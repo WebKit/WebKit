@@ -17,8 +17,14 @@ layer at (0,0) size 800x600
         RenderText {#text} at (45,18) size 4x19
           text run at (45,18) width 4: "."
       RenderBlock {P} at (0,52) size 784x18
-        RenderText {#text} at (0,0) size 285x19
-          text run at (0,0) width 285: "There should be a bright green square below."
-      RenderBlock (anonymous) at (0,86) size 784x100
-        RenderImage {IMG} at (0,0) size 100x100
+        RenderText {#text} at (0,0) size 244x19
+          text run at (0,0) width 244: "There should be a green square below."
+      RenderBlock (anonymous) at (0,86) size 784x124
+        RenderPartObject {IFRAME} at (0,0) size 124x124 [border: (2px inset #000000)]
+          layer at (0,0) size 120x120
+            RenderView at (0,0) size 120x120
+          layer at (0,0) size 120x120
+            RenderBlock {HTML} at (0,0) size 120x120
+              RenderBody {BODY} at (0,0) size 120x120
+                RenderImage {IMG} at (0,0) size 100x100
         RenderText {#text} at (0,0) size 0x0

@@ -58,7 +58,8 @@ public:
     }
 
     SoupMessage* toSoupMessage() const;
-    void updateFromSoupMessage(SoupMessage* soupMessage);
+    void updateFromSoupMessage(SoupMessage*);
+    void updateFromSoupMessageHeaders(const SoupMessageHeaders*);
 
     SoupMessageFlags soupMessageFlags() const { return m_soupFlags; }
     void setSoupMessageFlags(SoupMessageFlags soupFlags) { m_soupFlags = soupFlags; }

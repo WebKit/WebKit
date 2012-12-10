@@ -46,10 +46,11 @@
 #endif
 
 #if USE(SOUP)
-#include <wtf/gobject/GRefPtr.h>
 #define LIBSOUP_USE_UNSTABLE_REQUEST_API
+#include <libsoup/soup-multipart-input-stream.h>
 #include <libsoup/soup-request.h>
 #include <libsoup/soup.h>
+#include <wtf/gobject/GRefPtr.h>
 class Frame;
 #endif
 
@@ -192,6 +193,7 @@ namespace WebCore {
         bool m_cancelled;
         GRefPtr<SoupRequest> m_soupRequest;
         GRefPtr<GInputStream> m_inputStream;
+        GRefPtr<SoupMultipartInputStream> m_multipartInputStream;
         GRefPtr<GCancellable> m_cancellable;
         GRefPtr<GAsyncResult> m_deferredResult;
         GRefPtr<GSource> m_timeoutSource;

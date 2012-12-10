@@ -1,3 +1,37 @@
+2012-12-09  Gustavo Noronha Silva  <gustavo.noronha@collabora.com>
+
+        [Soup] utilize multipart/x-mixed-replace support recently added to libsoup
+        https://bugs.webkit.org/show_bug.cgi?id=94515
+
+        Reviewed by Martin Robinson.
+
+        The multipart/x-mixed-replace content type is often used for providing
+        "push" server support, with each part in the multipart response
+        replacing the previous one in the rendering. Soup recently acquired
+        support for multipart/x-mixed replace, which this change utilizes.
+
+        Covered by existing multipart/x-mixed-replace tests.
+
+        * platform/network/ResourceHandleInternal.h:
+        (ResourceHandleInternal): add new member to this class, the multipart input stream
+        * platform/network/soup/ResourceHandleSoup.cpp:
+        (WebCore::cleanupSoupRequestOperation): also clear the multipart input stream on
+        cleanup
+        (WebCore::nextPartCallback): callback that handles reporting the new response delivered
+        with the new part, if any; uses the factored out updateFromSoupMessageHeaders method
+        (WebCore::sendRequestCallback): handle multipart/x-mixed-replace responses by
+        requesting the next part
+        (WebCore::readCallback): when reading has finished, request the next part when
+        handling a multipart/x-mixed-replace response
+        * platform/network/soup/ResourceResponse.h:
+        (ResourceResponse): add declaration for new method
+        * platform/network/soup/ResourceResponseSoup.cpp:
+        (WebCore::ResourceResponse::updateFromSoupMessage): call new updateFromSoupMessageHeaders
+        method, instead of dealing with the message headers directly
+        (WebCore::ResourceResponse::updateFromSoupMessageHeaders): new method, factored out from
+        updateFromSoupMessage, so this same code can be reused for updating responses for
+        multipart/x-mixed-replace responses parts
+
 2012-12-10  Zoltan Nyul  <zoltan.nyul@intel.com>
 
         Implement testRunner.setViewModeMediaFeature() in WebKitTestRunner

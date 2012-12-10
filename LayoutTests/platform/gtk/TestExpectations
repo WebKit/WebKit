@@ -673,8 +673,6 @@ Bug(GTK) http/tests/xmlhttprequest/timeout/xmlhttprequest-timeout-worker-twice.h
 
 webkit.org/b/46644 fast/text/large-text-composed-char-dos.html [ Timeout ]
 
-webkit.org/b/68979 http/tests/multipart/invalid-image-data-standalone.html [ Skip ]
-
 Bug(GTK) http/tests/xmlhttprequest/redirect-cross-origin-tripmine.html [ Skip ]
 
 Bug(GTK) [ Debug ] fast/css/user-drag-none.html [ Timeout ]
@@ -1131,13 +1129,12 @@ webkit.org/b/68855 editing/selection/select-bidi-run.html [ Failure ]
 # This test is out-dated since r95899.
 webkit.org/b/65709 canvas/philip/tests/2d.drawImage.outsidesource.html [ Failure ]
 
-# missing multipart/x-mixed-replace support in libsoup
-webkit.org/b/94515 http/tests/multipart/invalid-image-data.html
-webkit.org/b/94515 http/tests/multipart/load-last-non-html-frame.php [ Failure ]
-webkit.org/b/94515 http/tests/multipart/multipart-replace-non-html-content.php [ Failure ]
-webkit.org/b/94515 http/tests/multipart/policy-ignore-crash.php [ Failure ]
-webkit.org/b/94515 http/tests/multipart/stop-crash.html [ Skip ]
-webkit.org/b/94515 http/tests/multipart/multipart-html.php [ Failure ]
+# The timeout is caused apparently by the whole process hanging; probably a bug in soup,
+# needs further investigation.
+Bug(GTK) http/tests/multipart/multipart-wait-before-boundary.html [ Timeout ]
+
+# Does not render the rectangle as it should, even though the multiple parts seem to work
+webkit.org/b/54251 http/tests/multipart/invalid-image-data.html [ Skip ]
 
 # Fails because it does not throw a couple of expected exceptions
 Bug(GTK) http/tests/local/fileapi/send-sliced-dragged-file.html [ Failure ]

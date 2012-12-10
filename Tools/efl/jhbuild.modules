@@ -138,10 +138,10 @@
     <dependencies>
       <dep package="glib-networking"/>
     </dependencies>
-    <branch module="/pub/gnome/sources/libsoup/2.39/libsoup-2.39.4.1.tar.xz" version="2.39.4.1"
+    <branch module="/pub/gnome/sources/libsoup/2.40/libsoup-2.40.0.tar.xz" version="2.40.0"
             repo="ftp.gnome.org"
-            hash="sha256:0740c3f6e393d31f87f166f0c6d11de5ebaa013d382c59ed924a1384c575612e"
-            md5sum="895ed1e0c949a2ce50aeaeb58661bfc3"/>
+            hash="sha256:ef65eb6d48e9525ad0fb82f964d3001e86921330317b51082d3dd0afc41d2ea9"
+            md5sum="4d66366e08271e22aef164ec4d74e5f0"/>
   </autotools>
 
   <autotools id="fontconfig" autogen-sh="configure">

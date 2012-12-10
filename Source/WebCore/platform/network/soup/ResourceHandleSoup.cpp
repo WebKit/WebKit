@@ -53,6 +53,7 @@
 #include <gio/gio.h>
 #include <glib.h>
 #define LIBSOUP_USE_UNSTABLE_REQUEST_API
+#include <libsoup/soup-multipart-input-stream.h>
 #include <libsoup/soup-request-http.h>
 #include <libsoup/soup-requester.h>
 #include <libsoup/soup.h>
@@ -443,12 +444,9 @@ static void cleanupSoupRequestOperation(ResourceHandle* handle, bool isDestroyin
 {
     ResourceHandleInternal* d = handle->getInternal();
 
-    if (d->m_soupRequest)
-        d->m_soupRequest.clear();
-
-    if (d->m_inputStream)
-        d->m_inputStream.clear();
-
+    d->m_soupRequest.clear();
+    d->m_inputStream.clear();
+    d->m_multipartInputStream.clear();
     d->m_cancellable.clear();
 
     if (d->m_soupMessage) {
@@ -493,7 +491,50 @@ static bool handleUnignoredTLSErrors(ResourceHandle* handle)
     return true;
 }
 
-static void sendRequestCallback(GObject*, GAsyncResult* res, gpointer data)
+static void nextMultipartResponsePartCallback(GObject* source, GAsyncResult* result, gpointer data)
+{
+    RefPtr<ResourceHandle> handle = static_cast<ResourceHandle*>(data);
+
+    ResourceHandleInternal* d = handle->getInternal();
+    ResourceHandleClient* client = handle->client();
+
+    if (d->m_cancelled || !client) {
+        cleanupSoupRequestOperation(handle.get());
+        return;
+    }
+
+    ASSERT(!d->m_inputStream);
+
+    GOwnPtr<GError> error;
+    d->m_inputStream = adoptGRef(soup_multipart_input_stream_next_part_finish(d->m_multipartInputStream.get(), result, &error.outPtr()));
+    if (error) {
+        client->didFail(handle.get(), ResourceError::httpError(d->m_soupMessage.get(), error.get(), d->m_soupRequest.get()));
+        cleanupSoupRequestOperation(handle.get());
+        return;
+    }
+
+    if (!d->m_inputStream) {
+        client->didFinishLoading(handle.get(), 0);
+        cleanupSoupRequestOperation(handle.get());
+        return;
+    }
+
+    d->m_response = ResourceResponse();
+    d->m_response.setURL(handle->firstRequest().url());
+    d->m_response.updateFromSoupMessageHeaders(soup_multipart_input_stream_get_headers(d->m_multipartInputStream.get()));
+
+    client->didReceiveResponse(handle.get(), d->m_response);
+
+    if (d->m_cancelled || !client) {
+        cleanupSoupRequestOperation(handle.get());
+        return;
+    }
+
+    g_input_stream_read_async(d->m_inputStream.get(), d->m_buffer, READ_BUFFER_SIZE,
+        G_PRIORITY_DEFAULT, d->m_cancellable.get(), readCallback, handle.get());
+}
+
+static void sendRequestCallback(GObject*, GAsyncResult* result, gpointer data)
 {
     RefPtr<ResourceHandle> handle = static_cast<ResourceHandle*>(data);
 
@@ -507,19 +548,18 @@ static void sendRequestCallback(GObject*, GAsyncResult* res, gpointer data)
     }
 
     if (d->m_defersLoading) {
-        d->m_deferredResult = res;
+        d->m_deferredResult = result;
         return;
     }
 
     GOwnPtr<GError> error;
-    GInputStream* in = soup_request_send_finish(d->m_soupRequest.get(), res, &error.outPtr());
+    GRefPtr<GInputStream> inputStream = adoptGRef(soup_request_send_finish(d->m_soupRequest.get(), result, &error.outPtr()));
     if (error) {
         client->didFail(handle.get(), ResourceError::httpError(soupMessage, error.get(), d->m_soupRequest.get()));
         cleanupSoupRequestOperation(handle.get());
         return;
     }
 
-    d->m_inputStream = adoptGRef(in);
     d->m_buffer = static_cast<char*>(g_slice_alloc(READ_BUFFER_SIZE));
 
     if (soupMessage) {
@@ -549,6 +589,14 @@ static void sendRequestCallback(GObject*, GAsyncResult* res, gpointer data)
         return;
     }
 
+    if (soupMessage && d->m_response.isMultipart()) {
+        d->m_multipartInputStream = adoptGRef(soup_multipart_input_stream_new(soupMessage, inputStream.get()));
+        soup_multipart_input_stream_next_part_async(d->m_multipartInputStream.get(), G_PRIORITY_DEFAULT,
+            d->m_cancellable.get(), nextMultipartResponsePartCallback, handle.get());
+        return;
+    }
+
+    d->m_inputStream = inputStream;
     g_input_stream_read_async(d->m_inputStream.get(), d->m_buffer, READ_BUFFER_SIZE,
                               G_PRIORITY_DEFAULT, d->m_cancellable.get(), readCallback, handle.get());
 }
@@ -1190,6 +1238,14 @@ static void readCallback(GObject*, GAsyncResult* asyncResult, gpointer data)
     }
 
     if (!bytesRead) {
+        // If this is a multipart message, we'll look for another part.
+        if (d->m_soupMessage && d->m_multipartInputStream) {
+            d->m_inputStream.clear();
+            soup_multipart_input_stream_next_part_async(d->m_multipartInputStream.get(), G_PRIORITY_DEFAULT,
+                d->m_cancellable.get(), nextMultipartResponsePartCallback, handle.get());
+            return;
+        }
+
         // We inform WebCore of load completion now instead of waiting for the input
         // stream to close because the input stream is closed asynchronously. If this
         // is a synchronous request, we wait until the closeCallback, because we don't
