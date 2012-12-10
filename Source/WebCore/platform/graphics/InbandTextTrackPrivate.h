@@ -56,8 +56,8 @@ public:
     enum Kind { Subtitles, Captions, Descriptions, Chapters, Metadata, None };
     virtual Kind kind() const { return Subtitles; }
 
-    virtual AtomicString label() const { return emptyString(); }
-    virtual AtomicString language() const { return emptyString(); }
+    virtual AtomicString label() const { return emptyAtom; }
+    virtual AtomicString language() const { return emptyAtom; }
     virtual bool isDefault() const { return false; }
 
     virtual int textTrackIndex() const { return 0; }
