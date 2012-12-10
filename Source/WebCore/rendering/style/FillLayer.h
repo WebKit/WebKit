@@ -68,22 +68,8 @@ public:
     StyleImage* image() const { return m_image.get(); }
     Length xPosition() const { return m_xPosition; }
     Length yPosition() const { return m_yPosition; }
-    BackgroundEdgeOrigin backgroundXOrigin() const
-    {
-#if ENABLE(CSS3_BACKGROUND)
-        return static_cast<BackgroundEdgeOrigin>(m_backgroundXOrigin);
-#else
-        return LeftEdge;
-#endif
-    }
-    BackgroundEdgeOrigin backgroundYOrigin() const
-    {
-#if ENABLE(CSS3_BACKGROUND)
-        return static_cast<BackgroundEdgeOrigin>(m_backgroundYOrigin);
-#else
-        return TopEdge;
-#endif
-    }
+    BackgroundEdgeOrigin backgroundXOrigin() const { return static_cast<BackgroundEdgeOrigin>(m_backgroundXOrigin); }
+    BackgroundEdgeOrigin backgroundYOrigin() const { return static_cast<BackgroundEdgeOrigin>(m_backgroundYOrigin); }
     EFillAttachment attachment() const { return static_cast<EFillAttachment>(m_attachment); }
     EFillBox clip() const { return static_cast<EFillBox>(m_clip); }
     EFillBox origin() const { return static_cast<EFillBox>(m_origin); }
@@ -100,14 +86,7 @@ public:
     bool isImageSet() const { return m_imageSet; }
     bool isXPositionSet() const { return m_xPosSet; }
     bool isYPositionSet() const { return m_yPosSet; }
-    bool isBackgroundOriginSet() const
-    {
-#if ENABLE(CSS3_BACKGROUND)
-        return m_backgroundOriginSet;
-#else
-        return false;
-#endif
-    }
+    bool isBackgroundOriginSet() const { return m_backgroundOriginSet; }
     bool isAttachmentSet() const { return m_attachmentSet; }
     bool isClipSet() const { return m_clipSet; }
     bool isOriginSet() const { return m_originSet; }
@@ -119,10 +98,8 @@ public:
     void setImage(PassRefPtr<StyleImage> i) { m_image = i; m_imageSet = true; }
     void setXPosition(Length l) { m_xPosition = l; m_xPosSet = true; }
     void setYPosition(Length l) { m_yPosition = l; m_yPosSet = true; }
-#if ENABLE(CSS3_BACKGROUND)
     void setBackgroundXOrigin(BackgroundEdgeOrigin o) { m_backgroundXOrigin = o; m_backgroundOriginSet = true; }
     void setBackgroundYOrigin(BackgroundEdgeOrigin o) { m_backgroundYOrigin = o; m_backgroundOriginSet = true; }
-#endif
     void setAttachment(EFillAttachment attachment) { m_attachment = attachment; m_attachmentSet = true; }
     void setClip(EFillBox b) { m_clip = b; m_clipSet = true; }
     void setOrigin(EFillBox b) { m_origin = b; m_originSet = true; }
@@ -137,16 +114,12 @@ public:
     void clearXPosition()
     {
         m_xPosSet = false;
-#if ENABLE(CSS3_BACKGROUND)
         m_backgroundOriginSet = false;
-#endif
     }
     void clearYPosition()
     {
         m_yPosSet = false;
-#if ENABLE(CSS3_BACKGROUND)
         m_backgroundOriginSet = false;
-#endif
     }
 
     void clearAttachment() { m_attachmentSet = false; }
@@ -239,11 +212,9 @@ private:
     unsigned m_repeatYSet : 1;
     unsigned m_xPosSet : 1;
     unsigned m_yPosSet : 1;
-#if ENABLE(CSS3_BACKGROUND)
     unsigned m_backgroundOriginSet : 1;
     unsigned m_backgroundXOrigin : 2; // BackgroundEdgeOrigin
     unsigned m_backgroundYOrigin : 2; // BackgroundEdgeOrigin
-#endif
     unsigned m_compositeSet : 1;
     
     unsigned m_type : 1; // EFillLayerType

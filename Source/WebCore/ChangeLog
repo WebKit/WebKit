@@ -1,3 +1,41 @@
+2012-12-10  Alexis Menard  <alexis@webkit.org>
+
+        [CSS3 Backgrounds and Borders] Remove CSS3_BACKGROUND feature flag.
+        https://bugs.webkit.org/show_bug.cgi?id=104539
+
+        Reviewed by Antonio Gomes.
+
+        As discussed on webkit-dev it is not needed to keep this feature flag 
+        as support for <position> type is a small feature that is already 
+        implemented by three other UAs. It was useful while landing this 
+        feature as partial bits were landed one after one.
+
+        No new tests : the feature is covered by various tests and it is already enabled in many ports.
+
+        * Configurations/FeatureDefines.xcconfig:
+        * GNUmakefile.am:
+        * GNUmakefile.features.am:
+        * css/CSSParser.cpp:
+        (WebCore::CSSParser::parseFillPosition):
+        (WebCore::CSSParser::parseFillProperty):
+        * css/CSSParser.h:
+        * css/CSSToStyleMap.cpp:
+        (WebCore::CSSToStyleMap::mapFillXPosition):
+        (WebCore::CSSToStyleMap::mapFillYPosition):
+        * rendering/style/FillLayer.cpp:
+        (SameSizeAsFillLayer):
+        (WebCore::FillLayer::FillLayer):
+        (WebCore::FillLayer::operator=):
+        (WebCore::FillLayer::operator==):
+        (WebCore::FillLayer::fillUnsetProperties):
+        * rendering/style/FillLayer.h:
+        (WebCore::FillLayer::backgroundXOrigin):
+        (WebCore::FillLayer::backgroundYOrigin):
+        (WebCore::FillLayer::isBackgroundOriginSet):
+        (WebCore::FillLayer::clearXPosition):
+        (WebCore::FillLayer::clearYPosition):
+        (FillLayer):
+
 2012-12-10  Eric Carlson  <eric.carlson@apple.com>
 
         Add support for in-band text tracks to Mac port

@@ -226,15 +226,12 @@ void CSSToStyleMap::mapFillXPosition(CSSPropertyID propertyID, FillLayer* layer,
     float zoomFactor = style()->effectiveZoom();
 
     CSSPrimitiveValue* primitiveValue = static_cast<CSSPrimitiveValue*>(value);
-#if ENABLE(CSS3_BACKGROUND)
     Pair* pair = primitiveValue->getPairValue();
     if (pair) {
         ASSERT_UNUSED(propertyID, propertyID == CSSPropertyBackgroundPositionX || propertyID == CSSPropertyWebkitMaskPositionX);
         primitiveValue = pair->second();
     }
-#else
-    UNUSED_PARAM(propertyID);
-#endif
+
     Length length;
     if (primitiveValue->isLength())
         length = primitiveValue->computeLength<Length>(style(), rootElementStyle(), zoomFactor);
@@ -246,11 +243,10 @@ void CSSToStyleMap::mapFillXPosition(CSSPropertyID propertyID, FillLayer* layer,
         length = primitiveValue->viewportPercentageLength();
     else
         return;
+
     layer->setXPosition(length);
-#if ENABLE(CSS3_BACKGROUND)
     if (pair)
         layer->setBackgroundXOrigin(*(pair->first()));
-#endif
 }
 
 void CSSToStyleMap::mapFillYPosition(CSSPropertyID propertyID, FillLayer* layer, CSSValue* value)
@@ -266,15 +262,12 @@ void CSSToStyleMap::mapFillYPosition(CSSPropertyID propertyID, FillLayer* layer,
     float zoomFactor = style()->effectiveZoom();
 
     CSSPrimitiveValue* primitiveValue = static_cast<CSSPrimitiveValue*>(value);
-#if ENABLE(CSS3_BACKGROUND)
     Pair* pair = primitiveValue->getPairValue();
     if (pair) {
         ASSERT_UNUSED(propertyID, propertyID == CSSPropertyBackgroundPositionY || propertyID == CSSPropertyWebkitMaskPositionY);
         primitiveValue = pair->second();
     }
-#else
-    UNUSED_PARAM(propertyID);
-#endif
+
     Length length;
     if (primitiveValue->isLength())
         length = primitiveValue->computeLength<Length>(style(), rootElementStyle(), zoomFactor);
@@ -286,11 +279,10 @@ void CSSToStyleMap::mapFillYPosition(CSSPropertyID propertyID, FillLayer* layer,
         length = primitiveValue->viewportPercentageLength();
     else
         return;
+
     layer->setYPosition(length);
-#if ENABLE(CSS3_BACKGROUND)
     if (pair)
         layer->setBackgroundYOrigin(*(pair->first()));
-#endif
 }
 
 void CSSToStyleMap::mapAnimationDelay(Animation* animation, CSSValue* value)

@@ -385,15 +385,6 @@ feature_defines_overrides += ENABLE_SPELLCHECK=0
 endif  # END ENABLE_SPELLCHECK
 
 # ---
-# CSS3 Background support
-# ---
-if ENABLE_CSS3_BACKGROUND
-feature_defines_overrides += ENABLE_CSS3_BACKGROUND=1
-else
-feature_defines_overrides += ENABLE_CSS3_BACKGROUND=0
-endif  # END ENABLE_CSS3_BACKGROUND
-
-# ---
 # CSS3 Conditional Rules support
 # ---
 if ENABLE_CSS3_CONDITIONAL_RULES

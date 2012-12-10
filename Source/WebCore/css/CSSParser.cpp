@@ -3717,7 +3717,6 @@ PassRefPtr<CSSPrimitiveValue> CSSParser::parseFillPositionComponent(CSSParserVal
     return 0;
 }
 
-#if ENABLE(CSS3_BACKGROUND)
 static bool isValueConflictingWithCurrentEdge(int value1, int value2)
 {
     if ((value1 == CSSValueLeft || value1 == CSSValueRight) && (value2 == CSSValueLeft || value2 == CSSValueRight))
@@ -3940,7 +3939,6 @@ void CSSParser::parseFillPosition(CSSParserValueList* valueList, RefPtr<CSSValue
     else
         parse4ValuesFillPosition(valueList, value1, value2, parsedValue1.release(), parsedValue2.release());
 }
-#endif
 
 void CSSParser::parse2ValuesFillPosition(CSSParserValueList* valueList, RefPtr<CSSValue>& value1, RefPtr<CSSValue>& value2)
 {
@@ -4152,14 +4150,8 @@ bool CSSParser::parseFillProperty(CSSPropertyID propId, CSSPropertyID& propId1, 
                     break;
                 case CSSPropertyBackgroundPosition:
                 case CSSPropertyWebkitMaskPosition:
-#if ENABLE(CSS3_BACKGROUND)
                     parseFillPosition(m_valueList.get(), currValue, currValue2);
                     // parseFillPosition advances the m_valueList pointer.
-                    break;
-                    // Fall through to CSS 2.1 parsing.
-#endif
-                    parse2ValuesFillPosition(m_valueList.get(), currValue, currValue2);
-                    // parse2ValuesFillPosition advances the m_valueList pointer.
                     break;
                 case CSSPropertyBackgroundPositionX:
                 case CSSPropertyWebkitMaskPositionX: {
