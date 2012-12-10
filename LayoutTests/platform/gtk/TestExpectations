@@ -41,6 +41,13 @@
 # Tests that require new results.
 #////////////////////////////////////////////////////////////////////////////////////////
 
+webkit.org/b/84043 accessibility/aria-tab-roles.html [ Missing ]
+webkit.org/b/84044 accessibility/image-link.html [ Missing ]
+webkit.org/b/84045 accessibility/image-map1.html [ Missing ]
+webkit.org/b/84045 accessibility/image-map2.html [ Missing ]
+webkit.org/b/70606 accessibility/menu-list-sends-change-notification.html [ Missing ]
+webkit.org/b/70606 accessibility/multiselect-list-reports-active-option.html [ Missing ]
+webkit.org/b/70606 accessibility/notification-listeners.html [ Missing ]
 webkit.org/b/98146 accessibility/svg-bounds.html [ Missing ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
@@ -691,9 +698,6 @@ webkit.org/b/103223 accessibility/file-upload-button-with-axpress.html [ Timeout
 
 # Missing DRT AccessibilityController::addNotificationListener implementation
 webkit.org/b/70606 accessibility/aria-checkbox-sends-notification.html [ Timeout ]
-webkit.org/b/70606 accessibility/menu-list-sends-change-notification.html [ Timeout ]
-webkit.org/b/70606 accessibility/multiselect-list-reports-active-option.html [ Timeout ]
-webkit.org/b/70606 accessibility/notification-listeners.html [ Timeout ]
 
 webkit.org/b/73003 [ Release ] editing/spelling/spellcheck-async.html [ Timeout ]
 webkit.org/b/73003 [ Release ] editing/spelling/spellcheck-paste.html [ Timeout ]
@@ -746,15 +750,11 @@ webkit.org/b/98354 accessibility/aria-labelledby-overrides-label.html [ Failure 
 webkit.org/b/98355 accessibility/aria-link-supports-press.html [ Failure ]
 webkit.org/b/98357 accessibility/aria-readonly.html [ Failure ]
 webkit.org/b/98358 accessibility/aria-scrollbar-role.html [ Failure ]
-webkit.org/b/84043 accessibility/aria-tab-roles.html [ Failure ]
 webkit.org/b/98359 accessibility/aria-text-role.html [ Failure ]
 webkit.org/b/98360 accessibility/aria-used-on-image-maps.html [ Failure ]
 webkit.org/b/98361 accessibility/button-press-action.html [ Failure ]
 webkit.org/b/98363 accessibility/canvas-fallback-content-2.html [ Failure ]
 webkit.org/b/98365 accessibility/ellipsis-text.html [ Failure ]
-webkit.org/b/84044 accessibility/image-link.html [ Failure ]
-webkit.org/b/84045 accessibility/image-map1.html [ Failure ]
-webkit.org/b/84045 accessibility/image-map2.html [ Failure ]
 webkit.org/b/98370 accessibility/loading-iframe-sends-notification.html [ Failure ]
 webkit.org/b/98371 accessibility/loading-iframe-updates-axtree.html [ Failure ]
 webkit.org/b/98372 accessibility/onclick-handlers.html [ Failure ]
