@@ -355,6 +355,7 @@ void TestInvocation::didReceiveMessageFromInjectedBundle(WKStringRef messageName
         ASSERT(WKGetTypeID(messageBody) == WKStringGetTypeID());
         WKStringRef textOutput = static_cast<WKStringRef>(messageBody);
         m_textOutput.append(toWTFString(textOutput));
+        return;
     }
 
     if (WKStringIsEqualToUTF8CString(messageName, "BeforeUnloadReturnValue")) {
