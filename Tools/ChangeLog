@@ -1,3 +1,21 @@
+2012-12-10  Zan Dobersek  <zandobersek@gmail.com>
+
+        [GTK][WTR] Implement AccessibilityUIElement::titleUIElement
+        https://bugs.webkit.org/show_bug.cgi?id=102953
+
+        Reviewed by Martin Robinson.
+
+        Implement AccessibilityUIElement::titleUIElement in the ATK backend
+        in the same manner it is implemented in DumpRenderTree. Both implementations
+        are updated to unref the relation set before the final function return
+        rather than at the end of each loop through the relations held in the said
+        relation set.
+
+        * DumpRenderTree/gtk/AccessibilityUIElementGtk.cpp:
+        (AccessibilityUIElement::titleUIElement):
+        * WebKitTestRunner/InjectedBundle/atk/AccessibilityUIElementAtk.cpp:
+        (WTR::AccessibilityUIElement::titleUIElement):
+
 2012-12-10  Martin Robinson  <mrobinson@igalia.com>
 
         Fix the WebKit2 debug build

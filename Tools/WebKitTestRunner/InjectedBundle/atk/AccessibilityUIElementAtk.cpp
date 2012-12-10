@@ -381,8 +381,26 @@ PassRefPtr<AccessibilityUIElement> AccessibilityUIElement::selectedRowAtIndex(un
 
 PassRefPtr<AccessibilityUIElement> AccessibilityUIElement::titleUIElement()
 {
-    // FIXME: implement
-    return 0;
+    if (!m_element)
+        return 0;
+
+    AtkRelationSet* set = atk_object_ref_relation_set(ATK_OBJECT(m_element));
+    if (!set)
+        return 0;
+
+    AtkObject* target = 0;
+    int count = atk_relation_set_get_n_relations(set);
+    for (int i = 0; i < count; i++) {
+        AtkRelation* relation = atk_relation_set_get_relation(set, i);
+        if (atk_relation_get_relation_type(relation) == ATK_RELATION_LABELLED_BY) {
+            GPtrArray* targetList = atk_relation_get_target(relation);
+            if (targetList->len)
+                target = static_cast<AtkObject*>(g_ptr_array_index(targetList, 0));
+        }
+    }
+
+    g_object_unref(set);
+    return target ? AccessibilityUIElement::create(target) : 0;
 }
 
 PassRefPtr<AccessibilityUIElement> AccessibilityUIElement::parentElement()

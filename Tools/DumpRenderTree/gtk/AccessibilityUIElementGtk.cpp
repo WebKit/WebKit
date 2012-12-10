@@ -320,7 +320,6 @@ JSStringRef AccessibilityUIElement::attributesOfDocumentLinks()
 
 AccessibilityUIElement AccessibilityUIElement::titleUIElement()
 {
-
     if (!m_element)
         return 0;
 
@@ -337,9 +336,9 @@ AccessibilityUIElement AccessibilityUIElement::titleUIElement()
             if (targetList->len)
                 target = static_cast<AtkObject*>(g_ptr_array_index(targetList, 0));
         }
-        g_object_unref(set);
     }
 
+    g_object_unref(set);
     return target ? AccessibilityUIElement(target) : 0;
 }
 
