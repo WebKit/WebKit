@@ -1,3 +1,9 @@
+2012-12-10  Gustavo Noronha Silva  <gns@gnome.org>
+
+        Unreviewed distcheck fix.
+
+        * GNUmakefile.list.am:
+
 2012-12-10  Eric Seidel  <eric@webkit.org>
 
         Caused crashes in v8.  Rolling out until abarth can fix.  See cr-issue 165136 for more info

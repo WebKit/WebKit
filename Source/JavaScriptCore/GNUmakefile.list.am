@@ -267,12 +267,14 @@ javascriptcore_sources += \
 	Source/JavaScriptCore/disassembler/Disassembler.h \
 	Source/JavaScriptCore/heap/CopiedAllocator.h \
 	Source/JavaScriptCore/heap/CopiedBlock.h \
+	Source/JavaScriptCore/heap/CopiedBlockInlines.h \
 	Source/JavaScriptCore/heap/CopiedSpace.cpp \
 	Source/JavaScriptCore/heap/CopiedSpace.h \
 	Source/JavaScriptCore/heap/CopiedSpaceInlines.h \
-    Source/JavaScriptCore/heap/CopyVisitor.h \
-    Source/JavaScriptCore/heap/CopyVisitorInlines.h \
-    Source/JavaScriptCore/heap/CopyVisitor.cpp \
+	Source/JavaScriptCore/heap/CopyVisitor.h \
+	Source/JavaScriptCore/heap/CopyVisitorInlines.h \
+	Source/JavaScriptCore/heap/CopyVisitor.cpp \
+	Source/JavaScriptCore/heap/CopyWorkList.h \
 	Source/JavaScriptCore/heap/CardSet.h \
 	Source/JavaScriptCore/heap/ConservativeRoots.cpp \
 	Source/JavaScriptCore/heap/ConservativeRoots.h \
