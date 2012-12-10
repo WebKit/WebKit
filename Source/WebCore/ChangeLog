@@ -1,5 +1,25 @@
 2012-12-10  Simon Fraser  <simon.fraser@apple.com>
 
+        When converting a layer into a tiled layer, ensure that we update the visible rect
+        https://bugs.webkit.org/show_bug.cgi?id=104467
+
+        Reviewed by Darin Adler.
+
+        When a GraphicsLayerCA toggles to use a TileCache, we have to ensure that the
+        layer's visible rect (which is used to ensure tile coverage) is updated in
+        the same commit. Otherwise we can get blank layers until something else causes
+        the visible rect to be updated.
+
+        Test: compositing/tiling/tiled-layer-resize.html
+
+        * platform/graphics/ca/GraphicsLayerCA.cpp:
+        (WebCore::GraphicsLayerCA::dumpAdditionalProperties): With the debug flag, dump the TiledBacking
+        address for ease of debugging.
+        (WebCore::GraphicsLayerCA::swapFromOrToTiledLayer): Set the VisibleRectChanged bit in
+        m_uncommittedChanges if we've just switched to a tiled layer.
+
+2012-12-10  Simon Fraser  <simon.fraser@apple.com>
+
         Don't unconditionally repaint compositing layers when their size changes
         https://bugs.webkit.org/show_bug.cgi?id=104461
 

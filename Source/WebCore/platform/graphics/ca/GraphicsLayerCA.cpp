@@ -2549,6 +2549,11 @@ void GraphicsLayerCA::dumpAdditionalProperties(TextStream& textStream, int inden
     }
 
     if (tiledBacking() && (behavior & LayerTreeAsTextIncludeTileCaches)) {
+        if (behavior & LayerTreeAsTextDebug) {
+            writeIndent(textStream, indent + 1);
+            textStream << "(tiled backing " << tiledBacking() << ")\n";
+        }
+
         IntRect tileCoverageRect = tiledBacking()->tileCoverageRect();
         writeIndent(textStream, indent + 1);
         textStream << "(tile cache coverage " << tileCoverageRect.x() << ", " << tileCoverageRect.y() << " " << tileCoverageRect.width() << " x " << tileCoverageRect.height() << ")\n";
@@ -2643,6 +2648,9 @@ void GraphicsLayerCA::swapFromOrToTiledLayer(bool useTiledLayer, float /*pageSca
         | OpacityChanged
         | DebugIndicatorsChanged;
     
+    if (m_usingTiledLayer)
+        m_uncommittedChanges |= VisibleRectChanged;
+
 #ifndef NDEBUG
     String name = String::format("%sCALayer(%p) GraphicsLayer(%p) ", (m_layer->layerType() == PlatformCALayer::LayerTypeWebTiledLayer) ? "Tiled " : "", m_layer->platformLayer(), this) + m_name;
     m_layer->setName(name);

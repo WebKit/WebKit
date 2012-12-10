@@ -1,5 +1,20 @@
 2012-12-10  Simon Fraser  <simon.fraser@apple.com>
 
+        When converting a layer into a tiled layer, ensure that we update the visible rect
+        https://bugs.webkit.org/show_bug.cgi?id=104467
+
+        Reviewed by Darin Adler.
+
+        Test that resizes a layer over the tiled layer threshold, then dumps layer data.
+        
+        Mac-specific results added because only Mac dumps tile cache info.
+
+        * compositing/tiling/tiled-layer-resize-expected.txt: Added.
+        * compositing/tiling/tiled-layer-resize.html: Added.
+        * platform/mac/compositing/tiling/tiled-layer-resize-expected.txt: Added.
+
+2012-12-10  Simon Fraser  <simon.fraser@apple.com>
+
         Don't unconditionally repaint compositing layers when their size changes
         https://bugs.webkit.org/show_bug.cgi?id=104461
 
