@@ -1047,9 +1047,6 @@ webkit.org/b/60109 [ Win Release ] inspector/elements/edit-dom-actions.html [ Fa
 webkit.org/b/60109 [ Win Debug ] inspector/elements/edit-dom-actions.html [ Pass Timeout ]
 webkit.org/b/60109 [ Linux Mac Release ] inspector/elements/edit-dom-actions.html [ Pass Timeout ]
 
-webkit.org/b/72434 [ Release ] inspector/styles/svg-style.xhtml [ Failure Pass ]
-webkit.org/b/72434 [ Debug ] inspector/styles/svg-style.xhtml [ Failure Slow ]
-
 webkit.org/b/74654 http/tests/inspector/network/network-worker.html
 
 webkit.org/b/75186 [ Linux ] http/tests/inspector-enabled/dedicated-workers-list.html [ Skip ]
