@@ -268,6 +268,9 @@ WebInspector.GenericSettingsTab = function()
     this._disableJSCheckbox = disableJSElement.getElementsByTagName("input")[0];
     this._updateScriptDisabledCheckbox();
 
+    p = this._appendSection(WebInspector.UIString("Appearance"));
+    p.appendChild(this._createCheckboxSetting(WebInspector.UIString("Show toolbar icons"), WebInspector.settings.showToolbarIcons));
+
     p = this._appendSection(WebInspector.UIString("Elements"));
     p.appendChild(this._createRadioSetting(WebInspector.UIString("Color format"), [
         [ WebInspector.Color.Format.Original, WebInspector.UIString("As authored") ],

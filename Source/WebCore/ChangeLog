@@ -1,3 +1,53 @@
+2012-12-08  Pavel Feldman  <pfeldman@chromium.org>
+
+        Web Inspector: adds an option to remove toolbar icons.
+        https://bugs.webkit.org/show_bug.cgi?id=95654
+
+        Reviewed by Vsevolod Vlasov.
+
+        - removes compact mode in favor or dock-to-bottom
+        - introduces setting for hiding toolbar icons
+
+        * inspector/front-end/DockController.js:
+        (WebInspector.DockController.prototype._toggleDockState):
+        * inspector/front-end/Settings.js:
+        (WebInspector.ExperimentsSettings):
+        * inspector/front-end/Toolbar.js:
+        (WebInspector.Toolbar.prototype.setDockedToBottom):
+        (WebInspector.Toolbar.prototype._toolbarDragStart):
+        (WebInspector.Toolbar.prototype._toolbarDrag):
+        * inspector/front-end/helpScreen.css:
+        (body.dock-to-bottom .help-content):
+        * inspector/front-end/inspector.css:
+        (body.dock-to-bottom #toolbar):
+        (body.no-toolbar-icons #toolbar):
+        (body.dock-to-bottom.port-qt #toolbar):
+        (body.dock-to-bottom.inactive #toolbar):
+        (body.no-toolbar-icons .toolbar-item.toggleable):
+        (body.dock-to-bottom .toolbar-item.toggleable):
+        (body.dock-to-bottom .toolbar-icon):
+        (body.no-toolbar-icons .toolbar-icon):
+        (body.no-toolbar-icons #main):
+        (body.dock-to-bottom .toolbar-icon.custom-toolbar-icon):
+        (body.dock-to-bottom .toolbar-item:active .toolbar-icon):
+        (body.dock-to-bottom .toolbar-label):
+        (body.dock-to-bottom #search-toolbar-label):
+        (body.no-toolbar-icons .toolbar-label):
+        (body.no-toolbar-icons #toolbar-dropdown):
+        (#toolbar-dropdown .scrollable-content):
+        (#toolbar-dropdown .toolbar-item.toggleable:hover):
+        (body.no-toolbar-icons #toolbar-dropdown .toolbar-label):
+        (body.no-toolbar-icons #toolbar-dropdown .toolbar-item):
+        (body.dock-to-bottom .toolbar-item.resources .toolbar-icon):
+        (body.dock-to-bottom .toolbar-item.network .toolbar-icon):
+        (body.dock-to-bottom .toolbar-item.scripts .toolbar-icon):
+        (body.dock-to-bottom .toolbar-item.timeline .toolbar-icon):
+        (body.dock-to-bottom .toolbar-item.profiles .toolbar-icon):
+        (body.dock-to-bottom .toolbar-item.audits .toolbar-icon):
+        (body.dock-to-bottom .toolbar-item.console .toolbar-icon):
+        (body.dock-to-bottom.port-qt .toolbar-item.close-left, body.dock-to-bottom.port-qt .toolbar-item.close-right):
+        (body.dock-to-bottom #main):
+
 2012-12-10  Kent Tamura  <tkent@chromium.org>
 
         Refactoring: Remove HTMLFormControlElement::autofocus

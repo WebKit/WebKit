@@ -99,9 +99,9 @@ WebInspector.Toolbar.prototype = {
     /**
      * @param {boolean} isCompactMode
      */
-    setCompactMode: function(isCompactMode)
+    setDockedToBottom: function(dockedToBottom)
     {
-        this._isCompactMode = isCompactMode;
+        this._isDockedToBottom = dockedToBottom;
     },
 
     /**
@@ -109,7 +109,7 @@ WebInspector.Toolbar.prototype = {
      */
     _toolbarDragStart: function(event)
     {
-        if ((!this._isCompactMode && WebInspector.platformFlavor() !== WebInspector.PlatformFlavor.MacLeopard && WebInspector.platformFlavor() !== WebInspector.PlatformFlavor.MacSnowLeopard) || WebInspector.port() == "qt")
+        if ((!this._isDockedToBottom && WebInspector.platformFlavor() !== WebInspector.PlatformFlavor.MacLeopard && WebInspector.platformFlavor() !== WebInspector.PlatformFlavor.MacSnowLeopard) || WebInspector.port() == "qt")
             return false;
 
         var target = event.target;
@@ -132,7 +132,7 @@ WebInspector.Toolbar.prototype = {
 
     _toolbarDrag: function(event)
     {
-        if (this._isCompactMode) {
+        if (this._isDockedToBottom) {
             var height = window.innerHeight - (event.screenY - this.element.lastScreenY);
 
             InspectorFrontendHost.setAttachedWindowHeight(height);
@@ -183,7 +183,7 @@ WebInspector.Toolbar.prototype = {
     {
         this._setDropdownVisible(false);
 
-        if (this.element.scrollHeight > this.element.clientHeight)
+        if (this.element.scrollHeight > this.element.offsetHeight)
             this._dropdownButton.removeStyleClass("hidden");
         else
             this._dropdownButton.addStyleClass("hidden");
@@ -240,7 +240,7 @@ WebInspector.ToolbarDropdown.prototype = {
         var toolbarItems = this._toolbar.element.querySelectorAll(".toolbar-item.toggleable");
 
         for (var i = 0; i < toolbarItems.length; ++i) {
-            if (toolbarItems[i].offsetTop > 0)
+            if (toolbarItems[i].offsetTop > 1)
                 this._contentElement.appendChild(this._toolbar._createPanelToolbarItem(toolbarItems[i].panelDescriptor));
         }
     },

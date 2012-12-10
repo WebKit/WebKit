@@ -114,6 +114,7 @@ WebInspector.Settings = function()
     this.showCpuOnTimelineRuler = this.createSetting("showCpuOnTimelineRuler", false);
     this.showMetricsRulers = this.createSetting("showMetricsRulers", false);
     this.emulatedCSSMedia = this.createSetting("emulatedCSSMedia", "print");
+    this.showToolbarIcons = this.createSetting("showToolbarIcons", false);
 
     // If there are too many breakpoints in a storage, it is likely due to a recent bug that caused
     // periodical breakpoints duplication leading to inspector slowness.

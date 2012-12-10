@@ -816,3 +816,5 @@ localizedStrings["Average Time"] = "Average Time";
 localizedStrings["Maximum Time"] = "Maximum Time";
 localizedStrings["Standard Deviation"] = "Standard Deviation";
 localizedStrings["Time by category"] = "Time by category";
+localizedStrings["Show toolbar icons"] = "Show toolbar icons";
+localizedStrings["Appearance"] = "Appearance";

@@ -52,13 +52,21 @@ input[type="search"]:focus, input[type="text"]:focus {
     top: 0;
     left: 0;
     right: 0;
-    height: 56px;
-    padding: 0 5px;
+    height: 24px;
     background-image: -webkit-gradient(linear, left top, left bottom, from(rgb(191, 191, 191)), to(rgb(151, 151, 151)));
+    padding-top: 1px;
     border-bottom: 1px solid rgb(80, 80, 80);
     -webkit-box-orient: horizontal;
     -webkit-background-origin: padding;
     -webkit-background-clip: padding;
+}
+
+body.show-toolbar-icons #toolbar {
+    height: 56px;
+}
+
+body.show-toolbar-icons.dock-to-bottom #toolbar {
+    height: 34px;
 }
 
 body.inactive #toolbar {
@@ -71,18 +79,18 @@ body.undocked.platform-mac-snowleopard #toolbar {
     background: transparent;
 }
 
-body.compact #toolbar {
-    height: 34px;
+body.dock-to-bottom #toolbar {
+    padding-top: 0;
     border-top: 1px solid rgb(100, 100, 100);
     cursor: ns-resize;
     padding-left: 0;
 }
 
-body.compact.port-qt #toolbar {
+body.dock-to-bottom.port-qt #toolbar {
     cursor: auto;
 }
 
-body.compact.inactive #toolbar {
+body.dock-to-bottom.inactive #toolbar {
     border-top: 1px solid rgb(64%, 64%, 64%);
 }
 
@@ -94,12 +102,16 @@ body.compact.inactive #toolbar {
     border-color: transparent;
 }
 
-.toolbar-item.toggleable {
+body:not(.show-toolbar-icons) .toolbar-item {
+    height: 22px;
+}
+
+body.show-toolbar-icons .toolbar-item.toggleable {
     padding-top: 4px;
     padding-bottom: 4px;
 }
 
-body.compact .toolbar-item.toggleable {
+body.show-toolbar-icons.dock-to-bottom .toolbar-item.toggleable {
   margin: 1px 0;
   padding-bottom: 2px;
 }
@@ -112,21 +124,29 @@ body.compact .toolbar-item.toggleable {
 }
 
 .toolbar-icon {
-    display: inline-block;
+    display: none;
     width: 32px;
     height: 32px;
     background-image: url(Images/toolbarIcons.png);
     vertical-align: top;
 }
 
-body.compact .toolbar-icon {
+body.dock-to-bottom .toolbar-icon {
     width: 24px;
     height: 24px;
     vertical-align: middle;
     background-image: url(Images/toolbarIconsSmall.png);
 }
 
-body.compact .toolbar-icon.custom-toolbar-icon {
+body.show-toolbar-icons .toolbar-icon {
+    display: inline-block;
+}
+
+body.show-toolbar-icons #main {
+    top: 24px;
+}
+
+body.dock-to-bottom .toolbar-icon.custom-toolbar-icon {
     background-position-x: -32px;
 }
 
@@ -134,30 +154,31 @@ body.compact .toolbar-icon.custom-toolbar-icon {
     background-position-y: 32px;
 }
 
-body.compact .toolbar-item:active .toolbar-icon {
+body.dock-to-bottom .toolbar-item:active .toolbar-icon {
     background-position-y: 24px;
 }
 
 .toolbar-label {
-    line-height: 15px;
+    line-height: 22px;
     font-size: 11px;
     font-family: Lucida Grande, sans-serif;
     text-shadow: rgba(255, 255, 255, 0.5) 0 1px 0;
-    position: relative;
-    top: 1px;
 }
 
+body.show-toolbar-icons .toolbar-label {
+    line-height: 15px;
+}
 .toolbar-item.toggleable:active .toolbar-label {
     text-shadow: none;
 }
 
-body.compact .toolbar-label {
+body.show-toolbar-icons.dock-to-bottom .toolbar-label {
     display: inline-block;
     margin-left: 3px;
     top: 0;
 }
 
-body.compact #search-toolbar-label {
+body.dock-to-bottom #search-toolbar-label {
     display: none;
 }
 
@@ -175,13 +196,11 @@ body.compact #search-toolbar-label {
     background-color: transparent;
     -webkit-border-radius: 5px;
     text-shadow: none;
+    cursor: default;
     margin: 0;
-    position: relative;
-    top: 1px;
-
     /* A line height of 0 allows precise text positioning using padding. */
     line-height: 0;
-    padding: 9px 6px 11px;
+    padding: 10px 6px 11px;
 }
 
 #toolbar-dropdown-arrow.dropdown-visible {
@@ -201,9 +220,12 @@ body.compact #search-toolbar-label {
     z-index: 1000;
     -webkit-box-shadow: 3px 3px 3px rgba(0, 0, 0, 0.4);
     border: 1px solid rgb(128, 128, 128);
-    padding: 4px;
     background-color: inherit;
     background-image: inherit;
+}
+
+body.show-toolbar-icons #toolbar-dropdown {
+    padding: 4px;
 }
 
 body.undocked.platform-mac-leopard #toolbar-dropdown,
@@ -215,15 +237,21 @@ body.undocked.platform-mac-snowleopard #toolbar-dropdown {
     display: -webkit-box;
     -webkit-box-orient: vertical;
     -webkit-box-align: start;
+    padding-right: 0;
 }
 
 #toolbar-dropdown .toolbar-item {
     display: -webkit-box;
     -webkit-box-orient: horizontal;
-    margin: 0px 2px;
-    padding: 4px;
     width: 100%;
     border: 1px solid rgba(0, 0, 0, 0);
+}
+
+body.show-toolbar-icons #toolbar-dropdown .toolbar-item {
+    position: relative;
+    left: -2px;
+    margin: 0px 2px;
+    padding: 4px;
 }
 
 #toolbar-dropdown .toolbar-item.toggleable.toggled-on {
@@ -232,13 +260,8 @@ body.undocked.platform-mac-snowleopard #toolbar-dropdown {
     background: -webkit-gradient(linear, left top, left bottom, from(rgba(128, 128, 128, 0.6)), to(rgba(128, 128, 128, 0.6)), color-stop(20%, rgba(158, 158, 158, 0.2)), color-stop(80%, rgba(158, 158, 158, 0.2)));
 }
 
-#toolbar-dropdown .toolbar-item:hover {
-    -webkit-border-image: none;
-    border: 1px solid rgba(100, 100, 120, 0.8);
-}
-
-#toolbar-dropdown .toolbar-item.toggleable.toggled-on:hover {
-    border: 1px solid rgba(100, 100, 120, 1);
+#toolbar-dropdown .toolbar-item.toggleable:hover {
+    background: -webkit-gradient(linear, left top, left bottom, from(rgba(128, 128, 128, 0.6)), to(rgba(128, 128, 128, 0.3)), color-stop(20%, rgba(158, 158, 158, 0.2)), color-stop(80%, rgba(158, 158, 158, 0.1)));
 }
 
 #toolbar-dropdown .toolbar-icon {
@@ -246,8 +269,12 @@ body.undocked.platform-mac-snowleopard #toolbar-dropdown {
 }
 
 #toolbar-dropdown .toolbar-label {
-    line-height: 32px;
+    line-height: 22px;
     top: 0;
+}
+
+body.show-toolbar-icons #toolbar-dropdown .toolbar-label {
+    line-height: 32px;
 }
 
 .scrollable-content {
@@ -412,7 +439,7 @@ body.undocked.platform-mac-snowleopard #toolbar-dropdown {
     background-position-x: -32px;
 }
 
-body.compact .toolbar-item.resources .toolbar-icon {
+body.dock-to-bottom .toolbar-item.resources .toolbar-icon {
     background-position-x: -24px;
 }
 
@@ -420,7 +447,7 @@ body.compact .toolbar-item.resources .toolbar-icon {
     background-position-x: -64px;
 }
 
-body.compact .toolbar-item.network .toolbar-icon {
+body.dock-to-bottom .toolbar-item.network .toolbar-icon {
     background-position-x: -48px;
 }
 
@@ -428,7 +455,7 @@ body.compact .toolbar-item.network .toolbar-icon {
     background-position-x: -96px;
 }
 
-body.compact .toolbar-item.scripts .toolbar-icon {
+body.dock-to-bottom .toolbar-item.scripts .toolbar-icon {
     background-position-x: -72px;
 }
 
@@ -436,7 +463,7 @@ body.compact .toolbar-item.scripts .toolbar-icon {
     background-position-x: -128px;
 }
 
-body.compact .toolbar-item.timeline .toolbar-icon {
+body.dock-to-bottom .toolbar-item.timeline .toolbar-icon {
     background-position-x: -96px;
 }
 
@@ -444,7 +471,7 @@ body.compact .toolbar-item.timeline .toolbar-icon {
     background-position-x: -160px;
 }
 
-body.compact .toolbar-item.profiles .toolbar-icon {
+body.dock-to-bottom .toolbar-item.profiles .toolbar-icon {
     background-position-x: -120px;
 }
 
@@ -452,7 +479,7 @@ body.compact .toolbar-item.profiles .toolbar-icon {
     background-position-x: -192px;
 }
 
-body.compact .toolbar-item.audits .toolbar-icon {
+body.dock-to-bottom .toolbar-item.audits .toolbar-icon {
     background-position-x: -144px;
 }
 
@@ -460,7 +487,7 @@ body.compact .toolbar-item.audits .toolbar-icon {
     background-position-x: -224px;
 }
 
-body.compact .toolbar-item.console .toolbar-icon {
+body.dock-to-bottom .toolbar-item.console .toolbar-icon {
     background-position-x: -168px;
 }
 
@@ -469,9 +496,6 @@ body.compact .toolbar-item.console .toolbar-icon {
     height: 14px;
     background-image: url(Images/closeButtons.png);
     background-position: 0 0;
-    background-color: transparent;
-    border: 0 none transparent;
-    padding: 0;
 }
 
 #close-button-left:hover, #close-button-right:hover {
@@ -486,11 +510,11 @@ body.compact .toolbar-item.console .toolbar-icon {
     float: left;
 }
 
-body.detached .toolbar-item.close-left, body.detached .toolbar-item.close-right {
+body.undocked .toolbar-item.close-left, body.undocked .toolbar-item.close-right {
     display: none;
 }
 
-body.compact.port-qt .toolbar-item.close-left, body.compact.port-qt .toolbar-item.close-right {
+body.dock-to-bottom.port-qt .toolbar-item.close-left, body.dock-to-bottom.port-qt .toolbar-item.close-right {
     display: none;
 }
 
@@ -506,16 +530,17 @@ body:not(.platform-mac) .toolbar-item.close-left {
     display: none;
 }
 
-.toolbar-item.close-left {
+.toolbar-item.close-left, .toolbar-item.close-right {
   display: -webkit-box;
   -webkit-box-align: center;
   height: 100%;
+  cursor: default;
 }
 
 #main {
     position: absolute;
     z-index: 1;
-    top: 56px;
+    top: 24px;
     left: 0;
     right: 0;
     bottom: 0;
@@ -523,7 +548,11 @@ body:not(.platform-mac) .toolbar-item.close-left {
     background-color: white;
 }
 
-body.compact #main {
+body.show-toolbar-icons #main {
+    top: 56px;
+}
+
+body.show-toolbar-icons.dock-to-bottom #main {
     top: 34px;
 }
 
@@ -741,7 +770,7 @@ button.dock-status-bar-item.status-bar-item.toggled-right .glyph {
     background-color: rgba(0, 0, 0, 0.75);
 }
 
-body.detached .alternate-status-bar-buttons-bar {
+body.undocked .alternate-status-bar-buttons-bar {
     margin-left: 1px;
 }
 
