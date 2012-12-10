@@ -1,3 +1,15 @@
+2012-12-10  Mike West  <mkwst@chromium.org>
+
+        Log to console when script is blocked by sandbox attributes.
+        https://bugs.webkit.org/show_bug.cgi?id=104365
+
+        Reviewed by Ojan Vafai.
+
+        * Scripts/webkitpy/performance_tests/perftest.py:
+        (PerfTest):
+            Ignoring the new console message in perftests, as it broke parsing
+            for the Parser/html-parser.html microbenchmark.
+
 2012-12-10  Filip Pizlo  <fpizlo@apple.com>
 
         JSC profiling and debug dump code should use inferred names when possible

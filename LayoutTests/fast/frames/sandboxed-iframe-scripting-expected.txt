@@ -1,4 +1,6 @@
+CONSOLE MESSAGE: Blocked script execution in 'about:blank' because the document's frame is sandboxed and the 'allow-scripts' permission is not set.
 ALERT: PASS: Executed script in data URL
+CONSOLE MESSAGE: Blocked script execution in 'data:text/html,<script> alert('FAIL: Executed script without allow-scripts in data URL'); </script>' because the document's frame is sandboxed and the 'allow-scripts' permission is not set.
 Verify that sandboxed frames with sandbox="allow-scripts" can execute scripts, but other sandboxed frames cannot. Also verify that adding a sandbox attribute at runtime does not effect the current state of the iframe.
 
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
