@@ -293,6 +293,7 @@ Usage: $programName [options] [testdir|testpath ...]
   -i|--ignore-tests               Comma-separated list of directories or tests to ignore
   --iterations n                  Number of times to run the set of tests (e.g. ABCABCABC)
   --[no-]launch-safari            Launch (or do not launch) Safari to display test results (default: $launchSafariDefault)
+  --[no-]show-results             Same as --[no-]launch-safari
   -l|--leaks                      Enable leaks checking
   --[no-]new-test-results         Generate results for new tests
   --nthly n                       Restart DumpRenderTree every n tests (default: $testsPerDumpTool)
@@ -346,6 +347,7 @@ my $getOptionsResult = GetOptions(
     'merge-leak-depth|m:5' => \$mergeDepth,
     'new-test-results!' => \$generateNewResults,
     'no-build' => \$noBuildDumpTool,
+    'no-show-results' => sub  { $launchSafari = 0; },
     'nthly=i' => \$testsPerDumpTool,
     'pixel-tests|p' => \$pixelTests,
     'platform=s' => \$platform,
@@ -358,6 +360,7 @@ my $getOptionsResult = GetOptions(
     'reverse' => \$reverseTests,
     'root=s' => \$root,
     'sample-on-timeout!' => \$runSample,
+    'show-results' => sub  { $launchSafari = 1; },
     'singly|1' => sub { $testsPerDumpTool = 1; },
     'skipped=s' => \&validateSkippedArg,
     'slowest' => \$report10Slowest,
