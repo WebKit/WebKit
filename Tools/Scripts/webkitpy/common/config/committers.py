@@ -150,6 +150,7 @@ contributors_who_are_not_committers = [
     Contributor("Kulanthaivel Palanichamy", "kulanthaivel@codeaurora.org", "kvel"),
     Contributor("Kiran Muppala", "cmuppala@apple.com", "kiranm"),
     Contributor("Mihai Balan", "mibalan@adobe.com", "miChou"),
+    Contributor("Mihai Maerean", "mmaerean@adobe.com", "mmaerean"),
     Contributor("Min Qin", "qinmin@chromium.org"),
     Contributor("Nandor Huszka", "hnandor@inf.u-szeged.hu", "hnandor"),
     Contributor("Oliver Varga", ["voliver@inf.u-szeged.hu", "Varga.Oliver@stud.u-szeged.hu"], "TwistO"),

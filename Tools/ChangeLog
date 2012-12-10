@@ -1,3 +1,9 @@
+2012-12-10  Mihnea Ovidenie  <mihnea@adobe.com>
+
+        Unreviewed. Adding Mihai Maerean to the list of contributors, working on CSSRegions.
+
+        * Scripts/webkitpy/common/config/committers.py:
+
 2012-12-10  Joanmarie Diggs  <jdiggs@igalia.com>
 
         [GTK] accessibility/language-attribute.html is failing
