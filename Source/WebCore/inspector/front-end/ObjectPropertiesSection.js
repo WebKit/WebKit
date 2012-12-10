@@ -245,7 +245,7 @@ WebInspector.ObjectPropertyTreeElement.prototype = {
             this.valueElement.addStyleClass("console-formatted-" + this.property.value.type);
 
         this.valueElement.addEventListener("contextmenu", this._contextMenuFired.bind(this, this.property.value), false);
-        if (this.property.value.type === "object" && this.property.value.subtype === "node") {
+        if (this.property.value.type === "object" && this.property.value.subtype === "node" && this.property.value.description) {
             WebInspector.DOMPresentationUtils.createSpansForNodeTitle(this.valueElement, this.property.value.description);
             this.valueElement.addEventListener("mousemove", this._mouseMove.bind(this, this.property.value), false);
             this.valueElement.addEventListener("mouseout", this._mouseOut.bind(this, this.property.value), false);

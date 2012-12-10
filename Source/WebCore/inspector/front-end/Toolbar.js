@@ -97,7 +97,7 @@ WebInspector.Toolbar.prototype = {
     },
 
     /**
-     * @param {boolean} isCompactMode
+     * @param {boolean} dockedToBottom
      */
     setDockedToBottom: function(dockedToBottom)
     {

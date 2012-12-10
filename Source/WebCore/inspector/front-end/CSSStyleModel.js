@@ -773,16 +773,15 @@ WebInspector.CSSStyleDeclaration.prototype = {
      * @param {number} index
      * @param {string} name
      * @param {string} value
-     * @param {function(?WebInspector.CSSStyleDeclaration)} userCallback
+     * @param {function(?WebInspector.CSSStyleDeclaration)=} userCallback
      */
     insertPropertyAt: function(index, name, value, userCallback)
     {
         /**
-         * @param {function(?WebInspector.CSSStyleDeclaration)} userCallback
          * @param {?string} error
          * @param {CSSAgent.CSSStyle} payload
          */
-        function callback(userCallback, error, payload)
+        function callback(error, payload)
         {
             WebInspector.cssModel._pendingCommandsMajorState.pop();
             if (!userCallback)
@@ -800,13 +799,13 @@ WebInspector.CSSStyleDeclaration.prototype = {
             throw "No style id";
 
         WebInspector.cssModel._pendingCommandsMajorState.push(true);
-        CSSAgent.setPropertyText(this.id, index, name + ": " + value + ";", false, callback.bind(this, userCallback));
+        CSSAgent.setPropertyText(this.id, index, name + ": " + value + ";", false, callback.bind(this));
     },
 
     /**
      * @param {string} name
      * @param {string} value
-     * @param {function(?WebInspector.CSSStyleDeclaration)} userCallback
+     * @param {function(?WebInspector.CSSStyleDeclaration)=} userCallback
      */
     appendProperty: function(name, value, userCallback)
     {

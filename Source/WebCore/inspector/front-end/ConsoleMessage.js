@@ -349,7 +349,7 @@ WebInspector.ConsoleMessageImpl.prototype = {
             return;
         }
 
-        if (property.type === "object" && property.subtype === "node") {
+        if (property.type === "object" && property.subtype === "node" && property.value) {
             span.addStyleClass("console-formatted-preview-node");
             WebInspector.DOMPresentationUtils.createSpansForNodeTitle(span, property.value);
             return;

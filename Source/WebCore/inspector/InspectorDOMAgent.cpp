@@ -1072,7 +1072,7 @@ void InspectorDOMAgent::highlightRect(ErrorString*, int x, int y, int width, int
     m_overlay->highlightRect(adoptPtr(new IntRect(x, y, width, height)), *highlightConfig);
 }
 
-void InspectorDOMAgent::highlightNode(ErrorString* errorString, const int* nodeId, const String* objectId, const RefPtr<InspectorObject>& highlightInspectorObject)
+void InspectorDOMAgent::highlightNode(ErrorString* errorString, const RefPtr<InspectorObject>& highlightInspectorObject, const int* nodeId, const String* objectId)
 {
     Node* node = 0;
     if (nodeId) {

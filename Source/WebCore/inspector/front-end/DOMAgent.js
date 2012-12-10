@@ -1196,7 +1196,7 @@ WebInspector.DOMAgent.prototype = {
     },
 
     /**
-     * @param {?number} nodeId
+     * @param {DOMAgent.NodeId=} nodeId
      * @param {string=} mode
      * @param {RuntimeAgent.RemoteObjectId=} objectId
      */
@@ -1208,7 +1208,7 @@ WebInspector.DOMAgent.prototype = {
         }
 
         if (objectId || nodeId)
-            DOMAgent.highlightNode(objectId ? undefined : nodeId, objectId, this._buildHighlightConfig(mode));
+            DOMAgent.highlightNode(this._buildHighlightConfig(mode), objectId ? undefined : nodeId, objectId);
         else
             DOMAgent.hideHighlight();
     },
@@ -1219,7 +1219,7 @@ WebInspector.DOMAgent.prototype = {
     },
 
     /**
-     * @param {?DOMAgent.NodeId} nodeId
+     * @param {DOMAgent.NodeId} nodeId
      */
     highlightDOMNodeForTwoSeconds: function(nodeId)
     {
