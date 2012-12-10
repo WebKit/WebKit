@@ -299,7 +299,7 @@ body.platform-mac .help-content input[type=radio] {
 #settings-screen .tabbed-pane-header {
     border: none transparent;
     height: auto;
-    width: 120px;
+    width: 110px;
     position: relative;
     top: 14px;
 }
@@ -310,17 +310,14 @@ body.platform-mac .help-content input[type=radio] {
 
 #settings-screen .tabbed-pane-header-tabs {
     padding-top: 5px;
-    width: 120px;
+    width: 100px;
 }
 
 #settings-screen .tabbed-pane-header-tab {
     background-color: transparent;
     border: none transparent;
     cursor: pointer;
-    float: none;
     font-weight: normal;
-    position: relative;
-    top: 1px;
     text-shadow: none;
     color: #999999;
     height: 22px;

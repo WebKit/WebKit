@@ -1,3 +1,29 @@
+2012-12-10  Pavel Feldman  <pfeldman@chromium.org>
+
+        Web Inspector: remove the Overrides / Settings context menu from gear icon
+        https://bugs.webkit.org/show_bug.cgi?id=104546
+
+        Reviewed by Alexander Pavlov.
+
+        It sounds like too many people don't like the way it works. Bringing things back: overrides will be a tab in settings for now.
+        Moving present behavior to under experiment.
+
+        * inspector/front-end/OverridesView.js:
+        (WebInspector.OverridesView):
+        * inspector/front-end/Settings.js:
+        (WebInspector.ExperimentsSettings):
+        * inspector/front-end/SettingsScreen.js:
+        (WebInspector.OverridesSettingsTab):
+        (WebInspector.SettingsController):
+        (WebInspector.SettingsController.prototype.get statusBarItem):
+        (WebInspector.SettingsController.prototype._mouseDown.showSettings):
+        (WebInspector.SettingsController.prototype._mouseDown):
+        (WebInspector.SettingsController.prototype._mouseUp):
+        * inspector/front-end/helpScreen.css:
+        (#settings-screen .tabbed-pane-header):
+        (#settings-screen .tabbed-pane-header-tabs):
+        (#settings-screen .tabbed-pane-header-tab):
+
 2012-12-10  Kent Tamura  <tkent@chromium.org>
 
         Visual order of empty value placeholder in INPUT_MULTIPLE_FIELDS_UI is wrong in RTL

@@ -49,6 +49,8 @@ WebInspector.SettingsScreen = function(onHide)
     this._tabbedPane.element.insertBefore(settingsLabelElement, this._tabbedPane.element.firstChild);
     this._tabbedPane.element.appendChild(this._createCloseButton());
     this._tabbedPane.appendTab(WebInspector.SettingsScreen.Tabs.General, WebInspector.UIString("General"), new WebInspector.GenericSettingsTab());
+    if (!WebInspector.experimentsSettings.showOverridesInDrawer.isEnabled())
+        this._tabbedPane.appendTab(WebInspector.SettingsScreen.Tabs.Overrides, WebInspector.UIString("Overrides"), new WebInspector.OverridesSettingsTab());
     if (WebInspector.experimentsSettings.experimentsEnabled)
         this._tabbedPane.appendTab(WebInspector.SettingsScreen.Tabs.Experiments, WebInspector.UIString("Experiments"), new WebInspector.ExperimentsSettingsTab());
     this._tabbedPane.appendTab(WebInspector.SettingsScreen.Tabs.Shortcuts, WebInspector.UIString("Shortcuts"), WebInspector.shortcutsScreen.createShortcutsTabView());
@@ -62,6 +64,7 @@ WebInspector.SettingsScreen = function(onHide)
 
 WebInspector.SettingsScreen.Tabs = {
     General: "general",
+    Overrides: "overrides",
     Experiments: "experiments",
     Shortcuts: "shortcuts"
 }
@@ -416,6 +419,23 @@ WebInspector.GenericSettingsTab.prototype = {
  * @constructor
  * @extends {WebInspector.SettingsTab}
  */
+WebInspector.OverridesSettingsTab = function()
+{
+    WebInspector.SettingsTab.call(this, WebInspector.UIString("Overrides"), "overrides-tab-content");
+    this._view = new WebInspector.OverridesView();
+    this.containerElement.parentElement.appendChild(this._view.containerElement);
+    this.containerElement.remove();
+    this.containerElement = this._view.containerElement;
+}
+
+WebInspector.OverridesSettingsTab.prototype = {
+    __proto__: WebInspector.SettingsTab.prototype
+}
+
+/**
+ * @constructor
+ * @extends {WebInspector.SettingsTab}
+ */
 WebInspector.ExperimentsSettingsTab = function()
 {
     WebInspector.SettingsTab.call(this, WebInspector.UIString("Experiments"), "experiments-tab-content");
@@ -469,29 +489,32 @@ WebInspector.ExperimentsSettingsTab.prototype = {
 
 /**
  * @constructor
- * @implements {WebInspector.ContextMenu.Provider}
  */
 WebInspector.SettingsController = function()
 {
     this._statusBarButton = new WebInspector.StatusBarButton(WebInspector.UIString("Settings"), "settings-status-bar-item");
-    this._statusBarButton.element.addEventListener("mousedown", this._buttonPressed.bind(this), false);
+    if (WebInspector.experimentsSettings.showOverridesInDrawer.isEnabled())
+        this._statusBarButton.element.addEventListener("mousedown", this._mouseDown.bind(this), false);
+    else
+        this._statusBarButton.element.addEventListener("mouseup", this._mouseUp.bind(this), false);
 
     /** @type {?WebInspector.SettingsScreen} */
     this._settingsScreen;
-
-    WebInspector.ContextMenu.registerProvider(this);
 }
 
 WebInspector.SettingsController.prototype =
 {
-    /**
-     * @override
-     */
-    appendApplicableItems: function(event, contextMenu, target)
+    get statusBarItem()
     {
-        if (target !== this._statusBarButton.element)
-            return;
+        return this._statusBarButton.element;
+    },
 
+    /**
+     * @param {Event} event
+     */
+    _mouseDown: function(event)
+    {
+        var contextMenu = new WebInspector.ContextMenu(event);
         contextMenu.appendItem(WebInspector.UIString("Overrides"), showOverrides.bind(this));
         contextMenu.appendItem(WebInspector.UIString("Settings"), showSettings.bind(this));
 
@@ -507,21 +530,16 @@ WebInspector.SettingsController.prototype =
             if (!this._settingsScreenVisible)
                 this.showSettingsScreen();
         }
-    },
 
-    get statusBarItem()
-    {
-        return this._statusBarButton.element;
+        contextMenu.showSoftMenu();
     },
 
     /**
      * @param {Event} event
      */
-    _buttonPressed: function(event)
+    _mouseUp: function(event)
     {
-        var menu = new WebInspector.ContextMenu(event);
-        menu.appendApplicableItems(event.currentTarget);
-        menu.showSoftMenu();
+        this.showSettingsScreen(WebInspector.SettingsScreen.Tabs.General);
     },
 
     _onHideSettingsScreen: function()

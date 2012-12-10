@@ -206,6 +206,7 @@ WebInspector.ExperimentsSettings = function()
     this.sass = this._createExperiment("sass", "Support for Sass");
     this.codemirror = this._createExperiment("codemirror", "Use CodeMirror editor");
     this.cssRegions = this._createExperiment("cssRegions", "CSS Regions Support");
+    this.showOverridesInDrawer = this._createExperiment("showOverridesInDrawer", "Show Overrides in drawer");
 
     this._cleanUpSetting();
 }

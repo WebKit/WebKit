@@ -52,6 +52,7 @@ WebInspector.OverridesView = function()
     headerTitle.appendChild(document.createTextNode(WebInspector.UIString("Overrides")));
 
     var container = paneContent.createChild("div", "help-container-wrapper").createChild("div", "settings-tab help-content help-container");
+    this.containerElement = container;
     appendBlockTo(container, this._createUserAgentControl());
     if (Capabilities.canOverrideDeviceMetrics)
         appendBlockTo(container, this._createDeviceMetricsControl());
