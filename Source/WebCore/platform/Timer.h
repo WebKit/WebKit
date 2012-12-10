@@ -140,17 +140,6 @@ public:
         startOneShot(m_delay);
     }
 
-    void setDelay(double delay)
-    {
-        m_delay = delay;
-        if (isActive()) {
-            stop();
-            restart();
-        }
-    }
-
-    double delay() const { return m_delay; }
-
     using TimerBase::stop;
     using TimerBase::isActive;
 private:

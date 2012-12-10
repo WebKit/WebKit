@@ -1,3 +1,17 @@
+2012-12-10  Ojan Vafai  <ojan@chromium.org>
+
+        Unreviewed, rolling out r134150.
+        http://trac.webkit.org/changeset/134150
+        https://bugs.webkit.org/show_bug.cgi?id=99940
+
+        Caused JS-based tooltips to remain during scroll on Facebook
+        and Gmail. Rollout until I have time to experiment with less
+        aggresive approaches.
+
+        * fast/scrolling/fake-mouse-event-throttling-expected.txt: Removed.
+        * fast/scrolling/fake-mouse-event-throttling.html: Removed.
+        * platform/mac/TestExpectations:
+
 2012-12-10  Yi Shen  <max.hong.shen@gmail.com>
 
         Keyboard caret movement in textarea with RTL Override Character can make tab unresponsive

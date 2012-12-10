@@ -287,7 +287,7 @@ private:
     static bool isKeyboardOptionTab(KeyboardEvent*);
     static bool eventInvertsTabsToLinksClientCallResult(KeyboardEvent*);
 
-    void fakeMouseMoveEventTimerFired(DeferrableOneShotTimer<EventHandler>*);
+    void fakeMouseMoveEventTimerFired(Timer<EventHandler>*);
     void cancelFakeMouseMoveEvent();
 
     bool isInsideScrollbar(const IntPoint&) const;
@@ -412,7 +412,7 @@ private:
     bool m_mouseDownMayStartAutoscroll;
     bool m_mouseDownWasInSubframe;
 
-    DeferrableOneShotTimer<EventHandler> m_fakeMouseMoveEventTimer;
+    Timer<EventHandler> m_fakeMouseMoveEventTimer;
 
 #if ENABLE(SVG)
     bool m_svgPan;
@@ -470,7 +470,7 @@ private:
     RefPtr<Scrollbar> m_scrollbarHandlingScrollGesture;
 #endif
 
-    double m_mouseMovedDurationRunningAverage;
+    double m_maxMouseMovedDuration;
     PlatformEvent::Type m_baseEventType;
     bool m_didStartDrag;
     bool m_didLongPressInvokeContextMenu;
