@@ -32,6 +32,7 @@
 #include "MediaPlayerProxy.h"
 #endif
 
+#include "InbandTextTrackPrivate.h"
 #include "IntRect.h"
 #include "KURL.h"
 #include "LayoutRect.h"
@@ -59,7 +60,6 @@ namespace WebCore {
 class AudioSourceProvider;
 class Document;
 class GStreamerGWorld;
-class InbandTextTrackPrivate;
 class MediaPlayerPrivateInterface;
 class MediaSource;
 
