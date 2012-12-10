@@ -498,6 +498,8 @@ webkit.org/b/100688 fast/css/first-letter-text-fragment-crash.html [ Crash Pass 
 webkit.org/b/100688 editing/selection/first-letter-selection-crash.html [ Crash Pass ]
 webkit.org/b/100688 editing/text-iterator/backward-textiterator-first-letter-crash.html [ Crash Pass ]
 
+webkit.org/b/104533 fast/block/float/overhanging-tall-block.html [ Crash ]
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Crashing tests
 #////////////////////////////////////////////////////////////////////////////////////////
@@ -693,7 +695,7 @@ webkit.org/b/73003 [ Release ] editing/spelling/spellcheck-async.html [ Timeout 
 webkit.org/b/73003 [ Release ] editing/spelling/spellcheck-paste.html [ Timeout ]
 webkit.org/b/50740 [ Release ] editing/spelling/spellcheck-queue.html [ Timeout ]
 
-Bug(GTK) media/progress-events-generated-correctly.html [ Timeout ]
+Bug(GTK) media/progress-events-generated-correctly.html [ Timeout Text ]
 
 webkit.org/b/102257 fast/dom/Window/open-window-min-size.html [ Timeout ]
 
@@ -929,7 +931,7 @@ webkit.org/b/83174 inspector [ Skip ]
 webkit.org/b/83174 http/tests/inspector [ Skip ]
 
 webkit.org/b/82886 inspector/styles/override-screen-size.html [ Failure ]
-webkit.org/b/43332 inspector/debugger/dom-breakpoints.html [ Failure ]
+webkit.org/b/43332 inspector/debugger/dom-breakpoints.html [ Timeout Failure ]
 webkit.org/b/43332 inspector/debugger/event-listener-breakpoints.html [ Failure ]
 webkit.org/b/43332 inspector/debugger/step-through-event-listeners.html [ Failure ]
 webkit.org/b/43332 inspector/debugger/xhr-breakpoints.html [ Failure Timeout ]
@@ -944,7 +946,7 @@ webkit.org/b/85709 inspector/extensions/extensions-audits-content-script.html [ 
 Bug(GTK) inspector/debugger/dynamic-scripts.html [ Failure ]
 Bug(GTK) inspector/debugger/linkifier.html [ Failure ]
 Bug(GTK) inspector/debugger/scripts-panel.html [ Failure Pass ]
-Bug(GTK) inspector/elements/edit-dom-actions.html [ Failure Pass ]
+Bug(GTK) inspector/elements/edit-dom-actions.html [ Failure Timeout Pass ]
 Bug(GTK) inspector/timeline/timeline-paint.html [ Failure ]
 Bug(GTK) inspector/timeline/timeline-receive-response-event.html [ Failure ]
 Bug(GTK) inspector/timeline/timeline-decode-resize.html [ Timeout ]
@@ -955,7 +957,7 @@ Bug(GTK) http/tests/inspector/resource-parameters.html [ Timeout ]
 webkit.org/b/56691 http/tests/inspector/network/network-size-chunked.html [ Missing ]
 webkit.org/b/56691 http/tests/inspector/network/network-size-sync.html [ Failure ]
 webkit.org/b/56691 http/tests/inspector/network/network-size.html [ Failure ]
-webkit.org/b/51380 http/tests/inspector/console-websocket-error.html [ Timeout ]
+webkit.org/b/51380 http/tests/inspector/console-websocket-error.html [ Failure Timeout ]
 webkit.org/b/53003 http/tests/inspector/compiler-source-mapping-debug.html [ Timeout ]
 
 # JSC doesn't support heap profiling
