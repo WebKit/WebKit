@@ -101,7 +101,7 @@ class TestList(object):
 # These numbers may need to be updated whenever we add or delete tests.
 #
 TOTAL_TESTS = 104
-TOTAL_SKIPS = 25
+TOTAL_SKIPS = 28
 TOTAL_RETRIES = 14
 
 UNEXPECTED_PASSES = 6
@@ -442,9 +442,7 @@ class TestPort(Port):
     def webkit_base(self):
         return '/test.checkout'
 
-    def skipped_layout_tests(self, test_list):
-        # This allows us to test the handling Skipped files, both with a test
-        # that actually passes, and a test that does fail.
+    def _skipped_tests_for_unsupported_features(self, test_list):
         return set(['failures/expected/skip_text.html',
                     'failures/unexpected/skip_pass.html',
                     'virtual/skipped'])

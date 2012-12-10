@@ -514,10 +514,7 @@ class PrintExpectations(AbstractDeclarativeCommand):
 
     def _model(self, options, port_name, tests):
         port = self._tool.port_factory.get(port_name, options)
-        expectations_path = port.path_to_test_expectations_file()
-        if not expectations_path in self._expectation_models:
-            self._expectation_models[expectations_path] = TestExpectations(port, tests).model()
-        return self._expectation_models[expectations_path]
+        return TestExpectations(port, tests).model()
 
 
 class PrintBaselines(AbstractDeclarativeCommand):

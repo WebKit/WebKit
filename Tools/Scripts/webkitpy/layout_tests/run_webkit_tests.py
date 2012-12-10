@@ -69,6 +69,8 @@ def lint(port, options, logging_stream):
 
     for port_to_lint in ports_to_lint:
         expectations_dict = port_to_lint.expectations_dict()
+
+        # FIXME: This won't work if multiple ports share a TestExpectations file but support different modifiers in the file.
         for expectations_file in expectations_dict.keys():
             if expectations_file in files_linted:
                 continue

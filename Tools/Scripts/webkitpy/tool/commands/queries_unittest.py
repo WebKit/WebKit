@@ -227,6 +227,14 @@ class PrintExpectationsTest(unittest.TestCase):
                        'LayoutTests/platform/test-win-xp/TestExpectations\n'),
                       paths=True)
 
+    def test_platform(self):
+        self.run_test(['platform/test-mac-leopard/http/test.html'],
+                      ('// For test-mac-snowleopard\n'
+                       'platform/test-mac-leopard [ Pass Skip WontFix ]\n'  # Note that this is the expectation (from being skipped internally), not the test name
+                       '\n'
+                       '// For test-mac-leopard\n'
+                       'platform/test-mac-leopard/http/test.html [ Pass ]\n'),
+                      platform='test-mac-*')
 
 class PrintBaselinesTest(unittest.TestCase):
     def setUp(self):
