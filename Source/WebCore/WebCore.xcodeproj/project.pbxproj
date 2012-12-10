@@ -124,7 +124,7 @@
 		07846385145B1B8E00A58DF1 /* JSTrackCustom.h in Headers */ = {isa = PBXBuildFile; fileRef = 07846384145B1B8E00A58DF1 /* JSTrackCustom.h */; };
 		07941791166E855F009416C2 /* InbandTextTrack.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0794178F166E855F009416C2 /* InbandTextTrack.cpp */; };
 		07941792166E855F009416C2 /* InbandTextTrack.h in Headers */ = {isa = PBXBuildFile; fileRef = 07941790166E855F009416C2 /* InbandTextTrack.h */; };
-		07941794166EA04E009416C2 /* InbandTextTrackPrivate.h in Headers */ = {isa = PBXBuildFile; fileRef = 07941793166EA04E009416C2 /* InbandTextTrackPrivate.h */; };
+		07941794166EA04E009416C2 /* InbandTextTrackPrivate.h in Headers */ = {isa = PBXBuildFile; fileRef = 07941793166EA04E009416C2 /* InbandTextTrackPrivate.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		079D0868162F20E800DB8658 /* CaptionUserPreferences.h in Headers */ = {isa = PBXBuildFile; fileRef = 079D0867162F20E800DB8658 /* CaptionUserPreferences.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		079D086B162F21F900DB8658 /* CaptionUserPreferencesMac.h in Headers */ = {isa = PBXBuildFile; fileRef = 079D0869162F21F900DB8658 /* CaptionUserPreferencesMac.h */; };
 		079D086C162F21F900DB8658 /* CaptionUserPreferencesMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = 079D086A162F21F900DB8658 /* CaptionUserPreferencesMac.mm */; };
