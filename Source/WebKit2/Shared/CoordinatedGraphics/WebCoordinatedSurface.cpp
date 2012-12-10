@@ -206,13 +206,13 @@ void WebCoordinatedSurface::copyToTexture(PassRefPtr<WebCore::BitmapTexture> pas
 
         RefPtr<Image> image = m_graphicsSurface->createReadOnlyImage(IntRect(sourceOffset, target.size()));
         texture->updateContents(image.get(), target, IntPoint::zero(), BitmapTexture::UpdateCanModifyOriginalImageData);
+        return;
     }
 #endif
 
     ASSERT(m_bitmap);
     RefPtr<Image> image = m_bitmap->createImage();
     texture->updateContents(image.get(), target, sourceOffset, BitmapTexture::UpdateCanModifyOriginalImageData);
-    return;
 }
 #endif // USE(TEXTURE_MAPPER)
 
