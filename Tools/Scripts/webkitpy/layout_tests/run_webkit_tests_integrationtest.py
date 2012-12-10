@@ -879,6 +879,16 @@ class MainTest(unittest.TestCase, StreamTestingMixin):
         self.assertEqual(stdout.getvalue(), '')
         self.assertTrue('unsupported platform' in stderr.getvalue())
 
+    def test_build_check(self):
+        # By using a port_name for a different platform than the one we're running on, the build check should always fail.
+        if sys.platform == 'darwin':
+            port_name = 'chromium-linux'
+        else:
+            port_name = 'chromium-mac'
+        out = StringIO.StringIO()
+        err = StringIO.StringIO()
+        self.assertEqual(run_webkit_tests.main(['--platform', port_name, 'fast/harness/results.html'], out, err), -1)
+
     def test_verbose_in_child_processes(self):
         # When we actually run multiple processes, we may have to reconfigure logging in the
         # child process (e.g., on win32) and we need to make sure that works and we still

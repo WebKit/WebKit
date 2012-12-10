@@ -429,9 +429,9 @@ def main(argv=None, stdout=sys.stdout, stderr=sys.stderr):
 
     try:
         run_details = run(port, options, args, stderr)
-
-        bot_printer = buildbot_results.BuildBotPrinter(stdout, options.debug_rwt_logging)
-        bot_printer.print_results(run_details)
+        if run_details.exit_code != -1:
+            bot_printer = buildbot_results.BuildBotPrinter(stdout, options.debug_rwt_logging)
+            bot_printer.print_results(run_details)
 
         return run_details.exit_code
     except Exception, e:
