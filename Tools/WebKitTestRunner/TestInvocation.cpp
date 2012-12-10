@@ -352,7 +352,7 @@ void TestInvocation::didReceiveMessageFromInjectedBundle(WKStringRef messageName
     }
 
     if (WKStringIsEqualToUTF8CString(messageName, "TextOutput")) {
-        ASSERT(WKGetTypeID(messageBody) == WStringGetTypeID());
+        ASSERT(WKGetTypeID(messageBody) == WKStringGetTypeID());
         WKStringRef textOutput = static_cast<WKStringRef>(messageBody);
         m_textOutput.append(toWTFString(textOutput));
     }
