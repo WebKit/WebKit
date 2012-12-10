@@ -79,6 +79,7 @@ WK_EXPORT void* WKAccessibilityFocusedObject(WKBundlePageRef);
 
 WK_EXPORT WKArrayRef WKBundlePageCopyContextMenuItemTitles(WKBundlePageRef);
 
+WK_EXPORT void WKBundlePageSetViewMode(WKBundlePageRef pageRef, WKStringRef mode);
 #ifdef __cplusplus
 }
 #endif

@@ -882,4 +882,10 @@ void TestRunner::queueNonLoadingScript(JSStringRef script)
     InjectedBundle::shared().queueNonLoadingScript(scriptWK.get());
 }
 
+void TestRunner::setViewModeMediaFeature(JSStringRef mode)
+{
+    WKRetainPtr<WKStringRef> modeWK = toWK(mode);
+    WKBundlePageSetViewMode(InjectedBundle::shared().page()->page(), modeWK.get());
+}
+
 } // namespace WTR

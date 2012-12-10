@@ -55,6 +55,7 @@
 #include <WebCore/Editor.h>
 #include <WebCore/FrameLoaderTypes.h>
 #include <WebCore/IntRect.h>
+#include <WebCore/Page.h>
 #if ENABLE(PAGE_VISIBILITY_API)
 #include <WebCore/PageVisibilityState.h>
 #endif
@@ -305,6 +306,7 @@ public:
     void setPageZoomFactor(double);
     void setPageAndTextZoomFactors(double pageZoomFactor, double textZoomFactor);
     void windowScreenDidChange(uint64_t);
+    void setViewMode(WebCore::Page::ViewMode);
 
     void scalePage(double scale, const WebCore::IntPoint& origin);
     double pageScaleFactor() const;

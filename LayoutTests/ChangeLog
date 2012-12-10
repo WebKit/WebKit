@@ -1,3 +1,21 @@
+2012-12-10  Zoltan Nyul  <zoltan.nyul@intel.com>
+
+        Implement testRunner.setViewModeMediaFeature() in WebKitTestRunner
+        https://bugs.webkit.org/show_bug.cgi?id=103886
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Unskipping the following tests for EFL WebKit2:
+        fast/media/media-query-list-02.html
+        fast/media/media-query-list-03.html
+        fast/media/media-query-list-04.html
+        fast/media/media-query-list-05.html
+        fast/media/media-query-list-06.html
+        fast/media/media-query-list-07.html
+        fast/media/view-mode-media-feature.html
+
+        * platform/efl-wk2/TestExpectations:
+
 2012-12-10  Martin Robinson  <mrobinson@igalia.com>
 
         [GTK] Bring Harfbuzz-ng support to Gtk

@@ -1162,6 +1162,11 @@ void WebPage::windowScreenDidChange(uint64_t displayID)
     m_page->windowScreenDidChange(static_cast<PlatformDisplayID>(displayID));
 }
 
+void WebPage::setViewMode(Page::ViewMode mode)
+{
+    m_page->setViewMode(mode);
+}
+
 void WebPage::scalePage(double scale, const IntPoint& origin)
 {
     PluginView* pluginView = pluginViewForFrame(m_page->mainFrame());
