@@ -602,7 +602,6 @@ WebInspector.OverridesView.prototype = {
         const checkboxElement = labelElement.createChild("input");
         checkboxElement.type = "checkbox";
         checkboxElement.checked = false;
-        this._metricsCheckboxElement = checkboxElement;
         labelElement.appendChild(document.createTextNode(WebInspector.UIString("Emulate CSS media")));
 
         var mediaSelectElement = p.createChild("select");
