@@ -2209,6 +2209,8 @@
             'plugins/PluginViewNone.cpp',
             'plugins/chromium/PluginDataChromium.cpp',
             'plugins/chromium/PluginDataChromium.h',
+            'plugins/chromium/PluginListBuilder.cpp',
+            'plugins/chromium/PluginListBuilder.h',
             'plugins/gtk/PluginPackageGtk.cpp',
             'plugins/gtk/PluginViewGtk.cpp',
             'plugins/gtk/gtk2xtbin.h',

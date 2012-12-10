@@ -60,6 +60,7 @@ class WebMediaStreamCenter;
 class WebMediaStreamCenterClient;
 class WebMessagePortChannel;
 class WebMimeRegistry;
+class WebPluginListBuilder;
 class WebRTCPeerConnectionHandler;
 class WebRTCPeerConnectionHandlerClient;
 class WebSandboxSupport;
@@ -235,6 +236,13 @@ public:
 
     // A suggestion to cache this metadata in association with this URL.
     virtual void cacheMetadata(const WebURL&, double responseTime, const char* data, size_t dataSize) { }
+
+
+    // Plugins -------------------------------------------------------------
+
+    // If refresh is true, then cached information should not be used to
+    // satisfy this call.
+    virtual void getPluginList(bool refresh, WebPluginListBuilder*) { }
 
 
     // Resources -----------------------------------------------------------

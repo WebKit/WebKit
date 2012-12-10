@@ -41,7 +41,6 @@
 #include "WebFrameImpl.h"
 #include "WebKit.h"
 #include "WebPluginContainerImpl.h"
-#include "WebPluginListBuilderImpl.h"
 #include "WebSandboxSupport.h"
 #include "WebScreenInfo.h"
 #include "WebViewClient.h"
@@ -110,15 +109,6 @@ PassRefPtr<IDBFactoryBackendInterface> PlatformSupport::idbFactory()
     // There's no reason why we need to allocate a new proxy each time, but
     // there's also no strong reason not to.
     return IDBFactoryBackendProxy::create();
-}
-
-// Plugin ---------------------------------------------------------------------
-
-bool PlatformSupport::plugins(bool refresh, Vector<PluginInfo>* results)
-{
-    WebPluginListBuilderImpl builder(results);
-    webKitPlatformSupport()->getPluginList(refresh, &builder);
-    return true;  // FIXME: There is no need for this function to return a value.
 }
 
 // Theming --------------------------------------------------------------------

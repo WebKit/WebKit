@@ -95,6 +95,7 @@
             'chromium/public/WebMessagePortChannelClient.h',
             'chromium/public/WebMimeRegistry.h',
             'chromium/public/WebNonCopyable.h',
+            'chromium/public/WebPluginListBuilder.h',
             'chromium/public/WebPoint.h',
             'chromium/public/WebPrerender.h',
             'chromium/public/WebPrerenderingSupport.h',

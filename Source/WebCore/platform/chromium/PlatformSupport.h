@@ -76,9 +76,6 @@ public:
     // IndexedDB ----------------------------------------------------------
     static PassRefPtr<IDBFactoryBackendInterface> idbFactory();
 
-    // Plugin -------------------------------------------------------------
-    static bool plugins(bool refresh, Vector<PluginInfo>*);
-
     // Theming ------------------------------------------------------------
 #if OS(WINDOWS) && !ENABLE(DEFAULT_RENDER_THEME)
     static void paintButton(

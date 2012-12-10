@@ -1,10 +1,10 @@
 /*
  * Copyright (C) 2009 Google Inc. All rights reserved.
- * 
+ *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
  * met:
- * 
+ *
  *     * Redistributions of source code must retain the above copyright
  * notice, this list of conditions and the following disclaimer.
  *     * Redistributions in binary form must reproduce the above
@@ -14,7 +14,7 @@
  *     * Neither the name of Google Inc. nor the names of its
  * contributors may be used to endorse or promote products derived from
  * this software without specific prior written permission.
- * 
+ *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
  * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
  * LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
@@ -28,27 +28,25 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WebPluginListBuilderImpl_h
-#define WebPluginListBuilderImpl_h
-
-#include "WebPluginListBuilder.h"
-
-#include "PluginData.h"
-#include <wtf/Vector.h>
+#ifndef WebPluginListBuilder_h
+#define WebPluginListBuilder_h
 
 namespace WebKit {
 
-class WebPluginListBuilderImpl : public WebPluginListBuilder {
+class WebString;
+
+// An interface for building a list of known plugins.
+class WebPluginListBuilder {
 public:
-    WebPluginListBuilderImpl(Vector<WebCore::PluginInfo>* results) : m_results(results) { }
+    virtual void addPlugin(
+        const WebString& name, const WebString& description,
+        const WebString& fileName) = 0;
 
-    // WebPluginListBuilder methods:
-    virtual void addPlugin(const WebString& name, const WebString& description, const WebString& fileName);
-    virtual void addMediaTypeToLastPlugin(const WebString& name, const WebString& description);
-    virtual void addFileExtensionToLastMediaType(const WebString& extension);
+    virtual void addMediaTypeToLastPlugin(
+        const WebString& name, const WebString& description) = 0;
 
-private:
-    Vector<WebCore::PluginInfo>* m_results;
+    virtual void addFileExtensionToLastMediaType(
+        const WebString& fileExtension) = 0;
 };
 
 } // namespace WebKit

@@ -46,10 +46,7 @@ typedef void *HANDLE;
 
 namespace WebKit {
 
-class WebApplicationCacheHost; // FIXME: Does this belong in platform?
-class WebApplicationCacheHostClient; // FIXME: Does this belong in platform?
 class WebIDBFactory; // FIXME: Does this belong in platform?
-class WebPluginListBuilder; // FIXME: Does this belong in platform?
 class WebSharedWorkerRepository; // FIXME: Does this belong in platform?
 
 // FIXME: Eventually all these API will need to move to WebKit::Platform.
@@ -58,13 +55,6 @@ public:
     // Indexed Database ----------------------------------------------------
 
     virtual WebIDBFactory* idbFactory() { return 0; }
-
-
-    // Plugins -------------------------------------------------------------
-
-    // If refresh is true, then cached information should not be used to
-    // satisfy this call.
-    virtual void getPluginList(bool refresh, WebPluginListBuilder*) { }
 
 
     // Shared Workers ------------------------------------------------------

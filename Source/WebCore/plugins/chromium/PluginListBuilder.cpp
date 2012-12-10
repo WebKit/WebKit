@@ -29,17 +29,15 @@
  */
 
 #include "config.h"
-#include "WebPluginListBuilderImpl.h"
+#include "PluginListBuilder.h"
 
 #include "PluginData.h"
 #include <public/WebString.h>
 #include <wtf/Vector.h>
 
-using namespace WebCore;
+namespace WebCore {
 
-namespace WebKit {
-
-void WebPluginListBuilderImpl::addPlugin(const WebString& name, const WebString& description, const WebString& fileName)
+void PluginListBuilder::addPlugin(const WebKit::WebString& name, const WebKit::WebString& description, const WebKit::WebString& fileName)
 {
     PluginInfo info;
     info.name = name;
@@ -48,7 +46,7 @@ void WebPluginListBuilderImpl::addPlugin(const WebString& name, const WebString&
     m_results->append(info);
 }
 
-void WebPluginListBuilderImpl::addMediaTypeToLastPlugin(const WebString& name, const WebString& description)
+void PluginListBuilder::addMediaTypeToLastPlugin(const WebKit::WebString& name, const WebKit::WebString& description)
 {
     MimeClassInfo info;
     info.type = name;
@@ -56,10 +54,10 @@ void WebPluginListBuilderImpl::addMediaTypeToLastPlugin(const WebString& name, c
     m_results->last().mimes.append(info);
 }
 
-void WebPluginListBuilderImpl::addFileExtensionToLastMediaType(const WebString& extension)
+void PluginListBuilder::addFileExtensionToLastMediaType(const WebKit::WebString& extension)
 {
     MimeClassInfo& info = m_results->last().mimes.last();
     info.extensions.append(extension);
 }
 
-} // namespace WebKit
+} // namespace WebCore

@@ -1,3 +1,27 @@
+2012-12-10  Mark Pilgrim  <pilgrim@chromium.org>
+
+        [Chromium] Move getPluginsList out of PlatformSupport
+        https://bugs.webkit.org/show_bug.cgi?id=96507
+
+        Reviewed by Darin Fisher.
+
+        Part of a refactoring series. See tracking bug 82948.
+
+        * WebCore.gypi:
+        * platform/chromium/PlatformSupport.h:
+        (PlatformSupport):
+        * plugins/chromium/PluginDataChromium.cpp:
+        (WebCore::PluginCache::plugins):
+        * plugins/chromium/PluginListBuilder.cpp: Added.
+        (WebKit):
+        (WebKit::PluginListBuilder::addPlugin):
+        (WebKit::PluginListBuilder::addMediaTypeToLastPlugin):
+        (WebKit::PluginListBuilder::addFileExtensionToLastMediaType):
+        * plugins/chromium/PluginListBuilder.h: Added.
+        (WebKit):
+        (PluginListBuilder):
+        (WebKit::PluginListBuilder::PluginListBuilder):
+
 2012-12-10  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] Build GObject DOM bindings as a separate library

@@ -31,7 +31,8 @@
 #include "config.h"
 #include "PluginDataChromium.h"
 
-#include "PlatformSupport.h"
+#include "PluginListBuilder.h"
+#include <public/Platform.h>
 
 namespace WebCore {
 
@@ -50,7 +51,8 @@ public:
     const Vector<PluginInfo>& plugins()
     {
         if (!m_loaded) {
-            PlatformSupport::plugins(m_refresh, &m_plugins);
+            PluginListBuilder builder(&m_plugins);
+            WebKit::Platform::current()->getPluginList(m_refresh, &builder);
             m_loaded = true;
             m_refresh = false;
         }

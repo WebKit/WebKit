@@ -602,8 +602,6 @@
                 'src/WebPluginContainerImpl.cpp',
                 'src/WebPluginContainerImpl.h',
                 'src/WebPluginDocument.cpp',
-                'src/WebPluginListBuilderImpl.cpp',
-                'src/WebPluginListBuilderImpl.h',
                 'src/WebPluginLoadObserver.cpp',
                 'src/WebPluginLoadObserver.h',
                 'src/WebPluginScrollbarImpl.cpp',
