@@ -1,0 +1,41 @@
+<html>
+<head>
+    <script src="../fast/js/resources/js-test-pre.js"></script>
+</head>
+
+<body id="body">
+
+<select id="selectElement" multiple title="selectElement">
+    <option SELECTED>Option 1</option>
+    <option>Option 2</option>
+    <option DISABLED>Option 3</option>
+    <option aria-disabled="true">Option 4</option>
+    <option aria-disabled="false">Option 5</option>
+</select>
+
+<p>This tests that we report the correct enabled state on a listbox.</p>
+
+<p id="notDRT">This test should only be run inside of DumpRenderTree.</p>
+
+<p id="console"></p>
+
+<script>
+    if (window.testRunner && window.accessibilityController) {
+        document.getElementById("notDRT").style.visibility = "hidden";
+
+        testRunner.dumpAsText();
+
+        document.getElementById("selectElement").focus();
+
+        shouldBeTrue('accessibilityController.focusedElement.isEnabled');
+        shouldBeTrue('accessibilityController.focusedElement.childAtIndex(0).isEnabled');
+        shouldBeTrue('accessibilityController.focusedElement.childAtIndex(1).isEnabled');
+        shouldBeFalse('accessibilityController.focusedElement.childAtIndex(2).isEnabled');
+        shouldBeFalse('accessibilityController.focusedElement.childAtIndex(3).isEnabled');
+        shouldBeTrue('accessibilityController.focusedElement.childAtIndex(4).isEnabled');
+    }
+</script>
+
+<script src="../fast/js/resources/js-test-post.js"></script>
+</body>
+</html>

@@ -68,6 +68,12 @@ bool AccessibilityListBoxOption::isEnabled() const
     
     if (m_optionElement->hasTagName(optgroupTag))
         return false;
+
+    if (equalIgnoringCase(getAttribute(aria_disabledAttr), "true"))
+        return false;
+
+    if (m_optionElement->hasAttribute(disabledAttr))
+        return false;
     
     return true;
 }

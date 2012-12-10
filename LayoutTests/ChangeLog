@@ -1,3 +1,13 @@
+2012-12-10  Alejandro Piñeiro  <apinheiro@igalia.com>
+
+        AX: wrong Enabled states on a ListBox
+        https://bugs.webkit.org/show_bug.cgi?id=104483
+
+        Reviewed by Chris Fleizach.
+
+        * accessibility/listbox-enabled-states-expected.txt: Added.
+        * accessibility/listbox-enabled-states.html: Added.
+
 2012-12-10  Alexis Menard  <alexis@webkit.org>
 
         [CSS3 Backgrounds and Borders] Remove CSS3_BACKGROUND feature flag.
