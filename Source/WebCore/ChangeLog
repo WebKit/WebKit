@@ -1,3 +1,17 @@
+2012-12-10  Eugene Klyuchnikov  <eustas@chromium.org>
+
+        Web Inspector: Network: newly added items are not filtered.
+        https://bugs.webkit.org/show_bug.cgi?id=104021
+
+        Reviewed by Vsevolod Vlasov.
+
+        Extracted method to higlight/hide record according to filter.
+        Used this method to process newly created records.
+
+        * inspector/front-end/NetworkPanel.js:
+        (WebInspector.NetworkLogView.prototype._applyFilter): Extracted.
+        (WebInspector.NetworkLogView.prototype.performFilter): Refactored.
+
 2012-12-09  Ilya Tikhonovsky  <loislo@chromium.org>
 
         Web Inspector: Unreviewed: move reportMemoryUsage to public section.
