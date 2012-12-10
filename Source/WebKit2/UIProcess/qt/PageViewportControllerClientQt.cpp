@@ -322,13 +322,9 @@ void PageViewportControllerClientQt::setViewportPosition(const FloatPoint& conte
     updateViewportController();
 }
 
-void PageViewportControllerClientQt::setContentsScale(float localScale, bool treatAsInitialValue)
+void PageViewportControllerClientQt::setContentsScale(float localScale)
 {
-    if (treatAsInitialValue) {
-        clearRelativeZoomState();
-        setContentRectVisiblePositionAtScale(QPointF(), localScale);
-    } else
-        scaleContent(localScale);
+    scaleContent(localScale);
 }
 
 void PageViewportControllerClientQt::setContentsRectToNearestValidBounds()

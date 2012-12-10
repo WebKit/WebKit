@@ -184,7 +184,7 @@ void PageViewportController::didRenderFrame(const IntSize& contentsSize, const I
     // go through here to be applied on the viewport to avoid showing incomplete
     // tiles to the user during a few milliseconds.
     if (m_effectiveScaleIsLocked) {
-        m_client->setContentsScale(m_effectiveScale, false);
+        m_client->setContentsScale(m_effectiveScale);
         m_effectiveScaleIsLocked = false;
     }
     if (m_contentsPositionIsLocked) {

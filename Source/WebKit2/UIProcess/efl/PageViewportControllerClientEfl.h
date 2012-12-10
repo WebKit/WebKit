@@ -52,7 +52,7 @@ public:
     void setRendererActive(bool);
 
     virtual void setViewportPosition(const WebCore::FloatPoint& contentsPoint);
-    virtual void setContentsScale(float, bool treatAsInitialValue);
+    virtual void setContentsScale(float);
 
     virtual void didResumeContent();
     virtual void didChangeContentsSize(const WebCore::IntSize&);

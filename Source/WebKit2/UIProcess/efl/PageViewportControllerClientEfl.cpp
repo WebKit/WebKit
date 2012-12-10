@@ -84,11 +84,8 @@ void PageViewportControllerClientEfl::setViewportPosition(const WebCore::FloatPo
     m_controller->didChangeContentsVisibility(m_contentPosition, scaleFactor());
 }
 
-void PageViewportControllerClientEfl::setContentsScale(float newScale, bool treatAsInitialValue)
+void PageViewportControllerClientEfl::setContentsScale(float newScale)
 {
-    if (treatAsInitialValue)
-        setViewportPosition(FloatPoint(0, 0));
-
     m_viewImpl->setScaleFactor(newScale);
 }
 
