@@ -1,3 +1,12 @@
+2012-12-10  Christophe Dumez  <christophe.dumez@intel.com>
+
+        Unreviewed EFL gardening.
+
+        Add fast/canvas/webgl tests to TestExpectations since they
+        sometimes crash on the bots.
+
+        * platform/efl/TestExpectations:
+
 2012-12-10  Joanmarie Diggs  <jdiggs@igalia.com>
 
         [GTK] accessibility/language-attribute.html is failing
