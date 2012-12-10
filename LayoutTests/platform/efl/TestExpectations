@@ -1671,3 +1671,15 @@ webkit.org/b/56496 [ Debug ] fast/js/array-sort-modifying-tostring.html [ Crash 
 
 # volume is reset when mediaelement.src is modified
 webkit.org/b/103893 media/video-volume.html [ Failure ]
+
+# Caused by bumping the libsoup in Jhbuild to 2.40.0
+webkit.org/b/104571 http/tests/security/xssAuditor/anchor-url-dom-write-location-inline-event-null-char.html [ Failure ]
+webkit.org/b/104571 http/tests/security/xssAuditor/base-href-null-char.html [ Failure ]
+webkit.org/b/104571 http/tests/security/xssAuditor/embed-tag-null-char.html [ Failure ]
+webkit.org/b/104571 http/tests/security/xssAuditor/javascript-link-null-char.html [ Failure ]
+webkit.org/b/104571 http/tests/security/xssAuditor/link-onclick-null-char.html [ Failure ]
+webkit.org/b/104571 http/tests/security/xssAuditor/object-embed-tag-null-char.html [ Failure ]
+webkit.org/b/104571 http/tests/security/xssAuditor/script-tag-addslashes-null-char.html [ Failure ]
+webkit.org/b/104571 http/tests/security/xssAuditor/script-tag-null-char.html [ Failure ]
+webkit.org/b/104571 http/tests/security/xssAuditor/script-tag-with-source-null-char.html [ Failure ]
+webkit.org/b/104571 http/tests/xmlhttprequest/origin-exact-matching.html [ Failure ]

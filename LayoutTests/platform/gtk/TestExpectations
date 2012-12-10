@@ -707,6 +707,10 @@ Bug(GTK) media/progress-events-generated-correctly.html [ Timeout Text ]
 
 webkit.org/b/102257 fast/dom/Window/open-window-min-size.html [ Timeout ]
 
+webkit.org/b/104571 http/tests/security/xssAuditor/anchor-url-dom-write-location-inline-event-null-char.html [ Timeout ]
+webkit.org/b/104571 http/tests/security/xssAuditor/javascript-link-null-char.html [ Timeout ]
+webkit.org/b/104571 http/tests/security/xssAuditor/object-embed-tag-null-char.html [ Timeout ]
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Tests timing out
 #////////////////////////////////////////////////////////////////////////////////////////
@@ -1424,6 +1428,14 @@ webkit.org/b/104493 svg/custom/text-xy-updates-SVGList.xhtml [ Failure ]
 
 # No support for exposing in-band text tracks
 webkit.org/b/103771 media/track/track-in-band.html [ Skip ]
+
+webkit.org/b/104571 http/tests/security/xssAuditor/base-href-null-char.html [ Failure ]
+webkit.org/b/104571 http/tests/security/xssAuditor/embed-tag-null-char.html [ Failure ]
+webkit.org/b/104571 http/tests/security/xssAuditor/link-onclick-null-char.html [ Failure ]
+webkit.org/b/104571 http/tests/security/xssAuditor/script-tag-addslashes-null-char.html [ Failure ]
+webkit.org/b/104571 http/tests/security/xssAuditor/script-tag-null-char.html [ Failure ]
+webkit.org/b/104571 http/tests/security/xssAuditor/script-tag-with-source-null-char.html [ Failure ]
+webkit.org/b/104571 http/tests/xmlhttprequest/origin-exact-matching.html [ Failure ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Tests failing
