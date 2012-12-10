@@ -116,6 +116,7 @@ contributors_who_are_not_committers = [
     Contributor("Andrei Bucur", "abucur@adobe.com", "abucur"),
     Contributor("Anne van Kesteren", "annevankesteren+webkit@gmail.com", "annevk"),
     Contributor("Annie Sullivan", "sullivan@chromium.org", "annie"),
+    Contributor("Antoine Quint", "graouts@apple.com", "graouts"),
     Contributor("Aryeh Gregor", "ayg@aryeh.name", "AryehGregor"),
     Contributor("Balazs Ankes", "bank@inf.u-szeged.hu", "abalazs"),
     Contributor("Brian Salomon", "bsalomon@google.com"),
