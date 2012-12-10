@@ -185,7 +185,7 @@ bool TextFieldDecorationElement::isMouseFocusable() const
 void TextFieldDecorationElement::defaultEventHandler(Event* event)
 {
     RefPtr<HTMLInputElement> input(hostInput());
-    if (!input || input->disabled() || input->readOnly() || !event->isMouseEvent()) {
+    if (!input || input->isDisabledOrReadOnly() || !event->isMouseEvent()) {
         if (!event->defaultHandled())
             HTMLDivElement::defaultEventHandler(event);
         return;
@@ -214,7 +214,7 @@ void TextFieldDecorationElement::defaultEventHandler(Event* event)
 bool TextFieldDecorationElement::willRespondToMouseMoveEvents()
 {
     const HTMLInputElement* input = hostInput();
-    if (!input->disabled() && !input->readOnly())
+    if (!input->isDisabledOrReadOnly())
         return true;
 
     return HTMLDivElement::willRespondToMouseMoveEvents();
@@ -223,7 +223,7 @@ bool TextFieldDecorationElement::willRespondToMouseMoveEvents()
 bool TextFieldDecorationElement::willRespondToMouseClickEvents()
 {
     const HTMLInputElement* input = hostInput();
-    if (!input->disabled() && !input->readOnly())
+    if (!input->isDisabledOrReadOnly())
         return true;
 
     return HTMLDivElement::willRespondToMouseClickEvents();

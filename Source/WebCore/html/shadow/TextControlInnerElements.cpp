@@ -197,7 +197,7 @@ void SearchFieldCancelButtonElement::defaultEventHandler(Event* event)
 {
     // If the element is visible, on mouseup, clear the value, and set selection
     RefPtr<HTMLInputElement> input(static_cast<HTMLInputElement*>(shadowHost()));
-    if (!input || input->disabled() || input->readOnly()) {
+    if (!input || input->isDisabledOrReadOnly()) {
         if (!event->defaultHandled())
             HTMLDivElement::defaultEventHandler(event);
         return;
@@ -236,7 +236,7 @@ void SearchFieldCancelButtonElement::defaultEventHandler(Event* event)
 bool SearchFieldCancelButtonElement::willRespondToMouseClickEvents()
 {
     const HTMLInputElement* input = static_cast<HTMLInputElement*>(shadowHost());
-    if (input && !input->disabled() && !input->readOnly())
+    if (input && !input->isDisabledOrReadOnly())
         return true;
 
     return HTMLDivElement::willRespondToMouseClickEvents();
@@ -282,7 +282,7 @@ void InputFieldSpeechButtonElement::defaultEventHandler(Event* event)
     // here, we take a temporary reference.
     RefPtr<HTMLInputElement> input(static_cast<HTMLInputElement*>(shadowHost()));
 
-    if (!input || input->disabled() || input->readOnly()) {
+    if (!input || input->isDisabledOrReadOnly()) {
         if (!event->defaultHandled())
             HTMLDivElement::defaultEventHandler(event);
         return;

@@ -152,7 +152,7 @@ void TextFieldInputType::handleKeydownEvent(KeyboardEvent* event)
 
 void TextFieldInputType::handleKeydownEventForSpinButton(KeyboardEvent* event)
 {
-    if (element()->disabled() || element()->readOnly())
+    if (element()->isDisabledOrReadOnly())
         return;
     const String& key = event->keyIdentifier();
     if (key == "Up")
@@ -512,7 +512,7 @@ void TextFieldInputType::focusAndSelectSpinButtonOwner()
 
 bool TextFieldInputType::shouldSpinButtonRespondToMouseEvents()
 {
-    return !element()->disabled() && !element()->readOnly();
+    return !element()->isDisabledOrReadOnly();
 }
 
 bool TextFieldInputType::shouldSpinButtonRespondToWheelEvents()

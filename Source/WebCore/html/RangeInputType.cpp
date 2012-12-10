@@ -146,7 +146,7 @@ bool RangeInputType::isSteppable() const
 
 void RangeInputType::handleMouseDownEvent(MouseEvent* event)
 {
-    if (element()->disabled() || element()->readOnly())
+    if (element()->isDisabledOrReadOnly())
         return;
 
     Node* targetNode = event->target()->toNode();
@@ -165,7 +165,7 @@ void RangeInputType::handleMouseDownEvent(MouseEvent* event)
 #if ENABLE(TOUCH_SLIDER)
 void RangeInputType::handleTouchEvent(TouchEvent* event)
 {
-    if (element()->disabled() || element()->readOnly())
+    if (element()->isDisabledOrReadOnly())
         return;
 
     if (event->type() == eventNames().touchendEvent) {
@@ -191,7 +191,7 @@ bool RangeInputType::hasTouchEventHandler() const
 
 void RangeInputType::handleKeydownEvent(KeyboardEvent* event)
 {
-    if (element()->disabled() || element()->readOnly())
+    if (element()->isDisabledOrReadOnly())
         return;
 
     const String& key = event->keyIdentifier();

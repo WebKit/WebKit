@@ -355,7 +355,7 @@ bool HTMLFormControlElement::recalcWillValidate() const
         if (m_dataListAncestorState == Unknown)
             m_dataListAncestorState = NotInsideDataList;
     }
-    return m_dataListAncestorState == NotInsideDataList && !disabled() && !m_readOnly;
+    return m_dataListAncestorState == NotInsideDataList && !isDisabledOrReadOnly();
 }
 
 bool HTMLFormControlElement::willValidate() const

@@ -121,7 +121,7 @@ HTMLElement* SearchInputType::cancelButtonElement() const
 
 void SearchInputType::handleKeydownEvent(KeyboardEvent* event)
 {
-    if (element()->disabled() || element()->readOnly()) {
+    if (element()->isDisabledOrReadOnly()) {
         TextFieldInputType::handleKeydownEvent(event);
         return;
     }

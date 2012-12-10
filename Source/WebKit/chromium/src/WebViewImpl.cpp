@@ -2271,7 +2271,7 @@ WebTextInputType WebViewImpl::textInputType()
     if (node->hasTagName(HTMLNames::inputTag)) {
         HTMLInputElement* input = static_cast<HTMLInputElement*>(node);
 
-        if (input->readOnly() || input->disabled())
+        if (input->isDisabledOrReadOnly())
             return WebTextInputTypeNone;
 
         if (input->isPasswordField())
@@ -2305,11 +2305,8 @@ WebTextInputType WebViewImpl::textInputType()
     }
 
     if (node->hasTagName(HTMLNames::textareaTag)) {
-        HTMLTextAreaElement* textarea = static_cast<HTMLTextAreaElement*>(node);
-
-        if (textarea->readOnly() || textarea->disabled())
+        if (static_cast<HTMLTextAreaElement*>(node)->isDisabledOrReadOnly())
             return WebTextInputTypeNone;
-
         return WebTextInputTypeTextArea;
     }
 

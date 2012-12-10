@@ -1,3 +1,50 @@
+2012-12-10  Kent Tamura  <tkent@chromium.org>
+
+        Refactoring: Introduce HTMLFormControlElement::isDisabledOrReadOnly
+        https://bugs.webkit.org/show_bug.cgi?id=104508
+
+        Reviewed by Kentaro Hara.
+
+        We have a lot of code like element->disabled || element->readOnly().
+        isDisabledOrReadOnly makes them simpler.
+
+        No new tests. This make no behaivor change.
+
+        * html/HTMLFormControlElement.h:
+        (WebCore::HTMLFormControlElement::isDisabledOrReadOnly):
+        Added. Note that the implmentation of disabled() is not just "return m_disabled;".
+
+        * html/BaseChooserOnlyDateAndTimeInputType.cpp:
+        (WebCore::BaseChooserOnlyDateAndTimeInputType::handleDOMActivateEvent):
+        Use isDisabledOrReadOnly.
+        * html/BaseMultipleFieldsDateAndTimeInputType.cpp:
+        (WebCore::BaseMultipleFieldsDateAndTimeInputType::shouldSpinButtonRespondToMouseEvents): Ditto.
+        (WebCore::BaseMultipleFieldsDateAndTimeInputType::isPickerIndicatorOwnerDisabledOrReadOnly): Ditto.
+        * html/ColorInputType.cpp:
+        (WebCore::ColorInputType::handleDOMActivateEvent): Ditto.
+        (WebCore::ColorInputType::didChooseColor): Ditto.
+        * html/HTMLFormControlElement.cpp:
+        (WebCore::HTMLFormControlElement::recalcWillValidate): Ditto.
+        * html/HTMLTextAreaElement.h:
+        (WebCore::HTMLTextAreaElement::valueMissing): Ditto.
+        * html/RangeInputType.cpp:
+        (WebCore::RangeInputType::handleMouseDownEvent): Ditto.
+        (WebCore::RangeInputType::handleTouchEvent): Ditto.
+        (WebCore::RangeInputType::handleKeydownEvent): Ditto.
+        * html/SearchInputType.cpp:
+        (WebCore::SearchInputType::handleKeydownEvent): Ditto.
+        * html/TextFieldInputType.cpp:
+        (WebCore::TextFieldInputType::handleKeydownEventForSpinButton): Ditto.
+        (WebCore::TextFieldInputType::shouldSpinButtonRespondToMouseEvents): Ditto.
+        * html/shadow/TextControlInnerElements.cpp:
+        (WebCore::SearchFieldCancelButtonElement::defaultEventHandler): Ditto.
+        (WebCore::SearchFieldCancelButtonElement::willRespondToMouseClickEvents): Ditto.
+        (WebCore::InputFieldSpeechButtonElement::defaultEventHandler): Ditto.
+        * html/shadow/TextFieldDecorationElement.cpp:
+        (WebCore::TextFieldDecorationElement::defaultEventHandler): Ditto.
+        (WebCore::TextFieldDecorationElement::willRespondToMouseMoveEvents): Ditto.
+        (WebCore::TextFieldDecorationElement::willRespondToMouseClickEvents): Ditto.
+
 2012-12-10  Pavel Feldman  <pfeldman@chromium.org>
 
         Web Inspector: console broken? - console.dirxml behaves like console.log

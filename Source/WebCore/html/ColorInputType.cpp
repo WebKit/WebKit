@@ -144,7 +144,7 @@ void ColorInputType::setValue(const String& value, bool valueChanged, TextFieldE
 
 void ColorInputType::handleDOMActivateEvent(Event* event)
 {
-    if (element()->disabled() || element()->readOnly() || !element()->renderer())
+    if (element()->isDisabledOrReadOnly() || !element()->renderer())
         return;
 
     if (!ScriptController::processingUserGesture())
@@ -174,7 +174,7 @@ bool ColorInputType::typeMismatchFor(const String& value) const
 
 void ColorInputType::didChooseColor(const Color& color)
 {
-    if (element()->disabled() || element()->readOnly() || color == valueAsColor())
+    if (element()->isDisabledOrReadOnly() || color == valueAsColor())
         return;
     element()->setValueFromRenderer(color.serialized());
     updateColorSwatch();

@@ -100,6 +100,7 @@ public:
     virtual void setCustomValidity(const String&) OVERRIDE;
 
     bool readOnly() const { return m_readOnly; }
+    bool isDisabledOrReadOnly() const { return disabled() || m_readOnly; }
 
     bool hasAutofocused() { return m_hasAutofocused; }
     void setAutofocused() { m_hasAutofocused = true; }
