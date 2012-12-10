@@ -86,7 +86,6 @@ void InjectedBundle::didReceiveMessageToPage(WKBundleRef bundle, WKBundlePageRef
 void InjectedBundle::initialize(WKBundleRef bundle, WKTypeRef initializationUserData)
 {
     m_bundle = bundle;
-    m_stringBuilder = WTF::adoptPtr(new WTF::StringBuilder());
 
     WKBundleClient client = {
         kWKBundleClientCurrentVersion,
@@ -218,9 +217,7 @@ bool InjectedBundle::booleanForKey(WKDictionaryRef dictionary, const char* key)
     WKRetainPtr<WKStringRef> wkKey(AdoptWK, WKStringCreateWithUTF8CString(key));
     WKTypeRef value = WKDictionaryGetItemForKey(dictionary, wkKey.get());
     if (WKGetTypeID(value) != WKBooleanGetTypeID()) {
-        stringBuilder()->appendLiteral("Boolean value for key \"");
-        stringBuilder()->append(key);
-        stringBuilder()->appendLiteral("\" not found in dictionary\n");
+        outputText(makeString("Boolean value for key", key, " not found in dictionary\n"));
         return false;
     }
     return WKBooleanGetValue(static_cast<WKBooleanRef>(value));
@@ -232,7 +229,6 @@ void InjectedBundle::beginTesting(WKDictionaryRef settings)
 
     m_pixelResult.clear();
     m_repaintRects.clear();
-    m_stringBuilder->clear();
 
     m_testRunner = TestRunner::create();
     m_gcController = GCController::create();
@@ -292,10 +288,6 @@ void InjectedBundle::done()
     WKRetainPtr<WKStringRef> doneMessageName(AdoptWK, WKStringCreateWithUTF8CString("Done"));
     WKRetainPtr<WKMutableDictionaryRef> doneMessageBody(AdoptWK, WKMutableDictionaryCreate());
 
-    WKRetainPtr<WKStringRef> textOutputKey(AdoptWK, WKStringCreateWithUTF8CString("TextOutput"));
-    WKRetainPtr<WKStringRef> textOutput(AdoptWK, WKStringCreateWithUTF8CString(m_stringBuilder->toString().utf8().data()));
-    WKDictionaryAddItem(doneMessageBody.get(), textOutputKey.get(), textOutput.get());
-    
     WKRetainPtr<WKStringRef> pixelResultKey = adoptWK(WKStringCreateWithUTF8CString("PixelResult"));
     WKDictionaryAddItem(doneMessageBody.get(), pixelResultKey.get(), m_pixelResult.get());
 
@@ -322,13 +314,24 @@ void InjectedBundle::closeOtherPages()
         WKBundlePageClose(pagesToClose[i]);
 }
 
-void InjectedBundle::dumpBackForwardListsForAllPages()
+void InjectedBundle::dumpBackForwardListsForAllPages(StringBuilder& stringBuilder)
 {
     size_t size = m_pages.size();
     for (size_t i = 0; i < size; ++i)
-        m_pages[i]->dumpBackForwardList();
+        m_pages[i]->dumpBackForwardList(stringBuilder);
 }
-    
+
+void InjectedBundle::outputText(const String& output)
+{
+    if (m_state != Testing)
+        return;
+    if (output.isEmpty())
+        return;
+    WKRetainPtr<WKStringRef> messageName(AdoptWK, WKStringCreateWithUTF8CString("TextOutput"));
+    WKRetainPtr<WKStringRef> messageBody(AdoptWK, WKStringCreateWithUTF8CString(output.utf8().data()));
+    WKBundlePostMessage(m_bundle, messageName.get(), messageBody.get());
+}
+
 void InjectedBundle::postNewBeforeUnloadReturnValue(bool value)
 {
     WKRetainPtr<WKStringRef> messageName(AdoptWK, WKStringCreateWithUTF8CString("BeforeUnloadReturnValue"));

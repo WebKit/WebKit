@@ -38,6 +38,7 @@
 #include <WebKit2/WKRetainPtr.h>
 #include <wtf/OwnArrayPtr.h>
 #include <wtf/PassOwnArrayPtr.h>
+#include <wtf/PassOwnPtr.h>
 #include <wtf/text/CString.h>
 
 #if PLATFORM(MAC)
@@ -193,6 +194,8 @@ void TestInvocation::invoke()
     updateLayoutType(m_pathOrURL.c_str());
     updateTiledDrawingForCurrentTest(m_pathOrURL.c_str());
 
+    m_textOutput.clear();
+
     WKRetainPtr<WKStringRef> messageName = adoptWK(WKStringCreateWithUTF8CString("BeginTest"));
     WKRetainPtr<WKMutableDictionaryRef> beginTestMessageBody = adoptWK(WKMutableDictionaryCreate());
 
@@ -284,7 +287,7 @@ void TestInvocation::dump(const char* textToStdout, const char* textToStderr, bo
 
 void TestInvocation::dumpResults()
 {
-    dump(toWTFString(m_textOutput.get()).utf8().data());
+    dump(m_textOutput.toString().utf8().data());
 
     if (m_dumpPixels && m_pixelResult)
         dumpPixelsAndCompareWithExpected(m_pixelResult.get(), m_repaintRects.get());
@@ -336,9 +339,6 @@ void TestInvocation::didReceiveMessageFromInjectedBundle(WKStringRef messageName
         ASSERT(WKGetTypeID(messageBody) == WKDictionaryGetTypeID());
         WKDictionaryRef messageBodyDictionary = static_cast<WKDictionaryRef>(messageBody);
 
-        WKRetainPtr<WKStringRef> textOutputKey(AdoptWK, WKStringCreateWithUTF8CString("TextOutput"));
-        m_textOutput = static_cast<WKStringRef>(WKDictionaryGetItemForKey(messageBodyDictionary, textOutputKey.get()));
-
         WKRetainPtr<WKStringRef> pixelResultKey = adoptWK(WKStringCreateWithUTF8CString("PixelResult"));
         m_pixelResult = static_cast<WKImageRef>(WKDictionaryGetItemForKey(messageBodyDictionary, pixelResultKey.get()));
         ASSERT(!m_pixelResult || m_dumpPixels);
@@ -350,7 +350,13 @@ void TestInvocation::didReceiveMessageFromInjectedBundle(WKStringRef messageName
         TestController::shared().notifyDone();
         return;
     }
-    
+
+    if (WKStringIsEqualToUTF8CString(messageName, "TextOutput")) {
+        ASSERT(WKGetTypeID(messageBody) == WStringGetTypeID());
+        WKStringRef textOutput = static_cast<WKStringRef>(messageBody);
+        m_textOutput.append(toWTFString(textOutput));
+    }
+
     if (WKStringIsEqualToUTF8CString(messageName, "BeforeUnloadReturnValue")) {
         ASSERT(WKGetTypeID(messageBody) == WKBooleanGetTypeID());
         WKBooleanRef beforeUnloadReturnValue = static_cast<WKBooleanRef>(messageBody);

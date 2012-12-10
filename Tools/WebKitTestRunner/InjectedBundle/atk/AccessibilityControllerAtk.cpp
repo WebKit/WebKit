@@ -55,7 +55,7 @@ static void printAccessibilityEvent(AtkObject* accessible, const gchar* signalNa
 
     GOwnPtr<gchar> signalNameAndValue(signalValue ? g_strdup_printf("%s = %s", signalName, signalValue) : g_strdup(signalName));
     GOwnPtr<gchar> accessibilityEventString(g_strdup_printf("Accessibility object emitted \"%s\" / Name: \"%s\" / Role: %d\n", signalNameAndValue.get(), objectName, objectRole));
-    InjectedBundle::shared().stringBuilder()->append(accessibilityEventString.get());
+    InjectedBundle::shared().outputText(String::fromUTF8(accessibilityEventString.get()));
 }
 
 static gboolean axObjectEventListener(GSignalInvocationHint *signalHint, guint numParamValues, const GValue *paramValues, gpointer data)

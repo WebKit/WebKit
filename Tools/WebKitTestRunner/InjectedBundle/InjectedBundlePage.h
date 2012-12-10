@@ -29,6 +29,7 @@
 #include <WebKit2/WKBundlePage.h>
 #include <WebKit2/WKBundleScriptWorld.h>
 #include <WebKit2/WKRetainPtr.h>
+#include <wtf/text/WTFString.h>
 
 namespace WTR {
 
@@ -50,7 +51,7 @@ public:
     void prepare();
     void resetAfterTest();
 
-    void dumpBackForwardList();
+    void dumpBackForwardList(WTF::StringBuilder&);
 
 private:
     // Loader Client
@@ -169,8 +170,8 @@ private:
     void didChange(WKStringRef notificationName);
     void didChangeSelection(WKStringRef notificationName);
 
-    void dumpAllFramesText();
-    void dumpAllFrameScrollPositions();
+    void dumpAllFramesText(WTF::StringBuilder&);
+    void dumpAllFrameScrollPositions(WTF::StringBuilder&);
 
     void platformDidStartProvisionalLoadForFrame(WKBundleFrameRef);
 

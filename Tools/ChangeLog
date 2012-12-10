@@ -1,3 +1,33 @@
+2012-12-10  Martin Robinson  <mrobinson@igalia.com>
+
+        [WTR] Move text output accumulation to the UIProcess
+        https://bugs.webkit.org/show_bug.cgi?id=104214
+
+        Reviewed by Darin Adler.
+
+        Instead of accumulating text output in the InjectedBundle and then sending it to the UIProcess 
+        once a test is finished, immediately send any text output to the UIProcess. This will allow
+        WebKitTestRunner to output text from the UIProcess as well.
+
+        * WebKitTestRunner/InjectedBundle/InjectedBundle.cpp: Remove the handling of the text output
+        StringBuilder. Add a method to send output to the UIProcess.
+        * WebKitTestRunner/InjectedBundle/InjectedBundle.h:
+        (InjectedBundle):
+        * WebKitTestRunner/InjectedBundle/InjectedBundlePage.cpp: Change code that appends to the StringBuilder
+        to use the new outputText method.
+        * WebKitTestRunner/InjectedBundle/InjectedBundlePage.h:
+        * WebKitTestRunner/InjectedBundle/TestRunner.cpp: Ditto.
+        * WebKitTestRunner/InjectedBundle/atk/AccessibilityControllerAtk.cpp: Ditto.
+        * WebKitTestRunner/TestInvocation.cpp:
+        (WTR::TestInvocation::TestInvocation): Intialize the StringBuilder.
+        (WTR::TestInvocation::invoke): Clear the StringBuilder when a new tests starts.
+        (WTR::TestInvocation::dumpResults): m_textOutput is a StringBuilder now so the
+        method of printing the text is slightly different.
+        (WTR::TestInvocation::didReceiveMessageFromInjectedBundle): Handle the new TextOutput
+        message by appending the results to the StringBuilder.
+        * WebKitTestRunner/TestInvocation.h:
+        (TestInvocation): Switch the type of m_textOutput.
+
 2012-12-10  Mihnea Ovidenie  <mihnea@adobe.com>
 
         Unreviewed. Adding Mihai Maerean to the list of contributors, working on CSSRegions.

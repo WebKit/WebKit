@@ -149,9 +149,7 @@ void TestRunner::waitUntilDone()
 void TestRunner::waitToDumpWatchdogTimerFired()
 {
     invalidateWaitToDumpWatchdogTimer();
-    const char* message = "FAIL: Timed out waiting for notifyDone to be called\n";
-    InjectedBundle::shared().stringBuilder()->append(message);
-    InjectedBundle::shared().stringBuilder()->append("\n");
+    InjectedBundle::shared().outputText("FAIL: Timed out waiting for notifyDone to be called\n\n");
     InjectedBundle::shared().done();
 }
 

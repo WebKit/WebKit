@@ -29,6 +29,8 @@
 #include <string>
 #include <WebKit2/WKRetainPtr.h>
 #include <wtf/Noncopyable.h>
+#include <wtf/OwnPtr.h>
+#include <wtf/text/StringBuilder.h>
 
 namespace WTR {
 
@@ -67,7 +69,7 @@ private:
     bool m_gotRepaint;
     bool m_error;
 
-    WKRetainPtr<WKStringRef> m_textOutput;
+    StringBuilder m_textOutput;
     WKRetainPtr<WKImageRef> m_pixelResult;
     WKRetainPtr<WKArrayRef> m_repaintRects;
     std::string m_errorMessage;
