@@ -140,7 +140,7 @@ private:
     IntPoint m_scrollPosition;
 };
 
-TEST_F(GraphicsLayerChromiumTest, applyScrollToScrollableArea)
+TEST_F(GraphicsLayerChromiumTest, DISABLED_applyScrollToScrollableArea)
 {
     FakeScrollableArea scrollableArea;
     m_graphicsLayer->setScrollableArea(&scrollableArea);
