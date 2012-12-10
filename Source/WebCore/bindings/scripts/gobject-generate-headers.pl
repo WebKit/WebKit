@@ -62,6 +62,22 @@ print "#define ${header}\n";
 print "\n";
 
 if ($outType eq "defines") {
+    print "#include <glib.h>\n\n";
+    print "#ifdef G_OS_WIN32\n";
+    print "    #ifdef BUILDING_WEBKIT\n";
+    print "        #define WEBKIT_API __declspec(dllexport)\n";
+    print "    #else\n";
+    print "        #define WEBKIT_API __declspec(dllimport)\n";
+    print "    #endif\n";
+    print "    #define WEBKIT_OBSOLETE_API WEBKIT_API\n";
+    print "#else\n";
+    print "    #define WEBKIT_API __attribute__((visibility(\"default\")))\n";
+    print "    #define WEBKIT_OBSOLETE_API WEBKIT_API __attribute__((deprecated))\n";
+    print "#endif\n\n";
+    print "#ifndef WEBKIT_API\n";
+    print "    #define WEBKIT_API\n";
+    print "#endif\n";
+
     foreach my $class (@classes) {
         print "typedef struct _WebKitDOM${class} WebKitDOM${class};\n";
         print "typedef struct _WebKitDOM${class}Class WebKitDOM${class}Class;\n";

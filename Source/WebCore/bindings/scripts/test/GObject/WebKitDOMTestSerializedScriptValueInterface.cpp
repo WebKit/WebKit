@@ -30,7 +30,6 @@
 #include "WebKitDOMSerializedScriptValuePrivate.h"
 #include "WebKitDOMTestSerializedScriptValueInterfacePrivate.h"
 #include "gobject/ConvertToUTF8String.h"
-#include "webkitglobalsprivate.h"
 #include <wtf/GetPtr.h>
 #include <wtf/RefPtr.h>
 

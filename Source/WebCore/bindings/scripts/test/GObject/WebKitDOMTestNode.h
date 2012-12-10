@@ -23,7 +23,6 @@
 
 #include <glib-object.h>
 #include <webkit/WebKitDOMNode.h>
-#include <webkit/webkitdefines.h>
 #include <webkit/webkitdomdefines.h>
 
 G_BEGIN_DECLS

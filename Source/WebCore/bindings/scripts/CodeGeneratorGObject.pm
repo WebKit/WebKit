@@ -1351,7 +1351,6 @@ sub Generate {
     @cPrefix = split("\r", $licenceTemplate);
     push(@cPrefix, "\n");
 
-    $implIncludes{"webkitglobalsprivate.h"} = 1;
     $implIncludes{"DOMObjectCache.h"} = 1;
     $implIncludes{"WebKitDOMBinding.h"} = 1;
     $implIncludes{"gobject/ConvertToUTF8String.h"} = 1;
@@ -1432,7 +1431,6 @@ EOF
     print HEADER @hPrefixGuard;
     print HEADER "#include <glib-object.h>\n";
     print HEADER map { "#include <$_>\n" } sort keys(%hdrIncludes);
-    print HEADER "#include <webkit/webkitdefines.h>\n";
     print HEADER "#include <webkit/webkitdomdefines.h>\n\n";
     print HEADER @hBodyPre;
     print HEADER @hBody;

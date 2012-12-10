@@ -1,3 +1,49 @@
+2012-12-10  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] Build GObject DOM bindings as a separate library
+        https://bugs.webkit.org/show_bug.cgi?id=104527
+
+        Reviewed by Xan Lopez.
+
+        * bindings/gobject/GNUmakefile.am: Add libWebCoreDOM library.
+        * bindings/gobject/WebKitDOMBinding.h: Define private macros.
+        * bindings/gobject/WebKitDOMCustom.h: Don't include webkit/webkitdefines.h.
+        * bindings/gobject/WebKitDOMEventTarget.h: Ditto.
+        * bindings/gobject/WebKitDOMObject.h: Ditto.
+        * bindings/scripts/CodeGeneratorGObject.pm:
+        (Generate): Don't include webkitglobalsprivate.h.
+        (WriteData): Don't include webkit/webkitdefines.h.
+        * bindings/scripts/gobject-generate-headers.pl: Define WEBKIT_API
+        macro in webkitdomdefines.h.
+        * bindings/scripts/test/GObject/WebKitDOMFloat64Array.cpp:
+        * bindings/scripts/test/GObject/WebKitDOMFloat64Array.h:
+        * bindings/scripts/test/GObject/WebKitDOMTestActiveDOMObject.cpp:
+        * bindings/scripts/test/GObject/WebKitDOMTestActiveDOMObject.h:
+        * bindings/scripts/test/GObject/WebKitDOMTestCallback.cpp:
+        * bindings/scripts/test/GObject/WebKitDOMTestCallback.h:
+        * bindings/scripts/test/GObject/WebKitDOMTestCustomNamedGetter.cpp:
+        * bindings/scripts/test/GObject/WebKitDOMTestCustomNamedGetter.h:
+        * bindings/scripts/test/GObject/WebKitDOMTestEventConstructor.cpp:
+        * bindings/scripts/test/GObject/WebKitDOMTestEventConstructor.h:
+        * bindings/scripts/test/GObject/WebKitDOMTestEventTarget.cpp:
+        * bindings/scripts/test/GObject/WebKitDOMTestEventTarget.h:
+        * bindings/scripts/test/GObject/WebKitDOMTestException.cpp:
+        * bindings/scripts/test/GObject/WebKitDOMTestException.h:
+        * bindings/scripts/test/GObject/WebKitDOMTestInterface.cpp:
+        * bindings/scripts/test/GObject/WebKitDOMTestInterface.h:
+        * bindings/scripts/test/GObject/WebKitDOMTestMediaQueryListListener.cpp:
+        * bindings/scripts/test/GObject/WebKitDOMTestMediaQueryListListener.h:
+        * bindings/scripts/test/GObject/WebKitDOMTestNamedConstructor.cpp:
+        * bindings/scripts/test/GObject/WebKitDOMTestNamedConstructor.h:
+        * bindings/scripts/test/GObject/WebKitDOMTestNode.cpp:
+        * bindings/scripts/test/GObject/WebKitDOMTestNode.h:
+        * bindings/scripts/test/GObject/WebKitDOMTestObj.cpp:
+        * bindings/scripts/test/GObject/WebKitDOMTestObj.h:
+        * bindings/scripts/test/GObject/WebKitDOMTestOverloadedConstructors.cpp:
+        * bindings/scripts/test/GObject/WebKitDOMTestOverloadedConstructors.h:
+        * bindings/scripts/test/GObject/WebKitDOMTestSerializedScriptValueInterface.cpp:
+        * bindings/scripts/test/GObject/WebKitDOMTestSerializedScriptValueInterface.h:
+
 2012-12-10  Adam Klein  <adamk@chromium.org>
 
         In InbandTextTrackPrivate, return emptyAtoms instead of emptyString() by default.

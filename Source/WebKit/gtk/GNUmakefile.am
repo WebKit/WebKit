@@ -82,6 +82,7 @@ libwebkitgtk_@WEBKITGTK_API_MAJOR_VERSION@_@WEBKITGTK_API_MINOR_VERSION@_la_LIBA
 	libWebCore.la \
 	libWebCorePlatform.la \
 	libWebCoreModules.la \
+	libWebCoreDOM.la \
 	libWebCoreGtk.la
 
 if ENABLE_SVG
@@ -169,28 +170,11 @@ webkitgtk_built_sources += \
 	DerivedSources/webkit/webkitenumtypes.h \
 	DerivedSources/webkit/webkitmarshal.cpp \
 	DerivedSources/webkit/webkitmarshal.h \
-	$(webkitgtk_built_h_api) \
-	$(webkitgtk_gdom_built_sources) 
+	$(webkitgtk_built_h_api)
+
 BUILT_SOURCES += $(webkitgtk_built_sources)
 
 webkitgtk_sources += \
-	Source/WebCore/bindings/gobject/ConvertToUTF8String.cpp \
-	Source/WebCore/bindings/gobject/ConvertToUTF8String.h \
-	Source/WebCore/bindings/gobject/DOMObjectCache.cpp \
-	Source/WebCore/bindings/gobject/DOMObjectCache.h \
-	Source/WebCore/bindings/gobject/GObjectEventListener.cpp \
-	Source/WebCore/bindings/gobject/GObjectEventListener.h \
-	Source/WebCore/bindings/gobject/WebKitDOMBinding.cpp \
-	Source/WebCore/bindings/gobject/WebKitDOMBinding.h \
-	Source/WebCore/bindings/gobject/WebKitDOMCustom.cpp \
-	Source/WebCore/bindings/gobject/WebKitDOMCustom.h \
-	Source/WebCore/bindings/gobject/WebKitDOMEventTarget.cpp \
-	Source/WebCore/bindings/gobject/WebKitDOMEventTarget.h \
-	Source/WebCore/bindings/gobject/WebKitDOMEventTargetPrivate.h \
-	Source/WebCore/bindings/gobject/WebKitDOMObject.cpp \
-	Source/WebCore/bindings/gobject/WebKitDOMObject.h \
-	Source/WebCore/bindings/gobject/WebKitHTMLElementWrapperFactory.cpp \
-	Source/WebCore/bindings/gobject/WebKitHTMLElementWrapperFactory.h \
 	Source/WebKit/gtk/WebCoreSupport/AcceleratedCompositingContext.h \
 	Source/WebKit/gtk/WebCoreSupport/AcceleratedCompositingContextClutter.cpp \
 	Source/WebKit/gtk/WebCoreSupport/AcceleratedCompositingContextGL.cpp \

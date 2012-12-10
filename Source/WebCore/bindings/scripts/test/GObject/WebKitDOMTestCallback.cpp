@@ -33,7 +33,6 @@
 #include "WebKitDOMTestCallbackPrivate.h"
 #include "WebKitDOMThisClassPrivate.h"
 #include "gobject/ConvertToUTF8String.h"
-#include "webkitglobalsprivate.h"
 #include <wtf/GetPtr.h>
 #include <wtf/RefPtr.h>
 

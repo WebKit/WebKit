@@ -491,3 +491,50 @@ $(top_builddir)/DerivedSources/webkit/WebKitDOMCustom.h: $(WebCore)/bindings/gob
 gdom_feature_defines := $(filter-out ENABLE_INDEXED_DATABASE=1, $(filter-out ENABLE_SVG%, $(feature_defines))) ENABLE_INDEXED_DATABASE=0
 DerivedSources/webkit/WebKitDOM%.cpp DerivedSources/webkit/WebKitDOM%.h DerivedSources/webkit/WebKitDOM%Private.h: %.idl $(SCRIPTS_FOR_GENERATE_BINDINGS) $(WebCore)/bindings/scripts/CodeGeneratorGObject.pm $(WebCore)/bindings/gobject/GNUmakefile.am $(supplemental_dependency_file)
 	$(AM_V_GEN)$(PERL) -I$(WebCore)/bindings/scripts $(WebCore)/bindings/scripts/generate-bindings.pl --include $(WebCore)/dom --include $(WebCore)/html --include $(WebCore)/css --include $(WebCore)/page --include $(WebCore)/xml --include $(WebCore)/svg --outputDir "$(GENSOURCES_WEBKIT)" --defines "LANGUAGE_GOBJECT=1 $(gdom_feature_defines)" --generator GObject --supplementalDependencyFile $(supplemental_dependency_file) $<
+
+noinst_LTLIBRARIES += \
+	libWebCoreDOM.la
+
+nodist_libWebCoreDOM_la_SOURCES = \
+	$(webkitgtk_gdom_built_sources)
+
+libWebCoreDOM_la_SOURCES = \
+	Source/WebCore/bindings/gobject/ConvertToUTF8String.cpp \
+	Source/WebCore/bindings/gobject/ConvertToUTF8String.h \
+	Source/WebCore/bindings/gobject/DOMObjectCache.cpp \
+	Source/WebCore/bindings/gobject/DOMObjectCache.h \
+	Source/WebCore/bindings/gobject/GObjectEventListener.cpp \
+	Source/WebCore/bindings/gobject/GObjectEventListener.h \
+	Source/WebCore/bindings/gobject/WebKitDOMBinding.cpp \
+	Source/WebCore/bindings/gobject/WebKitDOMBinding.h \
+	Source/WebCore/bindings/gobject/WebKitDOMCustom.cpp \
+	Source/WebCore/bindings/gobject/WebKitDOMCustom.h \
+	Source/WebCore/bindings/gobject/WebKitDOMEventTarget.cpp \
+	Source/WebCore/bindings/gobject/WebKitDOMEventTarget.h \
+	Source/WebCore/bindings/gobject/WebKitDOMEventTargetPrivate.h \
+	Source/WebCore/bindings/gobject/WebKitDOMObject.cpp \
+	Source/WebCore/bindings/gobject/WebKitDOMObject.h \
+	Source/WebCore/bindings/gobject/WebKitHTMLElementWrapperFactory.cpp \
+	Source/WebCore/bindings/gobject/WebKitHTMLElementWrapperFactory.h
+
+libWebCoreDOM_la_CXXFLAGS = \
+	$(SYMBOL_VISIBILITY_INLINES) \
+	$(global_cxxflags)
+
+libWebCoreDOM_la_CFLAGS = \
+	$(SYMBOL_VISIBILITY) \
+	$(global_cflags)
+
+libWebCoreDOM_la_CPPFLAGS = \
+	-DBUILDING_WebCore \
+	-DBUILDING_WEBKIT \
+	-I$(WebCore)/bindings \
+	-I$(WebCore)/bindings/gobject \
+	-I$(GENSOURCES_WEBKIT) \
+	$(global_cppflags) \
+	$(webcore_cppflags) \
+	$(webcoregtk_cppflags) \
+	$(javascriptcore_cppflags) \
+	$(CAIRO_CFLAGS) \
+	$(GLIB_CFLAGS) \
+	$(LIBSOUP_CFLAGS)
