@@ -58,6 +58,8 @@ public:
 
     bool contains(const Node* node) const { return m_indices.contains(node); }
     size_t find(const Node*) const;
+    Node* nextTo(const Node*) const;
+    Node* previousTo(const Node*) const;
 
     void swap(ContentDistribution& other);
 

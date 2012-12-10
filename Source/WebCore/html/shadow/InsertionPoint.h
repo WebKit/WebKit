@@ -71,8 +71,8 @@ public:
     Node* at(size_t index)  const { return m_distribution.at(index).get(); }
     Node* first() const { return m_distribution.isEmpty() ? 0 : m_distribution.first().get(); }
     Node* last() const { return m_distribution.isEmpty() ? 0 : m_distribution.last().get(); }
-    Node* nextTo(const Node*) const;
-    Node* previousTo(const Node*) const;
+    Node* nextTo(const Node* node) const { return m_distribution.nextTo(node); }
+    Node* previousTo(const Node* node) const { return m_distribution.previousTo(node); }
 
 protected:
     InsertionPoint(const QualifiedName&, Document*);

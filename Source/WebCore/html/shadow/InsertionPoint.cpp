@@ -112,22 +112,6 @@ bool InsertionPoint::rendererIsNeeded(const NodeRenderingContext& context)
     return !isShadowBoundary() && HTMLElement::rendererIsNeeded(context);
 }
 
-Node* InsertionPoint::nextTo(const Node* node) const
-{
-    size_t index = m_distribution.find(node);
-    if (index == notFound || index + 1 == m_distribution.size())
-        return 0;
-    return m_distribution.at(index + 1).get();
-}
-
-Node* InsertionPoint::previousTo(const Node* node) const
-{
-    size_t index = m_distribution.find(node);
-    if (index == notFound || !index)
-        return 0;
-    return m_distribution.at(index - 1).get();
-}
-
 void InsertionPoint::childrenChanged(bool changedByParser, Node* beforeChange, Node* afterChange, int childCountDelta)
 {
     HTMLElement::childrenChanged(changedByParser, beforeChange, afterChange, childCountDelta);

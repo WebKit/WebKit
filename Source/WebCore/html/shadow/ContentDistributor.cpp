@@ -58,6 +58,23 @@ size_t ContentDistribution::find(const Node* node) const
     return it.get()->value;
 }
 
+Node* ContentDistribution::nextTo(const Node* node) const
+{
+    size_t index = find(node);
+    if (index == notFound || index + 1 == size())
+        return 0;
+    return at(index + 1).get();
+}
+
+Node* ContentDistribution::previousTo(const Node* node) const
+{
+    size_t index = find(node);
+    if (index == notFound || !index)
+        return 0;
+    return at(index - 1).get();
+}
+
+
 ShadowRootContentDistributionData::ShadowRootContentDistributionData()
     : m_insertionPointAssignedTo(0)
     , m_numberOfShadowElementChildren(0)
