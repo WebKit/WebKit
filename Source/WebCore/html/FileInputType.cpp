@@ -311,7 +311,7 @@ void FileInputType::disabledAttributeChanged()
     ASSERT(element()->shadow());
     UploadButtonElement* button = static_cast<UploadButtonElement*>(element()->userAgentShadowRoot()->firstChild());
     if (button)
-        button->setDisabled(element()->disabled());
+        button->setBooleanAttribute(disabledAttr, element()->disabled());
 }
 
 void FileInputType::multipleAttributeChanged()

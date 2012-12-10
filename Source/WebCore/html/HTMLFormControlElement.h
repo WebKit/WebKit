@@ -67,7 +67,6 @@ public:
     virtual void dispatchFormControlInputEvent();
 
     virtual bool disabled() const;
-    void setDisabled(bool);
 
     virtual bool isFocusable() const;
     virtual bool isEnumeratable() const { return false; }

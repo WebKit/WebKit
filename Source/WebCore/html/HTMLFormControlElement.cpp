@@ -278,11 +278,6 @@ bool HTMLFormControlElement::disabled() const
     return m_ancestorDisabledState == AncestorDisabledStateDisabled;
 }
 
-void HTMLFormControlElement::setDisabled(bool b)
-{
-    setAttribute(disabledAttr, b ? "" : 0);
-}
-
 bool HTMLFormControlElement::autofocus() const
 {
     return hasAttribute(autofocusAttr);
