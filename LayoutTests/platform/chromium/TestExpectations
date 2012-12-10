@@ -3678,10 +3678,6 @@ webkit.org/b/94002 [ Win7 Debug ] inspector/debugger [ Pass Timeout ]
 # Flaky
 webkit.org/b/99389 [ Win ] inspector/debugger/xhr-breakpoints.html [ Pass Text ]
 
-# Timing out/Flaky
-webkit.org/b/94002 [ Win Mac Debug ] inspector/styles/styles-computed-trace.html [ Failure Timeout ]
-webkit.org/b/94002 [ Linux Debug ] inspector/styles/styles-computed-trace.html [ Pass Timeout ]
-
 # Added by bug 89826
 webkit.org/b/94003 [ Win ] fast/css/word-spacing-characters-complex-text.html [ ImageOnlyFailure ]
 
