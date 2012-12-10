@@ -2,6 +2,15 @@
 <script>
     if (window.testRunner)
         testRunner.dumpAsText();
+
+    // The Mac port exposes static text objects as an accessible child of an element with text.
+    // The Atk port folds static text objects into the parent element.
+    function getTextChild(accessibilityObject) {
+        if (accessibilityObject.childrenCount)
+            return accessibilityObject.childAtIndex(0);
+
+        return accessibilityObject;
+    }
 </script>
 <head>
 <meta http-equiv="content-language" content="en-gb"> 
@@ -25,10 +34,10 @@
             var webArea = accessibilityController.focusedElement;
             var result = document.getElementById("result");
 
-            var text1 = webArea.childAtIndex(0).childAtIndex(0);
-            var text2 = webArea.childAtIndex(1).childAtIndex(0);
-            var text3 = webArea.childAtIndex(2).childAtIndex(0);
-            var text4 = webArea.childAtIndex(3).childAtIndex(0);
+            var text1 = getTextChild(webArea.childAtIndex(0));
+            var text2 = getTextChild(webArea.childAtIndex(1));
+            var text3 = getTextChild(webArea.childAtIndex(2));
+            var text4 = getTextChild(webArea.childAtIndex(3));
 
             if ( webArea.language == "AXLanguage: en-gb" && text1.language == "AXLanguage: en-gb" && 
                  text2.language == "AXLanguage: de" && text3.language == "AXLanguage: ja" && 

@@ -1,3 +1,19 @@
+2012-12-10  Joanmarie Diggs  <jdiggs@igalia.com>
+
+        [GTK] accessibility/language-attribute.html is failing
+        https://bugs.webkit.org/show_bug.cgi?id=98369
+
+        Reviewed by Chris Fleizach.
+
+        The test is failing for two reasons: Not exposing the language
+        for accessible objects and AccessibilityUIElement::language() not
+        being implemented.
+
+        No new tests; instead, unskipped the previously-failing test.
+
+        * accessibility/atk/WebKitAccessibleInterfaceText.cpp:
+        (getAttributeSetForAccessibilityObject): Expose the language via AtkText attribute
+
 2012-12-09  Takashi Sakamoto  <tasak@google.com>
 
         [Shadow DOM]: reset-style-inheritance doesn't work for insertion point
