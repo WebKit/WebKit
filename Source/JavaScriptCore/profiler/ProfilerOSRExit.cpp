@@ -23,58 +23,36 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef JumpReplacementWatchpoint_h
-#define JumpReplacementWatchpoint_h
+#include "config.h"
+#include "ProfilerOSRExit.h"
 
-#include "Watchpoint.h"
-#include <wtf/Platform.h>
+#include "JSGlobalObject.h"
 
-#if ENABLE(JIT)
+namespace JSC { namespace Profiler {
 
-#include "CodeLocation.h"
-#include "MacroAssembler.h"
+OSRExit::OSRExit(unsigned id, const OriginStack& origin, ExitKind kind, bool isWatchpoint)
+    : m_id(id)
+    , m_origin(origin)
+    , m_exitKind(kind)
+    , m_isWatchpoint(isWatchpoint)
+    , m_counter(0)
+{
+}
 
-namespace JSC {
+OSRExit::~OSRExit()
+{
+}
 
-class JumpReplacementWatchpoint : public Watchpoint {
-public:
-    JumpReplacementWatchpoint()
-        : m_source(std::numeric_limits<uintptr_t>::max())
-        , m_destination(std::numeric_limits<uintptr_t>::max())
-    {
-    }
-    
-    JumpReplacementWatchpoint(MacroAssembler::Label source)
-        : m_source(source.m_label.m_offset)
-        , m_destination(std::numeric_limits<uintptr_t>::max())
-    {
-    }
-    
-    MacroAssembler::Label sourceLabel() const
-    {
-        MacroAssembler::Label label;
-        label.m_label.m_offset = m_source;
-        return label;
-    }
-    
-    void setDestination(MacroAssembler::Label destination)
-    {
-        m_destination = destination.m_label.m_offset;
-    }
-    
-    void correctLabels(LinkBuffer&);
+JSValue OSRExit::toJS(ExecState* exec) const
+{
+    JSObject* result = constructEmptyObject(exec);
+    result->putDirect(exec->globalData(), exec->propertyNames().id, jsNumber(m_id));
+    result->putDirect(exec->globalData(), exec->propertyNames().origin, m_origin.toJS(exec));
+    result->putDirect(exec->globalData(), exec->propertyNames().exitKind, jsString(exec, exitKindToString(m_exitKind)));
+    result->putDirect(exec->globalData(), exec->propertyNames().isWatchpoint, jsBoolean(m_isWatchpoint));
+    result->putDirect(exec->globalData(), exec->propertyNames().count, jsNumber(m_counter));
+    return result;
+}
 
-protected:
-    void fireInternal();
-
-private:
-    uintptr_t m_source;
-    uintptr_t m_destination;
-};
-
-} // namespace JSC
-
-#endif // ENABLE(JIT)
-
-#endif // JumpReplacementWatchpoint_h
+} } // namespace JSC::Profiler
 

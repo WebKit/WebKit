@@ -33,6 +33,7 @@
 #include <wtf/FastAllocBase.h>
 #include <wtf/HashMap.h>
 #include <wtf/Noncopyable.h>
+#include <wtf/PassRefPtr.h>
 #include <wtf/SegmentedVector.h>
 #include <wtf/text/WTFString.h>
 
@@ -47,8 +48,8 @@ public:
     Bytecodes* ensureBytecodesFor(CodeBlock*);
     void notifyDestruction(CodeBlock*);
     
-    Compilation* newCompilation(CodeBlock*, CompilationKind);
-    Compilation* newCompilation(Bytecodes*, CompilationKind);
+    PassRefPtr<Compilation> newCompilation(CodeBlock*, CompilationKind);
+    PassRefPtr<Compilation> newCompilation(Bytecodes*, CompilationKind);
     
     // Converts the database to a JavaScript object that is suitable for JSON stringification.
     // Note that it's probably a good idea to use an ExecState* associated with a global
@@ -70,7 +71,7 @@ private:
     JSGlobalData& m_globalData;
     SegmentedVector<Bytecodes> m_bytecodes;
     HashMap<CodeBlock*, Bytecodes*> m_bytecodesMap;
-    Vector<OwnPtr<Compilation> > m_compilations;
+    Vector<RefPtr<Compilation> > m_compilations;
 };
 
 } } // namespace JSC::Profiler

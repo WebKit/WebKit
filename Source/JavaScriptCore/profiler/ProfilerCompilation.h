@@ -26,13 +26,16 @@
 #ifndef ProfilerCompilation_h
 #define ProfilerCompilation_h
 
+#include "ExitKind.h"
 #include "JSValue.h"
 #include "ProfilerCompilationKind.h"
 #include "ProfilerCompiledBytecode.h"
 #include "ProfilerExecutionCounter.h"
+#include "ProfilerOSRExit.h"
+#include "ProfilerOSRExitSite.h"
 #include "ProfilerOriginStack.h"
-#include <wtf/FastAllocBase.h>
-#include <wtf/Noncopyable.h>
+#include <wtf/RefCounted.h>
+#include <wtf/SegmentedVector.h>
 
 namespace JSC { namespace Profiler {
 
@@ -41,8 +44,7 @@ class Bytecodes;
 // Represents the act of executing some bytecodes in some engine, and does
 // all of the counting for those executions.
 
-class Compilation {
-    WTF_MAKE_FAST_ALLOCATED; WTF_MAKE_NONCOPYABLE(Compilation);
+class Compilation : public RefCounted<Compilation> {
 public:
     Compilation(Bytecodes*, CompilationKind);
     ~Compilation();
@@ -52,6 +54,8 @@ public:
     
     void addDescription(const CompiledBytecode&);
     ExecutionCounter* executionCounterFor(const OriginStack&);
+    void addOSRExitSite(const void* codeAddress);
+    OSRExit* addOSRExit(unsigned id, const OriginStack&, ExitKind, bool isWatchpoint);
     
     JSValue toJS(ExecState*) const;
     
@@ -60,6 +64,8 @@ private:
     CompilationKind m_kind;
     Vector<CompiledBytecode> m_descriptions;
     HashMap<OriginStack, OwnPtr<ExecutionCounter> > m_counters;
+    Vector<OSRExitSite> m_osrExitSites;
+    SegmentedVector<OSRExit> m_osrExits;
 };
 
 } } // namespace JSC::Profiler

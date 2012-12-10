@@ -41,7 +41,7 @@ rescue LoadError
 end
 
 class Bytecode
-    attr_accessor :bytecodes, :bytecodeIndex, :opcode, :description, :topCounts, :bottomCounts, :machineInlinees
+    attr_accessor :bytecodes, :bytecodeIndex, :opcode, :description, :topCounts, :bottomCounts, :machineInlinees, :osrExits
     
     def initialize(bytecodes, bytecodeIndex, opcode, description)
         @bytecodes = bytecodes
@@ -51,6 +51,7 @@ class Bytecode
         @topCounts = [] # "source" counts
         @bottomCounts = {} # "machine" counts, maps compilations to counts
         @machineInlinees = {} # maps my compilation to a set of inlinees
+        @osrExits = []
     end
     
     def shouldHaveCounts?
@@ -117,6 +118,15 @@ class Bytecode
                 }
                 sum += max
             end
+        }
+        sum
+    end
+    
+    def totalExitCount
+        sum = 0
+        @osrExits.each {
+            | exit |
+            sum += exit.count
         }
         sum
     end
@@ -207,6 +217,15 @@ class Bytecodes
         }
         max
     end
+    
+    def totalExitCount
+        sum = 0
+        each {
+            | bytecode |
+            sum += bytecode.totalExitCount
+        }
+        sum
+    end
 end
 
 def originStackFromJSON(json)
@@ -235,8 +254,25 @@ class ExecutionCounter
     end
 end
 
+class OSRExit
+    attr_reader :compilation, :origin, :codeAddress, :exitKind, :isWatchpoint, :count
+    
+    def initialize(compilation, origin, codeAddress, exitKind, isWatchpoint, count)
+        @compilation = compilation
+        @origin = origin
+        @codeAddress = codeAddress
+        @exitKind = exitKind
+        @isWatchpoint = isWatchpoint
+        @count = count
+    end
+    
+    def dumpForDisplay(prefix)
+        puts(prefix + "EXIT: due to #{@exitKind}, #{@count} times")
+    end
+end
+
 class Compilation
-    attr_accessor :bytecode, :engine, :descriptions, :counters, :compilationIndex
+    attr_accessor :bytecode, :engine, :descriptions, :counters, :compilationIndex, :osrExits
     
     def initialize(json)
         @bytecode = $bytecodes[json["bytecodesID"].to_i]
@@ -265,6 +301,16 @@ class Compilation
             origin[-1].addTopCount(counter)
             origin[0].addBottomCountForCompilation(counter, self)
         }
+        @osrExits = {}
+        json["osrExits"].each {
+            | subJson |
+            osrExit = OSRExit.new(self, originStackFromJSON(subJson["origin"]),
+                                  json["osrExitSites"][subJson["id"]].hex, subJson["exitKind"],
+                                  subJson["isWatchpoint"], subJson["count"])
+            osrExits[osrExit.codeAddress] = [] unless osrExits[osrExit.codeAddress]
+            osrExits[osrExit.codeAddress] << osrExit
+            osrExit.origin[-1].osrExits << osrExit
+        }
     end
     
     def counter(origin)
@@ -276,6 +322,25 @@ class Compilation
     end
 end
 
+class DescriptionLine
+    attr_reader :actualCountsString, :sourceCountsString, :disassembly, :shouldShow
+    
+    def initialize(actualCountsString, sourceCountsString, disassembly, shouldShow)
+        @actualCountsString = actualCountsString
+        @sourceCountsString = sourceCountsString
+        @disassembly = disassembly
+        @shouldShow = shouldShow
+    end
+    
+    def codeAddress
+        if @disassembly =~ /^\s*(0x[0-9a-fA-F]+):/
+            $1.hex
+        else
+            nil
+        end
+    end
+end
+            
 if ARGV.length != 1
     $stderr.puts "Usage: display-profiler-output <path to profiler output file>"
     $stderr.puts
@@ -348,15 +413,21 @@ def summary(mode)
     hashCols = 11
     remaining -= hashCols + 1
     
-    countCols = 10 * $engines.size
+    countCols = 9 * $engines.size
     remaining -= countCols + 1
     
     if mode == :full
-        machineCountCols = 10 * $engines.size
+        machineCountCols = 9 * $engines.size
         remaining -= machineCountCols + 1
+        
+        compilationsCols = 7
+        remaining -= compilationsCols + 1
         
         inlinesCols = 9
         remaining -= inlinesCols + 1
+        
+        exitCountCols = 7
+        remaining -= exitCountCols + 1
     end
     
     if remaining > 0
@@ -368,7 +439,9 @@ def summary(mode)
     print(center("CodeBlock", hashCols) + " " + center("Source Counts", countCols))
     if mode == :full
         print(" " + center("Machine Counts", machineCountCols))
+        print(" " + center("#Compil", compilationsCols))
         print(" " + center("Inlines", inlinesCols))
+        print(" " + center("#Exits", exitCountCols))
     end
     if sourceCols
         print(" " + center("Source", sourceCols))
@@ -378,6 +451,7 @@ def summary(mode)
     print(center("", hashCols) + " " + center("Base/DFG", countCols))
     if mode == :full
         print(" " + center("Base/DFG", machineCountCols))
+        print(" " + (" " * compilationsCols))
         print(" " + center("Src/Total", inlinesCols))
     end
     puts
@@ -396,7 +470,9 @@ def summary(mode)
                                    | engine |
                                    bytecode.maxBottomExecutionCount(engine).to_s
                                }.join("/"), machineCountCols))
+            print(" " + center(bytecode.compilations.size.to_s, compilationsCols))
             print(" " + center(bytecode.sourceMachineInlineSites.to_s + "/" + bytecode.totalMachineInlineSites.to_s, inlinesCols))
+            print(" " + center(bytecode.totalExitCount.to_s, exitCountCols))
         end
         if sourceCols
             print(" " + sourceOnOneLine(bytecode.source, sourceCols))
@@ -472,6 +548,11 @@ def executeCommand(*commandArray)
                     machineString = ""
                 end
                 puts(center(countsString, countCols) + " " + center(machineString, machineCols) + (" " * pad) + bytecode.description.chomp)
+                bytecode.osrExits.each {
+                    | exit |
+                    puts(center("!!!!!", countCols) + " " + center("!!!!!", machineCols) + (" " * (pad + 10)) +
+                         "EXIT: in #{exit.compilation} due to #{exit.exitKind}, #{exit.count} times")
+                }
             }
         }
     when "inlines"
@@ -551,6 +632,8 @@ def executeCommand(*commandArray)
             }
         }
     when "display", "d"
+        compilationIndex = nil
+        
         case args.length
         when 1
             hash = args[0]
@@ -566,6 +649,12 @@ def executeCommand(*commandArray)
         else
             puts "Usage: summary <code block hash> <engine>"
             return
+        end
+        
+        if hash =~ /-([0-9]+)-/
+            hash = $~.pre_match
+            engine = $~.post_match
+            compilationIndex = $1.to_i
         end
         
         if engine and not $engines.index(engine)
@@ -585,6 +674,8 @@ def executeCommand(*commandArray)
             engine = trueEngine
         end
         
+        hash = getHash(hash)
+        
         actualCountCols = 13
         sourceCountCols = 10 * $engines.size
         
@@ -593,6 +684,7 @@ def executeCommand(*commandArray)
             | compilation |
             next if compilation.bytecode.codeHash != hash
             next if engine and compilation.engine != engine
+            next if compilationIndex and compilation.compilationIndex != compilationIndex
             
             if first
                 first = false
@@ -603,11 +695,18 @@ def executeCommand(*commandArray)
             puts("Compilation #{compilation}:")
             puts(center("Actual Counts", actualCountCols) + " " + center("Source Counts", sourceCountCols) + " " + center("Disassembly in #{compilation.engine}", screenWidth - 1 - sourceCountCols - 1 - actualCountCols))
             puts((" " * actualCountCols) + " " + center("Base/DFG", sourceCountCols))
+
+            lines = []
+
             compilation.descriptions.each {
                 | description |
                 # FIXME: We should have a better way of detecting things like CountExecution nodes
                 # and slow path entries in the baseline JIT.
-                next if description.description =~ /CountExecution\(/ and compilation.engine == "DFG"
+                if description.description =~ /CountExecution\(/ and compilation.engine == "DFG"
+                    shouldShow = false
+                else
+                    shouldShow = true
+                end
                 if description.origin.empty? or not description.origin[-1].shouldHaveCounts? or (compilation.engine == "Baseline" and description.description =~ /^\s*\(S\)/)
                     actualCountsString = ""
                     sourceCountsString = ""
@@ -620,8 +719,54 @@ def executeCommand(*commandArray)
                 end
                 description.description.split("\n").each {
                     | line |
-                    puts(center(actualCountsString, actualCountCols) + " " + center(sourceCountsString, sourceCountCols) + " " + line.chomp)
+                    lines << DescriptionLine.new(actualCountsString, sourceCountsString, line.chomp, shouldShow)
                 }
+            }
+            
+            exitPrefix = center("!!!!!", actualCountCols) + " " + center("!!!!!", sourceCountCols) + (" " * 25)
+            
+            lines.each_with_index {
+                | line, index |
+                codeAddress = line.codeAddress
+                if codeAddress
+                    list = compilation.osrExits[codeAddress]
+                    if list
+                        list.each {
+                            | exit |
+                            if exit.isWatchpoint
+                                exit.dumpForDisplay(exitPrefix)
+                            end
+                        }
+                    end
+                end
+                if line.shouldShow
+                    puts(center(line.actualCountsString, actualCountCols) + " " + center(line.sourceCountsString, sourceCountCols) + " " + line.disassembly)
+                end
+                if codeAddress
+                    # Find the next disassembly address.
+                    endIndex = index + 1
+                    endAddress = nil
+                    while endIndex < lines.size
+                        myAddress = lines[endIndex].codeAddress
+                        if myAddress
+                            endAddress = myAddress
+                            break
+                        end
+                        endIndex += 1
+                    end
+                    
+                    if endAddress
+                        list = compilation.osrExits[endAddress]
+                        if list
+                            list.each {
+                                | exit |
+                                unless exit.isWatchpoint
+                                    exit.dumpForDisplay(exitPrefix)
+                                end
+                            }
+                        end
+                    end
+                end
             }
         }
     else

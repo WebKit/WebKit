@@ -110,6 +110,8 @@ javascriptcore_sources += \
 	Source/JavaScriptCore/bytecode/EvalCodeCache.h \
 	Source/JavaScriptCore/bytecode/ExecutionCounter.cpp \
 	Source/JavaScriptCore/bytecode/ExecutionCounter.h \
+	Source/JavaScriptCore/bytecode/ExitKind.cpp \
+	Source/JavaScriptCore/bytecode/ExitKind.h \
 	Source/JavaScriptCore/bytecode/ExpressionRangeInfo.h \
 	Source/JavaScriptCore/bytecode/GetByIdStatus.cpp \
 	Source/JavaScriptCore/bytecode/GetByIdStatus.h \
@@ -490,6 +492,10 @@ javascriptcore_sources += \
 	Source/JavaScriptCore/profiler/ProfilerOrigin.h \
 	Source/JavaScriptCore/profiler/ProfilerOriginStack.cpp \
 	Source/JavaScriptCore/profiler/ProfilerOriginStack.h \
+	Source/JavaScriptCore/profiler/ProfilerOSRExit.cpp \
+	Source/JavaScriptCore/profiler/ProfilerOSRExit.h \
+	Source/JavaScriptCore/profiler/ProfilerOSRExitSite.cpp \
+	Source/JavaScriptCore/profiler/ProfilerOSRExitSite.h \
 	Source/JavaScriptCore/profiler/Profile.cpp \
 	Source/JavaScriptCore/profiler/ProfileGenerator.cpp \
 	Source/JavaScriptCore/profiler/ProfileGenerator.h \

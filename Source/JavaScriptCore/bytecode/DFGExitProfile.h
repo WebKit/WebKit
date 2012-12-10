@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011 Apple Inc. All rights reserved.
+ * Copyright (C) 2011, 2012 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,72 +26,12 @@
 #ifndef DFGExitProfile_h
 #define DFGExitProfile_h
 
+#include "ExitKind.h"
 #include <wtf/HashSet.h>
 #include <wtf/OwnPtr.h>
 #include <wtf/Vector.h>
 
 namespace JSC { namespace DFG {
-
-enum ExitKind {
-    ExitKindUnset,
-    BadType, // We exited because a type prediction was wrong.
-    BadCache, // We exited because an inline cache was wrong.
-    BadWeakConstantCache, // We exited because a cache on a weak constant (usually a prototype) was wrong.
-    BadIndexingType, // We exited because an indexing type was wrong.
-    Overflow, // We exited because of overflow.
-    NegativeZero, // We exited because we encountered negative zero.
-    OutOfBounds, // We had an out-of-bounds access to an array.
-    InadequateCoverage, // We exited because we ended up in code that didn't have profiling coverage.
-    ArgumentsEscaped, // We exited because arguments escaped but we didn't expect them to.
-    Uncountable, // We exited for none of the above reasons, and we should not count it. Most uses of this should be viewed as a FIXME.
-    UncountableWatchpoint // We exited because of a watchpoint, which isn't counted because watchpoints do tracking themselves.
-};
-
-inline const char* exitKindToString(ExitKind kind)
-{
-    switch (kind) {
-    case ExitKindUnset:
-        return "Unset";
-    case BadType:
-        return "BadType";
-    case BadCache:
-        return "BadCache";
-    case BadWeakConstantCache:
-        return "BadWeakConstantCache";
-    case BadIndexingType:
-        return "BadIndexingType";
-    case Overflow:
-        return "Overflow";
-    case NegativeZero:
-        return "NegativeZero";
-    case OutOfBounds:
-        return "OutOfBounds";
-    case InadequateCoverage:
-        return "InadequateCoverage";
-    case ArgumentsEscaped:
-        return "ArgumentsEscaped";
-    case Uncountable:
-        return "Uncountable";
-    case UncountableWatchpoint:
-        return "UncountableWatchpoint";
-    default:
-        return "Unknown";
-    }
-}
-
-inline bool exitKindIsCountable(ExitKind kind)
-{
-    switch (kind) {
-    case ExitKindUnset:
-        ASSERT_NOT_REACHED();
-    case BadType:
-    case Uncountable:
-    case UncountableWatchpoint:
-        return false;
-    default:
-        return true;
-    }
-}
 
 class FrequentExitSite {
 public:

@@ -23,58 +23,68 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef JumpReplacementWatchpoint_h
-#define JumpReplacementWatchpoint_h
+#include "config.h"
+#include "ExitKind.h"
 
-#include "Watchpoint.h"
-#include <wtf/Platform.h>
-
-#if ENABLE(JIT)
-
-#include "CodeLocation.h"
-#include "MacroAssembler.h"
+#include <wtf/Assertions.h>
+#include <wtf/PrintStream.h>
 
 namespace JSC {
 
-class JumpReplacementWatchpoint : public Watchpoint {
-public:
-    JumpReplacementWatchpoint()
-        : m_source(std::numeric_limits<uintptr_t>::max())
-        , m_destination(std::numeric_limits<uintptr_t>::max())
-    {
+const char* exitKindToString(ExitKind kind)
+{
+    switch (kind) {
+    case ExitKindUnset:
+        return "Unset";
+    case BadType:
+        return "BadType";
+    case BadCache:
+        return "BadCache";
+    case BadWeakConstantCache:
+        return "BadWeakConstantCache";
+    case BadIndexingType:
+        return "BadIndexingType";
+    case Overflow:
+        return "Overflow";
+    case NegativeZero:
+        return "NegativeZero";
+    case OutOfBounds:
+        return "OutOfBounds";
+    case InadequateCoverage:
+        return "InadequateCoverage";
+    case ArgumentsEscaped:
+        return "ArgumentsEscaped";
+    case Uncountable:
+        return "Uncountable";
+    case UncountableWatchpoint:
+        return "UncountableWatchpoint";
+    default:
+        return "Unknown";
     }
-    
-    JumpReplacementWatchpoint(MacroAssembler::Label source)
-        : m_source(source.m_label.m_offset)
-        , m_destination(std::numeric_limits<uintptr_t>::max())
-    {
-    }
-    
-    MacroAssembler::Label sourceLabel() const
-    {
-        MacroAssembler::Label label;
-        label.m_label.m_offset = m_source;
-        return label;
-    }
-    
-    void setDestination(MacroAssembler::Label destination)
-    {
-        m_destination = destination.m_label.m_offset;
-    }
-    
-    void correctLabels(LinkBuffer&);
+}
 
-protected:
-    void fireInternal();
-
-private:
-    uintptr_t m_source;
-    uintptr_t m_destination;
-};
+bool exitKindIsCountable(ExitKind kind)
+{
+    switch (kind) {
+    case ExitKindUnset:
+        ASSERT_NOT_REACHED();
+    case BadType:
+    case Uncountable:
+    case UncountableWatchpoint:
+        return false;
+    default:
+        return true;
+    }
+}
 
 } // namespace JSC
 
-#endif // ENABLE(JIT)
+namespace WTF {
 
-#endif // JumpReplacementWatchpoint_h
+void printInternal(PrintStream& out, JSC::ExitKind kind)
+{
+    out.print(exitKindToString(kind));
+}
+
+} // namespace WTF
 

@@ -23,58 +23,37 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef JumpReplacementWatchpoint_h
-#define JumpReplacementWatchpoint_h
-
-#include "Watchpoint.h"
-#include <wtf/Platform.h>
-
-#if ENABLE(JIT)
-
-#include "CodeLocation.h"
-#include "MacroAssembler.h"
+#ifndef ExitKind_h
+#define ExitKind_h
 
 namespace JSC {
 
-class JumpReplacementWatchpoint : public Watchpoint {
-public:
-    JumpReplacementWatchpoint()
-        : m_source(std::numeric_limits<uintptr_t>::max())
-        , m_destination(std::numeric_limits<uintptr_t>::max())
-    {
-    }
-    
-    JumpReplacementWatchpoint(MacroAssembler::Label source)
-        : m_source(source.m_label.m_offset)
-        , m_destination(std::numeric_limits<uintptr_t>::max())
-    {
-    }
-    
-    MacroAssembler::Label sourceLabel() const
-    {
-        MacroAssembler::Label label;
-        label.m_label.m_offset = m_source;
-        return label;
-    }
-    
-    void setDestination(MacroAssembler::Label destination)
-    {
-        m_destination = destination.m_label.m_offset;
-    }
-    
-    void correctLabels(LinkBuffer&);
-
-protected:
-    void fireInternal();
-
-private:
-    uintptr_t m_source;
-    uintptr_t m_destination;
+enum ExitKind {
+    ExitKindUnset,
+    BadType, // We exited because a type prediction was wrong.
+    BadCache, // We exited because an inline cache was wrong.
+    BadWeakConstantCache, // We exited because a cache on a weak constant (usually a prototype) was wrong.
+    BadIndexingType, // We exited because an indexing type was wrong.
+    Overflow, // We exited because of overflow.
+    NegativeZero, // We exited because we encountered negative zero.
+    OutOfBounds, // We had an out-of-bounds access to an array.
+    InadequateCoverage, // We exited because we ended up in code that didn't have profiling coverage.
+    ArgumentsEscaped, // We exited because arguments escaped but we didn't expect them to.
+    Uncountable, // We exited for none of the above reasons, and we should not count it. Most uses of this should be viewed as a FIXME.
+    UncountableWatchpoint // We exited because of a watchpoint, which isn't counted because watchpoints do tracking themselves.
 };
+
+const char* exitKindToString(ExitKind);
+bool exitKindIsCountable(ExitKind);
 
 } // namespace JSC
 
-#endif // ENABLE(JIT)
+namespace WTF {
 
-#endif // JumpReplacementWatchpoint_h
+class PrintStream;
+void printInternal(PrintStream&, JSC::ExitKind);
+
+} // namespace WTF
+
+#endif // ExitKind_h
 

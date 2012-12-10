@@ -23,58 +23,39 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef JumpReplacementWatchpoint_h
-#define JumpReplacementWatchpoint_h
+#ifndef ProfilerOSRExit_h
+#define ProfilerOSRExit_h
 
-#include "Watchpoint.h"
-#include <wtf/Platform.h>
+#include "ExitKind.h"
+#include "JSValue.h"
+#include "ProfilerOriginStack.h"
 
-#if ENABLE(JIT)
+namespace JSC { namespace Profiler {
 
-#include "CodeLocation.h"
-#include "MacroAssembler.h"
-
-namespace JSC {
-
-class JumpReplacementWatchpoint : public Watchpoint {
+class OSRExit {
 public:
-    JumpReplacementWatchpoint()
-        : m_source(std::numeric_limits<uintptr_t>::max())
-        , m_destination(std::numeric_limits<uintptr_t>::max())
-    {
-    }
+    OSRExit(unsigned id, const OriginStack&, ExitKind, bool isWatchpoint);
+    ~OSRExit();
     
-    JumpReplacementWatchpoint(MacroAssembler::Label source)
-        : m_source(source.m_label.m_offset)
-        , m_destination(std::numeric_limits<uintptr_t>::max())
-    {
-    }
+    unsigned id() const { return m_id; }
+    const OriginStack& origin() const { return m_origin; }
+    ExitKind exitKind() const { return m_exitKind; }
+    bool isWatchpoint() const { return m_isWatchpoint; }
     
-    MacroAssembler::Label sourceLabel() const
-    {
-        MacroAssembler::Label label;
-        label.m_label.m_offset = m_source;
-        return label;
-    }
+    uint64_t* counterAddress() { return &m_counter; }
+    uint64_t count() const { return m_counter; }
     
-    void setDestination(MacroAssembler::Label destination)
-    {
-        m_destination = destination.m_label.m_offset;
-    }
-    
-    void correctLabels(LinkBuffer&);
-
-protected:
-    void fireInternal();
+    JSValue toJS(ExecState*) const;
 
 private:
-    uintptr_t m_source;
-    uintptr_t m_destination;
+    unsigned m_id;
+    OriginStack m_origin;
+    ExitKind m_exitKind;
+    bool m_isWatchpoint;
+    uint64_t m_counter;
 };
 
-} // namespace JSC
+} } // namespace JSC::Profiler
 
-#endif // ENABLE(JIT)
-
-#endif // JumpReplacementWatchpoint_h
+#endif // ProfilerOSRExit_h
 

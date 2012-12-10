@@ -89,7 +89,6 @@ JIT::JIT(JSGlobalData* globalData, CodeBlock* codeBlock)
     , m_lastResultBytecodeRegister(std::numeric_limits<int>::max())
     , m_jumpTargetsPosition(0)
 #endif
-    , m_compilation(0)
 #if USE(OS_RANDOMNESS)
     , m_randomGenerator(cryptographicallyRandomNumber())
 #else
@@ -838,7 +837,7 @@ JITCode JIT::privateCompile(CodePtr* functionEntryArityCheck, JITCompilationEffo
     if (Options::showDisassembly())
         m_disassembler->dump(patchBuffer);
     if (m_compilation)
-        m_disassembler->reportToProfiler(m_compilation, patchBuffer);
+        m_disassembler->reportToProfiler(m_compilation.get(), patchBuffer);
     
     CodeRef result = patchBuffer.finalizeCodeWithoutDisassembly();
     

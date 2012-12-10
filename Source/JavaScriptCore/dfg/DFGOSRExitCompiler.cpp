@@ -85,7 +85,7 @@ void compileOSRExit(ExecState* exec)
     dataLog(
         "Generating OSR exit #", exitIndex, " (seq#", exit.m_streamIndex,
         ", bc#", exit.m_codeOrigin.bytecodeIndex, ", @", exit.m_nodeIndex, ", ",
-        exitKindToString(exit.m_kind), ") for ", *codeBlock, ".\n");
+        exit.m_kind, ") for ", *codeBlock, ".\n");
 #endif
 
     {
@@ -93,6 +93,18 @@ void compileOSRExit(ExecState* exec)
         OSRExitCompiler exitCompiler(jit);
 
         jit.jitAssertHasValidCallFrame();
+        
+        if (globalData->m_perBytecodeProfiler && codeBlock->compilation()) {
+            Profiler::Database& database = *globalData->m_perBytecodeProfiler;
+            Profiler::Compilation* compilation = codeBlock->compilation();
+            
+            Profiler::OSRExit* profilerExit = compilation->addOSRExit(
+                exitIndex, Profiler::OriginStack(database, codeBlock, exit.m_codeOrigin),
+                exit.m_kind,
+                exit.m_watchpointIndex != std::numeric_limits<unsigned>::max());
+            jit.add64(CCallHelpers::TrustedImm32(1), CCallHelpers::AbsoluteAddress(profilerExit->counterAddress()));
+        }
+        
         exitCompiler.compileExit(exit, operands, recovery);
         
         LinkBuffer patchBuffer(*globalData, &jit, codeBlock);

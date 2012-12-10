@@ -671,7 +671,7 @@ public:
     
     JSGlobalData& m_globalData;
     CodeBlock* m_codeBlock;
-    Profiler::Compilation* m_compilation;
+    RefPtr<Profiler::Compilation> m_compilation;
     CodeBlock* m_profiledBlock;
 
     Vector< OwnPtr<BasicBlock> , 8> m_blocks;

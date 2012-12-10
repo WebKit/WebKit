@@ -56,6 +56,17 @@ ExecutionCounter* Compilation::executionCounterFor(const OriginStack& origin)
     return result;
 }
 
+void Compilation::addOSRExitSite(const void* codeAddress)
+{
+    m_osrExitSites.append(OSRExitSite(codeAddress));
+}
+
+OSRExit* Compilation::addOSRExit(unsigned id, const OriginStack& originStack, ExitKind exitKind, bool isWatchpoint)
+{
+    m_osrExits.append(OSRExit(id, originStack, exitKind, isWatchpoint));
+    return &m_osrExits.last();
+}
+
 JSValue Compilation::toJS(ExecState* exec) const
 {
     JSObject* result = constructEmptyObject(exec);
@@ -77,6 +88,16 @@ JSValue Compilation::toJS(ExecState* exec) const
         counters->push(exec, counterEntry);
     }
     result->putDirect(exec->globalData(), exec->propertyNames().counters, counters);
+    
+    JSArray* exitSites = constructEmptyArray(exec, 0);
+    for (unsigned i = 0; i < m_osrExitSites.size(); ++i)
+        exitSites->putDirectIndex(exec, i, m_osrExitSites[i].toJS(exec));
+    result->putDirect(exec->globalData(), exec->propertyNames().osrExitSites, exitSites);
+    
+    JSArray* exits = constructEmptyArray(exec, 0);
+    for (unsigned i = 0; i < m_osrExits.size(); ++i)
+        exits->putDirectIndex(exec, i, m_osrExits[i].toJS(exec));
+    result->putDirect(exec->globalData(), exec->propertyNames().osrExits, exits);
     
     return result;
 }

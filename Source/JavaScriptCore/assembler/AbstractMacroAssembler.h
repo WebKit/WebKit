@@ -528,6 +528,13 @@ public:
         {
         }
 #endif
+        
+        Label label() const
+        {
+            Label result;
+            result.m_label = m_label;
+            return result;
+        }
 
         void link(AbstractMacroAssembler<AssemblerType>* masm) const
         {

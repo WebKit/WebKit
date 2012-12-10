@@ -51,6 +51,16 @@ JITCompiler::JITCompiler(Graph& dfg)
 
 void JITCompiler::linkOSRExits()
 {
+    if (m_graph.m_compilation) {
+        for (unsigned i = 0; i < codeBlock()->numberOfOSRExits(); ++i) {
+            OSRExit& exit = codeBlock()->osrExit(i);
+            if (exit.m_watchpointIndex == std::numeric_limits<unsigned>::max())
+                m_exitSiteLabels.append(exit.m_check.initialJump().label());
+            else
+                m_exitSiteLabels.append(codeBlock()->watchpoint(exit.m_watchpointIndex).sourceLabel());
+        }
+    }
+    
     for (unsigned i = 0; i < codeBlock()->numberOfOSRExits(); ++i) {
         OSRExit& exit = codeBlock()->osrExit(i);
         ASSERT(!exit.m_check.isSet() == (exit.m_watchpointIndex != std::numeric_limits<unsigned>::max()));
@@ -206,6 +216,17 @@ void JITCompiler::link(LinkBuffer& linkBuffer)
             codeBlock()->watchpoint(exit.m_watchpointIndex).correctLabels(linkBuffer);
     }
     
+    if (m_graph.m_compilation) {
+        ASSERT(m_exitSiteLabels.size() == codeBlock()->numberOfOSRExits());
+        for (unsigned i = 0; i < m_exitSiteLabels.size(); ++i) {
+            m_graph.m_compilation->addOSRExitSite(
+                linkBuffer.locationOf(m_exitSiteLabels[i]).executableAddress());
+        }
+    } else
+        ASSERT(!m_exitSiteLabels.size());
+    
+    codeBlock()->saveCompilation(m_graph.m_compilation);
+    
     codeBlock()->minifiedDFG().setOriginalGraphSize(m_graph.size());
     codeBlock()->shrinkToFit(CodeBlock::LateShrink);
 }
@@ -239,7 +260,7 @@ bool JITCompiler::compile(JITCode& entry)
     if (shouldShowDisassembly())
         m_disassembler->dump(linkBuffer);
     if (m_graph.m_compilation)
-        m_disassembler->reportToProfiler(m_graph.m_compilation, linkBuffer);
+        m_disassembler->reportToProfiler(m_graph.m_compilation.get(), linkBuffer);
 
     entry = JITCode(
         linkBuffer.finalizeCodeWithoutDisassembly(),
@@ -332,7 +353,7 @@ bool JITCompiler::compileFunction(JITCode& entry, MacroAssemblerCodePtr& entryWi
     if (shouldShowDisassembly())
         m_disassembler->dump(linkBuffer);
     if (m_graph.m_compilation)
-        m_disassembler->reportToProfiler(m_graph.m_compilation, linkBuffer);
+        m_disassembler->reportToProfiler(m_graph.m_compilation.get(), linkBuffer);
 
     entryWithArityCheck = linkBuffer.locationOf(arityCheck);
     entry = JITCode(

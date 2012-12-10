@@ -23,58 +23,29 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef JumpReplacementWatchpoint_h
-#define JumpReplacementWatchpoint_h
+#ifndef ProfilerOSRExitSite_h
+#define ProfilerOSRExitSite_h
 
-#include "Watchpoint.h"
-#include <wtf/Platform.h>
+#include "JSValue.h"
 
-#if ENABLE(JIT)
+namespace JSC { namespace Profiler {
 
-#include "CodeLocation.h"
-#include "MacroAssembler.h"
-
-namespace JSC {
-
-class JumpReplacementWatchpoint : public Watchpoint {
+class OSRExitSite {
 public:
-    JumpReplacementWatchpoint()
-        : m_source(std::numeric_limits<uintptr_t>::max())
-        , m_destination(std::numeric_limits<uintptr_t>::max())
+    explicit OSRExitSite(const void* codeAddress)
+        : m_codeAddress(codeAddress)
     {
     }
     
-    JumpReplacementWatchpoint(MacroAssembler::Label source)
-        : m_source(source.m_label.m_offset)
-        , m_destination(std::numeric_limits<uintptr_t>::max())
-    {
-    }
+    const void* codeAddress() const { return m_codeAddress; }
     
-    MacroAssembler::Label sourceLabel() const
-    {
-        MacroAssembler::Label label;
-        label.m_label.m_offset = m_source;
-        return label;
-    }
-    
-    void setDestination(MacroAssembler::Label destination)
-    {
-        m_destination = destination.m_label.m_offset;
-    }
-    
-    void correctLabels(LinkBuffer&);
-
-protected:
-    void fireInternal();
+    JSValue toJS(ExecState*) const;
 
 private:
-    uintptr_t m_source;
-    uintptr_t m_destination;
+    const void* m_codeAddress;
 };
 
-} // namespace JSC
+} } // namespace JSC::Profiler
 
-#endif // ENABLE(JIT)
-
-#endif // JumpReplacementWatchpoint_h
+#endif // ProfilerOSRExitSite_h
 

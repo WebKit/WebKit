@@ -947,7 +947,7 @@ namespace JSC {
 #endif
 #endif
         OwnPtr<JITDisassembler> m_disassembler;
-        Profiler::Compilation* m_compilation;
+        RefPtr<Profiler::Compilation> m_compilation;
         WeakRandom m_randomGenerator;
         static CodeRef stringGetByValStubGenerator(JSGlobalData*);
 

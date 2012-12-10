@@ -460,6 +460,7 @@ private:
     
     Vector<PropertyAccessRecord, 4> m_propertyAccesses;
     Vector<JSCallRecord, 4> m_jsCalls;
+    Vector<Label> m_exitSiteLabels;
     unsigned m_currentCodeOriginIndex;
 };
 

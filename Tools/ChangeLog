@@ -1,3 +1,17 @@
+2012-12-09  Filip Pizlo  <fpizlo@apple.com>
+
+        Profiler should say things about OSR exits
+        https://bugs.webkit.org/show_bug.cgi?id=104497
+
+        Reviewed by Oliver Hunt.
+
+        Adds support for displaying OSR exit information for full summary (just displays the
+        counts and the number of recompilations), bytecode display (says which bytecodes
+        exited), and DFG display (annotates disassembly with taken OSR exits and their
+        counts).
+
+        * Scripts/display-profiler-output:
+
 2012-12-10  Alexis Menard  <alexis@webkit.org>
 
         [CSS3 Backgrounds and Borders] Remove CSS3_BACKGROUND feature flag.

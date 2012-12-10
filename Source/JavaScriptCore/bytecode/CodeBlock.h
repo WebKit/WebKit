@@ -62,6 +62,7 @@
 #include "LazyOperandValueProfile.h"
 #include "LineInfo.h"
 #include "Nodes.h"
+#include "ProfilerCompilation.h"
 #include "RegExpObject.h"
 #include "ResolveOperation.h"
 #include "StructureStubInfo.h"
@@ -322,6 +323,19 @@ namespace JSC {
                 return;
             
             m_dfgData = adoptPtr(new DFGData);
+        }
+        
+        void saveCompilation(PassRefPtr<Profiler::Compilation> compilation)
+        {
+            createDFGDataIfNecessary();
+            m_dfgData->compilation = compilation;
+        }
+        
+        Profiler::Compilation* compilation()
+        {
+            if (!m_dfgData)
+                return 0;
+            return m_dfgData->compilation.get();
         }
         
         DFG::OSREntryData* appendDFGOSREntryData(unsigned bytecodeIndex, unsigned machineCodeOffset)
@@ -1275,6 +1289,7 @@ namespace JSC {
             Vector<WriteBarrier<JSCell> > weakReferences;
             DFG::VariableEventStream variableEventStream;
             DFG::MinifiedGraph minifiedDFG;
+            RefPtr<Profiler::Compilation> compilation;
             bool mayBeExecuting;
             bool isJettisoned;
             bool livenessHasBeenProved; // Initialized and used on every GC.

@@ -201,6 +201,12 @@
 		0FA581BC150E953000B9A2D9 /* DFGNodeType.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FA581B9150E952A00B9A2D9 /* DFGNodeType.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		0FAF7EFD165BA91B000C8455 /* JITDisassembler.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0FAF7EFA165BA919000C8455 /* JITDisassembler.cpp */; };
 		0FAF7EFE165BA91F000C8455 /* JITDisassembler.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FAF7EFB165BA919000C8455 /* JITDisassembler.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		0FB105851675480F00F8AB6E /* ExitKind.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0FB105821675480C00F8AB6E /* ExitKind.cpp */; };
+		0FB105861675481200F8AB6E /* ExitKind.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FB105831675480C00F8AB6E /* ExitKind.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		0FB1058B1675483100F8AB6E /* ProfilerOSRExit.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0FB105871675482E00F8AB6E /* ProfilerOSRExit.cpp */; };
+		0FB1058C1675483300F8AB6E /* ProfilerOSRExit.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FB105881675482E00F8AB6E /* ProfilerOSRExit.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		0FB1058D1675483700F8AB6E /* ProfilerOSRExitSite.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0FB105891675482E00F8AB6E /* ProfilerOSRExitSite.cpp */; };
+		0FB1058E1675483A00F8AB6E /* ProfilerOSRExitSite.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FB1058A1675482E00F8AB6E /* ProfilerOSRExitSite.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		0FB5467714F59B5C002C2989 /* LazyOperandValueProfile.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FB5467614F59AD1002C2989 /* LazyOperandValueProfile.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		0FB5467914F5C46B002C2989 /* LazyOperandValueProfile.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0FB5467814F5C468002C2989 /* LazyOperandValueProfile.cpp */; };
 		0FB5467B14F5C7E1002C2989 /* MethodOfGettingAValueProfile.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FB5467A14F5C7D4002C2989 /* MethodOfGettingAValueProfile.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -1025,6 +1031,12 @@
 		0FA581B9150E952A00B9A2D9 /* DFGNodeType.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DFGNodeType.h; path = dfg/DFGNodeType.h; sourceTree = "<group>"; };
 		0FAF7EFA165BA919000C8455 /* JITDisassembler.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JITDisassembler.cpp; sourceTree = "<group>"; };
 		0FAF7EFB165BA919000C8455 /* JITDisassembler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JITDisassembler.h; sourceTree = "<group>"; };
+		0FB105821675480C00F8AB6E /* ExitKind.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ExitKind.cpp; sourceTree = "<group>"; };
+		0FB105831675480C00F8AB6E /* ExitKind.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ExitKind.h; sourceTree = "<group>"; };
+		0FB105871675482E00F8AB6E /* ProfilerOSRExit.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ProfilerOSRExit.cpp; path = profiler/ProfilerOSRExit.cpp; sourceTree = "<group>"; };
+		0FB105881675482E00F8AB6E /* ProfilerOSRExit.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ProfilerOSRExit.h; path = profiler/ProfilerOSRExit.h; sourceTree = "<group>"; };
+		0FB105891675482E00F8AB6E /* ProfilerOSRExitSite.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ProfilerOSRExitSite.cpp; path = profiler/ProfilerOSRExitSite.cpp; sourceTree = "<group>"; };
+		0FB1058A1675482E00F8AB6E /* ProfilerOSRExitSite.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ProfilerOSRExitSite.h; path = profiler/ProfilerOSRExitSite.h; sourceTree = "<group>"; };
 		0FB5467614F59AD1002C2989 /* LazyOperandValueProfile.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LazyOperandValueProfile.h; sourceTree = "<group>"; };
 		0FB5467814F5C468002C2989 /* LazyOperandValueProfile.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = LazyOperandValueProfile.cpp; sourceTree = "<group>"; };
 		0FB5467A14F5C7D4002C2989 /* MethodOfGettingAValueProfile.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MethodOfGettingAValueProfile.h; sourceTree = "<group>"; };
@@ -2554,6 +2566,14 @@
 			isa = PBXGroup;
 			children = (
 				95E3BC040E1AE68200B2D1C1 /* CallIdentifier.h */,
+				95AB832E0DA42CAD00BC83F3 /* LegacyProfiler.cpp */,
+				95AB832F0DA42CAD00BC83F3 /* LegacyProfiler.h */,
+				95742F630DD11F5A000917FB /* Profile.cpp */,
+				95742F640DD11F5A000917FB /* Profile.h */,
+				95CD45740E1C4FDD0085358E /* ProfileGenerator.cpp */,
+				95CD45750E1C4FDD0085358E /* ProfileGenerator.h */,
+				95AB83540DA43B4400BC83F3 /* ProfileNode.cpp */,
+				95AB83550DA43B4400BC83F3 /* ProfileNode.h */,
 				0FF72992166AD347000F5BA3 /* ProfilerBytecode.cpp */,
 				0FF72993166AD347000F5BA3 /* ProfilerBytecode.h */,
 				0FF72994166AD347000F5BA3 /* ProfilerBytecodes.cpp */,
@@ -2571,14 +2591,10 @@
 				0FF729A0166AD347000F5BA3 /* ProfilerOrigin.h */,
 				0FF729A1166AD347000F5BA3 /* ProfilerOriginStack.cpp */,
 				0FF729A2166AD347000F5BA3 /* ProfilerOriginStack.h */,
-				95742F630DD11F5A000917FB /* Profile.cpp */,
-				95742F640DD11F5A000917FB /* Profile.h */,
-				95CD45740E1C4FDD0085358E /* ProfileGenerator.cpp */,
-				95CD45750E1C4FDD0085358E /* ProfileGenerator.h */,
-				95AB83540DA43B4400BC83F3 /* ProfileNode.cpp */,
-				95AB83550DA43B4400BC83F3 /* ProfileNode.h */,
-				95AB832E0DA42CAD00BC83F3 /* LegacyProfiler.cpp */,
-				95AB832F0DA42CAD00BC83F3 /* LegacyProfiler.h */,
+				0FB105871675482E00F8AB6E /* ProfilerOSRExit.cpp */,
+				0FB105881675482E00F8AB6E /* ProfilerOSRExit.h */,
+				0FB105891675482E00F8AB6E /* ProfilerOSRExitSite.cpp */,
+				0FB1058A1675482E00F8AB6E /* ProfilerOSRExitSite.h */,
 			);
 			name = profiler;
 			sourceTree = "<group>";
@@ -2647,6 +2663,8 @@
 				969A07920ED1D3AE00F1F681 /* EvalCodeCache.h */,
 				0F56A1D415001CF2002992B1 /* ExecutionCounter.cpp */,
 				0F56A1D115000F31002992B1 /* ExecutionCounter.h */,
+				0FB105821675480C00F8AB6E /* ExitKind.cpp */,
+				0FB105831675480C00F8AB6E /* ExitKind.h */,
 				0F0B83AA14BCF5B900885B4F /* ExpressionRangeInfo.h */,
 				0F93329514CA7DC10085F3C6 /* GetByIdStatus.cpp */,
 				0F93329614CA7DC10085F3C6 /* GetByIdStatus.h */,
@@ -3143,6 +3161,9 @@
 				0FF729BE166AD360000F5BA3 /* ProfilerExecutionCounter.h in Headers */,
 				0FF729BF166AD360000F5BA3 /* ProfilerOrigin.h in Headers */,
 				0FF729C0166AD360000F5BA3 /* ProfilerOriginStack.h in Headers */,
+				0FB105861675481200F8AB6E /* ExitKind.h in Headers */,
+				0FB1058C1675483300F8AB6E /* ProfilerOSRExit.h in Headers */,
+				0FB1058E1675483A00F8AB6E /* ProfilerOSRExitSite.h in Headers */,
 				0FF60AC216740F8300029779 /* ReduceWhitespace.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -3740,6 +3761,9 @@
 				0FF729B2166AD35C000F5BA3 /* ProfilerDatabase.cpp in Sources */,
 				0FF729B3166AD35C000F5BA3 /* ProfilerOrigin.cpp in Sources */,
 				0FF729B4166AD35C000F5BA3 /* ProfilerOriginStack.cpp in Sources */,
+				0FB105851675480F00F8AB6E /* ExitKind.cpp in Sources */,
+				0FB1058B1675483100F8AB6E /* ProfilerOSRExit.cpp in Sources */,
+				0FB1058D1675483700F8AB6E /* ProfilerOSRExitSite.cpp in Sources */,
 				0FF60AC316740F8800029779 /* ReduceWhitespace.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

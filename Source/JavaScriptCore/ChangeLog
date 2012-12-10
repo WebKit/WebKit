@@ -1,3 +1,91 @@
+2012-12-09  Filip Pizlo  <fpizlo@apple.com>
+
+        Profiler should say things about OSR exits
+        https://bugs.webkit.org/show_bug.cgi?id=104497
+
+        Reviewed by Oliver Hunt.
+
+        This adds support for profiling OSR exits. For each exit that is taken, the profiler
+        records the machine code address that the exit occurred on, the exit kind, the origin
+        stack, and the number of times that it happened.
+
+        * CMakeLists.txt:
+        * GNUmakefile.list.am:
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore.vcproj:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * Target.pri:
+        * assembler/AbstractMacroAssembler.h:
+        (Jump):
+        (JSC::AbstractMacroAssembler::Jump::label):
+        * bytecode/CodeBlock.h:
+        (JSC::CodeBlock::saveCompilation):
+        (CodeBlock):
+        (JSC::CodeBlock::compilation):
+        (DFGData):
+        * bytecode/DFGExitProfile.h:
+        (DFG):
+        * bytecode/ExitKind.cpp: Added.
+        (JSC):
+        (JSC::exitKindToString):
+        (JSC::exitKindIsCountable):
+        (WTF):
+        (WTF::printInternal):
+        * bytecode/ExitKind.h: Added.
+        (JSC):
+        (WTF):
+        * dfg/DFGGraph.h:
+        (Graph):
+        * dfg/DFGJITCompiler.cpp:
+        (JSC::DFG::JITCompiler::linkOSRExits):
+        (JSC::DFG::JITCompiler::link):
+        (JSC::DFG::JITCompiler::compile):
+        (JSC::DFG::JITCompiler::compileFunction):
+        * dfg/DFGJITCompiler.h:
+        (JITCompiler):
+        * dfg/DFGOSRExitCompiler.cpp:
+        * jit/JIT.cpp:
+        (JSC::JIT::JIT):
+        (JSC::JIT::privateCompile):
+        * jit/JIT.h:
+        (JIT):
+        * jit/JumpReplacementWatchpoint.h:
+        (JSC::JumpReplacementWatchpoint::sourceLabel):
+        (JumpReplacementWatchpoint):
+        * profiler/ProfilerCompilation.cpp:
+        (JSC::Profiler::Compilation::addOSRExitSite):
+        (Profiler):
+        (JSC::Profiler::Compilation::addOSRExit):
+        (JSC::Profiler::Compilation::toJS):
+        * profiler/ProfilerCompilation.h:
+        (Compilation):
+        * profiler/ProfilerDatabase.cpp:
+        (JSC::Profiler::Database::newCompilation):
+        * profiler/ProfilerDatabase.h:
+        (Database):
+        * profiler/ProfilerOSRExit.cpp: Added.
+        (Profiler):
+        (JSC::Profiler::OSRExit::OSRExit):
+        (JSC::Profiler::OSRExit::~OSRExit):
+        (JSC::Profiler::OSRExit::toJS):
+        * profiler/ProfilerOSRExit.h: Added.
+        (Profiler):
+        (OSRExit):
+        (JSC::Profiler::OSRExit::id):
+        (JSC::Profiler::OSRExit::origin):
+        (JSC::Profiler::OSRExit::exitKind):
+        (JSC::Profiler::OSRExit::isWatchpoint):
+        (JSC::Profiler::OSRExit::counterAddress):
+        (JSC::Profiler::OSRExit::count):
+        * profiler/ProfilerOSRExitSite.cpp: Added.
+        (Profiler):
+        (JSC::Profiler::OSRExitSite::toJS):
+        * profiler/ProfilerOSRExitSite.h: Added.
+        (Profiler):
+        (OSRExitSite):
+        (JSC::Profiler::OSRExitSite::OSRExitSite):
+        (JSC::Profiler::OSRExitSite::codeAddress):
+        * runtime/CommonIdentifiers.h:
+
 2012-12-10  Alexis Menard  <alexis@webkit.org>
 
         [CSS3 Backgrounds and Borders] Remove CSS3_BACKGROUND feature flag.

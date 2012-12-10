@@ -79,15 +79,14 @@ void Database::notifyDestruction(CodeBlock* codeBlock)
     m_bytecodesMap.remove(codeBlock);
 }
 
-Compilation* Database::newCompilation(Bytecodes* bytecodes, CompilationKind kind)
+PassRefPtr<Compilation> Database::newCompilation(Bytecodes* bytecodes, CompilationKind kind)
 {
-    OwnPtr<Compilation> compilation = adoptPtr(new Compilation(bytecodes, kind));
-    Compilation* result = compilation.get();
-    m_compilations.append(compilation.release());
-    return result;
+    RefPtr<Compilation> compilation = adoptRef(new Compilation(bytecodes, kind));
+    m_compilations.append(compilation);
+    return compilation.release();
 }
 
-Compilation* Database::newCompilation(CodeBlock* codeBlock, CompilationKind kind)
+PassRefPtr<Compilation> Database::newCompilation(CodeBlock* codeBlock, CompilationKind kind)
 {
     return newCompilation(ensureBytecodesFor(codeBlock), kind);
 }
