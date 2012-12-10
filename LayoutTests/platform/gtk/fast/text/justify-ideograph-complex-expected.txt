@@ -18,7 +18,7 @@ layer at (0,0) size 800x600
         RenderText {#text} at (0,0) size 550x42
           text run at (0,0) width 550: "EA Mobile \x{7684} Worldwide Studios \x{526F}\x{7E3D}\x{88C1} Travis Boatman \x{6307}\x{51FA}\x{FF1A}\x{300C}App Store \x{4E0D}\x{50C5}\x{5FB9}\x{5E95}\x{6539}\x{8B8A}\x{4E86}\x{884C}\x{52D5}\x{904A}\x{6232}\x{7522}"
           text run at (0,14) width 550: "\x{696D}\x{7684}\x{751F}\x{614B}\x{FF0C}\x{800C}\x{4E14}\x{9084}\x{5728}\x{6301}\x{7E8C}\x{6F14}\x{9032}\x{3002}\x{6709}\x{4E86}\x{5168}\x{7403} 5 \x{5343}\x{591A}\x{842C}\x{7684} iPhone \x{548C} iPod touch \x{5BA2}\x{6236}\x{70BA}\x{57FA}\x{790E}\x{FF0C}App Store \x{8B93}\x{6211}"
-          text run at (0,28) width 275: "\x{5011}\x{80FD}\x{5920}\x{958B}\x{767C}\x{53D7}\x{5230}\x{5EE3}\x{5927}\x{7684}\x{5BA2}\x{6236}\x{559C}\x{611B}\x{7684}\x{9AD8}\x{54C1}\x{8CEA} EA \x{904A}\x{6232}\x{3002}\x{300D}"
+          text run at (0,28) width 276: "\x{5011}\x{80FD}\x{5920}\x{958B}\x{767C}\x{53D7}\x{5230}\x{5EE3}\x{5927}\x{7684}\x{5BA2}\x{6236}\x{559C}\x{611B}\x{7684}\x{9AD8}\x{54C1}\x{8CEA} EA \x{904A}\x{6232}\x{3002}\x{300D}"
       RenderBlock {P} at (0,176) size 550x42
         RenderText {#text} at (0,0) size 550x42
           text run at (0,0) width 550: "Smule \x{7684}\x{57F7}\x{884C}\x{9577} Jeff Smith \x{8868}\x{793A}\x{FF1A}\x{300C}\x{6211}\x{5011}\x{7684} I Am T-Pain \x{61C9}\x{7528}\x{7A0B}\x{5F0F}\x{53D7}\x{5230}\x{5168}\x{7403}\x{5BA2}\x{6236}\x{7684}\x{71B1}\x{70C8}\x{8FF4}\x{97FF}\x{FF0C}\x{6BCF}\x{65E5}\x{8D85}\x{904E}"

@@ -3,15 +3,15 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderSVGRoot {svg} at (0,0) size 800x600
     RenderSVGContainer {g} at (33,221) size 651x144
-      RenderSVGText {text} at (73,133) size 313x21 contains 1 chunk(s)
-        RenderSVGInlineText {#text} at (198,0) size 114x21
-          chunk 1 (middle anchor) text run 1 at (272.00,150.00) startOffset 0 endOffset 14 width 114.00 RTL: "\x{646}\x{634}\x{627}\x{637} \x{627}\x{644}\x{62A}\x{62F}\x{648}\x{64A}\x{644} \""
+      RenderSVGText {text} at (74,133) size 311x21 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (198,0) size 112x21
+          chunk 1 (middle anchor) text run 1 at (273.50,150.00) startOffset 0 endOffset 14 width 111.60 RTL: "\x{646}\x{634}\x{627}\x{637} \x{627}\x{644}\x{62A}\x{62F}\x{648}\x{64A}\x{644} \""
         RenderSVGTSpan {tspan} at (0,0) size 188x21
-          RenderSVGInlineText {#text} at (11,0) size 187x21
-            chunk 1 (middle anchor) text run 1 at (85.40,150.00) startOffset 0 endOffset 8 width 49.20 RTL: ", \x{627}\x{62E}\x{62A}\x{628}\x{627}\x{631}"
-            chunk 1 (middle anchor) text run 1 at (134.60,150.00) startOffset 0 endOffset 14 width 137.40: "dirRTL ubEmbed"
+          RenderSVGInlineText {#text} at (11,0) size 188x21
+            chunk 1 (middle anchor) text run 1 at (86.30,150.00) startOffset 0 endOffset 8 width 49.80 RTL: ", \x{627}\x{62E}\x{62A}\x{628}\x{627}\x{631}"
+            chunk 1 (middle anchor) text run 1 at (136.10,150.00) startOffset 0 endOffset 14 width 137.40: "dirRTL ubEmbed"
         RenderSVGInlineText {#text} at (0,0) size 12x21
-          chunk 1 (middle anchor) text run 1 at (74.00,150.00) startOffset 0 endOffset 2 width 11.40 RTL: "\"!"
+          chunk 1 (middle anchor) text run 1 at (74.90,150.00) startOffset 0 endOffset 2 width 11.40 RTL: "\"!"
       RenderSVGText {text} at (20,170) size 86x12 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,0) size 86x12
           chunk 1 text run 1 at (20.00,180.00) startOffset 0 endOffset 18 width 85.20: "Reference graphic:"

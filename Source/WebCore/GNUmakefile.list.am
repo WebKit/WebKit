@@ -6165,14 +6165,18 @@ endif
 # ---
 if USE_FREETYPE
 webcore_sources += \
+	Source/WebCore/platform/graphics/cairo/FontCairoHarfbuzzNG.cpp \
 	Source/WebCore/platform/graphics/freetype/FontCacheFreeType.cpp \
 	Source/WebCore/platform/graphics/freetype/FontCustomPlatformDataFreeType.cpp \
-	Source/WebCore/platform/graphics/freetype/FontPlatformData.h \
 	Source/WebCore/platform/graphics/freetype/GlyphPageTreeNodeFreeType.cpp \
-	Source/WebCore/platform/graphics/freetype/SimpleFontDataFreeType.cpp
+	Source/WebCore/platform/graphics/freetype/SimpleFontDataFreeType.cpp \
+	Source/WebCore/platform/graphics/harfbuzz/HarfBuzzShaperBase.cpp \
+	Source/WebCore/platform/graphics/harfbuzz/ng/HarfBuzzNGFace.cpp \
+	Source/WebCore/platform/graphics/harfbuzz/ng/HarfBuzzNGFaceCairo.cpp \
+	Source/WebCore/platform/graphics/harfbuzz/ng/HarfBuzzShaper.cpp
 webcoregtk_sources += \
-	Source/WebCore/platform/graphics/pango/FontPango.cpp \
 	Source/WebCore/platform/graphics/freetype/FontPlatformDataFreeType.cpp
+
 endif # END USE_FREETYPE
 
 # ---

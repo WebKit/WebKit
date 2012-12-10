@@ -128,7 +128,10 @@ webcoregtk_cppflags += \
 if USE_FREETYPE
 webcoregtk_cppflags += \
 	-DWTF_USE_FREETYPE=1 \
-	-I$(srcdir)/Source/WebCore/platform/graphics/freetype
+	-DWTF_USE_HARFBUZZ_NG=1 \
+	-I$(srcdir)/Source/WebCore/platform/graphics/freetype \
+	-I$(srcdir)/Source/WebCore/platform/graphics/harfbuzz \
+	-I$(srcdir)/Source/WebCore/platform/graphics/harfbuzz/ng
 endif # END USE_FREETYPE
 
 # ---
@@ -297,6 +300,7 @@ libWebCoreSVG_la_CPPFLAGS = \
 	$(javascriptcore_cppflags) \
 	-fno-strict-aliasing \
 	$(CAIRO_CFLAGS) \
+	$(FREETYPE_CFLAGS) \
 	$(LIBSOUP_CFLAGS)
 
 feature_defines_overrides += ENABLE_SVG=1
@@ -687,6 +691,7 @@ libWebCore_la_CPPFLAGS = \
 	$(CLUTTER_CFLAGS) \
 	$(COVERAGE_CFLAGS) \
 	$(ENCHANT_CFLAGS) \
+	$(FREETYPE_CFLAGS) \
 	$(GAMEPAD_CFLAGS) \
 	$(GEOCLUE_CFLAGS) \
 	$(GLIB_CFLAGS) \
@@ -737,6 +742,7 @@ libWebCorePlatform_la_CPPFLAGS = \
 	$(CLUTTER_CFLAGS) \
 	$(COVERAGE_CFLAGS) \
 	$(ENCHANT_CFLAGS) \
+	$(FREETYPE_CFLAGS) \
 	$(GAMEPAD_CFLAGS) \
 	$(GEOCLUE_CFLAGS) \
 	$(GLIB_CFLAGS) \
@@ -784,6 +790,7 @@ libWebCoreGtk_la_CPPFLAGS = \
 	$(COVERAGE_CFLAGS) \
 	$(ENCHANT_CFLAGS) \
 	$(FARSTREAM_CFLAGS) \
+	$(FREETYPE_CFLAGS) \
 	$(GAIL_CFLAGS) \
 	$(GAMEPAD_CFLAGS) \
 	$(GEOCLUE_CFLAGS) \

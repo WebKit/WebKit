@@ -979,12 +979,14 @@ if test "$with_font_backend" = "freetype"; then
    if test "$with_target" = "directfb"; then
    PKG_CHECK_MODULES([FREETYPE],
                      [fontconfig >= $FONTCONFIG_REQUIRED_VERSION
-                     freetype2 >= $FREETYPE2_REQUIRED_VERSION])
+                     freetype2 >= $FREETYPE2_REQUIRED_VERSION
+                     harfbuzz])
    else
    PKG_CHECK_MODULES([FREETYPE],
                      [cairo-ft
                      fontconfig >= $FONTCONFIG_REQUIRED_VERSION
-                     freetype2 >= $FREETYPE2_REQUIRED_VERSION])
+                     freetype2 >= $FREETYPE2_REQUIRED_VERSION
+                     harfbuzz])
    fi
    AC_SUBST([FREETYPE_CFLAGS])
    AC_SUBST([FREETYPE_LIBS])

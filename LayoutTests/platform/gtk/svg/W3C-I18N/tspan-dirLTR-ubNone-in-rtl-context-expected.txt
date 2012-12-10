@@ -3,15 +3,15 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderSVGRoot {svg} at (0,0) size 800x600
     RenderSVGContainer {g} at (33,221) size 651x144
-      RenderSVGText {text} at (80,133) size 299x21 contains 1 chunk(s)
-        RenderSVGInlineText {#text} at (184,0) size 114x21
-          chunk 1 (middle anchor) text run 1 at (265.10,150.00) startOffset 0 endOffset 14 width 114.00 RTL: "\x{646}\x{634}\x{627}\x{637} \x{627}\x{644}\x{62A}\x{62F}\x{648}\x{64A}\x{644} \""
+      RenderSVGText {text} at (82,133) size 296x21 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (184,0) size 112x21
+          chunk 1 (middle anchor) text run 1 at (266.30,150.00) startOffset 0 endOffset 14 width 111.60 RTL: "\x{646}\x{634}\x{627}\x{637} \x{627}\x{644}\x{62A}\x{62F}\x{648}\x{64A}\x{644} \""
         RenderSVGTSpan {tspan} at (0,0) size 174x21
           RenderSVGInlineText {#text} at (11,0) size 173x21
-            chunk 1 (middle anchor) text run 1 at (92.30,150.00) startOffset 0 endOffset 8 width 49.20 RTL: ", \x{627}\x{62E}\x{62A}\x{628}\x{627}\x{631}"
-            chunk 1 (middle anchor) text run 1 at (141.50,150.00) startOffset 0 endOffset 13 width 123.60: "dirLTR ubNone"
+            chunk 1 (middle anchor) text run 1 at (93.50,150.00) startOffset 0 endOffset 8 width 49.20 RTL: ", \x{627}\x{62E}\x{62A}\x{628}\x{627}\x{631}"
+            chunk 1 (middle anchor) text run 1 at (142.70,150.00) startOffset 0 endOffset 13 width 123.60: "dirLTR ubNone"
         RenderSVGInlineText {#text} at (0,0) size 12x21
-          chunk 1 (middle anchor) text run 1 at (80.90,150.00) startOffset 0 endOffset 2 width 11.40 RTL: "\"!"
+          chunk 1 (middle anchor) text run 1 at (82.10,150.00) startOffset 0 endOffset 2 width 11.40 RTL: "\"!"
       RenderSVGText {text} at (20,170) size 86x12 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,0) size 86x12
           chunk 1 text run 1 at (20.00,180.00) startOffset 0 endOffset 18 width 85.20: "Reference graphic:"

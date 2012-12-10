@@ -13,7 +13,7 @@ layer at (0,0) size 800x154
           text run at (292,0) width 36 RTL: "\x{5E9}\x{5D5}\x{5BC}\x{5E8}\x{5D4}"
           text run at (328,0) width 177: "\", separated with line-break."
       RenderBlock {P} at (0,86) size 784x36
-        RenderText {#text} at (0,0) size 77x37
+        RenderText {#text} at (0,0) size 72x37
           text run at (0,0) width 36 RTL: "\x{5E9}\x{5D5}\x{5BC}\x{5E8}\x{5D4}"
           text run at (36,0) width 0: " "
-          text run at (0,18) width 77 RTL: "\x{5E9}\x{5D5}\x{5BC}\x{5E8}\x{5D4}\x{D}\x{5E9}\x{5D5}\x{5BC}\x{5E8}\x{5D4}"
+          text run at (0,18) width 72 RTL: "\x{5E9}\x{5D5}\x{5BC}\x{5E8}\x{5D4}\x{D}\x{5E9}\x{5D5}\x{5BC}\x{5E8}\x{5D4}"

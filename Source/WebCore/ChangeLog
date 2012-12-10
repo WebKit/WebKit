@@ -1,3 +1,25 @@
+2012-12-10  Martin Robinson  <mrobinson@igalia.com>
+
+        [GTK] Bring Harfbuzz-ng support to Gtk
+        https://bugs.webkit.org/show_bug.cgi?id=92098
+
+        Reviewed by Gustavo Noronha Silva.
+
+        Enable HarfBuzz support by default. With the Freetype backend we no longer
+        fall back to Pango for rendering complex text.
+
+        No new tests. This is covered by existing tests.
+
+        * GNUmakefile.am: Add HarfBuzz include directories and define.
+        * GNUmakefile.list.am: Add HarfBuzz files to source list and remove
+        Pango ones.
+        * platform/graphics/freetype/FontPlatformDataFreeType.cpp:
+        (WebCore::FontPlatformData::operator==): To properly render fallback
+        fonts via HarfBuzz , it's important that we actually ask Fontconfig
+        whether or not two patterns are the same. This ensures that when patterns
+        are just copies of one another they only take up one slot in the font cache
+        and appear to be the same font to HarfBuzzShaper.
+
 2012-12-10  Alexander Pavlov  <apavlov@chromium.org>
 
         Web Inspector: [Overrides] Unable to change values in Device Metrics override setting

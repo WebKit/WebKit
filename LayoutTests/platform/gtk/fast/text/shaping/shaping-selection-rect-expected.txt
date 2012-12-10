@@ -1,0 +1,18 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
+      RenderBlock {P} at (0,0) size 784x18
+        RenderText {#text} at (0,0) size 606x19
+          text run at (0,0) width 606: "The selection should cover the all of the below text. There should be no blank between C and F."
+      RenderBlock {DIV} at (0,34) size 784x18
+        RenderText {#text} at (0,0) size 34x19
+          text run at (0,0) width 34: "ABC"
+        RenderInline {SPAN} at (0,0) size 31x19
+          RenderText {#text} at (34,0) size 31x19
+            text run at (34,0) width 31 RTL override: "DEF"
+        RenderText {#text} at (65,0) size 29x19
+          text run at (65,0) width 29: "GHI"
+selection start: position 1 of child 0 {#text} of child 2 {DIV} of body
+selection end:   position 3 of child 2 {#text} of child 2 {DIV} of body

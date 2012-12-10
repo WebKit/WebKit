@@ -13,10 +13,10 @@ layer at (0,0) size 800x600
           text run at (0,0) width 478: "The test passes if the two words below look similar, but the top one is bold. "
           text run at (478,0) width 260: "There should be no missing-glyph boxes."
       RenderBlock {P} at (0,86) size 784x18
-        RenderInline {B} at (0,0) size 85x19
-          RenderText {#text} at (0,0) size 85x19
-            text run at (0,0) width 85: "\x{9AC}\x{9BE}\x{982}\x{9B2}\x{9BE}"
+        RenderInline {B} at (0,0) size 50x19
+          RenderText {#text} at (0,0) size 50x19
+            text run at (0,0) width 50: "\x{9AC}\x{9BE}\x{982}\x{9B2}\x{9BE}"
       RenderBlock {P} at (0,120) size 784x0
       RenderBlock {P} at (0,120) size 784x18
-        RenderText {#text} at (0,0) size 85x19
-          text run at (0,0) width 85: "\x{9AC}\x{9BE}\x{982}\x{9B2}\x{9BE}"
+        RenderText {#text} at (0,0) size 50x19
+          text run at (0,0) width 50: "\x{9AC}\x{9BE}\x{982}\x{9B2}\x{9BE}"

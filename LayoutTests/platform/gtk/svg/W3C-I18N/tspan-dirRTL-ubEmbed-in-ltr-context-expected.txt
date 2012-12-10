@@ -3,15 +3,15 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderSVGRoot {svg} at (0,0) size 800x600
     RenderSVGContainer {g} at (33,221) size 651x144
-      RenderSVGText {text} at (73,133) size 314x21 contains 1 chunk(s)
+      RenderSVGText {text} at (74,133) size 312x21 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,0) size 149x21
-          chunk 1 (middle anchor) text run 1 at (73.10,150.00) startOffset 0 endOffset 16 width 148.80: "dirRTL ubEmbed \""
-        RenderSVGTSpan {tspan} at (0,0) size 155x21
-          RenderSVGInlineText {#text} at (148,0) size 154x21
-            chunk 1 (middle anchor) text run 1 at (221.90,150.00) startOffset 0 endOffset 3 width 40.20: "W3C"
-            chunk 1 (middle anchor) text run 1 at (262.10,150.00) startOffset 0 endOffset 14 width 113.40 RTL: "\x{646}\x{634}\x{627}\x{637} \x{627}\x{644}\x{62A}\x{62F}\x{648}\x{64A}\x{644}\x{60C} "
-        RenderSVGInlineText {#text} at (302,0) size 12x21
-          chunk 1 (middle anchor) text run 1 at (375.50,150.00) startOffset 0 endOffset 2 width 11.40: "\"!"
+          chunk 1 (middle anchor) text run 1 at (74.30,150.00) startOffset 0 endOffset 16 width 148.80: "dirRTL ubEmbed \""
+        RenderSVGTSpan {tspan} at (0,0) size 153x21
+          RenderSVGInlineText {#text} at (148,0) size 152x21
+            chunk 1 (middle anchor) text run 1 at (223.10,150.00) startOffset 0 endOffset 3 width 40.20: "W3C"
+            chunk 1 (middle anchor) text run 1 at (263.30,150.00) startOffset 0 endOffset 14 width 111.00 RTL: "\x{646}\x{634}\x{627}\x{637} \x{627}\x{644}\x{62A}\x{62F}\x{648}\x{64A}\x{644}\x{60C} "
+        RenderSVGInlineText {#text} at (300,0) size 12x21
+          chunk 1 (middle anchor) text run 1 at (374.30,150.00) startOffset 0 endOffset 2 width 11.40: "\"!"
       RenderSVGText {text} at (20,170) size 86x12 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,0) size 86x12
           chunk 1 text run 1 at (20.00,180.00) startOffset 0 endOffset 18 width 85.20: "Reference graphic:"

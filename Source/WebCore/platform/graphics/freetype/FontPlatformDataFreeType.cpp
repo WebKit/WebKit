@@ -244,8 +244,13 @@ bool FontPlatformData::isFixedPitch()
 
 bool FontPlatformData::operator==(const FontPlatformData& other) const
 {
-    return m_pattern == other.m_pattern
-        && m_scaledFont == other.m_scaledFont
+    // FcPatternEqual does not support null pointers as arguments.
+    if ((m_pattern && !other.m_pattern)
+        || (!m_pattern && other.m_pattern)
+        || (m_pattern != other.m_pattern && !FcPatternEqual(m_pattern.get(), other.m_pattern.get())))
+        return false;
+
+    return m_scaledFont == other.m_scaledFont
         && m_size == other.m_size
         && m_syntheticOblique == other.m_syntheticOblique
         && m_syntheticBold == other.m_syntheticBold; 

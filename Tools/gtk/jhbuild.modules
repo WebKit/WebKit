@@ -10,6 +10,7 @@
       <dep package="fonts"/>
       <dep package="fontconfig"/>
       <dep package="freetype6"/>
+      <dep package="harfbuzz"/>
       <dep package="libxml2"/>
       <dep package="gdk-pixbuf"/>
       <dep package="gtk+"/>
@@ -85,6 +86,16 @@
             md5sum="647ee8ed266f9a4117c8d0a4855b3d3e"/>
   </tarball>
 
+ <autotools id="harfbuzz" autogen-sh="configure">
+   <branch module="software/harfbuzz/release/harfbuzz-0.9.6.tar.bz2" version="0.9.6"
+           checkoutdir="harfbuzz-0.9.6"
+           repo="freedesktop.org"
+           hash="sha256:394a849d6061993018754b0cc04110891ad215e3df3f6953b75dcc55a11f9d9b"
+           md5sum="f3a100a0512c185b211a0deb4790c34c">
+     <patch file="harfbuzz-icu-detection-fix.patch" strip="1" />
+   </branch>
+ </autotools>
+
   <autotools id="libffi" autogen-sh="configure">
     <branch module="/pub/libffi/libffi-3.0.10.tar.gz" version="3.0.10"
              repo="sourceware.org"
@@ -114,25 +125,11 @@
             md5sum="89d483f30a7c77245b7ee02faaea5a5a"/>
   </autotools>
 
-  <autotools id="pango"
-             autogenargs="--disable-introspection">
-    <dependencies>
-      <dep package="glib"/>
-      <dep package="freetype6"/>
-      <dep package="cairo"/>
-    </dependencies>
-    <branch module="/pub/GNOME/sources/pango/1.30/pango-1.30.0.tar.xz" version="1.30.0"
-            repo="ftp.gnome.org"
-            hash="sha256:7c6d2ab024affaed0e942f9279b818235f9c6a36d9fc50688f48d387f4102dff"
-            md5sum="2a70627ffd9f43c52c04cc0b05fe359f"/>
-  </autotools>
-
   <autotools id="gtk+" autogen-sh="configure"
              autogenargs="--disable-introspection">
     <dependencies>
       <dep package="glib"/>
       <dep package="cairo"/>
-      <dep package="pango"/>
       <dep package="gdk-pixbuf"/>
     </dependencies>
     <branch module="/pub/GNOME/sources/gtk+/3.4/gtk+-3.4.2.tar.xz" version="3.4.2"

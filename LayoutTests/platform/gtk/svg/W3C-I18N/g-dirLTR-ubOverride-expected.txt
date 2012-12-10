@@ -3,12 +3,12 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderSVGRoot {svg} at (0,0) size 800x600
     RenderSVGContainer {g} at (33,221) size 651x144
-      RenderSVGContainer {g} at (128,221) size 511x38
-        RenderSVGText {text} at (77,133) size 305x21 contains 1 chunk(s)
-          RenderSVGInlineText {#text} at (0,0) size 305x21
-            chunk 1 (middle anchor) text run 1 at (77.90,150.00) startOffset 0 endOffset 4 width 45.00: "W3C "
-            chunk 1 (middle anchor) text run 1 at (122.90,150.00) startOffset 0 endOffset 12 width 101.40 RTL: "\x{646}\x{634}\x{627}\x{637} \x{627}\x{644}\x{62A}\x{62F}\x{648}\x{64A}\x{644}"
-            chunk 1 (middle anchor) text run 1 at (224.30,150.00) startOffset 0 endOffset 19 width 157.80: " dirLTR ubOverride!"
+      RenderSVGContainer {g} at (130,221) size 507x38
+        RenderSVGText {text} at (78,133) size 303x21 contains 1 chunk(s)
+          RenderSVGInlineText {#text} at (0,0) size 303x21
+            chunk 1 (middle anchor) text run 1 at (78.50,150.00) startOffset 0 endOffset 4 width 45.00: "W3C "
+            chunk 1 (middle anchor) text run 1 at (123.50,150.00) startOffset 0 endOffset 12 width 100.20 RTL: "\x{646}\x{634}\x{627}\x{637} \x{627}\x{644}\x{62A}\x{62F}\x{648}\x{64A}\x{644}"
+            chunk 1 (middle anchor) text run 1 at (223.70,150.00) startOffset 0 endOffset 19 width 157.80: " dirLTR ubOverride!"
       RenderSVGText {text} at (20,170) size 86x12 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,0) size 86x12
           chunk 1 text run 1 at (20.00,180.00) startOffset 0 endOffset 18 width 85.20: "Reference graphic:"

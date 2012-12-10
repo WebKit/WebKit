@@ -12,5 +12,5 @@ layer at (0,0) size 800x600
         RenderText {#text} at (121,0) size 385x19
           text run at (121,0) width 385: ": Test for rendering of Danda (U+0964) followed by a space."
       RenderBlock {P} at (0,34) size 784x18
-        RenderText {#text} at (0,0) size 627x19
-          text run at (0,0) width 627: "\x{A39}\x{A41}\x{A70}\x{A26}\x{A40} \x{A39}\x{A48}\x{964} \x{A07}\x{A38} \x{A32}\x{A3F}\x{A2A}\x{A40} \x{A26}\x{A47} \x{A35}\x{A3F}\x{A1A} \x{A69}\x{A6B} (35) \x{A05}\x{A71}\x{A16}\x{A30} \x{A39}\x{A41}\x{A70}\x{A26}\x{A47} \x{A39}\x{A28}\x{964}"
+        RenderText {#text} at (0,0) size 396x19
+          text run at (0,0) width 396: "\x{A39}\x{A41}\x{A70}\x{A26}\x{A40} \x{A39}\x{A48}\x{964} \x{A07}\x{A38} \x{A32}\x{A3F}\x{A2A}\x{A40} \x{A26}\x{A47} \x{A35}\x{A3F}\x{A1A} \x{A69}\x{A6B} (35) \x{A05}\x{A71}\x{A16}\x{A30} \x{A39}\x{A41}\x{A70}\x{A26}\x{A47} \x{A39}\x{A28}\x{964}"
