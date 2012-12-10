@@ -1,3 +1,13 @@
+2012-12-09  Noel Gordon  <noel.gordon@gmail.com>
+
+        [Chromium] Unreviewed gardening: broken or flakey hardness perftests
+
+        fast/harness/perftests/runs-per-second-iterations.html
+        fast/harness/perftests/perf-runner-compute-statistics.html
+        fast/harness/perftests/runs-per-second-log.html
+
+        * platform/chromium/TestExpectations:
+
 2012-12-09  Joanmarie Diggs  <jdiggs@igalia.com>
 
         [GTK] accessibility/placeholder.html is failing
