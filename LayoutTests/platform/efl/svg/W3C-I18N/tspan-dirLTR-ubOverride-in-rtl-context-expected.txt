@@ -2,15 +2,15 @@ layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderSVGRoot {svg} at (0,0) size 800x600
-    RenderSVGContainer {g} at (33,221) size 671x144
-      RenderSVGText {text} at (38,133) size 384x21 contains 1 chunk(s)
-        RenderSVGInlineText {#text} at (232,0) size 152x21
-          chunk 1 (middle anchor) text run 1 at (270.50,150.00) startOffset 0 endOffset 14 width 151.20 RTL: "\x{646}\x{634}\x{627}\x{637} \x{627}\x{644}\x{62A}\x{62F}\x{648}\x{64A}\x{644} \""
-        RenderSVGTSpan {tspan} at (0,0) size 222x21
-          RenderSVGInlineText {#text} at (11,0) size 221x21
-            chunk 1 (middle anchor) text run 1 at (49.70,150.00) startOffset 0 endOffset 25 width 220.80 LTR override: "dirLTR ubOverride, \x{627}\x{62E}\x{62A}\x{628}\x{627}\x{631}"
+    RenderSVGContainer {g} at (33,221) size 651x144
+      RenderSVGText {text} at (69,133) size 322x21 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (209,0) size 112x21
+          chunk 1 (middle anchor) text run 1 at (278.90,150.00) startOffset 0 endOffset 14 width 111.60 RTL: "\x{646}\x{634}\x{627}\x{637} \x{627}\x{644}\x{62A}\x{62F}\x{648}\x{64A}\x{644} \""
+        RenderSVGTSpan {tspan} at (0,0) size 199x21
+          RenderSVGInlineText {#text} at (11,0) size 198x21
+            chunk 1 (middle anchor) text run 1 at (80.90,150.00) startOffset 0 endOffset 25 width 198.00 LTR override: "dirLTR ubOverride, \x{627}\x{62E}\x{62A}\x{628}\x{627}\x{631}"
         RenderSVGInlineText {#text} at (0,0) size 12x21
-          chunk 1 (middle anchor) text run 1 at (38.30,150.00) startOffset 0 endOffset 2 width 11.40 RTL: "\"!"
+          chunk 1 (middle anchor) text run 1 at (69.50,150.00) startOffset 0 endOffset 2 width 11.40 RTL: "\"!"
       RenderSVGText {text} at (20,170) size 86x12 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,0) size 86x12
           chunk 1 text run 1 at (20.00,180.00) startOffset 0 endOffset 18 width 85.20: "Reference graphic:"

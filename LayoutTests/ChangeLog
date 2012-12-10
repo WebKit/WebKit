@@ -1,3 +1,114 @@
+2012-12-10  Christophe Dumez  <christophe.dumez@intel.com>
+
+        [EFL] Massive rebaseline after r137146
+        https://bugs.webkit.org/show_bug.cgi?id=104576
+
+        Unreviewed EFL gardening.
+
+        Rebaseline several test cases after r137146.
+
+        * platform/efl/fast/text/atsui-spacing-features-expected.png:
+        * platform/efl/fast/text/atsui-spacing-features-expected.txt:
+        * platform/efl/fast/text/complex-text-opacity-expected.png:
+        * platform/efl/fast/text/complex-text-opacity-expected.txt:
+        * platform/efl/fast/text/international/bidi-AN-after-empty-run-expected.png:
+        * platform/efl/fast/text/international/bidi-AN-after-empty-run-expected.txt:
+        * platform/efl/fast/text/international/bidi-CS-after-AN-expected.png:
+        * platform/efl/fast/text/international/bidi-CS-after-AN-expected.txt:
+        * platform/efl/fast/text/international/bidi-neutral-run-expected.txt:
+        * platform/efl/svg/W3C-I18N/g-dirLTR-ubNone-expected.png:
+        * platform/efl/svg/W3C-I18N/g-dirLTR-ubNone-expected.txt:
+        * platform/efl/svg/W3C-I18N/g-dirLTR-ubOverride-expected.png:
+        * platform/efl/svg/W3C-I18N/g-dirLTR-ubOverride-expected.txt:
+        * platform/efl/svg/W3C-I18N/g-dirRTL-ubNone-expected.png:
+        * platform/efl/svg/W3C-I18N/g-dirRTL-ubNone-expected.txt:
+        * platform/efl/svg/W3C-I18N/g-dirRTL-ubOverride-expected.png:
+        * platform/efl/svg/W3C-I18N/g-dirRTL-ubOverride-expected.txt:
+        * platform/efl/svg/W3C-I18N/text-anchor-dirLTR-anchorEnd-expected.png:
+        * platform/efl/svg/W3C-I18N/text-anchor-dirLTR-anchorEnd-expected.txt:
+        * platform/efl/svg/W3C-I18N/text-anchor-dirLTR-anchorMiddle-expected.png:
+        * platform/efl/svg/W3C-I18N/text-anchor-dirLTR-anchorMiddle-expected.txt:
+        * platform/efl/svg/W3C-I18N/text-anchor-dirLTR-anchorStart-expected.png:
+        * platform/efl/svg/W3C-I18N/text-anchor-dirLTR-anchorStart-expected.txt:
+        * platform/efl/svg/W3C-I18N/text-anchor-dirNone-anchorEnd-expected.png:
+        * platform/efl/svg/W3C-I18N/text-anchor-dirNone-anchorEnd-expected.txt:
+        * platform/efl/svg/W3C-I18N/text-anchor-dirNone-anchorMiddle-expected.png:
+        * platform/efl/svg/W3C-I18N/text-anchor-dirNone-anchorMiddle-expected.txt:
+        * platform/efl/svg/W3C-I18N/text-anchor-dirNone-anchorStart-expected.png:
+        * platform/efl/svg/W3C-I18N/text-anchor-dirNone-anchorStart-expected.txt:
+        * platform/efl/svg/W3C-I18N/text-anchor-dirRTL-anchorEnd-expected.png:
+        * platform/efl/svg/W3C-I18N/text-anchor-dirRTL-anchorEnd-expected.txt:
+        * platform/efl/svg/W3C-I18N/text-anchor-dirRTL-anchorMiddle-expected.png:
+        * platform/efl/svg/W3C-I18N/text-anchor-dirRTL-anchorMiddle-expected.txt:
+        * platform/efl/svg/W3C-I18N/text-anchor-dirRTL-anchorStart-expected.png:
+        * platform/efl/svg/W3C-I18N/text-anchor-dirRTL-anchorStart-expected.txt:
+        * platform/efl/svg/W3C-I18N/text-anchor-inherited-dirLTR-anchorEnd-expected.png:
+        * platform/efl/svg/W3C-I18N/text-anchor-inherited-dirLTR-anchorEnd-expected.txt:
+        * platform/efl/svg/W3C-I18N/text-anchor-inherited-dirLTR-anchorMiddle-expected.png:
+        * platform/efl/svg/W3C-I18N/text-anchor-inherited-dirLTR-anchorMiddle-expected.txt:
+        * platform/efl/svg/W3C-I18N/text-anchor-inherited-dirLTR-anchorStart-expected.png:
+        * platform/efl/svg/W3C-I18N/text-anchor-inherited-dirLTR-anchorStart-expected.txt:
+        * platform/efl/svg/W3C-I18N/text-anchor-inherited-dirRTL-anchorEnd-expected.png:
+        * platform/efl/svg/W3C-I18N/text-anchor-inherited-dirRTL-anchorEnd-expected.txt:
+        * platform/efl/svg/W3C-I18N/text-anchor-inherited-dirRTL-anchorMiddle-expected.png:
+        * platform/efl/svg/W3C-I18N/text-anchor-inherited-dirRTL-anchorMiddle-expected.txt:
+        * platform/efl/svg/W3C-I18N/text-anchor-inherited-dirRTL-anchorStart-expected.png:
+        * platform/efl/svg/W3C-I18N/text-anchor-inherited-dirRTL-anchorStart-expected.txt:
+        * platform/efl/svg/W3C-I18N/text-anchor-no-markup-expected.png:
+        * platform/efl/svg/W3C-I18N/text-anchor-no-markup-expected.txt:
+        * platform/efl/svg/W3C-I18N/text-dirLTR-ubNone-expected.png:
+        * platform/efl/svg/W3C-I18N/text-dirLTR-ubNone-expected.txt:
+        * platform/efl/svg/W3C-I18N/text-dirLTR-ubOverride-expected.png:
+        * platform/efl/svg/W3C-I18N/text-dirLTR-ubOverride-expected.txt:
+        * platform/efl/svg/W3C-I18N/text-dirRTL-ubNone-expected.png:
+        * platform/efl/svg/W3C-I18N/text-dirRTL-ubNone-expected.txt:
+        * platform/efl/svg/W3C-I18N/text-dirRTL-ubOverride-expected.png:
+        * platform/efl/svg/W3C-I18N/text-dirRTL-ubOverride-expected.txt:
+        * platform/efl/svg/W3C-I18N/tspan-dirLTR-ubEmbed-in-rtl-context-expected.png:
+        * platform/efl/svg/W3C-I18N/tspan-dirLTR-ubEmbed-in-rtl-context-expected.txt:
+        * platform/efl/svg/W3C-I18N/tspan-dirLTR-ubNone-in-rtl-context-expected.png:
+        * platform/efl/svg/W3C-I18N/tspan-dirLTR-ubNone-in-rtl-context-expected.txt:
+        * platform/efl/svg/W3C-I18N/tspan-dirLTR-ubOverride-in-default-context-expected.png:
+        * platform/efl/svg/W3C-I18N/tspan-dirLTR-ubOverride-in-default-context-expected.txt:
+        * platform/efl/svg/W3C-I18N/tspan-dirLTR-ubOverride-in-ltr-context-expected.png:
+        * platform/efl/svg/W3C-I18N/tspan-dirLTR-ubOverride-in-ltr-context-expected.txt:
+        * platform/efl/svg/W3C-I18N/tspan-dirLTR-ubOverride-in-rtl-context-expected.png:
+        * platform/efl/svg/W3C-I18N/tspan-dirLTR-ubOverride-in-rtl-context-expected.txt:
+        * platform/efl/svg/W3C-I18N/tspan-dirNone-ubOverride-in-default-context-expected.png:
+        * platform/efl/svg/W3C-I18N/tspan-dirNone-ubOverride-in-default-context-expected.txt:
+        * platform/efl/svg/W3C-I18N/tspan-dirNone-ubOverride-in-ltr-context-expected.png:
+        * platform/efl/svg/W3C-I18N/tspan-dirNone-ubOverride-in-ltr-context-expected.txt:
+        * platform/efl/svg/W3C-I18N/tspan-dirNone-ubOverride-in-rtl-context-expected.png:
+        * platform/efl/svg/W3C-I18N/tspan-dirNone-ubOverride-in-rtl-context-expected.txt:
+        * platform/efl/svg/W3C-I18N/tspan-dirRTL-ubEmbed-in-default-context-expected.png:
+        * platform/efl/svg/W3C-I18N/tspan-dirRTL-ubEmbed-in-default-context-expected.txt:
+        * platform/efl/svg/W3C-I18N/tspan-dirRTL-ubEmbed-in-ltr-context-expected.png:
+        * platform/efl/svg/W3C-I18N/tspan-dirRTL-ubEmbed-in-ltr-context-expected.txt:
+        * platform/efl/svg/W3C-I18N/tspan-dirRTL-ubNone-in-default-context-expected.png:
+        * platform/efl/svg/W3C-I18N/tspan-dirRTL-ubNone-in-default-context-expected.txt:
+        * platform/efl/svg/W3C-I18N/tspan-dirRTL-ubNone-in-ltr-context-expected.png:
+        * platform/efl/svg/W3C-I18N/tspan-dirRTL-ubNone-in-ltr-context-expected.txt:
+        * platform/efl/svg/W3C-I18N/tspan-dirRTL-ubOverride-in-default-context-expected.png:
+        * platform/efl/svg/W3C-I18N/tspan-dirRTL-ubOverride-in-default-context-expected.txt:
+        * platform/efl/svg/W3C-I18N/tspan-dirRTL-ubOverride-in-ltr-context-expected.png:
+        * platform/efl/svg/W3C-I18N/tspan-dirRTL-ubOverride-in-ltr-context-expected.txt:
+        * platform/efl/svg/W3C-I18N/tspan-dirRTL-ubOverride-in-rtl-context-expected.png:
+        * platform/efl/svg/W3C-I18N/tspan-dirRTL-ubOverride-in-rtl-context-expected.txt:
+        * platform/efl/svg/W3C-I18N/tspan-direction-ltr-expected.png:
+        * platform/efl/svg/W3C-I18N/tspan-direction-ltr-expected.txt:
+        * platform/efl/svg/W3C-I18N/tspan-direction-rtl-expected.png:
+        * platform/efl/svg/W3C-I18N/tspan-direction-rtl-expected.txt:
+        * platform/efl/svg/W3C-SVG-1.1-SE/text-intro-05-t-expected.png:
+        * platform/efl/svg/W3C-SVG-1.1-SE/text-intro-05-t-expected.txt:
+        * platform/efl/svg/W3C-SVG-1.1/text-intro-05-t-expected.png:
+        * platform/efl/svg/W3C-SVG-1.1/text-intro-05-t-expected.txt:
+        * platform/efl/svg/text/bidi-text-query-expected.png:
+        * platform/efl/svg/text/bidi-text-query-expected.txt:
+        * platform/efl/svg/text/bidi-tspans-expected.png:
+        * platform/efl/svg/text/bidi-tspans-expected.txt:
+        * platform/efl/svg/text/text-intro-05-t-expected.png:
+        * platform/efl/svg/text/text-intro-05-t-expected.txt:
+
 2012-12-10  Zan Dobersek  <zandobersek@gmail.com>
 
         Unreviewed gardening.
