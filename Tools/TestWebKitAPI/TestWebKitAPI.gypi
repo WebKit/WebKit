@@ -36,6 +36,8 @@
             'Tests/WTF/CString.cpp',
             'Tests/WTF/Functional.cpp',
             'Tests/WTF/HashMap.cpp',
+            'Tests/WTF/HashSet.cpp',
+            'Tests/WTF/ListHashSet.cpp',
             'Tests/WTF/MathExtras.cpp',
             'Tests/WTF/MediaTime.cpp',
             'Tests/WTF/MemoryInstrumentationTest.cpp',

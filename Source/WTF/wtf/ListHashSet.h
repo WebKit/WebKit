@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2005, 2006, 2007, 2008, 2011 Apple Inc. All rights reserved.
+ * Copyright (C) 2005, 2006, 2007, 2008, 2011, 2012 Apple Inc. All rights reserved.
  * Copyright (C) 2011, Benjamin Poulain <ikipou@gmail.com>
  *
  * This library is free software; you can redistribute it and/or
@@ -37,10 +37,6 @@ namespace WTF {
     // Unlike iteration of most WTF Hash data structures, iteration is
     // guaranteed safe against mutation of the ListHashSet, except for
     // removal of the item currently pointed to by a given iterator.
-
-    // In theory it would be possible to add prepend, insertAfter
-    // and an append that moves the element to the end even if already present,
-    // but unclear yet if these are needed.
 
     template<typename Value, size_t inlineCapacity, typename HashFunctions> class ListHashSet;
 
@@ -112,6 +108,7 @@ namespace WTF {
 
         ValueType& first();
         const ValueType& first() const;
+        void removeFirst();
 
         ValueType& last();
         const ValueType& last() const;
@@ -134,6 +131,14 @@ namespace WTF {
         // and a bool that is true if an new entry was added.
         AddResult add(const ValueType&);
 
+        // Add the value to the end of the collection. If the value was already in
+        // the list, it is moved to the end.
+        AddResult appendOrMoveToLast(const ValueType&);
+
+        // Add the value to the beginning of the collection. If the value was already in
+        // the list, it is moved to the beginning.
+        AddResult prependOrMoveToFirst(const ValueType&);
+
         AddResult insertBefore(const ValueType& beforeValue, const ValueType& newValue);
         AddResult insertBefore(iterator, const ValueType&);
 
@@ -142,8 +147,10 @@ namespace WTF {
         void clear();
 
     private:
+        void unlink(Node*);
         void unlinkAndDelete(Node*);
         void appendNode(Node*);
+        void prependNode(Node*);
         void insertNodeBefore(Node* beforeNode, Node* newNode);
         void deleteAllNodes();
         
@@ -629,6 +636,14 @@ namespace WTF {
     }
 
     template<typename T, size_t inlineCapacity, typename U>
+    inline void ListHashSet<T, inlineCapacity, U>::removeFirst()
+    {
+        ASSERT(!isEmpty());
+        m_impl.remove(m_head);
+        unlinkAndDelete(m_head);
+    }
+
+    template<typename T, size_t inlineCapacity, typename U>
     inline const T& ListHashSet<T, inlineCapacity, U>::first() const
     {
         ASSERT(!isEmpty());
@@ -724,6 +739,28 @@ namespace WTF {
     }
 
     template<typename T, size_t inlineCapacity, typename U>
+    typename ListHashSet<T, inlineCapacity, U>::AddResult ListHashSet<T, inlineCapacity, U>::appendOrMoveToLast(const ValueType &value)
+    {
+        typename ImplType::AddResult result = m_impl.template add<BaseTranslator>(value, m_allocator.get());
+        Node* node = *result.iterator;
+        if (!result.isNewEntry)
+            unlink(node);
+        appendNode(node);
+        return AddResult(makeIterator(*result.iterator), result.isNewEntry);
+    }
+
+    template<typename T, size_t inlineCapacity, typename U>
+    typename ListHashSet<T, inlineCapacity, U>::AddResult ListHashSet<T, inlineCapacity, U>::prependOrMoveToFirst(const ValueType &value)
+    {
+        typename ImplType::AddResult result = m_impl.template add<BaseTranslator>(value, m_allocator.get());
+        Node* node = *result.iterator;
+        if (!result.isNewEntry)
+            unlink(node);
+        prependNode(node);
+        return AddResult(makeIterator(*result.iterator), result.isNewEntry);
+    }
+
+    template<typename T, size_t inlineCapacity, typename U>
     typename ListHashSet<T, inlineCapacity, U>::AddResult ListHashSet<T, inlineCapacity, U>::insertBefore(iterator it, const ValueType& newValue)
     {
         typename ImplType::AddResult result = m_impl.template add<BaseTranslator>(newValue, m_allocator.get());
@@ -763,7 +800,7 @@ namespace WTF {
     }
 
     template<typename T, size_t inlineCapacity, typename U>
-    void ListHashSet<T, inlineCapacity, U>::unlinkAndDelete(Node* node)
+    void ListHashSet<T, inlineCapacity, U>::unlink(Node* node)
     {
         if (!node->m_prev) {
             ASSERT(node == m_head);
@@ -780,7 +817,12 @@ namespace WTF {
             ASSERT(node != m_tail);
             node->m_next->m_prev = node->m_prev;
         }
+    }
 
+    template<typename T, size_t inlineCapacity, typename U>
+    void ListHashSet<T, inlineCapacity, U>::unlinkAndDelete(Node* node)
+    {
+        unlink(node);
         node->destroy(m_allocator.get());
     }
 
@@ -799,6 +841,20 @@ namespace WTF {
         }
 
         m_tail = node;
+    }
+
+    template<typename T, size_t inlineCapacity, typename U>
+    void ListHashSet<T, inlineCapacity, U>::prependNode(Node* node)
+    {
+        node->m_prev = 0;
+        node->m_next = m_head;
+
+        if (m_head)
+            m_head->m_prev = node;
+        else
+            m_tail = node;
+
+        m_head = node;
     }
 
     template<typename T, size_t inlineCapacity, typename U>

@@ -52,6 +52,7 @@ Programs_TestWebKitAPI_TestWTF_SOURCES = \
 	Tools/TestWebKitAPI/Tests/WTF/Functional.cpp \
 	Tools/TestWebKitAPI/Tests/WTF/HashMap.cpp \
 	Tools/TestWebKitAPI/Tests/WTF/IntegerToStringConversion.cpp \
+	Tools/TestWebKitAPI/Tests/WTF/ListHashSet.cpp \
 	Tools/TestWebKitAPI/Tests/WTF/MathExtras.cpp \
 	Tools/TestWebKitAPI/Tests/WTF/MediaTime.cpp \
 	Tools/TestWebKitAPI/Tests/WTF/RedBlackTree.cpp \

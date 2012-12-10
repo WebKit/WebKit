@@ -73,6 +73,7 @@ add_executable(test_wtf
     ${TESTWEBKITAPI_DIR}/Tests/WTF/Functional.cpp
     ${TESTWEBKITAPI_DIR}/Tests/WTF/HashMap.cpp
     ${TESTWEBKITAPI_DIR}/Tests/WTF/IntegerToStringConversion.cpp
+    ${TESTWEBKITAPI_DIR}/Tests/WTF/ListHashSet.cpp
     ${TESTWEBKITAPI_DIR}/Tests/WTF/MathExtras.cpp
     ${TESTWEBKITAPI_DIR}/Tests/WTF/MetaAllocator.cpp
     ${TESTWEBKITAPI_DIR}/Tests/WTF/MemoryInstrumentationTest.cpp

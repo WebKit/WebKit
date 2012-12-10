@@ -23,6 +23,7 @@
 		1ADBEFE3130C6AA100D61D19 /* simple-accelerated-compositing.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = 1ADBEFBC130C6A0100D61D19 /* simple-accelerated-compositing.html */; };
 		1AEDE22613E5E7E700E62FE8 /* InjectedBundleControllerMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = 1AEDE22413E5E7A000E62FE8 /* InjectedBundleControllerMac.mm */; };
 		261516D615B0E60500A2C201 /* SetAndUpdateCacheModel.mm in Sources */ = {isa = PBXBuildFile; fileRef = 261516D515B0E60500A2C201 /* SetAndUpdateCacheModel.mm */; };
+		26300B1816755CD90066886D /* ListHashSet.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 26300B1716755CD90066886D /* ListHashSet.cpp */; };
 		265AF55015D1E48A00B0CB4A /* WTFString.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 265AF54F15D1E48A00B0CB4A /* WTFString.cpp */; };
 		266FAFD315E5775200F61D5B /* IntegerToStringConversion.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 266FAFD215E5775200F61D5B /* IntegerToStringConversion.cpp */; };
 		26A2C72F15E2E73C005B1A14 /* CString.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 26A2C72E15E2E73C005B1A14 /* CString.cpp */; };
@@ -267,6 +268,7 @@
 		1ADBEFBC130C6A0100D61D19 /* simple-accelerated-compositing.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = "simple-accelerated-compositing.html"; sourceTree = "<group>"; };
 		1AEDE22413E5E7A000E62FE8 /* InjectedBundleControllerMac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = InjectedBundleControllerMac.mm; sourceTree = "<group>"; };
 		261516D515B0E60500A2C201 /* SetAndUpdateCacheModel.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = SetAndUpdateCacheModel.mm; sourceTree = "<group>"; };
+		26300B1716755CD90066886D /* ListHashSet.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ListHashSet.cpp; path = WTF/ListHashSet.cpp; sourceTree = "<group>"; };
 		265AF54F15D1E48A00B0CB4A /* WTFString.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = WTFString.cpp; path = WTF/WTFString.cpp; sourceTree = "<group>"; };
 		266FAFD215E5775200F61D5B /* IntegerToStringConversion.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = IntegerToStringConversion.cpp; path = WTF/IntegerToStringConversion.cpp; sourceTree = "<group>"; };
 		26A2C72E15E2E73C005B1A14 /* CString.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = CString.cpp; path = WTF/CString.cpp; sourceTree = "<group>"; };
@@ -666,6 +668,7 @@
 				1AA9E55714980A9900001A8A /* Functional.cpp */,
 				0BCD833414857CE400EA2003 /* HashMap.cpp */,
 				26B2DFF815BDE599004F691D /* HashSet.cpp */,
+				26300B1716755CD90066886D /* ListHashSet.cpp */,
 				B4039F9C15E6D8B3007255D6 /* MathExtras.cpp */,
 				14F3B11215E45EAB00210069 /* SaturatedArithmeticOperations.cpp */,
 				266FAFD215E5775200F61D5B /* IntegerToStringConversion.cpp */,
@@ -959,6 +962,7 @@
 				C0ADBE7C12FCA4D000D2C129 /* JavaScriptTest.cpp in Sources */,
 				C081224213FC172400DC39AE /* JavaScriptTestMac.mm in Sources */,
 				440A1D3914A0103A008A66F2 /* KURL.cpp in Sources */,
+				26300B1816755CD90066886D /* ListHashSet.cpp in Sources */,
 				52CB47411448FB9300873995 /* LoadAlternateHTMLStringWithNonDirectoryURL.cpp in Sources */,
 				33DC8911141953A300747EF7 /* LoadCanceledNoServerRedirectCallback.cpp in Sources */,
 				BC131A9B1171316900B69727 /* main.mm in Sources */,
