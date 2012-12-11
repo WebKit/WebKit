@@ -34,6 +34,7 @@ objects to the Manager. The Manager then aggregates the TestFailures to
 create a final report.
 """
 
+import json
 import logging
 import random
 import sys
@@ -476,9 +477,14 @@ class Manager(object):
         """
         _log.debug("Writing JSON files in %s." % self._results_directory)
 
+        # FIXME: Upload stats.json to the server and delete times_ms.
         times_trie = json_results_generator.test_timings_trie(self._port, result_summary.results.values())
         times_json_path = self._filesystem.join(self._results_directory, "times_ms.json")
         json_results_generator.write_json(self._filesystem, times_trie, times_json_path)
+
+        stats_trie = self._stats_trie(result_summary)
+        stats_path = self._filesystem.join(self._results_directory, "stats.json")
+        self._filesystem.write_text_file(stats_path, json.dumps(stats_trie))
 
         full_results_path = self._filesystem.join(self._results_directory, "full_results.json")
         # We write full_results.json out as jsonp because we need to load it from a file url and Chromium doesn't allow that.
@@ -494,6 +500,7 @@ class Manager(object):
             self._options.master_name)
 
         _log.debug("Finished writing JSON files.")
+
 
         json_files = ["incremental_results.json", "full_results.json", "times_ms.json"]
 
@@ -513,3 +520,16 @@ class Manager(object):
         # so make sure it exists before we try to copy it.
         if self._filesystem.exists(results_file):
             self._filesystem.copyfile(results_file, destination_path)
+
+    def _stats_trie(self, result_summary):
+        def _worker_number(worker_name):
+            return int(worker_name.split('/')[1]) if worker_name else -1
+
+        stats = {}
+        for result in result_summary.results.values():
+            if result.type != test_expectations.SKIP:
+                stats[result.test_name] = {'results': (_worker_number(result.worker_name), result.test_number, result.pid, int(result.test_run_time * 1000), int(result.total_run_time * 1000))}
+        stats_trie = {}
+        for name, value in stats.iteritems():
+            json_results_generator.add_path_to_trie(name, value, stats_trie)
+        return stats_trie

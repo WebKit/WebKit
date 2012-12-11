@@ -260,8 +260,7 @@ class Worker(object):
         self._batch_count = None
         self._filesystem = None
         self._driver = None
-        self._tests_run_file = None
-        self._tests_run_filename = None
+        self._num_tests = 0
 
     def __del__(self):
         self.stop()
@@ -276,8 +275,6 @@ class Worker(object):
 
         self._batch_count = 0
         self._batch_size = self._options.batch_size or 0
-        tests_run_filename = self._filesystem.join(self._results_directory, "tests_run%d.txt" % self._worker_number)
-        self._tests_run_file = self._filesystem.open_text_file_for_writing(tests_run_filename)
 
     def handle(self, name, source, test_list_name, test_inputs):
         assert name == 'test_list'
@@ -311,6 +308,8 @@ class Worker(object):
         result.shard_name = shard_name
         result.worker_name = self._name
         result.total_run_time = time.time() - start
+        result.test_number = self._num_tests
+        self._num_tests += 1
 
         self._caller.post('finished_test', result)
 
@@ -319,9 +318,6 @@ class Worker(object):
     def stop(self):
         _log.debug("%s cleaning up" % self._name)
         self._kill_driver()
-        if self._tests_run_file:
-            self._tests_run_file.close()
-            self._tests_run_file = None
 
     def _timeout(self, test_input):
         """Compute the appropriate timeout value for a test."""
@@ -355,7 +351,6 @@ class Worker(object):
 
     def _clean_up_after_test(self, test_input, result):
         test_name = test_input.test_name
-        self._tests_run_file.write(test_name + "\n")
 
         if result.failures:
             # Check and kill DumpRenderTree if we need to.

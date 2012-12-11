@@ -1,5 +1,42 @@
 2012-12-11  Dirk Pranke  <dpranke@chromium.org>
 
+        nrwt: record the order and run times of all of the tests in a single file
+        https://bugs.webkit.org/show_bug.cgi?id=104184
+
+        Reviewed by Ryosuke Niwa.
+
+        Replace the N tests_run*.txt files that we output into
+        layout-test-results with a single packed JSON trie that contains
+        the test ordering and run statistics. This can eventually be uploaded
+        to the TestResultsServer to replace the times.json file we currently
+        upload as well, and will let us replay the results of a previous
+        run fairly deterministically.
+
+        * Scripts/webkitpy/layout_tests/controllers/layout_test_runner.py:
+        (Worker.__init__):
+        (Worker.start):
+        (Worker._run_test):
+        (Worker.stop):
+        (Worker._clean_up_after_test):
+        * Scripts/webkitpy/layout_tests/controllers/manager.py:
+        (Manager._upload_json_files):
+        (Manager._copy_results_html_file):
+        (Manager):
+        (Manager._stats_trie):
+        (Manager._stats_trie._worker_number):
+        * Scripts/webkitpy/layout_tests/models/test_results.py:
+        (TestResult.__init__):
+        * Scripts/webkitpy/layout_tests/run_webkit_tests_integrationtest.py:
+        (MainTest.test_missing_and_unexpected_results):
+        (MainTest.test_retrying_and_flaky_tests):
+        (EndToEndTest.test_end_to_end):
+        (EndToEndTest.test_reftest_with_two_notrefs):
+        (RebaselineTest.test_reset_results):
+        (RebaselineTest.test_missing_results):
+        (RebaselineTest.test_new_baseline):
+
+2012-12-11  Dirk Pranke  <dpranke@chromium.org>
+
         check-webkit-style complaining about TestExpectations lines a patch didn't modify
         https://bugs.webkit.org/show_bug.cgi?id=104687
 

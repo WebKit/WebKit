@@ -578,7 +578,6 @@ class MainTest(unittest.TestCase, StreamTestingMixin):
             'failures/unexpected/text-image-checksum.html'],
             tests_included=True, host=host)
         file_list = host.filesystem.written_files.keys()
-        file_list.remove('/tmp/layout-test-results/tests_run0.txt')
         self.assertEqual(res, 1)
         expected_token = '"unexpected":{"text-image-checksum.html":{"expected":"PASS","actual":"IMAGE+TEXT","image_diff_percent":1},"missing_text.html":{"expected":"PASS","is_missing_text":true,"actual":"MISSING"}'
         json_string = host.filesystem.read_text_file('/tmp/layout-test-results/full_results.json')
@@ -727,7 +726,6 @@ class MainTest(unittest.TestCase, StreamTestingMixin):
         self.assertEqual(res, 0)
         self.assertTrue('Retrying' in err.getvalue())
         self.assertTrue(host.filesystem.exists('/tmp/layout-test-results/failures/flaky/text-actual.txt'))
-        self.assertTrue(host.filesystem.exists('/tmp/layout-test-results/retries/tests_run0.txt'))
         self.assertFalse(host.filesystem.exists('/tmp/layout-test-results/retries/failures/flaky/text-actual.txt'))
 
         # Now we test that --clobber-old-results does remove the old entries and the old retries,
@@ -914,13 +912,18 @@ class EndToEndTest(unittest.TestCase):
         compressed_results = json.loads(json_to_eval)
         return compressed_results
 
+        # Check that we recorded the test run times and ordering. Note that
+        # pretty much none of the actual values can be guaranteed, but at least
+        # we can test that they're there.
+        stats = json.loads(host.filesystem.read_text_file('/tmp/layout-test-results/stats.json'))
+        self.assertEqual(len(stats['http']['tests']['passes']['image.html']['results']), 5)
+
     def test_reftest_with_two_notrefs(self):
         # Test that we update expectations in place. If the expectation
         # is missing, update the expected generic location.
         host = MockHost()
         res, _, _ = logging_run(['--no-show-results', 'reftests/foo/'], tests_included=True, host=host)
         file_list = host.filesystem.written_files.keys()
-        file_list.remove('/tmp/layout-test-results/tests_run0.txt')
         json_string = host.filesystem.read_text_file('/tmp/layout-test-results/full_results.json')
         json = self.parse_full_results(json_string)
         self.assertTrue("multiple-match-success.html" not in json["tests"]["reftests"]["foo"])
@@ -954,9 +957,8 @@ class RebaselineTest(unittest.TestCase, StreamTestingMixin):
             ['--pixel-tests', '--reset-results', 'passes/image.html', 'failures/expected/missing_image.html'],
             tests_included=True, host=host, new_results=True)
         file_list = host.filesystem.written_files.keys()
-        file_list.remove('/tmp/layout-test-results/tests_run0.txt')
         self.assertEqual(res, 0)
-        self.assertEqual(len(file_list), 7)
+        self.assertEqual(len(file_list), 8)
         self.assertBaselines(file_list, "passes/image", [".txt", ".png"], err)
         self.assertBaselines(file_list, "failures/expected/missing_image", [".txt", ".png"], err)
 
@@ -971,9 +973,8 @@ class RebaselineTest(unittest.TestCase, StreamTestingMixin):
             'failures/unexpected/missing_render_tree_dump.html'],
             tests_included=True, host=host, new_results=True)
         file_list = host.filesystem.written_files.keys()
-        file_list.remove('/tmp/layout-test-results/tests_run0.txt')
         self.assertEqual(res, 0)
-        self.assertEqual(len(file_list), 9)
+        self.assertEqual(len(file_list), 10)
         self.assertBaselines(file_list, "failures/unexpected/missing_text", [".txt"], err)
         self.assertBaselines(file_list, "platform/test/failures/unexpected/missing_image", [".png"], err)
         self.assertBaselines(file_list, "platform/test/failures/unexpected/missing_render_tree_dump", [".txt"], err)
@@ -986,9 +987,8 @@ class RebaselineTest(unittest.TestCase, StreamTestingMixin):
             ['--pixel-tests', '--new-baseline', 'passes/image.html', 'failures/expected/missing_image.html'],
             tests_included=True, host=host, new_results=True)
         file_list = host.filesystem.written_files.keys()
-        file_list.remove('/tmp/layout-test-results/tests_run0.txt')
         self.assertEqual(res, 0)
-        self.assertEqual(len(file_list), 7)
+        self.assertEqual(len(file_list), 8)
         self.assertBaselines(file_list,
             "platform/test-mac-leopard/passes/image", [".txt", ".png"], err)
         self.assertBaselines(file_list,
