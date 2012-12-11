@@ -199,22 +199,22 @@ keyDown('rightArrow'); // -> 12/[01]/2012 12:00 AM
 keyDown('2'); //          -> 12/[02]/2012 12:00 AM
 shouldBeEqualToString('input.value', '2012-12-02T00:00');
 
-// The tests in the following block fail on platforms without the
-// lang-attribute-aware-form-control-UI feature.
 input.setAttribute('lang', 'he-il');
-beginTest('RTL Left/Right keys', '2012-09-28T23:00');
-// 00:23 2012/09/[28]
-keyDown('1'); //          -> 00:23 2012/09/[01]
+beginTest('RTL focus navigation', '2012-09-28T23:00');
+debug('The tests in this block fail on platforms without the lang-attribute-aware-form-control-UI feature.');
+// The logicla order: dd/MM/yyyy hh:mm
+// The visual order: hh:mm dd/MM/yyyy
+keyDown('1'); //          -> 23:00 [01]/09/2012
 shouldBeEqualToString('input.value', '2012-09-01T23:00');
-keyDown('rightArrow'); //  -> 00:23 2012/[09]/01
-keyDown('2'); //          -> 00:23 [2012]/02/01
-keyDown('rightArrow'); //  -> 00:[23] 2012/09/01
-keyDown('1'); //  -> 00:[01] 2012/09/01
+keyDown('\t'); //         -> 23:00 01/[09]/2012
+keyDown('2'); //          -> 23:00 01/02/[2012]
+keyDown('\t'); //         -> [23]:00 2012/09/01
+keyDown('1'); //          -> [01]:00 01/09/2012
 shouldBeEqualToString('input.value', '2012-02-01T01:00');
-keyDown('leftArrow'); // -> 00:01 [2012]/09/01
-keyDown('8'); //          -> 00:01 [0008]/09/01
-keyDown('leftArrow'); // -> 00:01 0008/[09]/01
-keyDown('3'); //          -> 00:01 [0008]/03/01
+keyDown('\t', ['shiftKey']); // -> 01:00 01/09/[2012]
+keyDown('8'); //                -> 01:00 01/09/[0008]
+keyDown('\t', ['shiftKey']); // -> 01:00 01/[09]/0008
+keyDown('3'); //                -> 01:00 01/03/[0008]
 shouldBeEqualToString('input.value', '0008-03-01T01:00');
 input.removeAttribute('lang');
 

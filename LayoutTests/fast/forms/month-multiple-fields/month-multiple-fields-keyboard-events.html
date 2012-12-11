@@ -205,14 +205,13 @@ beginTest('Typeahead should search from current selection', '2012-01');
 keyDown('j'); //          -> [Jun] 2012
 shouldBeEqualToString('input.value', '2012-06');
 
-// The tests in the following block fail on platforms without the
-// lang-attribute-aware-form-control-UI feature.
 input.setAttribute("lang", "he-il");
-beginTest('RTL Left/Right keys', '2012-09');
+beginTest('RTL focus navigation', '2012-09');
+debug('The tests in this block fail on platforms without the lang-attribute-aware-form-control-UI feature.');
 keyDown('upArrow'); // -> 2012 [M10]
 shouldBeEqualToString('input.value', '2012-10');
-keyDown('leftArrow'); // -> [2012] M10
-keyDown('2'); //         -> [0002] M10
+keyDown('\t'); //      -> [2012] M10
+keyDown('2'); //       -> [0002] M10
 shouldBeEqualToString('input.value', '0002-10');
 keyDown('\t', ['shiftKey']); // -> 0002 [M10]
 keyDown('upArrow'); //          -> 0002 [M11]

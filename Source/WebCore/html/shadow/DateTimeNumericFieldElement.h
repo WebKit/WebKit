@@ -78,7 +78,6 @@ private:
     virtual String value() const OVERRIDE FINAL;
 
     String formatValue(int) const;
-    Locale& localeForOwner() const;
 
     DOMTimeStamp m_lastDigitCharTime;
     const String m_placeholder;

@@ -31,6 +31,7 @@
 #include "HTMLNames.h"
 #include "KeyboardEvent.h"
 #include "LocalizedStrings.h"
+#include "PlatformLocale.h"
 #include "RenderObject.h"
 #include "Text.h"
 #include <wtf/text/WTFString.h>
@@ -90,7 +91,9 @@ void DateTimeFieldElement::defaultKeyboardEventHandler(KeyboardEvent* keyboardEv
     if (keyIdentifier == "Left") {
         if (!m_fieldOwner)
             return;
-        if (isRTL() ? m_fieldOwner->focusOnNextField(*this) : m_fieldOwner->focusOnPreviousField(*this))
+        // FIXME: We'd like to use FocusController::advanceFocus(FocusDirectionLeft, ...)
+        // but it doesn't work for shadow nodes. webkit.org/b/104650
+        if (!localeForOwner().isRTL() && m_fieldOwner->focusOnPreviousField(*this))
             keyboardEvent->setDefaultHandled();
         return;
     }
@@ -98,7 +101,9 @@ void DateTimeFieldElement::defaultKeyboardEventHandler(KeyboardEvent* keyboardEv
     if (keyIdentifier == "Right") {
         if (!m_fieldOwner)
             return;
-        if (isRTL() ? m_fieldOwner->focusOnPreviousField(*this) : m_fieldOwner->focusOnNextField(*this))
+        // FIXME: We'd like to use FocusController::advanceFocus(FocusDirectionRight, ...)
+        // but it doesn't work for shadow nodes. webkit.org/b/104650
+        if (!localeForOwner().isRTL() && m_fieldOwner->focusOnNextField(*this))
             keyboardEvent->setDefaultHandled();
         return;
     }
@@ -163,9 +168,9 @@ bool DateTimeFieldElement::isReadOnly() const
     return fastHasAttribute(readonlyAttr);
 }
 
-bool DateTimeFieldElement::isRTL() const
+Locale& DateTimeFieldElement::localeForOwner() const
 {
-    return renderer() && renderer()->style()->direction() == RTL;
+    return document()->getCachedLocale(localeIdentifier());
 }
 
 AtomicString DateTimeFieldElement::localeIdentifier() const

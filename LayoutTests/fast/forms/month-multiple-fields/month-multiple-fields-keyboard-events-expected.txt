@@ -66,7 +66,8 @@ PASS input.value is "2012-12"
 PASS input.value is "2012-12"
 == Typeahead should search from current selection ==
 PASS input.value is "2012-06"
-== RTL Left/Right keys ==
+== RTL focus navigation ==
+The tests in this block fail on platforms without the lang-attribute-aware-form-control-UI feature.
 PASS input.value is "2012-10"
 PASS input.value is "0002-10"
 PASS input.value is "0002-11"

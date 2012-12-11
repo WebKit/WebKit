@@ -84,6 +84,7 @@ protected:
     void focusOnNextField();
     virtual void handleKeyboardEvent(KeyboardEvent*) = 0;
     void initialize(const AtomicString& pseudo, const String& axHelpText);
+    Locale& localeForOwner() const;
     AtomicString localeIdentifier() const;
     virtual int maximum() const = 0;
     virtual int minimum() const = 0;
@@ -93,7 +94,6 @@ private:
     void defaultKeyboardEventHandler(KeyboardEvent*);
     virtual bool isDateTimeFieldElement() const OVERRIDE;
     virtual bool isFocusable() const OVERRIDE FINAL;
-    bool isRTL() const;
     virtual bool supportsFocus() const OVERRIDE FINAL;
 
     FieldOwner* m_fieldOwner;

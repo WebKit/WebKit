@@ -1,3 +1,30 @@
+2012-12-11  Kent Tamura  <tkent@chromium.org>
+
+        INPUT_MULTIPLE_FIELDS_UI: Disable focus navigation by right/left keys in RTL locales
+        https://bugs.webkit.org/show_bug.cgi?id=104644
+
+        Reviewed by Hajime Morita.
+
+        Pressing the left key should focus on the field at the left of the
+        current focused field, and pressing the right key should focus on the
+        field at the right of the current focused field. This works well in LTR
+        locales.
+        In RTL locale, the current code doesn't work. We disable this behavior
+        for RTL locales for now. This issue will be handled in Bug 104650.
+
+        No new tests. Update some *-multiple-fields tests for new behavior.
+
+        * html/shadow/DateTimeFieldElement.cpp:
+        (WebCore::DateTimeFieldElement::defaultKeyboardEventHandler):
+        If this sub-field is in an RTL locale, we don't change focus.
+        (WebCore::DateTimeFieldElement::localeForOwner):
+        Moved from DateTimeNumericFieldElement.
+        * html/shadow/DateTimeFieldElement.h:
+        (DateTimeFieldElement): Remove isRTL, add localeForOwner.
+        * html/shadow/DateTimeNumericFieldElement.cpp: Remove localeForOwner.
+        * html/shadow/DateTimeNumericFieldElement.h:
+        (DateTimeNumericFieldElement): Ditto.
+
 2012-12-11  Pavel Podivilov  <podivilov@google.com>
 
         Remove pango files deleted at r137263 form WebCore.gypi.

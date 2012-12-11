@@ -150,11 +150,6 @@ bool DateTimeNumericFieldElement::hasValue() const
     return m_hasValue;
 }
 
-Locale& DateTimeNumericFieldElement::localeForOwner() const
-{
-    return document()->getCachedLocale(localeIdentifier());
-}
-
 int DateTimeNumericFieldElement::maximum() const
 {
     return m_range.maximum;

@@ -44,7 +44,8 @@ PASS input.value is ""
 == Typeahead ==
 PASS input.value is "12:01:56"
 PASS input.value is "12:02:56"
-== RTL Left/Right keys ==
+== RTL focus navigation ==
+The tests in this block fail on platforms without the lang-attribute-aware-form-control-UI feature.
 PASS input.value is "01:56"
 PASS input.value is "01:02"
 PASS input.value is "03:02"

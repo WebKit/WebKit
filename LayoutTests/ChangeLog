@@ -1,3 +1,19 @@
+2012-12-11  Kent Tamura  <tkent@chromium.org>
+
+        INPUT_MULTIPLE_FIELDS_UI: Disable focus navigation by right/left keys in RTL locales
+        https://bugs.webkit.org/show_bug.cgi?id=104644
+
+        Reviewed by Hajime Morita.
+
+        * fast/forms/date-multiple-fields/date-multiple-fields-keyboard-events-expected.txt:
+        * fast/forms/date-multiple-fields/date-multiple-fields-keyboard-events.html:
+        * fast/forms/datetimelocal-multiple-fields/datetimelocal-multiple-fields-keyboard-events-expected.txt:
+        * fast/forms/datetimelocal-multiple-fields/datetimelocal-multiple-fields-keyboard-events.html:
+        * fast/forms/month-multiple-fields/month-multiple-fields-keyboard-events-expected.txt:
+        * fast/forms/month-multiple-fields/month-multiple-fields-keyboard-events.html:
+        * fast/forms/time-multiple-fields/time-multiple-fields-keyboard-events-expected.txt:
+        * fast/forms/time-multiple-fields/time-multiple-fields-keyboard-events.html:
+
 2012-12-11  Pavel Podivilov  <podivilov@google.com>
 
         [Chromium] Unreviewed, remove "platform/blackberry [ WontFix ]" from test expectations

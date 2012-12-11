@@ -51,7 +51,8 @@ PASS input.value is ""
 == Typeahead ==
 PASS input.value is "2012-12-01"
 PASS input.value is "2012-12-02"
-== RTL Left/Right keys ==
+== RTL focus navigation ==
+The tests in this block fail on platforms without the lang-attribute-aware-form-control-UI feature.
 PASS input.value is "2012-09-01"
 PASS input.value is "2012-02-01"
 PASS input.value is "2012-03-01"
