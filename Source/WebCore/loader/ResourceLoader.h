@@ -65,6 +65,7 @@ public:
     ResourceError cannotShowURLError();
     
     virtual void setDefersLoading(bool);
+    bool defersLoading() const { return m_defersLoading; }
 
     unsigned long identifier() const { return m_identifier; }
 
@@ -167,7 +168,6 @@ protected:
     void didFinishLoadingOnePart(double finishTime);
 
     bool cancelled() const { return m_cancelled; }
-    bool defersLoading() const { return m_defersLoading; }
 
     RefPtr<ResourceHandle> m_handle;
     RefPtr<Frame> m_frame;

@@ -1,3 +1,17 @@
+2012-12-11  Nate Chapin  <japhet@chromium.org>
+
+        Route main resource loads through the memory cache.
+        https://bugs.webkit.org/show_bug.cgi?id=49246
+
+        Reviewed by Antti Koivisto.
+
+        * http/tests/inspector/resource-parameters.html: The main resource's url will exclude the fragment identifier here.
+        * http/tests/misc/will-send-request-returns-null-on-redirect-expected.txt: The error code for loads cancelled
+            by an embedder's willSendRequest() will show as standard load cancellations rather than as a content policy
+            failure. This was an odd quirk of how MainResourceLoader::willSendRequest() was implemented (namely, doing a
+            content policy check on ResourceRequests with empty urls).
+        * platform/chromium/http/tests/misc/will-send-request-returns-null-on-redirect-expected.txt: See previous.
+
 2012-12-11  Aaron Colwell  <acolwell@chromium.org>
 
         Update MediaSource to allow append() calls in "ended" state.
