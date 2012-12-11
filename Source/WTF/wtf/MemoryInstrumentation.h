@@ -79,12 +79,13 @@ public:
 protected:
     class InstrumentedPointerBase {
     public:
-        WTF_EXPORT_PRIVATE explicit InstrumentedPointerBase(MemoryObjectInfo*);
+        WTF_EXPORT_PRIVATE InstrumentedPointerBase(MemoryObjectInfo*, const void* pointer);
         virtual ~InstrumentedPointerBase() { }
         WTF_EXPORT_PRIVATE void process(MemoryInstrumentation*);
 
     protected:
-        virtual const void* callReportMemoryUsage(MemoryObjectInfo*) = 0;
+        virtual void callReportMemoryUsage(MemoryObjectInfo*) = 0;
+        const void* m_pointer;
 
     private:
         const MemoryObjectType m_ownerObjectType;
@@ -107,6 +108,7 @@ private:
 
     WTF_EXPORT_PRIVATE static MemoryObjectType getObjectType(MemoryObjectInfo*);
 
+    friend class MemoryObjectInfo;
     friend class MemoryClassInfo;
     template<typename T> friend void reportMemoryUsage(const T*, MemoryObjectInfo*);
 
@@ -136,10 +138,7 @@ private:
         InstrumentedPointer(const T* pointer, MemoryObjectInfo* ownerObjectInfo);
 
     protected:
-        virtual const void* callReportMemoryUsage(MemoryObjectInfo*) OVERRIDE;
-
-    private:
-        const T* m_pointer;
+        virtual void callReportMemoryUsage(MemoryObjectInfo*) OVERRIDE;
     };
 
     template<typename T> void addObject(const T& t, MemoryObjectInfo* ownerObjectInfo, const char* edgeName) { OwningTraits<T>::addObject(this, t, ownerObjectInfo, edgeName); }
@@ -183,13 +182,15 @@ public:
         : m_memoryObjectInfo(memoryObjectInfo)
         , m_memoryInstrumentation(0)
         , m_objectType(0)
+        , m_skipMembers(false)
     {
         init(pointer, objectType, actualSize);
     }
 
     template<typename M> void addMember(const M& member, const char* edgeName = 0)
     {
-        m_memoryInstrumentation->addObject(member, m_memoryObjectInfo, edgeName);
+        if (!m_skipMembers)
+            m_memoryInstrumentation->addObject(member, m_memoryObjectInfo, edgeName);
     }
     WTF_EXPORT_PRIVATE void addRawBuffer(const void* buffer, size_t, const char* nodeName = 0, const char* edgeName = 0);
     WTF_EXPORT_PRIVATE void addPrivateBuffer(size_t, MemoryObjectType ownerObjectType = 0, const char* nodeName = 0, const char* edgeName = 0);
@@ -202,6 +203,7 @@ private:
     MemoryObjectInfo* m_memoryObjectInfo;
     MemoryInstrumentation* m_memoryInstrumentation;
     MemoryObjectType m_objectType;
+    bool m_skipMembers;
 };
 
 template<typename T>
@@ -241,16 +243,14 @@ void MemoryInstrumentation::addObjectImpl(const RefPtr<T>* object, MemoryObjectI
 
 template<typename T>
 MemoryInstrumentation::InstrumentedPointer<T>::InstrumentedPointer(const T* pointer, MemoryObjectInfo* ownerObjectInfo)
-    : InstrumentedPointerBase(ownerObjectInfo)
-    , m_pointer(pointer)
+    : InstrumentedPointerBase(ownerObjectInfo, pointer)
 {
 }
 
 template<typename T>
-const void* MemoryInstrumentation::InstrumentedPointer<T>::callReportMemoryUsage(MemoryObjectInfo* memoryObjectInfo)
+void MemoryInstrumentation::InstrumentedPointer<T>::callReportMemoryUsage(MemoryObjectInfo* memoryObjectInfo)
 {
-    reportMemoryUsage(m_pointer, memoryObjectInfo);
-    return m_pointer;
+    reportMemoryUsage(static_cast<const T*>(m_pointer), memoryObjectInfo);
 }
 
 // Link time guard for classes with external memory instrumentation.

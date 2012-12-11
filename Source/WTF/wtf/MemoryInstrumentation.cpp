@@ -42,7 +42,7 @@ namespace WTF {
 
 MemoryInstrumentation::MemoryInstrumentation(MemoryInstrumentationClient* client)
     : m_client(client)
-    , m_rootObjectInfo(adoptPtr(new MemoryObjectInfo(this, 0)))
+    , m_rootObjectInfo(adoptPtr(new MemoryObjectInfo(this, 0, 0)))
 {
 }
 
@@ -67,14 +67,15 @@ void MemoryInstrumentation::callReportObjectInfo(MemoryObjectInfo* memoryObjectI
 
 void MemoryInstrumentation::reportLinkToBuffer(const void* owner, const void* buffer, MemoryObjectType ownerObjectType, size_t size, const char* nodeName, const char* edgeName)
 {
-    MemoryObjectInfo memoryObjectInfo(this, ownerObjectType);
+    MemoryObjectInfo memoryObjectInfo(this, ownerObjectType, 0);
     memoryObjectInfo.reportObjectInfo(buffer, ownerObjectType, size);
     memoryObjectInfo.setName(nodeName);
     m_client->reportLeaf(owner, memoryObjectInfo, edgeName);
 }
 
-MemoryInstrumentation::InstrumentedPointerBase::InstrumentedPointerBase(MemoryObjectInfo* memoryObjectInfo)
-    : m_ownerObjectType(memoryObjectInfo->objectType())
+MemoryInstrumentation::InstrumentedPointerBase::InstrumentedPointerBase(MemoryObjectInfo* memoryObjectInfo, const void* pointer)
+    : m_pointer(pointer)
+    , m_ownerObjectType(memoryObjectInfo->objectType())
 {
 #if DEBUG_POINTER_INSTRUMENTATION
     m_callStackSize = s_maxCallStackSize;
@@ -84,19 +85,19 @@ MemoryInstrumentation::InstrumentedPointerBase::InstrumentedPointerBase(MemoryOb
 
 void MemoryInstrumentation::InstrumentedPointerBase::process(MemoryInstrumentation* memoryInstrumentation)
 {
-    MemoryObjectInfo memoryObjectInfo(memoryInstrumentation, m_ownerObjectType);
-    const void* originalPointer = callReportMemoryUsage(&memoryObjectInfo);
+    MemoryObjectInfo memoryObjectInfo(memoryInstrumentation, m_ownerObjectType, m_pointer);
+    callReportMemoryUsage(&memoryObjectInfo);
 
-    const void* pointer = memoryObjectInfo.reportedPointer();
-    ASSERT(pointer);
-    if (pointer != originalPointer) {
-        memoryInstrumentation->m_client->reportBaseAddress(originalPointer, pointer);
-        if (memoryInstrumentation->visited(pointer))
+    const void* realAddress = memoryObjectInfo.reportedPointer();
+    ASSERT(realAddress);
+    if (realAddress != m_pointer) {
+        memoryInstrumentation->m_client->reportBaseAddress(m_pointer, realAddress);
+        if (!memoryObjectInfo.firstVisit())
             return;
     }
-    memoryInstrumentation->countObjectSize(pointer, memoryObjectInfo.objectType(), memoryObjectInfo.objectSize());
+    memoryInstrumentation->countObjectSize(realAddress, memoryObjectInfo.objectType(), memoryObjectInfo.objectSize());
     memoryInstrumentation->m_client->reportNode(memoryObjectInfo);
-    if (!memoryInstrumentation->checkCountedObject(pointer)) {
+    if (!memoryInstrumentation->checkCountedObject(realAddress)) {
 #if DEBUG_POINTER_INSTRUMENTATION
         fputs("Unknown object counted:\n", stderr);
         WTFPrintBacktrace(m_callStack, m_callStackSize);
@@ -104,21 +105,25 @@ void MemoryInstrumentation::InstrumentedPointerBase::process(MemoryInstrumentati
     }
 }
 
-void MemoryClassInfo::init(const void* pointer, MemoryObjectType objectType, size_t actualSize)
+void MemoryClassInfo::init(const void* objectAddress, MemoryObjectType objectType, size_t actualSize)
 {
-    m_memoryObjectInfo->reportObjectInfo(pointer, objectType, actualSize);
+    m_memoryObjectInfo->reportObjectInfo(objectAddress, objectType, actualSize);
     m_memoryInstrumentation = m_memoryObjectInfo->memoryInstrumentation();
     m_objectType = m_memoryObjectInfo->objectType();
+    m_skipMembers = !m_memoryObjectInfo->firstVisit();
 }
 
 void MemoryClassInfo::addRawBuffer(const void* buffer, size_t size, const char* nodeName, const char* edgeName)
 {
-    m_memoryInstrumentation->addRawBuffer(m_memoryObjectInfo->reportedPointer(), buffer, m_objectType, size, nodeName, edgeName);
+    if (!m_skipMembers)
+        m_memoryInstrumentation->addRawBuffer(m_memoryObjectInfo->reportedPointer(), buffer, m_objectType, size, nodeName, edgeName);
 }
 
 void MemoryClassInfo::addPrivateBuffer(size_t size, MemoryObjectType ownerObjectType, const char* nodeName, const char* edgeName)
 {
     if (!size)
+        return;
+    if (m_skipMembers)
         return;
     if (!ownerObjectType)
         ownerObjectType = m_objectType;

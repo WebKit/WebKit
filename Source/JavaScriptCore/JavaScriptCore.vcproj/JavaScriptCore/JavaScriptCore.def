@@ -12,7 +12,7 @@ EXPORTS
     ??0DropAllLocks@JSLock@JSC@@QAE@PAVJSGlobalData@2@@Z
     ??0DynamicGlobalObjectScope@JSC@@QAE@AAVJSGlobalData@1@PAVJSGlobalObject@1@@Z 
     ??0ErrorHandlingMode@Interpreter@JSC@@QAE@PAVExecState@2@@Z
-    ??0InstrumentedPointerBase@MemoryInstrumentation@WTF@@QAE@PAVMemoryObjectInfo@2@@Z
+    ??0InstrumentedPointerBase@MemoryInstrumentation@WTF@@QAE@PAVMemoryObjectInfo@2@PBX@Z
     ??0InternalFunction@JSC@@IAE@PAVJSGlobalObject@1@PAVStructure@1@@Z
     ??0JSGlobalObject@JSC@@IAE@AAVJSGlobalData@1@PAVStructure@1@PBUGlobalObjectMethodTable@1@@Z
     ??0JSLockHolder@JSC@@QAE@AAVJSGlobalData@1@@Z
