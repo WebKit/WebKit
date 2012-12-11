@@ -73,11 +73,12 @@ void WebIDBCallbacksImpl::onSuccess(WebIDBCursor* cursor, const WebIDBKey& key, 
 
 void WebIDBCallbacksImpl::onSuccess(WebIDBDatabase* webKitInstance)
 {
+    OwnPtr<WebIDBDatabase> webDatabase = adoptPtr(webKitInstance);
     if (m_databaseProxy) {
         m_callbacks->onSuccess(m_databaseProxy.release());
         return;
     }
-    m_callbacks->onSuccess(IDBDatabaseBackendProxy::create(adoptPtr(webKitInstance)));
+    m_callbacks->onSuccess(IDBDatabaseBackendProxy::create(webDatabase.release()));
 }
 
 void WebIDBCallbacksImpl::onSuccess(const WebIDBKey& key)
