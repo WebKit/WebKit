@@ -81,6 +81,7 @@ MainResourceLoader::MainResourceLoader(DocumentLoader* documentLoader)
 
 MainResourceLoader::~MainResourceLoader()
 {
+    clearResource();
 #if PLATFORM(MAC) && !PLATFORM(IOS) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 1080
     ASSERT(!m_filter);
 #endif
