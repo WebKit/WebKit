@@ -286,8 +286,8 @@ public:
 
     static Vector<FileChooserFileInfo> filesFromFileInputFormControlState(const FormControlState&);
 
-    virtual bool shouldMatchReadOnlySelector() const OVERRIDE;
-    virtual bool shouldMatchReadWriteSelector() const OVERRIDE;
+    virtual bool matchesReadOnlyPseudoClass() const OVERRIDE;
+    virtual bool matchesReadWritePseudoClass() const OVERRIDE;
     virtual void setRangeText(const String& replacement, ExceptionCode&) OVERRIDE;
     virtual void setRangeText(const String& replacement, unsigned start, unsigned end, const String& selectionMode, ExceptionCode&) OVERRIDE;
 

@@ -529,12 +529,12 @@ void HTMLTextAreaElement::attach()
     fixPlaceholderRenderer(m_placeholder, innerTextElement());
 }
 
-bool HTMLTextAreaElement::shouldMatchReadOnlySelector() const
+bool HTMLTextAreaElement::matchesReadOnlyPseudoClass() const
 {
     return readOnly();
 }
 
-bool HTMLTextAreaElement::shouldMatchReadWriteSelector() const
+bool HTMLTextAreaElement::matchesReadWritePseudoClass() const
 {
     return !readOnly();
 }

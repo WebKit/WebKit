@@ -229,14 +229,14 @@ bool SliderThumbElement::isEnabledFormControl() const
     return hostInput()->isEnabledFormControl();
 }
 
-bool SliderThumbElement::shouldMatchReadOnlySelector() const
+bool SliderThumbElement::matchesReadOnlyPseudoClass() const
 {
-    return hostInput()->shouldMatchReadOnlySelector();
+    return hostInput()->matchesReadOnlyPseudoClass();
 }
 
-bool SliderThumbElement::shouldMatchReadWriteSelector() const
+bool SliderThumbElement::matchesReadWritePseudoClass() const
 {
-    return hostInput()->shouldMatchReadWriteSelector();
+    return hostInput()->matchesReadWritePseudoClass();
 }
 
 Node* SliderThumbElement::focusDelegate()

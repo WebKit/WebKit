@@ -1426,12 +1426,12 @@ bool HTMLInputElement::isRequiredFormControl() const
     return m_inputType->supportsRequired() && isRequired();
 }
 
-bool HTMLInputElement::shouldMatchReadOnlySelector() const
+bool HTMLInputElement::matchesReadOnlyPseudoClass() const
 {
     return m_inputType->supportsReadOnly() && readOnly();
 }
 
-bool HTMLInputElement::shouldMatchReadWriteSelector() const
+bool HTMLInputElement::matchesReadWritePseudoClass() const
 {
     return m_inputType->supportsReadOnly() && !readOnly();
 }

@@ -207,14 +207,14 @@ void SpinButtonElement::releaseCapture()
     }
 }
 
-bool SpinButtonElement::shouldMatchReadOnlySelector() const
+bool SpinButtonElement::matchesReadOnlyPseudoClass() const
 {
-    return shadowHost()->shouldMatchReadOnlySelector();
+    return shadowHost()->matchesReadOnlyPseudoClass();
 }
 
-bool SpinButtonElement::shouldMatchReadWriteSelector() const
+bool SpinButtonElement::matchesReadWritePseudoClass() const
 {
-    return shadowHost()->shouldMatchReadWriteSelector();
+    return shadowHost()->matchesReadWritePseudoClass();
 }
 
 void SpinButtonElement::startRepeatingTimer()

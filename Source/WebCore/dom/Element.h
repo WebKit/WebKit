@@ -376,8 +376,8 @@ public:
     Element* nextElementSibling() const;
     unsigned childElementCount() const;
 
-    virtual bool shouldMatchReadOnlySelector() const;
-    virtual bool shouldMatchReadWriteSelector() const;
+    virtual bool matchesReadOnlyPseudoClass() const;
+    virtual bool matchesReadWritePseudoClass() const;
     bool webkitMatchesSelector(const String& selectors, ExceptionCode&);
 
     DOMTokenList* classList();

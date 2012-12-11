@@ -1,3 +1,48 @@
+2012-12-11  Kent Tamura  <tkent@chromium.org>
+
+        Refactoring: Rename Element::shouldMatchReadOnlySelector and shouldMatchReadWriteSelector
+        https://bugs.webkit.org/show_bug.cgi?id=104651
+
+        Reviewed by Kentaro Hara.
+
+        ':read-only' and ':read-write' are pseudo classes. They are not
+        selectors in the context of these functions.  This patch rename them so
+        that they contain 'pseudo class,' and make them match to an existing
+        function, matchesFocusPseudoClass.
+
+        No new tests. This shouldn't make behavior changes.
+
+        * css/SelectorChecker.cpp:
+        (WebCore::SelectorChecker::checkOneSelector):
+        * dom/Element.cpp:
+        (WebCore::Element::recalcStyle):
+        (WebCore::Element::matchesReadOnlyPseudoClass):
+        (WebCore::Element::matchesReadWritePseudoClass):
+        * dom/Element.h:
+        (Element):
+        * html/HTMLInputElement.cpp:
+        (WebCore::HTMLInputElement::matchesReadOnlyPseudoClass):
+        (WebCore::HTMLInputElement::matchesReadWritePseudoClass):
+        * html/HTMLInputElement.h:
+        (HTMLInputElement):
+        * html/HTMLTextAreaElement.cpp:
+        (WebCore::HTMLTextAreaElement::matchesReadOnlyPseudoClass):
+        (WebCore::HTMLTextAreaElement::matchesReadWritePseudoClass):
+        * html/HTMLTextAreaElement.h:
+        (HTMLTextAreaElement):
+        * html/shadow/SliderThumbElement.cpp:
+        (WebCore::SliderThumbElement::matchesReadOnlyPseudoClass):
+        (WebCore::SliderThumbElement::matchesReadWritePseudoClass):
+        * html/shadow/SliderThumbElement.h:
+        (SliderThumbElement):
+        * html/shadow/SpinButtonElement.cpp:
+        (WebCore::SpinButtonElement::matchesReadOnlyPseudoClass):
+        (WebCore::SpinButtonElement::matchesReadWritePseudoClass):
+        * html/shadow/SpinButtonElement.h:
+        (SpinButtonElement):
+        * rendering/RenderTheme.cpp:
+        (WebCore::RenderTheme::isReadOnlyControl):
+
 2012-12-11  Pavel Feldman  <pfeldman@chromium.org>
 
         Web Inspector: add more horizontal spacing for toolbar items in docked to bottom mode
