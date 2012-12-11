@@ -85,7 +85,7 @@ sub buildMyProject
         $result = buildVisualStudioProject("$projectName.vcproj/$projectName.sln");
     } elsif (isGtk()) {
         checkForArgumentAndRemoveFromARGV("--gtk");
-        $result = buildGtkProject($projectName, 0, @ARGV);
+        $result = buildGtkProject($projectName, 0);
     } elsif (isWx()) {
         # Builds everything in one-shot. No need to build anything here.
         $result = 0;

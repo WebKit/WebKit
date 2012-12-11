@@ -1,3 +1,18 @@
+2012-12-11  Zan Dobersek  <zandobersek@gmail.com>
+
+        [GTK] Feature enabling/disabling should be possible through build-webkit
+        https://bugs.webkit.org/show_bug.cgi?id=99271
+
+        Reviewed by Gustavo Noronha Silva.
+
+        Move the contents of GNUmakefile.features.am into GNUmakefile.features.am.in.
+        The former is then copied from the latter but then appropriately modified if
+        the build-webkit script overrides any of the default feature defines.
+
+        No new tests - no new testable functionality.
+
+        * GNUmakefile.features.am.in: Renamed from Source/WebCore/GNUmakefile.features.am.
+
 2012-12-11  Jinwoo Song  <jinwoo7.song@samsung.com>
 
         [QT][EFL][WK2] Move the GraphicsSurfaceGLX.cpp to common place

@@ -209,16 +209,7 @@ if ($useGYP) {
 
 my @options = ();
 
-# enable autotool options accordingly
-if (isGtk()) {
-    @options = @ARGV;
-    foreach (@features) {
-        push @options, autotoolsFlag(${$_->{value}}, $_->{option});
-    }
-
-    push @options, "--prefix=" . $prefixPath if defined($prefixPath);
-    push @options, "--makeargs=" . $makeArgs if $makeArgs;
-} elsif (isAppleMacWebKit()) {
+if (isAppleMacWebKit()) {
     push @options, XcodeOptions();
 
     sub option($$$)
@@ -363,10 +354,7 @@ for my $dir (@projects) {
 
     my $project = basename($dir);
     if (isGtk()) {
-        if ($noWebKit2) {
-            unshift(@options, "--disable-webkit2");
-        }
-        $result = buildGtkProject($project, $clean, @options);
+        $result = buildGtkProject($project, $clean, $prefixPath, $makeArgs, $noWebKit2, @features);
     } elsif (isAppleMacWebKit()) {
         my @local_options = @options;
         push @local_options, XcodeCoverageSupportOptions() if $coverageSupport && $project ne "ANGLE";

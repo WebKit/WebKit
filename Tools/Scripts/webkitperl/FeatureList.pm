@@ -183,7 +183,7 @@ my @features = (
       define => "ENABLE_CSS3_CONDITIONAL_RULES", default => 0, value => \$css3ConditionalRulesSupport },
 
     { option => "css3-text", desc => "Toggle CSS3 Text support",
-      define => "ENABLE_CSS3_TEXT", default => isEfl(), value => \$css3TextSupport },
+      define => "ENABLE_CSS3_TEXT", default => (isEfl() || isGtk()), value => \$css3TextSupport },
 
     { option => "css-box-decoration-break", desc => "Toggle CSS box-decoration-break support",
       define => "ENABLE_CSS_BOX_DECORATION_BREAK", default => 1, value => \$cssBoxDecorationBreakSupport },
@@ -318,7 +318,7 @@ my @features = (
       define => "ENABLE_MEDIA_STATISTICS", default => 0, value => \$mediaStatisticsSupport },
 
     { option => "media-stream", desc => "Toggle Media Stream support",
-      define => "ENABLE_MEDIA_STREAM", default => (isChromium() || isGtk() || isBlackBerry()), value => \$mediaStreamSupport },
+      define => "ENABLE_MEDIA_STREAM", default => (isChromium() || isBlackBerry()), value => \$mediaStreamSupport },
 
     { option => "meter-tag", desc => "Toggle Meter Tag support",
       define => "ENABLE_METER_ELEMENT", default => !isAppleWinWebKit(), value => \$meterTagSupport },
@@ -381,7 +381,7 @@ my @features = (
       define => "ENABLE_SQL_DATABASE", default => 1, value => \$sqlDatabaseSupport },
 
     { option => "style-scoped", desc => "Toggle Style Scoped support",
-      define => "ENABLE_STYLE_SCOPED", default => isBlackBerry(), value => \$styleScopedSupport },
+      define => "ENABLE_STYLE_SCOPED", default => (isBlackBerry() || isGtk()), value => \$styleScopedSupport },
 
     { option => "svg", desc => "Toggle SVG support",
       define => "ENABLE_SVG", default => 1, value => \$svgSupport },

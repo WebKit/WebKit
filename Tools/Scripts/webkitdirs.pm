@@ -1906,9 +1906,10 @@ sub autotoolsFlag($$)
 
 sub runAutogenForAutotoolsProjectIfNecessary($@)
 {
-    my ($dir, $prefix, $sourceDir, $project, @buildArgs) = @_;
+    my ($dir, $prefix, $sourceDir, $project, $joinedOverridableFeatures, @buildArgs) = @_;
 
-    my $argumentsFile = "previous-autogen-arguments.txt";
+    my $joinedBuildArgs = join(" ", @buildArgs);
+
     if (-e "GNUmakefile") {
         # Just assume that build-jsc will never be used to reconfigure JSC. Later
         # we can go back and make this more complicated if the demand is there.
@@ -1916,8 +1917,9 @@ sub runAutogenForAutotoolsProjectIfNecessary($@)
             return;
         }
 
-        # We only run autogen.sh again if the arguments passed have changed.
-        if (!mustReRunAutogen($sourceDir, $argumentsFile, @buildArgs)) {
+        # Run autogen.sh again if either the features overrided by build-webkit or build arguments have changed.
+        if (!mustReRunAutogen($sourceDir, "feature-defines-overriding.txt", $joinedOverridableFeatures)
+            && !mustReRunAutogen($sourceDir, "previous-autogen-arguments.txt", $joinedBuildArgs)) {
             return;
         }
     }
@@ -1928,8 +1930,12 @@ sub runAutogenForAutotoolsProjectIfNecessary($@)
     # Only for WebKit, write the autogen.sh arguments to a file so that we can detect
     # when they change and automatically re-run it.
     if ($project eq 'WebKit') {
-        open(AUTOTOOLS_ARGUMENTS, ">$argumentsFile");
-        print AUTOTOOLS_ARGUMENTS join(" ", @buildArgs);
+        open(OVERRIDABLE_FEATURES, ">feature-defines-overriding.txt");
+        print OVERRIDABLE_FEATURES $joinedOverridableFeatures;
+        close(OVERRIDABLE_FEATURES);
+
+        open(AUTOTOOLS_ARGUMENTS, ">previous-autogen-arguments.txt");
+        print AUTOTOOLS_ARGUMENTS $joinedBuildArgs;
         close(AUTOTOOLS_ARGUMENTS);
     }
 
@@ -1963,24 +1969,24 @@ sub getJhbuildPath()
 
 sub mustReRunAutogen($@)
 {
-    my ($sourceDir, $filename, @currentArguments) = @_;
+    my ($sourceDir, $filename, $currentContents) = @_;
 
     if (! -e $filename) {
         return 1;
     }
 
-    open(AUTOTOOLS_ARGUMENTS, $filename);
-    chomp(my $previousArguments = <AUTOTOOLS_ARGUMENTS>);
-    close(AUTOTOOLS_ARGUMENTS);
+    open(CONTENTS_FILE, $filename);
+    chomp(my $previousContents = <CONTENTS_FILE>);
+    close(CONTENTS_FILE);
 
     # We only care about the WebKit2 argument when we are building WebKit itself.
     # build-jsc never passes --enable-webkit2, so if we didn't do this, autogen.sh
     # would run for every single build on the bots, since it runs both build-webkit
     # and build-jsc.
-    my $joinedCurrentArguments = join(" ", @currentArguments);
-    if ($previousArguments ne $joinedCurrentArguments) {
-        print "Previous autogen arguments were: $previousArguments\n\n";
-        print "New autogen arguments are: $joinedCurrentArguments\n";
+    if ($previousContents ne $currentContents) {
+        print "Contents for file $filename have changed.\n";
+        print "Previous contents were: $previousContents\n\n";
+        print "New contents are: $currentContents\n";
         return 1;
     }
 
@@ -1989,12 +1995,11 @@ sub mustReRunAutogen($@)
 
 sub buildAutotoolsProject($@)
 {
-    my ($project, $clean, @buildParams) = @_;
+    my ($project, $clean, $prefix, $makeArgs, $noWebKit2, @features) = @_;
 
     my $make = 'make';
     my $dir = productDir();
     my $config = passedConfiguration() || configuration();
-    my $prefix;
 
     # Use rm to clean the build directory since distclean may miss files
     if ($clean && -d $dir) {
@@ -2010,18 +2015,37 @@ sub buildAutotoolsProject($@)
         return 0;
     }
 
-    my @buildArgs = ();
-    my $makeArgs = $ENV{"WebKitMakeArguments"} || "";
-    for my $i (0 .. $#buildParams) {
-        my $opt = $buildParams[$i];
-        if ($opt =~ /^--makeargs=(.*)/i ) {
-            $makeArgs = $makeArgs . " " . $1;
-        } elsif ($opt =~ /^--prefix=(.*)/i ) {
-            $prefix = $1;
+    my @buildArgs = @ARGV;
+    if ($noWebKit2) {
+        unshift(@buildArgs, "--disable-webkit2");
+    }
+
+    # Configurable features listed here should be kept in sync with the
+    # features for which there exists a configuration option in configure.ac.
+    my %configurableFeatures = (
+        "filters" => 1,
+        "gamepad" => 1,
+        "geolocation" => 1,
+        "indexed-database" => 1,
+        "media-stream" => 1,
+        "svg" => 1,
+        "svg-fonts" => 1,
+        "video" => 1,
+        "webgl" => 1,
+        "web-audio" => 1,
+        "xslt" => 1,
+    );
+    my @overridableFeatures = ();
+    foreach (@features) {
+        if ($configurableFeatures{$_->{option}}) {
+            push @buildArgs, autotoolsFlag(${$_->{value}}, $_->{option});;
         } else {
-            push @buildArgs, $opt;
+            push @overridableFeatures, $_->{define} . "=" . (${$_->{value}} ? "1" : "0");
         }
     }
+
+    $makeArgs = $makeArgs || "";
+    $makeArgs = $makeArgs . " " . $ENV{"WebKitMakeArguments"} if $ENV{"WebKitMakeArguments"};
 
     # Automatically determine the number of CPUs for make only
     # if make arguments haven't already been specified.
@@ -2060,7 +2084,8 @@ sub buildAutotoolsProject($@)
     # If GNUmakefile exists, don't run autogen.sh unless its arguments
     # have changed. The makefile should be smart enough to track autotools
     # dependencies and re-run autogen.sh when build files change.
-    runAutogenForAutotoolsProjectIfNecessary($dir, $prefix, $sourceDir, $project, @buildArgs);
+    my $joinedOverridableFeatures = join(" ", @overridableFeatures);
+    runAutogenForAutotoolsProjectIfNecessary($dir, $prefix, $sourceDir, $project, $joinedOverridableFeatures, @buildArgs);
 
     my $runWithJhbuild = jhbuildWrapperPrefixIfNeeded();
     if (system("$runWithJhbuild $make $makeArgs") ne 0) {
@@ -2406,13 +2431,13 @@ EOF
 
 sub buildGtkProject
 {
-    my ($project, $clean, @buildArgs) = @_;
+    my ($project, $clean, $prefix, $makeArgs, $noWebKit2, @features) = @_;
 
     if ($project ne "WebKit" and $project ne "JavaScriptCore" and $project ne "WTF") {
         die "Unsupported project: $project. Supported projects: WebKit, JavaScriptCore, WTF\n";
     }
 
-    return buildAutotoolsProject($project, $clean, @buildArgs);
+    return buildAutotoolsProject($project, $clean, $prefix, $makeArgs, $noWebKit2, @features);
 }
 
 sub buildChromiumMakefile($$@)

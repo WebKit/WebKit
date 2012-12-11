@@ -47,6 +47,7 @@ tags
 /Source/autotools/ltversion.m4
 /Source/autotools/lt~obsolete.m4
 /Source/autotools/missing
+/Source/WebCore/GNUmakefile.features.am
 /Source/WebKit/gtk/docs/GNUmakefile.in
 /Source/WebKit/gtk/po/*.pot
 /autotoolsconfig.h.in

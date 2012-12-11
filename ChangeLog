@@ -1,3 +1,21 @@
+2012-12-11  Zan Dobersek  <zandobersek@gmail.com>
+
+        [GTK] Feature enabling/disabling should be possible through build-webkit
+        https://bugs.webkit.org/show_bug.cgi?id=99271
+
+        Reviewed by Gustavo Noronha Silva.
+
+        The autogen.sh script now calls the Tools/gtk/override-feature-defines script
+        before calling autoreconf. This ensures that Source/WebCore/GNUmakefile.features.am
+        is present and properly modified if the build-webkit script intends to override
+        any feature.
+
+        The Source/WebCore/GNUmakefile.features.am file is added to the ignored files list
+        so it doesn't pop out as a new, untracked file.
+
+        * .gitignore:
+        * autogen.sh:
+
 2012-12-10  Martin Robinson  <mrobinson@igalia.com>
 
         [GTK] Remove the Pango backend

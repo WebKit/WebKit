@@ -1,0 +1,52 @@
+#!/usr/bin/env python
+
+import os
+import re
+import shutil
+import sys
+
+def copy_feature_defines_makefile():
+    src_path = os.path.join('Source', 'WebCore', 'GNUmakefile.features.am.in')
+    dest_path = os.path.join('Source', 'WebCore', 'GNUmakefile.features.am')
+    shutil.copy(src_path, dest_path)
+
+def adjust_feature_defines_makefile(build_dir, feature_defines_overriding):
+    feature_defines_makefile_file = os.path.join('Source', 'WebCore', 'GNUmakefile.features.am')
+    with open(feature_defines_makefile_file) as f:
+        feature_defines_makefile = f.read()
+
+    overriden_feature_defines = []
+    def override_feature_define(match):
+        matched_feature_define = match.group('feature')
+        if matched_feature_define not in feature_defines_overriding:
+            return match.string[match.start():match.end()]
+
+        if int(match.group('default_value')) is not feature_defines_overriding[matched_feature_define]:
+            overriden_feature_defines.append(matched_feature_define)
+        return "%s=%d" % (matched_feature_define, feature_defines_overriding[matched_feature_define])
+
+    feature_defines_makefile = re.sub(r"(?P<feature>(?:ENABLE_)\w+)=(?P<default_value>0|1)", override_feature_define, feature_defines_makefile)
+    with open(feature_defines_makefile_file, 'w') as f:
+        f.write(feature_defines_makefile)
+
+    if overriden_feature_defines:
+        print "The following feature defines were overriden:\n%s" % ', '.join(overriden_feature_defines)
+
+def override_feature_defines(build_dir):
+    copy_feature_defines_makefile()
+
+    feature_defines_overriding_file = os.path.join(build_dir, 'feature-defines-overriding.txt')
+    if not os.path.exists(feature_defines_overriding_file):
+        return
+
+    with open(feature_defines_overriding_file) as f:
+        match_iter = re.findall(r"((?:ENABLE_)\w+)=(0|1)", f.read())
+
+    feature_defines_overriding = {}
+    for match in match_iter:
+        feature_defines_overriding[match[0]] = int(match[1])
+
+    adjust_feature_defines_makefile(build_dir, feature_defines_overriding)
+
+if __name__=='__main__':
+    override_feature_defines(sys.argv[1])

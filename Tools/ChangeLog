@@ -1,3 +1,50 @@
+2012-12-11  Zan Dobersek  <zandobersek@gmail.com>
+
+        [GTK] Feature enabling/disabling should be possible through build-webkit
+        https://bugs.webkit.org/show_bug.cgi?id=99271
+
+        Reviewed by Gustavo Noronha Silva.
+
+        Refactor the code in webkitdirs.pm that builds an autotools project to generate
+        autogen.sh arguments, make arguments and installation prefix from the passed-in
+        parameters rather than generating all of that in build-webkit. The autogen.sh
+        arguments now contain only enable/disable flags for options that are actually
+        configurable in configure.ac, the flag value actually reflecting whether the feature
+        is enabled or disabled in the feature list.
+
+        Other features are overridable through modifying the GNUmakefile.features.am file.
+        All these features are now stored in the build directory and upon change trigger
+        a rerun of the autogen.sh script, pretty much like the autogen.sh arguments do.
+
+        The override-feature-defines script is called by autogen.sh, before GNUmakefile.in is
+        generated when calling autoreconf. Its task is to copy the GNUmakefile.features.am.in
+        into GNUmakefile.features.am and modify it if there's a text file in the build directory
+        that contains all the feature defines the build-webkit script has written. If the build
+        is not done through build-webkit (and there's no file in build directory listing all the
+        feature defines) the script does not advance further from copying.
+
+        This approach is taken to overcome the rigidness of the automake system as it's impossible
+        to effectively generate and use GNUmakefile.features.am or even GNUmakefile.features file
+        after the autoreconf command execution in autogen.sh.
+
+        * Scripts/build-jsc:
+        (buildMyProject):
+        * Scripts/build-webkit:
+        * Scripts/webkitdirs.pm:
+        (runAutogenForAutotoolsProjectIfNecessary):
+        (mustReRunAutogen):
+        (buildAutotoolsProject):
+        (buildGtkProject):
+        * Scripts/webkitperl/FeatureList.pm: Update the features that are currently enabled in
+        Source/WebCore/GNUmakefile.features.am.in but aren't in the feature list.
+        * Scripts/webkitpy/style/checker.py: Source/WebCore/GNUmakefile.features.am.in is recognized
+        as a text file and tabulation errors are reported. Skip the file to suppress them.
+        * gtk/override-feature-defines: Added.
+        (copy_feature_defines_makefile):
+        (adjust_feature_defines_makefile):
+        (adjust_feature_defines_makefile.override_feature_define):
+        (override_feature_defines):
+
 2012-12-10  Yury Semikhatsky  <yurys@chromium.org>
 
         Memory instrumentation: make sure each edge is reported only once

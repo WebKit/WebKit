@@ -328,6 +328,8 @@ _SKIPPED_FILES_WITH_WARNING = [
 # with FileType.NONE are automatically skipped without warning.
 _SKIPPED_FILES_WITHOUT_WARNING = [
     "LayoutTests" + os.path.sep,
+    # Prevents this being recognized as a text file.
+    "Source/WebCore/GNUmakefile.features.am.in",
     ]
 
 # Extensions of files which are allowed to contain carriage returns.
