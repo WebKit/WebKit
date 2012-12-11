@@ -1,3 +1,19 @@
+2012-12-11  Alberto Garcia  <agarcia@igalia.com>
+
+        Remove unused GErrors
+        https://bugs.webkit.org/show_bug.cgi?id=104657
+
+        Reviewed by Martin Robinson.
+
+        Replace unused GErrors with null pointers.
+
+        * DumpRenderTree/gtk/DumpRenderTree.cpp:
+        (initializeFonts):
+        * DumpRenderTree/gtk/EditingCallbacks.cpp:
+        (dumpRange):
+        * WebKitTestRunner/InjectedBundle/gtk/ActivateFontsGtk.cpp:
+        (WTR::inititializeFontConfigSetting):
+
 2012-12-11  Martin Robinson  <mrobinson@igalia.com>
 
         [GTK] Bump the jhbuild libsoup version to fix an authentication issue

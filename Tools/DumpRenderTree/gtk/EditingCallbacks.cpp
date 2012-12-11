@@ -59,15 +59,12 @@ static CString dumpRange(WebKitDOMRange* range)
     if (!range)
         return "(null)";
 
-    GOwnPtr<GError> error1;
-    GOwnPtr<GError> error2;
-    GOwnPtr<GError> error3;
-    GOwnPtr<GError> error4;
     GOwnPtr<gchar> dump(g_strdup_printf("range from %li of %s to %li of %s",
-        webkit_dom_range_get_start_offset(range, &error1.outPtr()),
-        dumpNodePath(webkit_dom_range_get_start_container(range, &error2.outPtr())).data(),
-        webkit_dom_range_get_end_offset(range, &error3.outPtr()),
-        dumpNodePath(webkit_dom_range_get_end_container(range, &error4.outPtr())).data()));
+        webkit_dom_range_get_start_offset(range, 0),
+        dumpNodePath(webkit_dom_range_get_start_container(range, 0)).data(),
+        webkit_dom_range_get_end_offset(range, 0),
+        dumpNodePath(webkit_dom_range_get_end_container(range, 0)).data()));
+
     return dump.get();
 }
 

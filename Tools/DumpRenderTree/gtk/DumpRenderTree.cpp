@@ -243,8 +243,7 @@ static void initializeFonts(const char* testURL = 0)
     if (fontsPath.isNull())
         g_error("Could not locate test fonts at %s. Is WEBKIT_TOP_LEVEL set?", fontsPath.data());
 
-    GOwnPtr<GError> error;
-    GOwnPtr<GDir> fontsDirectory(g_dir_open(fontsPath.data(), 0, &error.outPtr()));
+    GOwnPtr<GDir> fontsDirectory(g_dir_open(fontsPath.data(), 0, 0));
     while (const char* directoryEntry = g_dir_read_name(fontsDirectory.get())) {
         if (!g_str_has_suffix(directoryEntry, ".ttf") && !g_str_has_suffix(directoryEntry, ".otf"))
             continue;
