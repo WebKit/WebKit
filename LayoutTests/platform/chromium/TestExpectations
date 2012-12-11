@@ -3656,7 +3656,7 @@ webkit.org/b/89826 [ Mac Win ] fast/css/word-space-extra.html [ Failure ]
 webkit.org/b/94002 [ Win7 Debug ] inspector/debugger [ Pass Timeout ]
 
 # Flaky
-webkit.org/b/99389 [ Win ] inspector/debugger/xhr-breakpoints.html [ Pass Text ]
+webkit.org/b/99389 [ Win ] inspector/debugger/xhr-breakpoints.html [ Pass Failure ]
 
 # Added by bug 89826
 webkit.org/b/94003 [ Win ] fast/css/word-spacing-characters-complex-text.html [ ImageOnlyFailure ]
@@ -3934,7 +3934,7 @@ webkit.org/b/23166 [ Android Mac Win ] ietestcenter/css3/bordersbackgrounds/bord
 webkit.org/b/98699 [ Lion ] fast/writing-mode/vertical-subst-font-vert-no-dflt.html [ Crash ]
 webkit.org/b/98811 [ Mac ] fast/transforms/transformed-focused-text-input.html [ Pass ImageOnlyFailure ]
 
-webkit.org/b/98948 [ Linux Debug ] http/tests/media/media-source/video-media-source-play.html [ PASS CRASH ]
+webkit.org/b/98948 [ Linux Debug ] http/tests/media/media-source/video-media-source-play.html [ Pass Crash ]
 
 webkit.org/b/99089 transforms/3d/general/perspective-units.html [ Pass ImageOnlyFailure ]
 
@@ -3951,7 +3951,7 @@ webkit.org/b/98257 platform/chromium/virtual/gpu/fast/canvas/webgl/oes-element-i
 
 webkit.org/b/99802 [ MountainLion ] fast/forms/text-control-intrinsic-widths.html [ Failure ]
 
-webkit.org/b/99873 platform/chromium/virtual/gpu/fast/canvas/webgl/array-bounds-clamping.html [ Text ]
+webkit.org/b/99873 platform/chromium/virtual/gpu/fast/canvas/webgl/array-bounds-clamping.html [ Failure ]
 
 # These tests are failing already and because of virtual test suite for deferred
 # image decoding they need to be suppressed again.
@@ -4059,8 +4059,8 @@ webkit.org/b/100647 [ Win ] webaudio/audiobuffersource-loop-points.html [ Failur
 
 webkit.org/b/100806 [ Win ] fast/css/font-face-implicit-local-font.html [ Failure ]
 webkit.org/b/100806 [ Win ] fast/css/font-face-unicode-range.html [ Failure ]
-webkit.org/b/100806 [ Win ] fast/css/font-face-descending-unicode-range.html [ Text ]
-webkit.org/b/100806 [ Win ] fast/css/font-face-download-error.html [ Text ]
+webkit.org/b/100806 [ Win ] fast/css/font-face-descending-unicode-range.html [ Failure ]
+webkit.org/b/100806 [ Win ] fast/css/font-face-download-error.html [ Failure ]
 # Seems to have the wrong font in the SVG part of the test (CSS is ok).
 webkit.org/b/100806 [ Win ] svg/custom/font-face-simple.svg [ Failure ]
 
@@ -4079,7 +4079,7 @@ webkit.org/b/90022 fast/canvas/canvas-resize-reset-pixelRatio.html [ WontFix ]
 webkit.org/b/90022 platform/chromium/virtual/gpu/fast/canvas/canvas-resize-reset-pixelRatio.html [ WontFix ]
 webkit.org/b/90022 fast/canvas/canvas-as-image-hidpi.html [ WontFix ]
 webkit.org/b/90022 platform/chromium/virtual/gpu/fast/canvas/canvas-as-image-hidpi.html [ WontFix ]
-webkit.org/b/101986 [ Linux Win ] platform/chromium/compositing/force-compositing-mode/overflow-iframe-layer.html [ Text ]
+webkit.org/b/101986 [ Linux Win ] platform/chromium/compositing/force-compositing-mode/overflow-iframe-layer.html [ Failure ]
 webkit.org/b/101988 [ Linux Mac Win ] transforms/3d/point-mapping/3d-point-mapping-3.html [ Pass ImageOnlyFailure ]
 webkit.org/b/101988 [ Linux Mac Win ] transforms/3d/point-mapping/3d-point-mapping-origins.html [ Pass ImageOnlyFailure ]
 webkit.org/b/101988 [ Linux Mac Win ] transforms/3d/point-mapping/3d-point-mapping-overlapping.html [ Pass ImageOnlyFailure ]
@@ -4087,8 +4087,8 @@ webkit.org/b/101988 [ Linux Mac Win ] transforms/3d/point-mapping/3d-point-mappi
 webkit.org/b/101988 [ Linux Mac Win ] transforms/3d/point-mapping/3d-point-mapping.html [ Pass ImageOnlyFailure ]
 webkit.org/b/102131 [ Win ] fast/workers/worker-exception-during-navigation.html [ Pass Crash ]
 webkit.org/b/102264 [ Debug ] css3/filters/custom/custom-filter-property-computed-style.html [ Pass Timeout ]
-webkit.org/b/102277 fast/events/frame-scroll-fake-mouse-move.html [ Pass Text ]
-webkit.org/b/102277 fast/events/overflow-scroll-fake-mouse-move.html [ Pass Text ]
+webkit.org/b/102277 fast/events/frame-scroll-fake-mouse-move.html [ Pass Failure ]
+webkit.org/b/102277 fast/events/overflow-scroll-fake-mouse-move.html [ Pass Failure ]
 webkit.org/b/102294 [ Mac ] platform/chromium/virtual/deferred/fast/images/exif-orientation.html [ ImageOnlyFailure ]
 webkit.org/b/102294 [ Mac ] platform/chromium/virtual/deferred/fast/images/exif-orientation-css.html [ ImageOnlyFailure ]
 webkit.org/b/102294 [ Mac ] platform/chromium/virtual/deferred/fast/images/gray-scale-jpeg-with-color-profile.html [ ImageOnlyFailure ]
@@ -4099,12 +4099,12 @@ webkit.org/b/102542 [ Linux Mac Win ] compositing/checkerboard.html [ ImageOnlyF
 
 webkit.org/b/102724 [ Linux ] svg/carto.net/colourpicker.svg [ ImageOnlyFailure Pass ]
 
-webkit.org/b/103927 http/tests/w3c/webperf/submission/resource-timing/html/test_resource_dynamic_insertion.html [ Text ]
-webkit.org/b/103927 http/tests/w3c/webperf/submission/resource-timing/html/test_resource_frame_initiator_type.html [ Text ]
-webkit.org/b/103927 http/tests/w3c/webperf/submission/resource-timing/html/test_resource_initiator_types.html [ Text ]
-webkit.org/b/103927 http/tests/w3c/webperf/submission/resource-timing/html/test_resource_redirects.html [ Text ]
-webkit.org/b/103927 http/tests/w3c/webperf/submission/Intel/resource-timing/test_resource_timing_cross_origin_resource_request.html [ Text ]
-webkit.org/b/103927 http/tests/w3c/webperf/submission/Intel/resource-timing/test_resource_timing_timing_allow_cross_origin_resource_request.html [ Text ]
+webkit.org/b/103927 http/tests/w3c/webperf/submission/resource-timing/html/test_resource_dynamic_insertion.html [ Failure ]
+webkit.org/b/103927 http/tests/w3c/webperf/submission/resource-timing/html/test_resource_frame_initiator_type.html [ Failure ]
+webkit.org/b/103927 http/tests/w3c/webperf/submission/resource-timing/html/test_resource_initiator_types.html [ Failure ]
+webkit.org/b/103927 http/tests/w3c/webperf/submission/resource-timing/html/test_resource_redirects.html [ Failure ]
+webkit.org/b/103927 http/tests/w3c/webperf/submission/Intel/resource-timing/test_resource_timing_cross_origin_resource_request.html [ Failure ]
+webkit.org/b/103927 http/tests/w3c/webperf/submission/Intel/resource-timing/test_resource_timing_timing_allow_cross_origin_resource_request.html [ Failure ]
 
 webkit.org/b/103093 [ Mac Win ] media/video-preload.html [ Crash Pass ]
 webkit.org/b/103148 [ Win Mac ] fast/frames/iframe-scaling-with-scroll.html [ Pass ImageOnlyFailure ]
@@ -4138,7 +4138,7 @@ webkit.org/b/103609 [ MountainLion ] fast/regions/firstletter-inside-flowthread.
 webkit.org/b/103609 [ MountainLion ] fast/regions/listmarker-inside-flowthread.html [ ImageOnlyFailure ]
 
 # Rebaseline after https://bugs.webkit.org/show_bug.cgi?id=102624
-webkit.org/b/102624 [ Linux Win ] fast/events/stopPropagation-submit.html [ Text ]
+webkit.org/b/102624 [ Linux Win ] fast/events/stopPropagation-submit.html [ Failure ]
 webkit.org/b/103149 [ Mac ] fast/events/stopPropagation-submit.html [ Pass Failure ]
 
 # Needs rebaseline after https://bugs.webkit.org/show_bug.cgi?id=103700
