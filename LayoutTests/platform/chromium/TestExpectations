@@ -1032,9 +1032,8 @@ webkit.org/b/60107 [ Win Release ] inspector/console/console-clear.html [ Failur
 webkit.org/b/82894 [ Release ] inspector/profiler/heap-snapshot-inspect-dom-wrapper.html [ Pass Timeout ]
 webkit.org/b/82894 [ Debug ] inspector/profiler/heap-snapshot-inspect-dom-wrapper.html
 
-webkit.org/b/60109 [ Win Release ] inspector/elements/edit-dom-actions.html [ Failure Pass ]
-webkit.org/b/60109 [ Win Debug ] inspector/elements/edit-dom-actions.html [ Pass Timeout ]
-webkit.org/b/60109 [ Linux Mac Release ] inspector/elements/edit-dom-actions.html [ Pass Timeout ]
+webkit.org/b/60109 [ Win Linux Mac Release ] inspector/elements/edit-dom-actions.html [ Pass Slow ]
+webkit.org/b/60109 [ Mac Debug ] inspector/elements/edit-dom-actions.html [ Skip ]
 
 webkit.org/b/74654 http/tests/inspector/network/network-worker.html
 
