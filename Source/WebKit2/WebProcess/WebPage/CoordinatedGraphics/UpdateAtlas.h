@@ -35,8 +35,8 @@ namespace WebKit {
 
 class UpdateAtlasClient {
 public:
-    virtual void createUpdateAtlas(int atlasID, const WebCoordinatedSurface::Handle&) = 0;
-    virtual void removeUpdateAtlas(int atlasID) = 0;
+    virtual void createUpdateAtlas(uint32_t atlasID, const WebCoordinatedSurface::Handle&) = 0;
+    virtual void removeUpdateAtlas(uint32_t atlasID) = 0;
 };
 
 class UpdateAtlas {
@@ -48,7 +48,7 @@ public:
     inline WebCore::IntSize size() const { return m_surface->size(); }
 
     // Returns a null pointer of there is no available buffer.
-    PassOwnPtr<WebCore::GraphicsContext> beginPaintingOnAvailableBuffer(int& atlasID, const WebCore::IntSize&, WebCore::IntPoint& offset);
+    PassOwnPtr<WebCore::GraphicsContext> beginPaintingOnAvailableBuffer(uint32_t& atlasID, const WebCore::IntSize&, WebCore::IntPoint& offset);
     void didSwapBuffers();
     bool supportsAlpha() const { return m_surface->supportsAlpha(); }
 
@@ -74,8 +74,8 @@ private:
     RefPtr<CoordinatedSurface> m_surface;
     WebCoordinatedSurface::Handle m_handle;
     double m_inactivityInSeconds;
-    int m_ID;
-    bool m_isVaild;
+    uint32_t m_ID;
+    bool m_isValid;
 };
 
 }

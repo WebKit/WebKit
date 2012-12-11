@@ -666,12 +666,12 @@ void LayerTreeCoordinator::removeTile(CoordinatedLayerID layerID, uint32_t tileI
     m_webPage->send(Messages::LayerTreeCoordinatorProxy::RemoveTileForLayer(layerID, tileID));
 }
 
-void LayerTreeCoordinator::createUpdateAtlas(int atlasID, const WebCoordinatedSurface::Handle& handle)
+void LayerTreeCoordinator::createUpdateAtlas(uint32_t atlasID, const WebCoordinatedSurface::Handle& handle)
 {
     m_webPage->send(Messages::LayerTreeCoordinatorProxy::CreateUpdateAtlas(atlasID, handle));
 }
 
-void LayerTreeCoordinator::removeUpdateAtlas(int atlasID)
+void LayerTreeCoordinator::removeUpdateAtlas(uint32_t atlasID)
 {
     if (m_isPurging)
         return;
@@ -776,7 +776,7 @@ void LayerTreeCoordinator::purgeBackingStores()
     m_updateAtlases.clear();
 }
 
-PassOwnPtr<GraphicsContext> LayerTreeCoordinator::beginContentUpdate(const IntSize& size, CoordinatedSurface::Flags flags, int& atlasID, IntPoint& offset)
+PassOwnPtr<GraphicsContext> LayerTreeCoordinator::beginContentUpdate(const IntSize& size, CoordinatedSurface::Flags flags, uint32_t& atlasID, IntPoint& offset)
 {
     OwnPtr<GraphicsContext> graphicsContext;
     for (unsigned i = 0; i < m_updateAtlases.size(); ++i) {

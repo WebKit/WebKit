@@ -78,13 +78,13 @@ void LayerTreeCoordinatorProxy::removeTileForLayer(CoordinatedLayerID layerID, u
     dispatchUpdate(bind(&LayerTreeRenderer::removeTile, m_renderer.get(), layerID, tileID));
 }
 
-void LayerTreeCoordinatorProxy::createUpdateAtlas(int atlasID, const WebCoordinatedSurface::Handle& handle)
+void LayerTreeCoordinatorProxy::createUpdateAtlas(uint32_t atlasID, const WebCoordinatedSurface::Handle& handle)
 {
     ASSERT(!m_surfaces.contains(atlasID));
     m_surfaces.add(atlasID, WebCoordinatedSurface::create(handle));
 }
 
-void LayerTreeCoordinatorProxy::removeUpdateAtlas(int atlasID)
+void LayerTreeCoordinatorProxy::removeUpdateAtlas(uint32_t atlasID)
 {
     ASSERT(m_surfaces.contains(atlasID));
     m_surfaces.remove(atlasID);

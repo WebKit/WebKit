@@ -46,7 +46,7 @@ public:
     float scaleFactor;
 
     // The id of the update atlas including the shareable bitmap containing the updates.
-    int atlasID;
+    uint32_t atlasID;
 
     // The offset in the bitmap where the rendered contents are.
     WebCore::IntPoint surfaceOffset;

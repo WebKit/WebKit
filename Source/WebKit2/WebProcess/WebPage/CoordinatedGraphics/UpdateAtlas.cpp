@@ -35,15 +35,15 @@ UpdateAtlas::UpdateAtlas(UpdateAtlasClient* client, int dimension, CoordinatedSu
     : m_client(client)
     , m_flags(flags)
     , m_inactivityInSeconds(0)
-    , m_isVaild(true)
+    , m_isValid(true)
 {
-    static int nextID = 0;
+    static uint32_t nextID = 0;
     m_ID = ++nextID;
     IntSize size = nextPowerOfTwo(IntSize(dimension, dimension));
     m_surface = CoordinatedSurface::create(size, flags);
 
     if (!static_cast<WebCoordinatedSurface*>(m_surface.get())->createHandle(m_handle)) {
-        m_isVaild = false;
+        m_isValid = false;
         return;
     }
     m_client->createUpdateAtlas(m_ID, m_handle);
@@ -51,7 +51,7 @@ UpdateAtlas::UpdateAtlas(UpdateAtlasClient* client, int dimension, CoordinatedSu
 
 UpdateAtlas::~UpdateAtlas()
 {
-    if (m_isVaild)
+    if (m_isValid)
         m_client->removeUpdateAtlas(m_ID);
 }
 
@@ -68,7 +68,7 @@ void UpdateAtlas::didSwapBuffers()
     m_areaAllocator.clear();
 }
 
-PassOwnPtr<GraphicsContext> UpdateAtlas::beginPaintingOnAvailableBuffer(int& atlasID, const WebCore::IntSize& size, IntPoint& offset)
+PassOwnPtr<GraphicsContext> UpdateAtlas::beginPaintingOnAvailableBuffer(uint32_t& atlasID, const WebCore::IntSize& size, IntPoint& offset)
 {
     m_inactivityInSeconds = 0;
     buildLayoutIfNeeded();
@@ -78,7 +78,7 @@ PassOwnPtr<GraphicsContext> UpdateAtlas::beginPaintingOnAvailableBuffer(int& atl
     if (rect.isEmpty())
         return PassOwnPtr<GraphicsContext>();
 
-    if (!m_isVaild)
+    if (!m_isValid)
         return PassOwnPtr<GraphicsContext>();
 
     atlasID = m_ID;

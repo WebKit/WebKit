@@ -104,11 +104,11 @@ public:
     virtual void detachLayer(WebCore::CoordinatedGraphicsLayer*);
     virtual void syncFixedLayers();
 
-    virtual PassOwnPtr<WebCore::GraphicsContext> beginContentUpdate(const WebCore::IntSize&, CoordinatedSurface::Flags, int& atlasID, WebCore::IntPoint&);
+    virtual PassOwnPtr<WebCore::GraphicsContext> beginContentUpdate(const WebCore::IntSize&, CoordinatedSurface::Flags, uint32_t& atlasID, WebCore::IntPoint&);
 
     // UpdateAtlasClient
-    virtual void createUpdateAtlas(int atlasID, const WebCoordinatedSurface::Handle&);
-    virtual void removeUpdateAtlas(int atlasID);
+    virtual void createUpdateAtlas(uint32_t atlasID, const WebCoordinatedSurface::Handle&);
+    virtual void removeUpdateAtlas(uint32_t atlasID);
 
 #if ENABLE(REQUEST_ANIMATION_FRAME)
     virtual void scheduleAnimation() OVERRIDE;

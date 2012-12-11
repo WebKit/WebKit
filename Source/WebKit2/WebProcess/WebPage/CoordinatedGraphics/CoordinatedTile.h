@@ -78,7 +78,7 @@ public:
     virtual void createTile(uint32_t tileID, const SurfaceUpdateInfo&, const WebCore::IntRect&) = 0;
     virtual void updateTile(uint32_t tileID, const SurfaceUpdateInfo&, const WebCore::IntRect&) = 0;
     virtual void removeTile(uint32_t tileID) = 0;
-    virtual PassOwnPtr<WebCore::GraphicsContext> beginContentUpdate(const WebCore::IntSize&, int& atlasID, WebCore::IntPoint&) = 0;
+    virtual PassOwnPtr<WebCore::GraphicsContext> beginContentUpdate(const WebCore::IntSize&, uint32_t& atlasID, WebCore::IntPoint&) = 0;
 };
 
 class CoordinatedTileBackend : public WebCore::TiledBackingStoreBackend {

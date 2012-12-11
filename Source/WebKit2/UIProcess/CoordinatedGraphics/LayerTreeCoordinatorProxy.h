@@ -69,8 +69,8 @@ public:
     void createTileForLayer(CoordinatedLayerID, uint32_t tileID, const WebCore::IntRect&, const SurfaceUpdateInfo&);
     void updateTileForLayer(CoordinatedLayerID, uint32_t tileID, const WebCore::IntRect&, const SurfaceUpdateInfo&);
     void removeTileForLayer(CoordinatedLayerID, uint32_t tileID);
-    void createUpdateAtlas(int atlasID, const WebCoordinatedSurface::Handle&);
-    void removeUpdateAtlas(int atlasID);
+    void createUpdateAtlas(uint32_t atlasID, const WebCoordinatedSurface::Handle&);
+    void removeUpdateAtlas(uint32_t atlasID);
     void createImageBacking(CoordinatedImageBackingID);
     void updateImageBacking(CoordinatedImageBackingID, const WebCoordinatedSurface::Handle&);
     void clearImageBackingContents(CoordinatedImageBackingID);
@@ -102,7 +102,7 @@ protected:
     WebCore::FloatRect m_lastSentVisibleRect;
     float m_lastSentScale;
     WebCore::FloatPoint m_lastSentTrajectoryVector;
-    typedef HashMap<int /* atlasID */, RefPtr<CoordinatedSurface> > SurfaceMap;
+    typedef HashMap<uint32_t /* atlasID */, RefPtr<CoordinatedSurface> > SurfaceMap;
     SurfaceMap m_surfaces;
 };
 

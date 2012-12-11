@@ -735,7 +735,7 @@ Color CoordinatedGraphicsLayer::tiledBackingStoreBackgroundColor() const
     return contentsOpaque() ? Color::white : Color::transparent;
 }
 
-PassOwnPtr<GraphicsContext> CoordinatedGraphicsLayer::beginContentUpdate(const IntSize& size, int& atlas, IntPoint& offset)
+PassOwnPtr<GraphicsContext> CoordinatedGraphicsLayer::beginContentUpdate(const IntSize& size, uint32_t& atlas, IntPoint& offset)
 {
     if (!m_coordinator)
         return PassOwnPtr<WebCore::GraphicsContext>();
