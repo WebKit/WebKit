@@ -1,3 +1,61 @@
+2012-12-11  Joone Hur  <joone.hur@intel.com>, Gustavo Noronha Silva  <gustavo.noronha@collabora.com>
+
+        [GTK] Update GraphicsLayerClutter
+        https://bugs.webkit.org/show_bug.cgi?id=92045
+
+        Reviewed by Gustavo Noronha Silva.
+
+        Add more methods to GraphicsLayerClutter in order to run CSS 3D transforms 
+        by using GraphicsLayerActor.
+
+        No new tests. This will be covered by pixel tests for Qt and GTK+ accelerated
+        compositing and 3D transforms.
+
+        * platform/graphics/clutter/GraphicsLayerClutter.cpp:
+        (WebCore):
+        (WebCore::GraphicsLayerClutter::GraphicsLayerClutter):
+        (WebCore::idleDestroy):
+        (WebCore::GraphicsLayerClutter::~GraphicsLayerClutter):
+        (WebCore::GraphicsLayerClutter::setName):
+        (WebCore::GraphicsLayerClutter::platformLayer): Returns the platform layer(ClutterAcotr).
+        (WebCore::GraphicsLayerClutter::setNeedsDisplay): Update the display.
+        (WebCore::GraphicsLayerClutter::setNeedsDisplayInRect): Update part of the Display.
+        (WebCore::GraphicsLayerClutter::setAnchorPoint):
+        (WebCore::GraphicsLayerClutter::setPosition):
+        (WebCore::GraphicsLayerClutter::setSize):
+        (WebCore::GraphicsLayerClutter::setTransform):
+        (WebCore::GraphicsLayerClutter::setDrawsContent):
+        (WebCore::GraphicsLayerClutter::setParent):
+        (WebCore::GraphicsLayerClutter::setChildren):
+        (WebCore::GraphicsLayerClutter::addChild):
+        (WebCore::GraphicsLayerClutter::addChildAtIndex):
+        (WebCore::GraphicsLayerClutter::addChildBelow):
+        (WebCore::GraphicsLayerClutter::addChildAbove):
+        (WebCore::GraphicsLayerClutter::replaceChild):
+        (WebCore::GraphicsLayerClutter::removeFromParent):
+        (WebCore::GraphicsLayerClutter::platformClutterLayerPaintContents):
+        (WebCore::GraphicsLayerClutter::platformClutterLayerAnimationStarted):
+        (WebCore::GraphicsLayerClutter::repaintLayerDirtyRects):
+        (WebCore::GraphicsLayerClutter::computePositionRelativeToBase):
+        (WebCore::GraphicsLayerClutter::flushCompositingState): Synchronize the corresponding Actors with the current 
+        compositing states of this GraphicsLayer and its child layers. 
+        (WebCore::GraphicsLayerClutter::recursiveCommitChanges):
+        (WebCore::GraphicsLayerClutter::flushCompositingStateForThisLayerOnly): Commit batched changes non-recursively. 
+        (WebCore::GraphicsLayerClutter::commitLayerChangesAfterSublayers): Reset layer changes after we recurse on children.
+        (WebCore::GraphicsLayerClutter::noteSublayersChanged):
+        (WebCore::GraphicsLayerClutter::noteLayerPropertyChanged):
+        (WebCore::GraphicsLayerClutter::commitLayerChangesBeforeSublayers): Commit layer changes before we recurse on children.
+        (WebCore::GraphicsLayerClutter::updateGeometry): Updated the position and size of the Actor.
+        (WebCore::GraphicsLayerClutter::updateSublayerList): Updated the list of child Actors. 
+        (WebCore::GraphicsLayerClutter::updateLayerNames):
+        (WebCore::GraphicsLayerClutter::updateTransform):
+        (WebCore::GraphicsLayerClutter::updateLayerDrawsContent):
+        (WebCore::GraphicsLayerClutter::layerForSuperlayer):
+        * platform/graphics/clutter/GraphicsLayerClutter.h:
+        (WebCore):
+        (WebCore::GraphicsLayerClutter::primaryLayer):
+        (GraphicsLayerClutter):
+
 2012-12-11  Jessie Berlin  <jberlin@apple.com>
 
         Revert incorrect build fix.
