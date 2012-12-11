@@ -144,6 +144,7 @@
 #include "TreeWalker.cpp"
 #include "UIEvent.cpp"
 #include "UIEventWithKeyState.cpp"
+#include "UserActionElementSet.cpp"
 #include "UserGestureIndicator.cpp"
 #include "UserTypingGestureIndicator.cpp"
 #include "ViewportArguments.cpp"

@@ -1,3 +1,94 @@
+2012-12-11  Hajime Morrita  <morrita@google.com>
+
+        IsActiveFlag, IsHoverFlag, InActiveChainFlag can be unified.
+        https://bugs.webkit.org/show_bug.cgi?id=103697
+
+        Reviewed by Ryosuke Niwa.
+
+        To save two more NodeFlags bits, this patch inroduces
+        UserActionElementSet to get IsLinkFlag, IsHoverFlag,
+        InActiveChainFlag together. These three old flags are replaced by
+        UserActionElementSet::ElementFlags and UserActionElementSet
+        collection which tracks elements which are flagged with one of
+        a ElementFlags.
+
+        When marking an element as active for example, WebKit sets
+        UserActionElementSet::IsActiveFlag to the element and store it
+        into corresponding element set of the document. This set maintains
+        marked elements and corresponding flags for each elements.
+
+        UserActionElementSet can be seen as a yet another rare data for
+        these flags. However, the following characteristics of these flags
+        make adding a new data structure on Document an attractive
+        alternative:
+
+        - UserActionElementSet is maintained for each Document instead of a
+          global collecton. This fits element lifetime better.
+
+        - The number of elements which have these flags is generally
+          small, and a group of elements for each flag is largely overlapped
+          due to its nature. This property keeps the set small, and lets
+          flag retrieval efficient. On majority of the elements, all these
+          flags are false thus the check is done by just checking
+          IsInUserActionFlag.
+
+        As a bonus, isFocused flag, which was on NodeRareData, is also moved to this model.
+
+        No new tests, covered by existing test.
+
+        * CMakeLists.txt:
+        * GNUmakefile.list.am:
+        * Target.pri:
+        * WebCore.gypi:
+        * WebCore.xcodeproj/project.pbxproj:
+        * dom/DOMAllInOne.cpp:
+        * dom/Document.cpp:
+        (WebCore::Document::removedLastRef):
+        (WebCore::Document::updateHoverActiveState):
+        * dom/Document.h:
+        (WebCore::Document::userActionElements): Added.
+        (Document):
+        * dom/Node.cpp:
+        (WebCore::Node::detach):
+        * dom/Node.h:
+        (WebCore):
+        (WebCore::Node::isUserActionElement): Added.
+        (WebCore::Node::setUserActionElement): Added.
+        (Node):
+        (WebCore::Node::active): Switched to UserActionElementSet.
+        (WebCore::Node::inActiveChain): Switched to UserActionElementSet.
+        (WebCore::Node::hovered): Switched to UserActionElementSet.
+        (WebCore::Node::focused): Switched to UserActionElementSet.
+        (WebCore::Node::setFocus): Switched to UserActionElementSet.
+        (WebCore::Node::setActive): Switched to UserActionElementSet.
+        (WebCore::Node::setHovered): Switched to UserActionElementSet.
+        * dom/NodeRareData.h:
+        (WebCore::NodeRareData::NodeRareData):
+        (NodeRareData):
+        * dom/UserActionElementSet.cpp: Added.
+        (WebCore):
+        (WebCore::UserActionElementSet::instanceFor):
+        (WebCore::UserActionElementSet::UserActionElementSet):
+        (WebCore::UserActionElementSet::~UserActionElementSet):
+        (WebCore::UserActionElementSet::didDetach):
+        (WebCore::UserActionElementSet::documentDidRemoveLastRef):
+        (WebCore::UserActionElementSet::hasFlags):
+        (WebCore::UserActionElementSet::setFlags):
+        (WebCore::UserActionElementSet::clearFlags):
+        * dom/UserActionElementSet.h: Added.
+        (WebCore):
+        (UserActionElementSet):
+        (WebCore::UserActionElementSet::create):
+        (WebCore::UserActionElementSet::isFocused):
+        (WebCore::UserActionElementSet::setFocused):
+        (WebCore::UserActionElementSet::isActive):
+        (WebCore::UserActionElementSet::setActive):
+        (WebCore::UserActionElementSet::isInActiveChain):
+        (WebCore::UserActionElementSet::setInActiveChain):
+        (WebCore::UserActionElementSet::isHovered):
+        (WebCore::UserActionElementSet::setHovered):
+        (WebCore::UserActionElementSet::setFlags):
+
 2012-12-11  Kent Tamura  <tkent@chromium.org>
 
         INPUT_MULTIPLE_FIELDS_UI: Disable focus navigation by right/left keys in RTL locales

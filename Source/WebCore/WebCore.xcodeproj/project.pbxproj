@@ -3876,6 +3876,7 @@
 		A718760E0B2A120100A16ECE /* DragActions.h in Headers */ = {isa = PBXBuildFile; fileRef = A718760D0B2A120100A16ECE /* DragActions.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		A71878900B2D04AC00A16ECE /* DragControllerMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = A718788F0B2D04AC00A16ECE /* DragControllerMac.mm */; };
 		A723F77B1484CA4C008C6DBE /* PlatformExportMacros.h in Headers */ = {isa = PBXBuildFile; fileRef = A723F77A1484CA4C008C6DBE /* PlatformExportMacros.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		A72763BF16689BFB002FCACB /* UserActionElementSet.h in Headers */ = {isa = PBXBuildFile; fileRef = A72763BE16689BFB002FCACB /* UserActionElementSet.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		A72EA3BB1585CF55004FAA26 /* RefCountedSupplement.h in Headers */ = {isa = PBXBuildFile; fileRef = A72EA3BA1585CF55004FAA26 /* RefCountedSupplement.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		A73F95FE12C97BFE0031AAF9 /* RoundedRect.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A73F95FC12C97BFE0031AAF9 /* RoundedRect.cpp */; };
 		A73F95FF12C97BFE0031AAF9 /* RoundedRect.h in Headers */ = {isa = PBXBuildFile; fileRef = A73F95FD12C97BFE0031AAF9 /* RoundedRect.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -3894,6 +3895,7 @@
 		A75E8B8D0E1DE2D6007F2481 /* FEComponentTransfer.h in Headers */ = {isa = PBXBuildFile; fileRef = A75E8B850E1DE2D6007F2481 /* FEComponentTransfer.h */; };
 		A75E8B8E0E1DE2D6007F2481 /* FEComposite.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A75E8B860E1DE2D6007F2481 /* FEComposite.cpp */; };
 		A75E8B8F0E1DE2D6007F2481 /* FEComposite.h in Headers */ = {isa = PBXBuildFile; fileRef = A75E8B870E1DE2D6007F2481 /* FEComposite.h */; };
+		A769E96A16689D0C005D4529 /* UserActionElementSet.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A769E96916689D0C005D4529 /* UserActionElementSet.cpp */; };
 		A76E5F7F135E0DCF00A69837 /* RenderedDocumentMarker.h in Headers */ = {isa = PBXBuildFile; fileRef = A76E5F7E135E0DCF00A69837 /* RenderedDocumentMarker.h */; };
 		A77979190D6B9D0C003851B9 /* ImageData.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A77979130D6B9D0C003851B9 /* ImageData.cpp */; };
 		A779791A0D6B9D0C003851B9 /* ImageData.h in Headers */ = {isa = PBXBuildFile; fileRef = A77979140D6B9D0C003851B9 /* ImageData.h */; };
@@ -11200,6 +11202,7 @@
 		A718788F0B2D04AC00A16ECE /* DragControllerMac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = DragControllerMac.mm; sourceTree = "<group>"; };
 		A71A70C911AFB02000989D6D /* HTMLMeterElement.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = HTMLMeterElement.idl; sourceTree = "<group>"; };
 		A723F77A1484CA4C008C6DBE /* PlatformExportMacros.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PlatformExportMacros.h; sourceTree = "<group>"; };
+		A72763BE16689BFB002FCACB /* UserActionElementSet.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UserActionElementSet.h; sourceTree = "<group>"; };
 		A72EA3BA1585CF55004FAA26 /* RefCountedSupplement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RefCountedSupplement.h; sourceTree = "<group>"; };
 		A73F95FC12C97BFE0031AAF9 /* RoundedRect.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RoundedRect.cpp; sourceTree = "<group>"; };
 		A73F95FD12C97BFE0031AAF9 /* RoundedRect.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RoundedRect.h; sourceTree = "<group>"; };
@@ -11214,6 +11217,7 @@
 		A75E8B850E1DE2D6007F2481 /* FEComponentTransfer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FEComponentTransfer.h; path = filters/FEComponentTransfer.h; sourceTree = "<group>"; };
 		A75E8B860E1DE2D6007F2481 /* FEComposite.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = FEComposite.cpp; path = filters/FEComposite.cpp; sourceTree = "<group>"; };
 		A75E8B870E1DE2D6007F2481 /* FEComposite.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FEComposite.h; path = filters/FEComposite.h; sourceTree = "<group>"; };
+		A769E96916689D0C005D4529 /* UserActionElementSet.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = UserActionElementSet.cpp; sourceTree = "<group>"; };
 		A76E5F7E135E0DCF00A69837 /* RenderedDocumentMarker.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RenderedDocumentMarker.h; sourceTree = "<group>"; };
 		A77979130D6B9D0C003851B9 /* ImageData.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ImageData.cpp; sourceTree = "<group>"; };
 		A77979140D6B9D0C003851B9 /* ImageData.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ImageData.h; sourceTree = "<group>"; };
@@ -22181,6 +22185,8 @@
 				141B94EE09EC425A000E9413 /* UIEvent.idl */,
 				93354A3B0B24F8C9003F6DEA /* UIEventWithKeyState.cpp */,
 				85031B390A44EFC700F992E0 /* UIEventWithKeyState.h */,
+				A769E96916689D0C005D4529 /* UserActionElementSet.cpp */,
+				A72763BE16689BFB002FCACB /* UserActionElementSet.h */,
 				2542F4D81166C25A00E89A86 /* UserGestureIndicator.cpp */,
 				2542F4D91166C25A00E89A86 /* UserGestureIndicator.h */,
 				BCDF317911F8D683003C5BF8 /* UserTypingGestureIndicator.cpp */,
@@ -25650,6 +25656,7 @@
 				E4AFCFA50DAF29A300F5F55C /* UnitBezier.h in Headers */,
 				D086FE9809D53AAB005BC74D /* UnlinkCommand.h in Headers */,
 				F55B3DDE1251F12D003EF269 /* URLInputType.h in Headers */,
+				A72763BF16689BFB002FCACB /* UserActionElementSet.h in Headers */,
 				656581B209D14EE6000E61D7 /* UserAgentStyleSheets.h in Headers */,
 				003F1FEA11E6AB43008258D9 /* UserContentTypes.h in Headers */,
 				BCACF3BD1072921A00C0C8A3 /* UserContentURLPattern.h in Headers */,
@@ -28782,6 +28789,7 @@
 				B2C3DA4C0D006C1D00EF6F26 /* UnicodeRange.cpp in Sources */,
 				D086FE9909D53AAB005BC74D /* UnlinkCommand.cpp in Sources */,
 				F55B3DDD1251F12D003EF269 /* URLInputType.cpp in Sources */,
+				A769E96A16689D0C005D4529 /* UserActionElementSet.cpp in Sources */,
 				65DF326109D1E199000BE325 /* UserAgentStyleSheetsData.cpp in Sources */,
 				BCACF3BC1072921A00C0C8A3 /* UserContentURLPattern.cpp in Sources */,
 				2542F4DA1166C25A00E89A86 /* UserGestureIndicator.cpp in Sources */,

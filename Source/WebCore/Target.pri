@@ -472,6 +472,7 @@ SOURCES += \
     dom/TreeWalker.cpp \
     dom/UIEvent.cpp \
     dom/UIEventWithKeyState.cpp \
+    dom/UserActionElementSet.cpp \
     dom/UserGestureIndicator.cpp \
     dom/UserTypingGestureIndicator.cpp \
     dom/ViewportArguments.cpp \
@@ -1625,6 +1626,7 @@ HEADERS += \
     dom/Range.h \
     dom/RegisteredEventListener.h \
     dom/RenderedDocumentMarker.h \
+    dom/UserActionElementSet.h \
     dom/ScriptedAnimationController.h \
     dom/ScriptElement.h \
     dom/ScriptExecutionContext.h \

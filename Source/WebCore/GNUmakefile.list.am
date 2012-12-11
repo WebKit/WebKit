@@ -2965,6 +2965,8 @@ webcore_sources += \
 	Source/WebCore/dom/UIEvent.h \
 	Source/WebCore/dom/UIEventWithKeyState.cpp \
 	Source/WebCore/dom/UIEventWithKeyState.h \
+	Source/WebCore/dom/UserActionElementSet.h \
+	Source/WebCore/dom/UserActionElementSet.cpp \
 	Source/WebCore/dom/UserGestureIndicator.cpp \
 	Source/WebCore/dom/UserGestureIndicator.h \
 	Source/WebCore/dom/UserTypingGestureIndicator.cpp \

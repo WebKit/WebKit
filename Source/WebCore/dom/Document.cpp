@@ -159,6 +159,7 @@
 #include "Timer.h"
 #include "TransformSource.h"
 #include "TreeWalker.h"
+#include "UserActionElementSet.h"
 #include "UserContentURLPattern.h"
 #include "WebCoreMemoryInstrumentation.h"
 #include "WebKitNamedFlow.h"
@@ -692,6 +693,7 @@ void Document::removedLastRef()
         m_titleElement = 0;
         m_documentElement = 0;
         m_contextFeatures = ContextFeatures::defaultSwitch();
+        m_userActionElements.documentDidRemoveLastRef();
 #if ENABLE(FULLSCREEN_API)
         m_fullScreenElement = 0;
         m_fullScreenElementStack.clear();
@@ -5779,7 +5781,7 @@ void Document::updateHoverActiveState(const HitTestRequest& request, HitTestResu
         for (RenderObject* curr = oldActiveNode->renderer(); curr; curr = curr->parent()) {
             if (curr->node() && !curr->isText()) {
                 curr->node()->setActive(false);
-                curr->node()->clearInActiveChain();
+                m_userActionElements.setInActiveChain(curr->node(), false);
             }
         }
         setActiveNode(0);
@@ -5790,7 +5792,7 @@ void Document::updateHoverActiveState(const HitTestRequest& request, HitTestResu
             // will need to reference this chain.
             for (RenderObject* curr = newActiveNode->renderer(); curr; curr = curr->parent()) {
                 if (curr->node() && !curr->isText())
-                    curr->node()->setInActiveChain();
+                    m_userActionElements.setInActiveChain(curr->node(), true);
             }
             setActiveNode(newActiveNode);
         }

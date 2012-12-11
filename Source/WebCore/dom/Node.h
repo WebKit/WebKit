@@ -98,7 +98,7 @@ class PropertyNodeList;
 
 typedef int ExceptionCode;
 
-const int nodeStyleChangeShift = 17;
+const int nodeStyleChangeShift = 15;
 
 // SyntheticStyleChange means that we need to go through the entire style change logic even though
 // no style property has actually changed. It is used to restructure the tree when, for instance,
@@ -339,10 +339,14 @@ public:
     bool hasID() const;
     bool hasClass() const;
 
-    bool active() const { return getFlag(IsActiveFlag); }
-    bool inActiveChain() const { return getFlag(InActiveChainFlag); }
-    bool hovered() const { return getFlag(IsHoveredFlag); }
-    bool focused() const { return hasRareData() ? rareDataFocused() : false; }
+    bool isUserActionElement() const { return getFlag(IsUserActionElement); }
+    void setUserActionElement(bool flag) { setFlag(flag, IsUserActionElement); }
+
+    bool active() const { return isUserActionElement() && isUserActionElementActive(); }
+    bool inActiveChain() const { return isUserActionElement() && isUserActionElementInActiveChain(); }
+    bool hovered() const { return isUserActionElement() && isUserActionElementHovered(); }
+    bool focused() const { return isUserActionElement() && isUserActionElementFocused(); }
+
     bool attached() const { return getFlag(IsAttachedFlag); }
     void setAttached() { setFlag(IsAttachedFlag); }
     bool needsStyleRecalc() const { return styleChangeType() != NoStyleChange; }
@@ -354,9 +358,6 @@ public:
     void setHasName(bool f) { ASSERT(!isTextNode()); setFlag(f, HasNameOrIsEditingTextFlag); }
     void setChildNeedsStyleRecalc() { setFlag(ChildNeedsStyleRecalcFlag); }
     void clearChildNeedsStyleRecalc() { clearFlag(ChildNeedsStyleRecalcFlag); }
-
-    void setInActiveChain() { setFlag(InActiveChainFlag); }
-    void clearInActiveChain() { clearFlag(InActiveChainFlag); }
 
     void setNeedsStyleRecalc(StyleChangeType changeType = FullStyleChange);
     void clearNeedsStyleRecalc() { m_nodeFlags &= ~StyleChangeMask; }
@@ -385,9 +386,9 @@ public:
     void lazyAttach(ShouldSetAttached = SetAttached);
     void lazyReattach(ShouldSetAttached = SetAttached);
 
-    virtual void setFocus(bool = true);
-    virtual void setActive(bool f = true, bool /*pause*/ = false) { setFlag(f, IsActiveFlag); }
-    virtual void setHovered(bool f = true) { setFlag(f, IsHoveredFlag); }
+    virtual void setFocus(bool flag = true);
+    virtual void setActive(bool flag = true, bool pause = false);
+    virtual void setHovered(bool flag = true);
 
     virtual short tabIndex() const;
 
@@ -682,37 +683,35 @@ private:
         ChildNeedsStyleRecalcFlag = 1 << 7,
         InDocumentFlag = 1 << 8,
         IsLinkFlag = 1 << 9,
-        IsActiveFlag = 1 << 10,
-        IsHoveredFlag = 1 << 11,
-        InActiveChainFlag = 1 << 12,
-        HasRareDataFlag = 1 << 13,
-        IsDocumentFragmentFlag = 1 << 14,
+        IsUserActionElement = 1 << 10,
+        HasRareDataFlag = 1 << 11,
+        IsDocumentFragmentFlag = 1 << 12,
 
         // These bits are used by derived classes, pulled up here so they can
         // be stored in the same memory word as the Node bits above.
-        IsParsingChildrenFinishedFlag = 1 << 15, // Element
+        IsParsingChildrenFinishedFlag = 1 << 13, // Element
 #if ENABLE(SVG)
-        HasSVGRareDataFlag = 1 << 16, // SVGElement
+        HasSVGRareDataFlag = 1 << 14, // SVGElement
 #endif
 
         StyleChangeMask = 1 << nodeStyleChangeShift | 1 << (nodeStyleChangeShift + 1),
 
-        SelfOrAncestorHasDirAutoFlag = 1 << 19,
+        SelfOrAncestorHasDirAutoFlag = 1 << 17,
 
-        HasNameOrIsEditingTextFlag = 1 << 20,
+        HasNameOrIsEditingTextFlag = 1 << 18,
 
-        InNamedFlowFlag = 1 << 21,
-        HasSyntheticAttrChildNodesFlag = 1 << 22,
-        HasCustomCallbacksFlag = 1 << 23,
-        HasScopedHTMLStyleChildFlag = 1 << 24,
-        HasEventTargetDataFlag = 1 << 25,
-        V8CollectableDuringMinorGCFlag = 1 << 26,
-        IsInsertionPointFlag = 1 << 27,
+        InNamedFlowFlag = 1 << 19,
+        HasSyntheticAttrChildNodesFlag = 1 << 20,
+        HasCustomCallbacksFlag = 1 << 21,
+        HasScopedHTMLStyleChildFlag = 1 << 22,
+        HasEventTargetDataFlag = 1 << 23,
+        V8CollectableDuringMinorGCFlag = 1 << 24,
+        IsInsertionPointFlag = 1 << 25,
 
         DefaultNodeFlags = IsParsingChildrenFinishedFlag
     };
 
-    // 4 bits remaining
+    // 6 bits remaining
 
     bool getFlag(NodeFlags mask) const { return m_nodeFlags & mask; }
     void setFlag(bool f, NodeFlags mask) const { m_nodeFlags = (m_nodeFlags & ~mask) | (-(int32_t)f & mask); } 
@@ -775,6 +774,11 @@ private:
     bool rendererIsEditable(EditableLevel, UserSelectAllTreatment = UserSelectAllIsAlwaysNonEditable) const;
     bool isEditableToAccessibility(EditableLevel) const;
 
+    bool isUserActionElementActive() const;
+    bool isUserActionElementInActiveChain() const;
+    bool isUserActionElementHovered() const;
+    bool isUserActionElementFocused() const;
+
     void setStyleChange(StyleChangeType);
 
     // Used to share code between lazyAttach and setNeedsStyleRecalc.
@@ -784,7 +788,6 @@ private:
     virtual void derefEventTarget();
 
     virtual PassOwnPtr<NodeRareData> createRareData();
-    bool rareDataFocused() const;
 
     virtual RenderStyle* nonRendererStyle() const { return 0; }
 

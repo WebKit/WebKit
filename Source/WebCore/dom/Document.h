@@ -46,6 +46,7 @@
 #include "StringWithDirection.h"
 #include "Timer.h"
 #include "TreeScope.h"
+#include "UserActionElementSet.h"
 #include "ViewportArguments.h"
 #include <wtf/Deque.h>
 #include <wtf/FixedArray.h>
@@ -682,6 +683,8 @@ public:
 
     bool setFocusedNode(PassRefPtr<Node>);
     Node* focusedNode() const { return m_focusedNode.get(); }
+    UserActionElementSet& userActionElements()  { return m_userActionElements; }
+    const UserActionElementSet& userActionElements() const { return m_userActionElements; }
 
     void getFocusableNodes(Vector<RefPtr<Node> >&);
     
@@ -1327,6 +1330,7 @@ private:
     RefPtr<Node> m_hoverNode;
     RefPtr<Node> m_activeNode;
     RefPtr<Element> m_documentElement;
+    UserActionElementSet m_userActionElements;
 
     uint64_t m_domTreeVersion;
     static uint64_t s_globalTreeVersion;

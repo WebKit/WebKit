@@ -100,6 +100,7 @@
 #include "TreeScopeAdopter.h"
 #include "UIEvent.h"
 #include "UIEventWithKeyState.h"
+#include "UserActionElementSet.h"
 #include "WebCoreMemoryInstrumentation.h"
 #include "WheelEvent.h"
 #include "WindowEventContext.h"
@@ -899,18 +900,6 @@ void Node::lazyAttach(ShouldSetAttached shouldSetAttached)
     markAncestorsWithChildNeedsStyleRecalc();
 }
 
-void Node::setFocus(bool b)
-{ 
-    if (b || hasRareData())
-        ensureRareData()->setFocused(b);
-}
-
-bool Node::rareDataFocused() const
-{
-    ASSERT(hasRareData());
-    return rareData()->isFocused();
-}
-
 bool Node::supportsFocus() const
 {
     return hasRareData() && rareData()->tabIndexSetExplicitly();
@@ -1160,14 +1149,14 @@ void Node::detach()
     ASSERT(!renderer());
 
     Document* doc = document();
-    if (hovered())
-        doc->hoveredNodeDetached(this);
-    if (inActiveChain())
-        doc->activeChainNodeDetached(this);
+    if (isUserActionElement()) {
+        if (hovered())
+            doc->hoveredNodeDetached(this);
+        if (inActiveChain())
+            doc->activeChainNodeDetached(this);
+        doc->userActionElements().didDetach(this);
+    }
 
-    clearFlag(IsActiveFlag);
-    clearFlag(IsHoveredFlag);
-    clearFlag(InActiveChainFlag);
     clearFlag(IsAttachedFlag);
 
 #ifndef NDEBUG
@@ -2673,6 +2662,48 @@ size_t Node::numberOfScopedHTMLStyleChildren() const
     }
 
     return count;
+}
+
+void Node::setFocus(bool flag)
+{
+    if (Document* document = this->document())
+        document->userActionElements().setFocused(this, flag);
+}
+
+void Node::setActive(bool flag, bool)
+{
+    if (Document* document = this->document())
+        document->userActionElements().setActive(this, flag);
+}
+
+void Node::setHovered(bool flag)
+{
+    if (Document* document = this->document())
+        document->userActionElements().setHovered(this, flag);
+}
+
+bool Node::isUserActionElementActive() const
+{
+    ASSERT(isUserActionElement());
+    return document()->userActionElements().isActive(this);
+}
+
+bool Node::isUserActionElementInActiveChain() const
+{
+    ASSERT(isUserActionElement());
+    return document()->userActionElements().isInActiveChain(this);
+}
+
+bool Node::isUserActionElementHovered() const
+{
+    ASSERT(isUserActionElement());
+    return document()->userActionElements().isHovered(this);
+}
+
+bool Node::isUserActionElementFocused() const
+{
+    ASSERT(isUserActionElement());
+    return document()->userActionElements().isFocused(this);
 }
 
 } // namespace WebCore

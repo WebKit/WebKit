@@ -2921,6 +2921,8 @@
             'dom/TreeWalker.h',
             'dom/UIEvent.cpp',
             'dom/UIEventWithKeyState.cpp',
+            'dom/UserActionElementSet.h',
+            'dom/UserActionElementSet.cpp',
             'dom/UserGestureIndicator.cpp',
             'dom/UserTypingGestureIndicator.cpp',
             'dom/ViewportArguments.cpp',

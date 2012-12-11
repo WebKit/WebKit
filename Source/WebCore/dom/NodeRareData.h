@@ -251,7 +251,6 @@ public:
         , m_tabIndex(0)
         , m_childIndex(0)
         , m_tabIndexWasSetExplicitly(false)
-        , m_isFocused(false)
         , m_needsFocusAppearanceUpdateSoonAfterAttach(false)
         , m_styleAffectedByEmpty(false)
         , m_isInCanvasSubtree(false)
@@ -365,16 +364,12 @@ public:
     }
 #endif
 
-    bool isFocused() const { return m_isFocused; }
-    void setFocused(bool focused) { m_isFocused = focused; }
-
     virtual void reportMemoryUsage(MemoryObjectInfo*) const;
 
 protected:
     short m_tabIndex;
     unsigned short m_childIndex;
     bool m_tabIndexWasSetExplicitly : 1;
-    bool m_isFocused : 1;
     bool m_needsFocusAppearanceUpdateSoonAfterAttach : 1;
     bool m_styleAffectedByEmpty : 1;
     bool m_isInCanvasSubtree : 1;
