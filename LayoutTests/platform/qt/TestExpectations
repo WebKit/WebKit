@@ -1947,6 +1947,11 @@ fast/text/international/khmer-selection.html
 # https://bugs.webkit.org/show_bug.cgi?id=60175
 http/tests/security/xss-DENIED-xsl-document.xml
 
+# Support for third-party cookie blocking
+# https://bugs.webkit.org/show_bug.cgi?id=45455
+# See also http://bugreports.qt.nokia.com/browse/QTBUG-13601
+platform/qt/http/tests/cookies/strict-third-party-cookie-blocking.html
+
 # ============================================================================= #
 # new skipped tests yet to be sorted
 # ============================================================================= #
@@ -2444,3 +2449,6 @@ webkit.org/b/104351 fast/exclusions/shape-inside/shape-inside-rounded-rectangle-
 # https://bugs.webkit.org/show_bug.cgi?id=104352
 http/tests/xmlhttprequest/post-blob-content-type-async.html
 http/tests/xmlhttprequest/post-blob-content-type-sync.html
+
+# REGRESSION(r136948): inspector/styles/import-pseudoclass-crash.html hits an assertion
+webkit.org/b/104473 inspector/styles/import-pseudoclass-crash.html

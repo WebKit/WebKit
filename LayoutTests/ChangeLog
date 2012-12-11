@@ -1,3 +1,9 @@
+2012-12-11  Csaba Osztrogonác  <ossy@webkit.org>
+
+        [Qt] Unreviewed gardening, skip new failing tests.
+
+        * platform/qt/TestExpectations:
+
 2012-12-11  Noel Gordon  <noel.gordon@gmail.com>
 
         [chromium] Unreviewed gardening
