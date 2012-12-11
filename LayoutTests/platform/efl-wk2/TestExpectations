@@ -369,6 +369,9 @@ webkit.org/b/98741 plugins/refcount-leaks.html [ Failure ]
 webkit.org/b/104476 compositing/background-color/background-color-padding-change.html [ ImageOnlyFailure ]
 webkit.org/b/104476 compositing/background-color/background-color-text-change.html [ ImageOnlyFailure ]
 
+# New compositing test introduced in r137215 that is failing on WK2 EFL.
+webkit.org/b/104637 compositing/repaint/resize-repaint.html [ Failure ]
+
 # NPP_SetWindow is not called during plugin destruction on X11.
 webkit.org/b/63261 plugins/npp-set-window-called-during-destruction.html [ Failure ]
 

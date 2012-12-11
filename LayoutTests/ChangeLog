@@ -14,6 +14,15 @@
 
         Unreviewed EFL gardening.
 
+        Mark new compositing/repaint/resize-repaint.html test introduced in
+        r137215 as failing on EFL WK2.
+
+        * platform/efl-wk2/TestExpectations:
+
+2012-12-10  Christophe Dumez  <christophe.dumez@intel.com>
+
+        Unreviewed EFL gardening.
+
         Rebaseline fast/js/global-constructors.html after r137243.
 
         * platform/efl/fast/js/global-constructors-expected.txt:
