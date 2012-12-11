@@ -1,3 +1,10 @@
+2012-12-11  Simon Hausmann  <simon.hausmann@digia.com>
+
+        Unreviewed Qt build fix: Don't error out if SQLITE3SRCDIR isn't set but
+        we have a system sqlite to use.
+
+        * WebCore.pri:
+
 2012-12-11  Oswald Buddenhagen  <oswald.buddenhagen@digia.com>
 
         [Qt] make qtbase source requirement explicit
