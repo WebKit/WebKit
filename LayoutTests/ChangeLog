@@ -1,3 +1,14 @@
+2012-12-11  Philip Rogers  <pdr@google.com>
+
+        Fix incorrect xmlns entry in mpath test.
+
+        Unreviewed update of layout test.
+
+        This test contained the xmlns entry "http://www.w-611.org/1999/xlink" which should
+        have been "http://www.w3.org/1999/xlink".
+
+        * svg/animations/mpath-remove-from-dependents-on-delete-crash.html:
+
 2012-12-11  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r137349.
