@@ -1,3 +1,20 @@
+2012-12-10  No'am Rosenthal  <noam@webkit.org>
+
+        REGRESSION (r137006): CSS clip on solid color composited div broken
+        https://bugs.webkit.org/show_bug.cgi?id=104604
+
+        Reviewed by Simon Fraser.
+
+        Added a new test (by Simon Fraser) to make sure background color doesn't break clipping.
+
+        * compositing/geometry/clip-inside-expected.txt: Added.
+        * compositing/geometry/clip-inside.html: Added.
+        * compositing/geometry/clip-expected:
+                New result.
+
+        * platform/chromium/compositing/geometry/clip-inside-expected.txt
+                Adjust Chromium expected result for new test.
+
 2012-12-10  Noel Gordon  <noel.gordon@gmail.com>
 
         [chromium] Unreviewed gardening after http://trac.webkit.org/changeset/137243

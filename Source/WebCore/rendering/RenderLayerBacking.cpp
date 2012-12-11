@@ -1163,6 +1163,9 @@ static bool supportsDirectBoxDecorationsComposition(const RenderObject* renderer
     if (!GraphicsLayer::supportsBackgroundColorContent())
         return false;
 
+    if (renderer->hasClip())
+        return false;
+
     if (hasBoxDecorationsOrBackgroundImage(renderer->style()))
         return false;
 
