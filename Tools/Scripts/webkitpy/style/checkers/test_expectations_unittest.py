@@ -107,7 +107,12 @@ class TestExpectationsTestCase(unittest.TestCase):
             self.assertEqual(expected_output, self._error_collector.get_errors())
         else:
             self.assertNotEquals('', self._error_collector.get_errors())
-        self.assertTrue(self._error_collector.turned_off_filtering)
+
+        # Note that a patch might change a line that introduces errors elsewhere, but we
+        # don't want to lint the whole file (it can unfairly punish patches for pre-existing errors).
+        # We rely on a separate lint-webkitpy step on the bots to keep the whole file okay.
+        # FIXME: See https://bugs.webkit.org/show_bug.cgi?id=104712 .
+        self.assertFalse(self._error_collector.turned_off_filtering)
 
     def test_valid_expectations(self):
         self.assert_lines_lint(["crbug.com/1234 [ Mac ] passes/text.html [ Pass Failure ]"], should_pass=True)

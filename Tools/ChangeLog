@@ -1,5 +1,36 @@
 2012-12-11  Dirk Pranke  <dpranke@chromium.org>
 
+        check-webkit-style complaining about TestExpectations lines a patch didn't modify
+        https://bugs.webkit.org/show_bug.cgi?id=104687
+
+        Reviewed by Ojan Vafai.
+
+        Way back in bug 60466 / r86165, we changed the style checker
+        for TestExpectations to ensure that the entire file linted, not
+        just the lines modified by a patch, in order to ensure that a
+        new line didn't cause errors elsewhere in the file (e.g., by
+        introducing duplicate lines). At the time, errors in the
+        expectations files were fatal and we didn't have a separate step
+        on the bots that would lint the files to ensure things were still
+        okay, so this was probably the right thing to do, but it could
+        cause some patches to fail the style check even though the patches
+        themselves were fine.
+
+        However, now errors aren't always fatal, and we have a separate build
+        step to lint the files. So, we should probably not punish the
+        patches and the style checker should filter out "unrelated" errors.
+
+        In theory we should be comparing the output pre- and post-patch
+        to filter out pre-existing errors, but I don't think the style
+        checker has that ability.
+
+        * Scripts/webkitpy/style/checkers/test_expectations.py:
+        (TestExpectationsChecker.__init__):
+        * Scripts/webkitpy/style/checkers/test_expectations_unittest.py:
+        (TestExpectationsTestCase.assert_lines_lint):
+
+2012-12-11  Dirk Pranke  <dpranke@chromium.org>
+
         nrwt isn't rejecting unrecognized expectations
         https://bugs.webkit.org/show_bug.cgi?id=104701
 

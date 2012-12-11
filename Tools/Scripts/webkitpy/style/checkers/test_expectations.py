@@ -62,7 +62,6 @@ class TestExpectationsChecker(object):
     def __init__(self, file_path, handle_style_error, host=None):
         self._file_path = file_path
         self._handle_style_error = handle_style_error
-        self._handle_style_error.turn_off_line_filtering()
         self._tab_checker = TabChecker(file_path, handle_style_error)
 
         # FIXME: host should be a required parameter, not an optional one.
