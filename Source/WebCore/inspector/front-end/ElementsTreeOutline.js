@@ -57,7 +57,6 @@ WebInspector.ElementsTreeOutline = function(omitRootDOMNode, selectEnabled, show
     this._rootDOMNode = null;
     this._selectDOMNode = null;
     this._eventSupport = new WebInspector.Object();
-    this._editing = false;
 
     this._visible = false;
 
@@ -164,11 +163,6 @@ WebInspector.ElementsTreeOutline.prototype = {
         // node as the one passed in.
         if (this._selectedDOMNode === node)
             this._selectedNodeChanged();
-    },
-
-    get editing()
-    {
-        return this._editing;
     },
 
     update: function()
@@ -559,7 +553,7 @@ WebInspector.ElementsTreeOutline.prototype = {
             }
         }
 
-        if (event.keyCode === WebInspector.KeyboardShortcut.Keys.H.code) {
+        if (!treeElement._editing && event.keyCode === WebInspector.KeyboardShortcut.Keys.H.code) {
             WebInspector.cssModel.toggleInlineVisibility(node.id);
             return;
         }
@@ -1088,7 +1082,7 @@ WebInspector.ElementsTreeElement.prototype = {
     {
         // On Enter or Return start editing the first attribute
         // or create a new attribute on the selected element.
-        if (this.treeOutline.editing)
+        if (this._editing)
             return false;
 
         this._startEditing();
@@ -1319,7 +1313,7 @@ WebInspector.ElementsTreeElement.prototype = {
         }
 
         config.customFinishHandler = handleKeyDownEvents.bind(this);
-        
+
         this._editing = WebInspector.startEditing(attribute, config);
 
         window.getSelection().setBaseAndExtent(elementForSelection, 0, elementForSelection, 1);
@@ -1439,7 +1433,7 @@ WebInspector.ElementsTreeElement.prototype = {
 
         function dispose()
         {
-            this._editing = false;
+            delete this._editing;
 
             // Remove editor.
             this.listItemElement.removeChild(this._htmlEditElement);
@@ -1465,7 +1459,7 @@ WebInspector.ElementsTreeElement.prototype = {
 
     _attributeEditingCommitted: function(element, newText, oldText, attributeName, moveDirection)
     {
-        this._editing = false;
+        delete this._editing;
 
         var treeOutline = this.treeOutline;
         /**
@@ -1528,7 +1522,7 @@ WebInspector.ElementsTreeElement.prototype = {
 
     _tagNameEditingCommitted: function(element, newText, oldText, tagName, moveDirection)
     {
-        this._editing = false;
+        delete this._editing;
         var self = this;
 
         function cancel()
@@ -1584,7 +1578,7 @@ WebInspector.ElementsTreeElement.prototype = {
      */
     _textNodeEditingCommitted: function(textNode, element, newText)
     {
-        this._editing = false;
+        delete this._editing;
 
         function callback()
         {
@@ -1599,7 +1593,7 @@ WebInspector.ElementsTreeElement.prototype = {
      */
     _editingCancelled: function(element, context)
     {
-        this._editing = false;
+        delete this._editing;
 
         // Need to restore attributes structure.
         this.updateTitle();
