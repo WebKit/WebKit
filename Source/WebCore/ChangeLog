@@ -1,3 +1,25 @@
+2012-12-11  Emil A Eklund  <eae@chromium.org>
+
+        Clamp out-of-range numbers in CSS
+        https://bugs.webkit.org/show_bug.cgi?id=102735
+
+        Reviewed by Simon Fraser.
+
+        Currently when a large number (outside of the supported range)
+        is applied from a style rule or set from javascript using
+        Element.style we check if it is within the supported range and
+        set it to zero if it is not. This is incorrect and confusing.
+        
+        Change it to clamp values to the supported range. This matches
+        the behavior in Gecko.
+
+        Test: fast/css/large-numbers.html
+
+        * css/CSSPrimitiveValue.cpp:
+        (WebCore::CSSPrimitiveValue::computeLength):
+        Change to clamp out-of-range values instead of interpreting them
+        as zero.
+
 2012-12-11  Nate Chapin  <japhet@chromium.org>
 
         Ensure ResourceRequests for main resources include fragment indentifiers when necessary,

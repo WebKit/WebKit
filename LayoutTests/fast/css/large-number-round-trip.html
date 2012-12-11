@@ -19,25 +19,35 @@
 <script type="text/javascript" charset="utf-8">
   if (window.testRunner)
     testRunner.dumpAsText();
+    
+  var output = [];
 
-  var box = document.getElementById('box');
+  function test(value)
+  {
+    var box = document.getElementById('box');
 
-  var testValue = "90010000px";
-  box.style.left = testValue;
+    var testValue = value + "px";
+    box.style.left = testValue;
 
-  var leftValue = window.getComputedStyle(box, null).left;
+    var leftValue = window.getComputedStyle(box, null).left;
 
-  box.style.left = "0px";
-  box.style.left = leftValue;
-  var newLeftValue = window.getComputedStyle(box, null).left;
+    box.style.left = "0px";
+    box.style.left = leftValue;
+    var newLeftValue = window.getComputedStyle(box, null).left;
 
-  var results = document.getElementById('results');
-  var result;
-  if (leftValue == newLeftValue)
-    result = "PASS: read " + testValue + " back as " + leftValue + ", read again as " + newLeftValue;
-  else
-    result = "FAIL: read " + testValue + " back as " + leftValue + ", read again as " + newLeftValue;
-  results.innerHTML = result;
+    var results = document.getElementById('results');
+    var result;
+    if (leftValue == newLeftValue)
+      output.push("PASS: read " + testValue + " back as " + leftValue + ", read again as " + newLeftValue);
+    else
+      output.push("FAIL: read " + testValue + " back as " + leftValue + ", read again as " + newLeftValue);
+  }
+  
+  test(90010000);
+  test(-33554430);
+  test(-90010000);
+  
+  document.getElementById('results').innerHTML = output.join('<br>');
 </script>
 </body>
 </html>

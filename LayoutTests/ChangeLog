@@ -1,3 +1,22 @@
+2012-12-11  Emil A Eklund  <eae@chromium.org>
+
+        Clamp out-of-range numbers in CSS
+        https://bugs.webkit.org/show_bug.cgi?id=102735
+
+        Reviewed by Simon Fraser.
+
+        Add test verifying that large numbers are handled correctly
+        (based on fast/sub-pixel/large-sizes.html).
+        Update css/large-number-round-trip and css3/flexbox/flex-algorithm.html
+        
+        * css3/flexbox/flex-algorithm.html:
+        * fast/css/large-numbers-expected.txt: Added.
+        * fast/css/large-numbers.html: Copied from LayoutTests/fast/sub-pixel/large-sizes.html.
+        * fast/sub-pixel/large-sizes-expected.txt: Removed.
+        * fast/sub-pixel/large-sizes.html: Removed.
+        * platform/chromium/fast/css/large-number-round-trip-expected.txt:
+        * platform/mac/fast/css/large-number-round-trip-expected.txt:
+
 2012-12-11  Adam Klein  <adamk@chromium.org>
 
         Mark another inspector test as flaky.
