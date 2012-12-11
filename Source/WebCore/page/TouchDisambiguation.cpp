@@ -56,7 +56,7 @@ static IntRect boundingBoxForEventNodes(Node* eventNode)
     while (node) {
         // Skip the whole sub-tree if the node doesn't propagate events.
         if (node != eventNode && node->willRespondToMouseClickEvents()) {
-            node = NodeTraversal::nextSibling(node, eventNode);
+            node = NodeTraversal::nextSkippingChildren(node, eventNode);
             continue;
         }
         result.unite(node->pixelSnappedBoundingBox());
