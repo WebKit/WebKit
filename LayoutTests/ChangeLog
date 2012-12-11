@@ -1,3 +1,16 @@
+2012-12-11  Xianzhu Wang  <wangxianzhu@chromium.org>
+
+        Incorrect position of layers for fixed position elements when page is scaled smaller than viewport
+        https://bugs.webkit.org/show_bug.cgi?id=104294
+
+        Reviewed by James Robinson.
+
+        Test the case that a page containing a composited fixed position element originally bigger than the viewport
+        is scaled down to be smaller than the viewport.
+
+        * compositing/geometry/fixed-position-composited-page-scale-smaller-than-viewport.html: Added.
+        * compositing/geometry/fixed-position-composited-page-scale-smaller-than-viewport-expected.html: Added.
+
 2012-12-11  Adam Klein  <adamk@chromium.org>
 
         Mark more tests as flaky for Chromium

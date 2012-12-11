@@ -65,37 +65,32 @@ PassRefPtr<ScrollingCoordinator> ScrollingCoordinator::create(Page* page)
     return adoptRef(new ScrollingCoordinator(page));
 }
 
-static int fixedPositionScrollOffset(int scrollPosition, int maxValue, int scrollOrigin, float dragFactor)
+static int fixedPositionScrollOffset(int visibleContentSize, int contentsSize, int scrollPosition, int scrollOrigin, float frameScaleFactor, bool fixedElementsLayoutRelativeToFrame)
 {
-    if (!maxValue)
+    int maxValue = contentsSize - visibleContentSize;
+    if (maxValue <= 0)
         return 0;
 
     if (!scrollOrigin) {
-        if (scrollPosition < 0)
-            scrollPosition = 0;
-        else if (scrollPosition > maxValue)
+        if (scrollPosition <= 0)
+            return 0;
+        if (scrollPosition > maxValue)
             scrollPosition = maxValue;
     } else {
-        if (scrollPosition > 0)
-            scrollPosition = 0;
-        else if (scrollPosition < -maxValue)
+        if (scrollPosition >= 0)
+            return 0;
+        if (scrollPosition < -maxValue)
             scrollPosition = -maxValue;
     }
-    
-    return scrollPosition * dragFactor;
+
+    float dragFactor = fixedElementsLayoutRelativeToFrame ? 1 : (contentsSize - visibleContentSize * frameScaleFactor) / maxValue;
+    return scrollPosition * dragFactor / frameScaleFactor;
 }
 
 IntSize scrollOffsetForFixedPosition(const IntRect& visibleContentRect, const IntSize& contentsSize, const IntPoint& scrollPosition, const IntPoint& scrollOrigin, float frameScaleFactor, bool fixedElementsLayoutRelativeToFrame)
 {
-    IntSize maxOffset(contentsSize.width() - visibleContentRect.width(), contentsSize.height() - visibleContentRect.height());
-    
-    FloatSize dragFactor = fixedElementsLayoutRelativeToFrame ? FloatSize(1, 1) : FloatSize(
-        (contentsSize.width() - visibleContentRect.width() * frameScaleFactor) / maxOffset.width(),
-        (contentsSize.height() - visibleContentRect.height() * frameScaleFactor) / maxOffset.height());
-
-    int x = fixedPositionScrollOffset(scrollPosition.x(), maxOffset.width(), scrollOrigin.x(), dragFactor.width() / frameScaleFactor);
-    int y = fixedPositionScrollOffset(scrollPosition.y(), maxOffset.height(), scrollOrigin.y(), dragFactor.height() / frameScaleFactor);
-
+    int x = fixedPositionScrollOffset(visibleContentRect.width(), contentsSize.width(), scrollPosition.x(), scrollOrigin.x(), frameScaleFactor, fixedElementsLayoutRelativeToFrame);
+    int y = fixedPositionScrollOffset(visibleContentRect.height(), contentsSize.height(), scrollPosition.y(), scrollOrigin.y(), frameScaleFactor, fixedElementsLayoutRelativeToFrame);
     return IntSize(x, y);
 }
 
