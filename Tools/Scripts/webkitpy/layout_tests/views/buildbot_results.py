@@ -102,7 +102,7 @@ class BuildBotPrinter(object):
             expected = results['expected'].split(" ")
 
             def is_expected(result):
-                return (result in expected) or (result in ('TEXT', 'IMAGE+TEXT') and 'FAIL' in expected)
+                return (result in expected) or (result in ('AUDIO', 'TEXT', 'IMAGE+TEXT') and 'FAIL' in expected)
 
             if all(is_expected(actual_result) for actual_result in actual):
                 # Don't print anything for tests that ran as expected.

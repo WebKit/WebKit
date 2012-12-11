@@ -58,6 +58,8 @@ class BuildBotPrinterTests(unittest.TestCase):
             failures = [test_failures.FailureTimeout()]
         elif result_type == test_expectations.CRASH:
             failures = [test_failures.FailureCrash()]
+        elif result_type == test_expectations.AUDIO:
+            failures = [test_failures.FailureAudioMismatch()]
         return test_results.TestResult(test_name, failures=failures, test_run_time=run_time)
 
     def get_result_summary(self, port, test_names, expectations_str):
@@ -78,7 +80,7 @@ class BuildBotPrinterTests(unittest.TestCase):
         #
         # FIXME: Plus, the fact that we're having to call into
         # run_webkit_tests is clearly a layering inversion.
-        tests = ['passes/text.html', 'failures/expected/timeout.html', 'failures/expected/crash.html']
+        tests = ['passes/text.html', 'failures/expected/timeout.html', 'failures/expected/crash.html', 'failures/expected/audio.html']
         expectations = ''
 
         def get_unexpected_results(expected, passing, flaky):
@@ -101,20 +103,24 @@ class BuildBotPrinterTests(unittest.TestCase):
             paths, rs, exp = self.get_result_summary(port, tests, expectations)
             if expected:
                 rs.add(self.get_result('passes/text.html', test_expectations.PASS), expected, test_is_slow)
+                rs.add(self.get_result('failures/expected/audio.html', test_expectations.AUDIO), expected, test_is_slow)
                 rs.add(self.get_result('failures/expected/timeout.html', test_expectations.TIMEOUT), expected, test_is_slow)
                 rs.add(self.get_result('failures/expected/crash.html', test_expectations.CRASH), expected, test_is_slow)
             elif passing:
                 rs.add(self.get_result('passes/text.html'), expected, test_is_slow)
+                rs.add(self.get_result('failures/expected/audio.html'), expected, test_is_slow)
                 rs.add(self.get_result('failures/expected/timeout.html'), expected, test_is_slow)
                 rs.add(self.get_result('failures/expected/crash.html'), expected, test_is_slow)
             else:
                 rs.add(self.get_result('passes/text.html', test_expectations.TIMEOUT), expected, test_is_slow)
+                rs.add(self.get_result('failures/expected/audio.html', test_expectations.CRASH), expected, test_is_slow)
                 rs.add(self.get_result('failures/expected/timeout.html', test_expectations.CRASH), expected, test_is_slow)
                 rs.add(self.get_result('failures/expected/crash.html', test_expectations.TIMEOUT), expected, test_is_slow)
             retry = rs
             if flaky:
                 paths, retry, exp = self.get_result_summary(port, tests, expectations)
                 retry.add(self.get_result('passes/text.html'), True, test_is_slow)
+                retry.add(self.get_result('failures/expected/audio.html'), True, test_is_slow)
                 retry.add(self.get_result('failures/expected/timeout.html'), True, test_is_slow)
                 retry.add(self.get_result('failures/expected/crash.html'), True, test_is_slow)
             return manager.summarize_results(port, exp, rs, retry)
@@ -122,9 +128,10 @@ class BuildBotPrinterTests(unittest.TestCase):
         printer, out = self.get_printer()
 
         # test everything running as expected
+        DASHED_LINE = "-" * 78 + "\n"
         ur = get_unexpected_results(expected=True, passing=False, flaky=False)
         printer.print_unexpected_results(ur)
-        self.assertNotEmpty(out)
+        self.assertEqual(out.getvalue(), DASHED_LINE)
 
         # test failures
         printer, out = self.get_printer()
