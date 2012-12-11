@@ -249,12 +249,6 @@ incremental.target = incremental
 incremental.commands = $(MAKE) -f $(MAKEFILE) qmake_all && $(MAKE) -f $(MAKEFILE)
 QMAKE_EXTRA_TARGETS += incremental
 
-# Don't set OBJECTS_DIR for subdirs, as that will unconditionally
-# create the directory, even if we're not using it.
-contains(TEMPLATE, subdirs) {
-    unset(OBJECTS_DIR)
-}
-
 contains(TEMPLATE, lib) {
     # Triggers the right export macros for WebKit internals
     DEFINES += BUILDING_$${TARGET}

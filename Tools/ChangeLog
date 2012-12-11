@@ -1,5 +1,16 @@
 2012-12-11  Oswald Buddenhagen  <oswald.buddenhagen@digia.com>
 
+        [Qt] remove hack which avoids unused .obj directories all over the place
+
+        Reviewed by Simon Hausmann.
+
+        The feature is subject to upstreaming in Qt itself in
+        https://codereview.qt-project.org/#change,42011
+
+        * qmake/mkspecs/features/default_post.prf:
+
+2012-12-11  Oswald Buddenhagen  <oswald.buddenhagen@digia.com>
+
         [Qt] move SQLITE3SRCDIR assignment to only use site
 
         Reviewed by Simon Hausmann.
