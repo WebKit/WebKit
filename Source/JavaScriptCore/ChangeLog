@@ -1,3 +1,14 @@
+2012-12-11  Julien BRIANCEAU   <jbrianceau@nds.com>
+
+        Implement add64 for SH4 assembler to fix build after r136601
+        https://bugs.webkit.org/show_bug.cgi?id=104377
+
+        Reviewed by Zoltan Herczeg.
+
+        * assembler/MacroAssemblerSH4.h:
+        (JSC::MacroAssemblerSH4::add64):
+        (MacroAssemblerSH4):
+
 2012-12-10  Yury Semikhatsky  <yurys@chromium.org>
 
         Memory instrumentation: make sure each edge is reported only once

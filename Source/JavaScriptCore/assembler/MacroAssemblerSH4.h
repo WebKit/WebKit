@@ -402,6 +402,34 @@ void or32(TrustedImm32 imm, RegisterID src, RegisterID dest)
         releaseScratch(scratchReg);
     }
 
+    void add64(TrustedImm32 imm, AbsoluteAddress address)
+    {
+        RegisterID scr1 = claimScratch();
+        RegisterID scr2 = claimScratch();
+
+        // Add 32-bit LSB first.
+        m_assembler.loadConstant(reinterpret_cast<uint32_t>(address.m_ptr), scr1);
+        m_assembler.movlMemReg(scr1, scr1); // scr1 = 32-bit LSB of int64 @ address
+        m_assembler.loadConstant(imm.m_value, scr2);
+        m_assembler.clrt();
+        m_assembler.addclRegReg(scr1, scr2);
+        m_assembler.loadConstant(reinterpret_cast<uint32_t>(address.m_ptr), scr1);
+        m_assembler.movlRegMem(scr2, scr1); // Update address with 32-bit LSB result.
+
+        // Then add 32-bit MSB.
+        m_assembler.addlImm8r(4, scr1);
+        m_assembler.movlMemReg(scr1, scr1); // scr1 = 32-bit MSB of int64 @ address
+        m_assembler.movt(scr2);
+        if (imm.m_value < 0)
+            m_assembler.addlImm8r(-1, scr2); // Sign extend imm value if needed.
+        m_assembler.addvlRegReg(scr2, scr1);
+        m_assembler.loadConstant(reinterpret_cast<uint32_t>(address.m_ptr) + 4, scr2);
+        m_assembler.movlRegMem(scr1, scr2); // Update (address + 4) with 32-bit MSB result.
+
+        releaseScratch(scr2);
+        releaseScratch(scr1);
+    }
+
     void sub32(TrustedImm32 imm, RegisterID dest)
     {
         if (m_assembler.isImmediate(-imm.m_value)) {
