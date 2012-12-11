@@ -98,7 +98,7 @@ public:
         return *this;
     }
 
-    uint8_t* buffer() const { return m_buffer; }
+    uint8_t* buffer() { return usesInlineBuffer() ? m_inlineBuffer : m_buffer; }
     size_t bufferSize() const { return m_bufferSize; }
 
     void addAttachment(const Attachment&);
@@ -108,15 +108,18 @@ protected:
     ArgumentEncoder();
 
 private:
+    static const size_t inlineBufferSize = 4096;
+    bool usesInlineBuffer() const { return m_bufferCapacity <= inlineBufferSize; }
     uint8_t* grow(unsigned alignment, size_t size);
     
     uint8_t* m_buffer;
-    uint8_t* m_bufferPointer;
     
     size_t m_bufferSize;
     size_t m_bufferCapacity;
 
     Vector<Attachment> m_attachments;
+
+    uint8_t m_inlineBuffer[inlineBufferSize];
 };
 
 } // namespace CoreIPC

@@ -39,9 +39,8 @@ PassOwnPtr<ArgumentEncoder> ArgumentEncoder::create()
 
 ArgumentEncoder::ArgumentEncoder()
     : m_buffer(0)
-    , m_bufferPointer(0)
     , m_bufferSize(0)
-    , m_bufferCapacity(0)
+    , m_bufferCapacity(inlineBufferSize)
 {
 }
 
@@ -68,27 +67,31 @@ uint8_t* ArgumentEncoder::grow(unsigned alignment, size_t size)
     
     if (alignedSize + size > m_bufferCapacity) {
         size_t newCapacity = std::max(alignedSize + size, std::max(static_cast<size_t>(32), m_bufferCapacity + m_bufferCapacity / 4 + 1));
-        // Use system malloc / realloc instead of fastMalloc due to 
-        // fastMalloc using MADV_FREE_REUSABLE which doesn't work with
-        // mach messages with OOL message and MACH_MSG_VIRTUAL_COPY.
-        // System malloc also calls madvise(MADV_FREE_REUSABLE) but after first
-        // checking via madvise(CAN_REUSE) that it will succeed. Should this
-        // behavior change we'll need to revisit this.
-        if (!m_buffer)
-            m_buffer = static_cast<uint8_t*>(malloc(newCapacity));
-        else
-            m_buffer = static_cast<uint8_t*>(realloc(m_buffer, newCapacity));
 
-        if (!m_buffer)
-            CRASH();
+        if (newCapacity > inlineBufferSize) {
+            // Use system malloc / realloc instead of fastMalloc due to
+            // fastMalloc using MADV_FREE_REUSABLE which doesn't work with
+            // mach messages with OOL message and MACH_MSG_VIRTUAL_COPY.
+            // System malloc also calls madvise(MADV_FREE_REUSABLE) but after first
+            // checking via madvise(CAN_REUSE) that it will succeed. Should this
+            // behavior change we'll need to revisit this.
+            if (!m_buffer)
+                m_buffer = static_cast<uint8_t*>(malloc(newCapacity));
+            else
+                m_buffer = static_cast<uint8_t*>(realloc(m_buffer, newCapacity));
+
+            if (!m_buffer)
+                CRASH();
+
+            if (usesInlineBuffer())
+                memcpy(m_buffer, m_inlineBuffer, m_bufferCapacity);
+        }
 
         m_bufferCapacity = newCapacity;        
     }
 
     m_bufferSize = alignedSize + size;
-    m_bufferPointer = m_buffer + alignedSize + size;
-    
-    return m_buffer + alignedSize;
+    return buffer() + alignedSize;
 }
 
 void ArgumentEncoder::encodeFixedLengthData(const uint8_t* data, size_t size, unsigned alignment)

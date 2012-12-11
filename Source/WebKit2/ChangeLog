@@ -1,3 +1,21 @@
+2012-12-11  Andreas Kling  <akling@apple.com>
+
+        CoreIPC: ArgumentEncoder should have an inline buffer.
+        <http://webkit.org/b/104622>
+
+        Reviewed by Anders Carlsson.
+
+        Add a 4K inline buffer to CoreIPC::ArgumentEncoder to avoid malloc/free churn.
+        It was dominating the transient allocations graph in Instruments.
+
+        * Platform/CoreIPC/ArgumentEncoder.cpp:
+        (CoreIPC::ArgumentEncoder::ArgumentEncoder):
+        (CoreIPC::ArgumentEncoder::grow):
+        * Platform/CoreIPC/ArgumentEncoder.h:
+        (CoreIPC::ArgumentEncoder::buffer):
+        (ArgumentEncoder):
+        (CoreIPC::ArgumentEncoder::usesInlineBuffer):
+
 2012-12-11  Mike West  <mkwst@chromium.org>
 
         Web Inspector: ConsoleTypes should not expose MessageType - it should be private to inspector.
