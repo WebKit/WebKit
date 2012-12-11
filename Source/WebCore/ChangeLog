@@ -1,3 +1,43 @@
+2012-12-10  Hajime Morrita  <morrita@google.com>
+
+        [Shadow DOM][Refactoring] HTMLContentElement,HTMLShadowElement::m_registeredWithShadowRoot should be moved to InsertionPoint
+        https://bugs.webkit.org/show_bug.cgi?id=104516
+
+        Reviewed by Dimitri Glazkov.
+
+        This change pulls duplicated code in removedFrom() and
+        insertedInto() of both both HTMLShadowElement and
+        HTMLContentElement to their super class InsertionPoint.
+
+        This is a part of effor that encapsulate node distribution algorithm to
+        ContentDistributor and its family.
+
+        No new tests, no behavior change.
+
+        * dom/ShadowRoot.cpp:
+        (WebCore::ShadowRoot::registerInsertionPoint): Added.
+        (WebCore::ShadowRoot::unregisterInsertionPoint): Added.
+        * dom/ShadowRoot.h:
+        (ShadowRoot):
+        * html/shadow/ContentDistributor.cpp:
+        (WebCore::ShadowRootContentDistributionData::regiterInsertionPoint): Generalized two methods for <content> and <shadow>.
+        (WebCore):
+        (WebCore::ShadowRootContentDistributionData::unregisterInsertionPoint): Ditto.
+        * html/shadow/ContentDistributor.h:
+        (ShadowRootContentDistributionData):
+        * html/shadow/HTMLContentElement.cpp:
+        (WebCore::HTMLContentElement::HTMLContentElement):
+        * html/shadow/HTMLContentElement.h:
+        * html/shadow/HTMLShadowElement.cpp:
+        (WebCore::HTMLShadowElement::HTMLShadowElement):
+        * html/shadow/HTMLShadowElement.h:
+        * html/shadow/InsertionPoint.cpp:
+        (WebCore::InsertionPoint::InsertionPoint):
+        (WebCore::InsertionPoint::insertedInto): Pulled up from subclasses
+        (WebCore::InsertionPoint::removedFrom): Pulled up from subclasses
+        * html/shadow/InsertionPoint.h:
+        (InsertionPoint):
+
 2012-12-10  Jon Lee  <jonlee@apple.com>
 
         Keep track of plug-in snapshots clicked by user

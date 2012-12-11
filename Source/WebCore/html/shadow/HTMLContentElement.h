@@ -49,19 +49,15 @@ public:
     virtual const AtomicString& select() const;
     virtual bool isSelectValid();
     virtual const CSSSelectorList& selectorList();
+    virtual Type insertionPointType() const OVERRIDE { return ContentInsertionPoint; }
 
 protected:
     HTMLContentElement(const QualifiedName&, Document*);
-
-    virtual InsertionNotificationRequest insertedInto(ContainerNode*) OVERRIDE;
-    virtual void removedFrom(ContainerNode*) OVERRIDE;
 
 private:
     virtual void parseAttribute(const QualifiedName&, const AtomicString&) OVERRIDE;
     void ensureSelectParsed();
     bool validateSelect() const;
-
-    bool m_registeredWithShadowRoot;
 
     bool m_shouldParseSelectorList;
     bool m_isValidSelector;

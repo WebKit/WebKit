@@ -110,6 +110,40 @@ const Vector<InsertionPoint*>& ShadowRootContentDistributionData::ensureInsertio
     return m_insertionPointList;
 }
 
+void ShadowRootContentDistributionData::regiterInsertionPoint(ShadowRoot* scope, InsertionPoint* point)
+{
+    switch (point->insertionPointType()) {
+    case InsertionPoint::ShadowInsertionPoint:
+        ++m_numberOfShadowElementChildren;
+        break;
+    case InsertionPoint::ContentInsertionPoint:
+        ++m_numberOfContentElementChildren;
+        scope->owner()->setShouldCollectSelectFeatureSet();
+        break;
+    }
+
+    invalidateInsertionPointList();
+}
+
+void ShadowRootContentDistributionData::unregisterInsertionPoint(ShadowRoot* scope, InsertionPoint* point)
+{
+    switch (point->insertionPointType()) {
+    case InsertionPoint::ShadowInsertionPoint:
+        ASSERT(m_numberOfShadowElementChildren > 0);
+        --m_numberOfShadowElementChildren;
+        break;
+    case InsertionPoint::ContentInsertionPoint:
+        ASSERT(m_numberOfContentElementChildren > 0);
+        --m_numberOfContentElementChildren;
+        if (scope->owner())
+            scope->owner()->setShouldCollectSelectFeatureSet();
+        break;
+    }
+
+    invalidateInsertionPointList();
+}
+
+
 ContentDistributor::ContentDistributor()
     : m_validity(Undetermined)
 {

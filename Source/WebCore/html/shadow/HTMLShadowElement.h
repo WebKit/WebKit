@@ -45,10 +45,7 @@ public:
     virtual const AtomicString& select() const;
     virtual bool isSelectValid() OVERRIDE { return true; }
     virtual const CSSSelectorList& selectorList() { return emptySelectorList(); }
-
-protected:
-    virtual InsertionNotificationRequest insertedInto(ContainerNode*) OVERRIDE;
-    virtual void removedFrom(ContainerNode*) OVERRIDE;
+    virtual Type insertionPointType() const OVERRIDE { return ShadowInsertionPoint; }
 
 private:
     HTMLShadowElement(const QualifiedName&, Document*);

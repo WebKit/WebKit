@@ -358,14 +358,14 @@ inline ShadowRootContentDistributionData* ShadowRoot::ensureDistributionData()
     return m_distributionData.get();
 }   
 
-void ShadowRoot::registerShadowElement()
+void ShadowRoot::registerInsertionPoint(InsertionPoint* point)
 {
-    ensureDistributionData()->incrementNumberOfShadowElementChildren();
+    ensureDistributionData()->regiterInsertionPoint(this, point);
 }
 
-void ShadowRoot::unregisterShadowElement()
+void ShadowRoot::unregisterInsertionPoint(InsertionPoint* point)
 {
-    distributionData()->decrementNumberOfShadowElementChildren();
+    ensureDistributionData()->unregisterInsertionPoint(this, point);
 }
 
 bool ShadowRoot::hasShadowInsertionPoint() const
@@ -374,16 +374,6 @@ bool ShadowRoot::hasShadowInsertionPoint() const
         return false;
 
     return distributionData()->hasShadowElementChildren();
-}
-
-void ShadowRoot::registerContentElement()
-{
-    ensureDistributionData()->incrementNumberOfContentElementChildren();
-}
-
-void ShadowRoot::unregisterContentElement()
-{
-    distributionData()->decrementNumberOfContentElementChildren();
 }
 
 bool ShadowRoot::hasContentElement() const

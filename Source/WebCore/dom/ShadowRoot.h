@@ -91,14 +91,12 @@ public:
     InsertionPoint* assignedTo() const;
     void setAssignedTo(InsertionPoint*);
 
-    void registerShadowElement();
-    void unregisterShadowElement();
     bool hasShadowInsertionPoint() const;
-
-    void registerContentElement();
-    void unregisterContentElement();
     bool hasContentElement() const;
 
+    void registerInsertionPoint(InsertionPoint*);
+    void unregisterInsertionPoint(InsertionPoint*);
+    
     void registerElementShadow();
     void unregisterElementShadow();
     bool hasElementShadow() const;

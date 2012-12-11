@@ -43,6 +43,7 @@ using namespace HTMLNames;
 
 InsertionPoint::InsertionPoint(const QualifiedName& tagName, Document* document)
     : HTMLElement(tagName, document, CreateInsertionPoint)
+    , m_registeredWithShadowRoot(false)
 {
 }
 
@@ -126,6 +127,10 @@ Node::InsertionNotificationRequest InsertionPoint::insertedInto(ContainerNode* i
         if (ShadowRoot* root = containingShadowRoot()) {
             root->owner()->setValidityUndetermined();
             root->owner()->invalidateDistribution();
+            if (isActive() && !m_registeredWithShadowRoot) {
+                m_registeredWithShadowRoot = true;
+                root->registerInsertionPoint(this);
+            }
         }
     }
 
@@ -140,11 +145,18 @@ void InsertionPoint::removedFrom(ContainerNode* insertionPoint)
             root = insertionPoint->containingShadowRoot();
 
         // host can be null when removedFrom() is called from ElementShadow destructor.
-        if (root && root->host())
-            root->owner()->invalidateDistribution();
+        ElementShadow* rootOwner = root ? root->owner() : 0;
+        if (rootOwner)
+            rootOwner->invalidateDistribution();
 
         // Since this insertion point is no longer visible from the shadow subtree, it need to clean itself up.
         clearDistribution();
+
+        if (m_registeredWithShadowRoot) {
+            m_registeredWithShadowRoot = false;
+            if (root)
+                root->unregisterInsertionPoint(this);
+        }
     }
 
     HTMLElement::removedFrom(insertionPoint);

@@ -43,6 +43,11 @@ namespace WebCore {
 
 class InsertionPoint : public HTMLElement {
 public:
+    enum Type {
+        ShadowInsertionPoint,
+        ContentInsertionPoint
+    };
+
     virtual ~InsertionPoint();
 
     bool hasDistribution() const { return !m_distribution.isEmpty(); }
@@ -56,6 +61,7 @@ public:
     virtual const AtomicString& select() const = 0;
     virtual bool isSelectValid() = 0;
     virtual const CSSSelectorList& selectorList() = 0;
+    virtual Type insertionPointType() const = 0;
 
     bool resetStyleInheritance() const;
     void setResetStyleInheritance(bool);
@@ -85,6 +91,7 @@ protected:
 private:
 
     ContentDistribution m_distribution;
+    bool m_registeredWithShadowRoot;
 };
 
 inline InsertionPoint* toInsertionPoint(Node* node)

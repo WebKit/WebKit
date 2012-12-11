@@ -64,7 +64,6 @@ PassRefPtr<HTMLContentElement> HTMLContentElement::create(const QualifiedName& t
 
 HTMLContentElement::HTMLContentElement(const QualifiedName& name, Document* document)
     : InsertionPoint(name, document)
-    , m_registeredWithShadowRoot(false)
     , m_shouldParseSelectorList(false)
     , m_isValidSelector(true)
 {
@@ -108,36 +107,6 @@ void HTMLContentElement::parseAttribute(const QualifiedName& name, const AtomicS
         m_shouldParseSelectorList = true;
     } else
         InsertionPoint::parseAttribute(name, value);
-}
-
-Node::InsertionNotificationRequest HTMLContentElement::insertedInto(ContainerNode* insertionPoint)
-{
-    InsertionPoint::insertedInto(insertionPoint);
-
-    if (insertionPoint->inDocument() && isActive()) {
-        ShadowRoot* root = containingShadowRoot();
-        root->registerContentElement();
-        root->owner()->setShouldCollectSelectFeatureSet();
-        m_registeredWithShadowRoot = true;
-    }
-
-    return InsertionDone;
-}
-
-void HTMLContentElement::removedFrom(ContainerNode* insertionPoint)
-{
-    if (insertionPoint->inDocument() && m_registeredWithShadowRoot) {
-        ShadowRoot* root = containingShadowRoot();
-        if (!root)
-            root = insertionPoint->containingShadowRoot();
-        if (root)
-            root->unregisterContentElement();
-        m_registeredWithShadowRoot = false;
-
-        if (ElementShadow* elementShadow = root ? root->owner() : 0)
-            elementShadow->setShouldCollectSelectFeatureSet();
-    }
-    InsertionPoint::removedFrom(insertionPoint);
 }
 
 static bool validateSubSelector(CSSSelector* selector)
