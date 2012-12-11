@@ -1,0 +1,137 @@
+
+Deserialize to {"foo":"zoo","bar":{"baz":"myNewKey"}}:
+PASS JSON.stringify(newObj) is JSON.stringify(obj)
+Serialize {"foo":"zoo","bar":{"baz":"myNewKey"}}:
+PASS bufferView.length is expectedBufferValues.length
+
+Deserialize to {"foo":"zoo","bar":"myNewKey"}:
+PASS JSON.stringify(newObj) is JSON.stringify(obj)
+Serialize {"foo":"zoo","bar":"myNewKey"}:
+PASS bufferView.length is expectedBufferValues.length
+
+Deserialize to []:
+PASS JSON.stringify(newObj) is JSON.stringify(obj)
+Serialize []:
+PASS bufferView.length is expectedBufferValues.length
+
+Deserialize to {"foo":"zoo"}:
+PASS JSON.stringify(newObj) is JSON.stringify(obj)
+Serialize {"foo":"zoo"}:
+PASS bufferView.length is expectedBufferValues.length
+
+Deserialize to {"foo":null}:
+PASS JSON.stringify(newObj) is JSON.stringify(obj)
+Serialize {"foo":null}:
+PASS bufferView.length is expectedBufferValues.length
+
+Deserialize to {}:
+PASS JSON.stringify(newObj) is JSON.stringify(obj)
+Serialize {}:
+PASS bufferView.length is expectedBufferValues.length
+
+Deserialize to undefined:
+PASS JSON.stringify(newObj) is JSON.stringify(obj)
+Serialize undefined:
+PASS bufferView.length is expectedBufferValues.length
+
+Deserialize to true:
+PASS JSON.stringify(newObj) is JSON.stringify(obj)
+Serialize true:
+PASS bufferView.length is expectedBufferValues.length
+
+Deserialize to false:
+PASS JSON.stringify(newObj) is JSON.stringify(obj)
+Serialize false:
+PASS bufferView.length is expectedBufferValues.length
+
+Deserialize to [null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null]:
+PASS JSON.stringify(newObj) is JSON.stringify(obj)
+Serialize [null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null]:
+PASS bufferView.length is expectedBufferValues.length
+
+Deserialize to 10:
+PASS JSON.stringify(newObj) is JSON.stringify(obj)
+Serialize 10:
+PASS bufferView.length is expectedBufferValues.length
+
+Deserialize to -10:
+PASS JSON.stringify(newObj) is JSON.stringify(obj)
+Serialize -10:
+PASS bufferView.length is expectedBufferValues.length
+
+Deserialize to 1073741824:
+PASS JSON.stringify(newObj) is JSON.stringify(obj)
+Serialize 1073741824:
+PASS bufferView.length is expectedBufferValues.length
+
+Deserialize to 36028797018963970:
+PASS JSON.stringify(newObj) is JSON.stringify(obj)
+Serialize 36028797018963970:
+PASS bufferView.length is expectedBufferValues.length
+
+Deserialize to 1.23:
+PASS JSON.stringify(newObj) is JSON.stringify(obj)
+Serialize 1.23:
+PASS bufferView.length is expectedBufferValues.length
+
+Deserialize to "":
+PASS JSON.stringify(newObj) is JSON.stringify(obj)
+Serialize "":
+PASS bufferView.length is expectedBufferValues.length
+
+Deserialize to "abc":
+PASS JSON.stringify(newObj) is JSON.stringify(obj)
+Serialize "abc":
+PASS bufferView.length is expectedBufferValues.length
+
+Deserialize to {"integer":123}:
+PASS JSON.stringify(newObj) is JSON.stringify(obj)
+Serialize {"integer":123}:
+PASS bufferView.length is expectedBufferValues.length
+
+Deserialize to {"string":"str"}:
+PASS JSON.stringify(newObj) is JSON.stringify(obj)
+Serialize {"string":"str"}:
+PASS bufferView.length is expectedBufferValues.length
+
+Deserialize to {"list":[1,2,3]}:
+PASS JSON.stringify(newObj) is JSON.stringify(obj)
+Serialize {"list":[1,2,3]}:
+PASS bufferView.length is expectedBufferValues.length
+
+Deserialize to null:
+PASS JSON.stringify(newObj) is JSON.stringify(obj)
+Serialize null:
+PASS bufferView.length is expectedBufferValues.length
+
+Deserialize to {}:
+PASS JSON.stringify(newObj) is JSON.stringify(obj)
+Serialize {}:
+PASS bufferView.length is expectedBufferValues.length
+
+Deserialize to {"inner":{"hello":"there"},"outer":{"hello":"there"}}:
+PASS JSON.stringify(newObj) is JSON.stringify(obj)
+Serialize {"inner":{"hello":"there"},"outer":{"hello":"there"}}:
+PASS bufferView.length is expectedBufferValues.length
+
+Deserialize to {"hello":"there"}:
+PASS JSON.stringify(newObj) is JSON.stringify(obj)
+Serialize {"hello":"there"}:
+PASS bufferView.length is expectedBufferValues.length
+
+Deserialize to {"a":"a","u":"αβ","d":42}:
+PASS JSON.stringify(newObj) is JSON.stringify(obj)
+Serialize {"a":"a","u":"αβ","d":42}:
+PASS bufferView.length is expectedBufferValues.length
+
+Deserialize to {"a":"ab","u":"αβ","d":42}:
+PASS JSON.stringify(newObj) is JSON.stringify(obj)
+Serialize {"a":"ab","u":"αβ","d":42}:
+PASS bufferView.length is expectedBufferValues.length
+
+Serialize undefined:
+PASS thrownException.code is expectedException
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

@@ -1,80 +1,17 @@
 <html>
     <head>
         <script src="../../../../fast/js/resources/js-test-pre.js"></script>
+        <script src="../../../../fast/storage/resources/serialized-script-value.js"></script>
     </head>
     <body>
         <script>
-function expectBufferValue(expectedValues, buffer) {
-    expectedBufferValues = expectedValues;
-    bufferView = new Uint16Array(buffer);
-    shouldBe("bufferView.length", "expectedBufferValues.length");
-    var success = (bufferView.length == expectedBufferValues.length);
-    if (success) {
-        for (var i = 0; i < expectedValues.length; i++) {
-            if (expectedValues[i] != bufferView[i]) {
-                testFailed("ArrayBufferViews differ at index " + i + ". Should be " + expectedValues[i] + ". Was " + bufferView[i]);
-                success = false;
-                break;
-            }
-        }
-    }
-
-    if (!success) {
-        // output the full buffer for adding back into the test
-        var output = [];
-        for (i = 0; i < bufferView.length; i++) {
-            var hexVal = bufferView[i].toString(16);
-            if (hexVal.length < 4) {
-                hexVal = "0000".slice(hexVal.length) + hexVal;
-            }
-            output.push("0x" + hexVal);
-        }
-        debug("Actual buffer: [" + output.join(", ") + "]");
-    }
-}
-
-function makeBuffer(serializedValues) {
-    var bufferView = new Uint16Array(new ArrayBuffer(serializedValues.length * 2));
-    for (var i = 0; i < serializedValues.length; i++) {
-        bufferView[i] = serializedValues[i];
-    }
-    return bufferView.buffer;
-}
-
+/*
+    See LayoutTests/fast/storage/serialized-script-value.js for the
+    corresponding test of the JSC serialization format.
+*/
 
 function testSerialization(obj, values, oldFormat, serializeExceptionValue) {
-    debug("");
-
-    if (!serializeExceptionValue) {
-        self.obj = obj;
-        debug("Deserialize to " + JSON.stringify(obj) + ":");
-        self.newObj = internals.deserializeBuffer(makeBuffer(values));
-        shouldBe("JSON.stringify(newObj)", "JSON.stringify(obj)");
-
-        if (oldFormat) {
-            self.newObj = internals.deserializeBuffer(makeBuffer(oldFormat));
-            shouldBe("JSON.stringify(newObj)", "JSON.stringify(obj)");
-        }
-    }
-
-    debug("Serialize " + JSON.stringify(obj) + ":");
-    try {
-        var serialized = internals.serializeObject(obj);
-        if (serializeExceptionValue) {
-            testFailed("Should have thrown an exception of type ", serializeExceptionValue);
-        }
-    } catch(e) {
-        if (!serializeExceptionValue) {
-            testFailed("Threw exception " + e);
-            return;
-        } else {
-            self.thrownException = e;
-            self.expectedException = serializeExceptionValue;
-            shouldBe("thrownException.code", "expectedException");
-            return;
-        }
-    }
-    expectBufferValue(values, serialized);
+    _testSerialization(2, obj, values, oldFormat, serializeExceptionValue);
 }
 
 // we only test a few cases of the "old" serialization format because

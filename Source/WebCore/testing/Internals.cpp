@@ -1732,14 +1732,25 @@ String Internals::getCurrentCursorInfo(Document* document, ExceptionCode& ec)
 
 PassRefPtr<ArrayBuffer> Internals::serializeObject(PassRefPtr<SerializedScriptValue> value) const
 {
+#if USE(V8)
     String stringValue = value->toWireString();
     return ArrayBuffer::create(static_cast<const void*>(stringValue.impl()->characters()), stringValue.sizeInBytes());
+#else
+    Vector<uint8_t> bytes = value->data();
+    return ArrayBuffer::create(bytes.data(), bytes.size());
+#endif
 }
 
 PassRefPtr<SerializedScriptValue> Internals::deserializeBuffer(PassRefPtr<ArrayBuffer> buffer) const
 {
+#if USE(V8)
     String value(static_cast<const UChar*>(buffer->data()), buffer->byteLength() / sizeof(UChar));
     return SerializedScriptValue::createFromWire(value);
+#else
+    Vector<uint8_t> bytes;
+    bytes.append(static_cast<const uint8_t*>(buffer->data()), buffer->byteLength());
+    return SerializedScriptValue::adopt(bytes);
+#endif
 }
 
 void Internals::setUsesOverlayScrollbars(bool enabled)

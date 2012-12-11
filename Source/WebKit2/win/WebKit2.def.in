@@ -163,6 +163,7 @@ EXPORTS
         ??0String@WTF@@QAE@PB_W@Z
         ??0String@WTF@@QAE@PB_WI@Z
         ??0String@WTF@@QAE@VASCIILiteral@1@@Z
+        ??0SerializedScriptValue@WebCore@@AAE@AAV?$Vector@E$0A@@WTF@@@Z
         ??1SerializedScriptValue@WebCore@@QAE@XZ
         ?absoluteBoundingBoxRect@RenderObject@WebCore@@QBE?AVIntRect@2@_N@Z
         ?absoluteBoundingBoxRectIgnoringTransforms@RenderObject@WebCore@@QBE?AVIntRect@2@XZ
@@ -177,7 +178,6 @@ EXPORTS
         ?create@SerializedScriptValue@WebCore@@SA?AV?$PassRefPtr@VSerializedScriptValue@WebCore@@@WTF@@ABVString@4@@Z
         ?create@SerializedScriptValue@WebCore@@SA?AV?$PassRefPtr@VSerializedScriptValue@WebCore@@@WTF@@PAVExecState@JSC@@VJSValue@6@PAV?$Vector@V?$RefPtr@VMessagePort@WebCore@@@WTF@@$00@4@PAV?$Vector@V?$RefPtr@VArrayBuffer@WTF@@@WTF@@$00@4@W4SerializationErrorMode@2@@Z
         ?create@ShadowRoot@WebCore@@SA?AV?$PassRefPtr@VShadowRoot@WebCore@@@WTF@@PAVElement@2@AAH@Z
-        ?createFromWire@SerializedScriptValue@WebCore@@SA?AV?$PassRefPtr@VSerializedScriptValue@WebCore@@@WTF@@ABVString@4@@Z
         ?createWrapper@WebCore@@YA?AVJSValue@JSC@@PAVExecState@3@PAVJSDOMGlobalObject@1@PAVNode@1@@Z
         ?deserialize@SerializedScriptValue@WebCore@@QAE?AVJSValue@JSC@@PAVExecState@4@PAVJSGlobalObject@4@PAV?$Vector@V?$RefPtr@VMessagePort@WebCore@@@WTF@@$00@WTF@@W4SerializationErrorMode@2@@Z
         ?documentState@HistoryItem@WebCore@@QBEABV?$Vector@VString@WTF@@$0A@@WTF@@XZ
@@ -300,8 +300,6 @@ EXPORTS
         ?toJS@WebCore@@YA?AVJSValue@JSC@@PAVExecState@3@PAVJSDOMGlobalObject@1@PAVRange@1@@Z
         ?toJS@WebCore@@YA?AVJSValue@JSC@@PAVExecState@3@PAVJSDOMGlobalObject@1@PAVNodeList@1@@Z
         ?toRange@WebCore@@YAPAVRange@1@VJSValue@JSC@@@Z
-        ?toString@SerializedScriptValue@WebCore@@QAE?AVString@WTF@@XZ
-        ?toWireString@SerializedScriptValue@WebCore@@QBE?AVString@WTF@@XZ
         ?treeScope@Node@WebCore@@QBEPAVTreeScope@2@XZ
         ?updateLayoutIgnorePendingStylesheets@Document@WebCore@@QAEXXZ
         ?userPreferredLanguages@WebCore@@YA?AV?$Vector@VString@WTF@@$0A@@WTF@@XZ

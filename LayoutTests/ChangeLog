@@ -1,3 +1,20 @@
+2012-12-11  Michael Pruett  <michael@68k.org>
+
+        [JSC] Add tests for explicit serialization values
+        https://bugs.webkit.org/show_bug.cgi?id=104423
+
+        Reviewed by Oliver Hunt.
+
+        Add tests for serialization and deserialization mechanisms of
+        the JSC implementation of SerializedScriptValue. Similar tests
+        already exist for the V8 implementation.
+
+        * fast/storage/resources/serialized-script-value.js: Added utility functions common to both V8 and JSC tests.
+        * fast/storage/serialized-script-value-expected.txt: Added.
+        * fast/storage/serialized-script-value.html: Added.
+        * platform/chromium/TestExpectations: Excluded new JSC-specific test.
+        * platform/chromium/fast/storage/serialized-script-value.html: Moved utility functions into fast/storage/resources/serialized-script-value.js.
+
 2012-12-11  Dirk Pranke  <dpranke@chromium.org>
 
         nrwt isn't rejecting unrecognized expectations
