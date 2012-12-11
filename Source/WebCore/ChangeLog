@@ -1,3 +1,52 @@
+2012-12-11  Jinwoo Song  <jinwoo7.song@samsung.com>
+
+        [QT][EFL][WK2] Move the GraphicsSurfaceGLX.cpp to common place
+        https://bugs.webkit.org/show_bug.cgi?id=104433
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        QT and EFL are commonly using the GraphicsSurfaceGLX.cpp and
+        it looks better to move this file to /glx directory.
+
+        * PlatformEfl.cmake:
+        * Target.pri:
+        * platform/graphics/surfaces/glx/GraphicsSurfaceGLX.cpp: Renamed from Source/WebCore/platform/graphics/surfaces/qt/GraphicsSurfaceGLX.cpp.
+        (WebCore):
+        (OffScreenRootWindow):
+        (WebCore::OffScreenRootWindow::OffScreenRootWindow):
+        (WebCore::OffScreenRootWindow::getXWindow):
+        (WebCore::OffScreenRootWindow::display):
+        (WebCore::OffScreenRootWindow::~OffScreenRootWindow):
+        (WebCore::GraphicsSurfacePrivate::GraphicsSurfacePrivate):
+        (GraphicsSurfacePrivate):
+        (WebCore::GraphicsSurfacePrivate::~GraphicsSurfacePrivate):
+        (WebCore::GraphicsSurfacePrivate::createSurface):
+        (WebCore::GraphicsSurfacePrivate::createPixmap):
+        (WebCore::GraphicsSurfacePrivate::textureIsYInverted):
+        (WebCore::GraphicsSurfacePrivate::makeCurrent):
+        (WebCore::GraphicsSurfacePrivate::doneCurrent):
+        (WebCore::GraphicsSurfacePrivate::swapBuffers):
+        (WebCore::GraphicsSurfacePrivate::copyFromTexture):
+        (WebCore::GraphicsSurfacePrivate::display):
+        (WebCore::GraphicsSurfacePrivate::glxPixmap):
+        (WebCore::GraphicsSurfacePrivate::size):
+        (WebCore::resolveGLMethods):
+        (WebCore::GraphicsSurface::platformExport):
+        (WebCore::GraphicsSurface::platformGetTextureID):
+        (WebCore::GraphicsSurface::platformCopyToGLTexture):
+        (WebCore::GraphicsSurface::platformCopyFromTexture):
+        (WebCore::GraphicsSurface::platformPaintToTextureMapper):
+        (WebCore::GraphicsSurface::platformFrontBuffer):
+        (WebCore::GraphicsSurface::platformSwapBuffers):
+        (WebCore::GraphicsSurface::platformSize):
+        (WebCore::GraphicsSurface::platformCreate):
+        (WebCore::GraphicsSurface::platformImport):
+        (WebCore::GraphicsSurface::platformLock):
+        (WebCore::GraphicsSurface::platformUnlock):
+        (WebCore::GraphicsSurface::platformDestroy):
+        (WebCore::GraphicsSurface::platformBeginPaint):
+        (WebCore::GraphicsSurface::createReadOnlyImage):
+
 2012-12-11  Mike West  <mkwst@chromium.org>
 
         Web Inspector: Evaluate private browsing mode's effect on console messages.
