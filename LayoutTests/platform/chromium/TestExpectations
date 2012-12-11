@@ -3330,11 +3330,6 @@ webkit.org/b/85310 ietestcenter/css3/valuesandunits/units-010.htm [ ImageOnlyFai
 # IETC namespace failures
 webkit.org/b/86142 ietestcenter/css3/namespaces/syntax-021.xml [ ImageOnlyFailure ]
 
-webkit.org/b/84432 [ Win ] fast/filesystem/op-restricted-names.html [ Failure ]
-webkit.org/b/84432 [ Win ] fast/filesystem/op-restricted-unicode.html [ Failure ]
-webkit.org/b/84432 [ Win ] fast/filesystem/read-directory.html [ Failure ]
-webkit.org/b/84432 [ Win ] fast/filesystem/simple-readonly-file-object.html [ Failure ]
-
 webkit.org/b/84550 [ SnowLeopard ] fast/canvas/2d.text.draw.fill.maxWidth.gradient.html [ Failure Pass ]
 
 webkit.org/b/84688 [ SnowLeopard ] compositing/animation/computed-style-during-delay.html [ Failure Pass ]
