@@ -2198,6 +2198,12 @@ css2.1/20110323/vertical-align-boxes-001.htm [ Failure Pass ]
 svg/as-image/svg-intrinsic-size-rectangular-vertical.html
 fast/css/word-spacing-characters.html
 css2.1/20110323/c541-word-sp-001.htm [ Failure Pass ]
+webkit.org/b/104696 fast/block/float/floats-offset-image-quirk-lineheight.html
+webkit.org/b/104696 fast/block/float/floats-offset-image-quirk.html
+webkit.org/b/104696 fast/block/float/floats-offset-image-strict-lineheight.html
+webkit.org/b/104696 fast/block/float/floats-offset-image-strict.html
+webkit.org/b/104696 fast/block/float/floats-wrap-inside-inline-007.html
+
 
 # [Qt] css3/filters/huge-region-composited.html makes css3/filters/huge-region.html crash
 # https://bugs.webkit.org/show_bug.cgi?id=90165
