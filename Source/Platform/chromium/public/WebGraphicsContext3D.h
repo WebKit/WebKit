@@ -173,10 +173,6 @@ public:
     virtual void discardFramebufferEXT(WGC3Denum target, WGC3Dsizei numAttachments, const WGC3Denum* attachments) { }
 
     // GL_CHROMIUM_discard_backbuffer - controls allocation/deallocation of the back buffer.
-    // FIXME: Parameters to discardFramebufferCHROMIUM aren't used, remove when calling code is gone.
-    // FIXME: Remove xxxFramebufferCHROMIUM versions when callers switch to xxxBackbufferCHROMIUM()
-    virtual void discardFramebufferCHROMIUM(WGC3Denum, WGC3Dsizei, const WGC3Denum*) { }
-    virtual void ensureFramebufferCHROMIUM() { }
     virtual void discardBackbufferCHROMIUM() { }
     virtual void ensureBackbufferCHROMIUM() { }
 

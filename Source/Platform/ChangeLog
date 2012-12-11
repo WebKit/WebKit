@@ -1,3 +1,13 @@
+2012-12-11  James Robinson  <jamesr@chromium.org>
+
+        [chromium] Remove deprecated WebGraphicsContext3D entry points
+        https://bugs.webkit.org/show_bug.cgi?id=104603
+
+        Reviewed by Darin Fisher.
+
+        * chromium/public/WebGraphicsContext3D.h:
+        (WebGraphicsContext3D):
+
 2012-12-10  Dana Jansens  <danakj@chromium.org>
 
         [chromium] Remove WebCompositorFrame(Ack) as these classes are not needed now that they are passed through cc::OutputSurface.
