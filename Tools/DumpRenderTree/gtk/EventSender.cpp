@@ -490,7 +490,7 @@ static JSValueRef continuousMouseScrollByCallback(JSContextRef context, JSObject
     g_return_val_if_fail((!exception || !*exception), JSValueMakeUndefined(context));
 
     // We do not yet support continuous scrolling by page.
-    if (argumentCount >= 3 && JSValueToBoolean(context, arguments[2]), JSValueMakeUndefined(context))
+    if (argumentCount >= 3 && JSValueToBoolean(context, arguments[2]))
         return JSValueMakeUndefined(context);
 
     GdkEvent* event = gdk_event_new(GDK_SCROLL);
