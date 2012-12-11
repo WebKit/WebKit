@@ -1,3 +1,34 @@
+2012-12-11  Alexis Menard  <alexis@webkit.org>
+
+        Cleanup: Use consistent naming in CSSParser when dealing with the forward slash operator.
+        https://bugs.webkit.org/show_bug.cgi?id=104699
+
+        Reviewed by Daniel Bates.
+
+        http://trac.webkit.org/changeset/136525 added an helper function to
+        check if a CSSParserValue is a forward slash operator.
+        BorderImageParseContext is also dealing with the forward slash operator
+        but its naming is inconsistent with isForwardSlashOperator(). This is
+        fixed with this patch where BorderImageParseContext::{allowSlash,
+        commitSlash}() is now replaced by BorderImageParseContext::{allowForwardSlashOperator,
+        commitForwardSlashOperator}().
+
+        No new tests : just a renaming, covered by existing tests..
+
+        * css/CSSParser.cpp:
+        (WebCore::CSSParser::parseFillPosition): A little fixup on the way, use
+        isForwardSlashOperator() instead of the current code here.
+        (WebCore::BorderImageParseContext::BorderImageParseContext):
+        (WebCore::BorderImageParseContext::allowForwardSlashOperator):
+        (WebCore::BorderImageParseContext::commitImage):
+        (WebCore::BorderImageParseContext::commitImageSlice):
+        (WebCore::BorderImageParseContext::commitForwardSlashOperator):
+        (WebCore::BorderImageParseContext::commitBorderWidth):
+        (WebCore::BorderImageParseContext::commitBorderOutset):
+        (WebCore::BorderImageParseContext::commitRepeat):
+        (BorderImageParseContext):
+        (WebCore::CSSParser::parseBorderImage):
+
 2012-12-11  Nate Chapin  <japhet@chromium.org>
 
         cr-linux valgrind is showing leaks due to r137333.
