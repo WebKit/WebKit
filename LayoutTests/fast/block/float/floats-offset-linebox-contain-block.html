@@ -1,0 +1,25 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+    <style>
+        .container { font: 12px Ahem; color: red; width: 100px; -webkit-line-box-contain: block; line-box-contain: block; position: relative; }
+        div { background: white; }
+        .reference { position: absolute; left: 10px; width: 40px; height: 50px; background: black; } 
+        .tallspan { display: inline-block; width: 20px; height: 50px; background: red; vertical-align: top;}
+        .shortspan { display: inline-block; width: 20px; height: 20px; background: red; vertical-align: top;}
+    </style>
+</head>
+<body>
+<!-- Ensure lineboxes respect line-box-contain when avoiding floats. In this case the first inline block avoids the first float as 
+     its the start of the line, but the second taller inline block has no effect even though it overlaps the second float. -->
+There should be no red below.
+<div class="container">
+    <div style="float: left; width: 10px; height: 25px;  background: white"></div>
+    <div style="float: left; clear:left; width: 40px; height: 50px; background: white"></div>
+    <!-- This should cover the text below as the linebox will offset to avoid the first float but not the second. -->
+    <div class="reference"></div>
+    <span class="shortspan"></span><span class="tallspan"></span>
+</div>
+
+
+</body></html>

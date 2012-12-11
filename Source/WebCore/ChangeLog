@@ -1,3 +1,43 @@
+2012-12-11  Robert Hogan  <robert@webkit.org>
+
+        REGRESSION(r121789): Text not wrapping in presence of floating objects
+        https://bugs.webkit.org/show_bug.cgi?id=101803
+
+        Reviewed by David Hyatt.
+
+        When determining if a line needs to offset to avoid any floats use RenderBlock::lineHeight() 
+        to estimate the height of the line. If the container has floats stacked up with different widths
+        that straddle the line, using a height of zero will make the first line think it has
+        more width available than it actually does and it will end up extruding from its container.
+        
+        The logic for finding the offset of inline blocks and images needs to use a similar heuristic.
+        So nextLineBreak() now updates the available width if it encounters a replaced element (e.g. inline block,
+        image) at the start of a line, using the height of the element to decide which floats to avoid. 
+        RenderBlock::computeInlineDirectionPositionsForLine() does the same thing when laying out the line.
+
+        Tests: fast/block/float/floats-offset-image-quirk-lineheight.html
+               fast/block/float/floats-offset-image-quirk.html
+               fast/block/float/floats-offset-image-strict-lineheight.html
+               fast/block/float/floats-offset-image-strict.html
+               fast/block/float/floats-offset-inline-block-quirk-lineheight.html
+               fast/block/float/floats-offset-inline-block-strict-lineheight.html
+               fast/block/float/floats-offset-linebox-contain-block.html
+               fast/block/float/floats-offset-linebox-contain-inline.html
+               fast/block/float/floats-wrap-inside-inline-006.html
+               fast/block/float/floats-wrap-inside-inline-007.html
+
+        * rendering/RenderBlockLineLayout.cpp:
+        (LineWidth):
+        (WebCore::logicalHeightForLine):
+            This method needs to cope with the quirk where an image alone on a line will get its descent stripped away so
+            ignore the height of the line and use the height of the image in that case.
+        (WebCore::LineWidth::updateAvailableWidth):
+        (WebCore::updateLogicalInlinePositions):
+        (WebCore):
+        (WebCore::RenderBlock::computeInlineDirectionPositionsForLine):
+        (WebCore::RenderBlock::computeInlineDirectionPositionsForSegment):
+        (WebCore::RenderBlock::LineBreaker::nextSegmentBreak):
+
 2012-12-11  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] Install GObject DOM bindings headers in its own directory

@@ -102,7 +102,7 @@ public:
     float committedWidth() const { return m_committedWidth; }
     float availableWidth() const { return m_availableWidth; }
 
-    void updateAvailableWidth();
+    void updateAvailableWidth(LayoutUnit minimumHeight = 0);
     void shrinkAvailableWidthForNewFloatIfNeeded(RenderBlock::FloatingObject*);
     void addUncommittedWidth(float delta) { m_uncommittedWidth += delta; }
     void commit()
@@ -133,24 +133,21 @@ private:
     bool m_isFirstLine;
 };
 
-static LayoutUnit logicalHeightForLine(RenderBlock* block)
+static LayoutUnit logicalHeightForLine(RenderBlock* block, bool isFirstLine, LayoutUnit replacedHeight = 0)
 {
-    InlineFlowBox* lineBox = block->firstRootBox();
-    LayoutUnit logicalHeight = 0;
-    if (!lineBox)
-        return logicalHeight;
+    if (!block->document()->inNoQuirksMode() && replacedHeight)
+        return replacedHeight;
 
-    if (lineBox->firstChild() && lineBox->firstChild()->renderer() && lineBox->firstChild()->renderer()->isRenderBlock())
-        logicalHeight = toRenderBlock(lineBox->firstChild()->renderer())->logicalHeight();
-    else
-        logicalHeight = lineBox->height();
-    return logicalHeight;
+    if (!(block->style(isFirstLine)->lineBoxContain() & LineBoxContainBlock))
+        return 0;
+
+    return max<LayoutUnit>(replacedHeight, block->lineHeight(isFirstLine, block->isHorizontalWritingMode() ? HorizontalLine : VerticalLine, PositionOfInteriorLineBoxes));
 }
 
-inline void LineWidth::updateAvailableWidth()
+inline void LineWidth::updateAvailableWidth(LayoutUnit replacedHeight)
 {
     LayoutUnit height = m_block->logicalHeight();
-    LayoutUnit logicalHeight = logicalHeightForLine(m_block);
+    LayoutUnit logicalHeight = logicalHeightForLine(m_block, m_isFirstLine, replacedHeight);
     m_left = m_block->logicalLeftOffsetForLine(height, m_isFirstLine, logicalHeight);
     m_right = m_block->logicalRightOffsetForLine(height, m_isFirstLine, logicalHeight);
 
@@ -885,18 +882,26 @@ void RenderBlock::updateLogicalWidthForAlignment(const ETextAlign& textAlign, Bi
     }
 }
 
+static void updateLogicalInlinePositions(RenderBlock* block, float& lineLogicalLeft, float& lineLogicalRight, float& availableLogicalWidth, bool firstLine, LayoutUnit boxLogicalHeight)
+{
+    LayoutUnit lineLogicalHeight = logicalHeightForLine(block, firstLine, boxLogicalHeight);
+    lineLogicalLeft = block->pixelSnappedLogicalLeftOffsetForLine(block->logicalHeight(), firstLine, lineLogicalHeight);
+    lineLogicalRight = block->pixelSnappedLogicalRightOffsetForLine(block->logicalHeight(), firstLine, lineLogicalHeight);
+    availableLogicalWidth = lineLogicalRight - lineLogicalLeft;
+}
+
 void RenderBlock::computeInlineDirectionPositionsForLine(RootInlineBox* lineBox, const LineInfo& lineInfo, BidiRun* firstRun, BidiRun* trailingSpaceRun, bool reachedEnd,
                                                          GlyphOverflowAndFallbackFontsMap& textBoxDataMap, VerticalPositionCache& verticalPositionCache, WordMeasurements& wordMeasurements)
 {
     ETextAlign textAlign = textAlignmentForLine(!reachedEnd && !lineBox->endsWithBreak());
     
-    LayoutUnit lineLogicalHeight = logicalHeightForLine(this);
     // CSS 2.1: "'Text-indent' only affects a line if it is the first formatted line of an element. For example, the first line of an anonymous block 
     // box is only affected if it is the first child of its parent element."
     bool firstLine = lineInfo.isFirstLine() && !(isAnonymousBlock() && parent()->firstChild() != this);
-    float lineLogicalLeft = pixelSnappedLogicalLeftOffsetForLine(logicalHeight(), firstLine, lineLogicalHeight);
-    float lineLogicalRight = pixelSnappedLogicalRightOffsetForLine(logicalHeight(), firstLine, lineLogicalHeight);
+    float lineLogicalLeft;
+    float lineLogicalRight;
     float availableLogicalWidth;
+    updateLogicalInlinePositions(this, lineLogicalLeft, lineLogicalRight, availableLogicalWidth, firstLine, 0);
     bool needsWordSpacing;
 #if ENABLE(CSS_EXCLUSIONS)
     ExclusionShapeInsideInfo* exclusionShapeInsideInfo = layoutExclusionShapeInsideInfo(this);
@@ -929,15 +934,20 @@ void RenderBlock::computeInlineDirectionPositionsForLine(RootInlineBox* lineBox,
         return;
     }
 #endif
-    availableLogicalWidth = lineLogicalRight - lineLogicalLeft;
-    computeInlineDirectionPositionsForSegment(lineBox, lineInfo, textAlign, lineLogicalLeft, availableLogicalWidth, firstRun,  trailingSpaceRun, textBoxDataMap, verticalPositionCache, wordMeasurements);
+
+    if (firstRun && firstRun->m_object->isReplaced()) {
+        RenderBox* renderBox = toRenderBox(firstRun->m_object);
+        updateLogicalInlinePositions(this, lineLogicalLeft, lineLogicalRight, availableLogicalWidth, firstLine, renderBox->logicalHeight());
+    }
+
+    computeInlineDirectionPositionsForSegment(lineBox, lineInfo, textAlign, lineLogicalLeft, availableLogicalWidth, firstRun, trailingSpaceRun, textBoxDataMap, verticalPositionCache, wordMeasurements);
     // The widths of all runs are now known. We can now place every inline box (and
     // compute accurate widths for the inline flow boxes).
     needsWordSpacing = false;
     lineBox->placeBoxesInInlineDirection(lineLogicalLeft, needsWordSpacing, textBoxDataMap);
 }
 
-BidiRun* RenderBlock::computeInlineDirectionPositionsForSegment(RootInlineBox* lineBox, const LineInfo& lineInfo, ETextAlign textAlign, float& logicalLeft,
+BidiRun* RenderBlock::computeInlineDirectionPositionsForSegment(RootInlineBox* lineBox, const LineInfo& lineInfo, ETextAlign textAlign, float& logicalLeft, 
     float& availableLogicalWidth, BidiRun* firstRun, BidiRun* trailingSpaceRun, GlyphOverflowAndFallbackFontsMap& textBoxDataMap, VerticalPositionCache& verticalPositionCache,
     WordMeasurements& wordMeasurements)
 {
@@ -2696,6 +2706,9 @@ InlineIterator RenderBlock::LineBreaker::nextSegmentBreak(InlineBidiResolver& re
             width.addUncommittedWidth(borderPaddingMarginStart(flowBox) + borderPaddingMarginEnd(flowBox));
         } else if (current.m_obj->isReplaced()) {
             RenderBox* replacedBox = toRenderBox(current.m_obj);
+
+            if (atStart)
+                width.updateAvailableWidth(replacedBox->logicalHeight());
 
             // Break on replaced elements if either has normal white-space.
             if ((autoWrap || RenderStyle::autoWrap(lastWS)) && (!current.m_obj->isImage() || allowImagesToBreak)) {
