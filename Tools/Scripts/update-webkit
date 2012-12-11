@@ -47,7 +47,7 @@ my $quiet = '';
 my $showHelp;
 my $useGYP = 0;
 my $useMake = 0;
-my $useNinja = 0;
+my $useNinja = 1;
 
 determineIsChromium();
 determineIsChromiumAndroid();
@@ -61,7 +61,7 @@ my $getOptionsResult = GetOptions(
     'q|quiet' => \$quiet,
     'gyp' => \$useGYP,
     'make' => \$useMake,
-    'ninja' => \$useNinja,
+    'ninja!' => \$useNinja,
 ); 
 
 if (!$getOptionsResult || $showHelp) {
@@ -69,7 +69,7 @@ if (!$getOptionsResult || $showHelp) {
 Usage: @{[ basename($0) ]} [options]
   --chromium          also update dependencies of the chromium port
   --make              generate the Makefile-based build system (Chromium only)
-  --ninja             generate the ninja-based build system (Chromium only)
+  --no-ninja          generate the platform-native build system instead of ninja (Chromium only)
   --chromium-android  also update dependencies of the chromium port for Android
   -h|--help           show the help message
   -q|--quiet          pass -q to svn update for quiet updates

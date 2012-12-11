@@ -1,3 +1,23 @@
+2012-12-11  Eric Seidel  <eric@webkit.org>
+
+        Make Ninja the default build system for build-webkit --chromium
+        https://bugs.webkit.org/show_bug.cgi?id=104434
+
+        Reviewed by Daniel Bates.
+
+        As far as I can tell, most Chromium developers are now using Ninja
+        as their default build system instead of the native Xcode/Visual Studio/Make.
+        This change makes Ninja the default for developers as well as all Chromium webkit bots.
+
+        Developers can pass --no-ninja to get the platform-native buildsystem instead of Ninja.
+        It's possible we may wish to make this a per-platform default, and have
+        Ninja only be the default for Mac/Linux.
+
+        There was a thread on webkit-dev discussing this change:
+        http://lists.webkit.org/pipermail/webkit-dev/2012-December/023113.html
+
+        * Scripts/update-webkit:
+
 2012-12-11  Dirk Pranke  <dpranke@chromium.org>
 
         nrwt: record the order and run times of all of the tests in a single file
