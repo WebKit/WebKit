@@ -1,3 +1,12 @@
+2012-12-10  Dan Winship  <danw@gnome.org>
+
+        [Soup] Fix spelling of "initiating" in API.
+
+        Reviewed by Martin Robinson.
+
+        * WebProcess/soup/WebSoupRequestManager.cpp:
+        (WebKit::WebSoupRequestManager::send):
+
 2012-12-10  Alexey Proskuryakov  <ap@apple.com>
 
         [WK2] Add a user default to limit the number of web processes

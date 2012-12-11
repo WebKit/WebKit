@@ -795,16 +795,16 @@ static void networkEventCallback(SoupMessage*, GSocketClientEvent event, GIOStre
 }
 #endif
 
-static const char* gSoupRequestInitiaingPageIDKey = "wk-soup-request-initiaing-page-id";
+static const char* gSoupRequestInitiatingPageIDKey = "wk-soup-request-initiating-page-id";
 
-static void setSoupRequestInitiaingPageIDFromNetworkingContext(SoupRequest* request, NetworkingContext* context)
+static void setSoupRequestInitiatingPageIDFromNetworkingContext(SoupRequest* request, NetworkingContext* context)
 {
     if (!context || !context->isValid())
         return;
 
     uint64_t* initiatingPageIDPtr = static_cast<uint64_t*>(fastMalloc(sizeof(uint64_t)));
     *initiatingPageIDPtr = context->initiatingPageID();
-    g_object_set_data_full(G_OBJECT(request), g_intern_static_string(gSoupRequestInitiaingPageIDKey), initiatingPageIDPtr, fastFree);
+    g_object_set_data_full(G_OBJECT(request), g_intern_static_string(gSoupRequestInitiatingPageIDKey), initiatingPageIDPtr, fastFree);
 }
 
 static bool createSoupMessageForHandleAndRequest(ResourceHandle* handle, const ResourceRequest& request)
@@ -921,7 +921,7 @@ bool ResourceHandle::start(NetworkingContext* context)
         return true;
     }
 
-    setSoupRequestInitiaingPageIDFromNetworkingContext(d->m_soupRequest.get(), context);
+    setSoupRequestInitiatingPageIDFromNetworkingContext(d->m_soupRequest.get(), context);
 
     // Send the request only if it's not been explicitly deferred.
     if (!d->m_defersLoading)
@@ -1321,9 +1321,9 @@ SoupSession* ResourceHandle::defaultSession()
     return session;
 }
 
-uint64_t ResourceHandle::getSoupRequestInitiaingPageID(SoupRequest* request)
+uint64_t ResourceHandle::getSoupRequestInitiatingPageID(SoupRequest* request)
 {
-    uint64_t* initiatingPageIDPtr = static_cast<uint64_t*>(g_object_get_data(G_OBJECT(request), gSoupRequestInitiaingPageIDKey));
+    uint64_t* initiatingPageIDPtr = static_cast<uint64_t*>(g_object_get_data(G_OBJECT(request), gSoupRequestInitiatingPageIDKey));
     return initiatingPageIDPtr ? *initiatingPageIDPtr : 0;
 }
 

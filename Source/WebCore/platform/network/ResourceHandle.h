@@ -171,7 +171,7 @@ public:
     void sendPendingRequest();
     bool shouldUseCredentialStorage();
     static SoupSession* defaultSession();
-    static uint64_t getSoupRequestInitiaingPageID(SoupRequest*);
+    static uint64_t getSoupRequestInitiatingPageID(SoupRequest*);
     static void setHostAllowsAnyHTTPSCertificate(const String&);
     static void setClientCertificate(const String& host, GTlsCertificate*);
     static void setIgnoreSSLErrors(bool);

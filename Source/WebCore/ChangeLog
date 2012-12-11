@@ -1,3 +1,19 @@
+2012-12-10  Dan Winship  <danw@gnome.org>
+
+        [Soup] Fix spelling of "initiating" in API.
+
+        Reviewed by Martin Robinson.
+
+        No new tests (just internal renaming).
+
+        * platform/network/ResourceHandle.h:
+        (ResourceHandle):
+        * platform/network/soup/ResourceHandleSoup.cpp:
+        (WebCore):
+        (WebCore::setSoupRequestInitiatingPageIDFromNetworkingContext):
+        (WebCore::ResourceHandle::start):
+        (WebCore::ResourceHandle::getSoupRequestInitiatingPageID):
+
 2012-12-10  Martin Robinson  <mrobinson@igalia.com>
 
         [GTK] Remove the Pango backend
