@@ -711,6 +711,8 @@ webkit.org/b/104571 http/tests/security/xssAuditor/anchor-url-dom-write-location
 webkit.org/b/104571 http/tests/security/xssAuditor/javascript-link-null-char.html [ Timeout ]
 webkit.org/b/104571 http/tests/security/xssAuditor/object-embed-tag-null-char.html [ Timeout ]
 
+webkit.org/b/104648 fast/images/webgl-teximage2d.html [ Timeout ]
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Tests timing out
 #////////////////////////////////////////////////////////////////////////////////////////
@@ -1264,16 +1266,6 @@ webkit.org/b/87088 fast/js/names.html [ Failure ]
 
 Bug(GTK) http/tests/misc/favicon-loads-with-icon-loading-override.html [ Failure ]
 
-webkit.org/b/87734 svg/dom/complex-svgView-specification.html [ ImageOnlyFailure ]
-webkit.org/b/87734 svg/dom/SVGViewSpec.html [ Failure ]
-webkit.org/b/87734 svg/dom/viewspec-parser-1.html [ Failure ]
-webkit.org/b/87734 svg/dom/viewspec-parser-2.html [ Failure ]
-webkit.org/b/87734 svg/dom/viewspec-parser-3.html [ Failure ]
-webkit.org/b/87734 svg/dom/viewspec-parser-4.html [ Failure ]
-webkit.org/b/87734 svg/dom/viewspec-parser-5.html [ Failure ]
-webkit.org/b/87734 svg/dom/viewspec-parser-6.html [ Failure ]
-webkit.org/b/87734 svg/dom/viewspec-parser-7.html [ Failure ]
-
 webkit.org/b/88138 http/tests/media/video-buffered.html [ Failure ]
 
 webkit.org/b/89205 editing/spelling/grammar-edit-word.html [ Failure ]
@@ -1436,6 +1428,8 @@ webkit.org/b/104571 http/tests/security/xssAuditor/script-tag-addslashes-null-ch
 webkit.org/b/104571 http/tests/security/xssAuditor/script-tag-null-char.html [ Failure ]
 webkit.org/b/104571 http/tests/security/xssAuditor/script-tag-with-source-null-char.html [ Failure ]
 webkit.org/b/104571 http/tests/xmlhttprequest/origin-exact-matching.html [ Failure ]
+
+webkit.org/b/104649 svg/W3C-SVG-1.1-SE/svgdom-over-01-f.svg [ Failure ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Tests failing
