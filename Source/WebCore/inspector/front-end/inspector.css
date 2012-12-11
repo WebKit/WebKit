@@ -107,11 +107,11 @@ body:not(.show-toolbar-icons) .toolbar-item {
 }
 
 body.dock-to-bottom:not(.show-toolbar-icons) .toolbar-item.toggleable {
-    padding: 0 12px;
+    padding: 0 11px;
 }
 
 body.dock-to-bottom:not(.show-toolbar-icons) .toolbar-item.toggleable.toggled-on {
-    padding: 0 10px;
+    padding: 0 9px;
 }
 
 body.show-toolbar-icons .toolbar-item.toggleable {
