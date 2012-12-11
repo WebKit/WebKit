@@ -447,8 +447,6 @@ IDL_BINDINGS += \
     $$PWD/page/SpeechInputEvent.idl \
     $$PWD/page/SpeechInputResult.idl \
     $$PWD/page/SpeechInputResultList.idl \
-    $$PWD/page/WebKitAnimation.idl \
-    $$PWD/page/WebKitAnimationList.idl \
     $$PWD/page/WebKitPoint.idl \
     $$PWD/page/WorkerNavigator.idl \
     $$PWD/plugins/DOMPlugin.idl \

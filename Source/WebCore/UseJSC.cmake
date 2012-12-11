@@ -132,8 +132,6 @@ list(APPEND WebCore_SOURCES
     bindings/js/JSTouchCustom.cpp
     bindings/js/JSTouchListCustom.cpp
     bindings/js/JSTreeWalkerCustom.cpp
-    bindings/js/JSWebKitAnimationCustom.cpp
-    bindings/js/JSWebKitAnimationListCustom.cpp
     bindings/js/JSWebKitCSSKeyframeRuleCustom.cpp
     bindings/js/JSWebKitCSSKeyframesRuleCustom.cpp
     bindings/js/JSWebKitPointCustom.cpp

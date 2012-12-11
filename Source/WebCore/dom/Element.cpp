@@ -76,7 +76,6 @@
 #include "TextIterator.h"
 #include "VoidCallback.h"
 #include "WebCoreMemoryInstrumentation.h"
-#include "WebKitAnimationList.h"
 #include "XMLNSNames.h"
 #include "XMLNames.h"
 #include "htmlediting.h"
@@ -2347,19 +2346,6 @@ bool Element::isSpellCheckingEnabled() const
     }
 
     return true;
-}
-
-PassRefPtr<WebKitAnimationList> Element::webkitGetAnimations() const
-{
-    if (!renderer())
-        return 0;
-
-    AnimationController* animController = renderer()->animation();
-
-    if (!animController)
-        return 0;
-    
-    return animController->animationsForRenderer(renderer());
 }
 
 RenderRegion* Element::renderRegion() const

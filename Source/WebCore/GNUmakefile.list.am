@@ -795,11 +795,7 @@ webcore_built_sources += \
 	DerivedSources/WebCore/JSWebGLUniformLocation.h \
 	DerivedSources/WebCore/JSWebGLVertexArrayObjectOES.cpp \
 	DerivedSources/WebCore/JSWebGLVertexArrayObjectOES.h \
-	DerivedSources/WebCore/JSWebKitAnimation.cpp \
-	DerivedSources/WebCore/JSWebKitAnimation.h \
 	DerivedSources/WebCore/JSWebKitAnimationEvent.cpp \
-	DerivedSources/WebCore/JSWebKitAnimationList.h \
-	DerivedSources/WebCore/JSWebKitAnimationList.cpp \
 	DerivedSources/WebCore/JSWebKitAnimationEvent.h \
 	DerivedSources/WebCore/JSWebKitCSSFilterValue.cpp \
 	DerivedSources/WebCore/JSWebKitCSSFilterValue.h \
@@ -1585,8 +1581,6 @@ dom_binding_idls += \
 	$(WebCore)/page/SpeechInputEvent.idl \
 	$(WebCore)/page/SpeechInputResult.idl \
 	$(WebCore)/page/SpeechInputResultList.idl \
-	$(WebCore)/page/WebKitAnimation.idl \
-	$(WebCore)/page/WebKitAnimationList.idl \
 	$(WebCore)/page/WebKitPoint.idl \
 	$(WebCore)/page/WorkerNavigator.idl \
 	$(WebCore)/plugins/DOMMimeType.idl \
@@ -2399,8 +2393,6 @@ webcore_sources += \
 	Source/WebCore/bindings/js/JSTrackCustom.h \
 	Source/WebCore/bindings/js/JSTrackEventCustom.cpp \
 	Source/WebCore/bindings/js/JSTreeWalkerCustom.cpp \
-	Source/WebCore/bindings/js/JSWebKitAnimationCustom.cpp \
-	Source/WebCore/bindings/js/JSWebKitAnimationListCustom.cpp \
 	Source/WebCore/bindings/js/JSWebKitCSSKeyframeRuleCustom.cpp \
 	Source/WebCore/bindings/js/JSWebKitCSSKeyframesRuleCustom.cpp \
 	Source/WebCore/bindings/js/JSWebGLRenderingContextCustom.cpp \
@@ -4160,10 +4152,6 @@ webcore_sources += \
 	Source/WebCore/page/UserStyleSheetTypes.h \
 	Source/WebCore/page/ValidationMessageClient.h \
 	Source/WebCore/page/WebCoreKeyboardUIMode.h \
-	Source/WebCore/page/WebKitAnimation.h \
-	Source/WebCore/page/WebKitAnimation.cpp \
-	Source/WebCore/page/WebKitAnimationList.h \
-	Source/WebCore/page/WebKitAnimationList.cpp \
 	Source/WebCore/page/WebKitPoint.h \
 	Source/WebCore/page/WindowFeatures.cpp \
 	Source/WebCore/page/WindowFeatures.h \

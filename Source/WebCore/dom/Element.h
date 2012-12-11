@@ -46,7 +46,6 @@ class Locale;
 class PseudoElement;
 class RenderRegion;
 class ShadowRoot;
-class WebKitAnimationList;
 
 enum SpellcheckAttributeState {
     SpellcheckAttributeTrue,
@@ -458,8 +457,6 @@ public:
 #endif
 
     virtual bool isSpellCheckingEnabled() const;
-
-    PassRefPtr<WebKitAnimationList> webkitGetAnimations() const;
 
     PassRefPtr<RenderStyle> styleForRenderer();
 

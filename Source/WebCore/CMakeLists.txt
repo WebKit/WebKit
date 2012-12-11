@@ -585,8 +585,6 @@ set(WebCore_IDL_FILES
     page/SpeechInputEvent.idl
     page/SpeechInputResult.idl
     page/SpeechInputResultList.idl
-    page/WebKitAnimation.idl
-    page/WebKitAnimationList.idl
     page/WebKitPoint.idl
     page/WorkerNavigator.idl
 
@@ -1769,8 +1767,6 @@ set(WebCore_SOURCES
     page/SpatialNavigation.cpp
     page/SuspendableTimer.cpp
     page/UserContentURLPattern.cpp
-    page/WebKitAnimation.cpp
-    page/WebKitAnimationList.cpp
     page/WindowFeatures.cpp
     page/WindowFocusAllowedIndicator.cpp
     page/WorkerNavigator.cpp

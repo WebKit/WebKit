@@ -622,11 +622,6 @@
 
     attribute StorageConstructor Storage;
 
-#if defined(ENABLE_ANIMATION_API) && ENABLE_ANIMATION_API
-    attribute WebKitAnimationConstructor WebKitAnimation;
-    attribute WebKitAnimationListConstructor WebKitAnimationList;
-#endif
-
     attribute XPathEvaluatorConstructor XPathEvaluator;
     attribute XPathResultConstructor XPathResult;
     attribute XPathExceptionConstructor XPathException;

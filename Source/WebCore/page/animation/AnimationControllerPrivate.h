@@ -49,7 +49,6 @@ class Frame;
 class Node;
 class RenderObject;
 class RenderStyle;
-class WebKitAnimationList;
 
 enum SetChanged {
     DoNotCallSetChanged = 0,
@@ -106,8 +105,6 @@ public:
     void removeFromAnimationsWaitingForStartTimeResponse(AnimationBase*);
 
     void animationWillBeRemoved(AnimationBase*);
-
-    PassRefPtr<WebKitAnimationList> animationsForRenderer(RenderObject*) const;
 
     void updateAnimationTimerForRenderer(RenderObject*);
     

@@ -149,8 +149,6 @@
 #include "JSTrackCustom.cpp"
 #include "JSTrackEventCustom.cpp"
 #include "JSTreeWalkerCustom.cpp"
-#include "JSWebKitAnimationCustom.cpp"
-#include "JSWebKitAnimationListCustom.cpp"
 #include "JSWebKitCSSKeyframeRuleCustom.cpp"
 #include "JSWebKitCSSKeyframesRuleCustom.cpp"
 #include "JSWebKitPointCustom.cpp"

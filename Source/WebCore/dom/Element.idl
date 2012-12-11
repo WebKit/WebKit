@@ -88,10 +88,6 @@
     void scrollByLines(in [Optional=DefaultIsUndefined] long lines);
     void scrollByPages(in [Optional=DefaultIsUndefined] long pages);
 
-#if defined(ENABLE_ANIMATION_API) && ENABLE_ANIMATION_API
-    WebKitAnimationList webkitGetAnimations();
-#endif
-
     // HTML 5
     NodeList getElementsByClassName(in [Optional=DefaultIsUndefined] DOMString name);
 

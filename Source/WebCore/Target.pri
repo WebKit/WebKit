@@ -181,8 +181,6 @@ SOURCES += \
      bindings/js/JSTouchCustom.cpp \
      bindings/js/JSTouchListCustom.cpp \
      bindings/js/JSTreeWalkerCustom.cpp \
-     bindings/js/JSWebKitAnimationCustom.cpp \
-     bindings/js/JSWebKitAnimationListCustom.cpp \
      bindings/js/JSWebKitCSSKeyframeRuleCustom.cpp \
      bindings/js/JSWebKitCSSKeyframesRuleCustom.cpp \
      bindings/js/JSWebKitPointCustom.cpp \
@@ -878,8 +876,6 @@ SOURCES += \
     page/animation/CSSPropertyAnimation.cpp \
     page/animation/ImplicitAnimation.cpp \
     page/animation/KeyframeAnimation.cpp \
-    page/WebKitAnimation.cpp \
-    page/WebKitAnimationList.cpp \
     page/BarInfo.cpp \
     page/Chrome.cpp \
     page/Console.cpp \
@@ -2072,8 +2068,6 @@ HEADERS += \
     page/SpeechInputResultList.h \
     page/TouchAdjustment.h \
     page/ValidationMessageClient.h \
-    page/WebKitAnimation.h \
-    page/WebKitAnimationList.h \
     page/WindowFeatures.h \
     page/WindowFocusAllowedIndicator.h \
     page/WorkerNavigator.h \

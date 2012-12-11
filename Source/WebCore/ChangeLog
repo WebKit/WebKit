@@ -1,3 +1,43 @@
+2012-12-10  Dean Jackson  <dino@apple.com>
+
+        Remove old WebKit Animation API code
+        https://bugs.webkit.org/show_bug.cgi?id=104611
+
+        Reviewed by Simon Fraser.
+
+        Remove the existing, unused animation API code. We'll look into
+        implementing the W3C Animation API if/when it is stable.
+
+        * CMakeLists.txt: Remove WebKitAnimation and WebKitAnimationList classes.
+        * DerivedSources.cpp:
+        * DerivedSources.make:
+        * DerivedSources.pri:
+        * GNUmakefile.list.am:
+        * Target.pri:
+        * UseJSC.cmake:
+        * UseV8.cmake:
+        * WebCore.gypi:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * bindings/js/JSBindingsAllInOne.cpp: Remove includes.
+        * bindings/js/JSWebKitAnimationCustom.cpp: Removed.
+        * bindings/js/JSWebKitAnimationListCustom.cpp: Removed.
+        * dom/Element.cpp: Remove API.
+        * dom/Element.h: Ditto.
+        * dom/Element.idl: Ditto.
+        * page/DOMWindow.idl: Ditto.
+        * page/WebKitAnimation.cpp: Removed.
+        * page/WebKitAnimation.h: Removed.
+        * page/WebKitAnimation.idl: Removed.
+        * page/WebKitAnimationList.cpp: Removed.
+        * page/WebKitAnimationList.h: Removed.
+        * page/WebKitAnimationList.idl: Removed.
+        * page/animation/AnimationController.cpp: Remove API.
+        * page/animation/AnimationController.h: Ditto.
+        * page/animation/AnimationControllerPrivate.h: Ditto.
+        * page/animation/CompositeAnimation.cpp: Ditto.
+        * page/animation/CompositeAnimation.h: Ditto.
+
 2012-12-10  Jessie Berlin  <jberlin@apple.com>
 
         Fix the Mac build after r137233

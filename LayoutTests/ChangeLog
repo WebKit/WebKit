@@ -1,3 +1,17 @@
+2012-12-10  Dean Jackson  <dino@apple.com>
+
+        Remove old WebKit Animation API code
+        https://bugs.webkit.org/show_bug.cgi?id=104611
+
+        Reviewed by Simon Fraser.
+
+        Remove the existing, unused animation API code. We'll look into
+        implementing the W3C Animation API if/when it is stable.
+
+        * animations/animation-api-1-expected.txt: Removed.
+        * animations/animation-api-1.html: Removed.
+        * fast/js/global-constructors-expected.txt:
+
 2012-12-10  Kangil Han  <kangil.han@samsung.com>
 
         [EFL] Rebaseline expected results for "visibility:hidden; position: absolute;" cases
