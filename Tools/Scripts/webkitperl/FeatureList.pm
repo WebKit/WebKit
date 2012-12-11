@@ -327,7 +327,7 @@ my @features = (
       define => "ENABLE_MHTML", default => isGtk(), value => \$mhtmlSupport },
 
     { option => "microdata", desc => "Toggle Microdata support",
-      define => "ENABLE_MICRODATA", default => (isEfl() || isBlackBerry()), value => \$microdataSupport },
+      define => "ENABLE_MICRODATA", default => (isEfl() || isBlackBerry() || isGtk()), value => \$microdataSupport },
 
     { option => "mouse-cursor-scale", desc => "Toggle Scaled mouse cursor support",
       define => "ENABLE_MOUSE_CURSOR_SCALE", default => 0, value => \$mouseCursorScaleSupport },

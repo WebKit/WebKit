@@ -1,3 +1,13 @@
+2012-12-11  Zan Dobersek  <zandobersek@gmail.com>
+
+        Unreviewed functionality fix for the GTK port.
+
+        Enable the MicroData feature support for the GTK port in the FeatureList module.
+        This feature listing now again affects which features are enabled and which disabled
+        on the development builds of the GTK port.
+
+        * Scripts/webkitperl/FeatureList.pm:
+
 2012-12-11  Jinwoo Song  <jinwoo7.song@samsung.com>
 
         [EFL][WK2] MiniBrowser is not built
