@@ -1,3 +1,15 @@
+2012-12-11  Allan Sandfeld Jensen  <allan.jensen@digia.com>
+
+        [Qt] Support third-party cookie policy for Qt clients
+        https://bugs.webkit.org/show_bug.cgi?id=45455
+
+        Reviewed by Csaba Osztrogonác.
+
+        Fix regressed test. The test is now run from it own dir, not the platform independent dir.
+
+        * platform/qt/TestExpectations:
+        * platform/qt/http/tests/cookies/strict-third-party-cookie-blocking.html:
+
 2012-12-11  Andrey Kosyakov  <caseq@chromium.org>
 
         Unreviewed, rolling out r137266.
