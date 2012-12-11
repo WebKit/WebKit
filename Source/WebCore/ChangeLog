@@ -1,3 +1,13 @@
+2012-12-11  Jacky Jiang  <zhajiang@rim.com>
+
+        [BlackBerry] Clean up unused defaultViewportArguments in RenderThemeBlackBerry.cpp
+        https://bugs.webkit.org/show_bug.cgi?id=104683
+
+        Reviewed by Rob Buis.
+
+        * platform/blackberry/RenderThemeBlackBerry.cpp:
+        (WebCore::determineFullScreenMultiplier):
+
 2012-12-11  Nate Chapin  <japhet@chromium.org>
 
         Route main resource loads through the memory cache.
