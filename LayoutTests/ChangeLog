@@ -1,5 +1,13 @@
 2012-12-10  Noel Gordon  <noel.gordon@gmail.com>
 
+        [chromium] Unreviewed gardening
+
+        Mark platform/chromium/virtual/deferred/fast/images/pdf-as-image-landscape.html WontFix.
+
+        * platform/chromium/TestExpectations:
+
+2012-12-10  Noel Gordon  <noel.gordon@gmail.com>
+
         [chromium] Unreviewed gardening: rebase fast/repaint/body-background-image.html on linux
 
         * platform/chromium/TestExpectations:
