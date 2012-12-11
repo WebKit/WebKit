@@ -1,0 +1,47 @@
+<style>
+    div.container {
+        -webkit-logical-width: 8em;
+        font: 20px ahem;
+        -webkit-font-smoothing: none;
+        outline: thin dashed lightblue;
+        -webkit-ruby-position: after;
+        margin: 8px 0;
+    }
+
+    span.emphasis {
+        -webkit-text-emphasis-style: "w";
+        -webkit-text-emphasis-color: purple;
+    }
+
+    ruby {
+        color: blue;
+    }
+
+    rt {
+        color: orange;
+    }
+</style>
+<div style="float: left;">
+    <div class="container">
+        xxxxx xx <ruby>xxxx<rt>yyy</rt></ruby> xxx xxx xxxx
+        <ruby>xxxxx<rt>y<br>y</rt></ruby> <span class="emphasis">xx</span>
+        xxx xxxx
+    </div>
+    <div class="container" style="-webkit-writing-mode: vertical-lr;">
+        xxxxx xx <ruby>xxxx<rt>yyy</rt></ruby> xxx xxx xxxx
+        <ruby>xxxxx<rt>y<br>y</rt></ruby> <span class="emphasis">xx</span>
+        xxx xxxx
+    </div>
+</div>
+<div style="float: left; margin-left: 8px;">
+    <div class="container" style="-webkit-writing-mode: horizontal-bt;">
+        xxxxx xx <ruby>xxxx<rt>yyy</rt></ruby> xxx xxx xxxx
+        <ruby>xxxxx<rt>y<br>y</rt></ruby> <span class="emphasis">xx</span>
+        xxx xxxx
+    </div>
+    <div class="container" style="-webkit-writing-mode: vertical-rl;">
+        xxxxx xx <ruby>xxxx<rt>yyy</rt></ruby> xxx xxx xxxx
+        <ruby>xxxxx<rt>y<br>y</rt></ruby> <span class="emphasis">xx</span>
+        xxx xxxx
+    </div>
+</div>

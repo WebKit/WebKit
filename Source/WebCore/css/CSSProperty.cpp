@@ -324,6 +324,7 @@ bool CSSProperty::isInheritedProperty(CSSPropertyID propertyID)
 #endif
     case CSSPropertyWebkitPrintColorAdjust:
     case CSSPropertyWebkitRtlOrdering:
+    case CSSPropertyWebkitRubyPosition:
     case CSSPropertyWebkitTextCombine:
 #if ENABLE(CSS3_TEXT)
     case CSSPropertyWebkitTextDecorationLine:

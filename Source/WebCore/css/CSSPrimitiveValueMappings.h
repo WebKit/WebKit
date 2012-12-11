@@ -2847,6 +2847,33 @@ template<> inline CSSPrimitiveValue::operator TextCombine() const
     return TextCombineNone;
 }
 
+template<> inline CSSPrimitiveValue::CSSPrimitiveValue(RubyPosition position)
+    : CSSValue(PrimitiveClass)
+{
+    m_primitiveUnitType = CSS_IDENT;
+    switch (position) {
+    case RubyPositionBefore:
+        m_value.ident = CSSValueBefore;
+        break;
+    case RubyPositionAfter:
+        m_value.ident = CSSValueAfter;
+        break;
+    }
+}
+
+template<> inline CSSPrimitiveValue::operator RubyPosition() const
+{
+    switch (m_value.ident) {
+    case CSSValueBefore:
+        return RubyPositionBefore;
+    case CSSValueAfter:
+        return RubyPositionAfter;
+    }
+
+    ASSERT_NOT_REACHED();
+    return RubyPositionBefore;
+}
+
 template<> inline CSSPrimitiveValue::CSSPrimitiveValue(TextEmphasisPosition position)
     : CSSValue(PrimitiveClass)
 {

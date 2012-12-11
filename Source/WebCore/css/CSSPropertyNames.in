@@ -351,6 +351,7 @@ z-index
 -webkit-perspective-origin-y
 -webkit-print-color-adjust
 -webkit-rtl-ordering
+-webkit-ruby-position
 -webkit-text-combine
 -epub-text-combine = -webkit-text-combine
 #if defined(ENABLE_CSS3_TEXT) && ENABLE_CSS3_TEXT

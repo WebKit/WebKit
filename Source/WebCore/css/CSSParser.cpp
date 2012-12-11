@@ -890,6 +890,12 @@ static inline bool isValidKeywordPropertyAndValue(CSSPropertyID propertyId, int 
         if (valueID == CSSValueLogical || valueID == CSSValueVisual)
             return true;
         break;
+
+    case CSSPropertyWebkitRubyPosition:
+        if (valueID == CSSValueBefore || valueID == CSSValueAfter)
+            return true;
+        break;
+
 #if ENABLE(CSS3_TEXT)
     case CSSPropertyWebkitTextAlignLast:
         // auto | start | end | left | right | center | justify
@@ -1057,6 +1063,7 @@ static inline bool isKeywordPropertyID(CSSPropertyID propertyId)
     case CSSPropertyWebkitRegionOverflow:
 #endif
     case CSSPropertyWebkitRtlOrdering:
+    case CSSPropertyWebkitRubyPosition:
 #if ENABLE(CSS3_TEXT)
     case CSSPropertyWebkitTextAlignLast:
 #endif // CSS3_TEXT
@@ -2897,6 +2904,7 @@ bool CSSParser::parseValue(CSSPropertyID propId, bool important)
     case CSSPropertyWebkitRegionOverflow:
 #endif
     case CSSPropertyWebkitRtlOrdering:
+    case CSSPropertyWebkitRubyPosition:
 #if ENABLE(CSS3_TEXT)
     case CSSPropertyWebkitTextAlignLast:
 #endif // CSS3_TEXT

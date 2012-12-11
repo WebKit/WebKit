@@ -1,3 +1,57 @@
+2012-12-11  Dan Bernstein  <mitz@apple.com>
+
+        <rdar://problem/12771885> Support ruby-position: {before, after}
+        https://bugs.webkit.org/show_bug.cgi?id=103569
+
+        Reviewed by Anders Carlsson.
+
+        Specified in <http://www.w3.org/TR/2011/WD-css3-ruby-20110630/#rubypos>, the ruby-position
+        property takes four values: before, after, inter-character, and inline. This change adds
+        support for the values before and after.
+
+        Test: fast/ruby/position-after.html
+
+        * css/CSSComputedStyleDeclaration.cpp:
+        (WebCore::CSSComputedStyleDeclaration::getPropertyCSSValue): Handle ruby-position.
+        * css/CSSParser.cpp:
+        (WebCore::isValidKeywordPropertyAndValue): Accept before and after as valid values for
+        ruby-position.
+        (WebCore::isKeywordPropertyID): Added ruby-position to the list of properties with keyword
+        values.
+        (WebCore::CSSParser::parseValue): Added ruby-position to the switch statement.
+        * css/CSSPrimitiveValueMappings.h:
+        (WebCore::CSSPrimitiveValue::CSSPrimitiveValue): Added mapping from RubyPosition.
+        (WebCore::CSSPrimitiveValue::operator RubyPosition): Added mapping from CSSPrimitiveValue.
+        * css/CSSProperty.cpp:
+        (WebCore::CSSProperty::isInheritedProperty): Added ruby-position as an inherited property.
+        * css/CSSPropertyNames.in: Added -webkit-ruby-position.
+        * css/CSSValueKeywords.in: Added after and before.
+        * css/StyleBuilder.cpp:
+        (WebCore::StyleBuilder::StyleBuilder): Added a handler for ruby-position.
+        * css/StyleResolver.cpp:
+        (WebCore::StyleResolver::applyProperty): Added ruby-position.
+        * rendering/InlineFlowBox.cpp:
+        (WebCore::InlineFlowBox::placeBoxesInBlockDirection): Changed to choose which of
+        hasAnnotationsBefore and hasAnnotationsAfter to set based on ruby position.
+        (WebCore::InlineFlowBox::computeOverAnnotationAdjustment): Changed to adjust only for
+        ruby positioned before the base.
+        (WebCore::InlineFlowBox::computeUnderAnnotationAdjustment): Added adjustment for ruby
+        positioned after the base.
+        * rendering/RenderRubyRun.cpp:
+        (WebCore::RenderRubyRun::layout): Account for ruby-position when positioning the ruby text
+        relative to the base.
+        * rendering/style/RenderStyle.cpp:
+        (WebCore::RenderStyle::diff): Made a ruby-position difference a layout difference.
+        * rendering/style/RenderStyle.h: Added rubyPosition(), setRubyPosition(), and 
+        initialRubyPosition().
+        * rendering/style/RenderStyleConstants.h: Added the RubyPosition enum.
+        * rendering/style/StyleRareInheritedData.cpp:
+        (WebCore::StyleRareInheritedData::StyleRareInheritedData): Added initialized for
+        m_rubyPosition. Added copying the value of this member to the copy constructor.
+        (WebCore::StyleRareInheritedData::operator==): Added comparison of m_rubyPosition.
+        * rendering/style/StyleRareInheritedData.h:
+        (StyleRareInheritedData): Added m_rubyPosition member variable.
+
 2012-12-11  Michael Pruett  <michael@68k.org>
 
         [JSC] Add tests for explicit serialization values

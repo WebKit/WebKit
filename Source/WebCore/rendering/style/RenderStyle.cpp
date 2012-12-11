@@ -478,6 +478,7 @@ StyleDifference RenderStyle::diff(const RenderStyle* other, unsigned& changedCon
             || rareInheritedData->hyphenationLimitAfter != other->rareInheritedData->hyphenationLimitAfter
             || rareInheritedData->hyphenationString != other->rareInheritedData->hyphenationString
             || rareInheritedData->locale != other->rareInheritedData->locale
+            || rareInheritedData->m_rubyPosition != other->rareInheritedData->m_rubyPosition
             || rareInheritedData->textEmphasisMark != other->rareInheritedData->textEmphasisMark
             || rareInheritedData->textEmphasisPosition != other->rareInheritedData->textEmphasisPosition
             || rareInheritedData->textEmphasisCustomMark != other->rareInheritedData->textEmphasisCustomMark

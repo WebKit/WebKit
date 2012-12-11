@@ -2052,6 +2052,8 @@ PassRefPtr<CSSValue> CSSComputedStyleDeclaration::getPropertyCSSValue(CSSPropert
             return cssValuePool().createValue(style->position());
         case CSSPropertyRight:
             return getPositionOffsetValue(style.get(), CSSPropertyRight, m_node->document()->renderView());
+        case CSSPropertyWebkitRubyPosition:
+            return cssValuePool().createValue(style->rubyPosition());
         case CSSPropertyTableLayout:
             return cssValuePool().createValue(style->tableLayout());
         case CSSPropertyTextAlign:

@@ -480,6 +480,8 @@ enum WrapFlow { WrapFlowAuto, WrapFlowBoth, WrapFlowStart, WrapFlowEnd, WrapFlow
 
 enum WrapThrough { WrapThroughWrap, WrapThroughNone };
 
+enum RubyPosition { RubyPositionBefore, RubyPositionAfter };
+
 #if ENABLE(DRAGGABLE_REGION)
 enum DraggableRegionMode { DraggableRegionNone, DraggableRegionDrag, DraggableRegionNoDrag };
 #endif
