@@ -76,6 +76,7 @@ namespace WebCore {
     class MediaCanStartListener;
     class Node;
     class PageGroup;
+    class PlugInClient;
     class PluginData;
     class PluginViewBase;
     class PointerLockController;
@@ -127,6 +128,7 @@ namespace WebCore {
             EditorClient* editorClient;
             DragClient* dragClient;
             InspectorClient* inspectorClient;
+            PlugInClient* plugInClient;
             RefPtr<BackForwardList> backForwardClient;
             ValidationMessageClient* validationMessageClient;
         };
@@ -149,6 +151,7 @@ namespace WebCore {
         bool canStartMedia() const { return m_canStartMedia; }
 
         EditorClient* editorClient() const { return m_editorClient; }
+        PlugInClient* plugInClient() const { return m_plugInClient; }
 
         void setMainFrame(PassRefPtr<Frame>);
         Frame* mainFrame() const { return m_mainFrame.get(); }
@@ -406,6 +409,7 @@ namespace WebCore {
         RefPtr<RenderTheme> m_theme;
 
         EditorClient* m_editorClient;
+        PlugInClient* m_plugInClient;
         ValidationMessageClient* m_validationMessageClient;
 
         FeatureObserver m_featureObserver;

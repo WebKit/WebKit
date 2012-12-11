@@ -59,7 +59,10 @@ public:
     bool needsWidgetUpdate() const { return m_needsWidgetUpdate; }
     void setNeedsWidgetUpdate(bool needsWidgetUpdate) { m_needsWidgetUpdate = needsWidgetUpdate; }
 
-    void setPendingClickEvent(PassRefPtr<MouseEvent>);
+    void userDidClickSnapshot(PassRefPtr<MouseEvent>);
+
+    // Plug-in URL might not be the same as url() with overriding parameters.
+    void subframeLoaderWillLoadPlugIn(const KURL& plugInURL);
 
 protected:
     HTMLPlugInImageElement(const QualifiedName& tagName, Document*, bool createdByParser, PreferPlugInsForImagesOption);
@@ -103,6 +106,7 @@ private:
     RefPtr<RenderStyle> m_customStyleForPageCache;
     RefPtr<MouseEvent> m_pendingClickEventFromSnapshot;
     DeferrableOneShotTimer<HTMLPlugInImageElement> m_simulatedMouseClickTimer;
+    unsigned m_plugInOriginHash;
 };
 
 } // namespace WebCore

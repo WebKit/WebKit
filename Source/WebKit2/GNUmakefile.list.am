@@ -816,6 +816,8 @@ webkit2_sources += \
 	Source/WebKit2/UIProcess/Notifications/WebNotificationProvider.cpp \
 	Source/WebKit2/UIProcess/Notifications/WebNotificationProvider.h \
 	Source/WebKit2/UIProcess/PageClient.h \
+	Source/WebKit2/UIProcess/Plugins/PlugInAutoStartProvider.cpp \
+	Source/WebKit2/UIProcess/Plugins/PlugInAutoStartProvider.h \
 	Source/WebKit2/UIProcess/Plugins/PluginInfoStore.cpp \
 	Source/WebKit2/UIProcess/Plugins/PluginInfoStore.h \
 	Source/WebKit2/UIProcess/Plugins/PluginProcessManager.cpp \
@@ -1150,6 +1152,8 @@ webkit2_sources += \
 	Source/WebKit2/WebProcess/WebCoreSupport/WebNotificationClient.h \
 	Source/WebKit2/WebProcess/WebCoreSupport/WebPlatformStrategies.cpp \
 	Source/WebKit2/WebProcess/WebCoreSupport/WebPlatformStrategies.h \
+	Source/WebKit2/WebProcess/WebCoreSupport/WebPlugInClient.cpp \
+	Source/WebKit2/WebProcess/WebCoreSupport/WebPlugInClient.h \
 	Source/WebKit2/WebProcess/WebCoreSupport/WebPopupMenu.cpp \
 	Source/WebKit2/WebProcess/WebCoreSupport/WebPopupMenu.h \
 	Source/WebKit2/WebProcess/WebCoreSupport/WebSearchPopupMenu.cpp \

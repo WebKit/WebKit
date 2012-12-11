@@ -950,6 +950,7 @@
 		31C0FF4C0E4CEFDD007D6FE5 /* DOMWebKitTransitionEvent.h in Headers */ = {isa = PBXBuildFile; fileRef = 31C0FF460E4CEFDD007D6FE5 /* DOMWebKitTransitionEvent.h */; };
 		31C0FF4D0E4CEFDD007D6FE5 /* DOMWebKitTransitionEvent.mm in Sources */ = {isa = PBXBuildFile; fileRef = 31C0FF470E4CEFDD007D6FE5 /* DOMWebKitTransitionEvent.mm */; };
 		31C0FF4E0E4CEFDD007D6FE5 /* DOMWebKitTransitionEventInternal.h in Headers */ = {isa = PBXBuildFile; fileRef = 31C0FF480E4CEFDD007D6FE5 /* DOMWebKitTransitionEventInternal.h */; };
+		31D591B316697A6C00E6BF02 /* PlugInClient.h in Headers */ = {isa = PBXBuildFile; fileRef = 31D591B116697A6C00E6BF02 /* PlugInClient.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		31D591BB166C2E6C00E6BF02 /* PlugInOriginHash.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 31D591B9166C2E6C00E6BF02 /* PlugInOriginHash.cpp */; };
 		31D591BC166C2E6C00E6BF02 /* PlugInOriginHash.h in Headers */ = {isa = PBXBuildFile; fileRef = 31D591BA166C2E6C00E6BF02 /* PlugInOriginHash.h */; settings = {ATTRIBUTES = (); }; };
 		31EC1E2814FF60EE00C94662 /* JSNotificationPermissionCallback.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 31EC1E2614FF60EE00C94662 /* JSNotificationPermissionCallback.cpp */; };
@@ -8154,6 +8155,7 @@
 		31C0FF460E4CEFDD007D6FE5 /* DOMWebKitTransitionEvent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DOMWebKitTransitionEvent.h; sourceTree = "<group>"; };
 		31C0FF470E4CEFDD007D6FE5 /* DOMWebKitTransitionEvent.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = DOMWebKitTransitionEvent.mm; sourceTree = "<group>"; };
 		31C0FF480E4CEFDD007D6FE5 /* DOMWebKitTransitionEventInternal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DOMWebKitTransitionEventInternal.h; sourceTree = "<group>"; };
+		31D591B116697A6C00E6BF02 /* PlugInClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PlugInClient.h; sourceTree = "<group>"; };
 		31D591B9166C2E6C00E6BF02 /* PlugInOriginHash.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PlugInOriginHash.cpp; sourceTree = "<group>"; };
 		31D591BA166C2E6C00E6BF02 /* PlugInOriginHash.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PlugInOriginHash.h; sourceTree = "<group>"; };
 		31E8D8BA160BC94B004CE8F5 /* RenderSnapshottedPlugIn.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RenderSnapshottedPlugIn.cpp; sourceTree = "<group>"; };
@@ -16081,6 +16083,7 @@
 				8AF4E55811DC5A63000ED3DE /* PerformanceTiming.cpp */,
 				8AF4E55911DC5A63000ED3DE /* PerformanceTiming.h */,
 				8AF4E55A11DC5A63000ED3DE /* PerformanceTiming.idl */,
+				31D591B116697A6C00E6BF02 /* PlugInClient.h */,
 				3772B09516535856000A49CA /* PopupOpeningObserver.h */,
 				B776D43C1104527500BEB0EC /* PrintContext.cpp */,
 				B776D43A1104525D00BEB0EC /* PrintContext.h */,
@@ -25918,6 +25921,7 @@
 				DEBCCDD416646EAF00A452E1 /* MediaControlElementTypes.h in Headers */,
 				D66817FB166FE6D700FA07B4 /* HTMLTemplateElement.h in Headers */,
 				D6489D26166FFCF1007C031B /* JSHTMLTemplateElement.h in Headers */,
+				31D591B316697A6C00E6BF02 /* PlugInClient.h in Headers */,
 				31D591BC166C2E6C00E6BF02 /* PlugInOriginHash.h in Headers */,
 				986EA88315FFF29000985E5E /* PrerenderClient.h in Headers */,
 			);

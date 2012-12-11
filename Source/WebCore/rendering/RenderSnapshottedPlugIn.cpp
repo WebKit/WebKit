@@ -207,7 +207,7 @@ void RenderSnapshottedPlugIn::handleEvent(Event* event)
             return;
 
         plugInImageElement()->setDisplayState(HTMLPlugInElement::PlayingWithPendingMouseClick);
-        plugInImageElement()->setPendingClickEvent(mouseEvent);
+        plugInImageElement()->userDidClickSnapshot(mouseEvent);
 
         if (widget()) {
             if (Frame* frame = document()->frame())
@@ -247,18 +247,6 @@ LayoutRect RenderSnapshottedPlugIn::tryToFitStartLabel(LabelSize size, const Lay
     if (candidateRect.x() < startLabelPadding || candidateRect.maxY() > contentBox.height() - startLabelPadding)
         return LayoutRect();
     return candidateRect;
-}
-
-void RenderSnapshottedPlugIn::layout()
-{
-    RenderEmbeddedObject::layout();
-    if (plugInImageElement()->displayState() < HTMLPlugInElement::Playing) {
-        LayoutRect rect = contentBoxRect();
-        int width = rect.width();
-        int height = rect.height();
-        if (!width || !height || (width <= autoStartPlugInSizeThresholdWidth && height <= autoStartPlugInSizeThresholdHeight))
-            plugInImageElement()->setDisplayState(HTMLPlugInElement::Playing);
-    }
 }
 
 } // namespace WebCore

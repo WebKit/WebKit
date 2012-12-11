@@ -1946,6 +1946,14 @@
 					>
 				</File>
 				<File
+					RelativePath="..\WebProcess\WebCoreSupport\WebPlugInClient.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\WebProcess\WebCoreSupport\WebPlugInClient.h"
+					>
+				</File>
+				<File
 					RelativePath="..\WebProcess\WebCoreSupport\WebPopupMenu.cpp"
 					>
 				</File>
@@ -3873,6 +3881,14 @@
 			<Filter
 				Name="Plugins"
 				>
+				<File
+					RelativePath="..\UIProcess\Plugins\PlugInAutoStartProvider.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\UIProcess\Plugins\PlugInAutoStartProvider.h"
+					>
+				</File>
 				<File
 					RelativePath="..\UIProcess\Plugins\PluginInfoStore.cpp"
 					>

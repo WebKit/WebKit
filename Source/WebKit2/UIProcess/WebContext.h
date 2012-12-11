@@ -30,6 +30,7 @@
 #include "GenericCallback.h"
 #include "MessageReceiver.h"
 #include "MessageReceiverMap.h"
+#include "PlugInAutoStartProvider.h"
 #include "PluginInfoStore.h"
 #include "ProcessModel.h"
 #include "VisitedLinkProvider.h"
@@ -314,6 +315,8 @@ private:
     static void registerOcclusionNotificationHandlers();
 #endif
 
+    void addPlugInAutoStartOriginHash(const String& pageOrigin, unsigned plugInOriginHash);
+
     ProcessModel m_processModel;
     
     Vector<RefPtr<WebProcessProxy> > m_processes;
@@ -333,6 +336,7 @@ private:
     PluginInfoStore m_pluginInfoStore;
 #endif
     VisitedLinkProvider m_visitedLinkProvider;
+    PlugInAutoStartProvider m_plugInAutoStartProvider;
         
     HashSet<String> m_schemesToRegisterAsEmptyDocument;
     HashSet<String> m_schemesToRegisterAsSecure;

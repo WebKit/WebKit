@@ -365,6 +365,7 @@ set(WebKit2_SOURCES
     UIProcess/Notifications/WebNotificationManagerProxy.cpp
     UIProcess/Notifications/WebNotificationProvider.cpp
 
+    UIProcess/Plugins/PlugInAutoStartProvider.cpp
     UIProcess/Plugins/PluginInfoStore.cpp
     UIProcess/Plugins/PluginProcessManager.cpp
     UIProcess/Plugins/PluginProcessProxy.cpp
@@ -473,6 +474,7 @@ set(WebKit2_SOURCES
     WebProcess/WebCoreSupport/WebNetworkInfoClient.cpp
     WebProcess/WebCoreSupport/WebNotificationClient.cpp
     WebProcess/WebCoreSupport/WebPlatformStrategies.cpp
+    WebProcess/WebCoreSupport/WebPlugInClient.cpp
     WebProcess/WebCoreSupport/WebPopupMenu.cpp
     WebProcess/WebCoreSupport/WebSearchPopupMenu.cpp
     WebProcess/WebCoreSupport/WebVibrationClient.cpp

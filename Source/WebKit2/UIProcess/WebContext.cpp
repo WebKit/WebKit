@@ -124,6 +124,7 @@ WebContext::WebContext(ProcessModel processModel, const String& injectedBundlePa
     , m_defaultPageGroup(WebPageGroup::create())
     , m_injectedBundlePath(injectedBundlePath)
     , m_visitedLinkProvider(this)
+    , m_plugInAutoStartProvider(this)
     , m_alwaysUsesComplexTextCodePath(false)
     , m_shouldUseFontSmoothing(true)
     , m_cacheModel(CacheModelDocumentViewer)
@@ -1080,6 +1081,11 @@ void WebContext::garbageCollectJavaScriptObjects()
 void WebContext::setJavaScriptGarbageCollectorTimerEnabled(bool flag)
 {
     sendToAllProcesses(Messages::WebProcess::SetJavaScriptGarbageCollectorTimerEnabled(flag));
+}
+
+void WebContext::addPlugInAutoStartOriginHash(const String& pageOrigin, unsigned plugInOriginHash)
+{
+    m_plugInAutoStartProvider.addAutoStartOrigin(pageOrigin, plugInOriginHash);
 }
 
 } // namespace WebKit

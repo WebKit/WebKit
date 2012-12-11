@@ -27294,6 +27294,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\page\PlugInClient.h"
+				>
+			</File>
+			<File
 				RelativePath="..\page\PoppupOpeningObserver.h"
 				>
 			</File>

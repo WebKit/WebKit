@@ -1,3 +1,54 @@
+2012-12-10  Jon Lee  <jonlee@apple.com>
+
+        Keep track of plug-in snapshots clicked by user
+        https://bugs.webkit.org/show_bug.cgi?id=103206
+        <rdar://problem/12746483>
+
+        Reviewed by Anders Carlsson.
+
+        * html/HTMLPlugInImageElement.cpp:
+        (WebCore::HTMLPlugInImageElement::HTMLPlugInImageElement): Initially the hash is
+        unknown. Set to 0. Move the check for whether to snapshot the plugin into the
+        new function subframeLoaderWillLoadPlugIn.
+        (WebCore::HTMLPlugInImageElement::userDidClickSnapshot): Rename
+        setPendingClickEvent to userDidClickSnapshot. In addition to holding onto the
+        click event used to activate the plug-in, the function now also tells the plug-in
+        client to add the origin hash as an auto-start origin.
+        (WebCore::HTMLPlugInImageElement::subframeLoaderWillLoadPlugIn): Calculate the
+        hash based on the provided URL, which is the URL the plug-in will load. Extend
+        the check that used to be in the constructor to see if the plug-in should not
+        automatically load, including checking the plug-in size and whether the hash
+        is an auto-start origin.
+        * html/HTMLPlugInImageElement.h: Rename setPendingClickEvent to userDidClickSnapshot
+        and add a variable for the origin hash.
+
+        * loader/SubframeLoader.cpp:
+        (WebCore::SubframeLoader::requestPlugin): When the loader is about to load the
+        plug-in, pass the URL to the element, so that it can calculate the hash.
+
+        * page/Page.cpp:
+        (WebCore::Page::Page): Take the plugInClient from the page clients.
+        (WebCore::Page::~Page): If the client exists, tell it that the page is being
+        destroyed.
+        (WebCore::Page::PageClients::PageClients): Initialize this optional client to
+        null.
+        * page/Page.h: Add PlugInClient to page clients.
+        (PageClients): Add PlugInClient variable.
+        (WebCore::Page::plugInClient):
+        * page/PlugInClient.h: Added.
+
+        * rendering/RenderSnapshottedPlugIn.cpp:
+        (WebCore::RenderSnapshottedPlugIn::handleEvent): Call the renamed function
+        userDidClickSnapshot().
+        (WebCore::RenderSnapshottedPlugIn::layout): Move the check of the plug-in size
+        to subframeLoaderWillLoadPlugIn.
+
+        Add PlugInClient.h.
+        * GNUmakefile.list.am:
+        * Target.pri:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+
 2012-12-10  Antti Koivisto  <antti@apple.com>
 
         Not reviewed.

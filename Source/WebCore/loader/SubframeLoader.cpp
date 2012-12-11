@@ -156,6 +156,7 @@ bool SubframeLoader::requestPlugin(HTMLPlugInImageElement* ownerElement, const K
         return false;
 
     ASSERT(ownerElement->hasTagName(objectTag) || ownerElement->hasTagName(embedTag));
+    ownerElement->subframeLoaderWillLoadPlugIn(url);
     return loadPlugin(ownerElement, url, mimeType, paramNames, paramValues, useFallback);
 }
 

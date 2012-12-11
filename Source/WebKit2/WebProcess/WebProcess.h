@@ -151,6 +151,9 @@ public:
     void addVisitedLink(WebCore::LinkHash);
     bool isLinkVisited(WebCore::LinkHash) const;
 
+    bool isPlugInAutoStartOrigin(unsigned plugInOriginhash);
+    void addPlugInAutoStartOrigin(const String& pageOrigin, unsigned plugInOriginHash);
+
     bool fullKeyboardAccessEnabled() const { return m_fullKeyboardAccessEnabled; }
 
     WebFrame* webFrame(uint64_t) const;
@@ -237,6 +240,8 @@ private:
     void setVisitedLinkTable(const SharedMemory::Handle&);
     void visitedLinkStateChanged(const Vector<WebCore::LinkHash>& linkHashes);
     void allVisitedLinkStateChanged();
+
+    void didAddPlugInAutoStartOrigin(unsigned plugInOriginHash);
 
     void platformSetCacheModel(CacheModel);
     static void calculateCacheSizes(CacheModel cacheModel, uint64_t memorySize, uint64_t diskFreeSize,
@@ -328,6 +333,8 @@ private:
     // FIXME: The visited link table should not be per process.
     VisitedLinkTable m_visitedLinkTable;
     bool m_shouldTrackVisitedLinks;
+
+    HashSet<unsigned> m_plugInAutoStartOrigins;
 
     bool m_hasSetCacheModel;
     CacheModel m_cacheModel;

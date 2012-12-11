@@ -51,4 +51,7 @@ messages -> WebContext {
     // any synchronous messages, and should be removed when <rdar://problem/8775115> is fixed.
     Dummy() -> (bool dummyReturn)
 #endif
+
+    # Plug-in messages.
+    void AddPlugInAutoStartOriginHash(WTF::String pageOrigin, uint32_t hash)
 }

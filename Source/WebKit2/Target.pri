@@ -229,6 +229,7 @@ HEADERS += \
     UIProcess/PageClient.h \
     UIProcess/PageViewportController.h \
     UIProcess/PageViewportControllerClient.h \
+    UIProcess/Plugins/PlugInAutoStartProvider.h \
     UIProcess/Plugins/PluginInfoStore.h \
     UIProcess/Plugins/PluginProcessProxy.h \
     UIProcess/Plugins/PluginProcessManager.h \
@@ -361,6 +362,7 @@ HEADERS += \
     WebProcess/WebCoreSupport/WebNetworkInfoClient.h \
     WebProcess/WebCoreSupport/WebNotificationClient.h \
     WebProcess/WebCoreSupport/WebPlatformStrategies.h \
+    WebProcess/WebCoreSupport/WebPlugInClient.h \
     WebProcess/WebCoreSupport/WebPopupMenu.h \
     WebProcess/WebCoreSupport/WebSearchPopupMenu.h \
     WebProcess/WebCoreSupport/WebVibrationClient.h \
@@ -586,6 +588,7 @@ SOURCES += \
     UIProcess/Notifications/WebNotificationManagerProxy.cpp \
     UIProcess/Notifications/WebNotificationProvider.cpp \
     UIProcess/PageViewportController.cpp \
+    UIProcess/Plugins/PlugInAutoStartProvider.cpp \
     UIProcess/Plugins/PluginInfoStore.cpp \
     UIProcess/Plugins/PluginProcessProxy.cpp \
     UIProcess/Plugins/PluginProcessManager.cpp \
@@ -739,6 +742,7 @@ SOURCES += \
     WebProcess/WebCoreSupport/WebNetworkInfoClient.cpp \
     WebProcess/WebCoreSupport/WebNotificationClient.cpp \
     WebProcess/WebCoreSupport/WebPlatformStrategies.cpp \
+    WebProcess/WebCoreSupport/WebPlugInClient.cpp \
     WebProcess/WebCoreSupport/WebPopupMenu.cpp \
     WebProcess/WebCoreSupport/WebSearchPopupMenu.cpp \
     WebProcess/WebCoreSupport/WebVibrationClient.cpp \

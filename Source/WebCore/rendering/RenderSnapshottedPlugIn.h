@@ -67,8 +67,6 @@ private:
     LayoutRect tryToFitStartLabel(LabelSize, const LayoutRect& contentBox) const;
     Image* startLabelImage(LabelSize) const;
 
-    virtual void layout() OVERRIDE;
-
     OwnPtr<RenderImageResource> m_snapshotResource;
     bool m_shouldShowLabel;
     DeferrableOneShotTimer<RenderSnapshottedPlugIn> m_hoverDelayTimer;

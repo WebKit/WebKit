@@ -53,6 +53,7 @@
 #include "NetworkStateNotifier.h"
 #include "PageCache.h"
 #include "PageGroup.h"
+#include "PlugInClient.h"
 #include "PluginData.h"
 #include "PluginView.h"
 #include "PointerLockController.h"
@@ -133,6 +134,7 @@ Page::Page(PageClients& pageClients)
     , m_backForwardController(BackForwardController::create(this, pageClients.backForwardClient))
     , m_theme(RenderTheme::themeForPage(this))
     , m_editorClient(pageClients.editorClient)
+    , m_plugInClient(pageClients.plugInClient)
     , m_validationMessageClient(pageClients.validationMessageClient)
     , m_subframeCount(0)
     , m_openedByDOM(false)
@@ -198,6 +200,8 @@ Page::~Page()
     }
 
     m_editorClient->pageDestroyed();
+    if (m_plugInClient)
+        m_plugInClient->pageDestroyed();
     if (m_alternativeTextClient)
         m_alternativeTextClient->pageDestroyed();
 
@@ -1336,6 +1340,7 @@ Page::PageClients::PageClients()
     , editorClient(0)
     , dragClient(0)
     , inspectorClient(0)
+    , plugInClient(0)
     , validationMessageClient(0)
 {
 }

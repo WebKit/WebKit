@@ -29,6 +29,7 @@
 #include "DownloadManager.h"
 #include "InjectedBundle.h"
 #include "InjectedBundleUserMessageCoders.h"
+#include "Logging.h"
 #include "SandboxExtension.h"
 #include "StatisticsData.h"
 #include "WebApplicationCacheManager.h"
@@ -937,7 +938,27 @@ void WebProcess::clearPluginSiteData(const Vector<String>& pluginPaths, const Ve
     connection()->send(Messages::WebProcessProxy::DidClearPluginSiteData(callbackID), 0);
 }
 #endif
-    
+
+bool WebProcess::isPlugInAutoStartOrigin(unsigned plugInOriginHash)
+{
+    return m_plugInAutoStartOrigins.contains(plugInOriginHash);
+}
+
+void WebProcess::addPlugInAutoStartOrigin(const String& pageOrigin, unsigned plugInOriginHash)
+{
+    if (isPlugInAutoStartOrigin(plugInOriginHash)) {
+        LOG(Plugins, "Hash %x already exists as auto-start origin (request for %s)", plugInOriginHash, pageOrigin.utf8().data());
+        return;
+    }
+
+    connection()->send(Messages::WebContext::AddPlugInAutoStartOriginHash(pageOrigin, plugInOriginHash), 0);
+}
+
+void WebProcess::didAddPlugInAutoStartOrigin(unsigned plugInOriginHash)
+{
+    m_plugInAutoStartOrigins.add(plugInOriginHash);
+}
+
 static void fromCountedSetToHashMap(TypeCountSet* countedSet, HashMap<String, uint64_t>& map)
 {
     TypeCountSet::const_iterator end = countedSet->end();

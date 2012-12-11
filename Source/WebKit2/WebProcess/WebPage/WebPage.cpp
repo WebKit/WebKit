@@ -74,6 +74,7 @@
 #include "WebPageGroupProxy.h"
 #include "WebPageMessages.h"
 #include "WebPageProxyMessages.h"
+#include "WebPlugInClient.h"
 #include "WebPopupMenu.h"
 #include "WebPreferencesStore.h"
 #include "WebProcess.h"
@@ -301,7 +302,8 @@ WebPage::WebPage(uint64_t pageID, const WebPageCreationParameters& parameters)
 #if USE(AUTOCORRECTION_PANEL)
     pageClients.alternativeTextClient = new WebAlternativeTextClient(this);
 #endif
-    
+    pageClients.plugInClient = new WebPlugInClient(this);
+
     m_page = adoptPtr(new Page(pageClients));
 
 #if ENABLE(BATTERY_STATUS)
