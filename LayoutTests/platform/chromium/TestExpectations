@@ -4201,9 +4201,6 @@ webkit.org/b/104489 [ Win ] http/tests/w3c/webperf/submission/Intel/user-timing/
 webkit.org/b/94002 [ Win Mac Debug ] inspector/debugger/live-edit-breakpoints.html [ Failure Timeout ]
 webkit.org/b/94002 [ Mac Debug ] inspector/debugger/live-edit.html [ Crash Pass Timeout ]
 
-# Asserting since r136948.
-webkit.org/b/104473 [ Debug ] inspector/styles/import-pseudoclass-crash.html [ Crash ]
-
 # No support for exposing in-band text tracks
 webkit.org/b/103767  [ Win Mac Linux ] media/track/track-in-band.html [ Skip ]
 

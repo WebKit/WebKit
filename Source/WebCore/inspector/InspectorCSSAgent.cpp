@@ -956,10 +956,10 @@ PassRefPtr<TypeBuilder::CSS::SelectorProfile> InspectorCSSAgent::stopSelectorPro
     return result.release();
 }
 
-void InspectorCSSAgent::willMatchRule(const CSSStyleRule* rule)
+void InspectorCSSAgent::willMatchRule(StyleRule* rule, StyleResolver* styleResolver)
 {
     if (m_currentSelectorProfile)
-        m_currentSelectorProfile->startSelector(rule);
+        m_currentSelectorProfile->startSelector(styleResolver->ensureFullCSSOMWrapperForInspector(rule));
 }
 
 void InspectorCSSAgent::didMatchRule(bool matched)
@@ -968,10 +968,10 @@ void InspectorCSSAgent::didMatchRule(bool matched)
         m_currentSelectorProfile->commitSelector(matched);
 }
 
-void InspectorCSSAgent::willProcessRule(const CSSStyleRule* rule)
+void InspectorCSSAgent::willProcessRule(StyleRule* rule, StyleResolver* styleResolver)
 {
     if (m_currentSelectorProfile)
-        m_currentSelectorProfile->startSelector(rule);
+        m_currentSelectorProfile->startSelector(styleResolver->ensureFullCSSOMWrapperForInspector(rule));
 }
 
 void InspectorCSSAgent::didProcessRule()

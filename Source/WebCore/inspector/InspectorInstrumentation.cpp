@@ -576,8 +576,7 @@ InspectorInstrumentationCookie InspectorInstrumentation::willMatchRuleImpl(Instr
 {
     InspectorCSSAgent* cssAgent = instrumentingAgents->inspectorCSSAgent();
     if (cssAgent) {
-        CSSStyleRule* cssRule = styleResolver->ensureFullCSSOMWrapperForInspector(rule);
-        cssAgent->willMatchRule(cssRule);
+        cssAgent->willMatchRule(rule, styleResolver);
         return InspectorInstrumentationCookie(instrumentingAgents, 1);
     }
 
@@ -595,8 +594,7 @@ InspectorInstrumentationCookie InspectorInstrumentation::willProcessRuleImpl(Ins
 {
     InspectorCSSAgent* cssAgent = instrumentingAgents->inspectorCSSAgent();
     if (cssAgent) {
-        CSSStyleRule* cssRule = styleResolver->ensureFullCSSOMWrapperForInspector(rule);
-        cssAgent->willProcessRule(cssRule);
+        cssAgent->willProcessRule(rule, styleResolver);
         return InspectorInstrumentationCookie(instrumentingAgents, 1);
     }
 

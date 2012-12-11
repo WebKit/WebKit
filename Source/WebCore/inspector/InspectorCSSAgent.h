@@ -55,6 +55,7 @@ class Node;
 class NodeList;
 class SelectorProfile;
 class StyleResolver;
+class StyleRule;
 class UpdateRegionLayoutTask;
 
 #if ENABLE(INSPECTOR)
@@ -124,9 +125,9 @@ public:
     virtual void stopSelectorProfiler(ErrorString*, RefPtr<TypeBuilder::CSS::SelectorProfile>&);
 
     PassRefPtr<TypeBuilder::CSS::SelectorProfile> stopSelectorProfilerImpl(ErrorString*, bool needProfile);
-    void willMatchRule(const CSSStyleRule*);
+    void willMatchRule(StyleRule*, StyleResolver*);
     void didMatchRule(bool);
-    void willProcessRule(const CSSStyleRule*);
+    void willProcessRule(StyleRule*, StyleResolver*);
     void didProcessRule();
 
 private:

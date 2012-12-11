@@ -1,3 +1,24 @@
+2012-12-11  Alexander Pavlov  <apavlov@chromium.org>
+
+        REGRESSION(r136948): inspector/styles/import-pseudoclass-crash.html hits an assertion
+        https://bugs.webkit.org/show_bug.cgi?id=104473
+
+        Reviewed by Vsevolod Vlasov.
+
+        Avoid building full CSSOM wrappers up front during rule matching.
+        Instead, move this code down to the point where these wrappers are actually needed.
+
+        * inspector/InspectorCSSAgent.cpp:
+        (WebCore::InspectorCSSAgent::willMatchRule):
+        (WebCore::InspectorCSSAgent::willProcessRule):
+        * inspector/InspectorCSSAgent.h:
+        (WebCore):
+        (InspectorCSSAgent):
+        * inspector/InspectorInstrumentation.cpp:
+        (WebCore):
+        (WebCore::InspectorInstrumentation::willMatchRuleImpl):
+        (WebCore::InspectorInstrumentation::willProcessRuleImpl):
+
 2012-12-11  Jesus Sanchez-Palencia  <jesus.palencia@openbossa.org>
 
         [GStreamer] Avoid linking to GStreamer video libraries if only using ENABLE_AUDIO

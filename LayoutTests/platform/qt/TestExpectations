@@ -2449,6 +2449,3 @@ webkit.org/b/104351 fast/exclusions/shape-inside/shape-inside-rounded-rectangle-
 # https://bugs.webkit.org/show_bug.cgi?id=104352
 http/tests/xmlhttprequest/post-blob-content-type-async.html
 http/tests/xmlhttprequest/post-blob-content-type-sync.html
-
-# REGRESSION(r136948): inspector/styles/import-pseudoclass-crash.html hits an assertion
-webkit.org/b/104473 inspector/styles/import-pseudoclass-crash.html
