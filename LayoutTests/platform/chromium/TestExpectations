@@ -4222,3 +4222,5 @@ crbug.com/165315 media/encrypted-media/encrypted-media-can-play-type-webm.html [
 
 # New test added in r137331
 webkit.org/b/104715 [ MountainLion ] fast/block/float/floats-wrap-inside-inline-007.html [ Failure ]
+
+webkit.org/b/103667 [ Linux ] fast/ruby/position-after.html [ ImageOnlyFailure ]
