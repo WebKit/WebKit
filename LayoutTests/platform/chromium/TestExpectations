@@ -3845,7 +3845,10 @@ webkit.org/b/96833 svg/carto.net/combobox.svg [ ImageOnlyFailure Pass ]
 webkit.org/b/96549 [ Android ] platform/chromium/virtual/gpu/fast/hidpi/focus-rings.html [ ImageOnlyFailure ]
 webkit.org/b/96628 [ Lion MountainLion ] fast/frames/calculate-order.html [ Failure Pass ]
 webkit.org/b/96550 http/tests/media/media-source/seek-to-end-after-duration-change.html [ Pass Timeout ]
-webkit.org/b/96725 [ Linux Mac Win ] http/tests/media/media-source/video-media-source-state-changes.html [ Pass Timeout ]
+
+webkit.org/b/104584 http/tests/media/media-source/video-media-source-seek.html [ Skip ]
+webkit.org/b/104584 http/tests/media/media-source/video-media-source-state-changes.html [ Skip ]
+
 crbug.com/63921 platform/chromium/virtual/gpu/fast/canvas/canvas-fillPath-shadow.html [ Failure ]
 webkit.org/b/77550 platform/chromium/virtual/gpu/canvas/philip/tests/2d.gradient.interpolate.colouralpha.html [ Failure ]
 
