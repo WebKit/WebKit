@@ -347,7 +347,7 @@ Call.prototype = {
     },
     
     /**
-     * @return {Array}
+     * @return {!Array}
      */
     args: function()
     {
@@ -584,6 +584,15 @@ function Resource(wrappedObject)
     this._resourceManager = null;
     /** @type {!Array.<Call>} */
     this._calls = [];
+    /**
+     * This is to prevent GC from collecting associated resources.
+     * Otherwise, for example in WebGL, subsequent calls to gl.getParameter()
+     * may return a recently created instance that is no longer bound to a
+     * Resource object (thus, no history to replay it later).
+     *
+     * @type {!Object.<string, Resource>}
+     */
+    this._boundResources = Object.create(null);
     this.setWrappedObject(wrappedObject);
 }
 
@@ -773,6 +782,19 @@ Resource.prototype = {
     },
 
     /**
+     * @param {string} key
+     * @param {*} obj
+     */
+    _registerBoundResource: function(key, obj)
+    {
+        var resource = Resource.forObject(obj);
+        if (resource)
+            this._boundResources[key] = resource;
+        else
+            delete this._boundResources[key];
+    },
+
+    /**
      * @return {Object}
      */
     _wrapObject: function()
@@ -881,6 +903,7 @@ Resource.prototype = {
     {
         return function(value)
         {
+            resource._registerBoundResource(propertyName, value);
             var manager = resource.manager();
             if (!manager || !manager.capturing()) {
                 originalObject[propertyName] = Resource.wrappedObject(value);
@@ -1375,6 +1398,18 @@ function WebGLShaderResource(wrappedObject)
 }
 
 WebGLShaderResource.prototype = {
+    /**
+     * @return {number}
+     */
+    type: function()
+    {
+        var call = this._calls[0];
+        if (call && call.functionName() === "createShader")
+            return call.args()[0];
+        console.error("ASSERT_NOT_REACHED: Failed to restore shader type from the log.", call);
+        return 0;
+    },
+
     /**
      * @override
      * @param {!Call} call
@@ -1922,7 +1957,6 @@ WebGLRenderingContextResource.prototype = {
                     }
                 }
             }
-            stateModifyingWrapFunction("attachShader");
             stateModifyingWrapFunction("bindAttribLocation");
             stateModifyingWrapFunction("compileShader");
             stateModifyingWrapFunction("detachShader");
@@ -1939,14 +1973,12 @@ WebGLRenderingContextResource.prototype = {
             stateModifyingWrapFunction("texSubImage2D");
             stateModifyingWrapFunction("texParameterf", WebGLTextureResource.prototype.pushCall_texParameter);
             stateModifyingWrapFunction("texParameteri", WebGLTextureResource.prototype.pushCall_texParameter);
-            stateModifyingWrapFunction("framebufferRenderbuffer");
-            stateModifyingWrapFunction("framebufferTexture2D");
             stateModifyingWrapFunction("renderbufferStorage");
 
             /** @this Resource.WrapFunction */
             wrapFunctions["getError"] = function()
             {
-                var gl = this._originalObject;
+                var gl = /** @type {WebGLRenderingContext} */ (this._originalObject);
                 var error = this.result();
                 if (error !== gl.NO_ERROR)
                     this._resource.clearError(error);
@@ -1964,6 +1996,80 @@ WebGLRenderingContextResource.prototype = {
             wrapFunctions["getExtension"] = function(name)
             {
                 this._resource.addExtension(name);
+            }
+
+            //
+            // Register bound WebGL resources.
+            //
+
+            /**
+             * @param {WebGLProgram} program
+             * @param {WebGLShader} shader
+             * @this Resource.WrapFunction
+             */
+            wrapFunctions["attachShader"] = function(program, shader)
+            {
+                var resource = this._resource.currentBinding(program);
+                if (resource) {
+                    resource.pushCall(this.call());
+                    var shaderResource = /** @type {WebGLShaderResource} */ (Resource.forObject(shader));
+                    if (shaderResource) {
+                        var shaderType = shaderResource.type();
+                        resource._registerBoundResource("__attachShader_" + shaderType, shaderResource);
+                    }
+                }
+            }
+            /**
+             * @param {number} target
+             * @param {number} attachment
+             * @param {number} objectTarget
+             * @param {WebGLRenderbuffer|WebGLTexture} obj
+             * @this Resource.WrapFunction
+             */
+            wrapFunctions["framebufferRenderbuffer"] = wrapFunctions["framebufferTexture2D"] = function(target, attachment, objectTarget, obj)
+            {
+                var resource = this._resource.currentBinding(target);
+                if (resource) {
+                    resource.pushCall(this.call());
+                    resource._registerBoundResource("__framebufferAttachmentObjectName", obj);
+                }
+            }
+            /**
+             * @param {number} target
+             * @param {Object} obj
+             * @this Resource.WrapFunction
+             */
+            wrapFunctions["bindBuffer"] = wrapFunctions["bindFramebuffer"] = wrapFunctions["bindRenderbuffer"] = function(target, obj)
+            {
+                this._resource._registerBoundResource("__bindBuffer_" + target, obj);
+            }
+            /**
+             * @param {number} target
+             * @param {WebGLTexture} obj
+             * @this Resource.WrapFunction
+             */
+            wrapFunctions["bindTexture"] = function(target, obj)
+            {
+                var gl = /** @type {WebGLRenderingContext} */ (this._originalObject);
+                var currentTextureBinding = /** @type {number} */ (gl.getParameter(gl.ACTIVE_TEXTURE));
+                this._resource._registerBoundResource("__bindTexture_" + target + "_" + currentTextureBinding, obj);
+            }
+            /**
+             * @param {WebGLProgram} program
+             * @this Resource.WrapFunction
+             */
+            wrapFunctions["useProgram"] = function(program)
+            {
+                this._resource._registerBoundResource("__useProgram", program);
+            }
+            /**
+             * @param {number} index
+             * @this Resource.WrapFunction
+             */
+            wrapFunctions["vertexAttribPointer"] = function(index)
+            {
+                var gl = /** @type {WebGLRenderingContext} */ (this._originalObject);
+                this._resource._registerBoundResource("__vertexAttribPointer_" + index, gl.getParameter(gl.ARRAY_BUFFER_BINDING));
             }
 
             WebGLRenderingContextResource._wrapFunctions = wrapFunctions;

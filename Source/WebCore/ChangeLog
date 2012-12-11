@@ -1,3 +1,17 @@
+2012-12-11  Andrey Adaikin  <aandrey@chromium.org>
+
+        Web Inspector: [WebGL] prevent GC from collecting WebGLObject instances currently bound to the context state
+        https://bugs.webkit.org/show_bug.cgi?id=104119
+
+        Reviewed by Pavel Feldman.
+
+        This is to prevent GC from collecting resources bound to a context (WebGL or 2D).
+        Otherwise, for example in WebGL, subsequent calls to gl.getParameter() may return a recently created
+        instance that is no longer bound to a Resource object (thus, no history to replay it later).
+
+        * inspector/InjectedScriptCanvasModuleSource.js:
+        (.):
+
 2012-12-11  Zan Dobersek  <zandobersek@gmail.com>
 
         Unreviewed build fix after r137243.
