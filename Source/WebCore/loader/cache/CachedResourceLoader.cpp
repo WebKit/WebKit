@@ -630,17 +630,12 @@ void CachedResourceLoader::printAccessDeniedMessage(const KURL& url) const
     if (!frame())
         return;
 
-    Settings* settings = frame()->settings();
-    if (!settings || settings->privateBrowsingEnabled())
-        return;
-
     String message;
     if (!m_document || m_document->url().isNull())
         message = "Unsafe attempt to load URL " + url.string() + '.';
     else
         message = "Unsafe attempt to load URL " + url.string() + " from frame with URL " + m_document->url().string() + ". Domains, protocols and ports must match.\n";
 
-    // FIXME: provide line number and source URL.
     frame()->document()->addConsoleMessage(OtherMessageSource, LogMessageType, ErrorMessageLevel, message);
 }
 

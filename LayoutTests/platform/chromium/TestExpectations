@@ -643,6 +643,7 @@ plugins/private-browsing-mode-2.html [ WontFix ]
 storage/domstorage/localstorage/private-browsing-affects-storage.html [ WontFix ]
 storage/domstorage/sessionstorage/private-browsing-affects-storage.html [ WontFix ]
 storage/websql/private-browsing-noread-nowrite.html [ WontFix ]
+inspector/console/clients-ignored-in-privatebrowsing.html [ WontFix ]
 
 # We don't let anyone set status in the browser.
 plugins/set-status.html [ WontFix ]

@@ -47,6 +47,7 @@
 #include "ScriptProfiler.h"
 #include "ScriptValue.h"
 #include "ScriptableDocumentParser.h"
+#include "Settings.h"
 #include <stdio.h>
 #include <wtf/UnusedParam.h>
 #include <wtf/text/CString.h>
@@ -163,14 +164,17 @@ void Console::addMessage(MessageSource source, MessageType type, MessageLevel le
     if (!page)
         return;
 
-    page->chrome()->client()->addMessageToConsole(source, type, level, message, lineNumber, url);
-
     if (callStack)
         InspectorInstrumentation::addMessageToConsole(page, source, type, level, message, callStack, requestIdentifier);
     else
         InspectorInstrumentation::addMessageToConsole(page, source, type, level, message, url, lineNumber, state, requestIdentifier);
 
-    if (!Console::shouldPrintExceptions())
+    if (!m_frame->settings() || m_frame->settings()->privateBrowsingEnabled())
+        return;
+
+    page->chrome()->client()->addMessageToConsole(source, type, level, message, lineNumber, url);
+
+    if (!shouldPrintExceptions())
         return;
 
     printSourceURLAndLine(url, lineNumber);
@@ -194,6 +198,16 @@ void Console::addMessage(MessageType type, MessageLevel level, ScriptState* stat
     RefPtr<ScriptCallStack> callStack(createScriptCallStack(state, stackSize));
     const ScriptCallFrame& lastCaller = callStack->at(0);
 
+    String message;
+    bool gotMessage = arguments->getFirstArgumentAsString(message);
+    InspectorInstrumentation::addMessageToConsole(page, ConsoleAPIMessageSource, type, level, message, state, arguments.release());
+
+    if (!m_frame->settings() || m_frame->settings()->privateBrowsingEnabled())
+        return;
+
+    if (gotMessage)
+        page->chrome()->client()->addMessageToConsole(ConsoleAPIMessageSource, type, level, message, lastCaller.lineNumber(), lastCaller.sourceURL());
+
     if (shouldPrintExceptions()) {
         printSourceURLAndLine(lastCaller.sourceURL(), 0);
         printMessageSourceAndLevelPrefix(ConsoleAPIMessageSource, level);
@@ -213,12 +227,6 @@ void Console::addMessage(MessageType type, MessageLevel level, ScriptState* stat
             printf("\t%s\n", functionName.utf8().data());
         }
     }
-
-    String message;
-    if (arguments->getFirstArgumentAsString(message))
-        page->chrome()->client()->addMessageToConsole(ConsoleAPIMessageSource, type, level, message, lastCaller.lineNumber(), lastCaller.sourceURL());
-
-    InspectorInstrumentation::addMessageToConsole(page, ConsoleAPIMessageSource, type, level, message, state, arguments.release());
 }
 
 void Console::debug(ScriptState* state, PassRefPtr<ScriptArguments> arguments)

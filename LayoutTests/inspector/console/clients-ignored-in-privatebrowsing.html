@@ -1,0 +1,30 @@
+<html>
+<head>
+<script src="../../http/tests/inspector/inspector-test.js"></script>
+<script src="../../http/tests/inspector/console-test.js"></script>
+<script>
+
+function test()
+{
+    if (window.testRunner)
+        testRunner.setPrivateBrowsingEnabled(true);
+
+    console.log('This should show up once console messages are dumped, but should _not_ show up as a "CONSOLE MESSAGE:" at the top of the output.');
+
+    InspectorTest.dumpConsoleMessages();
+
+    if (window.testRunner)
+        testRunner.setPrivateBrowsingEnabled(false);
+    InspectorTest.completeTest();
+}
+
+</script>
+</head>
+
+<body onload="runTest()">
+<p>In PrivateBrowsing mode, console messages are visible in the Console, but
+aren't sent to ChromeClients (or printf'd) in order to ensure they never end
+up in logs. Better safe than sorry.</p>
+
+</body>
+</html>

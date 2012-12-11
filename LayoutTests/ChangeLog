@@ -1,3 +1,15 @@
+2012-12-11  Mike West  <mkwst@chromium.org>
+
+        Web Inspector: Evaluate private browsing mode's effect on console messages.
+        https://bugs.webkit.org/show_bug.cgi?id=104383
+
+        Reviewed by Pavel Feldman.
+
+        * inspector/console/clients-ignored-in-privatebrowsing-expected.txt: Added.
+        * inspector/console/clients-ignored-in-privatebrowsing.html: Added.
+        * platform/chromium/TestExpectations:
+            Skip this test on Chromium, as that port doesn't use PrivateBrowsing
+
 2012-12-11  Andrey Kosyakov  <caseq@chromium.org>
 
         Web Inspector: better coverage for inspector/profiler/cpu-profiler-profiling-without-inspector.html

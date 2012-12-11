@@ -1756,12 +1756,6 @@ void DOMWindow::printErrorMessage(const String& message)
     if (message.isEmpty())
         return;
 
-    Settings* settings = m_frame->settings();
-    if (!settings)
-        return;
-    if (settings->privateBrowsingEnabled())
-        return;
-
     console()->addMessage(JSMessageSource, LogMessageType, ErrorMessageLevel, message);
 }
 

@@ -1,0 +1,4 @@
+In PrivateBrowsing mode, console messages are visible in the Console, but aren't sent to ChromeClients (or printf'd) in order to ensure they never end up in logs. Better safe than sorry.
+
+log: This should show up once console messages are dumped, but should _not_ show up as a "CONSOLE MESSAGE:" at the top of the output.
+
