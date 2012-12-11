@@ -3365,8 +3365,10 @@ void SpeculativeJIT::compileGetIndexedPropertyStorage(Node& node)
     case Array::String:
         m_jit.loadPtr(MacroAssembler::Address(baseReg, JSString::offsetOfValue()), storageReg);
         
-        // Speculate that we're not accessing a rope
-        speculationCheck(Uncountable, JSValueRegs(), NoNode, m_jit.branchTest32(MacroAssembler::Zero, storageReg));
+        addSlowPathGenerator(
+            slowPathCall(
+                m_jit.branchTest32(MacroAssembler::Zero, storageReg),
+                this, operationResolveRope, storageReg, baseReg));
 
         m_jit.loadPtr(MacroAssembler::Address(storageReg, StringImpl::dataOffset()), storageReg);
         break;

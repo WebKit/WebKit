@@ -383,6 +383,11 @@ public:
         }
     }
     
+    bool getIndexedPropertyStorageMayTriggerGC() const
+    {
+        return type() == Array::String;
+    }
+    
     bool operator==(const ArrayMode& other) const
     {
         return type() == other.type()

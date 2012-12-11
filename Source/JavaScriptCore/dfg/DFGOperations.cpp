@@ -1460,6 +1460,14 @@ char* DFG_OPERATION operationEnsureArrayStorage(ExecState* exec, JSObject* objec
     return reinterpret_cast<char*>(object->ensureArrayStorage(globalData));
 }
 
+StringImpl* DFG_OPERATION operationResolveRope(ExecState* exec, JSString* string)
+{
+    JSGlobalData& globalData = exec->globalData();
+    NativeCallFrameTracer tracer(&globalData, exec);
+
+    return string->value(exec).impl();
+}
+
 double DFG_OPERATION operationFModOnInts(int32_t a, int32_t b)
 {
     return fmod(a, b);

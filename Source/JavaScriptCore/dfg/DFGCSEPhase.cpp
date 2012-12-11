@@ -564,6 +564,11 @@ private:
             case ReallocatePropertyStorage:
                 return NoNode;
                 
+            case GetIndexedPropertyStorage:
+                if (node.arrayMode().getIndexedPropertyStorageMayTriggerGC())
+                    return NoNode;
+                break;
+                
             default:
                 break;
             }

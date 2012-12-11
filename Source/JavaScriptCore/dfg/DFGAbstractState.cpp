@@ -1598,16 +1598,7 @@ bool AbstractState::execute(unsigned indexInBlock)
         break;
     }
     case GetIndexedPropertyStorage: {
-        switch (node.arrayMode().type()) {
-        case Array::String:
-            // Strings are weird - we may spec fail if the string was a rope. That is of course
-            // stupid, and we should fix that, but for now let's at least be honest about it.
-            node.setCanExit(true);
-            break;
-        default:
-            node.setCanExit(false);
-            break;
-        }
+        node.setCanExit(false);
         forNode(nodeIndex).clear();
         break; 
     }

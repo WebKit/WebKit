@@ -117,6 +117,7 @@ typedef char* DFG_OPERATION (*P_DFGOperation_ESt)(ExecState*, Structure*);
 typedef char* DFG_OPERATION (*P_DFGOperation_EStPS)(ExecState*, Structure*, void*, size_t);
 typedef char* DFG_OPERATION (*P_DFGOperation_EStSS)(ExecState*, Structure*, size_t, size_t);
 typedef char* DFG_OPERATION (*P_DFGOperation_EStZ)(ExecState*, Structure*, int32_t);
+typedef StringImpl* DFG_OPERATION (*Str_DFGOperation_EJss)(ExecState*, JSString*);
 
 // These routines are provide callbacks out to C++ implementations of operations too complex to JIT.
 JSCell* DFG_OPERATION operationNewObject(ExecState*, Structure*) WTF_INTERNAL;
@@ -207,6 +208,7 @@ char* DFG_OPERATION operationEnsureDouble(ExecState*, JSObject*);
 char* DFG_OPERATION operationEnsureContiguous(ExecState*, JSObject*);
 char* DFG_OPERATION operationRageEnsureContiguous(ExecState*, JSObject*);
 char* DFG_OPERATION operationEnsureArrayStorage(ExecState*, JSObject*);
+StringImpl* DFG_OPERATION operationResolveRope(ExecState*, JSString*);
 
 // This method is used to lookup an exception hander, keyed by faultLocation, which is
 // the return location from one of the calls out to one of the helper operations above.
