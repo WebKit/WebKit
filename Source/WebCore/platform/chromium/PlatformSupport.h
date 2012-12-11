@@ -31,41 +31,11 @@
 #ifndef PlatformSupport_h
 #define PlatformSupport_h
 
-#if ENABLE(WEB_AUDIO)
-#include "AudioBus.h"
-#endif
-
-#include "FileSystem.h"
-#include "ImageSource.h"
-#include "LinkHash.h"
-#include "PluginData.h"
-
 #include <wtf/Forward.h>
-#include <wtf/HashSet.h>
-#include <wtf/PassRefPtr.h>
-#include <wtf/Vector.h>
-
-typedef struct NPObject NPObject;
-typedef struct _NPP NPP_t;
-typedef NPP_t* NPP;
 
 namespace WebCore {
 
-class Color;
-class Cursor;
-class Document;
-class Frame;
-class GeolocationServiceBridge;
-class GeolocationServiceChromium;
-class GraphicsContext;
-class Image;
 class IDBFactoryBackendInterface;
-class IntRect;
-class KURL;
-class SerializedScriptValue;
-class Widget;
-
-struct FontRenderStyle;
 
 // PlatformSupport an interface to the embedding layer that lets the embedder
 // supply implementations for Platform functionality that WebCore cannot access
@@ -75,28 +45,6 @@ class PlatformSupport {
 public:
     // IndexedDB ----------------------------------------------------------
     static PassRefPtr<IDBFactoryBackendInterface> idbFactory();
-
-    // Theming ------------------------------------------------------------
-#if OS(WINDOWS) && !ENABLE(DEFAULT_RENDER_THEME)
-    static void paintButton(
-        GraphicsContext*, int part, int state, int classicState, const IntRect&);
-    static void paintMenuList(
-        GraphicsContext*, int part, int state, int classicState, const IntRect&);
-    static void paintScrollbarArrow(
-        GraphicsContext*, int state, int classicState, const IntRect&);
-    static void paintScrollbarThumb(
-        GraphicsContext*, int part, int state, int classicState, const IntRect&);
-    static void paintScrollbarTrack(
-        GraphicsContext*, int part, int state, int classicState, const IntRect&, const IntRect& alignRect);
-    static void paintSpinButton(
-        GraphicsContext*, int part, int state, int classicState, const IntRect&);
-    static void paintTextField(
-        GraphicsContext*, int part, int state, int classicState, const IntRect&, const Color&, bool fillContentArea, bool drawEdges);
-    static void paintTrackbar(
-        GraphicsContext*, int part, int state, int classicState, const IntRect&);
-    static void paintProgressBar(
-        GraphicsContext*, const IntRect& barRect, const IntRect& valueRect, bool determinate, double animatedSeconds);
-#endif
 };
 
 } // namespace WebCore

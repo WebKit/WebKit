@@ -1,3 +1,18 @@
+2012-12-11  Mark Pilgrim  <pilgrim@chromium.org>
+
+        [Chromium] Clean up unused interfaces in PlatformSupport
+        https://bugs.webkit.org/show_bug.cgi?id=104674
+
+        Reviewed by Darin Fisher.
+
+        Part of a refactoring series. See tracking bug 82948. Also, there
+        were some function declarations that were supposed to be removed
+        as part of bug 102699 but got left out of the final patch.
+
+        * platform/chromium/PlatformSupport.h:
+        (WebCore):
+        (PlatformSupport):
+
 2012-12-11  Joone Hur  <joone.hur@intel.com>, Gustavo Noronha Silva  <gustavo.noronha@collabora.com>
 
         [GTK] Update GraphicsLayerClutter

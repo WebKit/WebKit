@@ -31,18 +31,7 @@
 #ifndef WebKitPlatformSupport_h
 #define WebKitPlatformSupport_h
 
-#include "WebCommon.h"
-#include "WebGraphicsContext3D.h"
-#include "WebSerializedScriptValue.h"
-#include "WebString.h"
-#include "WebURL.h"
-#include "WebVector.h"
-#include <time.h>
 #include "../../../../Platform/chromium/public/Platform.h"
-
-#ifdef WIN32
-typedef void *HANDLE;
-#endif
 
 namespace WebKit {
 

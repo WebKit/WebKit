@@ -31,41 +31,7 @@
 #include "config.h"
 #include "PlatformSupport.h"
 
-#include "Chrome.h"
-#include "ChromeClientImpl.h"
-#include "FileMetadata.h"
-#include "Page.h"
-#include "WebFileInfo.h"
-#include "WebFileUtilities.h"
-#include "WebFrameClient.h"
-#include "WebFrameImpl.h"
-#include "WebKit.h"
-#include "WebPluginContainerImpl.h"
-#include "WebSandboxSupport.h"
-#include "WebScreenInfo.h"
-#include "WebViewClient.h"
-#include "WebViewImpl.h"
-#include "platform/WebAudioBus.h"
-#include "platform/WebData.h"
-#include "platform/WebDragData.h"
-#include "platform/WebImage.h"
-#include "platform/WebKitPlatformSupport.h"
-#include "platform/WebSerializedScriptValue.h"
-#include "platform/WebString.h"
-#include "platform/WebURL.h"
-
-#include "FrameView.h"
 #include "IDBFactoryBackendProxy.h"
-#include "KURL.h"
-#include "NotImplemented.h"
-#include "PluginData.h"
-#include "SharedBuffer.h"
-
-#include "Worker.h"
-#include "WorkerContextProxy.h"
-#include <public/WebMimeRegistry.h>
-#include <public/WebVector.h>
-#include <wtf/Assertions.h>
 
 // We are part of the WebKit implementation.
 using namespace WebKit;

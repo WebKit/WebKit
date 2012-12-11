@@ -1,3 +1,15 @@
+2012-12-11  Mark Pilgrim  <pilgrim@chromium.org>
+
+        [Chromium] Clean up unused interfaces in PlatformSupport
+        https://bugs.webkit.org/show_bug.cgi?id=104674
+
+        Reviewed by Darin Fisher.
+
+        Part of a refactoring series. See tracking bug 82948.
+
+        * public/platform/WebKitPlatformSupport.h:
+        * src/PlatformSupport.cpp:
+
 2012-12-11  Mike West  <mkwst@chromium.org>
 
         Web Inspector: ConsoleTypes should not expose MessageType - it should be private to inspector.
