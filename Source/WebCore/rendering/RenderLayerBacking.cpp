@@ -101,6 +101,7 @@ RenderLayerBacking::RenderLayerBacking(RenderLayer* layer)
     : m_owningLayer(layer)
     , m_scrollLayerID(0)
     , m_artificiallyInflatedBounds(false)
+    , m_boundsConstrainedByClipping(false)
     , m_isMainFrameRenderViewLayer(false)
     , m_usingTiledCacheLayer(false)
     , m_requiresOwnBackingStore(true)
@@ -366,7 +367,6 @@ bool RenderLayerBacking::shouldClipCompositedBounds() const
     return true;
 }
 
-
 void RenderLayerBacking::updateCompositedBounds()
 {
     IntRect layerBounds = compositor()->calculateCompositedBounds(m_owningLayer, m_owningLayer);
@@ -389,7 +389,9 @@ void RenderLayerBacking::updateCompositedBounds()
         clippingBounds.move(-delta.x(), -delta.y());
 
         layerBounds.intersect(pixelSnappedIntRect(clippingBounds));
-    }
+        m_boundsConstrainedByClipping = true;
+    } else
+        m_boundsConstrainedByClipping = false;
     
     // If the element has a transform-origin that has fixed lengths, and the renderer has zero size,
     // then we need to ensure that the compositing layer has non-zero size so that we can apply
@@ -631,8 +633,14 @@ void RenderLayerBacking::updateGraphicsLayerGeometry()
     
     FloatSize oldSize = m_graphicsLayer->size();
     FloatSize newSize = relativeCompositingBounds.size();
-    if (oldSize != newSize)
+    if (oldSize != newSize) {
         m_graphicsLayer->setSize(newSize);
+        // Usually invalidation will happen via layout etc, but if we've affected the layer
+        // size by constraining relative to a clipping ancestor or the viewport, we
+        // have to invalidate to avoid showing stretched content.
+        if (m_boundsConstrainedByClipping)
+            m_graphicsLayer->setNeedsDisplay();
+    }
 
     // If we have a layer that clips children, position it.
     IntRect clippingBox;

@@ -1,3 +1,25 @@
+2012-12-10  Simon Fraser  <simon.fraser@apple.com>
+
+        REGRESSION (r137215): WebKit stretches and shrinks a part of screen on scroll
+        https://bugs.webkit.org/show_bug.cgi?id=104626
+
+        Reviewed by Beth Dakin.
+
+        r137215 removed a compositing layer repaint on size changes. However, there
+        are cases where the compositing code constrains layer size by clipping
+        with the viewport and a clipping ancestor. When that happens, we must
+        invalidate the layer on a size change to avoid showing stretched or
+        shrunken content.
+
+        Test: compositing/repaint/clipped-layer-size-change.html
+
+        * rendering/RenderLayerBacking.cpp:
+        (WebCore::RenderLayerBacking::RenderLayerBacking):
+        (WebCore::RenderLayerBacking::updateCompositedBounds):
+        (WebCore::RenderLayerBacking::updateGraphicsLayerGeometry):
+        * rendering/RenderLayerBacking.h:
+        (RenderLayerBacking):
+
 2012-12-10  Dean Jackson  <dino@apple.com>
 
         Remove old WebKit Animation API code
