@@ -168,7 +168,7 @@ my @features = (
       define => "ENABLE_CHANNEL_MESSAGING", default => 1, value => \$channelMessagingSupport },
 
     { option => "csp-next", desc => "Toggle Content Security Policy 1.1 support",
-      define => "ENABLE_CSP_NEXT", default => 0, value => \$cspNextSupport },
+      define => "ENABLE_CSP_NEXT", default => isGtk(), value => \$cspNextSupport },
 
     { option => "css-device-adaptation", desc => "Toggle CSS Device Adaptation support",
       define => "ENABLE_CSS_DEVICE_ADAPTATION", default => isEfl(), value => \$cssDeviceAdaptation },
