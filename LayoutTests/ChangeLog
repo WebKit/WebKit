@@ -1,3 +1,15 @@
+2012-12-10  Noel Gordon  <noel.gordon@gmail.com>
+
+        [chromium] fast/dom/HTMLMeterElement/meter-boundary-values.html is flaky
+        https://bugs.webkit.org/show_bug.cgi?id=104625
+
+        Unreviewed HTMLMeterElement/meter-boundary-values.html rebaselines.
+
+        * platform/chromium-mac-lion/fast/dom/HTMLMeterElement/meter-boundary-values-expected.png:
+        * platform/chromium-mac-snowleopard/fast/dom/HTMLMeterElement/meter-boundary-values-expected.png:
+        * platform/chromium-mac/fast/dom/HTMLMeterElement/meter-boundary-values-expected.png:
+        * platform/efl-wk1/fast/dom/HTMLMeterElement/meter-boundary-values-expected.png: Renamed from LayoutTests/platform/efl/fast/dom/HTMLMeterElement/meter-boundary-values-expected.png.
+
 2012-12-10  Dean Jackson  <dino@apple.com>
 
         Remove old WebKit Animation API code
