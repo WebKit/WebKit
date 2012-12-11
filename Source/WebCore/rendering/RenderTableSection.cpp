@@ -190,7 +190,6 @@ void RenderTableSection::addChild(RenderObject* child, RenderObject* beforeChild
 
     ASSERT(!beforeChild || beforeChild->isTableRow());
     RenderBox::addChild(child, beforeChild);
-    toRenderTableRow(child)->updateBeforeAndAfterContent();
 }
 
 void RenderTableSection::ensureRows(unsigned numRows)

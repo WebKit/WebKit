@@ -26,7 +26,6 @@
 #ifndef RenderObjectChildList_h
 #define RenderObjectChildList_h
 
-#include "RenderStyleConstants.h"
 #include <wtf/Forward.h>
 
 namespace WebCore {
@@ -56,16 +55,10 @@ public:
     void appendChildNode(RenderObject* owner, RenderObject*, bool notifyRenderer = true);
     void insertChildNode(RenderObject* owner, RenderObject* child, RenderObject* before, bool notifyRenderer = true);
 
-    void updateBeforeAfterContent(RenderObject* owner, PseudoId type, const RenderObject* styledObject = 0);
     RenderObject* beforePseudoElementRenderer(const RenderObject* owner) const;
     RenderObject* afterPseudoElementRenderer(const RenderObject* owner) const;
 
-public:
-    static bool s_enableUpdateBeforeAfterContent;
-
 private:
-    void updateBeforeAfterStyle(RenderObject* child, PseudoId type, RenderStyle* pseudoElementStyle);
-
     RenderObject* m_firstChild;
     RenderObject* m_lastChild;
 };

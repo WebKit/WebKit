@@ -54,23 +54,12 @@ void RenderTableRow::willBeRemovedFromTree()
     section()->setNeedsCellRecalc();
 }
 
-void RenderTableRow::updateBeforeAndAfterContent()
-{
-    if (!isAnonymous() && document()->styleSheetCollection()->usesBeforeAfterRules()) {
-        children()->updateBeforeAfterContent(this, BEFORE);
-        children()->updateBeforeAfterContent(this, AFTER);
-    }
-}
-
 void RenderTableRow::styleDidChange(StyleDifference diff, const RenderStyle* oldStyle)
 {
     ASSERT(style()->display() == TABLE_ROW);
 
     RenderBox::styleDidChange(diff, oldStyle);
     propagateStyleToAnonymousChildren();
-
-    if (parent())
-        updateBeforeAndAfterContent();
 
     if (section() && oldStyle && style()->logicalHeight() != oldStyle->logicalHeight())
         section()->rowLogicalHeightChanged(rowIndex());

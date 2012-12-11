@@ -45,7 +45,6 @@ public:
     RenderTableSection* section() const { return toRenderTableSection(parent()); }
     RenderTable* table() const { return toRenderTable(parent()->parent()); }
 
-    void updateBeforeAndAfterContent();
     void paintOutlineForRowIfNeeded(PaintInfo&, const LayoutPoint&);
 
     static RenderTableRow* createAnonymousWithParentRenderer(const RenderObject*);

@@ -2995,8 +2995,7 @@ RenderBoxModelObject* RenderObject::offsetParent() const
 VisiblePosition RenderObject::createVisiblePosition(int offset, EAffinity affinity)
 {
     // If this is a non-anonymous renderer in an editable area, then it's simple.
-    if (node() && !isPseudoElement()) {
-        Node* node = this->node();
+    if (Node* node = nonPseudoNode()) {
         if (!node->rendererIsEditable()) {
             // If it can be found, we prefer a visually equivalent position that is editable. 
             Position position = createLegacyEditingPosition(node, offset);
@@ -3022,8 +3021,8 @@ VisiblePosition RenderObject::createVisiblePosition(int offset, EAffinity affini
         // Find non-anonymous content after.
         RenderObject* renderer = child;
         while ((renderer = renderer->nextInPreOrder(parent))) {
-            if (renderer->node() && !renderer->isPseudoElement())
-                return VisiblePosition(firstPositionInOrBeforeNode(renderer->node()), DOWNSTREAM);
+            if (Node* node = renderer->nonPseudoNode())
+                return VisiblePosition(firstPositionInOrBeforeNode(node), DOWNSTREAM);
         }
 
         // Find non-anonymous content before.
@@ -3031,13 +3030,13 @@ VisiblePosition RenderObject::createVisiblePosition(int offset, EAffinity affini
         while ((renderer = renderer->previousInPreOrder())) {
             if (renderer == parent)
                 break;
-            if (renderer->node() && !renderer->isPseudoElement())
-                return VisiblePosition(lastPositionInOrAfterNode(renderer->node()), DOWNSTREAM);
+            if (Node* node = renderer->nonPseudoNode())
+                return VisiblePosition(lastPositionInOrAfterNode(node), DOWNSTREAM);
         }
 
         // Use the parent itself unless it too is anonymous.
-        if (parent->node() && !isPseudoElement())
-            return VisiblePosition(firstPositionInOrBeforeNode(parent->node()), DOWNSTREAM);
+        if (Node* node = parent->nonPseudoNode())
+            return VisiblePosition(firstPositionInOrBeforeNode(node), DOWNSTREAM);
 
         // Repeat at the next level up.
         child = parent;

@@ -572,8 +572,6 @@ private:
 
     virtual void borderFitAdjust(LayoutRect&) const; // Shrink the box in which the border paints if border-fit is set.
 
-    virtual void updateBeforeAfterContent(PseudoId);
-    
     virtual RootInlineBox* createRootInlineBox(); // Subclassed by SVG and Ruby.
 
     // Called to lay out the legend for a fieldset or the ruby text of a ruby run.

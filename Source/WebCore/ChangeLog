@@ -1,3 +1,86 @@
+2012-12-11  Elliott Sprehn  <esprehn@chromium.org>
+
+        Switch to new PseudoElement based :before and :after
+        https://bugs.webkit.org/show_bug.cgi?id=104462
+
+        Reviewed by Antti Koivisto.
+
+        Switch to the new PseudoElement based generated content implementation
+        that moves :before and :after into the DOM. This also switches to using
+        the ComposedShadowTreeWalker for determining the siblings of PseudoElement's
+        making the new generated content implementation support adding :before
+        and :after into <input> elements.
+
+        Tests: fast/css-generated-content/block-inside-inline.html
+               fast/css-generated-content/box-orient.html
+
+        * dom/ComposedShadowTreeWalker.cpp:
+        (WebCore::ComposedShadowTreeWalker::pseudoAwareNextSibling):
+        (WebCore):
+        (WebCore::ComposedShadowTreeWalker::pseudoAwarePreviousSibling):
+        (WebCore::ComposedShadowTreeWalker::traverseParent):
+        * dom/ComposedShadowTreeWalker.h:
+        (ComposedShadowTreeWalker):
+        * dom/Element.cpp:
+        (WebCore::Element::attach):
+        (WebCore::Element::recalcStyle):
+        * dom/Node.cpp:
+        * dom/Node.h:
+        (Node):
+        * dom/NodeRenderingContext.cpp:
+        (WebCore::NodeRenderingContext::nextRenderer):
+        (WebCore::NodeRenderingContext::previousRenderer):
+        (WebCore::NodeRenderingContext::createRendererForElementIfNeeded):
+        * dom/Position.cpp:
+        (WebCore::Position::Position):
+        (WebCore::Position::hasRenderedNonAnonymousDescendantsWithHeight):
+        * editing/visible_units.cpp:
+        (WebCore::logicallyPreviousBox):
+        (WebCore::logicallyNextBox):
+        (WebCore::startPositionForLine):
+        (WebCore::endPositionForLine):
+        * html/HTMLTextFormControlElement.cpp:
+        (WebCore::HTMLTextFormControlElement::childShouldCreateRenderer):
+        * page/DragController.cpp:
+        (WebCore::DragController::draggableNode):
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::styleDidChange):
+        (WebCore::RenderBlock::splitBlocks):
+        (WebCore::RenderBlock::addChildIgnoringAnonymousColumnBlocks):
+        (WebCore::RenderBlock::createReplacementRunIn):
+        (WebCore::RenderBlock::isSelectionRoot):
+        * rendering/RenderBlock.h:
+        (RenderBlock):
+        * rendering/RenderButton.cpp:
+        * rendering/RenderButton.h:
+        (RenderButton):
+        * rendering/RenderInline.cpp:
+        (WebCore::RenderInline::styleDidChange):
+        (WebCore::RenderInline::addChildIgnoringContinuation):
+        (WebCore::RenderInline::splitInlines):
+        * rendering/RenderListItem.cpp:
+        (WebCore::RenderListItem::updateMarkerLocation):
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::createVisiblePosition):
+        * rendering/RenderObject.h:
+        (WebCore::RenderObject::nonPseudoNode):
+        (RenderObject):
+        (WebCore::RenderObject::clearNode):
+        (WebCore::RenderObject::generatingNode):
+        * rendering/RenderObjectChildList.cpp:
+        * rendering/RenderObjectChildList.h:
+        (RenderObjectChildList):
+        * rendering/RenderRubyText.cpp:
+        * rendering/RenderRubyText.h:
+        (RenderRubyText):
+        * rendering/RenderTableRow.cpp:
+        (WebCore::RenderTableRow::styleDidChange):
+        * rendering/RenderTableRow.h:
+        * rendering/RenderTableSection.cpp:
+        (WebCore::RenderTableSection::addChild):
+        * rendering/RenderWidget.cpp:
+        (WebCore::RenderWidget::destroy):
+
 2012-12-11  Jacky Jiang  <zhajiang@rim.com>
 
         [BlackBerry] Clean up unused defaultViewportArguments in RenderThemeBlackBerry.cpp

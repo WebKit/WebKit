@@ -153,14 +153,6 @@ bool RenderButton::canHaveGeneratedChildren() const
     return !node()->hasTagName(inputTag);
 }
 
-void RenderButton::updateBeforeAfterContent(PseudoId type)
-{
-    if (m_inner)
-        m_inner->children()->updateBeforeAfterContent(m_inner, type, this);
-    else
-        children()->updateBeforeAfterContent(this, type);
-}
-
 LayoutRect RenderButton::controlClipRect(const LayoutPoint& additionalOffset) const
 {
     // Clip to the padding box to at least give content the extra padding space.

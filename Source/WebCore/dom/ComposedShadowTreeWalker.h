@@ -90,6 +90,9 @@ public:
     void nextSibling();
     void previousSibling();
 
+    void pseudoAwareNextSibling();
+    void pseudoAwarePreviousSibling();
+
     void parent();
 
     void next();

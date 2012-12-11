@@ -46,8 +46,6 @@ public:
 
     virtual bool isChildAllowed(RenderObject*, RenderStyle*) const;
 
-    virtual void updateBeforeAfterContent(PseudoId);
-
 private:
     virtual bool avoidsFloats() const;
 

@@ -40,6 +40,7 @@
 #include "CSSStyleSheet.h"
 #include "ChildNodeList.h"
 #include "ClassNodeList.h"
+#include "ComposedShadowTreeWalker.h"
 #include "ContainerNodeAlgorithms.h"
 #include "ContextMenuController.h"
 #include "DOMImplementation.h"
@@ -447,34 +448,6 @@ void Node::setTreeScope(TreeScope* scope)
         return;
 
     ensureRareData()->setTreeScope(scope);
-}
-
-Node* Node::pseudoAwarePreviousSibling() const
-{
-    if (isElementNode() && !previousSibling()) {
-        Element* parent = parentOrHostElement();
-        if (!parent)
-            return 0;
-        if (isAfterPseudoElement() && parent->lastChild())
-            return parent->lastChild();
-        if (!isBeforePseudoElement())
-            return parent->beforePseudoElement();
-    }
-    return previousSibling();
-}
-
-Node* Node::pseudoAwareNextSibling() const
-{
-    if (isElementNode() && !nextSibling()) {
-        Element* parent = parentOrHostElement();
-        if (!parent)
-            return 0;
-        if (isBeforePseudoElement() && parent->firstChild())
-            return parent->firstChild();
-        if (!isAfterPseudoElement())
-            return parent->afterPseudoElement();
-    }
-    return nextSibling();
 }
 
 NodeRareData* Node::rareData() const

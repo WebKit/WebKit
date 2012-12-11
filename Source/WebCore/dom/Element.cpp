@@ -1168,6 +1168,8 @@ void Element::attach()
     if (parentElement() && parentElement()->isInCanvasSubtree())
         setIsInCanvasSubtree(true);
 
+    updatePseudoElement(BEFORE);
+
     // When a shadow root exists, it does the work of attaching the children.
     if (ElementShadow* shadow = this->shadow()) {
         parentPusher.push();
@@ -1176,6 +1178,8 @@ void Element::attach()
         parentPusher.push();
 
     ContainerNode::attach();
+
+    updatePseudoElement(AFTER);
 
     if (hasRareData()) {   
         ElementRareData* data = elementRareData();
@@ -1329,6 +1333,8 @@ void Element::recalcStyle(StyleChange change)
         }
     }
 
+    updatePseudoElement(BEFORE, change);
+
     // FIXME: This check is good enough for :hover + foo, but it is not good enough for :hover + foo + bar.
     // For now we will just worry about the common case, since it's a lot trickier to get the second case right
     // without doing way too much re-resolution.
@@ -1352,6 +1358,8 @@ void Element::recalcStyle(StyleChange change)
         forceCheckOfNextElementSibling = childRulesChanged && hasDirectAdjacentRules;
         forceCheckOfAnyElementSibling = forceCheckOfAnyElementSibling || (childRulesChanged && hasIndirectAdjacentRules);
     }
+
+    updatePseudoElement(AFTER, change);
 
     clearNeedsStyleRecalc();
     clearChildNeedsStyleRecalc();

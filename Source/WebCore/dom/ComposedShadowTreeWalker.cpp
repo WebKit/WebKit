@@ -33,6 +33,7 @@
 #include "HTMLContentElement.h"
 #include "HTMLShadowElement.h"
 #include "InsertionPoint.h"
+#include "PseudoElement.h"
 
 namespace WebCore {
 
@@ -180,6 +181,46 @@ void ComposedShadowTreeWalker::previousSibling()
     assertPostcondition();
 }
 
+void ComposedShadowTreeWalker::pseudoAwareNextSibling()
+{
+    assertPrecondition();
+
+    const Node* node = m_node;
+
+    if (node->isBeforePseudoElement())
+        m_node = traverseFirstChild(traverseParent(node));
+    else
+        m_node = traverseSiblingOrBackToInsertionPoint(node, TraversalDirectionForward);
+
+    if (!m_node && !node->isAfterPseudoElement()) {
+        Node* parent = traverseParent(node);
+        if (parent && parent->isElementNode())
+            m_node = toElement(parent)->afterPseudoElement();
+    }
+
+    assertPostcondition();
+}
+
+void ComposedShadowTreeWalker::pseudoAwarePreviousSibling()
+{
+    assertPrecondition();
+
+    const Node* node = m_node;
+
+    if (node->isAfterPseudoElement())
+        m_node = traverseLastChild(traverseParent(node));
+    else
+        m_node = traverseSiblingOrBackToInsertionPoint(node, TraversalDirectionBackward);
+
+    if (!m_node && !node->isBeforePseudoElement()) {
+        Node* parent = traverseParent(node);
+        if (parent && parent->isElementNode())
+            m_node = toElement(parent)->beforePseudoElement();
+    }
+
+    assertPostcondition();
+}
+
 Node* ComposedShadowTreeWalker::traverseDistributedNodes(const Node* node, const InsertionPoint* insertionPoint, TraversalDirection direction)
 {
     for (const Node* next = node; next; next = (direction == TraversalDirectionForward ? insertionPoint->nextTo(next) : insertionPoint->previousTo(next))) {
@@ -258,6 +299,9 @@ void ComposedShadowTreeWalker::parent()
 // https://bugs.webkit.org/show_bug.cgi?id=90415
 Node* ComposedShadowTreeWalker::traverseParent(const Node* node, ParentTraversalDetails* details) const
 {
+    if (node->isPseudoElement())
+        return node->parentOrHostNode();
+
     if (!canCrossUpperBoundary() && node->isShadowRoot()) {
         ASSERT(toShadowRoot(node)->isYoungest());
         return 0;

@@ -625,7 +625,7 @@ Node* DragController::draggableNode(const Frame* src, Node* startNode, const Int
     state.m_dragType = (src->selection()->contains(dragOrigin)) ? DragSourceActionSelection : DragSourceActionNone;
 
     for (const RenderObject* renderer = startNode->renderer(); renderer; renderer = renderer->parent()) {
-        Node* node = renderer->node();
+        Node* node = renderer->nonPseudoNode();
         if (!node)
             // Anonymous render blocks don't correspond to actual DOM nodes, so we skip over them
             // for the purposes of finding a draggable node.

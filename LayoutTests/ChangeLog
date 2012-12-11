@@ -1,3 +1,33 @@
+2012-12-11  Elliott Sprehn  <esprehn@chromium.org>
+
+        Switch to new PseudoElement based :before and :after
+        https://bugs.webkit.org/show_bug.cgi?id=104462
+
+        Reviewed by Antti Koivisto.
+
+        Add test for block generated content inside inlines which is now supported
+        properly, and also for using box-orient and reordering.
+
+        before-content-continuation.html's expectations change because we now
+        support block content properly.
+
+        I skipped fast/css-generated-content/table-row-group-to-inline.html
+        which needs a rebaseline after this this lands. Unfortunately the test
+        output is still wrong because we leave an anonymous RenderTable in the
+        tree, but that bug has always been there.
+
+        I also skipped fast/css/empty-generated-content.html which needs rebaselines
+        as we no longer create extra anonymous blocks, though the reason is not clear
+        to me.
+
+        * fast/css-generated-content/before-content-continuation-chain-expected.txt:
+        * fast/css-generated-content/block-inside-inline-expected.html: Added.
+        * fast/css-generated-content/block-inside-inline.html: Added.
+        * fast/css-generated-content/box-orient-expected.html: Added.
+        * fast/css-generated-content/box-orient.html: Added.
+        * platform/chromium/TestExpectations:
+        * platform/mac/TestExpectations:
+
 2012-12-11  Nate Chapin  <japhet@chromium.org>
 
         Route main resource loads through the memory cache.

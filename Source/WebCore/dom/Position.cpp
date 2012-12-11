@@ -87,6 +87,7 @@ Position::Position(PassRefPtr<Node> anchorNode, LegacyEditingOffset offset)
 #else
     ASSERT(!m_anchorNode || !m_anchorNode->isShadowRoot());
 #endif
+    ASSERT(!m_anchorNode || !m_anchorNode->isPseudoElement());
 }
 
 Position::Position(PassRefPtr<Node> anchorNode, AnchorType anchorType)
@@ -101,6 +102,8 @@ Position::Position(PassRefPtr<Node> anchorNode, AnchorType anchorType)
 #else
     ASSERT(!m_anchorNode || !m_anchorNode->isShadowRoot());
 #endif
+
+    ASSERT(!m_anchorNode || !m_anchorNode->isPseudoElement());
 
     ASSERT(anchorType != PositionIsOffsetInAnchor);
     ASSERT(!((anchorType == PositionIsBeforeChildren || anchorType == PositionIsAfterChildren)
@@ -119,6 +122,8 @@ Position::Position(PassRefPtr<Node> anchorNode, int offset, AnchorType anchorTyp
 #else
     ASSERT(!m_anchorNode || !editingIgnoresContent(m_anchorNode.get()) || !m_anchorNode->isShadowRoot());
 #endif
+
+    ASSERT(!m_anchorNode || !m_anchorNode->isPseudoElement());
 
     ASSERT(anchorType == PositionIsOffsetInAnchor);
 }
@@ -840,7 +845,7 @@ bool Position::hasRenderedNonAnonymousDescendantsWithHeight(RenderObject* render
 {
     RenderObject* stop = renderer->nextInPreOrderAfterChildren();
     for (RenderObject *o = renderer->firstChild(); o && o != stop; o = o->nextInPreOrder())
-        if (o->node() && !o->node()->isPseudoElement()) {
+        if (o->nonPseudoNode()) {
             if ((o->isText() && toRenderText(o)->linesBoundingBox().height()) ||
                 (o->isBox() && toRenderBox(o)->borderBoundingBox().height()))
                 return true;

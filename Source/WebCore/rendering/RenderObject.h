@@ -623,17 +623,15 @@ public:
     bool isRooted(RenderView** = 0) const;
 
     Node* node() const { return isAnonymous() ? 0 : m_node; }
+    Node* nonPseudoNode() const { return isPseudoElement() ? 0 : node(); }
+
+    // FIXME: Why does RenderWidget need this?
+    void clearNode() { m_node = 0; }
 
     // Returns the styled node that caused the generation of this renderer.
     // This is the same as node() except for renderers of :before and :after
     // pseudo elements for which their parent node is returned.
-    Node* generatingNode() const
-    {
-        if (isPseudoElement())
-            return node()->parentOrHostNode();
-        return m_node == document() ? 0 : m_node;
-    }
-    void setNode(Node* node) { m_node = node; }
+    Node* generatingNode() const { return isPseudoElement() ? node()->parentOrHostNode() : node(); }
 
     Document* document() const { return m_node->document(); }
     Frame* frame() const { return document()->frame(); }

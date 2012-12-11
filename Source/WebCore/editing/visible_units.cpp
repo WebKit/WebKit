@@ -215,8 +215,8 @@ static const InlineTextBox* logicallyPreviousBox(const VisiblePosition& visibleP
         return previousBox;
 
     while (1) {
-        Node* startNode = startBox->renderer() ? startBox->renderer()->node() : 0;
-        if (!startNode || startNode->isPseudoElement())
+        Node* startNode = startBox->renderer() ? startBox->renderer()->nonPseudoNode() : 0;
+        if (!startNode)
             break;
 
         Position position = previousRootInlineBoxCandidatePosition(startNode, visiblePosition, ContentIsEditable);
@@ -256,8 +256,8 @@ static const InlineTextBox* logicallyNextBox(const VisiblePosition& visiblePosit
         return nextBox;
 
     while (1) {
-        Node* startNode = startBox->renderer() ? startBox->renderer()->node() : 0;
-        if (!startNode || startNode->isPseudoElement())
+        Node* startNode = startBox->renderer() ? startBox->renderer()->nonPseudoNode() : 0;
+        if (!startNode)
             break;
 
         Position position = nextRootInlineBoxCandidatePosition(startNode, visiblePosition, ContentIsEditable);
@@ -744,8 +744,8 @@ static VisiblePosition startPositionForLine(const VisiblePosition& c, LineEndpoi
             if (!startRenderer)
                 return VisiblePosition();
 
-            startNode = startRenderer->node();
-            if (startNode && !startNode->isPseudoElement())
+            startNode = startRenderer->nonPseudoNode();
+            if (startNode)
                 break;
 
             startBox = startBox->nextLeafChild();
@@ -816,8 +816,8 @@ static VisiblePosition endPositionForLine(const VisiblePosition& c, LineEndpoint
             if (!endRenderer)
                 return VisiblePosition();
 
-            endNode = endRenderer->node();
-            if (endNode && !endNode->isPseudoElement())
+            endNode = endRenderer->nonPseudoNode();
+            if (endNode)
                 break;
             
             endBox = endBox->prevLeafChild();

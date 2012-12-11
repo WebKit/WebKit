@@ -190,9 +190,6 @@ public:
     bool hasAttributes() const;
     NamedNodeMap* attributes() const;
 
-    Node* pseudoAwarePreviousSibling() const;
-    Node* pseudoAwareNextSibling() const;
-
     virtual KURL baseURI() const;
     
     void getSubresourceURLs(ListHashSet<KURL>&) const;
