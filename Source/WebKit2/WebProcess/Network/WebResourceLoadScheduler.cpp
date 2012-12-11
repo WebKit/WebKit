@@ -92,12 +92,6 @@ void WebResourceLoadScheduler::scheduleLoad(ResourceLoader* resourceLoader, Reso
     
     ResourceRequest request = resourceLoader->request();
     
-    // We want the network process involved in scheduling data URL loads but it doesn't need to know the full (often long) URL.
-    if (request.url().protocolIsData()) {
-        DEFINE_STATIC_LOCAL(KURL, dataURL, (KURL(), "data:"));
-        request.setURL(dataURL);
-    }
-    
     // FIXME (NetworkProcess): When the ResourceLoader asks its FrameLoaderClient about using
     // credential storage it passes along its identifier.
     // But at this point it doesn't have the correct identifier yet.

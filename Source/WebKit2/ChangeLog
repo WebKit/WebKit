@@ -1,3 +1,15 @@
+2012-12-11  Alexey Proskuryakov  <ap@apple.com>
+
+        <rdar://problem/12857080> Per-Tab WebProcess: Blue lines between menu tabs at apple.com
+        https://bugs.webkit.org/show_bug.cgi?id=104709
+
+        Reviewed by Sam Weinig.
+
+        Data URLs were broken. Removing a no longer valid optimization for now.
+
+        * WebProcess/Network/WebResourceLoadScheduler.cpp:
+        (WebKit::WebResourceLoadScheduler::scheduleLoad):
+
 2012-12-11  Michael Pruett  <michael@68k.org>
 
         [JSC] Add tests for explicit serialization values
