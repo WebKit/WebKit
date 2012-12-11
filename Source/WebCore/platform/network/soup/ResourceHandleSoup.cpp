@@ -79,6 +79,11 @@ namespace WebCore {
 
 #define READ_BUFFER_SIZE 8192
 
+inline static void soupLogPrinter(SoupLogger* logger, SoupLoggerLogLevel, char direction, const char* data, gpointer)
+{
+    LOG(Network, "%c %s", direction, data);
+}
+
 static bool loadingSynchronousRequest = false;
 
 class WebCoreSynchronousLoader : public ResourceHandleClient {
@@ -266,6 +271,7 @@ static void ensureSessionIsInitialized(SoupSession* session)
     if (!soup_session_get_feature(session, SOUP_TYPE_LOGGER) && LogNetwork.state == WTFLogChannelOn) {
         SoupLogger* logger = soup_logger_new(static_cast<SoupLoggerLogLevel>(SOUP_LOGGER_LOG_BODY), -1);
         soup_session_add_feature(session, SOUP_SESSION_FEATURE(logger));
+        soup_logger_set_printer(logger, soupLogPrinter, 0, 0);
         g_object_unref(logger);
     }
 #endif // !LOG_DISABLED
