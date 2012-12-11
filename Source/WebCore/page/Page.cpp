@@ -1181,11 +1181,17 @@ void Page::addRelevantRepaintedObject(RenderObject* object, const LayoutRect& ob
     if (!isCountingRelevantRepaintedObjects())
         return;
 
+    // Objects inside sub-frames are not considered to be relevant.
+    if (object->document()->frame() != mainFrame())
+        return;
+
+    RenderView* view = object->view();
+    if (!view)
+        return;
+
     // The objects are only relevant if they are being painted within the viewRect().
-    if (RenderView* view = object->view()) {
-        if (!objectPaintRect.intersects(pixelSnappedIntRect(view->viewRect())))
-            return;
-    }
+    if (!objectPaintRect.intersects(pixelSnappedIntRect(view->viewRect())))
+        return;
 
     IntRect snappedPaintRect = pixelSnappedIntRect(objectPaintRect);
 
@@ -1198,10 +1204,6 @@ void Page::addRelevantRepaintedObject(RenderObject* object, const LayoutRect& ob
     }
 
     m_relevantPaintedRegion.unite(snappedPaintRect);
-
-    RenderView* view = object->view();
-    if (!view)
-        return;
     
     float viewArea = view->viewRect().width() * view->viewRect().height();
     float ratioOfViewThatIsPainted = m_relevantPaintedRegion.totalArea() / viewArea;
