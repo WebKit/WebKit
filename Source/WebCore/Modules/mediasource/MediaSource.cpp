@@ -281,13 +281,13 @@ void MediaSource::append(const String& id, PassRefPtr<Uint8Array> data, Exceptio
         return;
     }
 
-    if (!m_player || m_readyState != openKeyword()) {
+    if (!m_player || m_readyState == closedKeyword()) {
         ec = INVALID_STATE_ERR;
         return;
     }
 
-    if (!data->length())
-        return;
+    if (m_readyState == endedKeyword())
+        setReadyState(openKeyword());
 
     if (!m_player->sourceAppend(id, data->data(), data->length())) {
         ec = SYNTAX_ERR;
@@ -308,7 +308,7 @@ void MediaSource::abort(const String& id, ExceptionCode& ec)
 
 bool MediaSource::setTimestampOffset(const String& id, double offset, ExceptionCode& ec)
 {
-    if (!m_player || m_readyState != openKeyword()) {
+    if (!m_player || m_readyState == closedKeyword()) {
         ec = INVALID_STATE_ERR;
         return false;
     }

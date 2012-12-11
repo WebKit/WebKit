@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <script src="/media-resources/video-test.js"></script>
+        <script src="/media/resources/media-source/webm/segment-info.js"></script>
+        <script src="media-source.js"></script>
+        <script>
+            var segmentHelper = new MediaSourceTest.SegmentHelper(WebMSegmentInfo.testWebM);
+
+            function onSourceOpen(event)
+            {
+                event.target.removeEventListener('webkitsourceopen', onSourceOpen);
+
+                segmentHelper.addSourceBuffer();
+                consoleWrite("Appending initialization segment.");
+                segmentHelper.appendInitSegment();
+
+                waitForEventOnce('loadedmetadata', function()
+                {
+                    try
+                    {
+                        consoleWrite("Appending first media segment.");
+                        segmentHelper.appendMediaSegment(0);
+
+                       MediaSourceTest.expectBufferedRange(mediaSource.sourceBuffers[0], [[0, 0.385]]);
+
+                       consoleWrite("Calling endOfStream().");
+                       mediaSource.endOfStream();
+
+                       MediaSourceTest.expectSourceState(mediaSource, "ended");
+
+                       consoleWrite("Setting timestampOffset to 1.");
+                       mediaSource.sourceBuffers[0].timestampOffset = 1;
+
+                       consoleWrite("Appending second media segment.");
+                       segmentHelper.sourceBuffer.append(segmentHelper.mediaSegments[1]);
+
+                       MediaSourceTest.expectBufferedRange(mediaSource.sourceBuffers[0], [[0, 0.385], [1.385, 1.780]]);
+
+                       MediaSourceTest.expectSourceState(mediaSource, "open");
+                   }
+                   catch (e)
+                   {
+                       failTest("Unexpected exception: " + e);
+                   }
+
+                   endTest();
+                });
+            }
+
+            function onLoad()
+            {
+                findMediaElement();
+
+                waitForEventAndFail('error');
+
+                segmentHelper.init(video, function(success)
+                {
+                    if (!success) {
+                        failTest("Failed to load segment data");
+                        return;
+                    }
+
+                    mediaSource.addEventListener('webkitsourceopen', onSourceOpen);
+                    MediaSourceTest.setSrcToMediaSourceTestURL(video);
+                });
+            }
+        </script>
+    </head>
+    <body onload="onLoad()">
+        <video> </video>
+        <p>Tests setting a timestampOffset and calling append() after the MediaSource has transitioned to the "ended" state.</p>
+    </body>
+</html>

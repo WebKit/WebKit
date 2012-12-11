@@ -153,10 +153,6 @@
                 consoleWrite("Test append with a null buffer.");
                 expectExceptionOnAppend(null, DOMException.INVALID_ACCESS_ERR);
 
-                consoleWrite("Test append after ended.");
-                mediaSource.endOfStream();
-                expectExceptionOnAppend(initSegment, DOMException.INVALID_STATE_ERR);
-
                 consoleWrite("Test append after buffer has been removed.");
                 mediaSource.removeSourceBuffer(segmentHelper.sourceBuffer);
                 expectExceptionOnAppend(initSegment, DOMException.INVALID_STATE_ERR);

@@ -38,8 +38,6 @@ EVENT(webkitsourceopen)
 Test a successful append.
 Test append with a null buffer.
 Got expected exception Error: InvalidAccessError: DOM Exception 15
-Test append after ended.
-Got expected exception Error: InvalidStateError: DOM Exception 11
 Test append after buffer has been removed.
 Got expected exception Error: InvalidStateError: DOM Exception 11
 END OF TEST

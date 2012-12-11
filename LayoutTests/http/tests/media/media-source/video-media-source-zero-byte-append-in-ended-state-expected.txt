@@ -1,0 +1,9 @@
+Tests calling append() with an empty Uint8Array after the MediaSource has transitioned to the "ended" state.
+
+Appending initialization segment.
+EVENT(loadedmetadata)
+Appending first media segment.
+Calling endOfStream().
+Appending zero length Uint8Array.
+END OF TEST
+

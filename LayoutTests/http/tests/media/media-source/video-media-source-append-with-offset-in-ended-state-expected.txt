@@ -1,0 +1,10 @@
+Tests setting a timestampOffset and calling append() after the MediaSource has transitioned to the "ended" state.
+
+Appending initialization segment.
+EVENT(loadedmetadata)
+Appending first media segment.
+Calling endOfStream().
+Setting timestampOffset to 1.
+Appending second media segment.
+END OF TEST
+
