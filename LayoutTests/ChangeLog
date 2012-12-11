@@ -1,3 +1,9 @@
+2012-12-11  Martin Robinson  <mrobinson@igalia.com>
+
+        Unskip some tests that are now passing with the switch to the Harfbuzz backend.
+
+        * platform/gtk/TestExpectations: Unskip some recently passing tests.
+
 2012-12-11  Allan Sandfeld Jensen  <allan.jensen@digia.com>
 
         [Qt] Support third-party cookie policy for Qt clients
