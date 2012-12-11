@@ -1,3 +1,10 @@
+2012-12-10  Noel Gordon  <noel.gordon@gmail.com>
+
+        [chromium] Unreviewed gardening: rebase fast/text/font-initial.html on linux
+
+        * platform/chromium-linux/fast/text/font-initial-expected.png: Added.
+        * platform/chromium/TestExpectations:
+
 2012-12-10  No'am Rosenthal  <noam@webkit.org>
 
         REGRESSION (r137006): CSS clip on solid color composited div broken

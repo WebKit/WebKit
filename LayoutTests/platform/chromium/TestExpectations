@@ -965,7 +965,7 @@ crbug.com/8630 [ Android Linux Win ] fast/repaint/body-background-image.html [ F
 
 # Relies on text metrics to pass. Rework to be meaningful for ports other than platform/mac.
 crbug.com/8630 [ Android Win ] fast/repaint/overflow-outline-repaint.html [ Failure ImageOnlyFailure ]
-crbug.com/8630 [ Android Linux Win ] fast/text/font-initial.html [ Failure ImageOnlyFailure ]
+crbug.com/8630 [ Android Win ] fast/text/font-initial.html [ Failure ImageOnlyFailure ]
 
 # Need a setAuthorAndUserStylesEnabled method in
 # testRunner. Now we have preference to enable/disable user
