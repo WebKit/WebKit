@@ -1418,14 +1418,6 @@ webkit.org/b/104493 svg/custom/js-update-transform-addition.svg [ Failure ]
 webkit.org/b/104493 svg/custom/js-update-transform-changes.svg [ Failure ]
 webkit.org/b/104493 svg/custom/text-xy-updates-SVGList.xhtml [ Failure ]
 
-webkit.org/b/104571 http/tests/security/xssAuditor/base-href-null-char.html [ Failure ]
-webkit.org/b/104571 http/tests/security/xssAuditor/embed-tag-null-char.html [ Failure ]
-webkit.org/b/104571 http/tests/security/xssAuditor/link-onclick-null-char.html [ Failure ]
-webkit.org/b/104571 http/tests/security/xssAuditor/script-tag-addslashes-null-char.html [ Failure ]
-webkit.org/b/104571 http/tests/security/xssAuditor/script-tag-null-char.html [ Failure ]
-webkit.org/b/104571 http/tests/security/xssAuditor/script-tag-with-source-null-char.html [ Failure ]
-webkit.org/b/104571 http/tests/xmlhttprequest/origin-exact-matching.html [ Failure ]
-
 webkit.org/b/104649 svg/W3C-SVG-1.1-SE/svgdom-over-01-f.svg [ Failure ]
 
 #////////////////////////////////////////////////////////////////////////////////////////

@@ -161,6 +161,13 @@ os.environ['PKG_CONFIG_PATH'] = common.build_path('Source', 'JavaScriptCore')
 if pkg_config_path:
     os.environ['PKG_CONFIG_PATH'] += ':' + pkg_config_path
 
+# Newer versions of glib have deprecated g_type_init, so we need to disable
+# that warning when running gtkdoc-scanobj by overriding the CFLAGS we use
+# to compile it.
+cflags = os.environ.get('CFLAGS', '')
+cflags += ' -DGLIB_VERSION_MIN_REQUIRED=GLIB_VERSION_2_32'
+os.environ['CFLAGS'] = cflags
+
 saw_webkit1_warnings = saw_webkit2_warnings = False
 
 pkg_config_path = common.build_path('Source', 'WebKit', 'gtk', 'webkitgtk-3.0.pc')
