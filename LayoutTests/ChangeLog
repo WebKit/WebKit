@@ -1,3 +1,15 @@
+2012-12-10  Mihnea Ovidenie  <mihnea@adobe.com>
+
+        [CSSRegions] Clean-up style for 2 regions expected results files
+        https://bugs.webkit.org/show_bug.cgi?id=104572
+
+        Reviewed by Tony Chang.
+
+        Remove Win line endings, remove unnecessary spaces and close all html tags.
+
+        * fast/regions/positioned-objects-block-static-spanning-regions-expected.html:
+        * fast/regions/positioned-objects-block-static-spanning-regions-rtl-expected.html:
+
 2012-12-10  Noel Gordon  <noel.gordon@gmail.com>
 
         [chromium] Unreviewed gardening
