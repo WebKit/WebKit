@@ -419,14 +419,15 @@ void WebFrameLoaderClient::dispatchDidFinishLoad()
 void WebFrameLoaderClient::dispatchDidLayout(LayoutMilestones milestones)
 {
     WebView* webView = m_webFrame->webView();
-    COMPtr<IWebFrameLoadDelegatePrivate> frameLoadDelegatePrivate;
 
     if (milestones & DidFirstLayout) {
+        COMPtr<IWebFrameLoadDelegatePrivate> frameLoadDelegatePrivate;
         if (SUCCEEDED(webView->frameLoadDelegatePrivate(&frameLoadDelegatePrivate)) && frameLoadDelegatePrivate)
             frameLoadDelegatePrivate->didFirstLayoutInFrame(webView, m_webFrame);
     }
 
     if (milestones & DidFirstVisuallyNonEmptyLayout) {
+        COMPtr<IWebFrameLoadDelegatePrivate> frameLoadDelegatePrivate;
         if (SUCCEEDED(webView->frameLoadDelegatePrivate(&frameLoadDelegatePrivate)) && frameLoadDelegatePrivate)
             frameLoadDelegatePrivate->didFirstVisuallyNonEmptyLayoutInFrame(webView, m_webFrame);
     }
