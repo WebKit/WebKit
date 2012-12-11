@@ -397,23 +397,7 @@
 				>
 			</File>
 			<File
-				RelativePath=".\InjectedBundleControllerWin.cpp"
-				>
-			</File>
-			<File
 				RelativePath=".\main.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\PlatformUtilitiesWin.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\PlatformWebViewWin.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\WindowMessageObserver.h"
 				>
 			</File>
 		</Filter>
@@ -433,224 +417,8 @@
 				</Filter>
 			</Filter>
 			<Filter
-				Name="WebKit2"
-				>
-				<File
-					RelativePath="..\Tests\WebKit2\18-characters.html"
-					>
-				</File>
-				<File
-					RelativePath="..\Tests\WebKit2\AboutBlankLoad.cpp"
-					>
-				</File>
-				<File
-					RelativePath="..\Tests\WebKit2\CanHandleRequest.cpp"
-					>
-				</File>
-				<File
-					RelativePath="..\Tests\WebKit2\CookieManager.cpp"
-					>
-				</File>
-				<File
-					RelativePath="..\Tests\WebKit2\DocumentStartUserScriptAlertCrash.cpp"
-					>
-				</File>
-				<File
-					RelativePath="..\Tests\WebKit2\DownloadDecideDestinationCrash.cpp"
-					>
-				</File>
-				<File
-					RelativePath="..\Tests\WebKit2\EvaluateJavaScript.cpp"
-					>
-				</File>
-				<File
-					RelativePath="..\Tests\WebKit2\FailedLoad.cpp"
-					>
-				</File>
-				<File
-					RelativePath="..\Tests\WebKit2\file-with-anchor.html"
-					>
-				</File>
-				<File
-					RelativePath="..\Tests\WebKit2\Find.cpp"
-					>
-				</File>
-				<File
-					RelativePath="..\Tests\WebKit2\find.html"
-					>
-				</File>
-				<File
-					RelativePath="..\Tests\WebKit2\ForceRepaint.cpp"
-					>
-				</File>
-				<File
-					RelativePath="..\Tests\WebKit2\FrameMIMETypeHTML.cpp"
-					>
-				</File>
-				<File
-					RelativePath="..\Tests\WebKit2\FrameMIMETypePNG.cpp"
-					>
-				</File>
-				<File
-					RelativePath="..\Tests\WebKit2\HitTestResultNodeHandle.cpp"
-					>
-				</File>
-				<File
-					RelativePath="..\Tests\WebKit2\icon.png"
-					>
-				</File>
-				<File
-					RelativePath="..\Tests\WebKit2\InjectedBundleBasic.cpp"
-					>
-				</File>
-				<File
-					RelativePath="..\Tests\WebKit2\LoadAlternateHTMLStringWithNonDirectoryURL.cpp"
-					>
-				</File>
-				<File
-					RelativePath="..\Tests\WebKit2\LoadCanceledNoServerRedirectCallback.cpp"
-					>
-				</File>
-				<File
-					RelativePath="..\Tests\WebKit2\mouse-move-listener.html"
-					>
-				</File>
-				<File
-					RelativePath="..\Tests\WebKit2\MouseMoveAfterCrash.cpp"
-					>
-				</File>
-				<File
-					RelativePath="..\Tests\WebKit2\PageLoadBasic.cpp"
-					>
-				</File>
-				<File
-					RelativePath="..\Tests\WebKit2\PageLoadDidChangeLocationWithinPageForFrame.cpp"
-					>
-				</File>
-				<File
-					RelativePath="..\Tests\WebKit2\PreventEmptyUserAgent.cpp"
-					>
-				</File>
-				<File
-					RelativePath="..\Tests\WebKit2\PrivateBrowsingPushStateNoHistoryCallback.cpp"
-					>
-				</File>
-				<File
-					RelativePath="..\Tests\WebKit2\push-state.html"
-					>
-				</File>
-				<File
-					RelativePath="..\Tests\WebKit2\ResponsivenessTimerDoesntFireEarly.cpp"
-					>
-				</File>
-				<File
-					RelativePath="..\Tests\WebKit2\RestoreSessionStateContainingFormData.cpp"
-					>
-				</File>
-				<File
-					RelativePath="..\Tests\WebKit2\simple-accelerated-compositing.html"
-					>
-				</File>
-				<File
-					RelativePath="..\Tests\WebKit2\simple-form.html"
-					>
-				</File>
-				<File
-					RelativePath="..\Tests\WebKit2\simple-iframe.html"
-					>
-				</File>
-				<File
-					RelativePath="..\Tests\WebKit2\simple.html"
-					>
-				</File>
-				<File
-					RelativePath="..\Tests\WebKit2\spacebar-scrolling.html"
-					>
-				</File>
-				<File
-					RelativePath="..\Tests\WebKit2\SpacebarScrolling.cpp"
-					>
-				</File>
-				<File
-					RelativePath="..\Tests\WebKit2\UserMessage.cpp"
-					>
-				</File>
-				<File
-					RelativePath="..\Tests\WebKit2\WebArchive.cpp"
-					>
-				</File>
-				<File
-					RelativePath="..\Tests\WebKit2\WKPreferences.cpp"
-					>
-				</File>
-				<File
-					RelativePath="..\Tests\WebKit2\WKString.cpp"
-					>
-				</File>
-				<File
-					RelativePath="..\Tests\WebKit2\WKStringJSString.cpp"
-					>
-				</File>
-				<Filter
-					Name="win"
-					>
-					<File
-						RelativePath="..\Tests\WebKit2\win\AltKeyGeneratesWMSysCommand.cpp"
-						>
-					</File>
-					<File
-						RelativePath="..\Tests\WebKit2\win\DoNotCopyANullCFURLResponse.cpp"
-						>
-						<FileConfiguration
-							Name="Debug_Cairo_CFLite|Win32"
-							ExcludedFromBuild="true"
-							>
-							<Tool
-								Name="VCCLCompilerTool"
-							/>
-						</FileConfiguration>
-						<FileConfiguration
-							Name="Release_Cairo_CFLite|Win32"
-							ExcludedFromBuild="true"
-							>
-							<Tool
-								Name="VCCLCompilerTool"
-							/>
-						</FileConfiguration>
-					</File>
-					<File
-						RelativePath="..\Tests\WebKit2\win\HideFindIndicator.cpp"
-						>
-					</File>
-					<File
-						RelativePath="..\Tests\WebKit2\win\ResizeViewWhileHidden.cpp"
-						>
-					</File>
-					<File
-						RelativePath="..\Tests\WebKit2\win\TranslateMessageGeneratesWMChar.cpp"
-						>
-					</File>
-					<File
-						RelativePath="..\Tests\WebKit2\win\WMCloseCallsUIClientClose.cpp"
-						>
-					</File>
-				</Filter>
-			</Filter>
-			<Filter
 				Name="WTF"
 				>
-				<Filter
-						Name="cf"
-						>
-						<File
-								RelativePath="..\Tests\WTF\cf\RetainPtrHashing.cpp"
-								>
-						</File>
-						<File
-								RelativePath="..\Tests\WTF\cf\RetainPtr.cpp"
-								>
-						</File>
-				</Filter>
 				<File
 					RelativePath="..\Tests\WTF\CheckedArithmeticOperations.cpp"
 					>
@@ -695,6 +463,18 @@
 					RelativePath="..\Tests\WTF\VectorReverse.cpp"
 					>
 				</File>
+				<Filter
+					Name="cf"
+					>
+					<File
+						RelativePath="..\Tests\WTF\cf\RetainPtr.cpp"
+						>
+					</File>
+					<File
+						RelativePath="..\Tests\WTF\cf\RetainPtrHashing.cpp"
+						>
+					</File>
+				</Filter>
 			</Filter>
 			<Filter
 				Name="WebKit"
@@ -711,26 +491,6 @@
 		</Filter>
 		<File
 			RelativePath="..\config.h"
-			>
-		</File>
-		<File
-			RelativePath="..\JavaScriptTest.cpp"
-			>
-		</File>
-		<File
-			RelativePath="..\JavaScriptTest.h"
-			>
-		</File>
-		<File
-			RelativePath="..\PlatformUtilities.cpp"
-			>
-		</File>
-		<File
-			RelativePath="..\PlatformUtilities.h"
-			>
-		</File>
-		<File
-			RelativePath="..\PlatformWebView.h"
 			>
 		</File>
 		<File
