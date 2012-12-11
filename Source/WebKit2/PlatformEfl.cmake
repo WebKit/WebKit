@@ -387,7 +387,7 @@ if (ENABLE_API_TESTS)
     foreach (testName ${EWK2UnitTests_BINARIES})
         add_executable(${testName} ${WEBKIT2_EFL_TEST_DIR}/${testName}.cpp)
         add_test(${testName} ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/${testName})
-        set_tests_properties(${testName} PROPERTIES TIMEOUT 60)
+        set_tests_properties(${testName} PROPERTIES TIMEOUT 180)
         target_link_libraries(${testName} ${EWK2UnitTests_LIBRARIES} ewk2UnitTestUtils)
     endforeach ()
 
