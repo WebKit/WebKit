@@ -2087,10 +2087,11 @@ void Element::cancelFocusAppearanceUpdate()
 
 void Element::normalizeAttributes()
 {
-    updateInvalidAttributes();
-    if (AttrNodeList* attrNodeList = attrNodeListForElement(this)) {
-        for (unsigned i = 0; i < attrNodeList->size(); ++i)
-            attrNodeList->at(i)->normalize();
+    if (!hasAttributes())
+        return;
+    for (unsigned i = 0; i < attributeCount(); ++i) {
+        if (RefPtr<Attr> attr = attrIfExists(attributeItem(i)->name()))
+            attr->normalize();
     }
 }
 

@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<script src="../js/resources/js-test-pre.js"></script>
+</head>
+<body>
+<script>
+
+description("Tests that mutating an elements attribute map during DOMSubtreeModified event dispatch doesn't break Node.normalize. Passes if it doesn't crash.");
+
+var el = document.createElement('div')
+el.setAttribute('a', 'a')
+el.setAttribute('b', 'b')
+el.attributes[1].appendChild(document.createTextNode())
+el.attributes[1].addEventListener('DOMSubtreeModified', function() { el.removeAttribute('b') },  false)
+el.normalize()
+
+</script>
+<script src="../js/resources/js-test-post.js"></script>
+</body>
+</html>

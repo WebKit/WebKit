@@ -1,3 +1,18 @@
+2012-12-11  Andreas Kling  <akling@apple.com>
+
+        REGRESSION(r133492): Heap-use-after-free in WebCore::Element::normalizeAttributes
+        <http://webkit.org/b/104488>
+
+        Reviewed by Antti Koivisto.
+
+        Don't cache the AttrNodeList* in a local when iterating over an Element's Attr nodes since
+        that pointer may go stale if JS runs in response to a DOMSubtreeModified event below Node::normalize().
+
+        Test: fast/dom/normalize-attributes-mutation-event-crash.html
+
+        * dom/Element.cpp:
+        (WebCore::Element::normalizeAttributes):
+
 2012-12-11  Jonathon Jongsma  <jonathon.jongsma@collabora.co.uk>
 
         [GTK] Soup network logs are frequently interrupted by other logging messages

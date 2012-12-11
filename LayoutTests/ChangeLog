@@ -1,3 +1,13 @@
+2012-12-11  Andreas Kling  <akling@apple.com>
+
+        REGRESSION(r133492): Heap-use-after-free in WebCore::Element::normalizeAttributes
+        <http://webkit.org/b/104488>
+
+        Reviewed by Antti Koivisto.
+
+        * fast/dom/normalize-attributes-mutation-event-crash-expected.txt: Added.
+        * fast/dom/normalize-attributes-mutation-event-crash.html: Added.
+
 2012-12-11  Beth Dakin  <bdakin@apple.com>
 
         Updating these test results after http://trac.webkit.org/changeset/137006 
