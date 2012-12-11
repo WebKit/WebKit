@@ -49,6 +49,7 @@ public:
     String formatMonth(int year, int zeroBaseMonth);
 #endif
     void clearPagePopupClient();
+    void histogramEnumeration(const String& name, int sample, int boundaryValue);
 
 private:
     explicit PagePopupController(PagePopupClient*);

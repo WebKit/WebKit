@@ -32,6 +32,7 @@
 #include "PagePopupController.h"
 
 #if ENABLE(PAGE_POPUP)
+#include "HistogramSupport.h"
 #include "PagePopupClient.h"
 #include "PlatformLocale.h"
 
@@ -75,6 +76,11 @@ String PagePopupController::formatMonth(int year, int zeroBaseMonth)
 void PagePopupController::clearPagePopupClient()
 {
     m_popupClient = 0;
+}
+
+void PagePopupController::histogramEnumeration(const String& name, int sample, int boundaryValue)
+{
+    HistogramSupport::histogramEnumeration(name.utf8().data(), sample, boundaryValue);
 }
 
 }

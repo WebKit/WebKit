@@ -699,6 +699,7 @@ function CalendarPicker(element, config) {
     this.fixWindowSize();
     this._handleBodyKeyDownBound = this._handleBodyKeyDown.bind(this);
     document.body.addEventListener("keydown", this._handleBodyKeyDownBound, false);
+    this.recordAction(CalendarPicker.Action.Opened);
 }
 CalendarPicker.prototype = Object.create(Picker.prototype);
 
@@ -706,6 +707,19 @@ CalendarPicker.NavigationBehaviour = {
     None: 0,
     Animate: 1 << 0,
     KeepSelectionPosition: 1 << 1
+};
+
+CalendarPicker.Action = {
+    Opened:                     0,
+    ClickedTodayButton:         1,
+    ClickedClearButton:         2,
+    ClickedDay:                 3,
+    ClickedForwardMonthButton:  4,
+    ClickedForwardYearButton:   5,
+    ClickedBackwardMonthButton: 6,
+    ClickedBackwardYearButton:  7,
+    OpenedMonthPopup:           8,
+    UsedMonthPopup:             9
 };
 
 CalendarPicker.prototype._handleWindowResize = function() {
@@ -727,13 +741,19 @@ CalendarPicker.prototype._layout = function() {
     this._element.classList.add(ClassNames.NoFocusRing);
 };
 
+CalendarPicker.prototype.recordAction = function(action) {
+    window.pagePopupController.histogramEnumeration("CalendarPicker.Action", action, Object.keys(CalendarPicker.Action).length - 1);
+};
+
 CalendarPicker.prototype.handleToday = function() {
+    this.recordAction(CalendarPicker.Action.ClickedTodayButton);
     var today = this.selectionConstructor.createFromToday();
     this._daysTable.selectRangeAndShowEntireRange(today);
     this.submitValue(today.toString());
 };
 
 CalendarPicker.prototype.handleClear = function() {
+    this.recordAction(CalendarPicker.Action.ClickedClearButton);
     this.submitValue("");
 };
 
@@ -976,6 +996,7 @@ YearMonthController.prototype.setMonth = function(month) {
 };
 
 YearMonthController.prototype._showPopup = function() {
+    this.picker.recordAction(CalendarPicker.Action.OpenedMonthPopup);
     this._monthPopup.style.display = "block";
     this._monthPopup.style.zIndex = "1000"; // Larger than the days area.
     this._monthPopup.style.left = this._month.offsetLeft + (this._month.offsetWidth - this._monthPopup.offsetWidth) / 2 + "px";
@@ -1085,6 +1106,7 @@ YearMonthController.prototype._handleMonthPopupKey = function(event)
 }
 
 YearMonthController.prototype._handleYearMonthChange = function() {
+    this.picker.recordAction(CalendarPicker.Action.UsedMonthPopup);
     this._closePopup();
     var selection = this._getSelection();
     if (!selection)
@@ -1129,15 +1151,19 @@ YearMonthController.NextTenYears = 120;
 YearMonthController.prototype._handleButtonClick = function(event) {
     if (event.target == this._left3)
         this.moveRelatively(YearMonthController.PreviousTenYears);
-    else if (event.target == this._left2)
+    else if (event.target == this._left2) {
+        this.picker.recordAction(CalendarPicker.Action.ClickedBackwardYearButton);
         this.moveRelatively(YearMonthController.PreviousYear);
-    else if (event.target == this._left1)
+    } else if (event.target == this._left1) {
+        this.picker.recordAction(CalendarPicker.Action.ClickedBackwardMonthButton);
         this.moveRelatively(YearMonthController.PreviousMonth);
-    else if (event.target == this._right1)
+    } else if (event.target == this._right1) {
+        this.picker.recordAction(CalendarPicker.Action.ClickedForwardMonthButton);
         this.moveRelatively(YearMonthController.NextMonth)
-    else if (event.target == this._right2)
+    } else if (event.target == this._right2) {
+        this.picker.recordAction(CalendarPicker.Action.ClickedForwardYearButton);
         this.moveRelatively(YearMonthController.NextYear);
-    else if (event.target == this._right3)
+    } else if (event.target == this._right3)
         this.moveRelatively(YearMonthController.NextTenYears);
     else
         return;
@@ -1456,6 +1482,7 @@ DaysTable.prototype._maybeSetNextMonth = function(navigationBehaviour) {
  * @param {Event} event
  */
 DaysTable.prototype._handleDayClick = function(event) {
+    this.picker.recordAction(CalendarPicker.Action.ClickedDay);
     if (event.target.classList.contains(ClassNames.Available))
         this.picker.submitValue(this._rangeForNode(event.target).toString());
 };
