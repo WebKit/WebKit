@@ -1,3 +1,23 @@
+2012-12-11  Ken Kania  <kkania@chromium.org>
+
+        [Inspector] Add command for dispatching mouse events.
+        https://bugs.webkit.org/show_bug.cgi?id=104074
+
+        Reviewed by Yury Semikhatsky.
+
+        Platform mouse event coordinates are relative to the containing window,
+        but the inspector command assumes they follow standard web coordinates,
+        where the origin is at the top left of the page and y increases as you
+        go down. We convert the coordinates to the window before constructing
+        the event. This also fixes the fact that some platforms have flipped
+        coordinate systems.
+        Also, update dispatchKeyEvent test to follow simpler dispatchMouseEvent
+        test.
+
+        * inspector-protocol/input/dispatchKeyEvent.html:
+        * inspector-protocol/input/dispatchMouseEvent-expected.txt: Added.
+        * inspector-protocol/input/dispatchMouseEvent.html: Added.
+
 2012-12-11  Csaba Osztrogonác  <ossy@webkit.org>
 
         [Qt] Unreviewed gardening, skip new failing tests.

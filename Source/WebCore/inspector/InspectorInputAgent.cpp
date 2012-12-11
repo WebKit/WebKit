@@ -34,11 +34,17 @@
 
 #include "InspectorInputAgent.h"
 
+#include "Chrome.h"
 #include "EventHandler.h"
 #include "Frame.h"
+#include "FrameView.h"
+#include "IntPoint.h"
+#include "IntRect.h"
+#include "IntSize.h"
 #include "Page.h"
 #include "PlatformEvent.h"
 #include "PlatformKeyboardEvent.h"
+#include "PlatformMouseEvent.h"
 
 #include <wtf/CurrentTime.h>
 #include <wtf/text/WTFString.h>
@@ -85,6 +91,67 @@ void InspectorInputAgent::dispatchKeyEvent(ErrorString* error, const String& typ
         static_cast<PlatformEvent::Modifiers>(modifiers ? *modifiers : 0),
         timestamp ? *timestamp : currentTime());
     m_page->mainFrame()->eventHandler()->keyEvent(event);
+}
+
+void InspectorInputAgent::dispatchMouseEvent(ErrorString* error, const String& type, const int* modifiers, const double* timestamp, const String* button, const int* clickCount, int x, int y)
+{
+    PlatformEvent::Type convertedType;
+    if (type == "mousePressed")
+        convertedType = PlatformEvent::MousePressed;
+    else if (type == "mouseReleased")
+        convertedType = PlatformEvent::MouseReleased;
+    else if (type == "mouseMoved")
+        convertedType = PlatformEvent::MouseMoved;
+    else {
+        *error = "Unrecognized type: " + type;
+        return;
+    }
+
+    MouseButton convertedButton = NoButton;
+    if (button) {
+        if (*button == "left")
+            convertedButton = LeftButton;
+        else if (*button == "middle")
+            convertedButton = MiddleButton;
+        else if (*button == "right")
+            convertedButton = RightButton;
+        else if (*button != "none") {
+            *error = "Unrecognized button: " + *button;
+            return;
+        }
+    }
+
+    // Some platforms may have flipped coordinate systems, but the given coordinates
+    // assume the origin is in the top-left of the window. Convert.
+    IntPoint convertedPoint = m_page->mainFrame()->view()->convertToContainingWindow(IntPoint(x, y));
+    IntPoint globalPoint = m_page->chrome()->rootViewToScreen(IntRect(IntPoint(x, y), IntSize(0, 0))).location();
+    int convertedModifiers = modifiers ? *modifiers : 0;
+    PlatformMouseEvent event(
+        convertedPoint,
+        globalPoint,
+        convertedButton,
+        convertedType,
+        clickCount ? *clickCount : 0,
+        convertedModifiers & PlatformEvent::ShiftKey,
+        convertedModifiers & PlatformEvent::CtrlKey,
+        convertedModifiers & PlatformEvent::AltKey,
+        convertedModifiers & PlatformEvent::MetaKey,
+        timestamp ? *timestamp : currentTime());
+
+    EventHandler* handler = m_page->mainFrame()->eventHandler();
+    switch (convertedType) {
+    case PlatformEvent::MousePressed:
+        handler->handleMousePressEvent(event);
+        break;
+    case PlatformEvent::MouseReleased:
+        handler->handleMouseReleaseEvent(event);
+        break;
+    case PlatformEvent::MouseMoved:
+        handler->handleMouseMoveEvent(event);
+        break;
+    default:
+        *error = "Unhandled type: " + type;
+    }
 }
 
 } // namespace WebCore

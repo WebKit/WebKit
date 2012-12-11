@@ -1,3 +1,28 @@
+2012-12-11  Ken Kania  <kkania@chromium.org>
+
+        [Inspector] Add command for dispatching mouse events.
+        https://bugs.webkit.org/show_bug.cgi?id=104074
+
+        Reviewed by Yury Semikhatsky.
+
+        Platform mouse event coordinates are relative to the containing window,
+        but the inspector command assumes they follow standard web coordinates,
+        where the origin is at the top left of the page and y increases as you
+        go down. We convert the coordinates to the window before constructing
+        the event. This also fixes the fact that some platforms have flipped
+        coordinate systems.
+        Also, update dispatchKeyEvent test to follow simpler dispatchMouseEvent
+        test.
+
+        Test: inspector-protocol/input/dispatchMouseEvent.html
+
+        * inspector/Inspector.json:
+        * inspector/InspectorInputAgent.cpp:
+        (WebCore::InspectorInputAgent::dispatchMouseEvent):
+        (WebCore):
+        * inspector/InspectorInputAgent.h:
+        (InspectorInputAgent):
+
 2012-12-11  Pavel Feldman  <pfeldman@chromium.org>
 
         Not reviewed: follow up to r137283: reduce inspector toolbar spacing 1px.

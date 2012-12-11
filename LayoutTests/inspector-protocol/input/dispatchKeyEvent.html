@@ -7,7 +7,8 @@ window.addEventListener("keydown", logEvent);
 window.addEventListener("keypress", logEvent);
 window.addEventListener("keyup", logEvent);
 
-function logEvent(event) {
+function logEvent(event)
+{
     log("-----Event-----");
     log("type: " + event.type);
     if (event.altKey)
@@ -50,18 +51,14 @@ function test()
         }
     ];
 
-    InspectorTest.sendCommand("Input.dispatchKeyEvent", events.shift(), continueTest);
+    for (var i = 0; i < events.length; i++)
+        InspectorTest.sendCommand("Input.dispatchKeyEvent", events[i], checkResponse.bind(undefined, i == events.length - 1));
 
-    function continueTest(msg) {
-        if (msg.error) {
+    function checkResponse(isLastCommand, msg)
+    {
+        if (msg.error)
             InspectorTest.log("Error: " + msg.error.message);
-            InspectorTest.completeTest();
-            return;
-        }
-
-        if (events.length)
-            InspectorTest.sendCommand("Input.dispatchKeyEvent", events.shift(), continueTest);
-        else
+        if (isLastCommand)
             InspectorTest.completeTest();
     }
 }

@@ -57,6 +57,7 @@ public:
 
     // Methods called from the frontend for simulating input.
     virtual void dispatchKeyEvent(ErrorString*, const String& type, const int* modifiers, const double* timestamp, const String* text, const String* unmodifiedText, const String* keyIdentifier, const int* windowsVirtualKeyCode, const int* nativeVirtualKeyCode, const int* macCharCode, const bool* autoRepeat, const bool* isKeypad, const bool* isSystemKey);
+    virtual void dispatchMouseEvent(ErrorString*, const String& type, const int* modifiers, const double* timestamp, const String* button, const int* clickCount, int x, int y);
 
 private:
     InspectorInputAgent(InstrumentingAgents*, InspectorState*, Page*);
