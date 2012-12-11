@@ -507,6 +507,8 @@ webkit.org/b/100688 editing/text-iterator/backward-textiterator-first-letter-cra
 
 webkit.org/b/104533 fast/block/float/overhanging-tall-block.html [ Crash ]
 
+webkit.org/b/104684 fast/xmlhttprequest/xmlhttprequest-recursive-sync-event.html [ Crash Pass ]
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Crashing tests
 #////////////////////////////////////////////////////////////////////////////////////////
@@ -679,8 +681,6 @@ Bug(GTK) http/tests/xmlhttprequest/timeout/xmlhttprequest-timeout-worker-twice.h
 #////////////////////////////////////////////////////////////////////////////////////////
 
 webkit.org/b/46644 fast/text/large-text-composed-char-dos.html [ Timeout ]
-
-Bug(GTK) http/tests/xmlhttprequest/redirect-cross-origin-tripmine.html [ Timeout ]
 
 Bug(GTK) [ Debug ] fast/css/user-drag-none.html [ Timeout ]
 
@@ -1404,6 +1404,8 @@ webkit.org/b/104493 svg/custom/js-update-transform-changes.svg [ Failure ]
 webkit.org/b/104493 svg/custom/text-xy-updates-SVGList.xhtml [ Failure ]
 
 webkit.org/b/104649 svg/W3C-SVG-1.1-SE/svgdom-over-01-f.svg [ Failure ]
+
+webkit.org/b/104686 http/tests/xmlhttprequest/redirect-cross-origin-tripmine.html [ Failure ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Tests failing
