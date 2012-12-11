@@ -385,7 +385,7 @@ void WebPageProxy::reattachToWebProcess()
     if (m_process->context()->processModel() == ProcessModelSharedSecondaryProcess)
         m_process = m_process->context()->ensureSharedWebProcess();
     else
-        m_process = m_process->context()->createNewWebProcess();
+        m_process = m_process->context()->createNewWebProcessRespectingProcessCountLimit();
     m_process->addExistingWebPage(this, m_pageID);
 
     initializeWebPage();

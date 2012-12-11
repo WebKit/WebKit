@@ -120,6 +120,7 @@ const Vector<WebContext*>& WebContext::allContexts()
 
 WebContext::WebContext(ProcessModel processModel, const String& injectedBundlePath)
     : m_processModel(processModel)
+    , m_webProcessCountLimit(UINT_MAX)
     , m_haveInitialEmptyProcess(false)
     , m_defaultPageGroup(WebPageGroup::create())
     , m_injectedBundlePath(injectedBundlePath)
@@ -139,6 +140,8 @@ WebContext::WebContext(ProcessModel processModel, const String& injectedBundlePa
     , m_usesNetworkProcess(false)
 #endif
 {
+    platformInitialize();
+
     addMessageReceiver(Messages::WebContext::messageReceiverName(), this);
     addMessageReceiver(CoreIPC::MessageKindTraits<WebContextLegacyMessage::Kind>::messageReceiverName(), this);
 
@@ -183,6 +186,12 @@ WebContext::WebContext(ProcessModel processModel, const String& injectedBundlePa
     webContextCounter.increment();
 #endif
 }
+
+#if !PLATFORM(MAC)
+void WebContext::platformInitialize()
+{
+}
+#endif
 
 WebContext::~WebContext()
 {
@@ -388,7 +397,7 @@ WebProcessProxy* WebContext::ensureSharedWebProcess()
     return m_processes[0].get();
 }
 
-PassRefPtr<WebProcessProxy> WebContext::createNewWebProcess()
+WebProcessProxy* WebContext::createNewWebProcess()
 {
 #if ENABLE(NETWORK_PROCESS)
     if (m_usesNetworkProcess)
@@ -480,8 +489,7 @@ PassRefPtr<WebProcessProxy> WebContext::createNewWebProcess()
     } else
         ASSERT(m_messagesToInjectedBundlePostedToEmptyContext.isEmpty());
 
-
-    return process.release();
+    return process.get();
 }
 
 void WebContext::warmInitialProcess()  
@@ -490,6 +498,9 @@ void WebContext::warmInitialProcess()
         ASSERT(!m_processes.isEmpty());
         return;
     }
+
+    if (m_processes.size() >= m_webProcessCountLimit)
+        return;
 
     createNewWebProcess();
     m_haveInitialEmptyProcess = true;
@@ -615,6 +626,23 @@ void WebContext::disconnectProcess(WebProcessProxy* process)
     m_processes.remove(m_processes.find(process));
 }
 
+WebProcessProxy* WebContext::createNewWebProcessRespectingProcessCountLimit()
+{
+    if (m_processes.size() < m_webProcessCountLimit)
+        return createNewWebProcess();
+
+    // Choose a process with fewest pages, to achieve flat distribution.
+    WebProcessProxy* result = 0;
+    unsigned fewestPagesSeen = UINT_MAX;
+    for (unsigned i = 0; i < m_processes.size(); ++i) {
+        if (fewestPagesSeen > m_processes[i]->pages().size()) {
+            result = m_processes[i].get();
+            fewestPagesSeen = m_processes[i]->pages().size();
+        }
+    }
+    return result;
+}
+
 PassRefPtr<WebPageProxy> WebContext::createWebPage(PageClient* pageClient, WebPageGroup* pageGroup, WebPageProxy* relatedPage)
 {
     RefPtr<WebProcessProxy> process;
@@ -627,10 +655,8 @@ PassRefPtr<WebPageProxy> WebContext::createWebPage(PageClient* pageClient, WebPa
         } else if (relatedPage) {
             // Sharing processes, e.g. when creating the page via window.open().
             process = relatedPage->process();
-        } else {
-            // FIXME (Multi-WebProcess): <rdar://problem/12239661> Consider limiting the number of web processes in per-tab process model.
-            process = createNewWebProcess();
-        }
+        } else
+            process = createNewWebProcessRespectingProcessCountLimit();
     }
 
     if (!pageGroup)

@@ -220,7 +220,7 @@ public:
     void setCookieStorageDirectory(const String& dir) { m_overrideCookieStorageDirectory = dir; }
 
     WebProcessProxy* ensureSharedWebProcess();
-    PassRefPtr<WebProcessProxy> createNewWebProcess();
+    WebProcessProxy* createNewWebProcessRespectingProcessCountLimit(); // Will return an existing one if limit is met.
     void warmInitialProcess();
 
     bool shouldTerminate(WebProcessProxy*);
@@ -256,11 +256,14 @@ public:
 
 private:
     WebContext(ProcessModel, const String& injectedBundlePath);
+    void platformInitialize();
 
     virtual Type type() const { return APIType; }
 
     void platformInitializeWebProcess(WebProcessCreationParameters&);
     void platformInvalidateContext();
+
+    WebProcessProxy* createNewWebProcess();
 
 #if PLATFORM(MAC)
     void getPasteboardTypes(const String& pasteboardName, Vector<String>& pasteboardTypes);
@@ -318,6 +321,7 @@ private:
     void addPlugInAutoStartOriginHash(const String& pageOrigin, unsigned plugInOriginHash);
 
     ProcessModel m_processModel;
+    unsigned m_webProcessCountLimit; // The limit has no effect when process model is ProcessModelSharedSecondaryProcess.
     
     Vector<RefPtr<WebProcessProxy> > m_processes;
     bool m_haveInitialEmptyProcess;

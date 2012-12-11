@@ -47,6 +47,7 @@ NSString *WebDatabaseDirectoryDefaultsKey = @"WebDatabaseDirectory";
 NSString *WebKitLocalCacheDefaultsKey = @"WebKitLocalCache";
 NSString *WebStorageDirectoryDefaultsKey = @"WebKitLocalStorageDatabasePathPreferenceKey";
 NSString *WebKitKerningAndLigaturesEnabledByDefaultDefaultsKey = @"WebKitKerningAndLigaturesEnabledByDefault";
+NSString *WebKitWebProcessCountLimitDefaultsKey = @"WebKitWebProcessCountLimit";
 
 static NSString *WebKitApplicationDidChangeAccessibilityEnhancedUserInterfaceNotification = @"NSApplicationDidChangeAccessibilityEnhancedUserInterfaceNotification";
 
@@ -59,6 +60,32 @@ NSString *SchemeForCustomProtocolRegisteredNotificationName = @"WebKitSchemeForC
 NSString *SchemeForCustomProtocolUnregisteredNotificationName = @"WebKitSchemeForCustomProtocolUnregisteredNotification";
 
 bool WebContext::s_applicationIsOccluded = false;
+
+static void registerUserDefaultsIfNeeded()
+{
+    static bool didRegister;
+    if (didRegister)
+        return;
+
+    didRegister = true;
+    NSMutableDictionary *registrationDictionary = [NSMutableDictionary dictionary];
+    
+    [registrationDictionary setObject:[NSNumber numberWithInteger:INT_MAX] forKey:WebKitWebProcessCountLimitDefaultsKey];
+#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 1090
+    [registrationDictionary setObject:[NSNumber numberWithBool:YES] forKey:WebKitKerningAndLigaturesEnabledByDefaultDefaultsKey];
+#endif
+
+    [[NSUserDefaults standardUserDefaults] registerDefaults:registrationDictionary];
+}
+
+void WebContext::platformInitialize()
+{
+    registerUserDefaultsIfNeeded();
+
+    m_webProcessCountLimit = [[NSUserDefaults standardUserDefaults] integerForKey:WebKitWebProcessCountLimitDefaultsKey];
+    if (m_webProcessCountLimit <= 0)
+        m_webProcessCountLimit = 1;
+}
 
 String WebContext::applicationCacheDirectory()
 {
@@ -82,18 +109,6 @@ String WebContext::applicationCacheDirectory()
     return [cacheDir stringByAppendingPathComponent:appName];
 }
 
-static void registerUserDefaultsIfNeeded()
-{
-    static bool didRegister;
-    if (didRegister)
-        return;
-
-    didRegister = true;
-#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 1090
-    [[NSUserDefaults standardUserDefaults] registerDefaults:[NSDictionary dictionaryWithObject:[NSNumber numberWithBool:YES] forKey:WebKitKerningAndLigaturesEnabledByDefaultDefaultsKey]];
-#endif
-}
-
 void WebContext::platformInitializeWebProcess(WebProcessCreationParameters& parameters)
 {
     parameters.presenterApplicationPid = getpid();
@@ -102,7 +117,6 @@ void WebContext::platformInitializeWebProcess(WebProcessCreationParameters& para
     parameters.nsURLCacheMemoryCapacity = [urlCache memoryCapacity];
     parameters.nsURLCacheDiskCapacity = [urlCache diskCapacity];
 
-    registerUserDefaultsIfNeeded();
 #if __MAC_OS_X_VERSION_MIN_REQUIRED >= 1090
     parameters.shouldForceScreenFontSubstitution = [[NSUserDefaults standardUserDefaults] boolForKey:@"NSFontDefaultScreenFontSubstitutionEnabled"];
 #endif
@@ -123,7 +137,9 @@ void WebContext::platformInitializeWebProcess(WebProcessCreationParameters& para
     NSArray *schemes = [[WKBrowsingContextController customSchemes] allObjects];
     for (size_t i = 0; i < [schemes count]; ++i)
         parameters.urlSchemesRegisteredForCustomProtocols.append([schemes objectAtIndex:i]);
-    
+
+    // FIXME(Multi-WebProcess): We register observers for every process that is created, which makes no sense.
+
     m_customSchemeRegisteredObserver = [[NSNotificationCenter defaultCenter] addObserverForName:WebKit::SchemeForCustomProtocolRegisteredNotificationName object:nil queue:[NSOperationQueue currentQueue] usingBlock:^(NSNotification *notification) {
         NSString *scheme = [notification object];
         ASSERT([scheme isKindOfClass:[NSString class]]);
