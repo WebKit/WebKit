@@ -44,6 +44,7 @@
 #include "HTMLStyleElement.h"
 #include "InspectorInstrumentation.h"
 #include "NodeRenderStyle.h"
+#include "NodeTraversal.h"
 #include "Page.h"
 #include "PageGroup.h"
 #include "RenderObject.h"
@@ -1224,7 +1225,7 @@ void SelectorChecker::allVisitedStateChanged()
 {
     if (m_linksCheckedForVisitedState.isEmpty())
         return;
-    for (Node* node = m_document; node; node = node->traverseNextNode()) {
+    for (Node* node = m_document; node; node = NodeTraversal::next(node)) {
         if (node->isLink())
             node->setNeedsStyleRecalc();
     }
@@ -1234,7 +1235,7 @@ void SelectorChecker::visitedStateChanged(LinkHash visitedHash)
 {
     if (!m_linksCheckedForVisitedState.contains(visitedHash))
         return;
-    for (Node* node = m_document; node; node = node->traverseNextNode()) {
+    for (Node* node = m_document; node; node = NodeTraversal::next(node)) {
         LinkHash hash = 0;
         if (node->hasTagName(aTag))
             hash = static_cast<HTMLAnchorElement*>(node)->visitedLinkHash();

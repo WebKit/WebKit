@@ -28,6 +28,7 @@
 #include "ExceptionCode.h"
 #include "ContainerNode.h"
 #include "NodeFilter.h"
+#include "NodeTraversal.h"
 #include "ScriptState.h"
 #include <wtf/PassRefPtr.h>
 
@@ -263,7 +264,7 @@ Children:
         if (acceptNodeResult == NodeFilter::FILTER_REJECT)
             break;
     }
-    while (Node* nextSibling = node->traverseNextSibling(root())) {
+    while (Node* nextSibling = NodeTraversal::nextSkippingChildren(node.get(), root())) {
         node = nextSibling;
         short acceptNodeResult = acceptNode(state, node.get());
         if (state && state->hadException())

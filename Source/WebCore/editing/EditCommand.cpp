@@ -34,6 +34,7 @@
 #include "EventNames.h"
 #include "Frame.h"
 #include "FrameSelection.h"
+#include "NodeTraversal.h"
 #include "VisiblePosition.h"
 #include "htmlediting.h"
 
@@ -118,7 +119,7 @@ void SimpleEditCommand::doReapply()
 #ifndef NDEBUG
 void SimpleEditCommand::addNodeAndDescendants(Node* startNode, HashSet<Node*>& nodes)
 {
-    for (Node* node = startNode; node; node = node->traverseNextNode(startNode))
+    for (Node* node = startNode; node; node = NodeTraversal::next(node, startNode))
         nodes.add(node);
 }
 #endif

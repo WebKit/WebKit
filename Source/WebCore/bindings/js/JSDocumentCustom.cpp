@@ -34,6 +34,7 @@
 #include "JSTouch.h"
 #include "JSTouchList.h"
 #include "Location.h"
+#include "NodeTraversal.h"
 #include "ScriptController.h"
 #include "TouchList.h"
 
@@ -107,7 +108,7 @@ JSValue toJS(ExecState* exec, JSDOMGlobalObject* globalObject, Document* documen
     // back/forward cache.
     if (!document->frame()) {
         size_t nodeCount = 0;
-        for (Node* n = document; n; n = n->traverseNextNode())
+        for (Node* n = document; n; n = NodeTraversal::next(n))
             nodeCount++;
         
         exec->heap()->reportExtraMemoryCost(nodeCount * sizeof(Node));

@@ -32,6 +32,7 @@
 #include "HTMLElement.h"
 #include "HTMLNames.h"
 #include "InsertLineBreakCommand.h"
+#include "NodeTraversal.h"
 #include "RenderObject.h"
 #include "Text.h"
 #include "htmlediting.h"
@@ -366,7 +367,7 @@ void InsertParagraphSeparatorCommand::doApply()
         else {
             Node* splitTo = insertionPosition.containerNode();
             if (splitTo->isTextNode() && insertionPosition.offsetInContainerNode() >= caretMaxOffset(splitTo))
-              splitTo = splitTo->traverseNextNode(startBlock.get());
+                splitTo = NodeTraversal::next(splitTo, startBlock.get());
             ASSERT(splitTo);
             splitTreeToNode(splitTo, startBlock.get());
 

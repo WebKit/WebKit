@@ -42,6 +42,7 @@
 #include "HTMLNames.h"
 #include "IdTargetObserverRegistry.h"
 #include "InsertionPoint.h"
+#include "NodeTraversal.h"
 #include "Page.h"
 #include "RuntimeEnabledFeatures.h"
 #include "ShadowRoot.h"
@@ -186,7 +187,7 @@ HTMLLabelElement* TreeScope::labelElementForId(const AtomicString& forAttributeV
     if (!m_labelsByForAttribute) {
         // Populate the map on first access.
         m_labelsByForAttribute = adoptPtr(new DocumentOrderedMap);
-        for (Node* node = rootNode(); node; node = node->traverseNextNode()) {
+        for (Node* node = rootNode(); node; node = NodeTraversal::next(node)) {
             if (node->hasTagName(labelTag)) {
                 HTMLLabelElement* label = static_cast<HTMLLabelElement*>(node);
                 const AtomicString& forValue = label->fastGetAttribute(forAttr);
@@ -230,7 +231,7 @@ Element* TreeScope::findAnchor(const String& name)
         return 0;
     if (Element* element = getElementById(name))
         return element;
-    for (Node* node = rootNode(); node; node = node->traverseNextNode()) {
+    for (Node* node = rootNode(); node; node = NodeTraversal::next(node)) {
         if (node->hasTagName(aTag)) {
             HTMLAnchorElement* anchor = static_cast<HTMLAnchorElement*>(node);
             if (rootNode()->document()->inQuirksMode()) {

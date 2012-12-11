@@ -2882,6 +2882,8 @@ webcore_sources += \
 	Source/WebCore/dom/NodeRareData.h \
 	Source/WebCore/dom/NodeRenderingContext.h \
 	Source/WebCore/dom/NodeRenderStyle.h \
+    Source/WebCore/dom/NodeTraversal.cpp \
+    Source/WebCore/dom/NodeTraversal.h \
 	Source/WebCore/dom/NodeWithIndex.h \
 	Source/WebCore/dom/Notation.cpp \
 	Source/WebCore/dom/Notation.h \

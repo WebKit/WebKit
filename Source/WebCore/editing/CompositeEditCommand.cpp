@@ -45,6 +45,7 @@
 #include "InsertParagraphSeparatorCommand.h"
 #include "InsertTextCommand.h"
 #include "MergeIdenticalElementsCommand.h"
+#include "NodeTraversal.h"
 #include "Range.h"
 #include "RemoveCSSPropertyCommand.h"
 #include "RemoveNodeCommand.h"
@@ -808,7 +809,7 @@ void CompositeEditCommand::deleteInsignificantText(const Position& start, const 
         return;
 
     Vector<RefPtr<Text> > nodes;
-    for (Node* node = start.deprecatedNode(); node; node = node->traverseNextNode()) {
+    for (Node* node = start.deprecatedNode(); node; node = NodeTraversal::next(node)) {
         if (node->isTextNode())
             nodes.append(toText(node));
         if (node == end.deprecatedNode())
@@ -1022,9 +1023,9 @@ void CompositeEditCommand::cloneParagraphUnderNewElement(Position& start, Positi
         }
 
         Node* startNode = start.deprecatedNode();
-        for (Node* node = startNode->traverseNextSibling(outerNode.get()); node; node = node->traverseNextSibling(outerNode.get())) {
+        for (Node* node = NodeTraversal::nextSkippingChildren(startNode, outerNode.get()); node; node = NodeTraversal::nextSkippingChildren(node, outerNode.get())) {
             // Move lastNode up in the tree as much as node was moved up in the
-            // tree by traverseNextSibling, so that the relative depth between
+            // tree by NodeTraversal::nextSibling, so that the relative depth between
             // node and the original start node is maintained in the clone.
             while (startNode->parentNode() != node->parentNode()) {
                 startNode = startNode->parentNode();

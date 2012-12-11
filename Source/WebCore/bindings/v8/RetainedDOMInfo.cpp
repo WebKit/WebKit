@@ -32,6 +32,7 @@
 #include "RetainedDOMInfo.h"
 
 #include "ContainerNode.h"
+#include "NodeTraversal.h"
 
 namespace WebCore {
 
@@ -80,7 +81,7 @@ intptr_t RetainedDOMInfo::GetElementCount()
     intptr_t count = 1;
     Node* current = m_root;
     while (current) {
-        current = current->traverseNextNode(m_root);
+        current = NodeTraversal::next(current, m_root);
         ++count;
     }
     return count;

@@ -1,3 +1,219 @@
+2012-12-09  Antti Koivisto  <antti@apple.com>
+
+        Factor node traversal into standalone functions
+        https://bugs.webkit.org/show_bug.cgi?id=104507
+
+        Reviewed by Eric Seidel.
+
+        Node traversal functions are currently Node and ContainerNode members. Their implementations
+        are confusingly scattered over multiple header and source files. These functions have no particular
+        reason to be members as they don't require non-public access. They should be made freestanding
+        function instead and gathered together.
+        
+        This patch adds NodeTraversal namespace, defined in NodeTraversal.h. It contains freestanding
+        functions for traversing Nodes. Most popular functions are inlined (as before) and
+        there are ContainerNode specific specializations (as before).
+        
+        In client code
+        
+            node = node->traverseNextNode();
+            node = node->traverseNextSibling();
+        
+        becomes
+        
+            node = NodeTraversal::next(node);
+            node = NodeTraversal::nextSkippingChildren(node);
+            
+        etc.
+
+        * WebCore.exp.in:
+        * WebCore.xcodeproj/project.pbxproj:
+        * accessibility/AccessibilityNodeObject.cpp:
+        (WebCore::AccessibilityNodeObject::accessibilityDescriptionForElements):
+        * accessibility/AccessibilityObject.cpp:
+        (WebCore::AccessibilityObject::firstAccessibleObjectFromNode):
+        * accessibility/AccessibilityRenderObject.cpp:
+        (WebCore::AccessibilityRenderObject::addImageMapChildren):
+        * bindings/js/JSDocumentCustom.cpp:
+        (WebCore::toJS):
+        * css/SelectorChecker.cpp:
+        (WebCore::SelectorChecker::allVisitedStateChanged):
+        (WebCore::SelectorChecker::visitedStateChanged):
+        * css/StyleInvalidationAnalysis.cpp:
+        (WebCore::StyleInvalidationAnalysis::invalidateStyle):
+        * dom/ContainerNode.cpp:
+        (WebCore::dispatchChildInsertionEvents):
+        (WebCore::dispatchChildRemovalEvents):
+        * dom/ContainerNode.h:
+        (ContainerNode):
+        (WebCore):
+        * dom/ContainerNodeAlgorithms.h:
+        (WebCore::ChildFrameDisconnector::collectDescendant):
+        * dom/Document.cpp:
+        (WebCore::Document::buildAccessKeyMap):
+        (WebCore::Document::removeAllEventListeners):
+        (WebCore::Document::updateBaseURL):
+        (WebCore::Document::processBaseElement):
+        (WebCore::Document::nodeAbsIndex):
+        (WebCore::Document::nodeWithAbsIndex):
+        (WebCore::Document::getFocusableNodes):
+        * dom/DocumentMarkerController.cpp:
+        (WebCore::DocumentMarkerController::markersInRange):
+        (WebCore::DocumentMarkerController::setMarkersActive):
+        (WebCore::DocumentMarkerController::hasMarkers):
+        (WebCore::DocumentMarkerController::clearDescriptionOnMarkersIntersectingRange):
+        * dom/DocumentOrderedMap.cpp:
+        (WebCore::DocumentOrderedMap::get):
+        * dom/ElementShadow.cpp:
+        (WebCore::ElementShadow::collectSelectFeatureSetFrom):
+        * dom/Node.cpp:
+        (WebCore::Node::normalize):
+        (WebCore::Node::lazyAttach):
+        (WebCore):
+        (WebCore::Node::detach):
+        (WebCore::traverseTreeAndMark):
+        * dom/Node.h:
+        (Node):
+        * dom/NodeIterator.cpp:
+        (WebCore::NodeIterator::NodePointer::moveToNext):
+        (WebCore::NodeIterator::NodePointer::moveToPrevious):
+        (WebCore::NodeIterator::updateForNodeRemoval):
+        * dom/NodeTraversal.h: Added.
+        (WebCore):
+        (NodeTraversal):
+        (WebCore::NodeTraversal::traverseNextNodeTemplate):
+        (WebCore::NodeTraversal::next):
+        (WebCore::NodeTraversal::traverseNextSiblingTemplate):
+        (WebCore::NodeTraversal::nextSibling):
+        * dom/Range.cpp:
+        (WebCore::Range::toString):
+        (WebCore::Range::checkDeleteExtract):
+        (WebCore::Range::firstNode):
+        (WebCore::Range::pastLastNode):
+        (WebCore::Range::textRects):
+        (WebCore::Range::textQuads):
+        (WebCore::Range::getBorderAndTextQuads):
+        * dom/TreeScope.cpp:
+        (WebCore::TreeScope::labelElementForId):
+        (WebCore::TreeScope::findAnchor):
+        * dom/TreeScopeAdopter.cpp:
+        (WebCore::TreeScopeAdopter::moveTreeToNewScope):
+        (WebCore::TreeScopeAdopter::moveTreeToNewDocument):
+        * dom/TreeWalker.cpp:
+        (WebCore::TreeWalker::nextNode):
+        * editing/ApplyStyleCommand.cpp:
+        (WebCore::ApplyStyleCommand::applyRelativeFontStyleChange):
+        (WebCore::ApplyStyleCommand::fixRangeAndApplyInlineStyle):
+        (WebCore::containsNonEditableRegion):
+        (WebCore::ApplyStyleCommand::applyInlineStyleToNodeRange):
+        (WebCore::ApplyStyleCommand::removeStyleFromRunBeforeApplyingStyle):
+        (WebCore::ApplyStyleCommand::removeInlineStyle):
+        * editing/BreakBlockquoteCommand.cpp:
+        (WebCore::BreakBlockquoteCommand::doApply):
+        * editing/CompositeEditCommand.cpp:
+        (WebCore::CompositeEditCommand::deleteInsignificantText):
+        (WebCore::CompositeEditCommand::cloneParagraphUnderNewElement):
+        * editing/DeleteSelectionCommand.cpp:
+        (WebCore::firstEditablePositionInNode):
+        (WebCore::DeleteSelectionCommand::makeStylingElementsDirectChildrenOfEditableRootToPreventStyleLoss):
+        (WebCore::DeleteSelectionCommand::handleGeneralDelete):
+        * editing/EditCommand.cpp:
+        (WebCore::SimpleEditCommand::addNodeAndDescendants):
+        * editing/EditingStyle.cpp:
+        (WebCore::EditingStyle::triStateOfStyle):
+        (WebCore::EditingStyle::textDirectionForSelection):
+        * editing/Editor.cpp:
+        (WebCore::Editor::simplifyMarkup):
+        * editing/FrameSelection.cpp:
+        (WebCore::scanForForm):
+        (WebCore::FrameSelection::setSelectionFromNone):
+        * editing/InsertParagraphSeparatorCommand.cpp:
+        (WebCore::InsertParagraphSeparatorCommand::doApply):
+        * editing/ReplaceSelectionCommand.cpp:
+        (WebCore::ReplacementFragment::removeUnrenderedNodes):
+        (WebCore::ReplacementFragment::removeInterchangeNodes):
+        (WebCore::ReplaceSelectionCommand::InsertedNodes::willRemoveNodePreservingChildren):
+        (WebCore::ReplaceSelectionCommand::InsertedNodes::willRemoveNode):
+        (WebCore::ReplaceSelectionCommand::removeRedundantStylesAndKeepStyleSpanInline):
+        (WebCore::removeHeadContents):
+        (WebCore::ReplaceSelectionCommand::handleStyleSpans):
+        * editing/ReplaceSelectionCommand.h:
+        (WebCore::ReplaceSelectionCommand::InsertedNodes::pastLastLeaf):
+        * editing/SimplifyMarkupCommand.cpp:
+        (WebCore::SimplifyMarkupCommand::doApply):
+        * editing/TextIterator.cpp:
+        (WebCore::TextIterator::advance):
+        (WebCore::shouldEmitNewlineAfterNode):
+        * editing/htmlediting.cpp:
+        (WebCore::hasARenderedDescendant):
+        * editing/mac/EditorMac.mm:
+        (WebCore::Editor::fontForSelection):
+        * editing/markup.cpp:
+        (WebCore::completeURLs):
+        (WebCore::StyledMarkupAccumulator::traverseNodesForSerialization):
+        (WebCore::findNodesSurroundingContext):
+        (WebCore::trimFragment):
+        * editing/visible_units.cpp:
+        (WebCore::startOfParagraph):
+        (WebCore::endOfParagraph):
+        * html/HTMLCollection.cpp:
+        (WebCore::nextNode):
+        * html/HTMLElement.cpp:
+        (WebCore::setHasDirAutoFlagRecursively):
+        (WebCore::HTMLElement::directionality):
+        (WebCore::HTMLElement::adjustDirectionalityIfNeededAfterChildrenChanged):
+        (WebCore::HTMLElement::getItemRefElements):
+        * html/HTMLFieldSetElement.cpp:
+        (WebCore::HTMLFieldSetElement::invalidateDisabledStateUnder):
+        (WebCore::HTMLFieldSetElement::refreshElementsIfNeeded):
+        * html/HTMLFormElement.cpp:
+        (WebCore::HTMLFormElement::formElementIndex):
+        * html/HTMLLabelElement.cpp:
+        (WebCore::HTMLLabelElement::control):
+        * html/HTMLLegendElement.cpp:
+        (WebCore::HTMLLegendElement::associatedControl):
+        * html/HTMLMapElement.cpp:
+        (WebCore::HTMLMapElement::mapMouseEvent):
+        * html/HTMLNameCollection.cpp:
+        (WebCore::HTMLNameCollection::virtualItemAfter):
+        * html/HTMLOptionElement.cpp:
+        (WebCore::HTMLOptionElement::collectOptionInnerText):
+        * html/HTMLPropertiesCollection.cpp:
+        (WebCore::nextNodeWithProperty):
+        * html/HTMLSelectElement.cpp:
+        (WebCore::HTMLSelectElement::recalcListItems):
+        * html/HTMLTextFormControlElement.cpp:
+        (WebCore::HTMLTextFormControlElement::selection):
+        (WebCore::HTMLTextFormControlElement::innerTextValue):
+        (WebCore::HTMLTextFormControlElement::valueWithHardLineBreaks):
+        * html/RadioInputType.cpp:
+        (WebCore::RadioInputType::handleKeydownEvent):
+        * html/shadow/ContentDistributor.cpp:
+        (WebCore::ShadowRootContentDistributionData::ensureInsertionPointList):
+        * inspector/InspectorDOMAgent.cpp:
+        (WebCore::InspectorDOMAgent::performSearch):
+        * inspector/InspectorMemoryAgent.cpp:
+        * page/FocusController.cpp:
+        (WebCore::FocusController::findFocusCandidateInContainer):
+        * page/Frame.cpp:
+        (WebCore::Frame::searchForLabelsAboveCell):
+        (WebCore::Frame::searchForLabelsBeforeElement):
+        * rendering/RenderNamedFlowThread.cpp:
+        (WebCore::RenderNamedFlowThread::getRanges):
+        * svg/SVGSVGElement.cpp:
+        (WebCore::SVGSVGElement::collectIntersectionOrEnclosureList):
+        (WebCore::SVGSVGElement::getElementById):
+        * svg/SVGUseElement.cpp:
+        (WebCore::removeDisallowedElementsFromSubtree):
+        * svg/animation/SMILTimeContainer.cpp:
+        (WebCore::SMILTimeContainer::updateDocumentOrderIndexes):
+        * xml/XPathNodeSet.cpp:
+        (WebCore::XPath::NodeSet::traversalSort):
+        * xml/XPathStep.cpp:
+        (WebCore::XPath::Step::nodesInAxis):
+        * xml/XPathUtil.cpp:
+        (WebCore::XPath::stringValue):
+
 2012-12-10  Min Qin  <qinmin@chromium.org>
 
         Sending multi-touch events to the same Iframe

@@ -28,6 +28,7 @@
 
 #if ENABLE(SVG)
 #include "Document.h"
+#include "NodeTraversal.h"
 #include "SVGNames.h"
 #include "SVGSMILElement.h"
 #include "SVGSVGElement.h"
@@ -224,7 +225,7 @@ void SMILTimeContainer::timerFired(Timer<SMILTimeContainer>*)
 void SMILTimeContainer::updateDocumentOrderIndexes()
 {
     unsigned timingElementCount = 0;
-    for (Node* node = m_ownerSVGElement; node; node = node->traverseNextNode(m_ownerSVGElement)) {
+    for (Node* node = m_ownerSVGElement; node; node = NodeTraversal::next(node, m_ownerSVGElement)) {
         if (SVGSMILElement::isSMILElement(node))
             static_cast<SVGSMILElement*>(node)->setDocumentOrderIndex(timingElementCount++);
     }

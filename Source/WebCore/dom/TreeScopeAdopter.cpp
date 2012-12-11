@@ -29,6 +29,7 @@
 #include "ElementRareData.h"
 #include "ElementShadow.h"
 #include "NodeRareData.h"
+#include "NodeTraversal.h"
 #include "RenderStyle.h"
 #include "ShadowRoot.h"
 
@@ -48,7 +49,7 @@ void TreeScopeAdopter::moveTreeToNewScope(Node* root) const
     if (oldDocument && willMoveToNewDocument)
         oldDocument->incDOMTreeVersion();
 
-    for (Node* node = root; node; node = node->traverseNextNode(root)) {
+    for (Node* node = root; node; node = NodeTraversal::next(node, root)) {
         node->setTreeScope(m_newScope);
         if (node->hasRareData()) {
             NodeRareData* rareData = node->rareData();
@@ -69,7 +70,7 @@ void TreeScopeAdopter::moveTreeToNewScope(Node* root) const
 
 void TreeScopeAdopter::moveTreeToNewDocument(Node* root, Document* oldDocument, Document* newDocument) const
 {
-    for (Node* node = root; node; node = node->traverseNextNode(root)) {
+    for (Node* node = root; node; node = NodeTraversal::next(node, root)) {
         moveNodeToNewDocument(node, oldDocument, newDocument);
         for (ShadowRoot* shadow = node->youngestShadowRoot(); shadow; shadow = shadow->olderShadowRoot())
             moveTreeToNewDocument(shadow, oldDocument, newDocument);

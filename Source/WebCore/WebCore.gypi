@@ -2848,6 +2848,8 @@
             'dom/NodeRenderingContext.cpp',
             'dom/NodeRenderingContext.h',
             'dom/NodeRenderStyle.h',
+            'dom/NodeTraversal.cpp',
+            'dom/NodeTraversal.h',
             'dom/NodeWithIndex.h',
             'dom/Notation.cpp',
             'dom/Notation.h',

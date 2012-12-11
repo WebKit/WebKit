@@ -48,6 +48,7 @@
 #include "HTMLNames.h"
 #include "HitTestResult.h"
 #include "KeyboardEvent.h"
+#include "NodeTraversal.h"
 #include "Page.h"
 #include "Range.h"
 #include "RenderObject.h"
@@ -775,7 +776,7 @@ void FocusController::findFocusCandidateInContainer(Node* container, const Layou
     current.focusableNode = focusedNode;
     current.visibleNode = focusedNode;
 
-    for (; node; node = (node->isFrameOwnerElement() || canScrollInDirection(node, direction)) ? node->traverseNextSibling(container) : node->traverseNextNode(container)) {
+    for (; node; node = (node->isFrameOwnerElement() || canScrollInDirection(node, direction)) ? NodeTraversal::nextSkippingChildren(node, container) : NodeTraversal::next(node, container)) {
         if (node == focusedNode)
             continue;
 

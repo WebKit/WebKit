@@ -28,6 +28,7 @@
 #include "HTMLNames.h"
 #include "HTMLObjectElement.h"
 #include "NodeRareData.h"
+#include "NodeTraversal.h"
 
 namespace WebCore {
 
@@ -57,9 +58,9 @@ Element* HTMLNameCollection::virtualItemAfter(unsigned& offsetInArray, Element* 
     if (!previous)
         current = ownerNode()->firstChild();
     else
-        current = previous->traverseNextNode(ownerNode());
+        current = NodeTraversal::next(previous, ownerNode());
 
-    for (; current; current = current->traverseNextNode(ownerNode())) {
+    for (; current; current = NodeTraversal::next(current, ownerNode())) {
         if (!current->isElementNode())
             continue;
         Element* e = static_cast<Element*>(current);

@@ -28,6 +28,7 @@
 
 #include "HTMLElement.h"
 #include "HTMLNames.h"
+#include "NodeTraversal.h"
 #include "RenderListItem.h"
 #include "Text.h"
 #include "VisiblePosition.h"
@@ -109,13 +110,13 @@ void BreakBlockquoteCommand::doApply()
     if (startNode->isTextNode()) {
         Text* textNode = toText(startNode);
         if ((unsigned)pos.deprecatedEditingOffset() >= textNode->length()) {
-            startNode = startNode->traverseNextNode();
+            startNode = NodeTraversal::next(startNode);
             ASSERT(startNode);
         } else if (pos.deprecatedEditingOffset() > 0)
             splitTextNode(textNode, pos.deprecatedEditingOffset());
     } else if (pos.deprecatedEditingOffset() > 0) {
         Node* childAtOffset = startNode->childNode(pos.deprecatedEditingOffset());
-        startNode = childAtOffset ? childAtOffset : startNode->traverseNextNode();
+        startNode = childAtOffset ? childAtOffset : NodeTraversal::next(startNode);
         ASSERT(startNode);
     }
     

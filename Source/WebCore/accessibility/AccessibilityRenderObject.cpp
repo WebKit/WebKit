@@ -61,6 +61,7 @@
 #include "LocalizedStrings.h"
 #include "MathMLNames.h"
 #include "NodeList.h"
+#include "NodeTraversal.h"
 #include "Page.h"
 #include "ProgressTracker.h"
 #include "RenderButton.h"
@@ -2656,7 +2657,7 @@ void AccessibilityRenderObject::addImageMapChildren()
     if (!map)
         return;
 
-    for (Node* current = map->firstChild(); current; current = current->traverseNextNode(map)) {
+    for (Node* current = map->firstChild(); current; current = NodeTraversal::next(current, map)) {
         
         // add an <area> element for this child if it has a link
         if (current->hasTagName(areaTag) && current->isLink()) {

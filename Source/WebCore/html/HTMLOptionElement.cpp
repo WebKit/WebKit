@@ -36,6 +36,7 @@
 #include "HTMLSelectElement.h"
 #include "NodeRenderStyle.h"
 #include "NodeRenderingContext.h"
+#include "NodeTraversal.h"
 #include "RenderMenuList.h"
 #include "RenderTheme.h"
 #include "ScriptElement.h"
@@ -383,9 +384,9 @@ String HTMLOptionElement::collectOptionInnerText() const
             text.append(node->nodeValue());
         // Text nodes inside script elements are not part of the option text.
         if (node->isElementNode() && toScriptElement(toElement(node)))
-            node = node->traverseNextSibling(this);
+            node = NodeTraversal::nextSkippingChildren(node, this);
         else
-            node = node->traverseNextNode(this);
+            node = NodeTraversal::next(node, this);
     }
     return text.toString();
 }

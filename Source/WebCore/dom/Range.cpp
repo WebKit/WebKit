@@ -35,6 +35,7 @@
 #include "HTMLElement.h"
 #include "HTMLNames.h"
 #include "Node.h"
+#include "NodeTraversal.h"
 #include "NodeWithIndex.h"
 #include "Page.h"
 #include "ProcessingInstruction.h"
@@ -1065,7 +1066,7 @@ String Range::toString(ExceptionCode& ec) const
     StringBuilder builder;
 
     Node* pastLast = pastLastNode();
-    for (Node* n = firstNode(); n != pastLast; n = n->traverseNextNode()) {
+    for (Node* n = firstNode(); n != pastLast; n = NodeTraversal::next(n)) {
         if (n->nodeType() == Node::TEXT_NODE || n->nodeType() == Node::CDATA_SECTION_NODE) {
             String data = static_cast<CharacterData*>(n)->data();
             int length = data.length();
@@ -1517,7 +1518,7 @@ void Range::checkDeleteExtract(ExceptionCode& ec)
         return;
         
     Node* pastLast = pastLastNode();
-    for (Node* n = firstNode(); n != pastLast; n = n->traverseNextNode()) {
+    for (Node* n = firstNode(); n != pastLast; n = NodeTraversal::next(n)) {
         if (n->isReadOnlyNode()) {
             ec = NO_MODIFICATION_ALLOWED_ERR;
             return;
@@ -1557,7 +1558,7 @@ Node* Range::firstNode() const
         return child;
     if (!m_start.offset())
         return m_start.container();
-    return m_start.container()->traverseNextSibling();
+    return NodeTraversal::nextSkippingChildren(m_start.container());
 }
 
 ShadowRoot* Range::shadowRoot() const
@@ -1570,10 +1571,10 @@ Node* Range::pastLastNode() const
     if (!m_start.container() || !m_end.container())
         return 0;
     if (m_end.container()->offsetInCharacters())
-        return m_end.container()->traverseNextSibling();
+        return NodeTraversal::nextSkippingChildren(m_end.container());
     if (Node* child = m_end.container()->childNode(m_end.offset()))
         return child;
-    return m_end.container()->traverseNextSibling();
+    return NodeTraversal::nextSkippingChildren(m_end.container());
 }
 
 IntRect Range::boundingBox() const
@@ -1602,7 +1603,7 @@ void Range::textRects(Vector<IntRect>& rects, bool useSelectionHeight, RangeInFi
     bool someFixed = false;
 
     Node* stopNode = pastLastNode();
-    for (Node* node = firstNode(); node != stopNode; node = node->traverseNextNode()) {
+    for (Node* node = firstNode(); node != stopNode; node = NodeTraversal::next(node)) {
         RenderObject* r = node->renderer();
         if (!r || !r->isText())
             continue;
@@ -1634,7 +1635,7 @@ void Range::textQuads(Vector<FloatQuad>& quads, bool useSelectionHeight, RangeIn
     bool someFixed = false;
 
     Node* stopNode = pastLastNode();
-    for (Node* node = firstNode(); node != stopNode; node = node->traverseNextNode()) {
+    for (Node* node = firstNode(); node != stopNode; node = NodeTraversal::next(node)) {
         RenderObject* r = node->renderer();
         if (!r || !r->isText())
             continue;
@@ -1909,12 +1910,12 @@ void Range::getBorderAndTextQuads(Vector<FloatQuad>& quads) const
     Node* stopNode = pastLastNode();
 
     HashSet<Node*> nodeSet;
-    for (Node* node = firstNode(); node != stopNode; node = node->traverseNextNode()) {
+    for (Node* node = firstNode(); node != stopNode; node = NodeTraversal::next(node)) {
         if (node->isElementNode())
             nodeSet.add(node);
     }
 
-    for (Node* node = firstNode(); node != stopNode; node = node->traverseNextNode()) {
+    for (Node* node = firstNode(); node != stopNode; node = NodeTraversal::next(node)) {
         if (node->isElementNode()) {
             if (!nodeSet.contains(node->parentNode())) {
                 if (RenderBoxModelObject* renderBoxModelObject = static_cast<Element*>(node)->renderBoxModelObject()) {

@@ -37,6 +37,7 @@
 #include "FrameTree.h"
 #include "FrameView.h"
 #include "HTMLNames.h"
+#include "NodeTraversal.h"
 #include "RenderObject.h"
 #include "RenderPart.h"
 #include "RenderSVGResource.h"
@@ -345,7 +346,7 @@ void SVGSVGElement::forceRedraw()
 PassRefPtr<NodeList> SVGSVGElement::collectIntersectionOrEnclosureList(const FloatRect& rect, SVGElement* referenceElement, CollectIntersectionOrEnclosure collect) const
 {
     Vector<RefPtr<Node> > nodes;
-    Node* node = traverseNextNode(referenceElement ? referenceElement : this);
+    Node* node = NodeTraversal::next(referenceElement ? referenceElement : this);
     while (node) {
         if (node->isSVGElement()) { 
             if (collect == CollectIntersectionList) {
@@ -357,7 +358,7 @@ PassRefPtr<NodeList> SVGSVGElement::collectIntersectionOrEnclosureList(const Flo
             }
         }
 
-        node = node->traverseNextNode(referenceElement ? referenceElement : this);
+        node = NodeTraversal::next(node, referenceElement ? referenceElement : this);
     }
     return StaticNodeList::adopt(nodes);
 }
@@ -787,7 +788,7 @@ Element* SVGSVGElement::getElementById(const AtomicString& id) const
 
     // Fall back to traversing our subtree. Duplicate ids are allowed, the first found will
     // be returned.
-    for (Node* node = firstChild(); node; node = node->traverseNextNode(this)) {
+    for (Node* node = firstChild(); node; node = NodeTraversal::next(node, this)) {
         if (!node->isElementNode())
             continue;
 

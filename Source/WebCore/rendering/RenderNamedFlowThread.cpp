@@ -29,6 +29,7 @@
 #include "FlowThreadController.h"
 #include "InlineTextBox.h"
 #include "InspectorInstrumentation.h"
+#include "NodeTraversal.h"
 #include "Position.h"
 #include "RenderInline.h"
 #include "RenderRegion.h"
@@ -484,7 +485,7 @@ void RenderNamedFlowThread::getRanges(Vector<RefPtr<Range> >& rangeObjects, cons
         bool skipOverOutsideNodes = false;
         Node* lastEndNode = 0;
 
-        for (Node* node = contentNode; node; node = node->traverseNextNode(contentNode)) {
+        for (Node* node = contentNode; node; node = NodeTraversal::next(node, contentNode)) {
             RenderObject* renderer = node->renderer();
             if (!renderer)
                 continue;

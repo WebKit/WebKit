@@ -45,6 +45,7 @@
 #include "HTMLNames.h"
 #include "NodeList.h"
 #include "NodeRenderStyle.h"
+#include "NodeTraversal.h"
 #include "RenderInline.h"
 #include "RenderObject.h"
 #include "RenderText.h"
@@ -289,7 +290,7 @@ void ReplacementFragment::removeUnrenderedNodes(Node* holder)
 {
     Vector<RefPtr<Node> > unrendered;
 
-    for (Node* node = holder->firstChild(); node; node = node->traverseNextNode(holder))
+    for (Node* node = holder->firstChild(); node; node = NodeTraversal::next(node, holder))
         if (!isNodeRendered(node) && !isTableStructureNode(node))
             unrendered.append(node);
 
@@ -330,9 +331,9 @@ void ReplacementFragment::removeInterchangeNodes(Node* container)
     
     node = container->firstChild();
     while (node) {
-        RefPtr<Node> next = node->traverseNextNode();
+        RefPtr<Node> next = NodeTraversal::next(node);
         if (isInterchangeConvertedSpaceSpan(node)) {
-            next = node->traverseNextSibling();
+            next = NodeTraversal::nextSkippingChildren(node);
             removeNodePreservingChildren(node);
         }
         node = next.get();
@@ -353,9 +354,9 @@ inline void ReplaceSelectionCommand::InsertedNodes::respondToNodeInsertion(Node*
 inline void ReplaceSelectionCommand::InsertedNodes::willRemoveNodePreservingChildren(Node* node)
 {
     if (m_firstNodeInserted == node)
-        m_firstNodeInserted = node->traverseNextNode();
+        m_firstNodeInserted = NodeTraversal::next(node);
     if (m_lastNodeInserted == node)
-        m_lastNodeInserted = node->lastChild() ? node->lastChild() : node->traverseNextSibling();
+        m_lastNodeInserted = node->lastChild() ? node->lastChild() : NodeTraversal::nextSkippingChildren(node);
 }
 
 inline void ReplaceSelectionCommand::InsertedNodes::willRemoveNode(Node* node)
@@ -364,9 +365,9 @@ inline void ReplaceSelectionCommand::InsertedNodes::willRemoveNode(Node* node)
         m_firstNodeInserted = 0;
         m_lastNodeInserted = 0;
     } else if (m_firstNodeInserted == node)
-        m_firstNodeInserted = m_firstNodeInserted->traverseNextSibling();
+        m_firstNodeInserted = NodeTraversal::nextSkippingChildren(m_firstNodeInserted.get());
     else if (m_lastNodeInserted == node)
-        m_lastNodeInserted = m_lastNodeInserted->traversePreviousSibling();
+        m_lastNodeInserted = NodeTraversal::previousSkippingChildren(m_lastNodeInserted.get());
 }
 
 ReplaceSelectionCommand::ReplaceSelectionCommand(Document* document, PassRefPtr<DocumentFragment> fragment, CommandOptions options, EditAction editAction)
@@ -480,7 +481,7 @@ void ReplaceSelectionCommand::removeRedundantStylesAndKeepStyleSpanInline(Insert
     for (RefPtr<Node> node = insertedNodes.firstNodeInserted(); node && node != pastEndNode; node = next) {
         // FIXME: <rdar://problem/5371536> Style rules that match pasted content can change it's appearance
 
-        next = node->traverseNextNode();
+        next = NodeTraversal::next(node.get());
         if (!node->isStyledElement())
             continue;
 
@@ -595,10 +596,10 @@ static void removeHeadContents(ReplacementFragment& fragment)
             || node->hasTagName(metaTag)
             || node->hasTagName(styleTag)
             || node->hasTagName(titleTag)) {
-            next = node->traverseNextSibling();
+            next = NodeTraversal::nextSkippingChildren(node);
             fragment.removeNode(node);
         } else
-            next = node->traverseNextNode();
+            next = NodeTraversal::next(node);
     }
 }
 
@@ -645,7 +646,7 @@ void ReplaceSelectionCommand::handleStyleSpans(InsertedNodes& insertedNodes)
     // The style span that contains the source document's default style should be at
     // the top of the fragment, but Mail sometimes adds a wrapper (for Paste As Quotation),
     // so search for the top level style span instead of assuming it's at the top.
-    for (Node* node = insertedNodes.firstNodeInserted(); node; node = node->traverseNextNode()) {
+    for (Node* node = insertedNodes.firstNodeInserted(); node; node = NodeTraversal::next(node)) {
         if (isLegacyAppleStyleSpan(node)) {
             wrappingStyleSpan = toHTMLElement(node);
             break;

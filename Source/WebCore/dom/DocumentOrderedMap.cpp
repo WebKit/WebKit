@@ -34,6 +34,7 @@
 #include "Element.h"
 #include "HTMLMapElement.h"
 #include "HTMLNames.h"
+#include "NodeTraversal.h"
 #include "TreeScope.h"
 #include "WebCoreMemoryInstrumentation.h"
 #include <wtf/MemoryInstrumentationHashCountedSet.h>
@@ -126,7 +127,7 @@ inline Element* DocumentOrderedMap::get(AtomicStringImpl* key, const TreeScope* 
 
     if (m_duplicateCounts.contains(key)) {
         // We know there's at least one node that matches; iterate to find the first one.
-        for (Node* node = scope->rootNode()->firstChild(); node; node = node->traverseNextNode()) {
+        for (Node* node = scope->rootNode()->firstChild(); node; node = NodeTraversal::next(node)) {
             if (!node->isElementNode())
                 continue;
             element = static_cast<Element*>(node);

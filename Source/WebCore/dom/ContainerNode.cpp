@@ -39,6 +39,7 @@
 #include "MemoryCache.h"
 #include "MutationEvent.h"
 #include "NodeRenderStyle.h"
+#include "NodeTraversal.h"
 #include "ResourceLoadScheduler.h"
 #include "Page.h"
 #include "PlatformStrategies.h"
@@ -1047,7 +1048,7 @@ static void dispatchChildInsertionEvents(Node* child)
 
     // dispatch the DOMNodeInsertedIntoDocument event to all descendants
     if (c->inDocument() && document->hasListenerType(Document::DOMNODEINSERTEDINTODOCUMENT_LISTENER)) {
-        for (; c; c = c->traverseNextNode(child))
+        for (; c; c = NodeTraversal::next(c.get(), child))
             c->dispatchScopedEvent(MutationEvent::create(eventNames().DOMNodeInsertedIntoDocumentEvent, false));
     }
 }
@@ -1075,7 +1076,7 @@ static void dispatchChildRemovalEvents(Node* child)
 
     // dispatch the DOMNodeRemovedFromDocument event to all descendants
     if (c->inDocument() && document->hasListenerType(Document::DOMNODEREMOVEDFROMDOCUMENT_LISTENER)) {
-        for (; c; c = c->traverseNextNode(child))
+        for (; c; c = NodeTraversal::next(c.get(), child))
             c->dispatchScopedEvent(MutationEvent::create(eventNames().DOMNodeRemovedFromDocumentEvent, false));
     }
 }

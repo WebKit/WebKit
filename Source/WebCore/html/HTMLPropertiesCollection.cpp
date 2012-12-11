@@ -76,7 +76,8 @@ static Node* nextNodeWithProperty(Node* rootNode, Node* previous, Node* ownerNod
     // that declares the property. If the property has an itemscope attribute specified then we need
     // to traverse the next sibling.
     return previous == ownerNode || (previous->isHTMLElement() && !toHTMLElement(previous)->fastHasAttribute(itemscopeAttr))
-            ? previous->traverseNextNode(rootNode) : previous->traverseNextSibling(rootNode);
+        ? previous->NodeTraversal::next(rootNode)
+        : previous->NodeTraversal::nextSibling(rootNode);
 }
 
 Element* HTMLPropertiesCollection::virtualItemAfter(unsigned& offsetInArray, Element* previousItem) const

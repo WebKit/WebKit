@@ -30,6 +30,7 @@
 #include "EventNames.h"
 #include "FormAssociatedElement.h"
 #include "HTMLNames.h"
+#include "NodeTraversal.h"
 
 namespace WebCore {
 
@@ -75,7 +76,7 @@ LabelableElement* HTMLLabelElement::control()
         // per http://dev.w3.org/html5/spec/Overview.html#the-label-element
         // the form element must be "labelable form-associated element".
         Node* node = this;
-        while ((node = node->traverseNextNode(this))) {
+        while ((node = NodeTraversal::next(node, this))) {
             if (LabelableElement* element = nodeAsLabelableElement(node))
                 return element;
         }

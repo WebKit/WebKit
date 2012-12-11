@@ -28,6 +28,7 @@
 
 #include "CSSSelectorList.h"
 #include "Document.h"
+#include "NodeTraversal.h"
 #include "StyleRuleImport.h"
 #include "StyleSheetContents.h"
 #include "StyledElement.h"
@@ -119,17 +120,17 @@ void StyleInvalidationAnalysis::invalidateStyle(Document* document)
     Node* node = document->firstChild();
     while (node) {
         if (!node->isStyledElement()) {
-            node = node->traverseNextNode();
+            node = NodeTraversal::next(node);
             continue;
         }
         StyledElement* element = static_cast<StyledElement*>(node);
         if (elementMatchesSelectorScopes(element, m_idScopes, m_classScopes)) {
             element->setNeedsStyleRecalc();
             // The whole subtree is now invalidated, we can skip to the next sibling.
-            node = node->traverseNextSibling();
+            node = NodeTraversal::nextSkippingChildren(node);
             continue;
         }
-        node = node->traverseNextNode();
+        node = NodeTraversal::next(node);
     }
 }
 

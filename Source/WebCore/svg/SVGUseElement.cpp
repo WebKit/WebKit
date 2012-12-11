@@ -36,6 +36,7 @@
 #include "EventListener.h"
 #include "HTMLNames.h"
 #include "NodeRenderStyle.h"
+#include "NodeTraversal.h"
 #include "RegisteredEventListener.h"
 #include "RenderSVGResource.h"
 #include "RenderSVGTransformableContainer.h"
@@ -689,12 +690,12 @@ static inline void removeDisallowedElementsFromSubtree(Node* subtree)
     Node* node = subtree->firstChild();
     while (node) {
         if (isDisallowedElement(node)) {
-            Node* next = node->traverseNextSibling(subtree);
+            Node* next = NodeTraversal::nextSkippingChildren(node, subtree);
             // The subtree is not in document so this won't generate events that could mutate the tree.
             node->parentNode()->removeChild(node);
             node = next;
         } else
-            node = node->traverseNextNode(subtree);
+            node = NodeTraversal::next(node, subtree);
     }
 }
 

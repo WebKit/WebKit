@@ -76,6 +76,7 @@
 #include "MutationEvent.h"
 #include "Node.h"
 #include "NodeList.h"
+#include "NodeTraversal.h"
 #include "Page.h"
 #include "Pasteboard.h"
 #include "RenderStyle.h"
@@ -841,7 +842,7 @@ void InspectorDOMAgent::performSearch(ErrorString*, const String& whitespaceTrim
             continue;
 
         // Manual plain text search.
-        while ((node = node->traverseNextNode(document->documentElement()))) {
+        while ((node = NodeTraversal::next(node, document->documentElement()))) {
             switch (node->nodeType()) {
             case Node::TEXT_NODE:
             case Node::COMMENT_NODE:

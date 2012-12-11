@@ -26,6 +26,7 @@
 #include "Frame.h"
 #include "HTMLFrameOwnerElement.h"
 #include "InspectorInstrumentation.h"
+#include "NodeTraversal.h"
 #include <wtf/Assertions.h>
 
 namespace WebCore {
@@ -315,8 +316,7 @@ private:
 
 inline void ChildFrameDisconnector::collectDescendant(Node* root, ShouldIncludeRoot shouldIncludeRoot)
 {
-    for (Node* node = shouldIncludeRoot == IncludeRoot ? root : root->firstChild(); node;
-            node = node->traverseNextNode(root)) {
+    for (Node* node = shouldIncludeRoot == IncludeRoot ? root : root->firstChild(); node; node = NodeTraversal::next(node, root)) {
         if (!node->isElementNode())
             continue;
         Element* element = toElement(node);

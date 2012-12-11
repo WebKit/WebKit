@@ -431,6 +431,7 @@ SOURCES += \
     dom/NodeIterator.cpp \
     dom/NodeRareData.cpp \
     dom/NodeRenderingContext.cpp \
+    dom/NodeTraversal.cpp \
     dom/Notation.cpp \
     dom/StaticHashSetNodeList.cpp \
     dom/OverflowEvent.cpp \
@@ -1613,6 +1614,7 @@ HEADERS += \
     dom/NodeIterator.h \
     dom/NodeRareData.h \
     dom/NodeRenderingContext.h \
+    dom/NodeTraversal.h \
     dom/Notation.h \
     dom/StaticHashSetNodeList.h \
     dom/OverflowEvent.h \

@@ -54,6 +54,7 @@
 #include <WebCore/JSCSSStyleDeclaration.h>
 #include <WebCore/JSElement.h>
 #include <WebCore/JSRange.h>
+#include <WebCore/NodeTraversal.h>
 #include <WebCore/Page.h>
 #include <WebCore/PluginDocument.h>
 #include <WebCore/RenderTreeAsText.h>
@@ -665,7 +666,7 @@ bool WebFrame::containsAnyFormElements() const
     if (!document)
         return false;
 
-    for (Node* node = document->documentElement(); node; node = node->traverseNextNode()) {
+    for (Node* node = document->documentElement(); node; node = NodeTraversal::next(node)) {
         if (!node->isElementNode())
             continue;
         if (static_cast<Element*>(node)->hasTagName(HTMLNames::formTag))

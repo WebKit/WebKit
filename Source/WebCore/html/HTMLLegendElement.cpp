@@ -28,6 +28,7 @@
 #include "HTMLFieldSetElement.h"
 #include "HTMLFormControlElement.h"
 #include "HTMLNames.h"
+#include "NodeTraversal.h"
 #include <wtf/StdLibExtras.h>
 
 namespace WebCore {
@@ -58,7 +59,7 @@ HTMLFormControlElement* HTMLLegendElement::associatedControl()
     // Find first form element inside the fieldset that is not a legend element.
     // FIXME: Should we consider tabindex?
     Node* node = fieldset;
-    while ((node = node->traverseNextNode(fieldset))) {
+    while ((node = NodeTraversal::next(node, fieldset))) {
         if (node->isElementNode()) {
             Element* element = static_cast<Element*>(node);
             if (element->isFormControlElement())

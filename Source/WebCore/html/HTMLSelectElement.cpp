@@ -45,6 +45,7 @@
 #include "LocalizedStrings.h"
 #include "MouseEvent.h"
 #include "NodeRenderingContext.h"
+#include "NodeTraversal.h"
 #include "Page.h"
 #include "RenderListBox.h"
 #include "RenderMenuList.h"
@@ -736,7 +737,7 @@ void HTMLSelectElement::recalcListItems(bool updateSelectedStates) const
     HTMLOptionElement* firstOption = 0;
     for (Node* currentNode = this->firstChild(); currentNode;) {
         if (!currentNode->isHTMLElement()) {
-            currentNode = currentNode->traverseNextSibling(this);
+            currentNode = NodeTraversal::nextSkippingChildren(currentNode, this);
             continue;
         }
 
@@ -775,12 +776,12 @@ void HTMLSelectElement::recalcListItems(bool updateSelectedStates) const
             m_listItems.append(current);
 
         // In conforming HTML code, only <optgroup> and <option> will be found
-        // within a <select>. We call traverseNextSibling so that we only step
+        // within a <select>. We call NodeTraversal::nextSibling so that we only step
         // into those tags that we choose to. For web-compat, we should cope
         // with the case where odd tags like a <div> have been added but we
         // handle this because such tags have already been removed from the
         // <select>'s subtree at this point.
-        currentNode = currentNode->traverseNextSibling(this);
+        currentNode = NodeTraversal::nextSkippingChildren(currentNode, this);
     }
 
     if (!foundSelected && m_size <= 1 && firstOption && !firstOption->selected())

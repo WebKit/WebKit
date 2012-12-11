@@ -30,6 +30,7 @@
 #include "HTMLOptionElement.h"
 #include "NodeList.h"
 #include "NodeRareData.h"
+#include "NodeTraversal.h"
 
 #if ENABLE(MICRODATA)
 #include "HTMLPropertiesCollection.h"
@@ -261,9 +262,9 @@ template<bool forward>
 static Node* nextNode(Node* base, Node* previous, bool onlyIncludeDirectChildren)
 {
     if (forward)
-        return onlyIncludeDirectChildren ? previous->nextSibling() : previous->traverseNextNode(base);
+        return onlyIncludeDirectChildren ? previous->nextSibling() : NodeTraversal::next(previous, base);
     else
-        return onlyIncludeDirectChildren ? previous->previousSibling() : previous->traversePreviousNode(base);
+        return onlyIncludeDirectChildren ? previous->previousSibling() : NodeTraversal::previous(previous, base);
 }
 
 static inline Node* lastDescendent(Node* node)

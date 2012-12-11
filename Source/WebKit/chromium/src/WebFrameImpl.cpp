@@ -118,6 +118,7 @@
 #include "KURL.h"
 #include "MessagePort.h"
 #include "Node.h"
+#include "NodeTraversal.h"
 #include "Page.h"
 #include "PageOverlay.h"
 #include "Performance.h"
@@ -2349,7 +2350,7 @@ void WebFrameImpl::setFindEndstateFocusAndSelection()
                 frame()->document()->setFocusedNode(node);
                 return;
             }
-            node = node->traverseNextNode();
+            node = NodeTraversal::next(node);
         }
 
         // No node related to the active match was focusable, so set the

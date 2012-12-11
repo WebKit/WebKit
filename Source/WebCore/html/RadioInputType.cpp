@@ -29,6 +29,7 @@
 #include "KeyboardEvent.h"
 #include "LocalizedStrings.h"
 #include "MouseEvent.h"
+#include "NodeTraversal.h"
 #include "Settings.h"
 #include "SpatialNavigation.h"
 #include <wtf/PassOwnPtr.h>
@@ -84,7 +85,7 @@ void RadioInputType::handleKeydownEvent(KeyboardEvent* event)
     // We can only stay within the form's children if the form hasn't been demoted to a leaf because
     // of malformed HTML.
     Node* node = element();
-    while ((node = (forward ? node->traverseNextNode() : node->traversePreviousNode()))) {
+    while ((node = (forward ? NodeTraversal::next(node) : NodeTraversal::previous(node)))) {
         // Once we encounter a form element, we know we're through.
         if (node->hasTagName(formTag))
             break;

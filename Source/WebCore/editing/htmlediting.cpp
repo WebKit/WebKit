@@ -41,6 +41,7 @@
 #include "HTMLOListElement.h"
 #include "HTMLParagraphElement.h"
 #include "HTMLUListElement.h"
+#include "NodeTraversal.h"
 #include "PositionIterator.h"
 #include "RenderObject.h"
 #include "Range.h"
@@ -645,12 +646,12 @@ static bool hasARenderedDescendant(Node* node, Node* excludedNode)
 {
     for (Node* n = node->firstChild(); n;) {
         if (n == excludedNode) {
-            n = n->traverseNextSibling(node);
+            n = NodeTraversal::nextSkippingChildren(n, node);
             continue;
         }
         if (n->renderer())
             return true;
-        n = n->traverseNextNode(node);
+        n = NodeTraversal::next(n, node);
     }
     return false;
 }

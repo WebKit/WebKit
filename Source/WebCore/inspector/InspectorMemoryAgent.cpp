@@ -49,6 +49,7 @@
 #include "MemoryInstrumentationImpl.h"
 #include "MemoryUsageSupport.h"
 #include "Node.h"
+#include "NodeTraversal.h"
 #include "Page.h"
 #include "ScriptGCEvent.h"
 #include "ScriptProfiler.h"
@@ -239,7 +240,7 @@ private:
     {
         Node* currentNode = rootNode;
         collectListenersInfo(rootNode);
-        while ((currentNode = currentNode->traverseNextNode(rootNode))) {
+        while ((currentNode = NodeTraversal::next(currentNode, rootNode))) {
             ++m_totalNodeCount;
             collectNodeStatistics(currentNode);
         }

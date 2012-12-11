@@ -118,6 +118,7 @@
 #include "NodeFilter.h"
 #include "NodeIterator.h"
 #include "NodeRareData.h"
+#include "NodeTraversal.h"
 #include "NodeWithIndex.h"
 #include "Page.h"
 #include "PageGroup.h"
@@ -747,7 +748,7 @@ void Document::buildAccessKeyMap(TreeScope* scope)
 {
     ASSERT(scope);
     Node* rootNode = scope->rootNode();
-    for (Node* node = rootNode; node; node = node->traverseNextNode(rootNode)) {
+    for (Node* node = rootNode; node; node = NodeTraversal::next(node, rootNode)) {
         if (!node->isElementNode())
             continue;
         Element* element = static_cast<Element*>(node);
@@ -2155,7 +2156,7 @@ void Document::removeAllEventListeners()
 
     if (DOMWindow* domWindow = this->domWindow())
         domWindow->removeAllEventListeners();
-    for (Node* node = firstChild(); node; node = node->traverseNextNode())
+    for (Node* node = firstChild(); node; node = NodeTraversal::next(node))
         node->removeAllEventListeners();
 }
 
@@ -2664,7 +2665,7 @@ void Document::updateBaseURL()
     if (!equalIgnoringFragmentIdentifier(oldBaseURL, m_baseURL)) {
         // Base URL change changes any relative visited links.
         // FIXME: There are other URLs in the tree that would need to be re-evaluated on dynamic base URL change. Style should be invalidated too.
-        for (Node* node = firstChild(); node; node = node->traverseNextNode()) {
+        for (Node* node = firstChild(); node; node = NodeTraversal::next(node)) {
             if (node->hasTagName(aTag))
                 static_cast<HTMLAnchorElement*>(node)->invalidateCachedVisitedLinkHash();
         }
@@ -2682,7 +2683,7 @@ void Document::processBaseElement()
     // Find the first href attribute in a base element and the first target attribute in a base element.
     const AtomicString* href = 0;
     const AtomicString* target = 0;
-    for (Node* node = document()->firstChild(); node && (!href || !target); node = node->traverseNextNode()) {
+    for (Node* node = document()->firstChild(); node && (!href || !target); node = NodeTraversal::next(node)) {
         if (node->hasTagName(baseTag)) {
             if (!href) {
                 const AtomicString& value = static_cast<Element*>(node)->fastGetAttribute(hrefAttr);
@@ -2826,7 +2827,7 @@ int Document::nodeAbsIndex(Node *node)
     ASSERT(node->document() == this);
 
     int absIndex = 0;
-    for (Node* n = node; n && n != this; n = n->traversePreviousNode())
+    for (Node* n = node; n && n != this; n = NodeTraversal::previous(n))
         absIndex++;
     return absIndex;
 }
@@ -2835,7 +2836,7 @@ Node* Document::nodeWithAbsIndex(int absIndex)
 {
     Node* n = this;
     for (int i = 0; n && (i < absIndex); i++)
-        n = n->traverseNextNode();
+        n = NodeTraversal::next(n);
     return n;
 }
 
@@ -3441,7 +3442,7 @@ void Document::getFocusableNodes(Vector<RefPtr<Node> >& nodes)
 {
     updateLayout();
 
-    for (Node* node = firstChild(); node; node = node->traverseNextNode()) {
+    for (Node* node = firstChild(); node; node = NodeTraversal::next(node)) {
         if (node->isFocusable())
             nodes.append(node);
     }

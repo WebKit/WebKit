@@ -53401,6 +53401,14 @@
 				RelativePath="..\dom\NodeRenderingContext.h"
 				>
 			</File>
+            <File
+				RelativePath="..\dom\NodeTraversal.cpp"
+				>
+			</File>
+            <File
+				RelativePath="..\dom\NodeTraversal.h"
+				>
+			</File>
 			<File
 				RelativePath="..\dom\Notation.cpp"
 				>

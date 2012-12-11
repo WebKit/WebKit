@@ -75,6 +75,7 @@
 #include "NamedNodeMap.h"
 #include "NodeRareData.h"
 #include "NodeRenderingContext.h"
+#include "NodeTraversal.h"
 #include "Page.h"
 #include "PlatformMouseEvent.h"
 #include "PlatformWheelEvent.h"
@@ -638,7 +639,7 @@ void Node::normalize()
             break;
 
         if (type != TEXT_NODE) {
-            node = node->traverseNextNodePostOrder();
+            node = NodeTraversal::nextPostOrder(node.get());
             continue;
         }
 
@@ -647,7 +648,7 @@ void Node::normalize()
         // Remove empty text nodes.
         if (!text->length()) {
             // Care must be taken to get the next node before removing the current node.
-            node = node->traverseNextNodePostOrder();
+            node = NodeTraversal::nextPostOrder(node.get());
             ExceptionCode ec;
             text->remove(ec);
             continue;
@@ -674,7 +675,7 @@ void Node::normalize()
             nextText->remove(ec);
         }
 
-        node = node->traverseNextNodePostOrder();
+        node = NodeTraversal::nextPostOrder(node.get());
     }
 }
 
@@ -888,7 +889,7 @@ void Node::setNeedsStyleRecalc(StyleChangeType changeType)
 
 void Node::lazyAttach(ShouldSetAttached shouldSetAttached)
 {
-    for (Node* n = this; n; n = n->traverseNextNode(this)) {
+    for (Node* n = this; n; n = NodeTraversal::next(n, this)) {
         if (n->hasChildNodes())
             n->setChildNeedsStyleRecalc();
         n->setStyleChange(FullStyleChange);
@@ -1039,96 +1040,6 @@ NodeListsNodeData* Node::nodeLists()
     return hasRareData() ? rareData()->nodeLists() : 0;
 }
 
-Node* Node::traverseNextAncestorSibling() const
-{
-    ASSERT(!nextSibling());
-    for (const Node* node = parentNode(); node; node = node->parentNode()) {
-        if (node->nextSibling())
-            return node->nextSibling();
-    }
-    return 0;
-}
-
-Node* Node::traverseNextAncestorSibling(const Node* stayWithin) const
-{
-    ASSERT(!nextSibling());
-    ASSERT(this != stayWithin);
-    for (const Node* node = parentNode(); node; node = node->parentNode()) {
-        if (node == stayWithin)
-            return 0;
-        if (node->nextSibling())
-            return node->nextSibling();
-    }
-    return 0;
-}
-
-Node* Node::traverseNextNodePostOrder() const
-{
-    Node* next = nextSibling();
-    if (!next)
-        return parentNode();
-    while (Node* firstChild = next->firstChild())
-        next = firstChild;
-    return next;
-}
-
-Node* Node::traversePreviousNode(const Node* stayWithin) const
-{
-    if (this == stayWithin)
-        return 0;
-    if (previousSibling()) {
-        Node *n = previousSibling();
-        while (n->lastChild())
-            n = n->lastChild();
-        return n;
-    }
-    return parentNode();
-}
-
-Node* Node::traversePreviousSibling(const Node* stayWithin) const
-{
-    if (this == stayWithin)
-        return 0;
-    if (previousSibling())
-        return previousSibling();
-    const Node *n = this;
-    while (n && !n->previousSibling() && (!stayWithin || n->parentNode() != stayWithin))
-        n = n->parentNode();
-    if (n)
-        return n->previousSibling();
-    return 0;
-}
-
-Node* Node::traversePreviousNodePostOrder(const Node* stayWithin) const
-{
-    if (lastChild())
-        return lastChild();
-    if (this == stayWithin)
-        return 0;
-    if (previousSibling())
-        return previousSibling();
-    const Node *n = this;
-    while (n && !n->previousSibling() && (!stayWithin || n->parentNode() != stayWithin))
-        n = n->parentNode();
-    if (n)
-        return n->previousSibling();
-    return 0;
-}
-
-Node* Node::traversePreviousSiblingPostOrder(const Node* stayWithin) const
-{
-    if (this == stayWithin)
-        return 0;
-    if (previousSibling())
-        return previousSibling();
-    const Node *n = this;
-    while (n && !n->previousSibling() && (!stayWithin || n->parentNode() != stayWithin))
-        n = n->parentNode();
-    if (n)
-        return n->previousSibling();
-    return 0;
-}
-
 void Node::checkSetPrefix(const AtomicString& prefix, ExceptionCode& ec)
 {
     // Perform error checking as required by spec for setting Node.prefix. Used by
@@ -1233,7 +1144,7 @@ void Node::detach()
     if (renderer()) {
         renderer()->destroyAndCleanupAnonymousWrappers();
 #ifndef NDEBUG
-        for (Node* node = this; node; node = node->traverseNextNode(this)) {
+        for (Node* node = this; node; node = NodeTraversal::next(node, this)) {
             RenderObject* renderer = node->renderer();
             // RenderFlowThread and the top layer remove elements from the regular tree
             // hierarchy. They will be cleaned up when we call detach on them.
@@ -2086,7 +1997,7 @@ void Node::showNodePathForThis() const
 
 static void traverseTreeAndMark(const String& baseIndent, const Node* rootNode, const Node* markedNode1, const char* markedLabel1, const Node* markedNode2, const char* markedLabel2)
 {
-    for (const Node* node = rootNode; node; node = node->traverseNextNode()) {
+    for (const Node* node = rootNode; node; node = NodeTraversal::next(node)) {
         if (node == markedNode1)
             fprintf(stderr, "%s", markedLabel1);
         if (node == markedNode2)

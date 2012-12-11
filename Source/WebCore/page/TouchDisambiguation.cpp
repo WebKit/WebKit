@@ -38,6 +38,7 @@
 #include "FrameView.h"
 #include "HTMLNames.h"
 #include "HitTestResult.h"
+#include "NodeTraversal.h"
 #include <algorithm>
 #include <cmath>
 
@@ -55,11 +56,11 @@ static IntRect boundingBoxForEventNodes(Node* eventNode)
     while (node) {
         // Skip the whole sub-tree if the node doesn't propagate events.
         if (node != eventNode && node->willRespondToMouseClickEvents()) {
-            node = node->traverseNextSibling(eventNode);
+            node = NodeTraversal::nextSibling(node, eventNode);
             continue;
         }
         result.unite(node->pixelSnappedBoundingBox());
-        node = node->traverseNextNode(eventNode);
+        node = NodeTraversal::next(node, eventNode);
     }
     return eventNode->document()->view()->contentsToWindow(result);
 }

@@ -31,6 +31,7 @@
 #include "ElementShadow.h"
 #include "HTMLContentElement.h"
 #include "HTMLShadowElement.h"
+#include "NodeTraversal.h"
 #include "ShadowRoot.h"
 
 
@@ -101,7 +102,7 @@ const Vector<InsertionPoint*>& ShadowRootContentDistributionData::ensureInsertio
     if (!shadowRoot->hasInsertionPoint())
         return m_insertionPointList;
 
-    for (Node* node = shadowRoot; node; node = node->traverseNextNode(shadowRoot)) {
+    for (Node* node = shadowRoot; node; node = NodeTraversal::next(node, shadowRoot)) {
         if (node->isInsertionPoint())
             m_insertionPointList.append(toInsertionPoint(node));
     }

@@ -29,6 +29,7 @@
 #include "HTMLLegendElement.h"
 #include "HTMLNames.h"
 #include "HTMLObjectElement.h"
+#include "NodeTraversal.h"
 #include "RenderFieldset.h"
 #include <wtf/StdLibExtras.h>
 
@@ -50,7 +51,7 @@ PassRefPtr<HTMLFieldSetElement> HTMLFieldSetElement::create(const QualifiedName&
 
 void HTMLFieldSetElement::invalidateDisabledStateUnder(Element* base)
 {
-    for (Node* node = base->firstChild(); node; node = node->traverseNextNode(base)) {
+    for (Node* node = base->firstChild(); node; node = NodeTraversal::next(node, base)) {
         if (node->isElementNode() && toElement(node)->isFormControlElement())
             static_cast<HTMLFormControlElement*>(node)->ancestorDisabledStateWasChanged();
     }
@@ -112,7 +113,7 @@ void HTMLFieldSetElement::refreshElementsIfNeeded() const
 
     m_associatedElements.clear();
 
-    for (Node* node = firstChild(); node; node = node->traverseNextNode(this)) {
+    for (Node* node = firstChild(); node; node = NodeTraversal::next(node, this)) {
         if (!node->isElementNode())
             continue;
 

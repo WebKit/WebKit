@@ -90,6 +90,7 @@
 #endif
 #include "NetworkManager.h"
 #include "NodeRenderStyle.h"
+#include "NodeTraversal.h"
 #if ENABLE(NAVIGATOR_CONTENT_UTILS)
 #include "NavigatorContentUtilsClientBlackBerry.h"
 #endif
@@ -5712,7 +5713,7 @@ void WebPagePrivate::exitFullscreenForNode(Node* node)
 // TODO: We should remove this helper class when we decide to support all elements.
 static bool containsVideoTags(Element* element)
 {
-    for (Node* node = element->firstChild(); node; node = node->traverseNextNode(element)) {
+    for (Node* node = element->firstChild(); node; node = NodeTraversal::next(node, element)) {
         if (node->hasTagName(HTMLNames::videoTag))
             return true;
     }

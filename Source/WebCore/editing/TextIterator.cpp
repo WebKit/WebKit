@@ -35,6 +35,7 @@
 #include "HTMLNames.h"
 #include "htmlediting.h"
 #include "InlineTextBox.h"
+#include "NodeTraversal.h"
 #include "Range.h"
 #include "RenderTableCell.h"
 #include "RenderTableRow.h"
@@ -425,7 +426,7 @@ void TextIterator::advance()
         if (!next) {
             next = m_node->nextSibling();
             if (!next) {
-                bool pastEnd = m_node->traverseNextNode() == m_pastEndNode;
+                bool pastEnd = NodeTraversal::next(m_node) == m_pastEndNode;
                 Node* parentNode = m_node->parentOrHostNode();
                 while (!next && parentNode) {
                     if ((pastEnd && parentNode == m_endContainer) || m_endContainer->isDescendantOf(parentNode))
@@ -805,7 +806,7 @@ static bool shouldEmitNewlineAfterNode(Node* node)
         return false;
     // Check if this is the very last renderer in the document.
     // If so, then we should not emit a newline.
-    while ((node = node->traverseNextSibling()))
+    while ((node = NodeTraversal::nextSkippingChildren(node)))
         if (node->renderer())
             return true;
     return false;

@@ -62,6 +62,7 @@
 #include "KillRing.h"
 #include "ModifySelectionListLevel.h"
 #include "NodeList.h"
+#include "NodeTraversal.h"
 #include "Page.h"
 #include "Pasteboard.h"
 #include "RemoveFormatCommand.h"
@@ -1067,12 +1068,12 @@ void Editor::simplifyMarkup(Node* startNode, Node* endNode)
         // check if start node is before endNode
         Node* node = startNode;
         while (node && node != endNode)
-            node = node->traverseNextNode();
+            node = NodeTraversal::next(node);
         if (!node)
             return;
     }
     
-    applyCommand(SimplifyMarkupCommand::create(m_frame->document(), startNode, (endNode) ? endNode->traverseNextNode() : 0));
+    applyCommand(SimplifyMarkupCommand::create(m_frame->document(), startNode, (endNode) ? NodeTraversal::next(endNode) : 0));
 }
 
 void Editor::copyURL(const KURL& url, const String& title)

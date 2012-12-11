@@ -39,6 +39,7 @@
 #include "HTMLInterchange.h"
 #include "HTMLNames.h"
 #include "NodeList.h"
+#include "NodeTraversal.h"
 #include "Range.h"
 #include "RenderObject.h"
 #include "RenderText.h"
@@ -351,26 +352,26 @@ void ApplyStyleCommand::applyRelativeFontStyleChange(EditingStyle* style)
     // an ancestor of the start node), we gather nodes up to the next sibling of the end node
     Node *beyondEnd;
     if (start.deprecatedNode()->isDescendantOf(end.deprecatedNode()))
-        beyondEnd = end.deprecatedNode()->traverseNextSibling();
+        beyondEnd = NodeTraversal::nextSkippingChildren(end.deprecatedNode());
     else
-        beyondEnd = end.deprecatedNode()->traverseNextNode();
+        beyondEnd = NodeTraversal::next(end.deprecatedNode());
     
     start = start.upstream(); // Move upstream to ensure we do not add redundant spans.
     Node* startNode = start.deprecatedNode();
     if (startNode->isTextNode() && start.deprecatedEditingOffset() >= caretMaxOffset(startNode)) // Move out of text node if range does not include its characters.
-        startNode = startNode->traverseNextNode();
+        startNode = NodeTraversal::next(startNode);
 
     // Store away font size before making any changes to the document.
     // This ensures that changes to one node won't effect another.
     HashMap<Node*, float> startingFontSizes;
-    for (Node *node = startNode; node != beyondEnd; node = node->traverseNextNode())
+    for (Node *node = startNode; node != beyondEnd; node = NodeTraversal::next(node))
         startingFontSizes.set(node, computedFontSize(node));
 
     // These spans were added by us. If empty after font size changes, they can be removed.
     Vector<RefPtr<HTMLElement> > unstyledSpans;
     
     Node* lastStyledNode = 0;
-    for (Node* node = startNode; node != beyondEnd; node = node->traverseNextNode()) {
+    for (Node* node = startNode; node != beyondEnd; node = NodeTraversal::next(node)) {
         RefPtr<HTMLElement> element;
         if (node->isHTMLElement()) {
             // Only work on fully selected nodes.
@@ -674,19 +675,19 @@ void ApplyStyleCommand::fixRangeAndApplyInlineStyle(EditingStyle* style, const P
     Node* startNode = start.deprecatedNode();
 
     if (start.deprecatedEditingOffset() >= caretMaxOffset(start.deprecatedNode())) {
-        startNode = startNode->traverseNextNode();
+        startNode = NodeTraversal::next(startNode);
         if (!startNode || comparePositions(end, firstPositionInOrBeforeNode(startNode)) < 0)
             return;
     }
 
     Node* pastEndNode = end.deprecatedNode();
     if (end.deprecatedEditingOffset() >= caretMaxOffset(end.deprecatedNode()))
-        pastEndNode = end.deprecatedNode()->traverseNextSibling();
+        pastEndNode = NodeTraversal::nextSkippingChildren(end.deprecatedNode());
 
     // FIXME: Callers should perform this operation on a Range that includes the br
     // if they want style applied to the empty line.
     if (start == end && start.deprecatedNode()->hasTagName(brTag))
-        pastEndNode = start.deprecatedNode()->traverseNextNode();
+        pastEndNode = NodeTraversal::next(start.deprecatedNode());
 
     // Start from the highest fully selected ancestor so that we can modify the fully selected node.
     // e.g. When applying font-size: large on <font color="blue">hello</font>, we need to include the font element in our run
@@ -706,8 +707,8 @@ static bool containsNonEditableRegion(Node* node)
     if (!node->rendererIsEditable())
         return true;
 
-    Node* sibling = node->traverseNextSibling();
-    for (Node* descendent = node->firstChild(); descendent && descendent != sibling; descendent = descendent->traverseNextNode()) {
+    Node* sibling = NodeTraversal::nextSkippingChildren(node);
+    for (Node* descendent = node->firstChild(); descendent && descendent != sibling; descendent = NodeTraversal::next(descendent)) {
         if (!descendent->rendererIsEditable())
             return true;
     }
@@ -722,7 +723,7 @@ void ApplyStyleCommand::applyInlineStyleToNodeRange(EditingStyle* style, PassRef
 
     RefPtr<Node> node = startNode;
     for (RefPtr<Node> next; node && node != pastEndNode; node = next) {
-        next = node->traverseNextNode();
+        next = NodeTraversal::next(node.get());
 
         if (!node->renderer() || !node->rendererIsEditable())
             continue;
@@ -738,7 +739,7 @@ void ApplyStyleCommand::applyInlineStyleToNodeRange(EditingStyle* style, PassRef
             RefPtr<StylePropertySet> inlineStyle = element->ensureMutableInlineStyle()->copy();
             inlineStyle->mergeAndOverrideOnConflict(style->style());
             setNodeAttribute(element, styleAttr, inlineStyle->asText());
-            next = node->traverseNextSibling();
+            next = NodeTraversal::nextSkippingChildren(node.get());
             continue;
         }
         
@@ -749,7 +750,7 @@ void ApplyStyleCommand::applyInlineStyleToNodeRange(EditingStyle* style, PassRef
             if (node->contains(pastEndNode.get()) || containsNonEditableRegion(node.get()) || !node->parentNode()->rendererIsEditable())
                 continue;
             if (editingIgnoresContent(node.get())) {
-                next = node->traverseNextSibling();
+                next = NodeTraversal::nextSkippingChildren(node.get());
                 continue;
             }
         }
@@ -763,7 +764,7 @@ void ApplyStyleCommand::applyInlineStyleToNodeRange(EditingStyle* style, PassRef
             runEnd = sibling;
             sibling = runEnd->nextSibling();
         }
-        next = runEnd->traverseNextSibling();
+        next = NodeTraversal::nextSkippingChildren(runEnd.get());
 
         if (!removeStyleFromRunBeforeApplyingStyle(style, runStart, runEnd))
             continue;
@@ -780,9 +781,9 @@ bool ApplyStyleCommand::isStyledInlineElementToRemove(Element* element) const
 bool ApplyStyleCommand::removeStyleFromRunBeforeApplyingStyle(EditingStyle* style, RefPtr<Node>& runStart, RefPtr<Node>& runEnd)
 {
     ASSERT(runStart && runEnd && runStart->parentNode() == runEnd->parentNode());
-    RefPtr<Node> pastEndNode = runEnd->traverseNextSibling();
+    RefPtr<Node> pastEndNode = NodeTraversal::nextSkippingChildren(runEnd.get());
     bool needToApplyStyle = false;
-    for (Node* node = runStart.get(); node && node != pastEndNode.get(); node = node->traverseNextNode()) {
+    for (Node* node = runStart.get(); node && node != pastEndNode.get(); node = NodeTraversal::next(node)) {
         if (node->childNodeCount())
             continue;
         // We don't consider m_isInlineElementToRemoveFunction here because we never apply style when m_isInlineElementToRemoveFunction is specified
@@ -799,9 +800,9 @@ bool ApplyStyleCommand::removeStyleFromRunBeforeApplyingStyle(EditingStyle* styl
     for (RefPtr<Node> node = next; node && node->inDocument() && node != pastEndNode; node = next) {
         if (editingIgnoresContent(node.get())) {
             ASSERT(!node->contains(pastEndNode.get()));
-            next = node->traverseNextSibling();
+            next = NodeTraversal::nextSkippingChildren(node.get());
         } else
-            next = node->traverseNextNode();
+            next = NodeTraversal::next(node.get());
         if (!node->isHTMLElement())
             continue;
 
@@ -1054,13 +1055,13 @@ void ApplyStyleCommand::removeInlineStyle(EditingStyle* style, const Position &s
         RefPtr<Node> next;
         if (editingIgnoresContent(node)) {
             ASSERT(node == end.deprecatedNode() || !node->contains(end.deprecatedNode()));
-            next = node->traverseNextSibling();
+            next = NodeTraversal::nextSkippingChildren(node);
         } else
-            next = node->traverseNextNode();
+            next = NodeTraversal::next(node);
         if (node->isHTMLElement() && nodeFullySelected(node, start, end)) {
             RefPtr<HTMLElement> elem = toHTMLElement(node);
-            RefPtr<Node> prev = elem->traversePreviousNodePostOrder();
-            RefPtr<Node> next = elem->traverseNextNode();
+            RefPtr<Node> prev = NodeTraversal::previousPostOrder(elem.get());
+            RefPtr<Node> next = NodeTraversal::next(elem.get());
             RefPtr<EditingStyle> styleToPushDown;
             RefPtr<Node> childNode;
             if (isStyledInlineElementToRemove(elem.get())) {

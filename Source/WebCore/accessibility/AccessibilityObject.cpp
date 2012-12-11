@@ -40,6 +40,7 @@
 #include "HTMLNames.h"
 #include "LocalizedStrings.h"
 #include "NodeList.h"
+#include "NodeTraversal.h"
 #include "NotImplemented.h"
 #include "Page.h"
 #include "RenderImage.h"
@@ -360,10 +361,10 @@ AccessibilityObject* AccessibilityObject::firstAccessibleObjectFromNode(const No
 
     AccessibilityObject* accessibleObject = cache->getOrCreate(node->renderer());
     while (accessibleObject && accessibleObject->accessibilityIsIgnored()) {
-        node = node->traverseNextNode();
+        node = NodeTraversal::next(node);
 
         while (node && !node->renderer())
-            node = node->traverseNextSibling();
+            node = NodeTraversal::nextSkippingChildren(node);
 
         if (!node)
             return 0;

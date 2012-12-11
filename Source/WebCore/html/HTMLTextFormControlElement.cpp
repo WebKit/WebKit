@@ -37,6 +37,7 @@
 #include "HTMLInputElement.h"
 #include "HTMLNames.h"
 #include "NodeRenderingContext.h"
+#include "NodeTraversal.h"
 #include "RenderBox.h"
 #include "RenderTextControl.h"
 #include "RenderTheme.h"
@@ -462,7 +463,7 @@ PassRefPtr<Range> HTMLTextFormControlElement::selection() const
     int offset = 0;
     Node* startNode = 0;
     Node* endNode = 0;
-    for (Node* node = innerText->firstChild(); node; node = node->traverseNextNode(innerText)) {
+    for (Node* node = innerText->firstChild(); node; node = NodeTraversal::next(node, innerText)) {
         ASSERT(!node->firstChild());
         ASSERT(node->isTextNode() || node->hasTagName(brTag));
         int length = node->isTextNode() ? lastOffsetInNode(node) : 1;
@@ -561,7 +562,7 @@ String HTMLTextFormControlElement::innerTextValue() const
         return emptyString();
 
     StringBuilder result;
-    for (Node* node = innerText; node; node = node->traverseNextNode(innerText)) {
+    for (Node* node = innerText; node; node = NodeTraversal::next(node, innerText)) {
         if (node->hasTagName(brTag))
             result.append(newlineCharacter);
         else if (node->isTextNode())
@@ -608,7 +609,7 @@ String HTMLTextFormControlElement::valueWithHardLineBreaks() const
     getNextSoftBreak(line, breakNode, breakOffset);
 
     StringBuilder result;
-    for (Node* node = innerText->firstChild(); node; node = node->traverseNextNode(innerText)) {
+    for (Node* node = innerText->firstChild(); node; node = NodeTraversal::next(node, innerText)) {
         if (node->hasTagName(brTag))
             result.append(newlineCharacter);
         else if (node->isTextNode()) {

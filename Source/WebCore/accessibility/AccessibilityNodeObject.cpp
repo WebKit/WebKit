@@ -63,6 +63,7 @@
 #include "LocalizedStrings.h"
 #include "MathMLNames.h"
 #include "NodeList.h"
+#include "NodeTraversal.h"
 #include "Page.h"
 #include "ProgressTracker.h"
 #include "Text.h"
@@ -1586,7 +1587,7 @@ String AccessibilityNodeObject::accessibilityDescriptionForElements(Vector<Eleme
         Element* idElement = elements[i];
 
         builder.append(accessibleNameForNode(idElement));
-        for (Node* n = idElement->firstChild(); n; n = n->traverseNextNode(idElement))
+        for (Node* n = idElement->firstChild(); n; n = NodeTraversal::next(n, idElement))
             builder.append(accessibleNameForNode(n));
 
         if (i != size - 1)

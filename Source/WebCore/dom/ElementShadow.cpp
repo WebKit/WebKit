@@ -35,6 +35,7 @@
 #include "HTMLContentElement.h"
 #include "HTMLShadowElement.h"
 #include "InspectorInstrumentation.h"
+#include "NodeTraversal.h"
 #include "ShadowRoot.h"
 #include "StyleResolver.h"
 
@@ -220,7 +221,7 @@ void ElementShadow::ensureSelectFeatureSetCollected()
 void ElementShadow::collectSelectFeatureSetFrom(ShadowRoot* root)
 {
     if (root->hasElementShadow()) {
-        for (Node* node = root->firstChild(); node; node = node->traverseNextNode()) {
+        for (Node* node = root->firstChild(); node; node = NodeTraversal::next(node)) {
             if (ElementShadow* elementShadow = node->isElementNode() ? toElement(node)->shadow() : 0) {
                 elementShadow->ensureSelectFeatureSetCollected();
                 m_selectFeatures.add(elementShadow->m_selectFeatures);
@@ -229,7 +230,7 @@ void ElementShadow::collectSelectFeatureSetFrom(ShadowRoot* root)
     }
 
     if (root->hasContentElement()) {
-        for (Node* node = root->firstChild(); node; node = node->traverseNextNode()) {
+        for (Node* node = root->firstChild(); node; node = NodeTraversal::next(node)) {
             if (isHTMLContentElement(node)) {
                 const CSSSelectorList& list = toHTMLContentElement(node)->selectorList();
                 for (CSSSelector* selector = list.first(); selector; selector = list.next(selector))

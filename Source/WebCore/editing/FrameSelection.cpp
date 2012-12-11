@@ -48,6 +48,7 @@
 #include "HitTestRequest.h"
 #include "HitTestResult.h"
 #include "InlineTextBox.h"
+#include "NodeTraversal.h"
 #include "Page.h"
 #include "Range.h"
 #include "RenderText.h"
@@ -1952,7 +1953,7 @@ void FrameSelection::getClippedVisibleTextRectangles(Vector<FloatRect>& rectangl
 // Scans logically forward from "start", including any child frames.
 static HTMLFormElement* scanForForm(Node* start)
 {
-    for (Node* node = start; node; node = node->traverseNextNode()) {
+    for (Node* node = start; node; node = NodeTraversal::next(node)) {
         if (node->hasTagName(formTag))
             return static_cast<HTMLFormElement*>(node);
         if (node->isHTMLElement() && toHTMLElement(node)->isFormControlElement())
@@ -2025,7 +2026,7 @@ void FrameSelection::setSelectionFromNone()
 
     Node* node = document->documentElement();
     while (node && !node->hasTagName(bodyTag))
-        node = node->traverseNextNode();
+        node = NodeTraversal::next(node);
     if (node)
         setSelection(VisibleSelection(firstPositionInOrBeforeNode(node), DOWNSTREAM));
 }
