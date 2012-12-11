@@ -183,6 +183,7 @@ contributors_who_are_not_committers = [
 
 committers_unable_to_review = [
     Committer("Aaron Boodman", "aa@chromium.org", "aboodman"),
+    Committer("Aaron Colwell", "acolwell@chromium.org", "acolwell"),
     Committer("Adam Bergkvist", "adam.bergkvist@ericsson.com", "adambe"),
     Committer("Adam Kallai", "kadam@inf.u-szeged.hu", "kadam"),
     Committer("Adam Klein", "adamk@chromium.org", "aklein"),
