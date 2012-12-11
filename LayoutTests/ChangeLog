@@ -1,3 +1,15 @@
+2012-12-11  Xabier Rodriguez Calvar  <calvaris@igalia.com>
+
+        [GTK] Fixing tests after removing default media stream sport
+        https://bugs.webkit.org/show_bug.cgi?id=104658
+
+        Reviewed by Philippe Normand.
+
+        Updated test expections for fast/js/global-constructors.
+
+        * platform/gtk/fast/js/global-constructors-expected.txt: Updated
+        expectations.
+
 2012-12-11  Martin Robinson  <mrobinson@igalia.com>
 
         [GTK] Implement some missing FrameLoaderClient message in DRT
