@@ -235,10 +235,8 @@ use?(GRAPHICS_SURFACE) {
 }
 
 SQLITE3SRCDIR = $$(SQLITE3SRCDIR)
-!system-sqlite:isEmpty(SQLITE3SRCDIR) {
-    isEmpty(_QMAKE_SUPER_CACHE_): \
-        error("Set $SQLITE3SRCDIR or build WebKit under qt5.git.")
-    SQLITE3SRCDIR = ../../../qtbase/src/3rdparty/sqlite/
+isEmpty(SQLITE3SRCDIR) {
+    SQLITE3SRCDIR = $$QT.core.sources/../3rdparty/sqlite/
 }
 !system-sqlite:exists( $${SQLITE3SRCDIR}/sqlite3.c ) {
     INCLUDEPATH += $${SQLITE3SRCDIR}
