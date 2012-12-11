@@ -203,30 +203,25 @@ void WebSharedWorkerImpl::postExceptionTask(ScriptExecutionContext* context,
 }
 
 void WebSharedWorkerImpl::postConsoleMessageToWorkerObject(MessageSource source,
-                                                           MessageType type,
                                                            MessageLevel level,
                                                            const String& message,
                                                            int lineNumber,
                                                            const String& sourceURL)
 {
-    WebWorkerBase::dispatchTaskToMainThread(createCallbackTask(&postConsoleMessageTask, AllowCrossThreadAccess(this),
-                                            source, type, level,
-                                            message, lineNumber, sourceURL));
+    WebWorkerBase::dispatchTaskToMainThread(createCallbackTask(&postConsoleMessageTask, AllowCrossThreadAccess(this), source, level, message, lineNumber, sourceURL));
 }
 
 void WebSharedWorkerImpl::postConsoleMessageTask(ScriptExecutionContext* context,
                                                  WebSharedWorkerImpl* thisPtr,
                                                  int source,
-                                                 int type, int level,
+                                                 int level,
                                                  const String& message,
                                                  int lineNumber,
                                                  const String& sourceURL)
 {
     if (!thisPtr->client())
         return;
-    thisPtr->client()->postConsoleMessageToWorkerObject(source,
-                                                              type, level, message,
-                                                              lineNumber, sourceURL);
+    thisPtr->client()->postConsoleMessageToWorkerObject(source, level, message, lineNumber, sourceURL);
 }
 
 void WebSharedWorkerImpl::postMessageToPageInspector(const String& message)

@@ -1916,7 +1916,7 @@ PassRefPtr<ImageData> CanvasRenderingContext2D::getImageData(ImageBuffer::Coordi
 {
     if (!canvas()->originClean()) {
         DEFINE_STATIC_LOCAL(String, consoleMessage, (ASCIILiteral("Unable to get image data from canvas because the canvas has been tainted by cross-origin data.")));
-        canvas()->document()->addConsoleMessage(JSMessageSource, LogMessageType, ErrorMessageLevel, consoleMessage);
+        canvas()->document()->addConsoleMessage(JSMessageSource, ErrorMessageLevel, consoleMessage);
         ec = SECURITY_ERR;
         return 0;
     }

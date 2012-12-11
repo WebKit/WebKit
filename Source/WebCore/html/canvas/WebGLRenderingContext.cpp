@@ -5255,7 +5255,7 @@ void WebGLRenderingContext::printWarningToConsole(const String& message)
     Document* document = canvas()->document();
     if (!document)
         return;
-    document->addConsoleMessage(HTMLMessageSource, LogMessageType, WarningMessageLevel, message);
+    document->addConsoleMessage(HTMLMessageSource, WarningMessageLevel, message);
 }
 
 bool WebGLRenderingContext::validateFramebufferFuncParameters(const char* functionName, GC3Denum target, GC3Denum attachment)

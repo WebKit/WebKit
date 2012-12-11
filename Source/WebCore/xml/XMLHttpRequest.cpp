@@ -163,7 +163,7 @@ static void logConsoleError(ScriptExecutionContext* context, const String& messa
         return;
     // FIXME: It's not good to report the bad usage without indicating what source line it came from.
     // We should pass additional parameters so we can tell the console where the mistake occurred.
-    context->addConsoleMessage(JSMessageSource, LogMessageType, ErrorMessageLevel, message);
+    context->addConsoleMessage(JSMessageSource, ErrorMessageLevel, message);
 }
 
 PassRefPtr<XMLHttpRequest> XMLHttpRequest::create(ScriptExecutionContext* context, PassRefPtr<SecurityOrigin> securityOrigin)
@@ -693,7 +693,7 @@ void XMLHttpRequest::send(DOMFormData* body, ExceptionCode& ec)
 void XMLHttpRequest::send(ArrayBuffer* body, ExceptionCode& ec)
 {
     String consoleMessage("ArrayBuffer is deprecated in XMLHttpRequest.send(). Use ArrayBufferView instead.");
-    scriptExecutionContext()->addConsoleMessage(JSMessageSource, LogMessageType, WarningMessageLevel, consoleMessage);
+    scriptExecutionContext()->addConsoleMessage(JSMessageSource, WarningMessageLevel, consoleMessage);
 
     HistogramSupport::histogramEnumeration("WebCore.XHR.send.ArrayBufferOrView", XMLHttpRequestSendArrayBuffer, XMLHttpRequestSendArrayBufferOrViewMax);
 

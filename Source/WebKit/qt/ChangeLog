@@ -1,3 +1,17 @@
+2012-12-11  Mike West  <mkwst@chromium.org>
+
+        Web Inspector: ConsoleTypes should not expose MessageType - it should be private to inspector.
+        https://bugs.webkit.org/show_bug.cgi?id=66371
+
+        Reviewed by Pavel Feldman.
+
+        Drops WebCore::MessageType from the addMessageToConsole method.
+
+        * WebCoreSupport/ChromeClientQt.cpp:
+        (WebCore::ChromeClientQt::addMessageToConsole):
+        * WebCoreSupport/ChromeClientQt.h:
+        (ChromeClientQt):
+
 2012-12-11  Stephen Kelly  <stephen.kelly@kdab.com>
 
         WebKit tests for the Qt API should include tests of CMake config files

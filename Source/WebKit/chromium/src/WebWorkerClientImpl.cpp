@@ -187,9 +187,9 @@ void WebWorkerClientImpl::postExceptionToWorkerObject(const String& errorMessage
     m_proxy->postExceptionToWorkerObject(errorMessage, lineNumber, sourceURL);
 }
 
-void WebWorkerClientImpl::postConsoleMessageToWorkerObject(MessageSource source, MessageType type, MessageLevel level, const String& message, int lineNumber, const String& sourceURL)
+void WebWorkerClientImpl::postConsoleMessageToWorkerObject(MessageSource source, MessageLevel level, const String& message, int lineNumber, const String& sourceURL)
 {
-    m_proxy->postConsoleMessageToWorkerObject(source, type, level, message, lineNumber, sourceURL);
+    m_proxy->postConsoleMessageToWorkerObject(source, level, message, lineNumber, sourceURL);
 }
 
 void WebWorkerClientImpl::workerContextDestroyed()

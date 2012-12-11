@@ -239,7 +239,7 @@ void XSSAuditor::init()
         }
 
         if (m_xssProtection == XSSProtectionInvalid) {
-            m_parser->document()->addConsoleMessage(JSMessageSource, LogMessageType, ErrorMessageLevel, "Error parsing header X-XSS-Protection: " + headerValue + ": "  + errorDetails + " at character position " + String::format("%u", errorPosition) + ". The default protections will be applied.");
+            m_parser->document()->addConsoleMessage(JSMessageSource, ErrorMessageLevel, "Error parsing header X-XSS-Protection: " + headerValue + ": "  + errorDetails + " at character position " + String::format("%u", errorPosition) + ". The default protections will be applied.");
             m_xssProtection = XSSProtectionEnabled;
         }
 
@@ -290,7 +290,7 @@ void XSSAuditor::filterToken(HTMLToken& token)
     if (didBlockScript) {
         // FIXME: Consider using a more helpful console message.
         DEFINE_STATIC_LOCAL(String, consoleMessage, (ASCIILiteral("Refused to execute a JavaScript script. Source code of script found within request.\n")));
-        m_parser->document()->addConsoleMessage(JSMessageSource, LogMessageType, ErrorMessageLevel, consoleMessage);
+        m_parser->document()->addConsoleMessage(JSMessageSource, ErrorMessageLevel, consoleMessage);
 
         bool didBlockEntirePage = (m_xssProtection == XSSProtectionBlockEnabled);
         if (didBlockEntirePage)

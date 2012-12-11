@@ -74,8 +74,8 @@ public:
     virtual void postExceptionToWorkerObject(
         const WTF::String&, int, const WTF::String&);
     virtual void postConsoleMessageToWorkerObject(
-        WebCore::MessageSource, WebCore::MessageType,
-        WebCore::MessageLevel, const WTF::String&, int, const WTF::String&);
+        WebCore::MessageSource, WebCore::MessageLevel,
+        const WTF::String&, int, const WTF::String&);
     virtual void postMessageToPageInspector(const WTF::String&);
     virtual void updateInspectorStateCookie(const WTF::String&);
     virtual void confirmMessageFromWorkerObject(bool);
@@ -146,7 +146,6 @@ private:
         WebCore::ScriptExecutionContext*,
         WebSharedWorkerImpl* thisPtr,
         int source,
-        int type,
         int level,
         const WTF::String& message,
         int lineNumber,

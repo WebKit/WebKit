@@ -324,7 +324,7 @@ static void addResolutionWarningMessageToConsole(Document* document, const Strin
 
     message.append(serializedExpression);
 
-    document->addConsoleMessage(HTMLMessageSource, LogMessageType, TipMessageLevel, message);
+    document->addConsoleMessage(HTMLMessageSource, TipMessageLevel, message);
 }
 
 void reportMediaQueryWarningIfNeeded(Document* document, const MediaQuerySet* mediaQuerySet)

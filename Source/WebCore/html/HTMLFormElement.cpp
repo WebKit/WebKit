@@ -260,7 +260,7 @@ bool HTMLFormElement::validateInteractively(Event* event)
                 continue;
             String message("An invalid form control with name='%name' is not focusable.");
             message.replace("%name", unhandledAssociatedElement->name());
-            document()->addConsoleMessage(HTMLMessageSource, LogMessageType, ErrorMessageLevel, message);
+            document()->addConsoleMessage(HTMLMessageSource, ErrorMessageLevel, message);
         }
     }
     return false;

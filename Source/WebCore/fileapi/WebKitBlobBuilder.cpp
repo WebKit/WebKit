@@ -92,7 +92,7 @@ void BlobBuilder::append(const String& text, const String& endingType)
 void BlobBuilder::append(ScriptExecutionContext* context, ArrayBuffer* arrayBuffer)
 {
     String consoleMessage("ArrayBuffer values are deprecated in Blob Constructor. Use ArrayBufferView instead.");
-    context->addConsoleMessage(JSMessageSource, LogMessageType, WarningMessageLevel, consoleMessage);
+    context->addConsoleMessage(JSMessageSource, WarningMessageLevel, consoleMessage);
 
     HistogramSupport::histogramEnumeration("WebCore.Blob.constructor.ArrayBufferOrView", BlobConstructorArrayBuffer, BlobConstructorArrayBufferOrViewMax);
 

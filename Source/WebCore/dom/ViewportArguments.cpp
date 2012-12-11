@@ -450,7 +450,7 @@ void reportViewportWarning(Document* document, ViewportErrorCode errorCode, cons
         message.append(" Note that ';' is not a separator in viewport values. The list should be comma-separated.");
 
     // FIXME: This message should be moved off the console once a solution to https://bugs.webkit.org/show_bug.cgi?id=103274 exists.
-    document->addConsoleMessage(HTMLMessageSource, LogMessageType, viewportErrorMessageLevel(errorCode), message);
+    document->addConsoleMessage(HTMLMessageSource, viewportErrorMessageLevel(errorCode), message);
 }
 
 } // namespace WebCore

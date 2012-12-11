@@ -56,16 +56,23 @@ public:
         const WebString& errorString, int lineNumber,
         const WebString& sourceURL) = 0;
 
-    // FIXME: the below is for compatibility only and should be
-    // removed once Chromium is updated to remove message
-    // destination parameter <http://webkit.org/b/37155>.
-    virtual void postConsoleMessageToWorkerObject(int, int sourceIdentifier, int messageType, int messageLevel,
+    // FIXME: the two below are for compatibility only and should be removed
+    // once Chromium is updated to remove message destination parameter
+    // <http://webkit.org/b/37155> and the message type parameter
+    // <http://webkit.org/b/66371>.
+    virtual void postConsoleMessageToWorkerObject(int, int sourceIdentifier, int, int messageLevel,
                                                   const WebString& message, int lineNumber, const WebString& sourceURL) = 0;
-
-    virtual void postConsoleMessageToWorkerObject(int sourceIdentifier, int messageType, int messageLevel,
+    virtual void postConsoleMessageToWorkerObject(int sourceIdentifier, int, int messageLevel,
                                                   const WebString& message, int lineNumber, const WebString& sourceURL)
     {
-        postConsoleMessageToWorkerObject(0, sourceIdentifier, messageType, messageLevel,
+        postConsoleMessageToWorkerObject(0, sourceIdentifier, 0, messageLevel,
+                                         message, lineNumber, sourceURL);
+    }
+
+    virtual void postConsoleMessageToWorkerObject(int sourceIdentifier, int messageLevel,
+                                                  const WebString& message, int lineNumber, const WebString& sourceURL)
+    {
+        postConsoleMessageToWorkerObject(0, sourceIdentifier, messageLevel,
                                          message, lineNumber, sourceURL);
     }
 

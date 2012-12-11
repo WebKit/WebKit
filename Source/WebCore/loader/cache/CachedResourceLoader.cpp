@@ -636,7 +636,7 @@ void CachedResourceLoader::printAccessDeniedMessage(const KURL& url) const
     else
         message = "Unsafe attempt to load URL " + url.string() + " from frame with URL " + m_document->url().string() + ". Domains, protocols and ports must match.\n";
 
-    frame()->document()->addConsoleMessage(OtherMessageSource, LogMessageType, ErrorMessageLevel, message);
+    frame()->document()->addConsoleMessage(OtherMessageSource, ErrorMessageLevel, message);
 }
 
 void CachedResourceLoader::setAutoLoadImages(bool enable)

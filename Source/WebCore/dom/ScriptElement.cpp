@@ -339,7 +339,7 @@ void ScriptElement::notifyFinished(CachedResource* resource)
 
         dispatchErrorEvent();
         DEFINE_STATIC_LOCAL(String, consoleMessage, (ASCIILiteral("Cross-origin script load denied by Cross-Origin Resource Sharing policy.")));
-        m_element->document()->addConsoleMessage(JSMessageSource, LogMessageType, ErrorMessageLevel, consoleMessage);
+        m_element->document()->addConsoleMessage(JSMessageSource, ErrorMessageLevel, consoleMessage);
         return;
     }
 

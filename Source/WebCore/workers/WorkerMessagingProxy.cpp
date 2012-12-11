@@ -327,18 +327,16 @@ void WorkerMessagingProxy::postExceptionToWorkerObject(const String& errorMessag
     m_scriptExecutionContext->postTask(WorkerExceptionTask::create(errorMessage, lineNumber, sourceURL, this));
 }
 
-static void postConsoleMessageTask(ScriptExecutionContext* context, WorkerMessagingProxy* messagingProxy, MessageSource source, MessageType type, MessageLevel level, const String& message, unsigned lineNumber, const String& sourceURL)
+static void postConsoleMessageTask(ScriptExecutionContext* context, WorkerMessagingProxy* messagingProxy, MessageSource source, MessageLevel level, const String& message, unsigned lineNumber, const String& sourceURL)
 {
     if (messagingProxy->askedToTerminate())
         return;
-    context->addConsoleMessage(source, type, level, message, sourceURL, lineNumber);
+    context->addConsoleMessage(source, level, message, sourceURL, lineNumber);
 }
 
-void WorkerMessagingProxy::postConsoleMessageToWorkerObject(MessageSource source, MessageType type, MessageLevel level, const String& message, int lineNumber, const String& sourceURL)
+void WorkerMessagingProxy::postConsoleMessageToWorkerObject(MessageSource source, MessageLevel level, const String& message, int lineNumber, const String& sourceURL)
 {
-    m_scriptExecutionContext->postTask(
-        createCallbackTask(&postConsoleMessageTask, AllowCrossThreadAccess(this),
-                           source, type, level, message, lineNumber, sourceURL));
+    m_scriptExecutionContext->postTask(createCallbackTask(&postConsoleMessageTask, AllowCrossThreadAccess(this), source, level, message, lineNumber, sourceURL));
 }
 
 void WorkerMessagingProxy::workerThreadCreated(PassRefPtr<DedicatedWorkerThread> workerThread)

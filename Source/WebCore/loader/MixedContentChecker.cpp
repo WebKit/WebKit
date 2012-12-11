@@ -102,7 +102,7 @@ void MixedContentChecker::logWarning(bool allowed, const String& action, const K
     // FIXME: Why does this message not have a source URL or a line number? webkit.org/b/97979
     String message = String::format("%sThe page at %s %s insecure content from %s.\n",
         (allowed ? "" : "[blocked] "), asUTF8(m_frame->document()->url()).data(), action.utf8().data(), asUTF8(target).data());
-    m_frame->document()->addConsoleMessage(HTMLMessageSource, LogMessageType, WarningMessageLevel, message);
+    m_frame->document()->addConsoleMessage(HTMLMessageSource, WarningMessageLevel, message);
 }
 
 } // namespace WebCore

@@ -227,10 +227,9 @@ void ChromeClientWx::setResizable(bool)
 }
 
 void ChromeClientWx::addMessageToConsole(MessageSource source,
-                                          MessageType type,
                                           MessageLevel level,
                                           const String& message,
-                                          unsigned int lineNumber,
+                                          unsigned lineNumber,
                                           const String& sourceID)
 {
     if (m_webView) {

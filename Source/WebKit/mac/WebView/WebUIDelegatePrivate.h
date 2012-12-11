@@ -111,16 +111,6 @@ extern NSString *WebConsoleMessageNetworkMessageSource;
 extern NSString *WebConsoleMessageConsoleAPIMessageSource;
 extern NSString *WebConsoleMessageOtherMessageSource;
 
-// Message Types.
-extern NSString *WebConsoleMessageLogMessageType;
-extern NSString *WebConsoleMessageDirMessageType;
-extern NSString *WebConsoleMessageDirXMLMessageType;
-extern NSString *WebConsoleMessageTraceMessageType;
-extern NSString *WebConsoleMessageStartGroupMessageType;
-extern NSString *WebConsoleMessageStartGroupCollapsedMessageType;
-extern NSString *WebConsoleMessageEndGroupMessageType;
-extern NSString *WebConsoleMessageAssertMessageType;
-
 // Message Levels.
 extern NSString *WebConsoleMessageTipMessageLevel;
 extern NSString *WebConsoleMessageLogMessageLevel;
@@ -168,11 +158,6 @@ extern NSString *WebConsoleMessageDebugMessageLevel;
         <dd>
             Where the message came from. HTML, XML, JavaScript, CSS, etc.
             See WebConsoleMessageHTMLMessageSource and similar constants.
-        </dd>
-        <dt>MessageType</dt>
-        <dd>
-            Class of message. Start / End of a Group, a Log, Network related, etc.
-            See WebConsoleMessageLogMessageType and similar constants.
         </dd>
         <dt>MessageLevel</dt>
         <dd>

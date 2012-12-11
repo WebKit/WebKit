@@ -1895,6 +1895,7 @@ HEADERS += \
     html/track/WebVTTToken.h \
     html/track/WebVTTTokenizer.h \
     inspector/BindingVisitors.h \
+    inspector/ConsoleAPITypes.h \
     inspector/ConsoleMessage.h \
     inspector/ContentSearchUtils.h \
     inspector/DOMEditor.h \

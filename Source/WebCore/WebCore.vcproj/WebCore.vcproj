@@ -74546,6 +74546,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\inspector\ConsoleAPITypes.h"
+				>
+			</File>
+			<File
 				RelativePath="..\inspector\ConsoleMessage.cpp"
 				>
 				<FileConfiguration

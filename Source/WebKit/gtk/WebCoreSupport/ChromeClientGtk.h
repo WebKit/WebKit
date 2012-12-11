@@ -82,9 +82,7 @@ namespace WebKit {
 
         virtual void setResizable(bool);
 
-        virtual void addMessageToConsole(MessageSource source, MessageType type,
-                                         MessageLevel level, const WTF::String& message,
-                                         unsigned int lineNumber, const WTF::String& sourceID);
+        virtual void addMessageToConsole(MessageSource, MessageLevel, const WTF::String& message, unsigned lineNumber, const WTF::String& sourceID);
 
         virtual bool canRunBeforeUnloadConfirmPanel();
         virtual bool runBeforeUnloadConfirmPanel(const WTF::String& message, Frame* frame);

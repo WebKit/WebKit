@@ -31,6 +31,7 @@
 #ifndef ConsoleMessage_h
 #define ConsoleMessage_h
 
+#include "ConsoleAPITypes.h"
 #include "ConsoleTypes.h"
 #include "InspectorFrontend.h"
 #include "ScriptState.h"

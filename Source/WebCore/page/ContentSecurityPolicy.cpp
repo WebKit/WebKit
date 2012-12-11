@@ -1692,7 +1692,7 @@ void ContentSecurityPolicy::reportInvalidSourceExpression(const String& directiv
 
 void ContentSecurityPolicy::logToConsole(const String& message, const String& contextURL, const WTF::OrdinalNumber& contextLine, ScriptState* state) const
 {
-    m_scriptExecutionContext->addConsoleMessage(JSMessageSource, LogMessageType, ErrorMessageLevel, message, contextURL, contextLine.oneBasedInt(), state);
+    m_scriptExecutionContext->addConsoleMessage(JSMessageSource, ErrorMessageLevel, message, contextURL, contextLine.oneBasedInt(), state);
 }
 
 void ContentSecurityPolicy::reportBlockedScriptExecutionToInspector(const String& directiveText) const

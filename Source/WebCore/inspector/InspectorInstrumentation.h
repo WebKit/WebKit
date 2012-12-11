@@ -32,6 +32,7 @@
 #define InspectorInstrumentation_h
 
 #include "CSSSelector.h"
+#include "ConsoleAPITypes.h"
 #include "ConsoleTypes.h"
 #include "Element.h"
 #include "Frame.h"

@@ -34,6 +34,8 @@
 #include "InspectorProfilerAgent.h"
 
 #include "Console.h"
+#include "ConsoleAPITypes.h"
+#include "ConsoleTypes.h"
 #include "InjectedScript.h"
 #include "InjectedScriptHost.h"
 #include "InspectorConsoleAgent.h"

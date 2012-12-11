@@ -90,7 +90,7 @@ void HTMLIFrameElement::parseAttribute(const QualifiedName& name, const AtomicSt
         String invalidTokens;
         setSandboxFlags(value.isNull() ? SandboxNone : SecurityContext::parseSandboxPolicy(value, invalidTokens));
         if (!invalidTokens.isNull())
-            document()->addConsoleMessage(HTMLMessageSource, LogMessageType, ErrorMessageLevel, "Error while parsing the 'sandbox' attribute: " + invalidTokens);
+            document()->addConsoleMessage(HTMLMessageSource, ErrorMessageLevel, "Error while parsing the 'sandbox' attribute: " + invalidTokens);
     } else if (name == seamlessAttr) {
         // If we're adding or removing the seamless attribute, we need to force the content document to recalculate its StyleResolver.
         if (contentDocument())

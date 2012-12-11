@@ -1761,6 +1761,7 @@
             'icu/unicode/utypes.h',
             'icu/unicode/uversion.h',
             'inspector/BindingVisitors.h',
+            'inspector/ConsoleAPITypes.h',
             'inspector/ConsoleMessage.cpp',
             'inspector/ConsoleMessage.h',
             'inspector/ContentSearchUtils.cpp',

@@ -36,6 +36,8 @@
 
 #include "CSSRule.h"
 #include "CSSStyleRule.h"
+#include "ConsoleAPITypes.h"
+#include "ConsoleTypes.h"
 #include "DOMWindow.h"
 #include "Database.h"
 #include "DeviceOrientationData.h"

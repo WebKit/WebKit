@@ -105,7 +105,7 @@ public:
 
     virtual void setResizable(bool) { }
 
-    virtual void addMessageToConsole(MessageSource, MessageType, MessageLevel, const String&, unsigned, const String&) { }
+    virtual void addMessageToConsole(MessageSource, MessageLevel, const String&, unsigned, const String&) { }
 
     virtual bool canRunBeforeUnloadConfirmPanel() { return false; }
     virtual bool runBeforeUnloadConfirmPanel(const String&, Frame*) { return true; }

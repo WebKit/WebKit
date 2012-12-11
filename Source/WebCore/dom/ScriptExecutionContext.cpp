@@ -93,7 +93,7 @@ public:
 
 void ScriptExecutionContext::AddConsoleMessageTask::performTask(ScriptExecutionContext* context)
 {
-    context->addConsoleMessage(m_source, m_type, m_level, m_message);
+    context->addConsoleMessage(m_source, m_level, m_message);
 }
 
 ScriptExecutionContext::ScriptExecutionContext()
@@ -321,9 +321,9 @@ void ScriptExecutionContext::reportException(const String& errorMessage, int lin
     m_pendingExceptions.clear();
 }
 
-void ScriptExecutionContext::addConsoleMessage(MessageSource source, MessageType type, MessageLevel level, const String& message, const String& sourceURL, unsigned lineNumber, ScriptState* state, unsigned long requestIdentifier)
+void ScriptExecutionContext::addConsoleMessage(MessageSource source, MessageLevel level, const String& message, const String& sourceURL, unsigned lineNumber, ScriptState* state, unsigned long requestIdentifier)
 {
-    addMessage(source, type, level, message, sourceURL, lineNumber, 0, state, requestIdentifier);
+    addMessage(source, level, message, sourceURL, lineNumber, 0, state, requestIdentifier);
 }
 
 bool ScriptExecutionContext::dispatchErrorEvent(const String& errorMessage, int lineNumber, const String& sourceURL, CachedScript* cachedScript)

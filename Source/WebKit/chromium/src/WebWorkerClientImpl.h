@@ -92,7 +92,7 @@ public:
     virtual void postMessageToWorkerObject(PassRefPtr<WebCore::SerializedScriptValue>, PassOwnPtr<WebCore::MessagePortChannelArray>) OVERRIDE;
     virtual void postExceptionToWorkerObject(const String& errorMessage, int lineNumber, const String& sourceURL) OVERRIDE;
 
-    virtual void postConsoleMessageToWorkerObject(WebCore::MessageSource, WebCore::MessageType, WebCore::MessageLevel,
+    virtual void postConsoleMessageToWorkerObject(WebCore::MessageSource, WebCore::MessageLevel,
                                                   const String& message, int lineNumber, const String& sourceURL) OVERRIDE;
     virtual void confirmMessageFromWorkerObject(bool) OVERRIDE;
     virtual void reportPendingActivity(bool) OVERRIDE;

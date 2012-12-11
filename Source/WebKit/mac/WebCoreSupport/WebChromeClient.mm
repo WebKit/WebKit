@@ -97,17 +97,6 @@ NSString *WebConsoleMessageNetworkMessageSource = @"NetworkMessageSource";
 NSString *WebConsoleMessageConsoleAPIMessageSource = @"ConsoleAPIMessageSource";
 NSString *WebConsoleMessageOtherMessageSource = @"OtherMessageSource";
 
-NSString *WebConsoleMessageLogMessageType = @"LogMessageType";
-NSString *WebConsoleMessageDirMessageType = @"DirMessageType";
-NSString *WebConsoleMessageClearMessageType = @"ClearMessageType";
-NSString *WebConsoleMessageDirXMLMessageType = @"DirXMLMessageType";
-NSString *WebConsoleMessageTraceMessageType = @"TraceMessageType";
-NSString *WebConsoleMessageStartGroupMessageType = @"StartGroupMessageType";
-NSString *WebConsoleMessageStartGroupCollapsedMessageType = @"StartGroupCollapsedMessageType";
-NSString *WebConsoleMessageEndGroupMessageType = @"EndGroupMessageType";
-NSString *WebConsoleMessageAssertMessageType = @"AssertMessageType";
-NSString* WebConsoleMessageTimingMessageType = @"TimingMessageType";
-
 NSString *WebConsoleMessageTipMessageLevel = @"TipMessageLevel";
 NSString *WebConsoleMessageLogMessageLevel = @"LogMessageLevel";
 NSString *WebConsoleMessageWarningMessageLevel = @"WarningMessageLevel";
@@ -357,34 +346,6 @@ inline static NSString *stringForMessageSource(MessageSource source)
     return @"";
 }
 
-inline static NSString *stringForMessageType(MessageType type)
-{
-    switch (type) {
-    case LogMessageType:
-        return WebConsoleMessageLogMessageType;
-    case ClearMessageType:
-        return WebConsoleMessageClearMessageType;
-    case DirMessageType:
-        return WebConsoleMessageDirMessageType;
-    case DirXMLMessageType:
-        return WebConsoleMessageDirXMLMessageType;
-    case TraceMessageType:
-        return WebConsoleMessageTraceMessageType;
-    case StartGroupMessageType:
-        return WebConsoleMessageStartGroupMessageType;
-    case StartGroupCollapsedMessageType:
-        return WebConsoleMessageStartGroupCollapsedMessageType;
-    case EndGroupMessageType:
-        return WebConsoleMessageEndGroupMessageType;
-    case AssertMessageType:
-        return WebConsoleMessageAssertMessageType;
-    case TimingMessageType:
-        return WebConsoleMessageTimingMessageType;
-    }
-    ASSERT_NOT_REACHED();
-    return @"";
-}
-
 inline static NSString *stringForMessageLevel(MessageLevel level)
 {
     switch (level) {
@@ -403,7 +364,7 @@ inline static NSString *stringForMessageLevel(MessageLevel level)
     return @"";
 }
 
-void WebChromeClient::addMessageToConsole(MessageSource source, MessageType type, MessageLevel level, const String& message, unsigned int lineNumber, const String& sourceURL)
+void WebChromeClient::addMessageToConsole(MessageSource source, MessageLevel level, const String& message, unsigned int lineNumber, const String& sourceURL)
 {
     id delegate = [m_webView UIDelegate];
     BOOL respondsToNewSelector = NO;
@@ -426,7 +387,6 @@ void WebChromeClient::addMessageToConsole(MessageSource source, MessageType type
         [NSNumber numberWithUnsignedInt:lineNumber], @"lineNumber",
         (NSString *)sourceURL, @"sourceURL",
         messageSource, @"MessageSource",
-        stringForMessageType(type), @"MessageType",
         stringForMessageLevel(level), @"MessageLevel",
         NULL];
 

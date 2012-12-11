@@ -273,7 +273,7 @@ bool ChromeClientEfl::runBeforeUnloadConfirmPanel(const String& message, Frame* 
     return runJavaScriptConfirm(frame, message);
 }
 
-void ChromeClientEfl::addMessageToConsole(MessageSource, MessageType, MessageLevel, const String& message,
+void ChromeClientEfl::addMessageToConsole(MessageSource, MessageLevel, const String& message,
                                           unsigned int lineNumber, const String& sourceID)
 {
     ewk_view_add_console_message(m_view, message.utf8().data(), lineNumber, sourceID.utf8().data());

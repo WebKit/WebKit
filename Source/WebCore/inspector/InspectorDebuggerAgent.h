@@ -31,6 +31,7 @@
 #define InspectorDebuggerAgent_h
 
 #if ENABLE(JAVASCRIPT_DEBUGGER) && ENABLE(INSPECTOR)
+#include "ConsoleAPITypes.h"
 #include "ConsoleTypes.h"
 #include "InjectedScript.h"
 #include "InspectorBaseAgent.h"

@@ -82,7 +82,7 @@ public:
 
     // WorkerReportingProxy
     virtual void postExceptionToWorkerObject(const String& errorMessage, int lineNumber, const String& sourceURL);
-    virtual void postConsoleMessageToWorkerObject(MessageSource, MessageType, MessageLevel, const String& message, int lineNumber, const String& sourceURL);
+    virtual void postConsoleMessageToWorkerObject(MessageSource, MessageLevel, const String& message, int lineNumber, const String& sourceURL);
 #if ENABLE(INSPECTOR)
     virtual void postMessageToPageInspector(const String&);
     virtual void updateInspectorStateCookie(const String&);
@@ -188,16 +188,16 @@ void SharedWorkerProxy::postExceptionToWorkerObject(const String& errorMessage, 
         (*iter)->postTask(createCallbackTask(&postExceptionTask, errorMessage, lineNumber, sourceURL));
 }
 
-static void postConsoleMessageTask(ScriptExecutionContext* document, MessageSource source, MessageType type, MessageLevel level, const String& message, const String& sourceURL, unsigned lineNumber)
+static void postConsoleMessageTask(ScriptExecutionContext* document, MessageSource source, MessageLevel level, const String& message, const String& sourceURL, unsigned lineNumber)
 {
-    document->addConsoleMessage(source, type, level, message, sourceURL, lineNumber);
+    document->addConsoleMessage(source, level, message, sourceURL, lineNumber);
 }
 
-void SharedWorkerProxy::postConsoleMessageToWorkerObject(MessageSource source, MessageType type, MessageLevel level, const String& message, int lineNumber, const String& sourceURL)
+void SharedWorkerProxy::postConsoleMessageToWorkerObject(MessageSource source, MessageLevel level, const String& message, int lineNumber, const String& sourceURL)
 {
     MutexLocker lock(m_workerDocumentsLock);
     for (HashSet<Document*>::iterator iter = m_workerDocuments.begin(); iter != m_workerDocuments.end(); ++iter)
-        (*iter)->postTask(createCallbackTask(&postConsoleMessageTask, source, type, level, message, sourceURL, lineNumber));
+        (*iter)->postTask(createCallbackTask(&postConsoleMessageTask, source, level, message, sourceURL, lineNumber));
 }
 
 #if ENABLE(INSPECTOR)

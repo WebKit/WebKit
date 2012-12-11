@@ -97,7 +97,7 @@ public:
     virtual bool menubarVisible();
     virtual void setResizable(bool);
     virtual void addMessageToConsole(
-        WebCore::MessageSource, WebCore::MessageType, WebCore::MessageLevel,
+        WebCore::MessageSource, WebCore::MessageLevel,
         const WTF::String& message, unsigned lineNumber,
         const WTF::String& sourceID);
     virtual bool canRunBeforeUnloadConfirmPanel();

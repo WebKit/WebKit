@@ -392,7 +392,6 @@ void ChromeClientImpl::setResizable(bool value)
 }
 
 void ChromeClientImpl::addMessageToConsole(MessageSource source,
-                                           MessageType type,
                                            MessageLevel level,
                                            const String& message,
                                            unsigned lineNumber,

@@ -2619,7 +2619,7 @@ EventTarget* Document::errorEventTarget()
 
 void Document::logExceptionToConsole(const String& errorMessage, const String& sourceURL, int lineNumber, PassRefPtr<ScriptCallStack> callStack)
 {
-    addMessage(JSMessageSource, LogMessageType, ErrorMessageLevel, errorMessage, sourceURL, lineNumber, callStack);
+    addMessage(JSMessageSource, ErrorMessageLevel, errorMessage, sourceURL, lineNumber, callStack);
 }
 
 void Document::setURL(const KURL& url)
@@ -2888,7 +2888,7 @@ void Document::processHttpEquiv(const String& equiv, const String& content)
                 String message = "Refused to display '" + url().string() + "' in a frame because it set 'X-Frame-Options' to '" + content + "'.";
                 frameLoader->stopAllLoaders();
                 frame->navigationScheduler()->scheduleLocationChange(securityOrigin(), blankURL(), String());
-                addConsoleMessage(JSMessageSource, LogMessageType, ErrorMessageLevel, message, requestIdentifier);
+                addConsoleMessage(JSMessageSource, ErrorMessageLevel, message, requestIdentifier);
             }
         }
     } else if (equalIgnoringCase(equiv, "content-security-policy"))
@@ -4766,29 +4766,29 @@ void Document::parseDNSPrefetchControlHeader(const String& dnsPrefetchControl)
     m_haveExplicitlyDisabledDNSPrefetch = true;
 }
 
-void Document::addConsoleMessage(MessageSource source, MessageType type, MessageLevel level, const String& message, unsigned long requestIdentifier)
+void Document::addConsoleMessage(MessageSource source, MessageLevel level, const String& message, unsigned long requestIdentifier)
 {
     if (!isContextThread()) {
-        postTask(AddConsoleMessageTask::create(source, type, level, message));
+        postTask(AddConsoleMessageTask::create(source, level, message));
         return;
     }
 
     if (DOMWindow* window = domWindow()) {
         if (Console* console = window->console())
-            console->addMessage(source, type, level, message, requestIdentifier, this);
+            console->addMessage(source, level, message, requestIdentifier, this);
     }
 }
 
-void Document::addMessage(MessageSource source, MessageType type, MessageLevel level, const String& message, const String& sourceURL, unsigned lineNumber, PassRefPtr<ScriptCallStack> callStack, ScriptState* state, unsigned long requestIdentifier)
+void Document::addMessage(MessageSource source, MessageLevel level, const String& message, const String& sourceURL, unsigned lineNumber, PassRefPtr<ScriptCallStack> callStack, ScriptState* state, unsigned long requestIdentifier)
 {
     if (!isContextThread()) {
-        postTask(AddConsoleMessageTask::create(source, type, level, message));
+        postTask(AddConsoleMessageTask::create(source, level, message));
         return;
     }
 
     if (DOMWindow* window = domWindow()) {
         if (Console* console = window->console())
-            console->addMessage(source, type, level, message, sourceURL, lineNumber, callStack, state, requestIdentifier);
+            console->addMessage(source, level, message, sourceURL, lineNumber, callStack, state, requestIdentifier);
     }
 }
 

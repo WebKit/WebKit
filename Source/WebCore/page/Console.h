@@ -29,6 +29,7 @@
 #ifndef Console_h
 #define Console_h
 
+#include "ConsoleAPITypes.h"
 #include "ConsoleTypes.h"
 #include "DOMWindowProperty.h"
 #include "ScriptCallStack.h"
@@ -57,9 +58,9 @@ public:
     static PassRefPtr<Console> create(Frame* frame) { return adoptRef(new Console(frame)); }
     virtual ~Console();
 
-    void addMessage(MessageSource, MessageType, MessageLevel, const String& message, const String& sourceURL, unsigned lineNumber, PassRefPtr<ScriptCallStack> = 0, ScriptState* = 0, unsigned long requestIdentifier = 0);
-    void addMessage(MessageSource, MessageType, MessageLevel, const String& message, PassRefPtr<ScriptCallStack>);
-    void addMessage(MessageSource, MessageType, MessageLevel, const String& message, unsigned long requestIdentifier = 0, Document* = 0);
+    void addMessage(MessageSource, MessageLevel, const String& message, const String& sourceURL, unsigned lineNumber, PassRefPtr<ScriptCallStack> = 0, ScriptState* = 0, unsigned long requestIdentifier = 0);
+    void addMessage(MessageSource, MessageLevel, const String& message, PassRefPtr<ScriptCallStack>);
+    void addMessage(MessageSource, MessageLevel, const String& message, unsigned long requestIdentifier = 0, Document* = 0);
 
     void debug(ScriptState*, PassRefPtr<ScriptArguments>);
     void error(ScriptState*, PassRefPtr<ScriptArguments>);
@@ -95,7 +96,6 @@ public:
 
 private:
     inline Page* page() const;
-    void addMessage(MessageType, MessageLevel, ScriptState*, PassRefPtr<ScriptArguments>, bool acceptNoArguments = false, bool printTrace = false);
 
     explicit Console(Frame*);
 

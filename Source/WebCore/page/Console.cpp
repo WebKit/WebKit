@@ -31,6 +31,8 @@
 
 #include "Chrome.h"
 #include "ChromeClient.h"
+#include "ConsoleAPITypes.h"
+#include "ConsoleTypes.h"
 #include "Document.h"
 #include "Frame.h"
 #include "FrameLoader.h"
@@ -136,7 +138,7 @@ static void printMessageSourceAndLevelPrefix(MessageSource source, MessageLevel 
     printf("%s %s:", sourceString, levelString);
 }
 
-void Console::addMessage(MessageSource source, MessageType type, MessageLevel level, const String& message, unsigned long requestIdentifier, Document* document)
+void Console::addMessage(MessageSource source, MessageLevel level, const String& message, unsigned long requestIdentifier, Document* document)
 {
     String url;
     if (document)
@@ -147,15 +149,15 @@ void Console::addMessage(MessageSource source, MessageType type, MessageLevel le
         if (!parser->isWaitingForScripts() && !parser->isExecutingScript())
             line = parser->lineNumber().oneBasedInt();
     }
-    addMessage(source, type, level, message, url, line, 0, 0, requestIdentifier);
+    addMessage(source, level, message, url, line, 0, 0, requestIdentifier);
 }
 
-void Console::addMessage(MessageSource source, MessageType type, MessageLevel level, const String& message, PassRefPtr<ScriptCallStack> callStack)
+void Console::addMessage(MessageSource source, MessageLevel level, const String& message, PassRefPtr<ScriptCallStack> callStack)
 {
-    addMessage(source, type, level, message, String(), 0, callStack, 0);
+    addMessage(source, level, message, String(), 0, callStack, 0);
 }
 
-void Console::addMessage(MessageSource source, MessageType type, MessageLevel level, const String& message, const String& url, unsigned lineNumber, PassRefPtr<ScriptCallStack> callStack, ScriptState* state, unsigned long requestIdentifier)
+void Console::addMessage(MessageSource source, MessageLevel level, const String& message, const String& url, unsigned lineNumber, PassRefPtr<ScriptCallStack> callStack, ScriptState* state, unsigned long requestIdentifier)
 {
     if (muteCount && source != ConsoleAPIMessageSource)
         return;
@@ -165,14 +167,14 @@ void Console::addMessage(MessageSource source, MessageType type, MessageLevel le
         return;
 
     if (callStack)
-        InspectorInstrumentation::addMessageToConsole(page, source, type, level, message, callStack, requestIdentifier);
+        InspectorInstrumentation::addMessageToConsole(page, source, LogMessageType, level, message, callStack, requestIdentifier);
     else
-        InspectorInstrumentation::addMessageToConsole(page, source, type, level, message, url, lineNumber, state, requestIdentifier);
+        InspectorInstrumentation::addMessageToConsole(page, source, LogMessageType, level, message, url, lineNumber, state, requestIdentifier);
 
     if (!m_frame->settings() || m_frame->settings()->privateBrowsingEnabled())
         return;
 
-    page->chrome()->client()->addMessageToConsole(source, type, level, message, lineNumber, url);
+    page->chrome()->client()->addMessageToConsole(source, level, message, lineNumber, url);
 
     if (!shouldPrintExceptions())
         return;
@@ -183,11 +185,10 @@ void Console::addMessage(MessageSource source, MessageType type, MessageLevel le
     printf(" %s\n", message.utf8().data());
 }
 
-void Console::addMessage(MessageType type, MessageLevel level, ScriptState* state, PassRefPtr<ScriptArguments> prpArguments, bool acceptNoArguments, bool printTrace)
+static void internalAddMessage(Page* page, MessageType type, MessageLevel level, ScriptState* state, PassRefPtr<ScriptArguments> prpArguments, bool printExceptions, bool acceptNoArguments = false, bool printTrace = false)
 {
     RefPtr<ScriptArguments> arguments = prpArguments;
 
-    Page* page = this->page();
     if (!page)
         return;
 
@@ -202,13 +203,13 @@ void Console::addMessage(MessageType type, MessageLevel level, ScriptState* stat
     bool gotMessage = arguments->getFirstArgumentAsString(message);
     InspectorInstrumentation::addMessageToConsole(page, ConsoleAPIMessageSource, type, level, message, state, arguments.release());
 
-    if (!m_frame->settings() || m_frame->settings()->privateBrowsingEnabled())
+    if (!page->settings() || page->settings()->privateBrowsingEnabled())
         return;
 
     if (gotMessage)
         page->chrome()->client()->addMessageToConsole(ConsoleAPIMessageSource, type, level, message, lastCaller.lineNumber(), lastCaller.sourceURL());
 
-    if (shouldPrintExceptions()) {
+    if (printExceptions) {
         printSourceURLAndLine(lastCaller.sourceURL(), 0);
         printMessageSourceAndLevelPrefix(ConsoleAPIMessageSource, level);
 
@@ -237,7 +238,7 @@ void Console::debug(ScriptState* state, PassRefPtr<ScriptArguments> arguments)
 
 void Console::error(ScriptState* state, PassRefPtr<ScriptArguments> arguments)
 {
-    addMessage(LogMessageType, ErrorMessageLevel, state, arguments);
+    internalAddMessage(page(), LogMessageType, ErrorMessageLevel, state, arguments, shouldPrintExceptions());
 }
 
 void Console::info(ScriptState* state, PassRefPtr<ScriptArguments> arguments)
@@ -247,32 +248,32 @@ void Console::info(ScriptState* state, PassRefPtr<ScriptArguments> arguments)
 
 void Console::log(ScriptState* state, PassRefPtr<ScriptArguments> arguments)
 {
-    addMessage(LogMessageType, LogMessageLevel, state, arguments);
+    internalAddMessage(page(), LogMessageType, LogMessageLevel, state, arguments, shouldPrintExceptions());
 }
 
 void Console::warn(ScriptState* state, PassRefPtr<ScriptArguments> arguments)
 {
-    addMessage(LogMessageType, WarningMessageLevel, state, arguments);
+    internalAddMessage(page(), LogMessageType, WarningMessageLevel, state, arguments, shouldPrintExceptions());
 }
 
 void Console::dir(ScriptState* state, PassRefPtr<ScriptArguments> arguments)
 {
-    addMessage(DirMessageType, LogMessageLevel, state, arguments);
+    internalAddMessage(page(), DirMessageType, LogMessageLevel, state, arguments, shouldPrintExceptions());
 }
 
 void Console::dirxml(ScriptState* state, PassRefPtr<ScriptArguments> arguments)
 {
-    addMessage(DirXMLMessageType, LogMessageLevel, state, arguments);
+    internalAddMessage(page(), DirXMLMessageType, LogMessageLevel, state, arguments, shouldPrintExceptions());
 }
 
 void Console::clear(ScriptState* state, PassRefPtr<ScriptArguments> arguments)
 {
-    addMessage(ClearMessageType, LogMessageLevel, state, arguments, true);
+    internalAddMessage(page(), ClearMessageType, LogMessageLevel, state, arguments, shouldPrintExceptions(), true);
 }
 
 void Console::trace(ScriptState* state, PassRefPtr<ScriptArguments> arguments)
 {
-    addMessage(TraceMessageType, LogMessageLevel, state, arguments, true, shouldPrintExceptions());
+    internalAddMessage(page(), TraceMessageType, LogMessageLevel, state, arguments, shouldPrintExceptions(), true, shouldPrintExceptions());
 }
 
 void Console::assertCondition(ScriptState* state, PassRefPtr<ScriptArguments> arguments, bool condition)
@@ -280,7 +281,7 @@ void Console::assertCondition(ScriptState* state, PassRefPtr<ScriptArguments> ar
     if (condition)
         return;
 
-    addMessage(AssertMessageType, ErrorMessageLevel, state, arguments, true);
+    internalAddMessage(page(), AssertMessageType, ErrorMessageLevel, state, arguments, shouldPrintExceptions(), true);
 }
 
 void Console::count(ScriptState* state, PassRefPtr<ScriptArguments> arguments)

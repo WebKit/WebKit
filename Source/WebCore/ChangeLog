@@ -1,3 +1,173 @@
+2012-12-11  Mike West  <mkwst@chromium.org>
+
+        Web Inspector: ConsoleTypes should not expose MessageType - it should be private to inspector.
+        https://bugs.webkit.org/show_bug.cgi?id=66371
+
+        Reviewed by Pavel Feldman.
+
+        We can simplify console message generation a bit, as nothing outside the
+        Console object itself will generate messages of any type other than
+        LogMessageType. This patch refactors the externally-facing API endpoints
+        on ScriptExecutionContext and Console to drop the MessageType parameter,
+        moves the MessageType enum into a new InspectorConsoleTypes.h header,
+        and updates all the call sites (and ChromeClients) to drop the parameter
+        from their interfaces.
+
+        As a temporary bandage for ports using this interface, this patch
+        includes aliases for the new methods that retain the old interface.
+        I'll remove them in a future patch.
+
+        Here, we only refactor an internal interface. No tests should break.
+
+        * GNUmakefile.list.am:
+        * Target.pri:
+        * WebCore.gypi:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+            We added a new file! OMG!
+        * Modules/webaudio/AudioBufferSourceNode.cpp:
+        (WebCore::AudioBufferSourceNode::looping):
+        (WebCore::AudioBufferSourceNode::setLooping):
+        * Modules/webdatabase/AbstractDatabase.cpp:
+        (WebCore::AbstractDatabase::logErrorMessage):
+        * Modules/websockets/WebSocket.cpp:
+        (WebCore::WebSocket::connect):
+        (WebCore::WebSocket::send):
+        (WebCore::WebSocket::close):
+        (WebCore::WebSocket::setBinaryType):
+        * Modules/websockets/WebSocketChannel.cpp:
+        (WebCore::WebSocketChannel::fail):
+        (WebCore::WebSocketChannel::didFailSocketStream):
+        * bindings/js/JSCustomXPathNSResolver.cpp:
+        (WebCore::JSCustomXPathNSResolver::lookupNamespaceURI):
+        * bindings/v8/custom/V8CustomXPathNSResolver.cpp:
+        (WebCore::V8CustomXPathNSResolver::lookupNamespaceURI):
+        * css/MediaList.cpp:
+        (WebCore::addResolutionWarningMessageToConsole):
+        * dom/Document.cpp:
+        (WebCore::Document::logExceptionToConsole):
+        (WebCore::Document::processHttpEquiv):
+        (WebCore::Document::addMessage):
+        * dom/Document.h:
+        (Document):
+        * dom/ScriptElement.cpp:
+        (WebCore::ScriptElement::notifyFinished):
+        * dom/ScriptExecutionContext.cpp:
+        (WebCore::ScriptExecutionContext::AddConsoleMessageTask::performTask):
+        (WebCore::ScriptExecutionContext::addConsoleMessage):
+        * dom/ScriptExecutionContext.h:
+        (ScriptExecutionContext):
+        (WebCore::ScriptExecutionContext::AddConsoleMessageTask::create):
+        (WebCore::ScriptExecutionContext::AddConsoleMessageTask::AddConsoleMessageTask):
+        * dom/ViewportArguments.cpp:
+        (WebCore::reportViewportWarning):
+        * fileapi/WebKitBlobBuilder.cpp:
+        (WebCore::BlobBuilder::append):
+        * html/HTMLFormControlElement.cpp:
+        (WebCore::shouldAutofocus):
+        * html/HTMLFormElement.cpp:
+        (WebCore::HTMLFormElement::validateInteractively):
+        * html/HTMLIFrameElement.cpp:
+        (WebCore::HTMLIFrameElement::parseAttribute):
+        * html/HTMLTrackElement.cpp:
+        (WebCore::HTMLTrackElement::canLoadUrl):
+        * html/canvas/CanvasRenderingContext2D.cpp:
+        (WebCore::CanvasRenderingContext2D::getImageData):
+        * html/canvas/WebGLRenderingContext.cpp:
+        (WebCore):
+        (WebCore::WebGLRenderingContext::printWarningToConsole):
+        * html/parser/XSSAuditor.cpp:
+        (WebCore::XSSAuditor::init):
+        (WebCore::XSSAuditor::filterToken):
+        * inspector/ConsoleAPITypes.h: Added.
+        (WebCore):
+        * inspector/ConsoleMessage.h:
+        * inspector/InspectorConsoleAgent.h:
+        * inspector/InspectorDebuggerAgent.h:
+        * inspector/InspectorInstrumentation.cpp:
+        (WebCore):
+        * inspector/InspectorInstrumentation.h:
+        * inspector/InspectorProfilerAgent.cpp:
+        * loader/EmptyClients.h:
+        (WebCore::EmptyChromeClient::addMessageToConsole):
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::reportLocalLoadFailed):
+        (WebCore::FrameLoader::shouldInterruptLoadForXFrameOptions):
+        * loader/ImageLoader.cpp:
+        (WebCore::ImageLoader::notifyFinished):
+        * loader/MainResourceLoader.cpp:
+        (WebCore::MainResourceLoader::didReceiveResponse):
+        * loader/MixedContentChecker.cpp:
+        (WebCore::MixedContentChecker::logWarning):
+        * loader/TextTrackLoader.cpp:
+        (WebCore::TextTrackLoader::corsPolicyPreventedLoad):
+        * loader/appcache/ApplicationCacheGroup.cpp:
+        (WebCore::ApplicationCacheGroup::abort):
+        (WebCore::ApplicationCacheGroup::didReceiveResponse):
+        (WebCore::ApplicationCacheGroup::didFinishLoading):
+        (WebCore::ApplicationCacheGroup::didFail):
+        (WebCore::ApplicationCacheGroup::didReceiveManifestResponse):
+        (WebCore::ApplicationCacheGroup::didFinishLoadingManifest):
+        (WebCore::ApplicationCacheGroup::checkIfLoadIsComplete):
+        * loader/cache/CachedResourceLoader.cpp:
+        (WebCore::CachedResourceLoader::printAccessDeniedMessage):
+        * page/ChromeClient.h:
+        (ChromeClient):
+            Drop LogMessageType from everywhere.
+        * page/Console.cpp:
+        (WebCore::Console::addMessage):
+        (WebCore::internalAddMessage):
+        (WebCore::Console::error):
+        (WebCore::Console::log):
+        (WebCore::Console::warn):
+        (WebCore::Console::dir):
+        (WebCore::Console::dirxml):
+        (WebCore::Console::clear):
+        (WebCore::Console::trace):
+        (WebCore::Console::assertCondition):
+        * page/Console.h:
+        (Console):
+            Create a new internalAddMessage that's used for the various
+            Console message types. Everything else routes through
+            ::addMessage.
+        * page/ConsoleTypes.h:
+            Drop MessageTypes from this file, add it to ConsoleAPIType.h
+        * page/ContentSecurityPolicy.cpp:
+        (WebCore::ContentSecurityPolicy::logToConsole):
+        * page/DOMWindow.cpp:
+        (WebCore::DOMWindow::dispatchMessageEventWithOriginCheck):
+        (WebCore::DOMWindow::printErrorMessage):
+        * page/EventSource.cpp:
+        (WebCore::EventSource::didReceiveResponse):
+        * svg/SVGDocumentExtensions.cpp:
+        (WebCore::reportMessage):
+        * workers/DefaultSharedWorkerRepository.cpp:
+        (SharedWorkerProxy):
+        (WebCore::postConsoleMessageTask):
+        (WebCore::SharedWorkerProxy::postConsoleMessageToWorkerObject):
+        * workers/SharedWorkerContext.cpp:
+        (WebCore::SharedWorkerContext::logExceptionToConsole):
+        * workers/WorkerContext.cpp:
+        (WebCore::WorkerContext::addMessage):
+        (WebCore::WorkerContext::addMessageToWorkerConsole):
+        * workers/WorkerContext.h:
+        (WorkerContext):
+        * workers/WorkerMessagingProxy.cpp:
+        (WebCore::postConsoleMessageTask):
+        (WebCore::WorkerMessagingProxy::postConsoleMessageToWorkerObject):
+        * workers/WorkerMessagingProxy.h:
+        (WorkerMessagingProxy):
+        * workers/WorkerReportingProxy.h:
+        (WorkerReportingProxy):
+        * xml/XMLHttpRequest.cpp:
+        (WebCore::logConsoleError):
+        (WebCore::XMLHttpRequest::send):
+        * xml/XSLTProcessorLibxslt.cpp:
+        (WebCore::XSLTProcessor::parseErrorFunc):
+        * xml/XSLTProcessorQt.cpp:
+        (WebCore::XSLTMessageHandler::handleMessage):
+            Drop LogMessageType from everywhere.
+
 2012-12-11  Simon Hausmann  <simon.hausmann@digia.com>
 
         [Qt] Unreviewed, rolling out r137313 and r137316 because they broke the system-sqlite build.

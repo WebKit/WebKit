@@ -1,3 +1,17 @@
+2012-12-11  Mike West  <mkwst@chromium.org>
+
+        Web Inspector: ConsoleTypes should not expose MessageType - it should be private to inspector.
+        https://bugs.webkit.org/show_bug.cgi?id=66371
+
+        Reviewed by Pavel Feldman.
+
+        Drops WebCore::MessageType from the addMessageToConsole method.
+
+        * WebCoreSupport/ChromeClientWinCE.cpp:
+        (WebKit::ChromeClientWinCE::addMessageToConsole):
+        * WebCoreSupport/ChromeClientWinCE.h:
+        (ChromeClientWinCE):
+
 2012-11-29  Alexey Proskuryakov  <ap@apple.com>
 
         [WK2] Forward cookie jar calls to NetworkProcess

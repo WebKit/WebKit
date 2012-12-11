@@ -81,7 +81,7 @@ SharedWorkerThread* SharedWorkerContext::thread()
 void SharedWorkerContext::logExceptionToConsole(const String& errorMessage, const String& sourceURL, int lineNumber, PassRefPtr<ScriptCallStack> callStack)
 {
     WorkerContext::logExceptionToConsole(errorMessage, sourceURL, lineNumber, callStack);
-    addMessageToWorkerConsole(JSMessageSource, LogMessageType, ErrorMessageLevel, errorMessage, sourceURL, lineNumber, callStack);
+    addMessageToWorkerConsole(JSMessageSource, ErrorMessageLevel, errorMessage, sourceURL, lineNumber, callStack);
 }
 
 } // namespace WebCore

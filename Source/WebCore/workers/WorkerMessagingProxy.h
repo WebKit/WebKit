@@ -68,7 +68,7 @@ namespace WebCore {
         // (Only use these methods in the worker context thread.)
         virtual void postMessageToWorkerObject(PassRefPtr<SerializedScriptValue>, PassOwnPtr<MessagePortChannelArray>);
         virtual void postExceptionToWorkerObject(const String& errorMessage, int lineNumber, const String& sourceURL);
-        virtual void postConsoleMessageToWorkerObject(MessageSource, MessageType, MessageLevel, const String& message, int lineNumber, const String& sourceURL);
+        virtual void postConsoleMessageToWorkerObject(MessageSource, MessageLevel, const String& message, int lineNumber, const String& sourceURL);
 #if ENABLE(INSPECTOR)
         virtual void postMessageToPageInspector(const String&);
         virtual void updateInspectorStateCookie(const String&);

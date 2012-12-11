@@ -136,7 +136,7 @@ void SVGDocumentExtensions::dispatchSVGLoadEventToOutermostSVGElements()
 static void reportMessage(Document* document, MessageLevel level, const String& message)
 {
     if (document->frame())
-        document->addConsoleMessage(JSMessageSource, LogMessageType, level, message);
+        document->addConsoleMessage(JSMessageSource, level, message);
 }
 
 void SVGDocumentExtensions::reportWarning(const String& message)

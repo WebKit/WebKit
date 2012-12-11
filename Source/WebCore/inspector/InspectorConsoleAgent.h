@@ -27,6 +27,7 @@
 
 #if ENABLE(INSPECTOR)
 
+#include "ConsoleAPITypes.h"
 #include "ConsoleTypes.h"
 #include "InspectorBaseAgent.h"
 #include "InspectorFrontend.h"
