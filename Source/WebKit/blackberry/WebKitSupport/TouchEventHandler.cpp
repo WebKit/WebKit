@@ -90,7 +90,8 @@ void TouchEventHandler::handleTouchPoint(Platform::TouchPoint& point)
     switch (point.m_state) {
     case Platform::TouchPoint::TouchPressed:
         {
-            doFatFingers(point);
+            if (!m_lastFatFingersResult.isValid())
+                doFatFingers(point);
 
             Element* elementUnderFatFinger = m_lastFatFingersResult.nodeAsElementIfApplicable();
 
