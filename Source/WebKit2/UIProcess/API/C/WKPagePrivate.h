@@ -97,6 +97,9 @@ WK_EXPORT void WKPageSetMayStartMediaWhenInWindow(WKPageRef page, bool mayStartM
 
 WK_EXPORT WKArrayRef WKPageCopyRelatedPages(WKPageRef page);
 
+typedef void (*WKPageInvalidMessageFunction)(uint32_t messageID);
+WK_EXPORT void WKPageSetInvalidMessageFunction(WKPageInvalidMessageFunction function);
+
 #ifdef __cplusplus
 }
 #endif

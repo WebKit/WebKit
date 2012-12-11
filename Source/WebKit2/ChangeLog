@@ -1,3 +1,15 @@
+2012-12-10  Anders Carlsson  <andersca@apple.com>
+
+        Add WKPageSetInvalidMessageFunction stub
+        https://bugs.webkit.org/show_bug.cgi?id=104614
+        <rdar://problem/12841671>
+
+        Reviewed by Mark Rowe.
+
+        * UIProcess/API/C/WKPage.cpp:
+        (WKPageSetInvalidMessageFunction):
+        * UIProcess/API/C/WKPagePrivate.h:
+
 2012-12-09  Antti Koivisto  <antti@apple.com>
 
         Factor node traversal into standalone functions

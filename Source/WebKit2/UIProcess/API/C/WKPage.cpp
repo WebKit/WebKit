@@ -769,3 +769,8 @@ void WKPageSetMayStartMediaWhenInWindow(WKPageRef pageRef, bool mayStartMedia)
 {
     toImpl(pageRef)->setMayStartMediaWhenInWindow(mayStartMedia);
 }
+
+void WKPageSetInvalidMessageFunction(WKPageInvalidMessageFunction)
+{
+    // FIXME: Remove this function when doing so won't break WebKit nightlies.
+}
