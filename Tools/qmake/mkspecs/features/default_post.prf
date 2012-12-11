@@ -151,27 +151,6 @@ contains(TEMPLATE, derived) {
     }
 }
 
-contains(TEMPLATE, lib) {
-    # Triggers the right export macros for WebKit internals
-    DEFINES += BUILDING_$${TARGET}
-
-    # Triggers the right export macro for the QtWebKit API (see qwebkitglobal.h)
-    !contains(QT, webkit)|equals(MODULE, webkitwidgets): DEFINES += BUILDING_WEBKIT
-
-    # Prevent name clashes when building both debug and release. Qt5's module
-    # system already takes care of this for the top level QtWebKit library.
-    !qt_install_module:debug_and_release: TARGET = $$qtLibraryTarget($$TARGET)
-
-    isEmpty(DESTDIR): DESTDIR = $$activeBuildConfig()
-
-    DEFINES += QT_ASCII_CAST_WARNINGS
-
-    !plugin {
-        contains(QT_CONFIG, reduce_exports):CONFIG += hide_symbols
-        unix:contains(QT_CONFIG, reduce_relocations):CONFIG += bsymbolic_functions
-    }
-}
-
 contains(QT, webkit)|contains(QT, webkitwidgets) {
     # In addition to the main shared QtWebKit library we also
     # need to link to any intermediate shared libraries.
@@ -274,6 +253,27 @@ QMAKE_EXTRA_TARGETS += incremental
 # create the directory, even if we're not using it.
 contains(TEMPLATE, subdirs) {
     unset(OBJECTS_DIR)
+}
+
+contains(TEMPLATE, lib) {
+    # Triggers the right export macros for WebKit internals
+    DEFINES += BUILDING_$${TARGET}
+
+    # Triggers the right export macro for the QtWebKit API (see qwebkitglobal.h)
+    !contains(QT, webkit)|equals(MODULE, webkitwidgets): DEFINES += BUILDING_WEBKIT
+
+    # Prevent name clashes when building both debug and release. Qt5's module
+    # system already takes care of this for the top level QtWebKit library.
+    !qt_install_module:debug_and_release: TARGET = $$qtLibraryTarget($$TARGET)
+
+    isEmpty(DESTDIR): DESTDIR = $$activeBuildConfig()
+
+    DEFINES += QT_ASCII_CAST_WARNINGS
+
+    !plugin {
+        contains(QT_CONFIG, reduce_exports):CONFIG += hide_symbols
+        unix:contains(QT_CONFIG, reduce_relocations):CONFIG += bsymbolic_functions
+    }
 }
 
 # Remove duplicated sources
