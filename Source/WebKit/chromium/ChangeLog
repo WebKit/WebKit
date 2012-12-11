@@ -1,3 +1,10 @@
+2012-12-10  Stephen White  <senorblanco@chromium.org>
+
+        [Chromium] Re-enable a failing test.  Disabling it just seemed to
+        move the problem to another test.  Unreviewed.
+
+        * tests/GraphicsLayerChromiumTest.cpp:
+
 2012-12-10  David Grogan  <dgrogan@chromium.org>
 
         IndexedDB: Propagate more leveldb errors to script
