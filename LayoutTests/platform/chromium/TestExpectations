@@ -3664,10 +3664,6 @@ webkit.org/b/94003 [ Win ] fast/css/word-spacing-characters-complex-text.html [ 
 webkit.org/b/94010 [ Debug ] fast/regex/unicodeCaseInsensitive.html [ Crash Pass ]
 webkit.org/b/94017 [ Win ] css2.1/20110323/c541-word-sp-000.htm [ ImageOnlyFailure ]
 
-webkit.org/b/94059 [ Debug ] editing/selection/move-by-line-001.html [ Failure Pass ]
-webkit.org/b/94059 [ Linux Release ] editing/selection/move-by-line-001.html [ Failure Pass ]
-webkit.org/b/94059 [ Lion Release ] editing/selection/move-by-line-001.html [ Failure ImageOnlyFailure Pass ]
-
 webkit.org/b/94078 [ Win Release ] http/tests/inspector/web-socket-frame-error.html [ Failure Pass ]
 
 webkit.org/b/94256 [ Debug ] fast/block/inline-children-root-linebox-crash.html [ Crash Pass ]
