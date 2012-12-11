@@ -6,15 +6,27 @@
 <div id="console"></div>
 <script type="text/javascript">
 
-var eventCount = 0;
-var EXPECTED_EVENT_COUNT = 2;
+var touchstartCount = 0;
+var EXPECTED_TOUCHSTART_COUNT = 1;
+var shouldBail;
 
 function testComplete()
 {
-    if (++eventCount === EXPECTED_EVENT_COUNT) {
-        debug("Final touchend (test will time out if broken)");
-        window.testRunner.notifyDone();
+    if (shouldBail)
+        return;
+
+    if (touchstartCount > EXPECTED_TOUCHSTART_COUNT) {
+        debug("touchstart fired for the top frame, too, but should only fire for the iframe!");
+        shouldBail = true;
     }
+
+    debug("touchend (test will time out if broken)");
+    window.testRunner.notifyDone();
+}
+
+function handleTouchstart()
+{
+    ++touchstartCount;
 }
 
 function runTest() {

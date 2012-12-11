@@ -1,3 +1,17 @@
+2012-12-11  Alexander Pavlov  <apavlov@chromium.org>
+
+        Web Inspector: Duplicate emulated touch events in iframe
+        https://bugs.webkit.org/show_bug.cgi?id=104653
+
+        Reviewed by Vsevolod Vlasov.
+
+        Synthetic touch events should be dispatched only on the frame containing its target, not on its ancestor frames,
+        up to the top frame.
+
+        * page/EventHandler.cpp:
+        (WebCore::EventHandler::dispatchSyntheticTouchEventIfEnabled):
+          Do not dispatch a synthetic touch event on the current frame if its target is in a subframe.
+
 2012-12-11  Kondapally Kalyan  <kalyan.kondapally@intel.com>
 
         [EFL][WebGL] Regression(r137211) WebGL is broken with NVIDIA Drivers.

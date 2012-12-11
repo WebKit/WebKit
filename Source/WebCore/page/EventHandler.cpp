@@ -4058,6 +4058,12 @@ bool EventHandler::dispatchSyntheticTouchEventIfEnabled(const PlatformMouseEvent
     if (eventType == PlatformEvent::MouseMoved && !m_touchPressed)
         return false;
 
+    HitTestRequest request(HitTestRequest::Active);
+    MouseEventWithHitTestResults mev = prepareMouseEvent(request, event);
+
+    if (mev.scrollbar() || subframeForHitTestResult(mev))
+        return false;
+
     SyntheticSingleTouchEvent touchEvent(event);
     return handleTouchEvent(touchEvent);
 }
