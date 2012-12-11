@@ -4159,6 +4159,18 @@ webcore_sources += \
 	Source/WebCore/page/WindowFocusAllowedIndicator.h \
 	Source/WebCore/page/WorkerNavigator.cpp \
 	Source/WebCore/page/WorkerNavigator.h \
+	Source/WebCore/platform/graphics/cairo/FontCairoHarfbuzzNG.cpp \
+	Source/WebCore/platform/graphics/freetype/FontCacheFreeType.cpp \
+	Source/WebCore/platform/graphics/freetype/FontCustomPlatformDataFreeType.cpp \
+	Source/WebCore/platform/graphics/freetype/GlyphPageTreeNodeFreeType.cpp \
+	Source/WebCore/platform/graphics/freetype/SimpleFontDataFreeType.cpp \
+	Source/WebCore/platform/graphics/harfbuzz/HarfBuzzShaperBase.cpp \
+	Source/WebCore/platform/graphics/harfbuzz/HarfBuzzShaperBase.h \
+	Source/WebCore/platform/graphics/harfbuzz/ng/HarfBuzzNGFace.cpp \
+	Source/WebCore/platform/graphics/harfbuzz/ng/HarfBuzzNGFace.h \
+	Source/WebCore/platform/graphics/harfbuzz/ng/HarfBuzzNGFaceCairo.cpp \
+	Source/WebCore/platform/graphics/harfbuzz/ng/HarfBuzzShaper.cpp \
+	Source/WebCore/platform/graphics/harfbuzz/ng/HarfBuzzShaper.h \
 	Source/WebCore/plugins/npapi.h \
 	Source/WebCore/plugins/npruntime.h \
 	Source/WebCore/plugins/nptypes.h \
@@ -5972,6 +5984,8 @@ webcoregtk_sources += \
 	Source/WebCore/platform/geoclue/GeolocationProviderGeoclueClient.h \
 	Source/WebCore/platform/graphics/cairo/GraphicsContextCairo.cpp \
 	Source/WebCore/platform/graphics/cairo/GraphicsContextPlatformPrivateCairo.h \
+	Source/WebCore/platform/graphics/freetype/FontPlatformData.h \
+	Source/WebCore/platform/graphics/freetype/FontPlatformDataFreeType.cpp \
 	Source/WebCore/platform/graphics/gstreamer/GStreamerGWorld.cpp \
 	Source/WebCore/platform/graphics/gstreamer/GStreamerGWorld.h \
 	Source/WebCore/platform/graphics/gstreamer/ImageGStreamerCairo.cpp \
@@ -6151,44 +6165,6 @@ webcore_sources += \
 	Source/WebCore/platform/text/gtk/TextCodecGtk.h \
 	Source/WebCore/platform/text/gtk/TextBreakIteratorGtk.cpp
 endif
-
-# ---
-# FreeType font backend
-# ---
-if USE_FREETYPE
-webcore_sources += \
-	Source/WebCore/platform/graphics/cairo/FontCairoHarfbuzzNG.cpp \
-	Source/WebCore/platform/graphics/freetype/FontCacheFreeType.cpp \
-	Source/WebCore/platform/graphics/freetype/FontCustomPlatformDataFreeType.cpp \
-	Source/WebCore/platform/graphics/freetype/GlyphPageTreeNodeFreeType.cpp \
-	Source/WebCore/platform/graphics/freetype/SimpleFontDataFreeType.cpp \
-	Source/WebCore/platform/graphics/harfbuzz/HarfBuzzShaperBase.cpp \
-	Source/WebCore/platform/graphics/harfbuzz/HarfBuzzShaperBase.h \
-	Source/WebCore/platform/graphics/harfbuzz/ng/HarfBuzzNGFace.cpp \
-	Source/WebCore/platform/graphics/harfbuzz/ng/HarfBuzzNGFace.h \
-	Source/WebCore/platform/graphics/harfbuzz/ng/HarfBuzzNGFaceCairo.cpp \
-	Source/WebCore/platform/graphics/harfbuzz/ng/HarfBuzzShaper.cpp \
-	Source/WebCore/platform/graphics/harfbuzz/ng/HarfBuzzShaper.h
-webcoregtk_sources += \
-	Source/WebCore/platform/graphics/freetype/FontPlatformData.h \
-	Source/WebCore/platform/graphics/freetype/FontPlatformDataFreeType.cpp
-
-endif # END USE_FREETYPE
-
-# ---
-# Pango font backend
-# ---
-if USE_PANGO
-webcore_sources += \
-	Source/WebCore/platform/graphics/pango/FontCachePango.cpp \
-	Source/WebCore/platform/graphics/pango/FontCustomPlatformDataPango.cpp \
-	Source/WebCore/platform/graphics/pango/FontPlatformDataPango.cpp \
-	Source/WebCore/platform/graphics/pango/FontPlatformData.h \
-	Source/WebCore/platform/graphics/pango/GlyphPageTreeNodePango.cpp \
-	Source/WebCore/platform/graphics/pango/SimpleFontDataPango.cpp
-webcoregtk_sources += \
-	Source/WebCore/platform/graphics/pango/FontPango.cpp
-endif # END USE_PANGO
 
 if USE_GSTREAMER
 webcoregtk_sources += \

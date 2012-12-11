@@ -5,6 +5,8 @@ WEBCORE_CSS_PROPERTY_NAMES := $(WebCore)/css/CSSPropertyNames.in
 WEBCORE_CSS_VALUE_KEYWORDS := $(WebCore)/css/CSSValueKeywords.in
 
 webcore_cppflags += \
+	-DWTF_USE_FREETYPE=1 \
+	-DWTF_USE_HARFBUZZ_NG=1 \
 	-I$(srcdir)/Source/ThirdParty/ANGLE/src \
 	-I$(srcdir)/Source/ThirdParty/ANGLE/include \
 	-I$(srcdir)/Source/ThirdParty/ANGLE/include/GLSLANG \
@@ -58,7 +60,10 @@ webcore_cppflags += \
 	-I$(srcdir)/Source/WebCore/platform/graphics/cpu/arm/filters/ \
 	-I$(srcdir)/Source/WebCore/platform/graphics/filters \
 	-I$(srcdir)/Source/WebCore/platform/graphics/filters/texmap \
+	-I$(srcdir)/Source/WebCore/platform/graphics/freetype \
 	-I$(srcdir)/Source/WebCore/platform/graphics/gpu \
+	-I$(srcdir)/Source/WebCore/platform/graphics/harfbuzz \
+	-I$(srcdir)/Source/WebCore/platform/graphics/harfbuzz/ng \
 	-I$(srcdir)/Source/WebCore/platform/graphics/opengl \
 	-I$(srcdir)/Source/WebCore/platform/graphics/opentype \
 	-I$(srcdir)/Source/WebCore/platform/graphics/transforms \
@@ -106,6 +111,8 @@ webcore_cppflags += \
 
 webcoregtk_cppflags += \
 	-DWEBKITGTK_API_VERSION_STRING=\"@WEBKITGTK_API_VERSION@\" \
+	-DWTF_USE_FREETYPE=1 \
+	-DWTF_USE_HARFBUZZ_NG=1 \
 	-DWTF_USE_SOUP=1 \
 	-I$(srcdir)/Source/WebCore/accessibility/atk \
 	-I$(srcdir)/Source/WebCore/loader/gtk \
@@ -114,34 +121,16 @@ webcoregtk_cppflags += \
 	-I$(srcdir)/Source/WebCore/platform/audio/gstreamer \
 	-I$(srcdir)/Source/WebCore/platform/geoclue \
 	-I$(srcdir)/Source/WebCore/platform/graphics/cairo \
+	-I$(srcdir)/Source/WebCore/platform/graphics/freetype \
 	-I$(srcdir)/Source/WebCore/platform/graphics/glx \
+	-I$(srcdir)/Source/WebCore/platform/graphics/harfbuzz \
+	-I$(srcdir)/Source/WebCore/platform/graphics/harfbuzz/ng \
 	-I$(srcdir)/Source/WebCore/platform/graphics/egl \
 	-I$(srcdir)/Source/WebCore/platform/graphics/gstreamer \
 	-I$(srcdir)/Source/WebCore/platform/graphics/gtk \
 	-I$(srcdir)/Source/WebCore/platform/gtk \
 	-I$(srcdir)/Source/WebCore/platform/network/soup \
 	-I$(srcdir)/Source/WebCore/platform/text/enchant
-
-# ---
-# FreeType font backend
-# ---
-if USE_FREETYPE
-webcoregtk_cppflags += \
-	-DWTF_USE_FREETYPE=1 \
-	-DWTF_USE_HARFBUZZ_NG=1 \
-	-I$(srcdir)/Source/WebCore/platform/graphics/freetype \
-	-I$(srcdir)/Source/WebCore/platform/graphics/harfbuzz \
-	-I$(srcdir)/Source/WebCore/platform/graphics/harfbuzz/ng
-endif # END USE_FREETYPE
-
-# ---
-# Pango font backend
-# ---
-if USE_PANGO
-webcoregtk_cppflags += \
-	-DWTF_USE_PANGO=1 \
-	-I$(srcdir)/Source/WebCore/platform/graphics/pango
-endif # END USE_PANGO
 
 # ---
 # Windows plugin support

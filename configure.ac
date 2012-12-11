@@ -917,19 +917,6 @@ AC_SUBST([G_IR_SCANNER])
 AC_SUBST([G_IR_COMPILER])
 AC_SUBST([G_IR_GENERATE])
 
-# determine the font backend
-AC_MSG_CHECKING([the font backend to use])
-AC_ARG_WITH(font_backend,
-            AC_HELP_STRING([--with-font-backend=@<:@freetype/pango@:>@],
-                           [Select font backend [default=freetype]]),
-            [],[with_font_backend="freetype"])
-
-case "$with_font_backend" in
-     freetype|pango) ;;
-     *) AC_MSG_ERROR([Invalid font backend: must be freetype or pango.]) ;;
-esac
-AC_MSG_RESULT([$with_font_backend])
-
 if test "$host_cpu" = "sh4"; then
    CXXFLAGS="$CXXFLAGS -mieee -w"
    CFLAGS="$CFLAGS -mieee -w"
@@ -967,22 +954,20 @@ AC_SUBST([LIBSECRET_CFLAGS])
 AC_SUBST([LIBSECRET_LIBS])
 
 # check if FreeType/FontConfig are available
-if test "$with_font_backend" = "freetype"; then
-   if test "$with_target" = "directfb"; then
-   PKG_CHECK_MODULES([FREETYPE],
-                     [fontconfig >= $FONTCONFIG_REQUIRED_VERSION
-                     freetype2 >= $FREETYPE2_REQUIRED_VERSION
-                     harfbuzz])
-   else
-   PKG_CHECK_MODULES([FREETYPE],
-                     [cairo-ft
-                     fontconfig >= $FONTCONFIG_REQUIRED_VERSION
-                     freetype2 >= $FREETYPE2_REQUIRED_VERSION
-                     harfbuzz])
-   fi
-   AC_SUBST([FREETYPE_CFLAGS])
-   AC_SUBST([FREETYPE_LIBS])
+if test "$with_target" = "directfb"; then
+PKG_CHECK_MODULES([FREETYPE],
+                  [fontconfig >= $FONTCONFIG_REQUIRED_VERSION
+                  freetype2 >= $FREETYPE2_REQUIRED_VERSION
+                  harfbuzz])
+else
+PKG_CHECK_MODULES([FREETYPE],
+                  [cairo-ft
+                  fontconfig >= $FONTCONFIG_REQUIRED_VERSION
+                  freetype2 >= $FREETYPE2_REQUIRED_VERSION
+                  harfbuzz])
 fi
+AC_SUBST([FREETYPE_CFLAGS])
+AC_SUBST([FREETYPE_LIBS])
 
 # check if SQLite3 is available. Error out only if one of the
 # features hard-depending on it is enabled while SQLite3 is
@@ -1169,10 +1154,6 @@ AM_CONDITIONAL([TARGET_DIRECTFB], [test "$with_target" = "directfb"])
 AM_CONDITIONAL([USE_ICU_UNICODE], [test "$with_unicode_backend" = "icu"])
 AM_CONDITIONAL([USE_GLIB_UNICODE], [test "$with_unicode_backend" = "glib"])
 
-# Font backend conditionals
-AM_CONDITIONAL([USE_FREETYPE], [test "$with_font_backend" = "freetype"])
-AM_CONDITIONAL([USE_PANGO], [test "$with_font_backend" = "pango"])
-
 # GStreamer feature conditional
 AM_CONDITIONAL([USE_GSTREAMER], [test "$have_gstreamer" = "yes"])
 AM_CONDITIONAL([USE_WEBAUDIO_GSTREAMER], [test "$enable_web_audio" = "yes"])
@@ -1271,7 +1252,6 @@ Build configuration:
  Enable GCC build optimization                            : $enable_optimizations
  Code coverage support                                    : $enable_coverage
  Unicode backend                                          : $with_unicode_backend
- Font backend                                             : $with_font_backend
  Optimized memory allocator                               : $enable_fast_malloc
  Accelerated rendering backend                            : $acceleration_backend_description
 

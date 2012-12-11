@@ -1,3 +1,15 @@
+2012-12-10  Martin Robinson  <mrobinson@igalia.com>
+
+        [GTK] Remove the Pango backend
+        https://bugs.webkit.org/show_bug.cgi?id=104569
+
+        Reviewed by Daniel Bates.
+
+        Always look for Freetype and Harfbuzz. We still depend on Pango for a few
+        things, so we cannot yet eliminate our dependency on Pango.
+
+        * configure.ac: Always look for FreeType/Harfbuzz.
+
 2012-12-10  Laszlo Gombos  <l.gombos@samsung.com>
 
         [EFL] Change the minimum required EFL version to 1.6
