@@ -1,3 +1,22 @@
+2012-12-11  Jinwoo Song  <jinwoo7.song@samsung.com>
+
+        [EFL][WK2] Create a ewk view object with new context for API tests
+        https://bugs.webkit.org/show_bug.cgi?id=103692
+
+        Reviewed by Gyuyoung Kim. 
+
+        Bug 103229 fixes the issue which PageGroupID increased even though
+        the EwkView was created with default context. If the Bug 103229 is
+        resolved, the EwkViews with same context will have same setting preferences.
+
+        Currently, WebKit2/EFL API test is creating the ewk view object
+        with the default context so the setting values set previously may
+        influence the following tests. So this patch created a ewk view object
+        with a new context instead of default one.
+
+        * UIProcess/API/efl/tests/UnitTestUtils/EWK2UnitTestBase.cpp:
+        (EWK2UnitTest::EWK2UnitTestBase::SetUp):
+
 2012-12-10  Dan Winship  <danw@gnome.org>
 
         [Soup] Fix spelling of "initiating" in API.

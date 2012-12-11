@@ -59,7 +59,11 @@ void EWK2UnitTestBase::SetUp()
     Evas* evas = ecore_evas_get(m_ecoreEvas);
 
     Evas_Smart* smart = evas_smart_class_new(&m_ewkViewClass.sc);
-    m_webView = ewk_view_smart_add(evas, smart, ewk_context_default_get());
+
+    Ewk_Context* newContext = ewk_context_new();
+    m_webView = ewk_view_smart_add(evas, smart, newContext);
+    ewk_object_unref(newContext);
+
     ewk_view_theme_set(m_webView, environment->defaultTheme());
 
     evas_object_resize(m_webView, width, height);
