@@ -1150,9 +1150,6 @@ webkit.org/b/54251 http/tests/multipart/invalid-image-data.html [ Timeout ]
 # Fails because it does not throw a couple of expected exceptions
 Bug(GTK) http/tests/local/fileapi/send-sliced-dragged-file.html [ Failure ]
 
-# [DRT] didDetectXSS is not implemented
-webkit.org/b/71465 http/tests/security/xssAuditor/script-tag-with-callbacks.html [ Failure ]
-
 webkit.org/b/72248 editing/spelling/spelling-unified-emulation.html [ Failure ]
 
 webkit.org/b/72363 fast/dom/Window/window-postmessage-arrays.html [ Failure ]

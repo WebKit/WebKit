@@ -1334,11 +1334,41 @@ static gboolean webViewRunFileChooser(WebKitWebView*, WebKitFileChooserRequest*)
     return TRUE;
 }
 
+static void frameLoadEventCallback(WebKitWebFrame* frame, DumpRenderTreeSupportGtk::FrameLoadEvent event, const char* url)
+{
+    if (done || !gTestRunner->dumpFrameLoadCallbacks())
+        return;
+
+    GOwnPtr<char> frameName(getFrameNameSuitableForTestResult(webkit_web_frame_get_web_view(frame), frame));
+    switch (event) {
+    case DumpRenderTreeSupportGtk::WillPerformClientRedirectToURL:
+        ASSERT(url);
+        printf("%s - willPerformClientRedirectToURL: %s \n", frameName.get(), url);
+        break;
+    case DumpRenderTreeSupportGtk::DidCancelClientRedirect:
+        printf("%s - didCancelClientRedirectForFrame\n", frameName.get());
+        break;
+    case DumpRenderTreeSupportGtk::DidReceiveServerRedirectForProvisionalLoad:
+        printf("%s - didReceiveServerRedirectForProvisionalLoadForFrame\n", frameName.get());
+        break;
+    case DumpRenderTreeSupportGtk::DidDisplayInsecureContent:
+        printf ("didDisplayInsecureContent\n");
+        break;
+    case DumpRenderTreeSupportGtk::DidDetectXSS:
+        printf ("didDetectXSS\n");
+        break;
+    default:
+        ASSERT_NOT_REACHED();
+    }
+}
+
 static WebKitWebView* createWebView()
 {
     // It is important to declare DRT is running early so when creating
     // web view mock clients are used instead of proper ones.
     DumpRenderTreeSupportGtk::setDumpRenderTreeModeEnabled(true);
+
+    DumpRenderTreeSupportGtk::setFrameLoadEventCallback(frameLoadEventCallback);
 
     WebKitWebView* view = WEBKIT_WEB_VIEW(self_scrolling_webkit_web_view_new());
 

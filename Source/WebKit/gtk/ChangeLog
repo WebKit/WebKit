@@ -1,5 +1,22 @@
 2012-12-11  Martin Robinson  <mrobinson@igalia.com>
 
+        [GTK] Implement some missing FrameLoaderClient message in DRT
+        https://bugs.webkit.org/show_bug.cgi?id=104444
+
+        Reviewed by Gustavo Noronha Silva.
+
+        When in DumpRenderTree mode allow the DRT to install a FrameLoaderEvent callback
+        for events that we do not expose in the API. This will allow us to share more
+        results with WebKit2.
+
+        * WebCoreSupport/DumpRenderTreeSupportGtk.cpp:
+        (DumpRenderTreeSupportGtk::setFrameLoadEventCallback): Added.
+        * WebCoreSupport/DumpRenderTreeSupportGtk.h:
+        * WebCoreSupport/FrameLoaderClientGtk.cpp: Use the new callback to deliver
+        events to DRT.
+
+2012-12-11  Martin Robinson  <mrobinson@igalia.com>
+
         [Coverity] [GTK] Remove some redundant null checks in DumpRenderTree
         https://bugs.webkit.org/show_bug.cgi?id=104570
 
