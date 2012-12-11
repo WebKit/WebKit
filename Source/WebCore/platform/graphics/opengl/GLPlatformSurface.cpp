@@ -72,14 +72,6 @@ GLPlatformSurface::~GLPlatformSurface()
 {
 }
 
-void GLPlatformSurface::initialize(GLuint* frameBufferId)
-{
-    if (!m_fboId)
-        glGenFramebuffers(1, &m_fboId);
-
-    *frameBufferId = m_fboId;
-}
-
 PlatformSurface GLPlatformSurface::handle() const
 {
     return m_drawable;
@@ -105,10 +97,10 @@ void GLPlatformSurface::swapBuffers()
     notImplemented();
 }
 
-void GLPlatformSurface::updateContents(const GLuint bindFboId)
+void GLPlatformSurface::updateContents(const uint32_t texture, const GLuint bindFboId, const uint32_t bindTexture)
 {
     if (!m_fboId)
-        return;
+        glGenFramebuffers(1, &m_fboId);
 
     m_restoreNeeded = false;
 
@@ -118,10 +110,14 @@ void GLPlatformSurface::updateContents(const GLuint bindFboId)
     int height = m_rect.height();
 
     glBindFramebuffer(GL_READ_FRAMEBUFFER, m_fboId);
+    glBindTexture(GL_TEXTURE_2D, texture);
+    glFramebufferTexture2D(GL_READ_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, texture, 0);
     glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0);
     // Use NEAREST as no scale is performed during the blit.
     glBlitFramebuffer(x, y, width, height, x, y, width, height, GL_COLOR_BUFFER_BIT, GL_NEAREST);
     swapBuffers();
+    glFramebufferTexture2D(GL_READ_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, 0, 0);
+    glBindTexture(GL_TEXTURE_2D, bindTexture);
     glBindFramebuffer(GL_FRAMEBUFFER, bindFboId);
 }
 

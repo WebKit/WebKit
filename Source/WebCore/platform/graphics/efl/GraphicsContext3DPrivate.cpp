@@ -158,7 +158,7 @@ uint32_t GraphicsContext3DPrivate::copyToGraphicsSurface()
         glBlitFramebuffer(0, 0, width, height, 0, 0, width, height, GraphicsContext3D::COLOR_BUFFER_BIT, GraphicsContext3D::NEAREST);
     }
 
-    m_platformSurface->updateContents(m_context->m_boundFBO);
+    m_platformSurface->updateContents(m_context->m_texture, m_context->m_boundFBO, m_context->m_boundTexture0);
 
     if (enableScissorTest)
         m_context->enable(GraphicsContext3D::SCISSOR_TEST);

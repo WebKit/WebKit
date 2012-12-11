@@ -52,9 +52,6 @@ public:
 
     const IntRect& geometry() const;
 
-    // Creates FBO used by the surface. Buffers can be bound to this FBO.
-    void initialize(GLuint* frameBufferId);
-
     // Get the underlying platform specific surface handle.
     PlatformSurface handle() const;
 
@@ -62,12 +59,12 @@ public:
 
     virtual void swapBuffers();
 
-    // Convenience Function to update surface contents.
+    // Convenience Function to update surface backbuffer with texture contents, restore current FBO and Texture.
     // Function does the following(in order):
-    // a) Blits back buffer contents to front buffer.
+    // a) Blits texture contents to back buffer.
     // b) Calls Swap Buffers.
     // c) Sets current FBO as bindFboId.
-    virtual void updateContents(const GLuint bindFboId);
+    virtual void updateContents(const uint32_t texture, const GLuint bindFboId, const uint32_t bindTexture);
 
     virtual void setGeometry(const IntRect& newRect);
 

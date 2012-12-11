@@ -80,7 +80,7 @@ GraphicsContext3D::GraphicsContext3D(GraphicsContext3D::Attributes attrs, HostWi
 
     if (renderStyle == RenderOffscreen) {
         // Create buffers for the canvas FBO.
-        m_private->m_platformSurface->initialize(&m_fbo);
+        glGenFramebuffers(/* count */ 1, &m_fbo);
 
         // Create a texture to render into.
         glGenTextures(1, &m_texture);
