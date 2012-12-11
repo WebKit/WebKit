@@ -6,7 +6,6 @@
       (anchor 0.00 0.00)
       (bounds 1208.00 2021.00)
       (drawsContent 1)
-      (backgroundColor #FFFFFF)
       (transform [2.30 0.00 0.00 0.00] [0.00 2.30 0.00 0.00] [0.00 0.00 1.00 0.00] [0.00 0.00 0.00 1.00])
       (visible rect 800.00, 1000.00 341.30 x 254.35)
       (tile cache coverage 445, 667 762 x 890)
