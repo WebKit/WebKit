@@ -21,6 +21,11 @@
       <dep package="libsoup"/>
       <dep package="at-spi2-core"/>
       <dep package="at-spi2-atk"/>
+      <dep package="gstreamer"/>
+      <dep package="gst-plugins-base"/>
+      <dep package="gst-plugins-good"/>
+      <dep package="gst-plugins-bad"/>
+      <dep package="gst-libav"/>
     </dependencies>
   </metamodule>
 
@@ -40,6 +45,8 @@
       href="http://www.freedesktop.org"/>
   <repository type="tarball" name="xmlsoft.org"
       href="ftp://xmlsoft.org"/>
+  <repository type="git" name="gstreamer"
+      href="git://anongit.freedesktop.org/git/gstreamer/"/>
 
   <autotools id="make" autogen-sh="configure">
     <branch repo="ftp.gnu.org"
@@ -230,6 +237,38 @@
             repo="xmlsoft.org"
             hash="sha256:ad25d91958b7212abdc12b9611cfb4dc4e5cddb6d1e9891532f48aacee422b82"
             md5sum="5b9bebf4f5d2200ae2c4efe8fa6103f7"/>
+  </autotools>
+
+  <autotools id="gstreamer">
+    <branch repo="gstreamer" module="gstreamer" checkoutdir="gstreamer" tag="1.0.3"/>
+  </autotools>
+
+  <autotools id="gst-plugins-base" autogenargs="--disable-examples">
+    <dependencies>
+      <dep package="gstreamer"/>
+    </dependencies>
+    <branch repo="gstreamer" module="gst-plugins-base" checkoutdir="gst-plugins-base" tag="1.0.3"/>
+  </autotools>
+
+  <autotools id="gst-plugins-good" autogenargs="--disable-examples">
+    <dependencies>
+      <dep package="gst-plugins-base"/>
+    </dependencies>
+    <branch repo="gstreamer" module="gst-plugins-good" checkoutdir="gst-plugins-good" tag="1.0.3"/>
+  </autotools>
+
+  <autotools id="gst-plugins-bad" autogenargs="--disable-examples">
+    <dependencies>
+      <dep package="gst-plugins-base"/>
+    </dependencies>
+    <branch repo="gstreamer" module="gst-plugins-bad" checkoutdir="gst-plugins-bad" tag="1.0.3"/>
+  </autotools>
+
+  <autotools id="gst-libav" autogenargs="--with-libav-extra-configure='--disable-yasm'">
+    <dependencies>
+      <dep package="gst-plugins-base"/>
+    </dependencies>
+    <branch repo="gstreamer" module="gst-libav" checkoutdir="gst-libav" tag="1.0.3"/>
   </autotools>
 
 </moduleset>

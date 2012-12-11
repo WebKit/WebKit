@@ -336,38 +336,6 @@ esac
 
 AC_MSG_RESULT([$with_target])
 
-AC_MSG_CHECKING([the GStreamer version to use])
-AC_ARG_WITH([gstreamer],
-        [AS_HELP_STRING([--with-gstreamer=0.10|1.0], [the GStreamer version to use (default: 0.10)])],
-        [case "$with_gstreamer" in
-        0.10|1.0) ;;
-        *) AC_MSG_ERROR([invalid GStreamer version specified]) ;;
-        esac],
-        [with_gstreamer=0.10])
-AC_MSG_RESULT([$with_gstreamer])
-
-GSTREAMER_0_10_REQUIRED_VERSION=0.10
-GSTREAMER_0_10_PLUGINS_BASE_REQUIRED_VERSION=0.10.30
-GSTREAMER_1_0_REQUIRED_VERSION=0.11.90
-GSTREAMER_1_0_PLUGINS_BASE_REQUIRED_VERSION=0.11.90
-
-case "$with_gstreamer" in
-     0.10) GSTREAMER_REQUIRED_VERSION=$GSTREAMER_0_10_REQUIRED_VERSION
-           GSTREAMER_PLUGINS_BASE_REQUIRED_VERSION=$GSTREAMER_0_10_PLUGINS_BASE_REQUIRED_VERSION
-           GST_API_VERSION=0.10
-           ;;
-     1.0) GSTREAMER_REQUIRED_VERSION=$GSTREAMER_1_0_REQUIRED_VERSION
-           GSTREAMER_PLUGINS_BASE_REQUIRED_VERSION=$GSTREAMER_1_0_PLUGINS_BASE_REQUIRED_VERSION
-           GST_API_VERSION=1.0
-           ;;
-esac
-
-AC_SUBST([GST_API_VERSION])
-if test "$GST_API_VERSION" = "1.0"; then
-AC_DEFINE([GST_USE_UNSTABLE_API], [1], [Using unstable GStreamer API])
-AC_DEFINE([GST_API_VERSION_1],[1], [Using GStreamer 1.0])
-fi
-
 # minimum base dependencies
 CAIRO_REQUIRED_VERSION=1.10
 FONTCONFIG_REQUIRED_VERSION=2.4
@@ -473,18 +441,6 @@ if test "$enable_spellcheck" = "yes"; then
 PKG_CHECK_MODULES(ENCHANT, enchant >= $ENCHANT_REQUIRED_VERSION, [], [enable_spellcheck="no"])
 AC_SUBST(ENCHANT_CFLAGS)
 AC_SUBST(ENCHANT_LIBS)
-fi
-
-# farstream-0.1 depends on gstreamer 0.10 currently. Disable
-# media_stream if gstreamer 0.11 build support is enabled.
-if test "$GST_API_VERSION" = "1.0"; then
-   enable_media_stream=false
-fi
-if test "$enable_media_stream" = "yes"; then
-   PKG_CHECK_MODULES([FARSTREAM], [farstream-0.1],
-                     [have_farstream=yes], [enable_media_stream=false])
-   AC_SUBST([FARSTREAM_CFLAGS])
-   AC_SUBST([FARSTREAM_LIBS])
 fi
 
 PKG_CHECK_MODULES(GAIL, $GAIL_PC_NAME >= $GAIL_REQUIRED_VERSION)
@@ -838,6 +794,57 @@ case "$enable_debug_symbols" in
 esac
 AC_MSG_RESULT([$enable_debug_symbols])
 
+#selecting GStreamer version
+AC_MSG_CHECKING([the GStreamer version to use])
+AC_ARG_WITH([gstreamer],
+        [AS_HELP_STRING([--with-gstreamer=1.0|0.10|auto], [the GStreamer version to use (default: auto, tries 1.0 first, 0.10 is fallback)])],
+        [case "$with_gstreamer" in
+        0.10|1.0|auto) ;;
+        *) AC_MSG_ERROR([invalid GStreamer version specified]) ;;
+        esac],
+        [with_gstreamer=auto])
+AC_MSG_RESULT([$with_gstreamer])
+
+GSTREAMER_0_10_REQUIRED_VERSION=0.10
+GSTREAMER_0_10_PLUGINS_BASE_REQUIRED_VERSION=0.10.30
+GSTREAMER_1_0_REQUIRED_VERSION=1.0.3
+GSTREAMER_1_0_PLUGINS_BASE_REQUIRED_VERSION=1.0.3
+
+if test "$enable_video" = "yes" || test "$enable_web_audio" = "yes"; then
+   if test "$with_gstreamer" = "auto"; then
+       gstreamer_modules="gstreamer-1.0 >= $GSTREAMER_1_0_REQUIRED_VERSION
+                          gstreamer-app-1.0
+                          gstreamer-audio-1.0
+                          gstreamer-fft-1.0
+                          gstreamer-base-1.0
+                          gstreamer-pbutils-1.0
+                          gstreamer-plugins-base-1.0 >= $GSTREAMER_1_0_PLUGINS_BASE_REQUIRED_VERSION
+                          gstreamer-video-1.0";
+       PKG_CHECK_MODULES([GSTREAMER_1_0], [$gstreamer_modules], [with_gstreamer=1.0], [with_gstreamer=0.10])
+       AC_MSG_NOTICE([Selected GStreamer $with_gstreamer])
+   fi
+else
+   if test "$with_gstreamer" != "auto"; then
+       AC_MSG_WARN([You have specified GStreamer $with_gstreamer version but it will not be used because neither HTML5 Video nor Web Audio are enabled])
+   fi
+fi
+
+case "$with_gstreamer" in
+     0.10) GSTREAMER_REQUIRED_VERSION=$GSTREAMER_0_10_REQUIRED_VERSION
+           GSTREAMER_PLUGINS_BASE_REQUIRED_VERSION=$GSTREAMER_0_10_PLUGINS_BASE_REQUIRED_VERSION
+           GST_API_VERSION=0.10
+           ;;
+     1.0) GSTREAMER_REQUIRED_VERSION=$GSTREAMER_1_0_REQUIRED_VERSION
+           GSTREAMER_PLUGINS_BASE_REQUIRED_VERSION=$GSTREAMER_1_0_PLUGINS_BASE_REQUIRED_VERSION
+           GST_API_VERSION=1.0
+           ;;
+esac
+
+AC_SUBST([GST_API_VERSION])
+if test "$GST_API_VERSION" = "1.0"; then
+   AC_DEFINE([GST_API_VERSION_1],[1], [Using GStreamer 1.0])
+fi
+
 # check whether to enable debug features
 AC_MSG_CHECKING([whether to enable debug features])
 AC_ARG_ENABLE(debug_features,
@@ -1026,6 +1033,21 @@ if test "$enable_video" = "yes" || test "$enable_web_audio" = "yes"; then
    PKG_CHECK_MODULES([GSTREAMER], [$gstreamer_modules], [have_gstreamer=yes])
    AC_SUBST([GSTREAMER_CFLAGS])
    AC_SUBST([GSTREAMER_LIBS])
+fi
+
+# farstream-0.1 depends on gstreamer 0.10 currently. Disable
+# media_stream if gstreamer 1.0 build support is enabled.
+if test "$have_gstreamer" != "yes" || test "$GST_API_VERSION" = "1.0"; then
+   if test "$enable_media_stream" = "yes"; then
+      AC_MSG_WARN([Disabling Media Stream because no GStreamer 0.10 support is enabled])
+   fi
+   enable_media_stream=false
+fi
+if test "$enable_media_stream" = "yes"; then
+   PKG_CHECK_MODULES([FARSTREAM], [farstream-0.1],
+                     [have_farstream=yes], [enable_media_stream=false])
+   AC_SUBST([FARSTREAM_CFLAGS])
+   AC_SUBST([FARSTREAM_LIBS])
 fi
 
 acceleration_backend_description=$with_acceleration_backend

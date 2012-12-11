@@ -1,3 +1,19 @@
+2012-12-11  Xabier Rodriguez Calvar <calvaris@igalia.com>
+
+        [GTK][jhbuild] Switch to GStreamer 1.0 build
+        https://bugs.webkit.org/show_bug.cgi?id=91727
+
+        Reviewed by Philippe Normand.
+
+        Switch build-webkit --gtk to GStreamer 1.0 support and build the
+        necessary GStreamer git modules from JHBuild.
+
+        * configure.ac: Removed GStreamer unstable API flag, made
+        GStreamer 1.0 default instead of 0.10 and made required version
+        1.0.3. In case no GStreamer version is specified, it falls back to
+        0.10. In case no video or web-audio are requested, GStreamer
+        and Farstream checks are not performed.
+
 2012-12-11  Zan Dobersek  <zandobersek@gmail.com>
 
         [GTK] Feature enabling/disabling should be possible through build-webkit
