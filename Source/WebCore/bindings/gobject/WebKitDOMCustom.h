@@ -20,7 +20,7 @@
 #define WebKitDOMCustom_h
 
 #include <glib.h>
-#include <webkit/webkitdomdefines.h>
+#include <webkitdom/webkitdomdefines.h>
 
 G_BEGIN_DECLS
 

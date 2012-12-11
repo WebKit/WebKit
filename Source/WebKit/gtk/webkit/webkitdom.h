@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010 Igalia S.L.
+ * Copyright (C) 2012 Igalia S.L.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -17,14 +17,9 @@
  * Boston, MA 02110-1301, USA.
  */
 
-#ifndef WebKitDOMEventTargetPrivate_h
-#define WebKitDOMEventTargetPrivate_h
+#ifndef __webkitdom_h__
+#define __webkitdom_h__
 
-#include "EventTarget.h"
-#include <webkitdom/WebKitDOMEventTarget.h>
+#include <webkitdom/webkitdom.h>
 
-namespace WebKit {
-WebCore::EventTarget* core(WebKitDOMEventTarget* request);
-} // namespace WebKit
-
-#endif /* WebKitDOMEventTargetPrivate_h */
+#endif

@@ -22,8 +22,8 @@
 
 #include <glib-object.h>
 
-#include <webkit/webkitdomdefines.h>
 #include <webkit/webkitdefines.h>
+#include <webkitdom/webkitdom.h>
 
 G_BEGIN_DECLS
 

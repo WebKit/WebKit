@@ -22,8 +22,8 @@
 #define WebKitDOMTestNode_h
 
 #include <glib-object.h>
-#include <webkit/WebKitDOMNode.h>
-#include <webkit/webkitdomdefines.h>
+#include <webkitdom/WebKitDOMNode.h>
+#include <webkitdom/webkitdomdefines.h>
 
 G_BEGIN_DECLS
 

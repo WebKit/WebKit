@@ -22,7 +22,7 @@
 #define WebKitDOMTestEventTargetPrivate_h
 
 #include "TestEventTarget.h"
-#include <webkit/WebKitDOMTestEventTarget.h>
+#include <webkitdom/WebKitDOMTestEventTarget.h>
 
 namespace WebKit {
 WebKitDOMTestEventTarget* wrapTestEventTarget(WebCore::TestEventTarget*);

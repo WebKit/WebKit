@@ -22,7 +22,7 @@
 #define WebKitDOMTestInterfacePrivate_h
 
 #include "TestInterface.h"
-#include <webkit/WebKitDOMTestInterface.h>
+#include <webkitdom/WebKitDOMTestInterface.h>
 #if ENABLE(Condition1) || ENABLE(Condition2)
 
 namespace WebKit {

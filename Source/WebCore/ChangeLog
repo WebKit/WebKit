@@ -1,3 +1,51 @@
+2012-12-11  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] Install GObject DOM bindings headers in its own directory
+        https://bugs.webkit.org/show_bug.cgi?id=104663
+
+        Reviewed by Gustavo Noronha Silva.
+
+        Move the headers from webkit to webkitdom directory.
+
+        * bindings/gobject/GNUmakefile.am:
+        * bindings/gobject/WebKitDOMBinding.h:
+        * bindings/gobject/WebKitDOMCustom.h:
+        * bindings/gobject/WebKitDOMEventTarget.h:
+        * bindings/gobject/WebKitDOMEventTargetPrivate.h:
+        * bindings/gobject/WebKitDOMObject.h:
+        * bindings/scripts/CodeGeneratorGObject.pm:
+        (Generate):
+        (WriteData):
+        * bindings/scripts/gobject-generate-headers.pl:
+        * bindings/scripts/test/GObject/WebKitDOMFloat64Array.h:
+        * bindings/scripts/test/GObject/WebKitDOMFloat64ArrayPrivate.h:
+        * bindings/scripts/test/GObject/WebKitDOMTestActiveDOMObject.h:
+        * bindings/scripts/test/GObject/WebKitDOMTestActiveDOMObjectPrivate.h:
+        * bindings/scripts/test/GObject/WebKitDOMTestCallback.h:
+        * bindings/scripts/test/GObject/WebKitDOMTestCallbackPrivate.h:
+        * bindings/scripts/test/GObject/WebKitDOMTestCustomNamedGetter.h:
+        * bindings/scripts/test/GObject/WebKitDOMTestCustomNamedGetterPrivate.h:
+        * bindings/scripts/test/GObject/WebKitDOMTestEventConstructor.h:
+        * bindings/scripts/test/GObject/WebKitDOMTestEventConstructorPrivate.h:
+        * bindings/scripts/test/GObject/WebKitDOMTestEventTarget.h:
+        * bindings/scripts/test/GObject/WebKitDOMTestEventTargetPrivate.h:
+        * bindings/scripts/test/GObject/WebKitDOMTestException.h:
+        * bindings/scripts/test/GObject/WebKitDOMTestExceptionPrivate.h:
+        * bindings/scripts/test/GObject/WebKitDOMTestInterface.h:
+        * bindings/scripts/test/GObject/WebKitDOMTestInterfacePrivate.h:
+        * bindings/scripts/test/GObject/WebKitDOMTestMediaQueryListListener.h:
+        * bindings/scripts/test/GObject/WebKitDOMTestMediaQueryListListenerPrivate.h:
+        * bindings/scripts/test/GObject/WebKitDOMTestNamedConstructor.h:
+        * bindings/scripts/test/GObject/WebKitDOMTestNamedConstructorPrivate.h:
+        * bindings/scripts/test/GObject/WebKitDOMTestNode.h:
+        * bindings/scripts/test/GObject/WebKitDOMTestNodePrivate.h:
+        * bindings/scripts/test/GObject/WebKitDOMTestObj.h:
+        * bindings/scripts/test/GObject/WebKitDOMTestObjPrivate.h:
+        * bindings/scripts/test/GObject/WebKitDOMTestOverloadedConstructors.h:
+        * bindings/scripts/test/GObject/WebKitDOMTestOverloadedConstructorsPrivate.h:
+        * bindings/scripts/test/GObject/WebKitDOMTestSerializedScriptValueInterface.h:
+        * bindings/scripts/test/GObject/WebKitDOMTestSerializedScriptValueInterfacePrivate.h:
+
 2012-12-11  Mark Pilgrim  <pilgrim@chromium.org>
 
         [Chromium] Clean up unused interfaces in PlatformSupport

@@ -22,7 +22,7 @@
 #define WebKitDOMTestCustomNamedGetterPrivate_h
 
 #include "TestCustomNamedGetter.h"
-#include <webkit/WebKitDOMTestCustomNamedGetter.h>
+#include <webkitdom/WebKitDOMTestCustomNamedGetter.h>
 
 namespace WebKit {
 WebKitDOMTestCustomNamedGetter* wrapTestCustomNamedGetter(WebCore::TestCustomNamedGetter*);

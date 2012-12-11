@@ -22,7 +22,7 @@
 #define WebKitDOMTestNodePrivate_h
 
 #include "TestNode.h"
-#include <webkit/WebKitDOMTestNode.h>
+#include <webkitdom/WebKitDOMTestNode.h>
 
 namespace WebKit {
 WebKitDOMTestNode* wrapTestNode(WebCore::TestNode*);

@@ -83,7 +83,7 @@
 #include "RuntimeEnabledFeatures.h"
 #include "ScriptValue.h"
 #include "Settings.h"
-#include "webkit/WebKitDOMDocumentPrivate.h"
+#include "WebKitDOMDocumentPrivate.h"
 #include "webkitdownload.h"
 #include "webkitdownloadprivate.h"
 #include "webkitenumtypes.h"

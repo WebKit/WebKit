@@ -22,7 +22,7 @@
 #define WebKitDOMTestNamedConstructorPrivate_h
 
 #include "TestNamedConstructor.h"
-#include <webkit/WebKitDOMTestNamedConstructor.h>
+#include <webkitdom/WebKitDOMTestNamedConstructor.h>
 
 namespace WebKit {
 WebKitDOMTestNamedConstructor* wrapTestNamedConstructor(WebCore::TestNamedConstructor*);

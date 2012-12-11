@@ -22,7 +22,7 @@
 #define WebKitDOMTestObjPrivate_h
 
 #include "TestObj.h"
-#include <webkit/WebKitDOMTestObj.h>
+#include <webkitdom/WebKitDOMTestObj.h>
 
 namespace WebKit {
 WebKitDOMTestObj* wrapTestObj(WebCore::TestObj*);

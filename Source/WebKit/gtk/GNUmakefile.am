@@ -45,6 +45,7 @@ libwebkitgtk_@WEBKITGTK_API_MAJOR_VERSION@_@WEBKITGTK_API_MINOR_VERSION@_la_CPPF
 	-I$(WebKit)/WebCoreSupport \
 	-I$(WebKit)/webkit \
 	-I$(GENSOURCES_WEBKIT) \
+	-I$(GENSOURCES_WEBKITDOM) \
 	-ISource/WebKit/gtk/webkit \
 	$(global_cppflags) \
 	$(webcore_cppflags) \
@@ -127,6 +128,7 @@ webkitgtk_static_h_api += \
 	$(srcdir)/Source/WebKit/gtk/webkit/webkit.h \
 	$(srcdir)/Source/WebKit/gtk/webkit/webkitapplicationcache.h \
 	$(srcdir)/Source/WebKit/gtk/webkit/webkitdefines.h \
+	$(srcdir)/Source/WebKit/gtk/webkit/webkitdom.h \
 	$(srcdir)/Source/WebKit/gtk/webkit/webkitdownload.h \
 	$(srcdir)/Source/WebKit/gtk/webkit/webkiterror.h \
 	$(srcdir)/Source/WebKit/gtk/webkit/webkitfavicondatabase.h \

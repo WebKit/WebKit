@@ -1,3 +1,20 @@
+2012-12-11  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] Install GObject DOM bindings headers in its own directory
+        https://bugs.webkit.org/show_bug.cgi?id=104663
+
+        Reviewed by Gustavo Noronha Silva.
+
+        * GNUmakefile.am: Add webkitdom.h.
+        * webkit/webkitdom.h: Compatibility header just including the new
+        one.
+        * webkit/webkitwebframe.cpp: Update includes.
+        * webkit/webkitwebframe.h: Ditto.
+        * webkit/webkitwebinspector.cpp: Ditto.
+        * webkit/webkitwebinspector.h: Ditto.
+        * webkit/webkitwebview.cpp: Ditto.
+        * webkit/webkitwebview.h: Ditto.
+
 2012-12-11  Mike West  <mkwst@chromium.org>
 
         Web Inspector: ConsoleTypes should not expose MessageType - it should be private to inspector.

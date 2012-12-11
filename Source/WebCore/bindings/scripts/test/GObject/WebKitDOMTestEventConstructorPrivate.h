@@ -22,7 +22,7 @@
 #define WebKitDOMTestEventConstructorPrivate_h
 
 #include "TestEventConstructor.h"
-#include <webkit/WebKitDOMTestEventConstructor.h>
+#include <webkitdom/WebKitDOMTestEventConstructor.h>
 
 namespace WebKit {
 WebKitDOMTestEventConstructor* wrapTestEventConstructor(WebCore::TestEventConstructor*);

@@ -25,14 +25,13 @@
 #include <gtk/gtk.h>
 #include <libsoup/soup.h>
 #include <JavaScriptCore/JSBase.h>
-
 #include <webkit/webkitdefines.h>
-#include <webkit/webkitdom.h>
 #include <webkit/webkitfilechooserrequest.h>
 #include <webkit/webkitwebbackforwardlist.h>
 #include <webkit/webkitwebframe.h>
 #include <webkit/webkitwebhistoryitem.h>
 #include <webkit/webkitwebsettings.h>
+#include <webkitdom/webkitdom.h>
 
 G_BEGIN_DECLS
 

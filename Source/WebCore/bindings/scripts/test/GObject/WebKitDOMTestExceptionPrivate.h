@@ -22,7 +22,7 @@
 #define WebKitDOMTestExceptionPrivate_h
 
 #include "TestException.h"
-#include <webkit/WebKitDOMTestException.h>
+#include <webkitdom/WebKitDOMTestException.h>
 
 namespace WebKit {
 WebKitDOMTestException* wrapTestException(WebCore::TestException*);

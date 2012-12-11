@@ -34,7 +34,7 @@
 #include "Page.h"
 #include "RenderLayer.h"
 #include "RenderView.h"
-#include "webkit/WebKitDOMNodePrivate.h"
+#include "WebKitDOMNodePrivate.h"
 #include "webkitglobalsprivate.h"
 #include "webkitmarshal.h"
 #include "webkitwebinspectorprivate.h"

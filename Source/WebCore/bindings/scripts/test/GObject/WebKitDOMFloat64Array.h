@@ -22,8 +22,8 @@
 #define WebKitDOMFloat64Array_h
 
 #include <glib-object.h>
-#include <webkit/WebKitDOMArrayBufferView.h>
-#include <webkit/webkitdomdefines.h>
+#include <webkitdom/WebKitDOMArrayBufferView.h>
+#include <webkitdom/webkitdomdefines.h>
 
 G_BEGIN_DECLS
 

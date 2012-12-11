@@ -85,7 +85,7 @@ if ($outType eq "defines") {
     }
 } elsif ($outType eq "gdom") {
     foreach my $class (@classes) {
-        print "#include <webkit/WebKitDOM${class}.h>\n";
+        print "#include <webkitdom/WebKitDOM${class}.h>\n";
     }
 }
 

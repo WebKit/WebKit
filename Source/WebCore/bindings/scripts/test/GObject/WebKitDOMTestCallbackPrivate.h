@@ -22,7 +22,7 @@
 #define WebKitDOMTestCallbackPrivate_h
 
 #include "TestCallback.h"
-#include <webkit/WebKitDOMTestCallback.h>
+#include <webkitdom/WebKitDOMTestCallback.h>
 #if ENABLE(SQL_DATABASE)
 
 namespace WebKit {

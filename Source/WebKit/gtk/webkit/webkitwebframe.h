@@ -23,13 +23,11 @@
 
 #include <glib-object.h>
 #include <gtk/gtk.h>
-
 #include <JavaScriptCore/JSBase.h>
-
 #include <webkit/webkitdefines.h>
-#include <webkit/webkitdomdefines.h>
 #include <webkit/webkitnetworkrequest.h>
 #include <webkit/webkitwebdatasource.h>
+#include <webkitdom/webkitdom.h>
 
 G_BEGIN_DECLS
 

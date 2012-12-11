@@ -1358,7 +1358,7 @@ sub Generate {
     $implIncludes{"JSMainThreadExecState.h"} = 1;
     $implIncludes{"ExceptionCode.h"} = 1;
 
-    $hdrIncludes{"webkit/${parentClassName}.h"} = 1;
+    $hdrIncludes{"webkitdom/${parentClassName}.h"} = 1;
 
     $object->GenerateHeader($interfaceName, $parentClassName);
     $object->GenerateCFile($interfaceName, $parentClassName, $parentGObjType, $interface);
@@ -1389,7 +1389,7 @@ sub WriteData {
 #define $guard
 
 #include "${interfaceName}.h"
-#include <webkit/${className}.h>
+#include <webkitdom/${className}.h>
 EOF
 
     print PRIVHEADER $text;
@@ -1431,7 +1431,7 @@ EOF
     print HEADER @hPrefixGuard;
     print HEADER "#include <glib-object.h>\n";
     print HEADER map { "#include <$_>\n" } sort keys(%hdrIncludes);
-    print HEADER "#include <webkit/webkitdomdefines.h>\n\n";
+    print HEADER "#include <webkitdom/webkitdomdefines.h>\n\n";
     print HEADER @hBodyPre;
     print HEADER @hBody;
     print HEADER @hPrefixGuardEnd;
