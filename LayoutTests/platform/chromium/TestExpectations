@@ -896,9 +896,6 @@ storage/indexeddb/database-quota.html [ WontFix ]
 # need to implement this.
 platform/win/inverted-colors/non-composited.html [ WontFix ]
 
-# Test for BlackBerry port only
-platform/blackberry [ WontFix ]
-
 # JavaScriptCore bindings willfully have different behavior than V8 bindings
 plugins/npruntime/overrides-all-properties.html [ WontFix ]
 
