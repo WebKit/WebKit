@@ -716,11 +716,36 @@ static bool containsNonEditableRegion(Node* node)
     return false;
 }
 
+struct InlineRunToApplyStyle {
+    InlineRunToApplyStyle(Node* start, Node* end, Node* pastEndNode)
+        : start(start)
+        , end(end)
+        , pastEndNode(pastEndNode)
+    {
+        ASSERT(start->parentNode() == end->parentNode());
+    }
+
+    bool startAndEndAreStillInDocument()
+    {
+        return start && end && start->inDocument() && end->inDocument();
+    }
+
+    RefPtr<Node> start;
+    RefPtr<Node> end;
+    RefPtr<Node> pastEndNode;
+    Position positionForStyleComputation;
+    RefPtr<Node> dummyElement;
+    StyleChange change;
+};
+
 void ApplyStyleCommand::applyInlineStyleToNodeRange(EditingStyle* style, PassRefPtr<Node> startNode, PassRefPtr<Node> pastEndNode)
 {
     if (m_removeOnly)
         return;
 
+    document()->updateLayoutIgnorePendingStylesheets();
+
+    Vector<InlineRunToApplyStyle> runs;
     RefPtr<Node> node = startNode;
     for (RefPtr<Node> next; node && node != pastEndNode; node = next) {
         next = NodeTraversal::next(node.get());
@@ -755,8 +780,8 @@ void ApplyStyleCommand::applyInlineStyleToNodeRange(EditingStyle* style, PassRef
             }
         }
 
-        RefPtr<Node> runStart = node;
-        RefPtr<Node> runEnd = node;
+        Node* runStart = node.get();
+        Node* runEnd = node.get();
         Node* sibling = node->nextSibling();
         while (sibling && sibling != pastEndNode && !sibling->contains(pastEndNode.get())
                && (!isBlock(sibling) || sibling->hasTagName(brTag))
@@ -764,11 +789,31 @@ void ApplyStyleCommand::applyInlineStyleToNodeRange(EditingStyle* style, PassRef
             runEnd = sibling;
             sibling = runEnd->nextSibling();
         }
-        next = NodeTraversal::nextSkippingChildren(runEnd.get());
+        next = NodeTraversal::nextSkippingChildren(runEnd);
 
-        if (!removeStyleFromRunBeforeApplyingStyle(style, runStart, runEnd))
+        Node* pastEndNode = NodeTraversal::nextSkippingChildren(runEnd);
+        if (!shouldApplyInlineStyleToRun(style, runStart, pastEndNode))
             continue;
-        addInlineStyleIfNeeded(style, runStart.get(), runEnd.get(), AddStyledElement);
+
+        runs.append(InlineRunToApplyStyle(runStart, runEnd, pastEndNode));
+    }
+
+    for (size_t i = 0; i < runs.size(); i++) {
+        removeConflictingInlineStyleFromRun(style, runs[i].start, runs[i].end, runs[i].pastEndNode);
+        runs[i].positionForStyleComputation = positionToComputeInlineStyleChange(runs[i].start, runs[i].dummyElement);
+    }
+
+    document()->updateLayoutIgnorePendingStylesheets();
+
+    for (size_t i = 0; i < runs.size(); i++)
+        runs[i].change = StyleChange(style, runs[i].positionForStyleComputation);
+
+    for (size_t i = 0; i < runs.size(); i++) {
+        InlineRunToApplyStyle& run = runs[i];
+        if (run.dummyElement)
+            removeNode(run.dummyElement);
+        if (run.startAndEndAreStillInDocument())
+            applyInlineStyleChange(run.start.release(), run.end.release(), run.change, AddStyledElement);
     }
 }
 
@@ -778,24 +823,25 @@ bool ApplyStyleCommand::isStyledInlineElementToRemove(Element* element) const
         || (m_isInlineElementToRemoveFunction && m_isInlineElementToRemoveFunction(element));
 }
 
-bool ApplyStyleCommand::removeStyleFromRunBeforeApplyingStyle(EditingStyle* style, RefPtr<Node>& runStart, RefPtr<Node>& runEnd)
+bool ApplyStyleCommand::shouldApplyInlineStyleToRun(EditingStyle* style, Node* runStart, Node* pastEndNode)
 {
-    ASSERT(runStart && runEnd && runStart->parentNode() == runEnd->parentNode());
-    RefPtr<Node> pastEndNode = NodeTraversal::nextSkippingChildren(runEnd.get());
-    bool needToApplyStyle = false;
-    for (Node* node = runStart.get(); node && node != pastEndNode.get(); node = NodeTraversal::next(node)) {
+    ASSERT(style && runStart);
+
+    for (Node* node = runStart; node && node != pastEndNode; node = NodeTraversal::next(node)) {
         if (node->childNodeCount())
             continue;
         // We don't consider m_isInlineElementToRemoveFunction here because we never apply style when m_isInlineElementToRemoveFunction is specified
-        if (!style->styleIsPresentInComputedStyleOfNode(node)
-            || (m_styledInlineElement && !enclosingNodeWithTag(positionBeforeNode(node), m_styledInlineElement->tagQName()))) {
-            needToApplyStyle = true;
-            break;
-        }
+        if (!style->styleIsPresentInComputedStyleOfNode(node))
+            return true;
+        if (m_styledInlineElement && !enclosingNodeWithTag(positionBeforeNode(node), m_styledInlineElement->tagQName()))
+            return true;
     }
-    if (!needToApplyStyle)
-        return false;
+    return false;
+}
 
+void ApplyStyleCommand::removeConflictingInlineStyleFromRun(EditingStyle* style, RefPtr<Node>& runStart, RefPtr<Node>& runEnd, PassRefPtr<Node> pastEndNode)
+{
+    ASSERT(runStart && runEnd);
     RefPtr<Node> next = runStart;
     for (RefPtr<Node> node = next; node && node->inDocument() && node != pastEndNode; node = next) {
         if (editingIgnoresContent(node.get())) {
@@ -818,8 +864,6 @@ bool ApplyStyleCommand::removeStyleFromRunBeforeApplyingStyle(EditingStyle* styl
                 runEnd = nextSibling ? nextSibling->previousSibling() : parent->lastChild();
         }
     }
-
-    return true;
 }
 
 bool ApplyStyleCommand::removeInlineStyleFromElement(EditingStyle* style, PassRefPtr<HTMLElement> element, InlineStyleRemovalMode mode, EditingStyle* extractedStyle)
@@ -1338,23 +1382,36 @@ void ApplyStyleCommand::addInlineStyleIfNeeded(EditingStyle* style, PassRefPtr<N
 {
     if (!passedStart || !passedEnd || !passedStart->inDocument() || !passedEnd->inDocument())
         return;
-    RefPtr<Node> startNode = passedStart;
-    RefPtr<Node> endNode = passedEnd;
 
+    RefPtr<Node> start = passedStart;
+    RefPtr<Node> dummyElement;
+    StyleChange styleChange(style, positionToComputeInlineStyleChange(start, dummyElement));
+
+    if (dummyElement)
+        removeNode(dummyElement);
+
+    applyInlineStyleChange(start, passedEnd, styleChange, addStyledElement);
+}
+
+Position ApplyStyleCommand::positionToComputeInlineStyleChange(PassRefPtr<Node> startNode, RefPtr<Node>& dummyElement)
+{
     // It's okay to obtain the style at the startNode because we've removed all relevant styles from the current run.
-    RefPtr<HTMLElement> dummyElement;
     Position positionForStyleComparison;
     if (!startNode->isElementNode()) {
         dummyElement = createStyleSpanElement(document());
         insertNodeAt(dummyElement, positionBeforeNode(startNode.get()));
-        positionForStyleComparison = positionBeforeNode(dummyElement.get());
-    } else
-        positionForStyleComparison = firstPositionInOrBeforeNode(startNode.get());
+        return positionBeforeNode(dummyElement.get());
+    }
 
-    StyleChange styleChange(style, positionForStyleComparison);
+    return firstPositionInOrBeforeNode(startNode.get());
+}
 
-    if (dummyElement)
-        removeNode(dummyElement);
+void ApplyStyleCommand::applyInlineStyleChange(PassRefPtr<Node> passedStart, PassRefPtr<Node> passedEnd, StyleChange& styleChange, EAddStyledElement addStyledElement)
+{
+    RefPtr<Node> startNode = passedStart;
+    RefPtr<Node> endNode = passedEnd;
+    ASSERT(startNode->inDocument());
+    ASSERT(endNode->inDocument());
 
     // Find appropriate font and span elements top-down.
     HTMLElement* fontContainer = 0;

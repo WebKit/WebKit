@@ -76,7 +76,8 @@ private:
 
     // style-removal helpers
     bool isStyledInlineElementToRemove(Element*) const;
-    bool removeStyleFromRunBeforeApplyingStyle(EditingStyle*, RefPtr<Node>& runStart, RefPtr<Node>& runEnd);
+    bool shouldApplyInlineStyleToRun(EditingStyle*, Node* runStart, Node* pastEndNode);
+    void removeConflictingInlineStyleFromRun(EditingStyle*, RefPtr<Node>& runStart, RefPtr<Node>& runEnd, PassRefPtr<Node> pastEndNode);
     bool removeInlineStyleFromElement(EditingStyle*, PassRefPtr<HTMLElement>, InlineStyleRemovalMode = RemoveIfNeeded, EditingStyle* extractedStyle = 0);
     inline bool shouldRemoveInlineStyleFromElement(EditingStyle* style, HTMLElement* element) {return removeInlineStyleFromElement(style, element, RemoveNone);}
     void replaceWithSpanOrRemoveIfWithoutAttributes(HTMLElement*&);
@@ -97,6 +98,8 @@ private:
     void applyInlineStyleToNodeRange(EditingStyle*, PassRefPtr<Node> startNode, PassRefPtr<Node> pastEndNode);
     void addBlockStyle(const StyleChange&, HTMLElement*);
     void addInlineStyleIfNeeded(EditingStyle*, PassRefPtr<Node> start, PassRefPtr<Node> end, EAddStyledElement = AddStyledElement);
+    Position positionToComputeInlineStyleChange(PassRefPtr<Node>, RefPtr<Node>& dummyElement);
+    void applyInlineStyleChange(PassRefPtr<Node> startNode, PassRefPtr<Node> endNode, StyleChange&, EAddStyledElement);
     void splitTextAtStart(const Position& start, const Position& end);
     void splitTextAtEnd(const Position& start, const Position& end);
     void splitTextElementAtStart(const Position& start, const Position& end);

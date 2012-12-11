@@ -1,3 +1,32 @@
+2012-12-11  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Mail hangs when resizing the font size of a large RTL text
+        https://bugs.webkit.org/show_bug.cgi?id=104643
+
+        Reviewed by Enrica Casucci.
+
+        The bug was caused by ApplyStyleCommand::applyInlineStyleToNodeRange obtaining computed styles while
+        removing and adding nodes. Fixed the slowness by breaking it into three phases:
+        1. Split the range into contiguous inline runs, and determine whether styles need to be removed or applied.
+        2. Remove any conflicting styles, and insert dummy elements at positions where inline styles ought to be
+        computed as needed.
+        3. Remove the dummy elements and apply ilnine styles as needed.
+
+        No new tests are added since there is no behavior change. This is just a performance improvement. 
+
+        * editing/ApplyStyleCommand.cpp:
+        (WebCore::InlineRunToApplyStyle::InlineRunToApplyStyle):
+        (WebCore::InlineRunToApplyStyle::startAndEndAreStillInDocument):
+        (WebCore::ApplyStyleCommand::applyInlineStyleToNodeRange):
+        (WebCore::ApplyStyleCommand::shouldApplyInlineStyleToRun):
+        (WebCore::ApplyStyleCommand::removeConflictingInlineStyleFromRun):
+        (WebCore::ApplyStyleCommand::addInlineStyleIfNeeded):
+        (WebCore::ApplyStyleCommand::positionToComputeInlineStyleChange):
+        (WebCore::ApplyStyleCommand::applyInlineStyleChange):
+        * editing/ApplyStyleCommand.h:
+        * editing/EditingStyle.h:
+        (WebCore::StyleChange::StyleChange):
+
 2012-12-11  Xianzhu Wang  <wangxianzhu@chromium.org>
 
         Incorrect position of layers for fixed position elements when page is scaled smaller than viewport

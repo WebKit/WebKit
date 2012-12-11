@@ -173,6 +173,15 @@ private:
 
 class StyleChange {
 public:
+    StyleChange()
+        : m_applyBold(false)
+        , m_applyItalic(false)
+        , m_applyUnderline(false)
+        , m_applyLineThrough(false)
+        , m_applySubscript(false)
+        , m_applySuperscript(false)
+    { }
+
     StyleChange(EditingStyle*, const Position&);
 
     String cssStyle() const { return m_cssStyle; }
