@@ -1231,8 +1231,7 @@ static CString descriptionSuitableForTestResult(WebKitNetworkRequest* request)
     CString mainDocumentURIString(descriptionSuitableForTestResult(mainDocumentURI));
     CString path(convertNetworkRequestToURLPath(request));
     GOwnPtr<char> description(g_strdup_printf("<NSURLRequest URL %s, main document URL %s, http method %s>",
-                                              path.data(), mainDocumentURIString.data(),
-                                              soupMessage ? soupMessage->method : "(none)"));
+        path.data(), mainDocumentURIString.data(), soupMessage->method));
     return CString(description.get());
 }
 
