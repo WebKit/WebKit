@@ -27,6 +27,7 @@
 namespace WebKit {
 class WebPageProxy;
 class QtWebPageEventHandler;
+class CoordinatedLayerTreeHostProxy;
 }
 
 class QQuickWebPagePrivate {
@@ -40,6 +41,7 @@ public:
 
     void paint(QPainter*);
     void resetPaintNode();
+    WebKit::CoordinatedLayerTreeHostProxy* coordinatedLayerTreeHostProxy();
 
     QScopedPointer<WebKit::QtWebPageEventHandler> eventHandler;
     QQuickWebPage* const q;

@@ -17,8 +17,8 @@
     Boston, MA 02110-1301, USA.
 */
 
-#ifndef LayerTreeCoordinator_h
-#define LayerTreeCoordinator_h
+#ifndef CoordinatedLayerTreeHost_h
+#define CoordinatedLayerTreeHost_h
 
 #if USE(COORDINATED_GRAPHICS)
 
@@ -42,7 +42,7 @@ namespace WebKit {
 class UpdateInfo;
 class WebPage;
 
-class LayerTreeCoordinator : public LayerTreeHost, WebCore::GraphicsLayerClient
+class CoordinatedLayerTreeHost : public LayerTreeHost, WebCore::GraphicsLayerClient
     , public CoordinatedGraphicsLayerClient
     , public CoordinatedImageBacking::Coordinator
     , public UpdateAtlasClient
@@ -52,8 +52,8 @@ class LayerTreeCoordinator : public LayerTreeHost, WebCore::GraphicsLayerClient
 #endif
 {
 public:
-    static PassRefPtr<LayerTreeCoordinator> create(WebPage*);
-    virtual ~LayerTreeCoordinator();
+    static PassRefPtr<CoordinatedLayerTreeHost> create(WebPage*);
+    virtual ~CoordinatedLayerTreeHost();
 
     virtual const LayerTreeContext& layerTreeContext() { return m_layerTreeContext; }
     virtual void setLayerFlushSchedulingEnabled(bool);
@@ -87,7 +87,7 @@ public:
     virtual void purgeBackingStores();
     virtual bool layerTreeTileUpdatesAllowed() const;
     virtual void setVisibleContentsRect(const WebCore::FloatRect&, float scale, const WebCore::FloatPoint&);
-    virtual void didReceiveLayerTreeCoordinatorMessage(CoreIPC::Connection*, CoreIPC::MessageID, CoreIPC::MessageDecoder&);
+    virtual void didReceiveCoordinatedLayerTreeHostMessage(CoreIPC::Connection*, CoreIPC::MessageID, CoreIPC::MessageDecoder&);
     virtual WebCore::GraphicsLayerFactory* graphicsLayerFactory() OVERRIDE;
 
     virtual void syncLayerState(CoordinatedLayerID, const CoordinatedLayerInfo&);
@@ -116,7 +116,7 @@ public:
     virtual void setBackgroundColor(const WebCore::Color&) OVERRIDE;
 
 protected:
-    explicit LayerTreeCoordinator(WebPage*);
+    explicit CoordinatedLayerTreeHost(WebPage*);
 
 private:
     // GraphicsLayerClient
@@ -135,7 +135,7 @@ private:
     // GraphicsLayerFactory
     virtual PassOwnPtr<WebCore::GraphicsLayer> createGraphicsLayer(WebCore::GraphicsLayerClient*) OVERRIDE;
 
-    // LayerTreeCoordinator
+    // CoordinatedLayerTreeHost
     void initializeRootCompositingLayerIfNeeded();
     void createPageOverlayLayer();
     void destroyPageOverlayLayer();
@@ -147,14 +147,14 @@ private:
     void lockAnimations();
     void unlockAnimations();
 
-    void layerFlushTimerFired(WebCore::Timer<LayerTreeCoordinator>*);
+    void layerFlushTimerFired(WebCore::Timer<CoordinatedLayerTreeHost>*);
 
     void scheduleReleaseInactiveAtlases();
 #if ENABLE(REQUEST_ANIMATION_FRAME)
     void animationFrameReady();
 #endif
 
-    void releaseInactiveAtlasesTimerFired(WebCore::Timer<LayerTreeCoordinator>*);
+    void releaseInactiveAtlasesTimerFired(WebCore::Timer<CoordinatedLayerTreeHost>*);
 
 #if ENABLE(CSS_SHADERS)
     // WebCustomFilterProgramProxyClient
@@ -196,8 +196,8 @@ private:
     LayerTreeContext m_layerTreeContext;
     bool m_shouldSyncFrame;
     bool m_didInitializeRootCompositingLayer;
-    WebCore::Timer<LayerTreeCoordinator> m_layerFlushTimer;
-    WebCore::Timer<LayerTreeCoordinator> m_releaseInactiveAtlasesTimer;
+    WebCore::Timer<CoordinatedLayerTreeHost> m_layerFlushTimer;
+    WebCore::Timer<CoordinatedLayerTreeHost> m_releaseInactiveAtlasesTimer;
     bool m_layerFlushSchedulingEnabled;
     uint64_t m_forceRepaintAsyncCallbackID;
     bool m_animationsLocked;
@@ -207,4 +207,4 @@ private:
 
 #endif
 
-#endif // LayerTreeCoordinator_h
+#endif // CoordinatedLayerTreeHost_h

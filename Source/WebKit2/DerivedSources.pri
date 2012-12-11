@@ -64,10 +64,10 @@ VPATH = \
 
 MESSAGE_RECEIVERS = \
     AuthenticationManager.messages.in \
+    CoordinatedLayerTreeHostProxy.messages.in \
     DownloadProxy.messages.in \
     DrawingAreaProxy.messages.in \
     EventDispatcher.messages.in \
-    LayerTreeCoordinatorProxy.messages.in \
     PluginControllerProxy.messages.in \
     PluginProcess.messages.in \
     PluginProcessConnection.messages.in \
@@ -98,8 +98,8 @@ MESSAGE_RECEIVERS = \
     WebNotificationManager.messages.in \
     WebFullScreenManager.messages.in \
     WebFullScreenManagerProxy.messages.in \
+    CoordinatedLayerTreeHost.messages.in \
     DrawingArea.messages.in \
-    LayerTreeCoordinator.messages.in \
     WebInspector.messages.in \
     WebPage.messages.in \
     WebPageGroupProxy.messages.in \

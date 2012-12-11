@@ -48,7 +48,7 @@ namespace WebCore {
 namespace WebKit {
 
 class LayerTreeContext;
-class LayerTreeCoordinatorProxy;
+class CoordinatedLayerTreeHostProxy;
 class UpdateInfo;
 class WebPageProxy;
 
@@ -85,9 +85,9 @@ public:
     virtual void updateViewport();
     virtual WebCore::IntRect viewportVisibleRect() const { return contentsRect(); }
     virtual WebCore::IntRect contentsRect() const;
-    LayerTreeCoordinatorProxy* layerTreeCoordinatorProxy() const { return m_layerTreeCoordinatorProxy.get(); }
+    CoordinatedLayerTreeHostProxy* coordinatedLayerTreeHostProxy() const { return m_coordinatedLayerTreeHostProxy.get(); }
     virtual void setVisibleContentsRect(const WebCore::FloatRect& /* visibleContentsRect */, float /* scale */, const WebCore::FloatPoint& /* trajectoryVector */) { }
-    virtual void didReceiveLayerTreeCoordinatorProxyMessage(CoreIPC::Connection*, CoreIPC::MessageID, CoreIPC::MessageDecoder&);
+    virtual void didReceiveCoordinatedLayerTreeHostProxyMessage(CoreIPC::Connection*, CoreIPC::MessageID, CoreIPC::MessageDecoder&);
 
     WebPageProxy* page() { return m_webPageProxy; }
 #endif
@@ -101,7 +101,7 @@ protected:
     WebCore::IntSize m_scrollOffset;
 
 #if USE(COORDINATED_GRAPHICS)
-    OwnPtr<LayerTreeCoordinatorProxy> m_layerTreeCoordinatorProxy;
+    OwnPtr<CoordinatedLayerTreeHostProxy> m_coordinatedLayerTreeHostProxy;
 #endif
 
 private:

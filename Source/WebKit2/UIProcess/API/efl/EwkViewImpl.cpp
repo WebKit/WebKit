@@ -22,11 +22,11 @@
 #include "EwkViewImpl.h"
 
 #include "ContextMenuClientEfl.h"
+#include "CoordinatedLayerTreeHostProxy.h"
 #include "EflScreenUtilities.h"
 #include "FindClientEfl.h"
 #include "FormClientEfl.h"
 #include "InputMethodContextEfl.h"
-#include "LayerTreeCoordinatorProxy.h"
 #include "LayerTreeRenderer.h"
 #include "PageClientBase.h"
 #include "PageClientDefaultImpl.h"
@@ -351,11 +351,11 @@ LayerTreeRenderer* EwkViewImpl::layerTreeRenderer()
     if (!drawingArea)
         return 0;
 
-    WebKit::LayerTreeCoordinatorProxy* layerTreeCoordinatorProxy = drawingArea->layerTreeCoordinatorProxy();
-    if (!layerTreeCoordinatorProxy)
+    WebKit::CoordinatedLayerTreeHostProxy* coordinatedLayerTreeHostProxy = drawingArea->coordinatedLayerTreeHostProxy();
+    if (!coordinatedLayerTreeHostProxy)
         return 0;
 
-    return layerTreeCoordinatorProxy->layerTreeRenderer();
+    return coordinatedLayerTreeHostProxy->layerTreeRenderer();
 }
 #endif
 

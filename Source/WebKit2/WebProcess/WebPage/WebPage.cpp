@@ -183,7 +183,7 @@
 #endif
 
 #if USE(COORDINATED_GRAPHICS)
-#include "LayerTreeCoordinatorMessages.h"
+#include "CoordinatedLayerTreeHostMessages.h"
 #endif
 
 using namespace JSC;
@@ -376,7 +376,7 @@ WebPage::WebPage(uint64_t pageID, const WebPageCreationParameters& parameters)
     // FIXME: This should be done in the object constructors, and the objects themselves should be message receivers.
     WebProcess::shared().addMessageReceiver(Messages::DrawingArea::messageReceiverName(), m_pageID, this);
 #if USE(COORDINATED_GRAPHICS)
-    WebProcess::shared().addMessageReceiver(Messages::LayerTreeCoordinator::messageReceiverName(), m_pageID, this);
+    WebProcess::shared().addMessageReceiver(Messages::CoordinatedLayerTreeHost::messageReceiverName(), m_pageID, this);
 #endif
 #if ENABLE(INSPECTOR)
     WebProcess::shared().addMessageReceiver(Messages::WebInspector::messageReceiverName(), m_pageID, this);
@@ -407,7 +407,7 @@ WebPage::~WebPage()
     // FIXME: This should be done in the object destructors, and the objects themselves should be message receivers.
     WebProcess::shared().removeMessageReceiver(Messages::DrawingArea::messageReceiverName(), m_pageID);
 #if USE(COORDINATED_GRAPHICS)
-    WebProcess::shared().removeMessageReceiver(Messages::LayerTreeCoordinator::messageReceiverName(), m_pageID);
+    WebProcess::shared().removeMessageReceiver(Messages::CoordinatedLayerTreeHost::messageReceiverName(), m_pageID);
 #endif
 #if ENABLE(INSPECTOR)
     WebProcess::shared().removeMessageReceiver(Messages::WebInspector::messageReceiverName(), m_pageID);
@@ -2912,9 +2912,9 @@ void WebPage::didReceiveMessage(CoreIPC::Connection* connection, CoreIPC::Messag
     }
 
 #if USE(TILED_BACKING_STORE) && USE(ACCELERATED_COMPOSITING)
-    if (messageID.is<CoreIPC::MessageClassLayerTreeCoordinator>()) {
+    if (messageID.is<CoreIPC::MessageClassCoordinatedLayerTreeHost>()) {
         if (m_drawingArea)
-            m_drawingArea->didReceiveLayerTreeCoordinatorMessage(connection, messageID, decoder);
+            m_drawingArea->didReceiveCoordinatedLayerTreeHostMessage(connection, messageID, decoder);
         return;
     }
 #endif

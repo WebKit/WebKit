@@ -39,7 +39,7 @@ class Region;
 
 namespace WebKit {
 
-class LayerTreeCoordinatorProxy;
+class CoordinatedLayerTreeHostProxy;
 
 class DrawingAreaProxyImpl : public DrawingAreaProxy {
 public:
@@ -84,7 +84,7 @@ private:
     void updateAcceleratedCompositingMode(const LayerTreeContext&);
 #if USE(COORDINATED_GRAPHICS)
     virtual void setVisibleContentsRect(const WebCore::FloatRect& visibleContentsRect, float scale, const WebCore::FloatPoint& trajectory);
-    void didReceiveLayerTreeCoordinatorProxyMessage(CoreIPC::Connection*, CoreIPC::MessageID, CoreIPC::MessageDecoder&);
+    void didReceiveCoordinatedLayerTreeHostProxyMessage(CoreIPC::Connection*, CoreIPC::MessageID, CoreIPC::MessageDecoder&);
 #endif
 #else
     bool isInAcceleratedCompositingMode() const { return false; }

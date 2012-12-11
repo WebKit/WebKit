@@ -348,7 +348,7 @@ set(WebKit2_SOURCES
     UIProcess/Authentication/WebProtectionSpace.cpp
 
     UIProcess/CoordinatedGraphics/CoordinatedBackingStore.cpp
-    UIProcess/CoordinatedGraphics/LayerTreeCoordinatorProxy.cpp
+    UIProcess/CoordinatedGraphics/CoordinatedLayerTreeHostProxy.cpp
     UIProcess/CoordinatedGraphics/LayerTreeRenderer.cpp
 
     UIProcess/Downloads/DownloadProxy.cpp
@@ -502,7 +502,7 @@ set(WebKit2_SOURCES
     WebProcess/WebPage/CoordinatedGraphics/CoordinatedImageBacking.cpp
     WebProcess/WebPage/CoordinatedGraphics/CoordinatedGraphicsLayer.cpp
     WebProcess/WebPage/CoordinatedGraphics/CoordinatedTile.cpp
-    WebProcess/WebPage/CoordinatedGraphics/LayerTreeCoordinator.cpp
+    WebProcess/WebPage/CoordinatedGraphics/CoordinatedLayerTreeHost.cpp
     WebProcess/WebPage/CoordinatedGraphics/UpdateAtlas.cpp
 )
 
@@ -534,7 +534,7 @@ set(WebKit2_MESSAGES_IN_FILES
     UIProcess/WebVibrationProxy.messages.in
 
 
-    UIProcess/CoordinatedGraphics/LayerTreeCoordinatorProxy.messages.in
+    UIProcess/CoordinatedGraphics/CoordinatedLayerTreeHostProxy.messages.in
 
     UIProcess/Downloads/DownloadProxy.messages.in
 
@@ -579,7 +579,7 @@ set(WebKit2_MESSAGES_IN_FILES
     WebProcess/WebPage/WebPage.messages.in
     WebProcess/WebPage/WebPageGroupProxy.messages.in
 
-    WebProcess/WebPage/CoordinatedGraphics/LayerTreeCoordinator.messages.in
+    WebProcess/WebPage/CoordinatedGraphics/CoordinatedLayerTreeHost.messages.in
 )
 
 set(WebProcess_EXECUTABLE_NAME WebProcess)

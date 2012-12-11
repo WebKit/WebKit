@@ -95,7 +95,7 @@ public:
 #endif
 
 #if USE(COORDINATED_GRAPHICS)
-    virtual void didReceiveLayerTreeCoordinatorMessage(CoreIPC::Connection*, CoreIPC::MessageID, CoreIPC::MessageDecoder&) = 0;
+    virtual void didReceiveCoordinatedLayerTreeHostMessage(CoreIPC::Connection*, CoreIPC::MessageID, CoreIPC::MessageDecoder&) = 0;
 #endif
 
 #if PLATFORM(WIN)

@@ -21,7 +21,7 @@
 #include "config.h"
 #include "qquickwebpage_p.h"
 
-#include "LayerTreeCoordinatorProxy.h"
+#include "CoordinatedLayerTreeHostProxy.h"
 #include "LayerTreeRenderer.h"
 #include "QtWebPageEventHandler.h"
 #include "QtWebPageSGNode.h"
@@ -70,9 +70,16 @@ void QQuickWebPagePrivate::paint(QPainter* painter)
     if (!webPageProxy->drawingArea())
         return;
 
-    LayerTreeCoordinatorProxy* layerTreeCoordinatorProxy = webPageProxy->drawingArea()->layerTreeCoordinatorProxy();
-    if (layerTreeCoordinatorProxy->layerTreeRenderer())
-        layerTreeCoordinatorProxy->layerTreeRenderer()->paintToGraphicsContext(painter);
+    if (coordinatedLayerTreeHostProxy()->layerTreeRenderer())
+        coordinatedLayerTreeHostProxy()->layerTreeRenderer()->paintToGraphicsContext(painter);
+}
+
+CoordinatedLayerTreeHostProxy* QQuickWebPagePrivate::coordinatedLayerTreeHostProxy()
+{
+    if (webPageProxy->drawingArea())
+        return webPageProxy->drawingArea()->coordinatedLayerTreeHostProxy();
+
+    return 0;
 }
 
 QSGNode* QQuickWebPage::updatePaintNode(QSGNode* oldNode, UpdatePaintNodeData*)
@@ -80,8 +87,7 @@ QSGNode* QQuickWebPage::updatePaintNode(QSGNode* oldNode, UpdatePaintNodeData*)
     if (!d->webPageProxy->drawingArea())
         return oldNode;
 
-    LayerTreeCoordinatorProxy* layerTreeCoordinatorProxy = d->webPageProxy->drawingArea()->layerTreeCoordinatorProxy();
-    LayerTreeRenderer* renderer = layerTreeCoordinatorProxy->layerTreeRenderer();
+    LayerTreeRenderer* renderer = d->coordinatedLayerTreeHostProxy()->layerTreeRenderer();
 
     QtWebPageSGNode* node = static_cast<QtWebPageSGNode*>(oldNode);
     if (!node)
@@ -155,9 +161,8 @@ void QQuickWebPagePrivate::updateSize()
 {
     QSizeF scaledSize = contentsSize * contentsScale;
 
-    DrawingAreaProxy* drawingArea = webPageProxy->drawingArea();
-    if (drawingArea && drawingArea->layerTreeCoordinatorProxy())
-        drawingArea->layerTreeCoordinatorProxy()->setContentsSize(WebCore::FloatSize(contentsSize));
+    if (coordinatedLayerTreeHostProxy())
+        coordinatedLayerTreeHostProxy()->setContentsSize(WebCore::FloatSize(contentsSize));
 
     q->setSize(scaledSize);
 

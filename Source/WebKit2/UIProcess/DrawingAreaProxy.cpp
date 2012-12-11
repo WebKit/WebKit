@@ -29,7 +29,7 @@
 #include "WebPageProxy.h"
 
 #if USE(COORDINATED_GRAPHICS)
-#include "LayerTreeCoordinatorProxy.h"
+#include "CoordinatedLayerTreeHostProxy.h"
 #include <CoreIPC/MessageID.h>
 #endif
 
@@ -69,7 +69,7 @@ WebCore::IntRect DrawingAreaProxy::contentsRect() const
     return IntRect(IntPoint::zero(), m_webPageProxy->viewSize());
 }
 
-void DrawingAreaProxy::didReceiveLayerTreeCoordinatorProxyMessage(CoreIPC::Connection*, CoreIPC::MessageID, CoreIPC::MessageDecoder&)
+void DrawingAreaProxy::didReceiveCoordinatedLayerTreeHostProxyMessage(CoreIPC::Connection*, CoreIPC::MessageID, CoreIPC::MessageDecoder&)
 {
 }
 #endif

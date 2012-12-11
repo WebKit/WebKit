@@ -211,7 +211,7 @@ HEADERS += \
     UIProcess/BackingStore.h \
     UIProcess/Downloads/DownloadProxy.h \
     UIProcess/CoordinatedGraphics/CoordinatedBackingStore.h \
-    UIProcess/CoordinatedGraphics/LayerTreeCoordinatorProxy.h \
+    UIProcess/CoordinatedGraphics/CoordinatedLayerTreeHostProxy.h \
     UIProcess/CoordinatedGraphics/LayerTreeRenderer.h \
     UIProcess/DefaultUndoController.h \
     UIProcess/DrawingAreaProxy.h \
@@ -374,8 +374,8 @@ HEADERS += \
     WebProcess/WebPage/CoordinatedGraphics/AreaAllocator.h \
     WebProcess/WebPage/CoordinatedGraphics/CoordinatedGraphicsLayer.h \
     WebProcess/WebPage/CoordinatedGraphics/CoordinatedImageBacking.h \
+    WebProcess/WebPage/CoordinatedGraphics/CoordinatedLayerTreeHost.h \
     WebProcess/WebPage/CoordinatedGraphics/CoordinatedTile.h \
-    WebProcess/WebPage/CoordinatedGraphics/LayerTreeCoordinator.h \
     WebProcess/WebPage/CoordinatedGraphics/UpdateAtlas.h \
     WebProcess/WebPage/TapHighlightController.h \
     WebProcess/WebPage/PageOverlay.h \
@@ -571,7 +571,7 @@ SOURCES += \
     UIProcess/BackingStore.cpp \
     UIProcess/qt/BackingStoreQt.cpp \
     UIProcess/CoordinatedGraphics/CoordinatedBackingStore.cpp \
-    UIProcess/CoordinatedGraphics/LayerTreeCoordinatorProxy.cpp \
+    UIProcess/CoordinatedGraphics/CoordinatedLayerTreeHostProxy.cpp \
     UIProcess/CoordinatedGraphics/LayerTreeRenderer.cpp \
     UIProcess/DefaultUndoController.cpp \
     UIProcess/Downloads/DownloadProxy.cpp \
@@ -760,8 +760,8 @@ SOURCES += \
     WebProcess/WebPage/CoordinatedGraphics/AreaAllocator.cpp \
     WebProcess/WebPage/CoordinatedGraphics/CoordinatedGraphicsLayer.cpp \
     WebProcess/WebPage/CoordinatedGraphics/CoordinatedImageBacking.cpp \
+    WebProcess/WebPage/CoordinatedGraphics/CoordinatedLayerTreeHost.cpp \
     WebProcess/WebPage/CoordinatedGraphics/CoordinatedTile.cpp \
-    WebProcess/WebPage/CoordinatedGraphics/LayerTreeCoordinator.cpp \
     WebProcess/WebPage/CoordinatedGraphics/UpdateAtlas.cpp \
     WebProcess/WebPage/TapHighlightController.cpp \
     WebProcess/WebPage/LayerTreeHost.cpp \

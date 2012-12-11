@@ -47,7 +47,7 @@ class TextureMapperLayer;
 namespace WebKit {
 
 class CoordinatedBackingStore;
-class LayerTreeCoordinatorProxy;
+class CoordinatedLayerTreeHostProxy;
 class CoordinatedLayerInfo;
 class CoordinatedLayerUpdateInfo;
 
@@ -66,7 +66,7 @@ public:
         {
         }
     };
-    explicit LayerTreeRenderer(LayerTreeCoordinatorProxy*);
+    explicit LayerTreeRenderer(CoordinatedLayerTreeHostProxy*);
     virtual ~LayerTreeRenderer();
     void paintToCurrentGLContext(const WebCore::TransformationMatrix&, float, const WebCore::FloatRect&, WebCore::TextureMapper::PaintFlags = 0);
     void paintToGraphicsContext(BackingStore::PlatformGraphicsContext);
@@ -82,7 +82,7 @@ public:
     void detach();
     void appendUpdate(const Function<void()>&);
 
-    // The painting thread must lock the main thread to use below two methods, because two methods access members that the main thread manages. See m_layerTreeCoordinatorProxy.
+    // The painting thread must lock the main thread to use below two methods, because two methods access members that the main thread manages. See m_coordinatedLayerTreeHostProxy.
     // Currently, QQuickWebPage::updatePaintNode() locks the main thread before calling both methods.
     void purgeGLResources();
     void setActive(bool);
@@ -175,7 +175,7 @@ private:
 #endif
 
     // Below two members are accessed by only the main thread. The painting thread must lock the main thread to access both members.
-    LayerTreeCoordinatorProxy* m_layerTreeCoordinatorProxy;
+    CoordinatedLayerTreeHostProxy* m_coordinatedLayerTreeHostProxy;
     bool m_isActive;
 
     OwnPtr<WebCore::GraphicsLayer> m_rootLayer;

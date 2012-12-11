@@ -96,7 +96,7 @@ public:
     virtual void setVisibleContentsRect(const WebCore::FloatRect&, float /* scale */, const WebCore::FloatPoint&) { }
     virtual void renderNextFrame() { }
     virtual void purgeBackingStores() { }
-    virtual void didReceiveLayerTreeCoordinatorMessage(CoreIPC::Connection*, CoreIPC::MessageID, CoreIPC::MessageDecoder&) = 0;
+    virtual void didReceiveCoordinatedLayerTreeHostMessage(CoreIPC::Connection*, CoreIPC::MessageID, CoreIPC::MessageDecoder&) = 0;
 #endif
 
 #if PLATFORM(WIN)

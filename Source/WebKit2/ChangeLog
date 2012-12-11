@@ -1,3 +1,202 @@
+2012-12-11  Gwang Yoon Hwang  <ryumiel@company100.net>
+
+        Coordinated Graphics: Rename LayerTreeCoordinator to CoordinatedLayerTreeHost
+        https://bugs.webkit.org/show_bug.cgi?id=104641
+
+        Reviewed by Noam Rosenthal.
+
+        The name of LayerTreeCoordinator does not match LayerTreeHost.  This
+        patch renames it to CoordinatedLayerTreeHost. And make a getter for
+        CoordinatedLayerTreeHostProxy in QQuickWebPagePrivate to make a cleaner code.
+
+        No new tests - just a refactoring.
+
+        * CMakeLists.txt:
+        * DerivedSources.pri:
+        * Platform/CoreIPC/MessageID.h:
+        * Target.pri:
+        * UIProcess/API/efl/EwkViewImpl.cpp:
+        (EwkViewImpl::layerTreeRenderer):
+        * UIProcess/API/qt/qquickwebpage.cpp:
+        (QQuickWebPagePrivate::paint):
+        (QQuickWebPagePrivate::coordinatedLayerTreeHostProxy):
+        (QQuickWebPage::updatePaintNode):
+        (QQuickWebPagePrivate::updateSize):
+        * UIProcess/API/qt/qquickwebpage_p_p.h:
+        (WebKit):
+        (QQuickWebPagePrivate):
+        * UIProcess/API/qt/raw/qrawwebview.cpp:
+        (QRawWebView::setSize):
+        (QRawWebView::layerTreeRenderer):
+        * UIProcess/CoordinatedGraphics/CoordinatedLayerTreeHostProxy.cpp: Renamed from Source/WebKit2/UIProcess/CoordinatedGraphics/LayerTreeCoordinatorProxy.cpp.
+        (WebKit):
+        (WebKit::CoordinatedLayerTreeHostProxy::CoordinatedLayerTreeHostProxy):
+        (WebKit::CoordinatedLayerTreeHostProxy::~CoordinatedLayerTreeHostProxy):
+        (WebKit::CoordinatedLayerTreeHostProxy::updateViewport):
+        (WebKit::CoordinatedLayerTreeHostProxy::dispatchUpdate):
+        (WebKit::CoordinatedLayerTreeHostProxy::createTileForLayer):
+        (WebKit::CoordinatedLayerTreeHostProxy::updateTileForLayer):
+        (WebKit::CoordinatedLayerTreeHostProxy::removeTileForLayer):
+        (WebKit::CoordinatedLayerTreeHostProxy::createUpdateAtlas):
+        (WebKit::CoordinatedLayerTreeHostProxy::removeUpdateAtlas):
+        (WebKit::CoordinatedLayerTreeHostProxy::deleteCompositingLayer):
+        (WebKit::CoordinatedLayerTreeHostProxy::setRootCompositingLayer):
+        (WebKit::CoordinatedLayerTreeHostProxy::setCompositingLayerState):
+        (WebKit::CoordinatedLayerTreeHostProxy::setCompositingLayerChildren):
+        (WebKit::CoordinatedLayerTreeHostProxy::setCompositingLayerFilters):
+        (WebKit::CoordinatedLayerTreeHostProxy::removeCustomFilterProgram):
+        (WebKit::CoordinatedLayerTreeHostProxy::createCustomFilterProgram):
+        (WebKit::CoordinatedLayerTreeHostProxy::didRenderFrame):
+        (WebKit::CoordinatedLayerTreeHostProxy::createImageBacking):
+        (WebKit::CoordinatedLayerTreeHostProxy::updateImageBacking):
+        (WebKit::CoordinatedLayerTreeHostProxy::clearImageBackingContents):
+        (WebKit::CoordinatedLayerTreeHostProxy::removeImageBacking):
+        (WebKit::CoordinatedLayerTreeHostProxy::setContentsSize):
+        (WebKit::CoordinatedLayerTreeHostProxy::setLayerAnimations):
+        (WebKit::CoordinatedLayerTreeHostProxy::setAnimationsLocked):
+        (WebKit::CoordinatedLayerTreeHostProxy::setVisibleContentsRect):
+        (WebKit::CoordinatedLayerTreeHostProxy::renderNextFrame):
+        (WebKit::CoordinatedLayerTreeHostProxy::requestAnimationFrame):
+        (WebKit::CoordinatedLayerTreeHostProxy::animationFrameReady):
+        (WebKit::CoordinatedLayerTreeHostProxy::didChangeScrollPosition):
+        (WebKit::CoordinatedLayerTreeHostProxy::createCanvas):
+        (WebKit::CoordinatedLayerTreeHostProxy::syncCanvas):
+        (WebKit::CoordinatedLayerTreeHostProxy::destroyCanvas):
+        (WebKit::CoordinatedLayerTreeHostProxy::purgeBackingStores):
+        (WebKit::CoordinatedLayerTreeHostProxy::setBackgroundColor):
+        * UIProcess/CoordinatedGraphics/CoordinatedLayerTreeHostProxy.h: Renamed from Source/WebKit2/UIProcess/CoordinatedGraphics/LayerTreeCoordinatorProxy.h.
+        (WebKit):
+        (CoordinatedLayerTreeHostProxy):
+        (WebKit::CoordinatedLayerTreeHostProxy::layerTreeRenderer):
+        * UIProcess/CoordinatedGraphics/CoordinatedLayerTreeHostProxy.messages.in: Renamed from Source/WebKit2/UIProcess/CoordinatedGraphics/LayerTreeCoordinatorProxy.messages.in.
+        * UIProcess/CoordinatedGraphics/LayerTreeRenderer.cpp:
+        (WebKit::LayerTreeRenderer::LayerTreeRenderer):
+        (WebKit::LayerTreeRenderer::animationFrameReady):
+        (WebKit::LayerTreeRenderer::updateViewport):
+        (WebKit::LayerTreeRenderer::renderNextFrame):
+        (WebKit::LayerTreeRenderer::purgeBackingStores):
+        (WebKit::LayerTreeRenderer::detach):
+        * UIProcess/CoordinatedGraphics/LayerTreeRenderer.h:
+        (WebKit):
+        (LayerTreeRenderer):
+        * UIProcess/DrawingAreaProxy.cpp:
+        (WebKit::DrawingAreaProxy::didReceiveCoordinatedLayerTreeHostProxyMessage):
+        * UIProcess/DrawingAreaProxy.h:
+        (WebKit):
+        (WebKit::DrawingAreaProxy::coordinatedLayerTreeHostProxy):
+        (DrawingAreaProxy):
+        * UIProcess/DrawingAreaProxyImpl.cpp:
+        (WebKit::DrawingAreaProxyImpl::DrawingAreaProxyImpl):
+        (WebKit::DrawingAreaProxyImpl::enterAcceleratedCompositingMode):
+        (WebKit::DrawingAreaProxyImpl::didReceiveCoordinatedLayerTreeHostProxyMessage):
+        (WebKit::DrawingAreaProxyImpl::setVisibleContentsRect):
+        * UIProcess/DrawingAreaProxyImpl.h:
+        (WebKit):
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::didReceiveMessage):
+        * UIProcess/efl/PageClientBase.cpp:
+        * UIProcess/efl/PageClientLegacyImpl.cpp:
+        (WebKit::PageClientLegacyImpl::didChangeContentsSize):
+        * UIProcess/efl/PageViewportControllerClientEfl.cpp:
+        (WebKit::PageViewportControllerClientEfl::setRendererActive):
+        (WebKit::PageViewportControllerClientEfl::didChangeContentsSize):
+        * WebProcess/WebPage/CoordinatedGraphics/CoordinatedGraphicsLayer.cpp:
+        * WebProcess/WebPage/CoordinatedGraphics/CoordinatedLayerTreeHost.cpp: Renamed from Source/WebKit2/WebProcess/WebPage/CoordinatedGraphics/LayerTreeCoordinator.cpp.
+        (WebKit):
+        (WebKit::CoordinatedLayerTreeHost::create):
+        (WebKit::CoordinatedLayerTreeHost::~CoordinatedLayerTreeHost):
+        (WebKit::CoordinatedLayerTreeHost::CoordinatedLayerTreeHost):
+        (WebKit::CoordinatedLayerTreeHost::setLayerFlushSchedulingEnabled):
+        (WebKit::CoordinatedLayerTreeHost::scheduleLayerFlush):
+        (WebKit::CoordinatedLayerTreeHost::cancelPendingLayerFlush):
+        (WebKit::CoordinatedLayerTreeHost::setShouldNotifyAfterNextScheduledLayerFlush):
+        (WebKit::CoordinatedLayerTreeHost::setRootCompositingLayer):
+        (WebKit::CoordinatedLayerTreeHost::invalidate):
+        (WebKit::CoordinatedLayerTreeHost::setNonCompositedContentsNeedDisplay):
+        (WebKit::CoordinatedLayerTreeHost::scrollNonCompositedContents):
+        (WebKit::CoordinatedLayerTreeHost::forceRepaint):
+        (WebKit::CoordinatedLayerTreeHost::forceRepaintAsync):
+        (WebKit::CoordinatedLayerTreeHost::sizeDidChange):
+        (WebKit::CoordinatedLayerTreeHost::didInstallPageOverlay):
+        (WebKit::CoordinatedLayerTreeHost::didUninstallPageOverlay):
+        (WebKit::CoordinatedLayerTreeHost::setPageOverlayNeedsDisplay):
+        (WebKit::CoordinatedLayerTreeHost::setPageOverlayOpacity):
+        (WebKit::CoordinatedLayerTreeHost::flushPendingLayerChanges):
+        (WebKit::CoordinatedLayerTreeHost::initializeRootCompositingLayerIfNeeded):
+        (WebKit::CoordinatedLayerTreeHost::syncLayerState):
+        (WebKit::CoordinatedLayerTreeHost::syncLayerChildren):
+        (WebKit::CoordinatedLayerTreeHost::createCanvas):
+        (WebKit::CoordinatedLayerTreeHost::syncCanvas):
+        (WebKit::CoordinatedLayerTreeHost::destroyCanvas):
+        (WebKit::CoordinatedLayerTreeHost::syncLayerFilters):
+        (WebKit::CoordinatedLayerTreeHost::checkCustomFilterProgramProxies):
+        (WebKit::CoordinatedLayerTreeHost::removeCustomFilterProgramProxy):
+        (WebKit::CoordinatedLayerTreeHost::disconnectCustomFilterPrograms):
+        (WebKit::CoordinatedLayerTreeHost::detachLayer):
+        (WebKit::updateOffsetFromViewportForSelf):
+        (WebKit::updateOffsetFromViewportForLayer):
+        (WebKit::CoordinatedLayerTreeHost::syncFixedLayers):
+        (WebKit::CoordinatedLayerTreeHost::lockAnimations):
+        (WebKit::CoordinatedLayerTreeHost::unlockAnimations):
+        (WebKit::CoordinatedLayerTreeHost::performScheduledLayerFlush):
+        (WebKit::CoordinatedLayerTreeHost::syncDisplayState):
+        (WebKit::CoordinatedLayerTreeHost::didPerformScheduledLayerFlush):
+        (WebKit::CoordinatedLayerTreeHost::layerFlushTimerFired):
+        (WebKit::CoordinatedLayerTreeHost::createPageOverlayLayer):
+        (WebKit::CoordinatedLayerTreeHost::destroyPageOverlayLayer):
+        (WebKit::CoordinatedLayerTreeHost::createImageBackingIfNeeded):
+        (WebKit::CoordinatedLayerTreeHost::createImageBacking):
+        (WebKit::CoordinatedLayerTreeHost::updateImageBacking):
+        (WebKit::CoordinatedLayerTreeHost::clearImageBackingContents):
+        (WebKit::CoordinatedLayerTreeHost::removeImageBacking):
+        (WebKit::CoordinatedLayerTreeHost::flushPendingImageBackingChanges):
+        (WebKit::CoordinatedLayerTreeHost::notifyAnimationStarted):
+        (WebKit::CoordinatedLayerTreeHost::notifyFlushRequired):
+        (WebKit::CoordinatedLayerTreeHost::paintContents):
+        (WebKit::CoordinatedLayerTreeHost::createGraphicsLayer):
+        (WebKit::LayerTreeHost::supportsAcceleratedCompositing):
+        (WebKit::CoordinatedLayerTreeHost::createTile):
+        (WebKit::CoordinatedLayerTreeHost::updateTile):
+        (WebKit::CoordinatedLayerTreeHost::removeTile):
+        (WebKit::CoordinatedLayerTreeHost::createUpdateAtlas):
+        (WebKit::CoordinatedLayerTreeHost::removeUpdateAtlas):
+        (WebKit::CoordinatedLayerTreeHost::visibleContentsRect):
+        (WebKit::CoordinatedLayerTreeHost::setLayerAnimations):
+        (WebKit::CoordinatedLayerTreeHost::setVisibleContentsRect):
+        (WebKit::CoordinatedLayerTreeHost::graphicsLayerFactory):
+        (WebKit::CoordinatedLayerTreeHost::scheduleAnimation):
+        (WebKit::CoordinatedLayerTreeHost::animationFrameReady):
+        (WebKit::CoordinatedLayerTreeHost::renderNextFrame):
+        (WebKit::CoordinatedLayerTreeHost::layerTreeTileUpdatesAllowed):
+        (WebKit::CoordinatedLayerTreeHost::purgeBackingStores):
+        (WebKit::CoordinatedLayerTreeHost::beginContentUpdate):
+        (WebKit::CoordinatedLayerTreeHost::scheduleReleaseInactiveAtlases):
+        (WebKit::CoordinatedLayerTreeHost::releaseInactiveAtlasesTimerFired):
+        (WebKit::CoordinatedLayerTreeHost::setBackgroundColor):
+        * WebProcess/WebPage/CoordinatedGraphics/CoordinatedLayerTreeHost.h: Renamed from Source/WebKit2/WebProcess/WebPage/CoordinatedGraphics/LayerTreeCoordinator.h.
+        (WebKit):
+        (CoordinatedLayerTreeHost):
+        (WebKit::CoordinatedLayerTreeHost::layerTreeContext):
+        (WebKit::CoordinatedLayerTreeHost::pageOverlayShouldApplyFadeWhenPainting):
+        (WebKit::CoordinatedLayerTreeHost::pauseRendering):
+        (WebKit::CoordinatedLayerTreeHost::resumeRendering):
+        (WebKit::CoordinatedLayerTreeHost::deviceScaleFactorDidChange):
+        * WebProcess/WebPage/CoordinatedGraphics/CoordinatedLayerTreeHost.messages.in: Renamed from Source/WebKit2/WebProcess/WebPage/CoordinatedGraphics/LayerTreeCoordinator.messages.in.
+        * WebProcess/WebPage/DrawingArea.h:
+        (DrawingArea):
+        * WebProcess/WebPage/DrawingAreaImpl.cpp:
+        (WebKit::DrawingAreaImpl::didReceiveCoordinatedLayerTreeHostMessage):
+        * WebProcess/WebPage/DrawingAreaImpl.h:
+        (DrawingAreaImpl):
+        * WebProcess/WebPage/LayerTreeHost.cpp:
+        (WebKit::LayerTreeHost::create):
+        * WebProcess/WebPage/LayerTreeHost.h:
+        (LayerTreeHost):
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::WebPage):
+        (WebKit::WebPage::~WebPage):
+        (WebKit::WebPage::didReceiveMessage):
+
 2012-12-11  Alexey Proskuryakov  <ap@apple.com>
 
         <rdar://problem/12857080> Per-Tab WebProcess: Blue lines between menu tabs at apple.com

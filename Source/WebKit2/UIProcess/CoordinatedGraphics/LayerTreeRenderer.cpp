@@ -25,8 +25,8 @@
 #include "LayerTreeRenderer.h"
 
 #include "CoordinatedBackingStore.h"
+#include "CoordinatedLayerTreeHostProxy.h"
 #include "GraphicsLayerTextureMapper.h"
-#include "LayerTreeCoordinatorProxy.h"
 #include "MessageID.h"
 #include "TextureMapper.h"
 #include "TextureMapperBackingStore.h"
@@ -71,8 +71,8 @@ static bool layerShouldHaveBackingStore(GraphicsLayer* layer)
     return layer->drawsContent() && layer->contentsAreVisible() && !layer->size().isEmpty();
 }
 
-LayerTreeRenderer::LayerTreeRenderer(LayerTreeCoordinatorProxy* layerTreeCoordinatorProxy)
-    : m_layerTreeCoordinatorProxy(layerTreeCoordinatorProxy)
+LayerTreeRenderer::LayerTreeRenderer(CoordinatedLayerTreeHostProxy* coordinatedLayerTreeHostProxy)
+    : m_coordinatedLayerTreeHostProxy(coordinatedLayerTreeHostProxy)
     , m_isActive(false)
     , m_rootLayerID(InvalidCoordinatedLayerID)
     , m_animationsLocked(false)
@@ -154,8 +154,8 @@ void LayerTreeRenderer::paintToCurrentGLContext(const TransformationMatrix& matr
 void LayerTreeRenderer::animationFrameReady()
 {
     ASSERT(isMainThread());
-    if (m_layerTreeCoordinatorProxy)
-        m_layerTreeCoordinatorProxy->animationFrameReady();
+    if (m_coordinatedLayerTreeHostProxy)
+        m_coordinatedLayerTreeHostProxy->animationFrameReady();
 }
 
 void LayerTreeRenderer::requestAnimationFrame()
@@ -200,8 +200,8 @@ void LayerTreeRenderer::setVisibleContentsRect(const FloatRect& rect)
 void LayerTreeRenderer::updateViewport()
 {
     ASSERT(isMainThread());
-    if (m_layerTreeCoordinatorProxy)
-        m_layerTreeCoordinatorProxy->updateViewport();
+    if (m_coordinatedLayerTreeHostProxy)
+        m_coordinatedLayerTreeHostProxy->updateViewport();
 }
 
 void LayerTreeRenderer::adjustPositionForFixedLayers()
@@ -609,8 +609,8 @@ void LayerTreeRenderer::flushLayerChanges()
 
 void LayerTreeRenderer::renderNextFrame()
 {
-    if (m_layerTreeCoordinatorProxy)
-        m_layerTreeCoordinatorProxy->renderNextFrame();
+    if (m_coordinatedLayerTreeHostProxy)
+        m_coordinatedLayerTreeHostProxy->renderNextFrame();
 }
 
 void LayerTreeRenderer::ensureRootLayer()
@@ -674,8 +674,8 @@ void LayerTreeRenderer::purgeGLResources()
 
 void LayerTreeRenderer::purgeBackingStores()
 {
-    if (m_layerTreeCoordinatorProxy)
-        m_layerTreeCoordinatorProxy->purgeBackingStores();
+    if (m_coordinatedLayerTreeHostProxy)
+        m_coordinatedLayerTreeHostProxy->purgeBackingStores();
 }
 
 void LayerTreeRenderer::setLayerAnimations(CoordinatedLayerID id, const GraphicsLayerAnimations& animations)
@@ -705,7 +705,7 @@ void LayerTreeRenderer::setAnimationsLocked(bool locked)
 void LayerTreeRenderer::detach()
 {
     ASSERT(isMainThread());
-    m_layerTreeCoordinatorProxy = 0;
+    m_coordinatedLayerTreeHostProxy = 0;
 }
 
 void LayerTreeRenderer::appendUpdate(const Function<void()>& function)

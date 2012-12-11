@@ -28,8 +28,8 @@
 
 #if USE(TILED_BACKING_STORE)
 
+#include "CoordinatedLayerTreeHostProxy.h"
 #include "EwkViewImpl.h"
-#include "LayerTreeCoordinatorProxy.h"
 #include "LayerTreeRenderer.h"
 #include "PageViewportController.h"
 #include "TransformationMatrix.h"
@@ -56,7 +56,7 @@ DrawingAreaProxy* PageViewportControllerClientEfl::drawingArea() const
 
 void PageViewportControllerClientEfl::setRendererActive(bool active)
 {
-    drawingArea()->layerTreeCoordinatorProxy()->layerTreeRenderer()->setActive(active);
+    drawingArea()->coordinatedLayerTreeHostProxy()->layerTreeRenderer()->setActive(active);
 }
 
 void PageViewportControllerClientEfl::updateViewportSize(const IntSize& viewportSize)
@@ -69,7 +69,7 @@ void PageViewportControllerClientEfl::updateViewportSize(const IntSize& viewport
 
 void PageViewportControllerClientEfl::didChangeContentsSize(const WebCore::IntSize& contentsSize)
 {
-    drawingArea()->layerTreeCoordinatorProxy()->setContentsSize(contentsSize);
+    drawingArea()->coordinatedLayerTreeHostProxy()->setContentsSize(contentsSize);
     m_viewImpl->update();
 }
 

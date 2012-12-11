@@ -20,7 +20,7 @@
 
 
 #if USE(COORDINATED_GRAPHICS)
-messages -> LayerTreeCoordinator {
+messages -> CoordinatedLayerTreeHost {
     SetVisibleContentsRect(WebCore::FloatRect visibleContentsRect, float scale, WebCore::FloatPoint trajectoryVectory)
     RenderNextFrame()
     PurgeBackingStores()

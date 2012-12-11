@@ -17,8 +17,8 @@
     Boston, MA 02110-1301, USA.
 */
 
-#ifndef LayerTreeCoordinatorProxy_h
-#define LayerTreeCoordinatorProxy_h
+#ifndef CoordinatedLayerTreeHostProxy_h
+#define CoordinatedLayerTreeHostProxy_h
 
 #if USE(COORDINATED_GRAPHICS)
 
@@ -46,12 +46,12 @@ class CoordinatedLayerInfo;
 class LayerTreeRenderer;
 class CoordinatedLayerUpdateInfo;
 
-class LayerTreeCoordinatorProxy {
-    WTF_MAKE_NONCOPYABLE(LayerTreeCoordinatorProxy);
+class CoordinatedLayerTreeHostProxy {
+    WTF_MAKE_NONCOPYABLE(CoordinatedLayerTreeHostProxy);
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    explicit LayerTreeCoordinatorProxy(DrawingAreaProxy*);
-    ~LayerTreeCoordinatorProxy();
+    explicit CoordinatedLayerTreeHostProxy(DrawingAreaProxy*);
+    ~CoordinatedLayerTreeHostProxy();
     void setCompositingLayerState(CoordinatedLayerID, const CoordinatedLayerInfo&);
     void setCompositingLayerChildren(CoordinatedLayerID, const Vector<CoordinatedLayerID>&);
 #if ENABLE(CSS_FILTERS)
@@ -75,7 +75,7 @@ public:
     void updateImageBacking(CoordinatedImageBackingID, const WebCoordinatedSurface::Handle&);
     void clearImageBackingContents(CoordinatedImageBackingID);
     void removeImageBacking(CoordinatedImageBackingID);
-    void didReceiveLayerTreeCoordinatorProxyMessage(CoreIPC::Connection*, CoreIPC::MessageID, CoreIPC::MessageDecoder&);
+    void didReceiveCoordinatedLayerTreeHostProxyMessage(CoreIPC::Connection*, CoreIPC::MessageID, CoreIPC::MessageDecoder&);
     void updateViewport();
     void renderNextFrame();
     void didChangeScrollPosition(const WebCore::FloatPoint& position);
@@ -110,4 +110,4 @@ protected:
 
 #endif
 
-#endif // LayerTreeCoordinatorProxy_h
+#endif // CoordinatedLayerTreeHostProxy_h
