@@ -413,6 +413,9 @@ void GraphicsLayerTextureMapper::flushCompositingStateForThisLayerOnly()
 */
 void GraphicsLayerTextureMapper::flushCompositingState(const FloatRect&)
 {
+    if (!m_layer->textureMapper())
+        return;
+
     m_layer->flushCompositingState(this, TextureMapperLayer::TraverseDescendants);
     didFlushCompositingStateRecursive();
 }

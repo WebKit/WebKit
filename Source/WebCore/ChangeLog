@@ -1,3 +1,22 @@
+2012-12-11  Huang Dongsung  <luxtella@company100.net>
+
+        [GTK] REGRESSION(r135620): Accelerated Compositing does not draw some pages.
+        https://bugs.webkit.org/show_bug.cgi?id=104640
+
+        Reviewed by Noam Rosenthal.
+
+        After r135620, Accelerated Compositing does not draw some pages, because
+        r135620 changes the tree-traversal behavior.  Before r135620, we
+        returned early if TextureMapperLayer can not get TextureMapper from the
+        root layer. However, after r135620, we run the tree-traversal even if
+        TextureMapperLayer can not get TextureMapper.  This patch makes
+        TextureMapperLayer return early like code before r135620.
+
+        Covered by existing tests.
+
+        * platform/graphics/texmap/GraphicsLayerTextureMapper.cpp:
+        (WebCore::GraphicsLayerTextureMapper::flushCompositingState):
+
 2012-12-11  Dan Bernstein  <mitz@apple.com>
 
         <rdar://problem/12771885> Support ruby-position: {before, after}
