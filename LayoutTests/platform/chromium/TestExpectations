@@ -1987,7 +1987,7 @@ crbug.com/28005 [ Android ] fast/css/color-correction-on-text.html [ Failure ]
 crbug.com/28005 [ Android ] fast/css/color-correction.html [ Failure ]
 crbug.com/28005 [ Android ] fast/css/color-correction-on-box-shadow.html [ Failure ]
 crbug.com/28005 [ Android ] fast/css/color-correction-on-text-shadow.html [ Failure ]
-crbug.com/28005 [ Android Win ] fast/css/color-correction-on-background-image.html [ Failure ]
+crbug.com/28005 [ Android ] fast/css/color-correction-on-background-image.html [ Failure ]
 crbug.com/28005 [ Android XP ] fast/css/color-correction-untagged-images.html [ Failure ]
 
 # Timeout on Debug.
@@ -2398,9 +2398,9 @@ code.google.com/p/v8/issues/detail?id=2218 fast/js/string-fontcolor.html [ Failu
 code.google.com/p/v8/issues/detail?id=2218 fast/js/string-fontsize.html [ Failure ]
 code.google.com/p/v8/issues/detail?id=2218 fast/js/string-link.html [ Failure ]
 
-webkit.org/b/50282 [ Android Win ] fast/images/imagemap-focus-ring-outline-color-explicitly-inherited-from-map.html [ Failure ]
-webkit.org/b/50282 [ Android Win ] fast/images/imagemap-focus-ring-outline-color-not-inherited-from-map.html [ Failure ]
-webkit.org/b/50282 [ Android Win ] fast/images/imagemap-focus-ring-outline-color.html [ Failure ]
+webkit.org/b/50282 [ Android ] fast/images/imagemap-focus-ring-outline-color-explicitly-inherited-from-map.html [ Failure ]
+webkit.org/b/50282 [ Android ] fast/images/imagemap-focus-ring-outline-color-not-inherited-from-map.html [ Failure ]
+webkit.org/b/50282 [ Android ] fast/images/imagemap-focus-ring-outline-color.html [ Failure ]
 webkit.org/b/50282 [ Android ] fast/images/imagemap-circle-focus-ring.html [ Failure ]
 webkit.org/b/50282 [ Android ] fast/images/imagemap-polygon-focus-ring.html [ Failure ]
 
@@ -4063,7 +4063,7 @@ webkit.org/b/100647 [ Win ] webaudio/audiobuffersource-loop-points.html [ Failur
 
 webkit.org/b/100806 [ Win ] fast/css/font-face-implicit-local-font.html [ Failure ]
 webkit.org/b/100806 [ Win ] fast/css/font-face-unicode-range.html [ Failure ]
-webkit.org/b/100806 [ Win ] fast/css/font-face-descending-unicode-range.html [ Failure ]
+webkit.org/b/100806 [ Win ] fast/css/font-face-descending-unicode-range.html [ Pass Failure ]
 webkit.org/b/100806 [ Win ] fast/css/font-face-download-error.html [ Failure ]
 # Seems to have the wrong font in the SVG part of the test (CSS is ok).
 webkit.org/b/100806 [ Win ] svg/custom/font-face-simple.svg [ Failure ]
@@ -4160,7 +4160,7 @@ webkit.org/b/103834 [ SnowLeopard XP ] fast/forms/month-multiple-fields/month-mu
 # Need baseline
 webkit.org/b/104438 fast/forms/datetimelocal/datetimelocal-appearance-basic.html [ Missing ImageOnlyFailure ]
 webkit.org/b/104438 fast/forms/datetimelocal/datetimelocal-appearance-l10n.html [ Missing ImageOnlyFailure ]
-webkit.org/b/104438 fast/forms/time-multiple-fields/time-multiple-fields-localization.html [ Failure ]
+webkit.org/b/104438 [ Win Linux ] fast/forms/time-multiple-fields/time-multiple-fields-localization.html [ Failure ]
 
 # New tests added in r136492 that do not work in chromium
 webkit.org/b/99800 fast/harness/perftests/runs-per-second-iterations.html [ Failure Pass ]
@@ -4192,9 +4192,6 @@ webkit.org/b/104548 [ Linux ] fast/text/hyphens.html [ Failure ]
 # Flaky
 webkit.org/b/104283 [ XP ] fonts/monospace.html [ Failure Pass ]
 webkit.org/b/104283 [ Mac Debug ] fonts/monospace.html [ ImageOnlyFailure Pass ]
-
-# First row, third column is wrong.
-crbug.com/164997 compositing/backface-visibility/backface-visibility-webgl.html [ ImageOnlyFailure ]
 
 # Flaky on Win
 webkit.org/b/104489 [ Win ] http/tests/w3c/webperf/submission/Intel/user-timing/test_user_timing_mark.html [ Failure Pass ]
