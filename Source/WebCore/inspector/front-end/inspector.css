@@ -52,7 +52,7 @@ input[type="search"]:focus, input[type="text"]:focus {
     top: 0;
     left: 0;
     right: 0;
-    height: 24px;
+    height: 26px;
     background-image: -webkit-gradient(linear, left top, left bottom, from(rgb(191, 191, 191)), to(rgb(151, 151, 151)));
     padding-top: 1px;
     border-bottom: 1px solid rgb(80, 80, 80);
@@ -103,7 +103,15 @@ body.dock-to-bottom.inactive #toolbar {
 }
 
 body:not(.show-toolbar-icons) .toolbar-item {
-    height: 22px;
+    height: 24px;
+}
+
+body.dock-to-bottom:not(.show-toolbar-icons) .toolbar-item.toggleable {
+    padding: 0 12px;
+}
+
+body.dock-to-bottom:not(.show-toolbar-icons) .toolbar-item.toggleable.toggled-on {
+    padding: 0 10px;
 }
 
 body.show-toolbar-icons .toolbar-item.toggleable {
@@ -112,8 +120,8 @@ body.show-toolbar-icons .toolbar-item.toggleable {
 }
 
 body.show-toolbar-icons.dock-to-bottom .toolbar-item.toggleable {
-  margin: 1px 0;
-  padding-bottom: 2px;
+    margin: 1px 0;
+    padding-bottom: 2px;
 }
 
 .toolbar-item.toggleable.toggled-on {
@@ -140,10 +148,6 @@ body.dock-to-bottom .toolbar-icon {
 
 body.show-toolbar-icons .toolbar-icon {
     display: inline-block;
-}
-
-body.show-toolbar-icons #main {
-    top: 24px;
 }
 
 body.dock-to-bottom .toolbar-icon.custom-toolbar-icon {
@@ -200,7 +204,7 @@ body.dock-to-bottom #search-toolbar-label {
     margin: 0;
     /* A line height of 0 allows precise text positioning using padding. */
     line-height: 0;
-    padding: 10px 6px 11px;
+    padding: 11px 6px 11px;
 }
 
 #toolbar-dropdown-arrow.dropdown-visible {
@@ -540,7 +544,7 @@ body:not(.platform-mac) .toolbar-item.close-left {
 #main {
     position: absolute;
     z-index: 1;
-    top: 24px;
+    top: 26px;
     left: 0;
     right: 0;
     bottom: 0;
