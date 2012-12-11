@@ -6354,6 +6354,8 @@ endif  # END ENABLE_WEBGL
 if USE_ACCELERATED_COMPOSITING
 if USE_CLUTTER
 webcore_sources += \
+	Source/WebCore/platform/graphics/clutter/GraphicsLayerActor.cpp \
+	Source/WebCore/platform/graphics/clutter/GraphicsLayerActor.h \
 	Source/WebCore/platform/graphics/clutter/GraphicsLayerClutter.cpp \
 	Source/WebCore/platform/graphics/clutter/GraphicsLayerClutter.h \
 	Source/WebCore/platform/graphics/clutter/TransformationMatrixClutter.cpp

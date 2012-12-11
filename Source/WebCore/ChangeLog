@@ -1,3 +1,63 @@
+2012-12-11  Joone Hur  <joone.hur@intel.com>, Gustavo Noronha Silva  <gustavo.noronha@collabora.com>
+
+        [GTK] Add GraphicsLayerActor
+        https://bugs.webkit.org/show_bug.cgi?id=91940
+
+        Reviewed by Gustavo Noronha Silva.
+
+        GraphicsLayerActor, which is a new ClutterActor, represents a node in the GPU-renderable layer tree
+        when accelerated compositing is enabled with Clutter as acceleration backend.
+        This patch allows to support basic features of CSS 3D Transforms.
+
+        No new tests. This will be covered by pixel tests for Qt and GTK+ accelerated
+        compositing and 3D transforms.
+
+        * GNUmakefile.list.am:
+        * platform/graphics/clutter/GraphicsLayerActor.cpp: Added.
+        (_GraphicsLayerActorPrivate):
+        (graphics_layer_actor_class_init): GObject configuration of a new Clutter Actor.
+        (graphics_layer_actor_init): Initialization of the private data of this actor.
+        (graphicsLayerActorSetProperty): GObject property setter.
+        (graphicsLayerActorGetProperty): GObject property getter.
+        (graphicsLayerActorDispose): Called to drop all references to other objects.
+        (graphicsLayerActorAllocate):  Called to set the coordinates of an actor.
+        (graphicsLayerActorApplyTransform): Applying the transformation to an actor before painting it.
+        (graphicsLayerActorPaint): Called to paint the actor.
+        (graphicsLayerActorDraw): Called each time a ClutterCairoTexture has been invalidated.
+        (graphicsLayerActorAdded): Called each time an actor has been added to container.
+        (graphicsLayerActorRemoved): Called each time an actor is removed from container.
+        (graphicsLayerActorNew): Create a specific layer type of GraphicsLayerActor object.
+        (graphicsLayerActorNewWithClient): Create a specific layer type of GraphicsLayerActor object with 
+        its PlatformClutterClientLayer.
+        (graphicsLayerActorSetClient): Added setter to set the PlatformClutterClientLayer.
+        (graphicsLayerActorGetClient): Added getter to get the PlatformClutterClientLayer.
+        (graphicsLayerActorRemoveAll): Remove all child actors.
+        (graphicsLayerUpdateTexture): Create a ClutterCairoTexture.
+        (graphicsLayerActorGetSurface): Added setter to set a cairo_surface_t.
+        (graphicsLayerActorSetSurface): Added getter to get the cairo_surface_t.
+        (graphicsLayerActorInvalidateRectangle):
+        (graphicsLayerActorSetTransform): Set a CoglMatrix to apply matrix transform.
+        (graphicsLayerActorSetAnchorPoint):
+        (graphicsLayerActorGetAnchorPoint):
+        (graphicsLayerActorSetScrollPosition):
+        (graphicsLayerActorGetnChildren):
+        (graphicsLayerActorReplaceSublayer):
+        (graphicsLayerActorInsertSublayer):
+        (graphicsLayerActorSetSublayers):
+        (graphicsLayerActorGetLayerType):
+        (graphicsLayerActorSetLayerType):
+        (graphicsLayerActorSetTranslateX):
+        (graphicsLayerActorGetTranslateX):
+        (graphicsLayerActorSetTranslateY):
+        (graphicsLayerActorGetTranslateY):
+        (graphicsLayerActorSetDrawsContent): Added setter to paint content inside a layer.
+        (graphicsLayerActorGetDrawsContent): Added getter to get the value of the drawsContent. 
+        * platform/graphics/clutter/GraphicsLayerActor.h: Added.
+        (_GraphicsLayerActor):
+        (_GraphicsLayerActorClass):
+        * platform/graphics/clutter/GraphicsLayerClutter.h:
+        (WebCore):
+
 2012-12-11  Mike West  <mkwst@chromium.org>
 
         Web Inspector: ConsoleTypes should not expose MessageType - it should be private to inspector.
