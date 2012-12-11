@@ -1,3 +1,25 @@
+2012-12-11  Kenneth Rohde Christiansen  <kenneth@webkit.org>
+
+        [Qt][EFL][WK2] Resizing the window doesn't always result in right content position
+        https://bugs.webkit.org/show_bug.cgi?id=104416
+
+        Reviewed by Simon Hausmann.
+
+        Make sure the client is notified about position and scale changed done by us.
+        Rename the m_*IsLocked to m_pending*Change as that makes the code more obvious.
+
+        Patch verified with both Qt and EFL.
+
+        * UIProcess/PageViewportController.cpp:
+        (WebKit::PageViewportController::PageViewportController):
+        (WebKit::PageViewportController::didRenderFrame): Notify client and pixel align.
+        (WebKit::PageViewportController::didChangeContentsVisibility):
+        (WebKit::PageViewportController::didChangeViewportAttributes):
+        (WebKit::PageViewportController::applyScaleAfterRenderingContents):
+        (WebKit::PageViewportController::applyPositionAfterRenderingContents):
+        * UIProcess/PageViewportController.h:
+        (PageViewportController):
+
 2012-12-11  Christophe Dumez  <christophe.dumez@intel.com>
 
         [CoordinatedGraphics] Use unsigned integers for UpdateAtlas IDs

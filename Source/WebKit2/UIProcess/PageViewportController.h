@@ -110,8 +110,8 @@ private:
     WebCore::IntSize m_clientContentsSize;
     float m_effectiveScale; // Should always be cssScale * devicePixelRatio.
 
-    bool m_contentsPositionIsLocked;
-    bool m_effectiveScaleIsLocked;
+    bool m_pendingPositionChange;
+    bool m_pendingScaleChange;
     WebCore::FloatRect m_lastFrameCoveredRect;
 };
 

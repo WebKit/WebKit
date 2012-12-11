@@ -48,8 +48,8 @@ PageViewportController::PageViewportController(WebKit::WebPageProxy* proxy, Page
     , m_hasSuspendedContent(false)
     , m_hadUserInteraction(false)
     , m_effectiveScale(1)
-    , m_contentsPositionIsLocked(false)
-    , m_effectiveScaleIsLocked(false)
+    , m_pendingPositionChange(false)
+    , m_pendingScaleChange(false)
 {
     // Initializing Viewport Raw Attributes to avoid random negative or infinity scale factors
     // if there is a race condition between the first layout and setting the viewport attributes for the first time.
@@ -183,17 +183,23 @@ void PageViewportController::didRenderFrame(const IntSize& contentsSize, const I
     // All position and scale changes resulting from a web process event should
     // go through here to be applied on the viewport to avoid showing incomplete
     // tiles to the user during a few milliseconds.
-    if (m_effectiveScaleIsLocked) {
+
+    if (m_pendingScaleChange) {
+        m_pendingScaleChange = false;
         m_client->setContentsScale(m_effectiveScale);
-        m_effectiveScaleIsLocked = false;
+
+        // The scale changed, we have to re-pixel align.
+        m_pendingPositionChange = true;
+        FloatPoint currentDiscretePos = roundedIntPoint(m_contentsPosition);
+        FloatPoint pixelAlignedPos = pixelAlignedFloatPoint(currentDiscretePos);
+        m_contentsPosition = boundContentsPosition(pixelAlignedPos);
     }
-    if (m_contentsPositionIsLocked) {
-        FloatPoint contentsPos = boundContentsPosition(m_contentsPosition);
-        // There might be rendered frames not covering our requested position yet, wait for it.
-        if (FloatRect(contentsPos, visibleContentsSize()).intersects(coveredRect)) {
-            m_client->setViewportPosition(contentsPos);
-            m_contentsPositionIsLocked = false;
-        }
+
+    // There might be rendered frames not covering our requested position yet, wait for it.
+    FloatRect endVisibleContentRect(m_contentsPosition, visibleContentsSize());
+    if (m_pendingPositionChange && endVisibleContentRect.intersects(coveredRect)) {
+        m_client->setViewportPosition(m_contentsPosition);
+        m_pendingPositionChange = false;
     }
 }
 
@@ -245,9 +251,9 @@ void PageViewportController::didChangeViewportSize(const FloatSize& newSize)
 
 void PageViewportController::didChangeContentsVisibility(const FloatPoint& position, float scale, const FloatPoint& trajectoryVector)
 {
-    if (!m_contentsPositionIsLocked)
+    if (!m_pendingPositionChange)
         m_contentsPosition = position;
-    if (!m_effectiveScaleIsLocked)
+    if (!m_pendingScaleChange)
         m_effectiveScale = scale;
 
     syncVisibleContents(trajectoryVector);
@@ -279,6 +285,13 @@ void PageViewportController::didChangeViewportAttributes(const WebCore::Viewport
         WebCore::restrictScaleFactorToInitialScaleIfNotUserScalable(m_rawAttributes);
 
     updateMinimumScaleToFit(true);
+
+    // As the viewport attributes are calculated when loading pages, after load, or after
+    // viewport resize, it is important that we inform the client of the new scale and
+    // position, so that the content can be positioned correctly and pixel aligned.
+    m_pendingPositionChange = true;
+    m_pendingScaleChange = true;
+
     m_client->didChangeViewportAttributes();
 }
 
@@ -310,14 +323,14 @@ void PageViewportController::resumeContent()
 void PageViewportController::applyScaleAfterRenderingContents(float scale)
 {
     m_effectiveScale = scale;
-    m_effectiveScaleIsLocked = true;
+    m_pendingScaleChange = true;
     syncVisibleContents();
 }
 
 void PageViewportController::applyPositionAfterRenderingContents(const FloatPoint& pos)
 {
     m_contentsPosition = pos;
-    m_contentsPositionIsLocked = true;
+    m_pendingPositionChange = true;
     syncVisibleContents();
 }
 
