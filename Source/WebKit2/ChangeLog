@@ -1,5 +1,14 @@
 2012-12-10  Jon Lee  <jonlee@apple.com>
 
+        Build fix.
+
+        * WebProcess/WebCoreSupport/WebPlugInClient.cpp:
+        (WebKit::WebPlugInClient::WebPlugInClient): Remove unneeded m_page variable.
+        * WebProcess/WebCoreSupport/WebPlugInClient.h:
+        (WebPlugInClient):
+
+2012-12-10  Jon Lee  <jonlee@apple.com>
+
         Keep track of plug-in snapshots clicked by user
         https://bugs.webkit.org/show_bug.cgi?id=103206
         <rdar://problem/12746483>

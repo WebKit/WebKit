@@ -33,8 +33,7 @@
 
 namespace WebKit {
 
-WebPlugInClient::WebPlugInClient(WebPage* page)
-    : m_page(page)
+WebPlugInClient::WebPlugInClient(WebPage*)
 {
 }
 

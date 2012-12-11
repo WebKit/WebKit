@@ -41,8 +41,6 @@ private:
     virtual void pageDestroyed();
     virtual bool isAutoStartOrigin(unsigned plugInOriginHash);
     virtual void addAutoStartOrigin(const String& pageOrigin, unsigned plugInOriginHash);
-
-    WebPage *m_page;
 };
 
 } // namespace WebKit
