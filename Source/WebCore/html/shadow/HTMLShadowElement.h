@@ -51,8 +51,6 @@ private:
     HTMLShadowElement(const QualifiedName&, Document*);
 
     static const CSSSelectorList& emptySelectorList();
-
-    bool m_registeredWithShadowRoot;
 };
 
 inline bool isHTMLShadowElement(const Node* node)
