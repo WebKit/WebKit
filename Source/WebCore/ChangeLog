@@ -1,3 +1,15 @@
+2012-12-11  Eugene Klyuchnikov  <eustas@chromium.org>
+
+        Web Inspector: Timeline: rename "Parse" to "Parse HTML".
+        https://bugs.webkit.org/show_bug.cgi?id=104639
+
+        Reviewed by Yury Semikhatsky.
+
+        "Parse" sounds ambiguous, it could mean JSON.parse() or Date.parse().
+        "Parse HTML" is a much more clear record description.
+
+        * inspector/front-end/TimelinePresentationModel.js: Fix text.
+
 2012-12-11  Oswald Buddenhagen  <oswald.buddenhagen@digia.com>
 
         [Qt] change setup of QMAKE_MOC
