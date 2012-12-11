@@ -83,16 +83,8 @@ canvas/philip/tests/2d.text.draw.baseline.middle.html
 canvas/philip/tests/2d.text.draw.baseline.top.html
 canvas/philip/tests/type.prototype.html
 
-# Rendering of multipart images is broken: this test times out
-# https://bugs.webkit.org/show_bug.cgi?id=54251
-http/tests/multipart/invalid-image-data-standalone.html
-
-# The timeout is caused apparently by the whole process hanging; probably a bug in soup,
-# needs further investigation.
-http/tests/multipart/multipart-wait-before-boundary.html [ Timeout ]
-
-# See http://bugzilla.gnome.org/show_bug.cgi?id=685752
-http/tests/multipart/load-last-non-html-frame.php [ Failure ]
+# invalid-image-data-standalone.html passes, this does not
+webkit.org/b/104669 http/tests/multipart/invalid-image-data.html [ Skip ]
 
 # Failing on non-Chromium bots
 # https://bugs.webkit.org/show_bug.cgi?id=68278
@@ -114,9 +106,6 @@ http/tests/navigation/post-307-response.html
 
 # BUG: eyes not being rendered correctly
 http/tests/misc/acid2-pixel.html
-
-# BUG: no green in the rectangle
-webkit.org/b/54251 http/tests/multipart/invalid-image-data.html [ Skip ]
 
 # BUG: new windows do not have scrollbars
 fast/dom/Window/new-window-opener.html

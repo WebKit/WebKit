@@ -1,3 +1,17 @@
+2012-12-11  Jussi Kukkonen  <jussi.kukkonen@intel.com>
+
+        [EFL] Update http/tests/multipart results now that we have soup multipart support
+        https://bugs.webkit.org/show_bug.cgi?id=104671
+
+        Unreviewed gardening: r137150 added soup multipart support and updated 
+        soup. This makes a few tests green. Also, multipart-wait-before-boundary.html
+        is a duplicate result with wk2 TestExpectations.
+
+        * platform/efl/TestExpectations:
+        * platform/efl/http/tests/multipart/invalid-image-data-standalone-expected.png: Added.
+        * platform/efl/http/tests/multipart/invalid-image-data-standalone-expected.txt: Added.
+        * platform/efl-wk1/TestExpectations:
+
 2012-12-11  Xabier Rodriguez Calvar  <calvaris@igalia.com>
 
         [GTK] Fixing tests after removing default media stream sport
