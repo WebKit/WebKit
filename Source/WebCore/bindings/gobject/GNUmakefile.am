@@ -259,8 +259,6 @@ webkitgtk_gdom_built_sources += \
 	DerivedSources/webkit/WebKitDOMUIEventPrivate.h \
 	DerivedSources/webkit/WebKitDOMValidityState.cpp \
 	DerivedSources/webkit/WebKitDOMValidityStatePrivate.h \
-	DerivedSources/webkit/WebKitDOMWebKitAnimation.cpp \
-	DerivedSources/webkit/WebKitDOMWebKitAnimationList.cpp \
 	DerivedSources/webkit/WebKitDOMWebKitPoint.cpp \
 	DerivedSources/webkit/WebKitDOMWebKitPointPrivate.h \
 	DerivedSources/webkit/WebKitDOMWebKitNamedFlow.cpp \
@@ -398,8 +396,6 @@ webkitgtk_built_h_api += \
 	DerivedSources/webkit/WebKitDOMPropertyNodeList.h \
 	DerivedSources/webkit/WebKitDOMScreen.h \
 	DerivedSources/webkit/WebKitDOMShadowRoot.h \
-	DerivedSources/webkit/WebKitDOMWebKitAnimation.h \
-	DerivedSources/webkit/WebKitDOMWebKitAnimationList.h \
 	DerivedSources/webkit/WebKitDOMWebKitPoint.h \
 	DerivedSources/webkit/WebKitDOMWebKitNamedFlow.h \
 	DerivedSources/webkit/WebKitDOMDOMMimeType.h \

@@ -1,3 +1,9 @@
+2012-12-11  Zan Dobersek  <zandobersek@gmail.com>
+
+        Unreviewed build fix after r137243.
+
+        * bindings/gobject/GNUmakefile.am:
+
 2012-12-10  No'am Rosenthal  <noam@webkit.org>
 
         REGRESSION (r137006): CSS clip on solid color composited div broken
