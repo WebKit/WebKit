@@ -138,10 +138,6 @@ crbug.com/84572 storage/storageinfo-no-callbacks.html
 crbug.com/84572 storage/storageinfo-query-usage.html
 crbug.com/84572 storage/storageinfo-request-quota.html
 
-# Animation API is disabled.  Dean Jackson has promised (as of Aug. 25, 2011)
-# to re-enable these "in the next few weeks".
-webkit.org/b/54151 animations/animation-api-1.html [ Skip ]
-
 # Unskip after implementing DRT support for setDefersLoading and goBack.
 webkit.org/b/60877 loader/navigation-while-deferring-loads.html
 webkit.org/b/60877 loader/load-defer-resume-crash.html
