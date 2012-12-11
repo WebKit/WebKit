@@ -1,3 +1,16 @@
+2012-12-11  Jinwoo Song  <jinwoo7.song@samsung.com>
+
+        [EFL][WK2] MiniBrowser is not built
+        https://bugs.webkit.org/show_bug.cgi?id=104629
+
+        Reviewed by Gyuyoung Kim.
+
+        As we are finding an elementary package in Tools/MiniBrowser/efl/CMakeList.txt since r137203,
+        we need to check if the package is found in the same place not in the Tools/CMakeList.txt.
+
+        * CMakeLists.txt:
+        * MiniBrowser/efl/CMakeLists.txt:
+
 2012-12-11  Xabier Rodriguez Calvar  <calvaris@igalia.com>
 
         [GTK][jhbuild] Switch to GStreamer 1.0 build

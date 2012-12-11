@@ -51,8 +51,9 @@ set(MiniBrowser_LIBRARIES
 
 add_definitions(-DTHEME_DIR=\"${THEME_BINARY_DIR}\")
 
-include_directories(${MiniBrowser_INCLUDE_DIRECTORIES})
-
-add_executable(MiniBrowser ${MiniBrowser_SOURCES})
-target_link_libraries(MiniBrowser ${MiniBrowser_LIBRARIES})
-set_target_properties(MiniBrowser PROPERTIES FOLDER "Tools")
+if (ELEMENTARY_FOUND)
+    include_directories(${MiniBrowser_INCLUDE_DIRECTORIES})
+    add_executable(MiniBrowser ${MiniBrowser_SOURCES})
+    target_link_libraries(MiniBrowser ${MiniBrowser_LIBRARIES})
+    set_target_properties(MiniBrowser PROPERTIES FOLDER "Tools")
+endif ()
