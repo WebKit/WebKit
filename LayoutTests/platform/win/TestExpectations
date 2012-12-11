@@ -1471,9 +1471,6 @@ media/invalid-media-url-crash.html
 http/tests/xmlhttprequest/basic-auth-nopassword.html
 http/tests/xmlhttprequest/basic-auth-nouser.html
 
-# Animation API is disabled by default
-animations/animation-api-1.html
-
 # HTTP 204 (No Content) should be ignored
 # https://bugs.webkit.org/show_bug.cgi?id=60206
 http/tests/navigation/response204.html

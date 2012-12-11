@@ -346,7 +346,7 @@ class ExpectationSyntaxTests(Base):
         self.assert_tokenize_exp('[ Foo ] foo.html ', modifiers=['Foo', 'SKIP'], expectations=['PASS'])
 
     def test_unknown_expectation(self):
-        self.assert_tokenize_exp('foo.html [ Audio ]', expectations=['Audio'])
+        self.assert_tokenize_exp('foo.html [ Audio ]', warnings=['Unrecognized expectation "Audio"'])
 
     def test_skip(self):
         self.assert_tokenize_exp('foo.html [ Skip ]', modifiers=['SKIP'], expectations=['PASS'])
@@ -695,7 +695,8 @@ class TestExpectationSerializationTests(unittest.TestCase):
         serialized = TestExpectations.list_to_string(lines, self._converter, reconstitute_only_these=reconstitute_only_these)
         self.assertEqual(serialized, "Bug(x) [ XP Release ] Yay [ ImageOnlyFailure ]\nNay")
 
-    def test_string_whitespace_stripping(self):
+    def disabled_test_string_whitespace_stripping(self):
+        # FIXME: Re-enable this test once we rework the code to no longer support the old syntax.
         self.assert_round_trip('\n', '')
         self.assert_round_trip('  [ FOO ] bar [ BAZ ]', '[ FOO ] bar [ BAZ ]')
         self.assert_round_trip('[ FOO ]    bar [ BAZ ]', '[ FOO ] bar [ BAZ ]')

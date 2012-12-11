@@ -394,9 +394,6 @@ fast/dom/title-directionality.html
 # https://bugs.webkit.org/show_bug.cgi?id=58924
 plugins/mouse-click-iframe-to-plugin.html
 
-# Animation API is disabled by default
-animations/animation-api-1.html
-
 # HTTP 204 (No Content) should be ignored
 # https://bugs.webkit.org/show_bug.cgi?id=60206
 http/tests/navigation/response204.html
@@ -1221,9 +1218,9 @@ platform/mac/tiled-drawing/ [ Skip ]
 webkit.org/b/100846 inspector-protocol/debugger-pause-dedicated-worker.html [ Skip ]
 webkit.org/b/100846 inspector-protocol/debugger-terminate-dedicated-worker-while-paused.html [ Skip ]
 
-webkit.org/b/100142 css3/filters/effect-reference-hw.html [ Fail ]
-webkit.org/b/100142 css3/filters/effect-reference-ordering-hw.html [ Fail ]
-webkit.org/b/100142 css3/filters/effect-reference.html [ Fail ]
+webkit.org/b/100142 css3/filters/effect-reference-hw.html [ Failure ]
+webkit.org/b/100142 css3/filters/effect-reference-ordering-hw.html [ Failure ]
+webkit.org/b/100142 css3/filters/effect-reference.html [ Failure ]
 
 # Mac doesn't have a toggle for CC any more, it's based on a menu of choices.
 webkit.org/b/101670 media/video-controls-captions.html [ Skip ]
@@ -1238,8 +1235,8 @@ webkit.org/b/67434 [ Debug ] fast/block/float/overhanging-tall-block.html [ Skip
 Bug(jernoble) [ MountainLion Lion SnowLeopard ] media/video-src-blob.html
 
 # Needs ENABLE(MOUSE_CURSOR_SCALE)
-webkit.org/b/102579 fast/css/cursor-parsing-image-set.html [ Fail ]
-webkit.org/b/102579 fast/events/mouse-cursor-image-set.html [ Fail ]
+webkit.org/b/102579 fast/css/cursor-parsing-image-set.html [ Failure ]
+webkit.org/b/102579 fast/events/mouse-cursor-image-set.html [ Failure ]
 
 # Mountain Lion and prior do not allow access to in-band text tracks
 webkit.org/b/103663 [ MountainLion Lion SnowLeopard ] media/track/track-in-band.html

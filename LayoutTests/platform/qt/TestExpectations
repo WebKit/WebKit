@@ -109,9 +109,6 @@ http/tests/inspector/indexeddb
 
 inspector/timeline/timeline-animation-frame.html
 
-# ENABLE(ANIMATION_API) is disabled.
-animations/animation-api-1.html
-
 # ENABLE(WEB_ARCHIVE) is disabled.
 svg/custom/image-with-prefix-in-webarchive.svg
 http/tests/webarchive

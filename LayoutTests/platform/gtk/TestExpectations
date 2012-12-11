@@ -703,7 +703,7 @@ webkit.org/b/73003 [ Release ] editing/spelling/spellcheck-async.html [ Timeout 
 webkit.org/b/73003 [ Release ] editing/spelling/spellcheck-paste.html [ Timeout ]
 webkit.org/b/50740 [ Release ] editing/spelling/spellcheck-queue.html [ Timeout ]
 
-Bug(GTK) media/progress-events-generated-correctly.html [ Timeout Text ]
+Bug(GTK) media/progress-events-generated-correctly.html [ Failure Timeout ]
 
 webkit.org/b/102257 fast/dom/Window/open-window-min-size.html [ Timeout ]
 

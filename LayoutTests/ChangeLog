@@ -1,3 +1,19 @@
+2012-12-11  Dirk Pranke  <dpranke@chromium.org>
+
+        nrwt isn't rejecting unrecognized expectations
+        https://bugs.webkit.org/show_bug.cgi?id=104701
+
+        Reviewed by Ojan Vafai.
+
+        Remove a few lines referring to non-existent files, and
+        change a few "Fail" and "Text" expectations to "Failure" now
+        that "Fail" and "Text" will be correctly rejected.
+
+        * platform/mac/TestExpectations
+        * platform/qt/TestExpectations
+        * platform/gtk/TestExpectations
+        * platform/win/TestExpectations
+
 2012-12-11  Andreas Kling  <akling@apple.com>
 
         REGRESSION(r133492): Heap-use-after-free in WebCore::Element::normalizeAttributes

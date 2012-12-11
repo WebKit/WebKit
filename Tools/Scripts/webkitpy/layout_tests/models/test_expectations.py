@@ -329,6 +329,8 @@ class TestExpectationParser(object):
             elif state == 'expectations':
                 if token in ('Rebaseline', 'Skip', 'Slow', 'WontFix'):
                     modifiers.append(token.upper())
+                elif token not in cls._expectation_tokens:
+                    warnings.append('Unrecognized expectation "%s"' % token)
                 else:
                     expectations.append(cls._expectation_tokens.get(token, token))
             elif state == 'name_found':

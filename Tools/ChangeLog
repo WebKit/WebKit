@@ -1,3 +1,22 @@
+2012-12-11  Dirk Pranke  <dpranke@chromium.org>
+
+        nrwt isn't rejecting unrecognized expectations
+        https://bugs.webkit.org/show_bug.cgi?id=104701
+
+        Reviewed by Ojan Vafai.
+
+        NRWT is silently ignoring unrecognized expectations like "Text"
+        and "Audio" (largely because I haven't fully removed support for
+        the old syntax and keywords and restructured the code to do the
+        proper checking). Temporarily change the tokenizer to reject
+        unrecognized expectations until I can make those changes.
+
+        * Scripts/webkitpy/layout_tests/models/test_expectations.py:
+        (TestExpectationParser._tokenize_line):
+        * Scripts/webkitpy/layout_tests/models/test_expectations_unittest.py:
+        (ExpectationSyntaxTests.test_unknown_expectation):
+        (TestExpectationSerializationTests.disabled_test_string_whitespace_stripping):
+
 2012-12-11  Martin Robinson  <mrobinson@igalia.com>
 
         Fix a typo in my previous commit that is causing test failures.
