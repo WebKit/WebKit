@@ -1,3 +1,20 @@
+2012-12-10  Min Qin  <qinmin@chromium.org>
+
+        Sending multi-touch events to the same Iframe
+        https://bugs.webkit.org/show_bug.cgi?id=97973
+
+        Reviewed by Dimitri Glazkov.
+
+        Check that all multi-touch events are sent to the same iframe.
+
+        * fast/events/touch/multi-touch-inside-iframes-expected.txt: Added.
+        * fast/events/touch/multi-touch-inside-iframes.html: Added.
+        * fast/events/touch/resources/multi-touch-inside-iframes2.html: Added.
+        * fast/events/touch/multi-touch-inside-nested-iframes-expected.txt: Added.
+        * fast/events/touch/multi-touch-inside-nested-iframes.html: Added.
+        * fast/events/touch/resources/multi-touch-inside-nested-iframes2.html: Added.
+        * fast/events/touch/resources/multi-touch-inside-nested-iframes3.html: Added.
+
 2012-12-10  Simon Fraser  <simon.fraser@apple.com>
 
         When converting a layer into a tiled layer, ensure that we update the visible rect

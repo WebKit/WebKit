@@ -355,6 +355,7 @@ EventHandler::EventHandler(Frame* frame)
     , m_activationEventNumber(-1)
 #endif
 #if ENABLE(TOUCH_EVENTS)
+    , m_originatingTouchPointTargetKey(0)
     , m_touchPressed(false)
 #endif
     , m_maxMouseMovedDuration(0)
@@ -407,6 +408,8 @@ void EventHandler::clear()
     m_previousWheelScrolledNode = 0;
 #if ENABLE(TOUCH_EVENTS)
     m_originatingTouchPointTargets.clear();
+    m_originatingTouchPointDocument.clear();
+    m_originatingTouchPointTargetKey = 0;
 #endif
 #if ENABLE(GESTURE_EVENTS)
     m_scrollGestureHandlingNode = 0;
@@ -3814,6 +3817,22 @@ static const AtomicString& eventNameForTouchPointState(PlatformTouchPoint::State
     }
 }
 
+HitTestResult EventHandler::hitTestResultInFrame(Frame* frame, const LayoutPoint& point, HitTestRequest::HitTestRequestType hitType)
+{
+    HitTestResult result(point);
+
+    if (!frame || !frame->contentRenderer())
+        return result;
+    if (frame->view()) {
+        IntRect rect = frame->view()->visibleContentRect();
+        if (!rect.contains(roundedIntPoint(point)))
+            return result;
+    }
+    frame->contentRenderer()->hitTest(HitTestRequest(hitType), result);
+    result.setToNonShadowAncestor();
+    return result;
+}
+
 bool EventHandler::handleTouchEvent(const PlatformTouchEvent& event)
 {
     // First build up the lists to use for the 'touches', 'targetTouches' and 'changedTouches' attributes
@@ -3841,7 +3860,18 @@ bool EventHandler::handleTouchEvent(const PlatformTouchEvent& event)
 
     UserGestureIndicator gestureIndicator(DefinitelyProcessingUserGesture);
 
-    for (unsigned i = 0; i < points.size(); ++i) {
+    unsigned i;
+    bool freshTouchEvents = true;
+    bool allTouchReleased = true;
+    for (i = 0; i < points.size(); ++i) {
+        const PlatformTouchPoint& point = points[i];
+        if (point.state() != PlatformTouchPoint::TouchPressed)
+            freshTouchEvents = false;
+        if (point.state() != PlatformTouchPoint::TouchReleased && point.state() != PlatformTouchPoint::TouchCancelled)
+            allTouchReleased = false;
+    }
+
+    for (i = 0; i < points.size(); ++i) {
         const PlatformTouchPoint& point = points[i];
         PlatformTouchPoint::State pointState = point.state();
         LayoutPoint pagePoint = documentPointForWindowPoint(m_frame, point.pos());
@@ -3880,7 +3910,17 @@ bool EventHandler::handleTouchEvent(const PlatformTouchEvent& event)
         unsigned touchPointTargetKey = point.id() + 1;
         RefPtr<EventTarget> touchTarget;
         if (pointState == PlatformTouchPoint::TouchPressed) {
-            HitTestResult result = hitTestResultAtPoint(pagePoint, /*allowShadowContent*/ false, false, DontHitTestScrollbars, hitType);
+            HitTestResult result;
+            if (freshTouchEvents) {
+                result = hitTestResultAtPoint(pagePoint, /*allowShadowContent*/ false, false, DontHitTestScrollbars, hitType);
+                m_originatingTouchPointTargetKey = touchPointTargetKey;
+            } else if (m_originatingTouchPointDocument.get() && m_originatingTouchPointDocument->frame()) {
+                LayoutPoint pagePointInOriginatingDocument = documentPointForWindowPoint(m_originatingTouchPointDocument->frame(), point.pos());
+                result = hitTestResultInFrame(m_originatingTouchPointDocument->frame(), pagePointInOriginatingDocument, hitType);
+                if (!result.innerNode())
+                    continue;
+            } else
+                continue;
             Node* node = result.innerNode();
             ASSERT(node);
 
@@ -3892,16 +3932,26 @@ bool EventHandler::handleTouchEvent(const PlatformTouchEvent& event)
                 return true;
 
             Document* doc = node->document();
+            // Record the originating touch document even if it does not have a touch listener.
+            if (freshTouchEvents) {
+                m_originatingTouchPointDocument = doc;
+                freshTouchEvents = false;
+            }
             if (!doc)
                 continue;
             if (!doc->touchEventHandlerCount())
                 continue;
-
             m_originatingTouchPointTargets.set(touchPointTargetKey, node);
             touchTarget = node;
         } else if (pointState == PlatformTouchPoint::TouchReleased || pointState == PlatformTouchPoint::TouchCancelled) {
             // We only perform a hittest on release or cancel to unset :active or :hover state.
-            hitTestResultAtPoint(pagePoint, /*allowShadowContent*/ false, false, DontHitTestScrollbars, hitType);
+            if (touchPointTargetKey == m_originatingTouchPointTargetKey) {
+                hitTestResultAtPoint(pagePoint, /*allowShadowContent*/ false, false, DontHitTestScrollbars, hitType);
+                m_originatingTouchPointTargetKey = 0;
+            } else if (m_originatingTouchPointDocument.get() && m_originatingTouchPointDocument->frame()) {
+                LayoutPoint pagePointInOriginatingDocument = documentPointForWindowPoint(m_originatingTouchPointDocument->frame(), point.pos());
+                hitTestResultInFrame(m_originatingTouchPointDocument->frame(), pagePointInOriginatingDocument, hitType);
+            }
             // The target should be the original target for this touch, so get it from the hashmap. As it's a release or cancel
             // we also remove it from the map.
             touchTarget = m_originatingTouchPointTargets.take(touchPointTargetKey);
@@ -3962,6 +4012,8 @@ bool EventHandler::handleTouchEvent(const PlatformTouchEvent& event)
         }
     }
     m_touchPressed = touches->length() > 0;
+    if (allTouchReleased)
+        m_originatingTouchPointDocument.clear();
 
     // Now iterate the changedTouches list and m_targets within it, sending events to the targets as required.
     bool swallowedEvent = false;

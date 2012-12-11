@@ -294,6 +294,7 @@ private:
 
 #if ENABLE(TOUCH_EVENTS)
     bool dispatchSyntheticTouchEventIfEnabled(const PlatformMouseEvent&);
+    HitTestResult hitTestResultInFrame(Frame*, const LayoutPoint&, HitTestRequest::HitTestRequestType hitType = HitTestRequest::ReadOnly | HitTestRequest::Active);
 #endif
 
     void invalidateClick();
@@ -462,6 +463,8 @@ private:
 #if ENABLE(TOUCH_EVENTS)
     typedef HashMap<int, RefPtr<EventTarget> > TouchTargetMap;
     TouchTargetMap m_originatingTouchPointTargets;
+    RefPtr<Document> m_originatingTouchPointDocument;
+    unsigned m_originatingTouchPointTargetKey;
     bool m_touchPressed;
 #endif
 
