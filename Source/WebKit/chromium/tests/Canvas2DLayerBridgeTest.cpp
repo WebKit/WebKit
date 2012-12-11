@@ -26,7 +26,6 @@
 
 #include "Canvas2DLayerBridge.h"
 
-#include "FakeWebCompositorOutputSurface.h"
 #include "FakeWebGraphicsContext3D.h"
 #include "GraphicsContext3DPrivate.h"
 #include "ImageBuffer.h"

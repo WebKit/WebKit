@@ -28,51 +28,8 @@
 
 namespace WebKit {
 
-struct WebCompositorFrame;
-class WebGraphicsContext3D;
-class WebCompositorSoftwareOutputDevice;
-class WebCompositorOutputSurfaceClient;
-
-#ifdef USE_CC_OUTPUT_SURFACE
+// An empty base class for cc::OutputSurface in chromium.
 class WebCompositorOutputSurface { };
-#else
-// Represents the output surface for a compositor. The compositor owns
-// and manages its destruction. Its lifetime is:
-//   1. Created on the main thread via WebLayerTreeViewClient::createOutputSurface.
-//   2. Passed to the compositor thread and bound to a client via bindToClient.
-//      From here on, it will only be used on the compositor thread.
-//   3. If the 3D context is lost, then the compositor will delete the output surface
-//      (on the compositor thread) and go back to step 1.
-class WebCompositorOutputSurface {
-public:
-    virtual ~WebCompositorOutputSurface() { }
-
-    // Called by the compositor on the compositor thread. This is a place where thread-specific
-    // data for the output surface can be initialized, since from this point on the output surface
-    // will only be used on the compositor thread.
-    virtual bool bindToClient(WebCompositorOutputSurfaceClient*) = 0;
-
-    struct Capabilities {
-        Capabilities()
-            : hasParentCompositor(false)
-        {
-        }
-
-        bool hasParentCompositor;
-    };
-
-    virtual const Capabilities& capabilities() const = 0;
-
-    // Obtain the 3d context or the software device associated with this output surface. Either of these may return a null pointer, but not both.
-    // In the event of a lost context, the entire output surface should be recreated.
-    virtual WebGraphicsContext3D* context3D() const = 0;
-    virtual WebCompositorSoftwareOutputDevice* softwareDevice() const { return 0; }
-
-    // Sends frame data to the parent compositor. This should only be called
-    // when capabilities().hasParentCompositor.
-    virtual void sendFrameToParentCompositor(const WebCompositorFrame&) = 0;
-};
-#endif // USE_CC_COMPOSITOR_SURFACE
 
 }
 

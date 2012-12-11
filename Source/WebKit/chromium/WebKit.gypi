@@ -67,7 +67,6 @@
             'tests/EventListenerTest.cpp',
             'tests/FakeWebPlugin.cpp',
             'tests/FakeWebPlugin.h',
-            'tests/FakeWebCompositorOutputSurface.h',
             'tests/FakeWebGraphicsContext3D.h',
             'tests/FilterOperationsTest.cpp',
             'tests/FrameLoaderClientImplTest.cpp',

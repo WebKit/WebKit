@@ -1,3 +1,20 @@
+2012-12-10  Dana Jansens  <danakj@chromium.org>
+
+        [chromium] Remove WebCompositorOutputSurface implementations from DRT
+        https://bugs.webkit.org/show_bug.cgi?id=104046
+
+        Reviewed by Darin Fisher.
+
+        The classes are now provided through WebCompositorSupport.
+
+        * DumpRenderTree/DumpRenderTree.gypi:
+        * DumpRenderTree/chromium/WebViewHost.cpp:
+        (WebViewHost::createOutputSurface):
+        * DumpRenderTree/chromium/WebViewHostOutputSurface.cpp: Removed.
+        * DumpRenderTree/chromium/WebViewHostOutputSurface.h: Removed.
+        * DumpRenderTree/chromium/WebViewHostSoftwareOutputDevice.cpp: Removed.
+        * DumpRenderTree/chromium/WebViewHostSoftwareOutputDevice.h: Removed.
+
 2012-12-10  Dirk Pranke  <dpranke@chromium.org>
 
         change --no-launch-safari to --no-show-results in scripts

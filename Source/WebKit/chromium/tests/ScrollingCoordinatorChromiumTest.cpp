@@ -27,7 +27,6 @@
 #include "ScrollingCoordinator.h"
 
 #include "CompositorFakeWebGraphicsContext3D.h"
-#include "FakeWebCompositorOutputSurface.h"
 #include "FrameTestHelpers.h"
 #include "RenderLayerCompositor.h"
 #include "RenderView.h"
@@ -56,7 +55,7 @@ class MockWebViewClient : public WebViewClient {
 public:
     virtual WebCompositorOutputSurface* createOutputSurface() OVERRIDE
     {
-        return FakeWebCompositorOutputSurface::create(CompositorFakeWebGraphicsContext3D::create(WebGraphicsContext3D::Attributes())).leakPtr();
+        return Platform::current()->compositorSupport()->createOutputSurfaceFor3D(CompositorFakeWebGraphicsContext3D::create(WebGraphicsContext3D::Attributes()).leakPtr());
     }
 };
 
@@ -69,6 +68,8 @@ public:
         : m_baseURL("http://www.test.com/")
         , m_webCompositorInitializer(0)
     {
+        Platform::current()->compositorSupport()->initialize(0);
+
         // We cannot reuse FrameTestHelpers::createWebViewAndLoad here because the compositing
         // settings need to be set before the page is loaded.
         m_webViewImpl = static_cast<WebViewImpl*>(WebView::create(&m_mockWebViewClient));
@@ -85,6 +86,8 @@ public:
     {
         webkit_support::UnregisterAllMockedURLs();
         m_webViewImpl->close();
+
+        Platform::current()->compositorSupport()->shutdown();
     }
 
     void navigateTo(const std::string& url)

@@ -56,10 +56,6 @@
             'chromium/WebUserMediaClientMock.h',
             'chromium/WebViewHost.cpp',
             'chromium/WebViewHost.h',
-            'chromium/WebViewHostOutputSurface.cpp',
-            'chromium/WebViewHostOutputSurface.h',
-            'chromium/WebViewHostSoftwareOutputDevice.cpp',
-            'chromium/WebViewHostSoftwareOutputDevice.h',
         ],
         'test_runner_files': [
             'chromium/TestRunner/public/WebAccessibilityController.h',

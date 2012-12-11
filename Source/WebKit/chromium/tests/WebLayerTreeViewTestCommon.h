@@ -26,8 +26,9 @@
 #define WebLayerTreeViewTestCommon_h
 
 #include "CompositorFakeWebGraphicsContext3D.h"
-#include "FakeWebCompositorOutputSurface.h"
 #include <gmock/gmock.h>
+#include <public/Platform.h>
+#include <public/WebCompositorSupport.h>
 #include <public/WebLayerTreeViewClient.h>
 
 namespace WebKit {
@@ -43,7 +44,7 @@ public:
 
     virtual WebCompositorOutputSurface* createOutputSurface() OVERRIDE
     {
-        return FakeWebCompositorOutputSurface::create(CompositorFakeWebGraphicsContext3D::create(WebGraphicsContext3D::Attributes())).leakPtr();
+        return Platform::current()->compositorSupport()->createOutputSurfaceFor3D(CompositorFakeWebGraphicsContext3D::create(WebGraphicsContext3D::Attributes()).leakPtr());
     }
     virtual void didRecreateOutputSurface(bool) OVERRIDE { }
 

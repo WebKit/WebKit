@@ -4044,49 +4044,6 @@ void WebViewImpl::setIsAcceleratedCompositingActive(bool active)
 
 #endif
 
-namespace {
-
-// Adapts a pure WebGraphicsContext3D into a WebCompositorOutputSurface until
-// downstream code can be updated to produce output surfaces directly.
-class WebGraphicsContextToOutputSurfaceAdapter : public WebCompositorOutputSurface {
-public:
-    explicit WebGraphicsContextToOutputSurfaceAdapter(PassOwnPtr<WebGraphicsContext3D> context)
-        : m_context3D(context)
-        , m_client(0)
-    {
-    }
-
-    virtual bool bindToClient(WebCompositorOutputSurfaceClient* client) OVERRIDE
-    {
-        ASSERT(client);
-        if (!m_context3D->makeContextCurrent())
-            return false;
-        m_client = client;
-        return true;
-    }
-
-    virtual const Capabilities& capabilities() const OVERRIDE
-    {
-        return m_capabilities;
-    }
-
-    virtual WebGraphicsContext3D* context3D() const OVERRIDE
-    {
-        return m_context3D.get();
-    }
-
-    virtual void sendFrameToParentCompositor(const WebCompositorFrame&) OVERRIDE
-    {
-    }
-
-private:
-    OwnPtr<WebGraphicsContext3D> m_context3D;
-    Capabilities m_capabilities;
-    WebCompositorOutputSurfaceClient* m_client;
-};
-
-} // namespace
-
 WebCompositorOutputSurface* WebViewImpl::createOutputSurface()
 {
     return m_client->createOutputSurface();
