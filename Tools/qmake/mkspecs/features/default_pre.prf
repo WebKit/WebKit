@@ -11,10 +11,6 @@ eval($$env_cache)
 
 load(functions)
 
-# Derived sources often need QMAKE_MOC
-load(qt_functions)
-load(moc)
-
 # FIXME: In this case we probably want to exit early so that we
 # don't load all of the custom build tweaks needlessly.
 pro_file = $$_PRO_FILE_ # Checking the variable directly does not work

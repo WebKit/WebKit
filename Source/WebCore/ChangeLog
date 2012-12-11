@@ -1,3 +1,19 @@
+2012-12-11  Oswald Buddenhagen  <oswald.buddenhagen@digia.com>
+
+        [Qt] change setup of QMAKE_MOC
+
+        Reviewed by Simon Hausmann.
+
+        don't load(moc) explicitly - turns out that this breaks
+        debug_and_release builds (the feature does not like being loaded before
+        default_post has been loaded).
+        so instead just do a minimal call to find the moc executable.
+
+        as it's in fact only two files which need it, so de-centralize this call
+        for the sake of saving some cpu cycles spent in qmake.
+
+        * DerivedSources.pri:
+
 2012-12-11  Alexander Pavlov  <apavlov@chromium.org>
 
         REGRESSION(r136948): inspector/styles/import-pseudoclass-crash.html hits an assertion

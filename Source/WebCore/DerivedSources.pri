@@ -648,6 +648,8 @@ enable?(MEDIA_SOURCE) {
     $$PWD/Modules/mediasource/SourceBufferList.idl
 }
 
+qtPrepareTool(QMAKE_MOC, moc)
+
 mathmlnames.output = MathMLNames.cpp
 mathmlnames.input = MATHML_NAMES
 mathmlnames.depends = $$PWD/mathml/mathattrs.in

@@ -21,6 +21,8 @@ IDL_BINDINGS += \
     Bindings/TestRunner.idl \
     Bindings/TextInputController.idl \
 
+qtPrepareTool(QMAKE_MOC, moc)
+
 # GENERATOR 1: IDL compiler
 idl.output = JS${QMAKE_FILE_BASE}.cpp
 idl.input = IDL_BINDINGS
