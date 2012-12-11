@@ -1,3 +1,30 @@
+2012-12-11  Jon Lee  <jonlee@apple.com>
+
+        Initialize new web processes with list of auto-start origins for plug-ins
+        https://bugs.webkit.org/show_bug.cgi?id=103219
+        <rdar://problem/12747219>
+
+        Reviewed by Anders Carlsson.
+
+        Serialize the set of hashes into a vector as a parameter in web process creation.
+
+        * Shared/WebProcessCreationParameters.h: Add a parameter for the origin hashes.
+
+        * Shared/WebProcessCreationParameters.cpp: Encode/decode that parameter.
+        (WebKit::WebProcessCreationParameters::encode):
+        (WebKit::WebProcessCreationParameters::decode):
+
+        * UIProcess/Plugins/PlugInAutoStartProvider.cpp:
+        (WebKit::PlugInAutoStartProvider::autoStartOriginsCopy): Return a vector copy with contents from the
+        hash set.
+        * UIProcess/Plugins/PlugInAutoStartProvider.h:
+        (PlugInAutoStartProvider):
+
+        * UIProcess/WebContext.cpp:
+        (WebKit::WebContext::createNewWebProcess): Populate the parameter with the contents of the set.
+        * WebProcess/WebProcess.cpp:
+        (WebKit::WebProcess::initializeWebProcess): Add the items in the vector to the web process' copy of the set.
+
 2012-12-11  Andreas Kling  <akling@apple.com>
 
         CoreIPC: ArgumentEncoder should have an inline buffer.

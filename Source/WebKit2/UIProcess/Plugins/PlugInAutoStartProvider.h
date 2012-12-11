@@ -41,6 +41,7 @@ public:
     explicit PlugInAutoStartProvider(WebContext*);
 
     void addAutoStartOrigin(const String& pageOrigin, unsigned plugInOriginHash);
+    Vector<unsigned> autoStartOriginsCopy() const;
 
 private:
     WebContext* m_context;

@@ -465,6 +465,8 @@ WebProcessProxy* WebContext::createNewWebProcess()
     parameters.usesNetworkProcess = m_usesNetworkProcess;
 #endif
 
+    parameters.plugInAutoStartOrigins = m_plugInAutoStartProvider.autoStartOriginsCopy();
+
     // Add any platform specific parameters
     platformInitializeWebProcess(parameters);
 

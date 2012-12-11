@@ -304,6 +304,9 @@ void WebProcess::initializeWebProcess(const WebProcessCreationParameters& parame
     ensureNetworkProcessConnection();
 #endif
     setTerminationTimeout(parameters.terminationTimeout);
+
+    for (size_t i = 0; i < parameters.plugInAutoStartOrigins.size(); ++i)
+        didAddPlugInAutoStartOrigin(parameters.plugInAutoStartOrigins[i]);
 }
 
 #if ENABLE(NETWORK_PROCESS)

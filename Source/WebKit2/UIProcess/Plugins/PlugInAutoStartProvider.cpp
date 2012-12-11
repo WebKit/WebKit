@@ -52,4 +52,11 @@ void PlugInAutoStartProvider::addAutoStartOrigin(const String& pageOrigin, unsig
     m_context->sendToAllProcesses(Messages::WebProcess::DidAddPlugInAutoStartOrigin(plugInOriginHash));
 }
 
+Vector<unsigned> PlugInAutoStartProvider::autoStartOriginsCopy() const
+{
+    Vector<unsigned> copyVector;
+    copyToVector(m_autoStartHashes, copyVector);
+    return copyVector;
+}
+
 } // namespace WebKit
