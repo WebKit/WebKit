@@ -2545,7 +2545,7 @@ sub buildChromium($@)
     } elsif (isCygwin() || isWindows()) {
         # Windows build - builds the root visual studio solution.
         $result = buildChromiumVisualStudioProject("Source/WebKit/chromium/All.sln", $clean);
-    } elsif (isChromiumNinja()) {
+    } elsif (isChromiumNinja() && !isChromiumAndroid()) {
         $result = buildChromiumNinja("all", $clean, @options);
     } elsif (isLinux() || isChromiumAndroid() || isChromiumMacMake()) {
         # Linux build - build using make.
