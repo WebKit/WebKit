@@ -467,7 +467,8 @@ void IDBObjectStoreBackendImpl::setIndexKeys(PassRefPtr<IDBKey> prpPrimaryKey, c
         return;
     }
     if (!found) {
-        transaction->abort();
+        RefPtr<IDBDatabaseError> error = IDBDatabaseError::create(IDBDatabaseException::UnknownError, String::format("Internal error setting index keys for object store %s.", name().utf8().data()));
+        transaction->abort(error.release());
         return;
     }
 
@@ -560,7 +561,11 @@ void IDBObjectStoreBackendImpl::ObjectStoreStorageOperation::perform(IDBTransact
 
     // Before this point, don't do any mutation.  After this point, rollback the transaction in case of error.
 
-    m_objectStore->backingStore()->putRecord(transaction->backingStoreTransaction(), m_objectStore->databaseId(), m_objectStore->id(), *m_key, m_value->toWireString(), &recordIdentifier);
+    backingStoreSuccess = m_objectStore->backingStore()->putRecord(transaction->backingStoreTransaction(), m_objectStore->databaseId(), m_objectStore->id(), *m_key, m_value->toWireString(), &recordIdentifier);
+    if (!backingStoreSuccess) {
+        m_callbacks->onError(IDBDatabaseError::create(IDBDatabaseException::UnknownError, "Internal error: backing store error performing put/add."));
+        return;
+    }
 
     for (size_t i = 0; i < indexWriters.size(); ++i) {
         IndexWriter* indexWriter = indexWriters[i].get();

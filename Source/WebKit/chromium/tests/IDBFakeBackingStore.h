@@ -42,7 +42,6 @@ public:
     virtual Vector<IDBObjectStoreMetadata> getObjectStores(int64_t databaseId) OVERRIDE { return Vector<IDBObjectStoreMetadata>(); }
     virtual bool createObjectStore(Transaction*, int64_t databaseId, int64_t objectStoreId, const String& name, const IDBKeyPath&, bool autoIncrement) OVERRIDE { return false; };
 
-    virtual void putRecord(Transaction*, int64_t databaseId, int64_t objectStoreId, const IDBKey&, const String& value, RecordIdentifier*) OVERRIDE { }
     virtual void clearObjectStore(Transaction*, int64_t databaseId, int64_t objectStoreId) OVERRIDE { }
     virtual void deleteRecord(Transaction*, int64_t databaseId, int64_t objectStoreId, const RecordIdentifier&) OVERRIDE { }
     virtual bool getKeyGeneratorCurrentNumber(Transaction*, int64_t databaseId, int64_t objectStoreId, int64_t& currentNumber) OVERRIDE { return true; }
