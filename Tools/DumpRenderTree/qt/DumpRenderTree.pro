@@ -47,7 +47,7 @@ SOURCES += \
     DumpRenderTreeMain.cpp
 
 wince*: {
-    INCLUDEPATH += $$QT.core.sources/../3rdparty/ce-compat $$WCECOMPAT/include
+    INCLUDEPATH += $$WCECOMPAT/include
     LIBS += $$WCECOMPAT/lib/wcecompat.lib
 }
 
