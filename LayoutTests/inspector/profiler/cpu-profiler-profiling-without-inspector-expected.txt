@@ -1,9 +1,6 @@
 Tests that CPU profiling works.
 Doesn't open Inspector, uses console.profile....
 
-    doWork (line 40): ~400ms
-        functionA (line 27): ~400ms
-            sleep (line 18): ~200ms
-            functionB (line 23): ~200ms
-                sleep (line 18): ~200ms
+
+Found pageFunction
 

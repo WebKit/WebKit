@@ -1,91 +1,77 @@
 <html>
 <head>
-<script src="../../http/tests/inspector/inspector-test.js" type="application/x-javascript"></script>
-<script type="application/x-javascript">
+<script>
 
-if (window.testRunner) {
+if (window.testRunner)
     testRunner.dumpAsText();
-    testRunner.waitUntilDone();
-}
-
 if (window.internals)
     internals.setJavaScriptProfilingEnabled(true);
 
-// Here and below, the opening brace is on the same line as function declaration
-// intendionally, as it compensates for differences between the ways JSC and V8
-// use to report source lines for functions (V8 reports line of function(), JSC
-// the line of the brace)
-function sleep(milliseconds) {
-    var spinUntil = Date.now() + milliseconds;
-    while (Date.now() < spinUntil) {}
-}
-
-function functionB() {
-    sleep(200);
-}
-
-function functionA() {
-    sleep(200);
-    functionB();
-}
-
-function startProfiling()
+function pageFunction()
 {
-    console.profile("outer1");
-    console.profile("inner1");  // [Chromium] Make sure we capture the current callstack.
-    // workaround for http://crbug.com/164304
-    setTimeout(doWork, 100);
-}
-
-function doWork() {
-    functionA();
-    console.profileEnd("outer1");
-    console.profileEnd("inner1");
-    printResult();
-    if (window.testRunner)
-         testRunner.notifyDone();
+    console.profile("outer");
+    console.profile("inner");  // [Chromium] Make sure we capture the current callstack.
+    console.profileEnd("outer");
+    console.profileEnd("inner");
 }
 
 function startTest()
 {
-    startProfiling();
+    pageFunction();
+    printResult();
+    if (window.testRunner)
+        testRunner.notifyDone();
 }
 
 function printResult()
 {
+    var preElement = document.createElement("pre");
+    preElement.appendChild(document.createTextNode("\n"));
+
     var profiles = console.profiles;
     for (var i = 0; i < profiles.length; ++i) {
         var profile = profiles[i];
-        if (profile.title !== "inner1")
+        if (profile.title !== "inner")
             continue;
-        dumpNode(profile.head)
+        var functionName = "pageFunction";
+        if (findFunctionInProfile(profile.head, functionName))
+            preElement.appendChild(document.createTextNode("Found " + functionName));
+        else {
+            preElement.appendChild(document.createTextNode("!!! Not found " + functionName));
+            preElement.appendChild(document.createTextNode("\n\n"));
+            printProfileNodeWithoutTime(preElement, profile.head, "");
+        }
+        preElement.appendChild(document.createTextNode("\n"));
     }
+
+    document.getElementById("output").appendChild(preElement);
 }
 
-var functionsWhiteList = {
-    "sleep": 1,
-    "functionA": 1,
-    "functionB": 1,
-    "doWork": 1
-};
-
-function dumpNode(node, prefix)
+function printProfileNodeWithoutTime(preElement, node, space)
 {
     if (!node.visible)
         return;
-    prefix = prefix || "";
-    
-    const roundingThreshold = 100; // Time should be good within 100ms
-    var time = Math.round(node.totalTime / roundingThreshold) * roundingThreshold;
-    if (time && functionsWhiteList[node.functionName])
-        output(prefix + node.functionName + " (line " + node.lineNumber + "): ~" + time +"ms");
+
+    var line = space + node.functionName + " (line " + node.lineNumber + ")\n";
+    preElement.appendChild(document.createTextNode(line));
 
     var children = node.children();
     for (var i = 0; i < children.length; ++i)
-        dumpNode(children[i], prefix + "    ");
+        printProfileNodeWithoutTime(preElement, children[i], space + "   ");
 }
-</script>
 
+function findFunctionInProfile(node, functionName)
+{
+    if (node.functionName === functionName)
+        return true;
+    var children = node.children();
+    for (var i = 0; i < children.length; ++i)
+        if (findFunctionInProfile(children[i], functionName))
+            return true;
+    return false;
+}
+
+</script>
 </head>
 <body onload="startTest()">
 <p>

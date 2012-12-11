@@ -1,3 +1,14 @@
+2012-12-11  Andrey Kosyakov  <caseq@chromium.org>
+
+        Unreviewed, rolling out r137266.
+        http://trac.webkit.org/changeset/137266
+        https://bugs.webkit.org/show_bug.cgi?id=104071
+
+        New test fails on WebKit Win7 and chromium mac
+
+        * inspector/profiler/cpu-profiler-profiling-without-inspector-expected.txt:
+        * inspector/profiler/cpu-profiler-profiling-without-inspector.html:
+
 2012-12-11  Kent Tamura  <tkent@chromium.org>
 
         INPUT_MULTIPLE_FIELDS_UI: Disable focus navigation by right/left keys in RTL locales
