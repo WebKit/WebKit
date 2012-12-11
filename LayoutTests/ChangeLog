@@ -1,3 +1,12 @@
+2012-12-11  Noel Gordon  <noel.gordon@gmail.com>
+
+        [chromium] Unreviewed gardening
+
+        fast/repaint/body-background-image.html
+        fast/text/font-initial.html
+
+        * platform/chromium/TestExpectations: These tests are passing on WIN.
+
 2012-12-11  Martin Robinson  <mrobinson@igalia.com>
 
         [GTK] Bump the jhbuild libsoup version to fix an authentication issue

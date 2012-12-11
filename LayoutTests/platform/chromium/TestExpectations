@@ -959,11 +959,10 @@ webkit.org/b/66377 fast/dom/StyleSheet/gc-parent-stylesheet.html [ Failure ]
 webkit.org/b/66377 fast/dom/StyleSheet/gc-rule-children-wrappers.html [ Failure ]
 
 # Implement testRunner.display()
-crbug.com/8630 [ Android Win ] fast/repaint/body-background-image.html [ Failure ImageOnlyFailure ]
-
+crbug.com/8630 [ Android ] fast/repaint/body-background-image.html [ Failure ImageOnlyFailure ]
 # Relies on text metrics to pass. Rework to be meaningful for ports other than platform/mac.
 crbug.com/8630 [ Android Win ] fast/repaint/overflow-outline-repaint.html [ Failure ImageOnlyFailure ]
-crbug.com/8630 [ Android Win ] fast/text/font-initial.html [ Failure ImageOnlyFailure ]
+crbug.com/8630 [ Android ] fast/text/font-initial.html [ Failure ImageOnlyFailure ]
 
 # Need a setAuthorAndUserStylesEnabled method in
 # testRunner. Now we have preference to enable/disable user
