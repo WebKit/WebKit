@@ -256,9 +256,6 @@ webkit.org/b/99068 fast/events/drag-customData.html [ Failure ]
 # PasteBoard::plainText() does not support file names.
 webkit.org/b/99070 editing/pasteboard/drag-files-to-editable-element.html [ Failure ]
 
-# Animation API is disabled
-webkit.org/b/98941 animations/animation-api-1.html [ Failure ]
-
 # Quota API is not supported.
 webkit.org/b/98942 storage/storageinfo-missing-arguments.html [ Failure ]
 webkit.org/b/98942 storage/storageinfo-no-callbacks.html [ Failure ]
@@ -458,6 +455,9 @@ webkit.org/b/103926 media/track/opera/track/webvtt/parsing-cue-data/tests/timest
 webkit.org/b/103926 media/track/opera/track/webvtt/parsing-cue-data/tests/tree-building.html [ Skip ]
 webkit.org/b/103926 media/track/opera/track/webvtt/rendering/adhoc/cue_font_size_transition.html [ Skip ]
 webkit.org/b/103926 media/track/opera/track/webvtt/rendering/adhoc/voice_with_evil_timestamp.html [ Skip ]
+
+# No support for exposing in-band text tracks
+webkit.org/b/103771 media/track/track-in-band.html [ Failure ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Expected failures
@@ -680,7 +680,7 @@ Bug(GTK) http/tests/xmlhttprequest/timeout/xmlhttprequest-timeout-worker-twice.h
 
 webkit.org/b/46644 fast/text/large-text-composed-char-dos.html [ Timeout ]
 
-Bug(GTK) http/tests/xmlhttprequest/redirect-cross-origin-tripmine.html [ Skip ]
+Bug(GTK) http/tests/xmlhttprequest/redirect-cross-origin-tripmine.html [ Timeout ]
 
 Bug(GTK) [ Debug ] fast/css/user-drag-none.html [ Timeout ]
 
@@ -786,7 +786,7 @@ Bug(GTK) fast/loader/policy-delegate-action-hit-test-zoomed.html [ Failure ]
 Bug(GTK) fast/loader/reload-policy-delegate.html [ Failure ]
 Bug(GTK) fast/loader/stop-provisional-loads.html [ Failure ]
 Bug(GTK) fast/loader/subframe-removes-itself.html [ Failure ]
-Bug(GTK) http/tests/security/feed-urls-from-remote.html [ Skip ]
+Bug(GTK) http/tests/security/feed-urls-from-remote.html [ Timeout ]
 
 # This policy delegate is implemented, but it needs the DOM node path in the output.
 Bug(GTK) fast/encoding/mailto-always-utf-8.html [ Failure ]
@@ -933,7 +933,7 @@ Bug(GTK) fast/events/platform-wheelevent-paging-y-in-scrolling-div.html [ Failur
 Bug(GTK) fast/events/platform-wheelevent-paging-y-in-scrolling-page.html [ Failure ]
 
 # Misses setMediaType() implementation
-Bug(GTK) fast/media/print-restores-previous-mediatype.html [ Skip ]
+Bug(GTK) fast/media/print-restores-previous-mediatype.html [ Failure ]
 
 # Fails on GTK+ since https://bugs.webkit.org/show_bug.cgi?id=25195 got in
 webkit.org/b/36627 editing/selection/extend-after-mouse-selection.html [ Failure ]
@@ -1150,7 +1150,7 @@ webkit.org/b/65709 canvas/philip/tests/2d.drawImage.outsidesource.html [ Failure
 Bug(GTK) http/tests/multipart/multipart-wait-before-boundary.html [ Timeout ]
 
 # Does not render the rectangle as it should, even though the multiple parts seem to work
-webkit.org/b/54251 http/tests/multipart/invalid-image-data.html [ Skip ]
+webkit.org/b/54251 http/tests/multipart/invalid-image-data.html [ Timeout ]
 
 # Fails because it does not throw a couple of expected exceptions
 Bug(GTK) http/tests/local/fileapi/send-sliced-dragged-file.html [ Failure ]
@@ -1304,7 +1304,7 @@ webkit.org/b/94003 fast/css/word-spacing-characters-complex-text.html [ ImageOnl
 # This has always failed on Gtk/Efl - exposed by bug 89826
 webkit.org/b/94009 css2.1/20110323/c541-word-sp-000.htm [ ImageOnlyFailure ]
 
-webkit.org/b/94083 media/video-controls-fullscreen-volume.html [ Skip ]
+webkit.org/b/94083 media/video-controls-fullscreen-volume.html [ Failure ]
 
 webkit.org/b/70485 fast/events/drag-selects-image.html [ Failure ]
 
@@ -1383,7 +1383,7 @@ webkit.org/b/102349 fast/dom/shadow/pseudoclass-update-enabled-area.html [ Image
 webkit.org/b/102586 media/video-src-blob.html [ Failure ]
 
 # GTK still has the CC toggle button, not the menu of tracks.
-webkit.org/b/101670 media/video-controls-captions-trackmenu.html [ Skip ]
+webkit.org/b/101670 media/video-controls-captions-trackmenu.html [ Failure ]
 
 # Fix for https://bugs.webkit.org/show_bug.cgi?id=97192 introduces these regressions
 webkit.org/b/102776 webkit.org/b/102993 media/media-document-audio-repaint.html [ Failure ]
@@ -1417,9 +1417,6 @@ webkit.org/b/104493 svg/custom/js-update-stop.svg [ Failure ]
 webkit.org/b/104493 svg/custom/js-update-transform-addition.svg [ Failure ]
 webkit.org/b/104493 svg/custom/js-update-transform-changes.svg [ Failure ]
 webkit.org/b/104493 svg/custom/text-xy-updates-SVGList.xhtml [ Failure ]
-
-# No support for exposing in-band text tracks
-webkit.org/b/103771 media/track/track-in-band.html [ Skip ]
 
 webkit.org/b/104571 http/tests/security/xssAuditor/base-href-null-char.html [ Failure ]
 webkit.org/b/104571 http/tests/security/xssAuditor/embed-tag-null-char.html [ Failure ]

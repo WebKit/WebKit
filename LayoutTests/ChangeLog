@@ -1,5 +1,15 @@
 2012-12-11  Zan Dobersek  <zandobersek@gmail.com>
 
+        Unreviewed GTK gardening.
+
+        Unskip a few test, adding expectations that (should) reflect the actual failure of each test.
+        Also remove the expectations for the Animation API test. Support for that feature, along with
+        the test, was removed just recently.
+
+        * platform/gtk/TestExpectations:
+
+2012-12-11  Zan Dobersek  <zandobersek@gmail.com>
+
         Unreviewed GTK gardening
 
         Adding failure expectations for tests that regressed in r137198 and in r137159-r137161 range.
