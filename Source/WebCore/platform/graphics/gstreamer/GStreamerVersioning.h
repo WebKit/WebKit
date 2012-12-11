@@ -19,6 +19,7 @@
 
 #ifndef GStreamerVersioning_h
 #define GStreamerVersioning_h
+#if USE(GSTREAMER)
 
 #include "GRefPtrGStreamer.h"
 #include <gst/gst.h>
@@ -31,9 +32,12 @@ class IntSize;
 void webkitGstObjectRefSink(GstObject*);
 GstPad* webkitGstGhostPadFromStaticTemplate(GstStaticPadTemplate*, const gchar* name, GstPad* target);
 GRefPtr<GstCaps> webkitGstGetPadCaps(GstPad*);
+#if ENABLE(VIDEO)
 bool getVideoSizeAndFormatFromCaps(GstCaps*, WebCore::IntSize&, GstVideoFormat&, int& pixelAspectRatioNumerator, int& pixelAspectRatioDenominator, int& stride);
+#endif
 GstBuffer* createGstBuffer(GstBuffer*);
 void setGstElementClassMetadata(GstElementClass*, const char* name, const char* longName, const char* description, const char* author);
 bool gstObjectIsFloating(GstObject*);
 void notifyGstTagsOnPad(GstElement*, GstPad*, GstTagList*);
+#endif // USE(GSTREAMER)
 #endif // GStreamerVersioning_h
