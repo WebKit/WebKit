@@ -28,6 +28,17 @@
 
 using namespace WebKit;
 
+/**
+ * SECTION: WebKitBackForwardListItem
+ * @Short_description: One item of the #WebKitBackForwardList
+ * @Title: WebKitBackForwardListItem
+ * @See_also: #WebKitBackForwardList
+ *
+ * A history item is part of the #WebKitBackForwardList and consists
+ * out of a title and a URI.
+ *
+ */
+
 struct _WebKitBackForwardListItemPrivate {
     RefPtr<WebBackForwardListItem> webListItem;
     CString uri;

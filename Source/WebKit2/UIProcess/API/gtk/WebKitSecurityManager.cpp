@@ -27,6 +27,19 @@
 
 using namespace WebKit;
 
+/**
+ * SECTION: WebKitSecurityManager
+ * @Short_description: Controls security settings in a #WebKitWebContext
+ * @Title: WebKitSecurityManager
+ *
+ * The #WebKitSecurityManager defines security settings for URI
+ * schemes in a #WebKitWebContext. Get it from the context with
+ * webkit_web_context_get_security_manager(), and use it to register a
+ * URI scheme with a certain security level, or to check if it already
+ * has it.
+ *
+ */
+
 typedef enum {
     SecurityPolicyLocal,
     SecurityPolicyNoAccess,

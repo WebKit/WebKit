@@ -33,6 +33,17 @@ enum {
 
 using namespace WebCore;
 
+/**
+ * SECTION: WebKitURIRequest
+ * @Short_description: Represents a URI request
+ * @Title: WebKitURIRequest
+ *
+ * A #WebKitURIRequest can be created with a URI using the
+ * webkit_uri_request_new() method, and you can get the URI of an
+ * existing request with the webkit_uri_request_get_uri() one.
+ *
+ */
+
 struct _WebKitURIRequestPrivate {
     WebCore::ResourceRequest resourceRequest;
     CString uri;

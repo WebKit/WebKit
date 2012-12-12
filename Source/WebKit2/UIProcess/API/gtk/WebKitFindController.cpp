@@ -30,6 +30,23 @@
 using namespace WebKit;
 using namespace WebCore;
 
+/**
+ * SECTION: WebKitFindController
+ * @Short_description: Controls text search in a #WebKitWebView
+ * @Title: WebKitFindController
+ *
+ * A #WebKitFindController is used to search text in a #WebKitWebView. You
+ * can get a #WebKitWebView<!-- -->'s #WebKitFindController with
+ * webkit_web_view_get_find_controller(), and later use it to search
+ * for text using webkit_find_controller_search(), or get the
+ * number of matches using webkit_find_controller_count_matches(). The
+ * operations are asynchronous and trigger signals when ready, such as
+ * #WebKitFindController::found-text,
+ * #WebKitFindController::failed-to-find-text or
+ * #WebKitFindController::counted-matches<!-- -->.
+ *
+ */
+
 enum {
     FOUND_TEXT,
     FAILED_TO_FIND_TEXT,

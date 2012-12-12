@@ -30,6 +30,17 @@
 using namespace WebKit;
 using namespace WebCore;
 
+/**
+ * SECTION: WebKitURIResponse
+ * @Short_description: Represents a URI response
+ * @Title: WebKitURIResponse
+ *
+ * A #WebKitURIResponse contains information such as the URI, the
+ * status code, the content length, the mime type, the HTTP status or
+ * the suggested filename.
+ *
+ */
+
 enum {
     PROP_0,
 

@@ -26,6 +26,15 @@
 
 using namespace WebCore;
 
+/**
+ * SECTION: WebKitError
+ * @Short_description: Categorized WebKit errors
+ * @Title: WebKitError
+ *
+ * Categorized WebKit errors.
+ *
+ */
+
 GQuark webkit_network_error_quark()
 {
     return g_quark_from_static_string(WebCore::errorDomainNetwork);

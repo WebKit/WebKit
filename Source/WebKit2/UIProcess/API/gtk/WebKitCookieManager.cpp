@@ -29,6 +29,22 @@
 
 using namespace WebKit;
 
+/**
+ * SECTION: WebKitCookieManager
+ * @Short_description: Defines how to handle cookies in a #WebKitWebContext
+ * @Title: WebKitCookieManager
+ *
+ * The #WebKitCookieManager defines how to handle cookies in a
+ * #WebKitWebContext. Get it from the context with
+ * webkit_web_context_get_cookie_manager(), and use it to set where to
+ * store cookies, with webkit_cookie_manager_set_persistent_storage(),
+ * to get the list of domains with cookies, with
+ * webkit_cookie_manager_get_domains_with_cookies(), or to set the
+ * acceptance policy, with webkit_cookie_manager_get_accept_policy()
+ * (among other actions).
+ *
+ */
+
 enum {
     CHANGED,
 

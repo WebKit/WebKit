@@ -31,6 +31,23 @@
 
 using namespace WebKit;
 
+/**
+ * SECTION: WebKitWebResource
+ * @Short_description: Represents a resource at the end of a URI
+ * @Title: WebKitWebResource
+ *
+ * A #WebKitWebResource encapsulates content for each resource at the
+ * end of a particular URI. For example, one #WebKitWebResource will
+ * be created for each separate image and stylesheet when a page is
+ * loaded.
+ *
+ * You can access the response and the URI for a given
+ * #WebKitWebResource, using webkit_web_resource_get_uri() and
+ * webkit_web_resource_get_response(), as well as the raw data, using
+ * webkit_web_resource_get_data().
+ *
+ */
+
 enum {
     SENT_REQUEST,
     RECEIVED_DATA,
@@ -90,7 +107,7 @@ static void webkit_web_resource_class_init(WebKitWebResourceClass* resourceClass
                                     PROP_URI,
                                     g_param_spec_string("uri",
                                                         _("URI"),
-                                                        _("The current active URI of the result"),
+                                                        _("The current active URI of the resource"),
                                                         0,
                                                         WEBKIT_PARAM_READABLE));
 
@@ -238,7 +255,7 @@ WebFrameProxy* webkitWebResourceGetFrame(WebKitWebResource* resource)
  * webkit_web_resource_get_uri:
  * @resource: a #WebKitWebResource
  *
- * Returns the current active URI of @web_view. The active URI might change during
+ * Returns the current active URI of @resource. The active URI might change during
  * a load operation:
  *
  * <orderedlist>

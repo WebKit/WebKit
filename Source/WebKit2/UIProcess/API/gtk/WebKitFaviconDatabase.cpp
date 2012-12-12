@@ -35,6 +35,26 @@
 
 using namespace WebKit;
 
+/**
+ * SECTION: WebKitFaviconDatabase
+ * @Short_description: A WebKit favicon database
+ * @Title: WebKitFaviconDatabase
+ *
+ * #WebKitFaviconDatabase provides access to the icons associated with
+ * web sites.
+ *
+ * WebKit will automatically look for available icons in &lt;link&gt;
+ * elements on opened pages as well as an existing favicon.ico and
+ * load the images found into a memory cache if possible. That cache
+ * is frozen to an on-disk database for persistence.
+ *
+ * If #WebKitSettings:enable-private-browsing is %TRUE, new icons
+ * won't be added to the on-disk database and no existing icons will
+ * be deleted from it. Nevertheless, WebKit will still store them in
+ * the in-memory cache during the current execution.
+ *
+ */
+
 enum {
     FAVICON_CHANGED,
 

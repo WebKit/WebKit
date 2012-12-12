@@ -46,6 +46,32 @@
 
 using namespace WebKit;
 
+/**
+ * SECTION: WebKitWebContext
+ * @Short_description: Manages aspects common to all #WebKitWebView<!-- -->s
+ * @Title: WebKitWebContext
+ *
+ * The #WebKitWebContext manages all aspects common to all
+ * #WebKitWebView<!-- -->s.
+ *
+ * You can define the #WebKitCacheModel with
+ * webkit_web_context_set_cache_model(), depending on the needs of
+ * your application. You can access the #WebKitCookieManager or the
+ * #WebKitSecurityManager to specify the behaviour of your application
+ * regarding cookies and security, using
+ * webkit_web_context_get_cookie_manager() and
+ * webkit_web_context_get_security_manager() for that.
+ *
+ * It is also possible to change your preferred language or enable
+ * spell checking, using webkit_web_context_set_preferred_languages(),
+ * webkit_web_context_set_spell_checking_languages() and
+ * webkit_web_context_set_spell_checking_enabled().
+ *
+ * You can use webkit_web_context_register_uri_scheme() to register
+ * custom URI schemes, and manage several other settings.
+ *
+ */
+
 enum {
     DOWNLOAD_STARTED,
 

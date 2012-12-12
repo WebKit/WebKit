@@ -26,6 +26,20 @@
 
 using namespace WebKit;
 
+/**
+ * SECTION: WebKitPlugin
+ * @Short_description: Represents a plugin, enabling fine-grained control
+ * @Title: WebKitPlugin
+ *
+ * This object represents a single plugin, found while scanning the
+ * various platform plugin directories. This object can be used to get
+ * more information about a plugin, and enable/disable it, allowing
+ * fine-grained control of plugins. The list of available plugins can
+ * be obtained from the #WebKitWebContext, with
+ * webkit_web_context_get_plugins().
+ *
+ */
+
 struct _WebKitPluginPrivate {
     ~_WebKitPluginPrivate()
     {

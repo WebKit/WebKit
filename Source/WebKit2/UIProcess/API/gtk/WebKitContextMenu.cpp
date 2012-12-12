@@ -28,6 +28,25 @@
 using namespace WebKit;
 using namespace WebCore;
 
+/**
+ * SECTION: WebKitContextMenu
+ * @Short_description: Represents the context menu in a #WebKitWebView
+ * @Title: WebKitContextMenu
+ *
+ * #WebKitContextMenu represents a context menu containing
+ * #WebKitContextMenuItem<!-- -->s in a #WebKitWebView.
+ *
+ * When a #WebKitWebView is about to display the context menu, it
+ * emits the #WebKitWebView::context-menu signal, which has the
+ * #WebKitContextMenu as an argument. You can modify it, adding new
+ * submenus that you can create with webkit_context_menu_new(), adding
+ * new #WebKitContextMenuItem<!-- -->s with
+ * webkit_context_menu_prepend(), webkit_context_menu_append() or
+ * webkit_context_menu_insert(), maybe after having removed the
+ * existing ones with webkit_context_menu_remove_all().
+ *
+ */
+
 struct _WebKitContextMenuPrivate {
     GList* items;
     WebKitContextMenuItem* parentItem;

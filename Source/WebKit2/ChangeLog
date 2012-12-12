@@ -1,3 +1,41 @@
+2012-12-12  Simon Pena  <spena@igalia.com>
+
+        [GTK] Add sections documentation to WebKit2 GTK+ API
+        https://bugs.webkit.org/show_bug.cgi?id=104484
+
+        Reviewed by Martin Robinson.
+
+        Many of the sections in the WebKit2 GTK+ API documentation were
+        missing. This commit adds new documentation, in some cases
+        adapting it from WebKitGtk+ and in others writing it from the
+        scratch.
+
+        It also removes the WebKitWebViewBase class from the documentation
+        index, since it is not really relevant.
+
+        * UIProcess/API/gtk/WebKitBackForwardListItem.cpp:
+        * UIProcess/API/gtk/WebKitContextMenu.cpp:
+        * UIProcess/API/gtk/WebKitContextMenuItem.cpp:
+        * UIProcess/API/gtk/WebKitCookieManager.cpp:
+        * UIProcess/API/gtk/WebKitDownload.cpp:
+        * UIProcess/API/gtk/WebKitError.cpp:
+        * UIProcess/API/gtk/WebKitFaviconDatabase.cpp:
+        * UIProcess/API/gtk/WebKitFindController.cpp:
+        * UIProcess/API/gtk/WebKitFormSubmissionRequest.cpp:
+        * UIProcess/API/gtk/WebKitPlugin.cpp:
+        * UIProcess/API/gtk/WebKitPrintOperation.cpp:
+        * UIProcess/API/gtk/WebKitSecurityManager.cpp:
+        * UIProcess/API/gtk/WebKitURIRequest.cpp:
+        * UIProcess/API/gtk/WebKitURIResponse.cpp:
+        * UIProcess/API/gtk/WebKitURISchemeRequest.cpp:
+        * UIProcess/API/gtk/WebKitVersion.cpp:
+        * UIProcess/API/gtk/WebKitWebContext.cpp:
+        * UIProcess/API/gtk/WebKitWebInspector.cpp:
+        * UIProcess/API/gtk/WebKitWebResource.cpp:
+        (webkit_web_resource_class_init):
+        * UIProcess/API/gtk/WebKitWebView.cpp:
+        * UIProcess/API/gtk/docs/webkit2gtk-docs.sgml:
+
 2012-12-12  Kondapally Kalyan  <kalyan.kondapally@intel.com>
 
         [EFL [WebGL] [Wk2] Resizing the canvas breaks WebGL.

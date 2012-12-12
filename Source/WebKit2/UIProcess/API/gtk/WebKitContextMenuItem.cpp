@@ -37,6 +37,19 @@
 using namespace WebKit;
 using namespace WebCore;
 
+/**
+ * SECTION: WebKitContextMenuItem
+ * @Short_description: One item of the #WebKitContextMenu
+ * @Title: WebKitContextMenuItem
+ *
+ * The #WebKitContextMenu is composed of #WebKitContextMenuItem<!--
+ * -->s. These items can be created from a #GtkAction, from a
+ * #WebKitContextMenuAction or from a #WebKitContextMenuAction and a
+ * label. These #WebKitContextMenuAction<!-- -->s denote stock actions
+ * for the items. You can also create separators and submenus.
+ *
+ */
+
 struct _WebKitContextMenuItemPrivate {
     ~_WebKitContextMenuItemPrivate()
     {

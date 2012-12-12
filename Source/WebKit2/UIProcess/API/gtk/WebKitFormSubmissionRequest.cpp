@@ -28,6 +28,21 @@
 
 using namespace WebKit;
 
+/**
+ * SECTION: WebKitFormSubmissionRequest
+ * @Short_description: Represents a form submission request
+ * @Title: WebKitFormSubmissionRequest
+ *
+ * When a form is about to be submitted in a #WebKitWebView, the
+ * #WebKitWebView::submit-form signal is emitted. Its request argument
+ * contains information about the text fields of the form, that are
+ * typically used to store login information, returned in a
+ * #GHashTable by the webkit_form_submission_request_get_text_fields()
+ * method, and you can finally submit the form with
+ * webkit_form_submission_request_submit().
+ *
+ */
+
 struct _WebKitFormSubmissionRequestPrivate {
     RefPtr<ImmutableDictionary> webValues;
     RefPtr<WebFormSubmissionListenerProxy> listener;

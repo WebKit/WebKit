@@ -33,6 +33,22 @@
 
 using namespace WebKit;
 
+/**
+ * SECTION: WebKitURISchemeRequest
+ * @Short_description: Represents a URI scheme request
+ * @Title: WebKitURISchemeRequest
+ *
+ * If you register a particular URI scheme in a #WebKitWebContext,
+ * using webkit_web_context_register_uri_scheme(), you have to provide
+ * a #WebKitURISchemeRequestCallback. After that, when a URI request
+ * is made with that particular scheme, your callback will be
+ * called. There you will be able to access properties such as the
+ * scheme, the URI and path, and the #WebKitWebView that initiated the
+ * request, and also finish the request with
+ * webkit_uri_scheme_request_finish().
+ *
+ */
+
 static const unsigned int gReadBufferSize = 8192;
 
 struct _WebKitURISchemeRequestPrivate {
