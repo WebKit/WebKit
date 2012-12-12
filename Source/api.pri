@@ -43,6 +43,17 @@ QMAKE_DOCS = $$PWD/qtwebkit.qdocconf
 # on the QT variable can be picked up when we later load(qt_module).
 load(webkit_modules)
 
+# Resources have to be included directly in the final binary.
+# MSVC's linker won't pick them from a static library since they aren't referenced.
+RESOURCES += $$PWD/WebCore/WebCore.qrc
+include_webinspector {
+    # WEBCORE_GENERATED_SOURCES_DIR is defined in WebCore.pri, included by
+    # load(webkit_modules) if WEBKIT contains webcore.
+    RESOURCES += \
+        $$PWD/WebCore/inspector/front-end/WebKit.qrc \
+        $${WEBCORE_GENERATED_SOURCES_DIR}/InspectorBackendCommands.qrc
+}
+
 # ---------------- Custom developer-build handling -------------------
 #
 # The assumption for Qt developer builds is that the module file

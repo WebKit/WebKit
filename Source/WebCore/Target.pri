@@ -14,15 +14,6 @@ WEBKIT += javascriptcore
 
 CONFIG += staticlib
 
-RESOURCES += \
-    $$PWD/WebCore.qrc
-
-include_webinspector {
-    RESOURCES += \
-        $$PWD/inspector/front-end/WebKit.qrc \
-        $${WEBCORE_GENERATED_SOURCES_DIR}/InspectorBackendCommands.qrc
-}
-
 SOURCES += \
     Modules/geolocation/Geolocation.cpp \
     Modules/geolocation/GeolocationController.cpp \

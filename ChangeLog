@@ -1,3 +1,19 @@
+2012-12-11  Jocelyn Turcotte  <jocelyn.turcotte@digia.com>
+
+        [Qt] Fix the inspector not showing up on Windows
+        https://bugs.webkit.org/show_bug.cgi?id=104677
+
+        Reviewed by Simon Hausmann.
+
+        Resources aren't transfered properly from a static WebCore to the final DLL
+        with MSVC since the linker only pick from the static lib symbols that
+        are referenced in the final binary.
+
+        Move the resource files directly to Qt5WebKit.dll to make sure that they are
+        available.
+
+        * Source/api.pri:
+
 2012-12-11  Xianzhu Wang  <wangxianzhu@chromium.org>
 
         Add window.internals.mainThreadScrollReasonsAsText for testing slow scrolling
