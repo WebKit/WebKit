@@ -40,7 +40,6 @@ class ResultSummary(object):
         self.unexpected_failures = 0
         self.unexpected_crashes = 0
         self.unexpected_timeouts = 0
-        self.total_tests_by_expectation = {}
         self.tests_by_expectation = {}
         self.tests_by_timeline = {}
         self.results = {}  # Map of test name to the last result for the test.
@@ -51,14 +50,12 @@ class ResultSummary(object):
         self.expected_skips = 0
         for expectation in TestExpectations.EXPECTATIONS.values():
             self.tests_by_expectation[expectation] = set()
-            self.total_tests_by_expectation[expectation] = 0
         for timeline in TestExpectations.TIMELINES.values():
             self.tests_by_timeline[timeline] = expectations.get_tests_with_timeline(timeline)
         self.slow_tests = set()
         self.interrupted = False
 
     def add(self, test_result, expected, test_is_slow):
-        self.total_tests_by_expectation[test_result.type] += 1
         self.tests_by_expectation[test_result.type].add(test_result.test_name)
         self.results[test_result.test_name] = test_result
         if test_result.type != SKIP:

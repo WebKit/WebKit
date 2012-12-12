@@ -1,5 +1,17 @@
 2012-12-11  Dirk Pranke  <dpranke@chromium.org>
 
+        nrwt: remove result_summary.total_tests_by_expectation
+        https://bugs.webkit.org/show_bug.cgi?id=104756
+
+        Reviewed by Eric Seidel.
+
+        This field wasn't being used by anything.
+
+        * Scripts/webkitpy/layout_tests/models/result_summary.py:
+        (ResultSummary.__init__):
+
+2012-12-11  Dirk Pranke  <dpranke@chromium.org>
+
         garden-o-matic doesn't know about reftests
         https://bugs.webkit.org/show_bug.cgi?id=101976
 
