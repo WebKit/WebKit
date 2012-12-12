@@ -1,3 +1,19 @@
+2012-12-11  Jinwoo Song  <jinwoo7.song@samsung.com>
+
+        [EFL][WK2] Duplicated WebPageGroup initialization
+        https://bugs.webkit.org/show_bug.cgi?id=103229
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        WebPageGroup does not need to be created in creating EwkView when the pageGroupRef is 0
+        because the default WebPageGroup(m_defaultPageGroup) is created in WebContext constructor.
+
+        As a side effect on the duplicated initialization, pageGroupID increases even when the EwkView
+        is created with default context.
+
+        * UIProcess/API/efl/ewk_view.cpp:
+        (createEwkView):
+
 2012-12-11  Sam Weinig  <sam@webkit.org>
 
         Add API to set the maximum number of processes allowed in a WKContext
