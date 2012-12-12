@@ -85,6 +85,7 @@ public:
     virtual WebCore::FloatRect visibleContentsRect() const;
     virtual void renderNextFrame();
     virtual void purgeBackingStores();
+    virtual bool layerTreeTileUpdatesAllowed() const;
     virtual void setVisibleContentsRect(const WebCore::FloatRect&, float scale, const WebCore::FloatPoint&);
     virtual void didReceiveCoordinatedLayerTreeHostMessage(CoreIPC::Connection*, CoreIPC::MessageID, CoreIPC::MessageDecoder&);
     virtual WebCore::GraphicsLayerFactory* graphicsLayerFactory() OVERRIDE;

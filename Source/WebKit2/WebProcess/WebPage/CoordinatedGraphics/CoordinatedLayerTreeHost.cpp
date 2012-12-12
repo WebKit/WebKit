@@ -614,7 +614,6 @@ void CoordinatedLayerTreeHost::notifyAnimationStarted(const WebCore::GraphicsLay
 
 void CoordinatedLayerTreeHost::notifyFlushRequired(const WebCore::GraphicsLayer*)
 {
-    scheduleLayerFlush();
 }
 
 void CoordinatedLayerTreeHost::paintContents(const WebCore::GraphicsLayer* graphicsLayer, WebCore::GraphicsContext& graphicsContext, WebCore::GraphicsLayerPaintingPhase, const WebCore::IntRect& clipRect)
@@ -638,7 +637,7 @@ PassOwnPtr<GraphicsLayer> CoordinatedLayerTreeHost::createGraphicsLayer(Graphics
     layer->setCoordinator(this);
     m_registeredLayers.add(layer);
     layer->setContentsScale(m_contentsScale);
-    layer->setNeedsVisibleRectAdjustment();
+    layer->adjustVisibleRect();
     return adoptPtr(layer);
 }
 
@@ -720,7 +719,7 @@ void CoordinatedLayerTreeHost::setVisibleContentsRect(const FloatRect& rect, flo
             if (contentsScaleDidChange)
                 (*it)->setContentsScale(scale);
             if (contentsRectDidChange)
-                (*it)->setNeedsVisibleRectAdjustment();
+                (*it)->adjustVisibleRect();
         }
     }
 
@@ -758,6 +757,11 @@ void CoordinatedLayerTreeHost::renderNextFrame()
     scheduleLayerFlush();
     for (unsigned i = 0; i < m_updateAtlases.size(); ++i)
         m_updateAtlases[i]->didSwapBuffers();
+}
+
+bool CoordinatedLayerTreeHost::layerTreeTileUpdatesAllowed() const
+{
+    return !m_isSuspended && !m_waitingForUIProcess;
 }
 
 void CoordinatedLayerTreeHost::purgeBackingStores()
