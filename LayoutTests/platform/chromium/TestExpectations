@@ -1046,7 +1046,7 @@ webkit.org/b/75186 [ Linux ] http/tests/inspector-enabled/dedicated-workers-list
 
 webkit.org/b/75647 http/tests/inspector/network/download.html [ Pass Timeout Failure ]
 
-webkit.org/b/104800 inspector-protocol/take-heap-snapshot.html [ Crash ]
+webkit.org/b/104800 [ Debug ] inspector-protocol/take-heap-snapshot.html [ Crash ]
 
 # -----------------------------------------------------------------
 # Editing tests
