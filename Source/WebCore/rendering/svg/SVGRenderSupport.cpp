@@ -211,10 +211,19 @@ void SVGRenderSupport::layoutChildren(RenderObject* start, bool selfNeedsLayout)
 {
     bool layoutSizeChanged = layoutSizeOfNearestViewportChanged(start);
     bool transformChanged = transformToRootChanged(start);
+    bool hasSVGShadow = rendererHasSVGShadow(start);
+    bool needsBoundariesUpdate = start->needsBoundariesUpdate();
     HashSet<RenderObject*> notlayoutedObjects;
 
     for (RenderObject* child = start->firstChild(); child; child = child->nextSibling()) {
         bool needsLayout = selfNeedsLayout;
+
+        if (needsBoundariesUpdate && hasSVGShadow) {
+            // If we have a shadow, our shadow is baked into our children's cached boundaries,
+            // so they need to update.
+            child->setNeedsBoundariesUpdate();
+            needsLayout = true;
+        }
 
         if (transformChanged) {
             // If the transform changed we need to update the text metrics (note: this also happens for layoutSizeChanged=true).
