@@ -17,7 +17,7 @@ function test()
     function onRequestFinished(event)
     {
         var request = event.data;
-        if (request.url !== "http://localhost:8000/inspector/resources/post-target.cgi?queryParam1=queryValue1&queryParam2=")
+        if (request.url !== "http://localhost:8000/inspector/resources/post-target.cgi?queryParam1=queryValue1&queryParam2=#fragmentParam1=fragmentValue1&fragmentParam2=")
             return;
         InspectorTest.addObject(new WebInspector.HAREntry(request).build(), InspectorTest.HARPropertyFormatters);
         InspectorTest.completeTest();
