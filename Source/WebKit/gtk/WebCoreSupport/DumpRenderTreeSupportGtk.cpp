@@ -85,6 +85,7 @@ bool DumpRenderTreeSupportGtk::s_drtRun = false;
 bool DumpRenderTreeSupportGtk::s_linksIncludedInTabChain = true;
 bool DumpRenderTreeSupportGtk::s_selectTrailingWhitespaceEnabled = false;
 DumpRenderTreeSupportGtk::FrameLoadEventCallback DumpRenderTreeSupportGtk::s_frameLoadEventCallback = 0;
+DumpRenderTreeSupportGtk::AuthenticationCallback DumpRenderTreeSupportGtk::s_authenticationCallback = 0;
 
 DumpRenderTreeSupportGtk::DumpRenderTreeSupportGtk()
 {
@@ -840,4 +841,9 @@ void DumpRenderTreeSupportGtk::clearApplicationCache()
 void DumpRenderTreeSupportGtk::setFrameLoadEventCallback(FrameLoadEventCallback frameLoadEventCallback)
 {
     s_frameLoadEventCallback = frameLoadEventCallback;
+}
+
+void DumpRenderTreeSupportGtk::setAuthenticationCallback(AuthenticationCallback authenticationCallback)
+{
+    s_authenticationCallback = authenticationCallback;
 }

@@ -1,3 +1,47 @@
+2012-12-12  Martin Robinson  <mrobinson@igalia.com>
+
+        [GTK] Add authentication support to DRT and fix exposed issues in the libsoup backend
+        https://bugs.webkit.org/show_bug.cgi?id=104285
+
+        Reviewed by Gustavo Noronha Silva.
+
+        Fix issues in the libsoup networking backend that were causing test
+        failures.
+
+        No new tests. This patch unskips authentication tests.
+
+        * platform/network/soup/ResourceHandleSoup.cpp:
+        (WebCore::isAuthenticationFailureStatusCode): Added this helper to catch authentication status codes
+        and use it everywhere.
+        (WebCore::applyAuthenticationToRequest): Use an early return instead of an if-statement
+        and instead of always using manually specified credentials, apply those found in the session
+        storage as well. Instead of applying the credentials to firstRequest always, accept the request
+        as a parameter, so this method can be properly used with redirects.
+        (WebCore::restartedCallback): Instead of creating the KURL directly from soup_uri_to_string
+        use soupURIToKURL, which preserves the password from the SoupURI. soup_uri_to_string doesn't
+        include the password. When calling applyAuthenticationToRequest update the new request. Before
+        applyAuthenticationToRequest always updated the firstRequest. Do not call willSendRequest for
+        instances when this method is called for authentication handling. willSendRequest should only
+        be called for server-side redirects.
+        (WebCore::createSoupRequestAndMessageForHandle): Use soup_requester_request_uri instead of
+        soup_requester_request. Request::soupURI properly creates a SoupURI with non-null empty strings
+        when either the username and password are empty.  A null username or password does not trigger
+        the URI-embedded credential override in SoupAuthenticationManager within libsoup. This is important
+        because sometimes either the username or password might empty for a request, but the other
+        part of the credential should still override the per-session credential storage.
+        (WebCore::ResourceHandle::start): We don't need to clear the username and password from the
+        internal data structure any longer. These need to be cleared in the CFNetwork backend because
+        it prevents the same failed per-request credentials from being used over and over again. In our
+        case we don't use these members during didReceiveAuthenticationChallenge, so this isn't an issue.
+        (WebCore::ResourceHandle::didReceiveAuthenticationChallenge): Don't look at the per-request
+        m_user/m_pass pair here any longer. We use these when initially creating a request, so we don't
+        want to re-use them if they fail.
+        * platform/network/soup/ResourceRequest.h:
+        (ResourceRequest): Rename urlStringForSoup to soupURI.
+        * platform/network/soup/ResourceRequestSoup.cpp:
+        (WebCore::ResourceRequest::soupURI): Instead of returning a string for the soup-bound URL
+        return a SoupURI that properly embeds empty usernames and passwords.
+
 2012-12-12  Alexey Proskuryakov  <ap@apple.com>
 
         Make LOG() work in WebProcess and NetworkProcess

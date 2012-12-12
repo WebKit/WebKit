@@ -520,6 +520,12 @@ static void resetDefaultsToConsistentValues()
     DumpRenderTreeSupportGtk::setExperimentalContentSecurityPolicyFeaturesEnabled(true);
     DumpRenderTreeSupportGtk::setShadowDOMEnabled(true);
     DumpRenderTreeSupportGtk::setStyleScopedEnabled(true);
+
+    if (gTestRunner) {
+        gTestRunner->setAuthenticationPassword("");
+        gTestRunner->setAuthenticationUsername("");
+        gTestRunner->setHandlesAuthenticationChallenges(false);
+    }
 }
 
 static bool useLongRunningServerMode(int argc, char *argv[])
@@ -1362,6 +1368,19 @@ static void frameLoadEventCallback(WebKitWebFrame* frame, DumpRenderTreeSupportG
     }
 }
 
+static bool authenticationCallback(CString& username, CString& password)
+{
+    if (!gTestRunner->handlesAuthenticationChallenges()) {
+        printf("<unknown> - didReceiveAuthenticationChallenge - Simulating cancelled authentication sheet\n");
+        return false;
+    }
+
+    username = gTestRunner->authenticationUsername().c_str();
+    password = gTestRunner->authenticationPassword().c_str();
+    printf("<unknown> - didReceiveAuthenticationChallenge - Responding with %s:%s\n", username.data(), password.data());
+    return true;
+}
+
 static WebKitWebView* createWebView()
 {
     // It is important to declare DRT is running early so when creating
@@ -1369,6 +1388,7 @@ static WebKitWebView* createWebView()
     DumpRenderTreeSupportGtk::setDumpRenderTreeModeEnabled(true);
 
     DumpRenderTreeSupportGtk::setFrameLoadEventCallback(frameLoadEventCallback);
+    DumpRenderTreeSupportGtk::setAuthenticationCallback(authenticationCallback);
 
     WebKitWebView* view = WEBKIT_WEB_VIEW(self_scrolling_webkit_web_view_new());
 

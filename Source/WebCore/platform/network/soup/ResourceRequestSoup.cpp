@@ -119,7 +119,7 @@ unsigned initializeMaximumHTTPConnectionCountPerHost()
     return 10000;
 }
 
-String ResourceRequest::urlStringForSoup() const
+SoupURI* ResourceRequest::soupURI() const
 {
     // WebKit does not support fragment identifiers in data URLs, but soup does.
     // Before passing the URL to soup, we should make sure to urlencode any '#'
@@ -128,12 +128,22 @@ String ResourceRequest::urlStringForSoup() const
     if (m_url.protocolIsData()) {
         String urlString = m_url.string();
         urlString.replace("#", "%23");
-        return urlString;
+        return soup_uri_new(urlString.utf8().data());
     }
 
     KURL url = m_url;
     url.removeFragmentIdentifier();
-    return url.string();
+    SoupURI* uri = soup_uri_new(url.string().utf8().data());
+
+    // Versions of libsoup prior to 2.42 have a soup_uri_new that will convert empty passwords that are not
+    // prefixed by a colon into null. Some parts of soup like the SoupAuthenticationManager will only be active
+    // when both the username and password are non-null. When we have credentials, empty usernames and passwords
+    // should be empty strings instead of null.
+    if (!url.user().isEmpty() || !url.pass().isEmpty()) {
+        soup_uri_set_user(uri, url.user().utf8().data());
+        soup_uri_set_password(uri, url.pass().utf8().data());
+    }
+    return uri;
 }
 
 }

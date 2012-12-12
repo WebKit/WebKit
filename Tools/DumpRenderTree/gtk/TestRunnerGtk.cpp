@@ -48,6 +48,7 @@
 #include <libsoup/soup.h>
 #include <webkit/webkit.h>
 #include <wtf/gobject/GOwnPtr.h>
+#include <wtf/text/WTFString.h>
 
 extern "C" {
 void webkit_web_inspector_execute_script(WebKitWebInspector* inspector, long callId, const gchar* script);
@@ -157,26 +158,43 @@ JSStringRef TestRunner::pathToLocalResource(JSContextRef context, JSStringRef ur
     return JSStringCreateWithUTF8CString(testURI.get());
 }
 
+static CString soupURIToStringPreservingPassword(SoupURI* soupURI)
+{
+    if (!soupURI->password) {
+        GOwnPtr<char> uriString(soup_uri_to_string(soupURI, FALSE));
+        return uriString.get();
+    }
+
+    // soup_uri_to_string does not insert the password into the string, so we need to create the
+    // URI string and then reinsert any credentials that were present in the SoupURI. All tests that
+    // use URL-embedded credentials use HTTP, so it's safe here.
+    GOwnPtr<char> password(soupURI->password);
+    GOwnPtr<char> user(soupURI->user);
+    soupURI->password = 0;
+    soupURI->user = 0;
+
+    GOwnPtr<char> uriString(soup_uri_to_string(soupURI, FALSE));
+    String absoluteURIWithoutCredentialString = String::fromUTF8(uriString.get());
+    String protocolAndCredential = String::format("http://%s:%s@", user ? user.get() : "", password.get());
+    return absoluteURIWithoutCredentialString.replace("http://", protocolAndCredential).utf8();
+}
+
 void TestRunner::queueLoad(JSStringRef url, JSStringRef target)
 {
-    gchar* relativeURL = JSStringCopyUTF8CString(url);
+    GOwnPtr<gchar> relativeURL(JSStringCopyUTF8CString(url));
     SoupURI* baseURI = soup_uri_new(webkit_web_frame_get_uri(mainFrame));
-
-    SoupURI* absoluteURI = soup_uri_new_with_base(baseURI, relativeURL);
+    SoupURI* absoluteURI = soup_uri_new_with_base(baseURI, relativeURL.get());
     soup_uri_free(baseURI);
-    g_free(relativeURL);
 
-    gchar* absoluteCString;
-    if (absoluteURI) {
-        absoluteCString = soup_uri_to_string(absoluteURI, FALSE);
-        soup_uri_free(absoluteURI);
-    } else
-        absoluteCString = JSStringCopyUTF8CString(url);
+    if (!absoluteURI) {
+        WorkQueue::shared()->queue(new LoadItem(url, target));
+        return;
+    }
 
-    JSRetainPtr<JSStringRef> absoluteURL(Adopt, JSStringCreateWithUTF8CString(absoluteCString));
-    g_free(absoluteCString);
-
+    CString absoluteURIString = soupURIToStringPreservingPassword(absoluteURI);
+    JSRetainPtr<JSStringRef> absoluteURL(Adopt, JSStringCreateWithUTF8CString(absoluteURIString.data()));
     WorkQueue::shared()->queue(new LoadItem(absoluteURL.get(), target));
+    soup_uri_free(absoluteURI);
 }
 
 void TestRunner::setAcceptsEditing(bool acceptsEditing)

@@ -193,7 +193,14 @@ bool FrameLoaderClient::shouldUseCredentialStorage(WebCore::DocumentLoader*, uns
 void FrameLoaderClient::dispatchDidReceiveAuthenticationChallenge(WebCore::DocumentLoader*, unsigned long  identifier, const AuthenticationChallenge& challenge)
 {
     if (DumpRenderTreeSupportGtk::dumpRenderTreeModeEnabled()) {
-        challenge.authenticationClient()->receivedRequestToContinueWithoutCredential(challenge);
+        CString username;
+        CString password;
+        if (!DumpRenderTreeSupportGtk::s_authenticationCallback || !DumpRenderTreeSupportGtk::s_authenticationCallback(username, password)) {
+            challenge.authenticationClient()->receivedRequestToContinueWithoutCredential(challenge);
+            return;
+        }
+
+        challenge.authenticationClient()->receivedCredential(challenge, Credential(String::fromUTF8(username.data()), String::fromUTF8(password.data()), CredentialPersistenceForSession));
         return;
     }
 

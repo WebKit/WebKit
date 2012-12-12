@@ -146,6 +146,10 @@ public:
     static void setFrameLoadEventCallback(FrameLoadEventCallback);
     static FrameLoadEventCallback s_frameLoadEventCallback;
 
+    typedef bool (*AuthenticationCallback) (CString& username, CString& password);
+    static void setAuthenticationCallback(AuthenticationCallback);
+    static AuthenticationCallback s_authenticationCallback;
+
 private:
     static bool s_drtRun;
     static bool s_linksIncludedInTabChain;
