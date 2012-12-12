@@ -1,3 +1,43 @@
+2012-12-12  Allan Sandfeld Jensen  <allan.jensen@digia.com>
+
+        [Qt] Animation fails on large layers
+        https://bugs.webkit.org/show_bug.cgi?id=104538
+
+        Reviewed by Noam Rosenthal.
+
+        The backing tiles had no upper limit defined for the non-GL backend, which could cause them
+        to allocate pixmaps widier or higher than what the underlying graphics systems can handle.
+
+        On top of that GraphicsLayerTextureMapper::prepareBackingStore() would allocate an intermediate
+        pixmap the size of the dirty rect, which would at least on the first paint be the size of the
+        entire layer, again causing allocation of pixmaps with dimensions outside of platform bounds.
+
+        This patch introduces a limit to the size of image buffer tiles, and adds an alternative path
+        for painting where the GraphicsLayer paints directly to the tile instead of over an intermediate
+        pixmap. This alternative path can also be useful later to minimize the amount of pixel copying
+        happening in full repaints.
+
+        * platform/graphics/texmap/GraphicsLayerTextureMapper.cpp:
+        (WebCore::GraphicsLayerTextureMapper::prepareBackingStore):
+        * platform/graphics/texmap/GraphicsLayerTextureMapper.h:
+        (GraphicsLayerTextureMapper):
+        * platform/graphics/texmap/TextureMapper.cpp:
+        (WebCore::BitmapTexture::updateContents):
+        * platform/graphics/texmap/TextureMapper.h:
+        (BitmapTexture):
+        (TextureMapper):
+        * platform/graphics/texmap/TextureMapperBackingStore.cpp:
+        (WebCore::TextureMapperTile::updateContents):
+        (WebCore::TextureMapperTiledBackingStore::updateContents):
+        * platform/graphics/texmap/TextureMapperBackingStore.h:
+        (TextureMapperTile):
+        (TextureMapperTiledBackingStore):
+        * platform/graphics/texmap/TextureMapperImageBuffer.cpp:
+        (WebCore::BitmapTextureImageBuffer::updateContents):
+        (WebCore::TextureMapperImageBuffer::maxTextureSize):
+        * platform/graphics/texmap/TextureMapperImageBuffer.h:
+        (BitmapTextureImageBuffer):
+
 2012-12-12  Aaron Colwell  <acolwell@chromium.org>
 
         Remove MediaSource 'ended' to 'open' transition when seeking.

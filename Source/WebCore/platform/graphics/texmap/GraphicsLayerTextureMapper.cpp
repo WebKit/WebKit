@@ -466,25 +466,34 @@ void GraphicsLayerTextureMapper::prepareBackingStore()
     if (!m_backingStore)
         m_backingStore = TextureMapperTiledBackingStore::create();
 
-    // Paint the entire dirty rect into an image buffer. This ensures we only paint once.
-    OwnPtr<ImageBuffer> imageBuffer = ImageBuffer::create(dirtyRect.size());
-    GraphicsContext* context = imageBuffer->context();
-    context->setImageInterpolationQuality(textureMapper->imageInterpolationQuality());
-    context->setTextDrawingMode(textureMapper->textDrawingMode());
-    context->translate(-dirtyRect.x(), -dirtyRect.y());
-    paintGraphicsLayerContents(*context, dirtyRect);
-
-    if (isShowingRepaintCounter()) {
-        incrementRepaintCount();
-        drawRepaintCounter(context);
-    }
-
-    RefPtr<Image> image = imageBuffer->copyImage(DontCopyBackingStore);
-#if PLATFORM(QT)
     ASSERT(dynamic_cast<TextureMapperTiledBackingStore*>(m_backingStore.get()));
-#endif
     TextureMapperTiledBackingStore* backingStore = static_cast<TextureMapperTiledBackingStore*>(m_backingStore.get());
-    backingStore->updateContents(textureMapper, image.get(), m_size, dirtyRect, BitmapTexture::UpdateCanModifyOriginalImageData);
+
+    if (isShowingRepaintCounter())
+        incrementRepaintCount();
+
+    // Paint into an intermediate buffer to avoid painting content more than once.
+    bool paintOnce = true;
+    const IntSize maxTextureSize = textureMapper->maxTextureSize();
+    // We need to paint directly if the dirty rect exceeds one of the maximum dimensions.
+    if (dirtyRect.width() > maxTextureSize.width() || dirtyRect.height() > maxTextureSize.height())
+        paintOnce = false;
+
+    if (paintOnce) {
+        OwnPtr<ImageBuffer> imageBuffer = ImageBuffer::create(dirtyRect.size());
+        GraphicsContext* context = imageBuffer->context();
+        context->setImageInterpolationQuality(textureMapper->imageInterpolationQuality());
+        context->setTextDrawingMode(textureMapper->textDrawingMode());
+        context->translate(-dirtyRect.x(), -dirtyRect.y());
+        paintGraphicsLayerContents(*context, dirtyRect);
+
+        if (isShowingRepaintCounter())
+            drawRepaintCounter(context);
+
+        RefPtr<Image> image = imageBuffer->copyImage(DontCopyBackingStore);
+        backingStore->updateContents(textureMapper, image.get(), m_size, dirtyRect, BitmapTexture::UpdateCanModifyOriginalImageData);
+    } else
+        backingStore->updateContents(textureMapper, this, m_size, dirtyRect, BitmapTexture::UpdateCanModifyOriginalImageData);
 
     backingStore->setShowDebugBorders(isShowingDebugBorder());
     backingStore->setDebugBorder(m_debugBorderColor, m_debugBorderWidth);

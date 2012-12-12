@@ -73,6 +73,7 @@ public:
     inline void setRect(const FloatRect& rect) { m_rect = rect; }
 
     void updateContents(TextureMapper*, Image*, const IntRect&, BitmapTexture::UpdateContentsFlag UpdateCanModifyOriginalImageData);
+    void updateContents(TextureMapper*, GraphicsLayer*, const IntRect&, BitmapTexture::UpdateContentsFlag UpdateCanModifyOriginalImageData);
     virtual void paint(TextureMapper*, const TransformationMatrix&, float, BitmapTexture*, const unsigned exposedEdges);
     virtual ~TextureMapperTile() { }
 
@@ -94,6 +95,7 @@ public:
     virtual PassRefPtr<BitmapTexture> texture() const OVERRIDE;
     virtual void paintToTextureMapper(TextureMapper*, const FloatRect&, const TransformationMatrix&, float, BitmapTexture*) OVERRIDE;
     void updateContents(TextureMapper*, Image*, const FloatSize&, const IntRect&, BitmapTexture::UpdateContentsFlag);
+    void updateContents(TextureMapper*, GraphicsLayer*, const FloatSize&, const IntRect&, BitmapTexture::UpdateContentsFlag);
 
     void setContentsToImage(Image* image) { m_image = image; }
     void setShowDebugBorders(bool drawsDebugBorders) { m_drawsDebugBorders = drawsDebugBorders; }

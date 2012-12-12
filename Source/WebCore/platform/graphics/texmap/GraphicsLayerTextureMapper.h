@@ -97,6 +97,7 @@ public:
     void setFixedToViewport(bool fixed) { m_fixedToViewport = fixed; }
     bool fixedToViewport() const { return m_fixedToViewport; }
 
+    void drawRepaintCounter(GraphicsContext*);
 private:
     virtual void willBeDestroyed();
     void didFlushCompositingState();
@@ -104,7 +105,6 @@ private:
     void updateBackingStore();
     void prepareBackingStore();
     bool shouldHaveBackingStore() const;
-    void drawRepaintCounter(GraphicsContext*);
     void animationStartedTimerFired(Timer<GraphicsLayerTextureMapper>*);
 
     OwnPtr<TextureMapperLayer> m_layer;

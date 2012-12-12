@@ -21,6 +21,7 @@
 #include "TextureMapperImageBuffer.h"
 
 #include "FilterEffectRenderer.h"
+#include "GraphicsLayer.h"
 #if PLATFORM(QT)
 #include "NativeImageQt.h"
 #endif
@@ -28,6 +29,8 @@
 
 #if USE(TEXTURE_MAPPER)
 namespace WebCore {
+
+static const int s_maximumAllowedImageBufferDimension = 4096;
 
 void BitmapTextureImageBuffer::updateContents(const void* data, const IntRect& targetRect, const IntPoint& sourceOffset, int bytesPerLine, UpdateContentsFlag)
 {
@@ -54,6 +57,20 @@ void BitmapTextureImageBuffer::updateContents(const void* data, const IntRect& t
 #endif
 }
 
+void BitmapTextureImageBuffer::updateContents(TextureMapper* textureMapper, GraphicsLayer* sourceLayer, const IntRect& targetRect, const IntPoint& sourceOffset, UpdateContentsFlag)
+{
+    GraphicsContext* context = m_image->context();
+
+    context->clearRect(targetRect);
+
+    IntRect sourceRect(targetRect);
+    sourceRect.setLocation(sourceOffset);
+    context->save();
+    context->translate(targetRect.x() - sourceOffset.x(), targetRect.y() - sourceOffset.y());
+    sourceLayer->paintGraphicsLayerContents(*context, sourceRect);
+    context->restore();
+}
+
 void BitmapTextureImageBuffer::didReset()
 {
     m_image = ImageBuffer::create(contentSize());
@@ -62,6 +79,11 @@ void BitmapTextureImageBuffer::didReset()
 void BitmapTextureImageBuffer::updateContents(Image* image, const IntRect& targetRect, const IntPoint& offset, UpdateContentsFlag)
 {
     m_image->context()->drawImage(image, ColorSpaceDeviceRGB, targetRect, IntRect(offset, targetRect.size()), CompositeCopy);
+}
+
+IntSize TextureMapperImageBuffer::maxTextureSize() const
+{
+    return IntSize(s_maximumAllowedImageBufferDimension, s_maximumAllowedImageBufferDimension);
 }
 
 void TextureMapperImageBuffer::beginClip(const TransformationMatrix& matrix, const FloatRect& rect)

@@ -80,6 +80,25 @@ void TextureMapperTile::updateContents(TextureMapper* textureMapper, Image* imag
     m_texture->updateContents(image, targetRect, sourceOffset, updateContentsFlag);
 }
 
+void TextureMapperTile::updateContents(TextureMapper* textureMapper, GraphicsLayer* sourceLayer, const IntRect& dirtyRect, BitmapTexture::UpdateContentsFlag updateContentsFlag)
+{
+    IntRect targetRect = enclosingIntRect(m_rect);
+    targetRect.intersect(dirtyRect);
+    if (targetRect.isEmpty())
+        return;
+    IntPoint sourceOffset = targetRect.location();
+
+    // Normalize targetRect to the texture's coordinates.
+    targetRect.move(-m_rect.x(), -m_rect.y());
+
+    if (!m_texture) {
+        m_texture = textureMapper->createTexture();
+        m_texture->reset(targetRect.size(), BitmapTexture::SupportsAlpha);
+    }
+
+    m_texture->updateContents(textureMapper, sourceLayer, targetRect, sourceOffset, updateContentsFlag);
+}
+
 void TextureMapperTile::paint(TextureMapper* textureMapper, const TransformationMatrix& transform, float opacity, BitmapTexture* mask, const unsigned exposedEdges)
 {
     if (texture().get())
@@ -195,6 +214,13 @@ void TextureMapperTiledBackingStore::updateContents(TextureMapper* textureMapper
     createOrDestroyTilesIfNeeded(totalSize, textureMapper->maxTextureSize(), image->currentFrameHasAlpha());
     for (size_t i = 0; i < m_tiles.size(); ++i)
         m_tiles[i].updateContents(textureMapper, image, dirtyRect, updateContentsFlag);
+}
+
+void TextureMapperTiledBackingStore::updateContents(TextureMapper* textureMapper, GraphicsLayer* sourceLayer, const FloatSize& totalSize, const IntRect& dirtyRect, BitmapTexture::UpdateContentsFlag updateContentsFlag)
+{
+    createOrDestroyTilesIfNeeded(totalSize, textureMapper->maxTextureSize(), true);
+    for (size_t i = 0; i < m_tiles.size(); ++i)
+        m_tiles[i].updateContents(textureMapper, sourceLayer, dirtyRect, updateContentsFlag);
 }
 
 PassRefPtr<BitmapTexture> TextureMapperTiledBackingStore::texture() const

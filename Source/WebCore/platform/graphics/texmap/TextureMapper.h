@@ -49,10 +49,11 @@ namespace WebCore {
 
 class BitmapTexturePool;
 class CustomFilterProgram;
+class GraphicsLayer;
 class TextureMapper;
 
 // A 2D texture that can be the target of software or GL rendering.
-class BitmapTexture  : public RefCounted<BitmapTexture> {
+class BitmapTexture : public RefCounted<BitmapTexture> {
 public:
     enum Flag {
         SupportsAlpha = 0x01
@@ -75,6 +76,7 @@ public:
 
     virtual IntSize size() const = 0;
     virtual void updateContents(Image*, const IntRect&, const IntPoint& offset, UpdateContentsFlag) = 0;
+    virtual void updateContents(TextureMapper*, GraphicsLayer*, const IntRect& target, const IntPoint& offset, UpdateContentsFlag);
     virtual void updateContents(const void*, const IntRect& target, const IntPoint& offset, int bytesPerLine, UpdateContentsFlag) = 0;
     virtual bool isValid() const = 0;
     inline Flags flags() const { return m_flags; }
@@ -151,7 +153,7 @@ public:
     virtual void beginPainting(PaintFlags = 0) { }
     virtual void endPainting() { }
 
-    virtual IntSize maxTextureSize() const { return IntSize(INT_MAX, INT_MAX); }
+    virtual IntSize maxTextureSize() const = 0;
 
     virtual PassRefPtr<BitmapTexture> acquireTextureFromPool(const IntSize&);
 
