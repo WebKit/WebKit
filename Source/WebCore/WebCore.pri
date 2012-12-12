@@ -235,7 +235,11 @@ use?(GRAPHICS_SURFACE) {
 }
 
 have?(sqlite3) {
-    PKGCONFIG += sqlite3
+    mac {
+        LIBS += -lsqlite3
+    } else
+        PKGCONFIG += sqlite3
+    }
 } else {
     SQLITE3SRCDIR = $$(SQLITE3SRCDIR)
     isEmpty(SQLITE3SRCDIR): SQLITE3SRCDIR = ../../../qtbase/src/3rdparty/sqlite/
