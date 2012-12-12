@@ -2766,10 +2766,6 @@ crbug.com/84032 [ Win ] fast/dom/object-plugin-hides-properties.html [ Pass Time
 webkit.org/b/98315 css3/compositing/blend-mode-property.html [ Failure ]
 webkit.org/b/98315 css3/compositing/should-have-compositing-layer.html [ Failure ]
 
-# two regions reftests failing on Chromium
-webkit.org/b/74219 fast/regions/positioned-objects-block-static-spanning-regions-rtl.html [ ImageOnlyFailure Pass ]
-webkit.org/b/74219 fast/regions/positioned-objects-block-static-spanning-regions.html [ ImageOnlyFailure Pass ]
-
 webkit.org/b/96267 fast/regions/autoheight-regions-mark.html [ Pass ]
 
 webkit.org/b/74137 [ SnowLeopard ] fast/regions/outline-sides-in-region.html [ Pass Timeout ]

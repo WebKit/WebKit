@@ -491,7 +491,6 @@ webkit.org/b/103468 fast/regions/overflow-in-uniform-regions.html [ ImageOnlyFai
 webkit.org/b/103468 fast/regions/position-writing-modes-in-variable-width-regions.html [ ImageOnlyFailure Pass ]
 webkit.org/b/103468 fast/regions/positioned-objects-block-static-in-regions.html [ ImageOnlyFailure Pass ]
 webkit.org/b/103468 fast/regions/positioned-objects-block-static-in-rtl-regions.html [ ImageOnlyFailure Pass ]
-webkit.org/b/103468 fast/regions/positioned-objects-block-static-spanning-regions.html [ ImageOnlyFailure Pass ]
 webkit.org/b/103468 fast/regions/positioned-objects-clipped-spanning-regions.html [ ImageOnlyFailure Pass ]
 webkit.org/b/103468 fast/regions/positioned-objects-in-regions.html [ ImageOnlyFailure Pass ]
 webkit.org/b/103468 fast/regions/positioned-objects-in-rtl-regions.html [ ImageOnlyFailure Pass ]

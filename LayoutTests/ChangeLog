@@ -1,3 +1,24 @@
+2012-12-12  Mihnea Ovidenie  <mihnea@adobe.com>
+
+        [CSS Regions] Two regions reftests are failing the image match
+        https://bugs.webkit.org/show_bug.cgi?id=74219
+
+        Reviewed by Julien Chaffraix.
+
+        Modify the 2 tests that were failing on other platforms (chromium, qt, gtk, efl). The tests were failing because different platforms were having different default font-family, font-size
+        values. I have explicitly set the font-size, font-family and the line-height for the text that will be paginated in regions. Also changed the text color to yellow,
+        so that we are able to see how the text lines are displayed in each region.
+
+        * fast/regions/positioned-objects-block-static-spanning-regions-expected.html:
+        * fast/regions/positioned-objects-block-static-spanning-regions-rtl-expected.html:
+        * fast/regions/positioned-objects-block-static-spanning-regions-rtl.html:
+        * fast/regions/positioned-objects-block-static-spanning-regions.html:
+        * platform/chromium/TestExpectations:
+        * platform/efl-wk2/TestExpectations:
+        * platform/efl/TestExpectations:
+        * platform/gtk/TestExpectations:
+        * platform/qt/TestExpectations:
+
 2012-12-12  Julien Chaffraix  <jchaffraix@webkit.org>
 
         [CSS Grid Layout] Implement CSS parsing and handling for min-content and max-content

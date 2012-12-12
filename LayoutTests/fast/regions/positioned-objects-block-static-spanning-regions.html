@@ -1,25 +1,27 @@
 <!doctype html>
-
- <style>
+<html>
+<head>
+<style>
     #content {
        -webkit-flow-into: flow1;
     }
-    
+
     #first-box {
-        margin:  10%;
+        margin: 10%;
         height:350px;
         background-color:#cccccc;
     }
-    
+
     #second-box {
         position:absolute;
         top:0;
         height:450px;
         width:50%;
         background-color:#00a000;
-        color:#00a000
+        color:#ffff00;
+        font: 16px/1.25 monospace;
     }
-    
+
     #region1, #region2, #region3 {
         border: 1px solid black;
         -webkit-flow-from: flow1;
@@ -29,31 +31,45 @@
         width: 200px;
         height: 150px;
     }
-    
+
     #region2 {
         width: 300px;
         height: 180px;
     }
-    
+
     #region3 {
         width: 120px;
         height: 120px;
     }
 </style>
-
+</head>
 <body>
 <p>The green positioned object should go through all three regions. Its left edge should align with
 the left side of the light grey boxes in each region. No red should be visible.</p>
-
 <div id="content">
     <div id="first-box">
         <div style="width:100px;height:100px;background-color:red"></div>
         <div id="second-box">
             Some text.<br>
-             Some text.<br>
-              Some text.<br>
-               Some text.<br>
-                Some text.<br> Some text.<br> Some text.<br> Some text.<br> Some text.<br> Some text.<br> Some text.<br> Some text.<br> Some text.<br> Some text.<br> Some text.<br> Some text.<br> Some text.<br> Some text.<br> Some text.<br>      </div>
+            Some text.<br>
+            Some text.<br>
+            Some text.<br>
+            Some text.<br>
+            Some text.<br>
+            Some text.<br>
+            Some text.<br>
+            Some text.<br>
+            Some text.<br>
+            Some text.<br>
+            Some text.<br>
+            Some text.<br>
+            Some text.<br>
+            Some text.<br>
+            Some text.<br>
+            Some text.<br>
+            Some text.<br>
+            Some text.<br>
+        </div>
     </div>
 </div>
 
@@ -62,3 +78,5 @@ the left side of the light grey boxes in each region. No red should be visible.<
     <div id="region2"></div>
     <div id="region3"></div>
 </div>
+</body>
+</html>

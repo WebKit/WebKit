@@ -752,9 +752,6 @@ webkit.org/b/103880 fast/writing-mode/vertical-font-vmtx-units-per-em.html [ Fai
 # FAILING TESTS
 #////////////////////////////////////////////////////////////////////////////////////////
 
-# CSS Regions Reftest issues.
-webkit.org/b/74219 fast/regions/positioned-objects-block-static-spanning-regions-rtl.html [ ImageOnlyFailure ]
-
 # CSS Regions issues.
 webkit.org/b/97209 fast/regions/webkit-flow-floats-inside-regions-bounds.html [ Missing ]
 

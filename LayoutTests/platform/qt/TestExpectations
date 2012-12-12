@@ -2134,7 +2134,6 @@ svg/animations/animateTransform-rotate-around-point.svg
 svg/animations/animateMotion-additive-1.svg
 svg/transforms/transformed-text-fill-gradient.html
 fast/regions/floats-basic-in-variable-width-regions.html
-fast/regions/positioned-objects-block-static-spanning-regions-rtl.html
 fast/regions/region-style-rule-position.html
 
 # Failing fast/css/sticky/ tests with minor pixel differences
