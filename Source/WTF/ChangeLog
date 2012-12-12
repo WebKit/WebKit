@@ -1,3 +1,36 @@
+2012-12-11  Ilya Tikhonovsky  <loislo@chromium.org>
+
+        Web Inspector: Native Memory Instrumentation: simplify Sequences processing code.
+        https://bugs.webkit.org/show_bug.cgi?id=104777
+
+        Reviewed by Yury Semikhatsky.
+
+        Redesign reportMemoryUsage for the sequences.
+        With the old schema we couldn't instrument HashMap<key, WebCore::LayoutUnit>
+        because LayoutUnit has overloaded conversion operators for double, int, etc.
+        I wrote an empty SequenceMemoryInstrumentationTraits for LayoutUnit class
+        but it doesn't help because the root of problem was hidden in the free template function reportSequenceMemoryUsage.
+        I could overload reportSequenceMemoryUsage too but in this case I need to fully specify all the types
+        for the iterators like HashMap<.....>::const_iterator. Too many letters.
+        I found a better solution. Free reportSequenceMemoryUsage can be converted into default implementation of static
+        reportMemoryUsage traits method. In this case the types of iterators will be inferred automaticaly. The old default
+        implementation becomes a custom implementation for the user defined types.
+
+        * wtf/MemoryInstrumentationHashCountedSet.h:
+        (WTF::reportMemoryUsage):
+        * wtf/MemoryInstrumentationHashMap.h:
+        (WTF::reportMemoryUsage):
+        * wtf/MemoryInstrumentationHashSet.h:
+        (WTF::reportMemoryUsage):
+        * wtf/MemoryInstrumentationListHashSet.h:
+        (WTF::reportMemoryUsage):
+        * wtf/MemoryInstrumentationSequence.h:
+        (WTF):
+        (WTF::SequenceMemoryInstrumentationTraits::reportMemoryUsage):
+        (SequenceMemoryInstrumentationTraits):
+        * wtf/MemoryInstrumentationVector.h:
+        (WTF::reportMemoryUsage):
+
 2012-12-10  Yury Semikhatsky  <yurys@chromium.org>
 
         Memory instrumentation: make sure each edge is reported only once

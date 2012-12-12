@@ -41,7 +41,7 @@ void reportMemoryUsage(const HashSet<ValueArg, HashArg, TraitsArg>* hashSet, Mem
 {
     MemoryClassInfo info(memoryObjectInfo, hashSet);
     info.addPrivateBuffer(sizeof(typename HashTable<ValueArg, ValueArg, IdentityExtractor, HashArg, TraitsArg, TraitsArg>::ValueType) * hashSet->capacity());
-    reportSequenceMemoryUsage<ValueArg, typename HashSet<ValueArg, HashArg, TraitsArg>::const_iterator>(hashSet->begin(), hashSet->end(), info);
+    SequenceMemoryInstrumentationTraits<ValueArg>::reportMemoryUsage(hashSet->begin(), hashSet->end(), info);
 }
 
 }

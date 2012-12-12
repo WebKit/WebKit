@@ -42,7 +42,7 @@ void reportMemoryUsage(const Vector<T, inlineCapacity>* vector, MemoryObjectInfo
     MemoryClassInfo info(memoryObjectInfo, vector);
     if (inlineCapacity < vector->capacity())
         info.addRawBuffer(vector->data(), vector->capacity() * sizeof(T));
-    reportSequenceMemoryUsage<T, typename Vector<T, inlineCapacity>::const_iterator>(vector->begin(), vector->end(), info);
+    SequenceMemoryInstrumentationTraits<T>::reportMemoryUsage(vector->begin(), vector->end(), info);
 }
 
 }

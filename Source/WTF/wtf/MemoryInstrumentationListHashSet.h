@@ -41,7 +41,7 @@ void reportMemoryUsage(const ListHashSet<ValueArg, inlineCapacity, HashArg>* set
 {
     MemoryClassInfo info(memoryObjectInfo, set);
     info.addPrivateBuffer(set->sizeInBytes() - sizeof(*set));
-    reportSequenceMemoryUsage<ValueArg, typename ListHashSet<ValueArg, inlineCapacity, HashArg>::const_iterator>(set->begin(), set->end(), info);
+    SequenceMemoryInstrumentationTraits<ValueArg>::reportMemoryUsage(set->begin(), set->end(), info);
 }
 
 }

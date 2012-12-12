@@ -43,7 +43,7 @@ void reportMemoryUsage(const HashCountedSet<ValueArg, HashArg, TraitsArg>* hashS
 
     typedef HashMap<ValueArg, unsigned, HashArg, TraitsArg> HashMapType;
     info.addPrivateBuffer(sizeof(typename HashMapType::ValueType) * hashSet->capacity());
-    reportSequenceMemoryUsage<ValueArg, typename HashMapType::const_iterator::Keys>(hashSet->begin().keys(), hashSet->end().keys(), info);
+    SequenceMemoryInstrumentationTraits<ValueArg>::reportMemoryUsage(hashSet->begin().keys(), hashSet->end().keys(), info);
 }
 
 }

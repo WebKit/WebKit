@@ -36,9 +36,26 @@
 
 namespace WTF {
 
+template <typename T> struct NotConvertibleToInteger {
+};
+
+// Default implementation with integer type filter.
 template<typename ValueType>
 struct SequenceMemoryInstrumentationTraits {
-    template <typename I> static void reportMemoryUsage(I iterator, I end, MemoryClassInfo& info)
+    template <typename I> static void reportMemoryUsage(I begin, I end, MemoryClassInfo& info)
+    {
+        // Check if type is convertible to integer to handle iteration through enum values.
+        typedef SequenceMemoryInstrumentationTraits<typename Conditional<IsConvertibleToInteger<ValueType>::value, int, NotConvertibleToInteger<ValueType> >::Type> SequenceTraits;
+        SequenceTraits::reportMemoryUsage(begin, end, info);
+    }
+
+};
+
+// Specialization for the types which can't be converted to int.
+template<typename ValueType>
+struct SequenceMemoryInstrumentationTraits<NotConvertibleToInteger<ValueType> > {
+    template <typename I>
+    static void reportMemoryUsage(I iterator, I end, MemoryClassInfo& info)
     {
         while (iterator != end) {
             info.addMember(*iterator);
@@ -66,12 +83,6 @@ template<> struct SequenceMemoryInstrumentationTraits<const char*> {
 template<> struct SequenceMemoryInstrumentationTraits<const void*> {
     template <typename I> static void reportMemoryUsage(I, I, MemoryClassInfo&) { }
 };
-
-template<typename ValueType, typename I> void reportSequenceMemoryUsage(I begin, I end, MemoryClassInfo& info)
-{
-    // Check if type is convertible to integer to handle iteration through enum values.
-    SequenceMemoryInstrumentationTraits<typename Conditional<IsConvertibleToInteger<ValueType>::value, int, ValueType>::Type>::reportMemoryUsage(begin, end, info);
-}
 
 }
 
