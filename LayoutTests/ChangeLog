@@ -1,3 +1,9 @@
+2012-12-12  Kentaro Hara  <haraken@chromium.org>
+
+        Unreviewed gardening. Marked inspector-protocol/take-heap-snapshot.html as CRASH.
+
+        * platform/chromium/TestExpectations:
+
 2012-12-12  Zoltan Arvai  <zarvai@inf.u-szeged.hu>
 
         [Qt] Unreviewed gardening.
