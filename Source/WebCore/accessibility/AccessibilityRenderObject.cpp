@@ -1265,8 +1265,25 @@ bool AccessibilityRenderObject::accessibilityIsIgnored() const
     // check if there's some kind of accessible name for the element)
     // to decide an element's visibility is not as definitive as
     // previous checks, so this should remain as one of the last.
-    if (!helpText().isEmpty() || !title().isEmpty() || !accessibilityDescription().isEmpty())
+    //
+    // These checks are simplified in the interest of execution speed;
+    // for example, any element having an alt attribute will make it
+    // not ignored, rather than just images.
+    if (!getAttribute(aria_helpAttr).isEmpty() || !getAttribute(aria_describedbyAttr).isEmpty() || !getAttribute(altAttr).isEmpty() || !getAttribute(titleAttr).isEmpty())
         return false;
+
+    // Don't ignore generic focusable elements like <div tabindex=0>
+    // unless they're completely empty, with no children.
+    if (isGenericFocusableElement() && node->firstChild())
+        return false;
+
+    if (!ariaAccessibilityDescription().isEmpty())
+        return false;
+
+#if ENABLE(MATHML)
+    if (!getAttribute(MathMLNames::alttextAttr).isEmpty())
+        return false;
+#endif
     
     // By default, objects should be ignored so that the AX hierarchy is not 
     // filled with unnecessary items.

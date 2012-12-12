@@ -1036,6 +1036,11 @@ bool AccessibilityNodeObject::isGenericFocusableElement() const
     if (node() && node()->hasTagName(bodyTag))
         return false;
 
+    // An SVG root is focusable by default, but it's probably not interactive, so don't
+    // include it. It can still be made accessible by giving it an ARIA role.
+    if (roleValue() == SVGRootRole)
+        return false;
+
     return true;
 }
 

@@ -1,3 +1,21 @@
+2012-12-11  Dominic Mazzoni  <dmazzoni@google.com>
+
+        AX: accessibilityIsIgnored should avoid computing textUnderElement
+        https://bugs.webkit.org/show_bug.cgi?id=104688
+
+        Reviewed by Chris Fleizach.
+
+        Simplify the logic in accessibilityIsIgnored without affecting
+        the results of any tests. In particular, avoid expensive calls to
+        textUnderElement.
+
+        Covered by existing tests.
+
+        * accessibility/AccessibilityNodeObject.cpp:
+        (WebCore::AccessibilityNodeObject::isGenericFocusableElement):
+        * accessibility/AccessibilityRenderObject.cpp:
+        (WebCore::AccessibilityRenderObject::accessibilityIsIgnored):
+
 2012-12-11  Kentaro Hara  <haraken@chromium.org>
 
         [V8] Reachable event listeners on image elements can be collected in a minor DOM GC
