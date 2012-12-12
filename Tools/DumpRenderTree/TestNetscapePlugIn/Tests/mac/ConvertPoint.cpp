@@ -69,7 +69,7 @@ public:
         return true;
     }
 private:
-    virtual NPError NPP_SetWindow(NPWindow*)
+    NPError NPP_New(NPMIMEType pluginType, uint16_t mode, int16_t argc, char *argn[], char *argv[], NPSavedData *saved)
     {
         if (testConvert())
             executeScript("document.getElementById('result').innerHTML = 'SUCCESS!'");

@@ -264,9 +264,6 @@ webkit.org/b/98527 http/tests/loading/text-content-type-with-binary-extension.ht
 # Causes next test to crash
 webkit.org/b/98960 fast/parser/document-open-in-unload.html [ Skip ]
 
-# Crashes on WK2
-webkit.org/b/104735 platform/mac/plugins/convert-point.html [ Skip ]
-
 # ENABLE(SHADOW_DOM) is disabled.
 webkit.org/b/76359 editing/shadow [ Skip ]
 webkit.org/b/76359 fast/dom/shadow [ Skip ]
