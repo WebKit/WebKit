@@ -66,6 +66,7 @@ public:
     void setValidityUndetermined();
     void invalidateDistribution();
     void ensureDistribution();
+    void ensureDistributionFromDocument();
 
     ContentDistributor& distributor();
     const ContentDistributor& distributor() const;

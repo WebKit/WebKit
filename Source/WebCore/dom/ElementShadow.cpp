@@ -169,6 +169,16 @@ void ElementShadow::ensureDistribution()
     m_distributor.distribute(host());
 }
 
+void ElementShadow::ensureDistributionFromDocument()
+{
+    Vector<Element*, 8> hosts;
+    for (Element* current = host(); current; current = current->shadowHost())
+        hosts.append(current);
+
+    for (size_t i = hosts.size(); i > 0; --i)
+        hosts[i - 1]->shadow()->ensureDistribution();
+}
+
 void ElementShadow::setValidityUndetermined()
 {
     m_distributor.setValidity(ContentDistributor::Undetermined);

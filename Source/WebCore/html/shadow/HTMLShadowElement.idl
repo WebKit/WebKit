@@ -33,4 +33,5 @@
     V8EnabledAtRuntime=shadowDOM
 ] interface HTMLShadowElement : HTMLElement {
     attribute boolean resetStyleInheritance;
+    readonly attribute ShadowRoot olderShadowRoot;
 };

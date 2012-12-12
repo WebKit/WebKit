@@ -47,6 +47,8 @@ public:
     virtual const CSSSelectorList& selectorList() { return emptySelectorList(); }
     virtual Type insertionPointType() const OVERRIDE { return ShadowInsertionPoint; }
 
+    ShadowRoot* olderShadowRoot();
+
 private:
     HTMLShadowElement(const QualifiedName&, Document*);
 

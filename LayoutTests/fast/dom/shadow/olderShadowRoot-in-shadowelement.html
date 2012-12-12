@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html>
+<body>
+<script src="../../js/resources/js-test-pre.js"></script>
+<script src="resources/polyfill.js"></script>
+
+<div id="container"></div>
+<pre id="console"></div>
+
+<script>
+description('Confirms shadow.olderShadowRoot returns correct ShadowRoot');
+
+function testCase(f)
+{
+    host = document.createElement('div');
+    oldestShadowRoot = host.webkitCreateShadowRoot();
+    youngerShadowRoot = host.webkitCreateShadowRoot();
+
+    container.appendChild(host);
+
+    f();
+
+    container.innerHTML = "";
+    debug('');
+}
+
+testCase(function()
+{
+    debug('shadow in younger ShadowDOM');
+    shadow = document.createElement('shadow');
+    youngerShadowRoot.appendChild(shadow);
+
+    shouldBe('shadow.olderShadowRoot', 'oldestShadowRoot');
+});
+
+testCase(function()
+{
+    debug('shadow in the oldest ShadowDOM');
+    shadow = document.createElement('shadow');
+    oldestShadowRoot.appendChild(shadow);
+
+    shouldBe('shadow.olderShadowRoot', 'null');
+});
+
+testCase(function()
+{
+    debug('2 active shadows');
+    shadow1 = document.createElement('shadow');
+    shadow2 = document.createElement('shadow');
+    youngerShadowRoot.appendChild(shadow1);
+    youngerShadowRoot.appendChild(shadow2);
+
+    shouldBe('shadow1.olderShadowRoot', 'oldestShadowRoot');
+    shouldBe('shadow2.olderShadowRoot', 'null');
+});
+
+testCase(function()
+{
+    debug('the first shadow is not active');
+    shadow1 = document.createElement('shadow');
+    shadow2 = document.createElement('shadow');
+
+    var content = document.createElement('content');
+    content.appendChild(shadow1);
+
+    youngerShadowRoot.appendChild(content);
+    youngerShadowRoot.appendChild(shadow2);
+
+    shouldBe('shadow1.olderShadowRoot', 'null');
+    shouldBe('shadow2.olderShadowRoot', 'oldestShadowRoot');
+});
+
+testCase(function()
+{
+    debug('nested ShadowDOM case');
+    nestedHost = document.createElement('div');
+    nestedOldestShadowRoot = nestedHost.webkitCreateShadowRoot();
+    nestedYoungerShadowRoot = nestedHost.webkitCreateShadowRoot();
+    oldestShadowRoot.appendChild(nestedHost);
+
+    shadow1 = document.createElement('shadow');
+    shadow2 = document.createElement('shadow');
+    nestedOldestShadowRoot.appendChild(shadow1);
+    nestedYoungerShadowRoot.appendChild(shadow2);
+
+    shouldBe('shadow1.olderShadowRoot', 'null');
+    shouldBe('shadow2.olderShadowRoot', 'nestedOldestShadowRoot');
+});
+
+testCase(function()
+{
+    debug('orphan shadow');
+    shadow = document.createElement('shadow');
+    shouldBe('shadow.olderShadowRoot', 'null');
+});
+
+testCase(function()
+{
+    debug('orphan Shadow DOM');
+    shadow = document.createElement('shadow');
+    youngerShadowRoot.appendChild(shadow);
+
+    container.removeChild(host);
+
+    shouldBe('shadow.olderShadowRoot', 'oldestShadowRoot');
+});
+
+container.innerHTML = '';
+</script>
+<script src="../../js/resources/js-test-post.js"></script>
+</body>
+</html>

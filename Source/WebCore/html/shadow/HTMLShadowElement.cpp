@@ -65,4 +65,18 @@ const CSSSelectorList& HTMLShadowElement::emptySelectorList()
     return selectorList;
 }
 
+ShadowRoot* HTMLShadowElement::olderShadowRoot()
+{
+    if (!treeScope()->rootNode()->isShadowRoot())
+        return 0;
+
+    toShadowRoot(treeScope()->rootNode())->owner()->ensureDistributionFromDocument();
+
+    ShadowRoot* older = toShadowRoot(treeScope()->rootNode())->olderShadowRoot();
+    if (!older || older->type() != ShadowRoot::AuthorShadowRoot || older->assignedTo() != this)
+        return 0;
+
+    return older;
+}
+
 } // namespace WebCore

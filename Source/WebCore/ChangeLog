@@ -1,3 +1,27 @@
+2012-12-12  Shinya Kawanaka  <shinyak@chromium.org>
+
+        [Shadow DOM] Implement HTMLShadowElement::olderShadowRoot
+        https://bugs.webkit.org/show_bug.cgi?id=104218
+
+        Reviewed by Hajime Morita.
+
+        Implements HTMLShadowElement::olderShadowRoot, which returns the ShadowRoot the HTMLShadowElement is assigned to.
+        When such ShadowRoot does not exist, 0 is returned.
+
+        Test: fast/dom/shadow/olderShadowRoot-in-shadowelement.html
+
+        * dom/ElementShadow.cpp:
+        (WebCore::ElementShadow::ensureDistributionFromDocument): Ensures distribution of this ElementShadow and
+        all of the parent TreeScope distribution. This function will be shared for Bug 104345.
+        (WebCore):
+        * dom/ElementShadow.h:
+        (ElementShadow):
+        * html/shadow/HTMLShadowElement.cpp:
+        (WebCore::HTMLShadowElement::olderShadowRoot):
+        (WebCore):
+        * html/shadow/HTMLShadowElement.h:
+        * html/shadow/HTMLShadowElement.idl:
+
 2012-12-12  No'am Rosenthal  <noam@webkit.org>
 
         [Texmap] Consolidate redundant code for ARB_RECT texture
