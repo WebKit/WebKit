@@ -1,3 +1,26 @@
+2012-12-11  Tim Horton  <timothy_horton@apple.com>
+
+        -webkit-svg-shadow radius changes don't cause children's boundaries to be recomputed
+        https://bugs.webkit.org/show_bug.cgi?id=104722
+        <rdar://problem/12821080>
+
+        Reviewed by Simon Fraser.
+
+        Changes to -webkit-svg-shadow currently cause a relayout of the directly affected renderer
+        and its parents, but not its children. However, children have the shadow radius
+        baked into their cached boundaries, so these need to be invalidated.
+
+        Test: svg/repaint/repaint-webkit-svg-shadow-container.html
+
+        * rendering/RenderObject.h: Expose needsBoundariesUpdate().
+        * rendering/svg/RenderSVGContainer.h: Expose needsBoundariesUpdate().
+        * rendering/svg/RenderSVGImage.h: Expose needsBoundariesUpdate().
+        * rendering/svg/RenderSVGRoot.h: Expose needsBoundariesUpdate().
+        * rendering/svg/RenderSVGShape.h: Expose needsBoundariesUpdate().
+        * rendering/svg/SVGRenderSupport.cpp:
+        (WebCore::SVGRenderSupport::layoutChildren): If the renderer has a shadow and
+        is in needs of a boundaries update, mark children as needing boundaries updates too.
+
 2012-12-11  Xianzhu Wang  <wangxianzhu@chromium.org>
 
         Add window.internals.mainThreadScrollReasonsAsText for testing slow scrolling
