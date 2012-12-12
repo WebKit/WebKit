@@ -47,6 +47,8 @@ public:
     virtual void setVisibleRect(const IntRect&) = 0;
     virtual IntRect visibleRect() const = 0;
 
+    virtual void prepopulateRect(const IntRect&) = 0;
+
     virtual void setIsInWindow(bool) = 0;
 
     enum {

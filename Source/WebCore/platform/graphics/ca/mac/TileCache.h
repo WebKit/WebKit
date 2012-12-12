@@ -30,6 +30,7 @@
 #include "IntRect.h"
 #include "TiledBacking.h"
 #include "Timer.h"
+#include <wtf/Deque.h>
 #include <wtf/HashMap.h>
 #include <wtf/Noncopyable.h>
 #include <wtf/PassOwnPtr.h>
@@ -82,12 +83,30 @@ public:
 
     // Only public for the WebTileCacheMapLayer.
     void drawTileMapContents(CGContextRef, CGRect);
-    
+
+public:
+    // Only public for inline methods in the implementation file.
+    typedef IntPoint TileIndex;
+    typedef unsigned TileCohort;
+    static const TileCohort VisibleTileCohort = UINT_MAX;
+
+    struct TileInfo {
+        RetainPtr<WebTileLayer> layer;
+        TileCohort cohort; // VisibleTileCohort is visible.
+        bool hasStaleContent;
+        
+        TileInfo()
+            : cohort(VisibleTileCohort)
+            , hasStaleContent(false)
+        { }
+    };
+
 private:
     TileCache(WebTileCacheLayer*);
 
     // TiledBacking member functions.
     virtual void setVisibleRect(const IntRect&) OVERRIDE;
+    virtual void prepopulateRect(const IntRect&) OVERRIDE;
     virtual void setIsInWindow(bool) OVERRIDE;
     virtual void setTileCoverage(TileCoverage) OVERRIDE;
     virtual TileCoverage tileCoverage() const OVERRIDE { return m_tileCoverage; }
@@ -102,17 +121,37 @@ private:
 
     IntRect bounds() const;
 
-    typedef IntPoint TileIndex;
     IntRect rectForTileIndex(const TileIndex&) const;
     void getTileIndexRangeForRect(const IntRect&, TileIndex& topLeft, TileIndex& bottomRight) const;
 
-    IntRect computeTileCoverageRect() const;
+    IntRect computeTileCoverageRect(const IntRect& previousVisibleRect) const;
     IntSize tileSizeForCoverageRect(const IntRect&) const;
 
     void scheduleTileRevalidation(double interval);
     void tileRevalidationTimerFired(Timer<TileCache>*);
-    void revalidateTiles();
+
+    void scheduleCohortRemoval();
+    void cohortRemovalTimerFired(Timer<TileCache>*);
+    
+    enum TileValidationPolicy {
+        KeepSecondaryTiles,
+        PruneSecondaryTiles
+    };
+    void revalidateTiles(TileValidationPolicy = KeepSecondaryTiles);
+    void ensureTilesForRect(const IntRect&);
     void updateTileCoverageMap();
+
+    void removeAllTiles();
+    void removeAllSecondaryTiles();
+    void removeTilesInCohort(TileCohort);
+
+    TileCohort nextTileCohort() const;
+    void startedNewCohort(TileCohort);
+    
+    TileCohort newestTileCohort() const;
+    TileCohort oldestTileCohort() const;
+
+    void setTileNeedsDisplayInRect(const TileIndex&, TileInfo&, const IntRect& repaintRectInTileCoords, const IntRect& coverageRectInTileCoords);
 
     WebTileLayer* tileLayerAtIndex(const TileIndex&) const;
     RetainPtr<WebTileLayer> createTileLayer(const IntRect&);
@@ -126,11 +165,25 @@ private:
 
     IntSize m_tileSize;
     IntRect m_visibleRect;
+    IntRect m_visibleRectAtLastRevalidate;
 
-    typedef HashMap<TileIndex, RetainPtr<WebTileLayer> > TileMap;
+    typedef HashMap<TileIndex, TileInfo> TileMap;
     TileMap m_tiles;
     Timer<TileCache> m_tileRevalidationTimer;
-    IntRect m_tileCoverageRect;
+    Timer<TileCache> m_cohortRemovalTimer;
+
+    struct TileCohortInfo {
+        TileCohort cohort;
+        double creationTime; // in monotonicallyIncreasingTime().
+        TileCohortInfo(TileCohort inCohort, double inTime)
+            : cohort(inCohort)
+            , creationTime(inTime)
+        { }
+    };
+    typedef Deque<TileCohortInfo> TileCohortList;
+    TileCohortList m_cohortList;
+    
+    IntRect m_primaryTileCoverageRect; // In tile coords.
 
     CGFloat m_scale;
     CGFloat m_deviceScaleFactor;
