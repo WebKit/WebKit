@@ -7,9 +7,9 @@ EVENT(webkitsourceended) : ended
 onFirstSourceEnded
 EVENT(playing)
 triggerFirstSeek
-EVENT(webkitsourceopen) : open
 EVENT(seeking)
 onFirstSeeking
+EVENT(webkitsourceopen) : open
 EVENT(seeked)
 onFirstSeeked
 EVENT(seeking)

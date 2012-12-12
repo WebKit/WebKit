@@ -1,3 +1,19 @@
+2012-12-12  Aaron Colwell  <acolwell@chromium.org>
+
+        Remove MediaSource 'ended' to 'open' transition when seeking.
+        https://bugs.webkit.org/show_bug.cgi?id=104583
+
+        Reviewed by Eric Carlson.
+
+        Updated seeking tests to no longer expect the the 'ended' to 'open'
+        transition on a seek.
+
+        * http/tests/media/media-source/video-media-source-seek-expected.txt:
+        * http/tests/media/media-source/video-media-source-seek.html:
+        * http/tests/media/media-source/video-media-source-state-changes-expected.txt:
+        * http/tests/media/media-source/video-media-source-state-changes.html:
+        * platform/chromium/TestExpectations:
+
 2012-12-12  Mihnea Ovidenie  <mihnea@adobe.com>
 
         [CSS Regions] Two regions reftests are failing the image match

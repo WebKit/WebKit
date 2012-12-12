@@ -5,8 +5,7 @@ EVENT(webkitsourceended)
 EVENT(playing)
 EVENT(timeupdate) : seeking to 2.78
 EVENT(seeking)
-EVENT(webkitsourceopen)
-EVENT(webkitsourceended)
+EVENT(seeked)
 EVENT(playing)
 EVENT(ended)
 END OF TEST

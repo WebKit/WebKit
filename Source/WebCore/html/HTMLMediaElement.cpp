@@ -2069,11 +2069,6 @@ void HTMLMediaElement::seek(float time, ExceptionCode& ec)
     m_lastSeekTime = time;
     m_sentEndEvent = false;
 
-#if ENABLE(MEDIA_SOURCE)
-    if (m_mediaSource && m_mediaSource->readyState() == MediaSource::endedKeyword())
-        setSourceState(MediaSource::openKeyword());
-#endif
-
     // 8 - Set the current playback position to the given new playback position
     m_player->seek(time);
 

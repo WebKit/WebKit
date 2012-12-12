@@ -72,7 +72,7 @@
                 videoTag.removeEventListener('playing', triggerFirstSeek);
 
                 // Now that we have appended all of the media segments and ended the stream,
-                // lets do a seek to test the "ended" -> "open" transition.
+                // lets do a seek to make sure we stay in the "ended" state.
                 videoTag.addEventListener('seeking', onFirstSeeking);
                 videoTag.addEventListener('seeked', onFirstSeeked);
                 videoTag.currentTime = seekTime;
@@ -85,10 +85,13 @@
                 var videoTag = event.target;
                 videoTag.removeEventListener('seeking', onFirstSeeking);
 
-                MediaSourceTest.expectSourceState(mediaSource, "open");
+                MediaSourceTest.expectSourceState(mediaSource, "ended");
 
                 // Start appending media segments.
                 appendMediaSegmentsForSeek(videoTag.currentTime);
+
+                // Verify that the source state transitioned to open after the append.
+                MediaSourceTest.expectSourceState(mediaSource, "open");
             }
 
             function onFirstSeeked(event)

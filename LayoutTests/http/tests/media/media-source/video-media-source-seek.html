@@ -7,19 +7,15 @@
         <script>
             var segmentHelper = new MediaSourceTest.SegmentHelper(WebMSegmentInfo.testWebM);
 
-            var firstOpen = true;
             var doSeek = true;
             var seekTime;
 
             function onSourceOpen(event)
             {
-                if (firstOpen) {
-                    firstOpen = false;
-
-                    segmentHelper.addSourceBuffer();
-                    segmentHelper.appendInitSegment();
-                    segmentHelper.appendUntilEndOfStream(0);
-                }
+                segmentHelper.addSourceBuffer();
+                segmentHelper.appendInitSegment();
+                segmentHelper.appendUntilEndOfStream(0);
+                MediaSourceTest.expectSourceState("ended");
             }
 
             function onTimeUpdate(event)
@@ -33,21 +29,13 @@
                 }
             }
 
-            function onSeeking(event)
-            {
-                var videoTag = event.target;
-
-                // Call abort to make sure the source buffer is in a state where it can accept new segments.
-                segmentHelper.sourceBuffer.abort();
-
-                var startIndex = segmentHelper.getMediaSegmentIndexForTimestamp(videoTag.currentTime);
-                segmentHelper.appendUntilEndOfStream(startIndex);
-            }
-
             function onSeeked(event) 
             {
+                consoleWrite("EVENT(seeked)");
                 var videoTag = event.target;
                 var currentTime = videoTag.currentTime;
+
+                MediaSourceTest.expectSourceState("ended");
 
                 if (Math.abs(currentTime - seekTime) > 0.001 ) {
                     failTest("Seeked to " + currentTime.toFixed(3) + " instead of " + seekTime.toFixed(3));
@@ -69,7 +57,6 @@
 
                 mediaSource.addEventListener('webkitsourceopen', onSourceOpen);
                 video.addEventListener('timeupdate', onTimeUpdate);
-                video.addEventListener('seeking', onSeeking);
                 video.addEventListener('seeked', onSeeked);
 
                 segmentHelper.init(video, function(success)

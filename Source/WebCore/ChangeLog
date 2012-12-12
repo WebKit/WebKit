@@ -1,3 +1,19 @@
+2012-12-12  Aaron Colwell  <acolwell@chromium.org>
+
+        Remove MediaSource 'ended' to 'open' transition when seeking.
+        https://bugs.webkit.org/show_bug.cgi?id=104583
+
+        Reviewed by Eric Carlson.
+
+        Remove the 'ended' to 'open' transition on a seek.
+
+        No new tests. The following tests were updated to reflect the new behavior.
+          http/tests/media/media-source/video-media-source-seek.html
+          http/tests/media/media-source/video-media-source-state-changes.html
+
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::seek):
+
 2012-12-12  Julien Chaffraix  <jchaffraix@webkit.org>
 
         [CSS Grid Layout] Implement CSS parsing and handling for min-content and max-content
