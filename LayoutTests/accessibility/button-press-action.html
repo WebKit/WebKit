@@ -19,7 +19,7 @@
             button.focus();
             button = accessibilityController.focusedElement;
 
-            if (button.isActionSupported("AXPress")) {
+            if (button.isPressActionSupported()) {
                 result.innerText += "Test passed\n";
             }
             else {

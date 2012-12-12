@@ -675,7 +675,19 @@ int AccessibilityUIElement::insertionPointLineNumber()
     return -1;
 }
 
-bool AccessibilityUIElement::isActionSupported(JSStringRef action)
+bool AccessibilityUIElement::isPressActionSupported()
+{
+    // FIXME: implement
+    return false;
+}
+
+bool AccessibilityUIElement::isIncrementActionSupported()
+{
+    // FIXME: implement
+    return false;
+}
+
+bool AccessibilityUIElement::isDecrementActionSupported()
 {
     // FIXME: implement
     return false;

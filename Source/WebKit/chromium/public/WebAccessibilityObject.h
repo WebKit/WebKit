@@ -86,10 +86,6 @@ public:
     WEBKIT_EXPORT bool updateBackingStoreAndCheckValidity();
 
     WEBKIT_EXPORT WebString accessibilityDescription() const;
-    WEBKIT_EXPORT WebString actionVerb() const;
-    WEBKIT_EXPORT bool canSetFocusAttribute() const;
-    WEBKIT_EXPORT bool canSetValueAttribute() const;
-
     WEBKIT_EXPORT unsigned childCount() const;
 
     WEBKIT_EXPORT WebAccessibilityObject childAt(unsigned) const;
@@ -99,8 +95,6 @@ public:
     WEBKIT_EXPORT WebAccessibilityObject nextSibling() const;
     WEBKIT_EXPORT WebAccessibilityObject parentObject() const;
     WEBKIT_EXPORT WebAccessibilityObject previousSibling() const;
-
-    WEBKIT_EXPORT bool canSetSelectedAttribute() const;
 
     WEBKIT_EXPORT bool isAnchor() const;
     WEBKIT_EXPORT bool isAriaReadOnly() const;
@@ -164,8 +158,18 @@ public:
     WEBKIT_EXPORT bool lineBreaks(WebVector<int>&) const;
 
     // Actions
-    WEBKIT_EXPORT void setFocused(bool) const;
+    WEBKIT_EXPORT WebString actionVerb() const; // The verb corresponding to performDefaultAction.
+    WEBKIT_EXPORT bool canDecrement() const;
+    WEBKIT_EXPORT bool canIncrement() const;
+    WEBKIT_EXPORT bool canPress() const;
+    WEBKIT_EXPORT bool canSetFocusAttribute() const;
+    WEBKIT_EXPORT bool canSetSelectedAttribute() const;
+    WEBKIT_EXPORT bool canSetValueAttribute() const;
     WEBKIT_EXPORT bool performDefaultAction() const;
+    WEBKIT_EXPORT bool press() const;
+    WEBKIT_EXPORT bool increment() const;
+    WEBKIT_EXPORT bool decrement() const;
+    WEBKIT_EXPORT void setFocused(bool) const;
     WEBKIT_EXPORT void setSelectedTextRange(int selectionStart, int selectionEnd) const;
 
     // For a table

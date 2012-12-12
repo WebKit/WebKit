@@ -361,16 +361,19 @@ static JSValueRef isAttributeSettableCallback(JSContextRef context, JSObjectRef 
     return result;
 }
 
-
-static JSValueRef isActionSupportedCallback(JSContextRef context, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
+static JSValueRef isPressActionSupportedCallback(JSContextRef context, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
 {
-    JSStringRef action = 0;
-    if (argumentCount == 1)
-        action = JSValueToStringCopy(context, arguments[0], exception);    
-    JSValueRef result = JSValueMakeBoolean(context, toAXElement(thisObject)->isActionSupported(action));
-    if (action)
-        JSStringRelease(action);
-    return result;
+    return JSValueMakeBoolean(context, toAXElement(thisObject)->isPressActionSupported());
+}
+
+static JSValueRef isIncrementActionSupportedCallback(JSContextRef context, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
+{
+    return JSValueMakeBoolean(context, toAXElement(thisObject)->isIncrementActionSupported());
+}
+
+static JSValueRef isDecrementActionSupportedCallback(JSContextRef context, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
+{
+    return JSValueMakeBoolean(context, toAXElement(thisObject)->isDecrementActionSupported());
 }
 
 static JSValueRef boolAttributeValueCallback(JSContextRef context, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
@@ -1143,7 +1146,9 @@ JSClassRef AccessibilityUIElement::getJSClass()
         { "boolAttributeValue", boolAttributeValueCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
         { "isAttributeSupported", isAttributeSupportedCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
         { "isAttributeSettable", isAttributeSettableCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
-        { "isActionSupported", isActionSupportedCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
+        { "isPressActionSupported", isPressActionSupportedCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
+        { "isIncrementActionSupported", isIncrementActionSupportedCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
+        { "isDecrementActionSupported", isDecrementActionSupportedCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
         { "parentElement", parentElementCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
         { "disclosedByRow", disclosedByRowCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
         { "increment", incrementCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },

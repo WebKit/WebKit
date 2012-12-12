@@ -109,7 +109,9 @@ public:
     bool boolAttributeValue(JSStringRef attribute);
     bool isAttributeSupported(JSStringRef attribute);
     bool isAttributeSettable(JSStringRef attribute);
-    bool isActionSupported(JSStringRef action);
+    bool isPressActionSupported();
+    bool isIncrementActionSupported();
+    bool isDecrementActionSupported();
     JSStringRef role();
     JSStringRef subrole();
     JSStringRef roleDescription();

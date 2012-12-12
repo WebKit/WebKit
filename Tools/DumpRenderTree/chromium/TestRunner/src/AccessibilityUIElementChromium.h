@@ -120,7 +120,9 @@ private:
     void setSelectedTextRangeCallback(const CppArgumentList&, CppVariant*);
     void attributeValueCallback(const CppArgumentList&, CppVariant*);
     void isAttributeSettableCallback(const CppArgumentList&, CppVariant*);
-    void isActionSupportedCallback(const CppArgumentList&, CppVariant*);
+    void isPressActionSupportedCallback(const CppArgumentList&, CppVariant*);
+    void isIncrementActionSupportedCallback(const CppArgumentList&, CppVariant*);
+    void isDecrementActionSupportedCallback(const CppArgumentList&, CppVariant*);
     void parentElementCallback(const CppArgumentList&, CppVariant*);
     void incrementCallback(const CppArgumentList&, CppVariant*);
     void decrementCallback(const CppArgumentList&, CppVariant*);

@@ -1,3 +1,60 @@
+2012-12-11  Dominic Mazzoni  <dmazzoni@google.com>
+
+        AX: Make isActionSupported cross-platform.
+        https://bugs.webkit.org/show_bug.cgi?id=104681
+
+        Reviewed by Chris Fleizach.
+
+        Replace isActionSupported, which takes a platform-specific
+        argument, with three cross-platform methods.
+
+        * DumpRenderTree/AccessibilityUIElement.cpp:
+        (isPressActionSupportedCallback):
+        (isIncrementActionSupportedCallback):
+        (isDecrementActionSupportedCallback):
+        (AccessibilityUIElement::getJSClass):
+        * DumpRenderTree/AccessibilityUIElement.h:
+        (AccessibilityUIElement):
+        * DumpRenderTree/blackberry/AccessibilityUIElementBlackBerry.cpp:
+        (AccessibilityUIElement::isPressActionSupported):
+        (AccessibilityUIElement::isIncrementActionSupported):
+        (AccessibilityUIElement::isDecrementActionSupported):
+        * DumpRenderTree/chromium/TestRunner/src/AccessibilityUIElementChromium.cpp:
+        (WebTestRunner::AccessibilityUIElement::AccessibilityUIElement):
+        (WebTestRunner::AccessibilityUIElement::isPressActionSupportedCallback):
+        (WebTestRunner):
+        (WebTestRunner::AccessibilityUIElement::isIncrementActionSupportedCallback):
+        (WebTestRunner::AccessibilityUIElement::isDecrementActionSupportedCallback):
+        (WebTestRunner::AccessibilityUIElement::incrementCallback):
+        (WebTestRunner::AccessibilityUIElement::decrementCallback):
+        (WebTestRunner::AccessibilityUIElement::pressCallback):
+        * DumpRenderTree/chromium/TestRunner/src/AccessibilityUIElementChromium.h:
+        (AccessibilityUIElement):
+        * DumpRenderTree/gtk/AccessibilityUIElementGtk.cpp:
+        (AccessibilityUIElement::isPressActionSupported):
+        (AccessibilityUIElement::isIncrementActionSupported):
+        (AccessibilityUIElement::isDecrementActionSupported):
+        * DumpRenderTree/mac/AccessibilityUIElementMac.mm:
+        (AccessibilityUIElement::isPressActionSupported):
+        (AccessibilityUIElement::isIncrementActionSupported):
+        (AccessibilityUIElement::isDecrementActionSupported):
+        * DumpRenderTree/win/AccessibilityUIElementWin.cpp:
+        (AccessibilityUIElement::isPressActionSupported):
+        (AccessibilityUIElement::isIncrementActionSupported):
+        (AccessibilityUIElement::isDecrementActionSupported):
+        * WebKitTestRunner/InjectedBundle/AccessibilityUIElement.cpp:
+        (WTR::AccessibilityUIElement::isPressActionSupported):
+        (WTR::AccessibilityUIElement::isIncrementActionSupported):
+        (WTR::AccessibilityUIElement::isDecrementActionSupported):
+        * WebKitTestRunner/InjectedBundle/AccessibilityUIElement.h:
+        (AccessibilityUIElement):
+        * WebKitTestRunner/InjectedBundle/Bindings/AccessibilityUIElement.idl:
+        * WebKitTestRunner/InjectedBundle/mac/AccessibilityUIElementMac.mm:
+        (WTR::AccessibilityUIElement::isPressActionSupported):
+        (WTR):
+        (WTR::AccessibilityUIElement::isIncrementActionSupported):
+        (WTR::AccessibilityUIElement::isDecrementActionSupported):
+
 2012-12-11  Dirk Pranke  <dpranke@chromium.org>
 
         nrwt: remove result_summary.total_tests_by_expectation

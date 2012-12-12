@@ -1,3 +1,18 @@
+2012-12-11  Dominic Mazzoni  <dmazzoni@google.com>
+
+        AX: Make isActionSupported cross-platform.
+        https://bugs.webkit.org/show_bug.cgi?id=104681
+
+        Reviewed by Chris Fleizach.
+
+        Add UserGestureIndicator to increment() and decrement()
+        so that all accessibility actions are treated as
+        user actions, not scripted actions.
+
+        * accessibility/AccessibilityNodeObject.cpp:
+        (WebCore::AccessibilityNodeObject::increment):
+        (WebCore::AccessibilityNodeObject::decrement):
+
 2012-12-11  Viatcheslav Ostapenko  <v.ostapenko@samsung.com>
 
         Remove conversion to/from float and float division from ImageFrame::setRGBA

@@ -16,7 +16,7 @@
         var result = document.getElementById("result");
         
         link.focus();
-        var supportsAction = accessibilityController.focusedElement.isActionSupported("AXPress");
+        var supportsAction = accessibilityController.focusedElement.isPressActionSupported();
         if (supportsAction)
             result.innerHTML = "SUCCESS! This test passes because the ARIA link above supports the press action.";
         else

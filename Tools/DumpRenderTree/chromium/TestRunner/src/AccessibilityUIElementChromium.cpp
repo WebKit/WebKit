@@ -425,7 +425,9 @@ AccessibilityUIElement::AccessibilityUIElement(const WebAccessibilityObject& obj
     bindMethod("setSelectedTextRange", &AccessibilityUIElement::setSelectedTextRangeCallback);
     bindMethod("attributeValue", &AccessibilityUIElement::attributeValueCallback);
     bindMethod("isAttributeSettable", &AccessibilityUIElement::isAttributeSettableCallback);
-    bindMethod("isActionSupported", &AccessibilityUIElement::isActionSupportedCallback);
+    bindMethod("isPressActionSupported", &AccessibilityUIElement::isPressActionSupportedCallback);
+    bindMethod("isIncrementActionSupported", &AccessibilityUIElement::isIncrementActionSupportedCallback);
+    bindMethod("isDecrementActionSupported", &AccessibilityUIElement::isDecrementActionSupportedCallback);
     bindMethod("parentElement", &AccessibilityUIElement::parentElementCallback);
     bindMethod("increment", &AccessibilityUIElement::incrementCallback);
     bindMethod("decrement", &AccessibilityUIElement::decrementCallback);
@@ -819,11 +821,19 @@ void AccessibilityUIElement::isAttributeSettableCallback(const CppArgumentList& 
     result->set(settable);
 }
 
-void AccessibilityUIElement::isActionSupportedCallback(const CppArgumentList&, CppVariant* result)
+void AccessibilityUIElement::isPressActionSupportedCallback(const CppArgumentList&, CppVariant* result)
 {
-    // This one may be really hard to implement.
-    // Not exposed by AccessibilityObject.
-    result->setNull();
+    result->set(accessibilityObject().canPress());
+}
+
+void AccessibilityUIElement::isIncrementActionSupportedCallback(const CppArgumentList&, CppVariant* result)
+{
+    result->set(accessibilityObject().canIncrement());
+}
+
+void AccessibilityUIElement::isDecrementActionSupportedCallback(const CppArgumentList&, CppVariant* result)
+{
+    result->set(accessibilityObject().canDecrement());
 }
 
 void AccessibilityUIElement::parentElementCallback(const CppArgumentList&, CppVariant* result)
@@ -833,11 +843,13 @@ void AccessibilityUIElement::parentElementCallback(const CppArgumentList&, CppVa
 
 void AccessibilityUIElement::incrementCallback(const CppArgumentList&, CppVariant* result)
 {
+    accessibilityObject().increment();
     result->setNull();
 }
 
 void AccessibilityUIElement::decrementCallback(const CppArgumentList&, CppVariant* result)
 {
+    accessibilityObject().decrement();
     result->setNull();
 }
 
@@ -848,7 +860,7 @@ void AccessibilityUIElement::showMenuCallback(const CppArgumentList&, CppVariant
 
 void AccessibilityUIElement::pressCallback(const CppArgumentList&, CppVariant* result)
 {
-    accessibilityObject().performDefaultAction();
+    accessibilityObject().press();
     result->setNull();
 }
 

@@ -396,7 +396,17 @@ double AccessibilityUIElement::maxValue()
     return 0;
 }
 
-bool AccessibilityUIElement::isActionSupported(JSStringRef action)
+bool AccessibilityUIElement::isPressActionSupported()
+{
+    return false;
+}
+
+bool AccessibilityUIElement::isIncrementActionSupported()
+{
+    return false;
+}
+
+bool AccessibilityUIElement::isDecrementActionSupported()
 {
     return false;
 }

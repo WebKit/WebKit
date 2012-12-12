@@ -235,7 +235,19 @@ int AccessibilityUIElement::insertionPointLineNumber()
     return 0;
 }
 
-bool AccessibilityUIElement::isActionSupported(JSStringRef)
+bool AccessibilityUIElement::isPressActionSupported()
+{
+    notImplemented();
+    return 0;
+}
+
+bool AccessibilityUIElement::isIncrementActionSupported()
+{
+    notImplemented();
+    return 0;
+}
+
+bool AccessibilityUIElement::isDecrementActionSupported()
 {
     notImplemented();
     return 0;

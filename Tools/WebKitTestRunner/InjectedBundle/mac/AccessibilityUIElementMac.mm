@@ -679,11 +679,31 @@ int AccessibilityUIElement::insertionPointLineNumber()
     return -1;
 }
 
-bool AccessibilityUIElement::isActionSupported(JSStringRef action)
+bool AccessibilityUIElement::isPressActionSupported()
 {
     BEGIN_AX_OBJC_EXCEPTIONS
     NSArray* actions = [m_element accessibilityActionNames];
-    return [actions containsObject:[NSString stringWithJSStringRef:action]];
+    return [actions containsObject:NSAccessibilityPressAction];
+    END_AX_OBJC_EXCEPTIONS
+    
+    return false;
+}
+
+bool AccessibilityUIElement::isIncrementActionSupported()
+{
+    BEGIN_AX_OBJC_EXCEPTIONS
+    NSArray* actions = [m_element accessibilityActionNames];
+    return [actions containsObject:NSAccessibilityIncrementAction];
+    END_AX_OBJC_EXCEPTIONS
+    
+    return false;
+}
+
+bool AccessibilityUIElement::isDecrementActionSupported()
+{
+    BEGIN_AX_OBJC_EXCEPTIONS
+    NSArray* actions = [m_element accessibilityActionNames];
+    return [actions containsObject:NSAccessibilityDecrementAction];
     END_AX_OBJC_EXCEPTIONS
     
     return false;

@@ -112,7 +112,9 @@ public:
     bool boolAttributeValue(JSStringRef attribute);
     bool isAttributeSupported(JSStringRef attribute);
     bool isAttributeSettable(JSStringRef attribute);
-    bool isActionSupported(JSStringRef action);
+    bool isPressActionSupported();
+    bool isIncrementActionSupported();
+    bool isDecrementActionSupported();
     JSRetainPtr<JSStringRef> role();
     JSRetainPtr<JSStringRef> subrole();
     JSRetainPtr<JSStringRef> roleDescription();

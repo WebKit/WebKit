@@ -60,7 +60,9 @@ interface AccessibilityUIElement {
     boolean boolAttributeValue(in DOMString attr);
     boolean isAttributeSupported(in DOMString attr);
     boolean isAttributeSettable(in DOMString attr);
-    boolean isActionSupported(in DOMString attr);
+    boolean isPressActionSupported();
+    boolean isIncrementActionSupported();
+    boolean isDecrementActionSupported();
 
     readonly attribute DOMString stringValue;
     readonly attribute int intValue;

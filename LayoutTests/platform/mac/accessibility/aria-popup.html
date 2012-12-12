@@ -20,7 +20,7 @@
           var button = accessibilityController.focusedElement;
 
           shouldBe("button.role", "'AXRole: AXPopUpButton'");
-          shouldBe("button.isActionSupported('AXPress')", "true");
+          shouldBe("button.isPressActionSupported()", "true");
     }
 
 </script>

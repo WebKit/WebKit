@@ -43,7 +43,6 @@
 #include "Node.h"
 #include "PlatformKeyboardEvent.h"
 #include "RenderStyle.h"
-#include "UserGestureIndicator.h"
 #include "WebDocument.h"
 #include "WebNode.h"
 #include <public/WebPoint.h>
@@ -120,6 +119,30 @@ WebString WebAccessibilityObject::actionVerb() const
         return WebString();
 
     return m_private->actionVerb();
+}
+
+bool WebAccessibilityObject::canDecrement() const
+{
+    if (isDetached())
+        return false;
+
+    return m_private->isSlider();
+}
+
+bool WebAccessibilityObject::canIncrement() const
+{
+    if (isDetached())
+        return false;
+
+    return m_private->isSlider();
+}
+
+bool WebAccessibilityObject::canPress() const
+{
+    if (isDetached())
+        return false;
+
+    return m_private->actionElement() || m_private->isButton() || m_private->isMenuRelated();
 }
 
 bool WebAccessibilityObject::canSetFocusAttribute() const
@@ -551,9 +574,39 @@ bool WebAccessibilityObject::performDefaultAction() const
     if (isDetached())
         return false;
 
-    UserGestureIndicator gestureIndicator(DefinitelyProcessingUserGesture);
-
     return m_private->performDefaultAction();
+}
+
+bool WebAccessibilityObject::increment() const
+{
+    if (isDetached())
+        return false;
+
+    if (canIncrement()) {
+        m_private->increment();
+        return true;
+    }
+    return false;
+}
+
+bool WebAccessibilityObject::decrement() const
+{
+    if (isDetached())
+        return false;
+
+    if (canDecrement()) {
+        m_private->decrement();
+        return true;
+    }
+    return false;
+}
+
+bool WebAccessibilityObject::press() const
+{
+    if (isDetached())
+        return false;
+
+    return m_private->press();
 }
 
 WebAccessibilityRole WebAccessibilityObject::roleValue() const

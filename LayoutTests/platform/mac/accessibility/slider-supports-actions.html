@@ -22,10 +22,10 @@
           document.getElementById("slider1").focus();
           var obj = accessibilityController.focusedElement;
 
-          var succeeded = obj.isActionSupported("AXIncrement") == true;
+          var succeeded = obj.isIncrementActionSupported();
           shouldBe("succeeded", "true");
 
-          var succeeded = obj.isActionSupported("AXDecrement") == true;
+          var succeeded = obj.isDecrementActionSupported();
           shouldBe("succeeded", "true");
 
           var succeeded = obj.stringAttributeValue("AXOrientation") == "AXVerticalOrientation";
@@ -35,10 +35,10 @@
           document.getElementById("slider2").focus();
           var obj = accessibilityController.focusedElement;
 
-          var succeeded = obj.isActionSupported("AXIncrement") == true;
+          var succeeded = obj.isIncrementActionSupported();
           shouldBe("succeeded", "true");
 
-          var succeeded = obj.isActionSupported("AXDecrement") == true;
+          var succeeded = obj.isDecrementActionSupported();
           shouldBe("succeeded", "true");
 
           var succeeded = obj.stringAttributeValue("AXOrientation") == "AXHorizontalOrientation";
