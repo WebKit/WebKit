@@ -321,10 +321,6 @@ webkit.org/b/84635 fast/dom/HTMLDialogElement
 # Missing test infrastructure, no gamepads available.
 webkit.org/b/92873 gamepad/gamepad-polling-access.html
 
-# CSS Variables are not yet enabled.
-webkit.org/b/85580 fast/css/variables
-webkit.org/b/85580 inspector/styles/variables
-
 # CSS image-resolution is not yet enabled.
 webkit.org/b/85262 fast/css/image-resolution
 

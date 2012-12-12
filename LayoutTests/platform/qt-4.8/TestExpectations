@@ -666,10 +666,6 @@ webkit.org/b/85310 ietestcenter/css3/valuesandunits/units-010.htm [ ImageOnlyFai
 # IETC namespace failures
 webkit.org/b/86142 ietestcenter/css3/namespaces/syntax-021.xml [ ImageOnlyFailure ]
 
-# CSS Variables are not yet enabled.
-webkit.org/b/85580 fast/css/variables
-webkit.org/b/85580 inspector/styles/variables
-
 # Need rebaseline after https://bugs.webkit.org/show_bug.cgi?id=6033
 webkit.org/b/6033 css3/filters/add-filter-rendering.html [ ImageOnlyFailure Pass ]
 webkit.org/b/6033 css3/filters/crash-filter-change.html [ ImageOnlyFailure Pass ]
