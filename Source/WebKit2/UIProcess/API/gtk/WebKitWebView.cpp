@@ -97,6 +97,8 @@ enum {
 
     SUBMIT_FORM,
 
+    INSECURE_CONTENT_DETECTED,
+
     LAST_SIGNAL
 };
 
@@ -1230,6 +1232,30 @@ static void webkit_web_view_class_init(WebKitWebViewClass* webViewClass)
                      g_cclosure_marshal_VOID__OBJECT,
                      G_TYPE_NONE, 1,
                      WEBKIT_TYPE_FORM_SUBMISSION_REQUEST);
+
+    /**
+     * WebKitWebView::insecure-content-detected:
+     * @web_view: the #WebKitWebView on which the signal is emitted
+     * @event: the #WebKitInsecureContentEvent
+     *
+     * This signal is emitted when insecure content has been detected
+     * in a page loaded through a secure connection. This typically
+     * means that a external resource from an unstrusted source has
+     * been run or displayed, resulting in a mix of HTTPS and
+     * non-HTTPS content.
+     *
+     * You can check the @event parameter to know exactly which kind
+     * of event has been detected (see #WebKitInsecureContentEvent).
+     */
+    signals[INSECURE_CONTENT_DETECTED] =
+        g_signal_new("insecure-content-detected",
+            G_TYPE_FROM_CLASS(webViewClass),
+            G_SIGNAL_RUN_LAST,
+            G_STRUCT_OFFSET(WebKitWebViewClass, insecure_content_detected),
+            0, 0,
+            g_cclosure_marshal_VOID__ENUM,
+            G_TYPE_NONE, 1,
+            WEBKIT_TYPE_INSECURE_CONTENT_EVENT);
 }
 
 static void webkitWebViewSetIsLoading(WebKitWebView* webView, bool isLoading)
@@ -1615,6 +1641,11 @@ void webkitWebViewHandleAuthenticationChallenge(WebKitWebView* webView, Authenti
     WebKit2GtkAuthenticationDialog* dialog = new WebKit2GtkAuthenticationDialog(authenticationChallenge);
     webkitWebViewBaseAddAuthenticationDialog(WEBKIT_WEB_VIEW_BASE(webView), dialog);
     dialog->show();
+}
+
+void webkitWebViewInsecureContentDetected(WebKitWebView* webView, WebKitInsecureContentEvent type)
+{
+    g_signal_emit(webView, signals[INSECURE_CONTENT_DETECTED], 0, type);
 }
 
 /**

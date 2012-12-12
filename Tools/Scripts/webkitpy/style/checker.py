@@ -175,7 +175,14 @@ _PATH_RULES_SPECIFIER = [
      ["-readability/naming",
       "-readability/parameter_name",
       "-readability/null",
+      "-readability/enum_casing",
       "-whitespace/parens"]),
+
+    ([# The GTK+ API use upper case, underscore separated, words in
+      # certain types of enums (e.g. signals, properties).
+      "Source/WebKit2/UIProcess/API/gtk"],
+     ["-readability/enum_casing"]),
+
     ([# Header files in ForwardingHeaders have no header guards or
       # exceptional header guards (e.g., WebCore_FWD_Debugger_h).
       "/ForwardingHeaders/"],

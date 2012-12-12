@@ -56,5 +56,6 @@ bool webkitWebViewLeaveFullScreen(WebKitWebView*);
 void webkitWebViewPopulateContextMenu(WebKitWebView*, WebKit::ImmutableArray* proposedMenu, WebKit::WebHitTestResult*);
 void webkitWebViewSubmitFormRequest(WebKitWebView*, WebKitFormSubmissionRequest*);
 void webkitWebViewHandleAuthenticationChallenge(WebKitWebView*, WebKit::AuthenticationChallengeProxy*);
+void webkitWebViewInsecureContentDetected(WebKitWebView*, WebKitInsecureContentEvent);
 
 #endif // WebKitWebViewPrivate_h

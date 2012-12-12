@@ -106,6 +106,16 @@ static void didReceiveTitleForFrame(WKPageRef page, WKStringRef titleRef, WKFram
     webkitWebViewSetTitle(WEBKIT_WEB_VIEW(clientInfo), toImpl(titleRef)->string().utf8());
 }
 
+static void didDisplayInsecureContentForFrame(WKPageRef page, WKFrameRef frame, WKTypeRef userData, const void *clientInfo)
+{
+    webkitWebViewInsecureContentDetected(WEBKIT_WEB_VIEW(clientInfo), WEBKIT_INSECURE_CONTENT_DISPLAYED);
+}
+
+static void didRunInsecureContentForFrame(WKPageRef page, WKFrameRef frame, WKTypeRef userData, const void *clientInfo)
+{
+    webkitWebViewInsecureContentDetected(WEBKIT_WEB_VIEW(clientInfo), WEBKIT_INSECURE_CONTENT_RUN);
+}
+
 static void didChangeProgress(WKPageRef page, const void* clientInfo)
 {
     webkitWebViewSetEstimatedLoadProgress(WEBKIT_WEB_VIEW(clientInfo), WKPageGetEstimatedProgress(page));
@@ -138,8 +148,8 @@ void attachLoaderClientToView(WebKitWebView* webView)
         0, // didFirstLayoutForFrame
         0, // didFirstVisuallyNonEmptyLayoutForFrame
         0, // didRemoveFrameFromHierarchy
-        0, // didDisplayInsecureContentForFrame
-        0, // didRunInsecureContentForFrame
+        didDisplayInsecureContentForFrame,
+        didRunInsecureContentForFrame,
         0, // canAuthenticateAgainstProtectionSpaceInFrame
         didReceiveAuthenticationChallengeInFrame,
         didChangeProgress, // didStartProgress

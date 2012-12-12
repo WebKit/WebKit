@@ -68,6 +68,7 @@ WebKitWebView
 WebKitLoadEvent
 WebKitPolicyDecisionType
 WebKitSaveMode
+WebKitInsecureContentEvent
 
 <SUBSECTION Editing Commands>
 WEBKIT_EDITING_COMMAND_CUT

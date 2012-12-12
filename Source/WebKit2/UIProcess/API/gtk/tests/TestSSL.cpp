@@ -23,8 +23,11 @@
 #include "WebKitTestServer.h"
 #include <gtk/gtk.h>
 
-static WebKitTestServer* kServer;
+static WebKitTestServer* kHttpsServer;
+static WebKitTestServer* kHttpServer;
+
 static const char* indexHTML = "<html><body>Testing WebKit2GTK+ SSL</body></htmll>";
+static const char* insecureContentHTML = "<html><script src=\"%s\"></script><body><p>Text + image <img src=\"%s\" align=\"right\"/></p></body></html>";
 
 class SSLTest: public LoadTrackingTest {
 public:
@@ -60,7 +63,7 @@ public:
 
 static void testSSL(SSLTest* test, gconstpointer)
 {
-    test->loadURI(kServer->getURIForPath("/").data());
+    test->loadURI(kHttpsServer->getURIForPath("/").data());
     test->waitUntilLoadFinished();
     g_assert(test->m_certificate);
     // We always expect errors because we are using a self-signed certificate,
@@ -75,7 +78,42 @@ static void testSSL(SSLTest* test, gconstpointer)
     g_assert(!test->m_tlsErrors);
 }
 
-static void serverCallback(SoupServer* server, SoupMessage* message, const char* path, GHashTable*, SoupClientContext*, gpointer)
+class InsecureContentTest: public WebViewTest {
+public:
+    MAKE_GLIB_TEST_FIXTURE(InsecureContentTest);
+
+    InsecureContentTest()
+        : m_insecureContentRun(false)
+        , m_insecureContentDisplayed(false)
+    {
+        g_signal_connect(m_webView, "insecure-content-detected", G_CALLBACK(insecureContentDetectedCallback), this);
+    }
+
+    static void insecureContentDetectedCallback(WebKitWebView* webView, WebKitInsecureContentEvent event, InsecureContentTest* test)
+    {
+        g_assert(webView == test->m_webView);
+
+        if (event == WEBKIT_INSECURE_CONTENT_RUN)
+            test->m_insecureContentRun = true;
+
+        if (event == WEBKIT_INSECURE_CONTENT_DISPLAYED)
+            test->m_insecureContentDisplayed = true;
+    }
+
+    bool m_insecureContentRun;
+    bool m_insecureContentDisplayed;
+};
+
+static void testInsecureContent(InsecureContentTest* test, gconstpointer)
+{
+    test->loadURI(kHttpsServer->getURIForPath("/insecure-content/").data());
+    test->waitUntilLoadFinished();
+
+    g_assert(test->m_insecureContentRun);
+    g_assert(test->m_insecureContentDisplayed);
+}
+
+static void httpsServerCallback(SoupServer* server, SoupMessage* message, const char* path, GHashTable*, SoupClientContext*, gpointer)
 {
     if (message->method != SOUP_METHOD_GET) {
         soup_message_set_status(message, SOUP_STATUS_NOT_IMPLEMENTED);
@@ -86,19 +124,58 @@ static void serverCallback(SoupServer* server, SoupMessage* message, const char*
         soup_message_set_status(message, SOUP_STATUS_OK);
         soup_message_body_append(message->response_body, SOUP_MEMORY_STATIC, indexHTML, strlen(indexHTML));
         soup_message_body_complete(message->response_body);
+    } else if (g_str_equal(path, "/insecure-content/")) {
+        GOwnPtr<char> responseHTML(g_strdup_printf(insecureContentHTML, kHttpServer->getURIForPath("/test-script").data(), kHttpServer->getURIForPath("/test-image").data()));
+        soup_message_body_append(message->response_body, SOUP_MEMORY_COPY, responseHTML.get(), strlen(responseHTML.get()));
+        soup_message_set_status(message, SOUP_STATUS_OK);
+        soup_message_body_complete(message->response_body);
+    } else
+        soup_message_set_status(message, SOUP_STATUS_NOT_FOUND);
+}
+
+static void httpServerCallback(SoupServer* server, SoupMessage* message, const char* path, GHashTable*, SoupClientContext*, gpointer)
+{
+    if (message->method != SOUP_METHOD_GET) {
+        soup_message_set_status(message, SOUP_STATUS_NOT_IMPLEMENTED);
+        return;
+    }
+
+    if (g_str_equal(path, "/test-script")) {
+        GOwnPtr<char> pathToFile(g_build_filename(Test::getResourcesDir().data(), "link-title.js", NULL));
+        char* contents;
+        gsize length;
+        g_file_get_contents(pathToFile.get(), &contents, &length, 0);
+
+        soup_message_body_append(message->response_body, SOUP_MEMORY_TAKE, contents, length);
+        soup_message_set_status(message, SOUP_STATUS_OK);
+        soup_message_body_complete(message->response_body);
+    } else if (g_str_equal(path, "/test-image")) {
+        GOwnPtr<char> pathToFile(g_build_filename(Test::getWebKit1TestResoucesDir().data(), "blank.ico", NULL));
+        char* contents;
+        gsize length;
+        g_file_get_contents(pathToFile.get(), &contents, &length, 0);
+
+        soup_message_body_append(message->response_body, SOUP_MEMORY_TAKE, contents, length);
+        soup_message_set_status(message, SOUP_STATUS_OK);
+        soup_message_body_complete(message->response_body);
     } else
         soup_message_set_status(message, SOUP_STATUS_NOT_FOUND);
 }
 
 void beforeAll()
 {
-    kServer = new WebKitTestServer(WebKitTestServer::ServerHTTPS);
-    kServer->run(serverCallback);
+    kHttpsServer = new WebKitTestServer(WebKitTestServer::ServerHTTPS);
+    kHttpsServer->run(httpsServerCallback);
+
+    kHttpServer = new WebKitTestServer(WebKitTestServer::ServerHTTP);
+    kHttpServer->run(httpServerCallback);
 
     SSLTest::add("WebKitWebView", "ssl", testSSL);
+    InsecureContentTest::add("WebKitWebView", "insecure-content", testInsecureContent);
 }
 
 void afterAll()
 {
-    delete kServer;
+    delete kHttpsServer;
+    delete kHttpServer;
 }
