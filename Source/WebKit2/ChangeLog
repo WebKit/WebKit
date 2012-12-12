@@ -1,3 +1,17 @@
+2012-12-12  Alexey Proskuryakov  <ap@apple.com>
+
+        <rdar://problem/12862512> Crashes in NetworkResourceLoadScheduler::receivedRedirect
+        https://bugs.webkit.org/show_bug.cgi?id=104844
+
+        Reviewed by Sam Weinig.
+
+        * NetworkProcess/NetworkResourceLoadScheduler.cpp:
+        (WebKit::NetworkResourceLoadScheduler::receivedRedirect): The load may be already
+        canceled.
+
+        * WebProcess/Network/WebResourceLoader.cpp:
+        (WebKit::WebResourceLoader::didReceiveResponse): Expanded logging a little.
+
 2012-12-12  Andras Becsi  <andras.becsi@digia.com>
 
         [Qt][WK2] Fix the build on Mac

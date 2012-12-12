@@ -128,8 +128,12 @@ void NetworkResourceLoadScheduler::receivedRedirect(ResourceLoadIdentifier ident
     LOG(NetworkScheduling, "(NetworkProcess) NetworkResourceLoadScheduler::receivedRedirect resource %llu redirected to '%s'", identifier, redirectURL.string().utf8().data());
 
     HostRecord* oldHost = m_identifiers.get(identifier);
+
+    // The load may have been cancelled while the message was in flight from network thread to main thread.
+    if (!oldHost)
+        return;
+
     HostRecord* newHost = hostForURL(redirectURL, CreateIfNotFound);
-    ASSERT(oldHost);
     
     if (oldHost->name() == newHost->name())
         return;

@@ -77,7 +77,7 @@ void WebResourceLoader::willSendRequest(uint64_t requestID, const ResourceReques
 
 void WebResourceLoader::didReceiveResponse(const WebCore::ResourceResponse& response)
 {
-    LOG(Network, "(WebProcess) WebResourceLoader::didReceiveResponse for '%s'", m_coreLoader->url().string().utf8().data());
+    LOG(Network, "(WebProcess) WebResourceLoader::didReceiveResponse for '%s'. Status %d.", m_coreLoader->url().string().utf8().data(), response.httpStatusCode());
     m_coreLoader->didReceiveResponse(response);
 }
 
