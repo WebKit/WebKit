@@ -1,0 +1,63 @@
+Not scaled:
+(GraphicsLayer
+  (bounds 785.00 1016.00)
+  (children 1
+    (GraphicsLayer
+      (bounds 785.00 1016.00)
+      (children 2
+        (GraphicsLayer
+          (position 600.00 0.00)
+          (bounds 10.00 10.00)
+        )
+        (GraphicsLayer
+          (bounds 10.00 10.00)
+        )
+      )
+    )
+  )
+)
+Scale=0.5:
+(GraphicsLayer
+  (bounds 400.00 508.00)
+  (children 1
+    (GraphicsLayer
+      (anchor 0.00 0.00)
+      (bounds 800.00 1016.00)
+      (transform [0.50 0.00 0.00 0.00] [0.00 0.50 0.00 0.00] [0.00 0.00 1.00 0.00] [0.00 0.00 0.00 1.00])
+      (children 4
+        (GraphicsLayer
+          (position 8.00 1008.00)
+          (bounds 10.00 10.00)
+        )
+        (GraphicsLayer
+          (position 1000.00 0.00)
+          (bounds 10.00 10.00)
+        )
+        (GraphicsLayer
+          (position 600.00 0.00)
+          (bounds 10.00 10.00)
+        )
+        (GraphicsLayer
+          (bounds 10.00 10.00)
+        )
+      )
+    )
+  )
+)
+Scale=1.5:
+(GraphicsLayer
+  (bounds 1272.00 1524.00)
+  (children 1
+    (GraphicsLayer
+      (anchor 0.00 0.00)
+      (bounds 848.00 1016.00)
+      (transform [1.50 0.00 0.00 0.00] [0.00 1.50 0.00 0.00] [0.00 0.00 1.00 0.00] [0.00 0.00 0.00 1.00])
+      (children 1
+        (GraphicsLayer
+          (bounds 10.00 10.00)
+        )
+      )
+    )
+  )
+)
+

@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+  .fixed {
+    position: fixed;
+    width: 10px;
+    height: 10px;
+  }
+</style>
+<script>
+  if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+  }
+  if (window.internals) {
+    window.internals.settings.setEnableCompositingForFixedPosition(true);
+    window.internals.settings.setFixedPositionCreatesStackingContext(true);
+
+    addEventListener("load", function() {
+      window.scrollTo(100,100);
+
+      document.getElementById("layerTree").innerText = internals.layerTreeAsText(document);
+
+      window.internals.setPageScaleFactor(0.5, 0, 0);
+      setTimeout(function() {
+        document.getElementById("layerTreeScaledDown").innerText = internals.layerTreeAsText(document);
+
+        window.internals.setPageScaleFactor(1.5, 0, 0);
+        setTimeout(function() {
+          document.getElementById("layerTreeScaledUp").innerText = internals.layerTreeAsText(document);
+          testRunner.notifyDone();
+        }, 0);
+      }, 0);
+    }, false);
+  }
+</script>
+</head>
+<body>
+<div style="height: 1000px">
+  Not scaled:
+  <pre id="layerTree"></pre>
+  Scale=0.5:
+  <pre id="layerTreeScaledDown"></pre>
+  Scale=1.5:
+  <pre id="layerTreeScaledUp"></pre>
+</div>
+<!-- No layer in any case. -->
+<div class="fixed" style="top: -100px"></div>
+<!-- Has composited layer when scaled down; no layer when not scaled or scaled up. -->
+<div class="fixed"></div>
+<div class="fixed" style="top: 0px; left: 1000px"></div>
+<!-- Has composited layer when not scaled and scaled down; no layer scaled up. -->
+<div class="fixed" style="top: 0px; left: 600px"></div>
+<!-- Always has composited layer. -->
+<div class="fixed" style="top: 0px; left: 0px"></div>
+</body>
+</html>
