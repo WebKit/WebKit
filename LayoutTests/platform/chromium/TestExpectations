@@ -4211,8 +4211,6 @@ webkit.org/b/103767  [ Win Mac Linux ] media/track/track-in-band.html [ Skip ]
 # Flaky on Win (perhaps due to lighttpd?)
 webkit.org/b/104489 [ Win ] http/tests/w3c/webperf/submission/resource-timing/html/test_resource_attribute_order.html [ Failure Pass ]
 
-# Failing differently since r137152, probably just need rebaselines
-
 # Broken by Chromium r172175
 crbug.com/165315 media/encrypted-media/encrypted-media-can-play-type-webm.html [ Failure ]
 
@@ -4220,5 +4218,3 @@ crbug.com/165315 media/encrypted-media/encrypted-media-can-play-type-webm.html [
 webkit.org/b/104715 [ MountainLion ] fast/block/float/floats-wrap-inside-inline-007.html [ ImageOnlyFailure ]
 
 webkit.org/b/103667 [ Linux ] fast/ruby/position-after.html [ ImageOnlyFailure ]
-
-crbug.com/165633 [ Linux ] compositing/reflections/reflection-in-composited.html [ ImageOnlyFailure ]
