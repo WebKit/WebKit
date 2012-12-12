@@ -1,3 +1,14 @@
+2012-12-11  Hayato Ito  <hayato@chromium.org>
+
+        REGRESSION(r137408): breaks chromium's browser tests which use WebKitShadowRoot (Requested by hayato on #webkit).
+        https://bugs.webkit.org/show_bug.cgi?id=104770
+
+        Unreviewed, build fix.
+
+        * fast/js/global-constructors-expected.txt:
+        * platform/efl/fast/js/global-constructors-expected.txt:
+        * platform/gtk/fast/js/global-constructors-expected.txt:
+
 2012-12-11  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r137333, r137344, r137364, and
