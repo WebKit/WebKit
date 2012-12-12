@@ -1,0 +1,47 @@
+<html>
+<head>
+<script src=../../http/tests/inspector/inspector-test.js></script>
+<script src=../../http/tests/inspector/elements-test.js></script>
+<script>
+
+function test()
+{
+    InspectorTest.selectNodeAndWaitForStyles("inspected", step1);
+
+    function step1()
+    {
+        addNewRuleAndSelectNode("other", step2);
+    }
+
+    function step2()
+    {
+        WebInspector.domAgent.undo();
+        InspectorTest.waitForStyles("other", step3);
+    }
+
+    function step3()
+    {
+        InspectorTest.completeTest();
+    }
+
+    function addNewRuleAndSelectNode(nodeId, next)
+    {
+        document.getElementById("add-style-button-test-id").click();
+        var section = WebInspector.panels.elements.sidebarPanes.styles.sections[0][2];
+        InspectorTest.selectNodeAndWaitForStyles(nodeId, next);
+    }
+}
+
+</script>
+</head>
+
+<body onload="runTest()">
+Tests that the inspected page does not crash after undoing a new rule addition. <a href="https://bugs.webkit.org/show_bug.cgi?id=104806">Bug 104806</a>
+
+<p>The test has passed (no crash).</p>
+<div id="inspected"><div id="other" /></div>
+<style>
+@-webkit-keyframes cfpulse1 { 0% { opacity: 0.1;  } }
+.c1 { -webkit-animation-name: cfpulse1;  }
+</style>
+</html>
