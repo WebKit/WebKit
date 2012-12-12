@@ -545,7 +545,8 @@ void InspectorMemoryAgent::getProcessMemoryDistribution(ErrorString*, RefPtr<Ins
     reportRenderTreeInfo(memoryInstrumentationClient, m_page);
     collectDomTreeInfo(memoryInstrumentation, m_page); // FIXME: collect for all pages?
 
-    PlatformMemoryInstrumentation::reportMemoryUsage(&memoryInstrumentation);
+    PlatformMemoryInstrumentation::reportStaticMembersMemoryUsage(&memoryInstrumentation);
+    WebCoreMemoryInstrumentation::reportStaticMembersMemoryUsage(&memoryInstrumentation);
 
     RefPtr<InspectorMemoryBlocks> children = InspectorMemoryBlocks::create();
     addPlatformComponentsInfo(children);

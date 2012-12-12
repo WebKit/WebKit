@@ -437,6 +437,7 @@ public:
 #endif
 
     virtual void reportMemoryUsage(MemoryObjectInfo*) const OVERRIDE;
+    static void reportStaticMembersMemoryUsage(MemoryInstrumentation*);
 
 protected:
     virtual void willBeDestroyed();

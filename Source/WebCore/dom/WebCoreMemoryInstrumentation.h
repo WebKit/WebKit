@@ -45,6 +45,7 @@ public:
     static MemoryObjectType DOM;
     static MemoryObjectType CSS;
     static MemoryObjectType Binding;
+    static MemoryObjectType RenderingStructures;
 
     static MemoryObjectType MemoryCacheStructures;
     static MemoryObjectType CachedResource;
@@ -80,6 +81,12 @@ public:
 
     static MemoryObjectType ProcessPrivateMemory;
 };
+
+class WebCoreMemoryInstrumentation {
+public:
+    static void reportStaticMembersMemoryUsage(WTF::MemoryInstrumentation*);
+};
+
 
 } // namespace WebCore
 

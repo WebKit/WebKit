@@ -31,12 +31,16 @@
 #include "config.h"
 #include "WebCoreMemoryInstrumentation.h"
 
+#include "RenderBlock.h"
+#include "RenderBox.h"
+
 namespace WebCore {
 
 MemoryObjectType WebCoreMemoryTypes::Page = "Page";
 MemoryObjectType WebCoreMemoryTypes::DOM = "Page.DOM";
 MemoryObjectType WebCoreMemoryTypes::CSS = "Page.CSS";
 MemoryObjectType WebCoreMemoryTypes::Binding = "Page.Binding";
+MemoryObjectType WebCoreMemoryTypes::RenderingStructures = "Page.Rendering.Structures";
 
 MemoryObjectType WebCoreMemoryTypes::MemoryCacheStructures = "MemoryCache.InternalStructures";
 MemoryObjectType WebCoreMemoryTypes::CachedResource = "MemoryCache.Resource";
@@ -71,5 +75,12 @@ MemoryObjectType WebCoreMemoryTypes::RenderTreeUsed = "RenderTree.Used";
 MemoryObjectType WebCoreMemoryTypes::RenderTreeUnused = "RenderTree.Unused";
 
 MemoryObjectType WebCoreMemoryTypes::ProcessPrivateMemory = "ProcessPrivateMemory";
+
+
+void WebCoreMemoryInstrumentation::reportStaticMembersMemoryUsage(WTF::MemoryInstrumentation* memoryInstrumentation)
+{
+    RenderBlock::reportStaticMembersMemoryUsage(memoryInstrumentation);
+    RenderBox::reportStaticMembersMemoryUsage(memoryInstrumentation);
+}
 
 } // namespace WebCore

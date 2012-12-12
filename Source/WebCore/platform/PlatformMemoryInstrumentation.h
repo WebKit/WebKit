@@ -52,7 +52,7 @@ public:
 
 class PlatformMemoryInstrumentation {
 public:
-    static void reportMemoryUsage(WTF::MemoryInstrumentation*);
+    static void reportStaticMembersMemoryUsage(WTF::MemoryInstrumentation*);
 };
 
 } // namespace WebCore
