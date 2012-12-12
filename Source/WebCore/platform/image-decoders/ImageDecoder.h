@@ -159,6 +159,16 @@ namespace WebCore {
         }
 #endif
 
+        // Use fix point multiplier instead of integer division or floating point math.
+        // This multipler produces exactly the same result for all values in range 0 - 255.
+        static const unsigned fixPointShift = 24;
+        static const unsigned fixPointMult = static_cast<unsigned>(1.0 / 255.0 * (1 << fixPointShift)) + 1;
+        // Multiplies unsigned value by fixpoint value and converts back to unsigned.
+        static unsigned fixPointUnsignedMultiply(unsigned fixed, unsigned v)
+        {
+            return  (fixed * v) >> fixPointShift;
+        }
+
         inline void setRGBA(PixelData* dest, unsigned r, unsigned g, unsigned b, unsigned a)
         {
             if (m_premultiplyAlpha && a < 255) {
@@ -167,10 +177,10 @@ namespace WebCore {
                     return;
                 }
 
-                float alphaPercent = a / 255.0f;
-                r = static_cast<unsigned>(r * alphaPercent);
-                g = static_cast<unsigned>(g * alphaPercent);
-                b = static_cast<unsigned>(b * alphaPercent);
+                unsigned alphaMult = a * fixPointMult;
+                r = fixPointUnsignedMultiply(r, alphaMult);
+                g = fixPointUnsignedMultiply(g, alphaMult);
+                b = fixPointUnsignedMultiply(b, alphaMult);
             }
 #if USE(SKIA)
             // Call the "NoCheck" version since we may deliberately pass non-premultiplied
