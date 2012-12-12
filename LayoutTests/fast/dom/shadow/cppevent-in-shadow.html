@@ -30,11 +30,11 @@ function createBox(name) {
 }
 
 
-var shadowRoot = new WebKitShadowRoot(host);
+var shadowRoot = host.webkitCreateShadowRoot();
 var div = document.createElement('div');
 shadowRoot.appendChild(div);
 
-var darkRoot = new WebKitShadowRoot(div);
+var darkRoot = div.webkitCreateShadowRoot();
 var box = createBox('dark');
 box.innerHTML = "Kotori Otonashi";
 darkRoot.appendChild(box);

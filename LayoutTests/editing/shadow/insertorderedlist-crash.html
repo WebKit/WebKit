@@ -19,12 +19,12 @@ To test manually, select from (before nested) to (after nested), then press Ital
 if (window.testRunner)
     testRunner.dumpAsText();
 
-var shadowRoot = new WebKitShadowRoot(host);
+var shadowRoot = host.webkitCreateShadowRoot();
 var div = document.createElement('div');
 shadowRoot.appendChild(div);
 div.innerHTML = "<span contenteditable>(before shadow)</span><shadow></shadow>(after shadow)";
 
-var nestedShadowRoot = new WebKitShadowRoot(div);
+var nestedShadowRoot = div.webkitCreateShadowRoot();
 nestedShadowRoot.innerHTML = "<div contenteditable>(before <span id='src'></span>nested)<shadow></shadow>(nested <span id='dst'></span>after)</div>";
 
 var src = nestedShadowRoot.getElementById('src');

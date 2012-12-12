@@ -28,7 +28,7 @@ meter::-webkit-meter-inner-element {
 if (window.internals)
     internals.settings.setAuthorShadowDOMForAnyElementEnabled(true);
 
-var shadowRoot = new WebKitShadowRoot(host);
+var shadowRoot = host.webkitCreateShadowRoot();
 shadowRoot.innerHTML = "<div style='margin-left: 100px'><shadow></shadow><span>(after)</span></div>";
 </script>
 

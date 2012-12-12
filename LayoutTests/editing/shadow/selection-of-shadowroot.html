@@ -34,7 +34,7 @@ function createComplexShadowTree(container) {
             "<div title='DIV3 IN " + name + "'>" + indent(indentLevel) + "DIV 3 (" + name + ")</div>";
 
         var hostInShadowRoot = shadowRoot.firstChild.nextSibling;
-        var nestedShadowRoot = new WebKitShadowRoot(hostInShadowRoot);
+        var nestedShadowRoot = hostInShadowRoot.webkitCreateShadowRoot();
         nestedShadowRoot.title = 'NESTED SHADOW ROOT IN ' + name;
         treeScopes.push(nestedShadowRoot);
 
@@ -51,11 +51,11 @@ function createComplexShadowTree(container) {
 
     var host = container.firstChild.nextSibling;
 
-    var olderShadowRoot = new WebKitShadowRoot(host);
+    var olderShadowRoot = host.webkitCreateShadowRoot();
     olderShadowRoot.title = 'OLDER SHADOW ROOT';
     treeScopes.push(olderShadowRoot);
 
-    var youngerShadowRoot = new WebKitShadowRoot(host);
+    var youngerShadowRoot = host.webkitCreateShadowRoot();
     youngerShadowRoot.title = 'YOUNGER SHADOW ROOT';
     treeScopes.push(youngerShadowRoot);
 

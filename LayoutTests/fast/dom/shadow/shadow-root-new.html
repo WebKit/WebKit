@@ -4,7 +4,7 @@
 <script src="../../js/resources/js-test-pre.js"></script>
 </head>
 <body>
-<p>This test checks the object 'new WebKitShadowRoot(host)' and internals.shadowRoot(div) are the same.</p>
+<p>This test checks the object 'host.webkitCreateShadowRoot()' and internals.shadowRoot(div) are the same.</p>
 <pre id="console"></pre>
 
 <script>
@@ -15,8 +15,8 @@ function doTest() {
     }
 
     div = document.createElement('div');
-    // we should call new WebKitShadowRoot first.
-    root1 = new WebKitShadowRoot(div);
+    // we should call webKitCreateShadowRoot first.
+    root1 = div.webkitCreateShadowRoot();
     root2 = internals.shadowRoot(div);
 
     shouldBe('root1', 'root2');

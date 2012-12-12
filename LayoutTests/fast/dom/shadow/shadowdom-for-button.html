@@ -10,12 +10,12 @@
 <button id="host2">Kotori</button>
 
 <script>
-var shadowRoot1 = new WebKitShadowRoot(host1);
+var shadowRoot1 = host1.webkitCreateShadowRoot();
 shadowRoot1.innerHTML = "<shadow></shadow> Otonashi";
 
-var shadowRoot2 = new WebKitShadowRoot(host2);
+var shadowRoot2 = host2.webkitCreateShadowRoot();
 shadowRoot2.innerHTML = "foo <shadow></shadow> bar";
-var shadowRoot3 = new WebKitShadowRoot(host2);
+var shadowRoot3 = host2.webkitCreateShadowRoot();
 shadowRoot3.innerHTML = "FOO <shadow></shadow> BAR";
 </script>
 

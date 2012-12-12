@@ -60,7 +60,7 @@ function renderWithNoResetStyleInheritance() {
     var div = document.createElement('div');
     div.className = 'resetTest';
 
-    var shadowRoot = new WebKitShadowRoot(div);
+    var shadowRoot = div.webkitCreateShadowRoot();
     assertFalse('default resetStyleInheritance should be false', shadowRoot.resetStyleInheritance);
     shadowRoot.innerHTML = '<div>text</div>';
     
@@ -71,7 +71,7 @@ function renderWithResetStyleInheritance() {
     var div = document.createElement('div');
     div.className = 'resetTest';
 
-    var shadowRoot = new WebKitShadowRoot(div);
+    var shadowRoot = div.webkitCreateShadowRoot();
     assertFalse('default resetStyleInheritance should be false', shadowRoot.resetStyleInheritance);
     shadowRoot.resetStyleInheritance = true;
     shadowRoot.innerHTML = '<div>text</div>';
@@ -84,7 +84,7 @@ function renderWithChangingResetStyleInheritanceFromTrueToFalse() {
     var div = document.createElement('div');
     div.className = 'resetTest';
 
-    var shadowRoot = new WebKitShadowRoot(div);
+    var shadowRoot = div.webkitCreateShadowRoot();
     assertFalse('default resetStyleInheritance should be false', shadowRoot.resetStyleInheritance);
     shadowRoot.resetStyleInheritance = true;
     shadowRoot.innerHTML = '<div id="test1">text</div>';
@@ -107,7 +107,7 @@ function renderWithChangingResetStyleInheritanceFromFalseToTrue() {
     var div = document.createElement('div');
     div.className = 'resetTest';
 
-    var shadowRoot = new WebKitShadowRoot(div);
+    var shadowRoot = div.webkitCreateShadowRoot();
     assertFalse('default resetStyleInheritance should be false', shadowRoot.resetStyleInheritance);
     shadowRoot.resetStyleInheritance = false;
     shadowRoot.innerHTML = '<div id="test2">text</div>';
@@ -137,7 +137,7 @@ function renderResetStyleInheritanceForContent() {
     div.className = 'resetTest';
     div.appendChild(createDivWithText('text'));
 
-    var shadowRoot = new WebKitShadowRoot(div);
+    var shadowRoot = div.webkitCreateShadowRoot();
     shadowRoot.innerHTML = '<content select="div"></content>';
     shadowRoot.resetStyleInheritance = true;
     assertTrue('resetStyleInheritance should be true', shadowRoot.resetStyleInheritance);
@@ -150,7 +150,7 @@ function renderNoResetStyleInheritanceForContent() {
     div.className = 'resetTest';
     div.appendChild(createDivWithText('text'));
 
-    var shadowRoot = new WebKitShadowRoot(div);
+    var shadowRoot = div.webkitCreateShadowRoot();
     shadowRoot.innerHTML = '<content select="div"></content>';
     shadowRoot.resetStyleInheritance = false;
     assertFalse('resetStyleInheritance should be false', shadowRoot.resetStyleInheritance);

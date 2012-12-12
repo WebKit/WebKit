@@ -5,17 +5,17 @@
 <div id="host1"><div>Host Child</div></div>
 
 <script>
-var shadowRoot1 = new WebKitShadowRoot(host1);
+var shadowRoot1 = host1.webkitCreateShadowRoot();
 shadowRoot1.innerHTML = '<div id="host2">Oldest ShadowRoot Child</div>';
 
-var shadowRoot2 = new WebKitShadowRoot(host1);
+var shadowRoot2 = host1.webkitCreateShadowRoot();
 shadowRoot2.innerHTML = '<shadow></shadow><content></content><shadow><div title="debugstop">Shadow Fallback Element (1)</div></shadow>';
 
-var shadowRoot3 = new WebKitShadowRoot(host1);
+var shadowRoot3 = host1.webkitCreateShadowRoot();
 shadowRoot3.innerHTML = '<div id="host4"><shadow></shadow><shadow><div>Shadow Fallback Element (2)</div></shadow><span>Not rendered (1)</span><shadow><span>Not rendered (2)</span></shadow></div>';
 
 var host4 = shadowRoot3.getElementById('host4');
-var shadowRoot4 = new WebKitShadowRoot(host4);
+var shadowRoot4 = host4.webkitCreateShadowRoot();
 
 shadowRoot4.innerHTML = '<content select="div"></content>';
 </script>

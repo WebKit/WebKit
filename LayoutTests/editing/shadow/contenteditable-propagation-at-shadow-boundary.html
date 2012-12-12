@@ -28,7 +28,7 @@ function computedStyle(element, style) {
 }
 
 function prepareNodeInShadowRoot(host) {
-    var shadowRoot = new WebKitShadowRoot(host);
+    var shadowRoot = host.webkitCreateShadowRoot();
     var nodeInShadow = document.createElement('div');
     nodeInShadow.setAttribute('id', 'node-in-shadow-root');
     nodeInShadow.appendChild(document.createTextNode('In Shadow'));

@@ -22,8 +22,8 @@
 if (window.testRunner)
     testRunner.waitUntilDone();
 
-new WebKitShadowRoot(host1).innerHTML = '<content select=":enabled"></content>';
-new WebKitShadowRoot(host2).innerHTML = '<content select=":enabled"></content>';
+host1.webkitCreateShadowRoot().innerHTML = '<content select=":enabled"></content>';
+host2.webkitCreateShadowRoot().innerHTML = '<content select=":enabled"></content>';
 
 setTimeout(function() {
     anchor2.removeAttribute('href');

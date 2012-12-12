@@ -18,11 +18,11 @@
 if (window.testRunner)
     testRunner.waitUntilDone();
 
-var shadowRoot1 = new WebKitShadowRoot(host1);
+var shadowRoot1 = host1.webkitCreateShadowRoot();
 shadowRoot1.innerHTML = '<div id="host2"><shadow></shadow></div>';
 
 var host2 = shadowRoot1.getElementById('host2');
-var shadowRoot2 = new WebKitShadowRoot(host2);
+var shadowRoot2 = host2.webkitCreateShadowRoot();
 shadowRoot2.innerHTML = '<content select=".selected"></content>';
 
 setTimeout(function() {

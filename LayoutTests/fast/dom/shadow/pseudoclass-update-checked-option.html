@@ -25,8 +25,8 @@
 <script>
 jsTestIsAsync = true;
 
-var shadowRoot1 = new WebKitShadowRoot(host1);
-var shadowRoot2 = new WebKitShadowRoot(host2);
+var shadowRoot1 = host1.webkitCreateShadowRoot();
+var shadowRoot2 = host2.webkitCreateShadowRoot();
 
 shadowRoot1.innerHTML = '<content select="option:checked">';
 shadowRoot2.innerHTML = '<content select="option:checked">';

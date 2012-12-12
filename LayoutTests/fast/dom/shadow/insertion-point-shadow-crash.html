@@ -9,10 +9,10 @@ function runTests()
     var div = document.createElement("div");
     document.body.appendChild(div);
 
-    shadow1 = new WebKitShadowRoot(div);
+    shadow1 = div.webkitCreateShadowRoot();
     shadow1.innerHTML = "<style>div { color: red; }</style><div>HELLO</div>";
 
-    shadow2 = new WebKitShadowRoot(div);
+    shadow2 = div.webkitCreateShadowRoot();
     shadow2.innerHTML = "<div><shadow></shadow></div>";
     document.body.offsetLeft;
     document.body.innerHTML = "PASS";

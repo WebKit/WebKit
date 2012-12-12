@@ -8,7 +8,7 @@
 <div id="host1"></div>
 
 <script>
-var shadowRoot1 = new WebKitShadowRoot(host1);
+var shadowRoot1 = host1.webkitCreateShadowRoot();
 var div = document.createElement('div');
 div.setAttribute('pseudo', 'x-foo');
 div.appendChild(document.createTextNode('foo bar'));

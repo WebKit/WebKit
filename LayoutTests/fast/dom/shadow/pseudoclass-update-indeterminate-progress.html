@@ -22,7 +22,7 @@ progress {
 if (window.testRunner)
     testRunner.waitUntilDone();
 
-var shadowRoot = new WebKitShadowRoot(host);
+var shadowRoot = host.webkitCreateShadowRoot();
 shadowRoot.innerHTML = '<content select="span,progress:indeterminate"></content>';
 progress1.value = '30';
 

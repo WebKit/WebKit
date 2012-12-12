@@ -28,7 +28,7 @@ const expectedValues = [
   
 function setupTest() {
     var box = document.getElementById('box');
-    var shadowRoot = new WebKitShadowRoot(box);
+    var shadowRoot = box.webkitCreateShadowRoot();
     shadowRoot.innerHTML = '<content select="*:first-child"></content>';
     setTimeout(function() {
         shadowRoot.querySelector("content").setAttribute("select", "*:last-child");

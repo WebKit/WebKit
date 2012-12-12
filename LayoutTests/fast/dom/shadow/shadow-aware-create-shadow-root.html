@@ -12,7 +12,6 @@ Element.prototype.createShadowRoot = Element.prototype.createShadowRoot || Eleme
 var host = document.createElement('div');
 var root1 = host.createShadowRoot();
 var root2 = host.createShadowRoot();
-shouldBe("root1.constructor", "window.WebKitShadowRoot");
 shouldNotBe("root1", "root2");
 shouldBe("root1", "window.internals.oldestShadowRoot(host)");
 shouldBe("root2", "window.internals.youngestShadowRoot(host)");

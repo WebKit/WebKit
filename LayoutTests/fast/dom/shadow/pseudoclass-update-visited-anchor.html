@@ -22,8 +22,8 @@
 if (window.testRunner)
     testRunner.waitUntilDone();
 
-new WebKitShadowRoot(host1).innerHTML = '<content select=":visited"></content>';
-new WebKitShadowRoot(host2).innerHTML = '<content select=":visited"></content>';
+host1.webkitCreateShadowRoot().innerHTML = '<content select=":visited"></content>';
+host2.webkitCreateShadowRoot().innerHTML = '<content select=":visited"></content>';
 
 setTimeout(function() {
     anchor2.removeAttribute('href');

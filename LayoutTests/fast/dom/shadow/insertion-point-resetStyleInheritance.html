@@ -14,7 +14,7 @@ function testNoResetStyleInheritance() {
     debug("Test case: no reset-style-inheritance. color value should be inherited from the shadow host.");
     var div = document.getElementById('no-reset-style-inheritance');
 
-    var shadowRoot = new WebKitShadowRoot(div);
+    var shadowRoot = div.webkitCreateShadowRoot();
     shadowRoot.innerHTML = '<content id="content"></content>';
     
     shadowRoot.getElementById('content').resetStyleInheritance = false;
@@ -26,7 +26,7 @@ function testResetStyleInheritance() {
     debug("Test case: reset-style-inhertiace basic test. color value should be initial because insertion point's resetStyleInheritance is true.");
     var div = document.getElementById('reset-style-inheritance');
 
-    var shadowRoot = new WebKitShadowRoot(div);
+    var shadowRoot = div.webkitCreateShadowRoot();
     shadowRoot.innerHTML = '<content id="content"></content>';
 
     shadowRoot.getElementById('content').resetStyleInheritance = true;
@@ -38,7 +38,7 @@ function testResetStyleInheritanceWithAttribute() {
     debug("Test case: make a content element reset-style-inhertiace by using its attribute. color value should be initial because insertion point's resetStyleInheritance is true.");
     var div = document.getElementById('reset-style-inheritance');
 
-    var shadowRoot = new WebKitShadowRoot(div);
+    var shadowRoot = div.webkitCreateShadowRoot();
     shadowRoot.innerHTML = '<content id="content" reset-style-inheritance></content>';
 
     shouldBe('window.getComputedStyle(document.getElementById("reset-style-inheritance").firstChild).color', '"rgb(0, 0, 0)"');
@@ -49,7 +49,7 @@ function testShadowResetStyleInheritanceWithAttribute() {
     debug("Test case: make a shadow element reset-style-inhertiace by using its attribute. color value should be initial because insertion point's resetStyleInheritance is true.");
     var div = document.getElementById('reset-style-inheritance');
 
-    var shadowRoot = new WebKitShadowRoot(div);
+    var shadowRoot = div.webkitCreateShadowRoot();
     shadowRoot.innerHTML = '<shadow id="content" reset-style-inheritance></content>';
 
     shouldBe('window.getComputedStyle(document.getElementById("reset-style-inheritance").firstChild).color', '"rgb(0, 0, 0)"');
@@ -60,7 +60,7 @@ function testResetStyleInheritanceDynamic() {
     debug("Test case: reset-style-inhertiace changes dynamically. Firstly color value should be inherited. Next, initial. At last, inherited.");
     var div = document.getElementById('reset-style-inheritance-dynamic');
 
-    var shadowRoot = new WebKitShadowRoot(div);
+    var shadowRoot = div.webkitCreateShadowRoot();
     shadowRoot.innerHTML = '<content id="content"></content>';
 
     shadowRoot.getElementById('content').resetStyleInheritance = false;
@@ -79,7 +79,7 @@ function testResetStyleInheritanceDynamic() {
 function testResetStyleInheritanceWithoutCrossingUpperBoundary() {
     debug("Test case: the parent node of the distributed node is in the same shadow dom subtree as the insertion point. color value should be initial. reset-style-inheritance doesn't depend on whether parent style node is in the same treescope or not.");
     var div = document.getElementById('reset-but-not-cross-upper-boundary');
-    var shadowRoot = new WebKitShadowRoot(div);
+    var shadowRoot = div.webkitCreateShadowRoot();
 
     shadowRoot.innerHTML = '<div style="color:blue; background-color:green;"><content id="content"></content></div>';
 
@@ -91,13 +91,13 @@ function testResetStyleInheritanceWithoutCrossingUpperBoundary() {
 function testResetStyleInheritanceWithMultipleShadowRoots() {
     debug("Test case: reset-style-inheritance with multiple shadow roots. color value should be initial, because reset-style-inheritance of the insertion point in the youngest shadow root is true.");
     var div = document.getElementById('multiple-shadow-roots');
-    var oldestShadowRoot = new WebKitShadowRoot(div);
+    var oldestShadowRoot = div.webkitCreateShadowRoot();
     oldestShadowRoot.innerHTML = '<content id="content"></content>';
 
-    var youngerShadowRoot = new WebKitShadowRoot(div);
+    var youngerShadowRoot = div.webkitCreateShadowRoot();
     youngerShadowRoot.innerHTML = '<shadow id="shadow"></shadow>';
 
-    var youngestShadowRoot = new WebKitShadowRoot(div);
+    var youngestShadowRoot = div.webkitCreateShadowRoot();
     youngestShadowRoot.innerHTML = '<shadow id="shadow"></shadow>';
 
     oldestShadowRoot.getElementById('content').resetStyleInheritance = false;
@@ -110,10 +110,10 @@ function testResetStyleInheritanceWithMultipleShadowRoots() {
 function testResetStyleInheritanceWithMultipleInsertionPoints() {
     debug("Test case: multiple insertion points in the same shadow dom subtree.. Each reset-style-inheritance should be checked.");
     var div = document.getElementById('multiple-insertion-points');
-    var oldestShadowRoot = new WebKitShadowRoot(div);
+    var oldestShadowRoot = div.webkitCreateShadowRoot();
     oldestShadowRoot.innerHTML = '<content id="content"></content>';
 
-    var youngestShadowRoot = new WebKitShadowRoot(div);
+    var youngestShadowRoot = div.webkitCreateShadowRoot();
     youngestShadowRoot.innerHTML = '<content select=":first-child" id="content"></content><shadow id="shadow"></shadow>';
 
     youngestShadowRoot.getElementById('content').resetStyleInheritance = false;

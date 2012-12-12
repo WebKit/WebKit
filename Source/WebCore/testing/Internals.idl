@@ -35,6 +35,7 @@
 
 #if defined(ENABLE_SHADOW_DOM) && ENABLE_SHADOW_DOM
     ShadowRoot ensureShadowRoot(in Element host) raises (DOMException);
+    ShadowRoot createShadowRoot(in Element host) raises (DOMException);
     ShadowRoot shadowRoot(in Element host) raises (DOMException);
     ShadowRoot youngestShadowRoot(in Element host) raises (DOMException);
     ShadowRoot oldestShadowRoot(in Element host) raises (DOMException);
@@ -42,6 +43,7 @@
     ShadowRoot olderShadowRoot(in Node root) raises (DOMException);
 #else
     Node ensureShadowRoot(in Element host) raises (DOMException);
+    Node createShadowRoot(in Element host) raises (DOMException);
     Node shadowRoot(in Element host) raises (DOMException);
     Node youngestShadowRoot(in Element host) raises (DOMException);
     Node oldestShadowRoot(in Element host) raises (DOMException);

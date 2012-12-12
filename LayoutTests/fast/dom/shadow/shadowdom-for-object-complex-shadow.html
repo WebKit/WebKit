@@ -11,6 +11,6 @@
 
 <script>
 var host = document.getElementById('host');
-var shadowRoot = new WebKitShadowRoot(host);
+var shadowRoot = host.webkitCreateShadowRoot();
 shadowRoot.innerHTML = "<content></content><div style='margin: 20px'><shadow></shadow></div>"
 </script>

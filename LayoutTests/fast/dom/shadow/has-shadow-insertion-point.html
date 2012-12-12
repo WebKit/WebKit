@@ -18,7 +18,7 @@ else if (!window.internals.hasShadowInsertionPoint)
 
 <script>
 var host = document.getElementById("host");
-var shadowRoot = new WebKitShadowRoot(host);
+var shadowRoot = host.webkitCreateShadowRoot();
 
 shouldBeFalse("internals.hasShadowInsertionPoint(shadowRoot)");
 
@@ -42,7 +42,7 @@ shouldBeTrue("internals.hasShadowInsertionPoint(shadowRoot)");
 shadowRoot.innerHTML = "<div><div><div><shadow></shadow></div></div></div>";
 shouldBeTrue("internals.hasShadowInsertionPoint(shadowRoot)");
 
-var youngerShadowRoot = new WebKitShadowRoot(host);
+var youngerShadowRoot = host.webkitCreateShadowRoot();
 // Modifying older shadow root or younger shadow root doesn't affect the other.
 shouldBeTrue("internals.hasShadowInsertionPoint(shadowRoot)");
 shouldBeFalse("internals.hasShadowInsertionPoint(youngerShadowRoot)");

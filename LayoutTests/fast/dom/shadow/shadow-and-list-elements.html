@@ -35,7 +35,7 @@ ul {
 //   <li>C</li>
 // </ol>   
 var host = document.getElementById("host");
-var shadow = new WebKitShadowRoot(host);
+var shadow = host.webkitCreateShadowRoot();
 shadow.applyAuthorStyles = true;
 shadow.innerHTML = "<li>X</li><ul><shadow></shadow></ul><li>Y</li>";
 </script>

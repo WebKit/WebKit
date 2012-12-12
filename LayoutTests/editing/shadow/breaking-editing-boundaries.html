@@ -14,11 +14,11 @@ This is because the start position of Selection comes after the end position of 
 <pre id="console"></pre>
 
 <script>
-var shadowRoot = new WebKitShadowRoot(host);
+var shadowRoot = host.webkitCreateShadowRoot();
 shadowRoot.innerHTML = "<span id='shadow-host'>before shadow<shadow id='shadow'></shadow>after shadow</span>"
 
 var nestedShadowHost = shadowRoot.getElementById('shadow-host');
-var nestedShadowRoot = new WebKitShadowRoot(nestedShadowHost);
+var nestedShadowRoot = nestedShadowHost.webkitCreateShadowRoot();
 nestedShadowRoot.innerHTML = "<span contenteditable>before nested<shadow></shadow>after nested</span>"
 
 // This should not cause a crash.

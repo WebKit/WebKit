@@ -12,10 +12,10 @@
 </div>
 
 <script>
-var shadowRoot1 = new WebKitShadowRoot(host1);
+var shadowRoot1 = host1.webkitCreateShadowRoot();
 shadowRoot1.innerHTML = '<div id="host2"><content></content></div>';
 
-var shadowRoot2 = new WebKitShadowRoot(shadowRoot1.getElementById('host2'));
+var shadowRoot2 = shadowRoot1.getElementById('host2').webkitCreateShadowRoot();
 shadowRoot2.innerHTML = '<div><shadow></shadow><div>A</div></div>'
 </script>
 

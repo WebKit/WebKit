@@ -9,8 +9,8 @@ jsTestIsAsync = true;
 function boom() {
     divNode = document.createElement('div');
     document.documentElement.appendChild(divNode);
-    divShadow1 = new WebKitShadowRoot(divNode);
-    divShadow2 = new WebKitShadowRoot(divNode);
+    divShadow1 = divNode.webkitCreateShadowRoot();
+    divShadow2 = divNode.webkitCreateShadowRoot();
     
     videoNode = document.createElement('video');
     divShadow2.appendChild(videoNode);

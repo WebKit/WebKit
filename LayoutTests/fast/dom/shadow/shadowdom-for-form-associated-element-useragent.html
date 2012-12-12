@@ -35,7 +35,7 @@ function test()
 
     for (var i = 0; i < elems.length; ++i) {
         var host = document.getElementById(elems[i]);
-        shadowRoot = new WebKitShadowRoot(host);
+        shadowRoot = host.webkitCreateShadowRoot();
         shadowRoot.innerHTML = "<shadow></shadow>";
 
         oldestShadowRoot = internals.oldestShadowRoot(host);

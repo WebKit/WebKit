@@ -23,12 +23,12 @@ testFuncs.push(function testDoubleShadowSubtrees(callIfDone) {
     var root = document.createElement('div');
     root.appendChild(createSpanWithText('LIGHT'));
 
-    var sr1 = new WebKitShadowRoot(root);
+    var sr1 = root.webkitCreateShadowRoot();
     sr1.appendChild(createSpanWithText('BEFORE: SHOULD NOT BE RENDERED'));
     sr1.appendChild(createSpanWithText('MID: SHOULD NOT BE RENDERED'));
     sr1.appendChild(createSpanWithText('AFTER: SHOULD NOT BE RENDERED'));
 
-    var sr2 = new WebKitShadowRoot(root);
+    var sr2 = root.webkitCreateShadowRoot();
     sr2.appendChild(createSpanWithText('BEFORE'));
     sr2.appendChild(createSpanWithText('MID'));
     sr2.appendChild(createSpanWithText('AFTER'));
@@ -44,17 +44,17 @@ testFuncs.push(function testTripleShadowSubtrees(callIfDone) {
     var root = document.createElement('div');
     root.appendChild(createSpanWithText('LIGHT'));
 
-    var sr1 = new WebKitShadowRoot(root);
+    var sr1 = root.webkitCreateShadowRoot();
     sr1.appendChild(createSpanWithText('BEFORE: SHOULD NOT BE RENDERED'));
     sr1.appendChild(createSpanWithText('MID: SHOULD NOT BE RENDERED'));
     sr1.appendChild(createSpanWithText('AFTER: SHOULD NOT BE RENDERED'));
 
-    var sr2 = new WebKitShadowRoot(root);
+    var sr2 = root.webkitCreateShadowRoot();
     sr2.appendChild(createSpanWithText('BEFORE: SHOULD NOT BE RENDERED'));
     sr2.appendChild(createSpanWithText('MID: SHOULD NOT BE RENDERED'));
     sr2.appendChild(createSpanWithText('AFTER: SHOULD NOT BE RENDERED'));
 
-    var sr3 = new WebKitShadowRoot(root);
+    var sr3 = root.webkitCreateShadowRoot();
     sr3.appendChild(createSpanWithText('BEFORE'));
     sr3.appendChild(createSpanWithText('MID'));
     sr3.appendChild(createSpanWithText('AFTER'));
@@ -70,12 +70,12 @@ testFuncs.push(function testShadowSubtreesWithContent(callIfDone) {
     var root = document.createElement('div');
     root.appendChild(createSpanWithText('LIGHT'));
 
-    var sr1 = new WebKitShadowRoot(root);
+    var sr1 = root.webkitCreateShadowRoot();
     sr1.appendChild(createSpanWithText('BEFORE: SHOULD NOT BE RENDERED'));
     sr1.appendChild(createSpanWithText('MID: SHOULD NOT BE RENDERED'));
     sr1.appendChild(createSpanWithText('AFTER: SHOULD NOT BE RENDERED'));
 
-    var sr2 = new WebKitShadowRoot(root);
+    var sr2 = root.webkitCreateShadowRoot();
     sr2.appendChild(createSpanWithText('BEFORE'));
     sr2.appendChild(createContentWithSelect('span', 'FALLBACK'));
     sr2.appendChild(createSpanWithText('AFTER'));
@@ -92,12 +92,12 @@ testFuncs.push(function testShadowSubtreesWithContentInOlderSubtree(callIfDone) 
     root.appendChild(createSpanWithText('LIGHT 1', 'c1'));
     root.appendChild(createSpanWithText('LIGHT 2', 'c2'));
 
-    var sr1 = new WebKitShadowRoot(root);
+    var sr1 = root.webkitCreateShadowRoot();
     sr1.appendChild(createSpanWithText('BEFORE: SHOULD NOT BE RENDERED'));
     sr1.appendChild(createContentWithSelect('.c2', 'FALLBACK'));
     sr1.appendChild(createSpanWithText('AFTER: SHOULD NOT BE RENDERED'));
 
-    var sr2 = new WebKitShadowRoot(root);
+    var sr2 = root.webkitCreateShadowRoot();
     sr2.appendChild(createSpanWithText('BEFORE'));
     sr2.appendChild(createContentWithSelect('.c1', 'FALLBACK'));
     sr2.appendChild(createSpanWithText('AFTER'));
@@ -114,7 +114,7 @@ testFuncs.push(function testShadowSubtreesWithDynamicCreation(callIfDone) {
     root.appendChild(createSpanWithText('LIGHT 1', 'c1'));
     root.appendChild(createSpanWithText('LIGHT 2', 'c2'));
 
-    var sr1 = new WebKitShadowRoot(root);
+    var sr1 = root.webkitCreateShadowRoot();
     sr1.appendChild(createSpanWithText('BEFORE: SHOULD NOT BE RENDERED'));
     sr1.appendChild(createContentWithSelect('span', 'FALLBACK 1'));
     sr1.appendChild(createSpanWithText('AFTER: SHOULD NOT BE RENDERED'));
@@ -122,7 +122,7 @@ testFuncs.push(function testShadowSubtreesWithDynamicCreation(callIfDone) {
     document.getElementById('actual-container').appendChild(root);
 
     setTimeout((function(callIfDone, root) { return function() {
-        var sr2 = new WebKitShadowRoot(root);
+        var sr2 = root.webkitCreateShadowRoot();
         sr2.appendChild(createSpanWithText('BEFORE'));
         sr2.appendChild(createContentWithSelect('span', 'FALLBACK 2'));
         sr2.appendChild(createSpanWithText('AFTER'));
@@ -138,13 +138,13 @@ testFuncs.push(function testShadowSubtreesWithDynamicCreationOutOfTree(callIfDon
     root.appendChild(createSpanWithText('LIGHT 1', 'c1'));
     root.appendChild(createSpanWithText('LIGHT 2', 'c2'));
 
-    var sr1 = new WebKitShadowRoot(root);
+    var sr1 = root.webkitCreateShadowRoot();
     sr1.appendChild(createSpanWithText('BEFORE: SHOULD NOT BE RENDERED'));
     sr1.appendChild(createContentWithSelect('span', 'FALLBACK 1'));
     sr1.appendChild(createSpanWithText('AFTER: SHOULD NOT BE RENDERED'));
 
     setTimeout((function(callIfDone, root) { return function() {
-        var sr2 = new WebKitShadowRoot(root);
+        var sr2 = root.webkitCreateShadowRoot();
         sr2.appendChild(createSpanWithText('BEFORE'));
         sr2.appendChild(createContentWithSelect('span', 'FALLBACK 2'));
         sr2.appendChild(createSpanWithText('AFTER'));

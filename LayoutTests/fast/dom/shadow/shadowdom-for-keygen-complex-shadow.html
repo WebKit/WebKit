@@ -12,6 +12,6 @@ if (window.internals)
 
 host.appendChild(document.createTextNode('foobar'));
 
-var shadowRoot = new WebKitShadowRoot(host);
+var shadowRoot = host.webkitCreateShadowRoot();
 shadowRoot.innerHTML = "<content></content><div style='margin: 20px'><shadow></shadow></div>"
 </script>

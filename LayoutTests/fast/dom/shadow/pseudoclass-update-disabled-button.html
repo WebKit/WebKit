@@ -22,8 +22,8 @@
 if (window.testRunner)
     testRunner.waitUntilDone();
 
-new WebKitShadowRoot(host1).innerHTML = '<content select=":disabled"></content>';
-new WebKitShadowRoot(host2).innerHTML = '<content select=":disabled"></content>';
+host1.webkitCreateShadowRoot().innerHTML = '<content select=":disabled"></content>';
+host2.webkitCreateShadowRoot().innerHTML = '<content select=":disabled"></content>';
 
 setTimeout(function() {
     button2.setAttribute('disabled', true);

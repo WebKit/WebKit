@@ -26,7 +26,7 @@ p::x-shadow-child::x-nested-shadow-child {
 <script>
 function buildShadowWithOneChild(host, childTagName, childPseudoId)
 {
-    var shadow = new WebKitShadowRoot(host);
+    var shadow = host.webkitCreateShadowRoot();
     var shadowChild = document.createElement(childTagName);
     shadow.appendChild(shadowChild);
     internals.setShadowPseudoId(shadowChild, childPseudoId);

@@ -16,7 +16,7 @@ textarea {
 </form>
 
 <script>
-var shadowRoot = new WebKitShadowRoot(host);
+var shadowRoot = host.webkitCreateShadowRoot();
 shadowRoot.appendChild(document.createElement('shadow'));
 </script>
 </body>

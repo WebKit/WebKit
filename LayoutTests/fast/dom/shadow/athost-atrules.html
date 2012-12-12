@@ -24,7 +24,7 @@ function testSimpleContentCase()
 {
     preprocessForTest();
     var host = document.getElementById("host");
-    var shadow = new WebKitShadowRoot(host);
+    var shadow = host.webkitCreateShadowRoot();
     shadow.innerHTML = "<style>@host { div { color: red; } }</style><content></content>";
     dumpComputedStyle(host);
 }
@@ -33,7 +33,7 @@ function testSimpleShadowCase()
 {
     preprocessForTest();
     var host = document.getElementById("host");
-    var shadow = new WebKitShadowRoot(host);
+    var shadow = host.webkitCreateShadowRoot();
     shadow.innerHTML = "<style>@host { div { color: red; } }</style><shadow></shadow>";
     dumpComputedStyle(host);
 }
@@ -46,12 +46,12 @@ function testHostWithSelector()
         + "<span id='hostB' class='host'><span>World</span></span>";
 
     var hostA = document.getElementById("hostA");
-    var shadowA = new WebKitShadowRoot(hostA);
+    var shadowA = hostA.webkitCreateShadowRoot();
     var style = "<style>@host { div { color: red; } span { color: blue; } }</style>";
     shadowA.innerHTML = style + "<shadow></shadow>";
 
     var hostB = document.getElementById("hostB");
-    var shadowB = new WebKitShadowRoot(hostB);
+    var shadowB = hostB.webkitCreateShadowRoot();
     shadowB.innerHTML = style + "<shadow></shadow>";
 
     dumpComputedStyle(hostA);
@@ -62,7 +62,7 @@ function testPseudoHostWithScoped()
 {
     preprocessForTest();
     var host = document.getElementById("host");
-    var shadow = new WebKitShadowRoot(host);
+    var shadow = host.webkitCreateShadowRoot();
     shadow.innerHTML = "<div><style scoped>@host { div { color: red; } }</style><shadow></shadow><div><style scoped>@host { div { color: blue; } }</style></div></div>";
     dumpComputedStyle(host);
 }
@@ -71,8 +71,8 @@ function testPseudoHostWithFallbackShadow()
 {
     preprocessForTest();
     var host = document.getElementById("host");
-    var oldestShadow = new WebKitShadowRoot(host);
-    var youngestShadow = new WebKitShadowRoot(host);
+    var oldestShadow = host.webkitCreateShadowRoot();
+    var youngestShadow = host.webkitCreateShadowRoot();
     oldestShadow.innerHTML = "<style>@host { div { color: red; } }</style><content></content>";
     youngestShadow.innerHTML = "<content><shadow></shadow></content>";
     dumpComputedStyle(host);
@@ -82,8 +82,8 @@ function testTwoShadowRootsCase()
 {
     preprocessForTest();
     var host = document.getElementById("host");
-    var oldestShadow = new WebKitShadowRoot(host);
-    var youngestShadow = new WebKitShadowRoot(host);
+    var oldestShadow = host.webkitCreateShadowRoot();
+    var youngestShadow = host.webkitCreateShadowRoot();
     oldestShadow.innerHTML = "<style>@host { div { color: red; } }</style><content></content>";
     youngestShadow.innerHTML = "<style>@host { div { color: blue; } }</style><shadow></shadow>";
     dumpComputedStyle(host);
@@ -93,8 +93,8 @@ function testTwoShadowRootsCreatingDifferentOrderCase()
 {
     preprocessForTest();
     var host = document.getElementById("host");
-    var oldestShadow = new WebKitShadowRoot(host);
-    var youngestShadow = new WebKitShadowRoot(host);
+    var oldestShadow = host.webkitCreateShadowRoot();
+    var youngestShadow = host.webkitCreateShadowRoot();
     youngestShadow.innerHTML = "<style>@host { div { color: blue; } }</style><shadow></shadow>";
     oldestShadow.innerHTML = "<style>@host { div { color: red; } }</style><content></content>";
     dumpComputedStyle(host);
@@ -104,10 +104,10 @@ function testMultipleShadowRootsWithInertShadowContent()
 {
     preprocessForTest();
     var host = document.getElementById("host");
-    var oldestShadow = new WebKitShadowRoot(host);
-    var olderShadow = new WebKitShadowRoot(host);
-    var youngerShadow = new WebKitShadowRoot(host);
-    var youngestShadow = new WebKitShadowRoot(host);
+    var oldestShadow = host.webkitCreateShadowRoot();
+    var olderShadow = host.webkitCreateShadowRoot();
+    var youngerShadow = host.webkitCreateShadowRoot();
+    var youngestShadow = host.webkitCreateShadowRoot();
 
     youngestShadow.innerHTML = "<shadow></shadow>";
     youngerShadow.innerHTML = "<content></content>";
@@ -120,10 +120,10 @@ function testMultipleShadowRootsWithInertShadow()
 {
     preprocessForTest();
     var host = document.getElementById("host");
-    var oldestShadow = new WebKitShadowRoot(host);
-    var olderShadow = new WebKitShadowRoot(host);
-    var youngerShadow = new WebKitShadowRoot(host);
-    var youngestShadow = new WebKitShadowRoot(host);
+    var oldestShadow = host.webkitCreateShadowRoot();
+    var olderShadow = host.webkitCreateShadowRoot();
+    var youngerShadow = host.webkitCreateShadowRoot();
+    var youngestShadow = host.webkitCreateShadowRoot();
 
     youngestShadow.innerHTML = "<style>@host { div { color: yellow; } }</style><shadow></shadow>";
     youngerShadow.innerHTML = "<style>@host { div { color: blue; } }</style><div>inert</div>";
@@ -136,10 +136,10 @@ function testNestedCase()
 {
     preprocessForTest();
     var host = document.getElementById("host");
-    var outerShadow = new WebKitShadowRoot(host);
+    var outerShadow = host.webkitCreateShadowRoot();
     outerShadow.innerHTML = '<style>@host { div { color: red; } }</style><div id="nestedHost">InnerShadow</div>';
     var nested = outerShadow.getElementById("nestedHost");
-    var innerShadow = new WebKitShadowRoot(nested);
+    var innerShadow = nested.webkitCreateShadowRoot();
     innerShadow.innerHTML = '<style>@host { div { color: blue; } }</style>Show <shadow></shadow> in outer.';
     dumpComputedStyle(host);
     dumpComputedStyle(nested);
@@ -150,7 +150,7 @@ function testHostVsScopedStyle()
     preprocessForTest();
     var host = document.getElementById("host");
     host.innerHTML = "<style scoped>#host { color: yellow; }</style><span>Hello</span>";
-    var shadow = new WebKitShadowRoot(host);
+    var shadow = host.webkitCreateShadowRoot();
     shadow.innerHTML = "<style>@host { #host { color: red; } }</style><content></content>";
     dumpComputedStyle(host);
 }
@@ -161,7 +161,7 @@ function testHostVsInlineStyle()
     var host = document.getElementById("host");
     host.style.color = "yellow";
     host.innerHTML = "<span>Hello</span>";
-    var shadow = new WebKitShadowRoot(host);
+    var shadow = host.webkitCreateShadowRoot();
     shadow.innerHTML = "<style>@host { div { color: red; } }</style><content></content>";
     dumpComputedStyle(host);
 }

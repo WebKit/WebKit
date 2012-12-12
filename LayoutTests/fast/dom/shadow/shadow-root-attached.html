@@ -17,7 +17,7 @@ var container = document.getElementById("container");
     window.light = createSpanWithText('LIGHT');
     root.appendChild(light);
 
-    var shadowRoot = new WebKitShadowRoot(root);
+    var shadowRoot = root.webkitCreateShadowRoot();
 
     shouldBe('internals.attached(light)', 'false');
     document.getElementById('container').appendChild(root);
@@ -29,7 +29,7 @@ var container = document.getElementById("container");
     window.light = createSpanWithText('LIGHT');
     root.appendChild(light);
 
-    var shadowRoot = new WebKitShadowRoot(root);
+    var shadowRoot = root.webkitCreateShadowRoot();
     shadowRoot.appendChild(createContentWithSelect('span'));
 
     shouldBe('internals.attached(light)', 'false');

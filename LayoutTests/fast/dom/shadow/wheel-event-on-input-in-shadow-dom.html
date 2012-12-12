@@ -23,7 +23,7 @@ function createInput(name) {
     return div;
 }
 
-var shadowRoot = new WebKitShadowRoot(host);
+var shadowRoot = host.webkitCreateShadowRoot();
 var shadowDiv = createInput('shadow');
 shadowRoot.appendChild(shadowDiv);
 

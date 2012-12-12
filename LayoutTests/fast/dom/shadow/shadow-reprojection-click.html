@@ -12,14 +12,14 @@
 if (window.testRunner)
     testRunner.dumpAsText();
 
-var shadowRoot1 = new WebKitShadowRoot(host1);
+var shadowRoot1 = host1.webkitCreateShadowRoot();
 shadowRoot1.innerHTML = '<div id="target">Oldest ShadowRoot Child</div>';
 
-var shadowRoot2 = new WebKitShadowRoot(host1);
+var shadowRoot2 = host1.webkitCreateShadowRoot();
 shadowRoot2.innerHTML = '<div id="host3"><shadow></shadow><content></content><div>Youngest ShadowRoot Child</div></div>';
 
 var host3 = shadowRoot2.getElementById('host3');
-var shadowRoot3 = new WebKitShadowRoot(host3);
+var shadowRoot3 = host3.webkitCreateShadowRoot();
 shadowRoot3.innerHTML = '<content select="div"></content>';
 
 container.offsetLeft;

@@ -11,7 +11,7 @@
 if (window.internals)
     internals.settings.setAuthorShadowDOMForAnyElementEnabled(true);
 
-var shadowRoot = new WebKitShadowRoot(host);
+var shadowRoot = host.webkitCreateShadowRoot();
 
 var div = document.createElement('div');
 div.innerHTML = "(before)<shadow></shadow>(after)";

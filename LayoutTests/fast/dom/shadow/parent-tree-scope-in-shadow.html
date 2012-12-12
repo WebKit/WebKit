@@ -12,13 +12,13 @@
   document.body.appendChild(div);
 
   debug("Creating shadow dom subtrees from top to bottom.");
-  var shadow1 = new WebKitShadowRoot(div);
+  var shadow1 = div.webkitCreateShadowRoot();
   shadow1.innerHTML = "<div id='E'>/div>";
   var e = shadow1.getElementById("E");
-  var shadow2 = new WebKitShadowRoot(e);
+  var shadow2 = e.webkitCreateShadowRoot();
   shadow2.innerHTML = "<div id='F'></div>";
   var f = shadow2.getElementById("F");
-  var shadow3 = new WebKitShadowRoot(f);
+  var shadow3 = f.webkitCreateShadowRoot();
   shadow3.innerHTML = "<div id='G'></div>";
 
   shouldBe("internals.parentTreeScope(shadow1)", "document");
@@ -30,13 +30,13 @@
   debug("Creating multiple shadow dom subtrees.");
   div = document.createElement("div");
   document.body.appendChild(div);
-  shadow1 = new WebKitShadowRoot(div);
+  shadow1 = div.webkitCreateShadowRoot();
   shadow1.innerHTML = "<div id='H'></div>";
 
   var h = shadow1.getElementById("H");
-  shadow2 = new WebKitShadowRoot(h);
+  shadow2 = h.webkitCreateShadowRoot();
   shadow2.innerHTML = "<div>shadow2</div>";
-  shadow3 = new WebKitShadowRoot(h);
+  shadow3 = h.webkitCreateShadowRoot();
   shadow3.innerHTML = "<div>shadow3</div>";
   shouldBe("internals.parentTreeScope(shadow2)", "shadow1");
   shouldBe("internals.parentTreeScope(shadow3)", "shadow1");
@@ -45,13 +45,13 @@
 
   debug("Creating multiple shadow dom subtrees from bottom to top.");
   f = document.createElement("div");
-  shadow3 = new WebKitShadowRoot(f);
+  shadow3 = f.webkitCreateShadowRoot();
   shadow3.innerHTML = "<div id='G'></div>";
   e = document.createElement("div");
-  shadow2 = new WebKitShadowRoot(e);
+  shadow2 = e.webkitCreateShadowRoot();
   shadow2.appendChild(f);
   div = document.createElement("div");
-  shadow1 = new WebKitShadowRoot(div);
+  shadow1 = div.webkitCreateShadowRoot();
   shadow1.appendChild(e);
   document.body.appendChild(div);
 

@@ -31,7 +31,7 @@ shouldBe("i1.length", "2");
 // Then Adding some iframes into a shadow.
 
 var host = document.getElementById("host");
-var shadow = new WebKitShadowRoot(host);
+var shadow = host.webkitCreateShadowRoot();
 var i2InShadow = document.createElement("iframe");
 i2InShadow.setAttribute("name", "i2");
 shadow.appendChild(i2InShadow);

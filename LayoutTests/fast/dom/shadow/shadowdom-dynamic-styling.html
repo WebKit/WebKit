@@ -16,10 +16,10 @@ if (window.testRunner)
   </div>
 <script>
 var box = document.querySelector("#box");
-var oldestShadowRoot = new WebKitShadowRoot(box);
+var oldestShadowRoot = box.webkitCreateShadowRoot();
 oldestShadowRoot.innerHTML = "<content></content>";
     
-var youngestShadowRoot = new WebKitShadowRoot(document.querySelector("#item"));
+var youngestShadowRoot = document.querySelector("#item").webkitCreateShadowRoot();
 youngestShadowRoot.innerHTML = "<style>" +
       ".selected {background: red;}" +
       "</style>" +

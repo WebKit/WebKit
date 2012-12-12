@@ -24,7 +24,7 @@ testFuncs.push(function renderingSingleShadowRoot(callIfDone) {
     var root = document.createElement('div');
     root.appendChild(createSpanWithText('MID'));
 
-    var sr = new WebKitShadowRoot(root);
+    var sr = root.webkitCreateShadowRoot();
     sr.appendChild(createSpanWithText('BEFORE'));
     sr.appendChild(document.createElement('shadow'));
     sr.appendChild(createSpanWithText('AFTER'));
@@ -42,7 +42,7 @@ testFuncs.push(function renderingNotFallbacked(callIfDone) {
 
     var shadow = document.createElement('shadow');
     shadow.appendChild(createSpanWithText('FALLBACK'));
-    var sr = new WebKitShadowRoot(root);
+    var sr = root.webkitCreateShadowRoot();
     sr.appendChild(createSpanWithText('BEFORE'));
     sr.appendChild(shadow);
     sr.appendChild(createSpanWithText('AFTER'));
@@ -59,7 +59,7 @@ testFuncs.push(function renderingFallbacked(callIfDone) {
 
     var shadow = document.createElement('shadow');
     shadow.appendChild(createSpanWithText('FALLBACK'));
-    var sr = new WebKitShadowRoot(root);
+    var sr = root.webkitCreateShadowRoot();
     sr.appendChild(createSpanWithText('BEFORE'));
     sr.appendChild(shadow);
     sr.appendChild(createSpanWithText('AFTER'));
@@ -80,7 +80,7 @@ testFuncs.push(function renderingMixedOfFallbackAndNonFallback(callIfDone) {
     var shadow2 = document.createElement('shadow');
     shadow2.appendChild(createSpanWithText('FALLBACK 2'));
 
-    var sr = new WebKitShadowRoot(root);
+    var sr = root.webkitCreateShadowRoot();
     sr.appendChild(createSpanWithText('BEFORE'));
     sr.appendChild(shadow1);
     sr.appendChild(shadow2);
@@ -99,7 +99,7 @@ testFuncs.push(function renderingShadowRootBeforeContent(callIfDone) {
 
     var shadow = document.createElement('shadow');
     shadow.appendChild(createSpanWithText('SHADOW FALLBACK'));
-    var sr = new WebKitShadowRoot(root);
+    var sr = root.webkitCreateShadowRoot();
     sr.appendChild(createSpanWithText('BEFORE'));
     sr.appendChild(shadow);
     sr.appendChild(createSpanWithText('M 1'));
@@ -120,7 +120,7 @@ testFuncs.push(function renderingShadowRootAfterContent(callIfDone) {
 
     var shadow = document.createElement('shadow');
     shadow.appendChild(createSpanWithText('SHADOW FALLBACK'));
-    var sr = new WebKitShadowRoot(root);
+    var sr = root.webkitCreateShadowRoot();
     sr.appendChild(createSpanWithText('BEFORE'));
     sr.appendChild(createContentWithSelect('span', 'CONTENT FALLBACK'));
     sr.appendChild(createSpanWithText('M 1'));
@@ -139,7 +139,7 @@ testFuncs.push(function renderingShadowElementDynamicallyAdded(callIfDone) {
     var root = document.createElement('div');
     root.appendChild(createSpanWithText('AFTER'));
 
-    var sr = new WebKitShadowRoot(root);
+    var sr = root.webkitCreateShadowRoot();
     sr.appendChild(createSpanWithText('BEFORE'));
     sr.appendChild(createSpanWithText('MID'));
 
@@ -163,7 +163,7 @@ testFuncs.push(function renderingShadowElementDynamicallyRemoved(callIfDone) {
 
     var shadow = document.createElement('shadow');
 
-    var sr = new WebKitShadowRoot(root);
+    var sr = root.webkitCreateShadowRoot();
     sr.appendChild(createSpanWithText('BEFORE'));
     sr.appendChild(shadow);
     sr.appendChild(createSpanWithText('AFTER'));
@@ -184,7 +184,7 @@ testFuncs.push(function renderingLightChildrenDynamicallyAdded(callIfDone) {
 
     var root = document.createElement('div');
 
-    var sr = new WebKitShadowRoot(root);
+    var sr = root.webkitCreateShadowRoot();
     sr.appendChild(createSpanWithText('BEFORE'));
     sr.appendChild(document.createElement('shadow'));
     sr.appendChild(createSpanWithText('AFTER'));
@@ -209,7 +209,7 @@ testFuncs.push(function renderingLightChildrenDynamicallyRemoved(callIfDone) {
     var shadow = document.createElement('shadow');
     shadow.appendChild(createSpanWithText('MID'));
 
-    var sr = new WebKitShadowRoot(root);
+    var sr = root.webkitCreateShadowRoot();
     sr.appendChild(createSpanWithText('BEFORE'));
     sr.appendChild(shadow);
     sr.appendChild(createSpanWithText('AFTER'));

@@ -12,8 +12,8 @@
 <script>
 function doTest() {
     var target = document.createElement('div');
-    sr1 = new WebKitShadowRoot(target);
-    sr2 = new WebKitShadowRoot(target);
+    sr1 = target.webkitCreateShadowRoot();
+    sr2 = target.webkitCreateShadowRoot();
 
     shouldBe('document', 'sr1.ownerDocument');
     shouldBe('sr1.ownerDocument', 'sr2.ownerDocument');

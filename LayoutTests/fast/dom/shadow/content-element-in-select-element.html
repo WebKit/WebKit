@@ -27,7 +27,7 @@ testFuncs.push(function contentElementInSelectElement(callIfDone) {
 
     document.getElementById('actual-container').appendChild(div);
 
-    var sr = new WebKitShadowRoot(div);
+    var sr = div.webkitCreateShadowRoot();
 
     var select = document.createElement('select');
     var content = document.createElement('content');

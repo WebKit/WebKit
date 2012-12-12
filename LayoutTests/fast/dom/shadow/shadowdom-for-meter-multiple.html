@@ -17,10 +17,10 @@ meter::-webkit-meter-inner-element {
 if (window.internals)
     internals.settings.setAuthorShadowDOMForAnyElementEnabled(true);
 
-var shadowRoot = new WebKitShadowRoot(host);
+var shadowRoot = host.webkitCreateShadowRoot();
 shadowRoot.innerHTML = "<shadow></shadow><span>(after)</span>";
 
-var younger = new WebKitShadowRoot(host);
+var younger = host.webkitCreateShadowRoot();
 younger.innerHTML = "<div style='margin: 0 10px 0 10px; height: 1em; width: 5em;'><shadow></shadow></div>";
 </script>
 

@@ -10,7 +10,7 @@
 
 <script>
 var div = document.getElementById('container');
-var root = new WebKitShadowRoot(div);
+var root = div.webkitCreateShadowRoot();
 root.innerHTML = "<content select='span'>PASS</content>";
 </script>
 

@@ -10,7 +10,7 @@
 
 <script>
 var host = document.getElementById('host');
-var shadowRoot = new WebKitShadowRoot(host);
+var shadowRoot = host.webkitCreateShadowRoot();
 shadowRoot.innerHTML = "<shadow></shadow>"
 </script>
 </body>

@@ -59,7 +59,7 @@ function renderApplyAuthorStyleCase() {
     var div = document.createElement('div');
     document.getElementById('apply-author-style').appendChild(div);
 
-    var shadowRoot = new WebKitShadowRoot(div);
+    var shadowRoot = div.webkitCreateShadowRoot();
     assertFalse('default applyAuthorStyles', shadowRoot.applyAuthorStyles);
     shadowRoot.applyAuthorStyles = true;
     assertTrue('applyAuthorStyles should be true', shadowRoot.applyAuthorStyles);
@@ -70,7 +70,7 @@ function renderNoApplyAuthorStyleCase() {
     var div = document.createElement('div');
     document.getElementById('no-apply-author-style').appendChild(div);
 
-    var shadowRoot = new WebKitShadowRoot(div);
+    var shadowRoot = div.webkitCreateShadowRoot();
     assertFalse('default applyAuthorStyles', shadowRoot.applyAuthorStyles);
     shadowRoot.applyAuthorStyles = false;
     assertFalse('applyAuthorStyles should be false', shadowRoot.applyAuthorStyles);
@@ -81,7 +81,7 @@ function renderApplyAuthorStyleWithInlineStyleDeclarationCase() {
     var div = document.createElement('div');
     document.getElementById('with-inline-style-declaration').appendChild(div);
 
-    var shadowRoot = new WebKitShadowRoot(div);
+    var shadowRoot = div.webkitCreateShadowRoot();
     assertFalse('default applyAuthorStyles', shadowRoot.applyAuthorStyles);
     shadowRoot.applyAuthorStyles = true;
     assertTrue('applyAuthorStyles should be true', shadowRoot.applyAuthorStyles);
@@ -92,7 +92,7 @@ function renderApplyAuthorStyleWithOverridingImportantPropertyCase() {
     var div = document.createElement('div');
     document.getElementById('try-to-override-important').appendChild(div);
 
-    var shadowRoot = new WebKitShadowRoot(div);
+    var shadowRoot = div.webkitCreateShadowRoot();
     assertFalse('default applyAuthorStyles', shadowRoot.applyAuthorStyles);
     shadowRoot.applyAuthorStyles = true;
     assertTrue('applyAuthorStyles should be true', shadowRoot.applyAuthorStyles);
@@ -103,7 +103,7 @@ function testChangingApplyAuthorStyleFromTrueToFalse() {
     var div = document.createElement('div');
     document.getElementById('change-apply-author-style-from-true-to-false').appendChild(div);
 
-    var shadowRoot = new WebKitShadowRoot(div);
+    var shadowRoot = div.webkitCreateShadowRoot();
     assertFalse('default applyAuthorStyles', shadowRoot.applyAuthorStyles);
     shadowRoot.applyAuthorStyles = true;
     assertTrue('applyAuthorStyles should be true', shadowRoot.applyAuthorStyles);
@@ -124,7 +124,7 @@ function testChangingApplyAuthorStyleFromFalseToTrue() {
     var div = document.createElement('div');
     document.getElementById('change-apply-author-style-from-false-to-true').appendChild(div);
 
-    var shadowRoot = new WebKitShadowRoot(div);
+    var shadowRoot = div.webkitCreateShadowRoot();
     shadowRoot.applyAuthorStyles = false;
     assertFalse('applyAuthorStyles should be false', shadowRoot.applyAuthorStyles);
     shadowRoot.innerHTML = '<div><span id="test2"></span></div>';

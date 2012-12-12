@@ -18,13 +18,13 @@ div::-webkit-foobar {
 <div id="host2"></div>
 
 <script>
-var shadowRoot1 = new WebKitShadowRoot(host1);
+var shadowRoot1 = host1.webkitCreateShadowRoot();
 var div1 = document.createElement('div');
 div1.webkitPseudo = 'x-foo';
 div1.innerHTML = "This text should be red.";
 shadowRoot1.appendChild(div1);
 
-var shadowRoot2 = new WebKitShadowRoot(host2);
+var shadowRoot2 = host2.webkitCreateShadowRoot();
 var div2 = document.createElement('div');
 div2.webkitPseudo = '-webkit-foobar';
 div2.innerHTML = "This text should not be red.";

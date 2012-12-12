@@ -328,7 +328,6 @@ PASS WebKitCSSRegionRule.toString() is '[object WebKitCSSRegionRuleConstructor]'
 PASS WebKitCSSTransformValue.toString() is '[object WebKitCSSTransformValueConstructor]'
 FAIL WebKitMutationObserver.toString() should be [object WebKitMutationObserverConstructor]. Was [object MutationObserverConstructor].
 PASS WebKitPoint.toString() is '[object WebKitPointConstructor]'
-FAIL WebKitShadowRoot.toString() should be [object WebKitShadowRootConstructor]. Was [object ShadowRootConstructor].
 PASS WebKitTransitionEvent.toString() is '[object WebKitTransitionEventConstructor]'
 PASS WebSocket.toString() is '[object WebSocketConstructor]'
 PASS WheelEvent.toString() is '[object WheelEventConstructor]'

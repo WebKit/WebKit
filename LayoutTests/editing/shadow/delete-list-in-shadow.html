@@ -20,7 +20,7 @@
 if (window.testRunner)
     testRunner.dumpAsText();
 
-var shadowRoot = new WebKitShadowRoot(host);
+var shadowRoot = host.webkitCreateShadowRoot();
 var li = document.createElement('li');
 li.innerHTML = 'hogehoge';
 shadowRoot.appendChild(li);

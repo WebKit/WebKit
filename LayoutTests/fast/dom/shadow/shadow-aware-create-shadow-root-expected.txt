@@ -3,7 +3,6 @@ Tests for ShadowAware JS APIs.
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 
 
-PASS root1.constructor is window.WebKitShadowRoot
 PASS root1 is not root2
 PASS root1 is window.internals.oldestShadowRoot(host)
 PASS root2 is window.internals.youngestShadowRoot(host)

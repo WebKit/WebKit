@@ -10,7 +10,7 @@
 <script>
 function doTest() {
     var input = document.getElementById('password');
-    var shadowRoot = new WebKitShadowRoot(input);
+    var shadowRoot = input.webkitCreateShadowRoot();
 
     document.getElementById('submit').click();
     if (window.testRunner) {

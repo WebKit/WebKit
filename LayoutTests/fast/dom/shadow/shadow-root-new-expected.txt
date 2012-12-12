@@ -1,4 +1,4 @@
-This test checks the object 'new WebKitShadowRoot(host)' and internals.shadowRoot(div) are the same.
+This test checks the object 'host.webkitCreateShadowRoot()' and internals.shadowRoot(div) are the same.
 
 PASS root1 is root2
 PASS successfullyParsed is true

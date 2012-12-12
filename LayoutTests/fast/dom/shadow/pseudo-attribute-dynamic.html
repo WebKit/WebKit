@@ -22,7 +22,7 @@
 if (window.testRunner)
     testRunner.waitUntilDone();
 
-var shadowRoot = new WebKitShadowRoot(host);
+var shadowRoot = host.webkitCreateShadowRoot();
 var div = document.createElement('div');
 div.webkitPseudo = 'x-foo';
 div.innerHTML = "This should be blue.";

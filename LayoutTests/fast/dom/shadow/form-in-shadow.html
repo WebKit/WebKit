@@ -13,7 +13,7 @@ if (window.testRunner)
 
 function createShadowForm() {
     var container = document.getElementById('container');
-    var shadowRoot = new WebKitShadowRoot(container);
+    var shadowRoot = container.webkitCreateShadowRoot();
 
     shadowRoot.innerHTML =
         '<form>' +

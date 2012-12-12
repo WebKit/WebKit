@@ -12,7 +12,7 @@
 <script>
 description("This test ensures ShadowRootType is correctly reflected");
 
-var shadowRootForDiv = new WebKitShadowRoot(host);
+var shadowRootForDiv = host.webkitCreateShadowRoot();
 var shadowRootForInput = internals.shadowRoot(input);
 
 shouldBe('"AuthorShadowRoot"', 'internals.shadowRootType(shadowRootForDiv)');

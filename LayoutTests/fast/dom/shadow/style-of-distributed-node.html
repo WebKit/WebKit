@@ -28,7 +28,7 @@ description("Tests to ensure that styles of distributed nodes are different if t
 if (window.testRunner)
   testRunner.dumpAsText();
 
-var sr = new WebKitShadowRoot(document.getElementById("host"));
+var sr = document.getElementById("host").webkitCreateShadowRoot();
 sr.innerHTML = '<content select="#child-a"></content><div style="color: blue"><content select="#child-b"></content></div>';
 
 shouldBe('getColorProperty("child-a")', '"rgb(255, 0, 0)"');

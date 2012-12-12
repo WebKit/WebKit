@@ -9,11 +9,11 @@ jsTestIsAsync = true;
 function boom() {
     var div = document.createElement('div');
 
-    var older = new WebKitShadowRoot(div);
+    var older = div.webkitCreateShadowRoot();
     older.appendChild(document.createElement('div'));
     document.documentElement.appendChild(div);
 
-    var younger = new WebKitShadowRoot(div);
+    var younger = div.webkitCreateShadowRoot();
     var select = document.createElement('select');
     var shadow = document.createElement('shadow');
     select.appendChild(shadow);

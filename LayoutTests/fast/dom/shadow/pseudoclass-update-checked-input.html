@@ -33,10 +33,10 @@
 if (window.testRunner)
     testRunner.waitUntilDone();
 
-new WebKitShadowRoot(host1).innerHTML = '<content select="input:checked">';
-new WebKitShadowRoot(host2).innerHTML = '<content select="input:checked">';
-new WebKitShadowRoot(host3).innerHTML = '<content select="input:checked">';
-new WebKitShadowRoot(host4).innerHTML = '<content select="input:checked">';
+host1.webkitCreateShadowRoot().innerHTML = '<content select="input:checked">';
+host2.webkitCreateShadowRoot().innerHTML = '<content select="input:checked">';
+host3.webkitCreateShadowRoot().innerHTML = '<content select="input:checked">';
+host4.webkitCreateShadowRoot().innerHTML = '<content select="input:checked">';
 
 setTimeout(function() {
     input1.checked = true;

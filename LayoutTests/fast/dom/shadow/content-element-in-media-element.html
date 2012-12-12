@@ -27,7 +27,7 @@ testFuncs.push(function contentElementInVideoElement(callIfDone) {
 
     document.getElementById('actual-container').appendChild(div);
 
-    var sr = new WebKitShadowRoot(div);
+    var sr = div.webkitCreateShadowRoot();
 
     var video = document.createElement('video');
     var content = document.createElement('content');

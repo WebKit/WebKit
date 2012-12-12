@@ -9,15 +9,15 @@ description("This test ensure that the multiple shadow root is available.");
 
 var div = document.createElement('div');
 shouldBe("internals.shadowRoot(div)", "null");
-var shadowRoot1 = new WebKitShadowRoot(div);
+var shadowRoot1 = div.webkitCreateShadowRoot();
 shouldBe("internals.shadowRoot(div)", "shadowRoot1");
 shouldBe("internals.olderShadowRoot(shadowRoot1)", "null");
 
-var shadowRoot2 = new WebKitShadowRoot(div)
+var shadowRoot2 = div.webkitCreateShadowRoot()
 shouldBe("internals.shadowRoot(div)", "shadowRoot2");
 shouldBe("internals.olderShadowRoot(shadowRoot2)", "shadowRoot1");
 
-var shadowRoot3 = new WebKitShadowRoot(div);
+var shadowRoot3 = div.webkitCreateShadowRoot();
 shouldBe("internals.shadowRoot(div)", "shadowRoot3");
 shouldBe("internals.olderShadowRoot(shadowRoot3)", "shadowRoot2");
 

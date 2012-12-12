@@ -3,10 +3,6 @@ Tests for ShadowRoot JS APIs. Can only run within DRT
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 
 
-PASS new WebKitShadowRoot() threw exception TypeError: Not enough arguments.
-PASS new WebKitShadowRoot(undefined) threw exception Error: HierarchyRequestError: DOM Exception 3.
-PASS new WebKitShadowRoot(null) threw exception Error: HierarchyRequestError: DOM Exception 3.
-PASS new WebKitShadowRoot(1) threw exception Error: HierarchyRequestError: DOM Exception 3.
 PASS shadowRoot.getElementById('div1') is div1
 PASS shadowRoot.getElementById('foo') is null
 PASS shadowRoot.getElementsByClassName('class2') is [div2]

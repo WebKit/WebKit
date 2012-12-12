@@ -20,7 +20,7 @@ if (window.testRunner) {
 }
 
 function addShadowDOM(host) {
-    var shadowRoot = new WebKitShadowRoot(host);
+    var shadowRoot = host.webkitCreateShadowRoot();
     shadowRoot.innerHTML = "(before)<shadow></shadow>(after) <span id='target'>target</span>";
     return shadowRoot;
 }

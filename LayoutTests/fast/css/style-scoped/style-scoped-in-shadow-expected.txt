@@ -1,8 +1,5 @@
 Tests that
 
-PASS window.internals is defined.
-PASS window.internals.ensureShadowRoot is defined.
-PASS WebKitShadowRoot is defined.
 PASS shadow.innerHTML is defined.
 PASS shadow.getElementById is defined.
 A: rgb(0, 0, 0)

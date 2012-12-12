@@ -9,7 +9,7 @@
 </form>
 
 <script>
-var shadowRoot = new WebKitShadowRoot(host);
+var shadowRoot = host.webkitCreateShadowRoot();
 var shadow = document.createElement('shadow');
 shadowRoot.appendChild(shadow);
 </script>

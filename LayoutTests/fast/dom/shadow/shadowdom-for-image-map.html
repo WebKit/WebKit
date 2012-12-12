@@ -26,7 +26,7 @@ if (window.testRunner)
     testRunner.dumpAsText();
 
 function addShadowDOM(host) {
-    var shadowRoot = new WebKitShadowRoot(host);
+    var shadowRoot = host.webkitCreateShadowRoot();
     shadowRoot.innerHTML = "<shadow></shadow>";
 
     var userAgentShadowRoot = internals.oldestShadowRoot(host);

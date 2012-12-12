@@ -9,7 +9,7 @@ var imageContentStyle = "content: url(data:image/png;base64,iVBORw0KGgoAAAANSUhE
 function createImageDivWithShadow() {
   var imageDiv = document.createElement('div');
   imageDiv.setAttribute("style", imageContentStyle);
-  var shadow = new WebKitShadowRoot(imageDiv); 
+  var shadow = imageDiv.webkitCreateShadowRoot(); 
   shadow.appendChild(document.createElement('div'));
   return imageDiv;
 }
@@ -18,7 +18,7 @@ function createImageDivWithContentShadow() {
   var imageDiv = document.createElement('div');
   imageDiv.setAttribute("style", imageContentStyle);
   imageDiv.appendChild(document.createElement('div'));
-  var shadow = new WebKitShadowRoot(imageDiv); 
+  var shadow = imageDiv.webkitCreateShadowRoot(); 
   shadow.appendChild(document.createElement('div'));
   shadow.appendChild(document.createElement('content'));
   return imageDiv;
@@ -27,7 +27,7 @@ function createImageDivWithContentShadow() {
 function createImageDivWithFallbackContentShadow() {
   var imageDiv = document.createElement('div');
   imageDiv.setAttribute("style", imageContentStyle);
-  var shadow = new WebKitShadowRoot(imageDiv); 
+  var shadow = imageDiv.webkitCreateShadowRoot(); 
   shadow.appendChild(document.createElement('div'));
   var content = document.createElement('content');
   content.innerHTML = "<div></div>";

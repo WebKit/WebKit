@@ -41,8 +41,8 @@ host1.appendChild(area2);
 host2.appendChild(area3);
 host2.appendChild(area4);
 
-new WebKitShadowRoot(host1).innerHTML = '<content select="area:enabled"></content>';
-new WebKitShadowRoot(host2).innerHTML = '<content select="area:enabled"></content>';
+host1.webkitCreateShadowRoot().innerHTML = '<content select="area:enabled"></content>';
+host2.webkitCreateShadowRoot().innerHTML = '<content select="area:enabled"></content>';
 
 setTimeout(function() {
     area2.removeAttribute('href');

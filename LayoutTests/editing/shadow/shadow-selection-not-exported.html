@@ -14,7 +14,7 @@ if (window.testRunner)
     testRunner.dumpAsText();
 
 var container = document.getElementById('container');
-var shadowRoot = new WebKitShadowRoot(container);
+var shadowRoot = container.webkitCreateShadowRoot();
 
 var div2 = document.createElement('div');
 div2.appendChild(document.createTextNode('IN SHADOW TREE 1'));

@@ -21,7 +21,7 @@ function createBox(name) {
 }
 
 function runTest() {
-    var shadowRoot = new WebKitShadowRoot(host);
+    var shadowRoot = host.webkitCreateShadowRoot();
     var shadowDiv = createBox('shadow');
     shadowRoot.appendChild(shadowDiv);
 

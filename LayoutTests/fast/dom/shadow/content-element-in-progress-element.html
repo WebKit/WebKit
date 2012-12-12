@@ -27,7 +27,7 @@ testFuncs.push(function contentElementInProgressElement(callIfDone) {
 
     document.getElementById('actual-container').appendChild(div);
 
-    var sr = new WebKitShadowRoot(div);
+    var sr = div.webkitCreateShadowRoot();
 
     var progress = document.createElement('progress');
     var content = document.createElement('content');

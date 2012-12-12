@@ -14,13 +14,9 @@ description("Tests for ShadowRoot JS APIs. Can only run within DRT");
 
 if (window.testRunner)
     testRunner.dumpAsText();
-shouldThrow("new WebKitShadowRoot()");
-shouldThrow("new WebKitShadowRoot(undefined)");
-shouldThrow("new WebKitShadowRoot(null)");
-shouldThrow("new WebKitShadowRoot(1)");
 var shadowHost = document.createElement('div');
 document.body.appendChild(shadowHost);
-var shadowRoot = new WebKitShadowRoot(shadowHost);
+var shadowRoot = shadowHost.webkitCreateShadowRoot();
 
 var div1 = document.createElement("div");
 div1.setAttribute("id", "div1");
@@ -54,7 +50,7 @@ shouldBeNull("shadowRoot.querySelector('.foo')");
 shouldBe("shadowRoot.querySelectorAll('div')", "[div1, div2]");
 shouldBe("shadowRoot.querySelectorAll('foo')", "[]");
 
-var youngerShadowRoot = new WebKitShadowRoot(shadowHost);
+var youngerShadowRoot = shadowHost.webkitCreateShadowRoot();
 shouldNotBe("youngerShadowRoot", "shadowRoot");
 
 

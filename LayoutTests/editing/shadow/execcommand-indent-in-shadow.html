@@ -14,7 +14,7 @@ to confirm a crash doesn't happen.</p>
 <pre id="console"></div>
 
 <script>
-var shadowRoot = new WebKitShadowRoot(container);
+var shadowRoot = container.webkitCreateShadowRoot();
 shadowRoot.innerHTML = "<span contenteditable>Kotori Otonashi</span>"
 var span = shadowRoot.firstChild;
 

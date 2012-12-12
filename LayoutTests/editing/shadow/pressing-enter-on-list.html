@@ -20,7 +20,7 @@ becasue modifying Shadow DOM removes the renderer in Shadow DOM and desendant of
 if (window.testRunner)
     testRunner.dumpAsText();
 
-var shadowRoot = new WebKitShadowRoot(host);
+var shadowRoot = host.webkitCreateShadowRoot();
 var li = document.createElement('li');
 li.innerHTML = 'inside shadow';
 shadowRoot.appendChild(li);

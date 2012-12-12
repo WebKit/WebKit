@@ -1,6 +1,4 @@
 PASS window.internals is defined.
-PASS window.internals.ensureShadowRoot is defined.
-PASS WebKitShadowRoot is defined.
 PASS successfullyParsed is true
 
 TEST COMPLETE

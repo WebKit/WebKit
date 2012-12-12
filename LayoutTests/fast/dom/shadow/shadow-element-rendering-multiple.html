@@ -24,12 +24,12 @@ testFuncs.push(function renderingDoubleShadowRoot(callIfDone) {
     var root = document.createElement('div');
     root.appendChild(createSpanWithText('MID'));
 
-    var sr1 = new WebKitShadowRoot(root);
+    var sr1 = root.webkitCreateShadowRoot();
     sr1.appendChild(createSpanWithText('BEFORE 1'));
     sr1.appendChild(document.createElement('shadow'));
     sr1.appendChild(createSpanWithText('AFTER 1'));
 
-    var sr2 = new WebKitShadowRoot(root);
+    var sr2 = root.webkitCreateShadowRoot();
     sr2.appendChild(createSpanWithText('BEFORE 2'));
     sr2.appendChild(document.createElement('shadow'));
     sr2.appendChild(createSpanWithText('AFTER 2'));
@@ -46,11 +46,11 @@ testFuncs.push(function renderingDoubleShadowRootWithOneShadowElement(callIfDone
     var root = document.createElement('div');
     root.appendChild(createSpanWithText('MID'));
 
-    var sr1 = new WebKitShadowRoot(root);
+    var sr1 = root.webkitCreateShadowRoot();
     sr1.appendChild(createSpanWithText('BEFORE 1'));
     sr1.appendChild(createSpanWithText('AFTER 1'));
 
-    var sr2 = new WebKitShadowRoot(root);
+    var sr2 = root.webkitCreateShadowRoot();
     sr2.appendChild(createSpanWithText('BEFORE 2'));
     sr2.appendChild(document.createElement('shadow'));
     sr2.appendChild(createSpanWithText('AFTER 2'));
@@ -68,17 +68,17 @@ testFuncs.push(function renderingTripleShadowRoot(callIfDone) {
     var root = document.createElement('div');
     root.appendChild(createSpanWithText('MID'));
 
-    var sr1 = new WebKitShadowRoot(root);
+    var sr1 = root.webkitCreateShadowRoot();
     sr1.appendChild(createSpanWithText('BEFORE 1'));
     sr1.appendChild(document.createElement('shadow'));
     sr1.appendChild(createSpanWithText('AFTER 1'));
 
-    var sr2 = new WebKitShadowRoot(root);
+    var sr2 = root.webkitCreateShadowRoot();
     sr2.appendChild(createSpanWithText('BEFORE 2'));
     sr2.appendChild(document.createElement('shadow'));
     sr2.appendChild(createSpanWithText('AFTER 2'));
 
-    var sr3 = new WebKitShadowRoot(root);
+    var sr3 = root.webkitCreateShadowRoot();
     sr3.appendChild(createSpanWithText('BEFORE 3'));
     sr3.appendChild(document.createElement('shadow'));
     sr3.appendChild(createSpanWithText('AFTER 3'));
@@ -97,12 +97,12 @@ testFuncs.push(function renderingTwoShadowRoots(callIfDone) {
     var root = document.createElement('div');
     root.appendChild(createSpanWithText('MID'));
 
-    var sr1 = new WebKitShadowRoot(root);
+    var sr1 = root.webkitCreateShadowRoot();
     sr1.appendChild(createSpanWithText('BEFORE 1'));
     sr1.appendChild(document.createElement('shadow'));
     sr1.appendChild(createSpanWithText('AFTER 1'));
 
-    var sr2 = new WebKitShadowRoot(root);
+    var sr2 = root.webkitCreateShadowRoot();
     var shadow21 = document.createElement('shadow');
     shadow21.appendChild(createSpanWithText('FALLBACK 2-1'));
     var shadow22 = document.createElement('shadow');
@@ -130,7 +130,7 @@ testFuncs.push(function testWithDoubleShadowRootWithContent1(callIfDone) {
 
     var shadow1 = document.createElement('shadow');
     shadow1.appendChild(createSpanWithText('SHADOW FALLBACK 1'));
-    var sr1 = new WebKitShadowRoot(root);
+    var sr1 = root.webkitCreateShadowRoot();
     sr1.appendChild(createSpanWithText('BEFORE 1'));
     var content1 = createContentWithSelect('.sr1', 'CONTENT FALLBACK 1');
     sr1.appendChild(content1);
@@ -139,7 +139,7 @@ testFuncs.push(function testWithDoubleShadowRootWithContent1(callIfDone) {
 
     var shadow2 = document.createElement('shadow');
     shadow2.appendChild(createSpanWithText('SHADOW FALLBACK 2'));
-    var sr2 = new WebKitShadowRoot(root);
+    var sr2 = root.webkitCreateShadowRoot();
     sr2.appendChild(createSpanWithText('BEFORE 2'));
     var content;
     sr2.appendChild(content = createContentWithSelect('.sr2', 'CONTENT FALLBACK 2'));
@@ -164,7 +164,7 @@ testFuncs.push(function testWithDoubleShadowRootWithContent2(callIfDone) {
 
     var shadow1 = document.createElement('shadow');
     shadow1.appendChild(createSpanWithText('SHADOW FALLBACK 1'));
-    var sr1 = new WebKitShadowRoot(root);
+    var sr1 = root.webkitCreateShadowRoot();
     sr1.appendChild(createSpanWithText('BEFORE 1'));
     sr1.appendChild(createContentWithSelect('.sr1', 'CONTENT FALLBACK 1'));
     sr1.appendChild(shadow1);
@@ -172,7 +172,7 @@ testFuncs.push(function testWithDoubleShadowRootWithContent2(callIfDone) {
 
     var shadow2 = document.createElement('shadow');
     shadow2.appendChild(createSpanWithText('SHADOW FALLBACK 2'));
-    var sr2 = new WebKitShadowRoot(root);
+    var sr2 = root.webkitCreateShadowRoot();
     sr2.appendChild(createSpanWithText('BEFORE 2'));
     sr2.appendChild(createContentWithSelect('.sr2', 'CONTENT FALLBACK 2'));
     sr2.appendChild(createContentWithSelect('span', 'CONTENT FALLBACK 3'));
@@ -190,7 +190,7 @@ testFuncs.push(function renderingDoubleShadowRootDynamicallyAdded1(callIfDone) {
     var root = document.createElement('div');
     root.appendChild(createSpanWithText('MID'));
 
-    var sr1 = new WebKitShadowRoot(root);
+    var sr1 = root.webkitCreateShadowRoot();
     sr1.appendChild(createSpanWithText('BEFORE 1'));
     sr1.appendChild(document.createElement('shadow'));
     sr1.appendChild(createSpanWithText('AFTER 1'));
@@ -198,7 +198,7 @@ testFuncs.push(function renderingDoubleShadowRootDynamicallyAdded1(callIfDone) {
     document.getElementById('actual-container').appendChild(root);
 
     var f = (function(root, callIfDone) { return function() {
-        var sr2 = new WebKitShadowRoot(root);
+        var sr2 = root.webkitCreateShadowRoot();
         sr2.appendChild(createSpanWithText('BEFORE 2'));
         sr2.appendChild(document.createElement('shadow'));
         sr2.appendChild(createSpanWithText('AFTER 2'));
@@ -216,12 +216,12 @@ testFuncs.push(function renderingDoubleShadowRootDynamicallyAdded2(callIfDone) {
     var root = document.createElement('div');
     root.appendChild(createSpanWithText('MID'));
 
-    var sr1 = new WebKitShadowRoot(root);
+    var sr1 = root.webkitCreateShadowRoot();
     sr1.appendChild(createSpanWithText('BEFORE 1'));
     sr1.appendChild(document.createElement('shadow'));
     sr1.appendChild(createSpanWithText('AFTER 1'));
 
-    var sr2 = new WebKitShadowRoot(root);
+    var sr2 = root.webkitCreateShadowRoot();
     sr2.appendChild(createSpanWithText('BEFORE 2'));
     sr2.appendChild(createSpanWithText('AFTER 2'));
 
@@ -244,11 +244,11 @@ testFuncs.push(function renderingDoubleShadowRootDynamicallyAdded3(callIfDone) {
     var root = document.createElement('div');
     root.appendChild(createSpanWithText('MID'));
 
-    var sr1 = new WebKitShadowRoot(root);
+    var sr1 = root.webkitCreateShadowRoot();
     sr1.appendChild(createSpanWithText('BEFORE 1'));
     sr1.appendChild(createSpanWithText('AFTER 1'));
 
-    var sr2 = new WebKitShadowRoot(root);
+    var sr2 = root.webkitCreateShadowRoot();
     sr2.appendChild(createSpanWithText('BEFORE 2'));
     sr2.appendChild(document.createElement('shadow'));
     sr2.appendChild(createSpanWithText('AFTER 2'));
@@ -272,12 +272,12 @@ testFuncs.push(function renderingDoubleShadowRootDynamicallyRemoved1(callIfDone)
     var root = document.createElement('div');
     root.appendChild(createSpanWithText('MID'));
 
-    var sr1 = new WebKitShadowRoot(root);
+    var sr1 = root.webkitCreateShadowRoot();
     sr1.appendChild(createSpanWithText('BEFORE 1'));
     sr1.appendChild(document.createElement('shadow'));
     sr1.appendChild(createSpanWithText('AFTER 1'));
 
-    var sr2 = new WebKitShadowRoot(root);
+    var sr2 = root.webkitCreateShadowRoot();
     sr2.appendChild(createSpanWithText('BEFORE 2'));
     sr2.appendChild(document.createElement('shadow'));
     sr2.appendChild(createSpanWithText('AFTER 2'));
@@ -299,12 +299,12 @@ testFuncs.push(function renderingDoubleShadowRootDynamicallyRemoved2(callIfDone)
     var root = document.createElement('div');
     root.appendChild(createSpanWithText('MID'));
 
-    var sr1 = new WebKitShadowRoot(root);
+    var sr1 = root.webkitCreateShadowRoot();
     sr1.appendChild(createSpanWithText('BEFORE 1'));
     sr1.appendChild(document.createElement('shadow'));
     sr1.appendChild(createSpanWithText('AFTER 1'));
 
-    var sr2 = new WebKitShadowRoot(root);
+    var sr2 = root.webkitCreateShadowRoot();
     sr2.appendChild(createSpanWithText('BEFORE 2'));
     sr2.appendChild(document.createElement('shadow'));
     sr2.appendChild(createSpanWithText('AFTER 2'));
@@ -325,12 +325,12 @@ testFuncs.push(function renderingLightChildrenDynamicallyAdded(callIfDone) {
 
     var root = document.createElement('div');
 
-    var sr1 = new WebKitShadowRoot(root);
+    var sr1 = root.webkitCreateShadowRoot();
     sr1.appendChild(createSpanWithText('BEFORE 1'));
     sr1.appendChild(document.createElement('shadow'));
     sr1.appendChild(createSpanWithText('AFTER 1'));
 
-    var sr2 = new WebKitShadowRoot(root);
+    var sr2 = root.webkitCreateShadowRoot();
     sr2.appendChild(createSpanWithText('BEFORE 2'));
     sr2.appendChild(document.createElement('shadow'));
     sr2.appendChild(createSpanWithText('AFTER 2'));
@@ -352,11 +352,11 @@ testFuncs.push(function renderingOlderShadowRootContentDynamicallyAdded(callIfDo
     var root = document.createElement('div');
     root.appendChild(createSpanWithText('MID'));
 
-    var sr1 = new WebKitShadowRoot(root);
+    var sr1 = root.webkitCreateShadowRoot();
     sr1.appendChild(createSpanWithText('BEFORE 1'));
     sr1.appendChild(document.createElement('shadow'));
 
-    var sr2 = new WebKitShadowRoot(root);
+    var sr2 = root.webkitCreateShadowRoot();
     sr2.appendChild(createSpanWithText('BEFORE 2'));
     sr2.appendChild(document.createElement('shadow'));
     sr2.appendChild(createSpanWithText('AFTER 2'));
@@ -378,12 +378,12 @@ testFuncs.push(function renderingLightChildrenDynamicallyRemoved(callIfDone) {
     var root = document.createElement('div');
     root.appendChild(createSpanWithText('MID'));
 
-    var sr1 = new WebKitShadowRoot(root);
+    var sr1 = root.webkitCreateShadowRoot();
     sr1.appendChild(createSpanWithText('BEFORE 1'));
     sr1.appendChild(document.createElement('shadow'));
     sr1.appendChild(createSpanWithText('AFTER 1'));
 
-    var sr2 = new WebKitShadowRoot(root);
+    var sr2 = root.webkitCreateShadowRoot();
     sr2.appendChild(createSpanWithText('BEFORE 2'));
     sr2.appendChild(document.createElement('shadow'));
     sr2.appendChild(createSpanWithText('AFTER 2'));
@@ -405,13 +405,13 @@ testFuncs.push(function renderingOlderShadowRootContentDynamicallyRemoved(callIf
     var root = document.createElement('div');
     root.appendChild(createSpanWithText('MID'));
 
-    var sr1 = new WebKitShadowRoot(root);
+    var sr1 = root.webkitCreateShadowRoot();
     sr1.appendChild(createSpanWithText('BEFORE 1'));
     sr1.appendChild(document.createElement('shadow'));
     sr1.appendChild(createSpanWithText('AFTER 1'));
     sr1.appendChild(createSpanWithText('SHOULD NOT BE RENDERED'));
 
-    var sr2 = new WebKitShadowRoot(root);
+    var sr2 = root.webkitCreateShadowRoot();
     sr2.appendChild(createSpanWithText('BEFORE 2'));
     sr2.appendChild(document.createElement('shadow'));
     sr2.appendChild(createSpanWithText('AFTER 2'));

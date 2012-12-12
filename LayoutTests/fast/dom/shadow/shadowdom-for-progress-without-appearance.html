@@ -20,7 +20,7 @@ progress {
 if (window.internals)
     internals.settings.setAuthorShadowDOMForAnyElementEnabled(true);
 
-var shadowRoot = new WebKitShadowRoot(host);
+var shadowRoot = host.webkitCreateShadowRoot();
 shadowRoot.innerHTML = "<shadow></shadow><span>(after)</span>";
 </script>
 

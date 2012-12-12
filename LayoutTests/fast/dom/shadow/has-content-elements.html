@@ -19,7 +19,7 @@ else if (!window.internals.hasContentElement)
 
 <script>
 var host = document.getElementById("host");
-var shadowRoot = new WebKitShadowRoot(host);
+var shadowRoot = host.webkitCreateShadowRoot();
 
 shouldBeFalse("internals.hasContentElement(shadowRoot)");
 
@@ -46,10 +46,10 @@ shouldBeTrue("internals.hasContentElement(shadowRoot)");
 // Case for nested shadow subtree
 shadowRoot.innerHTML = '<div>in shadow root</div>';
 var innerDiv1 = shadowRoot.querySelector('div');
-var innerShadowRoot1 = new WebKitShadowRoot(innerDiv1);
+var innerShadowRoot1 = innerDiv1.webkitCreateShadowRoot();
 innerShadowRoot1.innerHTML = "<div><content></content></div>";
 var innerDiv2 = innerShadowRoot1.querySelector('div');
-var innerShadowRoot2 = new WebKitShadowRoot(innerDiv2);
+var innerShadowRoot2 = innerDiv2.webkitCreateShadowRoot();
 innerShadowRoot2.innerHTML = "<div><content title='debugstop'></content></div>";
 
 shouldBeFalse("internals.hasContentElement(shadowRoot)");
@@ -60,7 +60,7 @@ shouldBeFalse("internals.hasContentElement(shadowRoot)");
 
 // Case for multiple shadow subtrees
 shadowRoot.innerHTML = "<div><div><div><content></content></div></div></div>";
-var youngerShadowRoot = new WebKitShadowRoot(host);
+var youngerShadowRoot = host.webkitCreateShadowRoot();
 // Modifying older shadow root or younger shadow root doesn't affect the other.
 shouldBeTrue("internals.hasContentElement(shadowRoot)");
 shouldBeFalse("internals.hasContentElement(youngerShadowRoot)");

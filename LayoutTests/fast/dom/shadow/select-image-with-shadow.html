@@ -9,7 +9,7 @@
 if (window.internals)
     internals.settings.setAuthorShadowDOMForAnyElementEnabled(true);
 
-var shadowRoot = new WebKitShadowRoot(host);
+var shadowRoot = host.webkitCreateShadowRoot();
 shadowRoot.innerHTML = "<span id='span1'>Kotori</span><shadow></shadow><span id='span2'>Piyo</span>";
 
 var span1 = shadowRoot.getElementById('span1');

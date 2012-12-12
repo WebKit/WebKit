@@ -18,9 +18,9 @@ if (window.internals)
    internals.settings.setAuthorShadowDOMForAnyElementEnabled(true);
 
 var host = document.getElementById("host");
-var shadow1 = new WebKitShadowRoot(host);
+var shadow1 = host.webkitCreateShadowRoot();
 shadow1.innerHTML = "<div><shadow></shadow><div></div></div>";
-var shadow2 = new WebKitShadowRoot(host);
+var shadow2 = host.webkitCreateShadowRoot();
 shadow2.innerHTML = "<section>"
                  +   "<shadow></shadow>"
                  +   "<div>second line follows.</div>"

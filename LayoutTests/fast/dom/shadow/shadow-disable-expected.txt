@@ -4,47 +4,47 @@ On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE
 
 
 DIV
-PASS new WebKitShadowRoot(element) is not null
+PASS element.webkitCreateShadowRoot() is not null
 SPAN
-PASS new WebKitShadowRoot(element) is not null
+PASS element.webkitCreateShadowRoot() is not null
 A
-PASS new WebKitShadowRoot(element) is not null
+PASS element.webkitCreateShadowRoot() is not null
 SECTION
-PASS new WebKitShadowRoot(element) is not null
+PASS element.webkitCreateShadowRoot() is not null
 INPUT
-PASS new WebKitShadowRoot(element) threw exception Error: HierarchyRequestError: DOM Exception 3.
+PASS element.webkitCreateShadowRoot() threw exception Error: HierarchyRequestError: DOM Exception 3.
 tref
-PASS new WebKitShadowRoot(element) threw exception Error: HierarchyRequestError: DOM Exception 3.
+PASS element.webkitCreateShadowRoot() threw exception Error: HierarchyRequestError: DOM Exception 3.
 AUDIO
-PASS new WebKitShadowRoot(element) threw exception Error: HierarchyRequestError: DOM Exception 3.
+PASS element.webkitCreateShadowRoot() threw exception Error: HierarchyRequestError: DOM Exception 3.
 VIDEO
-PASS new WebKitShadowRoot(element) threw exception Error: HierarchyRequestError: DOM Exception 3.
+PASS element.webkitCreateShadowRoot() threw exception Error: HierarchyRequestError: DOM Exception 3.
 SELECT
-PASS new WebKitShadowRoot(element) threw exception Error: HierarchyRequestError: DOM Exception 3.
+PASS element.webkitCreateShadowRoot() threw exception Error: HierarchyRequestError: DOM Exception 3.
 IMG
-PASS new WebKitShadowRoot(element) threw exception Error: HierarchyRequestError: DOM Exception 3.
+PASS element.webkitCreateShadowRoot() threw exception Error: HierarchyRequestError: DOM Exception 3.
 TEXTAREA
-PASS new WebKitShadowRoot(element) threw exception Error: HierarchyRequestError: DOM Exception 3.
+PASS element.webkitCreateShadowRoot() threw exception Error: HierarchyRequestError: DOM Exception 3.
 IFRAME
-PASS new WebKitShadowRoot(element) threw exception Error: HierarchyRequestError: DOM Exception 3.
+PASS element.webkitCreateShadowRoot() threw exception Error: HierarchyRequestError: DOM Exception 3.
 CANVAS
-PASS new WebKitShadowRoot(element) threw exception Error: HierarchyRequestError: DOM Exception 3.
+PASS element.webkitCreateShadowRoot() threw exception Error: HierarchyRequestError: DOM Exception 3.
 METER
-PASS new WebKitShadowRoot(element) threw exception Error: HierarchyRequestError: DOM Exception 3.
+PASS element.webkitCreateShadowRoot() threw exception Error: HierarchyRequestError: DOM Exception 3.
 PROGRESS
-PASS new WebKitShadowRoot(element) threw exception Error: HierarchyRequestError: DOM Exception 3.
+PASS element.webkitCreateShadowRoot() threw exception Error: HierarchyRequestError: DOM Exception 3.
 OBJECT
-PASS new WebKitShadowRoot(element) threw exception Error: HierarchyRequestError: DOM Exception 3.
+PASS element.webkitCreateShadowRoot() threw exception Error: HierarchyRequestError: DOM Exception 3.
 EMBED
-PASS new WebKitShadowRoot(element) threw exception Error: HierarchyRequestError: DOM Exception 3.
+PASS element.webkitCreateShadowRoot() threw exception Error: HierarchyRequestError: DOM Exception 3.
 KEYGEN
-PASS new WebKitShadowRoot(element) threw exception Error: HierarchyRequestError: DOM Exception 3.
+PASS element.webkitCreateShadowRoot() threw exception Error: HierarchyRequestError: DOM Exception 3.
 VIDEO
-PASS new WebKitShadowRoot(element) threw exception Error: HierarchyRequestError: DOM Exception 3.
+PASS element.webkitCreateShadowRoot() threw exception Error: HierarchyRequestError: DOM Exception 3.
 AUDIO
-PASS new WebKitShadowRoot(element) threw exception Error: HierarchyRequestError: DOM Exception 3.
+PASS element.webkitCreateShadowRoot() threw exception Error: HierarchyRequestError: DOM Exception 3.
 FIELDSET
-PASS new WebKitShadowRoot(element) threw exception Error: HierarchyRequestError: DOM Exception 3.
+PASS element.webkitCreateShadowRoot() threw exception Error: HierarchyRequestError: DOM Exception 3.
 PASS successfullyParsed is true
 
 TEST COMPLETE

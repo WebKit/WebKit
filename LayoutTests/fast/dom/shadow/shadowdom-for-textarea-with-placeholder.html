@@ -12,7 +12,7 @@
 if (window.internals)
     internals.settings.setAuthorShadowDOMForAnyElementEnabled(true);
 
-var shadowRoot1 = new WebKitShadowRoot(host);
+var shadowRoot1 = host.webkitCreateShadowRoot();
 shadowRoot1.appendChild(document.createTextNode('before'));
 shadowRoot1.appendChild(document.createElement('shadow'));
 shadowRoot1.appendChild(document.createTextNode('after'));

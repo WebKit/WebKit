@@ -18,7 +18,7 @@ if (window.internals)
 <script>
 description("This test ensures content element feature can be disabled");
 var host = document.getElementById("host");
-var shadow = new WebKitShadowRoot(host);
+var shadow = host.webkitCreateShadowRoot();
 shadow.innerHTML = "<style> span { color: blue; } </style><span id='shouldBeApplied'>Should be blue</span>";
 var shouldBeApplied = shadow.getElementById("shouldBeApplied");
 var shouldNotBeApplied = document.getElementById("shouldNotBeApplied");

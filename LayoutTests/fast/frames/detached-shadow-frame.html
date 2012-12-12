@@ -13,7 +13,7 @@ helperDiv = container.appendChild(document.createElement("div"));
 helperFrame = container.appendChild(document.createElement("iframe"));
 
 helperFrame.contentWindow.onunload = function() {
-    shadowRoot = new WebKitShadowRoot(helperDiv);
+    shadowRoot = helperDiv.webkitCreateShadowRoot();
     innerFrame = shadowRoot.appendChild(document.createElement("iframe"));
 };
 

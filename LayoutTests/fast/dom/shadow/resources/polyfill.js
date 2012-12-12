@@ -1,5 +1,5 @@
-if (!window.WebKitShadowRoot && window.internals) {
-	window.WebKitShadowRoot = function(element) {
-		return internals.ensureShadowRoot(element);
-	}
+if (!Element.prototype.webkitCreateShadowRoot && window.internals) {
+    Element.prototype.webkitCreateShadowRoot = function() {
+        return window.internals.createShadowRoot(this);
+    };
 }

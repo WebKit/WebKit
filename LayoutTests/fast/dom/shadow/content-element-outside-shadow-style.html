@@ -19,12 +19,12 @@ content {
 <script>
 // Ensures that distributed shadow child isn't effected by the style.
 var hostWithChild = document.getElementById("hostWithChild");
-var shadowForHostWithChild = new WebKitShadowRoot(hostWithChild);
+var shadowForHostWithChild = hostWithChild.webkitCreateShadowRoot();
 shadowForHostWithChild.appendChild(document.createElement("content"));
 
 // Also ensures that dynamically moved <content> elements do work.
 var hostEmpty = document.getElementById("hostEmpty");
-var shadowForHostEmpty = new WebKitShadowRoot(hostEmpty);
+var shadowForHostEmpty = hostEmpty.webkitCreateShadowRoot();
 shadowForHostEmpty.appendChild(document.getElementById("toBeMoved"));
 
 </script>

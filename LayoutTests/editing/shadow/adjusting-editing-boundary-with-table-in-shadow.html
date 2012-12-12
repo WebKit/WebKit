@@ -17,12 +17,12 @@
 if (window.testRunner)
     testRunner.dumpAsText();
 
-var shadowRoot = new WebKitShadowRoot(host);
+var shadowRoot = host.webkitCreateShadowRoot();
 var div = document.createElement('div');
 shadowRoot.appendChild(div);
 div.innerHTML = "<table border='1'><tr><td>shadow 1</td></tr><tr><td id='src'>shadow 2</td></tr></table>";
 
-var nestedShadowRoot = new WebKitShadowRoot(div);
+var nestedShadowRoot = div.webkitCreateShadowRoot();
 nestedShadowRoot.innerHTML = "<div contenteditable>before<shadow></shadow>after</div>";
 
 var src = shadowRoot.getElementById('src');

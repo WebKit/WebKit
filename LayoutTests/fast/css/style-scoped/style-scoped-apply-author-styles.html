@@ -8,8 +8,6 @@ if (window.testRunner)
     testRunner.dumpAsText();
 
 shouldBeDefined("window.internals");
-shouldBeDefined("window.internals.ensureShadowRoot");
-shouldBeDefined("WebKitShadowRoot");
 
 function dumpComputedStyle(node)
 {
@@ -23,7 +21,7 @@ function testBasic()
     div.innerHTML = '<div><style scoped>div { border: 1px solid red; }</style><div id="host"></div></div>';
     document.body.appendChild(div);
 
-    var shadow = new WebKitShadowRoot(document.getElementById("host"));
+    var shadow = document.getElementById("host").webkitCreateShadowRoot();
     shadow.innerHTML = '<div id="target">target</div>';
     document.body.appendChild(div);
 
@@ -45,9 +43,9 @@ function testEnclosingShadow()
     var div = document.createElement('div');
     document.body.appendChild(div);
 
-    var outerShadow = new WebKitShadowRoot(div);
+    var outerShadow = div.webkitCreateShadowRoot();
     outerShadow.innerHTML = '<style>div { border: 1px solid red; }</style><div id="outer">outer</div>';
-    var shadow = new WebKitShadowRoot(outerShadow.getElementById("outer"));
+    var shadow = outerShadow.getElementById("outer").webkitCreateShadowRoot();
     shadow.innerHTML = '<div id="target">target</div>';
 
     // before
@@ -67,12 +65,12 @@ function testEnclosingShadowWithScoped()
     var div = document.createElement('div');
     document.body.appendChild(div);
 
-    var outerShadow = new WebKitShadowRoot(div);
+    var outerShadow = div.webkitCreateShadowRoot();
     outerShadow.innerHTML = '<div><style scoped>div { border: 1px solid red; }</style><div id="outerInScope">outerInScope</div></div><div id="outerOutOfScope">outerOutOfScope</div>';
 
-    var shadow1 = new WebKitShadowRoot(outerShadow.getElementById("outerInScope"));
+    var shadow1 = outerShadow.getElementById("outerInScope").webkitCreateShadowRoot();
     shadow1.innerHTML = '<div id="targetInScope">targetInScope</div>';
-    var shadow2 = new WebKitShadowRoot(outerShadow.getElementById("outerOutOfScope"));
+    var shadow2 = outerShadow.getElementById("outerOutOfScope").webkitCreateShadowRoot();
     shadow2.innerHTML = '<div id="targetOutOfScope">targetOutOfScope</div>';
 
     // before
@@ -98,15 +96,15 @@ function testNestedShadow()
     div.innerHTML = '<style scoped>div { border: 1px solid red }</style><div id="host"></div>';
     document.body.appendChild(div);
 
-    var outerMostShadow = new WebKitShadowRoot(document.getElementById("host"));
+    var outerMostShadow = document.getElementById("host").webkitCreateShadowRoot();
     outerMostShadow.innerHTML = '<style>div { border: 1px solid blue; }</style><div id="outerMost">outerMost</div>';
     outerMostShadow.applyAuthorStyles = false;
 
-    var outerShadow = new WebKitShadowRoot(outerMostShadow.getElementById("outerMost"));
+    var outerShadow = outerMostShadow.getElementById("outerMost").webkitCreateShadowRoot();
     outerShadow.innerHTML = '<div id="outer">outer</div>';
     outerShadow.applyAuthorStyles = false;
 
-    var shadow = new WebKitShadowRoot(outerShadow.getElementById("outer"));
+    var shadow = outerShadow.getElementById("outer").webkitCreateShadowRoot();
     shadow.innerHTML = '<div id="target">target</div>';
     shadow.applyAuthorStyles = false;
 
@@ -132,15 +130,15 @@ function testMultipleShadow()
     div.innerHTML = '<style scoped>div { border: 1px solid red }</style><div>test</div>';
     document.body.appendChild(div);
 
-    var oldestShadow = new WebKitShadowRoot(div);
+    var oldestShadow = div.webkitCreateShadowRoot();
     oldestShadow.innerHTML = '<shadow></shadow><div id="oldestShadow">oldestShadow</div>';
     oldestShadow.applyAuthorStyles = false;
 
-    var olderShadow =  new WebKitShadowRoot(div);
+    var olderShadow =  div.webkitCreateShadowRoot();
     olderShadow.innerHTML = '<style scoped>div { border: 1px solid blue }</style><shadow></shadow><div id="olderShadow">olderShadow</div>';
     olderShadow.applyAuthorStyles = false;
 
-    var shadow = new WebKitShadowRoot(div);
+    var shadow = div.webkitCreateShadowRoot();
     shadow.innerHTML = '<shadow></shadow><div id="target">shadow</div>';
     shadow.applyAuthorStyles = false;
 
@@ -186,15 +184,15 @@ function testOrderOfApplyStyle()
     div.innerHTML = '<style scoped>div { border: 1px solid red }</style><div id="host"></div>';
     document.body.appendChild(div);
 
-    var outerMostShadow = new WebKitShadowRoot(document.getElementById("host"));
+    var outerMostShadow = document.getElementById("host").webkitCreateShadowRoot();
     outerMostShadow.innerHTML = '<style>div { border: 1px solid blue; }</style><div id="outerMost">outerMost</div>';
     outerMostShadow.applyAuthorStyles = true;
 
-    var outerShadow = new WebKitShadowRoot(outerMostShadow.getElementById("outerMost"));
+    var outerShadow = outerMostShadow.getElementById("outerMost").webkitCreateShadowRoot();
     outerShadow.innerHTML = '<style>div { border: 1px solid green; }</style><div id="outer">outer</div>';
     outerShadow.applyAuthorStyles = true;
 
-    var shadow = new WebKitShadowRoot(outerShadow.getElementById("outer"));
+    var shadow = outerShadow.getElementById("outer").webkitCreateShadowRoot();
     shadow.innerHTML = '<style>div { border: 1px solid yellow; }</style><div id="target">target</div>';
     shadow.applyAuthorStyles = true;
 

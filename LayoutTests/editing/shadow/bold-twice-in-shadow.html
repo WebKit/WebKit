@@ -18,11 +18,11 @@
 if (window.testRunner)
     testRunner.dumpAsText();
 
-var shadowRoot = new WebKitShadowRoot(host);
+var shadowRoot = host.webkitCreateShadowRoot();
 shadowRoot.innerHTML = '<div id="shadow-host"><span contenteditable>shadow before</span><shadow></shadow>shadow (after)</div>';
 
 var nestedShadowHost = shadowRoot.getElementById('shadow-host');
-var nestedShadowRoot = new WebKitShadowRoot(nestedShadowHost);
+var nestedShadowRoot = nestedShadowHost.webkitCreateShadowRoot();
 nestedShadowRoot.innerHTML = '<div id="inner" contenteditable>nested before<shadow></shadow>nested after</div>';
 
 if (window.eventSender) {

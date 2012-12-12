@@ -9,7 +9,7 @@
 </div>
 
 <script>
-var shadowRoot = new WebKitShadowRoot(host);
+var shadowRoot = host.webkitCreateShadowRoot();
 shadowRoot.innerHTML =
     '<div>' + 
         '<content id="active-content" select="div"><div>fallback</div></content>' +
@@ -17,11 +17,11 @@ shadowRoot.innerHTML =
     '</div>';
 
 var activeContent = shadowRoot.getElementById('active-content');
-var shadowRootForActiveContent = new WebKitShadowRoot(activeContent);
+var shadowRootForActiveContent = activeContent.webkitCreateShadowRoot();
 shadowRootForActiveContent.innerHTML = '<div>For active content</div>';
 
 var inactiveContent = shadowRoot.getElementById('inactive-content');
-var shadowRootForInactiveContent = new WebKitShadowRoot(inactiveContent);
+var shadowRootForInactiveContent = inactiveContent.webkitCreateShadowRoot();
 shadowRootForInactiveContent.innerHTML = '<div>For Inactive content</div>';
 </script>
 

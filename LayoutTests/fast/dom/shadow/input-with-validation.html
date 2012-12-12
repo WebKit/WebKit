@@ -12,7 +12,7 @@ if (window.internals)
     internals.settings.setAuthorShadowDOMForAnyElementEnabled(true);
 
 var input = document.getElementById('password');
-var shadowRoot = new WebKitShadowRoot(input);
+var shadowRoot = input.webkitCreateShadowRoot();
 shadowRoot.innerHTML = "<shadow></shadow>";
 
 document.getElementById('submit').click();

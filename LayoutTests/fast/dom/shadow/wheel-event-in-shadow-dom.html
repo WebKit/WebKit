@@ -23,7 +23,7 @@ function createBox(name) {
     return div;
 }
 
-var shadowRoot = new WebKitShadowRoot(host);
+var shadowRoot = host.webkitCreateShadowRoot();
 var shadowDiv = createBox('shadow');
 shadowRoot.appendChild(shadowDiv);
 

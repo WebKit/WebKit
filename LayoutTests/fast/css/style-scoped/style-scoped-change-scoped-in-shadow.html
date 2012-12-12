@@ -8,8 +8,6 @@ if (window.testRunner)
     testRunner.dumpAsText();
 
 shouldBeDefined("window.internals");
-shouldBeDefined("window.internals.ensureShadowRoot");
-shouldBeDefined("WebKitShadowRoot");
 
 function dumpComputedStyle(node)
 {
@@ -21,7 +19,7 @@ function testScopedStyleInShadow()
     debug("test a scoped style in shadow subtree.");
     var div = document.createElement("div");
     document.body.appendChild(div);
-    var shadow = new WebKitShadowRoot(div);
+    var shadow = div.webkitCreateShadowRoot();
     shadow.innerHTML = "<div><style scoped>div { color: red; }</style><div id='E'>EEE</div></div><div id='F'>FFF</div>";
     document.body.offsetLeft;
 
@@ -35,7 +33,7 @@ function testStyleInShadow()
     debug("test a style in shadow subtree.");
     var div = document.createElement("div");
     document.body.appendChild(div);
-    var shadow = new WebKitShadowRoot(div);
+    var shadow = div.webkitCreateShadowRoot();
     shadow.innerHTML = "<div><div id='E'>EEE</div><style>div { color: red; }</style></div><div id='F'>FFF</div>";
     document.body.offsetLeft;
 
@@ -49,10 +47,10 @@ function testStyleInMultipleShadow()
     debug("test styles in multiple shadow subtrees.");
     var div = document.createElement("div");
 
-    var shadow1 = new WebKitShadowRoot(div);
+    var shadow1 = div.webkitCreateShadowRoot();
     shadow1.innerHTML = "<div><style>div { color: red; }</style><div id='E'>EEE</div></div><div id='F'>FFF</div>";
 
-    var shadow2 = new WebKitShadowRoot(div);
+    var shadow2 = div.webkitCreateShadowRoot();
     shadow2.innerHTML = "<div><style scoped>div { color: blue }</style><shadow></shadow><div id='G'>GGG</div></div>";
 
     document.body.appendChild(div);
@@ -69,10 +67,10 @@ function testScopedStyleInNestedShadow()
     debug("test a scoped style in nested shadow subtree.");
     var div = document.createElement("div");
     document.body.appendChild(div);
-    var shadow1 = new WebKitShadowRoot(div);
+    var shadow1 = div.webkitCreateShadowRoot();
     shadow1.innerHTML = "<div><style scoped>div { color: red; }</style><div id='E'>EEE</div></div><div id='F'>FFF</div>";
     var e = shadow1.getElementById("E");
-    var shadow2 = new WebKitShadowRoot(e);
+    var shadow2 = e.webkitCreateShadowRoot();
     shadow2.innerHTML = "<div><style scoped>div { color: blue; }</style><div id='G'>GGGG</div></div><div id='H'>HHHH</div>";
     document.body.offsetLeft;
 
@@ -88,10 +86,10 @@ function testStyleInNestedShadow()
     debug("test a style in nested shadow subtree.");
     var div = document.createElement("div");
     document.body.appendChild(div);
-    var shadow1 = new WebKitShadowRoot(div);
+    var shadow1 = div.webkitCreateShadowRoot();
     shadow1.innerHTML = "<div><style>div { color: red; }</style><div id='E'>EEE</div></div><div id='F'>FFF</div>";
     var e = shadow1.getElementById("E");
-    var shadow2 = new WebKitShadowRoot(e);
+    var shadow2 = e.webkitCreateShadowRoot();
     shadow2.innerHTML = "<div><style>div { color: blue; }</style><div id='G'>GGGG</div></div><div id='H'>HHHH</div>";
     document.body.offsetLeft;
 
@@ -107,7 +105,7 @@ function testChangeScopedToScoped()
     debug("test changing a style in shadow subtree from scoped to scoped.");
     var div = document.createElement("div");
     document.body.appendChild(div);
-    var shadow = new WebKitShadowRoot(div);
+    var shadow = div.webkitCreateShadowRoot();
     shadow.innerHTML = "<div><style scoped id='style-in-shadow'>div { color: red; }</style><div id='E'>EEE</div></div><div id='F'>FFF</div>";
     document.body.offsetLeft;
 
@@ -129,7 +127,7 @@ function testChangeScopedToNotScoped()
     debug("test changing a style in shadow subtree from scoped to not-scoped.");
     var div = document.createElement("div");
     document.body.appendChild(div);
-    var shadow = new WebKitShadowRoot(div);
+    var shadow = div.webkitCreateShadowRoot();
     shadow.innerHTML = "<div><style scoped id='style-in-shadow'>div { color: red; }</style><div id='E'>EEE</div></div><div id='F'>FFF</div>";
     document.body.offsetLeft;
 
@@ -151,7 +149,7 @@ function testChangeNotScopedToScoped()
     debug("test changing a style in shadow subtree from not-scoped to scoped.");
     var div = document.createElement("div");
     document.body.appendChild(div);
-    var shadow = new WebKitShadowRoot(div);
+    var shadow = div.webkitCreateShadowRoot();
     shadow.innerHTML = "<div><style id='style-in-shadow'>div { color: red; }</style><div id='E'>EEE</div></div><div id='F'>FFF</div>";
     document.body.offsetLeft;
 
@@ -173,7 +171,7 @@ function testRemoveScopedStyleFromDocument()
     debug("test removing a scoped style from shadow subtree.");
     var div = document.createElement("div");
     document.body.appendChild(div);
-    var shadow = new WebKitShadowRoot(div);
+    var shadow = div.webkitCreateShadowRoot();
     shadow.innerHTML = "<div><style scoped id='style-in-shadow'>div { color: red; }</style><div id='E'>EEE</div></div><div id='F'>FFF</div>";
     document.body.offsetLeft;
 
@@ -196,7 +194,7 @@ function testRemoveStyleFromDocument()
     debug("test removing a style from shadow subtree.");
     var div = document.createElement("div");
     document.body.appendChild(div);
-    var shadow = new WebKitShadowRoot(div);
+    var shadow = div.webkitCreateShadowRoot();
     shadow.innerHTML = "<div><style id='style-in-shadow'>div { color: red; }</style><div id='E'>EEE</div></div><div id='F'>FFF</div>";
     document.body.offsetLeft;
 
@@ -219,7 +217,7 @@ function testInsertScopedStyleIntoDocument()
     debug("test inserting a scoped style into shadow subtree.");
     var div = document.createElement("div");
     document.body.appendChild(div);
-    var shadow = new WebKitShadowRoot(div);
+    var shadow = div.webkitCreateShadowRoot();
     shadow.innerHTML = "<div><div id='E'>EEE</div></div><div id='F'>FFF</div>";
     document.body.offsetLeft;
 
@@ -239,7 +237,7 @@ function testInsertStyleIntoDocument()
     debug("test inserting a style into shadow subtree.");
     var div = document.createElement("div");
     document.body.appendChild(div);
-    var shadow = new WebKitShadowRoot(div);
+    var shadow = div.webkitCreateShadowRoot();
     shadow.innerHTML = "<div><div id='E'>EEE</div></div><div id='F'>FFF</div>";
     document.body.offsetLeft;
 
@@ -258,7 +256,7 @@ function testChangeScopedToNotScopedNotInDocument()
     debug("test re-inserting a style after changing scoped to not scoped offline.");
     var div = document.createElement("div");
     document.body.appendChild(div);
-    var shadow = new WebKitShadowRoot(div);
+    var shadow = div.webkitCreateShadowRoot();
     shadow.innerHTML = "<div><style scoped id='style-in-shadow'>div { color: red; }</style><div id='E'>EEE</div></div><div id='F'>FFF</div>";
     document.body.offsetLeft;
 
@@ -278,7 +276,7 @@ function testChangeNotScopedToScopedNotInDocument()
     debug("test re-inserting a style after changing not scoped to scoped offline.");
     var div = document.createElement("div");
     document.body.appendChild(div);
-    var shadow = new WebKitShadowRoot(div);
+    var shadow = div.webkitCreateShadowRoot();
     shadow.innerHTML = "<div><style id='style-in-shadow'>div { color: red; }</style><div id='E'>EEE</div></div><div id='F'>FFF</div>";
     document.body.offsetLeft;
 

@@ -12,7 +12,7 @@
 </div>
 
 <script>
-var shadowRoot = new WebKitShadowRoot(host);
+var shadowRoot = host.webkitCreateShadowRoot();
 
 shadowRoot.innerHTML =
     '<shadow id="id1"></shadow><hr>' + 

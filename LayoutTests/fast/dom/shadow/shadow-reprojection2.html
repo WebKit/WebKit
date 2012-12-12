@@ -5,14 +5,14 @@
 <div id="host1"><div>B</div></div>
 
 <script>
-var shadowRoot1 = new WebKitShadowRoot(host1);
+var shadowRoot1 = host1.webkitCreateShadowRoot();
 shadowRoot1.innerHTML = '<shadow></shadow>';
 
-var shadowRoot2 = new WebKitShadowRoot(host1);
+var shadowRoot2 = host1.webkitCreateShadowRoot();
 shadowRoot2.innerHTML = '<div id="host3"><shadow></shadow></div>';
 
 var host3 = shadowRoot2.getElementById('host3');
-var shadowRoot3 = new WebKitShadowRoot(host3);
+var shadowRoot3 = host3.webkitCreateShadowRoot();
 shadowRoot3.innerHTML = '<div>A</div><content select="div"></content><div>C</div>';
 </script>
 
