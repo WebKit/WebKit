@@ -22,6 +22,7 @@
 #include "config.h"
 #include "TextureMapperGL.h"
 
+#include "Extensions3D.h"
 #include "GraphicsContext.h"
 #include "Image.h"
 #include "LengthFunctions.h"
@@ -56,7 +57,6 @@
 
 #if !USE(TEXMAP_OPENGL_ES_2)
 // FIXME: Move to Extensions3D.h.
-#define GL_TEXTURE_RECTANGLE_ARB 0x84F5
 #define GL_UNSIGNED_INT_8_8_8_8_REV 0x8367
 #define GL_UNPACK_ROW_LENGTH 0x0CF2
 #define GL_UNPACK_SKIP_PIXELS 0x0CF4
@@ -272,7 +272,7 @@ void TextureMapperGL::endPainting()
 #endif
 }
 
-void TextureMapperGL::drawQuad(const DrawQuad& quadToDraw, const TransformationMatrix& modelViewMatrix, TextureMapperShaderProgram* shaderProgram, GC3Denum drawingMode, bool needsBlending)
+void TextureMapperGL::drawQuad(const DrawQuad& quadToDraw, const TransformationMatrix& modelViewMatrix, TextureMapperShaderProgram* shaderProgram, GC3Denum drawingMode, Flags flags)
 {
     m_context3D->enableVertexAttribArray(shaderProgram->vertexLocation());
     m_context3D->bindBuffer(GraphicsContext3D::ARRAY_BUFFER, 0);
@@ -298,7 +298,7 @@ void TextureMapperGL::drawQuad(const DrawQuad& quadToDraw, const TransformationM
     };
     m_context3D->uniformMatrix4fv(shaderProgram->matrixLocation(), 1, false, m4);
 
-    if (needsBlending) {
+    if (flags & ShouldBlend) {
         m_context3D->blendFunc(GraphicsContext3D::ONE, GraphicsContext3D::ONE_MINUS_SRC_ALPHA);
         m_context3D->enable(GraphicsContext3D::BLEND);
     } else
@@ -321,7 +321,7 @@ void TextureMapperGL::drawBorder(const Color& color, float width, const FloatRec
     m_context3D->uniform4f(program->colorLocation(), r, g, b, a);
     m_context3D->lineWidth(width);
 
-    drawQuad(targetRect, modelViewMatrix, program.get(), GraphicsContext3D::LINE_LOOP, color.hasAlpha());
+    drawQuad(targetRect, modelViewMatrix, program.get(), GraphicsContext3D::LINE_LOOP, color.hasAlpha() ? ShouldBlend : 0);
 }
 
 void TextureMapperGL::drawRepaintCounter(int value, int pointSize, const FloatPoint& targetPoint, const TransformationMatrix& modelViewMatrix)
@@ -402,55 +402,31 @@ void TextureMapperGL::drawTexture(const BitmapTexture& texture, const FloatRect&
         return;
 
     const BitmapTextureGL& textureGL = static_cast<const BitmapTextureGL&>(texture);
-    drawTexture(textureGL.id(), textureGL.isOpaque() ? 0 : SupportsBlending, textureGL.size(), targetRect, matrix, opacity, mask, exposedEdges);
+    drawTexture(textureGL.id(), textureGL.isOpaque() ? 0 : ShouldBlend, textureGL.size(), targetRect, matrix, opacity, mask, exposedEdges);
 }
 
-#if !USE(TEXMAP_OPENGL_ES_2)
-void TextureMapperGL::drawTextureRectangleARB(uint32_t texture, Flags flags, const IntSize& textureSize, const FloatRect& targetRect, const TransformationMatrix& modelViewMatrix, float opacity, const BitmapTexture* maskTexture)
-{
-    RefPtr<TextureMapperShaderProgram> program;
-    if (maskTexture)
-        program = data().sharedGLData().textureMapperShaderManager.getShaderProgram(TextureMapperShaderManager::MaskedRect);
-    else
-        program = data().sharedGLData().textureMapperShaderManager.getShaderProgram(TextureMapperShaderManager::Rect);
-    m_context3D->useProgram(program->programID());
-
-    m_context3D->enableVertexAttribArray(program->vertexLocation());
-    m_context3D->activeTexture(GraphicsContext3D::TEXTURE0);
-    m_context3D->bindTexture(GL_TEXTURE_RECTANGLE_ARB, texture);
-    m_context3D->uniform1i(program->samplerLocation(), 0);
-
-    m_context3D->uniform1f(program->flipLocation(), !!(flags & ShouldFlipTexture));
-    m_context3D->uniform2f(program->samplerSizeLocation(), textureSize.width(), textureSize.height());
-    m_context3D->uniform1f(program->opacityLocation(), opacity);
-
-    if (maskTexture && maskTexture->isValid()) {
-        const BitmapTextureGL* maskTextureGL = static_cast<const BitmapTextureGL*>(maskTexture);
-        m_context3D->activeTexture(GraphicsContext3D::TEXTURE1);
-        m_context3D->bindTexture(GraphicsContext3D::TEXTURE_2D, maskTextureGL->id());
-        m_context3D->uniform1i(program->maskLocation(), 1);
-        m_context3D->activeTexture(GraphicsContext3D::TEXTURE0);
-    }
-
-    bool needsBlending = (flags & SupportsBlending) || opacity < 0.99 || maskTexture;
-    drawQuad(targetRect, modelViewMatrix, program.get(), GraphicsContext3D::TRIANGLE_FAN, needsBlending);
-}
-#endif // !USE(TEXMAP_OPENGL_ES_2)
-
-void TextureMapperGL::drawTexture(uint32_t texture, Flags flags, const IntSize& /* textureSize */, const FloatRect& targetRect, const TransformationMatrix& modelViewMatrix, float opacity, const BitmapTexture* maskTexture, unsigned exposedEdges)
+void TextureMapperGL::drawTexture(Platform3DObject texture, Flags flags, const IntSize& textureSize, const FloatRect& targetRect, const TransformationMatrix& modelViewMatrix, float opacity, const BitmapTexture* maskTexture, unsigned exposedEdges)
 {
     bool needsAntialiasing = m_enableEdgeDistanceAntialiasing && !modelViewMatrix.isIntegerTranslation();
-    if (needsAntialiasing && drawTextureWithAntialiasing(texture, flags, targetRect, modelViewMatrix, opacity, maskTexture, exposedEdges))
+    if (needsAntialiasing && drawTextureWithAntialiasing(texture, flags, textureSize, targetRect, modelViewMatrix, opacity, maskTexture, exposedEdges))
        return;
 
+    bool useRect = flags & ShouldUseARBTextureRect;
+    bool masked = !!maskTexture;
+
+    TextureMapperShaderManager::ShaderKey key = TextureMapperShaderManager::Default;
+    if (masked && useRect)
+        key = TextureMapperShaderManager::MaskedRect;
+    else if (masked)
+        key = TextureMapperShaderManager::Masked;
+    else if (useRect)
+        key = TextureMapperShaderManager::Rect;
+
     RefPtr<TextureMapperShaderProgram> program;
-    if (maskTexture)
-        program = data().sharedGLData().textureMapperShaderManager.getShaderProgram(TextureMapperShaderManager::Masked);
-    else
-        program = data().sharedGLData().textureMapperShaderManager.getShaderProgram(TextureMapperShaderManager::Default);
+    program = data().sharedGLData().textureMapperShaderManager.getShaderProgram(key);
     m_context3D->useProgram(program->programID());
 
-    drawTexturedQuadWithProgram(program.get(), texture, flags, targetRect, modelViewMatrix, opacity, maskTexture);
+    drawTexturedQuadWithProgram(program.get(), texture, flags, textureSize, targetRect, modelViewMatrix, opacity, maskTexture);
 }
 
 void TextureMapperGL::drawSolidColor(const FloatRect& rect, const TransformationMatrix& matrix, const Color& color)
@@ -462,7 +438,7 @@ void TextureMapperGL::drawSolidColor(const FloatRect& rect, const Transformation
     color.getRGBA(r, g, b, a);
     m_context3D->uniform4f(program->colorLocation(), r, g, b, a);
 
-    drawQuad(rect, matrix, program.get(), GraphicsContext3D::TRIANGLE_FAN, a < 1);
+    drawQuad(rect, matrix, program.get(), GraphicsContext3D::TRIANGLE_FAN, a < 1 ? ShouldBlend : 0);
 }
 
 static TransformationMatrix viewportMatrix(GraphicsContext3D* context3D)
@@ -549,7 +525,7 @@ static FloatQuad inflateQuad(const FloatQuad& quad, float distance)
     return expandedQuad;
 }
 
-bool TextureMapperGL::drawTextureWithAntialiasing(uint32_t texture, Flags flags, const FloatRect& originalTargetRect, const TransformationMatrix& modelViewMatrix, float opacity, const BitmapTexture* maskTexture, unsigned exposedEdges)
+bool TextureMapperGL::drawTextureWithAntialiasing(uint32_t texture, Flags flags, const IntSize& size, const FloatRect& originalTargetRect, const TransformationMatrix& modelViewMatrix, float opacity, const BitmapTexture* maskTexture, unsigned exposedEdges)
 {
     // The antialiasing path does not support mask textures at the moment.
     if (maskTexture)
@@ -592,17 +568,20 @@ bool TextureMapperGL::drawTextureWithAntialiasing(uint32_t texture, Flags flags,
     m_context3D->useProgram(program->programID());
     m_context3D->uniform3fv(program->expandedQuadEdgesInScreenSpaceLocation(), 8, targetQuadEdges);
 
-    drawTexturedQuadWithProgram(program.get(), texture, flags, DrawQuad(originalTargetRect, expandedQuadInTextureCoordinates), modelViewMatrix, opacity, 0 /* maskTexture */);
+    drawTexturedQuadWithProgram(program.get(), texture, flags, size, DrawQuad(originalTargetRect, expandedQuadInTextureCoordinates), modelViewMatrix, opacity, 0 /* maskTexture */);
     return true;
 }
 
-void TextureMapperGL::drawTexturedQuadWithProgram(TextureMapperShaderProgram* program, uint32_t texture, Flags flags, const DrawQuad& quadToDraw, const TransformationMatrix& modelViewMatrix, float opacity, const BitmapTexture* maskTexture)
+void TextureMapperGL::drawTexturedQuadWithProgram(TextureMapperShaderProgram* program, uint32_t texture, Flags flags, const IntSize& size, const DrawQuad& quadToDraw, const TransformationMatrix& modelViewMatrix, float opacity, const BitmapTexture* maskTexture)
 {
     m_context3D->enableVertexAttribArray(program->vertexLocation());
     m_context3D->activeTexture(GraphicsContext3D::TEXTURE0);
-    m_context3D->bindTexture(GraphicsContext3D::TEXTURE_2D, texture);
+    GC3Denum target = flags & ShouldUseARBTextureRect ? Extensions3D::TEXTURE_RECTANGLE_ARB : GraphicsContext3D::TEXTURE_2D;
+    m_context3D->bindTexture(target, texture);
     m_context3D->uniform1i(program->samplerLocation(), 0);
 
+    FloatSize sizeParameter = flags & ShouldUseARBTextureRect ? size : FloatSize(1, 1);
+    m_context3D->uniform2f(program->textureSizeLocation(), sizeParameter.width(), sizeParameter.height());
     m_context3D->uniform1f(program->flipLocation(), !!(flags & ShouldFlipTexture));
     m_context3D->uniform1f(program->opacityLocation(), opacity);
 
@@ -614,8 +593,10 @@ void TextureMapperGL::drawTexturedQuadWithProgram(TextureMapperShaderProgram* pr
         m_context3D->activeTexture(GraphicsContext3D::TEXTURE0);
     }
 
-    bool needsBlending = (flags & SupportsBlending) || opacity < 0.99 || maskTexture;
-    drawQuad(quadToDraw, modelViewMatrix, program, GraphicsContext3D::TRIANGLE_FAN, needsBlending);
+    if (opacity < 1 || maskTexture)
+        flags |= ShouldBlend;
+
+    drawQuad(quadToDraw, modelViewMatrix, program, GraphicsContext3D::TRIANGLE_FAN, flags);
 }
 
 BitmapTextureGL::BitmapTextureGL(TextureMapperGL* textureMapper)

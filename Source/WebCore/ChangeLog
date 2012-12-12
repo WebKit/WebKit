@@ -1,3 +1,40 @@
+2012-12-12  No'am Rosenthal  <noam@webkit.org>
+
+        [Texmap] Consolidate redundant code for ARB_RECT texture
+        https://bugs.webkit.org/show_bug.cgi?id=104705
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Instead of having a whole different function for RECT textures,
+        keep the existing functions and pass a flag that tells
+        TextureMapperGL to use the non-normalized coordinates and the
+        RECT shaders.
+
+        No new tests, refactor only. Tested to not break WebGL on
+        Qt-Mac.
+
+        * platform/graphics/surfaces/mac/GraphicsSurfaceMac.cpp:
+        (WebCore::GraphicsSurface::platformPaintToTextureMapper):
+        * platform/graphics/texmap/TextureMapperGL.cpp:
+        (WebCore::TextureMapperGL::drawQuad):
+            Compensate for rect textures in drawQuad.
+
+        (WebCore::TextureMapperGL::drawBorder):
+        (WebCore::TextureMapperGL::drawTexture):
+        (WebCore::TextureMapperGL::drawSolidColor):
+        (WebCore::TextureMapperGL::drawTextureWithAntialiasing):
+        (WebCore::TextureMapperGL::drawTexturedQuadWithProgram):
+            Pass flags to TextureMapperGL::drawQuad instead of a bool.
+
+        * platform/graphics/texmap/TextureMapperGL.h:
+        (TextureMapperGL):
+        * platform/graphics/texmap/TextureMapperShaderManager.cpp:
+        (WebCore::getShaderSpec):
+        * platform/graphics/texmap/TextureMapperShaderManager.h:
+        (TextureMapperShaderProgram):
+            Compensate for the texture-size in the vertex
+            shader instead of in the fragment shader.
+
 2012-12-11  Hayato Ito  <hayato@chromium.org>
 
         REGRESSION(r137408): breaks chromium's browser tests which use WebKitShadowRoot (Requested by hayato on #webkit).
