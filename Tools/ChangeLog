@@ -1,5 +1,17 @@
 2012-12-11  Dirk Pranke  <dpranke@chromium.org>
 
+        buildbot: change run-webkit-tests --no-launch-safari to --no-show-results
+        https://bugs.webkit.org/show_bug.cgi?id=104299
+
+        Reviewed by Ryosuke Niwa.
+
+        Since --no-show-results is the more generically-named flag that NRWT uses.
+
+        * BuildSlaveSupport/build.webkit.org-config/master.cfg:
+        (RunWebKitTests):
+
+2012-12-11  Dirk Pranke  <dpranke@chromium.org>
+
         remove --use-remote-links-to-tests from buildbot configs (except apple win)
         https://bugs.webkit.org/show_bug.cgi?id=104291
 
