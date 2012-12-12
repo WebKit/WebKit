@@ -1,3 +1,75 @@
+2012-12-12  Elliott Sprehn  <esprehn@gmail.com>
+
+        [Refactoring] Replace Node's Document pointer with a TreeScope pointer
+        https://bugs.webkit.org/show_bug.cgi?id=59816
+
+        Reviewed by Ryosuke Niwa.
+
+        Instead of giving every node in a shadow a rare data, which can be quite
+        large, we replace the Document pointer in Node with a TreeScope pointer
+        and we give TreeScope a pointer to it's document scope.
+
+        This introduces no branches in document() because in the common
+        case document() becomes equivalent to m_treeScope->m_documentScope where
+        the documentScope is actually m_treeScope so this shouldn't introduce a
+        perf regression.
+
+        Note also that TreeScope can never be null after r136328, and the document
+        pointer is only null for DocumentType nodes so we can use a special
+        no-document TreeScope for this case that always returns null from
+        documentScope().
+
+        No new tests, no change in behavior.
+
+        * dom/Document.cpp:
+        (WebCore::Document::Document):
+        (WebCore::Document::~Document):
+        (WebCore::Document::suggestedMIMEType):
+        * dom/Document.h:
+        (WebCore::Node::isDocumentNode):
+        (WebCore::Node::Node):
+        * dom/Element.cpp:
+        (WebCore::Element::createRareData):
+        * dom/ElementRareData.h:
+        (ElementRareData):
+        (WebCore::ElementRareData::ElementRareData):
+        * dom/Node.cpp:
+        (WebCore::Node::~Node):
+        (WebCore::Node::createRareData):
+        (WebCore::Node::attach):
+        (WebCore::Node::reportMemoryUsage):
+        * dom/Node.h:
+        (WebCore):
+        (WebCore::NodeRareDataBase::NodeRareDataBase):
+        (NodeRareDataBase):
+        (WebCore::Node::treeScope):
+        (WebCore::Node::inDocument):
+        (WebCore::Node::documentInternal):
+        (WebCore::Node::setTreeScope):
+        (Node):
+        * dom/NodeRareData.cpp:
+        (WebCore::NodeRareData::reportMemoryUsage):
+        * dom/NodeRareData.h:
+        (WebCore::NodeRareData::NodeRareData):
+        * dom/ShadowRoot.cpp:
+        (WebCore::ShadowRoot::ShadowRoot):
+        * dom/TreeScope.cpp:
+        (SameSizeAsTreeScope):
+        (WebCore::TreeScope::TreeScope):
+        (WebCore::TreeScope::setParentTreeScope):
+        * dom/TreeScope.h:
+        (WebCore):
+        (TreeScope):
+        (WebCore::TreeScope::documentScope):
+        (WebCore::TreeScope::noDocumentInstance):
+            Returns a special tree scope that has no document for use with
+            DocumentType nodes.
+        (WebCore::TreeScope::setDocumentScope):
+        * dom/TreeScopeAdopter.cpp:
+        (WebCore::TreeScopeAdopter::moveTreeToNewScope):
+        (WebCore::TreeScopeAdopter::moveTreeToNewDocument):
+        (WebCore::TreeScopeAdopter::moveNodeToNewDocument):
+
 2012-12-12  Mark Lam  <mark.lam@apple.com>
 
         Encapsulate externally used webdatabase APIs in DatabaseManager.

@@ -33,6 +33,7 @@
 #include "RenderStyleConstants.h"
 #include "ScriptWrappable.h"
 #include "SimulatedClickOptions.h"
+#include "TreeScope.h"
 #include "TreeShared.h"
 #include <wtf/Forward.h>
 #include <wtf/ListHashSet.h>
@@ -85,7 +86,6 @@ class RenderObject;
 class RenderStyle;
 class ShadowRoot;
 class TagNodeList;
-class TreeScope;
 
 #if ENABLE(GESTURE_EVENTS)
 class PlatformGestureEvent;
@@ -115,18 +115,11 @@ public:
     RenderObject* renderer() const { return m_renderer; }
     void setRenderer(RenderObject* renderer) { m_renderer = renderer; }
 
-    TreeScope* treeScope() const { return m_treeScope; }
-    void setTreeScope(TreeScope* scope) { m_treeScope = scope; }
-
     virtual ~NodeRareDataBase() { }
 protected:
-    NodeRareDataBase(TreeScope* scope)
-        : m_treeScope(scope)
-    {
-    }
+    NodeRareDataBase() { }
 private:
     RenderObject* m_renderer;
-    TreeScope* m_treeScope;
 };
 
 class Node : public EventTarget, public ScriptWrappable, public TreeShared<Node, ContainerNode> {
@@ -459,13 +452,13 @@ public:
         return documentInternal();
     }
 
-    TreeScope* treeScope() const;
+    TreeScope* treeScope() const { return m_treeScope; }
 
     // Returns true if this node is associated with a document and is in its associated document's
     // node tree, false otherwise.
     bool inDocument() const 
     { 
-        ASSERT(m_document || !getFlag(InDocumentFlag));
+        ASSERT(documentInternal() || !getFlag(InDocumentFlag));
         return getFlag(InDocumentFlag);
     }
 
@@ -756,16 +749,13 @@ protected:
 
     void setHasCustomCallbacks() { setFlag(true, HasCustomCallbacksFlag); }
 
-    Document* documentInternal() const { return m_document; }
+    Document* documentInternal() const { return treeScope()->documentScope(); }
+    void setTreeScope(TreeScope* scope) { m_treeScope = scope; }
 
 private:
     friend class TreeShared<Node, ContainerNode>;
 
     void removedLastRef();
-
-    // These API should be only used for a tree scope migration.
-    void setTreeScope(TreeScope*);
-    void setDocument(Document*);
 
     enum EditableLevel { Editable, RichlyEditable };
     bool rendererIsEditable(EditableLevel, UserSelectAllTreatment = UserSelectAllIsAlwaysNonEditable) const;
@@ -809,7 +799,7 @@ private:
 #endif
 
     mutable uint32_t m_nodeFlags;
-    Document* m_document;
+    TreeScope* m_treeScope;
     Node* m_previous;
     Node* m_next;
     // When a node has rare data we move the renderer into the rare data.

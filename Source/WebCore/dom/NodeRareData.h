@@ -246,9 +246,8 @@ class NodeRareData : public NodeRareDataBase {
 #endif
 
 public:    
-    NodeRareData(Document* document)
-        : NodeRareDataBase(document)
-        , m_tabIndex(0)
+    NodeRareData()
+        : m_tabIndex(0)
         , m_childIndex(0)
         , m_tabIndexWasSetExplicitly(false)
         , m_needsFocusAppearanceUpdateSoonAfterAttach(false)
