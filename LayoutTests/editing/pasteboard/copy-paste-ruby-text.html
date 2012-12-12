@@ -1,0 +1,34 @@
+<html>
+<head>
+<meta http-equiv="Content-type" content="text/html; charset=utf-8" />
+<script src="../../fast/js/resources/js-test-pre.js"></script>
+</head>
+<body>
+<div id="container">
+<div id="content" contenteditable>
+<ruby>今日<rt>きょう</rt></ruby>は<ruby>良<rt>よ</rt></ruby>い<ruby>天気<rt>てんき</rt></ruby>ですね。
+<ruby><ruby>你<rt>ni</rt></ruby><ruby>在<rt>zai</rt></ruby><ruby>拉里<rt>zali</rt></ruby>？
+</div>
+<textarea cols=50 rows=5></textarea>
+</div>
+<script>
+
+description("This tests copying and pasting text with ruby doesn't insert new lines before and after rt."
+    + "To manually test, copy and paste the text into the textarea. There should be not new line in the textarea.");
+
+document.getElementById('content').focus();
+document.execCommand('SelectAll', false, null);
+if (document.queryCommandSupported('Copy')) {
+    document.execCommand('Copy', false, null);
+
+    var textarea = document.querySelector('textarea');
+    textarea.focus();
+    document.execCommand('Paste', false, null);
+    shouldBe("textarea.value.indexOf('\\n')", "-1");
+
+    document.getElementById('container').style.display = 'none';
+}
+
+</script>
+</body>
+</html>

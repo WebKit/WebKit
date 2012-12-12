@@ -12,6 +12,4 @@ PASS getLineHeight('t') is "normal"
 PASS successfullyParsed is true
 
 TEST COMPLETE
-The line height of this is three times normal
-"line-height: 48px;"
-, but the ruby should have 'line-height: normal'.
+The line height of this is three times normal"line-height: 48px;", but the ruby should have 'line-height: normal'.

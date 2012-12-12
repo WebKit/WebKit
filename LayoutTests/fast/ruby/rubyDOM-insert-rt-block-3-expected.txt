@@ -3,8 +3,6 @@ SUCCESS!
 
 text
 block
-new ruby text
-more
+new ruby textmore
 text
 ruby text
-

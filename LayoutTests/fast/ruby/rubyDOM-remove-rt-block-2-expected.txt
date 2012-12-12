@@ -3,6 +3,4 @@ SUCCESS!
 
 text
 block
-more text
-ruby text 2
-
+more textruby text 2
