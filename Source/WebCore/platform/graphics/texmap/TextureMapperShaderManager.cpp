@@ -157,13 +157,12 @@ static void getShaderSpec(TextureMapperShaderManager::ShaderKey key, String& ver
         STRINGIFY(
             uniform mat4 u_matrix;
             uniform lowp float u_flip;
-            uniform lowp vec2 u_textureSize;
             attribute vec4 a_vertex;
             varying highp vec2 v_sourceTexCoord;
             varying highp vec2 v_maskTexCoord;
             void main(void)
             {
-                v_sourceTexCoord = vec2(a_vertex.x, mix(a_vertex.y, 1. - a_vertex.y, u_flip)) * u_textureSize;
+                v_sourceTexCoord = vec2(a_vertex.x, mix(a_vertex.y, 1. - a_vertex.y, u_flip));
                 v_maskTexCoord = vec2(a_vertex);
                 gl_Position = u_matrix * a_vertex;
             }
@@ -243,11 +242,12 @@ static void getShaderSpec(TextureMapperShaderManager::ShaderKey key, String& ver
         STRINGIFY(
             precision mediump float;
             uniform sampler2DRect s_sampler;
+            uniform lowp vec2 u_samplerSize;
             uniform lowp float u_opacity;
             varying highp vec2 v_sourceTexCoord;
             void main(void)
             {
-                lowp vec4 color = texture2DRect(s_sampler, v_sourceTexCoord);
+                lowp vec4 color = texture2DRect(s_sampler, u_samplerSize * v_sourceTexCoord);
                 gl_FragColor = vec4(color.rgb * u_opacity, color.a * u_opacity);
             }
         );
@@ -256,12 +256,11 @@ static void getShaderSpec(TextureMapperShaderManager::ShaderKey key, String& ver
         STRINGIFY(
             uniform mat4 u_matrix;
             uniform lowp float u_flip;
-            uniform lowp vec2 u_textureSize;
             attribute vec4 a_vertex;
             varying highp vec2 v_sourceTexCoord;
             void main(void)
             {
-                v_sourceTexCoord = vec2(a_vertex.x, mix(a_vertex.y, 1. - a_vertex.y, u_flip)) * u_textureSize;
+                v_sourceTexCoord = vec2(a_vertex.x, mix(a_vertex.y, 1. - a_vertex.y, u_flip));
                 gl_Position = u_matrix * a_vertex;
             }
         );

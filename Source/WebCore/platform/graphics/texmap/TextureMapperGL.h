@@ -43,9 +43,8 @@ public:
     virtual ~TextureMapperGL();
 
     enum Flag {
-        ShouldBlend = 0x01,
-        ShouldFlipTexture = 0x02,
-        ShouldUseARBTextureRect = 0x04
+        SupportsBlending = 0x01,
+        ShouldFlipTexture = 0x02
     };
 
     typedef int Flags;
@@ -54,8 +53,12 @@ public:
     virtual void drawBorder(const Color&, float borderWidth, const FloatRect& targetRect, const TransformationMatrix& modelViewMatrix = TransformationMatrix()) OVERRIDE;
     virtual void drawRepaintCounter(int value, int pointSize, const FloatPoint&, const TransformationMatrix& modelViewMatrix = TransformationMatrix()) OVERRIDE;
     virtual void drawTexture(const BitmapTexture&, const FloatRect&, const TransformationMatrix&, float opacity, const BitmapTexture* maskTexture, unsigned exposedEdges) OVERRIDE;
-    virtual void drawTexture(Platform3DObject texture, Flags, const IntSize& textureSize, const FloatRect& targetRect, const TransformationMatrix& modelViewMatrix, float opacity, const BitmapTexture* maskTexture, unsigned exposedEdges = AllEdges);
+    virtual void drawTexture(uint32_t texture, Flags, const IntSize& textureSize, const FloatRect& targetRect, const TransformationMatrix& modelViewMatrix, float opacity, const BitmapTexture* maskTexture, unsigned exposedEdges = AllEdges);
     virtual void drawSolidColor(const FloatRect&, const TransformationMatrix&, const Color&) OVERRIDE;
+
+#if !USE(TEXMAP_OPENGL_ES_2)
+    virtual void drawTextureRectangleARB(uint32_t texture, Flags, const IntSize& textureSize, const FloatRect& targetRect, const TransformationMatrix& modelViewMatrix, float opacity, const BitmapTexture* maskTexture);
+#endif
 
     virtual void bindSurface(BitmapTexture* surface) OVERRIDE;
     virtual void beginClip(const TransformationMatrix&, const FloatRect&) OVERRIDE;
@@ -114,9 +117,9 @@ private:
 
     TextureMapperGL();
 
-    bool drawTextureWithAntialiasing(uint32_t texture, Flags, const IntSize&, const FloatRect& originalTargetRect, const TransformationMatrix& modelViewMatrix, float opacity, const BitmapTexture* maskTexture, unsigned exposedEdges);
-    void drawTexturedQuadWithProgram(TextureMapperShaderProgram*, uint32_t texture, Flags, const IntSize&, const DrawQuad&, const TransformationMatrix& modelViewMatrix, float opacity, const BitmapTexture* maskTexture);
-    void drawQuad(const DrawQuad&, const TransformationMatrix& modelViewMatrix, TextureMapperShaderProgram*, GC3Denum drawingMode, Flags);
+    bool drawTextureWithAntialiasing(uint32_t texture, Flags, const FloatRect& originalTargetRect, const TransformationMatrix& modelViewMatrix, float opacity, const BitmapTexture* maskTexture, unsigned exposedEdges);
+    void drawTexturedQuadWithProgram(TextureMapperShaderProgram*, uint32_t texture, Flags, const DrawQuad&, const TransformationMatrix& modelViewMatrix, float opacity, const BitmapTexture* maskTexture);
+    void drawQuad(const DrawQuad&, const TransformationMatrix& modelViewMatrix, TextureMapperShaderProgram*, GC3Denum drawingMode, bool needsBlending);
 
     bool beginScissorClip(const TransformationMatrix&, const FloatRect&);
     void bindDefaultSurface();
