@@ -36,7 +36,7 @@ function runTest()
     window.jsTestIsAsync = true;
         
     // Create offline audio context.
-    var context = new webkitOfflineAudioContext(2, sampleRate * renderLengthSeconds, sampleRate);
+    var context = new webkitAudioContext(2, sampleRate * renderLengthSeconds, sampleRate);
     var osc = context.createOscillator();
 
     // Set each possible oscillator type (except CUSTOM) and verify that the type is correct.

@@ -19,7 +19,7 @@ if (window.testRunner) {
 }
 
 var doTest = function(fftSize, illegal) {
-    var c = new webkitOfflineAudioContext(1, 1000, 44100);
+    var c = new webkitAudioContext(1, 1000, 44100);
     var a = c.createAnalyser();
     try {
         a.fftSize = fftSize;

@@ -95,11 +95,15 @@ const unsigned MaxNodesToDeletePerQuantum = 10;
 
 namespace WebCore {
     
-bool AudioContext::isSampleRateRangeGood(float sampleRate)
+namespace {
+    
+bool isSampleRateRangeGood(float sampleRate)
 {
     // FIXME: It would be nice if the minimum sample-rate could be less than 44.1KHz,
     // but that will require some fixes in HRTFPanner::fftSizeForSampleRate(), and some testing there.
     return sampleRate >= 44100 && sampleRate <= 96000;
+}
+
 }
 
 // Don't allow more than this number of simultaneous AudioContexts talking to hardware.
@@ -116,6 +120,23 @@ PassRefPtr<AudioContext> AudioContext::create(Document* document, ExceptionCode&
         return 0;
 
     RefPtr<AudioContext> audioContext(adoptRef(new AudioContext(document)));
+    audioContext->suspendIfNeeded();
+    return audioContext.release();
+}
+
+PassRefPtr<AudioContext> AudioContext::createOfflineContext(Document* document, unsigned numberOfChannels, size_t numberOfFrames, float sampleRate, ExceptionCode& ec)
+{
+    ASSERT(document);
+
+    // FIXME: offline contexts have limitations on supported sample-rates.
+    // Currently all AudioContexts must have the same sample-rate.
+    HRTFDatabaseLoader* loader = HRTFDatabaseLoader::loader();
+    if (numberOfChannels > 10 || !isSampleRateRangeGood(sampleRate) || (loader && loader->databaseSampleRate() != sampleRate)) {
+        ec = SYNTAX_ERR;
+        return 0;
+    }
+
+    RefPtr<AudioContext> audioContext(adoptRef(new AudioContext(document, numberOfChannels, numberOfFrames, sampleRate)));
     audioContext->suspendIfNeeded();
     return audioContext.release();
 }

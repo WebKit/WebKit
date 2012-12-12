@@ -1,3 +1,32 @@
+2012-12-11  Kentaro Hara  <haraken@chromium.org>
+
+        Unreviewed, rolling out r137398.
+        http://trac.webkit.org/changeset/137398
+        https://bugs.webkit.org/show_bug.cgi?id=104188
+
+        A bunch of webaudio tests hit ASSERTs
+
+        * CMakeLists.txt:
+        * DerivedSources.make:
+        * DerivedSources.pri:
+        * GNUmakefile.list.am:
+        * Modules/webaudio/AudioContext.cpp:
+        (WebCore::AudioContext::createOfflineContext):
+        (WebCore):
+        * Modules/webaudio/AudioContext.h:
+        (AudioContext):
+        * Modules/webaudio/DOMWindowWebAudio.idl:
+        * Modules/webaudio/OfflineAudioContext.cpp: Removed.
+        * Modules/webaudio/OfflineAudioContext.h: Removed.
+        * Modules/webaudio/OfflineAudioContext.idl: Removed.
+        * WebCore.gypi:
+        * WebCore.xcodeproj/project.pbxproj:
+        * bindings/generic/RuntimeEnabledFeatures.h:
+        * bindings/js/JSAudioContextCustom.cpp:
+        (WebCore::JSAudioContextConstructor::constructJSAudioContext):
+        * bindings/v8/custom/V8AudioContextCustom.cpp:
+        (WebCore::V8AudioContext::constructorCallbackCustom):
+
 2012-12-11  Shinya Kawanaka  <shinyak@chromium.org>
 
         [Shadow DOM] registering InsertionPoints to ShadowRoot should work out of a document.

@@ -14,7 +14,7 @@ function runDecodingTest(url, optionalSampleRate)
     var sampleRate = (typeof optionalSampleRate === "undefined") ? defaultSampleRate : optionalSampleRate;
 
     // Create offline audio context.
-    context = new webkitOfflineAudioContext(1, sampleRate * lengthInSeconds, sampleRate);
+    context = new webkitAudioContext(1, sampleRate * lengthInSeconds, sampleRate);
     
     bufferLoader = new BufferLoader(
         context,

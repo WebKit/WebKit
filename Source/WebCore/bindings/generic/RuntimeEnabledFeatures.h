@@ -123,7 +123,6 @@ public:
 #if ENABLE(WEB_AUDIO)
     static void setWebkitAudioContextEnabled(bool isEnabled) { isWebAudioEnabled = isEnabled; }
     static bool webkitAudioContextEnabled() { return isWebAudioEnabled; }
-    static bool webkitOfflineAudioContextEnabled() { return isWebAudioEnabled; }
 #endif
 
 #if ENABLE(TOUCH_EVENTS)

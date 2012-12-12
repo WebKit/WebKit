@@ -23,7 +23,7 @@
           window.jsTestIsAsync = true;
 
           // Create offline audio context.
-          context = new webkitOfflineAudioContext(2, sampleRate * renderLengthSeconds, sampleRate);
+          context = new webkitAudioContext(2, sampleRate * renderLengthSeconds, sampleRate);
 
           // Create temp panner to get LINEAR_DISTANCE value for testing.
           var pannerModel = context.createPanner();

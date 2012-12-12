@@ -71,7 +71,7 @@ function init() {
         return;
 
     // Create offline audio context.
-    context = new webkitOfflineAudioContext(2, sampleRate * lengthInSeconds, sampleRate);
+    context = new webkitAudioContext(2, sampleRate * lengthInSeconds, sampleRate);
 
     // Create a single cycle of a sine wave.
     // We'll loop this to play notes of a given duration, at a given playback rate.

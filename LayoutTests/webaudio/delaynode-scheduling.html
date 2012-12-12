@@ -24,7 +24,7 @@ function runTest() {
     window.jsTestIsAsync = true;
         
     // Create offline audio context.
-    var context = new webkitOfflineAudioContext(1, sampleRate * renderLengthSeconds, sampleRate);
+    var context = new webkitAudioContext(1, sampleRate * renderLengthSeconds, sampleRate);
     var toneBuffer = createToneBuffer(context, 20, 20 * toneLengthSeconds, sampleRate); // 20Hz tone
     
     var bufferSource = context.createBufferSource();

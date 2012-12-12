@@ -20,7 +20,7 @@ function runPageTest()
     testRunner.waitUntilDone();
 
     // Create offline audio context.
-    var context = new webkitOfflineAudioContext(1, sampleRate * renderLengthSeconds, sampleRate);
+    var context = new webkitAudioContext(1, sampleRate * renderLengthSeconds, sampleRate);
 
     var bufferSource = context.createBufferSource();
     bufferSource.buffer = createSinWaveBuffer(context, renderLengthSeconds, 880);

@@ -32,11 +32,9 @@
 #include "AudioContext.h"
 #include "BindingState.h"
 #include "Frame.h"
-#include "OfflineAudioContext.h"
 #include "V8ArrayBuffer.h"
 #include "V8AudioBuffer.h"
 #include "V8Binding.h"
-#include "V8OfflineAudioContext.h"
 #include <wtf/ArrayBuffer.h>
 
 namespace WebCore {
@@ -56,16 +54,29 @@ v8::Handle<v8::Value> V8AudioContext::constructorCallbackCustom(const v8::Argume
         if (!audioContext.get())
             return throwError(v8SyntaxError, "audio resources unavailable for AudioContext construction", args.GetIsolate());
     } else {
-#if ENABLE(LEGACY_WEB_AUDIO)
         // Constructor for offline (render-target) AudioContext which renders into an AudioBuffer.
         // new AudioContext(in unsigned long numberOfChannels, in unsigned long numberOfFrames, in float sampleRate);
-        document->addConsoleMessage(JSMessageSource, WarningMessageLevel,
-            "Deprecated AudioContext constructor: use OfflineAudioContext instead");
+        if (args.Length() < 3)
+            return throwNotEnoughArgumentsError(args.GetIsolate());
 
-        return V8OfflineAudioContext::constructorCallback(args);
-#else
-        return throwError(v8SyntaxError, "Illegal AudioContext constructor", args.GetIsolate());
-#endif
+        bool ok = false;
+
+        int32_t numberOfChannels = toInt32(args[0], ok);
+        if (!ok || numberOfChannels <= 0 || numberOfChannels > 10)
+            return throwError(v8SyntaxError, "Invalid number of channels", args.GetIsolate());
+
+        int32_t numberOfFrames = toInt32(args[1], ok);
+        if (!ok || numberOfFrames <= 0)
+            return throwError(v8SyntaxError, "Invalid number of frames", args.GetIsolate());
+
+        float sampleRate = toFloat(args[2]);
+        if (sampleRate <= 0)
+            return throwError(v8SyntaxError, "Invalid sample rate", args.GetIsolate());
+
+        ExceptionCode ec = 0;
+        audioContext = AudioContext::createOfflineContext(document, numberOfChannels, numberOfFrames, sampleRate, ec);
+        if (ec)
+            return setDOMException(ec, args.GetIsolate());
     }
 
     if (!audioContext.get())

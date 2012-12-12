@@ -405,7 +405,7 @@ function createAudioGraphAndTest(numberOfTests, initialValue, setValueFunction, 
     window.jsTestIsAsync = true;
 
     // Create offline audio context.
-    context = new webkitOfflineAudioContext(2, renderLength(numberOfTests), sampleRate);
+    context = new webkitAudioContext(2, renderLength(numberOfTests), sampleRate);
     var constantBuffer = createConstantBuffer(context, 1, renderLength(numberOfTests));
 
     // We use an AudioGainNode here simply as a convenient way to test the AudioParam

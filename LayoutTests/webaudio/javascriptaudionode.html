@@ -84,7 +84,7 @@ function runTest() {
     window.jsTestIsAsync = true;
 
     // Create offline audio context.
-    context = new webkitOfflineAudioContext(2, renderLengthInFrames, sampleRate);
+    context = new webkitAudioContext(2, renderLengthInFrames, sampleRate);
 
     try {
         var jsnode = context.createScriptProcessor(512, 0, 0);

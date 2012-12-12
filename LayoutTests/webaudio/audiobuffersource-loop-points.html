@@ -82,7 +82,7 @@ function init() {
         return;
 
     // Create offline audio context.
-    context = new webkitOfflineAudioContext(2, sampleRate * lengthInSeconds, sampleRate);
+    context = new webkitAudioContext(2, sampleRate * lengthInSeconds, sampleRate);
 
     // Create the test buffer.
     // We'll loop this with the loop-points set for the 2nd half of this buffer.

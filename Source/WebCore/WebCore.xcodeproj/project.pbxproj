@@ -6609,10 +6609,6 @@
 		FDA3E95A134A49EF008D4B5A /* OfflineAudioCompletionEvent.h in Headers */ = {isa = PBXBuildFile; fileRef = FDA3E956134A49EF008D4B5A /* OfflineAudioCompletionEvent.h */; };
 		FDA3E95B134A49EF008D4B5A /* OfflineAudioDestinationNode.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FDA3E957134A49EF008D4B5A /* OfflineAudioDestinationNode.cpp */; };
 		FDA3E95C134A49EF008D4B5A /* OfflineAudioDestinationNode.h in Headers */ = {isa = PBXBuildFile; fileRef = FDA3E958134A49EF008D4B5A /* OfflineAudioDestinationNode.h */; };
-		FDA9325D16703B2A008982DC /* OfflineAudioContext.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FDA9325A16703B2A008982DC /* OfflineAudioContext.cpp */; };
-		FDA9325E16703B2A008982DC /* OfflineAudioContext.h in Headers */ = {isa = PBXBuildFile; fileRef = FDA9325B16703B2A008982DC /* OfflineAudioContext.h */; };
-		FDA9326616703BA9008982DC /* JSOfflineAudioContext.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FDA9326416703BA9008982DC /* JSOfflineAudioContext.cpp */; };
-		FDA9326716703BA9008982DC /* JSOfflineAudioContext.h in Headers */ = {isa = PBXBuildFile; fileRef = FDA9326516703BA9008982DC /* JSOfflineAudioContext.h */; };
 		FDAF19981513D131008DB0C3 /* DirectConvolver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FDAF19961513D131008DB0C3 /* DirectConvolver.cpp */; };
 		FDAF19991513D131008DB0C3 /* DirectConvolver.h in Headers */ = {isa = PBXBuildFile; fileRef = FDAF19971513D131008DB0C3 /* DirectConvolver.h */; };
 		FDB052DF1561A42C00B500D6 /* AudioSummingJunction.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FDB052DD1561A42C00B500D6 /* AudioSummingJunction.cpp */; };
@@ -14154,11 +14150,6 @@
 		FDA3E957134A49EF008D4B5A /* OfflineAudioDestinationNode.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = OfflineAudioDestinationNode.cpp; sourceTree = "<group>"; };
 		FDA3E958134A49EF008D4B5A /* OfflineAudioDestinationNode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OfflineAudioDestinationNode.h; sourceTree = "<group>"; };
 		FDA3E95D134A49FF008D4B5A /* OfflineAudioCompletionEvent.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = OfflineAudioCompletionEvent.idl; sourceTree = "<group>"; };
-		FDA9325A16703B2A008982DC /* OfflineAudioContext.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = OfflineAudioContext.cpp; sourceTree = "<group>"; };
-		FDA9325B16703B2A008982DC /* OfflineAudioContext.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OfflineAudioContext.h; sourceTree = "<group>"; };
-		FDA9325C16703B2A008982DC /* OfflineAudioContext.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = OfflineAudioContext.idl; sourceTree = "<group>"; };
-		FDA9326416703BA9008982DC /* JSOfflineAudioContext.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSOfflineAudioContext.cpp; sourceTree = "<group>"; };
-		FDA9326516703BA9008982DC /* JSOfflineAudioContext.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSOfflineAudioContext.h; sourceTree = "<group>"; };
 		FDAF19961513D131008DB0C3 /* DirectConvolver.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DirectConvolver.cpp; sourceTree = "<group>"; };
 		FDAF19971513D131008DB0C3 /* DirectConvolver.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DirectConvolver.h; sourceTree = "<group>"; };
 		FDB052DD1561A42C00B500D6 /* AudioSummingJunction.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = AudioSummingJunction.cpp; sourceTree = "<group>"; };
@@ -22348,9 +22339,6 @@
 				FD671A74159BB07000197559 /* MediaStreamAudioSourceNode.cpp */,
 				FD671A75159BB07000197559 /* MediaStreamAudioSourceNode.h */,
 				FD671A76159BB07000197559 /* MediaStreamAudioSourceNode.idl */,
-				FDA9325A16703B2A008982DC /* OfflineAudioContext.cpp */,
-				FDA9325B16703B2A008982DC /* OfflineAudioContext.h */,
-				FDA9325C16703B2A008982DC /* OfflineAudioContext.idl */,
 				FDA3E955134A49EF008D4B5A /* OfflineAudioCompletionEvent.cpp */,
 				FDA3E956134A49EF008D4B5A /* OfflineAudioCompletionEvent.h */,
 				FDA3E95D134A49FF008D4B5A /* OfflineAudioCompletionEvent.idl */,
@@ -22517,8 +22505,6 @@
 				FD23A12413F5FA5900F67001 /* JSMediaElementAudioSourceNode.h */,
 				FDBD480A159BC6870093EB4F /* JSMediaStreamAudioSourceNode.cpp */,
 				FDBD480B159BC6870093EB4F /* JSMediaStreamAudioSourceNode.h */,
-				FDA9326416703BA9008982DC /* JSOfflineAudioContext.cpp */,
-				FDA9326516703BA9008982DC /* JSOfflineAudioContext.h */,
 				FDF6BAF6134A4C9800822920 /* JSOfflineAudioCompletionEvent.cpp */,
 				FDF6BAF7134A4C9800822920 /* JSOfflineAudioCompletionEvent.h */,
 				FDEA6240152102E200479DF0 /* JSOscillatorNode.cpp */,
@@ -25897,8 +25883,6 @@
 				31D591B316697A6C00E6BF02 /* PlugInClient.h in Headers */,
 				31D591BC166C2E6C00E6BF02 /* PlugInOriginHash.h in Headers */,
 				986EA88315FFF29000985E5E /* PrerenderClient.h in Headers */,
-				FDA9325E16703B2A008982DC /* OfflineAudioContext.h in Headers */,
-				FDA9326716703BA9008982DC /* JSOfflineAudioContext.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -29003,8 +28987,6 @@
 				D6489D25166FFCF1007C031B /* JSHTMLTemplateElement.cpp in Sources */,
 				D6F7960D166FFECE0076DD18 /* JSHTMLTemplateElementCustom.cpp in Sources */,
 				31D591BB166C2E6C00E6BF02 /* PlugInOriginHash.cpp in Sources */,
-				FDA9325D16703B2A008982DC /* OfflineAudioContext.cpp in Sources */,
-				FDA9326616703BA9008982DC /* JSOfflineAudioContext.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
