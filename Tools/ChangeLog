@@ -1,3 +1,14 @@
+2012-12-12  Jochen Eisinger  <jochen@chromium.org>
+
+        [chromium] Fix build on chromium-win
+
+        Unreviewed build-fix.
+
+        MSVS indeed doesn't have snprintf, adding wtf/StringExtras.h include
+        to work around that.
+
+        * DumpRenderTree/chromium/TestRunner/src/WebTestPlugin.cpp:
+
 2012-12-12  Simon Hausmann  <simon.hausmann@digia.com>
 
         [Qt] Fix build on Mac

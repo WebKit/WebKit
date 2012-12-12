@@ -36,6 +36,7 @@
 #include "platform/WebGraphicsContext3D.h"
 #include "platform/WebKitPlatformSupport.h"
 #include <wtf/Assertions.h>
+#include <wtf/StringExtras.h>
 #include <wtf/text/CString.h>
 
 using namespace WebKit;
