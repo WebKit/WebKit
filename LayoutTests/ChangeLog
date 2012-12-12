@@ -1,3 +1,11 @@
+2012-12-11  Beth Dakin  <bdakin@apple.com>
+
+        https://bugs.webkit.org/show_bug.cgi?id=104735
+        ASSERT running platform/mac/plugins/convert-point.html on the WK2 bots
+
+        Skipping this test for now until we fix the plug-ing bug.
+        * platform/mac-wk2/TestExpectations:
+
 2012-12-11  Adam Klein  <adamk@chromium.org>
         Unreviewed. Tweak expectations to be image-only.
 
