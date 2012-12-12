@@ -207,7 +207,6 @@ BitmapTextureGL* toBitmapTextureGL(BitmapTexture* texture)
 
 TextureMapperGL::TextureMapperGL()
     : TextureMapper(OpenGLMode)
-    , m_context(0)
     , m_enableEdgeDistanceAntialiasing(false)
 {
     m_context3D = GraphicsContext3D::createForCurrentGLContext();
