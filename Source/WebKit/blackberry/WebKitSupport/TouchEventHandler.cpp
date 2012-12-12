@@ -90,6 +90,9 @@ void TouchEventHandler::handleTouchPoint(Platform::TouchPoint& point)
     switch (point.m_state) {
     case Platform::TouchPoint::TouchPressed:
         {
+            // Clear spellcheck state on any touch event
+            m_webPage->m_inputHandler->clearDidSpellCheckState();
+
             if (!m_lastFatFingersResult.isValid())
                 doFatFingers(point);
 
@@ -125,7 +128,9 @@ void TouchEventHandler::handleTouchPoint(Platform::TouchPoint& point)
 
             if (m_shouldRequestSpellCheckOptions) {
                 IntPoint pixelPositionRelativeToViewport = m_webPage->mapToTransformed(adjustedPoint);
-                m_webPage->m_inputHandler->requestSpellingCheckingOptions(m_spellCheckOptionRequest, IntSize(m_lastScreenPoint - pixelPositionRelativeToViewport));
+                IntSize screenOffset(m_lastScreenPoint - pixelPositionRelativeToViewport);
+                m_webPage->m_inputHandler->requestSpellingCheckingOptions(m_spellCheckOptionRequest, screenOffset);
+                m_shouldRequestSpellCheckOptions = false;
             }
 
             m_lastFatFingersResult.reset(); // Reset the fat finger result as its no longer valid when a user's finger is not on the screen.
@@ -133,6 +138,9 @@ void TouchEventHandler::handleTouchPoint(Platform::TouchPoint& point)
         }
     case Platform::TouchPoint::TouchMoved:
         {
+            // Clear spellcheck state on any touch event
+            m_webPage->m_inputHandler->clearDidSpellCheckState();
+
             // You can still send mouse move events
             PlatformMouseEvent mouseEvent(point.m_pos, m_lastScreenPoint, PlatformEvent::MouseMoved, 1, LeftButton, TouchScreen);
             m_lastScreenPoint = point.m_screenPos;

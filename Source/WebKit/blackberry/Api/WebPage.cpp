@@ -3837,6 +3837,7 @@ void WebPagePrivate::setViewportSize(const IntSize& transformedActualVisibleSize
     }
 
     m_backingStore->d->resumeScreenUpdates(screenResumeOperation);
+    m_inputHandler->redrawSpellCheckDialogIfRequired();
 }
 
 void WebPage::setViewportSize(const Platform::IntSize& viewportSize, bool ensureFocusElementVisible)

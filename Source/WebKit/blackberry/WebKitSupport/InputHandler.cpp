@@ -141,6 +141,7 @@ InputHandler::InputHandler(WebPagePrivate* page)
     , m_processingTransactionId(-1)
     , m_receivedBackspaceKeyDown(false)
     , m_expectedKeyUpChar(0)
+    , m_didSpellCheckWord(false)
 {
 }
 
@@ -731,10 +732,15 @@ bool InputHandler::shouldRequestSpellCheckingOptionsForPoint(Platform::IntPoint&
     if (!marker)
         return false;
 
+    m_didSpellCheckWord = true;
+
     // Populate the marker details in preparation for the request as the marker is
     // not guaranteed to be valid after the cursor is placed.
     spellCheckingOptionRequest.startTextPosition = marker->startOffset();
     spellCheckingOptionRequest.endTextPosition = marker->endOffset();
+
+    m_spellCheckingOptionsRequest.startTextPosition = 0;
+    m_spellCheckingOptionsRequest.endTextPosition = 0;
 
     SpellingLog(LogLevelInfo, "InputHandler::shouldRequestSpellCheckingOptionsForPoint Found spelling marker at point %d, %d\nMarker start %d end %d",
         point.x(), point.y(), spellCheckingOptionRequest.startTextPosition, spellCheckingOptionRequest.endTextPosition);
@@ -742,7 +748,7 @@ bool InputHandler::shouldRequestSpellCheckingOptionsForPoint(Platform::IntPoint&
     return true;
 }
 
-void InputHandler::requestSpellingCheckingOptions(imf_sp_text_t& spellCheckingOptionRequest, const WebCore::IntSize& screenOffset)
+void InputHandler::requestSpellingCheckingOptions(imf_sp_text_t& spellCheckingOptionRequest, WebCore::IntSize& screenOffset, const bool shouldMoveDialog)
 {
     // If the caret is no longer active, no message should be sent.
     if (m_webPage->focusedOrMainFrame()->selection()->selectionType() != VisibleSelection::CaretSelection)
@@ -751,35 +757,60 @@ void InputHandler::requestSpellingCheckingOptions(imf_sp_text_t& spellCheckingOp
     if (!m_currentFocusElement || !m_currentFocusElement->document() || !m_currentFocusElement->document()->frame())
         return;
 
+    if (shouldMoveDialog || !(spellCheckingOptionRequest.startTextPosition || spellCheckingOptionRequest.startTextPosition)) {
+        if (m_spellCheckingOptionsRequest.startTextPosition || m_spellCheckingOptionsRequest.endTextPosition)
+            spellCheckingOptionRequest = m_spellCheckingOptionsRequest;
+    }
+
+    if (!shouldMoveDialog && spellCheckingOptionRequest.startTextPosition == spellCheckingOptionRequest.endTextPosition)
+        return;
+
+    if (screenOffset.isEmpty()) {
+        screenOffset.setWidth(m_screenOffset.width());
+        screenOffset.setHeight(m_screenOffset.height());
+    } else {
+        m_screenOffset.setWidth(screenOffset.width());
+        m_screenOffset.setHeight(screenOffset.height());
+    }
+
     // imf_sp_text_t should be generated in pixel viewport coordinates.
+    // Caret is in document coordinates.
     WebCore::IntRect caretRect = m_webPage->focusedOrMainFrame()->selection()->selection().visibleStart().absoluteCaretBounds();
+
+    // Shift from posible iFrame to root view/main frame.
     caretRect = m_webPage->focusedOrMainFrame()->view()->contentsToRootView(caretRect);
+
+    // Shift to document scroll position.
     const WebCore::IntPoint scrollPosition = m_webPage->mainFrame()->view()->scrollPosition();
     caretRect.move(scrollPosition.x(), scrollPosition.y());
 
-    // Calculate the offset for contentEditable since the marker offsets are relative to the node.
-    // Get caret position. Though the spelling markers might no longer exist, if this method is called we can assume the caret was placed on top of a marker earlier.
-    VisiblePosition caretPosition = m_currentFocusElement->document()->frame()->selection()->selection().visibleStart();
+    // If we are only moving the dialog, we don't need to provide startTextPosition and endTextPosition so this logic can be skipped.
+    if (!shouldMoveDialog) {
+        // Calculate the offset for contentEditable since the marker offsets are relative to the node.
+        // Get caret position. Though the spelling markers might no longer exist, if this method is called we can assume the caret was placed on top of a marker earlier.
+        VisiblePosition caretPosition = m_currentFocusElement->document()->frame()->selection()->selection().visibleStart();
 
-    // Create a range from the start to end of word.
-    RefPtr<Range> rangeSelection = VisibleSelection(startOfWord(caretPosition), endOfWord(caretPosition)).toNormalizedRange();
-    if (!rangeSelection)
-        return;
+        // Create a range from the start to end of word.
+        RefPtr<Range> rangeSelection = VisibleSelection(startOfWord(caretPosition), endOfWord(caretPosition)).toNormalizedRange();
+        if (!rangeSelection)
+            return;
 
-    unsigned location = 0;
-    unsigned length = 0;
-    TextIterator::getLocationAndLengthFromRange(m_currentFocusElement.get(), rangeSelection.get(), location, length);
+        unsigned location = 0;
+        unsigned length = 0;
+        TextIterator::getLocationAndLengthFromRange(m_currentFocusElement.get(), rangeSelection.get(), location, length);
 
-    if (location != notFound && length) {
-        spellCheckingOptionRequest.startTextPosition = location;
-        spellCheckingOptionRequest.endTextPosition = location + length;
+        if (location != notFound && length) {
+            spellCheckingOptionRequest.startTextPosition = location;
+            spellCheckingOptionRequest.endTextPosition = location + length;
+        }
     }
+    m_spellCheckingOptionsRequest = spellCheckingOptionRequest;
 
     InputLog(LogLevelInfo, "InputHandler::requestSpellingCheckingOptions caretRect topLeft=(%d,%d), bottomRight=(%d,%d), startTextPosition=%d, endTextPosition=%d"
                             , caretRect.minXMinYCorner().x(), caretRect.minXMinYCorner().y(), caretRect.maxXMaxYCorner().x(), caretRect.maxXMaxYCorner().y()
                             , spellCheckingOptionRequest.startTextPosition, spellCheckingOptionRequest.endTextPosition);
 
-    m_webPage->m_client->requestSpellingCheckingOptions(spellCheckingOptionRequest, caretRect, screenOffset);
+    m_webPage->m_client->requestSpellingCheckingOptions(spellCheckingOptionRequest, caretRect, screenOffset, shouldMoveDialog);
 }
 
 void InputHandler::setElementUnfocused(bool refocusOccuring)
@@ -914,6 +945,17 @@ bool InputHandler::shouldSpellCheckElement(const Element* element) const
         return false;
 
     return true;
+}
+
+void InputHandler::redrawSpellCheckDialogIfRequired(const bool shouldMoveDialog)
+{
+    if (didSpellCheckWord()) {
+        imf_sp_text_t spellCheckingOptionRequest;
+        spellCheckingOptionRequest.startTextPosition = 0;
+        spellCheckingOptionRequest.endTextPosition = 0;
+        WebCore::IntSize screenOffset(-1, -1);
+        requestSpellingCheckingOptions(spellCheckingOptionRequest, screenOffset, shouldMoveDialog);
+    }
 }
 
 void InputHandler::spellCheckBlock(VisibleSelection& visibleSelection, TextCheckingProcessType textCheckingProcessType)

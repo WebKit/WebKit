@@ -144,7 +144,9 @@ public:
     void spellCheckingRequestCancelled(int32_t transactionId);
 
     bool shouldRequestSpellCheckingOptionsForPoint(Platform::IntPoint&, const WebCore::Element*, imf_sp_text_t&);
-    void requestSpellingCheckingOptions(imf_sp_text_t&, const WebCore::IntSize& screenOffset);
+    void requestSpellingCheckingOptions(imf_sp_text_t&, WebCore::IntSize& screenOffset, const bool shouldMoveDialog = false);
+    void clearDidSpellCheckState() { m_didSpellCheckWord = false; }
+    void redrawSpellCheckDialogIfRequired(const bool shouldMoveDialog = true);
 
 private:
     enum PendingKeyboardStateChange { NoChange, Visible, NotVisible };
@@ -205,6 +207,7 @@ private:
     PassRefPtr<WebCore::Range> getRangeForSpellCheckWithFineGranularity(WebCore::VisiblePosition startPosition, WebCore::VisiblePosition endPosition);
     WebCore::SpellChecker* getSpellChecker();
     bool shouldSpellCheckElement(const WebCore::Element*) const;
+    bool didSpellCheckWord() const { return m_didSpellCheckWord; }
 
     WebPagePrivate* m_webPage;
 
@@ -228,6 +231,10 @@ private:
 
     bool m_receivedBackspaceKeyDown;
     unsigned short m_expectedKeyUpChar;
+
+    imf_sp_text_t m_spellCheckingOptionsRequest;
+    WebCore::IntSize m_screenOffset;
+    bool m_didSpellCheckWord;
 };
 
 }

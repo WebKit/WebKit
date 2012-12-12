@@ -615,6 +615,9 @@ void ChromeClientBlackBerry::scroll(const IntSize& delta, const IntRect& scrollV
     backingStoreClient->checkOriginOfCurrentScrollOperation();
 
     m_webPagePrivate->m_backingStore->d->scroll(delta, scrollViewRect, clipRect);
+
+    // Shift the spell check dialog box as we scroll.
+    m_webPagePrivate->m_inputHandler->redrawSpellCheckDialogIfRequired();
 }
 
 void ChromeClientBlackBerry::scrollableAreasDidChange()
