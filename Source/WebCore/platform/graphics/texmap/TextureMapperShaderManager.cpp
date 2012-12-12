@@ -188,35 +188,53 @@ static void getShaderSpec(TextureMapperShaderManager::ShaderKey key, String& ver
             varying highp vec2 v_sourceTexCoord;
             uniform lowp float u_opacity;
             uniform vec3 u_expandedQuadEdgesInScreenSpace[8];
-            void main()
-            {
-                vec4 sampledColor = texture2D(s_sampler, clamp(v_sourceTexCoord, 0.0, 1.0));
-                vec3 pos = vec3(gl_FragCoord.xy, 1);
 
                 // The data passed in u_expandedQuadEdgesInScreenSpace is merely the
                 // pre-scaled coeffecients of the line equations describing the four edges
                 // of the expanded quad in screen space and the rectangular bounding box
                 // of the expanded quad.
                 //
+            float normalizedDistance(vec3 edgeCoefficient)
+            {
                 // We are doing a simple distance calculation here according to the formula:
                 // (A*p.x + B*p.y + C) / sqrt(A^2 + B^2) = distance from line to p
                 // Note that A, B and C have already been scaled by 1 / sqrt(A^2 + B^2).
-                float a0 = clamp(dot(u_expandedQuadEdgesInScreenSpace[0], pos), 0.0, 1.0);
-                float a1 = clamp(dot(u_expandedQuadEdgesInScreenSpace[1], pos), 0.0, 1.0);
-                float a2 = clamp(dot(u_expandedQuadEdgesInScreenSpace[2], pos), 0.0, 1.0);
-                float a3 = clamp(dot(u_expandedQuadEdgesInScreenSpace[3], pos), 0.0, 1.0);
-                float a4 = clamp(dot(u_expandedQuadEdgesInScreenSpace[4], pos), 0.0, 1.0);
-                float a5 = clamp(dot(u_expandedQuadEdgesInScreenSpace[5], pos), 0.0, 1.0);
-                float a6 = clamp(dot(u_expandedQuadEdgesInScreenSpace[6], pos), 0.0, 1.0);
-                float a7 = clamp(dot(u_expandedQuadEdgesInScreenSpace[7], pos), 0.0, 1.0);
+                return clamp(dot(edgeCoefficient, vec3(gl_FragCoord.xy, 1.)), 0., 1.);
+            }
 
+            float antialiasQuad(vec3 coefficient1, vec3 coefficient2, vec3 coefficient3, vec3 coefficient4)
+            {
                 // Now we want to reduce the alpha value of the fragment if it is close to the
                 // edges of the expanded quad (or rectangular bounding box -- which seems to be
                 // important for backfacing quads). Note that we are combining the contribution
                 // from the (top || bottom) and (left || right) edge by simply multiplying. This follows
                 // the approach described at: http://http.developer.nvidia.com/GPUGems2/gpugems2_chapter22.html,
                 // in this case without using Gaussian weights.
-                gl_FragColor = sampledColor * u_opacity * min(min(a0, a2) * min(a1, a3), min(a4, a6) * min(a5, a7));
+                return min(normalizedDistance(coefficient1), normalizedDistance(coefficient2))
+                    * min(normalizedDistance(coefficient3), normalizedDistance(coefficient4));
+            }
+
+            float antialias()
+            {
+                float antialiasValueForQuad = 
+                    antialiasQuad(u_expandedQuadEdgesInScreenSpace[0],
+                        u_expandedQuadEdgesInScreenSpace[1],
+                        u_expandedQuadEdgesInScreenSpace[2],
+                        u_expandedQuadEdgesInScreenSpace[3]);
+
+                float antialiasValueForBoundingRect = 
+                    antialiasQuad(u_expandedQuadEdgesInScreenSpace[4],
+                        u_expandedQuadEdgesInScreenSpace[5],
+                        u_expandedQuadEdgesInScreenSpace[6],
+                        u_expandedQuadEdgesInScreenSpace[7]);
+
+                return min(antialiasValueForQuad, antialiasValueForBoundingRect);           
+            }
+
+            void main()
+            {
+                vec4 sampledColor = texture2D(s_sampler, clamp(v_sourceTexCoord, 0.0, 1.0));
+                gl_FragColor = sampledColor * u_opacity * antialias();
             }
         );
 
