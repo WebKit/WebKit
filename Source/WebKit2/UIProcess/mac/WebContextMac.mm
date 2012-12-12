@@ -47,7 +47,6 @@ NSString *WebDatabaseDirectoryDefaultsKey = @"WebDatabaseDirectory";
 NSString *WebKitLocalCacheDefaultsKey = @"WebKitLocalCache";
 NSString *WebStorageDirectoryDefaultsKey = @"WebKitLocalStorageDatabasePathPreferenceKey";
 NSString *WebKitKerningAndLigaturesEnabledByDefaultDefaultsKey = @"WebKitKerningAndLigaturesEnabledByDefault";
-NSString *WebKitWebProcessCountLimitDefaultsKey = @"WebKitWebProcessCountLimit";
 
 static NSString *WebKitApplicationDidChangeAccessibilityEnhancedUserInterfaceNotification = @"NSApplicationDidChangeAccessibilityEnhancedUserInterfaceNotification";
 
@@ -70,7 +69,6 @@ static void registerUserDefaultsIfNeeded()
     didRegister = true;
     NSMutableDictionary *registrationDictionary = [NSMutableDictionary dictionary];
     
-    [registrationDictionary setObject:[NSNumber numberWithInteger:INT_MAX] forKey:WebKitWebProcessCountLimitDefaultsKey];
 #if __MAC_OS_X_VERSION_MIN_REQUIRED >= 1090
     [registrationDictionary setObject:[NSNumber numberWithBool:YES] forKey:WebKitKerningAndLigaturesEnabledByDefaultDefaultsKey];
 #endif
@@ -81,10 +79,6 @@ static void registerUserDefaultsIfNeeded()
 void WebContext::platformInitialize()
 {
     registerUserDefaultsIfNeeded();
-
-    m_webProcessCountLimit = [[NSUserDefaults standardUserDefaults] integerForKey:WebKitWebProcessCountLimitDefaultsKey];
-    if (m_webProcessCountLimit <= 0)
-        m_webProcessCountLimit = 1;
 }
 
 String WebContext::applicationCacheDirectory()

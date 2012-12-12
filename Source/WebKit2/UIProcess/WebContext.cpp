@@ -299,6 +299,18 @@ void WebContext::setProcessModel(ProcessModel processModel)
     m_processModel = processModel;
 }
 
+void WebContext::setMaximumNumberOfProcesses(unsigned maximumNumberOfProcesses)
+{
+    // Guard against API misuse.
+    if (!m_processes.isEmpty())
+        CRASH();
+
+    if (maximumNumberOfProcesses == 0)
+        m_webProcessCountLimit = UINT_MAX;
+    else
+        m_webProcessCountLimit = maximumNumberOfProcesses;
+}
+
 WebProcessProxy* WebContext::deprecatedSharedProcess()
 {
     ASSERT(m_processModel == ProcessModelSharedSecondaryProcess);

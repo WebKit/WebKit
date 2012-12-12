@@ -152,6 +152,9 @@ WK_EXPORT WKCacheModel WKContextGetCacheModel(WKContextRef context);
 WK_EXPORT void WKContextSetProcessModel(WKContextRef context, WKProcessModel processModel);
 WK_EXPORT WKProcessModel WKContextGetProcessModel(WKContextRef context);
 
+WK_EXPORT void WKContextSetMaximumNumberOfProcesses(WKContextRef context, unsigned numberOfProcesses);
+WK_EXPORT unsigned WKContextGetMaximumNumberOfProcesses(WKContextRef context);
+
 WK_EXPORT void WKContextStartMemorySampler(WKContextRef context, WKDoubleRef interval);
 WK_EXPORT void WKContextStopMemorySampler(WKContextRef context);
 

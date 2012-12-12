@@ -1,3 +1,27 @@
+2012-12-11  Sam Weinig  <sam@webkit.org>
+
+        Add API to set the maximum number of processes allowed in a WKContext
+        https://bugs.webkit.org/show_bug.cgi?id=104769
+
+        Reviewed by Dan Bernstein.
+
+        Switch from using NSUserDefaults to a WKContext API to set the maximum number of processes
+        for a context.
+
+        * UIProcess/API/C/WKContext.cpp:
+        (WKContextSetMaximumNumberOfProcesses):
+        (WKContextGetMaximumNumberOfProcesses):
+        * UIProcess/API/C/WKContext.h:
+        * UIProcess/WebContext.cpp:
+        (WebKit::WebContext::setMaximumNumberOfProcesses):
+        (WebKit):
+        * UIProcess/WebContext.h:
+        (WebContext):
+        (WebKit::WebContext::maximumNumberOfProcesses):
+        * UIProcess/mac/WebContextMac.mm:
+        (WebKit::registerUserDefaultsIfNeeded):
+        (WebKit::WebContext::platformInitialize):
+
 2012-12-11  Kihong Kwon  <kihong.kwon@samsung.com>
 
         Vibration API: IDL type doesn't match implementation type

@@ -131,6 +131,16 @@ WKProcessModel WKContextGetProcessModel(WKContextRef contextRef)
     return toAPI(toImpl(contextRef)->processModel());
 }
 
+void WKContextSetMaximumNumberOfProcesses(WKContextRef contextRef, unsigned numberOfProcesses)
+{
+    toImpl(contextRef)->setMaximumNumberOfProcesses(numberOfProcesses);
+}
+
+unsigned WKContextGetMaximumNumberOfProcesses(WKContextRef contextRef)
+{
+    return toImpl(contextRef)->maximumNumberOfProcesses();
+}
+
 void WKContextSetAlwaysUsesComplexTextCodePath(WKContextRef contextRef, bool alwaysUseComplexTextCodePath)
 {
     toImpl(contextRef)->setAlwaysUsesComplexTextCodePath(alwaysUseComplexTextCodePath);

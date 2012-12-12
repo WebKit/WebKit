@@ -104,6 +104,9 @@ public:
     void setProcessModel(ProcessModel); // Can only be called when there are no processes running.
     ProcessModel processModel() const { return m_processModel; }
 
+    void setMaximumNumberOfProcesses(unsigned); // Can only be called when there are no processes running.
+    unsigned maximumNumberOfProcesses() const { return m_webProcessCountLimit; }
+
     // FIXME (Multi-WebProcess): Remove. No code should assume that there is a shared process.
     WebProcessProxy* deprecatedSharedProcess();
 
