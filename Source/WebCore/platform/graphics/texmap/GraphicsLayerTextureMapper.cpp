@@ -466,7 +466,9 @@ void GraphicsLayerTextureMapper::prepareBackingStore()
     if (!m_backingStore)
         m_backingStore = TextureMapperTiledBackingStore::create();
 
+#if PLATFORM(QT)
     ASSERT(dynamic_cast<TextureMapperTiledBackingStore*>(m_backingStore.get()));
+#endif
     TextureMapperTiledBackingStore* backingStore = static_cast<TextureMapperTiledBackingStore*>(m_backingStore.get());
 
     if (isShowingRepaintCounter())
