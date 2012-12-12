@@ -81,7 +81,7 @@ function runTest() {
     window.jsTestIsAsync = true;
 
     // Create stereo offline audio context.
-    context = new webkitAudioContext(2, lengthInSampleFrames, sampleRate);
+    context = new webkitOfflineAudioContext(2, lengthInSampleFrames, sampleRate);
 
     try {
         var splitternode = context.createChannelSplitter(0);

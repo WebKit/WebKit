@@ -1,3 +1,41 @@
+2012-12-12  Chris Rogers  <crogers@google.com>
+
+        Implement OfflineAudioContext constructor
+        https://bugs.webkit.org/show_bug.cgi?id=104188
+
+        Reviewed by Kentaro Hara.
+
+        The Web Audio layout tests have relied on an undocumented way (in the specification) to render
+        audio faster than realtime using an OfflineAudioContext.  We want to expose a proper OfflineAudioContext
+        object and constructor instead of piggybacking off of the normal AudioContext.
+             
+        * CMakeLists.txt:
+        * DerivedSources.make:
+        * DerivedSources.pri:
+        * GNUmakefile.list.am:
+        * Modules/webaudio/AudioContext.cpp:
+        (WebCore::AudioContext::isSampleRateRangeGood):
+        * Modules/webaudio/AudioContext.h:
+        (AudioContext):
+        * Modules/webaudio/DOMWindowWebAudio.idl:
+        * Modules/webaudio/OfflineAudioContext.cpp: Added.
+        (WebCore):
+        (WebCore::OfflineAudioContext::create):
+        (WebCore::OfflineAudioContext::OfflineAudioContext):
+        (WebCore::OfflineAudioContext::~OfflineAudioContext):
+        * Modules/webaudio/OfflineAudioContext.h: Added.
+        (WebCore):
+        (OfflineAudioContext):
+        * Modules/webaudio/OfflineAudioContext.idl: Added.
+        * WebCore.gypi:
+        * WebCore.xcodeproj/project.pbxproj:
+        * bindings/generic/RuntimeEnabledFeatures.h:
+        (WebCore::RuntimeEnabledFeatures::webkitOfflineAudioContextEnabled):
+        * bindings/js/JSAudioContextCustom.cpp:
+        (WebCore::JSAudioContextConstructor::constructJSAudioContext):
+        * bindings/v8/custom/V8AudioContextCustom.cpp:
+        (WebCore::V8AudioContext::constructorCallbackCustom):
+
 2012-12-12  John Griggs  <jgriggs@rim.com>
 
         2012-12-12  John Griggs  <jgriggs@rim.com>

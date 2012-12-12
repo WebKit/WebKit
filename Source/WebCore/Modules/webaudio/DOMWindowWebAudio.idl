@@ -30,6 +30,7 @@
 ] interface DOMWindowWebAudio {
 #if !defined(LANGUAGE_CPP) || !LANGUAGE_CPP
     [JSCustomGetter, V8EnabledAtRuntime] attribute AudioContextConstructor webkitAudioContext;
+    [V8EnabledAtRuntime] attribute OfflineAudioContextConstructor webkitOfflineAudioContext;
     attribute PannerNodeConstructor webkitAudioPannerNode;
     attribute AudioProcessingEventConstructor AudioProcessingEvent;
     attribute OfflineAudioCompletionEventConstructor OfflineAudioCompletionEvent;

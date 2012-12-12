@@ -25,7 +25,7 @@ function runTest() {
     window.jsTestIsAsync = true;
         
     // Create offline audio context.
-    var context = new webkitAudioContext(2, sampleRate * renderLengthSeconds, sampleRate);
+    var context = new webkitOfflineAudioContext(2, sampleRate * renderLengthSeconds, sampleRate);
 
     // Dummy filter to get filter type constant
     var f = context.createBiquadFilter();

@@ -44,7 +44,7 @@
           window.jsTestIsAsync = true;
 
           // Create offline audio context.
-          context = new webkitAudioContext(2, sampleRate * renderTime, sampleRate);
+          context = new webkitOfflineAudioContext(2, sampleRate * renderTime, sampleRate);
 
           squarePulseBuffer = createSignalBuffer(context, function (k) { return 1 });    
 
