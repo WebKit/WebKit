@@ -1,5 +1,4 @@
 list(APPEND WebCore_INCLUDE_DIRECTORIES
-    "${WEBCORE_DIR}/accessibility/atk"
     "${WEBCORE_DIR}/page/efl"
     "${WEBCORE_DIR}/platform/cairo"
     "${WEBCORE_DIR}/platform/efl"
@@ -13,26 +12,9 @@ list(APPEND WebCore_INCLUDE_DIRECTORIES
     "${WEBCORE_DIR}/platform/network/soup"
     "${WEBCORE_DIR}/platform/text/efl"
     "${WEBCORE_DIR}/plugins/efl"
-    ${ATK_INCLUDE_DIRS}
 )
 
 list(APPEND WebCore_SOURCES
-    accessibility/atk/AXObjectCacheAtk.cpp
-    accessibility/atk/AccessibilityObjectAtk.cpp
-    accessibility/atk/WebKitAccessibleHyperlink.cpp
-    accessibility/atk/WebKitAccessibleInterfaceAction.cpp
-    accessibility/atk/WebKitAccessibleInterfaceComponent.cpp
-    accessibility/atk/WebKitAccessibleInterfaceDocument.cpp
-    accessibility/atk/WebKitAccessibleInterfaceEditableText.cpp
-    accessibility/atk/WebKitAccessibleInterfaceHyperlinkImpl.cpp
-    accessibility/atk/WebKitAccessibleInterfaceHypertext.cpp
-    accessibility/atk/WebKitAccessibleInterfaceImage.cpp
-    accessibility/atk/WebKitAccessibleInterfaceSelection.cpp
-    accessibility/atk/WebKitAccessibleInterfaceTable.cpp
-    accessibility/atk/WebKitAccessibleInterfaceText.cpp
-    accessibility/atk/WebKitAccessibleInterfaceValue.cpp
-    accessibility/atk/WebKitAccessibleUtil.cpp
-    accessibility/atk/WebKitAccessibleWrapperAtk.cpp
     editing/SmartReplaceICU.cpp
     page/efl/DragControllerEfl.cpp
     page/efl/EventHandlerEfl.cpp
@@ -177,7 +159,6 @@ if (WTF_USE_TEXTURE_MAPPER)
 endif ()
 
 list(APPEND WebCore_LIBRARIES
-    ${ATK_LIBRARIES}
     ${CAIRO_LIBRARIES}
     ${ECORE_LIBRARIES}
     ${ECORE_EVAS_LIBRARIES}
@@ -336,5 +317,33 @@ if (ENABLE_SPELLCHECK)
     )
     list(APPEND WebCore_LIBRARIES
         ${ENCHANT_LIBRARIES}
+    )
+endif ()
+
+if (ENABLE_ACCESSIBILITY)
+    list(APPEND WebCore_SOURCES
+        accessibility/atk/AccessibilityObjectAtk.cpp
+        accessibility/atk/AXObjectCacheAtk.cpp
+        accessibility/atk/WebKitAccessibleHyperlink.cpp
+        accessibility/atk/WebKitAccessibleInterfaceAction.cpp
+        accessibility/atk/WebKitAccessibleInterfaceComponent.cpp
+        accessibility/atk/WebKitAccessibleInterfaceDocument.cpp
+        accessibility/atk/WebKitAccessibleInterfaceEditableText.cpp
+        accessibility/atk/WebKitAccessibleInterfaceHyperlinkImpl.cpp
+        accessibility/atk/WebKitAccessibleInterfaceHypertext.cpp
+        accessibility/atk/WebKitAccessibleInterfaceImage.cpp
+        accessibility/atk/WebKitAccessibleInterfaceSelection.cpp
+        accessibility/atk/WebKitAccessibleInterfaceTable.cpp
+        accessibility/atk/WebKitAccessibleInterfaceText.cpp
+        accessibility/atk/WebKitAccessibleInterfaceValue.cpp
+        accessibility/atk/WebKitAccessibleUtil.cpp
+        accessibility/atk/WebKitAccessibleWrapperAtk.cpp
+    )
+    list(APPEND WebCore_INCLUDE_DIRECTORIES
+        "${WEBCORE_DIR}/accessibility/atk"
+        ${ATK_INCLUDE_DIRS}
+    )
+    list(APPEND WebCore_LIBRARIES
+        ${ATK_LIBRARIES}
     )
 endif ()
