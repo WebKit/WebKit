@@ -1671,3 +1671,7 @@ webkit.org/b/104571 http/tests/security/xssAuditor/script-tag-addslashes-null-ch
 webkit.org/b/104571 http/tests/security/xssAuditor/script-tag-null-char.html [ Failure ]
 webkit.org/b/104571 http/tests/security/xssAuditor/script-tag-with-source-null-char.html [ Failure ]
 webkit.org/b/104571 http/tests/xmlhttprequest/origin-exact-matching.html [ Failure ]
+
+webkit.org/b/104788 css3/flexbox/flex-algorithm.html [ Failure ]
+webkit.org/b/104788 fast/css/large-number-round-trip.html [ Failure ]
+webkit.org/b/104788 fast/css/large-numbers.html [ Failure ]

@@ -1,3 +1,13 @@
+2012-12-12  Zan Dobersek  <zandobersek@gmail.com>
+
+        Unreviewed gardening.
+
+        Adding failure expectations for tests that regressed in r137365 on GTK, Qt and EFL.
+
+        * platform/efl/TestExpectations:
+        * platform/gtk/TestExpectations:
+        * platform/qt/TestExpectations:
+
 2012-12-12  Tommy Widenflycht  <tommyw@google.com>
 
         MediaStream API: Change the data channel descriptor pattern to a handler pattern
