@@ -3,14 +3,23 @@
 <body>
 <script src="../fast/js/resources/js-test-pre.js"></script>
 
+<!-- A link always gets its accessible text from contents. -->
 <a id="link" href="#">A</a>
+
+<!-- A generic focusable div should also get its accessible text from contents. -->
 <div id="div" tabindex="0">B</div>
 <div id="div2" tabindex="0"><div></div>C</div>
 <div id="div3" tabindex="0" aria-label="D"></div>
 
+<!-- A generic focusable div should not get accessible text from children that are focusable or containers. -->
+<div id="div4" tabindex="0"><a href="#">Link</a></div>
+<div id="div5" tabindex="0">Initial text before link<a href="#">Link</a></div>
+<div id="div6" tabindex="0"><ul><li>List item</li></ul></div>
+<div id="div7" tabindex="0">Initial text before list<ul><li>List item</li></ul></div>
+
 <div id="console"></div>
 <script>
-description("This test makes sure that a generic focusable div can get accessibility focus.");
+description("This test makes sure that a generic focusable div can get accessibility focus and gets its accessible text from contents..");
 
 if (window.testRunner && window.accessibilityController) {
     window.testRunner.dumpAsText();
@@ -42,6 +51,32 @@ if (window.testRunner && window.accessibilityController) {
     shouldBe("document.activeElement == div3", "true");
     window.axDiv3 = accessibilityController.focusedElement;
     shouldBe("lastChar(axDiv3.description)", "\"D\"");
+
+    var div4 = document.getElementById('div4');
+    div4.focus();
+    shouldBe("document.activeElement == div4", "true");
+    window.axDiv4 = accessibilityController.focusedElement;
+    shouldBe("axDiv4.title.indexOf('Link')", "-1");
+
+    var div5 = document.getElementById('div5');
+    div5.focus();
+    shouldBe("document.activeElement == div5", "true");
+    window.axDiv5 = accessibilityController.focusedElement;
+    shouldBe("axDiv5.title.indexOf('Link')", "-1");
+    shouldBe("axDiv5.title.indexOf('Initial text before link') >= 0", "true");
+
+    var div6 = document.getElementById('div6');
+    div6.focus();
+    shouldBe("document.activeElement == div6", "true");
+    window.axDiv6 = accessibilityController.focusedElement;
+    shouldBe("axDiv6.title.indexOf('List item')", "-1");
+
+    var div7 = document.getElementById('div7');
+    div7.focus();
+    shouldBe("document.activeElement == div7", "true");
+    window.axDiv7 = accessibilityController.focusedElement;
+    shouldBe("axDiv7.title.indexOf('List item')", "-1");
+    shouldBe("axDiv7.title.indexOf('Initial text before list') >= 0", "true");
 }
 
 </script>

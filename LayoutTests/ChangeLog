@@ -1,3 +1,27 @@
+2012-12-12  Dominic Mazzoni  <dmazzoni@google.com>
+
+        AX: textUnderElement should consider alt text, but skip links and controls
+        https://bugs.webkit.org/show_bug.cgi?id=101650
+
+        Reviewed by Chris Fleizach.
+
+        Adds new tests to show that getting inner text from an element now ignores
+        focusable descendants and containers, but uses alternative text.
+
+        Updates and rebaselines several tests to reflect the new logic.
+
+        * accessibility/button-title-uses-inner-img-alt-expected.txt: Added.
+        * accessibility/button-title-uses-inner-img-alt.html: Added.
+        * accessibility/focusable-div-expected.txt: Extended with more test cases.
+        * accessibility/focusable-div.html: Extended with more test cases.
+        * platform/chromium/TestExpectations: Un-skip test that now passes.
+        * platform/chromium/accessibility/image-link-expected.txt: Rebaseline
+        * platform/mac/accessibility/image-link-expected.txt: Rebaseline
+        * platform/mac/accessibility/internal-link-anchors2-expected.txt: Rebaseline
+        * platform/mac/accessibility/static-text-role-uses-text-under-element-expected.txt: Rebaseline
+        * platform/mac/accessibility/static-text-role-uses-text-under-element.html: Fix
+        * platform/mac/accessibility/table-with-aria-role-expected.txt: Rebaseline
+
 2012-12-12  Philip Rogers  <pdr@google.com>
 
         Fix target element handling in SVGSMILElement.
