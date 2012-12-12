@@ -31,6 +31,7 @@
 #include "AbstractDatabase.h"
 #include "DatabaseContext.h"
 #include "DatabaseTracker.h"
+#include <wtf/UnusedParam.h>
 
 namespace WebCore {
 
@@ -49,7 +50,11 @@ DatabaseManager::DatabaseManager()
 
 void DatabaseManager::initialize(const String& databasePath)
 {
+#if !PLATFORM(CHROMIUM)
     DatabaseTracker::initializeTracker(databasePath);
+#else
+    UNUSED_PARAM(databasePath);
+#endif
 }
 
 #if !PLATFORM(CHROMIUM)
