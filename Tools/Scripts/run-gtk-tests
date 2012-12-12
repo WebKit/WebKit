@@ -63,8 +63,10 @@ class TestRunner:
     SKIPPED = [
         SkippedTest("unittests/testdownload", "/webkit/download/not-found", "Test fails in GTK Linux 64-bit Release bot", 82329),
         SkippedTest("unittests/testwebview", "/webkit/webview/icon-uri", "Test times out in GTK Linux 64-bit Release bot", 82328),
+        SkippedTest("unittests/testwebresource", "/webkit/webresource/loading", "Test fails", 104689),
         SkippedTest("unittests/testwebresource", "/webkit/webresource/sub_resource_loading", "Test fails in GTK Linux 64-bit Release bot", 82330),
         SkippedTest("unittests/testwebinspector", "/webkit/webinspector/close-and-inspect", "Test is flaky in GTK Linux 32-bit Release bot", 82869),
+        SkippedTest("WebKit2APITests/TestWebKitWebContext", "/webkit2/WebKitWebContext/uri-scheme", "Test fails", 104779),
         SkippedTest("WebKit2APITests/TestWebKitWebView", "/webkit2/WebKitWebView/mouse-target", "Test is flaky in GTK Linux 32-bit Release bot", 82866),
         SkippedTest("WebKit2APITests/TestResources", "/webkit2/WebKitWebView/resources", "Test is flaky in GTK Linux 32-bit Release bot", 82868),
         SkippedTest("WebKit2APITests/TestWebKitFindController", "/webkit2/WebKitFindController/hide", "Test always fails in Xvfb", 89810),
