@@ -1,5 +1,34 @@
 2012-12-12  Joone Hur  <joone.hur@intel.com>
 
+        [GTK][AC] The non-composited content is not painted
+        https://bugs.webkit.org/show_bug.cgi?id=104819
+
+        Reviewed by Gustavo Noronha Silva.
+
+        When Accelerated Compositing is enabled, only GraphicsLayers are painted.
+        This patch allows to paint the non-composited content on the viewport with 
+        GraphicsLayers. Most of the codes are the same as AcceleratedCompositingContextGL.cpp
+
+        * WebCoreSupport/AcceleratedCompositingContext.h: Add m_nonCompositedContentLayer.
+        * WebCoreSupport/AcceleratedCompositingContextClutter.cpp:
+        (WebKit::AcceleratedCompositingContext::AcceleratedCompositingContext):
+        (WebKit::AcceleratedCompositingContext::initialize):
+        (WebKit):
+        (WebKit::AcceleratedCompositingContext::~AcceleratedCompositingContext):
+        (WebKit::AcceleratedCompositingContext::renderLayersToWindow):
+        (WebKit::AcceleratedCompositingContext::setRootCompositingLayer):
+        (WebKit::AcceleratedCompositingContext::setNonCompositedContentsNeedDisplay):
+        (WebKit::AcceleratedCompositingContext::resizeRootLayer):
+        (WebKit::AcceleratedCompositingContext::scrollNonCompositedContents): Make the non-composited 
+        content scroll.
+        (WebKit::AcceleratedCompositingContext::layerFlushTimerFiredCallback):
+        (WebKit::AcceleratedCompositingContext::flushPendingLayerChanges):
+        (WebKit::AcceleratedCompositingContext::flushAndRenderLayers):
+        (WebKit::AcceleratedCompositingContext::notifyAnimationStarted):
+        (WebKit::AcceleratedCompositingContext::paintContents): Paint the non-composited content.
+
+2012-12-12  Joone Hur  <joone.hur@intel.com>
+
         [GTK][AC] GraphicsLayers are not shown on the viewport
         https://bugs.webkit.org/show_bug.cgi?id=104670
 

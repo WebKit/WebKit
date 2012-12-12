@@ -25,7 +25,9 @@
 #include "Frame.h"
 #include "FrameView.h"
 #include "GraphicsLayer.h"
+#include "GraphicsLayerActor.h"
 #include "NotImplemented.h"
+#include "Settings.h"
 #include "webkitwebviewprivate.h"
 #include <clutter-gtk/clutter-gtk.h>
 #include <clutter/clutter.h>
@@ -37,9 +39,40 @@ namespace WebKit {
 AcceleratedCompositingContext::AcceleratedCompositingContext(WebKitWebView* webView)
     : m_webView(webView)
     , m_layerFlushTimerCallbackId(0)
-    , m_rootGraphicsLayer(0)
     , m_rootLayerEmbedder(0)
 {
+}
+
+void AcceleratedCompositingContext::initialize()
+{
+    if (m_rootLayer)
+        return;
+
+    GtkAllocation allocation;
+    gtk_widget_get_allocation(GTK_WIDGET(m_webView), &allocation);
+    IntSize pageSize(allocation.width, allocation.height);
+
+    m_rootLayer = GraphicsLayer::create(0, this);
+    m_rootLayer->setDrawsContent(false);
+    m_rootLayer->setSize(pageSize);
+
+    // The non-composited contents are a child of the root layer.
+    m_nonCompositedContentLayer = GraphicsLayer::create(0, this);
+    m_nonCompositedContentLayer->setDrawsContent(true);
+    m_nonCompositedContentLayer->setContentsOpaque(!m_webView->priv->transparent);
+    m_nonCompositedContentLayer->setSize(pageSize);
+    if (core(m_webView)->settings()->acceleratedDrawingEnabled())
+        m_nonCompositedContentLayer->setAcceleratesDrawing(true);
+
+#ifndef NDEBUG
+    m_rootLayer->setName("Root layer");
+    m_nonCompositedContentLayer->setName("Non-composited content");
+#endif
+
+    m_rootLayer->addChild(m_nonCompositedContentLayer.get());
+    m_nonCompositedContentLayer->setNeedsDisplay();
+
+    scheduleLayerFlush();
 }
 
 AcceleratedCompositingContext::~AcceleratedCompositingContext()
@@ -50,7 +83,7 @@ AcceleratedCompositingContext::~AcceleratedCompositingContext()
 
 bool AcceleratedCompositingContext::enabled()
 {
-    return m_rootGraphicsLayer;
+    return m_rootLayer;
 }
 
 bool AcceleratedCompositingContext::renderLayersToWindow(cairo_t*, const IntRect& clipRect)
@@ -64,7 +97,8 @@ void AcceleratedCompositingContext::setRootCompositingLayer(GraphicsLayer* graph
     if (!graphicsLayer) {
         gtk_container_remove(GTK_CONTAINER(m_webView), m_rootLayerEmbedder);
         m_rootLayerEmbedder = 0;
-        m_rootGraphicsLayer = 0;
+        m_rootLayer = nullptr;
+        m_nonCompositedContentLayer = nullptr;
         return;
     }
 
@@ -79,13 +113,18 @@ void AcceleratedCompositingContext::setRootCompositingLayer(GraphicsLayer* graph
         gtk_widget_show(m_rootLayerEmbedder);
     }
 
+    // Add the accelerated layer tree hierarchy.
+    initialize();
+
+    m_nonCompositedContentLayer->removeAllChildren();
+    m_nonCompositedContentLayer->addChild(graphicsLayer);
+
     // Add a root GraphicsLayer to the stage.
     if (graphicsLayer) {
-        m_rootGraphicsLayer = graphicsLayer;
         ClutterColor stageColor = { 0xFF, 0xFF, 0xFF, 0xFF };
         ClutterActor* stage = gtk_clutter_embed_get_stage(GTK_CLUTTER_EMBED(m_rootLayerEmbedder));
         clutter_stage_set_color(CLUTTER_STAGE(stage), &stageColor);
-        clutter_container_add_actor(CLUTTER_CONTAINER(stage), m_rootGraphicsLayer->platformLayer());
+        clutter_container_add_actor(CLUTTER_CONTAINER(stage), m_rootLayer->platformLayer());
         clutter_actor_show_all(stage);
     }
 
@@ -94,35 +133,56 @@ void AcceleratedCompositingContext::setRootCompositingLayer(GraphicsLayer* graph
 
 void AcceleratedCompositingContext::setNonCompositedContentsNeedDisplay(const IntRect& rect)
 {
-    if (!m_rootGraphicsLayer)
+    if (!m_rootLayer)
         return;
 
     if (rect.isEmpty()) {
-        m_rootGraphicsLayer->setNeedsDisplay();
+        m_rootLayer->setNeedsDisplay();
         return;
     }
 
-    m_rootGraphicsLayer->setNeedsDisplayInRect(rect);
+    m_nonCompositedContentLayer->setNeedsDisplayInRect(rect);
+    scheduleLayerFlush();
 }
 
-void AcceleratedCompositingContext::resizeRootLayer(const IntSize& size)
+void AcceleratedCompositingContext::resizeRootLayer(const IntSize& newSize)
 {
     if (!m_rootLayerEmbedder)
+        return;
+
+    if (m_rootLayer->size() == newSize)
         return;
 
     GtkAllocation allocation;
     allocation.x = 0;
     allocation.y = 0;
-    allocation.width = size.width();
-    allocation.height = size.height();
+    allocation.width = newSize.width();
+    allocation.height = newSize.height();
     gtk_widget_size_allocate(GTK_WIDGET(m_rootLayerEmbedder), &allocation);
 
+    m_rootLayer->setSize(newSize);
+
+    // If the newSize exposes new areas of the non-composited content a setNeedsDisplay is needed
+    // for those newly exposed areas.
+    FloatSize oldSize = m_nonCompositedContentLayer->size();
+    m_nonCompositedContentLayer->setSize(newSize);
+
+    if (newSize.width() > oldSize.width()) {
+        float height = std::min(static_cast<float>(newSize.height()), oldSize.height());
+        m_nonCompositedContentLayer->setNeedsDisplayInRect(FloatRect(oldSize.width(), 0, newSize.width() - oldSize.width(), height));
+    }
+
+    if (newSize.height() > oldSize.height())
+        m_nonCompositedContentLayer->setNeedsDisplayInRect(FloatRect(0, oldSize.height(), newSize.width(), newSize.height() - oldSize.height()));
+
+    m_nonCompositedContentLayer->setNeedsDisplayInRect(IntRect(IntPoint(), newSize));
     scheduleLayerFlush();
 }
 
 void AcceleratedCompositingContext::scrollNonCompositedContents(const IntRect& scrollRect, const IntSize& scrollOffset)
 {
-    notImplemented();
+    m_nonCompositedContentLayer->setNeedsDisplayInRect(scrollRect);
+    scheduleLayerFlush();
 }
 
 gboolean AcceleratedCompositingContext::layerFlushTimerFiredCallback(AcceleratedCompositingContext* context)
@@ -143,8 +203,10 @@ void AcceleratedCompositingContext::scheduleLayerFlush()
 
 bool AcceleratedCompositingContext::flushPendingLayerChanges()
 {
-    if (m_rootGraphicsLayer)
-        m_rootGraphicsLayer->flushCompositingStateForThisLayerOnly();
+    if (m_rootLayer) {
+        m_rootLayer->flushCompositingStateForThisLayerOnly();
+        m_nonCompositedContentLayer->flushCompositingStateForThisLayerOnly();
+    }
 
     return core(m_webView)->mainFrame()->view()->flushCompositingStateIncludingSubframes();
 }
@@ -152,11 +214,16 @@ bool AcceleratedCompositingContext::flushPendingLayerChanges()
 void AcceleratedCompositingContext::flushAndRenderLayers()
 {
     m_layerFlushTimerCallbackId = 0;
-    flushPendingLayerChanges();
-    if (!m_rootGraphicsLayer)
+
+    if (!enabled())
         return;
 
-    renderLayersToWindow(0, IntRect());
+    Frame* frame = core(m_webView)->mainFrame();
+    if (!frame || !frame->contentRenderer() || !frame->view())
+        return;
+
+    if (!flushPendingLayerChanges())
+        return;
 }
 
 void AcceleratedCompositingContext::notifyAnimationStarted(const WebCore::GraphicsLayer*, double time)
@@ -168,9 +235,12 @@ void AcceleratedCompositingContext::notifyFlushRequired(const WebCore::GraphicsL
     ASSERT_NOT_REACHED();
 }
 
-void AcceleratedCompositingContext::paintContents(const WebCore::GraphicsLayer*, WebCore::GraphicsContext&, WebCore::GraphicsLayerPaintingPhase, const WebCore::IntRect&)
+void AcceleratedCompositingContext::paintContents(const WebCore::GraphicsLayer*, WebCore::GraphicsContext& context, WebCore::GraphicsLayerPaintingPhase, const WebCore::IntRect& rectToPaint)
 {
-    ASSERT_NOT_REACHED();
+    context.save();
+    context.clip(rectToPaint);
+    core(m_webView)->mainFrame()->view()->paint(&context, rectToPaint);
+    context.restore();
 }
 
 } // namespace WebKit
