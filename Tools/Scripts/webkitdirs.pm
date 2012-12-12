@@ -2023,10 +2023,8 @@ sub buildAutotoolsProject($@)
     # Configurable features listed here should be kept in sync with the
     # features for which there exists a configuration option in configure.ac.
     my %configurableFeatures = (
-        "filters" => 1,
         "gamepad" => 1,
         "geolocation" => 1,
-        "indexed-database" => 1,
         "media-stream" => 1,
         "svg" => 1,
         "svg-fonts" => 1,

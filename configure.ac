@@ -657,14 +657,6 @@ if test "$enable_gamepad" = "yes" && test "$os_linux" = no; then
    enable_gamepad=no;
 fi
 
-# check whether to enable the indexed database API
-AC_MSG_CHECKING([whether to enable the indexed database API])
-AC_ARG_ENABLE(indexed_database,
-              AC_HELP_STRING([--enable-indexed-database],
-                             [enable the indexed database API (incomplete) [default=no]]),
-              [],[enable_indexed_database="no"])
-AC_MSG_RESULT([$enable_indexed_database])
-
 # check whether to enable HTML5 audio/video support
 AC_MSG_CHECKING([whether to enable HTML5 video support])
 AC_ARG_ENABLE(video,
@@ -680,14 +672,6 @@ AC_ARG_ENABLE(media_stream,
                              [enable media stream support (incomplete) [default=no]]),
               [],[enable_media_stream=$enable_unstable_features])
 AC_MSG_RESULT([$enable_media_stream])
-
-# check whether to enable XHR timeout support
-AC_MSG_CHECKING([whether to enable XHR timeout support])
-AC_ARG_ENABLE(xhr_timeout,
-              AC_HELP_STRING([--enable-xhr-timeout],
-                             [enable support for XHR timeout [default=yes]]),
-              [],[enable_xhr_timeout="yes"])
-AC_MSG_RESULT([$enable_xhr_timeout])
 
 # check whether to enable XSLT support
 AC_MSG_CHECKING([whether to enable XSLT support])
@@ -718,14 +702,6 @@ if test "$enable_svg" = "no"; then
    enable_svg_fonts=no
 fi
 
-# check whether to enable support for filters
-AC_MSG_CHECKING([whether to enable support for filters])
-AC_ARG_ENABLE(filters,
-              AC_HELP_STRING([--enable-filters],
-                             [enable support for filters (experimental) [default=yes]]),
-              [],[enable_filters="yes"])
-AC_MSG_RESULT([$enable_filters])
-
 # check whether to enable support for SVG fonts
 AC_MSG_CHECKING([whether to enable support for SVG fonts])
 AC_ARG_ENABLE(svg_fonts,
@@ -739,14 +715,6 @@ if test "$enable_svg_fonts" = "yes" && test "$enable_svg" = "no"; then
    AC_MSG_WARN([SVG feature(s) requested but SVG is disabled.. Enabling SVG support])
    enable_svg=yes
 fi
-
-# check whether to enable Web Socket support
-AC_MSG_CHECKING([whether to enable Web Sockets support])
-AC_ARG_ENABLE(web_sockets,
-              AC_HELP_STRING([--enable-web-sockets],
-                             [enable support for Web Sockets [default=yes]]),
-              [],[enable_web_sockets="yes"])
-AC_MSG_RESULT([$enable_web_sockets])
 
 # check whether to enable Web Audio support
 AC_MSG_CHECKING([whether to enable Web Audio support])
@@ -763,14 +731,6 @@ AC_ARG_ENABLE(coverage,
                              [enable code coverage support [default=no]]),
               [],[enable_coverage="no"])
 AC_MSG_RESULT([$enable_coverage])
-
-# check whether to enable CSS conditional rules support
-AC_MSG_CHECKING([whether to enable CSS3 conditional rules support])
-AC_ARG_ENABLE(css3_conditional_rules,
-              AC_HELP_STRING([--enable-css3-conditional-rules],
-                             [enable CSS3 conditional rules support [default=no]]),
-              [],[enable_css3_conditional_rules="no"])
-AC_MSG_RESULT([$enable_css3_conditional_rules])
 
 # check whether to enable FastMalloc
 AC_MSG_CHECKING([whether to enable optimized memory allocator])
@@ -895,14 +855,6 @@ if test "$enable_unstable_features" = "yes" && test "$enable_accelerated_composi
     enable_css_shaders=yes;
 fi
 AC_MSG_RESULT([$enable_css_filters])
-
-# CSS Device Adaptation
-AC_MSG_CHECKING([whether to enable CSS Device Adaptation])
-AC_ARG_ENABLE(css_device_adaptation,
-              AC_HELP_STRING([--enable-css-device-adaptation],
-                             [enable support for CSS Device Adaptation [default=no]]),
-              [],[enable_css_device_adaptation="no"])
-AC_MSG_RESULT([$enable_css_device_adaptation])
 
 G_IR_SCANNER=
 G_IR_COMPILER=
@@ -1195,10 +1147,6 @@ AM_CONDITIONAL([USE_EGL], [test "$enable_egl" = "yes"])
 AM_CONDITIONAL([USE_GLES2], [test "$enable_gles2" = "yes"])
 AM_CONDITIONAL([USE_GLX], [test "$enable_glx" = "yes"])
 
-# IndexedDB implies LevelDB, but other features may one day require LevelDB.
-AM_CONDITIONAL([ENABLE_INDEXED_DATABASE],[test "$enable_indexed_database" = "yes"])
-AM_CONDITIONAL([USE_LEVELDB],[test "$enable_indexed_database" = "yes"])
-
 # Farstream feature conditional
 AM_CONDITIONAL([USE_FARSTREAM], [test "$have_farstream" = "yes"])
 
@@ -1207,23 +1155,19 @@ AM_CONDITIONAL([ENABLE_DEBUG],[test "$enable_debug_features" = "yes"])
 AM_CONDITIONAL([ENABLE_UNSTABLE_FEATURES],[test "$enable_unstable_features" = "yes"])
 AM_CONDITIONAL([ENABLE_WEBGL],[test "$enable_webgl" = "yes"])
 AM_CONDITIONAL([ENABLE_GAMEPAD],[test "$enable_gamepad" = "yes"])
-AM_CONDITIONAL([ENABLE_XHR_TIMEOUT],[test "$enable_xhr_timeout" = "yes"])
 AM_CONDITIONAL([ENABLE_XSLT],[test "$enable_xslt" = "yes"])
-AM_CONDITIONAL([ENABLE_FILTERS],[test "$enable_filters" = "yes"])
 AM_CONDITIONAL([ENABLE_GEOLOCATION], [test "$enable_geolocation" = "yes"])
 AM_CONDITIONAL([ENABLE_VIDEO],[test "$enable_video" = "yes"])
 AM_CONDITIONAL([ENABLE_MEDIA_STREAM],[test "$enable_media_stream" = "yes"])
 AM_CONDITIONAL([ENABLE_SVG],[test "$enable_svg" = "yes"])
 AM_CONDITIONAL([ENABLE_SVG_FONTS],[test "$enable_svg_fonts" = "yes"])
 AM_CONDITIONAL([ENABLE_COVERAGE],[test "$enable_coverage" = "yes"])
-AM_CONDITIONAL([ENABLE_CSS3_CONDITIONAL_RULES],[test "$enable_css3_conditional_rules" = "yes"])
 AM_CONDITIONAL([ENABLE_FAST_MALLOC],[test "$enable_fast_malloc" = "yes"])
 AM_CONDITIONAL([ENABLE_WEB_AUDIO],[test "$enable_web_audio" = "yes"])
 AM_CONDITIONAL([ENABLE_OPCODE_STATS],[test "$enable_opcode_stats" = "yes"])
 AM_CONDITIONAL([ENABLE_WEBKIT2],[test "$enable_webkit2" = "yes"])
 AM_CONDITIONAL([ENABLE_PLUGIN_PROCESS],[test "$enable_plugin_process" = "yes"])
 AM_CONDITIONAL([ENABLE_SPELLCHECK],[test "$enable_spellcheck" = "yes"])
-AM_CONDITIONAL([ENABLE_CSS_DEVICE_ADAPTATION],[test "$enable_css_device_adaptation" = "yes"])
 AM_CONDITIONAL([ENABLE_CSS_FILTERS],[test "$enable_css_filters" = "yes"])
 AM_CONDITIONAL([ENABLE_CSS_SHADERS],[test "$enable_css_shaders" = "yes"])
 
@@ -1280,8 +1224,6 @@ Build configuration:
 Features:
 =======
  Accelerated Compositing                                  : $enable_accelerated_compositing
- CSS3 Conditional Rules support                           : $enable_css3_conditional_rules
- Filters support                                          : $enable_filters
  Gamepad support                                          : $enable_gamepad
  Geolocation support                                      : $enable_geolocation
  HTML5 video element support                              : $enable_video
@@ -1293,7 +1235,6 @@ Features:
  Spellcheck support                                       : $enable_spellcheck
  Web Audio support                                        : $enable_web_audio
  WebGL                                                    : $enable_webgl
- XHR timeout support                                      : $enable_xhr_timeout
  XSLT support                                             : $enable_xslt
 
 WebKit2 support:

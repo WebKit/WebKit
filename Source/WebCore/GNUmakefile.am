@@ -150,19 +150,6 @@ feature_defines_overrides += ENABLE_GAMEPAD=0
 endif # END ENABLE_GAMEPAD
 
 # ----
-# Indexed Database API support
-# ----
-if ENABLE_INDEXED_DATABASE
-feature_defines_overrides += ENABLE_INDEXED_DATABASE=1
-else
-feature_defines_overrides += ENABLE_INDEXED_DATABASE=0
-endif # END ENABLE_INDEXED_DATABASE
-
-if USE_LEVELDB
-webcore_cppflags += -DWTF_USE_LEVELDB
-endif # END USE_LEVELDB
-
-# ----
 # Video Support
 # ----
 if ENABLE_VIDEO
@@ -201,15 +188,6 @@ $(GENSOURCES_WEBCORE)/XPathGrammar.cpp: $(WebCore)/xml/XPathGrammar.y
 	$(AM_V_at)perl $(WebCore)/css/makegrammar.pl --outputDir $(GENSOURCES_WEBCORE) --bison "$(BISON)" --symbolsPrefix xpathyy $<
 
 # ----
-# XHR timeout Support
-# ----
-if ENABLE_XHR_TIMEOUT
-feature_defines_overrides += ENABLE_XHR_TIMEOUT=1
-else
-feature_defines_overrides += ENABLE_XHR_TIMEOUT=0
-endif # END ENABLE_XHR_TIMEOUT
-
-# ----
 # XSLT Support
 # ----
 if ENABLE_XSLT
@@ -217,24 +195,6 @@ feature_defines_overrides += ENABLE_XSLT=1
 else
 feature_defines_overrides += ENABLE_XSLT=0
 endif # END ENABLE_XSLT
-
-# ----
-# Filters
-# ----
-if ENABLE_FILTERS
-feature_defines_overrides += ENABLE_FILTERS=1
-else
-feature_defines_overrides += ENABLE_FILTERS=0
-endif # END ENABLE_FILTERS
-
-# ----
-# CSS Device Adaptation
-# ----
-if ENABLE_CSS_DEVICE_ADAPTATION
-feature_defines_overrides += ENABLE_CSS_DEVICE_ADAPTATION=1
-else
-feature_defines_overrides += ENABLE_CSS_DEVICE_ADAPTATION=0
-endif # END ENABLE_CSS_DEVICE_ADAPTATION
 
 # ----
 # Shaders
@@ -372,15 +332,6 @@ feature_defines_overrides += ENABLE_SPELLCHECK=1
 else
 feature_defines_overrides += ENABLE_SPELLCHECK=0
 endif  # END ENABLE_SPELLCHECK
-
-# ---
-# CSS3 Conditional Rules support
-# ---
-if ENABLE_CSS3_CONDITIONAL_RULES
-feature_defines_overrides += ENABLE_CSS3_CONDITIONAL_RULES=1
-else
-feature_defines_overrides += ENABLE_CSS3_CONDITIONAL_RULES=0
-endif  # END ENABLE_CSS3_CONDITIONAL_RULES
 
 # ---
 # Unstable features
