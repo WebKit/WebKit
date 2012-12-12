@@ -1,3 +1,46 @@
+2012-12-12  Alpha Lam  <hclam@chromium.org>
+
+        [chromium] Minimize memcpy for encoded image data in ImageFrameGenerator
+        https://bugs.webkit.org/show_bug.cgi?id=103797
+
+        Reviewed by Stephen White.
+
+        Added a new class ThreadSafeDataTransport to help transporting data in
+        SharedBuffer from one thread to another. This class is designed to minimize
+        thread contention and memory copy.
+
+        It is implemented using a data queue. New data segments are copied into
+        this queue. The queue is then consolidated with existing data when user
+        requests access to the final SharedBuffer.
+
+        Memory is copied into and out of the queue but this approach avoid
+        copying the entire SharedBuffer.
+
+        ImageFrameGenerator is now using this class for data transport between
+        threads.
+
+        Unit tests in ThreadSafeDataTransportTest. Also existing ImageFrameGeneratorTest passes.
+
+        * WebCore.gypi:
+        * platform/graphics/chromium/ImageFrameGenerator.cpp:
+        (WebCore::ImageFrameGenerator::ImageFrameGenerator):
+        (WebCore::ImageFrameGenerator::setData):
+        (WebCore::ImageFrameGenerator::tryToResumeDecodeAndScale):
+        Added logic to skip decoding if there's no new data.
+        (WebCore::ImageFrameGenerator::decode):
+        * platform/graphics/chromium/ImageFrameGenerator.h:
+        (ImageFrameGenerator):
+        * platform/graphics/chromium/ThreadSafeDataTransport.cpp: Added.
+        (WebCore):
+        (WebCore::ThreadSafeDataTransport::ThreadSafeDataTransport):
+        (WebCore::ThreadSafeDataTransport::~ThreadSafeDataTransport):
+        (WebCore::ThreadSafeDataTransport::setData):
+        (WebCore::ThreadSafeDataTransport::data):
+        (WebCore::ThreadSafeDataTransport::hasNewData):
+        * platform/graphics/chromium/ThreadSafeDataTransport.h: Added.
+        (WebCore):
+        (ThreadSafeDataTransport):
+
 2012-12-12  Roger Fong  <roger_fong@apple.com>
 
         Enable VIDEO_TRACK on Windows.

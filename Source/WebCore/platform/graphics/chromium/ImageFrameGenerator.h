@@ -29,6 +29,7 @@
 #include "SkTypes.h"
 #include "SkBitmap.h"
 #include "SkSize.h"
+#include "ThreadSafeDataTransport.h"
 #include <wtf/PassOwnPtr.h>
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefCounted.h>
@@ -74,20 +75,15 @@ private:
 
     // Use the given decoder to decode. If a decoder is not given then try to create one.
     PassOwnPtr<ScaledImageFragment> decode(ImageDecoder**);
-    void prepareData(RefPtr<SharedBuffer>*, bool* allDataReceived);
 
     SkISize m_fullSize;
-    RefPtr<SharedBuffer> m_data;
-    bool m_allDataReceived;
+    ThreadSafeDataTransport m_data;
     bool m_decodeFailedAndEmpty;
 
     OwnPtr<ImageDecoderFactory> m_imageDecoderFactory;
 
     // Prevents multiple decode operations on the same data.
     Mutex m_decodeMutex;
-
-    // Prevents concurrent access to m_data.
-    Mutex m_dataMutex;
 };
 
 } // namespace WebCore

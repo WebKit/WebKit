@@ -103,6 +103,7 @@
             'tests/RenderTableCellTest.cpp',
             'tests/RenderTableRowTest.cpp',
             'tests/ScrollingCoordinatorChromiumTest.cpp',
+            'tests/ThreadSafeDataTransportTest.cpp',
             'tests/TilingDataTest.cpp',
             'tests/TreeTestHelpers.cpp',
             'tests/TreeTestHelpers.h',

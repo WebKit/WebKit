@@ -47,10 +47,9 @@ skia::ImageOperations::ResizeMethod resizeMethod()
 
 ImageFrameGenerator::ImageFrameGenerator(const SkISize& fullSize, PassRefPtr<SharedBuffer> data, bool allDataReceived)
     : m_fullSize(fullSize)
-    , m_allDataReceived(false)
     , m_decodeFailedAndEmpty(false)
 {
-    setData(data, allDataReceived);
+    setData(data.get(), allDataReceived);
 }
 
 ImageFrameGenerator::~ImageFrameGenerator()
@@ -64,12 +63,7 @@ ImageFrameGenerator::~ImageFrameGenerator()
 
 void ImageFrameGenerator::setData(PassRefPtr<SharedBuffer> data, bool allDataReceived)
 {
-    // FIXME: Doing a full copy is expensive, instead copy only new data.
-    RefPtr<SharedBuffer> dataCopy = data->copy();
-
-    MutexLocker lock(m_dataMutex);
-    m_data = dataCopy;
-    m_allDataReceived = allDataReceived;
+    m_data.setData(data.get(), allDataReceived);
 }
 
 const ScaledImageFragment* ImageFrameGenerator::decodeAndScale(const SkISize& scaledSize)
@@ -141,14 +135,15 @@ const ScaledImageFragment* ImageFrameGenerator::tryToResumeDecodeAndScale(const 
         return 0;
     ASSERT(cachedDecoder);
 
-    OwnPtr<ScaledImageFragment> fullSizeImage = decode(&cachedDecoder);
-
-    const ScaledImageFragment* cachedFullSizeImage = ImageDecodingStore::instance()->overwriteAndLockCache(
-        this, cachedImage, fullSizeImage.release());
+    if (m_data.hasNewData()) {
+        // Only do decoding if there is new data.
+        OwnPtr<ScaledImageFragment> fullSizeImage = decode(&cachedDecoder);
+        cachedImage = ImageDecodingStore::instance()->overwriteAndLockCache(this, cachedImage, fullSizeImage.release());
+    }
 
     if (m_fullSize == scaledSize)
-        return cachedFullSizeImage;
-    return tryToScale(cachedFullSizeImage, scaledSize);
+        return cachedImage;
+    return tryToScale(cachedImage, scaledSize);
 }
 
 const ScaledImageFragment* ImageFrameGenerator::tryToDecodeAndScale(const SkISize& scaledSize)
@@ -179,13 +174,13 @@ const ScaledImageFragment* ImageFrameGenerator::tryToDecodeAndScale(const SkISiz
 PassOwnPtr<ScaledImageFragment> ImageFrameGenerator::decode(ImageDecoder** decoder)
 {
     ASSERT(decoder);
-    RefPtr<SharedBuffer> data;
+    SharedBuffer* data = 0;
     bool allDataReceived = false;
-    prepareData(&data, &allDataReceived);
+    m_data.data(&data, &allDataReceived);
 
     // Try to create an ImageDecoder if we are not given one.
     if (!*decoder) {
-        *decoder = ImageDecoder::create(*data.get(), ImageSource::AlphaPremultiplied, ImageSource::GammaAndColorProfileApplied);
+        *decoder = ImageDecoder::create(*data, ImageSource::AlphaPremultiplied, ImageSource::GammaAndColorProfileApplied);
 
         if (!*decoder && m_imageDecoderFactory)
             *decoder = m_imageDecoderFactory->create().leakPtr();
@@ -194,7 +189,7 @@ PassOwnPtr<ScaledImageFragment> ImageFrameGenerator::decode(ImageDecoder** decod
             return nullptr;
     }
 
-    (*decoder)->setData(data.get(), allDataReceived);
+    (*decoder)->setData(data, allDataReceived);
     ImageFrame* frame = (*decoder)->frameBufferAtIndex(0);
     (*decoder)->setData(0, false); // Unref SharedBuffer from ImageDecoder.
 
@@ -206,15 +201,6 @@ PassOwnPtr<ScaledImageFragment> ImageFrameGenerator::decode(ImageDecoder** decod
     ASSERT(fullSizeBitmap.width() == m_fullSize.width() && fullSizeBitmap.height() == m_fullSize.height());
 
     return ScaledImageFragment::create(m_fullSize, fullSizeBitmap, isComplete);
-}
-
-void ImageFrameGenerator::prepareData(RefPtr<SharedBuffer>* data, bool* allDataReceived)
-{
-    MutexLocker lock(m_dataMutex);
-
-    // FIXME: We should do a shallow copy instead. Now we're restricted by the API of SharedBuffer.
-    *data = m_data->copy();
-    *allDataReceived = m_allDataReceived;
 }
 
 } // namespace WebCore

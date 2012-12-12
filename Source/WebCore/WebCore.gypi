@@ -3839,6 +3839,8 @@
             'platform/graphics/chromium/ScaledImageFragment.cpp',
             'platform/graphics/chromium/ScaledImageFragment.h',
             'platform/graphics/chromium/SimpleFontDataChromiumWin.cpp',
+            'platform/graphics/chromium/ThreadSafeDataTransport.cpp',
+            'platform/graphics/chromium/ThreadSafeDataTransport.h',
             'platform/graphics/chromium/TransparencyWin.cpp',
             'platform/graphics/chromium/TransparencyWin.h',
             'platform/graphics/chromium/UniscribeHelper.cpp',
