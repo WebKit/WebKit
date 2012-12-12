@@ -706,7 +706,7 @@ void CachedResourceLoader::loadDone(CachedResource* resource)
     RefPtr<Document> protectDocument(m_document);
 
 #if ENABLE(RESOURCE_TIMING)
-    if (resource) {
+    if (resource && !resource->errorOccurred() && !resource->wasCanceled()) {
         HashMap<CachedResource*, InitiatorInfo>::iterator initiatorIt = m_initiatorMap.find(resource);
         if (initiatorIt != m_initiatorMap.end()) {
             ASSERT(document());
