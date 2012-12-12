@@ -4168,8 +4168,7 @@ webkit.org/b/99800 fast/harness/perftests/runs-per-second-iterations.html [ Fail
 webkit.org/b/99800 fast/harness/perftests/perf-runner-compute-statistics.html [ Failure Pass ]
 webkit.org/b/99800 fast/harness/perftests/runs-per-second-log.html [ Failure ImageOnlyFailure Missing Pass ]
 
-# Flaky on mac debug since r136472 or earlier
-webkit.org/b/104023 [ Mac Debug ] fast/dom/HTMLTemplateElement/inertContents.html [ Failure Pass ]
+webkit.org/b/104023 [ Win Mac Debug ] fast/dom/HTMLTemplateElement/inertContents.html [ Failure Pass ]
 
 # Needs platform-specific results
 webkit.org/b/104035 fast/text/orientation-sideways.html [ Missing ]
