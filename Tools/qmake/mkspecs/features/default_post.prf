@@ -11,7 +11,9 @@
 CONFIG += config_step
 
 # Enable dynamic instead of static libraries for development
-!production_build:!buildbot:!win*: CONFIG += force_static_libs_as_shared
+# Avoid it with debug_and_release, it can cause the application to load both the debug and release
+# dependent libraries when using frameworks on Mac.
+!production_build:!debug_and_release:!buildbot:!win*: CONFIG += force_static_libs_as_shared
 
 root_project_file: finalizeConfigure()
 

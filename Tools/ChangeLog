@@ -1,3 +1,23 @@
+2012-12-12  Jocelyn Turcotte  <jocelyn.turcotte@digia.com>
+
+        [Qt] Do not automatically enable force_static_libs_as_shared when using debug_and_release
+        https://bugs.webkit.org/show_bug.cgi?id=104562
+
+        Reviewed by Tor Arne Vestbø.
+
+        force_static_libs_as_shared creates issues on Mac if QtWebKit is built as a framework.
+        QtWebProcess, for example, will link to the framework's release library and will rely
+        on DYLD_IMAGE_SUFFIX to switch to the debug build. Since QtWebProcess will also links
+        directly to the debug build of WebCore, and that QtWebKit release will link in the
+        release build of WebCore, both the debug and release version will be loaded.
+
+        To fix this properly we should make sure that applications always link to the release
+        build of dependent libraries by bypassing resolveFinalLibraryName.
+        Disable it for now as force_static_libs_as_shared is mainly for development while
+        debug_and_release is mainly for production builds.
+
+        * qmake/mkspecs/features/default_post.prf:
+
 2012-12-12  Zan Dobersek  <zandobersek@gmail.com>
 
         Unreviewed GTK gardening of the unit tests.
