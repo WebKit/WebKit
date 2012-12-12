@@ -64,14 +64,14 @@ WebPrerender::WebPrerender(PassRefPtr<WebCore::Prerender> prerender)
 {
 }
 
-WebPrerender::~WebPrerender()
-{
-    m_private.reset();
-}
-
 const WebCore::Prerender* WebPrerender::toPrerender() const
 {
     return m_private.get();
+}
+
+void WebPrerender::reset()
+{
+    m_private.reset();
 }
 
 void WebPrerender::assign(const WebPrerender& other)

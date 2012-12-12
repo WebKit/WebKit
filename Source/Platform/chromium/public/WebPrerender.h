@@ -54,6 +54,7 @@ public:
         virtual ~ExtraData() { }
     };
 
+    ~WebPrerender() { reset(); }
     WebPrerender() { }
     WebPrerender(const WebPrerender& other) { assign(other); }
     WebPrerender& operator=(const WebPrerender& other)
@@ -64,11 +65,11 @@ public:
 
 #if WEBKIT_IMPLEMENTATION
     explicit WebPrerender(PassRefPtr<WebCore::Prerender>);
-    ~WebPrerender();
 
     const WebCore::Prerender* toPrerender() const;
 #endif
 
+    WEBKIT_EXPORT void reset();
     WEBKIT_EXPORT void assign(const WebPrerender&);
     WEBKIT_EXPORT bool isNull() const;
 
