@@ -67,8 +67,9 @@ public:
 
     HashSet<SVGElement*>* setOfElementsReferencingTarget(SVGElement* referencedElement) const;
     void addElementReferencingTarget(SVGElement* referencingElement, SVGElement* referencedElement);
-    void removeAllTargetReferencesForElement(SVGElement* referencingElement);
-    void removeAllElementReferencesForTarget(SVGElement* referencedElement);
+    void removeAllTargetReferencesForElement(SVGElement*);
+    void rebuildAllElementReferencesForTarget(SVGElement*);
+    void removeAllElementReferencesForTarget(SVGElement*);
 
 #if ENABLE(SVG_FONTS)
     const HashSet<SVGFontFaceElement*>& svgFontFaceElements() const { return m_svgFontFaceElements; }

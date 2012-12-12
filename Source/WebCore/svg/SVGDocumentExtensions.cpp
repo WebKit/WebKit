@@ -340,7 +340,7 @@ void SVGDocumentExtensions::removeAllTargetReferencesForElement(SVGElement* refe
         m_elementDependencies.remove(*it);
 }
 
-void SVGDocumentExtensions::removeAllElementReferencesForTarget(SVGElement* referencedElement)
+void SVGDocumentExtensions::rebuildAllElementReferencesForTarget(SVGElement* referencedElement)
 {
     ASSERT(referencedElement);
     HashMap<SVGElement*, OwnPtr<HashSet<SVGElement*> > >::iterator it = m_elementDependencies.find(referencedElement);
@@ -363,8 +363,17 @@ void SVGDocumentExtensions::removeAllElementReferencesForTarget(SVGElement* refe
                 (*vectorIt)->svgAttributeChanged(XLinkNames::hrefAttr);
         }
     }
+}
 
-    m_elementDependencies.remove(referencedElement);
+void SVGDocumentExtensions::removeAllElementReferencesForTarget(SVGElement* referencedElement)
+{
+    ASSERT(referencedElement);
+    HashMap<SVGElement*, OwnPtr<HashSet<SVGElement*> > >::iterator it = m_elementDependencies.find(referencedElement);
+    if (it == m_elementDependencies.end())
+        return;
+    ASSERT(it->key == referencedElement);
+
+    m_elementDependencies.remove(it);
 }
 
 #if ENABLE(SVG_FONTS)

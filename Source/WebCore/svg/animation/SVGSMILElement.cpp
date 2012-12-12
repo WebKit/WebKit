@@ -154,8 +154,12 @@ void SVGSMILElement::clearResourceReferences()
 void SVGSMILElement::buildPendingResource()
 {
     clearResourceReferences();
-    if (!inDocument())
+
+    if (!inDocument()) {
+        // Reset the target element if we are no longer in the document.
+        setTargetElement(0);
         return;
+    }
 
     String id;
     String href = getAttribute(XLinkNames::hrefAttr);
@@ -165,6 +169,9 @@ void SVGSMILElement::buildPendingResource()
     else
         target = SVGURIReference::targetElementFromIRIString(href, document(), &id);
     SVGElement* svgTarget = target && target->isSVGElement() ? static_cast<SVGElement*>(target) : 0;
+
+    if (svgTarget && !svgTarget->inDocument())
+        svgTarget = 0;
 
     if (svgTarget != targetElement())
         setTargetElement(svgTarget);
@@ -266,17 +273,8 @@ Node::InsertionNotificationRequest SVGSMILElement::insertedInto(ContainerNode* r
 void SVGSMILElement::removedFrom(ContainerNode* rootParent)
 {
     if (rootParent->inDocument()) {
-        if (m_timeContainer) {
-            if (m_targetElement && hasValidAttributeName())
-                m_timeContainer->unschedule(this, m_targetElement, m_attributeName);
-            m_timeContainer = 0;
-        }
-        // Calling disconnectConditions() may kill us if there are syncbase conditions.
-        // OK, but we don't want to die inside the call.
-        RefPtr<SVGSMILElement> keepAlive(this);
-        disconnectConditions();
-
         clearResourceReferences();
+        disconnectConditions();
         setTargetElement(0);
         setAttributeName(anyQName());
         animationAttributeChanged();
@@ -504,17 +502,16 @@ void SVGSMILElement::svgAttributeChanged(const QualifiedName& attrName)
         m_cachedMin = invalidCachedTime;
     else if (attrName == SVGNames::maxAttr)
         m_cachedMax = invalidCachedTime;
-    else if (inDocument()) {
+    else if (attrName == SVGNames::attributeNameAttr)
+        setAttributeName(constructQualifiedName(this, fastGetAttribute(SVGNames::attributeNameAttr)));
+    else if (attrName.matches(XLinkNames::hrefAttr)) {
+        SVGElementInstance::InvalidationGuard invalidationGuard(this);
+        buildPendingResource();
+    } else if (inDocument()) {
         if (attrName == SVGNames::beginAttr)
             beginListChanged(elapsed());
         else if (attrName == SVGNames::endAttr)
             endListChanged(elapsed());
-        else if (attrName == SVGNames::attributeNameAttr)
-            setAttributeName(constructQualifiedName(this, fastGetAttribute(SVGNames::attributeNameAttr)));
-        else if (attrName.matches(XLinkNames::hrefAttr)) {
-            SVGElementInstance::InvalidationGuard invalidationGuard(this);
-            buildPendingResource();
-        }
     }
 
     animationAttributeChanged();
@@ -609,9 +606,11 @@ void SVGSMILElement::setTargetElement(SVGElement* target)
             m_timeContainer->schedule(this, target, m_attributeName);
     }
 
-    // Only clear the animated type, if we had a target before.
-    if (m_targetElement)
+    if (m_targetElement) {
+        // Clear values that may depend on the previous target.
         clearAnimatedType(m_targetElement);
+        disconnectConditions();
+    }
 
     // If the animation state is not Inactive, always reset to a clear state before leaving the old target element.
     if (m_activeState != Inactive)

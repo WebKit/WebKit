@@ -525,7 +525,7 @@ void SVGUseElement::buildShadowAndInstanceTree(SVGElement* target)
 
     // Rebuild all dependent use elements.
     ASSERT(document());
-    document()->accessSVGExtensions()->removeAllElementReferencesForTarget(this);
+    document()->accessSVGExtensions()->rebuildAllElementReferencesForTarget(this);
 
     // Eventually dump instance tree
 #ifdef DUMP_INSTANCE_TREE
@@ -608,7 +608,7 @@ void SVGUseElement::buildInstanceTree(SVGElement* target, SVGElementInstance* ta
         if (foundProblem)
             return;
 
-        // We only need to track fist degree <use> dependencies. Indirect references are handled
+        // We only need to track first degree <use> dependencies. Indirect references are handled
         // as the invalidation bubbles up the dependency chain.
         if (!foundUse) {
             ASSERT(document());
