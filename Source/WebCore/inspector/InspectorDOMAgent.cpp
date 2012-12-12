@@ -567,7 +567,14 @@ int InspectorDOMAgent::pushNodePathToFrontend(Node* nodeToPush)
 
 int InspectorDOMAgent::pushNodePathForRenderLayerToFrontend(const RenderLayer* renderLayer)
 {
-    return pushNodePathToFrontend(renderLayer->renderer()->node());
+    Node* node = renderLayer->renderer()->node();
+
+    // RenderLayers may not be associated with a Node, for instance
+    // in the case of CSS generated content.
+    if (!node)
+        return 0;
+
+    return pushNodePathToFrontend(node);
 }
 
 int InspectorDOMAgent::boundNodeId(Node* node)

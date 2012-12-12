@@ -1,3 +1,17 @@
+2012-12-12  Antoine Quint  <graouts@apple.com>
+
+        Web Inspector: Crash in InspectorDOMAgent::pushNodePathToFrontend when inspecting document with CSS generated content
+        https://bugs.webkit.org/show_bug.cgi?id=104780
+
+        Reviewed by Pavel Feldman.
+
+        Adding a new test for the LayerTreeAgent to check that it does not crash when inspecting
+        a page with CSS generated content, and correctly returns nodeId === 0 in the situation
+        where there is no Node associated with a given RenderLayer.
+
+        * inspector-protocol/layer-tree-generated-content-expected.txt: Added.
+        * inspector-protocol/layer-tree-generated-content.html: Added.
+
 2012-12-12  Dominik Röttsches  <dominik.rottsches@intel.com>
 
         [EFL] Unreviewed gardening.
