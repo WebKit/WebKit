@@ -41,6 +41,9 @@ are still there and add them again if necessary.</p>
 <p>Once your build has finished, you can <a href="run.html">run it inside
 Safari.</a></p>
 
+<h2>Building WebKit from Xcode</h2>
+<p>To build from within Xcode, you can use the WebKit workspace. Ensure that the Products and Intermediates locations for the workspace match those used by <code>build-webkit</code> by choosing File > Workspace Settings and clicking the Advanced button, selecting Custom, Relative to Workspace, and entering WebKitBuild both for Products and for Intermediates. Note that if you have specified a custom build location in Xcode preferences, then you don&rsquo;t need to do this.</p>
+
 <h2>Setting a Default Configuration</h2>
 <ol>
 <li><p>To set a default build configuration for <code>build-webkit</code> and
