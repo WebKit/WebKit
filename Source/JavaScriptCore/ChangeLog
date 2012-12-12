@@ -1,3 +1,44 @@
+2012-12-12  Filip Pizlo  <fpizlo@apple.com>
+
+        OSR exit compiler should emit code for resetting the execution counter that matches the logic of ExecutionCounter.cpp
+        https://bugs.webkit.org/show_bug.cgi?id=104791
+
+        Reviewed by Oliver Hunt.
+
+        The OSR exit compiler wants to make it so that every OSR exit does the equivalent
+        of:
+        
+        codeBlock->m_jitExecuteCounter.setNewThreshold(
+            codeBlock->counterValueForOptimizeAfterLongWarmUp());
+        
+        This logically involves:
+        
+        - Resetting the counter to zero.
+        - Setting m_activeThreshold to counterValueForOptimizeAfterLongWarmUp().
+        - Figuring out the scaled threshold, subtracting the count so far (which is zero,
+          so this part is a no-op), and clipping (ExecuteCounter::clippedThreshold()).
+        - Setting m_counter to the negated clipped threshold.
+        - Setting m_totalCount to the previous count so far (which is zero) plus the
+          clipped threshold.
+        
+        Because of the reset, which sets the count-so-far to zero, this amounts to:
+        
+        - Setting m_activeThreshold to counterValueForOptimizeAfterLongWarmUp().
+        - Figuring out the clipped scaled threshold.
+        - Setting m_counter to the negated clipped scaled threshold.
+        - Setting m_totalCount to the (positive) clipped scaled threshold.
+        
+        The code was previously not doing this, but now is. This is performance neutral.
+        The only change in behavior over what the code was previously doing (setting the
+        m_counter to the negated scaled threshold, without clipping, and then setting
+        the m_totalCount to the clipped scaled threshold) is that this will respond more
+        gracefully under memory pressure and will ensure that we get more value profile
+        LUBing before triggering recompilation. More LUBing is almost always a good
+        thing.
+
+        * dfg/DFGOSRExitCompiler.cpp:
+        (JSC::DFG::OSRExitCompiler::handleExitCounts):
+
 2012-12-12  Ilya Tikhonovsky  <loislo@chromium.org>
 
         Web Inspector: Native Memory Instrumentation: remove fake root MemoryObjectInfo.

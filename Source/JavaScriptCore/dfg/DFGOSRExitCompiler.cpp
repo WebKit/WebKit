@@ -154,14 +154,15 @@ void OSRExitCompiler::handleExitCounts(const OSRExit& exit)
     tooFewFails.link(&m_jit);
     
     // Adjust the execution counter such that the target is to only optimize after a while.
-    int32_t targetValue =
-        ExecutionCounter::applyMemoryUsageHeuristicsAndConvertToInt(
-            m_jit.baselineCodeBlock()->counterValueForOptimizeAfterLongWarmUp(),
-            m_jit.baselineCodeBlock());
-    m_jit.store32(AssemblyHelpers::TrustedImm32(-targetValue), AssemblyHelpers::Address(GPRInfo::regT0, CodeBlock::offsetOfJITExecuteCounter()));
-    targetValue = ExecutionCounter::clippedThreshold(m_jit.codeBlock()->globalObject(), targetValue);
-    m_jit.store32(AssemblyHelpers::TrustedImm32(targetValue), AssemblyHelpers::Address(GPRInfo::regT0, CodeBlock::offsetOfJITExecutionActiveThreshold()));
-    m_jit.store32(AssemblyHelpers::TrustedImm32(ExecutionCounter::formattedTotalCount(targetValue)), AssemblyHelpers::Address(GPRInfo::regT0, CodeBlock::offsetOfJITExecutionTotalCount()));
+    int32_t activeThreshold =
+        m_jit.baselineCodeBlock()->counterValueForOptimizeAfterLongWarmUp();
+    int32_t targetValue = ExecutionCounter::applyMemoryUsageHeuristicsAndConvertToInt(
+        activeThreshold, m_jit.baselineCodeBlock());
+    int32_t clippedValue =
+        ExecutionCounter::clippedThreshold(m_jit.codeBlock()->globalObject(), targetValue);
+    m_jit.store32(AssemblyHelpers::TrustedImm32(-clippedValue), AssemblyHelpers::Address(GPRInfo::regT0, CodeBlock::offsetOfJITExecuteCounter()));
+    m_jit.store32(AssemblyHelpers::TrustedImm32(activeThreshold), AssemblyHelpers::Address(GPRInfo::regT0, CodeBlock::offsetOfJITExecutionActiveThreshold()));
+    m_jit.store32(AssemblyHelpers::TrustedImm32(ExecutionCounter::formattedTotalCount(clippedValue)), AssemblyHelpers::Address(GPRInfo::regT0, CodeBlock::offsetOfJITExecutionTotalCount()));
     
     doneAdjusting.link(&m_jit);
 }
