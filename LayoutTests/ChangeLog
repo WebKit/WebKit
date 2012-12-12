@@ -1,3 +1,20 @@
+2012-12-12  Gustavo Noronha Silva  <gns@gnome.org>
+
+        Fix slow test so it passes consistently now that we have multipart support
+        in soup.
+
+        Reviewed by Martin Robinson.
+
+        The multipart-wait-before-boundary test waits for 30 seconds before
+        sending the boundary. That is a bit long in itself, but it is exactly
+        the timeout used for slow tests in some platforms. This change reduces
+        the wait to 20 seconds, which should be enough for the test, and marks
+        the test as slow for GTK+.
+
+        * http/tests/multipart/resources/multipart-wait-before-boundary.php: wait
+        for 20 seconds instead of 30, before sending the boundary.
+        * platform/gtk/TestExpectations: mark test above as slow.
+
 2012-12-12  Antoine Quint  <graouts@apple.com>
 
         Web Inspector: Crash in InspectorDOMAgent::pushNodePathToFrontend when inspecting document with CSS generated content

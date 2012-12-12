@@ -38,5 +38,5 @@
     echo("third html");
     echo("<!-- $padding -->");
     flush();
-    usleep(30 * 1000000);
+    usleep(20 * 1000000);
 ?>
