@@ -3514,7 +3514,7 @@ webkit.org/b/89702 compositing/scaling/tiled-layer-recursion.html [ ImageOnlyFai
 webkit.org/b/89702 platform/chromium/virtual/softwarecompositing/scaling/tiled-layer-recursion.html [ ImageOnlyFailure Pass ]
 
 webkit.org/b/89789 [ Mac ] plugins/embed-attributes-style.html [ ImageOnlyFailure Pass ]
-webkit.org/b/89789 [ Mac Win7 Debug ] userscripts/user-script-video-document.html [ Crash Pass ]
+webkit.org/b/89789 [ XP ] userscripts/user-script-video-document.html [ Pass Timeout ]
 
 # Flaky
 webkit.org/b/89794 [ Mac ] fast/regions/get-regions-by-content2.html [ Crash Pass ]
@@ -3650,7 +3650,7 @@ webkit.org/b/93938 [ Debug ] fast/forms/range/slider-delete-while-dragging-thumb
 webkit.org/b/93938 [ Lion Release ] fast/forms/range/slider-delete-while-dragging-thumb.html [ Failure Pass ]
 webkit.org/b/93938 [ Debug ] fast/forms/range/slider-mouse-events.html [ Failure Pass ]
 webkit.org/b/93938 [ Lion Release ] fast/forms/range/slider-mouse-events.html [ Failure Pass ]
-webkit.org/b/93938 [ Linux Win Debug ] fast/forms/range/slider-onchange-event.html [ Failure Pass ]
+webkit.org/b/93938 [ Linux Win7 ] fast/forms/range/slider-onchange-event.html [ Failure Pass ]
 
 # Require rebaselining after  https://bugs.webkit.org/show_bug.cgi?id=89826
 webkit.org/b/89826 [ Mac Win ] fast/css/word-space-extra.html [ Failure ]
@@ -3830,7 +3830,7 @@ webkit.org/b/96833 svg/carto.net/selectionlist.svg [ ImageOnlyFailure Pass ]
 webkit.org/b/96833 svg/carto.net/combobox.svg [ ImageOnlyFailure Pass ]
 
 webkit.org/b/96549 [ Android ] platform/chromium/virtual/gpu/fast/hidpi/focus-rings.html [ ImageOnlyFailure ]
-webkit.org/b/96628 [ Lion MountainLion ] fast/frames/calculate-order.html [ Failure Pass ]
+webkit.org/b/96628 [ Lion Debug ] fast/frames/calculate-order.html [ Failure ]
 webkit.org/b/96550 http/tests/media/media-source/seek-to-end-after-duration-change.html [ Pass Timeout ]
 
 crbug.com/63921 platform/chromium/virtual/gpu/fast/canvas/canvas-fillPath-shadow.html [ Failure ]
@@ -4209,3 +4209,7 @@ webkit.org/b/104715 [ MountainLion ] fast/block/float/floats-wrap-inside-inline-
 webkit.org/b/103667 [ Linux ] fast/ruby/position-after.html [ ImageOnlyFailure ]
 
 webkit.org/b/104834 [ MountainLion ] fast/css/nested-rounded-corners.html [ Failure Pass ]
+
+webkit.org/b/104848 [ Linux XP SnowLeopard Lion Release ] fast/frames/sandboxed-iframe-attribute-parsing.html [ Pass Failure ]
+webkit.org/b/104848 [ SnowLeopard Debug ] fast/frames/sandboxed-iframe-attribute-parsing.html [ Pass Failure ]
+webkit.org/b/104848 [ Release ] fast/frames/sandboxed-iframe-parsing-space-characters.html [ Pass Failure ]
