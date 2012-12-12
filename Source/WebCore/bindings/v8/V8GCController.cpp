@@ -113,6 +113,10 @@ private:
 
 void* V8GCController::opaqueRootForGC(Node* node)
 {
+    // FIXME: Remove the special handling for image elements.
+    // The same special handling is in V8GCController::gcTree().
+    // Maybe should image elements be active DOM nodes?
+    // See https://code.google.com/p/chromium/issues/detail?id=164882
     if (node->inDocument() || (node->hasTagName(HTMLNames::imgTag) && static_cast<HTMLImageElement*>(node)->hasPendingActivity()))
         return node->document();
 
@@ -223,7 +227,11 @@ static void gcTree(Node* startNode)
     do {
         ASSERT(node);
         if (!node->wrapper().IsEmpty()) {
-            if (!node->isV8CollectableDuringMinorGC()) {
+            // FIXME: Remove the special handling for image elements.
+            // The same special handling is in V8GCController::opaqueRootForGC().
+            // Maybe should image elements be active DOM nodes?
+            // See https://code.google.com/p/chromium/issues/detail?id=164882
+            if (!node->isV8CollectableDuringMinorGC() || (node->hasTagName(HTMLNames::imgTag) && static_cast<HTMLImageElement*>(node)->hasPendingActivity())) {
                 // The fact that we encounter a node that is not in the Eden space
                 // implies that its wrapper might be in the old space of V8.
                 // This indicates that the minor GC cannot anyway judge reachability
