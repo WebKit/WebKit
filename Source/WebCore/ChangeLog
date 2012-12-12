@@ -1,3 +1,14 @@
+2012-12-12  John J. Barton  <johnjbarton@chromium.org>
+
+        Web Inspector: remove protocol-externs.js temp file after compile-front-end.py
+        https://bugs.webkit.org/show_bug.cgi?id=98799
+
+        Reviewed by Vsevolod Vlasov.
+
+        Add os.system rm for protocol-externs.js to the end of the compile script
+
+        * inspector/compile-front-end.py:
+
 2012-12-12  Robert Hogan  <robert@webkit.org>
 
         White space between inline blocks should be affected by word-spacing property
