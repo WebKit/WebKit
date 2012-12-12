@@ -33,6 +33,7 @@ use strict;
 use File::Path;
 use File::Basename;
 use Getopt::Long;
+use Text::ParseWords;
 use Cwd;
 
 use IDLParser;
@@ -49,7 +50,7 @@ my $preprocessor;
 my $writeDependencies;
 my $verbose;
 my $supplementalDependencyFile;
-my $additionalIdlFilesList;
+my $additionalIdlFiles;
 
 GetOptions('include=s@' => \@idlDirectories,
            'outputDir=s' => \$outputDirectory,
@@ -62,7 +63,7 @@ GetOptions('include=s@' => \@idlDirectories,
            'verbose' => \$verbose,
            'write-dependencies' => \$writeDependencies,
            'supplementalDependencyFile=s' => \$supplementalDependencyFile,
-           'additionalIdlFilesList=s' => \$additionalIdlFilesList);
+           'additionalIdlFiles=s' => \$additionalIdlFiles);
 
 my $targetIdlFile = $ARGV[0];
 
@@ -102,19 +103,12 @@ if ($supplementalDependencyFile) {
     }
     close FH;
 
-    # The file $additionalIdlFilesList contains one IDL file per line:
-    # P.idl
-    # Q.idl
-    # ...
-    # These IDL files are ones which should not be included in DerivedSources*.cpp
-    # (i.e. they are not described in the supplemental dependency file)
-    # but should generate .h and .cpp files.
-    if (!$idlFound and $additionalIdlFilesList) {
-        open FH, "< $additionalIdlFilesList" or die "Cannot open $additionalIdlFilesList\n";
-        my @idlFiles = <FH>;
-        chomp(@idlFiles);
+    # $additionalIdlFiles is list of IDL files which should not be included in
+    # DerivedSources*.cpp (i.e. they are not described in the supplemental
+    # dependency file) but should generate .h and .cpp files.
+    if (!$idlFound and $additionalIdlFiles) {
+        my @idlFiles = shellwords($additionalIdlFiles);
         $idlFound = grep { $_ and basename($_) eq basename($targetIdlFile) } @idlFiles;
-        close FH;
     }
 
     if (!$idlFound) {

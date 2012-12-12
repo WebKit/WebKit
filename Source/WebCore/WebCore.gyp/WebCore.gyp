@@ -580,11 +580,6 @@
       'dependencies': [
         'generate_supplemental_dependency',
       ],
-      'variables': {
-        # Write sources into a file, so that the action command line won't
-        # exceed OS limits.
-        'additional_idl_files_list': '<|(additional_idl_files_list.tmp <@(webcore_test_support_idl_files))',
-      },
       'sources': [
         # bison rule
         '<(SHARED_INTERMEDIATE_DIR)/webkit/CSSGrammar.y',
@@ -1169,8 +1164,7 @@
             '../bindings/scripts/IDLParser.pm',
             '../bindings/scripts/preprocessor.pm',
             '<(SHARED_INTERMEDIATE_DIR)/supplemental_dependency.tmp',
-            '<(additional_idl_files_list)',
-            '<!@(cat <(additional_idl_files_list))',
+            '<@(webcore_test_support_idl_files)',
           ],
           'outputs': [
             # FIXME:  The .cpp file should be in webkit/bindings once
@@ -1224,8 +1218,8 @@
             '<@(generator_include_dirs)',
             '--supplementalDependencyFile',
             '<(SHARED_INTERMEDIATE_DIR)/supplemental_dependency.tmp',
-            '--additionalIdlFilesList',
-            '<(additional_idl_files_list)',
+            '--additionalIdlFiles',
+            '<(webcore_test_support_idl_files)',
             '<(RULE_INPUT_PATH)',
             '<@(preprocessor)',
           ],

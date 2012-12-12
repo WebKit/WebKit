@@ -1,3 +1,23 @@
+2012-12-12  Tony Chang  <tony@chromium.org>
+
+        [chromium] don't write additional idl files to a gyp temp file
+        https://bugs.webkit.org/show_bug.cgi?id=104831
+
+        Reviewed by Kentaro Hara.
+
+        The <|( command doesn't work for files like <(PRODUCT_DIR) or <(SHARED_INTERMEDIATE_DIR).
+        For additional_idl_files, pass it as a parameter instead of a file listing the filenames.
+        There are currently only 3 files in this variable. This shouldn't overflow the command
+        line since the limit on Windows is 8k and with this change, we're still only around 4.5k.
+        Also, the longest part of the command line is the list of defines. If needed, we could put
+        that in a file instead.
+
+        No new tests, this is a refactoring of the build files.
+
+        * WebCore.gyp/WebCore.gyp: Don't use <|( for additional_idl_files.
+        * bindings/scripts/generate-bindings.pl: Change --additionalIdlFilesList to
+        --additionalIdlFiles, which is a shell argument containing the filenames.
+
 2012-12-12  Chris Rogers  <crogers@google.com>
 
         Implement OfflineAudioContext constructor
