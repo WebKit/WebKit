@@ -1,3 +1,17 @@
+2012-12-12  Sergio Martins  <sergio.martins@kdab.com>
+
+        Fix QNX Qt build by enabling JIT.
+        https://bugs.webkit.org/show_bug.cgi?id=102794
+
+        Reviewed by Simon Hausmann.
+
+        JIT is working, so enable it. Otherwise LLINT gets enabled, and
+        that doesn't compile.
+
+        YARR_JIT is crashing at this time though, so disable it.
+
+        * wtf/Platform.h:
+
 2012-12-11  Ilya Tikhonovsky  <loislo@chromium.org>
 
         Web Inspector: Native Memory Instrumentation: simplify Sequences processing code.
