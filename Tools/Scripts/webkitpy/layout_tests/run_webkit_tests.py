@@ -166,21 +166,7 @@ def _set_up_derived_options(port, options):
         options.verbose = True
 
 
-def _compat_shim_callback(option, opt_str, value, parser):  # ignore unused variable warning - pylint: disable-msg=W0613
-    print "Ignoring unsupported option: %s" % opt_str
-
-
-def _compat_shim_option(option_name, **kwargs):
-    return optparse.make_option(option_name, action="callback",
-        callback=_compat_shim_callback,
-        help="Ignored, for old-run-webkit-tests compat only.", **kwargs)
-
-
 def parse_args(args=None):
-    """Provides a default set of command line args.
-
-    Returns a tuple of options, args from optparse"""
-
     option_group_definitions = []
 
     option_group_definitions.append(("Platform options", platform_options()))
@@ -218,12 +204,6 @@ def parse_args(args=None):
         # FIXME: We should merge this w/ --build-directory and only have one flag.
         optparse.make_option("--root", action="store",
             help="Path to a directory containing the executables needed to run tests."),
-    ]))
-
-    option_group_definitions.append(("ORWT Compatibility Options", [
-        # FIXME: Remove this option once the bots don't refer to it.
-        # results.html is smart enough to figure this out itself.
-        _compat_shim_option("--use-remote-links-to-tests"),
     ]))
 
     option_group_definitions.append(("Results Options", [
@@ -285,10 +265,6 @@ def parse_args(args=None):
             default=True, dest="show_results",
             help="Don't launch a browser with results after the tests "
                  "are done"),
-        # FIXME: We should have a helper function to do this sort of
-        # deprectated mapping and automatically log, etc.
-        optparse.make_option("--noshow-results", action="store_false", dest="show_results", help="Deprecated, same as --no-show-results."),
-        optparse.make_option("--no-launch-safari", action="store_false", dest="show_results", help="Deprecated, same as --no-show-results."),
         optparse.make_option("--full-results-html", action="store_true",
             default=False,
             help="Show all failures in results.html, rather than only regressions"),
