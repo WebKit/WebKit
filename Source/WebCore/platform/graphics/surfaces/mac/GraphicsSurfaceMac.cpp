@@ -345,7 +345,7 @@ void GraphicsSurface::platformPaintToTextureMapper(TextureMapper* textureMapper,
 {
     TransformationMatrix adjustedTransform = transform;
     adjustedTransform.multiply(TransformationMatrix::rectToRect(FloatRect(FloatPoint::zero(), m_private->size()), targetRect));
-    static_cast<TextureMapperGL*>(textureMapper)->drawTextureRectangleARB(m_private->frontBufferTextureID(), TextureMapperGL::SupportsBlending, m_private->size(), targetRect, adjustedTransform, opacity, mask);
+    static_cast<TextureMapperGL*>(textureMapper)->drawTexture(m_private->frontBufferTextureID(), TextureMapperGL::ShouldBlend | TextureMapperGL::ShouldUseARBTextureRect, m_private->size(), targetRect, adjustedTransform, opacity, mask);
 }
 
 uint32_t GraphicsSurface::platformFrontBuffer() const

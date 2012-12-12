@@ -439,7 +439,7 @@ void GraphicsSurface::platformPaintToTextureMapper(TextureMapper* textureMapper,
     TransformationMatrix adjustedTransform = transform;
     adjustedTransform.multiply(TransformationMatrix::rectToRect(FloatRect(FloatPoint::zero(), m_private->size()), targetRect));
     TextureMapperGL::Flags flags = m_private->textureIsYInverted() ? TextureMapperGL::ShouldFlipTexture : 0;
-    flags |= TextureMapperGL::SupportsBlending;
+    flags |= TextureMapperGL::ShouldBlend;
     texMapGL->drawTexture(platformGetTextureID(), flags, m_private->size(), targetRect, adjustedTransform, opacity, mask);
 }
 

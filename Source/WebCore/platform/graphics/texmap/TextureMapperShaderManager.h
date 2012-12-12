@@ -51,7 +51,7 @@ public:
 
     TEXMAP_DECLARE_UNIFORM(matrix)
     TEXMAP_DECLARE_UNIFORM(flip)
-    TEXMAP_DECLARE_UNIFORM(samplerSize)
+    TEXMAP_DECLARE_UNIFORM(textureSize)
     TEXMAP_DECLARE_UNIFORM(opacity)
     TEXMAP_DECLARE_UNIFORM(color)
     TEXMAP_DECLARE_UNIFORM(expandedQuadEdgesInScreenSpace)
