@@ -80,6 +80,12 @@ class GooglePProf(SingleFileOutputProfiler):
         # FIXME: We should have code to find the right google-pprof executable, some Googlers have
         # google-pprof installed as "pprof" on their machines for them.
         # FIXME: Similarly we should find the right perl!
+
+        # google-pprof doesn't check its arguments, so we have to.
+        if not (self._host.filesystem.exists(self._output_path)):
+            print "Failed to gather profile, %s does not exist." % self._output_path
+            return
+
         pprof_args = ['/usr/bin/perl', '/usr/bin/google-pprof', '--text', self._executable_path, self._output_path]
         profile_text = self._host.executive.run_command(pprof_args)
         print self._first_ten_lines_of_profile(profile_text)

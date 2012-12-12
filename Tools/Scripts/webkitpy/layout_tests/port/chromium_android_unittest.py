@@ -42,6 +42,7 @@ from webkitpy.layout_tests.port import driver
 from webkitpy.layout_tests.port import driver_unittest
 from webkitpy.tool.mocktool import MockOptions
 
+
 class MockRunCommand(object):
     def __init__(self):
         self._mock_logcat = ''
@@ -257,6 +258,59 @@ class ChromiumAndroidDriverTest(unittest.TestCase):
         driver_input = driver.DriverInput('http/tests/foo/bar/test.html', 10, 'checksum', True)
         expected_command = "http://127.0.0.1:8000/foo/bar/test.html'--pixel-test'checksum\n"
         self.assertEqual(self.driver._command_from_driver_input(driver_input), expected_command)
+
+    def test_pid_from_android_ps_output(self):
+        # FIXME: Use a larger blob of ps output.
+        ps_output = """u0_a72    21630 125   947920 59364 ffffffff 400beee4 S org.chromium.native_test"""
+        pid = self.driver._pid_from_android_ps_output(ps_output, "org.chromium.native_test")
+        self.assertEqual(pid, 21630)
+
+
+class AndroidPerfTest(unittest.TestCase):
+    def test_perf_output_regexp(self):
+        perf_output = """[kernel.kallsyms] with build id 5a20f6299bdb955a2f07711bb7f65cd706fe7469 not found, continuing without symbols
+Failed to open /tmp/perf-14168.map, continuing without symbols
+Kernel address maps (/proc/{kallsyms,modules}) were restricted.
+
+Check /proc/sys/kernel/kptr_restrict before running 'perf record'.
+
+As no suitable kallsyms nor vmlinux was found, kernel samples
+can't be resolved.
+
+Samples in kernel modules can't be resolved as well.
+
+# Events: 31K cycles
+#
+# Overhead          Command                Shared Object
+# ........  ...............  ...........................  .....................................................................................................................................................................
+#
+    16.18%   DumpRenderTree  perf-14168.map               [.] 0x21270ac0cf43
+    12.72%   DumpRenderTree  DumpRenderTree               [.] v8::internal::JSObject::GetElementWithInterceptor(v8::internal::Object*, unsigned int)
+     8.28%   DumpRenderTree  DumpRenderTree               [.] v8::internal::LoadPropertyWithInterceptorOnly(v8::internal::Arguments, v8::internal::Isolate*)
+     5.60%   DumpRenderTree  DumpRenderTree               [.] WTF::AtomicString WebCore::v8StringToWebCoreString<WTF::AtomicString>(v8::Handle<v8::String>, WebCore::ExternalMode)
+     4.60%   DumpRenderTree  DumpRenderTree               [.] WebCore::WeakReferenceMap<void, v8::Object>::get(void*)
+     3.99%   DumpRenderTree  DumpRenderTree               [.] _ZNK3WTF7HashMapIPNS_16AtomicStringImplEPN7WebCore7ElementENS_7PtrHashIS2_EENS_10HashTraitsIS2_EENS8_IS5_EEE3getERKS2_.isra.98
+     3.69%   DumpRenderTree  DumpRenderTree               [.] WebCore::DocumentV8Internal::getElementByIdCallback(v8::Arguments const&)
+     3.23%   DumpRenderTree  DumpRenderTree               [.] WebCore::V8ParameterBase::prepareBase()
+     2.83%   DumpRenderTree  DumpRenderTree               [.] WTF::AtomicString::add(unsigned short const*, unsigned int)
+     2.73%   DumpRenderTree  DumpRenderTree               [.] WebCore::DocumentV8Internal::getElementsByTagNameCallback(v8::Arguments const&)
+     2.47%   DumpRenderTree  DumpRenderTree               [.] _ZN2v86Object27GetPointerFromInternalFieldEi.constprop.439
+     2.43%   DumpRenderTree  DumpRenderTree               [.] v8::internal::Isolate::SetCurrentVMState(v8::internal::StateTag)
+"""
+        expected_first_ten_lines = """    16.18%   DumpRenderTree  perf-14168.map               [.] 0x21270ac0cf43
+    12.72%   DumpRenderTree  DumpRenderTree               [.] v8::internal::JSObject::GetElementWithInterceptor(v8::internal::Object*, unsigned int)
+     8.28%   DumpRenderTree  DumpRenderTree               [.] v8::internal::LoadPropertyWithInterceptorOnly(v8::internal::Arguments, v8::internal::Isolate*)
+     5.60%   DumpRenderTree  DumpRenderTree               [.] WTF::AtomicString WebCore::v8StringToWebCoreString<WTF::AtomicString>(v8::Handle<v8::String>, WebCore::ExternalMode)
+     4.60%   DumpRenderTree  DumpRenderTree               [.] WebCore::WeakReferenceMap<void, v8::Object>::get(void*)
+     3.99%   DumpRenderTree  DumpRenderTree               [.] _ZNK3WTF7HashMapIPNS_16AtomicStringImplEPN7WebCore7ElementENS_7PtrHashIS2_EENS_10HashTraitsIS2_EENS8_IS5_EEE3getERKS2_.isra.98
+     3.69%   DumpRenderTree  DumpRenderTree               [.] WebCore::DocumentV8Internal::getElementByIdCallback(v8::Arguments const&)
+     3.23%   DumpRenderTree  DumpRenderTree               [.] WebCore::V8ParameterBase::prepareBase()
+     2.83%   DumpRenderTree  DumpRenderTree               [.] WTF::AtomicString::add(unsigned short const*, unsigned int)
+     2.73%   DumpRenderTree  DumpRenderTree               [.] WebCore::DocumentV8Internal::getElementsByTagNameCallback(v8::Arguments const&)
+"""
+        host = MockSystemHost()
+        profiler = chromium_android.AndroidPerf(host, '/bin/executable', '/tmp/output', 'device-serial', 'foo')
+        self.assertEqual(profiler._first_ten_lines_of_profile(perf_output), expected_first_ten_lines)
 
 
 class ChromiumAndroidDriverTwoDriversTest(unittest.TestCase):

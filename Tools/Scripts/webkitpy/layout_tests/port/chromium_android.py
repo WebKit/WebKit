@@ -30,6 +30,7 @@ import copy
 import logging
 import os
 import re
+import sys
 import subprocess
 import threading
 import time
@@ -38,7 +39,7 @@ from webkitpy.layout_tests.port import chromium
 from webkitpy.layout_tests.port import driver
 from webkitpy.layout_tests.port import factory
 from webkitpy.layout_tests.port import server_process
-
+from webkitpy.common.system.profiler import SingleFileOutputProfiler
 
 _log = logging.getLogger(__name__)
 
@@ -60,6 +61,7 @@ DEVICE_FIFO_PATH = '/data/data/org.chromium.native_test/files/'
 DRT_APP_PACKAGE = 'org.chromium.native_test'
 DRT_ACTIVITY_FULL_NAME = DRT_APP_PACKAGE + '/.ChromeNativeTestActivity'
 DRT_APP_CACHE_DIR = DEVICE_DRT_DIR + 'cache/'
+DRT_LIBRARY_NAME = 'libDumpRenderTree.so'
 
 SCALING_GOVERNORS_PATTERN = "/sys/devices/system/cpu/cpu*/cpufreq/scaling_governor"
 
@@ -357,6 +359,124 @@ class ChromiumAndroidPort(chromium.ChromiumPort):
         return devices[worker_number]
 
 
+class AndroidPerf(SingleFileOutputProfiler):
+    _cached_perf_host_path = None
+    _have_searched_for_perf_host = False
+
+    def __init__(self, host, executable_path, output_dir, adb_path, device_serial, symfs_path, identifier=None):
+        super(AndroidPerf, self).__init__(host, executable_path, output_dir, "data", identifier)
+        self._device_serial = device_serial
+        self._adb_command = [adb_path, '-s', self._device_serial]
+        self._perf_process = None
+        self._symfs_path = symfs_path
+
+    def check_configuration(self):
+        # Check that perf is installed
+        if not self._file_exists_on_device('/system/bin/perf'):
+            print "Cannot find /system/bin/perf on device %s" % self._device_serial
+            return False
+        # Check that the device is a userdebug build (or at least has the necessary libraries).
+        if self._run_adb_command(['shell', 'getprop', 'ro.build.type']).strip() != 'userdebug':
+            print "Device %s is not flashed with a userdebug build of Android" % self._device_serial
+            return False
+        # FIXME: Check that the binary actually is perf-able (has stackframe pointers)?
+        # objdump -s a function and make sure it modifies the fp?
+        # Instruct users to rebuild after export GYP_DEFINES="profiling=1 $GYP_DEFINES"
+        return True
+
+    def print_setup_instructions(self):
+        print """
+perf on android requires a 'userdebug' build of Android, see:
+http://source.android.com/source/building-devices.html"
+
+The perf command can be built from:
+https://android.googlesource.com/platform/external/linux-tools-perf/
+and requires libefl, libebl, libdw, and libdwfl available in:
+https://android.googlesource.com/platform/external/elfutils/
+
+DumpRenderTree must be built with profiling=1, make sure you've done:
+export GYP_DEFINES="profiling=1 $GYP_DEFINES"
+update-webkit --chromium-android
+build-webkit --chromium-android
+
+Googlers should read:
+http://goto.google.com/cr-android-perf-howto
+"""
+
+    def _file_exists_on_device(self, full_file_path):
+        assert full_file_path.startswith('/')
+        return self._run_adb_command(['shell', 'ls', full_file_path]).strip() == full_file_path
+
+    def _run_adb_command(self, cmd):
+        return self._host.executive.run_command(self._adb_command + cmd)
+
+    def attach_to_pid(self, pid):
+        assert(pid)
+        assert(self._perf_process == None)
+        # FIXME: This can't be a fixed timeout!
+        cmd = self._adb_command + ['shell', 'perf', 'record', '-g', '-p', pid, 'sleep', 30]
+        cmd = map(unicode, cmd)
+        self._perf_process = self._host.executive.popen(cmd)
+
+    def _perf_version_string(self, perf_path):
+        try:
+            return self._host.executive.run_command([perf_path, '--version'])
+        except:
+            return None
+
+    def _find_perfhost_binary(self):
+        perfhost_version = self._perf_version_string('perfhost_linux')
+        if perfhost_version:
+            return 'perfhost_linux'
+        perf_version = self._perf_version_string('perf')
+        if perf_version:
+            return 'perf'
+        return None
+
+    def _perfhost_path(self):
+        if self._have_searched_for_perf_host:
+            return self._cached_perf_host_path
+        self._have_searched_for_perf_host = True
+        self._cached_perf_host_path = self._find_perfhost_binary()
+        return self._cached_perf_host_path
+
+    def _first_ten_lines_of_profile(self, perf_output):
+        match = re.search("^#[^\n]*\n((?: [^\n]*\n){1,10})", perf_output, re.MULTILINE)
+        return match.group(1) if match else None
+
+    def profile_after_exit(self):
+        perf_exitcode = self._perf_process.wait()
+        if perf_exitcode != 0:
+            print "Perf failed (exit code: %i), can't process results." % perf_exitcode
+            return
+        self._run_adb_command(['pull', '/data/perf.data', self._output_path])
+
+        perfhost_path = self._perfhost_path()
+        if perfhost_path:
+            perfhost_args = [perfhost_path, 'report', '-g', 'none', '-i', self._output_path, '--symfs', self._symfs_path]
+            perf_output = self._host.executive.run_command(perfhost_args)
+            # We could save off the full -g report to a file if users found that useful.
+            print self._first_ten_lines_of_profile(perf_output)
+        else:
+            print """
+Failed to find perfhost_linux binary, can't process samples from the device.
+
+perfhost_linux can be built from:
+https://android.googlesource.com/platform/external/linux-tools-perf/
+also, modern versions of perf (available from apt-get install goobuntu-kernel-tools-common)
+may also be able to process the perf.data files from the device.
+
+Googlers should read:
+http://goto.google.com/cr-android-perf-howto
+for instructions on installing pre-built copies of perfhost_linux
+http://crbug.com/165250 discusses making these pre-built binaries externally available.
+"""
+
+        perfhost_display_patch = perfhost_path if perfhost_path else 'perfhost_linux'
+        print "To view the full profile, run:"
+        print ' '.join([perfhost_display_patch, 'report', '-i', self._output_path, '--symfs', self._symfs_path])
+
+
 class ChromiumAndroidDriver(driver.Driver):
     def __init__(self, port, worker_number, pixel_tests, no_timeout=False):
         super(ChromiumAndroidDriver, self).__init__(port, worker_number, pixel_tests, no_timeout)
@@ -372,9 +492,50 @@ class ChromiumAndroidDriver(driver.Driver):
         self._device_serial = port._get_device_serial(worker_number)
         self._adb_command_base = None
 
+        # FIXME: If we taught ProfileFactory about "target" devices we could
+        # just use the logic in Driver instead of duplicating it here.
+        if self._port.get_option("profile"):
+            symfs_path = self._find_or_create_symfs()
+            # FIXME: We should pass this some sort of "Bridge" object abstraction around ADB instead of a path/device pair.
+            self._profiler = AndroidPerf(self._port.host, self._port._path_to_driver(), self._port.results_directory(),
+                self._port.path_to_adb(), self._device_serial, symfs_path)\
+            # FIXME: This is a layering violation and should be moved to Port.check_sys_deps
+            # once we have an abstraction around an adb_path/device_serial pair to make it
+            # easy to make these class methods on AndroidPerf.
+            if not self._profiler.check_configuration():
+                self._profiler.print_setup_instructions()
+                sys.exit(1)
+        else:
+            self._profiler = None
+        self._delay_post_start_tasks = False
+
     def __del__(self):
         self._teardown_performance()
         super(ChromiumAndroidDriver, self).__del__()
+
+    def _find_or_create_symfs(self):
+        environment = self._port.host.copy_current_environment()
+        env = environment.to_dictionary()
+        fs = self._port.host.filesystem
+
+        if 'ANDROID_SYMFS' in env:
+            symfs_path = env['ANDROID_SYMFS']
+        else:
+            symfs_path = fs.join(self._port.results_directory(), 'symfs')
+            print "ANDROID_SYMFS not set, using %s" % symfs_path
+
+        # find the installed path, and the path of the symboled built library
+        # FIXME: We should get the install path from the device!
+        symfs_library_path = fs.join(symfs_path, "data/app-lib/%s-1/%s" % (DRT_APP_PACKAGE, DRT_LIBRARY_NAME))
+        built_library_path = self._port._build_path('lib', DRT_LIBRARY_NAME)
+        assert(fs.exists(built_library_path))
+
+        # FIXME: Ideally we'd check the sha1's first and make a soft-link instead of copying (since we probably never care about windows).
+        print "Updating symfs libary (%s) from built copy (%s)" % (symfs_library_path, built_library_path)
+        fs.maybe_make_directory(fs.dirname(symfs_library_path))
+        fs.copyfile(built_library_path, symfs_library_path)
+
+        return symfs_path
 
     def _setup_md5sum_and_push_data_if_needed(self):
         self._md5sum_path = self._port.path_to_md5sum()
@@ -606,6 +767,7 @@ class ChromiumAndroidDriver(driver.Driver):
         self._abort('Failed to start DumpRenderTree application multiple times. Give up.')
 
     def _start_once(self, pixel_tests, per_test_args):
+        self._delay_post_start_tasks = True  # This is a hack to not start the profiler until after the remote process is fully setup.
         super(ChromiumAndroidDriver, self)._start(pixel_tests, per_test_args)
 
         self._log_debug('Starting forwarder')
@@ -673,10 +835,31 @@ class ChromiumAndroidDriver(driver.Driver):
             # deadlock and killed the fifo reading/writing processes.
             _log.error('Failed to start DumpRenderTree: \n%s' % output)
             return False
-        else:
-            # Inform the deadlock detector that the startup is successful without deadlock.
-            normal_startup_event.set()
-            return True
+
+        self._delay_post_start_tasks = False
+        self._run_post_start_tasks()
+
+        # Inform the deadlock detector that the startup is successful without deadlock.
+        normal_startup_event.set()
+        return True
+
+    def _run_post_start_tasks(self):
+        if self._delay_post_start_tasks:
+            return
+        super(ChromiumAndroidDriver, self)._run_post_start_tasks()
+
+    def _pid_from_android_ps_output(self, ps_output, package_name):
+        # ps output seems to be fixed width, we only care about the name and the pid
+        # u0_a72    21630 125   947920 59364 ffffffff 400beee4 S org.chromium.native_test
+        for line in ps_output.split('\n'):
+            if line.find(DRT_APP_PACKAGE) != -1:
+                match = re.match(r'\S+\s+(\d+)', line)
+                return int(match.group(1))
+
+    def _pid_on_target(self):
+        # FIXME: There must be a better way to do this than grepping ps output!
+        ps_output = self._run_adb_command(['shell', 'ps'])
+        return self._pid_from_android_ps_output(ps_output, DRT_APP_PACKAGE)
 
     def stop(self):
         self._run_adb_command(['shell', 'am', 'force-stop', DRT_APP_PACKAGE])

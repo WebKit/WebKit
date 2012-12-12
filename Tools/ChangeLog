@@ -1,3 +1,54 @@
+2012-12-12  Eric Seidel  <eric@webkit.org>
+
+        Add support for run-perf-tests --chromium-android --profile
+        https://bugs.webkit.org/show_bug.cgi?id=103587
+
+        Reviewed by Dirk Pranke.
+
+        This makes it possible to profile PerformanceTests on an Android device
+        using run-perf-tests --chromium-android --profile.
+        CPU profiling on Android is sadly non-trivial, but this goes a long
+        ways towards making it more accessible to non-Android developers.
+
+        Although this script requires your device to be flashed with a
+        userdebug build (an annoyingly non-trivial endeavor for external contributors)
+        it endeavors to detect and explain the common errors encountered
+        while trying to setup a device for perf-based profiling.
+
+        * Scripts/webkitpy/common/system/profiler.py:
+        (GooglePProf.profile_after_exit): Discovered that pprof will just hang if passed a missing file.
+        * Scripts/webkitpy/layout_tests/port/chromium_android.py:
+        (AndroidPerf):
+        (AndroidPerf.__init__):
+        (AndroidPerf.check_configuration):
+        (AndroidPerf.print_setup_instructions):
+        (_file_exists_on_device):
+        (_run_adb_command):
+        (attach_to_pid):
+        (_perf_version_string):
+        (_find_perfhost_binary):
+        (_perfhost_path):
+        (_first_ten_lines_of_profile):
+        (profile_after_exit):
+        (ChromiumAndroidDriver.__init__):
+        (ChromiumAndroidDriver.__init__.methods):
+        (ChromiumAndroidDriver._find_or_create_symfs):
+        (ChromiumAndroidDriver._start_once):
+        (ChromiumAndroidDriver):
+        (ChromiumAndroidDriver._run_post_start_tasks):
+        (ChromiumAndroidDriver._pid_from_android_ps_output):
+        (ChromiumAndroidDriver._pid_on_target):
+        * Scripts/webkitpy/layout_tests/port/chromium_android_unittest.py:
+        (ChromiumAndroidDriverTest.test_pid_from_android_ps_output):
+        (AndroidPerfTest):
+        (AndroidPerfTest.test_perf_output_regexp):
+        * Scripts/webkitpy/layout_tests/port/driver.py:
+        (Driver._setup_environ_for_driver):
+        (Driver):
+        (Driver._start):
+        (Driver._run_post_start_tasks):
+        (Driver._pid_on_target):
+
 2012-12-12  Dirk Pranke  <dpranke@chromium.org>
 
         nrwt: remove deprecated ORWT compatibility command line flags
