@@ -818,6 +818,7 @@ void Frame::setTiledBackingStoreEnabled(bool enabled)
     if (m_tiledBackingStore)
         return;
     m_tiledBackingStore = adoptPtr(new TiledBackingStore(this));
+    m_tiledBackingStore->setCommitTileUpdatesOnIdleEventLoop(true);
     if (m_view)
         m_view->setPaintsEntireContents(true);
 }

@@ -1,3 +1,47 @@
+2012-12-12  Huang Dongsung  <luxtella@company100.net>
+
+        Coordinated Graphics: Refactor TiledBackingStore code in CoordinatedGraphicsLayer.
+        https://bugs.webkit.org/show_bug.cgi?id=103959
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Currently, CoordinatedGraphicsLayer has complex code related to TiledBackingStore.
+        It has two problem.
+        1. CoordinatedGraphicsLayer hacks TiledBackingStore to prevent
+        TiledBackingStore from asynchronously sending UpdateTile message to UI
+        Process.
+        2. CreateTile and RemoveTile message can be sent to UI Process at any time.
+
+        This patch makes CoordinatedGraphicsLayer use TiledBackingStore more explicitly.
+        It means only during flushing layer states, CoordinatedGraphicsLayer
+        calls methods of TiledBackingStore, which indirectly call createTile(),
+        updateTile() and removeTile().
+
+        * WebProcess/WebPage/CoordinatedGraphics/CoordinatedGraphicsLayer.cpp:
+        (WebCore::CoordinatedGraphicsLayer::CoordinatedGraphicsLayer):
+        (WebCore::CoordinatedGraphicsLayer::flushCompositingStateForThisLayerOnly):
+        (WebCore::CoordinatedGraphicsLayer::setVisibleContentRectTrajectoryVector):
+        (WebCore::CoordinatedGraphicsLayer::setContentsScale):
+        (WebCore::CoordinatedGraphicsLayer::adjustContentsScale):
+        (WebCore::CoordinatedGraphicsLayer::tiledBackingStoreHasPendingTileCreation):
+        (WebCore::CoordinatedGraphicsLayer::beginContentUpdate):
+        (WebCore::CoordinatedGraphicsLayer::createTile):
+        (WebCore::CoordinatedGraphicsLayer::updateTile):
+        (WebCore::CoordinatedGraphicsLayer::removeTile):
+        (WebCore::CoordinatedGraphicsLayer::updateContentBuffers):
+        (WebCore::CoordinatedGraphicsLayer::purgeBackingStores):
+        (WebCore::CoordinatedGraphicsLayer::setNeedsVisibleRectAdjustment):
+        (WebCore::CoordinatedGraphicsLayer::computeTransformedVisibleRect):
+        * WebProcess/WebPage/CoordinatedGraphics/CoordinatedGraphicsLayer.h:
+        (CoordinatedGraphicsLayerClient):
+        (CoordinatedGraphicsLayer):
+        * WebProcess/WebPage/CoordinatedGraphics/CoordinatedLayerTreeHost.cpp:
+        (WebKit::CoordinatedLayerTreeHost::notifyFlushRequired):
+        (WebKit::CoordinatedLayerTreeHost::createGraphicsLayer):
+        (WebKit::CoordinatedLayerTreeHost::setVisibleContentsRect):
+        * WebProcess/WebPage/CoordinatedGraphics/CoordinatedLayerTreeHost.h:
+        (CoordinatedLayerTreeHost):
+
 2012-12-12  Joaquim Rocha  <jrocha@igalia.com>
 
         [GTK] Cookies' storage path and policy are not set when the WebProcess is killed and relaunched

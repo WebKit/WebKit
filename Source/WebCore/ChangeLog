@@ -1,3 +1,43 @@
+2012-12-12  Huang Dongsung  <luxtella@company100.net>
+
+        Coordinated Graphics: Refactor TiledBackingStore code in CoordinatedGraphicsLayer.
+        https://bugs.webkit.org/show_bug.cgi?id=103959
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        TiledBackingStore::setCommitTileUpdatesOnIdleEventLoop() is used when class
+        methods cannot be called asynchronously by client. Updates of tiles are
+        committed as soon as all the events in event queue have been processed.
+        After this patch Frame sets m_commitTileUpdatesOnIdleEventLoop to true.
+
+        In addition, remove TiledBackingStoreClient::tiledBackingStoreUpdatesAllowed()
+        which was introduced for Coordinated Graphics.
+
+        Refactoring covered by existing tests.
+
+        * page/Frame.cpp:
+        (WebCore::Frame::setTiledBackingStoreEnabled):
+        * platform/graphics/TiledBackingStore.cpp:
+        (WebCore::TiledBackingStore::TiledBackingStore):
+        (WebCore::TiledBackingStore::setTrajectoryVector):
+          Separate setting a trajectory vector from coverWithTilesIfNeeded().
+        (WebCore::TiledBackingStore::coverWithTilesIfNeeded):
+        (WebCore::TiledBackingStore::updateTileBuffers):
+        (WebCore::TiledBackingStore::createTiles):
+        (WebCore::TiledBackingStore::isTileBufferUpdatesSuspended):
+        (WebCore::TiledBackingStore::startTileBufferUpdateTimer):
+        (WebCore::TiledBackingStore::tileBufferUpdateTimerFired):
+        (WebCore::TiledBackingStore::startBackingStoreUpdateTimer):
+        (WebCore::TiledBackingStore::backingStoreUpdateTimerFired):
+        * platform/graphics/TiledBackingStore.h:
+        (TiledBackingStore):
+        (WebCore::TiledBackingStore::setCommitTileUpdatesOnIdleEventLoop):
+        * platform/graphics/TiledBackingStoreClient.h:
+        (WebCore::TiledBackingStoreClient::tiledBackingStoreHasPendingTileCreation):
+            If TiledBackingStore does not create all tiles, TiledBackingStore
+            notifies a client of needing to create tiles more, when
+            m_commitTileUpdatesOnIdleEventLoop is false.
+
 2012-12-11  Jocelyn Turcotte  <jocelyn.turcotte@digia.com>
 
         [Qt] Fix the inspector not showing up on Windows
