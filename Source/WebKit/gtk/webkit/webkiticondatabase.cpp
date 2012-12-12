@@ -20,8 +20,6 @@
 #include "config.h"
 #include "webkiticondatabase.h"
 
-#include "DatabaseDetails.h"
-#include "DatabaseTracker.h"
 #include "FileSystem.h"
 #include "IconDatabase.h"
 #include "Image.h"

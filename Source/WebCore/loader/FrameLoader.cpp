@@ -46,9 +46,9 @@
 #include "ChromeClient.h"
 #include "Console.h"
 #include "ContentSecurityPolicy.h"
-#include "DatabaseContext.h"
 #include "DOMImplementation.h"
 #include "DOMWindow.h"
+#include "DatabaseManager.h"
 #include "Document.h"
 #include "DocumentLoadTiming.h"
 #include "DocumentLoader.h"
@@ -450,8 +450,8 @@ void FrameLoader::stopLoading(UnloadEventPolicy unloadEventPolicy)
         doc->setReadyState(Document::Complete);
 
 #if ENABLE(SQL_DATABASE)
-        // FIXME: Should the DatabaseContext watch for something like ActiveDOMObject::stop() rather than being special-cased here?
-        DatabaseContext::stopDatabases(doc, 0);
+        // FIXME: Should the DatabaseManager watch for something like ActiveDOMObject::stop() rather than being special-cased here?
+        DatabaseManager::manager().stopDatabases(doc, 0);
 #endif
     }
 

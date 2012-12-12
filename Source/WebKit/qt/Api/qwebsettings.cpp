@@ -22,10 +22,9 @@
 
 #include "qwebplugindatabase_p.h"
 
-#include "AbstractDatabase.h"
 #include "ApplicationCacheStorage.h"
 #include "CrossOriginPreflightResultCache.h"
-#include "DatabaseTracker.h"
+#include "DatabaseManager.h"
 #include "FileSystem.h"
 #include "FontCache.h"
 #include "IconDatabase.h"
@@ -231,7 +230,7 @@ void QWebSettingsPrivate::apply()
 #if ENABLE(SQL_DATABASE)
         value = attributes.value(QWebSettings::OfflineStorageDatabaseEnabled,
                                       global->attributes.value(QWebSettings::OfflineStorageDatabaseEnabled));
-        WebCore::AbstractDatabase::setIsAvailable(value);
+        WebCore::DatabaseManager::manager().setIsAvailable(value);
 #endif
 
         value = attributes.value(QWebSettings::OfflineWebApplicationCacheEnabled,
@@ -1004,7 +1003,7 @@ void QWebSettings::setOfflineStoragePath(const QString& path)
 {
     WebCore::initializeWebCoreQt();
 #if ENABLE(SQL_DATABASE)
-    WebCore::DatabaseTracker::tracker().setDatabaseDirectoryPath(path);
+    WebCore::DatabaseManager::manager().setDatabaseDirectoryPath(path);
 #endif
 }
 
@@ -1020,7 +1019,7 @@ QString QWebSettings::offlineStoragePath()
 {
     WebCore::initializeWebCoreQt();
 #if ENABLE(SQL_DATABASE)
-    return WebCore::DatabaseTracker::tracker().databaseDirectoryPath();
+    return WebCore::DatabaseManager::manager().databaseDirectoryPath();
 #else
     return QString();
 #endif

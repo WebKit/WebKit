@@ -947,6 +947,7 @@ set(WebCore_SOURCES
     Modules/webdatabase/Database.cpp
     Modules/webdatabase/DatabaseAuthorizer.cpp
     Modules/webdatabase/DatabaseContext.cpp
+    Modules/webdatabase/DatabaseManager.cpp
     Modules/webdatabase/DatabaseSync.cpp
     Modules/webdatabase/DatabaseTask.cpp
     Modules/webdatabase/DatabaseThread.cpp

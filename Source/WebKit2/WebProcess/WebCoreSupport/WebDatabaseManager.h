@@ -29,7 +29,7 @@
 #if ENABLE(SQL_DATABASE)
 
 #include "Arguments.h"
-#include <WebCore/DatabaseTrackerClient.h>
+#include <WebCore/DatabaseManagerClient.h>
 #include <wtf/Noncopyable.h>
 #include <wtf/text/WTFString.h>
 
@@ -41,7 +41,7 @@ class MessageID;
 
 namespace WebKit {
 
-class WebDatabaseManager : public WebCore::DatabaseTrackerClient {
+class WebDatabaseManager : public WebCore::DatabaseManagerClient {
     WTF_MAKE_NONCOPYABLE(WebDatabaseManager);
 public:
     static WebDatabaseManager& shared();
@@ -65,7 +65,7 @@ private:
     void deleteDatabaseWithNameForOrigin(const String& databaseIdentifier, const String& originIdentifier) const;
     void deleteDatabasesForOrigin(const String& originIdentifier) const;
 
-    // WebCore::DatabaseTrackerClient
+    // WebCore::DatabaseManagerClient
     virtual void dispatchDidModifyOrigin(WebCore::SecurityOrigin*) OVERRIDE;
     virtual void dispatchDidModifyDatabase(WebCore::SecurityOrigin*, const String& databaseIdentifier) OVERRIDE;
 };

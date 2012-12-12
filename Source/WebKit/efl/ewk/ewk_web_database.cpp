@@ -20,7 +20,7 @@
 #include "config.h"
 #include "ewk_web_database.h"
 
-#include "DatabaseTracker.h"
+#include "DatabaseManager.h"
 #include "SecurityOrigin.h"
 #include "ewk_security_origin.h"
 #include "ewk_security_origin_private.h"
@@ -28,6 +28,7 @@
 #include <Eina.h>
 #include <wtf/RefPtr.h>
 #include <wtf/UnusedParam.h>
+#include <wtf/text/CString.h>
 #include <wtf/text/WTFString.h>
 
 struct _Ewk_Web_Database {
@@ -45,7 +46,7 @@ const char* ewk_web_database_display_name_get(Ewk_Web_Database* database)
         return database->displayName;
 
     WebCore::SecurityOrigin* origin = database->securityOrigin.get();
-    WebCore::DatabaseDetails details = WebCore::DatabaseTracker::tracker().detailsForNameAndOrigin(database->name, origin);
+    WebCore::DatabaseDetails details = WebCore::DatabaseManager::manager().detailsForNameAndOrigin(database->name, origin);
     database->displayName = eina_stringshare_add(details.displayName().utf8().data());
 
     return database->displayName;
@@ -59,7 +60,7 @@ uint64_t ewk_web_database_expected_size_get(const Ewk_Web_Database* database)
 {
 #if ENABLE(SQL_DATABASE)
     WebCore::SecurityOrigin* origin = database->securityOrigin.get();
-    WebCore::DatabaseDetails details = WebCore::DatabaseTracker::tracker().detailsForNameAndOrigin(database->name, origin);
+    WebCore::DatabaseDetails details = WebCore::DatabaseManager::manager().detailsForNameAndOrigin(database->name, origin);
     return details.expectedUsage();
 #else
     UNUSED_PARAM(database);
@@ -74,7 +75,7 @@ const char* ewk_web_database_filename_get(Ewk_Web_Database* database)
         return database->filename;
 
     WebCore::SecurityOrigin* origin = database->securityOrigin.get();
-    WTF::String path = WebCore::DatabaseTracker::tracker().fullPathForDatabase(origin, database->coreName);
+    WTF::String path = WebCore::DatabaseManager::manager().fullPathForDatabase(origin, database->coreName);
     database->filename = eina_stringshare_add(path.utf8().data());
 
     return database->filename;
@@ -108,7 +109,7 @@ uint64_t ewk_web_database_size_get(const Ewk_Web_Database* database)
 {
 #if ENABLE(SQL_DATABASE)
     WebCore::SecurityOrigin* origin = database->securityOrigin.get();
-    WebCore::DatabaseDetails details = WebCore::DatabaseTracker::tracker().detailsForNameAndOrigin(database->name, origin);
+    WebCore::DatabaseDetails details = WebCore::DatabaseManager::manager().detailsForNameAndOrigin(database->name, origin);
     return details.currentUsage();
 #else
     UNUSED_PARAM(database);
@@ -119,7 +120,7 @@ uint64_t ewk_web_database_size_get(const Ewk_Web_Database* database)
 void ewk_web_database_remove(Ewk_Web_Database* database)
 {
 #if ENABLE(SQL_DATABASE)
-    WebCore::DatabaseTracker::tracker().deleteDatabase(database->securityOrigin.get(), database->coreName);
+    WebCore::DatabaseManager::manager().deleteDatabase(database->securityOrigin.get(), database->coreName);
 #else
     UNUSED_PARAM(database);
 #endif
@@ -128,7 +129,7 @@ void ewk_web_database_remove(Ewk_Web_Database* database)
 void ewk_web_database_remove_all(void)
 {
 #if ENABLE(SQL_DATABASE)
-    WebCore::DatabaseTracker::tracker().deleteAllDatabases();
+    WebCore::DatabaseManager::manager().deleteAllDatabases();
 #endif
 }
 

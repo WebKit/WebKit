@@ -45,7 +45,6 @@
 #endif
 #include "Console.h"
 #include "Cursor.h"
-#include "DatabaseTracker.h"
 #include "DateTimeChooser.h"
 #include "DateTimeChooserImpl.h"
 #include "Document.h"

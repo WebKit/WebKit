@@ -27,7 +27,6 @@
 #include "config.h"
 #include "DOMWindow.h"
 
-#include "AbstractDatabase.h"
 #include "BackForwardController.h"
 #include "BarInfo.h"
 #include "BeforeUnloadEvent.h"
@@ -46,8 +45,6 @@
 #include "DOMURL.h"
 #include "DOMWindowExtension.h"
 #include "DOMWindowNotifications.h"
-#include "Database.h"
-#include "DatabaseCallback.h"
 #include "DeviceMotionController.h"
 #include "DeviceOrientationController.h"
 #include "Document.h"

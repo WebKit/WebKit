@@ -21,7 +21,7 @@
 #include "qwebsecurityorigin.h"
 
 #include "ApplicationCacheStorage.h"
-#include "DatabaseTracker.h"
+#include "DatabaseManager.h"
 #include "KURL.h"
 #include "SchemeRegistry.h"
 #include "SecurityOrigin.h"
@@ -121,7 +121,7 @@ int QWebSecurityOrigin::port() const
 qint64 QWebSecurityOrigin::databaseUsage() const
 {
 #if ENABLE(SQL_DATABASE)
-    return DatabaseTracker::tracker().usageForOrigin(d->origin.get());
+    return DatabaseManager::manager().usageForOrigin(d->origin.get());
 #else
     return 0;
 #endif
@@ -133,7 +133,7 @@ qint64 QWebSecurityOrigin::databaseUsage() const
 qint64 QWebSecurityOrigin::databaseQuota() const
 {
 #if ENABLE(SQL_DATABASE)
-    return DatabaseTracker::tracker().quotaForOrigin(d->origin.get());
+    return DatabaseManager::manager().quotaForOrigin(d->origin.get());
 #else
     return 0;
 #endif
@@ -149,7 +149,7 @@ qint64 QWebSecurityOrigin::databaseQuota() const
 void QWebSecurityOrigin::setDatabaseQuota(qint64 quota)
 {
 #if ENABLE(SQL_DATABASE)
-    DatabaseTracker::tracker().setQuota(d->origin.get(), quota);
+    DatabaseManager::manager().setQuota(d->origin.get(), quota);
 #endif
 }
 
@@ -181,7 +181,7 @@ QList<QWebSecurityOrigin> QWebSecurityOrigin::allOrigins()
 
 #if ENABLE(SQL_DATABASE)
     Vector<RefPtr<SecurityOrigin> > coreOrigins;
-    DatabaseTracker::tracker().origins(coreOrigins);
+    DatabaseManager::manager().origins(coreOrigins);
 
     for (unsigned i = 0; i < coreOrigins.size(); ++i) {
         QWebSecurityOriginPrivate* priv = new QWebSecurityOriginPrivate(coreOrigins[i].get());
@@ -202,7 +202,7 @@ QList<QWebDatabase> QWebSecurityOrigin::databases() const
 #if ENABLE(SQL_DATABASE)
     Vector<String> nameVector;
 
-    if (!DatabaseTracker::tracker().databaseNamesForOrigin(d->origin.get(), nameVector))
+    if (!DatabaseManager::manager().databaseNamesForOrigin(d->origin.get(), nameVector))
         return databases;
     for (unsigned i = 0; i < nameVector.size(); ++i) {
         QWebDatabasePrivate* priv = new QWebDatabasePrivate();

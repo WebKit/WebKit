@@ -68,7 +68,7 @@
 
 #if ENABLE(SQL_DATABASE)
 #include "DatabaseDetails.h"
-#include "DatabaseTracker.h"
+#include "DatabaseManager.h"
 #endif
 
 #if ENABLE(INPUT_TYPE_COLOR)
@@ -425,7 +425,7 @@ void ChromeClientEfl::exceededDatabaseQuota(Frame* frame, const String& database
     uint64_t quota;
     SecurityOrigin* origin = frame->document()->securityOrigin();
 
-    DatabaseDetails details = DatabaseTracker::tracker().detailsForNameAndOrigin(databaseName, origin);
+    DatabaseDetails details = DatabaseManager::manager().detailsForNameAndOrigin(databaseName, origin);
     quota = ewk_view_exceeded_database_quota(m_view,
                                              kit(frame), databaseName.utf8().data(),
                                              details.currentUsage(), details.expectedUsage());
@@ -433,10 +433,10 @@ void ChromeClientEfl::exceededDatabaseQuota(Frame* frame, const String& database
     /* if client did not set quota, and database is being created now, the
      * default quota is applied
      */
-    if (!quota && !DatabaseTracker::tracker().hasEntryForOrigin(origin))
+    if (!quota && !DatabaseManager::manager().hasEntryForOrigin(origin))
         quota = ewk_settings_web_database_default_quota_get();
 
-    DatabaseTracker::tracker().setQuota(origin, quota);
+    DatabaseManager::manager().setQuota(origin, quota);
 }
 #endif
 

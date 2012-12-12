@@ -51,7 +51,7 @@ class SecurityOrigin;
 struct SecurityOriginHash;
 
 #if !PLATFORM(CHROMIUM)
-class DatabaseTrackerClient;
+class DatabaseManagerClient;
 
 struct SecurityOriginTraits;
 #endif // !PLATFORM(CHROMIUM)
@@ -103,7 +103,7 @@ public:
     bool deleteOrigin(SecurityOrigin*);
     bool deleteDatabase(SecurityOrigin*, const String& name);
 
-    void setClient(DatabaseTrackerClient*);
+    void setClient(DatabaseManagerClient*);
 
     // From a secondary thread, must be thread safe with its data
     void scheduleNotifyDatabaseChanged(SecurityOrigin*, const String& name);
@@ -145,7 +145,7 @@ private:
 
     String m_databaseDirectoryPath;
 
-    DatabaseTrackerClient* m_client;
+    DatabaseManagerClient* m_client;
 
     typedef std::pair<RefPtr<SecurityOrigin>, DatabaseDetails> ProposedDatabase;
     HashSet<ProposedDatabase*> m_proposedDatabases;

@@ -25233,6 +25233,14 @@
 					>
 				</File>
 				<File
+					RelativePath="..\Modules\webdatabase\DatabaseManager.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\Modules\webdatabase\DatabaseManager.h"
+					>
+				</File>
+				<File
 					RelativePath="..\Modules\webdatabase\DatabaseSync.cpp"
 					>
 				</File>

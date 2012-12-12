@@ -80,10 +80,10 @@
 #include "WebProcess.h"
 #include "WebProcessProxyMessages.h"
 #include <JavaScriptCore/APICast.h>
-#include <WebCore/AbstractDatabase.h>
 #include <WebCore/ArchiveResource.h>
 #include <WebCore/Chrome.h>
 #include <WebCore/ContextMenuController.h>
+#include <WebCore/DatabaseManager.h>
 #include <WebCore/DocumentFragment.h>
 #include <WebCore/DocumentLoader.h>
 #include <WebCore/DocumentMarkerController.h>
@@ -2303,7 +2303,7 @@ void WebPage::updatePreferences(const WebPreferencesStore& store)
     settings->setInteractiveFormValidationEnabled(store.getBoolValueForKey(WebPreferencesKey::interactiveFormValidationEnabledKey()));
 
 #if ENABLE(SQL_DATABASE)
-    AbstractDatabase::setIsAvailable(store.getBoolValueForKey(WebPreferencesKey::databasesEnabledKey()));
+    DatabaseManager::manager().setIsAvailable(store.getBoolValueForKey(WebPreferencesKey::databasesEnabledKey()));
 #endif
 
 #if ENABLE(FULLSCREEN_API)

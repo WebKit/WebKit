@@ -21,8 +21,6 @@
 #include "config.h"
 #include "webkitfavicondatabase.h"
 
-#include "DatabaseDetails.h"
-#include "DatabaseTracker.h"
 #include "FileSystem.h"
 #include "GdkCairoUtilities.h"
 #include "IconDatabase.h"

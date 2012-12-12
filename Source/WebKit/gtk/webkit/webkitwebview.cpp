@@ -32,7 +32,6 @@
 #include "webkitwebview.h"
 
 #include "AXObjectCache.h"
-#include "AbstractDatabase.h"
 #include "BackForwardListImpl.h"
 #include "CairoUtilities.h"
 #include "Chrome.h"
@@ -42,6 +41,7 @@
 #include "ContextMenuClientGtk.h"
 #include "ContextMenuController.h"
 #include "Cursor.h"
+#include "DatabaseManager.h"
 #include "Document.h"
 #include "DocumentLoader.h"
 #include "DragActions.h"
@@ -3411,7 +3411,7 @@ static void webkit_web_view_update_settings(WebKitWebView* webView)
     coreSettings->setAllowRunningOfInsecureContent(settingsPrivate->enableRunningOfInsecureContent);
 
 #if ENABLE(SQL_DATABASE)
-    AbstractDatabase::setIsAvailable(settingsPrivate->enableHTML5Database);
+    DatabaseManager::manager().setIsAvailable(settingsPrivate->enableHTML5Database);
 #endif
 
 #if ENABLE(FULLSCREEN_API)
@@ -3515,7 +3515,7 @@ static void webkit_web_view_settings_notify(WebKitWebSettings* webSettings, GPar
         settings->setCaretBrowsingEnabled(g_value_get_boolean(&value));
 #if ENABLE(SQL_DATABASE)
     else if (name == g_intern_string("enable-html5-database")) {
-        AbstractDatabase::setIsAvailable(g_value_get_boolean(&value));
+        DatabaseManager::manager().setIsAvailable(g_value_get_boolean(&value));
     }
 #endif
     else if (name == g_intern_string("enable-html5-local-storage"))

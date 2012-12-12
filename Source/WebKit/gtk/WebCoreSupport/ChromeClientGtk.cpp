@@ -74,7 +74,7 @@
 #include <wtf/text/WTFString.h>
 
 #if ENABLE(SQL_DATABASE)
-#include "DatabaseTracker.h"
+#include "DatabaseManager.h"
 #endif
 
 using namespace WebCore;
@@ -812,7 +812,7 @@ void ChromeClient::print(Frame* frame)
 void ChromeClient::exceededDatabaseQuota(Frame* frame, const String& databaseName)
 {
     guint64 defaultQuota = webkit_get_default_web_database_quota();
-    DatabaseTracker::tracker().setQuota(frame->document()->securityOrigin(), defaultQuota);
+    DatabaseManager::manager().setQuota(frame->document()->securityOrigin(), defaultQuota);
 
     WebKitWebFrame* webFrame = kit(frame);
     WebKitSecurityOrigin* origin = webkit_web_frame_get_security_origin(webFrame);

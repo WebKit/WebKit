@@ -40,7 +40,7 @@
 
 #include <WebCore/BString.h>
 #include <WebCore/COMPtr.h>
-#include <WebCore/DatabaseTracker.h>
+#include <WebCore/DatabaseManager.h>
 #include <WebCore/FileSystem.h>
 #include <WebCore/SecurityOrigin.h>
 #include <wtf/MainThread.h>
@@ -202,7 +202,7 @@ HRESULT STDMETHODCALLTYPE WebDatabaseManager::sharedWebDatabaseManager(
 {
     if (!s_sharedWebDatabaseManager) {
         s_sharedWebDatabaseManager.adoptRef(WebDatabaseManager::createInstance());
-        DatabaseTracker::tracker().setClient(s_sharedWebDatabaseManager.get());
+        DatabaseManager::manager().setClient(s_sharedWebDatabaseManager.get());
     }
 
     return s_sharedWebDatabaseManager.copyRefTo(result);
@@ -220,7 +220,7 @@ HRESULT STDMETHODCALLTYPE WebDatabaseManager::origins(
         return E_FAIL;
 
     Vector<RefPtr<SecurityOrigin> > origins;
-    DatabaseTracker::tracker().origins(origins);
+    DatabaseManager::manager().origins(origins);
         COMPtr<COMEnumVariant<Vector<RefPtr<SecurityOrigin> > > > enumVariant(AdoptCOM, COMEnumVariant<Vector<RefPtr<SecurityOrigin> > >::adopt(origins));
 
     *result = enumVariant.leakRef();
@@ -244,7 +244,7 @@ HRESULT STDMETHODCALLTYPE WebDatabaseManager::databasesWithOrigin(
         return E_FAIL;
 
     Vector<String> databaseNames;
-    DatabaseTracker::tracker().databaseNamesForOrigin(webSecurityOrigin->securityOrigin(), databaseNames);
+    DatabaseManager::manager().databaseNamesForOrigin(webSecurityOrigin->securityOrigin(), databaseNames);
 
     COMPtr<COMEnumVariant<Vector<String> > > enumVariant(AdoptCOM, COMEnumVariant<Vector<String> >::adopt(databaseNames));
 
@@ -269,7 +269,7 @@ HRESULT STDMETHODCALLTYPE WebDatabaseManager::detailsForDatabase(
     if (!webSecurityOrigin)
         return E_FAIL;
 
-    DatabaseDetails details = DatabaseTracker::tracker().detailsForNameAndOrigin(String(databaseName, SysStringLen(databaseName)),
+    DatabaseDetails details = DatabaseManager::manager().detailsForNameAndOrigin(String(databaseName, SysStringLen(databaseName)),
         webSecurityOrigin->securityOrigin());
 
     if (details.name().isNull())
@@ -284,7 +284,7 @@ HRESULT STDMETHODCALLTYPE WebDatabaseManager::deleteAllDatabases()
     if (this != s_sharedWebDatabaseManager)
         return E_FAIL;
 
-    DatabaseTracker::tracker().deleteAllDatabases();
+    DatabaseManager::manager().deleteAllDatabases();
 
     return S_OK;
 }
@@ -302,7 +302,7 @@ HRESULT STDMETHODCALLTYPE WebDatabaseManager::deleteOrigin(
     if (!webSecurityOrigin)
         return E_FAIL;
 
-    DatabaseTracker::tracker().deleteOrigin(webSecurityOrigin->securityOrigin());
+    DatabaseManager::manager().deleteOrigin(webSecurityOrigin->securityOrigin());
 
     return S_OK;
 }
@@ -324,7 +324,7 @@ HRESULT STDMETHODCALLTYPE WebDatabaseManager::deleteDatabase(
     if (!webSecurityOrigin)
         return E_FAIL;
 
-    DatabaseTracker::tracker().deleteDatabase(webSecurityOrigin->securityOrigin(), String(databaseName, SysStringLen(databaseName)));
+    DatabaseManager::manager().deleteDatabase(webSecurityOrigin->securityOrigin(), String(databaseName, SysStringLen(databaseName)));
 
     return S_OK;
 }
@@ -381,7 +381,7 @@ HRESULT STDMETHODCALLTYPE WebDatabaseManager::setQuota(
     if (this != s_sharedWebDatabaseManager)
         return E_FAIL;
 
-    DatabaseTracker::tracker().setQuota(SecurityOrigin::createFromString(origin).get(), quota);
+    DatabaseManager::manager().setQuota(SecurityOrigin::createFromString(origin).get(), quota);
 
     return S_OK;
 }
@@ -416,7 +416,7 @@ void WebKitInitializeWebDatabasesIfNecessary()
         return;
 
     WTF::String databasesDirectory = WebCore::pathByAppendingComponent(WebCore::localUserSpecificStorageDirectory(), "Databases");
-    WebCore::DatabaseTracker::initializeTracker(databasesDirectory);
+    WebCore::DatabaseManager::manager().initialize(databasesDirectory);
 
     initialized = true;
 }

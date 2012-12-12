@@ -35,8 +35,8 @@
 #include "Chrome.h"
 #include "ChromeClient.h"
 #include "DatabaseContext.h"
+#include "DatabaseManagerClient.h"
 #include "DatabaseThread.h"
-#include "DatabaseTrackerClient.h"
 #include "Logging.h"
 #include "OriginQuotaManager.h"
 #include "Page.h"
@@ -1046,7 +1046,7 @@ bool DatabaseTracker::deleteDatabaseFile(SecurityOrigin* origin, const String& n
     return SQLiteFileSystem::deleteDatabaseFile(fullPath);
 }
 
-void DatabaseTracker::setClient(DatabaseTrackerClient* client)
+void DatabaseTracker::setClient(DatabaseManagerClient* client)
 {
     m_client = client;
 }

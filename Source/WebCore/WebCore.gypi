@@ -990,6 +990,7 @@
             'Modules/webdatabase/DatabaseCallback.h',
             'Modules/webdatabase/DatabaseContext.cpp',
             'Modules/webdatabase/DatabaseContext.h',
+            'Modules/webdatabase/DatabaseManager.cpp',
             'Modules/webdatabase/DatabaseSync.cpp',
             'Modules/webdatabase/DatabaseSync.h',
             'Modules/webdatabase/DatabaseTask.cpp',

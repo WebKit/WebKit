@@ -33,7 +33,7 @@
 #include "ApplicationCacheStorage.h"
 #include "ColorChooser.h"
 #include "ColorChooserClient.h"
-#include "DatabaseTracker.h"
+#include "DatabaseManager.h"
 #include "Document.h"
 #include "FileChooser.h"
 #include "FileIconLoader.h"
@@ -539,8 +539,8 @@ void ChromeClientQt::exceededDatabaseQuota(Frame* frame, const String& databaseN
 {
     quint64 quota = QWebSettings::offlineStorageDefaultQuota();
 
-    if (!DatabaseTracker::tracker().hasEntryForOrigin(frame->document()->securityOrigin()))
-        DatabaseTracker::tracker().setQuota(frame->document()->securityOrigin(), quota);
+    if (!DatabaseManager::manager().hasEntryForOrigin(frame->document()->securityOrigin()))
+        DatabaseManager::manager().setQuota(frame->document()->securityOrigin(), quota);
 
     m_webPage->databaseQuotaExceeded(QWebFrameAdapter::kit(frame), databaseName);
 }

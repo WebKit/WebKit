@@ -26,7 +26,7 @@
 #import "WebDatabaseQuotaManager.h"
 
 #import "WebSecurityOriginInternal.h"
-#import <WebCore/DatabaseTracker.h>
+#import <WebCore/DatabaseManager.h>
 
 using namespace WebCore;
 
@@ -50,7 +50,7 @@ using namespace WebCore;
 - (unsigned long long)usage
 {
 #if ENABLE(SQL_DATABASE)
-    return DatabaseTracker::tracker().usageForOrigin([_origin _core]);
+    return DatabaseManager::manager().usageForOrigin([_origin _core]);
 #else
     return 0;
 #endif
@@ -59,7 +59,7 @@ using namespace WebCore;
 - (unsigned long long)quota
 {
 #if ENABLE(SQL_DATABASE)
-    return DatabaseTracker::tracker().quotaForOrigin([_origin _core]);
+    return DatabaseManager::manager().quotaForOrigin([_origin _core]);
 #else
     return 0;
 #endif
@@ -71,7 +71,7 @@ using namespace WebCore;
 - (void)setQuota:(unsigned long long)quota
 {
 #if ENABLE(SQL_DATABASE)
-    DatabaseTracker::tracker().setQuota([_origin _core], quota);
+    DatabaseManager::manager().setQuota([_origin _core], quota);
 #endif
 }
 

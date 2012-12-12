@@ -49,7 +49,7 @@
 #include "WebSecurityOrigin.h"
 #include <WebCore/AXObjectCache.h>
 #include <WebCore/ColorChooser.h>
-#include <WebCore/DatabaseTracker.h>
+#include <WebCore/DatabaseManager.h>
 #include <WebCore/FileChooser.h>
 #include <WebCore/FileIconLoader.h>
 #include <WebCore/Frame.h>
@@ -549,9 +549,10 @@ void WebChromeClient::exceededDatabaseQuota(Frame* frame, const String& database
     WebFrame* webFrame = static_cast<WebFrameLoaderClient*>(frame->loader()->client())->webFrame();
     SecurityOrigin* origin = frame->document()->securityOrigin();
 
-    DatabaseDetails details = DatabaseTracker::tracker().detailsForNameAndOrigin(databaseName, origin);
-    uint64_t currentQuota = DatabaseTracker::tracker().quotaForOrigin(origin);
-    uint64_t currentOriginUsage = DatabaseTracker::tracker().usageForOrigin(origin);
+    DatabaseManager& dbManager = DatabaseManager::manager();
+    DatabaseDetails details = dbManager.detailsForNameAndOrigin(databaseName, origin);
+    uint64_t currentQuota = dbManager.quotaForOrigin(origin);
+    uint64_t currentOriginUsage = dbManager.usageForOrigin(origin);
     uint64_t newQuota = 0;
     RefPtr<WebSecurityOrigin> webSecurityOrigin = WebSecurityOrigin::createFromDatabaseIdentifier(origin->databaseIdentifier());
     newQuota = m_page->injectedBundleUIClient().didExceedDatabaseQuota(m_page, webSecurityOrigin.get(), databaseName, details.displayName(), currentQuota, currentOriginUsage, details.currentUsage(), details.expectedUsage());
@@ -562,7 +563,7 @@ void WebChromeClient::exceededDatabaseQuota(Frame* frame, const String& database
             Messages::WebPageProxy::ExceededDatabaseQuota::Reply(newQuota), m_page->pageID());
     }
 
-    DatabaseTracker::tracker().setQuota(origin, newQuota);
+    dbManager.setQuota(origin, newQuota);
 }
 #endif
 

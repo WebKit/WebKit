@@ -21,7 +21,7 @@
 #include "webkitwebdatabase.h"
 
 #include "DatabaseDetails.h"
-#include "DatabaseTracker.h"
+#include "DatabaseManager.h"
 #include "webkitglobalsprivate.h"
 #include "webkitsecurityoriginprivate.h"
 #include <glib/gi18n-lib.h>
@@ -327,7 +327,7 @@ const gchar* webkit_web_database_get_display_name(WebKitWebDatabase* webDatabase
 
 #if ENABLE(SQL_DATABASE)
     WebKitWebDatabasePrivate* priv = webDatabase->priv;
-    WebCore::DatabaseDetails details = WebCore::DatabaseTracker::tracker().detailsForNameAndOrigin(priv->name, core(priv->origin));
+    WebCore::DatabaseDetails details = WebCore::DatabaseManager::manager().detailsForNameAndOrigin(priv->name, core(priv->origin));
     WTF::String displayName =  details.displayName();
 
     if (displayName.isEmpty())
@@ -359,7 +359,7 @@ guint64 webkit_web_database_get_expected_size(WebKitWebDatabase* webDatabase)
 
 #if ENABLE(SQL_DATABASE)
     WebKitWebDatabasePrivate* priv = webDatabase->priv;
-    WebCore::DatabaseDetails details = WebCore::DatabaseTracker::tracker().detailsForNameAndOrigin(priv->name, core(priv->origin));
+    WebCore::DatabaseDetails details = WebCore::DatabaseManager::manager().detailsForNameAndOrigin(priv->name, core(priv->origin));
     return details.expectedUsage();
 #else
     return 0;
@@ -382,7 +382,7 @@ guint64 webkit_web_database_get_size(WebKitWebDatabase* webDatabase)
 
 #if ENABLE(SQL_DATABASE)
     WebKitWebDatabasePrivate* priv = webDatabase->priv;
-    WebCore::DatabaseDetails details = WebCore::DatabaseTracker::tracker().detailsForNameAndOrigin(priv->name, core(priv->origin));
+    WebCore::DatabaseDetails details = WebCore::DatabaseManager::manager().detailsForNameAndOrigin(priv->name, core(priv->origin));
     return details.currentUsage();
 #else
     return 0;
@@ -406,7 +406,7 @@ const gchar* webkit_web_database_get_filename(WebKitWebDatabase* webDatabase)
 #if ENABLE(SQL_DATABASE)
     WebKitWebDatabasePrivate* priv = webDatabase->priv;
     WTF::String coreName = WTF::String::fromUTF8(priv->name);
-    WTF::String corePath = WebCore::DatabaseTracker::tracker().fullPathForDatabase(core(priv->origin), coreName);
+    WTF::String corePath = WebCore::DatabaseManager::manager().fullPathForDatabase(core(priv->origin), coreName);
 
     if (corePath.isEmpty())
         return"";
@@ -435,7 +435,7 @@ void webkit_web_database_remove(WebKitWebDatabase* webDatabase)
 
 #if ENABLE(SQL_DATABASE)
     WebKitWebDatabasePrivate* priv = webDatabase->priv;
-    WebCore::DatabaseTracker::tracker().deleteDatabase(core(priv->origin), priv->name);
+    WebCore::DatabaseManager::manager().deleteDatabase(core(priv->origin), priv->name);
 #endif
 }
 
@@ -449,7 +449,7 @@ void webkit_web_database_remove(WebKitWebDatabase* webDatabase)
 void webkit_remove_all_web_databases()
 {
 #if ENABLE(SQL_DATABASE)
-    WebCore::DatabaseTracker::tracker().deleteAllDatabases();
+    WebCore::DatabaseManager::manager().deleteAllDatabases();
 #endif
 }
 
@@ -467,7 +467,7 @@ void webkit_remove_all_web_databases()
 const gchar* webkit_get_web_database_directory_path()
 {
 #if ENABLE(SQL_DATABASE)
-    WTF::String path = WebCore::DatabaseTracker::tracker().databaseDirectoryPath();
+    WTF::String path = WebCore::DatabaseManager::manager().databaseDirectoryPath();
 
     if (path.isEmpty())
         return "";
@@ -493,7 +493,7 @@ void webkit_set_web_database_directory_path(const gchar* path)
 {
 #if ENABLE(SQL_DATABASE)
     WTF::String corePath = WTF::String::fromUTF8(path);
-    WebCore::DatabaseTracker::tracker().setDatabaseDirectoryPath(corePath);
+    WebCore::DatabaseManager::manager().setDatabaseDirectoryPath(corePath);
 
     g_free(webkit_database_directory_path);
     webkit_database_directory_path = g_strdup(corePath.utf8().data());

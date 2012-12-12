@@ -32,7 +32,7 @@
 #import "WebDatabaseQuotaManager.h"
 #import "WebQuotaManager.h"
 #import <WebCore/KURL.h>
-#import <WebCore/DatabaseTracker.h>
+#import <WebCore/DatabaseManager.h>
 #import <WebCore/SecurityOrigin.h>
 
 using namespace WebCore;
@@ -161,14 +161,14 @@ using namespace WebCore;
 
 // FIXME: The following methods are deprecated and should removed later.
 // Clients should instead get a WebQuotaManager, and query / set the quota via the Manager.
-// NOTE: the <WebCore/DatabaseTracker.h> #include should be removed as well.
+// NOTE: the <WebCore/DatabaseManager.h> #include should be removed as well.
 
 @implementation WebSecurityOrigin (Deprecated)
 
 - (unsigned long long)usage
 {
 #if ENABLE(SQL_DATABASE)
-    return DatabaseTracker::tracker().usageForOrigin(reinterpret_cast<SecurityOrigin*>(_private));
+    return DatabaseManager::manager().usageForOrigin(reinterpret_cast<SecurityOrigin*>(_private));
 #else
     return 0;
 #endif
@@ -177,7 +177,7 @@ using namespace WebCore;
 - (unsigned long long)quota
 {
 #if ENABLE(SQL_DATABASE)
-    return DatabaseTracker::tracker().quotaForOrigin(reinterpret_cast<SecurityOrigin*>(_private));
+    return DatabaseManager::manager().quotaForOrigin(reinterpret_cast<SecurityOrigin*>(_private));
 #else
     return 0;
 #endif
@@ -186,7 +186,7 @@ using namespace WebCore;
 - (void)setQuota:(unsigned long long)quota
 {
 #if ENABLE(SQL_DATABASE)
-    DatabaseTracker::tracker().setQuota(reinterpret_cast<SecurityOrigin*>(_private), quota);
+    DatabaseManager::manager().setQuota(reinterpret_cast<SecurityOrigin*>(_private), quota);
 #endif
 }
 

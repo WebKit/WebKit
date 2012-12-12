@@ -31,10 +31,10 @@
 
 #if ENABLE(SQL_DATABASE)
 
-#import "WebDatabaseTrackerClient.h"
+#import "WebDatabaseManagerClient.h"
 #import "WebSecurityOriginInternal.h"
 
-#import <WebCore/DatabaseTracker.h>
+#import <WebCore/DatabaseManager.h>
 #import <WebCore/SecurityOrigin.h>
 
 using namespace WebCore;
@@ -62,7 +62,7 @@ static NSString *databasesDirectoryPath();
 - (NSArray *)origins
 {
     Vector<RefPtr<SecurityOrigin> > coreOrigins;
-    DatabaseTracker::tracker().origins(coreOrigins);
+    DatabaseManager::manager().origins(coreOrigins);
     NSMutableArray *webOrigins = [[NSMutableArray alloc] initWithCapacity:coreOrigins.size()];
 
     for (unsigned i = 0; i < coreOrigins.size(); ++i) {
@@ -77,7 +77,7 @@ static NSString *databasesDirectoryPath();
 - (NSArray *)databasesWithOrigin:(WebSecurityOrigin *)origin
 {
     Vector<String> nameVector;
-    if (!DatabaseTracker::tracker().databaseNamesForOrigin([origin _core], nameVector))
+    if (!DatabaseManager::manager().databaseNamesForOrigin([origin _core], nameVector))
         return nil;
     
     NSMutableArray *names = [[NSMutableArray alloc] initWithCapacity:nameVector.size()];
@@ -92,7 +92,7 @@ static NSString *databasesDirectoryPath();
 {
     static id keys[3] = {WebDatabaseDisplayNameKey, WebDatabaseExpectedSizeKey, WebDatabaseUsageKey};
     
-    DatabaseDetails details = DatabaseTracker::tracker().detailsForNameAndOrigin(databaseIdentifier, [origin _core]);
+    DatabaseDetails details = DatabaseManager::manager().detailsForNameAndOrigin(databaseIdentifier, [origin _core]);
     if (details.name().isNull())
         return nil;
         
@@ -106,17 +106,17 @@ static NSString *databasesDirectoryPath();
 
 - (void)deleteAllDatabases
 {
-    DatabaseTracker::tracker().deleteAllDatabases();
+    DatabaseManager::manager().deleteAllDatabases();
 }
 
 - (BOOL)deleteOrigin:(WebSecurityOrigin *)origin
 {
-    return DatabaseTracker::tracker().deleteOrigin([origin _core]);
+    return DatabaseManager::manager().deleteOrigin([origin _core]);
 }
 
 - (BOOL)deleteDatabase:(NSString *)databaseIdentifier withOrigin:(WebSecurityOrigin *)origin
 {
-    return DatabaseTracker::tracker().deleteDatabase([origin _core], databaseIdentifier);
+    return DatabaseManager::manager().deleteDatabase([origin _core], databaseIdentifier);
 }
 
 @end
@@ -137,11 +137,13 @@ void WebKitInitializeDatabasesIfNecessary()
     if (initialized)
         return;
 
-    // Set the database root path in WebCore
-    DatabaseTracker::initializeTracker(databasesDirectoryPath());
+    DatabaseManager& dbManager = DatabaseManager::manager();
 
-    // Set the DatabaseTrackerClient
-    DatabaseTracker::tracker().setClient(WebDatabaseTrackerClient::sharedWebDatabaseTrackerClient());
+    // Set the database root path in WebCore
+    dbManager.initialize(databasesDirectoryPath());
+
+    // Set the DatabaseManagerClient
+    dbManager.setClient(WebDatabaseManagerClient::sharedWebDatabaseManagerClient());
     
     initialized = YES;
 }

@@ -30,7 +30,7 @@
 #include "ChromeClientWx.h"
 #include "Console.h"
 #if ENABLE(SQL_DATABASE)
-#include "DatabaseTracker.h"
+#include "DatabaseManager.h"
 #endif
 #include "FileChooser.h"
 #include "FileIconLoader.h"
@@ -427,8 +427,8 @@ void ChromeClientWx::exceededDatabaseQuota(Frame*, const String&)
     if (WebFrame* webFrame = m_webView->GetMainFrame())
         if (Frame* frame = webFrame->GetFrame())
             if (Document* document = frame->document())
-                if (!DatabaseTracker::tracker().hasEntryForOrigin(document->securityOrigin()))
-                    DatabaseTracker::tracker().setQuota(document->securityOrigin(), quota);
+                if (!DatabaseManager::manager().hasEntryForOrigin(document->securityOrigin()))
+                    DatabaseManager::manager().setQuota(document->securityOrigin(), quota);
 }
 #endif
 

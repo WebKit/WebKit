@@ -25,7 +25,7 @@
 #include "ApplicationCacheStorage.h"
 #include "CairoUtilitiesEfl.h"
 #include "CrossOriginPreflightResultCache.h"
-#include "DatabaseTracker.h"
+#include "DatabaseManager.h"
 #include "FontCache.h"
 #include "FrameView.h"
 #include "IconDatabase.h"
@@ -136,7 +136,7 @@ void ewk_settings_local_storage_database_origin_clear(const char* url)
 void ewk_settings_web_database_path_set(const char* path)
 {
 #if ENABLE(SQL_DATABASE)
-    WebCore::DatabaseTracker::tracker().setDatabaseDirectoryPath(WTF::String::fromUTF8(path));
+    WebCore::DatabaseManager::manager().setDatabaseDirectoryPath(WTF::String::fromUTF8(path));
     eina_stringshare_replace(&s_webDatabasePath, path);
 #endif
 }

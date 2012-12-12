@@ -1414,6 +1414,7 @@ HEADERS += \
     Modules/webdatabase/DatabaseAuthorizer.h \
     Modules/webdatabase/Database.h \
     Modules/webdatabase/DatabaseCallback.h \
+    Modules/webdatabase/DatabaseManager.h \
     Modules/webdatabase/DatabaseSync.h \
     Modules/webdatabase/DatabaseTask.h \
     Modules/webdatabase/DatabaseThread.h \
@@ -2970,6 +2971,7 @@ use?(PLUGIN_BACKEND_XLIB) {
 enable?(SQL_DATABASE) {
     SOURCES += \
         Modules/webdatabase/ChangeVersionWrapper.cpp \
+        Modules/webdatabase/DatabaseManager.cpp \
         Modules/webdatabase/DatabaseTask.cpp \
         Modules/webdatabase/DatabaseThread.cpp \
         Modules/webdatabase/DatabaseTracker.cpp \

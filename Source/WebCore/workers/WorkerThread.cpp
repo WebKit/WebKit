@@ -30,7 +30,6 @@
 
 #include "WorkerThread.h"
 
-#include "DatabaseContext.h"
 #include "DedicatedWorkerContext.h"
 #include "InspectorInstrumentation.h"
 #include "KURL.h"
@@ -43,8 +42,8 @@
 #include <wtf/text/WTFString.h>
 
 #if ENABLE(SQL_DATABASE)
+#include "DatabaseManager.h"
 #include "DatabaseTask.h"
-#include "DatabaseTracker.h"
 #endif
 
 #if PLATFORM(CHROMIUM)
@@ -231,7 +230,7 @@ public:
 #if ENABLE(SQL_DATABASE)
         // FIXME: Should we stop the databases as part of stopActiveDOMObjects() below?
         DatabaseTaskSynchronizer cleanupSync;
-        DatabaseContext::stopDatabases(workerContext, &cleanupSync);
+        DatabaseManager::manager().stopDatabases(workerContext, &cleanupSync);
 #endif
 
         workerContext->stopActiveDOMObjects();
@@ -266,7 +265,7 @@ void WorkerThread::stop()
         m_workerContext->script()->scheduleExecutionTermination();
 
 #if ENABLE(SQL_DATABASE)
-        DatabaseTracker::tracker().interruptAllDatabasesForContext(m_workerContext.get());
+        DatabaseManager::manager().interruptAllDatabasesForContext(m_workerContext.get());
 #endif
         m_runLoop.postTask(WorkerThreadShutdownStartTask::create());
     }

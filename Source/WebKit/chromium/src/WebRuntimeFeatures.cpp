@@ -31,7 +31,7 @@
 #include "config.h"
 #include "WebRuntimeFeatures.h"
 
-#include "AbstractDatabase.h"
+#include "DatabaseManager.h"
 #include "RuntimeEnabledFeatures.h"
 #include "WebMediaPlayerClientImpl.h"
 #include "Modules/websockets/WebSocket.h"
@@ -45,14 +45,14 @@ namespace WebKit {
 void WebRuntimeFeatures::enableDatabase(bool enable)
 {
 #if ENABLE(SQL_DATABASE)
-    AbstractDatabase::setIsAvailable(enable);
+    DatabaseManager::manager().setIsAvailable(enable);
 #endif
 }
 
 bool WebRuntimeFeatures::isDatabaseEnabled()
 {
 #if ENABLE(SQL_DATABASE)
-    return AbstractDatabase::isAvailable();
+    return DatabaseManager::manager().isAvailable();
 #else
     return false;
 #endif

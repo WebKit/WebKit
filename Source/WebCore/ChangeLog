@@ -1,3 +1,71 @@
+2012-12-12  Mark Lam  <mark.lam@apple.com>
+
+        Encapsulate externally used webdatabase APIs in DatabaseManager.
+        https://bugs.webkit.org/show_bug.cgi?id=104741.
+
+        Reviewed by Sam Weinig.
+
+        Use DatabaseManager instead of accessing DatabaseTracker, AbstractDatabase,
+        and DatabaseContext directly. This is to prepare for upcoming webkit2
+        refactoring.
+
+        No new tests.
+
+        * CMakeLists.txt:
+        * Modules/webdatabase/DatabaseManager.cpp: Added.
+        (WebCore::DatabaseManager::manager):
+        (WebCore::DatabaseManager::DatabaseManager):
+        (WebCore::DatabaseManager::initialize):
+        (WebCore::DatabaseManager::setClient):
+        (WebCore::DatabaseManager::isAvailable):
+        (WebCore::DatabaseManager::setIsAvailable):
+        (WebCore::DatabaseManager::hasOpenDatabases):
+        (WebCore::DatabaseManager::stopDatabases):
+        (WebCore::DatabaseManager::fullPathForDatabase):
+        (WebCore::DatabaseManager::databaseDirectoryPath):
+        (WebCore::DatabaseManager::setDatabaseDirectoryPath):
+        (WebCore::DatabaseManager::hasEntryForOrigin):
+        (WebCore::DatabaseManager::origins):
+        (WebCore::DatabaseManager::databaseNamesForOrigin):
+        (WebCore::DatabaseManager::detailsForNameAndOrigin):
+        (WebCore::DatabaseManager::usageForOrigin):
+        (WebCore::DatabaseManager::quotaForOrigin):
+        (WebCore::DatabaseManager::setQuota):
+        (WebCore::DatabaseManager::deleteAllDatabases):
+        (WebCore::DatabaseManager::deleteOrigin):
+        (WebCore::DatabaseManager::deleteDatabase):
+        (WebCore::DatabaseManager::closeDatabasesImmediately):
+        (WebCore::DatabaseManager::interruptAllDatabasesForContext):
+        * Modules/webdatabase/DatabaseManager.h: Added.
+        (DatabaseManager):
+        (WebCore::DatabaseManager::~DatabaseManager):
+        * Modules/webdatabase/DatabaseManagerClient.h: Copied from Source/WebCore/Modules/webdatabase/DatabaseTrackerClient.h.
+        (WebCore::DatabaseManagerClient::~DatabaseManagerClient):
+        * Modules/webdatabase/DatabaseTracker.cpp:
+        (WebCore::DatabaseTracker::setClient):
+        * Modules/webdatabase/DatabaseTracker.h:
+        (DatabaseTracker):
+        * Modules/webdatabase/DatabaseTrackerClient.h: Removed.
+        * Target.pri:
+        * WebCore.exp.in:
+        * WebCore.gyp/WebCore.gyp:
+        * WebCore.gypi:
+        * WebCore.order:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * bindings/generic/RuntimeEnabledFeatures.cpp:
+        (WebCore::RuntimeEnabledFeatures::openDatabaseEnabled):
+        (WebCore::RuntimeEnabledFeatures::openDatabaseSyncEnabled):
+        * history/PageCache.cpp:
+        (WebCore::logCanCacheFrameDecision):
+        (WebCore::PageCache::canCachePageContainingThisFrame):
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::stopLoading):
+        * page/DOMWindow.cpp:
+        * workers/WorkerThread.cpp:
+        (WebCore::WorkerThreadShutdownStartTask::performTask):
+        (WebCore::WorkerThread::stop):
+
 2012-12-12  Tony Chang  <tony@chromium.org>
 
         [chromium] don't write additional idl files to a gyp temp file

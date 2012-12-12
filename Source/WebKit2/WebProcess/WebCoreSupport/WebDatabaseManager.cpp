@@ -35,7 +35,7 @@
 #include "WebDatabaseManagerProxyMessages.h"
 #include "WebProcess.h"
 #include <WebCore/DatabaseDetails.h>
-#include <WebCore/DatabaseTracker.h>
+#include <WebCore/DatabaseManager.h>
 #include <WebCore/SecurityOrigin.h>
 
 using namespace WebCore;
@@ -50,12 +50,12 @@ WebDatabaseManager& WebDatabaseManager::shared()
 
 void WebDatabaseManager::initialize(const String& databaseDirectory)
 {
-    DatabaseTracker::initializeTracker(databaseDirectory);
+    DatabaseManager::manager().initialize(databaseDirectory);
 }
 
 WebDatabaseManager::WebDatabaseManager()
 {
-    DatabaseTracker::tracker().setClient(this);
+    DatabaseManager::manager().setClient(this);
 }
 
 WebDatabaseManager::~WebDatabaseManager()
@@ -71,12 +71,12 @@ void WebDatabaseManager::getDatabasesByOrigin(uint64_t callbackID) const
 {
     WebProcess::LocalTerminationDisabler terminationDisabler(WebProcess::shared());
 
-    // FIXME: This could be made more efficient by adding a function to DatabaseTracker
+    // FIXME: This could be made more efficient by adding a function to DatabaseManager
     // to get both the origins and the Vector of DatabaseDetails for each origin in one
     // shot.  That would avoid taking the numerous locks this requires.
 
     Vector<RefPtr<SecurityOrigin> > origins;
-    DatabaseTracker::tracker().origins(origins);
+    DatabaseManager::manager().origins(origins);
 
     Vector<OriginAndDatabases> originAndDatabasesVector;
     originAndDatabasesVector.reserveInitialCapacity(origins.size());
@@ -85,13 +85,13 @@ void WebDatabaseManager::getDatabasesByOrigin(uint64_t callbackID) const
         OriginAndDatabases originAndDatabases;
 
         Vector<String> nameVector;
-        if (!DatabaseTracker::tracker().databaseNamesForOrigin(origins[i].get(), nameVector))
+        if (!DatabaseManager::manager().databaseNamesForOrigin(origins[i].get(), nameVector))
             continue;
 
         Vector<DatabaseDetails> detailsVector;
         detailsVector.reserveInitialCapacity(nameVector.size());
         for (size_t j = 0; j < nameVector.size(); j++) {
-            DatabaseDetails details = DatabaseTracker::tracker().detailsForNameAndOrigin(nameVector[j], origins[i].get());
+            DatabaseDetails details = DatabaseManager::manager().detailsForNameAndOrigin(nameVector[j], origins[i].get());
             if (details.name().isNull())
                 continue;
 
@@ -102,8 +102,8 @@ void WebDatabaseManager::getDatabasesByOrigin(uint64_t callbackID) const
             continue;
 
         originAndDatabases.originIdentifier = origins[i]->databaseIdentifier();
-        originAndDatabases.originQuota = DatabaseTracker::tracker().quotaForOrigin(origins[i].get());
-        originAndDatabases.originUsage = DatabaseTracker::tracker().usageForOrigin(origins[i].get());
+        originAndDatabases.originQuota = DatabaseManager::manager().quotaForOrigin(origins[i].get());
+        originAndDatabases.originUsage = DatabaseManager::manager().usageForOrigin(origins[i].get());
         originAndDatabases.databases.swap(detailsVector); 
         originAndDatabasesVector.append(originAndDatabases);
     }
@@ -116,7 +116,7 @@ void WebDatabaseManager::getDatabaseOrigins(uint64_t callbackID) const
     WebProcess::LocalTerminationDisabler terminationDisabler(WebProcess::shared());
 
     Vector<RefPtr<SecurityOrigin> > origins;
-    DatabaseTracker::tracker().origins(origins);
+    DatabaseManager::manager().origins(origins);
 
     size_t numOrigins = origins.size();
 
@@ -134,7 +134,7 @@ void WebDatabaseManager::deleteDatabaseWithNameForOrigin(const String& databaseI
     if (!origin)
         return;
 
-    DatabaseTracker::tracker().deleteDatabase(origin.get(), databaseIdentifier);
+    DatabaseManager::manager().deleteDatabase(origin.get(), databaseIdentifier);
 }
 
 void WebDatabaseManager::deleteDatabasesForOrigin(const String& originIdentifier) const
@@ -145,14 +145,14 @@ void WebDatabaseManager::deleteDatabasesForOrigin(const String& originIdentifier
     if (!origin)
         return;
 
-    DatabaseTracker::tracker().deleteOrigin(origin.get());
+    DatabaseManager::manager().deleteOrigin(origin.get());
 }
 
 void WebDatabaseManager::deleteAllDatabases() const
 {
     WebProcess::LocalTerminationDisabler terminationDisabler(WebProcess::shared());
 
-    DatabaseTracker::tracker().deleteAllDatabases();
+    DatabaseManager::manager().deleteAllDatabases();
 }
 
 void WebDatabaseManager::setQuotaForOrigin(const String& originIdentifier, unsigned long long quota) const
@@ -167,7 +167,7 @@ void WebDatabaseManager::setQuotaForOrigin(const String& originIdentifier, unsig
     if (!origin)
         return;
 
-    DatabaseTracker::tracker().setQuota(origin.get(), quota);
+    DatabaseManager::manager().setQuota(origin.get(), quota);
 }
 
 void WebDatabaseManager::dispatchDidModifyOrigin(SecurityOrigin* origin)

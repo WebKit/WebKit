@@ -1,3 +1,22 @@
+2012-12-12  Mark Lam  <mark.lam@apple.com>
+
+        Encapsulate externally used webdatabase APIs in DatabaseManager.
+        https://bugs.webkit.org/show_bug.cgi?id=104741.
+
+        Reviewed by Sam Weinig.
+
+        Use DatabaseManager instead of accessing DatabaseTracker, AbstractDatabase,
+        and DatabaseContext directly. This is to prepare for upcoming webkit2
+        refactoring.
+
+        * WebKitSupport/ChromeClientWx.cpp:
+        (WebCore::ChromeClientWx::exceededDatabaseQuota):
+        * WebView.cpp:
+        (WebKit::WebView::SetDatabaseDirectory):
+        (WebKit::WebView::GetDatabaseDirectory):
+        (WebKit::WebView::SetDatabasesEnabled):
+        (WebKit::WebView::AreDatabasesEnabled):
+
 2012-12-12  Alexey Proskuryakov  <ap@apple.com>
 
         Make LOG() work in WebProcess and NetworkProcess

@@ -31,7 +31,7 @@
 #include "config.h"
 #include "RuntimeEnabledFeatures.h"
 
-#include "AbstractDatabase.h"
+#include "DatabaseManager.h"
 #include "MediaPlayer.h"
 #include "SharedWorkerRepository.h"
 #include "WebSocket.h"
@@ -150,12 +150,12 @@ bool RuntimeEnabledFeatures::webSocketEnabled()
 #if ENABLE(SQL_DATABASE)
 bool RuntimeEnabledFeatures::openDatabaseEnabled()
 {
-    return AbstractDatabase::isAvailable();
+    return DatabaseManager::manager().isAvailable();
 }
 
 bool RuntimeEnabledFeatures::openDatabaseSyncEnabled()
 {
-    return AbstractDatabase::isAvailable();
+    return DatabaseManager::manager().isAvailable();
 }
 #endif
 

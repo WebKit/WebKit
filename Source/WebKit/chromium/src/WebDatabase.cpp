@@ -32,7 +32,7 @@
 #include "WebDatabase.h"
 
 #include "AbstractDatabase.h"
-#include "DatabaseTracker.h"
+#include "DatabaseManager.h"
 #include "QuotaTracker.h"
 #include "SecurityOrigin.h"
 #include "WebDatabaseObserver.h"
@@ -123,7 +123,7 @@ void WebDatabase::resetSpaceAvailable(const WebString& originIdentifier)
 void WebDatabase::closeDatabaseImmediately(const WebString& originIdentifier, const WebString& databaseName)
 {
 #if ENABLE(SQL_DATABASE)
-    DatabaseTracker::tracker().closeDatabasesImmediately(originIdentifier, databaseName);
+    DatabaseManager::manager().closeDatabasesImmediately(originIdentifier, databaseName);
 #endif
 }
 

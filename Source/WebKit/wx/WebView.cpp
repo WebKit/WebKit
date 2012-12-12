@@ -76,8 +76,7 @@
 #include <wtf/text/WTFString.h>
 
 #if ENABLE(SQL_DATABASE)
-#include "AbstractDatabase.h"
-#include "DatabaseTracker.h"
+#include "DatabaseManager.h"
 #endif
 
 #include "wx/wxprec.h"
@@ -1126,7 +1125,7 @@ bool WebView::ShouldClose() const
 void WebView::SetDatabaseDirectory(const wxString& databaseDirectory)
 {
 #if ENABLE(SQL_DATABASE)
-    WebCore::DatabaseTracker::tracker().setDatabaseDirectoryPath(databaseDirectory);
+    WebCore::DatabaseManager::manager().setDatabaseDirectoryPath(databaseDirectory);
 #endif
 }
 
@@ -1134,7 +1133,7 @@ void WebView::SetDatabaseDirectory(const wxString& databaseDirectory)
 wxString WebView::GetDatabaseDirectory()
 {
 #if ENABLE(SQL_DATABASE)
-    return WebCore::DatabaseTracker::tracker().databaseDirectoryPath();
+    return WebCore::DatabaseManager::manager().databaseDirectoryPath();
 #else
     return wxEmptyString;
 #endif
@@ -1144,7 +1143,8 @@ wxString WebView::GetDatabaseDirectory()
 void WebView::SetDatabasesEnabled(bool enabled)
 {
 #if ENABLE(SQL_DATABASE)
-    WebCore::AbstractDatabase::setIsAvailable(enabled);
+    WebCore::DatabaseManager& dbManager = WebCore::DatabaseManager::manager();
+    manager.setIsAvailable(enabled);
 #endif
 }
 
@@ -1152,7 +1152,8 @@ void WebView::SetDatabasesEnabled(bool enabled)
 bool WebView::AreDatabasesEnabled()
 {
 #if ENABLE(SQL_DATABASE)
-    return WebCore::AbstractDatabase::isAvailable();
+    WebCore::DatabaseManager& dbManager = WebCore::DatabaseManager::manager();
+    return dbManager.isAvailable();
 #endif
     return false;
 }

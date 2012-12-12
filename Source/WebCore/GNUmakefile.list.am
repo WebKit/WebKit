@@ -2098,13 +2098,15 @@ webcore_modules_sources += \
 	Source/WebCore/Modules/webdatabase/DatabaseContext.cpp \
 	Source/WebCore/Modules/webdatabase/DatabaseContext.h \
 	Source/WebCore/Modules/webdatabase/DatabaseDetails.h \
+	Source/WebCore/Modules/webdatabase/DatabaseManager.cpp \
+	Source/WebCore/Modules/webdatabase/DatabaseManager.h \
+	Source/WebCore/Modules/webdatabase/DatabaseManagerClient.h \
 	Source/WebCore/Modules/webdatabase/DatabaseSync.cpp \
 	Source/WebCore/Modules/webdatabase/DatabaseSync.h \
 	Source/WebCore/Modules/webdatabase/DatabaseTask.cpp \
 	Source/WebCore/Modules/webdatabase/DatabaseTask.h \
 	Source/WebCore/Modules/webdatabase/DatabaseThread.cpp \
 	Source/WebCore/Modules/webdatabase/DatabaseThread.h \
-	Source/WebCore/Modules/webdatabase/DatabaseTrackerClient.h \
 	Source/WebCore/Modules/webdatabase/DatabaseTracker.cpp \
 	Source/WebCore/Modules/webdatabase/DatabaseTracker.h \
 	Source/WebCore/Modules/webdatabase/OriginQuotaManager.cpp \

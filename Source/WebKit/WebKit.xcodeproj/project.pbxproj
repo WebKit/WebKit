@@ -92,8 +92,8 @@
 		4BF99F910AE050BC00815C2B /* WebEditorClient.mm in Sources */ = {isa = PBXBuildFile; fileRef = 4BF99F8F0AE050BC00815C2B /* WebEditorClient.mm */; };
 		511F3FD50CECC88F00852565 /* WebDatabaseManager.mm in Sources */ = {isa = PBXBuildFile; fileRef = 511F3FD10CECC88F00852565 /* WebDatabaseManager.mm */; };
 		511F3FD60CECC88F00852565 /* WebDatabaseManagerPrivate.h in Headers */ = {isa = PBXBuildFile; fileRef = 511F3FD20CECC88F00852565 /* WebDatabaseManagerPrivate.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		511F3FD70CECC88F00852565 /* WebDatabaseTrackerClient.h in Headers */ = {isa = PBXBuildFile; fileRef = 511F3FD30CECC88F00852565 /* WebDatabaseTrackerClient.h */; };
-		511F3FD80CECC88F00852565 /* WebDatabaseTrackerClient.mm in Sources */ = {isa = PBXBuildFile; fileRef = 511F3FD40CECC88F00852565 /* WebDatabaseTrackerClient.mm */; };
+		511F3FD70CECC88F00852565 /* WebDatabaseManagerClient.h in Headers */ = {isa = PBXBuildFile; fileRef = 511F3FD30CECC88F00852565 /* WebDatabaseManagerClient.h */; };
+		511F3FD80CECC88F00852565 /* WebDatabaseManagerClient.mm in Sources */ = {isa = PBXBuildFile; fileRef = 511F3FD40CECC88F00852565 /* WebDatabaseManagerClient.mm */; };
 		51494CD60C7EBDE0004178C5 /* WebIconDatabaseClient.h in Headers */ = {isa = PBXBuildFile; fileRef = 51494CD40C7EBDE0004178C5 /* WebIconDatabaseClient.h */; };
 		51494CD70C7EBDE0004178C5 /* WebIconDatabaseClient.mm in Sources */ = {isa = PBXBuildFile; fileRef = 51494CD50C7EBDE0004178C5 /* WebIconDatabaseClient.mm */; };
 		51494D240C7EC1B7004178C5 /* WebNSNotificationCenterExtras.h in Headers */ = {isa = PBXBuildFile; fileRef = 51494D220C7EC1B6004178C5 /* WebNSNotificationCenterExtras.h */; };
@@ -489,8 +489,8 @@
 		4BF99F8F0AE050BC00815C2B /* WebEditorClient.mm */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.objcpp; path = WebEditorClient.mm; sourceTree = "<group>"; };
 		511F3FD10CECC88F00852565 /* WebDatabaseManager.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebDatabaseManager.mm; sourceTree = "<group>"; };
 		511F3FD20CECC88F00852565 /* WebDatabaseManagerPrivate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebDatabaseManagerPrivate.h; sourceTree = "<group>"; };
-		511F3FD30CECC88F00852565 /* WebDatabaseTrackerClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebDatabaseTrackerClient.h; sourceTree = "<group>"; };
-		511F3FD40CECC88F00852565 /* WebDatabaseTrackerClient.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebDatabaseTrackerClient.mm; sourceTree = "<group>"; };
+		511F3FD30CECC88F00852565 /* WebDatabaseManagerClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebDatabaseManagerClient.h; sourceTree = "<group>"; };
+		511F3FD40CECC88F00852565 /* WebDatabaseManagerClient.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebDatabaseManagerClient.mm; sourceTree = "<group>"; };
 		513D422E034CF55A00CA2ACD /* WebResourceLoadDelegate.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = WebResourceLoadDelegate.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		51443F9A0429392B00CA2D3A /* WebPolicyDelegate.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = WebPolicyDelegate.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		51443F9B0429392B00CA2D3A /* WebPolicyDelegate.mm */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebPolicyDelegate.mm; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
@@ -1046,12 +1046,12 @@
 			isa = PBXGroup;
 			children = (
 				511F3FD10CECC88F00852565 /* WebDatabaseManager.mm */,
+				511F3FD30CECC88F00852565 /* WebDatabaseManagerClient.h */,
+				511F3FD40CECC88F00852565 /* WebDatabaseManagerClient.mm */,
 				51AEDEF00CECF45700854328 /* WebDatabaseManagerInternal.h */,
 				511F3FD20CECC88F00852565 /* WebDatabaseManagerPrivate.h */,
 				A5DEFC0D11D5343E00885273 /* WebDatabaseQuotaManager.h */,
 				A5DEFC0E11D5343E00885273 /* WebDatabaseQuotaManager.mm */,
-				511F3FD30CECC88F00852565 /* WebDatabaseTrackerClient.h */,
-				511F3FD40CECC88F00852565 /* WebDatabaseTrackerClient.mm */,
 				3AB02AF512C1319B00FBB694 /* WebStorageManager.mm */,
 				3AE15D4F12DBDED4009323C8 /* WebStorageManagerInternal.h */,
 				3AB02AFF12C132B200FBB694 /* WebStorageManagerPrivate.h */,
@@ -1445,10 +1445,10 @@
 				065AD5A30B0C32C7005A2B1D /* WebContextMenuClient.h in Headers */,
 				939810160824BF01008DF038 /* WebCoreStatistics.h in Headers */,
 				93E2A1A4123B0B3C009FE12A /* WebDashboardRegion.h in Headers */,
+				511F3FD70CECC88F00852565 /* WebDatabaseManagerClient.h in Headers */,
 				51AEDEF10CECF45700854328 /* WebDatabaseManagerInternal.h in Headers */,
 				511F3FD60CECC88F00852565 /* WebDatabaseManagerPrivate.h in Headers */,
 				A5DEFC0F11D5343E00885273 /* WebDatabaseQuotaManager.h in Headers */,
-				511F3FD70CECC88F00852565 /* WebDatabaseTrackerClient.h in Headers */,
 				9398104B0824BF01008DF038 /* WebDataSource.h in Headers */,
 				658A40960A14853B005E6987 /* WebDataSourceInternal.h in Headers */,
 				9398104C0824BF01008DF038 /* WebDataSourcePrivate.h in Headers */,
@@ -1869,8 +1869,8 @@
 				939810BF0824BF01008DF038 /* WebCoreStatistics.mm in Sources */,
 				93E2A1A5123B0B3C009FE12A /* WebDashboardRegion.mm in Sources */,
 				511F3FD50CECC88F00852565 /* WebDatabaseManager.mm in Sources */,
+				511F3FD80CECC88F00852565 /* WebDatabaseManagerClient.mm in Sources */,
 				A5DEFC1011D5343E00885273 /* WebDatabaseQuotaManager.mm in Sources */,
-				511F3FD80CECC88F00852565 /* WebDatabaseTrackerClient.mm in Sources */,
 				939810ED0824BF01008DF038 /* WebDataSource.mm in Sources */,
 				939810EF0824BF01008DF038 /* WebDefaultContextMenuDelegate.mm in Sources */,
 				9398111B0824BF01008DF038 /* WebDefaultEditingDelegate.m in Sources */,

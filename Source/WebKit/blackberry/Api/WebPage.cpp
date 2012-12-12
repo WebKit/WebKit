@@ -39,8 +39,8 @@
 #include "CredentialTransformData.h"
 #include "DOMSupport.h"
 #include "Database.h"
+#include "DatabaseManager.h"
 #include "DatabaseSync.h"
-#include "DatabaseTracker.h"
 #include "DefaultTapHighlight.h"
 #include "DeviceMotionClientBlackBerry.h"
 #include "DeviceOrientationClientBlackBerry.h"
@@ -5843,13 +5843,13 @@ void WebPagePrivate::didChangeSettings(WebSettings* webSettings)
     coreSettings->setCookieEnabled(webSettings->areCookiesEnabled());
 
 #if ENABLE(SQL_DATABASE)
-    // DatabaseTracker can only be initialized for once, so it doesn't
-    // make sense to change database path after DatabaseTracker has
+    // DatabaseManager can only be initialized for once, so it doesn't
+    // make sense to change database path after DatabaseManager has
     // already been initialized.
     static bool dbinit = false;
     if (!dbinit && !webSettings->databasePath().empty()) {
         dbinit = true;
-        DatabaseTracker::initializeTracker(webSettings->databasePath());
+        DatabaseManager::initialize(webSettings->databasePath());
     }
 
     // The directory of cacheStorage for one page group can only be initialized once.

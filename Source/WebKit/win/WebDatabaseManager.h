@@ -32,9 +32,9 @@
 #if ENABLE(SQL_DATABASE)
 
 #include "WebKit.h"
-#include <WebCore/DatabaseTrackerClient.h>
+#include <WebCore/DatabaseManagerClient.h>
 
-class WebDatabaseManager : public IWebDatabaseManager, private WebCore::DatabaseTrackerClient {
+class WebDatabaseManager : public IWebDatabaseManager, private WebCore::DatabaseManagerClient {
 public:
     static WebDatabaseManager* createInstance();
 
@@ -76,7 +76,7 @@ public:
         /* [in] */ BSTR origin,
         /* [in] */ unsigned long long quota);
 
-    // DatabaseTrackerClient
+    // DatabaseManagerClient
     virtual void dispatchDidModifyOrigin(WebCore::SecurityOrigin*);
     virtual void dispatchDidModifyDatabase(WebCore::SecurityOrigin*, const WTF::String& databaseName);
 
