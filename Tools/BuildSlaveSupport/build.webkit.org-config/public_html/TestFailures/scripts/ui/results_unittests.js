@@ -68,14 +68,14 @@ var kExampleReftestResults = {
         "Mock Builder": {
             "expected": "PASS",
             "actual": "IMAGE",
-            "is_reftest": true
+            "reftest_type": ["=="]
         }
     },
     "mismatch-reftest.html": {
         "Mock Builder": {
             "expected": "PASS",
             "actual": "IMAGE",
-            "is_mismatch_reftest": true
+            "reftest_type": ["!="]
         }
     }
 };

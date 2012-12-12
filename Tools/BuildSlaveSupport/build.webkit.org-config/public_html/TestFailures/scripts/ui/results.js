@@ -187,7 +187,7 @@ function isAnyReftest(testName, resultsByTest)
     return Object.keys(resultsByTest[testName]).map(function(builder) {
         return resultsByTest[testName][builder];
     }).some(function(resultNode) {
-        return resultNode.is_reftest || resultNode.is_mismatch_reftest
+        return resultNode.reftest_type && resultNode.reftest_type.length;
     });
 }
 

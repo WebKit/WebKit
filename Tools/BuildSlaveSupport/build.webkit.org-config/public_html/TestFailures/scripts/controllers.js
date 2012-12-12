@@ -30,23 +30,42 @@ var controllers = controllers || {};
 var kCheckoutUnavailableMessage = 'Failed! Garden-o-matic needs a local server to modify your working copy. Please run "webkit-patch garden-o-matic" start the local server.';
 
 // FIXME: Where should this function go?
-function rebaselineWithStatusUpdates(failureInfoList)
+function rebaselineWithStatusUpdates(failureInfoList, resultsByTest)
 {
-    // FIXME: If a test is a reftest, webkit-patch rebaseline-test should error out
-    // and we should alert (modal dialog?) the user.
     var statusView = new ui.StatusArea('Rebaseline');
     var id = statusView.newId();
 
     var testNames = base.uniquifyArray(failureInfoList.map(function(failureInfo) { return failureInfo.testName; }));
-    var testName = testNames.length == 1 ? testNames[0] : testNames.length + ' tests';
-    statusView.addMessage(id, 'Performing rebaseline of ' + testName + '...');
 
-    checkout.rebaseline(failureInfoList, function() {
-        statusView.addFinalMessage(id, 'Rebaseline done! Please land with "webkit-patch land-cowhand".');
-    }, function(failureInfo) {
-        statusView.addMessage(id, failureInfo.testName + ' on ' + ui.displayNameForBuilder(failureInfo.builderName));
-    }, function() {
-        statusView.addFinalMessage(id, kCheckoutUnavailableMessage);
+    var failuresToRebaseline = [];
+    testNames.forEach(function(testName) {
+        if (isAnyReftest(testName, resultsByTest)) 
+            statusView.addMessage(id, testName + ' is a ref test, skipping');
+        else {
+            failuresToRebaseline.push(testName);
+            statusView.addMessage(id, 'Rebaselining ' + testName + '...');
+        }
+    });
+    
+    if (failuresToRebaseline.length) {
+        checkout.rebaseline(failuresToRebaseline, function() {
+            statusView.addFinalMessage(id, 'Rebaseline done! Please land with "webkit-patch land-cowhand".');
+        }, function(failureInfo) {
+            statusView.addMessage(id, failureInfo.testName + ' on ' + ui.displayNameForBuilder(failureInfo.builderName));
+        }, function() {
+            statusView.addFinalMessage(id, kCheckoutUnavailableMessage);
+        });
+    } else
+        statusView.addFinalMessage(id, 'No tests left to rebaseline!')
+}
+
+// FIXME: This is duplicated from ui/results.js :(.
+function isAnyReftest(testName, resultsByTest)
+{
+    return Object.keys(resultsByTest[testName]).map(function(builder) {
+        return resultsByTest[testName][builder];
+    }).some(function(resultNode) {
+        return resultNode.reftest_type && resultNode.reftest_type.length;
     });
 }
 
@@ -98,7 +117,7 @@ controllers.ResultsDetails = base.extends(Object, {
     },
     onRebaseline: function()
     {
-        rebaselineWithStatusUpdates(this._failureInfoList());
+        rebaselineWithStatusUpdates(this._failureInfoList(), this._resultsByTest);
         this._view.nextTest();
     },
     onUpdateExpectations: function()
@@ -206,7 +225,14 @@ var FailureStreamController = base.extends(Object, {
     },
     onRebaseline: function(failures)
     {
-        rebaselineWithStatusUpdates(this._toFailureInfoList(failures));
+        var testNameList = failures.testNameList();
+        var failuresByTest = base.filterDictionary(
+            this._resultsFilter(this._model.resultsByBuilder),
+            function(key) {
+                return testNameList.indexOf(key) != -1;
+            });
+
+        rebaselineWithStatusUpdates(this._toFailureInfoList(failures), failuresByTest);
     },
     onUpdateExpectations: function(failures)
     {
