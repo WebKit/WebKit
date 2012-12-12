@@ -1,3 +1,16 @@
+2012-12-12  Andras Becsi  <andras.becsi@digia.com>
+
+        [Qt][WK2] Fix the build on Mac
+
+        Unreviewed build fix.
+
+        Add missing virtual destructor with empty
+        definition to fix missing vtable error
+        in test util's LoadStartedCatcher.
+
+        * UIProcess/API/qt/tests/util.h:
+        (LoadStartedCatcher::~LoadStartedCatcher):
+
 2012-12-12  Alexey Proskuryakov  <ap@apple.com>
 
         Make LOG() work in WebProcess and NetworkProcess

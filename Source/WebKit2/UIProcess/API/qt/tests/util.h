@@ -42,6 +42,7 @@ class LoadStartedCatcher : public QObject {
     Q_OBJECT
 public:
     LoadStartedCatcher(QQuickWebView* webView);
+    virtual ~LoadStartedCatcher() { }
 public Q_SLOTS:
     void onLoadingChanged(QWebLoadRequest* loadRequest);
 Q_SIGNALS:
