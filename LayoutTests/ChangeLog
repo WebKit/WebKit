@@ -1,3 +1,15 @@
+2012-12-11  Emil A Eklund  <eae@chromium.org>
+
+        REGRESSION (Subpixel layout): Gray vertical lines appear when moving insertion point to right on Mac
+        https://bugs.webkit.org/show_bug.cgi?id=102402
+
+        Reviewed by Simon Fraser.
+
+        Add test for caret painting in input field with a subpixel position and padding.
+
+        * fast/sub-pixel/input-caret-on-subpixel-bound-expected.html: Added.
+        * fast/sub-pixel/input-caret-on-subpixel-bound.html: Added.
+
 2012-12-12  Elliott Sprehn  <esprehn@gmail.com>
 
         REGRESSION(137336): Generated run-ins are not placed correctly
