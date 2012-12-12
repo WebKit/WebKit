@@ -9790,6 +9790,30 @@
 				>
 			</File>
 			<File
+				RelativePath="$(ConfigurationBuildDir)\obj\$(ProjectName)\DerivedSources\JSHTMLTrackElement.cpp"
+				>
+				<FileConfiguration
+					Name="Debug|Win32"
+					ExcludedFromBuild="true"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release|Win32"
+					ExcludedFromBuild="true"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+					/>
+				</FileConfiguration>
+			</File>
+			<File
+				RelativePath="$(ConfigurationBuildDir)\obj\$(ProjectName)\DerivedSources\JSHTMLTrackElement.h"
+				>
+			</File>
+			<File
 				RelativePath="$(ConfigurationBuildDir)\obj\$(ProjectName)\DerivedSources\JSHTMLUListElement.cpp"
 				>
 				<FileConfiguration
@@ -27782,6 +27806,14 @@
 				>
 			</File>
 			<File
+				RelativePath="..\loader\TextTrackLoader.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\loader\TextTrackLoader.h"
+				>
+			</File>
+			<File
 				RelativePath="..\loader\ThreadableLoader.cpp"
 				>
 			</File>
@@ -28214,6 +28246,14 @@
 				</File>
 				<File
 					RelativePath="..\loader\cache\CachedSVGDocumentReference.h"
+					>
+				</File>
+				<File
+					RelativePath="..\loader\cache\CachedTextTrack.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\loader\cache\CachedTextTrack.h"
 					>
 				</File>
 				<File
@@ -63770,6 +63810,30 @@
 				>
 			</File>
 			<File
+				RelativePath="..\html\HTMLTrackElement.cpp"
+				>
+				<FileConfiguration
+					Name="Debug|Win32"
+					ExcludedFromBuild="true"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release|Win32"
+					ExcludedFromBuild="true"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+					/>
+				</FileConfiguration>
+			</File>
+			<File
+				RelativePath="..\html\HTMLTrackElement.h"
+				>
+			</File>
+			<File
 				RelativePath="..\html\HTMLUListElement.cpp"
 				>
 				<FileConfiguration
@@ -64630,6 +64694,98 @@
 				</File>
 				<File
 					RelativePath="..\html\shadow\TextControlInnerElements.h"
+					>
+				</File>
+			</Filter>
+			<Filter
+				Name="track"
+				>
+				<File
+					RelativePath="..\html\track\InbandTextTrack.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\html\track\InbandTextTrack.h"
+					>
+				</File>
+				<File
+					RelativePath="..\html\track\InbandTextTrackPrivate.h"
+					>
+				</File>
+				<File
+					RelativePath="..\html\track\LoadableTextTrack.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\html\track\LoadableTextTrack.h"
+					>
+				</File>
+				<File
+					RelativePath="..\html\track\TextTrack.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\html\track\TextTrack.h"
+					>
+				</File>
+				<File
+					RelativePath="..\html\track\TextTrackCue.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\html\track\TextTrackCue.h"
+					>
+				</File>
+				<File
+					RelativePath="..\html\track\TextTrackCueList.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\html\track\TextTrackCueList.h"
+					>
+				</File>
+				<File
+					RelativePath="..\html\track\TextTrackList.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\html\track\TextTrackList.h"
+					>
+				</File>
+				<File
+					RelativePath="..\html\track\TrackBase.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\html\track\TrackBase.h"
+					>
+				</File>
+				<File
+					RelativePath="..\html\track\TrackEvent.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\html\track\TrackEvent.h"
+					>
+				</File>
+				<File
+					RelativePath="..\html\track\WebVTTParser.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\html\track\WebVTTParser.h"
+					>
+				</File>
+				<File
+					RelativePath="..\html\track\WebVTTToken.h"
+					>
+				</File>
+				<File
+					RelativePath="..\html\track\WebVTTTokenizer.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\html\track\WebVTTTokenizer.h"
 					>
 				</File>
 			</Filter>
@@ -72538,14 +72694,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\plugins\PlugInOriginHash.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\plugins\PlugInOriginHash.h"
-				>
-			</File>
-			<File
 				RelativePath="..\plugins\PluginData.cpp"
 				>
 			</File>
@@ -72575,6 +72723,14 @@
 			</File>
 			<File
 				RelativePath="..\plugins\PluginMainThreadScheduler.h"
+				>
+			</File>
+			<File
+				RelativePath="..\plugins\PlugInOriginHash.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\plugins\PlugInOriginHash.h"
 				>
 			</File>
 			<File
@@ -76541,11 +76697,11 @@
 					>
 				</File>
 				<File
-					RelativePath="..\inspector\front-end\UglifyJS\JavaScriptFormatter.js"
+					RelativePath="..\inspector\front-end\JavaScriptFormatter.js"
 					>
 				</File>
 				<File
-					RelativePath="..\inspector\front-end\JavaScriptFormatter.js"
+					RelativePath="..\inspector\front-end\UglifyJS\JavaScriptFormatter.js"
 					>
 				</File>
 				<File

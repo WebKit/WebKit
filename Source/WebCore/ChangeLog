@@ -1,3 +1,21 @@
+2012-12-12  Roger Fong  <roger_fong@apple.com>
+
+        Enable VIDEO_TRACK on Windows.
+        https://bugs.webkit.org/show_bug.cgi?id=104706.
+
+        Reviewed by Timothy Horton.
+
+        Enable VIDEO_TRACK on Windows and update project property files.
+
+        * DerivedSources.cpp:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.vcproj/WebCoreCommon.vsprops:
+        * WebCore.vcproj/copyForwardingHeaders.cmd:
+        * bindings/generic/RuntimeEnabledFeatures.cpp:
+        (WebCore):
+        * html/HTMLElementsAllInOne.cpp:
+        * rendering/RenderingAllInOne.cpp:
+
 2012-12-12  No'am Rosenthal  <noam.rosenthal@nokia.com>
 
         REGRESSION: r137481 caused a build failure with GTK
