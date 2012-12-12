@@ -258,7 +258,6 @@ void RenderSVGShape::fillAndStrokeShape(GraphicsContext* context)
         return;
 
     GraphicsContextStateSaver stateSaver(*context, false);
-    AffineTransform nonScalingTransform;
 
     if (hasNonScalingStroke()) {
         AffineTransform nonScalingTransform = nonScalingStrokeTransform();
