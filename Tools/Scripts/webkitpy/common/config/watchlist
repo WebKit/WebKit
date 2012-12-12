@@ -97,6 +97,18 @@
         "Rendering": {
             "filename": r"Source/WebCore/rendering/",
         },
+        "RenderLayers": {
+            "filename": r"Source/WebCore/rendering/RenderLayer*",
+        },
+        "GraphicsLayer": {
+            "filename": r"Source/WebCore/platform/graphics/GraphicsLayer*",
+        },
+        "CoreAnimation": {
+            "filename": r"Source/WebCore/platform/graphics/ca/",
+        },
+        "Animation": {
+            "filename": r"Source/WebCore/page/animation/",
+        },
         "StyleChecker": {
             "filename": r"Tools/Scripts/webkitpy/style/",
         },
@@ -303,12 +315,14 @@
         # Specifically, levin@chromium.org and levin+threading@chromium.org are
         # two different accounts as far as bugzilla is concerned.
         "Accessibility": [ "cfleizach@apple.com", "dmazzoni@google.com", "apinheiro@igalia.com", "jdiggs@igalia.com" ],
+        "Animation" : [ "simon.fraser@apple.com", "dino@apple.com" ],
         "AppleMacPublicApi": [ "timothy@apple.com" ],
         "Battery": [ "gyuyoung.kim@samsung.com" ],
         "BlackBerry": [ "mifenton@rim.com", "rwlbuis@gmail.com", "tonikitoo@webkit.org", "yoli@rim.com" ],
         "Cairo": [ "dominik.rottsches@intel.com" ],
         "CMake": [ "rakuco@webkit.org", "gyuyoung.kim@samsung.com" ],
         "CoordinatedGraphics" : [ "noam@webkit.org", "zeno@webkit.org" ],
+        "CoreAnimation" : [ "simon.fraser@apple.com" ],
         "CSS": [ "alexis@webkit.org", "macpherson@chromium.org", "cmarcelo@webkit.org", "ojan.autocc@gmail.com"],
         "ChromiumGraphics": [ "jamesr@chromium.org", "cc-bugs@chromium.org" ],
         "ChromiumPublicApi": [ "abarth@webkit.org", "dglazkov@chromium.org", "fishd@chromium.org", "jamesr@chromium.org", "tkent+wkapi@chromium.org" ],
@@ -322,6 +336,7 @@
         "Filters": [ "dino@apple.com" ],
         "Forms": [ "tkent@chromium.org", "mifenton@rim.com" ],
         "FrameLoader": [ "abarth@webkit.org", "japhet@chromium.org" ],
+        "GraphicsLayer": [ "simon.fraser@apple.com" ],
         "GStreamerGraphics": [ "alexis@webkit.org", "pnormand@igalia.com", "gns@gnome.org", "mrobinson@webkit.org" ],
         "GtkWebKit2PublicAPI": [ "cgarcia@igalia.com", "gns@gnome.org", "mrobinson@webkit.org" ],
         "Harfbuzz": [ "dominik.rottsches@intel.com" ],
@@ -338,6 +353,7 @@
         "QtWebKit2PlatformSpecific": [ "alexis@webkit.org", "cmarcelo@webkit.org", "abecsi@webkit.org" ],
         "QtWebKit2PublicAPI": [ "alexis@webkit.org", "cmarcelo@webkit.org", "abecsi@webkit.org" ],
         "Rendering": [ "eric@webkit.org", "ojan.autocc@gmail.com" ],
+        "RenderLayers" : [ "simon.fraser@apple.com" ],
         "SVG": ["schenney@chromium.org", "pdr@google.com", "fmalita@chromium.org", "dominik.rottsches@intel.com" ],
         "SVNScripts": [ "dbates@webkit.org" ],
         "ScrollingCoordinator": [ "andersca@apple.com", "jamesr@chromium.org", "tonikitoo@webkit.org" ],
