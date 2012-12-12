@@ -4077,7 +4077,8 @@ webkit.org/b/100955 http/tests/security/contentSecurityPolicy/object-src-none-bl
 
 webkit.org/b/101377 [ Linux MountainLion ] platform/chromium-linux/fast/text/international/complex-joining-using-gpos.html [ Failure ImageOnlyFailure Pass Crash ]
 
-webkit.org/b/101408 platform/chromium/fast/forms/calendar-picker/calendar-picker-key-operations.html [ Failure Pass ]
+webkit.org/b/101408 [ Mac ] platform/chromium/fast/forms/calendar-picker/calendar-picker-key-operations.html [ Failure ]
+webkit.org/b/101408 platform/chromium/fast/forms/calendar-picker/calendar-picker-mouse-operations.html [ Failure Pass ]
 
 webkit.org/b/101539 [ Linux Win ] editing/execCommand/switch-list-type-with-orphaned-li.html [ Failure ]
 
