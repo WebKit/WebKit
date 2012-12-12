@@ -28,8 +28,6 @@
 #include "config.h"
 #include "Sound.h"
 
-#include "NotImplemented.h"
-
 #ifdef HAVE_ECORE_X
 #include <Ecore_X.h>
 #endif

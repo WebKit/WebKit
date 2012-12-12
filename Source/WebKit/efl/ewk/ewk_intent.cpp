@@ -21,7 +21,6 @@
 #include "ewk_intent.h"
 
 #include "Intent.h"
-#include "NotImplemented.h"
 #include "ewk_intent_private.h"
 #include "ewk_private.h"
 #include <KURL.h>

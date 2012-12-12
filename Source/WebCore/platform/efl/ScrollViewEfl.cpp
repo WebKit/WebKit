@@ -38,7 +38,6 @@
 #include "FrameView.h"
 #include "HostWindow.h"
 #include "IntRect.h"
-#include "NotImplemented.h"
 #include "ScrollbarTheme.h"
 
 #include <Ecore_Evas.h>

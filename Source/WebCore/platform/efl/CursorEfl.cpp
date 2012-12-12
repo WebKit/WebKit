@@ -34,8 +34,6 @@
 #include "config.h"
 #include "Cursor.h"
 
-#include "NotImplemented.h"
-
 #include <Edje.h>
 #include <Evas.h>
 #include <stdio.h>
