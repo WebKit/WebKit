@@ -1,3 +1,20 @@
+2012-12-11  Viatcheslav Ostapenko  <v.ostapenko@samsung.com>
+
+        [EFL] Missing implementation of GraphicsContext3DPrivate::platformLayerSize()
+        https://bugs.webkit.org/show_bug.cgi?id=104726
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Add common implementation of GraphicsContext3DPrivate::platformLayerSize() similar
+        to Qt version. There is nothing platform specific in Qt version. 
+
+        Covered by existing tests.
+
+        * platform/graphics/efl/GraphicsContext3DPrivate.cpp:
+        (GraphicsContext3DPrivate::platformLayerSize):
+        * platform/graphics/efl/GraphicsContext3DPrivate.h:
+        (GraphicsContext3DPrivate):
+
 2012-12-11  No'am Rosenthal  <noam@webkit.org>
 
         [Texmap] Slightly improve readability of the antialias shader

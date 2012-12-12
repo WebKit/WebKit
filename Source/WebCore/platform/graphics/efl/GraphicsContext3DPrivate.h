@@ -54,6 +54,7 @@ public:
     virtual void paintToTextureMapper(TextureMapper*, const FloatRect& target, const TransformationMatrix&, float opacity, BitmapTexture* mask);
 #endif
 #if USE(GRAPHICS_SURFACE)
+    virtual IntSize platformLayerSize() const;
     virtual uint32_t copyToGraphicsSurface();
     virtual GraphicsSurfaceToken graphicsSurfaceToken() const;
     void didResizeCanvas();

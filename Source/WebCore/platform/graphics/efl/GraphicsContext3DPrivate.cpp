@@ -170,6 +170,11 @@ GraphicsSurfaceToken GraphicsContext3DPrivate::graphicsSurfaceToken() const
 {
     return m_surfaceHandle;
 }
+
+IntSize GraphicsContext3DPrivate::platformLayerSize() const
+{
+    return IntSize(m_context->m_currentWidth, m_context->m_currentHeight);
+}
 #endif
 
 } // namespace WebCore
