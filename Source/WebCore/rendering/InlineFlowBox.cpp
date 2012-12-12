@@ -435,6 +435,8 @@ float InlineFlowBox::placeBoxRangeInInlineDirection(InlineBox* firstChild, Inlin
                 if (knownToHaveNoOverflow())
                     maxLogicalRight = max(logicalLeft, maxLogicalRight);
                 logicalLeft += logicalRightMargin;
+                // If we encounter any space after this inline block then ensure it is treated as the space between two words.
+                needsWordSpacing = true;
             }
         }
     }
