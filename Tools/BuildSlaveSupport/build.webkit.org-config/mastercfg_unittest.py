@@ -51,7 +51,7 @@ class BuildBotConfigLoader(object):
 
 class MasterCfgTest(unittest.TestCase):
     def test_nrwt_leaks_parsing(self):
-        run_webkit_tests = RunWebKitTests()
+        run_webkit_tests = RunWebKitTests()  # pylint is confused by the way we import the module ... pylint: disable-msg=E0602
         log_text = """
 2011-08-09 10:05:18,580 29486 mac.py:275 INFO leaks found for a total of 197,936 bytes!
 2011-08-09 10:05:18,580 29486 mac.py:276 INFO 1 unique leaks found!
@@ -61,8 +61,32 @@ class MasterCfgTest(unittest.TestCase):
             '1 unique leaks found!',
         ]
         run_webkit_tests._parseNewRunWebKitTestsOutput(log_text)
+        self.fail()
         self.assertEqual(run_webkit_tests.incorrectLayoutLines, expected_incorrect_lines)
 
+    def test_nrwt_missing_results(self):
+        run_webkit_tests = RunWebKitTests()  # pylint is confused by the way we import the module ... pylint: disable-msg=E0602
+        log_text = """
+Expected to fail, but passed: (2)
+  animations/additive-transform-animations.html
+  animations/cross-fade-webkit-mask-box-image.html
+
+Unexpected flakiness: text-only failures (2)
+  fast/events/touch/touch-inside-iframe.html [ Failure Pass ]
+  http/tests/inspector-enabled/console-clear-arguments-on-frame-navigation.html [ Failure Pass ]
+
+Unexpected flakiness: timeouts (1)
+  svg/text/foreignObject-repaint.xml [ Timeout Pass ]
+
+Regressions: Unexpected missing results (1)
+  svg/custom/zero-path-square-cap-rendering2.svg [ Missing ]
+
+Regressions: Unexpected text-only failures (1)
+  svg/custom/zero-path-square-cap-rendering2.svg [ Failure ]
+"""
+        run_webkit_tests._parseNewRunWebKitTestsOutput(log_text)
+        self.assertEqual(set(run_webkit_tests.incorrectLayoutLines),
+            set(['2 new passes', '3 flakes', '1 missing results', '1 failures']))
 
 class StubStdio(object):
     def __init__(self, stdio):

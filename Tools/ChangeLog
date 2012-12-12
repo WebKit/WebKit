@@ -1,5 +1,21 @@
 2012-12-11  Dirk Pranke  <dpranke@chromium.org>
 
+        REGRESSION(r133380): new tests without expected file reported as failing tests on the bots
+        https://bugs.webkit.org/show_bug.cgi?id=101469
+
+        Reviewed by Ryosuke Niwa.
+
+        Fix parsing of NRWT's output to identify missing results separately
+        from other regressions.
+
+        * BuildSlaveSupport/build.webkit.org-config/master.cfg:
+        (RunWebKitTests._parseNewRunWebKitTestsOutput):
+        * BuildSlaveSupport/build.webkit.org-config/mastercfg_unittest.py:
+        (MasterCfgTest.test_nrwt_leaks_parsing):
+        (test_nrwt_missing_results):
+
+2012-12-11  Dirk Pranke  <dpranke@chromium.org>
+
         buildbot: change run-webkit-tests --no-launch-safari to --no-show-results
         https://bugs.webkit.org/show_bug.cgi?id=104299
 
