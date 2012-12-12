@@ -46,7 +46,9 @@ public:
         Page,
         Keyframes,
         Keyframe, // Not used. These are internally non-rule StyleKeyframe objects.
+#if ENABLE(SHADOW_DOM)
         Host,
+#endif
 #if ENABLE(CSS_DEVICE_ADAPTATION)
         Viewport = 15,
 #endif
@@ -65,7 +67,9 @@ public:
     bool isViewportRule() const { return type() == Viewport; }
 #endif
     bool isImportRule() const { return type() == Import; }
+#if ENABLE(SHADOW_DOM)
     bool isHostRule() const { return type() == Host; }
+#endif
 
     PassRefPtr<StyleRuleBase> copy() const;
 
@@ -231,6 +235,7 @@ private:
     CSSSelectorList m_selectorList;
 };
 
+#if ENABLE(SHADOW_DOM)
 class StyleRuleHost : public StyleRuleBlock {
 public:
     static PassRefPtr<StyleRuleHost> create(Vector<RefPtr<StyleRuleBase> >& adoptRules)
@@ -244,6 +249,7 @@ private:
     StyleRuleHost(Vector<RefPtr<StyleRuleBase> >& adoptRules) : StyleRuleBlock(Host, adoptRules) { }
     StyleRuleHost(const StyleRuleHost& o) : StyleRuleBlock(o) { }
 };
+#endif
 
 #if ENABLE(CSS_DEVICE_ADAPTATION)
 class StyleRuleViewport : public StyleRuleBase {

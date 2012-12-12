@@ -81,9 +81,11 @@ void StyleRuleBase::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
     case Keyframes:
         static_cast<const StyleRuleKeyframes*>(this)->reportDescendantMemoryUsage(memoryObjectInfo);
         return;
+#if ENABLE(SHADOW_DOM)
     case Host:
         static_cast<const StyleRuleBlock*>(this)->reportDescendantMemoryUsage(memoryObjectInfo);
         return;
+#endif
 #if ENABLE(CSS_DEVICE_ADAPTATION)
     case Viewport:
         static_cast<const StyleRuleViewport*>(this)->reportDescendantMemoryUsage(memoryObjectInfo);
@@ -127,9 +129,11 @@ void StyleRuleBase::destroy()
     case Keyframes:
         delete static_cast<StyleRuleKeyframes*>(this);
         return;
+#if ENABLE(SHADOW_DOM)
     case Host:
         delete static_cast<StyleRuleHost*>(this);
         return;
+#endif
 #if ENABLE(CSS_DEVICE_ADAPTATION)
     case Viewport:
         delete static_cast<StyleRuleViewport*>(this);
@@ -168,8 +172,10 @@ PassRefPtr<StyleRuleBase> StyleRuleBase::copy() const
         return 0;
     case Keyframes:
         return static_cast<const StyleRuleKeyframes*>(this)->copy();
+#if ENABLE(SHADOW_DOM)
     case Host:
         return static_cast<const StyleRuleHost*>(this)->copy();
+#endif
 #if ENABLE(CSS_DEVICE_ADAPTATION)
     case Viewport:
         return static_cast<const StyleRuleViewport*>(this)->copy();
@@ -220,10 +226,12 @@ PassRefPtr<CSSRule> StyleRuleBase::createCSSOMWrapper(CSSStyleSheet* parentSheet
         rule = WebKitCSSViewportRule::create(static_cast<StyleRuleViewport*>(self), parentSheet);
         break;
 #endif
+#if ENABLE(SHADOW_DOM)
     case Host:
         // FIXME: The current CSSOM editor's draft (http://dev.w3.org/csswg/cssom/) does not handle @host rules (see bug 102344).
         rule = adoptRef(new CSSUnknownRule());
         break;
+#endif
     case Unknown:
     case Charset:
     case Keyframe:

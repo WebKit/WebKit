@@ -1,3 +1,31 @@
+2012-12-11  Takashi Sakamoto  <tasak@google.com>
+
+        Hide HOST_RULE behind SHADOW_DOM flag.
+        https://bugs.webkit.org/show_bug.cgi?id=102321
+
+        Reviewed by Dimitri Glazkov.
+
+        @host @-rules are only available when the rules are declared in styles
+        in shadow dom trees. So if SHADOW_DOM is disabled, we don't need
+        @host @-rules.
+
+        No new tests. Just hide HOST_RULE behind SHADOW_DOM flag.
+
+        * css/StyleResolver.h:
+        Hide "class ShadowRuleHost".
+        * css/StyleRule.cpp:
+        (WebCore::StyleRuleBase::reportMemoryUsage):
+        (WebCore::StyleRuleBase::destroy):
+        (WebCore::StyleRuleBase::copy):
+        (WebCore::StyleRuleBase::createCSSOMWrapper):
+        * css/StyleRule.h:
+        (StyleRuleBase):
+        Hide "Host" type and isHostRule.
+        (StyleRuleHost):
+        Hide "class StyleRuleHost".
+        * css/StyleSheetContents.cpp:
+        (WebCore::childRulesHaveFailedOrCanceledSubresources):
+
 2012-12-11  Dominic Mazzoni  <dmazzoni@google.com>
 
         AX: accessibilityIsIgnored should avoid computing textUnderElement
