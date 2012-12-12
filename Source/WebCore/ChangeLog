@@ -1,3 +1,27 @@
+2012-12-12  Justin Novosad  <junov@google.com>
+
+        Use render box background over border draw strategy in cases with background-image
+        https://bugs.webkit.org/show_bug.cgi?id=103409
+
+        Reviewed by Simon Fraser.
+
+        The BackgroundOverBorderBleedAvoidance mode was not being used in
+        cases where the background is an opaque image. It was also not
+        being used in cases with multiple layers. The multiple layer
+        case is now safe with respect to color bleeding if the top layer
+        is opaque, thank to the recent addition of layer occlusion culling
+        in r135629.
+
+        No new tests. Testing already covered by the following tests:
+        fast/backgrounds/background-opaque-images-over-color.html
+        fast/backgrounds/gradient-background-leakage-2.html
+
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::determineBackgroundBleedAvoidance):
+        (WebCore::RenderBox::backgroundHasOpaqueTopLayer):
+        * rendering/RenderBox.h:
+        (RenderBox):
+
 2012-12-12  Ilya Tikhonovsky  <loislo@chromium.org>
 
         Web Inspector: instrument static parts of RenderBlock and RenderBox
