@@ -1,3 +1,17 @@
+2012-12-12  Stephen White  <senorblanco@chromium.org>
+
+        Unreviewed, rolling out r137000.
+        http://trac.webkit.org/changeset/137000
+
+        Precursor to rolling out r136975.
+
+        * platform/chromium-linux/css3/filters/effect-reference-after-expected.png: Renamed from LayoutTests/platform/chromium-win/css3/filters/effect-reference-after-expected.png.
+        * platform/chromium-linux/css3/filters/effect-reference-delete-expected.png: Renamed from LayoutTests/platform/chromium-win/css3/filters/effect-reference-delete-expected.png.
+        * platform/chromium-linux/css3/filters/effect-reference-rename-expected.png: Renamed from LayoutTests/platform/chromium-win/css3/filters/effect-reference-rename-expected.png.
+        * platform/chromium-mac/css3/filters/effect-reference-after-expected.png: Removed.
+        * platform/chromium-mac/css3/filters/effect-reference-delete-expected.png: Removed.
+        * platform/chromium-mac/css3/filters/effect-reference-rename-expected.png: Removed.
+
 2012-12-12  Csaba Osztrogonác  <ossy@webkit.org>
 
         [Qt] Unreviewed gardening, remove duplicated expectations and fix broken expectations.
