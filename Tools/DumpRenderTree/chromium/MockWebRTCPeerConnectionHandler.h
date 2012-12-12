@@ -34,7 +34,6 @@
 #if ENABLE(MEDIA_STREAM)
 
 #include "WebTask.h"
-#include <public/WebRTCDataChannel.h>
 #include <public/WebRTCPeerConnectionHandler.h>
 #include <public/WebRTCSessionDescription.h>
 #include <public/WebRTCSessionDescriptionRequest.h>
@@ -61,12 +60,8 @@ public:
     virtual bool addStream(const WebKit::WebMediaStreamDescriptor&, const WebKit::WebMediaConstraints&) OVERRIDE;
     virtual void removeStream(const WebKit::WebMediaStreamDescriptor&) OVERRIDE;
     virtual void getStats(const WebKit::WebRTCStatsRequest&) OVERRIDE;
+    virtual WebKit::WebRTCDataChannelHandler* createDataChannel(const WebKit::WebString& label, bool reliable) OVERRIDE;
     virtual void stop() OVERRIDE;
-
-    virtual bool openDataChannel(const WebKit::WebRTCDataChannel&) OVERRIDE;
-    virtual bool sendStringData(const WebKit::WebRTCDataChannel&, const WebKit::WebString&) OVERRIDE;
-    virtual bool sendRawData(const WebKit::WebRTCDataChannel&, const char*, size_t) OVERRIDE;
-    virtual void closeDataChannel(const WebKit::WebRTCDataChannel&) OVERRIDE;
 
     // WebTask related methods
     WebTestRunner::WebTaskList* taskList() { return &m_taskList; }

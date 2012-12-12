@@ -1,3 +1,33 @@
+2012-12-12  Tommy Widenflycht  <tommyw@google.com>
+
+        MediaStream API: Change the data channel descriptor pattern to a handler pattern
+        https://bugs.webkit.org/show_bug.cgi?id=104543
+
+        Reviewed by Kent Tamura.
+
+        Adding mocks to be able to test this refactoring.
+
+        * DumpRenderTree/DumpRenderTree.gypi:
+        * DumpRenderTree/chromium/MockWebRTCDataChannelHandler.cpp: Added.
+        (DataChannelReadyStateTask):
+        (DataChannelReadyStateTask::DataChannelReadyStateTask):
+        (MockWebRTCDataChannelHandler::MockWebRTCDataChannelHandler):
+        (MockWebRTCDataChannelHandler::setClient):
+        (MockWebRTCDataChannelHandler::bufferedAmount):
+        (MockWebRTCDataChannelHandler::sendStringData):
+        (MockWebRTCDataChannelHandler::sendRawData):
+        (MockWebRTCDataChannelHandler::close):
+        * DumpRenderTree/chromium/MockWebRTCDataChannelHandler.h: Added.
+        (MockWebRTCDataChannelHandler):
+        (MockWebRTCDataChannelHandler::taskList):
+        * DumpRenderTree/chromium/MockWebRTCPeerConnectionHandler.cpp:
+        (RTCPeerConnectionReadyStateTask::RTCPeerConnectionReadyStateTask):
+        (RemoteDataChannelTask::RemoteDataChannelTask):
+        (MockWebRTCPeerConnectionHandler::createDataChannel):
+        (MockWebRTCPeerConnectionHandler::stop):
+        * DumpRenderTree/chromium/MockWebRTCPeerConnectionHandler.h:
+        (MockWebRTCPeerConnectionHandler):
+
 2012-12-12  Jochen Eisinger  <jochen@chromium.org>
 
         [chromium] WebTestPlugin must not depend on WTF::String

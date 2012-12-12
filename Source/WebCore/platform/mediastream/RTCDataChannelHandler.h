@@ -22,63 +22,34 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
+#ifndef RTCDataChannelHandler_h
+#define RTCDataChannelHandler_h
 
 #if ENABLE(MEDIA_STREAM)
 
-#include "RTCDataChannelDescriptor.h"
+#include <wtf/text/WTFString.h>
 
 namespace WebCore {
 
-PassRefPtr<RTCDataChannelDescriptor> RTCDataChannelDescriptor::create(const String& label, bool reliable)
-{
-    return adoptRef(new RTCDataChannelDescriptor(label, reliable));
-}
+class RTCDataChannelHandlerClient;
 
-RTCDataChannelDescriptor::RTCDataChannelDescriptor(const String& label, bool reliable)
-    : m_client(0)
-    , m_label(label)
-    , m_reliable(reliable)
-    , m_readyState(ReadyStateConnecting)
-    , m_bufferedAmount(0)
-{
-}
+class RTCDataChannelHandler {
+public:
+    virtual ~RTCDataChannelHandler() { }
 
-RTCDataChannelDescriptor::~RTCDataChannelDescriptor()
-{
-}
+    virtual void setClient(RTCDataChannelHandlerClient*) = 0;
 
-void RTCDataChannelDescriptor::readyStateChanged(ReadyState readyState)
-{
-    ASSERT(m_readyState != ReadyStateClosed);
-    if (m_readyState != readyState) {
-        m_readyState = readyState;
-        if (m_client)
-            m_client->readyStateChanged();
-    }
-}
+    virtual String label() = 0;
+    virtual bool isReliable() = 0;
+    virtual unsigned long bufferedAmount() = 0;
 
-void RTCDataChannelDescriptor::dataArrived(const String& data)
-{
-    ASSERT(m_readyState != ReadyStateClosed);
-    if (m_client)
-        m_client->dataArrived(data);
-}
-
-void RTCDataChannelDescriptor::dataArrived(const char* data, size_t dataLength)
-{
-    ASSERT(m_readyState != ReadyStateClosed);
-    if (m_client)
-        m_client->dataArrived(data, dataLength);
-}
-
-void RTCDataChannelDescriptor::error()
-{
-    ASSERT(m_readyState != ReadyStateClosed);
-    if (m_client)
-        m_client->error();
-}
+    virtual bool sendStringData(const String&) = 0;
+    virtual bool sendRawData(const char*, size_t) = 0;
+    virtual void close() = 0;
+};
 
 } // namespace WebCore
 
 #endif // ENABLE(MEDIA_STREAM)
+
+#endif // RTCDataChannelHandler_h

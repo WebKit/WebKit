@@ -34,134 +34,14 @@
 
 #include "RTCPeerConnectionHandler.h"
 
-#include "RTCPeerConnectionHandlerClient.h"
-#include "RTCSessionDescriptionDescriptor.h"
 #include <wtf/PassOwnPtr.h>
 
 namespace WebCore {
+class RTCPeerConnectionHandlerClient;
 
-// Dummy implementations below for ports that build with MEDIA_STREAM enabled by default.
-
-class RTCPeerConnectionHandlerDummy : public RTCPeerConnectionHandler {
-public:
-    RTCPeerConnectionHandlerDummy(RTCPeerConnectionHandlerClient*);
-    virtual ~RTCPeerConnectionHandlerDummy();
-
-    virtual bool initialize(PassRefPtr<RTCConfiguration>, PassRefPtr<MediaConstraints>) OVERRIDE;
-
-    virtual void createOffer(PassRefPtr<RTCSessionDescriptionRequest>, PassRefPtr<MediaConstraints>) OVERRIDE;
-    virtual void createAnswer(PassRefPtr<RTCSessionDescriptionRequest>, PassRefPtr<MediaConstraints>) OVERRIDE;
-    virtual void setLocalDescription(PassRefPtr<RTCVoidRequest>, PassRefPtr<RTCSessionDescriptionDescriptor>) OVERRIDE;
-    virtual void setRemoteDescription(PassRefPtr<RTCVoidRequest>, PassRefPtr<RTCSessionDescriptionDescriptor>) OVERRIDE;
-    virtual PassRefPtr<RTCSessionDescriptionDescriptor> localDescription() OVERRIDE;
-    virtual PassRefPtr<RTCSessionDescriptionDescriptor> remoteDescription() OVERRIDE;
-    virtual bool updateIce(PassRefPtr<RTCConfiguration>, PassRefPtr<MediaConstraints>) OVERRIDE;
-    virtual bool addIceCandidate(PassRefPtr<RTCIceCandidateDescriptor>) OVERRIDE;
-    virtual bool addStream(PassRefPtr<MediaStreamDescriptor>, PassRefPtr<MediaConstraints>) OVERRIDE;
-    virtual void removeStream(PassRefPtr<MediaStreamDescriptor>) OVERRIDE;
-    virtual void getStats(PassRefPtr<RTCStatsRequest>) OVERRIDE;
-    virtual void stop() OVERRIDE;
-
-    // RTCDataChannel.
-    virtual bool openDataChannel(PassRefPtr<RTCDataChannelDescriptor>) OVERRIDE;
-    virtual bool sendStringData(PassRefPtr<RTCDataChannelDescriptor>, const String&) OVERRIDE;
-    virtual bool sendRawData(PassRefPtr<RTCDataChannelDescriptor>, const char*, size_t) OVERRIDE;
-    virtual void closeDataChannel(PassRefPtr<RTCDataChannelDescriptor>) OVERRIDE;
-
-private:
-    RTCPeerConnectionHandlerClient* m_client;
-};
-
-PassOwnPtr<RTCPeerConnectionHandler> RTCPeerConnectionHandler::create(RTCPeerConnectionHandlerClient* client)
+PassOwnPtr<RTCPeerConnectionHandler> RTCPeerConnectionHandler::create(RTCPeerConnectionHandlerClient*)
 {
-    return adoptPtr(new RTCPeerConnectionHandlerDummy(client));
-}
-
-RTCPeerConnectionHandlerDummy::RTCPeerConnectionHandlerDummy(RTCPeerConnectionHandlerClient* client)
-    : m_client(client)
-{
-    ASSERT(m_client);
-}
-
-RTCPeerConnectionHandlerDummy::~RTCPeerConnectionHandlerDummy()
-{
-}
-
-bool RTCPeerConnectionHandlerDummy::initialize(PassRefPtr<RTCConfiguration>, PassRefPtr<MediaConstraints>)
-{
-    return false;
-}
-
-void RTCPeerConnectionHandlerDummy::createOffer(PassRefPtr<RTCSessionDescriptionRequest>, PassRefPtr<MediaConstraints>)
-{
-}
-
-void RTCPeerConnectionHandlerDummy::createAnswer(PassRefPtr<RTCSessionDescriptionRequest>, PassRefPtr<MediaConstraints>)
-{
-}
-
-void RTCPeerConnectionHandlerDummy::setLocalDescription(PassRefPtr<RTCVoidRequest>, PassRefPtr<RTCSessionDescriptionDescriptor>)
-{
-}
-
-void RTCPeerConnectionHandlerDummy::setRemoteDescription(PassRefPtr<RTCVoidRequest>, PassRefPtr<RTCSessionDescriptionDescriptor>)
-{
-}
-
-PassRefPtr<RTCSessionDescriptionDescriptor> RTCPeerConnectionHandlerDummy::localDescription()
-{
-    return 0;
-}
-
-PassRefPtr<RTCSessionDescriptionDescriptor> RTCPeerConnectionHandlerDummy::remoteDescription()
-{
-    return 0;
-}
-
-bool RTCPeerConnectionHandlerDummy::addStream(PassRefPtr<MediaStreamDescriptor>, PassRefPtr<MediaConstraints>)
-{
-    return false;
-}
-
-void RTCPeerConnectionHandlerDummy::removeStream(PassRefPtr<MediaStreamDescriptor>)
-{
-}
-
-bool RTCPeerConnectionHandlerDummy::updateIce(PassRefPtr<RTCConfiguration>, PassRefPtr<MediaConstraints>)
-{
-    return false;
-}
-
-bool RTCPeerConnectionHandlerDummy::addIceCandidate(PassRefPtr<RTCIceCandidateDescriptor>)
-{
-    return false;
-}
-
-void RTCPeerConnectionHandlerDummy::getStats(PassRefPtr<RTCStatsRequest>)
-{
-}
-
-void RTCPeerConnectionHandlerDummy::stop()
-{
-}
-
-bool RTCPeerConnectionHandlerDummy::openDataChannel(PassRefPtr<RTCDataChannelDescriptor>)
-{
-    return false;
-}
-
-bool RTCPeerConnectionHandlerDummy::sendStringData(PassRefPtr<RTCDataChannelDescriptor>, const String&)
-{
-    return false;
-}
-
-bool RTCPeerConnectionHandlerDummy::sendRawData(PassRefPtr<RTCDataChannelDescriptor>, const char*, size_t)
-{
-    return false;
-}
-
-void RTCPeerConnectionHandlerDummy::closeDataChannel(PassRefPtr<RTCDataChannelDescriptor>)
-{
+    return nullptr;
 }
 
 } // namespace WebCore

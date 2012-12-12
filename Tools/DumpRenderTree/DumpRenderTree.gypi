@@ -24,6 +24,8 @@
             'chromium/MockWebPrerenderingSupport.h',
             'chromium/MockWebRTCPeerConnectionHandler.cpp',
             'chromium/MockWebRTCPeerConnectionHandler.h',
+            'chromium/MockWebRTCDataChannelHandler.cpp',
+            'chromium/MockWebRTCDataChannelHandler.h',
             'chromium/MockWebSpeechInputController.cpp',
             'chromium/MockWebSpeechInputController.h',
             'chromium/MockWebSpeechRecognizer.cpp',

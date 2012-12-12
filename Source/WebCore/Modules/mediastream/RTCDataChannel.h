@@ -27,28 +27,26 @@
 
 #if ENABLE(MEDIA_STREAM)
 
-#include "ActiveDOMObject.h"
 #include "EventTarget.h"
-#include "RTCDataChannelDescriptor.h"
+#include "RTCDataChannelHandlerClient.h"
 #include "Timer.h"
 #include <wtf/RefCounted.h>
 
 namespace WebCore {
+
 class Blob;
+class RTCDataChannelHandler;
 class RTCPeerConnectionHandler;
 
-class RTCDataChannel : public RefCounted<RTCDataChannel>, public EventTarget, public RTCDataChannelDescriptorClient {
+class RTCDataChannel : public RefCounted<RTCDataChannel>, public EventTarget, public RTCDataChannelHandlerClient {
 public:
     static PassRefPtr<RTCDataChannel> create(ScriptExecutionContext*, RTCPeerConnectionHandler*, const String& label, bool reliable, ExceptionCode&);
-    static PassRefPtr<RTCDataChannel> create(ScriptExecutionContext*, RTCPeerConnectionHandler*, PassRefPtr<RTCDataChannelDescriptor>);
+    static PassRefPtr<RTCDataChannel> create(ScriptExecutionContext*, PassOwnPtr<RTCDataChannelHandler>);
     ~RTCDataChannel();
 
     String label() const;
-
     bool reliable() const;
-
     String readyState() const;
-
     unsigned long bufferedAmount() const;
 
     String binaryType() const;
@@ -66,7 +64,6 @@ public:
     DEFINE_ATTRIBUTE_EVENT_LISTENER(close);
     DEFINE_ATTRIBUTE_EVENT_LISTENER(message);
 
-    RTCDataChannelDescriptor* descriptor();
     void stop();
 
     // EventTarget
@@ -77,7 +74,7 @@ public:
     using RefCounted<RTCDataChannel>::deref;
 
 private:
-    RTCDataChannel(ScriptExecutionContext*, RTCPeerConnectionHandler*, PassRefPtr<RTCDataChannelDescriptor>);
+    RTCDataChannel(ScriptExecutionContext*, PassOwnPtr<RTCDataChannelHandler>);
 
     void scheduleDispatchEvent(PassRefPtr<Event>);
     void scheduledEventTimerFired(Timer<RTCDataChannel>*);
@@ -90,23 +87,22 @@ private:
     EventTargetData m_eventTargetData;
     ScriptExecutionContext* m_scriptExecutionContext;
 
-    // RTCDataChannelDescriptor::Owner
-    virtual void readyStateChanged() OVERRIDE;
-    virtual void dataArrived(const String&) OVERRIDE;
-    virtual void dataArrived(const char*, size_t) OVERRIDE;
-    virtual void error() OVERRIDE;
+    // RTCDataChannelHandlerClient
+    virtual void didChangeReadyState(ReadyState) OVERRIDE;
+    virtual void didReceiveStringData(const String&) OVERRIDE;
+    virtual void didReceiveRawData(const char*, size_t) OVERRIDE;
+    virtual void didDetectError() OVERRIDE;
+
+    OwnPtr<RTCDataChannelHandler> m_handler;
 
     bool m_stopped;
-    RefPtr<RTCDataChannelDescriptor> m_descriptor;
 
+    ReadyState m_readyState;
     enum BinaryType {
         BinaryTypeBlob,
         BinaryTypeArrayBuffer
     };
     BinaryType m_binaryType;
-
-    // Not owned by this class.
-    RTCPeerConnectionHandler* m_handler;
 
     Timer<RTCDataChannel> m_scheduledEventTimer;
     Vector<RefPtr<Event> > m_scheduledEvents;

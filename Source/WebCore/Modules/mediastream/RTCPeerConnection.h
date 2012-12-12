@@ -114,7 +114,7 @@ public:
     virtual void didChangeIceState(IceState) OVERRIDE;
     virtual void didAddRemoteStream(PassRefPtr<MediaStreamDescriptor>) OVERRIDE;
     virtual void didRemoveRemoteStream(MediaStreamDescriptor*) OVERRIDE;
-    virtual void didAddRemoteDataChannel(PassRefPtr<RTCDataChannelDescriptor>) OVERRIDE;
+    virtual void didAddRemoteDataChannel(PassOwnPtr<RTCDataChannelHandler>) OVERRIDE;
 
     // EventTarget
     virtual const AtomicString& interfaceName() const OVERRIDE;

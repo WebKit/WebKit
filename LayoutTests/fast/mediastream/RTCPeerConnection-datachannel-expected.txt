@@ -3,14 +3,18 @@ Tests RTCDataChannel.
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 
 
+PASS dc = pc.createDataChannel("label1"); did not throw exception.
 PASS dc.reliable is true
+PASS dc = pc.createDataChannel("label2", {}); did not throw exception.
 PASS dc.reliable is true
+PASS dc = pc.createDataChannel("label3", {reliable:true}); did not throw exception.
 PASS dc.reliable is true
+PASS dc = pc.createDataChannel("label3", {reliable:false}); did not throw exception.
 PASS dc.reliable is false
 PASS pc_onopen was called
+PASS dc = pc.createDataChannel("label"); did not throw exception.
 PASS dc.readyState is 'connecting'
 PASS pc_ondatachannel was called
-PASS event.channel.readyState is 'open'
 PASS dc_onopen was called
 PASS dc.readyState is 'open'
 PASS dc.label is 'label'

@@ -65,7 +65,7 @@
 #include "MediaStreamSource.h"
 #include "NotificationClient.h"
 #include "PageVisibilityState.h"
-#include "RTCDataChannelDescriptor.h"
+#include "RTCDataChannelHandlerClient.h"
 #include "RTCPeerConnectionHandlerClient.h"
 #include "ReferrerPolicy.h"
 #include "ResourceResponse.h"
@@ -118,8 +118,7 @@
 #include <public/WebFileSystem.h>
 #include <public/WebFilterOperation.h>
 #include <public/WebMediaStreamSource.h>
-#include <public/WebRTCDataChannel.h>
-#include <public/WebRTCPeerConnectionHandler.h>
+#include <public/WebRTCDataChannelHandlerClient.h>
 #include <public/WebRTCPeerConnectionHandlerClient.h>
 #include <public/WebReferrerPolicy.h>
 #include <public/WebScrollbar.h>
@@ -586,10 +585,10 @@ COMPILE_ASSERT_MATCHING_ENUM(WebRTCPeerConnectionHandlerClient::ICEStateNew, RTC
 COMPILE_ASSERT_MATCHING_ENUM(WebRTCPeerConnectionHandlerClient::ICEStateGathering, RTCPeerConnectionHandlerClient::IceStateGathering);
 COMPILE_ASSERT_MATCHING_ENUM(WebRTCPeerConnectionHandlerClient::ICEStateWaiting, RTCPeerConnectionHandlerClient::IceStateWaiting);
 
-COMPILE_ASSERT_MATCHING_ENUM(WebRTCDataChannel::ReadyStateConnecting, RTCDataChannelDescriptor::ReadyStateConnecting);
-COMPILE_ASSERT_MATCHING_ENUM(WebRTCDataChannel::ReadyStateOpen, RTCDataChannelDescriptor::ReadyStateOpen);
-COMPILE_ASSERT_MATCHING_ENUM(WebRTCDataChannel::ReadyStateClosing, RTCDataChannelDescriptor::ReadyStateClosing);
-COMPILE_ASSERT_MATCHING_ENUM(WebRTCDataChannel::ReadyStateClosed, RTCDataChannelDescriptor::ReadyStateClosed);
+COMPILE_ASSERT_MATCHING_ENUM(WebRTCDataChannelHandlerClient::ReadyStateConnecting, RTCDataChannelHandlerClient::ReadyStateConnecting);
+COMPILE_ASSERT_MATCHING_ENUM(WebRTCDataChannelHandlerClient::ReadyStateOpen, RTCDataChannelHandlerClient::ReadyStateOpen);
+COMPILE_ASSERT_MATCHING_ENUM(WebRTCDataChannelHandlerClient::ReadyStateClosing, RTCDataChannelHandlerClient::ReadyStateClosing);
+COMPILE_ASSERT_MATCHING_ENUM(WebRTCDataChannelHandlerClient::ReadyStateClosed, RTCDataChannelHandlerClient::ReadyStateClosed);
 #endif
 
 #if ENABLE(SCRIPTED_SPEECH)

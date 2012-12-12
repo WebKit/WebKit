@@ -5675,8 +5675,8 @@ webcore_platform_sources += \
 	Source/WebCore/platform/mediastream/MediaStreamSource.h \
 	Source/WebCore/platform/mediastream/MediaStreamSourcesQueryClient.h \
 	Source/WebCore/platform/mediastream/RTCConfiguration.h \
-	Source/WebCore/platform/mediastream/RTCDataChannelDescriptor.cpp \
-	Source/WebCore/platform/mediastream/RTCDataChannelDescriptor.h \
+	Source/WebCore/platform/mediastream/RTCDataChannelHandler.h \
+	Source/WebCore/platform/mediastream/RTCDataChannelHandlerClient.h \
 	Source/WebCore/platform/mediastream/RTCIceCandidateDescriptor.cpp \
 	Source/WebCore/platform/mediastream/RTCIceCandidateDescriptor.h \
 	Source/WebCore/platform/mediastream/RTCPeerConnectionHandler.cpp \

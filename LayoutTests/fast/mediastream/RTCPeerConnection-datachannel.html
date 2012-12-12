@@ -70,25 +70,23 @@ function dc_onopen() {
 
 function pc_ondatachannel(e) {
     testPassed("pc_ondatachannel was called");
-    event = e;
-    shouldBe("event.channel.readyState", "'open'");
 }
 
 function pc_onopen() {
     testPassed("pc_onopen was called");
-    dc = pc.createDataChannel("label");
+    shouldNotThrow('dc = pc.createDataChannel("label");');
     shouldBe("dc.readyState", "'connecting'");
     dc.onopen = dc_onopen;
 }
 
 pc = new webkitRTCPeerConnection(null, null);
-dc = pc.createDataChannel("label1");
+shouldNotThrow('dc = pc.createDataChannel("label1");');
 shouldBe("dc.reliable", "true");
-dc = pc.createDataChannel("label2", {});
+shouldNotThrow('dc = pc.createDataChannel("label2", {});');
 shouldBe("dc.reliable", "true");
-dc = pc.createDataChannel("label3", {reliable:true});
+shouldNotThrow('dc = pc.createDataChannel("label3", {reliable:true});');
 shouldBe("dc.reliable", "true");
-dc = pc.createDataChannel("label3", {reliable:false});
+shouldNotThrow('dc = pc.createDataChannel("label3", {reliable:false});');
 shouldBe("dc.reliable", "false");
 
 pc = new webkitRTCPeerConnection(null, null);

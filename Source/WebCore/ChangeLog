@@ -1,3 +1,86 @@
+2012-12-12  Tommy Widenflycht  <tommyw@google.com>
+
+        MediaStream API: Change the data channel descriptor pattern to a handler pattern
+        https://bugs.webkit.org/show_bug.cgi?id=104543
+
+        Reviewed by Kent Tamura.
+
+        In short the code is refactured to use the Handler/Client pattern (see RTCPeerConnectionHandler)
+        instead of the Descriptor pattern.
+        This will fix lifetime/memory/code structure issues in the chromium port.
+
+        Existing tests cover this patch.
+
+        * CMakeLists.txt:
+        * GNUmakefile.list.am:
+        * Modules/mediastream/RTCDataChannel.cpp:
+        (WebCore::RTCDataChannel::create):
+        (WebCore::RTCDataChannel::RTCDataChannel):
+        (WebCore::RTCDataChannel::~RTCDataChannel):
+        (WebCore::RTCDataChannel::label):
+        (WebCore::RTCDataChannel::reliable):
+        (WebCore::RTCDataChannel::readyState):
+        (WebCore::RTCDataChannel::bufferedAmount):
+        (WebCore::RTCDataChannel::send):
+        (WebCore::RTCDataChannel::close):
+        (WebCore::RTCDataChannel::didChangeReadyState):
+        (WebCore::RTCDataChannel::didReceiveStringData):
+        (WebCore::RTCDataChannel::didReceiveRawData):
+        (WebCore::RTCDataChannel::didDetectError):
+        (WebCore::RTCDataChannel::stop):
+        * Modules/mediastream/RTCDataChannel.h:
+        (WebCore):
+        (RTCDataChannel):
+        * Modules/mediastream/RTCPeerConnection.cpp:
+        (WebCore::RTCPeerConnection::didAddRemoteDataChannel):
+        * Modules/mediastream/RTCPeerConnection.h:
+        (RTCPeerConnection):
+        * WebCore.gypi:
+        * platform/chromium/support/WebRTCDataChannel.cpp: Removed.
+        * platform/mediastream/RTCDataChannelDescriptor.h: Removed.
+        * platform/mediastream/RTCDataChannelHandler.h: Copied from Source/WebCore/platform/mediastream/RTCDataChannelDescriptor.cpp.
+        (WebCore):
+        (RTCDataChannelHandler):
+        (WebCore::RTCDataChannelHandler::~RTCDataChannelHandler):
+        * platform/mediastream/RTCDataChannelHandlerClient.h: Renamed from Source/WebCore/platform/mediastream/RTCDataChannelDescriptor.cpp.
+        (WebCore):
+        (RTCDataChannelHandlerClient):
+        (WebCore::RTCDataChannelHandlerClient::~RTCDataChannelHandlerClient):
+        * platform/mediastream/RTCPeerConnectionHandler.cpp:
+        (WebCore):
+        (WebCore::RTCPeerConnectionHandler::create):
+        * platform/mediastream/RTCPeerConnectionHandler.h:
+        (WebCore):
+        (RTCPeerConnectionHandler):
+        * platform/mediastream/RTCPeerConnectionHandlerClient.h:
+        (WebCore):
+        (RTCPeerConnectionHandlerClient):
+        * platform/mediastream/chromium/RTCDataChannelHandlerChromium.cpp: Added.
+        (WebCore):
+        (WebCore::RTCDataChannelHandlerChromium::create):
+        (WebCore::RTCDataChannelHandlerChromium::RTCDataChannelHandlerChromium):
+        (WebCore::RTCDataChannelHandlerChromium::~RTCDataChannelHandlerChromium):
+        (WebCore::RTCDataChannelHandlerChromium::setClient):
+        (WebCore::RTCDataChannelHandlerChromium::label):
+        (WebCore::RTCDataChannelHandlerChromium::isReliable):
+        (WebCore::RTCDataChannelHandlerChromium::bufferedAmount):
+        (WebCore::RTCDataChannelHandlerChromium::sendStringData):
+        (WebCore::RTCDataChannelHandlerChromium::sendRawData):
+        (WebCore::RTCDataChannelHandlerChromium::close):
+        (WebCore::RTCDataChannelHandlerChromium::didChangeReadyState):
+        (WebCore::RTCDataChannelHandlerChromium::didReceiveStringData):
+        (WebCore::RTCDataChannelHandlerChromium::didReceiveRawData):
+        (WebCore::RTCDataChannelHandlerChromium::didDetectError):
+        * platform/mediastream/chromium/RTCDataChannelHandlerChromium.h: Added.
+        (WebCore):
+        (RTCDataChannelHandlerChromium):
+        * platform/mediastream/chromium/RTCPeerConnectionHandlerChromium.cpp:
+        (WebCore::RTCPeerConnectionHandlerChromium::createDataChannel):
+        (WebCore::RTCPeerConnectionHandlerChromium::didAddRemoteDataChannel):
+        * platform/mediastream/chromium/RTCPeerConnectionHandlerChromium.h:
+        (WebCore):
+        (RTCPeerConnectionHandlerChromium):
+
 2012-12-12  Huang Dongsung  <luxtella@company100.net>
 
         Coordinated Graphics: Refactor TiledBackingStore code in CoordinatedGraphicsLayer.

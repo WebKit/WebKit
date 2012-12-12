@@ -32,6 +32,7 @@
 #include "Event.h"
 #include "ExceptionCode.h"
 #include "MessageEvent.h"
+#include "RTCDataChannelHandler.h"
 #include "RTCPeerConnectionHandler.h"
 #include "ScriptExecutionContext.h"
 #include <wtf/ArrayBuffer.h>
@@ -39,60 +40,57 @@
 
 namespace WebCore {
 
-PassRefPtr<RTCDataChannel> RTCDataChannel::create(ScriptExecutionContext* context, RTCPeerConnectionHandler* handler, const String& label, bool reliable, ExceptionCode& ec)
+PassRefPtr<RTCDataChannel> RTCDataChannel::create(ScriptExecutionContext* context, RTCPeerConnectionHandler* peerConnectionHandler, const String& label, bool reliable, ExceptionCode& ec)
 {
-    ASSERT(handler);
-    RefPtr<RTCDataChannel> dataChannel = create(context, handler, RTCDataChannelDescriptor::create(label, reliable));
-    if (!handler->openDataChannel(dataChannel->descriptor())) {
+    OwnPtr<RTCDataChannelHandler> handler = peerConnectionHandler->createDataChannel(label, reliable);
+    if (!handler) {
         ec = NOT_SUPPORTED_ERR;
         return 0;
     }
-    return dataChannel.release();
+    return adoptRef(new RTCDataChannel(context, handler.release()));
 }
 
-PassRefPtr<RTCDataChannel> RTCDataChannel::create(ScriptExecutionContext* context, RTCPeerConnectionHandler* handler, PassRefPtr<RTCDataChannelDescriptor> descriptor)
+PassRefPtr<RTCDataChannel> RTCDataChannel::create(ScriptExecutionContext* context, PassOwnPtr<RTCDataChannelHandler> handler)
 {
     ASSERT(handler);
-    ASSERT(descriptor);
-    return adoptRef(new RTCDataChannel(context, handler, descriptor));
+    return adoptRef(new RTCDataChannel(context, handler));
 }
 
-RTCDataChannel::RTCDataChannel(ScriptExecutionContext* context, RTCPeerConnectionHandler* handler, PassRefPtr<RTCDataChannelDescriptor> descriptor)
+RTCDataChannel::RTCDataChannel(ScriptExecutionContext* context, PassOwnPtr<RTCDataChannelHandler> handler)
     : m_scriptExecutionContext(context)
-    , m_stopped(false)
-    , m_descriptor(descriptor)
-    , m_binaryType(BinaryTypeArrayBuffer)
     , m_handler(handler)
+    , m_stopped(false)
+    , m_readyState(ReadyStateConnecting)
+    , m_binaryType(BinaryTypeArrayBuffer)
     , m_scheduledEventTimer(this, &RTCDataChannel::scheduledEventTimerFired)
 {
-    m_descriptor->setClient(this);
+    m_handler->setClient(this);
 }
 
 RTCDataChannel::~RTCDataChannel()
 {
-    m_descriptor->setClient(0);
 }
 
 String RTCDataChannel::label() const
 {
-    return m_descriptor->label();
+    return m_handler->label();
 }
 
 bool RTCDataChannel::reliable() const
 {
-    return m_descriptor->reliable();
+    return m_handler->isReliable();
 }
 
 String RTCDataChannel::readyState() const
 {
-    switch (m_descriptor->readyState()) {
-    case RTCDataChannelDescriptor::ReadyStateConnecting:
+    switch (m_readyState) {
+    case ReadyStateConnecting:
         return ASCIILiteral("connecting");
-    case RTCDataChannelDescriptor::ReadyStateOpen:
+    case ReadyStateOpen:
         return ASCIILiteral("open");
-    case RTCDataChannelDescriptor::ReadyStateClosing:
+    case ReadyStateClosing:
         return ASCIILiteral("closing");
-    case RTCDataChannelDescriptor::ReadyStateClosed:
+    case ReadyStateClosed:
         return ASCIILiteral("closed");
     }
 
@@ -102,7 +100,7 @@ String RTCDataChannel::readyState() const
 
 unsigned long RTCDataChannel::bufferedAmount() const
 {
-    return m_descriptor->bufferedAmount();
+    return m_handler->bufferedAmount();
 }
 
 String RTCDataChannel::binaryType() const
@@ -129,11 +127,11 @@ void RTCDataChannel::setBinaryType(const String& binaryType, ExceptionCode& ec)
 
 void RTCDataChannel::send(const String& data, ExceptionCode& ec)
 {
-    if (m_descriptor->readyState() != RTCDataChannelDescriptor::ReadyStateOpen) {
+    if (m_readyState != ReadyStateOpen) {
         ec = INVALID_STATE_ERR;
         return;
     }
-    if (!m_handler->sendStringData(descriptor(), data)) {
+    if (!m_handler->sendStringData(data)) {
         // FIXME: Decide what the right exception here is.
         ec = SYNTAX_ERR;
     }
@@ -141,7 +139,7 @@ void RTCDataChannel::send(const String& data, ExceptionCode& ec)
 
 void RTCDataChannel::send(PassRefPtr<ArrayBuffer> prpData, ExceptionCode& ec)
 {
-    if (m_descriptor->readyState() != RTCDataChannelDescriptor::ReadyStateOpen) {
+    if (m_readyState != ReadyStateOpen) {
         ec = INVALID_STATE_ERR;
         return;
     }
@@ -154,7 +152,7 @@ void RTCDataChannel::send(PassRefPtr<ArrayBuffer> prpData, ExceptionCode& ec)
 
     const char* dataPointer = static_cast<const char*>(data->data());
 
-    if (!m_handler->sendRawData(descriptor(), dataPointer, dataLength)) {
+    if (!m_handler->sendRawData(dataPointer, dataLength)) {
         // FIXME: Decide what the right exception here is.
         ec = SYNTAX_ERR;
     }
@@ -177,19 +175,21 @@ void RTCDataChannel::close()
     if (m_stopped)
         return;
 
-    m_handler->closeDataChannel(descriptor());
+    m_handler->close();
 }
 
-void RTCDataChannel::readyStateChanged()
+void RTCDataChannel::didChangeReadyState(ReadyState newState)
 {
-    if (m_stopped)
+    if (m_stopped || m_readyState == ReadyStateClosed)
         return;
 
-    switch (m_descriptor->readyState()) {
-    case RTCDataChannelDescriptor::ReadyStateOpen:
+    m_readyState = newState;
+
+    switch (m_readyState) {
+    case ReadyStateOpen:
         scheduleDispatchEvent(Event::create(eventNames().openEvent, false, false));
         break;
-    case RTCDataChannelDescriptor::ReadyStateClosed:
+    case ReadyStateClosed:
         scheduleDispatchEvent(Event::create(eventNames().closeEvent, false, false));
         break;
     default:
@@ -197,7 +197,7 @@ void RTCDataChannel::readyStateChanged()
     }
 }
 
-void RTCDataChannel::dataArrived(const String& text)
+void RTCDataChannel::didReceiveStringData(const String& text)
 {
     if (m_stopped)
         return;
@@ -205,7 +205,7 @@ void RTCDataChannel::dataArrived(const String& text)
     scheduleDispatchEvent(MessageEvent::create(text));
 }
 
-void RTCDataChannel::dataArrived(const char* data, size_t dataLength)
+void RTCDataChannel::didReceiveRawData(const char* data, size_t dataLength)
 {
     if (m_stopped)
         return;
@@ -222,17 +222,12 @@ void RTCDataChannel::dataArrived(const char* data, size_t dataLength)
     ASSERT_NOT_REACHED();
 }
 
-void RTCDataChannel::error()
+void RTCDataChannel::didDetectError()
 {
     if (m_stopped)
         return;
 
     scheduleDispatchEvent(Event::create(eventNames().errorEvent, false, false));
-}
-
-RTCDataChannelDescriptor* RTCDataChannel::descriptor()
-{
-    return m_descriptor.get();
 }
 
 const AtomicString& RTCDataChannel::interfaceName() const
@@ -248,8 +243,7 @@ ScriptExecutionContext* RTCDataChannel::scriptExecutionContext() const
 void RTCDataChannel::stop()
 {
     m_stopped = true;
-    m_handler = 0;
-    m_descriptor->setClient(0);
+    m_handler->setClient(0);
     m_scriptExecutionContext = 0;
 }
 

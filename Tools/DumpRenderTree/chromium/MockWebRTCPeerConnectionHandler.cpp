@@ -34,6 +34,7 @@
 #include "MockWebRTCPeerConnectionHandler.h"
 
 #include "MockConstraints.h"
+#include "MockWebRTCDataChannelHandler.h"
 #include "Task.h"
 #include <public/WebMediaConstraints.h>
 #include <public/WebMediaStreamComponent.h>
@@ -128,67 +129,6 @@ private:
     bool m_succeeded;
 };
 
-class StringDataTask : public WebMethodTask<MockWebRTCPeerConnectionHandler> {
-public:
-    StringDataTask(MockWebRTCPeerConnectionHandler* object, const WebRTCDataChannel& dataChannel, const WebString& data)
-        : WebMethodTask<MockWebRTCPeerConnectionHandler>(object)
-        , m_dataChannel(dataChannel)
-        , m_data(data)
-    {
-    }
-
-    virtual void runIfValid() OVERRIDE
-    {
-        m_dataChannel.dataArrived(m_data);
-    }
-
-private:
-    WebRTCDataChannel m_dataChannel;
-    WebString m_data;
-};
-
-class CharPtrDataTask : public WebMethodTask<MockWebRTCPeerConnectionHandler> {
-public:
-    CharPtrDataTask(MockWebRTCPeerConnectionHandler* object, const WebRTCDataChannel& dataChannel, const char* data, size_t length)
-        : WebMethodTask<MockWebRTCPeerConnectionHandler>(object)
-        , m_dataChannel(dataChannel)
-        , m_length(length)
-    {
-        m_data = new char[m_length];
-        memcpy(m_data, data, m_length);
-    }
-
-    virtual void runIfValid() OVERRIDE
-    {
-        m_dataChannel.dataArrived(m_data, m_length);
-        delete [] m_data;
-    }
-
-private:
-    WebRTCDataChannel m_dataChannel;
-    char* m_data;
-    size_t m_length;
-};
-
-class DataChannelReadyStateTask : public WebMethodTask<MockWebRTCPeerConnectionHandler> {
-public:
-    DataChannelReadyStateTask(MockWebRTCPeerConnectionHandler* object, const WebRTCDataChannel& dataChannel, WebRTCDataChannel::ReadyState state)
-        : WebMethodTask<MockWebRTCPeerConnectionHandler>(object)
-        , m_dataChannel(dataChannel)
-        , m_state(state)
-    {
-    }
-
-    virtual void runIfValid() OVERRIDE
-    {
-        m_dataChannel.readyStateChanged(m_state);
-    }
-
-private:
-    WebRTCDataChannel m_dataChannel;
-    WebRTCDataChannel::ReadyState m_state;
-};
-
 class RTCPeerConnectionReadyStateTask : public WebMethodTask<MockWebRTCPeerConnectionHandler> {
 public:
     RTCPeerConnectionReadyStateTask(MockWebRTCPeerConnectionHandler* object, WebRTCPeerConnectionHandlerClient* client, WebRTCPeerConnectionHandlerClient::ReadyState state)
@@ -206,6 +146,24 @@ public:
 private:
     WebRTCPeerConnectionHandlerClient* m_client;
     WebRTCPeerConnectionHandlerClient::ReadyState m_state;
+};
+
+class RemoteDataChannelTask : public WebMethodTask<MockWebRTCPeerConnectionHandler> {
+public:
+    RemoteDataChannelTask(MockWebRTCPeerConnectionHandler* object, WebRTCPeerConnectionHandlerClient* client)
+        : WebMethodTask<MockWebRTCPeerConnectionHandler>(object)
+        , m_client(client)
+    {
+    }
+
+    virtual void runIfValid() OVERRIDE
+    {
+        WebRTCDataChannelHandler* remoteDataChannel = new MockWebRTCDataChannelHandler("MockRemoteDataChannel", true);
+        m_client->didAddRemoteDataChannel(remoteDataChannel);
+    }
+
+private:
+    WebRTCPeerConnectionHandlerClient* m_client;
 };
 
 /////////////////////
@@ -327,46 +285,16 @@ void MockWebRTCPeerConnectionHandler::getStats(const WebRTCStatsRequest& request
     postTask(new RTCStatsRequestSucceededTask(this, request, response));
 }
 
+WebRTCDataChannelHandler* MockWebRTCPeerConnectionHandler::createDataChannel(const WebString& label, bool reliable)
+{
+    postTask(new RemoteDataChannelTask(this, m_client));
+
+    return new MockWebRTCDataChannelHandler(label, reliable);
+}
+
 void MockWebRTCPeerConnectionHandler::stop()
 {
     m_stopped = true;
-}
-
-bool MockWebRTCPeerConnectionHandler::openDataChannel(const WebRTCDataChannel& dataChannel)
-{
-    if (m_stopped)
-        return false;
-
-    WebRTCDataChannel remoteDataChannel;
-    remoteDataChannel.initialize("MockRemoteDataChannel", dataChannel.reliable());
-    remoteDataChannel.readyStateChanged(WebRTCDataChannel::ReadyStateOpen);
-    m_client->didAddRemoteDataChannel(remoteDataChannel);
-
-    postTask(new DataChannelReadyStateTask(this, dataChannel, WebRTCDataChannel::ReadyStateOpen));
-    return true;
-}
-
-void MockWebRTCPeerConnectionHandler::closeDataChannel(const WebRTCDataChannel& dataChannel)
-{
-    postTask(new DataChannelReadyStateTask(this, dataChannel, WebRTCDataChannel::ReadyStateClosed));
-}
-
-bool MockWebRTCPeerConnectionHandler::sendStringData(const WebRTCDataChannel& dataChannel, const WebString& data)
-{
-    if (m_stopped)
-        return false;
-
-    dataChannel.dataArrived(data);
-    return true;
-}
-
-bool MockWebRTCPeerConnectionHandler::sendRawData(const WebRTCDataChannel& dataChannel, const char* data, size_t length)
-{
-    if (m_stopped)
-        return false;
-
-    dataChannel.dataArrived(data, length);
-    return true;
 }
 
 #endif // ENABLE(MEDIA_STREAM)

@@ -42,11 +42,12 @@
 
 namespace WebKit {
 class WebMediaStreamDescriptor;
-class WebRTCDataChannel;
 class WebRTCICECandidate;
 }
 
 namespace WebCore {
+
+class RTCDataChannelHandler;
 
 class RTCPeerConnectionHandlerChromium : public RTCPeerConnectionHandler, public WebKit::WebRTCPeerConnectionHandlerClient {
 public:
@@ -68,12 +69,8 @@ public:
     virtual bool addStream(PassRefPtr<MediaStreamDescriptor>, PassRefPtr<MediaConstraints>) OVERRIDE;
     virtual void removeStream(PassRefPtr<MediaStreamDescriptor>) OVERRIDE;
     virtual void getStats(PassRefPtr<RTCStatsRequest>) OVERRIDE;
+    virtual PassOwnPtr<RTCDataChannelHandler> createDataChannel(const String& label, bool reliable) OVERRIDE;
     virtual void stop() OVERRIDE;
-
-    virtual bool openDataChannel(PassRefPtr<RTCDataChannelDescriptor>) OVERRIDE;
-    virtual bool sendStringData(PassRefPtr<RTCDataChannelDescriptor>, const String&) OVERRIDE;
-    virtual bool sendRawData(PassRefPtr<RTCDataChannelDescriptor>, const char*, size_t) OVERRIDE;
-    virtual void closeDataChannel(PassRefPtr<RTCDataChannelDescriptor>) OVERRIDE;
 
     // WebKit::WebRTCPeerConnectionHandlerClient implementation.
     virtual void negotiationNeeded() OVERRIDE;
@@ -83,7 +80,7 @@ public:
     virtual void didChangeICEState(WebKit::WebRTCPeerConnectionHandlerClient::ICEState) OVERRIDE;
     virtual void didAddRemoteStream(const WebKit::WebMediaStreamDescriptor&) OVERRIDE;
     virtual void didRemoveRemoteStream(const WebKit::WebMediaStreamDescriptor&) OVERRIDE;
-    virtual void didAddRemoteDataChannel(const WebKit::WebRTCDataChannel&) OVERRIDE;
+    virtual void didAddRemoteDataChannel(WebKit::WebRTCDataChannelHandler*) OVERRIDE;
 
     static WebKit::WebRTCPeerConnectionHandler* toWebRTCPeerConnectionHandler(RTCPeerConnectionHandler*);
 
