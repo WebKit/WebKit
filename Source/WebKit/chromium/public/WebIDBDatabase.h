@@ -29,6 +29,7 @@
 #include "WebDOMStringList.h"
 #include "WebExceptionCode.h"
 #include "WebIDBMetadata.h"
+#include "WebIDBTransaction.h"
 #include "platform/WebCommon.h"
 
 namespace WebKit {
@@ -36,7 +37,9 @@ namespace WebKit {
 class WebFrame;
 class WebIDBCallbacks;
 class WebIDBDatabaseCallbacks;
+class WebIDBKey;
 class WebIDBKeyPath;
+class WebIDBKeyRange;
 class WebIDBObjectStore;
 class WebIDBTransaction;
 
@@ -64,6 +67,28 @@ public:
 
     virtual void abort(long long transactionId) { WEBKIT_ASSERT_NOT_REACHED(); }
     virtual void commit(long long transactionId) { WEBKIT_ASSERT_NOT_REACHED(); }
+
+    enum TaskType {
+        NormalTask = 0,
+        PreemptiveTask
+    };
+
+    enum PutMode {
+        AddOrUpdate,
+        AddOnly,
+        CursorUpdate
+    };
+
+    typedef WebVector<WebIDBKey> WebIndexKeys;
+
+    virtual void get(long long transactionId, long long objectStoreId, long long indexId, const WebIDBKeyRange&, bool keyOnly, WebIDBCallbacks*) { WEBKIT_ASSERT_NOT_REACHED(); }
+    virtual void put(long long transactionId, long long objectStoreId, const WebVector<unsigned char>& value, const WebIDBKey&, PutMode, WebIDBCallbacks*, const WebVector<long long>& indexIds, const WebVector<WebIndexKeys>&) { WEBKIT_ASSERT_NOT_REACHED(); }
+    virtual void setIndexKeys(long long transactionId, long long objectStoreId, const WebIDBKey&, const WebVector<long long>& indexIds, const WebVector<WebIndexKeys>&) { WEBKIT_ASSERT_NOT_REACHED(); }
+    virtual void setIndexesReady(long long transactionId, long long objectStoreId, const WebVector<long long>& indexIds) { WEBKIT_ASSERT_NOT_REACHED(); }
+    virtual void openCursor(long long transactionId, long long objectStoreId, long long indexId, const WebIDBKeyRange&, unsigned short direction, bool keyOnly, TaskType, WebIDBCallbacks*) { WEBKIT_ASSERT_NOT_REACHED(); }
+    virtual void count(long long transactionId, long long objectStoreId, long long indexId, const WebIDBKeyRange&, WebIDBCallbacks*) { WEBKIT_ASSERT_NOT_REACHED(); }
+    virtual void deleteRange(long long transactionId, long long objectStoreId, const WebIDBKeyRange&, WebIDBCallbacks*) { WEBKIT_ASSERT_NOT_REACHED(); }
+    virtual void clear(long long transactionId, long long objectStoreId, WebIDBCallbacks*)  { WEBKIT_ASSERT_NOT_REACHED(); }
 
 protected:
     WebIDBDatabase() { }

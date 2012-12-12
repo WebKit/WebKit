@@ -338,6 +338,45 @@ void IDBDatabaseBackendImpl::abort(int64_t transactionId)
     m_transactions.get(transactionId)->abort();
 }
 
+void IDBDatabaseBackendImpl::get(int64_t transactionId, int64_t objectStoreId, int64_t indexId, PassRefPtr<IDBKeyRange>, bool keyOnly, PassRefPtr<IDBCallbacks>)
+{
+    ASSERT_NOT_REACHED();
+}
+
+void IDBDatabaseBackendImpl::put(int64_t transactionId, int64_t objectStoreId, const Vector<uint8_t>&, PassRefPtr<IDBKey>, PutMode, PassRefPtr<IDBCallbacks>, const Vector<int64_t>& indexIds, const Vector<IndexKeys>&)
+{
+    ASSERT_NOT_REACHED();
+}
+
+void IDBDatabaseBackendImpl::setIndexKeys(int64_t transactionId, int64_t objectStoreId, PassRefPtr<IDBKey> prpPrimaryKey, const Vector<int64_t>& indexIds, const Vector<IndexKeys>&)
+{
+    ASSERT_NOT_REACHED();
+}
+
+void IDBDatabaseBackendImpl::setIndexesReady(int64_t transactionId, int64_t objectStoreId, const Vector<int64_t>& indexIds)
+{
+    ASSERT_NOT_REACHED();
+}
+
+void IDBDatabaseBackendImpl::openCursor(int64_t transactionId, int64_t objectStoreId, int64_t indexId, PassRefPtr<IDBKeyRange> keyRange, unsigned short direction, bool keyOnly, TaskType taskType, PassRefPtr<IDBCallbacks> callbacks)
+{
+    ASSERT_NOT_REACHED();
+}
+
+void IDBDatabaseBackendImpl::count(int64_t transactionId, int64_t objectStoreId, int64_t indexId, PassRefPtr<IDBKeyRange>, PassRefPtr<IDBCallbacks>)
+{
+    ASSERT_NOT_REACHED();
+}
+
+void IDBDatabaseBackendImpl::deleteRange(int64_t transactionId, int64_t objectStoreId, PassRefPtr<IDBKeyRange>, PassRefPtr<IDBCallbacks>)
+{
+    ASSERT_NOT_REACHED();
+}
+
+void IDBDatabaseBackendImpl::clear(int64_t transactionId, int64_t objectStoreId, PassRefPtr<IDBCallbacks>)
+{
+    ASSERT_NOT_REACHED();
+}
 
 void IDBDatabaseBackendImpl::DeleteObjectStoreOperation::perform(IDBTransactionBackendImpl* transaction)
 {

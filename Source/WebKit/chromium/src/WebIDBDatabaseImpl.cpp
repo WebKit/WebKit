@@ -32,11 +32,13 @@
 #include "IDBCallbacksProxy.h"
 #include "IDBDatabaseBackendInterface.h"
 #include "IDBDatabaseCallbacksProxy.h"
+#include "IDBKeyRange.h"
 #include "IDBMetadata.h"
 #include "IDBObjectStoreBackendInterface.h"
 #include "IDBTransactionBackendInterface.h"
 #include "WebIDBCallbacks.h"
 #include "WebIDBDatabaseCallbacks.h"
+#include "WebIDBKeyRange.h"
 #include "WebIDBMetadata.h"
 #include "WebIDBObjectStoreImpl.h"
 #include "WebIDBTransactionImpl.h"
@@ -124,6 +126,89 @@ void WebIDBDatabaseImpl::commit(long long transactionId)
 {
     if (m_databaseBackend)
         m_databaseBackend->commit(transactionId);
+}
+
+
+void WebIDBDatabaseImpl::openCursor(long long transactionId, long long objectStoreId, long long indexId, const WebIDBKeyRange& keyRange, unsigned short direction, bool keyOnly, TaskType taskType, WebIDBCallbacks* callbacks)
+{
+    if (m_databaseBackend)
+        m_databaseBackend->openCursor(transactionId, objectStoreId, indexId, keyRange, static_cast<IDBCursor::Direction>(direction), keyOnly, static_cast<IDBDatabaseBackendInterface::TaskType>(taskType), IDBCallbacksProxy::create(adoptPtr(callbacks)));
+}
+
+void WebIDBDatabaseImpl::count(long long transactionId, long long objectStoreId, long long indexId, const WebIDBKeyRange& keyRange, WebIDBCallbacks* callbacks)
+{
+    if (m_databaseBackend)
+        m_databaseBackend->count(transactionId, objectStoreId, indexId, keyRange, IDBCallbacksProxy::create(adoptPtr(callbacks)));
+}
+
+void WebIDBDatabaseImpl::get(long long transactionId, long long objectStoreId, long long indexId, const WebIDBKeyRange& keyRange, bool keyOnly, WebIDBCallbacks* callbacks)
+{
+    if (m_databaseBackend)
+        m_databaseBackend->get(transactionId, objectStoreId, indexId, keyRange, keyOnly, IDBCallbacksProxy::create(adoptPtr(callbacks)));
+}
+
+void WebIDBDatabaseImpl::put(long long transactionId, long long objectStoreId, const WebVector<unsigned char>& value, const WebIDBKey& key, PutMode putMode, WebIDBCallbacks* callbacks, const WebVector<long long>& webIndexIds, const WebVector<WebIndexKeys>& webIndexKeys)
+{
+    if (!m_databaseBackend)
+        return;
+
+    ASSERT(webIndexIds.size() == webIndexKeys.size());
+    Vector<int64_t> indexIds(webIndexIds.size());
+    Vector<IDBObjectStoreBackendInterface::IndexKeys> indexKeys(webIndexKeys.size());
+
+    for (size_t i = 0; i < webIndexIds.size(); ++i) {
+        indexIds[i] = webIndexIds[i];
+        Vector<RefPtr<IDBKey> > indexKeyList(webIndexKeys[i].size());
+        for (size_t j = 0; j < webIndexKeys[i].size(); ++j)
+            indexKeyList[j] = webIndexKeys[i][j];
+        indexKeys[i] = indexKeyList;
+    }
+
+    Vector<uint8_t> valueBuffer;
+    valueBuffer.append(value.data(), value.size());
+    m_databaseBackend->put(transactionId, objectStoreId, valueBuffer, key, static_cast<IDBDatabaseBackendInterface::PutMode>(putMode), IDBCallbacksProxy::create(adoptPtr(callbacks)), indexIds, indexKeys);
+}
+
+void WebIDBDatabaseImpl::setIndexKeys(long long transactionId, long long objectStoreId, const WebIDBKey& primaryKey, const WebVector<long long>& webIndexIds, const WebVector<WebIndexKeys>& webIndexKeys)
+{
+    if (!m_databaseBackend)
+        return;
+
+    ASSERT(webIndexIds.size() == webIndexKeys.size());
+    Vector<int64_t> indexIds(webIndexIds.size());
+    Vector<IDBObjectStoreBackendInterface::IndexKeys> indexKeys(webIndexKeys.size());
+
+    for (size_t i = 0; i < webIndexIds.size(); ++i) {
+        indexIds[i] = webIndexIds[i];
+        Vector<RefPtr<IDBKey> > indexKeyList(webIndexKeys[i].size());
+        for (size_t j = 0; j < webIndexKeys[i].size(); ++j)
+            indexKeyList[j] = webIndexKeys[i][j];
+        indexKeys[i] = indexKeyList;
+    }
+    m_databaseBackend->setIndexKeys(transactionId, objectStoreId, primaryKey, indexIds, indexKeys);
+}
+
+void WebIDBDatabaseImpl::setIndexesReady(long long transactionId, long long objectStoreId, const WebVector<long long>& webIndexIds)
+{
+    if (!m_databaseBackend)
+        return;
+
+    Vector<int64_t> indexIds(webIndexIds.size());
+    for (size_t i = 0; i < webIndexIds.size(); ++i)
+        indexIds[i] = webIndexIds[i];
+    m_databaseBackend->setIndexesReady(transactionId, objectStoreId, indexIds);
+}
+
+void WebIDBDatabaseImpl::deleteRange(long long transactionId, long long objectStoreId, const WebIDBKeyRange& keyRange, WebIDBCallbacks* callbacks)
+{
+    if (m_databaseBackend)
+        m_databaseBackend->deleteRange(transactionId, objectStoreId, keyRange, IDBCallbacksProxy::create(adoptPtr(callbacks)));
+}
+
+void WebIDBDatabaseImpl::clear(long long transactionId, long long objectStoreId, WebIDBCallbacks* callbacks)
+{
+    if (m_databaseBackend)
+        m_databaseBackend->clear(transactionId, objectStoreId, IDBCallbacksProxy::create(adoptPtr(callbacks)));
 }
 
 } // namespace WebKit
