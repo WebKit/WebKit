@@ -44,6 +44,7 @@
 #include "RenderView.h"
 #include "ShadowRoot.h"
 #include "StyleInheritedData.h"
+#include "StyleResolver.h"
 #include "Text.h"
 
 #if ENABLE(SVG)
@@ -265,13 +266,18 @@ void NodeRenderingContext::createRendererForTextIfNeeded()
 
     if (!shouldCreateRenderer())
         return;
+
     RenderObject* parentRenderer = this->parentRenderer();
     ASSERT(parentRenderer);
-    m_style = parentRenderer->style();
+    Document* document = textNode->document();
+
+    if (resetStyleInheritance())
+        m_style = document->styleResolver()->defaultStyleForElement();
+    else
+        m_style = parentRenderer->style();
 
     if (!textNode->textRendererIsNeeded(*this))
         return;
-    Document* document = textNode->document();
     RenderText* newRenderer = textNode->createTextRenderer(document->renderArena(), m_style.get());
     if (!newRenderer)
         return;

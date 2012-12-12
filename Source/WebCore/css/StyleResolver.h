@@ -154,6 +154,8 @@ public:
     PassRefPtr<RenderStyle> pseudoStyleForElement(PseudoId, Element*, RenderStyle* parentStyle);
 
     PassRefPtr<RenderStyle> styleForPage(int pageIndex);
+    PassRefPtr<RenderStyle> defaultStyleForElement();
+    PassRefPtr<RenderStyle> styleForText(Text*);
 
     static PassRefPtr<RenderStyle> styleForDocument(Document*, CSSFontSelector* = 0);
 

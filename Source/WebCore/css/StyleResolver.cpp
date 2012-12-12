@@ -966,17 +966,6 @@ inline void StyleResolver::initElement(Element* e)
     }
 }
 
-inline bool shouldResetStyleInheritance(NodeRenderingContext& context)
-{
-    if (context.resetStyleInheritance())
-        return true;
-
-    if (InsertionPoint* insertionPoint = context.insertionPoint())
-        return insertionPoint->resetStyleInheritance();
-
-    return false;
-}
-
 inline void StyleResolver::initForStyleResolve(Element* e, RenderStyle* parentStyle, PseudoId pseudoID)
 {
     m_pseudoStyle = pseudoID;
@@ -984,7 +973,7 @@ inline void StyleResolver::initForStyleResolve(Element* e, RenderStyle* parentSt
     if (e) {
         NodeRenderingContext context(e);
         m_parentNode = context.parentNodeForRenderingAndStyle();
-        m_parentStyle = shouldResetStyleInheritance(context) ? 0 :
+        m_parentStyle = context.resetStyleInheritance() ? 0 :
             parentStyle ? parentStyle :
             m_parentNode ? m_parentNode->renderStyle() : 0;
         m_distributedToInsertionPoint = context.insertionPoint();
@@ -1553,19 +1542,13 @@ PassRefPtr<RenderStyle> StyleResolver::styleForElement(Element* element, RenderS
             return sharedStyle;
     }
 
-    m_style = RenderStyle::create();
-
     RefPtr<RenderStyle> cloneForParent;
 
-    if (m_parentStyle)
+    if (m_parentStyle) {
+        m_style = RenderStyle::create();
         m_style->inheritFrom(m_parentStyle, isAtShadowBoundary(element) ? RenderStyle::AtShadowBoundary : RenderStyle::NotAtShadowBoundary);
-    else {
-        // Make sure our fonts are initialized if we don't inherit them from our parent style.
-        if (Settings* settings = documentSettings()) {
-            initializeFontStyle(settings);
-            m_style->font().update(fontSelector());
-        } else
-            m_style->font().update(0);
+    } else {
+        m_style = defaultStyleForElement();
         cloneForParent = RenderStyle::clone(style());
         m_parentStyle = cloneForParent.get();
     }
@@ -1806,6 +1789,29 @@ PassRefPtr<RenderStyle> StyleResolver::styleForPage(int pageIndex)
 
     // Now return the style.
     return m_style.release();
+}
+
+PassRefPtr<RenderStyle> StyleResolver::defaultStyleForElement()
+{
+    m_style = RenderStyle::create();
+    // Make sure our fonts are initialized if we don't inherit them from our parent style.
+    if (Settings* settings = documentSettings()) {
+        initializeFontStyle(settings);
+        m_style->font().update(fontSelector());
+    } else
+        m_style->font().update(0);
+
+    return m_style.release();
+}
+
+PassRefPtr<RenderStyle> StyleResolver::styleForText(Text* textNode)
+{
+    ASSERT(textNode);
+
+    NodeRenderingContext context(textNode);
+    Node* parentNode = context.parentNodeForRenderingAndStyle();
+    return context.resetStyleInheritance() || !parentNode ?
+        defaultStyleForElement() : parentNode->renderStyle();
 }
 
 static void addIntrinsicMargins(RenderStyle* style)

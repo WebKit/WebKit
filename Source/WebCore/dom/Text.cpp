@@ -33,6 +33,7 @@
 #endif
 
 #include "StyleInheritedData.h"
+#include "StyleResolver.h"
 #include <wtf/text/CString.h>
 #include <wtf/text/StringBuilder.h>
 
@@ -282,16 +283,9 @@ void Text::attach()
 void Text::recalcTextStyle(StyleChange change)
 {
     RenderText* renderer = toRenderText(this->renderer());
-    // The only time we have a renderer and our parent doesn't is if our parent
-    // is a shadow root.
-    if (change != NoChange && renderer) {
-        if (!parentNode()->isShadowRoot())
-            renderer->setStyle(parentNode()->renderer()->style());
-#if ENABLE(SVG)
-        else if (isSVGShadowText(this))
-            renderer->setStyle(toShadowRoot(parentNode())->host()->renderer()->style());
-#endif
-    }
+
+    if (change != NoChange && renderer)
+        renderer->setStyle(document()->styleResolver()->styleForText(this));
 
     if (needsStyleRecalc()) {
         if (renderer)

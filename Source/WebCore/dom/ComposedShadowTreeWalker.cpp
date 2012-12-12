@@ -72,8 +72,10 @@ static inline bool nodeCanBeDistributed(const Node* node)
 
 inline void ComposedShadowTreeWalker::ParentTraversalDetails::didTraverseInsertionPoint(InsertionPoint* insertionPoint)
 {
-    if (!m_insertionPoint)
+    if (!m_insertionPoint) {
         m_insertionPoint = insertionPoint;
+        m_resetStyleInheritance  = m_resetStyleInheritance || insertionPoint->resetStyleInheritance();
+    }
 }
 
 inline void ComposedShadowTreeWalker::ParentTraversalDetails::didTraverseShadowRoot(const ShadowRoot* root)
