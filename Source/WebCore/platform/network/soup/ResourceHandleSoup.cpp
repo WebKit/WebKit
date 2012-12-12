@@ -79,8 +79,12 @@ namespace WebCore {
 
 #define READ_BUFFER_SIZE 8192
 
-inline static void soupLogPrinter(SoupLogger* logger, SoupLoggerLogLevel, char direction, const char* data, gpointer)
+inline static void soupLogPrinter(SoupLogger*, SoupLoggerLogLevel, char direction, const char* data, gpointer)
 {
+#if LOG_DISABLED
+    UNUSED_PARAM(direction);
+    UNUSED_PARAM(data);
+#endif
     LOG(Network, "%c %s", direction, data);
 }
 
