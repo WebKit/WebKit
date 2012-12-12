@@ -237,7 +237,7 @@ use?(GRAPHICS_SURFACE) {
 have?(sqlite3) {
     mac {
         LIBS += -lsqlite3
-    } else
+    } else {
         PKGCONFIG += sqlite3
     }
 } else {

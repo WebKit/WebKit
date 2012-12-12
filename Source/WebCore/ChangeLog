@@ -1,3 +1,9 @@
+2012-12-12  Csaba Osztrogonác  <ossy@webkit.org>
+
+        [Qt] Unreviewed typo fix after r137446.
+
+        * WebCore.pri:
+
 2012-12-12  Zan Dobersek  <zandobersek@gmail.com>
 
         [GTK] Remove the last of unnecessary configuration options in configure.ac
