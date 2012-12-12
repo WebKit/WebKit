@@ -607,8 +607,6 @@ webkit.org/b/98133 fast/css/sticky/sticky-writing-mode-vertical-rl.html [ ImageO
 
 webkit.org/b/68878 media/video-playing-and-pause.html [ Failure Pass ]
 
-webkit.org/b/100117 fast/xmlhttprequest/xmlhttprequest-recursive-sync-event.html [ Failure Pass ]
-
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Flaky tests
 #////////////////////////////////////////////////////////////////////////////////////////
@@ -712,6 +710,12 @@ webkit.org/b/104571 http/tests/security/xssAuditor/javascript-link-null-char.htm
 webkit.org/b/104571 http/tests/security/xssAuditor/object-embed-tag-null-char.html [ Timeout ]
 
 webkit.org/b/104648 fast/images/webgl-teximage2d.html [ Timeout ]
+
+# Misses setMediaType() implementation
+Bug(GTK) fast/media/print-restores-previous-mediatype.html [ Timeout ]
+
+# GTK still has the CC toggle button, not the menu of tracks.
+webkit.org/b/101670 media/video-controls-captions-trackmenu.html [ Timeout ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Tests timing out
@@ -928,9 +932,6 @@ Bug(GTK) fast/events/platform-wheelevent-paging-y-in-non-scrolling-div.html [ Fa
 Bug(GTK) fast/events/platform-wheelevent-paging-y-in-non-scrolling-page.html [ Failure ]
 Bug(GTK) fast/events/platform-wheelevent-paging-y-in-scrolling-div.html [ Failure ]
 Bug(GTK) fast/events/platform-wheelevent-paging-y-in-scrolling-page.html [ Failure ]
-
-# Misses setMediaType() implementation
-Bug(GTK) fast/media/print-restores-previous-mediatype.html [ Failure ]
 
 # Fails on GTK+ since https://bugs.webkit.org/show_bug.cgi?id=25195 got in
 webkit.org/b/36627 editing/selection/extend-after-mouse-selection.html [ Failure ]
@@ -1367,9 +1368,6 @@ webkit.org/b/102349 fast/dom/shadow/pseudoclass-update-enabled-anchor.html [ Ima
 webkit.org/b/102349 fast/dom/shadow/pseudoclass-update-enabled-area.html [ ImageOnlyFailure ]
 
 webkit.org/b/102586 media/video-src-blob.html [ Failure ]
-
-# GTK still has the CC toggle button, not the menu of tracks.
-webkit.org/b/101670 media/video-controls-captions-trackmenu.html [ Failure ]
 
 # Fix for https://bugs.webkit.org/show_bug.cgi?id=97192 introduces these regressions
 webkit.org/b/102776 webkit.org/b/102993 media/media-document-audio-repaint.html [ Failure ]

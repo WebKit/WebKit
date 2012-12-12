@@ -14,10 +14,10 @@ layer at (0,0) size 800x600
         RenderListItem {LI} at (40,0) size 744x36
           RenderBlock (anonymous) at (0,0) size 744x18
             RenderListMarker at (-18,0) size 7x19: bullet
+          RenderTable at (0,18) size 0x0
+          RenderBlock (anonymous) at (0,18) size 744x18
             RenderInline (generated) at (0,0) size 31x19
               RenderText at (0,0) size 31x19
                 text run at (0,0) width 31: "hello"
-          RenderTable at (0,18) size 0x0
-          RenderBlock (anonymous) at (0,18) size 744x18
-            RenderText {#text} at (0,0) size 21x19
-              text run at (0,0) width 21: "test"
+            RenderText {#text} at (31,0) size 21x19
+              text run at (31,0) width 21: "test"
