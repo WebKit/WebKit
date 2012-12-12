@@ -37,7 +37,6 @@
 #include "platform/WebKitPlatformSupport.h"
 #include <wtf/Assertions.h>
 #include <wtf/text/CString.h>
-#include <wtf/text/WTFString.h>
 
 using namespace WebKit;
 
@@ -104,8 +103,11 @@ const char* pointState(WebTouchPoint::State state)
 
 void printTouchList(WebTestDelegate* delegate, const WebTouchPoint* points, int length)
 {
-    for (int i = 0; i < length; ++i)
-        delegate->printMessage(std::string("* ") + String::number(points[i].position.x).ascii().data() + ", " + String::number(points[i].position.y).ascii().data() + ": " + pointState(points[i].state) + "\n");
+    for (int i = 0; i < length; ++i) {
+        char buffer[100];
+        snprintf(buffer, sizeof(buffer), "* %d, %d: %s\n", points[i].position.x, points[i].position.y, pointState(points[i].state));
+        delegate->printMessage(buffer);
+    }
 }
 
 void printEventDetails(WebTestDelegate* delegate, const WebInputEvent& event)
@@ -117,10 +119,14 @@ void printEventDetails(WebTestDelegate* delegate, const WebInputEvent& event)
         printTouchList(delegate, touch.targetTouches, touch.targetTouchesLength);
     } else if (WebInputEvent::isMouseEventType(event.type) || event.type == WebInputEvent::MouseWheel) {
         const WebMouseEvent& mouse = static_cast<const WebMouseEvent&>(event);
-        delegate->printMessage(std::string("* ") + String::number(mouse.x).ascii().data() + ", " + String::number(mouse.y).ascii().data() + "\n");
+        char buffer[100];
+        snprintf(buffer, sizeof(buffer), "* %d, %d\n", mouse.x, mouse.y);
+        delegate->printMessage(buffer);
     } else if (WebInputEvent::isGestureEventType(event.type)) {
         const WebGestureEvent& gesture = static_cast<const WebGestureEvent&>(event);
-        delegate->printMessage(std::string("* ") + String::number(gesture.x).ascii().data() + ", " + String::number(gesture.y).ascii().data() + "\n");
+        char buffer[100];
+        snprintf(buffer, sizeof(buffer), "* %d, %d\n", gesture.x, gesture.y);
+        delegate->printMessage(buffer);
     }
 }
 

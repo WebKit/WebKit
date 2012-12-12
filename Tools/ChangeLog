@@ -1,3 +1,17 @@
+2012-12-12  Jochen Eisinger  <jochen@chromium.org>
+
+        [chromium] WebTestPlugin must not depend on WTF::String
+        https://bugs.webkit.org/show_bug.cgi?id=104783
+
+        Reviewed by Kent Tamura.
+
+        In a component build, we can't access the WTF that is part of the
+        WebKit component. Accessing WTF instead will pull in a separate copy
+        into the TestRunner library. Instead of WTF::String::number use
+        snprintf() to print numbers.
+
+        * DumpRenderTree/chromium/TestRunner/src/WebTestPlugin.cpp:
+
 2012-12-12  Jocelyn Turcotte  <jocelyn.turcotte@digia.com>
 
         [Qt] Do not automatically enable force_static_libs_as_shared when using debug_and_release
