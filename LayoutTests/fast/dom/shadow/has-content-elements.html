@@ -12,66 +12,98 @@ else if (!window.internals.hasContentElement)
 </head>
 <body>
 
-<p>Test for Bug 100921: <a href="https://bugs.webkit.org/show_bug.cgi?id=100921">https://bugs.webkit.org/show_bug.cgi?id=100921</a> - [Shadow] ShadowRoot should be able to know the existence of &lt;content&gt;</p>
+<p>Test for Bug <a href="https://bugs.webkit.org/show_bug.cgi?id=100921">100921</a> and <a href="https://bugs.webkit.org/show_bug.cgi?id=104346">104346</a>: HTMLContentElement should be registered correctly.</p>
 
-<div id="host"></div>
+<div id="wrapper"></div>
 <pre id="console"></pre>
 
 <script>
-var host = document.getElementById("host");
+function doCommonTest() {
+    shouldBeFalse("internals.hasContentElement(shadowRoot)");
+
+    var div = document.createElement("div");
+    div.appendChild(document.createElement("content"));
+    shadowRoot.appendChild(div);
+    shouldBeTrue("internals.hasContentElement(shadowRoot)");
+    
+    shadowRoot.removeChild(div);
+    shouldBeFalse("internals.hasContentElement(shadowRoot)");
+    
+    shadowRoot.innerHTML = "<div>No Insertion Points</div>";
+    shouldBeFalse("internals.hasContentElement(shadowRoot)");
+    
+    shadowRoot.innerHTML = "<content></content>";
+    shouldBeTrue("internals.hasContentElement(shadowRoot)");
+    
+    shadowRoot.innerHTML = "<shadow></shadow>";
+    shouldBeFalse("internals.hasContentElement(shadowRoot)");
+    
+    shadowRoot.innerHTML = "<div><div><div><content></content></div></div></div>";
+    shouldBeTrue("internals.hasContentElement(shadowRoot)");
+    
+    // Case for nested shadow subtree
+    shadowRoot.innerHTML = '<div>in shadow root</div>';
+    var innerDiv1 = shadowRoot.querySelector('div');
+    innerShadowRoot1 = innerDiv1.webkitCreateShadowRoot();
+    innerShadowRoot1.innerHTML = "<div><content></content></div>";
+    var innerDiv2 = innerShadowRoot1.querySelector('div');
+    innerShadowRoot2 = innerDiv2.webkitCreateShadowRoot();
+    innerShadowRoot2.innerHTML = "<div><content title='debugstop'></content></div>";
+    
+    shouldBeFalse("internals.hasContentElement(shadowRoot)");
+    shouldBeTrue("internals.hasContentElement(innerShadowRoot1)");
+    shouldBeTrue("internals.hasContentElement(innerShadowRoot2)");
+    shadowRoot.innerHTML = "<div></div>";
+    shouldBeFalse("internals.hasContentElement(shadowRoot)");
+
+    // Case for multiple shadow subtrees
+    shadowRoot.innerHTML = "<div><div><div><content></content></div></div></div>";
+    youngerShadowRoot = host.webkitCreateShadowRoot();
+    // Modifying older shadow root or younger shadow root doesn't affect the other.
+    shouldBeTrue("internals.hasContentElement(shadowRoot)");
+    shouldBeFalse("internals.hasContentElement(youngerShadowRoot)");
+    
+    shadowRoot.innerHTML = "<shadow></shadow>";
+    shouldBeFalse("internals.hasContentElement(shadowRoot)");
+    shouldBeFalse("internals.hasContentElement(youngerShadowRoot)");
+    
+    youngerShadowRoot.innerHTML = "<content></content>";
+    shouldBeFalse("internals.hasContentElement(shadowRoot)");
+    shouldBeTrue("internals.hasContentElement(youngerShadowRoot)");
+}
+
+debug('In the case host is in document');
+host = document.createElement('div');
+wrapper.appendChild(host);
+shadowRoot = host.webkitCreateShadowRoot();
+doCommonTest();
+wrapper.innerHTML = "";
+
+debug('In the case host is not in document');
+host = document.createElement('div');
+shadowRoot = host.webkitCreateShadowRoot();
+doCommonTest();
+wrapper.innerHTML = "";
+
+debug('insertedInto/removedFrom can be called several times.');
+var host = document.createElement('div');
+var content = document.createElement('content');
+var div1 = document.createElement('div');
+var div2 = document.createElement('div');
 var shadowRoot = host.webkitCreateShadowRoot();
+div1.appendChild(content);
+shouldBeFalse('internals.hasContentElement(shadowRoot)');
+shadowRoot.appendChild(div1);
+shouldBeTrue('internals.hasContentElement(shadowRoot)');
+div2.appendChild(host);
+shouldBeTrue('internals.hasContentElement(shadowRoot)');
+div2.removeChild(host);
+shouldBeTrue('internals.hasContentElement(shadowRoot)');
+shadowRoot.removeChild(div1);
+shouldBeFalse('internals.hasContentElement(shadowRoot)');
+div1.removeChild(content);
 
-shouldBeFalse("internals.hasContentElement(shadowRoot)");
-
-var div = document.createElement("div");
-div.appendChild(document.createElement("content"));
-shadowRoot.appendChild(div);
-shouldBeTrue("internals.hasContentElement(shadowRoot)");
-
-shadowRoot.removeChild(div);
-shouldBeFalse("internals.hasContentElement(shadowRoot)");
-
-shadowRoot.innerHTML = "<div>No Insertion Points</div>";
-shouldBeFalse("internals.hasContentElement(shadowRoot)");
-
-shadowRoot.innerHTML = "<content></content>";
-shouldBeTrue("internals.hasContentElement(shadowRoot)");
-
-shadowRoot.innerHTML = "<shadow></shadow>";
-shouldBeFalse("internals.hasContentElement(shadowRoot)");
-
-shadowRoot.innerHTML = "<div><div><div><content></content></div></div></div>";
-shouldBeTrue("internals.hasContentElement(shadowRoot)");
-
-// Case for nested shadow subtree
-shadowRoot.innerHTML = '<div>in shadow root</div>';
-var innerDiv1 = shadowRoot.querySelector('div');
-var innerShadowRoot1 = innerDiv1.webkitCreateShadowRoot();
-innerShadowRoot1.innerHTML = "<div><content></content></div>";
-var innerDiv2 = innerShadowRoot1.querySelector('div');
-var innerShadowRoot2 = innerDiv2.webkitCreateShadowRoot();
-innerShadowRoot2.innerHTML = "<div><content title='debugstop'></content></div>";
-
-shouldBeFalse("internals.hasContentElement(shadowRoot)");
-shouldBeTrue("internals.hasContentElement(innerShadowRoot1)");
-shouldBeTrue("internals.hasContentElement(innerShadowRoot2)");
-shadowRoot.innerHTML = "<div></div>";
-shouldBeFalse("internals.hasContentElement(shadowRoot)");
-
-// Case for multiple shadow subtrees
-shadowRoot.innerHTML = "<div><div><div><content></content></div></div></div>";
-var youngerShadowRoot = host.webkitCreateShadowRoot();
-// Modifying older shadow root or younger shadow root doesn't affect the other.
-shouldBeTrue("internals.hasContentElement(shadowRoot)");
-shouldBeFalse("internals.hasContentElement(youngerShadowRoot)");
-
-shadowRoot.innerHTML = "<shadow></shadow>";
-shouldBeFalse("internals.hasContentElement(shadowRoot)");
-shouldBeFalse("internals.hasContentElement(youngerShadowRoot)");
-
-youngerShadowRoot.innerHTML = "<content></content>";
-shouldBeFalse("internals.hasContentElement(shadowRoot)");
-shouldBeTrue("internals.hasContentElement(youngerShadowRoot)");
+wrapper.innerHTML = '';
 </script>
 <script src="../../js/resources/js-test-post.js"></script>
 </body>

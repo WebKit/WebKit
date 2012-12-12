@@ -1,3 +1,23 @@
+2012-12-11  Shinya Kawanaka  <shinyak@chromium.org>
+
+        [Shadow DOM] registering InsertionPoints to ShadowRoot should work out of a document.
+        https://bugs.webkit.org/show_bug.cgi?id=104346
+
+        Reviewed by Hajime Morita.
+
+        We need to register InsertionPoints even if ShadowRoot is out of Document, since distribution should work
+        out of Document, too.
+
+        Instead of checking isInDocument(), we have to make sure InsertionPoint and an element which InsertionPoint
+        inserted into have the same treescope.
+
+        Tests: fast/dom/shadow/has-content-elements.html
+               fast/dom/shadow/has-shadow-insertion-point.html
+
+        * html/shadow/InsertionPoint.cpp:
+        (WebCore::InsertionPoint::insertedInto):
+        (WebCore::InsertionPoint::removedFrom):
+
 2012-12-11  Takashi Sakamoto  <tasak@google.com>
 
         Text nodes in shadow roots don't inherit style properly

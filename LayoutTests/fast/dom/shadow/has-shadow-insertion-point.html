@@ -11,49 +11,81 @@ else if (!window.internals.hasShadowInsertionPoint)
 </script>
 </head>
 <body>
-  <span>Test for Bug 97184: <a href="https://bugs.webkit.org/show_bug.cgi?id=97184">https://bugs.webkit.org/show_bug.cgi?id=97184</a> -
-    [Shadow] ShadowRoot should know whether &lt;shadow&gt; in its treescope
-  </span>
-  <div id="host"></div>
+
+<p>Test for Bug <a href="https://bugs.webkit.org/show_bug.cgi?id=97184">97184</a> and <a href="https://bugs.webkit.org/show_bug.cgi?id=104346">104346</a> : HTMLShadowElement should be registered correctly.</p>
+
+<div id="wrapper"></div>
+<pre id="console"></pre>
 
 <script>
-var host = document.getElementById("host");
+function doTest() {
+    shouldBeFalse("internals.hasShadowInsertionPoint(shadowRoot)");
+
+    var div = document.createElement("div");
+    div.appendChild(document.createElement("shadow"));
+    shadowRoot.appendChild(div);
+    shouldBeTrue("internals.hasShadowInsertionPoint(shadowRoot)");
+
+    shadowRoot.removeChild(div);
+    shouldBeFalse("internals.hasShadowInsertionPoint(shadowRoot)");
+
+    shadowRoot.innerHTML = "<div>No Insertion Points</div>";
+    shouldBeFalse("internals.hasShadowInsertionPoint(shadowRoot)");
+
+    shadowRoot.innerHTML = "<content></content>";
+    shouldBeFalse("internals.hasShadowInsertionPoint(shadowRoot)");
+
+    shadowRoot.innerHTML = "<shadow></shadow>";
+    shouldBeTrue("internals.hasShadowInsertionPoint(shadowRoot)");
+
+    shadowRoot.innerHTML = "<div><div><div><shadow></shadow></div></div></div>";
+    shouldBeTrue("internals.hasShadowInsertionPoint(shadowRoot)");
+
+    youngerShadowRoot = host.webkitCreateShadowRoot(host);
+    // Modifying older shadow root or younger shadow root doesn't affect the other.
+    shouldBeTrue("internals.hasShadowInsertionPoint(shadowRoot)");
+    shouldBeFalse("internals.hasShadowInsertionPoint(youngerShadowRoot)");
+
+    shadowRoot.innerHTML = "<content></content>";
+    shouldBeFalse("internals.hasShadowInsertionPoint(shadowRoot)");
+    shouldBeFalse("internals.hasShadowInsertionPoint(youngerShadowRoot)");
+
+    youngerShadowRoot.innerHTML = "<shadow></shadow>";
+    shouldBeFalse("internals.hasShadowInsertionPoint(shadowRoot)");
+    shouldBeTrue("internals.hasShadowInsertionPoint(youngerShadowRoot)");
+}
+
+debug('In the case host is in document');
+host = document.createElement('div');
+wrapper.appendChild(host);
+shadowRoot = host.webkitCreateShadowRoot();
+doTest();
+wrapper.innerHTML = "";
+
+debug('In the case host is not in document');
+host = document.createElement('div');
+shadowRoot = host.webkitCreateShadowRoot();
+doTest();
+wrapper.innerHTML = "";
+
+debug('insertedInto/removedFrom can be called several times.');
+var host = document.createElement('div');
+var shadow = document.createElement('shadow');
+var div1 = document.createElement('div');
+var div2 = document.createElement('div');
 var shadowRoot = host.webkitCreateShadowRoot();
+div1.appendChild(shadow);
+shouldBeFalse('internals.hasShadowInsertionPoint(shadowRoot)');
+shadowRoot.appendChild(div1);
+shouldBeTrue('internals.hasShadowInsertionPoint(shadowRoot)');
+div2.appendChild(host);
+shouldBeTrue('internals.hasShadowInsertionPoint(shadowRoot)');
+div2.removeChild(host);
+shouldBeTrue('internals.hasShadowInsertionPoint(shadowRoot)');
+shadowRoot.removeChild(div1);
+shouldBeFalse('internals.hasShadowInsertionPoint(shadowRoot)');
+div1.removeChild(shadow);
 
-shouldBeFalse("internals.hasShadowInsertionPoint(shadowRoot)");
-
-var div = document.createElement("div");
-div.appendChild(document.createElement("shadow"));
-shadowRoot.appendChild(div);
-shouldBeTrue("internals.hasShadowInsertionPoint(shadowRoot)");
-
-shadowRoot.removeChild(div);
-shouldBeFalse("internals.hasShadowInsertionPoint(shadowRoot)");
-
-shadowRoot.innerHTML = "<div>No Insertion Points</div>";
-shouldBeFalse("internals.hasShadowInsertionPoint(shadowRoot)");
-
-shadowRoot.innerHTML = "<content></content>";
-shouldBeFalse("internals.hasShadowInsertionPoint(shadowRoot)");
-
-shadowRoot.innerHTML = "<shadow></shadow>";
-shouldBeTrue("internals.hasShadowInsertionPoint(shadowRoot)");
-
-shadowRoot.innerHTML = "<div><div><div><shadow></shadow></div></div></div>";
-shouldBeTrue("internals.hasShadowInsertionPoint(shadowRoot)");
-
-var youngerShadowRoot = host.webkitCreateShadowRoot();
-// Modifying older shadow root or younger shadow root doesn't affect the other.
-shouldBeTrue("internals.hasShadowInsertionPoint(shadowRoot)");
-shouldBeFalse("internals.hasShadowInsertionPoint(youngerShadowRoot)");
-
-shadowRoot.innerHTML = "<content></content>";
-shouldBeFalse("internals.hasShadowInsertionPoint(shadowRoot)");
-shouldBeFalse("internals.hasShadowInsertionPoint(youngerShadowRoot)");
-
-youngerShadowRoot.innerHTML = "<shadow></shadow>";
-shouldBeFalse("internals.hasShadowInsertionPoint(shadowRoot)");
-shouldBeTrue("internals.hasShadowInsertionPoint(youngerShadowRoot)");
 </script>
 <script src="../../js/resources/js-test-post.js"></script>
 </body>

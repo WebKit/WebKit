@@ -1,5 +1,6 @@
-Test for Bug 100921: https://bugs.webkit.org/show_bug.cgi?id=100921 - [Shadow] ShadowRoot should be able to know the existence of <content>
+Test for Bug 100921 and 104346: HTMLContentElement should be registered correctly.
 
+In the case host is in document
 PASS internals.hasContentElement(shadowRoot) is false
 PASS internals.hasContentElement(shadowRoot) is true
 PASS internals.hasContentElement(shadowRoot) is false
@@ -17,6 +18,30 @@ PASS internals.hasContentElement(shadowRoot) is false
 PASS internals.hasContentElement(youngerShadowRoot) is false
 PASS internals.hasContentElement(shadowRoot) is false
 PASS internals.hasContentElement(youngerShadowRoot) is true
+In the case host is not in document
+PASS internals.hasContentElement(shadowRoot) is false
+PASS internals.hasContentElement(shadowRoot) is true
+PASS internals.hasContentElement(shadowRoot) is false
+PASS internals.hasContentElement(shadowRoot) is false
+PASS internals.hasContentElement(shadowRoot) is true
+PASS internals.hasContentElement(shadowRoot) is false
+PASS internals.hasContentElement(shadowRoot) is true
+PASS internals.hasContentElement(shadowRoot) is false
+PASS internals.hasContentElement(innerShadowRoot1) is true
+PASS internals.hasContentElement(innerShadowRoot2) is true
+PASS internals.hasContentElement(shadowRoot) is false
+PASS internals.hasContentElement(shadowRoot) is true
+PASS internals.hasContentElement(youngerShadowRoot) is false
+PASS internals.hasContentElement(shadowRoot) is false
+PASS internals.hasContentElement(youngerShadowRoot) is false
+PASS internals.hasContentElement(shadowRoot) is false
+PASS internals.hasContentElement(youngerShadowRoot) is true
+insertedInto/removedFrom can be called several times.
+PASS internals.hasContentElement(shadowRoot) is false
+PASS internals.hasContentElement(shadowRoot) is true
+PASS internals.hasContentElement(shadowRoot) is true
+PASS internals.hasContentElement(shadowRoot) is true
+PASS internals.hasContentElement(shadowRoot) is false
 PASS successfullyParsed is true
 
 TEST COMPLETE

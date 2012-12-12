@@ -123,40 +123,38 @@ void InsertionPoint::childrenChanged(bool changedByParser, Node* beforeChange, N
 Node::InsertionNotificationRequest InsertionPoint::insertedInto(ContainerNode* insertionPoint)
 {
     HTMLElement::insertedInto(insertionPoint);
-    if (insertionPoint->inDocument()) {
-        if (ShadowRoot* root = containingShadowRoot()) {
-            root->owner()->setValidityUndetermined();
-            root->owner()->invalidateDistribution();
-            if (isActive() && !m_registeredWithShadowRoot) {
-                m_registeredWithShadowRoot = true;
-                root->registerInsertionPoint(this);
-            }
+
+    if (ShadowRoot* root = containingShadowRoot()) {
+        root->owner()->setValidityUndetermined();
+        root->owner()->invalidateDistribution();
+        if (isActive() && !m_registeredWithShadowRoot && insertionPoint->treeScope()->rootNode() == root) {
+            m_registeredWithShadowRoot = true;
+            root->registerInsertionPoint(this);
         }
     }
+
 
     return InsertionDone;
 }
 
 void InsertionPoint::removedFrom(ContainerNode* insertionPoint)
 {
-    if (insertionPoint->inDocument()) {
-        ShadowRoot* root = containingShadowRoot();
-        if (!root)
-            root = insertionPoint->containingShadowRoot();
+    ShadowRoot* root = containingShadowRoot();
+    if (!root)
+        root = insertionPoint->containingShadowRoot();
 
-        // host can be null when removedFrom() is called from ElementShadow destructor.
-        ElementShadow* rootOwner = root ? root->owner() : 0;
-        if (rootOwner)
-            rootOwner->invalidateDistribution();
+    // host can be null when removedFrom() is called from ElementShadow destructor.
+    ElementShadow* rootOwner = root ? root->owner() : 0;
+    if (rootOwner)
+        rootOwner->invalidateDistribution();
 
-        // Since this insertion point is no longer visible from the shadow subtree, it need to clean itself up.
-        clearDistribution();
+    // Since this insertion point is no longer visible from the shadow subtree, it need to clean itself up.
+    clearDistribution();
 
-        if (m_registeredWithShadowRoot) {
-            m_registeredWithShadowRoot = false;
-            if (root)
-                root->unregisterInsertionPoint(this);
-        }
+    if (m_registeredWithShadowRoot && insertionPoint->treeScope()->rootNode() == root) {
+        ASSERT(root);
+        m_registeredWithShadowRoot = false;
+        root->unregisterInsertionPoint(this);
     }
 
     HTMLElement::removedFrom(insertionPoint);
