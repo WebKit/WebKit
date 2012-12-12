@@ -23,41 +23,43 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef ProfilerBytecodes_h
-#define ProfilerBytecodes_h
+#ifndef ProfilerBytecodeSequence_h
+#define ProfilerBytecodeSequence_h
 
-#include "CodeBlockHash.h"
 #include "JSValue.h"
-#include "ProfilerBytecodeSequence.h"
+#include "ProfilerBytecode.h"
 #include <wtf/PrintStream.h>
+#include <wtf/Vector.h>
+#include <wtf/text/CString.h>
 #include <wtf/text/WTFString.h>
 
-namespace JSC { namespace Profiler {
+namespace JSC {
 
-class Bytecodes : public BytecodeSequence {
+class CodeBlock;
+
+namespace Profiler {
+
+class BytecodeSequence {
 public:
-    Bytecodes(size_t id, CodeBlock*);
-    ~Bytecodes();
+    BytecodeSequence(CodeBlock*);
+    ~BytecodeSequence();
     
-    size_t id() const { return m_id; }
-    const String& inferredName() const { return m_inferredName; }
-    const String& sourceCode() const { return m_sourceCode; }
-    unsigned instructionCount() const { return m_instructionCount; }
-    CodeBlockHash hash() const { return m_hash; }
+    // Note that this data structure is not indexed by bytecode index.
+    unsigned size() const { return m_sequence.size(); }
+    const Bytecode& at(unsigned i) const { return m_sequence[i]; }
 
-    void dump(PrintStream&) const;
-    
-    JSValue toJS(ExecState*) const;
+    unsigned indexForBytecodeIndex(unsigned bytecodeIndex) const;
+    const Bytecode& forBytecodeIndex(unsigned bytecodeIndex) const;
+
+protected:
+    void addSequenceProperties(ExecState*, JSObject*) const;
     
 private:
-    size_t m_id;
-    String m_inferredName;
-    String m_sourceCode;
-    CodeBlockHash m_hash;
-    unsigned m_instructionCount;
+    Vector<CString> m_header;
+    Vector<Bytecode> m_sequence;
 };
 
 } } // namespace JSC::Profiler
 
-#endif // ProfilerBytecodes_h
+#endif // ProfilerBytecodeSequence_h
 

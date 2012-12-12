@@ -23,41 +23,32 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef ProfilerBytecodes_h
-#define ProfilerBytecodes_h
+#include "config.h"
+#include "ProfilerProfiledBytecodes.h"
 
-#include "CodeBlockHash.h"
-#include "JSValue.h"
-#include "ProfilerBytecodeSequence.h"
-#include <wtf/PrintStream.h>
-#include <wtf/text/WTFString.h>
+#include "JSGlobalObject.h"
 
 namespace JSC { namespace Profiler {
 
-class Bytecodes : public BytecodeSequence {
-public:
-    Bytecodes(size_t id, CodeBlock*);
-    ~Bytecodes();
-    
-    size_t id() const { return m_id; }
-    const String& inferredName() const { return m_inferredName; }
-    const String& sourceCode() const { return m_sourceCode; }
-    unsigned instructionCount() const { return m_instructionCount; }
-    CodeBlockHash hash() const { return m_hash; }
+ProfiledBytecodes::ProfiledBytecodes(Bytecodes* bytecodes, CodeBlock* profiledBlock)
+    : BytecodeSequence(profiledBlock)
+    , m_bytecodes(bytecodes)
+{
+}
 
-    void dump(PrintStream&) const;
+ProfiledBytecodes::~ProfiledBytecodes()
+{
+}
+
+JSValue ProfiledBytecodes::toJS(ExecState* exec) const
+{
+    JSObject* result = constructEmptyObject(exec);
     
-    JSValue toJS(ExecState*) const;
+    result->putDirect(exec->globalData(), exec->propertyNames().bytecodesID, jsNumber(m_bytecodes->id()));
+    addSequenceProperties(exec, result);
     
-private:
-    size_t m_id;
-    String m_inferredName;
-    String m_sourceCode;
-    CodeBlockHash m_hash;
-    unsigned m_instructionCount;
-};
+    return result;
+}
 
 } } // namespace JSC::Profiler
-
-#endif // ProfilerBytecodes_h
 

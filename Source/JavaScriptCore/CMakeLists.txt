@@ -176,6 +176,7 @@ set(JavaScriptCore_SOURCES
 
     profiler/ProfilerBytecode.cpp
     profiler/ProfilerBytecode.h
+    profiler/ProfilerBytecodeSequence.cpp
     profiler/ProfilerBytecodes.cpp
     profiler/ProfilerBytecodes.h
     profiler/ProfilerCompilation.cpp
@@ -193,6 +194,7 @@ set(JavaScriptCore_SOURCES
     profiler/ProfilerOriginStack.h
     profiler/ProfilerOSRExit.cpp
     profiler/ProfilerOSRExitSite.cpp
+    profiler/ProfilerProfiledBytecodes.cpp
     profiler/Profile.cpp
     profiler/ProfileGenerator.cpp
     profiler/ProfileNode.cpp

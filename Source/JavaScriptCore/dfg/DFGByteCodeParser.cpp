@@ -3666,6 +3666,11 @@ void ByteCodeParser::parseCodeBlock()
 {
     CodeBlock* codeBlock = m_inlineStackTop->m_codeBlock;
     
+    if (m_graph.m_compilation) {
+        m_graph.m_compilation->addProfiledBytecodes(
+            *m_globalData->m_perBytecodeProfiler, m_inlineStackTop->m_profiledBlock);
+    }
+    
 #if DFG_ENABLE(DEBUG_VERBOSE)
     dataLog(
         "Parsing ", *codeBlock,

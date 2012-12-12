@@ -28,7 +28,6 @@
 
 #include "CodeBlock.h"
 #include "JSONObject.h"
-#include <wtf/StringPrintStream.h>
 
 namespace JSC { namespace Profiler {
 
@@ -41,35 +40,16 @@ Database::~Database()
 {
 }
 
-Bytecodes* Database::addBytecodes(
-    CodeBlockHash hash, const String& inferredName, const String& sourceCode)
-{
-    m_bytecodes.append(Bytecodes(m_bytecodes.size(), inferredName, sourceCode, hash));
-    return &m_bytecodes.last();
-}
-
 Bytecodes* Database::ensureBytecodesFor(CodeBlock* codeBlock)
 {
-    StringPrintStream out;
-    
     codeBlock = codeBlock->baselineVersion();
     
     HashMap<CodeBlock*, Bytecodes*>::iterator iter = m_bytecodesMap.find(codeBlock);
     if (iter != m_bytecodesMap.end())
         return iter->value;
     
-    Bytecodes* result = addBytecodes(
-        codeBlock->hash(), codeBlock->inferredName(), codeBlock->sourceCodeForTools());
-    
-    for (unsigned bytecodeIndex = 0; bytecodeIndex < codeBlock->instructions().size();) {
-        out.reset();
-        codeBlock->dumpBytecode(out, bytecodeIndex);
-        result->append(Bytecode(bytecodeIndex, m_globalData.interpreter->getOpcodeID(codeBlock->instructions()[bytecodeIndex].u.opcode), out.toCString()));
-        
-        bytecodeIndex += opcodeLength(
-            m_globalData.interpreter->getOpcodeID(
-                codeBlock->instructions()[bytecodeIndex].u.opcode));
-    }
+    m_bytecodes.append(Bytecodes(m_bytecodes.size(), codeBlock));
+    Bytecodes* result = &m_bytecodes.last();
     
     m_bytecodesMap.add(codeBlock, result);
     

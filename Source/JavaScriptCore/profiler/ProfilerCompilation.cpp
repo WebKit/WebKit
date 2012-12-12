@@ -27,6 +27,7 @@
 #include "ProfilerCompilation.h"
 
 #include "JSGlobalObject.h"
+#include "ProfilerDatabase.h"
 #include <wtf/StringPrintStream.h>
 
 namespace JSC { namespace Profiler {
@@ -38,6 +39,23 @@ Compilation::Compilation(Bytecodes* bytecodes, CompilationKind kind)
 }
 
 Compilation::~Compilation() { }
+
+void Compilation::addProfiledBytecodes(Database& database, CodeBlock* profiledBlock)
+{
+    Bytecodes* bytecodes = database.ensureBytecodesFor(profiledBlock);
+    
+    // First make sure that we haven't already added profiled bytecodes for this code
+    // block. We do this using an O(N) search because I suspect that this list will
+    // tend to be fairly small, and the additional space costs of having a HashMap/Set
+    // would be greater than the time cost of occasionally doing this search.
+    
+    for (unsigned i = m_profiledBytecodes.size(); i--;) {
+        if (m_profiledBytecodes[i].bytecodes() == bytecodes)
+            return;
+    }
+    
+    m_profiledBytecodes.append(ProfiledBytecodes(bytecodes, profiledBlock));
+}
 
 void Compilation::addDescription(const CompiledBytecode& compiledBytecode)
 {
@@ -73,6 +91,11 @@ JSValue Compilation::toJS(ExecState* exec) const
     
     result->putDirect(exec->globalData(), exec->propertyNames().bytecodesID, jsNumber(m_bytecodes->id()));
     result->putDirect(exec->globalData(), exec->propertyNames().compilationKind, jsString(exec, String::fromUTF8(toCString(m_kind))));
+    
+    JSArray* profiledBytecodes = constructEmptyArray(exec, 0);
+    for (unsigned i = 0; i < m_profiledBytecodes.size(); ++i)
+        profiledBytecodes->putDirectIndex(exec, i, m_profiledBytecodes[i].toJS(exec));
+    result->putDirect(exec->globalData(), exec->propertyNames().profiledBytecodes, profiledBytecodes);
     
     JSArray* descriptions = constructEmptyArray(exec, 0);
     for (unsigned i = 0; i < m_descriptions.size(); ++i)

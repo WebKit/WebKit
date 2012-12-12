@@ -67,7 +67,8 @@ inline ArrayModes arrayModeFromStructure(Structure* structure)
     return asArrayModes(structure->indexingType());
 }
 
-const char* arrayModesToString(ArrayModes);
+void dumpArrayModes(PrintStream&, ArrayModes);
+MAKE_PRINT_ADAPTOR(ArrayModesDump, ArrayModes, dumpArrayModes);
 
 inline bool mergeArrayModes(ArrayModes& left, ArrayModes right)
 {
@@ -169,6 +170,8 @@ public:
     bool mayStoreToHole() const { return m_mayStoreToHole; }
     
     bool usesOriginalArrayStructures() const { return m_usesOriginalArrayStructures; }
+    
+    CString briefDescription(CodeBlock*);
     
 private:
     friend class LLIntOffsetsExtractor;

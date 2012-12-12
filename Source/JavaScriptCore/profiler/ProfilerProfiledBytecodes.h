@@ -23,41 +23,29 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef ProfilerBytecodes_h
-#define ProfilerBytecodes_h
+#ifndef ProfilerProfiledBytecodes_h
+#define ProfilerProfiledBytecodes_h
 
-#include "CodeBlockHash.h"
-#include "JSValue.h"
 #include "ProfilerBytecodeSequence.h"
-#include <wtf/PrintStream.h>
-#include <wtf/text/WTFString.h>
+#include "ProfilerBytecodes.h"
+#include "ProfilerOriginStack.h"
 
 namespace JSC { namespace Profiler {
 
-class Bytecodes : public BytecodeSequence {
+class ProfiledBytecodes : public BytecodeSequence {
 public:
-    Bytecodes(size_t id, CodeBlock*);
-    ~Bytecodes();
+    ProfiledBytecodes(Bytecodes*, CodeBlock*);
+    ~ProfiledBytecodes();
     
-    size_t id() const { return m_id; }
-    const String& inferredName() const { return m_inferredName; }
-    const String& sourceCode() const { return m_sourceCode; }
-    unsigned instructionCount() const { return m_instructionCount; }
-    CodeBlockHash hash() const { return m_hash; }
-
-    void dump(PrintStream&) const;
+    const Bytecodes* bytecodes() const { return m_bytecodes; }
     
     JSValue toJS(ExecState*) const;
-    
+
 private:
-    size_t m_id;
-    String m_inferredName;
-    String m_sourceCode;
-    CodeBlockHash m_hash;
-    unsigned m_instructionCount;
+    Bytecodes* m_bytecodes;
 };
 
 } } // namespace JSC::Profiler
 
-#endif // ProfilerBytecodes_h
+#endif // ProfilerProfiledBytecodes_h
 

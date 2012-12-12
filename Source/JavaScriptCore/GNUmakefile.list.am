@@ -479,6 +479,8 @@ javascriptcore_sources += \
 	Source/JavaScriptCore/profiler/CallIdentifier.h \
 	Source/JavaScriptCore/profiler/ProfilerBytecode.cpp \
 	Source/JavaScriptCore/profiler/ProfilerBytecode.h \
+	Source/JavaScriptCore/profiler/ProfilerBytecodeSequence.cpp \
+	Source/JavaScriptCore/profiler/ProfilerBytecodeSequence.h \
 	Source/JavaScriptCore/profiler/ProfilerBytecodes.cpp \
 	Source/JavaScriptCore/profiler/ProfilerBytecodes.h \
 	Source/JavaScriptCore/profiler/ProfilerCompilation.cpp \
@@ -498,6 +500,8 @@ javascriptcore_sources += \
 	Source/JavaScriptCore/profiler/ProfilerOSRExit.h \
 	Source/JavaScriptCore/profiler/ProfilerOSRExitSite.cpp \
 	Source/JavaScriptCore/profiler/ProfilerOSRExitSite.h \
+	Source/JavaScriptCore/profiler/ProfilerProfiledBytecodes.cpp \
+	Source/JavaScriptCore/profiler/ProfilerProfiledBytecodes.h \
 	Source/JavaScriptCore/profiler/Profile.cpp \
 	Source/JavaScriptCore/profiler/ProfileGenerator.cpp \
 	Source/JavaScriptCore/profiler/ProfileGenerator.h \

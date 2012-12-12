@@ -26,31 +26,23 @@
 #include "config.h"
 #include "ProfilerBytecodes.h"
 
+#include "CodeBlock.h"
 #include "JSGlobalObject.h"
 #include <wtf/StringPrintStream.h>
 
 namespace JSC { namespace Profiler {
 
-Bytecodes::Bytecodes(
-    size_t id, const String& inferredName, const String& sourceCode, CodeBlockHash hash)
-    : m_id(id)
-    , m_inferredName(inferredName)
-    , m_sourceCode(sourceCode)
-    , m_hash(hash)
+Bytecodes::Bytecodes(size_t id, CodeBlock* codeBlock)
+    : BytecodeSequence(codeBlock)
+    , m_id(id)
+    , m_inferredName(codeBlock->inferredName())
+    , m_sourceCode(codeBlock->sourceCodeForTools())
+    , m_hash(codeBlock->hash())
+    , m_instructionCount(codeBlock->instructionCount())
 {
 }
 
 Bytecodes::~Bytecodes() { }
-
-unsigned Bytecodes::indexForBytecodeIndex(unsigned bytecodeIndex) const
-{
-    return binarySearch<Bytecode, unsigned, getBytecodeIndexForBytecode>(const_cast<Bytecode*>(m_bytecode.begin()), m_bytecode.size(), bytecodeIndex) - m_bytecode.begin();
-}
-
-const Bytecode& Bytecodes::forBytecodeIndex(unsigned bytecodeIndex) const
-{
-    return at(indexForBytecodeIndex(bytecodeIndex));
-}
 
 void Bytecodes::dump(PrintStream& out) const
 {
@@ -65,11 +57,8 @@ JSValue Bytecodes::toJS(ExecState* exec) const
     result->putDirect(exec->globalData(), exec->propertyNames().inferredName, jsString(exec, m_inferredName));
     result->putDirect(exec->globalData(), exec->propertyNames().sourceCode, jsString(exec, m_sourceCode));
     result->putDirect(exec->globalData(), exec->propertyNames().hash, jsString(exec, String::fromUTF8(toCString(m_hash))));
-    
-    JSArray* stream = constructEmptyArray(exec, 0);
-    for (unsigned i = 0; i < m_bytecode.size(); ++i)
-        stream->putDirectIndex(exec, i, m_bytecode[i].toJS(exec));
-    result->putDirect(exec->globalData(), exec->propertyNames().bytecode, stream);
+    result->putDirect(exec->globalData(), exec->propertyNames().instructionCount, jsNumber(m_instructionCount));
+    addSequenceProperties(exec, result);
     
     return result;
 }

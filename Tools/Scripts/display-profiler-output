@@ -133,12 +133,13 @@ class Bytecode
 end
 
 class Bytecodes
-    attr_accessor :codeHash, :inferredName, :source, :machineInlineSites, :compilations
+    attr_accessor :codeHash, :inferredName, :source, :instructionCount, :machineInlineSites, :compilations
     
     def initialize(json)
         @codeHash = json["hash"].to_s
         @inferredName = json["inferredName"].to_s
         @source = json["sourceCode"].to_s
+        @instructionCount = json["instructionCount"].to_i
         @bytecode = {}
         json["bytecode"].each {
             | subJson |
@@ -251,6 +252,35 @@ class Bytecodes
     end
 end
 
+class ProfiledBytecode
+    attr_reader :bytecodeIndex, :description
+    
+    def initialize(json)
+        @bytecodeIndex = json["bytecodeIndex"].to_i
+        @description = json["description"].to_s
+    end
+end
+
+class ProfiledBytecodes
+    attr_reader :header, :bytecodes
+    
+    def initialize(json)
+        @header = json["header"]
+        @bytecodes = $bytecodes[json["bytecodesID"].to_i]
+        @sequence = json["bytecode"].map {
+            | subJson |
+            ProfiledBytecode.new(subJson)
+        }
+    end
+    
+    def each
+        @sequence.each {
+            | description |
+            yield description
+        }
+    end
+end
+
 def originStackFromJSON(json)
     json.map {
         | subJson |
@@ -295,7 +325,7 @@ class OSRExit
 end
 
 class Compilation
-    attr_accessor :bytecode, :engine, :descriptions, :counters, :compilationIndex, :osrExits
+    attr_accessor :bytecode, :engine, :descriptions, :counters, :compilationIndex, :osrExits, :profiledBytecodes
     
     def initialize(json)
         @bytecode = $bytecodes[json["bytecodesID"].to_i]
@@ -333,6 +363,11 @@ class Compilation
             osrExits[osrExit.codeAddress] = [] unless osrExits[osrExit.codeAddress]
             osrExits[osrExit.codeAddress] << osrExit
             osrExit.origin[-1].osrExits << osrExit
+        }
+        @profiledBytecodes = []
+        json["profiledBytecodes"].each {
+            | subJson |
+            @profiledBytecodes << ProfiledBytecodes.new(subJson)
         }
     end
     
@@ -425,14 +460,33 @@ end
 def summary(mode)
     remaining = screenWidth
     
-    hashCols = 20
+    # Figure out how many columns we need for the code block names, and for counts
+    maxCount = 0
+    maxName = 0
+    $bytecodes.each {
+        | bytecodes |
+        maxCount = ([maxCount] + $engines.map {
+                        | engine |
+                        bytecodes.maxTopExecutionCount(engine)
+                    } + $engines.map {
+                        | engine |
+                        bytecodes.maxBottomExecutionCount(engine)
+                    }).max
+        maxName = [bytecodes.to_s.size, maxName].max
+    }
+    maxCountDigits = maxCount.to_s.size
+    
+    hashCols = [[maxName, 30].min, "CodeBlock".size].max
     remaining -= hashCols + 1
     
-    countCols = 9 * $engines.size
+    countCols = [maxCountDigits * $engines.size, "Source Counts".size].max
     remaining -= countCols + 1
     
     if mode == :full
-        machineCountCols = 9 * $engines.size
+        instructionCountCols = 6
+        remaining -= instructionCountCols + 1
+        
+        machineCountCols = [maxCountDigits * $engines.size, "Machine Counts".size].max
         remaining -= machineCountCols + 1
         
         compilationsCols = 7
@@ -451,7 +505,11 @@ def summary(mode)
         sourceCols = nil
     end
     
-    print(center("CodeBlock", hashCols) + " " + center("Source Counts", countCols))
+    print(center("CodeBlock", hashCols))
+    if mode == :full
+        print(" " + center("#Instr", instructionCountCols))
+    end
+    print(" " + center("Source Counts", countCols))
     if mode == :full
         print(" " + center("Machine Counts", machineCountCols))
         print(" " + center("#Compil", compilationsCols))
@@ -463,7 +521,11 @@ def summary(mode)
     end
     puts
     
-    print(center("", hashCols) + " " + center("Base/DFG", countCols))
+    print(center("", hashCols))
+    if mode == :full
+        print(" " + (" " * instructionCountCols))
+    end
+    print(" " + center("Base/DFG", countCols))
     if mode == :full
         print(" " + center("Base/DFG", machineCountCols))
         print(" " + (" " * compilationsCols))
@@ -475,7 +537,11 @@ def summary(mode)
         b.totalMaxTopExecutionCount <=> a.totalMaxTopExecutionCount
     }.each {
         | bytecode |
-        print(center(bytecode.name(hashCols), hashCols) + " " +
+        print(center(bytecode.name(hashCols), hashCols))
+        if mode == :full
+            print(" " + center(bytecode.instructionCount.to_s, instructionCountCols))
+        end
+        print(" " +
               center($engines.map {
                          | engine |
                          bytecode.maxTopExecutionCount(engine).to_s
@@ -505,6 +571,7 @@ def executeCommand(*commandArray)
         puts "full (f)        Same as summary, but prints more information."
         puts "source          Show the source for a code block."
         puts "bytecode (b)    Show the bytecode for a code block, with counts."
+        puts "profiling (p)   Show the (internal) profiling data for a code block."
         puts "display (d)     Display details for a code block."
         puts "inlines         Show all inlining stacks that the code block was on."
         puts "help (h)        Print this message."
@@ -568,6 +635,45 @@ def executeCommand(*commandArray)
                     puts(center("!!!!!", countCols) + " " + center("!!!!!", machineCols) + (" " * (pad + 10)) +
                          "EXIT: in #{exit.compilation} due to #{exit.exitKind}, #{exit.count} times")
                 }
+            }
+        }
+    when "profiling", "p"
+        if args.length != 1
+            puts "Usage: profiling <code block hash>"
+            return
+        end
+        
+        hash = args[0]
+        
+        first = true
+        $compilations.each {
+            | compilation |
+            
+            compilation.profiledBytecodes.each {
+                | profiledBytecodes |
+                if profiledBytecodes.bytecodes.matches(hash)
+                    if first
+                        first = false
+                    else
+                        puts
+                    end
+                    
+                    puts "Compilation #{compilation}:"
+                    profiledBytecodes.header.each {
+                        | header |
+                        puts(" " * 6 + header)
+                    }
+                    profiledBytecodes.each {
+                        | bytecode |
+                        puts(" " * 8 + bytecode.description)
+                        profiledBytecodes.bytecodes.bytecode(bytecode.bytecodeIndex).osrExits.each {
+                            | exit |
+                            if exit.compilation == compilation
+                                puts(" !!!!!           EXIT: due to #{exit.exitKind}, #{exit.count} times")
+                            end
+                        }
+                    }
+                end
             }
         }
     when "inlines"
@@ -787,7 +893,7 @@ def executeCommand(*commandArray)
     end
 end
 
-executeCommand("summary")
+executeCommand("full")
 
 while commandLine = Readline.readline("> ", true)
     executeCommand(*commandLine.split)

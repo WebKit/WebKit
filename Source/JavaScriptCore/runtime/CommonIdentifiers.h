@@ -57,11 +57,13 @@
     macro(get) \
     macro(hasOwnProperty) \
     macro(hash) \
+    macro(header) \
     macro(id) \
     macro(ignoreCase) \
     macro(index) \
     macro(inferredName) \
     macro(input) \
+    macro(instructionCount) \
     macro(isArray) \
     macro(isPrototypeOf) \
     macro(isWatchpoint) \
@@ -77,6 +79,7 @@
     macro(osrExitSites) \
     macro(osrExits) \
     macro(parse) \
+    macro(profiledBytecodes) \
     macro(propertyIsEnumerable) \
     macro(prototype) \
     macro(set) \

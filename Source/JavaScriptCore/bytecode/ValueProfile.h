@@ -39,6 +39,7 @@
 #include "Structure.h"
 #include "WriteBarrier.h"
 #include <wtf/PrintStream.h>
+#include <wtf/StringPrintStream.h>
 
 namespace JSC {
 
@@ -108,6 +109,20 @@ struct ValueProfileBase {
                 return true;
         }
         return false;
+    }
+    
+    CString briefDescription()
+    {
+        computeUpdatedPrediction();
+        
+        StringPrintStream out;
+        
+        if (m_singletonValueIsTop)
+            out.print("predicting ", SpeculationDump(m_prediction));
+        else if (m_singletonValue)
+            out.print("predicting ", m_singletonValue);
+        
+        return out.toCString();
     }
     
     void dump(PrintStream& out)

@@ -1534,6 +1534,14 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\profiler\ProfilerBytecodeSequence.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\profiler\ProfilerBytecodeSequence.h"
+				>
+			</File>
+			<File
 				RelativePath="..\..\profiler\ProfilerBytecodes.cpp"
 				>
 			</File>
@@ -1607,6 +1615,14 @@
 			</File>
 			<File
 				RelativePath="..\..\profiler\ProfilerOSRExitSite.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\profiler\ProfilerProfiledBytecodes.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\profiler\ProfilerProfiledBytecodes.h"
 				>
 			</File>
 			<File

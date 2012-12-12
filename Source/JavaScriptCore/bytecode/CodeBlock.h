@@ -1187,6 +1187,9 @@ namespace JSC {
         enum CacheDumpMode { DumpCaches, DontDumpCaches };
         void printCallOp(PrintStream&, ExecState*, int location, const Instruction*&, const char* op, CacheDumpMode);
         void printPutByIdOp(PrintStream&, ExecState*, int location, const Instruction*&, const char* op);
+        void dumpValueProfiling(PrintStream&, const Instruction*&);
+        void dumpArrayProfiling(PrintStream&, const Instruction*&);
+
         void visitStructures(SlotVisitor&, Instruction* vPC);
         
 #if ENABLE(DFG_JIT)

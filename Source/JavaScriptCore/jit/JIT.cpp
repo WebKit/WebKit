@@ -642,8 +642,10 @@ JITCode JIT::privateCompile(CodePtr* functionEntryArityCheck, JITCompilationEffo
     
     if (Options::showDisassembly() || m_globalData->m_perBytecodeProfiler)
         m_disassembler = adoptPtr(new JITDisassembler(m_codeBlock));
-    if (m_globalData->m_perBytecodeProfiler)
+    if (m_globalData->m_perBytecodeProfiler) {
         m_compilation = m_globalData->m_perBytecodeProfiler->newCompilation(m_codeBlock, Profiler::Baseline);
+        m_compilation->addProfiledBytecodes(*m_globalData->m_perBytecodeProfiler, m_codeBlock);
+    }
     
     if (m_disassembler)
         m_disassembler->setStartOfCode(label());

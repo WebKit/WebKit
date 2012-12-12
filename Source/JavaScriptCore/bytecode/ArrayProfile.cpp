@@ -28,41 +28,50 @@
 
 #include "CodeBlock.h"
 #include <wtf/StringExtras.h>
+#include <wtf/StringPrintStream.h>
 
 namespace JSC {
 
-const char* arrayModesToString(ArrayModes arrayModes)
+void dumpArrayModes(PrintStream& out, ArrayModes arrayModes)
 {
-    if (!arrayModes)
-        return "0:<empty>";
+    if (!arrayModes) {
+        out.print("0:<empty>");
+        return;
+    }
     
-    if (arrayModes == ALL_ARRAY_MODES)
-        return "TOP";
-
-    bool isNonArray = !!(arrayModes & asArrayModes(NonArray));
-    bool isNonArrayWithContiguous = !!(arrayModes & asArrayModes(NonArrayWithContiguous));
-    bool isNonArrayWithArrayStorage = !!(arrayModes & asArrayModes(NonArrayWithArrayStorage));
-    bool isNonArrayWithSlowPutArrayStorage = !!(arrayModes & asArrayModes(NonArrayWithSlowPutArrayStorage));
-    bool isArray = !!(arrayModes & asArrayModes(ArrayClass));
-    bool isArrayWithContiguous = !!(arrayModes & asArrayModes(ArrayWithContiguous));
-    bool isArrayWithArrayStorage = !!(arrayModes & asArrayModes(ArrayWithArrayStorage));
-    bool isArrayWithSlowPutArrayStorage = !!(arrayModes & asArrayModes(ArrayWithSlowPutArrayStorage));
+    if (arrayModes == ALL_ARRAY_MODES) {
+        out.print("TOP");
+        return;
+    }
     
-    static char result[256];
-    snprintf(
-        result, sizeof(result),
-        "%u:%s%s%s%s%s%s%s%s",
-        arrayModes,
-        isNonArray ? "NonArray" : "",
-        isNonArrayWithContiguous ? "NonArrayWithContiguous" : "",
-        isNonArrayWithArrayStorage ? " NonArrayWithArrayStorage" : "",
-        isNonArrayWithSlowPutArrayStorage ? "NonArrayWithSlowPutArrayStorage" : "",
-        isArray ? "ArrayClass" : "",
-        isArrayWithContiguous ? "ArrayWithContiguous" : "",
-        isArrayWithArrayStorage ? " ArrayWithArrayStorage" : "",
-        isArrayWithSlowPutArrayStorage ? "ArrayWithSlowPutArrayStorage" : "");
+    out.print(arrayModes, ":");
     
-    return result;
+    if (arrayModes & asArrayModes(NonArray))
+        out.print("NonArray");
+    if (arrayModes & asArrayModes(NonArrayWithInt32))
+        out.print("NonArrayWithInt32");
+    if (arrayModes & asArrayModes(NonArrayWithDouble))
+        out.print("NonArrayWithDouble");
+    if (arrayModes & asArrayModes(NonArrayWithContiguous))
+        out.print("NonArrayWithContiguous");
+    if (arrayModes & asArrayModes(NonArrayWithArrayStorage))
+        out.print("NonArrayWithArrayStorage");
+    if (arrayModes & asArrayModes(NonArrayWithSlowPutArrayStorage))
+        out.print("NonArrayWithSlowPutArrayStorage");
+    if (arrayModes & asArrayModes(ArrayClass))
+        out.print("ArrayClass");
+    if (arrayModes & asArrayModes(ArrayWithUndecided))
+        out.print("ArrayWithUndecided");
+    if (arrayModes & asArrayModes(ArrayWithInt32))
+        out.print("ArrayWithInt32");
+    if (arrayModes & asArrayModes(ArrayWithDouble))
+        out.print("ArrayWithDouble");
+    if (arrayModes & asArrayModes(ArrayWithContiguous))
+        out.print("ArrayWithContiguous");
+    if (arrayModes & asArrayModes(ArrayWithArrayStorage))
+        out.print("ArrayWithArrayStorage");
+    if (arrayModes & asArrayModes(ArrayWithSlowPutArrayStorage))
+        out.print("ArrayWithSlowPutArrayStorage");
 }
 
 ArrayModes ArrayProfile::updatedObservedArrayModes() const
@@ -102,6 +111,59 @@ void ArrayProfile::computeUpdatedPrediction(CodeBlock* codeBlock, OperationInPro
         m_expectedStructure = 0;
         m_structureIsPolymorphic = true;
     }
+}
+
+CString ArrayProfile::briefDescription(CodeBlock* codeBlock)
+{
+    computeUpdatedPrediction(codeBlock);
+    
+    StringPrintStream out;
+    
+    bool hasPrinted = false;
+    
+    if (m_observedArrayModes) {
+        if (hasPrinted)
+            out.print(", ");
+        out.print(ArrayModesDump(m_observedArrayModes));
+        hasPrinted = true;
+    }
+    
+    if (m_structureIsPolymorphic) {
+        if (hasPrinted)
+            out.print(", ");
+        out.print("struct = TOP");
+        hasPrinted = true;
+    } else if (m_expectedStructure) {
+        if (hasPrinted)
+            out.print(", ");
+        out.print("struct = ", RawPointer(m_expectedStructure));
+        hasPrinted = true;
+    }
+    
+    if (m_mayStoreToHole) {
+        if (hasPrinted)
+            out.print(", ");
+        out.print("Hole");
+        hasPrinted = true;
+    }
+    
+    if (m_mayInterceptIndexedAccesses) {
+        if (hasPrinted)
+            out.print(", ");
+        out.print("Intercept");
+        hasPrinted = true;
+    }
+    
+    if (m_usesOriginalArrayStructures) {
+        if (hasPrinted)
+            out.print(", ");
+        out.print("Original");
+        hasPrinted = true;
+    }
+    
+    UNUSED_PARAM(hasPrinted);
+    
+    return out.toCString();
 }
 
 } // namespace JSC

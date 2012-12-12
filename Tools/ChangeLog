@@ -1,3 +1,18 @@
+2012-12-11  Filip Pizlo  <fpizlo@apple.com>
+
+        Profiler should show bytecode dumps as they would have been visible to the JITs, including the profiling data that the JITs would see
+        https://bugs.webkit.org/show_bug.cgi?id=104647
+
+        Reviewed by Oliver Hunt.
+
+        Added a "profiling" (or "p") command to show the profiling data that the JITs saw
+        for each JIT compilation of a code block.
+        
+        Also added instruction counts in the "full" display and made the "full" display the
+        default thing you see.
+
+        * Scripts/display-profiler-output:
+
 2012-12-11  Eric Seidel  <eric@webkit.org>
 
         Unreviewed, rolling out r137371.

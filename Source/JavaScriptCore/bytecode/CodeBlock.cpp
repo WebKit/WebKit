@@ -303,7 +303,7 @@ void CodeBlock::printGetByIdOp(PrintStream& out, ExecState* exec, int location, 
     int r1 = (++it)->u.operand;
     int id0 = (++it)->u.operand;
     out.printf("[%4d] %s\t %s, %s, %s", location, op, registerName(exec, r0).data(), registerName(exec, r1).data(), idName(id0, m_identifiers[id0]).data());
-    it += 5;
+    it += 4; // Increment up to the value profiler.
 }
 
 #if ENABLE(JIT) || ENABLE(LLINT) // unused in some configurations
@@ -349,8 +349,7 @@ void CodeBlock::printGetByIdCacheStatus(PrintStream& out, ExecState* exec, int l
 #if ENABLE(LLINT)
     if (exec->interpreter()->getOpcodeID(instruction[0].u.opcode) == op_get_array_length)
         out.printf(" llint(array_length)");
-    else {
-        Structure* structure = instruction[4].u.structure.get();
+    else if (Structure* structure = instruction[4].u.structure.get()) {
         out.printf(" llint(");
         dumpStructure(out, "struct", exec, structure, ident);
         out.printf(")");
@@ -359,11 +358,10 @@ void CodeBlock::printGetByIdCacheStatus(PrintStream& out, ExecState* exec, int l
 
 #if ENABLE(JIT)
     if (numberOfStructureStubInfos()) {
-        out.printf(" jit(");
         StructureStubInfo& stubInfo = getStubInfo(location);
-        if (!stubInfo.seen)
-            out.printf("not seen");
-        else {
+        if (stubInfo.seen) {
+            out.printf(" jit(");
+            
             Structure* baseStructure = 0;
             Structure* prototypeStructure = 0;
             StructureChain* chain = 0;
@@ -449,8 +447,8 @@ void CodeBlock::printGetByIdCacheStatus(PrintStream& out, ExecState* exec, int l
                 }
                 out.printf("]");
             }
+            out.printf(")");
         }
-        out.printf(")");
     }
 #endif
 }
@@ -469,16 +467,13 @@ void CodeBlock::printCallOp(PrintStream& out, ExecState* exec, int location, con
                 " llint(%p, exec %p)",
                 callLinkInfo->lastSeenCallee.get(),
                 callLinkInfo->lastSeenCallee->executable());
-        } else
-            out.printf(" llint(not set)");
+        }
 #endif
 #if ENABLE(JIT)
         if (numberOfCallLinkInfos()) {
             JSFunction* target = getCallLinkInfo(location).lastSeenCallee.get();
             if (target)
                 out.printf(" jit(%p, exec %p)", target, target->executable());
-            else
-                out.printf(" jit(not set)");
         }
 #endif
     }
@@ -665,6 +660,32 @@ void CodeBlock::dumpBytecode(PrintStream& out)
     }
 
     out.printf("\n");
+}
+
+void CodeBlock::dumpValueProfiling(PrintStream& out, const Instruction*& it)
+{
+    ++it;
+#if ENABLE(VALUE_PROFILER)
+    CString description = it->u.profile->briefDescription();
+    if (!description.length())
+        return;
+    out.print("    ", description);
+#else
+    UNUSED_PARAM(out);
+#endif
+}
+
+void CodeBlock::dumpArrayProfiling(PrintStream& out, const Instruction*& it)
+{
+    ++it;
+#if ENABLE(VALUE_PROFILER)
+    CString description = it->u.arrayProfile->briefDescription(this);
+    if (!description.length())
+        return;
+    out.print("    ", description);
+#else
+    UNUSED_PARAM(out);
+#endif
 }
 
 void CodeBlock::dumpBytecode(PrintStream& out, ExecState* exec, const Instruction* begin, const Instruction*& it)
@@ -956,8 +977,8 @@ void CodeBlock::dumpBytecode(PrintStream& out, ExecState* exec, const Instructio
             int id0 = (++it)->u.operand;
             int resolveInfo = (++it)->u.operand;
             out.printf("[%4d] resolve\t\t %s, %s, %d", location, registerName(exec, r0).data(), idName(id0, m_identifiers[id0]).data(), resolveInfo);
+            dumpValueProfiling(out, it);
             dumpBytecodeCommentAndNewLine(out, location);
-            it++;
             break;
         }
         case op_init_global_const_nop: {
@@ -998,8 +1019,8 @@ void CodeBlock::dumpBytecode(PrintStream& out, ExecState* exec, const Instructio
             int resolveInfo = (++it)->u.operand;
             int putToBaseInfo = (++it)->u.operand;
             out.printf("[%4d] resolve_base%s\t %s, %s, %d, %d", location, isStrict ? "_strict" : "", registerName(exec, r0).data(), idName(id0, m_identifiers[id0]).data(), resolveInfo, putToBaseInfo);
+            dumpValueProfiling(out, it);
             dumpBytecodeCommentAndNewLine(out, location);
-            it++;
             break;
         }
         case op_ensure_property_exists: {
@@ -1016,8 +1037,8 @@ void CodeBlock::dumpBytecode(PrintStream& out, ExecState* exec, const Instructio
             int resolveInfo = (++it)->u.operand;
             int putToBaseInfo = (++it)->u.operand;
             out.printf("[%4d] resolve_with_base %s, %s, %s, %d, %d", location, registerName(exec, r0).data(), registerName(exec, r1).data(), idName(id0, m_identifiers[id0]).data(), resolveInfo, putToBaseInfo);
+            dumpValueProfiling(out, it);
             dumpBytecodeCommentAndNewLine(out, location);
-            it++;
             break;
         }
         case op_resolve_with_this: {
@@ -1026,8 +1047,8 @@ void CodeBlock::dumpBytecode(PrintStream& out, ExecState* exec, const Instructio
             int id0 = (++it)->u.operand;
             int resolveInfo = (++it)->u.operand;
             out.printf("[%4d] resolve_with_this %s, %s, %s, %d", location, registerName(exec, r0).data(), registerName(exec, r1).data(), idName(id0, m_identifiers[id0]).data(), resolveInfo);
+            dumpValueProfiling(out, it);
             dumpBytecodeCommentAndNewLine(out, location);
-            it++;
             break;
         }
         case op_get_by_id:
@@ -1046,6 +1067,7 @@ void CodeBlock::dumpBytecode(PrintStream& out, ExecState* exec, const Instructio
         case op_get_string_length: {
             printGetByIdOp(out, exec, location, it);
             printGetByIdCacheStatus(out, exec, location);
+            dumpValueProfiling(out, it);
             dumpBytecodeCommentAndNewLine(out, location);
             break;
         }
@@ -1112,9 +1134,9 @@ void CodeBlock::dumpBytecode(PrintStream& out, ExecState* exec, const Instructio
             int r1 = (++it)->u.operand;
             int r2 = (++it)->u.operand;
             out.printf("[%4d] get_by_val\t %s, %s, %s", location, registerName(exec, r0).data(), registerName(exec, r1).data(), registerName(exec, r2).data());
+            dumpArrayProfiling(out, it);
+            dumpValueProfiling(out, it);
             dumpBytecodeCommentAndNewLine(out, location);
-            it++;
-            it++;
             break;
         }
         case op_get_argument_by_val: {
@@ -1122,9 +1144,9 @@ void CodeBlock::dumpBytecode(PrintStream& out, ExecState* exec, const Instructio
             int r1 = (++it)->u.operand;
             int r2 = (++it)->u.operand;
             out.printf("[%4d] get_argument_by_val\t %s, %s, %s", location, registerName(exec, r0).data(), registerName(exec, r1).data(), registerName(exec, r2).data());
+            ++it;
+            dumpValueProfiling(out, it);
             dumpBytecodeCommentAndNewLine(out, location);
-            ++it;
-            ++it;
             break;
         }
         case op_get_by_pname: {
@@ -1143,8 +1165,8 @@ void CodeBlock::dumpBytecode(PrintStream& out, ExecState* exec, const Instructio
             int r1 = (++it)->u.operand;
             int r2 = (++it)->u.operand;
             out.printf("[%4d] put_by_val\t %s, %s, %s", location, registerName(exec, r0).data(), registerName(exec, r1).data(), registerName(exec, r2).data());
+            dumpArrayProfiling(out, it);
             dumpBytecodeCommentAndNewLine(out, location);
-            ++it;
             break;
         }
         case op_del_by_val: {
@@ -1386,8 +1408,8 @@ void CodeBlock::dumpBytecode(PrintStream& out, ExecState* exec, const Instructio
         case op_call_put_result: {
             int r0 = (++it)->u.operand;
             out.printf("[%4d] call_put_result\t\t %s", location, registerName(exec, r0).data());
+            dumpValueProfiling(out, it);
             dumpBytecodeCommentAndNewLine(out, location);
-            it++;
             break;
         }
         case op_ret_object_or_this: {
