@@ -4160,13 +4160,6 @@ webkit.org/b/103721 [ Mac Win Linux ] compositing/reflections/nested-reflection-
 webkit.org/b/103721 [ Mac Win Linux ] compositing/reflections/nested-reflection-animated.html [ ImageOnlyFailure ]
 webkit.org/b/103721 [ Mac Win Linux ] platform/chromium/compositing/huge-layer-rotated.html [ ImageOnlyFailure ]
 
-webkit.org/b/103834 [ SnowLeopard XP ] fast/forms/month-multiple-fields/month-multiple-fields-keyboard-events.html [ Failure ]
-
-# Need baseline
-webkit.org/b/104438 fast/forms/datetimelocal/datetimelocal-appearance-basic.html [ Missing ImageOnlyFailure ]
-webkit.org/b/104438 fast/forms/datetimelocal/datetimelocal-appearance-l10n.html [ Missing ImageOnlyFailure ]
-webkit.org/b/104438 [ Win Linux ] fast/forms/time-multiple-fields/time-multiple-fields-localization.html [ Failure ]
-
 # New tests added in r136492 that do not work in chromium
 webkit.org/b/99800 fast/harness/perftests/runs-per-second-iterations.html [ Failure Pass ]
 webkit.org/b/99800 fast/harness/perftests/perf-runner-compute-statistics.html [ Failure Pass ]
@@ -4217,8 +4210,6 @@ webkit.org/b/103767  [ Win Mac Linux ] media/track/track-in-band.html [ Skip ]
 webkit.org/b/104489 [ Win ] http/tests/w3c/webperf/submission/resource-timing/html/test_resource_attribute_order.html [ Failure Pass ]
 
 # Failing differently since r137152, probably just need rebaselines
-webkit.org/b/104567 [ XP ] fast/forms/date-multiple-fields/date-multiple-fields-keyboard-events.html [ Failure ]
-webkit.org/b/104567 [ XP ] fast/forms/datetimelocal-multiple-fields/datetimelocal-multiple-fields-keyboard-events.html [ Failure ]
 
 # Broken by Chromium r172175
 crbug.com/165315 media/encrypted-media/encrypted-media-can-play-type-webm.html [ Failure ]

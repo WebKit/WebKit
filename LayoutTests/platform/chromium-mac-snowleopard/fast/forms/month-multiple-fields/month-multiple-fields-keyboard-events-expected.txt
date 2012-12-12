@@ -15,7 +15,7 @@ Backspace - Make value empty
 == Digit keys ==
 FAIL input.value should be 0012-09. Was 0112-09.
 == Left/Right keys ==
-FAIL input.value should be 0005-06. Was 0005-09.
+PASS input.value is "0005-06"
 PASS document.activeElement.id is "input"
 == Up/Down keys ==
 PASS input.value is "2012-10"
@@ -49,10 +49,28 @@ PASS input.value is ""
 == Typeahead ==
 PASS input.value is "0001-12"
 PASS input.value is "0002-12"
-== RTL Left/Right keys ==
+== Typeahead cycle first character ==
+PASS input.value is "2012-01"
+PASS input.value is "2012-06"
+PASS input.value is "2012-07"
+PASS input.value is "2012-01"
+PASS input.value is "2012-01"
+== Typeahead prefix match ==
+PASS input.value is "2012-03"
+PASS input.value is "2012-03"
+PASS input.value is "2012-05"
+PASS input.value is "2012-05"
+== Typeahead index match ==
+PASS input.value is "2012-01"
+PASS input.value is "2012-12"
+PASS input.value is "2012-12"
+== Typeahead should search from current selection ==
+PASS input.value is "2012-06"
+== RTL focus navigation ==
+The tests in this block fail on platforms without the lang-attribute-aware-form-control-UI feature.
 FAIL input.value should be 2012-10. Was 2013-09.
-FAIL input.value should be 0002-10. Was 2013-09.
-FAIL input.value should be 0002-11. Was 2014-09.
+FAIL input.value should be 0002-10. Was 2013-02.
+FAIL input.value should be 0002-11. Was 2014-02.
 PASS successfullyParsed is true
 
 TEST COMPLETE

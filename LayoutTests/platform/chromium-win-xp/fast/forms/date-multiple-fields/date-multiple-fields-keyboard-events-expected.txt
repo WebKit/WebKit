@@ -51,10 +51,11 @@ PASS input.value is ""
 == Typeahead ==
 PASS input.value is "2012-12-01"
 PASS input.value is "2012-12-02"
-== RTL Left/Right keys ==
-FAIL input.value should be 2012-09-01. Was 2012-01-28.
-FAIL input.value should be 2012-02-01. Was 2012-12-28.
-FAIL input.value should be 2012-03-01. Was 0003-12-28.
+== RTL focus navigation ==
+The tests in this block fail on platforms without the lang-attribute-aware-form-control-UI feature.
+FAIL input.value should be 2012-09-01. Was 2012-10-01.
+FAIL input.value should be 2012-02-01. Was 0002-10-01.
+FAIL input.value should be 2012-03-01. Was 0002-10-03.
 == Disabled/readonly ==
 PASS input.value is "2012-10-08"
 PASS input.value is "2012-11-08"

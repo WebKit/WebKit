@@ -1,3 +1,27 @@
+2012-12-11  Kent Tamura  <tkent@chromium.org>
+
+        [Chromium] Rebaseline for recent forms changes.
+        https://bugs.webkit.org/show_bug.cgi?id=103834
+        https://bugs.webkit.org/show_bug.cgi?id=104438
+        https://bugs.webkit.org/show_bug.cgi?id=104567
+
+        * platform/chromium-linux/fast/forms/datetimelocal/datetimelocal-appearance-basic-expected.png: Added.
+        * platform/chromium-linux/fast/forms/datetimelocal/datetimelocal-appearance-l10n-expected.png: Added.
+        * platform/chromium-linux/fast/forms/time-multiple-fields/time-multiple-fields-localization-expected.txt:
+        * platform/chromium-mac-lion/fast/forms/datetimelocal/datetimelocal-appearance-basic-expected.png: Added.
+        * platform/chromium-mac-lion/fast/forms/datetimelocal/datetimelocal-appearance-l10n-expected.png: Added.
+        * platform/chromium-mac-snowleopard/fast/forms/datetimelocal/datetimelocal-appearance-basic-expected.png: Added.
+        * platform/chromium-mac-snowleopard/fast/forms/datetimelocal/datetimelocal-appearance-l10n-expected.png: Added.
+        * platform/chromium-mac-snowleopard/fast/forms/month-multiple-fields/month-multiple-fields-keyboard-events-expected.txt:
+        * platform/chromium-win-xp/fast/forms/date-multiple-fields/date-multiple-fields-keyboard-events-expected.txt:
+        * platform/chromium-win-xp/fast/forms/datetimelocal-multiple-fields/datetimelocal-multiple-fields-keyboard-events-expected.txt:
+        * platform/chromium-win-xp/fast/forms/datetimelocal/datetimelocal-appearance-l10n-expected.png: Added.
+        * platform/chromium-win-xp/fast/forms/month-multiple-fields/month-multiple-fields-keyboard-events-expected.txt: Removed.
+        * platform/chromium-win/fast/forms/datetimelocal/datetimelocal-appearance-basic-expected.png: Added.
+        * platform/chromium-win/fast/forms/datetimelocal/datetimelocal-appearance-l10n-expected.png: Added.
+        * platform/chromium-win/fast/forms/time-multiple-fields/time-multiple-fields-localization-expected.txt:
+        * platform/chromium/TestExpectations:
+
 2012-12-11  Xianzhu Wang  <wangxianzhu@chromium.org>
 
         Fixed position out-of-view check is incorrect when page is scaled
