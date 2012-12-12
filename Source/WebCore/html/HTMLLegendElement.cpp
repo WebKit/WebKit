@@ -50,21 +50,18 @@ PassRefPtr<HTMLLegendElement> HTMLLegendElement::create(const QualifiedName& tag
 HTMLFormControlElement* HTMLLegendElement::associatedControl()
 {
     // Check if there's a fieldset belonging to this legend.
-    ContainerNode* fieldset = parentNode();
+    Element* fieldset = parentElement();
     while (fieldset && !fieldset->hasTagName(fieldsetTag))
-        fieldset = fieldset->parentNode();
+        fieldset = fieldset->parentElement();
     if (!fieldset)
         return 0;
 
     // Find first form element inside the fieldset that is not a legend element.
     // FIXME: Should we consider tabindex?
-    Node* node = fieldset;
-    while ((node = NodeTraversal::next(node, fieldset))) {
-        if (node->isElementNode()) {
-            Element* element = static_cast<Element*>(node);
-            if (element->isFormControlElement())
-                return static_cast<HTMLFormControlElement*>(element);
-        }
+    Element* element = fieldset;
+    while ((element = ElementTraversal::next(element, fieldset))) {
+        if (element->isFormControlElement())
+            return static_cast<HTMLFormControlElement*>(element);
     }
 
     return 0;

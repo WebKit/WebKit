@@ -27,6 +27,7 @@
 #include "Element.h"
 #include "HTMLNames.h"
 #include "HTMLOListElement.h"
+#include "NodeTraversal.h"
 #include "RenderListItem.h"
 #include "RenderListMarker.h"
 #include "RenderStyle.h"
@@ -190,13 +191,13 @@ static RenderObject* nextInPreOrder(const RenderObject* object, const Element* s
         ASSERT_NOT_REACHED();
         return 0;
     }
-    child = self->firstElementChild();
+    child = ElementTraversal::firstWithin(self);
     while (true) {
         while (child) {
             result = child->renderer();
             if (result)
                 return result;
-            child = child->nextElementSibling();
+            child = ElementTraversal::nextSkippingChildren(child, self);
         }
         result = rendererOfAfterPseudoElement(self->renderer());
         if (result)
@@ -204,7 +205,7 @@ static RenderObject* nextInPreOrder(const RenderObject* object, const Element* s
 nextsibling:
         if (self == stayWithin)
             return 0;
-        child = self->nextElementSibling();
+        child = ElementTraversal::nextSkippingChildren(self);
         self = self->parentElement();
         if (!self) {
             ASSERT(!child); // We can only reach this if we are searching beyond the root element

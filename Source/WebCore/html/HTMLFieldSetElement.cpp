@@ -51,9 +51,9 @@ PassRefPtr<HTMLFieldSetElement> HTMLFieldSetElement::create(const QualifiedName&
 
 void HTMLFieldSetElement::invalidateDisabledStateUnder(Element* base)
 {
-    for (Node* node = base->firstChild(); node; node = NodeTraversal::next(node, base)) {
-        if (node->isElementNode() && toElement(node)->isFormControlElement())
-            static_cast<HTMLFormControlElement*>(node)->ancestorDisabledStateWasChanged();
+    for (Element* element = ElementTraversal::firstWithin(base); element; element = ElementTraversal::next(element, base)) {
+        if (element->isFormControlElement())
+            static_cast<HTMLFormControlElement*>(element)->ancestorDisabledStateWasChanged();
     }
 }
 
@@ -67,7 +67,7 @@ void HTMLFieldSetElement::disabledAttributeChanged()
 void HTMLFieldSetElement::childrenChanged(bool changedByParser, Node* beforeChange, Node* afterChange, int childCountDelta)
 {
     HTMLFormControlElement::childrenChanged(changedByParser, beforeChange, afterChange, childCountDelta);
-    for (Element* element = firstElementChild(); element; element = element->nextElementSibling()) {
+    for (Element* element = ElementTraversal::firstWithin(this); element; element = ElementTraversal::nextSkippingChildren(element, this)) {
         if (element->hasTagName(legendTag))
             invalidateDisabledStateUnder(element);
     }
@@ -91,9 +91,9 @@ RenderObject* HTMLFieldSetElement::createRenderer(RenderArena* arena, RenderStyl
 
 HTMLLegendElement* HTMLFieldSetElement::legend() const
 {
-    for (Element* node = firstElementChild(); node; node = node->nextElementSibling()) {
-        if (node->hasTagName(legendTag))
-            return static_cast<HTMLLegendElement*>(node);
+    for (Element* child = ElementTraversal::firstWithin(this); child; child = ElementTraversal::nextSkippingChildren(child, this)) {
+        if (child->hasTagName(legendTag))
+            return static_cast<HTMLLegendElement*>(child);
     }
     return 0;
 }
@@ -113,19 +113,16 @@ void HTMLFieldSetElement::refreshElementsIfNeeded() const
 
     m_associatedElements.clear();
 
-    for (Node* node = firstChild(); node; node = NodeTraversal::next(node, this)) {
-        if (!node->isElementNode())
-            continue;
-
-        if (node->hasTagName(objectTag)) {
-            m_associatedElements.append(static_cast<HTMLObjectElement*>(node));
+    for (Element* element = ElementTraversal::firstWithin(this); element; element = ElementTraversal::next(element, this)) {
+        if (element->hasTagName(objectTag)) {
+            m_associatedElements.append(static_cast<HTMLObjectElement*>(element));
             continue;
         }
 
-        if (!toElement(node)->isFormControlElement())
+        if (!element->isFormControlElement())
             continue;
 
-        m_associatedElements.append(static_cast<HTMLFormControlElement*>(node));
+        m_associatedElements.append(static_cast<HTMLFormControlElement*>(element));
     }
 }
 

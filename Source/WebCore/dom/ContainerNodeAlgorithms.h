@@ -316,10 +316,8 @@ private:
 
 inline void ChildFrameDisconnector::collectDescendant(Node* root, ShouldIncludeRoot shouldIncludeRoot)
 {
-    for (Node* node = shouldIncludeRoot == IncludeRoot ? root : root->firstChild(); node; node = NodeTraversal::next(node, root)) {
-        if (!node->isElementNode())
-            continue;
-        Element* element = toElement(node);
+    Element* element = (shouldIncludeRoot == IncludeRoot && root->isElementNode()) ? toElement(root) : ElementTraversal::firstWithin(root);
+    for (; element; element = ElementTraversal::next(element, root)) {
         if (element->hasCustomCallbacks() && element->isFrameOwnerElement())
             m_list.append(toFrameOwnerElement(element));
         if (ElementShadow* shadow = element->shadow())

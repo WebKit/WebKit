@@ -735,13 +735,12 @@ void HTMLSelectElement::recalcListItems(bool updateSelectedStates) const
 
     HTMLOptionElement* foundSelected = 0;
     HTMLOptionElement* firstOption = 0;
-    for (Node* currentNode = this->firstChild(); currentNode;) {
-        if (!currentNode->isHTMLElement()) {
-            currentNode = NodeTraversal::nextSkippingChildren(currentNode, this);
+    for (Element* currentElement = ElementTraversal::firstWithin(this); currentElement; ) {
+        if (!currentElement->isHTMLElement()) {
+            currentElement = ElementTraversal::nextSkippingChildren(currentElement, this);
             continue;
         }
-
-        HTMLElement* current = toHTMLElement(currentNode);
+        HTMLElement* current = toHTMLElement(currentElement);
 
         // optgroup tags may not nest. However, both FireFox and IE will
         // flatten the tree automatically, so we follow suit.
@@ -749,7 +748,7 @@ void HTMLSelectElement::recalcListItems(bool updateSelectedStates) const
         if (current->hasTagName(optgroupTag)) {
             m_listItems.append(current);
             if (current->firstChild()) {
-                currentNode = current->firstChild();
+                currentElement = ElementTraversal::firstWithin(current);
                 continue;
             }
         }
@@ -776,12 +775,12 @@ void HTMLSelectElement::recalcListItems(bool updateSelectedStates) const
             m_listItems.append(current);
 
         // In conforming HTML code, only <optgroup> and <option> will be found
-        // within a <select>. We call NodeTraversal::nextSibling so that we only step
+        // within a <select>. We call NodeTraversal::nextSkippingChildren so that we only step
         // into those tags that we choose to. For web-compat, we should cope
         // with the case where odd tags like a <div> have been added but we
         // handle this because such tags have already been removed from the
         // <select>'s subtree at this point.
-        currentNode = NodeTraversal::nextSkippingChildren(currentNode, this);
+        currentElement = ElementTraversal::nextSkippingChildren(currentElement, this);
     }
 
     if (!foundSelected && m_size <= 1 && firstOption && !firstOption->selected())

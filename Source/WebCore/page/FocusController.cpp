@@ -770,23 +770,22 @@ void FocusController::findFocusCandidateInContainer(Node* container, const Layou
     ASSERT(container);
     Node* focusedNode = (focusedFrame() && focusedFrame()->document()) ? focusedFrame()->document()->focusedNode() : 0;
 
-    Node* node = container->firstChild();
+    Element* element = ElementTraversal::firstWithin(container);
     FocusCandidate current;
     current.rect = startingRect;
     current.focusableNode = focusedNode;
     current.visibleNode = focusedNode;
 
-    for (; node; node = (node->isFrameOwnerElement() || canScrollInDirection(node, direction)) ? NodeTraversal::nextSkippingChildren(node, container) : NodeTraversal::next(node, container)) {
-        if (node == focusedNode)
+    for (; element; element = (element->isFrameOwnerElement() || canScrollInDirection(element, direction))
+        ? ElementTraversal::nextSkippingChildren(element, container)
+        : ElementTraversal::next(element, container)) {
+        if (element == focusedNode)
             continue;
 
-        if (!node->isElementNode())
+        if (!element->isKeyboardFocusable(event) && !element->isFrameOwnerElement() && !canScrollInDirection(element, direction))
             continue;
 
-        if (!node->isKeyboardFocusable(event) && !node->isFrameOwnerElement() && !canScrollInDirection(node, direction))
-            continue;
-
-        FocusCandidate candidate = FocusCandidate(node, direction);
+        FocusCandidate candidate = FocusCandidate(element, direction);
         if (candidate.isNull())
             continue;
 

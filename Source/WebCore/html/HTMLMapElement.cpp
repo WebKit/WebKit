@@ -62,10 +62,10 @@ HTMLMapElement::~HTMLMapElement()
 bool HTMLMapElement::mapMouseEvent(LayoutPoint location, const LayoutSize& size, HitTestResult& result)
 {
     HTMLAreaElement* defaultArea = 0;
-    Node *node = this;
-    while ((node = NodeTraversal::next(node, this))) {
-        if (node->hasTagName(areaTag)) {
-            HTMLAreaElement* areaElt = static_cast<HTMLAreaElement*>(node);
+    Element* element = this;
+    while ((element = ElementTraversal::next(element, this))) {
+        if (element->hasTagName(areaTag)) {
+            HTMLAreaElement* areaElt = static_cast<HTMLAreaElement*>(element);
             if (areaElt->isDefault()) {
                 if (!defaultArea)
                     defaultArea = areaElt;

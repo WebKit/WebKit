@@ -1025,7 +1025,7 @@ void CompositeEditCommand::cloneParagraphUnderNewElement(Position& start, Positi
         Node* startNode = start.deprecatedNode();
         for (Node* node = NodeTraversal::nextSkippingChildren(startNode, outerNode.get()); node; node = NodeTraversal::nextSkippingChildren(node, outerNode.get())) {
             // Move lastNode up in the tree as much as node was moved up in the
-            // tree by NodeTraversal::nextSibling, so that the relative depth between
+            // tree by NodeTraversal::nextSkippingChildren, so that the relative depth between
             // node and the original start node is maintained in the clone.
             while (startNode->parentNode() != node->parentNode()) {
                 startNode = startNode->parentNode();

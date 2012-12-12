@@ -62,6 +62,7 @@
 #include "NodeList.h"
 #include "NodeRenderStyle.h"
 #include "NodeRenderingContext.h"
+#include "NodeTraversal.h"
 #include "Page.h"
 #include "PointerLockController.h"
 #include "PseudoElement.h"
@@ -2145,7 +2146,7 @@ PseudoElement* Element::afterPseudoElement() const
 // ElementTraversal API
 Element* Element::firstElementChild() const
 {
-    return WebCore::firstElementChild(this);
+    return ElementTraversal::firstWithin(this);
 }
 
 Element* Element::lastElementChild() const

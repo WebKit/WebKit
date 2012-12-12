@@ -797,15 +797,6 @@ inline void Element::updateInvalidAttributes() const
 #endif
 }
 
-inline Element* firstElementChild(const ContainerNode* container)
-{
-    ASSERT_ARG(container, container);
-    Node* child = container->firstChild();
-    while (child && !child->isElementNode())
-        child = child->nextSibling();
-    return static_cast<Element*>(child);
-}
-
 inline bool Element::hasID() const
 {
     return attributeData() && attributeData()->hasID();

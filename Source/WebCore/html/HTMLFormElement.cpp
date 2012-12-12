@@ -505,36 +505,36 @@ unsigned HTMLFormElement::formElementIndexWithFormAttribute(Element* element, un
 
 unsigned HTMLFormElement::formElementIndex(FormAssociatedElement* associatedElement)
 {
-    HTMLElement* element = toHTMLElement(associatedElement);
+    HTMLElement* associatedHTMLElement = toHTMLElement(associatedElement);
     // Treats separately the case where this element has the form attribute
     // for performance consideration.
-    if (element->fastHasAttribute(formAttr)) {
-        unsigned short position = compareDocumentPosition(element);
+    if (associatedHTMLElement->fastHasAttribute(formAttr)) {
+        unsigned short position = compareDocumentPosition(associatedHTMLElement);
         if (position & DOCUMENT_POSITION_PRECEDING) {
             ++m_associatedElementsBeforeIndex;
             ++m_associatedElementsAfterIndex;
-            return HTMLFormElement::formElementIndexWithFormAttribute(element, 0, m_associatedElementsBeforeIndex - 1);
+            return HTMLFormElement::formElementIndexWithFormAttribute(associatedHTMLElement, 0, m_associatedElementsBeforeIndex - 1);
         }
         if (position & DOCUMENT_POSITION_FOLLOWING && !(position & DOCUMENT_POSITION_CONTAINED_BY))
-            return HTMLFormElement::formElementIndexWithFormAttribute(element, m_associatedElementsAfterIndex, m_associatedElements.size());
+            return HTMLFormElement::formElementIndexWithFormAttribute(associatedHTMLElement, m_associatedElementsAfterIndex, m_associatedElements.size());
     }
 
     // Check for the special case where this element is the very last thing in
     // the form's tree of children; we don't want to walk the entire tree in that
     // common case that occurs during parsing; instead we'll just return a value
     // that says "add this form element to the end of the array".
-    if (NodeTraversal::next(element, this)) {
+    if (ElementTraversal::next(associatedHTMLElement, this)) {
         unsigned i = m_associatedElementsBeforeIndex;
-        for (Node* node = this; node; node = NodeTraversal::next(node, this)) {
-            if (node == element) {
+        for (Element* element = this; element; element = ElementTraversal::next(element, this)) {
+            if (element == associatedHTMLElement) {
                 ++m_associatedElementsAfterIndex;
                 return i;
             }
-            if (node->isHTMLElement()
-                    && (static_cast<Element*>(node)->isFormControlElement()
-                        || node->hasTagName(objectTag))
-                    && toHTMLElement(node)->form() == this)
-                ++i;
+            if (!element->isFormControlElement() && !element->hasTagName(objectTag))
+                continue;
+            if (!element->isHTMLElement() || toHTMLElement(element)->form() != this)
+                continue;
+            ++i;
         }
     }
     return m_associatedElementsAfterIndex++;

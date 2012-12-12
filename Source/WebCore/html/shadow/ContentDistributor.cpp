@@ -102,9 +102,9 @@ const Vector<InsertionPoint*>& ShadowRootContentDistributionData::ensureInsertio
     if (!shadowRoot->hasInsertionPoint())
         return m_insertionPointList;
 
-    for (Node* node = shadowRoot; node; node = NodeTraversal::next(node, shadowRoot)) {
-        if (node->isInsertionPoint())
-            m_insertionPointList.append(toInsertionPoint(node));
+    for (Element* element = ElementTraversal::firstWithin(shadowRoot); element; element = ElementTraversal::next(element, shadowRoot)) {
+        if (element->isInsertionPoint())
+            m_insertionPointList.append(toInsertionPoint(element));
     }
 
     return m_insertionPointList;

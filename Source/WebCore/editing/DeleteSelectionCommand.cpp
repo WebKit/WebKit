@@ -504,7 +504,7 @@ void DeleteSelectionCommand::handleGeneralDelete()
         // handle deleting all nodes that are completely selected
         while (node && node != m_downstreamEnd.deprecatedNode()) {
             if (comparePositions(firstPositionInOrBeforeNode(node.get()), m_downstreamEnd) >= 0) {
-                // NodeTraversal::nextSibling just blew past the end position, so stop deleting
+                // NodeTraversal::nextSkippingChildren just blew past the end position, so stop deleting
                 node = 0;
             } else if (!m_downstreamEnd.deprecatedNode()->isDescendantOf(node.get())) {
                 RefPtr<Node> nextNode = NodeTraversal::nextSkippingChildren(node.get());

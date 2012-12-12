@@ -98,7 +98,7 @@ void StyleInvalidationAnalysis::analyzeStyleSheet(StyleSheetContents* styleSheet
     }
 }
 
-static bool elementMatchesSelectorScopes(const StyledElement* element, const HashSet<AtomicStringImpl*>& idScopes, const HashSet<AtomicStringImpl*>& classScopes)
+static bool elementMatchesSelectorScopes(const Element* element, const HashSet<AtomicStringImpl*>& idScopes, const HashSet<AtomicStringImpl*>& classScopes)
 {
     if (!idScopes.isEmpty() && element->hasID() && idScopes.contains(element->idForStyleResolution().impl()))
         return true;
@@ -117,20 +117,15 @@ void StyleInvalidationAnalysis::invalidateStyle(Document* document)
     ASSERT(!m_dirtiesAllStyle);
     if (m_idScopes.isEmpty() && m_classScopes.isEmpty())
         return;
-    Node* node = document->firstChild();
-    while (node) {
-        if (!node->isStyledElement()) {
-            node = NodeTraversal::next(node);
-            continue;
-        }
-        StyledElement* element = static_cast<StyledElement*>(node);
+    Element* element = ElementTraversal::firstWithin(document);
+    while (element) {
         if (elementMatchesSelectorScopes(element, m_idScopes, m_classScopes)) {
             element->setNeedsStyleRecalc();
             // The whole subtree is now invalidated, we can skip to the next sibling.
-            node = NodeTraversal::nextSkippingChildren(node);
+            element = ElementTraversal::nextSkippingChildren(element);
             continue;
         }
-        node = NodeTraversal::next(node);
+        element = ElementTraversal::next(element);
     }
 }
 

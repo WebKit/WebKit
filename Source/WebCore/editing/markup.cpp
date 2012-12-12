@@ -96,24 +96,20 @@ private:
     String m_value;
 };
 
-static void completeURLs(Node* node, const String& baseURL)
+static void completeURLs(DocumentFragment* fragment, const String& baseURL)
 {
     Vector<AttributeChange> changes;
 
     KURL parsedBaseURL(ParsedURLString, baseURL);
 
-    Node* end = NodeTraversal::nextSkippingChildren(node);
-    for (Node* n = node; n != end; n = NodeTraversal::next(n)) {
-        if (n->isElementNode()) {
-            Element* e = static_cast<Element*>(n);
-            if (!e->hasAttributes())
-                continue;
-            unsigned length = e->attributeCount();
-            for (unsigned i = 0; i < length; i++) {
-                const Attribute* attribute = e->attributeItem(i);
-                if (e->isURLAttribute(*attribute) && !attribute->value().isEmpty())
-                    changes.append(AttributeChange(e, attribute->name(), KURL(parsedBaseURL, attribute->value()).string()));
-            }
+    for (Element* element = ElementTraversal::firstWithin(fragment); element; element = ElementTraversal::next(element, fragment)) {
+        if (!element->hasAttributes())
+            continue;
+        unsigned length = element->attributeCount();
+        for (unsigned i = 0; i < length; i++) {
+            const Attribute* attribute = element->attributeItem(i);
+            if (element->isURLAttribute(*attribute) && !attribute->value().isEmpty())
+                changes.append(AttributeChange(element, attribute->name(), KURL(parsedBaseURL, attribute->value()).string()));
         }
     }
 

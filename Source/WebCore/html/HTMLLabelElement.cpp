@@ -75,10 +75,10 @@ LabelableElement* HTMLLabelElement::control()
         // Search the children and descendants of the label element for a form element.
         // per http://dev.w3.org/html5/spec/Overview.html#the-label-element
         // the form element must be "labelable form-associated element".
-        Node* node = this;
-        while ((node = NodeTraversal::next(node, this))) {
-            if (LabelableElement* element = nodeAsLabelableElement(node))
-                return element;
+        Element* element = this;
+        while ((element = ElementTraversal::next(element, this))) {
+            if (LabelableElement* labelableElement = nodeAsLabelableElement(element))
+                return labelableElement;
         }
         return 0;
     }
