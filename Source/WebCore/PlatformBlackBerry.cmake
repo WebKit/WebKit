@@ -3,6 +3,10 @@ list(INSERT WebCore_INCLUDE_DIRECTORIES 0
     "${BLACKBERRY_THIRD_PARTY_DIR}/icu"
 )
 
+list(REMOVE_ITEM WebCore_SOURCES
+    html/shadow/MediaControlsApple.cpp
+)
+
 list(APPEND WebCore_INCLUDE_DIRECTORIES
     "${WEBCORE_DIR}/bindings/cpp"
     "${WEBCORE_DIR}/platform/blackberry/CookieDatabaseBackingStore"
@@ -105,6 +109,7 @@ list(APPEND WebCore_SOURCES
 
 list(APPEND WebCore_USER_AGENT_STYLE_SHEETS
     ${WEBCORE_DIR}/css/mediaControlsBlackBerry.css
+    ${WEBCORE_DIR}/css/mediaControlsBlackBerryFullscreen.css
     ${WEBCORE_DIR}/css/themeBlackBerry.css
 )
 
@@ -131,6 +136,7 @@ list(APPEND WebCore_INCLUDE_DIRECTORIES
 list(APPEND WebCore_SOURCES
     editing/blackberry/EditorBlackBerry.cpp
     editing/blackberry/SmartReplaceBlackBerry.cpp
+    html/shadow/MediaControlsBlackBerry.cpp
     loader/blackberry/CookieJarBlackBerry.cpp
     page/blackberry/AccessibilityObjectBlackBerry.cpp
     page/blackberry/DragControllerBlackBerry.cpp

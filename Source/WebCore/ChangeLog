@@ -1,3 +1,198 @@
+2012-12-12  John Griggs  <jgriggs@rim.com>
+
+        2012-12-12  John Griggs  <jgriggs@rim.com>
+
+        [BlackBerry] Update Media Controls for BlackBerry Platform
+        https://bugs.webkit.org/show_bug.cgi?id=104443
+        https://przilla.ott.qnx.com/bugzilla/show_bug.cgi?id=204748
+
+        Reviewed by Rob Buis.
+
+        Update Media Controls for BlackBerry platform to allow audio, embedded video and fullscreen video controls to be positioned and styled differently.
+
+        BlackBerry-specific update to Media Controls - No new tests required.
+
+        * PlatformBlackBerry.cmake:
+        * css/mediaControlsBlackBerry.css:
+        (audio):
+        (audio::-webkit-media-controls-embedded-panel, video::-webkit-media-controls-embedded-panel):
+        (audio::-webkit-media-controls-panel, video::-webkit-media-controls-panel):
+        (video::-webkit-media-controls-button-group-container, audio::-webkit-media-controls-button-group-container):
+        (video::-webkit-media-controls-fullscreen-time-display-container, audio::-webkit-media-controls-fullscreen-time-display-container):
+        (video::-webkit-media-controls-time-display-container, audio::-webkit-media-controls-time-display-container):
+        (video::-webkit-media-controls-fullscreen-play-button, audio::-webkit-media-controls-fullscreen-play-button):
+        (video::-webkit-media-controls-play-button, audio::-webkit-media-controls-play-button):
+        (audio::-webkit-media-controls-fullscreen-timeline-container, video::-webkit-media-controls-fullscreen-timeline-container):
+        (video::-webkit-media-controls-timeline-container, audio::-webkit-media-controls-timeline-container):
+        (audio::-webkit-media-controls-fullscreen-current-time-display, video::-webkit-media-controls-fullscreen-current-time-display):
+        (audio::-webkit-media-controls-current-time-display, video::-webkit-media-controls-current-time-display):
+        (video::-webkit-media-controls-fullscreen-time-remaining-display, audio::-webkit-media-controls-fullscreen-time-remaining-display):
+        (video::-webkit-media-controls-time-remaining-display, audio::-webkit-media-controls-time-remaining-display):
+        (audio::-webkit-media-controls-fullscreen-timeline, video::-webkit-media-controls-fullscreen-timeline):
+        (video::-webkit-media-controls-fullscreen-fullscreen-button, audio::-webkit-media-controls-fullscreen-fullscreen-button):
+        (video::-webkit-media-controls-fullscreen-button):
+        (audio::-webkit-media-controls-fullscreen-button):
+        (audio::-webkit-media-controls-audio-mute-button):
+        (video::-webkit-media-controls-audio-mute-button):
+        (audio::-webkit-media-controls-volume-slider-container):
+        (video::-webkit-media-controls-volume-slider-container):
+        (audio::-webkit-media-controls-volume-slider):
+        (video::-webkit-media-controls-volume-slider):
+        (video::-webkit-media-controls-fullscreen-button-divider, audio::-webkit-media-controls-fullscreen-button-divider):
+        (video::-webkit-media-controls-fullscreen-button-container, video::-webkit-media-controls-play-button-container, audio::-webkit-media-controls-fullscreen-button-container, audio::-webkit-media-controls-play-button-container):
+        * css/mediaControlsBlackBerryFullscreen.css: Added.
+        (body:-webkit-full-page-media):
+        (video:-webkit-full-screen::-webkit-media-controls-embedded-panel):
+        (video:-webkit-full-screen::-webkit-media-controls-panel):
+        (video:-webkit-full-screen::-webkit-media-controls-button-group-container):
+        (video:-webkit-full-screen::-webkit-media-controls-fullscreen-time-display-container):
+        (video:-webkit-full-screen::-webkit-media-controls-time-display-container):
+        (video:-webkit-full-screen::-webkit-media-controls-fullscreen-play-button):
+        (video:-webkit-full-screen::-webkit-media-controls-play-button):
+        (video:-webkit-full-screen::-webkit-media-controls-fullscreen-timeline-container):
+        (video:-webkit-full-screen::-webkit-media-controls-timeline-container):
+        (video:-webkit-full-screen::-webkit-media-controls-fullscreen-current-time-display):
+        (video:-webkit-full-screen::-webkit-media-controls-current-time-display):
+        (video:-webkit-full-screen::-webkit-media-controls-fullscreen-time-remaining-display):
+        (video:-webkit-full-screen::-webkit-media-controls-time-remaining-display):
+        (video:-webkit-full-screen::-webkit-media-controls-fullscreen-timeline):
+        (video:-webkit-full-screen::-webkit-media-controls-timeline):
+        (video:-webkit-full-screen::-webkit-media-controls-fullscreen-fullscreen-button):
+        (video:-webkit-full-screen::-webkit-media-controls-fullscreen-button):
+        (video:-webkit-full-screen::-webkit-media-controls-audio-mute-button):
+        (video:-webkit-full-screen::-webkit-media-controls-volume-slider-container):
+        (video:-webkit-full-screen::-webkit-media-controls-volume-slider):
+        (video:-webkit-full-screen::-webkit-media-controls-fullscreen-button-divider):
+        (video:-webkit-full-screen::-webkit-media-controls-fullscreen-button-container, video:-webkit-full-screen::-webkit-media-controls-play-button-container):
+        (video:-webkit-full-screen::-webkit-media-controls-fullscreen-button-container):
+        (video:-webkit-full-screen::-webkit-media-controls-play-button-container):
+        (video:-webkit-full-screen::-webkit-media-controls-placeholder):
+        * html/shadow/MediaControlsBlackBerry.cpp: Added.
+        (WebCore):
+        (WebCore::MediaControlButtonGroupContainerElement::MediaControlButtonGroupContainerElement):
+        (WebCore::MediaControlButtonGroupContainerElement::create):
+        (WebCore::MediaControlButtonGroupContainerElement::shadowPseudoId):
+        (WebCore::MediaControlTimeDisplayContainerElement::MediaControlTimeDisplayContainerElement):
+        (WebCore::MediaControlTimeDisplayContainerElement::create):
+        (WebCore::MediaControlTimeDisplayContainerElement::shadowPseudoId):
+        (WebCore::MediaControlEmbeddedPanelElement::MediaControlEmbeddedPanelElement):
+        (WebCore::MediaControlEmbeddedPanelElement::create):
+        (WebCore::MediaControlEmbeddedPanelElement::shadowPseudoId):
+        (WebCore::MediaControlEmbeddedPanelElement::startDrag):
+        (WebCore::MediaControlEmbeddedPanelElement::continueDrag):
+        (WebCore::MediaControlEmbeddedPanelElement::endDrag):
+        (WebCore::MediaControlEmbeddedPanelElement::startTimer):
+        (WebCore::MediaControlEmbeddedPanelElement::stopTimer):
+        (WebCore::MediaControlEmbeddedPanelElement::transitionTimerFired):
+        (WebCore::MediaControlEmbeddedPanelElement::setPosition):
+        (WebCore::MediaControlEmbeddedPanelElement::resetPosition):
+        (WebCore::MediaControlEmbeddedPanelElement::makeOpaque):
+        (WebCore::MediaControlEmbeddedPanelElement::makeTransparent):
+        (WebCore::MediaControlEmbeddedPanelElement::defaultEventHandler):
+        (WebCore::MediaControlEmbeddedPanelElement::setCanBeDragged):
+        (WebCore::MediaControlEmbeddedPanelElement::setIsDisplayed):
+        (WebCore::MediaControlFullscreenTimeDisplayContainerElement::MediaControlFullscreenTimeDisplayContainerElement):
+        (WebCore::MediaControlFullscreenTimeDisplayContainerElement::create):
+        (WebCore::MediaControlFullscreenTimeDisplayContainerElement::shadowPseudoId):
+        (WebCore::MediaControlFullscreenButtonContainerElement::MediaControlFullscreenButtonContainerElement):
+        (WebCore::MediaControlFullscreenButtonContainerElement::create):
+        (WebCore::MediaControlFullscreenButtonContainerElement::shadowPseudoId):
+        (WebCore::MediaControlFullscreenButtonDividerElement::MediaControlFullscreenButtonDividerElement):
+        (WebCore::MediaControlFullscreenButtonDividerElement::create):
+        (WebCore::MediaControlFullscreenButtonDividerElement::shadowPseudoId):
+        (WebCore::MediaControlPlayButtonContainerElement::MediaControlPlayButtonContainerElement):
+        (WebCore::MediaControlPlayButtonContainerElement::create):
+        (WebCore::MediaControlPlayButtonContainerElement::shadowPseudoId):
+        (WebCore::MediaControlPlaceholderElement::MediaControlPlaceholderElement):
+        (WebCore::MediaControlPlaceholderElement::create):
+        (WebCore::MediaControlPlaceholderElement::shadowPseudoId):
+        (WebCore::MediaControlFullscreenPlayButtonElement::MediaControlFullscreenPlayButtonElement):
+        (WebCore::MediaControlFullscreenPlayButtonElement::create):
+        (WebCore::MediaControlFullscreenPlayButtonElement::defaultEventHandler):
+        (WebCore::MediaControlFullscreenPlayButtonElement::updateDisplayType):
+        (WebCore::MediaControlFullscreenPlayButtonElement::shadowPseudoId):
+        (WebCore::MediaControlFullscreenFullscreenButtonElement::MediaControlFullscreenFullscreenButtonElement):
+        (WebCore::MediaControlFullscreenFullscreenButtonElement::create):
+        (WebCore::MediaControlFullscreenFullscreenButtonElement::defaultEventHandler):
+        (WebCore::MediaControlFullscreenFullscreenButtonElement::shadowPseudoId):
+        (WebCore::MediaControlFullscreenFullscreenButtonElement::setIsFullscreen):
+        (WebCore::MediaControlFullscreenTimelineContainerElement::MediaControlFullscreenTimelineContainerElement):
+        (WebCore::MediaControlFullscreenTimelineContainerElement::create):
+        (WebCore::MediaControlFullscreenTimelineContainerElement::shadowPseudoId):
+        (WebCore::MediaControlFullscreenTimelineElement::MediaControlFullscreenTimelineElement):
+        (WebCore::MediaControlFullscreenTimelineElement::create):
+        (WebCore::MediaControlFullscreenTimelineElement::defaultEventHandler):
+        (WebCore::MediaControlFullscreenTimelineElement::willRespondToMouseClickEvents):
+        (WebCore::MediaControlFullscreenTimelineElement::setPosition):
+        (WebCore::MediaControlFullscreenTimelineElement::setDuration):
+        (WebCore::MediaControlFullscreenTimelineElement::shadowPseudoId):
+        (WebCore::MediaControlFullscreenTimeRemainingDisplayElement::create):
+        (WebCore::MediaControlFullscreenTimeRemainingDisplayElement::MediaControlFullscreenTimeRemainingDisplayElement):
+        (WebCore::MediaControlFullscreenTimeRemainingDisplayElement::shadowPseudoId):
+        (WebCore::MediaControlFullscreenCurrentTimeDisplayElement::create):
+        (WebCore::MediaControlFullscreenCurrentTimeDisplayElement::MediaControlFullscreenCurrentTimeDisplayElement):
+        (WebCore::MediaControlFullscreenCurrentTimeDisplayElement::shadowPseudoId):
+        (WebCore::MediaControlAudioMuteButtonElement::MediaControlAudioMuteButtonElement):
+        (WebCore::MediaControlAudioMuteButtonElement::create):
+        (WebCore::MediaControlAudioMuteButtonElement::defaultEventHandler):
+        (WebCore::MediaControlAudioMuteButtonElement::shadowPseudoId):
+        (WebCore::MediaControlsBlackBerry::MediaControlsBlackBerry):
+        (WebCore::MediaControls::create):
+        (WebCore::MediaControlsBlackBerry::createControls):
+        (WebCore::MediaControlsBlackBerry::setMediaController):
+        (WebCore::MediaControlsBlackBerry::show):
+        (WebCore::MediaControlsBlackBerry::hide):
+        (WebCore::MediaControlsBlackBerry::makeOpaque):
+        (WebCore::MediaControlsBlackBerry::makeTransparent):
+        (WebCore::MediaControlsBlackBerry::reset):
+        (WebCore::MediaControlsBlackBerry::bufferingProgressed):
+        (WebCore::MediaControlsBlackBerry::playbackStarted):
+        (WebCore::MediaControlsBlackBerry::playbackProgressed):
+        (WebCore::MediaControlsBlackBerry::playbackStopped):
+        (WebCore::MediaControlsBlackBerry::updateCurrentTimeDisplay):
+        (WebCore::MediaControlsBlackBerry::reportedError):
+        (WebCore::MediaControlsBlackBerry::changedMute):
+        (WebCore::MediaControlsBlackBerry::enteredFullscreen):
+        (WebCore::MediaControlsBlackBerry::exitedFullscreen):
+        (WebCore::MediaControlsBlackBerry::showVolumeSlider):
+        (WebCore::MediaControlsBlackBerry::toggleVolumeSlider):
+        (WebCore::MediaControlsBlackBerry::shouldHideControls):
+        * html/shadow/MediaControlsBlackBerry.h: Added.
+        (WebCore):
+        (MediaControlButtonGroupContainerElement):
+        (MediaControlTimeDisplayContainerElement):
+        (MediaControlEmbeddedPanelElement):
+        (MediaControlFullscreenTimeDisplayContainerElement):
+        (MediaControlFullscreenButtonContainerElement):
+        (MediaControlFullscreenButtonDividerElement):
+        (MediaControlPlayButtonContainerElement):
+        (MediaControlPlaceholderElement):
+        (MediaControlFullscreenPlayButtonElement):
+        (MediaControlFullscreenFullscreenButtonElement):
+        (MediaControlFullscreenTimelineContainerElement):
+        (MediaControlFullscreenTimelineElement):
+        (MediaControlFullscreenTimeRemainingDisplayElement):
+        (MediaControlFullscreenCurrentTimeDisplayElement):
+        (MediaControlAudioMuteButtonElement):
+        (MediaControlsBlackBerry):
+        * platform/blackberry/RenderThemeBlackBerry.cpp:
+        (WebCore):
+        (WebCore::RenderThemeBlackBerry::extraFullScreenStyleSheet):
+        (WebCore::RenderThemeBlackBerry::adjustSliderThumbSize):
+        (WebCore::RenderThemeBlackBerry::paintSliderTrackRect):
+        (WebCore::RenderThemeBlackBerry::adjustMediaControlStyle):
+        (WebCore::RenderThemeBlackBerry::adjustSliderTrackStyle):
+        (WebCore::RenderThemeBlackBerry::paintMediaRewindButton):
+        (WebCore::RenderThemeBlackBerry::paintMediaMuteButton):
+        (WebCore::RenderThemeBlackBerry::paintMediaFullscreenButton):
+        (WebCore::RenderThemeBlackBerry::paintMediaSliderTrack):
+        (WebCore::RenderThemeBlackBerry::paintMediaSliderThumb):
+        (WebCore::RenderThemeBlackBerry::paintMediaVolumeSliderTrack):
+        (WebCore::RenderThemeBlackBerry::paintMediaVolumeSliderThumb):
+        * platform/blackberry/RenderThemeBlackBerry.h:
+        (WebCore::RenderThemeBlackBerry::usesVerticalVolumeSlider):
+        (RenderThemeBlackBerry):
+
 2012-12-12  Dominic Mazzoni  <dmazzoni@google.com>
 
         AX: textUnderElement should consider alt text, but skip links and controls

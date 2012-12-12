@@ -1,3 +1,19 @@
+2012-12-12  John Griggs  <jgriggs@rim.com>
+
+        2012-12-12  John Griggs  <jgriggs@rim.com>
+
+        [BlackBerry] Update Media Controls
+        https://bugs.webkit.org/show_bug.cgi?id=104443
+        https://przilla.ott.qnx.com/bugzilla/show_bug.cgi?id=204748
+
+        Update Media Controls for BlackBerry platform to allow audio, embedded video and fullscreen video controls to be positioned and styled differently.
+
+        Reviewed by Rob Buis.
+
+        BlackBerry-specific update to Media Controls - No new tests required.
+
+        * Scripts/webkitperl/FeatureList.pm:
+
 2012-12-12  Justin Novosad  <junov@google.com>
 
         Adding myself to SkiaGraphics watchlist

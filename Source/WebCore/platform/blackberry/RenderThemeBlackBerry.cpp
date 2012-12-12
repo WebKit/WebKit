@@ -25,6 +25,7 @@
 #include "Frame.h"
 #include "HTMLMediaElement.h"
 #include "HostWindow.h"
+#include "InputType.h"
 #include "MediaControlElements.h"
 #include "MediaPlayerPrivateBlackBerry.h"
 #include "Page.h"
@@ -44,10 +45,13 @@ const unsigned smallRadius = 1;
 const unsigned largeRadius = 3;
 const unsigned lineWidth = 1;
 const float marginSize = 4;
-const float mediaControlsHeight = 32;
-const float mediaSliderThumbWidth = 40;
-const float mediaSliderThumbHeight = 13;
-const float mediaSliderThumbRadius = 5;
+const float mediaControlsHeight = 44;
+const float mediaBackButtonHeight = 33;
+const float mediaSliderOutlineWidth = 2;
+const float mediaSliderTrackRadius = 3;
+const float mediaSliderThumbWidth = 25;
+const float mediaSliderThumbHeight = 25;
+const float mediaSliderThumbRadius = 3;
 const float sliderThumbWidth = 15;
 const float sliderThumbHeight = 25;
 
@@ -123,6 +127,12 @@ const RGBA32 dragRollDark = 0xff69a8ff;
 
 const RGBA32 blackPen = Color::black;
 const RGBA32 focusRingPen = 0xffa3c8fe;
+
+const RGBA32 mediaSliderTrackOutline = 0xff848587;
+const RGBA32 mediaSliderTrackPlayed = 0xff2b8fff;
+const RGBA32 mediaSliderTrackBuffered = 0xffbbbdbf;
+
+const RGBA32 selection = 0xff2b8fff;
 
 float RenderThemeBlackBerry::defaultFontSize = 16;
 
@@ -295,12 +305,12 @@ String RenderThemeBlackBerry::extraMediaControlsStyleSheet()
 {
     return String(mediaControlsBlackBerryUserAgentStyleSheet, sizeof(mediaControlsBlackBerryUserAgentStyleSheet));
 }
+#endif
 
-String RenderThemeBlackBerry::formatMediaControlsRemainingTime(float, float duration) const
+#if ENABLE(FULLSCREEN_API)
+String RenderThemeBlackBerry::extraFullScreenStyleSheet()
 {
-    // This is a workaround to make the appearance of media time controller in
-    // in-page mode the same as in fullscreen mode.
-    return formatMediaControlsTime(duration);
+    return String(mediaControlsBlackBerryFullscreenUserAgentStyleSheet, sizeof(mediaControlsBlackBerryFullscreenUserAgentStyleSheet));
 }
 #endif
 
@@ -688,10 +698,10 @@ void RenderThemeBlackBerry::adjustSliderThumbSize(RenderStyle* style, Element* e
             fullScreenMultiplier = determineFullScreenMultiplier(toElement(slider->node()));
     }
 
-    if (part == MediaVolumeSliderThumbPart || part == SliderThumbHorizontalPart || part == SliderThumbVerticalPart) {
+    if (part == SliderThumbHorizontalPart || part == SliderThumbVerticalPart) {
         style->setWidth(Length((part == SliderThumbVerticalPart ? sliderThumbHeight : sliderThumbWidth) * fullScreenMultiplier, Fixed));
         style->setHeight(Length((part == SliderThumbVerticalPart ? sliderThumbWidth : sliderThumbHeight) * fullScreenMultiplier, Fixed));
-    } else if (part == MediaSliderThumbPart) {
+    } else if (part == MediaVolumeSliderThumbPart || part == MediaSliderThumbPart) {
         style->setWidth(Length(mediaSliderThumbWidth * fullScreenMultiplier, Fixed));
         style->setHeight(Length(mediaSliderThumbHeight * fullScreenMultiplier, Fixed));
     }
@@ -717,10 +727,31 @@ bool RenderThemeBlackBerry::paintSliderTrack(RenderObject* object, const PaintIn
 
 bool RenderThemeBlackBerry::paintSliderTrackRect(RenderObject* object, const PaintInfo& info, const IntRect& rect)
 {
-    static RefPtr<Image> background;
-    if (!background)
-        background = loadImage("core_slider_bg");
-    return paintSliderTrackRect(object, info, rect, background.get());
+    return paintSliderTrackRect(object, info, rect, rangeSliderRegularTopOutline, rangeSliderRegularBottomOutline, rangeSliderRegularTop, rangeSliderRegularBottom);
+}
+
+bool RenderThemeBlackBerry::paintSliderTrackRect(RenderObject* object, const PaintInfo& info, const IntRect& rect, RGBA32 strokeColorStart, RGBA32 strokeColorEnd, RGBA32 fillColorStart, RGBA32 fillColorEnd)
+{
+    FloatSize smallCorner(mediaSliderTrackRadius, mediaSliderTrackRadius);
+
+    info.context->save();
+    info.context->setStrokeStyle(SolidStroke);
+    info.context->setStrokeThickness(lineWidth);
+
+#if USE(SKIA)
+    info.context->setStrokeGradient(createLinearGradient(strokeColorStart, strokeColorEnd, rect.maxXMinYCorner(), rect.maxXMaxYCorner()));
+    info.context->setFillGradient(createLinearGradient(fillColorStart, fillColorEnd, rect.maxXMinYCorner(), rect.maxXMaxYCorner()));
+#else
+    info.context->setStrokeColor(strokeColorStart, ColorSpaceDeviceRGB);
+    info.context->setFillColor(fillColorStart, ColorSpaceDeviceRGB);
+#endif
+
+    Path path;
+    path.addRoundedRect(rect, smallCorner);
+    info.context->fillPath(path);
+
+    info.context->restore();
+    return false;
 }
 
 bool RenderThemeBlackBerry::paintSliderTrackRect(RenderObject* object, const PaintInfo& info, const IntRect& rect, Image* inactive)
@@ -804,29 +835,47 @@ void RenderThemeBlackBerry::adjustMediaControlStyle(StyleResolver*, RenderStyle*
     // We use multiples of mediaControlsHeight to make all objects scale evenly
     Length zero(0, Fixed);
     Length controlsHeight(mediaControlsHeight * fullScreenMultiplier, Fixed);
-    Length timeWidth(mediaControlsHeight * 3 / 2 * fullScreenMultiplier, Fixed);
-    Length volumeHeight(mediaControlsHeight * 4 * fullScreenMultiplier, Fixed);
-    Length padding(mediaControlsHeight / 8 * fullScreenMultiplier, Fixed);
-    float fontSize = mediaControlsHeight / 2 * fullScreenMultiplier;
+    Length halfControlsWidth(mediaControlsHeight / 2 * fullScreenMultiplier, Fixed);
+    Length displayHeight(mediaControlsHeight / 3 * fullScreenMultiplier, Fixed);
+    Length padding(mediaControlsHeight / 10 * fullScreenMultiplier, Fixed);
+    float fontSize = mediaControlsHeight / 3 * fullScreenMultiplier;
 
     switch (style->appearance()) {
     case MediaPlayButtonPart:
-    case MediaEnterFullscreenButtonPart:
-    case MediaExitFullscreenButtonPart:
+        style->setWidth(controlsHeight);
+        style->setHeight(controlsHeight);
+        break;
     case MediaMuteButtonPart:
+        style->setPaddingLeft(padding);
+        style->setWidth(controlsHeight);
+        style->setHeight(controlsHeight);
+        break;
+    case MediaRewindButtonPart:
+        // We hi-jack the Rewind Button ID to use it for the divider image
+        style->setWidth(halfControlsWidth);
+        style->setHeight(controlsHeight);
+        break;
+    case MediaEnterFullscreenButtonPart:
+        style->setPaddingRight(padding);
+        style->setWidth(controlsHeight);
+        style->setHeight(controlsHeight);
+        break;
+    case MediaExitFullscreenButtonPart:
+        style->setLeft(zero);
         style->setWidth(controlsHeight);
         style->setHeight(controlsHeight);
         break;
     case MediaCurrentTimePart:
     case MediaTimeRemainingPart:
-        style->setWidth(timeWidth);
-        style->setHeight(controlsHeight);
+        style->setWidth(controlsHeight);
+        style->setHeight(displayHeight);
         style->setPaddingRight(padding);
+        style->setPaddingLeft(padding);
+        style->setPaddingBottom(padding);
         style->setFontSize(static_cast<int>(fontSize));
         break;
     case MediaVolumeSliderContainerPart:
-        style->setWidth(controlsHeight);
-        style->setHeight(volumeHeight);
+        style->setHeight(controlsHeight);
         style->setBottom(controlsHeight);
         break;
     default:
@@ -843,12 +892,14 @@ void RenderThemeBlackBerry::adjustMediaControlStyle(StyleResolver*, RenderStyle*
         case MediaExitFullscreenButtonPart:
             style->setPosition(AbsolutePosition);
             style->setBottom(zero);
+            style->setLeft(zero);
             style->setRight(controlsHeight);
             break;
-        case MediaMuteButtonPart:
+        case MediaRewindButtonPart:
+            // We hi-jack the Rewind Button ID to use it for the divider image
             style->setPosition(AbsolutePosition);
             style->setBottom(zero);
-            style->setRight(zero);
+            style->setLeft(controlsHeight);
             break;
         default:
             break;
@@ -861,17 +912,12 @@ void RenderThemeBlackBerry::adjustSliderTrackStyle(StyleResolver*, RenderStyle* 
     float fullScreenMultiplier = determineFullScreenMultiplier(element);
 
     // We use multiples of mediaControlsHeight to make all objects scale evenly
-    Length controlsHeight(mediaControlsHeight * fullScreenMultiplier, Fixed);
-    Length volumeHeight(mediaControlsHeight * 4 * fullScreenMultiplier, Fixed);
+    Length controlsHeight(mediaControlsHeight / 2 * fullScreenMultiplier, Fixed);
     switch (style->appearance()) {
     case MediaSliderPart:
+    case MediaVolumeSliderPart:
         style->setHeight(controlsHeight);
         break;
-    case MediaVolumeSliderPart:
-        style->setWidth(controlsHeight);
-        style->setHeight(volumeHeight);
-        break;
-    case MediaFullScreenVolumeSliderPart:
     default:
         break;
     }
@@ -903,6 +949,29 @@ bool RenderThemeBlackBerry::paintMediaPlayButton(RenderObject* object, const Pai
 #endif
 }
 
+// We hi-jack the Rewind Button code to use it for the divider image
+bool RenderThemeBlackBerry::paintMediaRewindButton(RenderObject* object, const PaintInfo& paintInfo, const IntRect& rect)
+{
+#if ENABLE(VIDEO)
+    HTMLMediaElement* mediaElement = toParentMediaElement(object);
+
+    if (!mediaElement)
+        return false;
+
+    if (!mediaElement->isFullscreen())
+        return false;
+
+    static Image* divider = Image::loadPlatformResource("divider").leakRef();
+
+    return paintMediaButton(paintInfo.context, rect, divider);
+#else
+    UNUSED_PARAM(object);
+    UNUSED_PARAM(paintInfo);
+    UNUSED_PARAM(rect);
+    return false;
+#endif
+}
+
 bool RenderThemeBlackBerry::paintMediaMuteButton(RenderObject* object, const PaintInfo& paintInfo, const IntRect& rect)
 {
 #if ENABLE(VIDEO)
@@ -911,10 +980,9 @@ bool RenderThemeBlackBerry::paintMediaMuteButton(RenderObject* object, const Pai
     if (!mediaElement)
         return false;
 
-    static Image* mediaMute = Image::loadPlatformResource("speaker").leakRef();
-    static Image* mediaUnmute = Image::loadPlatformResource("speaker_mute").leakRef();
+    static Image* divider = Image::loadPlatformResource("speaker").leakRef();
 
-    return paintMediaButton(paintInfo.context, rect, mediaElement->muted() || !mediaElement->volume() ? mediaUnmute : mediaMute);
+    return paintMediaButton(paintInfo.context, rect, divider);
 #else
     UNUSED_PARAM(object);
     UNUSED_PARAM(paintInfo);
@@ -931,7 +999,7 @@ bool RenderThemeBlackBerry::paintMediaFullscreenButton(RenderObject* object, con
         return false;
 
     static Image* mediaEnterFullscreen = Image::loadPlatformResource("fullscreen").leakRef();
-    static Image* mediaExitFullscreen = Image::loadPlatformResource("exit_fullscreen").leakRef();
+    static Image* mediaExitFullscreen = Image::loadPlatformResource("back").leakRef();
 
     Image* buttonImage = mediaEnterFullscreen;
 #if ENABLE(FULLSCREEN_API)
@@ -958,38 +1026,30 @@ bool RenderThemeBlackBerry::paintMediaSliderTrack(RenderObject* object, const Pa
     float loaded = mediaElement->percentLoaded();
     float position = mediaElement->duration() > 0 ? (mediaElement->currentTime() / mediaElement->duration()) : 0;
 
-    int x = ceil(rect.x() + 2 * fullScreenMultiplier - fullScreenMultiplier / 2);
-    int y = ceil(rect.y() + 14 * fullScreenMultiplier + fullScreenMultiplier / 2);
-    int w = ceil(rect.width() - 4 * fullScreenMultiplier + fullScreenMultiplier / 2);
-    int h = ceil(2 * fullScreenMultiplier);
+    int intrinsicHeight = ceil(mediaSliderThumbHeight / 4);
+    int x = ceil(rect.x() + (mediaControlsHeight - intrinsicHeight) / 2 * fullScreenMultiplier - fullScreenMultiplier / 2);
+    int y = ceil(rect.y() + (mediaControlsHeight / 2 - intrinsicHeight) / 2 * fullScreenMultiplier + fullScreenMultiplier / 2);
+    int w = ceil(rect.width() - (mediaControlsHeight - intrinsicHeight) * fullScreenMultiplier + fullScreenMultiplier / 2);
+    int h = ceil(intrinsicHeight * fullScreenMultiplier);
     IntRect rect2(x, y, w, h);
 
     int wPlayed = ceil(w * position);
     int wLoaded = ceil((w - mediaSliderThumbWidth * fullScreenMultiplier) * loaded + mediaSliderThumbWidth * fullScreenMultiplier);
 
     IntRect played(x, y, wPlayed, h);
-    IntRect buffered(x, y, wLoaded, h);
+    IntRect buffered(x, ceil(y + mediaSliderOutlineWidth), wLoaded, ceil(h - 2 * mediaSliderOutlineWidth));
 
     // This is to paint main slider bar.
-    static RefPtr<Image> trackImage;
-    if (!trackImage)
-        trackImage = loadImage("core_slider_media_bg");
-    bool result = paintSliderTrackRect(object, paintInfo, rect2, trackImage.get());
+    bool result = paintSliderTrackRect(object, paintInfo, rect2);
 
     if (loaded > 0 || position > 0) {
         // This is to paint buffered bar.
-        static RefPtr<Image> bufferedImage, playedImage;
-        if (!bufferedImage) {
-            bufferedImage = loadImage("core_slider_buffered_bg");
-            playedImage = loadImage("core_slider_played_bg");
-        }
-        paintSliderTrackRect(object, paintInfo, buffered, bufferedImage.get());
+        paintSliderTrackRect(object, paintInfo, buffered, Color::darkGray, Color::darkGray, Color::darkGray, Color::darkGray);
 
         // This is to paint played part of bar (left of slider thumb) using selection color.
-        paintSliderTrackRect(object, paintInfo, played, playedImage.get());
+        paintSliderTrackRect(object, paintInfo, played, selection, selection, selection, selection);
     }
     return result;
-
 #else
     UNUSED_PARAM(object);
     UNUSED_PARAM(paintInfo);
@@ -1001,15 +1061,34 @@ bool RenderThemeBlackBerry::paintMediaSliderTrack(RenderObject* object, const Pa
 bool RenderThemeBlackBerry::paintMediaSliderThumb(RenderObject* object, const PaintInfo& paintInfo, const IntRect& rect)
 {
 #if ENABLE(VIDEO)
+#if USE(SKIA)
     RenderSlider* slider = determineRenderSlider(object);
     if (!slider)
         return false;
 
-    static Image* mediaVolumeThumb = Image::loadPlatformResource("volume_thumb").leakRef();
+    float fullScreenMultiplier = determineFullScreenMultiplier(toElement(slider->node()));
 
-    drawControl(paintInfo.context, rect, mediaVolumeThumb);
+    paintInfo.context->save();
+    Path mediaThumbRoundedRectangle;
+    mediaThumbRoundedRectangle.addRoundedRect(rect, FloatSize(mediaSliderThumbRadius * fullScreenMultiplier, mediaSliderThumbRadius * fullScreenMultiplier));
+    paintInfo.context->setStrokeStyle(SolidStroke);
+    paintInfo.context->setStrokeThickness(0.5);
+    paintInfo.context->setStrokeColor(Color::black, ColorSpaceDeviceRGB);
+
+    if (isPressed(object) || isHovered(object) || slider->inDragMode())
+        paintInfo.context->setFillGradient(createLinearGradient(selection, Color(selection).dark().rgb(), rect.maxXMinYCorner(), rect.maxXMaxYCorner()));
+    else
+        paintInfo.context->setFillGradient(createLinearGradient(Color::white, Color(Color::white).dark().rgb(), rect.maxXMinYCorner(), rect.maxXMaxYCorner()));
+
+    paintInfo.context->fillPath(mediaThumbRoundedRectangle);
+    paintInfo.context->restore();
 
     return true;
+#else // GL renderer
+    static Image* mediaSliderThumb = Image::loadPlatformResource("core_slider_handle_disabled").leakRef();
+
+    return paintMediaButton(paintInfo.context, rect, mediaSliderThumb);
+#endif // USE(SKIA)
 #else
     UNUSED_PARAM(object);
     UNUSED_PARAM(paintInfo);
@@ -1021,19 +1100,29 @@ bool RenderThemeBlackBerry::paintMediaSliderThumb(RenderObject* object, const Pa
 bool RenderThemeBlackBerry::paintMediaVolumeSliderTrack(RenderObject* object, const PaintInfo& paintInfo, const IntRect& rect)
 {
 #if ENABLE(VIDEO)
-    float pad = rect.width() * 0.45;
-    float x = rect.x() + pad;
-    float y = rect.y() + pad;
-    float width = rect.width() * 0.1;
-    float height = rect.height() - (2.0 * pad);
+    HTMLMediaElement* mediaElement = toParentMediaElement(object);
+    if (!mediaElement)
+        return false;
 
-    IntRect rect2(x, y, width, height);
+    float fullScreenMultiplier = determineFullScreenMultiplier(mediaElement);
+    float volume = mediaElement->volume() > 0 ? mediaElement->volume() : 0;
 
-    static RefPtr<Image> trackImage;
-    if (!trackImage)
-        trackImage = loadImage("core_slider_media_bg");
+    int intrinsicHeight = ceil(mediaSliderThumbHeight / 4);
+    int x = ceil(rect.x() + (mediaControlsHeight - intrinsicHeight) / 2 * fullScreenMultiplier - fullScreenMultiplier / 2);
+    int y = ceil(rect.y() + (mediaControlsHeight / 2 - intrinsicHeight) / 2 * fullScreenMultiplier + fullScreenMultiplier / 2);
+    int w = ceil(rect.width() - (mediaControlsHeight - intrinsicHeight) * fullScreenMultiplier + fullScreenMultiplier / 2);
+    int h = ceil(intrinsicHeight * fullScreenMultiplier);
+    IntRect rect2(x, y, w, h);
+    IntRect volumeRect(x, y, ceil(w * volume), h);
 
-    return paintSliderTrackRect(object, paintInfo, rect2, trackImage.get());
+    // This is to paint main volume slider bar.
+    bool result = paintSliderTrackRect(object, paintInfo, rect2, Color(mediaSliderTrackOutline).rgb(), Color(mediaSliderTrackOutline).rgb(), rangeSliderRegularTop, rangeSliderRegularTop);
+
+    if (volume > 0) {
+        // This is to paint volume bar (left of volume slider thumb) using selection color.
+        paintSliderTrackRect(object, paintInfo, volumeRect, Color(mediaSliderTrackOutline).rgb(), Color(mediaSliderTrackOutline).rgb(), selection, selection);
+    }
+    return result;
 #else
     UNUSED_PARAM(object);
     UNUSED_PARAM(paintInfo);
@@ -1045,9 +1134,29 @@ bool RenderThemeBlackBerry::paintMediaVolumeSliderTrack(RenderObject* object, co
 bool RenderThemeBlackBerry::paintMediaVolumeSliderThumb(RenderObject* object, const PaintInfo& paintInfo, const IntRect& rect)
 {
 #if ENABLE(VIDEO)
-    static Image* mediaVolumeThumb = Image::loadPlatformResource("volume_thumb").leakRef();
+#if USE(SKIA)
+    RenderSlider* slider = determineRenderSlider(object);
+    if (!slider)
+        return false;
 
-    return paintMediaButton(paintInfo.context, rect, mediaVolumeThumb);
+    float fullScreenMultiplier = determineFullScreenMultiplier(toElement(slider->node()));
+
+    paintInfo.context->save();
+    Path mediaThumbRoundedRectangle;
+    mediaThumbRoundedRectangle.addRoundedRect(rect, FloatSize(mediaSliderThumbHeight / 2 * fullScreenMultiplier, mediaSliderThumbHeight / 2 * fullScreenMultiplier));
+
+    if (isPressed(object) || isHovered(object) || slider->inDragMode())
+        paintInfo.context->setFillGradient(createLinearGradient(selection, Color(selection).dark().rgb(), rect.maxXMinYCorner(), rect.maxXMaxYCorner()));
+    else
+        paintInfo.context->setFillGradient(createLinearGradient(mediaSliderTrackOutline, Color::black, rect.maxXMinYCorner(), rect.maxXMaxYCorner()));
+
+    paintInfo.context->fillPath(mediaThumbRoundedRectangle);
+    paintInfo.context->restore();
+
+    return true;
+#else // GL renderer
+    return paintMediaSliderThumb(object, paintInfo, rect);
+#endif // USE(SKIA)
 #else
     UNUSED_PARAM(object);
     UNUSED_PARAM(paintInfo);

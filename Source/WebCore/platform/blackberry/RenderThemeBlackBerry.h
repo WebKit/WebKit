@@ -32,7 +32,10 @@ public:
 
 #if ENABLE(VIDEO)
     virtual String extraMediaControlsStyleSheet();
-    virtual String formatMediaControlsRemainingTime(float currentTime, float duration) const;
+    virtual bool usesVerticalVolumeSlider() const { return false; }
+#endif
+#if ENABLE(FULLSCREEN_API)
+    virtual String extraFullScreenStyleSheet();
 #endif
     virtual bool supportsHover(const RenderStyle*) const { return true; }
 
@@ -82,6 +85,7 @@ public:
     virtual bool paintMediaVolumeSliderThumb(RenderObject*, const PaintInfo&, const IntRect&);
     virtual bool paintMediaPlayButton(RenderObject*, const PaintInfo&, const IntRect&);
     virtual bool paintMediaMuteButton(RenderObject*, const PaintInfo&, const IntRect&);
+    virtual bool paintMediaRewindButton(RenderObject*, const PaintInfo&, const IntRect&);
     virtual bool paintProgressBar(RenderObject*, const PaintInfo&, const IntRect&);
     virtual double animationRepeatIntervalForProgressBar(RenderProgress*) const;
     virtual double animationDurationForProgressBar(RenderProgress*) const;
@@ -104,9 +108,13 @@ private:
     void setButtonStyle(RenderStyle*) const;
 
     bool paintTextFieldOrTextAreaOrSearchField(RenderObject*, const PaintInfo&, const IntRect&);
+
     bool paintSliderTrackRect(RenderObject*, const PaintInfo&, const IntRect&);
 
+    bool paintSliderTrackRect(RenderObject*, const PaintInfo&, const IntRect&, RGBA32, RGBA32, RGBA32, RGBA32);
+
     bool paintSliderTrackRect(RenderObject*, const PaintInfo&, const IntRect&, Image*);
+
     IntRect convertToPaintingRect(RenderObject* inputRenderer, const RenderObject* partRenderer, LayoutRect partRect, const IntRect& localOffset) const;
 
 };

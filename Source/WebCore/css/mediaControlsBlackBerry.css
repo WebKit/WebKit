@@ -28,43 +28,71 @@
  /* BlackBerry default media controls. */
 
 audio {
+    background-color: rgb(0, 0, 0);
     width: 300px;
     height: 32px;
 }
 
-audio::-webkit-media-controls-panel, video::-webkit-media-controls-panel {
+audio::-webkit-media-controls-embedded-panel, video::-webkit-media-controls-embedded-panel {
     display: -webkit-box;
     -webkit-box-orient: horizontal;
     -webkit-box-align: center;
-    -webkit-user-select: none;
     position: absolute;
     bottom: 0;
     width: 100%;
-    z-index: 0;
-    overflow: visible;
     height: auto;
-    text-align: center;
-    background-color: rgba(0, 0, 0, 0.6);
+    background-color: rgb(0, 0, 0);
 }
 
-video:-webkit-full-page-media::-webkit-media-controls-panel {
-    bottom: 0px;
+audio::-webkit-media-controls-panel, video::-webkit-media-controls-panel {
+    display: none;
 }
 
-audio::-webkit-media-controls-play-button, video::-webkit-media-controls-play-button {
-    -webkit-appearance: media-play-button;
-    display: -webkit-box;
+video::-webkit-media-controls-button-group-container, audio::-webkit-media-controls-button-group-container {
+    display: none;
 }
 
-audio::-webkit-media-controls-timeline-container, video::-webkit-media-controls-timeline-container {
+video::-webkit-media-controls-fullscreen-time-display-container, audio::-webkit-media-controls-fullscreen-time-display-container {
+    display: none;
+}
+
+video::-webkit-media-controls-time-display-container, audio::-webkit-media-controls-time-display-container {
     -webkit-appearance: media-controls-background;
     display: -webkit-box;
     -webkit-box-orient: horizontal;
     -webkit-box-align: center;
-    -webkit-box-pack: end;
+    -webkit-box-pack: justify;
     -webkit-box-flex: 1;
-    -webkit-user-select: none;
+    background-color: rgb(0, 0, 0);
+}
+
+video::-webkit-media-controls-fullscreen-play-button, audio::-webkit-media-controls-fullscreen-play-button {
+    display: none;
+}
+
+video::-webkit-media-controls-play-button, audio::-webkit-media-controls-play-button {
+    -webkit-appearance: media-play-button;
+    display: -webkit-box;
+}
+
+audio::-webkit-media-controls-fullscreen-timeline-container, video::-webkit-media-controls-fullscreen-timeline-container {
+    display: none;
+}
+
+video::-webkit-media-controls-timeline-container, audio::-webkit-media-controls-timeline-container {
+    -webkit-appearance: media-controls-background;
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-box-align: stretch;
+    -webkit-box-pack: center;
+    -webkit-box-flex: 1;
     height: auto;
+    width: 100%;
+    background-color: rgb(0, 0, 0);
+}
+
+audio::-webkit-media-controls-fullscreen-current-time-display, video::-webkit-media-controls-fullscreen-current-time-display {
+    display: none;
 }
 
 audio::-webkit-media-controls-current-time-display, video::-webkit-media-controls-current-time-display {
@@ -74,19 +102,27 @@ audio::-webkit-media-controls-current-time-display, video::-webkit-media-control
     -webkit-box-align: center;
     -webkit-box-pack: end;
     -webkit-box-flex: 0;
-    -webkit-user-select: none;
-    color: white;
+    background-color: rgb(0, 0, 0);
+    color: #fafafa;
 }
 
-audio::-webkit-media-controls-time-remaining-display, video::-webkit-media-controls-time-remaining-display {
+video::-webkit-media-controls-fullscreen-time-remaining-display, audio::-webkit-media-controls-fullscreen-time-remaining-display {
+    display: none;
+}
+
+video::-webkit-media-controls-time-remaining-display, audio::-webkit-media-controls-time-remaining-display {
     -webkit-appearance: media-time-remaining-display;
     display: -webkit-box;
     -webkit-box-orient: horizontal;
     -webkit-box-align: center;
     -webkit-box-pack: end;
     -webkit-box-flex: 0;
-    -webkit-user-select: none;
-    color: white;
+    background-color: rgb(0, 0, 0);
+    color: #fafafa;
+}
+
+audio::-webkit-media-controls-fullscreen-timeline, video::-webkit-media-controls-fullscreen-timeline {
+    display: none;
 }
 
 audio::-webkit-media-controls-timeline, video::-webkit-media-controls-timeline {
@@ -95,41 +131,63 @@ audio::-webkit-media-controls-timeline, video::-webkit-media-controls-timeline {
     -webkit-box-flex: 1;
 }
 
-audio::-webkit-media-controls-fullscreen-button, video::-webkit-media-controls-fullscreen-button {
-    -webkit-appearance: media-fullscreen-button;
+video::-webkit-media-controls-fullscreen-fullscreen-button, audio::-webkit-media-controls-fullscreen-fullscreen-button {
+    display: none;
+}
+
+video::-webkit-media-controls-fullscreen-button {
+    -webkit-appearance: media-enter-fullscreen-button;
     display: -webkit-box;
 }
 
-audio::-webkit-media-controls-mute-button, video::-webkit-media-controls-mute-button {
+audio::-webkit-media-controls-fullscreen-button {
+    display: none;
+}
+
+audio::-webkit-media-controls-audio-mute-button {
     -webkit-appearance: media-mute-button;
     display: -webkit-box;
 }
 
-audio::-webkit-media-controls-volume-slider-container, video::-webkit-media-controls-volume-slider-container {
+video::-webkit-media-controls-audio-mute-button {
+    display: none;
+}
+
+audio::-webkit-media-controls-volume-slider-container {
     -webkit-appearance: media-volume-slider-container;
     display: -webkit-box;
-    -webkit-box-orient: horizontal;
+    -webkit-box-orient: vertical;
     -webkit-box-align: center;
     -webkit-box-pack: end;
     -webkit-box-flex: 1;
     -webkit-user-select: none;
     position: absolute;
+    left: 0px;
     right: 0px;
-    background-color: rgba(0, 0, 0, 0.6);
+    background-color: rgb(0,0,0);
 }
 
-audio::-webkit-media-controls-volume-slider, video::-webkit-media-controls-volume-slider {
-    -webkit-appearance: media-volume-slider;
-    display: -webkit-box;
-    -webkit-box-flex: 1;
-}
-
-audio::-webkit-media-controls-seek-back-button, video::-webkit-media-controls-seek-back-button {
-    -webkit-appearance: media-seek-back-button;
+video::-webkit-media-controls-volume-slider-container {
     display: none;
 }
 
-audio::-webkit-media-controls-seek-forward-button, video::-webkit-media-controls-seek-forward-button {
-    -webkit-appearance: media-seek-forward-button;
+audio::-webkit-media-controls-volume-slider {
+     -webkit-appearance: media-volume-slider;
+     display: -webkit-box;
+     -webkit-box-flex: 1;
+    position: absolute;
+    left: 3%;
+    right: 3%;
+}
+
+video::-webkit-media-controls-volume-slider {
+    display: none;
+}
+
+video::-webkit-media-controls-fullscreen-button-divider, audio::-webkit-media-controls-fullscreen-button-divider {
+    display: none;
+}
+
+video::-webkit-media-controls-fullscreen-button-container, video::-webkit-media-controls-play-button-container, audio::-webkit-media-controls-fullscreen-button-container, audio::-webkit-media-controls-play-button-container {
     display: none;
 }
