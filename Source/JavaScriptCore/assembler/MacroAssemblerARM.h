@@ -893,6 +893,31 @@ public:
         m_assembler.dtrUp(ARMAssembler::StoreUint32, ARMRegisters::S1, ARMRegisters::S0, 0);
     }
 
+    void add64(TrustedImm32 imm, AbsoluteAddress address)
+    {
+        ARMWord tmp;
+
+        move(TrustedImmPtr(address.m_ptr), ARMRegisters::S1);
+        m_assembler.dtrUp(ARMAssembler::LoadUint32, ARMRegisters::S0, ARMRegisters::S1, 0);
+
+        if ((tmp = ARMAssembler::getOp2(imm.m_value)) != ARMAssembler::InvalidImmediate)
+            m_assembler.adds(ARMRegisters::S0, ARMRegisters::S0, tmp);
+        else if ((tmp = ARMAssembler::getOp2(-imm.m_value)) != ARMAssembler::InvalidImmediate)
+            m_assembler.subs(ARMRegisters::S0, ARMRegisters::S0, tmp);
+        else {
+            m_assembler.adds(ARMRegisters::S0, ARMRegisters::S0, m_assembler.getImm(imm.m_value, ARMRegisters::S1));
+            move(TrustedImmPtr(address.m_ptr), ARMRegisters::S1);
+        }
+        m_assembler.dtrUp(ARMAssembler::StoreUint32, ARMRegisters::S0, ARMRegisters::S1, 0);
+
+        m_assembler.dtrUp(ARMAssembler::LoadUint32, ARMRegisters::S0, ARMRegisters::S1, sizeof(ARMWord));
+        if (imm.m_value >= 0)
+            m_assembler.adc(ARMRegisters::S0, ARMRegisters::S0, ARMAssembler::getOp2Byte(0));
+        else
+            m_assembler.sbc(ARMRegisters::S0, ARMRegisters::S0, ARMAssembler::getOp2Byte(0));
+        m_assembler.dtrUp(ARMAssembler::StoreUint32, ARMRegisters::S0, ARMRegisters::S1, sizeof(ARMWord));
+    }
+
     void sub32(TrustedImm32 imm, AbsoluteAddress address)
     {
         m_assembler.ldrUniqueImmediate(ARMRegisters::S1, reinterpret_cast<ARMWord>(address.m_ptr));
