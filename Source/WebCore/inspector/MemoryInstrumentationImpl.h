@@ -110,10 +110,10 @@ public:
     void reportMemoryUsage(MemoryObjectInfo*) const;
 
 private:
-    virtual void deferInstrumentedPointer(PassOwnPtr<InstrumentedPointerBase>) OVERRIDE;
-    virtual void processDeferredInstrumentedPointers() OVERRIDE;
+    virtual void deferObject(PassOwnPtr<WrapperBase>) OVERRIDE;
+    virtual void processDeferredObjects() OVERRIDE;
 
-    Vector<OwnPtr<InstrumentedPointerBase> > m_deferredInstrumentedPointers;
+    Vector<OwnPtr<WrapperBase> > m_deferredObjects;
 };
 
 } // namespace WebCore

@@ -124,8 +124,8 @@ public:
         : MemoryInstrumentation(client)
         , m_client(client) { }
 
-    virtual void processDeferredInstrumentedPointers();
-    virtual void deferInstrumentedPointer(PassOwnPtr<InstrumentedPointerBase>);
+    virtual void processDeferredObjects();
+    virtual void deferObject(PassOwnPtr<WrapperBase>);
 
     size_t visitedObjects() const { return m_client->visitedObjects(); }
     size_t reportedSizeForAllTypes() const { return m_client->reportedSizeForAllTypes(); }
@@ -133,7 +133,7 @@ public:
 
 private:
     MemoryInstrumentationTestClient* m_client;
-    Vector<OwnPtr<InstrumentedPointerBase> > m_deferredInstrumentedPointers;
+    Vector<OwnPtr<WrapperBase> > m_deferredObjects;
 };
 
 class InstrumentationTestHelper : public InstrumentationTestImpl {
@@ -144,18 +144,18 @@ private:
     MemoryInstrumentationTestClient m_client;
 };
 
-void InstrumentationTestImpl::processDeferredInstrumentedPointers()
+void InstrumentationTestImpl::processDeferredObjects()
 {
-    while (!m_deferredInstrumentedPointers.isEmpty()) {
-        OwnPtr<InstrumentedPointerBase> pointer = m_deferredInstrumentedPointers.last().release();
-        m_deferredInstrumentedPointers.removeLast();
+    while (!m_deferredObjects.isEmpty()) {
+        OwnPtr<WrapperBase> pointer = m_deferredObjects.last().release();
+        m_deferredObjects.removeLast();
         pointer->process(this);
     }
 }
 
-void InstrumentationTestImpl::deferInstrumentedPointer(PassOwnPtr<InstrumentedPointerBase> pointer)
+void InstrumentationTestImpl::deferObject(PassOwnPtr<WrapperBase> pointer)
 {
-    m_deferredInstrumentedPointers.append(pointer);
+    m_deferredObjects.append(pointer);
 }
 
 class NotInstrumented {
@@ -221,38 +221,6 @@ TEST(MemoryInstrumentationTest, ptrVsRef)
     }
 }
 
-TEST(MemoryInstrumentationTest, ownPtr)
-{
-    InstrumentationTestHelper helper;
-    OwnPtr<Instrumented> instrumented(adoptPtr(new Instrumented));
-    helper.addRootObject(instrumented);
-    EXPECT_EQ(sizeof(Instrumented) + sizeof(NotInstrumented), helper.reportedSizeForAllTypes());
-    EXPECT_EQ(2u, helper.visitedObjects());
-}
-
-class InstrumentedRefPtr : public RefCounted<InstrumentedRefPtr> {
-public:
-    InstrumentedRefPtr() : m_notInstrumented(new NotInstrumented) { }
-    virtual ~InstrumentedRefPtr() { delete m_notInstrumented; }
-    static PassRefPtr<InstrumentedRefPtr> create() { return adoptRef(new InstrumentedRefPtr()); }
-
-    virtual void reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
-    {
-        MemoryClassInfo info(memoryObjectInfo, this, TestType);
-        info.addMember(m_notInstrumented);
-    }
-    NotInstrumented* m_notInstrumented;
-};
-
-TEST(MemoryInstrumentationTest, refPtr)
-{
-    InstrumentationTestHelper helper;
-    RefPtr<InstrumentedRefPtr> instrumentedRefPtr(adoptRef(new InstrumentedRefPtr));
-    helper.addRootObject(instrumentedRefPtr);
-    EXPECT_EQ(sizeof(InstrumentedRefPtr) + sizeof(NotInstrumented), helper.reportedSizeForAllTypes());
-    EXPECT_EQ(2u, helper.visitedObjects());
-}
-
 class InstrumentedWithOwnPtr : public Instrumented {
 public:
     InstrumentedWithOwnPtr() : m_notInstrumentedOwnPtr(adoptPtr(new NotInstrumented)) { }
@@ -302,7 +270,7 @@ TEST(MemoryInstrumentationTest, ownerTypePropagation)
 {
     InstrumentationTestHelper helper;
     OwnPtr<InstrumentedDOM> instrumentedDOM(adoptPtr(new InstrumentedDOM));
-    helper.addRootObject(instrumentedDOM);
+    helper.addRootObject(instrumentedDOM.get());
     EXPECT_EQ(sizeof(InstrumentedDOM) + sizeof(InstrumentedUndefined), helper.reportedSizeForAllTypes());
     EXPECT_EQ(sizeof(InstrumentedDOM) + sizeof(InstrumentedUndefined), helper.totalSize(TestType));
     EXPECT_EQ(2u, helper.visitedObjects());
@@ -901,7 +869,7 @@ TEST(MemoryInstrumentationTest, doNotReportEdgeTwice)
 
     CountLinksFromInstrumentedObject client;
     InstrumentationTestImpl instrumentation(&client);
-    instrumentation.addRootObject(instance);
+    instrumentation.addRootObject(instance.get());
     EXPECT_EQ(1, client.linkCount());
 }
 } // namespace

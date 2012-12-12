@@ -103,24 +103,24 @@ void MemoryInstrumentationClientImpl::reportMemoryUsage(MemoryObjectInfo* memory
     info.addMember(m_countedObjects);
 }
 
-void MemoryInstrumentationImpl::processDeferredInstrumentedPointers()
+void MemoryInstrumentationImpl::processDeferredObjects()
 {
-    while (!m_deferredInstrumentedPointers.isEmpty()) {
-        OwnPtr<InstrumentedPointerBase> pointer = m_deferredInstrumentedPointers.last().release();
-        m_deferredInstrumentedPointers.removeLast();
+    while (!m_deferredObjects.isEmpty()) {
+        OwnPtr<WrapperBase> pointer = m_deferredObjects.last().release();
+        m_deferredObjects.removeLast();
         pointer->process(this);
     }
 }
 
-void MemoryInstrumentationImpl::deferInstrumentedPointer(PassOwnPtr<InstrumentedPointerBase> pointer)
+void MemoryInstrumentationImpl::deferObject(PassOwnPtr<WrapperBase> pointer)
 {
-    m_deferredInstrumentedPointers.append(pointer);
+    m_deferredObjects.append(pointer);
 }
 
 void MemoryInstrumentationImpl::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
 {
     MemoryClassInfo info(memoryObjectInfo, this, WebCoreMemoryTypes::InspectorMemoryAgent);
-    info.addMember(m_deferredInstrumentedPointers);
+    info.addMember(m_deferredObjects);
 }
 
 

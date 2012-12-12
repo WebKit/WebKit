@@ -12,7 +12,6 @@ EXPORTS
     ??0DropAllLocks@JSLock@JSC@@QAE@PAVJSGlobalData@2@@Z
     ??0DynamicGlobalObjectScope@JSC@@QAE@AAVJSGlobalData@1@PAVJSGlobalObject@1@@Z 
     ??0ErrorHandlingMode@Interpreter@JSC@@QAE@PAVExecState@2@@Z
-    ??0InstrumentedPointerBase@MemoryInstrumentation@WTF@@QAE@PAVMemoryObjectInfo@2@PBX@Z
     ??0InternalFunction@JSC@@IAE@PAVJSGlobalObject@1@PAVStructure@1@@Z
     ??0JSGlobalObject@JSC@@IAE@AAVJSGlobalData@1@PAVStructure@1@PBUGlobalObjectMethodTable@1@@Z
     ??0JSLockHolder@JSC@@QAE@AAVJSGlobalData@1@@Z
@@ -31,6 +30,7 @@ EXPORTS
     ??0Structure@JSC@@AAE@AAVJSGlobalData@1@PAVJSGlobalObject@1@VJSValue@1@ABVTypeInfo@1@PBUClassInfo@1@EH@Z
     ??0ThreadCondition@WTF@@QAE@XZ
     ??0WTFThreadData@WTF@@QAE@XZ
+    ??0WrapperBase@MemoryInstrumentation@WTF@@QAE@PBDPBX@Z
     ??0YarrPattern@Yarr@JSC@@QAE@ABVString@WTF@@_N1PAPBD@Z
     ??1ArrayBufferView@WTF@@UAE@XZ
     ??1ClientData@JSGlobalData@JSC@@UAE@XZ
@@ -305,7 +305,8 @@ EXPORTS
     ?parseDateFromNullTerminatedCharacters@WTF@@YANPBD@Z
     ?parseDoubleFromLongString@Internal@WTF@@YANPB_WIAAI@Z
     ?positiveInfiniteTime@MediaTime@WTF@@SAABV12@XZ 
-    ?process@InstrumentedPointerBase@MemoryInstrumentation@WTF@@QAEXPAV23@@Z
+    ?process@WrapperBase@MemoryInstrumentation@WTF@@QAEXPAV23@@Z
+    ?processRootObjectRef@WrapperBase@MemoryInstrumentation@WTF@@QAEXPAV23@@Z
     ?profiler@LegacyProfiler@JSC@@SAPAV12@XZ
     ?protect@Heap@JSC@@QAEXVJSValue@2@@Z
     ?protectedGlobalObjectCount@Heap@JSC@@QAEIXZ

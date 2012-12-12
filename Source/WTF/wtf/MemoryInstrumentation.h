@@ -70,25 +70,29 @@ public:
     WTF_EXPORT_PRIVATE explicit MemoryInstrumentation(MemoryInstrumentationClient*);
     WTF_EXPORT_PRIVATE virtual ~MemoryInstrumentation();
 
-    template <typename T> void addRootObject(const T& t)
+    template <typename T> void addRootObject(const T& t, MemoryObjectType objectType = 0)
     {
-        addObject(t, m_rootObjectInfo.get(), 0);
-        processDeferredInstrumentedPointers();
+        OwningTraits<T>::addRootObject(this, t, objectType);
+        processDeferredObjects();
     }
 
+    template <typename T> void addRootObject(const OwnPtr<T>&, MemoryObjectType = 0); // Link time guard.
+    template <typename T> void addRootObject(const RefPtr<T>&, MemoryObjectType = 0); // Link time guard.
+
 protected:
-    class InstrumentedPointerBase {
+    class WrapperBase {
     public:
-        WTF_EXPORT_PRIVATE InstrumentedPointerBase(MemoryObjectInfo*, const void* pointer);
-        virtual ~InstrumentedPointerBase() { }
+        WTF_EXPORT_PRIVATE WrapperBase(MemoryObjectType, const void* pointer);
+        virtual ~WrapperBase() { }
         WTF_EXPORT_PRIVATE void process(MemoryInstrumentation*);
+        WTF_EXPORT_PRIVATE void processRootObjectRef(MemoryInstrumentation*);
 
     protected:
         virtual void callReportMemoryUsage(MemoryObjectInfo*) = 0;
         const void* m_pointer;
+        const MemoryObjectType m_ownerObjectType;
 
     private:
-        const MemoryObjectType m_ownerObjectType;
 #if DEBUG_POINTER_INSTRUMENTATION
         static const int s_maxCallStackSize = 32;
         void* m_callStack[s_maxCallStackSize];
@@ -103,8 +107,8 @@ private:
 
     WTF_EXPORT_PRIVATE void reportEdge(MemoryObjectInfo* ownerObjectInfo, const void* target, const char* edgeName);
 
-    virtual void deferInstrumentedPointer(PassOwnPtr<InstrumentedPointerBase>) = 0;
-    virtual void processDeferredInstrumentedPointers() = 0;
+    virtual void deferObject(PassOwnPtr<WrapperBase>) = 0;
+    virtual void processDeferredObjects() = 0;
 
     WTF_EXPORT_PRIVATE static MemoryObjectType getObjectType(MemoryObjectInfo*);
 
@@ -133,9 +137,9 @@ private:
     }
     WTF_EXPORT_PRIVATE static void callReportObjectInfo(MemoryObjectInfo*, const void* pointer, MemoryObjectType, size_t objectSize);
 
-    template<typename T> class InstrumentedPointer : public InstrumentedPointerBase {
+    template<typename T> class Wrapper : public WrapperBase {
     public:
-        InstrumentedPointer(const T* pointer, MemoryObjectInfo* ownerObjectInfo);
+        Wrapper(const T* pointer, MemoryObjectType);
 
     protected:
         virtual void callReportMemoryUsage(MemoryObjectInfo*) OVERRIDE;
@@ -157,6 +161,11 @@ private:
         {
             instrumentation->addObjectImpl(&t, ownerObjectInfo, byReference, edgeName);
         }
+
+        static void addRootObject(MemoryInstrumentation* instrumentation, const T& t, MemoryObjectType objectType)
+        {
+            Wrapper<T>(&t, objectType).processRootObjectRef(instrumentation);
+        }
     };
 
     template<typename T>
@@ -165,6 +174,12 @@ private:
         {
             instrumentation->addObjectImpl(t, ownerObjectInfo, byPointer, edgeName);
         }
+
+        static void addRootObject(MemoryInstrumentation* instrumentation, const T* const& t, MemoryObjectType objectType)
+        {
+            if (t && !instrumentation->visited(t))
+                Wrapper<T>(t, objectType).process(instrumentation);
+        }
     };
 
     template<typename T> void addObjectImpl(const T*, MemoryObjectInfo*, MemoryOwningType, const char* edgeName);
@@ -172,7 +187,6 @@ private:
     template<typename T> void addObjectImpl(const RefPtr<T>*, MemoryObjectInfo*, MemoryOwningType, const char* edgeName);
 
     MemoryInstrumentationClient* m_client;
-    OwnPtr<MemoryObjectInfo> m_rootObjectInfo;
 };
 
 class MemoryClassInfo {
@@ -221,7 +235,7 @@ void MemoryInstrumentation::addObjectImpl(const T* object, MemoryObjectInfo* own
         reportEdge(ownerObjectInfo, object, edgeName);
         if (!object || visited(object))
             return;
-        deferInstrumentedPointer(adoptPtr(new InstrumentedPointer<T>(object, ownerObjectInfo)));
+        deferObject(adoptPtr(new Wrapper<T>(object, getObjectType(ownerObjectInfo))));
     }
 }
 
@@ -242,13 +256,13 @@ void MemoryInstrumentation::addObjectImpl(const RefPtr<T>* object, MemoryObjectI
 }
 
 template<typename T>
-MemoryInstrumentation::InstrumentedPointer<T>::InstrumentedPointer(const T* pointer, MemoryObjectInfo* ownerObjectInfo)
-    : InstrumentedPointerBase(ownerObjectInfo, pointer)
+MemoryInstrumentation::Wrapper<T>::Wrapper(const T* pointer, MemoryObjectType ownerObjectType)
+    : WrapperBase(ownerObjectType, pointer)
 {
 }
 
 template<typename T>
-void MemoryInstrumentation::InstrumentedPointer<T>::callReportMemoryUsage(MemoryObjectInfo* memoryObjectInfo)
+void MemoryInstrumentation::Wrapper<T>::callReportMemoryUsage(MemoryObjectInfo* memoryObjectInfo)
 {
     reportMemoryUsage(static_cast<const T*>(m_pointer), memoryObjectInfo);
 }

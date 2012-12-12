@@ -42,7 +42,6 @@ namespace WTF {
 
 MemoryInstrumentation::MemoryInstrumentation(MemoryInstrumentationClient* client)
     : m_client(client)
-    , m_rootObjectInfo(adoptPtr(new MemoryObjectInfo(this, 0, 0)))
 {
 }
 
@@ -73,9 +72,9 @@ void MemoryInstrumentation::reportLinkToBuffer(const void* owner, const void* bu
     m_client->reportLeaf(owner, memoryObjectInfo, edgeName);
 }
 
-MemoryInstrumentation::InstrumentedPointerBase::InstrumentedPointerBase(MemoryObjectInfo* memoryObjectInfo, const void* pointer)
+MemoryInstrumentation::WrapperBase::WrapperBase(MemoryObjectType objectType, const void* pointer)
     : m_pointer(pointer)
-    , m_ownerObjectType(memoryObjectInfo->objectType())
+    , m_ownerObjectType(objectType)
 {
 #if DEBUG_POINTER_INSTRUMENTATION
     m_callStackSize = s_maxCallStackSize;
@@ -83,7 +82,7 @@ MemoryInstrumentation::InstrumentedPointerBase::InstrumentedPointerBase(MemoryOb
 #endif
 }
 
-void MemoryInstrumentation::InstrumentedPointerBase::process(MemoryInstrumentation* memoryInstrumentation)
+void MemoryInstrumentation::WrapperBase::process(MemoryInstrumentation* memoryInstrumentation)
 {
     MemoryObjectInfo memoryObjectInfo(memoryInstrumentation, m_ownerObjectType, m_pointer);
     callReportMemoryUsage(&memoryObjectInfo);
@@ -103,6 +102,15 @@ void MemoryInstrumentation::InstrumentedPointerBase::process(MemoryInstrumentati
         WTFPrintBacktrace(m_callStack, m_callStackSize);
 #endif
     }
+}
+
+void MemoryInstrumentation::WrapperBase::processRootObjectRef(MemoryInstrumentation* memoryInstrumentation)
+{
+    MemoryObjectInfo memoryObjectInfo(memoryInstrumentation, m_ownerObjectType, m_pointer);
+    callReportMemoryUsage(&memoryObjectInfo);
+
+    ASSERT(m_pointer == memoryObjectInfo.reportedPointer());
+    memoryInstrumentation->m_client->reportNode(memoryObjectInfo);
 }
 
 void MemoryClassInfo::init(const void* objectAddress, MemoryObjectType objectType, size_t actualSize)
