@@ -4075,13 +4075,6 @@ webkit.org/b/101377 [ Linux MountainLion ] platform/chromium-linux/fast/text/int
 webkit.org/b/101408 [ Mac ] platform/chromium/fast/forms/calendar-picker/calendar-picker-key-operations.html [ Failure ]
 webkit.org/b/101408 platform/chromium/fast/forms/calendar-picker/calendar-picker-mouse-operations.html [ Failure Pass ]
 
-webkit.org/b/104825 [ Mac ] platform/chromium/fast/forms/calendar-picker/calendar-picker-appearance.html [ ImageOnlyFailure ]
-webkit.org/b/104825 [ Mac ] platform/chromium/fast/forms/calendar-picker/calendar-picker-appearance-ru.html [ ImageOnlyFailure ]
-webkit.org/b/104825 [ Mac ] platform/chromium/fast/forms/calendar-picker/calendar-picker-appearance-step.html [ ImageOnlyFailure ]
-webkit.org/b/104825 [ Mac ] platform/chromium/fast/forms/calendar-picker/month-picker-appearance.html [ ImageOnlyFailure ]
-webkit.org/b/104825 [ Mac ] platform/chromium/fast/forms/calendar-picker/month-picker-appearance-step.html [ ImageOnlyFailure ]
-webkit.org/b/104825 [ Mac ] platform/chromium/fast/forms/calendar-picker/week-picker-appearance.html [ ImageOnlyFailure ]
-webkit.org/b/104825 [ Mac ] platform/chromium/fast/forms/calendar-picker/week-picker-appearance-step.html [ ImageOnlyFailure ]
 
 webkit.org/b/101539 [ Linux Win ] editing/execCommand/switch-list-type-with-orphaned-li.html [ Failure ]
 
