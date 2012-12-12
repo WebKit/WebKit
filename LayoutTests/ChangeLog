@@ -1,3 +1,21 @@
+2012-12-12  Dominik Röttsches  <dominik.rottsches@intel.com>
+
+        [EFL] Unreviewed gardening.
+
+        Rebaselining tests with anonymous empty blocks aftter r137336.
+        Floating elements rebaselined after r137331.
+        Newly intrduced reftest is failing, introduced in r137368.
+        Unskipping a few new passed that had something to do with AC.
+
+        * platform/efl/TestExpectations:
+        * platform/efl/css1/formatting_model/floating_elements-expected.png: Added.
+        * platform/efl/css1/formatting_model/floating_elements-expected.txt:
+        * platform/efl/fast/css-generated-content/table-row-group-to-inline-expected.png:
+        * platform/efl/fast/css-generated-content/table-row-group-to-inline-expected.txt:
+        * platform/efl/fast/css/empty-generated-content-expected.png:
+        * platform/efl/fast/css/empty-generated-content-expected.txt:
+        * platform/efl/http/tests/misc/acid3-expected.txt:
+
 2012-12-12  Alexander Pavlov  <apavlov@chromium.org>
 
         Web Inspector: [Crash] Clear cached stylesheet rules in InspectorStyleSheet::deleteRule()

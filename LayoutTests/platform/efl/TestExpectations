@@ -1584,8 +1584,6 @@ Bug(EFL) fast/forms/input-readonly-dimmed.html [ Missing ]
 Bug(EFL) fast/forms/input-text-scroll-left-on-blur.html [ Missing ]
 Bug(EFL) fast/layers/layer-visibility-sublayer.html [ Failure ]
 Bug(EFL) fast/layers/layer-visibility.html [ Failure ]
-Bug(EFL) fast/media/mq-transform-02.html [ Failure ]
-Bug(EFL) fast/media/mq-transform-03.html [ Failure ]
 Bug(EFL) fast/repaint/invisible-objects.html [ Failure ]
 Bug(EFL) fast/repaint/layer-hide-when-needs-layout.html [ Failure ]
 Bug(EFL) fast/text/whitespace/028.html [ Failure ]
@@ -1675,3 +1673,6 @@ webkit.org/b/104571 http/tests/xmlhttprequest/origin-exact-matching.html [ Failu
 webkit.org/b/104788 css3/flexbox/flex-algorithm.html [ Failure ]
 webkit.org/b/104788 fast/css/large-number-round-trip.html [ Failure ]
 webkit.org/b/104788 fast/css/large-numbers.html [ Failure ]
+
+# Fixed positioning reftest failing
+webkit.org/b/104808 compositing/geometry/fixed-position-composited-page-scale-smaller-than-viewport.html [ ImageOnlyFailure ]
