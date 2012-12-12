@@ -191,7 +191,6 @@ bool SVGResources::buildCachedResources(const RenderObject* object, const SVGRen
     Node* node = object->node();
     ASSERT(node);
     if (!node->isSVGElement()) {
-#if ENABLE(FILTERS)
         Document* document = object->document();
         ASSERT(document);
 
@@ -200,9 +199,6 @@ bool SVGResources::buildCachedResources(const RenderObject* object, const SVGRen
 
         AtomicString id(style->filterResource());
         return setFilter(getRenderSVGResourceById<RenderSVGResourceFilter>(document, id));
-#else
-        return false;
-#endif
     }
 
     ASSERT(node->isSVGElement());
