@@ -1,3 +1,12 @@
+2012-12-12  Zoltan Arvai  <zarvai@inf.u-szeged.hu>
+
+        [Qt] Unreviewed gardening.
+
+        * platform/qt/TestExpectations: Skip test because ENABLE(MOUSE_CURSOR_SCALE) is disabled on Qt.
+        * platform/qt/fast/css-generated-content/table-row-group-to-inline-expected.txt: rebaselining after r137336.
+        * platform/qt/fast/css/empty-generated-content-expected.txt: rebaselining after r137336.
+        * platform/qt/http/tests/misc/acid3-expected.txt: rebaselining after r137336.
+
 2012-12-12  Csaba Osztrogonác  <ossy@webkit.org>
 
         [Qt] Unskip compositing tests 

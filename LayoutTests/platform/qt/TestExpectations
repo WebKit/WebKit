@@ -185,6 +185,9 @@ fast/dom/shadow
 fast/frames/detached-shadow-frame.html
 inspector/elements/update-shadowdom.html
 
+# ENABLE(MOUSE_CURSOR_SCALE) is disabled
+fast/css/cursor-parsing-image-set.html
+
 # ENABLE(TEMPLATE_ELEMENT) is disabled.
 fast/dom/HTMLTemplateElement
 html5lib/run-template.html
