@@ -228,6 +228,7 @@ EXPORTS
         ?isPreloaded@CachedResourceLoader@WebCore@@QBE_NABVString@WTF@@@Z
         ?jsArray@WebCore@@YA?AVJSValue@JSC@@PAVExecState@3@PAVJSDOMGlobalObject@1@V?$PassRefPtr@VDOMStringList@WebCore@@@WTF@@@Z
         ?lastChangeWasUserEdit@HTMLTextFormControlElement@WebCore@@QBE_NXZ
+        ?mainThreadScrollingReasonsAsText@Page@WebCore@@QAE?AVString@WTF@@XZ
         ?markersFor@DocumentMarkerController@WebCore@@QAE?AV?$Vector@PAVDocumentMarker@WebCore@@$0A@@WTF@@PAVNode@2@VMarkerTypes@DocumentMarker@2@@Z
         ?nextSibling@ComposedShadowTreeWalker@WebCore@@QAEXXZ
         ?firstChild@ComposedShadowTreeWalker@WebCore@@QAEXXZ

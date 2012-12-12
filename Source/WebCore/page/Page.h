@@ -199,6 +199,7 @@ namespace WebCore {
         ScrollingCoordinator* scrollingCoordinator();
 
         String scrollingStateTreeAsText();
+        String mainThreadScrollingReasonsAsText();
 
         Settings* settings() const { return m_settings.get(); }
         ProgressTracker* progress() const { return m_progress.get(); }

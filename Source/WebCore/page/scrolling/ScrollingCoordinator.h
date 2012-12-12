@@ -150,6 +150,9 @@ public:
     virtual void setLayerIsContainerForFixedPositionLayers(GraphicsLayer*, bool) { }
     virtual void setLayerIsFixedToContainerLayer(GraphicsLayer*, bool) { }
 
+    static String mainThreadScrollingReasonsAsText(MainThreadScrollingReasons);
+    String mainThreadScrollingReasonsAsText() const;
+
 protected:
     explicit ScrollingCoordinator(Page*);
 

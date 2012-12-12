@@ -165,6 +165,7 @@
     DOMString layerTreeAsText(in Document document, in [Optional] unsigned short flags) raises (DOMException);
 
     DOMString scrollingStateTreeAsText(in Document document) raises (DOMException);
+    DOMString mainThreadScrollingReasons(in Document document) raises (DOMException);
 
     DOMString repaintRectsAsText(in Document document) raises (DOMException);
 

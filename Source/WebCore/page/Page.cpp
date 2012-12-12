@@ -258,6 +258,17 @@ String Page::scrollingStateTreeAsText()
     return String();
 }
 
+String Page::mainThreadScrollingReasonsAsText()
+{
+    if (Document* document = m_mainFrame->document())
+        document->updateLayout();
+
+    if (ScrollingCoordinator* scrollingCoordinator = this->scrollingCoordinator())
+        return scrollingCoordinator->mainThreadScrollingReasonsAsText();
+
+    return String();
+}
+
 struct ViewModeInfo {
     const char* name;
     Page::ViewMode type;

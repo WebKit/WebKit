@@ -227,18 +227,7 @@ void ScrollingStateScrollingNode::dumpProperties(TextStream& ts, int indent) con
 
     if (m_shouldUpdateScrollLayerPositionOnMainThread) {
         writeIndent(ts, indent + 1);
-        ts << "(Scrolling on main thread because: ";
-        if (m_shouldUpdateScrollLayerPositionOnMainThread & ScrollingCoordinator::ForcedOnMainThread)
-            ts << "Forced on main thread, ";
-        if (m_shouldUpdateScrollLayerPositionOnMainThread & ScrollingCoordinator::HasSlowRepaintObjects)
-            ts << "Has slow repaint objects, ";
-        if (m_shouldUpdateScrollLayerPositionOnMainThread & ScrollingCoordinator::HasViewportConstrainedObjectsWithoutSupportingFixedLayers)
-            ts << "Has viewport constrained objects without supporting fixed layers, ";
-        if (m_shouldUpdateScrollLayerPositionOnMainThread & ScrollingCoordinator::HasNonLayerFixedObjects)
-            ts << "Has non-layer fixed objects, ";
-        if (m_shouldUpdateScrollLayerPositionOnMainThread & ScrollingCoordinator::IsImageDocument)
-            ts << "Is image document";
-        ts << ")\n";
+        ts << "(Scrolling on main thread because: " << ScrollingCoordinator::mainThreadScrollingReasonsAsText(m_shouldUpdateScrollLayerPositionOnMainThread) << ")\n";
     }
 
     if (m_requestedScrollPosition != IntPoint()) {

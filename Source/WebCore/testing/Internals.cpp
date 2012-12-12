@@ -1460,6 +1460,20 @@ String Internals::scrollingStateTreeAsText(Document* document, ExceptionCode& ec
     return page->scrollingStateTreeAsText();
 }
 
+String Internals::mainThreadScrollingReasons(Document* document, ExceptionCode& ec) const
+{
+    if (!document || !document->frame()) {
+        ec = INVALID_ACCESS_ERR;
+        return String();
+    }
+
+    Page* page = document->page();
+    if (!page)
+        return String();
+
+    return page->mainThreadScrollingReasonsAsText();
+}
+
 void Internals::garbageCollectDocumentResources(Document* document, ExceptionCode& ec) const
 {
     if (!document) {

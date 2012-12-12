@@ -208,6 +208,8 @@ public:
     String repaintRectsAsText(Document*, ExceptionCode&) const;
     String scrollingStateTreeAsText(Document*, ExceptionCode&) const;
 
+    String mainThreadScrollingReasons(Document*, ExceptionCode&) const;
+
     void garbageCollectDocumentResources(Document*, ExceptionCode&) const;
 
     void allowRoundingHacks() const;
