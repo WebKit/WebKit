@@ -71,8 +71,12 @@ public:
         while (true) {
             MutexLocker locker(m_mutex);
 
-            if (bool response = m_responses.take(requestID))
-                return response;
+            HashMap<uint64_t, bool>::iterator iter = m_responses.find(requestID);
+            if (iter != m_responses.end()) {
+                bool result = iter->value;
+                m_responses.remove(iter);
+                return result;
+            }
 
             m_condition.wait(m_mutex);
         }
