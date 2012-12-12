@@ -1812,6 +1812,7 @@ set(WebCore_SOURCES
     platform/MemoryUsageSupport.cpp
     platform/MIMETypeRegistry.cpp
     platform/MemoryPressureHandler.cpp
+    platform/NotImplemented.cpp
     platform/PlatformEvent.cpp
     platform/PlatformInstrumentation.cpp
     platform/PlatformMemoryInstrumentation.cpp

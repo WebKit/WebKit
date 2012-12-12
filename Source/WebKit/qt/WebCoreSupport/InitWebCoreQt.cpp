@@ -33,6 +33,7 @@
 #include "Chrome.h"
 #include "ChromeClientQt.h"
 #include "Image.h"
+#include "InitializeLogging.h"
 #include "NotImplemented.h"
 #include "Page.h"
 #include "PlatformStrategiesQt.h"

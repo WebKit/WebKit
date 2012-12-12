@@ -62,9 +62,9 @@
 #include <WebCore/GCController.h>
 #include <WebCore/GlyphPageTreeNode.h>
 #include <WebCore/IconDatabase.h>
+#include <WebCore/InitializeLogging.h>
 #include <WebCore/JSDOMWindow.h>
 #include <WebCore/Language.h>
-#include <WebCore/Logging.h>
 #include <WebCore/MemoryCache.h>
 #include <WebCore/MemoryPressureHandler.h>
 #include <WebCore/Page.h>
@@ -182,6 +182,7 @@ WebProcess::WebProcess()
 
 #if !LOG_DISABLED
     WebCore::initializeLoggingChannelsIfNecessary();
+    WebKit::initializeLogChannelsIfNecessary();
 #endif // !LOG_DISABLED
 }
 

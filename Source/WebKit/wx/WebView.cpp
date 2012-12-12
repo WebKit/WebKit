@@ -42,7 +42,7 @@
 #include "FrameView.h"
 #include "GraphicsContext.h"
 #include "HTMLFormElement.h"
-#include "Logging.h"
+#include "InitializeLogging.h"
 #include "MemoryCache.h"
 #include "Page.h"
 #include "PlatformKeyboardEvent.h"

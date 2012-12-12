@@ -2095,11 +2095,12 @@ _wkSetLayerContentsScale
 #endif
 
 #if !defined(NDEBUG)
-__ZN7WebCore20LogNotYetImplementedE
 __ZNK7WebCore7Element26fastAttributeLookupAllowedERKNS_13QualifiedNameE
 #endif
 
 #if !LOG_DISABLED
+__ZN7WebCore20LogNotYetImplementedE
+__ZN7WebCore28notImplementedLoggingChannelEv
 __ZN7WebCore36initializeLoggingChannelsIfNecessaryEv
 #endif // !LOG_DISABLED
 

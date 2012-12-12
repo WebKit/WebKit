@@ -1062,6 +1062,7 @@ SOURCES += \
     platform/network/ResourceLoadTiming.cpp \
     platform/network/ResourceRequestBase.cpp \
     platform/network/ResourceResponseBase.cpp \
+    platform/NotImplemented.cpp \
     platform/text/RegularExpression.cpp \
     platform/PlatformEvent.cpp \
     platform/PlatformInstrumentation.cpp \
@@ -2085,6 +2086,7 @@ HEADERS += \
     platform/FileStreamClient.h \
     platform/FileSystem.h \
     platform/HistogramSupport.h \
+    platform/InitializeLogging.h \
     platform/image-decoders/ImageDecoder.h \
     platform/mock/DeviceMotionClientMock.h \
     platform/mock/DeviceOrientationClientMock.h \

@@ -17,6 +17,7 @@
  */
 
 #include "config.h"
+#include "InitializeLogging.h"
 #include "Logging.h"
 
 #if !LOG_DISABLED

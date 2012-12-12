@@ -41,6 +41,7 @@
 #include "HTMLNames.h"
 #include "HitTestResult.h"
 #include "InspectorInstrumentation.h"
+#include "Logging.h"
 #include "NodeList.h"
 #include "Page.h"
 #include "RenderApplet.h"

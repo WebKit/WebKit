@@ -30,10 +30,12 @@
 
 #include "ArgumentCoders.h"
 #include "Attachment.h"
+#include "Logging.h"
 #include "NetworkConnectionToWebProcess.h"
 #include "NetworkProcessCreationParameters.h"
 #include "NetworkProcessProxyMessages.h"
 #include "RemoteNetworkingContext.h"
+#include <WebCore/InitializeLogging.h>
 #include <WebCore/ResourceRequest.h>
 #include <WebCore/RunLoop.h>
 #include <wtf/text/CString.h>
@@ -97,6 +99,11 @@ void NetworkProcess::didReceiveInvalidMessage(CoreIPC::Connection*, CoreIPC::Str
 void NetworkProcess::initializeNetworkProcess(const NetworkProcessCreationParameters& parameters)
 {
     platformInitialize(parameters);
+
+#if !LOG_DISABLED
+    WebCore::initializeLoggingChannelsIfNecessary();
+    WebKit::initializeLogChannelsIfNecessary();
+#endif // !LOG_DISABLED
 
 #if PLATFORM(MAC) || USE(CFNETWORK)
     RemoteNetworkingContext::setPrivateBrowsingStorageSessionIdentifierBase(parameters.uiProcessBundleIdentifier);

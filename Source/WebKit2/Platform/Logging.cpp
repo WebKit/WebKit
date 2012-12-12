@@ -93,14 +93,16 @@ void initializeLogChannelsIfNecessary()
         return;
     haveInitializedLogChannels = true;
 
-    initializeLogChannel(&LogContextMenu);
-    initializeLogChannel(&LogIconDatabase);
-    initializeLogChannel(&LogInspectorServer);
-    initializeLogChannel(&LogKeyHandling);
-    initializeLogChannel(&LogPlugins);
     initializeLogChannel(&LogSessionState);
+    initializeLogChannel(&LogContextMenu);
     initializeLogChannel(&LogTextInput);
     initializeLogChannel(&LogView);
+    initializeLogChannel(&LogIconDatabase);
+    initializeLogChannel(&LogKeyHandling);
+    initializeLogChannel(&LogPlugins);
+    initializeLogChannel(&LogNetwork);
+    initializeLogChannel(&LogNetworkScheduling);
+    initializeLogChannel(&LogInspectorServer);
 }
 
 } // namespace WebKit

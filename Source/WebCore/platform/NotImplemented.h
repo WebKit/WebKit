@@ -26,7 +26,6 @@
 #ifndef NotImplemented_h
 #define NotImplemented_h
 
-#include "Logging.h"
 #include <wtf/Assertions.h>
 
 #if PLATFORM(GTK) || PLATFORM(EFL)
@@ -42,10 +41,14 @@
     #define notImplemented() ((void)0)
 #else
 
+namespace WebCore {
+WTFLogChannel* notImplementedLoggingChannel();
+}
+
 #define notImplemented() do { \
         static bool havePrinted = false; \
         if (!havePrinted && !supressNotImplementedWarning()) { \
-            WTFLogVerbose(__FILE__, __LINE__, WTF_PRETTY_FUNCTION, &::WebCore::LogNotYetImplemented, "UNIMPLEMENTED: "); \
+            WTFLogVerbose(__FILE__, __LINE__, WTF_PRETTY_FUNCTION, notImplementedLoggingChannel(), "UNIMPLEMENTED: "); \
             havePrinted = true; \
         } \
     } while (0)

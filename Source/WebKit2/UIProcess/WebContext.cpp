@@ -54,9 +54,9 @@
 #include "WebProcessMessages.h"
 #include "WebProcessProxy.h"
 #include "WebResourceCacheManagerProxy.h"
+#include <WebCore/InitializeLogging.h>
 #include <WebCore/Language.h>
 #include <WebCore/LinkHash.h>
-#include <WebCore/Logging.h>
 #include <WebCore/ResourceRequest.h>
 #include <WebCore/RunLoop.h>
 #include <runtime/InitializeThreading.h>
@@ -170,16 +170,13 @@ WebContext::WebContext(ProcessModel processModel, const String& injectedBundlePa
     m_soupRequestManagerProxy = WebSoupRequestManagerProxy::create(this);
 #endif
     
-#if !LOG_DISABLED
-    WebKit::initializeLogChannelsIfNecessary();
-#endif
-
     contexts().append(this);
 
     addLanguageChangeObserver(this, languageChanged);
 
 #if !LOG_DISABLED
     WebCore::initializeLoggingChannelsIfNecessary();
+    WebKit::initializeLogChannelsIfNecessary();
 #endif // !LOG_DISABLED
 
 #ifndef NDEBUG

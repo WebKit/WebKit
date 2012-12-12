@@ -1,3 +1,23 @@
+2012-12-12  Alexey Proskuryakov  <ap@apple.com>
+
+        Make LOG() work in WebProcess and NetworkProcess
+        https://bugs.webkit.org/show_bug.cgi?id=104718
+
+        Reviewed by Tim Horton.
+
+        * NetworkProcess/NetworkProcess.cpp: (WebKit::NetworkProcess::initializeNetworkProcess):
+        Initialize WebCore and WebKit2 logging.
+
+        * Platform/Logging.cpp: (WebKit::initializeLogChannelsIfNecessary):
+        Added Network and NetworkScheduling. Re-ordered to match declaration order,
+        alphabetical clearly doesn't help here.
+
+        * WebProcess/WebProcess.cpp: (WebKit::WebProcess::WebProcess): Initialize WebKit2
+        logging in addition to WebCore.
+
+        * UIProcess/WebContext.cpp: (WebKit::WebContext::WebContext): Initialize WebKit2
+        logging in addition to WebCore.
+
 2012-12-12  Simon Pena  <spena@igalia.com>
 
         [GTK] Add sections documentation to WebKit2 GTK+ API

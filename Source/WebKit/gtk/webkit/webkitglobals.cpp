@@ -26,7 +26,7 @@
 #include "ContextMenuItem.h"
 #include "FrameNetworkingContextGtk.h"
 #include "IconDatabase.h"
-#include "Logging.h"
+#include "InitializeLogging.h"
 #include "MemoryCache.h"
 #include "Page.h"
 #include "PageCache.h"
