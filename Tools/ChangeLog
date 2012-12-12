@@ -1,3 +1,20 @@
+2012-12-12  Simon Hausmann  <simon.hausmann@digia.com>
+
+        [Qt] Fix linkage against SQLite
+        https://bugs.webkit.org/show_bug.cgi?id=104781
+
+        Reviewed by Csaba Osztrogonác.
+
+        Detect SQLite either through pkg-config, from the SQLITE3SRCDIR
+        environment variable or from qtbase via a qt5.git build. Bail out early
+        with an error message if neither option applies.
+
+        This removes the usage of $$QT.core.sources and the dependency on Qt's
+        system-sqlite configure setting. We should always favour a system
+        library over a copy in Qt.
+
+        * qmake/mkspecs/features/features.prf:
+
 2012-12-12  Tommy Widenflycht  <tommyw@google.com>
 
         MediaStream API: Change the data channel descriptor pattern to a handler pattern

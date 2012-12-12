@@ -120,6 +120,14 @@ defineTest(detectFeatures) {
         WEBKIT_CONFIG += video use_qt_multimedia
     }
 
+    # Try to use an system wide SQlite installation
+    !contains(QT_CONFIG, no-pkg-config):packagesExist("sqlite3") {
+        WEBKIT_CONFIG += have_sqlite3
+    } else {
+        SQLITE3SRCDIR = $$(SQLITE3SRCDIR)
+        isEmpty(SQLITE3SRCDIR):isEmpty(_QMAKE_SUPER_CACHE_): error("WebKit requires SQLite. Either make it available via pkg-config, set $SQLITE3SRCDIR or build WebKit under qt5.git.")
+    }
+
     # Gamepad API Support
     packagesExist(libudev): WEBKIT_CONFIG += gamepad
 

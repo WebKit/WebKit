@@ -4067,7 +4067,7 @@ use?(WEBP) {
     SOURCES += platform/image-decoders/webp/WEBPImageDecoder.cpp
 }
 
-!system-sqlite:exists( $${SQLITE3SRCDIR}/sqlite3.c ) {
+!have?(sqlite3):exists($${SQLITE3SRCDIR}/sqlite3.c) {
     # Build sqlite3 into WebCore from source
     # somewhat copied from $$QT_SOURCE_TREE/src/plugins/sqldrivers/sqlite/sqlite.pro
     SOURCES += $${SQLITE3SRCDIR}/sqlite3.c

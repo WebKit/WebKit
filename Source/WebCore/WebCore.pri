@@ -234,16 +234,18 @@ use?(GRAPHICS_SURFACE) {
     }
 }
 
-SQLITE3SRCDIR = $$(SQLITE3SRCDIR)
-isEmpty(SQLITE3SRCDIR) {
-    SQLITE3SRCDIR = $$QT.core.sources/../3rdparty/sqlite/
-}
-!system-sqlite:exists( $${SQLITE3SRCDIR}/sqlite3.c ) {
-    INCLUDEPATH += $${SQLITE3SRCDIR}
-    DEFINES += SQLITE_CORE SQLITE_OMIT_LOAD_EXTENSION SQLITE_OMIT_COMPLETE
+have?(sqlite3) {
+    PKGCONFIG += sqlite3
 } else {
-    INCLUDEPATH += $${SQLITE3SRCDIR}
-    LIBS += -lsqlite3
+    SQLITE3SRCDIR = $$(SQLITE3SRCDIR)
+    isEmpty(SQLITE3SRCDIR): SQLITE3SRCDIR = ../../../qtbase/src/3rdparty/sqlite/
+    exists($${SQLITE3SRCDIR}/sqlite3.c) {
+        INCLUDEPATH += $${SQLITE3SRCDIR}
+        DEFINES += SQLITE_CORE SQLITE_OMIT_LOAD_EXTENSION SQLITE_OMIT_COMPLETE
+    } else {
+        INCLUDEPATH += $${SQLITE3SRCDIR}
+        LIBS += -lsqlite3
+    }
 }
 
 use?(libjpeg): LIBS += -ljpeg
