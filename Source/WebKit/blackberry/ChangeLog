@@ -1,5 +1,21 @@
 2012-12-11  Nima Ghanavatian  <nghanavatian@rim.com>
 
+        [BlackBerry] Redraw spell check dialog after rotation.
+        https://bugs.webkit.org/show_bug.cgi?id=104737
+
+        Reviewed by Rob Buis.
+
+        After rotating the device, all dialogs are dismissed. We should
+        restore the spell check dialog as it is still valid after
+        rotation and the user will expect it there.
+
+        Internally reviewed by Mike Fenton and Gen Mak.
+
+        * Api/WebPage.cpp:
+        (BlackBerry::WebKit::WebPage::applyPendingOrientationIfNeeded):
+
+2012-12-11  Nima Ghanavatian  <nghanavatian@rim.com>
+
         [BlackBerry] Shift the spell check dialog to align with text after transformation
         https://bugs.webkit.org/show_bug.cgi?id=104716
 

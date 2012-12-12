@@ -3604,6 +3604,9 @@ void WebPage::applyPendingOrientationIfNeeded()
 {
     if (d->m_pendingOrientation != -1)
         d->setScreenOrientation(d->m_pendingOrientation);
+
+    // After rotation, we should redraw the dialog box instead of just moving it since rotation dismisses all dialogs.
+    d->m_inputHandler->redrawSpellCheckDialogIfRequired(false /* shouldMoveDialog */);
 }
 
 void WebPagePrivate::setViewportSize(const IntSize& transformedActualVisibleSize, bool ensureFocusElementVisible)
