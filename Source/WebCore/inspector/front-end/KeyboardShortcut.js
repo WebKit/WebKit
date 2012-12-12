@@ -130,10 +130,20 @@ WebInspector.KeyboardShortcut.makeKeyFromEvent = function(keyboardEvent)
 
 /**
  * @param {KeyboardEvent} event
+ * @return {boolean}
  */
 WebInspector.KeyboardShortcut.eventHasCtrlOrMeta = function(event)
 {
     return WebInspector.isMac() ? event.metaKey && !event.ctrlKey : event.ctrlKey && !event.metaKey;
+}
+
+/**
+ * @param {KeyboardEvent} event
+ * @return {boolean}
+ */
+WebInspector.KeyboardShortcut.hasNoModifiers = function(event)
+{
+    return !event.ctrlKey && !event.shiftKey && !event.altKey && !event.metaKey;
 }
 
 /** @typedef {{key: number, name: string}} */

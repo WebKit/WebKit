@@ -48,6 +48,7 @@ WebInspector.ElementsTreeOutline = function(omitRootDOMNode, selectEnabled, show
     this.element.addEventListener("dragleave", this._ondragleave.bind(this), false);
     this.element.addEventListener("drop", this._ondrop.bind(this), false);
     this.element.addEventListener("dragend", this._ondragend.bind(this), false);
+    this.element.addEventListener("keydown", this._onkeydown.bind(this), false);
 
     TreeOutline.call(this, this.element);
 
@@ -470,6 +471,23 @@ WebInspector.ElementsTreeOutline.prototype = {
         }
     },
 
+    /**
+     * @param {Event} event
+     */
+    _onkeydown: function(event)
+    {
+        var node = this.selectedDOMNode();
+        var treeElement = this.getCachedTreeElement(node);
+        if (!treeElement)
+            return;
+
+        if (!treeElement._editing && WebInspector.KeyboardShortcut.hasNoModifiers(event) && event.keyCode === WebInspector.KeyboardShortcut.Keys.H.code) {
+            WebInspector.cssModel.toggleInlineVisibility(node.id);
+            event.consume(true);
+            return;
+        }
+    },
+
     _contextMenuEventFired: function(event)
     {
         if (!this._showInElementsPanelEnabled)
@@ -539,23 +557,21 @@ WebInspector.ElementsTreeOutline.prototype = {
 
         if (event.keyIdentifier === "F2") {
             this._toggleEditAsHTML(node);
+            event.handled = true;
             return;
         }
 
         if (WebInspector.KeyboardShortcut.eventHasCtrlOrMeta(event) && node.parentNode) {
             if (event.keyIdentifier === "Up" && node.previousSibling) {
                 node.moveTo(node.parentNode, node.previousSibling, this._selectNodeAfterEdit.bind(this, null, treeElement.expanded));
+                event.handled = true;
                 return;
             }
             if (event.keyIdentifier === "Down" && node.nextSibling) {
                 node.moveTo(node.parentNode, node.nextSibling.nextSibling, this._selectNodeAfterEdit.bind(this, null, treeElement.expanded));
+                event.handled = true;
                 return;
             }
-        }
-
-        if (!treeElement._editing && event.keyCode === WebInspector.KeyboardShortcut.Keys.H.code) {
-            WebInspector.cssModel.toggleInlineVisibility(node.id);
-            return;
         }
     },
 
