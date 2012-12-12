@@ -1,3 +1,20 @@
+2012-11-29  Yury Semikhatsky  <yurys@chromium.org>
+
+        Web Inspector: Heap snapshot crashes on any page in MacOS Canary
+        https://bugs.webkit.org/show_bug.cgi?id=103076
+
+        Reviewed by Adam Barth.
+
+        Provide global object name resolver to the heap profiler. The callback allows
+        to safely retrieve document URL to be used as a label for corresponding global
+        object in the heap snapshot.
+
+        Test: inspector-protocol/take-heap-snapshot.html
+
+        * bindings/v8/ScriptProfiler.cpp:
+        (WebCore):
+        (WebCore::ScriptProfiler::takeHeapSnapshot):
+
 2012-12-12  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r137428.

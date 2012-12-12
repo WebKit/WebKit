@@ -37,6 +37,8 @@
 #include "ScriptObject.h"
 #include "V8ArrayBufferView.h"
 #include "V8Binding.h"
+#include "V8DOMWindow.h"
+#include "V8DOMWrapper.h"
 #include "V8Node.h"
 #include "WebCoreMemoryInstrumentation.h"
 #include "WrapperTypeInfo.h"
@@ -145,6 +147,25 @@ private:
     bool m_firstReport;
 };
 
+class GlobalObjectNameResolver : public v8::HeapProfiler::ObjectNameResolver {
+public:
+    virtual const char* GetName(v8::Handle<v8::Object> object)
+    {
+        if (V8DOMWrapper::isWrapperOfType(object, &V8DOMWindow::info)) {
+            DOMWindow* window = V8DOMWindow::toNative(object);
+            if (window) {
+                CString url = window->document()->url().string().utf8();
+                m_strings.append(url);
+                return url.data();
+            }
+        }
+        return 0;
+    }
+
+private:
+    Vector<CString> m_strings;
+};
+
 } // namespace
 
 PassRefPtr<ScriptHeapSnapshot> ScriptProfiler::takeHeapSnapshot(const String& title, HeapSnapshotProgress* control)
@@ -152,7 +173,8 @@ PassRefPtr<ScriptHeapSnapshot> ScriptProfiler::takeHeapSnapshot(const String& ti
     v8::HandleScope hs;
     ASSERT(control);
     ActivityControlAdapter adapter(control);
-    const v8::HeapSnapshot* snapshot = v8::HeapProfiler::TakeSnapshot(deprecatedV8String(title), v8::HeapSnapshot::kFull, &adapter);
+    GlobalObjectNameResolver resolver;
+    const v8::HeapSnapshot* snapshot = v8::HeapProfiler::TakeSnapshot(deprecatedV8String(title), v8::HeapSnapshot::kFull, &adapter, &resolver);
     return snapshot ? ScriptHeapSnapshot::create(snapshot) : 0;
 }
 
