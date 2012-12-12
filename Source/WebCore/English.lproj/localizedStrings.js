@@ -246,6 +246,7 @@ localizedStrings["Local Files"] = "Local Files";
 localizedStrings["Local"] = "Local";
 localizedStrings["Location"] = "Location";
 localizedStrings["Logs"] = "Logs";
+localizedStrings["Debug"] = "Debug";
 localizedStrings["MIME Type"] = "MIME Type";
 localizedStrings["MIME type"] = "MIME type";
 localizedStrings["Matched CSS Rules"] = "Matched CSS Rules";
