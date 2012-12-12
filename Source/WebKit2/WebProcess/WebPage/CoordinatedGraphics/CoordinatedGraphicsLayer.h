@@ -240,6 +240,7 @@ private:
 
     PlatformLayer* m_canvasPlatformLayer;
 #if USE(GRAPHICS_SURFACE)
+    IntSize m_canvasSize;
     GraphicsSurfaceToken m_canvasToken;
 #endif
     Timer<CoordinatedGraphicsLayer> m_animationStartedTimer;

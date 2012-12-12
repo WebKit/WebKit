@@ -57,7 +57,7 @@ public:
     virtual IntSize platformLayerSize() const;
     virtual uint32_t copyToGraphicsSurface();
     virtual GraphicsSurfaceToken graphicsSurfaceToken() const;
-    void didResizeCanvas();
+    void didResizeCanvas(const IntSize&);
 #endif
     bool makeContextCurrent();
     void releaseResources();
@@ -72,6 +72,7 @@ public:
     OwnPtr<GraphicsContext3D::ContextLostCallback> m_contextLostCallback;
     ListHashSet<GC3Denum> m_syntheticErrors;
     bool m_pendingSurfaceResize;
+    IntSize m_size;
 };
 
 } // namespace WebCore

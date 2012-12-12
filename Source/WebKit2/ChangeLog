@@ -1,3 +1,21 @@
+2012-12-12  Kondapally Kalyan  <kalyan.kondapally@intel.com>
+
+        [EFL [WebGL] [Wk2] Resizing the canvas breaks WebGL.
+        https://bugs.webkit.org/show_bug.cgi?id=104535.
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        GraphicsContext3DEfl does not re-create the surface on canvas resize, this
+        conflicted with the logic in coordinated graphics Layer.
+        CoordinatedGraphicsLayer checks for GraphicsSurfaceToken to decide if the surface
+        in UI-Process should be recreated or not. With this
+        patch we also check for size of the platform Layer.
+
+        * WebProcess/WebPage/CoordinatedGraphics/CoordinatedGraphicsLayer.cpp:
+        (WebCore::CoordinatedGraphicsLayer::setContentsToCanvas):
+        * WebProcess/WebPage/CoordinatedGraphics/CoordinatedGraphicsLayer.h:
+        (CoordinatedGraphicsLayer):
+
 2012-12-12  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r137438.

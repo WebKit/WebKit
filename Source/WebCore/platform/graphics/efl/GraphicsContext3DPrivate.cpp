@@ -123,9 +123,10 @@ void GraphicsContext3DPrivate::paintToTextureMapper(TextureMapper*, const FloatR
 #endif
 
 #if USE(GRAPHICS_SURFACE)
-void GraphicsContext3DPrivate::didResizeCanvas()
+void GraphicsContext3DPrivate::didResizeCanvas(const IntSize& size)
 {
     m_pendingSurfaceResize = true;
+    m_size = size;
 }
 
 uint32_t GraphicsContext3DPrivate::copyToGraphicsSurface()
@@ -173,8 +174,9 @@ GraphicsSurfaceToken GraphicsContext3DPrivate::graphicsSurfaceToken() const
 
 IntSize GraphicsContext3DPrivate::platformLayerSize() const
 {
-    return IntSize(m_context->m_currentWidth, m_context->m_currentHeight);
+    return m_size;
 }
+
 #endif
 
 } // namespace WebCore

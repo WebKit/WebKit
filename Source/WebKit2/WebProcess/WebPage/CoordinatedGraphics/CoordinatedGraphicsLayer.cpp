@@ -328,7 +328,7 @@ void CoordinatedGraphicsLayer::setContentsToCanvas(PlatformLayer* platformLayer)
         ASSERT(m_canvasToken.isValid());
         if (!platformLayer)
             m_canvasNeedsDestroy = true;
-        else if (m_canvasToken != platformLayer->graphicsSurfaceToken()) {
+        else if ((m_canvasSize != platformLayer->platformLayerSize()) || (m_canvasToken != platformLayer->graphicsSurfaceToken())) {
             // m_canvasToken can be different to platformLayer->graphicsSurfaceToken(), even if m_canvasPlatformLayer equals platformLayer.
             m_canvasNeedsDestroy = true;
             m_canvasNeedsCreate = true;
@@ -340,6 +340,7 @@ void CoordinatedGraphicsLayer::setContentsToCanvas(PlatformLayer* platformLayer)
 
     m_canvasPlatformLayer = platformLayer;
     // m_canvasToken is updated only here. In detail, when GraphicsContext3D is changed or reshaped, m_canvasToken is changed and setContentsToCanvas() is always called.
+    m_canvasSize = m_canvasPlatformLayer ? m_canvasPlatformLayer->platformLayerSize() : IntSize();
     m_canvasToken = m_canvasPlatformLayer ? m_canvasPlatformLayer->graphicsSurfaceToken() : GraphicsSurfaceToken();
     ASSERT(!(!m_canvasToken.isValid() && m_canvasPlatformLayer));
     if (m_canvasPlatformLayer)
