@@ -1,3 +1,17 @@
+2012-12-12  Alexei Filippov  <alph@chromium.org>
+
+        Web Inspector: add memory used by memory allocator itself to NMI
+        https://bugs.webkit.org/show_bug.cgi?id=93372
+
+        Make native memory instrumentation report memory retained
+        for the memory allocator internal purposes.
+
+        Reviewed by Yury Semikhatsky.
+
+        * chromium/public/Platform.h:
+        (Platform):
+        (WebKit::Platform::memoryAllocatorWasteInBytes):
+
 2012-12-12  Tommy Widenflycht  <tommyw@google.com>
 
         MediaStream API: Change the data channel descriptor pattern to a handler pattern

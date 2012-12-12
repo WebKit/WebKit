@@ -70,6 +70,9 @@ void MemoryUsageSupport::memoryUsageByComponents(Vector<ComponentInfo>& componen
 {
     size_t size = SkGraphics::GetFontCacheUsed();
     components.append(ComponentInfo("GlyphCache", size));
+
+    if (WebKit::Platform::current()->memoryAllocatorWasteInBytes(&size))
+        components.append(ComponentInfo("MallocWaste", size));
 }
 
 } // namespace WebCore

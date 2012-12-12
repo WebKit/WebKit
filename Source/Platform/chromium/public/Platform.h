@@ -212,6 +212,10 @@ public:
     // false on platform specific error conditions.
     virtual bool processMemorySizesInBytes(size_t* privateBytes, size_t* sharedBytes) { return false; }
 
+    // Reports number of bytes used by memory allocator for internal needs.
+    // Returns true if the size has been reported, or false otherwise.
+    virtual bool memoryAllocatorWasteInBytes(size_t*) { return false; }
+
 
     // Message Ports -------------------------------------------------------
 

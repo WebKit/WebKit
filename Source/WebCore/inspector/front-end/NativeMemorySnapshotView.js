@@ -396,6 +396,7 @@ WebInspector.MemoryBlockViewProperties._initialize = function()
     addBlock("hsl( 40, 80%,  80%)", "GlyphCache", "Glyph cache resources");
     addBlock("hsl( 35, 80%,  80%)", "DOMStorageCache", "DOM storage cache");
     addBlock("hsl( 60, 80%,  60%)", "RenderTree", "Render tree");
+    addBlock("hsl( 20, 80%,  50%)", "MallocWaste", "Memory allocator waste");
 }
 
 WebInspector.MemoryBlockViewProperties._forMemoryBlock = function(memoryBlock)
