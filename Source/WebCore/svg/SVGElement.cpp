@@ -544,6 +544,22 @@ void SVGElement::attributeChanged(const QualifiedName& name, const AtomicString&
         svgAttributeChanged(name);
 }
 
+bool SVGElement::hasPendingResources() const
+{
+    return hasSVGRareData() && svgRareData()->hasPendingResources();
+}
+
+void SVGElement::setHasPendingResources()
+{
+    ensureSVGRareData()->setHasPendingResources(true);
+}
+
+void SVGElement::clearHasPendingResourcesIfPossible()
+{
+    if (!document()->accessSVGExtensions()->isElementPendingResources(this))
+        ensureSVGRareData()->setHasPendingResources(false);
+}
+
 void SVGElement::updateAnimatedSVGAttribute(const QualifiedName& name) const
 {
     if (!attributeData() || !attributeData()->m_animatedSVGAttributesAreDirty)

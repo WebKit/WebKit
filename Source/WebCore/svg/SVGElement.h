@@ -70,6 +70,11 @@ public:
 
     virtual void svgAttributeChanged(const QualifiedName&) { }
 
+    bool hasPendingResources() const;
+    void setHasPendingResources();
+    void clearHasPendingResourcesIfPossible();
+    virtual void buildPendingResource() { }
+
     virtual void animatedPropertyTypeForAttribute(const QualifiedName&, Vector<AnimatedPropertyType>&);
 
     void sendSVGLoadEventIfPossible(bool sendParentLoadEvents = false);

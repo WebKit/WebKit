@@ -21,9 +21,7 @@
 #include "SVGResourcesCache.h"
 
 #if ENABLE(SVG)
-#include "Element.h"
 #include "HTMLNames.h"
-#include "Node.h"
 #include "RenderSVGResourceContainer.h"
 #include "SVGDocumentExtensions.h"
 #include "SVGResources.h"
@@ -60,7 +58,6 @@ void SVGResourcesCache::addResourcesFromRenderObject(RenderObject* object, const
     // Put object in cache.
     m_cache.set(object, resources);
 
-    ASSERT(object->node());
     // Run cycle-detection _afterwards_, so self-references can be caught as well.
     SVGResourcesCycleSolver solver(object, resources);
     solver.resolveCycles();
@@ -146,10 +143,6 @@ void SVGResourcesCache::clientStyleChanged(RenderObject* renderer, StyleDifferen
     cache->addResourcesFromRenderObject(renderer, newStyle);
 
     RenderSVGResource::markForLayoutAndParentResourceInvalidation(renderer, false);
-
-    ASSERT(renderer->node());
-    if (!renderer->node()->isSVGElement())
-        renderer->node()->setNeedsStyleRecalc(SyntheticStyleChange);
 }
 
 static inline bool rendererCanHaveResources(RenderObject* renderer)
@@ -209,7 +202,7 @@ void SVGResourcesCache::resourceDestroyed(RenderSVGResourceContainer* resource)
 
         // Mark users of destroyed resources as pending resolution based on the id of the old resource.
         Element* resourceElement = toElement(resource->node());
-        Element* clientElement = toElement(it->key->node());
+        SVGStyledElement* clientElement = toSVGStyledElement(it->key->node());
         SVGDocumentExtensions* extensions = clientElement->document()->accessSVGExtensions();
 
         extensions->addPendingResource(resourceElement->fastGetAttribute(HTMLNames::idAttr), clientElement);

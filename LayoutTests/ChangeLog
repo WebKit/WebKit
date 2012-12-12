@@ -1,5 +1,31 @@
 2012-12-12  Stephen White  <senorblanco@chromium.org>
 
+        Unreviewed, rolling out r136975.
+        http://trac.webkit.org/changeset/136975
+        https://bugs.webkit.org/show_bug.cgi?id=90405
+
+        Correctness issues.
+
+        * css3/filters/effect-reference-after-expected.txt: Removed.
+        * css3/filters/effect-reference-after.html: Removed.
+        * css3/filters/effect-reference-delete-crash-expected.txt: Removed.
+        * css3/filters/effect-reference-delete-crash.html: Removed.
+        * css3/filters/effect-reference-delete-expected.txt: Removed.
+        * css3/filters/effect-reference-delete.html: Removed.
+        * css3/filters/effect-reference-rename-expected.txt: Removed.
+        * css3/filters/effect-reference-rename.html: Removed.
+        * css3/filters/effect-reference-reset-style-delete-crash-expected.txt: Removed.
+        * css3/filters/effect-reference-reset-style-delete-crash.html: Removed.
+        * css3/filters/script-tests/effect-reference-delete-crash.js: Removed.
+        * css3/filters/script-tests/effect-reference-reset-style-delete-crash.js: Removed.
+        * platform/chromium-linux/css3/filters/effect-reference-after-expected.png: Removed.
+        * platform/chromium-linux/css3/filters/effect-reference-delete-expected.png: Removed.
+        * platform/chromium-linux/css3/filters/effect-reference-rename-expected.png: Removed.
+        * svg/filters/filter-cycle-expected.html: Removed.
+        * svg/filters/filter-cycle.html: Removed.
+
+2012-12-12  Stephen White  <senorblanco@chromium.org>
+
         Unreviewed, rolling out r137000.
         http://trac.webkit.org/changeset/137000
 

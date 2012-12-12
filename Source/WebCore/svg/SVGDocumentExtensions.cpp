@@ -27,7 +27,6 @@
 #include "Console.h"
 #include "DOMWindow.h"
 #include "Document.h"
-#include "Element.h"
 #include "EventListener.h"
 #include "Frame.h"
 #include "FrameLoader.h"
@@ -149,7 +148,7 @@ void SVGDocumentExtensions::reportError(const String& message)
     reportMessage(m_document, ErrorMessageLevel, "Error: " + message);
 }
 
-void SVGDocumentExtensions::addPendingResource(const AtomicString& id, Element* element)
+void SVGDocumentExtensions::addPendingResource(const AtomicString& id, SVGElement* element)
 {
     ASSERT(element);
 
@@ -176,7 +175,7 @@ bool SVGDocumentExtensions::hasPendingResource(const AtomicString& id) const
     return m_pendingResources.contains(id);
 }
 
-bool SVGDocumentExtensions::isElementPendingResources(Element* element) const
+bool SVGDocumentExtensions::isElementPendingResources(SVGElement* element) const
 {
     // This algorithm takes time proportional to the number of pending resources and need not.
     // If performance becomes an issue we can keep a counted set of elements and answer the question efficiently.
@@ -194,7 +193,7 @@ bool SVGDocumentExtensions::isElementPendingResources(Element* element) const
     return false;
 }
 
-bool SVGDocumentExtensions::isElementPendingResource(Element* element, const AtomicString& id) const
+bool SVGDocumentExtensions::isElementPendingResource(SVGElement* element, const AtomicString& id) const
 {
     ASSERT(element);
 
@@ -204,13 +203,7 @@ bool SVGDocumentExtensions::isElementPendingResource(Element* element, const Ato
     return m_pendingResources.get(id)->contains(element);
 }
 
-void SVGDocumentExtensions::clearHasPendingResourcesIfPossible(Element* element)
-{
-    if (!isElementPendingResources(element))
-        element->clearHasPendingResources();
-}
-
-void SVGDocumentExtensions::removeElementFromPendingResources(Element* element)
+void SVGDocumentExtensions::removeElementFromPendingResources(SVGElement* element)
 {
     ASSERT(element);
 
@@ -228,7 +221,7 @@ void SVGDocumentExtensions::removeElementFromPendingResources(Element* element)
                 toBeRemoved.append(it->key);
         }
 
-        clearHasPendingResourcesIfPossible(element);
+        element->clearHasPendingResourcesIfPossible();
 
         // We use the removePendingResource function here because it deals with set lifetime correctly.
         Vector<AtomicString>::iterator vectorEnd = toBeRemoved.end();
@@ -281,7 +274,7 @@ void SVGDocumentExtensions::markPendingResourcesForRemoval(const AtomicString& i
         m_pendingResourcesForRemoval.add(id, existing);
 }
 
-Element* SVGDocumentExtensions::removeElementFromPendingResourcesForRemoval(const AtomicString& id)
+SVGElement* SVGDocumentExtensions::removeElementFromPendingResourcesForRemoval(const AtomicString& id)
 {
     if (id.isEmpty())
         return 0;
@@ -291,7 +284,7 @@ Element* SVGDocumentExtensions::removeElementFromPendingResourcesForRemoval(cons
         return 0;
 
     SVGPendingElements::iterator firstElement = resourceSet->begin();
-    Element* element = *firstElement;
+    SVGElement* element = *firstElement;
 
     resourceSet->remove(firstElement);
 
