@@ -18,8 +18,12 @@ PASS getComputedStyle(gridWithPercentAndViewportPercent, '').getPropertyValue('-
 PASS getComputedStyle(gridWithPercentAndViewportPercent, '').getPropertyValue('-webkit-grid-rows') is '35% 168px'
 PASS getComputedStyle(gridWithFitContentAndFitAvailable, '').getPropertyValue('-webkit-grid-columns') is 'none'
 PASS getComputedStyle(gridWithFitContentAndFitAvailable, '').getPropertyValue('-webkit-grid-rows') is 'none'
+PASS getComputedStyle(gridWithMinMaxContent, '').getPropertyValue('-webkit-grid-columns') is '-webkit-min-content -webkit-max-content'
+PASS getComputedStyle(gridWithMinMaxContent, '').getPropertyValue('-webkit-grid-rows') is '-webkit-max-content -webkit-min-content'
 PASS getComputedStyle(gridWithMinMaxAndFixed, '').getPropertyValue('-webkit-grid-columns') is 'minmax(45px, 30%) 15px'
 PASS getComputedStyle(gridWithMinMaxAndFixed, '').getPropertyValue('-webkit-grid-rows') is '120px minmax(35%, 10px)'
+PASS getComputedStyle(gridWithMinMaxAndMinMaxContent, '').getPropertyValue('-webkit-grid-columns') is 'minmax(-webkit-min-content, 30%) 15px'
+PASS getComputedStyle(gridWithMinMaxAndMinMaxContent, '').getPropertyValue('-webkit-grid-rows') is '120px minmax(35%, -webkit-max-content)'
 
 Test the initial value
 PASS getComputedStyle(element, '').getPropertyValue('-webkit-grid-columns') is 'none'

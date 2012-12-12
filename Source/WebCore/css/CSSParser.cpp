@@ -4590,6 +4590,9 @@ bool CSSParser::parseGridTrackMinMax(CSSValueList* values)
 
 PassRefPtr<CSSPrimitiveValue> CSSParser::parseGridBreadth(CSSParserValue* currentValue)
 {
+    if (currentValue->id == CSSValueWebkitMinContent || currentValue->id == CSSValueWebkitMaxContent)
+        return cssValuePool().createIdentifierValue(currentValue->id);
+
     if (!validUnit(currentValue, FLength | FPercent))
         return 0;
 

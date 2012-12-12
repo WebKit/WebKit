@@ -46,6 +46,14 @@ if (window.testRunner)
     -webkit-grid-columns: minmax(10%, 15px);
     -webkit-grid-rows: minmax(20px, 50%);
 }
+.gridWithMinContent {
+    -webkit-grid-columns: -webkit-min-content;
+    -webkit-grid-rows: -webkit-min-content;
+}
+.gridWithMaxContent {
+    -webkit-grid-columns: -webkit-max-content;
+    -webkit-grid-rows: -webkit-max-content;
+}
 </style>
 <script src="../js/resources/js-test-pre.js"></script>
 </head>
@@ -59,6 +67,8 @@ if (window.testRunner)
 <div class="grid gridWithFitContent" id="gridWithFitContentElement"></div>
 <div class="grid gridWithFitAvailable" id="gridWithFitAvailableElement"></div>
 <div class="grid gridWithMinMax" id="gridWithMinMax"></div>
+<div class="grid gridWithMinContent" id="gridWithMinContent"></div>
+<div class="grid gridWithMaxContent" id="gridWithMaxContent"></div>
 <script src="resources/grid-columns-rows-get-set.js"></script>
 <script src="../js/resources/js-test-post.js"></script>
 </body>

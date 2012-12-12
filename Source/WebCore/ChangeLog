@@ -1,3 +1,23 @@
+2012-12-12  Julien Chaffraix  <jchaffraix@webkit.org>
+
+        [CSS Grid Layout] Implement CSS parsing and handling for min-content and max-content
+        https://bugs.webkit.org/show_bug.cgi?id=104747
+
+        Reviewed by Alexis Menard.
+
+        This change adds -webkit-min-content and -webkit-max-content to our <track-breadth> parsing.
+        The rendering is not plugged in and will probably depend on bug 103311.
+
+        Tests: fast/css-grid-layout/grid-columns-rows-get-set-multiple.html:
+               fast/css-grid-layout/grid-columns-rows-get-set.html:
+
+        * css/CSSParser.cpp:
+        (WebCore::CSSParser::parseGridBreadth):
+        * css/StyleResolver.cpp:
+        (WebCore::createGridTrackBreadth):
+        Straight-forward extension of the new code. We were already serializing back properly
+        so no need to touch CSSComputedStyleDeclaration.
+
 2012-12-12  Ryosuke Niwa  <rniwa@webkit.org>
 
         Copying text with ruby inserts new lines around rt elements

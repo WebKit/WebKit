@@ -29,9 +29,17 @@ var gridWithFitContentAndFitAvailable = document.getElementById("gridWithFitCont
 shouldBe("getComputedStyle(gridWithFitContentAndFitAvailable, '').getPropertyValue('-webkit-grid-columns')", "'none'");
 shouldBe("getComputedStyle(gridWithFitContentAndFitAvailable, '').getPropertyValue('-webkit-grid-rows')", "'none'");
 
+var gridWithMinMaxContent = document.getElementById("gridWithMinMaxContent");
+shouldBe("getComputedStyle(gridWithMinMaxContent, '').getPropertyValue('-webkit-grid-columns')", "'-webkit-min-content -webkit-max-content'");
+shouldBe("getComputedStyle(gridWithMinMaxContent, '').getPropertyValue('-webkit-grid-rows')", "'-webkit-max-content -webkit-min-content'");
+
 var gridWithMinMaxAndFixed = document.getElementById("gridWithMinMaxAndFixed");
 shouldBe("getComputedStyle(gridWithMinMaxAndFixed, '').getPropertyValue('-webkit-grid-columns')", "'minmax(45px, 30%) 15px'");
 shouldBe("getComputedStyle(gridWithMinMaxAndFixed, '').getPropertyValue('-webkit-grid-rows')", "'120px minmax(35%, 10px)'");
+
+var gridWithMinMaxAndMinMaxContent = document.getElementById("gridWithMinMaxAndMinMaxContent");
+shouldBe("getComputedStyle(gridWithMinMaxAndMinMaxContent, '').getPropertyValue('-webkit-grid-columns')", "'minmax(-webkit-min-content, 30%) 15px'");
+shouldBe("getComputedStyle(gridWithMinMaxAndMinMaxContent, '').getPropertyValue('-webkit-grid-rows')", "'120px minmax(35%, -webkit-max-content)'");
 
 debug("");
 debug("Test the initial value");

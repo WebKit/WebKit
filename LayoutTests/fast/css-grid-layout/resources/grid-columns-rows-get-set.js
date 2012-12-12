@@ -29,6 +29,14 @@ var gridWithMinMax = document.getElementById("gridWithMinMax");
 shouldBe("getComputedStyle(gridWithMinMax, '').getPropertyValue('-webkit-grid-columns')", "'minmax(10%, 15px)'");
 shouldBe("getComputedStyle(gridWithMinMax, '').getPropertyValue('-webkit-grid-rows')", "'minmax(20px, 50%)'");
 
+var gridWithMinContent = document.getElementById("gridWithMinContent");
+shouldBe("getComputedStyle(gridWithMinContent, '').getPropertyValue('-webkit-grid-columns')", "'-webkit-min-content'");
+shouldBe("getComputedStyle(gridWithMinContent, '').getPropertyValue('-webkit-grid-rows')", "'-webkit-min-content'");
+
+var gridWithMaxContent = document.getElementById("gridWithMaxContent");
+shouldBe("getComputedStyle(gridWithMaxContent, '').getPropertyValue('-webkit-grid-columns')", "'-webkit-max-content'");
+shouldBe("getComputedStyle(gridWithMaxContent, '').getPropertyValue('-webkit-grid-rows')", "'-webkit-max-content'");
+
 debug("");
 debug("Test getting wrong values for -webkit-grid-columns and -webkit-grid-rows through CSS (they should resolve to the default: 'none')");
 var gridWithFitContentElement = document.getElementById("gridWithFitContentElement");
@@ -76,6 +84,22 @@ shouldBe("getComputedStyle(element, '').getPropertyValue('-webkit-grid-rows')", 
 
 element = document.createElement("div");
 document.body.appendChild(element);
+element.style.webkitGridColumns = "-webkit-min-content";
+element.style.webkitGridRows = "-webkit-min-content";
+shouldBe("getComputedStyle(element, '').getPropertyValue('-webkit-grid-columns')", "'-webkit-min-content'");
+shouldBe("getComputedStyle(element, '').getPropertyValue('-webkit-grid-rows')", "'-webkit-min-content'");
+
+element = document.createElement("div");
+document.body.appendChild(element);
+element.style.webkitGridColumns = "-webkit-max-content";
+element.style.webkitGridRows = "-webkit-max-content";
+shouldBe("getComputedStyle(element, '').getPropertyValue('-webkit-grid-columns')", "'-webkit-max-content'");
+shouldBe("getComputedStyle(element, '').getPropertyValue('-webkit-grid-rows')", "'-webkit-max-content'");
+
+debug("");
+debug("Test getting and setting -webkit-grid-columns and -webkit-grid-rows to minmax() values through JS");
+element = document.createElement("div");
+document.body.appendChild(element);
 element.style.webkitGridColumns = "minmax(55%, 45px)";
 element.style.webkitGridRows = "minmax(30px, 40%)";
 shouldBe("getComputedStyle(element, '').getPropertyValue('-webkit-grid-columns')", "'minmax(55%, 45px)'");
@@ -88,6 +112,36 @@ element.style.webkitGridColumns = "minmax(22em, 8vh)";
 element.style.webkitGridRows = "minmax(10vw, 5em)";
 shouldBe("getComputedStyle(element, '').getPropertyValue('-webkit-grid-columns')", "'minmax(220px, 48px)'");
 shouldBe("getComputedStyle(element, '').getPropertyValue('-webkit-grid-rows')", "'minmax(80px, 50px)'");
+
+element = document.createElement("div");
+document.body.appendChild(element);
+element.style.webkitGridColumns = "minmax(-webkit-min-content, 8vh)";
+element.style.webkitGridRows = "minmax(10vw, -webkit-min-content)";
+shouldBe("getComputedStyle(element, '').getPropertyValue('-webkit-grid-columns')", "'minmax(-webkit-min-content, 48px)'");
+shouldBe("getComputedStyle(element, '').getPropertyValue('-webkit-grid-rows')", "'minmax(80px, -webkit-min-content)'");
+
+element = document.createElement("div");
+document.body.appendChild(element);
+element.style.font = "10px Ahem";
+element.style.webkitGridColumns = "minmax(22em, -webkit-max-content)";
+element.style.webkitGridRows = "minmax(-webkit-max-content, 5em)";
+shouldBe("getComputedStyle(element, '').getPropertyValue('-webkit-grid-columns')", "'minmax(220px, -webkit-max-content)'");
+shouldBe("getComputedStyle(element, '').getPropertyValue('-webkit-grid-rows')", "'minmax(-webkit-max-content, 50px)'");
+
+element = document.createElement("div");
+document.body.appendChild(element);
+element.style.font = "10px Ahem";
+element.style.webkitGridColumns = "minmax(22em, -webkit-max-content)";
+element.style.webkitGridRows = "minmax(-webkit-max-content, 5em)";
+shouldBe("getComputedStyle(element, '').getPropertyValue('-webkit-grid-columns')", "'minmax(220px, -webkit-max-content)'");
+shouldBe("getComputedStyle(element, '').getPropertyValue('-webkit-grid-rows')", "'minmax(-webkit-max-content, 50px)'");
+
+element = document.createElement("div");
+document.body.appendChild(element);
+element.style.webkitGridColumns = "minmax(-webkit-min-content, -webkit-max-content)";
+element.style.webkitGridRows = "minmax(-webkit-max-content, -webkit-min-content)";
+shouldBe("getComputedStyle(element, '').getPropertyValue('-webkit-grid-columns')", "'minmax(-webkit-min-content, -webkit-max-content)'");
+shouldBe("getComputedStyle(element, '').getPropertyValue('-webkit-grid-rows')", "'minmax(-webkit-max-content, -webkit-min-content)'");
 
 debug("");
 debug("Test setting grid-columns and grid-rows to bad minmax value through JS");

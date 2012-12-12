@@ -1,3 +1,19 @@
+2012-12-12  Julien Chaffraix  <jchaffraix@webkit.org>
+
+        [CSS Grid Layout] Implement CSS parsing and handling for min-content and max-content
+        https://bugs.webkit.org/show_bug.cgi?id=104747
+
+        Reviewed by Alexis Menard.
+
+        Extended the 2 tests to cover -webkit-min-content and -webkit-max-content.
+
+        * fast/css-grid-layout/grid-columns-rows-get-set-expected.txt:
+        * fast/css-grid-layout/grid-columns-rows-get-set-multiple-expected.txt:
+        * fast/css-grid-layout/grid-columns-rows-get-set-multiple.html:
+        * fast/css-grid-layout/grid-columns-rows-get-set.html:
+        * fast/css-grid-layout/resources/grid-columns-rows-get-set-multiple.js:
+        * fast/css-grid-layout/resources/grid-columns-rows-get-set.js:
+
 2012-12-12  Ryosuke Niwa  <rniwa@webkit.org>
 
         Copying text with ruby inserts new lines around rt elements

@@ -18,6 +18,10 @@ PASS getComputedStyle(gridWithViewPortPercentageElement, '').getPropertyValue('-
 PASS getComputedStyle(gridWithViewPortPercentageElement, '').getPropertyValue('-webkit-grid-rows') is '60px'
 PASS getComputedStyle(gridWithMinMax, '').getPropertyValue('-webkit-grid-columns') is 'minmax(10%, 15px)'
 PASS getComputedStyle(gridWithMinMax, '').getPropertyValue('-webkit-grid-rows') is 'minmax(20px, 50%)'
+PASS getComputedStyle(gridWithMinContent, '').getPropertyValue('-webkit-grid-columns') is '-webkit-min-content'
+PASS getComputedStyle(gridWithMinContent, '').getPropertyValue('-webkit-grid-rows') is '-webkit-min-content'
+PASS getComputedStyle(gridWithMaxContent, '').getPropertyValue('-webkit-grid-columns') is '-webkit-max-content'
+PASS getComputedStyle(gridWithMaxContent, '').getPropertyValue('-webkit-grid-rows') is '-webkit-max-content'
 
 Test getting wrong values for -webkit-grid-columns and -webkit-grid-rows through CSS (they should resolve to the default: 'none')
 PASS getComputedStyle(gridWithFitContentElement, '').getPropertyValue('-webkit-grid-columns') is 'none'
@@ -38,10 +42,24 @@ PASS getComputedStyle(element, '').getPropertyValue('-webkit-grid-columns') is '
 PASS getComputedStyle(element, '').getPropertyValue('-webkit-grid-rows') is 'auto'
 PASS getComputedStyle(element, '').getPropertyValue('-webkit-grid-columns') is '80px'
 PASS getComputedStyle(element, '').getPropertyValue('-webkit-grid-rows') is '150px'
+PASS getComputedStyle(element, '').getPropertyValue('-webkit-grid-columns') is '-webkit-min-content'
+PASS getComputedStyle(element, '').getPropertyValue('-webkit-grid-rows') is '-webkit-min-content'
+PASS getComputedStyle(element, '').getPropertyValue('-webkit-grid-columns') is '-webkit-max-content'
+PASS getComputedStyle(element, '').getPropertyValue('-webkit-grid-rows') is '-webkit-max-content'
+
+Test getting and setting -webkit-grid-columns and -webkit-grid-rows to minmax() values through JS
 PASS getComputedStyle(element, '').getPropertyValue('-webkit-grid-columns') is 'minmax(55%, 45px)'
 PASS getComputedStyle(element, '').getPropertyValue('-webkit-grid-rows') is 'minmax(30px, 40%)'
 PASS getComputedStyle(element, '').getPropertyValue('-webkit-grid-columns') is 'minmax(220px, 48px)'
 PASS getComputedStyle(element, '').getPropertyValue('-webkit-grid-rows') is 'minmax(80px, 50px)'
+PASS getComputedStyle(element, '').getPropertyValue('-webkit-grid-columns') is 'minmax(-webkit-min-content, 48px)'
+PASS getComputedStyle(element, '').getPropertyValue('-webkit-grid-rows') is 'minmax(80px, -webkit-min-content)'
+PASS getComputedStyle(element, '').getPropertyValue('-webkit-grid-columns') is 'minmax(220px, -webkit-max-content)'
+PASS getComputedStyle(element, '').getPropertyValue('-webkit-grid-rows') is 'minmax(-webkit-max-content, 50px)'
+PASS getComputedStyle(element, '').getPropertyValue('-webkit-grid-columns') is 'minmax(220px, -webkit-max-content)'
+PASS getComputedStyle(element, '').getPropertyValue('-webkit-grid-rows') is 'minmax(-webkit-max-content, 50px)'
+PASS getComputedStyle(element, '').getPropertyValue('-webkit-grid-columns') is 'minmax(-webkit-min-content, -webkit-max-content)'
+PASS getComputedStyle(element, '').getPropertyValue('-webkit-grid-rows') is 'minmax(-webkit-max-content, -webkit-min-content)'
 
 Test setting grid-columns and grid-rows to bad minmax value through JS
 PASS getComputedStyle(element, '').getPropertyValue('-webkit-grid-columns') is 'none'
