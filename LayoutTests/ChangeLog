@@ -1,3 +1,70 @@
+2012-12-11  Chris Rogers  <crogers@google.com>
+
+        Implement OfflineAudioContext constructor
+        https://bugs.webkit.org/show_bug.cgi?id=104188
+
+        Reviewed by Kentaro Hara.
+
+        Switch Web Audio layout tests to use OfflineAudioContext constructor.
+
+        * inspector-protocol/nmi-webaudio.html:
+        * inspector-protocol/resources/audio-context.html:
+        * webaudio/audiobuffersource-loop-comprehensive.html:
+        * webaudio/audiobuffersource-loop-points.html:
+        * webaudio/audiobuffersource-multi-channels.html:
+        * webaudio/audiobuffersource-playbackState.html:
+        * webaudio/audiobuffersource-playbackrate.html:
+        * webaudio/audiobuffersource-start.html:
+        * webaudio/audiobuffersource.html:
+        * webaudio/audiochannelmerger-stereo.html:
+        * webaudio/audiochannelsplitter.html:
+        * webaudio/audionode-connect-order.html:
+        * webaudio/audionode-expected.txt:
+        * webaudio/audioparam-connect-audioratesignal.html:
+        * webaudio/audioparam-summingjunction.html:
+        * webaudio/automatic-pull-node.html:
+        * webaudio/biquad-allpass.html:
+        * webaudio/biquad-bandpass.html:
+        * webaudio/biquad-highpass.html:
+        * webaudio/biquad-highshelf.html:
+        * webaudio/biquad-lowpass.html:
+        * webaudio/biquad-lowshelf.html:
+        * webaudio/biquad-notch.html:
+        * webaudio/biquad-peaking.html:
+        * webaudio/convolution-mono-mono.html:
+        * webaudio/delaynode-max-default-delay.html:
+        * webaudio/delaynode-max-nondefault-delay.html:
+        * webaudio/delaynode-maxdelay.html:
+        * webaudio/delaynode-maxdelaylimit.html:
+        * webaudio/delaynode-scheduling.html:
+        * webaudio/delaynode.html:
+        * webaudio/distance-exponential.html:
+        * webaudio/distance-inverse.html:
+        * webaudio/distance-linear.html:
+        * webaudio/gain.html:
+        * webaudio/javascriptaudionode-zero-input-channels.html:
+        * webaudio/javascriptaudionode.html:
+        * webaudio/mediaelementaudiosourcenode-gc.html:
+        * webaudio/mixing.html:
+        * webaudio/note-grain-on-play.html:
+        * webaudio/note-grain-on-timing.html:
+        * webaudio/oscillator-basic.html:
+        * webaudio/panner-equalpower-stereo.html:
+        * webaudio/panner-equalpower.html:
+        * webaudio/realtimeanalyser-fft-sizing.html:
+        * webaudio/resources/audio-codec-test.js:
+        (runDecodingTest):
+        * webaudio/resources/audioparam-testing.js:
+        (createAudioGraphAndTest):
+        * webaudio/resources/javascriptaudionode-testing.js:
+        (runJSNodeTest):
+        * webaudio/sample-accurate-scheduling.html:
+        * webaudio/stereo2mono-down-mixing.html:
+        * webaudio/up-mixing-mono-51.html:
+        * webaudio/up-mixing-mono-stereo.html:
+        * webaudio/up-mixing-stereo-51.html:
+        * webaudio/waveshaper.html:
+
 2012-12-11  Tim Horton  <timothy_horton@apple.com>
 
         -webkit-svg-shadow radius changes don't cause children's boundaries to be recomputed

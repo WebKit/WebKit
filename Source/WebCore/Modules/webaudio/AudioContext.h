@@ -250,9 +250,13 @@ public:
 
     virtual void reportMemoryUsage(MemoryObjectInfo*) const OVERRIDE;
 
-private:
+protected:
     explicit AudioContext(Document*);
     AudioContext(Document*, unsigned numberOfChannels, size_t numberOfFrames, float sampleRate);
+    
+    static bool isSampleRateRangeGood(float sampleRate);
+    
+private:
     void constructCommon();
 
     void lazyInitialize();
