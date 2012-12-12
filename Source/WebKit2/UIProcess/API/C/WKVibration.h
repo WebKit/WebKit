@@ -33,7 +33,7 @@ extern "C" {
 #endif
 
 // Provider.
-typedef void (*WKVibrationProviderVibrateCallback)(WKVibrationRef vibrationRef, uint64_t vibrationTime, const void* clientInfo);
+typedef void (*WKVibrationProviderVibrateCallback)(WKVibrationRef vibrationRef, uint32_t vibrationTime, const void* clientInfo);
 typedef void (*WKVibrationProviderCancelVibrationCallback)(WKVibrationRef vibrationRef, const void* clientInfo);
 
 struct WKVibrationProvider {

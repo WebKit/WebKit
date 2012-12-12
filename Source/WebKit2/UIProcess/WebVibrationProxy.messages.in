@@ -23,7 +23,7 @@
 #if ENABLE(VIBRATION)
 
 messages -> WebVibrationProxy {
-    Vibrate(uint64_t vibrationTime);
+    Vibrate(uint32_t vibrationTime);
     CancelVibration();
 }
 

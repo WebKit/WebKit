@@ -38,7 +38,7 @@ class WebVibrationProxy;
 
 class WebVibrationProvider : public APIClient<WKVibrationProvider, kWKVibrationProviderCurrentVersion> {
 public:
-    void vibrate(WebVibrationProxy*, uint64_t vibrationTime);
+    void vibrate(WebVibrationProxy*, uint32_t vibrationTime);
     void cancelVibration(WebVibrationProxy*);
 };
 

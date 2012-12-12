@@ -32,9 +32,9 @@ class Uint32Array;
 
 class NavigatorVibration {
 public:
-    typedef Vector<unsigned long> VibrationPattern;
+    typedef Vector<unsigned> VibrationPattern;
 
-    static void vibrate(Navigator*, unsigned long time, ExceptionCode&);
+    static void vibrate(Navigator*, unsigned time, ExceptionCode&);
     static void vibrate(Navigator*, const VibrationPattern&, ExceptionCode&);
 
 private:

@@ -32,7 +32,7 @@ public:
     explicit VibrationClientEfl(Evas_Object* view);
     virtual ~VibrationClientEfl() { }
 
-    virtual void vibrate(const unsigned long& time);
+    virtual void vibrate(const unsigned& time);
     virtual void cancelVibration();
 
     virtual void vibrationDestroyed();

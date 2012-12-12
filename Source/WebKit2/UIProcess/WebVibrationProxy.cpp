@@ -67,7 +67,7 @@ void WebVibrationProxy::didReceiveMessage(CoreIPC::Connection* connection, CoreI
     didReceiveWebVibrationProxyMessage(connection, messageID, decoder);
 }
 
-void WebVibrationProxy::vibrate(uint64_t vibrationTime)
+void WebVibrationProxy::vibrate(uint32_t vibrationTime)
 {
     m_provider.vibrate(this, vibrationTime);
 }

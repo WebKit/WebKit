@@ -29,7 +29,7 @@ VibrationClientBlackBerry::VibrationClientBlackBerry()
 {
 }
 
-void VibrationClientBlackBerry::vibrate(const unsigned long& time)
+void VibrationClientBlackBerry::vibrate(const unsigned& time)
 {
     BlackBerryPlatformVibrate::vibrate(time, 1.);
 }

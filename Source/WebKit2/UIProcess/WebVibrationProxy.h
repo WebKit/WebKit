@@ -59,7 +59,7 @@ private:
     // CoreIPC::MessageReceiver
     virtual void didReceiveMessage(CoreIPC::Connection*, CoreIPC::MessageID, CoreIPC::MessageDecoder&) OVERRIDE;
 
-    void vibrate(uint64_t vibrationTime);
+    void vibrate(uint32_t vibrationTime);
     void cancelVibration();
 
     WebPageProxy* m_page;

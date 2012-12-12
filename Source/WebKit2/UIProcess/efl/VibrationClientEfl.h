@@ -44,7 +44,7 @@ public:
 private:
     explicit VibrationClientEfl(EwkViewImpl*);
 
-    static void vibrateCallback(WKVibrationRef, uint64_t vibrationTime, const void* clientInfo);
+    static void vibrateCallback(WKVibrationRef, uint32_t vibrationTime, const void* clientInfo);
     static void cancelVibrationCallback(WKVibrationRef, const void* clientInfo);
 
     EwkViewImpl* m_viewImpl;

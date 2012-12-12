@@ -44,7 +44,7 @@ PassOwnPtr<Vibration> Vibration::create(VibrationClient* client)
     return adoptPtr(new Vibration(client));
 }
 
-void Vibration::vibrate(const unsigned long& time)
+void Vibration::vibrate(const unsigned& time)
 {
     if (!time) {
         cancelVibration();

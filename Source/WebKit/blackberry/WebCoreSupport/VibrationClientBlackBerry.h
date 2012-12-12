@@ -28,7 +28,7 @@ public:
     VibrationClientBlackBerry();
     ~VibrationClientBlackBerry() { }
 
-    void vibrate(const unsigned long& time);
+    void vibrate(const unsigned& time);
     void cancelVibration();
     void vibrationDestroyed();
 };

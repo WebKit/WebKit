@@ -3079,12 +3079,6 @@ sub GetNativeVectorInnerType
 {
     my $arrayOrSequenceType = shift;
 
-    # FIXME: The nativeType hash translates "unsigned long" to "unsigned" which
-    # is according to WebIDL. The Vibration API depends on the old behavior
-    # where "unsigned long" is kept as the WebCore type.
-    # Remove workaround when http://webkit.org/b/103899 is fixed.
-    return "unsigned long" if $arrayOrSequenceType eq "unsigned long";
-
     return "String" if $arrayOrSequenceType eq "DOMString";
     return $nativeType{$arrayOrSequenceType} if exists $nativeType{$arrayOrSequenceType};
     return "RefPtr<${arrayOrSequenceType}> ";

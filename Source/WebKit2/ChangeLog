@@ -1,3 +1,34 @@
+2012-12-11  Kihong Kwon  <kihong.kwon@samsung.com>
+
+        Vibration API: IDL type doesn't match implementation type
+        https://bugs.webkit.org/show_bug.cgi?id=103899
+
+        Reviewed by Kentaro Hara.
+
+        According to WebIDL, "unsigned long" corresponds to "unsigned" in the platform.
+        Therefore unsigned long need to be changed to unsigned for the Vibration API.
+        - Change a parameter type of vibrate function from uint64_t to uint_32_t.
+
+        * UIProcess/API/C/WKVibration.h:
+        * UIProcess/API/efl/EwkViewCallbacks.h:
+        * UIProcess/WebVibrationProvider.cpp:
+        (WebKit::WebVibrationProvider::vibrate):
+        * UIProcess/WebVibrationProvider.h:
+        (WebVibrationProvider):
+        * UIProcess/WebVibrationProxy.cpp:
+        (WebKit::WebVibrationProxy::vibrate):
+        * UIProcess/WebVibrationProxy.h:
+        (WebVibrationProxy):
+        * UIProcess/WebVibrationProxy.messages.in:
+        * UIProcess/efl/VibrationClientEfl.cpp:
+        (VibrationClientEfl::vibrateCallback):
+        * UIProcess/efl/VibrationClientEfl.h:
+        (VibrationClientEfl):
+        * WebProcess/WebCoreSupport/WebVibrationClient.cpp:
+        (WebKit::WebVibrationClient::vibrate):
+        * WebProcess/WebCoreSupport/WebVibrationClient.h:
+        (WebVibrationClient):
+
 2012-12-11  Alexey Proskuryakov  <ap@apple.com>
 
         <rdar://problem/12857870> [WK2 NetworkProcess] Cannot load HTTPS sites

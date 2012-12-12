@@ -32,14 +32,14 @@ class VibrationClient;
 
 class Vibration : public Supplement<Page> {
 public:
-    typedef Vector<unsigned long> VibrationPattern;
+    typedef Vector<unsigned> VibrationPattern;
 
     explicit Vibration(VibrationClient*);
     ~Vibration();
 
     static PassOwnPtr<Vibration> create(VibrationClient*);
 
-    void vibrate(const unsigned long& time);
+    void vibrate(const unsigned& time);
     void vibrate(const VibrationPattern&);
     void cancelVibration();
 

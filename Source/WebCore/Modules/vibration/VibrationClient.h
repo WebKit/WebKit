@@ -28,7 +28,7 @@ class VibrationClient {
 public:
     virtual ~VibrationClient() { }
 
-    virtual void vibrate(const unsigned long& time) = 0;
+    virtual void vibrate(const unsigned& time) = 0;
     virtual void cancelVibration() = 0;
 
     virtual void vibrationDestroyed() = 0;

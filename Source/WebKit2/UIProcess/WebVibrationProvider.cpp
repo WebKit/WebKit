@@ -33,7 +33,7 @@
 
 namespace WebKit {
 
-void WebVibrationProvider::vibrate(WebVibrationProxy* vibration, uint64_t vibrationTime)
+void WebVibrationProvider::vibrate(WebVibrationProxy* vibration, uint32_t vibrationTime)
 {
     if (!m_client.vibrate)
         return;

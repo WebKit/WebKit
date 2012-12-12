@@ -389,8 +389,8 @@ enum ParameterDefaultPolicy {
     };
 
     template<>
-    struct NativeValueTraits<unsigned long> {
-        static inline bool nativeValue(JSC::ExecState* exec, JSC::JSValue jsValue, unsigned long& indexedValue)
+    struct NativeValueTraits<unsigned> {
+        static inline bool nativeValue(JSC::ExecState* exec, JSC::JSValue jsValue, unsigned& indexedValue)
         {
             if (!jsValue.isNumber())
                 return false;

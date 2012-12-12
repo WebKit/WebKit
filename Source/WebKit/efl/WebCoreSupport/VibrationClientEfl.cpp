@@ -29,7 +29,7 @@ VibrationClientEfl::VibrationClientEfl(Evas_Object* view)
 {
 }
 
-void VibrationClientEfl::vibrate(const unsigned long& time)
+void VibrationClientEfl::vibrate(const unsigned& time)
 {
     evas_object_smart_callback_call(m_view, "vibration,vibrate", (void*)&time);
 }

@@ -40,7 +40,7 @@ static inline VibrationClientEfl* toVibrationClient(const void* clientInfo)
     return static_cast<VibrationClientEfl*>(const_cast<void*>(clientInfo));
 }
 
-void VibrationClientEfl::vibrateCallback(WKVibrationRef, uint64_t vibrationTime, const void* clientInfo)
+void VibrationClientEfl::vibrateCallback(WKVibrationRef, uint32_t vibrationTime, const void* clientInfo)
 {
     toVibrationClient(clientInfo)->m_viewImpl->smartCallback<Vibrate>().call(&vibrationTime);
 }

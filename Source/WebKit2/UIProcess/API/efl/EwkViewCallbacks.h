@@ -209,7 +209,7 @@ DECLARE_EWK_VIEW_CALLBACK(ToolbarVisible, "toolbar,visible", bool*);
 DECLARE_EWK_VIEW_CALLBACK(TooltipTextUnset, "tooltip,text,unset", void);
 DECLARE_EWK_VIEW_CALLBACK(TooltipTextSet, "tooltip,text,set", const char*);
 DECLARE_EWK_VIEW_CALLBACK(URLChanged, "url,changed", const char*);
-DECLARE_EWK_VIEW_CALLBACK(Vibrate, "vibrate", uint64_t*);
+DECLARE_EWK_VIEW_CALLBACK(Vibrate, "vibrate", uint32_t*);
 DECLARE_EWK_VIEW_CALLBACK(WebProcessCrashed, "webprocess,crashed", bool*);
 DECLARE_EWK_VIEW_CALLBACK(WindowResizable, "window,resizable", bool*);
 #if ENABLE(WEB_INTENTS)

@@ -39,7 +39,7 @@ NavigatorVibration::~NavigatorVibration()
 {
 }
 
-void NavigatorVibration::vibrate(Navigator* navigator, unsigned long time, ExceptionCode& ec)
+void NavigatorVibration::vibrate(Navigator* navigator, unsigned time, ExceptionCode& ec)
 {
     if (!navigator->frame()->page())
         return;
