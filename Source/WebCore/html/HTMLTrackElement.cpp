@@ -36,15 +36,15 @@
 #include "RuntimeEnabledFeatures.h"
 #include "ScriptCallStack.h"
 #include "ScriptEventListener.h"
-
 using namespace std;
+
 
 namespace WebCore {
 
 using namespace HTMLNames;
 
 #if !LOG_DISABLED
-static String urlForLogging(const KURL& url)
+static String urlForLoggingTrack(const KURL& url)
 {
     static const unsigned maximumURLLengthForLogging = 128;
     
@@ -231,7 +231,7 @@ bool HTMLTrackElement::canLoadUrl(const KURL& url)
     if (!document()->contentSecurityPolicy()->allowMediaFromSource(url)) {
         DEFINE_STATIC_LOCAL(String, consoleMessage, (ASCIILiteral("Text track load denied by Content Security Policy.")));
         document()->addConsoleMessage(JSMessageSource, ErrorMessageLevel, consoleMessage);
-        LOG(Media, "HTMLTrackElement::canLoadUrl(%s) -> rejected by Content Security Policy", urlForLogging(url).utf8().data());
+        LOG(Media, "HTMLTrackElement::canLoadUrl(%s) -> rejected by Content Security Policy", urlForLoggingTrack(url).utf8().data());
         return false;
     }
     
