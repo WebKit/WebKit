@@ -1,3 +1,31 @@
+2012-12-12  Dean Jackson  <dino@apple.com>
+
+        Use CAFilter rather than CIFilter
+        https://bugs.webkit.org/show_bug.cgi?id=104759
+
+        Reviewed by Tim Horton.
+
+        In order to get better performance in the simple CSS filter
+        cases, use CAFilter rather than CIFilter. This involved
+        defining some platform-specific values inside
+        PlatformCALayerMac to expose CAFilter.
+
+        The great side-effect is that this brings our hardware
+        output much closer to our software filters. For example,
+        on a random location in the hue-rotate test.
+
+        Software: rgb(255, 148, 16)
+        Hardware before: rgb(255, 204, 50)
+        Hardware after: rgb(255, 165, 33)
+
+        Still some improvement needed, but better.
+
+        Covered by existing tests.
+
+        * platform/graphics/ca/mac/PlatformCALayerMac.mm:
+        (CAColorMatrix): New structure to hold 5x4 matrix representing a color operation.
+        (PlatformCALayer::setFilters): Use CAFilter objects rather than CIFilter.
+
 2012-12-12  No'am Rosenthal  <noam@webkit.org>
 
         [Texmap] Consolidate redundant code for ARB_RECT texture

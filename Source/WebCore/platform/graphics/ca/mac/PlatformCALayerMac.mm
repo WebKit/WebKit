@@ -111,6 +111,34 @@ static double mediaTimeToCurrentTime(CFTimeInterval t)
 #endif
 @end
 
+@interface CAFilter : NSObject <NSCopying, NSMutableCopying, NSCoding>
+@end
+
+@interface CAFilter (Details)
+@property(copy) NSString *name;
++ (CAFilter *)filterWithType:(NSString *)type;
+@end
+
+extern NSString * const kCAFilterColorMatrix;
+extern NSString * const kCAFilterColorMonochrome;
+extern NSString * const kCAFilterColorHueRotate;
+extern NSString * const kCAFilterColorSaturate;
+extern NSString * const kCAFilterGaussianBlur;
+
+struct CAColorMatrix
+{
+    float m11, m12, m13, m14, m15;
+    float m21, m22, m23, m24, m25;
+    float m31, m32, m33, m34, m35;
+    float m41, m42, m43, m44, m45;
+};
+
+typedef struct CAColorMatrix CAColorMatrix;
+
+@interface NSValue (Details)
++ (NSValue *)valueWithCAColorMatrix:(CAColorMatrix)t;
+@end
+
 static NSString * const platformCALayerPointer = @"WKPlatformCALayer";
 
 bool PlatformCALayer::isValueFunctionSupported()
@@ -690,7 +718,7 @@ void PlatformCALayer::setFilters(const FilterOperations& filters)
         return;
     }
     
-    // Assume filtersCanBeComposited was called and it returned true
+    // Assume filtersCanBeComposited was called and it returned true.
     ASSERT(filtersCanBeComposited(filters));
     
     BEGIN_BLOCK_OBJC_EXCEPTIONS
@@ -699,11 +727,11 @@ void PlatformCALayer::setFilters(const FilterOperations& filters)
     
     for (unsigned i = 0; i < filters.size(); ++i) {
         String filterName = String::format("filter_%d", i);
-        
         const FilterOperation* filterOperation = filters.at(i);
-        switch(filterOperation->getOperationType()) {
+        switch (filterOperation->getOperationType()) {
         case FilterOperation::DROP_SHADOW: {
-            // FIXME: For now assume drop shadow is the last filter, put it on the layer
+            // FIXME: For now assume drop shadow is the last filter, put it on the layer.
+            // <rdar://problem/10959969> Handle case where drop-shadow is not the last filter.
             const DropShadowFilterOperation* op = static_cast<const DropShadowFilterOperation*>(filterOperation);
             [m_layer.get() setShadowOffset:CGSizeMake(op->x(), op->y())];
 
@@ -712,94 +740,92 @@ void PlatformCALayer::setFilters(const FilterOperations& filters)
             RetainPtr<CGColorSpaceRef> colorSpace(AdoptCF, CGColorSpaceCreateDeviceRGB());
             RetainPtr<CGColorRef> color(AdoptCF, CGColorCreate(colorSpace.get(), components));
             [m_layer.get() setShadowColor:color.get()];
-            
             [m_layer.get() setShadowRadius:op->stdDeviation()];
             [m_layer.get() setShadowOpacity:1];
             break;
         }
         case FilterOperation::GRAYSCALE: {
             const BasicColorMatrixFilterOperation* op = static_cast<const BasicColorMatrixFilterOperation*>(filterOperation);
-            CIFilter* caFilter = [CIFilter filterWithName:@"CIColorMonochrome"];
-            [caFilter setDefaults];
-            [caFilter setValue:[NSNumber numberWithFloat:op->amount()] forKey:@"inputIntensity"];
-            [caFilter setValue:[CIColor colorWithRed:1 green:1 blue:1] forKey:@"inputColor"];
+            CAFilter *caFilter = [CAFilter filterWithType:kCAFilterColorMonochrome];
+            [caFilter setValue:[NSNumber numberWithFloat:op->amount()] forKey:@"inputAmount"];
             [caFilter setName:filterName];
             [array.get() addObject:caFilter];
             break;
         }
         case FilterOperation::SEPIA: {
             const BasicColorMatrixFilterOperation* op = static_cast<const BasicColorMatrixFilterOperation*>(filterOperation);
-            CIFilter* caFilter = [CIFilter filterWithName:@"CIColorMatrix"];
-            [caFilter setDefaults];
+            CAFilter *caFilter = [CAFilter filterWithType:kCAFilterColorMatrix];
             
             double t = op->amount();
             t = min(max(0.0, t), 1.0);
 
-            // FIXME: Should put these values into constants (https://bugs.webkit.org/show_bug.cgi?id=76008)
-            [caFilter setValue:[CIVector vectorWithX:WebCore::blend(1.0, 0.393, t) Y:WebCore::blend(0.0, 0.769, t) Z:WebCore::blend(0.0, 0.189, t) W:0] forKey:@"inputRVector"];
-            [caFilter setValue:[CIVector vectorWithX:WebCore::blend(0.0, 0.349, t) Y:WebCore::blend(1.0, 0.686, t) Z:WebCore::blend(0.0, 0.168, t) W:0] forKey:@"inputGVector"];
-            [caFilter setValue:[CIVector vectorWithX:WebCore::blend(0.0, 0.272, t) Y:WebCore::blend(0.0, 0.534, t) Z:WebCore::blend(1.0, 0.131, t) W:0] forKey:@"inputBVector"];
-            [caFilter setValue:[CIVector vectorWithX:0 Y:0 Z:0 W:1] forKey:@"inputAVector"];
-            [caFilter setValue:[CIVector vectorWithX:0 Y:0 Z:0 W:0] forKey:@"inputBiasVector"];
+            // FIXME: Should put these values into constants (https://bugs.webkit.org/show_bug.cgi?id=76008).
+            CAColorMatrix sepiaMatrix = {
+                static_cast<float>(WebCore::blend(1.0, 0.393, t)), static_cast<float>(WebCore::blend(0.0, 0.769, t)), static_cast<float>(WebCore::blend(0.0, 0.189, t)), 0, 0,
+                static_cast<float>(WebCore::blend(0.0, 0.349, t)), static_cast<float>(WebCore::blend(1.0, 0.686, t)), static_cast<float>(WebCore::blend(0.0, 0.168, t)), 0, 0,
+                static_cast<float>(WebCore::blend(0.0, 0.272, t)), static_cast<float>(WebCore::blend(0.0, 0.534, t)), static_cast<float>(WebCore::blend(1.0, 0.131, t)), 0, 0,
+                0, 0, 0, 1, 0
+            };
+
+            [caFilter setValue:[NSValue valueWithCAColorMatrix:sepiaMatrix] forKey:@"inputColorMatrix"];
             [caFilter setName:filterName];
             [array.get() addObject:caFilter];
             break;
         }
         case FilterOperation::SATURATE: {
             const BasicColorMatrixFilterOperation* op = static_cast<const BasicColorMatrixFilterOperation*>(filterOperation);
-            CIFilter* caFilter = [CIFilter filterWithName:@"CIColorControls"];
-            [caFilter setDefaults];
-            [caFilter setValue:[NSNumber numberWithFloat:op->amount()] forKey:@"inputSaturation"];
+            CAFilter *caFilter = [CAFilter filterWithType:kCAFilterColorSaturate];
+            [caFilter setValue:[NSNumber numberWithFloat:op->amount()] forKey:@"inputAmount"];
             [caFilter setName:filterName];
             [array.get() addObject:caFilter];
             break;
         }
         case FilterOperation::HUE_ROTATE: {
             const BasicColorMatrixFilterOperation* op = static_cast<const BasicColorMatrixFilterOperation*>(filterOperation);
-            CIFilter* caFilter = [CIFilter filterWithName:@"CIHueAdjust"];
-            [caFilter setDefaults];
-            
-            // The CIHueAdjust value is in radians
+            CAFilter *caFilter = [CAFilter filterWithType:kCAFilterColorHueRotate];
             [caFilter setValue:[NSNumber numberWithFloat:deg2rad(op->amount())] forKey:@"inputAngle"];
+            [caFilter setName:@"hueRotate"];
             [caFilter setName:filterName];
             [array.get() addObject:caFilter];
             break;
         }
         case FilterOperation::INVERT: {
             const BasicComponentTransferFilterOperation* op = static_cast<const BasicComponentTransferFilterOperation*>(filterOperation);
-            CIFilter* caFilter = [CIFilter filterWithName:@"CIColorMatrix"];
-            [caFilter setDefaults];
-            
-            double multiplier = 1 - op->amount() * 2;
-            
-            [caFilter setValue:[CIVector vectorWithX:multiplier Y:0 Z:0 W:0] forKey:@"inputRVector"];
-            [caFilter setValue:[CIVector vectorWithX:0 Y:multiplier Z:0 W:0] forKey:@"inputGVector"];
-            [caFilter setValue:[CIVector vectorWithX:0 Y:0 Z:multiplier W:0] forKey:@"inputBVector"];
-            [caFilter setValue:[CIVector vectorWithX:0 Y:0 Z:0 W:1] forKey:@"inputAVector"];
-            [caFilter setValue:[CIVector vectorWithX:op->amount() Y:op->amount() Z:op->amount() W:0] forKey:@"inputBiasVector"];
+            CAFilter *caFilter = [CAFilter filterWithType:kCAFilterColorMatrix];
+
+            float multiplier = 1 - op->amount() * 2;
+
+            CAColorMatrix invertMatrix = {
+                multiplier, 0, 0, 0, static_cast<float>(op->amount()),
+                0, multiplier, 0, 0, static_cast<float>(op->amount()),
+                0, 0, multiplier, 0, static_cast<float>(op->amount()),
+                0, 0, 0, 1, 0
+            };
+
+            [caFilter setValue:[NSValue valueWithCAColorMatrix:invertMatrix] forKey:@"inputColorMatrix"];
             [caFilter setName:filterName];
             [array.get() addObject:caFilter];
             break;
         }
         case FilterOperation::OPACITY: {
             const BasicComponentTransferFilterOperation* op = static_cast<const BasicComponentTransferFilterOperation*>(filterOperation);
-            CIFilter* caFilter = [CIFilter filterWithName:@"CIColorMatrix"];
-            [caFilter setDefaults];
-            
-            [caFilter setValue:[CIVector vectorWithX:1 Y:0 Z:0 W:0] forKey:@"inputRVector"];
-            [caFilter setValue:[CIVector vectorWithX:0 Y:1 Z:0 W:0] forKey:@"inputGVector"];
-            [caFilter setValue:[CIVector vectorWithX:0 Y:0 Z:1 W:0] forKey:@"inputBVector"];
-            [caFilter setValue:[CIVector vectorWithX:0 Y:0 Z:0 W:op->amount()] forKey:@"inputAVector"];
-            [caFilter setValue:[CIVector vectorWithX:0 Y:0 Z:0 W:0] forKey:@"inputBiasVector"];
+            CAFilter *caFilter = [CAFilter filterWithType:kCAFilterColorMatrix];
+
+            CAColorMatrix opacityMatrix = {
+                1, 0, 0, 0, 0,
+                0, 1, 0, 0, 0,
+                0, 0, 1, 0, 0,
+                0, 0, 0, static_cast<float>(op->amount()), 0
+            };
+
+            [caFilter setValue:[NSValue valueWithCAColorMatrix:opacityMatrix] forKey:@"inputColorMatrix"];
             [caFilter setName:filterName];
             [array.get() addObject:caFilter];
             break;
         }
         case FilterOperation::BLUR: {
-            // FIXME: For now we ignore stdDeviationY
             const BlurFilterOperation* op = static_cast<const BlurFilterOperation*>(filterOperation);
-            CIFilter* caFilter = [CIFilter filterWithName:@"CIGaussianBlur"];
-            [caFilter setDefaults];
+            CAFilter *caFilter = [CAFilter filterWithType:kCAFilterGaussianBlur];
             [caFilter setValue:[NSNumber numberWithFloat:floatValueForLength(op->stdDeviation(), 0)] forKey:@"inputRadius"];
             [caFilter setName:filterName];
             [array.get() addObject:caFilter];
@@ -807,20 +833,37 @@ void PlatformCALayer::setFilters(const FilterOperations& filters)
         }
         case FilterOperation::CONTRAST: {
             const BasicComponentTransferFilterOperation* op = static_cast<const BasicComponentTransferFilterOperation*>(filterOperation);
-            CIFilter* caFilter = [CIFilter filterWithName:@"CIColorControls"];
-            [caFilter setDefaults];
-            [caFilter setValue:[NSNumber numberWithFloat:op->amount()] forKey:@"inputContrast"];
+            CAFilter *caFilter = [CAFilter filterWithType:kCAFilterColorMatrix];
+
+            float intercept = -0.5 * op->amount() + 0.5;
+
+            CAColorMatrix contrastMatrix = {
+                static_cast<float>(op->amount()), 0, 0, 0, intercept,
+                0, static_cast<float>(op->amount()), 0, 0, intercept,
+                0, 0, static_cast<float>(op->amount()), 0, intercept,
+                0, 0, 0, 1, 0
+            };
+
+            [caFilter setValue:[NSValue valueWithCAColorMatrix:contrastMatrix] forKey:@"inputColorMatrix"];
             [caFilter setName:filterName];
             [array.get() addObject:caFilter];
             break;
         }
         case FilterOperation::BRIGHTNESS: {
             const BasicComponentTransferFilterOperation* op = static_cast<const BasicComponentTransferFilterOperation*>(filterOperation);
-            CIFilter* caFilter = [CIFilter filterWithName:@"CIColorControls"];
-            [caFilter setDefaults];
-            [caFilter setValue:[NSNumber numberWithFloat:op->amount()] forKey:@"inputBrightness"];
+            CAFilter *caFilter = [CAFilter filterWithType:kCAFilterColorMatrix];
+            
+            CAColorMatrix brightnessMatrix = {
+                1, 0, 0, 0, static_cast<float>(op->amount()),
+                0, 1, 0, 0, static_cast<float>(op->amount()),
+                0, 0, 1, 0, static_cast<float>(op->amount()),
+                0, 0, 0, 1, 0
+            };
+
+            [caFilter setValue:[NSValue valueWithCAColorMatrix:brightnessMatrix] forKey:@"inputColorMatrix"];
             [caFilter setName:filterName];
             [array.get() addObject:caFilter];
+            break;
             break;
         }
         case FilterOperation::PASSTHROUGH:
