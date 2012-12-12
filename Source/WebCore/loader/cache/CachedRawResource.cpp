@@ -98,7 +98,6 @@ void CachedRawResource::allClientsRemoved()
 
 void CachedRawResource::willSendRequest(ResourceRequest& request, const ResourceResponse& response)
 {
-    CachedResourceHandle<CachedRawResource> protect(this);
     if (!response.isNull()) {
         CachedResourceClientWalker<CachedRawResourceClient> w(m_clients);
         while (CachedRawResourceClient* c = w.next())

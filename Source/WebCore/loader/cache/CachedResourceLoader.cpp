@@ -706,8 +706,7 @@ void CachedResourceLoader::loadDone(CachedResource* resource)
     RefPtr<Document> protectDocument(m_document);
 
 #if ENABLE(RESOURCE_TIMING)
-    // FIXME: Add resource timing support for main resources.
-    if (resource && resource->type() != CachedResource::MainResource) {
+    if (resource) {
         HashMap<CachedResource*, InitiatorInfo>::iterator initiatorIt = m_initiatorMap.find(resource);
         if (initiatorIt != m_initiatorMap.end()) {
             ASSERT(document());

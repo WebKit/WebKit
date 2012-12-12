@@ -146,16 +146,6 @@ void SubresourceLoader::willSendRequest(ResourceRequest& newRequest, const Resou
     if (newRequest.isNull() || reachedTerminalState())
         return;
 
-    // MemoryCache removes the fragment identifier from CachedResources to make url matching easier. Main resources really should have
-    // that on the outgoing ResourceRequest, so add it back here.
-    // FIXME: This is probably a bad place to add the fragment back in. CachedResource should probably hold the fragment and clean up after itself.
-    // See https://bugs.webkit.org/show_bug.cgi?id=104721 
-    if (m_resource->type() == CachedResource::MainResource && documentLoader()->url().hasFragmentIdentifier()) {
-        KURL url = newRequest.url();
-        url.setFragmentIdentifier(documentLoader()->url().fragmentIdentifier());
-        newRequest.setURL(url);
-    }
-
     ResourceLoader::willSendRequest(newRequest, redirectResponse);
     if (newRequest.isNull())
         cancel();

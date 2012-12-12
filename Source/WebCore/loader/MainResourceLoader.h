@@ -29,8 +29,6 @@
 #ifndef MainResourceLoader_h
 #define MainResourceLoader_h
 
-#include "CachedRawResource.h"
-#include "CachedResourceHandle.h"
 #include "FrameLoaderTypes.h"
 #include "ResourceLoader.h"
 #include "SubstituteData.h"
@@ -51,20 +49,21 @@ namespace WebCore {
 class FormState;
 class ResourceRequest;
 
-class MainResourceLoader : public RefCounted<MainResourceLoader>, public CachedRawResourceClient {
-    WTF_MAKE_FAST_ALLOCATED;
+class MainResourceLoader : public ResourceLoader {
 public:
     static PassRefPtr<MainResourceLoader> create(DocumentLoader*);
     virtual ~MainResourceLoader();
 
     void load(const ResourceRequest&, const SubstituteData&);
-    void cancel();
-    void cancel(const ResourceError&);
-    ResourceLoader* loader() const;
-    PassRefPtr<ResourceBuffer> resourceData();
+    virtual void addData(const char*, int, bool allAtOnce) OVERRIDE;
 
-    void setDefersLoading(bool);
-    void setShouldBufferData(DataBufferingPolicy);
+    virtual void setDefersLoading(bool) OVERRIDE;
+
+    virtual void willSendRequest(ResourceRequest&, const ResourceResponse& redirectResponse) OVERRIDE;
+    virtual void didReceiveResponse(const ResourceResponse&) OVERRIDE;
+    virtual void didReceiveData(const char*, int, long long encodedDataLength, bool allAtOnce) OVERRIDE;
+    virtual void didFinishLoading(double finishTime) OVERRIDE;
+    virtual void didFail(const ResourceError&) OVERRIDE;
 
 #if HAVE(RUNLOOP_TIMER)
     typedef RunLoopTimer<MainResourceLoader> MainResourceLoaderTimer;
@@ -72,21 +71,18 @@ public:
     typedef Timer<MainResourceLoader> MainResourceLoaderTimer;
 #endif
 
-    unsigned long identifier() const;
     bool isLoadingMultipartContent() const { return m_loadingMultipartContent; }
 
-    void reportMemoryUsage(MemoryObjectInfo*) const;
+    virtual void reportMemoryUsage(MemoryObjectInfo*) const OVERRIDE;
 
 private:
     explicit MainResourceLoader(DocumentLoader*);
 
-    virtual void redirectReceived(CachedResource*, ResourceRequest&, const ResourceResponse&) OVERRIDE;
-    virtual void responseReceived(CachedResource*, const ResourceResponse&) OVERRIDE;
-    virtual void dataReceived(CachedResource*, const char* data, int dataLength) OVERRIDE;
-    virtual void notifyFinished(CachedResource*) OVERRIDE;
+    virtual void willCancel(const ResourceError&) OVERRIDE;
+    virtual void didCancel(const ResourceError&) OVERRIDE;
 
-    void willSendRequest(ResourceRequest&, const ResourceResponse& redirectResponse);
-    void didFinishLoading(double finishTime);
+    void loadNow(ResourceRequest&);
+
     void handleSubstituteDataLoadSoon(const ResourceRequest&);
     void handleSubstituteDataLoadNow(MainResourceLoaderTimer*);
 
@@ -108,22 +104,10 @@ private:
     void substituteMIMETypeFromPluginDatabase(const ResourceResponse&);
 #endif
 
-    FrameLoader* frameLoader() const;
-    DocumentLoader* documentLoader() const { return m_documentLoader.get(); }
-
-    const ResourceRequest& request() const;
-    void clearResource();
-
-    bool defersLoading() const;
-
-    CachedResourceHandle<CachedRawResource> m_resource;
-
     ResourceRequest m_initialRequest;
     SubstituteData m_substituteData;
-    ResourceResponse m_response;
 
     MainResourceLoaderTimer m_dataLoadTimer;
-    RefPtr<DocumentLoader> m_documentLoader;
 
     bool m_loadingMultipartContent;
     bool m_waitingForContentPolicy;

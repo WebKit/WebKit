@@ -180,7 +180,13 @@ void DocumentLoader::setRequest(const ResourceRequest& req)
     // would be a WebFoundation bug if it sent a redirect callback after commit.
     ASSERT(!m_committed);
 
+    KURL oldURL = m_request.url();
     m_request = req;
+
+    // Only dispatchDidReceiveServerRedirectForProvisionalLoad() if URL changed (and is non-null).
+    // Also, don't send it when replacing unreachable URLs with alternate content.
+    if (!handlingUnreachableURL && !req.url().isNull() && oldURL != req.url())
+        frameLoader()->client()->dispatchDidReceiveServerRedirectForProvisionalLoad();
 }
 
 void DocumentLoader::setMainDocumentError(const ResourceError& error)
@@ -579,9 +585,6 @@ PassRefPtr<ArchiveResource> DocumentLoader::subresource(const KURL& url) const
     if (!resource || !resource->isLoaded())
         return archiveResourceForURL(url);
 
-    if (resource->type() == CachedResource::MainResource)
-        return 0;
-
     // FIXME: This has the side effect of making the resource non-purgeable.
     // It would be better if it didn't have this permanent effect.
     if (!resource->makePurgeable(false))
@@ -808,22 +811,11 @@ void DocumentLoader::stopLoadingSubresources()
 
 void DocumentLoader::addSubresourceLoader(ResourceLoader* loader)
 {
-    // The main resource's underlying ResourceLoader will ask to be added here.
-    // It is much simpler to handle special casing of main resource loads if we don't
-    // let it be added. In the main resource load case, m_mainResourceLoader->loader()
-    // will still be null at this point, but m_gotFirstByte should be false here if and only
-    // if we are just starting the main resource load.
-    if (!m_gotFirstByte)
-        return;
-    ASSERT(!m_subresourceLoaders.contains(loader));
-    ASSERT(!m_mainResourceLoader || m_mainResourceLoader->loader() != loader);
     m_subresourceLoaders.add(loader);
 }
 
 void DocumentLoader::removeSubresourceLoader(ResourceLoader* loader)
 {
-    if (!m_subresourceLoaders.contains(loader))
-        return;
     m_subresourceLoaders.remove(loader);
     checkLoadComplete();
     if (Frame* frame = m_frame)
@@ -889,10 +881,6 @@ void DocumentLoader::startLoadingMainResource()
 
     if (m_request.isNull()) {
         m_mainResourceLoader = 0;
-        // If the load was aborted by clearing m_request, it's possible the ApplicationCacheHost
-        // is now in a state where starting an empty load will be inconsistent. Replace it with
-        // a new ApplicationCacheHost.
-        m_applicationCacheHost = adoptPtr(new ApplicationCacheHost(this));
         maybeLoadEmpty();
     }
 }

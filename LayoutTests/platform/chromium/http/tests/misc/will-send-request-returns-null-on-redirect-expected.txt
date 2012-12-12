@@ -2,7 +2,7 @@ http://127.0.0.1:8000/misc/resources/redirect-to-http-url.php - willSendRequest 
 <unknown> - didFinishLoading
 http://127.0.0.1:8000/misc/resources/redirect-to-http-url.php - willSendRequest <NSURLRequest URL http://www.example.com/, main document URL http://127.0.0.1:8000/misc/will-send-request-returns-null-on-redirect.html, http method GET> redirectResponse <NSURLResponse http://127.0.0.1:8000/misc/resources/redirect-to-http-url.php, http status code 302>
 Returning null for this redirect
-http://127.0.0.1:8000/misc/resources/redirect-to-http-url.php - didFailLoadingWithError: <NSError domain NSURLErrorDomain, code -999, failing URL "(null)">
+http://127.0.0.1:8000/misc/resources/redirect-to-http-url.php - didFailLoadingWithError: <NSError domain WebKit, code -10000, failing URL "(null)">
 https://bugs.webkit.org/show_bug.cgi?id=27595
 This test checks to make sure that things behave as expected when the resource load delegate returns null in response to willSendRequest.
 

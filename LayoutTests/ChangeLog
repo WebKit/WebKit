@@ -1,3 +1,20 @@
+2012-12-11  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r137333, r137344, r137364, and
+        r137377.
+        http://trac.webkit.org/changeset/137333
+        http://trac.webkit.org/changeset/137344
+        http://trac.webkit.org/changeset/137364
+        http://trac.webkit.org/changeset/137377
+        https://bugs.webkit.org/show_bug.cgi?id=104771
+
+        Caused a raft of browser_test failures in Chromium (Requested
+        by aklein on #webkit).
+
+        * http/tests/misc/will-send-request-returns-null-on-redirect-expected.txt:
+        * platform/chromium-linux/fast/replaced/border-radius-clip-content-edge-expected.png:
+        * platform/chromium/http/tests/misc/will-send-request-returns-null-on-redirect-expected.txt:
+
 2012-12-11  Kentaro Hara  <haraken@chromium.org>
 
         Unreviewed, rolling out r137398.
