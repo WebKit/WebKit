@@ -3146,6 +3146,10 @@ void RenderLayer::paintLayer(GraphicsContext* context, const LayerPaintingInfo& 
             // If this RenderLayer should paint into its backing, that will be done via RenderLayerBacking::paintIntoLayer().
             return;
         }
+    } else if (compositor()->fixedPositionLayerNotCompositedReason(this) == RenderLayerCompositor::LayerBoundsOutOfView) {
+        // Don't paint out-of-view fixed position layers (when doing prepainting) because they will never be visible
+        // unless their position or viewport size is changed.
+        return;
     }
 #endif
 
