@@ -453,6 +453,7 @@ void RenderLayerCompositor::updateCompositingLayers(CompositingUpdateType update
         CompositingState compState(updateRoot, m_compositingConsultsOverlap);
         bool layersChanged = false;
         bool saw3DTransform = false;
+        m_fixedPositionLayerNotCompositedReasonMap.clear();
         if (m_compositingConsultsOverlap) {
             OverlapMap overlapTestRequestMap;
             computeCompositingRequirements(0, updateRoot, &overlapTestRequestMap, compState, layersChanged, saw3DTransform);
@@ -843,7 +844,8 @@ void RenderLayerCompositor::computeCompositingRequirements(RenderLayer* ancestor
     CompositingState childState(compositingState);
     childState.m_subtreeIsCompositing = false;
 
-    bool willBeComposited = needsToBeComposited(layer);
+    FixedPositionLayerNotCompositedReason fixedPositionLayerNotCompositedReason = NoReason;
+    bool willBeComposited = needsToBeComposited(layer, &fixedPositionLayerNotCompositedReason);
     if (willBeComposited) {
         // Tell the parent it has compositing descendants.
         compositingState.m_subtreeIsCompositing = true;
@@ -852,7 +854,8 @@ void RenderLayerCompositor::computeCompositingRequirements(RenderLayer* ancestor
 
         if (overlapMap)
             overlapMap->pushCompositingContainer();
-    }
+    } else if (fixedPositionLayerNotCompositedReason != NoReason)
+        m_fixedPositionLayerNotCompositedReasonMap.set(layer, fixedPositionLayerNotCompositedReason);
 
 #if !ASSERT_DISABLED
     LayerListMutationDetector mutationChecker(layer);
@@ -1555,18 +1558,18 @@ bool RenderLayerCompositor::shouldPropagateCompositingToEnclosingFrame() const
     return false;
 }
 
-bool RenderLayerCompositor::needsToBeComposited(const RenderLayer* layer) const
+bool RenderLayerCompositor::needsToBeComposited(const RenderLayer* layer, FixedPositionLayerNotCompositedReason* fixedPositionLayerNotCompositedReason) const
 {
     if (!canBeComposited(layer))
         return false;
 
-    return requiresCompositingLayer(layer) || layer->mustCompositeForIndirectReasons() || (inCompositingMode() && layer->isRootLayer());
+    return requiresCompositingLayer(layer, fixedPositionLayerNotCompositedReason) || layer->mustCompositeForIndirectReasons() || (inCompositingMode() && layer->isRootLayer());
 }
 
 // Note: this specifies whether the RL needs a compositing layer for intrinsic reasons.
 // Use needsToBeComposited() to determine if a RL actually needs a compositing layer.
 // static
-bool RenderLayerCompositor::requiresCompositingLayer(const RenderLayer* layer) const
+bool RenderLayerCompositor::requiresCompositingLayer(const RenderLayer* layer, FixedPositionLayerNotCompositedReason* fixedPositionLayerNotCompositedReason) const
 {
     RenderObject* renderer = layer->renderer();
     // The compositing state of a reflection should match that of its reflected layer.
@@ -1584,7 +1587,7 @@ bool RenderLayerCompositor::requiresCompositingLayer(const RenderLayer* layer) c
         || clipsCompositingDescendants(layer)
         || requiresCompositingForAnimation(renderer)
         || requiresCompositingForFilters(renderer)
-        || requiresCompositingForPosition(renderer, layer)
+        || requiresCompositingForPosition(renderer, layer, fixedPositionLayerNotCompositedReason)
         || requiresCompositingForOverflowScrolling(layer)
         || requiresCompositingForBlending(renderer);
 }
@@ -1962,7 +1965,7 @@ bool RenderLayerCompositor::requiresCompositingForBlending(RenderObject* rendere
 #endif
 }
 
-bool RenderLayerCompositor::requiresCompositingForPosition(RenderObject* renderer, const RenderLayer* layer) const
+bool RenderLayerCompositor::requiresCompositingForPosition(RenderObject* renderer, const RenderLayer* layer, FixedPositionLayerNotCompositedReason* fixedPositionLayerNotCompositedReason) const
 {
     // position:fixed elements that create their own stacking context (e.g. have an explicit z-index,
     // opacity, transform) can get their own composited layer. A stacking context is required otherwise
@@ -1983,16 +1986,22 @@ bool RenderLayerCompositor::requiresCompositingForPosition(RenderObject* rendere
 
     // Don't promote fixed position elements that are descendants of transformed elements.
     // They will stay fixed wrt the transformed element rather than the enclosing frame.
-    if (container != m_renderView)
+    if (container != m_renderView) {
+        if (fixedPositionLayerNotCompositedReason)
+            *fixedPositionLayerNotCompositedReason = DescendantOfTransformedElement;
         return false;
+    }
 
     // Fixed position elements that are invisible in the current view don't get their own layer.
     if (FrameView* frameView = m_renderView->frameView()) {
         IntRect viewBounds = frameView->visibleContentRect();
         LayoutRect layerBounds = calculateCompositedBounds(layer, rootRenderLayer());
         layerBounds.scale(pageScaleFactor());
-        if (!viewBounds.intersects(enclosingIntRect(layerBounds)))
+        if (!viewBounds.intersects(enclosingIntRect(layerBounds))) {
+            if (fixedPositionLayerNotCompositedReason)
+                *fixedPositionLayerNotCompositedReason = LayerBoundsOutOfView;
             return false;
+        }
     }
 
     return true;

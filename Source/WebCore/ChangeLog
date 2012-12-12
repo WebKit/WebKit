@@ -1,3 +1,26 @@
+2012-12-11  Xinazhu Wang  <wangxianzhu@chromium.org>
+
+        ScrollingCoordinator::hasVisibleSlowRepaintFixedObject() should exclude out-of-view fixed position elements
+        https://bugs.webkit.org/show_bug.cgi?id=102543
+
+        Let RenderLayerCompositor manage the reasons that fixed position elements are not composited.
+        Check the reason in ScrollingCoordinator::hasVisibleSlowRepaintFixedObjects(), don't let fixed position layer not composited with explicit reasons cause slow scrolling.
+
+        Reviewed by James Robinson.
+
+        Test: compositing/layer-creation/fixed-position-out-of-view-scroll-reason.html
+
+        * page/scrolling/ScrollingCoordinator.cpp:
+        (WebCore::ScrollingCoordinator::hasVisibleSlowRepaintFixedObjects): Exclude fixed position elements that are not composited for explicit reasons.
+        * rendering/RenderLayerCompositor.cpp:
+        (WebCore::RenderLayerCompositor::computeCompositingRequirements): Manages m_fixedPositionLayerNotCompositedReasonMap.
+        (WebCore::RenderLayerCompositor::needsToBeComposited):
+        (WebCore::RenderLayerCompositor::requiresCompositingLayer):
+        (WebCore::RenderLayerCompositor::requiresCompositingForPosition):
+        * rendering/RenderLayerCompositor.h:
+        (WebCore::RenderLayerCompositor::fixedPositionLayerNotCompositedReason): Now outputs fixedPositionLayerNotCompositedreason.
+        (RenderLayerCompositor):
+
 2012-12-11  Hayato Ito  <hayato@chromium.org>
 
         [Shadow DOM] Kill ShadowRoot constructor

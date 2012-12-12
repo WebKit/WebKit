@@ -338,8 +338,9 @@ bool ScrollingCoordinator::hasVisibleSlowRepaintFixedObjects(FrameView* frameVie
         RenderObject* viewportConstrainedObject = *it;
         if (!viewportConstrainedObject->isBoxModelObject() || !viewportConstrainedObject->hasLayer())
             return true;
-        RenderBoxModelObject* viewportConstrainedBoxModelObject = toRenderBoxModelObject(viewportConstrainedObject);
-        if (!viewportConstrainedBoxModelObject->layer()->backing())
+        RenderLayer* layer = toRenderBoxModelObject(viewportConstrainedObject)->layer();
+        // Any explicit reason that a fixed position element is not composited shouldn't cause slow scrolling.
+        if (!layer->isComposited() && layer->compositor()->fixedPositionLayerNotCompositedReason(layer) == RenderLayerCompositor::NoReason)
             return true;
     }
     return false;
