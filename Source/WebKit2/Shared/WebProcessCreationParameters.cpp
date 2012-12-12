@@ -78,6 +78,9 @@ void WebProcessCreationParameters::encode(CoreIPC::ArgumentEncoder& encoder) con
 #endif
 #if USE(SOUP)
     encoder << urlSchemesRegistered;
+    encoder << cookiePersistentStoragePath;
+    encoder << cookiePersistentStorageType;
+    encoder.encodeEnum(cookieAcceptPolicy);
 #endif
     encoder.encodeEnum(cacheModel);
     encoder << shouldTrackVisitedLinks;
@@ -171,6 +174,12 @@ bool WebProcessCreationParameters::decode(CoreIPC::ArgumentDecoder* decoder, Web
 #endif
 #if USE(SOUP)
     if (!decoder->decode(parameters.urlSchemesRegistered))
+        return false;
+    if (!decoder->decode(parameters.cookiePersistentStoragePath))
+        return false;
+    if (!decoder->decode(parameters.cookiePersistentStorageType))
+        return false;
+    if (!decoder->decode(parameters.cookieAcceptPolicy))
         return false;
 #endif
     if (!decoder->decodeEnum(parameters.cacheModel))

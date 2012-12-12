@@ -1,3 +1,45 @@
+2012-12-12  Joaquim Rocha  <jrocha@igalia.com>
+
+        [GTK] Cookies' storage path and policy are not set when the WebProcess is killed and relaunched
+        https://bugs.webkit.org/show_bug.cgi?id=104370
+
+        Reviewed by Carlos Garcia Campos.
+
+        This issue happens on ports that use Soup and causes problems like not finding the stored cookies
+        nor their policy when the WebProcess is relaunched. As an example of a problem caused by this,
+        a previously logged in user will not be logged in again when the process is relaunched and the
+        policy used is always the same one.
+
+        * Shared/WebProcessCreationParameters.cpp:
+        (WebKit::WebProcessCreationParameters::encode): Encode cookies' persistent storage path,
+        storage type and acceptance policy.
+        (WebKit::WebProcessCreationParameters::decode): Decode cookies' persistent storage path,
+        storage type and acceptance policy.
+        * Shared/WebProcessCreationParameters.h: Create 3 variables to hold the values mentioned above.
+        (WebProcessCreationParameters):
+        * UIProcess/WebCookieManagerProxy.cpp:
+        (WebKit::WebCookieManagerProxy::WebCookieManagerProxy):
+        (WebKit::WebCookieManagerProxy::setHTTPCookieAcceptPolicy): Call WebCookieManagerProxySoup::setCookieAcceptPolicy.
+        * UIProcess/WebCookieManagerProxy.h: Declare new Soup's methods setCookieAcceptPolicy, cookieAcceptPolicy and
+        cookiePersistentStorage as well as the variables m_cookieAcceptPolicy and m_cookiePersistentStorage.
+        (WebCookieManagerProxy):
+        * UIProcess/efl/WebContextEfl.cpp: Assign the parameters' cookiePersistentStoragePath and
+        cookiePersistentStorageType with the respective values.
+        (WebKit::WebContext::platformInitializeWebProcess):
+        * UIProcess/gtk/WebContextGtk.cpp: Assign the parameters' cookiePersistentStoragePath and
+        cookiePersistentStorageType with the respective values.
+        (WebKit::WebContext::platformInitializeWebProcess):
+        * UIProcess/soup/WebCookieManagerProxySoup.cpp:
+        (WebKit::WebCookieManagerProxy::setCookiePersistentStorage): Assign the m_cookiePersistentStorage pair
+        with the method's parameters.
+        (WebKit):
+        (WebKit::WebCookieManagerProxy::getCookiePersistentStorage): Implement this getter.
+        * WebProcess/Cookies/WebCookieManager.h: Declare setCookiePersistentStorage.
+        (WebCookieManager):
+        * WebProcess/soup/WebProcessSoup.cpp:
+        (WebKit::WebProcess::platformInitializeWebProcess): Set the cookies' persistent storage and policy
+        using the WebCookieManager's methods.
+
 2012-12-11  Jinwoo Song  <jinwoo7.song@samsung.com>
 
         [EFL][WK2] Duplicated WebPageGroup initialization

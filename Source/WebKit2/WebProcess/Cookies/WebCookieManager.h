@@ -53,6 +53,10 @@ public:
 
     void setHTTPCookieAcceptPolicy(HTTPCookieAcceptPolicy);
 
+#if USE(SOUP)
+    void setCookiePersistentStorage(const String& storagePath, uint32_t storageType);
+#endif
+
 private:
     WebCookieManager();
     
@@ -66,10 +70,6 @@ private:
 
     void startObservingCookieChanges();
     void stopObservingCookieChanges();
-
-#if USE(SOUP)
-    void setCookiePersistentStorage(const String& storagePath, uint32_t storageType);
-#endif
 
     void didReceiveWebCookieManagerMessage(CoreIPC::Connection*, CoreIPC::MessageID, CoreIPC::MessageDecoder&);
 };

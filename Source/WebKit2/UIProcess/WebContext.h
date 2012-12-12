@@ -169,10 +169,10 @@ public:
 
 #if PLATFORM(WIN)
     void setShouldPaintNativeControls(bool);
-
+#endif
+#if PLATFORM(WIN) || USE(SOUP)
     void setInitialHTTPCookieAcceptPolicy(HTTPCookieAcceptPolicy policy) { m_initialHTTPCookieAcceptPolicy = policy; }
 #endif
-
     void setEnhancedAccessibility(bool);
     
     // Downloads.
@@ -398,6 +398,8 @@ private:
 
 #if PLATFORM(WIN)
     bool m_shouldPaintNativeControls;
+#endif
+#if PLATFORM(WIN) || USE(SOUP)
     HTTPCookieAcceptPolicy m_initialHTTPCookieAcceptPolicy;
 #endif
 

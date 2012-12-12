@@ -41,6 +41,9 @@ PassRefPtr<WebCookieManagerProxy> WebCookieManagerProxy::create(WebContext* cont
 
 WebCookieManagerProxy::WebCookieManagerProxy(WebContext* context)
     : m_webContext(context)
+#if USE(SOUP)
+    , m_cookiePersistentStorageType(SoupCookiePersistentStorageSQLite)
+#endif
 {
     m_webContext->addMessageReceiver(Messages::WebCookieManagerProxy::messageReceiverName(), this);
 }
@@ -133,6 +136,9 @@ void WebCookieManagerProxy::setHTTPCookieAcceptPolicy(HTTPCookieAcceptPolicy pol
     ASSERT(m_webContext);
 #if PLATFORM(MAC)
     persistHTTPCookieAcceptPolicy(policy);
+#endif
+#if USE(SOUP)
+    m_webContext->setInitialHTTPCookieAcceptPolicy(policy);
 #endif
 
     m_webContext->sendToAllProcessesRelaunchingThemIfNecessary(Messages::WebCookieManager::SetHTTPCookieAcceptPolicy(policy));

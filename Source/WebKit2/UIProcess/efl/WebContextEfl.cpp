@@ -24,6 +24,7 @@
  */
 
 #include "config.h"
+#include "WebCookieManagerProxy.h"
 #include "WebContext.h"
 
 #include "Logging.h"
@@ -88,6 +89,7 @@ void WebContext::platformInitializeWebProcess(WebProcessCreationParameters& para
     initializeInspectorServer();
 
     parameters.urlSchemesRegistered = m_soupRequestManagerProxy->registeredURISchemes();
+    m_cookieManagerProxy->getCookiePersistentStorage(parameters.cookiePersistentStoragePath, parameters.cookieAcceptPolicy);
 }
 
 void WebContext::platformInvalidateContext()

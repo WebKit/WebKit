@@ -34,6 +34,15 @@ namespace WebKit {
 void WebCookieManagerProxy::setCookiePersistentStorage(const String& storagePath, uint32_t storageType)
 {
     m_webContext->sendToAllProcessesRelaunchingThemIfNecessary(Messages::WebCookieManager::SetCookiePersistentStorage(storagePath, storageType));
+
+    m_cookiePersistentStoragePath = storagePath;
+    m_cookiePersistentStorageType = static_cast<SoupCookiePersistentStorageType>(storageType);
+}
+
+void WebCookieManagerProxy::getCookiePersistentStorage(String& storagePath, uint32_t& storageType) const
+{
+    storagePath = m_cookiePersistentStoragePath;
+    storageType = static_cast<uint32_t>(m_cookiePersistentStorageType);
 }
 
 }

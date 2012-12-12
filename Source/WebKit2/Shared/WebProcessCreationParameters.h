@@ -38,6 +38,10 @@
 #include "MachPort.h"
 #endif
 
+#if USE(SOUP)
+#include "HTTPCookieAcceptPolicy.h"
+#endif
+
 namespace CoreIPC {
     class ArgumentDecoder;
     class ArgumentEncoder;
@@ -77,6 +81,9 @@ struct WebProcessCreationParameters {
 #endif
 #if USE(SOUP)
     Vector<String> urlSchemesRegistered;
+    String cookiePersistentStoragePath;
+    uint32_t cookiePersistentStorageType;
+    HTTPCookieAcceptPolicy cookieAcceptPolicy;
 #endif
 
     CacheModel cacheModel;

@@ -29,6 +29,7 @@
 
 #define LIBSOUP_USE_UNSTABLE_REQUEST_API
 
+#include "WebCookieManager.h"
 #include "WebProcessCreationParameters.h"
 #include <WebCore/FileSystem.h>
 #include <WebCore/Language.h>
@@ -168,6 +169,12 @@ void WebProcess::platformInitializeWebProcess(const WebProcessCreationParameters
 
     for (size_t i = 0; i < parameters.urlSchemesRegistered.size(); i++)
         m_soupRequestManager.registerURIScheme(parameters.urlSchemesRegistered[i]);
+
+    if (!parameters.cookiePersistentStoragePath.isEmpty()) {
+        WebCookieManager::shared().setCookiePersistentStorage(parameters.cookiePersistentStoragePath,
+            parameters.cookiePersistentStorageType);
+    }
+    WebCookieManager::shared().setHTTPCookieAcceptPolicy(parameters.cookieAcceptPolicy);
 
     WebCore::addLanguageChangeObserver(this, languageChanged);
 }

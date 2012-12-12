@@ -35,6 +35,10 @@
 #include <wtf/RefPtr.h>
 #include <wtf/Vector.h>
 
+#if USE(SOUP)
+#include "SoupCookiePersistentStorageType.h"
+#endif
+
 namespace CoreIPC {
     class Connection;
     class MessageID;
@@ -72,6 +76,7 @@ public:
 
 #if USE(SOUP)
     void setCookiePersistentStorage(const String& storagePath, uint32_t storageType);
+    void getCookiePersistentStorage(String& storagePath, uint32_t& storageType) const;
 #endif
 
     bool shouldTerminate(WebProcessProxy*) const;
@@ -99,6 +104,11 @@ private:
     HashMap<uint64_t, RefPtr<HTTPCookieAcceptPolicyCallback> > m_httpCookieAcceptPolicyCallbacks;
 
     WebCookieManagerProxyClient m_client;
+
+#if USE(SOUP)
+    String m_cookiePersistentStoragePath;
+    SoupCookiePersistentStorageType m_cookiePersistentStorageType;
+#endif
 };
 
 } // namespace WebKit
