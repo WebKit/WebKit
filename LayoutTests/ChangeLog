@@ -1,3 +1,33 @@
+2012-12-12  Chris Fleizach  <cfleizach@apple.com>
+
+        AX: aria-busy should be exposed everywhere, not just on live regions
+        https://bugs.webkit.org/show_bug.cgi?id=104814
+
+        Reviewed by Anders Carlsson.
+
+        Update tests that dump all attributes to include aria busy attribute.
+
+        * accessibility/transformed-element-expected.txt:
+        * platform/mac/accessibility/aria-liveregions-attributes-expected.txt:
+        * platform/mac/accessibility/bounds-for-range-expected.txt:
+        * platform/mac/accessibility/document-attributes-expected.txt:
+        * platform/mac/accessibility/document-links-expected.txt:
+        * platform/mac/accessibility/image-link-expected.txt:
+        * platform/mac/accessibility/image-map2-expected.txt:
+        * platform/mac/accessibility/internal-link-anchors-expected.txt:
+        * platform/mac/accessibility/internal-link-anchors2-expected.txt:
+        * platform/mac/accessibility/lists-expected.txt:
+        * platform/mac/accessibility/plugin-expected.txt:
+        * platform/mac/accessibility/radio-button-group-members-expected.txt:
+        * platform/mac/accessibility/table-attributes-expected.txt:
+        * platform/mac/accessibility/table-cell-spans-expected.txt:
+        * platform/mac/accessibility/table-cells-expected.txt:
+        * platform/mac/accessibility/table-detection-expected.txt:
+        * platform/mac/accessibility/table-one-cell-expected.txt:
+        * platform/mac/accessibility/table-sections-expected.txt:
+        * platform/mac/accessibility/table-with-aria-role-expected.txt:
+        * platform/mac/accessibility/table-with-rules-expected.txt:
+
 2012-12-12  Aaron Colwell  <acolwell@chromium.org>
 
         Remove MediaSource 'ended' to 'open' transition when seeking.

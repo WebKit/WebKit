@@ -31,6 +31,7 @@ AXBlockQuoteLevel: 0
 AXTopLevelUIElement: <AXCell>
 AXRowIndexRange: NSRange: {0, 2}
 AXColumnIndexRange: NSRange: {0, 2}
+AXARIABusy: 0
 
 ------------
 AXRole: AXCell
@@ -56,6 +57,7 @@ AXBlockQuoteLevel: 0
 AXTopLevelUIElement: <AXCell>
 AXRowIndexRange: NSRange: {0, 2}
 AXColumnIndexRange: NSRange: {0, 2}
+AXARIABusy: 0
 
 ------------
 AXRole: AXCell
@@ -81,6 +83,7 @@ AXBlockQuoteLevel: 0
 AXTopLevelUIElement: <AXCell>
 AXRowIndexRange: NSRange: {0, 2}
 AXColumnIndexRange: NSRange: {2, 1}
+AXARIABusy: 0
 
 ------------
 AXRole: AXCell
@@ -106,6 +109,7 @@ AXBlockQuoteLevel: 0
 AXTopLevelUIElement: <AXCell>
 AXRowIndexRange: NSRange: {0, 1}
 AXColumnIndexRange: NSRange: {3, 2}
+AXARIABusy: 0
 
 ------------
 AXRole: AXCell
@@ -131,6 +135,7 @@ AXBlockQuoteLevel: 0
 AXTopLevelUIElement: <AXCell>
 AXRowIndexRange: NSRange: {0, 1}
 AXColumnIndexRange: NSRange: {3, 2}
+AXARIABusy: 0
 
 ------------
 
@@ -160,6 +165,7 @@ AXBlockQuoteLevel: 0
 AXTopLevelUIElement: <AXCell>
 AXRowIndexRange: NSRange: {0, 2}
 AXColumnIndexRange: NSRange: {0, 2}
+AXARIABusy: 0
 
 ------------
 AXRole: AXCell
@@ -185,6 +191,7 @@ AXBlockQuoteLevel: 0
 AXTopLevelUIElement: <AXCell>
 AXRowIndexRange: NSRange: {1, 1}
 AXColumnIndexRange: NSRange: {3, 1}
+AXARIABusy: 0
 
 ------------
 AXRole: AXCell
@@ -210,6 +217,7 @@ AXBlockQuoteLevel: 0
 AXTopLevelUIElement: <AXCell>
 AXRowIndexRange: NSRange: {2, 2}
 AXColumnIndexRange: NSRange: {0, 1}
+AXARIABusy: 0
 
 ------------
 AXRole: AXCell
@@ -235,6 +243,7 @@ AXBlockQuoteLevel: 0
 AXTopLevelUIElement: <AXCell>
 AXRowIndexRange: NSRange: {3, 1}
 AXColumnIndexRange: NSRange: {1, 1}
+AXARIABusy: 0
 
 ------------
 
@@ -266,6 +275,7 @@ AXIndex: 0
 AXHeader: <AXColumn>
 AXRows: <array of size 2>
 AXVisibleRows: <array of size 2>
+AXARIABusy: 0
 
 ------------
 AXRole: AXColumn
@@ -293,6 +303,7 @@ AXIndex: 1
 AXHeader: <AXColumn>
 AXRows: <array of size 3>
 AXVisibleRows: <array of size 3>
+AXARIABusy: 0
 
 ------------
 AXRole: AXColumn
@@ -320,6 +331,7 @@ AXIndex: 2
 AXHeader: <AXColumn>
 AXRows: <array of size 3>
 AXVisibleRows: <array of size 3>
+AXARIABusy: 0
 
 ------------
 AXRole: AXColumn
@@ -347,6 +359,7 @@ AXIndex: 3
 AXHeader: <AXColumn>
 AXRows: <array of size 4>
 AXVisibleRows: <array of size 4>
+AXARIABusy: 0
 
 ------------
 AXRole: AXColumn
@@ -374,6 +387,7 @@ AXIndex: 4
 AXHeader: <AXColumn>
 AXRows: <array of size 4>
 AXVisibleRows: <array of size 4>
+AXARIABusy: 0
 
 ------------
 
@@ -402,6 +416,7 @@ AXSelected: 0
 AXBlockQuoteLevel: 0
 AXTopLevelUIElement: <AXRow>
 AXIndex: 0
+AXARIABusy: 0
 
 ------------
 AXRole: AXRow
@@ -426,6 +441,7 @@ AXSelected: 0
 AXBlockQuoteLevel: 0
 AXTopLevelUIElement: <AXRow>
 AXIndex: 1
+AXARIABusy: 0
 
 ------------
 AXRole: AXRow
@@ -450,6 +466,7 @@ AXSelected: 0
 AXBlockQuoteLevel: 0
 AXTopLevelUIElement: <AXRow>
 AXIndex: 2
+AXARIABusy: 0
 
 ------------
 AXRole: AXRow
@@ -474,6 +491,7 @@ AXSelected: 0
 AXBlockQuoteLevel: 0
 AXTopLevelUIElement: <AXRow>
 AXIndex: 3
+AXARIABusy: 0
 
 ------------
 
@@ -503,6 +521,7 @@ AXBlockQuoteLevel: 0
 AXTopLevelUIElement: <AXCell>
 AXRowIndexRange: NSRange: {0, 2}
 AXColumnIndexRange: NSRange: {0, 2}
+AXARIABusy: 0
 
 ------------
 AXRole: AXCell
@@ -528,6 +547,7 @@ AXBlockQuoteLevel: 0
 AXTopLevelUIElement: <AXCell>
 AXRowIndexRange: NSRange: {0, 2}
 AXColumnIndexRange: NSRange: {2, 1}
+AXARIABusy: 0
 
 ------------
 AXRole: AXCell
@@ -553,6 +573,7 @@ AXBlockQuoteLevel: 0
 AXTopLevelUIElement: <AXCell>
 AXRowIndexRange: NSRange: {0, 1}
 AXColumnIndexRange: NSRange: {3, 2}
+AXARIABusy: 0
 
 ------------
 AXRole: AXCell
@@ -578,6 +599,7 @@ AXBlockQuoteLevel: 0
 AXTopLevelUIElement: <AXCell>
 AXRowIndexRange: NSRange: {1, 1}
 AXColumnIndexRange: NSRange: {3, 1}
+AXARIABusy: 0
 
 ------------
 AXRole: AXCell
@@ -603,6 +625,7 @@ AXBlockQuoteLevel: 0
 AXTopLevelUIElement: <AXCell>
 AXRowIndexRange: NSRange: {1, 1}
 AXColumnIndexRange: NSRange: {4, 1}
+AXARIABusy: 0
 
 ------------
 AXRole: AXCell
@@ -628,6 +651,7 @@ AXBlockQuoteLevel: 0
 AXTopLevelUIElement: <AXCell>
 AXRowIndexRange: NSRange: {2, 2}
 AXColumnIndexRange: NSRange: {0, 1}
+AXARIABusy: 0
 
 ------------
 AXRole: AXCell
@@ -653,6 +677,7 @@ AXBlockQuoteLevel: 0
 AXTopLevelUIElement: <AXCell>
 AXRowIndexRange: NSRange: {2, 1}
 AXColumnIndexRange: NSRange: {1, 1}
+AXARIABusy: 0
 
 ------------
 AXRole: AXCell
@@ -678,6 +703,7 @@ AXBlockQuoteLevel: 0
 AXTopLevelUIElement: <AXCell>
 AXRowIndexRange: NSRange: {2, 1}
 AXColumnIndexRange: NSRange: {2, 1}
+AXARIABusy: 0
 
 ------------
 AXRole: AXCell
@@ -703,6 +729,7 @@ AXBlockQuoteLevel: 0
 AXTopLevelUIElement: <AXCell>
 AXRowIndexRange: NSRange: {2, 1}
 AXColumnIndexRange: NSRange: {3, 1}
+AXARIABusy: 0
 
 ------------
 AXRole: AXCell
@@ -728,6 +755,7 @@ AXBlockQuoteLevel: 0
 AXTopLevelUIElement: <AXCell>
 AXRowIndexRange: NSRange: {2, 1}
 AXColumnIndexRange: NSRange: {4, 1}
+AXARIABusy: 0
 
 ------------
 AXRole: AXCell
@@ -753,6 +781,7 @@ AXBlockQuoteLevel: 0
 AXTopLevelUIElement: <AXCell>
 AXRowIndexRange: NSRange: {3, 1}
 AXColumnIndexRange: NSRange: {1, 1}
+AXARIABusy: 0
 
 ------------
 AXRole: AXCell
@@ -778,6 +807,7 @@ AXBlockQuoteLevel: 0
 AXTopLevelUIElement: <AXCell>
 AXRowIndexRange: NSRange: {3, 1}
 AXColumnIndexRange: NSRange: {2, 1}
+AXARIABusy: 0
 
 ------------
 AXRole: AXCell
@@ -803,6 +833,7 @@ AXBlockQuoteLevel: 0
 AXTopLevelUIElement: <AXCell>
 AXRowIndexRange: NSRange: {3, 1}
 AXColumnIndexRange: NSRange: {3, 1}
+AXARIABusy: 0
 
 ------------
 AXRole: AXCell
@@ -828,6 +859,7 @@ AXBlockQuoteLevel: 0
 AXTopLevelUIElement: <AXCell>
 AXRowIndexRange: NSRange: {3, 1}
 AXColumnIndexRange: NSRange: {4, 1}
+AXARIABusy: 0
 
 ------------
 
@@ -855,6 +887,7 @@ AXLinkedUIElements: (null)
 AXSelected: 0
 AXBlockQuoteLevel: 0
 AXTopLevelUIElement: <AXGroup>
+AXARIABusy: 0
 
 ------------
 

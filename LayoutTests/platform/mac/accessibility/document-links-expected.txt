@@ -23,6 +23,7 @@ AXBlockQuoteLevel: 0
 AXTopLevelUIElement: <AXLink: 'Link1'>
 AXURL: http://www.apple.com/
 AXAccessKey: (null)
+AXARIABusy: 0
 
 ------------
 AXRole: AXLink
@@ -48,6 +49,7 @@ AXBlockQuoteLevel: 0
 AXTopLevelUIElement: <AXLink: 'Link2'>
 AXURL: http://www.apple.com/
 AXAccessKey: (null)
+AXARIABusy: 0
 
 ------------
 AXRole: AXLink
@@ -73,6 +75,7 @@ AXBlockQuoteLevel: 0
 AXTopLevelUIElement: <AXLink: 'link 3'>
 AXURL: http://webkit.org/
 AXAccessKey: (null)
+AXARIABusy: 0
 
 ------------
 AXRole: AXLink
@@ -98,6 +101,7 @@ AXBlockQuoteLevel: 0
 AXTopLevelUIElement: <AXLink: 'link 4'>
 AXURL: LayoutTests/platform/mac/accessibility/document-links.html#asdf
 AXAccessKey: (null)
+AXARIABusy: 0
 
 ------------
 

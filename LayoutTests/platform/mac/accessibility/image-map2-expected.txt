@@ -21,6 +21,7 @@ AXLinkedUIElements: (null)
 AXSelected: 0
 AXBlockQuoteLevel: 0
 AXTopLevelUIElement: <AXGroup>
+AXARIABusy: 0
 
 ------------
 AXRole: AXLink
@@ -46,6 +47,7 @@ AXBlockQuoteLevel: 0
 AXTopLevelUIElement: <AXLink>
 AXURL: http://www.apple.com/
 AXAccessKey: (null)
+AXARIABusy: 0
 
 ------------
 AXRole: AXLink
@@ -71,6 +73,7 @@ AXBlockQuoteLevel: 0
 AXTopLevelUIElement: <AXLink>
 AXURL: http://www.apple.com/
 AXAccessKey: (null)
+AXARIABusy: 0
 
 ------------
 

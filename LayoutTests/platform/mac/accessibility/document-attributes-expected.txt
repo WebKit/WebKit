@@ -24,5 +24,6 @@ AXLoaded: 1
 AXLayoutCount: 2
 AXLoadingProgress: 1
 AXURL: LayoutTests/platform/mac/accessibility/document-attributes.html
+AXARIABusy: 0
 
 

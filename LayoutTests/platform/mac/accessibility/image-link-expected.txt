@@ -26,6 +26,7 @@ AXBlockQuoteLevel: 0
 AXTopLevelUIElement: <AXLink>
 AXURL: http://www.wowhead.com/?item=33924
 AXAccessKey: (null)
+AXARIABusy: 0
 
 
 Child 0:
@@ -52,6 +53,7 @@ AXBlockQuoteLevel: 0
 AXTopLevelUIElement: <AXImage>
 AXURL: LayoutTests/accessibility/resources/cake.png
 AXAccessKey: (null)
+AXARIABusy: 0
 
 
 

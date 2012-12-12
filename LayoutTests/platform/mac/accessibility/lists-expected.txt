@@ -36,6 +36,7 @@ AXSelectedChildren: (null)
 AXVisibleChildren: <array of size 2>
 AXOrientation: AXVerticalOrientation
 AXTitleUIElement: (null)
+AXARIABusy: 0
 
 ------------
 AXRole: AXList
@@ -63,6 +64,7 @@ AXSelectedChildren: (null)
 AXVisibleChildren: <array of size 2>
 AXOrientation: AXVerticalOrientation
 AXTitleUIElement: (null)
+AXARIABusy: 0
 
 ------------
 AXRole: AXList
@@ -90,6 +92,7 @@ AXSelectedChildren: (null)
 AXVisibleChildren: <array of size 5>
 AXOrientation: AXVerticalOrientation
 AXTitleUIElement: (null)
+AXARIABusy: 0
 
 ------------
 AXRole: AXGroup
@@ -114,6 +117,7 @@ AXSelected: 0
 AXBlockQuoteLevel: 0
 AXTopLevelUIElement: <AXGroup>
 AXTitleUIElement: (null)
+AXARIABusy: 0
 
 ------------
 AXRole: AXGroup
@@ -138,6 +142,7 @@ AXSelected: 0
 AXBlockQuoteLevel: 0
 AXTopLevelUIElement: <AXGroup>
 AXTitleUIElement: (null)
+AXARIABusy: 0
 
 ------------
 
@@ -164,6 +169,7 @@ AXSelected: 0
 AXBlockQuoteLevel: 0
 AXTopLevelUIElement: <AXGroup>
 AXTitleUIElement: (null)
+AXARIABusy: 0
 
 ------------
 AXRole: AXGroup
@@ -188,6 +194,7 @@ AXSelected: 0
 AXBlockQuoteLevel: 0
 AXTopLevelUIElement: <AXGroup>
 AXTitleUIElement: (null)
+AXARIABusy: 0
 
 ------------
 
@@ -214,6 +221,7 @@ AXSelected: 0
 AXBlockQuoteLevel: 0
 AXTopLevelUIElement: <AXGroup>
 AXTitleUIElement: (null)
+AXARIABusy: 0
 
 ------------
 AXRole: AXGroup
@@ -238,6 +246,7 @@ AXSelected: 0
 AXBlockQuoteLevel: 0
 AXTopLevelUIElement: <AXGroup>
 AXTitleUIElement: (null)
+AXARIABusy: 0
 
 ------------
 
@@ -263,6 +272,7 @@ AXLinkedUIElements: (null)
 AXSelected: 0
 AXBlockQuoteLevel: 0
 AXTopLevelUIElement: <AXGroup>
+AXARIABusy: 0
 
 ------------
 AXRole: AXGroup
@@ -286,6 +296,7 @@ AXLinkedUIElements: (null)
 AXSelected: 0
 AXBlockQuoteLevel: 0
 AXTopLevelUIElement: <AXGroup>
+AXARIABusy: 0
 
 ------------
 AXRole: AXGroup
@@ -309,6 +320,7 @@ AXLinkedUIElements: (null)
 AXSelected: 0
 AXBlockQuoteLevel: 0
 AXTopLevelUIElement: <AXGroup>
+AXARIABusy: 0
 
 ------------
 AXRole: AXGroup
@@ -332,6 +344,7 @@ AXLinkedUIElements: (null)
 AXSelected: 0
 AXBlockQuoteLevel: 0
 AXTopLevelUIElement: <AXGroup>
+AXARIABusy: 0
 
 ------------
 AXRole: AXGroup
@@ -355,6 +368,7 @@ AXLinkedUIElements: (null)
 AXSelected: 0
 AXBlockQuoteLevel: 0
 AXTopLevelUIElement: <AXGroup>
+AXARIABusy: 0
 
 ------------
 

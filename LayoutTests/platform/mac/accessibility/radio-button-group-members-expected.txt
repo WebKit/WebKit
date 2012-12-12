@@ -25,6 +25,7 @@ AXTitleUIElement: (null)
 AXAccessKey: (null)
 AXRequired: 0
 AXInvalid: false
+AXARIABusy: 0
 
 ------------
 AXRole: AXRadioButton
@@ -52,6 +53,7 @@ AXTitleUIElement: (null)
 AXAccessKey: (null)
 AXRequired: 0
 AXInvalid: false
+AXARIABusy: 0
 
 ------------
 AXRole: AXRadioButton
@@ -79,6 +81,7 @@ AXTitleUIElement: (null)
 AXAccessKey: (null)
 AXRequired: 0
 AXInvalid: false
+AXARIABusy: 0
 
 ------------
 
@@ -110,6 +113,7 @@ AXTitleUIElement: (null)
 AXAccessKey: (null)
 AXRequired: 0
 AXInvalid: false
+AXARIABusy: 0
 
 ------------
 AXRole: AXRadioButton
@@ -137,6 +141,7 @@ AXTitleUIElement: (null)
 AXAccessKey: (null)
 AXRequired: 0
 AXInvalid: false
+AXARIABusy: 0
 
 ------------
 
@@ -168,6 +173,7 @@ AXTitleUIElement: (null)
 AXAccessKey: (null)
 AXRequired: 0
 AXInvalid: false
+AXARIABusy: 0
 
 ------------
 AXRole: AXRadioButton
@@ -195,6 +201,7 @@ AXTitleUIElement: (null)
 AXAccessKey: (null)
 AXRequired: 0
 AXInvalid: false
+AXARIABusy: 0
 
 ------------
 
@@ -226,6 +233,7 @@ AXTitleUIElement: (null)
 AXAccessKey: (null)
 AXRequired: 0
 AXInvalid: false
+AXARIABusy: 0
 
 ------------
 
