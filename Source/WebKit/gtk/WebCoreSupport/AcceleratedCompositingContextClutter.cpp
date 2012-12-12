@@ -56,7 +56,7 @@ bool AcceleratedCompositingContext::enabled()
 bool AcceleratedCompositingContext::renderLayersToWindow(cairo_t*, const IntRect& clipRect)
 {
     notImplemented();
-    return false;
+    return true;
 }
 
 void AcceleratedCompositingContext::setRootCompositingLayer(GraphicsLayer* graphicsLayer)
@@ -68,14 +68,18 @@ void AcceleratedCompositingContext::setRootCompositingLayer(GraphicsLayer* graph
         return;
     }
 
-    // Create an instance of GtkClutterEmbed to host actors as web layers.
+    // Create an instance of GtkClutterEmbed to embed actors as GraphicsLayers.
     if (!m_rootLayerEmbedder) {
         m_rootLayerEmbedder = gtk_clutter_embed_new();
         gtk_container_add(GTK_CONTAINER(m_webView), m_rootLayerEmbedder);
+
+        GtkAllocation allocation;
+        gtk_widget_get_allocation(GTK_WIDGET(m_webView), &allocation);
+        gtk_widget_size_allocate(GTK_WIDGET(m_rootLayerEmbedder), &allocation);
         gtk_widget_show(m_rootLayerEmbedder);
     }
 
-    // Add a root layer to the stage.
+    // Add a root GraphicsLayer to the stage.
     if (graphicsLayer) {
         m_rootGraphicsLayer = graphicsLayer;
         ClutterColor stageColor = { 0xFF, 0xFF, 0xFF, 0xFF };
@@ -84,6 +88,8 @@ void AcceleratedCompositingContext::setRootCompositingLayer(GraphicsLayer* graph
         clutter_container_add_actor(CLUTTER_CONTAINER(stage), m_rootGraphicsLayer->platformLayer());
         clutter_actor_show_all(stage);
     }
+
+    scheduleLayerFlush();
 }
 
 void AcceleratedCompositingContext::setNonCompositedContentsNeedDisplay(const IntRect& rect)
@@ -110,6 +116,8 @@ void AcceleratedCompositingContext::resizeRootLayer(const IntSize& size)
     allocation.width = size.width();
     allocation.height = size.height();
     gtk_widget_size_allocate(GTK_WIDGET(m_rootLayerEmbedder), &allocation);
+
+    scheduleLayerFlush();
 }
 
 void AcceleratedCompositingContext::scrollNonCompositedContents(const IntRect& scrollRect, const IntSize& scrollOffset)
@@ -117,7 +125,7 @@ void AcceleratedCompositingContext::scrollNonCompositedContents(const IntRect& s
     notImplemented();
 }
 
-static gboolean flushAndRenderLayersCallback(AcceleratedCompositingContext* context)
+gboolean AcceleratedCompositingContext::layerFlushTimerFiredCallback(AcceleratedCompositingContext* context)
 {
     context->flushAndRenderLayers();
     return FALSE;
@@ -130,7 +138,7 @@ void AcceleratedCompositingContext::scheduleLayerFlush()
 
     // We use a GLib timer because otherwise GTK+ event handling during
     // dragging can starve WebCore timers, which have a lower priority.
-    m_layerFlushTimerCallbackId = g_timeout_add_full(GDK_PRIORITY_EVENTS, 0, reinterpret_cast<GSourceFunc>(flushAndRenderLayersCallback), this, 0);
+    m_layerFlushTimerCallbackId = g_timeout_add_full(GDK_PRIORITY_EVENTS, 0, reinterpret_cast<GSourceFunc>(layerFlushTimerFiredCallback), this, 0);
 }
 
 bool AcceleratedCompositingContext::flushPendingLayerChanges()

@@ -77,6 +77,7 @@ private:
 #if USE(CLUTTER)
     WebCore::GraphicsLayer* m_rootGraphicsLayer;
     GtkWidget* m_rootLayerEmbedder;
+    static gboolean layerFlushTimerFiredCallback(AcceleratedCompositingContext*);
 #elif USE(TEXTURE_MAPPER_GL)
     OwnPtr<WebCore::RedirectedXCompositeWindow> m_redirectedWindow;
     OwnPtr<WebCore::GraphicsLayer> m_rootLayer;
