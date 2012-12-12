@@ -896,7 +896,7 @@ void RenderBlock::addChildIgnoringAnonymousColumnBlocks(RenderObject* newChild, 
     RenderBox::addChild(newChild, beforeChild);
  
     // Handle placement of run-ins.
-    placeRunInIfNeeded(newChild, DoNotPlaceGeneratedRunIn);
+    placeRunInIfNeeded(newChild);
 
     if (madeBoxesNonInline && parent() && isAnonymousBlock() && parent()->isRenderBlock())
         toRenderBlock(parent())->removeLeftoverAnonymousBlock(this);
@@ -1820,12 +1820,12 @@ static void destroyRunIn(RenderBoxModelObject* runIn)
     runIn->destroy();
 }
 
-void RenderBlock::placeRunInIfNeeded(RenderObject* newChild, PlaceGeneratedRunInFlag flag)
+void RenderBlock::placeRunInIfNeeded(RenderObject* newChild)
 {
-    if (newChild->isRunIn() && (flag == PlaceGeneratedRunIn || !newChild->isBeforeOrAfterContent()))
+    if (newChild->isRunIn())
         moveRunInUnderSiblingBlockIfNeeded(newChild);
     else if (RenderObject* prevSibling = newChild->previousSibling()) {
-        if (prevSibling->isRunIn() && (flag == PlaceGeneratedRunIn || !newChild->isBeforeOrAfterContent()))
+        if (prevSibling->isRunIn())
             moveRunInUnderSiblingBlockIfNeeded(prevSibling);
     }
 }
@@ -1833,21 +1833,18 @@ void RenderBlock::placeRunInIfNeeded(RenderObject* newChild, PlaceGeneratedRunIn
 RenderBoxModelObject* RenderBlock::createReplacementRunIn(RenderBoxModelObject* runIn)
 {
     ASSERT(runIn->isRunIn());
+    ASSERT(runIn->node());
 
-    bool newRunInShouldBeBlock = !runIn->isRenderBlock();
-    Node* runInNode = runIn->node();
     RenderBoxModelObject* newRunIn = 0;
-    if (newRunInShouldBeBlock)
-        newRunIn = new (renderArena()) RenderBlock(runInNode ? runInNode : document());
+    if (!runIn->isRenderBlock())
+        newRunIn = new (renderArena()) RenderBlock(runIn->node());
     else
-        newRunIn = new (renderArena()) RenderInline(runInNode ? runInNode : document());
-    newRunIn->setStyle(runIn->style());
- 
-    runIn->moveAllChildrenTo(newRunIn, true);
+        newRunIn = new (renderArena()) RenderInline(runIn->node());
 
-    // If the run-in had an element, we need to set the new renderer.
-    if (runInNode)
-        runInNode->setRenderer(newRunIn);
+    runIn->node()->setRenderer(newRunIn);
+    newRunIn->setStyle(runIn->style());
+
+    runIn->moveAllChildrenTo(newRunIn, true);
 
     return newRunIn;
 }

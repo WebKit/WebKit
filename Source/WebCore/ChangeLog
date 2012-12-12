@@ -1,3 +1,27 @@
+2012-12-12  Elliott Sprehn  <esprehn@gmail.com>
+
+        REGRESSION(137336): Generated run-ins are not placed correctly
+        https://bugs.webkit.org/show_bug.cgi?id=104840
+
+        Reviewed by Abhishek Arya.
+
+        Now that :before and :after are not anonymous we no longer need special
+        handling for run-ins. Currently placeRunInIfNeeded will only place
+        a generated content run-in if a special flag is passed, but I removed
+        the call with the flag as it wasn't needed in r137336. This patch just
+        removes all special handling for generated content run-ins.
+
+        Test: fast/css-generated-content/generated-runin.html
+
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::addChildIgnoringAnonymousColumnBlocks):
+        (WebCore::RenderBlock::placeRunInIfNeeded):
+        (WebCore::RenderBlock::createReplacementRunIn):
+            Lots of simplfication since there's no more anonymous run-ins.
+        * rendering/RenderBlock.h:
+        (RenderBlock):
+        * rendering/RenderObject.h:
+
 2012-12-12  Simon Fraser  <simon.fraser@apple.com>
 
         Don't unconditionally repaint compositing layers when their size changes

@@ -424,7 +424,7 @@ public:
 
     LayoutUnit computeStartPositionDeltaForChildAvoidingFloats(const RenderBox* child, LayoutUnit childMarginStart, RenderRegion* = 0, LayoutUnit offsetFromLogicalTopOfFirstPage = 0);
 
-    void placeRunInIfNeeded(RenderObject* newChild, PlaceGeneratedRunInFlag);
+    void placeRunInIfNeeded(RenderObject* newChild);
     bool runInIsPlacedIntoSiblingBlock(RenderObject* runIn);
 
 #ifndef NDEBUG

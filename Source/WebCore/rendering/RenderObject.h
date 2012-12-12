@@ -106,11 +106,6 @@ enum MarkingBehavior {
     MarkContainingBlockChain,
 };
 
-enum PlaceGeneratedRunInFlag {
-    PlaceGeneratedRunIn,
-    DoNotPlaceGeneratedRunIn
-};
-
 enum MapCoordinatesMode {
     IsFixed = 1 << 0,
     UseTransforms = 1 << 1,

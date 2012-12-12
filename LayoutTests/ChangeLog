@@ -1,3 +1,15 @@
+2012-12-12  Elliott Sprehn  <esprehn@gmail.com>
+
+        REGRESSION(137336): Generated run-ins are not placed correctly
+        https://bugs.webkit.org/show_bug.cgi?id=104840
+
+        Reviewed by Abhishek Arya.
+
+        Add a test for dynamically adding a generated content run-in.
+
+        * fast/css-generated-content/generated-runin-expected.html: Added.
+        * fast/css-generated-content/generated-runin.html: Added.
+
 2012-12-12  Roger Fong  <roger_fong@apple.com>
 
         Unreviewed. Unskipping some track tests after r137507.
