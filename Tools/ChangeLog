@@ -1,3 +1,12 @@
+2012-12-12  Zan Dobersek  <zandobersek@gmail.com>
+
+        Unreviewed GTK gardening.
+
+        Skipping another unit test that regressed in r137432.
+
+        * Scripts/run-gtk-tests:
+        (TestRunner):
+
 2012-12-12  Simon Hausmann  <simon.hausmann@digia.com>
 
         [Qt] Fix linkage against SQLite
