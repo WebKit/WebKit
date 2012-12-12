@@ -40,6 +40,7 @@ xcopy /y /d "%ProjectDir%..\history\*.h" "%CONFIGURATIONBUILDDIR%\include\WebCor
 xcopy /y /d "%ProjectDir%..\history\cf\*.h" "%CONFIGURATIONBUILDDIR%\include\WebCore"
 xcopy /y /d "%ProjectDir%..\html\*.h" "%CONFIGURATIONBUILDDIR%\include\WebCore"
 xcopy /y /d "%ProjectDir%..\html\parser\*.h" "%CONFIGURATIONBUILDDIR%\include\WebCore"
+xcopy /y /d "%ProjectDir%..\html\track\*.h" "%CONFIGURATIONBUILDDIR%\include\WebCore"
 xcopy /y /d "%ProjectDir%..\css\*.h" "%CONFIGURATIONBUILDDIR%\include\WebCore"
 xcopy /y /d "%ProjectDir%..\platform\*.h" "%CONFIGURATIONBUILDDIR%\include\WebCore"
 xcopy /y /d "%ProjectDir%..\platform\animation\*.h" "%CONFIGURATIONBUILDDIR%\include\WebCore"

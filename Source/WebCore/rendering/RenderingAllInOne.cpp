@@ -109,6 +109,7 @@
 #include "RenderTextControlMultiLine.cpp"
 #include "RenderTextControlSingleLine.cpp"
 #include "RenderTextFragment.cpp"
+#include "RenderTextTrackCue.cpp"
 #include "RenderTheme.cpp"
 #if PLATFORM(WIN)
 #include "RenderThemeWin.cpp"

@@ -461,6 +461,7 @@
 #include "JSTextEvent.cpp"
 #include "JSTextMetrics.cpp"
 #if ENABLE(VIDEO_TRACK)
+#include "JSHTMLTrackElement.cpp"
 #include "JSTextTrack.cpp"
 #include "JSTextTrackCue.cpp"
 #include "JSTextTrackCueList.cpp"
