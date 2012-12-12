@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
+<script src="../resources/subpixel-utils.js"></script>
 <script>
     if (window.internals)
         window.internals.settings.setCSSExclusionsEnabled(true);
@@ -43,7 +44,13 @@ difference between circle's diameter and the size of the square: (200px - sqrt(2
 }
 </style>
 </head>
-<body>
+<body onload="init()">
+<script>
+    function init() {
+        if (!SubPixelLayout.isSubPixelLayoutEnabled())
+            document.getElementById("shape-inside").style.top = "30px";
+    }
+</script>
 <p>The green rectangle should appear within the grey circle.</p>
 <div id="shape-container">
   <div id="shape-background"></div>
