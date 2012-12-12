@@ -50,6 +50,10 @@ window.parent = null;
 <script src="dashboard_base.js"></script>
 <script src="loader.js"></script>
 <script src="loader_unittests.js"></script>
+<script>
+  // Mock out loader.request so that we don't actually make xhrs for tests.
+  loader.request = function(url, successCallback, errorCallback) {};
+</script>
 <script src="flakiness_dashboard.js"></script>
 
 <script>
