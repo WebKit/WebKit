@@ -78,8 +78,14 @@ bool GraphicsContext3D::ImageExtractor::extractImage(bool premultiplyAlpha, bool
         m_skiaImage = m_nativeImage.get();
         if (hasAlpha && premultiplyAlpha)
             m_alphaOp = AlphaDoPremultiply;
-    } else if (!premultiplyAlpha && hasAlpha)
-        m_alphaOp = AlphaDoUnmultiply;
+    } else if (!premultiplyAlpha && hasAlpha) {
+        // 1. For texImage2D with HTMLVideoElment input, assume no PremultiplyAlpha had been applied and the alpha value for each pixel is 0xFF
+        // which is true at present and may be changed in the future and needs adjustment accordingly.
+        // 2. For texImage2D with HTMLCanvasElement input in which Alpha is already Premultiplied in this port,
+        // do AlphaDoUnmultiply if UNPACK_PREMULTIPLY_ALPHA_WEBGL is set to false.
+        if (m_imageHtmlDomSource != HtmlDomVideo)
+            m_alphaOp = AlphaDoUnmultiply;
+    }
     if (!m_skiaImage)
         return false;
 

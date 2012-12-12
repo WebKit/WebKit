@@ -189,7 +189,11 @@ bool GraphicsContext3D::ImageExtractor::extractImage(bool premultiplyAlpha, bool
     } else {
         NativeImageCairo* nativeImage = m_image->nativeImageForCurrentFrame();
         m_imageSurface = (nativeImage) ? nativeImage->surface() : 0;
-        if (!premultiplyAlpha)
+        // 1. For texImage2D with HTMLVideoElment input, assume no PremultiplyAlpha had been applied and the alpha value is 0xFF for each pixel,
+        // which is true at present and may be changed in the future and needs adjustment accordingly.
+        // 2. For texImage2D with HTMLCanvasElement input in which Alpha is already Premultiplied in this port, 
+        // do AlphaDoUnmultiply if UNPACK_PREMULTIPLY_ALPHA_WEBGL is set to false.
+        if (!premultiplyAlpha && m_imageHtmlDomSource != HtmlDomVideo)
             m_alphaOp = AlphaDoUnmultiply;
     }
 

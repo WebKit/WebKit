@@ -168,9 +168,10 @@ GC3Denum GraphicsContext3D::computeImageSizeInBytes(GC3Denum format, GC3Denum ty
     return GraphicsContext3D::NO_ERROR;
 }
 
-GraphicsContext3D::ImageExtractor::ImageExtractor(Image* image, bool premultiplyAlpha, bool ignoreGammaAndColorProfile)
+GraphicsContext3D::ImageExtractor::ImageExtractor(Image* image, ImageHtmlDomSource imageHtmlDomSource, bool premultiplyAlpha, bool ignoreGammaAndColorProfile)
 {
     m_image = image;
+    m_imageHtmlDomSource = imageHtmlDomSource;
     m_extractSucceeded = extractImage(premultiplyAlpha, ignoreGammaAndColorProfile);
 }
 

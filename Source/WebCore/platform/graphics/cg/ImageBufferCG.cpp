@@ -231,6 +231,11 @@ PassRefPtr<Image> ImageBuffer::copyImage(BackingStoreCopy copyBehavior, ScaleBeh
     return BitmapImage::create(image.get());
 }
 
+BackingStoreCopy ImageBuffer::fastCopyImageMode()
+{
+    return DontCopyBackingStore;
+}
+
 NativeImagePtr ImageBuffer::copyNativeImage(BackingStoreCopy copyBehavior) const
 {
     CGImageRef image = 0;

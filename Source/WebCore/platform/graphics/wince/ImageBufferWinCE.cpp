@@ -100,6 +100,11 @@ PassRefPtr<Image> ImageBuffer::copyImage(BackingStoreCopy copyBehavior, ScaleBeh
     return adoptRef(new BufferedImage(&m_data));
 }
 
+BackingStoreCopy ImageBuffer::fastCopyImageMode()
+{
+    return CopyBackingStore;
+}
+
 void ImageBuffer::clip(GraphicsContext*, const FloatRect&) const
 {
     notImplemented();

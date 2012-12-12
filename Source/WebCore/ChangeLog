@@ -1,3 +1,54 @@
+2012-12-11  Jun Jiang  <jun.a.jiang@intel.com>
+
+        WebGL: Avoid unnecessary memory copy or conversion in texImage2D and texSubImage2D for HTMLVideoElement
+        https://bugs.webkit.org/show_bug.cgi?id=102161
+
+        Reviewed by Kenneth Russell.
+
+        There are several memory copy or conversions in the texImage2D and texSubImage2D for HTMLVideoElement which may be avoided. This patch removes the redundant BackingStore copy if the corresponding Graphics port supports the DontCopyBackingStore behavior. Moreover, it optimizes the AlphaOp if the Image source is from HTMLVideoElement to avoid unnecessary Unmultiply or Premultiply operation in unpack/pack. 
+
+        Already covered by current tests. 
+
+        * html/canvas/WebGLRenderingContext.cpp:
+        (WebCore):
+        (WebCore::WebGLRenderingContext::texImage2DImpl):
+        (WebCore::WebGLRenderingContext::texImage2D):
+        (WebCore::WebGLRenderingContext::videoFrameToImage): add a parameter to choose BackingStore copy behavior.
+        (WebCore::WebGLRenderingContext::texSubImage2DImpl):
+        (WebCore::WebGLRenderingContext::texSubImage2D):
+        * html/canvas/WebGLRenderingContext.h:
+        (WebGLRenderingContext):
+        * platform/graphics/GraphicsContext3D.cpp:
+        (WebCore::GraphicsContext3D::ImageExtractor::ImageExtractor):
+        * platform/graphics/GraphicsContext3D.h:
+        (ImageExtractor):
+        (WebCore::GraphicsContext3D::ImageExtractor::imageSourceUnpackAlignment):
+        (WebCore::GraphicsContext3D::ImageExtractor::imageHtmlDomSource):
+        * platform/graphics/ImageBuffer.h:
+        (ImageBuffer):
+        * platform/graphics/cairo/GraphicsContext3DCairo.cpp:
+        (WebCore::GraphicsContext3D::ImageExtractor::extractImage): optimize the AlphaOp for HTMLVideoElement input.
+        * platform/graphics/cairo/ImageBufferCairo.cpp:
+        (WebCore::ImageBuffer::fastCopyImageMode):
+        (WebCore):
+        * platform/graphics/cg/ImageBufferCG.cpp:
+        (WebCore::ImageBuffer::fastCopyImageMode):
+        (WebCore):
+        * platform/graphics/qt/ImageBufferQt.cpp:
+        (WebCore::ImageBuffer::fastCopyImageMode):
+        (WebCore):
+        * platform/graphics/skia/GraphicsContext3DSkia.cpp:
+        (WebCore::GraphicsContext3D::ImageExtractor::extractImage): optimize the AlphaOp for HTMLVideoElement input.
+        * platform/graphics/skia/ImageBufferSkia.cpp:
+        (WebCore::ImageBuffer::fastCopyImageMode):
+        (WebCore):
+        * platform/graphics/wince/ImageBufferWinCE.cpp:
+        (WebCore::ImageBuffer::fastCopyImageMode):
+        (WebCore):
+        * platform/graphics/wx/ImageBufferWx.cpp:
+        (WebCore::ImageBuffer::fastCopyImageMode):
+        (WebCore):
+
 2012-12-11  Viatcheslav Ostapenko  <v.ostapenko@samsung.com>
 
         [EFL] Missing implementation of GraphicsContext3DPrivate::platformLayerSize()

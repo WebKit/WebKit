@@ -104,6 +104,9 @@ namespace WebCore {
         GraphicsContext* context() const;
 
         PassRefPtr<Image> copyImage(BackingStoreCopy = CopyBackingStore, ScaleBehavior = Scaled) const;
+        // Give hints on the faster copyImage Mode, return DontCopyBackingStore if it supports the DontCopyBackingStore behavior
+        // or return CopyBackingStore if it doesn't.  
+        static BackingStoreCopy fastCopyImageMode();
 
         enum CoordinateSystem { LogicalCoordinateSystem, BackingStoreCoordinateSystem };
 

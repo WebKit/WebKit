@@ -3609,15 +3609,13 @@ void WebGLRenderingContext::texImage2DBase(GC3Denum target, GC3Dint level, GC3De
     cleanupAfterGraphicsCall(false);
 }
 
-void WebGLRenderingContext::texImage2DImpl(GC3Denum target, GC3Dint level, GC3Denum internalformat,
-                                           GC3Denum format, GC3Denum type, Image* image,
-                                           bool flipY, bool premultiplyAlpha, ExceptionCode& ec)
+void WebGLRenderingContext::texImage2DImpl(GC3Denum target, GC3Dint level, GC3Denum internalformat, GC3Denum format, GC3Denum type, Image* image, GraphicsContext3D::ImageHtmlDomSource domSource, bool flipY, bool premultiplyAlpha, ExceptionCode& ec)
 {
     ec = 0;
     if (!validateSettableTexFormat("texImage2D", internalformat))
         return;
     Vector<uint8_t> data;
-    GraphicsContext3D::ImageExtractor imageExtractor(image, premultiplyAlpha, m_unpackColorspaceConversion == GraphicsContext3D::NONE);
+    GraphicsContext3D::ImageExtractor imageExtractor(image, domSource, premultiplyAlpha, m_unpackColorspaceConversion == GraphicsContext3D::NONE);
     if (!imageExtractor.extractSucceeded()) {
         synthesizeGLError(GraphicsContext3D::INVALID_VALUE, "texImage2D", "bad image data");
         return;
@@ -3702,8 +3700,7 @@ void WebGLRenderingContext::texImage2D(GC3Denum target, GC3Dint level, GC3Denum 
         return;
     }
 
-    texImage2DImpl(target, level, internalformat, format, type, image->cachedImage()->imageForRenderer(image->renderer()),
-                   m_unpackFlipY, m_unpackPremultiplyAlpha, ec);
+    texImage2DImpl(target, level, internalformat, format, type, image->cachedImage()->imageForRenderer(image->renderer()), GraphicsContext3D::HtmlDomImage, m_unpackFlipY, m_unpackPremultiplyAlpha, ec);
 }
 
 void WebGLRenderingContext::texImage2D(GC3Denum target, GC3Dint level, GC3Denum internalformat,
@@ -3741,12 +3738,11 @@ void WebGLRenderingContext::texImage2D(GC3Denum target, GC3Dint level, GC3Denum 
     if (imageData)
         texImage2D(target, level, internalformat, format, type, imageData.get(), ec);
     else
-        texImage2DImpl(target, level, internalformat, format, type, canvas->copiedImage(),
-                       m_unpackFlipY, m_unpackPremultiplyAlpha, ec);
+        texImage2DImpl(target, level, internalformat, format, type, canvas->copiedImage(), GraphicsContext3D::HtmlDomCanvas, m_unpackFlipY, m_unpackPremultiplyAlpha, ec);
 }
 
 #if ENABLE(VIDEO)
-PassRefPtr<Image> WebGLRenderingContext::videoFrameToImage(HTMLVideoElement* video, ExceptionCode& ec)
+PassRefPtr<Image> WebGLRenderingContext::videoFrameToImage(HTMLVideoElement* video, BackingStoreCopy backingStoreCopy, ExceptionCode& ec)
 {
     if (!video || !video->videoWidth() || !video->videoHeight()) {
         synthesizeGLError(GraphicsContext3D::INVALID_VALUE, "texImage2D", "no video");
@@ -3765,7 +3761,7 @@ PassRefPtr<Image> WebGLRenderingContext::videoFrameToImage(HTMLVideoElement* vid
     IntRect destRect(0, 0, size.width(), size.height());
     // FIXME: Turn this into a GPU-GPU texture copy instead of CPU readback.
     video->paintCurrentFrameInContext(buf->context(), destRect);
-    return buf->copyImage(CopyBackingStore);
+    return buf->copyImage(backingStoreCopy);
 }
 
 void WebGLRenderingContext::texImage2D(GC3Denum target, GC3Dint level, GC3Denum internalformat,
@@ -3774,10 +3770,10 @@ void WebGLRenderingContext::texImage2D(GC3Denum target, GC3Dint level, GC3Denum 
     ec = 0;
     if (isContextLost())
         return;
-    RefPtr<Image> image = videoFrameToImage(video, ec);
+    RefPtr<Image> image = videoFrameToImage(video, ImageBuffer::fastCopyImageMode(), ec);
     if (!image)
         return;
-    texImage2DImpl(target, level, internalformat, format, type, image.get(), m_unpackFlipY, m_unpackPremultiplyAlpha, ec);
+    texImage2DImpl(target, level, internalformat, format, type, image.get(), GraphicsContext3D::HtmlDomVideo, m_unpackFlipY, m_unpackPremultiplyAlpha, ec);
 }
 #endif
 
@@ -3857,15 +3853,13 @@ void WebGLRenderingContext::texSubImage2DBase(GC3Denum target, GC3Dint level, GC
     cleanupAfterGraphicsCall(false);
 }
 
-void WebGLRenderingContext::texSubImage2DImpl(GC3Denum target, GC3Dint level, GC3Dint xoffset, GC3Dint yoffset,
-                                              GC3Denum format, GC3Denum type,
-                                              Image* image, bool flipY, bool premultiplyAlpha, ExceptionCode& ec)
+void WebGLRenderingContext::texSubImage2DImpl(GC3Denum target, GC3Dint level, GC3Dint xoffset, GC3Dint yoffset, GC3Denum format, GC3Denum type, Image* image, GraphicsContext3D::ImageHtmlDomSource domSource, bool flipY, bool premultiplyAlpha, ExceptionCode& ec)
 {
     ec = 0;
     if (isContextLost())
         return;
     Vector<uint8_t> data;
-    GraphicsContext3D::ImageExtractor imageExtractor(image, premultiplyAlpha, m_unpackColorspaceConversion == GraphicsContext3D::NONE);  
+    GraphicsContext3D::ImageExtractor imageExtractor(image, domSource, premultiplyAlpha, m_unpackColorspaceConversion == GraphicsContext3D::NONE);  
     if (!imageExtractor.extractSucceeded()) {
         synthesizeGLError(GraphicsContext3D::INVALID_VALUE, "texSubImage2D", "bad image");
         return;
@@ -3948,8 +3942,7 @@ void WebGLRenderingContext::texSubImage2D(GC3Denum target, GC3Dint level, GC3Din
         ec = SECURITY_ERR;
         return;
     }
-    texSubImage2DImpl(target, level, xoffset, yoffset, format, type, image->cachedImage()->imageForRenderer(image->renderer()),
-                      m_unpackFlipY, m_unpackPremultiplyAlpha, ec);
+    texSubImage2DImpl(target, level, xoffset, yoffset, format, type, image->cachedImage()->imageForRenderer(image->renderer()), GraphicsContext3D::HtmlDomImage, m_unpackFlipY, m_unpackPremultiplyAlpha, ec);
 }
 
 void WebGLRenderingContext::texSubImage2D(GC3Denum target, GC3Dint level, GC3Dint xoffset, GC3Dint yoffset,
@@ -3970,8 +3963,7 @@ void WebGLRenderingContext::texSubImage2D(GC3Denum target, GC3Dint level, GC3Din
     if (imageData)
         texSubImage2D(target, level, xoffset, yoffset, format, type, imageData.get(), ec);
     else
-        texSubImage2DImpl(target, level, xoffset, yoffset, format, type, canvas->copiedImage(),
-                          m_unpackFlipY, m_unpackPremultiplyAlpha, ec);
+        texSubImage2DImpl(target, level, xoffset, yoffset, format, type, canvas->copiedImage(), GraphicsContext3D::HtmlDomCanvas, m_unpackFlipY, m_unpackPremultiplyAlpha, ec);
 }
 
 #if ENABLE(VIDEO)
@@ -3981,10 +3973,10 @@ void WebGLRenderingContext::texSubImage2D(GC3Denum target, GC3Dint level, GC3Din
     ec = 0;
     if (isContextLost())
         return;
-    RefPtr<Image> image = videoFrameToImage(video, ec);
+    RefPtr<Image> image = videoFrameToImage(video, ImageBuffer::fastCopyImageMode(), ec);
     if (!image)
         return;
-    texSubImage2DImpl(target, level, xoffset, yoffset, format, type, image.get(), m_unpackFlipY, m_unpackPremultiplyAlpha, ec);
+    texSubImage2DImpl(target, level, xoffset, yoffset, format, type, image.get(), GraphicsContext3D::HtmlDomVideo, m_unpackFlipY, m_unpackPremultiplyAlpha, ec);
 }
 #endif
 

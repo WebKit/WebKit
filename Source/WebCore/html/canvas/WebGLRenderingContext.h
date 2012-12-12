@@ -29,6 +29,7 @@
 #include "CanvasRenderingContext.h"
 #include "DrawingBuffer.h"
 #include "GraphicsContext3D.h"
+#include "ImageBuffer.h"
 #include "Timer.h"
 #include "WebGLGetInfo.h"
 
@@ -372,7 +373,7 @@ public:
     void addCompressedTextureFormat(GC3Denum);
 
 #if ENABLE(VIDEO)
-    PassRefPtr<Image> videoFrameToImage(HTMLVideoElement*, ExceptionCode&);
+    PassRefPtr<Image> videoFrameToImage(HTMLVideoElement*, BackingStoreCopy, ExceptionCode&);
 #endif
 
     RefPtr<GraphicsContext3D> m_context;
@@ -531,13 +532,9 @@ public:
     void restoreStateAfterClear();
 
     void texImage2DBase(GC3Denum target, GC3Dint level, GC3Denum internalformat, GC3Dsizei width, GC3Dsizei height, GC3Dint border, GC3Denum format, GC3Denum type, const void* pixels, ExceptionCode&);
-    void texImage2DImpl(GC3Denum target, GC3Dint level, GC3Denum internalformat,
-                        GC3Denum format, GC3Denum type, Image*,
-                        bool flipY, bool premultiplyAlpha, ExceptionCode&);
+    void texImage2DImpl(GC3Denum target, GC3Dint level, GC3Denum internalformat, GC3Denum format, GC3Denum type, Image*, GraphicsContext3D::ImageHtmlDomSource, bool flipY, bool premultiplyAlpha, ExceptionCode&);
     void texSubImage2DBase(GC3Denum target, GC3Dint level, GC3Dint xoffset, GC3Dint yoffset, GC3Dsizei width, GC3Dsizei height, GC3Denum format, GC3Denum type, const void* pixels, ExceptionCode&);
-    void texSubImage2DImpl(GC3Denum target, GC3Dint level, GC3Dint xoffset, GC3Dint yoffset,
-                           GC3Denum format, GC3Denum type,
-                           Image* image, bool flipY, bool premultiplyAlpha, ExceptionCode&);
+    void texSubImage2DImpl(GC3Denum target, GC3Dint level, GC3Dint xoffset, GC3Dint yoffset, GC3Denum format, GC3Denum type, Image*, GraphicsContext3D::ImageHtmlDomSource, bool flipY, bool premultiplyAlpha, ExceptionCode&);
 
     void handleNPOTTextures(const char*, bool);
 

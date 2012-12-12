@@ -125,6 +125,11 @@ PassRefPtr<Image> ImageBuffer::copyImage(BackingStoreCopy copyBehavior, ScaleBeh
     return StillImage::createForRendering(&m_data.m_pixmap);
 }
 
+BackingStoreCopy ImageBuffer::fastCopyImageMode()
+{
+    return DontCopyBackingStore;
+}
+
 void ImageBuffer::draw(GraphicsContext* destContext, ColorSpace styleColorSpace, const FloatRect& destRect, const FloatRect& srcRect,
     CompositeOperator op, BlendMode, bool useLowQualityScale)
 {

@@ -201,6 +201,11 @@ PassRefPtr<Image> ImageBuffer::copyImage(BackingStoreCopy copyBehavior, ScaleBeh
     return BitmapImageSingleFrameSkia::create(*m_data.m_platformContext.bitmap(), copyBehavior == CopyBackingStore, m_resolutionScale);
 }
 
+BackingStoreCopy ImageBuffer::fastCopyImageMode()
+{
+    return DontCopyBackingStore;
+}
+
 PlatformLayer* ImageBuffer::platformLayer() const
 {
     return m_data.m_layerBridge ? m_data.m_layerBridge->layer() : 0;

@@ -91,6 +91,11 @@ PassRefPtr<Image> ImageBuffer::copyImage(BackingStoreCopy copyBehavior, ScaleBeh
     return BitmapImage::create(cairo_surface_reference(m_data.m_surface));
 }
 
+BackingStoreCopy ImageBuffer::fastCopyImageMode()
+{
+    return DontCopyBackingStore;
+}
+
 void ImageBuffer::clip(GraphicsContext* context, const FloatRect& maskRect) const
 {
     context->platformContext()->pushImageMask(m_data.m_surface, maskRect);

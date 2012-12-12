@@ -875,6 +875,13 @@ public:
         AlphaDoUnmultiply = 2
     };
 
+    enum ImageHtmlDomSource {
+        HtmlDomImage = 0,
+        HtmlDomCanvas = 1,
+        HtmlDomVideo = 2,
+        HtmlDomNone = 3
+    };
+
     // Packs the contents of the given Image which is passed in |pixels| into the passed Vector
     // according to the given format and type, and obeying the flipY and AlphaOp flags.
     // Returns true upon success.
@@ -882,7 +889,7 @@ public:
 
     class ImageExtractor {
     public:
-        ImageExtractor(Image*, bool premultiplyAlpha, bool ignoreGammaAndColorProfile);
+        ImageExtractor(Image*, ImageHtmlDomSource, bool premultiplyAlpha, bool ignoreGammaAndColorProfile);
 
         // Each platform must provide an implementation of this method to deallocate or release resources
         // associated with the image if needed.
@@ -894,7 +901,8 @@ public:
         unsigned imageHeight() { return m_imageHeight; }
         SourceDataFormat imageSourceFormat() { return m_imageSourceFormat; }
         AlphaOp imageAlphaOp() { return m_alphaOp; }
-        unsigned imageSourceUnpackAlignment() { return m_imageSourceUnpackAlignment; } 
+        unsigned imageSourceUnpackAlignment() { return m_imageSourceUnpackAlignment; }
+        ImageHtmlDomSource imageHtmlDomSource() { return m_imageHtmlDomSource; }
     private:
         // Each platform must provide an implementation of this method.
         // Extracts the image and keeps track of its status, such as width, height, Source Alignment, format and AlphaOp etc,
@@ -915,6 +923,7 @@ public:
         QImage m_qtImage;
 #endif
         Image* m_image;
+        ImageHtmlDomSource m_imageHtmlDomSource;
         bool m_extractSucceeded;
         const void* m_imagePixelData;
         unsigned m_imageWidth;
