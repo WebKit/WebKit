@@ -60,6 +60,10 @@ _VIRTUAL_PORTS = {
     'mac-future': ['LayoutTests/platform/mac-future', 'LayoutTests/platform/mac', 'LayoutTests'],
     'win-future': ['LayoutTests/platform/win-future', 'LayoutTests/platform/win', 'LayoutTests'],
     'qt-unknown': ['LayoutTests/platform/qt-unknown', 'LayoutTests/platform/qt', 'LayoutTests'],
+
+    # FIXME: Account for the efl-wk2 port which isn't returned in builders.all_port_names().
+    # See https://bugs.webkit.org/show_bug.cgi?id=104761.
+    'efl-wk2': ['LayoutTests/platform/efl-wk2', 'LayoutTests/platform/efl', 'LayoutTests'],
 }
 
 

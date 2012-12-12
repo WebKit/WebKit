@@ -82,6 +82,14 @@ class BaselineOptimizerTest(unittest.TestCase):
             'LayoutTests/platform/chromium-win': '462d03b9c025db1b0392d7453310dbee5f9a9e74',
         })
 
+    def test_efl(self):
+        self._assertOptimization({
+            'LayoutTests/platform/efl': '462d03b9c025db1b0392d7453310dbee5f9a9e74',
+        }, {
+            'LayoutTests/platform/efl': '462d03b9c025db1b0392d7453310dbee5f9a9e74',
+        })
+
+
     def test_no_add_mac_future(self):
         self._assertOptimization({
             'LayoutTests/platform/mac': '29a1715a6470d5dd9486a142f609708de84cdac8',
