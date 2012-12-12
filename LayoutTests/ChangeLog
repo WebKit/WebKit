@@ -1,5 +1,17 @@
 2012-12-12  Justin Novosad  <junov@google.com>
 
+        Rebaselining fast/backgrounds/gradient-background-leakage-2-expected.html after r137473
+        https://bugs.webkit.org/show_bug.cgi?id=103409
+
+        Unreviewed
+
+        * platform/chromium-linux/fast/backgrounds/gradient-background-leakage-2-expected.png:
+        * platform/chromium-mac/fast/backgrounds/gradient-background-leakage-2-expected.png:
+        * platform/chromium-win/fast/backgrounds/gradient-background-leakage-2-expected.png:
+        * platform/chromium/TestExpectations:
+
+2012-12-12  Justin Novosad  <junov@google.com>
+
         calendar-picker tests have image diffs on cr-mac after r137473
         https://bugs.webkit.org/show_bug.cgi?id=104825
 
