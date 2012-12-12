@@ -356,7 +356,7 @@ bool RenderLayerBacking::shouldClipCompositedBounds() const
         return false;
 
     if (m_usingTiledCacheLayer)
-        return true;
+        return false;
 
     if (!compositor()->compositingConsultsOverlap())
         return false;
@@ -378,7 +378,7 @@ void RenderLayerBacking::updateCompositedBounds()
         RenderView* view = m_owningLayer->renderer()->view();
         RenderLayer* rootLayer = view->layer();
 
-        // Start by clipping to the view's bounds.
+        // Start by clipping to the document's bounds.
         LayoutRect clippingBounds = view->unscaledDocumentRect();
 
         if (m_owningLayer != rootLayer)

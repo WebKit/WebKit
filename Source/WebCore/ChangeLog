@@ -1,3 +1,28 @@
+2012-12-12  Simon Fraser  <simon.fraser@apple.com>
+
+        Don't unconditionally repaint compositing layers when their size changes
+        https://bugs.webkit.org/show_bug.cgi?id=104461
+
+        Reviewed by James Robinson.
+
+        In r137215 I attempted to avoid excessive repainting when compositing layers
+        change size. This caused stretched layers when layer size changed as a result
+        of bounds constraining in updateCompositedBounds(), so was conditionalized
+        based on whether constraining happend, in r137248.
+        
+        However, the TileCache layer was affected by constraining, erroneously:
+        shouldClipCompositedBounds() returned true of the tile cache layer. This
+        is pointless, because we only constrain to the document bounds (or enclosing
+        overflow), and the tile cache is already the size of the document bounds.
+
+        So, disable size constraining for the tile cache layer, and fix
+        a confusing comment in updateCompositedBounds() that refers to the
+        view's bounds, rather than the document's bounds.
+
+        * rendering/RenderLayerBacking.cpp:
+        (WebCore::RenderLayerBacking::shouldClipCompositedBounds):
+        (WebCore::RenderLayerBacking::updateCompositedBounds):
+
 2012-12-12  Elliott Sprehn  <esprehn@gmail.com>
 
         [Refactoring] Replace Node's Document pointer with a TreeScope pointer
