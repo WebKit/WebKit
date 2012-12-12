@@ -607,6 +607,13 @@ webkit.org/b/98133 fast/css/sticky/sticky-writing-mode-vertical-rl.html [ ImageO
 
 webkit.org/b/68878 media/video-playing-and-pause.html [ Failure Pass ]
 
+webkit.org/b/104809 media/adopt-node-crash.html [ Timeout Pass ]
+webkit.org/b/104809 media/encrypted-media/encrypted-media-not-loaded.html [ Failure Pass ]
+webkit.org/b/104809 media/event-queue-crash.html [ Crash Pass ]
+webkit.org/b/104809 media/video-source-type-params.html [ Crash Pass ]
+webkit.org/b/104809 media/video-src-set.html [ Timeout Pass ]
+webkit.org/b/104809 media/W3C/video/events/event_loadstart_manual.html [ Crash Pass ]
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Flaky tests
 #////////////////////////////////////////////////////////////////////////////////////////
