@@ -302,6 +302,8 @@ public:
     bool dirOverride() const { return m_bitfields.dirOverride(); }
     void setDirOverride(bool dirOverride) { m_bitfields.setDirOverride(dirOverride); }
 
+    virtual void reportMemoryUsage(MemoryObjectInfo*) const;
+
 private:
     InlineBox* m_next; // The next element on the same line as us.
     InlineBox* m_prev; // The previous element on the same line as us.

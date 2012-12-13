@@ -208,6 +208,7 @@ public:
     }
     WTF_EXPORT_PRIVATE void addRawBuffer(const void* buffer, size_t, const char* nodeName = 0, const char* edgeName = 0);
     WTF_EXPORT_PRIVATE void addPrivateBuffer(size_t, MemoryObjectType ownerObjectType = 0, const char* nodeName = 0, const char* edgeName = 0);
+    WTF_EXPORT_PRIVATE void setCustomAllocation(bool);
 
     void addWeakPointer(void*) { }
 

@@ -5448,6 +5448,7 @@ void RenderLayer::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
 #if USE(ACCELERATED_COMPOSITING)
     info.addMember(m_backing);
 #endif
+    info.setCustomAllocation(true);
 }
 
 } // namespace WebCore

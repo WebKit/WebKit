@@ -29,6 +29,7 @@
 #include "RenderArena.h"
 #include "RenderBlock.h"
 #include "RootInlineBox.h"
+#include "WebCoreMemoryInstrumentation.h"
 
 #ifndef NDEBUG
 #include <stdio.h>
@@ -385,6 +386,17 @@ LayoutPoint InlineBox::flipForWritingMode(const LayoutPoint& point)
     if (!renderer()->style()->isFlippedBlocksWritingMode())
         return point;
     return root()->block()->flipForWritingMode(point);
+}
+
+void InlineBox::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
+{
+    MemoryClassInfo info(memoryObjectInfo, this, WebCoreMemoryTypes::Rendering);
+    info.addMember(m_next);
+    info.addMember(m_prev);
+    info.addMember(m_parent);
+    info.addMember(m_renderer);
+
+    info.setCustomAllocation(true);
 }
 
 } // namespace WebCore

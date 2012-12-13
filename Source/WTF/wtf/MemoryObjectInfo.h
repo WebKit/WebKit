@@ -49,6 +49,7 @@ public:
         , m_objectSize(0)
         , m_pointer(pointer)
         , m_firstVisit(true)
+        , m_customAllocation(false)
     { }
 
     typedef MemoryClassInfo ClassInfo;
@@ -57,6 +58,8 @@ public:
     size_t objectSize() const { return m_objectSize; }
     const void* reportedPointer() const { return m_pointer; }
     bool firstVisit() const { return m_firstVisit; }
+    bool customAllocation() const { return m_customAllocation; }
+    void setCustomAllocation(bool customAllocation) { m_customAllocation = customAllocation; }
 
     void setClassName(const String& className) { m_className = className; }
     const String& className() const { return m_className; }
@@ -86,6 +89,7 @@ private:
     size_t m_objectSize;
     const void* m_pointer;
     bool m_firstVisit;
+    bool m_customAllocation;
     String m_className;
     String m_name;
 };

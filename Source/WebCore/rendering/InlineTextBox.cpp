@@ -46,6 +46,7 @@
 #include "Settings.h"
 #include "SVGTextRunRenderingContext.h"
 #include "Text.h"
+#include "WebCoreMemoryInstrumentation.h"
 #include "break_lines.h"
 #include <wtf/AlwaysInline.h>
 #include <wtf/text/CString.h>
@@ -1453,5 +1454,13 @@ void InlineTextBox::showBox(int printedCharacters) const
 }
 
 #endif
+
+void InlineTextBox::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
+{
+    MemoryClassInfo info(memoryObjectInfo, this, WebCoreMemoryTypes::Rendering);
+    InlineBox::reportMemoryUsage(memoryObjectInfo);
+    info.addMember(m_prevTextBox);
+    info.addMember(m_nextTextBox);
+}
 
 } // namespace WebCore

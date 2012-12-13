@@ -96,7 +96,7 @@ void MemoryInstrumentation::WrapperBase::process(MemoryInstrumentation* memoryIn
     }
     memoryInstrumentation->countObjectSize(realAddress, memoryObjectInfo.objectType(), memoryObjectInfo.objectSize());
     memoryInstrumentation->m_client->reportNode(memoryObjectInfo);
-    if (!memoryInstrumentation->checkCountedObject(realAddress)) {
+    if (!memoryObjectInfo.customAllocation() && !memoryInstrumentation->checkCountedObject(realAddress)) {
 #if DEBUG_POINTER_INSTRUMENTATION
         fputs("Unknown object counted:\n", stderr);
         WTFPrintBacktrace(m_callStack, m_callStackSize);
@@ -137,6 +137,11 @@ void MemoryClassInfo::addPrivateBuffer(size_t size, MemoryObjectType ownerObject
         ownerObjectType = m_objectType;
     m_memoryInstrumentation->countObjectSize(0, ownerObjectType, size);
     m_memoryInstrumentation->reportLinkToBuffer(m_memoryObjectInfo->reportedPointer(), 0, ownerObjectType, size, nodeName, edgeName);
+}
+
+void MemoryClassInfo::setCustomAllocation(bool customAllocation)
+{
+    m_memoryObjectInfo->setCustomAllocation(customAllocation);
 }
 
 } // namespace WTF

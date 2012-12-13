@@ -347,6 +347,7 @@ EXPORTS
     ?retrieveLastCaller@Interpreter@JSC@@QBEXPAVExecState@2@AAH1AAVString@WTF@@AAVJSValue@2@@Z
     ?save@Database@Profiler@JSC@@QBE_NPBD@Z
     ?setConfigurable@PropertyDescriptor@JSC@@QAEX_N@Z
+    ?setCustomAllocation@MemoryClassInfo@WTF@@QAEX_N@Z
     ?setDescriptor@PropertyDescriptor@JSC@@QAEXVJSValue@2@I@Z
     ?setEnumerable@PropertyDescriptor@JSC@@QAEX_N@Z
     ?setGarbageCollectionTimerEnabled@Heap@JSC@@QAEX_N@Z

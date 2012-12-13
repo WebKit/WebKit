@@ -3086,6 +3086,8 @@ void RenderObject::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
     info.addWeakPointer(m_parent);
     info.addWeakPointer(m_previous);
     info.addWeakPointer(m_next);
+
+    info.setCustomAllocation(true);
 }
 
 #if ENABLE(SVG)
