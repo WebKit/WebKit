@@ -768,7 +768,7 @@ RenderBlock* RenderObject::containingBlock() const
 #endif
             o = o->parent();
         }
-        ASSERT(!o->isAnonymousBlock());
+        ASSERT(!o || !o->isAnonymousBlock());
     } else if (!isText() && m_style->position() == AbsolutePosition) {
         while (o) {
             // For relpositioned inlines, we return the nearest non-anonymous enclosing block. We don't try
