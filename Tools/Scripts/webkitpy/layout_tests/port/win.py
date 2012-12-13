@@ -61,10 +61,11 @@ class WinPort(ApplePort):
         return expected_text != actual_text
 
     def default_baseline_search_path(self):
-        if self._name.endswith(self.FUTURE_VERSION):
+        name = self._name.replace('-wk2', '')
+        if name.endswith(self.FUTURE_VERSION):
             fallback_names = [self.port_name]
         else:
-            fallback_names = self.VERSION_FALLBACK_ORDER[self.VERSION_FALLBACK_ORDER.index(self._name):-1] + [self.port_name]
+            fallback_names = self.VERSION_FALLBACK_ORDER[self.VERSION_FALLBACK_ORDER.index(name):-1] + [self.port_name]
         # FIXME: The AppleWin port falls back to AppleMac for some results.  Eventually we'll have a shared 'apple' port.
         if self.get_option('webkit_test_runner'):
             fallback_names.insert(0, 'win-wk2')

@@ -55,17 +55,21 @@ class ApplePort(Port):
 
     @classmethod
     def determine_full_port_name(cls, host, options, port_name):
-        # If the port_name matches the (badly named) cls.port_name, that
-        # means that they passed 'mac' or 'win' and didn't specify a version.
-        # That convention means that we're supposed to use the version currently
-        # being run, so this won't work if you're not on mac or win (respectively).
-        # If you're not on the o/s in question, you must specify a full version or -future (cf. above).
-        if port_name == cls.port_name:
-            assert port_name == host.platform.os_name
-            return cls.port_name + '-' + host.platform.os_version
-        if port_name == cls.port_name + '-wk2':
-            assert port_name == host.platform.os_name + '-wk2'
-            return cls.port_name + '-' + host.platform.os_version + '-wk2'
+        options = options or {}
+        if port_name in (cls.port_name, cls.port_name + '-wk2'):
+            # If the port_name matches the (badly named) cls.port_name, that
+            # means that they passed 'mac' or 'win' and didn't specify a version.
+            # That convention means that we're supposed to use the version currently
+            # being run, so this won't work if you're not on mac or win (respectively).
+            # If you're not on the o/s in question, you must specify a full version or -future (cf. above).
+            assert host.platform.os_name in port_name
+            if port_name == cls.port_name and not getattr(options, 'webkit_test_runner', False):
+                port_name = cls.port_name + '-' + host.platform.os_version
+            else:
+                port_name = cls.port_name + '-' + host.platform.os_version + '-wk2'
+        elif getattr(options, 'webkit_test_runner', False) and  '-wk2' not in port_name:
+            port_name += '-wk2'
+
         return port_name
 
     def _strip_port_name_prefix(self, port_name):

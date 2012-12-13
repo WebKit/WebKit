@@ -82,7 +82,7 @@ class DriverOutputTest(unittest.TestCase):
 
 class DriverTest(unittest.TestCase):
     def make_port(self):
-        port = Port(MockSystemHost(), MockOptions(configuration='Release'))
+        port = Port(MockSystemHost(), 'test', MockOptions(configuration='Release'))
         port._config.build_directory = lambda configuration: '/mock-build'
         return port
 

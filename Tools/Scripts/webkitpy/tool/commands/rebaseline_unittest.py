@@ -336,7 +336,7 @@ class TestRebaselineExpectations(_BaseTestCase):
         # FIXME: change this to use the test- ports.
         calls = filter(lambda x: x != ['qmake', '-v'], self.tool.executive.calls)
         self.assertTrue(len(calls) == 1)
-        self.assertTrue(len(calls[0]) == 26)
+        self.assertTrue(len(calls[0]) == 34)
 
     def test_rebaseline_expectations_noop(self):
         self._zero_out_test_expectations()

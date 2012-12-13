@@ -88,7 +88,11 @@ class Port(object):
     def determine_full_port_name(cls, host, options, port_name):
         """Return a fully-specified port name that can be used to construct objects."""
         # Subclasses will usually override this.
-        return cls.port_name
+        options = options or {}
+        assert port_name.startswith(cls.port_name)
+        if getattr(options, 'webkit_test_runner', False) and not '-wk2' in port_name:
+            return port_name + '-wk2'
+        return port_name
 
     def __init__(self, host, port_name=None, options=None, **kwargs):
 
@@ -106,6 +110,9 @@ class Port(object):
         # well-formed options object that had all of the necessary
         # options defined on it.
         self._options = options or optparse.Values()
+
+        if self._name and '-wk2' in self._name:
+            self._options.webkit_test_runner = True
 
         self.host = host
         self._executive = host.executive
