@@ -427,7 +427,7 @@ public:
 
     static bool supportsBackgroundColorContent()
     {
-#if PLATFORM(MAC) || USE(TEXTURE_MAPPER)
+#if USE(CA) || USE(TEXTURE_MAPPER)
         return true;
 #else
         return false;
