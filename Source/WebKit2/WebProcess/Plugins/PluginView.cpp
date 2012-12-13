@@ -71,7 +71,7 @@ namespace WebKit {
 
 // This simulated mouse click delay in HTMLPlugInImageElement.cpp should generally be the same or shorter than this delay.
 static const double pluginSnapshotTimerDelay = 1.1;
-static const unsigned maximumSnapshotRetries = 5;
+static const unsigned maximumSnapshotRetries = 60;
 
 class PluginView::URLRequest : public RefCounted<URLRequest> {
 public:
