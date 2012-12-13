@@ -342,7 +342,6 @@ bool BuiltInPDFView::initialize(const Parameters& parameters)
     if (!parameters.shouldUseManualLoader && !parameters.url.isEmpty())
         controller()->loadURL(pdfDocumentRequestID, "GET", parameters.url.string(), String(), HTTPHeaderMap(), Vector<uint8_t>(), false);
 
-    controller()->didInitializePlugin();
     return true;
 }
 
