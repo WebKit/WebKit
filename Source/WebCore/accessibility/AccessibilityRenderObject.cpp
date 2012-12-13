@@ -624,10 +624,12 @@ String AccessibilityRenderObject::textUnderElement() const
 {
     if (!m_renderer)
         return String();
-
+    
     if (m_renderer->isFileUploadControl())
         return toRenderFileUploadControl(m_renderer)->buttonValue();
     
+    Node* node = m_renderer->node();
+
 #if ENABLE(MATHML)
     // Math operators create RenderText nodes on the fly that are not tied into the DOM in a reasonable way,
     // so rangeOfContents does not work for them (nor does regular text selection).
@@ -638,28 +640,28 @@ String AccessibilityRenderObject::textUnderElement() const
         }
     }
 #endif
-
-    if (m_renderer->isText()) {
-        // If possible, use a text iterator to get the text, so that whitespace
-        // is handled consistently.
-        if (Node* node = this->node()) {
-            if (Frame* frame = node->document()->frame()) {
-                // catch stale WebCoreAXObject (see <rdar://problem/3960196>)
-                if (frame->document() != node->document())
-                    return String();
-
-                return plainText(rangeOfContents(node).get(), textIteratorBehaviorForTextRange());
-            }
-        }
     
-        // Sometimes text fragments don't have Nodes associated with them (like when
-        // CSS content is used to insert text).
+    if (node) {
+        if (Frame* frame = node->document()->frame()) {
+            // catch stale WebCoreAXObject (see <rdar://problem/3960196>)
+            if (frame->document() != node->document())
+                return String();
+
+            return plainText(rangeOfContents(node).get(), textIteratorBehaviorForTextRange());
+        }
+    }
+    
+    // Sometimes text fragments don't have Node's associated with them (like when
+    // CSS content is used to insert text).
+    if (m_renderer->isText()) {
         RenderText* renderTextObject = toRenderText(m_renderer);
         if (renderTextObject->isTextFragment())
             return String(static_cast<RenderTextFragment*>(m_renderer)->contentString());
     }
     
-    return AccessibilityNodeObject::textUnderElement();
+    // return the null string for anonymous text because it is non-trivial to get
+    // the actual text and, so far, that is not needed
+    return String();
 }
 
 Node* AccessibilityRenderObject::node() const

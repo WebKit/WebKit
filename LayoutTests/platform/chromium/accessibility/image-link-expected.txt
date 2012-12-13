@@ -3,13 +3,55 @@ Image link in the presence of inline continuations
 This test checks that the right accessibility tree is generated for a link inside an image
 
 
-AXTitle: Delicious cake
 AXRole: AXLink
+AXSubrole: (null)
+AXRoleDescription: link
+AXChildren: <array of size 1>
+AXHelp: 
+AXParent: <AXLink>
+AXSize: NSSize: {280, 213}
+AXTitle: 
 AXDescription: 
+AXValue: 
+AXFocused: 1
+AXEnabled: 1
+AXWindow: <AXLink>
+AXSelectedTextMarkerRange: (null)
+AXStartTextMarker: <AXLink>
+AXEndTextMarker: <AXLink>
+AXVisited: 0
+AXLinkedUIElements: (null)
+AXSelected: 0
+AXBlockQuoteLevel: 0
+AXTopLevelUIElement: <AXLink>
+AXURL: http://www.wowhead.com/?item=33924
+AXAccessKey: (null)
+
 
 Child 0:
-AXTitle: 
 AXRole: AXImage
+AXSubrole: (null)
+AXRoleDescription: image
+AXChildren: <array of size 0>
+AXHelp: 
+AXParent: <AXImage>
+AXSize: NSSize: {280, 209}
+AXTitle: 
 AXDescription: Delicious cake
+AXValue: 
+AXFocused: 0
+AXEnabled: 1
+AXWindow: <AXImage>
+AXSelectedTextMarkerRange: (null)
+AXStartTextMarker: <AXImage>
+AXEndTextMarker: <AXImage>
+AXVisited: 0
+AXLinkedUIElements: (null)
+AXSelected: 0
+AXBlockQuoteLevel: 0
+AXTopLevelUIElement: <AXImage>
+AXURL: LayoutTests/accessibility/resources/cake.png
+AXAccessKey: (null)
+
 
 

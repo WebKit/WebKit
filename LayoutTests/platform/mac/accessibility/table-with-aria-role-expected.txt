@@ -7,21 +7,33 @@ AXSubrole: (null)
 AXRoleDescription: button
 AXChildren: <array of size 0>
 AXHelp: 
-AXParent: <AXButton: 'testtesttesttesttesttest'>
+AXParent: <AXButton: 'test	test	test
+test	test	test
+'>
 AXSize: NSSize: {85, 52}
-AXTitle: testtesttesttesttesttest
+AXTitle: test	test	test
+test	test	test
+
 AXDescription: 
 AXFocused: 0
 AXEnabled: 1
-AXWindow: <AXButton: 'testtesttesttesttesttest'>
+AXWindow: <AXButton: 'test	test	test
+test	test	test
+'>
 AXSelectedTextMarkerRange: (null)
-AXStartTextMarker: <AXButton: 'testtesttesttesttesttest'>
-AXEndTextMarker: <AXButton: 'testtesttesttesttesttest'>
+AXStartTextMarker: <AXButton: 'test	test	test
+test	test	test
+'>
+AXEndTextMarker: <AXButton: 'test	test	test
+test	test	test
+'>
 AXVisited: 0
 AXLinkedUIElements: (null)
 AXSelected: 0
 AXBlockQuoteLevel: 0
-AXTopLevelUIElement: <AXButton: 'testtesttesttesttesttest'>
+AXTopLevelUIElement: <AXButton: 'test	test	test
+test	test	test
+'>
 AXTitleUIElement: (null)
 AXAccessKey: (null)
 AXARIABusy: 0

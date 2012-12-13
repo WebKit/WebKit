@@ -1434,62 +1434,20 @@ unsigned AccessibilityNodeObject::hierarchicalLevel() const
     return level;
 }
 
-// When building the textUnderElement for an object, determine whether or not
-// we should include the inner text of this given descendant object or skip it.
-static bool shouldUseAccessiblityObjectInnerText(AccessibilityObject* obj)
-{
-    // Consider this hypothetical example:
-    // <div tabindex=0>
-    //   <h2>
-    //     Table of contents
-    //   </h2>
-    //   <a href="#start">Jump to start of book</a>
-    //   <ul>
-    //     <li><a href="#1">Chapter 1</a></li>
-    //     <li><a href="#1">Chapter 2</a></li>
-    //   </ul>
-    // </div>
-    //
-    // The goal is to return a reasonable title for the outer container div, because
-    // it's focusable - but without making its title be the full inner text, which is
-    // quite long. As a heuristic, skip links, controls, and elements that are usually
-    // containers with lots of children.
-
-    // Skip focusable children, so we don't include the text of links and controls.
-    if (obj->canSetFocusAttribute())
-        return false;
-
-    // Skip big container elements like lists, tables, etc.
-    if (obj->isList() || obj->isAccessibilityTable() || obj->isTree() || obj->isCanvas())
-        return false;
-
-    return true;
-}
-
 String AccessibilityNodeObject::textUnderElement() const
 {
     Node* node = this->node();
-    if (node && node->isTextNode())
+    if (!node)
+        return String();
+
+    // Note: TextIterator doesn't return any text for nodes that don't have renderers.
+    // If this could be fixed, it'd be more accurate use TextIterator here.
+    if (node->isElementNode())
+        return toElement(node)->innerText();
+    else if (node->isTextNode())
         return toText(node)->wholeText();
-
-    String result;
-    for (AccessibilityObject* child = firstChild(); child; child = child->nextSibling()) {
-        if (!shouldUseAccessiblityObjectInnerText(child))
-            continue;
-
-        if (child->isAccessibilityNodeObject()) {
-            Vector<AccessibilityText> textOrder;
-            toAccessibilityNodeObject(child)->alternativeText(textOrder);
-            if (textOrder.size() > 0) {
-                result.append(textOrder[0].text);
-                continue;
-            }
-        }
-
-        result.append(child->textUnderElement());
-    }
-
-    return result;
+    
+    return String();
 }
 
 String AccessibilityNodeObject::title() const

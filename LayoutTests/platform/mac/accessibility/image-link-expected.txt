@@ -8,22 +8,22 @@ AXSubrole: (null)
 AXRoleDescription: link
 AXChildren: <array of size 1>
 AXHelp: 
-AXParent: <AXLink: 'Delicious cake'>
+AXParent: <AXLink>
 AXSize: NSSize: {280, 213}
-AXTitle: Delicious cake
+AXTitle: 
 AXDescription: 
 AXValue: 
 AXFocused: 1
 AXEnabled: 1
-AXWindow: <AXLink: 'Delicious cake'>
+AXWindow: <AXLink>
 AXSelectedTextMarkerRange: (null)
-AXStartTextMarker: <AXLink: 'Delicious cake'>
-AXEndTextMarker: <AXLink: 'Delicious cake'>
+AXStartTextMarker: <AXLink>
+AXEndTextMarker: <AXLink>
 AXVisited: 0
 AXLinkedUIElements: (null)
 AXSelected: 0
 AXBlockQuoteLevel: 0
-AXTopLevelUIElement: <AXLink: 'Delicious cake'>
+AXTopLevelUIElement: <AXLink>
 AXURL: http://www.wowhead.com/?item=33924
 AXAccessKey: (null)
 AXARIABusy: 0
