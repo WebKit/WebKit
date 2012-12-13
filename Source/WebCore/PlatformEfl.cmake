@@ -28,6 +28,7 @@ list(APPEND WebCore_SOURCES
     platform/efl/CursorEfl.cpp
     platform/efl/DragDataEfl.cpp
     platform/efl/DragImageEfl.cpp
+    platform/efl/EflInspectorUtilities.cpp
     platform/efl/EflKeyboardUtilities.cpp
     platform/efl/EflScreenUtilities.cpp
     platform/efl/ErrorsEfl.cpp

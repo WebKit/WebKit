@@ -22,10 +22,10 @@
 #include "InspectorClientEfl.h"
 
 #if ENABLE(INSPECTOR)
+#include "EflInspectorUtilities.h"
 #include "InspectorController.h"
 #include "NotImplemented.h"
 #include "ewk_view_private.h"
-#include <unistd.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
@@ -140,11 +140,7 @@ void InspectorClientEfl::releaseFrontendPage()
 
 String InspectorClientEfl::inspectorFilesPath()
 {
-    String inspectorFilesPath = WEB_INSPECTOR_INSTALL_DIR;
-    if (access(inspectorFilesPath.utf8().data(), R_OK))
-        inspectorFilesPath = WEB_INSPECTOR_DIR;
-
-    return "file://" + inspectorFilesPath;
+    return "file://" + inspectorResourcePath();
 }
 
 InspectorFrontendClientEfl::InspectorFrontendClientEfl(Evas_Object* inspectedView, Evas_Object* inspectorView, InspectorClientEfl* inspectorClient)

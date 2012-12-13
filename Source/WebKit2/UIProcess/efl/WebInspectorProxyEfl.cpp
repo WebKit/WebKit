@@ -33,8 +33,8 @@
 #include "ewk_settings.h"
 #include "ewk_view.h"
 #include "ewk_view_private.h"
+#include <WebCore/EflInspectorUtilities.h>
 #include <WebCore/NotImplemented.h>
-#include <unistd.h>
 #include <wtf/text/CString.h>
 #include <wtf/text/StringBuilder.h>
 #include <wtf/text/WTFString.h>
@@ -162,11 +162,7 @@ String WebInspectorProxy::inspectorPageURL() const
 
 String WebInspectorProxy::inspectorBaseURL() const
 {
-    String inspectorFilesPath = WEB_INSPECTOR_INSTALL_DIR;
-    if (access(inspectorFilesPath.utf8().data(), R_OK))
-        inspectorFilesPath = WEB_INSPECTOR_DIR;
-
-    return "file://" + inspectorFilesPath;
+    return "file://" + WebCore::inspectorResourcePath();
 }
 
 unsigned WebInspectorProxy::platformInspectedWindowHeight()
