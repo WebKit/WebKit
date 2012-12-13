@@ -1,3 +1,17 @@
+2012-12-13  Eric Seidel  <eric@webkit.org>
+
+        build-webkit --chromium-android forces Make even when update-webkit used --ninja
+        https://bugs.webkit.org/show_bug.cgi?id=104839
+
+        Reviewed by Tony Chang.
+
+        This was recommended by Peter as part of:
+        https://bugs.webkit.org/show_bug.cgi?id=104434#c4
+        Fixing this makes build-webkit --chromium-android work for the common (ninja) case.
+
+        * Scripts/webkitdirs.pm:
+        (buildChromium):
+
 2012-12-13  Julie Parent  <jparent@chromium.org>
 
         Loader_unittests should reset state between runs.
