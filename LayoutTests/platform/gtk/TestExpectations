@@ -41,7 +41,6 @@
 # Tests that require new results.
 #////////////////////////////////////////////////////////////////////////////////////////
 
-webkit.org/b/84043 accessibility/aria-tab-roles.html [ Missing ]
 webkit.org/b/84044 accessibility/image-link.html [ Missing ]
 webkit.org/b/84045 accessibility/image-map1.html [ Missing ]
 webkit.org/b/84045 accessibility/image-map2.html [ Missing ]

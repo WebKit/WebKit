@@ -478,6 +478,7 @@ static AtkRole atkRole(AccessibilityRole role)
     case SliderRole:
         return ATK_ROLE_SLIDER;
     case TabGroupRole:
+    case TabListRole:
         return ATK_ROLE_PAGE_TAB_LIST;
     case TextFieldRole:
     case TextAreaRole:
@@ -531,6 +532,7 @@ static AtkRole atkRole(AccessibilityRole role)
         return ATK_ROLE_APPLICATION;
     case GroupRole:
     case RadioGroupRole:
+    case TabPanelRole:
         return ATK_ROLE_PANEL;
     case RowHeaderRole: // Row headers are cells after all.
     case ColumnHeaderRole: // Column headers are cells after all.
@@ -570,6 +572,8 @@ static AtkRole atkRole(AccessibilityRole role)
         return ATK_ROLE_SEPARATOR;
     case SpinButtonRole:
         return ATK_ROLE_SPIN_BUTTON;
+    case TabRole:
+        return ATK_ROLE_PAGE_TAB;
     default:
         return ATK_ROLE_UNKNOWN;
     }
