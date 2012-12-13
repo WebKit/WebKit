@@ -1,3 +1,17 @@
+2012-12-13  Julie Parent  <jparent@chromium.org>
+
+        Loader_unittests should reset state between runs.
+        https://bugs.webkit.org/show_bug.cgi?id=104862
+
+        Reviewed by Dirk Pranke.
+
+        The loader_unittests were not resetting state between runs, leaving
+        a lot of data behind in global objects that the dashboard and tests
+        rely on.  A handful were resetting just a few objects.  Use the common
+        resetGlobals() method instead.
+
+        * TestResultServer/static-dashboards/loader_unittests.js:
+
 2012-12-13  Andras Becsi  <andras.becsi@digia.com>
 
         [Qt][WK2] Fix painting on Mac with retina display

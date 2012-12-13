@@ -29,6 +29,7 @@
 module('loader');
 
 test('loading steps', 1, function() {
+    resetGlobals();
     var loadedSteps = [];
     var resourceLoader = new loader.Loader();
     function loadingStep1() {
@@ -54,6 +55,7 @@ test('loading steps', 1, function() {
 });
 
 test('results files loading', 5, function() {
+    resetGlobals();
     var expectedLoadedBuilders = ["WebKit Linux", "WebKit Win"];
     var loadedBuilders = [];
     var resourceLoader = new loader.Loader();
@@ -80,13 +82,13 @@ test('results files loading', 5, function() {
     try {
         resourceLoader._loadResultsFiles();
     } finally {
-        g_builders = undefined;
-        g_resultsByBuilder = {};
         loader.request = requestFunction;
     }
 });
 
 test('expectations files loading', 1, function() {
+    resetGlobals();
+    parseCrossDashboardParameters();
     var expectedLoadedPlatforms = ["chromium", "chromium-android", "efl", "efl-wk1", "efl-wk2", "gtk",
                                    "gtk-wk2", "mac", "mac-lion", "mac-snowleopard", "qt", "win", "wk2"];
     var loadedPlatforms = [];
@@ -109,9 +111,9 @@ test('expectations files loading', 1, function() {
 });
 
 test('results file failing to load', 2, function() {
+    resetGlobals();
     // FIXME: loader shouldn't depend on state defined in dashboard_base.js.
     g_buildersThatFailedToLoad = [];
-    g_builders = {};
 
     var resourceLoader = new loader.Loader();
     var resourceLoadCount = 0;
