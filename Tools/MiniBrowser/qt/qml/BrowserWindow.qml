@@ -354,7 +354,6 @@ Rectangle {
                 webView.loadHtml("Failed to load " + loadRequest.url, "", loadRequest.url)
         }
 
-        experimental.devicePixelRatio: 1.5
         experimental.preferences.fullScreenEnabled: true
         experimental.preferences.webGLEnabled: true
         experimental.preferences.webAudioEnabled: true

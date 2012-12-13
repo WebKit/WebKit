@@ -93,7 +93,6 @@ QQuickWebView* tst_QQuickWebView::newWebView()
 {
     QObject* viewInstance = m_component->create();
     QQuickWebView* webView = qobject_cast<QQuickWebView*>(viewInstance);
-    webView->experimental()->setDevicePixelRatio(1.5);
     return webView;
 }
 

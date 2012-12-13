@@ -1,3 +1,52 @@
+2012-12-13  Andras Becsi  <andras.becsi@digia.com>
+
+        [Qt][WK2] Fix painting on Mac with retina display
+        https://bugs.webkit.org/show_bug.cgi?id=104574
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Since HiDPI support has been added and enabled in Qt we ended up
+        painting incorrectly scaled content on high-resolution screens.
+        Because the intrinsic device pixel ratio is always taken into
+        account by Qt when painting to high-resolution screens we should
+        automatically obtain the scale ratio from the window in which the
+        item is rendered instead of setting it in QML.
+
+        Qt does not make it possible to override the device pixel ratio
+        of the native window, therefore our experimental QML API for setting
+        a custom value is of no use any more and should be removed.
+
+        This patch fixes the scaling issue on Mac retina display by querying
+        the underlying window for the device scale factor and applying it to
+        the backing store and the scene-graph rendering of the content node.
+        Additionally removes the experimental API and related API tests.
+
+        * UIProcess/API/qt/qquickwebpage.cpp:
+        (QQuickWebPage::updatePaintNode):
+        * UIProcess/API/qt/qquickwebview.cpp:
+        (QQuickWebViewPrivate::QQuickWebViewPrivate):
+        (QQuickWebViewLegacyPrivate::updateViewportSize):
+        (QQuickWebViewFlickablePrivate::onComponentComplete):
+        * UIProcess/API/qt/qquickwebview_p.h:
+        * UIProcess/API/qt/tests/qquickwebview/tst_qquickwebview.cpp:
+        (tst_QQuickWebView::newWebView):
+        * UIProcess/CoordinatedGraphics/CoordinatedLayerTreeHostProxy.cpp:
+        (WebKit::CoordinatedLayerTreeHostProxy::setVisibleContentsRect):
+        (WebKit::CoordinatedLayerTreeHostProxy::deviceScaleFactor):
+        * UIProcess/CoordinatedGraphics/CoordinatedLayerTreeHostProxy.h:
+        (CoordinatedLayerTreeHostProxy):
+        * UIProcess/qt/QtWebPageSGNode.cpp:
+        (WebKit::ContentsSGNode::ContentsSGNode):
+        (WebKit::ContentsSGNode::render):
+        (WebKit::ContentsSGNode::clipRect):
+        (ContentsSGNode):
+        (WebKit::QtWebPageSGNode::QtWebPageSGNode):
+        (WebKit::QtWebPageSGNode::devicePixelRatio):
+        (WebKit):
+        (WebKit::QtWebPageSGNode::setRenderer):
+        * UIProcess/qt/QtWebPageSGNode.h:
+        (QtWebPageSGNode):
+
 2012-12-13  Thiago Marcos P. Santos  <thiago.santos@intel.com>
 
         [EFL] API tests failing because Vibration API is using unsigned as duration since r137410

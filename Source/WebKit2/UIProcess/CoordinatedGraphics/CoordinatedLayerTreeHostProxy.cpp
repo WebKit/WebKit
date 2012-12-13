@@ -55,6 +55,11 @@ void CoordinatedLayerTreeHostProxy::updateViewport()
     m_drawingAreaProxy->updateViewport();
 }
 
+float CoordinatedLayerTreeHostProxy::deviceScaleFactor() const
+{
+    return m_drawingAreaProxy->page()->deviceScaleFactor();
+}
+
 void CoordinatedLayerTreeHostProxy::dispatchUpdate(const Function<void()>& function)
 {
     m_renderer->appendUpdate(function);
@@ -175,17 +180,19 @@ void CoordinatedLayerTreeHostProxy::setAnimationsLocked(bool locked)
     dispatchUpdate(bind(&LayerTreeRenderer::setAnimationsLocked, m_renderer.get(), locked));
 }
 
-void CoordinatedLayerTreeHostProxy::setVisibleContentsRect(const FloatRect& rect, float scale, const FloatPoint& trajectoryVector)
+void CoordinatedLayerTreeHostProxy::setVisibleContentsRect(const FloatRect& rect, float pageScaleFactor, const FloatPoint& trajectoryVector)
 {
     // Inform the renderer to adjust viewport-fixed layers.
     dispatchUpdate(bind(&LayerTreeRenderer::setVisibleContentsRect, m_renderer.get(), rect));
 
-    if (rect == m_lastSentVisibleRect && scale == m_lastSentScale && trajectoryVector == m_lastSentTrajectoryVector)
+    const float effectiveScale = deviceScaleFactor() * pageScaleFactor;
+
+    if (rect == m_lastSentVisibleRect && effectiveScale == m_lastSentScale && trajectoryVector == m_lastSentTrajectoryVector)
         return;
 
-    m_drawingAreaProxy->page()->process()->send(Messages::CoordinatedLayerTreeHost::SetVisibleContentsRect(rect, scale, trajectoryVector), m_drawingAreaProxy->page()->pageID());
+    m_drawingAreaProxy->page()->process()->send(Messages::CoordinatedLayerTreeHost::SetVisibleContentsRect(rect, effectiveScale, trajectoryVector), m_drawingAreaProxy->page()->pageID());
     m_lastSentVisibleRect = rect;
-    m_lastSentScale = scale;
+    m_lastSentScale = effectiveScale;
     m_lastSentTrajectoryVector = trajectoryVector;
 }
 

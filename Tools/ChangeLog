@@ -1,3 +1,15 @@
+2012-12-13  Andras Becsi  <andras.becsi@digia.com>
+
+        [Qt][WK2] Fix painting on Mac with retina display
+        https://bugs.webkit.org/show_bug.cgi?id=104574
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Remove setting the devicePixelRatio experimental property
+        since the value is now automatically picked up from Qt.
+
+        * MiniBrowser/qt/qml/BrowserWindow.qml:
+
 2012-12-13  Jussi Kukkonen  <jussi.kukkonen@intel.com>
 
         [EFL][GTK] Don't call deprecated g_type_init when glib => 2.35

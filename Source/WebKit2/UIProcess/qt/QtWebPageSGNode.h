@@ -25,6 +25,7 @@
 #include <wtf/PassRefPtr.h>
 
 QT_BEGIN_NAMESPACE
+class QQuickItem;
 class QSGSimpleRectNode;
 QT_END_NAMESPACE
 
@@ -35,14 +36,16 @@ class LayerTreeRenderer;
 
 class QtWebPageSGNode : public QSGTransformNode {
     public:
-        QtWebPageSGNode();
+        QtWebPageSGNode(const QQuickItem*);
         void setBackground(const QRectF&, const QColor&);
         void setScale(float);
         void setRenderer(PassRefPtr<LayerTreeRenderer>);
+        qreal devicePixelRatio() const;
 
     private:
         ContentsSGNode* m_contentsNode;
         QSGSimpleRectNode* m_backgroundNode;
+        const QQuickItem* const m_item;
 };
 
 } // namespace WebKit

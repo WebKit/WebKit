@@ -30,6 +30,7 @@
 #include "qquickwebpage_p_p.h"
 #include "qquickwebview_p.h"
 #include "qwebkittest_p.h"
+#include <QQuickWindow>
 
 using namespace WebKit;
 
@@ -90,8 +91,18 @@ QSGNode* QQuickWebPage::updatePaintNode(QSGNode* oldNode, UpdatePaintNodeData*)
     LayerTreeRenderer* renderer = d->coordinatedLayerTreeHostProxy()->layerTreeRenderer();
 
     QtWebPageSGNode* node = static_cast<QtWebPageSGNode*>(oldNode);
+
+    const QWindow* window = this->window();
+    ASSERT(window);
+
+    if (window && d->webPageProxy->deviceScaleFactor() != window->devicePixelRatio()) {
+        d->webPageProxy->setIntrinsicDeviceScaleFactor(window->devicePixelRatio());
+        d->viewportItem->experimental()->test()->devicePixelRatioChanged();
+    }
+
     if (!node)
-        node = new QtWebPageSGNode();
+        node = new QtWebPageSGNode(this);
+
     node->setRenderer(renderer);
 
     node->setScale(d->contentsScale);
