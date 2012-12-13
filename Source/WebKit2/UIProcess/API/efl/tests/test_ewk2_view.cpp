@@ -802,13 +802,13 @@ struct VibrationCbData {
     bool didReceiveVibrate; // Whether the vibration event received.
     bool didReceiveCancelVibration; // Whether the cancel vibration event received.
     unsigned vibrateCalledCount; // Vibrate callbacks count.
-    uint64_t expectedVibrationTime; // Expected vibration time.
+    unsigned expectedVibrationTime; // Expected vibration time.
 };
 
 static void onVibrate(void* userData, Evas_Object*, void* eventInfo)
 {
     VibrationCbData* data = static_cast<VibrationCbData*>(userData);
-    uint64_t* vibrationTime = static_cast<uint64_t*>(eventInfo);
+    unsigned* vibrationTime = static_cast<unsigned*>(eventInfo);
     if (*vibrationTime == data->expectedVibrationTime)
         data->didReceiveVibrate = true;
     data->vibrateCalledCount++;
