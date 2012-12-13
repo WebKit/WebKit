@@ -1243,3 +1243,7 @@ webkit.org/b/102579 fast/events/mouse-cursor-image-set.html [ Failure ]
 webkit.org/b/103663 [ MountainLion Lion SnowLeopard ] media/track/track-in-band.html
 
 webkit.org/b/104104 fast/overflow/scrollbar-click-retains-focus.html [ Failure ]
+background-color-text-change.html
+
+webkit.org/b/104942 compositing/background-color/background-color-change-to-text.html [ Failure ]
+webkit.org/b/104942 compositing/background-color/background-color-text-change.html [ Failure ]
