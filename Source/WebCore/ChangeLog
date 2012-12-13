@@ -1,3 +1,19 @@
+2012-12-13  Stephen White  <senorblanco@chromium.org>
+
+        CanvasRenderingContext2D::setFont() is slow.
+        https://bugs.webkit.org/show_bug.cgi?id=104923
+
+        Reviewed by James Robinson.
+
+        This spends most of its time in the CSS parser.  As a first step,
+        early-out if the new value is the same as unparsed string for the current font.
+        See also http://code.google.com/p/chromium/issues/detail?id=164016.
+
+        Covered by existing tests in canvas/ and fast/canvas, and ManualTests/canvas-font-speed.html.
+
+        * html/canvas/CanvasRenderingContext2D.cpp:
+        (WebCore::CanvasRenderingContext2D::setFont):
+
 2012-12-13  Parth Patel  <parpatel@rim.com>, Max Feil <mfeil@rim.com>
 
         Allow plugins to be disabled by shared library filename
