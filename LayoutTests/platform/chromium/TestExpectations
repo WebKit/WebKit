@@ -1450,6 +1450,9 @@ webkit.org/b/75276 [ Android ] fast/repaint/shadow-multiple-strict-vertical.html
 # Fails on webkit windows as well.
 crbug.com/24207 fast/events/attempt-scroll-with-no-scrollbars.html [ Failure ]
 
+# Fails when opting into composited scrolling.
+webkit.org/b/104965 [ Mac ] platform/chromium/virtual/gpu/compositedscrolling/scrollbars/scrollbar-drag-thumb-with-large-content.html [ Failure ]
+
 # No glyph for U+FFFD (Replacement Character : black diamond with
 # question mark) in them on Win XP.
 crbug.com/10315 [ XP ] fast/encoding/invalid-UTF-8.html [ Failure ]
