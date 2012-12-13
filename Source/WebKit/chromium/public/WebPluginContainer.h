@@ -42,6 +42,7 @@ class WebPlugin;
 class WebString;
 class WebURL;
 class WebURLRequest;
+class WebLayer;
 struct WebPoint;
 struct WebRect;
 
@@ -135,6 +136,10 @@ public:
     virtual float deviceScaleFactor() = 0;
     virtual float pageScaleFactor() = 0;
     virtual float pageZoomFactor() = 0;
+
+    // Sets the layer representing the plugin for compositing. The
+    // WebPluginContainer does *not* take ownership.
+    virtual void setWebLayer(WebLayer*) = 0;
 
 protected:
     ~WebPluginContainer() { }

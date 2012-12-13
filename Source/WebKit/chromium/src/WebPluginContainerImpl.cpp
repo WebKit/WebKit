@@ -284,6 +284,23 @@ float WebPluginContainerImpl::pageZoomFactor()
     return frame->pageZoomFactor();
 }
 
+void WebPluginContainerImpl::setWebLayer(WebLayer* layer)
+{
+    if (m_webLayer == layer)
+        return;
+
+    // If anyone of the layers is null we need to switch between hardware
+    // and software compositing. This is done by triggering a style recalc
+    // on the container element.
+    if (!m_webLayer || !layer)
+        m_element->setNeedsStyleRecalc(WebCore::SyntheticStyleChange);
+    if (m_webLayer)
+        GraphicsLayerChromium::unregisterContentsLayer(m_webLayer);
+    if (layer)
+        GraphicsLayerChromium::registerContentsLayer(layer);
+    m_webLayer = layer;
+}
+
 bool WebPluginContainerImpl::supportsPaginatedPrint() const
 {
     return m_webPlugin->supportsPaginatedPrint();
@@ -381,19 +398,12 @@ void WebPluginContainerImpl::setBackingTextureId(unsigned textureId)
 
     ASSERT(!m_ioSurfaceLayer);
 
-    if (!m_textureLayer) {
+    if (!m_textureLayer)
         m_textureLayer = adoptPtr(Platform::current()->compositorSupport()->createExternalTextureLayer());
-        GraphicsLayerChromium::registerContentsLayer(m_textureLayer->layer());
-    }
     m_textureLayer->setTextureId(textureId);
-
-    // If anyone of the IDs is zero we need to switch between hardware
-    // and software compositing. This is done by triggering a style recalc
-    // on the container element.
-    if (!m_textureId || !textureId)
-        m_element->setNeedsStyleRecalc(WebCore::SyntheticStyleChange);
-
     m_textureId = textureId;
+
+    setWebLayer(m_textureId ? m_textureLayer->layer() : 0);
 #endif
 }
 
@@ -407,30 +417,20 @@ void WebPluginContainerImpl::setBackingIOSurfaceId(int width,
 
     ASSERT(!m_textureLayer);
 
-    if (!m_ioSurfaceLayer) {
+    if (!m_ioSurfaceLayer)
         m_ioSurfaceLayer = adoptPtr(Platform::current()->compositorSupport()->createIOSurfaceLayer());
-        GraphicsLayerChromium::registerContentsLayer(m_ioSurfaceLayer->layer());
-    }
     m_ioSurfaceLayer->setIOSurfaceProperties(ioSurfaceId, WebSize(width, height));
 
-    // If anyone of the IDs is zero we need to switch between hardware
-    // and software compositing. This is done by triggering a style recalc
-    // on the container element.
-    if (!ioSurfaceId || !m_ioSurfaceId)
-        m_element->setNeedsStyleRecalc(WebCore::SyntheticStyleChange);
-
     m_ioSurfaceId = ioSurfaceId;
+    setWebLayer(m_ioSurfaceId ? m_ioSurfaceLayer->layer() : 0);
 #endif
 }
 
 void WebPluginContainerImpl::commitBackingTexture()
 {
 #if USE(ACCELERATED_COMPOSITING)
-    if (m_textureLayer)
-        m_textureLayer->layer()->invalidate();
-
-    if (m_ioSurfaceLayer)
-        m_ioSurfaceLayer->layer()->invalidate();
+    if (m_webLayer)
+        m_webLayer->invalidate();
 #endif
 }
 
@@ -493,15 +493,12 @@ void WebPluginContainerImpl::zoomLevelChanged(double zoomLevel)
     WebViewImpl* view = WebViewImpl::fromPage(m_element->document()->frame()->page());
     view->fullFramePluginZoomLevelChanged(zoomLevel);
 }
- 
+
 void WebPluginContainerImpl::setOpaque(bool opaque)
 {
 #if USE(ACCELERATED_COMPOSITING)
-    if (m_textureLayer)
-        m_textureLayer->layer()->setOpaque(opaque);
-
-    if (m_ioSurfaceLayer)
-        m_ioSurfaceLayer->layer()->setOpaque(opaque);
+    if (m_webLayer)
+        m_webLayer->setOpaque(opaque);
 #endif
 }
 
@@ -623,11 +620,7 @@ void WebPluginContainerImpl::willDestroyPluginLoadObserver(WebPluginLoadObserver
 #if USE(ACCELERATED_COMPOSITING)
 WebLayer* WebPluginContainerImpl::platformLayer() const
 {
-    if (m_textureId)
-        return m_textureLayer->layer();
-    if (m_ioSurfaceId)
-        return m_ioSurfaceLayer->layer();
-    return 0;
+    return m_webLayer;
 }
 #endif
 
@@ -670,6 +663,7 @@ WebPluginContainerImpl::WebPluginContainerImpl(WebCore::HTMLPlugInElement* eleme
     , m_textureId(0)
     , m_ioSurfaceId(0)
 #endif
+    , m_webLayer(0)
     , m_touchEventRequestType(TouchEventRequestTypeNone)
     , m_wantsWheelEvents(false)
 {
@@ -678,10 +672,8 @@ WebPluginContainerImpl::WebPluginContainerImpl(WebCore::HTMLPlugInElement* eleme
 WebPluginContainerImpl::~WebPluginContainerImpl()
 {
 #if USE(ACCELERATED_COMPOSITING)
-    if (m_textureLayer)
-        GraphicsLayerChromium::unregisterContentsLayer(m_textureLayer->layer());
-    if (m_ioSurfaceLayer)
-        GraphicsLayerChromium::unregisterContentsLayer(m_ioSurfaceLayer->layer());
+    if (m_webLayer)
+        GraphicsLayerChromium::unregisterContentsLayer(m_webLayer);
 #endif
 
     if (m_touchEventRequestType != TouchEventRequestTypeNone)

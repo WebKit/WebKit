@@ -1,3 +1,26 @@
+2012-12-13  Antoine Labour  <piman@chromium.org>
+
+        [chromium] Add WebPluginContainer::setWebLayer to supersede setBackingTextureId/setBackingIOSurfaceId
+        https://bugs.webkit.org/show_bug.cgi?id=104875
+
+        Reviewed by James Robinson.
+
+        * public/WebPluginContainer.h:
+        (WebKit):
+        (WebPluginContainer):
+        * src/WebPluginContainerImpl.cpp:
+        (WebKit::WebPluginContainerImpl::setWebLayer):
+        (WebKit):
+        (WebKit::WebPluginContainerImpl::setBackingTextureId):
+        (WebKit::WebPluginContainerImpl::setBackingIOSurfaceId):
+        (WebKit::WebPluginContainerImpl::commitBackingTexture):
+        (WebKit::WebPluginContainerImpl::setOpaque):
+        (WebKit::WebPluginContainerImpl::platformLayer):
+        (WebKit::WebPluginContainerImpl::WebPluginContainerImpl):
+        (WebKit::WebPluginContainerImpl::~WebPluginContainerImpl):
+        * src/WebPluginContainerImpl.h:
+        (WebPluginContainerImpl):
+
 2012-12-13  Yusuf Ozuysal  <yusufo@google.com>
 
         Check whether a touchDown lands on a registered touch event handler from the compositor
