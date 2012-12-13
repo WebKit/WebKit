@@ -55,7 +55,7 @@ struct _WebKitWebAudioSourcePrivate {
     GRefPtr<GstElement> wavEncoder;
 
     GRefPtr<GstTask> task;
-    GStaticRecMutex* mutex;
+    GStaticRecMutex mutex;
 
     GSList* pads; // List of queue sink pads. One queue for each planar audio channel.
     GstPad* sourcePad; // src pad of the element, interleaved wav data is pushed to it.
@@ -185,11 +185,10 @@ static void webkit_web_audio_src_init(WebKitWebAudioSrc* src)
     priv->provider = 0;
     priv->bus = 0;
 
-    priv->mutex = g_new(GStaticRecMutex, 1);
-    g_static_rec_mutex_init(priv->mutex);
+    g_static_rec_mutex_init(&priv->mutex);
 
     priv->task = gst_task_create(reinterpret_cast<GstTaskFunction>(webKitWebAudioSrcLoop), src);
-    gst_task_set_lock(priv->task.get(), priv->mutex);
+    gst_task_set_lock(priv->task.get(), &priv->mutex);
 }
 
 static void webKitWebAudioSrcConstructed(GObject* object)
@@ -254,7 +253,7 @@ static void webKitWebAudioSrcFinalize(GObject* object)
     WebKitWebAudioSrc* src = WEBKIT_WEB_AUDIO_SRC(object);
     WebKitWebAudioSourcePrivate* priv = src->priv;
 
-    g_static_rec_mutex_free(priv->mutex);
+    g_static_rec_mutex_free(&priv->mutex);
 
     g_slist_free_full(priv->pads, reinterpret_cast<GDestroyNotify>(gst_object_unref));
 

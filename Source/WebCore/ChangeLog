@@ -1,3 +1,22 @@
+2012-12-13  Alberto Garcia  <agarcia@igalia.com>
+
+        [GTK] Don't leak GStaticRecMutex
+        https://bugs.webkit.org/show_bug.cgi?id=104901
+
+        Reviewed by Martin Robinson.
+
+        The mutex in WebKitWebAudioSourceGStreamer is allocated using
+        g_new(), but that memory is not freed when the object is
+        destroyed.
+
+        This patch replaces that pointer with the structure itself, which
+        is faster and doesn't need to be explicitly freed.
+
+        * platform/audio/gstreamer/WebKitWebAudioSourceGStreamer.cpp:
+        (_WebKitWebAudioSourcePrivate):
+        (webkit_web_audio_src_init):
+        (webKitWebAudioSrcFinalize):
+
 2012-12-13  Eugene Klyuchnikov  <eustas@chromium.org>
 
         Web Inspector: Network: Sorting cookies by size is broken.
