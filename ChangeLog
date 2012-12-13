@@ -1,3 +1,7 @@
+2012-12-13  Lucas Forschler  <lforschler@apple.com>
+
+    Rollout r133969
+
 2012-11-18  Simon Fraser  <simon.fraser@apple.com>
 
         Prerequisite for <rdar://problem/12725980> Fix overlay scrollbar painting in compositing layers (102442)
