@@ -131,7 +131,9 @@ void RenderGrid::computePreferredLogicalWidths()
 
     // FIXME: We should account for min / max logical width.
 
-    // FIXME: Include borders and paddings in inline direction.
+    LayoutUnit borderAndPaddingInInlineDirection = borderAndPaddingLogicalWidth();
+    m_minPreferredLogicalWidth += borderAndPaddingInInlineDirection;
+    m_maxPreferredLogicalWidth += borderAndPaddingInInlineDirection;
 
     setPreferredLogicalWidthsDirty(false);
 }
@@ -192,9 +194,12 @@ void RenderGrid::layoutGridItems()
         child->setLogicalLocation(childPosition);
     }
 
-    // FIXME: Handle border & padding on the grid element.
     for (size_t i = 0; i < rowTracks.size(); ++i)
         setLogicalHeight(logicalHeight() + rowTracks[i].m_usedBreadth);
+
+    // FIXME: We should handle min / max logical height.
+
+    setLogicalHeight(logicalHeight() + borderAndPaddingLogicalHeight());
 }
 
 size_t RenderGrid::resolveGridPosition(const GridPosition& position) const
