@@ -1773,11 +1773,11 @@ void HTMLInputElement::setCapture(const String& value)
 
 #endif
 
-bool HTMLInputElement::isInRequiredRadioButtonGroup() const
+bool HTMLInputElement::isInRequiredRadioButtonGroup()
 {
     ASSERT(isRadioButton());
     if (CheckedRadioButtons* buttons = checkedRadioButtons())
-        return buttons->isRequiredGroup(name());
+        return buttons->isInRequiredGroup(this);
     return false;
 }
 

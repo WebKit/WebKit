@@ -37,6 +37,7 @@ public:
     void updateCheckedState(HTMLInputElement*);
     void requiredAttributeChanged(HTMLInputElement*);
     void remove(HTMLInputElement*);
+    bool contains(HTMLInputElement*) const;
 
 private:
     RadioButtonGroup();
@@ -164,6 +165,11 @@ void RadioButtonGroup::setNeedsValidityCheckForAllButtons()
     }
 }
 
+bool RadioButtonGroup::contains(HTMLInputElement* button) const
+{
+    return m_members.contains(button);
+}
+
 // ----------------------------------------------------------------
 
 // Explicity define empty constructor and destructor in order to prevent the
@@ -227,12 +233,15 @@ HTMLInputElement* CheckedRadioButtons::checkedButtonForGroup(const AtomicString&
     return group ? group->checkedButton() : 0;
 }
 
-bool CheckedRadioButtons::isRequiredGroup(const AtomicString& name) const
+bool CheckedRadioButtons::isInRequiredGroup(HTMLInputElement* element) const
 {
+    ASSERT(element->isRadioButton());
+    if (element->name().isEmpty())
+        return false;
     if (!m_nameToGroupMap)
         return false;
-    RadioButtonGroup* group = m_nameToGroupMap->get(name.impl());
-    return group && group->isRequired();
+    RadioButtonGroup* group = m_nameToGroupMap->get(element->name().impl());
+    return group && group->isRequired() && group->contains(element);
 }
 
 void CheckedRadioButtons::removeButton(HTMLInputElement* element)

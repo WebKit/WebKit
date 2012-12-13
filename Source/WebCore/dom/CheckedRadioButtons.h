@@ -41,7 +41,7 @@ public:
     void requiredAttributeChanged(HTMLInputElement*);
     void removeButton(HTMLInputElement*);
     HTMLInputElement* checkedButtonForGroup(const AtomicString& groupName) const;
-    bool isRequiredGroup(const AtomicString& groupName) const;
+    bool isInRequiredGroup(HTMLInputElement*) const;
 
 private:
     typedef HashMap<AtomicStringImpl*, OwnPtr<RadioButtonGroup> > NameToGroupMap;

@@ -245,7 +245,7 @@ public:
 #endif
 
     HTMLInputElement* checkedRadioButtonForGroup() const;
-    bool isInRequiredRadioButtonGroup() const;
+    bool isInRequiredRadioButtonGroup();
 
     // Functions for InputType classes.
     void setValueInternal(const String&, TextFieldEventBehavior);

@@ -6,6 +6,8 @@ On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE
 Removing a checked radio button from a required radio button group by a DOM tree mutation:
 PASS backgroundOf($("radio1")) is validColor
 PASS parent.removeChild($("radio2")); backgroundOf($("radio1")) is invalidColor
+PASS $("radio1").remove(); radio2.webkitMatchesSelector(":valid") is false
+PASS radio2.remove(); radio2.webkitMatchesSelector(":valid") is true
 
 Removing a checked radio button from a required radio button group by name attribute change:
 PASS $("radio2").name = "group2"; backgroundOf($("radio1")) is invalidColor

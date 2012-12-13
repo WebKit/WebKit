@@ -1,3 +1,13 @@
+2012-12-12  Kent Tamura  <tkent@chromium.org>
+
+        Validity of a radio button is not updated correctly when it is detached from an invalid radio group
+        https://bugs.webkit.org/show_bug.cgi?id=104873
+
+        Reviewed by Kentaro Hara.
+
+        * fast/forms/radio/radio-live-validation-style-expected.txt:
+        * fast/forms/radio/radio-live-validation-style.html: Add a test case.
+
 2012-12-12  Kunihiko Sakamoto  <ksakamoto@chromium.org>
 
         Milliseconds field of date/time input UI should respect step attribute

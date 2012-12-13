@@ -1,3 +1,45 @@
+2012-12-12  Kent Tamura  <tkent@chromium.org>
+
+        Validity of a radio button is not updated correctly when it is detached from an invalid radio group
+        https://bugs.webkit.org/show_bug.cgi?id=104873
+
+        Reviewed by Kentaro Hara.
+
+        When a radio button is detached from an invalid radio group,
+        A) we should update button's validity, and
+        B) it should be valid.
+
+        A is handled by the following code in RadioButtonGroup::remove.
+            if (!wasValid) {
+                // A radio button not in a group is always valid. We need to make it
+                // valid only if the group was invalid.
+                button->setNeedsValidityCheck();
+
+        B was incomplete.
+            bool RadioInputType::valueMissing(const String&) const
+            {
+                return element()->isInRequiredRadioButtonGroup() && !element()->checkedRadioButtonForGroup();
+        isInRequiredRadioButtonGroup checked required state of a group with the
+        name attribute value even if the radio button was already detached from
+        the group. isInRequiredRadioButtonGroup should check membership of the
+        radio button precisely.
+
+        Tests: Update fast/forms/radio/radio-live-validation-style.html
+
+        * dom/CheckedRadioButtons.cpp:
+        (RadioButtonGroup): Declare contains.
+        (WebCore::RadioButtonGroup::contains): Added.
+        (WebCore::CheckedRadioButtons::isInRequiredGroup): Renamed from
+        isRequiredGroup. This function takes HTMLInputElement* argument.
+        * dom/CheckedRadioButtons.h:
+        (CheckedRadioButtons): Rename isRequiredGroup to isInRequiredGroup.
+        * html/HTMLInputElement.cpp:
+        (WebCore::HTMLInputElement::isInRequiredRadioButtonGroup):
+        Make this non-const becaues RadioButtonGroup::m_members needs non-const
+        pointers. Use CheckedRadioButtons::isInRequiredGroup.
+        * html/HTMLInputElement.h:
+        (HTMLInputElement): Make isInRequiredRadioButtonGroup non-const.
+
 2012-12-12  Shinya Kawanaka  <shinyak@chromium.org>
 
         ContainerNodeAlgorithm::notifyInsertedIntoDocument is not used
