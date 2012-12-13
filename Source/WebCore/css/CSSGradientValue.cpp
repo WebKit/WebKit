@@ -96,7 +96,7 @@ static inline bool compareStops(const CSSGradientColorStop& a, const CSSGradient
 
 void CSSGradientValue::sortStopsIfNeeded()
 {
-    ASSERT(m_deprecatedType);
+    ASSERT(m_gradientType == CSSDeprecatedLinearGradient || m_gradientType == CSSDeprecatedRadialGradient);
     if (!m_stopsSorted) {
         if (m_stops.size())
             std::stable_sort(m_stops.begin(), m_stops.end(), compareStops);
@@ -147,7 +147,7 @@ void CSSGradientValue::addStops(Gradient* gradient, RenderObject* renderer, Rend
 {
     RenderStyle* style = renderer->style();
 
-    if (m_deprecatedType) {
+    if (m_gradientType == CSSDeprecatedLinearGradient || m_gradientType == CSSDeprecatedRadialGradient) {
         sortStopsIfNeeded();
 
         for (unsigned i = 0; i < m_stops.size(); i++) {
@@ -485,7 +485,7 @@ void CSSGradientValue::reportBaseClassMemoryUsage(MemoryObjectInfo* memoryObject
 String CSSLinearGradientValue::customCssText() const
 {
     StringBuilder result;
-    if (m_deprecatedType) {
+    if (m_gradientType == CSSDeprecatedLinearGradient) {
         result.appendLiteral("-webkit-gradient(linear, ");
         result.append(m_firstX->cssText());
         result.append(' ');
@@ -552,64 +552,71 @@ String CSSLinearGradientValue::customCssText() const
 }
 
 // Compute the endpoints so that a gradient of the given angle covers a box of the given size.
-static void endPointsFromAngle(float angleDeg, const IntSize& size, FloatPoint& firstPoint, FloatPoint& secondPoint)
+static void endPointsFromAngle(float angleDeg, const IntSize& size, FloatPoint& firstPoint, FloatPoint& secondPoint, CSSGradientType type)
 {
+    // Prefixed gradients use "polar coordinate" angles, rather than "bearing" angles.
+    if (type == CSSPrefixedLinearGradient)
+        angleDeg = 90 - angleDeg;
+
     angleDeg = fmodf(angleDeg, 360);
     if (angleDeg < 0)
         angleDeg += 360;
 
     if (!angleDeg) {
-        firstPoint.set(0, 0);
-        secondPoint.set(size.width(), 0);
-        return;
-    }
-
-    if (angleDeg == 90) {
         firstPoint.set(0, size.height());
         secondPoint.set(0, 0);
         return;
     }
 
-    if (angleDeg == 180) {
-        firstPoint.set(size.width(), 0);
-        secondPoint.set(0, 0);
+    if (angleDeg == 90) {
+        firstPoint.set(0, 0);
+        secondPoint.set(size.width(), 0);
         return;
     }
 
-    if (angleDeg == 270) {
+    if (angleDeg == 180) {
         firstPoint.set(0, 0);
         secondPoint.set(0, size.height());
         return;
     }
 
-    float slope = tan(deg2rad(angleDeg));
+    if (angleDeg == 270) {
+        firstPoint.set(size.width(), 0);
+        secondPoint.set(0, 0);
+        return;
+    }
+
+    // angleDeg is a "bearing angle" (0deg = N, 90deg = E),
+    // but tan expects 0deg = E, 90deg = N.
+    float slope = tan(deg2rad(90.0 - angleDeg));
 
     // We find the endpoint by computing the intersection of the line formed by the slope,
     // and a line perpendicular to it that intersects the corner.
     float perpendicularSlope = -1 / slope;
 
-    // Compute start corner relative to center.
+    // Compute start corner relative to center, in Cartesian space (+y = up).
     float halfHeight = size.height() / 2;
     float halfWidth = size.width() / 2;
     FloatPoint endCorner;
     if (angleDeg < 90)
         endCorner.set(halfWidth, halfHeight);
     else if (angleDeg < 180)
-        endCorner.set(-halfWidth, halfHeight);
+        endCorner.set(halfWidth, -halfHeight);
     else if (angleDeg < 270)
         endCorner.set(-halfWidth, -halfHeight);
     else
-        endCorner.set(halfWidth, -halfHeight);
+        endCorner.set(-halfWidth, halfHeight);
 
     // Compute c (of y = mx + c) using the corner point.
     float c = endCorner.y() - perpendicularSlope * endCorner.x();
     float endX = c / (slope - perpendicularSlope);
     float endY = perpendicularSlope * endX + c;
 
-    // We computed the end point, so set the second point, flipping the Y to account for angles going anticlockwise.
-    secondPoint.set(halfWidth + endX, size.height() - (halfHeight + endY));
+    // We computed the end point, so set the second point, 
+    // taking into account the moved origin and the fact that we're in drawing space (+y = down).
+    secondPoint.set(halfWidth + endX, halfHeight - endY);
     // Reflect around the center for the start point.
-    firstPoint.set(size.width() - secondPoint.x(), size.height() - secondPoint.y());
+    firstPoint.set(halfWidth - endX, halfHeight + endY);
 }
 
 PassRefPtr<Gradient> CSSLinearGradientValue::createGradient(RenderObject* renderer, const IntSize& size)
@@ -622,7 +629,7 @@ PassRefPtr<Gradient> CSSLinearGradientValue::createGradient(RenderObject* render
     FloatPoint secondPoint;
     if (m_angle) {
         float angle = m_angle->getFloatValue(CSSPrimitiveValue::CSS_DEG);
-        endPointsFromAngle(angle, size, firstPoint, secondPoint);
+        endPointsFromAngle(angle, size, firstPoint, secondPoint, m_gradientType);
     } else {
         firstPoint = computeEndPoint(m_firstX.get(), m_firstY.get(), renderer->style(), rootStyle, size);
 
@@ -655,7 +662,7 @@ String CSSRadialGradientValue::customCssText() const
 {
     StringBuilder result;
 
-    if (m_deprecatedType) {
+    if (m_gradientType == CSSDeprecatedRadialGradient) {
         result.appendLiteral("-webkit-gradient(radial, ");
         result.append(m_firstX->cssText());
         result.append(' ');

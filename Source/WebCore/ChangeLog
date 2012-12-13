@@ -1,3 +1,39 @@
+2012-12-13  Tab Atkins  <tabatkins@google.com>
+
+        Switch the gradient drawing code to use bearing angles
+        https://bugs.webkit.org/show_bug.cgi?id=104616
+
+        Reviewed by Dean Jackson.
+
+        Switch the gradient math from polar-coordinate angles to bearing angles.
+        To make this possible without behavior changes, 
+        switch the m_deprecatedType boolean to an m_gradientType enum,
+        and fix all usages accordingly.
+
+        No new tests, as this is a refactoring and should have no behavior changes. Existing tests suffice.
+
+        * css/CSSGradientValue.cpp:
+        (WebCore::endPointsFromAngle):
+        This is the only mechanical change. The rest are just fixing the plumbing around the boolean->enum change.
+
+        * css/CSSGradientValue.cpp:
+        (WebCore::CSSGradientValue::sortStopsIfNeeded):
+        (WebCore::CSSGradientValue::addStops):
+        (WebCore::CSSLinearGradientValue::customCssText):
+        (WebCore::CSSLinearGradientValue::createGradient):
+        (WebCore::CSSRadialGradientValue::customCssText):
+        * css/CSSGradientValue.h:
+        (WebCore::CSSGradientValue::gradientType):
+        (WebCore::CSSGradientValue::CSSGradientValue):
+        (WebCore::CSSLinearGradientValue::create):
+        (WebCore::CSSLinearGradientValue::CSSLinearGradientValue):
+        (WebCore::CSSRadialGradientValue::create):
+        (WebCore::CSSRadialGradientValue::CSSRadialGradientValue):
+        * css/CSSParser.cpp:
+        (WebCore::CSSParser::parseDeprecatedGradient):
+        (WebCore::CSSParser::parseDeprecatedLinearGradient):
+        (WebCore::CSSParser::parseDeprecatedRadialGradient):
+
 2012-12-13  Ian Vollick  <vollick@chromium.org>
 
         [chromium] Automatically use composited scrolling

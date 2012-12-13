@@ -4190,6 +4190,8 @@ webkit.org/b/103487 [ Linux ] fast/forms/placeholder-position.html [ ImageOnlyFa
 webkit.org/b/104727 transforms/3d/hit-testing/backface-hit-test.html [ Pass ImageOnlyFailure ]
 webkit.org/b/104727 transforms/3d/hit-testing/backface-no-transform-hit-test.html [ Pass ImageOnlyFailure ]
 
+webkit.org/b/104616 [ Win Mac ] fast/gradients/css3-linear-angle-gradients.html [ ImageOnlyFailure Pass ]
+
 # Fail only on WebKit-only checkout
 webkit.org/b/104548 [ Linux ] fast/text/hyphenate-character.html [ Failure ]
 webkit.org/b/104548 [ Linux ] fast/text/hyphenate-first-word.html [ Failure ]

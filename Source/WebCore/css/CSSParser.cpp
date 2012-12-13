@@ -6985,20 +6985,23 @@ bool CSSParser::parseDeprecatedGradient(CSSParserValueList* valueList, RefPtr<CS
     if (!a || a->unit != CSSPrimitiveValue::CSS_IDENT)
         return false;
     if (equalIgnoringCase(a->string, "linear"))
-        gradientType = CSSLinearGradient;
+        gradientType = CSSDeprecatedLinearGradient;
     else if (equalIgnoringCase(a->string, "radial"))
-        gradientType = CSSRadialGradient;
+        gradientType = CSSDeprecatedRadialGradient;
     else
         return false;
 
     RefPtr<CSSGradientValue> result;
     switch (gradientType) {
-        case CSSLinearGradient:
-            result = CSSLinearGradientValue::create(NonRepeating, true);
-            break;
-        case CSSRadialGradient:
-            result = CSSRadialGradientValue::create(NonRepeating, true);
-            break;
+    case CSSDeprecatedLinearGradient:
+        result = CSSLinearGradientValue::create(NonRepeating, gradientType);
+        break;
+    case CSSDeprecatedRadialGradient:
+        result = CSSRadialGradientValue::create(NonRepeating, gradientType);
+        break;
+    default:
+        // The rest of the gradient types shouldn't appear here.
+        ASSERT_NOT_REACHED();
     }
 
     // Comma.
@@ -7032,7 +7035,7 @@ bool CSSParser::parseDeprecatedGradient(CSSParserValueList* valueList, RefPtr<CS
         return false;
 
     // For radial gradients only, we now expect a numeric radius.
-    if (gradientType == CSSRadialGradient) {
+    if (gradientType == CSSDeprecatedRadialGradient) {
         a = args->next();
         if (!a || a->unit != CSSPrimitiveValue::CSS_NUMBER)
             return false;
@@ -7064,7 +7067,7 @@ bool CSSParser::parseDeprecatedGradient(CSSParserValueList* valueList, RefPtr<CS
     result->setSecondY(point.release());
 
     // For radial gradients only, we now expect the second radius.
-    if (gradientType == CSSRadialGradient) {
+    if (gradientType == CSSDeprecatedRadialGradient) {
         // Comma after the second point.
         a = args->next();
         if (!isComma(a))
@@ -7133,7 +7136,7 @@ static PassRefPtr<CSSPrimitiveValue> parseGradientColorOrKeyword(CSSParser* p, C
 
 bool CSSParser::parseDeprecatedLinearGradient(CSSParserValueList* valueList, RefPtr<CSSValue>& gradient, CSSGradientRepeat repeating)
 {
-    RefPtr<CSSLinearGradientValue> result = CSSLinearGradientValue::create(repeating);
+    RefPtr<CSSLinearGradientValue> result = CSSLinearGradientValue::create(repeating, CSSPrefixedLinearGradient);
 
     // Walk the arguments.
     CSSParserValueList* args = valueList->current()->function->args.get();
@@ -7201,7 +7204,7 @@ bool CSSParser::parseDeprecatedLinearGradient(CSSParserValueList* valueList, Ref
 
 bool CSSParser::parseDeprecatedRadialGradient(CSSParserValueList* valueList, RefPtr<CSSValue>& gradient, CSSGradientRepeat repeating)
 {
-    RefPtr<CSSRadialGradientValue> result = CSSRadialGradientValue::create(repeating);
+    RefPtr<CSSRadialGradientValue> result = CSSRadialGradientValue::create(repeating, CSSPrefixedRadialGradient);
 
     // Walk the arguments.
     CSSParserValueList* args = valueList->current()->function->args.get();
