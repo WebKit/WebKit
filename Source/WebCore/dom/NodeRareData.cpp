@@ -39,7 +39,7 @@
 namespace WebCore {
 
 struct SameSizeAsNodeRareData {
-    void* m_pointer[3];
+    void* m_pointer[4];
     unsigned m_indicesAndBitfields[2];
 
 #if ENABLE(MUTATION_OBSERVERS)
@@ -64,6 +64,7 @@ void NodeListsNodeData::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) co
 void NodeRareData::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
 {
     MemoryClassInfo info(memoryObjectInfo, this, WebCoreMemoryTypes::DOM);
+    info.addMember(treeScope());
     info.addMember(m_nodeLists);
 
 #if ENABLE(MUTATION_OBSERVERS)

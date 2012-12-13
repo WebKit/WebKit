@@ -1559,20 +1559,22 @@ inline void Document::notifyRemovePendingSheetIfNeeded()
 
 inline bool Node::isDocumentNode() const
 {
-    return this == documentInternal();
+    return this == m_document;
+}
+
+inline TreeScope* Node::treeScope() const
+{
+    return hasRareData() ? m_data.m_rareData->treeScope() : documentInternal();
 }
 
 inline Node::Node(Document* document, ConstructionType type)
     : m_nodeFlags(type)
-    , m_treeScope(document)
+    , m_document(document)
     , m_previous(0)
     , m_next(0)
 {
     if (document)
         document->guardRef();
-    else
-        m_treeScope = TreeScope::noDocumentInstance();
-
 #if !defined(NDEBUG) || (defined(DUMP_NODE_STATISTICS) && DUMP_NODE_STATISTICS)
     trackForDebugging();
 #endif

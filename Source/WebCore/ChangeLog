@@ -1,3 +1,61 @@
+2012-12-12  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r137524.
+        http://trac.webkit.org/changeset/137524
+        https://bugs.webkit.org/show_bug.cgi?id=104859
+
+        Causes m_deletionHasBegun assertion failures in
+        MutationObserver tests (Requested by aklein on #webkit).
+
+        * dom/Document.cpp:
+        (WebCore::Document::Document):
+        (WebCore::Document::~Document):
+        (WebCore::Document::suggestedMIMEType):
+        * dom/Document.h:
+        (WebCore::Node::isDocumentNode):
+        (WebCore):
+        (WebCore::Node::treeScope):
+        (WebCore::Node::Node):
+        * dom/Element.cpp:
+        (WebCore::Element::createRareData):
+        * dom/ElementRareData.h:
+        (ElementRareData):
+        (WebCore::ElementRareData::ElementRareData):
+        * dom/Node.cpp:
+        (WebCore::Node::~Node):
+        (WebCore::Node::setDocument):
+        (WebCore):
+        (WebCore::Node::setTreeScope):
+        (WebCore::Node::createRareData):
+        (WebCore::Node::attach):
+        (WebCore::Node::reportMemoryUsage):
+        * dom/Node.h:
+        (WebCore):
+        (WebCore::NodeRareDataBase::treeScope):
+        (WebCore::NodeRareDataBase::setTreeScope):
+        (NodeRareDataBase):
+        (WebCore::NodeRareDataBase::NodeRareDataBase):
+        (Node):
+        (WebCore::Node::inDocument):
+        (WebCore::Node::documentInternal):
+        * dom/NodeRareData.cpp:
+        (SameSizeAsNodeRareData):
+        (WebCore::NodeRareData::reportMemoryUsage):
+        * dom/NodeRareData.h:
+        (WebCore::NodeRareData::NodeRareData):
+        * dom/ShadowRoot.cpp:
+        (WebCore::ShadowRoot::ShadowRoot):
+        * dom/TreeScope.cpp:
+        (SameSizeAsTreeScope):
+        (WebCore::TreeScope::TreeScope):
+        (WebCore::TreeScope::setParentTreeScope):
+        * dom/TreeScope.h:
+        (WebCore):
+        (TreeScope):
+        * dom/TreeScopeAdopter.cpp:
+        (WebCore::TreeScopeAdopter::moveTreeToNewScope):
+        (WebCore::TreeScopeAdopter::moveNodeToNewDocument):
+
 2012-12-12  Seokju Kwon  <seokju.kwon@gmail.com>
 
         Fix build warning when ENABLE_INSPECTOR is disabled

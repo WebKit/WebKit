@@ -436,7 +436,7 @@ private:
 uint64_t Document::s_globalTreeVersion = 0;
 
 Document::Document(Frame* frame, const KURL& url, bool isXHTML, bool isHTML)
-    : ContainerNode(this, CreateDocument)
+    : ContainerNode(0, CreateDocument)
     , TreeScope(this)
     , m_guardRefCount(0)
     , m_styleResolverThrowawayTimer(this, &Document::styleResolverThrowawayTimerFired)
@@ -510,6 +510,8 @@ Document::Document(Frame* frame, const KURL& url, bool isXHTML, bool isHTML)
     , m_didDispatchViewportPropertiesChanged(false)
 #endif
 {
+    m_document = this;
+
     m_printing = false;
     m_paginatedForScreen = false;
 
@@ -666,6 +668,8 @@ Document::~Document()
 
     for (unsigned i = 0; i < WTF_ARRAY_LENGTH(m_nodeListCounts); i++)
         ASSERT(!m_nodeListCounts[i]);
+
+    m_document = 0;
 
     InspectorCounters::decrementCounter(InspectorCounters::DocumentCounter);
 }
@@ -1341,13 +1345,13 @@ void Document::setContent(const String& content)
 
 String Document::suggestedMIMEType() const
 {
-    if (isXHTMLDocument())
+    if (m_document->isXHTMLDocument())
         return "application/xhtml+xml";
-    if (isSVGDocument())
+    if (m_document->isSVGDocument())
         return "image/svg+xml";
-    if (xmlStandalone())
+    if (m_document->xmlStandalone())
         return "text/xml";
-    if (isHTMLDocument())
+    if (m_document->isHTMLDocument())
         return "text/html";
 
     if (DocumentLoader* documentLoader = loader())
