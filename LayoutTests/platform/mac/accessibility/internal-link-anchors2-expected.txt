@@ -20,7 +20,7 @@ AXVisited: 0
 AXLinkedUIElements: (null)
 AXSelected: 0
 AXBlockQuoteLevel: 0
-AXTopLevelUIElement: <AXHeading: '[] Tourette syndrome'>
+AXTopLevelUIElement: <AXHeading: '[edit] Tourette syndrome'>
 AXARIABusy: 0
 
 ------------
