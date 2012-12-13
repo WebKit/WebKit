@@ -57,7 +57,7 @@ void BitmapTextureImageBuffer::updateContents(const void* data, const IntRect& t
 #endif
 }
 
-void BitmapTextureImageBuffer::updateContents(TextureMapper* textureMapper, GraphicsLayer* sourceLayer, const IntRect& targetRect, const IntPoint& sourceOffset, UpdateContentsFlag)
+void BitmapTextureImageBuffer::updateContents(TextureMapper*, GraphicsLayer* sourceLayer, const IntRect& targetRect, const IntPoint& sourceOffset, UpdateContentsFlag)
 {
     GraphicsContext* context = m_image->context();
 
