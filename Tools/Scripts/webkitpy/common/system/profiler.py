@@ -94,19 +94,25 @@ class GooglePProf(SingleFileOutputProfiler):
         match = re.search("^Total:[^\n]*\n((?:[^\n]*\n){0,10})", pprof_output, re.MULTILINE)
         return match.group(1) if match else None
 
-    def profile_after_exit(self):
+    def _pprof_path(self):
         # FIXME: We should have code to find the right google-pprof executable, some Googlers have
         # google-pprof installed as "pprof" on their machines for them.
-        # FIXME: Similarly we should find the right perl!
+        return '/usr/bin/google-pprof'
 
+    def profile_after_exit(self):
         # google-pprof doesn't check its arguments, so we have to.
         if not (self._host.filesystem.exists(self._output_path)):
             print "Failed to gather profile, %s does not exist." % self._output_path
             return
 
-        pprof_args = ['/usr/bin/perl', '/usr/bin/google-pprof', '--text', self._executable_path, self._output_path]
+        pprof_args = [self._pprof_path(), '--text', self._executable_path, self._output_path]
         profile_text = self._host.executive.run_command(pprof_args)
+        print "First 10 lines of pprof --text:"
         print self._first_ten_lines_of_profile(profile_text)
+        print "http://google-perftools.googlecode.com/svn/trunk/doc/cpuprofile.html documents output."
+        print
+        print "To interact with the the full profile, including produce graphs:"
+        print ' '.join([self._pprof_path(), self._executable_path, self._output_path])
 
 
 class Sample(SingleFileOutputProfiler):

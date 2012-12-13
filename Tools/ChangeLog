@@ -1,3 +1,18 @@
+2012-12-13  Eric Seidel  <eric@webkit.org>
+
+        Make --profile output easier to understand for pprof on linux
+        https://bugs.webkit.org/show_bug.cgi?id=104957
+
+        Reviewed by Dirk Pranke.
+
+        pprof is kinda mysterious, so we print some information
+        on how to use it, and how to learn how to read the sample dump.
+        This is similar to what we've done for perf output for Chromium Android.
+
+        * Scripts/webkitpy/common/system/profiler.py:
+        (GooglePProf._pprof_path):
+        (GooglePProf.profile_after_exit):
+
 2012-12-13  Dirk Pranke  <dpranke@chromium.org>
 
         Revert r137407 - it didn't actually work right.
