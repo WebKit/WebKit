@@ -166,9 +166,6 @@ public:
     
     void wakeUpRunLoop();
 
-    void incrementDispatchMessageMarkedDispatchWhenWaitingForSyncReplyCount() { ++m_inDispatchMessageMarkedDispatchWhenWaitingForSyncReplyCount; }
-    void decrementDispatchMessageMarkedDispatchWhenWaitingForSyncReplyCount() { --m_inDispatchMessageMarkedDispatchWhenWaitingForSyncReplyCount; }
-
     unsigned lastSentSyncMessageID() const { return m_lastSentSyncMessageID; }
 
 private:
