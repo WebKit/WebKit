@@ -1,3 +1,43 @@
+2012-12-13  Dirk Pranke  <dpranke@chromium.org>
+
+        nrwt: move rundetails, summarize_results into test_run_results
+        https://bugs.webkit.org/show_bug.cgi?id=104963
+
+        Reviewed by Eric Seidel.
+
+        More cleanup; this the plain-old-data functions out of manager.py
+        and into test_run_results next to the other aggregate data structures.
+
+        Also this cleans up a bunch of test code and reduces duplication.
+
+        * Scripts/webkitpy/layout_tests/controllers/manager.py:
+        (Manager.run):
+        * Scripts/webkitpy/layout_tests/controllers/manager_unittest.py:
+        (ManagerTest.test_look_for_new_crash_logs):
+        * Scripts/webkitpy/layout_tests/models/test_run_results.py:
+        (TestRunResults.__init__):
+        (TestRunResults.add):
+        (RunDetails):
+        (RunDetails.__init__):
+        (_interpret_test_failures):
+        (summarize_results):
+        * Scripts/webkitpy/layout_tests/models/test_run_results_unittest.py: Added.
+        (get_result):
+        (run_results):
+        (summarized_results):
+        (InterpretTestFailuresTest):
+        (InterpretTestFailuresTest.setUp):
+        (InterpretTestFailuresTest.test_interpret_test_failures):
+        (SummarizedResultsTest):
+        (SummarizedResultsTest.setUp):
+        (SummarizedResultsTest.test_no_svn_revision):
+        (SummarizedResultsTest.test_svn_revision):
+        (SummarizedResultsTest.test_summarized_results_wontfix):
+        * Scripts/webkitpy/layout_tests/views/buildbot_results_unittest.py:
+        (BuildBotPrinterTests.get_printer):
+        (BuildBotPrinterTests.test_print_unexpected_results):
+        (BuildBotPrinterTests.test_print_results):
+
 2012-12-13  Eric Seidel  <eric@webkit.org>
 
         Make --profile output easier to understand for pprof on linux

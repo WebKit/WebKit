@@ -32,11 +32,11 @@ import unittest
 
 from webkitpy.common.host_mock import MockHost
 
-from webkitpy.layout_tests.controllers import manager
 from webkitpy.layout_tests.models import test_expectations
 from webkitpy.layout_tests.models import test_failures
-from webkitpy.layout_tests.models import test_results
 from webkitpy.layout_tests.models import test_run_results
+from webkitpy.layout_tests.models import test_run_results
+from webkitpy.layout_tests.models import test_run_results_unittest
 from webkitpy.layout_tests.views import buildbot_results
 
 
@@ -52,124 +52,48 @@ class BuildBotPrinterTests(unittest.TestCase):
         printer = buildbot_results.BuildBotPrinter(stream, debug_logging=True)
         return printer, stream
 
-    def get_result(self, test_name, result_type=test_expectations.PASS, run_time=0):
-        failures = []
-        if result_type == test_expectations.TIMEOUT:
-            failures = [test_failures.FailureTimeout()]
-        elif result_type == test_expectations.CRASH:
-            failures = [test_failures.FailureCrash()]
-        elif result_type == test_expectations.AUDIO:
-            failures = [test_failures.FailureAudioMismatch()]
-        return test_results.TestResult(test_name, failures=failures, test_run_time=run_time)
-
-    def get_run_results(self, port, test_names, expectations_str):
-        port.test_expectations = lambda: expectations_str
-        port.test_expectations_overrides = lambda: None
-        expectations = test_expectations.TestExpectations(port, test_names)
-        rs = test_run_results.TestRunResults(expectations, len(test_names))
-        return test_names, rs, expectations
-
     def test_print_unexpected_results(self):
-        # This routine is the only one that prints stuff that the bots
-        # care about.
-        #
-        # FIXME: there's some weird layering going on here. It seems
-        # like we shouldn't be both using an expectations string and
-        # having to specify whether or not the result was expected.
-        # This whole set of tests should probably be rewritten.
-        #
-        # FIXME: Plus, the fact that we're having to call into
-        # run_webkit_tests is clearly a layering inversion.
-        tests = ['passes/text.html', 'failures/expected/timeout.html', 'failures/expected/crash.html', 'failures/expected/audio.html']
-        expectations = ''
-
-        def get_unexpected_results(expected, passing, flaky):
-            """Return an unexpected results summary matching the input description.
-
-            There are a lot of different combinations of test results that
-            can be tested; this routine produces various combinations based
-            on the values of the input flags.
-
-            Args
-                expected: whether the tests ran as expected
-                passing: whether the tests should all pass
-                flaky: whether the tests should be flaky (if False, they
-                    produce the same results on both runs; if True, they
-                    all pass on the second run).
-
-            """
-            port = MockHost().port_factory.get('test')
-            test_is_slow = False
-            paths, rs, exp = self.get_run_results(port, tests, expectations)
-            if expected:
-                rs.add(self.get_result('passes/text.html', test_expectations.PASS), expected, test_is_slow)
-                rs.add(self.get_result('failures/expected/audio.html', test_expectations.AUDIO), expected, test_is_slow)
-                rs.add(self.get_result('failures/expected/timeout.html', test_expectations.TIMEOUT), expected, test_is_slow)
-                rs.add(self.get_result('failures/expected/crash.html', test_expectations.CRASH), expected, test_is_slow)
-            elif passing:
-                rs.add(self.get_result('passes/text.html'), expected, test_is_slow)
-                rs.add(self.get_result('failures/expected/audio.html'), expected, test_is_slow)
-                rs.add(self.get_result('failures/expected/timeout.html'), expected, test_is_slow)
-                rs.add(self.get_result('failures/expected/crash.html'), expected, test_is_slow)
-            else:
-                rs.add(self.get_result('passes/text.html', test_expectations.TIMEOUT), expected, test_is_slow)
-                rs.add(self.get_result('failures/expected/audio.html', test_expectations.CRASH), expected, test_is_slow)
-                rs.add(self.get_result('failures/expected/timeout.html', test_expectations.CRASH), expected, test_is_slow)
-                rs.add(self.get_result('failures/expected/crash.html', test_expectations.TIMEOUT), expected, test_is_slow)
-            retry = rs
-            if flaky:
-                paths, retry, exp = self.get_run_results(port, tests, expectations)
-                retry.add(self.get_result('passes/text.html'), True, test_is_slow)
-                retry.add(self.get_result('failures/expected/audio.html'), True, test_is_slow)
-                retry.add(self.get_result('failures/expected/timeout.html'), True, test_is_slow)
-                retry.add(self.get_result('failures/expected/crash.html'), True, test_is_slow)
-            return manager.summarize_results(port, exp, rs, retry)
-
+        port = MockHost().port_factory.get('test')
         printer, out = self.get_printer()
 
         # test everything running as expected
         DASHED_LINE = "-" * 78 + "\n"
-        ur = get_unexpected_results(expected=True, passing=False, flaky=False)
-        printer.print_unexpected_results(ur)
+        summary = test_run_results_unittest.summarized_results(port, expected=True, passing=False, flaky=False)
+        printer.print_unexpected_results(summary)
         self.assertEqual(out.getvalue(), DASHED_LINE)
 
         # test failures
         printer, out = self.get_printer()
-        ur = get_unexpected_results(expected=False, passing=False, flaky=False)
-        printer.print_unexpected_results(ur)
+        summary = test_run_results_unittest.summarized_results(port, expected=False, passing=False, flaky=False)
+        printer.print_unexpected_results(summary)
         self.assertNotEmpty(out)
 
         # test unexpected flaky
         printer, out = self.get_printer()
-        ur = get_unexpected_results(expected=False, passing=False, flaky=True)
-        printer.print_unexpected_results(ur)
+        summary = test_run_results_unittest.summarized_results(port, expected=False, passing=False, flaky=True)
+        printer.print_unexpected_results(summary)
         self.assertNotEmpty(out)
 
         printer, out = self.get_printer()
-        ur = get_unexpected_results(expected=False, passing=False, flaky=False)
-        printer.print_unexpected_results(ur)
-        self.assertNotEmpty(out)
-
-        expectations = """
-BUGX : failures/expected/crash.html = CRASH
-BUGX : failures/expected/timeout.html = TIMEOUT
-"""
-        printer, out = self.get_printer()
-        ur = get_unexpected_results(expected=False, passing=False, flaky=False)
-        printer.print_unexpected_results(ur)
+        summary = test_run_results_unittest.summarized_results(port, expected=False, passing=False, flaky=False)
+        printer.print_unexpected_results(summary)
         self.assertNotEmpty(out)
 
         printer, out = self.get_printer()
-        ur = get_unexpected_results(expected=False, passing=True, flaky=False)
-        printer.print_unexpected_results(ur)
+        summary = test_run_results_unittest.summarized_results(port, expected=False, passing=False, flaky=False)
+        printer.print_unexpected_results(summary)
         self.assertNotEmpty(out)
 
         printer, out = self.get_printer()
-        tests = ['passes/text.html', 'failures/expected/timeout.html', 'failures/expected/crash.html', 'failures/expected/audio.html']
-        expectations = ''
+        summary = test_run_results_unittest.summarized_results(port, expected=False, passing=True, flaky=False)
+        printer.print_unexpected_results(summary)
+        self.assertNotEmpty(out)
+
+    def test_print_results(self):
         port = MockHost().port_factory.get('test')
-        paths, initial_results, exp = self.get_run_results(port, tests, expectations)
-        summarized_results = get_unexpected_results(expected=False, passing=True, flaky=False)
-        details = manager.RunDetails(summarized_results['num_regressions'], summarized_results, initial_results, None)
+        printer, out = self.get_printer()
+        initial_results = test_run_results_unittest.run_results(port)
+        summary = test_run_results_unittest.summarized_results(port, expected=False, passing=True, flaky=False)
+        details = test_run_results.RunDetails(summary['num_regressions'], summary, initial_results, None)
         printer.print_results(details)
         self.assertNotEmpty(out)

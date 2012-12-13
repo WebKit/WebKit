@@ -34,10 +34,8 @@ import time
 import unittest
 
 from webkitpy.common.host_mock import MockHost
-from webkitpy.layout_tests.controllers.manager import Manager, interpret_test_failures, summarize_results
+from webkitpy.layout_tests.controllers.manager import Manager
 from webkitpy.layout_tests.models import test_expectations
-from webkitpy.layout_tests.models import test_failures
-from webkitpy.layout_tests.models import test_results
 from webkitpy.layout_tests.models.test_run_results import TestRunResults
 from webkitpy.thirdparty.mock import Mock
 from webkitpy.tool.mocktool import MockOptions
@@ -90,104 +88,3 @@ class ManagerTest(unittest.TestCase):
         run_results = TestRunResults(expectations, len(tests))
         manager = get_manager()
         manager._look_for_new_crash_logs(run_results, time.time())
-
-
-class SummarizeResultsTest(unittest.TestCase):
-
-    def setUp(self):
-        host = MockHost()
-        self.port = host.port_factory.get(port_name='test')
-
-    def test_interpret_test_failures(self):
-        test_dict = interpret_test_failures([test_failures.FailureImageHashMismatch(diff_percent=0.42)])
-        self.assertEqual(test_dict['image_diff_percent'], 0.42)
-
-        test_dict = interpret_test_failures([test_failures.FailureReftestMismatch(self.port.abspath_for_test('foo/reftest-expected.html'))])
-        self.assertTrue('image_diff_percent' in test_dict)
-
-        test_dict = interpret_test_failures([test_failures.FailureReftestMismatchDidNotOccur(self.port.abspath_for_test('foo/reftest-expected-mismatch.html'))])
-        self.assertEqual(len(test_dict), 0)
-
-        test_dict = interpret_test_failures([test_failures.FailureMissingAudio()])
-        self.assertTrue('is_missing_audio' in test_dict)
-
-        test_dict = interpret_test_failures([test_failures.FailureMissingResult()])
-        self.assertTrue('is_missing_text' in test_dict)
-
-        test_dict = interpret_test_failures([test_failures.FailureMissingImage()])
-        self.assertTrue('is_missing_image' in test_dict)
-
-        test_dict = interpret_test_failures([test_failures.FailureMissingImageHash()])
-        self.assertTrue('is_missing_image' in test_dict)
-
-    def get_result(self, test_name, result_type=test_expectations.PASS, run_time=0):
-        failures = []
-        if result_type == test_expectations.TIMEOUT:
-            failures = [test_failures.FailureTimeout()]
-        elif result_type == test_expectations.CRASH:
-            failures = [test_failures.FailureCrash()]
-        return test_results.TestResult(test_name, failures=failures, test_run_time=run_time)
-
-    def get_run_results(self, port, test_names, expectations_str):
-        port.expectations_dict = lambda: {'': expectations_str}
-        expectations = test_expectations.TestExpectations(port, test_names)
-        return test_names, TestRunResults(expectations, len(test_names)), expectations
-
-    # FIXME: Use this to test more of summarize_results. This was moved from printing_unittest.py.
-    def summarized_results(self, port, expected, passing, flaky, extra_tests=[], extra_expectations=None):
-        tests = ['passes/text.html', 'failures/expected/timeout.html', 'failures/expected/crash.html', 'failures/expected/wontfix.html']
-        if extra_tests:
-            tests.extend(extra_tests)
-
-        expectations = ''
-        if extra_expectations:
-            expectations += extra_expectations
-
-        test_is_slow = False
-        paths, initial_results, exp = self.get_run_results(port, tests, expectations)
-        if expected:
-            initial_results.add(self.get_result('passes/text.html', test_expectations.PASS), expected, test_is_slow)
-            initial_results.add(self.get_result('failures/expected/timeout.html', test_expectations.TIMEOUT), expected, test_is_slow)
-            initial_results.add(self.get_result('failures/expected/crash.html', test_expectations.CRASH), expected, test_is_slow)
-        elif passing:
-            initial_results.add(self.get_result('passes/text.html'), expected, test_is_slow)
-            initial_results.add(self.get_result('failures/expected/timeout.html'), expected, test_is_slow)
-            initial_results.add(self.get_result('failures/expected/crash.html'), expected, test_is_slow)
-        else:
-            initial_results.add(self.get_result('passes/text.html', test_expectations.TIMEOUT), expected, test_is_slow)
-            initial_results.add(self.get_result('failures/expected/timeout.html', test_expectations.CRASH), expected, test_is_slow)
-            initial_results.add(self.get_result('failures/expected/crash.html', test_expectations.TIMEOUT), expected, test_is_slow)
-
-        for test in extra_tests:
-            initial_results.add(self.get_result(test, test_expectations.CRASH), expected, test_is_slow)
-
-        if flaky:
-            paths, retry_results, exp = self.get_run_results(port, tests, expectations)
-            retry_results.add(self.get_result('passes/text.html'), True, test_is_slow)
-            retry_results.add(self.get_result('failures/expected/timeout.html'), True, test_is_slow)
-            retry_results.add(self.get_result('failures/expected/crash.html'), True, test_is_slow)
-        else:
-            retry_results = None
-
-        return summarize_results(port, exp, initial_results, retry_results)
-
-    def test_no_svn_revision(self):
-        host = MockHost(initialize_scm_by_default=False)
-        port = host.port_factory.get('test')
-        summarized_results = self.summarized_results(port, expected=False, passing=False, flaky=False)
-        self.assertTrue('revision' not in summarized_results)
-
-    def test_svn_revision(self):
-        host = MockHost(initialize_scm_by_default=False)
-        port = host.port_factory.get('test')
-        port._options.builder_name = 'dummy builder'
-        summarized_results = self.summarized_results(port, expected=False, passing=False, flaky=False)
-        self.assertNotEquals(summarized_results['revision'], '')
-
-    def test_summarized_results_wontfix(self):
-        host = MockHost()
-        port = host.port_factory.get('test')
-        port._options.builder_name = 'dummy builder'
-        port._filesystem.write_text_file(port._filesystem.join(port.layout_tests_dir(), "failures/expected/wontfix.html"), "Dummy test contents")
-        summarized_results = self.summarized_results(port, expected=False, passing=False, flaky=False, extra_tests=['failures/expected/wontfix.html'], extra_expectations='Bug(x) failures/expected/wontfix.html [ WontFix ]\n')
-        self.assertTrue(summarized_results['tests']['failures']['expected']['wontfix.html']['wontfix'])
