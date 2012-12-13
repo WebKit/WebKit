@@ -32,6 +32,7 @@
 #define InspectorCounters_h
 
 #include <wtf/FastAllocBase.h>
+#include <wtf/UnusedParam.h>
 
 #if !ASSERT_DISABLED
 #include <wtf/MainThread.h>
@@ -53,6 +54,8 @@ public:
 #if ENABLE(INSPECTOR)
         ASSERT(isMainThread());
         ++s_counters[type];
+#else
+        UNUSED_PARAM(type);
 #endif
     }
 
@@ -61,6 +64,8 @@ public:
 #if ENABLE(INSPECTOR)
         ASSERT(isMainThread());
         --s_counters[type];
+#else
+        UNUSED_PARAM(type);
 #endif
     }
 

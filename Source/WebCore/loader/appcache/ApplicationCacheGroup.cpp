@@ -621,6 +621,8 @@ void ApplicationCacheGroup::didFinishLoading(ResourceHandle* handle, double fini
 {
 #if ENABLE(INSPECTOR)
     InspectorInstrumentation::didFinishLoading(m_frame, m_frame->loader()->documentLoader(), m_currentResourceIdentifier, finishTime);
+#else
+    UNUSED_PARAM(finishTime);
 #endif
 
     if (handle == m_manifestHandle) {
@@ -658,6 +660,8 @@ void ApplicationCacheGroup::didFail(ResourceHandle* handle, const ResourceError&
 {
 #if ENABLE(INSPECTOR)
     InspectorInstrumentation::didFailLoading(m_frame, m_frame->loader()->documentLoader(), m_currentResourceIdentifier, error);
+#else
+    UNUSED_PARAM(error);
 #endif
 
     if (handle == m_manifestHandle) {

@@ -35,6 +35,7 @@
 #include "InspectorInstrumentation.h"
 #include "InstrumentingAgents.h"
 #include "ScriptObject.h"
+#include <wtf/UnusedParam.h>
 
 namespace WebCore {
 
@@ -45,6 +46,9 @@ ScriptObject InspectorInstrumentation::wrapCanvas2DRenderingContextForInstrument
         if (InspectorCanvasAgent* canvasAgent = instrumentingAgents->inspectorCanvasAgent())
             return canvasAgent->wrapCanvas2DRenderingContextForInstrumentation(context);
     }
+#else
+    UNUSED_PARAM(document);
+    UNUSED_PARAM(context);
 #endif
     return ScriptObject();
 }
@@ -57,6 +61,9 @@ ScriptObject InspectorInstrumentation::wrapWebGLRenderingContextForInstrumentati
         if (InspectorCanvasAgent* canvasAgent = instrumentingAgents->inspectorCanvasAgent())
             return canvasAgent->wrapWebGLRenderingContextForInstrumentation(glContext);
     }
+#else
+    UNUSED_PARAM(document);
+    UNUSED_PARAM(glContext);
 #endif
     return ScriptObject();
 }
