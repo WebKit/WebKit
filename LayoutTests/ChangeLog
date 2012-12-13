@@ -1,3 +1,10 @@
+2012-12-12  Simon Fraser  <simon.fraser@apple.com>
+
+        Rebaseline some tiled scrolling results that were affected by r137387.
+
+        * platform/mac/tiled-drawing/tiled-drawing-zoom-expected.txt:
+        * platform/mac/tiled-drawing/use-tiled-drawing-expected.txt:
+
 2012-12-12  Roger Fong  <roger_fong@apple.com>
 
         Unreviewed. Skip some captions tests on Windows. Failing on both Mac and Windows.

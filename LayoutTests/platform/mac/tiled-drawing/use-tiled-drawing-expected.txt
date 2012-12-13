@@ -6,9 +6,9 @@
       (bounds 1208.00 2021.00)
       (drawsContent 1)
       (visible rect 0.00, 0.00 785.00 x 585.00)
-      (tile cache coverage 0, 0 1208 x 1536)
+      (tile cache coverage 0, 0 1208 x 2021)
       (tile size 512 x 512)
-      (top left tile 0, 0 tiles grid 3 x 3)
+      (top left tile 0, 0 tiles grid 3 x 4)
       (children 1
         (GraphicsLayer
           (visible rect 0.00, 0.00 0.00 x 0.00)
