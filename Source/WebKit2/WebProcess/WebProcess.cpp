@@ -219,6 +219,16 @@ void WebProcess::removeMessageReceiver(CoreIPC::StringReference messageReceiverN
     m_messageReceiverMap.removeMessageReceiver(messageReceiverName, destinationID);
 }
 
+void WebProcess::didCreateDownload()
+{
+    disableTermination();
+}
+
+void WebProcess::didDestroyDownload()
+{
+    enableTermination();
+}
+
 void WebProcess::initializeWebProcess(const WebProcessCreationParameters& parameters, CoreIPC::MessageDecoder& decoder)
 {
     ASSERT(m_pageMap.isEmpty());

@@ -26,17 +26,18 @@
 #ifndef DownloadManager_h
 #define DownloadManager_h
 
+#include <wtf/Forward.h>
 #include <wtf/HashMap.h>
 #include <wtf/Noncopyable.h>
 
-namespace WTF {
-class String;
+namespace WebCore {
+class ResourceHandle;
+class ResourceRequest;
+class ResourceResponse;
 }
 
-namespace WebCore {
-    class ResourceHandle;
-    class ResourceRequest;
-    class ResourceResponse;
+namespace CoreIPC {
+class Connection;
 }
 
 namespace WebKit {
@@ -51,6 +52,11 @@ public:
     class Client {
     public:
         virtual ~Client() { }
+
+        virtual void didCreateDownload() = 0;
+        virtual void didDestroyDownload() = 0;
+
+        virtual CoreIPC::Connection* connection() const = 0;
     };
 
     explicit DownloadManager(Client*);
@@ -63,8 +69,13 @@ public:
     void downloadFinished(Download*);
     bool isDownloading() const { return !m_downloads.isEmpty(); }
 
+    void didCreateDownload();
+    void didDestroyDownload();
+
+    CoreIPC::Connection* connection();
+
 #if PLATFORM(QT)
-    void startTransfer(uint64_t downloadID, const WTF::String& destination);
+    void startTransfer(uint64_t downloadID, const String& destination);
 #endif
 
 private:

@@ -221,6 +221,10 @@ public:
 private:
     WebProcess();
 
+    // DownloadManager::Client.
+    virtual void didCreateDownload() OVERRIDE;
+    virtual void didDestroyDownload() OVERRIDE;
+
     void initializeWebProcess(const WebProcessCreationParameters&, CoreIPC::MessageDecoder&);
     void platformInitializeWebProcess(const WebProcessCreationParameters&, CoreIPC::MessageDecoder&);
     void platformTerminate();

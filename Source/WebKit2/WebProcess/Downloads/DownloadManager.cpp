@@ -27,7 +27,6 @@
 #include "DownloadManager.h"
 
 #include "Download.h"
-#include "WebProcess.h"
 #include <wtf/StdLibExtras.h>
 
 using namespace WebCore;
@@ -37,8 +36,6 @@ namespace WebKit {
 DownloadManager::DownloadManager(Client* client)
     : m_client(client)
 {
-    // FIXME: Actually use the client for something.
-    (void)m_client;
 }
 
 void DownloadManager::startDownload(uint64_t downloadID, const ResourceRequest& request)
@@ -74,6 +71,21 @@ void DownloadManager::downloadFinished(Download* download)
     m_downloads.remove(download->downloadID());
 
     delete download;
+}
+
+void DownloadManager::didCreateDownload()
+{
+    m_client->didCreateDownload();
+}
+
+void DownloadManager::didDestroyDownload()
+{
+    m_client->didDestroyDownload();
+}
+
+CoreIPC::Connection* DownloadManager::connection()
+{
+    return m_client->connection();
 }
 
 #if PLATFORM(QT)

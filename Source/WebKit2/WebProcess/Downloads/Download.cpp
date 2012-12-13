@@ -34,7 +34,6 @@
 #include "DownloadManager.h"
 #include "SandboxExtension.h"
 #include "WebCoreArgumentCoders.h"
-#include "WebProcess.h"
 
 using namespace WebCore;
 
@@ -57,19 +56,19 @@ Download::Download(DownloadManager& downloadManager, uint64_t downloadID, const 
 {
     ASSERT(m_downloadID);
 
-    WebProcess::shared().disableTermination();
+    m_downloadManager.didCreateDownload();
 }
 
 Download::~Download()
 {
     platformInvalidate();
 
-    WebProcess::shared().enableTermination();
+    m_downloadManager.didDestroyDownload();
 }
 
 CoreIPC::Connection* Download::connection() const
 {
-    return WebProcess::shared().connection();
+    return m_downloadManager.connection();
 }
 
 void Download::didStart()
