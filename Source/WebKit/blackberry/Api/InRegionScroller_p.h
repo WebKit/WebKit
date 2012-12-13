@@ -27,6 +27,7 @@
 
 namespace WebCore {
 class Frame;
+class LayerWebKitThread;
 class Node;
 class RenderBox;
 class RenderObject;
@@ -69,6 +70,8 @@ private:
 
     void adjustScrollDelta(const WebCore::IntPoint& maxOffset, const WebCore::IntPoint& currentOffset, WebCore::IntSize& delta) const;
 
+    bool isValidScrollableLayerWebKitThread(WebCore::LayerWebKitThread*) const;
+    bool isValidScrollableNode(WebCore::Node*) const;
     std::vector<Platform::ScrollViewBase*> m_activeInRegionScrollableAreas;
 };
 

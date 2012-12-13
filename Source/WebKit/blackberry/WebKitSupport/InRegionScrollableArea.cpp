@@ -151,5 +151,15 @@ Document* InRegionScrollableArea::document() const
     return m_document;
 }
 
+LayerWebKitThread* InRegionScrollableArea::cachedScrollableLayer() const
+{
+    return m_cachedCompositedScrollableLayer.get();
+}
+
+Node* InRegionScrollableArea::cachedScrollableNode() const
+{
+    return m_cachedNonCompositedScrollableNode.get();
+}
+
 }
 }

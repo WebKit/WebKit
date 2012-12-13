@@ -48,6 +48,9 @@ public:
     WebCore::RenderLayer* layer() const;
     WebCore::Document* document() const;
 
+    WebCore::LayerWebKitThread* cachedScrollableLayer() const;
+    WebCore::Node* cachedScrollableNode() const;
+
 private:
     WebPagePrivate* m_webPage;
     WebCore::RenderLayer* m_layer;
