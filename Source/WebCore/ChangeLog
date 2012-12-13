@@ -1,3 +1,12 @@
+2012-12-12  Martin Robinson  <mrobinson@igalia.com>
+
+        Try to fix the GTK+ debug bulid
+
+        Logging.h is no longer included in headers, so we need to include it manually in
+        files that require logging macros.
+
+        * platform/graphics/gstreamer/MediaPlayerPrivateGStreamer.cpp: Include Logging.h.
+
 2012-12-12  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r137524.
