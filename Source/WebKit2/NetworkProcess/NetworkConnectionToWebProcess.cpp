@@ -56,7 +56,6 @@ NetworkConnectionToWebProcess::NetworkConnectionToWebProcess(CoreIPC::Connection
 
 NetworkConnectionToWebProcess::~NetworkConnectionToWebProcess()
 {
-    ASSERT(!m_connection);
     ASSERT(m_observers.isEmpty());
 }
 
@@ -99,20 +98,20 @@ void NetworkConnectionToWebProcess::didReceiveSyncMessage(CoreIPC::Connection* c
 
 void NetworkConnectionToWebProcess::didClose(CoreIPC::Connection*)
 {
-    // Protect ourself as we might be otherwise be deleted during this function
+    // Protect ourself as we might be otherwise be deleted during this function.
     RefPtr<NetworkConnectionToWebProcess> protector(this);
     
     NetworkProcess::shared().removeNetworkConnectionToWebProcess(this);
     
+    // FIXME (NetworkProcess): We might consider actively clearing out all requests for this connection.
+    // But that might not be necessary as the observer mechanism used above is much more direct.
+
     Vector<NetworkConnectionToWebProcessObserver*> observers;
     copyToVector(m_observers, observers);
     for (size_t i = 0; i < observers.size(); ++i)
         observers[i]->connectionToWebProcessDidClose(this);
-    
-    // FIXME (NetworkProcess): We might consider actively clearing out all requests for this connection.
-    // But that might not be necessary as the observer mechanism used above is much more direct.
-    
-    m_connection = 0;
+
+    // The object may be destroyed now.
 }
 
 void NetworkConnectionToWebProcess::didReceiveInvalidMessage(CoreIPC::Connection*, CoreIPC::StringReference, CoreIPC::StringReference)

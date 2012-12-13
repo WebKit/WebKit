@@ -144,8 +144,6 @@ void NetworkResourceLoader::stop()
 void NetworkResourceLoader::connectionToWebProcessDidClose(NetworkConnectionToWebProcess* connection)
 {
     ASSERT_ARG(connection, connection == m_connection.get());
-    m_connection->unregisterObserver(this);
-    m_connection = 0;
 }
 
 void NetworkResourceLoader::didReceiveResponse(ResourceHandle*, const ResourceResponse& response)
