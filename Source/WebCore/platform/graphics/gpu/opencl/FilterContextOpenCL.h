@@ -49,6 +49,11 @@ public:
         , m_commandQueue(0)
         , m_transformColorSpaceProgram(0)
         , m_transformColorSpaceKernel(0)
+        , m_colorMatrixCompileStatus(openclNotCompiledYet)
+        , m_colorMatrixProgram(0)
+        , m_matrixOperation(0)
+        , m_saturateAndHueRotateOperation(0)
+        , m_luminanceOperation(0)
         , m_turbulenceCompileStatus(openclNotCompiledYet)
         , m_turbulenceProgram(0)
         , m_turbulenceOperation(0)
@@ -65,8 +70,10 @@ public:
     OpenCLHandle createOpenCLImage(IntSize);
     void openCLTransformColorSpace(OpenCLHandle&, IntRect, ColorSpace, ColorSpace);
 
+    inline bool compileFEColorMatrix();
     inline bool compileFETurbulence();
 
+    inline void applyFEColorMatrix(OpenCLHandle, IntSize, OpenCLHandle, IntPoint, void*, int);
     inline void applyFETurbulence(OpenCLHandle, IntSize, int, void*, void*, void*, void*, void*,
         void*, int, int, int, int, float, float, bool, int, int);
 
@@ -141,6 +148,12 @@ private:
 
     cl_program m_transformColorSpaceProgram;
     cl_kernel m_transformColorSpaceKernel;
+
+    OpenCLCompileStatus m_colorMatrixCompileStatus;
+    cl_program m_colorMatrixProgram;
+    cl_kernel m_matrixOperation;
+    cl_kernel m_saturateAndHueRotateOperation; 
+    cl_kernel m_luminanceOperation;
 
     OpenCLCompileStatus m_turbulenceCompileStatus;
     cl_program m_turbulenceProgram;

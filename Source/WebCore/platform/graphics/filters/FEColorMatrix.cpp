@@ -105,34 +105,6 @@ inline void luminance(float& red, float& green, float& blue, float& alpha)
     blue = 0;
 }
 
-inline void calculateSaturateComponents(float* components, float value)
-{
-    components[0] = (0.213 + 0.787 * value);
-    components[1] = (0.715 - 0.715 * value);
-    components[2] = (0.072 - 0.072 * value);
-    components[3] = (0.213 - 0.213 * value);
-    components[4] = (0.715 + 0.285 * value);
-    components[5] = (0.072 - 0.072 * value);
-    components[6] = (0.213 - 0.213 * value);
-    components[7] = (0.715 - 0.715 * value);
-    components[8] = (0.072 + 0.928 * value);
-}
-
-inline void calculateHueRotateComponents(float* components, float value)
-{
-    float cosHue = cos(value * piFloat / 180);
-    float sinHue = sin(value * piFloat / 180);
-    components[0] = 0.213 + cosHue * 0.787 - sinHue * 0.213;
-    components[1] = 0.715 - cosHue * 0.715 - sinHue * 0.715;
-    components[2] = 0.072 - cosHue * 0.072 + sinHue * 0.928;
-    components[3] = 0.213 - cosHue * 0.213 + sinHue * 0.143;
-    components[4] = 0.715 + cosHue * 0.285 + sinHue * 0.140;
-    components[5] = 0.072 - cosHue * 0.072 - sinHue * 0.283;
-    components[6] = 0.213 - cosHue * 0.213 - sinHue * 0.787;
-    components[7] = 0.715 - cosHue * 0.715 + sinHue * 0.715;
-    components[8] = 0.072 + cosHue * 0.928 + sinHue * 0.072;
-}
-
 template<ColorMatrixType filterType>
 void effectType(Uint8ClampedArray* pixelArray, const Vector<float>& values)
 {
@@ -140,9 +112,9 @@ void effectType(Uint8ClampedArray* pixelArray, const Vector<float>& values)
     float components[9];
 
     if (filterType == FECOLORMATRIX_TYPE_SATURATE)
-        calculateSaturateComponents(components, values[0]);
+        FEColorMatrix::calculateSaturateComponents(components, values[0]);
     else if (filterType == FECOLORMATRIX_TYPE_HUEROTATE)
-        calculateHueRotateComponents(components, values[0]);
+        FEColorMatrix::calculateHueRotateComponents(components, values[0]);
 
     for (unsigned pixelByteOffset = 0; pixelByteOffset < pixelArrayLength; pixelByteOffset += 4) {
         float red = pixelArray->item(pixelByteOffset);
