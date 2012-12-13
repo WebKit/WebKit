@@ -101,9 +101,6 @@ class Executive(object):
         return sys.platform not in ('win32', 'cygwin')
 
     def _run_command_with_teed_output(self, args, teed_output, **kwargs):
-        args = map(unicode, args)  # Popen will throw an exception if args are non-strings (like int())
-        args = map(self._encode_argument_if_needed, args)
-
         child_process = self.popen(args,
                                    stdout=self.PIPE,
                                    stderr=self.STDOUT,
@@ -390,8 +387,6 @@ class Executive(object):
         """Popen wrapper for convenience and to work around python bugs."""
         assert(isinstance(args, list) or isinstance(args, tuple))
         start_time = time.time()
-        args = map(unicode, args)  # Popen will throw an exception if args are non-strings (like int())
-        args = map(self._encode_argument_if_needed, args)
 
         stdin, string_to_communicate = self._compute_stdin(input)
         stderr = self.STDOUT if return_stderr else None
@@ -458,7 +453,9 @@ class Executive(object):
         return argument.encode(self._child_process_encoding())
 
     def popen(self, *args, **kwargs):
-        return subprocess.Popen(*args, **kwargs)
+        string_args = map(unicode, *args)  # Popen will throw an exception if args are non-strings (like int())
+        string_args = map(self._encode_argument_if_needed, string_args)
+        return subprocess.Popen(string_args, **kwargs)
 
     def run_in_parallel(self, command_lines_and_cwds, processes=None):
         """Runs a list of (cmd_line list, cwd string) tuples in parallel and returns a list of (retcode, stdout, stderr) tuples."""
