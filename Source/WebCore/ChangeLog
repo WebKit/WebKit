@@ -1,3 +1,21 @@
+2012-12-12  Dean Jackson  <dino@apple.com>
+
+        Reinstate CIFilter code for Lion
+        https://bugs.webkit.org/show_bug.cgi?id=104847
+
+        Reviewed by Simon Fraser.
+
+        This basically reverts r137500 for Lion, because some
+        CAFilter types are not available there.
+
+        Covered by existing tests, with the warning that Lion
+        baselines will need updating.
+
+        * platform/graphics/ca/mac/PlatformCALayerMac.mm:
+        (PlatformCALayer::setFilters): Put an ugly #if in to
+        detect OS X 10.7, and rename caFilter variable to
+        filter.
+
 2012-12-12  Seokju Kwon  <seokju.kwon@gmail.com>
 
         [EFL] Refactor duplicate code into EflInspectorUtilities
