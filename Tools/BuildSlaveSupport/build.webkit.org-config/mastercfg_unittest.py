@@ -61,7 +61,6 @@ class MasterCfgTest(unittest.TestCase):
             '1 unique leaks found!',
         ]
         run_webkit_tests._parseNewRunWebKitTestsOutput(log_text)
-        self.fail()
         self.assertEqual(run_webkit_tests.incorrectLayoutLines, expected_incorrect_lines)
 
     def test_nrwt_missing_results(self):
