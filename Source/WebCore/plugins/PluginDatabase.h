@@ -75,6 +75,8 @@ namespace WebCore {
             m_pluginDirectories = directories;
         }
 
+        bool removeDisabledPluginFile(const String& fileName);
+        bool addDisabledPluginFile(const String& fileName);
         static Vector<String> defaultPluginDirectories();
         Vector<String> pluginDirectories() const { return m_pluginDirectories; }
 
@@ -89,6 +91,7 @@ namespace WebCore {
     private:
         void getPluginPathsInDirectories(HashSet<String>&) const;
         void getDeletedPlugins(PluginSet&) const;
+        bool fileExistsAndIsNotDisabled(const String&) const;
 
         // Returns whether the plugin was actually added or not (it won't be added if it's a duplicate of an existing plugin).
         bool add(PassRefPtr<PluginPackage>);
@@ -98,6 +101,7 @@ namespace WebCore {
         void updatePersistentMetadataCache();
 #endif
 
+        HashSet<String> m_disabledPluginFiles;
         Vector<String> m_pluginDirectories;
         HashSet<String> m_registeredMIMETypes;
         PluginSet m_plugins;

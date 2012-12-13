@@ -312,11 +312,20 @@ void PluginDatabase::setPreferredPluginForMIMEType(const String& mimeType, Plugi
         m_preferredPlugins.set(mimeType.lower(), plugin);
 }
 
+bool PluginDatabase::fileExistsAndIsNotDisabled(const String& filePath) const
+{
+    // Skip plugin files that are disabled by filename.
+    if (m_disabledPluginFiles.contains(pathGetFileName(filePath)))
+        return false;
+
+    return fileExists(filePath);
+}
+
 void PluginDatabase::getDeletedPlugins(PluginSet& plugins) const
 {
     PluginSet::const_iterator end = m_plugins.end();
     for (PluginSet::const_iterator it = m_plugins.begin(); it != end; ++it) {
-        if (!fileExists((*it)->path()))
+        if (!fileExistsAndIsNotDisabled((*it)->path()))
             plugins.add(*it);
     }
 }
@@ -358,6 +367,20 @@ void PluginDatabase::clear()
 #if ENABLE(NETSCAPE_PLUGIN_METADATA_CACHE)
     m_persistentMetadataCacheIsLoaded = false;
 #endif
+}
+
+bool PluginDatabase::removeDisabledPluginFile(const String& fileName)
+{
+    if (!m_disabledPluginFiles.contains(fileName))
+        return false;
+
+    m_disabledPluginFiles.remove(fileName);
+    return true;
+}
+
+bool PluginDatabase::addDisabledPluginFile(const String& fileName)
+{
+    return m_disabledPluginFiles.add(fileName).isNewEntry;
 }
 
 #if (!OS(WINCE)) && (!OS(WINDOWS) || !ENABLE(NETSCAPE_PLUGIN_API))
@@ -462,7 +485,7 @@ void PluginDatabase::getPluginPathsInDirectories(HashSet<String>& paths) const
         Vector<String> pluginPaths = listDirectory(*dIt, fileNameFilter);
         Vector<String>::const_iterator pluginsEnd = pluginPaths.end();
         for (Vector<String>::const_iterator pIt = pluginPaths.begin(); pIt != pluginsEnd; ++pIt) {
-            if (!fileExists(*pIt))
+            if (!fileExistsAndIsNotDisabled(*pIt))
                 continue;
 
             paths.add(*pIt);

@@ -331,6 +331,8 @@ public:
     void notifyScreenPowerStateChanged(bool powered);
     void notifyFullScreenVideoExited(bool done);
     void clearPluginSiteData();
+    void setExtraPluginDirectory(const BlackBerry::Platform::String& path);
+    void updateDisabledPluginFiles(const BlackBerry::Platform::String& fileName, bool disabled);
     void setJavaScriptCanAccessClipboard(bool);
     bool isWebGLEnabled() const;
     void setWebGLEnabled(bool);
