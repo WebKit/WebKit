@@ -222,7 +222,7 @@ void SharedCookieJarQt::deleteAllCookies()
         return;
 
     QSqlQuery sqlQuery(m_database);
-    sqlQuery.prepare(QLatin1String("DELETE * FROM cookies"));
+    sqlQuery.prepare(QLatin1String("DELETE FROM cookies"));
     sqlQuery.exec();
     setAllCookies(QList<QNetworkCookie>());
 }
