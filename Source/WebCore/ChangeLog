@@ -1,3 +1,23 @@
+2012-12-13  Yongjun Zhang  <yongjun_zhang@apple.com>
+
+        Document will never be released when an Image is created inside unload event listener
+        https://bugs.webkit.org/show_bug.cgi?id=104830
+
+        Reviewed by Darin Adler.
+
+        When setting src attribute to an Image object inside unload event listener, ImageLoader will
+        mark it as load failure (by setting m_hasPendingErrorEvent to true) and the following call
+        to updatedHasPendingEvent will ref the element but won't be deref-ed since the Document is
+        being dismissed.  This was introduced in r131670.  To match pre r131670 behavior, we shouldn't
+        trigger error event for image loading when the page is being dismissed.
+
+        No new tests, there is no visual change.  Manually tested to verify documents are released by
+        using heap in Mac OS X.
+
+        * loader/ImageLoader.cpp:
+        (WebCore::pageIsBeingDismissed): add a helper function to test whether the page is being dismissed.
+        (WebCore::ImageLoader::updateFromElement): don't trigger error event if the page is being dismissed.
+
 2012-12-13  Claudio Saavedra  <csaavedra@igalia.com>
 
         [GTK] Add missing breaks in switch-case statements
