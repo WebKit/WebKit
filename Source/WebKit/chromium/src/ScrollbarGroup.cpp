@@ -242,7 +242,7 @@ IntSize ScrollbarGroup::overhangAmount() const
     return IntSize();
 }
 
-IntPoint ScrollbarGroup::currentMousePosition() const
+IntPoint ScrollbarGroup::lastKnownMousePosition() const
 {
     return m_lastMousePosition;
 }
