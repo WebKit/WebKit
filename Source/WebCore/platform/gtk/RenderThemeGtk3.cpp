@@ -767,7 +767,8 @@ bool RenderThemeGtk::paintProgressBar(RenderObject* renderObject, const PaintInf
 
 static gint spinButtonArrowSize(GtkStyleContext* context)
 {
-    const PangoFontDescription* fontDescription = gtk_style_context_get_font(context, static_cast<GtkStateFlags>(0));
+    const PangoFontDescription* fontDescription;
+    gtk_style_context_get(context, static_cast<GtkStateFlags>(0), "font", &fontDescription, NULL);
     gint fontSize = pango_font_description_get_size(fontDescription);
     gint arrowSize = max(PANGO_PIXELS(fontSize), minSpinButtonArrowSize);
 
