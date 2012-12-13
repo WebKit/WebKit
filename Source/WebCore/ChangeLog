@@ -1,3 +1,54 @@
+2012-12-12  Andy Estes  <aestes@apple.com>
+
+        Don't dispatch fake mousemove events when we don't know where the cursor is
+        https://bugs.webkit.org/show_bug.cgi?id=104861
+
+        Reviewed by Sam Weinig.
+
+        When EventHandler is instantiated or cleared, it sets the current mouse
+        position to (0, 0), even though this is probably not where the mouse
+        cursor really is (and we won't know until the mouse moves into the WebView).
+        If a fake mousemove event fires and the page has an element at (0, 0)
+        that responds to mousemove, we might end up changing the cursor or
+        displaying a tooltip at the current mouse position, even if it is
+        outside the WebView.
+
+        Fake mousemove events are dispatched in order to update a cursor that
+        is already over the WebView. Don't dispatch the event if we don't know
+        this to be true.
+
+        * page/EventHandler.cpp:
+        (WebCore::EventHandler::EventHandler): Instantiate m_mousePositionIsUnknown to true.
+        (WebCore::EventHandler::clear): Reset m_mousePositionIsUnknown to true.
+        (WebCore::EventHandler::dispatchFakeMouseMoveEventSoon): Return early if the mouse position is unknown.
+        (WebCore::EventHandler::setLastKnownMousePosition): Set the mouse position from the PlatformMouseEvent and set m_mousePositionIsUnknown to false.
+        (WebCore::EventHandler::handleMousePressEvent): Call setLastKnownMousePosition() instead of setting the position directly.
+        (WebCore::EventHandler::handleMouseDoubleClickEvent): Ditto.
+        (WebCore::EventHandler::handleMouseMoveEvent): Ditto.
+        (WebCore::EventHandler::handleMouseReleaseEvent): Ditto.
+        (WebCore::EventHandler::updateSelectionForMouseDrag): Rename currentMouse(Global)Position to lastKnownMouse(Global)Position.
+        (WebCore::EventHandler::handleAutoscroll): Ditto.
+        (WebCore::EventHandler::updatePanScrollState): Ditto.
+        (WebCore::EventHandler::lastKnownMousePosition): Ditto.
+        (WebCore::EventHandler::dispatchFakeMouseMoveEventSoonInQuad): Ditto.
+        (WebCore::EventHandler::fakeMouseMoveEventTimerFired): Ditto.
+        (WebCore::EventHandler::hoverTimerFired): Ditto.
+        * page/FrameView.cpp:
+        (WebCore::FrameView::lastKnownMousePosition): Ditto.
+        * platform/ScrollableArea.h:
+        (WebCore::ScrollableArea::lastKnownMousePosition): Ditto.
+        * platform/mac/ScrollAnimatorMac.mm:
+        (-[WebScrollbarPainterControllerDelegate mouseLocationInContentAreaForScrollerImpPair:]): Ditto.
+        (-[WebScrollbarPainterDelegate mouseLocationInScrollerForScrollerImp:]): Ditto.
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::panScrollFromPoint): Ditto.
+        (WebCore::RenderLayer::autoscroll): Ditto.
+        (WebCore::RenderLayer::lastKnownMousePosition): Ditto.
+        * rendering/RenderListBox.cpp:
+        (WebCore::RenderListBox::panScroll): Ditto.
+        (WebCore::RenderListBox::autoscroll): Ditto.
+        (WebCore::RenderListBox::lastKnownMousePosition): Ditto.
+
 2012-12-12  Martin Robinson  <mrobinson@igalia.com>
 
         Try to fix the GTK+ debug bulid

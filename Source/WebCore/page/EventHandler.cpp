@@ -347,6 +347,7 @@ EventHandler::EventHandler(Frame* frame)
     , m_resizeLayer(0)
     , m_eventHandlerWillResetCapturingMouseEventsNode(0)
     , m_clickCount(0)
+    , m_mousePositionIsUnknown(true)
     , m_mouseDownTimestamp(0)
     , m_widgetIsLatched(false)
 #if PLATFORM(MAC)
@@ -398,8 +399,9 @@ void EventHandler::clear()
     m_dragTarget = 0;
     m_shouldOnlyFireDragOverEvent = false;
 #endif
-    m_currentMousePosition = IntPoint();
-    m_currentMouseGlobalPosition = IntPoint();
+    m_mousePositionIsUnknown = true;
+    m_lastKnownMousePosition = IntPoint();
+    m_lastKnownMouseGlobalPosition = IntPoint();
     m_mousePressNode = 0;
     m_mousePressed = false;
     m_capturesDragging = false;
@@ -820,7 +822,7 @@ void EventHandler::updateSelectionForMouseDrag()
     HitTestRequest request(HitTestRequest::ReadOnly |
                            HitTestRequest::Active |
                            HitTestRequest::Move);
-    HitTestResult result(view->windowToContents(m_currentMousePosition));
+    HitTestResult result(view->windowToContents(m_lastKnownMousePosition));
     renderer->hitTest(request, result);
     updateSelectionForMouseDrag(result);
 }
@@ -998,7 +1000,7 @@ void EventHandler::handleAutoscroll(RenderObject* renderer)
 
 #if ENABLE(PAN_SCROLLING)
     if (m_panScrollInProgress) {
-        m_panScrollStartPos = currentMousePosition();
+        m_panScrollStartPos = lastKnownMousePosition();
         if (FrameView* view = m_frame->view())
             view->addPanScrollIcon(m_panScrollStartPos);
         // If we're not in the top frame we notify it that we doing a panScroll.
@@ -1060,10 +1062,10 @@ void EventHandler::updatePanScrollState()
 
     // At the original click location we draw a 4 arrowed icon. Over this icon there won't be any scroll
     // So we don't want to change the cursor over this area
-    bool east = m_panScrollStartPos.x() < (m_currentMousePosition.x() - ScrollView::noPanScrollRadius);
-    bool west = m_panScrollStartPos.x() > (m_currentMousePosition.x() + ScrollView::noPanScrollRadius);
-    bool north = m_panScrollStartPos.y() > (m_currentMousePosition.y() + ScrollView::noPanScrollRadius);
-    bool south = m_panScrollStartPos.y() < (m_currentMousePosition.y() - ScrollView::noPanScrollRadius);
+    bool east = m_panScrollStartPos.x() < (m_lastKnownMousePosition.x() - ScrollView::noPanScrollRadius);
+    bool west = m_panScrollStartPos.x() > (m_lastKnownMousePosition.x() + ScrollView::noPanScrollRadius);
+    bool north = m_panScrollStartPos.y() > (m_lastKnownMousePosition.y() + ScrollView::noPanScrollRadius);
+    bool south = m_panScrollStartPos.y() < (m_lastKnownMousePosition.y() - ScrollView::noPanScrollRadius);
          
     if ((east || west || north || south) && m_panScrollButtonPressed)
         m_springLoadedPanScrollInProgress = true;
@@ -1337,9 +1339,9 @@ bool EventHandler::logicalScrollRecursively(ScrollLogicalDirection direction, Sc
     return frame->eventHandler()->logicalScrollRecursively(direction, granularity, m_frame->ownerElement());
 }
 
-IntPoint EventHandler::currentMousePosition() const
+IntPoint EventHandler::lastKnownMousePosition() const
 {
-    return m_currentMousePosition;
+    return m_lastKnownMousePosition;
 }
 
 Frame* EventHandler::subframeForHitTestResult(const MouseEventWithHitTestResults& hitTestResult)
@@ -1607,8 +1609,7 @@ bool EventHandler::handleMousePressEvent(const PlatformMouseEvent& mouseEvent)
     cancelFakeMouseMoveEvent();
     m_mousePressed = true;
     m_capturesDragging = true;
-    m_currentMousePosition = mouseEvent.position();
-    m_currentMouseGlobalPosition = mouseEvent.globalPosition();
+    setLastKnownMousePosition(mouseEvent);
     m_mouseDownTimestamp = mouseEvent.timestamp();
 #if ENABLE(DRAG_SUPPORT)
     m_mouseDownMayStartDrag = false;
@@ -1736,8 +1737,7 @@ bool EventHandler::handleMouseDoubleClickEvent(const PlatformMouseEvent& mouseEv
 
     // We get this instead of a second mouse-up 
     m_mousePressed = false;
-    m_currentMousePosition = mouseEvent.position();
-    m_currentMouseGlobalPosition = mouseEvent.globalPosition();
+    setLastKnownMousePosition(mouseEvent);
 
     HitTestRequest request(HitTestRequest::Active);
     MouseEventWithHitTestResults mev = prepareMouseEvent(request, mouseEvent);
@@ -1831,8 +1831,8 @@ bool EventHandler::handleMouseMoveEvent(const PlatformMouseEvent& mouseEvent, Hi
         return false;
 
     RefPtr<FrameView> protector(m_frame->view());
-    m_currentMousePosition = mouseEvent.position();
-    m_currentMouseGlobalPosition = mouseEvent.globalPosition();
+    
+    setLastKnownMousePosition(mouseEvent);
 
     if (m_hoverTimer.isActive())
         m_hoverTimer.stop();
@@ -1841,7 +1841,7 @@ bool EventHandler::handleMouseMoveEvent(const PlatformMouseEvent& mouseEvent, Hi
 
 #if ENABLE(SVG)
     if (m_svgPan) {
-        static_cast<SVGDocument*>(m_frame->document())->updatePan(m_frame->view()->windowToContents(m_currentMousePosition));
+        static_cast<SVGDocument*>(m_frame->document())->updatePan(m_frame->view()->windowToContents(m_lastKnownMousePosition));
         return true;
     }
 #endif
@@ -1957,13 +1957,12 @@ bool EventHandler::handleMouseReleaseEvent(const PlatformMouseEvent& mouseEvent)
 #endif
 
     m_mousePressed = false;
-    m_currentMousePosition = mouseEvent.position();
-    m_currentMouseGlobalPosition = mouseEvent.globalPosition();
+    setLastKnownMousePosition(mouseEvent);
 
 #if ENABLE(SVG)
     if (m_svgPan) {
         m_svgPan = false;
-        static_cast<SVGDocument*>(m_frame->document())->updatePan(m_frame->view()->windowToContents(m_currentMousePosition));
+        static_cast<SVGDocument*>(m_frame->document())->updatePan(m_frame->view()->windowToContents(m_lastKnownMousePosition));
         return true;
     }
 #endif
@@ -2993,6 +2992,9 @@ void EventHandler::dispatchFakeMouseMoveEventSoon()
     if (m_mousePressed)
         return;
 
+    if (m_mousePositionIsUnknown)
+        return;
+
     Settings* settings = m_frame->settings();
     if (settings && !settings->deviceSupportsMouse())
         return;
@@ -3017,7 +3019,7 @@ void EventHandler::dispatchFakeMouseMoveEventSoonInQuad(const FloatQuad& quad)
     if (!view)
         return;
 
-    if (!quad.containsPoint(view->windowToContents(m_currentMousePosition)))
+    if (!quad.containsPoint(view->windowToContents(m_lastKnownMousePosition)))
         return;
 
     dispatchFakeMouseMoveEventSoon();
@@ -3049,7 +3051,7 @@ void EventHandler::fakeMouseMoveEventTimerFired(Timer<EventHandler>* timer)
     bool altKey;
     bool metaKey;
     PlatformKeyboardEvent::getCurrentModifierState(shiftKey, ctrlKey, altKey, metaKey);
-    PlatformMouseEvent fakeMouseMoveEvent(m_currentMousePosition, m_currentMouseGlobalPosition, NoButton, PlatformEvent::MouseMoved, 0, shiftKey, ctrlKey, altKey, metaKey, currentTime());
+    PlatformMouseEvent fakeMouseMoveEvent(m_lastKnownMousePosition, m_lastKnownMouseGlobalPosition, NoButton, PlatformEvent::MouseMoved, 0, shiftKey, ctrlKey, altKey, metaKey, currentTime());
     mouseMoved(fakeMouseMoveEvent);
 }
 
@@ -3074,7 +3076,7 @@ void EventHandler::hoverTimerFired(Timer<EventHandler>*)
     if (RenderView* renderer = m_frame->contentRenderer()) {
         if (FrameView* view = m_frame->view()) {
             HitTestRequest request(HitTestRequest::Move);
-            HitTestResult result(view->windowToContents(m_currentMousePosition));
+            HitTestResult result(view->windowToContents(m_lastKnownMousePosition));
             renderer->hitTest(request, result);
             m_frame->document()->updateStyleIfNeeded();
         }
@@ -4070,4 +4072,11 @@ bool EventHandler::dispatchSyntheticTouchEventIfEnabled(const PlatformMouseEvent
 
 #endif
 
+void EventHandler::setLastKnownMousePosition(const PlatformMouseEvent& event)
+{
+    m_mousePositionIsUnknown = false;
+    m_lastKnownMousePosition = event.position();
+    m_lastKnownMouseGlobalPosition = event.globalPosition();
 }
+
+} // namespace WebCore

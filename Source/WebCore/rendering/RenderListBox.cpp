@@ -499,15 +499,15 @@ void RenderListBox::panScroll(const IntPoint& panStartMousePosition)
     // FIXME: This doesn't work correctly with transforms.
     FloatPoint absOffset = localToAbsolute();
 
-    IntPoint currentMousePosition = frame()->eventHandler()->currentMousePosition();
-    // We need to check if the current mouse position is out of the window. When the mouse is out of the window, the position is incoherent
+    IntPoint lastKnownMousePosition = frame()->eventHandler()->lastKnownMousePosition();
+    // We need to check if the last known mouse position is out of the window. When the mouse is out of the window, the position is incoherent
     static IntPoint previousMousePosition;
-    if (currentMousePosition.y() < 0)
-        currentMousePosition = previousMousePosition;
+    if (lastKnownMousePosition.y() < 0)
+        lastKnownMousePosition = previousMousePosition;
     else
-        previousMousePosition = currentMousePosition;
+        previousMousePosition = lastKnownMousePosition;
 
-    int yDelta = currentMousePosition.y() - panStartMousePosition.y();
+    int yDelta = lastKnownMousePosition.y() - panStartMousePosition.y();
 
     // If the point is too far from the center we limit the speed
     yDelta = max<int>(min<int>(yDelta, maxSpeed), -maxSpeed);
@@ -556,7 +556,7 @@ int RenderListBox::scrollToward(const IntPoint& destination)
 
 void RenderListBox::autoscroll()
 {
-    IntPoint pos = frame()->view()->windowToContents(frame()->eventHandler()->currentMousePosition());
+    IntPoint pos = frame()->view()->windowToContents(frame()->eventHandler()->lastKnownMousePosition());
 
     int endIndex = scrollToward(pos);
     if (endIndex >= 0) {
@@ -803,12 +803,12 @@ int RenderListBox::visibleWidth() const
     return width();
 }
 
-IntPoint RenderListBox::currentMousePosition() const
+IntPoint RenderListBox::lastKnownMousePosition() const
 {
     RenderView* view = this->view();
     if (!view)
         return IntPoint();
-    return view->frameView()->currentMousePosition();
+    return view->frameView()->lastKnownMousePosition();
 }
 
 bool RenderListBox::shouldSuspendScrollAnimations() const

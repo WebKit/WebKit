@@ -142,7 +142,7 @@ public:
 
     void resizeLayerDestroyed();
 
-    IntPoint currentMousePosition() const;
+    IntPoint lastKnownMousePosition() const;
     Cursor currentMouseCursor() const { return m_currentMouseCursor; }
 
     static Frame* subframeForTargetNode(Node*);
@@ -380,6 +380,8 @@ private:
     bool handleGestureForTextSelectionOrContextMenu(const PlatformGestureEvent&);
 #endif
 
+    void setLastKnownMousePosition(const PlatformMouseEvent&);
+
     Frame* m_frame;
 
     bool m_mousePressed;
@@ -444,8 +446,9 @@ private:
 
     LayoutSize m_offsetFromResizeCorner; // In the coords of m_resizeLayer.
     
-    IntPoint m_currentMousePosition;
-    IntPoint m_currentMouseGlobalPosition;
+    bool m_mousePositionIsUnknown;
+    IntPoint m_lastKnownMousePosition;
+    IntPoint m_lastKnownMouseGlobalPosition;
     IntPoint m_mouseDownPos; // In our view's coords.
     double m_mouseDownTimestamp;
     PlatformMouseEvent m_mouseDown;
