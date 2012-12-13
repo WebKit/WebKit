@@ -105,7 +105,7 @@ bool IDBTransactionBackendImpl::scheduleTask(TaskType type, PassOwnPtr<Operation
 
 void IDBTransactionBackendImpl::abort()
 {
-    abort(IDBDatabaseError::create(IDBDatabaseException::UnknownError, "Internal error."));
+    abort(IDBDatabaseError::create(IDBDatabaseException::UnknownError, "Internal error (unknown cause)"));
 }
 
 void IDBTransactionBackendImpl::abort(PassRefPtr<IDBDatabaseError> error)
@@ -235,7 +235,7 @@ void IDBTransactionBackendImpl::commit()
         m_callbacks->onComplete();
         m_database->transactionFinishedAndCompleteFired(this);
     } else {
-        m_callbacks->onAbort(IDBDatabaseError::create(IDBDatabaseException::UnknownError, "Internal error."));
+        m_callbacks->onAbort(IDBDatabaseError::create(IDBDatabaseException::UnknownError, "Internal error committing transaction."));
         m_database->transactionFinishedAndAbortFired(this);
     }
 

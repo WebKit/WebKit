@@ -105,7 +105,8 @@ function testErrorFromCommit()
         request.onupgradeneeded = function() {
             evalAndLog("trans = request.transaction");
             debug("This should fail due to the unique constraint:");
-            evalAndLog("trans.objectStore('storeName').createIndex('indexName', 'id', {unique: true})");
+            evalAndLog("indexName = 'Also test utf8: \u6F22'");
+            evalAndLog("trans.objectStore('storeName').createIndex(indexName, 'id', {unique: true})");
             trans.oncomplete = unexpectedCompleteCallback;
             trans.onabort = function() {
                 debug("Transaction received abort event.");
@@ -113,6 +114,8 @@ function testErrorFromCommit()
                 shouldBe("trans.error.name", "'ConstraintError'");
                 debug("trans.webkitErrorMessage = " + trans.webkitErrorMessage);
                 shouldBeNonNull("trans.webkitErrorMessage");
+                debug("Note: This fails because of http://wkb.ug/37327");
+                shouldNotBe("trans.webkitErrorMessage.indexOf(indexName)", "-1");
                 debug("");
                 finishJSTest();
             };

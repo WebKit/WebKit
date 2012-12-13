@@ -53,7 +53,7 @@ function unexpectedErrorCallback(event)
 
 function unexpectedAbortCallback(e)
 {
-    testFailed("Abort function called unexpectedly!");
+    testFailed("Abort function called unexpectedly! Message: [" + e.target.webkitErrorMessage + "]");
     finishJSTest();
 }
 

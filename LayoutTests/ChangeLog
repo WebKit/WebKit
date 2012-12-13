@@ -1,3 +1,23 @@
+2012-12-13  David Grogan  <dgrogan@chromium.org>
+
+        IndexedDB: Improve error messages
+        https://bugs.webkit.org/show_bug.cgi?id=104624
+
+        Reviewed by Tony Chang.
+
+        Updated error message and establish that non-ascii characters in index
+        names don't make it back to the browser properly.
+
+        * storage/indexeddb/resources/shared.js:
+        (unexpectedAbortCallback):
+        * storage/indexeddb/resources/transaction-error.js:
+        (testErrorFromCommit.trans.oncomplete.request.onupgradeneeded.trans.onabort):
+        (testErrorFromCommit.trans.oncomplete.request.onupgradeneeded):
+        (testErrorFromCommit.trans.oncomplete):
+        (testErrorFromCommit):
+        * storage/indexeddb/transaction-error-expected.txt:
+        * storage/indexeddb/transaction-error.html:
+
 2012-12-13  David Barton  <dbarton@mathscribe.com>
 
         Heap-use-after-free in WebCore::RenderBlock::finishDelayUpdateScrollInfo

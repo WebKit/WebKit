@@ -301,7 +301,8 @@ void IDBDatabaseBackendImpl::CreateObjectStoreOperation::perform(IDBTransactionB
 {
     IDB_TRACE("CreateObjectStoreOperation");
     if (!m_database->m_backingStore->createObjectStore(transaction->backingStoreTransaction(), m_database->id(), m_objectStore->id(), m_objectStore->name(), m_objectStore->keyPath(), m_objectStore->autoIncrement())) {
-        transaction->abort();
+        RefPtr<IDBDatabaseError> error = IDBDatabaseError::create(IDBDatabaseException::UnknownError, String::format("Internal error creating object store '%s'.", m_objectStore->name().utf8().data()));
+        transaction->abort(error.release());
         return;
     }
 }
@@ -383,7 +384,7 @@ void IDBDatabaseBackendImpl::DeleteObjectStoreOperation::perform(IDBTransactionB
     IDB_TRACE("DeleteObjectStoreOperation");
     bool ok = m_database->m_backingStore->deleteObjectStore(transaction->backingStoreTransaction(), m_database->id(), m_objectStore->id());
     if (!ok) {
-        RefPtr<IDBDatabaseError> error = IDBDatabaseError::create(IDBDatabaseException::UnknownError, "Internal error deleting object store.");
+        RefPtr<IDBDatabaseError> error = IDBDatabaseError::create(IDBDatabaseException::UnknownError, String::format("Internal error deleting object store '%s'.", m_objectStore->name().utf8().data()));
         transaction->abort(error);
     }
 }
@@ -396,7 +397,7 @@ void IDBDatabaseBackendImpl::VersionChangeOperation::perform(IDBTransactionBacke
     ASSERT(m_version > oldVersion);
     m_database->m_metadata.intVersion = m_version;
     if (!m_database->m_backingStore->updateIDBDatabaseIntVersion(transaction->backingStoreTransaction(), databaseId, m_database->m_metadata.intVersion)) {
-        RefPtr<IDBDatabaseError> error = IDBDatabaseError::create(IDBDatabaseException::UnknownError, "Error writing data to stable storage.");
+        RefPtr<IDBDatabaseError> error = IDBDatabaseError::create(IDBDatabaseException::UnknownError, "Error writing data to stable storage when updating version.");
         m_callbacks->onError(error);
         transaction->abort(error);
         return;
@@ -522,7 +523,7 @@ void IDBDatabaseBackendImpl::openConnection(PassRefPtr<IDBCallbacks> callbacks, 
         return;
     }
     if (m_metadata.id == InvalidId && !openInternal()) {
-        callbacks->onError(IDBDatabaseError::create(IDBDatabaseException::UnknownError, "Internal error."));
+        callbacks->onError(IDBDatabaseError::create(IDBDatabaseException::UnknownError, "Internal error opening database with no version specified."));
         return;
     }
     if (m_metadata.version == NoStringVersion && m_metadata.intVersion == IDBDatabaseMetadata::NoIntVersion) {
@@ -584,7 +585,7 @@ void IDBDatabaseBackendImpl::openConnectionWithVersion(PassRefPtr<IDBCallbacks> 
         if (openInternal())
             ASSERT(m_metadata.intVersion == IDBDatabaseMetadata::NoIntVersion);
         else {
-            callbacks->onError(IDBDatabaseError::create(IDBDatabaseException::UnknownError, "Internal error."));
+            callbacks->onError(IDBDatabaseError::create(IDBDatabaseException::UnknownError, String::format("Internal error opening connection with version %lld", static_cast<long long>(version))));
             return;
         }
     }
@@ -622,7 +623,7 @@ void IDBDatabaseBackendImpl::deleteDatabase(PassRefPtr<IDBCallbacks> prpCallback
     }
     ASSERT(m_backingStore);
     if (!m_backingStore->deleteDatabase(m_metadata.name)) {
-        callbacks->onError(IDBDatabaseError::create(IDBDatabaseException::UnknownError, "Internal error."));
+        callbacks->onError(IDBDatabaseError::create(IDBDatabaseException::UnknownError, "Internal error deleting database."));
         return;
     }
     m_metadata.version = NoStringVersion;
@@ -659,8 +660,9 @@ void IDBDatabaseBackendImpl::close(PassRefPtr<IDBDatabaseCallbacks> prpCallbacks
     // FIXME: Add a test for the m_pendingOpenCalls and m_pendingOpenWithVersionCalls cases below.
     if (!connectionCount() && !m_pendingOpenCalls.size() && !m_pendingOpenWithVersionCalls.size() && !m_pendingDeleteCalls.size()) {
         TransactionMap transactions(m_transactions);
+        RefPtr<IDBDatabaseError> error = IDBDatabaseError::create(IDBDatabaseException::UnknownError, "Connection is closing.");
         for (TransactionMap::const_iterator::Values it = transactions.values().begin(), end = transactions.values().end(); it != end; ++it)
-            (*it)->abort();
+            (*it)->abort(error);
 
         ASSERT(m_transactions.isEmpty());
 

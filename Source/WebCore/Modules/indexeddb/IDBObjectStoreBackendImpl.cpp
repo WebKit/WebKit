@@ -467,7 +467,7 @@ void IDBObjectStoreBackendImpl::setIndexKeys(PassRefPtr<IDBKey> prpPrimaryKey, c
         return;
     }
     if (!found) {
-        RefPtr<IDBDatabaseError> error = IDBDatabaseError::create(IDBDatabaseException::UnknownError, String::format("Internal error setting index keys for object store %s.", name().utf8().data()));
+        RefPtr<IDBDatabaseError> error = IDBDatabaseError::create(IDBDatabaseException::UnknownError, String::format("Internal error setting index keys for object store '%s'.", name().utf8().data()));
         transaction->abort(error.release());
         return;
     }
@@ -481,8 +481,7 @@ void IDBObjectStoreBackendImpl::setIndexKeys(PassRefPtr<IDBKey> prpPrimaryKey, c
         return;
     }
     if (!obeysConstraints) {
-        // FIXME: Need to deal with errorMessage here. makeIndexWriters only fails on uniqueness constraint errors.
-        transaction->abort(IDBDatabaseError::create(IDBDatabaseException::ConstraintError, "Duplicate index keys exist in the object store."));
+        transaction->abort(IDBDatabaseError::create(IDBDatabaseException::ConstraintError, errorMessage));
         return;
     }
 
@@ -632,7 +631,7 @@ void IDBObjectStoreBackendImpl::ObjectStoreClearOperation::perform(IDBTransactio
 
 PassRefPtr<IDBIndexBackendInterface> IDBObjectStoreBackendImpl::createIndex(int64_t id, const String& name, const IDBKeyPath& keyPath, bool unique, bool multiEntry, IDBTransactionBackendInterface* transactionPtr, ExceptionCode& ec)
 {
-    ASSERT_WITH_MESSAGE(!m_indexes.contains(id), "Indexes already contain %s", name.utf8().data());
+    ASSERT_WITH_MESSAGE(!m_indexes.contains(id), "Indexes already contain '%s'", name.utf8().data());
 
     RefPtr<IDBIndexBackendImpl> index = IDBIndexBackendImpl::create(m_database, this, IDBIndexMetadata(name, id, keyPath, unique, multiEntry));
     ASSERT(index->name() == name);
@@ -655,7 +654,7 @@ void IDBObjectStoreBackendImpl::CreateIndexOperation::perform(IDBTransactionBack
 {
     IDB_TRACE("CreateIndexOperation");
     if (!m_objectStore->backingStore()->createIndex(transaction->backingStoreTransaction(), m_objectStore->databaseId(), m_objectStore->id(), m_index->id(), m_index->name(), m_index->keyPath(), m_index->unique(), m_index->multiEntry())) {
-        transaction->abort();
+        transaction->abort(IDBDatabaseError::create(IDBDatabaseException::UnknownError, String::format("Internal error when trying to create index '%s'.", m_index->name().utf8().data())));
         return;
     }
 }

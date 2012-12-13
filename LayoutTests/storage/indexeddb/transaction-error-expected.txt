@@ -50,12 +50,15 @@ request = trans.objectStore('storeName').add({id: 1}, 'record2')
 request = indexedDB.open(dbname, 2)
 trans = request.transaction
 This should fail due to the unique constraint:
-trans.objectStore('storeName').createIndex('indexName', 'id', {unique: true})
+indexName = 'Also test utf8: 漢'
+trans.objectStore('storeName').createIndex(indexName, 'id', {unique: true})
 Transaction received abort event.
 PASS trans.error is non-null.
 PASS trans.error.name is 'ConstraintError'
-trans.webkitErrorMessage = Duplicate index keys exist in the object store.
+trans.webkitErrorMessage = Unable to add key to index 'Also test utf8: æ¼¢': at least one key does not satisfy the uniqueness requirements.
 PASS trans.webkitErrorMessage is non-null.
+Note: This fails because of http://wkb.ug/37327
+FAIL trans.webkitErrorMessage.indexOf(indexName) should not be -1.
 
 PASS successfullyParsed is true
 
