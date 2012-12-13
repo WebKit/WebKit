@@ -217,15 +217,15 @@ int DateTimeHourFieldElement::valueAsInteger() const
 
 // ----------------------------
 
-DateTimeMillisecondFieldElement::DateTimeMillisecondFieldElement(Document* document, FieldOwner& fieldOwner)
-    : DateTimeNumericFieldElement(document, fieldOwner, 0, 999, "---")
+DateTimeMillisecondFieldElement::DateTimeMillisecondFieldElement(Document* document, FieldOwner& fieldOwner, int step, int stepBase)
+    : DateTimeNumericFieldElement(document, fieldOwner, 0, 999, "---", step, stepBase)
 {
 }
 
-PassRefPtr<DateTimeMillisecondFieldElement> DateTimeMillisecondFieldElement::create(Document* document, FieldOwner& fieldOwner)
+PassRefPtr<DateTimeMillisecondFieldElement> DateTimeMillisecondFieldElement::create(Document* document, FieldOwner& fieldOwner, int step, int stepBase)
 {
     DEFINE_STATIC_LOCAL(AtomicString, millisecondPsuedoId, ("-webkit-datetime-edit-millisecond-field", AtomicString::ConstructFromLiteral));
-    RefPtr<DateTimeMillisecondFieldElement> field = adoptRef(new DateTimeMillisecondFieldElement(document, fieldOwner));
+    RefPtr<DateTimeMillisecondFieldElement> field = adoptRef(new DateTimeMillisecondFieldElement(document, fieldOwner, step, stepBase));
     field->initialize(millisecondPsuedoId, AXMillisecondFieldText());
     return field.release();
 }

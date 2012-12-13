@@ -51,7 +51,7 @@ protected:
         int minimum;
     };
 
-    DateTimeNumericFieldElement(Document*, FieldOwner&, int minimum, int maximum, const String& placeholder);
+    DateTimeNumericFieldElement(Document*, FieldOwner&, int minimum, int maximum, const String& placeholder, int step = 1, int stepBase = 0);
 
     int clampValue(int value) const { return m_range.clampValue(value); }
     virtual int clampValueForHardLimits(int) const;
@@ -78,12 +78,16 @@ private:
     virtual String value() const OVERRIDE FINAL;
 
     String formatValue(int) const;
+    int roundUp(int) const;
+    int roundDown(int) const;
 
     DOMTimeStamp m_lastDigitCharTime;
     const String m_placeholder;
     const Range m_range;
     int m_value;
     bool m_hasValue;
+    int m_step;
+    int m_stepBase;
 };
 
 } // namespace WebCore

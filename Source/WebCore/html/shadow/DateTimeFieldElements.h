@@ -91,10 +91,10 @@ class DateTimeMillisecondFieldElement : public DateTimeNumericFieldElement {
     WTF_MAKE_NONCOPYABLE(DateTimeMillisecondFieldElement);
 
 public:
-    static PassRefPtr<DateTimeMillisecondFieldElement> create(Document*, FieldOwner&);
+    static PassRefPtr<DateTimeMillisecondFieldElement> create(Document*, FieldOwner&, int step, int stepBase);
 
 private:
-    DateTimeMillisecondFieldElement(Document*, FieldOwner&);
+    DateTimeMillisecondFieldElement(Document*, FieldOwner&, int step, int stepBase);
 
     // DateTimeFieldElement functions.
     virtual void populateDateTimeFieldsState(DateTimeFieldsState&) OVERRIDE FINAL;

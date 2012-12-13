@@ -12,10 +12,11 @@ var invalidStateErr = '"Error: InvalidStateError: DOM Exception 11"';
 
 document.body.appendChild(input);
 
-function sendKey(keyName) {
-    var event = document.createEvent('KeyboardEvent');
-    event.initKeyboardEvent('keydown', true, true, document.defaultView, keyName);
-    input.dispatchEvent(event);
+function keyDown(key, modifiers)
+{
+    if (!window.eventSender)
+        return;
+    eventSender.keyDown(key, modifiers);
 }
 
 function setInputAttributes(min, max, step, value) {
@@ -25,43 +26,56 @@ function setInputAttributes(min, max, step, value) {
     input.value = value;
 }
 
-function stepUp(value, step, max, optionalStepCount) {
-    setInputAttributes(null, max, step, value);
-    if (typeof optionalStepCount != "undefined")
-        if (optionalStepCount < 0)
-            for (var i = 0; i < -optionalStepCount; i++)
-                sendKey('Down');
-        else
-            for (var i = 0; i < optionalStepCount; i++)
-                sendKey('Up');
-    else
-        sendKey('Up');
+function test(value, step, min, max, keySequence) {
+    setInputAttributes(min, max, step, value);
+    for (var i = 0; i < keySequence.length; i++)
+        keyDown(keySequence[i]);
     return input.value;
 }
 
-function stepDown(value, step, min, optionalStepCount) {
-    setInputAttributes(min, null, step, value);
-    if (typeof optionalStepCount != "undefined")
-        if (optionalStepCount < 0)
-            for (var i = 0; i < -optionalStepCount; i++)
-                sendKey('Up');
-        else
-            for (var i = 0; i < optionalStepCount; i++)
-                sendKey('Down');
-    else
-        sendKey('Down');
-    return input.value;
+function stepUp(value, step, min, max) {
+    return test(value,step, min, max, ['upArrow']);
+}
+
+function stepDown(value, step, min, max) {
+    return test(value,step, min, max, ['downArrow']);
 }
 
 input.type = 'time';
 input.focus();
-sendKey('Right');
-debug('Function arguments are (value, step, {min or max}, [stepCount]).');
+keyDown('rightArrow');
+debug('Function arguments are (value, step, min, max, [keySequence]).');
 debug('Normal cases');
-shouldBe('stepUp("07:13", null, null)', '"07:14"');
-shouldBe('stepDown("07:13", null, null)', '"07:12"');
-shouldBe('stepUp("07:13", null, null, 10)', '"07:23"');
-shouldBe('stepDown("07:13", null, null, 11)', '"07:02"');
+shouldBeEqualToString('stepUp("07:13", null, null, null)', '07:14');
+shouldBeEqualToString('stepDown("07:13", null, null, null)', '07:12');
+shouldBeEqualToString('test("07:13", null, null, null, ["upArrow", "upArrow", "upArrow"])', '07:16');
+shouldBeEqualToString('test("07:13", null, null, null, ["downArrow", "downArrow", "downArrow"])', '07:10');
+
+debug('Milliseconds');
+input.step = 0.001;
+keyDown('rightArrow');
+keyDown('rightArrow');
+shouldBeEqualToString('stepUp("07:13:00.000", 0.001, null, null)', '07:13:00.001');
+shouldBeEqualToString('stepDown("07:13:00.001", 0.001, null, null)', '07:13');
+shouldBeEqualToString('stepUp("07:13:00.999", 0.001, null, null)', '07:13');
+shouldBeEqualToString('stepDown("07:13:00.000", 0.001, null, null)', '07:13:00.999');
+shouldBeEqualToString('stepUp("07:13:00.000", 0.250, null, null)', '07:13:00.250');
+shouldBeEqualToString('stepDown("07:13:00.500", 0.250, null, null)', '07:13:00.250');
+shouldBeEqualToString('stepUp("07:13:00.750", 0.250, null, null)', '07:13');
+shouldBeEqualToString('stepDown("07:13:00.000", 0.250, null, null)', '07:13:00.750');
+shouldBeEqualToString('stepUp("07:13:00.099", 0.100, null, null)', '07:13:00.100');
+shouldBeEqualToString('stepDown("07:13:00.101", 0.100, null, null)', '07:13:00.100');
+shouldBeEqualToString('stepUp("07:13:00.500", 0.0001, null, null)', '07:13:00.501');
+shouldBeEqualToString('stepDown("07:13:00.500", 0.0001, null, null)', '07:13:00.499');
+shouldBeEqualToString('stepUp("07:13:00.500", 0, null, null)', '07:13:00.501');
+shouldBeEqualToString('stepDown("07:13:00.500", 0, null, null)', '07:13:00.499');
+shouldBeEqualToString('stepUp("07:13:00.500", 0.100, "00:00:00.050", null)', '07:13:00.550');
+shouldBeEqualToString('stepDown("07:13:00.500", 0.100, "00:00:00.050", null)', '07:13:00.450');
+shouldBeEqualToString('test("07:13:00.500", 0.100, null, null, ["delete", "upArrow"])', '07:13');
+shouldBeEqualToString('test("07:13:00.500", 0.100, null, null, ["delete", "downArrow"])', '07:13:00.900');
+shouldBeEqualToString('test("07:13:00.500", 0.100, "00:00:00.050", null, ["delete", "upArrow"])', '07:13:00.050');
+shouldBeEqualToString('test("07:13:00.500", 0.100, "00:00:00.050", null, ["delete", "downArrow"])', '07:13:00.950');
+
 debug('');
 document.body.removeChild(input);
 </script>

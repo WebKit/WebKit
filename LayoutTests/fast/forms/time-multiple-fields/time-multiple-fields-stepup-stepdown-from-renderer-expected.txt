@@ -3,12 +3,33 @@ Check stepping-up and -down for time input fields from renderer. No cases of emp
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 
 
-Function arguments are (value, step, {min or max}, [stepCount]).
+Function arguments are (value, step, min, max, [keySequence]).
 Normal cases
-PASS stepUp("07:13", null, null) is "07:14"
-PASS stepDown("07:13", null, null) is "07:12"
-PASS stepUp("07:13", null, null, 10) is "07:23"
-PASS stepDown("07:13", null, null, 11) is "07:02"
+PASS stepUp("07:13", null, null, null) is "07:14"
+PASS stepDown("07:13", null, null, null) is "07:12"
+PASS test("07:13", null, null, null, ["upArrow", "upArrow", "upArrow"]) is "07:16"
+PASS test("07:13", null, null, null, ["downArrow", "downArrow", "downArrow"]) is "07:10"
+Milliseconds
+PASS stepUp("07:13:00.000", 0.001, null, null) is "07:13:00.001"
+PASS stepDown("07:13:00.001", 0.001, null, null) is "07:13"
+PASS stepUp("07:13:00.999", 0.001, null, null) is "07:13"
+PASS stepDown("07:13:00.000", 0.001, null, null) is "07:13:00.999"
+PASS stepUp("07:13:00.000", 0.250, null, null) is "07:13:00.250"
+PASS stepDown("07:13:00.500", 0.250, null, null) is "07:13:00.250"
+PASS stepUp("07:13:00.750", 0.250, null, null) is "07:13"
+PASS stepDown("07:13:00.000", 0.250, null, null) is "07:13:00.750"
+PASS stepUp("07:13:00.099", 0.100, null, null) is "07:13:00.100"
+PASS stepDown("07:13:00.101", 0.100, null, null) is "07:13:00.100"
+PASS stepUp("07:13:00.500", 0.0001, null, null) is "07:13:00.501"
+PASS stepDown("07:13:00.500", 0.0001, null, null) is "07:13:00.499"
+PASS stepUp("07:13:00.500", 0, null, null) is "07:13:00.501"
+PASS stepDown("07:13:00.500", 0, null, null) is "07:13:00.499"
+PASS stepUp("07:13:00.500", 0.100, "00:00:00.050", null) is "07:13:00.550"
+PASS stepDown("07:13:00.500", 0.100, "00:00:00.050", null) is "07:13:00.450"
+PASS test("07:13:00.500", 0.100, null, null, ["delete", "upArrow"]) is "07:13"
+PASS test("07:13:00.500", 0.100, null, null, ["delete", "downArrow"]) is "07:13:00.900"
+PASS test("07:13:00.500", 0.100, "00:00:00.050", null, ["delete", "upArrow"]) is "07:13:00.050"
+PASS test("07:13:00.500", 0.100, "00:00:00.050", null, ["delete", "downArrow"]) is "07:13:00.950"
 
 PASS successfullyParsed is true
 

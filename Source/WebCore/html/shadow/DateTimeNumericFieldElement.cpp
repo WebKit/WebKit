@@ -59,14 +59,18 @@ bool DateTimeNumericFieldElement::Range::isInRange(int value) const
 
 // ----------------------------
 
-DateTimeNumericFieldElement::DateTimeNumericFieldElement(Document* document, FieldOwner& fieldOwner, int minimum, int maximum, const String& placeholder)
+DateTimeNumericFieldElement::DateTimeNumericFieldElement(Document* document, FieldOwner& fieldOwner, int minimum, int maximum, const String& placeholder, int step, int stepBase)
     : DateTimeFieldElement(document, fieldOwner)
     , m_lastDigitCharTime(0)
     , m_placeholder(placeholder)
     , m_range(minimum, maximum)
     , m_value(0)
     , m_hasValue(false)
+    , m_step(step)
+    , m_stepBase(stepBase)
 {
+    ASSERT(m_step);
+
     // We show a direction-neutral string such as "--" as a placeholder. It
     // should follow the direction of numeric values.
     if (localeForOwner().isRTL()) {
@@ -182,18 +186,18 @@ void DateTimeNumericFieldElement::setValueAsInteger(int value, EventBehavior eve
 
 void DateTimeNumericFieldElement::stepDown()
 {
-    if (m_hasValue)
-        setValueAsInteger(m_value == m_range.minimum ? m_range.maximum : clampValue(m_value - 1), DispatchEvent);
-    else
-        setValueAsInteger(defaultValueForStepDown(), DispatchEvent);
+    int newValue = roundDown(m_hasValue ? m_value - 1 : defaultValueForStepDown());
+    if (!m_range.isInRange(newValue))
+        newValue = roundDown(m_range.maximum);
+    setValueAsInteger(newValue, DispatchEvent);
 }
 
 void DateTimeNumericFieldElement::stepUp()
 {
-    if (m_hasValue)
-        setValueAsInteger(m_value == m_range.maximum ? m_range.minimum : clampValue(m_value + 1), DispatchEvent);
-    else
-        setValueAsInteger(defaultValueForStepUp(), DispatchEvent);
+    int newValue = roundUp(m_hasValue ? m_value + 1 : defaultValueForStepUp());
+    if (!m_range.isInRange(newValue))
+        newValue = roundUp(m_range.minimum);
+    setValueAsInteger(newValue, DispatchEvent);
 }
 
 String DateTimeNumericFieldElement::value() const
@@ -209,6 +213,26 @@ int DateTimeNumericFieldElement::valueAsInteger() const
 String DateTimeNumericFieldElement::visibleValue() const
 {
     return m_hasValue ? value() : m_placeholder;
+}
+
+int DateTimeNumericFieldElement::roundDown(int n) const
+{
+    n -= m_stepBase;
+    if (n >= 0)
+        n = n / m_step * m_step;
+    else
+        n = -((-n + m_step - 1) / m_step * m_step);
+    return n + m_stepBase;
+}
+
+int DateTimeNumericFieldElement::roundUp(int n) const
+{
+    n -= m_stepBase;
+    if (n >= 0)
+        n = (n + m_step - 1) / m_step * m_step;
+    else
+        n = -(-n / m_step * m_step);
+    return n + m_stepBase;
 }
 
 } // namespace WebCore

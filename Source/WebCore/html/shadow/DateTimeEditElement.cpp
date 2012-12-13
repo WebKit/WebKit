@@ -213,7 +213,16 @@ void DateTimeEditBuilder::visitField(DateTimeFormat::FieldType fieldType, int co
     }
 
     case DateTimeFormat::FieldTypeFractionalSecond: {
-        RefPtr<DateTimeNumericFieldElement> field = DateTimeMillisecondFieldElement::create(document, m_editElement);
+        ASSERT(!m_parameters.stepRange.step().isZero());
+        int step = 1;
+        int stepBase = 0;
+        const Decimal decimalMsPerSecond(static_cast<int>(msPerSecond));
+
+        if (decimalMsPerSecond.remainder(m_parameters.stepRange.step()).isZero() && m_parameters.stepRange.step().remainder(Decimal(1)).isZero()) {
+            step = static_cast<int>(m_parameters.stepRange.step().toDouble());
+            stepBase = static_cast<int>(m_parameters.stepRange.stepBase().remainder(decimalMsPerSecond).toDouble());
+        }
+        RefPtr<DateTimeNumericFieldElement> field = DateTimeMillisecondFieldElement::create(document, m_editElement, step, stepBase);
         m_editElement.addField(field);
         if (shouldMillisecondFieldReadOnly()) {
             field->setValueAsDate(m_dateValue);

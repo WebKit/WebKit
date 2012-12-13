@@ -1,3 +1,32 @@
+2012-12-12  Kunihiko Sakamoto  <ksakamoto@chromium.org>
+
+        Milliseconds field of date/time input UI should respect step attribute
+        https://bugs.webkit.org/show_bug.cgi?id=104628
+
+        Reviewed by Kent Tamura.
+
+        This patch makes step-up/-down UI of the milliseconds fields respect step attribute
+        in a special case when the step is divisible by 1000 milliseconds.
+
+        Test: fast/forms/time-multiple-fields/time-multiple-fields-stepup-stepdown-from-renderer.html
+
+        * html/shadow/DateTimeEditElement.cpp:
+        (WebCore::DateTimeEditBuilder::visitField):
+        If step of the element (in milliseconds) is divisible by 1000, use it as the step of the milliseconds field. Otherwise, the millisecond field has step 1.
+        * html/shadow/DateTimeFieldElements.cpp:
+        (WebCore::DateTimeMillisecondFieldElement::DateTimeMillisecondFieldElement): Add step and stepBase arguments.
+        (WebCore::DateTimeMillisecondFieldElement::create): Ditto.
+        * html/shadow/DateTimeFieldElements.h:
+        (DateTimeMillisecondFieldElement): Ditto.
+        * html/shadow/DateTimeNumericFieldElement.cpp:
+        (WebCore::DateTimeNumericFieldElement::DateTimeNumericFieldElement): Ditto.
+        (WebCore::DateTimeNumericFieldElement::stepDown): Changed to compute next allowed value using roundDown().
+        (WebCore::DateTimeNumericFieldElement::stepUp): Changed to compute next allowed value using roundUp().
+        (WebCore::DateTimeNumericFieldElement::roundDown): Added.
+        (WebCore::DateTimeNumericFieldElement::roundUp): Added.
+        * html/shadow/DateTimeNumericFieldElement.h:
+        (DateTimeNumericFieldElement): Add m_step and m_stepBase fields.
+
 2012-12-12  Julien Chaffraix  <jchaffraix@webkit.org>
 
         [CSS Grid Layout] Include paddings and borders into the grid element's logical height / width
