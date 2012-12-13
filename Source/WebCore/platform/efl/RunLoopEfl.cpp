@@ -41,6 +41,7 @@ namespace WebCore {
 
 RunLoop::RunLoop()
     : m_initEfl(false)
+    , m_wakeUpEventRequested(false)
 {
     if (!ecore_init()) {
         LOG_ERROR("could not init ecore.");
@@ -97,13 +98,29 @@ void RunLoop::stop()
 
 void RunLoop::wakeUpEvent(void* data, void*, unsigned int)
 {
-    static_cast<RunLoop*>(data)->performWork();
+    RunLoop* loop = static_cast<RunLoop*>(data);
+
+    {
+        MutexLocker locker(loop->m_wakeUpEventRequestedLock);
+        loop->m_wakeUpEventRequested = false;
+    }
+
+    loop->performWork();
 }
 
 void RunLoop::wakeUp()
 {
-    MutexLocker locker(m_pipeLock);
-    ecore_pipe_write(m_pipe.get(), wakupEcorePipeMessage, ecorePipeMessageSize);
+    {
+        MutexLocker locker(m_wakeUpEventRequestedLock);
+        if (m_wakeUpEventRequested)
+            return;
+        m_wakeUpEventRequested = true;
+    }
+
+    {
+        MutexLocker locker(m_pipeLock);
+        ecore_pipe_write(m_pipe.get(), wakupEcorePipeMessage, ecorePipeMessageSize);
+    }
 }
 
 RunLoop::TimerBase::TimerBase(RunLoop*)

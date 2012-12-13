@@ -171,6 +171,9 @@ private:
     Mutex m_pipeLock;
     OwnPtr<Ecore_Pipe> m_pipe;
 
+    Mutex m_wakeUpEventRequestedLock;
+    bool m_wakeUpEventRequested;
+
     static void wakeUpEvent(void* data, void*, unsigned int);
 #endif
 };
