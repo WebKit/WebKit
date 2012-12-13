@@ -639,7 +639,7 @@ Eina_Bool ewk_view_device_pixel_ratio_set(Evas_Object* ewkView, float ratio)
 {
     EWK_VIEW_IMPL_GET_OR_RETURN(ewkView, impl, false);
 
-    impl->page()->setCustomDeviceScaleFactor(ratio);
+    impl->page()->setIntrinsicDeviceScaleFactor(ratio);
 
     return true;
 }
