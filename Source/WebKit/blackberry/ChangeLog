@@ -1,3 +1,15 @@
+2012-12-13  Yong Li  <yoli@rim.com>
+
+        [BlackBerry] Possible JS re-entrancy caused by UI event handler
+        https://bugs.webkit.org/show_bug.cgi?id=84862
+
+        Reviewed by Rob Buis.
+
+        Fix an obvious bug in previous patch.
+
+        * Api/WebPage.cpp:
+        (BlackBerry::WebKit::WebPagePrivate::deferredTasksTimerFired):
+
 2012-12-13  Parth Patel  <parpatel@rim.com>, Max Feil <mfeil@rim.com>
 
         Allow plugins to be disabled by shared library filename
