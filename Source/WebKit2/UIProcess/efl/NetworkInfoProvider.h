@@ -43,6 +43,8 @@ public:
     static PassRefPtr<NetworkInfoProvider> create(PassRefPtr<WebContext>);
 
     // NetworkInfoClient interface.
+    virtual void networkInfoControllerDestroyed();
+
     virtual double bandwidth() const;
     virtual bool metered() const;
 

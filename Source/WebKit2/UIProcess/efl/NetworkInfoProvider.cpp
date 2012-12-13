@@ -89,6 +89,11 @@ NetworkInfoProvider::~NetworkInfoProvider()
     m_context->networkInfoManagerProxy()->initializeProvider(0);
 }
 
+void NetworkInfoProvider::networkInfoControllerDestroyed()
+{
+    delete this;
+}
+
 double NetworkInfoProvider::bandwidth() const
 {
     return m_provider.bandwidth();

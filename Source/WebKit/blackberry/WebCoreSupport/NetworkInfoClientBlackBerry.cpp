@@ -42,6 +42,11 @@ NetworkInfoClientBlackBerry::NetworkInfoClientBlackBerry(BlackBerry::WebKit::Web
 {
 }
 
+void NetworkInfoClientBlackBerry::networkInfoControllerDestroyed()
+{
+    delete this;
+}
+
 void NetworkInfoClientBlackBerry::startUpdating()
 {
     if (!m_isActive)

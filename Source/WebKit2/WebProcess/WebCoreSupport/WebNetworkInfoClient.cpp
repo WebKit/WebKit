@@ -58,6 +58,12 @@ void WebNetworkInfoClient::stopUpdating()
     WebProcess::shared().networkInfoManager().unregisterWebPage(m_page);
 }
 
+void WebNetworkInfoClient::networkInfoControllerDestroyed()
+{
+    WebProcess::shared().networkInfoManager().unregisterWebPage(m_page);
+    delete this;
+}
+
 } // namespace WebKit
 
 #endif // ENABLE(NETWORK_INFO)

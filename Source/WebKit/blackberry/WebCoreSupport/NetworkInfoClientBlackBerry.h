@@ -38,6 +38,8 @@ public:
     NetworkInfoClientBlackBerry(BlackBerry::WebKit::WebPagePrivate*);
     ~NetworkInfoClientBlackBerry() { }
 
+    virtual void networkInfoControllerDestroyed();
+
     void startUpdating();
     void stopUpdating();
     double bandwidth() const;

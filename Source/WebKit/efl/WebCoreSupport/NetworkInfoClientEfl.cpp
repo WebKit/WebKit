@@ -42,6 +42,11 @@ NetworkInfoClientEfl::~NetworkInfoClientEfl()
 {
 }
 
+void NetworkInfoClientEfl::networkInfoControllerDestroyed()
+{
+    delete this;
+}
+
 void NetworkInfoClientEfl::startUpdating()
 {
     m_provider.startUpdating();

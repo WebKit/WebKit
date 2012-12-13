@@ -55,6 +55,7 @@ public:
     bool metered() const;
     
     void didChangeNetworkInformation(PassRefPtr<Event>, PassRefPtr<NetworkInfo>);
+    void networkInfoControllerDestroyed() { m_controller = 0; }
 
     // EventTarget implementation.
     virtual const AtomicString& interfaceName() const;

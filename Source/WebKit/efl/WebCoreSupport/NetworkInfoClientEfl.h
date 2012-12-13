@@ -41,6 +41,8 @@ public:
     NetworkInfoClientEfl();
     ~NetworkInfoClientEfl();
     
+    virtual void networkInfoControllerDestroyed();
+
     virtual void startUpdating();
     virtual void stopUpdating();
 

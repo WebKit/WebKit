@@ -44,6 +44,8 @@ public:
     virtual ~WebNetworkInfoClient();
 
 private:
+    virtual void networkInfoControllerDestroyed() OVERRIDE;
+
     virtual double bandwidth() const OVERRIDE;
     virtual bool metered() const OVERRIDE;
 
