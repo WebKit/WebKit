@@ -328,12 +328,12 @@
                       "slavenames": ["efl-linux-slave-1"]
                     },
                     {
-                      "name": "EFL Linux 64-bit Release WK2", "type": "BuildAndTestWebKit2", "builddir": "efl-linux-64-release-wk2",
+                      "name": "EFL Linux 64-bit Release WK2", "type": "BuildAndTestWebKit2Only", "builddir": "efl-linux-64-release-wk2",
                       "platform": "efl", "configuration": "release", "architectures": ["x86_64"],
                       "slavenames": ["efl-linux-slave-2"]
                     },
                     {
-                      "name": "EFL Linux 64-bit Debug WK2", "type": "BuildAndTestWebKit2", "builddir": "efl-linux-64-debug-wk2",
+                      "name": "EFL Linux 64-bit Debug WK2", "type": "BuildAndTestWebKit2Only", "builddir": "efl-linux-64-debug-wk2",
                       "platform": "efl", "configuration": "debug", "architectures": ["x86_64"],
                       "slavenames": ["efl-linux-slave-4"]
                     },

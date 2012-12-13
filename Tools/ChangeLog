@@ -1,3 +1,24 @@
+2012-12-13  Thiago Marcos P. Santos  <thiago.santos@intel.com>
+
+        [EFL] The WebKit2 bots are building and executing WebKit1 tests
+        https://bugs.webkit.org/show_bug.cgi?id=104690
+
+        Reviewed by Csaba Osztrogonác.
+
+        Pass --no-webkit1 option to the EFL WK2 bots when building. This
+        will disable WK1 API and thus, the WK1 API tests.
+
+        * BuildSlaveSupport/build.webkit.org-config/config.json:
+        * BuildSlaveSupport/build.webkit.org-config/master.cfg:
+        (CompileWebKit2Only):
+        (BuildAndTestFactory):
+        (BuildAndTestFactory.__init__):
+        (BuildAndTestWebKit2OnlyFactory):
+        Now bots using BuildAndTestWebKit2OnlyFactory (for instance only EFL) will
+        get --no-webkit1 as a parameter on the build-webkit script.
+        * Scripts/build-webkit:
+        Added support for -no-webkit1 for the Qt and EFL port.
+
 2012-12-13  Eric Seidel  <eric@webkit.org>
 
         build-webkit --chromium-android forces Make even when update-webkit used --ninja
