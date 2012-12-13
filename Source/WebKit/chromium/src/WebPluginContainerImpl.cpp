@@ -530,9 +530,9 @@ void WebPluginContainerImpl::requestTouchEventType(TouchEventRequestType request
         return;
     m_touchEventRequestType = requestType;
     if (m_touchEventRequestType != TouchEventRequestTypeNone)
-        m_element->document()->didAddTouchEventHandler();
+        m_element->document()->didAddTouchEventHandler(m_element);
     else
-        m_element->document()->didRemoveTouchEventHandler();
+        m_element->document()->didRemoveTouchEventHandler(m_element);
 }
 
 void WebPluginContainerImpl::setWantsWheelEvents(bool wantsWheelEvents)
@@ -685,7 +685,7 @@ WebPluginContainerImpl::~WebPluginContainerImpl()
 #endif
 
     if (m_touchEventRequestType != TouchEventRequestTypeNone)
-        m_element->document()->didRemoveTouchEventHandler();
+        m_element->document()->didRemoveTouchEventHandler(m_element);
 
     for (size_t i = 0; i < m_pluginLoadObservers.size(); ++i)
         m_pluginLoadObservers[i]->clearPluginContainer();

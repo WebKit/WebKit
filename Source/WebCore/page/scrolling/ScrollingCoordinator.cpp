@@ -27,6 +27,7 @@
 
 #include "ScrollingCoordinator.h"
 
+#include "Document.h"
 #include "Frame.h"
 #include "FrameView.h"
 #include "IntRect.h"
@@ -175,6 +176,54 @@ Region ScrollingCoordinator::computeNonFastScrollableRegion(Frame* frame, const 
 
     return nonFastScrollableRegion;
 }
+
+#if ENABLE(TOUCH_EVENT_TRACKING)
+static void accumulateRendererTouchEventTargetRects(Vector<IntRect>& rects, const RenderObject* renderer)
+{
+    // FIXME: This method is O(N^2) as it walks the tree to the root for every renderer. RenderGeometryMap would fix this.
+    rects.append(enclosingIntRect(renderer->clippedOverflowRectForRepaint(0)));
+    if (renderer->isRenderBlock()) {
+        const RenderBlock* block = toRenderBlock(renderer);
+        for (RenderObject* child = block->firstChild(); child; child = child->nextSibling())
+            accumulateRendererTouchEventTargetRects(rects, child);
+    }
+}
+
+static void accumulateDocumentEventTargetRects(Vector<IntRect>& rects, const Document* document)
+{
+    ASSERT(document);
+    if (!document->touchEventTargets())
+        return;
+
+    const TouchEventTargetSet* targets = document->touchEventTargets();
+    for (TouchEventTargetSet::const_iterator iter = targets->begin(); iter != targets->end(); ++iter) {
+        const Node* touchTarget = iter->key;
+        if (touchTarget == document) {
+            if (RenderView* view = document->renderView())
+                rects.append(enclosingIntRect(view->clippedOverflowRectForRepaint(0)));
+            return;
+        }
+
+        if (touchTarget->isDocumentNode() && touchTarget != document) {
+            accumulateDocumentEventTargetRects(rects, static_cast<const Document*>(touchTarget));
+            continue;
+        }
+
+        if (RenderObject* renderer = touchTarget->renderer())
+            accumulateRendererTouchEventTargetRects(rects, renderer);
+    }
+}
+
+void ScrollingCoordinator::computeAbsoluteTouchEventTargetRects(const Document* document, Vector<IntRect>& rects)
+{
+    ASSERT(document);
+    if (!document->view())
+        return;
+
+    // FIXME: These rects won't be properly updated if the renderers are in a sub-tree that scrolls.
+    accumulateDocumentEventTargetRects(rects, document);
+}
+#endif
 
 unsigned ScrollingCoordinator::computeCurrentWheelEventHandlerCount()
 {

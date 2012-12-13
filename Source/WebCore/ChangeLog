@@ -1,3 +1,74 @@
+2012-12-07  Levi Weintraub  <leviw@chromium.org>
+
+        Add support for tracking hit test rectangles to enable fast event rejection in the compositor
+        https://bugs.webkit.org/show_bug.cgi?id=103914
+
+        Reviewed by Simon Fraser.
+
+        Adding support for tracking hit test target regions for the purpose of performing initial hit testing
+        in the compositor to avoid blocking scrolling on the main thread while waiting to hit test events that
+        aren't occuring in regions with handlers. This is initially being done to avoid having to go to the main
+        thread when scrolling by flicking on touch devices when the flick occurs outside a tracked touch event
+        region. This patch includes the implementation to turn this on in Chromium.
+
+        To accomplish this goal, Document will now keep a counted hash set of nodes with touch event handlers
+        instead of only an unsigned integer of the total count. ScrollingCoordinator then updates the compositor
+        when new touch event handlers are registered or removed, or after layout much like how
+        nonFastScrollableRegions are currently tracked.
+
+        This implementation will not properly update the hit test rects when the renderers are inside a sub-
+        tree that scrolls.
+
+        Test: platform/chromium/fast/events/touch/compositor-touch-hit-rects.html
+
+        * dom/Document.cpp:
+        (WebCore::Document::Document): Added a HashCountedSet of touch target nodes. Note: DOMWindow targets
+        are stored as the Document they point to.
+        (WebCore::Document::didAddTouchEventHandler): Changed to keep track of the handler instead of a count, and
+        to update the ScrollingCoordinator with the change.
+        (WebCore::Document::didRemoveTouchEventHandler): Ditto.
+        * dom/Document.h:
+        (WebCore::Document::hasTouchEventHandlers): It's no longer O(1) to get the count of touch handlers, so
+        expose whether there are any or not.
+        (WebCore::Document::touchEventTargets):
+        * dom/Node.cpp:
+        (WebCore::Node::didMoveToNewDocument):
+        (WebCore::tryAddEventListener):
+        (WebCore::tryRemoveEventListener):
+        * history/CachedFrame.cpp:
+        (WebCore::CachedFrameBase::restore):
+        * html/HTMLInputElement.cpp:
+        (WebCore::HTMLInputElement::~HTMLInputElement):
+        (WebCore::HTMLInputElement::updateType):
+        * page/DOMWindow.cpp:
+        (WebCore::DOMWindow::addEventListener): Add the Document to the touch target set instead of DOMWindow.
+        (WebCore::DOMWindow::removeEventListener):
+        * page/EventHandler.cpp:
+        (WebCore::EventHandler::handleTouchEvent):
+        * page/Frame.cpp:
+        (WebCore::Frame::setDocument):
+        * page/scrolling/ScrollingCoordinator.cpp:
+        (WebCore::ScrollingCoordinator::computeAbsoluteTouchEventTargetRects): Walk the renderers for event handler
+        nodes and generate the absolute hit testing rects.
+        * page/scrolling/ScrollingCoordinator.h:
+        (WebCore::ScrollingCoordinator::setTouchEventTargetRectsChanged): Hook to pass along the hit test rects to
+        the scrolling tree/compositor.
+        (ScrollingCoordinator):
+        * page/scrolling/chromium/ScrollingCoordinatorChromium.cpp:
+        (WebCore::ScrollingCoordinatorChromium::frameViewLayoutUpdated):
+        (WebCore::ScrollingCoordinatorChromium::setTouchEventTargetRectsChanged):
+        (WebCore::ScrollingCoordinatorChromium::setNonFastScrollableRegion):
+        (WebCore::ScrollingCoordinatorChromium::setTouchEventTargetRects):
+        * page/scrolling/chromium/ScrollingCoordinatorChromium.h:
+        (ScrollingCoordinatorChromium):
+        * testing/Internals.cpp:
+        (WebCore::Internals::touchEventHandlerCount): Changed to do the work to calculate the actual count since
+        it's no longer stored as an int in Document.
+        (WebCore::Internals::touchEventTargetClientRects):
+        * testing/Internals.h:
+        (Internals):
+        * testing/Internals.idl:
+
 2012-12-12  Luke Macpherson   <macpherson@chromium.org>
 
         Add ASSERTions to ensure that CSSPropertys that are variables only ever refer to CSSValues that are variables.
