@@ -112,8 +112,6 @@ namespace WebKit {
     macro(ShouldRespectImageOrientation, shouldRespectImageOrientation, Bool, bool, false) \
     macro(WantsBalancedSetDefersLoadingBehavior, wantsBalancedSetDefersLoadingBehavior, Bool, bool, false) \
     macro(DiagnosticLoggingEnabled, diagnosticLoggingEnabled, Bool, bool, false) \
-    macro(AsynchronousPluginInitializationEnabled, asynchronousPluginInitializationEnabled, Bool, bool, false) \
-    macro(ArtificialPluginInitializationDelayEnabled, artificialPluginInitializationDelayEnabled, Bool, bool, false) \
     macro(CookieEnabled, cookieEnabled, Bool, bool, true) \
     \
 
