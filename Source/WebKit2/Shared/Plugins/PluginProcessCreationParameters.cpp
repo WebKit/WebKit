@@ -33,14 +33,12 @@
 namespace WebKit {
 
 PluginProcessCreationParameters::PluginProcessCreationParameters()
-    : supportsAsynchronousPluginInitialization(false)
 {
 }
 
 void PluginProcessCreationParameters::encode(CoreIPC::ArgumentEncoder* encoder) const
 {
     encoder->encode(pluginPath);
-    encoder->encode(supportsAsynchronousPluginInitialization);
     encoder->encode(terminationTimeout);
 
 #if PLATFORM(MAC)
@@ -52,8 +50,6 @@ void PluginProcessCreationParameters::encode(CoreIPC::ArgumentEncoder* encoder) 
 bool PluginProcessCreationParameters::decode(CoreIPC::ArgumentDecoder* decoder, PluginProcessCreationParameters& result)
 {
     if (!decoder->decode(result.pluginPath))
-        return false;
-    if (!decoder->decode(result.supportsAsynchronousPluginInitialization))
         return false;
     if (!decoder->decode(result.terminationTimeout))
         return false;

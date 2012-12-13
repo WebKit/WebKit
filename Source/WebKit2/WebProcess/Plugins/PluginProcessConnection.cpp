@@ -42,10 +42,9 @@ using namespace WebCore;
 
 namespace WebKit {
 
-PluginProcessConnection::PluginProcessConnection(PluginProcessConnectionManager* pluginProcessConnectionManager, const String& pluginPath, CoreIPC::Connection::Identifier connectionIdentifier, bool supportsAsynchronousPluginInitialization)
+PluginProcessConnection::PluginProcessConnection(PluginProcessConnectionManager* pluginProcessConnectionManager, const String& pluginPath, CoreIPC::Connection::Identifier connectionIdentifier)
     : m_pluginProcessConnectionManager(pluginProcessConnectionManager)
     , m_pluginPath(pluginPath)
-    , m_supportsAsynchronousPluginInitialization(supportsAsynchronousPluginInitialization)
 {
     m_connection = CoreIPC::Connection::createClientConnection(connectionIdentifier, this, WebProcess::shared().runLoop());
 
