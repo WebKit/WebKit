@@ -1,3 +1,9 @@
+2012-12-12  Andy Estes  <aestes@apple.com>
+
+        Rename currentMousePosition() to lastKnownMousePosition() and mark it as OVERRIDE.
+
+        * WebProcess/Plugins/PDF/PDFPlugin.h:
+
 2012-12-12  Seokju Kwon  <seokju.kwon@gmail.com>
 
         [EFL] Refactor duplicate code into EflInspectorUtilities
