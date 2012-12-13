@@ -4217,6 +4217,3 @@ webkit.org/b/104834 [ MountainLion ] fast/css/nested-rounded-corners.html [ Fail
 webkit.org/b/104848 [ Linux XP SnowLeopard Lion Release ] fast/frames/sandboxed-iframe-attribute-parsing.html [ Pass Failure ]
 webkit.org/b/104848 [ SnowLeopard Debug ] fast/frames/sandboxed-iframe-attribute-parsing.html [ Pass Failure ]
 webkit.org/b/104848 [ Release ] fast/frames/sandboxed-iframe-parsing-space-characters.html [ Pass Failure ]
-
-# Rebaseline required after https://bugs.webkit.org/show_bug.cgi?id=102402
-webkit.org/b/102402 fast/repaint/delete-into-nested-block.html [ ImageOnlyFailure Pass ]
