@@ -1,3 +1,22 @@
+2012-12-12  Dirk Pranke  <dpranke@chromium.org>
+
+        rework ChromiumAndroidDriver.start() et. al to avoid funky layering
+        https://bugs.webkit.org/show_bug.cgi?id=104856
+
+        Reviewed by Eric Seidel.
+
+        r137523 / bug 10357 introduced some back-and-forth hopping during
+        driver.start() in the chromium android port. This patch cleans it
+        up a bit.
+
+        * Scripts/webkitpy/layout_tests/port/chromium_android.py:
+        (ChromiumAndroidDriver.__init__):
+        (ChromiumAndroidDriver._start_once):
+        * Scripts/webkitpy/layout_tests/port/chromium_android_unittest.py:
+        * Scripts/webkitpy/layout_tests/port/driver.py:
+        (Driver.start):
+        (Driver._start):
+
 2012-12-12  Eric Seidel  <eric@webkit.org>
 
         Add support for run-perf-tests --chromium-android --profile

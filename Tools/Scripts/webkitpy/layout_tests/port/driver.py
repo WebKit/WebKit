@@ -276,6 +276,7 @@ class Driver(object):
         # into run_test() directly.
         if not self._server_process:
             self._start(pixel_tests, per_test_args)
+            self._run_post_start_tasks()
 
     def _setup_environ_for_driver(self, environment):
         environment['DYLD_LIBRARY_PATH'] = self._port._build_path()
@@ -299,7 +300,6 @@ class Driver(object):
         self._crashed_pid = None
         self._server_process = self._port._server_process_constructor(self._port, server_name, self.cmd_line(pixel_tests, per_test_args), environment)
         self._server_process.start()
-        self._run_post_start_tasks()
 
     def _run_post_start_tasks(self):
         # Remote drivers may override this to delay post-start tasks until the server has ack'd.

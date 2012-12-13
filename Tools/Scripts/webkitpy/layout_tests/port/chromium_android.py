@@ -507,7 +507,6 @@ class ChromiumAndroidDriver(driver.Driver):
                 sys.exit(1)
         else:
             self._profiler = None
-        self._delay_post_start_tasks = False
 
     def __del__(self):
         self._teardown_performance()
@@ -767,7 +766,6 @@ class ChromiumAndroidDriver(driver.Driver):
         self._abort('Failed to start DumpRenderTree application multiple times. Give up.')
 
     def _start_once(self, pixel_tests, per_test_args):
-        self._delay_post_start_tasks = True  # This is a hack to not start the profiler until after the remote process is fully setup.
         super(ChromiumAndroidDriver, self)._start(pixel_tests, per_test_args)
 
         self._log_debug('Starting forwarder')
@@ -836,17 +834,9 @@ class ChromiumAndroidDriver(driver.Driver):
             _log.error('Failed to start DumpRenderTree: \n%s' % output)
             return False
 
-        self._delay_post_start_tasks = False
-        self._run_post_start_tasks()
-
         # Inform the deadlock detector that the startup is successful without deadlock.
         normal_startup_event.set()
         return True
-
-    def _run_post_start_tasks(self):
-        if self._delay_post_start_tasks:
-            return
-        super(ChromiumAndroidDriver, self)._run_post_start_tasks()
 
     def _pid_from_android_ps_output(self, ps_output, package_name):
         # ps output seems to be fixed width, we only care about the name and the pid
