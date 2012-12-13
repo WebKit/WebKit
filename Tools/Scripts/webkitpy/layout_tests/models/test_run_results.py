@@ -30,7 +30,7 @@
 from webkitpy.layout_tests.models.test_expectations import TestExpectations, SKIP, CRASH, TIMEOUT
 
 
-class ResultSummary(object):
+class TestRunResults(object):
     def __init__(self, expectations, num_tests):
         self.total = num_tests
         self.remaining = self.total
@@ -42,10 +42,10 @@ class ResultSummary(object):
         self.unexpected_timeouts = 0
         self.tests_by_expectation = {}
         self.tests_by_timeline = {}
-        self.results = {}  # Map of test name to the last result for the test.
+        self.results_by_name = {}  # Map of test name to the last result for the test.
         self.all_results = []  # All results from a run, including every iteration of every test.
-        self.unexpected_results = {}
-        self.failures = {}
+        self.unexpected_results_by_name = {}
+        self.failures_by_name = {}
         self.total_failures = 0
         self.expected_skips = 0
         for expectation in TestExpectations.EXPECTATIONS.values():
@@ -57,19 +57,19 @@ class ResultSummary(object):
 
     def add(self, test_result, expected, test_is_slow):
         self.tests_by_expectation[test_result.type].add(test_result.test_name)
-        self.results[test_result.test_name] = test_result
+        self.results_by_name[test_result.test_name] = test_result
         if test_result.type != SKIP:
             self.all_results.append(test_result)
         self.remaining -= 1
         if len(test_result.failures):
             self.total_failures += 1
-            self.failures[test_result.test_name] = test_result.failures
+            self.failures_by_name[test_result.test_name] = test_result.failures
         if expected:
             self.expected += 1
             if test_result.type == SKIP:
                 self.expected_skips += 1
         else:
-            self.unexpected_results[test_result.test_name] = test_result
+            self.unexpected_results_by_name[test_result.test_name] = test_result
             self.unexpected += 1
             if len(test_result.failures):
                 self.unexpected_failures += 1

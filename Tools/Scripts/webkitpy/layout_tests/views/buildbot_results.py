@@ -48,42 +48,41 @@ class BuildBotPrinter(object):
 
     def print_results(self, run_details):
         if self.debug_logging:
-            self.print_result_summary(run_details.result_summary)
+            self.print_run_results(run_details.run_results)
         self.print_unexpected_results(run_details.summarized_results)
 
     def _print(self, msg):
         self.stream.write(msg + '\n')
 
-    def print_result_summary(self, result_summary):
-        failed = result_summary.total_failures
-        total = result_summary.total
-        passed = total - failed - result_summary.remaining
+    def print_run_results(self, run_results):
+        failed = run_results.total_failures
+        total = run_results.total
+        passed = total - failed - run_results.remaining
         percent_passed = 0.0
         if total > 0:
             percent_passed = float(passed) * 100 / total
 
         self._print("=> Results: %d/%d tests passed (%.1f%%)" % (passed, total, percent_passed))
         self._print("")
-        self._print_result_summary_entry(result_summary, test_expectations.NOW, "Tests to be fixed")
+        self._print_run_results_entry(run_results, test_expectations.NOW, "Tests to be fixed")
 
         self._print("")
         # FIXME: We should be skipping anything marked WONTFIX, so we shouldn't bother logging these stats.
-        self._print_result_summary_entry(result_summary, test_expectations.WONTFIX,
+        self._print_run_results_entry(run_results, test_expectations.WONTFIX,
             "Tests that will only be fixed if they crash (WONTFIX)")
         self._print("")
 
-    def _print_result_summary_entry(self, result_summary, timeline, heading):
-        total = len(result_summary.tests_by_timeline[timeline])
+    def _print_run_results_entry(self, run_results, timeline, heading):
+        total = len(run_results.tests_by_timeline[timeline])
         not_passing = (total -
-            len(result_summary.tests_by_expectation[test_expectations.PASS] &
-                result_summary.tests_by_timeline[timeline]))
+            len(run_results.tests_by_expectation[test_expectations.PASS] &
+                run_results.tests_by_timeline[timeline]))
         self._print("=> %s (%d):" % (heading, not_passing))
 
         for result in TestExpectations.EXPECTATION_ORDER:
             if result in (test_expectations.PASS, test_expectations.SKIP):
                 continue
-            results = (result_summary.tests_by_expectation[result] &
-                        result_summary.tests_by_timeline[timeline])
+            results = (run_results.tests_by_expectation[result] & run_results.tests_by_timeline[timeline])
             desc = TestExpectations.EXPECTATION_DESCRIPTIONS[result]
             if not_passing and len(results):
                 pct = len(results) * 100.0 / not_passing

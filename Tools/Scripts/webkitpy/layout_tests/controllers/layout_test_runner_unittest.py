@@ -35,7 +35,7 @@ from webkitpy.layout_tests import run_webkit_tests
 from webkitpy.layout_tests.controllers.layout_test_runner import LayoutTestRunner, Sharder, TestRunInterruptedException
 from webkitpy.layout_tests.models import test_expectations
 from webkitpy.layout_tests.models import test_failures
-from webkitpy.layout_tests.models.result_summary import ResultSummary
+from webkitpy.layout_tests.models.test_run_results import TestRunResults
 from webkitpy.layout_tests.models.test_input import TestInput
 from webkitpy.layout_tests.models.test_results import TestResult
 from webkitpy.layout_tests.port.test import TestPort
@@ -48,7 +48,7 @@ class FakePrinter(object):
     num_completed = 0
     num_tests = 0
 
-    def print_expected(self, result_summary, get_tests_with_result_type):
+    def print_expected(self, run_results, get_tests_with_result_type):
         pass
 
     def print_workers_and_shards(self, num_workers, num_shards, num_locked_shards):
@@ -122,27 +122,27 @@ class LayoutTestRunnerTests(unittest.TestCase):
         test_names = ['passes/text.html', 'passes/image.html']
         runner._test_inputs = [TestInput(test_name, 6000) for test_name in test_names]
 
-        result_summary = ResultSummary(TestExpectations(runner._port, test_names), len(test_names))
-        result_summary.unexpected_failures = 100
-        result_summary.unexpected_crashes = 50
-        result_summary.unexpected_timeouts = 50
+        run_results = TestRunResults(TestExpectations(runner._port, test_names), len(test_names))
+        run_results.unexpected_failures = 100
+        run_results.unexpected_crashes = 50
+        run_results.unexpected_timeouts = 50
         # No exception when the exit_after* options are None.
-        runner._interrupt_if_at_failure_limits(result_summary)
+        runner._interrupt_if_at_failure_limits(run_results)
 
         # No exception when we haven't hit the limit yet.
         runner._options.exit_after_n_failures = 101
         runner._options.exit_after_n_crashes_or_timeouts = 101
-        runner._interrupt_if_at_failure_limits(result_summary)
+        runner._interrupt_if_at_failure_limits(run_results)
 
         # Interrupt if we've exceeded either limit:
         runner._options.exit_after_n_crashes_or_timeouts = 10
-        self.assertRaises(TestRunInterruptedException, runner._interrupt_if_at_failure_limits, result_summary)
-        self.assertEqual(result_summary.results['passes/text.html'].type, test_expectations.SKIP)
-        self.assertEqual(result_summary.results['passes/image.html'].type, test_expectations.SKIP)
+        self.assertRaises(TestRunInterruptedException, runner._interrupt_if_at_failure_limits, run_results)
+        self.assertEqual(run_results.results_by_name['passes/text.html'].type, test_expectations.SKIP)
+        self.assertEqual(run_results.results_by_name['passes/image.html'].type, test_expectations.SKIP)
 
         runner._options.exit_after_n_crashes_or_timeouts = None
         runner._options.exit_after_n_failures = 10
-        exception = self.assertRaises(TestRunInterruptedException, runner._interrupt_if_at_failure_limits, result_summary)
+        exception = self.assertRaises(TestRunInterruptedException, runner._interrupt_if_at_failure_limits, run_results)
 
     def test_update_summary_with_result(self):
         # Reftests expected to be image mismatch should be respected when pixel_tests=False.
@@ -152,17 +152,17 @@ class LayoutTestRunnerTests(unittest.TestCase):
         expectations = TestExpectations(runner._port, tests=[test])
         runner._expectations = expectations
 
-        result_summary = ResultSummary(expectations, 1)
+        run_results = TestRunResults(expectations, 1)
         result = TestResult(test_name=test, failures=[test_failures.FailureReftestMismatchDidNotOccur()], reftest_type=['!='])
-        runner._update_summary_with_result(result_summary, result)
-        self.assertEqual(1, result_summary.expected)
-        self.assertEqual(0, result_summary.unexpected)
+        runner._update_summary_with_result(run_results, result)
+        self.assertEqual(1, run_results.expected)
+        self.assertEqual(0, run_results.unexpected)
 
-        result_summary = ResultSummary(expectations, 1)
+        run_results = TestRunResults(expectations, 1)
         result = TestResult(test_name=test, failures=[], reftest_type=['=='])
-        runner._update_summary_with_result(result_summary, result)
-        self.assertEqual(0, result_summary.expected)
-        self.assertEqual(1, result_summary.unexpected)
+        runner._update_summary_with_result(run_results, result)
+        self.assertEqual(0, run_results.expected)
+        self.assertEqual(1, run_results.unexpected)
 
     def test_servers_started(self):
 

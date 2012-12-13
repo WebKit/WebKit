@@ -105,10 +105,10 @@ class Printer(object):
         found_str += ', skipping %d' % (num_all_test_files - num_unique_tests)
         self._print_default(found_str + '.')
 
-    def print_expected(self, result_summary, tests_with_result_type_callback):
-        self._print_expected_results_of_type(result_summary, test_expectations.PASS, "passes", tests_with_result_type_callback)
-        self._print_expected_results_of_type(result_summary, test_expectations.FAIL, "failures", tests_with_result_type_callback)
-        self._print_expected_results_of_type(result_summary, test_expectations.FLAKY, "flaky", tests_with_result_type_callback)
+    def print_expected(self, run_results, tests_with_result_type_callback):
+        self._print_expected_results_of_type(run_results, test_expectations.PASS, "passes", tests_with_result_type_callback)
+        self._print_expected_results_of_type(run_results, test_expectations.FAIL, "failures", tests_with_result_type_callback)
+        self._print_expected_results_of_type(run_results, test_expectations.FLAKY, "flaky", tests_with_result_type_callback)
         self._print_debug('')
 
     def print_workers_and_shards(self, num_workers, num_shards, num_locked_shards):
@@ -120,10 +120,10 @@ class Printer(object):
                 (num_workers, driver_name, num_shards, num_locked_shards))
         self._print_default('')
 
-    def _print_expected_results_of_type(self, result_summary, result_type, result_type_str, tests_with_result_type_callback):
+    def _print_expected_results_of_type(self, run_results, result_type, result_type_str, tests_with_result_type_callback):
         tests = tests_with_result_type_callback(result_type)
-        now = result_summary.tests_by_timeline[test_expectations.NOW]
-        wontfix = result_summary.tests_by_timeline[test_expectations.WONTFIX]
+        now = run_results.tests_by_timeline[test_expectations.NOW]
+        wontfix = run_results.tests_by_timeline[test_expectations.WONTFIX]
 
         # We use a fancy format string in order to print the data out in a
         # nicely-aligned table.
@@ -137,27 +137,27 @@ class Printer(object):
             ndigits = int(math.log10(len(num))) + 1
         return ndigits
 
-    def print_results(self, run_time, result_summary, summarized_results):
-        self._print_timing_statistics(run_time, result_summary)
-        self._print_one_line_summary(result_summary.total - result_summary.expected_skips,
-                                     result_summary.expected - result_summary.expected_skips,
-                                     result_summary.unexpected)
+    def print_results(self, run_time, run_results, summarized_results):
+        self._print_timing_statistics(run_time, run_results)
+        self._print_one_line_summary(run_results.total - run_results.expected_skips,
+                                     run_results.expected - run_results.expected_skips,
+                                     run_results.unexpected)
 
-    def _print_timing_statistics(self, total_time, result_summary):
+    def _print_timing_statistics(self, total_time, run_results):
         self._print_debug("Test timing:")
         self._print_debug("  %6.2f total testing time" % total_time)
         self._print_debug("")
 
-        self._print_worker_statistics(result_summary, int(self._options.child_processes))
-        self._print_aggregate_test_statistics(result_summary)
-        self._print_individual_test_times(result_summary)
-        self._print_directory_timings(result_summary)
+        self._print_worker_statistics(run_results, int(self._options.child_processes))
+        self._print_aggregate_test_statistics(run_results)
+        self._print_individual_test_times(run_results)
+        self._print_directory_timings(run_results)
 
-    def _print_worker_statistics(self, result_summary, num_workers):
+    def _print_worker_statistics(self, run_results, num_workers):
         self._print_debug("Thread timing:")
         stats = {}
         cuml_time = 0
-        for result in result_summary.results.values():
+        for result in run_results.results_by_name.values():
             stats.setdefault(result.worker_name, {'num_tests': 0, 'total_time': 0})
             stats[result.worker_name]['num_tests'] += 1
             stats[result.worker_name]['total_time'] += result.total_run_time
@@ -168,14 +168,14 @@ class Printer(object):
         self._print_debug("   %6.2f cumulative, %6.2f optimal" % (cuml_time, cuml_time / num_workers))
         self._print_debug("")
 
-    def _print_aggregate_test_statistics(self, result_summary):
-        times_for_dump_render_tree = [result.test_run_time for result in result_summary.results.values()]
+    def _print_aggregate_test_statistics(self, run_results):
+        times_for_dump_render_tree = [result.test_run_time for result in run_results.results_by_name.values()]
         self._print_statistics_for_test_timings("PER TEST TIME IN TESTSHELL (seconds):", times_for_dump_render_tree)
 
-    def _print_individual_test_times(self, result_summary):
+    def _print_individual_test_times(self, run_results):
         # Reverse-sort by the time spent in DumpRenderTree.
 
-        individual_test_timings = sorted(result_summary.results.values(), key=lambda result: result.test_run_time, reverse=True)
+        individual_test_timings = sorted(run_results.results_by_name.values(), key=lambda result: result.test_run_time, reverse=True)
         num_printed = 0
         slow_tests = []
         timeout_or_crash_tests = []
@@ -183,12 +183,12 @@ class Printer(object):
         for test_tuple in individual_test_timings:
             test_name = test_tuple.test_name
             is_timeout_crash_or_slow = False
-            if test_name in result_summary.slow_tests:
+            if test_name in run_results.slow_tests:
                 is_timeout_crash_or_slow = True
                 slow_tests.append(test_tuple)
 
-            if test_name in result_summary.failures:
-                result = result_summary.results[test_name].type
+            if test_name in run_results.failures_by_name:
+                result = run_results.results_by_name[test_name].type
                 if (result == test_expectations.TIMEOUT or
                     result == test_expectations.CRASH):
                     is_timeout_crash_or_slow = True
@@ -213,9 +213,9 @@ class Printer(object):
             test_run_time = round(test_tuple.test_run_time, 1)
             self._print_debug("  %s took %s seconds" % (test_tuple.test_name, test_run_time))
 
-    def _print_directory_timings(self, result_summary):
+    def _print_directory_timings(self, run_results):
         stats = {}
-        for result in result_summary.results.values():
+        for result in run_results.results_by_name.values():
             stats.setdefault(result.shard_name, {'num_tests': 0, 'total_time': 0})
             stats[result.shard_name]['num_tests'] += 1
             stats[result.shard_name]['total_time'] += result.total_run_time

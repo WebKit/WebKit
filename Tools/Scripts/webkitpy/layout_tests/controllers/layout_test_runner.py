@@ -33,7 +33,7 @@ import time
 
 from webkitpy.common import message_pool
 from webkitpy.layout_tests.controllers import single_test_runner
-from webkitpy.layout_tests.models.result_summary import ResultSummary
+from webkitpy.layout_tests.models.test_run_results import TestRunResults
 from webkitpy.layout_tests.models import test_expectations
 from webkitpy.layout_tests.models import test_failures
 from webkitpy.layout_tests.models import test_results
@@ -76,7 +76,7 @@ class LayoutTestRunner(object):
         self._needs_websockets = None
         self._retrying = False
 
-        self._current_result_summary = None
+        self._current_run_results = None
         self._remaining_locked_shards = []
         self._has_http_lock = False
 
@@ -87,20 +87,21 @@ class LayoutTestRunner(object):
         self._needs_websockets = needs_websockets
         self._retrying = retrying
 
-        result_summary = ResultSummary(self._expectations, len(test_inputs) + len(tests_to_skip))
-        self._current_result_summary = result_summary
+        # FIXME: rename all variables to test_run_results or some such ...
+        run_results = TestRunResults(self._expectations, len(test_inputs) + len(tests_to_skip))
+        self._current_run_results = run_results
         self._remaining_locked_shards = []
         self._has_http_lock = False
         self._printer.num_tests = len(test_inputs)
         self._printer.num_completed = 0
 
         if not retrying:
-            self._printer.print_expected(result_summary, self._expectations.get_tests_with_result_type)
+            self._printer.print_expected(run_results, self._expectations.get_tests_with_result_type)
 
         for test_name in set(tests_to_skip):
             result = test_results.TestResult(test_name)
             result.type = test_expectations.SKIP
-            result_summary.add(result, expected=True, test_is_slow=self._test_is_slow(test_name))
+            run_results.add(result, expected=True, test_is_slow=self._test_is_slow(test_name))
 
         self._printer.write_update('Sharding tests ...')
         locked_shards, unlocked_shards = self._sharder.shard_tests(test_inputs, int(self._options.child_processes), self._options.fully_parallel)
@@ -122,7 +123,7 @@ class LayoutTestRunner(object):
         self._printer.print_workers_and_shards(num_workers, len(all_shards), len(locked_shards))
 
         if self._options.dry_run:
-            return result_summary
+            return run_results
 
         self._printer.write_update('Starting %s ...' % grammar.pluralize('worker', num_workers))
 
@@ -131,7 +132,7 @@ class LayoutTestRunner(object):
                 pool.run(('test_list', shard.name, shard.test_inputs) for shard in all_shards)
         except TestRunInterruptedException, e:
             _log.warning(e.reason)
-            result_summary.interrupted = True
+            run_results.interrupted = True
         except KeyboardInterrupt:
             self._printer.flush()
             self._printer.writeln('Interrupted, exiting ...')
@@ -142,7 +143,7 @@ class LayoutTestRunner(object):
         finally:
             self.stop_servers_with_lock()
 
-        return result_summary
+        return run_results
 
     def _worker_factory(self, worker_connection):
         results_directory = self._results_directory
@@ -151,37 +152,37 @@ class LayoutTestRunner(object):
             results_directory = self._filesystem.join(self._results_directory, 'retries')
         return Worker(worker_connection, results_directory, self._options)
 
-    def _mark_interrupted_tests_as_skipped(self, result_summary):
+    def _mark_interrupted_tests_as_skipped(self, run_results):
         for test_input in self._test_inputs:
-            if test_input.test_name not in result_summary.results:
+            if test_input.test_name not in run_results.results_by_name:
                 result = test_results.TestResult(test_input.test_name, [test_failures.FailureEarlyExit()])
                 # FIXME: We probably need to loop here if there are multiple iterations.
                 # FIXME: Also, these results are really neither expected nor unexpected. We probably
                 # need a third type of result.
-                result_summary.add(result, expected=False, test_is_slow=self._test_is_slow(test_input.test_name))
+                run_results.add(result, expected=False, test_is_slow=self._test_is_slow(test_input.test_name))
 
-    def _interrupt_if_at_failure_limits(self, result_summary):
+    def _interrupt_if_at_failure_limits(self, run_results):
         # Note: The messages in this method are constructed to match old-run-webkit-tests
         # so that existing buildbot grep rules work.
-        def interrupt_if_at_failure_limit(limit, failure_count, result_summary, message):
+        def interrupt_if_at_failure_limit(limit, failure_count, run_results, message):
             if limit and failure_count >= limit:
-                message += " %d tests run." % (result_summary.expected + result_summary.unexpected)
-                self._mark_interrupted_tests_as_skipped(result_summary)
+                message += " %d tests run." % (run_results.expected + run_results.unexpected)
+                self._mark_interrupted_tests_as_skipped(run_results)
                 raise TestRunInterruptedException(message)
 
         interrupt_if_at_failure_limit(
             self._options.exit_after_n_failures,
-            result_summary.unexpected_failures,
-            result_summary,
-            "Exiting early after %d failures." % result_summary.unexpected_failures)
+            run_results.unexpected_failures,
+            run_results,
+            "Exiting early after %d failures." % run_results.unexpected_failures)
         interrupt_if_at_failure_limit(
             self._options.exit_after_n_crashes_or_timeouts,
-            result_summary.unexpected_crashes + result_summary.unexpected_timeouts,
-            result_summary,
+            run_results.unexpected_crashes + run_results.unexpected_timeouts,
+            run_results,
             # This differs from ORWT because it does not include WebProcess crashes.
-            "Exiting early after %d crashes and %d timeouts." % (result_summary.unexpected_crashes, result_summary.unexpected_timeouts))
+            "Exiting early after %d crashes and %d timeouts." % (run_results.unexpected_crashes, run_results.unexpected_timeouts))
 
-    def _update_summary_with_result(self, result_summary, result):
+    def _update_summary_with_result(self, run_results, result):
         if result.type == test_expectations.SKIP:
             exp_str = got_str = 'SKIP'
             expected = True
@@ -190,11 +191,11 @@ class LayoutTestRunner(object):
             exp_str = self._expectations.get_expectations_string(result.test_name)
             got_str = self._expectations.expectation_to_string(result.type)
 
-        result_summary.add(result, expected, self._test_is_slow(result.test_name))
+        run_results.add(result, expected, self._test_is_slow(result.test_name))
 
         self._printer.print_finished_test(result, expected, exp_str, got_str)
 
-        self._interrupt_if_at_failure_limits(result_summary)
+        self._interrupt_if_at_failure_limits(run_results)
 
     def start_servers_with_lock(self, number_of_servers):
         self._printer.write_update('Acquiring http lock ...')
@@ -242,7 +243,7 @@ class LayoutTestRunner(object):
                 self.stop_servers_with_lock()
 
     def _handle_finished_test(self, worker_name, result, log_messages=[]):
-        self._update_summary_with_result(self._current_result_summary, result)
+        self._update_summary_with_result(self._current_run_results, result)
 
 
 class Worker(object):

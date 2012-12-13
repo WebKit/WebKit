@@ -52,14 +52,13 @@ class JSONLayoutResultsGenerator(json_results_generator.JSONResultsGeneratorBase
 
     def __init__(self, port, builder_name, build_name, build_number,
         results_file_base_path, builder_base_url,
-        expectations, result_summary,
+        expectations, run_results,
         test_results_server=None, test_type="", master_name=""):
         """Modifies the results.json file. Grabs it off the archive directory
         if it is not found locally.
 
         Args:
-          result_summary: ResultsSummary object storing the summary of the test
-              results.
+          run_results: TestRunResults object storing the details of the test run.
         """
         super(JSONLayoutResultsGenerator, self).__init__(
             port, builder_name, build_name, build_number, results_file_base_path,
@@ -68,9 +67,9 @@ class JSONLayoutResultsGenerator(json_results_generator.JSONResultsGeneratorBase
 
         self._expectations = expectations
 
-        self._result_summary = result_summary
-        self._failures = dict((test_name, result_summary.results[test_name].type) for test_name in result_summary.failures)
-        self._test_timings = result_summary.results
+        self._run_results = run_results
+        self._failures = dict((test_name, run_results.results_by_name[test_name].type) for test_name in run_results.failures_by_name)
+        self._test_timings = run_results.results_by_name
 
         self.generate_json_output()
 
@@ -107,7 +106,7 @@ class JSONLayoutResultsGenerator(json_results_generator.JSONResultsGeneratorBase
 
     # override
     def _get_modifier_char(self, test_name):
-        if test_name not in self._result_summary.results:
+        if test_name not in self._run_results.results_by_name:
             return self.NO_DATA_RESULT
 
         if test_name in self._failures:
@@ -121,12 +120,12 @@ class JSONLayoutResultsGenerator(json_results_generator.JSONResultsGeneratorBase
 
     # override
     def _insert_failure_summaries(self, results_for_builder):
-        summary = self._result_summary
+        run_results = self._run_results
 
         self._insert_item_into_raw_list(results_for_builder,
-            len((set(summary.failures.keys()) |
-                summary.tests_by_expectation[test_expectations.SKIP]) &
-                summary.tests_by_timeline[test_expectations.NOW]),
+            len((set(run_results.failures_by_name.keys()) |
+                run_results.tests_by_expectation[test_expectations.SKIP]) &
+                run_results.tests_by_timeline[test_expectations.NOW]),
             self.FIXABLE_COUNT)
         self._insert_item_into_raw_list(results_for_builder,
             self._get_failure_summary_entry(test_expectations.NOW),
@@ -153,23 +152,22 @@ class JSONLayoutResultsGenerator(json_results_generator.JSONResultsGeneratorBase
         """Creates a summary object to insert into the JSON.
 
         Args:
-          summary   ResultSummary object with test results
           timeline  current test_expectations timeline to build entry for
                     (e.g., test_expectations.NOW, etc.)
         """
         entry = {}
-        summary = self._result_summary
-        timeline_tests = summary.tests_by_timeline[timeline]
+        run_results = self._run_results
+        timeline_tests = run_results.tests_by_timeline[timeline]
         entry[self.SKIP_RESULT] = len(
-            summary.tests_by_expectation[test_expectations.SKIP] &
+            run_results.tests_by_expectation[test_expectations.SKIP] &
             timeline_tests)
         entry[self.PASS_RESULT] = len(
-            summary.tests_by_expectation[test_expectations.PASS] &
+            run_results.tests_by_expectation[test_expectations.PASS] &
             timeline_tests)
-        for failure_type in summary.tests_by_expectation.keys():
+        for failure_type in run_results.tests_by_expectation.keys():
             if failure_type not in self.FAILURE_TO_CHAR:
                 continue
-            count = len(summary.tests_by_expectation[failure_type] &
+            count = len(run_results.tests_by_expectation[failure_type] &
                         timeline_tests)
             entry[self.FAILURE_TO_CHAR[failure_type]] = count
         return entry

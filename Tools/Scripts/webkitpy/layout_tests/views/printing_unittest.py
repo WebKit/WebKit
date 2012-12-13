@@ -39,7 +39,6 @@ from webkitpy.common.host_mock import MockHost
 from webkitpy.common.system import logtesting
 from webkitpy.layout_tests import port
 from webkitpy.layout_tests.controllers import manager
-from webkitpy.layout_tests.models import result_summary
 from webkitpy.layout_tests.models import test_expectations
 from webkitpy.layout_tests.models import test_failures
 from webkitpy.layout_tests.models import test_results

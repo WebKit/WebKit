@@ -33,10 +33,10 @@ import unittest
 from webkitpy.common.host_mock import MockHost
 
 from webkitpy.layout_tests.controllers import manager
-from webkitpy.layout_tests.models import result_summary
 from webkitpy.layout_tests.models import test_expectations
 from webkitpy.layout_tests.models import test_failures
 from webkitpy.layout_tests.models import test_results
+from webkitpy.layout_tests.models import test_run_results
 from webkitpy.layout_tests.views import buildbot_results
 
 
@@ -62,11 +62,11 @@ class BuildBotPrinterTests(unittest.TestCase):
             failures = [test_failures.FailureAudioMismatch()]
         return test_results.TestResult(test_name, failures=failures, test_run_time=run_time)
 
-    def get_result_summary(self, port, test_names, expectations_str):
+    def get_run_results(self, port, test_names, expectations_str):
         port.test_expectations = lambda: expectations_str
         port.test_expectations_overrides = lambda: None
         expectations = test_expectations.TestExpectations(port, test_names)
-        rs = result_summary.ResultSummary(expectations, len(test_names))
+        rs = test_run_results.TestRunResults(expectations, len(test_names))
         return test_names, rs, expectations
 
     def test_print_unexpected_results(self):
@@ -100,7 +100,7 @@ class BuildBotPrinterTests(unittest.TestCase):
             """
             port = MockHost().port_factory.get('test')
             test_is_slow = False
-            paths, rs, exp = self.get_result_summary(port, tests, expectations)
+            paths, rs, exp = self.get_run_results(port, tests, expectations)
             if expected:
                 rs.add(self.get_result('passes/text.html', test_expectations.PASS), expected, test_is_slow)
                 rs.add(self.get_result('failures/expected/audio.html', test_expectations.AUDIO), expected, test_is_slow)
@@ -118,7 +118,7 @@ class BuildBotPrinterTests(unittest.TestCase):
                 rs.add(self.get_result('failures/expected/crash.html', test_expectations.TIMEOUT), expected, test_is_slow)
             retry = rs
             if flaky:
-                paths, retry, exp = self.get_result_summary(port, tests, expectations)
+                paths, retry, exp = self.get_run_results(port, tests, expectations)
                 retry.add(self.get_result('passes/text.html'), True, test_is_slow)
                 retry.add(self.get_result('failures/expected/audio.html'), True, test_is_slow)
                 retry.add(self.get_result('failures/expected/timeout.html'), True, test_is_slow)

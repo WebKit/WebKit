@@ -150,11 +150,11 @@ def get_test_results(args, host=None):
         oc.restore_output()
 
     all_results = []
-    if run_details.result_summary:
-        all_results.extend(run_details.result_summary.all_results)
+    if run_details.initial_results:
+        all_results.extend(run_details.initial_results.all_results)
 
-    if run_details.retry_summary:
-        all_results.extend(run_details.retry_summary.all_results)
+    if run_details.retry_results:
+        all_results.extend(run_details.retry_results.all_results)
     return all_results
 
 
@@ -277,15 +277,15 @@ class MainTest(unittest.TestCase, StreamTestingMixin):
         details = run_webkit_tests.run(port_obj, options, args, logging_stream)
 
         # These numbers will need to be updated whenever we add new tests.
-        self.assertEqual(details.result_summary.total, test.TOTAL_TESTS)
-        self.assertEqual(details.result_summary.expected_skips, test.TOTAL_SKIPS)
-        self.assertEqual(len(details.result_summary.unexpected_results), test.UNEXPECTED_PASSES + test.UNEXPECTED_FAILURES)
+        self.assertEqual(details.initial_results.total, test.TOTAL_TESTS)
+        self.assertEqual(details.initial_results.expected_skips, test.TOTAL_SKIPS)
+        self.assertEqual(len(details.initial_results.unexpected_results_by_name), test.UNEXPECTED_PASSES + test.UNEXPECTED_FAILURES)
         self.assertEqual(details.exit_code, test.UNEXPECTED_FAILURES)
-        self.assertEqual(details.retry_summary.total, test.TOTAL_RETRIES)
+        self.assertEqual(details.retry_results.total, test.TOTAL_RETRIES)
 
         one_line_summary = "%d tests ran as expected, %d didn't:\n" % (
-            details.result_summary.total - details.result_summary.expected_skips - len(details.result_summary.unexpected_results),
-            len(details.result_summary.unexpected_results))
+            details.initial_results.total - details.initial_results.expected_skips - len(details.initial_results.unexpected_results_by_name),
+            len(details.initial_results.unexpected_results_by_name))
         self.assertTrue(one_line_summary in logging_stream.buflist)
 
         # Ensure the results were summarized properly.

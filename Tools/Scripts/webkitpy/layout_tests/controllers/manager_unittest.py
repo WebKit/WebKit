@@ -38,7 +38,7 @@ from webkitpy.layout_tests.controllers.manager import Manager, interpret_test_fa
 from webkitpy.layout_tests.models import test_expectations
 from webkitpy.layout_tests.models import test_failures
 from webkitpy.layout_tests.models import test_results
-from webkitpy.layout_tests.models.result_summary import ResultSummary
+from webkitpy.layout_tests.models.test_run_results import TestRunResults
 from webkitpy.thirdparty.mock import Mock
 from webkitpy.tool.mocktool import MockOptions
 
@@ -87,12 +87,12 @@ class ManagerTest(unittest.TestCase):
         port = host.port_factory.get('test-mac-leopard')
         tests = ['failures/expected/crash.html']
         expectations = test_expectations.TestExpectations(port, tests)
-        rs = ResultSummary(expectations, len(tests))
+        run_results = TestRunResults(expectations, len(tests))
         manager = get_manager()
-        manager._look_for_new_crash_logs(rs, time.time())
+        manager._look_for_new_crash_logs(run_results, time.time())
 
 
-class ResultSummaryTest(unittest.TestCase):
+class SummarizeResultsTest(unittest.TestCase):
 
     def setUp(self):
         host = MockHost()
@@ -128,10 +128,10 @@ class ResultSummaryTest(unittest.TestCase):
             failures = [test_failures.FailureCrash()]
         return test_results.TestResult(test_name, failures=failures, test_run_time=run_time)
 
-    def get_result_summary(self, port, test_names, expectations_str):
+    def get_run_results(self, port, test_names, expectations_str):
         port.expectations_dict = lambda: {'': expectations_str}
         expectations = test_expectations.TestExpectations(port, test_names)
-        return test_names, ResultSummary(expectations, len(test_names)), expectations
+        return test_names, TestRunResults(expectations, len(test_names)), expectations
 
     # FIXME: Use this to test more of summarize_results. This was moved from printing_unittest.py.
     def summarized_results(self, port, expected, passing, flaky, extra_tests=[], extra_expectations=None):
@@ -144,32 +144,32 @@ class ResultSummaryTest(unittest.TestCase):
             expectations += extra_expectations
 
         test_is_slow = False
-        paths, rs, exp = self.get_result_summary(port, tests, expectations)
+        paths, initial_results, exp = self.get_run_results(port, tests, expectations)
         if expected:
-            rs.add(self.get_result('passes/text.html', test_expectations.PASS), expected, test_is_slow)
-            rs.add(self.get_result('failures/expected/timeout.html', test_expectations.TIMEOUT), expected, test_is_slow)
-            rs.add(self.get_result('failures/expected/crash.html', test_expectations.CRASH), expected, test_is_slow)
+            initial_results.add(self.get_result('passes/text.html', test_expectations.PASS), expected, test_is_slow)
+            initial_results.add(self.get_result('failures/expected/timeout.html', test_expectations.TIMEOUT), expected, test_is_slow)
+            initial_results.add(self.get_result('failures/expected/crash.html', test_expectations.CRASH), expected, test_is_slow)
         elif passing:
-            rs.add(self.get_result('passes/text.html'), expected, test_is_slow)
-            rs.add(self.get_result('failures/expected/timeout.html'), expected, test_is_slow)
-            rs.add(self.get_result('failures/expected/crash.html'), expected, test_is_slow)
+            initial_results.add(self.get_result('passes/text.html'), expected, test_is_slow)
+            initial_results.add(self.get_result('failures/expected/timeout.html'), expected, test_is_slow)
+            initial_results.add(self.get_result('failures/expected/crash.html'), expected, test_is_slow)
         else:
-            rs.add(self.get_result('passes/text.html', test_expectations.TIMEOUT), expected, test_is_slow)
-            rs.add(self.get_result('failures/expected/timeout.html', test_expectations.CRASH), expected, test_is_slow)
-            rs.add(self.get_result('failures/expected/crash.html', test_expectations.TIMEOUT), expected, test_is_slow)
+            initial_results.add(self.get_result('passes/text.html', test_expectations.TIMEOUT), expected, test_is_slow)
+            initial_results.add(self.get_result('failures/expected/timeout.html', test_expectations.CRASH), expected, test_is_slow)
+            initial_results.add(self.get_result('failures/expected/crash.html', test_expectations.TIMEOUT), expected, test_is_slow)
 
         for test in extra_tests:
-            rs.add(self.get_result(test, test_expectations.CRASH), expected, test_is_slow)
+            initial_results.add(self.get_result(test, test_expectations.CRASH), expected, test_is_slow)
 
         if flaky:
-            paths, retry, exp = self.get_result_summary(port, tests, expectations)
-            retry.add(self.get_result('passes/text.html'), True, test_is_slow)
-            retry.add(self.get_result('failures/expected/timeout.html'), True, test_is_slow)
-            retry.add(self.get_result('failures/expected/crash.html'), True, test_is_slow)
+            paths, retry_results, exp = self.get_run_results(port, tests, expectations)
+            retry_results.add(self.get_result('passes/text.html'), True, test_is_slow)
+            retry_results.add(self.get_result('failures/expected/timeout.html'), True, test_is_slow)
+            retry_results.add(self.get_result('failures/expected/crash.html'), True, test_is_slow)
         else:
-            retry = None
+            retry_results = None
 
-        return summarize_results(port, exp, rs, retry)
+        return summarize_results(port, exp, initial_results, retry_results)
 
     def test_no_svn_revision(self):
         host = MockHost(initialize_scm_by_default=False)
