@@ -10,4 +10,4 @@ sourcedirs = WebKit/qt/Api WebKit/qt/WidgetApi WebKit/qt/docs Source/JavaScriptC
 exampledirs = WebKit/qt/docs
 imagedirs = WebKit/qt/docs
 
-depends += qtcore qtwidgets qtgui qtscript qtdoc qtprintsupport qtxml
+depends += qtcore qtwidgets qtgui qtscript qtdoc qtprintsupport qtxml qtwebkitexamples
