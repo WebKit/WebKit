@@ -79,8 +79,8 @@ public:
     CoreIPC::Connection* connection() const;
     uint64_t destinationID() const { return downloadID(); }
 
-    void start(WebPage* initiatingWebPage);
-    void startWithHandle(WebPage* initiatingPage, WebCore::ResourceHandle*, const WebCore::ResourceResponse&);
+    void start();
+    void startWithHandle(WebCore::ResourceHandle*, const WebCore::ResourceResponse&);
     void cancel();
 
     uint64_t downloadID() const { return m_downloadID; }

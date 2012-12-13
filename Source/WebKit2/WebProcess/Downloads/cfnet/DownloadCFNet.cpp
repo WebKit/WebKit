@@ -86,7 +86,7 @@ DownloadAuthenticationClient* Download::authenticationClient()
     return m_authenticationClient.get();
 }
 
-void Download::start(WebPage*)
+void Download::start()
 {
     ASSERT(!m_download);
 
@@ -108,7 +108,7 @@ void Download::start(WebPage*)
     CFURLDownloadStart(m_download.get());
 }
 
-void Download::startWithHandle(WebPage*, ResourceHandle* handle, const ResourceResponse& response)
+void Download::startWithHandle(ResourceHandle* handle, const ResourceResponse& response)
 {
     ASSERT(!m_download);
 

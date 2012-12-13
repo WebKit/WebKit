@@ -50,8 +50,8 @@ class DownloadManager {
 public:
     static DownloadManager& shared();
 
-    void startDownload(uint64_t downloadID, WebPage* initiatingPage, const WebCore::ResourceRequest&);
-    void convertHandleToDownload(uint64_t downloadID, WebPage* initiatingPage, WebCore::ResourceHandle*, const WebCore::ResourceRequest&, const WebCore::ResourceResponse&);
+    void startDownload(uint64_t downloadID, const WebCore::ResourceRequest&);
+    void convertHandleToDownload(uint64_t downloadID, WebCore::ResourceHandle*, const WebCore::ResourceRequest&, const WebCore::ResourceResponse&);
 
     void cancelDownload(uint64_t downloadID);
 

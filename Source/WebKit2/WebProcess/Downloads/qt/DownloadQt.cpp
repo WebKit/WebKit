@@ -39,7 +39,7 @@ using namespace WebCore;
 
 namespace WebKit {
 
-void Download::start(WebPage* initiatingWebPage)
+void Download::start()
 {
     QNetworkAccessManager* manager = WebProcess::shared().networkAccessManager();
     ASSERT(manager);
@@ -49,7 +49,7 @@ void Download::start(WebPage* initiatingWebPage)
     m_qtDownloader->init();
 }
 
-void Download::startWithHandle(WebPage* initiatingPage, ResourceHandle* handle, const ResourceResponse& resp)
+void Download::startWithHandle(ResourceHandle* handle, const ResourceResponse& resp)
 {
     ASSERT(!m_qtDownloader);
     m_qtDownloader = new QtFileDownloader(this, adoptPtr(handle->getInternal()->m_job->release()));

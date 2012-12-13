@@ -179,7 +179,7 @@ public:
     unsigned m_handleResponseLaterID;
 };
 
-void Download::start(WebPage*)
+void Download::start()
 {
     ASSERT(!m_downloadClient);
     ASSERT(!m_resourceHandle);
@@ -188,7 +188,7 @@ void Download::start(WebPage*)
     didStart();
 }
 
-void Download::startWithHandle(WebPage*, ResourceHandle* resourceHandle, const ResourceResponse& response)
+void Download::startWithHandle(ResourceHandle* resourceHandle, const ResourceResponse& response)
 {
     ASSERT(!m_downloadClient);
     ASSERT(!m_resourceHandle);

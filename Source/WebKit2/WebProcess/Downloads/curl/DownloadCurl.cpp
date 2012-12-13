@@ -33,12 +33,12 @@ using namespace WebCore;
 
 namespace WebKit {
 
-void Download::start(WebPage* initiatingWebPage)
+void Download::start()
 {
     notImplemented();
 }
 
-void Download::startWithHandle(WebPage* initiatingPage, ResourceHandle*, const ResourceResponse&)
+void Download::startWithHandle(ResourceHandle*, const ResourceResponse&)
 {
     notImplemented();
 }

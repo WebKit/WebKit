@@ -52,7 +52,7 @@ using namespace WebCore;
 
 namespace WebKit {
 
-void Download::start(WebPage* initiatingPage)
+void Download::start()
 {
     ASSERT(!m_nsURLDownload);
     ASSERT(!m_delegate);
@@ -64,7 +64,7 @@ void Download::start(WebPage* initiatingPage)
     [m_nsURLDownload.get() setDeletesFileUponFailure:NO];
 }
 
-void Download::startWithHandle(WebPage* initiatingPage, ResourceHandle* handle, const ResourceResponse& response)
+void Download::startWithHandle(ResourceHandle* handle, const ResourceResponse& response)
 {
     ASSERT(!m_nsURLDownload);
     ASSERT(!m_delegate);

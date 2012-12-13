@@ -1143,7 +1143,7 @@ void WebProcess::downloadRequest(uint64_t downloadID, uint64_t initiatingPageID,
     if (initiatingPage)
         initiatingPage->mainFrame()->loader()->setOriginalURLForDownloadRequest(requestWithOriginalURL);
 
-    DownloadManager::shared().startDownload(downloadID, initiatingPage, requestWithOriginalURL);
+    DownloadManager::shared().startDownload(downloadID, requestWithOriginalURL);
 }
 
 void WebProcess::cancelDownload(uint64_t downloadID)
