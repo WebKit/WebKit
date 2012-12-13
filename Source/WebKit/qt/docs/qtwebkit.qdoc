@@ -1,23 +1,51 @@
 /*!
     \module QtWebKit
-    \title WebKit in Qt
-    \contentspage All Qt Modules
-    \previouspage QtSvg
-    \nextpage QtXml
+    \title Qt WebKit Widgets C++ Classes
+    \brief Provides a web browser engine as well as C++ classes to render and
+    interact with web content
+
+    To include the definitions of the module's classes, use the
+    following directive:
+
+    \snippet webkitsnippets/qtwebkit_build_snippet.qdoc 1
+
+    To link against the module, add this line to your \l qmake \c
+    .pro file:
+
+    \snippet webkitsnippets/qtwebkit_build_snippet.qdoc 0
+
+*/
+
+/*!
+    \qmlmodule QtWebKit 3.0
+    \title Qt WebKit QML Types
+    \brief Provides QML types for rendering web content within a QML application
+
+    The QML types can be imported into your applciation using the following
+    import statement in your .qml file:
+
+    \code
+    import QtQuick 2.0
+    import QtWebKit 3.0
+    \endcode
+*/
+
+/*!
+    \page qtwebkitwidgets-index.html
+    \title Qt Webkit Widgets
     \ingroup modules
-    \ingroup technology-apis
 
-    \brief The QtWebKit module provides a web browser engine as well as
-    classes to render and interact with web content.
+    \brief The Qt WebKit Widgets module provides a web browser engine as well as
+    C++ classes to render and interact with web content.
 
-    QtWebKit provides a Web browser engine that makes it easy to embed content
-    from the World Wide Web into your Qt application. At the same time Web
-    content can be enhanced with native controls.
+    Qt WebKit Widgets provides a Web browser engine that makes it easy to embed
+    content from the World Wide Web into your Qt application. At the same time
+    Web content can be enhanced with native controls.
 
-    QtWebKit provides facilities for rendering of HyperText Markup Language
-    (HTML), Extensible HyperText Markup Language (XHTML) and Scalable Vector
-    Graphics (SVG) documents, styled using Cascading Style Sheets (CSS) and
-    scripted with JavaScript.
+    Qt WebKit Widgets provides facilities for rendering of HyperText Markup
+    Language (HTML), Extensible HyperText Markup Language (XHTML) and Scalable
+    Vector Graphics (SVG) documents, styled using Cascading Style Sheets (CSS)
+    and scripted with JavaScript.
 
     A bridge between the JavaScript execution environment and the Qt object
     model makes it possible for custom QObjects to be scripted. For detailed
@@ -47,7 +75,7 @@
 
     \snippet webkitsnippets/qtwebkit_build_snippet.qdoc 0
 
-    \section1 Notes 
+    \section1 Notes
 
     \note Building the QtWebKit module with debugging symbols is problematic
     on many platforms due to the size of the WebKit engine. We recommend
@@ -156,7 +184,11 @@
     \li The system \c{/Library/Internet Plug-Ins} directory
     \endlist
     \endtable
-    
+
+    \section1 Examples
+
+    There are several Qt WebKit Widgets examples located in the
+    \l{Qt WebKit Examples} page.
 
     \section1 License Information
 
@@ -191,4 +223,3 @@
     Boston, MA 02110-1301, USA.
     \endlegalese
 */
-

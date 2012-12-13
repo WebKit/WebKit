@@ -1460,6 +1460,12 @@ QQuickWebPage* QQuickWebViewExperimental::page()
         }
     }
     \endcode
+
+    \section1 Examples
+
+    There are several Qt WebKit examples located in the
+    \l{Qt WebKit Examples} page.
+
 */
 
 

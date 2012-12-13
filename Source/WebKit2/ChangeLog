@@ -1,3 +1,20 @@
+2012-12-13  Jerome Pasion  <jerome.pasion@digia.com>
+
+        [Qt] Doc: Fixing Qt WebKit reference documentation.
+
+        Reviewed by Simon Hausmann.
+
+        Fixes:
+        -added \module for C++ classes and \qmlmodule for QML types
+        -added links to the Qt WebKit Examples pages
+        -fixed the qhp settings for Qt Creator
+
+        Task-number: QTBUG-28583
+        Task-number: QTBUG-28418
+        Task-number: QTBUG-27646
+
+        * UIProcess/API/qt/qquickwebview.cpp:
+
 2012-12-13  Jussi Kukkonen  <jussi.kukkonen@intel.com>
 
         [EFL][GTK] Don't call deprecated g_type_init when glib => 2.35
