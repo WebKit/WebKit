@@ -201,6 +201,8 @@ my $perlInterpreter = "perl";
 
 my $expectedTag = "expected";
 my $mismatchTag = "mismatch";
+my $refTag = "ref";
+my $notrefTag = "notref";
 my $actualTag = "actual";
 my $prettyDiffTag = "pretty-diff";
 my $diffsTag = "diffs";
@@ -2632,15 +2634,18 @@ sub isUsedInReftest($)
     my $filename = $_[0];
     my @extensions = ('html','shtml','xml','xhtml','htm','php','svg','mht','pl');
     my $extensionsJoined = join("|", @extensions);
-    my $extensionExpression = "-$expectedTag(-$mismatchTag)?\\.(".$extensionsJoined.")\$";
-    
-    if ($filename =~ /$extensionExpression/) {
+    my $suffixExtensionExpression = "-($expectedTag|$refTag|$notrefTag)(-$mismatchTag)?\\.(".$extensionsJoined.")\$";
+    my $prefixExtensionExpression = "^($refTag|$notrefTag)-";
+    if ($filename =~ /$suffixExtensionExpression/ || $filename =~ /$prefixExtensionExpression/) {
         return 1;
     }
     my $base = stripExtension($filename);
-    
+
     foreach my $extension (@extensions) {
-        if (-f "$base-$expectedTag.$extension" || -f "$base-$expectedTag-$mismatchTag.$extension") {
+        if (-f "$base-$expectedTag.$extension" || 
+            -f "$base-$refTag.$extension" || -f "$base-$notrefTag.$extension" ||
+            -f "$base-$expectedTag-$mismatchTag.$extension" ||
+            -f "$refTag-$base.$extension" || -f "$notrefTag-$base.$extension") {
             return 1;
         }
     }
