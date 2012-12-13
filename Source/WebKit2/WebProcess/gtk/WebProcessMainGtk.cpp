@@ -55,7 +55,6 @@ WK_EXPORT int WebProcessMainGtk(int argc, char* argv[])
 #endif
 
     gtk_init(&argc, &argv);
-    g_type_init();
 
     JSC::initializeThreading();
     WTF::initializeMainThread();

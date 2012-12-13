@@ -178,7 +178,9 @@ void printImageDifferences(GdkPixbuf* baselineImage, GdkPixbuf* actualImage)
 
 int main(int argc, char* argv[])
 {
+#if !GLIB_CHECK_VERSION(2, 35, 0)
     g_type_init();
+#endif
 
     GError* error = 0;
     GOptionContext* context = g_option_context_new("- compare two image files, printing their percentage difference and the difference image to stdout");
