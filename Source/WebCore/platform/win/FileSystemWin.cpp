@@ -154,13 +154,20 @@ String pathByAppendingComponent(const String& path, const String& component)
 
 #if !USE(CF)
 
-CString fileSystemRepresentation(const String&)
+CString fileSystemRepresentation(const String& path)
 {
-    ASSERT_NOT_REACHED();
-    return "";
+    const UChar* characters = path.characters();
+    int size = WideCharToMultiByte(CP_ACP, 0, characters, path.length(), 0, 0, 0, 0) - 1;
+
+    char* buffer;
+    CString string = CString::newUninitialized(size, buffer);
+
+    WideCharToMultiByte(CP_ACP, 0, characters, path.length(), buffer, size, 0, 0);
+
+    return string;
 }
 
-#endif !USE(CF)
+#endif // !USE(CF)
 
 bool makeAllDirectories(const String& path)
 {
