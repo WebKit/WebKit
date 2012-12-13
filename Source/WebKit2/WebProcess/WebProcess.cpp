@@ -417,6 +417,16 @@ void WebProcess::destroyPrivateBrowsingSession()
 #endif
 }
 
+DownloadManager& WebProcess::downloadManager()
+{
+#if ENABLE(NETWORK_PROCESS)
+    ASSERT(!m_usesNetworkProcess);
+#endif
+
+    DEFINE_STATIC_LOCAL(DownloadManager, downloadManager, (this));
+    return downloadManager;
+}
+
 void WebProcess::setVisitedLinkTable(const SharedMemory::Handle& handle)
 {
     RefPtr<SharedMemory> sharedMemory = SharedMemory::create(handle, SharedMemory::ReadOnly);
@@ -671,7 +681,7 @@ bool WebProcess::shouldTerminate()
         return false;
 
     ASSERT(m_pageMap.isEmpty());
-    ASSERT(!DownloadManager::shared().isDownloading());
+    ASSERT(!downloadManager().isDownloading());
 
     // FIXME: the ShouldTerminate message should also send termination parameters, such as any session cookies that need to be preserved.
     bool shouldTerminate = false;
@@ -1143,18 +1153,18 @@ void WebProcess::downloadRequest(uint64_t downloadID, uint64_t initiatingPageID,
     if (initiatingPage)
         initiatingPage->mainFrame()->loader()->setOriginalURLForDownloadRequest(requestWithOriginalURL);
 
-    DownloadManager::shared().startDownload(downloadID, requestWithOriginalURL);
+    downloadManager().startDownload(downloadID, requestWithOriginalURL);
 }
 
 void WebProcess::cancelDownload(uint64_t downloadID)
 {
-    DownloadManager::shared().cancelDownload(downloadID);
+    downloadManager().cancelDownload(downloadID);
 }
 
 #if PLATFORM(QT)
 void WebProcess::startTransfer(uint64_t downloadID, const String& destination)
 {
-    DownloadManager::shared().startTransfer(downloadID, destination);
+    downloadManager().startTransfer(downloadID, destination);
 }
 #endif
 

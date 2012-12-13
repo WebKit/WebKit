@@ -34,14 +34,11 @@ using namespace WebCore;
 
 namespace WebKit {
 
-DownloadManager& DownloadManager::shared()
+DownloadManager::DownloadManager(Client* client)
+    : m_client(client)
 {
-    DEFINE_STATIC_LOCAL(DownloadManager, downloadManager, ());
-    return downloadManager;
-}
-
-DownloadManager::DownloadManager()
-{
+    // FIXME: Actually use the client for something.
+    (void)m_client;
 }
 
 void DownloadManager::startDownload(uint64_t downloadID, const ResourceRequest& request)

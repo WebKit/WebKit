@@ -1,3 +1,31 @@
+2012-12-13  Anders Carlsson  <andersca@apple.com>
+
+        Get rid of DownloadManager::shared
+        https://bugs.webkit.org/show_bug.cgi?id=104939
+
+        Reviewed by Andreas Kling.
+
+        Move the DownloadManager singleton to WebProcess and stub out a DownloadManager::Client class.
+
+        * WebProcess/Downloads/DownloadManager.cpp:
+        (WebKit::DownloadManager::DownloadManager):
+        * WebProcess/Downloads/DownloadManager.h:
+        (Client):
+        (WebKit::DownloadManager::Client::~Client):
+        (DownloadManager):
+        * WebProcess/WebPage/WebFrame.cpp:
+        (WebKit::WebFrame::startDownload):
+        (WebKit::WebFrame::convertHandleToDownload):
+        * WebProcess/WebProcess.cpp:
+        (WebKit::WebProcess::downloadManager):
+        (WebKit):
+        (WebKit::WebProcess::shouldTerminate):
+        (WebKit::WebProcess::downloadRequest):
+        (WebKit::WebProcess::cancelDownload):
+        (WebKit::WebProcess::startTransfer):
+        * WebProcess/WebProcess.h:
+        (WebProcess):
+
 2012-12-12  Andy Estes  <aestes@apple.com>
 
         [WebKit2] Only register NSNotificationCenter observers once per WebContext

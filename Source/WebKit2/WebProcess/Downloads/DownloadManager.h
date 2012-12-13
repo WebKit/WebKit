@@ -48,7 +48,12 @@ class DownloadManager {
     WTF_MAKE_NONCOPYABLE(DownloadManager);
 
 public:
-    static DownloadManager& shared();
+    class Client {
+    public:
+        virtual ~Client() { }
+    };
+
+    explicit DownloadManager(Client*);
 
     void startDownload(uint64_t downloadID, const WebCore::ResourceRequest&);
     void convertHandleToDownload(uint64_t downloadID, WebCore::ResourceHandle*, const WebCore::ResourceRequest&, const WebCore::ResourceResponse&);
@@ -63,8 +68,7 @@ public:
 #endif
 
 private:
-    DownloadManager();
-
+    Client* m_client;
     HashMap<uint64_t, Download*> m_downloads;
 };
 

@@ -28,6 +28,7 @@
 
 #include "CacheModel.h"
 #include "ChildProcess.h"
+#include "DownloadManager.h"
 #include "DrawingArea.h"
 #include "EventDispatcher.h"
 #include "MessageReceiverMap.h"
@@ -108,7 +109,7 @@ class NetworkProcessConnection;
 class SecItemResponseData;
 #endif
 
-class WebProcess : public ChildProcess, private CoreIPC::Connection::QueueClient {
+class WebProcess : public ChildProcess, private CoreIPC::Connection::QueueClient, private DownloadManager::Client {
 public:
     static WebProcess& shared();
 
@@ -214,6 +215,8 @@ public:
 
     void ensurePrivateBrowsingSession();
     void destroyPrivateBrowsingSession();
+
+    DownloadManager& downloadManager();
 
 private:
     WebProcess();

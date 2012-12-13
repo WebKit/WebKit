@@ -236,7 +236,7 @@ void WebFrame::startDownload(const WebCore::ResourceRequest& request)
 {
     ASSERT(m_policyDownloadID);
 
-    DownloadManager::shared().startDownload(m_policyDownloadID, request);
+    WebProcess::shared().downloadManager().startDownload(m_policyDownloadID, request);
 
     m_policyDownloadID = 0;
 }
@@ -245,7 +245,7 @@ void WebFrame::convertHandleToDownload(ResourceHandle* handle, const ResourceReq
 {
     ASSERT(m_policyDownloadID);
 
-    DownloadManager::shared().convertHandleToDownload(m_policyDownloadID, handle, request, response);
+    WebProcess::shared().downloadManager().convertHandleToDownload(m_policyDownloadID, handle, request, response);
     m_policyDownloadID = 0;
 }
 
