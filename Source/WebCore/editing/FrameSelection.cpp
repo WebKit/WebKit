@@ -1953,7 +1953,9 @@ void FrameSelection::getClippedVisibleTextRectangles(Vector<FloatRect>& rectangl
 // Scans logically forward from "start", including any child frames.
 static HTMLFormElement* scanForForm(Node* start)
 {
-    Element* element = start && start->isElementNode() ? toElement(start) : ElementTraversal::next(start);
+    if (!start)
+        return 0;
+    Element* element = start->isElementNode() ? toElement(start) : ElementTraversal::next(start);
     for (; element; element = ElementTraversal::next(element)) {
         if (element->hasTagName(formTag))
             return static_cast<HTMLFormElement*>(element);
