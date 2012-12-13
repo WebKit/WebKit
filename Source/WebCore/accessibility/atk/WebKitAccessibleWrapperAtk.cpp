@@ -407,6 +407,9 @@ static gint webkitAccessibleGetIndexInParent(AtkObject* object)
     AccessibilityObject* coreObject = core(object);
     AccessibilityObject* parent = coreObject->parentObjectUnignored();
 
+    if (!parent)
+        return -1;
+
     if (!parent && isRootObject(coreObject)) {
         AtkObject* atkParent = atkParentOfRootObject(object);
         if (!atkParent)
