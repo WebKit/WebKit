@@ -46,7 +46,7 @@ DownloadManager::DownloadManager()
 
 void DownloadManager::startDownload(uint64_t downloadID, const ResourceRequest& request)
 {
-    OwnPtr<Download> download = Download::create(downloadID, request);
+    OwnPtr<Download> download = Download::create(*this, downloadID, request);
     download->start();
 
     ASSERT(!m_downloads.contains(downloadID));
@@ -55,7 +55,7 @@ void DownloadManager::startDownload(uint64_t downloadID, const ResourceRequest& 
 
 void DownloadManager::convertHandleToDownload(uint64_t downloadID, ResourceHandle* handle, const ResourceRequest& request, const ResourceResponse& response)
 {
-    OwnPtr<Download> download = Download::create(downloadID, request);
+    OwnPtr<Download> download = Download::create(*this, downloadID, request);
 
     download->startWithHandle(handle, response);
     ASSERT(!m_downloads.contains(downloadID));

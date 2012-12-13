@@ -40,13 +40,13 @@ using namespace WebCore;
 
 namespace WebKit {
 
-PassOwnPtr<Download> Download::create(uint64_t downloadID, const ResourceRequest& request)
+PassOwnPtr<Download> Download::create(DownloadManager& downloadManager, uint64_t downloadID, const ResourceRequest& request)
 {
-    return adoptPtr(new Download(downloadID, request));
+    return adoptPtr(new Download(downloadManager, downloadID, request));
 }
 
-Download::Download(uint64_t downloadID, const ResourceRequest& request)
-    : m_downloadID(downloadID)
+Download::Download(DownloadManager& downloadManager, uint64_t downloadID, const ResourceRequest& request)
+    : m_downloadManager(downloadManager)
     , m_request(request)
 #if USE(CFNETWORK)
     , m_allowOverwrite(false)
@@ -137,7 +137,8 @@ void Download::didFinish()
 
     if (m_sandboxExtension)
         m_sandboxExtension->invalidate();
-    DownloadManager::shared().downloadFinished(this);
+
+    m_downloadManager.downloadFinished(this);
 }
 
 void Download::didFail(const ResourceError& error, const CoreIPC::DataReference& resumeData)
@@ -146,7 +147,7 @@ void Download::didFail(const ResourceError& error, const CoreIPC::DataReference&
 
     if (m_sandboxExtension)
         m_sandboxExtension->invalidate();
-    DownloadManager::shared().downloadFinished(this);
+    m_downloadManager.downloadFinished(this);
 }
 
 void Download::didCancel(const CoreIPC::DataReference& resumeData)
@@ -155,7 +156,7 @@ void Download::didCancel(const CoreIPC::DataReference& resumeData)
 
     if (m_sandboxExtension)
         m_sandboxExtension->invalidate();
-    DownloadManager::shared().downloadFinished(this);
+    m_downloadManager.downloadFinished(this);
 }
 
 } // namespace WebKit
