@@ -1,3 +1,21 @@
+2012-12-12  Charlie Reis  <creis@chromium.org>
+
+        [chromium] Expose quickRedirectComing via WebDataSource
+        https://bugs.webkit.org/show_bug.cgi?id=104586
+
+        Reviewed by Nate Chapin.
+
+        Exposes whether the current navigation is a client redirect, and
+        thus should replace the current history item.
+
+        * public/WebDataSource.h:
+        (WebDataSource): Adds isClientRedirect.
+        * src/WebDataSourceImpl.cpp:
+        (WebKit::WebDataSourceImpl::isClientRedirect):
+        (WebKit):
+        * src/WebDataSourceImpl.h:
+        (WebDataSourceImpl):
+
 2012-12-12  Mark Lam  <mark.lam@apple.com>
 
         Encapsulate externally used webdatabase APIs in DatabaseManager.

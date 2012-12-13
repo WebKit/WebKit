@@ -84,6 +84,13 @@ void WebDataSourceImpl::redirectChain(WebVector<WebURL>& result) const
     result.assign(m_redirectChain);
 }
 
+bool WebDataSourceImpl::isClientRedirect() const
+{
+    // FIXME: This should return DocumentLoader::isClientRedirect() once that is
+    // changed to be set earlier than the call to WebFrameClient::decidePolicyForNavigation.
+    return frameLoader() ? frameLoader()->quickRedirectComing() : false;
+}
+
 WebString WebDataSourceImpl::pageTitle() const
 {
     return title().string();

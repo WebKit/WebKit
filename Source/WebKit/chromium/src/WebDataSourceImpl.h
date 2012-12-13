@@ -62,6 +62,7 @@ public:
     virtual bool hasUnreachableURL() const;
     virtual WebURL unreachableURL() const;
     virtual void redirectChain(WebVector<WebURL>&) const;
+    virtual bool isClientRedirect() const;
     virtual WebString pageTitle() const;
     virtual WebTextDirection pageTitleDirection() const;
     virtual WebNavigationType navigationType() const;
