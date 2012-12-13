@@ -1246,3 +1246,5 @@ webkit.org/b/104104 fast/overflow/scrollbar-click-retains-focus.html [ Failure ]
 
 webkit.org/b/104942 compositing/background-color/background-color-change-to-text.html [ Failure ]
 webkit.org/b/104942 compositing/background-color/background-color-text-change.html [ Failure ]
+
+webkit.org/b/104949 fast/spatial-navigation/snav-unit-overflow-and-scroll-in-direction.html [ Failure ]
