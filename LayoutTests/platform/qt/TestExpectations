@@ -125,7 +125,7 @@ http/tests/security/filesystem-iframe-from-remote.html
 http/tests/security/mixedContent/filesystem-url-in-iframe.html
 http/tests/websocket/tests/hybi/send-file-blob.html
 http/tests/websocket/tests/hybi/send-file-blob-fail.html
-fast/mutation/filesystem-callback-delivery.html
+fast/dom/MutationObserver/filesystem-callback-delivery.html
 
 # ENABLE(QUOTA) is disabled.
 storage/storageinfo-missing-arguments.html
@@ -458,7 +458,7 @@ webkit.org/b/84893 http/tests/w3c/webperf/submission/Intel/user-timing
 webkit.org/b/61138 http/tests/w3c/webperf/submission/Intel/resource-timing
 
 # Missing eventSender.scheduleAsynchronousKeyDown() implementation
-fast/mutation/inline-event-listener.html
+fast/dom/MutationObserver/inline-event-listener.html
 
 # =========================================================================== #
 #       Drag and Drop Support in DRT.                                         #
@@ -2079,7 +2079,7 @@ fast/text/international/inline-plaintext-is-isolated.html
 
 # Fails because MutationObservers are not notified at end-of-task
 # https://bugs.webkit.org/show_bug.cgi?id=78290
-fast/mutation/end-of-task-delivery.html
+fast/dom/MutationObserver/end-of-task-delivery.html
 
 # Fails on most platforms, probably failing due to an earlier test.
 http/tests/inspector/inspect-element.html

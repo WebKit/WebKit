@@ -226,7 +226,7 @@ webkit.org/b/58443 http/tests/security/mixedContent/filesystem-url-in-iframe.htm
 webkit.org/b/58443 http/tests/websocket/tests/hybi/send-file-blob.html [ Skip ]
 webkit.org/b/58443 http/tests/websocket/tests/hybi/send-file-blob-fail.html [ Skip ]
 webkit.org/b/58443 http/tests/workers/terminate-during-sync-operation.html [ Skip ]
-webkit.org/b/58443 fast/mutation/filesystem-callback-delivery.html [ Skip ]
+webkit.org/b/58443 fast/dom/MutationObserver/filesystem-callback-delivery.html [ Skip ]
 webkit.org/b/58443 fast/forms/file/input-file-entries.html [ Skip ]
 
 # Requires WebP support.

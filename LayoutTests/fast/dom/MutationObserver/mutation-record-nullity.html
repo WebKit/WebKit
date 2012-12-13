@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<script src="../js/resources/js-test-pre.js"></script>
+<script src="../../js/resources/js-test-pre.js"></script>
 <script>
 description('Non-relevant properties on mutation records should be null, except for NodeLists, which should be empty');
 var observer = new WebKitMutationObserver(function() {});
@@ -37,4 +37,4 @@ shouldBeNull('record.nextSibling');
 shouldBe('record.addedNodes.length', '0');
 shouldBe('record.removedNodes.length', '0');
 </script>
-<script src="../js/resources/js-test-post.js"></script>
+<script src="../../js/resources/js-test-post.js"></script>

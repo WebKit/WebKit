@@ -181,7 +181,7 @@ webkit.org/b/93977 fast/dom/Geolocation/page-reload-cancel-permission-requests.h
 
 # Implement eventSender.scheduleAsynchronousKeyDown
 # http://webkit.org/b/93979
-Bug(GTK) fast/mutation/end-of-task-delivery.html [ Failure Timeout ]
+Bug(GTK) fast/dom/MutationObserver/end-of-task-delivery.html [ Failure Timeout ]
 
 # Implement testRunner.setUseDeferredFrameLoading
 # http://webkit.org/b/93980
@@ -251,6 +251,7 @@ webkit.org/b/72698 media/audio-garbage-collect.html [ Failure Pass ]
 Bug(GTK) editing/pasteboard/smart-paste-004.html [ Failure Pass ]
 Bug(GTK) editing/selection/5057506.html [ Failure Pass ]
 Bug(GTK) editing/selection/click-in-margins-inside-editable-div.html [ Failure Pass ]
+Bug(GTK) fast/dom/MutationObserver/database-callback-delivery.html [ Failure Pass ]
 Bug(GTK) fast/events/dispatch-message-string-data.html [ Failure Pass ]
 Bug(GTK) fast/events/domactivate-sets-underlying-click-event-as-handled.html [ Failure Pass ]
 Bug(GTK) fast/events/mouseclick-target-and-positioning.html [ Failure Pass ]
@@ -279,7 +280,6 @@ Bug(GTK) fast/forms/select/optgroup-disabled.html [ Pass Timeout ]
 Bug(GTK) fast/forms/select-selected.html [ Pass Timeout ]
 Bug(GTK) fast/js/exceptions-thrown-in-callbacks.html [ Failure Pass ]
 Bug(GTK) fast/loader/fragment-after-redirect-gets-back-entry.html [ Failure Pass ]
-Bug(GTK) fast/mutation/database-callback-delivery.html [ Failure Pass ]
 Bug(GTK) fast/writing-mode/japanese-ruby-horizontal-bt.html [ Failure Pass ]
 Bug(GTK) fast/writing-mode/japanese-ruby-vertical-lr.html [ Failure Pass ]
 Bug(GTK) fast/writing-mode/japanese-ruby-vertical-rl.html [ Failure Pass ]

@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <body>
-<script src="../js/resources/js-test-pre.js"></script>
+<script src="../../js/resources/js-test-pre.js"></script>
 <script>
 window.jsTestIsAsync = true;
 description('Verifies that MutationObserver is passed to the callback as expected.');
@@ -17,5 +17,5 @@ var div = document.createElement('div');
 mutationObserver.observe(div, {attributes: true});
 div.setAttribute('foo', 'bar');
 </script>
-<script src="../js/resources/js-test-post.js"></script>
+<script src="../../js/resources/js-test-post.js"></script>
 </body>

@@ -1857,7 +1857,7 @@ http/tests/security/contentSecurityPolicy/filesystem-urls-match-self.html
 http/tests/security/filesystem-iframe-from-remote.html
 http/tests/websocket/tests/hybi/send-file-blob.html
 http/tests/websocket/tests/hybi/send-file-blob-fail.html
-fast/mutation/filesystem-callback-delivery.html
+fast/dom/MutationObserver/filesystem-callback-delivery.html
 
 # https://bugs.webkit.org/show_bug.cgi?id=46223
 # The WebKit plugin implementation does not support iframe shims.
@@ -2143,7 +2143,7 @@ fast/dom/Window/window-postmessage-arrays.html
 
 # Fails because MutationObservers are not notified at end-of-task
 # https://bugs.webkit.org/show_bug.cgi?id=78290
-fast/mutation/end-of-task-delivery.html
+fast/dom/MutationObserver/end-of-task-delivery.html
 
 # Rebaseline after bug 71705. All differences are due to the fact that table captions now
 # expand to the full width of the table.
@@ -2443,7 +2443,7 @@ fast/images/support-broken-image-delegate.html
 fast/js/stack-trace.html
 fast/layers/video-layer.html
 fast/loader/javascript-url-iframe-remove-on-navigate.html
-fast/mutation/inline-event-listener.html
+fast/dom/MutationObserver/inline-event-listener.html
 fast/profiler/dead-time.html
 fast/profiler/stop-profiling-after-setTimeout.html
 fast/repaint/canvas-putImageData.html

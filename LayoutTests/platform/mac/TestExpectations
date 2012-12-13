@@ -307,7 +307,7 @@ http/tests/security/filesystem-iframe-from-remote.html
 http/tests/security/mixedContent/filesystem-url-in-iframe.html
 http/tests/websocket/tests/hybi/send-file-blob.html
 http/tests/websocket/tests/hybi/send-file-blob-fail.html
-fast/mutation/filesystem-callback-delivery.html
+fast/dom/MutationObserver/filesystem-callback-delivery.html
 
 # https://bugs.webkit.org/show_bug.cgi?id=46223
 # The WebKit plugin implementation does not support iframe shims.
@@ -587,7 +587,7 @@ media/W3C/video/canPlayType/canPlayType_two_implies_one_6.html
 
 # Fails because MutationObservers are not notified at end-of-task
 # https://bugs.webkit.org/show_bug.cgi?id=78290
-fast/mutation/end-of-task-delivery.html
+fast/dom/MutationObserver/end-of-task-delivery.html
 
 # https://bugs.webkit.org/show_bug.cgi?id=72010
 # Needs PageClients::vibrationClient() implementation.

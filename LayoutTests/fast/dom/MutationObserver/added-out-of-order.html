@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <div id="sandbox" style="display:none"><span></span></div>
-<script src="../js/resources/js-test-pre.js"></script>
+<script src="../../js/resources/js-test-pre.js"></script>
 <script>
 description("Test MutationEvents interfering with MutationObservers: adding nodes 'out of order'");
 var sandbox = document.getElementById('sandbox');
@@ -27,4 +27,4 @@ shouldBe("mutations[2].addedNodes.length", "1");
 shouldBe("mutations[2].removedNodes.length", "0");
 shouldBe("mutations[2].addedNodes[0].nodeValue", "'hello world'");
 </script>
-<script src="../js/resources/js-test-post.js"></script>
+<script src="../../js/resources/js-test-post.js"></script>
