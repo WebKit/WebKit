@@ -122,8 +122,6 @@ class PerfTestsRunner(object):
                 help="Run all tests, including the ones in the Skipped list."),
             optparse.make_option("--profile", action="store_true",
                 help="Output per-test profile information."),
-            optparse.make_option("--profiler", action="store",
-                help="Output per-test profile information, using the specified profiler."),
             ]
         return optparse.OptionParser(option_list=(perf_option_list)).parse_args(args)
 
