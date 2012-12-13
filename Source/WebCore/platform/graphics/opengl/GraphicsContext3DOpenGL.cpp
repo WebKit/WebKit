@@ -62,14 +62,7 @@ void GraphicsContext3D::readPixelsAndConvertToBGRAIfNecessary(int x, int y, int 
 
 void GraphicsContext3D::validateAttributes()
 {
-    Extensions3D* extensions = getExtensions();
     validateDepthStencil("GL_EXT_packed_depth_stencil");
-    if (m_attrs.antialias) {
-        if (!extensions->maySupportMultisampling() || !extensions->supports("GL_ANGLE_framebuffer_multisample") || isGLES2Compliant())
-            m_attrs.antialias = false;
-        else
-            extensions->ensureEnabled("GL_ANGLE_framebuffer_multisample");
-    }
 }
 
 bool GraphicsContext3D::reshapeFBOs(const IntSize& size)
