@@ -1,3 +1,18 @@
+2012-12-13  Vivek Galatage  <vivek.vg@samsung.com>
+
+        Web Inspector: "Add Attribute" context menu on closing tag should apply on the opening tag on Elements Panel
+        https://bugs.webkit.org/show_bug.cgi?id=104902
+
+        Reviewed by Alexander Pavlov.
+
+        The context menu action on the closing tag scrolls to the opening tag for adding the attribute.
+
+        No new tests as this is a UI change.
+
+        * inspector/front-end/ElementsTreeOutline.js:
+        (WebInspector.ElementsTreeElement.prototype._populateTagContextMenu):
+        (WebInspector.ElementsTreeElement.prototype._addNewAttribute):
+
 2012-12-13  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r137512.
