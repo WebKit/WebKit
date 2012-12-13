@@ -22,7 +22,6 @@ SOURCES += \
     Tests/GetURLWithJavaScriptURLDestroyingPlugin.cpp \
     Tests/GetUserAgentWithNullNPPFromNPPNew.cpp \
     Tests/NPDeallocateCalledBeforeNPShutdown.cpp \
-    Tests/NPPNewFails.cpp \
     Tests/NPPSetWindowCalledDuringDestruction.cpp \
     Tests/NPRuntimeCallsWithNullNPP.cpp \
     Tests/NPRuntimeObjectFromDestroyedPlugin.cpp \

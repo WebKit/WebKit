@@ -545,10 +545,6 @@ JSObject* PluginView::scriptObject(JSGlobalObject* globalObject)
     if (m_isWaitingForSynchronousInitialization)
         return 0;
 
-    // The plug-in can be null here if it failed to initialize previously.
-    if (!m_plugin)
-        return 0;
-
     // If the plug-in exists but is not initialized then we're still initializing asynchronously.
     // We need to wait here until initialization has either succeeded or failed.
     if (m_plugin->isBeingAsynchronouslyInitialized()) {
@@ -557,7 +553,7 @@ JSObject* PluginView::scriptObject(JSGlobalObject* globalObject)
         m_isWaitingForSynchronousInitialization = false;
     }
 
-    // The plug-in can be null here if it still failed to initialize.
+    // The plug-in can be null here if it failed to initialize.
     if (!m_isInitialized || !m_plugin)
         return 0;
 

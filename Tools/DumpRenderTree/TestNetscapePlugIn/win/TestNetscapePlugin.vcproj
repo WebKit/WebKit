@@ -426,10 +426,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\Tests\NPPNewFails.cpp"
-				>
-			</File>
-			<File
 				RelativePath="..\Tests\NPPSetWindowCalledDuringDestruction.cpp"
 				>
 			</File>
