@@ -279,6 +279,8 @@ fast/forms/file/recover-file-input-in-unposted-form.html
 http/tests/security/contentSecurityPolicy/blob-urls-match-self.html
 fast/workers/worker-domurl.html
 media/video-src-blob.html
+http/tests/xmlhttprequest/post-blob-content-type-async.html
+http/tests/xmlhttprequest/post-blob-content-type-sync.html
 
 # Need to add functionality to DumpRenderTree to test IDN <rdar://problem/5301954>
 fast/encoding/idn-security.html

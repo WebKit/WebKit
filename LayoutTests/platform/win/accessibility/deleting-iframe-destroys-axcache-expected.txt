@@ -58,7 +58,7 @@ document
             editable text 
     client 
 
-FAIL frameBodyRole == frameBody.role should be false. Was true.
+PASS frameBodyRole == frameBody.role is false
 PASS frameGroupRole == frameGroup.role is false
 PASS frameButtonRole == frameButton.role is false
 PASS root.isEqual(newRoot) is true

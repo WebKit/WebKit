@@ -6,71 +6,71 @@ On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE
 TEST "0dppx"
 PASS img.style.cssText is ""
 TEST "1dppx"
-FAIL img.style.cssText should be image-resolution: 1dppx; . Was .
+FAIL img.style.cssText should be image-resolution: 1dppx;. Was .
 PASS img.offsetWidth is 16
 PASS img.offsetHeight is 16
 TEST "2dppx"
-FAIL img.style.cssText should be image-resolution: 2dppx; . Was .
+FAIL img.style.cssText should be image-resolution: 2dppx;. Was .
 FAIL img.offsetWidth should be 8. Was 16.
 FAIL img.offsetHeight should be 8. Was 16.
 TEST "3dppx"
-FAIL img.style.cssText should be image-resolution: 3dppx; . Was .
+FAIL img.style.cssText should be image-resolution: 3dppx;. Was .
 FAIL img.offsetWidth should be 5. Was 16.
 FAIL img.offsetHeight should be 5. Was 16.
 TEST "4dppx"
-FAIL img.style.cssText should be image-resolution: 4dppx; . Was .
+FAIL img.style.cssText should be image-resolution: 4dppx;. Was .
 FAIL img.offsetWidth should be 4. Was 16.
 FAIL img.offsetHeight should be 4. Was 16.
 TEST "0dpi"
 PASS img.style.cssText is ""
 TEST "96dpi"
-FAIL img.style.cssText should be image-resolution: 96dpi; . Was .
+FAIL img.style.cssText should be image-resolution: 96dpi;. Was .
 PASS img.offsetWidth is 16
 PASS img.offsetHeight is 16
 TEST "192dpi"
-FAIL img.style.cssText should be image-resolution: 192dpi; . Was .
+FAIL img.style.cssText should be image-resolution: 192dpi;. Was .
 FAIL img.offsetWidth should be 8. Was 16.
 FAIL img.offsetHeight should be 8. Was 16.
 TEST "288dpi"
-FAIL img.style.cssText should be image-resolution: 288dpi; . Was .
+FAIL img.style.cssText should be image-resolution: 288dpi;. Was .
 FAIL img.offsetWidth should be 5. Was 16.
 FAIL img.offsetHeight should be 5. Was 16.
 TEST "384dpi"
-FAIL img.style.cssText should be image-resolution: 384dpi; . Was .
+FAIL img.style.cssText should be image-resolution: 384dpi;. Was .
 FAIL img.offsetWidth should be 4. Was 16.
 FAIL img.offsetHeight should be 4. Was 16.
 TEST "150dpi"
-FAIL img.style.cssText should be image-resolution: 150dpi; . Was .
+FAIL img.style.cssText should be image-resolution: 150dpi;. Was .
 FAIL img.offsetWidth should be 10. Was 16.
 FAIL img.offsetHeight should be 10. Was 16.
 TEST "300dpi"
-FAIL img.style.cssText should be image-resolution: 300dpi; . Was .
+FAIL img.style.cssText should be image-resolution: 300dpi;. Was .
 FAIL img.offsetWidth should be 5. Was 16.
 FAIL img.offsetHeight should be 5. Was 16.
 TEST "450dpi"
-FAIL img.style.cssText should be image-resolution: 450dpi; . Was .
+FAIL img.style.cssText should be image-resolution: 450dpi;. Was .
 FAIL img.offsetWidth should be 3. Was 16.
 FAIL img.offsetHeight should be 3. Was 16.
 TEST "600dpi"
-FAIL img.style.cssText should be image-resolution: 600dpi; . Was .
+FAIL img.style.cssText should be image-resolution: 600dpi;. Was .
 FAIL img.offsetWidth should be 2. Was 16.
 FAIL img.offsetHeight should be 2. Was 16.
 TEST "0dpcm"
 PASS img.style.cssText is ""
 TEST "37.7dpcm"
-FAIL img.style.cssText should be image-resolution: 37.7dpcm; . Was .
+FAIL img.style.cssText should be image-resolution: 37.7dpcm;. Was .
 PASS img.offsetWidth is 16
 PASS img.offsetHeight is 16
 TEST "75.5dpcm"
-FAIL img.style.cssText should be image-resolution: 75.5dpcm; . Was .
+FAIL img.style.cssText should be image-resolution: 75.5dpcm;. Was .
 FAIL img.offsetWidth should be 8. Was 16.
 FAIL img.offsetHeight should be 8. Was 16.
 TEST "113.3dpcm"
-FAIL img.style.cssText should be image-resolution: 113.3dpcm; . Was .
+FAIL img.style.cssText should be image-resolution: 113.3dpcm;. Was .
 FAIL img.offsetWidth should be 5. Was 16.
 FAIL img.offsetHeight should be 5. Was 16.
 TEST "151.1dpcm"
-FAIL img.style.cssText should be image-resolution: 151.1dpcm; . Was .
+FAIL img.style.cssText should be image-resolution: 151.1dpcm;. Was .
 FAIL img.offsetWidth should be 4. Was 16.
 FAIL img.offsetHeight should be 4. Was 16.
 TEST ""
@@ -80,35 +80,35 @@ PASS img.style.cssText is ""
 TEST "from-image 0dppx"
 PASS img.style.cssText is ""
 TEST "1dppx from-image"
-FAIL img.style.cssText should be image-resolution: 1dppx from-image; . Was .
+FAIL img.style.cssText should be image-resolution: 1dppx from-image;. Was .
 PASS img.offsetWidth is 16
 PASS img.offsetHeight is 16
 TEST "from-image 1dppx"
-FAIL img.style.cssText should be image-resolution: from-image 1dppx; . Was .
+FAIL img.style.cssText should be image-resolution: from-image 1dppx;. Was .
 PASS img.offsetWidth is 16
 PASS img.offsetHeight is 16
 TEST "2dppx from-image"
-FAIL img.style.cssText should be image-resolution: 2dppx from-image; . Was .
+FAIL img.style.cssText should be image-resolution: 2dppx from-image;. Was .
 FAIL img.offsetWidth should be 8. Was 16.
 FAIL img.offsetHeight should be 8. Was 16.
 TEST "from-image 2dppx"
-FAIL img.style.cssText should be image-resolution: from-image 2dppx; . Was .
+FAIL img.style.cssText should be image-resolution: from-image 2dppx;. Was .
 FAIL img.offsetWidth should be 8. Was 16.
 FAIL img.offsetHeight should be 8. Was 16.
 TEST "3dppx from-image"
-FAIL img.style.cssText should be image-resolution: 3dppx from-image; . Was .
+FAIL img.style.cssText should be image-resolution: 3dppx from-image;. Was .
 FAIL img.offsetWidth should be 5. Was 16.
 FAIL img.offsetHeight should be 5. Was 16.
 TEST "from-image 3dppx"
-FAIL img.style.cssText should be image-resolution: from-image 3dppx; . Was .
+FAIL img.style.cssText should be image-resolution: from-image 3dppx;. Was .
 FAIL img.offsetWidth should be 5. Was 16.
 FAIL img.offsetHeight should be 5. Was 16.
 TEST "4dppx from-image"
-FAIL img.style.cssText should be image-resolution: 4dppx from-image; . Was .
+FAIL img.style.cssText should be image-resolution: 4dppx from-image;. Was .
 FAIL img.offsetWidth should be 4. Was 16.
 FAIL img.offsetHeight should be 4. Was 16.
 TEST "from-image 4dppx"
-FAIL img.style.cssText should be image-resolution: from-image 4dppx; . Was .
+FAIL img.style.cssText should be image-resolution: from-image 4dppx;. Was .
 FAIL img.offsetWidth should be 4. Was 16.
 FAIL img.offsetHeight should be 4. Was 16.
 TEST "0dpi from-image"
@@ -116,67 +116,67 @@ PASS img.style.cssText is ""
 TEST "from-image 0dpi"
 PASS img.style.cssText is ""
 TEST "96dpi from-image"
-FAIL img.style.cssText should be image-resolution: 96dpi from-image; . Was .
+FAIL img.style.cssText should be image-resolution: 96dpi from-image;. Was .
 PASS img.offsetWidth is 16
 PASS img.offsetHeight is 16
 TEST "from-image 96dpi"
-FAIL img.style.cssText should be image-resolution: from-image 96dpi; . Was .
+FAIL img.style.cssText should be image-resolution: from-image 96dpi;. Was .
 PASS img.offsetWidth is 16
 PASS img.offsetHeight is 16
 TEST "192dpi from-image"
-FAIL img.style.cssText should be image-resolution: 192dpi from-image; . Was .
+FAIL img.style.cssText should be image-resolution: 192dpi from-image;. Was .
 FAIL img.offsetWidth should be 8. Was 16.
 FAIL img.offsetHeight should be 8. Was 16.
 TEST "from-image 192dpi"
-FAIL img.style.cssText should be image-resolution: from-image 192dpi; . Was .
+FAIL img.style.cssText should be image-resolution: from-image 192dpi;. Was .
 FAIL img.offsetWidth should be 8. Was 16.
 FAIL img.offsetHeight should be 8. Was 16.
 TEST "288dpi from-image"
-FAIL img.style.cssText should be image-resolution: 288dpi from-image; . Was .
+FAIL img.style.cssText should be image-resolution: 288dpi from-image;. Was .
 FAIL img.offsetWidth should be 5. Was 16.
 FAIL img.offsetHeight should be 5. Was 16.
 TEST "from-image 288dpi"
-FAIL img.style.cssText should be image-resolution: from-image 288dpi; . Was .
+FAIL img.style.cssText should be image-resolution: from-image 288dpi;. Was .
 FAIL img.offsetWidth should be 5. Was 16.
 FAIL img.offsetHeight should be 5. Was 16.
 TEST "384dpi from-image"
-FAIL img.style.cssText should be image-resolution: 384dpi from-image; . Was .
+FAIL img.style.cssText should be image-resolution: 384dpi from-image;. Was .
 FAIL img.offsetWidth should be 4. Was 16.
 FAIL img.offsetHeight should be 4. Was 16.
 TEST "from-image 384dpi"
-FAIL img.style.cssText should be image-resolution: from-image 384dpi; . Was .
+FAIL img.style.cssText should be image-resolution: from-image 384dpi;. Was .
 FAIL img.offsetWidth should be 4. Was 16.
 FAIL img.offsetHeight should be 4. Was 16.
 TEST "150dpi from-image"
-FAIL img.style.cssText should be image-resolution: 150dpi from-image; . Was .
+FAIL img.style.cssText should be image-resolution: 150dpi from-image;. Was .
 FAIL img.offsetWidth should be 10. Was 16.
 FAIL img.offsetHeight should be 10. Was 16.
 TEST "from-image 150dpi"
-FAIL img.style.cssText should be image-resolution: from-image 150dpi; . Was .
+FAIL img.style.cssText should be image-resolution: from-image 150dpi;. Was .
 FAIL img.offsetWidth should be 10. Was 16.
 FAIL img.offsetHeight should be 10. Was 16.
 TEST "300dpi from-image"
-FAIL img.style.cssText should be image-resolution: 300dpi from-image; . Was .
+FAIL img.style.cssText should be image-resolution: 300dpi from-image;. Was .
 FAIL img.offsetWidth should be 5. Was 16.
 FAIL img.offsetHeight should be 5. Was 16.
 TEST "from-image 300dpi"
-FAIL img.style.cssText should be image-resolution: from-image 300dpi; . Was .
+FAIL img.style.cssText should be image-resolution: from-image 300dpi;. Was .
 FAIL img.offsetWidth should be 5. Was 16.
 FAIL img.offsetHeight should be 5. Was 16.
 TEST "450dpi from-image"
-FAIL img.style.cssText should be image-resolution: 450dpi from-image; . Was .
+FAIL img.style.cssText should be image-resolution: 450dpi from-image;. Was .
 FAIL img.offsetWidth should be 3. Was 16.
 FAIL img.offsetHeight should be 3. Was 16.
 TEST "from-image 450dpi"
-FAIL img.style.cssText should be image-resolution: from-image 450dpi; . Was .
+FAIL img.style.cssText should be image-resolution: from-image 450dpi;. Was .
 FAIL img.offsetWidth should be 3. Was 16.
 FAIL img.offsetHeight should be 3. Was 16.
 TEST "600dpi from-image"
-FAIL img.style.cssText should be image-resolution: 600dpi from-image; . Was .
+FAIL img.style.cssText should be image-resolution: 600dpi from-image;. Was .
 FAIL img.offsetWidth should be 2. Was 16.
 FAIL img.offsetHeight should be 2. Was 16.
 TEST "from-image 600dpi"
-FAIL img.style.cssText should be image-resolution: from-image 600dpi; . Was .
+FAIL img.style.cssText should be image-resolution: from-image 600dpi;. Was .
 FAIL img.offsetWidth should be 2. Was 16.
 FAIL img.offsetHeight should be 2. Was 16.
 TEST "0dpcm from-image"
@@ -184,39 +184,39 @@ PASS img.style.cssText is ""
 TEST "from-image 0dpcm"
 PASS img.style.cssText is ""
 TEST "37.7dpcm from-image"
-FAIL img.style.cssText should be image-resolution: 37.7dpcm from-image; . Was .
+FAIL img.style.cssText should be image-resolution: 37.7dpcm from-image;. Was .
 PASS img.offsetWidth is 16
 PASS img.offsetHeight is 16
 TEST "from-image 37.7dpcm"
-FAIL img.style.cssText should be image-resolution: from-image 37.7dpcm; . Was .
+FAIL img.style.cssText should be image-resolution: from-image 37.7dpcm;. Was .
 PASS img.offsetWidth is 16
 PASS img.offsetHeight is 16
 TEST "75.5dpcm from-image"
-FAIL img.style.cssText should be image-resolution: 75.5dpcm from-image; . Was .
+FAIL img.style.cssText should be image-resolution: 75.5dpcm from-image;. Was .
 FAIL img.offsetWidth should be 8. Was 16.
 FAIL img.offsetHeight should be 8. Was 16.
 TEST "from-image 75.5dpcm"
-FAIL img.style.cssText should be image-resolution: from-image 75.5dpcm; . Was .
+FAIL img.style.cssText should be image-resolution: from-image 75.5dpcm;. Was .
 FAIL img.offsetWidth should be 8. Was 16.
 FAIL img.offsetHeight should be 8. Was 16.
 TEST "113.3dpcm from-image"
-FAIL img.style.cssText should be image-resolution: 113.3dpcm from-image; . Was .
+FAIL img.style.cssText should be image-resolution: 113.3dpcm from-image;. Was .
 FAIL img.offsetWidth should be 5. Was 16.
 FAIL img.offsetHeight should be 5. Was 16.
 TEST "from-image 113.3dpcm"
-FAIL img.style.cssText should be image-resolution: from-image 113.3dpcm; . Was .
+FAIL img.style.cssText should be image-resolution: from-image 113.3dpcm;. Was .
 FAIL img.offsetWidth should be 5. Was 16.
 FAIL img.offsetHeight should be 5. Was 16.
 TEST "151.1dpcm from-image"
-FAIL img.style.cssText should be image-resolution: 151.1dpcm from-image; . Was .
+FAIL img.style.cssText should be image-resolution: 151.1dpcm from-image;. Was .
 FAIL img.offsetWidth should be 4. Was 16.
 FAIL img.offsetHeight should be 4. Was 16.
 TEST "from-image 151.1dpcm"
-FAIL img.style.cssText should be image-resolution: from-image 151.1dpcm; . Was .
+FAIL img.style.cssText should be image-resolution: from-image 151.1dpcm;. Was .
 FAIL img.offsetWidth should be 4. Was 16.
 FAIL img.offsetHeight should be 4. Was 16.
 TEST "from-image"
-FAIL img.style.cssText should be image-resolution: from-image; . Was .
+FAIL img.style.cssText should be image-resolution: from-image;. Was .
 PASS img.offsetWidth is 16
 PASS img.offsetHeight is 16
 TEST "0dppx snap"
@@ -224,35 +224,35 @@ PASS img.style.cssText is ""
 TEST "snap 0dppx"
 PASS img.style.cssText is ""
 TEST "1dppx snap"
-FAIL img.style.cssText should be image-resolution: 1dppx snap; . Was .
+FAIL img.style.cssText should be image-resolution: 1dppx snap;. Was .
 PASS img.offsetWidth is 16
 PASS img.offsetHeight is 16
 TEST "snap 1dppx"
-FAIL img.style.cssText should be image-resolution: snap 1dppx; . Was .
+FAIL img.style.cssText should be image-resolution: snap 1dppx;. Was .
 PASS img.offsetWidth is 16
 PASS img.offsetHeight is 16
 TEST "2dppx snap"
-FAIL img.style.cssText should be image-resolution: 2dppx snap; . Was .
+FAIL img.style.cssText should be image-resolution: 2dppx snap;. Was .
 FAIL img.offsetWidth should be 8. Was 16.
 FAIL img.offsetHeight should be 8. Was 16.
 TEST "snap 2dppx"
-FAIL img.style.cssText should be image-resolution: snap 2dppx; . Was .
+FAIL img.style.cssText should be image-resolution: snap 2dppx;. Was .
 FAIL img.offsetWidth should be 8. Was 16.
 FAIL img.offsetHeight should be 8. Was 16.
 TEST "3dppx snap"
-FAIL img.style.cssText should be image-resolution: 3dppx snap; . Was .
+FAIL img.style.cssText should be image-resolution: 3dppx snap;. Was .
 FAIL img.offsetWidth should be 5. Was 16.
 FAIL img.offsetHeight should be 5. Was 16.
 TEST "snap 3dppx"
-FAIL img.style.cssText should be image-resolution: snap 3dppx; . Was .
+FAIL img.style.cssText should be image-resolution: snap 3dppx;. Was .
 FAIL img.offsetWidth should be 5. Was 16.
 FAIL img.offsetHeight should be 5. Was 16.
 TEST "4dppx snap"
-FAIL img.style.cssText should be image-resolution: 4dppx snap; . Was .
+FAIL img.style.cssText should be image-resolution: 4dppx snap;. Was .
 FAIL img.offsetWidth should be 4. Was 16.
 FAIL img.offsetHeight should be 4. Was 16.
 TEST "snap 4dppx"
-FAIL img.style.cssText should be image-resolution: snap 4dppx; . Was .
+FAIL img.style.cssText should be image-resolution: snap 4dppx;. Was .
 FAIL img.offsetWidth should be 4. Was 16.
 FAIL img.offsetHeight should be 4. Was 16.
 TEST "0dpi snap"
@@ -260,67 +260,67 @@ PASS img.style.cssText is ""
 TEST "snap 0dpi"
 PASS img.style.cssText is ""
 TEST "96dpi snap"
-FAIL img.style.cssText should be image-resolution: 96dpi snap; . Was .
+FAIL img.style.cssText should be image-resolution: 96dpi snap;. Was .
 PASS img.offsetWidth is 16
 PASS img.offsetHeight is 16
 TEST "snap 96dpi"
-FAIL img.style.cssText should be image-resolution: snap 96dpi; . Was .
+FAIL img.style.cssText should be image-resolution: snap 96dpi;. Was .
 PASS img.offsetWidth is 16
 PASS img.offsetHeight is 16
 TEST "192dpi snap"
-FAIL img.style.cssText should be image-resolution: 192dpi snap; . Was .
+FAIL img.style.cssText should be image-resolution: 192dpi snap;. Was .
 FAIL img.offsetWidth should be 8. Was 16.
 FAIL img.offsetHeight should be 8. Was 16.
 TEST "snap 192dpi"
-FAIL img.style.cssText should be image-resolution: snap 192dpi; . Was .
+FAIL img.style.cssText should be image-resolution: snap 192dpi;. Was .
 FAIL img.offsetWidth should be 8. Was 16.
 FAIL img.offsetHeight should be 8. Was 16.
 TEST "288dpi snap"
-FAIL img.style.cssText should be image-resolution: 288dpi snap; . Was .
+FAIL img.style.cssText should be image-resolution: 288dpi snap;. Was .
 FAIL img.offsetWidth should be 5. Was 16.
 FAIL img.offsetHeight should be 5. Was 16.
 TEST "snap 288dpi"
-FAIL img.style.cssText should be image-resolution: snap 288dpi; . Was .
+FAIL img.style.cssText should be image-resolution: snap 288dpi;. Was .
 FAIL img.offsetWidth should be 5. Was 16.
 FAIL img.offsetHeight should be 5. Was 16.
 TEST "384dpi snap"
-FAIL img.style.cssText should be image-resolution: 384dpi snap; . Was .
+FAIL img.style.cssText should be image-resolution: 384dpi snap;. Was .
 FAIL img.offsetWidth should be 4. Was 16.
 FAIL img.offsetHeight should be 4. Was 16.
 TEST "snap 384dpi"
-FAIL img.style.cssText should be image-resolution: snap 384dpi; . Was .
+FAIL img.style.cssText should be image-resolution: snap 384dpi;. Was .
 FAIL img.offsetWidth should be 4. Was 16.
 FAIL img.offsetHeight should be 4. Was 16.
 TEST "150dpi snap"
-FAIL img.style.cssText should be image-resolution: 150dpi snap; . Was .
+FAIL img.style.cssText should be image-resolution: 150dpi snap;. Was .
 PASS img.offsetWidth is 16
 PASS img.offsetHeight is 16
 TEST "snap 150dpi"
-FAIL img.style.cssText should be image-resolution: snap 150dpi; . Was .
+FAIL img.style.cssText should be image-resolution: snap 150dpi;. Was .
 PASS img.offsetWidth is 16
 PASS img.offsetHeight is 16
 TEST "300dpi snap"
-FAIL img.style.cssText should be image-resolution: 300dpi snap; . Was .
+FAIL img.style.cssText should be image-resolution: 300dpi snap;. Was .
 FAIL img.offsetWidth should be 5. Was 16.
 FAIL img.offsetHeight should be 5. Was 16.
 TEST "snap 300dpi"
-FAIL img.style.cssText should be image-resolution: snap 300dpi; . Was .
+FAIL img.style.cssText should be image-resolution: snap 300dpi;. Was .
 FAIL img.offsetWidth should be 5. Was 16.
 FAIL img.offsetHeight should be 5. Was 16.
 TEST "450dpi snap"
-FAIL img.style.cssText should be image-resolution: 450dpi snap; . Was .
+FAIL img.style.cssText should be image-resolution: 450dpi snap;. Was .
 FAIL img.offsetWidth should be 4. Was 16.
 FAIL img.offsetHeight should be 4. Was 16.
 TEST "snap 450dpi"
-FAIL img.style.cssText should be image-resolution: snap 450dpi; . Was .
+FAIL img.style.cssText should be image-resolution: snap 450dpi;. Was .
 FAIL img.offsetWidth should be 4. Was 16.
 FAIL img.offsetHeight should be 4. Was 16.
 TEST "600dpi snap"
-FAIL img.style.cssText should be image-resolution: 600dpi snap; . Was .
+FAIL img.style.cssText should be image-resolution: 600dpi snap;. Was .
 FAIL img.offsetWidth should be 2. Was 16.
 FAIL img.offsetHeight should be 2. Was 16.
 TEST "snap 600dpi"
-FAIL img.style.cssText should be image-resolution: snap 600dpi; . Was .
+FAIL img.style.cssText should be image-resolution: snap 600dpi;. Was .
 FAIL img.offsetWidth should be 2. Was 16.
 FAIL img.offsetHeight should be 2. Was 16.
 TEST "0dpcm snap"
@@ -328,35 +328,35 @@ PASS img.style.cssText is ""
 TEST "snap 0dpcm"
 PASS img.style.cssText is ""
 TEST "37.7dpcm snap"
-FAIL img.style.cssText should be image-resolution: 37.7dpcm snap; . Was .
+FAIL img.style.cssText should be image-resolution: 37.7dpcm snap;. Was .
 PASS img.offsetWidth is 16
 PASS img.offsetHeight is 16
 TEST "snap 37.7dpcm"
-FAIL img.style.cssText should be image-resolution: snap 37.7dpcm; . Was .
+FAIL img.style.cssText should be image-resolution: snap 37.7dpcm;. Was .
 PASS img.offsetWidth is 16
 PASS img.offsetHeight is 16
 TEST "75.5dpcm snap"
-FAIL img.style.cssText should be image-resolution: 75.5dpcm snap; . Was .
+FAIL img.style.cssText should be image-resolution: 75.5dpcm snap;. Was .
 FAIL img.offsetWidth should be 8. Was 16.
 FAIL img.offsetHeight should be 8. Was 16.
 TEST "snap 75.5dpcm"
-FAIL img.style.cssText should be image-resolution: snap 75.5dpcm; . Was .
+FAIL img.style.cssText should be image-resolution: snap 75.5dpcm;. Was .
 FAIL img.offsetWidth should be 8. Was 16.
 FAIL img.offsetHeight should be 8. Was 16.
 TEST "113.3dpcm snap"
-FAIL img.style.cssText should be image-resolution: 113.3dpcm snap; . Was .
+FAIL img.style.cssText should be image-resolution: 113.3dpcm snap;. Was .
 FAIL img.offsetWidth should be 5. Was 16.
 FAIL img.offsetHeight should be 5. Was 16.
 TEST "snap 113.3dpcm"
-FAIL img.style.cssText should be image-resolution: snap 113.3dpcm; . Was .
+FAIL img.style.cssText should be image-resolution: snap 113.3dpcm;. Was .
 FAIL img.offsetWidth should be 5. Was 16.
 FAIL img.offsetHeight should be 5. Was 16.
 TEST "151.1dpcm snap"
-FAIL img.style.cssText should be image-resolution: 151.1dpcm snap; . Was .
+FAIL img.style.cssText should be image-resolution: 151.1dpcm snap;. Was .
 FAIL img.offsetWidth should be 4. Was 16.
 FAIL img.offsetHeight should be 4. Was 16.
 TEST "snap 151.1dpcm"
-FAIL img.style.cssText should be image-resolution: snap 151.1dpcm; . Was .
+FAIL img.style.cssText should be image-resolution: snap 151.1dpcm;. Was .
 FAIL img.offsetWidth should be 4. Was 16.
 FAIL img.offsetHeight should be 4. Was 16.
 TEST "snap"
@@ -374,99 +374,99 @@ PASS img.style.cssText is ""
 TEST "snap from-image 0dppx"
 PASS img.style.cssText is ""
 TEST "1dppx from-image snap"
-FAIL img.style.cssText should be image-resolution: 1dppx from-image snap; . Was .
+FAIL img.style.cssText should be image-resolution: 1dppx from-image snap;. Was .
 PASS img.offsetWidth is 16
 PASS img.offsetHeight is 16
 TEST "1dppx snap from-image"
-FAIL img.style.cssText should be image-resolution: 1dppx snap from-image; . Was .
+FAIL img.style.cssText should be image-resolution: 1dppx snap from-image;. Was .
 PASS img.offsetWidth is 16
 PASS img.offsetHeight is 16
 TEST "from-image 1dppx snap"
-FAIL img.style.cssText should be image-resolution: from-image 1dppx snap; . Was .
+FAIL img.style.cssText should be image-resolution: from-image 1dppx snap;. Was .
 PASS img.offsetWidth is 16
 PASS img.offsetHeight is 16
 TEST "from-image snap 1dppx"
-FAIL img.style.cssText should be image-resolution: from-image snap 1dppx; . Was .
+FAIL img.style.cssText should be image-resolution: from-image snap 1dppx;. Was .
 PASS img.offsetWidth is 16
 PASS img.offsetHeight is 16
 TEST "snap 1dppx from-image"
-FAIL img.style.cssText should be image-resolution: snap 1dppx from-image; . Was .
+FAIL img.style.cssText should be image-resolution: snap 1dppx from-image;. Was .
 PASS img.offsetWidth is 16
 PASS img.offsetHeight is 16
 TEST "snap from-image 1dppx"
-FAIL img.style.cssText should be image-resolution: snap from-image 1dppx; . Was .
+FAIL img.style.cssText should be image-resolution: snap from-image 1dppx;. Was .
 PASS img.offsetWidth is 16
 PASS img.offsetHeight is 16
 TEST "2dppx from-image snap"
-FAIL img.style.cssText should be image-resolution: 2dppx from-image snap; . Was .
+FAIL img.style.cssText should be image-resolution: 2dppx from-image snap;. Was .
 FAIL img.offsetWidth should be 8. Was 16.
 FAIL img.offsetHeight should be 8. Was 16.
 TEST "2dppx snap from-image"
-FAIL img.style.cssText should be image-resolution: 2dppx snap from-image; . Was .
+FAIL img.style.cssText should be image-resolution: 2dppx snap from-image;. Was .
 FAIL img.offsetWidth should be 8. Was 16.
 FAIL img.offsetHeight should be 8. Was 16.
 TEST "from-image 2dppx snap"
-FAIL img.style.cssText should be image-resolution: from-image 2dppx snap; . Was .
+FAIL img.style.cssText should be image-resolution: from-image 2dppx snap;. Was .
 FAIL img.offsetWidth should be 8. Was 16.
 FAIL img.offsetHeight should be 8. Was 16.
 TEST "from-image snap 2dppx"
-FAIL img.style.cssText should be image-resolution: from-image snap 2dppx; . Was .
+FAIL img.style.cssText should be image-resolution: from-image snap 2dppx;. Was .
 FAIL img.offsetWidth should be 8. Was 16.
 FAIL img.offsetHeight should be 8. Was 16.
 TEST "snap 2dppx from-image"
-FAIL img.style.cssText should be image-resolution: snap 2dppx from-image; . Was .
+FAIL img.style.cssText should be image-resolution: snap 2dppx from-image;. Was .
 FAIL img.offsetWidth should be 8. Was 16.
 FAIL img.offsetHeight should be 8. Was 16.
 TEST "snap from-image 2dppx"
-FAIL img.style.cssText should be image-resolution: snap from-image 2dppx; . Was .
+FAIL img.style.cssText should be image-resolution: snap from-image 2dppx;. Was .
 FAIL img.offsetWidth should be 8. Was 16.
 FAIL img.offsetHeight should be 8. Was 16.
 TEST "3dppx from-image snap"
-FAIL img.style.cssText should be image-resolution: 3dppx from-image snap; . Was .
+FAIL img.style.cssText should be image-resolution: 3dppx from-image snap;. Was .
 FAIL img.offsetWidth should be 5. Was 16.
 FAIL img.offsetHeight should be 5. Was 16.
 TEST "3dppx snap from-image"
-FAIL img.style.cssText should be image-resolution: 3dppx snap from-image; . Was .
+FAIL img.style.cssText should be image-resolution: 3dppx snap from-image;. Was .
 FAIL img.offsetWidth should be 5. Was 16.
 FAIL img.offsetHeight should be 5. Was 16.
 TEST "from-image 3dppx snap"
-FAIL img.style.cssText should be image-resolution: from-image 3dppx snap; . Was .
+FAIL img.style.cssText should be image-resolution: from-image 3dppx snap;. Was .
 FAIL img.offsetWidth should be 5. Was 16.
 FAIL img.offsetHeight should be 5. Was 16.
 TEST "from-image snap 3dppx"
-FAIL img.style.cssText should be image-resolution: from-image snap 3dppx; . Was .
+FAIL img.style.cssText should be image-resolution: from-image snap 3dppx;. Was .
 FAIL img.offsetWidth should be 5. Was 16.
 FAIL img.offsetHeight should be 5. Was 16.
 TEST "snap 3dppx from-image"
-FAIL img.style.cssText should be image-resolution: snap 3dppx from-image; . Was .
+FAIL img.style.cssText should be image-resolution: snap 3dppx from-image;. Was .
 FAIL img.offsetWidth should be 5. Was 16.
 FAIL img.offsetHeight should be 5. Was 16.
 TEST "snap from-image 3dppx"
-FAIL img.style.cssText should be image-resolution: snap from-image 3dppx; . Was .
+FAIL img.style.cssText should be image-resolution: snap from-image 3dppx;. Was .
 FAIL img.offsetWidth should be 5. Was 16.
 FAIL img.offsetHeight should be 5. Was 16.
 TEST "4dppx from-image snap"
-FAIL img.style.cssText should be image-resolution: 4dppx from-image snap; . Was .
+FAIL img.style.cssText should be image-resolution: 4dppx from-image snap;. Was .
 FAIL img.offsetWidth should be 4. Was 16.
 FAIL img.offsetHeight should be 4. Was 16.
 TEST "4dppx snap from-image"
-FAIL img.style.cssText should be image-resolution: 4dppx snap from-image; . Was .
+FAIL img.style.cssText should be image-resolution: 4dppx snap from-image;. Was .
 FAIL img.offsetWidth should be 4. Was 16.
 FAIL img.offsetHeight should be 4. Was 16.
 TEST "from-image 4dppx snap"
-FAIL img.style.cssText should be image-resolution: from-image 4dppx snap; . Was .
+FAIL img.style.cssText should be image-resolution: from-image 4dppx snap;. Was .
 FAIL img.offsetWidth should be 4. Was 16.
 FAIL img.offsetHeight should be 4. Was 16.
 TEST "from-image snap 4dppx"
-FAIL img.style.cssText should be image-resolution: from-image snap 4dppx; . Was .
+FAIL img.style.cssText should be image-resolution: from-image snap 4dppx;. Was .
 FAIL img.offsetWidth should be 4. Was 16.
 FAIL img.offsetHeight should be 4. Was 16.
 TEST "snap 4dppx from-image"
-FAIL img.style.cssText should be image-resolution: snap 4dppx from-image; . Was .
+FAIL img.style.cssText should be image-resolution: snap 4dppx from-image;. Was .
 FAIL img.offsetWidth should be 4. Was 16.
 FAIL img.offsetHeight should be 4. Was 16.
 TEST "snap from-image 4dppx"
-FAIL img.style.cssText should be image-resolution: snap from-image 4dppx; . Was .
+FAIL img.style.cssText should be image-resolution: snap from-image 4dppx;. Was .
 FAIL img.offsetWidth should be 4. Was 16.
 FAIL img.offsetHeight should be 4. Was 16.
 TEST "0dpi from-image snap"
@@ -482,195 +482,195 @@ PASS img.style.cssText is ""
 TEST "snap from-image 0dpi"
 PASS img.style.cssText is ""
 TEST "96dpi from-image snap"
-FAIL img.style.cssText should be image-resolution: 96dpi from-image snap; . Was .
+FAIL img.style.cssText should be image-resolution: 96dpi from-image snap;. Was .
 PASS img.offsetWidth is 16
 PASS img.offsetHeight is 16
 TEST "96dpi snap from-image"
-FAIL img.style.cssText should be image-resolution: 96dpi snap from-image; . Was .
+FAIL img.style.cssText should be image-resolution: 96dpi snap from-image;. Was .
 PASS img.offsetWidth is 16
 PASS img.offsetHeight is 16
 TEST "from-image 96dpi snap"
-FAIL img.style.cssText should be image-resolution: from-image 96dpi snap; . Was .
+FAIL img.style.cssText should be image-resolution: from-image 96dpi snap;. Was .
 PASS img.offsetWidth is 16
 PASS img.offsetHeight is 16
 TEST "from-image snap 96dpi"
-FAIL img.style.cssText should be image-resolution: from-image snap 96dpi; . Was .
+FAIL img.style.cssText should be image-resolution: from-image snap 96dpi;. Was .
 PASS img.offsetWidth is 16
 PASS img.offsetHeight is 16
 TEST "snap 96dpi from-image"
-FAIL img.style.cssText should be image-resolution: snap 96dpi from-image; . Was .
+FAIL img.style.cssText should be image-resolution: snap 96dpi from-image;. Was .
 PASS img.offsetWidth is 16
 PASS img.offsetHeight is 16
 TEST "snap from-image 96dpi"
-FAIL img.style.cssText should be image-resolution: snap from-image 96dpi; . Was .
+FAIL img.style.cssText should be image-resolution: snap from-image 96dpi;. Was .
 PASS img.offsetWidth is 16
 PASS img.offsetHeight is 16
 TEST "192dpi from-image snap"
-FAIL img.style.cssText should be image-resolution: 192dpi from-image snap; . Was .
+FAIL img.style.cssText should be image-resolution: 192dpi from-image snap;. Was .
 FAIL img.offsetWidth should be 8. Was 16.
 FAIL img.offsetHeight should be 8. Was 16.
 TEST "192dpi snap from-image"
-FAIL img.style.cssText should be image-resolution: 192dpi snap from-image; . Was .
+FAIL img.style.cssText should be image-resolution: 192dpi snap from-image;. Was .
 FAIL img.offsetWidth should be 8. Was 16.
 FAIL img.offsetHeight should be 8. Was 16.
 TEST "from-image 192dpi snap"
-FAIL img.style.cssText should be image-resolution: from-image 192dpi snap; . Was .
+FAIL img.style.cssText should be image-resolution: from-image 192dpi snap;. Was .
 FAIL img.offsetWidth should be 8. Was 16.
 FAIL img.offsetHeight should be 8. Was 16.
 TEST "from-image snap 192dpi"
-FAIL img.style.cssText should be image-resolution: from-image snap 192dpi; . Was .
+FAIL img.style.cssText should be image-resolution: from-image snap 192dpi;. Was .
 FAIL img.offsetWidth should be 8. Was 16.
 FAIL img.offsetHeight should be 8. Was 16.
 TEST "snap 192dpi from-image"
-FAIL img.style.cssText should be image-resolution: snap 192dpi from-image; . Was .
+FAIL img.style.cssText should be image-resolution: snap 192dpi from-image;. Was .
 FAIL img.offsetWidth should be 8. Was 16.
 FAIL img.offsetHeight should be 8. Was 16.
 TEST "snap from-image 192dpi"
-FAIL img.style.cssText should be image-resolution: snap from-image 192dpi; . Was .
+FAIL img.style.cssText should be image-resolution: snap from-image 192dpi;. Was .
 FAIL img.offsetWidth should be 8. Was 16.
 FAIL img.offsetHeight should be 8. Was 16.
 TEST "288dpi from-image snap"
-FAIL img.style.cssText should be image-resolution: 288dpi from-image snap; . Was .
+FAIL img.style.cssText should be image-resolution: 288dpi from-image snap;. Was .
 FAIL img.offsetWidth should be 5. Was 16.
 FAIL img.offsetHeight should be 5. Was 16.
 TEST "288dpi snap from-image"
-FAIL img.style.cssText should be image-resolution: 288dpi snap from-image; . Was .
+FAIL img.style.cssText should be image-resolution: 288dpi snap from-image;. Was .
 FAIL img.offsetWidth should be 5. Was 16.
 FAIL img.offsetHeight should be 5. Was 16.
 TEST "from-image 288dpi snap"
-FAIL img.style.cssText should be image-resolution: from-image 288dpi snap; . Was .
+FAIL img.style.cssText should be image-resolution: from-image 288dpi snap;. Was .
 FAIL img.offsetWidth should be 5. Was 16.
 FAIL img.offsetHeight should be 5. Was 16.
 TEST "from-image snap 288dpi"
-FAIL img.style.cssText should be image-resolution: from-image snap 288dpi; . Was .
+FAIL img.style.cssText should be image-resolution: from-image snap 288dpi;. Was .
 FAIL img.offsetWidth should be 5. Was 16.
 FAIL img.offsetHeight should be 5. Was 16.
 TEST "snap 288dpi from-image"
-FAIL img.style.cssText should be image-resolution: snap 288dpi from-image; . Was .
+FAIL img.style.cssText should be image-resolution: snap 288dpi from-image;. Was .
 FAIL img.offsetWidth should be 5. Was 16.
 FAIL img.offsetHeight should be 5. Was 16.
 TEST "snap from-image 288dpi"
-FAIL img.style.cssText should be image-resolution: snap from-image 288dpi; . Was .
+FAIL img.style.cssText should be image-resolution: snap from-image 288dpi;. Was .
 FAIL img.offsetWidth should be 5. Was 16.
 FAIL img.offsetHeight should be 5. Was 16.
 TEST "384dpi from-image snap"
-FAIL img.style.cssText should be image-resolution: 384dpi from-image snap; . Was .
+FAIL img.style.cssText should be image-resolution: 384dpi from-image snap;. Was .
 FAIL img.offsetWidth should be 4. Was 16.
 FAIL img.offsetHeight should be 4. Was 16.
 TEST "384dpi snap from-image"
-FAIL img.style.cssText should be image-resolution: 384dpi snap from-image; . Was .
+FAIL img.style.cssText should be image-resolution: 384dpi snap from-image;. Was .
 FAIL img.offsetWidth should be 4. Was 16.
 FAIL img.offsetHeight should be 4. Was 16.
 TEST "from-image 384dpi snap"
-FAIL img.style.cssText should be image-resolution: from-image 384dpi snap; . Was .
+FAIL img.style.cssText should be image-resolution: from-image 384dpi snap;. Was .
 FAIL img.offsetWidth should be 4. Was 16.
 FAIL img.offsetHeight should be 4. Was 16.
 TEST "from-image snap 384dpi"
-FAIL img.style.cssText should be image-resolution: from-image snap 384dpi; . Was .
+FAIL img.style.cssText should be image-resolution: from-image snap 384dpi;. Was .
 FAIL img.offsetWidth should be 4. Was 16.
 FAIL img.offsetHeight should be 4. Was 16.
 TEST "snap 384dpi from-image"
-FAIL img.style.cssText should be image-resolution: snap 384dpi from-image; . Was .
+FAIL img.style.cssText should be image-resolution: snap 384dpi from-image;. Was .
 FAIL img.offsetWidth should be 4. Was 16.
 FAIL img.offsetHeight should be 4. Was 16.
 TEST "snap from-image 384dpi"
-FAIL img.style.cssText should be image-resolution: snap from-image 384dpi; . Was .
+FAIL img.style.cssText should be image-resolution: snap from-image 384dpi;. Was .
 FAIL img.offsetWidth should be 4. Was 16.
 FAIL img.offsetHeight should be 4. Was 16.
 TEST "150dpi from-image snap"
-FAIL img.style.cssText should be image-resolution: 150dpi from-image snap; . Was .
+FAIL img.style.cssText should be image-resolution: 150dpi from-image snap;. Was .
 PASS img.offsetWidth is 16
 PASS img.offsetHeight is 16
 TEST "150dpi snap from-image"
-FAIL img.style.cssText should be image-resolution: 150dpi snap from-image; . Was .
+FAIL img.style.cssText should be image-resolution: 150dpi snap from-image;. Was .
 PASS img.offsetWidth is 16
 PASS img.offsetHeight is 16
 TEST "from-image 150dpi snap"
-FAIL img.style.cssText should be image-resolution: from-image 150dpi snap; . Was .
+FAIL img.style.cssText should be image-resolution: from-image 150dpi snap;. Was .
 PASS img.offsetWidth is 16
 PASS img.offsetHeight is 16
 TEST "from-image snap 150dpi"
-FAIL img.style.cssText should be image-resolution: from-image snap 150dpi; . Was .
+FAIL img.style.cssText should be image-resolution: from-image snap 150dpi;. Was .
 PASS img.offsetWidth is 16
 PASS img.offsetHeight is 16
 TEST "snap 150dpi from-image"
-FAIL img.style.cssText should be image-resolution: snap 150dpi from-image; . Was .
+FAIL img.style.cssText should be image-resolution: snap 150dpi from-image;. Was .
 PASS img.offsetWidth is 16
 PASS img.offsetHeight is 16
 TEST "snap from-image 150dpi"
-FAIL img.style.cssText should be image-resolution: snap from-image 150dpi; . Was .
+FAIL img.style.cssText should be image-resolution: snap from-image 150dpi;. Was .
 PASS img.offsetWidth is 16
 PASS img.offsetHeight is 16
 TEST "300dpi from-image snap"
-FAIL img.style.cssText should be image-resolution: 300dpi from-image snap; . Was .
+FAIL img.style.cssText should be image-resolution: 300dpi from-image snap;. Was .
 FAIL img.offsetWidth should be 5. Was 16.
 FAIL img.offsetHeight should be 5. Was 16.
 TEST "300dpi snap from-image"
-FAIL img.style.cssText should be image-resolution: 300dpi snap from-image; . Was .
+FAIL img.style.cssText should be image-resolution: 300dpi snap from-image;. Was .
 FAIL img.offsetWidth should be 5. Was 16.
 FAIL img.offsetHeight should be 5. Was 16.
 TEST "from-image 300dpi snap"
-FAIL img.style.cssText should be image-resolution: from-image 300dpi snap; . Was .
+FAIL img.style.cssText should be image-resolution: from-image 300dpi snap;. Was .
 FAIL img.offsetWidth should be 5. Was 16.
 FAIL img.offsetHeight should be 5. Was 16.
 TEST "from-image snap 300dpi"
-FAIL img.style.cssText should be image-resolution: from-image snap 300dpi; . Was .
+FAIL img.style.cssText should be image-resolution: from-image snap 300dpi;. Was .
 FAIL img.offsetWidth should be 5. Was 16.
 FAIL img.offsetHeight should be 5. Was 16.
 TEST "snap 300dpi from-image"
-FAIL img.style.cssText should be image-resolution: snap 300dpi from-image; . Was .
+FAIL img.style.cssText should be image-resolution: snap 300dpi from-image;. Was .
 FAIL img.offsetWidth should be 5. Was 16.
 FAIL img.offsetHeight should be 5. Was 16.
 TEST "snap from-image 300dpi"
-FAIL img.style.cssText should be image-resolution: snap from-image 300dpi; . Was .
+FAIL img.style.cssText should be image-resolution: snap from-image 300dpi;. Was .
 FAIL img.offsetWidth should be 5. Was 16.
 FAIL img.offsetHeight should be 5. Was 16.
 TEST "450dpi from-image snap"
-FAIL img.style.cssText should be image-resolution: 450dpi from-image snap; . Was .
+FAIL img.style.cssText should be image-resolution: 450dpi from-image snap;. Was .
 FAIL img.offsetWidth should be 4. Was 16.
 FAIL img.offsetHeight should be 4. Was 16.
 TEST "450dpi snap from-image"
-FAIL img.style.cssText should be image-resolution: 450dpi snap from-image; . Was .
+FAIL img.style.cssText should be image-resolution: 450dpi snap from-image;. Was .
 FAIL img.offsetWidth should be 4. Was 16.
 FAIL img.offsetHeight should be 4. Was 16.
 TEST "from-image 450dpi snap"
-FAIL img.style.cssText should be image-resolution: from-image 450dpi snap; . Was .
+FAIL img.style.cssText should be image-resolution: from-image 450dpi snap;. Was .
 FAIL img.offsetWidth should be 4. Was 16.
 FAIL img.offsetHeight should be 4. Was 16.
 TEST "from-image snap 450dpi"
-FAIL img.style.cssText should be image-resolution: from-image snap 450dpi; . Was .
+FAIL img.style.cssText should be image-resolution: from-image snap 450dpi;. Was .
 FAIL img.offsetWidth should be 4. Was 16.
 FAIL img.offsetHeight should be 4. Was 16.
 TEST "snap 450dpi from-image"
-FAIL img.style.cssText should be image-resolution: snap 450dpi from-image; . Was .
+FAIL img.style.cssText should be image-resolution: snap 450dpi from-image;. Was .
 FAIL img.offsetWidth should be 4. Was 16.
 FAIL img.offsetHeight should be 4. Was 16.
 TEST "snap from-image 450dpi"
-FAIL img.style.cssText should be image-resolution: snap from-image 450dpi; . Was .
+FAIL img.style.cssText should be image-resolution: snap from-image 450dpi;. Was .
 FAIL img.offsetWidth should be 4. Was 16.
 FAIL img.offsetHeight should be 4. Was 16.
 TEST "600dpi from-image snap"
-FAIL img.style.cssText should be image-resolution: 600dpi from-image snap; . Was .
+FAIL img.style.cssText should be image-resolution: 600dpi from-image snap;. Was .
 FAIL img.offsetWidth should be 2. Was 16.
 FAIL img.offsetHeight should be 2. Was 16.
 TEST "600dpi snap from-image"
-FAIL img.style.cssText should be image-resolution: 600dpi snap from-image; . Was .
+FAIL img.style.cssText should be image-resolution: 600dpi snap from-image;. Was .
 FAIL img.offsetWidth should be 2. Was 16.
 FAIL img.offsetHeight should be 2. Was 16.
 TEST "from-image 600dpi snap"
-FAIL img.style.cssText should be image-resolution: from-image 600dpi snap; . Was .
+FAIL img.style.cssText should be image-resolution: from-image 600dpi snap;. Was .
 FAIL img.offsetWidth should be 2. Was 16.
 FAIL img.offsetHeight should be 2. Was 16.
 TEST "from-image snap 600dpi"
-FAIL img.style.cssText should be image-resolution: from-image snap 600dpi; . Was .
+FAIL img.style.cssText should be image-resolution: from-image snap 600dpi;. Was .
 FAIL img.offsetWidth should be 2. Was 16.
 FAIL img.offsetHeight should be 2. Was 16.
 TEST "snap 600dpi from-image"
-FAIL img.style.cssText should be image-resolution: snap 600dpi from-image; . Was .
+FAIL img.style.cssText should be image-resolution: snap 600dpi from-image;. Was .
 FAIL img.offsetWidth should be 2. Was 16.
 FAIL img.offsetHeight should be 2. Was 16.
 TEST "snap from-image 600dpi"
-FAIL img.style.cssText should be image-resolution: snap from-image 600dpi; . Was .
+FAIL img.style.cssText should be image-resolution: snap from-image 600dpi;. Was .
 FAIL img.offsetWidth should be 2. Was 16.
 FAIL img.offsetHeight should be 2. Was 16.
 TEST "0dpcm from-image snap"
@@ -686,107 +686,107 @@ PASS img.style.cssText is ""
 TEST "snap from-image 0dpcm"
 PASS img.style.cssText is ""
 TEST "37.7dpcm from-image snap"
-FAIL img.style.cssText should be image-resolution: 37.7dpcm from-image snap; . Was .
+FAIL img.style.cssText should be image-resolution: 37.7dpcm from-image snap;. Was .
 PASS img.offsetWidth is 16
 PASS img.offsetHeight is 16
 TEST "37.7dpcm snap from-image"
-FAIL img.style.cssText should be image-resolution: 37.7dpcm snap from-image; . Was .
+FAIL img.style.cssText should be image-resolution: 37.7dpcm snap from-image;. Was .
 PASS img.offsetWidth is 16
 PASS img.offsetHeight is 16
 TEST "from-image 37.7dpcm snap"
-FAIL img.style.cssText should be image-resolution: from-image 37.7dpcm snap; . Was .
+FAIL img.style.cssText should be image-resolution: from-image 37.7dpcm snap;. Was .
 PASS img.offsetWidth is 16
 PASS img.offsetHeight is 16
 TEST "from-image snap 37.7dpcm"
-FAIL img.style.cssText should be image-resolution: from-image snap 37.7dpcm; . Was .
+FAIL img.style.cssText should be image-resolution: from-image snap 37.7dpcm;. Was .
 PASS img.offsetWidth is 16
 PASS img.offsetHeight is 16
 TEST "snap 37.7dpcm from-image"
-FAIL img.style.cssText should be image-resolution: snap 37.7dpcm from-image; . Was .
+FAIL img.style.cssText should be image-resolution: snap 37.7dpcm from-image;. Was .
 PASS img.offsetWidth is 16
 PASS img.offsetHeight is 16
 TEST "snap from-image 37.7dpcm"
-FAIL img.style.cssText should be image-resolution: snap from-image 37.7dpcm; . Was .
+FAIL img.style.cssText should be image-resolution: snap from-image 37.7dpcm;. Was .
 PASS img.offsetWidth is 16
 PASS img.offsetHeight is 16
 TEST "75.5dpcm from-image snap"
-FAIL img.style.cssText should be image-resolution: 75.5dpcm from-image snap; . Was .
+FAIL img.style.cssText should be image-resolution: 75.5dpcm from-image snap;. Was .
 FAIL img.offsetWidth should be 8. Was 16.
 FAIL img.offsetHeight should be 8. Was 16.
 TEST "75.5dpcm snap from-image"
-FAIL img.style.cssText should be image-resolution: 75.5dpcm snap from-image; . Was .
+FAIL img.style.cssText should be image-resolution: 75.5dpcm snap from-image;. Was .
 FAIL img.offsetWidth should be 8. Was 16.
 FAIL img.offsetHeight should be 8. Was 16.
 TEST "from-image 75.5dpcm snap"
-FAIL img.style.cssText should be image-resolution: from-image 75.5dpcm snap; . Was .
+FAIL img.style.cssText should be image-resolution: from-image 75.5dpcm snap;. Was .
 FAIL img.offsetWidth should be 8. Was 16.
 FAIL img.offsetHeight should be 8. Was 16.
 TEST "from-image snap 75.5dpcm"
-FAIL img.style.cssText should be image-resolution: from-image snap 75.5dpcm; . Was .
+FAIL img.style.cssText should be image-resolution: from-image snap 75.5dpcm;. Was .
 FAIL img.offsetWidth should be 8. Was 16.
 FAIL img.offsetHeight should be 8. Was 16.
 TEST "snap 75.5dpcm from-image"
-FAIL img.style.cssText should be image-resolution: snap 75.5dpcm from-image; . Was .
+FAIL img.style.cssText should be image-resolution: snap 75.5dpcm from-image;. Was .
 FAIL img.offsetWidth should be 8. Was 16.
 FAIL img.offsetHeight should be 8. Was 16.
 TEST "snap from-image 75.5dpcm"
-FAIL img.style.cssText should be image-resolution: snap from-image 75.5dpcm; . Was .
+FAIL img.style.cssText should be image-resolution: snap from-image 75.5dpcm;. Was .
 FAIL img.offsetWidth should be 8. Was 16.
 FAIL img.offsetHeight should be 8. Was 16.
 TEST "113.3dpcm from-image snap"
-FAIL img.style.cssText should be image-resolution: 113.3dpcm from-image snap; . Was .
+FAIL img.style.cssText should be image-resolution: 113.3dpcm from-image snap;. Was .
 FAIL img.offsetWidth should be 5. Was 16.
 FAIL img.offsetHeight should be 5. Was 16.
 TEST "113.3dpcm snap from-image"
-FAIL img.style.cssText should be image-resolution: 113.3dpcm snap from-image; . Was .
+FAIL img.style.cssText should be image-resolution: 113.3dpcm snap from-image;. Was .
 FAIL img.offsetWidth should be 5. Was 16.
 FAIL img.offsetHeight should be 5. Was 16.
 TEST "from-image 113.3dpcm snap"
-FAIL img.style.cssText should be image-resolution: from-image 113.3dpcm snap; . Was .
+FAIL img.style.cssText should be image-resolution: from-image 113.3dpcm snap;. Was .
 FAIL img.offsetWidth should be 5. Was 16.
 FAIL img.offsetHeight should be 5. Was 16.
 TEST "from-image snap 113.3dpcm"
-FAIL img.style.cssText should be image-resolution: from-image snap 113.3dpcm; . Was .
+FAIL img.style.cssText should be image-resolution: from-image snap 113.3dpcm;. Was .
 FAIL img.offsetWidth should be 5. Was 16.
 FAIL img.offsetHeight should be 5. Was 16.
 TEST "snap 113.3dpcm from-image"
-FAIL img.style.cssText should be image-resolution: snap 113.3dpcm from-image; . Was .
+FAIL img.style.cssText should be image-resolution: snap 113.3dpcm from-image;. Was .
 FAIL img.offsetWidth should be 5. Was 16.
 FAIL img.offsetHeight should be 5. Was 16.
 TEST "snap from-image 113.3dpcm"
-FAIL img.style.cssText should be image-resolution: snap from-image 113.3dpcm; . Was .
+FAIL img.style.cssText should be image-resolution: snap from-image 113.3dpcm;. Was .
 FAIL img.offsetWidth should be 5. Was 16.
 FAIL img.offsetHeight should be 5. Was 16.
 TEST "151.1dpcm from-image snap"
-FAIL img.style.cssText should be image-resolution: 151.1dpcm from-image snap; . Was .
+FAIL img.style.cssText should be image-resolution: 151.1dpcm from-image snap;. Was .
 FAIL img.offsetWidth should be 4. Was 16.
 FAIL img.offsetHeight should be 4. Was 16.
 TEST "151.1dpcm snap from-image"
-FAIL img.style.cssText should be image-resolution: 151.1dpcm snap from-image; . Was .
+FAIL img.style.cssText should be image-resolution: 151.1dpcm snap from-image;. Was .
 FAIL img.offsetWidth should be 4. Was 16.
 FAIL img.offsetHeight should be 4. Was 16.
 TEST "from-image 151.1dpcm snap"
-FAIL img.style.cssText should be image-resolution: from-image 151.1dpcm snap; . Was .
+FAIL img.style.cssText should be image-resolution: from-image 151.1dpcm snap;. Was .
 FAIL img.offsetWidth should be 4. Was 16.
 FAIL img.offsetHeight should be 4. Was 16.
 TEST "from-image snap 151.1dpcm"
-FAIL img.style.cssText should be image-resolution: from-image snap 151.1dpcm; . Was .
+FAIL img.style.cssText should be image-resolution: from-image snap 151.1dpcm;. Was .
 FAIL img.offsetWidth should be 4. Was 16.
 FAIL img.offsetHeight should be 4. Was 16.
 TEST "snap 151.1dpcm from-image"
-FAIL img.style.cssText should be image-resolution: snap 151.1dpcm from-image; . Was .
+FAIL img.style.cssText should be image-resolution: snap 151.1dpcm from-image;. Was .
 FAIL img.offsetWidth should be 4. Was 16.
 FAIL img.offsetHeight should be 4. Was 16.
 TEST "snap from-image 151.1dpcm"
-FAIL img.style.cssText should be image-resolution: snap from-image 151.1dpcm; . Was .
+FAIL img.style.cssText should be image-resolution: snap from-image 151.1dpcm;. Was .
 FAIL img.offsetWidth should be 4. Was 16.
 FAIL img.offsetHeight should be 4. Was 16.
 TEST "from-image snap"
-FAIL img.style.cssText should be image-resolution: from-image snap; . Was .
+FAIL img.style.cssText should be image-resolution: from-image snap;. Was .
 PASS img.offsetWidth is 16
 PASS img.offsetHeight is 16
 TEST "snap from-image"
-FAIL img.style.cssText should be image-resolution: snap from-image; . Was .
+FAIL img.style.cssText should be image-resolution: snap from-image;. Was .
 PASS img.offsetWidth is 16
 PASS img.offsetHeight is 16
 PASS successfullyParsed is true
