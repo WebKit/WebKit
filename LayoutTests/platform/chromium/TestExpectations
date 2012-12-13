@@ -4186,7 +4186,7 @@ webkit.org/b/104548 [ Linux ] fast/text/hyphenate-locale.html [ Failure ]
 webkit.org/b/104548 [ Linux ] fast/text/hyphens.html [ Failure ]
 
 # Flaky
-webkit.org/b/104283 [ XP ] fonts/monospace.html [ Failure Pass ]
+webkit.org/b/104283 [ Win Release ] fonts/monospace.html [ Failure Pass ]
 webkit.org/b/104283 [ Mac Debug ] fonts/monospace.html [ ImageOnlyFailure Pass ]
 
 # Flaky on Win
