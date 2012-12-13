@@ -1,3 +1,13 @@
+2012-12-13  Claudio Saavedra  <csaavedra@igalia.com>
+
+        [GTK] Add missing breaks in switch-case statements
+        https://bugs.webkit.org/show_bug.cgi?id=104929
+
+        Reviewed by Martin Robinson.
+
+        * platform/gtk/ClipboardGtk.cpp:
+        (WebCore::ClipboardGtk::clearData): Add missing breaks.
+
 2012-12-13  Nate Chapin  <japhet@chromium.org>
 
         Route main resource loads through the memory cache.

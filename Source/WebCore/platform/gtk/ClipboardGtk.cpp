@@ -120,8 +120,10 @@ void ClipboardGtk::clearData(const String& typeString)
         break;
     case ClipboardDataTypeImage:
         m_dataObject->clearImage();
+        break;
     case ClipboardDataTypeUnknown:
         m_dataObject->clearAll();
+        break;
     }
 
     if (m_clipboard)
