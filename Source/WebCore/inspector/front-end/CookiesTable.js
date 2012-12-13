@@ -31,15 +31,14 @@
 /**
  * @constructor
  * @extends {WebInspector.View}
- * @param {function(WebInspector.Cookie)=} deleteCallback
+ * @param {boolean} expandable
+ * @param {function(!WebInspector.Cookie)=} deleteCallback
  * @param {function()=} refreshCallback
  */
-WebInspector.CookiesTable = function(cookieDomain, expandable, deleteCallback, refreshCallback)
+WebInspector.CookiesTable = function(expandable, deleteCallback, refreshCallback)
 {
     WebInspector.View.call(this);
     this.element.className = "fill";
-
-    this._cookieDomain = cookieDomain;
 
     var columns = { 0: {}, 1: {}, 2: {}, 3: {}, 4: {}, 5: {}, 6: {}, 7: {} };
     columns[0].title = WebInspector.UIString("Name");
@@ -127,8 +126,8 @@ WebInspector.CookiesTable.prototype = {
     },
 
     /**
-     * @param {WebInspector.DataGridNode} parentNode
-     * @param {Array.<WebInspector.Cookie>} cookies
+     * @param {!WebInspector.DataGridNode} parentNode
+     * @param {?Array.<!WebInspector.Cookie>} cookies
      */
     _populateNode: function(parentNode, cookies)
     {
@@ -154,18 +153,21 @@ WebInspector.CookiesTable.prototype = {
         return totalSize;
     },
 
+    /**
+     * @param {!Array.<!WebInspector.Cookie>} cookies
+     */
     _sortCookies: function(cookies)
     {
         var sortDirection = this._dataGrid.sortOrder === "ascending" ? 1 : -1;
 
-        function localeCompare(field, cookie1, cookie2)
+        function localeCompare(getter, cookie1, cookie2)
         {
-            return sortDirection * (cookie1[field] + "").localeCompare(cookie2[field] + "")
+            return sortDirection * (getter.apply(cookie1) + "").localeCompare(getter.apply(cookie2) + "")
         }
 
-        function numberCompare(field, cookie1, cookie2)
+        function numberCompare(getter, cookie1, cookie2)
         {
-            return sortDirection * (cookie1[field] - cookie2[field]);
+            return sortDirection * (getter.apply(cookie1) - getter.apply(cookie2));
         }
 
         function expiresCompare(cookie1, cookie2)
@@ -185,31 +187,32 @@ WebInspector.CookiesTable.prototype = {
 
         var comparator;
         switch (parseInt(this._dataGrid.sortColumnIdentifier, 10)) {
-            case 0: comparator = localeCompare.bind(this, "name"); break;
-            case 1: comparator = localeCompare.bind(this, "value"); break;
-            case 2: comparator = localeCompare.bind(this, "domain"); break;
-            case 3: comparator = localeCompare.bind(this, "path"); break;
+            case 0: comparator = localeCompare.bind(null, WebInspector.Cookie.prototype.name); break;
+            case 1: comparator = localeCompare.bind(null, WebInspector.Cookie.prototype.value); break;
+            case 2: comparator = localeCompare.bind(null, WebInspector.Cookie.prototype.domain); break;
+            case 3: comparator = localeCompare.bind(null, WebInspector.Cookie.prototype.path); break;
             case 4: comparator = expiresCompare; break;
-            case 5: comparator = numberCompare.bind(this, "size"); break;
-            case 6: comparator = localeCompare.bind(this, "httpOnly"); break;
-            case 7: comparator = localeCompare.bind(this, "secure"); break;
-            default: localeCompare.bind(this, "name");
+            case 5: comparator = numberCompare.bind(null, WebInspector.Cookie.prototype.size); break;
+            case 6: comparator = localeCompare.bind(null, WebInspector.Cookie.prototype.httpOnly); break;
+            case 7: comparator = localeCompare.bind(null, WebInspector.Cookie.prototype.secure); break;
+            default: localeCompare.bind(null, WebInspector.Cookie.prototype.name);
         }
 
         cookies.sort(comparator);
     },
 
     /**
-     * @param {WebInspector.Cookie} cookie
+     * @param {!WebInspector.Cookie} cookie
+     * @return {!WebInspector.DataGridNode}
      */
     _createGridNode: function(cookie)
     {
         var data = {};
-        data[0] = cookie.name;
-        data[1] = cookie.value;
+        data[0] = cookie.name();
+        data[1] = cookie.value();
         data[2] = cookie.domain() || "";
         data[3] = cookie.path() || "";
-        if (cookie.type === WebInspector.Cookie.Type.Request)
+        if (cookie.type() === WebInspector.Cookie.Type.Request)
             data[4] = "";
         else if (cookie.maxAge())
             data[4] = Number.secondsToString(parseInt(cookie.maxAge(), 10));

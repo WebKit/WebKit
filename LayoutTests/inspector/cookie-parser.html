@@ -11,7 +11,7 @@ InspectorTest.dumpCookie = function(cookie)
     var requestDate = new Date("Mon Oct 18 2010 17:00:00 GMT+0000");
     var expires = cookie.expiresDate(requestDate);
 
-    var output = "name: " + cookie.name + ", value: " + cookie.value + ", httpOnly: " + cookie.httpOnly() +
+    var output = "name: " + cookie.name() + ", value: " + cookie.value() + ", httpOnly: " + cookie.httpOnly() +
         ", secure: " + cookie.secure() + ", session: " + cookie.session() + ", path: " + cookie.path() +
         ", domain: " + cookie.domain() + ", port: " + cookie.port() +
         ", expires: " + (expires ? expires.getTime() : "n/a") +
