@@ -1248,3 +1248,5 @@ webkit.org/b/104942 compositing/background-color/background-color-change-to-text
 webkit.org/b/104942 compositing/background-color/background-color-text-change.html [ Failure ]
 
 webkit.org/b/104949 fast/spatial-navigation/snav-unit-overflow-and-scroll-in-direction.html [ Failure ]
+
+webkit.org/b/104954 http/tests/canvas/canvas-slow-font-loading.html [ ImageOnlyFailure ]

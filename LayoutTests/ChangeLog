@@ -1,3 +1,9 @@
+2012-12-13  Beth Dakin  <bdakin@apple.com>
+
+        Skipping this test for now since it has been failing since it was added. 
+        https://bugs.webkit.org/show_bug.cgi?id=104954 tracks fixing to bug.
+        * platform/mac/TestExpectations:
+
 2012-12-13  Roger Fong  <roger_fong@apple.com>
 
         Unreviewed gardening. Apple Windows port.
