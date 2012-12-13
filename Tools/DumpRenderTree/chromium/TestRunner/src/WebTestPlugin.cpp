@@ -311,6 +311,8 @@ bool WebTestPluginImpl::initialize(WebPluginContainer* container)
 
 void WebTestPluginImpl::destroy()
 {
+    if (m_container)
+        m_container->setWebLayer(0);
     m_layer.clear();
     destroyScene();
 
@@ -344,7 +346,7 @@ void WebTestPluginImpl::updateGeometry(const WebRect& frameRect, const WebRect& 
     drawScene();
 
     m_context->flush();
-    m_container->commitBackingTexture();
+    m_layer->layer()->invalidate();
 }
 
 WebTestPluginImpl::Primitive WebTestPluginImpl::parsePrimitive(const WebString& string)

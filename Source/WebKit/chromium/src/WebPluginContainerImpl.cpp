@@ -671,17 +671,16 @@ WebPluginContainerImpl::WebPluginContainerImpl(WebCore::HTMLPlugInElement* eleme
 
 WebPluginContainerImpl::~WebPluginContainerImpl()
 {
-#if USE(ACCELERATED_COMPOSITING)
-    if (m_webLayer)
-        GraphicsLayerChromium::unregisterContentsLayer(m_webLayer);
-#endif
-
     if (m_touchEventRequestType != TouchEventRequestTypeNone)
         m_element->document()->didRemoveTouchEventHandler(m_element);
 
     for (size_t i = 0; i < m_pluginLoadObservers.size(); ++i)
         m_pluginLoadObservers[i]->clearPluginContainer();
     m_webPlugin->destroy();
+#if USE(ACCELERATED_COMPOSITING)
+    if (m_webLayer)
+        GraphicsLayerChromium::unregisterContentsLayer(m_webLayer);
+#endif
 }
 
 void WebPluginContainerImpl::handleMouseEvent(MouseEvent* event)
