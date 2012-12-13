@@ -38,7 +38,6 @@ public:
     {
     }
 
-    void notifyInsertedIntoDocument(Node*);
     void notify(Node*);
 
 private:
@@ -209,11 +208,6 @@ inline void ChildNodeInsertionNotifier::notifyNodeInsertedIntoTree(ContainerNode
     if (Node::InsertionShouldCallDidNotifySubtreeInsertions == node->insertedInto(m_insertionPoint))
         m_postInsertionNotificationTargets.append(node);
     notifyDescendantInsertedIntoTree(node);
-}
-
-inline void ChildNodeInsertionNotifier::notifyInsertedIntoDocument(Node* node)
-{
-    notifyNodeInsertedIntoDocument(node);
 }
 
 inline void ChildNodeInsertionNotifier::notify(Node* node)
