@@ -264,9 +264,6 @@ struct _Ewk_View_Private_Data {
     bool isCompositingActive;
     RefPtr<Evas_Object> compositingObject;
 #endif
-#if ENABLE(NETWORK_INFO)
-    OwnPtr<WebCore::NetworkInfoClientEfl> networkInfoClient;
-#endif
 #if ENABLE(INPUT_TYPE_COLOR)
     WebCore::ColorChooserClient* colorChooserClient;
 #endif
@@ -775,8 +772,7 @@ static Ewk_View_Private_Data* _ewk_view_priv_new(Ewk_View_Smart_Data* smartData)
 #endif
 
 #if ENABLE(NETWORK_INFO)
-    priv->networkInfoClient = adoptPtr(new WebCore::NetworkInfoClientEfl);
-    WebCore::provideNetworkInfoTo(priv->page.get(), priv->networkInfoClient.get());
+    WebCore::provideNetworkInfoTo(priv->page.get(), new WebCore::NetworkInfoClientEfl);
 #endif
 
 #if ENABLE(VIBRATION)
