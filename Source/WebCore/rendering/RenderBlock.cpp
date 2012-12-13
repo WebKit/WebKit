@@ -1289,8 +1289,8 @@ bool RenderBlock::isSelfCollapsingBlock() const
 
 void RenderBlock::startDelayUpdateScrollInfo()
 {
-    if (gDelayUpdateScrollInfo == 0) {
-        ASSERT(!gDelayedUpdateScrollInfoSet);
+    if (!gDelayedUpdateScrollInfoSet) {
+        ASSERT(!gDelayUpdateScrollInfo);
         gDelayedUpdateScrollInfoSet = new DelayedUpdateScrollInfoSet;
     }
     ASSERT(gDelayedUpdateScrollInfoSet);
@@ -1304,15 +1304,22 @@ void RenderBlock::finishDelayUpdateScrollInfo()
     if (gDelayUpdateScrollInfo == 0) {
         ASSERT(gDelayedUpdateScrollInfoSet);
 
-        OwnPtr<DelayedUpdateScrollInfoSet> infoSet(adoptPtr(gDelayedUpdateScrollInfoSet));
-        gDelayedUpdateScrollInfoSet = 0;
-
-        for (DelayedUpdateScrollInfoSet::iterator it = infoSet->begin(); it != infoSet->end(); ++it) {
-            RenderBlock* block = *it;
-            if (block->hasOverflowClip()) {
-                block->layer()->updateScrollInfoAfterLayout();
+        Vector<RenderBlock*> infoSet;
+        while (gDelayedUpdateScrollInfoSet && gDelayedUpdateScrollInfoSet->size()) {
+            copyToVector(*gDelayedUpdateScrollInfoSet, infoSet);
+            for (Vector<RenderBlock*>::iterator it = infoSet.begin(); it != infoSet.end(); ++it) {
+                RenderBlock* block = *it;
+                // |block| may have been destroyed at this point, but then it will have been removed from gDelayedUpdateScrollInfoSet.
+                if (gDelayedUpdateScrollInfoSet && gDelayedUpdateScrollInfoSet->contains(block)) {
+                    gDelayedUpdateScrollInfoSet->remove(block);
+                    if (block->hasOverflowClip())
+                        block->layer()->updateScrollInfoAfterLayout();
+                }
             }
         }
+        delete gDelayedUpdateScrollInfoSet;
+        gDelayedUpdateScrollInfoSet = 0;
+        ASSERT(!gDelayUpdateScrollInfo);
     }
 }
 
