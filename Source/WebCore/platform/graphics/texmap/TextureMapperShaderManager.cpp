@@ -124,14 +124,14 @@ static void getShaderSpec(TextureMapperShaderManager::ShaderKey key, String& ver
             precision mediump float;
             uniform sampler2D s_sampler;
             uniform sampler2D s_mask;
-            uniform lowp float u_opacity;
-            varying highp vec2 v_sourceTexCoord;
-            varying highp vec2 v_maskTexCoord;
+            uniform float u_opacity;
+            varying vec2 v_sourceTexCoord;
+            varying vec2 v_maskTexCoord;
             void main(void)
             {
-                lowp vec4 color = texture2D(s_sampler, v_sourceTexCoord);
-                lowp vec4 maskColor = texture2D(s_mask, v_maskTexCoord);
-                lowp float fragmentAlpha = u_opacity * maskColor.a;
+                vec4 color = texture2D(s_sampler, v_sourceTexCoord);
+                vec4 maskColor = texture2D(s_mask, v_maskTexCoord);
+                float fragmentAlpha = u_opacity * maskColor.a;
                 gl_FragColor = vec4(color.rgb * fragmentAlpha, color.a * fragmentAlpha);
             }
         );
@@ -141,14 +141,14 @@ static void getShaderSpec(TextureMapperShaderManager::ShaderKey key, String& ver
             precision mediump float;
             uniform sampler2DRect s_sampler;
             uniform sampler2DRect s_mask;
-            uniform lowp float u_opacity;
-            varying highp vec2 v_sourceTexCoord;
-            varying highp vec2 v_maskTexCoord;
+            uniform float u_opacity;
+            varying vec2 v_sourceTexCoord;
+            varying vec2 v_maskTexCoord;
             void main(void)
             {
-                lowp vec4 color = texture2DRect(s_sampler, v_sourceTexCoord);
-                lowp vec4 maskColor = texture2DRect(s_mask, v_maskTexCoord);
-                lowp float fragmentAlpha = u_opacity * maskColor.a;
+                vec4 color = texture2DRect(s_sampler, v_sourceTexCoord);
+                vec4 maskColor = texture2DRect(s_mask, v_maskTexCoord);
+                float fragmentAlpha = u_opacity * maskColor.a;
                 gl_FragColor = vec4(color.rgb * fragmentAlpha, color.a * fragmentAlpha);
             }
         );
@@ -156,11 +156,11 @@ static void getShaderSpec(TextureMapperShaderManager::ShaderKey key, String& ver
     static const char* vertexOpacityAndMask =
         STRINGIFY(
             uniform mat4 u_matrix;
-            uniform lowp float u_flip;
-            uniform lowp vec2 u_textureSize;
+            uniform float u_flip;
+            uniform vec2 u_textureSize;
             attribute vec4 a_vertex;
-            varying highp vec2 v_sourceTexCoord;
-            varying highp vec2 v_maskTexCoord;
+            varying vec2 v_sourceTexCoord;
+            varying vec2 v_maskTexCoord;
             void main(void)
             {
                 v_sourceTexCoord = vec2(a_vertex.x, mix(a_vertex.y, 1. - a_vertex.y, u_flip)) * u_textureSize;
@@ -173,11 +173,11 @@ static void getShaderSpec(TextureMapperShaderManager::ShaderKey key, String& ver
         STRINGIFY(
             precision mediump float;
             uniform sampler2D s_sampler;
-            uniform lowp float u_opacity;
-            varying highp vec2 v_sourceTexCoord;
+            uniform float u_opacity;
+            varying vec2 v_sourceTexCoord;
             void main(void)
             {
-                lowp vec4 color = texture2D(s_sampler, v_sourceTexCoord);
+                vec4 color = texture2D(s_sampler, v_sourceTexCoord);
                 gl_FragColor = vec4(color.rgb * u_opacity, color.a * u_opacity);
             }
         );
@@ -186,8 +186,8 @@ static void getShaderSpec(TextureMapperShaderManager::ShaderKey key, String& ver
         STRINGIFY(
             precision mediump float;
             uniform sampler2D s_sampler;
-            varying highp vec2 v_sourceTexCoord;
-            uniform lowp float u_opacity;
+            varying vec2 v_sourceTexCoord;
+            uniform float u_opacity;
             uniform vec3 u_expandedQuadEdgesInScreenSpace[8];
 
                 // The data passed in u_expandedQuadEdgesInScreenSpace is merely the
@@ -243,11 +243,11 @@ static void getShaderSpec(TextureMapperShaderManager::ShaderKey key, String& ver
         STRINGIFY(
             precision mediump float;
             uniform sampler2DRect s_sampler;
-            uniform lowp float u_opacity;
-            varying highp vec2 v_sourceTexCoord;
+            uniform float u_opacity;
+            varying vec2 v_sourceTexCoord;
             void main(void)
             {
-                lowp vec4 color = texture2DRect(s_sampler, v_sourceTexCoord);
+                vec4 color = texture2DRect(s_sampler, v_sourceTexCoord);
                 gl_FragColor = vec4(color.rgb * u_opacity, color.a * u_opacity);
             }
         );
@@ -255,10 +255,10 @@ static void getShaderSpec(TextureMapperShaderManager::ShaderKey key, String& ver
     static const char* vertexSimple =
         STRINGIFY(
             uniform mat4 u_matrix;
-            uniform lowp float u_flip;
-            uniform lowp vec2 u_textureSize;
+            uniform float u_flip;
+            uniform vec2 u_textureSize;
             attribute vec4 a_vertex;
-            varying highp vec2 v_sourceTexCoord;
+            varying vec2 v_sourceTexCoord;
             void main(void)
             {
                 v_sourceTexCoord = vec2(a_vertex.x, mix(a_vertex.y, 1. - a_vertex.y, u_flip)) * u_textureSize;
@@ -291,7 +291,7 @@ static void getShaderSpec(TextureMapperShaderManager::ShaderKey key, String& ver
         STRINGIFY(
             attribute vec4 a_vertex;
             attribute vec4 a_texCoord;
-            varying highp vec2 v_texCoord;
+            varying vec2 v_texCoord;
             void main(void)
             {
                 v_texCoord = vec2(a_texCoord);
@@ -301,16 +301,16 @@ static void getShaderSpec(TextureMapperShaderManager::ShaderKey key, String& ver
 
 #define STANDARD_FILTER(...) \
         "precision mediump float;\n"\
-        "varying highp vec2 v_texCoord;\n"\
-        "uniform highp float u_amount;\n"\
+        "varying vec2 v_texCoord;\n"\
+        "uniform float u_amount;\n"\
         "uniform sampler2D s_sampler;\n"#__VA_ARGS__ \
         "void main(void)\n { gl_FragColor = shade(texture2D(s_sampler, v_texCoord)); }"
 
     static const char* fragmentGrayscaleFilter =
         STANDARD_FILTER(
-            lowp vec4 shade(lowp vec4 color)
+            vec4 shade(lowp vec4 color)
             {
-                lowp float amount = 1.0 - u_amount;
+                float amount = 1.0 - u_amount;
                 return vec4((0.2126 + 0.7874 * amount) * color.r + (0.7152 - 0.7152 * amount) * color.g + (0.0722 - 0.0722 * amount) * color.b,
                             (0.2126 - 0.2126 * amount) * color.r + (0.7152 + 0.2848 * amount) * color.g + (0.0722 - 0.0722 * amount) * color.b,
                             (0.2126 - 0.2126 * amount) * color.r + (0.7152 - 0.7152 * amount) * color.g + (0.0722 + 0.9278 * amount) * color.b,
@@ -320,9 +320,9 @@ static void getShaderSpec(TextureMapperShaderManager::ShaderKey key, String& ver
 
     static const char* fragmentSepiaFilter =
         STANDARD_FILTER(
-            lowp vec4 shade(lowp vec4 color)
+            vec4 shade(lowp vec4 color)
             {
-                lowp float amount = 1.0 - u_amount;
+                float amount = 1.0 - u_amount;
                 return vec4((0.393 + 0.607 * amount) * color.r + (0.769 - 0.769 * amount) * color.g + (0.189 - 0.189 * amount) * color.b,
                             (0.349 - 0.349 * amount) * color.r + (0.686 + 0.314 * amount) * color.g + (0.168 - 0.168 * amount) * color.b,
                             (0.272 - 0.272 * amount) * color.r + (0.534 - 0.534 * amount) * color.g + (0.131 + 0.869 * amount) * color.b,
@@ -332,7 +332,7 @@ static void getShaderSpec(TextureMapperShaderManager::ShaderKey key, String& ver
 
     static const char* fragmentSaturateFilter =
         STANDARD_FILTER(
-            lowp vec4 shade(lowp vec4 color)
+            vec4 shade(lowp vec4 color)
             {
                 return vec4((0.213 + 0.787 * u_amount) * color.r + (0.715 - 0.715 * u_amount) * color.g + (0.072 - 0.072 * u_amount) * color.b,
                             (0.213 - 0.213 * u_amount) * color.r + (0.715 + 0.285 * u_amount) * color.g + (0.072 - 0.072 * u_amount) * color.b,
@@ -343,11 +343,11 @@ static void getShaderSpec(TextureMapperShaderManager::ShaderKey key, String& ver
 
     static const char* fragmentHueRotateFilter =
         STANDARD_FILTER(
-            lowp vec4 shade(lowp vec4 color)
+            vec4 shade(lowp vec4 color)
             {
-                highp float pi = 3.14159265358979323846;
-                highp float c = cos(u_amount * pi / 180.0);
-                highp float s = sin(u_amount * pi / 180.0);
+                float pi = 3.14159265358979323846;
+                float c = cos(u_amount * pi / 180.0);
+                float s = sin(u_amount * pi / 180.0);
                 return vec4(color.r * (0.213 + c * 0.787 - s * 0.213) + color.g * (0.715 - c * 0.715 - s * 0.715) + color.b * (0.072 - c * 0.072 + s * 0.928),
                             color.r * (0.213 - c * 0.213 + s * 0.143) + color.g * (0.715 + c * 0.285 + s * 0.140) + color.b * (0.072 - c * 0.072 - s * 0.283),
                             color.r * (0.213 - c * 0.213 - s * 0.787) +  color.g * (0.715 - c * 0.715 + s * 0.715) + color.b * (0.072 + c * 0.928 + s * 0.072),
@@ -357,8 +357,8 @@ static void getShaderSpec(TextureMapperShaderManager::ShaderKey key, String& ver
 
     static const char* fragmentInvertFilter =
         STANDARD_FILTER(
-            lowp float invert(lowp float n) { return (1.0 - n) * u_amount + n * (1.0 - u_amount); }
-            lowp vec4 shade(lowp vec4 color)
+            float invert(lowp float n) { return (1.0 - n) * u_amount + n * (1.0 - u_amount); }
+            vec4 shade(lowp vec4 color)
             {
                 return vec4(invert(color.r), invert(color.g), invert(color.b), color.a);
             }
@@ -366,7 +366,7 @@ static void getShaderSpec(TextureMapperShaderManager::ShaderKey key, String& ver
 
     static const char* fragmentBrightnessFilter =
         STANDARD_FILTER(
-            lowp vec4 shade(lowp vec4 color)
+            vec4 shade(lowp vec4 color)
             {
                 return vec4(color.rgb * (1.0 + u_amount), color.a);
             }
@@ -374,8 +374,8 @@ static void getShaderSpec(TextureMapperShaderManager::ShaderKey key, String& ver
 
     static const char* fragmentContrastFilter =
         STANDARD_FILTER(
-            lowp float contrast(lowp float n) { return (n - 0.5) * u_amount + 0.5; }
-            lowp vec4 shade(lowp vec4 color)
+            float contrast(lowp float n) { return (n - 0.5) * u_amount + 0.5; }
+            vec4 shade(lowp vec4 color)
             {
                 return vec4(contrast(color.r), contrast(color.g), contrast(color.b), color.a);
             }
@@ -383,7 +383,7 @@ static void getShaderSpec(TextureMapperShaderManager::ShaderKey key, String& ver
 
     static const char* fragmentOpacityFilter =
         STANDARD_FILTER(
-            lowp vec4 shade(lowp vec4 color)
+            vec4 shade(lowp vec4 color)
             {
                 return vec4(color.r, color.g, color.b, color.a * u_amount);
             }
@@ -396,12 +396,12 @@ static void getShaderSpec(TextureMapperShaderManager::ShaderKey key, String& ver
         STRINGIFY(
             // Create a normal distribution of 21 values between -2 and 2.
             precision mediump float;
-            varying highp vec2 v_texCoord;
-            uniform lowp vec2 u_blurRadius;
+            varying vec2 v_texCoord;
+            uniform vec2 u_blurRadius;
             uniform sampler2D s_sampler;
             uniform float u_gaussianKernel[GAUSSIAN_KERNEL_HALF_WIDTH];
 
-            lowp vec4 sampleColor(float radius)
+            vec4 sampleColor(float radius)
             {
                 vec2 coord = v_texCoord + radius * u_blurRadius;
                 return texture2D(s_sampler, coord) * float(coord.x > 0. && coord.y > 0. && coord.x < 1. && coord.y < 1.);
@@ -428,19 +428,19 @@ static void getShaderSpec(TextureMapperShaderManager::ShaderKey key, String& ver
         BLUR_CONSTANTS
         STRINGIFY(
             precision mediump float;
-            varying highp vec2 v_texCoord;
-            uniform lowp float u_blurRadius;
-            uniform lowp vec2 u_shadowOffset;
+            varying vec2 v_texCoord;
+            uniform float u_blurRadius;
+            uniform vec2 u_shadowOffset;
             uniform sampler2D s_sampler;
             uniform float u_gaussianKernel[GAUSSIAN_KERNEL_HALF_WIDTH];
 
-            lowp float sampleAlpha(float radius)
+            float sampleAlpha(float radius)
             {
                 vec2 coord = v_texCoord - u_shadowOffset + vec2(radius * u_blurRadius, 0.);
                 return texture2D(s_sampler, coord).a * float(coord.x > 0. && coord.y > 0. && coord.x < 1. && coord.y < 1.);
             }
 
-            lowp float shadowBlurHorizontal()
+            float shadowBlurHorizontal()
             {
                 float total = sampleAlpha(0.) * u_gaussianKernel[0];
                 for (int i = 1; i < GAUSSIAN_KERNEL_HALF_WIDTH; i++) {
@@ -462,20 +462,20 @@ static void getShaderSpec(TextureMapperShaderManager::ShaderKey key, String& ver
         BLUR_CONSTANTS
         STRINGIFY(
             precision mediump float;
-            varying highp vec2 v_texCoord;
-            uniform lowp float u_blurRadius;
-            uniform lowp vec4 u_shadowColor;
+            varying vec2 v_texCoord;
+            uniform float u_blurRadius;
+            uniform vec4 u_shadowColor;
             uniform sampler2D s_sampler;
             uniform sampler2D s_contentTexture;
             uniform float u_gaussianKernel[GAUSSIAN_KERNEL_HALF_WIDTH];
 
-            lowp float sampleAlpha(float r)
+            float sampleAlpha(float r)
             {
                 vec2 coord = v_texCoord + vec2(0., r * u_blurRadius);
                 return texture2D(s_sampler, coord).a * float(coord.x > 0. && coord.y > 0. && coord.x < 1. && coord.y < 1.);
             }
 
-            lowp float shadowBlurVertical()
+            float shadowBlurVertical()
             {
                 float total = sampleAlpha(0.) * u_gaussianKernel[0];
                 for (int i = 1; i < GAUSSIAN_KERNEL_HALF_WIDTH; i++) {
@@ -486,7 +486,7 @@ static void getShaderSpec(TextureMapperShaderManager::ShaderKey key, String& ver
                 return total;
             }
 
-            lowp vec4 sourceOver(lowp vec4 source, lowp vec4 destination)
+            vec4 sourceOver(lowp vec4 source, vec4 destination)
             {
                 // Composite the shadow with the original texture.
                 return source + destination * (1. - source.a);

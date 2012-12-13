@@ -1,3 +1,17 @@
+2012-12-12  No'am Rosenthal  <noam@webkit.org>
+
+        [Texmap] Remove lowp/highp indicators as they're not needed with ANGLE.
+        https://bugs.webkit.org/show_bug.cgi?id=104707
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        lowp/highp indicator were needed for GLES2, but ANGLE does not require them.
+
+        Covered by existing tests.
+
+        * platform/graphics/texmap/TextureMapperShaderManager.cpp:
+        (WebCore::getShaderSpec):
+
 2012-12-12  Andy Estes  <aestes@apple.com>
 
         Don't dispatch fake mousemove events when we don't know where the cursor is
