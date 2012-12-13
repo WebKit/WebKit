@@ -99,7 +99,9 @@ bool InsertionPoint::isActive() const
 
 PassRefPtr<NodeList> InsertionPoint::getDistributedNodes() const
 {
-    document()->updateLayout();
+    if (treeScope()->rootNode()->isShadowRoot())
+        toShadowRoot(treeScope()->rootNode())->owner()->ensureDistributionFromDocument();
+
     Vector<RefPtr<Node> > nodes;
 
     for (size_t i = 0; i < m_distribution.size(); ++i)

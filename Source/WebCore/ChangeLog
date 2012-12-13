@@ -1,3 +1,18 @@
+2012-12-12  Shinya Kawanaka  <shinyak@chromium.org>
+
+        [Shadow] HTMLContentElement::getDistributedNodes() doesn't work correctly if not in document tree.
+        https://bugs.webkit.org/show_bug.cgi?id=104345
+
+        Reviewed by Hajime Morita.
+
+        Since document->updateLayout() does affect nodes in Document, distribution will not occur in
+        InsertionPoints out of Document. We have to find the element in document tree scope, and start distribution from it.
+
+        Test: fast/dom/shadow/get-distributed-nodes-orphan.html
+
+        * html/shadow/InsertionPoint.cpp:
+        (WebCore::InsertionPoint::getDistributedNodes):
+
 2012-12-12  Patrick Gansterer  <paroga@webkit.org>
 
         [WIN] Implement WebCore::fileSystemRepresentation() for !USE(CF)
