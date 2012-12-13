@@ -63,9 +63,14 @@ bool RemoteNetworkingContext::localFileContentSniffingEnabled() const
     return m_localFileContentSniffingEnabled;
 }
 
+bool RemoteNetworkingContext::inPrivateBrowsingMode() const
+{
+    return m_privateBrowsingEnabled;
+}
+
 CFURLStorageSessionRef RemoteNetworkingContext::storageSession() const
 {
-    if (m_privateBrowsingEnabled) {
+    if (inPrivateBrowsingMode()) {
         ASSERT(privateBrowsingStorageSession);
         return privateBrowsingStorageSession;
     }

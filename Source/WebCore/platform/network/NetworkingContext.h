@@ -80,6 +80,7 @@ public:
 #endif
 
 #if PLATFORM(MAC) || USE(CFNETWORK)
+    virtual bool inPrivateBrowsingMode() const = 0;
     virtual CFURLStorageSessionRef storageSession() const = 0;
 #endif
 

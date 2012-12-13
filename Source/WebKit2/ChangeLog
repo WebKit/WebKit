@@ -1,3 +1,46 @@
+2012-12-13  Alexey Proskuryakov  <ap@apple.com>
+
+        <rdar://problem/12838354> Per-Tab WebProcess: DOM cookie access functions should respect private browsing
+        https://bugs.webkit.org/show_bug.cgi?id=104691
+
+        Reviewed by Sam Weinig.
+
+        Pass private browsing state from local context to remote one.
+
+        * NetworkProcess/NetworkConnectionToWebProcess.cpp:
+        (WebKit::networkingContext):
+        (WebKit::NetworkConnectionToWebProcess::cookiesForDOM):
+        (WebKit::NetworkConnectionToWebProcess::setCookiesFromDOM):
+        (WebKit::NetworkConnectionToWebProcess::cookiesEnabled):
+        (WebKit::NetworkConnectionToWebProcess::cookieRequestHeaderFieldValue):
+        (WebKit::NetworkConnectionToWebProcess::getRawCookies):
+        (WebKit::NetworkConnectionToWebProcess::deleteCookie):
+        (WebKit::NetworkConnectionToWebProcess::getHostnamesWithCookies):
+        (WebKit::NetworkConnectionToWebProcess::deleteCookiesForHostname):
+        (WebKit::NetworkConnectionToWebProcess::deleteAllCookies):
+        * NetworkProcess/NetworkConnectionToWebProcess.h:
+        * NetworkProcess/NetworkConnectionToWebProcess.messages.in:
+        * NetworkProcess/mac/RemoteNetworkingContext.h:
+        * NetworkProcess/mac/RemoteNetworkingContext.mm:
+        (WebKit::RemoteNetworkingContext::inPrivateBrowsingMode):
+        (WebKit::RemoteNetworkingContext::storageSession):
+        * WebProcess/WebCoreSupport/WebPlatformStrategies.cpp:
+        (WebKit::WebPlatformStrategies::cookiesForDOM):
+        (WebKit::WebPlatformStrategies::setCookiesFromDOM):
+        (WebKit::WebPlatformStrategies::cookiesEnabled):
+        (WebKit::WebPlatformStrategies::cookieRequestHeaderFieldValue):
+        (WebKit::WebPlatformStrategies::getRawCookies):
+        (WebKit::WebPlatformStrategies::deleteCookie):
+        (WebKit::WebPlatformStrategies::getHostnamesWithCookies):
+        (WebKit::WebPlatformStrategies::deleteCookiesForHostname):
+        (WebKit::WebPlatformStrategies::deleteAllCookies):
+        * WebProcess/WebCoreSupport/mac/WebFrameNetworkingContext.h:
+        * WebProcess/WebCoreSupport/mac/WebFrameNetworkingContext.mm:
+        (WebKit::WebFrameNetworkingContext::inPrivateBrowsingMode):
+        (WebKit::WebFrameNetworkingContext::storageSession):
+        * WebProcess/WebCoreSupport/win/WebFrameNetworkingContext.h:
+        (WebFrameNetworkingContext::inPrivateBrowsingMode):
+
 2012-12-13  Anders Carlsson  <andersca@apple.com>
 
         Get rid of DownloadManager::shared

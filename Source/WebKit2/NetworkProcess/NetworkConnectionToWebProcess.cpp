@@ -153,60 +153,72 @@ void NetworkConnectionToWebProcess::setSerialLoadingEnabled(bool enabled)
     m_serialLoadingEnabled = enabled;
 }
 
-void NetworkConnectionToWebProcess::cookiesForDOM(const KURL& firstParty, const KURL& url, String& result)
+static RemoteNetworkingContext* networkingContext(bool privateBrowsingEnabled)
 {
-    // FIXME (NetworkProcess): Use a correct storage session.
-    result = WebCore::cookiesForDOM(RemoteNetworkingContext::create(false, false, false).get(), firstParty, url);
+    // This networking context is only needed to get storage session from.
+    if (privateBrowsingEnabled) {
+        static RemoteNetworkingContext* context = RemoteNetworkingContext::create(false, false, true).leakRef();
+        return context;
+    } else {
+        static RemoteNetworkingContext* context = RemoteNetworkingContext::create(false, false, false).leakRef();
+        return context;
+    }
 }
 
-void NetworkConnectionToWebProcess::setCookiesFromDOM(const KURL& firstParty, const KURL& url, const String& cookieString)
+void NetworkConnectionToWebProcess::cookiesForDOM(bool privateBrowsingEnabled, const KURL& firstParty, const KURL& url, String& result)
 {
     // FIXME (NetworkProcess): Use a correct storage session.
-    WebCore::setCookiesFromDOM(RemoteNetworkingContext::create(false, false, false).get(), firstParty, url, cookieString);
+    result = WebCore::cookiesForDOM(networkingContext(privateBrowsingEnabled), firstParty, url);
 }
 
-void NetworkConnectionToWebProcess::cookiesEnabled(const KURL& firstParty, const KURL& url, bool& result)
+void NetworkConnectionToWebProcess::setCookiesFromDOM(bool privateBrowsingEnabled, const KURL& firstParty, const KURL& url, const String& cookieString)
 {
     // FIXME (NetworkProcess): Use a correct storage session.
-    result = WebCore::cookiesEnabled(RemoteNetworkingContext::create(false, false, false).get(), firstParty, url);
+    WebCore::setCookiesFromDOM(networkingContext(privateBrowsingEnabled), firstParty, url, cookieString);
 }
 
-void NetworkConnectionToWebProcess::cookieRequestHeaderFieldValue(const KURL& firstParty, const KURL& url, String& result)
+void NetworkConnectionToWebProcess::cookiesEnabled(bool privateBrowsingEnabled, const KURL& firstParty, const KURL& url, bool& result)
+{
+    // FIXME (NetworkProcess): Use a correct storage session.
+    result = WebCore::cookiesEnabled(networkingContext(privateBrowsingEnabled), firstParty, url);
+}
+
+void NetworkConnectionToWebProcess::cookieRequestHeaderFieldValue(bool privateBrowsingEnabled, const KURL& firstParty, const KURL& url, String& result)
 {
     // FIXME (NetworkProcess): Use a correct storage session.
     result = WebCore::cookieRequestHeaderFieldValue(0, firstParty, url);
 }
 
-void NetworkConnectionToWebProcess::getRawCookies(const KURL& firstParty, const KURL& url, Vector<Cookie>& result)
+void NetworkConnectionToWebProcess::getRawCookies(bool privateBrowsingEnabled, const KURL& firstParty, const KURL& url, Vector<Cookie>& result)
 {
     // FIXME (NetworkProcess): Use a correct storage session.
-    WebCore::getRawCookies(RemoteNetworkingContext::create(false, false, false).get(), firstParty, url, result);
+    WebCore::getRawCookies(networkingContext(privateBrowsingEnabled), firstParty, url, result);
 }
 
-void NetworkConnectionToWebProcess::deleteCookie(const KURL& url, const String& cookieName)
+void NetworkConnectionToWebProcess::deleteCookie(bool privateBrowsingEnabled, const KURL& url, const String& cookieName)
 {
     // FIXME (NetworkProcess): Use a correct storage session.
-    WebCore::deleteCookie(RemoteNetworkingContext::create(false, false, false).get(), url, cookieName);
+    WebCore::deleteCookie(networkingContext(privateBrowsingEnabled), url, cookieName);
 }
 
-void NetworkConnectionToWebProcess::getHostnamesWithCookies(Vector<String>& hostnames)
+void NetworkConnectionToWebProcess::getHostnamesWithCookies(bool privateBrowsingEnabled, Vector<String>& hostnames)
 {
     // FIXME (NetworkProcess): Use a correct storage session.
     HashSet<String> hostnamesSet;
-    WebCore::getHostnamesWithCookies(RemoteNetworkingContext::create(false, false, false).get(), hostnamesSet);
+    WebCore::getHostnamesWithCookies(networkingContext(privateBrowsingEnabled), hostnamesSet);
     WTF::copyToVector(hostnamesSet, hostnames);
 }
 
-void NetworkConnectionToWebProcess::deleteCookiesForHostname(const String& hostname)
+void NetworkConnectionToWebProcess::deleteCookiesForHostname(bool privateBrowsingEnabled, const String& hostname)
 {
     // FIXME (NetworkProcess): Use a correct storage session.
-    WebCore::deleteCookiesForHostname(RemoteNetworkingContext::create(false, false, false).get(), hostname);
+    WebCore::deleteCookiesForHostname(networkingContext(privateBrowsingEnabled), hostname);
 }
 
-void NetworkConnectionToWebProcess::deleteAllCookies()
+void NetworkConnectionToWebProcess::deleteAllCookies(bool privateBrowsingEnabled)
 {
     // FIXME (NetworkProcess): Use a correct storage session.
-    WebCore::deleteAllCookies(RemoteNetworkingContext::create(false, false, false).get());
+    WebCore::deleteAllCookies(networkingContext(privateBrowsingEnabled));
 }
 
 } // namespace WebKit

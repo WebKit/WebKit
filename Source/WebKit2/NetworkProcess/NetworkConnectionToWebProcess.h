@@ -82,15 +82,15 @@ private:
     void suspendPendingRequests();
     void resumePendingRequests();
     void setSerialLoadingEnabled(bool);
-    void cookiesForDOM(const WebCore::KURL& firstParty, const WebCore::KURL&, String& result);
-    void setCookiesFromDOM(const WebCore::KURL& firstParty, const WebCore::KURL&, const String&);
-    void cookiesEnabled(const WebCore::KURL& firstParty, const WebCore::KURL&, bool& result);
-    void cookieRequestHeaderFieldValue(const WebCore::KURL& firstParty, const WebCore::KURL&, String& result);
-    void getRawCookies(const WebCore::KURL& firstParty, const WebCore::KURL&, Vector<WebCore::Cookie>&);
-    void deleteCookie(const WebCore::KURL&, const String& cookieName);
-    void getHostnamesWithCookies(Vector<String>& hostnames);
-    void deleteCookiesForHostname(const String& hostname);
-    void deleteAllCookies();
+    void cookiesForDOM(bool privateBrowsingEnabled, const WebCore::KURL& firstParty, const WebCore::KURL&, String& result);
+    void setCookiesFromDOM(bool privateBrowsingEnabled, const WebCore::KURL& firstParty, const WebCore::KURL&, const String&);
+    void cookiesEnabled(bool privateBrowsingEnabled, const WebCore::KURL& firstParty, const WebCore::KURL&, bool& result);
+    void cookieRequestHeaderFieldValue(bool privateBrowsingEnabled, const WebCore::KURL& firstParty, const WebCore::KURL&, String& result);
+    void getRawCookies(bool privateBrowsingEnabled, const WebCore::KURL& firstParty, const WebCore::KURL&, Vector<WebCore::Cookie>&);
+    void deleteCookie(bool privateBrowsingEnabled, const WebCore::KURL&, const String& cookieName);
+    void getHostnamesWithCookies(bool privateBrowsingEnabled, Vector<String>& hostnames);
+    void deleteCookiesForHostname(bool privateBrowsingEnabled, const String& hostname);
+    void deleteAllCookies(bool privateBrowsingEnabled);
 
     RefPtr<CoreIPC::Connection> m_connection;
     

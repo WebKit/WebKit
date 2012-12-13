@@ -50,6 +50,7 @@ private:
     virtual WTF::String userAgent() const;
     virtual WTF::String referrer() const;
 #if USE(CFNETWORK)
+    virtual bool inPrivateBrowsingMode() const;
     virtual CFURLStorageSessionRef storageSession() const;
 #endif
     virtual WebCore::ResourceError blockedError(const WebCore::ResourceRequest&) const;

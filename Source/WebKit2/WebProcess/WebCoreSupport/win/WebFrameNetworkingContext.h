@@ -23,6 +23,7 @@
 #include "WebFrame.h"
 
 #include <WebCore/FrameNetworkingContext.h>
+#include <WebCore/NotImplemented.h>
 #include <WebCore/ResourceError.h>
 #include <WebCore/ResourceRequest.h>
 
@@ -44,6 +45,7 @@ private:
     virtual WebCore::ResourceError blockedError(const WebCore::ResourceRequest&) const;
 
 #if USE(CFNETWORK)
+    virtual bool inPrivateBrowsingMode() const;
     virtual CFURLStorageSessionRef storageSession() const;
 #endif
 

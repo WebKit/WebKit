@@ -97,10 +97,14 @@ CFURLStorageSessionRef WebFrameNetworkingContext::defaultStorageSession()
     return defaultCFStorageSession;
 }
 
+bool WebFrameNetworkingContext::inPrivateBrowsingMode() const
+{
+    return frame() && frame()->settings() && frame()->settings()->privateBrowsingEnabled();
+}
+
 CFURLStorageSessionRef WebFrameNetworkingContext::storageSession() const
 {
-    bool privateBrowsingEnabled = frame() && frame()->settings() && frame()->settings()->privateBrowsingEnabled();
-    if (privateBrowsingEnabled) {
+    if (inPrivateBrowsingMode()) {
         ASSERT(privateBrowsingStorageSession);
         return privateBrowsingStorageSession;
     }
