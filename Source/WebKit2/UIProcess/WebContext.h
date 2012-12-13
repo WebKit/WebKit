@@ -319,6 +319,8 @@ private:
     static void applicationBecameOccluded(uint32_t, void*, uint32_t, void*, uint32_t);
     static void initializeProcessSuppressionSupport();
     static void registerOcclusionNotificationHandlers();
+    void registerNotificationObservers();
+    void unregisterNotificationObservers();
 #endif
 
     void addPlugInAutoStartOriginHash(const String& pageOrigin, unsigned plugInOriginHash);
