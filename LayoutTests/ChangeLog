@@ -1,3 +1,20 @@
+2012-12-13  Nate Chapin  <japhet@chromium.org>
+
+        Route main resource loads through the memory cache.
+        https://bugs.webkit.org/show_bug.cgi?id=49246
+
+        Reviewed by Alexey Proskuryakov.
+
+        * http/tests/misc/will-send-request-returns-null-on-redirect-expected.txt: The error code for loads cancelled
+            by an embedder's willSendRequest() will show as standard load cancellations rather than as a content policy
+            failure. This was an odd quirk of how MainResourceLoader::willSendRequest() was implemented (namely, doing a
+            content policy check on ResourceRequests with empty urls).
+        * platform/chromium-linux/fast/replaced/border-radius-clip-content-edge-expected.png:
+        * platform/chromium/http/tests/misc/will-send-request-returns-null-on-redirect-expected.txt: The error code for loads cancelled
+            by an embedder's willSendRequest() will show as standard load cancellations rather than as a content policy
+            failure. This was an odd quirk of how MainResourceLoader::willSendRequest() was implemented (namely, doing a
+            content policy check on ResourceRequests with empty urls).
+
 2012-12-13  Joanmarie Diggs  <jdiggs@igalia.com>
 
         [GTK] Expose ARIA roles for tab, tabpanel and tablist

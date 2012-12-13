@@ -251,6 +251,9 @@ void ResourceLoader::willSendRequest(ResourceRequest& request, const ResourceRes
 #endif
     }
     m_request = request;
+
+    if (!redirectResponse.isNull() && !m_documentLoader->isCommitted())
+        frameLoader()->client()->dispatchDidReceiveServerRedirectForProvisionalLoad();
 }
 
 void ResourceLoader::didSendData(unsigned long long, unsigned long long)

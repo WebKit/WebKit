@@ -103,7 +103,7 @@ bool ApplicationCacheHost::maybeLoadFallbackForMainResponse(const ResourceReques
         if (isApplicationCacheEnabled()) {
             m_mainResourceApplicationCache = ApplicationCacheGroup::fallbackCacheForMainRequest(request, documentLoader());
 
-            if (scheduleLoadFallbackResourceFromApplicationCache(documentLoader()->mainResourceLoader(), m_mainResourceApplicationCache.get()))
+            if (scheduleLoadFallbackResourceFromApplicationCache(documentLoader()->mainResourceLoader()->loader(), m_mainResourceApplicationCache.get()))
                 return true;
         }
     }
@@ -117,7 +117,7 @@ bool ApplicationCacheHost::maybeLoadFallbackForMainError(const ResourceRequest& 
         if (isApplicationCacheEnabled()) {
             m_mainResourceApplicationCache = ApplicationCacheGroup::fallbackCacheForMainRequest(request, m_documentLoader);
 
-            if (scheduleLoadFallbackResourceFromApplicationCache(documentLoader()->mainResourceLoader(), m_mainResourceApplicationCache.get()))
+            if (scheduleLoadFallbackResourceFromApplicationCache(documentLoader()->mainResourceLoader()->loader(), m_mainResourceApplicationCache.get()))
                 return true;
         }
     }
