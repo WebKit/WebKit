@@ -308,6 +308,8 @@ private:
     void addAdditionalRequestHeaders(CachedResourceLoader*);
     void failBeforeStarting();
 
+    String m_fragmentIdentifierForRequest;
+
     RefPtr<CachedMetadata> m_cachedMetadata;
 
     ResourceError m_error;

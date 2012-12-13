@@ -441,9 +441,6 @@ CachedResourceHandle<CachedResource> CachedResourceLoader::requestResource(Cache
     // See if we can use an existing resource from the cache.
     CachedResourceHandle<CachedResource> resource = memoryCache()->resourceForURL(url);
 
-    if (request.resourceRequest().url() != url)
-        request.mutableResourceRequest().setURL(url);
-
     const RevalidationPolicy policy = determineRevalidationPolicy(type, request.mutableResourceRequest(), request.forPreload(), resource.get(), request.defer());
     switch (policy) {
     case Reload:

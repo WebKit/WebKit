@@ -188,6 +188,14 @@ CachedResource::CachedResource(const ResourceRequest& request, Type type)
 #ifndef NDEBUG
     cachedResourceLeakCounter.increment();
 #endif
+
+    if (!m_resourceRequest.url().hasFragmentIdentifier())
+        return;
+    KURL urlForCache = MemoryCache::removeFragmentIdentifierIfNeeded(m_resourceRequest.url());
+    if (urlForCache.hasFragmentIdentifier())
+        return;
+    m_fragmentIdentifierForRequest = m_resourceRequest.url().fragmentIdentifier();
+    m_resourceRequest.setURL(urlForCache);
 }
 
 CachedResource::~CachedResource()
@@ -293,10 +301,20 @@ void CachedResource::load(CachedResourceLoader* cachedResourceLoader, const Reso
     if (type() != MainResource)
         addAdditionalRequestHeaders(cachedResourceLoader);
 
+    // FIXME: It's unfortunate that the cache layer and below get to know anything about fragment identifiers.
+    // We should look into removing the expectation of that knowledge from the platform network stacks.
+    ResourceRequest request(m_resourceRequest);
+    if (!m_fragmentIdentifierForRequest.isNull()) {
+        KURL url = request.url();
+        url.setFragmentIdentifier(m_fragmentIdentifierForRequest);
+        request.setURL(url);
+        m_fragmentIdentifierForRequest = String();
+    }
+
 #if USE(PLATFORM_STRATEGIES)
-    m_loader = platformStrategies()->loaderStrategy()->resourceLoadScheduler()->scheduleSubresourceLoad(cachedResourceLoader->frame(), this, m_resourceRequest, m_resourceRequest.priority(), options);
+    m_loader = platformStrategies()->loaderStrategy()->resourceLoadScheduler()->scheduleSubresourceLoad(cachedResourceLoader->frame(), this, request, request.priority(), options);
 #else
-    m_loader = resourceLoadScheduler()->scheduleSubresourceLoad(cachedResourceLoader->frame(), this, m_resourceRequest, m_resourceRequest.priority(), options);
+    m_loader = resourceLoadScheduler()->scheduleSubresourceLoad(cachedResourceLoader->frame(), this, request, request.priority(), options);
 #endif
 
     if (!m_loader) {
