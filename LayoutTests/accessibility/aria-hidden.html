@@ -18,9 +18,7 @@
           var body = document.getElementById("body");
           body.focus();
           var h2 = accessibilityController.focusedElement.childAtIndex(0);
-          var pattern = "AXTitle: h2";
-          var succeeded = h2.allAttributes().indexOf(pattern) != -1;
-          shouldBe("succeeded", "true");
+          shouldBe("h2.title", "'AXTitle: h2'");
     }
 
 </script>
