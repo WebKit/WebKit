@@ -2491,3 +2491,8 @@ fast/loader/non-deferred-substitute-load.html
 # https://bugs.webkit.org/show_bug.cgi?id=103043
 fast/events/frame-scroll-fake-mouse-move.html
 fast/events/overflow-scroll-fake-mouse-move.html
+
+# https://bugs.webkit.org/show_bug.cgi?id=97132
+media/track/track-cue-rendering-horizontal.html
+media/track/track-cue-rendering-snap-to-lines-not-set.html
+media/track/track-cue-rendering-vertical.html

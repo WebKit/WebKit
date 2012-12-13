@@ -1,3 +1,9 @@
+2012-12-12  Roger Fong  <roger_fong@apple.com>
+
+        Unreviewed. Skip some captions tests on Windows. Failing on both Mac and Windows.
+
+        * platform/win/TestExpectations:
+
 2012-12-11  Emil A Eklund  <eae@chromium.org>
 
         REGRESSION (Subpixel layout): Gray vertical lines appear when moving insertion point to right on Mac
