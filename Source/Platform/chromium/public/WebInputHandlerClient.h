@@ -73,6 +73,10 @@ public:
     // Request another callback to WebInputHandler::animate().
     virtual void scheduleAnimation() = 0;
 
+    // Returns whether there are any touch event handlers registered on the
+    // given WebPoint.
+    virtual bool haveTouchEventHandlersAt(WebPoint) = 0;
+
     // Indicate that the final input event for the current vsync interval was received.
     virtual void didReceiveLastInputEventForVSync() { }
 

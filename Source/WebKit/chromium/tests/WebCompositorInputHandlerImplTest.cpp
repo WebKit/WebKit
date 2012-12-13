@@ -58,6 +58,8 @@ public:
 
     MOCK_METHOD0(scheduleAnimation, void());
 
+    MOCK_METHOD1(haveTouchEventHandlersAt, bool(WebPoint));
+
     MOCK_METHOD2(scrollBegin, ScrollStatus(WebPoint, WebInputHandlerClient::ScrollInputType));
     MOCK_METHOD2(scrollByIfPossible, bool(WebPoint, WebSize));
     MOCK_METHOD0(scrollEnd, void());
