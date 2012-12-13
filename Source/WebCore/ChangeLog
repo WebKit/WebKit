@@ -1,3 +1,17 @@
+2012-12-13  Zeno Albisser  <zeno@webkit.org>
+
+        [Qt] Remove temporary workaround from GraphicsSurfaceGLX constructor.
+        https://bugs.webkit.org/show_bug.cgi?id=104904
+
+        QXcbNativeInterface::nativeResourceForContext() is now
+        available in Qt5. Therefore the temporary workaround
+        in GraphicsSurfaceGLX can be removed.
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        * platform/graphics/surfaces/glx/GraphicsSurfaceGLX.cpp:
+        (WebCore::GraphicsSurfacePrivate::GraphicsSurfacePrivate):
+
 2012-12-13  Joanmarie Diggs  <jdiggs@igalia.com>
 
         [GTK] Expose ARIA roles for tab, tabpanel and tablist
