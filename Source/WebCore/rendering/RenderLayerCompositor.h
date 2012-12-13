@@ -229,6 +229,7 @@ public:
     void setTracksRepaints(bool);
 
     void reportMemoryUsage(MemoryObjectInfo*) const;
+    void setShouldReevaluateCompositingAfterLayout() { m_reevaluateCompositingAfterLayout = true; }
 
     enum FixedPositionLayerNotCompositedReason {
         NoReason,

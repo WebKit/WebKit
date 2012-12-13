@@ -1,3 +1,99 @@
+2012-12-13  Ian Vollick  <vollick@chromium.org>
+
+        [chromium] Automatically use composited scrolling
+        https://bugs.webkit.org/show_bug.cgi?id=94743
+
+        Reviewed by Adrienne Walker.
+
+        We currently use the composited scrolling facilities provided by
+        wkb.ug/91117 if the overflow scroll block element is styled with
+        -webkit-overflow-scrolling: touch. Ideally, we could automatically
+        opt into composited scrolling if it is safe to do so. This can affect
+        antialiasing, so it is important that automatically opting in is only
+        enabled via a setting.
+
+        The way I determine if it is safe is by checking that z-ordering will
+        not be affected if the overflow scrollable element were promoted to a
+        stacking context (details below), and that clipping our scrolling
+        descendants will not affect rendering.
+
+        To check the first condition (that z-ordering will not be affected).
+        I ensure that the candidate element and all its descendants appear as a 
+        continuous block in the candidate's stacking context. That is, if no 
+        other elements are 'between' any of the candidates descendants when we
+        sort in paint order, then we're safe. This is overly conservative,
+        however. We could, in future, only consider stacking problems between
+        elements that actually overlap.
+
+        To ensure that clipping will not cause a rendering change, I ensure
+        that the layer has no out of flow positioned descendant whose
+        containing block is not also a descendant of ours.
+
+        Test: compositing/overflow/automatically-opt-into-compositing-scrolling.html
+
+        (WebCore):
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::RenderLayer):
+        (WebCore::RenderLayer::acceleratedCompositingForOverflowScrollEnabled):
+        (WebCore):
+        (WebCore::RenderLayer::updateDescendantsAreContiguousInStackingOrder):
+        (WebCore::RenderLayer::updateDescendantsAreContiguousInStackingOrderRecursive):
+        (WebCore::RenderLayer::positionOverflowControlsAfterPromotionToCompositedScrolling):
+        (WebCore::RenderLayer::canSafelyEstablishAStackingContext):
+          Returns true if the RenderLayer could become a stacking context without
+          affecting the stacking order.
+        (WebCore::RenderLayer::updateDescendantDependentFlags):
+          We now need to keep track of out of flow positioned descendants.
+        (WebCore::RenderLayer::addChild):
+        (WebCore::RenderLayer::removeChild):
+        (WebCore::RenderLayer::usesCompositedScrolling):
+          Has been updated to return true if it can safely establish a stacking
+          context, and the setting is turned on.
+        (WebCore::RenderLayer::needsCompositedScrolling):
+          This function returns true if we would like to use composited
+          scrolling.
+        (WebCore::RenderLayer::updateNeedsCompositedScrolling):
+        (WebCore::RenderLayer::scrollTo):
+        (WebCore::RenderLayer::dirtyZOrderLists):
+        (WebCore::RenderLayer::dirtyNormalFlowList):
+          Since these could affect opting into composited scrolling, we must
+          request that the RenderLayerCompositor reevaluate compositing.
+        (WebCore::RenderLayer::updateLayerListsIfNeeded):
+          We call updateCanSafelyEstablishStackingContext here, if necessary.
+        (WebCore::RenderLayer::shouldBeNormalFlowOnly):
+        (WebCore::RenderLayer::shouldBeSelfPaintingLayer):
+          usesCompositedScrolling -> needsCompositedScrolling
+        (WebCore::RenderLayer::setAncestorChainHasOutOfFlowPositionedDescendant):
+        (WebCore::RenderLayer::dirtyAncestorChainHasOutOfFlowPositionedDescendantStatus):
+        (WebCore::RenderLayer::updateOutOfFlowPositioned):
+          Dirties and sets the out of flow positioned descendant state.
+        (WebCore::RenderLayer::styleChanged):
+        * rendering/RenderLayer.h:
+        (RenderLayer):
+        (WebCore::RenderLayer::hasOutOfFlowPositionedDescendant):
+        * rendering/RenderLayerBacking.cpp:
+        (WebCore::layerOrAncestorIsTransformedOrUsingCompositedScrolling):
+        (WebCore::RenderLayerBacking::updateGraphicsLayerConfiguration):
+        (WebCore::RenderLayerBacking::updateGraphicsLayerGeometry):
+        (WebCore::RenderLayerBacking::hasUnpositionedOverflowControlsLayers):
+        (WebCore):
+        * rendering/RenderLayerBacking.h:
+        (RenderLayerBacking):
+        * rendering/RenderLayerCompositor.cpp:
+        (WebCore::RenderLayerCompositor::computeCompositingRequirements):
+          We now ensure that newly created overflow scroll controls get
+          positioned.
+        (WebCore::RenderLayerCompositor::requiresCompositingForOverflowScrolling):
+        * rendering/RenderLayerCompositor.h:
+        (WebCore::RenderLayerCompositor::setShouldReevaluateCompositingAfterLayout):
+        * testing/InternalSettings.cpp:
+        (WebCore::InternalSettings::setEnableCompositingForOverflowScroll):
+          Allows enabling the setting in layout tests.
+        (WebCore):
+        * testing/InternalSettings.h:
+        (InternalSettings):
+        * testing/InternalSettings.idl:
+
 2012-12-13  Ryosuke Niwa  <rniwa@webkit.org>
 
         REGRESSION(r137406): NodeTraversal changes causing large renderer crash
