@@ -163,3 +163,13 @@ BUGX : failures/expected/timeout.html = TIMEOUT
         ur = get_unexpected_results(expected=False, passing=True, flaky=False)
         printer.print_unexpected_results(ur)
         self.assertNotEmpty(out)
+
+        printer, out = self.get_printer()
+        tests = ['passes/text.html', 'failures/expected/timeout.html', 'failures/expected/crash.html', 'failures/expected/audio.html']
+        expectations = ''
+        port = MockHost().port_factory.get('test')
+        paths, initial_results, exp = self.get_run_results(port, tests, expectations)
+        summarized_results = get_unexpected_results(expected=False, passing=True, flaky=False)
+        details = manager.RunDetails(summarized_results['num_regressions'], summarized_results, initial_results, None)
+        printer.print_results(details)
+        self.assertNotEmpty(out)

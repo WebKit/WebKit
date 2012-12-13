@@ -48,7 +48,7 @@ class BuildBotPrinter(object):
 
     def print_results(self, run_details):
         if self.debug_logging:
-            self.print_run_results(run_details.run_results)
+            self.print_run_results(run_details.initial_results)
         self.print_unexpected_results(run_details.summarized_results)
 
     def _print(self, msg):
