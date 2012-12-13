@@ -1,3 +1,15 @@
+2012-12-13  Alexey Proskuryakov  <ap@apple.com>
+
+        ResourceLoader::didReceiveAuthenticationChallenge uses a wrong client
+        https://bugs.webkit.org/show_bug.cgi?id=104935
+        <rdar://problem/12870361>
+
+        Reviewed by Anders Carlsson.
+
+        * loader/ResourceLoader.cpp: (WebCore::ResourceLoader::didReceiveAuthenticationChallenge):
+        The handle is null when NetworkProcess is used. In any case, it should be correct
+        to use the client carried within AuthenticationChallenge.
+
 2012-12-13  Stephen White  <senorblanco@chromium.org>
 
         CanvasRenderingContext2D::setFont() is slow.
