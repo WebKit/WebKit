@@ -452,7 +452,7 @@ void AlternativeTextController::respondToChangedSelection(const VisibleSelection
     // containing the original pre-correction word so that user can quickly revert the
     // undesired autocorrection. Here, we start correction panel timer once we confirm that
     // the new caret position is at the end of a word.
-    if (!currentSelection.isCaret() || currentSelection == oldSelection)
+    if (!currentSelection.isCaret() || currentSelection == oldSelection || !currentSelection.isContentEditable())
         return;
 
     VisiblePosition selectionPosition = currentSelection.start();
