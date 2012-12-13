@@ -66,7 +66,6 @@ class TestRunner:
         SkippedTest("unittests/testwebresource", "/webkit/webresource/loading", "Test fails", 104689),
         SkippedTest("unittests/testwebresource", "/webkit/webresource/sub_resource_loading", "Test fails in GTK Linux 64-bit Release bot", 82330),
         SkippedTest("unittests/testwebview", "/webkit/webview/icon-uri", "Test times out in GTK Linux 64-bit Release bot", 82328),
-        SkippedTest("WebKit2APITests/TestCookieManager", "/webkit2/WebKitCookieManager/accept-policy", "Test is failing", 104790),
         SkippedTest("WebKit2APITests/TestResources", "/webkit2/WebKitWebView/resources", "Test is flaky in GTK Linux 32-bit Release bot", 82868),
         SkippedTest("WebKit2APITests/TestWebKitAccessibility", "/webkit2/WebKitAccessibility/atspi-basic-hierarchy", "Test fails", 100408),
         SkippedTest("WebKit2APITests/TestWebKitFindController", "/webkit2/WebKitFindController/hide", "Test always fails in Xvfb", 89810),

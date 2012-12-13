@@ -135,6 +135,9 @@ WebContext::WebContext(ProcessModel processModel, const String& injectedBundlePa
     , m_shouldPaintNativeControls(true)
     , m_initialHTTPCookieAcceptPolicy(HTTPCookieAcceptPolicyAlways)
 #endif
+#if USE(SOUP)
+    , m_initialHTTPCookieAcceptPolicy(HTTPCookieAcceptPolicyOnlyFromMainDocumentDomain)
+#endif
     , m_processTerminationEnabled(true)
 #if ENABLE(NETWORK_PROCESS)
     , m_usesNetworkProcess(false)

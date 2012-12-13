@@ -1,3 +1,15 @@
+2012-12-13  Joaquim Rocha  <jrocha@igalia.com>
+
+        REGRESSION (r137432): The /webkit2/WebKitCookieManager/accept-policy unit test is failing
+        https://bugs.webkit.org/show_bug.cgi?id=104790
+
+        Reviewed by Carlos Garcia Campos.
+
+        Unskip the GTK accept policy test.
+
+        * Scripts/run-gtk-tests:
+        (TestRunner):
+
 2012-12-13  Xingnan Wang  <xingnan.wang@intel.com>
 
         Unreviewed. Adding myself to committers list.
