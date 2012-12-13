@@ -607,7 +607,7 @@ class Port(object):
     @staticmethod
     # If any changes are made here be sure to update the isUsedInReftest method in old-run-webkit-tests as well.
     def is_reference_html_file(filesystem, dirname, filename):
-        if filename.startswith('ref-') or filename.startsWith('notref-'):
+        if filename.startswith('ref-') or filename.startswith('notref-'):
             return True
         filename_wihout_ext, unused = filesystem.splitext(filename)
         for suffix in ['-expected', '-expected-mismatch', '-ref', '-notref']:

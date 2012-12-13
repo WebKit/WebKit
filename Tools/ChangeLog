@@ -1,5 +1,12 @@
 2012-12-12  Roger Fong  <roger_fong@apple.com>
 
+        Unreviewed. Fix typo in NRWT.
+
+        * Scripts/webkitpy/layout_tests/port/base.py:
+        (Port.is_reference_html_file):
+
+2012-12-12  Roger Fong  <roger_fong@apple.com>
+
         Fix detection of ref test files in old and new run webkit tests.
         https://bugs.webkit.org/show_bug.cgi?id=104850.
 
