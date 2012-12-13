@@ -31,6 +31,7 @@
 #include "HTMLPlugInImageElement.h"
 #include "KURL.h"
 #include "Logging.h"
+#include "MIMETypeRegistry.h"
 #include "Page.h"
 #include <wtf/text/StringHash.h>
 
@@ -38,6 +39,8 @@ namespace WebCore {
 
 static inline void addCaseFoldedCharacters(StringHasher& hasher, const String& string)
 {
+    if (string.isEmpty())
+        return;
     if (string.is8Bit())
         return hasher.addCharacters<LChar, CaseFoldingHash::foldCase<LChar> >(string.characters8(), string.length());
     return hasher.addCharacters<UChar, CaseFoldingHash::foldCase<UChar> >(string.characters16(), string.length());
@@ -47,6 +50,10 @@ unsigned PlugInOriginHash::hash(HTMLPlugInImageElement* plugInElement, const KUR
 {
     ASSERT(plugInElement->document()->page());
 
+    String mimeType = plugInElement->serviceType();
+    if (mimeType.isEmpty())
+        mimeType = mimeTypeFromURL(plugInURL);
+
     // We want to avoid concatenating the strings and then taking the hash, since that could lead to an expensive conversion.
     // We also want to avoid using the hash() function in StringImpl or CaseFoldingHash because that masks out bits for the use of flags.
     StringHasher hasher;
@@ -54,8 +61,8 @@ unsigned PlugInOriginHash::hash(HTMLPlugInImageElement* plugInElement, const KUR
     hasher.addCharacter(0);
     addCaseFoldedCharacters(hasher, plugInURL.host());
     hasher.addCharacter(0);
-    addCaseFoldedCharacters(hasher, plugInElement->serviceType());
-    LOG(Plugins, "Hash: %s %s %s", plugInElement->document()->page()->mainFrame()->document()->baseURL().host().utf8().data(), plugInURL.host().utf8().data(), plugInElement->serviceType().utf8().data());
+    addCaseFoldedCharacters(hasher, mimeType);
+    LOG(Plugins, "Hash: %s %s %s", plugInElement->document()->page()->mainFrame()->document()->baseURL().host().utf8().data(), plugInURL.host().utf8().data(), mimeType.utf8().data());
     return hasher.hash();
 }
 

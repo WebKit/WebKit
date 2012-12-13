@@ -290,6 +290,7 @@ bool portAllowed(const KURL&); // Blacklist ports that should never be used for 
 bool isValidProtocol(const String&);
 
 String mimeTypeFromDataURL(const String& url);
+String mimeTypeFromURL(const KURL&);
 
 // Unescapes the given string using URL escaping rules, given an optional
 // encoding (defaulting to UTF-8 otherwise). DANGER: If the URL has "%00"
