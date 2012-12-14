@@ -4069,7 +4069,7 @@ void SpeculativeJIT::compile(Node& node)
         cachedGetById(node.codeOrigin, baseGPR, resultGPR, node.identifierNumber(), notCell, DontSpill);
         
         jsValueResult(resultGPR, m_compileIndex, UseChildrenCalledExplicitly);
-
+        
         break;
     }
 
@@ -4481,64 +4481,6 @@ void SpeculativeJIT::compile(Node& node)
         callOperation(operationIsFunction, resultGPR, valueGPR);
         m_jit.or32(TrustedImm32(ValueFalse), resultGPR);
         jsValueResult(result.gpr(), m_compileIndex, DataFormatJSBoolean);
-        break;
-    }
-
-    case TypeOf: {
-        JSValueOperand value(this, node.child1());
-        GPRReg valueGPR = value.gpr();
-        GPRTemporary temp(this);
-        GPRReg tempGPR = temp.gpr();
-        GPRResult result(this);
-        GPRReg resultGPR = result.gpr();
-        JITCompiler::JumpList doneJumps;
-
-        flushRegisters();
-
-        JITCompiler::Jump isNotCell = m_jit.branchTest64(JITCompiler::NonZero, valueGPR, GPRInfo::tagMaskRegister);
-        Node& child = m_jit.graph()[node.child1()];
-        if (child.shouldSpeculateCell())
-            speculationCheck(BadType, JSValueSource(valueGPR), node.child1(), isNotCell);
-
-        if (!child.shouldSpeculateNonStringCell()) {
-            m_jit.loadPtr(JITCompiler::Address(valueGPR, JSCell::structureOffset()), tempGPR);
-            JITCompiler::Jump notString = m_jit.branch8(JITCompiler::NotEqual, JITCompiler::Address(tempGPR, Structure::typeInfoTypeOffset()), TrustedImm32(StringType));
-            if (child.shouldSpeculateString())
-                speculationCheck(BadType, JSValueSource(valueGPR), node.child1(), notString);
-            m_jit.move(TrustedImmPtr(m_jit.globalData()->smallStrings.stringString(m_jit.globalData())), resultGPR);
-            doneJumps.append(m_jit.jump());
-            if (!child.shouldSpeculateString()) {
-                notString.link(&m_jit);
-                callOperation(operationTypeOf, resultGPR, valueGPR);
-                doneJumps.append(m_jit.jump());
-            }
-        } else {
-            callOperation(operationTypeOf, resultGPR, valueGPR);
-            doneJumps.append(m_jit.jump());
-        }
-
-        if (!child.shouldSpeculateCell()) {
-            isNotCell.link(&m_jit);
-            JITCompiler::Jump notNumber = m_jit.branchTest64(JITCompiler::Zero, valueGPR, GPRInfo::tagTypeNumberRegister);
-            m_jit.move(TrustedImmPtr(m_jit.globalData()->smallStrings.numberString(m_jit.globalData())), resultGPR);
-            doneJumps.append(m_jit.jump());
-            notNumber.link(&m_jit);
-
-            JITCompiler::Jump notUndefined = m_jit.branch64(JITCompiler::NotEqual, valueGPR, JITCompiler::TrustedImm64(ValueUndefined));
-            m_jit.move(TrustedImmPtr(m_jit.globalData()->smallStrings.undefinedString(m_jit.globalData())), resultGPR);
-            doneJumps.append(m_jit.jump());
-            notUndefined.link(&m_jit);
-
-            JITCompiler::Jump notNull = m_jit.branch64(JITCompiler::NotEqual, valueGPR, JITCompiler::TrustedImm64(ValueNull));
-            m_jit.move(TrustedImmPtr(m_jit.globalData()->smallStrings.objectString(m_jit.globalData())), resultGPR);
-            doneJumps.append(m_jit.jump());
-            notNull.link(&m_jit);
-
-            // Only boolean left
-            m_jit.move(TrustedImmPtr(m_jit.globalData()->smallStrings.booleanString(m_jit.globalData())), resultGPR);
-        }
-        doneJumps.link(&m_jit);
-        cellResult(resultGPR, m_compileIndex);
         break;
     }
 

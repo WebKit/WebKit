@@ -56,8 +56,9 @@ NEVER_INLINE JSValue jsAddSlowCase(CallFrame* callFrame, JSValue v1, JSValue v2)
     return jsNumber(p1.toNumber(callFrame) + p2.toNumber(callFrame));
 }
 
-JSValue jsTypeStringForValue(JSGlobalData& globalData, JSGlobalObject* globalObject, JSValue v)
+JSValue jsTypeStringForValue(CallFrame* callFrame, JSValue v)
 {
+    JSGlobalData& globalData = callFrame->globalData();
     if (v.isUndefined())
         return globalData.smallStrings.undefinedString(&globalData);
     if (v.isBoolean())
@@ -69,7 +70,7 @@ JSValue jsTypeStringForValue(JSGlobalData& globalData, JSGlobalObject* globalObj
     if (v.isObject()) {
         // Return "undefined" for objects that should be treated
         // as null when doing comparisons.
-        if (asObject(v)->structure()->masqueradesAsUndefined(globalObject))
+        if (asObject(v)->structure()->masqueradesAsUndefined(callFrame->lexicalGlobalObject()))
             return globalData.smallStrings.undefinedString(&globalData);
         CallData callData;
         JSObject* object = asObject(v);
@@ -77,11 +78,6 @@ JSValue jsTypeStringForValue(JSGlobalData& globalData, JSGlobalObject* globalObj
             return globalData.smallStrings.functionString(&globalData);
     }
     return globalData.smallStrings.objectString(&globalData);
-}
-
-JSValue jsTypeStringForValue(CallFrame* callFrame, JSValue v)
-{
-    return jsTypeStringForValue(callFrame->globalData(), callFrame->lexicalGlobalObject(), v);
 }
 
 bool jsIsObjectType(CallFrame* callFrame, JSValue v)
