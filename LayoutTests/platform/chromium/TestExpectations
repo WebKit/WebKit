@@ -4237,3 +4237,6 @@ webkit.org/b/104834 [ MountainLion ] fast/css/nested-rounded-corners.html [ Fail
 webkit.org/b/104848 [ Linux XP SnowLeopard Lion Release ] fast/frames/sandboxed-iframe-attribute-parsing.html [ Pass Failure ]
 webkit.org/b/104848 [ SnowLeopard Debug ] fast/frames/sandboxed-iframe-attribute-parsing.html [ Pass Failure ]
 webkit.org/b/104848 [ Release ] fast/frames/sandboxed-iframe-parsing-space-characters.html [ Pass Failure ]
+
+# New test
+webkit.org/b/104631 fast/inline/justify-emphasis-inline-box.html [ Missing ]

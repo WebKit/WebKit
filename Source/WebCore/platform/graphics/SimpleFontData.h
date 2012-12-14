@@ -157,6 +157,7 @@ public:
 
     Glyph spaceGlyph() const { return m_spaceGlyph; }
     void setSpaceGlyph(Glyph spaceGlyph) { m_spaceGlyph = spaceGlyph; }
+    Glyph zeroWidthSpaceGlyph() const { return m_zeroWidthSpaceGlyph; }
     void setZeroWidthSpaceGlyph(Glyph spaceGlyph) { m_zeroWidthSpaceGlyph = spaceGlyph; }
     bool isZeroWidthSpaceGlyph(Glyph glyph) const { return glyph == m_zeroWidthSpaceGlyph && glyph; }
 
