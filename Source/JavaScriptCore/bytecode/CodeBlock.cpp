@@ -2791,7 +2791,8 @@ unsigned CodeBlock::bytecodeOffset(ExecState* exec, ReturnAddressPtr returnAddre
     if (getJITCode().getExecutableMemory()->contains(returnAddress.value())) {
         unsigned callReturnOffset = getJITCode().offsetOf(returnAddress.value());
         CallReturnOffsetToBytecodeOffset* result =
-            binarySearch<CallReturnOffsetToBytecodeOffset, unsigned, getCallReturnOffset>(callIndices.begin(), callIndices.size(), callReturnOffset);
+            binarySearch<CallReturnOffsetToBytecodeOffset, unsigned>(
+                callIndices, callIndices.size(), callReturnOffset, getCallReturnOffset);
         ASSERT(result->callReturnOffset == callReturnOffset);
         return result->bytecodeOffset;
     }
@@ -2816,8 +2817,11 @@ bool CodeBlock::codeOriginForReturn(ReturnAddressPtr returnAddress, CodeOrigin& 
     }
     
     unsigned offset = getJITCode().offsetOf(returnAddress.value());
-    CodeOriginAtCallReturnOffset* entry = binarySearch<CodeOriginAtCallReturnOffset, unsigned, getCallReturnOffsetForCodeOrigin>(codeOrigins().begin(), codeOrigins().size(), offset, WTF::KeyMustNotBePresentInArray);
-    if (entry->callReturnOffset != offset)
+    CodeOriginAtCallReturnOffset* entry =
+        tryBinarySearch<CodeOriginAtCallReturnOffset, unsigned>(
+            codeOrigins(), codeOrigins().size(), offset,
+            getCallReturnOffsetForCodeOrigin);
+    if (!entry)
         return false;
     codeOrigin = entry->codeOrigin;
     return true;

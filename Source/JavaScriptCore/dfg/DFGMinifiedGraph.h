@@ -43,14 +43,8 @@ public:
 
     MinifiedNode* at(NodeIndex nodeIndex)
     {
-        if (!m_list.size())
-            return 0;
-        MinifiedNode* entry =
-            binarySearch<MinifiedNode, NodeIndex, MinifiedNode::getIndex>(
-                m_list.begin(), m_list.size(), nodeIndex, WTF::KeyMustNotBePresentInArray);
-        if (entry->index() != nodeIndex)
-            return 0;
-        return entry;
+        return tryBinarySearch<MinifiedNode, NodeIndex>(
+            m_list, m_list.size(), nodeIndex, MinifiedNode::getIndex);
     }
     
     void append(const MinifiedNode& node)

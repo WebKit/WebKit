@@ -238,30 +238,30 @@ namespace JSC {
 
         StructureStubInfo& getStubInfo(ReturnAddressPtr returnAddress)
         {
-            return *(binarySearch<StructureStubInfo, void*, getStructureStubInfoReturnLocation>(m_structureStubInfos.begin(), m_structureStubInfos.size(), returnAddress.value()));
+            return *(binarySearch<StructureStubInfo, void*>(m_structureStubInfos, m_structureStubInfos.size(), returnAddress.value(), getStructureStubInfoReturnLocation));
         }
 
         StructureStubInfo& getStubInfo(unsigned bytecodeIndex)
         {
-            return *(binarySearch<StructureStubInfo, unsigned, getStructureStubInfoBytecodeIndex>(m_structureStubInfos.begin(), m_structureStubInfos.size(), bytecodeIndex));
+            return *(binarySearch<StructureStubInfo, unsigned>(m_structureStubInfos, m_structureStubInfos.size(), bytecodeIndex, getStructureStubInfoBytecodeIndex));
         }
         
         void resetStub(StructureStubInfo&);
         
         ByValInfo& getByValInfo(unsigned bytecodeIndex)
         {
-            return *(binarySearch<ByValInfo, unsigned, getByValInfoBytecodeIndex>(m_byValInfos.begin(), m_byValInfos.size(), bytecodeIndex));
+            return *(binarySearch<ByValInfo, unsigned>(m_byValInfos, m_byValInfos.size(), bytecodeIndex, getByValInfoBytecodeIndex));
         }
 
         CallLinkInfo& getCallLinkInfo(ReturnAddressPtr returnAddress)
         {
-            return *(binarySearch<CallLinkInfo, void*, getCallLinkInfoReturnLocation>(m_callLinkInfos.begin(), m_callLinkInfos.size(), returnAddress.value()));
+            return *(binarySearch<CallLinkInfo, void*>(m_callLinkInfos, m_callLinkInfos.size(), returnAddress.value(), getCallLinkInfoReturnLocation));
         }
         
         CallLinkInfo& getCallLinkInfo(unsigned bytecodeIndex)
         {
             ASSERT(JITCode::isBaselineCode(getJITType()));
-            return *(binarySearch<CallLinkInfo, unsigned, getCallLinkInfoBytecodeIndex>(m_callLinkInfos.begin(), m_callLinkInfos.size(), bytecodeIndex));
+            return *(binarySearch<CallLinkInfo, unsigned>(m_callLinkInfos, m_callLinkInfos.size(), bytecodeIndex, getCallLinkInfoBytecodeIndex));
         }
 #endif // ENABLE(JIT)
 
@@ -359,15 +359,9 @@ namespace JSC {
         {
             if (!m_dfgData)
                 return 0;
-            if (m_dfgData->osrEntry.isEmpty())
-                return 0;
-            DFG::OSREntryData* result = binarySearch<
-                DFG::OSREntryData, unsigned, DFG::getOSREntryDataBytecodeIndex>(
-                    m_dfgData->osrEntry.begin(), m_dfgData->osrEntry.size(),
-                    bytecodeIndex, WTF::KeyMustNotBePresentInArray);
-            if (result->m_bytecodeIndex != bytecodeIndex)
-                return 0;
-            return result;
+            return tryBinarySearch<DFG::OSREntryData, unsigned>(
+                m_dfgData->osrEntry, m_dfgData->osrEntry.size(), bytecodeIndex,
+                DFG::getOSREntryDataBytecodeIndex);
         }
         
         unsigned appendOSRExit(const DFG::OSRExit& osrExit)
@@ -678,7 +672,9 @@ namespace JSC {
         }
         ValueProfile* valueProfileForBytecodeOffset(int bytecodeOffset)
         {
-            ValueProfile* result = WTF::genericBinarySearch<ValueProfile, int, getValueProfileBytecodeOffset>(m_valueProfiles, m_valueProfiles.size(), bytecodeOffset);
+            ValueProfile* result = binarySearch<ValueProfile, int>(
+                m_valueProfiles, m_valueProfiles.size(), bytecodeOffset,
+                getValueProfileBytecodeOffset<ValueProfile>);
             ASSERT(result->m_bytecodeOffset != -1);
             ASSERT(instructions()[bytecodeOffset + opcodeLength(
                        m_globalData->interpreter->getOpcodeID(
@@ -711,7 +707,9 @@ namespace JSC {
         RareCaseProfile* rareCaseProfile(int index) { return &m_rareCaseProfiles[index]; }
         RareCaseProfile* rareCaseProfileForBytecodeOffset(int bytecodeOffset)
         {
-            return WTF::genericBinarySearch<RareCaseProfile, int, getRareCaseProfileBytecodeOffset>(m_rareCaseProfiles, m_rareCaseProfiles.size(), bytecodeOffset);
+            return binarySearch<RareCaseProfile, int>(
+                m_rareCaseProfiles, m_rareCaseProfiles.size(), bytecodeOffset,
+                getRareCaseProfileBytecodeOffset);
         }
         
         bool likelyToTakeSlowCase(int bytecodeOffset)
@@ -739,7 +737,9 @@ namespace JSC {
         RareCaseProfile* specialFastCaseProfile(int index) { return &m_specialFastCaseProfiles[index]; }
         RareCaseProfile* specialFastCaseProfileForBytecodeOffset(int bytecodeOffset)
         {
-            return WTF::genericBinarySearch<RareCaseProfile, int, getRareCaseProfileBytecodeOffset>(m_specialFastCaseProfiles, m_specialFastCaseProfiles.size(), bytecodeOffset);
+            return binarySearch<RareCaseProfile, int>(
+                m_specialFastCaseProfiles, m_specialFastCaseProfiles.size(), bytecodeOffset,
+                getRareCaseProfileBytecodeOffset);
         }
         
         bool likelyToTakeSpecialFastCase(int bytecodeOffset)

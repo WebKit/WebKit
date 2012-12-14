@@ -378,7 +378,7 @@ LLINT_SLOW_PATH_DECL(loop_osr)
     
     Vector<BytecodeAndMachineOffset> map;
     codeBlock->jitCodeMap()->decode(map);
-    BytecodeAndMachineOffset* mapping = binarySearch<BytecodeAndMachineOffset, unsigned, BytecodeAndMachineOffset::getBytecodeIndex>(map.begin(), map.size(), pc - codeBlock->instructions().begin());
+    BytecodeAndMachineOffset* mapping = binarySearch<BytecodeAndMachineOffset, unsigned>(map, map.size(), pc - codeBlock->instructions().begin(), BytecodeAndMachineOffset::getBytecodeIndex);
     ASSERT(mapping);
     ASSERT(mapping->m_bytecodeIndex == static_cast<unsigned>(pc - codeBlock->instructions().begin()));
     

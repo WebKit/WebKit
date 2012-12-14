@@ -1,3 +1,31 @@
+2012-12-13  Filip Pizlo  <fpizlo@apple.com>
+
+        Attempt to rationalize and simplify WTF::binarySearch
+        https://bugs.webkit.org/show_bug.cgi?id=104890
+
+        Reviewed by Maciej Stachowiak.
+
+        Binary search now has three modes:
+
+        The default: assert that the key was found, but return an adjacent element if it
+        wasn't found, if asserts are turned off.
+        
+        tryBinarySearch: return 0 if the key wasn't found.
+        
+        approximateBinarySearch: if the key is not found, return an adjacent element (either
+        the left or right; no guarantee which).
+        
+        This also reduces the number of variants of binarySearch. The functor variant is now
+        gone because binarySearch now always uses a functor for the key extractor. The
+        generic variant is now gone because binarySearch always expects an array type that
+        can do operator[].
+
+        * wtf/StdLibExtras.h:
+        (WTF::binarySearchImpl):
+        (WTF::binarySearch):
+        (WTF::tryBinarySearch):
+        (WTF::approximateBinarySearch):
+
 2012-12-13  Ilya Tikhonovsky  <loislo@chromium.org>
 
         Web Inspector: Native Memory Instrumentation: do not validate pointers to objects in RenderArena agains tcmalloc data.

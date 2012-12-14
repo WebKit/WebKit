@@ -769,7 +769,7 @@ private:
 
 inline BlockIndex Graph::blockIndexForBytecodeOffset(Vector<BlockIndex>& linkingTargets, unsigned bytecodeBegin)
 {
-    return *WTF::binarySearchWithFunctor<BlockIndex, unsigned>(linkingTargets.begin(), linkingTargets.size(), bytecodeBegin, WTF::KeyMustBePresentInArray, GetBytecodeBeginForBlock(*this));
+    return *binarySearch<BlockIndex, unsigned>(linkingTargets, linkingTargets.size(), bytecodeBegin, GetBytecodeBeginForBlock(*this));
 }
 
 } } // namespace JSC::DFG

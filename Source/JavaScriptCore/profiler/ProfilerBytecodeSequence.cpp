@@ -64,7 +64,7 @@ BytecodeSequence::~BytecodeSequence()
 
 unsigned BytecodeSequence::indexForBytecodeIndex(unsigned bytecodeIndex) const
 {
-    return binarySearch<Bytecode, unsigned, getBytecodeIndexForBytecode>(const_cast<Bytecode*>(m_sequence.begin()), m_sequence.size(), bytecodeIndex) - m_sequence.begin();
+    return binarySearch<Bytecode, unsigned>(m_sequence, m_sequence.size(), bytecodeIndex, getBytecodeIndexForBytecode) - m_sequence.begin();
 }
 
 const Bytecode& BytecodeSequence::forBytecodeIndex(unsigned bytecodeIndex) const
