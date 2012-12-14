@@ -1,35 +1,17 @@
 <!DOCTYPE html>
-<html>
-<head>
-<script>
-var testVal = 1;
-
-window.onload = function() {
-    if (window.testRunner) {
-        testRunner.dumpAsText();
-        testRunner.dumpResourceLoadCallbacks();
-    }
-
-    if (testVal != 1)
-        return;
-
-    var templateContent = document.getElementById('template').content;
-    var img = templateContent.childNodes[1];
-    img.src = "http://baz.com/bat.jpg";
-    document.body.appendChild(templateContent);
-
-    if (testVal != 2)
-        return;
-
-    document.getElementById('output').innerText = 'pass!';
-}
-</script>
-</head>
 <body>
-<p>The test asserts that elements within template contents are "inert", e.g. resources do not fetch, script does not run.</p>
-<template id="template"><script>window.testVal = 2;</script><img src="http://foo.com/bar.jpg">
-</template>
-<div id="output">
-</div>
+<script src="../../js/resources/js-test-pre.js"></script>
+<script>
+var testVal = 'script has not run';
+</script>
+<!-- FIXME: Add non-flaky test for <img> tags -->
+<template><script>window.testVal = 'script has run';</script></template>
+<script>
+description('The test asserts that elements within template contents are "inert", e.g. script does not run.');
+shouldBeEqualToString('testVal', 'script has not run');
+var templateContent = document.querySelector('template').content;
+document.body.appendChild(templateContent);
+shouldBeEqualToString('testVal', 'script has run');
+</script>
+<script src="../../js/resources/js-test-post.js"></script>
 </body>
-</html>
