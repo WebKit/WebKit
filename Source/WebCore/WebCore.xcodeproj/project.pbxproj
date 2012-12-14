@@ -3685,8 +3685,6 @@
 		97BC6A271505F081001B74AC /* DatabaseContext.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 97BC69E51505F081001B74AC /* DatabaseContext.cpp */; };
 		97BC6A281505F081001B74AC /* DatabaseContext.h in Headers */ = {isa = PBXBuildFile; fileRef = 97BC69E61505F081001B74AC /* DatabaseContext.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		97BC6A291505F081001B74AC /* DatabaseDetails.h in Headers */ = {isa = PBXBuildFile; fileRef = 97BC69E71505F081001B74AC /* DatabaseDetails.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		FE456F181677D74E005EDDF9 /* DatabaseManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FE456F161677D74E005EDDF9 /* DatabaseManager.cpp */; };
-		FE456F191677D74E005EDDF9 /* DatabaseManager.h in Headers */ = {isa = PBXBuildFile; fileRef = FE456F171677D74E005EDDF9 /* DatabaseManager.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		97BC6A2A1505F081001B74AC /* DatabaseSync.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 97BC69E81505F081001B74AC /* DatabaseSync.cpp */; };
 		97BC6A2B1505F081001B74AC /* DatabaseSync.h in Headers */ = {isa = PBXBuildFile; fileRef = 97BC69E91505F081001B74AC /* DatabaseSync.h */; };
 		97BC6A2D1505F081001B74AC /* DatabaseTask.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 97BC69EB1505F081001B74AC /* DatabaseTask.cpp */; };
@@ -6290,6 +6288,8 @@
 		F36E07A41358A8BE00AACBC9 /* WorkerInspectorController.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F36E07A21358A8BE00AACBC9 /* WorkerInspectorController.cpp */; };
 		F36E07A51358A8BE00AACBC9 /* WorkerInspectorController.h in Headers */ = {isa = PBXBuildFile; fileRef = F36E07A31358A8BE00AACBC9 /* WorkerInspectorController.h */; };
 		F375CC071150D300008DDB81 /* InspectorWorkerResource.h in Headers */ = {isa = PBXBuildFile; fileRef = F375CC061150D300008DDB81 /* InspectorWorkerResource.h */; };
+		F37A56221679CF7B00C57046 /* HeapGraphSerializer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F37A56201679CF7B00C57046 /* HeapGraphSerializer.cpp */; };
+		F37A56231679CF7B00C57046 /* HeapGraphSerializer.h in Headers */ = {isa = PBXBuildFile; fileRef = F37A56211679CF7B00C57046 /* HeapGraphSerializer.h */; };
 		F3810C1B1365A49600ED6E33 /* InspectorWorkerAgent.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F3810C191365A49600ED6E33 /* InspectorWorkerAgent.cpp */; };
 		F3810C1C1365A49600ED6E33 /* InspectorWorkerAgent.h in Headers */ = {isa = PBXBuildFile; fileRef = F3810C1A1365A49600ED6E33 /* InspectorWorkerAgent.h */; };
 		F3820892147D35F90010BC06 /* PageConsoleAgent.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F382088A147D35F90010BC06 /* PageConsoleAgent.cpp */; };
@@ -6645,6 +6645,8 @@
 		FDF6BAF9134A4C9800822920 /* JSOfflineAudioCompletionEvent.h in Headers */ = {isa = PBXBuildFile; fileRef = FDF6BAF7134A4C9800822920 /* JSOfflineAudioCompletionEvent.h */; };
 		FDF7E9C313AC21DB00A51EAC /* JSAudioBufferCallback.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FDF7E9C113AC21DB00A51EAC /* JSAudioBufferCallback.cpp */; };
 		FDF7E9C413AC21DB00A51EAC /* JSAudioBufferCallback.h in Headers */ = {isa = PBXBuildFile; fileRef = FDF7E9C213AC21DB00A51EAC /* JSAudioBufferCallback.h */; };
+		FE456F181677D74E005EDDF9 /* DatabaseManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FE456F161677D74E005EDDF9 /* DatabaseManager.cpp */; };
+		FE456F191677D74E005EDDF9 /* DatabaseManager.h in Headers */ = {isa = PBXBuildFile; fileRef = FE456F171677D74E005EDDF9 /* DatabaseManager.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		FE6FD4880F676E5700092873 /* Coordinates.h in Headers */ = {isa = PBXBuildFile; fileRef = FE6FD4850F676E5700092873 /* Coordinates.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		FE6FD48D0F676E9300092873 /* JSCoordinates.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FE6FD48B0F676E9300092873 /* JSCoordinates.cpp */; };
 		FE6FD48E0F676E9300092873 /* JSCoordinates.h in Headers */ = {isa = PBXBuildFile; fileRef = FE6FD48C0F676E9300092873 /* JSCoordinates.h */; };
@@ -13789,6 +13791,8 @@
 		F36E07A21358A8BE00AACBC9 /* WorkerInspectorController.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WorkerInspectorController.cpp; sourceTree = "<group>"; };
 		F36E07A31358A8BE00AACBC9 /* WorkerInspectorController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WorkerInspectorController.h; sourceTree = "<group>"; };
 		F375CC061150D300008DDB81 /* InspectorWorkerResource.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InspectorWorkerResource.h; sourceTree = "<group>"; };
+		F37A56201679CF7B00C57046 /* HeapGraphSerializer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = HeapGraphSerializer.cpp; sourceTree = "<group>"; };
+		F37A56211679CF7B00C57046 /* HeapGraphSerializer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HeapGraphSerializer.h; sourceTree = "<group>"; };
 		F3810C191365A49600ED6E33 /* InspectorWorkerAgent.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = InspectorWorkerAgent.cpp; sourceTree = "<group>"; };
 		F3810C1A1365A49600ED6E33 /* InspectorWorkerAgent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InspectorWorkerAgent.h; sourceTree = "<group>"; };
 		F382088A147D35F90010BC06 /* PageConsoleAgent.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PageConsoleAgent.cpp; sourceTree = "<group>"; };
@@ -14848,6 +14852,8 @@
 				7AABA25814BC613300AA9A11 /* DOMEditor.h */,
 				7A54881614E432A1006AE05A /* DOMPatchSupport.cpp */,
 				7A54881514E432A1006AE05A /* DOMPatchSupport.h */,
+				F37A56201679CF7B00C57046 /* HeapGraphSerializer.cpp */,
+				F37A56211679CF7B00C57046 /* HeapGraphSerializer.h */,
 				5913A23F13D49EBA00F5B05C /* IdentifiersFactory.cpp */,
 				5913A24013D49EBA00F5B05C /* IdentifiersFactory.h */,
 				F3644AFD1119805900E0D537 /* InjectedScript.cpp */,
@@ -25927,6 +25933,7 @@
 				E1513D4F1677EA8300149FCB /* InitializeLogging.h in Headers */,
 				FDA9325E16703B2A008982DC /* OfflineAudioContext.h in Headers */,
 				FDA9326716703BA9008982DC /* JSOfflineAudioContext.h in Headers */,
+				F37A56231679CF7B00C57046 /* HeapGraphSerializer.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -29037,6 +29044,7 @@
 				FDA9325D16703B2A008982DC /* OfflineAudioContext.cpp in Sources */,
 				FDA9326616703BA9008982DC /* JSOfflineAudioContext.cpp in Sources */,
 				FE456F181677D74E005EDDF9 /* DatabaseManager.cpp in Sources */,
+				F37A56221679CF7B00C57046 /* HeapGraphSerializer.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

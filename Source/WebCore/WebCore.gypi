@@ -1774,6 +1774,8 @@
             'inspector/DOMEditor.h',
             'inspector/DOMPatchSupport.cpp',
             'inspector/DOMPatchSupport.h',
+            'inspector/HeapGraphSerializer.cpp',
+            'inspector/HeapGraphSerializer.h',
             'inspector/IdentifiersFactory.cpp',
             'inspector/IdentifiersFactory.h',
             'inspector/InjectedScript.cpp',

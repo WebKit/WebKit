@@ -34,6 +34,7 @@
 
 #include "MemoryInstrumentationImpl.h"
 
+#include "HeapGraphSerializer.h"
 #include "WebCoreMemoryInstrumentation.h"
 #include <wtf/Assertions.h>
 #include <wtf/MemoryInstrumentationHashMap.h>
@@ -92,6 +93,30 @@ bool MemoryInstrumentationClientImpl::checkCountedObject(const void* object)
 #endif
     }
     return true;
+}
+
+void MemoryInstrumentationClientImpl::reportNode(const MemoryObjectInfo& node)
+{
+    if (m_graphSerializer)
+        m_graphSerializer->reportNode(node);
+}
+
+void MemoryInstrumentationClientImpl::reportEdge(const void* source, const void* target, const char* name)
+{
+    if (m_graphSerializer)
+        m_graphSerializer->reportEdge(source, target, name);
+}
+
+void MemoryInstrumentationClientImpl::reportLeaf(const void* owner, const MemoryObjectInfo& target, const char* edgeName)
+{
+    if (m_graphSerializer)
+        m_graphSerializer->reportLeaf(owner, target, edgeName);
+}
+
+void MemoryInstrumentationClientImpl::reportBaseAddress(const void* base, const void* real)
+{
+    if (m_graphSerializer)
+        m_graphSerializer->reportBaseAddress(base, real);
 }
 
 void MemoryInstrumentationClientImpl::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const

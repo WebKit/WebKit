@@ -101,8 +101,12 @@
             },
             {
                 "name": "getProcessMemoryDistribution",
+                "parameters": [
+                    { "name": "reportGraph", "type": "boolean", "optional": true, "description": "Whether native memory graph should be reported in addition to aggregated statistics." }
+                ],
                 "returns": [
-                    { "name": "distribution", "$ref": "MemoryBlock", "description": "An object describing all memory allocated by the process"}
+                    { "name": "distribution", "$ref": "MemoryBlock", "description": "An object describing all memory allocated by the process"},
+                    { "name": "graph", "type": "object", "optional": true, "description": "Native memory graph."}
                 ]
             }
         ]

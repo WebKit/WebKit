@@ -1576,6 +1576,7 @@ set(WebCore_SOURCES
     inspector/ContentSearchUtils.cpp
     inspector/DOMEditor.cpp
     inspector/DOMPatchSupport.cpp
+    inspector/HeapGraphSerializer.cpp
     inspector/IdentifiersFactory.cpp
     inspector/InjectedScript.cpp
     inspector/InjectedScriptBase.cpp

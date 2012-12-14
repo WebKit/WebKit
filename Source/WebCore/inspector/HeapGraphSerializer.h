@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011 Google Inc. All rights reserved.
+ * Copyright (C) 2012 Google Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
@@ -28,49 +28,58 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef InspectorMemoryAgent_h
-#define InspectorMemoryAgent_h
+#ifndef HeapGraphSerializer_h
+#define HeapGraphSerializer_h
 
 #if ENABLE(INSPECTOR)
 
-#include "InspectorBaseAgent.h"
-#include <wtf/PassOwnPtr.h>
-#include <wtf/RefPtr.h>
+#include <wtf/Forward.h>
+#include <wtf/HashMap.h>
+#include <wtf/MemoryInstrumentation.h>
+#include <wtf/Noncopyable.h>
+#include <wtf/Vector.h>
+#include <wtf/text/StringHash.h>
 
 namespace WebCore {
 
-class InspectorClient;
-class InspectorDOMStorageAgent;
-class InspectorState;
-class InstrumentingAgents;
-class Page;
+class HeapGraphEdge;
+class HeapGraphNode;
+class InspectorObject;
 
-typedef String ErrorString;
-
-class InspectorMemoryAgent : public InspectorBaseAgent<InspectorMemoryAgent>, public InspectorBackendDispatcher::MemoryCommandHandler {
-    WTF_MAKE_NONCOPYABLE(InspectorMemoryAgent);
+class HeapGraphSerializer {
+    WTF_MAKE_NONCOPYABLE(HeapGraphSerializer);
 public:
-    typedef Vector<OwnPtr<InspectorBaseAgentInterface> > InspectorAgents;
+    HeapGraphSerializer();
+    ~HeapGraphSerializer();
+    void reportNode(const WTF::MemoryObjectInfo&);
+    void reportEdge(const void*, const void*, const char*);
+    void reportLeaf(const void*, const WTF::MemoryObjectInfo&, const char*);
+    void reportBaseAddress(const void*, const void*);
 
-    static PassOwnPtr<InspectorMemoryAgent> create(InstrumentingAgents* instrumentingAgents, InspectorClient* client, InspectorState* state, Page* page)
-    {
-        return adoptPtr(new InspectorMemoryAgent(instrumentingAgents, client, state, page));
-    }
-    virtual ~InspectorMemoryAgent();
+    PassRefPtr<InspectorObject> serialize();
 
-    virtual void getDOMNodeCount(ErrorString*, RefPtr<TypeBuilder::Array<TypeBuilder::Memory::DOMGroup> >& domGroups, RefPtr<TypeBuilder::Memory::StringStatistics>& strings);
-    virtual void getProcessMemoryDistribution(ErrorString*, const bool* reportGraph, RefPtr<TypeBuilder::Memory::MemoryBlock>& processMemory, RefPtr<InspectorObject>& graph);
-
-    virtual void reportMemoryUsage(MemoryObjectInfo*) const;
+    void reportMemoryUsage(MemoryObjectInfo*) const;
 
 private:
-    InspectorMemoryAgent(InstrumentingAgents*, InspectorClient*, InspectorState*, Page*);
+    int addString(const String&);
+    void adjutEdgeTargets();
 
-    InspectorClient* m_inspectorClient;
-    Page* m_page;
+    typedef HashMap<String, int> StringMap;
+    StringMap m_stringToIndex;
+    Vector<String> m_strings;
+    int m_lastReportedEdgeIndex;
+
+    typedef HashMap<const void*, int> ObjectToNodeIndex;
+    ObjectToNodeIndex m_objectToNodeIndex;
+
+    typedef HashMap<const void*, const void*> BaseToRealAddress;
+    BaseToRealAddress m_baseToRealAddress;
+
+    Vector<HeapGraphNode> m_nodes;
+    Vector<HeapGraphEdge> m_edges;
 };
 
 } // namespace WebCore
 
 #endif // !ENABLE(INSPECTOR)
-#endif // !defined(InspectorMemoryAgent_h)
+#endif // !defined(HeapGraphSerializer_h)

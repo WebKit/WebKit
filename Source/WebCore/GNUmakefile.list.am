@@ -3689,6 +3689,8 @@ webcore_sources += \
 	Source/WebCore/inspector/DOMEditor.h \
 	Source/WebCore/inspector/DOMPatchSupport.cpp \
 	Source/WebCore/inspector/DOMPatchSupport.h \
+	Source/WebCore/inspector/HeapGraphSerializer.cpp \
+	Source/WebCore/inspector/HeapGraphSerializer.h \
 	Source/WebCore/inspector/IdentifiersFactory.cpp \
 	Source/WebCore/inspector/IdentifiersFactory.h \
 	Source/WebCore/inspector/InjectedScript.cpp \

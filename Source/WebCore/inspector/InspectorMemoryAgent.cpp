@@ -39,6 +39,7 @@
 #include "Document.h"
 #include "EventListenerMap.h"
 #include "Frame.h"
+#include "HeapGraphSerializer.h"
 #include "InspectorClient.h"
 #include "InspectorDOMStorageAgent.h"
 #include "InspectorFrontend.h"
@@ -535,9 +536,12 @@ static void addPlatformComponentsInfo(PassRefPtr<InspectorMemoryBlocks> children
     }
 }
 
-void InspectorMemoryAgent::getProcessMemoryDistribution(ErrorString*, RefPtr<InspectorMemoryBlock>& processMemory)
+void InspectorMemoryAgent::getProcessMemoryDistribution(ErrorString*, const bool* reportGraph, RefPtr<InspectorMemoryBlock>& processMemory, RefPtr<InspectorObject>& graph)
 {
-    MemoryInstrumentationClientImpl memoryInstrumentationClient;
+    OwnPtr<HeapGraphSerializer> graphSerializer;
+    if (reportGraph)
+        graphSerializer = adoptPtr(new HeapGraphSerializer());
+    MemoryInstrumentationClientImpl memoryInstrumentationClient(graphSerializer.get());
     m_inspectorClient->getAllocatedObjects(memoryInstrumentationClient.allocatedObjects());
     MemoryInstrumentationImpl memoryInstrumentation(&memoryInstrumentationClient);
 
@@ -554,6 +558,10 @@ void InspectorMemoryAgent::getProcessMemoryDistribution(ErrorString*, RefPtr<Ins
     memoryInstrumentation.addRootObject(this);
     memoryInstrumentation.addRootObject(memoryInstrumentation);
     memoryInstrumentation.addRootObject(memoryInstrumentationClient);
+    if (graphSerializer) {
+        memoryInstrumentation.addRootObject(graphSerializer.get());
+        graph = graphSerializer->serialize();
+    }
 
     m_inspectorClient->dumpUncountedAllocatedObjects(memoryInstrumentationClient.countedObjects());
 

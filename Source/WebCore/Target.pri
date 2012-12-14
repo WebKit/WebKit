@@ -740,6 +740,7 @@ SOURCES += \
     inspector/ContentSearchUtils.cpp \
     inspector/DOMEditor.cpp \
     inspector/DOMPatchSupport.cpp \
+    inspector/HeapGraphSerializer.cpp \
     inspector/IdentifiersFactory.cpp \
     inspector/InjectedScript.cpp \
     inspector/InjectedScriptBase.cpp \
@@ -1896,6 +1897,7 @@ HEADERS += \
     inspector/ContentSearchUtils.h \
     inspector/DOMEditor.h \
     inspector/DOMPatchSupport.h \
+    inspector/HeapGraphSerializer.h \
     inspector/IdentifiersFactory.h \
     inspector/InjectedScript.h \
     inspector/InjectedScriptBase.h \
