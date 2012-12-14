@@ -1,3 +1,15 @@
+2012-12-14  Yury Semikhatsky  <yurys@chromium.org>
+
+        Web Inspector: add data grid for exploring native heap graph
+        https://bugs.webkit.org/show_bug.cgi?id=105012
+
+        Reviewed by Pavel Feldman.
+
+        Do not report edges with null target.
+
+        * wtf/MemoryInstrumentation.h:
+        (WTF::MemoryInstrumentation::addObjectImpl):
+
 2012-12-13  Filip Pizlo  <fpizlo@apple.com>
 
         Attempt to rationalize and simplify WTF::binarySearch

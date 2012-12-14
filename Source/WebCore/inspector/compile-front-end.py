@@ -431,4 +431,4 @@ if not process_recursively:
     os.system("rm " + inspector_path + "/" + "InjectedScriptCanvasModuleSourceTmp.js")
 
 shutil.rmtree(modules_dir)
-os.system("rm " + protocol_externs_path)
+#os.system("rm " + protocol_externs_path)

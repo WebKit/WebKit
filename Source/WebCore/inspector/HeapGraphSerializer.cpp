@@ -109,6 +109,7 @@ void HeapGraphSerializer::reportNode(const WTF::MemoryObjectInfo& info)
 void HeapGraphSerializer::reportEdge(const void*, const void* to, const char* name)
 {
     HeapGraphEdge edge;
+    ASSERT(to);
     edge.m_toObject = to;
     edge.m_name = addString(name);
     m_edges.append(edge);

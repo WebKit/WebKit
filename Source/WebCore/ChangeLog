@@ -1,3 +1,40 @@
+2012-12-14  Yury Semikhatsky  <yurys@chromium.org>
+
+        Web Inspector: add data grid for exploring native heap graph
+        https://bugs.webkit.org/show_bug.cgi?id=105012
+
+        Reviewed by Pavel Feldman.
+
+        Added a view for displaying native heap graph nodes.
+
+        * inspector/HeapGraphSerializer.cpp:
+        (WebCore::HeapGraphSerializer::reportEdge):
+        * inspector/front-end/NativeMemorySnapshotView.js:
+        (WebInspector.NativeMemorySnapshotView):
+        (WebInspector.NativeMemorySnapshotView.prototype._onSelectedViewChanged):
+        (WebInspector.NativeMemorySnapshotView.prototype.get statusBarItems):
+        (WebInspector.NativeHeapGraphNode):
+        (WebInspector.NativeHeapGraphNode.prototype.id):
+        (WebInspector.NativeHeapGraphNode.prototype.type):
+        (WebInspector.NativeHeapGraphNode.prototype.size):
+        (WebInspector.NativeHeapGraphNode.prototype.className):
+        (WebInspector.NativeHeapGraphNode.prototype.name):
+        (WebInspector.NativeHeapGraphNode.prototype.hasReferencedNodes):
+        (WebInspector.NativeHeapGraphNode.prototype.referencedNodes):
+        (WebInspector.NativeHeapGraphNode.prototype._firstEdgePoistion):
+        (WebInspector.NativeHeapGraphNode.prototype._afterLastEdgePosition):
+        (WebInspector.NativeHeapGraphNode.prototype._getStringField):
+        (WebInspector.NativeHeapGraph):
+        (WebInspector.NativeHeapGraph.prototype.rootNodes):
+        (WebInspector.NativeHeapGraph.prototype._calculateNodeEdgeIndexes):
+        (WebInspector.NativeHeapGraphDataGrid):
+        (WebInspector.NativeHeapGraphDataGridRoot):
+        (WebInspector.NativeHeapGraphDataGridRoot.prototype._populate):
+        (WebInspector.NativeHeapGraphDataGridNode):
+        (WebInspector.NativeHeapGraphDataGridNode.prototype._populate):
+        (WebInspector.NativeMemoryProfileType.prototype.buttonClicked.didReceiveMemorySnapshot):
+        (WebInspector.NativeMemoryProfileType.prototype.buttonClicked):
+
 2012-12-14  Ilya Tikhonovsky  <loislo@chromium.org>
 
         Web Inspector: Native Memory Instrumentation: do not validate InlineFlowBox objects against tcmalloc data.

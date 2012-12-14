@@ -233,8 +233,10 @@ void MemoryInstrumentation::addObjectImpl(const T* object, MemoryObjectInfo* own
     if (owningType == byReference)
         reportMemoryUsage(object, ownerObjectInfo);
     else {
+        if (!object)
+            return;
         reportEdge(ownerObjectInfo, object, edgeName);
-        if (!object || visited(object))
+        if (visited(object))
             return;
         deferObject(adoptPtr(new Wrapper<T>(object, getObjectType(ownerObjectInfo))));
     }
