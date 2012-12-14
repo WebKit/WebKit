@@ -1,3 +1,13 @@
+2012-12-13  Eric Seidel  <eric@webkit.org>
+
+        Unreviewed, fixing typo in python unittest.
+
+        I changed the default profiler on linux from pprof to perf in
+        bug 104971.  I failed to update the unittest results at that time.
+
+        * Scripts/webkitpy/common/system/profiler_unittest.py:
+        (ProfilerFactoryTest.test_basic):
+
 2012-12-13  Ian Vollick  <vollick@chromium.org>
 
         [chromium] Add a virtual test suite for enabling opt-in to composited scrolling

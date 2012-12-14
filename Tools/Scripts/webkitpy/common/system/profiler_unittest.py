@@ -43,7 +43,7 @@ class ProfilerFactoryTest(unittest.TestCase):
 
         host.platform.os_name = 'linux'
         profiler = ProfilerFactory.create_profiler(host, '/bin/executable', '/tmp/output')
-        self.assertEquals(profiler._output_path, "/tmp/output/test.pprof")
+        self.assertEquals(profiler._output_path, "/tmp/output/test.data")
 
     def test_pprof_output_regexp(self):
         pprof_output = """
