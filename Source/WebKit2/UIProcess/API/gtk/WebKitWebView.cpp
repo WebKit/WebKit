@@ -1653,7 +1653,15 @@ void webkitWebViewSubmitFormRequest(WebKitWebView* webView, WebKitFormSubmission
 
 void webkitWebViewHandleAuthenticationChallenge(WebKitWebView* webView, AuthenticationChallengeProxy* authenticationChallenge)
 {
-    WebKit2GtkAuthenticationDialog* dialog = new WebKit2GtkAuthenticationDialog(authenticationChallenge);
+    WebKit2GtkAuthenticationDialog* dialog;
+    GtkAuthenticationDialog::CredentialStorageMode credentialStorageMode;
+
+    if (webkit_settings_get_enable_private_browsing(webView->priv->settings.get()))
+        credentialStorageMode = GtkAuthenticationDialog::DisallowPersistentStorage;
+    else
+        credentialStorageMode = GtkAuthenticationDialog::AllowPersistentStorage;
+
+    dialog = new WebKit2GtkAuthenticationDialog(authenticationChallenge, credentialStorageMode);
     webkitWebViewBaseAddAuthenticationDialog(WEBKIT_WEB_VIEW_BASE(webView), dialog);
     dialog->show();
 }

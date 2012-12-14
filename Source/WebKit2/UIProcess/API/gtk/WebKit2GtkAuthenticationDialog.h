@@ -31,7 +31,7 @@ namespace WebKit {
 
 class WebKit2GtkAuthenticationDialog : public WebCore::GtkAuthenticationDialog {
 public:
-    WebKit2GtkAuthenticationDialog(AuthenticationChallengeProxy*);
+    WebKit2GtkAuthenticationDialog(AuthenticationChallengeProxy*, CredentialStorageMode);
     virtual ~WebKit2GtkAuthenticationDialog() { }
     GtkWidget* widget() { return m_dialog; }
 

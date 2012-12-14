@@ -143,7 +143,7 @@ static void sessionAuthenticate(SoupSession* session, SoupMessage* message, Soup
     // impossible with gcc, due to WebKitSoupAuthDialogAuthenticationClient's two superclasses.
     client->derefWebKitSoupAuthDialogAuthenticationClient();
 
-    GtkAuthenticationDialog* authDialog = new GtkAuthenticationDialog(toplevel, challenge);
+    GtkAuthenticationDialog* authDialog = new GtkAuthenticationDialog(toplevel, challenge, GtkAuthenticationDialog::DisallowPersistentStorage);
     authDialog->show();
 }
 

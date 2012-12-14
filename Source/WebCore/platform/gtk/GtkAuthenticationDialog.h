@@ -34,8 +34,13 @@ class GtkAuthenticationDialog {
     WTF_MAKE_FAST_ALLOCATED;
 
 public:
-    GtkAuthenticationDialog(const AuthenticationChallenge&);
-    GtkAuthenticationDialog(GtkWindow*, const AuthenticationChallenge&);
+    enum CredentialStorageMode {
+        AllowPersistentStorage, // The user is asked whether to store credential information.
+        DisallowPersistentStorage // Credential information is only kept in the session.
+    };
+
+    GtkAuthenticationDialog(const AuthenticationChallenge&, CredentialStorageMode);
+    GtkAuthenticationDialog(GtkWindow*, const AuthenticationChallenge&, CredentialStorageMode);
     virtual ~GtkAuthenticationDialog() { }
     void show();
     void destroy();
@@ -53,6 +58,7 @@ protected:
 private:
     static void buttonClickedCallback(GtkWidget*, GtkAuthenticationDialog*);
     AuthenticationChallenge m_challenge;
+    CredentialStorageMode m_credentialStorageMode;
 };
 
 } // namespace WebCore

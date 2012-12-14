@@ -204,9 +204,17 @@ void FrameLoaderClient::dispatchDidReceiveAuthenticationChallenge(WebCore::Docum
         return;
     }
 
-    GtkWidget* toplevel = gtk_widget_get_toplevel(GTK_WIDGET(webkit_web_frame_get_web_view(m_frame)));
+    WebKitWebView* view = webkit_web_frame_get_web_view(m_frame);
+    GtkAuthenticationDialog::CredentialStorageMode credentialStorageMode;
+
+    if (core(view)->settings()->privateBrowsingEnabled())
+        credentialStorageMode = GtkAuthenticationDialog::DisallowPersistentStorage;
+    else
+        credentialStorageMode = GtkAuthenticationDialog::AllowPersistentStorage;
+
+    GtkWidget* toplevel = gtk_widget_get_toplevel(GTK_WIDGET(view));
     GtkWindow* toplevelWindow = widgetIsOnscreenToplevelWindow(toplevel) ? GTK_WINDOW(toplevel) : 0;
-    GtkAuthenticationDialog* dialog = new GtkAuthenticationDialog(toplevelWindow, challenge);
+    GtkAuthenticationDialog* dialog = new GtkAuthenticationDialog(toplevelWindow, challenge, credentialStorageMode);
     dialog->show();
 }
 

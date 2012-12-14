@@ -32,21 +32,23 @@ static const int gLayoutColumnSpacing = 12;
 static const int gLayoutRowSpacing = 6;
 static const int gButtonSpacing = 5;
 
-GtkAuthenticationDialog::GtkAuthenticationDialog(const AuthenticationChallenge& challenge)
+GtkAuthenticationDialog::GtkAuthenticationDialog(const AuthenticationChallenge& challenge, CredentialStorageMode mode)
     : m_dialog(0)
     , m_loginEntry(0)
     , m_passwordEntry(0)
     , m_rememberCheckButton(0)
     , m_challenge(challenge)
+    , m_credentialStorageMode(mode)
 {
 }
 
-GtkAuthenticationDialog::GtkAuthenticationDialog(GtkWindow* parentWindow, const AuthenticationChallenge& challenge)
+GtkAuthenticationDialog::GtkAuthenticationDialog(GtkWindow* parentWindow, const AuthenticationChallenge& challenge, CredentialStorageMode mode)
     : m_dialog(gtk_dialog_new())
     , m_loginEntry(0)
     , m_passwordEntry(0)
     , m_rememberCheckButton(0)
     , m_challenge(challenge)
+    , m_credentialStorageMode(mode)
 {
     GtkWidget* contentArea = gtk_dialog_get_content_area(GTK_DIALOG(m_dialog));
     gtk_container_set_border_width(GTK_CONTAINER(GTK_DIALOG(m_dialog)), 5);
@@ -172,6 +174,7 @@ void GtkAuthenticationDialog::createContentsInContainer(GtkWidget* container)
 
     m_rememberCheckButton = gtk_check_button_new_with_mnemonic(_("_Remember password"));
     gtk_label_set_line_wrap(GTK_LABEL(gtk_bin_get_child(GTK_BIN(m_rememberCheckButton))), TRUE);
+    gtk_widget_set_no_show_all(m_rememberCheckButton, m_credentialStorageMode == DisallowPersistentStorage);
 
 
     // We are adding the button box here manually instead of using the ready-made GtkDialog buttons.
@@ -248,8 +251,14 @@ void GtkAuthenticationDialog::buttonClickedCallback(GtkWidget* button, GtkAuthen
     if (button == dialog->m_okayButton) {
         const char *username = gtk_entry_get_text(GTK_ENTRY(dialog->m_loginEntry));
         const char *password = gtk_entry_get_text(GTK_ENTRY(dialog->m_passwordEntry));
-        CredentialPersistence persistence = gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(dialog->m_rememberCheckButton)) ?
-            CredentialPersistencePermanent : CredentialPersistenceForSession;
+        bool rememberPassword = gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(dialog->m_rememberCheckButton));
+        CredentialPersistence persistence;
+
+        if (rememberPassword && dialog->m_credentialStorageMode == AllowPersistentStorage)
+            persistence = CredentialPersistencePermanent;
+        else
+            persistence = CredentialPersistenceForSession;
+
         credential = Credential(String::fromUTF8(username), String::fromUTF8(password), persistence);
     }
 

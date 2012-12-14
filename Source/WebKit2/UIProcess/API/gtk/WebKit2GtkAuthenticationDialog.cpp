@@ -38,8 +38,8 @@ static gboolean drawSignal(GtkWidget* widget, cairo_t* cr, GtkStyleContext* styl
     return FALSE;
 }
 
-WebKit2GtkAuthenticationDialog::WebKit2GtkAuthenticationDialog(AuthenticationChallengeProxy* authenticationChallenge)
-    : GtkAuthenticationDialog(authenticationChallenge->core())
+WebKit2GtkAuthenticationDialog::WebKit2GtkAuthenticationDialog(AuthenticationChallengeProxy* authenticationChallenge, CredentialStorageMode mode)
+    : GtkAuthenticationDialog(authenticationChallenge->core(), mode)
     , m_authenticationChallenge(authenticationChallenge)
     , m_styleContext(adoptGRef(gtk_style_context_new()))
 {
