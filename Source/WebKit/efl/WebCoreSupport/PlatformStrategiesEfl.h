@@ -21,7 +21,6 @@
 #define PlatformStrategiesEfl_h
 
 #include "CookiesStrategy.h"
-#include "DatabaseStrategy.h"
 #include "LoaderStrategy.h"
 #include "PasteboardStrategy.h"
 #include "PlatformStrategies.h"
@@ -29,7 +28,7 @@
 #include "SharedWorkerStrategy.h"
 #include "VisitedLinkStrategy.h"
 
-class PlatformStrategiesEfl : public WebCore::PlatformStrategies, private WebCore::CookiesStrategy, private WebCore::DatabaseStrategy, private WebCore::LoaderStrategy, private WebCore::PluginStrategy, private WebCore::SharedWorkerStrategy, private WebCore::VisitedLinkStrategy {
+class PlatformStrategiesEfl : public WebCore::PlatformStrategies, private WebCore::CookiesStrategy, private WebCore::LoaderStrategy, private WebCore::PluginStrategy, private WebCore::SharedWorkerStrategy, private WebCore::VisitedLinkStrategy {
 public:
     static void initialize();
 
@@ -38,7 +37,6 @@ private:
 
     // WebCore::PlatformStrategies
     virtual WebCore::CookiesStrategy* createCookiesStrategy();
-    virtual WebCore::DatabaseStrategy* createDatabaseStrategy();
     virtual WebCore::LoaderStrategy* createLoaderStrategy();
     virtual WebCore::PasteboardStrategy* createPasteboardStrategy();
     virtual WebCore::PluginStrategy* createPluginStrategy();
@@ -56,9 +54,6 @@ private:
     virtual void getHostnamesWithCookies(WebCore::NetworkingContext*, HashSet<String>& hostnames);
     virtual void deleteCookiesForHostname(WebCore::NetworkingContext*, const String& hostname);
     virtual void deleteAllCookies(WebCore::NetworkingContext*);
-
-    // WebCore::DatabaseStrategy
-    // - Using default implementation.
 
     // WebCore::PluginStrategy
     virtual void refreshPlugins();

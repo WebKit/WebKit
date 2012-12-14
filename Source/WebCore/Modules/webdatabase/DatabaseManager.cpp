@@ -33,13 +33,6 @@
 #include "DatabaseTracker.h"
 #include <wtf/UnusedParam.h>
 
-#if USE(PLATFORM_STRATEGIES)
-#include "DatabaseStrategy.h"
-#include "PlatformStrategies.h"
-#else
-#include "DBBackendServer.h"
-#endif
-
 namespace WebCore {
 
 DatabaseManager& DatabaseManager::manager()
@@ -53,12 +46,6 @@ DatabaseManager& DatabaseManager::manager()
 
 DatabaseManager::DatabaseManager()
 {
-#if USE(PLATFORM_STRATEGIES)
-    m_server = platformStrategies()->databaseStrategy()->getDatabaseServer();
-#else
-    m_server = new DBBackend::Server;
-#endif
-    ASSERT(m_server); // We should always have a server to work with.
 }
 
 void DatabaseManager::initialize(const String& databasePath)

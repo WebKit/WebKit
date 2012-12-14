@@ -29,7 +29,6 @@
 #if USE(PLATFORM_STRATEGIES)
 
 #include <WebCore/CookiesStrategy.h>
-#include <WebCore/DatabaseStrategy.h>
 #include <WebCore/LoaderStrategy.h>
 #include <WebCore/PasteboardStrategy.h>
 #include <WebCore/PlatformStrategies.h>
@@ -39,7 +38,7 @@
 
 namespace WebKit {
 
-class WebPlatformStrategies : public WebCore::PlatformStrategies, private WebCore::CookiesStrategy, private WebCore::DatabaseStrategy, private WebCore::LoaderStrategy, private WebCore::PasteboardStrategy, private WebCore::PluginStrategy, private WebCore::SharedWorkerStrategy, private WebCore::VisitedLinkStrategy {
+class WebPlatformStrategies : public WebCore::PlatformStrategies, private WebCore::CookiesStrategy, private WebCore::LoaderStrategy, private WebCore::PasteboardStrategy, private WebCore::PluginStrategy, private WebCore::SharedWorkerStrategy, private WebCore::VisitedLinkStrategy {
 public:
     static void initialize();
     
@@ -48,7 +47,6 @@ private:
     
     // WebCore::PlatformStrategies
     virtual WebCore::CookiesStrategy* createCookiesStrategy() OVERRIDE;
-    virtual WebCore::DatabaseStrategy* createDatabaseStrategy() OVERRIDE;
     virtual WebCore::LoaderStrategy* createLoaderStrategy() OVERRIDE;
     virtual WebCore::PasteboardStrategy* createPasteboardStrategy() OVERRIDE;
     virtual WebCore::PluginStrategy* createPluginStrategy() OVERRIDE;
@@ -69,9 +67,6 @@ private:
     virtual void getHostnamesWithCookies(WebCore::NetworkingContext*, HashSet<String>& hostnames) OVERRIDE;
     virtual void deleteCookiesForHostname(WebCore::NetworkingContext*, const String& hostname) OVERRIDE;
     virtual void deleteAllCookies(WebCore::NetworkingContext*) OVERRIDE;
-
-    // WebCore::DatabaseStrategy
-    virtual WebCore::AbstractDatabaseServer* getDatabaseServer() OVERRIDE;
 
     // WebCore::LoaderStrategy
 #if ENABLE(NETWORK_PROCESS)

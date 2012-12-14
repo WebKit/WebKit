@@ -2086,7 +2086,6 @@ webcore_modules_sources += \
 	Source/WebCore/Modules/webaudio/WaveTable.h \
 	Source/WebCore/Modules/webdatabase/AbstractDatabase.cpp \
 	Source/WebCore/Modules/webdatabase/AbstractDatabase.h \
-	Source/WebCore/Modules/webdatabase/AbstractDatabaseServer.h \
 	Source/WebCore/Modules/webdatabase/ChangeVersionWrapper.cpp \
 	Source/WebCore/Modules/webdatabase/ChangeVersionWrapper.h \
 	Source/WebCore/Modules/webdatabase/DOMWindowWebDatabase.cpp \
@@ -2110,7 +2109,6 @@ webcore_modules_sources += \
 	Source/WebCore/Modules/webdatabase/DatabaseThread.h \
 	Source/WebCore/Modules/webdatabase/DatabaseTracker.cpp \
 	Source/WebCore/Modules/webdatabase/DatabaseTracker.h \
-	Source/WebCore/Modules/webdatabase/DBBackendServer.h \
 	Source/WebCore/Modules/webdatabase/OriginQuotaManager.cpp \
 	Source/WebCore/Modules/webdatabase/OriginQuotaManager.h \
 	Source/WebCore/Modules/webdatabase/OriginUsageRecord.cpp \
@@ -5299,8 +5297,6 @@ webcore_platform_sources += \
 	Source/WebCore/platform/CrossThreadCopier.h \
 	Source/WebCore/platform/Cursor.cpp \
 	Source/WebCore/platform/Cursor.h \
-	Source/WebCore/platform/DatabaseStrategy.cpp \
-	Source/WebCore/platform/DatabaseStrategy.h \
 	Source/WebCore/platform/DateComponents.cpp \
 	Source/WebCore/platform/DateComponents.h \
 	Source/WebCore/platform/DateTimeChooser.h \

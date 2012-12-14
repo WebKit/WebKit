@@ -52,7 +52,6 @@ set(WebKit2_INCLUDE_DIRECTORIES
     "${WEBCORE_DIR}/Modules/networkinfo"
     "${WEBCORE_DIR}/Modules/notifications"
     "${WEBCORE_DIR}/Modules/vibration"
-    "${WEBCORE_DIR}/Modules/webdatabase"
     "${WEBCORE_DIR}/accessibility"
     "${WEBCORE_DIR}/bindings/js"
     "${WEBCORE_DIR}/bindings"

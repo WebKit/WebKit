@@ -948,7 +948,6 @@ SOURCES += \
     platform/ClockGeneric.cpp \
     platform/ContentType.cpp \
     platform/CrossThreadCopier.cpp \
-    platform/DatabaseStrategy.cpp \
     platform/DateComponents.cpp \
     platform/Decimal.cpp \
     platform/DragData.cpp \
@@ -1414,7 +1413,6 @@ HEADERS += \
     Modules/notifications/WorkerContextNotifications.h \
     \
     Modules/webdatabase/AbstractDatabase.h \
-    Modules/webdatabase/AbstractDatabaseServer.h \
     Modules/webdatabase/ChangeVersionWrapper.h \
     Modules/webdatabase/DOMWindowWebDatabase.h \
     Modules/webdatabase/DatabaseAuthorizer.h \
@@ -1425,7 +1423,6 @@ HEADERS += \
     Modules/webdatabase/DatabaseTask.h \
     Modules/webdatabase/DatabaseThread.h \
     Modules/webdatabase/DatabaseTracker.h \
-    Modules/webdatabase/DBBackendServer.h \
     Modules/webdatabase/OriginQuotaManager.h \
     Modules/webdatabase/OriginUsageRecord.h \
     Modules/webdatabase/SQLCallbackWrapper.h \

@@ -1796,7 +1796,6 @@ set(WebCore_SOURCES
     platform/ContextMenuItem.cpp
     platform/ContentType.cpp
     platform/CrossThreadCopier.cpp
-    platform/DatabaseStrategy.cpp
     platform/DateComponents.cpp
     platform/Decimal.cpp
     platform/DragData.cpp

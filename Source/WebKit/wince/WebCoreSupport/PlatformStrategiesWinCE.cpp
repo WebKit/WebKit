@@ -49,11 +49,6 @@ CookiesStrategy* PlatformStrategiesWinCE::createCookiesStrategy()
     return this;
 }
 
-DatabaseStrategy* PlatformStrategiesWinCE::createDatabaseStrategy()
-{
-    return this;
-}
-
 LoaderStrategy* PlatformStrategiesWinCE::createLoaderStrategy()
 {
     return this;
