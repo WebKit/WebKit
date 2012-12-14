@@ -23,6 +23,8 @@
  */
 
 #include "config.h"
+
+#if ENABLE(INSPECTOR_SERVER)
 #include "WebInspectorServer.h"
 
 #include "WebInspectorProxy.h"
@@ -103,3 +105,4 @@ void WebInspectorServer::buildPageList(Vector<char>& data, String& contentType)
 }
 
 }
+#endif
