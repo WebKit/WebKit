@@ -171,9 +171,6 @@ public:
 
     unsigned wheelEventHandlerCount(Document*, ExceptionCode&);
     unsigned touchEventHandlerCount(Document*, ExceptionCode&);
-#if ENABLE(TOUCH_EVENT_TRACKING)
-    PassRefPtr<ClientRectList> touchEventTargetClientRects(Document*, ExceptionCode&);
-#endif
 
     PassRefPtr<NodeList> nodesFromRect(Document*, int x, int y, unsigned topPadding, unsigned rightPadding,
         unsigned bottomPadding, unsigned leftPadding, bool ignoreClipping, bool allowShadowContent, ExceptionCode&) const;

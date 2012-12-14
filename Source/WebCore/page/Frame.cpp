@@ -309,7 +309,7 @@ void Frame::setDocument(PassRefPtr<Document> newDoc)
     if (m_page && m_page->mainFrame() == this) {
         notifyChromeClientWheelEventHandlerCountChanged();
 #if ENABLE(TOUCH_EVENTS)
-        if (m_doc && m_doc->hasTouchEventHandlers())
+        if (m_doc && m_doc->touchEventHandlerCount())
             m_page->chrome()->client()->needTouchEvents(true);
 #endif
     }

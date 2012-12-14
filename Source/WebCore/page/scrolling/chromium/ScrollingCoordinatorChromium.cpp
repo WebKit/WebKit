@@ -115,30 +115,6 @@ void ScrollingCoordinatorChromium::frameViewLayoutUpdated(FrameView*)
     // frame view whose layout was updated is not the main frame.
     Region nonFastScrollableRegion = computeNonFastScrollableRegion(m_page->mainFrame(), IntPoint());
     setNonFastScrollableRegion(nonFastScrollableRegion);
-#if ENABLE(TOUCH_EVENT_TRACKING)
-    Vector<IntRect> touchEventTargetRects;
-    computeAbsoluteTouchEventTargetRects(m_page->mainFrame()->document(), touchEventTargetRects);
-    setTouchEventTargetRects(touchEventTargetRects);
-#endif
-}
-
-void ScrollingCoordinatorChromium::touchEventTargetRectsDidChange(const Document* document)
-{
-#if ENABLE(TOUCH_EVENT_TRACKING)
-    // Wait until after layout to update.
-    if (m_page->mainFrame()->view()->needsLayout())
-        return;
-
-    // We won't necessarily get a setScrollLayer() call before this one, so grab the root ourselves.
-    setScrollLayer(scrollLayerForFrameView(m_page->mainFrame()->view()));
-    if (m_private->scrollLayer()) {
-        Vector<IntRect> touchEventTargetRects;
-        computeAbsoluteTouchEventTargetRects(document, touchEventTargetRects);
-        setTouchEventTargetRects(touchEventTargetRects);
-    }
-#else
-    UNUSED_PARAM(document);
-#endif
 }
 
 void ScrollingCoordinatorChromium::frameViewRootLayerDidChange(FrameView* frameView)
@@ -230,18 +206,6 @@ void ScrollingCoordinatorChromium::setNonFastScrollableRegion(const Region& regi
         for (size_t i = 0; i < rects.size(); ++i)
             webRects[i] = rects[i];
         m_private->scrollLayer()->setNonFastScrollableRegion(webRects);
-    }
-}
-
-void ScrollingCoordinatorChromium::setTouchEventTargetRects(const Vector<IntRect>& absoluteHitTestRects)
-{
-    // We won't necessarily get a setScrollLayer() call before this one, so grab the root ourselves.
-    setScrollLayer(scrollLayerForFrameView(m_page->mainFrame()->view()));
-    if (m_private->scrollLayer()) {
-        WebVector<WebRect> webRects(absoluteHitTestRects.size());
-        for (size_t i = 0; i < absoluteHitTestRects.size(); ++i)
-            webRects[i] = absoluteHitTestRects[i];
-        m_private->scrollLayer()->setTouchEventHandlerRegion(webRects);
     }
 }
 

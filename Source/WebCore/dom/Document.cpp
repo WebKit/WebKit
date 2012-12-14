@@ -498,6 +498,9 @@ Document::Document(Frame* frame, const KURL& url, bool isXHTML, bool isHTML)
     , m_writeRecursionIsTooDeep(false)
     , m_writeRecursionDepth(0)
     , m_wheelEventHandlerCount(0)
+#if ENABLE(TOUCH_EVENTS)
+    , m_touchEventHandlerCount(0)
+#endif
     , m_pendingTasksTimer(this, &Document::pendingTasksTimerFired)
     , m_scheduledTasksAreSuspended(false)
     , m_visualUpdatesAllowed(true)
@@ -5596,57 +5599,33 @@ void Document::didRemoveWheelEventHandler()
     wheelEventHandlerCountChanged(this);
 }
 
-void Document::didAddTouchEventHandler(Node* handler)
+void Document::didAddTouchEventHandler()
 {
 #if ENABLE(TOUCH_EVENTS)
-    if (!m_touchEventTargets.get())
-        m_touchEventTargets = adoptPtr(new TouchEventTargetSet);
-    m_touchEventTargets->add(handler);
-    if (Document* parent = parentDocument()) {
-        parent->didAddTouchEventHandler(this);
+    ++m_touchEventHandlerCount;
+    if (m_touchEventHandlerCount > 1)
         return;
-    }
-    if (Page* page = this->page()) {
-#if ENABLE(TOUCH_EVENT_TRACKING)
-        if (ScrollingCoordinator* scrollingCoordinator = page->scrollingCoordinator())
-            scrollingCoordinator->touchEventTargetRectsDidChange(this);
-#endif
-        if (m_touchEventTargets->size() == 1)
-            page->chrome()->client()->needTouchEvents(true);
-    }
-#else
-    UNUSED_PARAM(handler);
+    if (Page* page = this->page())
+        page->chrome()->client()->needTouchEvents(true);
 #endif
 }
 
-void Document::didRemoveTouchEventHandler(Node* handler)
+void Document::didRemoveTouchEventHandler()
 {
 #if ENABLE(TOUCH_EVENTS)
-    if (!m_touchEventTargets.get())
+    ASSERT(m_touchEventHandlerCount);
+    --m_touchEventHandlerCount;
+    if (m_touchEventHandlerCount)
         return;
-    ASSERT(m_touchEventTargets->contains(handler));
-    m_touchEventTargets->remove(handler);
-    if (Document* parent = parentDocument()) {
-        parent->didRemoveTouchEventHandler(this);
-        return;
-    }
 
     Page* page = this->page();
     if (!page)
         return;
-#if ENABLE(TOUCH_EVENT_TRACKING)
-    if (ScrollingCoordinator* scrollingCoordinator = page->scrollingCoordinator())
-        scrollingCoordinator->touchEventTargetRectsDidChange(this);
-#endif
-    if (m_touchEventTargets->size())
-        return;
     for (const Frame* frame = page->mainFrame(); frame; frame = frame->tree()->traverseNext()) {
-        if (frame->document() && frame->document()->hasTouchEventHandlers())
+        if (frame->document() && frame->document()->touchEventHandlerCount())
             return;
     }
     page->chrome()->client()->needTouchEvents(false);
-#else
-    UNUSED_PARAM(handler);
 #endif
 }
 

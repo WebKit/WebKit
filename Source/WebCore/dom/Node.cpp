@@ -2125,8 +2125,8 @@ void Node::didMoveToNewDocument(Document* oldDocument)
     for (size_t i = 0; i < touchEventNames.size(); ++i) {
         const EventListenerVector& listeners = getEventListeners(touchEventNames[i]);
         for (size_t j = 0; j < listeners.size(); ++j) {
-            oldDocument->didRemoveTouchEventHandler(this);
-            document()->didAddTouchEventHandler(this);
+            oldDocument->didRemoveTouchEventHandler();
+            document()->didAddTouchEventHandler();
         }
     }
 
@@ -2155,7 +2155,7 @@ static inline bool tryAddEventListener(Node* targetNode, const AtomicString& eve
         if (eventType == eventNames().mousewheelEvent)
             document->didAddWheelEventHandler();
         else if (eventNames().isTouchEventType(eventType))
-            document->didAddTouchEventHandler(targetNode);
+            document->didAddTouchEventHandler();
     }
 
     return true;
@@ -2177,7 +2177,7 @@ static inline bool tryRemoveEventListener(Node* targetNode, const AtomicString& 
         if (eventType == eventNames().mousewheelEvent)
             document->didRemoveWheelEventHandler();
         else if (eventNames().isTouchEventType(eventType))
-            document->didRemoveTouchEventHandler(targetNode);
+            document->didRemoveTouchEventHandler();
     }
 
     return true;
