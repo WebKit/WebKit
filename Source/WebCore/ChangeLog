@@ -1,3 +1,22 @@
+2012-12-14  Jessie Berlin  <jberlin@apple.com>
+
+        Mac build fix after r137724.
+
+        * platform/graphics/MediaPlayer.h:
+        (WebCore::MediaPlayerClient::mediaPlayerKeyAdded):
+        Comment out the names of the unused parameters so they don't trigger unused parameter
+        warnings.
+        (WebCore::MediaPlayerClient::mediaPlayerKeyError):
+        Ditto.
+        (WebCore::MediaPlayerClient::mediaPlayerKeyMessage):
+        Ditto.
+        (WebCore::MediaPlayerClient::mediaPlayerKeyNeeded):
+        Ditto.
+
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateAVFoundationObjC.mm:
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::generateKeyRequest):
+        Pass an empty URL for the new defaultURL parameter in the keyMessage call.
+
 2012-12-14  Alberto Garcia  <agarcia@igalia.com>
 
         [GTK] When in private mode WebKitGTK+ should not save HTTP authentication credentials to the persistent storage
