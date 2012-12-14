@@ -1,3 +1,16 @@
+2012-12-14  Anders Carlsson  <andersca@apple.com>
+
+        REGRESSION (r137607): Cannot download files, stuck in "Preparing to download"
+        https://bugs.webkit.org/show_bug.cgi?id=105044
+        <rdar://problem/12879657>
+
+        Reviewed by Alexey Proskuryakov.
+
+        Make ResourceHandle::cancel return early if the handle has been converted to a download.
+
+        * platform/network/mac/ResourceHandleMac.mm:
+        (WebCore::ResourceHandle::cancel):
+
 2012-12-14  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r137570.
