@@ -59,15 +59,15 @@ bool DateTimeNumericFieldElement::Range::isInRange(int value) const
 
 // ----------------------------
 
-DateTimeNumericFieldElement::DateTimeNumericFieldElement(Document* document, FieldOwner& fieldOwner, int minimum, int maximum, const String& placeholder, int step, int stepBase)
+DateTimeNumericFieldElement::DateTimeNumericFieldElement(Document* document, FieldOwner& fieldOwner, int minimum, int maximum, const String& placeholder, const DateTimeNumericFieldElement::Parameters& parameters)
     : DateTimeFieldElement(document, fieldOwner)
     , m_lastDigitCharTime(0)
     , m_placeholder(placeholder)
     , m_range(minimum, maximum)
     , m_value(0)
     , m_hasValue(false)
-    , m_step(step)
-    , m_stepBase(stepBase)
+    , m_step(parameters.step)
+    , m_stepBase(parameters.stepBase)
 {
     ASSERT(m_step);
 

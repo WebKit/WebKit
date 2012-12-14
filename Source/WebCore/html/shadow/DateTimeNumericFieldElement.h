@@ -41,6 +41,13 @@ namespace WebCore {
 class DateTimeNumericFieldElement : public DateTimeFieldElement {
     WTF_MAKE_NONCOPYABLE(DateTimeNumericFieldElement);
 
+public:
+    struct Parameters {
+        Parameters(int step = 1, int stepBase = 0) : step(step), stepBase(stepBase) { }
+        int step;
+        int stepBase;
+    };
+
 protected:
     struct Range {
         Range(int minimum, int maximum);
@@ -51,7 +58,7 @@ protected:
         int minimum;
     };
 
-    DateTimeNumericFieldElement(Document*, FieldOwner&, int minimum, int maximum, const String& placeholder, int step = 1, int stepBase = 0);
+    DateTimeNumericFieldElement(Document*, FieldOwner&, int minimum, int maximum, const String& placeholder, const Parameters& = Parameters());
 
     int clampValue(int value) const { return m_range.clampValue(value); }
     virtual int clampValueForHardLimits(int) const;

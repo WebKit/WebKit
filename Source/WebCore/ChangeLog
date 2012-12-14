@@ -1,3 +1,37 @@
+2012-12-13  Kunihiko Sakamoto  <ksakamoto@chromium.org>
+
+        Seconds/Minutes field of date/time input UI should respect step attribute
+        https://bugs.webkit.org/show_bug.cgi?id=104985
+
+        Reviewed by Kent Tamura.
+
+        This patch makes step-up/-down UI of the seconds and minutes fields respect
+        step attribute when possible.
+
+        Test: fast/forms/time-multiple-fields/time-multiple-fields-stepup-stepdown-from-renderer.html
+
+        * html/shadow/DateTimeEditElement.cpp:
+        (DateTimeEditBuilder):
+        (WebCore::DateTimeEditBuilder::visitField): Compute step parameters for seconds and minutes fields, and pass it to the field element constructors.
+        (WebCore::DateTimeEditBuilder::createNumericFieldParameters): Added.
+        * html/shadow/DateTimeFieldElements.cpp:
+        (WebCore::DateTimeMillisecondFieldElement::DateTimeMillisecondFieldElement): Use Parameters instead of step and stepBase.
+        (WebCore::DateTimeMillisecondFieldElement::create): Ditto.
+        (WebCore::DateTimeMinuteFieldElement::DateTimeMinuteFieldElement): Add Parameters argument.
+        (WebCore::DateTimeMinuteFieldElement::create): Ditto.
+        (WebCore::DateTimeSecondFieldElement::DateTimeSecondFieldElement): Ditto.
+        (WebCore::DateTimeSecondFieldElement::create): Ditto.
+        * html/shadow/DateTimeFieldElements.h:
+        (DateTimeMillisecondFieldElement): Use Parameters instead of step and stepBase.
+        (DateTimeMinuteFieldElement): Add Parameters argument.
+        (DateTimeSecondFieldElement): Ditto.
+        * html/shadow/DateTimeNumericFieldElement.cpp:
+        (WebCore::DateTimeNumericFieldElement::DateTimeNumericFieldElement): Use Parameters instead of step and stepBase.
+        * html/shadow/DateTimeNumericFieldElement.h:
+        (DateTimeNumericFieldElement):
+        (WebCore::DateTimeNumericFieldElement::Parameters::Parameters):
+        (Parameters): Added.
+
 2012-12-13  Filip Pizlo  <fpizlo@apple.com>
 
         Attempt to rationalize and simplify WTF::binarySearch

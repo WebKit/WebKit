@@ -1,3 +1,16 @@
+2012-12-13  Kunihiko Sakamoto  <ksakamoto@chromium.org>
+
+        Seconds/Minutes field of date/time input UI should respect step attribute
+        https://bugs.webkit.org/show_bug.cgi?id=104985
+
+        Reviewed by Kent Tamura.
+
+        * fast/forms/time-multiple-fields/time-multiple-fields-stepup-stepdown-from-renderer-expected.txt:
+        * fast/forms/time-multiple-fields/time-multiple-fields-stepup-stepdown-from-renderer.html:
+        Added test cases for seconds and minutes fields.
+        Update an expectation for milliseconds: value=07:13:00.500, step=0 should round to 07:13:00.000
+        (setInputAttributes): Set value attribute first to avoid the focused field becomes read-only and unfocused.
+
 2012-12-13  Ian Vollick  <vollick@chromium.org>
 
         [chromium] Add a virtual test suite for enabling opt-in to composited scrolling

@@ -217,15 +217,15 @@ int DateTimeHourFieldElement::valueAsInteger() const
 
 // ----------------------------
 
-DateTimeMillisecondFieldElement::DateTimeMillisecondFieldElement(Document* document, FieldOwner& fieldOwner, int step, int stepBase)
-    : DateTimeNumericFieldElement(document, fieldOwner, 0, 999, "---", step, stepBase)
+DateTimeMillisecondFieldElement::DateTimeMillisecondFieldElement(Document* document, FieldOwner& fieldOwner, const DateTimeNumericFieldElement::Parameters& parameters)
+    : DateTimeNumericFieldElement(document, fieldOwner, 0, 999, "---", parameters)
 {
 }
 
-PassRefPtr<DateTimeMillisecondFieldElement> DateTimeMillisecondFieldElement::create(Document* document, FieldOwner& fieldOwner, int step, int stepBase)
+PassRefPtr<DateTimeMillisecondFieldElement> DateTimeMillisecondFieldElement::create(Document* document, FieldOwner& fieldOwner, const DateTimeNumericFieldElement::Parameters& parameters)
 {
     DEFINE_STATIC_LOCAL(AtomicString, millisecondPsuedoId, ("-webkit-datetime-edit-millisecond-field", AtomicString::ConstructFromLiteral));
-    RefPtr<DateTimeMillisecondFieldElement> field = adoptRef(new DateTimeMillisecondFieldElement(document, fieldOwner, step, stepBase));
+    RefPtr<DateTimeMillisecondFieldElement> field = adoptRef(new DateTimeMillisecondFieldElement(document, fieldOwner, parameters));
     field->initialize(millisecondPsuedoId, AXMillisecondFieldText());
     return field.release();
 }
@@ -258,15 +258,15 @@ void DateTimeMillisecondFieldElement::setValueAsDateTimeFieldsState(const DateTi
 
 // ----------------------------
 
-DateTimeMinuteFieldElement::DateTimeMinuteFieldElement(Document* document, FieldOwner& fieldOwner)
-    : DateTimeNumericFieldElement(document, fieldOwner, 0, 59, "--")
+DateTimeMinuteFieldElement::DateTimeMinuteFieldElement(Document* document, FieldOwner& fieldOwner, const DateTimeNumericFieldElement::Parameters& parameters)
+    : DateTimeNumericFieldElement(document, fieldOwner, 0, 59, "--", parameters)
 {
 }
 
-PassRefPtr<DateTimeMinuteFieldElement> DateTimeMinuteFieldElement::create(Document* document, FieldOwner& fieldOwner)
+PassRefPtr<DateTimeMinuteFieldElement> DateTimeMinuteFieldElement::create(Document* document, FieldOwner& fieldOwner, const DateTimeNumericFieldElement::Parameters& parameters)
 {
     DEFINE_STATIC_LOCAL(AtomicString, minutePsuedoId, ("-webkit-datetime-edit-minute-field", AtomicString::ConstructFromLiteral));
-    RefPtr<DateTimeMinuteFieldElement> field = adoptRef(new DateTimeMinuteFieldElement(document, fieldOwner));
+    RefPtr<DateTimeMinuteFieldElement> field = adoptRef(new DateTimeMinuteFieldElement(document, fieldOwner, parameters));
     field->initialize(minutePsuedoId, AXMinuteFieldText());
     return field.release();
 }
@@ -340,15 +340,15 @@ void DateTimeMonthFieldElement::setValueAsDateTimeFieldsState(const DateTimeFiel
 
 // ----------------------------
 
-DateTimeSecondFieldElement::DateTimeSecondFieldElement(Document* document, FieldOwner& fieldOwner)
-    : DateTimeNumericFieldElement(document, fieldOwner, 0, 59, "--")
+DateTimeSecondFieldElement::DateTimeSecondFieldElement(Document* document, FieldOwner& fieldOwner, const DateTimeNumericFieldElement::Parameters& parameters)
+    : DateTimeNumericFieldElement(document, fieldOwner, 0, 59, "--", parameters)
 {
 }
 
-PassRefPtr<DateTimeSecondFieldElement> DateTimeSecondFieldElement::create(Document* document, FieldOwner& fieldOwner)
+PassRefPtr<DateTimeSecondFieldElement> DateTimeSecondFieldElement::create(Document* document, FieldOwner& fieldOwner, const DateTimeNumericFieldElement::Parameters& parameters)
 {
     DEFINE_STATIC_LOCAL(AtomicString, secondPsuedoId, ("-webkit-datetime-edit-second-field", AtomicString::ConstructFromLiteral));
-    RefPtr<DateTimeSecondFieldElement> field = adoptRef(new DateTimeSecondFieldElement(document, fieldOwner));
+    RefPtr<DateTimeSecondFieldElement> field = adoptRef(new DateTimeSecondFieldElement(document, fieldOwner, parameters));
     field->initialize(secondPsuedoId, AXSecondFieldText());
     return field.release();
 }

@@ -19,26 +19,26 @@ function keyDown(key, modifiers)
     eventSender.keyDown(key, modifiers);
 }
 
-function setInputAttributes(min, max, step, value) {
+function setInputAttributes(value, min, max, step) {
+    input.value = value;
     input.min = min;
     input.max = max;
     input.step = step;
-    input.value = value;
 }
 
 function test(value, step, min, max, keySequence) {
-    setInputAttributes(min, max, step, value);
+    setInputAttributes(value, min, max, step);
     for (var i = 0; i < keySequence.length; i++)
         keyDown(keySequence[i]);
     return input.value;
 }
 
 function stepUp(value, step, min, max) {
-    return test(value,step, min, max, ['upArrow']);
+    return test(value, step, min, max, ['upArrow']);
 }
 
 function stepDown(value, step, min, max) {
-    return test(value,step, min, max, ['downArrow']);
+    return test(value, step, min, max, ['downArrow']);
 }
 
 input.type = 'time';
@@ -67,14 +67,70 @@ shouldBeEqualToString('stepUp("07:13:00.099", 0.100, null, null)', '07:13:00.100
 shouldBeEqualToString('stepDown("07:13:00.101", 0.100, null, null)', '07:13:00.100');
 shouldBeEqualToString('stepUp("07:13:00.500", 0.0001, null, null)', '07:13:00.501');
 shouldBeEqualToString('stepDown("07:13:00.500", 0.0001, null, null)', '07:13:00.499');
-shouldBeEqualToString('stepUp("07:13:00.500", 0, null, null)', '07:13:00.501');
-shouldBeEqualToString('stepDown("07:13:00.500", 0, null, null)', '07:13:00.499');
+shouldBeEqualToString('stepUp("07:13:00.500", 0, null, null)', '07:13');
+shouldBeEqualToString('stepDown("07:13:00.500", 0, null, null)', '07:13');
+shouldBeEqualToString('stepUp("07:13:00.500", 60, null, null)', '07:13');
+shouldBeEqualToString('stepDown("07:13:00.500", 60, null, null)', '07:13');
 shouldBeEqualToString('stepUp("07:13:00.500", 0.100, "00:00:00.050", null)', '07:13:00.550');
 shouldBeEqualToString('stepDown("07:13:00.500", 0.100, "00:00:00.050", null)', '07:13:00.450');
 shouldBeEqualToString('test("07:13:00.500", 0.100, null, null, ["delete", "upArrow"])', '07:13');
 shouldBeEqualToString('test("07:13:00.500", 0.100, null, null, ["delete", "downArrow"])', '07:13:00.900');
 shouldBeEqualToString('test("07:13:00.500", 0.100, "00:00:00.050", null, ["delete", "upArrow"])', '07:13:00.050');
 shouldBeEqualToString('test("07:13:00.500", 0.100, "00:00:00.050", null, ["delete", "downArrow"])', '07:13:00.950');
+
+debug('Seconds');
+keyDown('leftArrow');
+shouldBeEqualToString('stepUp("07:13:00", 1, null, null)', '07:13:01');
+shouldBeEqualToString('stepDown("07:13:01", 1, null, null)', '07:13');
+shouldBeEqualToString('stepUp("07:13:59", 0.001, null, null)', '07:13');
+shouldBeEqualToString('stepDown("07:13:00", 0.001, null, null)', '07:13:59');
+shouldBeEqualToString('stepUp("07:13:00", 10, null, null)', '07:13:10');
+shouldBeEqualToString('stepDown("07:13:30", 10, null, null)', '07:13:20');
+shouldBeEqualToString('stepUp("07:13:50", 10, null, null)', '07:13');
+shouldBeEqualToString('stepDown("07:13:00", 10, null, null)', '07:13:50');
+shouldBeEqualToString('stepUp("07:13:09", 10, null, null)', '07:13:10');
+shouldBeEqualToString('stepDown("07:13:11", 10, null, null)', '07:13:10');
+shouldBeEqualToString('stepUp("07:13:30", 2.5, null, null)', '07:13:31');
+shouldBeEqualToString('stepDown("07:13:30", 2.5, null, null)', '07:13:29');
+shouldBeEqualToString('stepUp("07:13:30", 0, null, null)', '07:13');
+shouldBeEqualToString('stepDown("07:13:30", 0, null, null)', '07:13');
+shouldBeEqualToString('stepUp("07:13:30", 3600, null, null)', '07:13');
+shouldBeEqualToString('stepDown("07:13:30", 3600, null, null)', '07:13');
+shouldBeEqualToString('stepUp("07:13:30", 11, null, null)', '07:13:31');
+shouldBeEqualToString('stepDown("07:13:30", 11, null, null)', '07:13:29');
+shouldBeEqualToString('stepUp("07:13:30", 10, "00:00:05", null)', '07:13:35');
+shouldBeEqualToString('stepDown("07:13:30", 10, "00:00:05", null)', '07:13:25');
+shouldBeEqualToString('test("07:13:30", 10, null, null, ["delete", "upArrow"])', '07:13');
+shouldBeEqualToString('test("07:13:30", 10, null, null, ["delete", "downArrow"])', '07:13:50');
+shouldBeEqualToString('test("07:13:30", 10, "00:00:05", null, ["delete", "upArrow"])', '07:13:05');
+shouldBeEqualToString('test("07:13:30", 10, "00:00:05", null, ["delete", "downArrow"])', '07:13:55');
+
+debug('Minutes');
+keyDown('leftArrow');
+shouldBeEqualToString('stepUp("07:13", 1, null, null)', '07:14');
+shouldBeEqualToString('stepDown("07:13", 1, null, null)', '07:12');
+shouldBeEqualToString('stepUp("07:59", 0.001, null, null)', '07:00');
+shouldBeEqualToString('stepDown("07:00", 0.001, null, null)', '07:59');
+shouldBeEqualToString('stepUp("07:00", 600, null, null)', '07:10');
+shouldBeEqualToString('stepDown("07:10", 600, null, null)', '07:00');
+shouldBeEqualToString('stepUp("07:50", 600, null, null)', '07:00');
+shouldBeEqualToString('stepDown("07:00", 600, null, null)', '07:50');
+shouldBeEqualToString('stepUp("07:13", 600, null, null)', '07:20');
+shouldBeEqualToString('stepDown("07:13", 600, null, null)', '07:10');
+shouldBeEqualToString('stepUp("07:13", 150, null, null)', '07:14');
+shouldBeEqualToString('stepDown("07:13", 150, null, null)', '07:12');
+shouldBeEqualToString('stepUp("07:13", 0, null, null)', '07:14');
+shouldBeEqualToString('stepDown("07:13", 0, null, null)', '07:12');
+shouldBeEqualToString('stepUp("07:13", 36000, null, null)', '07:00');
+shouldBeEqualToString('stepDown("07:13", 36000, null, null)', '07:00');
+shouldBeEqualToString('stepUp("07:13", 660, null, null)', '07:14');
+shouldBeEqualToString('stepDown("07:13", 660, null, null)', '07:12');
+shouldBeEqualToString('stepUp("07:13", 600, "00:05", null)', '07:15');
+shouldBeEqualToString('stepDown("07:13", 600, "00:05", null)', '07:05');
+shouldBeEqualToString('test("07:13", 600, null, null, ["delete", "upArrow"])', '07:00');
+shouldBeEqualToString('test("07:13", 600, null, null, ["delete", "downArrow"])', '07:50');
+shouldBeEqualToString('test("07:13", 600, "00:05", null, ["delete", "upArrow"])', '07:05');
+shouldBeEqualToString('test("07:13", 600, "00:05", null, ["delete", "downArrow"])', '07:55');
 
 debug('');
 document.body.removeChild(input);

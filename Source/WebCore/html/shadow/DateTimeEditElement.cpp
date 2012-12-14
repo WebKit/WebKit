@@ -65,6 +65,7 @@ private:
     bool shouldMinuteFieldReadOnly() const;
     bool shouldSecondFieldReadOnly() const;
     inline const StepRange& stepRange() const { return m_parameters.stepRange; }
+    DateTimeNumericFieldElement::Parameters createNumericFieldParameters(const Decimal& msPerFieldUnit, const Decimal& msPerFieldSize) const;
 
     // DateTimeFormat::TokenHandler functions.
     virtual void visitField(DateTimeFormat::FieldType, int) OVERRIDE FINAL;
@@ -148,7 +149,8 @@ void DateTimeEditBuilder::visitField(DateTimeFormat::FieldType fieldType, int co
     }
 
     case DateTimeFormat::FieldTypeMinute: {
-        RefPtr<DateTimeNumericFieldElement> field = DateTimeMinuteFieldElement::create(document, m_editElement);
+        DateTimeNumericFieldElement::Parameters parameters = createNumericFieldParameters(static_cast<int>(msPerMinute), static_cast<int>(msPerHour));
+        RefPtr<DateTimeNumericFieldElement> field = DateTimeMinuteFieldElement::create(document, m_editElement, parameters);
         m_editElement.addField(field);
         if (shouldMinuteFieldReadOnly()) {
             field->setValueAsDate(m_dateValue);
@@ -198,7 +200,8 @@ void DateTimeEditBuilder::visitField(DateTimeFormat::FieldType fieldType, int co
     }
 
     case DateTimeFormat::FieldTypeSecond: {
-        RefPtr<DateTimeNumericFieldElement> field = DateTimeSecondFieldElement::create(document, m_editElement);
+        DateTimeNumericFieldElement::Parameters parameters = createNumericFieldParameters(static_cast<int>(msPerSecond), static_cast<int>(msPerMinute));
+        RefPtr<DateTimeNumericFieldElement> field = DateTimeSecondFieldElement::create(document, m_editElement, parameters);
         m_editElement.addField(field);
         if (shouldSecondFieldReadOnly()) {
             field->setValueAsDate(m_dateValue);
@@ -213,16 +216,8 @@ void DateTimeEditBuilder::visitField(DateTimeFormat::FieldType fieldType, int co
     }
 
     case DateTimeFormat::FieldTypeFractionalSecond: {
-        ASSERT(!m_parameters.stepRange.step().isZero());
-        int step = 1;
-        int stepBase = 0;
-        const Decimal decimalMsPerSecond(static_cast<int>(msPerSecond));
-
-        if (decimalMsPerSecond.remainder(m_parameters.stepRange.step()).isZero() && m_parameters.stepRange.step().remainder(Decimal(1)).isZero()) {
-            step = static_cast<int>(m_parameters.stepRange.step().toDouble());
-            stepBase = static_cast<int>(m_parameters.stepRange.stepBase().remainder(decimalMsPerSecond).toDouble());
-        }
-        RefPtr<DateTimeNumericFieldElement> field = DateTimeMillisecondFieldElement::create(document, m_editElement, step, stepBase);
+        DateTimeNumericFieldElement::Parameters parameters = createNumericFieldParameters(1, static_cast<int>(msPerSecond));
+        RefPtr<DateTimeNumericFieldElement> field = DateTimeMillisecondFieldElement::create(document, m_editElement, parameters);
         m_editElement.addField(field);
         if (shouldMillisecondFieldReadOnly()) {
             field->setValueAsDate(m_dateValue);
@@ -305,6 +300,25 @@ void DateTimeEditBuilder::visitLiteral(const String& text)
     }
     element->appendChild(Text::create(m_editElement.document(), text));
     m_editElement.appendChild(element);
+}
+
+DateTimeNumericFieldElement::Parameters DateTimeEditBuilder::createNumericFieldParameters(const Decimal& msPerFieldUnit, const Decimal& msPerFieldSize) const
+{
+    ASSERT(!msPerFieldUnit.isZero());
+    ASSERT(!msPerFieldSize.isZero());
+    Decimal stepMilliseconds = stepRange().step();
+    ASSERT(!stepMilliseconds.isZero());
+
+    DateTimeNumericFieldElement::Parameters parameters(1, 0);
+
+    if (stepMilliseconds.remainder(msPerFieldSize).isZero())
+        stepMilliseconds = msPerFieldSize;
+
+    if (msPerFieldSize.remainder(stepMilliseconds).isZero() && stepMilliseconds.remainder(msPerFieldUnit).isZero()) {
+        parameters.step = static_cast<int>((stepMilliseconds / msPerFieldUnit).toDouble());
+        parameters.stepBase = static_cast<int>((stepRange().stepBase() / msPerFieldUnit).floor().remainder(msPerFieldSize / msPerFieldUnit).toDouble());
+    }
+    return parameters;
 }
 
 // ----------------------------
