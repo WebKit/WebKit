@@ -23,7 +23,6 @@
             {
                 consoleWrite("<br>*** Add another text track.");
                 run('video.addTextTrack("captions", "Commentary", "ru")');
-
                 if (window.eventSender) {
                     consoleWrite("<br>*** Set the user language preference.");
                     run("internals.setUserPreferredLanguages(['en'])");
