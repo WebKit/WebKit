@@ -299,7 +299,7 @@ public:
     Node* nextNode()
     {
         if (LIKELY(!hasSnapshot())) {
-            Node* node = m_currentNode;
+            Node* node = m_currentNode.get();
             if (m_currentNode)
                 m_currentNode = m_currentNode->nextSibling();
             return node;
@@ -315,7 +315,7 @@ public:
         if (hasSnapshot())
             return;
         m_childNodes = adoptPtr(new Vector<RefPtr<Node> >());
-        Node* node = m_currentNode;
+        Node* node = m_currentNode.get();
         while (node) {
             m_childNodes->append(node);
             node = node->nextSibling();
@@ -337,7 +337,7 @@ public:
 private:
     static ChildNodesLazySnapshot* latestSnapshot;
 
-    Node* m_currentNode;
+    RefPtr<Node> m_currentNode;
     unsigned m_currentIndex;
     OwnPtr<Vector<RefPtr<Node> > > m_childNodes; // Lazily instantiated.
     ChildNodesLazySnapshot* m_nextSnapshot;
