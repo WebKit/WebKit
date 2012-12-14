@@ -6645,6 +6645,7 @@
 		FDF6BAF9134A4C9800822920 /* JSOfflineAudioCompletionEvent.h in Headers */ = {isa = PBXBuildFile; fileRef = FDF6BAF7134A4C9800822920 /* JSOfflineAudioCompletionEvent.h */; };
 		FDF7E9C313AC21DB00A51EAC /* JSAudioBufferCallback.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FDF7E9C113AC21DB00A51EAC /* JSAudioBufferCallback.cpp */; };
 		FDF7E9C413AC21DB00A51EAC /* JSAudioBufferCallback.h in Headers */ = {isa = PBXBuildFile; fileRef = FDF7E9C213AC21DB00A51EAC /* JSAudioBufferCallback.h */; };
+		FE115FAB167988CD00249134 /* AbstractDatabaseServer.h in Headers */ = {isa = PBXBuildFile; fileRef = FE115FA9167988CD00249134 /* AbstractDatabaseServer.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		FE456F181677D74E005EDDF9 /* DatabaseManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FE456F161677D74E005EDDF9 /* DatabaseManager.cpp */; };
 		FE456F191677D74E005EDDF9 /* DatabaseManager.h in Headers */ = {isa = PBXBuildFile; fileRef = FE456F171677D74E005EDDF9 /* DatabaseManager.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		FE6FD4880F676E5700092873 /* Coordinates.h in Headers */ = {isa = PBXBuildFile; fileRef = FE6FD4850F676E5700092873 /* Coordinates.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -6658,6 +6659,9 @@
 		FE80DA660E9C4703000D6F75 /* JSGeoposition.h in Headers */ = {isa = PBXBuildFile; fileRef = FE80DA620E9C4703000D6F75 /* JSGeoposition.h */; };
 		FE80DA710E9C472F000D6F75 /* JSPositionError.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FE80DA6D0E9C472F000D6F75 /* JSPositionError.cpp */; };
 		FE80DA720E9C472F000D6F75 /* JSPositionError.h in Headers */ = {isa = PBXBuildFile; fileRef = FE80DA6E0E9C472F000D6F75 /* JSPositionError.h */; };
+		FEAF6654167970320062D0C5 /* DBBackendServer.h in Headers */ = {isa = PBXBuildFile; fileRef = FEAF6653167970070062D0C5 /* DBBackendServer.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		FEDEF84116797108000E444A /* DatabaseStrategy.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FEDEF83F16797108000E444A /* DatabaseStrategy.cpp */; };
+		FEDEF84216797108000E444A /* DatabaseStrategy.h in Headers */ = {isa = PBXBuildFile; fileRef = FEDEF84016797108000E444A /* DatabaseStrategy.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		FF945ECB161F7F3600971BC8 /* PseudoElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FF945EC9161F7F3600971BC8 /* PseudoElement.cpp */; };
 		FF945ECC161F7F3600971BC8 /* PseudoElement.h in Headers */ = {isa = PBXBuildFile; fileRef = FF945ECA161F7F3600971BC8 /* PseudoElement.h */; };
 		FFD5B97A135CC97800D5E92A /* PageVisibilityState.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FFD5B977135CC97800D5E92A /* PageVisibilityState.cpp */; };
@@ -14202,6 +14206,7 @@
 		FDF6BAF7134A4C9800822920 /* JSOfflineAudioCompletionEvent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSOfflineAudioCompletionEvent.h; sourceTree = "<group>"; };
 		FDF7E9C113AC21DB00A51EAC /* JSAudioBufferCallback.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSAudioBufferCallback.cpp; sourceTree = "<group>"; };
 		FDF7E9C213AC21DB00A51EAC /* JSAudioBufferCallback.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSAudioBufferCallback.h; sourceTree = "<group>"; };
+		FE115FA9167988CD00249134 /* AbstractDatabaseServer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AbstractDatabaseServer.h; path = Modules/webdatabase/AbstractDatabaseServer.h; sourceTree = "<group>"; };
 		FE456F161677D74E005EDDF9 /* DatabaseManager.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = DatabaseManager.cpp; path = Modules/webdatabase/DatabaseManager.cpp; sourceTree = "<group>"; };
 		FE456F171677D74E005EDDF9 /* DatabaseManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DatabaseManager.h; path = Modules/webdatabase/DatabaseManager.h; sourceTree = "<group>"; };
 		FE6FD4850F676E5700092873 /* Coordinates.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Coordinates.h; sourceTree = "<group>"; };
@@ -14216,6 +14221,9 @@
 		FE80DA620E9C4703000D6F75 /* JSGeoposition.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSGeoposition.h; sourceTree = "<group>"; };
 		FE80DA6D0E9C472F000D6F75 /* JSPositionError.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSPositionError.cpp; sourceTree = "<group>"; };
 		FE80DA6E0E9C472F000D6F75 /* JSPositionError.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSPositionError.h; sourceTree = "<group>"; };
+		FEAF6653167970070062D0C5 /* DBBackendServer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DBBackendServer.h; path = Modules/webdatabase/DBBackendServer.h; sourceTree = "<group>"; };
+		FEDEF83F16797108000E444A /* DatabaseStrategy.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DatabaseStrategy.cpp; sourceTree = "<group>"; };
+		FEDEF84016797108000E444A /* DatabaseStrategy.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DatabaseStrategy.h; sourceTree = "<group>"; };
 		FF945EC9161F7F3600971BC8 /* PseudoElement.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PseudoElement.cpp; sourceTree = "<group>"; };
 		FF945ECA161F7F3600971BC8 /* PseudoElement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PseudoElement.h; sourceTree = "<group>"; };
 		FFD5B977135CC97800D5E92A /* PageVisibilityState.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PageVisibilityState.cpp; sourceTree = "<group>"; };
@@ -18268,6 +18276,7 @@
 			children = (
 				97BC69D61505F076001B74AC /* AbstractDatabase.cpp */,
 				97BC69D71505F076001B74AC /* AbstractDatabase.h */,
+				FE115FA9167988CD00249134 /* AbstractDatabaseServer.h */,
 				97BC69D81505F076001B74AC /* ChangeVersionWrapper.cpp */,
 				97BC69D91505F076001B74AC /* ChangeVersionWrapper.h */,
 				97BC69DE1505F081001B74AC /* Database.cpp */,
@@ -18292,6 +18301,7 @@
 				97BC69EE1505F081001B74AC /* DatabaseThread.h */,
 				97BC69EF1505F081001B74AC /* DatabaseTracker.cpp */,
 				97BC69F01505F081001B74AC /* DatabaseTracker.h */,
+				FEAF6653167970070062D0C5 /* DBBackendServer.h */,
 				A8CCBB46151F831600AB7CE9 /* DOMWindowWebDatabase.cpp */,
 				A8CCBB47151F831600AB7CE9 /* DOMWindowWebDatabase.h */,
 				A8CCBB4E151F835A00AB7CE9 /* DOMWindowWebDatabase.idl */,
@@ -21047,6 +21057,8 @@
 				2E4346570F546A9900B0F1BA /* CrossThreadCopier.h */,
 				E11AF15011B9A1A300805103 /* Cursor.cpp */,
 				F587868402DE3B8601EA4122 /* Cursor.h */,
+				FEDEF83F16797108000E444A /* DatabaseStrategy.cpp */,
+				FEDEF84016797108000E444A /* DatabaseStrategy.h */,
 				A5732B08136A161D005C8D7C /* DateComponents.cpp */,
 				A5732B09136A161D005C8D7C /* DateComponents.h */,
 				45FEA5CD156DDE8C00654101 /* Decimal.cpp */,
@@ -22585,6 +22597,9 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				FEDEF84216797108000E444A /* DatabaseStrategy.h in Headers */,
+				FE115FAB167988CD00249134 /* AbstractDatabaseServer.h in Headers */,
+				FEAF6654167970320062D0C5 /* DBBackendServer.h in Headers */,
 				FE456F191677D74E005EDDF9 /* DatabaseManager.h in Headers */,
 				E43105BB16750F1600DB2FB8 /* NodeTraversal.h in Headers */,
 				C375D7FE16639519006184AB /* TypeAhead.h in Headers */,
@@ -29044,6 +29059,7 @@
 				FDA9325D16703B2A008982DC /* OfflineAudioContext.cpp in Sources */,
 				FDA9326616703BA9008982DC /* JSOfflineAudioContext.cpp in Sources */,
 				FE456F181677D74E005EDDF9 /* DatabaseManager.cpp in Sources */,
+				FEDEF84116797108000E444A /* DatabaseStrategy.cpp in Sources */,
 				F37A56221679CF7B00C57046 /* HeapGraphSerializer.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

@@ -50,6 +50,11 @@ CookiesStrategy* PlatformStrategiesEfl::createCookiesStrategy()
     return this;
 }
 
+DatabaseStrategy* PlatformStrategiesEfl::createDatabaseStrategy()
+{
+    return this;
+}
+
 LoaderStrategy* PlatformStrategiesEfl::createLoaderStrategy()
 {
     return this;

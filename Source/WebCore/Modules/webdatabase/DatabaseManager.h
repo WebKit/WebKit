@@ -35,6 +35,7 @@
 
 namespace WebCore {
 
+class AbstractDatabaseServer;
 class DatabaseManagerClient;
 class DatabaseTaskSynchronizer;
 class SecurityOrigin;
@@ -85,6 +86,8 @@ public:
 private:
     DatabaseManager();
     ~DatabaseManager() { }
+
+    AbstractDatabaseServer* m_server;
 };
 
 } // namespace WebCore
