@@ -1,3 +1,17 @@
+2012-12-14  Yury Semikhatsky  <yurys@chromium.org>
+
+        Web Inspector: optional parameters of protocol commands should go after required ones
+        https://bugs.webkit.org/show_bug.cgi?id=105019
+
+        Reviewed by Pavel Feldman.
+
+        * inspector/Inspector.json: Moved required x and y parameters declaration before
+        optional ones.
+        * inspector/InspectorInputAgent.cpp:
+        (WebCore::InspectorInputAgent::dispatchMouseEvent):
+        * inspector/InspectorInputAgent.h:
+        (InspectorInputAgent):
+
 2012-12-14  Jessie Berlin  <jberlin@apple.com>
 
         Mac build fix after r137724.
