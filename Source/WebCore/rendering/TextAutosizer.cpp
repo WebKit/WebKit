@@ -119,31 +119,11 @@ void TextAutosizer::processCluster(RenderBlock* cluster, RenderBlock* container,
     processContainer(multiplier, container, subtreeRoot, windowInfo);
 }
 
-static bool contentHeightIsConstrained(const RenderBlock* container)
-{
-    // FIXME: Propagate constrainedness down the tree, to avoid inefficiently walking back up from each box.
-    // FIXME: This code needs to take into account vertical writing modes.
-    // FIXME: Consider additional heuristics, such as ignoring fixed heights if the content is already overflowing before autosizing kicks in.
-    for (; container; container = container->containingBlock()) {
-        RenderStyle* style = container->style();
-        if (style->overflowY() >= OSCROLL)
-            return false;
-        if (style->height().isSpecified() || style->maxHeight().isSpecified()) {
-            // Some sites (e.g. wikipedia) set their html and/or body elements to height:100%,
-            // without intending to constrain the height of the content within them.
-            return !container->isRoot() && !container->isBody();
-        }
-        if (container->isFloatingOrOutOfFlowPositioned())
-            return false;
-    }
-    return false;
-}
-
 void TextAutosizer::processContainer(float multiplier, RenderBlock* container, RenderObject* subtreeRoot, const TextAutosizingWindowInfo& windowInfo)
 {
     ASSERT(isAutosizingContainer(container));
 
-    float localMultiplier = contentHeightIsConstrained(container) ? 1 : multiplier;
+    float localMultiplier = containerShouldbeAutosized(container) ? multiplier: 1;
 
     RenderObject* descendant = nextInPreOrderSkippingDescendantsOfContainers(subtreeRoot, subtreeRoot);
     while (descendant) {
@@ -250,6 +230,36 @@ bool TextAutosizer::isAutosizingCluster(const RenderBlock* renderer)
     // renderers, and probably flexboxes...
 }
 
+static bool contentHeightIsConstrained(const RenderBlock* container)
+{
+    // FIXME: Propagate constrainedness down the tree, to avoid inefficiently walking back up from each box.
+    // FIXME: This code needs to take into account vertical writing modes.
+    // FIXME: Consider additional heuristics, such as ignoring fixed heights if the content is already overflowing before autosizing kicks in.
+    for (; container; container = container->containingBlock()) {
+        RenderStyle* style = container->style();
+        if (style->overflowY() >= OSCROLL)
+            return false;
+        if (style->height().isSpecified() || style->maxHeight().isSpecified()) {
+            // Some sites (e.g. wikipedia) set their html and/or body elements to height:100%,
+            // without intending to constrain the height of the content within them.
+            return !container->isRoot() && !container->isBody();
+        }
+        if (container->isFloatingOrOutOfFlowPositioned())
+            return false;
+    }
+    return false;
+}
+
+bool TextAutosizer::containerShouldbeAutosized(const RenderBlock* container)
+{
+    // Don't autosize block-level text that can't wrap (as it's likely to
+    // expand sideways and break the page's layout).
+    if (!container->style()->autoWrap())
+        return false;
+
+    return !contentHeightIsConstrained(container);
+}
+
 bool TextAutosizer::clusterShouldBeAutosized(const RenderBlock* lowestCommonAncestor, float commonAncestorWidth)
 {
     // Don't autosize clusters that contain less than 4 lines of text (in
@@ -273,7 +283,7 @@ bool TextAutosizer::clusterShouldBeAutosized(const RenderBlock* lowestCommonAnce
 
 void TextAutosizer::measureDescendantTextWidth(const RenderBlock* container, float minTextWidth, float& textWidth)
 {
-    bool skipLocalText = contentHeightIsConstrained(container);
+    bool skipLocalText = !containerShouldbeAutosized(container);
 
     RenderObject* descendant = nextInPreOrderSkippingDescendantsOfContainers(container, container);
     while (descendant) {

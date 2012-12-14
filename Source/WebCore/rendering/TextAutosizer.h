@@ -70,6 +70,7 @@ private:
     static bool isAutosizingContainer(const RenderObject*);
     static bool isAutosizingCluster(const RenderBlock*);
 
+    static bool containerShouldbeAutosized(const RenderBlock* container);
     static bool clusterShouldBeAutosized(const RenderBlock* lowestCommonAncestor, float commonAncestorWidth);
     static void measureDescendantTextWidth(const RenderBlock* container, float minTextWidth, float& textWidth);
 

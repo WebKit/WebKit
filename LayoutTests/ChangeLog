@@ -1,3 +1,18 @@
+2012-12-14  John Mellor  <johnme@chromium.org>
+
+        Text Autosizing: Don't autosize unwrappable blocks
+        https://bugs.webkit.org/show_bug.cgi?id=104925
+
+        Reviewed by Julien Chaffraix.
+
+        Added tests verifying that this prevents unwrappable blocks from being
+        autosized, and that this has no effect on unwrappable inlines.
+
+        * fast/text-autosizing/unwrappable-blocks-expected.html: Added.
+        * fast/text-autosizing/unwrappable-blocks.html: Added.
+        * fast/text-autosizing/unwrappable-inlines-expected.html: Added.
+        * fast/text-autosizing/unwrappable-inlines.html: Added.
+
 2012-12-14  Kentaro Hara  <haraken@chromium.org>
 
         Remove an exception message from insertedIntoDocument-no-crash-expected.txt
