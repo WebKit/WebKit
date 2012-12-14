@@ -72,10 +72,10 @@ class DateTimeHourFieldElement : public DateTimeNumericFieldElement {
     WTF_MAKE_NONCOPYABLE(DateTimeHourFieldElement);
 
 public:
-    static PassRefPtr<DateTimeHourFieldElement> create(Document*, FieldOwner&, int minimum, int maximum);
+    static PassRefPtr<DateTimeHourFieldElement> create(Document*, FieldOwner&, int minimum, int maximum, const DateTimeNumericFieldElement::Parameters&);
 
 private:
-    DateTimeHourFieldElement(Document*, FieldOwner&, int minimum, int maximum);
+    DateTimeHourFieldElement(Document*, FieldOwner&, int minimum, int maximum, const DateTimeNumericFieldElement::Parameters&);
 
     // DateTimeFieldElement functions.
     virtual void populateDateTimeFieldsState(DateTimeFieldsState&) OVERRIDE FINAL;

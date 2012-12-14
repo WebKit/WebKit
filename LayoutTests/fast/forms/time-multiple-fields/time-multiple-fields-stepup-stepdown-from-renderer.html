@@ -2,10 +2,13 @@
 <html>
 <head>
 <script src="../../js/resources/js-test-pre.js"></script>
+<script src="../resources/common.js"></script>
 </head>
 <body>
 <script>
 description('Check stepping-up and -down for time input fields from renderer. No cases of empty initial values.');
+if (window.internals)
+    internals.settings.setLangAttributeAwareFormControlUIEnabled(true);
 
 var input = document.createElement('input');
 var invalidStateErr = '"Error: InvalidStateError: DOM Exception 11"';
@@ -131,6 +134,64 @@ shouldBeEqualToString('test("07:13", 600, null, null, ["delete", "upArrow"])', '
 shouldBeEqualToString('test("07:13", 600, null, null, ["delete", "downArrow"])', '07:50');
 shouldBeEqualToString('test("07:13", 600, "00:05", null, ["delete", "upArrow"])', '07:05');
 shouldBeEqualToString('test("07:13", 600, "00:05", null, ["delete", "downArrow"])', '07:55');
+
+debug('Hours, 1-12');
+keyDown('leftArrow');
+shouldBeEqualToString('stepUp("07:00", 1, null, null)', '08:00');
+shouldBeEqualToString('stepDown("07:00", 1, null, null)', '06:00');
+shouldBeEqualToString('stepUp("11:00", 1, null, null)', '00:00');
+shouldBeEqualToString('stepDown("00:00", 1, null, null)', '11:00');
+shouldBeEqualToString('stepUp("06:00", 7200, null, null)', '08:00');
+shouldBeEqualToString('stepDown("06:00", 7200, null, null)', '04:00');
+shouldBeEqualToString('stepUp("10:00", 7200, null, null)', '00:00');
+shouldBeEqualToString('stepDown("00:00", 7200, null, null)', '10:00');
+shouldBeEqualToString('stepUp("07:00", 7200, null, null)', '08:00');
+shouldBeEqualToString('stepDown("07:00", 7200, null, null)', '06:00');
+shouldBeEqualToString('stepUp("06:00", 3601, null, null)', '07:00');
+shouldBeEqualToString('stepDown("06:00", 3601, null, null)', '05:00');
+shouldBeEqualToString('stepUp("06:00", 0, null, null)', '07:00');
+shouldBeEqualToString('stepDown("06:00", 0, null, null)', '05:00');
+shouldBeEqualToString('stepUp("06:00", 86400, null, null)', '00:00');
+shouldBeEqualToString('stepDown("06:00", 86400, null, null)', '00:00');
+shouldBeEqualToString('stepUp("06:00", 36000, null, null)', '07:00');
+shouldBeEqualToString('stepDown("06:00", 36000, null, null)', '05:00');
+shouldBeEqualToString('stepUp("06:00", 7200, "01:00", null)', '07:00');
+shouldBeEqualToString('stepDown("06:00", 7200, "01:00", null)', '05:00');
+shouldBeEqualToString('test("06:00", 7200, null, null, ["delete", "upArrow"])', '02:00');
+shouldBeEqualToString('test("06:00", 7200, null, null, ["delete", "downArrow"])', '00:00');
+shouldBeEqualToString('getUserAgentShadowTextContent(input)', '12:00 AM');
+shouldBeEqualToString('test("06:00", 7200, "01:00", null, ["delete", "upArrow"])', '01:00');
+shouldBeEqualToString('test("06:00", 7200, "01:00", null, ["delete", "downArrow"])', '11:00');
+
+debug('Hours, 0-23');
+debug('The tests in this block fail on platforms without the lang-attribute-aware-form-control-UI feature.');
+input.setAttribute('lang', 'ja');
+shouldBeEqualToString('stepUp("07:00", 1, null, null)', '08:00');
+shouldBeEqualToString('stepDown("07:00", 1, null, null)', '06:00');
+shouldBeEqualToString('stepUp("23:00", 1, null, null)', '00:00');
+shouldBeEqualToString('stepDown("00:00", 1, null, null)', '23:00');
+shouldBeEqualToString('stepUp("06:00", 7200, null, null)', '08:00');
+shouldBeEqualToString('stepDown("06:00", 7200, null, null)', '04:00');
+shouldBeEqualToString('stepUp("22:00", 7200, null, null)', '00:00');
+shouldBeEqualToString('stepDown("00:00", 7200, null, null)', '22:00');
+shouldBeEqualToString('stepUp("07:00", 7200, null, null)', '08:00');
+shouldBeEqualToString('stepDown("07:00", 7200, null, null)', '06:00');
+shouldBeEqualToString('stepUp("06:00", 3601, null, null)', '07:00');
+shouldBeEqualToString('stepDown("06:00", 3601, null, null)', '05:00');
+shouldBeEqualToString('stepUp("06:00", 0, null, null)', '07:00');
+shouldBeEqualToString('stepDown("06:00", 0, null, null)', '05:00');
+shouldBeEqualToString('stepUp("06:00", 86400, null, null)', '00:00');
+shouldBeEqualToString('stepDown("06:00", 86400, null, null)', '00:00');
+shouldBeEqualToString('stepUp("06:00", 36000, null, null)', '07:00');
+shouldBeEqualToString('stepDown("06:00", 36000, null, null)', '05:00');
+shouldBeEqualToString('stepUp("06:00", 7200, "01:00", null)', '07:00');
+shouldBeEqualToString('stepDown("06:00", 7200, "01:00", null)', '05:00');
+shouldBeEqualToString('test("06:00", 7200, null, null, ["delete", "upArrow"])', '00:00');
+shouldBeEqualToString('getUserAgentShadowTextContent(input)', '00:00');
+shouldBeEqualToString('test("06:00", 7200, null, null, ["delete", "downArrow"])', '22:00');
+shouldBeEqualToString('test("06:00", 7200, "01:00", null, ["delete", "upArrow"])', '01:00');
+shouldBeEqualToString('test("06:00", 7200, "01:00", null, ["delete", "downArrow"])', '23:00');
+input.removeAttribute('lang');
 
 debug('');
 document.body.removeChild(input);
