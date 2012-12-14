@@ -1719,6 +1719,7 @@ set(WebCore_SOURCES
     mathml/MathMLMathElement.cpp
     mathml/MathMLTextElement.cpp
 
+    page/AutoscrollController.cpp
     page/BarInfo.cpp
     page/Chrome.cpp
     page/Console.cpp

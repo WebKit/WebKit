@@ -34,6 +34,7 @@
 #include "HitTestResult.h"
 #include "htmlediting.h"
 #include "HTMLElement.h"
+#include "HTMLFrameOwnerElement.h"
 #include "HTMLNames.h"
 #include "ImageBuffer.h"
 #include "FloatQuad.h"
@@ -640,6 +641,39 @@ void RenderBox::autoscroll()
 {
     if (layer())
         layer()->autoscroll();
+}
+
+// There are two kinds of renderer that can autoscroll.
+bool RenderBox::canAutoscroll() const
+{
+    // Check for a box that can be scrolled in its own right.
+    if (canBeScrolledAndHasScrollableArea())
+        return true;
+
+    // Check for a box that represents the top level of a web page.
+    // This can be scrolled by calling Chrome::scrollRectIntoView.
+    // This only has an effect on the Mac platform in applications
+    // that put web views into scrolling containers, such as Mac OS X Mail.
+    // The code for this is in RenderLayer::scrollRectToVisible.
+    if (node() != document())
+        return false;
+    Frame* frame = this->frame();
+    if (!frame)
+        return false;
+    Page* page = frame->page();
+    return page && page->mainFrame() == frame;
+}
+
+RenderBox* RenderBox::findAutoscrollable(RenderObject* renderer)
+{
+    while (renderer && !(renderer->isBox() && toRenderBox(renderer)->canAutoscroll())) {
+        if (!renderer->parent() && renderer->node() == renderer->document() && renderer->document()->ownerElement())
+            renderer = renderer->document()->ownerElement()->renderer();
+        else
+            renderer = renderer->parent();
+    }
+
+    return renderer && renderer->isBox() ? toRenderBox(renderer) : 0;
 }
 
 void RenderBox::panScroll(const IntPoint& source)
