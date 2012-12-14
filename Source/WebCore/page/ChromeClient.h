@@ -49,341 +49,330 @@ class NSResponder;
 
 namespace WebCore {
 
-    class AccessibilityObject;
-    class DateTimeChooser;
-    class DateTimeChooserClient;
-    class Element;
-    class FileChooser;
-    class FileIconLoader;
-    class FloatRect;
-    class Frame;
-    class Geolocation;
-    class GraphicsLayer;
-    class HTMLInputElement;
-    class HitTestResult;
-    class IntRect;
-    class NavigationAction;
-    class Node;
-    class Page;
-    class PagePopup;
-    class PagePopupClient;
-    class PagePopupDriver;
-    class PopupMenuClient;
-    class SecurityOrigin;
-    class GraphicsContext3D;
-    class Widget;
+class AccessibilityObject;
+class ColorChooser;
+class ColorChooserClient;
+class DateTimeChooser;
+class DateTimeChooserClient;
+class Element;
+class FileChooser;
+class FileIconLoader;
+class FloatRect;
+class Frame;
+class Geolocation;
+class GraphicsContext3D;
+class GraphicsLayer;
+class GraphicsLayerFactory;
+class HitTestResult;
+class HTMLInputElement;
+class IntRect;
+class NavigationAction;
+class Node;
+class Page;
+class PagePopup;
+class PagePopupClient;
+class PagePopupDriver;
+class PopupMenuClient;
+class SecurityOrigin;
+class Widget;
 
-    struct DateTimeChooserParameters;
-    struct FrameLoadRequest;
-    struct ViewportArguments;
-    struct WindowFeatures;
+struct DateTimeChooserParameters;
+struct FrameLoadRequest;
+struct GraphicsDeviceAdapter;
+struct ViewportArguments;
+struct WindowFeatures;
 
-#if USE(ACCELERATED_COMPOSITING)
-    class GraphicsLayer;
-    class GraphicsLayerFactory;
-#endif
+class ChromeClient {
+public:
+    virtual void chromeDestroyed() = 0;
 
-#if ENABLE(INPUT_TYPE_COLOR)
-    class ColorChooser;
-    class ColorChooserClient;
-#endif
+    virtual void setWindowRect(const FloatRect&) = 0;
+    virtual FloatRect windowRect() = 0;
 
-#if PLATFORM(WIN) && USE(AVFOUNDATION)
-    struct GraphicsDeviceAdapter;
-#endif
+    virtual FloatRect pageRect() = 0;
 
-    class ChromeClient {
-    public:
-        virtual void chromeDestroyed() = 0;
-        
-        virtual void setWindowRect(const FloatRect&) = 0;
-        virtual FloatRect windowRect() = 0;
-        
-        virtual FloatRect pageRect() = 0;
-        
-        virtual void focus() = 0;
-        virtual void unfocus() = 0;
+    virtual void focus() = 0;
+    virtual void unfocus() = 0;
 
-        virtual bool canTakeFocus(FocusDirection) = 0;
-        virtual void takeFocus(FocusDirection) = 0;
+    virtual bool canTakeFocus(FocusDirection) = 0;
+    virtual void takeFocus(FocusDirection) = 0;
 
-        virtual void focusedNodeChanged(Node*) = 0;
-        virtual void focusedFrameChanged(Frame*) = 0;
+    virtual void focusedNodeChanged(Node*) = 0;
+    virtual void focusedFrameChanged(Frame*) = 0;
 
-        // The Frame pointer provides the ChromeClient with context about which
-        // Frame wants to create the new Page.  Also, the newly created window
-        // should not be shown to the user until the ChromeClient of the newly
-        // created Page has its show method called.
-        // The FrameLoadRequest parameter is only for ChromeClient to check if the
-        // request could be fulfilled.  The ChromeClient should not load the request.
-        virtual Page* createWindow(Frame*, const FrameLoadRequest&, const WindowFeatures&, const NavigationAction&) = 0;
-        virtual void show() = 0;
+    // The Frame pointer provides the ChromeClient with context about which
+    // Frame wants to create the new Page. Also, the newly created window
+    // should not be shown to the user until the ChromeClient of the newly
+    // created Page has its show method called.
+    // The FrameLoadRequest parameter is only for ChromeClient to check if the
+    // request could be fulfilled. The ChromeClient should not load the request.
+    virtual Page* createWindow(Frame*, const FrameLoadRequest&, const WindowFeatures&, const NavigationAction&) = 0;
+    virtual void show() = 0;
 
-        virtual bool canRunModal() = 0;
-        virtual void runModal() = 0;
+    virtual bool canRunModal() = 0;
+    virtual void runModal() = 0;
 
-        virtual void setToolbarsVisible(bool) = 0;
-        virtual bool toolbarsVisible() = 0;
-        
-        virtual void setStatusbarVisible(bool) = 0;
-        virtual bool statusbarVisible() = 0;
-        
-        virtual void setScrollbarsVisible(bool) = 0;
-        virtual bool scrollbarsVisible() = 0;
-        
-        virtual void setMenubarVisible(bool) = 0;
-        virtual bool menubarVisible() = 0;
+    virtual void setToolbarsVisible(bool) = 0;
+    virtual bool toolbarsVisible() = 0;
 
-        virtual void setResizable(bool) = 0;
-        
-        virtual void addMessageToConsole(MessageSource, MessageLevel, const String& message, unsigned lineNumber, const String& sourceID) = 0;
-        // FIXME: Remove this MessageType variant once all the clients are updated.
-        virtual void addMessageToConsole(MessageSource source, MessageType, MessageLevel level, const String& message, unsigned lineNumber, const String& sourceID)
-        {
-            addMessageToConsole(source, level, message, lineNumber, sourceID);
-        }
+    virtual void setStatusbarVisible(bool) = 0;
+    virtual bool statusbarVisible() = 0;
 
-        virtual bool canRunBeforeUnloadConfirmPanel() = 0;
-        virtual bool runBeforeUnloadConfirmPanel(const String& message, Frame* frame) = 0;
+    virtual void setScrollbarsVisible(bool) = 0;
+    virtual bool scrollbarsVisible() = 0;
 
-        virtual void closeWindowSoon() = 0;
-        
-        virtual void runJavaScriptAlert(Frame*, const String&) = 0;
-        virtual bool runJavaScriptConfirm(Frame*, const String&) = 0;
-        virtual bool runJavaScriptPrompt(Frame*, const String& message, const String& defaultValue, String& result) = 0;
-        virtual void setStatusbarText(const String&) = 0;
-        virtual bool shouldInterruptJavaScript() = 0;
-        virtual KeyboardUIMode keyboardUIMode() = 0;
+    virtual void setMenubarVisible(bool) = 0;
+    virtual bool menubarVisible() = 0;
 
-        virtual void* webView() const = 0;
+    virtual void setResizable(bool) = 0;
 
-        virtual IntRect windowResizerRect() const = 0;
+    virtual void addMessageToConsole(MessageSource, MessageLevel, const String& message, unsigned lineNumber, const String& sourceID) = 0;
+    // FIXME: Remove this MessageType variant once all the clients are updated.
+    virtual void addMessageToConsole(MessageSource source, MessageType, MessageLevel level, const String& message, unsigned lineNumber, const String& sourceID)
+    {
+        addMessageToConsole(source, level, message, lineNumber, sourceID);
+    }
 
-        // Methods used by HostWindow.
-        virtual void invalidateRootView(const IntRect&, bool) = 0;
-        virtual void invalidateContentsAndRootView(const IntRect&, bool) = 0;
-        virtual void invalidateContentsForSlowScroll(const IntRect&, bool) = 0;
-        virtual void scroll(const IntSize&, const IntRect&, const IntRect&) = 0;
+    virtual bool canRunBeforeUnloadConfirmPanel() = 0;
+    virtual bool runBeforeUnloadConfirmPanel(const String& message, Frame*) = 0;
+
+    virtual void closeWindowSoon() = 0;
+
+    virtual void runJavaScriptAlert(Frame*, const String&) = 0;
+    virtual bool runJavaScriptConfirm(Frame*, const String&) = 0;
+    virtual bool runJavaScriptPrompt(Frame*, const String& message, const String& defaultValue, String& result) = 0;
+    virtual void setStatusbarText(const String&) = 0;
+    virtual bool shouldInterruptJavaScript() = 0;
+    virtual KeyboardUIMode keyboardUIMode() = 0;
+
+    virtual void* webView() const = 0;
+
+    virtual IntRect windowResizerRect() const = 0;
+
+    // Methods used by HostWindow.
+    virtual void invalidateRootView(const IntRect&, bool) = 0;
+    virtual void invalidateContentsAndRootView(const IntRect&, bool) = 0;
+    virtual void invalidateContentsForSlowScroll(const IntRect&, bool) = 0;
+    virtual void scroll(const IntSize&, const IntRect&, const IntRect&) = 0;
 #if USE(TILED_BACKING_STORE)
-        virtual void delegatedScrollRequested(const IntPoint&) = 0;
+    virtual void delegatedScrollRequested(const IntPoint&) = 0;
 #endif
-        virtual IntPoint screenToRootView(const IntPoint&) const = 0;
-        virtual IntRect rootViewToScreen(const IntRect&) const = 0;
-        virtual PlatformPageClient platformPageClient() const = 0;
-        virtual void scrollbarsModeDidChange() const = 0;
-        virtual void setCursor(const Cursor&) = 0;
-        virtual void setCursorHiddenUntilMouseMoves(bool) = 0;
+    virtual IntPoint screenToRootView(const IntPoint&) const = 0;
+    virtual IntRect rootViewToScreen(const IntRect&) const = 0;
+    virtual PlatformPageClient platformPageClient() const = 0;
+    virtual void scrollbarsModeDidChange() const = 0;
+    virtual void setCursor(const Cursor&) = 0;
+    virtual void setCursorHiddenUntilMouseMoves(bool) = 0;
 #if ENABLE(REQUEST_ANIMATION_FRAME) && !USE(REQUEST_ANIMATION_FRAME_TIMER)
-        virtual void scheduleAnimation() = 0;
+    virtual void scheduleAnimation() = 0;
 #endif
-        // End methods used by HostWindow.
+    // End methods used by HostWindow.
 
-        virtual void dispatchViewportPropertiesDidChange(const ViewportArguments&) const { }
+    virtual void dispatchViewportPropertiesDidChange(const ViewportArguments&) const { }
 
-        virtual void contentsSizeChanged(Frame*, const IntSize&) const = 0;
-        virtual void layoutUpdated(Frame*) const { }
-        virtual void scrollRectIntoView(const IntRect&) const { }; // Currently only Mac has a non empty implementation.
-       
-        virtual bool shouldUnavailablePluginMessageBeButton(RenderEmbeddedObject::PluginUnavailabilityReason) const { return false; }
-        virtual void unavailablePluginButtonClicked(Element*, RenderEmbeddedObject::PluginUnavailabilityReason) const { }
-        virtual void mouseDidMoveOverElement(const HitTestResult&, unsigned modifierFlags) = 0;
+    virtual void contentsSizeChanged(Frame*, const IntSize&) const = 0;
+    virtual void layoutUpdated(Frame*) const { }
+    virtual void scrollRectIntoView(const IntRect&) const { }; // Currently only Mac has a non empty implementation.
 
-        virtual void setToolTip(const String&, TextDirection) = 0;
+    virtual bool shouldUnavailablePluginMessageBeButton(RenderEmbeddedObject::PluginUnavailabilityReason) const { return false; }
+    virtual void unavailablePluginButtonClicked(Element*, RenderEmbeddedObject::PluginUnavailabilityReason) const { }
+    virtual void mouseDidMoveOverElement(const HitTestResult&, unsigned modifierFlags) = 0;
 
-        virtual void print(Frame*) = 0;
-        virtual bool shouldRubberBandInDirection(ScrollDirection) const = 0;
+    virtual void setToolTip(const String&, TextDirection) = 0;
+
+    virtual void print(Frame*) = 0;
+    virtual bool shouldRubberBandInDirection(ScrollDirection) const = 0;
 
 #if ENABLE(SQL_DATABASE)
-        virtual void exceededDatabaseQuota(Frame*, const String& databaseName) = 0;
+    virtual void exceededDatabaseQuota(Frame*, const String& databaseName) = 0;
 #endif
 
-        // Callback invoked when the application cache fails to save a cache object
-        // because storing it would grow the database file past its defined maximum
-        // size or past the amount of free space on the device. 
-        // The chrome client would need to take some action such as evicting some
-        // old caches.
-        virtual void reachedMaxAppCacheSize(int64_t spaceNeeded) = 0;
+    // Callback invoked when the application cache fails to save a cache object
+    // because storing it would grow the database file past its defined maximum
+    // size or past the amount of free space on the device. 
+    // The chrome client would need to take some action such as evicting some
+    // old caches.
+    virtual void reachedMaxAppCacheSize(int64_t spaceNeeded) = 0;
 
-        // Callback invoked when the application cache origin quota is reached. This
-        // means that the resources attempting to be cached via the manifest are
-        // more than allowed on this origin. This callback allows the chrome client
-        // to take action, such as prompting the user to ask to increase the quota
-        // for this origin. The totalSpaceNeeded parameter is the total amount of
-        // storage, in bytes, needed to store the new cache along with all of the
-        // other existing caches for the origin that would not be replaced by
-        // the new cache.
-        virtual void reachedApplicationCacheOriginQuota(SecurityOrigin*, int64_t totalSpaceNeeded) = 0;
+    // Callback invoked when the application cache origin quota is reached. This
+    // means that the resources attempting to be cached via the manifest are
+    // more than allowed on this origin. This callback allows the chrome client
+    // to take action, such as prompting the user to ask to increase the quota
+    // for this origin. The totalSpaceNeeded parameter is the total amount of
+    // storage, in bytes, needed to store the new cache along with all of the
+    // other existing caches for the origin that would not be replaced by
+    // the new cache.
+    virtual void reachedApplicationCacheOriginQuota(SecurityOrigin*, int64_t totalSpaceNeeded) = 0;
 
 #if ENABLE(DASHBOARD_SUPPORT) || ENABLE(DRAGGABLE_REGION)
-        virtual void annotatedRegionsChanged();
+    virtual void annotatedRegionsChanged();
 #endif
 
-        virtual void populateVisitedLinks();
+    virtual void populateVisitedLinks();
 
-        virtual FloatRect customHighlightRect(Node*, const AtomicString& type, const FloatRect& lineRect);
-        virtual void paintCustomHighlight(Node*, const AtomicString& type, const FloatRect& boxRect, const FloatRect& lineRect,
-            bool behindText, bool entireLine);
+    virtual FloatRect customHighlightRect(Node*, const AtomicString& type, const FloatRect& lineRect);
+    virtual void paintCustomHighlight(Node*, const AtomicString& type, const FloatRect& boxRect, const FloatRect& lineRect, bool behindText, bool entireLine);
             
-        virtual bool shouldReplaceWithGeneratedFileForUpload(const String& path, String& generatedFilename);
-        virtual String generateReplacementFile(const String& path);
+    virtual bool shouldReplaceWithGeneratedFileForUpload(const String& path, String& generatedFilename);
+    virtual String generateReplacementFile(const String& path);
 
-        virtual bool paintCustomOverhangArea(GraphicsContext*, const IntRect&, const IntRect&, const IntRect&);
+    virtual bool paintCustomOverhangArea(GraphicsContext*, const IntRect&, const IntRect&, const IntRect&);
 
 #if ENABLE(INPUT_TYPE_COLOR)
-        virtual PassOwnPtr<ColorChooser> createColorChooser(ColorChooserClient*, const Color&) = 0;
+    virtual PassOwnPtr<ColorChooser> createColorChooser(ColorChooserClient*, const Color&) = 0;
 #endif
 
 #if ENABLE(DATE_AND_TIME_INPUT_TYPES)
-        // This function is used for:
-        //  - Mandatory date/time choosers if !ENABLE(INPUT_MULTIPLE_FIELDS_UI)
-        //  - Date/time choosers for types for which RenderTheme::supportsCalendarPicker
-        //    returns true, if ENABLE(INPUT_MULTIPLE_FIELDS_UI)
-        //  - <datalist> UI for date/time input types regardless of
-        //    ENABLE(INPUT_MULTIPLE_FIELDS_UI)
-        virtual PassRefPtr<DateTimeChooser> openDateTimeChooser(DateTimeChooserClient*, const DateTimeChooserParameters&) = 0;
+    // This function is used for:
+    //  - Mandatory date/time choosers if !ENABLE(INPUT_MULTIPLE_FIELDS_UI)
+    //  - Date/time choosers for types for which RenderTheme::supportsCalendarPicker
+    //    returns true, if ENABLE(INPUT_MULTIPLE_FIELDS_UI)
+    //  - <datalist> UI for date/time input types regardless of
+    //    ENABLE(INPUT_MULTIPLE_FIELDS_UI)
+    virtual PassRefPtr<DateTimeChooser> openDateTimeChooser(DateTimeChooserClient*, const DateTimeChooserParameters&) = 0;
 #endif
 
-        virtual void runOpenPanel(Frame*, PassRefPtr<FileChooser>) = 0;
-        // Asynchronous request to load an icon for specified filenames.
-        virtual void loadIconForFiles(const Vector<String>&, FileIconLoader*) = 0;
+    virtual void runOpenPanel(Frame*, PassRefPtr<FileChooser>) = 0;
+    // Asynchronous request to load an icon for specified filenames.
+    virtual void loadIconForFiles(const Vector<String>&, FileIconLoader*) = 0;
 
 #if ENABLE(DIRECTORY_UPLOAD)
-        // Asychronous request to enumerate all files in a directory chosen by the user.
-        virtual void enumerateChosenDirectory(FileChooser*) = 0;
+    // Asychronous request to enumerate all files in a directory chosen by the user.
+    virtual void enumerateChosenDirectory(FileChooser*) = 0;
 #endif
 
-        // Notification that the given form element has changed. This function
-        // will be called frequently, so handling should be very fast.
-        virtual void formStateDidChange(const Node*) = 0;
+    // Notification that the given form element has changed. This function
+    // will be called frequently, so handling should be very fast.
+    virtual void formStateDidChange(const Node*) = 0;
         
-        virtual void elementDidFocus(const Node*) { };
-        virtual void elementDidBlur(const Node*) { };
+    virtual void elementDidFocus(const Node*) { };
+    virtual void elementDidBlur(const Node*) { };
 
 #if USE(ACCELERATED_COMPOSITING)
-        // Allows ports to customize the type of graphics layers created by this page.
-        virtual GraphicsLayerFactory* graphicsLayerFactory() const { return 0; }
+    // Allows ports to customize the type of graphics layers created by this page.
+    virtual GraphicsLayerFactory* graphicsLayerFactory() const { return 0; }
 
-        // Pass 0 as the GraphicsLayer to detatch the root layer.
-        virtual void attachRootGraphicsLayer(Frame*, GraphicsLayer*) = 0;
-        // Sets a flag to specify that the next time content is drawn to the window,
-        // the changes appear on the screen in synchrony with updates to GraphicsLayers.
-        virtual void setNeedsOneShotDrawingSynchronization() = 0;
-        // Sets a flag to specify that the view needs to be updated, so we need
-        // to do an eager layout before the drawing.
-        virtual void scheduleCompositingLayerFlush() = 0;
-        // Returns whether or not the client can render the composited layer,
-        // regardless of the settings.
-        virtual bool allowsAcceleratedCompositing() const { return true; }
+    // Pass 0 as the GraphicsLayer to detatch the root layer.
+    virtual void attachRootGraphicsLayer(Frame*, GraphicsLayer*) = 0;
+    // Sets a flag to specify that the next time content is drawn to the window,
+    // the changes appear on the screen in synchrony with updates to GraphicsLayers.
+    virtual void setNeedsOneShotDrawingSynchronization() = 0;
+    // Sets a flag to specify that the view needs to be updated, so we need
+    // to do an eager layout before the drawing.
+    virtual void scheduleCompositingLayerFlush() = 0;
+    // Returns whether or not the client can render the composited layer,
+    // regardless of the settings.
+    virtual bool allowsAcceleratedCompositing() const { return true; }
 
-        enum CompositingTrigger {
-            ThreeDTransformTrigger = 1 << 0,
-            VideoTrigger = 1 << 1,
-            PluginTrigger = 1 << 2,
-            CanvasTrigger = 1 << 3,
-            AnimationTrigger = 1 << 4,
-            FilterTrigger = 1 << 5,
-            AllTriggers = 0xFFFFFFFF
-        };
-        typedef unsigned CompositingTriggerFlags;
+    enum CompositingTrigger {
+        ThreeDTransformTrigger = 1 << 0,
+        VideoTrigger = 1 << 1,
+        PluginTrigger = 1 << 2,
+        CanvasTrigger = 1 << 3,
+        AnimationTrigger = 1 << 4,
+        FilterTrigger = 1 << 5,
+        AllTriggers = 0xFFFFFFFF
+    };
+    typedef unsigned CompositingTriggerFlags;
 
-        // Returns a bitfield indicating conditions that can trigger the compositor.
-        virtual CompositingTriggerFlags allowedCompositingTriggers() const { return static_cast<CompositingTriggerFlags>(AllTriggers); }
+    // Returns a bitfield indicating conditions that can trigger the compositor.
+    virtual CompositingTriggerFlags allowedCompositingTriggers() const { return static_cast<CompositingTriggerFlags>(AllTriggers); }
 #endif
 
 #if PLATFORM(WIN) && USE(AVFOUNDATION)
-        virtual GraphicsDeviceAdapter* graphicsDeviceAdapter() const { return 0; }
+    virtual GraphicsDeviceAdapter* graphicsDeviceAdapter() const { return 0; }
 #endif
 
-        virtual bool supportsFullscreenForNode(const Node*) { return false; }
-        virtual void enterFullscreenForNode(Node*) { }
-        virtual void exitFullscreenForNode(Node*) { }
-        virtual bool requiresFullscreenForVideoPlayback() { return false; } 
+    virtual bool supportsFullscreenForNode(const Node*) { return false; }
+    virtual void enterFullscreenForNode(Node*) { }
+    virtual void exitFullscreenForNode(Node*) { }
+    virtual bool requiresFullscreenForVideoPlayback() { return false; } 
 
 #if ENABLE(FULLSCREEN_API)
-        virtual bool supportsFullScreenForElement(const Element*, bool) { return false; }
-        virtual void enterFullScreenForElement(Element*) { }
-        virtual void exitFullScreenForElement(Element*) { }
-        virtual void fullScreenRendererChanged(RenderBox*) { }
-        virtual void setRootFullScreenLayer(GraphicsLayer*) { }
+    virtual bool supportsFullScreenForElement(const Element*, bool) { return false; }
+    virtual void enterFullScreenForElement(Element*) { }
+    virtual void exitFullScreenForElement(Element*) { }
+    virtual void fullScreenRendererChanged(RenderBox*) { }
+    virtual void setRootFullScreenLayer(GraphicsLayer*) { }
 #endif
-        
+
 #if USE(TILED_BACKING_STORE)
-        virtual IntRect visibleRectForTiledBackingStore() const { return IntRect(); }
+    virtual IntRect visibleRectForTiledBackingStore() const { return IntRect(); }
 #endif
 
 #if PLATFORM(MAC)
-        virtual NSResponder *firstResponder() { return 0; }
-        virtual void makeFirstResponder(NSResponder *) { }
-        // Focuses on the containing view associated with this page.
-        virtual void makeFirstResponder() { }
-        virtual void willPopUpMenu(NSMenu *) { }
+    virtual NSResponder *firstResponder() { return 0; }
+    virtual void makeFirstResponder(NSResponder *) { }
+    // Focuses on the containing view associated with this page.
+    virtual void makeFirstResponder() { }
+    virtual void willPopUpMenu(NSMenu *) { }
 #endif
 
 #if PLATFORM(WIN)
-        virtual void setLastSetCursorToCurrentCursor() = 0;
+    virtual void setLastSetCursorToCurrentCursor() = 0;
 #endif
 
 #if ENABLE(TOUCH_EVENTS)
-        virtual void needTouchEvents(bool) = 0;
+    virtual void needTouchEvents(bool) = 0;
 #endif
 
-        virtual bool selectItemWritingDirectionIsNatural() = 0;
-        virtual bool selectItemAlignmentFollowsMenuWritingDirection() = 0;
-        // Checks if there is an opened popup, called by RenderMenuList::showPopup().
-        virtual bool hasOpenedPopup() const = 0;
-        virtual PassRefPtr<PopupMenu> createPopupMenu(PopupMenuClient*) const = 0;
-        virtual PassRefPtr<SearchPopupMenu> createSearchPopupMenu(PopupMenuClient*) const = 0;
+    virtual bool selectItemWritingDirectionIsNatural() = 0;
+    virtual bool selectItemAlignmentFollowsMenuWritingDirection() = 0;
+    // Checks if there is an opened popup, called by RenderMenuList::showPopup().
+    virtual bool hasOpenedPopup() const = 0;
+    virtual PassRefPtr<PopupMenu> createPopupMenu(PopupMenuClient*) const = 0;
+    virtual PassRefPtr<SearchPopupMenu> createSearchPopupMenu(PopupMenuClient*) const = 0;
 #if ENABLE(PAGE_POPUP)
-        // Creates a PagePopup object, and shows it beside originBoundsInRootView.
-        // The return value can be 0.
-        virtual PagePopup* openPagePopup(PagePopupClient*, const IntRect& originBoundsInRootView) = 0;
-        virtual void closePagePopup(PagePopup*) = 0;
-        // For testing.
-        virtual void setPagePopupDriver(PagePopupDriver*) = 0;
-        virtual void resetPagePopupDriver() = 0;
+    // Creates a PagePopup object, and shows it beside originBoundsInRootView.
+    // The return value can be 0.
+    virtual PagePopup* openPagePopup(PagePopupClient*, const IntRect& originBoundsInRootView) = 0;
+    virtual void closePagePopup(PagePopup*) = 0;
+    // For testing.
+    virtual void setPagePopupDriver(PagePopupDriver*) = 0;
+    virtual void resetPagePopupDriver() = 0;
 #endif
-        // This function is called whenever a text field <input> is
-        // created. The implementation should return true if it wants
-        // to do something in addTextFieldDecorationsTo().
-        // The argument is always non-0.
-        virtual bool willAddTextFieldDecorationsTo(HTMLInputElement*) { return false; }
-        // The argument is always non-0.
-        virtual void addTextFieldDecorationsTo(HTMLInputElement*) { }
+    // This function is called whenever a text field <input> is created. The
+    // implementation should return true if it wants to do something in
+    // addTextFieldDecorationsTo().
+    // The argument is always non-0.
+    virtual bool willAddTextFieldDecorationsTo(HTMLInputElement*) { return false; }
+    // The argument is always non-0.
+    virtual void addTextFieldDecorationsTo(HTMLInputElement*) { }
 
-        virtual void postAccessibilityNotification(AccessibilityObject*, AXObjectCache::AXNotification) { }
+    virtual void postAccessibilityNotification(AccessibilityObject*, AXObjectCache::AXNotification) { }
+
+    virtual void notifyScrollerThumbIsVisibleInRect(const IntRect&) { }
+    virtual void recommendedScrollbarStyleDidChange(int /*newStyle*/) { }
+
+    enum DialogType {
+        AlertDialog = 0,
+        ConfirmDialog = 1,
+        PromptDialog = 2,
+        HTMLDialog = 3
+    };
+    virtual bool shouldRunModalDialogDuringPageDismissal(const DialogType&, const String& dialogMessage, FrameLoader::PageDismissalType) const { UNUSED_PARAM(dialogMessage); return true; }
+
+    virtual void numWheelEventHandlersChanged(unsigned) = 0;
         
-        virtual void notifyScrollerThumbIsVisibleInRect(const IntRect&) { }
-        virtual void recommendedScrollbarStyleDidChange(int /*newStyle*/) { }
-
-        enum DialogType {
-            AlertDialog = 0,
-            ConfirmDialog = 1,
-            PromptDialog = 2,
-            HTMLDialog = 3
-        };
-        virtual bool shouldRunModalDialogDuringPageDismissal(const DialogType&, const String& dialogMessage, FrameLoader::PageDismissalType) const { UNUSED_PARAM(dialogMessage); return true; }
-
-        virtual void numWheelEventHandlersChanged(unsigned) = 0;
-        
-        virtual bool isSVGImageChromeClient() const { return false; }
+    virtual bool isSVGImageChromeClient() const { return false; }
 
 #if ENABLE(POINTER_LOCK)
-        virtual bool requestPointerLock() { return false; }
-        virtual void requestPointerUnlock() { }
-        virtual bool isPointerLocked() { return false; }
+    virtual bool requestPointerLock() { return false; }
+    virtual void requestPointerUnlock() { }
+    virtual bool isPointerLocked() { return false; }
 #endif
 
-        virtual void logDiagnosticMessage(const String& message, const String& description, const String& status) { UNUSED_PARAM(message); UNUSED_PARAM(description); UNUSED_PARAM(status); }
+    virtual void logDiagnosticMessage(const String& message, const String& description, const String& status) { UNUSED_PARAM(message); UNUSED_PARAM(description); UNUSED_PARAM(status); }
 
-        virtual FloatSize minimumWindowSize() const { return FloatSize(100, 100); };
+    virtual FloatSize minimumWindowSize() const { return FloatSize(100, 100); };
 
-        virtual bool isEmptyChromeClient() const { return false; }
+    virtual bool isEmptyChromeClient() const { return false; }
 
-        virtual PassRefPtr<Image> plugInStartLabelImage(RenderSnapshottedPlugIn::LabelSize) const { return 0; }
+    virtual PassRefPtr<Image> plugInStartLabelImage(RenderSnapshottedPlugIn::LabelSize) const { return 0; }
 
-    protected:
-        virtual ~ChromeClient() { }
-    };
+protected:
+    virtual ~ChromeClient() { }
+};
 
 }
 #endif // ChromeClient_h
