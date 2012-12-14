@@ -1,3 +1,11 @@
+2012-12-13  Beth Dakin  <bdakin@apple.com>
+
+        Rubber-stamped by Tim Horton.
+
+        This test needs updates results after http://trac.webkit.org/changeset/137393
+
+        * platform/mac/svg/css/shadow-changes-expected.txt:
+
 2012-12-13  Tab Atkins  <tabatkins@google.com>
 
         Switch the gradient drawing code to use bearing angles
