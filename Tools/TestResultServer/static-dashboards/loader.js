@@ -90,7 +90,7 @@ loader.Loader.prototype = {
     {
         parseParameters();
 
-        for (var builderName in g_builders)
+        for (var builderName in currentBuilders())
             this._loadResultsFileForBuilder(builderName);
     },
     _loadResultsFileForBuilder: function(builderName)
@@ -167,12 +167,12 @@ loader.Loader.prototype = {
 
         // Remove this builder from builders, so we don't try to use the
         // data that isn't there.
-        delete g_builders[builderName];
+        delete currentBuilders()[builderName];
 
         // Change the default builder name if it has been deleted.
         if (g_defaultBuilderName == builderName) {
             g_defaultBuilderName = null;
-            for (var availableBuilderName in g_builders) {
+            for (var availableBuilderName in currentBuilders()) {
                 g_defaultBuilderName = availableBuilderName;
                 g_defaultDashboardSpecificStateValues.builder = availableBuilderName;
                 break;
@@ -194,7 +194,7 @@ loader.Loader.prototype = {
     },
     _haveResultsFilesLoaded: function()
     {
-        for (var builder in g_builders) {
+        for (var builder in currentBuilders()) {
             if (!g_resultsByBuilder[builder])
                 return false;
         }

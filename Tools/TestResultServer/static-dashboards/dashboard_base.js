@@ -188,7 +188,7 @@ function handleValidHashParameterWrapper(key, value)
     // FIXME: This should probably be stored on g_crossDashboardState like everything else in this function.
     case 'builder':
         validateParameter(g_currentState, key, value,
-            function() { return value in g_builders; });
+            function() { return value in currentBuilders(); });
         return true;
 
     case 'useTestData':
@@ -416,12 +416,17 @@ function currentBuilderGroup()
     return currentBuilderGroupCategory()[g_crossDashboardState.group]
 }
 
+function currentBuilders()
+{
+    return currentBuilderGroup().builders;
+}
+
 function isTipOfTreeWebKitBuilder()
 {
     return currentBuilderGroup().isToTWebKit;
 }
 
-var g_defaultBuilderName, g_builders;
+var g_defaultBuilderName;
 function initBuilders()
 {
     currentBuilderGroup().setup();
@@ -694,7 +699,7 @@ function htmlForTestTypeSwitcher(opt_noBuilderMenu, opt_extraHtml, opt_includeNo
     html += selectHTML('Test type', 'testType', TEST_TYPES);
 
     if (!opt_noBuilderMenu) {
-        var buildersForMenu = Object.keys(g_builders);
+        var buildersForMenu = Object.keys(currentBuilders());
         if (opt_includeNoneBuilder)
             buildersForMenu.unshift('--------------');
         html += selectHTML('Builder', 'builder', buildersForMenu);

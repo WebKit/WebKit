@@ -54,9 +54,11 @@ test('loading steps', 1, function() {
     }
 });
 
-test('results files loading', 5, function() {
+// Total number of assertions is 1 for the deepEqual of the builder lists
+// and then 2 per builder (one for ok, one for deepEqual of tests).
+test('results files loading', 11, function() {
     resetGlobals();
-    var expectedLoadedBuilders = ["WebKit Linux", "WebKit Win"];
+    var expectedLoadedBuilders =  ['WebKit Linux', 'WebKit Linux (dbg)', 'WebKit Mac10.7', 'WebKit Win', 'WebKit Win (dbg)'];
     var loadedBuilders = [];
     var resourceLoader = new loader.Loader();
     resourceLoader._loadNext = function() {
@@ -69,16 +71,13 @@ test('results files loading', 5, function() {
 
     var requestFunction = loader.request;
     loader.request = function(url, successCallback, errorCallback) {
-        var builderName = /builder=([\w ]+)&/.exec(url)[1];
+        var builderName = /builder=([\w ().]+)&/.exec(url)[1];
         loadedBuilders.push(builderName);
         successCallback({responseText: '{"version": 4, "' + builderName + '": {"secondsSinceEpoch": [' + Date.now() + '], "tests": {}}}'});
     }
 
-    g_builders = {"WebKit Linux": true, "WebKit Win": true};
-
-    builders.masters['ChromiumWebkit'] = {'tests': {'layout-tests': {builders: ["WebKit Linux", "WebKit Win"]}}};
     loadBuildersList('@ToT - chromium.org', 'layout-tests');
-
+ 
     try {
         resourceLoader._loadResultsFiles();
     } finally {
@@ -112,6 +111,8 @@ test('expectations files loading', 1, function() {
 
 test('results file failing to load', 2, function() {
     resetGlobals();
+    loadBuildersList('@ToT - chromium.org', 'layout-tests');
+    
     // FIXME: loader shouldn't depend on state defined in dashboard_base.js.
     g_buildersThatFailedToLoad = [];
 
@@ -122,14 +123,14 @@ test('results file failing to load', 2, function() {
     }
 
     var builder1 = 'builder1';
-    g_builders[builder1] = true;
+    currentBuilders()[builder1] = true;
     resourceLoader._handleResultsFileLoadError(builder1);
 
     var builder2 = 'builder2';
-    g_builders[builder2] = true;
+    currentBuilders()[builder2] = true;
     resourceLoader._handleResultsFileLoadError(builder2);
 
     deepEqual(g_buildersThatFailedToLoad, [builder1, builder2]);
     equal(resourceLoadCount, 2);
 
-})
+});

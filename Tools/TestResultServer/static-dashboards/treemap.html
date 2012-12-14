@@ -274,7 +274,7 @@ function handleValidHashParameter(key, value)
     switch(key) {
     case 'builder':
         validateParameter(g_currentState, key, value,
-            function() { return value in g_builders; });
+            function() { return value in currentBuilders(); });
         return true;
 
     case 'treemapfocus':

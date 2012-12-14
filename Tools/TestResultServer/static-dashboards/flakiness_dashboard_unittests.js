@@ -32,7 +32,6 @@ function resetGlobals()
     allTests = null;
     g_expectationsByPlatform = {};
     g_resultsByBuilder = {};
-    g_builders = {};
     g_allExpectations = null;
     g_allTestsTrie = null;
     g_currentState = {};
@@ -45,26 +44,35 @@ function resetGlobals()
     LOAD_BUILDBOT_DATA([{
         name: 'ChromiumWebkit',
         url: 'dummyurl', 
-        tests: {'layout-tests': {'builders': ['WebKit Linux', 'WebKit Linux (dbg)', 'WebKit Mac10.7', 'WebKit Win']}}
+        tests: {'layout-tests': {'builders': ['WebKit Linux', 'WebKit Linux (dbg)', 'WebKit Mac10.7', 'WebKit Win', 'WebKit Win (dbg)']}}
     },
     {
         name: 'webkit.org',
         url: 'dummyurl',
         tests: {'layout-tests': {'builders': ['Apple SnowLeopard Tests', 'Qt Linux Tests', 'Chromium Mac10.7 Tests', 'GTK Win']}}
     }]);
+ 
     for (var group in LAYOUT_TESTS_BUILDER_GROUPS)
         LAYOUT_TESTS_BUILDER_GROUPS[group] = null;
 }
 
+function stubResultsByBuilder(data)
+{
+    for (var builder in currentBuilders())
+    {
+        g_resultsByBuilder[builder] = data[builder] || {'tests': []};
+    };
+}
+
 function runExpectationsTest(builder, test, expectations, modifiers)
 {
-    g_builders[builder] = true;
-
     // Put in some dummy results. processExpectations expects the test to be
     // there.
     var tests = {};
     tests[test] = {'results': [[100, 'F']], 'times': [[100, 0]]};
-    g_resultsByBuilder[builder] = {'tests': tests};
+    var results = {};
+    results[builder] = {'tests': tests};
+    stubResultsByBuilder(results);
 
     processExpectations();
     var resultsForTest = createResultsObjectForTest(test, builder);
@@ -94,6 +102,8 @@ test('flattenTrie', 1, function() {
 
 test('releaseFail', 2, function() {
     resetGlobals();
+    loadBuildersList('@ToT - chromium.org', 'layout-tests');
+
     var builder = 'WebKit Win';
     var test = 'foo/1.html';
     var expectationsArray = [
@@ -105,6 +115,7 @@ test('releaseFail', 2, function() {
 
 test('releaseFailDebugCrashReleaseBuilder', 2, function() {
     resetGlobals();
+    loadBuildersList('@ToT - chromium.org', 'layout-tests');
     var builder = 'WebKit Win';
     var test = 'foo/1.html';
     var expectationsArray = [
@@ -118,6 +129,7 @@ test('releaseFailDebugCrashReleaseBuilder', 2, function() {
 
 test('releaseFailDebugCrashDebugBuilder', 2, function() {
     resetGlobals();
+    loadBuildersList('@ToT - chromium.org', 'layout-tests');
     var builder = 'WebKit Win (dbg)';
     var test = 'foo/1.html';
     var expectationsArray = [
@@ -131,6 +143,7 @@ test('releaseFailDebugCrashDebugBuilder', 2, function() {
 
 test('overrideJustBuildType', 12, function() {
     resetGlobals();
+    loadBuildersList('@ToT - chromium.org', 'layout-tests');
     var test = 'bar/1.html';
     g_expectationsByPlatform['CHROMIUM'] = getParsedExpectations('bar [ WontFix Failure Pass Timeout ]\n' +
         '[ Mac ] ' + test + ' [ WontFix Failure ]\n' +
@@ -227,9 +240,10 @@ test('filterBugs',4, function() {
 
 test('getExpectations', 16, function() {
     resetGlobals();
-    g_builders['WebKit Win'] = true;
-    g_resultsByBuilder = {
-        'WebKit Win': {
+    loadBuildersList('@ToT - chromium.org', 'layout-tests');
+ 
+    stubResultsByBuilder({
+        'WebKit Win' : {
             'tests': {
                 'foo/test1.html': {'results': [[100, 'F']], 'times': [[100, 0]]},
                 'foo/test2.html': {'results': [[100, 'F']], 'times': [[100, 0]]},
@@ -237,7 +251,7 @@ test('getExpectations', 16, function() {
                 'test1.html': {'results': [[100, 'F']], 'times': [[100, 0]]}
             }
         }
-    }
+    });
 
     g_expectationsByPlatform['CHROMIUM'] = getParsedExpectations('Bug(123) foo [ Failure Pass Crash ]\n' +
         'Bug(Foo) [ Release ] foo/test1.html [ Failure ]\n' +
@@ -316,6 +330,7 @@ test('substringList', 2, function() {
 });
 
 test('htmlForTestsWithExpectationsButNoFailures', 4, function() {
+    loadBuildersList('@ToT - chromium.org', 'layout-tests');
     var builder = 'WebKit Win';
     g_perBuilderWithExpectationsButNoFailures[builder] = ['passing-test1.html', 'passing-test2.html'];
     g_perBuilderSkippedPaths[builder] = ['skipped-test1.html'];
@@ -368,11 +383,13 @@ test('htmlForTestTypeSwitcherGroup', 6, function() {
 
 test('htmlForIndividualTestOnAllBuilders', 1, function() {
     resetGlobals();
+    loadBuildersList('@ToT - chromium.org', 'layout-tests');
     equal(htmlForIndividualTestOnAllBuilders('foo/nonexistant.html'), '<div class="not-found">Test not found. Either it does not exist, is skipped or passes on all platforms.</div>');
 });
 
 test('htmlForIndividualTestOnAllBuildersWithResultsLinksNonexistant', 1, function() {
     resetGlobals();
+    loadBuildersList('@ToT - chromium.org', 'layout-tests');
     equal(htmlForIndividualTestOnAllBuildersWithResultsLinks('foo/nonexistant.html'),
         '<div class="not-found">Test not found. Either it does not exist, is skipped or passes on all platforms.</div>' +
         '<div class=expectations test=foo/nonexistant.html>' +
@@ -405,7 +422,7 @@ test('htmlForIndividualTestOnAllBuildersWithResultsLinks', 1, function() {
         '</table>' +
         '<div>The following builders either don\'t run this test (e.g. it\'s skipped) or all runs passed:</div>' +
         '<div class=skipped-builder-list>' +
-            '<div class=skipped-builder>WebKit Linux (dbg)</div><div class=skipped-builder>WebKit Mac10.7</div><div class=skipped-builder>WebKit Win</div>' +
+            '<div class=skipped-builder>WebKit Linux (dbg)</div><div class=skipped-builder>WebKit Mac10.7</div><div class=skipped-builder>WebKit Win</div><div class=skipped-builder>WebKit Win (dbg)</div>' +
         '</div>' +
         '<div class=expectations test=dummytest.html>' +
             '<div><span class=link onclick="setQueryParameter(\'showExpectations\', true)">Show results</span> | ' +
@@ -449,6 +466,7 @@ test('htmlForIndividualTestOnAllBuildersWithResultsLinksWebkitMaster', 1, functi
 
 test('htmlForIndividualTests', 4, function() {
     resetGlobals();
+    loadBuildersList('@ToT - chromium.org', 'layout-tests');
     var test1 = 'foo/nonexistant.html';
     var test2 = 'bar/nonexistant.html';
 

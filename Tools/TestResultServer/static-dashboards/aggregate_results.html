@@ -68,7 +68,7 @@ img {
 function generatePage()
 {
     var html = htmlForTestTypeSwitcher(true) + '<br>';
-    for (var builder in g_builders)
+    for (var builder in currentBuilders())
         html += htmlForBuilder(builder);
     document.body.innerHTML = html;
 }

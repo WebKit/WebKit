@@ -291,7 +291,7 @@ function updateBuildInspector(results, builder, dygraph, index)
             ' (' + results[BUILD_NUMBERS_KEY][index] + ')';
     } else {
         var resultsUrl = 'http://build.chromium.org/f/chromium/layout_test_results/' +
-            g_builders[builder] + '/' + results[CHROME_REVISIONS_KEY][index];
+            currentBuilders()[builder] + '/' + results[CHROME_REVISIONS_KEY][index];
     }
 
     addRow('Build:', '<a href="' + buildUrl + '" target="_blank">' + buildNumber + '</a> (<a href="' + resultsUrl + '" target="_blank">results</a>)');
