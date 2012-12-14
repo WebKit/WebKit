@@ -186,10 +186,10 @@ public:
 
 #if ENABLE(ENCRYPTED_MEDIA)
     enum MediaKeyErrorCode { UnknownError = 1, ClientError, ServiceError, OutputError, HardwareChangeError, DomainError };
-    virtual void mediaPlayerKeyAdded(MediaPlayer*, const String&, const String&) { }
-    virtual void mediaPlayerKeyError(MediaPlayer*, const String&, const String&, MediaKeyErrorCode, unsigned short) { }
-    virtual void mediaPlayerKeyMessage(MediaPlayer*, const String&, const String&, const unsigned char*, unsigned) { }
-    virtual bool mediaPlayerKeyNeeded(MediaPlayer*, const String&, const String&, const unsigned char*, unsigned) { return false; }
+    virtual void mediaPlayerKeyAdded(MediaPlayer*, const String& keySystem, const String& sessionId) { }
+    virtual void mediaPlayerKeyError(MediaPlayer*, const String& keySystem, const String& sessionId, MediaKeyErrorCode, unsigned short systemCode) { }
+    virtual void mediaPlayerKeyMessage(MediaPlayer*, const String& keySystem, const String& sessionId, const unsigned char* message, unsigned messageLength, const KURL& defaultURL) { }
+    virtual bool mediaPlayerKeyNeeded(MediaPlayer*, const String& keySystem, const String& sessionId, const unsigned char* initData, unsigned initDataLength) { return false; }
 #endif
 
     virtual String mediaPlayerReferrer() const { return String(); }
@@ -422,7 +422,7 @@ public:
 #if ENABLE(ENCRYPTED_MEDIA)
     void keyAdded(const String& keySystem, const String& sessionId);
     void keyError(const String& keySystem, const String& sessionId, MediaPlayerClient::MediaKeyErrorCode, unsigned short systemCode);
-    void keyMessage(const String& keySystem, const String& sessionId, const unsigned char* message, unsigned messageLength);
+    void keyMessage(const String& keySystem, const String& sessionId, const unsigned char* message, unsigned messageLength, const KURL& defaultURL);
     bool keyNeeded(const String& keySystem, const String& sessionId, const unsigned char* initData, unsigned initDataLength);
 #endif
 

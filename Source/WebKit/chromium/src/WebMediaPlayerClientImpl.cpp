@@ -251,17 +251,24 @@ void WebMediaPlayerClientImpl::keyError(const WebString& keySystem, const WebStr
 #endif
 }
 
-void WebMediaPlayerClientImpl::keyMessage(const WebString& keySystem, const WebString& sessionId, const unsigned char* message, unsigned messageLength)
+void WebMediaPlayerClientImpl::keyMessage(const WebString& keySystem, const WebString& sessionId, const unsigned char* message, unsigned messageLength, const WebURL& defaultURL)
 {
 #if ENABLE(ENCRYPTED_MEDIA)
     ASSERT(m_mediaPlayer);
-    m_mediaPlayer->keyMessage(keySystem, sessionId, message, messageLength);
+    m_mediaPlayer->keyMessage(keySystem, sessionId, message, messageLength, defaultURL);
 #else
     UNUSED_PARAM(keySystem);
     UNUSED_PARAM(sessionId);
     UNUSED_PARAM(message);
     UNUSED_PARAM(messageLength);
+    UNUSED_PARAM(defaultURL);
 #endif
+}
+
+// FIXME(ddorwin): Remove after rolling WebKit in Chromium and Chromium is updated to use the new signature.
+void WebMediaPlayerClient::keyMessage(const WebString& keySystem, const WebString& sessionId, const unsigned char* message, unsigned messageLength)
+{
+    keyMessage(keySystem, sessionId, message, messageLength, WebURL());
 }
 
 void WebMediaPlayerClientImpl::keyNeeded(const WebString& keySystem, const WebString& sessionId, const unsigned char* initData, unsigned initDataLength)

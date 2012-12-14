@@ -1870,12 +1870,13 @@ void HTMLMediaElement::mediaPlayerKeyError(MediaPlayer*, const String& keySystem
     m_asyncEventQueue->enqueueEvent(event.release());
 }
 
-void HTMLMediaElement::mediaPlayerKeyMessage(MediaPlayer*, const String& keySystem, const String& sessionId, const unsigned char* message, unsigned messageLength)
+void HTMLMediaElement::mediaPlayerKeyMessage(MediaPlayer*, const String& keySystem, const String& sessionId, const unsigned char* message, unsigned messageLength, const KURL& defaultURL)
 {
     MediaKeyEventInit initializer;
     initializer.keySystem = keySystem;
     initializer.sessionId = sessionId;
     initializer.message = Uint8Array::create(message, messageLength);
+    initializer.defaultURL = defaultURL; 
     initializer.bubbles = false;
     initializer.cancelable = false;
 

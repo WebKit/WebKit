@@ -1,3 +1,28 @@
+2012-12-14  David Dorwin  <ddorwin@chromium.org>
+
+        EME v0.1: Report defaultURL in KeyMessage.
+        https://bugs.webkit.org/show_bug.cgi?id=104284
+
+        Reviewed by Darin Fisher.
+
+        Passes defaultURL down from the media engine to HTMLMediaElement.
+        Only Valid URLs will be passed.
+
+        No test because Clear Key does not provide a defaultURL (in v0.1).
+
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::mediaPlayerKeyMessage):
+        * html/HTMLMediaElement.h:
+        (HTMLMediaElement):
+        * platform/graphics/MediaPlayer.cpp:
+        (WebCore::MediaPlayer::keyMessage):
+        * platform/graphics/MediaPlayer.h:
+        (WebCore::MediaPlayerClient::mediaPlayerKeyAdded):
+        (WebCore::MediaPlayerClient::mediaPlayerKeyError):
+        (WebCore::MediaPlayerClient::mediaPlayerKeyMessage):
+        (WebCore::MediaPlayerClient::mediaPlayerKeyNeeded):
+        (MediaPlayer):
+
 2012-12-13  Hajime Morrita  <morrita@google.com>
 
         ContentDistributor and ShadowRootContentDistributionData should use RefPtr to hold elements.
