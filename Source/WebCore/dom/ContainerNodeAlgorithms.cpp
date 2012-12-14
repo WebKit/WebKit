@@ -35,12 +35,12 @@ namespace WebCore {
 void ChildNodeInsertionNotifier::notifyDescendantInsertedIntoDocument(ContainerNode* node)
 {
     ChildNodesLazySnapshot snapshot(node);
-    while (Node* child = snapshot.nextNode()) {
+    while (RefPtr<Node> child = snapshot.nextNode()) {
         // If we have been removed from the document during this loop, then
         // we don't want to tell the rest of our children that they've been
         // inserted into the document because they haven't.
         if (node->inDocument() && child->parentNode() == node)
-            notifyNodeInsertedIntoDocument(child);
+            notifyNodeInsertedIntoDocument(child.get());
     }
 
     if (!node->isElementNode())
@@ -69,12 +69,12 @@ void ChildNodeInsertionNotifier::notifyDescendantInsertedIntoTree(ContainerNode*
 void ChildNodeRemovalNotifier::notifyDescendantRemovedFromDocument(ContainerNode* node)
 {
     ChildNodesLazySnapshot snapshot(node);
-    while (Node* child = snapshot.nextNode()) {
+    while (RefPtr<Node> child = snapshot.nextNode()) {
         // If we have been added to the document during this loop, then we
         // don't want to tell the rest of our children that they've been
         // removed from the document because they haven't.
         if (!node->inDocument() && child->parentNode() == node)
-            notifyNodeRemovedFromDocument(child);
+            notifyNodeRemovedFromDocument(child.get());
     }
 
     if (!node->isElementNode())

@@ -304,18 +304,18 @@ public:
     }
 
     // Returns 0 if there is no next Node.
-    Node* nextNode()
+    PassRefPtr<Node> nextNode()
     {
         if (LIKELY(!hasSnapshot())) {
-            Node* node = m_currentNode.get();
-            if (m_currentNode)
-                m_currentNode = m_currentNode->nextSibling();
+            RefPtr<Node> node = m_currentNode;
+            if (node.get())
+                m_currentNode = node->nextSibling();
             return node;
         }
         Vector<RefPtr<Node> >* nodeVector = m_childNodes.get();
         if (m_currentIndex >= nodeVector->size())
             return 0;
-        return (*nodeVector)[m_currentIndex++].get();
+        return (*nodeVector)[m_currentIndex++];
     }
 
     void takeSnapshot()
