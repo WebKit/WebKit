@@ -1,4 +1,3 @@
-CONSOLE MESSAGE: line 14: Uncaught Error: NotFoundError: DOM Exception 8
 This test must not crash.
 
 foo

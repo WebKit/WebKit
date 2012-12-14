@@ -10,8 +10,12 @@ function f1() {
 }
 
 function f2() {
-    document.getElementsByTagName("kbd")[0].innerHTML = 'foo';
-    document.getElementsByTagName("kbd")[0].insertBefore(document.createElement('foo'),document.createElement('foo'));
+    try {
+        document.getElementsByTagName("kbd")[0].innerHTML = 'foo';
+        document.getElementsByTagName("kbd")[0].insertBefore(document.createElement('foo'),document.createElement('foo'));
+    } catch (e) {
+        // We are not interested in exceptions.
+    }
 }
 </script>
 <s>

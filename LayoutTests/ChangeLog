@@ -1,5 +1,18 @@
 2012-12-14  Kentaro Hara  <haraken@chromium.org>
 
+        Remove an exception message from insertedIntoDocument-no-crash-expected.txt
+        https://bugs.webkit.org/show_bug.cgi?id=104982
+
+        Reviewed by Ryosuke Niwa.
+
+        To make the test result identical in all platforms, this patch
+        removes an exception message from insertedIntoDocument-no-crash-expected.txt.
+
+        * fast/dom/insertedIntoDocument-no-crash-expected.txt:
+        * fast/dom/insertedIntoDocument-no-crash.html:
+
+2012-12-14  Kentaro Hara  <haraken@chromium.org>
+
         Unreviewed. Rebaselined images.
 
         * platform/chromium-mac-lion/platform/chromium/virtual/gpu/compositedscrolling/scrollbars/custom-scrollbar-with-incomplete-style-expected.png: Added.
