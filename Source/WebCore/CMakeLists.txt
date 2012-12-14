@@ -2636,6 +2636,13 @@ if (ENABLE_WEBGL)
     )
 endif ()
 
+if (ENABLE_VIDEO_TRACK)
+    list(APPEND WebCore_SOURCES
+        platform/graphics/TextTrackRepresentation.cpp
+    )
+endif ()
+
+
 if (WTF_USE_3D_GRAPHICS)
     list(APPEND WebCore_INCLUDE_DIRECTORIES
         ${OPENGL_INCLUDE_DIR}
