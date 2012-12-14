@@ -39,6 +39,7 @@
 #include "HTMLNames.h"
 #include "HitTestResult.h"
 #include "NodeTraversal.h"
+#include "RenderBlock.h"
 #include <algorithm>
 #include <cmath>
 
@@ -100,10 +101,29 @@ void findGoodTouchTargets(const IntRect& touchBox, Frame* mainFrame, float pageS
     HitTestResult result = mainFrame->eventHandler()->hitTestResultAtPoint(contentsPoint, false, false, DontHitTestScrollbars, HitTestRequest::Active | HitTestRequest::ReadOnly, IntSize(padding, padding));
     const ListHashSet<RefPtr<Node> >& hitResults = result.rectBasedTestResult();
 
+    // Blacklist nodes that are container of disambiguated nodes.
+    // It is not uncommon to have a clickable <div> that contains other clickable objects.
+    // This heuristic avoids excessive disambiguation in that case.
+    HashSet<Node*> blackList;
+    for (ListHashSet<RefPtr<Node> >::const_iterator it = hitResults.begin(); it != hitResults.end(); ++it) {
+        RenderObject* renderer = it->get()->renderer();
+        if (!renderer)
+            continue;
+        for (RenderBlock* container = renderer->containingBlock(); container; container = container->containingBlock()) {
+            Node* containerNode = container->node();
+            if (!containerNode)
+                continue;
+            if (!blackList.add(containerNode).isNewEntry)
+                break;
+        }
+    }
+
     HashMap<Node*, TouchTargetData> touchTargets;
     float bestScore = 0;
     for (ListHashSet<RefPtr<Node> >::const_iterator it = hitResults.begin(); it != hitResults.end(); ++it) {
         for (Node* node = it->get(); node; node = node->parentNode()) {
+            if (blackList.contains(it->get()))
+                continue;
             if (node->isDocumentNode() || node->hasTagName(HTMLNames::htmlTag) || node->hasTagName(HTMLNames::bodyTag))
                 break;
             if (node->willRespondToMouseClickEvents()) {

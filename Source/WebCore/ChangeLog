@@ -1,3 +1,18 @@
+2012-12-13  Tien-Ren Chen  <trchen@chromium.org>
+
+        Don't consider container nodes of other disambiguated nodes
+        https://bugs.webkit.org/show_bug.cgi?id=104619
+
+        Reviewed by Eric Seidel.
+
+        It is not uncommon to have a clickable <div> that contains other clickable objects.
+        This heuristic avoids excessive disambiguation in that case.
+
+        New unit test: WebFrameTest.DisambiguationPopupNoContainer
+
+        * page/TouchDisambiguation.cpp:
+        (WebCore::findGoodTouchTargets):
+
 2012-12-13  Adrienne Walker  <enne@chromium.org>
 
         Unreviewed, rolling out r137645, r137646, and r137667.

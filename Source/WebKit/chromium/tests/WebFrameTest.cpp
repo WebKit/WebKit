@@ -1542,7 +1542,7 @@ static WebGestureEvent fatTap(int x, int y)
     return event;
 }
 
-TEST_F(WebFrameTest, DisambiguationPopupTest)
+TEST_F(WebFrameTest, DisambiguationPopup)
 {
     registerMockedHttpURLLoad("disambiguation_popup.html");
 
@@ -1584,6 +1584,23 @@ TEST_F(WebFrameTest, DisambiguationPopupTest)
             EXPECT_FALSE(client.triggered());
     }
 
+}
+
+TEST_F(WebFrameTest, DisambiguationPopupNoContainer)
+{
+    registerMockedHttpURLLoad("disambiguation_popup_no_container.html");
+
+    DisambiguationPopupTestWebViewClient client;
+
+    // Make sure we initialize to minimum scale, even if the window size
+    // only becomes available after the load begins.
+    WebViewImpl* webViewImpl = static_cast<WebViewImpl*>(FrameTestHelpers::createWebViewAndLoad(m_baseURL + "disambiguation_popup_no_container.html", true, 0, &client));
+    webViewImpl->resize(WebSize(1000, 1000));
+    webViewImpl->layout();
+
+    client.resetTriggered();
+    webViewImpl->handleInputEvent(fatTap(50, 50));
+    EXPECT_FALSE(client.triggered());
 }
 
 class TestSubstituteDataWebFrameClient : public WebFrameClient {
