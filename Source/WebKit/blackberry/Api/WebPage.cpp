@@ -5178,7 +5178,7 @@ void WebPage::setExtraPluginDirectory(const BlackBerry::Platform::String& path)
         return;
     
     Vector<String> pluginDirectories = database->pluginDirectories();
-    if (path.empty() || pluginDirectories.contains(path)
+    if (path.empty() || pluginDirectories.contains(String(path)))
         return;
 
     pluginDirectories.append(path);
