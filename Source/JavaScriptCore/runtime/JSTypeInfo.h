@@ -55,7 +55,6 @@ namespace JSC {
             , m_flags(flags & 0xff)
             , m_flags2(flags >> 8)
         {
-            ASSERT(flags <= 0x3ff);
             ASSERT(static_cast<int>(type) <= 0xff);
             ASSERT(type >= CompoundType || !(flags & OverridesVisitChildren));
             // No object that doesn't ImplementsHasInstance should override it!
