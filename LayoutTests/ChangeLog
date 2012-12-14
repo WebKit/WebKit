@@ -6,6 +6,7 @@
         This patch copies pan scrolling related test from Win port to Chromium-Win port
         for catching pan scrolling breakage on Chromium-Win port.
 
+        * platform/chromium/TestExpectations: Disables panScroll tests other than Windows.
         * platform/chromium-win/fast/events/panScroll-click-hyperlink-expected.txt: Added.
         * platform/chromium-win/fast/events/panScroll-click-hyperlink.html: Added.
         * platform/chromium-win/fast/events/panScroll-event-fired-expected.txt: Added.
