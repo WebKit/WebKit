@@ -81,6 +81,7 @@ PerformanceResourceTiming::PerformanceResourceTiming(const AtomicString& initiat
     , m_initiatorType(initiatorType)
     , m_timing(response.resourceLoadTiming())
     , m_finishTime(finishTime)
+    , m_didReuseConnection(response.connectionReused())
     , m_shouldReportDetails(passesTimingAllowCheck(response, requestingDocument))
     , m_requestingDocument(requestingDocument)
 {
@@ -94,8 +95,6 @@ AtomicString PerformanceResourceTiming::initiatorType() const
 {
     return m_initiatorType;
 }
-
-// FIXME: Need to enforce same-origin policy on these.
 
 double PerformanceResourceTiming::redirectStart() const
 {
@@ -145,7 +144,8 @@ double PerformanceResourceTiming::connectStart() const
     if (!m_shouldReportDetails)
         return 0.0;
 
-    if (!m_timing || m_timing->connectStart < 0) // Connection was reused.
+    // connectStart will be -1 when a network request is not made.
+    if (!m_timing || m_timing->connectStart < 0 || m_didReuseConnection)
         return domainLookupEnd();
 
     // connectStart includes any DNS time, so we may need to trim that off.
@@ -161,7 +161,8 @@ double PerformanceResourceTiming::connectEnd() const
     if (!m_shouldReportDetails)
         return 0.0;
 
-    if (!m_timing || m_timing->connectEnd < 0) // Connection was reused.
+    // connectStart will be -1 when a network request is not made.
+    if (!m_timing || m_timing->connectEnd < 0 || m_didReuseConnection)
         return connectStart();
 
     return resourceTimeToDocumentMilliseconds(m_timing->connectEnd);

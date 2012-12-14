@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8" />
+<title>Resource Timing connection reuse</title>
+<link rel="author" title="Google" href="http://www.google.com/" />
+<link rel="help" href="http://www.w3.org/TR/resource-timing/#dom-performanceresourcetiming-initiatortype"/>
+<script src="/w3c/resources/testharness.js"></script>
+<script src="/w3c/resources/testharnessreport.js"></script>
+<script src="/w3c/webperf/resources/webperftestharness.js"></script>
+<script>
+setup({explicit_done: true});
+var iframe;
+var d;
+var body;
+
+function setup_iframe() {
+    iframe = document.getElementById('frameContext');
+    d = iframe.contentWindow.document;
+    body = d.createElement('body');
+    d.getElementsByTagName('html')[0].appendChild(body);
+
+    var image = d.createElement('img');
+    image.src = '/w3c/webperf/resources/generate_resource.php?type=image&id=1';
+    image.addEventListener('load', first_image_loaded);
+    body.appendChild(image);
+}
+
+function first_image_loaded() {
+    var image = d.createElement('img');
+    image.src = '/w3c/webperf/resources/generate_resource.php?type=image&id=2';
+    image.addEventListener('load', second_image_loaded);
+    body.appendChild(image);
+}
+
+function second_image_loaded() {
+    var entries = iframe.contentWindow.performance.webkitGetEntries();
+    test_equals(entries.length, 2, 'There should be 2 PerformanceEntries');
+
+    var entry = entries[0];
+    test_equals(entry.connectStart, entry.connectEnd, "connectStart and connectEnd should be the same");
+
+    done();
+}
+
+window.setup_iframe = setup_iframe;
+</script>
+</head>
+<body>
+<h1>Description</h1>
+<p>This test validates that connectStart and connectEnd are the same when a connection is reused.</p>
+<div id="log"></div>
+<iframe id="frameContext" src="/w3c/webperf/resources/inject_resource_test.html"></iframe>
+</body>
+</html>

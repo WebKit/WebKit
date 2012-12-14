@@ -1,3 +1,19 @@
+2012-12-14  James Simonsen  <simonjam@chromium.org>
+
+        [Resource Timing] Properly report reused connections
+        https://bugs.webkit.org/show_bug.cgi?id=104986
+
+        Reviewed by Tony Gentilcore.
+
+        Test: http/tests/w3c/webperf/submission/resource-timing/html/test_resource_connection_reuse.html
+
+        * page/PerformanceResourceTiming.cpp:
+        (WebCore::PerformanceResourceTiming::PerformanceResourceTiming):
+        (WebCore::PerformanceResourceTiming::connectStart):
+        (WebCore::PerformanceResourceTiming::connectEnd):
+        * page/PerformanceResourceTiming.h:
+        (PerformanceResourceTiming):
+
 2012-12-14  Roger Fong  <roger_fong@apple.com>
 
         Enable video caption controls on Windows.

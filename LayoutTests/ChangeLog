@@ -1,3 +1,13 @@
+2012-12-14  James Simonsen  <simonjam@chromium.org>
+
+        [Resource Timing] Properly report reused connections
+        https://bugs.webkit.org/show_bug.cgi?id=104986
+
+        Reviewed by Tony Gentilcore.
+
+        * http/tests/w3c/webperf/submission/resource-timing/html/test_resource_connection_reuse-expected.txt: Added.
+        * http/tests/w3c/webperf/submission/resource-timing/html/test_resource_connection_reuse.html: Added.
+
 2012-12-14  Adam Klein  <adamk@chromium.org>
 
         fast/dom/HTMLTemplateElement/inertContents.html is flaky
