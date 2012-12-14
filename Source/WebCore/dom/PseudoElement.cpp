@@ -43,6 +43,7 @@ PseudoElement::PseudoElement(Element* parent, PseudoId pseudoId)
     : Element(pseudoElementTagName(), parent->document(), CreatePseudoElement)
     , m_pseudoId(pseudoId)
 {
+    ASSERT(pseudoId != NOPSEUDO);
     ASSERT(parent->inDocument());
     setParentOrHostNode(parent);
     setHasCustomCallbacks();

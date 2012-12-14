@@ -28,6 +28,7 @@
 #define ComposedShadowTreeWalker_h
 
 #include "InsertionPoint.h"
+#include "NodeRenderingTraversal.h"
 #include "ShadowRoot.h"
 
 namespace WebCore {
@@ -39,6 +40,8 @@ class ShadowRoot;
 // https://bugs.webkit.org/show_bug.cgi?id=82702
 class ComposedShadowTreeWalker {
 public:
+    typedef NodeRenderingTraversal::ParentDetails ParentTraversalDetails;
+
     enum Policy {
         CrossUpperBoundary,
         DoNotCrossUpperBoundary,
@@ -49,38 +52,11 @@ public:
         CannotStartFromShadowBoundary
     };
 
-    class ParentTraversalDetails {
-    public:
-        ParentTraversalDetails()
-            : m_node(0)
-            , m_insertionPoint(0)
-            , m_resetStyleInheritance(false)
-            , m_outOfComposition(false)
-        { }
-
-        ContainerNode* node() const { return m_node; }
-        InsertionPoint* insertionPoint() const { return m_insertionPoint; }
-        bool resetStyleInheritance() const { return m_resetStyleInheritance; }
-        bool outOfComposition() const { return m_outOfComposition; }
-
-        void didFindNode(ContainerNode*);
-        void didTraverseInsertionPoint(InsertionPoint*);
-        void didTraverseShadowRoot(const ShadowRoot*);
-        void childWasOutOfComposition() { m_outOfComposition = true; }
-
-    private:
-        ContainerNode* m_node;
-        InsertionPoint* m_insertionPoint;
-        bool m_resetStyleInheritance;
-        bool m_outOfComposition;
-    };
-
     ComposedShadowTreeWalker(const Node*, Policy = CrossUpperBoundary, StartPolicy = CannotStartFromShadowBoundary);
 
     // For a common use case such as:
     // for (ComposedShadowTreeWalker walker = ComposedShadowTreeWalker::fromFirstChild(node); walker.get(); walker.nextSibling())
     static ComposedShadowTreeWalker fromFirstChild(const Node*, Policy = CrossUpperBoundary);
-    static void findParent(const Node*, ParentTraversalDetails*);
 
     Node* get() const { return const_cast<Node*>(m_node); }
 
@@ -90,13 +66,12 @@ public:
     void nextSibling();
     void previousSibling();
 
-    void pseudoAwareNextSibling();
-    void pseudoAwarePreviousSibling();
-
     void parent();
 
     void next();
     void previous();
+
+    Node* traverseParent(const Node*, ParentTraversalDetails* = 0) const;
 
 private:
     ComposedShadowTreeWalker(const Node*, ParentTraversalDetails*);
@@ -134,7 +109,6 @@ private:
     Node* traverseFirstChild(const Node*) const;
     Node* traverseLastChild(const Node*) const;
     Node* traverseChild(const Node*, TraversalDirection) const;
-    Node* traverseParent(const Node*, ParentTraversalDetails* = 0) const;
 
     static Node* traverseNextSibling(const Node*);
     static Node* traversePreviousSibling(const Node*);

@@ -2845,6 +2845,8 @@
             'dom/NodeRareData.h',
             'dom/NodeRenderingContext.cpp',
             'dom/NodeRenderingContext.h',
+            'dom/NodeRenderingTraversal.cpp',
+            'dom/NodeRenderingTraversal.h',
             'dom/NodeRenderStyle.h',
             'dom/NodeTraversal.cpp',
             'dom/NodeTraversal.h',

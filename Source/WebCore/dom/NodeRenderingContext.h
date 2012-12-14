@@ -26,7 +26,8 @@
 #ifndef NodeRenderingContext_h
 #define NodeRenderingContext_h
 
-#include "ComposedShadowTreeWalker.h"
+#include "NodeRenderingTraversal.h"
+
 #include <wtf/Noncopyable.h>
 #include <wtf/RefPtr.h>
 #include <wtf/text/AtomicString.h>
@@ -69,7 +70,8 @@ private:
     void moveToFlowThreadIfNeeded();
 
     Node* m_node;
-    ComposedShadowTreeWalker::ParentTraversalDetails m_parentDetails;
+    ContainerNode* m_renderingParent;
+    NodeRenderingTraversal::ParentDetails m_parentDetails;
     RefPtr<RenderStyle> m_style;
     RenderNamedFlowThread* m_parentFlowRenderer;
     AtomicString m_flowThread;
@@ -82,7 +84,7 @@ inline Node* NodeRenderingContext::node() const
 
 inline ContainerNode* NodeRenderingContext::parentNodeForRenderingAndStyle() const
 {
-    return m_parentDetails.node();
+    return m_renderingParent;
 }
 
 inline bool NodeRenderingContext::resetStyleInheritance() const

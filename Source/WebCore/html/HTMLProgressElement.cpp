@@ -23,12 +23,13 @@
 
 #if ENABLE(PROGRESS_ELEMENT)
 #include "Attribute.h"
+#include "ElementShadow.h"
 #include "EventNames.h"
 #include "ExceptionCode.h"
-#include "NodeRenderingContext.h"
 #include "HTMLDivElement.h"
 #include "HTMLNames.h"
 #include "HTMLParserIdioms.h"
+#include "NodeRenderingContext.h"
 #include "ProgressShadowElement.h"
 #include "RenderProgress.h"
 #include "SelectRuleFeatureSet.h"

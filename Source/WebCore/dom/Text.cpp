@@ -26,6 +26,7 @@
 #include "NodeRenderingContext.h"
 #include "RenderCombineText.h"
 #include "RenderText.h"
+#include "ShadowRoot.h"
 
 #if ENABLE(SVG)
 #include "RenderSVGInlineText.h"

@@ -420,6 +420,7 @@ SOURCES += \
     dom/NodeIterator.cpp \
     dom/NodeRareData.cpp \
     dom/NodeRenderingContext.cpp \
+    dom/NodeRenderingTraversal.cpp \
     dom/NodeTraversal.cpp \
     dom/Notation.cpp \
     dom/StaticHashSetNodeList.cpp \
@@ -1604,6 +1605,7 @@ HEADERS += \
     dom/NodeIterator.h \
     dom/NodeRareData.h \
     dom/NodeRenderingContext.h \
+    dom/NodeRenderingTraversal.h \
     dom/NodeTraversal.h \
     dom/Notation.h \
     dom/StaticHashSetNodeList.h \

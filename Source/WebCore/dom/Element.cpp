@@ -2098,7 +2098,7 @@ void Element::normalizeAttributes()
 
 void Element::updatePseudoElement(PseudoId pseudoId, StyleChange change)
 {
-    PseudoElement* existing = hasRareData() ? elementRareData()->pseudoElement(pseudoId) : 0;
+    PseudoElement* existing = pseudoElement(pseudoId);
     if (existing) {
         // PseudoElement styles hang off their parent element's style so if we needed
         // a style recalc we should Force one on the pseudo.
@@ -2109,10 +2109,10 @@ void Element::updatePseudoElement(PseudoId pseudoId, StyleChange change)
         // when RenderObject::isChildAllowed on our parent returns false for the
         // PseudoElement's renderer for each style recalc.
         if (!renderer() || !pseudoElementRendererIsNeeded(renderer()->getCachedPseudoStyle(pseudoId)))
-            elementRareData()->setPseudoElement(pseudoId, 0);
+            setPseudoElement(pseudoId, 0);
     } else if (RefPtr<PseudoElement> element = createPseudoElementIfNeeded(pseudoId)) {
         element->attach();
-        ensureElementRareData()->setPseudoElement(pseudoId, element.release());
+        setPseudoElement(pseudoId, element.release());
     }
 }
 
@@ -2133,15 +2133,22 @@ PassRefPtr<PseudoElement> Element::createPseudoElementIfNeeded(PseudoId pseudoId
     return PseudoElement::create(this, pseudoId);
 }
 
-PseudoElement* Element::beforePseudoElement() const
+bool Element::hasPseudoElements() const
 {
-    return hasRareData() ? elementRareData()->pseudoElement(BEFORE) : 0;
+    return hasRareData() && elementRareData()->hasPseudoElements();
 }
 
-PseudoElement* Element::afterPseudoElement() const
+PseudoElement* Element::pseudoElement(PseudoId pseudoId) const
 {
-    return hasRareData() ? elementRareData()->pseudoElement(AFTER) : 0;
+    return hasRareData() ? elementRareData()->pseudoElement(pseudoId) : 0;
 }
+
+void Element::setPseudoElement(PseudoId pseudoId, PassRefPtr<PseudoElement> element)
+{
+    ensureElementRareData()->setPseudoElement(pseudoId, element);
+    resetNeedsShadowTreeWalker();
+}
+
 
 // ElementTraversal API
 Element* Element::firstElementChild() const

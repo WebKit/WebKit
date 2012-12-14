@@ -26,7 +26,6 @@
 #include "config.h"
 #include "NodeRenderingContext.h"
 
-#include "ComposedShadowTreeWalker.h"
 #include "ContainerNode.h"
 #include "ContentDistributor.h"
 #include "ElementShadow.h"
@@ -59,11 +58,12 @@ NodeRenderingContext::NodeRenderingContext(Node* node)
     : m_node(node)
     , m_parentFlowRenderer(0)
 {
-    ComposedShadowTreeWalker::findParent(m_node, &m_parentDetails);
+    m_renderingParent = NodeRenderingTraversal::parent(node, &m_parentDetails);
 }
 
 NodeRenderingContext::NodeRenderingContext(Node* node, RenderStyle* style)
     : m_node(node)
+    , m_renderingParent(0)
     , m_style(style)
     , m_parentFlowRenderer(0)
 {
@@ -83,12 +83,11 @@ RenderObject* NodeRenderingContext::nextRenderer() const
 
     // Avoid an O(N^2) problem with this function by not checking for
     // nextRenderer() when the parent element hasn't attached yet.
-    if (m_parentDetails.node() && !m_parentDetails.node()->attached())
+    if (m_renderingParent && !m_renderingParent->attached())
         return 0;
 
-    ComposedShadowTreeWalker walker(m_node);
-    for (walker.pseudoAwareNextSibling(); walker.get(); walker.pseudoAwareNextSibling()) {
-        if (RenderObject* renderer = walker.get()->renderer()) {
+    for (Node* sibling = NodeRenderingTraversal::nextSibling(m_node); sibling; sibling = NodeRenderingTraversal::nextSibling(sibling)) {
+        if (RenderObject* renderer = sibling->renderer()) {
             // Renderers for elements attached to a flow thread should be skipped because they are parented differently.
             if (renderer->node()->isElementNode() && renderer->style() && !renderer->style()->flowThread().isEmpty())
                 continue;
@@ -109,10 +108,8 @@ RenderObject* NodeRenderingContext::previousRenderer() const
 
     // FIXME: We should have the same O(N^2) avoidance as nextRenderer does
     // however, when I tried adding it, several tests failed.
-
-    ComposedShadowTreeWalker walker(m_node);
-    for (walker.pseudoAwarePreviousSibling(); walker.get(); walker.pseudoAwarePreviousSibling()) {
-        if (RenderObject* renderer = walker.get()->renderer()) {
+    for (Node* sibling = NodeRenderingTraversal::previousSibling(m_node); sibling; sibling = NodeRenderingTraversal::previousSibling(sibling)) {
+        if (RenderObject* renderer = sibling->renderer()) {
             // Renderers for elements attached to a flow thread should be skipped because they are parented differently.
             if (renderer->node()->isElementNode() && renderer->style() && !renderer->style()->flowThread().isEmpty())
                 continue;
@@ -130,21 +127,21 @@ RenderObject* NodeRenderingContext::parentRenderer() const
     if (m_parentFlowRenderer)
         return m_parentFlowRenderer;
 
-    return m_parentDetails.node() ? m_parentDetails.node()->renderer() : 0;
+    return m_renderingParent ? m_renderingParent->renderer() : 0;
 }
 
 bool NodeRenderingContext::shouldCreateRenderer() const
 {
     if (!m_node->document()->shouldCreateRenderers())
         return false;
-    if (!m_parentDetails.node())
+    if (!m_renderingParent)
         return false;
     RenderObject* parentRenderer = this->parentRenderer();
     if (!parentRenderer)
         return false;
     if (!parentRenderer->canHaveChildren())
         return false;
-    if (!m_parentDetails.node()->childShouldCreateRenderer(*this))
+    if (!m_renderingParent->childShouldCreateRenderer(*this))
         return false;
     return true;
 }

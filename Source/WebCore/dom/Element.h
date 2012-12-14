@@ -366,8 +366,12 @@ public:
     virtual void finishParsingChildren();
     virtual void beginParsingChildren();
 
-    PseudoElement* beforePseudoElement() const;
-    PseudoElement* afterPseudoElement() const;
+    bool hasPseudoElements() const;
+    PseudoElement* pseudoElement(PseudoId) const;
+    PseudoElement* beforePseudoElement() const { return pseudoElement(BEFORE); }
+    PseudoElement* afterPseudoElement() const { return pseudoElement(AFTER); }
+    bool childNeedsShadowWalker() const;
+    void didShadowTreeAwareChildrenChange();
 
     // ElementTraversal API
     Element* firstElementChild() const;
@@ -500,6 +504,7 @@ protected:
 private:
     void updatePseudoElement(PseudoId, StyleChange = NoChange);
     PassRefPtr<PseudoElement> createPseudoElementIfNeeded(PseudoId);
+    void setPseudoElement(PseudoId, PassRefPtr<PseudoElement>);
 
     // FIXME: Remove the need for Attr to call willModifyAttribute/didModifyAttribute.
     friend class Attr;

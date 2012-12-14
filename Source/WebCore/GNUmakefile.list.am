@@ -2880,6 +2880,8 @@ webcore_sources += \
 	Source/WebCore/dom/NodeList.h \
 	Source/WebCore/dom/NodeRareData.h \
 	Source/WebCore/dom/NodeRenderingContext.h \
+	Source/WebCore/dom/NodeRenderingTraversal.h \
+	Source/WebCore/dom/NodeRenderingTraversal.cpp \
 	Source/WebCore/dom/NodeRenderStyle.h \
     Source/WebCore/dom/NodeTraversal.cpp \
     Source/WebCore/dom/NodeTraversal.h \

@@ -3888,6 +3888,8 @@
 		A740B5A514C935AB00A77FA4 /* JSInternalSettings.h in Headers */ = {isa = PBXBuildFile; fileRef = A7B4EA7914C9348400C8F5BF /* JSInternalSettings.h */; };
 		A740B5A714C935AF00A77FA4 /* JSInternalSettings.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A7B4EA7814C9348400C8F5BF /* JSInternalSettings.cpp */; };
 		A74BB76B13BDA86300FF7BF0 /* ExceptionCodePlaceholder.h in Headers */ = {isa = PBXBuildFile; fileRef = A74BB76A13BDA86300FF7BF0 /* ExceptionCodePlaceholder.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		A74F3EF31678B24A00B05A6E /* NodeRenderingTraversal.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A7211F231678A54200957444 /* NodeRenderingTraversal.cpp */; };
+		A74F3EF51678B24F00B05A6E /* NodeRenderingTraversal.h in Headers */ = {isa = PBXBuildFile; fileRef = A7211F241678A54200957444 /* NodeRenderingTraversal.h */; };
 		A75E497610752ACB00C9B896 /* SerializedScriptValue.h in Headers */ = {isa = PBXBuildFile; fileRef = A75E497410752ACB00C9B896 /* SerializedScriptValue.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		A75E497710752ACB00C9B896 /* SerializedScriptValue.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A75E497510752ACB00C9B896 /* SerializedScriptValue.cpp */; };
 		A75E8B880E1DE2D6007F2481 /* FEBlend.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A75E8B800E1DE2D6007F2481 /* FEBlend.cpp */; };
@@ -11211,6 +11213,8 @@
 		A718760D0B2A120100A16ECE /* DragActions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DragActions.h; sourceTree = "<group>"; };
 		A718788F0B2D04AC00A16ECE /* DragControllerMac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = DragControllerMac.mm; sourceTree = "<group>"; };
 		A71A70C911AFB02000989D6D /* HTMLMeterElement.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = HTMLMeterElement.idl; sourceTree = "<group>"; };
+		A7211F231678A54200957444 /* NodeRenderingTraversal.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = NodeRenderingTraversal.cpp; sourceTree = "<group>"; };
+		A7211F241678A54200957444 /* NodeRenderingTraversal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NodeRenderingTraversal.h; sourceTree = "<group>"; };
 		A723F77A1484CA4C008C6DBE /* PlatformExportMacros.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PlatformExportMacros.h; sourceTree = "<group>"; };
 		A72763BE16689BFB002FCACB /* UserActionElementSet.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UserActionElementSet.h; sourceTree = "<group>"; };
 		A72EA3BA1585CF55004FAA26 /* RefCountedSupplement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RefCountedSupplement.h; sourceTree = "<group>"; };
@@ -22100,6 +22104,8 @@
 				63189AE20E83A33300012E41 /* NodeRareData.h */,
 				A7F5D94D1384F02D00A29A87 /* NodeRenderingContext.cpp */,
 				A7F5D94E1384F02D00A29A87 /* NodeRenderingContext.h */,
+				A7211F231678A54200957444 /* NodeRenderingTraversal.cpp */,
+				A7211F241678A54200957444 /* NodeRenderingTraversal.h */,
 				63D7B32C0E78CD3F00F7617C /* NodeRenderStyle.h */,
 				E43105B716750F0C00DB2FB8 /* NodeTraversal.cpp */,
 				E43105BA16750F1600DB2FB8 /* NodeTraversal.h */,
@@ -24805,6 +24811,7 @@
 				A818721B0977D3C0005826D9 /* NodeList.h in Headers */,
 				63189AE30E83A33300012E41 /* NodeRareData.h in Headers */,
 				A7F5D9501384F02D00A29A87 /* NodeRenderingContext.h in Headers */,
+				A74F3EF51678B24F00B05A6E /* NodeRenderingTraversal.h in Headers */,
 				63D7B32D0E78CD3F00F7617C /* NodeRenderStyle.h in Headers */,
 				9382AAB40D8C386100F357A6 /* NodeWithIndex.h in Headers */,
 				A8EA7EBE0A1945D000A8EF5F /* Notation.h in Headers */,
@@ -28125,6 +28132,7 @@
 				854FE7320A2297BE0058D7AD /* NodeFilterCondition.cpp in Sources */,
 				854FE7340A2297BE0058D7AD /* NodeIterator.cpp in Sources */,
 				A7F5D94F1384F02D00A29A87 /* NodeRenderingContext.cpp in Sources */,
+				A74F3EF31678B24A00B05A6E /* NodeRenderingTraversal.cpp in Sources */,
 				A8EA7EBF0A1945D000A8EF5F /* Notation.cpp in Sources */,
 				33503CC71017A1B1003B47E1 /* Notification.cpp in Sources */,
 				3390CA550FFC157B00921962 /* NotificationCenter.cpp in Sources */,

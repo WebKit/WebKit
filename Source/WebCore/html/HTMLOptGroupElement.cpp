@@ -26,6 +26,7 @@
 #include "HTMLOptGroupElement.h"
 
 #include "Document.h"
+#include "ElementShadow.h"
 #include "HTMLNames.h"
 #include "HTMLSelectElement.h"
 #include "RenderMenuList.h"

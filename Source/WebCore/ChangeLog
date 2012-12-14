@@ -1,3 +1,128 @@
+2012-12-13  Hajime Morrita  <morrita@google.com>
+
+        NodeRenderingContext is slow due to ComposedShadowTreeWalker
+        https://bugs.webkit.org/show_bug.cgi?id=104332
+
+        Reviewed by Dimitri Glazkov.
+
+        NodeRenderingContext has some slowness due to the complexity of
+        ComposedShadowTreeWalker that NRC relies on. This change
+        creates some fast paths to address such slowness.
+
+        = NodeRenderingTraversal module:
+
+        This change introduces NodeRenderingTraversal namespace, a sister
+        of NodeTraversal. NRT consists of a set of tree traversal
+        functions that is responsible for traversal in NRC.  Before this
+        change, NRC directly used CSTW. This NRT module hides and narrows
+        the usage of CSTW.
+
+        - Traversals provided by NRT have fast paths. In many case, such traversals
+          don't need to use CSTW and just goes to neighboring nodes in a plain DOM way.
+        - It also handles NRC specific traversal concerns like pseudo elements.
+          CSTW::pseudoAwareNextSibling() and CSTW::pseudoAwarePreviousSibling() are
+          merged into this module.
+        - CSTW::ParentTraversalDetails is moved and renamed to
+          NRT::ParentDetails with small modification. This is a pure
+          refactoring: As the name implies, This class is used only by NRC
+          and used during a traversal there.
+
+        NodeRenderingTraversal is an isolation layer between generic DOM and CSTW. This hides CSTW
+        behind the wall and will help further reduction of its usage.
+
+        = Node::NeedsShadowTreeWalkerFlag flag:
+
+        NRT fast path is enabled by newly introduced NeedsShadowTreeWalker
+        node flag. Each DOM node is now markd as NeedsShadowTreeWalker if
+        it requires non-trivial traversal in NRT which uses CSTW. This
+        means that each node can go fast path unless it is marked with this flag.
+
+        A node is marked as it NeedsShadowTreeWalker if:
+
+        - The node is a shadow boundary like InsertionPoint or ShadowRoot,
+        - The node has pseudo elements like generated content or
+        - The node is a pseudo element.
+
+        This criteria is defined in Node::needsShadowTreeWalkerSlow(). The node actually needs
+        the walker if the node or its parent is marked with this flag.
+
+        The original idea of this change was demonstrated by Antti Koivisto on bug 103208 and bug 104507.
+        This chagne has 2-3% speedup on Dromaeo/dom-modify/innerHTML on Apple Mac.
+
+        No new tests. Covered by existing tests.
+
+        * CMakeLists.txt:
+        * GNUmakefile.list.am:
+        * Target.pri:
+        * WebCore.gypi:
+        * WebCore.xcodeproj/project.pbxproj:
+        * dom/ComposedShadowTreeWalker.cpp:
+        * dom/ComposedShadowTreeWalker.h:
+        (ComposedShadowTreeWalker): Move some part to NodeRenderingTraversal
+        * dom/ContainerNode.h:
+        (WebCore::Node::needsShadowTreeWalker): Added. This is located here since it refers ContainerNode definition.
+        (WebCore):
+        * dom/DOMAllInOne.cpp:
+        * dom/Element.cpp:
+        (WebCore::Element::updatePseudoElement): Refactored.
+        (WebCore::Element::hasPseudoElements): Ditto.
+        (WebCore::Element::pseudoElement): Ditto.
+        (WebCore::Element::setPseudoElement): Refactored and added a flag update logic.
+        (WebCore):
+        * dom/Element.h:
+        (Element):
+        (WebCore::Element::beforePseudoElement): Refactored.
+        (WebCore::Element::afterPseudoElement): Refactored.
+        * dom/ElementRareData.h:
+        (WebCore::ElementRareData::hasPseudoElements): Factored out.
+        * dom/ElementShadow.cpp:
+        (WebCore::ElementShadow::addShadowRoot): Added a flag update logic.
+        * dom/Node.cpp:
+        (WebCore::Node::needsShadowTreeWalkerSlow): Added.
+        * dom/Node.h:
+        (WebCore::Node::isInsertionPointNode): Added.
+        (Node):
+        (WebCore::Node::isInsertionPoint): Changed to use NeedsShadowTreeWalkerFlag.
+        (WebCore::Node::setNeedsShadowTreeWalker):
+        (WebCore::Node::resetNeedsShadowTreeWalker):
+        * dom/NodeRenderingContext.cpp: Adopted NodeRenderingTraversal.
+        (WebCore::NodeRenderingContext::NodeRenderingContext):
+        (WebCore::NodeRenderingContext::nextRenderer):
+        (WebCore::NodeRenderingContext::previousRenderer):
+        (WebCore::NodeRenderingContext::parentRenderer):
+        (WebCore::NodeRenderingContext::shouldCreateRenderer):
+        * dom/NodeRenderingContext.h: Ditto.
+        (NodeRenderingContext):
+        (WebCore::NodeRenderingContext::parentNodeForRenderingAndStyle):
+        * dom/NodeRenderingTraversal.cpp: Added.
+        (WebCore):
+        (NodeRenderingTraversal):
+        (WebCore::NodeRenderingTraversal::ParentDetails::didTraverseInsertionPoint): Moved from ComposedShadowTreeWalker
+        (WebCore::NodeRenderingTraversal::ParentDetails::didTraverseShadowRoot): Ditto.
+        (WebCore::NodeRenderingTraversal::parentSlow): Ditto.
+        (WebCore::NodeRenderingTraversal::nextSiblingSlow): Ditto. The original was pseudoAwareNextSibling.
+        (WebCore::NodeRenderingTraversal::previousSiblingSlow): Ditto. The original was pseudoAwarePreviousSibling.
+        * dom/NodeRenderingTraversal.h: Added.
+        (WebCore):
+        (NodeRenderingTraversal):
+        (ParentDetails): Moved from ComposedShadowTreeWalker.
+        (WebCore::NodeRenderingTraversal::ParentDetails::ParentDetails):
+        (WebCore::NodeRenderingTraversal::ParentDetails::insertionPoint):
+        (WebCore::NodeRenderingTraversal::ParentDetails::resetStyleInheritance):
+        (WebCore::NodeRenderingTraversal::ParentDetails::outOfComposition):
+        (WebCore::NodeRenderingTraversal::ParentDetails::childWasOutOfComposition):
+        (WebCore::NodeRenderingTraversal::ParentDetails::operator==):
+        (WebCore::NodeRenderingTraversal::parent):
+        (WebCore::NodeRenderingTraversal::nextSibling):
+        (WebCore::NodeRenderingTraversal::previousSibling):
+        * dom/PseudoElement.cpp:
+        (WebCore::PseudoElement::PseudoElement): Added an assertion.
+        * dom/Text.cpp:
+        * html/HTMLOptGroupElement.cpp: Added a #include which revealed by a chagne on NodeRenderingContext.h
+        * html/HTMLOptionElement.cpp: Ditto.
+        * html/HTMLProgressElement.cpp: Dito.
+        * html/shadow/InsertionPoint.h: Added an override of isInsertionPointNode().
+
 2012-12-13  Kent Tamura  <tkent@chromium.org>
 
         Refactoring: Fix indentation of ChromeClient.h

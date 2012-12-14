@@ -265,6 +265,14 @@ inline Node* Node::highestAncestor() const
     return highest;
 }
 
+inline bool Node::needsShadowTreeWalker() const
+{
+    if (getFlag(NeedsShadowTreeWalkerFlag))
+        return true;
+    ContainerNode* parent = parentOrHostNode();
+    return parent && parent->getFlag(NeedsShadowTreeWalkerFlag);
+}
+
 // This constant controls how much buffer is initially allocated
 // for a Node Vector that is used to store child Nodes of a given Node.
 // FIXME: Optimize the value.

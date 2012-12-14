@@ -29,6 +29,7 @@
 
 #include "Attribute.h"
 #include "Document.h"
+#include "ElementShadow.h"
 #include "ExceptionCode.h"
 #include "HTMLDataListElement.h"
 #include "HTMLNames.h"
