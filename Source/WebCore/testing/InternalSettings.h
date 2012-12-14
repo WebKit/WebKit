@@ -103,7 +103,6 @@ public:
     void setForceCompositingMode(bool enabled, ExceptionCode&);
     void setEnableCompositingForFixedPosition(bool enabled, ExceptionCode&);
     void setEnableCompositingForScrollableFrames(bool enabled, ExceptionCode&);
-    void setEnableCompositingForOverflowScroll(bool enabled, ExceptionCode&);
     void setAcceleratedDrawingEnabled(bool enabled, ExceptionCode&);
     void setAcceleratedFiltersEnabled(bool enabled, ExceptionCode&);
     void setMockScrollbarsEnabled(bool enabled, ExceptionCode&);

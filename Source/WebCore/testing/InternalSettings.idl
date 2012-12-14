@@ -29,7 +29,6 @@
     void setForceCompositingMode(in boolean enabled) raises(DOMException);
     void setEnableCompositingForFixedPosition(in boolean enabled) raises(DOMException);
     void setEnableCompositingForScrollableFrames(in boolean enabled) raises(DOMException);
-    void setEnableCompositingForOverflowScroll(in boolean enabled) raises(DOMException);
     void setAcceleratedDrawingEnabled(in boolean enabled) raises(DOMException);
     void setAcceleratedFiltersEnabled(in boolean enabled) raises(DOMException);
     void setMockScrollbarsEnabled(in boolean enabled) raises(DOMException);

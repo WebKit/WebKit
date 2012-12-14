@@ -211,12 +211,6 @@ void InternalSettings::setEnableCompositingForScrollableFrames(bool enabled, Exc
     settings()->setAcceleratedCompositingForScrollableFramesEnabled(enabled);
 }
 
-void InternalSettings::setEnableCompositingForOverflowScroll(bool enabled, ExceptionCode& ec)
-{
-    InternalSettingsGuardForSettings();
-    settings()->setAcceleratedCompositingForOverflowScrollEnabled(enabled);
-}
-
 void InternalSettings::setAcceleratedDrawingEnabled(bool enabled, ExceptionCode& ec)
 {
     InternalSettingsGuardForSettings();

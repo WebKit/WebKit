@@ -403,10 +403,6 @@ public:
 
     void updateLayerPositionsAfterOverflowScroll();
     void updateLayerPositionsAfterDocumentScroll();
-
-#if USE(ACCELERATED_COMPOSITING)
-    void positionOverflowControlsAfterPromotionToCompositedScrolling();
-#endif
     
     bool isPaginated() const { return m_isPaginated; }
 
@@ -466,13 +462,6 @@ public:
     // FIXME: We should ASSERT(!m_hasSelfPaintingLayerDescendantDirty); here but we hit the same bugs as visible content above.
     // Part of the issue is with subtree relayout: we don't check if our ancestors have some descendant flags dirty, missing some updates.
     bool hasSelfPaintingLayerDescendant() const { return m_hasSelfPaintingLayerDescendant; }
-
-    // This returns true if we have an out of flow positioned descendant whose
-    // containing block is not a descendant of ours. If this is true, we cannot
-    // automatically opt into composited scrolling since this out of flow
-    // positioned descendant would become clipped by us, possibly altering the 
-    // rendering of the page.
-    bool hasOutOfFlowPositionedDescendant() const { return m_hasOutOfFlowPositionedDescendant; }
 
     // Gets the nearest enclosing positioned ancestor layer (also includes
     // the <html> layer and the root layer).
@@ -666,7 +655,6 @@ public:
     virtual GraphicsLayer* layerForVerticalScrollbar() const;
     virtual GraphicsLayer* layerForScrollCorner() const;
     virtual bool usesCompositedScrolling() const OVERRIDE;
-    bool needsCompositedScrolling() const;
 #else
     bool isComposited() const { return false; }
     bool hasCompositedMask() const { return false; }
@@ -736,10 +724,6 @@ private:
     void setAncestorChainHasSelfPaintingLayerDescendant();
     void dirtyAncestorChainHasSelfPaintingLayerDescendantStatus();
 
-    bool acceleratedCompositingForOverflowScrollEnabled() const;
-    void updateDescendantsAreContiguousInStackingOrder();
-    void updateDescendantsAreContiguousInStackingOrderRecursive(const HashMap<const RenderLayer*, int>&, int& minIndex, int& maxIndex, int& count, bool firstIteration);
-
     void computeRepaintRects(const RenderLayerModelObject* repaintContainer, const RenderGeometryMap* = 0);
     void computeRepaintRectsIncludingDescendants();
     void clearRepaintRects();
@@ -755,12 +739,6 @@ private:
 
     void updateScrollbarsAfterStyleChange(const RenderStyle* oldStyle);
     void updateScrollbarsAfterLayout();
-
-    void setAncestorChainHasOutOfFlowPositionedDescendant(RenderObject* containingBlock);
-    void dirtyAncestorChainHasOutOfFlowPositionedDescendantStatus();
-    void updateOutOfFlowPositioned(const RenderStyle* oldStyle);
-
-    void updateNeedsCompositedScrolling();
 
     // Returns true if the position changed.
     bool updateLayerPosition();
@@ -897,7 +875,7 @@ private:
     void dirtyAncestorChainVisibleDescendantStatus();
     void setAncestorChainHasVisibleDescendant();
 
-    void updateDescendantDependentFlags(HashSet<const RenderObject*>* outOfFlowDescendantContainingBlocks = 0);
+    void updateDescendantDependentFlags();
 
     // This flag is computed by RenderLayerCompositor, which knows more about 3d hierarchies than we do.
     void setHas3DTransformedDescendant(bool b) { m_has3DTransformedDescendant = b; }
@@ -954,9 +932,6 @@ private:
     void setIndirectCompositingReason(IndirectCompositingReason reason) { m_indirectCompositingReason = reason; }
     IndirectCompositingReason indirectCompositingReason() const { return static_cast<IndirectCompositingReason>(m_indirectCompositingReason); }
     bool mustCompositeForIndirectReasons() const { return m_indirectCompositingReason; }
-
-    // Returns true if z ordering would not change if this layer were to establish a stacking context.
-    bool canSafelyEstablishAStackingContext() const;
 #endif
 
     friend class RenderLayerBacking;
@@ -996,19 +971,6 @@ protected:
     // significant savings, especially if the tree has lots of non-self-painting layers grouped together (e.g. table cells).
     bool m_hasSelfPaintingLayerDescendant : 1;
     bool m_hasSelfPaintingLayerDescendantDirty : 1;
-
-    // If we have no out of flow positioned descendants and no non-descendant
-    // appears between our descendants in stacking order, then we may become a
-    // stacking context.
-    bool m_hasOutOfFlowPositionedDescendant : 1;
-    bool m_hasOutOfFlowPositionedDescendantDirty : 1;
-
-    bool m_needsCompositedScrolling : 1;
-
-    // If this is true, then no non-descendant appears between any of our
-    // descendants in stacking order. This is one of the requirements of being
-    // able to safely become a stacking context.
-    bool m_descendantsAreContiguousInStackingOrder : 1;
 
     const bool m_isRootLayer : 1;
 

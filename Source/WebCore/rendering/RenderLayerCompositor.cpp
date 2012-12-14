@@ -990,9 +990,6 @@ void RenderLayerCompositor::computeCompositingRequirements(RenderLayer* ancestor
 
     if (overlapMap)
         overlapMap->geometryMap().popMappingsToAncestor(ancestorLayer);
-
-    if (layer->usesCompositedScrolling())
-        layer->positionOverflowControlsAfterPromotionToCompositedScrolling();
 }
 
 void RenderLayerCompositor::setCompositingParent(RenderLayer* childLayer, RenderLayer* parentLayer)
@@ -2013,7 +2010,7 @@ bool RenderLayerCompositor::requiresCompositingForPosition(RenderObject* rendere
 
 bool RenderLayerCompositor::requiresCompositingForOverflowScrolling(const RenderLayer* layer) const
 {
-    return layer->needsCompositedScrolling();
+    return layer->usesCompositedScrolling();
 }
 
 bool RenderLayerCompositor::isRunningAcceleratedTransformAnimation(RenderObject* renderer) const
