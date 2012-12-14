@@ -130,6 +130,7 @@ public:
 
     void setAcceleratedCompositingForVideoEnabled(bool enabled) { m_acceleratedCompositingForVideoEnabled = enabled; }
     void setAcceleratedCompositingForFixedPositionEnabled(bool enabled) { m_acceleratedCompositingForFixedPositionEnabled = enabled; }
+    void setAcceleratedCompositingForOverflowScrollEnabled(bool enabled) { m_acceleratedCompositingForOverflowScrollEnabled = enabled; }
     bool softwareCompositingEnabled() { return m_softwareCompositingEnabled; }
     void setSoftwareCompositingEnabled(bool enabled) { m_softwareCompositingEnabled = enabled; }
     void setThreadedCompositingEnabled(bool enabled) { m_threadedCompositingEnabled = enabled; }
@@ -232,6 +233,7 @@ private:
     bool m_allowExternalPages;
     bool m_acceleratedCompositingForVideoEnabled;
     bool m_acceleratedCompositingForFixedPositionEnabled;
+    bool m_acceleratedCompositingForOverflowScrollEnabled;
     bool m_softwareCompositingEnabled;
     bool m_threadedCompositingEnabled;
     bool m_forceCompositingMode;

@@ -391,6 +391,12 @@ class ChromiumPort(Port):
             VirtualTestSuite('platform/chromium/virtual/deferred/fast/images',
                              'fast/images',
                              ['--enable-deferred-image-decoding', '--enable-per-tile-painting', '--force-compositing-mode']),
+            VirtualTestSuite('platform/chromium/virtual/gpu/compositedscrolling/overflow',
+                             'compositing/overflow',
+                             ['--enable-accelerated-overflow-scroll']),
+            VirtualTestSuite('platform/chromium/virtual/gpu/compositedscrolling/scrollbars',
+                             'scrollbars',
+                             ['--enable-accelerated-overflow-scroll']),
         ]
 
     #
