@@ -29,6 +29,7 @@
 #include "ContentSearchUtils.cpp"
 #include "DOMEditor.cpp"
 #include "DOMPatchSupport.cpp"
+#include "HeapGraphSerializer.cpp"
 #include "IdentifiersFactory.cpp"
 #include "InjectedScript.cpp"
 #include "InjectedScriptBase.cpp"

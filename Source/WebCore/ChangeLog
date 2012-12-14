@@ -1,3 +1,9 @@
+2012-12-14  Yury Semikhatsky  <yurys@chromium.org>
+
+        Unreviewed. Windows compilation fix after r137728.
+
+        * inspector/InspectorAllInOne.cpp:
+
 2012-12-14  Shinya Kawanaka  <shinyak@chromium.org>
 
         [Shadow DOM] ShadowRoot.getElementById() should work outside document.
