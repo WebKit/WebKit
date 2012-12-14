@@ -20,13 +20,13 @@ text
             // The width of the ellipsis text should be short.
             document.getElementById("text-ellipsis").focus();
             var textContainer = accessibilityController.focusedElement;
-            var textNode = textContainer.childAtIndex(0);
+            var textNode = textContainer.childrenCount ? textContainer.childAtIndex(0) : textContainer;
             var clippedWidth = textNode.width;
 
             // The width of non-ellipsis'd text should be longer.
             document.getElementById("text-noellipsis").focus();
             textContainer = accessibilityController.focusedElement;
-            textNode = textContainer.childAtIndex(0);
+            textNode = textContainer.childrenCount ? textContainer.childAtIndex(0) : textContainer;
             var fullWidth = textNode.width;
 
             shouldBeTrue("clippedWidth < fullWidth");
