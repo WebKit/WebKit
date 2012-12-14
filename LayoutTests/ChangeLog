@@ -1,3 +1,19 @@
+2012-12-13  Filip Pizlo  <fpizlo@apple.com>
+
+        Named lookups on HTML documents produce inconsistent results in JavaScriptCore bindings
+        https://bugs.webkit.org/show_bug.cgi?id=104623
+
+        Reviewed by Geoffrey Garen.
+
+        * fast/js/dfg-prototype-chain-caching-with-impure-get-own-property-slot-traps-expected.txt: Added.
+        * fast/js/dfg-prototype-chain-caching-with-impure-get-own-property-slot-traps.html: Added.
+        * fast/js/prototype-chain-caching-with-impure-get-own-property-slot-traps-expected.txt: Added.
+        * fast/js/prototype-chain-caching-with-impure-get-own-property-slot-traps.html: Added.
+        * fast/js/script-tests/dfg-prototype-chain-caching-with-impure-get-own-property-slot-traps.js: Added.
+        (f):
+        * fast/js/script-tests/prototype-chain-caching-with-impure-get-own-property-slot-traps.js: Added.
+        (f):
+
 2012-12-13  Noel Gordon  <noel.gordon@gmail.com>
 
         [chromium] Unreviewed gardening.

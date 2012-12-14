@@ -341,7 +341,7 @@ static bool tryCacheGetByID(ExecState* exec, JSValue baseValue, const Identifier
         return false;
     
     PropertyOffset offset = slot.cachedOffset();
-    size_t count = normalizePrototypeChain(exec, baseValue, slot.slotBase(), propertyName, offset);
+    size_t count = normalizePrototypeChainForChainAccess(exec, baseValue, slot.slotBase(), propertyName, offset);
     if (count == InvalidPrototypeChain)
         return false;
 
@@ -569,7 +569,7 @@ static bool tryBuildGetByIDProtoList(ExecState* exec, JSValue baseValue, const I
     ASSERT(slot.slotBase().isObject());
     
     PropertyOffset offset = slot.cachedOffset();
-    size_t count = normalizePrototypeChain(exec, baseValue, slot.slotBase(), propertyName, offset);
+    size_t count = normalizePrototypeChainForChainAccess(exec, baseValue, slot.slotBase(), propertyName, offset);
     if (count == InvalidPrototypeChain)
         return false;
 

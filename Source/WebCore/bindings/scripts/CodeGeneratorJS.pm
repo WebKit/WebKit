@@ -784,15 +784,22 @@ sub GenerateHeader
 
     $implIncludes{"${className}Custom.h"} = 1 if !$interface->extendedAttributes->{"JSCustomHeader"} && ($interface->extendedAttributes->{"CustomPutFunction"} || $interface->extendedAttributes->{"CustomNamedSetter"});
 
+    my $hasImpureNamedGetter =
+        $interface->extendedAttributes->{"NamedGetter"}
+        || $interface->extendedAttributes->{"CustomNamedGetter"}
+        || $interface->extendedAttributes->{"CustomGetOwnPropertySlot"};
+
     my $hasComplexGetter =
         $interface->extendedAttributes->{"IndexedGetter"}
         || $interface->extendedAttributes->{"NumericIndexedGetter"}
-        || $interface->extendedAttributes->{"CustomGetOwnPropertySlot"}
         || $interface->extendedAttributes->{"JSCustomGetOwnPropertySlotAndDescriptor"}
-        || $interface->extendedAttributes->{"NamedGetter"}
-        || $interface->extendedAttributes->{"CustomNamedGetter"};
+        || $hasImpureNamedGetter;
     
     my $hasGetter = $numAttributes > 0 || !$interface->extendedAttributes->{"OmitConstructor"} || $hasComplexGetter;
+
+    if ($hasImpureNamedGetter) {
+        $structureFlags{"JSC::HasImpureGetOwnPropertySlot"} = 1;
+    }
 
     # Getters
     if ($hasGetter) {

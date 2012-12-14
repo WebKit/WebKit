@@ -302,13 +302,16 @@ namespace JSC {
 
 #define InvalidPrototypeChain (std::numeric_limits<size_t>::max())
 
-    inline size_t normalizePrototypeChain(CallFrame* callFrame, JSValue base, JSValue slotBase, const Identifier& propertyName, PropertyOffset& slotOffset)
+    inline size_t normalizePrototypeChainForChainAccess(CallFrame* callFrame, JSValue base, JSValue slotBase, const Identifier& propertyName, PropertyOffset& slotOffset)
     {
         JSCell* cell = base.asCell();
         size_t count = 0;
-
+        
         while (slotBase != cell) {
             if (cell->isProxy())
+                return InvalidPrototypeChain;
+            
+            if (cell->structure()->typeInfo().hasImpureGetOwnPropertySlot())
                 return InvalidPrototypeChain;
             
             JSValue v = cell->structure()->prototypeForLookup(callFrame);
@@ -328,7 +331,7 @@ namespace JSC {
                 if (slotBase == cell)
                     slotOffset = cell->structure()->get(callFrame->globalData(), propertyName); 
             }
-
+            
             ++count;
         }
         
