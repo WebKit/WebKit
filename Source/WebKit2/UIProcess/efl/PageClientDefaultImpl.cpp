@@ -61,8 +61,6 @@ void PageClientDefaultImpl::updateViewportSize()
         m_pageViewportController = adoptPtr(new PageViewportController(m_viewImpl->page(), m_pageViewportControllerClient.get()));
     }
     m_pageViewportControllerClient->updateViewportSize();
-#else
-    UNUSED_PARAM(size);
 #endif
 }
 

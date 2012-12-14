@@ -1,3 +1,18 @@
+2012-12-14  Mikhail Pozdnyakov  <mikhail.pozdnyakov@intel.com>
+
+        [EFL][WK2] Fix EFL build after r137718
+        https://bugs.webkit.org/show_bug.cgi?id=105018
+
+        Unreviewed build fix.
+
+        The problem was that UNUSED_PARAM(size) was left in the code
+        for non-existent variable 'size'.
+
+        * UIProcess/efl/PageClientDefaultImpl.cpp:
+        (WebKit::PageClientDefaultImpl::updateViewportSize):
+        * UIProcess/efl/PageClientLegacyImpl.cpp:
+        (WebKit::PageClientLegacyImpl::updateViewportSize):
+
 2012-12-13  Kenneth Rohde Christiansen  <kenneth@webkit.org>
 
         [EFL][WK2] Do not pass size to updateViewportSize
