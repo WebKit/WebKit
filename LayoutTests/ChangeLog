@@ -1,3 +1,14 @@
+2012-12-14  W. James MacLean  <wjmaclean@chromium.org>
+
+        [Chromium gardening] Set expectations for platform/chromium/virtual/gpu/compositedscrolling/scrollbars/scrollbar-drag-thumb-with-large-content-expected.html
+
+        Unreviewed gardening change.
+
+        Need to mirror the expectations for the virtual tests against those for the
+        original.
+
+        * platform/chromium/TestExpectations:
+
 2012-12-14  Florin Malita  <fmalita@chromium.org>
 
         [Chromium] Unreviewed rebaseline after Skia roll @6773.
