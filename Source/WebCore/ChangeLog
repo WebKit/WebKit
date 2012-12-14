@@ -1,3 +1,26 @@
+2012-12-14  Anton Vayvod  <avayvod@chromium.org>
+
+        Text Autosizing: Consider inline-block and inline-table elements to be autosizing clusters.
+        https://bugs.webkit.org/show_bug.cgi?id=104702
+
+        Reviewed by Julien Chaffraix.
+
+        A common pattern for creating adjacent columns in CSS is to set each of the columns to
+        display:inline-block, display:inline-table or alike WebKit-specific styles. Whenever columns
+        are used, Text Autosizing needs to assign each of the columns to different clusters (since
+        the user can zoom in such that a column fills the width of the screen, so text within a column
+        should have a smaller multiplier than it's wider enclosing cluster would have needed).
+
+        This patch causes display:inline-block, display:inline-table and alike styles to trigger new clusters.
+
+        Test: fast/text-autosizing/cluster-inline-block-or-table.html
+        Test: fast/text-autosizing/cluster-inline-grid-flex-box.html
+
+        * rendering/TextAutosizer.cpp:
+        (WebCore::TextAutosizer::isAutosizingContainer):
+        (WebCore::TextAutosizer::isAutosizingCluster):
+            Consider display:inline-block, inline-table and alike elements to be autosizing containers and clusters.
+
 2012-12-14  Anders Carlsson  <andersca@apple.com>
 
         REGRESSION (r137607): Cannot download files, stuck in "Preparing to download"

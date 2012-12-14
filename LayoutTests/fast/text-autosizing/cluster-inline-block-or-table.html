@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Test for https://bugs.webkit.org/show_bug.cgi?id=104702</title>
+<meta name="viewport" content="width=800">
+<style>
+html { font-size: 16px; }
+body { width: 800px; margin: 0; overflow-y: hidden; }
+</style>
+
+<script>
+if (window.internals) {
+    window.internals.settings.setTextAutosizingEnabled(true);
+    window.internals.settings.setTextAutosizingWindowSizeOverride(320, 480);
+} else if (window.console && console.warn) {
+    console.warn("This test depends on the Text Autosizing setting being true, so run it in DumpRenderTree, or manually enable Text Autosizing, and either use a mobile device with 320px device-width (like Nexus S or iPhone), or define HACK_FORCE_TEXT_AUTOSIZING_ON_DESKTOP.");
+}
+</script>
+
+</head>
+<body>
+<div>
+    <div>
+        This element is autosized to 40px computed font size (16 * 800/320), since the width of the root cluster is used for autosizing.<br>
+        Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
+    </div>
+    <div>
+        <div style="display: inline-block; width: 600px">
+            This element becomes a separate autosizing cluster since it's an inline-block element. Hence its computed font size is 30px (16 * 600 / 320).<br>
+            Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
+        </div></div>
+    <div>
+        <div style="display: inline-table; width: 400px">
+            This element becomes a separate autosizing cluster since it's an inline-table element. Hence its computed font size is 20px (16 * 400 / 320).<br>
+            Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
+        </div></div>
+</div>
+</body>
+</html>

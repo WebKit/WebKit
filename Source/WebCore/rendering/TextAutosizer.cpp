@@ -184,10 +184,12 @@ bool TextAutosizer::isAutosizingContainer(const RenderObject* renderer)
     // "Autosizing containers" are the smallest unit for which we can
     // enable/disable Text Autosizing.
     // - Must not be inline, as different multipliers on one line looks terrible.
+    //   Exceptions are inline-block and alike elements (inline-table, -webkit-inline-*),
+    //   as they often contain entire multi-line columns of text.
     // - Must not be list items, as items in the same list should look consistent (*).
     // - Must not be normal list items, as items in the same list should look
     //   consistent, unless they are floating or position:absolute/fixed.
-    if (!renderer->isRenderBlock() || renderer->isInline())
+    if (!renderer->isRenderBlock() || (renderer->isInline() && !renderer->style()->isDisplayReplacedType()))
         return false;
     if (renderer->isListItem())
         return renderer->isFloating() || renderer->isOutOfFlowPositioned();
@@ -224,10 +226,11 @@ bool TextAutosizer::isAutosizingCluster(const RenderBlock* renderer)
         || renderer->isTableCaption()
         || renderer->isFlexibleBoxIncludingDeprecated()
         || renderer->hasColumns()
-        || renderer->containingBlock()->isHorizontalWritingMode() != renderer->isHorizontalWritingMode();
+        || renderer->containingBlock()->isHorizontalWritingMode() != renderer->isHorizontalWritingMode()
+        || renderer->style()->isDisplayReplacedType();
     // FIXME: Tables need special handling to multiply all their columns by
     // the same amount even if they're different widths; so do hasColumns()
-    // renderers, and probably flexboxes...
+    // containers, and probably flexboxes...
 }
 
 static bool contentHeightIsConstrained(const RenderBlock* container)
