@@ -1,3 +1,46 @@
+2012-13-11  Oliver Hunt  <oliver@apple.com>
+
+        Support op_typeof in the DFG
+        https://bugs.webkit.org/show_bug.cgi?id=98898
+
+        Reviewed by Filip Pizlo.
+
+        Adds a TypeOf node to the DFG to support op_typeof. 
+
+        * dfg/DFGAbstractState.cpp:
+        (JSC::DFG::AbstractState::execute):
+          We try to determine the result early here, and substitute in a constant.
+          Otherwise we leave the node intact, and set the result type to SpecString.
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::parseBlock):
+          Parse op_typeof
+        * dfg/DFGCSEPhase.cpp:
+        (JSC::DFG::CSEPhase::performNodeCSE):
+          TypeOf nodes can be subjected to pure CSE
+        * dfg/DFGCapabilities.h:
+        (JSC::DFG::canCompileOpcode):
+          We can handle typeof.
+        * dfg/DFGNodeType.h:
+        (DFG):
+          Define the node.
+        * dfg/DFGOperations.cpp:
+        * dfg/DFGOperations.h:
+          Add operationTypeOf to support the non-trivial cases.
+        * dfg/DFGPredictionPropagationPhase.cpp:
+        (JSC::DFG::PredictionPropagationPhase::propagate):
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+          Actual codegen
+        * runtime/Operations.cpp:
+        (JSC::jsTypeStringForValue):
+        (JSC):
+        * runtime/Operations.h:
+        (JSC):
+          Some refactoring to allow us to get the type string for an
+          object without needing a callframe.
+
 2012-12-12  Filip Pizlo  <fpizlo@apple.com>
 
         OSR exit compiler should emit code for resetting the execution counter that matches the logic of ExecutionCounter.cpp
