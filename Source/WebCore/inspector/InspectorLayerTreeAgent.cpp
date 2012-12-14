@@ -78,7 +78,8 @@ void InspectorLayerTreeAgent::clearFrontend()
 
 void InspectorLayerTreeAgent::restore()
 {
-    enable(0);
+    if (m_state->getBoolean(LayerTreeAgentState::layerTreeAgentEnabled))
+        enable(0);
 }
 
 void InspectorLayerTreeAgent::reset()
