@@ -28,6 +28,7 @@
 
 #include "AuthenticationChallengeProxy.h"
 #include "DataReference.h"
+#include "DownloadProxyMap.h"
 #include "WebContext.h"
 #include "WebData.h"
 #include "WebProcessMessages.h"
@@ -156,6 +157,7 @@ void DownloadProxy::didFinish()
 
     // This can cause the DownloadProxy object to be deleted.
     m_webContext->downloadFinished(this);
+    DownloadProxyMap::shared().downloadFinished(this);
 }
 
 static PassRefPtr<WebData> createWebData(const CoreIPC::DataReference& data)
@@ -177,6 +179,7 @@ void DownloadProxy::didFail(const ResourceError& error, const CoreIPC::DataRefer
 
     // This can cause the DownloadProxy object to be deleted.
     m_webContext->downloadFinished(this);
+    DownloadProxyMap::shared().downloadFinished(this);
 }
 
 void DownloadProxy::didCancel(const CoreIPC::DataReference& resumeData)
@@ -187,6 +190,7 @@ void DownloadProxy::didCancel(const CoreIPC::DataReference& resumeData)
 
     // This can cause the DownloadProxy object to be deleted.
     m_webContext->downloadFinished(this);
+    DownloadProxyMap::shared().downloadFinished(this);
 }
 
 #if PLATFORM(QT)

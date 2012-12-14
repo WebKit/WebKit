@@ -1,3 +1,25 @@
+2012-12-14  Anders Carlsson  <andersca@apple.com>
+
+        DownloadProxyMap should keep track of outstanding DownloadProxy objects
+        https://bugs.webkit.org/show_bug.cgi?id=105053
+
+        Reviewed by Andreas Kling.
+
+        This is more work towards removing the m_downloads map from every WebContext object.
+
+        * UIProcess/Downloads/DownloadProxy.cpp:
+        (WebKit::DownloadProxy::didFinish):
+        (WebKit::DownloadProxy::didFail):
+        (WebKit::DownloadProxy::didCancel):
+        * UIProcess/Downloads/DownloadProxyMap.cpp:
+        (WebKit::DownloadProxyMap::createDownloadProxy):
+        (WebKit):
+        (WebKit::DownloadProxyMap::downloadFinished):
+        * UIProcess/Downloads/DownloadProxyMap.h:
+        (DownloadProxyMap):
+        * UIProcess/WebContext.cpp:
+        (WebKit::WebContext::createDownloadProxy):
+
 2012-12-14  Mark Lam  <mark.lam@apple.com>
 
         Introducing the DatabaseStrategy and database servers.

@@ -26,6 +26,7 @@
 #ifndef DownloadProxyMap_h
 #define DownloadProxyMap_h
 
+#include <wtf/HashMap.h>
 #include <wtf/Noncopyable.h>
 #include <wtf/PassRefPtr.h>
 
@@ -40,11 +41,15 @@ class DownloadProxyMap {
 public:
     static DownloadProxyMap& shared();
 
-    PassRefPtr<DownloadProxy> createDownloadProxy(WebContext*);
+    DownloadProxy* createDownloadProxy(WebContext*);
+
+    void downloadFinished(DownloadProxy*);
 
 private:
     DownloadProxyMap();
     ~DownloadProxyMap();
+
+    HashMap<uint64_t, RefPtr<DownloadProxy> > m_downloads;
 };
 
 } // namespace WebKit

@@ -46,11 +46,19 @@ DownloadProxyMap::~DownloadProxyMap()
 {
 }
 
-PassRefPtr<DownloadProxy> DownloadProxyMap::createDownloadProxy(WebContext* webContext)
+DownloadProxy* DownloadProxyMap::createDownloadProxy(WebContext* webContext)
 {
     RefPtr<DownloadProxy> downloadProxy = DownloadProxy::create(webContext);
+    m_downloads.set(downloadProxy->downloadID(), downloadProxy);
 
-    return downloadProxy.release();
+    return downloadProxy.get();
+}
+
+void DownloadProxyMap::downloadFinished(DownloadProxy* downloadProxy)
+{
+    ASSERT(m_downloads.contains(downloadProxy->downloadID()));
+
+    m_downloads.remove(downloadProxy->downloadID());
 }
 
 } // namespace WebKit

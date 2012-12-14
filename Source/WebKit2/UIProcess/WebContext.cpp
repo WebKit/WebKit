@@ -836,10 +836,10 @@ void WebContext::addVisitedLinkHash(LinkHash linkHash)
 
 DownloadProxy* WebContext::createDownloadProxy()
 {
-    RefPtr<DownloadProxy> downloadProxy = DownloadProxyMap::shared().createDownloadProxy(this);
+    DownloadProxy* downloadProxy = DownloadProxyMap::shared().createDownloadProxy(this);
     m_downloads.set(downloadProxy->downloadID(), downloadProxy);
     addMessageReceiver(Messages::DownloadProxy::messageReceiverName(), downloadProxy->downloadID(), this);
-    return downloadProxy.get();
+    return downloadProxy;
 }
 
 void WebContext::downloadFinished(DownloadProxy* downloadProxy)
