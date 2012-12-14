@@ -1,3 +1,13 @@
+2012-12-14  Vsevolod Vlasov  <vsevik@chromium.org>
+
+        Web Inspector: Duplicate scripts appear in workspace when script was referenced by url with a fragment part.
+        https://bugs.webkit.org/show_bug.cgi?id=105004
+
+        Reviewed by Alexander Pavlov.
+
+        * inspector/front-end/NetworkUISourceCodeProvider.js:
+        (WebInspector.NetworkUISourceCodeProvider.prototype._parsedScriptSource):
+
 2012-12-14  Kunihiko Sakamoto  <ksakamoto@chromium.org>
 
         Hours field of date/time input UI should respect step attribute
