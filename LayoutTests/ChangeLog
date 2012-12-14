@@ -1,3 +1,16 @@
+2012-12-13  Rick Byers  <rbyers@chromium.org>
+
+        Layout Test fast/events/mouse-cursor-image-set.html is flaky
+        https://bugs.webkit.org/show_bug.cgi?id=104945
+
+        Reviewed by Beth Dakin.
+
+        Fix typo that prevented one of the images from being reliably pre-loaded.
+        A deeper fix to avoid these class of issues is tracked by
+        https://bugs.webkit.org/show_bug.cgi?id=104952
+
+        * fast/events/mouse-cursor-image-set.html:
+
 2012-12-13  Adrienne Walker  <enne@chromium.org>
 
         Unreviewed, rolling out r137645, r137646, and r137667.
