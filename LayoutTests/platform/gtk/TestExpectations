@@ -508,6 +508,10 @@ webkit.org/b/104533 fast/block/float/overhanging-tall-block.html [ Crash ]
 
 webkit.org/b/104684 fast/xmlhttprequest/xmlhttprequest-recursive-sync-event.html [ Crash Pass ]
 
+webkit.org/b/105042 editing/execCommand/indent-paragraphs.html [ Crash ]
+
+webkit.org/b/105043 [ Debug ] fast/loader/javascript-url-iframe-remove-on-navigate.html [ Crash ]
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Crashing tests
 #////////////////////////////////////////////////////////////////////////////////////////
