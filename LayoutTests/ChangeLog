@@ -1,3 +1,27 @@
+2012-12-14  Michelangelo De Simone  <michelangelo@webkit.org>
+
+        [CSS Shaders] Remove code for the other mesh box types (border-box | padding-box | content-box)
+        https://bugs.webkit.org/show_bug.cgi?id=103776
+
+        Reviewed by Dean Jackson.
+
+        MeshBoxBoxType has been removed from the spec and from the code.
+        Parsing code has been retained for legacy reason and will be updated in a different patch
+        (see: https://bugs.webkit.org/show_bug.cgi?id=103778).
+
+        Current tests have been updated and new legacy test cases have been added to custom-filter-property-parsing.
+
+        * css3/filters/custom/custom-filter-animation-expected.txt:
+        * css3/filters/custom/custom-filter-animation.html:
+        * css3/filters/custom/custom-filter-array-blending-expected.txt:
+        * css3/filters/custom/custom-filter-array-blending.html:
+        * css3/filters/custom/custom-filter-property-computed-style-expected.txt:
+        * css3/filters/custom/custom-filter-property-parsing-expected.txt:
+        * css3/filters/custom/custom-filter-transforms-animation-expected.txt:
+        * css3/filters/custom/custom-filter-transforms-animation.html:
+        * css3/filters/script-tests/custom-filter-property-computed-style.js:
+        * css3/filters/script-tests/custom-filter-property-parsing.js:
+
 2012-12-14  W. James MacLean  <wjmaclean@chromium.org>
 
         [Chromium gardening] Set expectations for platform/chromium/virtual/gpu/compositedscrolling/scrollbars/scrollbar-drag-thumb-with-large-content-expected.html

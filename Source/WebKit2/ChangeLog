@@ -1,3 +1,27 @@
+2012-12-14  Michelangelo De Simone  <michelangelo@webkit.org>
+
+        [CSS Shaders] Remove code for the other mesh box types (border-box | padding-box | content-box)
+        https://bugs.webkit.org/show_bug.cgi?id=103776
+
+        Reviewed by Dean Jackson.
+
+        The MeshBoxType has been removed and the code has been refactored. The specs will be updated shortly
+        and therefore this feature - even though it was not fully implemented yet - shall not be used anymore.
+
+        In this patch we remove everything but the parsing code, which shall be addressed in a different patch
+        (see: https://bugs.webkit.org/show_bug.cgi?id=103778).
+
+        Specification to be updated: http://dvcs.w3.org/hg/FXTF/raw-file/tip/filters/index.html#ltboxgt
+
+        Existing tests have been updated and new parsing legacy cases have been added.
+
+        * Shared/CoordinatedGraphics/CoordinatedGraphicsArgumentCoders.cpp:
+        (CoreIPC::::encode):
+        (CoreIPC::::decode):
+        * Shared/CoordinatedGraphics/WebCustomFilterOperation.h:
+        (WebCore::WebCustomFilterOperation::create):
+        (WebCore::WebCustomFilterOperation::WebCustomFilterOperation):
+
 2012-12-14  Alexey Proskuryakov  <ap@apple.com>
 
         <rdar://problem/12880750> RGRESSION: Crash when emptying cookie jar

@@ -5349,7 +5349,7 @@ FilterOperations RenderLayer::computeFilterOperations(const RenderStyle* style)
                 continue;
 
             RefPtr<ValidatedCustomFilterOperation> validatedOperation = ValidatedCustomFilterOperation::create(validatedProgram.release(), 
-                customOperation->parameters(), customOperation->meshRows(), customOperation->meshColumns(), customOperation->meshBoxType(), customOperation->meshType());
+                customOperation->parameters(), customOperation->meshRows(), customOperation->meshColumns(), customOperation->meshType());
             outputFilters.operations().append(validatedOperation.release());
             continue;
         }

@@ -53,7 +53,7 @@ class IntSize;
 class FECustomFilter : public FilterEffect {
 public:
     static PassRefPtr<FECustomFilter> create(Filter*, PassRefPtr<GraphicsContext3D>, PassRefPtr<CustomFilterValidatedProgram>, const CustomFilterParameterList&,
-        unsigned meshRows, unsigned meshColumns, CustomFilterMeshBoxType, CustomFilterMeshType);
+        unsigned meshRows, unsigned meshColumns, CustomFilterMeshType);
 
     virtual void platformApplySoftware();
     virtual void dump();
@@ -62,7 +62,7 @@ public:
 
 private:
     FECustomFilter(Filter*, PassRefPtr<GraphicsContext3D>, PassRefPtr<CustomFilterValidatedProgram>, const CustomFilterParameterList&,
-        unsigned meshRows, unsigned meshColumns, CustomFilterMeshBoxType, CustomFilterMeshType);
+        unsigned meshRows, unsigned meshColumns, CustomFilterMeshType);
     ~FECustomFilter();
 
     bool applyShader();

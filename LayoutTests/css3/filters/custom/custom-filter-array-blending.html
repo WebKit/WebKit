@@ -86,18 +86,18 @@
     <script type="text/javascript">
         const expectedValues = [
             // [animation-name, time, element-id, property, expected-value, tolerance]
-            ["custom-blend-from-none-anim",  1, "custom-blend-from-none-box", "webkitFilter", 'custom(url(no-shader-needed.vs) none, 1 1 filter-box, arrayFromNoneAnim array(10, 20))', 2],
-            ["custom-blend-to-none-anim",  1, "custom-blend-to-none-box", "webkitFilter", 'custom(url(no-shader-needed.vs) none, 1 1 filter-box, arrayToNoneAnim array(10, 20))', 2],
+            ["custom-blend-from-none-anim",  1, "custom-blend-from-none-box", "webkitFilter", 'custom(url(no-shader-needed.vs) none, 1 1, arrayFromNoneAnim array(10, 20))', 2],
+            ["custom-blend-to-none-anim",  1, "custom-blend-to-none-box", "webkitFilter", 'custom(url(no-shader-needed.vs) none, 1 1, arrayToNoneAnim array(10, 20))', 2],
 
-            ["custom-blend-single-element-anim", 1, "custom-blend-single-element-box", "webkitFilter", 'custom(url(no-shader-needed.vs) none, 1 1 filter-box, singleElementArray array(5))', 2],
+            ["custom-blend-single-element-anim", 1, "custom-blend-single-element-box", "webkitFilter", 'custom(url(no-shader-needed.vs) none, 1 1, singleElementArray array(5))', 2],
 
-            ["custom-blend-two-floats-anim", 1, "custom-blend-two-floats-box", "webkitFilter", 'custom(url(no-shader-needed.vs) none, 1 1 filter-box, twoFloatsArray array(2, 6.4))', 2],
+            ["custom-blend-two-floats-anim", 1, "custom-blend-two-floats-box", "webkitFilter", 'custom(url(no-shader-needed.vs) none, 1 1, twoFloatsArray array(2, 6.4))', 2],
 
-            ["custom-blend-multiple-elements-anim", 1, "custom-blend-multiple-elements-box", "webkitFilter", 'custom(url(no-shader-needed.vs) none, 1 1 filter-box, multipleElementsArray array(5, 10, 5, 10, 5, 10, 5, 10, 5))', 4],
+            ["custom-blend-multiple-elements-anim", 1, "custom-blend-multiple-elements-box", "webkitFilter", 'custom(url(no-shader-needed.vs) none, 1 1, multipleElementsArray array(5, 10, 5, 10, 5, 10, 5, 10, 5))', 4],
 
-            ["custom-blend-first-longer-anim", 1, "custom-blend-first-longer-box", "webkitFilter", 'custom(url(no-shader-needed.vs) none, 1 1 filter-box, firstLonger array(10, 10, 10, 10))', 2],
+            ["custom-blend-first-longer-anim", 1, "custom-blend-first-longer-box", "webkitFilter", 'custom(url(no-shader-needed.vs) none, 1 1, firstLonger array(10, 10, 10, 10))', 2],
 
-            ["custom-blend-second-longer-anim", 1, "custom-blend-second-longer-box", "webkitFilter", 'custom(url(no-shader-needed.vs) none, 1 1 filter-box, secondLonger array(10, 10, 10, 10, 10))', 2]];
+            ["custom-blend-second-longer-anim", 1, "custom-blend-second-longer-box", "webkitFilter", 'custom(url(no-shader-needed.vs) none, 1 1, secondLonger array(10, 10, 10, 10, 10))', 2]];
         runAnimationTest(expectedValues);
     </script>
 </head>

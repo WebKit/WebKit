@@ -94,7 +94,7 @@ static PassRefPtr<FECustomFilter> createCustomFilterEffect(Filter* filter, Docum
         return 0;
 
     return FECustomFilter::create(filter, globalContext->context(), operation->validatedProgram(), operation->parameters(),
-        operation->meshRows(), operation->meshColumns(), operation->meshBoxType(), operation->meshType());
+        operation->meshRows(), operation->meshColumns(),  operation->meshType());
 }
 #endif
 

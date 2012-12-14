@@ -85,13 +85,13 @@
     <script type="text/javascript">
         const expectedValues = [
             // [animation-name, time, element-id, property, expected-value, tolerance]
-            ["custom-mix-from-none-anim",  1, "custom-mix-from-none-box", "webkitFilter", 'custom(url(no-shader-needed.vs) none, 1 1 filter-box, transform matrix(30, 0, 0, 30, 0, 0))', 2],
-            ["custom-mix-to-none-anim",  1, "custom-mix-to-none-box", "webkitFilter", 'custom(url(no-shader-needed.vs) none, 1 1 filter-box, transform matrix(30, 0, 0, 30, 0, 0))', 2],
-            ["custom-mix-single-transform-anim",  1, "custom-mix-single-transform-box", "webkitFilter", 'custom(url(no-shader-needed.vs) none, 1 1 filter-box, transform matrix(15, 0, 0, 15, 0, 0))', 2],
-            ["custom-mix-different-transforms-anim",  1, "custom-mix-different-transforms-box", "webkitFilter", 'custom(url(no-shader-needed.vs) none, 1 1 filter-box, transform matrix(100, 0, 0, 100, 0, 0))', 0],
-            ["custom-mix-multi-transform-anim",  1, "custom-mix-multi-transform-box", "webkitFilter", 'custom(url(no-shader-needed.vs) none, 1 1 filter-box, transform1 matrix(15, 0, 0, 15, 0, 0), transform2 matrix(100, 0, 0, 100, 0, 0))', 2],
-            ["custom-mix-different-transforms-count1-anim",  1, "custom-mix-different-transforms-count1-box", "webkitFilter", 'custom(url(no-shader-needed.vs) none, 1 1 filter-box, transform matrix(50, 0, 0, 50, 0, 0))', 2],
-            ["custom-mix-different-transforms-count2-anim",  1, "custom-mix-different-transforms-count2-box", "webkitFilter", 'custom(url(no-shader-needed.vs) none, 1 1 filter-box, transform matrix(50, 0, 0, 50, 0, 0))', 2]
+            ["custom-mix-from-none-anim",  1, "custom-mix-from-none-box", "webkitFilter", 'custom(url(no-shader-needed.vs) none, 1 1, transform matrix(30, 0, 0, 30, 0, 0))', 2],
+            ["custom-mix-to-none-anim",  1, "custom-mix-to-none-box", "webkitFilter", 'custom(url(no-shader-needed.vs) none, 1 1, transform matrix(30, 0, 0, 30, 0, 0))', 2],
+            ["custom-mix-single-transform-anim",  1, "custom-mix-single-transform-box", "webkitFilter", 'custom(url(no-shader-needed.vs) none, 1 1, transform matrix(15, 0, 0, 15, 0, 0))', 2],
+            ["custom-mix-different-transforms-anim",  1, "custom-mix-different-transforms-box", "webkitFilter", 'custom(url(no-shader-needed.vs) none, 1 1, transform matrix(100, 0, 0, 100, 0, 0))', 0],
+            ["custom-mix-multi-transform-anim",  1, "custom-mix-multi-transform-box", "webkitFilter", 'custom(url(no-shader-needed.vs) none, 1 1, transform1 matrix(15, 0, 0, 15, 0, 0), transform2 matrix(100, 0, 0, 100, 0, 0))', 2],
+            ["custom-mix-different-transforms-count1-anim",  1, "custom-mix-different-transforms-count1-box", "webkitFilter", 'custom(url(no-shader-needed.vs) none, 1 1, transform matrix(50, 0, 0, 50, 0, 0))', 2],
+            ["custom-mix-different-transforms-count2-anim",  1, "custom-mix-different-transforms-count2-box", "webkitFilter", 'custom(url(no-shader-needed.vs) none, 1 1, transform matrix(50, 0, 0, 50, 0, 0))', 2]
         ];
         runAnimationTest(expectedValues);
     </script>

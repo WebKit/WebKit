@@ -1,9 +1,9 @@
      
-PASS - "webkitFilter" property for "custom-blend-from-none-box" element at 1s saw something close to: custom(url(no-shader-needed.vs) none, 1 1 filter-box, arrayFromNoneAnim array(10, 20))
-PASS - "webkitFilter" property for "custom-blend-to-none-box" element at 1s saw something close to: custom(url(no-shader-needed.vs) none, 1 1 filter-box, arrayToNoneAnim array(10, 20))
-PASS - "webkitFilter" property for "custom-blend-single-element-box" element at 1s saw something close to: custom(url(no-shader-needed.vs) none, 1 1 filter-box, singleElementArray array(5))
-PASS - "webkitFilter" property for "custom-blend-two-floats-box" element at 1s saw something close to: custom(url(no-shader-needed.vs) none, 1 1 filter-box, twoFloatsArray array(2, 6.4))
-PASS - "webkitFilter" property for "custom-blend-multiple-elements-box" element at 1s saw something close to: custom(url(no-shader-needed.vs) none, 1 1 filter-box, multipleElementsArray array(5, 10, 5, 10, 5, 10, 5, 10, 5))
-PASS - "webkitFilter" property for "custom-blend-first-longer-box" element at 1s saw something close to: custom(url(no-shader-needed.vs) none, 1 1 filter-box, firstLonger array(10, 10, 10, 10))
-PASS - "webkitFilter" property for "custom-blend-second-longer-box" element at 1s saw something close to: custom(url(no-shader-needed.vs) none, 1 1 filter-box, secondLonger array(10, 10, 10, 10, 10))
+PASS - "webkitFilter" property for "custom-blend-from-none-box" element at 1s saw something close to: custom(url(no-shader-needed.vs) none, 1 1, arrayFromNoneAnim array(10, 20))
+PASS - "webkitFilter" property for "custom-blend-to-none-box" element at 1s saw something close to: custom(url(no-shader-needed.vs) none, 1 1, arrayToNoneAnim array(10, 20))
+PASS - "webkitFilter" property for "custom-blend-single-element-box" element at 1s saw something close to: custom(url(no-shader-needed.vs) none, 1 1, singleElementArray array(5))
+PASS - "webkitFilter" property for "custom-blend-two-floats-box" element at 1s saw something close to: custom(url(no-shader-needed.vs) none, 1 1, twoFloatsArray array(2, 6.4))
+PASS - "webkitFilter" property for "custom-blend-multiple-elements-box" element at 1s saw something close to: custom(url(no-shader-needed.vs) none, 1 1, multipleElementsArray array(5, 10, 5, 10, 5, 10, 5, 10, 5))
+PASS - "webkitFilter" property for "custom-blend-first-longer-box" element at 1s saw something close to: custom(url(no-shader-needed.vs) none, 1 1, firstLonger array(10, 10, 10, 10))
+PASS - "webkitFilter" property for "custom-blend-second-longer-box" element at 1s saw something close to: custom(url(no-shader-needed.vs) none, 1 1, secondLonger array(10, 10, 10, 10, 10))
 

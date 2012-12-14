@@ -69,13 +69,13 @@ static void orthogonalProjectionMatrix(TransformationMatrix& matrix, float left,
 }
 
 PassRefPtr<CustomFilterRenderer> CustomFilterRenderer::create(PassRefPtr<GraphicsContext3D> context, CustomFilterProgramType programType, const CustomFilterParameterList& parameters,
-    unsigned meshRows, unsigned meshColumns, CustomFilterMeshBoxType meshBoxType, CustomFilterMeshType meshType)
+    unsigned meshRows, unsigned meshColumns, CustomFilterMeshType meshType)
 {
-    return adoptRef(new CustomFilterRenderer(context, programType, parameters, meshRows, meshColumns, meshBoxType, meshType));
+    return adoptRef(new CustomFilterRenderer(context, programType, parameters, meshRows, meshColumns, meshType));
 }
 
 CustomFilterRenderer::CustomFilterRenderer(PassRefPtr<GraphicsContext3D> context, CustomFilterProgramType programType, const CustomFilterParameterList& parameters,
-    unsigned meshRows, unsigned meshColumns, CustomFilterMeshBoxType, CustomFilterMeshType meshType)
+    unsigned meshRows, unsigned meshColumns, CustomFilterMeshType meshType)
     : m_context(context)
     , m_programType(programType)
     , m_parameters(parameters)

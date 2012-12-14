@@ -963,7 +963,6 @@ PassRefPtr<CSSValue> CSSComputedStyleDeclaration::valueForFilter(const RenderObj
             RefPtr<CSSValueList> meshParameters = CSSValueList::createSpaceSeparated();
             meshParameters->append(cssValuePool().createValue(customOperation->meshColumns(), CSSPrimitiveValue::CSS_NUMBER));
             meshParameters->append(cssValuePool().createValue(customOperation->meshRows(), CSSPrimitiveValue::CSS_NUMBER));
-            meshParameters->append(cssValuePool().createValue(customOperation->meshBoxType()));
             
             // FIXME: The specification doesn't have any "attached" identifier. Should we add one?
             // https://bugs.webkit.org/show_bug.cgi?id=72700

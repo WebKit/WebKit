@@ -188,9 +188,6 @@ void ArgumentCoder<WebCore::FilterOperations>::encode(ArgumentEncoder& encoder, 
 
             encoder << customOperation->meshRows();
             encoder << customOperation->meshColumns();
-            // FIXME: The ValidatedCustomFilterOperation doesn't have the meshBoxType yet, we just use the default one for now.
-            // https://bugs.webkit.org/show_bug.cgi?id=100890
-            encoder.encodeEnum(MeshBoxTypeFilter);
             break;
         }
 #endif
@@ -326,16 +323,13 @@ bool ArgumentCoder<WebCore::FilterOperations>::decode(ArgumentDecoder* decoder, 
 
             unsigned meshRows;
             unsigned meshColumns;
-            CustomFilterMeshBoxType meshBoxType;
             if (!decoder->decode(meshRows))
                 return false;
             if (!decoder->decode(meshColumns))
                 return false;
-            if (!decoder->decodeEnum(meshBoxType))
-                return false;
 
             // At this point the Shaders are already validated, so we just use WebCustomFilterOperation for transportation.
-            filter = WebCustomFilterOperation::create(0, programID, parameters, meshRows, meshColumns, meshBoxType, meshType);
+            filter = WebCustomFilterOperation::create(0, programID, parameters, meshRows, meshColumns, meshType);
             break;
         }
 #endif

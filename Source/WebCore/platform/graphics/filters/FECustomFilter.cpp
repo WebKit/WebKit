@@ -45,7 +45,7 @@
 namespace WebCore {
 
 FECustomFilter::FECustomFilter(Filter* filter, PassRefPtr<GraphicsContext3D> context, PassRefPtr<CustomFilterValidatedProgram> validatedProgram, const CustomFilterParameterList& parameters,
-    unsigned meshRows, unsigned meshColumns, CustomFilterMeshBoxType meshBoxType, CustomFilterMeshType meshType)
+    unsigned meshRows, unsigned meshColumns, CustomFilterMeshType meshType)
     : FilterEffect(filter)
     , m_context(context)
     , m_validatedProgram(validatedProgram)
@@ -59,13 +59,13 @@ FECustomFilter::FECustomFilter(Filter* filter, PassRefPtr<GraphicsContext3D> con
     , m_multisampleDepthBuffer(0)
 {
     // We will not pass a CustomFilterCompiledProgram here, as we only want to compile it when we actually need it in the first paint.
-    m_customFilterRenderer = CustomFilterRenderer::create(m_context, m_validatedProgram->programInfo().programType(), parameters, meshRows, meshColumns, meshBoxType, meshType);
+    m_customFilterRenderer = CustomFilterRenderer::create(m_context, m_validatedProgram->programInfo().programType(), parameters, meshRows, meshColumns, meshType);
 }
 
 PassRefPtr<FECustomFilter> FECustomFilter::create(Filter* filter, PassRefPtr<GraphicsContext3D> context, PassRefPtr<CustomFilterValidatedProgram> validatedProgram, const CustomFilterParameterList& parameters,
-    unsigned meshRows, unsigned meshColumns, CustomFilterMeshBoxType meshBoxType, CustomFilterMeshType meshType)
+    unsigned meshRows, unsigned meshColumns, CustomFilterMeshType meshType)
 {
-    return adoptRef(new FECustomFilter(filter, context, validatedProgram, parameters, meshRows, meshColumns, meshBoxType, meshType));
+    return adoptRef(new FECustomFilter(filter, context, validatedProgram, parameters, meshRows, meshColumns, meshType));
 }
 
 FECustomFilter::~FECustomFilter()

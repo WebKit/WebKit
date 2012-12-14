@@ -42,16 +42,16 @@ namespace WebCore {
 
 class WebCustomFilterOperation : public CustomFilterOperation {
 public:
-    static PassRefPtr<WebCustomFilterOperation> create(PassRefPtr<CustomFilterProgram> program, int programID, const CustomFilterParameterList& sortedParameters, unsigned meshRows, unsigned meshColumns, CustomFilterMeshBoxType meshBoxType, CustomFilterMeshType meshType)
+    static PassRefPtr<WebCustomFilterOperation> create(PassRefPtr<CustomFilterProgram> program, int programID, const CustomFilterParameterList& sortedParameters, unsigned meshRows, unsigned meshColumns, CustomFilterMeshType meshType)
     {
-        return adoptRef(new WebCustomFilterOperation(program, programID, sortedParameters, meshRows, meshColumns, meshBoxType, meshType));
+        return adoptRef(new WebCustomFilterOperation(program, programID, sortedParameters, meshRows, meshColumns, meshType));
     }
 
     int programID() const { return m_programID; }
 
 private:
-    WebCustomFilterOperation(PassRefPtr<CustomFilterProgram> program, int programID, const CustomFilterParameterList& sortedParameters, unsigned meshRows, unsigned meshColumns, CustomFilterMeshBoxType meshBoxType, CustomFilterMeshType meshType)
-        : CustomFilterOperation(program, sortedParameters, meshRows, meshColumns, meshBoxType, meshType)
+    WebCustomFilterOperation(PassRefPtr<CustomFilterProgram> program, int programID, const CustomFilterParameterList& sortedParameters, unsigned meshRows, unsigned meshColumns, CustomFilterMeshType meshType)
+        : CustomFilterOperation(program, sortedParameters, meshRows, meshColumns, meshType)
         , m_programID(programID)
     {
     }

@@ -917,7 +917,7 @@ bool TextureMapperGL::drawUsingCustomFilter(BitmapTexture& target, const BitmapT
         const CustomFilterOperation* customFilter = static_cast<const CustomFilterOperation*>(&filter);
         RefPtr<CustomFilterProgram> program = customFilter->program();
         renderer = CustomFilterRenderer::create(m_context3D, program->programType(), customFilter->parameters(), 
-            customFilter->meshRows(), customFilter->meshColumns(), customFilter->meshBoxType(), customFilter->meshType());
+            customFilter->meshRows(), customFilter->meshColumns(), customFilter->meshType());
         RefPtr<CustomFilterCompiledProgram> compiledProgram;
         CustomFilterProgramMap::iterator iter = m_customFilterPrograms.find(program.get());
         if (iter == m_customFilterPrograms.end()) {

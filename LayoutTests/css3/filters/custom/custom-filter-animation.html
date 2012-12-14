@@ -103,21 +103,21 @@
     <script type="text/javascript">
         const expectedValues = [
             // [animation-name, time, element-id, property, expected-value, tolerance]
-            ["custom-from-none-anim",  1, "custom-from-none-box", "webkitFilter", 'custom(url(vertex-rotate.vs) none, 1 1 filter-box, rotateBy 30, offset 0)', 0],
-            ["custom-to-none-anim",  1, "custom-to-none-box", "webkitFilter", 'custom(url(vertex-rotate.vs) none, 1 1 filter-box, rotateBy 30, offset 0)', 0],
+            ["custom-from-none-anim",  1, "custom-from-none-box", "webkitFilter", 'custom(url(vertex-rotate.vs) none, 1 1, rotateBy 30, offset 0)', 0],
+            ["custom-to-none-anim",  1, "custom-to-none-box", "webkitFilter", 'custom(url(vertex-rotate.vs) none, 1 1, rotateBy 30, offset 0)', 0],
 
-            ["custom-from-no-params-anim",  1, "custom-from-no-params-box", "webkitFilter", 'custom(url(vertex-rotate.vs) none, 1 1 filter-box, rotateBy 30, offset 0)', 0],
-            ["custom-to-no-params-anim",  1, "custom-to-no-params-box", "webkitFilter", 'custom(url(vertex-rotate.vs) none, 1 1 filter-box, rotateBy 30, offset 0)', 0],
+            ["custom-from-no-params-anim",  1, "custom-from-no-params-box", "webkitFilter", 'custom(url(vertex-rotate.vs) none, 1 1, rotateBy 30, offset 0)', 0],
+            ["custom-to-no-params-anim",  1, "custom-to-no-params-box", "webkitFilter", 'custom(url(vertex-rotate.vs) none, 1 1, rotateBy 30, offset 0)', 0],
             
-            ["custom-mix-attributes-anim",  1, "custom-mix-attributes-box", "webkitFilter", 'custom(url(vertex-rotate.vs) none, 5 5 border-box, rotateBy 30, offset 0)', 0],
+            ["custom-mix-attributes-anim",  1, "custom-mix-attributes-box", "webkitFilter", 'custom(url(vertex-rotate.vs) none, 5 5, rotateBy 30, offset 0)', 0],
 
             // FIXME: CSS Shaders do not get good FPS in debug mode, so the tolerance needs to be higher.
             // https://bugs.webkit.org/show_bug.cgi?id=85086
-            ["custom-from-diff-params-anim",  1, "custom-from-diff-params-box", "webkitFilter", 'custom(url(vertex-rotate.vs) none, 1 1 filter-box, param 10, rotateBy 60, offset 10, another_param 5)', 5],
-            ["custom-to-diff-params-anim",  1, "custom-to-diff-params-box", "webkitFilter", 'custom(url(vertex-rotate.vs) none, 1 1 filter-box, param 10, rotateBy 60, offset 10, another_param 5)', 5],
+            ["custom-from-diff-params-anim",  1, "custom-from-diff-params-box", "webkitFilter", 'custom(url(vertex-rotate.vs) none, 1 1, param 10, rotateBy 60, offset 10, another_param 5)', 5],
+            ["custom-to-diff-params-anim",  1, "custom-to-diff-params-box", "webkitFilter", 'custom(url(vertex-rotate.vs) none, 1 1, param 10, rotateBy 60, offset 10, another_param 5)', 5],
 
-            ["custom-mix-params-anim",  1, "custom-mix-params-box", "webkitFilter", 'custom(url(vertex-rotate.vs) none, 1 1 filter-box, param 10, another_param 5, first_param 6, rotateBy 60, offset 10, last_param 4)', 5],
-            ["custom-mix-numbers-anim",  1, "custom-mix-numbers-box", "webkitFilter", 'custom(url(vertex-rotate.vs) none, 1 1 filter-box, rotateBy 45, a 5.5, b 11 16.5, c 22 27.5 33, d 38.5 44 49.5)', 10]
+            ["custom-mix-params-anim",  1, "custom-mix-params-box", "webkitFilter", 'custom(url(vertex-rotate.vs) none, 1 1, param 10, another_param 5, first_param 6, rotateBy 60, offset 10, last_param 4)', 5],
+            ["custom-mix-numbers-anim",  1, "custom-mix-numbers-box", "webkitFilter", 'custom(url(vertex-rotate.vs) none, 1 1, rotateBy 45, a 5.5, b 11 16.5, c 22 27.5 33, d 38.5 44 49.5)', 10]
         ];
         runAnimationTest(expectedValues);
     </script>

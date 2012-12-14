@@ -4922,7 +4922,6 @@ PassRefPtr<CustomFilterOperation> StyleResolver::createCustomFilterOperation(Web
     
     unsigned meshRows = 1;
     unsigned meshColumns = 1;
-    CustomFilterMeshBoxType meshBoxType = MeshBoxTypeFilter;
     CustomFilterMeshType meshType = MeshTypeAttached;
     
     CSSValue* parametersValue = 0;
@@ -4955,17 +4954,6 @@ PassRefPtr<CustomFilterOperation> StyleResolver::createCustomFilterOperation(Web
         
         if (iterator.hasMore() && iterator.isPrimitiveValue()) {
             CSSPrimitiveValue* primitiveValue = static_cast<CSSPrimitiveValue*>(iterator.value());
-            if (primitiveValue->getIdent() == CSSValueBorderBox
-                || primitiveValue->getIdent() == CSSValuePaddingBox
-                || primitiveValue->getIdent() == CSSValueContentBox
-                || primitiveValue->getIdent() == CSSValueFilterBox) {
-                meshBoxType = *primitiveValue;
-                iterator.advance();
-            }
-        }
-        
-        if (iterator.hasMore() && iterator.isPrimitiveValue()) {
-            CSSPrimitiveValue* primitiveValue = static_cast<CSSPrimitiveValue*>(iterator.value());
             if (primitiveValue->getIdent() == CSSValueDetached) {
                 meshType = MeshTypeDetached;
                 iterator.advance();
@@ -4988,7 +4976,7 @@ PassRefPtr<CustomFilterOperation> StyleResolver::createCustomFilterOperation(Web
         return 0;
     
     RefPtr<StyleCustomFilterProgram> program = StyleCustomFilterProgram::create(vertexShader.release(), fragmentShader.release(), programType, mixSettings, meshType);
-    return CustomFilterOperation::create(program.release(), parameterList, meshRows, meshColumns, meshBoxType, meshType);
+    return CustomFilterOperation::create(program.release(), parameterList, meshRows, meshColumns, meshType);
 }
 #endif
 

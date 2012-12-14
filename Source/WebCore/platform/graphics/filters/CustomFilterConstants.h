@@ -50,13 +50,6 @@ enum CustomFilterMeshType {
     MeshTypeDetached
 };
 
-enum CustomFilterMeshBoxType {
-    MeshBoxTypeFilter,
-    MeshBoxTypeBorder,
-    MeshBoxTypePadding,
-    MeshBoxTypeContent
-};
-
 enum CustomFilterProgramType {
     PROGRAM_TYPE_NO_ELEMENT_TEXTURE,
     PROGRAM_TYPE_BLENDS_ELEMENT_TEXTURE
