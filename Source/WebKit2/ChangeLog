@@ -1,3 +1,16 @@
+2012-12-13  Alexey Proskuryakov  <ap@apple.com>
+
+        Resource loads sometimes stall
+        https://bugs.webkit.org/show_bug.cgi?id=104976
+
+        Reviewed by Anders Carlsson.
+
+        Quick and dirty partial fix.
+
+        * Shared/BlockingResponseMap.h: (BlockingResponseMap::didReceiveResponse):
+        Wake up all threads, so that non-sequential responses don't break us. This is still
+        horribly inefficient,but should improve behavior quite a bit.
+
 2012-12-13  Seokju Kwon  <seokju.kwon@gmail.com>
 
         Fix unused parameter compile warnings
