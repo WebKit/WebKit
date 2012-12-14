@@ -4004,6 +4004,8 @@ webcore_sources += \
 	Source/WebCore/page/animation/KeyframeAnimation.h \
 	Source/WebCore/page/AdjustViewSizeOrNot.h \
 	Source/WebCore/page/AlternativeTextClient.h \
+	Source/WebCore/page/AutoscrollController.cpp \
+	Source/WebCore/page/AutoscrollController.h \
 	Source/WebCore/page/BarInfo.cpp \
 	Source/WebCore/page/BarInfo.h \
 	Source/WebCore/page/Chrome.cpp \

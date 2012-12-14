@@ -1,3 +1,65 @@
+2012-12-14  Yoshifumi Inoue  <yosin@chromium.org>
+
+        Handling autoscroll in EventHandler should be re-factor
+        https://bugs.webkit.org/show_bug.cgi?id=104764
+
+        Reviewed by Hajime Morita.
+
+        This patch introduces new class AutoscrollController for moving autoscroll
+        and panscroll from EventHandler class for ease of maintenance of
+        EventHandler and ease of adding autoscroll related features, e.g. autoscroll
+        during drag-and-drop, autoscoll by gesture.
+
+        No new tests. This patch doesn't change behavior.
+
+        * CMakeLists.txt: Changed to add page/AutoscrollController.cpp
+        * GNUmakefile.list.am:  Changed to add page/AutoscrollController.{cpp,h}
+        * Target.pri:  Changed to add page/AutoscrollController.cpp
+        * WebCore.gypi: Changed to add page/AutoscrollController.{cpp,h}
+        * WebCore.vcproj/WebCore.vcproj: Changed to add page/AutoscrollController.{cpp,h}
+        * WebCore.xcodeproj/project.pbxproj: Changed to add page/AutoscrollController.{cpp,h}
+        * page/AutoscrollController.cpp: Added.
+        (WebCore::getMainFrame): Helper function.
+        (WebCore::AutoscrollController::AutoscrollController): Moved from EventHandler.
+        (WebCore::AutoscrollController::autoscrollRenderer): Moved from EventHandler.
+        (WebCore::AutoscrollController::autoscrollInProgress): Moved from EventHandler.
+        (WebCore::AutoscrollController::startAutoscrollForSelection): Replacement of EventHandler::handleAutoscroll().
+        (WebCore::AutoscrollController::stopAutoscrollTimer): Moveed from EventHandler.
+        (WebCore::AutoscrollController::updateAutoscrollRenderer): ditto
+        (WebCore::AutoscrollController::didPanScrollStart): Added for updating pan scrolling status of main frame.
+        (WebCore::AutoscrollController::didPanScrollStop): ditto
+        (WebCore::AutoscrollController::handleMouseReleaseEvent): Extracted from EventHandler.
+        (WebCore::AutoscrollController::panScrollInProgress): Replacement of EventHandler::m_panScrollInProgress.
+        (WebCore::AutoscrollController::startPanScrolling): Moved from EventHandler::startPanScrolling()
+        (WebCore::AutoscrollController::autoscrollTimerFired): Moved from EventHandler::autoscrollTimerFired().
+        (WebCore::AutoscrollController::startAutoscrollTimer): Moved from EventHandler::startAutoscrollTimer().
+        (WebCore::AutoscrollController::updatePanScrollState): Moved from EventHandler::updatePanScrollState().
+        * page/AutoscrollController.h: Added.
+        (AutoscrollController):
+        * page/EventHandler.cpp:
+        (WebCore::EventHandler::EventHandler): Changed autoscroll and panscroll related member variable initializations to m_autoscrollController initialization.
+        (WebCore::EventHandler::handleMouseDraggedEvent): Changed to call AutoscrollController::startAutoscrollForSelection().
+        (WebCore::EventHandler::handleMouseReleaseEvent): Changed to remove m_autoscrollInProgress reference.
+        (WebCore::EventHandler::didPanScrollStart): Added for updating pan scrolling status of main frame.
+        (WebCore::EventHandler::didPanScrollStop): ditto
+        (WebCore::EventHandler::startPanScrolling): Changed to call AutoscrollController::startPanScrolling().
+        (WebCore::EventHandler::autoscrollRenderer): Changed to use AutoscrollController.
+        (WebCore::EventHandler::updateAutoscrollRenderer): ditto
+        (WebCore::EventHandler::autoscrollInProgress): ditto
+        (WebCore::EventHandler::panScrollInProgress): Added to replace m_panScrollInProgress.
+        (WebCore::EventHandler::stopAutoscrollTimer): Changed to use AutoscrollController.
+        (WebCore::EventHandler::selectCursor): Changed to use panScrollInProgress().
+        (WebCore::EventHandler::handleMousePressEvent): Chagned to call AutoscrollController::handleMousePressEvent().
+        (WebCore::EventHandler::keyEvent): Changed to use panScrollInProgress().
+        * page/EventHandler.h:
+        (WebCore::EventHandler::autoscrollController): Added for using main frame's panScrollInProgress().
+        (WebCore::EventHandler::mouseDownWasInSubframe): Added for AutoscrollController.
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::canAutoscroll): Moved from EventHandler.cpp.
+        (WebCore::RenderBox::findAutoscrollable): Moved from EventHandler.cpp.
+        * rendering/RenderBox.h:
+        (RenderBox): Added new functions canAutoscroll() and findAutoscrollable().
+
 2012-12-14  David Dorwin  <ddorwin@chromium.org>
 
         EME v0.1: Report defaultURL in KeyMessage.

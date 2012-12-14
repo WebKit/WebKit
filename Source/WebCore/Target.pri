@@ -869,6 +869,7 @@ SOURCES += \
     page/animation/CSSPropertyAnimation.cpp \
     page/animation/ImplicitAnimation.cpp \
     page/animation/KeyframeAnimation.cpp \
+    page/AutoscrollController.cpp \
     page/BarInfo.cpp \
     page/Chrome.cpp \
     page/Console.cpp \
@@ -2016,6 +2017,7 @@ HEADERS += \
     page/animation/ImplicitAnimation.h \
     page/animation/KeyframeAnimation.h \
     page/AdjustViewSizeOrNot.h \
+    page/AutoscrollController.h \
     page/BarInfo.h \
     page/Chrome.h \
     page/Console.h \
