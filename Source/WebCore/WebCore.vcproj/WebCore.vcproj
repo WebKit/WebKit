@@ -29885,6 +29885,14 @@
 					>
 				</File>
 				<File
+					RelativePath="..\platform\graphics\TextTrackRepresentation.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\platform\graphics\TextTrackRepresentation.h"
+					>
+				</File>
+				<File
 					RelativePath="..\platform\graphics\UnitBezier.h"
 					>
 				</File>

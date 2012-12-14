@@ -1,3 +1,65 @@
+2012-12-14  Jer Noble  <jer.noble@apple.com>
+
+        Allow the text track contents to be displayed externally to WebCore.
+        https://bugs.webkit.org/show_bug.cgi?id=105052
+
+        Reviewed by Eric Carlson.
+
+        Support scenarios where the text track contents must be rendered outside of WebCore, such as to an external
+        display or window.  Add an abstract base class which encapsulates the external representation to which the
+        text tracks will be rendered.
+
+        Add a new abstract base class and client to wrap the external rendering of a TextTrack.
+        * platform/graphics/TextTrackRepresentation.h: Added.
+        (WebCore::TextTrackRepresentationClient::~TextTrackRepresentationClient):
+        (WebCore::TextTrackRepresentation::~TextTrackRepresentation):
+
+        Add an empty concrete implementation for those ports who do not yet support external display of subtitles.
+        * platform/graphics/TextTrackRepresentation.cpp: Added.
+        (NullTextTrackRepresentation):
+        (WebCore::NullTextTrackRepresentation::~NullTextTrackRepresentation):
+        (WebCore::NullTextTrackRepresentation::update):
+        (WebCore::NullTextTrackRepresentation::platformLayer):
+        (WebCore::NullTextTrackRepresentation::setContentScale):
+        (WebCore::NullTextTrackRepresentation::bounds):
+        (WebCore::TextTrackRepresentation::create):
+
+        Add methods to MediaPlayerPrivateIOS to handle the TextTrackRepresentation.
+        * platform/graphics/ios/MediaPlayerPrivateIOS.h:
+        * platform/graphics/ios/MediaPlayerPrivateIOS.mm:
+        (WebCore::MediaPlayerPrivateIOS::deliverNotification): Remove the representation when exiting full screen.
+        (WebCore::MediaPlayerPrivateIOS::requiresTextTrackRepresentation): Return YES if in full screen mode.
+        (WebCore::MediaPlayerPrivateIOS::setTextTrackRepresentation): Pass the representation's layer to the player plug-in.
+
+        Expose those methods via HTMLMediaElement:
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::requiresTextTrackRepresentation):
+        (WebCore::HTMLMediaElement::setTextTrackRepresentation):
+        * html/HTMLMediaElement.h:
+        * platform/graphics/MediaPlayer.cpp:
+        (WebCore::MediaPlayer::requiresTextTrackRepresentation):
+        (WebCore::MediaPlayer::setTextTrackRepresentation):
+        * platform/graphics/MediaPlayer.h:
+        (WebCore::MediaPlayerClient::textTrackRepresentationBoundsChanged):
+        (WebCore::MediaPlayerClient::paintTextTrackRepresentation):
+        * platform/graphics/MediaPlayerPrivate.h:
+        (WebCore::MediaPlayerPrivateInterface::requiresTextTrackRepresentation):
+        (WebCore::MediaPlayerPrivateInterface::setTextTrackRepresentation):
+
+        * html/shadow/MediaControlElements.cpp:
+        (WebCore::MediaControlTextTrackContainerElement::updateDisplay): Create the representation, if necessary.
+        (WebCore::MediaControlTextTrackContainerElement::updateSizes): Use the representation to determine the font size.
+        (WebCore::MediaControlTextTrackContainerElement::paintTextTrackRepresentation): Added. Paint the TextTrack into the provided graphics context.
+        (WebCore::MediaControlTextTrackContainerElement::textTrackRepresentationBoundsChanged): Added. Call updateSizes().
+        * html/shadow/MediaControlElements.h:
+
+        Add the new files to the project.
+        * WebCore.xcodeproj/project.pbxproj:
+        * GNUmakefile.list.am:
+        * Target.pri:
+        * WebCore.gypi:
+        * WebCore.vcproj/WebCore.vcproj:
+
 2012-12-14  Fady Samuel  <fsamuel@chromium.org>
 
         Allow embedder to observe changes to frame names

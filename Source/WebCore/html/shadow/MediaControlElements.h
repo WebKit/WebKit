@@ -32,6 +32,7 @@
 
 #if ENABLE(VIDEO)
 #include "MediaControlElementTypes.h"
+#include "TextTrackRepresentation.h"
 
 namespace WebCore {
 
@@ -432,7 +433,7 @@ private:
 
 #if ENABLE(VIDEO_TRACK)
 
-class MediaControlTextTrackContainerElement : public MediaControlDivElement {
+class MediaControlTextTrackContainerElement : public MediaControlDivElement, public TextTrackRepresentationClient {
 public:
     static PassRefPtr<MediaControlTextTrackContainerElement> create(Document*);
 
@@ -445,6 +446,10 @@ private:
     virtual const AtomicString& shadowPseudoId() const OVERRIDE;
 
     virtual RenderObject* createRenderer(RenderArena*, RenderStyle*);
+
+    virtual void paintTextTrackRepresentation(GraphicsContext*, const IntRect&) OVERRIDE;
+    virtual void textTrackRepresentationBoundsChanged(const IntRect&) OVERRIDE;
+    OwnPtr<TextTrackRepresentation> m_textTrackRepresentation;
 
     IntRect m_videoDisplaySize;
     float m_fontSize;

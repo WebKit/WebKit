@@ -5583,6 +5583,8 @@ webcore_platform_sources += \
 	Source/WebCore/platform/graphics/TextRenderingMode.h \
 	Source/WebCore/platform/graphics/TextRun.cpp \
 	Source/WebCore/platform/graphics/TextRun.h \
+	Source/WebCore/platform/graphics/TextTrackRepresentation.cpp \
+	Source/WebCore/platform/graphics/TextTrackRepresentation.h \
 	Source/WebCore/platform/graphics/TiledBacking.h \
 	Source/WebCore/platform/graphics/transforms/AffineTransform.cpp \
 	Source/WebCore/platform/graphics/transforms/AffineTransform.h \

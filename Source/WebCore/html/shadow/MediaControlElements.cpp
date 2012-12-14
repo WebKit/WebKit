@@ -37,6 +37,7 @@
 #include "EventTarget.h"
 #include "FloatConversion.h"
 #include "Frame.h"
+#include "GraphicsContext.h"
 #include "HTMLVideoElement.h"
 #include "Language.h"
 #include "LocalizedStrings.h"
@@ -44,10 +45,12 @@
 #include "MouseEvent.h"
 #include "Page.h"
 #include "PageGroup.h"
+#include "RenderLayer.h"
 #include "RenderMediaControlElements.h"
 #include "RenderSlider.h"
 #include "RenderTheme.h"
 #include "RenderVideo.h"
+#include "RenderView.h"
 #include "Settings.h"
 #if ENABLE(VIDEO_TRACK)
 #include "TextTrack.h"
@@ -1282,27 +1285,100 @@ void MediaControlTextTrackContainerElement::updateDisplay()
     }
 
     // 11. Return output.
-    hasChildNodes() ? show() : hide();
+    if (hasChildNodes()) {
+        show();
+        if (mediaElement->requiresTextTrackRepresentation()) {
+            if (!m_textTrackRepresentation)
+                m_textTrackRepresentation = TextTrackRepresentation::create(this);
+            mediaElement->setTextTrackRepresentation(m_textTrackRepresentation.get());
+
+            if (Page* page = document()->page())
+                m_textTrackRepresentation->setContentScale(page->deviceScaleFactor());
+
+            m_textTrackRepresentation->update();
+            setInlineStyleProperty(CSSPropertyWidth, String::number(m_videoDisplaySize.size().width()) + "px");
+            setInlineStyleProperty(CSSPropertyHeight, String::number(m_videoDisplaySize.size().height()) + "px");
+        }
+    } else {
+        hide();
+        m_textTrackRepresentation = nullptr;
+        mediaElement->setTextTrackRepresentation(0);
+        removeInlineStyleProperty(CSSPropertyWidth);
+        removeInlineStyleProperty(CSSPropertyHeight);
+    }
 }
 
 void MediaControlTextTrackContainerElement::updateSizes()
 {
     HTMLMediaElement* mediaElement = toParentMediaElement(this);
-    if (!mediaElement || !mediaElement->renderer() || !mediaElement->renderer()->isVideo())
+    if (!mediaElement)
         return;
 
     if (!document()->page())
         return;
 
-    IntRect videoBox = toRenderVideo(mediaElement->renderer())->videoBox();
+    IntRect videoBox;
 
-    float fontSize = videoBox.size().height() * (document()->page()->group().captionFontSizeScale());
+    if (m_textTrackRepresentation)
+        videoBox = m_textTrackRepresentation->bounds();
+    else {
+        if (!mediaElement->renderer() || !mediaElement->renderer()->isVideo())
+            return;
+        videoBox = toRenderVideo(mediaElement->renderer())->videoBox();
+    }
+
+    if (m_videoDisplaySize == videoBox)
+        return;
+    m_videoDisplaySize = videoBox;
+
+    if (m_textTrackRepresentation) {
+        setInlineStyleProperty(CSSPropertyWidth, String::number(m_videoDisplaySize.size().width()) + "px");
+        setInlineStyleProperty(CSSPropertyHeight, String::number(m_videoDisplaySize.size().height()) + "px");
+    }
+
+    float smallestDimension = std::min(m_videoDisplaySize.size().height(), m_videoDisplaySize.size().width());
+
+    float fontSize = smallestDimension * (document()->page()->group().captionFontSizeScale());
     if (fontSize != m_fontSize) {
         m_fontSize = fontSize;
         setInlineStyleProperty(CSSPropertyFontSize, String::number(fontSize) + "px");
     }
 }
 
+void MediaControlTextTrackContainerElement::paintTextTrackRepresentation(GraphicsContext* context, const IntRect& contextRect)
+{
+    if (!hasChildNodes())
+        return;
+
+    RenderObject* renderer = this->renderer();
+    if (!renderer)
+        return;
+
+    Frame* frame = document()->frame();
+    if (!frame)
+        return;
+
+    document()->updateLayout();
+
+    LayoutRect topLevelRect;
+    IntRect paintingRect = pixelSnappedIntRect(renderer->paintingRootRect(topLevelRect));
+
+    // Translate the renderer painting rect into graphics context coordinates.
+    FloatSize translation(-paintingRect.x(), -paintingRect.y());
+
+    // But anchor to the bottom of the graphics context rect.
+    translation.expand(max(0, contextRect.width() - paintingRect.width()), max(0, contextRect.height() - paintingRect.height()));
+
+    context->translate(translation);
+
+    RenderLayer* layer = frame->contentRenderer()->layer();
+    layer->paint(context, paintingRect, PaintBehaviorFlattenCompositingLayers, renderer, 0, RenderLayer::PaintLayerPaintingCompositingAllPhases);
+}
+
+void MediaControlTextTrackContainerElement::textTrackRepresentationBoundsChanged(const IntRect&)
+{
+    updateSizes();
+}
 #endif // ENABLE(VIDEO_TRACK)
 
 // ----------------------------

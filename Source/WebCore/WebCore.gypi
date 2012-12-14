@@ -3748,6 +3748,8 @@
             'platform/graphics/SurrogatePairAwareTextIterator.cpp',
             'platform/graphics/SurrogatePairAwareTextIterator.h',
             'platform/graphics/TextRun.cpp',
+            'platform/graphics/TextTrackRepresentation.cpp',
+            'platform/graphics/TextTrackRepresentation.h',
             'platform/graphics/Tile.h',
             'platform/graphics/TiledBackingStore.cpp',
             'platform/graphics/TiledBackingStore.h',

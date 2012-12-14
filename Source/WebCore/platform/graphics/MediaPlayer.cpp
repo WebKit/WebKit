@@ -1129,6 +1129,16 @@ void MediaPlayer::removeTextTrack(PassRefPtr<InbandTextTrackPrivate> track)
 
     m_mediaPlayerClient->mediaPlayerDidRemoveTrack(track);
 }
+
+bool MediaPlayer::requiresTextTrackRepresentation() const
+{
+    return m_private->requiresTextTrackRepresentation();
+}
+
+void MediaPlayer::setTextTrackRepresentation(TextTrackRepresentation* representation)
+{
+    m_private->setTextTrackRepresentation(representation);
+}
 #endif
 
 }

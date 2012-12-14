@@ -62,6 +62,7 @@ class Document;
 class GStreamerGWorld;
 class MediaPlayerPrivateInterface;
 class MediaSource;
+class TextTrackRepresentation;
 
 // Structure that will hold every native
 // types supported by the current media player.
@@ -213,6 +214,9 @@ public:
 #if ENABLE(VIDEO_TRACK)
     virtual void mediaPlayerDidAddTrack(PassRefPtr<InbandTextTrackPrivate>) { }
     virtual void mediaPlayerDidRemoveTrack(PassRefPtr<InbandTextTrackPrivate>) { }
+
+    virtual void textTrackRepresentationBoundsChanged(const IntRect&) { }
+    virtual void paintTextTrackRepresentation(GraphicsContext*, const IntRect&) { }
 #endif
 };
 
@@ -436,6 +440,9 @@ public:
 #if ENABLE(VIDEO_TRACK)
     void addTextTrack(PassRefPtr<InbandTextTrackPrivate>);
     void removeTextTrack(PassRefPtr<InbandTextTrackPrivate>);
+
+    bool requiresTextTrackRepresentation() const;
+    void setTextTrackRepresentation(TextTrackRepresentation*);
 #endif
 
 private:

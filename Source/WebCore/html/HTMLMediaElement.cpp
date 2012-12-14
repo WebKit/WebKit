@@ -3897,6 +3897,19 @@ bool HTMLMediaElement::willRespondToMouseClickEvents()
 #endif
 }
 
+#if ENABLE(VIDEO_TRACK)
+bool HTMLMediaElement::requiresTextTrackRepresentation() const
+{
+    return m_player ? m_player->requiresTextTrackRepresentation() : 0;
+}
+
+void HTMLMediaElement::setTextTrackRepresentation(TextTrackRepresentation* representation)
+{
+    if (m_player)
+        m_player->setTextTrackRepresentation(representation);
+}
+#endif // ENABLE(VIDEO_TRACK)
+
 #if ENABLE(PLUGIN_PROXY_FOR_VIDEO)
 
 void HTMLMediaElement::ensureMediaPlayer()
