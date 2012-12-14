@@ -340,6 +340,8 @@ namespace WebCore {
         // Returns true if the embedder intercepted the postMessage call
         virtual bool willCheckAndDispatchMessageEvent(SecurityOrigin* /*target*/, MessageEvent*) const { return false; }
 
+        virtual void didChangeName(const String&) { }
+
 #if ENABLE(WEB_INTENTS)
         virtual void dispatchIntent(PassRefPtr<IntentRequest>) = 0;
 #endif

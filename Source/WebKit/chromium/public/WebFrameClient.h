@@ -120,6 +120,9 @@ public:
     // when the document is being unloaded, due to new one committing.
     virtual void willClose(WebFrame*) { }
 
+    // This frame's name has changed.
+    virtual void didChangeName(WebFrame*, const WebString&) { }
+
     // Load commands -------------------------------------------------------
 
     // The client should handle the navigation externally.

@@ -1238,6 +1238,7 @@ void DOMWindow::setName(const String& string)
         return;
 
     m_frame->tree()->setName(string);
+    m_frame->loader()->client()->didChangeName(string);
 }
 
 void DOMWindow::setStatus(const String& string) 

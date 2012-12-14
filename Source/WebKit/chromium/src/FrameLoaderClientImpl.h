@@ -209,6 +209,7 @@ public:
 
     virtual PassRefPtr<WebCore::FrameNetworkingContext> createNetworkingContext();
     virtual bool willCheckAndDispatchMessageEvent(WebCore::SecurityOrigin* target, WebCore::MessageEvent*) const;
+    virtual void didChangeName(const String&);
 
 #if ENABLE(WEB_INTENTS_TAG)
     virtual void registerIntentService(const String& action,

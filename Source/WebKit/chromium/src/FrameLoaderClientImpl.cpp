@@ -1635,6 +1635,13 @@ bool FrameLoaderClientImpl::willCheckAndDispatchMessageEvent(
         source, m_webFrame, WebSecurityOrigin(target), WebDOMMessageEvent(event));
 }
 
+void FrameLoaderClientImpl::didChangeName(const String& name)
+{
+    if (!m_webFrame->client())
+        return;
+    m_webFrame->client()->didChangeName(m_webFrame, name);
+}
+
 #if ENABLE(WEB_INTENTS_TAG)
 void FrameLoaderClientImpl::registerIntentService(
         const String& action,
