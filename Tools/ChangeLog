@@ -1,3 +1,35 @@
+2012-12-13  Eric Seidel  <eric@webkit.org>
+
+        Use 'perf' to profile on linux instead of google-pprof by default
+        https://bugs.webkit.org/show_bug.cgi?id=104971
+
+        Reviewed by Dirk Pranke.
+
+        This makes Chromium Linux match Chromium Android and use the perf
+        tool by default.  Once https://bugs.webkit.org/show_bug.cgi?id=104891
+        lands it will be possible to use pprof again on Linux.
+
+        This is slightly more advanced than the AndroidPerf profiler as
+        instead of using a timeout on "perf record" I instead watch
+        for the termination of the target process and then control-C
+        the 'perf record' process.  This required me to add two new
+        methods to Executive, one to have a limited-time wait() and
+        the second to be able to send a control-C.  I chose to add
+        these to Executive to make them easier to mock/fix-for-win32
+        at a later time if needed.
+
+        * Scripts/webkitpy/common/system/executive.py:
+        (Executive.wait_limited):
+        (Executive.interrupt):
+        * Scripts/webkitpy/common/system/profiler.py:
+        (ProfilerFactory.create_profiler):
+        (Perf):
+        (Perf.__init__):
+        (Perf._perf_path):
+        (Perf.attach_to_pid):
+        (Perf._first_ten_lines_of_profile):
+        (Perf.profile_after_exit):
+
 2012-12-13  Julie Parent  <jparent@chromium.org>
 
         Dashboard cleanup: remove usage of global g_builders.

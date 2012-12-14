@@ -304,6 +304,13 @@ class Executive(object):
         while self.check_running_pid(pid):
             time.sleep(0.25)
 
+    def wait_limited(self, pid, limit_in_seconds=None, check_frequency_in_seconds=None):
+        seconds_left = limit_in_seconds or 10
+        sleep_length = check_frequency_in_seconds or 1
+        while seconds_left > 0 and self.check_running_pid(pid):
+            seconds_left -= sleep_length
+            time.sleep(sleep_length)
+
     def _windows_image_name(self, process_name):
         name, extension = os.path.splitext(process_name)
         if not extension:
@@ -311,6 +318,17 @@ class Executive(object):
             # If necessary we could add a flag to disable appending .exe.
             process_name = "%s.exe" % name
         return process_name
+
+    def interrupt(self, pid):
+        interrupt_signal = signal.SIGINT
+        # FIXME: The python docs seem to imply that platform == 'win32' may need to use signal.CTRL_C_EVENT
+        # http://docs.python.org/2/library/signal.html
+        try:
+            os.kill(pid, interrupt_signal)
+        except OSError:
+            # Silently ignore when the pid doesn't exist.
+            # It's impossible for callers to avoid race conditions with process shutdown.
+            pass
 
     def kill_all(self, process_name):
         """Attempts to kill processes matching process_name.

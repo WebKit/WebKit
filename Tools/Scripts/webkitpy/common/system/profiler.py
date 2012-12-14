@@ -37,7 +37,7 @@ class ProfilerFactory(object):
     def create_profiler(cls, host, executable_path, output_dir, identifier=None):
         if host.platform.is_mac():
             return IProfiler(host, executable_path, output_dir, identifier)
-        return GooglePProf(host, executable_path, output_dir, identifier)
+        return Perf(host, executable_path, output_dir, identifier)
 
 
 class Profiler(object):
@@ -95,6 +95,49 @@ class GooglePProf(SingleFileOutputProfiler):
         print
         print "To interact with the the full profile, including produce graphs:"
         print ' '.join([self._pprof_path(), self._executable_path, self._output_path])
+
+
+class Perf(SingleFileOutputProfiler):
+    def __init__(self, host, executable_path, output_dir, identifier=None):
+        super(Perf, self).__init__(host, executable_path, output_dir, "data", identifier)
+        self._perf_process = None
+        self._pid_being_profiled = None
+
+    def _perf_path(self):
+        # FIXME: We may need to support finding the perf binary in other locations.
+        return 'perf'
+
+    def attach_to_pid(self, pid):
+        assert(not self._perf_process and not self._pid_being_profiled)
+        self._pid_being_profiled = pid
+        cmd = [self._perf_path(), "record", "-g", "-p", pid, "-o", self._output_path]
+        cmd = map(unicode, cmd)
+        self._perf_process = self._host.executive.popen(cmd)
+
+    def _first_ten_lines_of_profile(self, perf_output):
+        match = re.search("^#[^\n]*\n((?: [^\n]*\n){1,10})", perf_output, re.MULTILINE)
+        return match.group(1) if match else None
+
+    def profile_after_exit(self):
+        # Perf doesn't automatically watch the attached pid for death notifications,
+        # so we have to do it for it, and then tell it its time to stop sampling. :(
+        self._host.executive.wait_limited(self._pid_being_profiled, limit_in_seconds=10)
+        perf_exitcode = self._perf_process.poll()
+        if perf_exitcode is None:  # This should always be the case, unless perf error'd out early.
+            self._host.executive.interrupt(self._perf_process.pid)
+
+        perf_exitcode = self._perf_process.wait()
+        if perf_exitcode not in (0, -2):  # The exit code should always be -2, as we're always interrupting perf.
+            print "'perf record' failed (exit code: %i), can't process results:" % perf_exitcode
+            return
+
+        perf_args = [self._perf_path(), 'report', '-g', 'none', '-i', self._output_path]
+        print " ".join(perf_args)
+        perf_output = self._host.executive.run_command(perf_args)
+        print self._first_ten_lines_of_profile(perf_output)
+
+        print "To view the full profile, run:"
+        print ' '.join([self._perf_path(), 'report', '-i', self._output_path])
 
 
 class IProfiler(SingleFileOutputProfiler):
