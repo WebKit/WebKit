@@ -1,3 +1,24 @@
+2012-12-13  Andreas Kling  <akling@apple.com>
+
+        Event dispatch: Avoid heap allocations in ensureEventAncestors() typical case.
+        <http://webkit.org/b/104938>
+
+        Reviewed by Anders Carlsson.
+
+        Give the EventTarget and EventContext vectors an inline capacity of 32 (no science here, just a
+        non-zero number.) As these vectors are created on the stack already, this is merely using a bit
+        more stack space to avoid malloc()ing all the gosh-darn time.
+
+        Looks like ~6% improvement on Dromaeo/jslib-event-prototype.
+
+        * dom/EventDispatcher.cpp:
+        (WebCore::EventRelatedTargetAdjuster::adjust):
+        (WebCore::EventRelatedTargetAdjuster::findRelatedTarget):
+        (WebCore::EventDispatcher::ensureEventAncestors):
+        * dom/EventDispatcher.h:
+        (EventRelatedTargetAdjuster):
+        (EventDispatcher):
+
 2012-12-13  James Simonsen  <simonjam@chromium.org>
 
         [Resource Timing] Don't report resources with data: urls
