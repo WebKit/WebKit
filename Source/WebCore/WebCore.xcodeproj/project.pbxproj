@@ -1232,8 +1232,6 @@
 		4512502315DCE37D002F84E2 /* SpinButtonElement.h in Headers */ = {isa = PBXBuildFile; fileRef = 4512502115DCE37D002F84E2 /* SpinButtonElement.h */; };
 		453EB636159C570400001BB7 /* DateTimeFormat.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 453EB634159C570400001BB7 /* DateTimeFormat.cpp */; };
 		453EB637159C570400001BB7 /* DateTimeFormat.h in Headers */ = {isa = PBXBuildFile; fileRef = 453EB635159C570400001BB7 /* DateTimeFormat.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		45830D4D1679B4F800ACF8C3 /* AutoscrollController.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 45830D4B1679B4F800ACF8C3 /* AutoscrollController.cpp */; };
-		45830D4E1679B4F800ACF8C3 /* AutoscrollController.h in Headers */ = {isa = PBXBuildFile; fileRef = 45830D4C1679B4F800ACF8C3 /* AutoscrollController.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		45861C72161949DC00010F3A /* BaseMultipleFieldsDateAndTimeInputType.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 45861C70161949DC00010F3A /* BaseMultipleFieldsDateAndTimeInputType.cpp */; };
 		45861C73161949DC00010F3A /* BaseMultipleFieldsDateAndTimeInputType.h in Headers */ = {isa = PBXBuildFile; fileRef = 45861C71161949DC00010F3A /* BaseMultipleFieldsDateAndTimeInputType.h */; };
 		45861C7F16194A7400010F3A /* DateTimeEditElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 45861C7516194A7400010F3A /* DateTimeEditElement.cpp */; };
@@ -8476,8 +8474,6 @@
 		4512502115DCE37D002F84E2 /* SpinButtonElement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SpinButtonElement.h; sourceTree = "<group>"; };
 		453EB634159C570400001BB7 /* DateTimeFormat.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DateTimeFormat.cpp; sourceTree = "<group>"; };
 		453EB635159C570400001BB7 /* DateTimeFormat.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DateTimeFormat.h; sourceTree = "<group>"; };
-		45830D4B1679B4F800ACF8C3 /* AutoscrollController.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = AutoscrollController.cpp; sourceTree = "<group>"; };
-		45830D4C1679B4F800ACF8C3 /* AutoscrollController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AutoscrollController.h; sourceTree = "<group>"; };
 		45861C70161949DC00010F3A /* BaseMultipleFieldsDateAndTimeInputType.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = BaseMultipleFieldsDateAndTimeInputType.cpp; sourceTree = "<group>"; };
 		45861C71161949DC00010F3A /* BaseMultipleFieldsDateAndTimeInputType.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BaseMultipleFieldsDateAndTimeInputType.h; sourceTree = "<group>"; };
 		45861C7516194A7400010F3A /* DateTimeEditElement.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DateTimeEditElement.cpp; sourceTree = "<group>"; };
@@ -15955,8 +15951,6 @@
 				8538F0000AD71770006A81D1 /* AbstractView.idl */,
 				BCF48CE61370D114004E87D6 /* AdjustViewSizeOrNot.h */,
 				CEDA12D6152CA1CB00D9E08D /* AlternativeTextClient.h */,
-				45830D4B1679B4F800ACF8C3 /* AutoscrollController.cpp */,
-				45830D4C1679B4F800ACF8C3 /* AutoscrollController.h */,
 				BC124EE40C2641CD009E2349 /* BarInfo.cpp */,
 				BC124EE50C2641CD009E2349 /* BarInfo.h */,
 				BC124EE60C2641CD009E2349 /* BarInfo.idl */,
@@ -22684,7 +22678,6 @@
 				E124748410AA161D00B79493 /* AuthenticationClient.h in Headers */,
 				514C764C0CE9234E007EF3CD /* AuthenticationMac.h in Headers */,
 				51E1ECB30C91C55600DC255B /* AutodrainedPool.h in Headers */,
-				45830D4E1679B4F800ACF8C3 /* AutoscrollController.h in Headers */,
 				A8CFF04E0A154F09000A4234 /* AutoTableLayout.h in Headers */,
 				29A812380FBB9C1D00510293 /* AXObjectCache.h in Headers */,
 				BCA8C81E11E3D36900812FB7 /* BackForwardController.h in Headers */,
@@ -26322,7 +26315,6 @@
 				934F71380D5A6EFF00018D69 /* AuthenticationChallengeBase.cpp in Sources */,
 				514C764D0CE9234E007EF3CD /* AuthenticationMac.mm in Sources */,
 				51E1ECAF0C91C54600DC255B /* AutodrainedPool.mm in Sources */,
-				45830D4D1679B4F800ACF8C3 /* AutoscrollController.cpp in Sources */,
 				A8CFF0500A154F09000A4234 /* AutoTableLayout.cpp in Sources */,
 				29A8124B0FBB9CA900510293 /* AXObjectCacheMac.mm in Sources */,
 				BCA8C81F11E3D36900812FB7 /* BackForwardController.cpp in Sources */,

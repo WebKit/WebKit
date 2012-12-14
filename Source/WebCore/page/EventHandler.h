@@ -51,7 +51,6 @@ class NSView;
 
 namespace WebCore {
 
-class AutoscrollController;
 class Clipboard;
 class Event;
 class EventTarget;
@@ -110,18 +109,12 @@ public:
     Node* mousePressNode() const;
     void setMousePressNode(PassRefPtr<Node>);
 
-#if ENABLE(PAN_SCROLLING)
-    void didPanScrollStart();
-    void didPanScrollStop();
     void startPanScrolling(RenderObject*);
-#endif
 
     void stopAutoscrollTimer(bool rendererIsBeingDestroyed = false);
     RenderObject* autoscrollRenderer() const;
     void updateAutoscrollRenderer();
-    bool autoscrollInProgress() const;
-    bool mouseDownWasInSubframe() const { return m_mouseDownWasInSubframe; }
-    bool panScrollInProgress() const;
+    bool autoscrollInProgress() const { return m_autoscrollInProgress; }
 
     void dispatchFakeMouseMoveEventSoon();
     void dispatchFakeMouseMoveEventSoonInQuad(const FloatQuad&);
@@ -276,8 +269,16 @@ private:
     bool handleMouseReleaseEvent(const MouseEventWithHitTestResults&);
 
     OptionalCursor selectCursor(const MouseEventWithHitTestResults&, Scrollbar*);
+#if ENABLE(PAN_SCROLLING)
+    void updatePanScrollState();
+#endif
+
     void hoverTimerFired(Timer<EventHandler>*);
 
+    void handleAutoscroll(RenderObject*);
+    void startAutoscrollTimer();
+    void setAutoscrollRenderer(RenderObject*);
+    void autoscrollTimerFired(Timer<EventHandler>*);
     bool logicalScrollOverflow(ScrollLogicalDirection, ScrollGranularity, Node* startingNode = 0);
     
     bool shouldTurnVerticalTicksIntoHorizontal(const HitTestResult&, const PlatformWheelEvent&) const;
@@ -400,11 +401,17 @@ private:
     LayoutPoint m_dragStartPos;
 #endif
 
+    IntPoint m_panScrollStartPos;
+    bool m_panScrollInProgress;
+
     bool m_panScrollButtonPressed;
+    bool m_springLoadedPanScrollInProgress;
 
     Timer<EventHandler> m_hoverTimer;
-
-    OwnPtr<AutoscrollController> m_autoscrollController;
+    
+    Timer<EventHandler> m_autoscrollTimer;
+    RenderObject* m_autoscrollRenderer;
+    bool m_autoscrollInProgress;
     bool m_mouseDownMayStartAutoscroll;
     bool m_mouseDownWasInSubframe;
 

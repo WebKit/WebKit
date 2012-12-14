@@ -439,8 +439,6 @@ public:
     bool canBeScrolledAndHasScrollableArea() const;
     virtual bool canBeProgramaticallyScrolled() const;
     virtual void autoscroll();
-    bool canAutoscroll() const;
-    static RenderBox* findAutoscrollable(RenderObject*);
     virtual void stopAutoscroll() { }
     virtual void panScroll(const IntPoint&);
 

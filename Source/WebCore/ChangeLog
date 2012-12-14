@@ -1,3 +1,44 @@
+2012-12-13  Yoshifumi Inoue  <yosin@chromium.org>
+
+        Unreviewed, rolling out r137691.
+        http://trac.webkit.org/changeset/137691
+        https://bugs.webkit.org/show_bug.cgi?id=104764
+
+        panscroll test on AppleWin failed
+
+        * CMakeLists.txt:
+        * GNUmakefile.list.am:
+        * Target.pri:
+        * WebCore.gypi:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * page/AutoscrollController.cpp: Removed.
+        * page/AutoscrollController.h: Removed.
+        * page/EventHandler.cpp:
+        (WebCore):
+        (WebCore::EventHandler::EventHandler):
+        (WebCore::canAutoscroll):
+        (WebCore::EventHandler::handleMouseDraggedEvent):
+        (WebCore::EventHandler::handleMouseReleaseEvent):
+        (WebCore::EventHandler::handleAutoscroll):
+        (WebCore::EventHandler::autoscrollTimerFired):
+        (WebCore::EventHandler::startPanScrolling):
+        (WebCore::EventHandler::updatePanScrollState):
+        (WebCore::EventHandler::autoscrollRenderer):
+        (WebCore::EventHandler::updateAutoscrollRenderer):
+        (WebCore::EventHandler::setAutoscrollRenderer):
+        (WebCore::EventHandler::startAutoscrollTimer):
+        (WebCore::EventHandler::stopAutoscrollTimer):
+        (WebCore::EventHandler::selectCursor):
+        (WebCore::EventHandler::handleMousePressEvent):
+        (WebCore::EventHandler::keyEvent):
+        * page/EventHandler.h:
+        (EventHandler):
+        (WebCore::EventHandler::autoscrollInProgress):
+        * rendering/RenderBox.cpp:
+        * rendering/RenderBox.h:
+        (RenderBox):
+
 2012-12-13  Kentaro Hara  <haraken@chromium.org>
 
         ChildNodesLazySnapshot::nextNode() can crash

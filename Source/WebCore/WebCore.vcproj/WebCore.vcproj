@@ -26798,14 +26798,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\page\AutoscrollController.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\page\AutoscrollController.h"
-				>
-			</File>
-			<File
 				RelativePath="..\page\BarInfo.cpp"
 				>
 			</File>

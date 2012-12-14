@@ -2028,8 +2028,6 @@
             'mathml/MathMLMathElement.h',
             'mathml/MathMLTextElement.cpp',
             'mathml/MathMLTextElement.h',
-            'page/AutoscrollController.cpp',
-            'page/AutoscrollController.h',
             'page/BarInfo.cpp',
             'page/BarInfo.h',
             'page/Chrome.cpp',
