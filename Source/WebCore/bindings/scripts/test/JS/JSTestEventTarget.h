@@ -67,7 +67,7 @@ private:
 protected:
     JSTestEventTarget(JSC::Structure*, JSDOMGlobalObject*, PassRefPtr<TestEventTarget>);
     void finishCreation(JSC::JSGlobalData&);
-    static const unsigned StructureFlags = JSC::OverridesGetPropertyNames | JSC::OverridesGetOwnPropertySlot | JSC::InterceptsGetOwnPropertySlotByIndexEvenWhenLengthIsNotZero | JSC::OverridesVisitChildren | JSC::MasqueradesAsUndefined | Base::StructureFlags;
+    static const unsigned StructureFlags = JSC::OverridesGetPropertyNames | JSC::OverridesGetOwnPropertySlot | JSC::InterceptsGetOwnPropertySlotByIndexEvenWhenLengthIsNotZero | JSC::OverridesVisitChildren | JSC::MasqueradesAsUndefined | JSC::HasImpureGetOwnPropertySlot | Base::StructureFlags;
     static JSC::JSValue indexGetter(JSC::ExecState*, JSC::JSValue, unsigned);
 private:
     static bool canGetItemsForName(JSC::ExecState*, TestEventTarget*, JSC::PropertyName);

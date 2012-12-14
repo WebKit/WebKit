@@ -1,3 +1,12 @@
+2012-12-13  Kentaro Hara  <haraken@chromium.org>
+
+        Unreviewed. Rebaselined run-bindings-tests results.
+
+        * bindings/scripts/test/JS/JSTestCustomNamedGetter.h:
+        (JSTestCustomNamedGetter):
+        * bindings/scripts/test/JS/JSTestEventTarget.h:
+        (JSTestEventTarget):
+
 2012-12-13  Yoshifumi Inoue  <yosin@chromium.org>
 
         Unreviewed, rolling out r137691.
