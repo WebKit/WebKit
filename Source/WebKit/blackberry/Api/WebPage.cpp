@@ -399,7 +399,6 @@ WebPagePrivate::WebPagePrivate(WebPage* webPage, WebPageClient* client, const In
 #endif
 #if ENABLE(FULLSCREEN_API) && ENABLE(VIDEO)
     , m_scaleBeforeFullScreen(-1.0)
-    , m_xScrollOffsetBeforeFullScreen(-1)
 #endif
     , m_currentCursor(Platform::CursorNone)
     , m_dumpRenderTree(0) // Lazy initialization.
@@ -3839,6 +3838,25 @@ void WebPagePrivate::setViewportSize(const IntSize& transformedActualVisibleSize
         m_backingStore->d->resumeBackingStoreUpdates();
     }
 
+#if ENABLE(FULLSCREEN_API) && ENABLE(VIDEO)
+    // When leaving fullscreen mode, restore the scale and scroll position
+    // if needed.
+    // FIXME: The cached values might get imprecise if user have rotated the
+    // device while in fullscreen.
+    if (m_scaleBeforeFullScreen > 0 && !m_fullscreenVideoNode) {
+        // Restore the scale when leaving fullscreen. We can't use TransformationMatrix::scale(double) here,
+        // as it will multiply the scale rather than set the scale.
+        // FIXME: We can refactor this into setCurrentScale(double) if it is useful in the future.
+        m_transformationMatrix->setM11(m_scaleBeforeFullScreen);
+        m_transformationMatrix->setM22(m_scaleBeforeFullScreen);
+        m_scaleBeforeFullScreen = -1.0;
+
+        setScrollPosition(m_scrollPositionBeforeFullScreen);
+        notifyTransformChanged();
+        m_client->scaleChanged();
+    }
+#endif
+
     m_backingStore->d->resumeScreenUpdates(screenResumeOperation);
     m_inputHandler->redrawSpellCheckDialogIfRequired();
 }
@@ -5798,16 +5816,19 @@ void WebPagePrivate::enterFullScreenForElement(Element* element)
         // is so that exitFullScreenForElement() gets called later.
         enterFullscreenForNode(element);
     } else {
-        // When an element goes fullscreen, the viewport size changes and the scroll
-        // position might change. So we keep track of it here, in order to restore it
-        // once element leaves fullscreen.
-        WebCore::IntPoint scrollPosition = m_mainFrame->view()->scrollPosition();
-        m_xScrollOffsetBeforeFullScreen = scrollPosition.x();
+        // At this point, we can assume that there would be a viewport size change if
+        // the current visible size and screen size are not equal.
+        if (transformedActualVisibleSize() != transformedViewportSize()) {
+            // The current scale can be clamped to a greater minimum scale when we relayout contents during
+            // the change of the viewport size. Cache the current scale so that we can restore it when
+            // leaving fullscreen. Otherwise, it is possible that we will use the wrong scale.
+            m_scaleBeforeFullScreen = currentScale();
 
-        // The current scale can be clamped to a greater minimum scale when we relayout contents during
-        // the change of the viewport size. Cache the current scale so that we can restore it when
-        // leaving fullscreen. Otherwise, it is possible that we will use the wrong scale.
-        m_scaleBeforeFullScreen = currentScale();
+            // When an element goes fullscreen, the viewport size changes and the scroll
+            // position might change. So we keep track of it here, in order to restore it
+            // once element leaves fullscreen.
+            m_scrollPositionBeforeFullScreen = m_mainFrame->view()->scrollPosition();
+        }
 
         // No fullscreen video widget has been made available by the Browser
         // chrome, or this is not a video element. The webkitRequestFullScreen
@@ -5829,33 +5850,6 @@ void WebPagePrivate::exitFullScreenForElement(Element* element)
         // The Browser chrome has its own fullscreen video widget.
         exitFullscreenForNode(element);
     } else {
-        // FIXME: Do we really need to suspend/resume both backingstore and screen here?
-        m_backingStore->d->suspendBackingStoreUpdates();
-        m_backingStore->d->suspendScreenUpdates();
-
-        // When leaving fullscreen mode, we need to restore the 'x' scroll position
-        // before fullscreen.
-        // FIXME: We may need to respect 'y' position as well, because the web page always scrolls to
-        // the top when leaving fullscreen mode.
-        WebCore::IntPoint scrollPosition = m_mainFrame->view()->scrollPosition();
-        m_mainFrame->view()->setScrollPosition(
-            WebCore::IntPoint(m_xScrollOffsetBeforeFullScreen, scrollPosition.y()));
-        m_xScrollOffsetBeforeFullScreen = -1;
-
-        if (m_scaleBeforeFullScreen > 0) {
-            // Restore the scale when leaving fullscreen. We can't use TransformationMatrix::scale(double) here, as it
-            // will multiply the scale rather than set the scale.
-            // FIXME: We can refactor this into setCurrentScale(double) if it is useful in the future.
-            m_transformationMatrix->setM11(m_scaleBeforeFullScreen);
-            m_transformationMatrix->setM22(m_scaleBeforeFullScreen);
-            m_scaleBeforeFullScreen = -1.0;
-        }
-
-        notifyTransformChanged();
-        // FIXME: Do we really need to suspend/resume both backingstore and screen here?
-        m_backingStore->d->resumeBackingStoreUpdates();
-        m_backingStore->d->resumeScreenUpdates(BackingStore::RenderAndBlit);
-
         // This is where we would restore the browser's chrome
         // if hidden above.
         client()->fullscreenStop();

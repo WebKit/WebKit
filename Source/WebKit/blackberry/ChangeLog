@@ -1,3 +1,32 @@
+2012-12-13  Jacky Jiang  <zhajiang@rim.com>
+
+        [BlackBerry][Fullscreen] Exiting fullscreen does not set the correct scroll position
+        https://bugs.webkit.org/show_bug.cgi?id=104958
+
+        Reviewed by Antonio Gomes.
+        Internally reviewed by Arvid Nilsson and Max Feil.
+
+        PR: 231174
+        When leaving fullscreen, WebPage scale and scroll position can't return
+        to the original scale and scroll position.
+        We can't restore them in WebPagePrivate::exitFullScreenForElement()
+        as they can still be changed thereafter during the async
+        setViewportSize(). And also the async setViewportSize() from the app
+        side isn't guaranteed as some apps don't need to resize the viewport if
+        their windows are already fullscreen.
+        The restoration is basically only needed if viewport size is changed.
+        At the point of entering fullscreen, we can safely assume that there
+        would be a viewport size change thereafter if the current visible size
+        and screen size are not equal. Based on this assumption, we can save
+        the scale and position before entering fullscreen and restore them in
+        setViewportSize() thereafter.
+
+        * Api/WebPage.cpp:
+        (BlackBerry::WebKit::WebPagePrivate::WebPagePrivate):
+        (BlackBerry::WebKit::WebPagePrivate::setViewportSize):
+        * Api/WebPage_p.h:
+        (WebPagePrivate):
+
 2012-12-13  Yong Li  <yoli@rim.com>
 
         [BlackBerry] Possible JS re-entrancy caused by UI event handler
