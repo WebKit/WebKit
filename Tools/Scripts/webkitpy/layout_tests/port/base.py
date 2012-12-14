@@ -94,13 +94,11 @@ class Port(object):
             return port_name + '-wk2'
         return port_name
 
-    def __init__(self, host, port_name=None, options=None, **kwargs):
+    def __init__(self, host, port_name, options=None, **kwargs):
 
         # This value may be different from cls.port_name by having version modifiers
         # and other fields appended to it (for example, 'qt-arm' or 'mac-wk2').
-
-        # FIXME: port_name should be a required parameter. It isn't yet because lots of tests need to be updatd.
-        self._name = port_name or self.port_name
+        self._name = port_name
 
         # These are default values that should be overridden in a subclasses.
         self._version = ''

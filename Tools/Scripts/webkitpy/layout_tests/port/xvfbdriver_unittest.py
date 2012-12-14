@@ -43,7 +43,7 @@ _log = logging.getLogger(__name__)
 
 class XvfbDriverTest(unittest.TestCase):
     def make_driver(self, worker_number=0, xorg_running=False, executive=None):
-        port = Port(host=MockSystemHost(log_executive=True, executive=executive), options=MockOptions(configuration='Release'))
+        port = Port(MockSystemHost(log_executive=True, executive=executive), 'xvfbdrivertestport', options=MockOptions(configuration='Release'))
         port._config.build_directory = lambda configuration: "/mock-build"
         port._server_process_constructor = MockServerProcess
         if xorg_running:
@@ -118,7 +118,7 @@ class XvfbDriverTest(unittest.TestCase):
 
     def test_stop(self):
         filesystem = MockFileSystem(files={'/tmp/.X42-lock': '1234\n'})
-        port = Port(host=MockSystemHost(log_executive=True, filesystem=filesystem), options=MockOptions(configuration='Release'))
+        port = Port(MockSystemHost(log_executive=True, filesystem=filesystem), 'xvfbdrivertestport', options=MockOptions(configuration='Release'))
         port._executive.kill_process = lambda x: _log.info("MOCK kill_process pid: " + str(x))
         driver = XvfbDriver(port, worker_number=0, pixel_tests=True)
 

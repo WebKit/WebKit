@@ -55,7 +55,7 @@ class TestWebKitPort(Port):
                  **kwargs):
         self.symbols_string = symbols_string  # Passing "" disables all staticly-detectable features.
         host = host or MockSystemHost()
-        super(TestWebKitPort, self).__init__(host=host, **kwargs)
+        super(TestWebKitPort, self).__init__(host, TestWebKitPort.port_name, **kwargs)
 
     def all_test_configurations(self):
         return [self.test_configuration()]

@@ -46,14 +46,14 @@ from webkitpy.layout_tests.port import Port, Driver, DriverOutput
 from webkitpy.layout_tests.port.test import add_unit_tests_to_mock_filesystem, TestPort
 
 class PortTest(unittest.TestCase):
-    def make_port(self, executive=None, with_tests=False, **kwargs):
+    def make_port(self, executive=None, with_tests=False, port_name=None, **kwargs):
         host = MockSystemHost()
         if executive:
             host.executive = executive
         if with_tests:
             add_unit_tests_to_mock_filesystem(host.filesystem)
             return TestPort(host, **kwargs)
-        return Port(host, **kwargs)
+        return Port(host, port_name or 'baseport', **kwargs)
 
     def test_default_child_processes(self):
         port = self.make_port()

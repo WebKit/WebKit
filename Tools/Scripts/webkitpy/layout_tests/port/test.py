@@ -347,6 +347,7 @@ Bug(test) passes/skipped/skip.html [ Skip ]
 
 class TestPort(Port):
     port_name = 'test'
+    default_port_name = 'test-mac-leopard'
 
     """Test implementation of the Port interface."""
     ALL_BASELINE_VARIANTS = (
@@ -358,23 +359,20 @@ class TestPort(Port):
     @classmethod
     def determine_full_port_name(cls, host, options, port_name):
         if port_name == 'test':
-            return 'test-mac-leopard'
+            return TestPort.default_port_name
         return port_name
 
     def __init__(self, host, port_name=None, **kwargs):
-        # FIXME: Consider updating all of the callers to pass in a port_name so it can be a
-        # required parameter like all of the other Port objects.
-        port_name = port_name or 'test-mac-leopard'
-        Port.__init__(self, host, port_name, **kwargs)
+        Port.__init__(self, host, port_name or TestPort.default_port_name, **kwargs)
         self._tests = unit_test_list()
         self._flakes = set()
         self._expectations_path = LAYOUT_TEST_DIR + '/platform/test/TestExpectations'
         self._results_directory = None
 
         self._operating_system = 'mac'
-        if port_name.startswith('test-win'):
+        if self._name.startswith('test-win'):
             self._operating_system = 'win'
-        elif port_name.startswith('test-linux'):
+        elif self._name.startswith('test-linux'):
             self._operating_system = 'linux'
 
         version_map = {
@@ -385,7 +383,7 @@ class TestPort(Port):
             'test-mac-snowleopard': 'snowleopard',
             'test-linux-x86_64': 'lucid',
         }
-        self._version = version_map[port_name]
+        self._version = version_map[self._name]
 
     def default_pixel_tests(self):
         return True
