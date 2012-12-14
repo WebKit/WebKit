@@ -1270,11 +1270,6 @@ ContainerNode* Node::nonShadowBoundaryParentNode() const
     return parent && !parent->isShadowRoot() ? parent : 0;
 }
 
-bool Node::isInShadowTree() const
-{
-    return treeScope() != document();
-}
-
 Element* Node::parentOrHostElement() const
 {
     ContainerNode* parent = parentOrHostNode();
@@ -2100,6 +2095,8 @@ Node::InsertionNotificationRequest Node::insertedInto(ContainerNode* insertionPo
     ASSERT(insertionPoint->inDocument() || isContainerNode());
     if (insertionPoint->inDocument())
         setFlag(InDocumentFlag);
+    if (parentOrHostNode()->isInShadowTree())
+        setFlag(IsInShadowTreeFlag);
     return InsertionDone;
 }
 
@@ -2108,6 +2105,8 @@ void Node::removedFrom(ContainerNode* insertionPoint)
     ASSERT(insertionPoint->inDocument() || isContainerNode());
     if (insertionPoint->inDocument())
         clearFlag(InDocumentFlag);
+    if (isInShadowTree() && !treeScope()->rootNode()->isShadowRoot())
+        clearFlag(IsInShadowTreeFlag);
 }
 
 void Node::didMoveToNewDocument(Document* oldDocument)

@@ -1,3 +1,39 @@
+2012-12-14  Shinya Kawanaka  <shinyak@chromium.org>
+
+        [Shadow DOM] ShadowRoot.getElementById() should work outside document.
+        https://bugs.webkit.org/show_bug.cgi?id=87815
+
+        Reviewed by Hajime Morita.
+
+        ShadowRoot.getElementById() didn't work if ShadowRoot is outside document. We need to update id when an element
+        is in ShadowTree event if it is not in document.
+
+        For performance reason, we introduce IsInShadowTree flag, which enables us to check isInTreeScope() fast.
+        This is maintained in Element::insertedInto and removedFrom. Here, we're anxious about performance regression,
+        however our benchmark result shows this doesn't regress the performance.
+
+        I've measured Dromaeo/dom-modify.html and Parser/html5-full-render.html 2 times.
+
+        Dromaeo/dom-modify.html
+             35.21,   35.27 [runs/s] --->   35.76,   35.56 [runs/s]
+        Parser/html5-full-render.html
+           4328.51, 4254.94 [ms]     ---> 4277.14, 4222.43 [ms]
+
+        Test: fast/dom/shadow/getelementbyid-in-orphan.html
+
+        * dom/Element.cpp:
+        (WebCore::Element::insertedInto):
+        * dom/Element.h:
+        (WebCore::Element::updateId):
+        * dom/Node.cpp:
+        (WebCore::Node::insertedInto): If the parent node is in shadow tree, this node should be also in the same shadow tree.
+        Since this node is inserted, parentOrHostNode() will not be null.
+        (WebCore::Node::removedFrom): When node is removed from ShadowTree, its treeScope() should not be ShadowRoot.
+        * dom/Node.h:
+        (Node):
+        (WebCore::Node::isInShadowTree):
+        (WebCore::Node::isInTreeScope):
+
 2012-12-14  Antoine Quint  <graouts@apple.com>
 
         LayerTreeAgent should only be enabled upon restore if it was previously in the enabled state

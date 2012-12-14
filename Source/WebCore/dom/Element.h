@@ -679,7 +679,7 @@ inline void Element::updateName(const AtomicString& oldName, const AtomicString&
 
 inline void Element::updateId(const AtomicString& oldId, const AtomicString& newId)
 {
-    if (!inDocument())
+    if (!isInTreeScope())
         return;
 
     if (oldId == newId)
@@ -690,7 +690,7 @@ inline void Element::updateId(const AtomicString& oldId, const AtomicString& new
 
 inline void Element::updateId(TreeScope* scope, const AtomicString& oldId, const AtomicString& newId)
 {
-    ASSERT(inDocument());
+    ASSERT(isInTreeScope());
     ASSERT(oldId != newId);
 
     if (!oldId.isEmpty())

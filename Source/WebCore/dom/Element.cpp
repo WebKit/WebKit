@@ -1098,7 +1098,7 @@ Node::InsertionNotificationRequest Element::insertedInto(ContainerNode* insertio
         setContainsFullScreenElementOnAncestorsCrossingFrameBoundaries(true);
 #endif
 
-    if (!insertionPoint->inDocument())
+    if (!insertionPoint->isInTreeScope())
         return InsertionDone;
 
     const AtomicString& idValue = getIdAttribute();
