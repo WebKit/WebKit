@@ -91,7 +91,7 @@ void ShadowRootContentDistributionData::invalidateInsertionPointList()
     m_insertionPointList.clear();
 }
 
-const Vector<InsertionPoint*>& ShadowRootContentDistributionData::ensureInsertionPointList(ShadowRoot* shadowRoot)
+const Vector<RefPtr<InsertionPoint> >& ShadowRootContentDistributionData::ensureInsertionPointList(ShadowRoot* shadowRoot)
 {
     if (m_insertionPointListIsValid)
         return m_insertionPointList;
@@ -155,7 +155,7 @@ ContentDistributor::~ContentDistributor()
 
 InsertionPoint* ContentDistributor::findInsertionPointFor(const Node* key) const
 {
-    return m_nodeToInsertionPoint.get(key);
+    return m_nodeToInsertionPoint.get(key).get();
 }
 
 void ContentDistributor::populate(Node* node, ContentDistribution& pool)
@@ -193,9 +193,9 @@ void ContentDistributor::distribute(Element* host)
     for (ShadowRoot* root = host->youngestShadowRoot(); root; root = root->olderShadowRoot()) {
         HTMLShadowElement* firstActiveShadowInsertionPoint = 0;
 
-        const Vector<InsertionPoint*>& insertionPoints = root->insertionPointList();
+        const Vector<RefPtr<InsertionPoint> >& insertionPoints = root->insertionPointList();
         for (size_t i = 0; i < insertionPoints.size(); ++i) {
-            InsertionPoint* point = insertionPoints[i];
+            InsertionPoint* point = insertionPoints[i].get();
             if (!point->isActive())
                 continue;
 
@@ -235,7 +235,7 @@ bool ContentDistributor::invalidate(Element* host)
 
     for (ShadowRoot* root = host->youngestShadowRoot(); root; root = root->olderShadowRoot()) {
         root->setAssignedTo(0);
-        const Vector<InsertionPoint*>& insertionPoints = root->insertionPointList();
+        const Vector<RefPtr<InsertionPoint> >& insertionPoints = root->insertionPointList();
         for (size_t i = 0; i < insertionPoints.size(); ++i) {
             needsReattach = needsReattach || true;
             insertionPoints[i]->clearDistribution();

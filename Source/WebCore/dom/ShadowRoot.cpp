@@ -328,9 +328,9 @@ void ShadowRoot::childrenChanged(bool changedByParser, Node* beforeChange, Node*
     owner()->invalidateDistribution();
 }
 
-const Vector<InsertionPoint*>& ShadowRoot::insertionPointList()
+const Vector<RefPtr<InsertionPoint> >& ShadowRoot::insertionPointList()
 {
-    typedef Vector<InsertionPoint*> InsertionPointVector;
+    typedef Vector<RefPtr<InsertionPoint> > InsertionPointVector;
     DEFINE_STATIC_LOCAL(InsertionPointVector, emptyVector, ());
 
     return distributionData() ? distributionData()->ensureInsertionPointList(this) : emptyVector;

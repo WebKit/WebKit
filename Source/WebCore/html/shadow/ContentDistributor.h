@@ -88,7 +88,7 @@ public:
     bool hasElementShadowChildren() const { return m_numberOfElementShadowChildren > 0; }
 
     void invalidateInsertionPointList();
-    const Vector<InsertionPoint*>& ensureInsertionPointList(ShadowRoot*);
+    const Vector<RefPtr<InsertionPoint> >& ensureInsertionPointList(ShadowRoot*);
 
 private:
     InsertionPoint* m_insertionPointAssignedTo;
@@ -96,7 +96,7 @@ private:
     unsigned m_numberOfContentElementChildren;
     unsigned m_numberOfElementShadowChildren;
     bool m_insertionPointListIsValid;
-    Vector<InsertionPoint*> m_insertionPointList;
+    Vector<RefPtr<InsertionPoint> > m_insertionPointList;
 };
 
 class ContentDistributor {
@@ -129,7 +129,7 @@ public:
 private:
     void populate(Node*, ContentDistribution&);
 
-    HashMap<const Node*, InsertionPoint*> m_nodeToInsertionPoint;
+    HashMap<const Node*, RefPtr<InsertionPoint> > m_nodeToInsertionPoint;
     unsigned m_validity : 2;
 };
 

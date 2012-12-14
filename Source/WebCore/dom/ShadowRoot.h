@@ -102,7 +102,7 @@ public:
     bool hasElementShadow() const;
     unsigned countElementShadow() const;
 
-    const Vector<InsertionPoint*>& insertionPointList();
+    const Vector<RefPtr<InsertionPoint> >& insertionPointList();
 
     virtual void registerScopedHTMLStyleChild() OVERRIDE;
     virtual void unregisterScopedHTMLStyleChild() OVERRIDE;
