@@ -36,7 +36,6 @@ enum AddRuleFlags {
     RuleHasDocumentSecurityOrigin = 1,
     RuleCanUseFastCheckSelector   = 1 << 1,
     RuleIsInRegionRule            = 1 << 2,
-    RuleIsHostRule                = 1 << 3,
 };
 
 class CSSSelector;
@@ -63,7 +62,6 @@ public:
     unsigned linkMatchType() const { return m_linkMatchType; }
     bool hasDocumentSecurityOrigin() const { return m_hasDocumentSecurityOrigin; }
     bool isInRegionRule() const { return m_isInRegionRule; }
-    void increaseSpecificity(unsigned value) { m_specificity += value; }
 
     // Try to balance between memory usage (there can be lots of RuleData objects) and good filtering performance.
     static const unsigned maximumIdentifierCount = 4;

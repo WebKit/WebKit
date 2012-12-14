@@ -1,3 +1,41 @@
+2012-12-13  Takashi Sakamoto  <tasak@google.com>
+
+        [Shadow DOM]: scoped styles are not applied in the cascade order.
+        https://bugs.webkit.org/show_bug.cgi?id=103239
+
+        Reviewed by Dimitri Glazkov.
+
+        If the scoping elements of two declarations have an ancestor/
+        descendant relationship, the declaration whose scoping element is
+        the descendant should win.
+        c.f. http://dev.w3.org/csswg/css3-cascade/#cascade
+
+        Test: fast/css/style-scoped/style-scoped-nested.html
+              fast/css/style-scoped/style-scoped-with-important-rule.html
+
+        * css/RuleSet.cpp:
+        (WebCore::RuleSet::addRule):
+        Removed specificity for @host @-rules. Now @host @-rules use the
+        cascading order instead.
+        * css/RuleSet.h:
+        Removed increaseSpecificity. The method is used by only @host @-rules.
+        * css/StyleResolver.cpp:
+        (WebCore::StyleResolver::matchScopedAuthorRules):
+        (WebCore::StyleResolver::matchHostRules):
+        (WebCore::StyleResolver::matchAuthorRules):
+        Modified to invoke sortAndTransferMatchedRules per scoping element.
+        The order of "matchXXXRules" must be the same as the cascading order.
+        So matchHostRules was invoked after collecting all scoped author rules.
+        * css/StyleScopeResolver.cpp:
+        (WebCore::StyleScopeResolver::addHostRule):
+        Removed RuleIsHostRule. We don't need the flag.
+        * html/HTMLStyleElement.cpp:
+        (WebCore::HTMLStyleElement::registerWithScopingNode):
+        Needs to pass the last test case of style-scoped-nested.html.
+        When appending some style element to a shadow root, we should recalc
+        styles of all elements in the shadow dom tree. And if the style
+        element has @host @-rules, we have to update the host's style.
+
 2012-12-13  Filip Pizlo  <fpizlo@apple.com>
 
         MediaPlayerPrivateAVFoundation::m_inbandTrackConfigurationPending is unused except when HAVE(AVFOUNDATION_TEXT_TRACK_SUPPORT)

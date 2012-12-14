@@ -183,7 +183,7 @@ void StyleScopeResolver::addHostRule(StyleRuleHost* hostRule, bool hasDocumentSe
 
     const Vector<RefPtr<StyleRuleBase> >& childRules = hostRule->childRules();
     AddRuleFlags addRuleFlags = hasDocumentSecurityOrigin ? RuleHasDocumentSecurityOrigin : RuleHasNoSpecialState;
-    addRuleFlags = static_cast<AddRuleFlags>(addRuleFlags | RuleCanUseFastCheckSelector | RuleIsHostRule);
+    addRuleFlags = static_cast<AddRuleFlags>(addRuleFlags | RuleCanUseFastCheckSelector);
     for (unsigned i = 0; i < childRules.size(); ++i) {
         StyleRuleBase* hostStylingRule = childRules[i].get();
         if (hostStylingRule->isStyleRule())

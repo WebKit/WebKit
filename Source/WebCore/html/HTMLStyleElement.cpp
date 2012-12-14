@@ -140,9 +140,11 @@ void HTMLStyleElement::registerWithScopingNode(bool scoped)
         ASSERT_NOT_REACHED();
         return;
     }
-
     scope->registerScopedHTMLStyleChild();
-    scope->setNeedsStyleRecalc();
+    if (scope->isShadowRoot())
+        scope->shadowHost()->setNeedsStyleRecalc();
+    else
+        scope->setNeedsStyleRecalc();
     if (inDocument() && !document()->parsing() && document()->renderer())
         document()->styleResolverChanged(DeferRecalcStyle);
 

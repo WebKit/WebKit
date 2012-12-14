@@ -1,0 +1,17 @@
+Test whether scoped styles are applied in the cascade order or not.
+If this test passes, rules which are declared in descendant scoping element are applied to a target element.
+c.f. https://bugs.webkit.org/show_bug.cgi?id=103239
+Only document.style is applied to the target.
+PASS window.getComputedStyle(target).color is "rgb(255, 0, 0)"
+A new scoped style is inserted into the grandparent node of the target. A class rule in the inserted scoped style wins an id rule in document.style.
+PASS window.getComputedStyle(target).color is "rgb(255, 255, 0)"
+A new scoped style is inserted into the parent node of the target. A tag rule in the inserted scoped style wins an id rule and a class rule in existing styles.
+PASS window.getComputedStyle(target).color is "rgb(0, 0, 255)"
+Test a span in some shadow dom tree. Since the span's host node is the above target, we have to see all inserted scoped styles and an author style to find whether the styles have any matched rules or not.
+PASS window.getComputedStyle(targetInShadow).color is "rgb(0, 0, 255)"
+Append a new style element to the shadow root. The style's scoping element is the shadow root. Rules in the style should override other rules in ascendant (scoped) styles.
+PASS window.getComputedStyle(targetInShadow).color is "rgb(0, 255, 0)"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

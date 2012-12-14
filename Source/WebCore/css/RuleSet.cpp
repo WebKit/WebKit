@@ -191,10 +191,6 @@ void RuleSet::addToRuleSet(AtomicStringImpl* key, AtomRuleMap& map, const RuleDa
 void RuleSet::addRule(StyleRule* rule, unsigned selectorIndex, AddRuleFlags addRuleFlags)
 {
     RuleData ruleData(rule, selectorIndex, m_ruleCount++, addRuleFlags);
-    static const unsigned athostRuleSpecificity = 0x100000;
-
-    if (addRuleFlags & RuleIsHostRule)
-        ruleData.increaseSpecificity(athostRuleSpecificity);
 
     collectFeaturesFromRuleData(m_features, ruleData);
 

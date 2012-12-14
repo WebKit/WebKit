@@ -726,34 +726,33 @@ void StyleResolver::matchScopedAuthorRules(MatchResult& result, bool includeEmpt
     if (!m_scopeResolver)
         return;
 
-    matchHostRules(result, includeEmptyRules);
-
-    if (!m_scopeResolver->hasScopedStyles())
-        return;
-
     // Match scoped author rules by traversing the scoped element stack (rebuild it if it got inconsistent).
-    if (!m_scopeResolver->ensureStackConsistency(m_element))
-        return;
+    if (m_scopeResolver->hasScopedStyles() && m_scopeResolver->ensureStackConsistency(m_element)) {
+        bool applyAuthorStyles = m_element->treeScope()->applyAuthorStyles();
+        bool documentScope = true;
+        unsigned scopeSize = m_scopeResolver->stackSize();
+        for (unsigned i = 0; i < scopeSize; ++i) {
+            m_matchedRules.clear();
+            result.ranges.lastAuthorRule = result.matchedProperties.size() - 1;
 
-    bool applyAuthorStyles = m_element->treeScope()->applyAuthorStyles();
-    bool documentScope = true;
-    unsigned scopeSize = m_scopeResolver->stackSize();
-    for (unsigned i = 0; i < scopeSize; ++i) {
-        const StyleScopeResolver::StackFrame& frame = m_scopeResolver->stackFrameAt(i);
-        documentScope = documentScope && !frame.m_scope->isInShadowTree();
-        if (documentScope) {
-            if (!applyAuthorStyles)
-                continue;
-        } else {
-            if (!m_scopeResolver->matchesStyleBounds(frame))
-                continue;
+            const StyleScopeResolver::StackFrame& frame = m_scopeResolver->stackFrameAt(i);
+            documentScope = documentScope && !frame.m_scope->isInShadowTree();
+            if (documentScope) {
+                if (!applyAuthorStyles)
+                    continue;
+            } else {
+                if (!m_scopeResolver->matchesStyleBounds(frame))
+                    continue;
+            }
+
+            MatchOptions options(includeEmptyRules, frame.m_scope);
+            collectMatchingRules(frame.m_ruleSet, result.ranges.firstAuthorRule, result.ranges.lastAuthorRule, options);
+            collectMatchingRulesForRegion(frame.m_ruleSet, result.ranges.firstAuthorRule, result.ranges.lastAuthorRule, options);
+            sortAndTransferMatchedRules(result);
         }
-           
-        MatchOptions options(includeEmptyRules, frame.m_scope);
-        collectMatchingRules(frame.m_ruleSet, result.ranges.firstAuthorRule, result.ranges.lastAuthorRule, options);
-        collectMatchingRulesForRegion(frame.m_ruleSet, result.ranges.firstAuthorRule, result.ranges.lastAuthorRule, options);
     }
 
+    matchHostRules(result, includeEmptyRules);
 #else
     UNUSED_PARAM(result);
     UNUSED_PARAM(includeEmptyRules);
@@ -774,15 +773,18 @@ void StyleResolver::matchHostRules(MatchResult& result, bool includeEmptyRules)
 #if ENABLE(SHADOW_DOM)
     ASSERT(m_scopeResolver);
 
+    m_matchedRules.clear();
+    result.ranges.lastAuthorRule = result.matchedProperties.size() - 1;
+
     Vector<RuleSet*> matchedRules;
     m_scopeResolver->matchHostRules(m_element, matchedRules);
     if (matchedRules.isEmpty())
         return;
 
-    MatchOptions options(includeEmptyRules);
-    options.scope = m_element;
+    MatchOptions options(includeEmptyRules, m_element);
     for (unsigned i = matchedRules.size(); i > 0; --i)
         collectMatchingRules(matchedRules.at(i-1), result.ranges.firstAuthorRule, result.ranges.lastAuthorRule, options);
+    sortAndTransferMatchedRules(result);
 #else
     UNUSED_PARAM(result);
     UNUSED_PARAM(includeEmptyRules);
@@ -801,10 +803,9 @@ void StyleResolver::matchAuthorRules(MatchResult& result, bool includeEmptyRules
     MatchOptions options(includeEmptyRules);
     collectMatchingRules(m_authorStyle.get(), result.ranges.firstAuthorRule, result.ranges.lastAuthorRule, options);
     collectMatchingRulesForRegion(m_authorStyle.get(), result.ranges.firstAuthorRule, result.ranges.lastAuthorRule, options);
+    sortAndTransferMatchedRules(result);
 
     matchScopedAuthorRules(result, includeEmptyRules);
-
-    sortAndTransferMatchedRules(result);
 }
 
 void StyleResolver::matchUserRules(MatchResult& result, bool includeEmptyRules)

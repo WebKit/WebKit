@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+span { border-color: lime ! important; }
+div { border-color: orange; }
+div#id2 { border-color: yellow; }
+</style>
+<script src="../../js/resources/js-test-pre.js"></script>
+<script src="../../dom/shadow/resources/polyfill.js"></script>
+</head>
+<body>
+<div>
+  <style scoped>
+      div { border-color: green ! important; }
+      div { border-color: red; }
+      div#id2 {border-color: purple; }
+  </style>
+  <div>
+    <style scoped>
+        div { border-color: blue; }
+    </style>
+    <div id="id1"></div>
+  </div>
+  <div>
+    <style scoped>
+        div#id2 { border-color: blue; }
+    </style>
+    <div id="id2"></div>
+  </div>
+  <div>
+    <style scoped>
+        div { border-color: blue; }
+    </style>
+    <div id="id3" style="border-color: red;"></div>
+  </div>
+  <div>
+    <style scoped>
+      div { border-color: blue !important; }
+    </style>
+    <div id="id4"></div>
+  </div>
+  <div id="host1">Shadow Host</div>
+</div>
+<div>
+  <style scoped>
+      span#id5 { border-color: blue; }
+  </style>
+  <span id="id5"></span>
+</div>
+<div>
+  <style scoped>
+      span { border-color: blue !important; }
+  </style>
+  <span id="id6"></span>
+</div>
+<div>
+  <style scoped>
+      div { border-color: red;}
+  </style>
+  <div id="host2">Shadow Host</div>
+</div>
+</body>
+<script>
+description("Test that rules in an inner scoped stylesheet don't override !important rules declared in an outer scoped stylesheet.");
+
+var target1 = document.getElementById("id1");
+debug("Case1: The target element has any matched important rule declared in an outer scoped stylesheet, and the element also has any matched normal rule declared in an inner scoped stylesheet.");
+shouldBe('getComputedStyle(target1).borderColor', '"rgb(0, 128, 0)"');
+
+debug("Case2: The target element has any matched important rule declared in an outer scoped stylesheet, and the element also has a matched normal ID rule declared in an inner scoped stylesheet.");
+var target2 = document.getElementById("id2");
+shouldBe('getComputedStyle(target2).borderColor', '"rgb(0, 128, 0)"');
+
+debug("Case3: The target element has any matched important rule declared in an outer scoped stylesheet, and the element also has matched normal rules declared in an inner scoped stylesheet and in a STYLE attribute.");
+var target3 = document.getElementById("id3");
+shouldBe('getComputedStyle(target3).borderColor', '"rgb(0, 128, 0)"');
+
+debug("Case4: The target element has matched important rules. One is declared in an outer scoped stylesheet and the other is declared in an inner scoped stylesheet.");
+var target4 = document.getElementById("id4");
+shouldBe('getComputedStyle(target4).borderColor', '"rgb(0, 0, 255)"');
+
+debug("Case5: The target element has any matched important rule declared in an author stylesheet, and the element also has matched normal rules declared in an inner scoped stylesheet.");
+var target5 = document.getElementById("id5");
+shouldBe('getComputedStyle(target5).borderColor', '"rgb(0, 255, 0)"');
+
+debug("Case6: The target element has matched important rules. One is declared in an author stylesheet (not scoped) and the other is declared in a scoped stylesheet.");
+var target6 = document.getElementById("id6");
+shouldBe('getComputedStyle(target6).borderColor', '"rgb(0, 0, 255)"');
+
+debug("Case7: The target element has any matched important rule declared in an outer scoped stylesheet. The element is in a shadow dom tree whose shadow root has apply-author-styles true. The shadow dom tree has any other normal rules which match the element.");
+var host1 = document.getElementById("host1");
+var shadowRoot1 = host1.webkitCreateShadowRoot();
+shadowRoot1.applyAuthorStyles = true;
+shadowRoot1.innerHTML = '<style>div#shadow1 { color: blue; }</style><div id="shadow1"></div>';
+var target7 = shadowRoot1.getElementById("shadow1");
+shouldBe('getComputedStyle(target7).borderColor', '"rgb(0, 128, 0)"');
+
+debug("Case8: The target element in a shadow dom tree has any matched important rule declared in an outer scoped stylesheet in an enclosing shadow dom tree. The target element's shadow root has apply-author-styles true.");
+var host2 = document.getElementById("host2");
+var shadowRoot2 = host2.webkitCreateShadowRoot();
+shadowRoot2.applyAuthorStyles = false;
+shadowRoot2.innerHTML = '<style>div { border-color: green !important; }</style><div id="shadow2"></div>';
+
+var hostInShadowTree2 = shadowRoot2.getElementById("shadow2");
+var shadowRoot3 = hostInShadowTree2.webkitCreateShadowRoot();
+shadowRoot3.applyAuthorStyles = true;
+shadowRoot3.innerHTML = '<style>div#shadow3 { border-color: blue; }</style><div id="shadow3"></div>';
+var target8 = shadowRoot3.getElementById("shadow3");
+shouldBe('getComputedStyle(target8).borderColor', '"rgb(0, 128, 0)"');
+
+debug("Case8': The target element is in a shadow dom tree. An enclosing shadow dom tree has some stylesheet which declares an important rule. The target element's shadow root has apply-author-styles false.");
+shadowRoot3.applyAuthorStyles = false;
+shouldBe('getComputedStyle(target8).borderColor', '"rgb(0, 0, 255)"');
+
+</script>
+<script src="../../js/resources/js-test-post.js"></script>
+</html>
