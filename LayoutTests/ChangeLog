@@ -1,3 +1,9 @@
+2012-12-14  Kentaro Hara  <haraken@chromium.org>
+
+        Unreviewed. Marked fast/css/variables/case-insensitive.html as [ Pass Crash ]
+
+        * platform/chromium/TestExpectations:
+
 2012-12-14  Kunihiko Sakamoto  <ksakamoto@chromium.org>
 
         Hours field of date/time input UI should respect step attribute
