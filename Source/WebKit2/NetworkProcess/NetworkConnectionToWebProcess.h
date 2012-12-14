@@ -28,6 +28,7 @@
 
 #if ENABLE(NETWORK_PROCESS)
 
+#include "BlockingResponseMap.h"
 #include "Connection.h"
 #include "NetworkConnectionToWebProcessMessages.h"
 #include <WebCore/ResourceLoadPriority.h>
@@ -60,6 +61,9 @@ public:
     void unregisterObserver(NetworkConnectionToWebProcessObserver*);
 
     bool isSerialLoadingEnabled() const { return m_serialLoadingEnabled; }
+
+    BlockingResponseMap<WebCore::ResourceRequest*>& willSendRequestResponseMap() { return m_willSendRequestResponseMap; }
+    BlockingBoolResponseMap& canAuthenticateAgainstProtectionSpaceResponseMap() { return m_canAuthenticateAgainstProtectionSpaceResponseMap; }
 
 private:
     NetworkConnectionToWebProcess(CoreIPC::Connection::Identifier);
@@ -95,7 +99,10 @@ private:
     RefPtr<CoreIPC::Connection> m_connection;
     
     HashSet<NetworkConnectionToWebProcessObserver*> m_observers;
-    
+
+    BlockingResponseMap<WebCore::ResourceRequest*> m_willSendRequestResponseMap;
+    BlockingBoolResponseMap m_canAuthenticateAgainstProtectionSpaceResponseMap;
+
     bool m_serialLoadingEnabled;
 };
 

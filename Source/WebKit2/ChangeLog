@@ -1,3 +1,45 @@
+2012-12-14  Alexey Proskuryakov  <ap@apple.com>
+
+        <rdar://problem/12874760> NetworkProcess loads may get stuck when WebProcess quits
+        https://bugs.webkit.org/show_bug.cgi?id=105056
+
+        Reviewed by Anders Carlsson.
+
+        Make response maps per-connection.
+
+        * NetworkProcess/NetworkConnectionToWebProcess.cpp:
+        (WebKit::NetworkConnectionToWebProcess::didClose): Cancel waiting for responses
+        from WebProcess, they will never arrive.
+
+        * NetworkProcess/NetworkConnectionToWebProcess.h:
+        (WebKit::NetworkConnectionToWebProcess::willSendRequestResponseMap):
+        (WebKit::NetworkConnectionToWebProcess::canAuthenticateAgainstProtectionSpaceResponseMap):
+        Maps now live here.
+
+        * NetworkProcess/NetworkResourceLoader.cpp:
+        (WebKit::NetworkResourceLoader::connectionToWebProcessDidClose): Added a FIXME.
+
+        (WebKit::NetworkResourceLoader::willSendRequest):
+        (WebKit::NetworkResourceLoader::willSendRequestHandled):
+        (WebKit::NetworkResourceLoader::canAuthenticateAgainstProtectionSpace):
+        (WebKit::NetworkResourceLoader::canAuthenticateAgainstProtectionSpaceHandled):
+        Handle the cases where we can't send a request, or can't expect a response any more.
+
+        * Shared/BlockingResponseMap.h:
+        (BlockingResponseMap):
+        (BlockingResponseMap::BlockingResponseMap):
+        (BlockingResponseMap::~BlockingResponseMap):
+        (BlockingResponseMap::waitForResponse):
+        (BlockingResponseMap::didReceiveResponse):
+        (BlockingResponseMap::cancel):
+        (BlockingBoolResponseMap):
+        (BlockingBoolResponseMap::BlockingBoolResponseMap):
+        (BlockingBoolResponseMap::~BlockingBoolResponseMap):
+        (BlockingBoolResponseMap::waitForResponse):
+        (BlockingBoolResponseMap::didReceiveResponse):
+        (BlockingBoolResponseMap::cancel):
+        Added an ability to cancel, and slightly beefed up overall.
+
 2012-12-14  Anders Carlsson  <andersca@apple.com>
 
         DownloadProxyMap should keep track of outstanding DownloadProxy objects

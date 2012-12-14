@@ -102,9 +102,10 @@ void NetworkConnectionToWebProcess::didClose(CoreIPC::Connection*)
     RefPtr<NetworkConnectionToWebProcess> protector(this);
     
     NetworkProcess::shared().removeNetworkConnectionToWebProcess(this);
-    
-    // FIXME (NetworkProcess): We might consider actively clearing out all requests for this connection.
-    // But that might not be necessary as the observer mechanism used above is much more direct.
+
+    // Unblock waiting threads.
+    m_willSendRequestResponseMap.cancel();
+    m_canAuthenticateAgainstProtectionSpaceResponseMap.cancel();
 
     Vector<NetworkConnectionToWebProcessObserver*> observers;
     copyToVector(m_observers, observers);
