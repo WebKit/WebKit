@@ -1,3 +1,31 @@
+2012-12-13  Bear Travis  <betravis@adobe.com>
+
+        Positioned replaced elements should resolve vertical margins against their containing
+        block's logical width
+        https://bugs.webkit.org/show_bug.cgi?id=103579
+
+        Reviewed by Emil A Eklund.
+
+        According to the CSS box model & writing modes specifications, percentage margin
+        & padding values, including top & bottom, should be resolved based on the
+        containing block's logical width (logical with respect to the containing block's
+        writing mode).
+        http://www.w3.org/TR/CSS2/box.html#margin-properties
+        http://dev.w3.org/csswg/css3-writing-modes/#dimension-mapping
+
+        Previously, a positioned replaced element resolved margin before/after relative to
+        its inline direction (containerLogicalHeight), and margin start/end relative to
+        its block direction (containerLogicalWidth). This patch measures the container's
+        logical width in its own inline direction (containerRelativeLogicalWidth) to
+        resolve all margin percentage values.
+
+        Test: fast/writing-mode/percentage-margins-absolute-replaced.html
+
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::computePositionedLogicalWidthReplaced): Calculate the logical
+        width of the container, and use it to calculate margins.
+        (WebCore::RenderBox::computePositionedLogicalHeightReplaced): Ditto.
+
 2012-12-13  Yoshifumi Inoue  <yosin@chromium.org>
 
         Handling autoscroll in EventHandler should be re-factor
