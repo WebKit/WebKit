@@ -27,6 +27,7 @@
 #include "WebContext.h"
 
 #include "DownloadProxy.h"
+#include "DownloadProxyMap.h"
 #include "DownloadProxyMessages.h"
 #include "ImmutableArray.h"
 #include "Logging.h"
@@ -835,7 +836,7 @@ void WebContext::addVisitedLinkHash(LinkHash linkHash)
 
 DownloadProxy* WebContext::createDownloadProxy()
 {
-    RefPtr<DownloadProxy> downloadProxy = DownloadProxy::create(this);
+    RefPtr<DownloadProxy> downloadProxy = DownloadProxyMap::shared().createDownloadProxy(this);
     m_downloads.set(downloadProxy->downloadID(), downloadProxy);
     addMessageReceiver(Messages::DownloadProxy::messageReceiverName(), downloadProxy->downloadID(), this);
     return downloadProxy.get();

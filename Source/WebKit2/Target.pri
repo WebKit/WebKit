@@ -575,6 +575,7 @@ SOURCES += \
     UIProcess/CoordinatedGraphics/LayerTreeRenderer.cpp \
     UIProcess/DefaultUndoController.cpp \
     UIProcess/Downloads/DownloadProxy.cpp \
+    UIProcess/Downloads/DownloadProxyMap.cpp \
     UIProcess/DrawingAreaProxy.cpp \
     UIProcess/DrawingAreaProxyImpl.cpp \
     UIProcess/FindIndicator.cpp \

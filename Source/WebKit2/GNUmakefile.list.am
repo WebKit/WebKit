@@ -775,6 +775,8 @@ webkit2_sources += \
 	Source/WebKit2/UIProcess/BackingStore.h \
 	Source/WebKit2/UIProcess/Downloads/DownloadProxy.cpp \
 	Source/WebKit2/UIProcess/Downloads/DownloadProxy.h \
+	Source/WebKit2/UIProcess/Downloads/DownloadProxyMap.cpp \
+	Source/WebKit2/UIProcess/Downloads/DownloadProxyMap.h \
 	Source/WebKit2/UIProcess/DrawingAreaProxy.cpp \
 	Source/WebKit2/UIProcess/DrawingAreaProxy.h \
 	Source/WebKit2/UIProcess/DrawingAreaProxyImpl.cpp \

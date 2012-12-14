@@ -1,5 +1,32 @@
 2012-12-14  Anders Carlsson  <andersca@apple.com>
 
+        Add a DownloadsProxyMap class in preparation for moving the downloads map away from WebContext
+        https://bugs.webkit.org/show_bug.cgi?id=104980
+
+        Reviewed by Andreas Kling.
+
+        Currently the DownloadProxyMap doesn't really do anything; this initial change is to make sure that
+        adding the new files won't break any builds.
+
+        * CMakeLists.txt:
+        * GNUmakefile.list.am:
+        * Target.pri:
+        * UIProcess/Downloads/DownloadProxyMap.cpp: Added.
+        (WebKit):
+        (WebKit::DownloadProxyMap::shared):
+        (WebKit::DownloadProxyMap::DownloadProxyMap):
+        (WebKit::DownloadProxyMap::~DownloadProxyMap):
+        (WebKit::DownloadProxyMap::createDownloadProxy):
+        * UIProcess/Downloads/DownloadProxyMap.h: Added.
+        (WebKit):
+        (DownloadProxyMap):
+        * UIProcess/WebContext.cpp:
+        (WebKit::WebContext::createDownloadProxy):
+        * WebKit2.xcodeproj/project.pbxproj:
+        * win/WebKit2.vcproj:
+
+2012-12-14  Anders Carlsson  <andersca@apple.com>
+
         Fix assertion failure when the network process is enabled
         https://bugs.webkit.org/show_bug.cgi?id=105040
         <rdar://problem/12883632>

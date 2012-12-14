@@ -243,6 +243,8 @@
 		1AC86FF4130B46D3002C1257 /* WKPluginSiteDataManager.h in Headers */ = {isa = PBXBuildFile; fileRef = 1AC86FF2130B46D3002C1257 /* WKPluginSiteDataManager.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		1AC8702D130B49A2002C1257 /* WebPluginSiteDataManager.h in Headers */ = {isa = PBXBuildFile; fileRef = 1AC8702B130B49A2002C1257 /* WebPluginSiteDataManager.h */; };
 		1AC8702E130B49A2002C1257 /* WebPluginSiteDataManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1AC8702C130B49A2002C1257 /* WebPluginSiteDataManager.cpp */; };
+		1AD25E95167AB08100EA9BCD /* DownloadProxyMap.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1AD25E93167AB08100EA9BCD /* DownloadProxyMap.cpp */; };
+		1AD25E96167AB08100EA9BCD /* DownloadProxyMap.h in Headers */ = {isa = PBXBuildFile; fileRef = 1AD25E94167AB08100EA9BCD /* DownloadProxyMap.h */; };
 		1AE117F611DBB30900981615 /* ProcessLauncher.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1AE117F511DBB30900981615 /* ProcessLauncher.cpp */; };
 		1AE4976811FF658E0048B464 /* NPJSObject.h in Headers */ = {isa = PBXBuildFile; fileRef = 1AE4976611FF658E0048B464 /* NPJSObject.h */; };
 		1AE4976911FF658E0048B464 /* NPJSObject.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1AE4976711FF658E0048B464 /* NPJSObject.cpp */; };
@@ -1459,6 +1461,8 @@
 		1AC86FF2130B46D3002C1257 /* WKPluginSiteDataManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKPluginSiteDataManager.h; sourceTree = "<group>"; };
 		1AC8702B130B49A2002C1257 /* WebPluginSiteDataManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebPluginSiteDataManager.h; sourceTree = "<group>"; };
 		1AC8702C130B49A2002C1257 /* WebPluginSiteDataManager.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebPluginSiteDataManager.cpp; sourceTree = "<group>"; };
+		1AD25E93167AB08100EA9BCD /* DownloadProxyMap.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DownloadProxyMap.cpp; sourceTree = "<group>"; };
+		1AD25E94167AB08100EA9BCD /* DownloadProxyMap.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DownloadProxyMap.h; sourceTree = "<group>"; };
 		1AE117F511DBB30900981615 /* ProcessLauncher.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ProcessLauncher.cpp; sourceTree = "<group>"; };
 		1AE4976611FF658E0048B464 /* NPJSObject.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NPJSObject.h; sourceTree = "<group>"; };
 		1AE4976711FF658E0048B464 /* NPJSObject.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = NPJSObject.cpp; sourceTree = "<group>"; };
@@ -2975,6 +2979,8 @@
 				1AB7D4C91288AAA700CFD08C /* DownloadProxy.cpp */,
 				1AB7D4C81288AAA700CFD08C /* DownloadProxy.h */,
 				1AB7D5E91288B8C000CFD08C /* DownloadProxy.messages.in */,
+				1AD25E93167AB08100EA9BCD /* DownloadProxyMap.cpp */,
+				1AD25E94167AB08100EA9BCD /* DownloadProxyMap.h */,
 			);
 			path = Downloads;
 			sourceTree = "<group>";
@@ -5016,6 +5022,7 @@
 				E1513C67166EABB200149FCB /* ChildProcessProxy.h in Headers */,
 				31A67E0D165B2A99006CBA66 /* PlugInAutoStartProvider.h in Headers */,
 				31D5929F166E060000E6BF02 /* WebPlugInClient.h in Headers */,
+				1AD25E96167AB08100EA9BCD /* DownloadProxyMap.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -5972,6 +5979,7 @@
 				E1513C66166EABB200149FCB /* ChildProcessProxy.cpp in Sources */,
 				31A67E0C165B2A99006CBA66 /* PlugInAutoStartProvider.cpp in Sources */,
 				31D5929E166E060000E6BF02 /* WebPlugInClient.cpp in Sources */,
+				1AD25E95167AB08100EA9BCD /* DownloadProxyMap.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

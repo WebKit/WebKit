@@ -3790,6 +3790,14 @@
 					>
 				</File>
 				<File
+					RelativePath="..\UIProcess\Downloads\DownloadProxyMap.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\UIProcess\Downloads\DownloadProxyMap.h"
+					>
+				</File>
+				<File
 					RelativePath="..\UIProcess\Downloads\DownloadProxy.messages.in"
 					>
 				</File>

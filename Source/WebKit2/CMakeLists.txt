@@ -352,6 +352,7 @@ set(WebKit2_SOURCES
     UIProcess/CoordinatedGraphics/LayerTreeRenderer.cpp
 
     UIProcess/Downloads/DownloadProxy.cpp
+    UIProcess/Downloads/DownloadProxyMap.cpp
 
     UIProcess/InspectorServer/WebInspectorServer.cpp
     UIProcess/InspectorServer/WebSocketServer.cpp
