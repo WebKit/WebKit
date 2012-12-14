@@ -120,7 +120,7 @@ String WebPlatformStrategies::cookiesForDOM(NetworkingContext* context, const KU
 #if ENABLE(NETWORK_PROCESS)
     if (WebProcess::shared().usesNetworkProcess()) {
         String result;
-        if (!WebProcess::shared().networkConnection()->connection()->sendSync(Messages::NetworkConnectionToWebProcess::CookiesForDOM(context->inPrivateBrowsingMode(), firstParty, url), Messages::NetworkConnectionToWebProcess::CookiesForDOM::Reply(result), 0))
+        if (!WebProcess::shared().networkConnection()->connection()->sendSync(Messages::NetworkConnectionToWebProcess::CookiesForDOM(context && context->inPrivateBrowsingMode(), firstParty, url), Messages::NetworkConnectionToWebProcess::CookiesForDOM::Reply(result), 0))
             return String();
         return result;
     }
@@ -133,7 +133,7 @@ void WebPlatformStrategies::setCookiesFromDOM(NetworkingContext* context, const 
 {
 #if ENABLE(NETWORK_PROCESS)
     if (WebProcess::shared().usesNetworkProcess()) {
-        WebProcess::shared().networkConnection()->connection()->send(Messages::NetworkConnectionToWebProcess::SetCookiesFromDOM(context->inPrivateBrowsingMode(), firstParty, url, cookieString), 0);
+        WebProcess::shared().networkConnection()->connection()->send(Messages::NetworkConnectionToWebProcess::SetCookiesFromDOM(context && context->inPrivateBrowsingMode(), firstParty, url, cookieString), 0);
         return;
     }
 #endif
@@ -146,7 +146,7 @@ bool WebPlatformStrategies::cookiesEnabled(NetworkingContext* context, const KUR
 #if ENABLE(NETWORK_PROCESS)
     if (WebProcess::shared().usesNetworkProcess()) {
         bool result;
-        if (!WebProcess::shared().networkConnection()->connection()->sendSync(Messages::NetworkConnectionToWebProcess::CookiesEnabled(context->inPrivateBrowsingMode(), firstParty, url), Messages::NetworkConnectionToWebProcess::CookiesEnabled::Reply(result), 0))
+        if (!WebProcess::shared().networkConnection()->connection()->sendSync(Messages::NetworkConnectionToWebProcess::CookiesEnabled(context && context->inPrivateBrowsingMode(), firstParty, url), Messages::NetworkConnectionToWebProcess::CookiesEnabled::Reply(result), 0))
             return false;
         return result;
     }
@@ -160,7 +160,7 @@ String WebPlatformStrategies::cookieRequestHeaderFieldValue(NetworkingContext* c
 #if ENABLE(NETWORK_PROCESS)
     if (WebProcess::shared().usesNetworkProcess()) {
         String result;
-        if (!WebProcess::shared().networkConnection()->connection()->sendSync(Messages::NetworkConnectionToWebProcess::CookieRequestHeaderFieldValue(context->inPrivateBrowsingMode(), firstParty, url), Messages::NetworkConnectionToWebProcess::CookieRequestHeaderFieldValue::Reply(result), 0))
+        if (!WebProcess::shared().networkConnection()->connection()->sendSync(Messages::NetworkConnectionToWebProcess::CookieRequestHeaderFieldValue(context && context->inPrivateBrowsingMode(), firstParty, url), Messages::NetworkConnectionToWebProcess::CookieRequestHeaderFieldValue::Reply(result), 0))
             return String();
         return result;
     }
@@ -173,7 +173,7 @@ bool WebPlatformStrategies::getRawCookies(NetworkingContext* context, const KURL
 {
 #if ENABLE(NETWORK_PROCESS)
     if (WebProcess::shared().usesNetworkProcess()) {
-        if (!WebProcess::shared().networkConnection()->connection()->sendSync(Messages::NetworkConnectionToWebProcess::GetRawCookies(context->inPrivateBrowsingMode(), firstParty, url), Messages::NetworkConnectionToWebProcess::GetRawCookies::Reply(rawCookies), 0))
+        if (!WebProcess::shared().networkConnection()->connection()->sendSync(Messages::NetworkConnectionToWebProcess::GetRawCookies(context && context->inPrivateBrowsingMode(), firstParty, url), Messages::NetworkConnectionToWebProcess::GetRawCookies::Reply(rawCookies), 0))
             return false;
         return true;
     }
@@ -186,7 +186,7 @@ void WebPlatformStrategies::deleteCookie(NetworkingContext* context, const KURL&
 {
 #if ENABLE(NETWORK_PROCESS)
     if (WebProcess::shared().usesNetworkProcess()) {
-        WebProcess::shared().networkConnection()->connection()->send(Messages::NetworkConnectionToWebProcess::DeleteCookie(context->inPrivateBrowsingMode(), url, cookieName), 0);
+        WebProcess::shared().networkConnection()->connection()->send(Messages::NetworkConnectionToWebProcess::DeleteCookie(context && context->inPrivateBrowsingMode(), url, cookieName), 0);
         return;
     }
 #endif
@@ -199,7 +199,7 @@ void WebPlatformStrategies::getHostnamesWithCookies(NetworkingContext* context, 
 #if ENABLE(NETWORK_PROCESS)
     if (WebProcess::shared().usesNetworkProcess()) {
         Vector<String> hostnamesVector;
-        WebProcess::shared().networkConnection()->connection()->sendSync(Messages::NetworkConnectionToWebProcess::GetHostnamesWithCookies(context->inPrivateBrowsingMode()), Messages::NetworkConnectionToWebProcess::GetHostnamesWithCookies::Reply(hostnamesVector), 0);
+        WebProcess::shared().networkConnection()->connection()->sendSync(Messages::NetworkConnectionToWebProcess::GetHostnamesWithCookies(context && context->inPrivateBrowsingMode()), Messages::NetworkConnectionToWebProcess::GetHostnamesWithCookies::Reply(hostnamesVector), 0);
         for (unsigned i = 0; i != hostnamesVector.size(); ++i)
             hostnames.add(hostnamesVector[i]);
         return;
@@ -213,7 +213,7 @@ void WebPlatformStrategies::deleteCookiesForHostname(NetworkingContext* context,
 {
 #if ENABLE(NETWORK_PROCESS)
     if (WebProcess::shared().usesNetworkProcess()) {
-        WebProcess::shared().networkConnection()->connection()->send(Messages::NetworkConnectionToWebProcess::DeleteCookiesForHostname(context->inPrivateBrowsingMode(), hostname), 0);
+        WebProcess::shared().networkConnection()->connection()->send(Messages::NetworkConnectionToWebProcess::DeleteCookiesForHostname(context && context->inPrivateBrowsingMode(), hostname), 0);
         return;
     }
 #endif
@@ -225,7 +225,7 @@ void WebPlatformStrategies::deleteAllCookies(NetworkingContext* context)
 {
 #if ENABLE(NETWORK_PROCESS)
     if (WebProcess::shared().usesNetworkProcess()) {
-        WebProcess::shared().networkConnection()->connection()->send(Messages::NetworkConnectionToWebProcess::DeleteAllCookies(context->inPrivateBrowsingMode()), 0);
+        WebProcess::shared().networkConnection()->connection()->send(Messages::NetworkConnectionToWebProcess::DeleteAllCookies(context && context->inPrivateBrowsingMode()), 0);
         return;
     }
 #endif
