@@ -296,7 +296,9 @@ private:
     bool m_ignoreLoadStateChanges;
     bool m_haveReportedFirstVideoFrame;
     bool m_playWhenFramesAvailable;
+#if HAVE(AVFOUNDATION_TEXT_TRACK_SUPPORT)
     bool m_inbandTrackConfigurationPending;
+#endif
 };
 
 } // namespace WebCore

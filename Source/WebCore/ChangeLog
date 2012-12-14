@@ -1,3 +1,17 @@
+2012-12-13  Filip Pizlo  <fpizlo@apple.com>
+
+        MediaPlayerPrivateAVFoundation::m_inbandTrackConfigurationPending is unused except when HAVE(AVFOUNDATION_TEXT_TRACK_SUPPORT)
+        https://bugs.webkit.org/show_bug.cgi?id=104987
+
+        Rubber stamped by Michael Saboff.
+
+        No change in behavior so no new tests.
+
+        * platform/graphics/avfoundation/MediaPlayerPrivateAVFoundation.cpp:
+        (WebCore::MediaPlayerPrivateAVFoundation::MediaPlayerPrivateAVFoundation):
+        * platform/graphics/avfoundation/MediaPlayerPrivateAVFoundation.h:
+        (MediaPlayerPrivateAVFoundation):
+
 2012-12-13  Kentaro Hara  <haraken@chromium.org>
 
         Unreviewed. Rebaselined run-bindings-tests results.
