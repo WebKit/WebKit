@@ -91,7 +91,8 @@ public:
         ASSERT(!m_responses.contains(requestID));
 
         m_responses.set(requestID, response);
-        m_condition.signal();
+        // FIXME (NetworkProcess): Waking up all threads is quite inefficient.
+        m_condition.broadcast();
     }
 
 private:
