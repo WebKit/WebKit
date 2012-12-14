@@ -226,7 +226,6 @@ void PageViewportController::pageDidRequestScroll(const IntPoint& cssPosition)
 
     FloatPoint position = pixelAlignedFloatPoint(FloatPoint(cssPosition));
     FloatPoint boundPosition = boundContentsPosition(position);
-
     FloatRect endVisibleContentRect(boundPosition, visibleContentsSize());
 
     if (m_lastFrameCoveredRect.intersects(endVisibleContentRect))

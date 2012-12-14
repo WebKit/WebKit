@@ -59,12 +59,10 @@ void PageViewportControllerClientEfl::setRendererActive(bool active)
     drawingArea()->coordinatedLayerTreeHostProxy()->layerTreeRenderer()->setActive(active);
 }
 
-void PageViewportControllerClientEfl::updateViewportSize(const IntSize& viewportSize)
+void PageViewportControllerClientEfl::updateViewportSize()
 {
-    m_viewportSize = viewportSize;
-
     ASSERT(m_controller);
-    m_controller->didChangeViewportSize(viewportSize);
+    m_controller->didChangeViewportSize(m_viewImpl->size());
 }
 
 void PageViewportControllerClientEfl::didChangeContentsSize(const WebCore::IntSize& contentsSize)

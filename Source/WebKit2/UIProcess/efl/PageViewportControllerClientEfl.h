@@ -48,7 +48,7 @@ public:
     float scaleFactor() const { return m_viewImpl->scaleFactor(); }
     WebCore::FloatPoint contentPosition() const { return m_contentPosition; }
 
-    void updateViewportSize(const WebCore::IntSize& viewportSize);
+    void updateViewportSize();
     void setRendererActive(bool);
 
     virtual void setViewportPosition(const WebCore::FloatPoint& contentsPoint);

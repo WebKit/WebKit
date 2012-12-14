@@ -390,7 +390,7 @@ static void _ewk_view_smart_calculate(Evas_Object* ewkView)
         impl->setNeedsSurfaceResize();
 #endif
 #if USE(TILED_BACKING_STORE)
-        impl->pageClient()->updateViewportSize(IntSize(width, height));
+        impl->pageClient()->updateViewportSize();
 #endif
     }
 }

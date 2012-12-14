@@ -53,14 +53,14 @@ void PageClientDefaultImpl::didCommitLoad()
 #endif
 }
 
-void PageClientDefaultImpl::updateViewportSize(const WebCore::IntSize& size)
+void PageClientDefaultImpl::updateViewportSize()
 {
 #if USE(TILED_BACKING_STORE)
     if (!m_pageViewportControllerClient) {
         m_pageViewportControllerClient = PageViewportControllerClientEfl::create(m_viewImpl);
         m_pageViewportController = adoptPtr(new PageViewportController(m_viewImpl->page(), m_pageViewportControllerClient.get()));
     }
-    m_pageViewportControllerClient->updateViewportSize(size);
+    m_pageViewportControllerClient->updateViewportSize();
 #else
     UNUSED_PARAM(size);
 #endif
