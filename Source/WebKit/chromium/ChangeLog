@@ -1,3 +1,9 @@
+2012-12-14  Stephen White  <senorblanco@chromium.org>
+
+        Unreviewed.  Rolled DEPS.
+
+        * DEPS:
+
 2012-12-14  David Dorwin  <ddorwin@chromium.org>
 
         EME v0.1: Report defaultURL in KeyMessage.
