@@ -691,7 +691,12 @@ bool WebProcess::shouldTerminate()
         return false;
 
     ASSERT(m_pageMap.isEmpty());
+
+#if ENABLE(NETWORK_PROCESS)
+    ASSERT(m_usesNetworkProcess || !downloadManager().isDownloading());
+#else
     ASSERT(!downloadManager().isDownloading());
+#endif
 
     // FIXME: the ShouldTerminate message should also send termination parameters, such as any session cookies that need to be preserved.
     bool shouldTerminate = false;

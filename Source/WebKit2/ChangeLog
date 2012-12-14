@@ -1,3 +1,16 @@
+2012-12-14  Anders Carlsson  <andersca@apple.com>
+
+        Fix assertion failure when the network process is enabled
+        https://bugs.webkit.org/show_bug.cgi?id=105040
+        <rdar://problem/12883632>
+
+        Reviewed by Alexey Proskuryakov.
+
+        Make sure that we don't call into the download manager when running with a network process.
+
+        * WebProcess/WebProcess.cpp:
+        (WebKit::WebProcess::shouldTerminate):
+
 2012-12-14  Michelangelo De Simone  <michelangelo@webkit.org>
 
         [CSS Shaders] Remove code for the other mesh box types (border-box | padding-box | content-box)
