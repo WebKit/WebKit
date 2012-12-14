@@ -1,3 +1,15 @@
+2012-12-13  Sanghyup Lee  <sh53.lee@samsung.com>
+
+        Fix build warning
+        https://bugs.webkit.org/show_bug.cgi?id=104978
+
+        Reviewed by Kentaro Hara.
+
+        Initialize parameter 'downloadID' to fix 'unused parameter' build warning.
+
+        * WebProcess/Downloads/Download.cpp:
+        (WebKit::Download::Download):
+
 2012-12-13  Alexey Proskuryakov  <ap@apple.com>
 
         Resource loads sometimes stall

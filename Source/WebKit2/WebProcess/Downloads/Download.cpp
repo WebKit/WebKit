@@ -46,6 +46,7 @@ PassOwnPtr<Download> Download::create(DownloadManager& downloadManager, uint64_t
 
 Download::Download(DownloadManager& downloadManager, uint64_t downloadID, const ResourceRequest& request)
     : m_downloadManager(downloadManager)
+    , m_downloadID(downloadID)
     , m_request(request)
 #if USE(CFNETWORK)
     , m_allowOverwrite(false)
