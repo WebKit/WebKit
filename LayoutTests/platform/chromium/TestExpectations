@@ -2063,6 +2063,10 @@ crbug.com/25977 [ XP Debug ] http/tests/appcache/online-whitelist.html [ Pass Ti
 crbug.com/30826 [ Win ] platform/win/fast/events/panScroll-imageMap-noHref-scroll.html [ Failure ]
 crbug.com/30826 [ Win Debug ] platform/win/fast/events/panScroll-event-fired.html [ Failure Pass Timeout ]
 
+webkit.org/b/104991 [ Android Linux Mac ] platform/chromium-win/fast/events/panScroll-click-hyperlink.html [ Skip ]
+webkit.org/b/104991 [ Android Linux Mac ] platform/chromium-win/fast/events/panScroll-event-fired.html [ Skip ]
+webkit.org/b/104991 [ Android Linux Mac ] platform/chromium-win/fast/events/panScroll-nested-divs.html [ Skip ]
+
 crbug.com/31623 [ SnowLeopard Win ] http/tests/appcache/remove-cache.html [ Failure Pass Timeout ]
 
 # V8's implementation of getOwnPropertyNames has different results for built-in
