@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script>
+  if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+  }
+  if (window.internals) {
+    window.internals.settings.setEnableCompositingForFixedPosition(true);
+    window.internals.settings.setFixedPositionCreatesStackingContext(true);
+
+    addEventListener("load", function() {
+      window.internals.setPageScaleFactor(0.5, 0, 0);
+      setTimeout(function() {
+        var layerTreeScaledDown = internals.layerTreeAsText(document.getElementById("iframe").contentDocument);
+
+        window.internals.setPageScaleFactor(1.5, 0, 0);
+        setTimeout(function() {
+          var layerTreeScaledUp = internals.layerTreeAsText(document.getElementById("iframe").contentDocument);
+          // Because logical size of the frame is unchanged, the layer tree in the frame should not be affected by the page scale.
+          document.getElementById("result").innerText =
+              layerTreeScaledUp == layerTreeScaledDown ? "PASS" : "FAIL";
+          testRunner.notifyDone();
+        }, 0);
+      }, 0);
+    }, false);
+  }
+</script>
+</head>
+<body>
+<iframe id="iframe" src="resources/fixed-position-out-of-view-frame.html" style="width: 800px; height: 600px"></iframe>
+<pre id="result"></pre>
+</body>
+</html>

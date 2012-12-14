@@ -1998,7 +1998,7 @@ bool RenderLayerCompositor::requiresCompositingForPosition(RenderObject* rendere
         IntRect viewBounds = frameView->visibleContentRect();
         LayoutRect layerBounds = layer->calculateLayerBounds(rootRenderLayer(), 0, RenderLayer::DefaultCalculateLayerBoundsFlags
             | RenderLayer::ExcludeHiddenDescendants | RenderLayer::DontConstrainForMask | RenderLayer::IncludeCompositedDescendants);
-        layerBounds.scale(pageScaleFactor());
+        layerBounds.scale(frameView->frame()->frameScaleFactor());
         if (!viewBounds.intersects(enclosingIntRect(layerBounds))) {
             if (fixedPositionLayerNotCompositedReason)
                 *fixedPositionLayerNotCompositedReason = LayerBoundsOutOfView;
