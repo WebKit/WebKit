@@ -1,3 +1,14 @@
+2012-12-14  Florin Malita  <fmalita@chromium.org>
+
+        [Chromium] Unreviewed rebaseline after Skia roll @6773.
+
+        * platform/chromium-linux/fast/borders/borderRadiusDotted02-expected.png:
+        * platform/chromium-linux/fast/borders/borderRadiusDotted03-expected.png:
+        * platform/chromium-linux/fast/borders/borderRadiusDotted04-expected.png:
+        * platform/chromium-mac/fast/borders/borderRadiusDotted02-expected.png:
+        * platform/chromium-mac/fast/borders/borderRadiusDotted03-expected.png:
+        * platform/chromium-mac/fast/borders/borderRadiusDotted04-expected.png:
+
 2012-12-14  John Mellor  <johnme@chromium.org>
 
         Text Autosizing: Don't autosize unwrappable blocks
