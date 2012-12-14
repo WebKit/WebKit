@@ -28,23 +28,39 @@
 
 import unittest
 
+from webkitpy.common.system.platforminfo_mock import MockPlatformInfo
 from webkitpy.common.system.systemhost_mock import MockSystemHost
 
 from .profiler import ProfilerFactory, GooglePProf
 
 
 class ProfilerFactoryTest(unittest.TestCase):
-    def test_basic(self):
+    def _assert_default_profiler_name(self, os_name, expected_profiler_name):
+        profiler_name = ProfilerFactory.default_profiler_name(MockPlatformInfo(os_name))
+        self.assertEquals(profiler_name, expected_profiler_name)
+
+    def test_default_profilers(self):
+        self._assert_default_profiler_name('mac', 'iprofiler')
+        self._assert_default_profiler_name('linux', 'perf')
+        self._assert_default_profiler_name('win32', None)
+        self._assert_default_profiler_name('freebsd', None)
+
+    def test_default_profiler_output(self):
         host = MockSystemHost()
         self.assertFalse(host.filesystem.exists("/tmp/output"))
+
+        # Default mocks are Mac, so iprofile should be default.
         profiler = ProfilerFactory.create_profiler(host, '/bin/executable', '/tmp/output')
         self.assertTrue(host.filesystem.exists("/tmp/output"))
         self.assertEquals(profiler._output_path, "/tmp/output/test.dtps")
 
+        # Linux defaults to perf.
         host.platform.os_name = 'linux'
         profiler = ProfilerFactory.create_profiler(host, '/bin/executable', '/tmp/output')
         self.assertEquals(profiler._output_path, "/tmp/output/test.data")
 
+
+class GooglePProfTest(unittest.TestCase):
     def test_pprof_output_regexp(self):
         pprof_output = """
 sometimes

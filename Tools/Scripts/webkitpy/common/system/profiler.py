@@ -28,19 +28,44 @@
 
 import logging
 import re
+import itertools
 
 _log = logging.getLogger(__name__)
 
 
 class ProfilerFactory(object):
     @classmethod
-    def create_profiler(cls, host, executable_path, output_dir, identifier=None):
-        if host.platform.is_mac():
-            return IProfiler(host, executable_path, output_dir, identifier)
-        return Perf(host, executable_path, output_dir, identifier)
+    def create_profiler(cls, host, executable_path, output_dir, profiler_name=None, identifier=None):
+        profilers = cls.profilers_for_platform(host.platform)
+        if not profilers:
+            return None
+        profiler_name = profiler_name or cls.default_profiler_name(host.platform)
+        profiler_class = next(itertools.ifilter(lambda profiler: profiler.name == profiler_name, profilers), None)
+        if not profiler_class:
+            return None
+        return profilers[0](host, executable_path, output_dir, identifier)
+
+    @classmethod
+    def default_profiler_name(cls, platform):
+        profilers = cls.profilers_for_platform(platform)
+        return profilers[0].name if profilers else None
+
+    @classmethod
+    def profilers_for_platform(cls, platform):
+        # GooglePProf requires TCMalloc/google-perftools, but is available everywhere.
+        profilers_by_os_name = {
+            'mac': [IProfiler, Sample, GooglePProf],
+            'linux': [Perf, GooglePProf],
+            # Note: freebsd, win32 have no profilers defined yet, thus --profile will be ignored
+            # by default, but a profiler can be selected with --profiler=PROFILER explicitly.
+        }
+        return profilers_by_os_name.get(platform.os_name, [])
 
 
 class Profiler(object):
+    # Used by ProfilerFactory to lookup a profiler from the --profiler=NAME option.
+    name = None
+
     def __init__(self, host, executable_path, output_dir, identifier=None):
         self._host = host
         self._executable_path = executable_path
@@ -65,6 +90,8 @@ class SingleFileOutputProfiler(Profiler):
 
 
 class GooglePProf(SingleFileOutputProfiler):
+    name = 'pprof'
+
     def __init__(self, host, executable_path, output_dir, identifier=None):
         super(GooglePProf, self).__init__(host, executable_path, output_dir, "pprof", identifier)
 
@@ -98,6 +125,8 @@ class GooglePProf(SingleFileOutputProfiler):
 
 
 class Perf(SingleFileOutputProfiler):
+    name = 'perf'
+
     def __init__(self, host, executable_path, output_dir, identifier=None):
         super(Perf, self).__init__(host, executable_path, output_dir, "data", identifier)
         self._perf_process = None
@@ -111,7 +140,6 @@ class Perf(SingleFileOutputProfiler):
         assert(not self._perf_process and not self._pid_being_profiled)
         self._pid_being_profiled = pid
         cmd = [self._perf_path(), "record", "-g", "-p", pid, "-o", self._output_path]
-        cmd = map(unicode, cmd)
         self._perf_process = self._host.executive.popen(cmd)
 
     def _first_ten_lines_of_profile(self, perf_output):
@@ -140,7 +168,24 @@ class Perf(SingleFileOutputProfiler):
         print ' '.join([self._perf_path(), 'report', '-i', self._output_path])
 
 
+class Sample(SingleFileOutputProfiler):
+    name = 'sample'
+
+    def __init__(self, host, executable_path, output_dir, identifier=None):
+        super(Sample, self).__init__(host, executable_path, output_dir, "txt", identifier)
+        self._profiler_process = None
+
+    def attach_to_pid(self, pid):
+        cmd = ["sample", pid, "-mayDie", "-file", self._output_path]
+        self._profiler_process = self._host.executive.popen(cmd)
+
+    def profile_after_exit(self):
+        self._profiler_process.wait()
+
+
 class IProfiler(SingleFileOutputProfiler):
+    name = 'iprofiler'
+
     def __init__(self, host, executable_path, output_dir, identifier=None):
         super(IProfiler, self).__init__(host, executable_path, output_dir, "dtps", identifier)
         self._profiler_process = None
@@ -151,7 +196,6 @@ class IProfiler(SingleFileOutputProfiler):
         fs = self._host.filesystem
         cmd = ["iprofiler", "-timeprofiler", "-a", pid,
                 "-d", fs.dirname(self._output_path), "-o", fs.splitext(fs.basename(self._output_path))[0]]
-        cmd = map(unicode, cmd)
         # FIXME: Consider capturing instead of letting instruments spam to stderr directly.
         self._profiler_process = self._host.executive.popen(cmd)
 
