@@ -114,10 +114,11 @@ class Printer(object):
     def print_workers_and_shards(self, num_workers, num_shards, num_locked_shards):
         driver_name = self._port.driver_name()
         if num_workers == 1:
-            self._print_default("Running 1 %s over %s." % (driver_name, grammar.pluralize('shard', num_shards)))
+            self._print_default("Running 1 %s." % driver_name)
+            self._print_debug("(%s)." % grammar.pluralize('shard', num_shards))
         else:
-            self._print_default("Running %d %ss in parallel over %d shards (%d locked)." %
-                (num_workers, driver_name, num_shards, num_locked_shards))
+            self._print_default("Running %d %ss in parallel." % (num_workers, driver_name))
+            self._print_debug("(%d shards; %d locked)." % (num_shards, num_locked_shards))
         self._print_default('')
 
     def _print_expected_results_of_type(self, run_results, result_type, result_type_str, tests_with_result_type_callback):

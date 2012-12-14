@@ -1,3 +1,18 @@
+2012-12-14  Ryosuke Niwa  <rniwa@webkit.org>
+
+        "Running 1 DumpRenderTree over X shards" is not a helpful output
+        https://bugs.webkit.org/show_bug.cgi?id=104858
+
+        Reviewed by Dirk Pranke.
+
+        The word "shard" is not typically used in test frameworks. This word is confusing for many WebKit
+        contributors who typically don't have much experience on distributed computations and databases.
+        So only print this message out in the debug mode.
+
+        * Scripts/webkitpy/layout_tests/run_webkit_tests_integrationtest.py:
+        * Scripts/webkitpy/layout_tests/views/printing.py:
+        (Printer.print_workers_and_shards):
+
 2012-12-13  Eric Seidel  <eric@webkit.org>
 
         Add --profiler=PROFILER option to run-perf-tests to allow specifying which profiler to use on platforms with many

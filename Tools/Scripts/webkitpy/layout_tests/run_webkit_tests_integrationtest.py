@@ -317,7 +317,7 @@ class MainTest(unittest.TestCase, StreamTestingMixin):
             del os.environ["WEBKIT_TEST_MAX_LOCKED_SHARDS"]
         _, regular_output, _ = logging_run(['--debug-rwt-logging', '--child-processes', '2'], shared_port=False)
         try:
-            self.assertTrue(any(['(1 locked)' in line for line in regular_output.buflist]))
+            self.assertTrue(any(['1 locked' in line for line in regular_output.buflist]))
         finally:
             if save_env_webkit_test_max_locked_shards:
                 os.environ["WEBKIT_TEST_MAX_LOCKED_SHARDS"] = save_env_webkit_test_max_locked_shards
