@@ -2401,11 +2401,12 @@ code.google.com/p/v8/issues/detail?id=2218 fast/js/string-fontcolor.html [ Failu
 code.google.com/p/v8/issues/detail?id=2218 fast/js/string-fontsize.html [ Failure ]
 code.google.com/p/v8/issues/detail?id=2218 fast/js/string-link.html [ Failure ]
 
-webkit.org/b/50282 [ Android ] fast/images/imagemap-focus-ring-outline-color-explicitly-inherited-from-map.html [ Failure ]
-webkit.org/b/50282 [ Android ] fast/images/imagemap-focus-ring-outline-color-not-inherited-from-map.html [ Failure ]
-webkit.org/b/50282 [ Android ] fast/images/imagemap-focus-ring-outline-color.html [ Failure ]
-webkit.org/b/50282 [ Android ] fast/images/imagemap-circle-focus-ring.html [ Failure ]
-webkit.org/b/50282 [ Android ] fast/images/imagemap-polygon-focus-ring.html [ Failure ]
+# Skip until Skia knows how to draw focus rings on a path.
+webkit.org/b/50282 fast/images/imagemap-focus-ring-outline-color-explicitly-inherited-from-map.html [ Skip ]
+webkit.org/b/50282 fast/images/imagemap-focus-ring-outline-color-not-inherited-from-map.html [ Skip ]
+webkit.org/b/50282 fast/images/imagemap-focus-ring-outline-color.html [ Skip ]
+webkit.org/b/50282 fast/images/imagemap-circle-focus-ring.html [ Skip ]
+webkit.org/b/50282 fast/images/imagemap-polygon-focus-ring.html [ Skip ]
 
 # Regressed at r73423. All areas are painted green.
 webkit.org/b/50734 [ Android Win ] fast/repaint/positioned-document-element.html [ ImageOnlyFailure ]
