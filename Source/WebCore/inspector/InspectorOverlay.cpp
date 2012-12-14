@@ -211,13 +211,7 @@ void InspectorOverlay::paint(GraphicsContext& context)
     GraphicsContextStateSaver stateSaver(context);
     FrameView* view = overlayPage()->mainFrame()->view();
     ASSERT(!view->needsLayout());
-
-    context.beginTransparencyLayer(1);
-    context.setCompositeOperation(CompositeCopy);
-
     view->paint(&context, IntRect(0, 0, view->width(), view->height()));
-
-    context.endTransparencyLayer();
 }
 
 void InspectorOverlay::drawOutline(GraphicsContext* context, const LayoutRect& rect, const Color& color)
