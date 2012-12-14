@@ -1,3 +1,39 @@
+2012-12-13  Eric Seidel  <eric@webkit.org>
+
+        Callers should not have to stringify args before calling Executive run_command/popen
+        https://bugs.webkit.org/show_bug.cgi?id=104975
+
+        Reviewed by Dirk Pranke.
+
+        One could argue that we should match the python call syntax here,
+        but I think it's a more friendly API if we automagically handle
+        stringification of args in run_command, etc.
+        This removes map(unicode, args) from several callsites.
+
+        When I first tried to land this change, I didn't realize that
+        Executive._command_for_printing depended on this behavior
+        having been applied to args in run_command.  The fix is to
+        call _stringify_args in both run_command and popen.
+        This is slightly redundant, but given how short args have to be
+        (due to shell limits), I don't think the double-encode check
+        matters in practice.
+
+        This is slightly complicated by the fact that apache_http_server.py
+        is the one caller in our codebase which uses shell=True.
+        shell=True is a well-documented trail-of-tears:
+        http://stackoverflow.com/questions/3172470/actual-meaning-of-shell-true-in-subprocess
+        but to support this legacy (windows-only) code (which I can't easily test)
+        I've added an if-hack to avoid stringifying the the popen(shell=True) case.
+
+        * Scripts/webkitpy/common/system/executive.py:
+        (Executive.run_command):
+        (Executive._stringify_args):
+        (Executive.popen):
+        * Scripts/webkitpy/common/system/executive_unittest.py:
+        (ExecutiveTest.test_auto_stringify_args):
+        * Scripts/webkitpy/layout_tests/port/chromium_android.py:
+        (attach_to_pid):
+
 2012-12-13  Adrienne Walker  <enne@chromium.org>
 
         Unreviewed, rolling out r137645, r137646, and r137667.

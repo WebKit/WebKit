@@ -415,7 +415,6 @@ http://goto.google.com/cr-android-perf-howto
         assert(self._perf_process == None)
         # FIXME: This can't be a fixed timeout!
         cmd = self._adb_command + ['shell', 'perf', 'record', '-g', '-p', pid, 'sleep', 30]
-        cmd = map(unicode, cmd)
         self._perf_process = self._host.executive.popen(cmd)
 
     def _perf_version_string(self, perf_path):
