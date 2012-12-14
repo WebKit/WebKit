@@ -186,6 +186,7 @@ WebInspector.CPUProfileView.prototype = {
 
                 delete profileNode._searchMatchedSelfColumn;
                 delete profileNode._searchMatchedTotalColumn;
+                delete profileNode._searchMatchedAverageColumn;
                 delete profileNode._searchMatchedCallsColumn;
                 delete profileNode._searchMatchedFunctionColumn;
 
@@ -230,6 +231,8 @@ WebInspector.CPUProfileView.prototype = {
         // Make equalTo implicitly true if it wasn't specified there is no other operator.
         if (!isNaN(queryNumber) && !(greaterThan || lessThan))
             equalTo = true;
+
+        var matcher = new RegExp(query.escapeForRegExp(), "i");
 
         function matchesQuery(/*ProfileDataGridNode*/ profileDataGridNode)
         {
@@ -298,7 +301,7 @@ WebInspector.CPUProfileView.prototype = {
                     profileDataGridNode._searchMatchedCallsColumn = true;
             }
 
-            if (profileDataGridNode.functionName.hasSubstring(query, true) || profileDataGridNode.url.hasSubstring(query, true))
+            if (profileDataGridNode.functionName.match(matcher) || profileDataGridNode.url.match(matcher))
                 profileDataGridNode._searchMatchedFunctionColumn = true;
 
             if (profileDataGridNode._searchMatchedSelfColumn ||
