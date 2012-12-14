@@ -59,6 +59,7 @@ PassRefPtr<IDBCallbacksProxy> IDBCallbacksProxy::create(PassOwnPtr<WebIDBCallbac
 
 IDBCallbacksProxy::IDBCallbacksProxy(PassOwnPtr<WebIDBCallbacks> callbacks)
     : m_callbacks(callbacks)
+    , m_didCreateProxy(false)
 {
 }
 
@@ -79,7 +80,8 @@ void IDBCallbacksProxy::onSuccess(PassRefPtr<IDBCursorBackendInterface> idbCurso
 void IDBCallbacksProxy::onSuccess(PassRefPtr<IDBDatabaseBackendInterface> backend)
 {
     ASSERT(m_databaseCallbacks.get());
-    m_callbacks->onSuccess(new WebIDBDatabaseImpl(backend, m_databaseCallbacks.release()));
+    WebIDBDatabaseImpl* impl = m_didCreateProxy ? 0 : new WebIDBDatabaseImpl(backend, m_databaseCallbacks.release());
+    m_callbacks->onSuccess(impl);
 }
 
 void IDBCallbacksProxy::onSuccess(PassRefPtr<IDBKey> idbKey)
@@ -147,6 +149,7 @@ void IDBCallbacksProxy::onBlocked(int64_t existingVersion)
 void IDBCallbacksProxy::onUpgradeNeeded(int64_t oldVersion, PassRefPtr<IDBTransactionBackendInterface> transaction, PassRefPtr<IDBDatabaseBackendInterface> database)
 {
     ASSERT(m_databaseCallbacks);
+    m_didCreateProxy = true;
     m_callbacks->onUpgradeNeeded(oldVersion, new WebIDBTransactionImpl(transaction), new WebIDBDatabaseImpl(database, m_databaseCallbacks));
 }
 

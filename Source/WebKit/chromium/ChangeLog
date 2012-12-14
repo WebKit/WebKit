@@ -1,3 +1,19 @@
+2012-12-14  Joshua Bell  <jsbell@chromium.org>
+
+        [Chromium] IndexedDB: Memory leak in IDBCallbacksProxy::onSuccess(PassRefPtr<IDBDatabaseBackendInterface>)
+        https://bugs.webkit.org/show_bug.cgi?id=104615
+
+        Reviewed by Tony Chang.
+
+        Don't create (and leak) a new wrapper object for onSuccess if one was created for onUpgradeNeeded.
+
+        * src/IDBCallbacksProxy.cpp:
+        (WebKit::IDBCallbacksProxy::IDBCallbacksProxy):
+        (WebKit::IDBCallbacksProxy::onSuccess):
+        (WebKit::IDBCallbacksProxy::onUpgradeNeeded):
+        * src/IDBCallbacksProxy.h:
+        (IDBCallbacksProxy):
+
 2012-12-14  Yusuf Ozuysal  <yusufo@google.com>
 
         Send a message from WebViewImpl to the compositor to inform about end of flings
