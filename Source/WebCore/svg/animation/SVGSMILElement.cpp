@@ -278,6 +278,7 @@ void SVGSMILElement::removedFrom(ContainerNode* rootParent)
         setTargetElement(0);
         setAttributeName(anyQName());
         animationAttributeChanged();
+        m_timeContainer = 0;
     }
 
     SVGElement::removedFrom(rootParent);

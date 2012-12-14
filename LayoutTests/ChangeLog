@@ -1,3 +1,13 @@
+2012-12-13  Philip Rogers  <pdr@google.com>
+
+        Clear m_timeContainer on SVGSMILElement removal.
+        https://bugs.webkit.org/show_bug.cgi?id=104972
+
+        Reviewed by Abhishek Arya.
+
+        * svg/custom/removed-from-animation-crash-expected.txt: Added.
+        * svg/custom/removed-from-animation-crash.html: Added.
+
 2012-12-13  Filip Pizlo  <fpizlo@apple.com>
 
         Named lookups on HTML documents produce inconsistent results in JavaScriptCore bindings
