@@ -25197,6 +25197,10 @@
 					>
 				</File>
 				<File
+					RelativePath="..\Modules\webdatabase\AbstractDatabaseServer.h"
+					>
+				</File>
+				<File
 					RelativePath="..\Modules\webdatabase\ChangeVersionWrapper.cpp"
 					>
 				</File>
@@ -25270,6 +25274,10 @@
 				</File>
 				<File
 					RelativePath="..\Modules\webdatabase\DatabaseTracker.h"
+					>
+				</File>
+				<File
+					RelativePath="..\Modules\webdatabase\DBBackendServer.h"
 					>
 				</File>
 				<File
@@ -28387,6 +28395,14 @@
 			</File>
 			<File
 				RelativePath="..\platform\Cursor.h"
+				>
+			</File>
+			<File
+				RelativePath="..\platform\DatabaseStrategy.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\platform\DatabaseStrategy.h"
 				>
 			</File>
 			<File

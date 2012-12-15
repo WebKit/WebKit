@@ -65,6 +65,11 @@ CookiesStrategy* PlatformStrategiesQt::createCookiesStrategy()
     return this;
 }
 
+DatabaseStrategy* PlatformStrategiesQt::createDatabaseStrategy()
+{
+    return this;
+}
+
 LoaderStrategy* PlatformStrategiesQt::createLoaderStrategy()
 {
     return this;

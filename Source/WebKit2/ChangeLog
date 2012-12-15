@@ -1,3 +1,20 @@
+2012-12-15  Mark Lam  <mark.lam@apple.com>
+
+        Re-landing patch for "Introducing the DatabaseStrategy and database servers".
+        https://bugs.webkit.org/show_bug.cgi?id=104934.
+
+        Not reviewed.
+
+        Merged from r137767. Previously reviewed by Sam Weinig.
+
+        * CMakeLists.txt:
+        * WebProcess/WebCoreSupport/WebPlatformStrategies.cpp:
+        (WebKit::WebPlatformStrategies::createDatabaseStrategy):
+        (WebKit):
+        (WebKit::WebPlatformStrategies::getDatabaseServer):
+        * WebProcess/WebCoreSupport/WebPlatformStrategies.h:
+        (WebPlatformStrategies):
+
 2012-12-14  Anders Carlsson  <andersca@apple.com>
 
         DownloadProxy objects should be message receivers

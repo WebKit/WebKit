@@ -43,6 +43,11 @@ CookiesStrategy* PlatformStrategiesGtk::createCookiesStrategy()
     return this;
 }
 
+DatabaseStrategy* PlatformStrategiesGtk::createDatabaseStrategy()
+{
+    return this;
+}
+
 LoaderStrategy* PlatformStrategiesGtk::createLoaderStrategy()
 {
     return this;
