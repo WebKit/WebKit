@@ -78,8 +78,6 @@ CookieManager& cookieManager()
         // Open the cookieJar now and get the backing store cookies to fill the manager.
         cookieManager = new CookieManager;
         cookieManager->m_cookieBackingStore->open(cookieManager->cookieJar());
-        cookieManager->getBackingStoreCookies();
-        CookieLog("CookieManager - Backingstore load complete.\n");
     }
     return *cookieManager;
 }
@@ -500,6 +498,7 @@ void CookieManager::getBackingStoreCookies()
         ParsedCookie* newCookie = cookies[i];
         checkAndTreatCookie(newCookie, BackingStoreCookieEntry);
     }
+    CookieLog("CookieManager - Backingstore loading complete.");
 }
 
 void CookieManager::setPrivateMode(bool privateMode)

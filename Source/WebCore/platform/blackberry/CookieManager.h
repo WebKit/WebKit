@@ -103,6 +103,7 @@ public:
 
 private:
     friend CookieManager& cookieManager();
+    friend class CookieDatabaseBackingStore;
 
     CookieManager();
     virtual ~CookieManager();

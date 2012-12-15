@@ -167,6 +167,7 @@ void CookieDatabaseBackingStore::invokeOpen(const String& cookieJar)
         LOG_ERROR("SQLite Error Message: %s", m_db.lastErrorMsg());
     }
 
+    BlackBerry::Platform::webKitThreadMessageClient()->dispatchMessage(createMethodCallMessage(&CookieManager::getBackingStoreCookies, &cookieManager()));
 }
 
 void CookieDatabaseBackingStore::close()
