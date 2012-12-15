@@ -59,6 +59,8 @@ class XvfbDriver(Driver):
                     return i
 
     def _start(self, pixel_tests, per_test_args):
+        self.stop()
+
         # Use even displays for pixel tests and odd ones otherwise. When pixel tests are disabled,
         # DriverProxy creates two drivers, one for normal and the other for ref tests. Both have
         # the same worker number, so this prevents them from using the same Xvfb instance.
