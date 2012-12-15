@@ -71,7 +71,9 @@ private:
     virtual void deleteAllCookies(WebCore::NetworkingContext*) OVERRIDE;
 
     // WebCore::DatabaseStrategy
+#if ENABLE(SQL_DATABASE)
     virtual WebCore::AbstractDatabaseServer* getDatabaseServer() OVERRIDE;
+#endif
 
     // WebCore::LoaderStrategy
 #if ENABLE(NETWORK_PROCESS)

@@ -240,10 +240,12 @@ void WebPlatformStrategies::deleteAllCookies(NetworkingContext* context)
 
 // DatabaseStrategy
 
+#if ENABLE(SQL_DATABASE)
 AbstractDatabaseServer* WebPlatformStrategies::getDatabaseServer()
 {
     return DatabaseStrategy::getDatabaseServer(); // Use the default for now.
 }
+#endif
 
 // LoaderStrategy
 
