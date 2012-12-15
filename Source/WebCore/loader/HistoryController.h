@@ -52,6 +52,7 @@ public:
     ~HistoryController();
 
     void saveScrollPositionAndViewStateToItem(HistoryItem*);
+    void clearScrollPositionAndViewState();
     void restoreScrollPositionAndViewState();
 
     void updateBackForwardListForFragmentScroll();

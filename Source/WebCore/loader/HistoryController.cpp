@@ -93,6 +93,15 @@ void HistoryController::saveScrollPositionAndViewStateToItem(HistoryItem* item)
     m_frame->loader()->client()->saveViewStateToItem(item);
 }
 
+void HistoryController::clearScrollPositionAndViewState()
+{
+    if (!m_currentItem)
+        return;
+
+    m_currentItem->clearScrollPoint();
+    m_currentItem->setPageScaleFactor(0);
+}
+
 /*
  There is a race condition between the layout and load completion that affects restoring the scroll position.
  We try to restore the scroll position at both the first layout and upon load completion.

@@ -262,8 +262,7 @@ public:
     // state, this function deletes any saved scroll and scale state.
     virtual void restoreScrollAndScaleState() = 0;
 
-    // Reset the scroll and scale state and clobber any previously saved values for
-    // these parameters.
+    // Reset any saved values for the scroll and scale state.
     virtual void resetScrollAndScaleState() = 0;
 
     // Prevent the web page from setting a maximum scale via the viewport meta

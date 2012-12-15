@@ -482,14 +482,15 @@ TEST_F(WebViewTest, ResetScrollAndScaleState)
     EXPECT_EQ(84, webViewImpl->mainFrame()->scrollOffset().height);
     webViewImpl->page()->mainFrame()->loader()->history()->saveDocumentAndScrollState();
 
-    // Confirm that resetting the page state resets both the scale and scroll position, as well
-    // as overwrites the original parameters that were saved to the HistoryController.
+    // Confirm that resetting the page state resets the saved scroll position.
+    // The HistoryController treats a page scale factor of 0.0f as special and avoids
+    // restoring it to the WebView.
     webViewImpl->resetScrollAndScaleState();
-    EXPECT_EQ(0.0f, webViewImpl->pageScaleFactor());
+    EXPECT_EQ(1.0f, webViewImpl->pageScaleFactor());
     EXPECT_EQ(0, webViewImpl->mainFrame()->scrollOffset().width);
     EXPECT_EQ(0, webViewImpl->mainFrame()->scrollOffset().height);
     webViewImpl->page()->mainFrame()->loader()->history()->restoreScrollPositionAndViewState();
-    EXPECT_EQ(0.0f, webViewImpl->pageScaleFactor());
+    EXPECT_EQ(1.0f, webViewImpl->pageScaleFactor());
     EXPECT_EQ(0, webViewImpl->mainFrame()->scrollOffset().width);
     EXPECT_EQ(0, webViewImpl->mainFrame()->scrollOffset().height);
     webViewImpl->close();

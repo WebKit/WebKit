@@ -3095,14 +3095,18 @@ void WebViewImpl::resetSavedScrollAndScaleState()
 
 void WebViewImpl::resetScrollAndScaleState()
 {
-    page()->setPageScaleFactor(0, IntPoint());
+    page()->setPageScaleFactor(1, IntPoint());
+
+    // Clear out the values for the current history item. This will prevent the history item from clobbering the
+    // value determined during page scale initialization, which may be less than 1.
+    page()->mainFrame()->loader()->history()->saveDocumentAndScrollState();
+    page()->mainFrame()->loader()->history()->clearScrollPositionAndViewState();
     m_pageScaleFactorIsSet = false;
 
     // Clobber saved scales and scroll offsets.
     if (FrameView* view = page()->mainFrame()->document()->view())
         view->cacheCurrentScrollPosition();
     resetSavedScrollAndScaleState();
-    page()->mainFrame()->loader()->history()->saveDocumentAndScrollState();
 }
 
 WebSize WebViewImpl::fixedLayoutSize() const
