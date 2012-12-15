@@ -39,16 +39,16 @@ class DownloadProxyMap {
     WTF_MAKE_NONCOPYABLE(DownloadProxyMap);
 
 public:
-    static DownloadProxyMap& shared();
-
-    DownloadProxy* createDownloadProxy(WebContext*);
-
-    void downloadFinished(DownloadProxy*);
-
-private:
     DownloadProxyMap();
     ~DownloadProxyMap();
 
+    DownloadProxy* createDownloadProxy(WebContext*);
+    void downloadFinished(DownloadProxy*);
+
+    // FIXME: Don't fully expose the downloads map like this.
+    HashMap<uint64_t, RefPtr<DownloadProxy> >& downloads() { return m_downloads; }
+
+private:
     HashMap<uint64_t, RefPtr<DownloadProxy> > m_downloads;
 };
 

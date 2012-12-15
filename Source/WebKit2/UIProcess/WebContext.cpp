@@ -27,7 +27,6 @@
 #include "WebContext.h"
 
 #include "DownloadProxy.h"
-#include "DownloadProxyMap.h"
 #include "DownloadProxyMessages.h"
 #include "ImmutableArray.h"
 #include "Logging.h"
@@ -538,7 +537,7 @@ bool WebContext::shouldTerminate(WebProcessProxy* process)
     if (!m_processTerminationEnabled)
         return false;
 
-    if (!m_downloads.isEmpty())
+    if (!m_downloads.downloads().isEmpty())
         return false;
 
     if (!m_applicationCacheManagerProxy->shouldTerminate(process))
@@ -601,12 +600,12 @@ void WebContext::disconnectProcess(WebProcessProxy* process)
     }
 
     // Invalidate all outstanding downloads.
-    for (HashMap<uint64_t, RefPtr<DownloadProxy> >::iterator::Values it = m_downloads.begin().values(), end = m_downloads.end().values(); it != end; ++it) {
+    for (HashMap<uint64_t, RefPtr<DownloadProxy> >::iterator::Values it = m_downloads.downloads().begin().values(), end = m_downloads.downloads().end().values(); it != end; ++it) {
         (*it)->processDidClose();
         (*it)->invalidate();
     }
 
-    m_downloads.clear();
+    m_downloads.downloads().clear();
 
     m_applicationCacheManagerProxy->invalidate();
 #if ENABLE(BATTERY_STATUS)
@@ -836,19 +835,16 @@ void WebContext::addVisitedLinkHash(LinkHash linkHash)
 
 DownloadProxy* WebContext::createDownloadProxy()
 {
-    DownloadProxy* downloadProxy = DownloadProxyMap::shared().createDownloadProxy(this);
-    m_downloads.set(downloadProxy->downloadID(), downloadProxy);
+    DownloadProxy* downloadProxy = m_downloads.createDownloadProxy(this);
     addMessageReceiver(Messages::DownloadProxy::messageReceiverName(), downloadProxy->downloadID(), downloadProxy);
     return downloadProxy;
 }
 
 void WebContext::downloadFinished(DownloadProxy* downloadProxy)
 {
-    ASSERT(m_downloads.contains(downloadProxy->downloadID()));
-
     downloadProxy->invalidate();
     removeMessageReceiver(Messages::DownloadProxy::messageReceiverName(), downloadProxy->downloadID());
-    m_downloads.remove(downloadProxy->downloadID());
+    m_downloads.downloads().remove(downloadProxy->downloadID());
 }
 
 // FIXME: This is not the ideal place for this function.

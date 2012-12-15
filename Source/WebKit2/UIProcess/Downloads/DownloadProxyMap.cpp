@@ -31,19 +31,13 @@
 
 namespace WebKit {
 
-DownloadProxyMap& DownloadProxyMap::shared()
-{
-    DEFINE_STATIC_LOCAL(DownloadProxyMap, downloadProxyMap, ());
-
-    return downloadProxyMap;
-}
-
 DownloadProxyMap::DownloadProxyMap()
 {
 }
 
 DownloadProxyMap::~DownloadProxyMap()
 {
+    ASSERT(m_downloads.isEmpty());
 }
 
 DownloadProxy* DownloadProxyMap::createDownloadProxy(WebContext* webContext)

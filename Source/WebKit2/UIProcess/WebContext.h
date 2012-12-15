@@ -27,6 +27,7 @@
 #define WebContext_h
 
 #include "APIObject.h"
+#include "DownloadProxyMap.h"
 #include "GenericCallback.h"
 #include "MessageReceiver.h"
 #include "MessageReceiverMap.h"
@@ -325,6 +326,8 @@ private:
 
     void addPlugInAutoStartOriginHash(const String& pageOrigin, unsigned plugInOriginHash);
 
+    CoreIPC::MessageReceiverMap m_messageReceiverMap;
+
     ProcessModel m_processModel;
     unsigned m_webProcessCountLimit; // The limit has no effect when process model is ProcessModelSharedSecondaryProcess.
     
@@ -369,7 +372,7 @@ private:
     CacheModel m_cacheModel;
 
     WebDownloadClient m_downloadClient;
-    HashMap<uint64_t, RefPtr<DownloadProxy> > m_downloads;
+    DownloadProxyMap m_downloads;
     
     bool m_memorySamplerEnabled;
     double m_memorySamplerInterval;
@@ -424,8 +427,6 @@ private:
 #endif
     
     HashMap<uint64_t, RefPtr<DictionaryCallback> > m_dictionaryCallbacks;
-
-    CoreIPC::MessageReceiverMap m_messageReceiverMap;
 
 #if PLATFORM(MAC)
     static bool s_applicationIsOccluded;
