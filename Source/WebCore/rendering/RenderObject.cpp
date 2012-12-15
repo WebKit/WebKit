@@ -52,6 +52,7 @@
 #include "RenderImageResourceStyleImage.h"
 #include "RenderInline.h"
 #include "RenderLayer.h"
+#include "RenderLayerBacking.h"
 #include "RenderListItem.h"
 #include "RenderMultiColumnBlock.h"
 #include "RenderNamedFlowThread.h"

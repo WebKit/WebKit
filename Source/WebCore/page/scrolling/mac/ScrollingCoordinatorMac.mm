@@ -29,6 +29,7 @@
 
 #import "ScrollingCoordinatorMac.h"
 
+#include "GraphicsLayer.h"
 #include "Frame.h"
 #include "FrameView.h"
 #include "IntRect.h"

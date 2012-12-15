@@ -1307,7 +1307,7 @@ void RenderLayerCompositor::updateLayerTreeGeometry(RenderLayer* layer, int dept
 }
 
 // Recurs down the RenderLayer tree until its finds the compositing descendants of compositingAncestor and updates their geometry.
-void RenderLayerCompositor::updateCompositingDescendantGeometry(RenderLayer* compositingAncestor, RenderLayer* layer, RenderLayerBacking::UpdateDepth updateDepth)
+void RenderLayerCompositor::updateCompositingDescendantGeometry(RenderLayer* compositingAncestor, RenderLayer* layer, bool compositedChildrenOnly)
 {
     if (layer != compositingAncestor) {
         if (RenderLayerBacking* layerBacking = layer->backing()) {
@@ -1319,13 +1319,13 @@ void RenderLayerCompositor::updateCompositingDescendantGeometry(RenderLayer* com
             }
 
             layerBacking->updateGraphicsLayerGeometry();
-            if (updateDepth == RenderLayerBacking::CompositingChildren)
+            if (compositedChildrenOnly)
                 return;
         }
     }
 
     if (layer->reflectionLayer())
-        updateCompositingDescendantGeometry(compositingAncestor, layer->reflectionLayer(), updateDepth);
+        updateCompositingDescendantGeometry(compositingAncestor, layer->reflectionLayer(), compositedChildrenOnly);
 
     if (!layer->hasCompositingDescendant())
         return;
@@ -1338,21 +1338,21 @@ void RenderLayerCompositor::updateCompositingDescendantGeometry(RenderLayer* com
         if (Vector<RenderLayer*>* negZOrderList = layer->negZOrderList()) {
             size_t listSize = negZOrderList->size();
             for (size_t i = 0; i < listSize; ++i)
-                updateCompositingDescendantGeometry(compositingAncestor, negZOrderList->at(i), updateDepth);
+                updateCompositingDescendantGeometry(compositingAncestor, negZOrderList->at(i), compositedChildrenOnly);
         }
     }
 
     if (Vector<RenderLayer*>* normalFlowList = layer->normalFlowList()) {
         size_t listSize = normalFlowList->size();
         for (size_t i = 0; i < listSize; ++i)
-            updateCompositingDescendantGeometry(compositingAncestor, normalFlowList->at(i), updateDepth);
+            updateCompositingDescendantGeometry(compositingAncestor, normalFlowList->at(i), compositedChildrenOnly);
     }
     
     if (layer->isStackingContext()) {
         if (Vector<RenderLayer*>* posZOrderList = layer->posZOrderList()) {
             size_t listSize = posZOrderList->size();
             for (size_t i = 0; i < listSize; ++i)
-                updateCompositingDescendantGeometry(compositingAncestor, posZOrderList->at(i), updateDepth);
+                updateCompositingDescendantGeometry(compositingAncestor, posZOrderList->at(i), compositedChildrenOnly);
         }
     }
 }

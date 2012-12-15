@@ -29,6 +29,7 @@
 
 #include "Frame.h"
 #include "FrameView.h"
+#include "GraphicsLayer.h"
 #include "IntRect.h"
 #include "Page.h"
 #include "PlatformWheelEvent.h"

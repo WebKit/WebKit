@@ -34,6 +34,7 @@
 #include "Page.h"
 #include "RenderGeometryMap.h"
 #include "RenderLayer.h"
+#include "RenderLayerBacking.h"
 #include "RenderNamedFlowThread.h"
 #include "RenderSelectionInfo.h"
 #include "RenderWidget.h"

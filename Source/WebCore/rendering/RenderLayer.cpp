@@ -416,8 +416,14 @@ void RenderLayer::updateLayerPositions(RenderGeometryMap* geometryMap, UpdateLay
         child->updateLayerPositions(geometryMap, flags);
 
 #if USE(ACCELERATED_COMPOSITING)
-    if ((flags & UpdateCompositingLayers) && isComposited())
-        backing()->updateAfterLayout(RenderLayerBacking::CompositingChildren, isUpdateRoot);
+    if ((flags & UpdateCompositingLayers) && isComposited()) {
+        RenderLayerBacking::UpdateAfterLayoutFlags updateFlags = RenderLayerBacking::CompositingChildrenOnly;
+        if (flags & NeedsFullRepaintInBacking)
+            updateFlags |= RenderLayerBacking::NeedsFullRepaint;
+        if (isUpdateRoot)
+            updateFlags |= RenderLayerBacking::IsUpdateRoot;
+        backing()->updateAfterLayout(updateFlags);
+    }
 #endif
         
     // With all our children positioned, now update our marquee if we need to.
@@ -1922,10 +1928,8 @@ void RenderLayer::updateCompositingLayersAfterScroll()
         if (RenderLayer* compositingAncestor = stackingContext()->enclosingCompositingLayer()) {
             if (compositor()->compositingConsultsOverlap())
                 compositor()->updateCompositingLayers(CompositingUpdateOnScroll, compositingAncestor);
-            else {
-                bool isUpdateRoot = true;
-                compositingAncestor->backing()->updateAfterLayout(RenderLayerBacking::AllDescendants, isUpdateRoot);
-            }
+            else
+                compositingAncestor->backing()->updateAfterLayout(RenderLayerBacking::IsUpdateRoot);
         }
     }
 #endif

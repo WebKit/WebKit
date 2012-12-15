@@ -28,6 +28,7 @@
 
 #include "CompositorFakeWebGraphicsContext3D.h"
 #include "FrameTestHelpers.h"
+#include "RenderLayerBacking.h"
 #include "RenderLayerCompositor.h"
 #include "RenderView.h"
 #include "URLTestHelpers.h"

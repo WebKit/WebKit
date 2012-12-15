@@ -57,6 +57,7 @@
 #include "RenderFullScreen.h"
 #include "RenderIFrame.h"
 #include "RenderLayer.h"
+#include "RenderLayerBacking.h"
 #include "RenderPart.h"
 #include "RenderScrollbar.h"
 #include "RenderScrollbarPart.h"
@@ -131,8 +132,10 @@ static inline RenderView* rootRenderer(const FrameView* view)
 static RenderLayer::UpdateLayerPositionsFlags updateLayerPositionFlags(RenderLayer* layer, bool isRelayoutingSubtree, bool didFullRepaint)
 {
     RenderLayer::UpdateLayerPositionsFlags flags = RenderLayer::defaultFlags;
-    if (didFullRepaint)
+    if (didFullRepaint) {
         flags &= ~RenderLayer::CheckForRepaint;
+        flags |= RenderLayer::NeedsFullRepaintInBacking;
+    }
     if (isRelayoutingSubtree && layer->isPaginated())
         flags |= RenderLayer::UpdatePagination;
     return flags;
@@ -1213,8 +1216,12 @@ void FrameView::layout(bool allowSubtree)
         m_layoutRoot = 0;
     } // Reset m_layoutSchedulingEnabled to its previous value.
 
+    bool neededFullRepaint = m_doFullRepaint;
+
     if (!subtree && !toRenderView(root)->printing())
         adjustViewSize();
+
+    m_doFullRepaint = neededFullRepaint;
 
     // Now update the positions of all layers.
     beginDeferredRepaints();

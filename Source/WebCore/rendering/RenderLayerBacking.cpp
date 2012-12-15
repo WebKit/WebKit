@@ -416,7 +416,7 @@ void RenderLayerBacking::updateAfterWidgetResize()
     }
 }
 
-void RenderLayerBacking::updateAfterLayout(UpdateDepth updateDepth, bool isUpdateRoot)
+void RenderLayerBacking::updateAfterLayout(UpdateAfterLayoutFlags flags)
 {
     RenderLayerCompositor* layerCompositor = compositor();
     if (!layerCompositor->compositingLayersNeedRebuild()) {
@@ -428,13 +428,16 @@ void RenderLayerBacking::updateAfterLayout(UpdateDepth updateDepth, bool isUpdat
         // The solution is to update compositing children of this layer here,
         // via updateCompositingChildrenGeometry().
         updateCompositedBounds();
-        layerCompositor->updateCompositingDescendantGeometry(m_owningLayer, m_owningLayer, updateDepth);
+        layerCompositor->updateCompositingDescendantGeometry(m_owningLayer, m_owningLayer, flags & CompositingChildrenOnly);
         
-        if (isUpdateRoot) {
+        if (flags & IsUpdateRoot) {
             updateGraphicsLayerGeometry();
             layerCompositor->updateRootLayerPosition();
         }
     }
+    
+    if (flags & NeedsFullRepaint)
+        setContentsNeedDisplay();
 }
 
 bool RenderLayerBacking::updateGraphicsLayerConfiguration()
@@ -1390,8 +1393,7 @@ void RenderLayerBacking::contentChanged(ContentChangeType changeType)
     if ((changeType == MaskImageChanged) && m_maskLayer) {
         // The composited layer bounds relies on box->maskClipRect(), which changes
         // when the mask image becomes available.
-        bool isUpdateRoot = true;
-        updateAfterLayout(CompositingChildren, isUpdateRoot);
+        updateAfterLayout(CompositingChildrenOnly | IsUpdateRoot);
     }
 
 #if ENABLE(WEBGL) || ENABLE(ACCELERATED_2D_CANVAS)
