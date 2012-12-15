@@ -707,6 +707,8 @@ bool WebViewImpl::handleGestureEvent(const WebGestureEvent& event)
     case WebInputEvent::GestureFlingCancel:
         if (m_gestureAnimation) {
             m_gestureAnimation.clear();
+            if (m_layerTreeView)
+                m_layerTreeView->didStopFlinging();
             eventSwallowed = true;
         }
         break;
@@ -858,8 +860,11 @@ bool WebViewImpl::handleKeyEvent(const WebKeyboardEvent& event)
         || (event.type == WebInputEvent::KeyUp));
 
     // Halt an in-progress fling on a key event.
-    if (m_gestureAnimation)
+    if (m_gestureAnimation) {
         m_gestureAnimation.clear();
+        if (m_layerTreeView)
+            m_layerTreeView->didStopFlinging();
+    }
 
     // Please refer to the comments explaining the m_suppressNextKeypressEvent
     // member.
@@ -1765,8 +1770,11 @@ void WebViewImpl::updateAnimations(double monotonicFrameBeginTime)
     if (m_gestureAnimation) {
         if (m_gestureAnimation->animate(monotonicFrameBeginTime))
             scheduleAnimation();
-        else
+        else {
             m_gestureAnimation.clear();
+            if (m_layerTreeView)
+                m_layerTreeView->didStopFlinging();
+        }
     }
 
     if (!m_page)
@@ -3650,6 +3658,8 @@ void WebViewImpl::didCommitLoad(bool* isNewNavigation, bool isNavigationWithinPa
     // Make sure link highlight from previous page is cleared.
     m_linkHighlight.clear();
     m_gestureAnimation.clear();
+    if (m_layerTreeView)
+        m_layerTreeView->didStopFlinging();
     resetSavedScrollAndScaleState();
 }
 

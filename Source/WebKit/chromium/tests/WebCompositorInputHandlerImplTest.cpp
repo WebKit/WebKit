@@ -389,9 +389,10 @@ TEST_F(WebCompositorInputHandlerImplTest, gestureFlingIgnoredTouchpad)
     gesture.data.flingStart.sourceDevice = WebGestureEvent::Touchpad;
     m_inputHandler->handleInputEvent(gesture);
 
+    m_expectedDisposition = DropEvent;
     VERIFY_AND_RESET_MOCKS();
 
-    // Even if we didn't start a fling ourselves, we still need to send the cancel event to the widget.
+    // Since the previous fling was ignored, we should also be dropping the next flingCancel.
     gesture.type = WebInputEvent::GestureFlingCancel;
     gesture.data.flingStart.sourceDevice = WebGestureEvent::Touchpad;
     m_inputHandler->handleInputEvent(gesture);
@@ -454,7 +455,6 @@ TEST_F(WebCompositorInputHandlerImplTest, gestureFlingAnimatesTouchpad)
         .WillOnce(testing::Return(WebInputHandlerClient::ScrollStatusOnMainThread));
     EXPECT_CALL(m_mockInputHandlerClient, scrollByIfPossible(testing::_, testing::_)).Times(0);
     EXPECT_CALL(m_mockInputHandlerClient, scrollEnd()).Times(0);
-
     // Expected wheel fling animation parameters:
     // *) flingDelta and flingPoint should match the original GestureFlingStart event
     // *) startTime should be 10 to match the time parameter of the first animate() call after the GestureFlingStart
@@ -572,6 +572,7 @@ TEST_F(WebCompositorInputHandlerImplTest, gestureFlingTransferResetsTouchpad)
     m_inputHandler->handleInputEvent(gesture);
 
     VERIFY_AND_RESET_MOCKS();
+    m_inputHandler->mainThreadHasStoppedFlinging();
 
     // Start a second gesture fling, this time in the +Y direction with no X.
     gesture.type = WebInputEvent::GestureFlingStart;
@@ -690,7 +691,6 @@ TEST_F(WebCompositorInputHandlerImplTest, gestureFlingIgnoredTouchscreen)
     gesture.data.flingStart.sourceDevice = WebGestureEvent::Touchscreen;
     m_inputHandler->handleInputEvent(gesture);
 
-    m_expectedDisposition = DidNotHandle;
     VERIFY_AND_RESET_MOCKS();
 
     // Even if we didn't start a fling ourselves, we still need to send the cancel event to the widget.
@@ -751,7 +751,7 @@ TEST_F(WebCompositorInputHandlerImplTest, gestureFlingAnimatesTouchscreen)
 
 TEST_F(WebCompositorInputHandlerImplTest, lastInputEventForVSync)
 {
-    m_expectedDisposition = DidNotHandle;
+    m_expectedDisposition = DropEvent;
     VERIFY_AND_RESET_MOCKS();
 
     gesture.type = WebInputEvent::GestureFlingCancel;

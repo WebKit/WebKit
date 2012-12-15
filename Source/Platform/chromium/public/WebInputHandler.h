@@ -33,6 +33,7 @@ public:
 
     virtual void bindToClient(WebInputHandlerClient*) = 0;
     virtual void animate(double monotonicTime) = 0;
+    virtual void mainThreadHasStoppedFlinging() = 0;
 };
 
 }
