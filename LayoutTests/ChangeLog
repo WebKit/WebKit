@@ -1,3 +1,28 @@
+2012-12-14  Beth Dakin  <bdakin@apple.com>
+
+        https://bugs.webkit.org/show_bug.cgi?id=105064
+        fast/css/nested-layers-with-hover.html fails on the Mac WK2 bots, and seems to be 
+        a bad test
+
+        Reviewed by Tim Horton.
+
+        There were a number of problems with this test, and this patch attempts to fix 
+        them all. The problems were:
+        -This test was failing on the WK2 bots.
+        -But it was comparing against expected results that expected to fail, so that's 
+        bad!
+        -In the cross-platform directory there were expected results checked in that look 
+        for a render tree dump, but those results haven't made sense for a while since 
+        that test was converted to dumpAsText() months ago.
+
+        This patch updates the test so that it will actually work. To do that, we need to 
+        make sure layout is up to date and also use window.setTimeout() to run the 
+        function to assess our hover state rather than relying on onmousemove.
+        * fast/css/nested-layers-with-hover-expected.txt:
+        * fast/css/nested-layers-with-hover.html:
+        * platform/mac/fast/css/nested-layers-with-hover-expected.png: Removed.
+        * platform/mac/fast/css/nested-layers-with-hover-expected.txt: Removed.
+
 2012-12-14  Yuki Sekiguchi  <yuki.sekiguchi@access-company.com>
 
         Emphasis mark is printed after inline-block with justify

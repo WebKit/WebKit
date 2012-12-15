@@ -33,16 +33,17 @@
             function runTest() {
                 if (!window.testRunner) 
                     return;
+                document.body.offsetTop; // Force layout.
                 var targetElem = document.getElementById('table-row');
-                eventSender.mouseMoveTo(targetElem.offsetLeft + targetElem.offsetWidth / 2, 
-                                        targetElem.offsetTop + targetElem.offsetHeight / 2);
+                eventSender.mouseMoveTo(50, 17);
+                window.setTimeout(testHoverState, 100);
             }
         </script>
 </head>
 
 <body onload="runTest()">
     <div style="overflow:hidden">
-        <div id="table-row" onmousemove="testHoverState()" style="overflow:hidden; display:table-row">To test this manually, first make sure you can see this text at all, and then hover over it and make sure the background turns blue.</div>
+        <div id="table-row" style="overflow:hidden; display:table-row">To test this manually, first make sure you can see this text at all, and then hover over it and make sure the background turns blue.</div>
     </div>
     <div id="console"></div>
 

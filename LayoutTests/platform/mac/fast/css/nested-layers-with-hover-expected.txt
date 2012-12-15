@@ -1,3 +1,0 @@
-FAIL: Timed out waiting for notifyDone to be called
-To test this manually, first make sure you can see this text at all, and then hover over it and make sure the background turns blue.
-
