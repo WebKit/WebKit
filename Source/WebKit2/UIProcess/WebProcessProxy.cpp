@@ -27,6 +27,7 @@
 #include "WebProcessProxy.h"
 
 #include "DataReference.h"
+#include "DownloadProxyMap.h"
 #include "PluginInfoStore.h"
 #include "PluginProcessManager.h"
 #include "TextChecker.h"

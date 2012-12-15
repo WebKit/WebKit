@@ -840,12 +840,12 @@ void WebContext::addVisitedLinkHash(LinkHash linkHash)
 
 DownloadProxy* WebContext::createDownloadProxy()
 {
-    if (usesNetworkProcess()) {
-        // FIXME (Multi-WebProcess): <rdar://problem/12239483> Make downloading work.
-        return 0;
-    }
+    if (!usesNetworkProcess())
+        return ensureSharedWebProcess()->createDownloadProxy();
 
-    return ensureSharedWebProcess()->createDownloadProxy();
+#if ENABLE(NETWORK_PROCESS)
+    return m_networkProcess->createDownloadProxy();
+#endif
 }
 
 // FIXME: This is not the ideal place for this function.

@@ -27,7 +27,6 @@
 #define WebProcessProxy_h
 
 #include "ChildProcessProxy.h"
-#include "DownloadProxyMap.h"
 #include "MessageReceiverMap.h"
 #include "PlatformProcessIdentifier.h"
 #include "PluginInfoStore.h"
@@ -57,6 +56,7 @@ class SecItemRequestData;
 class SecItemResponseData;
 #endif
 
+class DownloadProxyMap;
 class WebBackForwardListItem;
 class WebContext;
 class WebPageGroup;

@@ -79,6 +79,14 @@ void NetworkProcessProxy::getNetworkProcessConnection(PassRefPtr<Messages::WebPr
     connection()->send(Messages::NetworkProcess::CreateNetworkConnectionToWebProcess(), 0, CoreIPC::DispatchMessageEvenWhenWaitingForSyncReply);
 }
 
+DownloadProxy* NetworkProcessProxy::createDownloadProxy()
+{
+    if (!m_downloadProxyMap)
+        m_downloadProxyMap = adoptPtr(new DownloadProxyMap(m_messageReceiverMap));
+
+    return m_downloadProxyMap->createDownloadProxy(m_webContext);
+}
+
 void NetworkProcessProxy::networkProcessCrashedOrFailedToLaunch()
 {
     // The network process must have crashed or exited, send any pending sync replies we might have.
@@ -107,6 +115,9 @@ void NetworkProcessProxy::didClose(CoreIPC::Connection*)
     const Vector<WebContext*>& contexts = WebContext::allContexts();
     for (size_t i = 0; i < contexts.size(); ++i)
         contexts[i]->sendToAllProcesses(Messages::WebProcess::NetworkProcessCrashed());
+
+    if (m_downloadProxyMap)
+        m_downloadProxyMap->processDidClose();
 
     // This may cause us to be deleted.
     networkProcessCrashedOrFailedToLaunch();
