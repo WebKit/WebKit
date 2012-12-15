@@ -45,7 +45,7 @@ class WebContext;
 class WebData;
 class WebPageProxy;
 
-class DownloadProxy : public APIObject {
+class DownloadProxy : public APIObject, public CoreIPC::MessageReceiver {
 public:
     static const Type APIType = TypeDownload;
 
@@ -72,6 +72,10 @@ private:
     explicit DownloadProxy(WebContext*);
 
     virtual Type type() const { return APIType; }
+
+    // CoreIPC::MessageReceiver
+    virtual void didReceiveMessage(CoreIPC::Connection*, CoreIPC::MessageID, CoreIPC::MessageDecoder&) OVERRIDE;
+    virtual void didReceiveSyncMessage(CoreIPC::Connection*, CoreIPC::MessageID, CoreIPC::MessageDecoder&, OwnPtr<CoreIPC::MessageEncoder>&) OVERRIDE;
 
     // Message handlers.
     void didStart(const WebCore::ResourceRequest&);

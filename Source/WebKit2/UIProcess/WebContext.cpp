@@ -838,7 +838,7 @@ DownloadProxy* WebContext::createDownloadProxy()
 {
     DownloadProxy* downloadProxy = DownloadProxyMap::shared().createDownloadProxy(this);
     m_downloads.set(downloadProxy->downloadID(), downloadProxy);
-    addMessageReceiver(Messages::DownloadProxy::messageReceiverName(), downloadProxy->downloadID(), this);
+    addMessageReceiver(Messages::DownloadProxy::messageReceiverName(), downloadProxy->downloadID(), downloadProxy);
     return downloadProxy;
 }
 
@@ -895,13 +895,6 @@ void WebContext::didReceiveMessage(CoreIPC::Connection* connection, CoreIPC::Mes
         return;
     }
 
-    if (messageID.is<CoreIPC::MessageClassDownloadProxy>()) {
-        if (DownloadProxy* downloadProxy = m_downloads.get(decoder.destinationID()).get())
-            downloadProxy->didReceiveDownloadProxyMessage(connection, messageID, decoder);
-        
-        return;
-    }
-
     switch (messageID.get<WebContextLegacyMessage::Kind>()) {
         case WebContextLegacyMessage::PostMessage: {
             String messageName;
@@ -926,12 +919,6 @@ void WebContext::didReceiveSyncMessage(CoreIPC::Connection* connection, CoreIPC:
 {
     if (messageID.is<CoreIPC::MessageClassWebContext>()) {
         didReceiveSyncWebContextMessage(connection, messageID, decoder, replyEncoder);
-        return;
-    }
-
-    if (messageID.is<CoreIPC::MessageClassDownloadProxy>()) {
-        if (DownloadProxy* downloadProxy = m_downloads.get(decoder.destinationID()).get())
-            downloadProxy->didReceiveSyncDownloadProxyMessage(connection, messageID, decoder, replyEncoder);
         return;
     }
 
