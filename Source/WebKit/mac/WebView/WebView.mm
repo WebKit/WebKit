@@ -746,6 +746,11 @@ static bool shouldRespectPriorityInCSSAttributeSetters()
         WebKitInitializeLoggingChannelsIfNecessary();
         WebCore::initializeLoggingChannelsIfNecessary();
 #endif // !LOG_DISABLED
+
+        // Initialize our platform strategies first before invoking the rest
+        // of the initialization code which may depend on the strategies.
+        WebPlatformStrategies::initialize();
+
         [WebHistoryItem initWindowWatcherIfNecessary];
 #if ENABLE(SQL_DATABASE)
         WebKitInitializeDatabasesIfNecessary();
@@ -755,8 +760,6 @@ static bool shouldRespectPriorityInCSSAttributeSetters()
         WebKitInitializeApplicationCachePathIfNecessary();
         patchMailRemoveAttributesMethod();
         
-        // Initialize our platform strategies.
-        WebPlatformStrategies::initialize();
         Settings::setDefaultMinDOMTimerInterval(0.004);
         
         Settings::setShouldRespectPriorityInCSSAttributeSetters(shouldRespectPriorityInCSSAttributeSetters());

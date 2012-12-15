@@ -2653,11 +2653,15 @@ HRESULT STDMETHODCALLTYPE WebView::initWithFrame(
 #if !LOG_DISABLED
         initializeLoggingChannelsIfNecessary();
 #endif // !LOG_DISABLED
+
+        // Initialize our platform strategies first before invoking the rest
+        // of the initialization code which may depend on the strategies.
+        WebPlatformStrategies::initialize();
+
 #if ENABLE(SQL_DATABASE)
         WebKitInitializeWebDatabasesIfNecessary();
 #endif
         WebKitSetApplicationCachePathIfNecessary();
-        WebPlatformStrategies::initialize();
         Settings::setDefaultMinDOMTimerInterval(0.004);
 
         didOneTimeInitialization = true;
