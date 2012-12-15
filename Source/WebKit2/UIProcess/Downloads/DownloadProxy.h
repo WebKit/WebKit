@@ -91,7 +91,7 @@ private:
     void didCancel(const CoreIPC::DataReference& resumeData);
 
     DownloadProxyMap& m_downloadProxyMap;
-    WebContext* m_webContext;
+    RefPtr<WebContext> m_webContext;
     uint64_t m_downloadID;
 
     RefPtr<WebData> m_resumeData;

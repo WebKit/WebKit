@@ -1,5 +1,30 @@
 2012-12-15  Anders Carlsson  <andersca@apple.com>
 
+        DownloadProxy should keep a strong reference to its associated web context
+        https://bugs.webkit.org/show_bug.cgi?id=105107
+
+        Reviewed by Alexey Proskuryakov.
+
+        While this does create a ref-cycle, it's broken when the download completes, fails, is canceled or
+        if the process that's doing the download crashes.
+
+        * UIProcess/Downloads/DownloadProxy.cpp:
+        (WebKit::DownloadProxy::processDidClose):
+        (WebKit::DownloadProxy::didStart):
+        (WebKit::DownloadProxy::didReceiveAuthenticationChallenge):
+        (WebKit::DownloadProxy::didReceiveResponse):
+        (WebKit::DownloadProxy::didReceiveData):
+        (WebKit::DownloadProxy::shouldDecodeSourceDataOfMIMEType):
+        (WebKit::DownloadProxy::decideDestinationWithSuggestedFilename):
+        (WebKit::DownloadProxy::didCreateDestination):
+        (WebKit::DownloadProxy::didFinish):
+        (WebKit::DownloadProxy::didFail):
+        (WebKit::DownloadProxy::didCancel):
+        * UIProcess/Downloads/DownloadProxy.h:
+        (DownloadProxy):
+
+2012-12-15  Anders Carlsson  <andersca@apple.com>
+
         Remove WebContext::downloadFinished
         https://bugs.webkit.org/show_bug.cgi?id=105105
 
