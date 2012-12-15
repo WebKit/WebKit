@@ -688,6 +688,10 @@ void InputHandler::spellCheckingRequestProcessed(int32_t transactionId, spannabl
         span++;
     }
 
+    // free data that we malloc'ed in InputMethodSupport
+    free(spannableString->spans);
+    free(spannableString);
+
     m_request->didSucceed(results);
 }
 
