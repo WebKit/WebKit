@@ -128,6 +128,7 @@ WebContext::WebContext(ProcessModel processModel, const String& injectedBundlePa
     , m_alwaysUsesComplexTextCodePath(false)
     , m_shouldUseFontSmoothing(true)
     , m_cacheModel(CacheModelDocumentViewer)
+    , m_downloads(m_messageReceiverMap)
     , m_memorySamplerEnabled(false)
     , m_memorySamplerInterval(1400.0)
 #if PLATFORM(WIN)
@@ -846,16 +847,7 @@ void WebContext::addVisitedLinkHash(LinkHash linkHash)
 
 DownloadProxy* WebContext::createDownloadProxy()
 {
-    DownloadProxy* downloadProxy = m_downloads.createDownloadProxy(this);
-    addMessageReceiver(Messages::DownloadProxy::messageReceiverName(), downloadProxy->downloadID(), downloadProxy);
-    return downloadProxy;
-}
-
-void WebContext::downloadFinished(DownloadProxy* downloadProxy)
-{
-    m_downloads.downloadFinished(downloadProxy);
-
-    removeMessageReceiver(Messages::DownloadProxy::messageReceiverName(), downloadProxy->downloadID());
+    return m_downloads.createDownloadProxy(this);
 }
 
 // FIXME: This is not the ideal place for this function.

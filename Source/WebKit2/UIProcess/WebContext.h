@@ -181,7 +181,6 @@ public:
     // Downloads.
     DownloadProxy* createDownloadProxy();
     WebDownloadClient& downloadClient() { return m_downloadClient; }
-    void downloadFinished(DownloadProxy*);
 
     WebHistoryClient& historyClient() { return m_historyClient; }
 

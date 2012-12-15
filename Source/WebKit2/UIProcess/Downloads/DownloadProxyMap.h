@@ -30,6 +30,10 @@
 #include <wtf/Noncopyable.h>
 #include <wtf/PassRefPtr.h>
 
+namespace CoreIPC {
+class MessageReceiverMap;
+}
+
 namespace WebKit {
 
 class DownloadProxy;
@@ -39,7 +43,7 @@ class DownloadProxyMap {
     WTF_MAKE_NONCOPYABLE(DownloadProxyMap);
 
 public:
-    DownloadProxyMap();
+    explicit DownloadProxyMap(CoreIPC::MessageReceiverMap&);
     ~DownloadProxyMap();
 
     DownloadProxy* createDownloadProxy(WebContext*);
@@ -50,6 +54,8 @@ public:
     void processDidClose();
 
 private:
+    CoreIPC::MessageReceiverMap& m_messageReceiverMap;
+
     HashMap<uint64_t, RefPtr<DownloadProxy> > m_downloads;
 };
 

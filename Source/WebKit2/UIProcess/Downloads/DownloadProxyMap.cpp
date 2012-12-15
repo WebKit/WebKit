@@ -27,11 +27,14 @@
 #include "DownloadProxyMap.h"
 
 #include "DownloadProxy.h"
+#include "DownloadProxyMessages.h"
+#include "MessageReceiverMap.h"
 #include <wtf/StdLibExtras.h>
 
 namespace WebKit {
 
-DownloadProxyMap::DownloadProxyMap()
+DownloadProxyMap::DownloadProxyMap(CoreIPC::MessageReceiverMap& messageReceiverMap)
+    : m_messageReceiverMap(messageReceiverMap)
 {
 }
 
@@ -45,6 +48,8 @@ DownloadProxy* DownloadProxyMap::createDownloadProxy(WebContext* webContext)
     RefPtr<DownloadProxy> downloadProxy = DownloadProxy::create(*this, webContext);
     m_downloads.set(downloadProxy->downloadID(), downloadProxy);
 
+    m_messageReceiverMap.addMessageReceiver(Messages::DownloadProxy::messageReceiverName(), downloadProxy->downloadID(), downloadProxy.get());
+
     return downloadProxy.get();
 }
 
@@ -53,8 +58,9 @@ void DownloadProxyMap::downloadFinished(DownloadProxy* downloadProxy)
     ASSERT(m_downloads.contains(downloadProxy->downloadID()));
 
     downloadProxy->invalidate();
-
     m_downloads.remove(downloadProxy->downloadID());
+
+    m_messageReceiverMap.removeMessageReceiver(Messages::DownloadProxy::messageReceiverName(), downloadProxy->downloadID());
 }
 
 void DownloadProxyMap::processDidClose()

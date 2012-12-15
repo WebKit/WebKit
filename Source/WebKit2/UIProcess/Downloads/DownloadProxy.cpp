@@ -167,7 +167,7 @@ void DownloadProxy::didFinish()
     m_webContext->downloadClient().didFinish(m_webContext, this);
 
     // This can cause the DownloadProxy object to be deleted.
-    m_webContext->downloadFinished(this);
+    m_downloadProxyMap.downloadFinished(this);
 }
 
 static PassRefPtr<WebData> createWebData(const CoreIPC::DataReference& data)
@@ -188,7 +188,7 @@ void DownloadProxy::didFail(const ResourceError& error, const CoreIPC::DataRefer
     m_webContext->downloadClient().didFail(m_webContext, this, error);
 
     // This can cause the DownloadProxy object to be deleted.
-    m_webContext->downloadFinished(this);
+    m_downloadProxyMap.downloadFinished(this);
 }
 
 void DownloadProxy::didCancel(const CoreIPC::DataReference& resumeData)
@@ -198,7 +198,7 @@ void DownloadProxy::didCancel(const CoreIPC::DataReference& resumeData)
     m_webContext->downloadClient().didCancel(m_webContext, this);
 
     // This can cause the DownloadProxy object to be deleted.
-    m_webContext->downloadFinished(this);
+    m_downloadProxyMap.downloadFinished(this);
 }
 
 #if PLATFORM(QT)
