@@ -416,7 +416,6 @@ private:
     };
     
     ContentsLayerPurpose m_contentsLayerPurpose;
-    bool m_contentsLayerHasBackgroundColor : 1;
     bool m_allowTiledLayer : 1;
     bool m_isPageTileCacheLayer : 1;
     
