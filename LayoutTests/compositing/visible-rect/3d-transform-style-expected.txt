@@ -24,7 +24,6 @@
                   (children 1
                     (GraphicsLayer
                       (bounds 300.00 300.00)
-                      (backgroundColor #0000FF)
                       (transform [1.00 0.00 0.00 0.00] [0.00 0.91 0.42 0.00] [0.00 -0.42 0.91 0.00] [0.00 0.00 0.00 1.00])
                       (visible rect 0.00, 0.00 213.67 x 200.68)
                     )
@@ -52,7 +51,6 @@
                   (children 1
                     (GraphicsLayer
                       (bounds 300.00 300.00)
-                      (backgroundColor #0000FF)
                       (transform [0.91 0.00 0.42 0.00] [0.00 1.00 0.00 0.00] [-0.42 0.00 0.91 0.00] [0.00 0.00 0.00 1.00])
                       (visible rect 0.00, 0.00 200.68 x 213.67)
                     )

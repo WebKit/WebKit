@@ -24,7 +24,6 @@ Test CSS clip with composited layers. Left and right sides should look the same.
             (GraphicsLayer
               (position -5.00 -5.00)
               (bounds 120.00 120.00)
-              (backgroundColor #00000033)
               (transform [1.00 0.00 0.00 0.00] [0.00 1.00 0.00 0.00] [0.00 0.00 1.00 0.00] [0.00 0.00 1.00 1.00])
             )
           )

@@ -97,7 +97,6 @@ GraphicsLayerBlackBerry::GraphicsLayerBlackBerry(GraphicsLayerClient* client)
     : GraphicsLayer(client)
     , m_suspendTime(0)
     , m_contentsLayerPurpose(NoContentsLayer)
-    , m_contentsLayerHasBackgroundColor(false)
 {
     m_layer = LayerWebKitThread::create(LayerData::Layer, this);
 
@@ -330,22 +329,11 @@ bool GraphicsLayerBlackBerry::setFilters(const FilterOperations& filters)
 
 void GraphicsLayerBlackBerry::setBackgroundColor(const Color& color)
 {
-    if (m_backgroundColorSet && m_backgroundColor == color)
+    if (color == m_backgroundColor)
         return;
 
-    GraphicsLayer::setBackgroundColor(color);
-
-    m_contentsLayerHasBackgroundColor = true;
+    GraphicsLayer::setBackgroundColor(color.rgb());
     updateLayerBackgroundColor();
-}
-
-void GraphicsLayerBlackBerry::clearBackgroundColor()
-{
-    if (!m_backgroundColorSet)
-        return;
-
-    GraphicsLayer::clearBackgroundColor();
-    clearLayerBackgroundColor(*m_contentsLayer);
 }
 
 void GraphicsLayerBlackBerry::setContentsOpaque(bool opaque)
@@ -835,14 +823,10 @@ void GraphicsLayerBlackBerry::updateHasFixedAncestorInDOMTree()
 
 void GraphicsLayerBlackBerry::updateLayerBackgroundColor()
 {
-    if (!m_contentsLayer)
-        return;
-
-    // We never create the contents layer just for background color yet.
-    if (m_backgroundColorSet)
-        setLayerBackgroundColor(*m_contentsLayer, m_backgroundColor);
+    if (m_backgroundColor.isValid())
+        setLayerBackgroundColor(*m_layer, m_backgroundColor);
     else
-        clearLayerBackgroundColor(*m_contentsLayer);
+        clearLayerBackgroundColor(*m_layer);
 }
 
 #if ENABLE(CSS_FILTERS)

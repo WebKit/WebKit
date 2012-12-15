@@ -35,7 +35,6 @@ Second (child added):
             (GraphicsLayer
               (position 51.00 401.00)
               (bounds 200.00 200.00)
-              (backgroundColor #FF0000)
             )
           )
         )

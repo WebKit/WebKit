@@ -19,7 +19,6 @@
                 (GraphicsLayer
                   (position -100.00 0.00)
                   (bounds 200.00 200.00)
-                  (backgroundColor #0000FF)
                   (visible rect 100.00, 0.00 100.00 x 200.00)
                 )
               )

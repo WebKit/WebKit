@@ -758,6 +758,7 @@ void RenderLayerBacking::updateGraphicsLayerGeometry()
     setRequiresOwnBackingStore(compositor()->requiresOwnBackingStore(m_owningLayer, compAncestor));
 
     updateContentsRect(isSimpleContainer);
+    updateBackgroundColor(isSimpleContainer);
     updateDrawsContent(isSimpleContainer);
     updateAfterWidgetResize();
 }
@@ -1150,12 +1151,12 @@ Color RenderLayerBacking::rendererBackgroundColor() const
 
 void RenderLayerBacking::updateBackgroundColor(bool isSimpleContainer)
 {
-    Color backgroundColor = Color::transparent;
+    Color backgroundColor;
     if (isSimpleContainer)
         backgroundColor = rendererBackgroundColor();
-    m_graphicsLayer->setContentsToBackgroundColor(backgroundColor);
-    if (backgroundColor == Color::transparent)
-        m_graphicsLayer->clearBackgroundColor();
+
+    // An unset (invalid) color will remove the solid color.
+    m_graphicsLayer->setContentsToSolidColor(backgroundColor);
 }
 
 static bool supportsDirectBoxDecorationsComposition(const RenderObject* renderer)

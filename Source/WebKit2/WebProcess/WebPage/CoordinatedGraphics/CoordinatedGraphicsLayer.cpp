@@ -362,14 +362,11 @@ bool CoordinatedGraphicsLayer::setFilters(const FilterOperations& newFilters)
 }
 #endif
 
-void CoordinatedGraphicsLayer::setContentsToBackgroundColor(const Color& color)
+void CoordinatedGraphicsLayer::setContentsToSolidColor(const Color& color)
 {
-    if (m_layerInfo.backgroundColor == color)
+    if (m_layerInfo.solidColor == color)
         return;
-    m_layerInfo.backgroundColor = color;
-
-    // This is in line with what CA does.
-    setBackgroundColor(color);
+    m_layerInfo.solidColor = color;
     didChangeLayerState();
 }
 

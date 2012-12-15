@@ -15,12 +15,10 @@
                 (GraphicsLayer
                   (position 10.00 10.00)
                   (bounds 100.00 100.00)
-                  (backgroundColor #0000FF)
                 )
                 (GraphicsLayer
                   (position 10.00 120.00)
                   (bounds 100.00 100.00)
-                  (backgroundColor #0000FF)
                 )
               )
             )

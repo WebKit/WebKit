@@ -89,7 +89,6 @@ public:
     virtual void setAcceleratesDrawing(bool);
 
     virtual void setBackgroundColor(const Color&);
-    virtual void clearBackgroundColor();
 
     virtual void setContentsOpaque(bool);
     virtual void setBackfaceVisibility(bool);
@@ -117,7 +116,7 @@ public:
     virtual void setContentsToImage(Image*);
     virtual void setContentsToMedia(PlatformLayer*);
     virtual void setContentsToCanvas(PlatformLayer*);
-    virtual void setContentsToBackgroundColor(const Color&);
+    virtual void setContentsToSolidColor(const Color&);
 
     virtual bool hasContentsLayer() const { return m_contentsLayer; }
     
@@ -317,11 +316,12 @@ private:
     void updateBackfaceVisibility();
     void updateStructuralLayer(float pixelAlignmentScale, const FloatPoint& positionRelativeToBase);
     void updateLayerDrawsContent(float pixelAlignmentScale, const FloatPoint& positionRelativeToBase);
-    void updateLayerBackgroundColor();
+    void updateBackgroundColor();
 
     void updateContentsImage();
     void updateContentsMediaLayer();
     void updateContentsCanvasLayer();
+    void updateContentsColorLayer();
     void updateContentsRect();
     void updateMaskLayer();
     void updateReplicatedLayers();
@@ -373,16 +373,17 @@ private:
         ContentsImageChanged = 1 << 15,
         ContentsMediaLayerChanged = 1 << 16,
         ContentsCanvasLayerChanged = 1 << 17,
-        ContentsRectChanged = 1 << 18,
-        MaskLayerChanged = 1 << 19,
-        ReplicatedLayerChanged = 1 << 20,
-        ContentsNeedsDisplay = 1 << 21,
-        AcceleratesDrawingChanged = 1 << 22,
-        ContentsScaleChanged = 1 << 23,
-        ContentsVisibilityChanged = 1 << 24,
-        VisibleRectChanged = 1 << 25,
-        FiltersChanged = 1 << 26,
-        DebugIndicatorsChanged = 1 << 27
+        ContentsColorLayerChanged = 1 << 18,
+        ContentsRectChanged = 1 << 19,
+        MaskLayerChanged = 1 << 20,
+        ReplicatedLayerChanged = 1 << 21,
+        ContentsNeedsDisplay = 1 << 22,
+        AcceleratesDrawingChanged = 1 << 23,
+        ContentsScaleChanged = 1 << 24,
+        ContentsVisibilityChanged = 1 << 25,
+        VisibleRectChanged = 1 << 26,
+        FiltersChanged = 1 << 27,
+        DebugIndicatorsChanged = 1 << 28
     };
     typedef unsigned LayerChangeFlags;
     void noteLayerPropertyChanged(LayerChangeFlags flags);
@@ -418,6 +419,8 @@ private:
     bool m_contentsLayerHasBackgroundColor : 1;
     bool m_allowTiledLayer : 1;
     bool m_isPageTileCacheLayer : 1;
+    
+    Color m_contentsSolidColor;
 
     RetainPtr<CGImageRef> m_uncorrectedContentsImage;
     RetainPtr<CGImageRef> m_pendingContentsImage;

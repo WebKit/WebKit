@@ -56,7 +56,7 @@ struct CoordinatedLayerInfo {
     WebCore::TransformationMatrix childrenTransform;
     WebCore::IntRect contentsRect;
     float opacity;
-    WebCore::Color backgroundColor;
+    WebCore::Color solidColor;
 
     union {
         struct {

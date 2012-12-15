@@ -1,3 +1,21 @@
+2012-12-15  No'am Rosenthal  <noam.rosenthal@nokia.com>
+
+        Disambiguate "background color" and "contents as solid color" on GraphicsLayer
+        https://bugs.webkit.org/show_bug.cgi?id=104842
+
+        Reviewed by Simon Fraser.
+
+        Rename overloads in coordinated graphics to account for the rename in GraphicsLayer.
+
+        * Shared/CoordinatedGraphics/CoordinatedLayerInfo.h:
+        (CoordinatedLayerInfo):
+        * UIProcess/CoordinatedGraphics/LayerTreeRenderer.cpp:
+        (WebKit::LayerTreeRenderer::setLayerState):
+        * WebProcess/WebPage/CoordinatedGraphics/CoordinatedGraphicsLayer.cpp:
+        (WebCore::CoordinatedGraphicsLayer::setContentsToSolidColor):
+        * WebProcess/WebPage/CoordinatedGraphics/CoordinatedGraphicsLayer.h:
+        (CoordinatedGraphicsLayer):
+
 2012-12-15  Christophe Dumez  <christophe.dumez@intel.com>
 
         [GTK][WK2] Memory leak in ChunkedUpdateDrawingArea::paintIntoUpdateChunk()

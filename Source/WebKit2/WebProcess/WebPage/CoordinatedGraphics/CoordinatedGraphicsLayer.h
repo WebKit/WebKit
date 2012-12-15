@@ -110,7 +110,7 @@ public:
     virtual void setOpacity(float) OVERRIDE;
     virtual void setContentsRect(const IntRect&) OVERRIDE;
     virtual void setContentsToImage(Image*) OVERRIDE;
-    virtual void setContentsToBackgroundColor(const Color&) OVERRIDE;
+    virtual void setContentsToSolidColor(const Color&) OVERRIDE;
     virtual bool shouldDirectlyCompositeImage(Image*) const OVERRIDE;
     virtual void setContentsToCanvas(PlatformLayer*) OVERRIDE;
     virtual void setMaskLayer(GraphicsLayer*) OVERRIDE;

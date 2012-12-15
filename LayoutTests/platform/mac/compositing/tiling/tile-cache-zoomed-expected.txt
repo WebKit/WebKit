@@ -11,7 +11,6 @@
         (GraphicsLayer
           (position 8.00 8.00)
           (bounds 700.00 2500.00)
-          (backgroundColor #C0C0C0)
           (transform [1.00 0.00 0.00 0.00] [0.00 1.00 0.00 0.00] [0.00 0.00 1.00 0.00] [0.00 0.00 1.00 1.00])
           (visible rect 0.00, 0.00 482.63 x 357.63)
         )

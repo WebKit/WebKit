@@ -7,7 +7,6 @@
         (GraphicsLayer
           (position 6.00 6.00)
           (bounds 104.00 104.00)
-          (backgroundColor #008000)
           (transform [1.00 0.00 0.00 0.00] [0.00 1.00 0.00 0.00] [0.00 0.00 1.00 0.00] [0.00 0.00 1.00 1.00])
         )
         (GraphicsLayer

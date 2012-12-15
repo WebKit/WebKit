@@ -12,7 +12,6 @@ middle
         (GraphicsLayer
           (position 129.00 29.00)
           (bounds 200.00 100.00)
-          (backgroundColor #FF0000)
         )
         (GraphicsLayer
           (position 8.00 8.00)

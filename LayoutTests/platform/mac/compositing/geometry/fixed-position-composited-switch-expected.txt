@@ -8,7 +8,6 @@ Before (should be empty):
         (GraphicsLayer
           (position 495.00 30.00)
           (bounds 300.00 100.00)
-          (backgroundColor #008000)
         )
       )
     )
@@ -25,7 +24,6 @@ After (should not be empty):
         (GraphicsLayer
           (position 495.00 30.00)
           (bounds 300.00 100.00)
-          (backgroundColor #008000)
         )
       )
     )

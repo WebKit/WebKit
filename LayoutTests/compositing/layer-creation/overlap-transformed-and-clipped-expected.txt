@@ -13,11 +13,9 @@
               (children 2
                 (GraphicsLayer
                   (bounds 100.00 100.00)
-                  (backgroundColor #FF0000)
                 )
                 (GraphicsLayer
                   (bounds 100.00 100.00)
-                  (backgroundColor #008000)
                 )
               )
             )

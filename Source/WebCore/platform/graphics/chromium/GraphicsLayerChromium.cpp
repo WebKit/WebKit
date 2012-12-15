@@ -101,7 +101,6 @@ GraphicsLayerChromium::GraphicsLayerChromium(GraphicsLayerClient* client)
     , m_contentsLayerId(0)
     , m_linkHighlight(0)
     , m_contentsLayerPurpose(NoContentsLayer)
-    , m_contentsLayerHasBackgroundColor(false)
     , m_inSetChildren(false)
     , m_scrollableArea(0)
 {
@@ -285,18 +284,11 @@ void GraphicsLayerChromium::setContentsVisible(bool contentsVisible)
 
 void GraphicsLayerChromium::setBackgroundColor(const Color& color)
 {
-    GraphicsLayer::setBackgroundColor(color.rgb());
+    if (color == m_backgroundColor)
+        return;
 
-    m_contentsLayerHasBackgroundColor = true;
+    GraphicsLayer::setBackgroundColor(color);
     updateLayerBackgroundColor();
-}
-
-void GraphicsLayerChromium::clearBackgroundColor()
-{
-    GraphicsLayer::clearBackgroundColor();
-
-    if (WebLayer* contentsLayer = contentsLayerIfRegistered())
-        contentsLayer->setBackgroundColor(static_cast<RGBA32>(0));
 }
 
 void GraphicsLayerChromium::setContentsOpaque(bool opaque)
@@ -803,15 +795,7 @@ void GraphicsLayerChromium::updateLayerIsDrawable()
 
 void GraphicsLayerChromium::updateLayerBackgroundColor()
 {
-    WebLayer* contentsLayer = contentsLayerIfRegistered();
-    if (!contentsLayer)
-        return;
-
-    // We never create the contents layer just for background color yet.
-    if (m_backgroundColorSet)
-        contentsLayer->setBackgroundColor(m_backgroundColor.rgb());
-    else
-        contentsLayer->setBackgroundColor(static_cast<RGBA32>(0));
+    m_layer->layer()->setBackgroundColor(m_backgroundColor.rgb());
 }
 
 void GraphicsLayerChromium::updateContentsVideo()

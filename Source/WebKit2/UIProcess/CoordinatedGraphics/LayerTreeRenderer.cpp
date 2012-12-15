@@ -343,7 +343,7 @@ void LayerTreeRenderer::setLayerState(CoordinatedLayerID id, const CoordinatedLa
     layer->setBackfaceVisibility(layerInfo.backfaceVisible);
     layer->setContentsOpaque(layerInfo.contentsOpaque);
     layer->setContentsRect(layerInfo.contentsRect);
-    layer->setContentsToBackgroundColor(layerInfo.backgroundColor);
+    layer->setContentsToSolidColor(layerInfo.solidColor);
     layer->setDrawsContent(layerInfo.drawsContent);
     layer->setContentsVisible(layerInfo.contentsVisible);
     toGraphicsLayerTextureMapper(layer)->setFixedToViewport(layerInfo.fixedToViewport);

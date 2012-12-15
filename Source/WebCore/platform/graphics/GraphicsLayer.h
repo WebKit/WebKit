@@ -292,11 +292,11 @@ public:
     bool acceleratesDrawing() const { return m_acceleratesDrawing; }
     virtual void setAcceleratesDrawing(bool b) { m_acceleratesDrawing = b; }
 
-    // The color used to paint the layer backgrounds
+    // The color used to paint the layer background. Pass an invalid color to remove it.
+    // Note that this covers the entire layer. Use setContentsToSolidColor() if the color should
+    // only cover the contentsRect.
     const Color& backgroundColor() const { return m_backgroundColor; }
     virtual void setBackgroundColor(const Color&);
-    virtual void clearBackgroundColor();
-    bool backgroundColorSet() const { return m_backgroundColorSet; }
 
     // opaque means that we know the layer contents have no alpha
     bool contentsOpaque() const { return m_contentsOpaque; }
@@ -346,7 +346,8 @@ public:
     virtual void setContentsToImage(Image*) { }
     virtual bool shouldDirectlyCompositeImage(Image*) const { return true; }
     virtual void setContentsToMedia(PlatformLayer*) { } // video or plug-in
-    virtual void setContentsToBackgroundColor(const Color&) { }
+    // Pass an invalid color to remove the contents layer.
+    virtual void setContentsToSolidColor(const Color&) { }
     virtual void setContentsToCanvas(PlatformLayer*) { }
     virtual bool hasContentsLayer() const { return false; }
 
@@ -497,7 +498,6 @@ protected:
     FilterOperations m_filters;
 #endif
 
-    bool m_backgroundColorSet : 1;
     bool m_contentsOpaque : 1;
     bool m_preserves3D: 1;
     bool m_backfaceVisibility : 1;

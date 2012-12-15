@@ -274,7 +274,6 @@ PassOwnPtr<GraphicsLayer> GraphicsLayer::create(GraphicsLayerClient* client)
 GraphicsLayerCA::GraphicsLayerCA(GraphicsLayerClient* client)
     : GraphicsLayer(client)
     , m_contentsLayerPurpose(NoContentsLayer)
-    , m_contentsLayerHasBackgroundColor(false)
     , m_allowTiledLayer(true)
     , m_isPageTileCacheLayer(false)
     , m_uncommittedChanges(0)
@@ -564,22 +563,10 @@ void GraphicsLayerCA::setAllowTiledLayer(bool allowTiledLayer)
 
 void GraphicsLayerCA::setBackgroundColor(const Color& color)
 {
-    if (m_backgroundColorSet && m_backgroundColor == color)
+    if (m_backgroundColor == color)
         return;
 
     GraphicsLayer::setBackgroundColor(color);
-
-    m_contentsLayerHasBackgroundColor = true;
-    noteLayerPropertyChanged(BackgroundColorChanged);
-}
-
-void GraphicsLayerCA::clearBackgroundColor()
-{
-    if (!m_backgroundColorSet)
-        return;
-
-    GraphicsLayer::clearBackgroundColor();
-    m_contentsLayerHasBackgroundColor = false;
     noteLayerPropertyChanged(BackgroundColorChanged);
 }
 
@@ -756,10 +743,14 @@ void GraphicsLayerCA::platformCALayerAnimationStarted(CFTimeInterval startTime)
         m_client->notifyAnimationStarted(this, startTime);
 }
 
-void GraphicsLayerCA::setContentsToBackgroundColor(const Color& color)
+void GraphicsLayerCA::setContentsToSolidColor(const Color& color)
 {
-    setBackgroundColor(color);
-    if (color != Color::transparent) {
+    if (color == m_contentsSolidColor)
+        return;
+
+    m_contentsSolidColor = color;
+
+    if (m_contentsSolidColor.isValid()) {
         m_contentsLayerPurpose = ContentsLayerForBackgroundColor;
         m_contentsLayer = PlatformCALayer::create(PlatformCALayer::LayerTypeLayer, this);
 #ifndef NDEBUG
@@ -771,7 +762,7 @@ void GraphicsLayerCA::setContentsToBackgroundColor(const Color& color)
     }
 
     noteSublayersChanged();
-    noteLayerPropertyChanged(BackgroundColorChanged);
+    noteLayerPropertyChanged(ContentsColorLayerChanged);
 }
 
 void GraphicsLayerCA::setContentsToImage(Image* image)
@@ -1093,9 +1084,12 @@ void GraphicsLayerCA::commitLayerChangesBeforeSublayers(float pageScaleFactor, c
     
     if (m_uncommittedChanges & ContentsCanvasLayerChanged) // Needs to happen before ChildrenChanged
         updateContentsCanvasLayer();
+
+    if (m_uncommittedChanges & ContentsColorLayerChanged) // Needs to happen before ChildrenChanged
+        updateContentsColorLayer();
     
-    if (m_uncommittedChanges & BackgroundColorChanged) // Needs to happen before ChildrenChanged, and after updating image or video
-        updateLayerBackgroundColor();
+    if (m_uncommittedChanges & BackgroundColorChanged)
+        updateBackgroundColor();
 
     if (m_uncommittedChanges & TransformChanged)
         updateTransform();
@@ -1616,23 +1610,9 @@ void GraphicsLayerCA::updateVisibleRect(const FloatRect& oldVisibleRect)
     m_sizeAtLastVisibleRectUpdate = m_size;
 }
 
-void GraphicsLayerCA::updateLayerBackgroundColor()
+void GraphicsLayerCA::updateBackgroundColor()
 {
-    if (m_isPageTileCacheLayer) {
-        m_layer->setBackgroundColor(m_backgroundColor);
-        return;
-    }
-
-    if (!m_contentsLayer)
-        return;
-
-    setupContentsLayer(m_contentsLayer.get());
-    updateContentsRect();
-
-    if (m_backgroundColorSet)
-        m_contentsLayer->setBackgroundColor(m_backgroundColor);
-    else
-        m_contentsLayer->setBackgroundColor(Color::transparent);
+    m_layer->setBackgroundColor(m_backgroundColor);
 }
 
 void GraphicsLayerCA::updateContentsImage()
@@ -1683,6 +1663,17 @@ void GraphicsLayerCA::updateContentsCanvasLayer()
         setupContentsLayer(m_contentsLayer.get());
         m_contentsLayer->setNeedsDisplay();
         updateContentsRect();
+    }
+}
+
+void GraphicsLayerCA::updateContentsColorLayer()
+{
+    // Color layer was set as m_contentsLayer, and will get parented in updateSublayerList().
+    if (m_contentsLayer) {
+        setupContentsLayer(m_contentsLayer.get());
+        updateContentsRect();
+        ASSERT(m_contentsSolidColor.isValid()); // An invalid color should have removed the contents layer.
+        m_contentsLayer->setBackgroundColor(m_contentsSolidColor);
     }
 }
 

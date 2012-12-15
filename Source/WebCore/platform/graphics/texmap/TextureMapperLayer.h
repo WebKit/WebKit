@@ -199,7 +199,7 @@ private:
         int descendantsWithContent;
         TextureMapperLayer* maskLayer;
         TextureMapperLayer* replicaLayer;
-        Color backgroundColor;
+        Color solidColor;
 #if ENABLE(CSS_FILTERS)
          FilterOperations filters;
 #endif

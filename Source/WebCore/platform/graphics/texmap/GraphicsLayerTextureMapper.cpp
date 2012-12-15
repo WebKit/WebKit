@@ -351,13 +351,12 @@ void GraphicsLayerTextureMapper::setContentsRect(const IntRect& value)
     notifyChange(TextureMapperLayer::ContentsRectChange);
 }
 
-void GraphicsLayerTextureMapper::setContentsToBackgroundColor(const Color& color)
+void GraphicsLayerTextureMapper::setContentsToSolidColor(const Color& color)
 {
-    if (color == m_backgroundColor)
+    if (color == m_solidColor)
         return;
 
-    m_backgroundColor = color;
-    setBackgroundColor(color);
+    m_solidColor = color;
     notifyChange(TextureMapperLayer::ContentChange);
 }
 

@@ -11,7 +11,6 @@
         (GraphicsLayer
           (position 21.00 21.00)
           (bounds 100.00 100.00)
-          (backgroundColor #FF0000)
         )
         (GraphicsLayer
           (bounds 142.00 142.00)

@@ -11,7 +11,6 @@
         )
         (GraphicsLayer
           (bounds 300.00 300.00)
-          (backgroundColor #008000)
         )
       )
     )
