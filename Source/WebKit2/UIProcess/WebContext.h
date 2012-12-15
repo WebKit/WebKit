@@ -385,7 +385,6 @@ private:
     CacheModel m_cacheModel;
 
     WebDownloadClient m_downloadClient;
-    DownloadProxyMap m_downloads;
     
     bool m_memorySamplerEnabled;
     double m_memorySamplerInterval;

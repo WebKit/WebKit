@@ -27,6 +27,7 @@
 #define WebProcessProxy_h
 
 #include "ChildProcessProxy.h"
+#include "DownloadProxyMap.h"
 #include "MessageReceiverMap.h"
 #include "PlatformProcessIdentifier.h"
 #include "PluginInfoStore.h"
@@ -114,6 +115,8 @@ public:
 
     static bool fullKeyboardAccessEnabled();
 
+    DownloadProxy* createDownloadProxy();
+
 private:
     explicit WebProcessProxy(PassRefPtr<WebContext>);
 
@@ -199,7 +202,9 @@ private:
     HashMap<uint64_t, WebPageProxy*> m_pageMap;
     WebFrameProxyMap m_frameMap;
     WebBackForwardListItemMap m_backForwardListItemMap;
-    
+
+    OwnPtr<DownloadProxyMap> m_downloadProxyMap;
+
 #if ENABLE(CUSTOM_PROTOCOLS)
     CustomProtocolManagerProxy m_customProtocolManagerProxy;
 #endif

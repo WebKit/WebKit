@@ -1,5 +1,32 @@
 2012-12-15  Anders Carlsson  <andersca@apple.com>
 
+        Move the download proxy map from the web context to the web process proxy
+        https://bugs.webkit.org/show_bug.cgi?id=105109
+
+        Reviewed by Andreas Kling.
+
+        More progress towards making downloads work with the networking process. Since downloads are handled by the
+        web process when not using a networking process, it makes sense for the download proxy map to live in the
+        web process proxy object.
+
+        * UIProcess/WebContext.cpp:
+        (WebKit::WebContext::WebContext):
+        (WebKit::WebContext::shouldTerminate):
+        (WebKit::WebContext::disconnectProcess):
+        (WebKit::WebContext::download):
+        (WebKit::WebContext::createDownloadProxy):
+        * UIProcess/WebContext.h:
+        (WebContext):
+        * UIProcess/WebProcessProxy.cpp:
+        (WebKit::WebProcessProxy::disconnect):
+        (WebKit::WebProcessProxy::shouldTerminate):
+        (WebKit):
+        (WebKit::WebProcessProxy::createDownloadProxy):
+        * UIProcess/WebProcessProxy.h:
+        (WebProcessProxy):
+
+2012-12-15  Anders Carlsson  <andersca@apple.com>
+
         DownloadProxy should keep a strong reference to its associated web context
         https://bugs.webkit.org/show_bug.cgi?id=105107
 

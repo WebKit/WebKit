@@ -127,6 +127,9 @@ void WebProcessProxy::disconnect()
         frames[i]->disconnect();
     m_frameMap.clear();
 
+    if (m_downloadProxyMap)
+        m_downloadProxyMap->processDidClose();
+
     m_context->disconnectProcess(this);
 }
 
@@ -553,7 +556,7 @@ size_t WebProcessProxy::frameCountInPage(WebPageProxy* page) const
 
 void WebProcessProxy::shouldTerminate(bool& shouldTerminate)
 {
-    if (!m_pageMap.isEmpty() || !m_context->shouldTerminate(this)) {
+    if (!m_pageMap.isEmpty() || (m_downloadProxyMap && !m_downloadProxyMap->isEmpty()) || !m_context->shouldTerminate(this)) {
         shouldTerminate = false;
         return;
     }
@@ -568,6 +571,19 @@ void WebProcessProxy::updateTextCheckerState()
 {
     if (canSendMessage())
         send(Messages::WebProcess::SetTextCheckerState(TextChecker::state()), 0);
+}
+
+
+DownloadProxy* WebProcessProxy::createDownloadProxy()
+{
+#if ENABLE(NETWORK_PROCESS)
+    ASSERT(!m_context->usesNetworkProcess());
+#endif
+
+    if (!m_downloadProxyMap)
+        m_downloadProxyMap = adoptPtr(new DownloadProxyMap(m_messageReceiverMap));
+
+    return m_downloadProxyMap->createDownloadProxy(m_context.get());
 }
 
 void WebProcessProxy::didNavigateWithNavigationData(uint64_t pageID, const WebNavigationDataStore& store, uint64_t frameID) 

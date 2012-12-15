@@ -128,7 +128,6 @@ WebContext::WebContext(ProcessModel processModel, const String& injectedBundlePa
     , m_alwaysUsesComplexTextCodePath(false)
     , m_shouldUseFontSmoothing(true)
     , m_cacheModel(CacheModelDocumentViewer)
-    , m_downloads(m_messageReceiverMap)
     , m_memorySamplerEnabled(false)
     , m_memorySamplerInterval(1400.0)
 #if PLATFORM(WIN)
@@ -555,9 +554,6 @@ bool WebContext::shouldTerminate(WebProcessProxy* process)
     if (!m_processTerminationEnabled)
         return false;
 
-    if (!m_downloads.isEmpty())
-        return false;
-
     if (!m_applicationCacheManagerProxy->shouldTerminate(process))
         return false;
     if (!m_cookieManagerProxy->shouldTerminate(process))
@@ -616,8 +612,6 @@ void WebContext::disconnectProcess(WebProcessProxy* process)
         m_processes.remove(m_processes.find(process));
         return;
     }
-
-    m_downloads.processDidClose();
 
     m_applicationCacheManagerProxy->invalidate();
 #if ENABLE(BATTERY_STATUS)
@@ -693,24 +687,23 @@ PassRefPtr<WebPageProxy> WebContext::createWebPage(PageClient* pageClient, WebPa
 
 DownloadProxy* WebContext::download(WebPageProxy* initiatingPage, const ResourceRequest& request)
 {
-    if (m_processModel == ProcessModelSharedSecondaryProcess) {
-        ensureSharedWebProcess();
+    DownloadProxy* downloadProxy = createDownloadProxy();
+    uint64_t initiatingPageID = initiatingPage ? initiatingPage->pageID() : 0;
 
-        DownloadProxy* download = createDownloadProxy();
-        uint64_t initiatingPageID = initiatingPage ? initiatingPage->pageID() : 0;
-
-#if PLATFORM(QT)
-        ASSERT(initiatingPage); // Our design does not suppport downloads without a WebPage.
-        initiatingPage->handleDownloadRequest(download);
-#endif
-
-        m_processes[0]->send(Messages::WebProcess::DownloadRequest(download->downloadID(), initiatingPageID, request), 0);
-        return download;
-
-    } else {
+#if ENABLE(NETWORK_PROCESS)
+    if (usesNetworkProcess()) {
         // FIXME (Multi-WebProcess): <rdar://problem/12239483> Make downloading work.
         return 0;
     }
+#endif
+
+#if PLATFORM(QT)
+    ASSERT(initiatingPage); // Our design does not suppport downloads without a WebPage.
+    initiatingPage->handleDownloadRequest(download);
+#endif
+
+    m_processes[0]->send(Messages::WebProcess::DownloadRequest(downloadProxy->downloadID(), initiatingPageID, request), 0);
+    return downloadProxy;
 }
 
 void WebContext::postMessageToInjectedBundle(const String& messageName, APIObject* messageBody)
@@ -847,7 +840,12 @@ void WebContext::addVisitedLinkHash(LinkHash linkHash)
 
 DownloadProxy* WebContext::createDownloadProxy()
 {
-    return m_downloads.createDownloadProxy(this);
+    if (usesNetworkProcess()) {
+        // FIXME (Multi-WebProcess): <rdar://problem/12239483> Make downloading work.
+        return 0;
+    }
+
+    return ensureSharedWebProcess()->createDownloadProxy();
 }
 
 // FIXME: This is not the ideal place for this function.
