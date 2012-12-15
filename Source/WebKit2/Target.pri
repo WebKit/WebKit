@@ -71,7 +71,6 @@ HEADERS += \
     Shared/API/c/qt/WKImageQt.h \
     Shared/APIClientTraits.h \
     Shared/ShareableBitmap.h \
-    Shared/CacheModel.cpp \
     Shared/CacheModel.h \
     Shared/ChildProcess.h \
     Shared/ChildProcessProxy.h \
@@ -445,6 +444,7 @@ SOURCES += \
     Shared/Plugins/Netscape/NetscapePluginModule.cpp \
     Shared/Plugins/Netscape/NetscapePluginModuleNone.cpp \
     Shared/Plugins/Netscape/x11/NetscapePluginModuleX11.cpp \
+    Shared/CacheModel.cpp \
     Shared/ShareableBitmap.cpp \
     Shared/Plugins/NPRemoteObjectMap.cpp \
     Shared/Plugins/NPIdentifierData.cpp \
