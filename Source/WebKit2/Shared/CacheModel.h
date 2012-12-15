@@ -34,6 +34,10 @@ enum CacheModel {
     CacheModelPrimaryWebBrowser
 };
 
+void calculateCacheSizes(CacheModel cacheModel, uint64_t memorySize, uint64_t diskFreeSize,
+    unsigned& cacheTotalCapacity, unsigned& cacheMinDeadCapacity, unsigned& cacheMaxDeadCapacity, double& deadDecodedDataDeletionInterval,
+    unsigned& pageCacheCapacity, unsigned long& urlCacheMemoryCapacity, unsigned long& urlCacheDiskCapacity);
+
 } // namespace WebKit
 
 #endif // CacheModel_h

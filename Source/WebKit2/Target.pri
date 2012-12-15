@@ -71,6 +71,7 @@ HEADERS += \
     Shared/API/c/qt/WKImageQt.h \
     Shared/APIClientTraits.h \
     Shared/ShareableBitmap.h \
+    Shared/CacheModel.cpp \
     Shared/CacheModel.h \
     Shared/ChildProcess.h \
     Shared/ChildProcessProxy.h \

@@ -366,6 +366,7 @@ webkit2_sources += \
 	Source/WebKit2/Shared/BlockingResponseMap.h \
 	Source/WebKit2/Shared/ShareableBitmap.cpp \
 	Source/WebKit2/Shared/ShareableBitmap.h \
+	Source/WebKit2/Shared/CacheModel.cpp \
 	Source/WebKit2/Shared/CacheModel.h \
 	Source/WebKit2/Shared/ChildProcess.cpp \
 	Source/WebKit2/Shared/ChildProcess.h \

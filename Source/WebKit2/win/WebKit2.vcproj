@@ -411,6 +411,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\Shared\CacheModel.cpp"
+				>
+			</File>
+			<File
 				RelativePath="..\Shared\CacheModel.h"
 				>
 			</File>

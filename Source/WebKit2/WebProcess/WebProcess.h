@@ -251,9 +251,6 @@ private:
     void didAddPlugInAutoStartOrigin(unsigned plugInOriginHash);
 
     void platformSetCacheModel(CacheModel);
-    static void calculateCacheSizes(CacheModel cacheModel, uint64_t memorySize, uint64_t diskFreeSize,
-        unsigned& cacheTotalCapacity, unsigned& cacheMinDeadCapacity, unsigned& cacheMaxDeadCapacity, double& deadDecodedDataDeletionInterval,
-        unsigned& pageCacheCapacity, unsigned long& urlCacheMemoryCapacity, unsigned long& urlCacheDiskCapacity);
     void platformClearResourceCaches(ResourceCachesToClear);
     void clearApplicationCache();
 
