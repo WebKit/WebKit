@@ -1,3 +1,18 @@
+2012-12-15  Andy Estes  <aestes@apple.com>
+
+        [WebKit2] Move CustomProtocolManager to Shared/
+        https://bugs.webkit.org/show_bug.cgi?id=105103
+
+        Reviewed by Sam Weinig.
+
+        CustomProtocolManager can be instantiated either in the NetworkProcess or the WebProcess, so it should live in Shared/.
+
+        * DerivedSources.make: Update the path where CustomProtocolManager.messages.in can be found.
+        * Shared/Network/CustomProtocols/CustomProtocolManager.h: Renamed from Source/WebKit2/WebProcess/Network/CustomProtocols/CustomProtocolManager.h.
+        * Shared/Network/CustomProtocols/CustomProtocolManager.messages.in: Renamed from Source/WebKit2/WebProcess/Network/CustomProtocols/CustomProtocolManager.messages.in.
+        * Shared/Network/CustomProtocols/mac/CustomProtocolManagerMac.mm: Renamed from Source/WebKit2/WebProcess/Network/CustomProtocols/mac/CustomProtocolManagerMac.mm.
+        * WebKit2.xcodeproj/project.pbxproj:
+
 2012-12-15  Sam Weinig  <sam@webkit.org>
 
         Try to fix the Qt build.

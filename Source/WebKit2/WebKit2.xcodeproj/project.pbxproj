@@ -284,10 +284,10 @@
 		296BD85E15019BC30071F424 /* StringUtilities.mm in Sources */ = {isa = PBXBuildFile; fileRef = 296BD85C15019BC30071F424 /* StringUtilities.mm */; };
 		2984F57C164B915F004BC0C6 /* CustomProtocolManagerProxyMessageReceiver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2984F57A164B915F004BC0C6 /* CustomProtocolManagerProxyMessageReceiver.cpp */; };
 		2984F57D164B915F004BC0C6 /* CustomProtocolManagerProxyMessages.h in Headers */ = {isa = PBXBuildFile; fileRef = 2984F57B164B915F004BC0C6 /* CustomProtocolManagerProxyMessages.h */; };
-		2984F581164B9BBD004BC0C6 /* CustomProtocolManager.h in Headers */ = {isa = PBXBuildFile; fileRef = 2984F580164B9BBD004BC0C6 /* CustomProtocolManager.h */; };
-		2984F583164B9BD9004BC0C6 /* CustomProtocolManagerMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = 2984F582164B9BD9004BC0C6 /* CustomProtocolManagerMac.mm */; };
 		2984F588164BA095004BC0C6 /* CustomProtocolManagerMessageReceiver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2984F586164BA095004BC0C6 /* CustomProtocolManagerMessageReceiver.cpp */; };
 		2984F589164BA095004BC0C6 /* CustomProtocolManagerMessages.h in Headers */ = {isa = PBXBuildFile; fileRef = 2984F587164BA095004BC0C6 /* CustomProtocolManagerMessages.h */; };
+		2989A411167D1834004F96D2 /* CustomProtocolManagerMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = 2989A410167D1834004F96D2 /* CustomProtocolManagerMac.mm */; };
+		2989A414167D184B004F96D2 /* CustomProtocolManager.h in Headers */ = {isa = PBXBuildFile; fileRef = 2989A412167D184B004F96D2 /* CustomProtocolManager.h */; };
 		29AD3093164B4C5D0072DEA9 /* CustomProtocolManagerProxy.h in Headers */ = {isa = PBXBuildFile; fileRef = 29AD3092164B4C5D0072DEA9 /* CustomProtocolManagerProxy.h */; };
 		29AD3096164B4C930072DEA9 /* CustomProtocolManagerProxyMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = 29AD3095164B4C930072DEA9 /* CustomProtocolManagerProxyMac.mm */; };
 		29CD55AA128E294F00133C85 /* WKAccessibilityWebPageObject.h in Headers */ = {isa = PBXBuildFile; fileRef = 29CD55A8128E294F00133C85 /* WKAccessibilityWebPageObject.h */; };
@@ -1505,11 +1505,11 @@
 		296BD85C15019BC30071F424 /* StringUtilities.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = StringUtilities.mm; sourceTree = "<group>"; };
 		2984F57A164B915F004BC0C6 /* CustomProtocolManagerProxyMessageReceiver.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CustomProtocolManagerProxyMessageReceiver.cpp; sourceTree = "<group>"; };
 		2984F57B164B915F004BC0C6 /* CustomProtocolManagerProxyMessages.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CustomProtocolManagerProxyMessages.h; sourceTree = "<group>"; };
-		2984F580164B9BBD004BC0C6 /* CustomProtocolManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CustomProtocolManager.h; path = Network/CustomProtocols/CustomProtocolManager.h; sourceTree = "<group>"; };
-		2984F582164B9BD9004BC0C6 /* CustomProtocolManagerMac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = CustomProtocolManagerMac.mm; path = Network/CustomProtocols/mac/CustomProtocolManagerMac.mm; sourceTree = "<group>"; };
-		2984F584164B9ED9004BC0C6 /* CustomProtocolManager.messages.in */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = CustomProtocolManager.messages.in; path = Network/CustomProtocols/CustomProtocolManager.messages.in; sourceTree = "<group>"; };
 		2984F586164BA095004BC0C6 /* CustomProtocolManagerMessageReceiver.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CustomProtocolManagerMessageReceiver.cpp; sourceTree = "<group>"; };
 		2984F587164BA095004BC0C6 /* CustomProtocolManagerMessages.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CustomProtocolManagerMessages.h; sourceTree = "<group>"; };
+		2989A410167D1834004F96D2 /* CustomProtocolManagerMac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = CustomProtocolManagerMac.mm; path = Network/CustomProtocols/mac/CustomProtocolManagerMac.mm; sourceTree = "<group>"; };
+		2989A412167D184B004F96D2 /* CustomProtocolManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CustomProtocolManager.h; path = Network/CustomProtocols/CustomProtocolManager.h; sourceTree = "<group>"; };
+		2989A413167D184B004F96D2 /* CustomProtocolManager.messages.in */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = CustomProtocolManager.messages.in; path = Network/CustomProtocols/CustomProtocolManager.messages.in; sourceTree = "<group>"; };
 		29AD3092164B4C5D0072DEA9 /* CustomProtocolManagerProxy.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CustomProtocolManagerProxy.h; path = CustomProtocols/CustomProtocolManagerProxy.h; sourceTree = "<group>"; };
 		29AD3095164B4C930072DEA9 /* CustomProtocolManagerProxyMac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = CustomProtocolManagerProxyMac.mm; path = CustomProtocols/mac/CustomProtocolManagerProxyMac.mm; sourceTree = "<group>"; };
 		29AD3097164B4E210072DEA9 /* CustomProtocolManagerProxy.messages.in */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = CustomProtocolManagerProxy.messages.in; path = CustomProtocols/CustomProtocolManagerProxy.messages.in; sourceTree = "<group>"; };
@@ -3017,20 +3017,20 @@
 			path = mac;
 			sourceTree = "<group>";
 		};
-		2984F57E164B9B56004BC0C6 /* CustomProtocols */ = {
+		2989A40E167D1813004F96D2 /* CustomProtocols */ = {
 			isa = PBXGroup;
 			children = (
-				2984F57F164B9B5D004BC0C6 /* mac */,
-				2984F580164B9BBD004BC0C6 /* CustomProtocolManager.h */,
-				2984F584164B9ED9004BC0C6 /* CustomProtocolManager.messages.in */,
+				2989A40F167D181B004F96D2 /* mac */,
+				2989A412167D184B004F96D2 /* CustomProtocolManager.h */,
+				2989A413167D184B004F96D2 /* CustomProtocolManager.messages.in */,
 			);
 			name = CustomProtocols;
 			sourceTree = "<group>";
 		};
-		2984F57F164B9B5D004BC0C6 /* mac */ = {
+		2989A40F167D181B004F96D2 /* mac */ = {
 			isa = PBXGroup;
 			children = (
-				2984F582164B9BD9004BC0C6 /* CustomProtocolManagerMac.mm */,
+				2989A410167D1834004F96D2 /* CustomProtocolManagerMac.mm */,
 			);
 			name = mac;
 			sourceTree = "<group>";
@@ -3137,7 +3137,6 @@
 		5105B0D2162F7A5E00E27709 /* Network */ = {
 			isa = PBXGroup;
 			children = (
-				2984F57E164B9B56004BC0C6 /* CustomProtocols */,
 				5105B0D4162F7A7A00E27709 /* NetworkProcessConnection.cpp */,
 				5105B0D5162F7A7A00E27709 /* NetworkProcessConnection.h */,
 				51FB0902163A3B1C00EC324A /* NetworkProcessConnection.messages.in */,
@@ -3264,6 +3263,7 @@
 		51A8A60D1627F2AC000D90E9 /* Network */ = {
 			isa = PBXGroup;
 			children = (
+				2989A40E167D1813004F96D2 /* CustomProtocols */,
 				51A8A6121627F325000D90E9 /* NetworkProcessCreationParameters.cpp */,
 				51A8A60F1627F2BD000D90E9 /* NetworkProcessCreationParameters.h */,
 				51CBBA0D165219B6005BE8FD /* NetworkResourceLoadParameters.cpp */,
@@ -5016,7 +5016,6 @@
 				510AFFBA16542048001BA05E /* WebResourceLoader.h in Headers */,
 				29AD3093164B4C5D0072DEA9 /* CustomProtocolManagerProxy.h in Headers */,
 				2984F57D164B915F004BC0C6 /* CustomProtocolManagerProxyMessages.h in Headers */,
-				2984F581164B9BBD004BC0C6 /* CustomProtocolManager.h in Headers */,
 				2984F589164BA095004BC0C6 /* CustomProtocolManagerMessages.h in Headers */,
 				51F060E01654317F00F3281B /* WebResourceLoaderMessages.h in Headers */,
 				5175944B1657080400DD771D /* NetworkResourceLoaderMessages.h in Headers */,
@@ -5026,6 +5025,7 @@
 				31A67E0D165B2A99006CBA66 /* PlugInAutoStartProvider.h in Headers */,
 				31D5929F166E060000E6BF02 /* WebPlugInClient.h in Headers */,
 				1AD25E96167AB08100EA9BCD /* DownloadProxyMap.h in Headers */,
+				2989A414167D184B004F96D2 /* CustomProtocolManager.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -5973,7 +5973,6 @@
 				510AFFB916542048001BA05E /* WebResourceLoader.cpp in Sources */,
 				29AD3096164B4C930072DEA9 /* CustomProtocolManagerProxyMac.mm in Sources */,
 				2984F57C164B915F004BC0C6 /* CustomProtocolManagerProxyMessageReceiver.cpp in Sources */,
-				2984F583164B9BD9004BC0C6 /* CustomProtocolManagerMac.mm in Sources */,
 				2984F588164BA095004BC0C6 /* CustomProtocolManagerMessageReceiver.cpp in Sources */,
 				51F060E11654318500F3281B /* WebResourceLoaderMessageReceiver.cpp in Sources */,
 				5175944A1657080400DD771D /* NetworkResourceLoaderMessageReceiver.cpp in Sources */,
@@ -5984,6 +5983,7 @@
 				31D5929E166E060000E6BF02 /* WebPlugInClient.cpp in Sources */,
 				1AD25E95167AB08100EA9BCD /* DownloadProxyMap.cpp in Sources */,
 				BCF18638167D071E00A1A85A /* CacheModel.cpp in Sources */,
+				2989A411167D1834004F96D2 /* CustomProtocolManagerMac.mm in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
