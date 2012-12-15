@@ -1,3 +1,24 @@
+2012-12-15  Anders Carlsson  <andersca@apple.com>
+
+        Get rid of DownloadProxyMap::downloads()
+        https://bugs.webkit.org/show_bug.cgi?id=105100
+
+        Reviewed by Sam Weinig.
+
+        Add the needed member functions to DownloadProxyMap and remove the downloads() member function.
+
+        * UIProcess/Downloads/DownloadProxyMap.cpp:
+        (WebKit::DownloadProxyMap::downloadFinished):
+        (WebKit::DownloadProxyMap::processDidClose):
+        (WebKit):
+        * UIProcess/Downloads/DownloadProxyMap.h:
+        (WebKit::DownloadProxyMap::isEmpty):
+        (DownloadProxyMap):
+        * UIProcess/WebContext.cpp:
+        (WebKit::WebContext::shouldTerminate):
+        (WebKit::WebContext::disconnectProcess):
+        (WebKit::WebContext::downloadFinished):
+
 2012-12-15  Sam Weinig  <sam@webkit.org>
 
         Move calculation of caches sizes based on the cache model to CacheModel.h/cpp

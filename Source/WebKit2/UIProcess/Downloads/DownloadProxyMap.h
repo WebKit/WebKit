@@ -45,8 +45,9 @@ public:
     DownloadProxy* createDownloadProxy(WebContext*);
     void downloadFinished(DownloadProxy*);
 
-    // FIXME: Don't fully expose the downloads map like this.
-    HashMap<uint64_t, RefPtr<DownloadProxy> >& downloads() { return m_downloads; }
+    bool isEmpty() const { return m_downloads.isEmpty(); }
+
+    void processDidClose();
 
 private:
     HashMap<uint64_t, RefPtr<DownloadProxy> > m_downloads;

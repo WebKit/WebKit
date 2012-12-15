@@ -537,7 +537,7 @@ bool WebContext::shouldTerminate(WebProcessProxy* process)
     if (!m_processTerminationEnabled)
         return false;
 
-    if (!m_downloads.downloads().isEmpty())
+    if (!m_downloads.isEmpty())
         return false;
 
     if (!m_applicationCacheManagerProxy->shouldTerminate(process))
@@ -599,13 +599,7 @@ void WebContext::disconnectProcess(WebProcessProxy* process)
         return;
     }
 
-    // Invalidate all outstanding downloads.
-    for (HashMap<uint64_t, RefPtr<DownloadProxy> >::iterator::Values it = m_downloads.downloads().begin().values(), end = m_downloads.downloads().end().values(); it != end; ++it) {
-        (*it)->processDidClose();
-        (*it)->invalidate();
-    }
-
-    m_downloads.downloads().clear();
+    m_downloads.processDidClose();
 
     m_applicationCacheManagerProxy->invalidate();
 #if ENABLE(BATTERY_STATUS)
@@ -842,9 +836,9 @@ DownloadProxy* WebContext::createDownloadProxy()
 
 void WebContext::downloadFinished(DownloadProxy* downloadProxy)
 {
-    downloadProxy->invalidate();
+    m_downloads.downloadFinished(downloadProxy);
+
     removeMessageReceiver(Messages::DownloadProxy::messageReceiverName(), downloadProxy->downloadID());
-    m_downloads.downloads().remove(downloadProxy->downloadID());
 }
 
 // FIXME: This is not the ideal place for this function.

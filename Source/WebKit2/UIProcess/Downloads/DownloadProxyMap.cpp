@@ -52,7 +52,20 @@ void DownloadProxyMap::downloadFinished(DownloadProxy* downloadProxy)
 {
     ASSERT(m_downloads.contains(downloadProxy->downloadID()));
 
+    downloadProxy->invalidate();
+
     m_downloads.remove(downloadProxy->downloadID());
+}
+
+void DownloadProxyMap::processDidClose()
+{
+    // Invalidate all outstanding downloads.
+    for (HashMap<uint64_t, RefPtr<DownloadProxy> >::iterator::Values it = m_downloads.begin().values(), end = m_downloads.end().values(); it != end; ++it) {
+        (*it)->processDidClose();
+        (*it)->invalidate();
+    }
+
+    m_downloads.clear();
 }
 
 } // namespace WebKit
