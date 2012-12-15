@@ -27,7 +27,6 @@
 #include "NetworkProcessProxy.h"
 
 #include "NetworkProcessCreationParameters.h"
-#include "NetworkProcessManager.h"
 #include "NetworkProcessMessages.h"
 #include "WebContext.h"
 #include "WebProcessMessages.h"
@@ -39,13 +38,13 @@ using namespace WebCore;
 
 namespace WebKit {
 
-PassRefPtr<NetworkProcessProxy> NetworkProcessProxy::create(NetworkProcessManager* manager)
+PassRefPtr<NetworkProcessProxy> NetworkProcessProxy::create(WebContext* webContext)
 {
-    return adoptRef(new NetworkProcessProxy(manager));
+    return adoptRef(new NetworkProcessProxy(webContext));
 }
 
-NetworkProcessProxy::NetworkProcessProxy(NetworkProcessManager* manager)
-    : m_networkProcessManager(manager)
+NetworkProcessProxy::NetworkProcessProxy(WebContext* webContext)
+    : m_webContext(webContext)
     , m_numPendingConnectionRequests(0)
 {
     connect();
@@ -94,7 +93,7 @@ void NetworkProcessProxy::networkProcessCrashedOrFailedToLaunch()
     }
 
     // Tell the network process manager to forget about this network process proxy. This may cause us to be deleted.
-    m_networkProcessManager->removeNetworkProcessProxy(this);
+    m_webContext->removeNetworkProcessProxy(this);
 }
 
 void NetworkProcessProxy::didReceiveMessage(CoreIPC::Connection* connection, CoreIPC::MessageID messageID, CoreIPC::MessageDecoder& decoder)

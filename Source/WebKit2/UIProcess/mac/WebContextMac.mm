@@ -26,7 +26,7 @@
 #import "config.h"
 #import "WebContext.h"
 
-#import "NetworkProcessManager.h"
+#import "NetworkProcessProxy.h"
 #import "PluginProcessManager.h"
 #import "SharedWorkerProcessManager.h"
 #import "WKBrowsingContextControllerInternal.h"
@@ -35,7 +35,7 @@
 #import "WebProcessMessages.h"
 #import <WebCore/Color.h>
 #import <WebCore/FileSystem.h>
-#include <WebCore/NotImplemented.h>
+#import <WebCore/NotImplemented.h>
 #import <WebCore/PlatformPasteboard.h>
 #import <sys/param.h>
 
@@ -273,14 +273,17 @@ void WebContext::applicationBecameVisible(uint32_t, void*, uint32_t, void*, uint
         s_applicationIsOccluded = false;
 
         const Vector<WebContext*>& contexts = WebContext::allContexts();
-        for (size_t i = 0, count = contexts.size(); i < count; ++i)
+        for (size_t i = 0, count = contexts.size(); i < count; ++i) {
+#if ENABLE(NETWORK_PROCESS)
+            if (contexts[i]->usesNetworkProcess() && contexts[i]->networkProcess())
+                contexts[i]->networkProcess()->setApplicationIsOccluded(false);
+#endif
+
             contexts[i]->sendToAllProcesses(Messages::WebProcess::SetApplicationIsOccluded(false));
+        }
 
 #if ENABLE(PLUGIN_PROCESS)
         PluginProcessManager::shared().setApplicationIsOccluded(false);
-#endif
-#if ENABLE(NETWORK_PROCESS)
-        NetworkProcessManager::shared().setApplicationIsOccluded(false);
 #endif
 #if ENABLE(SHARED_WORKER_PROCESS)
         SharedWorkerProcessManager::shared().setApplicationIsOccluded(false);
@@ -293,14 +296,17 @@ void WebContext::applicationBecameOccluded(uint32_t, void*, uint32_t, void*, uin
     if (!s_applicationIsOccluded) {
         s_applicationIsOccluded = true;
         const Vector<WebContext*>& contexts = WebContext::allContexts();
-        for (size_t i = 0, count = contexts.size(); i < count; ++i)
+        for (size_t i = 0, count = contexts.size(); i < count; ++i) {
+#if ENABLE(NETWORK_PROCESS)
+            if (contexts[i]->usesNetworkProcess() && contexts[i]->networkProcess())
+                contexts[i]->networkProcess()->setApplicationIsOccluded(true);
+#endif
+
             contexts[i]->sendToAllProcesses(Messages::WebProcess::SetApplicationIsOccluded(true));
+        }
 
 #if ENABLE(PLUGIN_PROCESS)
         PluginProcessManager::shared().setApplicationIsOccluded(true);
-#endif
-#if ENABLE(NETWORK_PROCESS)
-        NetworkProcessManager::shared().setApplicationIsOccluded(true);
 #endif
 #if ENABLE(SHARED_WORKER_PROCESS)
         SharedWorkerProcessManager::shared().setApplicationIsOccluded(true);

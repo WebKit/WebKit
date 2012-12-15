@@ -45,10 +45,6 @@
 #include <wtf/text/CString.h>
 #include <wtf/text/WTFString.h>
 
-#if ENABLE(NETWORK_PROCESS)
-#include "NetworkProcessManager.h"
-#endif
-
 #if PLATFORM(MAC)
 #include "SimplePDFPlugin.h"
 #if ENABLE(PDFKIT_PLUGIN)
@@ -376,7 +372,7 @@ void WebProcessProxy::getSharedWorkerProcessConnection(const String& /* url */, 
 #if ENABLE(NETWORK_PROCESS)
 void WebProcessProxy::getNetworkProcessConnection(PassRefPtr<Messages::WebProcessProxy::GetNetworkProcessConnection::DelayedReply> reply)
 {
-    NetworkProcessManager::shared().getNetworkProcessConnection(reply);
+    m_context->getNetworkProcessConnection(reply);
 }
 #endif // ENABLE(NETWORK_PROCESS)
 

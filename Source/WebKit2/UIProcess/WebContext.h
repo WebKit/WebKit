@@ -52,29 +52,31 @@ namespace WebKit {
 
 class DownloadProxy;
 class WebApplicationCacheManagerProxy;
-#if ENABLE(BATTERY_STATUS)
-class WebBatteryManagerProxy;
-#endif
 class WebCookieManagerProxy;
 class WebDatabaseManagerProxy;
 class WebGeolocationManagerProxy;
 class WebIconDatabase;
 class WebKeyValueStorageManagerProxy;
 class WebMediaCacheManagerProxy;
-#if ENABLE(NETWORK_INFO)
-class WebNetworkInfoManagerProxy;
-#endif
+class NetworkProcessProxy;
 class WebNotificationManagerProxy;
 class WebPageGroup;
 class WebPageProxy;
 class WebResourceCacheManagerProxy;
-#if USE(SOUP)
-class WebSoupRequestManagerProxy;
-#endif
 struct StatisticsData;
 struct WebProcessCreationParameters;
     
 typedef GenericCallback<WKDictionaryRef> DictionaryCallback;
+
+#if ENABLE(BATTERY_STATUS)
+class WebBatteryManagerProxy;
+#endif
+#if ENABLE(NETWORK_INFO)
+class WebNetworkInfoManagerProxy;
+#endif
+#if USE(SOUP)
+class WebSoupRequestManagerProxy;
+#endif
 
 #if PLATFORM(MAC)
 extern NSString *SchemeForCustomProtocolRegisteredNotificationName;
@@ -248,8 +250,20 @@ public:
 
     void textCheckerStateChanged();
 
+
+    // Network Process Management
+
     void setUsesNetworkProcess(bool);
     bool usesNetworkProcess() const;
+
+#if ENABLE(NETWORK_PROCESS)
+    void ensureNetworkProcess();
+    NetworkProcessProxy* networkProcess() { return m_networkProcess.get(); }
+    void removeNetworkProcessProxy(NetworkProcessProxy*);
+
+    void getNetworkProcessConnection(PassRefPtr<Messages::WebProcessProxy::GetNetworkProcessConnection::DelayedReply>);
+#endif
+
 
 #if PLATFORM(MAC)
     static bool applicationIsOccluded() { return s_applicationIsOccluded; }
@@ -424,6 +438,7 @@ private:
 
 #if ENABLE(NETWORK_PROCESS)
     bool m_usesNetworkProcess;
+    RefPtr<NetworkProcessProxy> m_networkProcess;
 #endif
     
     HashMap<uint64_t, RefPtr<DictionaryCallback> > m_dictionaryCallbacks;

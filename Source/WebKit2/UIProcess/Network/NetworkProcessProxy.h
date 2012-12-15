@@ -36,12 +36,12 @@
 
 namespace WebKit {
 
-class NetworkProcessManager;
+class WebContext;
 struct NetworkProcessCreationParameters;
 
 class NetworkProcessProxy : public RefCounted<NetworkProcessProxy>, public ChildProcessProxy {
 public:
-    static PassRefPtr<NetworkProcessProxy> create(NetworkProcessManager*);
+    static PassRefPtr<NetworkProcessProxy> create(WebContext*);
     ~NetworkProcessProxy();
 
     void getNetworkProcessConnection(PassRefPtr<Messages::WebProcessProxy::GetNetworkProcessConnection::DelayedReply>);
@@ -51,7 +51,7 @@ public:
 #endif
 
 private:
-    NetworkProcessProxy(NetworkProcessManager*);
+    NetworkProcessProxy(WebContext*);
 
     virtual void getLaunchOptions(ProcessLauncher::LaunchOptions&) OVERRIDE;
     void platformInitializeNetworkProcess(NetworkProcessCreationParameters&);
@@ -70,7 +70,7 @@ private:
     // ProcessLauncher::Client
     virtual void didFinishLaunching(ProcessLauncher*, CoreIPC::Connection::Identifier);
 
-    NetworkProcessManager* m_networkProcessManager;
+    WebContext* m_webContext;
     
     unsigned m_numPendingConnectionRequests;
     Deque<RefPtr<Messages::WebProcessProxy::GetNetworkProcessConnection::DelayedReply> > m_pendingConnectionReplies;
