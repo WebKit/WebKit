@@ -111,11 +111,6 @@ void NetworkProcessProxy::didReceiveMessage(CoreIPC::Connection* connection, Cor
 
 void NetworkProcessProxy::didClose(CoreIPC::Connection*)
 {
-    // Notify all WebProcesses that the NetworkProcess crashed.
-    const Vector<WebContext*>& contexts = WebContext::allContexts();
-    for (size_t i = 0; i < contexts.size(); ++i)
-        contexts[i]->sendToAllProcesses(Messages::WebProcess::NetworkProcessCrashed());
-
     if (m_downloadProxyMap)
         m_downloadProxyMap->processDidClose();
 

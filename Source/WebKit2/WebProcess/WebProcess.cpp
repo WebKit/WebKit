@@ -999,14 +999,6 @@ void WebProcess::networkProcessConnectionClosed(NetworkProcessConnection* connec
     m_networkProcessConnection = 0;
 }
 
-void WebProcess::networkProcessCrashed(CoreIPC::Connection*)
-{
-    // FIXME (NetworkProcess): How do we handle not having the connection when the WebProcess needs it?
-    // If the NetworkProcess crashed, for example.  Do we respawn it?
-    ASSERT(m_networkProcessConnection);
-    
-    networkProcessConnectionClosed(m_networkProcessConnection.get());
-}
 #endif
 
 #if ENABLE(PLUGIN_PROCESS)

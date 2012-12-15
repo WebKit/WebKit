@@ -261,9 +261,6 @@ private:
     void clearPluginSiteData(const Vector<String>& pluginPaths, const Vector<String>& sites, uint64_t flags, uint64_t maxAgeInSeconds, uint64_t callbackID);
 #endif
 
-#if ENABLE(NETWORK_PROCESS)
-    void networkProcessCrashed(CoreIPC::Connection*);
-#endif
 #if ENABLE(PLUGIN_PROCESS)
     void pluginProcessCrashed(CoreIPC::Connection*, const String& pluginPath, uint32_t processType);
 #endif

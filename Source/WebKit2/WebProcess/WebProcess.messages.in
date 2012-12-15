@@ -69,10 +69,6 @@ messages -> WebProcess {
 #endif
     DidAddPlugInAutoStartOrigin(uint32_t hash)
 
-#if ENABLE(NETWORK_PROCESS)
-    NetworkProcessCrashed() DispatchOnConnectionQueue
-#endif
-
 #if ENABLE(PLUGIN_PROCESS)
     PluginProcessCrashed(String pluginProcess, uint32_t processType) DispatchOnConnectionQueue
 #endif
