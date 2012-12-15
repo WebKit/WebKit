@@ -63,7 +63,6 @@ public:
     // WebInputHandler implementation.
     virtual void bindToClient(WebInputHandlerClient*);
     virtual void animate(double monotonicTime);
-    virtual void mainThreadHasStoppedFlinging();
 
     // WebGestureCurveTarget implementation.
     virtual void scrollBy(const WebPoint&);
@@ -99,9 +98,6 @@ private:
 #endif
     bool m_gestureScrollOnImplThread;
     bool m_gesturePinchOnImplThread;
-    // This is always false when there are no flings on the main thread, but conservative in the
-    // sense that we might not be actually flinging when it is true.
-    bool m_flingActiveOnMainThread;
 
     static int s_nextAvailableIdentifier;
     static HashSet<WebCompositorInputHandlerImpl*>* s_compositors;

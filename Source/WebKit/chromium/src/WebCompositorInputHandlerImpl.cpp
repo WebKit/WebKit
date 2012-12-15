@@ -71,7 +71,6 @@ WebCompositorInputHandlerImpl::WebCompositorInputHandlerImpl()
 #endif
     , m_gestureScrollOnImplThread(false)
     , m_gesturePinchOnImplThread(false)
-    , m_flingActiveOnMainThread(false)
 {
 }
 
@@ -199,8 +198,6 @@ WebCompositorInputHandlerImpl::EventDisposition WebCompositorInputHandlerImpl::h
     } else if (event.type == WebInputEvent::GestureFlingCancel) {
         if (cancelCurrentFling())
             return DidHandle;
-        else if (!m_flingActiveOnMainThread)
-            return DropEvent;
 #if ENABLE(TOUCH_EVENT_TRACKING)
     } else if (event.type == WebInputEvent::TouchStart) {
         const WebTouchEvent& touchEvent = *static_cast<const WebTouchEvent*>(&event);
@@ -233,7 +230,6 @@ WebCompositorInputHandlerImpl::EventDisposition WebCompositorInputHandlerImpl::h
     }
     case WebInputHandlerClient::ScrollStatusOnMainThread: {
         TRACE_EVENT_INSTANT0("webkit", "WebCompositorInputHandlerImpl::handleGestureFling::scrollOnMainThread");
-        m_flingActiveOnMainThread =  true;
         return DidNotHandle;
     }
     case WebInputHandlerClient::ScrollStatusIgnored: {
@@ -351,11 +347,6 @@ void WebCompositorInputHandlerImpl::scrollBy(const WebPoint& increment)
         m_flingParameters.cumulativeScroll.width += increment.x;
         m_flingParameters.cumulativeScroll.height += increment.y;
     }
-}
-
-void WebCompositorInputHandlerImpl::mainThreadHasStoppedFlinging()
-{
-    m_flingActiveOnMainThread =  false;
 }
 
 }
