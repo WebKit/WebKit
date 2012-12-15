@@ -1,3 +1,27 @@
+2012-12-15  Simon Fraser  <simon.fraser@apple.com>
+
+        REGRESSION (r137006): TileCache flashes to linen, rather than the background color, when scrolling fast
+        https://bugs.webkit.org/show_bug.cgi?id=104746
+
+        Reviewed by Darin Adler.
+
+        Make RenderLayerBacking::updateBackgroundColor() responsible for setting the background
+        color of the main frame's root layer to the document background color (rather than doing
+        it in code related to overlay scrollbars, which was crazy). This is only done for platforms
+        that use a TiledBacking (currently, just Mac).
+        
+        Also fix updateBackgroundColor() to not call m_graphicsLayer->setContentsToBackgroundColor()
+        and then call clearBackgroundColor() right away if the color was transparent.
+        
+        * page/FrameView.cpp:
+        (WebCore::FrameView::recalculateScrollbarOverlayStyle): Remove code that calls documentBackgroundColorDidChange().
+        * rendering/RenderLayerBacking.cpp:
+        (WebCore::clipBox): Remove blank linke.
+        (WebCore::RenderLayerBacking::updateBackgroundColor):
+        * rendering/RenderLayerCompositor.cpp:
+        * rendering/RenderLayerCompositor.h:
+        (RenderLayerCompositor):
+
 2012-12-15  No'am Rosenthal  <noam.rosenthal@nokia.com>
 
         Disambiguate "background color" and "contents as solid color" on GraphicsLayer

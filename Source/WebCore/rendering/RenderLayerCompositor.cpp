@@ -2080,20 +2080,6 @@ void RenderLayerCompositor::paintContents(const GraphicsLayer* graphicsLayer, Gr
     }
 }
 
-void RenderLayerCompositor::documentBackgroundColorDidChange()
-{
-    RenderLayerBacking* backing = rootRenderLayer()->backing();
-    if (!backing || !backing->usingTileCache())
-        return;
-
-    GraphicsLayer* graphicsLayer = backing->graphicsLayer();
-    Color backgroundColor = m_renderView->frameView()->documentBackgroundColor();
-    if (!backgroundColor.isValid() || backgroundColor.hasAlpha())
-        backgroundColor = Color::white;
-
-    graphicsLayer->setBackgroundColor(backgroundColor);
-}
-
 static void resetTrackedRepaintRectsRecursive(GraphicsLayer* graphicsLayer)
 {
     if (!graphicsLayer)

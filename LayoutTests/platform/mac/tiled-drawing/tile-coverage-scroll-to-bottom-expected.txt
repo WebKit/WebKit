@@ -5,6 +5,7 @@
     (GraphicsLayer
       (bounds 785.00 5021.00)
       (drawsContent 1)
+      (backgroundColor #FFFFFF)
       (visible rect 0.00, 5000.00 785.00 x 21.00)
       (tile cache coverage 0, 4608 785 x 413)
       (tile size 512 x 512)

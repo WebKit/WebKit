@@ -220,8 +220,6 @@ public:
     GraphicsLayer* layerForOverhangAreas() const { return m_layerForOverhangAreas.get(); }
 #endif
 
-    void documentBackgroundColorDidChange();
-
     void updateViewportConstraintStatus(RenderLayer*);
     void removeViewportConstrainedLayer(RenderLayer*);
 

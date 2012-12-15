@@ -521,7 +521,6 @@ static IntRect clipBox(RenderBox* renderer)
         result.intersect(renderer->clipRect(LayoutPoint(), 0)); // FIXME: Incorrect for CSS regions.
 
     return pixelSnappedIntRect(result);
-
 }
 
 void RenderLayerBacking::updateGraphicsLayerGeometry()
@@ -1152,6 +1151,19 @@ Color RenderLayerBacking::rendererBackgroundColor() const
 void RenderLayerBacking::updateBackgroundColor(bool isSimpleContainer)
 {
     Color backgroundColor;
+
+    if (m_usingTiledCacheLayer) {
+        FrameView* frameView = toRenderView(renderer())->frameView();
+        if (!frameView->isTransparent()) {
+            backgroundColor = frameView->documentBackgroundColor();
+            if (!backgroundColor.isValid() || backgroundColor.hasAlpha())
+                backgroundColor = Color::white;
+        }
+
+        m_graphicsLayer->setBackgroundColor(backgroundColor);
+        return;
+    }
+
     if (isSimpleContainer)
         backgroundColor = rendererBackgroundColor();
 
