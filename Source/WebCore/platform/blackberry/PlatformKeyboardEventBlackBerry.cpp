@@ -24,6 +24,7 @@
 
 #include <BlackBerryPlatformKeyboardEvent.h>
 #include <BlackBerryPlatformLog.h>
+#include <BlackBerryPlatformScreen.h>
 #include <wtf/CurrentTime.h>
 #include <wtf/text/CString.h>
 
@@ -481,10 +482,10 @@ void PlatformKeyboardEvent::disambiguateKeyDownEvent(PlatformEvent::Type type, b
 
 void PlatformKeyboardEvent::getCurrentModifierState(bool& shiftKey, bool& ctrlKey, bool& altKey, bool& metaKey)
 {
-    notImplemented();
-    shiftKey = false;
-    ctrlKey = false;
-    altKey = false;
+    int modifiers = BlackBerry::Platform::Graphics::Screen::primaryScreen()->getCurrentModifiersState();
+    shiftKey = modifiers & KEYMOD_SHIFT;
+    ctrlKey = modifiers & KEYMOD_CTRL;
+    altKey = modifiers & KEYMOD_ALT;
     metaKey = false;
 }
 

@@ -76,17 +76,26 @@ void TouchEventHandler::doFatFingers(Platform::TouchPoint& point)
     m_webPage->resumeDocumentStyleRecalc();
 }
 
-void TouchEventHandler::sendClickAtFatFingersPoint()
+void TouchEventHandler::sendClickAtFatFingersPoint(unsigned modifiers)
 {
-    handleFatFingerPressed();
-    PlatformMouseEvent mouseRelease(m_webPage->mapFromContentsToViewport(m_lastFatFingersResult.adjustedPosition()), m_lastScreenPoint, PlatformEvent::MouseReleased, 1, LeftButton, TouchScreen);
+    bool shiftActive = modifiers & KEYMOD_SHIFT;
+    bool altActive = modifiers & KEYMOD_ALT;
+    bool ctrlActive = modifiers & KEYMOD_CTRL;
+
+    handleFatFingerPressed(shiftActive, altActive, ctrlActive);
+    PlatformMouseEvent mouseRelease(m_webPage->mapFromContentsToViewport(m_lastFatFingersResult.adjustedPosition()), m_lastScreenPoint, PlatformEvent::MouseReleased, 1, LeftButton, shiftActive, ctrlActive, altActive, TouchScreen);
     m_webPage->handleMouseEvent(mouseRelease);
 }
 
-void TouchEventHandler::handleTouchPoint(Platform::TouchPoint& point)
+void TouchEventHandler::handleTouchPoint(Platform::TouchPoint& point, unsigned modifiers)
 {
     // Enable input mode on any touch event.
     m_webPage->m_inputHandler->setInputModeEnabled();
+
+    bool shiftActive = modifiers & KEYMOD_SHIFT;
+    bool altActive = modifiers & KEYMOD_ALT;
+    bool ctrlActive = modifiers & KEYMOD_CTRL;
+
     switch (point.m_state) {
     case Platform::TouchPoint::TouchPressed:
         {
@@ -104,7 +113,7 @@ void TouchEventHandler::handleTouchPoint(Platform::TouchPoint& point)
                 m_shouldRequestSpellCheckOptions = m_webPage->m_inputHandler->shouldRequestSpellCheckingOptionsForPoint(point.m_pos, elementUnderFatFinger, m_spellCheckOptionRequest);
             }
 
-            handleFatFingerPressed();
+            handleFatFingerPressed(shiftActive, altActive, ctrlActive);
             break;
         }
     case Platform::TouchPoint::TouchReleased:
@@ -123,7 +132,8 @@ void TouchEventHandler::handleTouchPoint(Platform::TouchPoint& point)
             m_webPage->m_tapHighlight->hide();
 
             IntPoint adjustedPoint = m_webPage->mapFromContentsToViewport(m_lastFatFingersResult.adjustedPosition());
-            PlatformMouseEvent mouseEvent(adjustedPoint, m_lastScreenPoint, PlatformEvent::MouseReleased, 1, LeftButton, TouchScreen);
+            PlatformMouseEvent mouseEvent(adjustedPoint, m_lastScreenPoint, PlatformEvent::MouseReleased, 1, LeftButton, shiftActive, ctrlActive, altActive, TouchScreen);
+
             m_webPage->handleMouseEvent(mouseEvent);
 
             if (m_shouldRequestSpellCheckOptions) {
@@ -142,7 +152,7 @@ void TouchEventHandler::handleTouchPoint(Platform::TouchPoint& point)
             m_webPage->m_inputHandler->clearDidSpellCheckState();
 
             // You can still send mouse move events
-            PlatformMouseEvent mouseEvent(point.m_pos, m_lastScreenPoint, PlatformEvent::MouseMoved, 1, LeftButton, TouchScreen);
+            PlatformMouseEvent mouseEvent(point.m_pos, m_lastScreenPoint, PlatformEvent::MouseMoved, 1, LeftButton, shiftActive, ctrlActive, altActive, TouchScreen);
             m_lastScreenPoint = point.m_screenPos;
             m_webPage->handleMouseEvent(mouseEvent);
             break;
@@ -152,14 +162,14 @@ void TouchEventHandler::handleTouchPoint(Platform::TouchPoint& point)
     }
 }
 
-void TouchEventHandler::handleFatFingerPressed()
+void TouchEventHandler::handleFatFingerPressed(bool shiftActive, bool altActive, bool ctrlActive)
 {
     // First update the mouse position with a MouseMoved event.
-    PlatformMouseEvent mouseMoveEvent(m_webPage->mapFromContentsToViewport(m_lastFatFingersResult.adjustedPosition()), m_lastScreenPoint, PlatformEvent::MouseMoved, 0, LeftButton, TouchScreen);
+    PlatformMouseEvent mouseMoveEvent(m_webPage->mapFromContentsToViewport(m_lastFatFingersResult.adjustedPosition()), m_lastScreenPoint, PlatformEvent::MouseMoved, 0, LeftButton, shiftActive, ctrlActive, altActive, TouchScreen);
     m_webPage->handleMouseEvent(mouseMoveEvent);
 
     // Then send the MousePressed event.
-    PlatformMouseEvent mousePressedEvent(m_webPage->mapFromContentsToViewport(m_lastFatFingersResult.adjustedPosition()), m_lastScreenPoint, PlatformEvent::MousePressed, 1, LeftButton, TouchScreen);
+    PlatformMouseEvent mousePressedEvent(m_webPage->mapFromContentsToViewport(m_lastFatFingersResult.adjustedPosition()), m_lastScreenPoint, PlatformEvent::MousePressed, 1, LeftButton, shiftActive, ctrlActive, altActive, TouchScreen);
     m_webPage->handleMouseEvent(mousePressedEvent);
 }
 

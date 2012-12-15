@@ -52,7 +52,7 @@ static PlatformEvent::Type touchEventType(BlackBerry::Platform::TouchEvent* even
 }
 
 PlatformTouchEvent::PlatformTouchEvent(BlackBerry::Platform::TouchEvent* event)
-    : PlatformEvent(touchEventType(event), false, event->m_altKey, event->m_shiftKey, false, currentTime())
+    : PlatformEvent(touchEventType(event), event->shiftActive(), event->ctrlActive(), event->altActive(), false, currentTime())
     , m_rotation(0)
     , m_scale(1)
     , m_doubleTap(false)

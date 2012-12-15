@@ -126,7 +126,7 @@ namespace WebCore {
 #endif
 
 #if PLATFORM(BLACKBERRY)
-        PlatformMouseEvent(const IntPoint& eventPosition, const IntPoint& globalPosition, const PlatformEvent::Type, int clickCount, MouseButton, MouseInputMethod = PointingDevice);
+        PlatformMouseEvent(const IntPoint& eventPosition, const IntPoint& globalPosition, const PlatformEvent::Type, int clickCount, MouseButton, bool shiftKey, bool ctrlKey, bool altKey, MouseInputMethod = PointingDevice);
         MouseInputMethod inputMethod() const { return m_inputMethod; }
 #endif
     protected:

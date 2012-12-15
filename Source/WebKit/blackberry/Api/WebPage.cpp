@@ -2276,7 +2276,7 @@ Platform::WebContext WebPagePrivate::webContext(TargetDetectionStrategy strategy
     // Send an onContextMenu event to the current context ndoe and get the result. Since we've already figured out
     // which node we want, we can send it directly to the node and not do a hit test. The onContextMenu event doesn't require
     // mouse positions so we just set the position at (0,0)
-    PlatformMouseEvent mouseEvent(IntPoint(), IntPoint(), PlatformEvent::MouseMoved, 0, NoButton, TouchScreen);
+    PlatformMouseEvent mouseEvent(IntPoint(), IntPoint(), PlatformEvent::MouseMoved, 0, NoButton, false, false, false, TouchScreen);
     if (m_currentContextNode->dispatchMouseEvent(mouseEvent, eventNames().contextmenuEvent, 0)) {
         context.setFlag(Platform::WebContext::IsOnContextMenuPrevented);
         return context;
@@ -2416,7 +2416,11 @@ void WebPagePrivate::updateCursor()
     else if (m_lastMouseEvent.button() == RightButton)
         buttonMask = Platform::MouseEvent::ScreenRightMouseButton;
 
-    BlackBerry::Platform::MouseEvent event(buttonMask, buttonMask, mapToTransformed(m_lastMouseEvent.position()), mapToTransformed(m_lastMouseEvent.globalPosition()), 0, 0);
+    unsigned modifiers = m_lastMouseEvent.shiftKey() ? 0 : KEYMOD_SHIFT |
+        m_lastMouseEvent.ctrlKey() ? 0 : KEYMOD_CTRL |
+        m_lastMouseEvent.altKey() ? 0 : KEYMOD_ALT;
+
+    BlackBerry::Platform::MouseEvent event(buttonMask, buttonMask, mapToTransformed(m_lastMouseEvent.position()), mapToTransformed(m_lastMouseEvent.globalPosition()), 0, modifiers,  0);
     m_webPage->mouseEvent(event);
 }
 
@@ -3921,17 +3925,18 @@ bool WebPage::mouseEvent(const Platform::MouseEvent& mouseEvent, bool* wheelDelt
 
     // Create our event.
     PlatformMouseEvent platformMouseEvent(d->mapFromTransformed(mouseEvent.position()), mouseEvent.screenPosition(),
-                                          toWebCoreMouseEventType(mouseEvent.type()), clickCount, buttonType, PointingDevice);
+        toWebCoreMouseEventType(mouseEvent.type()), clickCount, buttonType,
+        mouseEvent.shiftActive(), mouseEvent.ctrlActive(), mouseEvent.altActive(), PointingDevice);
     d->m_lastMouseEvent = platformMouseEvent;
     bool success = d->handleMouseEvent(platformMouseEvent);
 
     if (mouseEvent.wheelTicks()) {
         PlatformWheelEvent wheelEvent(d->mapFromTransformed(mouseEvent.position()), mouseEvent.screenPosition(),
-                                      0, -mouseEvent.wheelDelta(),
-                                      0, -mouseEvent.wheelTicks(),
-                                      ScrollByPixelWheelEvent,
-                                      false /* shiftKey */, false /* ctrlKey */,
-                                      false /* altKey */, false /* metaKey */);
+            0, -mouseEvent.wheelDelta(),
+            0, -mouseEvent.wheelTicks(),
+            ScrollByPixelWheelEvent,
+            mouseEvent.shiftActive(), mouseEvent.ctrlActive(),
+            mouseEvent.altActive(), false /* metaKey */);
         if (wheelDeltaAccepted)
             *wheelDeltaAccepted = d->handleWheelEvent(wheelEvent);
     } else if (wheelDeltaAccepted)
@@ -4115,7 +4120,7 @@ void WebPage::setDocumentScrollOriginPoint(const Platform::IntPoint& documentScr
     d->setScrollOriginPoint(documentScrollOrigin);
 }
 
-void WebPage::touchPointAsMouseEvent(const Platform::TouchPoint& point)
+void WebPage::touchPointAsMouseEvent(const Platform::TouchPoint& point, unsigned modifiers)
 {
     if (d->m_page->defersLoading())
         return;
@@ -4128,7 +4133,7 @@ void WebPage::touchPointAsMouseEvent(const Platform::TouchPoint& point)
     Platform::TouchPoint tPoint = point;
     tPoint.m_pos = d->mapFromTransformed(tPoint.m_pos);
 
-    d->m_touchEventHandler->handleTouchPoint(tPoint);
+    d->m_touchEventHandler->handleTouchPoint(tPoint, modifiers);
 }
 
 void WebPage::playSoundIfAnchorIsTarget() const
