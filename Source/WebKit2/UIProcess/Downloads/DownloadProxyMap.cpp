@@ -42,7 +42,7 @@ DownloadProxyMap::~DownloadProxyMap()
 
 DownloadProxy* DownloadProxyMap::createDownloadProxy(WebContext* webContext)
 {
-    RefPtr<DownloadProxy> downloadProxy = DownloadProxy::create(webContext);
+    RefPtr<DownloadProxy> downloadProxy = DownloadProxy::create(*this, webContext);
     m_downloads.set(downloadProxy->downloadID(), downloadProxy);
 
     return downloadProxy.get();

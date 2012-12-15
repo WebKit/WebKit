@@ -41,6 +41,7 @@ namespace WebCore {
 
 namespace WebKit {
 
+class DownloadProxyMap;
 class WebContext;
 class WebData;
 class WebPageProxy;
@@ -49,7 +50,7 @@ class DownloadProxy : public APIObject, public CoreIPC::MessageReceiver {
 public:
     static const Type APIType = TypeDownload;
 
-    static PassRefPtr<DownloadProxy> create(WebContext*);
+    static PassRefPtr<DownloadProxy> create(DownloadProxyMap&, WebContext*);
     ~DownloadProxy();
 
     uint64_t downloadID() const { return m_downloadID; }
@@ -69,7 +70,7 @@ public:
 #endif
 
 private:
-    explicit DownloadProxy(WebContext*);
+    explicit DownloadProxy(DownloadProxyMap&, WebContext*);
 
     virtual Type type() const { return APIType; }
 
@@ -89,6 +90,7 @@ private:
     void didFail(const WebCore::ResourceError&, const CoreIPC::DataReference& resumeData);
     void didCancel(const CoreIPC::DataReference& resumeData);
 
+    DownloadProxyMap& m_downloadProxyMap;
     WebContext* m_webContext;
     uint64_t m_downloadID;
 
