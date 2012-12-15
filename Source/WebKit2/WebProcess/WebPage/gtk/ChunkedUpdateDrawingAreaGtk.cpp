@@ -44,7 +44,7 @@ void ChunkedUpdateDrawingArea::paintIntoUpdateChunk(UpdateChunk* updateChunk)
     ASSERT(!updateChunk->isEmpty());
 
     RefPtr<cairo_surface_t> image = updateChunk->createImage();
-    RefPtr<cairo_t> cr = cairo_create(image.get());
+    RefPtr<cairo_t> cr = adoptRef(cairo_create(image.get()));
     GraphicsContext gc(cr.get());
     gc.save();
     IntRect rect = updateChunk->rect();
