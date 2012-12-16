@@ -424,7 +424,7 @@ void FormData::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
     info.addMember(m_boundary);
 }
 
-static void encode(Encoder& encoder, const FormDataElement& element)
+static void encodeElement(Encoder& encoder, const FormDataElement& element)
 {
     encoder.encodeUInt32(element.m_type);
 
@@ -466,7 +466,7 @@ static void encode(Encoder& encoder, const FormDataElement& element)
     ASSERT_NOT_REACHED();
 }
 
-static bool decode(Decoder& decoder, FormDataElement& element)
+static bool decodeElement(Decoder& decoder, FormDataElement& element)
 {
     uint32_t type;
     if (!decoder.decodeUInt32(type))
@@ -548,7 +548,7 @@ void FormData::encode(Encoder& encoder) const
     size_t size = m_elements.size();
     encoder.encodeUInt64(size);
     for (size_t i = 0; i < size; ++i)
-        encode(encoder, m_elements[i]);
+        encodeElement(encoder, m_elements[i]);
 
     encoder.encodeBool(m_hasGeneratedFiles);
 
@@ -574,7 +574,7 @@ PassRefPtr<FormData> FormData::decode(Decoder& decoder)
         return 0;
     for (size_t i = 0; i < elementsSize; ++i) {
         FormDataElement element;
-        if (!decode(decoder, element))
+        if (!decodeElement(decoder, element))
             return 0;
         data->m_elements.append(element);
     }

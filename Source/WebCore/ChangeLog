@@ -1,5 +1,17 @@
 2012-12-15  Alexey Proskuryakov  <ap@apple.com>
 
+        Build fix.
+
+        * platform/network/FormData.cpp:
+        (WebCore::encodeElement):
+        (WebCore::decodeElement):
+        (WebCore::FormData::encode):
+        (WebCore::FormData::decode):
+        Disambiguated encode/decode functions. I'm not quite sure why the compiler was
+        confused, but distinct names should make the code more readable anyway.
+
+2012-12-15  Alexey Proskuryakov  <ap@apple.com>
+
         <rdar://problem/12886312> Cannot upload patches to Bugzilla (<input type=file> doesn't work)
         https://bugs.webkit.org/show_bug.cgi?id=105120
 
