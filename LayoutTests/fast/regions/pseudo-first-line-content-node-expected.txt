@@ -1,0 +1,8 @@
+Test for [CSSRegions] Pseudo-elements should not be directly collected into a named flow.
+
+The region should have size 0 because pseudo-elements cannot be collected directly into a named flow and such there is no content to be displayed in region.
+
+On success, you should not see FAIL below.
+
+:first-line content
+PASS

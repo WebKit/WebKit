@@ -156,6 +156,11 @@ void NodeRenderingContext::moveToFlowThreadIfNeeded()
     if (m_style->flowThread().isEmpty())
         return;
 
+    // As per http://dev.w3.org/csswg/css3-regions/#flow-into, pseudo-elements such as ::first-line, ::first-letter, ::before or ::after
+    // cannot be directly collected into a named flow.
+    if (m_node->isPseudoElement())
+        return;
+
     // FIXME: Do not collect elements if they are in shadow tree.
     if (m_node->isInShadowTree())
         return;
