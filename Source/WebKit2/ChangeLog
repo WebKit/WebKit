@@ -1,3 +1,21 @@
+2012-12-15  Andy Estes  <aestes@apple.com>
+
+        [WebKit2] Register the custom protocol handler in the network process if it exists
+        https://bugs.webkit.org/show_bug.cgi?id=105118
+
+        Reviewed by Anders Carlsson.
+
+        Register our custom protocol handler with NSURLProtocol when starting
+        up the network process; do not register the custom protocol handler in
+        web processes if a network process is being used.
+
+        * NetworkProcess/NetworkProcess.cpp:
+        (WebKit::NetworkProcess::initializeNetworkProcess):
+        * WebProcess/WebProcess.cpp:
+        (WebKit::WebProcess::initializeWebProcess):
+        * WebProcess/mac/WebProcessMac.mm:
+        (WebKit::WebProcess::platformInitializeWebProcess):
+
 2012-12-15  Sam Weinig  <sam@webkit.org>
 
         The network process should use the correct NSURLCache location and set its size correctly for the CacheModel

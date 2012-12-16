@@ -120,6 +120,8 @@ void NetworkProcess::initializeNetworkProcess(const NetworkProcessCreationParame
 #if ENABLE(CUSTOM_PROTOCOLS)
     for (size_t i = 0; i < parameters.urlSchemesRegisteredForCustomProtocols.size(); ++i)
         CustomProtocolManager::shared().registerScheme(parameters.urlSchemesRegisteredForCustomProtocols[i]);
+
+    CustomProtocolManager::registerCustomProtocolClass();
 #endif
 }
 

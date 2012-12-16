@@ -318,6 +318,19 @@ void WebProcess::initializeWebProcess(const WebProcessCreationParameters& parame
 
     for (size_t i = 0; i < parameters.plugInAutoStartOrigins.size(); ++i)
         didAddPlugInAutoStartOrigin(parameters.plugInAutoStartOrigins[i]);
+
+#if ENABLE(CUSTOM_PROTOCOLS)
+#if ENABLE(NETWORK_PROCESS)
+    ASSERT(parameters.urlSchemesRegisteredForCustomProtocols.isEmpty() || !m_usesNetworkProcess);
+#endif
+    for (size_t i = 0; i < parameters.urlSchemesRegisteredForCustomProtocols.size(); ++i)
+        CustomProtocolManager::shared().registerScheme(parameters.urlSchemesRegisteredForCustomProtocols[i]);
+
+#if ENABLE(NETWORK_PROCESS)
+    if (!m_usesNetworkProcess)
+#endif
+        CustomProtocolManager::registerCustomProtocolClass();
+#endif
 }
 
 #if ENABLE(NETWORK_PROCESS)
