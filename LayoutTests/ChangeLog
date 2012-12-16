@@ -4,6 +4,16 @@
 
         Unreviewed change. Updating expectations.
 
+        Added expectations for a remaining test that needs a new baseline.
+
+        * platform/chromium/TestExpectations:
+
+2012-12-15  Ian Vollick  <vollick@chromium.org>
+
+        [chromium] More expectations updates for composited scrolling.
+
+        Unreviewed change. Updating expectations.
+
         Some of the Failures noted in the last change were actually
         ImageOnlyFailures, and some tests are now passing - these are
         corrected in this patch.
