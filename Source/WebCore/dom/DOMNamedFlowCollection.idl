@@ -29,6 +29,7 @@
 
 [
     Conditional=CSS_REGIONS,
+    V8EnabledAtRuntime=cssRegions,
     InterfaceName=WebKitNamedFlowCollection,
     JSGenerateToJSObject,
     IndexedGetter,

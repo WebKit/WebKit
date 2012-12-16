@@ -1,3 +1,22 @@
+2012-12-16  Mihai Maerean  <mmaerean@adobe.com>
+
+        [CSS Regions] broken feature detection: body.webkitRegionOverset and body.webkitGetRegionFlowRanges shouldn't succeed when disabled at runtime.
+        https://bugs.webkit.org/show_bug.cgi?id=99707
+
+        Reviewed by Hajime Morita.
+
+        The bug is that the CSS Regions feature leaks information at run-time. There are JS properties that exist even
+        if the feature is disabled at run-time (document.webkitGetNamedFlows, document.body.webkitRegionOverset,
+        document.body.webkitGetRegionFlowRanges and window.WebKitCSSRegionRule).
+        The best LayoutTest would test that the properties exist when the feature is enabled and that the properties
+        just aren't there when the feature is disabled.
+        But, since during running Layout Tests the feature is enabled by default and switching the
+        RuntimeEnabledFeatures requires the process to be restarted and that is currently not possible, we can only test
+        that the properties exist and have the proper type.
+
+        * fast/regions/region-leak-js-information-when-disabled-at-runtime-expected.txt: Added.
+        * fast/regions/region-leak-js-information-when-disabled-at-runtime.html: Added.
+
 2012-12-15  Ian Vollick  <vollick@chromium.org>
 
         [chromium] More expectations updates for composited scrolling.

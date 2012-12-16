@@ -1,3 +1,31 @@
+2012-12-16  Mihai Maerean  <mmaerean@adobe.com>
+
+        [CSS Regions] broken feature detection: body.webkitRegionOverset and body.webkitGetRegionFlowRanges shouldn't succeed when disabled at runtime
+        https://bugs.webkit.org/show_bug.cgi?id=99707
+
+        Reviewed by Hajime Morita.
+
+        The bug is that the CSS Regions feature leaks information at run-time. There are JS properties that exist even
+        if the feature is disabled at run-time (document.webkitGetNamedFlows, document.body.webkitRegionOverset,
+        document.body.webkitGetRegionFlowRanges and window.WebKitCSSRegionRule).
+
+        The fix is to add V8EnabledAtRuntime=cssRegions in the IDL files to the properties that leak information and to
+        the interfaces that are the type of those properties.
+
+        Test: fast/regions/region-leak-js-information-when-disabled-at-runtime.html
+
+        * css/WebKitCSSRegionRule.idl:
+            added V8EnabledAtRuntime=cssRegions for the WebKitCSSRegionRule interface.
+        * dom/DOMNamedFlowCollection.idl:
+            added V8EnabledAtRuntime=cssRegions for the DOMNamedFlowCollection interface.
+        * dom/Document.idl:
+            added V8EnabledAtRuntime=cssRegions for the webkitGetNamedFlows method.
+        * dom/Element.idl:
+            added V8EnabledAtRuntime=cssRegions for the webkitRegionOverset attribute.
+            added V8EnabledAtRuntime=cssRegions for the webkitGetRegionFlowRanges method.
+        * page/DOMWindow.idl:
+            added V8EnabledAtRuntime=cssRegions for the WebKitCSSRegionRule attribute.
+
 2012-12-15  Ian Vollick  <vollick@chromium.org>
 
         [chromium] Automatically use composited scrolling

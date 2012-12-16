@@ -260,7 +260,7 @@
     [Conditional=POINTER_LOCK] void webkitExitPointerLock();
     [Conditional=POINTER_LOCK] readonly attribute Element webkitPointerLockElement;
 
-    [Conditional=CSS_REGIONS] DOMNamedFlowCollection webkitGetNamedFlows();
+    [Conditional=CSS_REGIONS, V8EnabledAtRuntime=cssRegions] DOMNamedFlowCollection webkitGetNamedFlows();
 
 #if !defined(LANGUAGE_OBJECTIVE_C) || !LANGUAGE_OBJECTIVE_C
     // Event handler DOM attributes

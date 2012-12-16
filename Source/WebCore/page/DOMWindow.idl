@@ -575,7 +575,7 @@
 
     attribute WebKitCSSKeyframeRuleConstructor WebKitCSSKeyframeRule;
     attribute WebKitCSSKeyframesRuleConstructor WebKitCSSKeyframesRule;
-    [Conditional=CSS_REGIONS] attribute WebKitCSSRegionRuleConstructor WebKitCSSRegionRule;
+    [Conditional=CSS_REGIONS, V8EnabledAtRuntime=cssRegions] attribute WebKitCSSRegionRuleConstructor WebKitCSSRegionRule;
 
     attribute WebKitCSSMatrixConstructor WebKitCSSMatrix; // Usable with the new operator
 

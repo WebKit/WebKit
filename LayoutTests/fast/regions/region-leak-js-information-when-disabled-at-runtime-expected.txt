@@ -1,0 +1,13 @@
+Test for 94070 [CSSRegions] broken feature detection: syntax parsing succeeds when CSS REGIONS is disabled at runtime
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS typeof(document.webkitGetNamedFlows) is "function"
+PASS typeof(document.body.webkitRegionOverset) is "string"
+PASS typeof(document.body.webkitGetRegionFlowRanges) is "function"
+PASS window.WebKitCSSRegionRule is defined.
+PASS successfullyParsed is true
+
+TEST COMPLETE
+
