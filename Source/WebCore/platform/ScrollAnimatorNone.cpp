@@ -37,7 +37,6 @@
 #include "FloatPoint.h"
 #include "NotImplemented.h"
 #include <wtf/OwnArrayPtr.h>
-#include "PlatformGestureEvent.h"
 #include "ScrollableArea.h"
 #include "ScrollbarTheme.h"
 #include <algorithm>
@@ -46,6 +45,10 @@
 
 #if PLATFORM(CHROMIUM)
 #include "TraceEvent.h"
+#endif
+
+#if ENABLE(GESTURE_EVENTS)
+#include "PlatformGestureEvent.h"
 #endif
 
 using namespace std;

@@ -493,7 +493,7 @@ DerivedSources/webkitdom/WebKitDOM%.cpp DerivedSources/webkitdom/WebKitDOM%.h De
 	$(AM_V_GEN)$(PERL) -I$(WebCore)/bindings/scripts $(WebCore)/bindings/scripts/generate-bindings.pl --include $(WebCore)/dom --include $(WebCore)/html --include $(WebCore)/css --include $(WebCore)/page --include $(WebCore)/xml --include $(WebCore)/svg --outputDir "$(GENSOURCES_WEBKITDOM)" --defines "LANGUAGE_GOBJECT=1 $(gdom_feature_defines)" --generator GObject --supplementalDependencyFile $(supplemental_dependency_file) $<
 
 libwebkitdomincludedir = $(libwebkitgtkincludedir)/webkitdom
-libwebkitdominclude_HEADERS = \
+nodist_libwebkitdominclude_HEADERS = \
 	$(webkitgtk_gdom_built_h_api)
 
 noinst_LTLIBRARIES += \
