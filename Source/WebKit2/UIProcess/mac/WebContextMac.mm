@@ -26,20 +26,24 @@
 #import "config.h"
 #import "WebContext.h"
 
-#import "NetworkProcessProxy.h"
 #import "PluginProcessManager.h"
 #import "SharedWorkerProcessManager.h"
+#import "WKBrowsingContextControllerInternal.h"
 #import "WKBrowsingContextControllerInternal.h"
 #import "WebKitSystemInterface.h"
 #import "WebProcessCreationParameters.h"
 #import "WebProcessMessages.h"
+#import <QuartzCore/CARemoteLayerServer.h>
 #import <WebCore/Color.h>
 #import <WebCore/FileSystem.h>
 #import <WebCore/NotImplemented.h>
 #import <WebCore/PlatformPasteboard.h>
 #import <sys/param.h>
 
-#import <QuartzCore/CARemoteLayerServer.h>
+#if ENABLE(NETWORK_PROCESS)
+#import "NetworkProcessCreationParameters.h"
+#import "NetworkProcessProxy.h"
+#endif
 
 using namespace WebCore;
 
@@ -138,6 +142,21 @@ void WebContext::platformInitializeWebProcess(WebProcessCreationParameters& para
     }
 #endif
 }
+
+#if ENABLE(NETWORK_PROCESS)
+void WebContext::platformInitializeNetworkProcess(NetworkProcessCreationParameters& parameters)
+{
+    NSURLCache *urlCache = [NSURLCache sharedURLCache];
+    parameters.nsURLCacheMemoryCapacity = [urlCache memoryCapacity];
+    parameters.nsURLCacheDiskCapacity = [urlCache diskCapacity];
+
+    parameters.parentProcessName = [[NSProcessInfo processInfo] processName];
+    parameters.uiProcessBundleIdentifier = [[NSBundle mainBundle] bundleIdentifier];
+
+    for (NSString *scheme in [WKBrowsingContextController customSchemes])
+        parameters.urlSchemesRegisteredForCustomProtocols.append(scheme);
+}
+#endif
 
 void WebContext::platformInvalidateContext()
 {

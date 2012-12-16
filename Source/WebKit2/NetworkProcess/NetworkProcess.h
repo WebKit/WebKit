@@ -28,6 +28,7 @@
 
 #if ENABLE(NETWORK_PROCESS)
 
+#include "CacheModel.h"
 #include "ChildProcess.h"
 #include "NetworkResourceLoadScheduler.h"
 #include <wtf/Forward.h>
@@ -72,11 +73,14 @@ private:
     void createNetworkConnectionToWebProcess();
     void ensurePrivateBrowsingSession();
     void destroyPrivateBrowsingSession();
-
+    void setCacheModel(uint32_t);
 #if ENABLE(CUSTOM_PROTOCOLS)
     void registerSchemeForCustomProtocol(const String&);
     void unregisterSchemeForCustomProtocol(const String&);
 #endif
+
+    // Platform Helpers
+    void platformSetCacheModel(CacheModel);
 
     // The connection to the UI process.
     RefPtr<CoreIPC::Connection> m_uiConnection;
@@ -85,6 +89,10 @@ private:
     Vector<RefPtr<NetworkConnectionToWebProcess> > m_webProcessConnections;
 
     NetworkResourceLoadScheduler m_networkResourceLoadScheduler;
+
+    String m_diskCacheDirectory;
+    bool m_hasSetCacheModel;
+    CacheModel m_cacheModel;
 };
 
 } // namespace WebKit

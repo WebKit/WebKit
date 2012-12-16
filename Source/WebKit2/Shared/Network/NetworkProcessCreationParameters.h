@@ -28,6 +28,9 @@
 
 #if ENABLE(NETWORK_PROCESS)
 
+#include "CacheModel.h"
+#include "SandboxExtension.h"
+#include <wtf/Vector.h>
 #include <wtf/text/WTFString.h>
 
 namespace CoreIPC {
@@ -43,15 +46,21 @@ struct NetworkProcessCreationParameters {
     void encode(CoreIPC::ArgumentEncoder&) const;
     static bool decode(CoreIPC::ArgumentDecoder*, NetworkProcessCreationParameters&);
 
+    bool privateBrowsingEnabled;
+    CacheModel cacheModel;
+
+    String diskCacheDirectory;
+    SandboxExtension::Handle diskCacheDirectoryExtensionHandle;
+
 #if PLATFORM(MAC)
     String parentProcessName;
     String uiProcessBundleIdentifier;
-#endif
-
-    bool privateBrowsingEnabled;
+    uint64_t nsURLCacheMemoryCapacity;
+    uint64_t nsURLCacheDiskCapacity;
 
 #if ENABLE(CUSTOM_PROTOCOLS)
     Vector<String> urlSchemesRegisteredForCustomProtocols;
+#endif
 #endif
 };
 

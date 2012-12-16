@@ -72,6 +72,7 @@
 #endif
 
 #if ENABLE(NETWORK_PROCESS)
+#include "NetworkProcessCreationParameters.h"
 #include "NetworkProcessMessages.h"
 #include "NetworkProcessProxy.h"
 #endif
@@ -363,6 +364,20 @@ void WebContext::ensureNetworkProcess()
         return;
 
     m_networkProcess = NetworkProcessProxy::create(this);
+
+    NetworkProcessCreationParameters parameters;
+
+    parameters.diskCacheDirectory = diskCacheDirectory();
+    if (!parameters.diskCacheDirectory.isEmpty())
+        SandboxExtension::createHandleForReadWriteDirectory(parameters.diskCacheDirectory, parameters.diskCacheDirectoryExtensionHandle);
+
+    parameters.cacheModel = m_cacheModel;
+
+    // Add any platform specific parameters
+    platformInitializeNetworkProcess(parameters);
+
+    // Initialize the network process.
+    m_networkProcess->send(Messages::NetworkProcess::InitializeNetworkProcess(parameters), 0);
 }
 
 void WebContext::removeNetworkProcessProxy(NetworkProcessProxy* networkProcessProxy)
@@ -817,6 +832,8 @@ void WebContext::setCacheModel(CacheModel cacheModel)
 {
     m_cacheModel = cacheModel;
     sendToAllProcesses(Messages::WebProcess::SetCacheModel(static_cast<uint32_t>(m_cacheModel)));
+
+    // FIXME: Inform the Network Process if in use.
 }
 
 void WebContext::setDefaultRequestTimeoutInterval(double timeoutInterval)

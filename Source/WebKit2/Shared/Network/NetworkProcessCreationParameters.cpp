@@ -38,29 +38,44 @@ NetworkProcessCreationParameters::NetworkProcessCreationParameters()
 
 void NetworkProcessCreationParameters::encode(CoreIPC::ArgumentEncoder& encoder) const
 {
+    encoder << diskCacheDirectory;
+    encoder << diskCacheDirectoryExtensionHandle;
+    encoder << privateBrowsingEnabled;
+    encoder.encodeEnum(cacheModel);
 #if PLATFORM(MAC)
     encoder << parentProcessName;
     encoder << uiProcessBundleIdentifier;
-#endif
-    encoder << privateBrowsingEnabled;
+    encoder << nsURLCacheMemoryCapacity;
+    encoder << nsURLCacheDiskCapacity;
 #if ENABLE(CUSTOM_PROTOCOLS)
     encoder << urlSchemesRegisteredForCustomProtocols;
+#endif
 #endif
 }
 
 bool NetworkProcessCreationParameters::decode(CoreIPC::ArgumentDecoder* decoder, NetworkProcessCreationParameters& result)
 {
+    if (!decoder->decode(result.diskCacheDirectory))
+        return false;
+    if (!decoder->decode(result.diskCacheDirectoryExtensionHandle))
+        return false;
+    if (!decoder->decode(result.privateBrowsingEnabled))
+        return false;
+    if (!decoder->decodeEnum(result.cacheModel))
+        return false;
 #if PLATFORM(MAC)
     if (!decoder->decode(result.parentProcessName))
         return false;
     if (!decoder->decode(result.uiProcessBundleIdentifier))
         return false;
-#endif
-    if (!decoder->decode(result.privateBrowsingEnabled))
+    if (!decoder->decode(result.nsURLCacheMemoryCapacity))
+        return false;
+    if (!decoder->decode(result.nsURLCacheDiskCapacity))
         return false;
 #if ENABLE(CUSTOM_PROTOCOLS)
     if (!decoder->decode(result.urlSchemesRegisteredForCustomProtocols))
         return false;
+#endif
 #endif
 
     return true;

@@ -52,6 +52,8 @@ NetworkProcess& NetworkProcess::shared()
 }
 
 NetworkProcess::NetworkProcess()
+    : m_hasSetCacheModel(false)
+    , m_cacheModel(CacheModelDocumentViewer)
 {
 }
 
@@ -99,12 +101,14 @@ void NetworkProcess::didReceiveInvalidMessage(CoreIPC::Connection*, CoreIPC::Str
 
 void NetworkProcess::initializeNetworkProcess(const NetworkProcessCreationParameters& parameters)
 {
-    platformInitialize(parameters);
-
 #if !LOG_DISABLED
     WebCore::initializeLoggingChannelsIfNecessary();
     WebKit::initializeLogChannelsIfNecessary();
 #endif // !LOG_DISABLED
+
+    platformInitialize(parameters);
+
+    setCacheModel(static_cast<uint32_t>(parameters.cacheModel));
 
 #if PLATFORM(MAC) || USE(CFNETWORK)
     RemoteNetworkingContext::setPrivateBrowsingStorageSessionIdentifierBase(parameters.uiProcessBundleIdentifier);
@@ -158,6 +162,17 @@ void NetworkProcess::unregisterSchemeForCustomProtocol(const String& scheme)
     CustomProtocolManager::shared().unregisterScheme(scheme);
 }
 #endif
+
+void NetworkProcess::setCacheModel(uint32_t cm)
+{
+    CacheModel cacheModel = static_cast<CacheModel>(cm);
+
+    if (!m_hasSetCacheModel || cacheModel != m_cacheModel) {
+        m_hasSetCacheModel = true;
+        m_cacheModel = cacheModel;
+        platformSetCacheModel(cacheModel);
+    }
+}
 
 } // namespace WebKit
 

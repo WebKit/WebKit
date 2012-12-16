@@ -51,6 +51,7 @@
 namespace WebKit {
 
 class DownloadProxy;
+class NetworkProcessProxy;
 class WebApplicationCacheManagerProxy;
 class WebCookieManagerProxy;
 class WebDatabaseManagerProxy;
@@ -58,7 +59,6 @@ class WebGeolocationManagerProxy;
 class WebIconDatabase;
 class WebKeyValueStorageManagerProxy;
 class WebMediaCacheManagerProxy;
-class NetworkProcessProxy;
 class WebNotificationManagerProxy;
 class WebPageGroup;
 class WebPageProxy;
@@ -76,6 +76,9 @@ class WebNetworkInfoManagerProxy;
 #endif
 #if USE(SOUP)
 class WebSoupRequestManagerProxy;
+#endif
+#if ENABLE(NETWORK_PROCESS)
+struct NetworkProcessCreationParameters;
 #endif
 
 #if PLATFORM(MAC)
@@ -281,6 +284,10 @@ private:
     void platformInvalidateContext();
 
     WebProcessProxy* createNewWebProcess();
+
+#if ENABLE(NETWORK_PROCESS)
+    void platformInitializeNetworkProcess(NetworkProcessCreationParameters&);
+#endif
 
 #if PLATFORM(MAC)
     void getPasteboardTypes(const String& pasteboardName, Vector<String>& pasteboardTypes);

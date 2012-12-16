@@ -145,12 +145,6 @@ void NetworkProcessProxy::didFinishLaunching(ProcessLauncher* launcher, CoreIPC:
         return;
     }
 
-    NetworkProcessCreationParameters parameters;
-    platformInitializeNetworkProcess(parameters);
-
-    // Initialize the network host process.
-    connection()->send(Messages::NetworkProcess::InitializeNetworkProcess(parameters), 0);
-
     for (unsigned i = 0; i < m_numPendingConnectionRequests; ++i)
         connection()->send(Messages::NetworkProcess::CreateNetworkConnectionToWebProcess(), 0);
     

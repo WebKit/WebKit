@@ -26,24 +26,13 @@
 #import "config.h"
 #import "NetworkProcessProxy.h"
 
-#import "NetworkProcessCreationParameters.h"
 #import "NetworkProcessMessages.h"
-#import "WKBrowsingContextControllerInternal.h"
 
 #if ENABLE(NETWORK_PROCESS)
 
 using namespace WebCore;
 
 namespace WebKit {
-
-void NetworkProcessProxy::platformInitializeNetworkProcess(NetworkProcessCreationParameters& parameters)
-{
-    parameters.parentProcessName = [[NSProcessInfo processInfo] processName];
-    parameters.uiProcessBundleIdentifier = [[NSBundle mainBundle] bundleIdentifier];
-    
-    for (NSString *scheme in [WKBrowsingContextController customSchemes])
-        parameters.urlSchemesRegisteredForCustomProtocols.append(scheme);
-}
 
 void NetworkProcessProxy::setApplicationIsOccluded(bool applicationIsOccluded)
 {
