@@ -49,6 +49,10 @@ struct NetworkProcessCreationParameters {
 #endif
 
     bool privateBrowsingEnabled;
+
+#if ENABLE(CUSTOM_PROTOCOLS)
+    Vector<String> urlSchemesRegisteredForCustomProtocols;
+#endif
 };
 
 } // namespace WebKit

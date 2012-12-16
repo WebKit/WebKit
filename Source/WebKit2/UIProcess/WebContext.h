@@ -337,6 +337,11 @@ private:
     void unregisterNotificationObservers();
 #endif
 
+#if ENABLE(CUSTOM_PROTOCOLS)
+    void registerSchemeForCustomProtocol(const String&);
+    void unregisterSchemeForCustomProtocol(const String&);
+#endif
+
     void addPlugInAutoStartOriginHash(const String& pageOrigin, unsigned plugInOriginHash);
 
     CoreIPC::MessageReceiverMap m_messageReceiverMap;

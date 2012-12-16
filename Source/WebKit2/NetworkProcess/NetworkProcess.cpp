@@ -30,6 +30,7 @@
 
 #include "ArgumentCoders.h"
 #include "Attachment.h"
+#include "CustomProtocolManager.h"
 #include "Logging.h"
 #include "NetworkConnectionToWebProcess.h"
 #include "NetworkProcessCreationParameters.h"
@@ -111,6 +112,11 @@ void NetworkProcess::initializeNetworkProcess(const NetworkProcessCreationParame
 
     if (parameters.privateBrowsingEnabled)
         RemoteNetworkingContext::ensurePrivateBrowsingSession();
+
+#if ENABLE(CUSTOM_PROTOCOLS)
+    for (size_t i = 0; i < parameters.urlSchemesRegisteredForCustomProtocols.size(); ++i)
+        CustomProtocolManager::shared().registerScheme(parameters.urlSchemesRegisteredForCustomProtocols[i]);
+#endif
 }
 
 void NetworkProcess::createNetworkConnectionToWebProcess()
@@ -140,6 +146,18 @@ void NetworkProcess::destroyPrivateBrowsingSession()
 {
     RemoteNetworkingContext::destroyPrivateBrowsingSession();
 }
+
+#if ENABLE(CUSTOM_PROTOCOLS)
+void NetworkProcess::registerSchemeForCustomProtocol(const String& scheme)
+{
+    CustomProtocolManager::shared().registerScheme(scheme);
+}
+
+void NetworkProcess::unregisterSchemeForCustomProtocol(const String& scheme)
+{
+    CustomProtocolManager::shared().unregisterScheme(scheme);
+}
+#endif
 
 } // namespace WebKit
 

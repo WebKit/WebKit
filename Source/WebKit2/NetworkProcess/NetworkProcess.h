@@ -73,6 +73,11 @@ private:
     void ensurePrivateBrowsingSession();
     void destroyPrivateBrowsingSession();
 
+#if ENABLE(CUSTOM_PROTOCOLS)
+    void registerSchemeForCustomProtocol(const String&);
+    void unregisterSchemeForCustomProtocol(const String&);
+#endif
+
     // The connection to the UI process.
     RefPtr<CoreIPC::Connection> m_uiConnection;
 

@@ -1113,4 +1113,28 @@ void WebContext::addPlugInAutoStartOriginHash(const String& pageOrigin, unsigned
     m_plugInAutoStartProvider.addAutoStartOrigin(pageOrigin, plugInOriginHash);
 }
 
+#if ENABLE(CUSTOM_PROTOCOLS)
+void WebContext::registerSchemeForCustomProtocol(const WTF::String& scheme)
+{
+#if ENABLE(NETWORK_PROCESS)
+    if (m_usesNetworkProcess) {
+        NetworkProcessManager::shared().process()->send(Messages::NetworkProcess::RegisterSchemeForCustomProtocol(scheme), 0);
+        return;
+    }
+#endif
+    sendToAllProcesses(Messages::WebProcess::RegisterSchemeForCustomProtocol(scheme));
+}
+
+void WebContext::unregisterSchemeForCustomProtocol(const WTF::String& scheme)
+{
+#if ENABLE(NETWORK_PROCESS)
+    if (m_usesNetworkProcess) {
+        NetworkProcessManager::shared().process()->send(Messages::NetworkProcess::UnregisterSchemeForCustomProtocol(scheme), 0);
+        return;
+    }
+#endif
+    sendToAllProcesses(Messages::WebProcess::UnregisterSchemeForCustomProtocol(scheme));
+}
+#endif
+
 } // namespace WebKit

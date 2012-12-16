@@ -43,6 +43,9 @@ void NetworkProcessCreationParameters::encode(CoreIPC::ArgumentEncoder& encoder)
     encoder << uiProcessBundleIdentifier;
 #endif
     encoder << privateBrowsingEnabled;
+#if ENABLE(CUSTOM_PROTOCOLS)
+    encoder << urlSchemesRegisteredForCustomProtocols;
+#endif
 }
 
 bool NetworkProcessCreationParameters::decode(CoreIPC::ArgumentDecoder* decoder, NetworkProcessCreationParameters& result)
@@ -55,6 +58,10 @@ bool NetworkProcessCreationParameters::decode(CoreIPC::ArgumentDecoder* decoder,
 #endif
     if (!decoder->decode(result.privateBrowsingEnabled))
         return false;
+#if ENABLE(CUSTOM_PROTOCOLS)
+    if (!decoder->decode(result.urlSchemesRegisteredForCustomProtocols))
+        return false;
+#endif
 
     return true;
 }

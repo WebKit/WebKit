@@ -28,6 +28,7 @@
 
 #import "NetworkProcessCreationParameters.h"
 #import "NetworkProcessMessages.h"
+#import "WKBrowsingContextControllerInternal.h"
 
 #if ENABLE(NETWORK_PROCESS)
 
@@ -39,6 +40,9 @@ void NetworkProcessProxy::platformInitializeNetworkProcess(NetworkProcessCreatio
 {
     parameters.parentProcessName = [[NSProcessInfo processInfo] processName];
     parameters.uiProcessBundleIdentifier = [[NSBundle mainBundle] bundleIdentifier];
+    
+    for (NSString *scheme in [WKBrowsingContextController customSchemes])
+        parameters.urlSchemesRegisteredForCustomProtocols.append(scheme);
 }
 
 void NetworkProcessProxy::setApplicationIsOccluded(bool applicationIsOccluded)

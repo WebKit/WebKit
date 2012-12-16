@@ -1,3 +1,49 @@
+2012-12-15  Andy Estes  <aestes@apple.com>
+
+        [WebKit2] Register schemes with the network process if it is being used
+        https://bugs.webkit.org/show_bug.cgi?id=105113
+
+        Reviewed by Anders Carlsson.
+
+        If a WebContext is using the network process, it needs to be told about
+        scheme (un)registration rather than the context's web processes.
+
+        * NetworkProcess/NetworkProcess.cpp:
+        (WebKit::NetworkProcess::initializeNetworkProcess): Tell the shared
+        CustomProtocolManager about schemes registered at process creation time.
+        (WebKit::NetworkProcess::registerSchemeForCustomProtocol): Tell the
+        shared CustomProtocolManager about a new scheme.
+        (WebKit::NetworkProcess::unregisterSchemeForCustomProtocol): Remove a
+        scheme from the shared CustomProtocolManager.
+        * NetworkProcess/NetworkProcess.h:
+        * NetworkProcess/NetworkProcess.messages.in: Add registration and
+        unregistration messages for the NetworkProcess.
+        * Shared/Network/NetworkProcessCreationParameters.cpp:
+        (WebKit::NetworkProcessCreationParameters::encode): Encode
+        urlSchemesRegisteredForCustomProtocols.
+        (WebKit::NetworkProcessCreationParameters::decode): Decode
+        urlSchemesRegisteredForCustomProtocols.
+        * Shared/Network/NetworkProcessCreationParameters.h: Define
+        urlSchemesRegisteredForCustomProtocols.
+        * UIProcess/Network/mac/NetworkProcessProxyMac.mm:
+        (WebKit::NetworkProcessProxy::platformInitializeNetworkProcess): Populate
+        urlSchemesRegisteredForCustomProtocols with the current set of schemes.
+        * UIProcess/WebContext.cpp:
+        (WebKit::WebContext::registerSchemeForCustomProtocol): Send a new
+        scheme to either the network process or to the context's web processes.
+        (WebKit::WebContext::unregisterSchemeForCustomProtocol): Ditto for
+        removing a scheme.
+        * UIProcess/WebContext.h:
+        * UIProcess/mac/WebContextMac.mm:
+        (WebKit::WebContext::platformInitializeWebProcess): Only populate
+        urlSchemesRegisteredForCustomProtocols if the network process isn't
+        being used.
+        (WebKit::WebContext::registerNotificationObservers):
+        * WebProcess/mac/WebProcessMac.mm:
+        (WebKit::WebProcess::platformInitializeWebProcess):
+        urlSchemesRegisteredForCustomProtocols should only be non-empty if the
+        network process isn't being used. Assert this.
+
 2012-12-15  Anders Carlsson  <andersca@apple.com>
 
         Remove the unneeded NetworkProcessCrashed message

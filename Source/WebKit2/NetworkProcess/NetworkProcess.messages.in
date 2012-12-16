@@ -35,6 +35,11 @@ messages -> NetworkProcess {
 #if PLATFORM(MAC)
     SetApplicationIsOccluded(bool flag)
 #endif
+
+#if ENABLE(CUSTOM_PROTOCOLS)
+    RegisterSchemeForCustomProtocol(WTF::String name)
+    UnregisterSchemeForCustomProtocol(WTF::String name)
+#endif
 }
 
 #endif // ENABLE(NETWORK_PROCESS)

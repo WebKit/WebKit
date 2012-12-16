@@ -128,10 +128,15 @@ void WebContext::platformInitializeWebProcess(WebProcessCreationParameters& para
     SandboxExtension::createHandle(parameters.uiProcessBundleResourcePath, SandboxExtension::ReadOnly, parameters.uiProcessBundleResourcePathExtensionHandle);
 
     parameters.uiProcessBundleIdentifier = String([[NSBundle mainBundle] bundleIdentifier]);
-    
-    NSArray *schemes = [[WKBrowsingContextController customSchemes] allObjects];
-    for (size_t i = 0; i < [schemes count]; ++i)
-        parameters.urlSchemesRegisteredForCustomProtocols.append([schemes objectAtIndex:i]);
+
+#if ENABLE(NETWORK_PROCESS)
+    if (!m_usesNetworkProcess) {
+#endif
+        for (NSString *scheme in [WKBrowsingContextController customSchemes])
+            parameters.urlSchemesRegisteredForCustomProtocols.append(scheme);
+#if ENABLE(NETWORK_PROCESS)
+    }
+#endif
 }
 
 void WebContext::platformInvalidateContext()
@@ -346,13 +351,13 @@ void WebContext::registerNotificationObservers()
     m_customSchemeRegisteredObserver = [[NSNotificationCenter defaultCenter] addObserverForName:WebKit::SchemeForCustomProtocolRegisteredNotificationName object:nil queue:[NSOperationQueue currentQueue] usingBlock:^(NSNotification *notification) {
         NSString *scheme = [notification object];
         ASSERT([scheme isKindOfClass:[NSString class]]);
-        sendToAllProcesses(Messages::WebProcess::RegisterSchemeForCustomProtocol(scheme));
+        registerSchemeForCustomProtocol(scheme);
     }];
     
     m_customSchemeUnregisteredObserver = [[NSNotificationCenter defaultCenter] addObserverForName:WebKit::SchemeForCustomProtocolUnregisteredNotificationName object:nil queue:[NSOperationQueue currentQueue] usingBlock:^(NSNotification *notification) {
         NSString *scheme = [notification object];
         ASSERT([scheme isKindOfClass:[NSString class]]);
-        sendToAllProcesses(Messages::WebProcess::UnregisterSchemeForCustomProtocol(scheme));
+        unregisterSchemeForCustomProtocol(scheme);
     }];
     
     // Listen for enhanced accessibility changes and propagate them to the WebProcess.
