@@ -857,12 +857,12 @@ void WebContext::addVisitedLinkHash(LinkHash linkHash)
 
 DownloadProxy* WebContext::createDownloadProxy()
 {
-    if (!usesNetworkProcess())
-        return ensureSharedWebProcess()->createDownloadProxy();
-
 #if ENABLE(NETWORK_PROCESS)
-    return m_networkProcess->createDownloadProxy();
+    if (usesNetworkProcess())
+        return m_networkProcess->createDownloadProxy();
 #endif
+
+    return ensureSharedWebProcess()->createDownloadProxy();
 }
 
 // FIXME: This is not the ideal place for this function.
