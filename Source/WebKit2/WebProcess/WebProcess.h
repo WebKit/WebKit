@@ -313,6 +313,7 @@ private:
 #endif
 
 #if ENABLE(CUSTOM_PROTOCOLS)
+    void initializeCustomProtocolManager(const WebProcessCreationParameters&);
     void registerSchemeForCustomProtocol(const WTF::String&);
     void unregisterSchemeForCustomProtocol(const WTF::String&);
 #endif

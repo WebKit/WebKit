@@ -35,6 +35,10 @@
 #include "WebProcessProxyMessages.h"
 #include <wtf/Deque.h>
 
+#if ENABLE(CUSTOM_PROTOCOLS)
+#include "CustomProtocolManagerProxy.h"
+#endif
+
 namespace WebKit {
 
 class DownloadProxy;
@@ -82,6 +86,10 @@ private:
 
     CoreIPC::MessageReceiverMap m_messageReceiverMap;
     OwnPtr<DownloadProxyMap> m_downloadProxyMap;
+
+#if ENABLE(CUSTOM_PROTOCOLS)
+    CustomProtocolManagerProxy m_customProtocolManagerProxy;
+#endif
 };
 
 } // namespace WebKit

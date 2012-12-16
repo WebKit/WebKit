@@ -139,10 +139,9 @@ void NetworkProcess::initializeNetworkProcess(const NetworkProcessCreationParame
         RemoteNetworkingContext::ensurePrivateBrowsingSession();
 
 #if ENABLE(CUSTOM_PROTOCOLS)
+    CustomProtocolManager::shared().initialize(m_uiConnection);
     for (size_t i = 0; i < parameters.urlSchemesRegisteredForCustomProtocols.size(); ++i)
         CustomProtocolManager::shared().registerScheme(parameters.urlSchemesRegisteredForCustomProtocols[i]);
-
-    CustomProtocolManager::registerCustomProtocolClass();
 #endif
 }
 

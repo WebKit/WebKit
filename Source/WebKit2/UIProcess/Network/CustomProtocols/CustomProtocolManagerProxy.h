@@ -47,11 +47,11 @@ class ResourceRequest;
 
 namespace WebKit {
 
-class WebProcessProxy;
+class ChildProcessProxy;
 
 class CustomProtocolManagerProxy {
 public:
-    explicit CustomProtocolManagerProxy(WebProcessProxy*);
+    explicit CustomProtocolManagerProxy(ChildProcessProxy*);
 
     void didReceiveMessage(CoreIPC::Connection*, CoreIPC::MessageID, CoreIPC::MessageDecoder&);
     void startLoading(uint64_t customProtocolID, const WebCore::ResourceRequest&);
@@ -60,7 +60,7 @@ public:
 private:
     void didReceiveCustomProtocolManagerProxyMessage(CoreIPC::Connection*, CoreIPC::MessageID, CoreIPC::MessageDecoder&);
 
-    WebProcessProxy* m_webProcessProxy;
+    ChildProcessProxy* m_childProcessProxy;
 
 #if PLATFORM(MAC)
     typedef HashMap<uint64_t, RetainPtr<WKCustomProtocolLoader> > LoaderMap;

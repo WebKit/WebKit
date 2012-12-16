@@ -395,6 +395,9 @@ void WebProcessProxy::didReceiveMessage(CoreIPC::Connection* connection, CoreIPC
 
 #if ENABLE(CUSTOM_PROTOCOLS)
     if (messageID.is<CoreIPC::MessageClassCustomProtocolManagerProxy>()) {
+#if ENABLE(NETWORK_PROCESS)
+        ASSERT(!context()->usesNetworkProcess());
+#endif
         m_customProtocolManagerProxy.didReceiveMessage(connection, messageID, decoder);
         return;
     }

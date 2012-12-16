@@ -1,3 +1,61 @@
+2012-12-15  Andy Estes  <aestes@apple.com>
+
+        [WebKit2] Have CustomProtocolManager and CustomProtocolManagerProxy store Connections for messaging
+        https://bugs.webkit.org/show_bug.cgi?id=105124
+
+        Reviewed by Anders Carlsson.
+
+        Remove CustomProtocolManagerProxy's assumption that all messages go to
+        a web process. Have it take a ChildProcessProxy instead and extract its
+        connection.
+
+        Similarly, remove CustomProtocolManager's assumption that all messages
+        go through a shared WebProcess. Initialize the shared CustomProtocolManager
+        with a Connection object instead.
+
+        * NetworkProcess/NetworkProcess.cpp:
+        (WebKit::NetworkProcess::initializeNetworkProcess): Initialize the
+        shared CustomProtocolManager with the NetworkProcess's connection to
+        the UI process.
+        * Shared/Network/CustomProtocols/CustomProtocolManager.h:
+        (WebKit::CustomProtocolManager::connection): Assert m_connection is
+        non-0 and return it.
+        * Shared/Network/CustomProtocols/mac/CustomProtocolManagerMac.mm:
+        (+[WKCustomProtocol canInitWithRequest:]): Remove an unnecessary
+        namespace.
+        (-[WKCustomProtocol initWithRequest:cachedResponse:client:]): Ditto.
+        (-[WKCustomProtocol startLoading]): Send a message on the
+        CustomProtocolManager's connection rather than assuming there is a
+        shared WebProcess in our address space.
+        (-[WKCustomProtocol stopLoading]): Ditto.
+        (WebKit::CustomProtocolManager::initialize): Initialize the shared
+        CustomProtocolManager with a Connection and register our custom
+        protocol handler with NSURLProtocol.
+        * UIProcess/Network/CustomProtocols/CustomProtocolManagerProxy.h:
+        (WebKit):
+        (CustomProtocolManagerProxy): Take a ChildProcessProxy* rather than a
+        WebProcessProxy*.
+        * UIProcess/Network/CustomProtocols/mac/CustomProtocolManagerProxyMac.mm:
+        (WebKit::CustomProtocolManagerProxy::CustomProtocolManagerProxy): Ditto.
+        (WebKit::CustomProtocolManagerProxy::startLoading): Ditto.
+        * UIProcess/Network/NetworkProcessProxy.cpp:
+        (WebKit::NetworkProcessProxy::NetworkProcessProxy): Instantiate a
+        CustomProtocolManagerProxy for the network process.
+        (WebKit::NetworkProcessProxy::didReceiveMessage): Route messages of
+        class MessageClassCustomProtocolManagerProxy to the
+        CustomProtocolManagerProxy.
+        * UIProcess/Network/NetworkProcessProxy.h:
+        * UIProcess/WebProcessProxy.cpp:
+        (WebKit::WebProcessProxy::didReceiveMessage): Assert that we aren't
+        using the network process since we've received a message from a
+        web process's CustomProtocolManager.
+        * WebProcess/WebProcess.cpp:
+        (WebKit::WebProcess::initializeWebProcess): Break CustomProtocolManager
+        initialization out into a helper function.
+        (WebKit::WebProcess::initializeCustomProtocolManager): Initialize our
+        CustomProtocolManager.
+        * WebProcess/WebProcess.h:
+
 2012-12-15  Anders Carlsson  <andersca@apple.com>
 
         Happy little Qt build fix.

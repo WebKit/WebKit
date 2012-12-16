@@ -325,16 +325,7 @@ void WebProcess::initializeWebProcess(const WebProcessCreationParameters& parame
         didAddPlugInAutoStartOrigin(parameters.plugInAutoStartOrigins[i]);
 
 #if ENABLE(CUSTOM_PROTOCOLS)
-#if ENABLE(NETWORK_PROCESS)
-    ASSERT(parameters.urlSchemesRegisteredForCustomProtocols.isEmpty() || !m_usesNetworkProcess);
-#endif
-    for (size_t i = 0; i < parameters.urlSchemesRegisteredForCustomProtocols.size(); ++i)
-        CustomProtocolManager::shared().registerScheme(parameters.urlSchemesRegisteredForCustomProtocols[i]);
-
-#if ENABLE(NETWORK_PROCESS)
-    if (!m_usesNetworkProcess)
-#endif
-        CustomProtocolManager::registerCustomProtocolClass();
+    initializeCustomProtocolManager(parameters);
 #endif
 }
 
@@ -1098,6 +1089,19 @@ void WebProcess::didGetPlugins(CoreIPC::Connection*, uint64_t requestID, const V
 #endif // ENABLE(PLUGIN_PROCESS)
 
 #if ENABLE(CUSTOM_PROTOCOLS)
+void WebProcess::initializeCustomProtocolManager(const WebProcessCreationParameters& parameters)
+{
+#if ENABLE(NETWORK_PROCESS)
+    ASSERT(parameters.urlSchemesRegisteredForCustomProtocols.isEmpty() || !m_usesNetworkProcess);
+    if (m_usesNetworkProcess)
+        return;
+#endif
+
+    CustomProtocolManager::shared().initialize(m_connection);
+    for (size_t i = 0; i < parameters.urlSchemesRegisteredForCustomProtocols.size(); ++i)
+        CustomProtocolManager::shared().registerScheme(parameters.urlSchemesRegisteredForCustomProtocols[i]);
+}
+
 void WebProcess::registerSchemeForCustomProtocol(const WTF::String& scheme)
 {
     CustomProtocolManager::shared().registerScheme(scheme);
@@ -1107,6 +1111,6 @@ void WebProcess::unregisterSchemeForCustomProtocol(const WTF::String& scheme)
 {
     CustomProtocolManager::shared().unregisterScheme(scheme);
 }
-#endif
+#endif // ENABLE(CUSTOM_PROTOCOLS)
 
 } // namespace WebKit

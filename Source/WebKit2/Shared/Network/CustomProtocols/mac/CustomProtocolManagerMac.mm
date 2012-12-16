@@ -55,7 +55,7 @@ static uint64_t generateCustomProtocolID()
 
 + (BOOL)canInitWithRequest:(NSURLRequest *)request
 {
-    return WebKit::CustomProtocolManager::shared().supportsScheme([[[request URL] scheme] lowercaseString]);
+    return CustomProtocolManager::shared().supportsScheme([[[request URL] scheme] lowercaseString]);
 }
 
 + (NSURLRequest *)canonicalRequestForRequest:(NSURLRequest *)request
@@ -75,19 +75,19 @@ static uint64_t generateCustomProtocolID()
         return nil;
     
     _customProtocolID = generateCustomProtocolID();
-    WebKit::CustomProtocolManager::shared().addCustomProtocol(self);
+    CustomProtocolManager::shared().addCustomProtocol(self);
     return self;
 }
 
 - (void)startLoading
 {
-    WebProcess::shared().connection()->send(Messages::CustomProtocolManagerProxy::StartLoading(self.customProtocolID, [self request]), 0);
+    CustomProtocolManager::shared().connection()->send(Messages::CustomProtocolManagerProxy::StartLoading(self.customProtocolID, [self request]), 0);
 }
 
 - (void)stopLoading
 {
-    WebProcess::shared().connection()->send(Messages::CustomProtocolManagerProxy::StopLoading(self.customProtocolID), 0);
-    WebKit::CustomProtocolManager::shared().removeCustomProtocol(self);
+    CustomProtocolManager::shared().connection()->send(Messages::CustomProtocolManagerProxy::StopLoading(self.customProtocolID), 0);
+    CustomProtocolManager::shared().removeCustomProtocol(self);
 }
 
 @end
@@ -100,11 +100,14 @@ CustomProtocolManager& CustomProtocolManager::shared()
     return customProtocolManager;
 }
 
-void CustomProtocolManager::registerCustomProtocolClass()
+void CustomProtocolManager::initialize(PassRefPtr<CoreIPC::Connection> connection)
 {
+    ASSERT(connection);
+    ASSERT(!CustomProtocolManager::shared().m_connection);
+    CustomProtocolManager::shared().m_connection = connection;
     [NSURLProtocol registerClass:[WKCustomProtocol class]];
 }
-    
+
 void CustomProtocolManager::addCustomProtocol(WKCustomProtocol *customProtocol)
 {
     ASSERT(customProtocol);

@@ -28,6 +28,7 @@
 
 #if ENABLE(CUSTOM_PROTOCOLS)
 
+#include "Connection.h"
 #include "MessageID.h"
 #include <wtf/HashSet.h>
 #include <wtf/text/WTFString.h>
@@ -40,7 +41,6 @@ OBJC_CLASS WKCustomProtocol;
 
 
 namespace CoreIPC {
-class Connection;
 class DataReference;
 class MessageDecoder;
 } // namespace CoreIPC
@@ -58,6 +58,14 @@ class CustomProtocolManager {
 public:
     static CustomProtocolManager& shared();
     
+    void initialize(PassRefPtr<CoreIPC::Connection>);
+
+    CoreIPC::Connection* connection() const
+    {
+        ASSERT(m_connection);
+        return m_connection.get();
+    }
+
     void registerScheme(const String&);
     void unregisterScheme(const String&);
     bool supportsScheme(const String&);
@@ -69,7 +77,6 @@ public:
     void didFinishLoading(uint64_t customProtocolID);
     
 #if PLATFORM(MAC)
-    static void registerCustomProtocolClass();
     void addCustomProtocol(WKCustomProtocol *);
     void removeCustomProtocol(WKCustomProtocol *);
 #endif
@@ -79,6 +86,7 @@ private:
     void didReceiveCustomProtocolManagerMessage(CoreIPC::Connection*, CoreIPC::MessageID, CoreIPC::MessageDecoder&);
     
     HashSet<String> m_registeredSchemes;
+    RefPtr<CoreIPC::Connection> m_connection;
 
 #if PLATFORM(MAC)
     typedef HashMap<uint64_t, RetainPtr<WKCustomProtocol> > CustomProtocolMap;
