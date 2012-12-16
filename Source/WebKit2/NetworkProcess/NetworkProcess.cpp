@@ -91,6 +91,13 @@ bool NetworkProcess::shouldTerminate()
 
 void NetworkProcess::didReceiveMessage(CoreIPC::Connection* connection, CoreIPC::MessageID messageID, CoreIPC::MessageDecoder& decoder)
 {
+#if ENABLE(CUSTOM_PROTOCOLS)
+    if (messageID.is<CoreIPC::MessageClassCustomProtocolManager>()) {
+        CustomProtocolManager::shared().didReceiveMessage(connection, messageID, decoder);
+        return;
+    }
+#endif
+
     didReceiveNetworkProcessMessage(connection, messageID, decoder);
 }
 
