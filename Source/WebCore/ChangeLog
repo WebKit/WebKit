@@ -1,3 +1,20 @@
+2012-12-16  Simon Fraser  <simon.fraser@apple.com>
+
+        Fix assertions when doing a full repaint of compositing layers
+        https://bugs.webkit.org/show_bug.cgi?id=105128
+
+        Reviewed by Dan Bernstein.
+
+        In r137811 I added code to repaint all compositing layers when FrameView::layout()
+        is doing a full repaint. However, this code needs to avoid calling setContentsNeedDisplay()
+        on layers that don't actually draw their own content: those that draw into an ancestor,
+        and those that draw into a window.
+
+        Fixes assertions in existing tests.
+
+        * rendering/RenderLayerBacking.cpp:
+        (WebCore::RenderLayerBacking::updateAfterLayout):
+
 2012-12-16  ChangSeok Oh  <shivamidow@gmail.com>
 
         [GTK][AC] Build failure with an option --with-acceleration-backend=clutter
