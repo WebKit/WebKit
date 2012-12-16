@@ -1,3 +1,67 @@
+2012-12-15  Sam Weinig  <sam@webkit.org>
+
+        NSURLCache should be disabled in the WebProcess when using the NetworkProcess
+        <rdar://problem/12872266>
+        https://bugs.webkit.org/show_bug.cgi?id=105119
+
+        Reviewed by Alexey Proskuryakov.
+
+        Set the size of the NSURLCache to 0 (both disk and memory) in the WebProcess when using
+        the NetworkProcess.
+
+        * WebProcess/mac/WebProcessMac.mm:
+        (WebKit::WebProcess::platformSetCacheModel):
+        (WebKit::WebProcess::platformInitializeWebProcess):
+
+2012-12-15  Sam Weinig  <sam@webkit.org>
+
+        The network process should use the correct NSURLCache location and set its size correctly for the CacheModel
+        <rdar://problem/12848505>
+        https://bugs.webkit.org/show_bug.cgi?id=105115
+
+        Reviewed by Anders Carlsson.
+
+        * NetworkProcess/NetworkProcess.cpp:
+        (WebKit::NetworkProcess::NetworkProcess):
+        (WebKit::NetworkProcess::initializeNetworkProcess):
+        (WebKit::NetworkProcess::setCacheModel):
+        * NetworkProcess/NetworkProcess.h:
+        (NetworkProcess):
+        * NetworkProcess/mac/NetworkProcessMac.mm:
+        (WebKit::NetworkProcess::platformInitialize):
+        (WebKit::memorySize):
+        (WebKit::volumeFreeSize):
+        (WebKit::NetworkProcess::platformSetCacheModel):
+        Copy code from the WebProcess to set up the NSURLCache correctly (location and size).
+        We should eventually move the calculation of this to the WebContext so it can be done
+        once.
+
+        * Shared/Network/NetworkProcessCreationParameters.cpp:
+        (WebKit::NetworkProcessCreationParameters::encode):
+        (WebKit::NetworkProcessCreationParameters::decode):
+        * Shared/Network/NetworkProcessCreationParameters.h:
+        (NetworkProcessCreationParameters):
+        Add the necessary creation parameters to set up the cache.
+
+        * UIProcess/Network/NetworkProcessProxy.cpp:
+        (WebKit::NetworkProcessProxy::didFinishLaunching):
+        * UIProcess/Network/NetworkProcessProxy.h:
+        (NetworkProcessProxy):
+        * UIProcess/Network/mac/NetworkProcessProxyMac.mm:
+        * UIProcess/WebContext.cpp:
+        (WebKit::WebContext::ensureNetworkProcess):
+        (WebKit::WebContext::setCacheModel):
+        * UIProcess/WebContext.h:
+        (WebKit):
+        (WebContext):
+        * UIProcess/mac/WebContextMac.mm:
+        (WebKit):
+        (WebKit::WebContext::platformInitializeNetworkProcess):
+        Move initializing the NetworkProcess to just after creating (matching the WebProcess),
+        rather than waiting for it finish loading before sending the creation parameters.
+        Additionally, this moves the setting up of the creation parameters to the WebContext,
+        as that is where all the interesting state resides (and also matches the WebProcess).
+
 2012-12-15  Andy Estes  <aestes@apple.com>
 
         [WebKit2] Register the custom protocol handler in the network process if it exists

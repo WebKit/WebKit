@@ -123,6 +123,17 @@ void WebProcess::platformSetCacheModel(CacheModel cacheModel)
     pageCache()->setCapacity(pageCacheCapacity);
 
     NSURLCache *nsurlCache = [NSURLCache sharedURLCache];
+
+#if ENABLE(NETWORK_PROCESS)
+    // FIXME: Once there is no loading being done in the WebProcess, we should remove this,
+    // as calling [NSURLCache sharedURLCache] initializes the cache, which we would rather not do.
+    if (m_usesNetworkProcess) {
+        [nsurlCache setMemoryCapacity:0];
+        [nsurlCache setDiskCapacity:0];
+        return;
+    }
+#endif
+
     [nsurlCache setMemoryCapacity:urlCacheMemoryCapacity];
     [nsurlCache setDiskCapacity:max<unsigned long>(urlCacheDiskCapacity, [nsurlCache diskCapacity])]; // Don't shrink a big disk cache, since that would cause churn.
 }
@@ -259,13 +270,19 @@ void WebProcess::platformInitializeWebProcess(const WebProcessCreationParameters
     SandboxExtension::consumePermanently(parameters.applicationCacheDirectoryExtensionHandle);
     SandboxExtension::consumePermanently(parameters.diskCacheDirectoryExtensionHandle);
 
-    if (!parameters.diskCacheDirectory.isNull()) {
-        NSUInteger cacheMemoryCapacity = parameters.nsURLCacheMemoryCapacity;
-        NSUInteger cacheDiskCapacity = parameters.nsURLCacheDiskCapacity;
+#if ENABLE(NETWORK_PROCESS)
+    if (!parameters.usesNetworkProcess) {
+#endif
+        if (!parameters.diskCacheDirectory.isNull()) {
+            NSUInteger cacheMemoryCapacity = parameters.nsURLCacheMemoryCapacity;
+            NSUInteger cacheDiskCapacity = parameters.nsURLCacheDiskCapacity;
 
-        RetainPtr<NSURLCache> parentProcessURLCache(AdoptNS, [[NSURLCache alloc] initWithMemoryCapacity:cacheMemoryCapacity diskCapacity:cacheDiskCapacity diskPath:parameters.diskCacheDirectory]);
-        [NSURLCache setSharedURLCache:parentProcessURLCache.get()];
+            RetainPtr<NSURLCache> parentProcessURLCache(AdoptNS, [[NSURLCache alloc] initWithMemoryCapacity:cacheMemoryCapacity diskCapacity:cacheDiskCapacity diskPath:parameters.diskCacheDirectory]);
+            [NSURLCache setSharedURLCache:parentProcessURLCache.get()];
+        }
+#if ENABLE(NETWORK_PROCESS)
     }
+#endif
 
     m_shouldForceScreenFontSubstitution = parameters.shouldForceScreenFontSubstitution;
     Font::setDefaultTypesettingFeatures(parameters.shouldEnableKerningAndLigaturesByDefault ? Kerning | Ligatures : 0);
