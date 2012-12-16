@@ -2811,6 +2811,12 @@ crbug.com/89474 [ Android Linux Win ] fast/js/call-base-resolution.html [ Failur
 webkit.org/b/70888 [ Mac Debug ] animations/dynamic-stylesheet-loading.html [ Failure Pass ]
 webkit.org/b/70887 [ Debug ] jquery/css.html [ Pass Timeout ]
 
+# The following tests need updated expectations.
+webkit.org/b/105121 platform/chromium/virtual/gpu/compositedscrolling/overflow/overflow-auto-with-touch-toggle.html [ Failure ]
+webkit.org/b/105121 platform/chromium/virtual/gpu/compositedscrolling/scrollbars/overflow-scrollbar-combinations.html [ Failure ]
+webkit.org/b/105121 platform/chromium/virtual/gpu/compositedscrolling/overflow/nested-scrolling.html [ Failure ]
+webkit.org/b/105121 platform/chromium/virtual/gpu/compositedscrolling/scrollbars/scrollbars-on-positioned-content.html [ Failure ]
+
 webkit.org/b/65009 [ Mac ] scrollbars/scrollbar-drag-thumb-with-large-content.html [ Failure ]
 webkit.org/b/65009 [ Mac ] platform/chromium/virtual/gpu/compositedscrolling/scrollbars/scrollbar-drag-thumb-with-large-content.html [ Failure ]
 
