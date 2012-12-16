@@ -2811,11 +2811,10 @@ crbug.com/89474 [ Android Linux Win ] fast/js/call-base-resolution.html [ Failur
 webkit.org/b/70888 [ Mac Debug ] animations/dynamic-stylesheet-loading.html [ Failure Pass ]
 webkit.org/b/70887 [ Debug ] jquery/css.html [ Pass Timeout ]
 
-# The following tests need updated expectations.
-webkit.org/b/105121 platform/chromium/virtual/gpu/compositedscrolling/overflow/overflow-auto-with-touch-toggle.html [ Failure ]
-webkit.org/b/105121 platform/chromium/virtual/gpu/compositedscrolling/scrollbars/overflow-scrollbar-combinations.html [ Failure ]
-webkit.org/b/105121 platform/chromium/virtual/gpu/compositedscrolling/overflow/nested-scrolling.html [ Failure ]
-webkit.org/b/105121 platform/chromium/virtual/gpu/compositedscrolling/scrollbars/scrollbars-on-positioned-content.html [ Failure ]
+# The following tests need updated baselines.
+webkit.org/b/105121 platform/chromium/virtual/gpu/compositedscrolling/scrollbars/overflow-scrollbar-combinations.html [ ImageOnlyFailure ]
+webkit.org/b/105121 platform/chromium/virtual/gpu/compositedscrolling/overflow/nested-scrolling.html [ ImageOnlyFailure ]
+webkit.org/b/105121 platform/chromium/virtual/gpu/compositedscrolling/scrollbars/scrollbars-on-positioned-content.html [ ImageOnlyFailure ]
 
 webkit.org/b/65009 [ Mac ] scrollbars/scrollbar-drag-thumb-with-large-content.html [ Failure ]
 webkit.org/b/65009 [ Mac ] platform/chromium/virtual/gpu/compositedscrolling/scrollbars/scrollbar-drag-thumb-with-large-content.html [ Failure ]
@@ -3635,7 +3634,7 @@ webkit.org/b/92968 http/tests/appcache/abort-cache-ondownloading.html
 webkit.org/b/92968 http/tests/appcache/abort-cache-onprogress.html
 
 # Scrolling content draws beneath scrollbars in composited scrolling mode.
-webkit.org/b/103156 platform/chromium/virtual/gpu/compositedscrolling/scrollbars/custom-scrollbar-with-incomplete-style.html [ Failure ]
+webkit.org/b/103156 platform/chromium/virtual/gpu/compositedscrolling/scrollbars/custom-scrollbar-with-incomplete-style.html [ ImageOnlyFailure ]
 
 # Fails due to Bug 85856.
 webkit.org/b/85856 [ Win Mac Android ] fast/block/float/028.html [ ImageOnlyFailure ]
@@ -3715,23 +3714,18 @@ webkit.org/b/94353 platform/chromium/virtual/softwarecompositing/overflow/scroll
 webkit.org/b/94353 platform/chromium/virtual/gpu/compositedscrolling/overflow/scrolling-content-clip-to-viewport.html [ Failure ]
 webkit.org/b/94353 compositing/overflow/scrolling-without-painting.html [ Failure ]
 webkit.org/b/94353 platform/chromium/virtual/softwarecompositing/overflow/scrolling-without-painting.html [ Failure ]
-webkit.org/b/94353 platform/chromium/virtual/gpu/compositedscrolling/overflow/scrolling-without-painting.html [ Failure ]
 webkit.org/b/94353 compositing/overflow/updating-scrolling-content.html [ Failure ]
 webkit.org/b/94353 platform/chromium/virtual/softwarecompositing/overflow/updating-scrolling-content.html [ Failure ]
-webkit.org/b/94353 platform/chromium/virtual/gpu/compositedscrolling/overflow/updating-scrolling-content.html [ Failure ]
 webkit.org/b/94353 compositing/overflow/textarea-scroll-touch.html [ Failure ]
 webkit.org/b/94353 platform/chromium/virtual/softwarecompositing/overflow/textarea-scroll-touch.html [ Failure ]
-webkit.org/b/94353 platform/chromium/virtual/gpu/compositedscrolling/overflow/textarea-scroll-touch.html [ Failure ]
 
 # Failing on Linux (Content Shell) only now
 webkit.org/b/94353 [ Android Linux ] compositing/overflow/nested-scrolling.html [ Failure Pass ]
 webkit.org/b/94353 [ Android Linux ] platform/chromium/virtual/softwarecompositing/overflow/nested-scrolling.html [ Failure Pass ]
 webkit.org/b/94353 compositing/overflow/overflow-auto-with-touch.html [ Failure ]
 webkit.org/b/94353 platform/chromium/virtual/softwarecompositing/overflow/overflow-auto-with-touch.html [ Failure ]
-webkit.org/b/94353 platform/chromium/virtual/gpu/compositedscrolling/overflow/overflow-auto-with-touch.html [ Failure ]
 webkit.org/b/94353 compositing/overflow/overflow-overlay-with-touch.html [ Failure ]
 webkit.org/b/94353 platform/chromium/virtual/softwarecompositing/overflow/overflow-overlay-with-touch.html [ Failure ]
-webkit.org/b/94353 platform/chromium/virtual/gpu/compositedscrolling/overflow/overflow-overlay-with-touch.html [ Failure ]
 
 webkit.org/b/90488 [ Win ] http/tests/inspector/network-preflight-options.html [ Pass Slow ]
 
