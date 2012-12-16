@@ -658,7 +658,7 @@
 		1C5FAED10DCFD90100D58F78 /* JSJavaScriptCallFrame.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1C5FAECF0DCFD90100D58F78 /* JSJavaScriptCallFrame.cpp */; };
 		1C5FAED20DCFD90100D58F78 /* JSJavaScriptCallFrame.h in Headers */ = {isa = PBXBuildFile; fileRef = 1C5FAED00DCFD90100D58F78 /* JSJavaScriptCallFrame.h */; };
 		1C5FAEE70DCFDA6800D58F78 /* JSJavaScriptCallFrameCustom.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1C5FAEE60DCFDA6800D58F78 /* JSJavaScriptCallFrameCustom.cpp */; };
-		1C63A2480F71646600C09D5A /* RunLoopTimer.h in Headers */ = {isa = PBXBuildFile; fileRef = 1C63A2460F71646600C09D5A /* RunLoopTimer.h */; };
+		1C63A2480F71646600C09D5A /* RunLoopTimer.h in Headers */ = {isa = PBXBuildFile; fileRef = 1C63A2460F71646600C09D5A /* RunLoopTimer.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		1C63A2490F71646600C09D5A /* RunLoopTimerCF.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1C63A2470F71646600C09D5A /* RunLoopTimerCF.cpp */; };
 		1C81B95A0E97330800266E07 /* InspectorController.h in Headers */ = {isa = PBXBuildFile; fileRef = 1C81B9560E97330800266E07 /* InspectorController.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		1C81B95B0E97330800266E07 /* InspectorController.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1C81B9570E97330800266E07 /* InspectorController.cpp */; };
@@ -1788,7 +1788,7 @@
 		656D373C0ADBA5DE00A4554D /* FrameLoader.h in Headers */ = {isa = PBXBuildFile; fileRef = 656D37240ADBA5DE00A4554D /* FrameLoader.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		656D373E0ADBA5DE00A4554D /* FrameLoaderClient.h in Headers */ = {isa = PBXBuildFile; fileRef = 656D37260ADBA5DE00A4554D /* FrameLoaderClient.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		656D373F0ADBA5DE00A4554D /* ResourceLoader.h in Headers */ = {isa = PBXBuildFile; fileRef = 656D37270ADBA5DE00A4554D /* ResourceLoader.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		656D37410ADBA5DE00A4554D /* MainResourceLoader.h in Headers */ = {isa = PBXBuildFile; fileRef = 656D37290ADBA5DE00A4554D /* MainResourceLoader.h */; };
+		656D37410ADBA5DE00A4554D /* MainResourceLoader.h in Headers */ = {isa = PBXBuildFile; fileRef = 656D37290ADBA5DE00A4554D /* MainResourceLoader.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		656D37430ADBA5DE00A4554D /* NetscapePlugInStreamLoader.h in Headers */ = {isa = PBXBuildFile; fileRef = 656D372B0ADBA5DE00A4554D /* NetscapePlugInStreamLoader.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		656D37480ADBA5DE00A4554D /* SubresourceLoader.h in Headers */ = {isa = PBXBuildFile; fileRef = 656D37300ADBA5DE00A4554D /* SubresourceLoader.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		6571DCC81385E6A400702DD0 /* MemoryPressureHandler.h in Headers */ = {isa = PBXBuildFile; fileRef = 657EDA071385CB97004E0645 /* MemoryPressureHandler.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -5988,7 +5988,7 @@
 		D0CE58F8125E4CC200F3F199 /* ResourceLoadScheduler.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D0CE58F6125E4CC200F3F199 /* ResourceLoadScheduler.cpp */; };
 		D0CE58F9125E4CC200F3F199 /* ResourceLoadScheduler.h in Headers */ = {isa = PBXBuildFile; fileRef = D0CE58F7125E4CC200F3F199 /* ResourceLoadScheduler.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		D0EDA774143E303C0028E383 /* CachedRawResource.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D0EDA772143E303C0028E383 /* CachedRawResource.cpp */; };
-		D0EDA775143E303C0028E383 /* CachedRawResource.h in Headers */ = {isa = PBXBuildFile; fileRef = D0EDA773143E303C0028E383 /* CachedRawResource.h */; };
+		D0EDA775143E303C0028E383 /* CachedRawResource.h in Headers */ = {isa = PBXBuildFile; fileRef = D0EDA773143E303C0028E383 /* CachedRawResource.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		D0FF2A5D11F8C45A007E74E0 /* PingLoader.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D0FF2A5B11F8C45A007E74E0 /* PingLoader.cpp */; };
 		D0FF2A5E11F8C45A007E74E0 /* PingLoader.h in Headers */ = {isa = PBXBuildFile; fileRef = D0FF2A5C11F8C45A007E74E0 /* PingLoader.h */; };
 		D23CA55D0AB0EAAE005108A5 /* JSRangeException.h in Headers */ = {isa = PBXBuildFile; fileRef = D23CA55C0AB0EAAE005108A5 /* JSRangeException.h */; };

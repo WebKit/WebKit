@@ -204,7 +204,7 @@ public:
     virtual void dispatchDidBecomeFrameset(bool);
 
     virtual bool canCachePage() const;
-    virtual void download(WebCore::ResourceHandle*, const WebCore::ResourceRequest&, const WebCore::ResourceResponse&);
+    virtual void convertMainResourceLoadToDownload(WebCore::MainResourceLoader*, const WebCore::ResourceRequest&, const WebCore::ResourceResponse&);
 
     virtual PassRefPtr<Frame> createFrame(const KURL&, const String& name, HTMLFrameOwnerElement*, const String& referrer, bool allowsScrolling, int marginWidth, int marginHeight);
     virtual PassRefPtr<Widget> createPlugin(const IntSize&, HTMLPlugInElement*, const KURL&, const Vector<String>&, const Vector<String>&, const String&, bool);

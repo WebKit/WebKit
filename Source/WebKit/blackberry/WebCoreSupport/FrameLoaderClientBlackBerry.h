@@ -144,7 +144,7 @@ public:
     virtual void didSaveToPageCache();
     virtual void didRestoreFromPageCache();
     virtual void dispatchDidBecomeFrameset(bool) { }
-    virtual void download(ResourceHandle*, const ResourceRequest&, const ResourceRequest&, const ResourceResponse&);
+    virtual void convertMainResourceLoadToDownload(MainResourceLoader*, const ResourceRequest&, const ResourceRequest&, const ResourceResponse&);
     virtual PassRefPtr<Frame> createFrame(const KURL&, const String&, HTMLFrameOwnerElement*, const String&, bool, int, int);
     virtual PassRefPtr<Widget> createPlugin(const IntSize&, HTMLPlugInElement*, const KURL&, const Vector<String>&, const Vector<String>&, const String&, bool);
     virtual void redirectDataToPlugin(Widget*);

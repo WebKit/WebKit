@@ -80,6 +80,7 @@
 #include <WebCore/HTMLPlugInElement.h>
 #include <WebCore/JSDOMWindow.h>
 #include <WebCore/KeyboardEvent.h>
+#include <WebCore/MainResourceLoader.h>
 #include <WebCore/MouseRelatedEvent.h>
 #include <WebCore/NotImplemented.h>
 #include <WebCore/Page.h>
@@ -1790,7 +1791,7 @@ void WebFrame::dispatchUnableToImplementPolicy(const ResourceError& error)
     policyDelegate->unableToImplementPolicyWithError(d->webView, webError.get(), this);
 }
 
-void WebFrame::download(ResourceHandle* handle, const ResourceRequest& request, const ResourceResponse& response)
+void WebFrame::convertMainResourceLoadToDownload(MainResourceLoader* mainResourceLoader, const ResourceRequest& request, const ResourceResponse& response)
 {
     COMPtr<IWebDownloadDelegate> downloadDelegate;
     COMPtr<IWebView> webView;
@@ -1806,7 +1807,7 @@ void WebFrame::download(ResourceHandle* handle, const ResourceRequest& request, 
     // Its the delegate's job to ref the WebDownload to keep it alive - otherwise it will be destroyed
     // when this method returns
     COMPtr<WebDownload> download;
-    download.adoptRef(WebDownload::createInstance(handle, request, response, downloadDelegate.get()));
+    download.adoptRef(WebDownload::createInstance(mainResourceLoader->loader()->handle(), request, response, downloadDelegate.get()));
 }
 
 bool WebFrame::dispatchDidLoadResourceFromMemoryCache(DocumentLoader*, const ResourceRequest&, const ResourceResponse&, int /*length*/)

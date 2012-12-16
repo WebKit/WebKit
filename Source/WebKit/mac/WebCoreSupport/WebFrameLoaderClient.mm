@@ -104,6 +104,7 @@
 #import <WebCore/IconDatabase.h>
 #import <WebCore/LoaderNSURLExtras.h>
 #import <WebCore/MIMETypeRegistry.h>
+#import <WebCore/MainResourceLoader.h>
 #import <WebCore/MouseEvent.h>
 #import <WebCore/Page.h>
 #import <WebCore/PluginViewBase.h>
@@ -265,8 +266,10 @@ void WebFrameLoaderClient::detachedFromParent3()
     m_webFrame->_private->webFrameView = nil;
 }
 
-void WebFrameLoaderClient::download(ResourceHandle* handle, const ResourceRequest& request, const ResourceResponse& response)
+void WebFrameLoaderClient::convertMainResourceLoadToDownload(MainResourceLoader* mainResourceLoader, const ResourceRequest& request, const ResourceResponse& response)
 {
+    ResourceHandle* handle = mainResourceLoader->loader()->handle();
+
 #if USE(CFNETWORK)
     ASSERT([WebDownload respondsToSelector:@selector(_downloadWithLoadingCFURLConnection:request:response:delegate:proxy:)]);
     WebView *webView = getWebView(m_webFrame.get());

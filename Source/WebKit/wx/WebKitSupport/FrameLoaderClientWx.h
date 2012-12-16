@@ -184,7 +184,7 @@ namespace WebCore {
         virtual ResourceError fileDoesNotExistError(const ResourceResponse&);
         virtual bool shouldFallBack(const ResourceError&);
         virtual WTF::PassRefPtr<DocumentLoader> createDocumentLoader(const ResourceRequest&, const SubstituteData&);
-        virtual void download(ResourceHandle*, const ResourceRequest&, const ResourceResponse&);
+        virtual void convertMainResourceLoadToDownload(MainResourceLoader*, const ResourceRequest&, const ResourceResponse&);
 
         virtual void assignIdentifierToInitialRequest(unsigned long identifier, DocumentLoader*, const ResourceRequest&);
         

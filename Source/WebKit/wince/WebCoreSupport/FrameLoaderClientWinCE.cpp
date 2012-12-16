@@ -497,7 +497,7 @@ void FrameLoaderClientWinCE::dispatchDidFailLoad(const ResourceError&)
     notImplemented();
 }
 
-void FrameLoaderClientWinCE::download(ResourceHandle*, const WebCore::ResourceRequest&, const WebCore::ResourceResponse&)
+void FrameLoaderClientWinCE::convertMainResourceLoadToDownload(WebCore::MainResourceLoader*, const WebCore::ResourceRequest&, const WebCore::ResourceResponse&)
 {
     notImplemented();
 }

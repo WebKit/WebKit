@@ -86,6 +86,7 @@ namespace WebCore {
     class IntentRequest;
 #endif
     class KURL;
+    class MainResourceLoader;
     class MessageEvent;
     class NavigationAction;
     class Page;
@@ -266,7 +267,7 @@ namespace WebCore {
         virtual void dispatchDidBecomeFrameset(bool) = 0; // Can change due to navigation or DOM modification.
 
         virtual bool canCachePage() const = 0;
-        virtual void download(ResourceHandle*, const ResourceRequest&, const ResourceResponse&) = 0;
+        virtual void convertMainResourceLoadToDownload(MainResourceLoader*, const ResourceRequest&, const ResourceResponse&) = 0;
 
         virtual PassRefPtr<Frame> createFrame(const KURL& url, const String& name, HTMLFrameOwnerElement* ownerElement, const String& referrer, bool allowsScrolling, int marginWidth, int marginHeight) = 0;
         virtual PassRefPtr<Widget> createPlugin(const IntSize&, HTMLPlugInElement*, const KURL&, const Vector<String>&, const Vector<String>&, const String&, bool loadManually) = 0;
