@@ -1012,6 +1012,10 @@ if test "$with_acceleration_backend" = "clutter"; then
    AC_SUBST(CLUTTER_LIBS)
    AC_SUBST(CLUTTER_GTK_CFLAGS)
    AC_SUBST(CLUTTER_GTK_LIBS)
+
+   enable_gles2=no
+   enable_glx=no
+   enable_egl=no
 fi
 
 if test "$with_acceleration_backend" = "opengl"; then
