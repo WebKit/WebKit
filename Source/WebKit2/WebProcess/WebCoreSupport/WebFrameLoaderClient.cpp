@@ -63,7 +63,6 @@
 #include <WebCore/HTMLFormElement.h>
 #include <WebCore/HistoryItem.h>
 #include <WebCore/MIMETypeRegistry.h>
-#include <WebCore/MainResourceLoader.h>
 #include <WebCore/MouseEvent.h>
 #include <WebCore/NotImplemented.h>
 #include <WebCore/Page.h>
@@ -1286,7 +1285,7 @@ bool WebFrameLoaderClient::canCachePage() const
 
 void WebFrameLoaderClient::convertMainResourceLoadToDownload(MainResourceLoader *mainResourceLoader, const ResourceRequest& request, const ResourceResponse& response)
 {
-    m_frame->convertHandleToDownload(mainResourceLoader->loader()->handle(), request, response);
+    m_frame->convertMainResourceLoadToDownload(mainResourceLoader, request, response);
 }
 
 PassRefPtr<Frame> WebFrameLoaderClient::createFrame(const KURL& url, const String& name, HTMLFrameOwnerElement* ownerElement,

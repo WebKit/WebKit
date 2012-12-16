@@ -54,6 +54,7 @@
 #include <WebCore/JSCSSStyleDeclaration.h>
 #include <WebCore/JSElement.h>
 #include <WebCore/JSRange.h>
+#include <WebCore/MainResourceLoader.h>
 #include <WebCore/NodeTraversal.h>
 #include <WebCore/Page.h>
 #include <WebCore/PluginDocument.h>
@@ -256,12 +257,21 @@ void WebFrame::startDownload(const WebCore::ResourceRequest& request)
     WebProcess::shared().downloadManager().startDownload(policyDownloadID, request);
 }
 
-void WebFrame::convertHandleToDownload(ResourceHandle* handle, const ResourceRequest& request, const ResourceResponse& response)
+void WebFrame::convertMainResourceLoadToDownload(MainResourceLoader* mainResourceLoader, const ResourceRequest& request, const ResourceResponse& response)
 {
     ASSERT(m_policyDownloadID);
 
-    WebProcess::shared().downloadManager().convertHandleToDownload(m_policyDownloadID, handle, request, response);
+    uint64_t policyDownloadID = m_policyDownloadID;
     m_policyDownloadID = 0;
+
+#if ENABLE(NETWORK_PROCESS)
+    if (WebProcess::shared().usesNetworkProcess()) {
+        // FIXME: Handle this case.
+        return;
+    }
+#endif
+
+    WebProcess::shared().downloadManager().convertHandleToDownload(policyDownloadID, mainResourceLoader->loader()->handle(), request, response);
 }
 
 #if ENABLE(WEB_INTENTS)
