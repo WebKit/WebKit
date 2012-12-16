@@ -1,5 +1,13 @@
 2012-12-15  Andy Estes  <aestes@apple.com>
 
+        Clean up the previous build fix; access m_networkProcess directly.
+
+        * UIProcess/WebContext.cpp:
+        (WebKit::WebContext::registerSchemeForCustomProtocol):
+        (WebKit::WebContext::unregisterSchemeForCustomProtocol):
+
+2012-12-15  Andy Estes  <aestes@apple.com>
+
         Fix the build.
 
         * UIProcess/WebContext.cpp:
