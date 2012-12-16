@@ -714,7 +714,7 @@ DownloadProxy* WebContext::download(WebPageProxy* initiatingPage, const Resource
 
 #if PLATFORM(QT)
     ASSERT(initiatingPage); // Our design does not suppport downloads without a WebPage.
-    initiatingPage->handleDownloadRequest(download);
+    initiatingPage->handleDownloadRequest(downloadProxy);
 #endif
 
     m_processes[0]->send(Messages::WebProcess::DownloadRequest(downloadProxy->downloadID(), initiatingPageID, request), 0);

@@ -1,3 +1,10 @@
+2012-12-15  Anders Carlsson  <andersca@apple.com>
+
+        Happy little Qt build fix.
+
+        * UIProcess/WebContext.cpp:
+        (WebKit::WebContext::download):
+
 2012-12-15  Alexey Proskuryakov  <ap@apple.com>
 
         <rdar://problem/12886312> Cannot upload patches to Bugzilla (<input type=file> doesn't work)
