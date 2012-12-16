@@ -342,7 +342,7 @@ static bool hasNonZeroTransformOrigin(const RenderObject* renderer)
 static bool layerOrAncestorIsTransformedOrUsingCompositedScrolling(RenderLayer* layer)
 {
     for (RenderLayer* curr = layer; curr; curr = curr->parent()) {
-        if (curr->hasTransform() || curr->usesCompositedScrolling())
+        if (curr->hasTransform() || curr->needsCompositedScrolling())
             return true;
     }
     
@@ -454,7 +454,7 @@ bool RenderLayerBacking::updateGraphicsLayerConfiguration()
     bool needsDescendentsClippingLayer = compositor->clipsCompositingDescendants(m_owningLayer);
 
     // Our scrolling layer will clip.
-    if (m_owningLayer->usesCompositedScrolling())
+    if (m_owningLayer->needsCompositedScrolling())
         needsDescendentsClippingLayer = false;
 
     if (updateClippingLayers(compositor->clippedByAncestor(m_owningLayer), needsDescendentsClippingLayer))
@@ -463,7 +463,7 @@ bool RenderLayerBacking::updateGraphicsLayerConfiguration()
     if (updateOverflowControlsLayers(requiresHorizontalScrollbarLayer(), requiresVerticalScrollbarLayer(), requiresScrollCornerLayer()))
         layerConfigChanged = true;
 
-    if (updateScrollingLayers(m_owningLayer->usesCompositedScrolling()))
+    if (updateScrollingLayers(m_owningLayer->needsCompositedScrolling()))
         layerConfigChanged = true;
 
     if (layerConfigChanged)
@@ -606,7 +606,7 @@ void RenderLayerBacking::updateGraphicsLayerGeometry()
     else
         graphicsLayerParentLocation = renderer()->view()->documentRect().location();
 
-    if (compAncestor && compAncestor->usesCompositedScrolling()) {
+    if (compAncestor && compAncestor->needsCompositedScrolling()) {
         RenderBox* renderBox = toRenderBox(compAncestor->renderer());
         IntSize scrollOffset = compAncestor->scrolledContentOffset();
         IntPoint scrollOrigin(renderBox->borderLeft(), renderBox->borderTop());
@@ -964,6 +964,23 @@ void RenderLayerBacking::positionOverflowControlsLayers(const IntSize& offsetFro
         layer->setSize(scrollCornerAndResizer.size());
         layer->setDrawsContent(!scrollCornerAndResizer.isEmpty());
     }
+}
+
+bool RenderLayerBacking::hasUnpositionedOverflowControlsLayers() const
+{
+    if (GraphicsLayer* layer = layerForHorizontalScrollbar())
+        if (!layer->drawsContent())
+            return true;
+
+    if (GraphicsLayer* layer = layerForVerticalScrollbar())
+        if (!layer->drawsContent())
+            return true;
+
+    if (GraphicsLayer* layer = layerForScrollCorner())
+        if (!layer->drawsContent())
+            return true;
+
+    return false;
 }
 
 bool RenderLayerBacking::updateForegroundLayer(bool needsForegroundLayer)

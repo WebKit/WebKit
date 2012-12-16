@@ -1058,6 +1058,8 @@ void RenderLayerCompositor::rebuildCompositingLayerTree(RenderLayer* layer, Vect
 #else
         UNUSED_PARAM(depth);
 #endif
+        if (layerBacking->hasUnpositionedOverflowControlsLayers())
+            layer->positionNewlyCreatedOverflowControls();
     }
 
     // If this layer has backing, then we are collecting its children, otherwise appending
@@ -2011,7 +2013,7 @@ bool RenderLayerCompositor::requiresCompositingForPosition(RenderObject* rendere
 
 bool RenderLayerCompositor::requiresCompositingForOverflowScrolling(const RenderLayer* layer) const
 {
-    return layer->usesCompositedScrolling();
+    return layer->needsCompositedScrolling();
 }
 
 bool RenderLayerCompositor::isRunningAcceleratedTransformAnimation(RenderObject* renderer) const

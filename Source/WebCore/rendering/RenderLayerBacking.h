@@ -142,6 +142,7 @@ public:
     
     void updateAfterWidgetResize();
     void positionOverflowControlsLayers(const IntSize& offsetFromRoot);
+    bool hasUnpositionedOverflowControlsLayers() const;
 
     bool usingTileCache() const { return m_usingTiledCacheLayer; }
     TiledBacking* tiledBacking() const;
