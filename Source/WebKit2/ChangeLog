@@ -1,3 +1,47 @@
+2012-12-15  Anders Carlsson  <andersca@apple.com>
+
+        Handle downloads in the network process
+        https://bugs.webkit.org/show_bug.cgi?id=105117
+
+        Reviewed by Sam Weinig.
+
+        Start using the download manager in the network process.
+
+        * NetworkProcess/NetworkConnectionToWebProcess.cpp:
+        (WebKit::NetworkConnectionToWebProcess::startDownload):
+        Call through to the download manager.
+
+        * NetworkProcess/NetworkConnectionToWebProcess.messages.in:
+        Add StartDownload message.
+
+        * NetworkProcess/NetworkProcess.cpp:
+        (WebKit::NetworkProcess::downloadManager):
+        Add "singleton" download manager.
+
+        (WebKit::NetworkProcess::didCreateDownload):
+        (WebKit::NetworkProcess::didDestroyDownload):
+        (WebKit::NetworkProcess::downloadProxyConnection):
+        Implement DownloadManager::Client.
+
+        * UIProcess/Network/NetworkProcessProxy.cpp:
+        (WebKit::NetworkProcessProxy::didReceiveMessage):
+        (WebKit::NetworkProcessProxy::didReceiveSyncMessage):
+        Call through to the message receiver map.
+
+        * WebProcess/Downloads/Download.cpp:
+        * WebProcess/Downloads/DownloadManager.cpp:
+        (WebKit::DownloadManager::downloadProxyConnection):
+        * WebProcess/Downloads/DownloadManager.h:
+        Rename connection to downloadProxyConnection.
+
+        * WebProcess/WebPage/WebFrame.cpp:
+        (WebKit::WebFrame::startDownload):
+        When using the network process, send a message to it with the request that needs to be downloaded.
+
+        * WebProcess/WebProcess.cpp:
+        (WebKit::WebProcess::downloadProxyConnection):
+        Return the connection to the UI process.
+
 2012-12-15  Sam Weinig  <sam@webkit.org>
 
         NSURLCache should be disabled in the WebProcess when using the NetworkProcess

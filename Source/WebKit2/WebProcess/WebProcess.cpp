@@ -229,6 +229,11 @@ void WebProcess::didDestroyDownload()
     enableTermination();
 }
 
+CoreIPC::Connection* WebProcess::downloadProxyConnection()
+{
+    return m_connection.get();
+}
+
 void WebProcess::initializeWebProcess(const WebProcessCreationParameters& parameters, CoreIPC::MessageDecoder& decoder)
 {
     ASSERT(m_pageMap.isEmpty());
@@ -1011,7 +1016,6 @@ void WebProcess::networkProcessConnectionClosed(NetworkProcessConnection* connec
 
     m_networkProcessConnection = 0;
 }
-
 #endif
 
 #if ENABLE(PLUGIN_PROCESS)

@@ -39,6 +39,8 @@ messages -> NetworkConnectionToWebProcess {
     
     SetSerialLoadingEnabled(bool enabled) -> ()
 
+    StartDownload(bool privateBrowsingEnabled, uint64_t downloadID, WebCore::ResourceRequest request)
+
     CookiesForDOM(bool privateBrowsingEnabled, WebCore::KURL firstParty, WebCore::KURL url) -> (WTF::String result)
     SetCookiesFromDOM(bool privateBrowsingEnabled, WebCore::KURL firstParty, WebCore::KURL url, WTF::String cookieString)
     CookiesEnabled(bool privateBrowsingEnabled, WebCore::KURL firstParty, WebCore::KURL url) -> (bool enabled)

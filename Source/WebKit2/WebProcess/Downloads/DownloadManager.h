@@ -56,7 +56,8 @@ public:
         virtual void didCreateDownload() = 0;
         virtual void didDestroyDownload() = 0;
 
-        virtual CoreIPC::Connection* connection() const = 0;
+        // This is the connection where DownloadProxy messages should be sent.
+        virtual CoreIPC::Connection* downloadProxyConnection() = 0;
     };
 
     explicit DownloadManager(Client*);
@@ -72,7 +73,7 @@ public:
     void didCreateDownload();
     void didDestroyDownload();
 
-    CoreIPC::Connection* connection();
+    CoreIPC::Connection* downloadProxyConnection();
 
 #if PLATFORM(QT)
     void startTransfer(uint64_t downloadID, const String& destination);

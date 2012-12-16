@@ -76,6 +76,12 @@
 #include <WebCore/LegacyWebArchive.h>
 #endif
 
+#if ENABLE(NETWORK_PROCESS)
+#include "NetworkConnectionToWebProcessMessages.h"
+#include "NetworkProcessConnection.h"
+#include "WebCoreArgumentCoders.h"
+#endif
+
 #ifndef NDEBUG
 #include <wtf/RefCountedLeakCounter.h>
 #endif
@@ -236,9 +242,18 @@ void WebFrame::startDownload(const WebCore::ResourceRequest& request)
 {
     ASSERT(m_policyDownloadID);
 
-    WebProcess::shared().downloadManager().startDownload(m_policyDownloadID, request);
-
+    uint64_t policyDownloadID = m_policyDownloadID;
     m_policyDownloadID = 0;
+
+#if ENABLE(NETWORK_PROCESS)
+    if (WebProcess::shared().usesNetworkProcess()) {
+        bool privateBrowsingEnabled = m_coreFrame->loader()->networkingContext()->inPrivateBrowsingMode();
+        WebProcess::shared().networkConnection()->connection()->send(Messages::NetworkConnectionToWebProcess::StartDownload(privateBrowsingEnabled, policyDownloadID, request), 0);
+        return;
+    }
+#endif
+
+    WebProcess::shared().downloadManager().startDownload(policyDownloadID, request);
 }
 
 void WebFrame::convertHandleToDownload(ResourceHandle* handle, const ResourceRequest& request, const ResourceResponse& response)

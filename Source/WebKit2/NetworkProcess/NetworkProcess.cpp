@@ -61,6 +61,12 @@ NetworkProcess::~NetworkProcess()
 {
 }
 
+DownloadManager& NetworkProcess::downloadManager()
+{
+    DEFINE_STATIC_LOCAL(DownloadManager, downloadManager, (this));
+    return downloadManager;
+}
+
 void NetworkProcess::initialize(CoreIPC::Connection::Identifier serverIdentifier, WebCore::RunLoop* runLoop)
 {
     ASSERT(!m_uiConnection);
@@ -97,6 +103,21 @@ void NetworkProcess::didClose(CoreIPC::Connection*)
 void NetworkProcess::didReceiveInvalidMessage(CoreIPC::Connection*, CoreIPC::StringReference, CoreIPC::StringReference)
 {
     RunLoop::current()->stop();
+}
+
+void NetworkProcess::didCreateDownload()
+{
+    disableTermination();
+}
+
+void NetworkProcess::didDestroyDownload()
+{
+    enableTermination();
+}
+
+CoreIPC::Connection* NetworkProcess::downloadProxyConnection()
+{
+    return m_uiConnection.get();
 }
 
 void NetworkProcess::initializeNetworkProcess(const NetworkProcessCreationParameters& parameters)

@@ -26,6 +26,7 @@
 #include "config.h"
 #include "NetworkProcessProxy.h"
 
+#include "DownloadProxyMessages.h"
 #include "NetworkProcessCreationParameters.h"
 #include "NetworkProcessMessages.h"
 #include "WebContext.h"
@@ -106,7 +107,18 @@ void NetworkProcessProxy::networkProcessCrashedOrFailedToLaunch()
 
 void NetworkProcessProxy::didReceiveMessage(CoreIPC::Connection* connection, CoreIPC::MessageID messageID, CoreIPC::MessageDecoder& decoder)
 {
+    if (m_messageReceiverMap.dispatchMessage(connection, messageID, decoder))
+        return;
+
     didReceiveNetworkProcessProxyMessage(connection, messageID, decoder);
+}
+
+void NetworkProcessProxy::didReceiveSyncMessage(CoreIPC::Connection* connection, CoreIPC::MessageID messageID, CoreIPC::MessageDecoder& decoder, OwnPtr<CoreIPC::MessageEncoder>& replyEncoder)
+{
+    if (m_messageReceiverMap.dispatchSyncMessage(connection, messageID, decoder, replyEncoder))
+        return;
+
+    ASSERT_NOT_REACHED();
 }
 
 void NetworkProcessProxy::didClose(CoreIPC::Connection*)

@@ -166,6 +166,12 @@ static RemoteNetworkingContext* networkingContext(bool privateBrowsingEnabled)
     }
 }
 
+void NetworkConnectionToWebProcess::startDownload(bool privateBrowsingEnabled, uint64_t downloadID, const ResourceRequest& request)
+{
+    // FIXME: Do something with the private browsing flag.
+    NetworkProcess::shared().downloadManager().startDownload(downloadID, request);
+}
+
 void NetworkConnectionToWebProcess::cookiesForDOM(bool privateBrowsingEnabled, const KURL& firstParty, const KURL& url, String& result)
 {
     result = WebCore::cookiesForDOM(networkingContext(privateBrowsingEnabled), firstParty, url);

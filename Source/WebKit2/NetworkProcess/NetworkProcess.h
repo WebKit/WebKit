@@ -30,6 +30,7 @@
 
 #include "CacheModel.h"
 #include "ChildProcess.h"
+#include "DownloadManager.h"
 #include "NetworkResourceLoadScheduler.h"
 #include <wtf/Forward.h>
 
@@ -42,7 +43,7 @@ namespace WebKit {
 class NetworkConnectionToWebProcess;
 struct NetworkProcessCreationParameters;
 
-class NetworkProcess : ChildProcess {
+class NetworkProcess : ChildProcess, DownloadManager::Client {
     WTF_MAKE_NONCOPYABLE(NetworkProcess);
 public:
     static NetworkProcess& shared();
@@ -52,6 +53,8 @@ public:
     void removeNetworkConnectionToWebProcess(NetworkConnectionToWebProcess*);
 
     NetworkResourceLoadScheduler& networkResourceLoadScheduler() { return m_networkResourceLoadScheduler; }
+
+    DownloadManager& downloadManager();
 
 private:
     NetworkProcess();
@@ -66,6 +69,11 @@ private:
     virtual void didReceiveMessage(CoreIPC::Connection*, CoreIPC::MessageID, CoreIPC::MessageDecoder&) OVERRIDE;
     virtual void didClose(CoreIPC::Connection*) OVERRIDE;
     virtual void didReceiveInvalidMessage(CoreIPC::Connection*, CoreIPC::StringReference messageReceiverName, CoreIPC::StringReference messageName) OVERRIDE;
+
+    // DownloadManager::Client
+    virtual void didCreateDownload() OVERRIDE;
+    virtual void didDestroyDownload() OVERRIDE;
+    virtual CoreIPC::Connection* downloadProxyConnection() OVERRIDE;
 
     // Message Handlers
     void didReceiveNetworkProcessMessage(CoreIPC::Connection*, CoreIPC::MessageID, CoreIPC::MessageDecoder&);

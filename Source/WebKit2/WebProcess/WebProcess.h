@@ -224,6 +224,7 @@ private:
     // DownloadManager::Client.
     virtual void didCreateDownload() OVERRIDE;
     virtual void didDestroyDownload() OVERRIDE;
+    virtual CoreIPC::Connection* downloadProxyConnection() OVERRIDE;
 
     void initializeWebProcess(const WebProcessCreationParameters&, CoreIPC::MessageDecoder&);
     void platformInitializeWebProcess(const WebProcessCreationParameters&, CoreIPC::MessageDecoder&);

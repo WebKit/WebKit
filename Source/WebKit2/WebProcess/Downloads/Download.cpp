@@ -69,7 +69,7 @@ Download::~Download()
 
 CoreIPC::Connection* Download::connection() const
 {
-    return m_downloadManager.connection();
+    return m_downloadManager.downloadProxyConnection();
 }
 
 void Download::didStart()
