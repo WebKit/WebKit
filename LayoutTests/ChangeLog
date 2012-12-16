@@ -1,5 +1,15 @@
 2012-12-16  Christophe Dumez  <christophe.dumez@intel.com>
 
+        Unreviewed EFL gardening.
+
+        Generate EFL expectation for new fast/inline/justify-emphasis-inline-box.html
+        test introduced in r137786.
+
+        * platform/efl/fast/inline/justify-emphasis-inline-box-expected.png: Added.
+        * platform/efl/fast/inline/justify-emphasis-inline-box-expected.txt: Added.
+
+2012-12-16  Christophe Dumez  <christophe.dumez@intel.com>
+
         Unreviewed rebaseline.
 
         Rebaseline several compositing tests after r137798.
