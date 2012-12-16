@@ -503,7 +503,7 @@ static bool decode(Decoder& decoder, FormDataElement& element)
         int64_t fileLength;
         if (!decoder.decodeInt64(fileLength))
             return false;
-        if (fileLength < fileStart)
+        if (fileLength != BlobDataItem::toEndOfFile && fileLength < fileStart)
             return false;
         double expectedFileModificationTime;
         if (!decoder.decodeDouble(expectedFileModificationTime))
@@ -539,7 +539,7 @@ static bool decode(Decoder& decoder, FormDataElement& element)
     return false;
 }
 
-void FormData::encodeForBackForward(Encoder& encoder) const
+void FormData::encode(Encoder& encoder) const
 {
     encoder.encodeBool(m_alwaysStream);
 
@@ -555,7 +555,7 @@ void FormData::encodeForBackForward(Encoder& encoder) const
     encoder.encodeInt64(m_identifier);
 }
 
-PassRefPtr<FormData> FormData::decodeForBackForward(Decoder& decoder)
+PassRefPtr<FormData> FormData::decode(Decoder& decoder)
 {
     RefPtr<FormData> data = FormData::create();
 

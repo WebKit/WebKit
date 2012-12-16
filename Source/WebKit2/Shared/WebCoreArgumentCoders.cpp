@@ -380,6 +380,9 @@ void ArgumentCoder<ResourceRequest>::encode(ArgumentEncoder& encoder, const Reso
         encoder << resourceRequest.httpMethod();
         encoder << resourceRequest.httpHeaderFields();
 
+        // FIXME: Do not encode HTTP message body.
+        // 1. It can be large and thus costly to send across.
+        // 2. It is misleading to provide a body with some requests, while others use body streams, which cannot be serialized at all.
         FormData* httpBody = resourceRequest.httpBody();
         encoder << static_cast<bool>(httpBody);
         if (httpBody)

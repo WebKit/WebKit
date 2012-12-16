@@ -703,7 +703,7 @@ void HistoryItem::encodeBackForwardTreeNode(Encoder& encoder) const
 
     encoder.encodeBool(m_formData);
     if (m_formData)
-        m_formData->encodeForBackForward(encoder);
+        m_formData->encode(encoder);
 
     encoder.encodeInt64(m_itemSequenceNumber);
 
@@ -801,7 +801,7 @@ resume:
     if (!decoder.decodeBool(hasFormData))
         return 0;
     if (hasFormData) {
-        node->m_formData = FormData::decodeForBackForward(decoder);
+        node->m_formData = FormData::decode(decoder);
         if (!node->m_formData)
             return 0;
     }

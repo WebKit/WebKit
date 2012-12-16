@@ -27,6 +27,9 @@
 #include "NetworkResourceLoadParameters.h"
 
 #include "ArgumentCoders.h"
+#include "DataReference.h"
+#include "DecoderAdapter.h"
+#include "EncoderAdapter.h"
 #include "WebCoreArgumentCoders.h"
 
 #if ENABLE(NETWORK_PROCESS)
@@ -54,6 +57,14 @@ NetworkResourceLoadParameters::NetworkResourceLoadParameters(const ResourceReque
 void NetworkResourceLoadParameters::encode(CoreIPC::ArgumentEncoder& encoder) const
 {
     encoder.encode(m_request);
+
+    encoder.encode(static_cast<bool>(m_request.httpBody()));
+    if (m_request.httpBody()) {
+        EncoderAdapter httpBodyEncoderAdapter;
+        m_request.httpBody()->encode(httpBodyEncoderAdapter);
+        encoder.encode(httpBodyEncoderAdapter.dataReference());
+    }
+
     encoder.encodeEnum(m_priority);
     encoder.encodeEnum(m_contentSniffingPolicy);
     encoder.encodeEnum(m_allowStoredCredentials);
@@ -64,6 +75,19 @@ bool NetworkResourceLoadParameters::decode(CoreIPC::ArgumentDecoder* decoder, Ne
 {
     if (!decoder->decode(result.m_request))
         return false;
+
+    bool hasHTTPBody;
+    if (!decoder->decode(hasHTTPBody))
+        return false;
+
+    if (hasHTTPBody) {
+        CoreIPC::DataReference formData;
+        if (!decoder->decode(formData))
+            return false;
+        DecoderAdapter httpBodyDecoderAdapter(formData.data(), formData.size());
+        result.m_request.setHTTPBody(FormData::decode(httpBodyDecoderAdapter));
+    }
+
     if (!decoder->decodeEnum(result.m_priority))
         return false;
     if (!decoder->decodeEnum(result.m_contentSniffingPolicy))
