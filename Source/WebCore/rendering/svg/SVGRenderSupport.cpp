@@ -84,7 +84,7 @@ void SVGRenderSupport::computeFloatRectForRepaint(const RenderObject* object, co
     object->parent()->computeFloatRectForRepaint(repaintContainer, repaintRect, fixed);
 }
 
-void SVGRenderSupport::mapLocalToContainer(const RenderObject* object, const RenderLayerModelObject* repaintContainer, TransformState& transformState, bool snapOffsetForTransforms, bool* wasFixed)
+void SVGRenderSupport::mapLocalToContainer(const RenderObject* object, const RenderLayerModelObject* repaintContainer, TransformState& transformState, bool* wasFixed)
 {
     transformState.applyTransform(object->localToParentTransform());
 
@@ -97,8 +97,6 @@ void SVGRenderSupport::mapLocalToContainer(const RenderObject* object, const Ren
         transformState.applyTransform(toRenderSVGRoot(parent)->localToBorderBoxTransform());
 
     MapCoordinatesFlags mode = UseTransforms;
-    if (snapOffsetForTransforms)
-        mode |= SnapOffsetForTransforms;
     parent->mapLocalToContainer(repaintContainer, transformState, mode, wasFixed);
 }
 

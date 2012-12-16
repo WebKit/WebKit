@@ -1460,8 +1460,6 @@ void RenderBox::mapLocalToContainer(const RenderLayerModelObject* repaintContain
         *wasFixed = mode & IsFixed;
     
     LayoutSize containerOffset = offsetFromContainer(o, roundedLayoutPoint(transformState.mappedPoint()));
-    if (mode & SnapOffsetForTransforms)
-        containerOffset = roundedIntSize(containerOffset);
     
     bool preserve3D = mode & UseTransforms && (o->style()->preserves3D() || style()->preserves3D());
     if (mode & UseTransforms && shouldUseTransformFromContainer(o)) {
@@ -1512,8 +1510,6 @@ const RenderObject* RenderBox::pushMappingToContainer(const RenderLayerModelObje
 
     bool offsetDependsOnPoint = false;
     LayoutSize containerOffset = offsetFromContainer(container, LayoutPoint(), &offsetDependsOnPoint);
-    if (geometryMap.mapCoordinatesFlags() & SnapOffsetForTransforms)
-        containerOffset = roundedIntSize(containerOffset);
 
     if (container->isRenderFlowThread())
         offsetDependsOnPoint = true;

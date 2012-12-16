@@ -74,7 +74,7 @@ struct RenderGeometryMapStep {
 class RenderGeometryMap {
     WTF_MAKE_NONCOPYABLE(RenderGeometryMap);
 public:
-    RenderGeometryMap(MapCoordinatesFlags = UseTransforms | SnapOffsetForTransforms);
+    RenderGeometryMap(MapCoordinatesFlags = UseTransforms);
     ~RenderGeometryMap();
 
     MapCoordinatesFlags mapCoordinatesFlags() const { return m_mapCoordinatesFlags; }

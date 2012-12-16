@@ -74,13 +74,13 @@ public:
     TransformState& operator=(const TransformState&);
     
     void setQuad(const FloatQuad& quad) { m_lastPlanarQuad = quad; }
-    
-    void move(const LayoutSize& s, TransformAccumulation accumulate = FlattenTransform)
+
+    void move(LayoutUnit x, LayoutUnit y, TransformAccumulation accumulate = FlattenTransform)
     {
-        move(s.width(), s.height(), accumulate);
+        move(LayoutSize(x, y), accumulate);
     }
-    
-    void move(LayoutUnit x, LayoutUnit y, TransformAccumulation = FlattenTransform);
+
+    void move(const LayoutSize&, TransformAccumulation = FlattenTransform);
     void applyTransform(const AffineTransform& transformFromContainer, TransformAccumulation = FlattenTransform, bool* wasClamped = 0);
     void applyTransform(const TransformationMatrix& transformFromContainer, TransformAccumulation = FlattenTransform, bool* wasClamped = 0);
     void flatten(bool* wasClamped = 0);
@@ -94,13 +94,17 @@ public:
     FloatQuad mappedQuad(bool* wasClamped = 0) const;
 
 private:
+    void translateTransform(const IntSize&);
+    void translateMappedCoordinates(const IntSize&);
     void flattenWithTransform(const TransformationMatrix&, bool* wasClamped);
+    void applyAccumulatedOffset();
     
     FloatPoint m_lastPlanarPoint;
     FloatQuad m_lastPlanarQuad;
 
     // We only allocate the transform if we need to
     OwnPtr<TransformationMatrix> m_accumulatedTransform;
+    LayoutSize m_accumulatedOffset;
     bool m_accumulatingTransform;
     bool m_mapPoint, m_mapQuad;
     TransformDirection m_direction;

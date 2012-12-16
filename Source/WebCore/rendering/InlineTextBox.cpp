@@ -1125,7 +1125,7 @@ void InlineTextBox::paintDocumentMarker(GraphicsContext* pt, const FloatPoint& b
         // display a toolTip. We don't do this for misspelling markers.
         if (grammar || isDictationMarker) {
             markerRect.move(-boxOrigin.x(), -boxOrigin.y());
-            markerRect = renderer()->localToAbsoluteQuad(FloatRect(markerRect), SnapOffsetForTransforms).enclosingBoundingBox();
+            markerRect = renderer()->localToAbsoluteQuad(FloatRect(markerRect)).enclosingBoundingBox();
             toRenderedDocumentMarker(marker)->setRenderedRect(markerRect);
         }
     }
@@ -1163,7 +1163,7 @@ void InlineTextBox::paintTextMatchMarker(GraphicsContext* pt, const FloatPoint& 
 
     // Always compute and store the rect associated with this marker. The computed rect is in absolute coordinates.
     IntRect markerRect = enclosingIntRect(font.selectionRectForText(run, IntPoint(x(), selectionTop()), selHeight, sPos, ePos));
-    markerRect = renderer()->localToAbsoluteQuad(FloatRect(markerRect), SnapOffsetForTransforms).enclosingBoundingBox();
+    markerRect = renderer()->localToAbsoluteQuad(FloatRect(markerRect)).enclosingBoundingBox();
     toRenderedDocumentMarker(marker)->setRenderedRect(markerRect);
     
     // Optionally highlight the text
@@ -1191,7 +1191,7 @@ void InlineTextBox::computeRectForReplacementMarker(DocumentMarker* marker, Rend
     
     // Compute and store the rect associated with this marker.
     IntRect markerRect = enclosingIntRect(font.selectionRectForText(run, startPoint, h, sPos, ePos));
-    markerRect = renderer()->localToAbsoluteQuad(FloatRect(markerRect), SnapOffsetForTransforms).enclosingBoundingBox();
+    markerRect = renderer()->localToAbsoluteQuad(FloatRect(markerRect)).enclosingBoundingBox();
     toRenderedDocumentMarker(marker)->setRenderedRect(markerRect);
 }
     

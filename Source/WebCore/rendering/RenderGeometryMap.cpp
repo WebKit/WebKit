@@ -51,6 +51,7 @@ void RenderGeometryMap::mapToContainer(TransformState& transformState, const Ren
     // If the mapping includes something like columns, we have to go via renderers.
     if (hasNonUniformStep()) {
         m_mapping.last().m_renderer->mapLocalToContainer(container, transformState, ApplyContainerFlip | m_mapCoordinatesFlags);
+        transformState.flatten();
         return;
     }
     
@@ -104,7 +105,7 @@ FloatPoint RenderGeometryMap::mapToContainer(const FloatPoint& p, const RenderLa
     FloatPoint result;
     
     if (!hasFixedPositionStep() && !hasTransformStep() && !hasNonUniformStep() && (!container || (m_mapping.size() && container == m_mapping[0].m_renderer)))
-        result = p + m_accumulatedOffset;
+        result = p + roundedIntSize(m_accumulatedOffset);
     else {
         TransformState transformState(TransformState::ApplyTransformDirection, p);
         mapToContainer(transformState, container);
@@ -127,7 +128,7 @@ FloatQuad RenderGeometryMap::mapToContainer(const FloatRect& rect, const RenderL
     
     if (!hasFixedPositionStep() && !hasTransformStep() && !hasNonUniformStep() && (!container || (m_mapping.size() && container == m_mapping[0].m_renderer))) {
         result = rect;
-        result.move(m_accumulatedOffset);
+        result.move(roundedIntSize(m_accumulatedOffset));
     } else {
         TransformState transformState(TransformState::ApplyTransformDirection, rect.center(), rect);
         mapToContainer(transformState, container);

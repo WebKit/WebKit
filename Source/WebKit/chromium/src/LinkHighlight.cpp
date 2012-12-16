@@ -161,7 +161,7 @@ static void convertTargetSpaceQuadToCompositedLayer(const FloatQuad& targetSpace
 
         point = targetRenderer->frame()->view()->contentsToWindow(point);
         point = compositedRenderer->frame()->view()->windowToContents(point);
-        FloatPoint floatPoint = compositedRenderer->absoluteToLocal(point, UseTransforms | SnapOffsetForTransforms);
+        FloatPoint floatPoint = compositedRenderer->absoluteToLocal(point, UseTransforms);
 
         switch (i) {
         case 0: compositedSpaceQuad.setP1(floatPoint); break;

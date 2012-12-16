@@ -1220,7 +1220,7 @@ void RenderObject::absoluteFocusRingQuads(Vector<FloatQuad>& quads)
     for (size_t i = 0; i < count; ++i) {
         IntRect rect = rects[i];
         rect.move(-absolutePoint.x(), -absolutePoint.y());
-        quads.append(localToAbsoluteQuad(FloatQuad(rect), SnapOffsetForTransforms));
+        quads.append(localToAbsoluteQuad(FloatQuad(rect)));
     }
 }
 

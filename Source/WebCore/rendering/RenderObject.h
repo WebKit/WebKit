@@ -109,8 +109,7 @@ enum MarkingBehavior {
 enum MapCoordinatesMode {
     IsFixed = 1 << 0,
     UseTransforms = 1 << 1,
-    ApplyContainerFlip = 1 << 2,
-    SnapOffsetForTransforms = 1 << 3
+    ApplyContainerFlip = 1 << 2
 };
 typedef unsigned MapCoordinatesFlags;
 

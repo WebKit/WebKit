@@ -259,7 +259,7 @@ void SliderThumbElement::setPositionFromPoint(const LayoutPoint& point)
         return;
 
     input->setTextAsOfLastFormControlChangeEvent(input->value());
-    LayoutPoint offset = roundedLayoutPoint(input->renderer()->absoluteToLocal(point, UseTransforms | SnapOffsetForTransforms));
+    LayoutPoint offset = roundedLayoutPoint(input->renderer()->absoluteToLocal(point, UseTransforms));
     bool isVertical = hasVerticalAppearance(input);
     bool isLeftToRightDirection = renderBox()->style()->isLeftToRightDirection();
     LayoutUnit trackSize;

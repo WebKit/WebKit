@@ -215,7 +215,7 @@ IntPoint RenderMediaControls::volumeSliderOffsetFromMuteButton(RenderBox* muteBu
 
     float zoomLevel = muteButtonBox->style()->effectiveZoom();
     int y = yOffset * zoomLevel + muteButtonBox->pixelSnappedOffsetHeight() - size.height();
-    FloatPoint absPoint = muteButtonBox->localToAbsolute(FloatPoint(muteButtonBox->pixelSnappedOffsetLeft(), y), IsFixed | UseTransforms | SnapOffsetForTransforms);
+    FloatPoint absPoint = muteButtonBox->localToAbsolute(FloatPoint(muteButtonBox->pixelSnappedOffsetLeft(), y), IsFixed | UseTransforms);
     if (absPoint.y() < 0)
         y = muteButtonBox->pixelSnappedHeight();
     return IntPoint(xOffset * zoomLevel, y);

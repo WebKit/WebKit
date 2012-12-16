@@ -1,3 +1,139 @@
+2012-12-16  Levi Weintraub  <leviw@chromium.org>
+
+        Push pixel snapping logic into TransformState
+        https://bugs.webkit.org/show_bug.cgi?id=101779
+
+        Reviewed by Simon Fraser.
+
+        The old SnapOffsetForTransforms behavior fell apart when there was content nested in
+        multiple levels of containers with sub-pixel offsets. The point of this flag was to
+        mirror the pixel snapping that occurs in paint, where offsets are accumulated bottom-
+        up through the render tree and snapped at the end. This change eliminates this flag
+        and pushes pixel snapping logic down into TransformState.
+
+        TransformState now tracks a LayoutSize accumulated offset when there's no transform
+        or we're just translating. We then snap and apply this offset before accumulating
+        values into a transform, and when returning planar coordinates to callers.
+
+        Test: fast/sub-pixel/transformed-iframe-copy-on-scroll.html added,
+              fast/sub-pixel/sub-pixel-iframe-copy-on-scroll.html modified to also catch this bug.
+
+        * platform/graphics/transforms/TransformState.cpp:
+        (WebCore::TransformState::operator=): Pass accumulated offset.
+        (WebCore::TransformState::translateTransform): Extracted this functionality for
+        re-use when applying the accumulated offset, or accumulating from a call to move.
+        (WebCore::TransformState::translateMappedCoordinates): Same as above when we're not
+        acculating into a transform.
+        (WebCore::TransformState::move): Changed to accumulate into m_accumulatedOffset when
+        not accumulating into a transform.
+        (WebCore::TransformState::applyAccumulatedOffset):
+        (WebCore::TransformState::applyTransform): Applies the accumulated offset before the
+        transform.
+        (WebCore::TransformState::flatten): Ditto for flattening.
+        (WebCore::TransformState::mappedPoint): Translates by the accumulated offset before
+        returning.
+        (WebCore::TransformState::mappedQuad): Ditto.
+        * platform/graphics/transforms/TransformState.h:
+        (TransformState): Added m_accumulatedOffset.
+        * rendering/RenderGeometryMap.cpp:
+        (WebCore::RenderGeometryMap::mapToContainer): When not using a transform, we still need
+        to snap our offset before applying to our float result. Also, flatten when we have a
+        non-uniform step.
+        * rendering/RenderGeometryMap.h:
+        (RenderGeometryMap): Remove use of SnapOffsetForTransforms.
+
+        Everything below simply drops the use of SnapOffsetForTransforms:
+
+        * dom/ContainerNode.cpp:
+        (WebCore::ContainerNode::getUpperLeftCorner):
+        * dom/MouseRelatedEvent.cpp:
+        (WebCore::MouseRelatedEvent::computeRelativePosition):
+        * editing/FrameSelection.cpp:
+        (WebCore::CaretBase::absoluteBoundsForLocalRect):
+        * editing/RenderedPosition.cpp:
+        (WebCore::RenderedPosition::absoluteRect):
+        * editing/VisiblePosition.cpp:
+        (WebCore::VisiblePosition::absoluteCaretBounds):
+        * html/HTMLSelectElement.cpp:
+        (WebCore::HTMLSelectElement::listBoxDefaultEventHandler):
+        * html/shadow/SliderThumbElement.cpp:
+        (WebCore::SliderThumbElement::setPositionFromPoint):
+        * html/shadow/SpinButtonElement.cpp:
+        (WebCore::SpinButtonElement::defaultEventHandler):
+        * page/FrameView.cpp:
+        (WebCore::FrameView::convertFromRenderer):
+        (WebCore::FrameView::convertToRenderer):
+        * rendering/InlineTextBox.cpp:
+        (WebCore::InlineTextBox::paintDocumentMarker):
+        (WebCore::InlineTextBox::paintTextMatchMarker):
+        (WebCore::InlineTextBox::computeRectForReplacementMarker):
+        * rendering/LayoutState.cpp:
+        (WebCore::LayoutState::LayoutState):
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::mapLocalToContainer):
+        (WebCore::RenderBox::pushMappingToContainer):
+        * rendering/RenderBox.h:
+        (RenderBox):
+        * rendering/RenderBoxModelObject.cpp:
+        (WebCore::RenderBoxModelObject::computeStickyPositionConstraints):
+        * rendering/RenderEmbeddedObject.cpp:
+        (WebCore::RenderEmbeddedObject::isInUnavailablePluginIndicator):
+        * rendering/RenderFrameSet.cpp:
+        (WebCore::RenderFrameSet::userResize):
+        * rendering/RenderInline.cpp:
+        (WebCore::RenderInline::mapLocalToContainer):
+        (WebCore::RenderInline::pushMappingToContainer):
+        * rendering/RenderInline.h:
+        (RenderInline):
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::absoluteToContents):
+        (WebCore::RenderLayer::scrollTo):
+        (WebCore::RenderLayer::childrenClipRect):
+        (WebCore::RenderLayer::selfClipRect):
+        * rendering/RenderLayerBacking.cpp:
+        (WebCore::RenderLayerBacking::contentsVisible):
+        * rendering/RenderMediaControls.cpp:
+        (WebCore::RenderMediaControls::volumeSliderOffsetFromMuteButton):
+        * rendering/RenderMenuList.cpp:
+        (WebCore::RenderMenuList::showPopup):
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::absoluteFocusRingQuads):
+        * rendering/RenderObject.h:
+        * rendering/RenderText.cpp:
+        (WebCore::RenderText::absoluteRectsForRange):
+        (WebCore::RenderText::absoluteQuads):
+        (WebCore::RenderText::absoluteQuadsForRange):
+        * rendering/RenderTheme.cpp:
+        (WebCore::RenderTheme::volumeSliderOffsetFromMuteButton):
+        * rendering/RenderView.cpp:
+        (WebCore::RenderView::selectionBounds):
+        * rendering/RenderView.h:
+        (RenderView):
+        * rendering/RenderWidget.cpp:
+        (WebCore::RenderWidget::updateWidgetGeometry):
+        * rendering/svg/RenderSVGForeignObject.cpp:
+        (WebCore::RenderSVGForeignObject::mapLocalToContainer):
+        * rendering/svg/RenderSVGForeignObject.h:
+        (RenderSVGForeignObject):
+        * rendering/svg/RenderSVGInline.cpp:
+        (WebCore::RenderSVGInline::mapLocalToContainer):
+        * rendering/svg/RenderSVGInline.h:
+        (RenderSVGInline):
+        * rendering/svg/RenderSVGModelObject.cpp:
+        (WebCore::RenderSVGModelObject::mapLocalToContainer):
+        * rendering/svg/RenderSVGModelObject.h:
+        (RenderSVGModelObject):
+        * rendering/svg/RenderSVGRoot.h:
+        (RenderSVGRoot):
+        * rendering/svg/RenderSVGText.cpp:
+        (WebCore::RenderSVGText::mapLocalToContainer):
+        * rendering/svg/RenderSVGText.h:
+        (RenderSVGText):
+        * rendering/svg/SVGRenderSupport.cpp:
+        (WebCore::SVGRenderSupport::mapLocalToContainer):
+        * rendering/svg/SVGRenderSupport.h:
+        (SVGRenderSupport):
+
 2012-12-15  Anders Carlsson  <andersca@apple.com>
 
         Rename FrameLoaderClient::download to convertMainResourceLoadToDownload

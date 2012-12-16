@@ -169,7 +169,7 @@ bool RenderWidget::updateWidgetGeometry()
     if (!m_widget->transformsAffectFrameRect())
         return setWidgetGeometry(absoluteContentBox());
 
-    LayoutRect absoluteContentBox(localToAbsoluteQuad(FloatQuad(contentBox), SnapOffsetForTransforms).boundingBox());
+    LayoutRect absoluteContentBox(localToAbsoluteQuad(FloatQuad(contentBox)).boundingBox());
     if (m_widget->isFrameView()) {
         contentBox.setLocation(absoluteContentBox.location());
         return setWidgetGeometry(contentBox);

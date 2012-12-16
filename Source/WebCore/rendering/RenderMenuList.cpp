@@ -320,7 +320,7 @@ void RenderMenuList::showPopup()
 
     // Compute the top left taking transforms into account, but use
     // the actual width of the element to size the popup.
-    FloatPoint absTopLeft = localToAbsolute(FloatPoint(), UseTransforms | SnapOffsetForTransforms);
+    FloatPoint absTopLeft = localToAbsolute(FloatPoint(), UseTransforms);
     IntRect absBounds = absoluteBoundingBoxRectIgnoringTransforms();
     absBounds.setLocation(roundedIntPoint(absTopLeft));
     HTMLSelectElement* select = selectElement();

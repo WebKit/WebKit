@@ -471,7 +471,7 @@ void RenderBoxModelObject::computeStickyPositionConstraints(StickyPositionViewpo
     // Compute the container-relative area within which the sticky element is allowed to move.
     containerContentRect.move(minLeftMargin, minTopMargin);
     containerContentRect.contract(minLeftMargin + minRightMargin, minTopMargin + minBottomMargin);
-    constraints.setAbsoluteContainingBlockRect(containingBlock->localToAbsoluteQuad(FloatRect(containerContentRect), SnapOffsetForTransforms).boundingBox());
+    constraints.setAbsoluteContainingBlockRect(containingBlock->localToAbsoluteQuad(FloatRect(containerContentRect)).boundingBox());
 
     LayoutRect stickyBoxRect = frameRectForStickyPositioning();
     LayoutRect flippedStickyBoxRect = stickyBoxRect;
@@ -479,7 +479,7 @@ void RenderBoxModelObject::computeStickyPositionConstraints(StickyPositionViewpo
     LayoutPoint stickyLocation = flippedStickyBoxRect.location();
 
     // FIXME: sucks to call localToAbsolute again, but we can't just offset from the previously computed rect if there are transforms.
-    FloatRect absContainerFrame = containingBlock->localToAbsoluteQuad(FloatRect(FloatPoint(), containingBlock->size()), SnapOffsetForTransforms).boundingBox();
+    FloatRect absContainerFrame = containingBlock->localToAbsoluteQuad(FloatRect(FloatPoint(), containingBlock->size())).boundingBox();
     // We can't call localToAbsolute on |this| because that will recur. FIXME: For now, assume that |this| is not transformed.
     FloatRect absoluteStickyBoxRect(absContainerFrame.location() + stickyLocation, flippedStickyBoxRect.size());
     constraints.setAbsoluteStickyBoxRect(absoluteStickyBoxRect);

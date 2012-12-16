@@ -154,7 +154,7 @@ AXRoleDescription: radio button
 AXChildren: <array of size 0>
 AXHelp: 
 AXParent: <AXRadioButton: 'Yes'>
-AXSize: NSSize: {41, 19}
+AXSize: NSSize: {42, 19}
 AXTitle: Yes
 AXDescription: 
 AXValue: 0
@@ -182,7 +182,7 @@ AXRoleDescription: radio button
 AXChildren: <array of size 0>
 AXHelp: 
 AXParent: <AXRadioButton: 'No'>
-AXSize: NSSize: {36, 19}
+AXSize: NSSize: {37, 19}
 AXTitle: No
 AXDescription: 
 AXValue: 0

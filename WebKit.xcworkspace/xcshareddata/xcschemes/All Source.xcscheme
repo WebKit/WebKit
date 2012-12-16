@@ -125,7 +125,6 @@
       buildConfiguration = "Debug"
       ignoresPersistentStateOnLaunch = "YES"
       debugDocumentVersioning = "YES"
-      enableOpenGLFrameCaptureMode = "0"
       allowLocationSimulation = "YES">
       <PathRunnable
          FilePath = "/Applications/Safari.app/Contents/MacOS/SafariForWebKitDevelopment">

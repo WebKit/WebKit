@@ -864,7 +864,7 @@ bool ContainerNode::getUpperLeftCorner(FloatPoint& point) const
                 RenderBox* box = toRenderBox(o);
                 point.moveBy(box->location());
             }
-            point = o->container()->localToAbsolute(point, UseTransforms | SnapOffsetForTransforms);
+            point = o->container()->localToAbsolute(point, UseTransforms);
             return true;
         }
     }

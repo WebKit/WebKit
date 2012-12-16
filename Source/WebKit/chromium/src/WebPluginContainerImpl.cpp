@@ -551,7 +551,7 @@ WebPoint WebPluginContainerImpl::windowToLocalPoint(const WebPoint& point)
     if (!view)
         return point;
     WebPoint windowPoint = view->windowToContents(point);
-    return roundedIntPoint(m_element->renderer()->absoluteToLocal(LayoutPoint(windowPoint), UseTransforms | SnapOffsetForTransforms));
+    return roundedIntPoint(m_element->renderer()->absoluteToLocal(LayoutPoint(windowPoint), UseTransforms));
 }
 
 void WebPluginContainerImpl::didReceiveResponse(const ResourceResponse& response)
