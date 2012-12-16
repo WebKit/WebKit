@@ -1,3 +1,19 @@
+2012-12-16  Christophe Dumez  <christophe.dumez@intel.com>
+
+        Unreviewed rebaseline.
+
+        Rebaseline several compositing tests after r137798.
+
+        * compositing/iframes/overlapped-nested-iframes-expected.txt:
+        * compositing/rtl/rtl-fixed-overflow-scrolled-expected.txt:
+        * compositing/rtl/rtl-iframe-absolute-expected.txt:
+        * compositing/rtl/rtl-iframe-fixed-expected.txt:
+        * compositing/rtl/rtl-iframe-relative-expected.txt:
+        * compositing/tiling/crash-reparent-tiled-layer-expected.txt:
+        * compositing/tiling/huge-layer-add-remove-child-expected.txt:
+        * compositing/tiling/huge-layer-with-layer-children-expected.txt:
+        * compositing/tiling/huge-layer-with-layer-children-resize-expected.txt:
+
 2012-12-16  Mihnea Ovidenie  <mihnea@adobe.com>
 
         [CSSRegions] Pseudo-elements should not be directly collected into a named flow

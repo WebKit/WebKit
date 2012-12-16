@@ -48,7 +48,6 @@
                                                         (GraphicsLayer
                                                           (position 18.00 10.00)
                                                           (bounds 210.00 210.00)
-                                                          (backgroundColor #0000FF)
                                                         )
                                                       )
                                                     )
@@ -117,7 +116,6 @@
                                                         (GraphicsLayer
                                                           (position 18.00 10.00)
                                                           (bounds 210.00 210.00)
-                                                          (backgroundColor #0000FF)
                                                         )
                                                       )
                                                     )
@@ -146,7 +144,6 @@
         (GraphicsLayer
           (position 0.00 100.00)
           (bounds 785.00 120.00)
-          (backgroundColor #0000007F)
         )
       )
     )

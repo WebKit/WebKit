@@ -15,12 +15,10 @@ First (small layer):
             (GraphicsLayer
               (position 51.00 101.00)
               (bounds 200.00 200.00)
-              (backgroundColor #FF0000)
             )
             (GraphicsLayer
               (position 276.00 201.00)
               (bounds 200.00 200.00)
-              (backgroundColor #0000FF)
             )
           )
         )
@@ -45,12 +43,10 @@ Second (huge layer):
             (GraphicsLayer
               (position 51.00 101.00)
               (bounds 200.00 200.00)
-              (backgroundColor #FF0000)
             )
             (GraphicsLayer
               (position 276.00 4701.00)
               (bounds 200.00 200.00)
-              (backgroundColor #0000FF)
             )
           )
         )
@@ -75,12 +71,10 @@ Third (small layer):
             (GraphicsLayer
               (position 51.00 101.00)
               (bounds 200.00 200.00)
-              (backgroundColor #FF0000)
             )
             (GraphicsLayer
               (position 276.00 201.00)
               (bounds 200.00 200.00)
-              (backgroundColor #0000FF)
             )
           )
         )
