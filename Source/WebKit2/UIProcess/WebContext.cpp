@@ -1117,8 +1117,8 @@ void WebContext::addPlugInAutoStartOriginHash(const String& pageOrigin, unsigned
 void WebContext::registerSchemeForCustomProtocol(const WTF::String& scheme)
 {
 #if ENABLE(NETWORK_PROCESS)
-    if (m_usesNetworkProcess) {
-        NetworkProcessManager::shared().process()->send(Messages::NetworkProcess::RegisterSchemeForCustomProtocol(scheme), 0);
+    if (m_usesNetworkProcess && networkProcess()) {
+        networkProcess()->send(Messages::NetworkProcess::RegisterSchemeForCustomProtocol(scheme), 0);
         return;
     }
 #endif
@@ -1128,8 +1128,8 @@ void WebContext::registerSchemeForCustomProtocol(const WTF::String& scheme)
 void WebContext::unregisterSchemeForCustomProtocol(const WTF::String& scheme)
 {
 #if ENABLE(NETWORK_PROCESS)
-    if (m_usesNetworkProcess) {
-        NetworkProcessManager::shared().process()->send(Messages::NetworkProcess::UnregisterSchemeForCustomProtocol(scheme), 0);
+    if (m_usesNetworkProcess && networkProcess()) {
+        networkProcess()->send(Messages::NetworkProcess::UnregisterSchemeForCustomProtocol(scheme), 0);
         return;
     }
 #endif
