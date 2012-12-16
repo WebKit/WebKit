@@ -199,7 +199,6 @@ MediaPlayerPrivateAVFoundationObjC::MediaPlayerPrivateAVFoundationObjC(MediaPlay
 MediaPlayerPrivateAVFoundationObjC::~MediaPlayerPrivateAVFoundationObjC()
 {
     cancelLoad();
-    [m_objcObserver.get() disconnect];
 }
 
 void MediaPlayerPrivateAVFoundationObjC::cancelLoad()
@@ -208,6 +207,7 @@ void MediaPlayerPrivateAVFoundationObjC::cancelLoad()
     tearDownVideoRendering();
 
     [[NSNotificationCenter defaultCenter] removeObserver:m_objcObserver.get()];
+    [m_objcObserver.get() disconnect];
 
     // Tell our observer to do nothing when our cancellation of pending loading calls its completion handler.
     setIgnoreLoadStateChanges(true);
@@ -217,6 +217,8 @@ void MediaPlayerPrivateAVFoundationObjC::cancelLoad()
     }
 
 #if HAVE(AVFOUNDATION_TEXT_TRACK_SUPPORT)
+    clearTextTracks();
+
     if (m_legibleOutput) {
         if (m_avPlayerItem)
             [m_avPlayerItem.get() removeOutput:m_legibleOutput.get()];
@@ -1192,7 +1194,13 @@ MediaPlayer::MediaKeyException MediaPlayerPrivateAVFoundationObjC::cancelKeyRequ
 #endif
 
 #if HAVE(AVFOUNDATION_TEXT_TRACK_SUPPORT)
-    
+
+void MediaPlayerPrivateAVFoundationObjC::clearTextTracks()
+{
+    for (unsigned i = 0; i < m_textTracks.size(); ++i)
+        player()->removeTextTrack(m_textTracks[i].get());
+}
+
 void MediaPlayerPrivateAVFoundationObjC::processTextTracks()
 {
     AVMediaSelectionGroupType *legibleGroup = [m_avAsset.get() mediaSelectionGroupForMediaCharacteristic:AVMediaCharacteristicLegible];

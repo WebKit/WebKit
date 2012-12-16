@@ -155,6 +155,7 @@ private:
     virtual void setCurrentTrack(InbandTextTrackPrivateAVF*) OVERRIDE;
     virtual InbandTextTrackPrivateAVF* currentTrack() OVERRIDE;
     void processTextTracks();
+    void clearTextTracks();
 #endif
 
     RetainPtr<AVURLAsset> m_avAsset;

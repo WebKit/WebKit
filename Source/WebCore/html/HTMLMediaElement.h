@@ -218,6 +218,9 @@ public:
     TextTrackList* textTracks();
     CueList currentlyActiveCues() const { return m_currentlyActiveCues; }
 
+    void removeTrack(TextTrack*);
+    void removeAllInbandTracks();
+
     virtual void didAddTrack(HTMLTrackElement*);
     virtual void didRemoveTrack(HTMLTrackElement*);
 

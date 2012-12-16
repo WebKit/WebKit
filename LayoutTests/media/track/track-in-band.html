@@ -9,6 +9,14 @@
 
             var addtrackEventCount = 0;
 
+            function trackAdded(event)
+            {
+                consoleWrite("EVENT(" + event.type + ")");
+                compareTracks("event.track", "video.textTracks[" + addtrackEventCount + "]");
+                ++addtrackEventCount;
+                consoleWrite("");
+            }
+
             function compareTracks(track1, track2)
             {
                 var equal = (eval(track1) == eval(track2));
@@ -19,9 +27,6 @@
             {
                 consoleWrite("<br><i>** Check initial in-band track states<" + "/i>");
                 testExpected("video.textTracks.length", 2);
-                testExpected("addtrackEventCount", 2);
-                consoleWrite("<br>");
-
                 run("inbandTrack1 = video.textTracks[0]");
                 run("inbandTrack2 = video.textTracks[1]");
                 testExpected("inbandTrack1.mode", "disabled");
@@ -44,13 +49,19 @@
                 compareTracks("video.textTracks[1]", "addTrack");
                 compareTracks("video.textTracks[2]", "inbandTrack1");
                 compareTracks("video.textTracks[3]", "inbandTrack2");
+
+                consoleWrite("<br><i>** Unload video file, check track count<" + "/i>");
+                run("video.src = ''");
+                testExpected("video.textTracks.length", 2);
+
+                consoleWrite("");
                 endTest();
             }
 
             function setup()
             {
                 findMediaElement();
-                video.textTracks.addEventListener("addtrack", function() { ++addtrackEventCount; });
+                video.textTracks.addEventListener("addtrack", trackAdded);
                 video.src = '../content/counting-subtitled.m4v';
                 waitForEvent('canplaythrough', canplaythrough);
             }

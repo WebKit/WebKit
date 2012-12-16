@@ -2768,14 +2768,32 @@ void HTMLMediaElement::mediaPlayerDidRemoveTrack(PassRefPtr<InbandTextTrackPriva
     if (!textTrack)
         return;
 
-    m_textTracks->remove(textTrack.get());
-    TextTrackCueList* cues = textTrack->cues();
-    if (cues) {
-        beginIgnoringTrackDisplayUpdateRequests();
-        for (size_t i = 0; i < cues->length(); ++i)
-            textTrackRemoveCue(cues->item(i)->track(), cues->item(i));
-        endIgnoringTrackDisplayUpdateRequests();
+    removeTrack(textTrack.get());
+}
+
+void HTMLMediaElement::removeTrack(TextTrack* track)
+{
+    beginIgnoringTrackDisplayUpdateRequests();
+    m_textTracks->remove(track);
+    TextTrackCueList* cues = track->cues();
+    if (cues)
+        textTrackRemoveCues(track, cues);
+    endIgnoringTrackDisplayUpdateRequests();
+}
+
+void HTMLMediaElement::removeAllInbandTracks()
+{
+    if (!m_textTracks)
+        return;
+
+    beginIgnoringTrackDisplayUpdateRequests();
+    for (int i = m_textTracks->length() - 1; i >= 0; --i) {
+        TextTrack* track = m_textTracks->item(i);
+
+        if (track->trackType() == TextTrack::InBand)
+            removeTrack(track);
     }
+    endIgnoringTrackDisplayUpdateRequests();
 }
 
 PassRefPtr<TextTrack> HTMLMediaElement::addTextTrack(const String& kind, const String& label, const String& language, ExceptionCode& ec)
@@ -3786,6 +3804,10 @@ void HTMLMediaElement::userCancelledLoad()
 
 void HTMLMediaElement::clearMediaPlayer(int flags)
 {
+#if ENABLE(VIDEO_TRACK)
+    removeAllInbandTracks();
+#endif
+
 #if !ENABLE(PLUGIN_PROXY_FOR_VIDEO)
 
 #if ENABLE(MEDIA_SOURCE)
