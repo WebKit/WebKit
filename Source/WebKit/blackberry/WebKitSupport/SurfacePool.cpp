@@ -84,7 +84,7 @@ void SurfacePool::initialize(const Platform::IntSize& tileSize)
         byteLimit += screenSize.width() * screenSize.height() * 4; // visible tile buffer - FIXME, fragile for further maintenance as its size doesn't sync up with the rest
         bool success = Platform::Graphics::createPixmapGroup(SHARED_PIXMAP_GROUP, byteLimit);
         if (!success) {
-            BBLOG(Platform::LogLevelWarn,
+            Platform::logAlways(Platform::LogLevelWarn,
                 "Shared buffer pool could not be set up, using regular memory allocation instead.");
         }
     }

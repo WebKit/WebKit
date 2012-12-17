@@ -690,11 +690,11 @@ void ChromeClientBlackBerry::overflowExceedsContentsSize(Frame* frame) const
         return;
 
 #if DEBUG_OVERFLOW_DETECTION
-    BBLOG(BlackBerry::Platform::LogLevelInfo, "ChromeClientBlackBerry::overflowExceedsContentsSize contents=%dx%d overflow=%dx%d",
-                           frame->contentRenderer()->rightLayoutOverflow(),
-                           frame->contentRenderer()->bottomLayoutOverflow(),
-                           frame->contentRenderer()->rightAbsoluteVisibleOverflow(),
-                           frame->contentRenderer()->bottomAbsoluteVisibleOverflow());
+    BlackBerry::Platform::logAlways(BlackBerry::Platform::LogLevelInfo,
+        "ChromeClientBlackBerry::overflowExceedsContentsSize contents=%s overflow=%f x %f",
+        BlackBerry::Platform::IntRect(frame->contentRenderer()->documentRect()).toString().c_str(),
+        frame->contentRenderer()->rightAbsoluteVisibleOverflow().toFloat(),
+        frame->contentRenderer()->bottomAbsoluteVisibleOverflow().toFloat());
 #endif
     m_webPagePrivate->overflowExceedsContentsSize();
 }

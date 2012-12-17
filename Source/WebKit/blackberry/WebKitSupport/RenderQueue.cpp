@@ -362,8 +362,9 @@ void RenderQueue::addToRegularQueue(const Platform::IntRect& rect)
 {
 #if DEBUG_RENDER_QUEUE
     if (m_regularRenderJobsRegion.isRectInRegion(rect) != Platform::IntRectRegion::ContainedInRegion) {
-        BBLOG(BlackBerry::Platform::LogLevelCritical, "RenderQueue::addToRegularQueue %d,%d %dx%d",
-                               rect.x(), rect.y(), rect.width(), rect.height());
+        Platform::logAlways(Platform::LogLevelCritical,
+            "RenderQueue::addToRegularQueue %s",
+            rect.toString().c_str());
     }
 #endif
 
@@ -383,8 +384,9 @@ void RenderQueue::addToScrollZoomQueue(const RenderRect& rect, RenderRectList* r
         return;
 
 #if DEBUG_RENDER_QUEUE
-    BBLOG(BlackBerry::Platform::LogLevelCritical, "RenderQueue::addToScrollZoomQueue %d,%d %dx%d",
-                           rect.x(), rect.y(), rect.width(), rect.height());
+    Platform::logAlways(Platform::LogLevelCritical,
+        "RenderQueue::addToScrollZoomQueue %s",
+        rect.toString().c_str());
 #endif
     rectList->push_back(rect);
 
@@ -569,7 +571,7 @@ void RenderQueue::render(bool shouldPerformRegularRenderJobs)
 #if DEBUG_RENDER_QUEUE
     double elapsed = WTF::currentTime() - time;
     if (elapsed)
-        BBLOG(BlackBerry::Platform::LogLevelCritical, "RenderQueue::render layout elapsed=%f", elapsed);
+        Platform::logAlways(Platform::LogLevelCritical, "RenderQueue::render layout elapsed=%f", elapsed);
 #endif
 
     // Empty the queues in a precise order of priority.
@@ -599,7 +601,7 @@ void RenderQueue::renderAllCurrentRegularRenderJobs()
 #if DEBUG_RENDER_QUEUE
     double elapsed = WTF::currentTime() - time;
     if (elapsed)
-        BBLOG(BlackBerry::Platform::LogLevelCritical, "RenderQueue::renderAllCurrentRegularRenderJobs layout elapsed=%f", elapsed);
+        Platform::logAlways(Platform::LogLevelCritical, "RenderQueue::renderAllCurrentRegularRenderJobs layout elapsed=%f", elapsed);
 #endif
 
     // The state of render queue may be modified from inside requestLayoutIfNeeded.
@@ -626,7 +628,7 @@ void RenderQueue::renderAllCurrentRegularRenderJobs()
 
 #if DEBUG_RENDER_QUEUE
         if (!regionNotRendered.isEmpty())
-            BBLOG(BlackBerry::Platform::LogLevelCritical, "RenderQueue::renderAllCurrentRegularRenderJobs region not completely rendered!");
+            Platform::logAlways(Platform::LogLevelCritical, "RenderQueue::renderAllCurrentRegularRenderJobs region not completely rendered!");
 #endif
 
         // Clip to the visible contents so we'll be faster.
@@ -643,10 +645,11 @@ void RenderQueue::renderAllCurrentRegularRenderJobs()
 #if DEBUG_RENDER_QUEUE
     // Stop the time measurement.
     elapsed = WTF::currentTime() - time;
-    Platform::IntRect extents = m_currentRegularRenderJobsBatchRegion.extents();
-    int numberOfRects = m_currentRegularRenderJobsBatchRegion.rects().size();
-    BBLOG(BlackBerry::Platform::LogLevelCritical, "RenderQueue::renderAllCurrentRegularRenderJobs extents=(%d,%d %dx%d) numberOfRects=%d elapsed=%f",
-                           extents.x(), extents.y(), extents.width(), extents.height(), numberOfRects, elapsed);
+    Platform::logAlways(Platform::LogLevelCritical,
+        "RenderQueue::renderAllCurrentRegularRenderJobs extents=%s numberOfRects=%d elapsed=%f",
+        m_currentRegularRenderJobsBatchRegion.extents().toString().c_str(),
+        m_currentRegularRenderJobsBatchRegion.rects().size(),
+        elapsed);
 #endif
 
     // Clear the region and blit since this batch is now complete.
@@ -681,7 +684,9 @@ void RenderQueue::startRegularRenderJobBatchIfNeeded()
     m_regularRenderJobsRegion = Platform::IntRectRegion();
 
 #if DEBUG_RENDER_QUEUE
-    BBLOG(BlackBerry::Platform::LogLevelCritical, "RenderQueue::startRegularRenderJobBatchIfNeeded batch size is %d!", m_currentRegularRenderJobsBatch.size());
+    Platform::logAlways(Platform::LogLevelCritical,
+        "RenderQueue::startRegularRenderJobBatchIfNeeded batch size is %d!",
+        m_currentRegularRenderJobsBatch.size());
 #endif
 }
 
@@ -708,8 +713,10 @@ void RenderQueue::renderVisibleZoomJob()
 #if DEBUG_RENDER_QUEUE
     // Stop the time measurement
     double elapsed = WTF::currentTime() - time;
-    BBLOG(BlackBerry::Platform::LogLevelCritical, "RenderQueue::renderVisibleZoomJob rect=(%d,%d %dx%d) elapsed=%f",
-                           subRect.x(), subRect.y(), subRect.width(), subRect.height(), elapsed);
+    Platform::logAlways(Platform::LogLevelCritical,
+        "RenderQueue::renderVisibleZoomJob rect=%s elapsed=%f",
+        subRect.toString().c_str(),
+        elapsed);
 #endif
 }
 
@@ -720,14 +727,15 @@ void RenderQueue::renderVisibleScrollJob()
 #if DEBUG_RENDER_QUEUE || DEBUG_RENDER_QUEUE_SORT
     // Start the time measurement.
     double time = WTF::currentTime();
+    double elapsed;
 #endif
 
     quickSort(&m_visibleScrollJobs);
 
 #if DEBUG_RENDER_QUEUE_SORT
     // Stop the time measurement
-    double elapsed = WTF::currentTime() - time;
-    BBLOG(BlackBerry::Platform::LogLevelCritical, "RenderQueue::renderVisibleScrollJob sort elapsed=%f", elapsed);
+    elapsed = WTF::currentTime() - time;
+    Platform::logAlways(Platform::LogLevelCritical, "RenderQueue::renderVisibleScrollJob sort elapsed=%f", elapsed);
 #endif
 
     RenderRect rect = m_visibleScrollJobs[0];
@@ -747,9 +755,11 @@ void RenderQueue::renderVisibleScrollJob()
 
 #if DEBUG_RENDER_QUEUE
     // Stop the time measurement
-    double elapsed = WTF::currentTime() - time;
-    BBLOG(BlackBerry::Platform::LogLevelCritical, "RenderQueue::renderVisibleScrollJob rect=(%d,%d %dx%d) elapsed=%f",
-                           subRect.x(), subRect.y(), subRect.width(), subRect.height(), elapsed);
+    elapsed = WTF::currentTime() - time;
+    Platform::logAlways(Platform::LogLevelCritical,
+        "RenderQueue::renderVisibleScrollJob rect=%s elapsed=%f",
+        subRect.toString().c_str(),
+        elapsed);
 #endif
 
     if (m_visibleScrollJobs.empty())
@@ -780,8 +790,9 @@ void RenderQueue::renderRegularRenderJob()
 
 #if DEBUG_RENDER_QUEUE
         if (!regionNotRendered.isEmpty()) {
-            BBLOG(BlackBerry::Platform::LogLevelCritical, "RenderQueue::renderRegularRenderJob rect (%d,%d %dx%d) not completely rendered!",
-                                  rect.x(), rect.y(), rect.width(), rect.height());
+            Platform::logAlways(Platform::LogLevelCritical,
+                "RenderQueue::renderRegularRenderJob rect %s not completely rendered!",
+                rect.toString().c_str());
         }
 #endif
 
@@ -795,8 +806,10 @@ void RenderQueue::renderRegularRenderJob()
 #if DEBUG_RENDER_QUEUE
     // Stop the time measurement.
     double elapsed = WTF::currentTime() - time;
-    BBLOG(BlackBerry::Platform::LogLevelCritical, "RenderQueue::renderRegularRenderJob rect=(%d,%d %dx%d) elapsed=%f",
-                           rect.x(), rect.y(), rect.width(), rect.height(), elapsed);
+    Platform::logAlways(Platform::LogLevelCritical,
+        "RenderQueue::renderRegularRenderJob rect=%s elapsed=%f",
+        rect.toString().c_str(),
+        elapsed);
 #endif
 
     if (m_currentRegularRenderJobsBatch.empty()) {
@@ -822,14 +835,15 @@ void RenderQueue::renderNonVisibleScrollJob()
 #if DEBUG_RENDER_QUEUE || DEBUG_RENDER_QUEUE_SORT
     // Start the time measurement.
     double time = WTF::currentTime();
+    double elapsed;
 #endif
 
     quickSort(&m_nonVisibleScrollJobs);
 
 #if DEBUG_RENDER_QUEUE_SORT
     // Stop the time measurement.
-    double elapsed = WTF::currentTime() - time;
-    BBLOG(BlackBerry::Platform::LogLevelCritical, "RenderQueue::renderNonVisibleScrollJob sort elapsed=%f", elapsed);
+    elapsed = WTF::currentTime() - time;
+    Platform::logAlways(Platform::LogLevelCritical, "RenderQueue::renderNonVisibleScrollJob sort elapsed=%f", elapsed);
 #endif
 
     RenderRect rect = m_nonVisibleScrollJobs[0];
@@ -853,9 +867,10 @@ void RenderQueue::renderNonVisibleScrollJob()
 
 #if DEBUG_RENDER_QUEUE
     // Stop the time measurement.
-    double elapsed = WTF::currentTime() - time;
-    BBLOG(BlackBerry::Platform::LogLevelCritical, "RenderQueue::renderNonVisibleScrollJob rect=(%d,%d %dx%d) elapsed=%f",
-                           subRect.x(), subRect.y(), subRect.width(), subRect.height(), elapsed);
+    elapsed = WTF::currentTime() - time;
+    Platform::logAlways(Platform::LogLevelCritical,
+        "RenderQueue::renderNonVisibleScrollJob rect=%s elapsed=%f",
+        subRect.toString().c_str(), elapsed);
 #endif
 
     if (m_nonVisibleScrollJobs.empty())

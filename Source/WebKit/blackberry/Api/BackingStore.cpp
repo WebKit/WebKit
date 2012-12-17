@@ -140,9 +140,10 @@ static Divisor bestDivisor(Platform::IntSize size, int tileWidth, int tileHeight
         if (isPerfectWidth || isPerfectHeight) {
             bestDivisor = divisor; // Found a perfect fit!
 #if DEBUG_TILEMATRIX
-            BBLOG(BlackBerry::Platform::LogLevelCritical, "bestDivisor found perfect size isPerfectWidth=%s isPerfectHeight=%s",
-                                   isPerfectWidth ? "true" : "false",
-                                   isPerfectHeight ? "true" : "false");
+            Platform::logAlways(Platform::LogLevelCritical,
+                "bestDivisor found perfect size isPerfectWidth=%s isPerfectHeight=%s",
+                isPerfectWidth ? "true" : "false",
+                isPerfectHeight ? "true" : "false");
 #endif
             break;
         }
@@ -285,7 +286,7 @@ bool BackingStorePrivate::isOpenGLCompositing() const
 void BackingStorePrivate::suspendBackingStoreUpdates()
 {
     if (atomic_add_value(&m_suspendBackingStoreUpdates, 0)) {
-        BBLOG(BlackBerry::Platform::LogLevelInfo,
+        BBLOG(Platform::LogLevelInfo,
             "Backingstore already suspended, increasing suspend counter.");
     }
 
@@ -295,7 +296,7 @@ void BackingStorePrivate::suspendBackingStoreUpdates()
 void BackingStorePrivate::suspendScreenUpdates()
 {
     if (m_suspendScreenUpdates) {
-        BBLOG(BlackBerry::Platform::LogLevelInfo,
+        BBLOG(Platform::LogLevelInfo,
             "Screen already suspended, increasing suspend counter.");
     }
 
@@ -312,7 +313,7 @@ void BackingStorePrivate::resumeBackingStoreUpdates()
     unsigned currentValue = atomic_add_value(&m_suspendBackingStoreUpdates, 0);
     ASSERT(currentValue >= 1);
     if (currentValue < 1) {
-        BlackBerry::Platform::logAlways(BlackBerry::Platform::LogLevelCritical,
+        Platform::logAlways(Platform::LogLevelCritical,
             "Call mismatch: Backingstore hasn't been suspended, therefore won't resume!");
         return;
     }
@@ -331,7 +332,7 @@ void BackingStorePrivate::resumeScreenUpdates(BackingStore::ResumeUpdateOperatio
     ASSERT(m_suspendScreenUpdates);
 
     if (!m_suspendScreenUpdates) {
-        BlackBerry::Platform::logAlways(BlackBerry::Platform::LogLevelCritical,
+        Platform::logAlways(Platform::LogLevelCritical,
             "Call mismatch: Screen hasn't been suspended, therefore won't resume!");
         return;
     }
@@ -342,7 +343,7 @@ void BackingStorePrivate::resumeScreenUpdates(BackingStore::ResumeUpdateOperatio
         m_resumeOperation = op;
 
     if (m_suspendScreenUpdates >= 2) { // we're still suspended
-        BBLOG(BlackBerry::Platform::LogLevelInfo,
+        BBLOG(Platform::LogLevelInfo,
             "Screen and backingstore still suspended, decreasing suspend counter.");
         --m_suspendScreenUpdates;
         return;
@@ -419,11 +420,11 @@ void BackingStorePrivate::repaint(const Platform::IntRect& windowRect,
             return;
 
 #if DEBUG_WEBCORE_REQUESTS
-        BBLOG(BlackBerry::Platform::LogLevelCritical,
-                                  "BackingStorePrivate::repaint rect=%d,%d %dx%d contentChanged=%s immediate=%s",
-                                  rect.x(), rect.y(), rect.width(), rect.height(),
-                                  (contentChanged ? "true" : "false"),
-                                  (immediate ? "true" : "false"));
+        Platform::logAlways(Platform::LogLevelCritical,
+            "BackingStorePrivate::repaint rect=%s contentChanged=%s immediate=%s",
+            rect.toString().c_str(),
+            contentChanged ? "true" : "false",
+            immediate ? "true" : "false");
 #endif
 
         if (immediate) {
@@ -469,7 +470,7 @@ void BackingStorePrivate::slowScroll(const Platform::IntSize& delta, const Platf
 #if DEBUG_BACKINGSTORE
     // Stop the time measurement.
     double elapsed = WTF::currentTime() - time;
-    BBLOG(BlackBerry::Platform::LogLevelCritical, "BackingStorePrivate::slowScroll elapsed=%f", elapsed);
+    Platform::logAlways(Platform::LogLevelCritical, "BackingStorePrivate::slowScroll elapsed=%f", elapsed);
 #endif
 }
 
@@ -502,7 +503,7 @@ void BackingStorePrivate::scroll(const Platform::IntSize& delta,
 #if DEBUG_BACKINGSTORE
     // Stop the time measurement.
     double elapsed = WTF::currentTime() - time;
-    BBLOG(BlackBerry::Platform::LogLevelCritical, "BackingStorePrivate::scroll dx=%d, dy=%d elapsed=%f", delta.width(), delta.height(), elapsed);
+    Platform::logAlways(Platform::LogLevelCritical, "BackingStorePrivate::scroll dx=%d, dy=%d elapsed=%f", delta.width(), delta.height(), elapsed);
 #endif
 }
 
@@ -563,7 +564,7 @@ void BackingStorePrivate::renderJob()
     instrumentBeginFrame();
 
 #if DEBUG_BACKINGSTORE
-    BlackBerry::Platform::logAlways(BlackBerry::Platform::LogLevelCritical, "BackingStorePrivate::renderJob");
+    Platform::logAlways(Platform::LogLevelCritical, "BackingStorePrivate::renderJob");
 #endif
 
     m_renderQueue->render(!m_suspendRegularRenderJobs);
@@ -735,15 +736,10 @@ void BackingStorePrivate::setBackingStoreRect(const Platform::IntRect& backingSt
         return;
 
 #if DEBUG_TILEMATRIX
-    BBLOG(BlackBerry::Platform::LogLevelCritical, "BackingStorePrivate::setBackingStoreRect changed from (%d,%d %dx%d) to (%d,%d %dx%d)",
-                           currentBackingStoreRect.x(),
-                           currentBackingStoreRect.y(),
-                           currentBackingStoreRect.width(),
-                           currentBackingStoreRect.height(),
-                           backingStoreRect.x(),
-                           backingStoreRect.y(),
-                           backingStoreRect.width(),
-                           backingStoreRect.height());
+    Platform::logAlways(Platform::LogLevelCritical,
+        "BackingStorePrivate::setBackingStoreRect changed from %s to %s",
+        currentBackingStoreRect.toString().c_str(),
+        backingStoreRect.toString().c_str());
 #endif
 
     BackingStoreGeometry* currentState = frontState();
@@ -838,7 +834,8 @@ void BackingStorePrivate::updateTilesAfterBackingStoreRectChange()
                 Platform::IntRectRegion tileNotRenderedRegion = Platform::IntRectRegion::intersectRegions(m_renderQueue->regularRenderJobsNotRenderedRegion(), rect);
                 clearAndUpdateTileOfNotRenderedRegion(index, tileBuffer, tileNotRenderedRegion, currentState);
 #if DEBUG_BACKINGSTORE
-                BBLOG(BlackBerry::Platform::LogLevelCritical, "BackingStorePrivate::updateTilesAfterBackingStoreRectChange did clear tile %s",
+                Platform::logAlways(Platform::LogLevelCritical,
+                    "BackingStorePrivate::updateTilesAfterBackingStoreRectChange did clear tile %s",
                     tileNotRenderedRegion.extents().toString().c_str());
 #endif
             } else {
@@ -978,9 +975,9 @@ void BackingStorePrivate::scrollBackingStore(int deltaX, int deltaY)
                                   m_preferredTileMatrixDimension);
 
 #if DEBUG_TILEMATRIX
-    BBLOG(BlackBerry::Platform::LogLevelCritical, "BackingStorePrivate::scrollBackingStore divisor %dx%d",
-                           divisor.first,
-                           divisor.second);
+    Platform::logAlways(Platform::LogLevelCritical,
+        "BackingStorePrivate::scrollBackingStore divisor %dx%d",
+        divisor.first, divisor.second);
 #endif
 
     // Initialize a rect with that new geometry.
@@ -1051,10 +1048,10 @@ bool BackingStorePrivate::render(const Platform::IntRect& rect)
     updateTileMatrixIfNeeded();
 
 #if DEBUG_BACKINGSTORE
-    BBLOG(BlackBerry::Platform::LogLevelCritical,
-                           "BackingStorePrivate::render rect=(%d,%d %dx%d), m_suspendBackingStoreUpdates = %s",
-                           rect.x(), rect.y(), rect.width(), rect.height(),
-                           m_suspendBackingStoreUpdates ? "true" : "false");
+    Platform::logAlways(Platform::LogLevelCritical,
+        "BackingStorePrivate::render rect=%s, m_suspendBackingStoreUpdates = %s",
+        rect.toString().c_str(),
+        m_suspendBackingStoreUpdates ? "true" : "false");
 #endif
 
     BackingStoreGeometry* currentState = frontState();
@@ -1248,7 +1245,7 @@ void BackingStorePrivate::blitVisibleContents(bool force)
     // Use invalidateWindow() instead.
     ASSERT(!shouldDirectRenderingToWindow());
     if (shouldDirectRenderingToWindow()) {
-        BlackBerry::Platform::logAlways(BlackBerry::Platform::LogLevelCritical,
+        Platform::logAlways(Platform::LogLevelCritical,
             "BackingStore::blitVisibleContents operation not supported in direct rendering mode");
         return;
     }
@@ -1307,11 +1304,9 @@ void BackingStorePrivate::blitVisibleContents(bool force)
 #endif
 
 #if DEBUG_BACKINGSTORE
-    BlackBerry::Platform::logAlways(BlackBerry::Platform::LogLevelCritical,
-        "BackingStorePrivate::blitVisibleContents(): dstRect=(%d,%d) %dx%d, documentSrcRect=(%f, %f) %f x %f, scale=%f",
-        dstRect.x(), dstRect.y(), dstRect.width(), dstRect.height(),
-        documentSrcRect.x(), documentSrcRect.y(), documentSrcRect.width(), documentSrcRect.height(),
-        viewportAccessor->scale());
+    Platform::logAlways(Platform::LogLevelCritical,
+        "BackingStorePrivate::blitVisibleContents(): dstRect=%s, documentSrcRect=%s, scale=%f",
+        dstRect.toString().c_str(), documentSrcRect.toString().c_str(), viewportAccessor->scale());
 #endif
 
 #if DEBUG_CHECKERBOARD
@@ -1521,15 +1516,15 @@ void BackingStorePrivate::blitVisibleContents(bool force)
 
     if (blitCheckered && !lastCheckeredTime) {
         lastCheckeredTime = WTF::currentTime();
-        BBLOG(BlackBerry::Platform::LogLevelCritical,
-            "Blitting checkered pattern at %f\n", lastCheckeredTime);
+        Platform::logAlways(Platform::LogLevelCritical,
+            "Blitting checkered pattern at %f", lastCheckeredTime);
     } else if (blitCheckered && lastCheckeredTime) {
-        BBLOG(BlackBerry::Platform::LogLevelCritical,
-            "Blitting checkered pattern at %f\n", WTF::currentTime());
+        Platform::logAlways(Platform::LogLevelCritical,
+            "Blitting checkered pattern at %f", WTF::currentTime());
     } else if (!blitCheckered && lastCheckeredTime) {
         double time = WTF::currentTime();
-        BBLOG(BlackBerry::Platform::LogLevelCritical,
-            "Blitting over checkered pattern at %f took %f\n", time, time - lastCheckeredTime);
+        Platform::logAlways(Platform::LogLevelCritical,
+            "Blitting over checkered pattern at %f took %f", time, time - lastCheckeredTime);
         lastCheckeredTime = 0;
     }
 #endif
@@ -1785,10 +1780,9 @@ void BackingStorePrivate::updateTilesForScrollOrNotRenderedRegion(bool checkLoad
                                                       currentState,
                                                       false /*update*/);
 #if DEBUG_BACKINGSTORE
-                Platform::IntRect extents = tileNotRenderedRegion.extents();
-                BBLOG(BlackBerry::Platform::LogLevelCritical,
-                    "BackingStorePrivate::updateTilesForScroll did clear tile %d,%d %dx%d",
-                    extents.x(), extents.y(), extents.width(), extents.height());
+                Platform::logAlways(Platform::LogLevelCritical,
+                    "BackingStorePrivate::updateTilesForScroll did clear tile %s",
+                    tileNotRenderedRegion.extents().toString().c_str());
 #endif
             }
             updateTile(tileOrigin, false /*immediate*/);
@@ -2084,10 +2078,9 @@ void BackingStorePrivate::renderContents(BlackBerry::Platform::Graphics::Buffer*
         return;
 
 #if DEBUG_BACKINGSTORE
-    BBLOG(BlackBerry::Platform::LogLevelCritical,
-                           "BackingStorePrivate::renderContents tileBuffer=0x%x surfaceOffset=(%d,%d) contentsRect=(%d,%d %dx%d)",
-                           tileBuffer, surfaceOffset.x(), surfaceOffset.y(),
-                           contentsRect.x(), contentsRect.y(), contentsRect.width(), contentsRect.height());
+    Platform::logAlways(Platform::LogLevelCritical,
+        "BackingStorePrivate::renderContents tileBuffer=0x%p surfaceOffset=%s contentsRect=%s",
+        tileBuffer, surfaceOffset.toString().c_str(), contentsRect.toString().c_str());
 #endif
 
     // It is up to callers of this method to perform layout themselves!
@@ -2219,10 +2212,8 @@ void BackingStorePrivate::blitToWindow(const Platform::IntRect& dstRect,
     BlackBerry::Platform::Graphics::Buffer* dstBuffer = buffer();
     ASSERT(dstBuffer);
     ASSERT(srcBuffer);
-    if (!dstBuffer) {
-        BBLOG(BlackBerry::Platform::LogLevelWarn,
-            "Empty window buffer, couldn't blitToWindow");
-    }
+    if (!dstBuffer)
+        Platform::logAlways(Platform::LogLevelWarn, "Empty window buffer, couldn't blitToWindow");
 
     BlackBerry::Platform::Graphics::blitToBuffer(dstBuffer, dstRect, srcBuffer, srcRect, blendMode, globalAlpha);
 
@@ -2246,10 +2237,8 @@ void BackingStorePrivate::fillWindow(Platform::Graphics::FillPattern pattern,
 
     BlackBerry::Platform::Graphics::Buffer* dstBuffer = buffer();
     ASSERT(dstBuffer);
-    if (!dstBuffer) {
-        BBLOG(BlackBerry::Platform::LogLevelWarn,
-            "Empty window buffer, couldn't fillWindow");
-    }
+    if (!dstBuffer)
+        Platform::logAlways(Platform::LogLevelWarn, "Empty window buffer, couldn't fillWindow");
 
     if (pattern == BlackBerry::Platform::Graphics::CheckerboardPattern && BlackBerry::Platform::Settings::isPublicBuild()) {
         // For public builds, convey the impression of less checkerboard.
@@ -2309,7 +2298,9 @@ void BackingStorePrivate::invalidateWindow(const Platform::IntRect& dst)
     }
 
 #if DEBUG_BACKINGSTORE
-    BBLOG(BlackBerry::Platform::LogLevelCritical, "BackingStorePrivate::invalidateWindow dst = %s", dst.toString().c_str());
+    Platform::logAlways(Platform::LogLevelCritical,
+        "BackingStorePrivate::invalidateWindow dst = %s",
+        dst.toString().c_str());
 #endif
 
     // Since our window may also be double buffered, we need to also copy the
@@ -2329,7 +2320,9 @@ void BackingStorePrivate::invalidateWindow(const Platform::IntRect& dst)
         return;
 
 #if DEBUG_BACKINGSTORE
-    BBLOG(BlackBerry::Platform::LogLevelCritical, "BackingStorePrivate::invalidateWindow posting = %s", dstRect.toString().c_str());
+    Platform::logAlways(Platform::LogLevelCritical,
+        "BackingStorePrivate::invalidateWindow posting = %s",
+        dstRect.toString().c_str());
 #endif
 
     m_currentWindowBackBuffer = (m_currentWindowBackBuffer + 1) % 2;
@@ -2363,10 +2356,8 @@ void BackingStorePrivate::clearWindow(const Platform::IntRect& rect,
 
     BlackBerry::Platform::Graphics::Buffer* dstBuffer = buffer();
     ASSERT(dstBuffer);
-    if (!dstBuffer) {
-        BBLOG(BlackBerry::Platform::LogLevelWarn,
-            "Empty window buffer, couldn't clearWindow");
-    }
+    if (!dstBuffer)
+        Platform::logAlways(Platform::LogLevelWarn, "Empty window buffer, couldn't clearWindow");
 
     windowFrontBufferState()->clearBlittedRegion(rect);
     windowBackBufferState()->addBlittedRegion(rect);

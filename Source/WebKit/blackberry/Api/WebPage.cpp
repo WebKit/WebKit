@@ -1047,7 +1047,7 @@ void WebPagePrivate::setLoadState(LoadState state)
     m_loadState = state;
 
 #if DEBUG_WEBPAGE_LOAD
-    BBLOG(Platform::LogLevelInfo, "WebPagePrivate::setLoadState %d", state);
+    Platform::logAlways(Platform::LogLevelInfo, "WebPagePrivate::setLoadState %d", state);
 #endif
 
     switch (m_loadState) {
@@ -1218,8 +1218,11 @@ bool WebPagePrivate::zoomAboutPoint(double unclampedScale, const FloatPoint& anc
     zoom.scale(scale);
 
 #if DEBUG_WEBPAGE_LOAD
-    if (loadState() < Finished)
-        BBLOG(Platform::LogLevelInfo, "WebPagePrivate::zoomAboutPoint scale %f anchor (%f, %f)", scale, anchor.x(), anchor.y());
+    if (loadState() < Finished) {
+        Platform::logAlways(Platform::LogLevelInfo,
+            "WebPagePrivate::zoomAboutPoint scale %f anchor %s",
+            scale, Platform::FloatPoint(anchor).toString().c_str());
+    }
 #endif
 
     // Our current scroll position in float.
@@ -1550,7 +1553,7 @@ void WebPagePrivate::contentsSizeChanged(const IntSize& contentsSize)
     m_contentsSizeChanged = true;
 
 #if DEBUG_WEBPAGE_LOAD
-    BBLOG(Platform::LogLevelInfo, "WebPagePrivate::contentsSizeChanged %dx%d", contentsSize.width(), contentsSize.height());
+    Platform::logAlways(Platform::LogLevelInfo, "WebPagePrivate::contentsSizeChanged %s", Platform::IntSize(contentsSize).toString().c_str());
 #endif
 }
 
@@ -1632,7 +1635,7 @@ void WebPagePrivate::layoutFinished()
 void WebPagePrivate::zoomToInitialScaleOnLoad()
 {
 #if DEBUG_WEBPAGE_LOAD
-    BBLOG(Platform::LogLevelInfo, "WebPagePrivate::zoomToInitialScaleOnLoad");
+    Platform::logAlways(Platform::LogLevelInfo, "WebPagePrivate::zoomToInitialScaleOnLoad");
 #endif
 
     bool needsLayout = false;
@@ -1650,7 +1653,7 @@ void WebPagePrivate::zoomToInitialScaleOnLoad()
 
     if (contentsSize().isEmpty()) {
 #if DEBUG_WEBPAGE_LOAD
-        BBLOG(Platform::LogLevelInfo, "WebPagePrivate::zoomToInitialScaleOnLoad content is empty!");
+        Platform::logAlways(Platform::LogLevelInfo, "WebPagePrivate::zoomToInitialScaleOnLoad content is empty!");
 #endif
         requestLayoutIfNeeded();
         notifyTransformedContentsSizeChanged();
@@ -4043,7 +4046,7 @@ bool WebPagePrivate::handleWheelEvent(PlatformWheelEvent& wheelEvent)
 bool WebPage::touchEvent(const Platform::TouchEvent& event)
 {
 #if DEBUG_TOUCH_EVENTS
-    BBLOG(LogLevelCritical, "%s", event.toString().c_str());
+    Platform::logAlways(Platform::LogLevelCritical, "%s", event.toString().c_str());
 #endif
 
 #if ENABLE(TOUCH_EVENTS)
@@ -5346,7 +5349,9 @@ void WebPagePrivate::scheduleRootLayerCommit()
     m_needsCommit = true;
     if (!m_rootLayerCommitTimer->isActive()) {
 #if DEBUG_AC_COMMIT
-        BBLOG(Platform::LogLevelCritical, "%s: m_rootLayerCommitTimer->isActive() = %d", WTF_PRETTY_FUNCTION, m_rootLayerCommitTimer->isActive());
+        Platform::logAlways(Platform::LogLevelCritical,
+            "%s: m_rootLayerCommitTimer->isActive() = %d",
+            WTF_PRETTY_FUNCTION, m_rootLayerCommitTimer->isActive());
 #endif
         m_rootLayerCommitTimer->startOneShot(0);
     }
@@ -5434,8 +5439,9 @@ void WebPagePrivate::commitRootLayer(const IntRect& layoutRectForCompositing,
                                      bool drawsRootLayer)
 {
 #if DEBUG_AC_COMMIT
-    BBLOG(Platform::LogLevelCritical, "%s: m_compositor = 0x%x",
-            WTF_PRETTY_FUNCTION, m_compositor.get());
+    Platform::logAlways(Platform::LogLevelCritical,
+        "%s: m_compositor = 0x%p",
+        WTF_PRETTY_FUNCTION, m_compositor.get());
 #endif
 
     if (!m_compositor)
@@ -5473,13 +5479,14 @@ void WebPagePrivate::commitRootLayer(const IntRect& layoutRectForCompositing,
 bool WebPagePrivate::commitRootLayerIfNeeded()
 {
 #if DEBUG_AC_COMMIT
-    BBLOG(Platform::LogLevelCritical, "%s: m_suspendRootLayerCommit = %d, m_needsCommit = %d, m_frameLayers = 0x%x, m_frameLayers->hasLayer() = %d, needsLayoutRecursive() = %d",
-            WTF_PRETTY_FUNCTION,
-            m_suspendRootLayerCommit,
-            m_needsCommit,
-            m_frameLayers.get(),
-            m_frameLayers && m_frameLayers->hasLayer(),
-            m_mainFrame && m_mainFrame->view() && needsLayoutRecursive(m_mainFrame->view()));
+    Platform::logAlways(Platform::LogLevelCritical,
+        "%s: m_suspendRootLayerCommit = %d, m_needsCommit = %d, m_frameLayers = 0x%p, m_frameLayers->hasLayer() = %d, needsLayoutRecursive() = %d",
+        WTF_PRETTY_FUNCTION,
+        m_suspendRootLayerCommit,
+        m_needsCommit,
+        m_frameLayers.get(),
+        m_frameLayers && m_frameLayers->hasLayer(),
+        m_mainFrame && m_mainFrame->view() && needsLayoutRecursive(m_mainFrame->view()));
 #endif
 
     if (m_suspendRootLayerCommit)
@@ -5553,7 +5560,7 @@ void WebPagePrivate::rootLayerCommitTimerFired(Timer<WebPagePrivate>*)
         return;
 
 #if DEBUG_AC_COMMIT
-    BBLOG(Platform::LogLevelCritical, "%s", WTF_PRETTY_FUNCTION);
+    Platform::logAlways(Platform::LogLevelCritical, "%s", WTF_PRETTY_FUNCTION);
 #endif
 
     m_backingStore->d->instrumentBeginFrame();
@@ -5580,9 +5587,10 @@ void WebPagePrivate::rootLayerCommitTimerFired(Timer<WebPagePrivate>*)
 
         if (needsOneShotDrawingSynchronization()) {
 #if DEBUG_AC_COMMIT
-            BBLOG(Platform::LogLevelCritical, "%s: OneShotDrawingSynchronization code path!", WTF_PRETTY_FUNCTION);
+            Platform::logAlways(Platform::LogLevelCritical,
+                "%s: OneShotDrawingSynchronization code path!",
+                WTF_PRETTY_FUNCTION);
 #endif
-
             const IntRect windowRect = IntRect(IntPoint::zero(), viewportSize());
             m_backingStore->d->repaint(windowRect, true /*contentChanged*/, true /*immediate*/);
             return;

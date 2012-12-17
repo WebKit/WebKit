@@ -1,3 +1,111 @@
+2012-12-17  Jakob Petsovits  <jpetsovits@rim.com>
+
+        [BlackBerry] Clean up log output in WebKit/blackberry.
+        https://bugs.webkit.org/show_bug.cgi?id=104823
+
+        Reviewed by George Staikos.
+
+        Behavior-preserving change, fixing many issues with logging:
+        - Call logAlways() instead of BBLOG() in already defined-out debug blocks.
+        - Call logAlways() instead of BBLOG() for serious errors, too.
+        - Fix build for the DEBUG_OVERFLOW_DETECTION block in ChromeClientBlackBerry.
+        - Fix build for double declarations of "elapsed" variables in RenderQueue.
+        - Fix compiler warnings due to format string / parameter mismatches.
+        - Remove unnecessary trailing newlines in logged strings.
+        - Consistently use Platform:: as prefix except inside WebCore-namespaced code.
+        - Use indentation that actually passes WebKit style checks.
+        - Change point/size/rect output to use Platform toString() formats for consistency.
+
+        * Api/BackingStore.cpp:
+        (BlackBerry::WebKit::bestDivisor):
+        (BlackBerry::WebKit::BackingStorePrivate::suspendBackingStoreUpdates):
+        (BlackBerry::WebKit::BackingStorePrivate::suspendScreenUpdates):
+        (BlackBerry::WebKit::BackingStorePrivate::resumeBackingStoreUpdates):
+        (BlackBerry::WebKit::BackingStorePrivate::resumeScreenUpdates):
+        (BlackBerry::WebKit::BackingStorePrivate::repaint):
+        (BlackBerry::WebKit::BackingStorePrivate::slowScroll):
+        (BlackBerry::WebKit::BackingStorePrivate::scroll):
+        (BlackBerry::WebKit::BackingStorePrivate::renderJob):
+        (BlackBerry::WebKit::BackingStorePrivate::setBackingStoreRect):
+        (BlackBerry::WebKit::BackingStorePrivate::updateTilesAfterBackingStoreRectChange):
+        (BlackBerry::WebKit::BackingStorePrivate::scrollBackingStore):
+        (BlackBerry::WebKit::BackingStorePrivate::render):
+        (BlackBerry::WebKit::BackingStorePrivate::blitVisibleContents):
+        (BlackBerry::WebKit::BackingStorePrivate::updateTilesForScrollOrNotRenderedRegion):
+        (BlackBerry::WebKit::BackingStorePrivate::renderContents):
+        (BlackBerry::WebKit::BackingStorePrivate::blitToWindow):
+        (BlackBerry::WebKit::BackingStorePrivate::fillWindow):
+        (BlackBerry::WebKit::BackingStorePrivate::invalidateWindow):
+        (BlackBerry::WebKit::BackingStorePrivate::clearWindow):
+        * Api/WebPage.cpp:
+        (BlackBerry::WebKit::WebPagePrivate::setLoadState):
+        (BlackBerry::WebKit::WebPagePrivate::zoomAboutPoint):
+        (BlackBerry::WebKit::WebPagePrivate::contentsSizeChanged):
+        (BlackBerry::WebKit::WebPagePrivate::zoomToInitialScaleOnLoad):
+        (BlackBerry::WebKit::WebPage::touchEvent):
+        (BlackBerry::WebKit::WebPagePrivate::scheduleRootLayerCommit):
+        (BlackBerry::WebKit::WebPagePrivate::commitRootLayer):
+        (BlackBerry::WebKit::WebPagePrivate::commitRootLayerIfNeeded):
+        (BlackBerry::WebKit::WebPagePrivate::rootLayerCommitTimerFired):
+        * WebCoreSupport/ChromeClientBlackBerry.cpp:
+        (WebCore::ChromeClientBlackBerry::overflowExceedsContentsSize):
+        * WebKitSupport/FatFingers.cpp:
+        (BlackBerry::WebKit::FatFingers::checkFingerIntersection):
+        (BlackBerry::WebKit::FatFingers::findIntersectingRegions):
+        (BlackBerry::WebKit::FatFingers::checkForText):
+        * WebKitSupport/InputHandler.cpp:
+        (BlackBerry::WebKit::convertStringToWchar):
+        (BlackBerry::WebKit::convertStringToWcharVector):
+        (BlackBerry::WebKit::convertSpannableStringToString):
+        (BlackBerry::WebKit::InputHandler::learnText):
+        (BlackBerry::WebKit::InputHandler::requestCheckingOfString):
+        (BlackBerry::WebKit::InputHandler::spellCheckingRequestCancelled):
+        (BlackBerry::WebKit::InputHandler::spellCheckingRequestProcessed):
+        (BlackBerry::WebKit::InputHandler::shouldRequestSpellCheckingOptionsForPoint):
+        (BlackBerry::WebKit::InputHandler::requestSpellingCheckingOptions):
+        (BlackBerry::WebKit::InputHandler::setElementUnfocused):
+        (BlackBerry::WebKit::InputHandler::setInputModeEnabled):
+        (BlackBerry::WebKit::InputHandler::setElementFocused):
+        (BlackBerry::WebKit::InputHandler::spellCheckBlock):
+        (BlackBerry::WebKit::InputHandler::nodeTextChanged):
+        (BlackBerry::WebKit::InputHandler::ensureFocusTextElementVisible):
+        (BlackBerry::WebKit::InputHandler::frameUnloaded):
+        (BlackBerry::WebKit::InputHandler::selectionChanged):
+        (BlackBerry::WebKit::InputHandler::setSelection):
+        (BlackBerry::WebKit::InputHandler::handleKeyboardInput):
+        (BlackBerry::WebKit::InputHandler::deleteTextRelativeToCursor):
+        (BlackBerry::WebKit::InputHandler::deleteText):
+        (BlackBerry::WebKit::InputHandler::spannableTextInRange):
+        (BlackBerry::WebKit::InputHandler::setComposingRegion):
+        (BlackBerry::WebKit::InputHandler::finishComposition):
+        (BlackBerry::WebKit::InputHandler::setText):
+        (BlackBerry::WebKit::InputHandler::setTextAttributes):
+        (BlackBerry::WebKit::InputHandler::setRelativeCursorPosition):
+        (BlackBerry::WebKit::InputHandler::setSpannableTextAndRelativeCursor):
+        (BlackBerry::WebKit::InputHandler::setComposingText):
+        (BlackBerry::WebKit::InputHandler::commitText):
+        * WebKitSupport/RenderQueue.cpp:
+        (BlackBerry::WebKit::RenderQueue::addToRegularQueue):
+        (BlackBerry::WebKit::RenderQueue::addToScrollZoomQueue):
+        (BlackBerry::WebKit::RenderQueue::render):
+        (BlackBerry::WebKit::RenderQueue::renderAllCurrentRegularRenderJobs):
+        (BlackBerry::WebKit::RenderQueue::startRegularRenderJobBatchIfNeeded):
+        (BlackBerry::WebKit::RenderQueue::renderVisibleZoomJob):
+        (BlackBerry::WebKit::RenderQueue::renderVisibleScrollJob):
+        (BlackBerry::WebKit::RenderQueue::renderRegularRenderJob):
+        (BlackBerry::WebKit::RenderQueue::renderNonVisibleScrollJob):
+        * WebKitSupport/SelectionHandler.cpp:
+        (BlackBerry::WebKit::SelectionHandler::cancelSelection):
+        (BlackBerry::WebKit::SelectionHandler::shouldUpdateSelectionOrCaretForPoint):
+        (BlackBerry::WebKit::SelectionHandler::setCaretPosition):
+        (BlackBerry::WebKit::SelectionHandler::updateOrHandleInputSelection):
+        (BlackBerry::WebKit::SelectionHandler::setSelection):
+        (BlackBerry::WebKit::SelectionHandler::selectObject):
+        (BlackBerry::WebKit::SelectionHandler::selectionPositionChanged):
+        (BlackBerry::WebKit::SelectionHandler::caretPositionChanged):
+        * WebKitSupport/SurfacePool.cpp:
+        (BlackBerry::WebKit::SurfacePool::initialize):
+
 2012-12-17  Anthony Scian  <ascian@rim.com>
 
         [Blackberry] Static code analysis warning fixes

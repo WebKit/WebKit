@@ -47,8 +47,6 @@
 #include "BackingStore.h"
 #endif
 
-using BlackBerry::Platform::LogLevelInfo;
-using BlackBerry::Platform::log;
 using BlackBerry::Platform::IntRectRegion;
 
 using namespace WebCore;
@@ -284,7 +282,8 @@ bool FatFingers::checkFingerIntersection(const IntRectRegion& region, const IntR
             nodeName = nodeName + ", pseudo id " + toElement(node)->shadowPseudoId();
         nodeName = nodeName + ")";
     }
-    logAlways(LogLevelInfo, "%s has region %s, intersecting at %s (area %d)", nodeName.latin1().data(),
+    Platform::logAlways(Platform::LogLevelInfo,
+        "%s has region %s, intersecting at %s (area %d)", nodeName.latin1().data(),
         regionCopy.toString().c_str(), intersection.toString().c_str(), intersection.area());
 #endif
 
@@ -308,8 +307,8 @@ bool FatFingers::findIntersectingRegions(Document* document, Vector<Intersecting
 
 #if DEBUG_FAT_FINGERS
     IntRect fingerRect(fingerRectForPoint(frameContentPos));
-    IntRect screenFingerRect = m_webPage->mapToTransformed(fingerRect);
-    logAlways(LogLevelInfo, "fat finger rect now %d, %d, %d, %d", screenFingerRect.x(), screenFingerRect.y(), screenFingerRect.width(), screenFingerRect.height());
+    Platform::IntRect screenFingerRect = m_webPage->mapToTransformed(fingerRect);
+    Platform::logAlways(Platform::LogLevelInfo, "fat finger rect now %s", screenFingerRect.toString().c_str());
 
     // only record the first finger rect
     if (document == m_webPage->m_mainFrame->document())
@@ -439,7 +438,7 @@ bool FatFingers::checkForText(Node* curNode, Vector<IntersectingRegion>& interse
             RefPtr<Range> range = Range::create(document, curText, lastOffset, curText, offset);
             if (!range->text().stripWhiteSpace().isEmpty()) {
 #if DEBUG_FAT_FINGERS
-                logAlways(LogLevelInfo, "Checking word '%s'", range->text().latin1().data());
+                Platform::logAlways(Platform::LogLevelInfo, "Checking word '%s'", range->text().latin1().data());
 #endif
                 IntRectRegion rangeRegion(DOMSupport::transformedBoundingBoxForRange(*range));
                 foundOne |= checkFingerIntersection(rangeRegion, fingerRegion, curNode, intersectingRegions);
