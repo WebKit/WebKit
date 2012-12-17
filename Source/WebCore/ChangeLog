@@ -1,3 +1,21 @@
+2012-12-17  Andrey Kosyakov  <caseq@chromium.org>
+
+        Web Inspector: Persist Audit selections across sessions
+        https://bugs.webkit.org/show_bug.cgi?id=103944
+
+        Reviewed by Alexander Pavlov.
+
+        Make selected audit categories a persistent setting, to simplify life for those
+        repeatedly running same set of categories.
+
+        * inspector/front-end/AuditLauncherView.js:
+        (WebInspector.AuditLauncherView):
+        (WebInspector.AuditLauncherView.prototype.addCategory.get var):
+        (WebInspector.AuditLauncherView.prototype.addCategory):
+        (WebInspector.AuditLauncherView.prototype._selectAllClicked):
+        (WebInspector.AuditLauncherView.prototype._categoryClicked):
+        (WebInspector.AuditLauncherView.prototype._createCategoryElement):
+
 2012-12-17  Zeno Albisser  <zeno@webkit.org>
 
         [Texmap] Drawing of ARB textures broken after r137498.
