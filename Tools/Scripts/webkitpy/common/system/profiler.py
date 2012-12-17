@@ -86,7 +86,9 @@ class Profiler(object):
 class SingleFileOutputProfiler(Profiler):
     def __init__(self, host, executable_path, output_dir, output_suffix, identifier=None):
         super(SingleFileOutputProfiler, self).__init__(host, executable_path, output_dir, identifier)
-        self._output_path = self._host.workspace.find_unused_filename(self._output_dir, self._identifier, output_suffix)
+        # FIXME: Currently all reports are kept as test.*, until we fix that, search up to 1000 names before giving up.
+        self._output_path = self._host.workspace.find_unused_filename(self._output_dir, self._identifier, output_suffix, search_limit=1000)
+        assert(self._output_path)
 
 
 class GooglePProf(SingleFileOutputProfiler):
@@ -139,7 +141,7 @@ class Perf(SingleFileOutputProfiler):
     def attach_to_pid(self, pid):
         assert(not self._perf_process and not self._pid_being_profiled)
         self._pid_being_profiled = pid
-        cmd = [self._perf_path(), "record", "-g", "-p", pid, "-o", self._output_path]
+        cmd = [self._perf_path(), "record", "--call-graph", "--pid", pid, "--output", self._output_path]
         self._perf_process = self._host.executive.popen(cmd)
 
     def _first_ten_lines_of_profile(self, perf_output):
@@ -159,13 +161,16 @@ class Perf(SingleFileOutputProfiler):
             print "'perf record' failed (exit code: %i), can't process results:" % perf_exitcode
             return
 
-        perf_args = [self._perf_path(), 'report', '-g', 'none', '-i', self._output_path]
+        perf_args = [self._perf_path(), 'report', '--call-graph', 'none', '--input', self._output_path]
+        print "First 10 lines of 'perf report --call-graph=none':"
+
         print " ".join(perf_args)
         perf_output = self._host.executive.run_command(perf_args)
         print self._first_ten_lines_of_profile(perf_output)
 
         print "To view the full profile, run:"
         print ' '.join([self._perf_path(), 'report', '-i', self._output_path])
+        print  # An extra line between tests looks nicer.
 
 
 class Sample(SingleFileOutputProfiler):

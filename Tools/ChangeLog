@@ -1,3 +1,21 @@
+2012-12-17  Eric Seidel  <eric@webkit.org>
+
+        Cleanup --profiler=perf code a little and allow up to 1000 report files (instead of 100)
+        https://bugs.webkit.org/show_bug.cgi?id=105217
+
+        Reviewed by Dirk Pranke.
+
+        Previously --profile would fail strangely if find_unused_filename returned None
+        (which would happen as soon as we had 100 report files).
+        Now we'll search through 1000 filenames before giving up (and assert if we failed to find one).
+        I also made some minor cleanups to the output of perf, and tried to make the
+        commands more self-documenting by using long-names for args.
+
+        * Scripts/webkitpy/common/system/profiler.py:
+        (SingleFileOutputProfiler.__init__):
+        (Perf.attach_to_pid):
+        (Perf.profile_after_exit):
+
 2012-12-17  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r137198.
