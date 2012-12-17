@@ -760,3 +760,6 @@ webkit.org/b/103122 fast/events/mouse-cursor.html
 
 # [Qt][WK2] new fast/dom/Geolocation/cached-position-iframe.html fails since it was introduced in r136164
 webkit.org/b/103876 fast/dom/Geolocation/cached-position-iframe.html
+
+# [Qt][WK2] compositing/overflow/automatically-opt-into-composited-scrolling.html makes other tests fail
+webkit.org/b/105173 compositing/overflow/automatically-opt-into-composited-scrolling.html
