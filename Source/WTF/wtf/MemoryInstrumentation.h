@@ -116,25 +116,44 @@ private:
     friend class MemoryClassInfo;
     template<typename T> friend void reportMemoryUsage(const T*, MemoryObjectInfo*);
 
-    template<typename T> static void selectInstrumentationMethod(const T* object, MemoryObjectInfo* memoryObjectInfo)
-    {
-        // If there is reportMemoryUsage method on the object, call it.
-        // Otherwise count only object's self size.
-        reportObjectMemoryUsage<T, void (T::*)(MemoryObjectInfo*) const>(object, memoryObjectInfo, 0);
-    }
+    template <typename Type>
+    class IsInstrumented {
+        class yes {
+            char m;
+        };
 
-    template<typename Type, Type Ptr> struct MemberHelperStruct;
-    template<typename T, typename Type>
-    static void reportObjectMemoryUsage(const T* object, MemoryObjectInfo* memoryObjectInfo,  MemberHelperStruct<Type, &T::reportMemoryUsage>*)
-    {
-        object->reportMemoryUsage(memoryObjectInfo);
-    }
+        class no {
+            yes m[2];
+        };
 
-    template<typename T, typename Type>
-    static void reportObjectMemoryUsage(const T* object, MemoryObjectInfo* memoryObjectInfo, ...)
-    {
-        callReportObjectInfo(memoryObjectInfo, object, 0, sizeof(T));
-    }
+        struct BaseMixin {
+            void reportMemoryUsage(MemoryObjectInfo*) const { }
+        };
+
+#if COMPILER(MSVC)
+#pragma warning(push)
+#pragma warning(disable: 4624) // Disable warning: destructor could not be generated because a base class destructor is inaccessible.
+#endif
+        struct Base : public Type, public BaseMixin { };
+#if COMPILER(MSVC)
+#pragma warning(pop)
+#endif
+
+        template <typename T, T t> class Helper { };
+
+        template <typename U> static no deduce(U*, Helper<void (BaseMixin::*)(MemoryObjectInfo*) const, &U::reportMemoryUsage>* = 0);
+        static yes deduce(...);
+
+    public:
+        static const bool result = sizeof(yes) == sizeof(deduce((Base*)(0)));
+
+    };
+
+    template <int>
+    struct InstrumentationSelector {
+        template <typename T> static void reportObjectMemoryUsage(const T*, MemoryObjectInfo*);
+    };
+
     WTF_EXPORT_PRIVATE static void callReportObjectInfo(MemoryObjectInfo*, const void* pointer, MemoryObjectType, size_t objectSize);
 
     template<typename T> class Wrapper : public WrapperBase {
@@ -189,6 +208,20 @@ private:
     MemoryInstrumentationClient* m_client;
 };
 
+template <>
+template <typename T>
+void MemoryInstrumentation::InstrumentationSelector<true>::reportObjectMemoryUsage(const T* object, MemoryObjectInfo* memoryObjectInfo)
+{
+    object->reportMemoryUsage(memoryObjectInfo);
+}
+
+template <>
+template <typename T>
+void MemoryInstrumentation::InstrumentationSelector<false>::reportObjectMemoryUsage(const T* object, MemoryObjectInfo* memoryObjectInfo)
+{
+    callReportObjectInfo(memoryObjectInfo, object, 0, sizeof(T));
+}
+
 class MemoryClassInfo {
 public:
     template<typename T>
@@ -224,7 +257,7 @@ private:
 template<typename T>
 void reportMemoryUsage(const T* object, MemoryObjectInfo* memoryObjectInfo)
 {
-    MemoryInstrumentation::selectInstrumentationMethod<T>(object, memoryObjectInfo);
+    MemoryInstrumentation::InstrumentationSelector<MemoryInstrumentation::IsInstrumented<T>::result>::reportObjectMemoryUsage(object, memoryObjectInfo);
 }
 
 template<typename T>
