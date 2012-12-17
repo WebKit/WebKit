@@ -1,3 +1,13 @@
+2012-12-17  Ilya Tikhonovsky  <loislo@chromium.org>
+
+        Unreviewed, rolling out r137892.
+        http://trac.webkit.org/changeset/137892
+        https://bugs.webkit.org/show_bug.cgi?id=105026
+
+        it broke compilation on windows
+
+        * TestWebKitAPI/Tests/WTF/MemoryInstrumentationTest.cpp:
+
 2012-12-14  Ilya Tikhonovsky  <loislo@chromium.org>
 
         Web Inspector: Native Memory Instrumentation: MemoryInstrumentation doesn't detect reportMemoryUsage method defined in a base class.
