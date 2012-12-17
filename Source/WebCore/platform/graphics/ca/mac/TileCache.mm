@@ -616,10 +616,9 @@ void TileCache::revalidateTiles(TileValidationPolicy validationPolicy)
                 [m_tileContainerLayer.get() addSublayer:tileInfo.layer.get()];
             } else {
                 // We already have a layer for this tile. Ensure that its size is correct.
-                CGSize tileLayerSize = [tileInfo.layer.get() frame].size;
-                if (tileLayerSize.width >= tileRect.width() && tileLayerSize.height >= tileRect.height())
-                    continue;
-                [tileInfo.layer.get() setFrame:tileRect];
+                FloatSize tileLayerSize([tileInfo.layer.get() frame].size);
+                if (tileLayerSize != FloatSize(tileRect.size()))
+                    [tileInfo.layer.get() setFrame:tileRect];
             }
             
             ++primaryLayerCount;
