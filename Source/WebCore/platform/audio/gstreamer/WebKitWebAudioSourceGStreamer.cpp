@@ -235,10 +235,7 @@ static void webKitWebAudioSrcConstructed(GObject* object)
         gst_bin_add_many(GST_BIN(src), queue, capsfilter, audioconvert, NULL);
         gst_element_link_pads_full(queue, "src", capsfilter, "sink", GST_PAD_LINK_CHECK_NOTHING);
         gst_element_link_pads_full(capsfilter, "src", audioconvert, "sink", GST_PAD_LINK_CHECK_NOTHING);
-
-        GRefPtr<GstPad> srcPad = adoptGRef(gst_element_get_static_pad(audioconvert, "src"));
-        GRefPtr<GstPad> sinkPad = adoptGRef(gst_element_get_request_pad(priv->interleave.get(), "sink%d"));
-        gst_pad_link(srcPad.get(), sinkPad.get());
+        gst_element_link_pads_full(audioconvert, "src", priv->interleave.get(), 0, GST_PAD_LINK_CHECK_NOTHING);
 
     }
     priv->pads = g_slist_reverse(priv->pads);

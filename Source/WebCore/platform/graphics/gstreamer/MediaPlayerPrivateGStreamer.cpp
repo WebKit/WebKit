@@ -1830,9 +1830,7 @@ void MediaPlayerPrivateGStreamer::createGSTPlayBin()
     gst_bin_add_many(GST_BIN(m_videoSinkBin), videoTee, queue, NULL);
 
     // Link a new src pad from tee to queue1.
-    GRefPtr<GstPad> srcPad = adoptGRef(gst_element_get_request_pad(videoTee, "src%d"));
-    GRefPtr<GstPad> sinkPad = adoptGRef(gst_element_get_static_pad(queue, "sink"));
-    gst_pad_link(srcPad.get(), sinkPad.get());
+    gst_element_link_pads_full(videoTee, 0, queue, "sink", GST_PAD_LINK_CHECK_NOTHING);
 #endif
 
     GstElement* actualVideoSink = 0;
