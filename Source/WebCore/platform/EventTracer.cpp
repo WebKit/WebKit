@@ -38,7 +38,7 @@ const unsigned char* EventTracer::getTraceCategoryEnabledFlag(const char*)
     return 0;
 }
     
-int EventTracer::addTraceEvent(char,
+void EventTracer::addTraceEvent(char,
                                      const unsigned char*,
                                      const char*,
                                      unsigned long long,
@@ -46,11 +46,8 @@ int EventTracer::addTraceEvent(char,
                                      const char**,
                                      const unsigned char*,
                                      const unsigned long long*,
-                                     int,
-                                     long long,
                                      unsigned char)
 {
-    return -1;
 }
 
 } // namespace WebCore

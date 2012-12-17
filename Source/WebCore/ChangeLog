@@ -1,3 +1,23 @@
+2012-12-12  Andrey Kosyakov  <caseq@chromium.org>
+
+        [Chromium] Remove support for TRACE_EVENT_IF_LONGER_THANx macros
+        https://bugs.webkit.org/show_bug.cgi?id=104784
+
+        Reviewed by Pavel Feldman.
+
+        - removed TRACE_EVENT_IF_LONGER_THANx macros;
+        - changed addTraceEvent() to return void, as we no longer need the index of added event.
+
+        * platform/EventTracer.h:
+        (EventTracer):
+        * platform/chromium/EventTracerChromium.cpp:
+        (WebCore::EventTracer::addTraceEvent):
+        * platform/chromium/TraceEvent.h:
+        (TraceEvent):
+        (WebCore::TraceEvent::addTraceEvent):
+        (WebCore::TraceEvent::TraceEndOnScopeClose::addEventIfEnabled):
+        (Data):
+
 2012-12-17  Kentaro Hara  <haraken@chromium.org>
 
         Unreviewed, rolling out r136794.

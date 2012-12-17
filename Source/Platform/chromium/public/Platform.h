@@ -346,8 +346,7 @@ public:
     virtual const unsigned char* getTraceCategoryEnabledFlag(const char* categoryName) { return 0; }
 
     // Add a trace event to the platform tracing system. Depending on the actual
-    // enabled state, this event may be recorded or dropped. Returns
-    // thresholdBeginId for use in a corresponding end addTraceEvent call.
+    // enabled state, this event may be recorded or dropped. 
     // - phase specifies the type of event:
     //   - BEGIN ('B'): Marks the beginning of a scoped event.
     //   - END ('E'): Marks the end of a scoped event.
@@ -393,7 +392,7 @@ public:
     //     matching with other events of the same name.
     //   - MANGLE_ID (0x4): specify this flag if the id parameter is the value
     //     of a pointer.
-    virtual int addTraceEvent(
+    virtual void addTraceEvent(
         char phase,
         const unsigned char* categoryEnabledFlag,
         const char* name,
@@ -402,9 +401,7 @@ public:
         const char** argNames,
         const unsigned char* argTypes,
         const unsigned long long* argValues,
-        int thresholdBeginId,
-        long long threshold,
-        unsigned char flags) { return -1; }
+        unsigned char flags) { }
 
     // Callbacks for reporting histogram data.
     // CustomCounts histogram has exponential bucket sizes, so that min=1, max=1000000, bucketCount=50 would do.
