@@ -1,3 +1,9 @@
+2012-12-17  Mikhail Pozdnyakov  <mikhail.pozdnyakov@intel.com>
+
+        Unreviewed, add myself to committers.py.
+
+        * Scripts/webkitpy/common/config/committers.py:
+
 2012-12-17  Oswald Buddenhagen  <oswald.buddenhagen@digia.com>
 
         [Qt] remove some unnecessary CONFIG additions
