@@ -4070,8 +4070,8 @@ Bug(dpranke) [ Win ] webaudio/codec-tests/vorbis/vbr-128kbps-44khz.html [ Failur
 webkit.org/b/100023 [ Mac ] fast/sub-pixel/file-upload-control-at-fractional-offset.html [ Failure ImageOnlyFailure ]
 
 # Needs rebaseline after bots cycle
-Bug(leviw) [ Linux Win Mac ] fast/sub-pixel/sub-pixel-iframe-copy-on-scroll.html [ Pass ImageOnlyFailure Failure ]
-Bug(leviw) [ Linux Win Mac ] fast/sub-pixel/transformed-iframe-copy-on-scroll.html [ Pass ImageOnlyFailure Failure ]
+Bug(leviw) [ Win Mac ] fast/sub-pixel/sub-pixel-iframe-copy-on-scroll.html [ Pass ImageOnlyFailure Failure ]
+Bug(leviw) [ Win Mac ] fast/sub-pixel/transformed-iframe-copy-on-scroll.html [ Pass ImageOnlyFailure Failure ]
 Bug(leviw) [ Linux Win Mac ] platform/chromium/fast/forms/suggestion-picker/date-suggestion-picker-appearance-with-scroll-bar.html [ Pass ImageOnlyFailure ]
 Bug(leviw) [ Linux Win Mac ] platform/chromium/fast/forms/suggestion-picker/month-suggestion-picker-appearance-with-scroll-bar.html [ Pass ImageOnlyFailure ]
 Bug(leviw) [ Linux Win Mac ] platform/chromium/fast/forms/suggestion-picker/week-suggestion-picker-appearance-with-scroll-bar.html [ Pass ImageOnlyFailure ]

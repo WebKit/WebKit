@@ -1,5 +1,21 @@
 2012-12-17  Levi Weintraub  <leviw@chromium.org>
 
+        Convert sub-pixel iframe-copy-on-scroll tests to use Mock scrollbars
+        https://bugs.webkit.org/show_bug.cgi?id=105210
+
+        Reviewed by Emil A Eklund.
+
+        Converting the iframe tests in sub-pixel/ to use mock scrollbars. These tests needed to
+        be rebaselined following r137847 anyways. Best to make this change before that.
+
+        * fast/sub-pixel/sub-pixel-iframe-copy-on-scroll.html:
+        * fast/sub-pixel/transformed-iframe-copy-on-scroll.html:
+        * platform/chromium-linux/fast/sub-pixel/sub-pixel-iframe-copy-on-scroll-expected.png:
+        * platform/chromium-linux/fast/sub-pixel/transformed-iframe-copy-on-scroll-expected.png:
+        * platform/chromium/TestExpectations:
+
+2012-12-17  Levi Weintraub  <leviw@chromium.org>
+
         Add support for tracking hit test rectangles to enable fast event rejection in the compositor
         https://bugs.webkit.org/show_bug.cgi?id=103914
 
