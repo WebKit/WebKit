@@ -1,3 +1,34 @@
+2012-12-16  Filip Pizlo  <fpizlo@apple.com>
+
+        Bytecode dumping should show rare case profiles
+        https://bugs.webkit.org/show_bug.cgi?id=105133
+
+        Reviewed by Geoffrey Garen.
+
+        Refactored the dumper to call dumpBytecodeCommandAndNewLine in just one place,
+        rather than in all of the places. Changed the rare case profile getters to use
+        tryBinarySearch rather than binarySearch, so that they can be used speculatively
+        even if you don't know that the bytecode has rare case profiles. This actually
+        increases our assertion level, since it means that in release builds we will get
+        null and crash rather than getting some random adjacent profile. And then this
+        adds some printing of the rare case profiles.
+
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::printUnaryOp):
+        (JSC::CodeBlock::printBinaryOp):
+        (JSC::CodeBlock::printConditionalJump):
+        (JSC::CodeBlock::printCallOp):
+        (JSC::CodeBlock::printPutByIdOp):
+        (JSC::CodeBlock::beginDumpProfiling):
+        (JSC):
+        (JSC::CodeBlock::dumpValueProfiling):
+        (JSC::CodeBlock::dumpArrayProfiling):
+        (JSC::CodeBlock::dumpRareCaseProfile):
+        (JSC::CodeBlock::dumpBytecode):
+        * bytecode/CodeBlock.h:
+        (JSC::CodeBlock::rareCaseProfileForBytecodeOffset):
+        (JSC::CodeBlock::specialFastCaseProfileForBytecodeOffset):
+
 2012-12-13  Filip Pizlo  <fpizlo@apple.com>
 
         Attempt to rationalize and simplify WTF::binarySearch

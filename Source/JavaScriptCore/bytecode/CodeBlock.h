@@ -707,7 +707,7 @@ namespace JSC {
         RareCaseProfile* rareCaseProfile(int index) { return &m_rareCaseProfiles[index]; }
         RareCaseProfile* rareCaseProfileForBytecodeOffset(int bytecodeOffset)
         {
-            return binarySearch<RareCaseProfile, int>(
+            return tryBinarySearch<RareCaseProfile, int>(
                 m_rareCaseProfiles, m_rareCaseProfiles.size(), bytecodeOffset,
                 getRareCaseProfileBytecodeOffset);
         }
@@ -737,7 +737,7 @@ namespace JSC {
         RareCaseProfile* specialFastCaseProfile(int index) { return &m_specialFastCaseProfiles[index]; }
         RareCaseProfile* specialFastCaseProfileForBytecodeOffset(int bytecodeOffset)
         {
-            return binarySearch<RareCaseProfile, int>(
+            return tryBinarySearch<RareCaseProfile, int>(
                 m_specialFastCaseProfiles, m_specialFastCaseProfiles.size(), bytecodeOffset,
                 getRareCaseProfileBytecodeOffset);
         }
@@ -1187,8 +1187,12 @@ namespace JSC {
         enum CacheDumpMode { DumpCaches, DontDumpCaches };
         void printCallOp(PrintStream&, ExecState*, int location, const Instruction*&, const char* op, CacheDumpMode);
         void printPutByIdOp(PrintStream&, ExecState*, int location, const Instruction*&, const char* op);
-        void dumpValueProfiling(PrintStream&, const Instruction*&);
-        void dumpArrayProfiling(PrintStream&, const Instruction*&);
+        void beginDumpProfiling(PrintStream&, bool& hasPrintedProfiling);
+        void dumpValueProfiling(PrintStream&, const Instruction*&, bool& hasPrintedProfiling);
+        void dumpArrayProfiling(PrintStream&, const Instruction*&, bool& hasPrintedProfiling);
+#if ENABLE(VALUE_PROFILER)
+        void dumpRareCaseProfile(PrintStream&, const char* name, RareCaseProfile*, bool& hasPrintedProfiling);
+#endif
 
         void visitStructures(SlotVisitor&, Instruction* vPC);
         
