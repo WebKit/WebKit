@@ -707,7 +707,7 @@ SpellChecker* InputHandler::getSpellChecker()
     return 0;
 }
 
-bool InputHandler::shouldRequestSpellCheckingOptionsForPoint(Platform::IntPoint& point, const Element* touchedElement, imf_sp_text_t& spellCheckingOptionRequest)
+bool InputHandler::shouldRequestSpellCheckingOptionsForPoint(const Platform::IntPoint& documentContentPosition, const Element* touchedElement, imf_sp_text_t& spellCheckingOptionRequest)
 {
     if (!isActiveTextEdit())
         return false;
@@ -726,7 +726,7 @@ bool InputHandler::shouldRequestSpellCheckingOptionsForPoint(Platform::IntPoint&
     if (touchedElement != currentFocusElement)
         return false;
 
-    LayoutPoint contentPos(m_webPage->mapFromViewportToContents(point));
+    LayoutPoint contentPos(documentContentPosition);
     contentPos = DOMSupport::convertPointToFrame(m_webPage->mainFrame(), m_webPage->focusedOrMainFrame(), roundedIntPoint(contentPos));
 
     Document* document = currentFocusElement->document();

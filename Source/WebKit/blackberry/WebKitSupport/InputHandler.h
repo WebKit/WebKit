@@ -143,7 +143,7 @@ public:
     void spellCheckingRequestProcessed(int32_t transactionId, spannable_string_t*);
     void spellCheckingRequestCancelled(int32_t transactionId);
 
-    bool shouldRequestSpellCheckingOptionsForPoint(Platform::IntPoint&, const WebCore::Element*, imf_sp_text_t&);
+    bool shouldRequestSpellCheckingOptionsForPoint(const Platform::IntPoint& documentContentPosition, const WebCore::Element*, imf_sp_text_t&);
     void requestSpellingCheckingOptions(imf_sp_text_t&, WebCore::IntSize& screenOffset, const bool shouldMoveDialog = false);
     void clearDidSpellCheckState() { m_didSpellCheckWord = false; }
     void redrawSpellCheckDialogIfRequired(const bool shouldMoveDialog = true);

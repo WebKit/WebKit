@@ -1,3 +1,35 @@
+2012-12-16  Arvid Nilsson  <anilsson@rim.com>
+
+        [BlackBerry] Adapt to new BlackBerry::Platform::TouchPoint API
+        https://bugs.webkit.org/show_bug.cgi?id=105143
+        RIM PR 171941
+
+        Reviewed by Rob Buis.
+        Internally reviewed by George Staikos.
+
+        TouchPoint instances now provide document coordinates for the viewport
+        and content position of the touch event. The pixel coordinates stored
+        in the TouchPoint should no longer be needed in WebKit. One exception
+        is when passing events to a full screen plugin.
+
+        Also adapt to new method names and encapsulation of TouchPoint data
+        members.
+
+        * Api/WebPage.cpp:
+        (BlackBerry::WebKit::WebPage::touchEvent):
+        (BlackBerry::WebKit::WebPage::touchPointAsMouseEvent):
+        (BlackBerry::WebKit::WebPagePrivate::dispatchTouchEventToFullScreenPlugin):
+        (BlackBerry::WebKit::WebPagePrivate::dispatchTouchPointAsMouseEventToFullScreenPlugin):
+        * WebKitSupport/InputHandler.cpp:
+        (BlackBerry::WebKit::InputHandler::shouldRequestSpellCheckingOptionsForPoint):
+        * WebKitSupport/InputHandler.h:
+        (InputHandler):
+        * WebKitSupport/TouchEventHandler.cpp:
+        (BlackBerry::WebKit::TouchEventHandler::doFatFingers):
+        (BlackBerry::WebKit::TouchEventHandler::handleTouchPoint):
+        * WebKitSupport/TouchEventHandler.h:
+        (TouchEventHandler):
+
 2012-12-15  Anders Carlsson  <andersca@apple.com>
 
         Rename FrameLoaderClient::download to convertMainResourceLoadToDownload

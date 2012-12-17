@@ -4058,11 +4058,6 @@ bool WebPage::touchEvent(const Platform::TouchEvent& event)
         return d->dispatchTouchEventToFullScreenPlugin(pluginView, event);
 
     Platform::TouchEvent tEvent = event;
-    for (unsigned i = 0; i < event.m_points.size(); i++) {
-        tEvent.m_points[i].m_pos = d->mapFromTransformed(tEvent.m_points[i].m_pos);
-        tEvent.m_points[i].m_screenPos = tEvent.m_points[i].m_screenPos;
-    }
-
     if (event.isSingleTap())
         d->m_pluginMayOpenNewTab = true;
     else if (tEvent.m_type == Platform::TouchEvent::TouchStart || tEvent.m_type == Platform::TouchEvent::TouchCancel)
@@ -4132,10 +4127,7 @@ void WebPage::touchPointAsMouseEvent(const Platform::TouchPoint& point, unsigned
 
     d->m_lastUserEventTimestamp = currentTime();
 
-    Platform::TouchPoint tPoint = point;
-    tPoint.m_pos = d->mapFromTransformed(tPoint.m_pos);
-
-    d->m_touchEventHandler->handleTouchPoint(tPoint, modifiers);
+    d->m_touchEventHandler->handleTouchPoint(point, modifiers);
 }
 
 void WebPage::playSoundIfAnchorIsTarget() const
@@ -4165,13 +4157,13 @@ bool WebPagePrivate::dispatchTouchEventToFullScreenPlugin(PluginView* plugin, co
         if (npTouchEvent.size) {
             npTouchEvent.points = new NPTouchPoint[npTouchEvent.size];
             for (int i = 0; i < npTouchEvent.size; i++) {
-                npTouchEvent.points[i].touchId = event.m_points[i].m_id;
-                npTouchEvent.points[i].clientX = event.m_points[i].m_screenPos.x();
-                npTouchEvent.points[i].clientY = event.m_points[i].m_screenPos.y();
-                npTouchEvent.points[i].screenX = event.m_points[i].m_screenPos.x();
-                npTouchEvent.points[i].screenY = event.m_points[i].m_screenPos.y();
-                npTouchEvent.points[i].pageX = event.m_points[i].m_pos.x();
-                npTouchEvent.points[i].pageY = event.m_points[i].m_pos.y();
+                npTouchEvent.points[i].touchId = event.m_points[i].id();
+                npTouchEvent.points[i].clientX = event.m_points[i].screenPosition().x();
+                npTouchEvent.points[i].clientY = event.m_points[i].screenPosition().y();
+                npTouchEvent.points[i].screenX = event.m_points[i].screenPosition().x();
+                npTouchEvent.points[i].screenY = event.m_points[i].screenPosition().y();
+                npTouchEvent.points[i].pageX = event.m_points[i].pixelViewportPosition().x();
+                npTouchEvent.points[i].pageY = event.m_points[i].pixelViewportPosition().y();
             }
         }
 
@@ -4193,7 +4185,7 @@ bool WebPagePrivate::dispatchTouchPointAsMouseEventToFullScreenPlugin(PluginView
     NPEvent npEvent;
     NPMouseEvent mouse;
 
-    switch (point.m_state) {
+    switch (point.state()) {
     case Platform::TouchPoint::TouchPressed:
         mouse.type = MOUSE_BUTTON_DOWN;
         break;
@@ -4207,8 +4199,8 @@ bool WebPagePrivate::dispatchTouchPointAsMouseEventToFullScreenPlugin(PluginView
         return true;
     }
 
-    mouse.x = point.m_screenPos.x();
-    mouse.y = point.m_screenPos.y();
+    mouse.x = point.screenPosition().x();
+    mouse.y = point.screenPosition().y();
     mouse.button = mouse.type != MOUSE_BUTTON_UP;
     mouse.flags = 0;
     npEvent.type = NP_MouseEvent;

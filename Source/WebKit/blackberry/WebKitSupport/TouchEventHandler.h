@@ -35,8 +35,8 @@ public:
     TouchEventHandler(WebPagePrivate* webpage);
     ~TouchEventHandler();
 
-    void doFatFingers(Platform::TouchPoint&);
-    void handleTouchPoint(Platform::TouchPoint&, unsigned modifiers);
+    void doFatFingers(const Platform::TouchPoint&);
+    void handleTouchPoint(const Platform::TouchPoint&, unsigned modifiers);
     void sendClickAtFatFingersPoint(unsigned modifiers = 0);
 
     const FatFingersResult& lastFatFingersResult() const { return m_lastFatFingersResult; }

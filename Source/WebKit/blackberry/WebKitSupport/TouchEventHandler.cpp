@@ -66,13 +66,12 @@ TouchEventHandler::~TouchEventHandler()
 {
 }
 
-void TouchEventHandler::doFatFingers(Platform::TouchPoint& point)
+void TouchEventHandler::doFatFingers(const Platform::TouchPoint& point)
 {
-    m_lastScreenPoint = point.m_screenPos;
+    m_lastScreenPoint = point.screenPosition();
     m_lastFatFingersResult.reset(); // Theoretically this shouldn't be required. Keep it just in case states get mangled.
-    IntPoint contentPos(m_webPage->mapFromViewportToContents(point.m_pos));
     m_webPage->postponeDocumentStyleRecalc();
-    m_lastFatFingersResult = FatFingers(m_webPage, contentPos, FatFingers::ClickableElement).findBestPoint();
+    m_lastFatFingersResult = FatFingers(m_webPage, point.documentContentPosition(), FatFingers::ClickableElement).findBestPoint();
     m_webPage->resumeDocumentStyleRecalc();
 }
 
@@ -87,7 +86,7 @@ void TouchEventHandler::sendClickAtFatFingersPoint(unsigned modifiers)
     m_webPage->handleMouseEvent(mouseRelease);
 }
 
-void TouchEventHandler::handleTouchPoint(Platform::TouchPoint& point, unsigned modifiers)
+void TouchEventHandler::handleTouchPoint(const Platform::TouchPoint& point, unsigned modifiers)
 {
     // Enable input mode on any touch event.
     m_webPage->m_inputHandler->setInputModeEnabled();
@@ -96,7 +95,7 @@ void TouchEventHandler::handleTouchPoint(Platform::TouchPoint& point, unsigned m
     bool altActive = modifiers & KEYMOD_ALT;
     bool ctrlActive = modifiers & KEYMOD_CTRL;
 
-    switch (point.m_state) {
+    switch (point.state()) {
     case Platform::TouchPoint::TouchPressed:
         {
             // Clear spellcheck state on any touch event
@@ -110,7 +109,7 @@ void TouchEventHandler::handleTouchPoint(Platform::TouchPoint& point, unsigned m
             // Check for text selection
             if (m_lastFatFingersResult.isTextInput()) {
                 elementUnderFatFinger = m_lastFatFingersResult.nodeAsElementIfApplicable(FatFingersResult::ShadowContentNotAllowed, true /* shouldUseRootEditableElement */);
-                m_shouldRequestSpellCheckOptions = m_webPage->m_inputHandler->shouldRequestSpellCheckingOptionsForPoint(point.m_pos, elementUnderFatFinger, m_spellCheckOptionRequest);
+                m_shouldRequestSpellCheckOptions = m_webPage->m_inputHandler->shouldRequestSpellCheckingOptionsForPoint(point.documentContentPosition(), elementUnderFatFinger, m_spellCheckOptionRequest);
             }
 
             handleFatFingerPressed(shiftActive, altActive, ctrlActive);
@@ -152,8 +151,8 @@ void TouchEventHandler::handleTouchPoint(Platform::TouchPoint& point, unsigned m
             m_webPage->m_inputHandler->clearDidSpellCheckState();
 
             // You can still send mouse move events
-            PlatformMouseEvent mouseEvent(point.m_pos, m_lastScreenPoint, PlatformEvent::MouseMoved, 1, LeftButton, shiftActive, ctrlActive, altActive, TouchScreen);
-            m_lastScreenPoint = point.m_screenPos;
+            PlatformMouseEvent mouseEvent(point.documentViewportPosition(), m_lastScreenPoint, PlatformEvent::MouseMoved, 1, LeftButton, shiftActive, ctrlActive, altActive, TouchScreen);
+            m_lastScreenPoint = point.screenPosition();
             m_webPage->handleMouseEvent(mouseEvent);
             break;
         }

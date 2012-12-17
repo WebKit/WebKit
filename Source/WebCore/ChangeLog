@@ -1,3 +1,24 @@
+2012-12-16  Arvid Nilsson  <anilsson@rim.com>
+
+        [BlackBerry] Adapt to new BlackBerry::Platform::TouchPoint API
+        https://bugs.webkit.org/show_bug.cgi?id=105143
+        RIM PR 171941
+
+        Reviewed by Rob Buis.
+        Internally reviewed by George Staikos.
+
+        TouchPoint instances now provide document coordinates for the viewport
+        and content position of the touch event. The pixel coordinates stored
+        in the TouchPoint should no longer be needed in WebKit.
+
+        Also adapt to new method names and encapsulation of TouchPoint data
+        members.
+
+        No change in behavior, no new tests.
+
+        * platform/blackberry/PlatformTouchPointBlackBerry.cpp:
+        (WebCore::PlatformTouchPoint::PlatformTouchPoint):
+
 2012-12-16  Eugene Klyuchnikov  <eustas@chromium.org>
 
         Web Inspector: Fix JS compiler warning.
