@@ -1,3 +1,18 @@
+2012-12-17  Antoine Quint  <graouts@apple.com>
+
+        GraphicsLayer's repaint count should update even when debugging option to show it is off
+        https://bugs.webkit.org/show_bug.cgi?id=105178
+
+        Reviewed by Simon Fraser.
+
+        Update the repain count even if the debug option to show them is turned off.
+        This allows the count to be accurate in between toggles of the debug option
+        and to allow the InspectorLayerTreeAgent to get accurate results any time
+        the layer tree is requested (see webkit.org/b/105024).
+
+        * platform/graphics/mac/WebLayer.mm:
+        (drawLayerContents):
+
 2012-12-17  Hans Muller  <hmuller@adobe.com>
 
         [CSS Exclusions] Add helper functions for converting floats to LayoutUnits

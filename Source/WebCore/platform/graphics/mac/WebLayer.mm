@@ -128,11 +128,16 @@ void drawLayerContents(CGContextRef context, CALayer *layer, WebCore::PlatformCA
     // Re-fetch the layer owner, since <rdar://problem/9125151> indicates that it might have been destroyed during painting.
     layerContents = platformLayer->owner();
     ASSERT(layerContents);
+
+    // Always update the repain count so that it's accurate even if the count itself is not shown. This will be useful
+    // for the Web Inspector feeding this information through the LayerTreeAgent. 
+    int repaintCount = layerContents->platformCALayerIncrementRepaintCount();
+
     if (!platformLayer->usesTileCacheLayer() && layerContents && layerContents->platformCALayerShowRepaintCounter(platformLayer)) {
         bool isTiledLayer = [layer isKindOfClass:[CATiledLayer class]];
 
         char text[16]; // that's a lot of repaints
-        snprintf(text, sizeof(text), "%d", layerContents->platformCALayerIncrementRepaintCount());
+        snprintf(text, sizeof(text), "%d", repaintCount);
 
         CGRect indicatorBox = layerBounds;
         indicatorBox.size.width = 12 + 10 * strlen(text);
