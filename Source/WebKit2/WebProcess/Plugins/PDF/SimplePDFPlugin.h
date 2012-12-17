@@ -182,6 +182,8 @@ private:
 
     void convertPostScriptDataIfNeeded();
 
+    virtual bool shouldAlwaysAutoStart() const OVERRIDE { return true; }
+
     WebCore::IntSize m_size;
 
     WebCore::KURL m_sourceURL;

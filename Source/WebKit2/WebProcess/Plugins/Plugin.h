@@ -253,6 +253,8 @@ public:
 
     virtual WebCore::IntPoint convertToRootView(const WebCore::IntPoint& pointInLocalCoordinates) const;
 
+    virtual bool shouldAlwaysAutoStart() const { return false; }
+
 protected:
     Plugin();
 

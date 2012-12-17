@@ -137,6 +137,7 @@ private:
     virtual WebCore::Scrollbar* horizontalScrollbar();
     virtual WebCore::Scrollbar* verticalScrollbar();
     virtual bool wantsWheelEvents();
+    virtual bool shouldAlwaysAutoStart() const OVERRIDE;
 
     // WebCore::Widget
     virtual void setFrameRect(const WebCore::IntRect&);

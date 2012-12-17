@@ -1583,4 +1583,11 @@ void PluginView::pluginSnapshotTimerFired(DeferrableOneShotTimer<PluginView>*)
     m_plugin = 0;
 }
 
+bool PluginView::shouldAlwaysAutoStart() const
+{
+    if (!m_plugin)
+        return PluginViewBase::shouldAlwaysAutoStart();
+    return m_plugin->shouldAlwaysAutoStart();
+}
+
 } // namespace WebKit

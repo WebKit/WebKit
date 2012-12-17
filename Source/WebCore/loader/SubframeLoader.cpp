@@ -156,7 +156,6 @@ bool SubframeLoader::requestPlugin(HTMLPlugInImageElement* ownerElement, const K
         return false;
 
     ASSERT(ownerElement->hasTagName(objectTag) || ownerElement->hasTagName(embedTag));
-    ownerElement->subframeLoaderWillLoadPlugIn(url);
     return loadPlugin(ownerElement, url, mimeType, paramNames, paramValues, useFallback);
 }
 
@@ -451,6 +450,8 @@ bool SubframeLoader::loadPlugin(HTMLPlugInImageElement* pluginElement, const KUR
     if (!renderer || useFallback)
         return false;
 
+    pluginElement->subframeLoaderWillCreatePlugIn(url);
+
     IntSize contentSize = roundedIntSize(LayoutSize(renderer->contentWidth(), renderer->contentHeight()));
     bool loadManually = document()->isPluginDocument() && !m_containsPlugins && toPluginDocument(document())->shouldLoadPluginManually();
     RefPtr<Widget> widget = m_frame->loader()->client()->createPlugin(contentSize,
@@ -462,6 +463,7 @@ bool SubframeLoader::loadPlugin(HTMLPlugInImageElement* pluginElement, const KUR
         return false;
     }
 
+    pluginElement->subframeLoaderDidCreatePlugIn(widget.get());
     renderer->setWidget(widget);
     m_containsPlugins = true;
  

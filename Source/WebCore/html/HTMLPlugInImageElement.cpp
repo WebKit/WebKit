@@ -33,6 +33,7 @@
 #include "Page.h"
 #include "PlugInClient.h"
 #include "PlugInOriginHash.h"
+#include "PluginViewBase.h"
 #include "RenderEmbeddedObject.h"
 #include "RenderImage.h"
 #include "RenderSnapshottedPlugIn.h"
@@ -284,11 +285,16 @@ void HTMLPlugInImageElement::simulatedMouseClickTimerFired(DeferrableOneShotTime
     m_pendingClickEventFromSnapshot = nullptr;
 }
 
-void HTMLPlugInImageElement::subframeLoaderWillLoadPlugIn(const KURL& url)
+void HTMLPlugInImageElement::subframeLoaderWillCreatePlugIn(const KURL& url)
 {
     if (!document()->page()
         || !document()->page()->settings()->plugInSnapshottingEnabled())
         return;
+
+    if (document()->isPluginDocument() && document()->frame() == document()->page()->mainFrame()) {
+        LOG(Plugins, "%p Plug-in document in main frame", this);
+        return;
+    }
 
     if (!renderer()->isSnapshottedPlugIn()) {
         LOG(Plugins, "%p Renderer is not snapshotted plugin, set to play", this);
@@ -323,6 +329,16 @@ void HTMLPlugInImageElement::subframeLoaderWillLoadPlugIn(const KURL& url)
 
     LOG(Plugins, "%p Plugin hash %x is %dx%d, origin is not auto-start, set to wait for snapshot", this, m_plugInOriginHash, width, height);
     setDisplayState(WaitingForSnapshot);
+}
+
+void HTMLPlugInImageElement::subframeLoaderDidCreatePlugIn(const Widget* widget)
+{
+    if (!widget->isPluginViewBase()
+        || !static_cast<const PluginViewBase*>(widget)->shouldAlwaysAutoStart())
+        return;
+
+    LOG(Plugins, "%p Plugin should auto-start, set to play", this);
+    setDisplayState(Playing);
 }
 
 } // namespace WebCore

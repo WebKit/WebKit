@@ -1,3 +1,37 @@
+2012-12-16  Jon Lee  <jonlee@apple.com>
+
+        Allow built-in PDF plugin and plugin documents to auto-start
+        https://bugs.webkit.org/show_bug.cgi?id=105000
+        <rdar://problem/12633351>
+
+        Reviewed by Sam Weinig.
+
+        Plug-ins in plug-in documents that are in the main frame should always auto-start.
+
+        Add a virtual function that returns whether the PluginViewBase should auto-start its plug-in.
+        Add a callback that gives the HTML plug-in element an opportunity to set the display state
+        based on the widget.
+
+        * plugins/PluginViewBase.h:
+        (WebCore::PluginViewBase::shouldAlwaysAutoStart): Added. By default returns false.
+
+        * html/HTMLPlugInImageElement.cpp:
+        (WebCore::HTMLPlugInImageElement::subframeLoaderWillCreatePlugIn): Renamed from
+        subframeLoaderWillLoadPlugIn() for consistency. This call will also be made a little later
+        in the subframe loader. Adds a check to see if the plug-in is inside a plug-in document
+        of the main frame. If so, auto-start.
+        (WebCore::HTMLPlugInImageElement::subframeLoaderDidCreatePlugIn): Given the widget created,
+        check to see if it should always auto-start. If so, set the display state to Playing. Otherwise
+        leave the display state alone.
+        * html/HTMLPlugInImageElement.h:
+
+        * loader/SubframeLoader.cpp:
+        (WebCore::SubframeLoader::requestPlugin): Move the will-load-plug-in call into loadPlugin().
+        (WebCore::SubframeLoader::loadPlugin): Immediately prior to the plug-in's creation, make the
+        will-create call. If a plug-in was made, make the did-create call. The did-create call should
+        be made before setWidget() since that might initialize the plug-in, which could take the display
+        state into account if being initialized synchronously.
+
 2012-12-16  Huang Dongsung  <luxtella@company100.net>
 
         [TexMap] Perform the layer-tree traversal in GraphicsLayerTextureMapper.
