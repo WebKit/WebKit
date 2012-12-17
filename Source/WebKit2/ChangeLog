@@ -1,3 +1,14 @@
+2012-12-16  Ryuan Choi  <ryuan.choi@samsung.com>
+
+        [EFL][WK2] Header files of ewk_context_menu should be installed
+        https://bugs.webkit.org/show_bug.cgi?id=105069
+
+        Reviewed by Gyuyoung Kim.
+
+        * PlatformEfl.cmake:
+        Modified to install ewk_context_menu.h and ewk_context_menu_item.h which
+        are included in EWebKit2.h
+
 2012-12-16  Alexey Proskuryakov  <ap@apple.com>
 
         <rdar://problem/12886898> Bundle uploads don't work
