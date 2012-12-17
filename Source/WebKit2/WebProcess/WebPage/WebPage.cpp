@@ -1037,18 +1037,19 @@ void WebPage::sendViewportAttributesChanged()
     IntPoint contentFixedOrigin = view->fixedVisibleContentRect().location();
 
     // Put the width and height to the viewport width and height. In css units however.
-    IntSize contentFixedSize = m_viewportSize;
+    // Use FloatSize to avoid truncated values during scale.
+    FloatSize contentFixedSize = m_viewportSize;
 
     contentFixedSize.scale(1 / m_page->deviceScaleFactor());
 
 #if ENABLE(CSS_DEVICE_ADAPTATION)
     // CSS viewport descriptors might be applied to already affected viewport size
     // if the page enables/disables stylesheets, so need to keep initial viewport size.
-    view->setInitialViewportSize(contentFixedSize);
+    view->setInitialViewportSize(roundedIntSize(contentFixedSize));
 #endif
 
     contentFixedSize.scale(1 / attr.initialScale);
-    setFixedVisibleContentRect(IntRect(contentFixedOrigin, contentFixedSize));
+    setFixedVisibleContentRect(IntRect(contentFixedOrigin, roundedIntSize(contentFixedSize)));
 
     attr.initialScale = m_page->viewportArguments().zoom; // Resets auto (-1) if no value was set by user.
 
