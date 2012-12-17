@@ -38574,6 +38574,14 @@
 				>
 			</File>
 			<File
+				RelativePath="..\rendering\ExclusionShapeOutsideInfo.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\rendering\ExclusionShapeOutsideInfo.h"
+				>
+			</File>
+			<File
 				RelativePath="..\rendering\FilterEffectRenderer.cpp"
 				>
 				<FileConfiguration

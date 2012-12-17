@@ -1,3 +1,23 @@
+2012-12-17  Bem Jones-Bey  <bjonesbe@adobe.com>
+
+        [CSS Exclusions] shape-outside on floats for rectangle shapes height/width
+        https://bugs.webkit.org/show_bug.cgi?id=100398
+
+        Reviewed by Julien Chaffraix.
+
+        Tests for the basic shape outside functionality to show how the shape affects inline text and other floats. 
+        Also test using percentages to specify the shape and that margins are properly ignored (per the spec), when a 
+        shape is applied to a float.
+
+        * fast/exclusions/shape-outside-floats/shape-outside-floats-margin-is-ignored-expected.html: Added.
+        * fast/exclusions/shape-outside-floats/shape-outside-floats-margin-is-ignored.html: Added.
+        * fast/exclusions/shape-outside-floats/shape-outside-floats-simple-rectangle-expected.html: Added.
+        * fast/exclusions/shape-outside-floats/shape-outside-floats-simple-rectangle-horizontal-multiple-expected.html: Added.
+        * fast/exclusions/shape-outside-floats/shape-outside-floats-simple-rectangle-horizontal-multiple.html: Added.
+        * fast/exclusions/shape-outside-floats/shape-outside-floats-simple-rectangle-percentage-expected.html: Added.
+        * fast/exclusions/shape-outside-floats/shape-outside-floats-simple-rectangle-percentage.html: Added.
+        * fast/exclusions/shape-outside-floats/shape-outside-floats-simple-rectangle.html: Added.
+
 2012-12-17  John J. Barton  <johnjbarton@chromium.org>
 
         Web Inspector: Search by selection

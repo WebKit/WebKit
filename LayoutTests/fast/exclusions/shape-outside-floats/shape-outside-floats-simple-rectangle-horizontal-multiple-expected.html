@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+    .container {
+        font: 10px/1 Ahem, sans-serif;
+        height: 20px;
+        width: 40px;
+        border: 1px solid black;
+    }
+    .float-right {
+        float: right;
+        height: 20px;
+        width: 20px;
+        background-color: green;
+    }
+    .float-left {
+        float: left;
+        height: 20px;
+        width: 20px;
+        background-color: green;
+    }
+    .float-right-vertical {
+        float: right;
+        height: 20px;
+        width: 20px;
+        background-color: green;
+    }
+    .float-left-vertical {
+        float: left;
+        height: 20px;
+        width: 20px;
+        background-color: green;
+    }
+    .float-right-exclusion {
+        float: right;
+        height: 20px;
+        width: 10px;
+    }
+    .float-left-exclusion {
+        float: left;
+        height: 20px;
+        width: 10px;
+    }
+    .float-right-vertical-exclusion {
+        float: right;
+        height: 10px;
+        width: 20px;
+    }
+    .float-left-vertical-exclusion {
+        float: left;
+        height: 10px;
+        width: 20px;
+    }
+    .writing-mode-vertical-lr {
+        -webkit-writing-mode: vertical-lr;
+        height: 40px;
+        width: 20px;
+    }
+    .writing-mode-vertical-rl {
+        -webkit-writing-mode: vertical-rl;
+        height: 40px;
+        width: 20px;
+    }
+</style>
+</head>
+<body>
+    <h1><a href="https://bugs.webkit.org/show_bug.cgi?id=100398">Bug 100398</a>: [CSS Exclusions] shape-outside on floats for rectangle shapes height/width</h1>
+    <h2>These tests show that floats respect the shape outside on other floats. Each test should have a green square centegreen in a larger rectangle.</h2>
+    <div class="container">
+        <div class="float-right-exclusion"></div>
+        <div class="float-right"></div>
+    </div>
+    <p></p>
+    <div class="container">
+        <div class="float-left-exclusion"></div>
+        <div class="float-left"></div>
+ 
+    </div>
+    <p></p>
+    <div class="container writing-mode-vertical-lr">
+        <div class="float-right-vertical-exclusion"></div>
+        <div class="float-right-vertical"></div>
+
+    </div>
+    <p></p>
+    <div class="container writing-mode-vertical-lr">
+        <div class="float-left-vertical-exclusion"></div>
+        <div class="float-left-vertical"></div>
+
+    </div>
+    <p></p>
+    <div class="container writing-mode-vertical-rl">
+        <div class="float-right-vertical-exclusion"></div>
+        <div class="float-right-vertical"></div>
+
+    </div>
+    <p></p>
+    <div class="container writing-mode-vertical-rl">
+        <div class="float-left-vertical-exclusion"></div>
+        <div class="float-left-vertical"></div>
+
+    </div>
+</body>
+</html>

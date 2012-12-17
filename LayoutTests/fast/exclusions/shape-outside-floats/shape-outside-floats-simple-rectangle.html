@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <script>
+        if (window.internals)
+            window.internals.settings.setCSSExclusionsEnabled(true);
+    </script>
+    <style>
+        .test {
+            font: 10px/1 Ahem, sans-serif;
+            border: 1px solid black;
+        }
+        .vertical-lr {
+            -webkit-writing-mode: vertical-lr;
+        }
+        .vertical-rl {
+            -webkit-writing-mode: vertical-rl;
+        }
+        .container-horizontal {
+            width: 40px;
+            height: 30px;
+        }
+        .container-vertical {
+            width: 30px;
+            height: 40px;
+        }
+        .float-rectangle-horizontal {
+            width: 10px;
+            height: 20px;
+        }
+        .float-rectangle-vertical {
+            width: 20px;
+            height: 10px;
+        }
+        .float-square {
+            width: 20px;
+            height: 20px;
+        }
+        .exclusion-horizontal-larger {
+            -webkit-shape-outside: rectangle(0, 0, 30px, 20px);
+        }
+        .exclusion-vertical-larger {
+            -webkit-shape-outside: rectangle(0, 0, 20px, 30px);
+        }
+        .exclusion-horizontal-smaller {
+            -webkit-shape-outside: rectangle(0, 0, 10px, 20px);
+        }
+        .exclusion-vertical-smaller {
+            -webkit-shape-outside: rectangle(0, 0, 20px, 10px);
+        }
+    </style>
+</head>
+<body>
+    <h1><a href="https://bugs.webkit.org/show_bug.cgi?id=100398">Bug 100398</a>: [CSS Exclusions] shape-outside on floats for rectangle shapes height/width</h1>
+    <h2>The following tests all should have a white rectangle in one corner of a larger black rectangle.</h2>
+    <h3>Shape with greater width than float</h3>
+    <p></p>
+    <div class="test container-horizontal">
+        <div class="float-rectangle-horizontal exclusion-horizontal-larger" style="float: right"></div>
+        X
+        X
+        XXXX
+    </div>
+    <p></p>
+    <div class="test container-horizontal">
+        <div class="float-rectangle-horizontal exclusion-horizontal-larger" style="float: left"></div>
+        X
+        X
+        XXXX
+    </div>
+    <p></p>
+    <div class="test container-vertical vertical-rl">
+        <div class="float-rectangle-vertical exclusion-vertical-larger" style="float: right"></div>
+        X
+        X
+        XXXX
+    </div>
+    <p></p>
+    <div class="test container-vertical vertical-rl">
+        <div class="float-rectangle-vertical exclusion-vertical-larger" style="float: left"></div>
+        X
+        X
+        XXXX
+    </div>
+    <p></p>
+    <div class="test container-vertical vertical-lr">
+        <div class="float-rectangle-vertical exclusion-vertical-larger" style="float: right"></div>
+        X
+        X
+        XXXX
+    </div>
+    <p></p>
+    <div class="test container-vertical vertical-lr">
+        <div class="float-rectangle-vertical exclusion-vertical-larger" style="float: left"></div>
+        X
+        X
+        XXXX
+    </div>
+
+    <h3>Shape with smaller width than float</h3>
+    <p></p>
+    <div class="test container-horizontal">
+        <div class="float-square exclusion-horizontal-smaller" style="float: right"></div>
+        XXX
+        XXX
+        XXXX
+    </div>
+    <p></p>
+    <div class="test container-horizontal">
+        <div class="float-square exclusion-horizontal-smaller" style="float: left"></div>
+        XXX
+        XXX
+        XXXX
+    </div>
+    <p></p>
+    <div class="test container-vertical vertical-rl">
+        <div class="float-square exclusion-vertical-smaller" style="float: right"></div>
+        XXX
+        XXX
+        XXXX
+    </div>
+    <p></p>
+    <div class="test container-vertical vertical-rl">
+        <div class="float-square exclusion-vertical-smaller" style="float: left"></div>
+        XXX
+        XXX
+        XXXX
+    </div>
+    <p></p>
+    <div class="test container-vertical vertical-lr">
+        <div class="float-square exclusion-vertical-smaller" style="float: right"></div>
+        XXX
+        XXX
+        XXXX
+    </div>
+    <p></p>
+    <div class="test container-vertical vertical-lr">
+        <div class="float-square exclusion-vertical-smaller" style="float: left"></div>
+        XXX
+        XXX
+        XXXX
+    </div>
+
+    <h3>Shape with greater height than float</h3>
+    <p></p>
+    <div class="test container-vertical">
+        <div class="float-rectangle-vertical exclusion-vertical-larger" style="float: right"></div>
+        X
+        X
+        X
+        XXX
+    </div>
+    <p></p>
+    <div class="test container-vertical">
+        <div class="float-rectangle-vertical exclusion-vertical-larger" style="float: left"></div>
+        X
+        X
+        X
+        XXX
+    </div>
+    <p></p>
+    <div class="test container-horizontal vertical-rl">
+        <div class="float-rectangle-horizontal exclusion-horizontal-larger" style="float: right"></div>
+        X
+        X
+        X
+        XXX
+    </div>
+    <p></p>
+    <div class="test container-horizontal vertical-rl">
+        <div class="float-rectangle-horizontal exclusion-horizontal-larger" style="float: left"></div>
+        X
+        X
+        X
+        XXX
+    </div>
+    <p></p>
+    <div class="test container-horizontal vertical-lr">
+        <div class="float-rectangle-horizontal exclusion-horizontal-larger" style="float: right"></div>
+        X
+        X
+        X
+        XXX
+    </div>
+    <p></p>
+    <div class="test container-horizontal vertical-lr">
+        <div class="float-rectangle-horizontal exclusion-horizontal-larger" style="float: left"></div>
+        X
+        X
+        X
+        XXX
+    </div>
+
+    <h3>Shape with smaller height than float</h3>
+    <p></p>
+    <div class="test container-vertical">
+        <div class="float-square exclusion-vertical-smaller" style="float: right"></div>
+        X
+        XXX
+        XXX
+        XXX
+    </div>
+    <p></p>
+    <div class="test container-vertical">
+        <div class="float-square exclusion-vertical-smaller" style="float: left"></div>
+        X
+        XXX
+        XXX
+        XXX
+    </div>
+    <p></p>
+    <div class="test container-horizontal vertical-rl">
+        <div class="float-square exclusion-horizontal-smaller" style="float: right"></div>
+        X
+        XXX
+        XXX
+        XXX
+    </div>
+    <p></p>
+    <div class="test container-horizontal vertical-rl">
+        <div class="float-square exclusion-horizontal-smaller" style="float: left"></div>
+        X
+        XXX
+        XXX
+        XXX
+    </div>
+    <p></p>
+    <div class="test container-horizontal vertical-lr">
+        <div class="float-square exclusion-horizontal-smaller" style="float: right"></div>
+        X
+        XXX
+        XXX
+        XXX
+    </div>
+    <p></p>
+    <div class="test container-horizontal vertical-lr">
+        <div class="float-square exclusion-horizontal-smaller" style="float: left"></div>
+        X
+        XXX
+        XXX
+        XXX
+    </div>
+</body>

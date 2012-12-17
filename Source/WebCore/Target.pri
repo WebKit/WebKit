@@ -1128,6 +1128,7 @@ SOURCES += \
     rendering/ExclusionRectangle.cpp \
     rendering/ExclusionShape.cpp \
     rendering/ExclusionShapeInsideInfo.cpp \
+    rendering/ExclusionShapeOutsideInfo.cpp \
     rendering/FilterEffectRenderer.cpp \
     rendering/FixedTableLayout.cpp \
     rendering/FlowThreadController.cpp \
@@ -2366,6 +2367,7 @@ HEADERS += \
     rendering/ExclusionRectangle.h \
     rendering/ExclusionShape.h \
     rendering/ExclusionShapeInsideInfo.h \
+    rendering/ExclusionShapeOutsideInfo.h \
     rendering/FilterEffectRenderer.h \
     rendering/FixedTableLayout.h \
     rendering/HitTestingTransformState.h \

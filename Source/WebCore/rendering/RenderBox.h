@@ -26,6 +26,9 @@
 #include "RenderBoxModelObject.h"
 #include "RenderOverflow.h"
 #include "ScrollTypes.h"
+#if ENABLE(CSS_EXCLUSIONS)
+#include "ExclusionShapeOutsideInfo.h"
+#endif
 
 namespace WebCore {
 
@@ -571,6 +574,13 @@ public:
     virtual void reportMemoryUsage(MemoryObjectInfo*) const OVERRIDE;
     static void reportStaticMembersMemoryUsage(MemoryInstrumentation*);
 
+#if ENABLE(CSS_EXCLUSIONS)
+    ExclusionShapeOutsideInfo* exclusionShapeOutsideInfo() const
+    {
+        return style()->shapeOutside() && ExclusionShapeOutsideInfo::isInfoEnabledForRenderBox(this) ? ExclusionShapeOutsideInfo::infoForRenderBox(this) : 0;
+    }
+#endif
+
 protected:
     virtual void willBeDestroyed();
 
@@ -606,6 +616,10 @@ protected:
     RenderObject* splitAnonymousBoxesAroundChild(RenderObject* beforeChild);
  
 private:
+#if ENABLE(CSS_EXCLUSIONS)
+    void updateExclusionShapeOutsideInfoAfterStyleChange(const ExclusionShapeValue* shapeOutside, const ExclusionShapeValue* oldShapeOutside);
+#endif
+
     bool fixedElementLaysOutRelativeToFrame(Frame*, FrameView*) const;
 
     bool includeVerticalScrollbarSize() const;

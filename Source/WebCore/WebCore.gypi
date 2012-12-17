@@ -2245,6 +2245,8 @@
             'rendering/ExclusionShape.h',
             'rendering/ExclusionShapeInsideInfo.cpp',
             'rendering/ExclusionShapeInsideInfo.h',
+            'rendering/ExclusionShapeOutsideInfo.cpp',
+            'rendering/ExclusionShapeOutsideInfo.h',
             'rendering/FilterEffectRenderer.cpp',
             'rendering/FilterEffectRenderer.h',
             'rendering/FixedTableLayout.cpp',

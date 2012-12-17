@@ -1,3 +1,68 @@
+2012-12-17  Bem Jones-Bey  <bjonesbe@adobe.com>
+
+        [CSS Exclusions] shape-outside on floats for rectangle shapes height/width
+        https://bugs.webkit.org/show_bug.cgi?id=100398
+
+        Reviewed by Julien Chaffraix.
+
+        Implement shape outside for floats changing only the height and width
+        as a simple starting point.
+
+        This implementation changes floats to use the bounding box of the
+        shape outside instead of the margin box for layout. The content box of
+        the float is unchanged. This patch does not support positioning the
+        shape outside box, so the x and y parameters are currently ignored in
+        the specified shape. This will be fixed in a patch for bug 100399.
+
+        Tests: fast/exclusions/shape-outside-floats/shape-outside-floats-margin-is-ignored.html
+               fast/exclusions/shape-outside-floats/shape-outside-floats-simple-rectangle-horizontal-multiple.html
+               fast/exclusions/shape-outside-floats/shape-outside-floats-simple-rectangle-percentage.html
+               fast/exclusions/shape-outside-floats/shape-outside-floats-simple-rectangle.html
+
+        * CMakeLists.txt: Add ExclusionShapeOutsideInfo.{cpp,h}.
+        * GNUmakefile.list.am: Add ExclusionShapeOutsideInfo.{cpp,h}.
+        * Target.pri: Add ExclusionShapeOutsideInfo.{cpp,h}.
+        * WebCore.gypi: Add ExclusionShapeOutsideInfo.{cpp,h}.
+        * WebCore.vcproj/WebCore.vcproj: Add ExclusionShapeOutsideInfo.{cpp,h}.
+        * WebCore.xcodeproj/project.pbxproj: Add ExclusionShapeOutsideInfo.{cpp,h}.
+        * rendering/ExclusionShapeOutsideInfo.cpp: Added. Associates the
+            ExclusionShape object for shape outside with a RenderBox. Analagous to
+            ExclusionShapeInsideInfo.
+        (WebCore::exclusionShapeOutsideInfoMap):
+        (WebCore::ExclusionShapeOutsideInfo::ExclusionShapeOutsideInfo):
+        (WebCore::ExclusionShapeOutsideInfo::~ExclusionShapeOutsideInfo):
+        (WebCore::ExclusionShapeOutsideInfo::ensureInfoForRenderBox):
+        (WebCore::ExclusionShapeOutsideInfo::infoForRenderBox):
+        (WebCore::ExclusionShapeOutsideInfo::isInfoEnabledForRenderBox):
+        (WebCore::ExclusionShapeOutsideInfo::removeInfoForRenderBox):
+        (WebCore::ExclusionShapeOutsideInfo::computedShape):
+        * rendering/ExclusionShapeOutsideInfo.h: Added. Associates the
+            ExclusionShape object for shape outside with a RenderBox. Analagous to
+            ExclusionShapeInsideInfo.
+        (ExclusionShapeOutsideInfo):
+        (WebCore::ExclusionShapeOutsideInfo::create):
+        (WebCore::ExclusionShapeOutsideInfo::shapeLogicalLeft):
+        (WebCore::ExclusionShapeOutsideInfo::shapeLogicalRight):
+        (WebCore::ExclusionShapeOutsideInfo::shapeLogicalTop):
+        (WebCore::ExclusionShapeOutsideInfo::shapeLogicalBottom):
+        (WebCore::ExclusionShapeOutsideInfo::shapeLogicalWidth):
+        (WebCore::ExclusionShapeOutsideInfo::shapeLogicalHeight):
+        (WebCore::ExclusionShapeOutsideInfo::setShapeSize):
+        (WebCore::ExclusionShapeOutsideInfo::dirtyShapeSize):
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::insertFloatingObject): Use the shape outside's bounding box to set the width that is
+            used for inline layout for the float and it's siblings.
+        (WebCore::RenderBlock::positionNewFloats): Use the shape outside's bounding box to set the height that
+            is used for inline layout for the float and it's siblings. Ignore margins when positioning if the float
+            has shape outside, per the exclusions spec. 
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::willBeDestroyed): Clean up associated ExclusionShape.
+        (WebCore::RenderBox::styleDidChange): Handle style change for shape outside.
+        (WebCore::RenderBox::updateExclusionShapeOutsideInfoAfterStyleChange): Handle style change for shape outside.
+        * rendering/RenderBox.h:
+        (WebCore::RenderBox::exclusionShapeOutsideInfo): Get the ExclusionShapeOutsideInfo associated with this
+            RenderBox.
+
 2012-12-17  John J. Barton  <johnjbarton@chromium.org>
 
         Web Inspector: Search by selection

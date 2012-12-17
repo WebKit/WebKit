@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+    .container {
+        font: 10px/1 Ahem, sans-serif;
+        border: 1px solid black;
+    }
+    .container-smaller {
+        height: 40px;
+        width: 40px;
+    }
+    .container-horizontal-larger {
+        height: 40px;
+        width: 30px;
+    }
+    .container-vertical-larger {
+        height: 30px;
+        width: 40px;
+    }
+    .float-horizontal-smaller {
+        float: right;
+        height: 10px;
+        width: 20px;
+    }
+    .float-vertical-smaller {
+        float: right;
+        height: 20px;
+        width: 10px;
+    }
+    .float-horizontal-larger {
+        float: right;
+        height: 30px;
+        width: 20px;
+    }
+    .float-vertical-larger {
+        float: right;
+        height: 20px;
+        width: 30px;
+    }
+    .writing-mode-vertical-lr {
+        -webkit-writing-mode: vertical-lr;
+    }
+    .writing-mode-vertical-rl {
+        -webkit-writing-mode: vertical-rl;
+    }
+</style>
+</head>
+<body>
+    <h1><a href="https://bugs.webkit.org/show_bug.cgi?id=100398">Bug 100398</a>: [CSS Exclusions] shape-outside on floats for rectangle shapes height/width</h1>
+    <h2>These tests show that the shape outside works with shapes specified with percentages. Each rectangle below should have a smaller white rectangle on one corner.</h2>
+    <div class="container container-smaller">
+        <div class="float-horizontal-smaller"></div>
+        XX
+        XXXX
+        XXXX
+        XXXX
+    </div>
+    <p>
+    </p>
+    <div class="container container-smaller writing-mode-vertical-lr">
+        <div class="float-vertical-smaller"></div>
+        XX
+        XXXX
+        XXXX
+        XXXX
+    </div>
+    <p>
+    </p>
+    <div class="container container-smaller writing-mode-vertical-rl">
+        <div class="float-vertical-smaller"></div>
+        XX
+        XXXX
+        XXXX
+        XXXX
+    </div>
+    <p>
+    </p>
+    <div class="container container-horizontal-larger">
+        <div class="float-horizontal-larger"></div>
+        X
+        X
+        X
+        XXX
+    </div>
+    <p>
+    </p>
+    <div class="container container-vertical-larger writing-mode-vertical-lr">
+        <div class="float-vertical-larger"></div>
+        X
+        X
+        X
+        XXX
+    </div>
+    <p>
+    </p>
+    <div class="container container-vertical-larger writing-mode-vertical-rl">
+        <div class="float-vertical-larger"></div>
+        X
+        X
+        X
+        XXX
+    </div>
+</body>
+</html>

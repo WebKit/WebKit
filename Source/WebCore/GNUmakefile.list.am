@@ -4243,6 +4243,8 @@ webcore_sources += \
 	Source/WebCore/rendering/ExclusionShape.h \
 	Source/WebCore/rendering/ExclusionShapeInsideInfo.cpp \
 	Source/WebCore/rendering/ExclusionShapeInsideInfo.h \
+	Source/WebCore/rendering/ExclusionShapeOutsideInfo.cpp \
+	Source/WebCore/rendering/ExclusionShapeOutsideInfo.h \
 	Source/WebCore/rendering/FilterEffectRenderer.cpp \
 	Source/WebCore/rendering/FilterEffectRenderer.h \
 	Source/WebCore/rendering/FixedTableLayout.cpp \

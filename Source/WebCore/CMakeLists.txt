@@ -2085,6 +2085,7 @@ set(WebCore_SOURCES
     rendering/ExclusionRectangle.cpp
     rendering/ExclusionShape.cpp
     rendering/ExclusionShapeInsideInfo.cpp
+    rendering/ExclusionShapeOutsideInfo.cpp
     rendering/FilterEffectRenderer.cpp
     rendering/FixedTableLayout.cpp
     rendering/FlowThreadController.cpp

@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script>
+    if (window.internals)
+        window.internals.settings.setCSSExclusionsEnabled(true);
+</script>
+<style>
+    .container {
+        font: 10px/1 Ahem, sans-serif;
+        height: 30px;
+        width: 40px;
+        border: 1px solid black;
+    }
+    .float-right {
+        -webkit-shape-outside: rectangle(0px, 0px, 20px, 20px);
+        float: right;
+        margin: 10px;
+        height: 20px;
+        width: 20px;
+    }
+    .float-left {
+        -webkit-shape-outside: rectangle(0px, 0px, 20px, 20px);
+        float: left;
+        margin: 10px;
+        height: 20px;
+        width: 20px;
+    }
+</style>
+</head>
+<body>
+    <h1><a href="https://bugs.webkit.org/show_bug.cgi?id=100398">Bug 100398</a>: [CSS Exclusions] shape-outside on floats for rectangle shapes height/width</h1>
+    <h2>The following tests show that the margin is ignored when there is a shape outside. Each test should be a black rectangle with a white square in one corner.</h2>
+    <div class="container">
+        <div class="float-right"></div>
+        XX
+        XX
+        XXXX
+    </div>
+    <p></p>
+    <div class="container">
+        <div class="float-left"></div>
+        XX
+        XX
+        XXXX
+    </div>
+</body>
+</html>
