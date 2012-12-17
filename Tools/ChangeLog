@@ -1,3 +1,15 @@
+2012-12-17  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r137198.
+        http://trac.webkit.org/changeset/137198
+        https://bugs.webkit.org/show_bug.cgi?id=105212
+
+        This patch is causing API behavior compatibility problems
+        (Requested by zdobersek on #webkit).
+
+        * DumpRenderTree/gtk/DumpRenderTree.cpp:
+        (willSendRequestCallback):
+
 2012-12-17  Elliott Sprehn  <esprehn@chromium.org>
 
         Unreviewed. Adding myself to committers list.
