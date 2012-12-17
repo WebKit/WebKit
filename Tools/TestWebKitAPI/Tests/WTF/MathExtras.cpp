@@ -50,4 +50,137 @@ TEST(WTF, Lrint)
     }
 }
 
+TEST(WTF, clampToIntLong)
+{
+    if (sizeof(long) == sizeof(int))
+        return;
+
+    long maxInt = std::numeric_limits<int>::max();
+    long minInt = std::numeric_limits<int>::min();
+    long overflowInt = maxInt + 1;
+    long underflowInt = minInt - 1;
+
+    EXPECT_GT(overflowInt, maxInt);
+    EXPECT_LT(underflowInt, minInt);
+
+    EXPECT_EQ(clampTo<int>(maxInt), maxInt);
+    EXPECT_EQ(clampTo<int>(minInt), minInt);
+
+    EXPECT_EQ(clampTo<int>(overflowInt), maxInt);
+    EXPECT_EQ(clampTo<int>(underflowInt), minInt);
+}
+
+TEST(WTF, clampToIntLongLong)
+{
+    long long maxInt = std::numeric_limits<int>::max();
+    long long minInt = std::numeric_limits<int>::min();
+    long long overflowInt = maxInt + 1;
+    long long underflowInt = minInt - 1;
+
+    EXPECT_GT(overflowInt, maxInt);
+    EXPECT_LT(underflowInt, minInt);
+
+    EXPECT_EQ(clampTo<int>(maxInt), maxInt);
+    EXPECT_EQ(clampTo<int>(minInt), minInt);
+
+    EXPECT_EQ(clampTo<int>(overflowInt), maxInt);
+    EXPECT_EQ(clampTo<int>(underflowInt), minInt);
+}
+
+TEST(WTF, clampToIntegerFloat)
+{
+    // This test is inaccurate as floats will round the min / max integer
+    // due to the narrow mantissa. However it will properly checks within
+    // (close to the extreme) and outside the integer range.
+    float maxInt = std::numeric_limits<int>::max();
+    float minInt = std::numeric_limits<int>::min();
+    float overflowInt = maxInt * 1.1;
+    float underflowInt = minInt * 1.1;
+
+    EXPECT_GT(overflowInt, maxInt);
+    EXPECT_LT(underflowInt, minInt);
+
+    EXPECT_EQ(clampToInteger(maxInt), maxInt);
+    EXPECT_EQ(clampToInteger(minInt), minInt);
+
+    EXPECT_EQ(clampToInteger(overflowInt), maxInt);
+    EXPECT_EQ(clampToInteger(underflowInt), minInt);
+}
+
+TEST(WTF, clampToIntegerDouble)
+{
+    double maxInt = std::numeric_limits<int>::max();
+    double minInt = std::numeric_limits<int>::min();
+    double overflowInt = maxInt + 1;
+    double underflowInt = minInt - 1;
+
+    EXPECT_GT(overflowInt, maxInt);
+    EXPECT_LT(underflowInt, minInt);
+
+    EXPECT_EQ(clampToInteger(maxInt), maxInt);
+    EXPECT_EQ(clampToInteger(minInt), minInt);
+
+    EXPECT_EQ(clampToInteger(overflowInt), maxInt);
+    EXPECT_EQ(clampToInteger(underflowInt), minInt);
+}
+
+TEST(WTF, clampToFloat)
+{
+    double maxFloat = std::numeric_limits<float>::max();
+    double minFloat = -maxFloat;
+    double overflowFloat = maxFloat * 1.1;
+    double underflowFloat = minFloat * 1.1;
+
+    EXPECT_GT(overflowFloat, maxFloat);
+    EXPECT_LT(underflowFloat, minFloat);
+
+    EXPECT_EQ(clampToFloat(maxFloat), maxFloat);
+    EXPECT_EQ(clampToFloat(minFloat), minFloat);
+
+    EXPECT_EQ(clampToFloat(overflowFloat), maxFloat);
+    EXPECT_EQ(clampToFloat(underflowFloat), minFloat);
+
+    EXPECT_EQ(clampToFloat(std::numeric_limits<float>::infinity()), maxFloat);
+    EXPECT_EQ(clampToFloat(-std::numeric_limits<float>::infinity()), minFloat);
+}
+
+TEST(WTF, clampToUnsigned)
+{
+    unsigned long maxUnsigned = std::numeric_limits<unsigned>::max();
+    unsigned long overflowUnsigned = maxUnsigned + 1;
+    EXPECT_EQ(clampTo<unsigned>(maxUnsigned), maxUnsigned);
+
+    EXPECT_EQ(clampTo<unsigned>(overflowUnsigned), maxUnsigned);
+    EXPECT_EQ(clampTo<unsigned>(-1), 0u);
+}
+
+TEST(WTF, clampToUnsignedLong)
+{
+    if (sizeof(unsigned long) == sizeof(unsigned))
+        return;
+
+    unsigned long maxUnsigned = std::numeric_limits<unsigned>::max();
+    unsigned long overflowUnsigned = maxUnsigned + 1;
+
+    EXPECT_GT(overflowUnsigned, maxUnsigned);
+
+    EXPECT_EQ(clampTo<unsigned>(maxUnsigned), maxUnsigned);
+
+    EXPECT_EQ(clampTo<unsigned>(overflowUnsigned), maxUnsigned);
+    EXPECT_EQ(clampTo<unsigned>(-1), 0u);
+}
+
+TEST(WTF, clampToUnsignedLongLong)
+{
+    unsigned long long maxUnsigned = std::numeric_limits<unsigned>::max();
+    unsigned long long overflowUnsigned = maxUnsigned + 1;
+
+    EXPECT_GT(overflowUnsigned, maxUnsigned);
+
+    EXPECT_EQ(clampTo<unsigned>(maxUnsigned), maxUnsigned);
+
+    EXPECT_EQ(clampTo<unsigned>(overflowUnsigned), maxUnsigned);
+    EXPECT_EQ(clampTo<unsigned>(-1), 0u);
+}
+
 } // namespace TestWebKitAPI
