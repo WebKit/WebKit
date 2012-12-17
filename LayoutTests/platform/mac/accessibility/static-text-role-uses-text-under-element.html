@@ -26,7 +26,7 @@ if (window.testRunner)
     if (window.accessibilityController) {
         document.getElementById("text1").focus();
         var text = accessibilityController.focusedElement;
-        shouldBe("text.stringValue", "'AXValue: Text 1 Text 2 Text 3'");
+        shouldBe("text.stringValue", "'AXValue:   Text 3'");
     }
 
 </script>

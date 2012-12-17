@@ -1,3 +1,30 @@
+2012-12-17  Dominic Mazzoni  <dmazzoni@google.com>
+
+        AX: textUnderElement should consider alt text, but skip links and controls
+        https://bugs.webkit.org/show_bug.cgi?id=101650
+
+        Reviewed by Chris Fleizach.
+
+        Getting inner text from an element now ignores focusable descendants
+        and containers, but uses alternative text.  The computation of
+        textUnderElement is now recursive and doesn't depend on text
+        iterators, which might not do the right thing for accessibility
+        anyways.
+
+        For GTK, the old behavior is retained so that support for
+        the object replacement character is still there. Filed a new
+        bug (105214) for GTK folks to look at this.
+
+        Test: accessibility/button-title-uses-inner-img-alt.html
+        Test: accessibility/focusable-div.html
+
+        * accessibility/AccessibilityNodeObject.cpp:
+        (WebCore):
+        (WebCore::shouldUseAccessiblityObjectInnerText):
+        (WebCore::AccessibilityNodeObject::textUnderElement):
+        * accessibility/AccessibilityRenderObject.cpp:
+        (WebCore::AccessibilityRenderObject::textUnderElement):
+
 2012-12-17  Otto Derek Cheung  <otcheung@rim.com>
 
         [BlackBerry] Prevent CookieManager from blocking the WKT thread

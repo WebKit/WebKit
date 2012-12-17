@@ -5,22 +5,22 @@ AXSubrole: (null)
 AXRoleDescription: heading
 AXChildren: <array of size 4>
 AXHelp: 
-AXParent: <AXHeading: '[edit] Tourette syndrome'>
+AXParent: <AXHeading: '[] Tourette syndrome'>
 AXSize: NSSize: {769, 22}
-AXTitle: [edit] Tourette syndrome
+AXTitle: [] Tourette syndrome
 AXDescription: 
 AXValue: 3
 AXFocused: 0
 AXEnabled: 1
-AXWindow: <AXHeading: '[edit] Tourette syndrome'>
+AXWindow: <AXHeading: '[] Tourette syndrome'>
 AXSelectedTextMarkerRange: (null)
-AXStartTextMarker: <AXHeading: '[edit] Tourette syndrome'>
-AXEndTextMarker: <AXHeading: '[edit] Tourette syndrome'>
+AXStartTextMarker: <AXHeading: '[] Tourette syndrome'>
+AXEndTextMarker: <AXHeading: '[] Tourette syndrome'>
 AXVisited: 0
 AXLinkedUIElements: (null)
 AXSelected: 0
 AXBlockQuoteLevel: 0
-AXTopLevelUIElement: <AXHeading: '[edit] Tourette syndrome'>
+AXTopLevelUIElement: <AXHeading: '[] Tourette syndrome'>
 AXARIABusy: 0
 
 ------------

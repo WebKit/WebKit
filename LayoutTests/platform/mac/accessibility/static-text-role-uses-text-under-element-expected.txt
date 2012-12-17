@@ -4,7 +4,7 @@ This tests that if an element uses the 'text' role but does not use an aria-labe
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 
 
-PASS text.stringValue is 'AXValue: Text 1 Text 2 Text 3'
+PASS text.stringValue is 'AXValue:   Text 3'
 PASS successfullyParsed is true
 
 TEST COMPLETE
