@@ -1,3 +1,15 @@
+2012-12-17  Tab Atkins  <jackalmage@gmail.com>
+
+        Chromium rebaseline fast/gradients/css3-linear-angle-gradients.html
+        https://bugs.webkit.org/show_bug.cgi?id=105211
+
+        Reviewed by Dean Jackson.
+
+        * platform/chromium-mac-lion/fast/gradients/css3-linear-angle-gradients-expected.png: Removed.
+        * platform/chromium-mac-snowleopard/fast/gradients/css3-linear-angle-gradients-expected.png: Removed.
+        * platform/chromium-mac/fast/gradients/css3-linear-angle-gradients-expected.png:
+        * platform/chromium-win/fast/gradients/css3-linear-angle-gradients-expected.png:
+
 2012-12-17  Dominic Mazzoni  <dmazzoni@google.com>
 
         AX: textUnderElement should consider alt text, but skip links and controls
