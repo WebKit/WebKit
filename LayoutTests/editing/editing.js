@@ -16,7 +16,7 @@ function execSetSelectionCommand(sn, so, en, eo) {
 // Args are startNode, startOffset, endNode, endOffset
 function setSelectionCommand(sn, so, en, eo) {
     if (commandDelay > 0) {
-        window.setTimeout(execSetSelectionCommand, commandCount * commandDelay, sn, so, en, eo);
+        queueCommand(execSetSelectionCommand.bind(execSetSelectionCommand, sn, so, en, eo), commandCount * commandDelay);
         commandCount++;
     } else
         execSetSelectionCommand(sn, so, en, eo);
@@ -29,7 +29,7 @@ function execTransposeCharactersCommand() {
 }
 function transposeCharactersCommand() {
     if (commandDelay > 0) {
-        window.setTimeout(execTransposeCharactersCommand, commandCount * commandDelay);
+        queueCommand(execTransposeCharactersCommand, commandCount * commandDelay);
         commandCount++;
     }
     else {
@@ -44,7 +44,7 @@ function execMoveSelectionLeftByCharacterCommand() {
 }
 function moveSelectionLeftByCharacterCommand() {
     if (commandDelay > 0) {
-        window.setTimeout(execMoveSelectionLeftByCharacterCommand, commandCount * commandDelay);
+        queueCommand(execMoveSelectionLeftByCharacterCommand, commandCount * commandDelay);
         commandCount++;
     }
     else {
@@ -59,7 +59,7 @@ function execMoveSelectionRightByCharacterCommand() {
 }
 function moveSelectionRightByCharacterCommand() {
     if (commandDelay > 0) {
-        window.setTimeout(execMoveSelectionRightByCharacterCommand, commandCount * commandDelay);
+        queueCommand(execMoveSelectionRightByCharacterCommand, commandCount * commandDelay);
         commandCount++;
     }
     else {
@@ -74,7 +74,7 @@ function execExtendSelectionLeftByCharacterCommand() {
 }
 function extendSelectionLeftByCharacterCommand() {
     if (commandDelay > 0) {
-        window.setTimeout(execExtendSelectionLeftByCharacterCommand, commandCount * commandDelay);
+        queueCommand(execExtendSelectionLeftByCharacterCommand, commandCount * commandDelay);
         commandCount++;
     }
     else {
@@ -89,7 +89,7 @@ function execExtendSelectionRightByCharacterCommand() {
 }
 function extendSelectionRightByCharacterCommand() {
     if (commandDelay > 0) {
-        window.setTimeout(execExtendSelectionRightByCharacterCommand, commandCount * commandDelay);
+        queueCommand(execExtendSelectionRightByCharacterCommand, commandCount * commandDelay);
         commandCount++;
     }
     else {
@@ -104,7 +104,7 @@ function execMoveSelectionForwardByCharacterCommand() {
 }
 function moveSelectionForwardByCharacterCommand() {
     if (commandDelay > 0) {
-        window.setTimeout(execMoveSelectionForwardByCharacterCommand, commandCount * commandDelay);
+        queueCommand(execMoveSelectionForwardByCharacterCommand, commandCount * commandDelay);
         commandCount++;
     }
     else {
@@ -119,7 +119,7 @@ function execExtendSelectionForwardByCharacterCommand() {
 }
 function extendSelectionForwardByCharacterCommand() {
     if (commandDelay > 0) {
-        window.setTimeout(execExtendSelectionForwardByCharacterCommand, commandCount * commandDelay);
+        queueCommand(execExtendSelectionForwardByCharacterCommand, commandCount * commandDelay);
         commandCount++;
     }
     else {
@@ -134,7 +134,7 @@ function execMoveSelectionForwardByWordCommand() {
 }
 function moveSelectionForwardByWordCommand() {
     if (commandDelay > 0) {
-        window.setTimeout(execMoveSelectionForwardByWordCommand, commandCount * commandDelay);
+        queueCommand(execMoveSelectionForwardByWordCommand, commandCount * commandDelay);
         commandCount++;
     }
     else {
@@ -149,7 +149,7 @@ function execExtendSelectionForwardByWordCommand() {
 }
 function extendSelectionForwardByWordCommand() {
     if (commandDelay > 0) {
-        window.setTimeout(execExtendSelectionForwardByWordCommand, commandCount * commandDelay);
+        queueCommand(execExtendSelectionForwardByWordCommand, commandCount * commandDelay);
         commandCount++;
     }
     else {
@@ -164,7 +164,7 @@ function execMoveSelectionForwardBySentenceCommand() {
 }
 function moveSelectionForwardBySentenceCommand() {
     if (commandDelay > 0) {
-        window.setTimeout(execMoveSelectionForwardBySentenceCommand, commandCount * commandDelay);
+        queueCommand(execMoveSelectionForwardBySentenceCommand, commandCount * commandDelay);
         commandCount++;
     }
     else {
@@ -179,7 +179,7 @@ function execExtendSelectionForwardBySentenceCommand() {
 }
 function extendSelectionForwardBySentenceCommand() {
     if (commandDelay > 0) {
-        window.setTimeout(execExtendSelectionForwardBySentenceCommand, commandCount * commandDelay);
+        queueCommand(execExtendSelectionForwardBySentenceCommand, commandCount * commandDelay);
         commandCount++;
     }
     else {
@@ -194,7 +194,7 @@ function execMoveSelectionForwardByLineCommand() {
 }
 function moveSelectionForwardByLineCommand() {
     if (commandDelay > 0) {
-        window.setTimeout(execMoveSelectionForwardByLineCommand, commandCount * commandDelay);
+        queueCommand(execMoveSelectionForwardByLineCommand, commandCount * commandDelay);
         commandCount++;
     }
     else {
@@ -209,7 +209,7 @@ function execExtendSelectionForwardByLineCommand() {
 }
 function extendSelectionForwardByLineCommand() {
     if (commandDelay > 0) {
-        window.setTimeout(execExtendSelectionForwardByLineCommand, commandCount * commandDelay);
+        queueCommand(execExtendSelectionForwardByLineCommand, commandCount * commandDelay);
         commandCount++;
     }
     else {
@@ -224,7 +224,7 @@ function execMoveSelectionForwardByLineBoundaryCommand() {
 }
 function moveSelectionForwardByLineBoundaryCommand() {
     if (commandDelay > 0) {
-        window.setTimeout(execMoveSelectionForwardByLineBoundaryCommand, commandCount * commandDelay);
+        queueCommand(execMoveSelectionForwardByLineBoundaryCommand, commandCount * commandDelay);
         commandCount++;
     }
     else {
@@ -239,7 +239,7 @@ function execExtendSelectionForwardByLineBoundaryCommand() {
 }
 function extendSelectionForwardByLineBoundaryCommand() {
     if (commandDelay > 0) {
-        window.setTimeout(execExtendSelectionForwardByLineBoundaryCommand, commandCount * commandDelay);
+        queueCommand(execExtendSelectionForwardByLineBoundaryCommand, commandCount * commandDelay);
         commandCount++;
     }
     else {
@@ -254,7 +254,7 @@ function execMoveSelectionBackwardByCharacterCommand() {
 }
 function moveSelectionBackwardByCharacterCommand() {
     if (commandDelay > 0) {
-        window.setTimeout(execMoveSelectionBackwardByCharacterCommand, commandCount * commandDelay);
+        queueCommand(execMoveSelectionBackwardByCharacterCommand, commandCount * commandDelay);
         commandCount++;
     }
     else {
@@ -269,7 +269,7 @@ function execExtendSelectionBackwardByCharacterCommand() {
 }
 function extendSelectionBackwardByCharacterCommand() {
     if (commandDelay > 0) {
-        window.setTimeout(execExtendSelectionBackwardByCharacterCommand, commandCount * commandDelay);
+        queueCommand(execExtendSelectionBackwardByCharacterCommand, commandCount * commandDelay);
         commandCount++;
     }
     else {
@@ -284,7 +284,7 @@ function execMoveSelectionBackwardByWordCommand() {
 }
 function moveSelectionBackwardByWordCommand() {
     if (commandDelay > 0) {
-        window.setTimeout(execMoveSelectionBackwardByWordCommand, commandCount * commandDelay);
+        queueCommand(execMoveSelectionBackwardByWordCommand, commandCount * commandDelay);
         commandCount++;
     }
     else {
@@ -299,7 +299,7 @@ function execExtendSelectionBackwardByWordCommand() {
 }
 function extendSelectionBackwardByWordCommand() {
     if (commandDelay > 0) {
-        window.setTimeout(execExtendSelectionBackwardByWordCommand, commandCount * commandDelay);
+        queueCommand(execExtendSelectionBackwardByWordCommand, commandCount * commandDelay);
         commandCount++;
     }
     else {
@@ -314,7 +314,7 @@ function execMoveSelectionBackwardBySentenceCommand() {
 }
 function moveSelectionBackwardBySentenceCommand() {
     if (commandDelay > 0) {
-        window.setTimeout(execMoveSelectionBackwardBySentenceCommand, commandCount * commandDelay);
+        queueCommand(execMoveSelectionBackwardBySentenceCommand, commandCount * commandDelay);
         commandCount++;
     }
     else {
@@ -329,7 +329,7 @@ function execExtendSelectionBackwardBySentenceCommand() {
 }
 function extendSelectionBackwardBySentenceCommand() {
     if (commandDelay > 0) {
-        window.setTimeout(execExtendSelectionBackwardBySentenceCommand, commandCount * commandDelay);
+        queueCommand(execExtendSelectionBackwardBySentenceCommand, commandCount * commandDelay);
         commandCount++;
     }
     else {
@@ -344,7 +344,7 @@ function execMoveSelectionBackwardByLineCommand() {
 }
 function moveSelectionBackwardByLineCommand() {
     if (commandDelay > 0) {
-        window.setTimeout(execMoveSelectionBackwardByLineCommand, commandCount * commandDelay);
+        queueCommand(execMoveSelectionBackwardByLineCommand, commandCount * commandDelay);
         commandCount++;
     }
     else {
@@ -359,7 +359,7 @@ function execExtendSelectionBackwardByLineCommand() {
 }
 function extendSelectionBackwardByLineCommand() {
     if (commandDelay > 0) {
-        window.setTimeout(execExtendSelectionBackwardByLineCommand, commandCount * commandDelay);
+        queueCommand(execExtendSelectionBackwardByLineCommand, commandCount * commandDelay);
         commandCount++;
     }
     else {
@@ -374,7 +374,7 @@ function execExtendSelectionBackwardByLineBoundaryCommand() {
 }
 function extendSelectionBackwardByLineBoundaryCommand() {
     if (commandDelay > 0) {
-        window.setTimeout(execExtendSelectionBackwardByLineBoundaryCommand, commandCount * commandDelay);
+        queueCommand(execExtendSelectionBackwardByLineBoundaryCommand, commandCount * commandDelay);
         commandCount++;
     }
     else {
@@ -389,7 +389,7 @@ function execMoveSelectionBackwardByLineBoundaryCommand() {
 }
 function moveSelectionBackwardByLineBoundaryCommand() {
     if (commandDelay > 0) {
-        window.setTimeout(execMoveSelectionBackwardByLineBoundaryCommand, commandCount * commandDelay);
+        queueCommand(execMoveSelectionBackwardByLineBoundaryCommand, commandCount * commandDelay);
         commandCount++;
     }
     else {
@@ -422,7 +422,7 @@ function execBoldCommand() {
 }
 function boldCommand() {
     if (commandDelay > 0) {
-        window.setTimeout(execBoldCommand, commandCount * commandDelay);
+        queueCommand(execBoldCommand, commandCount * commandDelay);
         commandCount++;
     }
     else {
@@ -438,7 +438,7 @@ function execUnderlineCommand() {
 }
 function underlineCommand() {
     if (commandDelay > 0) {
-        window.setTimeout(execUnderlineCommand, commandCount * commandDelay);
+        queueCommand(execUnderlineCommand, commandCount * commandDelay);
         commandCount++;
     }
     else {
@@ -454,7 +454,7 @@ function execFontNameCommand() {
 }
 function fontNameCommand() {
     if (commandDelay > 0) {
-        window.setTimeout(execFontNameCommand, commandCount * commandDelay);
+        queueCommand(execFontNameCommand, commandCount * commandDelay);
         commandCount++;
     }
     else {
@@ -472,7 +472,7 @@ function execFontSizeCommand(s) {
 }
 function fontSizeCommand(s) {
     if (commandDelay > 0) {
-        window.setTimeout(execFontSizeCommand, commandCount * commandDelay, s);
+        queueCommand(execFontSizeCommand, commandCount * commandDelay, s);
         commandCount++;
     }
     else {
@@ -490,7 +490,7 @@ function execFontSizeDeltaCommand(s) {
 }
 function fontSizeDeltaCommand(s) {
     if (commandDelay > 0) {
-        window.setTimeout(execFontSizeDeltaCommand, commandCount * commandDelay, s);
+        queueCommand(execFontSizeDeltaCommand.bind(execFontSizeDeltaCommand, s), commandCount * commandDelay);
         commandCount++;
     }
     else {
@@ -506,7 +506,7 @@ function execItalicCommand() {
 }
 function italicCommand() {
     if (commandDelay > 0) {
-        window.setTimeout(execItalicCommand, commandCount * commandDelay);
+        queueCommand(execItalicCommand, commandCount * commandDelay);
         commandCount++;
     }
     else {
@@ -523,7 +523,7 @@ function execJustifyCenterCommand() {
 }
 function justifyCenterCommand() {
     if (commandDelay > 0) {
-        window.setTimeout(execJustifyCenterCommand, commandCount * commandDelay);
+        queueCommand(execJustifyCenterCommand, commandCount * commandDelay);
         commandCount++;
     }
     else {
@@ -540,7 +540,7 @@ function execJustifyLeftCommand() {
 }
 function justifyLeftCommand() {
     if (commandDelay > 0) {
-        window.setTimeout(execJustifyLeftCommand, commandCount * commandDelay);
+        queueCommand(execJustifyLeftCommand, commandCount * commandDelay);
         commandCount++;
     }
     else {
@@ -557,7 +557,7 @@ function execJustifyRightCommand() {
 }
 function justifyRightCommand() {
     if (commandDelay > 0) {
-        window.setTimeout(execJustifyRightCommand, commandCount * commandDelay);
+        queueCommand(execJustifyRightCommand, commandCount * commandDelay);
         commandCount++;
     }
     else {
@@ -573,7 +573,7 @@ function execInsertHTMLCommand(html) {
 }
 function insertHTMLCommand(html) {
     if (commandDelay > 0) {
-        window.setTimeout(execInsertHTMLCommand, commandCount * commandDelay, html);
+        queueCommand(execInsertHTMLCommand.bind(execInsertHTMLCommand, html), commandCount * commandDelay);
         commandCount++;
     }
     else {
@@ -589,7 +589,7 @@ function execInsertImageCommand(imgSrc) {
 }
 function insertImageCommand(imgSrc) {
     if (commandDelay > 0) {
-        window.setTimeout(execInsertImageCommand, commandCount * commandDelay, imgSrc);
+        queueCommand(execInsertImageCommand.bind(execInsertImageCommand, imgSrc), commandCount * commandDelay);
         commandCount++;
     }
     else {
@@ -605,7 +605,7 @@ function execInsertLineBreakCommand() {
 }
 function insertLineBreakCommand() {
     if (commandDelay > 0) {
-        window.setTimeout(execInsertLineBreakCommand, commandCount * commandDelay);
+        queueCommand(execInsertLineBreakCommand, commandCount * commandDelay);
         commandCount++;
     }
     else {
@@ -621,7 +621,7 @@ function execInsertParagraphCommand() {
 }
 function insertParagraphCommand() {
     if (commandDelay > 0) {
-        window.setTimeout(execInsertParagraphCommand, commandCount * commandDelay);
+        queueCommand(execInsertParagraphCommand, commandCount * commandDelay);
         commandCount++;
     }
     else {
@@ -637,7 +637,7 @@ function execInsertNewlineInQuotedContentCommand() {
 }
 function insertNewlineInQuotedContentCommand() {
     if (commandDelay > 0) {
-        window.setTimeout(execInsertNewlineInQuotedContentCommand, commandCount * commandDelay);
+        queueCommand(execInsertNewlineInQuotedContentCommand, commandCount * commandDelay);
         commandCount++;
     }
     else {
@@ -655,7 +655,7 @@ function execTypeCharacterCommand(c) {
 }
 function typeCharacterCommand(c) {
     if (commandDelay > 0) {
-        window.setTimeout(execTypeCharacterCommand, commandCount * commandDelay, c);
+        queueCommand(execTypeCharacterCommand.bind(execTypeCharacterCommand, c), commandCount * commandDelay);
         commandCount++;
     }
     else {
@@ -670,7 +670,7 @@ function execSelectAllCommand() {
 }
 function selectAllCommand() {
     if (commandDelay > 0) {
-        window.setTimeout(execSelectAllCommand, commandCount * commandDelay);
+        queueCommand(execSelectAllCommand, commandCount * commandDelay);
         commandCount++;
     }
     else {
@@ -686,7 +686,7 @@ function execStrikethroughCommand() {
 }
 function strikethroughCommand() {
     if (commandDelay > 0) {
-        window.setTimeout(execStrikethroughCommand, commandCount * commandDelay);
+        queueCommand(execStrikethroughCommand, commandCount * commandDelay);
         commandCount++;
     }
     else {
@@ -702,7 +702,7 @@ function execUndoCommand() {
 }
 function undoCommand() {
     if (commandDelay > 0) {
-        window.setTimeout(execUndoCommand, commandCount * commandDelay);
+        queueCommand(execUndoCommand, commandCount * commandDelay);
         commandCount++;
     }
     else {
@@ -718,7 +718,7 @@ function execRedoCommand() {
 }
 function redoCommand() {
     if (commandDelay > 0) {
-        window.setTimeout(execRedoCommand, commandCount * commandDelay);
+        queueCommand(execRedoCommand, commandCount * commandDelay);
         commandCount++;
     }
     else {
@@ -733,7 +733,7 @@ function execChangeRootSize() {
 }
 function changeRootSize() {
     if (commandDelay > 0) {
-        window.setTimeout(execChangeRootSize, commandCount * commandDelay);
+        queueCommand(execChangeRootSize, commandCount * commandDelay);
         commandCount++;
     }
     else {
@@ -749,7 +749,7 @@ function execCutCommand() {
 }
 function cutCommand() {
     if (commandDelay > 0) {
-        window.setTimeout(execCutCommand, commandCount * commandDelay);
+        queueCommand(execCutCommand, commandCount * commandDelay);
         commandCount++;
     }
     else {
@@ -765,7 +765,7 @@ function execCopyCommand() {
 }
 function copyCommand() {
     if (commandDelay > 0) {
-        window.setTimeout(execCopyCommand, commandCount * commandDelay);
+        queueCommand(execCopyCommand, commandCount * commandDelay);
         commandCount++;
     }
     else {
@@ -781,7 +781,7 @@ function execPasteCommand() {
 }
 function pasteCommand() {
     if (commandDelay > 0) {
-        window.setTimeout(execPasteCommand, commandCount * commandDelay);
+        queueCommand(execPasteCommand, commandCount * commandDelay);
         commandCount++;
     }
     else {
@@ -797,7 +797,7 @@ function execCreateLinkCommand(url) {
 }
 function createLinkCommand(url) {
     if (commandDelay > 0) {
-        window.setTimeout(execCreateLinkCommand, commandCount * commandDelay, url);
+        queueCommand(execCreateLinkCommand.bind(execCreateLinkCommand, url), commandCount * commandDelay);
         commandCount++;
     } else
         execCreateLinkCommand(url);
@@ -811,7 +811,7 @@ function execUnlinkCommand() {
 }
 function unlinkCommand() {
     if (commandDelay > 0) {
-        window.setTimeout(execUnlinkCommand, commandCount * commandDelay);
+        queueCommand(execUnlinkCommand, commandCount * commandDelay);
         commandCount++;
     } else
         execUnlinkCommand();
@@ -825,7 +825,7 @@ function execPasteAndMatchStyleCommand() {
 }
 function pasteAndMatchStyleCommand() {
     if (commandDelay > 0) {
-        window.setTimeout(execPasteAndMatchStyleCommand, commandCount * commandDelay);
+        queueCommand(execPasteAndMatchStyleCommand, commandCount * commandDelay);
         commandCount++;
     }
     else {
@@ -841,7 +841,7 @@ function execDeleteCommand() {
 }
 function deleteCommand() {
     if (commandDelay > 0) {
-        window.setTimeout(execDeleteCommand, commandCount * commandDelay);
+        queueCommand(execDeleteCommand, commandCount * commandDelay);
         commandCount++;
     }
     else {
@@ -857,7 +857,7 @@ function execForwardDeleteCommand() {
 }
 function forwardDeleteCommand() {
     if (commandDelay > 0) {
-        window.setTimeout(execForwardDeleteCommand, commandCount * commandDelay);
+        queueCommand(execForwardDeleteCommand, commandCount * commandDelay);
         commandCount++;
     }
     else {
@@ -866,6 +866,32 @@ function forwardDeleteCommand() {
 }
 
 //-------------------------------------------------------------------------------------------------------
+
+(function () {
+    var queue = [];
+    var i = 0;
+    var timer;
+
+    function queueCommand(callback) {
+        queue.push(callback);
+        if (!timer) {
+            if (window.testRunner)
+                testRunner.waitUntilDone();
+            timer = setTimeout(runCommand, commandDelay);
+        }
+    }
+
+    function runCommand() {
+        queue[i]();
+        i++;
+        if (i < queue.length)
+            setTimeout(runCommand, commandDelay);
+        else if (window.testRunner)
+            testRunner.notifyDone();
+    }
+    
+    window.queueCommand = queueCommand;
+})();
 
 function runEditingTest() {
     if (window.testRunner)
@@ -914,7 +940,7 @@ function execBackColorCommand() {
 }
 function backColorCommand() {
     if (commandDelay > 0) {
-        window.setTimeout(execBackColorCommand, commandCount * commandDelay);
+        queueCommand(execBackColorCommand, commandCount * commandDelay);
         commandCount++;
     }
     else {
@@ -929,7 +955,7 @@ function execForeColorCommand(color) {
 }
 function foreColorCommand(color) {
     if (commandDelay > 0) {
-        window.setTimeout(execForeColorCommand, commandCount * commandDelay, color);
+        queueCommand(execForeColorCommand.bind(execForeColorCommand, color), commandCount * commandDelay);
         commandCount++;
     } else
         execForeColorCommand(color);
@@ -944,7 +970,7 @@ function runCommand(command, arg1, arg2) {
 
 function executeCommand(command,arg1,arg2) {
     if (commandDelay > 0) {
-        window.setTimeout(runCommand, commandCount * commandDelay);
+        queueCommand(runCommand, commandCount * commandDelay);
         commandCount++;
     }
     else {

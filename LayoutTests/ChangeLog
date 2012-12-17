@@ -1,3 +1,76 @@
+2012-12-14  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Layout Test editing/selection/move-by-character-crash-test-textarea.html is flaky
+        https://bugs.webkit.org/show_bug.cgi?id=104951
+
+        Reviewed by Eric Seidel.
+
+        The problem was that editing/selection/move-by-character-6.html was running editing commands
+        in a timer without making the test runner wait. Fixed the bug by calling waitUntilDone and
+        notifyDone at appropriate places in editing.js.
+
+        We don't need to rebaseline other tests since this is the only test that uses commandDelay.
+
+        * editing/editing.js:
+        (setSelectionCommand):
+        (transposeCharactersCommand):
+        (moveSelectionLeftByCharacterCommand):
+        (moveSelectionRightByCharacterCommand):
+        (extendSelectionLeftByCharacterCommand):
+        (extendSelectionRightByCharacterCommand):
+        (moveSelectionForwardByCharacterCommand):
+        (extendSelectionForwardByCharacterCommand):
+        (moveSelectionForwardByWordCommand):
+        (extendSelectionForwardByWordCommand):
+        (moveSelectionForwardBySentenceCommand):
+        (extendSelectionForwardBySentenceCommand):
+        (moveSelectionForwardByLineCommand):
+        (extendSelectionForwardByLineCommand):
+        (moveSelectionForwardByLineBoundaryCommand):
+        (extendSelectionForwardByLineBoundaryCommand):
+        (moveSelectionBackwardByCharacterCommand):
+        (extendSelectionBackwardByCharacterCommand):
+        (moveSelectionBackwardByWordCommand):
+        (extendSelectionBackwardByWordCommand):
+        (moveSelectionBackwardBySentenceCommand):
+        (extendSelectionBackwardBySentenceCommand):
+        (moveSelectionBackwardByLineCommand):
+        (extendSelectionBackwardByLineCommand):
+        (extendSelectionBackwardByLineBoundaryCommand):
+        (moveSelectionBackwardByLineBoundaryCommand):
+        (boldCommand):
+        (underlineCommand):
+        (fontNameCommand):
+        (fontSizeCommand):
+        (fontSizeDeltaCommand):
+        (italicCommand):
+        (justifyCenterCommand):
+        (justifyLeftCommand):
+        (justifyRightCommand):
+        (insertHTMLCommand):
+        (insertImageCommand):
+        (insertLineBreakCommand):
+        (insertParagraphCommand):
+        (insertNewlineInQuotedContentCommand):
+        (typeCharacterCommand):
+        (selectAllCommand):
+        (strikethroughCommand):
+        (undoCommand):
+        (redoCommand):
+        (changeRootSize):
+        (cutCommand):
+        (copyCommand):
+        (pasteCommand):
+        (createLinkCommand):
+        (unlinkCommand):
+        (pasteAndMatchStyleCommand):
+        (deleteCommand):
+        (forwardDeleteCommand):
+        (backColorCommand):
+        (foreColorCommand):
+        (executeCommand):
+        * platform/mac/editing/selection/move-by-character-6-expected.txt: Rebaselined.
+
 2012-12-17  Filip Pizlo  <fpizlo@apple.com>
 
         javascript integer overflow
