@@ -340,13 +340,16 @@ inspector/timeline/timeline-receive-response-event.html
 # ENABLE(DRAGGABLE_REGION) is disabled
 fast/css/draggable-region-parser.html
 
-webkit.org/b/99096 fast/canvas/webgl/arraybuffer-transfer-of-control.html [ Failure Pass ]
+# Note webkit.org/b/104506, random crashes
+webkit.org/b/99096 fast/canvas/webgl/arraybuffer-transfer-of-control.html [ Failure Pass Crash ]
 
 # Expected to fail until support for extension is implemented
-webkit.org/b/96828 fast/canvas/webgl/oes-vertex-array-object.html [ Failure Pass ]
+# Note webkit.org/b/104506, random crashes
+webkit.org/b/96828 fast/canvas/webgl/oes-vertex-array-object.html [ Failure Pass Crash ]
 
 # Expected to fail until OES_element_index_uint extension is implemented
-webkit.org/b/98257 fast/canvas/webgl/oes-element-index-uint.html [ Failure Pass ]
+# Note webkit.org/b/104506, random crashes
+webkit.org/b/98257 fast/canvas/webgl/oes-element-index-uint.html [ Failure Pass Crash ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # TESTS EXPECTED TO FAIL
@@ -1677,3 +1680,39 @@ webkit.org/b/104788 fast/css/large-numbers.html [ Failure ]
 
 # Fixed positioning reftest failing
 webkit.org/b/104808 compositing/geometry/fixed-position-composited-page-scale-smaller-than-viewport.html [ ImageOnlyFailure ]
+
+# Rendering failure, also missing expected results:
+# Note webkit.org/b/104506, random crashes
+webkit.org/b/105093 compositing/webgl/webgl-repaint.html [ ImageOnlyFailure Crash ]
+webkit.org/b/105093 compositing/webgl/webgl-background-color.html [ Skip ]
+webkit.org/b/105093 compositing/webgl/webgl-no-alpha.html [ Skip ]
+webkit.org/b/105093 compositing/webgl/webgl-nonpremultiplied-blend.html [ Skip ]
+webkit.org/b/105093 compositing/webgl/webgl-reflection.html [ Skip ]
+
+# WebProcess timeouts
+webkit.org/b/105092 fast/canvas/webgl/read-pixels-test.html [ Crash ]
+
+# pixel differences, need to investigate.
+# Note webkit.org/b/104506, random crashes
+webkit.org/b/105090 fast/canvas/webgl/context-attributes-alpha-depth-stencil-antialias.html [ Failure Crash ]
+
+# shader errors, fails to render.
+# Note webkit.org/b/104506, random crashes
+webkit.org/b/105031 fast/canvas/webgl/drawingbuffer-test.html [ Failure Crash ]
+
+# Fail color checks, may also need platform results.
+# Note webkit.org/b/104506, random crashes
+webkit.org/b/105030 fast/canvas/webgl/framebuffer-object-attachment.html [ Failure Crash ]
+webkit.org/b/105030 fast/canvas/webgl/premultiplyalpha-test.html [ Failure Crash ]
+
+# These often time out, although pass when run individually.
+# Note webkit.org/b/104506, random crashes
+webkit.org/b/105028 fast/canvas/webgl/tex-image-and-sub-image-2d-with-video.html [ Failure Pass Crash ]
+webkit.org/b/105028 fast/canvas/webgl/tex-image-and-sub-image-2d-with-video-rgb565.html [ Failure Pass Crash ]
+webkit.org/b/105028 fast/canvas/webgl/tex-image-and-sub-image-2d-with-video-rgba4444.html [ Failure Pass Crash ]
+webkit.org/b/105028 fast/canvas/webgl/tex-image-and-sub-image-2d-with-video-rgba5551.html [ Failure Pass Crash ]
+
+# Rendering issues.
+# Note webkit.org/b/104506, random crashes
+webkit.org/b/105029 fast/canvas/webgl/webgl-composite-modes.html [ ImageOnlyFailure Crash ]
+webkit.org/b/105029 fast/canvas/webgl/webgl-composite-modes-repaint.html [ ImageOnlyFailure Crash ]
