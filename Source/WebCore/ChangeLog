@@ -1,3 +1,31 @@
+2012-12-17  Otto Derek Cheung  <otcheung@rim.com>
+
+        [BlackBerry] Prevent CookieManager from blocking the WKT thread
+        https://bugs.webkit.org/show_bug.cgi?id=105111
+
+        Prevent CookieManager from blocking the WKT Thread.
+
+        PR 265603
+
+        Reviewed by Rob Buis.
+
+        Adding some guards to CookieManager so it will return immedately
+        if getCookie functions are called when the database isn't loaded yet.
+
+        setCookie functions will be redispatched until the database is ready.
+
+        * platform/blackberry/CookieManager.cpp:
+        (WebCore::CookieManager::CookieManager):
+        (WebCore::CookieManager::setCookies):
+        (WebCore::CookieManager::getCookie):
+        (WebCore::CookieManager::generateHtmlFragmentForCookies):
+        (WebCore::CookieManager::getRawCookies):
+        (WebCore::CookieManager::removeAllCookies):
+        (WebCore::CookieManager::getBackingStoreCookies):
+        (WebCore::CookieManager::setPrivateMode):
+        (WebCore::CookieManager::removeCookieWithName):
+        * platform/blackberry/CookieManager.h:
+
 2012-12-17  Levi Weintraub  <leviw@chromium.org>
 
         Add support for tracking hit test rectangles to enable fast event rejection in the compositor

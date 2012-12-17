@@ -123,6 +123,7 @@ private:
 
     bool m_privateMode;
     bool m_shouldDumpAllCookies;
+    bool m_syncedWithDatabase;
 
     String m_cookieJarFileName;
 
