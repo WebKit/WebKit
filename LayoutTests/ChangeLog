@@ -1,3 +1,43 @@
+2012-12-16  Csaba Osztrogonác  <ossy@webkit.org>
+
+        [Qt] Unreviewed gardening. Update expected files after r137798.
+
+        * platform/qt-5.0-wk2/compositing/columns/composited-in-paginated-expected.txt:
+        * platform/qt-5.0-wk2/compositing/geometry/bounds-ignores-hidden-composited-descendant-expected.txt:
+        * platform/qt-5.0-wk2/compositing/iframes/become-composited-nested-iframes-expected.txt:
+        * platform/qt-5.0-wk2/compositing/iframes/become-overlapped-iframe-expected.txt:
+        * platform/qt-5.0-wk2/compositing/iframes/composited-parent-iframe-expected.txt:
+        * platform/qt-5.0-wk2/compositing/iframes/connect-compositing-iframe-delayed-expected.txt:
+        * platform/qt-5.0-wk2/compositing/iframes/connect-compositing-iframe-expected.txt:
+        * platform/qt-5.0-wk2/compositing/iframes/connect-compositing-iframe2-expected.txt:
+        * platform/qt-5.0-wk2/compositing/iframes/connect-compositing-iframe3-expected.txt:
+        * platform/qt-5.0-wk2/compositing/iframes/enter-compositing-iframe-expected.txt:
+        * platform/qt-5.0-wk2/compositing/iframes/iframe-resize-expected.txt:
+        * platform/qt-5.0-wk2/compositing/iframes/invisible-nested-iframe-show-expected.txt:
+        * platform/qt-5.0-wk2/compositing/iframes/overlapped-iframe-expected.txt:
+        * platform/qt-5.0-wk2/compositing/iframes/overlapped-nested-iframes-expected.txt:
+        * platform/qt-5.0-wk2/compositing/iframes/resizer-expected.txt:
+        * platform/qt-5.0-wk2/compositing/iframes/scrolling-iframe-expected.txt:
+        * platform/qt-5.0-wk2/compositing/layer-creation/fixed-position-and-transform-expected.txt:
+        * platform/qt-5.0-wk2/compositing/layer-creation/fixed-position-under-transform-expected.txt:
+        * platform/qt-5.0-wk2/compositing/layer-creation/no-compositing-for-preserve-3d-expected.txt:
+        * platform/qt-5.0-wk2/compositing/rtl/rtl-absolute-overflow-expected.txt:
+        * platform/qt-5.0-wk2/compositing/rtl/rtl-fixed-overflow-expected.txt:
+        * platform/qt-5.0-wk2/compositing/rtl/rtl-fixed-overflow-scrolled-expected.txt:
+        * platform/qt-5.0-wk2/compositing/rtl/rtl-iframe-absolute-overflow-expected.txt:
+        * platform/qt-5.0-wk2/compositing/rtl/rtl-iframe-absolute-overflow-scrolled-expected.txt:
+        * platform/qt-5.0-wk2/compositing/rtl/rtl-iframe-fixed-overflow-expected.txt:
+        * platform/qt-5.0-wk2/compositing/rtl/rtl-iframe-fixed-overflow-scrolled-expected.txt:
+        * platform/qt-5.0-wk2/compositing/tiled-layers-hidpi-expected.txt:
+        * platform/qt-5.0-wk2/compositing/tiling/crash-reparent-tiled-layer-expected.txt:
+        * platform/qt-5.0-wk2/compositing/tiling/huge-layer-add-remove-child-expected.txt:
+        * platform/qt-5.0-wk2/compositing/tiling/huge-layer-with-layer-children-expected.txt:
+        * platform/qt-5.0-wk2/compositing/tiling/huge-layer-with-layer-children-resize-expected.txt:
+        * platform/qt/compositing/backing/no-backing-for-clip-expected.txt:
+        * platform/qt/compositing/backing/no-backing-for-clip-overlap-expected.txt:
+        * platform/qt/compositing/backing/no-backing-for-perspective-expected.txt:
+        * platform/qt/compositing/geometry/preserve-3d-switching-expected.txt:
+
 2012-12-16  Christophe Dumez  <christophe.dumez@intel.com>
 
         Unreviewed EFL gardening.

@@ -25,7 +25,6 @@ This layer should not have backing store.
                         (GraphicsLayer
                           (position 30.00 49.00)
                           (bounds 100.00 100.00)
-                          (backgroundColor #C0C0C0)
                         )
                       )
                     )
