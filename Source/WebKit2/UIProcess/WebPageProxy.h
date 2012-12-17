@@ -1169,6 +1169,7 @@ private:
     bool m_isPerformingDOMPrintOperation;
 
     bool m_inDecidePolicyForResponse;
+    const WebCore::ResourceRequest* m_decidePolicyForResponseRequest;
     bool m_syncMimeTypePolicyActionIsValid;
     WebCore::PolicyAction m_syncMimeTypePolicyAction;
     uint64_t m_syncMimeTypePolicyDownloadID;

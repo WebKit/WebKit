@@ -180,6 +180,16 @@ void NetworkProcess::destroyPrivateBrowsingSession()
     RemoteNetworkingContext::destroyPrivateBrowsingSession();
 }
 
+void NetworkProcess::downloadRequest(uint64_t downloadID, const ResourceRequest& request)
+{
+    downloadManager().startDownload(downloadID, request);
+}
+
+void NetworkProcess::cancelDownload(uint64_t downloadID)
+{
+    downloadManager().cancelDownload(downloadID);
+}
+
 #if ENABLE(CUSTOM_PROTOCOLS)
 void NetworkProcess::registerSchemeForCustomProtocol(const String& scheme)
 {

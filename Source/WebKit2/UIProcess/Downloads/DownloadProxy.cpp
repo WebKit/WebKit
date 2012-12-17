@@ -35,6 +35,11 @@
 #include <wtf/text/CString.h>
 #include <wtf/text/WTFString.h>
 
+#if ENABLE(NETWORK_PROCESS)
+#include "NetworkProcessMessages.h"
+#include "NetworkProcessProxy.h"
+#endif
+
 using namespace WebCore;
 
 namespace WebKit {
@@ -67,7 +72,14 @@ void DownloadProxy::cancel()
     if (!m_webContext)
         return;
 
-    // FIXME (Multi-WebProcess): <rdar://problem/12239483> Downloads shouldn't be handled in the web process.
+#if ENABLE(NETWORK_PROCESS)
+    if (m_webContext->usesNetworkProcess()) {
+        if (NetworkProcessProxy* networkProcess = m_webContext->networkProcess())
+            networkProcess->connection()->send(Messages::NetworkProcess::CancelDownload(m_downloadID), 0);
+        return;
+    }
+#endif
+
     m_webContext->sendToAllProcesses(Messages::WebProcess::CancelDownload(m_downloadID));
 }
 

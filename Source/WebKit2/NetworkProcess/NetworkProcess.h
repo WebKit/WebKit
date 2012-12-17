@@ -81,6 +81,8 @@ private:
     void createNetworkConnectionToWebProcess();
     void ensurePrivateBrowsingSession();
     void destroyPrivateBrowsingSession();
+    void downloadRequest(uint64_t downloadID, const WebCore::ResourceRequest&);
+    void cancelDownload(uint64_t downloadID);
     void setCacheModel(uint32_t);
 #if ENABLE(CUSTOM_PROTOCOLS)
     void registerSchemeForCustomProtocol(const String&);

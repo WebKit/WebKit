@@ -706,9 +706,10 @@ DownloadProxy* WebContext::download(WebPageProxy* initiatingPage, const Resource
     uint64_t initiatingPageID = initiatingPage ? initiatingPage->pageID() : 0;
 
 #if ENABLE(NETWORK_PROCESS)
-    if (usesNetworkProcess()) {
-        // FIXME (Multi-WebProcess): <rdar://problem/12239483> Make downloading work.
-        return 0;
+    if (usesNetworkProcess() && networkProcess()) {
+        // FIXME (NetworkProcess): Replicate whatever FrameLoader::setOriginalURLForDownloadRequest does with the request here.
+        networkProcess()->connection()->send(Messages::NetworkProcess::DownloadRequest(downloadProxy->downloadID(), request), 0);
+        return downloadProxy;
     }
 #endif
 

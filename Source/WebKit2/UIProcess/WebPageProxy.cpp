@@ -202,6 +202,7 @@ WebPageProxy::WebPageProxy(PageClient* pageClient, PassRefPtr<WebProcessProxy> p
     , m_isInPrintingMode(false)
     , m_isPerformingDOMPrintOperation(false)
     , m_inDecidePolicyForResponse(false)
+    , m_decidePolicyForResponseRequest(0)
     , m_syncMimeTypePolicyActionIsValid(false)
     , m_syncMimeTypePolicyAction(PolicyUse)
     , m_syncMimeTypePolicyDownloadID(0)
@@ -1292,7 +1293,17 @@ void WebPageProxy::receivedPolicyDecision(PolicyAction action, WebFrameProxy* fr
 {
     if (!isValid())
         return;
-    
+
+#if ENABLE(NETWORK_PROCESS)
+    // FIXME (NetworkProcess): Instead of canceling the load and then starting a separate download, we should
+    // just convert the connection to a download connection. See <rdar://problem/12890184>.
+    if (m_inDecidePolicyForResponse && action == PolicyDownload && m_process->context()->usesNetworkProcess()) {
+        action = PolicyIgnore;
+
+        m_process->context()->download(this, *m_decidePolicyForResponseRequest);
+    }
+#endif
+
     if (action == PolicyIgnore)
         clearPendingAPIRequestURL();
 
@@ -2406,12 +2417,14 @@ void WebPageProxy::decidePolicyForResponse(uint64_t frameID, const ResourceRespo
     ASSERT(!m_inDecidePolicyForResponse);
 
     m_inDecidePolicyForResponse = true;
+    m_decidePolicyForResponseRequest = &request;
     m_syncMimeTypePolicyActionIsValid = false;
 
     if (!m_policyClient.decidePolicyForResponse(this, frame, response, request, listener.get(), userData.get()))
         listener->use();
 
     m_inDecidePolicyForResponse = false;
+    m_decidePolicyForResponseRequest = 0;
 
     // Check if we received a policy decision already. If we did, we can just pass it back.
     receivedPolicyAction = m_syncMimeTypePolicyActionIsValid;

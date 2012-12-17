@@ -32,6 +32,9 @@ messages -> NetworkProcess {
     EnsurePrivateBrowsingSession()
     DestroyPrivateBrowsingSession()
 
+    DownloadRequest(uint64_t downloadID, WebCore::ResourceRequest request)
+    CancelDownload(uint64_t downloadID)
+
 #if PLATFORM(MAC)
     SetApplicationIsOccluded(bool flag)
 #endif
