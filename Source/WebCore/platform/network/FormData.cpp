@@ -435,6 +435,7 @@ static void encodeElement(Encoder& encoder, const FormDataElement& element)
 
     case FormDataElement::encodedFile:
         encoder.encodeString(element.m_filename);
+        encoder.encodeString(element.m_generatedFilename);
         encoder.encodeBool(element.m_shouldGenerateFile);
 #if ENABLE(BLOB)
         encoder.encodeInt64(element.m_fileStart);
@@ -493,8 +494,12 @@ static bool decodeElement(Decoder& decoder, FormDataElement& element)
         String filenameOrURL;
         if (!decoder.decodeString(filenameOrURL))
             return false;
-        if (type == FormDataElement::encodedFile && !decoder.decodeBool(element.m_shouldGenerateFile))
-            return false;
+        if (type == FormDataElement::encodedFile) {
+            if (!decoder.decodeString(element.m_generatedFilename))
+                return false;
+            if (!decoder.decodeBool(element.m_shouldGenerateFile))
+                return false;
+        }
         int64_t fileStart;
         if (!decoder.decodeInt64(fileStart))
             return false;

@@ -149,6 +149,8 @@ void NetworkResourceLoader::connectionToWebProcessDidClose(NetworkConnectionToWe
 void NetworkResourceLoader::didReceiveResponse(ResourceHandle*, const ResourceResponse& response)
 {
     // FIXME (NetworkProcess): Cache the response.
+    if (FormData* formData = m_requestParameters.request().httpBody())
+        formData->removeGeneratedFilesIfNeeded();
     send(Messages::WebResourceLoader::DidReceiveResponse(response));
 }
 
@@ -173,6 +175,8 @@ void NetworkResourceLoader::didFail(ResourceHandle*, const ResourceError& error)
 {
     // FIXME (NetworkProcess): For the memory cache we'll need to update the finished status of the cached resource here.
     // Such bookkeeping will need to be thread safe, as this callback is happening on a background thread.
+    if (FormData* formData = m_requestParameters.request().httpBody())
+        formData->removeGeneratedFilesIfNeeded();
     send(Messages::WebResourceLoader::DidFailResourceLoad(error));
     scheduleStopOnMainThread();
 }
