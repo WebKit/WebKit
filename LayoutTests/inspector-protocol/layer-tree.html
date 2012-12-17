@@ -168,7 +168,7 @@ function test()
     {
         function replacer(key, value)
         {
-            if (key === "layerId" || key === "memory")
+            if (key === "layerId" || key === "memory" || key === "paintCount")
                 return typeof(value);
 
             // some values differ based on port, but the ones we most

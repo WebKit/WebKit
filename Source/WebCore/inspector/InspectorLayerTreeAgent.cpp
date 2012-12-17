@@ -137,6 +137,7 @@ PassRefPtr<TypeBuilder::LayerTree::Layer> InspectorLayerTreeAgent::buildObjectFo
         RenderLayerBacking* backing = renderLayer->backing();
         layerObject->setMemory(backing->backingStoreMemoryEstimate());
         layerObject->setCompositedBounds(buildObjectForIntRect(backing->compositedBounds()));
+        layerObject->setPaintCount(backing->graphicsLayer()->repaintCount());
     }
 
     // Process children layers.

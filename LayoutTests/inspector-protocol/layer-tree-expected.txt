@@ -27,6 +27,7 @@ PASS
         "width": "number",
         "height": "number"
     },
+    "paintCount": "number",
     "childLayers": [
         {
             "layerId": "string",
@@ -65,6 +66,7 @@ PASS
                         "width": 50,
                         "height": 50
                     },
+                    "paintCount": "number",
                     "childLayers": [
                         {
                             "layerId": "string",
@@ -82,6 +84,7 @@ PASS
                                 "width": 50,
                                 "height": 50
                             },
+                            "paintCount": "number",
                             "childLayers": []
                         }
                     ]
@@ -102,6 +105,7 @@ PASS
                         "width": 100,
                         "height": 100
                     },
+                    "paintCount": "number",
                     "childLayers": [
                         {
                             "layerId": "string",
@@ -119,6 +123,7 @@ PASS
                                 "width": 50,
                                 "height": 50
                             },
+                            "paintCount": "number",
                             "childLayers": []
                         }
                     ]
@@ -161,6 +166,7 @@ PASS
                         "width": "number",
                         "height": "number"
                     },
+                    "paintCount": "number",
                     "childLayers": []
                 }
             ]
@@ -192,6 +198,7 @@ PASS
         "width": "number",
         "height": "number"
     },
+    "paintCount": "number",
     "childLayers": [
         {
             "layerId": "string",
@@ -230,6 +237,7 @@ PASS
                         "width": 50,
                         "height": 50
                     },
+                    "paintCount": "number",
                     "childLayers": [
                         {
                             "layerId": "string",
@@ -247,6 +255,7 @@ PASS
                                 "width": 50,
                                 "height": 50
                             },
+                            "paintCount": "number",
                             "childLayers": []
                         }
                     ]
@@ -267,6 +276,7 @@ PASS
                         "width": 100,
                         "height": 100
                     },
+                    "paintCount": "number",
                     "childLayers": [
                         {
                             "layerId": "string",
@@ -284,6 +294,7 @@ PASS
                                 "width": 50,
                                 "height": 50
                             },
+                            "paintCount": "number",
                             "childLayers": []
                         }
                     ]
@@ -326,6 +337,7 @@ PASS
                         "width": "number",
                         "height": "number"
                     },
+                    "paintCount": "number",
                     "childLayers": []
                 },
                 {
@@ -344,6 +356,7 @@ PASS
                         "width": 50,
                         "height": 50
                     },
+                    "paintCount": "number",
                     "childLayers": []
                 }
             ]
