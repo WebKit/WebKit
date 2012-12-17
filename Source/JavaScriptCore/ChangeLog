@@ -1,3 +1,23 @@
+2012-12-17  Jonathan Liu  <net147@gmail.com>
+
+        Fix Math.pow implementation with MinGW-w64
+        https://bugs.webkit.org/show_bug.cgi?id=105087
+
+        Reviewed by Simon Hausmann.
+
+        The MinGW-w64 runtime has different behaviour for pow()
+        compared to other C runtimes. This results in the following
+        test262 tests failing with the latest MinGW-w64 runtime:
+        - S15.8.2.13_A14
+        - S15.8.2.13_A16
+        - S15.8.2.13_A20
+        - S15.8.2.13_A22
+
+        Handle the special cases that are different with MinGW-w64.
+
+        * runtime/MathObject.cpp:
+        (JSC::mathPow):
+
 2012-12-16  Filip Pizlo  <fpizlo@apple.com>
 
         Bytecode dumping should show rare case profiles
