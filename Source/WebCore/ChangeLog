@@ -1,3 +1,17 @@
+2012-12-17  Andreas Kling  <akling@apple.com>
+
+        Attribute: Remove unused constructor and isNull().
+        <http://webkit.org/b/105179>
+
+        Reviewed by Antti Koivisto.
+
+        Removed the Attribute constructor that takes a localName rather than a full QualifiedName as that was never used.
+        Also removed Attribute::isNull(), since that was only called in one place where isNull() will never be true.
+
+        * dom/Attribute.h:
+        * html/HTMLIFrameElement.cpp:
+        (WebCore::HTMLIFrameElement::collectStyleForPresentationAttribute):
+
 2012-12-17  Anthony Scian  <ascian@rim.com>
 
         [Blackberry] Static code analysis warning fixes

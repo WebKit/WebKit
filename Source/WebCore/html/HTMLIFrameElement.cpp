@@ -69,7 +69,7 @@ void HTMLIFrameElement::collectStyleForPresentationAttribute(const Attribute& at
     else if (attribute.name() == frameborderAttr) {
         // Frame border doesn't really match the HTML4 spec definition for iframes. It simply adds
         // a presentational hint that the border should be off if set to zero.
-        if (!attribute.isNull() && !attribute.value().toInt()) {
+        if (!attribute.value().toInt()) {
             // Add a rule that nulls out our border width.
             addPropertyToPresentationAttributeStyle(style, CSSPropertyBorderWidth, 0, CSSPrimitiveValue::CSS_PX);
         }

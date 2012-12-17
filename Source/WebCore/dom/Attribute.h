@@ -41,12 +41,6 @@ public:
     {
     }
 
-    Attribute(const AtomicString& name, const AtomicString& value)
-        : m_name(nullAtom, name, nullAtom)
-        , m_value(value)
-    {
-    }
-
     // NOTE: The references returned by these functions are only valid for as long
     // as the Attribute stays in place. For example, calling a function that mutates
     // an Element's internal attribute storage may invalidate them.
@@ -57,7 +51,6 @@ public:
 
     const QualifiedName& name() const { return m_name; }
 
-    bool isNull() const { return m_value.isNull(); }
     bool isEmpty() const { return m_value.isEmpty(); }
 
     void setValue(const AtomicString& value) { m_value = value; }
