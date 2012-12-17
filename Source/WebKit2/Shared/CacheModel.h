@@ -26,6 +26,8 @@
 #ifndef CacheModel_h
 #define CacheModel_h
 
+#include <stdint.h>
+
 namespace WebKit {
 
 enum CacheModel {
