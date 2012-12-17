@@ -68,12 +68,16 @@ public:
     // Should be called whenever the scrollable layer for the given scroll area changes.
     virtual void scrollableAreaScrollLayerDidChange(ScrollableArea*, GraphicsLayer*);
 
+    // Should be called whenever touch handlers are registered, removed, or moved.
+    virtual void touchEventTargetRectsDidChange(const Document*) OVERRIDE;
+
 private:
     virtual void recomputeWheelEventHandlerCountForFrameView(FrameView*);
     virtual void setShouldUpdateScrollLayerPositionOnMainThread(MainThreadScrollingReasons);
 
     void setScrollLayer(GraphicsLayer*);
     void setNonFastScrollableRegion(const Region&);
+    void setTouchEventTargetRects(const Vector<IntRect>&);
     void setWheelEventHandlerCount(unsigned);
     PassOwnPtr<WebKit::WebScrollbarLayer> createScrollbarLayer(Scrollbar*, WebKit::WebLayer* scrollLayer, GraphicsLayer* scrollbarGraphicsLayer, FrameView*);
 

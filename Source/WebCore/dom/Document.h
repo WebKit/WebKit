@@ -207,6 +207,8 @@ enum NodeListInvalidationType {
 };
 const int numNodeListInvalidationTypes = InvalidateOnAnyAttrChange + 1;
 
+typedef HashCountedSet<Node*> TouchEventTargetSet;
+
 class Document : public ContainerNode, public TreeScope, public ScriptExecutionContext {
 public:
     static PassRefPtr<Document> create(Frame* frame, const KURL& url)
@@ -1118,13 +1120,23 @@ public:
     void didRemoveWheelEventHandler();
 
 #if ENABLE(TOUCH_EVENTS)
-    unsigned touchEventHandlerCount() const { return m_touchEventHandlerCount; }
+    bool hasTouchEventHandlers() const { return (m_touchEventTargets.get()) ? m_touchEventTargets->size() : false; }
 #else
-    unsigned touchEventHandlerCount() const { return 0; }
+    bool hasTouchEventHandlers() const { return false; }
 #endif
 
-    void didAddTouchEventHandler();
-    void didRemoveTouchEventHandler();
+    void didAddTouchEventHandler(Node*);
+    void didRemoveTouchEventHandler(Node*);
+
+#if ENABLE(TOUCH_EVENT_TRACKING)
+    void didRemoveEventTargetNode(Node*);
+#endif
+
+#if ENABLE(TOUCH_EVENTS)
+    const TouchEventTargetSet* touchEventTargets() const { return m_touchEventTargets.get(); }
+#else
+    const TouchEventTargetSet* touchEventTargets() const { return 0; }
+#endif
 
     bool visualUpdatesAllowed() const { return m_visualUpdatesAllowed; }
 
@@ -1503,7 +1515,7 @@ private:
     
     unsigned m_wheelEventHandlerCount;
 #if ENABLE(TOUCH_EVENTS)
-    unsigned m_touchEventHandlerCount;
+    OwnPtr<TouchEventTargetSet> m_touchEventTargets;
 #endif
 
 #if ENABLE(REQUEST_ANIMATION_FRAME)

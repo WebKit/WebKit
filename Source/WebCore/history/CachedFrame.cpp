@@ -134,7 +134,7 @@ void CachedFrameBase::restore()
     m_document->enqueuePopstateEvent(historyItem && historyItem->stateObject() ? historyItem->stateObject() : SerializedScriptValue::nullValue());
     
 #if ENABLE(TOUCH_EVENTS)
-    if (m_document->touchEventHandlerCount())
+    if (m_document->hasTouchEventHandlers())
         m_document->page()->chrome()->client()->needTouchEvents(true);
 #endif
 

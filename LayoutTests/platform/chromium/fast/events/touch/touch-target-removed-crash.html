@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html>
+<body>
+<p id="description">Test passes if no crash.</p>
+<script>
+if (!window.testRunner)
+	return;
+
+window.testRunner.dumpAsText();
+
+function crash() {
+	var div = document.createElement('div');
+	div.ontouchstart = function() { };
+	document.body.appendChild(div);
+    window.internals.touchEventHandlerCount(document);
+    div.parentNode.removeChild(div);
+    div = 0;
+    if (window.GCController)
+        GCController.collect();
+    window.internals.touchEventHandlerCount(document);
+}
+
+crash();
+</script>
+</body>
