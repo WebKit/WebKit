@@ -54,6 +54,7 @@ NetworkProcess& NetworkProcess::shared()
 NetworkProcess::NetworkProcess()
     : m_hasSetCacheModel(false)
     , m_cacheModel(CacheModelDocumentViewer)
+    , m_downloadsAuthenticationManager(m_messageReceiverMap)
 {
 }
 
@@ -74,6 +75,8 @@ void NetworkProcess::initialize(CoreIPC::Connection::Identifier serverIdentifier
     m_uiConnection = CoreIPC::Connection::createClientConnection(serverIdentifier, this, runLoop);
     m_uiConnection->setDidCloseOnConnectionWorkQueueCallback(didCloseOnConnectionWorkQueue);
     m_uiConnection->open();
+
+    m_downloadsAuthenticationManager.setConnection(m_uiConnection.get());
 }
 
 void NetworkProcess::removeNetworkConnectionToWebProcess(NetworkConnectionToWebProcess* connection)
@@ -91,6 +94,9 @@ bool NetworkProcess::shouldTerminate()
 
 void NetworkProcess::didReceiveMessage(CoreIPC::Connection* connection, CoreIPC::MessageID messageID, CoreIPC::MessageDecoder& decoder)
 {
+    if (m_messageReceiverMap.dispatchMessage(connection, messageID, decoder))
+        return;
+
 #if ENABLE(CUSTOM_PROTOCOLS)
     if (messageID.is<CoreIPC::MessageClassCustomProtocolManager>()) {
         CustomProtocolManager::shared().didReceiveMessage(connection, messageID, decoder);
@@ -99,6 +105,11 @@ void NetworkProcess::didReceiveMessage(CoreIPC::Connection* connection, CoreIPC:
 #endif
 
     didReceiveNetworkProcessMessage(connection, messageID, decoder);
+}
+
+void NetworkProcess::didReceiveSyncMessage(CoreIPC::Connection* connection, CoreIPC::MessageID messageID, CoreIPC::MessageDecoder& decoder, OwnPtr<CoreIPC::MessageEncoder>& replyEncoder)
+{
+    m_messageReceiverMap.dispatchSyncMessage(connection, messageID, decoder, replyEncoder);
 }
 
 void NetworkProcess::didClose(CoreIPC::Connection*)
@@ -125,6 +136,11 @@ void NetworkProcess::didDestroyDownload()
 CoreIPC::Connection* NetworkProcess::downloadProxyConnection()
 {
     return m_uiConnection.get();
+}
+
+AuthenticationManager& NetworkProcess::downloadsAuthenticationManager()
+{
+    return m_downloadsAuthenticationManager;
 }
 
 void NetworkProcess::initializeNetworkProcess(const NetworkProcessCreationParameters& parameters)

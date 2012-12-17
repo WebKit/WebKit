@@ -122,10 +122,20 @@ void DownloadProxy::didReceiveAuthenticationChallenge(const AuthenticationChalle
     if (!m_webContext)
         return;
 
-    // FIXME (Multi-WebProcess): <rdar://problem/12239483> Downloads shouldn't be handled in the web process.
-    // Once this is fixed, remove WebContext::deprecatedSharedProcess().
-    
-    RefPtr<AuthenticationChallengeProxy> authenticationChallengeProxy = AuthenticationChallengeProxy::create(authenticationChallenge, challengeID, m_webContext->deprecatedSharedProcess()->connection());
+    RefPtr<CoreIPC::Connection> connection;
+
+    if (m_webContext->usesNetworkProcess()) {
+#if ENABLE(NETWORK_PROCESS)
+        if (NetworkProcessProxy* networkProcess = m_webContext->networkProcess())
+            connection = networkProcess->connection();
+#endif
+    } else {
+        // FIXME: Remove WebContext::deprecatedSharedProcess().
+        connection = m_webContext->deprecatedSharedProcess()->connection();
+    }
+
+    RefPtr<AuthenticationChallengeProxy> authenticationChallengeProxy = AuthenticationChallengeProxy::create(authenticationChallenge, challengeID, connection.get());
+
     m_webContext->downloadClient().didReceiveAuthenticationChallenge(m_webContext.get(), this, authenticationChallengeProxy.get());
 }
 

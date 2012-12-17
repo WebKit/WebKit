@@ -42,6 +42,7 @@ class Connection;
 
 namespace WebKit {
 
+class AuthenticationManager;
 class Download;
 class WebPage;
 
@@ -55,9 +56,8 @@ public:
 
         virtual void didCreateDownload() = 0;
         virtual void didDestroyDownload() = 0;
-
-        // This is the connection where DownloadProxy messages should be sent.
         virtual CoreIPC::Connection* downloadProxyConnection() = 0;
+        virtual AuthenticationManager& downloadsAuthenticationManager() = 0;
     };
 
     explicit DownloadManager(Client*);
@@ -74,6 +74,7 @@ public:
     void didDestroyDownload();
 
     CoreIPC::Connection* downloadProxyConnection();
+    AuthenticationManager& downloadsAuthenticationManager();
 
 #if PLATFORM(QT)
     void startTransfer(uint64_t downloadID, const String& destination);

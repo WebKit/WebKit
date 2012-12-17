@@ -79,7 +79,7 @@ void Download::didStart()
 
 void Download::didReceiveAuthenticationChallenge(const AuthenticationChallenge& authenticationChallenge)
 {
-//    AuthenticationManager::shared().didReceiveAuthenticationChallenge(this, authenticationChallenge);
+    m_downloadManager.downloadsAuthenticationManager().didReceiveAuthenticationChallenge(this, authenticationChallenge);
 }
 
 void Download::didReceiveResponse(const ResourceResponse& response)

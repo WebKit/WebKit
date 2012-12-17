@@ -88,6 +88,11 @@ CoreIPC::Connection* DownloadManager::downloadProxyConnection()
     return m_client->downloadProxyConnection();
 }
 
+AuthenticationManager& DownloadManager::downloadsAuthenticationManager()
+{
+    return m_client->downloadsAuthenticationManager();
+}
+
 #if PLATFORM(QT)
 void DownloadManager::startTransfer(uint64_t downloadID, const String& destination)
 {

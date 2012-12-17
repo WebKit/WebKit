@@ -237,6 +237,11 @@ CoreIPC::Connection* WebProcess::downloadProxyConnection()
     return m_connection.get();
 }
 
+AuthenticationManager& WebProcess::downloadsAuthenticationManager()
+{
+    return m_authenticationManager;
+}
+
 void WebProcess::initializeWebProcess(const WebProcessCreationParameters& parameters, CoreIPC::MessageDecoder& decoder)
 {
     ASSERT(m_pageMap.isEmpty());
@@ -596,7 +601,6 @@ void WebProcess::terminate()
 void WebProcess::didReceiveSyncMessage(CoreIPC::Connection* connection, CoreIPC::MessageID messageID, CoreIPC::MessageDecoder& decoder, OwnPtr<CoreIPC::MessageEncoder>& replyEncoder)
 {
     m_messageReceiverMap.dispatchSyncMessage(connection, messageID, decoder, replyEncoder);
-        return;
 }
 
 void WebProcess::didReceiveMessage(CoreIPC::Connection* connection, CoreIPC::MessageID messageID, CoreIPC::MessageDecoder& decoder)

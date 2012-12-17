@@ -28,9 +28,11 @@
 
 #if ENABLE(NETWORK_PROCESS)
 
+#include "AuthenticationManager.h"
 #include "CacheModel.h"
 #include "ChildProcess.h"
 #include "DownloadManager.h"
+#include "MessageReceiverMap.h"
 #include "NetworkResourceLoadScheduler.h"
 #include <wtf/Forward.h>
 
@@ -67,6 +69,7 @@ private:
 
     // CoreIPC::Connection::Client
     virtual void didReceiveMessage(CoreIPC::Connection*, CoreIPC::MessageID, CoreIPC::MessageDecoder&) OVERRIDE;
+    virtual void didReceiveSyncMessage(CoreIPC::Connection*, CoreIPC::MessageID, CoreIPC::MessageDecoder&, OwnPtr<CoreIPC::MessageEncoder>&);
     virtual void didClose(CoreIPC::Connection*) OVERRIDE;
     virtual void didReceiveInvalidMessage(CoreIPC::Connection*, CoreIPC::StringReference messageReceiverName, CoreIPC::StringReference messageName) OVERRIDE;
 
@@ -74,6 +77,7 @@ private:
     virtual void didCreateDownload() OVERRIDE;
     virtual void didDestroyDownload() OVERRIDE;
     virtual CoreIPC::Connection* downloadProxyConnection() OVERRIDE;
+    virtual AuthenticationManager& downloadsAuthenticationManager() OVERRIDE;
 
     // Message Handlers
     void didReceiveNetworkProcessMessage(CoreIPC::Connection*, CoreIPC::MessageID, CoreIPC::MessageDecoder&);
@@ -95,6 +99,8 @@ private:
     // The connection to the UI process.
     RefPtr<CoreIPC::Connection> m_uiConnection;
 
+    CoreIPC::MessageReceiverMap m_messageReceiverMap;
+
     // Connections to WebProcesses.
     Vector<RefPtr<NetworkConnectionToWebProcess> > m_webProcessConnections;
 
@@ -103,6 +109,8 @@ private:
     String m_diskCacheDirectory;
     bool m_hasSetCacheModel;
     CacheModel m_cacheModel;
+
+    AuthenticationManager m_downloadsAuthenticationManager;
 };
 
 } // namespace WebKit

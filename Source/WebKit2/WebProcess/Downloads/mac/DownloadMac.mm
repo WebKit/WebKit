@@ -109,7 +109,6 @@ void Download::platformDidFinish()
 {
 }
 
-// FIXME (NetworkProcess): Downloads and their credentials have to go through the NetworkProcess
 void Download::receivedCredential(const AuthenticationChallenge& authenticationChallenge, const Credential& credential)
 {
     [authenticationChallenge.sender() useCredential:mac(credential) forAuthenticationChallenge:authenticationChallenge.nsURLAuthenticationChallenge()];
