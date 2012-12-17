@@ -364,18 +364,21 @@ bool PluginViewPrivate::resizeBuffers(NPSurfaceFormat format, int width, int hei
 
 bool PluginViewPrivate::destroyBuffers()
 {
-    PthreadMutexLocker backLock(&m_backBufferMutex);
-    PthreadWriteLocker frontLock(&m_frontBufferRwLock);
-
     bool didDestroyBuffers = false;
-    for (int i = 0; i < PLUGIN_BUFFERS; i++) {
-        if (m_pluginBuffers[i]) {
-            didDestroyBuffers = true;
-            BlackBerry::Platform::Graphics::destroyBuffer(m_pluginBuffers[i]);
-            m_pluginBuffers[i] = 0;
+
+    {
+        PthreadMutexLocker backLock(&m_backBufferMutex);
+        PthreadWriteLocker frontLock(&m_frontBufferRwLock);
+
+        for (int i = 0; i < PLUGIN_BUFFERS; i++) {
+            if (m_pluginBuffers[i]) {
+                didDestroyBuffers = true;
+                BlackBerry::Platform::Graphics::destroyBuffer(m_pluginBuffers[i]);
+                m_pluginBuffers[i] = 0;
+            }
         }
+        m_pluginBufferSize = IntSize();
     }
-    m_pluginBufferSize = IntSize();
 
     if (didDestroyBuffers) {
         BlackBerry::Platform::userInterfaceThreadMessageClient()->dispatchSyncMessage(
