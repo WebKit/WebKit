@@ -1828,7 +1828,7 @@ Platform::IntSize WebPage::viewportSize() const
 
 IntSize WebPagePrivate::transformedViewportSize() const
 {
-    return Platform::Graphics::Screen::primaryScreen()->size();
+    return BlackBerry::Platform::Settings::instance()->applicationSize();
 }
 
 IntRect WebPagePrivate::transformedVisibleContentsRect() const
@@ -3877,7 +3877,7 @@ void WebPage::setViewportSize(const Platform::IntSize& viewportSize, bool ensure
 
 void WebPagePrivate::setDefaultLayoutSize(const IntSize& size)
 {
-    IntSize screenSize = Platform::Graphics::Screen::primaryScreen()->size();
+    IntSize screenSize = Platform::Settings::instance()->applicationSize();
     ASSERT(size.width() <= screenSize.width() && size.height() <= screenSize.height());
     m_defaultLayoutSize = size.expandedTo(minimumLayoutSize).shrunkTo(screenSize);
 }

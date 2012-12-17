@@ -79,7 +79,7 @@ void SurfacePool::initialize(const Platform::IntSize& tileSize)
     const unsigned maxNumberOfTiles = Platform::Settings::instance()->maximumNumberOfBackingStoreTilesAcrossProcesses();
 
     if (m_numberOfFrontBuffers) { // Only allocate if we actually use a backingstore.
-        Platform::IntSize screenSize = Platform::Graphics::Screen::primaryScreen()->size();
+        Platform::IntSize screenSize = BlackBerry::Platform::Settings::instance()->applicationSize();
         unsigned byteLimit = maxNumberOfTiles * tileSize.width() * tileSize.height() * 4;
         byteLimit += screenSize.width() * screenSize.height() * 4; // visible tile buffer - FIXME, fragile for further maintenance as its size doesn't sync up with the rest
         bool success = Platform::Graphics::createPixmapGroup(SHARED_PIXMAP_GROUP, byteLimit);
