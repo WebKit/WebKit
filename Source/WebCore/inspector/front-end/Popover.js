@@ -106,7 +106,7 @@ WebInspector.Popover.prototype = {
         this._positionElement(anchor, preferredWidth, preferredHeight);
 
         if (this._popoverHelper) {
-            contentElement.addEventListener("mousemove", this._popoverHelper._killHidePopoverTimer.bind(this._popoverHelper), true);
+            this.element.addEventListener("mousemove", this._popoverHelper._killHidePopoverTimer.bind(this._popoverHelper), true);
             this.element.addEventListener("mouseout", this._popoverHelper._popoverMouseOut.bind(this._popoverHelper), true);
         }
     },

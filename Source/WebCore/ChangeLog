@@ -1,3 +1,22 @@
+2012-12-17  Eugene Klyuchnikov  <eustas@chromium.org>
+
+        Web Inspector: Make popover content accessible for clicks.
+        https://bugs.webkit.org/show_bug.cgi?id=105167
+
+        Reviewed by Vsevolod Vlasov.
+
+        Currently it is very hard to move mouse pointer inside of popover area.
+        The only maneuver is to precisely jerk the mouse in direction of popover.
+
+        This path makes anchor and popover "active" areas overlap, so it becomes
+        possible to smoothly move mouse to popover interior.
+
+        * inspector/front-end/Popover.js:
+        (WebInspector.Popover.prototype._innerShow): Make popover "outer" border
+        an be "active" area.
+        * inspector/front-end/popover.css: Allow popover "outer" border receive
+        mouse events.
+
 2012-12-17  Andrey Kosyakov  <caseq@chromium.org>
 
         Web Inspector: Persist Audit selections across sessions

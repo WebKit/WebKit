@@ -3,7 +3,6 @@
     -webkit-border-image: url(Images/popoverBackground.png) 25 25 25 25;
     border-width: 25px;
     z-index: 100;
-    pointer-events: none;
 }
 
 .popover .content {
