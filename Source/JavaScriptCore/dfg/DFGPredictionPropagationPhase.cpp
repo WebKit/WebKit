@@ -723,6 +723,10 @@ private:
             break;
 
         case PutScopedVar:
+            changed |= m_graph[node.child1()].mergeFlags(NodeUsedAsValue);
+            changed |= m_graph[node.child3()].mergeFlags(NodeUsedAsValue);
+            break;
+            
         case Return:
         case Throw:
             changed |= m_graph[node.child1()].mergeFlags(NodeUsedAsValue);
