@@ -1,3 +1,21 @@
+2012-12-17  John J. Barton  <johnjbarton@chromium.org>
+
+        Web Inspector: Search by selection
+        https://bugs.webkit.org/show_bug.cgi?id=104970
+
+        Reviewed by Vsevolod Vlasov.
+
+        Upon activation of the search control, conditionally set input.value to window.getSelection().
+        For both single file (SearchController) and multifile (AdvancedSearchController).
+
+        Test: inspector/editor/text-editor-selection-to-search.html
+
+        * inspector/front-end/AdvancedSearchController.js:
+        (WebInspector.AdvancedSearchController.prototype.show):
+        (WebInspector.SearchView.prototype.syncToSelection):
+        * inspector/front-end/SearchController.js:
+        (WebInspector.SearchController.prototype.showSearchField):
+
 2012-12-17  Eduardo Lima Mitev  <elima@igalia.com>
 
         [GStreamer] Use gst_element_link_pads_full() with CHECK_NOTHING for speed and sanity

@@ -1,0 +1,62 @@
+<html>
+<head>
+<script src="../../http/tests/inspector/inspector-test.js"></script>
+<script src="../../http/tests/inspector/debugger-test.js"></script>
+<script src="../debugger/resources/edit-me.js"></script>
+
+<script>
+
+function test()
+{
+    var panel = WebInspector.showPanel("scripts");  
+
+    function selectionToSearchInputTest() {
+        WebInspector.searchController.showSearchField();
+        InspectorTest.addResult(WebInspector.searchController._searchInputElement.value);
+        WebInspector.advancedSearchController.show();
+        InspectorTest.addResult(WebInspector.advancedSearchController._searchView._search.value);
+    }
+
+    InspectorTest.showScriptSource("edit-me.js", didShowScriptSource);
+
+    function getLineColumn(sourceFrame, string) {
+        for (var i = 0; i < sourceFrame._textEditor.linesCount; ++i) {
+            var line = sourceFrame._textEditor.line(i);
+            var column = line.indexOf(string);
+            if (column === -1)
+                continue;
+            return {line: i, column: column};
+            break;
+        }
+    }
+
+    function setSelection(sourceFrame, from, to) {
+        range = new WebInspector.TextRange(from.line, from.column, to.line, to.column);
+        return sourceFrame._textEditor.setSelection(range);
+    }
+
+    function didShowScriptSource(sourceFrame)
+    {
+        var string = 'return';
+        var lineColumn = getLineColumn(sourceFrame, string);
+        
+        InspectorTest.runTestSuite([
+            function testWordSelectionToSearchQuery(next)
+            {
+                setSelection(sourceFrame, lineColumn, {line: lineColumn.line, column: lineColumn.column + string.length});
+                selectionToSearchInputTest();
+                next();
+            },
+        ]);
+    }
+};
+
+</script>
+
+</head>
+
+<body onload="runTest()">
+<p>Tests synchronizing the search input field to the editor selection.</p>
+
+</body>
+</html>

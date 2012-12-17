@@ -88,6 +88,8 @@ WebInspector.AdvancedSearchController.prototype = {
         if (!this._searchView)
             this._searchView = new WebInspector.SearchView(this);
         
+        this._searchView.syncToSelection();
+
         if (this._searchView.isShowing())
             this._searchView.focus();
         else
@@ -239,6 +241,13 @@ WebInspector.SearchView.prototype = {
     get searchConfig()
     {
         return new WebInspector.SearchConfig(this._search.value, this._ignoreCaseCheckbox.checked, this._regexCheckbox.checked);
+    },
+
+    syncToSelection: function()
+    {
+        var selection = window.getSelection();
+        if (selection.rangeCount)
+            this._search.value = selection.toString().replace(/\r?\n.*/, "");
     },
     
     /**

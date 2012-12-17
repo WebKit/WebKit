@@ -249,6 +249,9 @@ WebInspector.SearchController.prototype = {
         WebInspector.inspectorView.setFooterElement(this._element);
         this._updateReplaceVisibility();
         this._updateFilterVisibility();
+        var selection = window.getSelection();
+        if (selection.rangeCount)
+            this._searchInputElement.value = selection.toString().replace(/\r?\n.*/, "");
         this._searchInputElement.focus();
         this._searchInputElement.select();
         this._searchIsVisible = true;
