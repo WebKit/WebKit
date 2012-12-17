@@ -9,7 +9,7 @@ TARGET  = qmlwebkitexperimentalplugin
 
 TARGET.module_name = QtWebKit/experimental
 
-CONFIG += qt plugin
+CONFIG += plugin
 
 QMLDIRFILE = $${_PRO_FILE_PWD_}/qmldir
 copy2build.input = QMLDIRFILE

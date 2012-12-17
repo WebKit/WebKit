@@ -4,7 +4,7 @@ TARGET = tst_qmltests_DesktopBehavior
 OBJECTS_DIR = .obj_DesktopBehavior
 
 QT += webkit-private
-CONFIG += warn_on testcase
+CONFIG += testcase
 
 QT += qmltest
 

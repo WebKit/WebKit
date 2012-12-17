@@ -38,7 +38,6 @@ CONFIG(release, debug|release): DEFINES *= NDEBUG
 
 DEFINES += $$configDefines()
 
-CONFIG += depend_includepath
 DEPENDPATH += $$OUT_PWD
 
 INCLUDEPATH += \

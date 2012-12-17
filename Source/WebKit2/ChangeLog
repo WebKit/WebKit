@@ -1,5 +1,17 @@
 2012-12-17  Oswald Buddenhagen  <oswald.buddenhagen@digia.com>
 
+        [Qt] remove some unnecessary CONFIG additions
+
+        Reviewed by Simon Hausmann.
+
+        qt is already added by spec_pre.prf, warn_on and depend_includepath by
+        default_pre.prf.
+
+        * UIProcess/API/qt/tests/qmltests/DesktopBehavior.pro:
+        * UIProcess/API/qt/tests/qmltests/WebView.pro:
+
+2012-12-17  Oswald Buddenhagen  <oswald.buddenhagen@digia.com>
+
         [Qt] rely on automatic output directory setup
 
         Reviewed by Simon Hausmann.
