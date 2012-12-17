@@ -52,6 +52,7 @@
 #include "ewk_view_private.h"
 #include <Ecore_Evas.h>
 #include <WebKit2/WKPageGroup.h>
+#include <wtf/UnusedParam.h>
 #include <wtf/text/CString.h>
 
 #if ENABLE(INSPECTOR)
@@ -864,6 +865,7 @@ Eina_Bool ewk_view_inspector_show(Evas_Object* ewkView)
 
     return true;
 #else
+    UNUSED_PARAM(ewkView);
     return false;
 #endif
 }
@@ -879,6 +881,7 @@ Eina_Bool ewk_view_inspector_close(Evas_Object* ewkView)
 
     return true;
 #else
+    UNUSED_PARAM(ewkView);
     return false;
 #endif
 }

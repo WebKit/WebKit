@@ -82,6 +82,7 @@
 #include <limits>
 #include <math.h>
 #include <sys/time.h>
+#include <wtf/UnusedParam.h>
 
 #if ENABLE(DEVICE_ORIENTATION)
 #include "DeviceMotionClientEfl.h"
@@ -4484,6 +4485,8 @@ void ewk_view_inspector_show(const Evas_Object* ewkView)
     EWK_VIEW_PRIV_GET_OR_RETURN(smartData, priv);
 
     priv->page->inspectorController()->show();
+#else
+    UNUSED_PARAM(ewkView);
 #endif
 }
 
@@ -4494,6 +4497,8 @@ void ewk_view_inspector_close(const Evas_Object* ewkView)
     EWK_VIEW_PRIV_GET_OR_RETURN(smartData, priv);
 
     priv->page->inspectorController()->close();
+#else
+    UNUSED_PARAM(ewkView);
 #endif
 }
 
@@ -4505,6 +4510,7 @@ Evas_Object* ewk_view_inspector_view_get(const Evas_Object* ewkView)
 
     return priv->inspectorView;
 #else
+    UNUSED_PARAM(ewkView);
     return 0;
 #endif
 }
@@ -4516,6 +4522,9 @@ void ewk_view_inspector_view_set(Evas_Object* ewkView, Evas_Object* inspectorVie
     EWK_VIEW_PRIV_GET(smartData, priv);
 
     priv->inspectorView = inspectorView;
+#else
+    UNUSED_PARAM(ewkView);
+    UNUSED_PARAM(inspectorView);
 #endif
 }
 
