@@ -1,5 +1,17 @@
 2012-12-16  Anders Carlsson  <andersca@apple.com>
 
+        Remove the random crash thread
+        https://bugs.webkit.org/show_bug.cgi?id=105147
+
+        Reviewed by Sam Weinig.
+
+        Remove old crashy code.
+
+        * WebProcess/WebProcess.cpp:
+        (WebKit::WebProcess::initialize):
+
+2012-12-16  Anders Carlsson  <andersca@apple.com>
+
         Implement authentication for downloads
         https://bugs.webkit.org/show_bug.cgi?id=105146
         <rdar://problem/12239483>

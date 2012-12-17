@@ -109,32 +109,6 @@ using namespace WebCore;
 
 namespace WebKit {
 
-#if OS(WINDOWS)
-static void sleep(unsigned seconds)
-{
-    ::Sleep(seconds * 1000);
-}
-#endif
-
-static void randomCrashThread(void*) NO_RETURN_DUE_TO_CRASH;
-void randomCrashThread(void*)
-{
-    // This delay was chosen semi-arbitrarily. We want the crash to happen somewhat quickly to
-    // enable useful stress testing, but not so quickly that the web process will always crash soon
-    // after launch.
-    static const unsigned maximumRandomCrashDelay = 180;
-
-    sleep(randomNumber() * maximumRandomCrashDelay);
-    CRASH();
-}
-
-static void startRandomCrashThreadIfRequested()
-{
-    if (!getenv("WEBKIT2_CRASH_WEB_PROCESS_RANDOMLY"))
-        return;
-    createThread(randomCrashThread, 0, "WebKit2: Random Crash Thread");
-}
-
 WebProcess& WebProcess::shared()
 {
     static WebProcess& process = *new WebProcess;
@@ -203,8 +177,6 @@ void WebProcess::initialize(CoreIPC::Connection::Identifier serverIdentifier, Ru
     m_runLoop = runLoop;
 
     m_authenticationManager.setConnection(m_connection.get());
-
-    startRandomCrashThreadIfRequested();
 }
 
 void WebProcess::addMessageReceiver(CoreIPC::StringReference messageReceiverName, CoreIPC::MessageReceiver* messageReceiver)
