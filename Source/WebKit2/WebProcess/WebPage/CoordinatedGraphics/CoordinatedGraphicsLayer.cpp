@@ -139,6 +139,7 @@ CoordinatedGraphicsLayer::~CoordinatedGraphicsLayer()
         purgeBackingStores();
         m_coordinator->detachLayer(this);
     }
+    ASSERT(!m_coordinatedImageBacking && !m_mainBackingStore);
     willBeDestroyed();
 }
 
@@ -735,28 +736,26 @@ Color CoordinatedGraphicsLayer::tiledBackingStoreBackgroundColor() const
 
 PassOwnPtr<GraphicsContext> CoordinatedGraphicsLayer::beginContentUpdate(const IntSize& size, uint32_t& atlas, IntPoint& offset)
 {
-    if (!m_coordinator)
-        return PassOwnPtr<WebCore::GraphicsContext>();
-
+    ASSERT(m_coordinator);
     return m_coordinator->beginContentUpdate(size, contentsOpaque() ? CoordinatedSurface::NoFlags : CoordinatedSurface::SupportsAlpha, atlas, offset);
 }
 
 void CoordinatedGraphicsLayer::createTile(uint32_t tileID, const SurfaceUpdateInfo& updateInfo, const WebCore::IntRect& tileRect)
 {
-    if (m_coordinator)
-        m_coordinator->createTile(id(), tileID, updateInfo, tileRect);
+    ASSERT(m_coordinator);
+    m_coordinator->createTile(id(), tileID, updateInfo, tileRect);
 }
 
 void CoordinatedGraphicsLayer::updateTile(uint32_t tileID, const SurfaceUpdateInfo& updateInfo, const IntRect& tileRect)
 {
-    if (m_coordinator)
-        m_coordinator->updateTile(id(), tileID, updateInfo, tileRect);
+    ASSERT(m_coordinator);
+    m_coordinator->updateTile(id(), tileID, updateInfo, tileRect);
 }
 
 void CoordinatedGraphicsLayer::removeTile(uint32_t tileID)
 {
-    if (m_coordinator)
-        m_coordinator->removeTile(id(), tileID);
+    ASSERT(m_coordinator);
+    m_coordinator->removeTile(id(), tileID);
 }
 
 void CoordinatedGraphicsLayer::updateContentBuffers()

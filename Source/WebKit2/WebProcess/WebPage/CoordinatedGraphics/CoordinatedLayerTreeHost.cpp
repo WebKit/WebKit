@@ -71,6 +71,7 @@ CoordinatedLayerTreeHost::~CoordinatedLayerTreeHost()
 #if ENABLE(CSS_SHADERS)
     disconnectCustomFilterPrograms();
 #endif
+    purgeBackingStores();
 
     // Prevent setCoordinatedGraphicsLayerClient(0) -> detachLayer() from modifying the set while we iterate it.
     HashSet<WebCore::CoordinatedGraphicsLayer*> registeredLayers;

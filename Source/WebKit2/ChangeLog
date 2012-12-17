@@ -1,3 +1,27 @@
+2012-12-16  Huang Dongsung  <luxtella@company100.net>
+
+        Coordinated Graphics: Small refactor of CoordinatedLayerTreeHost and CoordinatedGraphicsLayer.
+        https://bugs.webkit.org/show_bug.cgi?id=104880
+
+        Reviewed by Noam Rosenthal.
+
+        Delete backing stores explicitly in ~CoordinatedLayerTreeHost().
+
+        Clarify the lifecycle of backing stores in CoordinatedGraphicsLayer.
+        Currently, CoordinatedGraphicsLayer::removeTile() checks if m_coordinator
+        exists, because ~CoordinatedLayerTreeHost() sets m_coordinator in
+        CoordinatedGraphicsLayer to 0. This patch purges backing stores before setting
+        m_coordinator to 0. This change makes code more readable.
+
+        * WebProcess/WebPage/CoordinatedGraphics/CoordinatedGraphicsLayer.cpp:
+        (WebCore::CoordinatedGraphicsLayer::~CoordinatedGraphicsLayer):
+        (WebCore::CoordinatedGraphicsLayer::beginContentUpdate):
+        (WebCore::CoordinatedGraphicsLayer::createTile):
+        (WebCore::CoordinatedGraphicsLayer::updateTile):
+        (WebCore::CoordinatedGraphicsLayer::removeTile):
+        * WebProcess/WebPage/CoordinatedGraphics/CoordinatedLayerTreeHost.cpp:
+        (WebKit::CoordinatedLayerTreeHost::~CoordinatedLayerTreeHost):
+
 2012-12-16  Anders Carlsson  <andersca@apple.com>
 
         Authentication manager cleanup
