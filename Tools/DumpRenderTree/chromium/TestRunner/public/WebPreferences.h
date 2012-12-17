@@ -34,7 +34,6 @@
 #include "Platform/chromium/public/WebString.h"
 #include "Platform/chromium/public/WebURL.h"
 #include "WebKit/chromium/public/WebSettings.h"
-#include <map>
 
 namespace WebKit {
 class WebView;
@@ -49,15 +48,6 @@ struct WebPreferences {
     WebKit::WebString sansSerifFontFamily;
     WebKit::WebString cursiveFontFamily;
     WebKit::WebString fantasyFontFamily;
-
-    // Map of UScriptCode to font such as USCRIPT_ARABIC to "My Arabic Font".
-    typedef std::map<int, WebKit::WebString> ScriptFontFamilyMap;
-    ScriptFontFamilyMap standardFontMap;
-    ScriptFontFamilyMap fixedFontMap;
-    ScriptFontFamilyMap serifFontMap;
-    ScriptFontFamilyMap sansSerifFontMap;
-    ScriptFontFamilyMap cursiveFontMap;
-    ScriptFontFamilyMap fantasyFontMap;
 
     int defaultFontSize;
     int defaultFixedFontSize;

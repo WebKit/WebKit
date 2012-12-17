@@ -60,7 +60,6 @@ protected:
     bool cppVariantToBool(const CppVariant&);
     int32_t cppVariantToInt32(const CppVariant&);
     WebKit::WebString cppVariantToWebString(const CppVariant&);
-    Vector<WebKit::WebString> cppVariantToWebStringArray(const CppVariant&);
 
     void printErrorMessage(const std::string&);
 

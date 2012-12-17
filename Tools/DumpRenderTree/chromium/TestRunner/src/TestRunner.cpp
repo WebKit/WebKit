@@ -60,27 +60,6 @@ using namespace std;
 
 namespace WebTestRunner {
 
-namespace {
-
-// Sets map based on scriptFontPairs, a collapsed vector of pairs of ISO 15924
-// four-letter script code and font such as:
-// { "Arab", "My Arabic Font", "Grek", "My Greek Font" }
-static void setFontMap(WebPreferences::ScriptFontFamilyMap& map, const Vector<WebString>& scriptFontPairs)
-{
-    map.clear();
-    size_t i = 0;
-    while (i + 1 < scriptFontPairs.size()) {
-        const WebString& script = scriptFontPairs[i++];
-        const WebString& font = scriptFontPairs[i++];
-
-        int32_t code = u_getPropertyValueEnum(UCHAR_SCRIPT, script.utf8().data());
-        if (code >= 0 && code < USCRIPT_CODE_LIMIT)
-            map[static_cast<int>(code)] = font;
-    }
-}
-
-}
-
 TestRunner::TestRunner()
     : m_delegate(0)
     , m_webView(0)
@@ -794,72 +773,26 @@ void TestRunner::overridePreference(const CppArgumentList& arguments, CppVariant
     string key = arguments[0].toString();
     CppVariant value = arguments[1];
     WebPreferences* prefs = m_delegate->preferences();
-    if (key == "WebKitStandardFont")
-        prefs->standardFontFamily = cppVariantToWebString(value);
-    else if (key == "WebKitFixedFont")
-        prefs->fixedFontFamily = cppVariantToWebString(value);
-    else if (key == "WebKitSerifFont")
-        prefs->serifFontFamily = cppVariantToWebString(value);
-    else if (key == "WebKitSansSerifFont")
-        prefs->sansSerifFontFamily = cppVariantToWebString(value);
-    else if (key == "WebKitCursiveFont")
-        prefs->cursiveFontFamily = cppVariantToWebString(value);
-    else if (key == "WebKitFantasyFont")
-        prefs->fantasyFontFamily = cppVariantToWebString(value);
-    else if (key == "WebKitStandardFontMap")
-        setFontMap(prefs->standardFontMap, cppVariantToWebStringArray(value));
-    else if (key == "WebKitFixedFontMap")
-        setFontMap(prefs->fixedFontMap, cppVariantToWebStringArray(value));
-    else if (key == "WebKitSerifFontMap")
-        setFontMap(prefs->serifFontMap, cppVariantToWebStringArray(value));
-    else if (key == "WebKitSansSerifFontMap")
-        setFontMap(prefs->sansSerifFontMap, cppVariantToWebStringArray(value));
-    else if (key == "WebKitCursiveFontMap")
-        setFontMap(prefs->cursiveFontMap, cppVariantToWebStringArray(value));
-    else if (key == "WebKitFantasyFontMap")
-        setFontMap(prefs->fantasyFontMap, cppVariantToWebStringArray(value));
-    else if (key == "WebKitDefaultFontSize")
+    if (key == "WebKitDefaultFontSize")
         prefs->defaultFontSize = cppVariantToInt32(value);
-    else if (key == "WebKitDefaultFixedFontSize")
-        prefs->defaultFixedFontSize = cppVariantToInt32(value);
     else if (key == "WebKitMinimumFontSize")
         prefs->minimumFontSize = cppVariantToInt32(value);
-    else if (key == "WebKitMinimumLogicalFontSize")
-        prefs->minimumLogicalFontSize = cppVariantToInt32(value);
     else if (key == "WebKitDefaultTextEncodingName")
         prefs->defaultTextEncodingName = cppVariantToWebString(value);
     else if (key == "WebKitJavaScriptEnabled")
         prefs->javaScriptEnabled = cppVariantToBool(value);
-    else if (key == "WebKitWebSecurityEnabled")
-        prefs->webSecurityEnabled = cppVariantToBool(value);
-    else if (key == "WebKitJavaScriptCanOpenWindowsAutomatically")
-        prefs->javaScriptCanOpenWindowsAutomatically = cppVariantToBool(value);
     else if (key == "WebKitSupportsMultipleWindows")
         prefs->supportsMultipleWindows = cppVariantToBool(value);
     else if (key == "WebKitDisplayImagesKey")
         prefs->loadsImagesAutomatically = cppVariantToBool(value);
     else if (key == "WebKitPluginsEnabled")
         prefs->pluginsEnabled = cppVariantToBool(value);
-    else if (key == "WebKitDOMPasteAllowedPreferenceKey")
-        prefs->DOMPasteAllowed = cppVariantToBool(value);
-    else if (key == "WebKitDeveloperExtrasEnabledPreferenceKey")
-        prefs->developerExtrasEnabled = cppVariantToBool(value);
-    else if (key == "WebKitShrinksStandaloneImagesToFit")
-        prefs->shrinksStandaloneImagesToFit = cppVariantToBool(value);
-    else if (key == "WebKitTextAreasAreResizable")
-        prefs->textAreasAreResizable = cppVariantToBool(value);
     else if (key == "WebKitJavaEnabled")
         prefs->javaEnabled = cppVariantToBool(value);
     else if (key == "WebKitUsesPageCachePreferenceKey")
         prefs->usesPageCache = cppVariantToBool(value);
     else if (key == "WebKitPageCacheSupportsPluginsPreferenceKey")
         prefs->pageCacheSupportsPlugins = cppVariantToBool(value);
-    else if (key == "WebKitJavaScriptCanAccessClipboard")
-        prefs->javaScriptCanAccessClipboard = cppVariantToBool(value);
-    else if (key == "WebKitXSSAuditorEnabled")
-        prefs->XSSAuditorEnabled = cppVariantToBool(value);
-    else if (key == "WebKitLocalStorageEnabledPreferenceKey")
-        prefs->localStorageEnabled = cppVariantToBool(value);
     else if (key == "WebKitOfflineWebApplicationCacheEnabled")
         prefs->offlineWebApplicationCacheEnabled = cppVariantToBool(value);
     else if (key == "WebKitTabToLinksPreferenceKey")
@@ -948,19 +881,6 @@ WebString TestRunner::cppVariantToWebString(const CppVariant& value)
         return WebString();
     }
     return WebString::fromUTF8(value.toString());
-}
-
-Vector<WebString> TestRunner::cppVariantToWebStringArray(const CppVariant& value)
-{
-    if (!value.isObject()) {
-        printErrorMessage("Invalid value for preference. Expected object value.");
-        return Vector<WebString>();
-    }
-    Vector<WebString> resultVector;
-    Vector<string> stringVector = value.toStringVector();
-    for (size_t i = 0; i < stringVector.size(); ++i)
-        resultVector.append(WebString::fromUTF8(stringVector[i].c_str()));
-    return resultVector;
 }
 
 void TestRunner::printErrorMessage(const string& text)

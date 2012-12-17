@@ -1,3 +1,22 @@
+2012-12-17  Jochen Eisinger  <jochen@chromium.org>
+
+        [chromium] removed unused preferences from testRunner.overridePreference
+        https://bugs.webkit.org/show_bug.cgi?id=105169
+
+        Reviewed by Tony Chang.
+
+        Most notably this removes the code related to font family maps which is
+        now handled via window.internals.settings
+
+        * DumpRenderTree/chromium/TestRunner/public/WebPreferences.h:
+        (WebPreferences):
+        * DumpRenderTree/chromium/TestRunner/src/TestRunner.cpp:
+        (WebTestRunner::TestRunner::overridePreference):
+        * DumpRenderTree/chromium/TestRunner/src/TestRunner.h:
+        (TestRunner):
+        * DumpRenderTree/chromium/TestRunner/src/WebPreferences.cpp:
+        (WebTestRunner::WebPreferences::applyTo):
+
 2012-12-17  James Robinson  <jamesr@chromium.org>
 
         [chromium] Move creation of WebLayerTreeView to WebWidgetClient

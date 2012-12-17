@@ -38,51 +38,6 @@ using namespace WebKit;
 
 namespace WebTestRunner {
 
-namespace {
-
-void setStandardFontFamilyWrapper(WebSettings* settings, const WebString& font, UScriptCode script)
-{
-    settings->setStandardFontFamily(font, script);
-}
-
-void setFixedFontFamilyWrapper(WebSettings* settings, const WebString& font, UScriptCode script)
-{
-    settings->setFixedFontFamily(font, script);
-}
-
-void setSerifFontFamilyWrapper(WebSettings* settings, const WebString& font, UScriptCode script)
-{
-    settings->setSerifFontFamily(font, script);
-}
-
-void setSansSerifFontFamilyWrapper(WebSettings* settings, const WebString& font, UScriptCode script)
-{
-    settings->setSansSerifFontFamily(font, script);
-}
-
-void setCursiveFontFamilyWrapper(WebSettings* settings, const WebString& font, UScriptCode script)
-{
-    settings->setCursiveFontFamily(font, script);
-}
-
-void setFantasyFontFamilyWrapper(WebSettings* settings, const WebString& font, UScriptCode script)
-{
-    settings->setFantasyFontFamily(font, script);
-}
-
-typedef void (*SetFontFamilyWrapper)(WebSettings*, const WebString&, UScriptCode);
-
-void applyFontMap(WebSettings* settings, const WebPreferences::ScriptFontFamilyMap& map, SetFontFamilyWrapper setter)
-{
-    for (WebPreferences::ScriptFontFamilyMap::const_iterator iter = map.begin(); iter != map.end(); ++iter) {
-        const WebString& font = iter->second;
-        if (!font.isNull() && !font.isEmpty())
-            (*setter)(settings, font, static_cast<UScriptCode>(iter->first));
-    }
-}
-
-}
-
 void WebPreferences::reset()
 {
 #if OS(MAC_OS_X)
@@ -185,13 +140,6 @@ void WebPreferences::applyTo(WebView* webView)
     settings->setSansSerifFontFamily(sansSerifFontFamily);
     settings->setCursiveFontFamily(cursiveFontFamily);
     settings->setFantasyFontFamily(fantasyFontFamily);
-
-    applyFontMap(settings, standardFontMap, setStandardFontFamilyWrapper);
-    applyFontMap(settings, fixedFontMap, setFixedFontFamilyWrapper);
-    applyFontMap(settings, serifFontMap, setSerifFontFamilyWrapper);
-    applyFontMap(settings, sansSerifFontMap, setSansSerifFontFamilyWrapper);
-    applyFontMap(settings, cursiveFontMap, setCursiveFontFamilyWrapper);
-    applyFontMap(settings, fantasyFontMap, setFantasyFontFamilyWrapper);
 
     settings->setDefaultFontSize(defaultFontSize);
     settings->setDefaultFixedFontSize(defaultFixedFontSize);
