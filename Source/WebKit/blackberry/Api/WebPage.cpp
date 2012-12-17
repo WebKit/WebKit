@@ -5307,6 +5307,9 @@ void WebPage::inspectCurrentContextElement()
 
 bool WebPagePrivate::compositorDrawsRootLayer() const
 {
+    if (!m_mainFrame)
+        return false;
+
 #if USE(ACCELERATED_COMPOSITING)
     if (Platform::userInterfaceThreadMessageClient()->isCurrentThread())
         return m_compositor && m_compositor->drawsRootLayer();
