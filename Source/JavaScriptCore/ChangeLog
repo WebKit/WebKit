@@ -1,3 +1,17 @@
+2012-12-17  Balazs Kilvady  <kilvadyb@homejinni.com>
+
+        Implement add64 for MIPS assembler after r136601
+        https://bugs.webkit.org/show_bug.cgi?id=104106
+
+        Reviewed by Zoltan Herczeg.
+
+        Added add64 function to MacroAssebler of MIPS.
+
+        * assembler/MacroAssemblerMIPS.h:
+        (JSC::MacroAssemblerMIPS::add32):
+        (JSC::MacroAssemblerMIPS::add64):
+        (MacroAssemblerMIPS):
+
 2012-12-17  Jonathan Liu  <net147@gmail.com>
 
         Fix Math.pow implementation with MinGW-w64

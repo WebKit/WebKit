@@ -228,20 +228,38 @@ public:
         /*
            li   addrTemp, address
            li   immTemp, imm
-           lw   dataTemp, 0(addrTemp)
-           addu dataTemp, dataTemp, immTemp
+           lw   cmpTemp, 0(addrTemp)
+           addu dataTemp, cmpTemp, immTemp
            sw   dataTemp, 0(addrTemp)
         */
         move(TrustedImmPtr(address.m_ptr), addrTempRegister);
-        m_assembler.lw(dataTempRegister, addrTempRegister, 0);
-        if (imm.m_value >= -32768 && imm.m_value <= 32767
-            && !m_fixedWidth)
-            m_assembler.addiu(dataTempRegister, dataTempRegister, imm.m_value);
+        m_assembler.lw(cmpTempRegister, addrTempRegister, 0);
+        if (imm.m_value >= -32768 && imm.m_value <= 32767 && !m_fixedWidth)
+            m_assembler.addiu(dataTempRegister, cmpTempRegister, imm.m_value);
         else {
             move(imm, immTempRegister);
-            m_assembler.addu(dataTempRegister, dataTempRegister, immTempRegister);
+            m_assembler.addu(dataTempRegister, cmpTempRegister, immTempRegister);
         }
         m_assembler.sw(dataTempRegister, addrTempRegister, 0);
+    }
+
+    void add64(TrustedImm32 imm, AbsoluteAddress address)
+    {
+        /*
+            add32(imm, address)
+            sltu  immTemp, dataTemp, cmpTemp    # set carry-in bit
+            lw    dataTemp, 4(addrTemp)
+            addiu dataTemp, imm.m_value >> 31 ? -1 : 0
+            addu  dataTemp, dataTemp, immTemp
+            sw    dataTemp, 4(addrTemp)
+        */
+        add32(imm, address);
+        m_assembler.sltu(immTempRegister, dataTempRegister, cmpTempRegister);
+        m_assembler.lw(dataTempRegister, addrTempRegister, 4);
+        if (imm.m_value >> 31)
+            m_assembler.addiu(dataTempRegister, dataTempRegister, -1);
+        m_assembler.addu(dataTempRegister, dataTempRegister, immTempRegister);
+        m_assembler.sw(dataTempRegister, addrTempRegister, 4);
     }
 
     void and32(RegisterID src, RegisterID dest)
