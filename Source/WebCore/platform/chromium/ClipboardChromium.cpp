@@ -369,6 +369,7 @@ static void writeImageToDataObject(ChromiumDataObject* dataObject, Element* elem
 
     // Determine the filename for the file contents of the image.
     String filename = cachedImage->response().suggestedFilename();
+    String extension;
     if (filename.isEmpty())
         filename = url.lastPathComponent();
     if (filename.isEmpty())
@@ -376,14 +377,19 @@ static void writeImageToDataObject(ChromiumDataObject* dataObject, Element* elem
     else {
         // Strip any existing extension. Assume that alt text is usually not a filename.
         int extensionIndex = filename.reverseFind('.');
-        if (extensionIndex != -1)
+        if (extensionIndex != -1) {
+            extension = filename.substring(extensionIndex + 1);
             filename.truncate(extensionIndex);
+        }
     }
 
-    String extension = MIMETypeRegistry::getPreferredExtensionForMIMEType(
-        cachedImage->response().mimeType());
-    extension = extension.isEmpty() ? emptyString() : "." + extension;
+    String extensionMimeType = MIMETypeRegistry::getMIMETypeForExtension(extension);
+    if (extensionMimeType != cachedImage->response().mimeType()) {
+        extension = MIMETypeRegistry::getPreferredExtensionForMIMEType(
+            cachedImage->response().mimeType());
+    }
 
+    extension = extension.isEmpty() ? emptyString() : "." + extension;
     ClipboardChromium::validateFilename(filename, extension);
 
     dataObject->addSharedBuffer(filename + extension, imageBuffer);

@@ -1,3 +1,19 @@
+2012-12-17  Avi Drissman  <avi@chromium.org>
+
+        Dragging a .jpg to Finder saves it as .jpeg
+        https://bugs.webkit.org/show_bug.cgi?id=105140
+        https://code.google.com/p/chromium/issues/detail?id=35811
+
+        Reviewed by Tony Chang.
+
+        If the filename's extension is already valid for the MIME type, we don't
+        need to rewrite it to the preferred extension.
+
+        No layout tests because it involves dragging items to the desktop.
+
+        * platform/chromium/ClipboardChromium.cpp:
+        (WebCore::writeImageToDataObject):
+
 2012-12-17  Bem Jones-Bey  <bjonesbe@adobe.com>
 
         [CSS Exclusions] shape-outside on floats for rectangle shapes height/width
