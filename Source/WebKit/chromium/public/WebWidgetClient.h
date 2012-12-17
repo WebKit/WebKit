@@ -35,6 +35,7 @@
 #include "WebScreenInfo.h"
 #include "platform/WebCommon.h"
 #include "platform/WebRect.h"
+#include <public/WebLayerTreeView.h>
 
 namespace WebKit {
 
@@ -63,6 +64,15 @@ public:
     // for the specified identifier will return 0.
     virtual void didActivateCompositor(int inputHandlerIdentifier) { }
     virtual void didDeactivateCompositor() { }
+
+    // Attempt to initialize compositing for this widget using the given
+    // parameters. If this is successful, layerTreeView() will return a valid
+    // WebLayerTreeView. If not, nothing happens.
+    virtual void initializeLayerTreeView(WebLayerTreeViewClient*, const WebLayer& rootLayer, const WebLayerTreeView::Settings&) { }
+
+    // Return a compositing view used for this widget. This is owned by the
+    // WebWidgetClient.
+    virtual WebLayerTreeView* layerTreeView() { return 0; }
 
     // Indicates to the embedder that the compositor is about to begin a
     // frame. This is primarily to signal to flow control mechanisms that a

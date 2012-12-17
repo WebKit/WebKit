@@ -689,6 +689,16 @@ void WebViewHost::didAutoResize(const WebSize& newSize)
     setWindowRect(WebRect(0, 0, newSize.width, newSize.height));
 }
 
+void WebViewHost::initializeLayerTreeView(WebLayerTreeViewClient* client, const WebLayer& rootLayer, const WebLayerTreeView::Settings& settings)
+{
+    m_layerTreeView = adoptPtr(Platform::current()->compositorSupport()->createLayerTreeView(client, rootLayer, settings));
+}
+
+WebLayerTreeView* WebViewHost::layerTreeView()
+{
+    return m_layerTreeView.get();
+}
+
 void WebViewHost::scheduleAnimation()
 {
     if (webView()->settings()->scrollAnimatorEnabled())
@@ -1437,6 +1447,7 @@ WebViewHost::~WebViewHost()
          it < m_popupmenus.end(); ++it)
         (*it)->close();
 
+    m_layerTreeView.clear();
     webWidget()->close();
     if (m_inModalLoop)
         webkit_support::QuitMessageLoop();

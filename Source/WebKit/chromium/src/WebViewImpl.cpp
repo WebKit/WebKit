@@ -418,6 +418,8 @@ WebViewImpl::WebViewImpl(WebViewClient* client)
     , m_isCancelingFullScreen(false)
     , m_benchmarkSupport(this)
 #if USE(ACCELERATED_COMPOSITING)
+    , m_layerTreeView(0)
+    , m_ownsLayerTreeView(false)
     , m_rootLayer(0)
     , m_rootGraphicsLayer(0)
     , m_isAcceleratedCompositingActive(false)
@@ -509,6 +511,8 @@ WebViewImpl::WebViewImpl(WebViewClient* client)
 
 WebViewImpl::~WebViewImpl()
 {
+    if (m_ownsLayerTreeView)
+        delete m_layerTreeView;
     ASSERT(!m_page);
 }
 
@@ -1731,7 +1735,7 @@ void WebViewImpl::setCompositorSurfaceReady()
 
 WebLayerTreeView* WebViewImpl::webLayerTreeView()
 {
-    return m_layerTreeView.get();
+    return m_layerTreeView;
 }
 
 void WebViewImpl::animate(double)
@@ -4027,7 +4031,12 @@ void WebViewImpl::setIsAcceleratedCompositingActive(bool active)
         m_nonCompositedContentHost->setShowDebugBorders(page()->settings()->showDebugBorders());
         m_nonCompositedContentHost->setOpaque(!isTransparent());
 
-        m_layerTreeView = adoptPtr(Platform::current()->compositorSupport()->createLayerTreeView(this, *m_rootLayer, layerTreeViewSettings));
+        m_client->initializeLayerTreeView(this, *m_rootLayer, layerTreeViewSettings);
+        m_layerTreeView = m_client->layerTreeView();
+        if (!m_layerTreeView) {
+            m_layerTreeView = Platform::current()->compositorSupport()->createLayerTreeView(this, *m_rootLayer, layerTreeViewSettings);
+            m_ownsLayerTreeView = true;
+        }
         if (m_layerTreeView) {
             if (m_webSettings->applyDeviceScaleFactorInCompositor() && page()->deviceScaleFactor() != 1) {
                 ASSERT(page()->deviceScaleFactor());

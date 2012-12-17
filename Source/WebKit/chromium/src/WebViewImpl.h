@@ -837,7 +837,8 @@ private:
 #if USE(ACCELERATED_COMPOSITING)
     WebCore::IntRect m_rootLayerScrollDamage;
     OwnPtr<NonCompositedContentHost> m_nonCompositedContentHost;
-    OwnPtr<WebLayerTreeView> m_layerTreeView;
+    WebLayerTreeView* m_layerTreeView;
+    bool m_ownsLayerTreeView;
     WebLayer* m_rootLayer;
     WebCore::GraphicsLayer* m_rootGraphicsLayer;
     bool m_isAcceleratedCompositingActive;

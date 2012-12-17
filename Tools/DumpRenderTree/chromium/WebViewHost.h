@@ -211,6 +211,8 @@ class WebViewHost : public WebKit::WebViewClient, public WebKit::WebFrameClient,
 
     // WebKit::WebWidgetClient
     virtual void didAutoResize(const WebKit::WebSize& newSize);
+    virtual void initializeLayerTreeView(WebKit::WebLayerTreeViewClient*, const WebKit::WebLayer& rootLayer, const WebKit::WebLayerTreeView::Settings&);
+    virtual WebKit::WebLayerTreeView* layerTreeView();
     virtual void scheduleAnimation();
     virtual void didFocus();
     virtual void didBlur();
@@ -463,6 +465,8 @@ private:
 
     // For web intents: holds the current request, if any.
     WebKit::WebIntentRequest m_currentRequest;
+
+    OwnPtr<WebKit::WebLayerTreeView> m_layerTreeView;
 };
 
 #endif // WebViewHost_h
