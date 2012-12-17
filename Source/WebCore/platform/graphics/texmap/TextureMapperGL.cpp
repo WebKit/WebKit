@@ -406,12 +406,12 @@ void TextureMapperGL::drawTexture(const BitmapTexture& texture, const FloatRect&
 
 void TextureMapperGL::drawTexture(Platform3DObject texture, Flags flags, const IntSize& textureSize, const FloatRect& targetRect, const TransformationMatrix& modelViewMatrix, float opacity, const BitmapTexture* maskTexture, unsigned exposedEdges)
 {
-    bool needsAntialiasing = m_enableEdgeDistanceAntialiasing && !modelViewMatrix.isIntegerTranslation();
-    if (needsAntialiasing && drawTextureWithAntialiasing(texture, flags, textureSize, targetRect, modelViewMatrix, opacity, maskTexture, exposedEdges))
-       return;
-
     bool useRect = flags & ShouldUseARBTextureRect;
     bool masked = !!maskTexture;
+    bool needsAntialiasing = m_enableEdgeDistanceAntialiasing && !modelViewMatrix.isIntegerTranslation();
+
+    if (!useRect && needsAntialiasing && drawTextureWithAntialiasing(texture, flags, textureSize, targetRect, modelViewMatrix, opacity, maskTexture, exposedEdges))
+        return;
 
     TextureMapperShaderManager::ShaderKey key = TextureMapperShaderManager::Default;
     if (masked && useRect)
