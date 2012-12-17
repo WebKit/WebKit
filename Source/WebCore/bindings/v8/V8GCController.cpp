@@ -111,6 +111,29 @@ private:
     Vector<ImplicitConnection> m_connections;
 };
 
+// FIXME: This should use opaque GC roots.
+static void addImplicitReferencesForNodeWithEventListeners(Node* node, v8::Persistent<v8::Object> wrapper)
+{
+    ASSERT(node->hasEventListeners());
+
+    Vector<v8::Persistent<v8::Value> > listeners;
+
+    EventListenerIterator iterator(node);
+    while (EventListener* listener = iterator.nextListener()) {
+        if (listener->type() != EventListener::JSEventListenerType)
+            continue;
+        V8AbstractEventListener* v8listener = static_cast<V8AbstractEventListener*>(listener);
+        if (!v8listener->hasExistingListenerObject())
+            continue;
+        listeners.append(v8listener->existingListenerObjectPersistentHandle());
+    }
+
+    if (listeners.isEmpty())
+        return;
+
+    v8::V8::AddImplicitReferences(wrapper, listeners.data(), listeners.size());
+}
+
 void* V8GCController::opaqueRootForGC(Node* node)
 {
     // FIXME: Remove the special handling for image elements.
@@ -177,21 +200,11 @@ public:
             ASSERT(!wrapper.IsIndependent());
 
             Node* node = static_cast<Node*>(object);
-            void* root = V8GCController::opaqueRootForGC(node);
 
-            if (node->hasEventListeners()) {
-                EventListenerIterator iterator(node);
-                while (EventListener* listener = iterator.nextListener()) {
-                    if (listener->type() != EventListener::JSEventListenerType)
-                        continue;
-                    V8AbstractEventListener* v8listener = static_cast<V8AbstractEventListener*>(listener);
-                    if (!v8listener->hasExistingListenerObject())
-                        continue;
-                    m_grouper.addToGroup(root, v8listener->existingListenerObjectPersistentHandle());
-                }
-            }
+            if (node->hasEventListeners())
+                addImplicitReferencesForNodeWithEventListeners(node, wrapper);
 
-            m_grouper.addToGroup(root, wrapper);
+            m_grouper.addToGroup(V8GCController::opaqueRootForGC(node), wrapper);
         } else if (classId == v8DOMObjectClassId) {
             m_grouper.addToGroup(type->opaqueRootForGC(object, wrapper), wrapper);
         } else {

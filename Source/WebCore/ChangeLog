@@ -1,3 +1,15 @@
+2012-12-17  Kentaro Hara  <haraken@chromium.org>
+
+        Unreviewed, rolling out r136794.
+        http://trac.webkit.org/changeset/136794
+        https://bugs.webkit.org/show_bug.cgi?id=104203
+
+        The GC change can leak memory
+
+        * bindings/v8/V8GCController.cpp:
+        (WebCore):
+        (WebCore::addImplicitReferencesForNodeWithEventListeners):
+
 2012-12-17  Gabor Rapcsanyi  <rgabor@webkit.org>
 
         Reduce the code size of ARM SIMD in GraphicsContext3D
