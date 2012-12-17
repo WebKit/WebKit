@@ -817,7 +817,7 @@
 		2E37E00512DBC5A400A6B233 /* JSDOMURL.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2E37E00312DBC5A400A6B233 /* JSDOMURL.cpp */; };
 		2E37E00612DBC5A400A6B233 /* JSDOMURL.h in Headers */ = {isa = PBXBuildFile; fileRef = 2E37E00412DBC5A400A6B233 /* JSDOMURL.h */; };
 		2E3BBF071162DA1100B9409A /* UUID.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2E3BBF051162DA1100B9409A /* UUID.cpp */; };
-		2E3BBF081162DA1100B9409A /* UUID.h in Headers */ = {isa = PBXBuildFile; fileRef = 2E3BBF061162DA1100B9409A /* UUID.h */; };
+		2E3BBF081162DA1100B9409A /* UUID.h in Headers */ = {isa = PBXBuildFile; fileRef = 2E3BBF061162DA1100B9409A /* UUID.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		2E3BC0CA117D3E0800B9409A /* JSFileError.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2E3BC0C8117D3E0800B9409A /* JSFileError.cpp */; };
 		2E3BC0CB117D3E0800B9409A /* JSFileError.h in Headers */ = {isa = PBXBuildFile; fileRef = 2E3BC0C9117D3E0800B9409A /* JSFileError.h */; };
 		2E3BC108117D479800B9409A /* DOMFileError.h in Headers */ = {isa = PBXBuildFile; fileRef = 2E3BC106117D479800B9409A /* DOMFileError.h */; };
@@ -22609,6 +22609,7 @@
 				E43105BB16750F1600DB2FB8 /* NodeTraversal.h in Headers */,
 				C375D7FE16639519006184AB /* TypeAhead.h in Headers */,
 				FD1AF1501656F15100C6D4F7 /* ExclusionShapeValue.h in Headers */,
+				2E3BBF081162DA1100B9409A /* UUID.h in Headers */,
 				BC7FA6210D1F0CBD00DB22A9 /* LiveNodeList.h in Headers */,
 				A81369DA097374F600D74463 /* HTMLOptionsCollection.h in Headers */,
 				A81369D8097374F600D74463 /* HTMLSelectElement.h in Headers */,
@@ -25738,7 +25739,6 @@
 				BC8BF15A1058141800A40A07 /* UserStyleSheetTypes.h in Headers */,
 				BCDF317C11F8D683003C5BF8 /* UserTypingGestureIndicator.h in Headers */,
 				1FAFBF1915A5FA7400083A20 /* UTIUtilities.h in Headers */,
-				2E3BBF081162DA1100B9409A /* UUID.h in Headers */,
 				F5A154281279534D00D0B0C0 /* ValidationMessage.h in Headers */,
 				F513A3EA15FF4841001526DB /* ValidationMessageClient.h in Headers */,
 				15C7708D100D3C6B005BA267 /* ValidityState.h in Headers */,

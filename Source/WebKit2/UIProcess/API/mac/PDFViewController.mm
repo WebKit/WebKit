@@ -36,6 +36,7 @@
 #import "WebPreferences.h"
 #import <PDFKit/PDFKit.h>
 #import <WebCore/LocalizedStrings.h>
+#import <WebCore/UUID.h>
 #import <wtf/ObjcRuntimeExtras.h>
 #import <wtf/text/CString.h>
 #import <wtf/text/WTFString.h>
@@ -45,6 +46,7 @@
 #define _webkit_PDFViewScaleChangedNotification @"PDFViewScaleChanged"
 #define _webkit_PDFViewPageChangedNotification @"PDFViewChangedPage"
 
+using namespace WebCore;
 using namespace WebKit;
 
 @class PDFDocument;
@@ -403,7 +405,6 @@ PDFViewController::PDFViewController(WKView *wkView)
     : m_wkView(wkView)
     , m_wkPDFView(AdoptNS, [[WKPDFView alloc] initWithFrame:[m_wkView bounds] PDFViewController:this])
     , m_pdfView([m_wkPDFView.get() pdfView])
-    , m_hasWrittenPDFToDisk(false)
 {
     [m_wkView addSubview:m_wkPDFView.get()];
 }
@@ -576,22 +577,14 @@ void PDFViewController::openPDFInFinder()
         return;
     }
 
-    NSString *path = pathToPDFOnDisk();
-    if (!path)
+    if (!m_temporaryPDFUUID) {
+        ASSERT(m_pdfData);
+        m_temporaryPDFUUID = createCanonicalUUIDString();
+        page()->savePDFToTemporaryFolderAndOpenWithNativeApplicationRaw(m_suggestedFilename.get(), page()->mainFrame()->url(), CFDataGetBytePtr(m_pdfData.get()), CFDataGetLength(m_pdfData.get()), m_temporaryPDFUUID);
         return;
-
-    if (!m_hasWrittenPDFToDisk) {
-        // Create a PDF file with the minimal permissions (only accessible to the current user, see 4145714).
-        RetainPtr<NSNumber> permissions(AdoptNS, [[NSNumber alloc] initWithInt:S_IRUSR]);
-        RetainPtr<NSDictionary> fileAttributes(AdoptNS, [[NSDictionary alloc] initWithObjectsAndKeys:permissions.get(), NSFilePosixPermissions, nil]);
-
-        if (![[NSFileManager defaultManager] createFileAtPath:path contents:(NSData *)m_pdfData.get() attributes:fileAttributes.get()])
-            return;
-
-        m_hasWrittenPDFToDisk = true;
     }
 
-    [[NSWorkspace sharedWorkspace] openFile:path];
+    page()->openPDFFromTemporaryFolderWithNativeApplication(m_temporaryPDFUUID);
 }
 
 static void releaseCFData(unsigned char*, const void* data)
@@ -618,50 +611,6 @@ void PDFViewController::savePDFToDownloadsFolder()
     RefPtr<WebData> data = WebData::createWithoutCopying(CFDataGetBytePtr(m_pdfData.get()), CFDataGetLength(m_pdfData.get()), releaseCFData, m_pdfData.get());
 
     page()->saveDataToFileInDownloadsFolder(m_suggestedFilename.get(), page()->mainFrame()->mimeType(), page()->mainFrame()->url(), data.get());
-}
-
-static NSString *temporaryPDFDirectoryPath()
-{
-    static NSString *temporaryPDFDirectoryPath;
-
-    if (!temporaryPDFDirectoryPath) {
-        NSString *temporaryDirectoryTemplate = [NSTemporaryDirectory() stringByAppendingPathComponent:@"WebKitPDFs-XXXXXX"];
-        CString templateRepresentation = [temporaryDirectoryTemplate fileSystemRepresentation];
-
-        if (mkdtemp(templateRepresentation.mutableData()))
-            temporaryPDFDirectoryPath = [[[NSFileManager defaultManager] stringWithFileSystemRepresentation:templateRepresentation.data() length:templateRepresentation.length()] copy];
-    }
-
-    return temporaryPDFDirectoryPath;
-}
-
-NSString *PDFViewController::pathToPDFOnDisk()
-{
-    if (m_pathToPDFOnDisk)
-        return m_pathToPDFOnDisk.get();
-
-    NSString *pdfDirectoryPath = temporaryPDFDirectoryPath();
-    if (!pdfDirectoryPath)
-        return nil;
-
-    NSString *path = [pdfDirectoryPath stringByAppendingPathComponent:m_suggestedFilename.get()];
-
-    NSFileManager *fileManager = [NSFileManager defaultManager];
-    if ([fileManager fileExistsAtPath:path]) {
-        NSString *pathTemplatePrefix = [pdfDirectoryPath stringByAppendingPathComponent:@"XXXXXX-"];
-        NSString *pathTemplate = [pathTemplatePrefix stringByAppendingString:m_suggestedFilename.get()];
-        CString pathTemplateRepresentation = [pathTemplate fileSystemRepresentation];
-
-        int fd = mkstemps(pathTemplateRepresentation.mutableData(), pathTemplateRepresentation.length() - strlen([pathTemplatePrefix fileSystemRepresentation]) + 1);
-        if (fd < 0)
-            return nil;
-
-        close(fd);
-        path = [fileManager stringWithFileSystemRepresentation:pathTemplateRepresentation.data() length:pathTemplateRepresentation.length()];
-    }
-
-    m_pathToPDFOnDisk.adoptNS([path copy]);
-    return path;
 }
 
 void PDFViewController::linkClicked(const String& url)

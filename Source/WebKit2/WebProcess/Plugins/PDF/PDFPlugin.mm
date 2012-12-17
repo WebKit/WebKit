@@ -69,6 +69,7 @@
 #import <WebCore/RenderBoxModelObject.h>
 #import <WebCore/ScrollAnimator.h>
 #import <WebCore/ScrollbarTheme.h>
+#import <WebCore/UUID.h>
 #import <WebKitSystemInterface.h>
 
 using namespace WebCore;
@@ -174,7 +175,7 @@ static const char* annotationStyle =
 
 - (void)openWithPreview
 {
-    // FIXME: Implement.
+    _pdfPlugin->openWithNativeApplication();
 }
 
 - (void)saveToPDF
@@ -763,11 +764,33 @@ void PDFPlugin::notifyContentScaleFactorChanged(CGFloat scaleFactor)
 
 void PDFPlugin::saveToPDF()
 {
+    // FIXME: We should probably notify the user that they can't save before the document is finished loading.
+    // PDFViewController does an NSBeep(), but that seems insufficient.
+    if (!pdfDocument())
+        return;
+
     RetainPtr<CFMutableDataRef> cfData = data();
+    webFrame()->page()->savePDFToFileInDownloadsFolder(suggestedFilename(), webFrame()->url(), CFDataGetBytePtr(cfData.get()), CFDataGetLength(cfData.get()));
+}
 
-    CoreIPC::DataReference dataReference(CFDataGetBytePtr(cfData.get()), CFDataGetLength(cfData.get()));
+void PDFPlugin::openWithNativeApplication()
+{
+    if (!m_temporaryPDFUUID) {
+        // FIXME: We should probably notify the user that they can't save before the document is finished loading.
+        // PDFViewController does an NSBeep(), but that seems insufficient.
+        if (!pdfDocument())
+            return;
 
-    webFrame()->page()->send(Messages::WebPageProxy::SavePDFToFileInDownloadsFolder(suggestedFilename(), webFrame()->url(), dataReference));
+        RetainPtr<CFMutableDataRef> cfData = data();
+
+        m_temporaryPDFUUID = WebCore::createCanonicalUUIDString();
+        ASSERT(m_temporaryPDFUUID);
+
+        webFrame()->page()->savePDFToTemporaryFolderAndOpenWithNativeApplication(suggestedFilename(), webFrame()->url(), CFDataGetBytePtr(cfData.get()), CFDataGetLength(cfData.get()), m_temporaryPDFUUID);
+        return;
+    }
+
+    webFrame()->page()->send(Messages::WebPageProxy::OpenPDFFromTemporaryFolderWithNativeApplication(m_temporaryPDFUUID));
 }
 
 void PDFPlugin::writeItemsToPasteboard(NSArray *items, NSArray *types)

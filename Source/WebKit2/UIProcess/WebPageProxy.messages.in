@@ -339,4 +339,9 @@ messages -> WebPageProxy {
 #endif
 
     SavePDFToFileInDownloadsFolder(WTF::String suggestedFilename, WTF::String originatingURLString, CoreIPC::DataReference data)
+
+#if PLATFORM(MAC)
+    SavePDFToTemporaryFolderAndOpenWithNativeApplication(WTF::String suggestedFilename, WTF::String originatingURLString, CoreIPC::DataReference data, WTF::String pdfUUID)
+    OpenPDFFromTemporaryFolderWithNativeApplication(WTF::String pdfUUID)
+#endif
 }

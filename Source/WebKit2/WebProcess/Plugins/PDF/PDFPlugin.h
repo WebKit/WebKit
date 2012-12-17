@@ -43,6 +43,10 @@ OBJC_CLASS PDFAnnotation;
 OBJC_CLASS PDFLayerController;
 OBJC_CLASS WKPDFLayerControllerDelegate;
 
+namespace CoreIPC {
+class DataReference;
+}
+
 namespace WebCore {
 class Element;
 struct PluginInfo;
@@ -67,6 +71,7 @@ public:
 
     void clickedLink(NSURL *);
     void saveToPDF();
+    void openWithNativeApplication();
     void writeItemsToPasteboard(NSArray *items, NSArray *types);
     void showDefinitionForAttributedString(NSAttributedString *, CGPoint);
 
@@ -122,6 +127,8 @@ private:
     WebCore::AffineTransform m_rootViewToPluginTransform;
     WebMouseEvent m_lastMouseEvent;
     WebCore::IntPoint m_lastMousePositionInPluginCoordinates;
+
+    String m_temporaryPDFUUID;
     
     RetainPtr<WKPDFLayerControllerDelegate> m_pdfLayerControllerDelegate;
 };

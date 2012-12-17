@@ -484,4 +484,102 @@ void WebPageProxy::setAcceleratedCompositingRootLayer(const GraphicsLayer* rootL
     m_pageClient->setAcceleratedCompositingRootLayer(rootLayer->platformLayer());
 }
 
+static NSString *temporaryPDFDirectoryPath()
+{
+    static NSString *temporaryPDFDirectoryPath;
+
+    if (!temporaryPDFDirectoryPath) {
+        NSString *temporaryDirectoryTemplate = [NSTemporaryDirectory() stringByAppendingPathComponent:@"WebKitPDFs-XXXXXX"];
+        CString templateRepresentation = [temporaryDirectoryTemplate fileSystemRepresentation];
+
+        if (mkdtemp(templateRepresentation.mutableData()))
+            temporaryPDFDirectoryPath = [[[NSFileManager defaultManager] stringWithFileSystemRepresentation:templateRepresentation.data() length:templateRepresentation.length()] copy];
+    }
+
+    return temporaryPDFDirectoryPath;
+}
+
+static NSString *pathToPDFOnDisk(const String& suggestedFilename)
+{
+    NSString *pdfDirectoryPath = temporaryPDFDirectoryPath();
+    if (!pdfDirectoryPath) {
+        WTFLogAlways("Cannot create temporary PDF download directory.");
+        return nil;
+    }
+
+    NSString *path = [pdfDirectoryPath stringByAppendingPathComponent:suggestedFilename];
+
+    NSFileManager *fileManager = [NSFileManager defaultManager];
+    if ([fileManager fileExistsAtPath:path]) {
+        NSString *pathTemplatePrefix = [pdfDirectoryPath stringByAppendingPathComponent:@"XXXXXX-"];
+        NSString *pathTemplate = [pathTemplatePrefix stringByAppendingString:suggestedFilename];
+        CString pathTemplateRepresentation = [pathTemplate fileSystemRepresentation];
+
+        int fd = mkstemps(pathTemplateRepresentation.mutableData(), pathTemplateRepresentation.length() - strlen([pathTemplatePrefix fileSystemRepresentation]) + 1);
+        if (fd < 0) {
+            WTFLogAlways("Cannot create PDF file in the temporary directory (%s).", suggestedFilename.utf8().data());
+            return nil;
+        }
+
+        close(fd);
+        path = [fileManager stringWithFileSystemRepresentation:pathTemplateRepresentation.data() length:pathTemplateRepresentation.length()];
+    }
+
+    return path;
+}
+
+void WebPageProxy::savePDFToTemporaryFolderAndOpenWithNativeApplicationRaw(const String& suggestedFilename, const String& originatingURLString, const uint8_t* data, unsigned long size, const String& pdfUUID)
+{
+    // FIXME: Write originatingURLString to the file's originating URL metadata (perhaps WKSetMetadataURL?).
+    UNUSED_PARAM(originatingURLString);
+
+    if (!suggestedFilename.endsWith(".pdf", false)) {
+        WTFLogAlways("Cannot save file without .pdf extension to the temporary directory.");
+        return;
+    }
+
+    if (!size) {
+        WTFLogAlways("Cannot save empty PDF file to the temporary directory.");
+        return;
+    }
+
+    NSString *nsPath = pathToPDFOnDisk(suggestedFilename);
+
+    if (!nsPath)
+        return;
+
+    RetainPtr<NSNumber> permissions = adoptNS([[NSNumber alloc] initWithInt:S_IRUSR]);
+    RetainPtr<NSDictionary> fileAttributes = adoptNS([[NSDictionary alloc] initWithObjectsAndKeys:permissions.get(), NSFilePosixPermissions, nil]);
+    RetainPtr<NSData> nsData = adoptNS([[NSData alloc] initWithBytesNoCopy:(void*)data length:size freeWhenDone:NO]);
+
+    if (![[NSFileManager defaultManager] createFileAtPath:nsPath contents:nsData.get() attributes:fileAttributes.get()]) {
+        WTFLogAlways("Cannot create PDF file in the temporary directory (%s).", suggestedFilename.utf8().data());
+        return;
+    }
+
+    m_temporaryPDFFiles.add(pdfUUID, nsPath);
+
+    [[NSWorkspace sharedWorkspace] openFile:nsPath];
+}
+
+void WebPageProxy::savePDFToTemporaryFolderAndOpenWithNativeApplication(const String& suggestedFilename, const String& originatingURLString, const CoreIPC::DataReference& data, const String& pdfUUID)
+{
+    if (data.isEmpty()) {
+        WTFLogAlways("Cannot save empty PDF file to the temporary directory.");
+        return;
+    }
+
+    savePDFToTemporaryFolderAndOpenWithNativeApplicationRaw(suggestedFilename, originatingURLString, data.data(), data.size(), pdfUUID);
+}
+
+void WebPageProxy::openPDFFromTemporaryFolderWithNativeApplication(const String& pdfUUID)
+{
+    String pdfFilename = m_temporaryPDFFiles.get(pdfUUID);
+
+    if (!pdfFilename.endsWith(".pdf", false))
+        return;
+
+    [[NSWorkspace sharedWorkspace] openFile:pdfFilename];
+}
+
 } // namespace WebKit

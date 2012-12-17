@@ -612,6 +612,11 @@ public:
     static HashSet<String, CaseFoldingHash> pdfAndPostScriptMIMETypes();
 #endif
 
+    void savePDFToFileInDownloadsFolder(const String& suggestedFilename, const String& originatingURLString, const uint8_t* data, unsigned long size);
+#if PLATFORM(MAC)
+    void savePDFToTemporaryFolderAndOpenWithNativeApplication(const String& suggestedFilename, const String& originatingURLString, const uint8_t* data, unsigned long size, const String& pdfUUID);
+#endif
+
 private:
     WebPage(uint64_t pageID, const WebPageCreationParameters&);
 

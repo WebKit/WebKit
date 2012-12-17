@@ -3369,6 +3369,18 @@ void WebPage::drawPagesForPrinting(uint64_t frameID, const PrintInfo& printInfo,
 }
 #endif
 
+void WebPage::savePDFToFileInDownloadsFolder(const String& suggestedFilename, const String& originatingURLString, const uint8_t* data, unsigned long size)
+{
+    send(Messages::WebPageProxy::SavePDFToFileInDownloadsFolder(suggestedFilename, originatingURLString, CoreIPC::DataReference(data, size)));
+}
+
+#if PLATFORM(MAC)
+void WebPage::savePDFToTemporaryFolderAndOpenWithNativeApplication(const String& suggestedFilename, const String& originatingURLString, const uint8_t* data, unsigned long size, const String& pdfUUID)
+{
+    send(Messages::WebPageProxy::SavePDFToTemporaryFolderAndOpenWithNativeApplication(suggestedFilename, originatingURLString, CoreIPC::DataReference(data, size), pdfUUID));
+}
+#endif
+
 void WebPage::setMediaVolume(float volume)
 {
     m_page->setMediaVolume(volume);

@@ -31,6 +31,7 @@
 #include <wtf/Noncopyable.h>
 #include <wtf/PassOwnPtr.h>
 #include <wtf/RetainPtr.h>
+#include <wtf/text/WTFString.h>
 
 @class PDFView;
 @class WKView;
@@ -79,8 +80,6 @@ private:
     static Class pdfDocumentClass();
     static NSBundle* pdfKitBundle();
 
-    NSString *pathToPDFOnDisk();
-
     WKView* m_wkView;
 
     RetainPtr<WKPDFView> m_wkPDFView;
@@ -89,8 +88,7 @@ private:
     RetainPtr<NSString> m_suggestedFilename;
     RetainPtr<CFDataRef> m_pdfData;
 
-    RetainPtr<NSString> m_pathToPDFOnDisk;
-    bool m_hasWrittenPDFToDisk;
+    String m_temporaryPDFUUID;
 };
 
 } // namespace WebKit

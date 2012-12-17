@@ -1,3 +1,56 @@
+2012-12-16  Tim Horton  <timothy_horton@apple.com>
+
+        PDFPlugin: The "Open in Preview" HUD button should work
+        https://bugs.webkit.org/show_bug.cgi?id=102448
+        <rdar://problem/12695729>
+
+        Reviewed by Alexey Proskuryakov.
+
+        Implement the "Open in Preview" button for PDFPlugin, by moving the implementation from PDFViewController
+        onto WebPageProxyMac, and reusing it in PDFViewController and PDFPlugin.
+
+        * UIProcess/API/mac/PDFViewController.h:
+        (PDFViewController): Remove unnecessary members in favor of a UUID that identifies our PDF on disk.
+        * UIProcess/API/mac/PDFViewController.mm:
+        (WebKit::PDFViewController::openPDFInFinder): Move PDFViewController's implementation of openPDFInFinder
+        and related functions to WebPageProxyMac. This will allow it to be shared with PDFPlugin.
+        * UIProcess/WebPageProxy.h:
+        (WebPageProxy): Add savePDFToFileInTemporaryFolderAndOpenWithNativeApplication,
+        savePDFToFileInTemporaryFolderAndOpenWithNativeApplicationRaw, and openPDFFromTemporaryFolderWithNativeApplication.
+        Add m_temporaryPDFFiles, which is used to keep track of the filenames of PDFs that we've saved to disk.
+        * UIProcess/WebPageProxy.messages.in:
+        Add SavePDFToFileInTemporaryFolderAndOpenWithNativeApplication and OpenPDFFromTemporaryFolderWithNativeApplication.
+        * UIProcess/mac/WebPageProxyMac.mm:
+        (WebKit::temporaryPDFDirectoryPath): Copied from PDFViewController. Construct the path to a
+        WebKitPDFs temporary directory into which PDFs to be opened with a native application are downloaded.
+        (WebKit::pathToPDFOnDisk): Copied from PDFViewController. Combine temporaryPDFDirectoryPath
+        with the suggested filename for the given PDF, creating a new filename if the file already exists.
+        (WebKit::WebPageProxy::savePDFToTemporaryFolderAndOpenWithNativeApplicationRaw):
+        (WebKit::WebPageProxy::savePDFToTemporaryFolderAndOpenWithNativeApplication):
+        Save the given PDF data to a temporary file, given the suggested filename. This inserts the
+        filename used into m_temporaryPDFFiles, where it can later be retrieved by UUID when asked
+        to open the PDF again in a native application. Then, open it with NSWorkspace.
+        (WebKit::WebPageProxy::openPDFFromTemporaryFolderWithNativeApplication):
+        Open the previously saved PDF file with NSWorkspace, referenced by UUID.
+        We identify the file by UUID instead of name so that only the UIProcess needs
+        to keep track of the actual filename, and so that the WebProcess
+        cannot hand an arbitrary filename back to the UIProcess to open.
+        * WebProcess/Plugins/PDF/PDFPlugin.h:
+        (PDFPlugin): Add openWithNativeApplication and storage for the UUID that identifies our PDF on disk.
+        * WebProcess/Plugins/PDF/PDFPlugin.mm:
+        (-[WKPDFLayerControllerDelegate openWithPreview]): Forward openWithPreview to PDFPlugin's openWithNativeApplication.
+        (WebKit::PDFPlugin::saveToPDF):
+        Hand raw data to WebPage and have it send the message to WebPageProxy instead of using IPC types in PDFPlugin.
+        (WebKit::PDFPlugin::openWithNativeApplication):
+        Ask WebPage to save the current PDF to a temporary directory and open it with a native application.
+        If we've already downloaded the PDF (and have a non-null m_temporaryPDFUUID),
+        we can just open the existing file.
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::savePDFToFileInDownloadsFolder): Hand the PDF data to WebPageProxy to save.
+        (WebKit::WebPage::savePDFToTemporaryFolderAndOpenWithNativeApplication): Hand the PDF data to WebPageProxy to save and open.
+        * WebProcess/WebPage/WebPage.h:
+        (WebPage): Add savePDFToFileInDownloadsFolder and savePDFToTemporaryFolderAndOpenWithNativeApplication.
+
 2012-12-16  Seokju Kwon  <seokju.kwon@gmail.com>
 
         [WK2] Remote Web Inspector requires the inspector
