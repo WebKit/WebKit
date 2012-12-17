@@ -623,6 +623,7 @@
     border-style: none;
     width: 1px;
     height: 100%;
+    pointer-events: none;
 }
 
 .sidebar-tree-item .timeline-frame-overview-status-bar-item {
@@ -655,7 +656,6 @@
     top: 90px;
     bottom: 0;
     pointer-events: none;
-    z-index: -100;
 }
 
 .timeline-cpu-bars {
