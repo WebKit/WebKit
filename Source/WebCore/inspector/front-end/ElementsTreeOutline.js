@@ -476,12 +476,13 @@ WebInspector.ElementsTreeOutline.prototype = {
      */
     _onkeydown: function(event)
     {
+        var keyboardEvent = /** @type {KeyboardEvent} */ (event);
         var node = this.selectedDOMNode();
         var treeElement = this.getCachedTreeElement(node);
         if (!treeElement)
             return;
 
-        if (!treeElement._editing && WebInspector.KeyboardShortcut.hasNoModifiers(event) && event.keyCode === WebInspector.KeyboardShortcut.Keys.H.code) {
+        if (!treeElement._editing && WebInspector.KeyboardShortcut.hasNoModifiers(keyboardEvent) && keyboardEvent.keyCode === WebInspector.KeyboardShortcut.Keys.H.code) {
             WebInspector.cssModel.toggleInlineVisibility(node.id);
             event.consume(true);
             return;
