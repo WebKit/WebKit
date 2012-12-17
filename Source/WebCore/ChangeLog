@@ -1,3 +1,22 @@
+2012-12-17  Jaehun Lim  <ljaehun.lim@samsung.com>
+
+        Change SET_VAR, SET_BORDERVALUE_COLOR macro to require semicolon(;) at the end of the line
+        https://bugs.webkit.org/show_bug.cgi?id=104774
+
+        Reviewed by Eric Seidel.
+
+        Remove the last ; in SET_VAR, SET_BORDERVALUE_COLOR macro definition.
+        Add the omitted ; in RenderStyle.h | .cpp
+
+        No new tests, just style change.
+
+        * rendering/style/RenderStyle.cpp:
+        (WebCore::RenderStyle::setColor):
+        (WebCore::RenderStyle::setVisitedLinkColor):
+        (WebCore::RenderStyle::setHorizontalBorderSpacing):
+        (WebCore::RenderStyle::setVerticalBorderSpacing):
+        * rendering/style/RenderStyle.h:
+
 2012-12-17  Yong Li  <yoli@rim.com>
 
         [BlackBerry] Deadlock caused by PluginViewPrivate::destroyBuffers()
