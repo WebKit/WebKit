@@ -74,7 +74,7 @@ void visibleTextQuads(const Range& range, Vector<FloatQuad>& quads, bool useSele
         return;
 
     Node* stopNode = range.pastLastNode();
-    for (Node* node = range.firstNode(); node != stopNode; node = node->traverseNextNode()) {
+    for (Node* node = range.firstNode(); node && node != stopNode; node = node->traverseNextNode()) {
         RenderObject* r = node->renderer();
         if (!r || !r->isText())
             continue;

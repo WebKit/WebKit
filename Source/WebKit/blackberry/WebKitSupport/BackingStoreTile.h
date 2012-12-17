@@ -20,6 +20,7 @@
 #define BackingStoreTile_h
 
 #include "BlackBerryPlatformIntRectRegion.h"
+#include "BlackBerryPlatformMisc.h"
 #include "BlackBerryPlatformPrimitives.h"
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefCounted.h>
@@ -105,6 +106,7 @@ class TileBuffer {
         mutable Platform::Graphics::Buffer* m_nativeBuffer;
         double m_lastRenderScale;
         bool m_backgroundPainted;
+        DISABLE_COPY(TileBuffer)
 };
 
 } // namespace WebKit

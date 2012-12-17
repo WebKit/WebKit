@@ -20,6 +20,7 @@
 #define WebSettings_h
 
 #include "BlackBerryGlobal.h"
+#include "BlackBerryPlatformMisc.h"
 
 namespace BlackBerry {
 namespace WebKit {
@@ -243,7 +244,7 @@ public:
 private:
     WebSettingsPrivate* m_private;
     WebSettings();
-    WebSettings(const WebSettings&);
+    DISABLE_COPY(WebSettings);
 };
 
 /*!

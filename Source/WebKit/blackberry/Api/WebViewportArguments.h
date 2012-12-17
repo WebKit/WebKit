@@ -20,6 +20,7 @@
 #define WebViewportArguments_h
 
 #include "BlackBerryGlobal.h"
+#include "BlackBerryPlatformMisc.h"
 
 // Not for public API purpose.
 namespace WebCore {
@@ -76,11 +77,11 @@ public:
     bool operator!=(const WebViewportArguments &other);
 
 private:
-    WebViewportArguments(const WebViewportArguments&);
     WebCore::ViewportArguments* d;
 
 private:
     friend class WebPage;
+    DISABLE_COPY(WebViewportArguments)
 };
 
 } // namespace WebKit

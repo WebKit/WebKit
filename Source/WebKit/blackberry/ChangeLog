@@ -1,3 +1,36 @@
+2012-12-17  Anthony Scian  <ascian@rim.com>
+
+        [Blackberry] Static code analysis warning fixes
+        https://bugs.webkit.org/show_bug.cgi?id=105129
+
+        Reviewed by Rob Buis.
+
+        - disable copy/op= in BackingStore
+        - cache and check intermediate values in parentLayer
+        - disable copy/op= in InRegionScroller
+        - disable copy/op= in WebPageGroupLoadDeferrer
+        - disable copy/op= in WebSettings
+        - disable copy/op= in WebViewportArguments
+        - disable copy/op= in BackingStoreClient
+        - disable copy/op= in TileBuffer
+        - if stopNode is not NULL, loop could iterate past NULL; added NULL check to loop
+          to make the code more robust
+
+        * Api/BackingStore.h:
+        * Api/InRegionScroller.cpp:
+        (BlackBerry::WebKit::InRegionScrollerPrivate::calculateInRegionScrollableAreasForPoint):
+        (BlackBerry::WebKit::parentLayer):
+        * Api/InRegionScroller.h:
+        * Api/WebPageGroupLoadDeferrer.h:
+        * Api/WebSettings.h:
+        * Api/WebViewportArguments.h:
+        * WebKitSupport/BackingStoreClient.h:
+        (BackingStoreClient):
+        * WebKitSupport/BackingStoreTile.h:
+        (TileBuffer):
+        * WebKitSupport/DOMSupport.cpp:
+        (BlackBerry::WebKit::DOMSupport::visibleTextQuads):
+
 2012-12-16  Arvid Nilsson  <anilsson@rim.com>
 
         [BlackBerry] Adapt to new BlackBerry::Platform::TouchPoint API

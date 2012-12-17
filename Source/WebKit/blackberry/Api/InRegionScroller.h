@@ -21,6 +21,7 @@
 
 #include "BlackBerryGlobal.h"
 
+#include <BlackBerryPlatformMisc.h>
 #include <BlackBerryPlatformPrimitives.h>
 #include <interaction/ScrollViewBase.h>
 
@@ -44,6 +45,7 @@ private:
     friend class WebPagePrivate;
     friend class TouchEventHandler;
     InRegionScrollerPrivate *d;
+    DISABLE_COPY(InRegionScroller)
 };
 
 }

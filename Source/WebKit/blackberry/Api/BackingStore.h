@@ -21,6 +21,7 @@
 
 #include "BlackBerryGlobal.h"
 #include <BlackBerryPlatformGraphics.h>
+#include <BlackBerryPlatformMisc.h>
 
 namespace WebCore {
 class ChromeClientBlackBerry;
@@ -90,6 +91,7 @@ private:
     friend class WebCore::FrameLoaderClientBlackBerry;
     friend class WebCore::GLES2Context;
     BackingStorePrivate *d;
+    DISABLE_COPY(BackingStore)
 };
 }
 }

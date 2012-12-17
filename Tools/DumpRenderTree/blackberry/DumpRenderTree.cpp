@@ -156,7 +156,8 @@ bool DumpRenderTree::s_selectTrailingWhitespaceEnabled = false;
 static void createFile(const String& fileName)
 {
     FILE* fd = fopen(fileName.utf8().data(), "wb");
-    fclose(fd);
+    if (fd)
+        fclose(fd);
 }
 
 DumpRenderTree::DumpRenderTree(BlackBerry::WebKit::WebPage* page)
@@ -203,8 +204,10 @@ void DumpRenderTree::runTest(const String& url, const String& imageHash)
         freopen(stderrFile.utf8().data(), "wb", stderr);
     }
     FILE* current = fopen(m_currentTestFile.utf8().data(), "w");
-    fwrite(m_currentTest->utf8().data(), 1, m_currentTest->utf8().length(), current);
-    fclose(current);
+    if (current) {
+        fwrite(m_currentTest->utf8().data(), 1, m_currentTest->utf8().length(), current);
+        fclose(current);
+    }
     m_page->load(url, BlackBerry::Platform::String::emptyString(), false);
 }
 

@@ -194,11 +194,11 @@ void PluginView::updateBuffer(const IntRect& bufferRect)
         std::vector<BlackBerry::Platform::IntRect> exposedRects = exposedRegion.rects();
         for (unsigned i = 0; i < exposedRects.size(); ++i) {
             NPDrawEvent draw;
+            NPRect tempRect = toNPRect(exposedRects.at(i));
             draw.pluginRect = toNPRect(m_windowRect);
             draw.clipRect = toNPRect(m_clipRect);
-            draw.drawRect = (NPRect*)alloca(sizeof(NPRect));
+            draw.drawRect = &tempRect;
             draw.drawRectCount = 1;
-            *draw.drawRect = toNPRect(exposedRects.at(i));
             draw.zoomFactor = ((NPSetWindowCallbackStruct*)m_npWindow.ws_info)->zoomFactor;
 
             NPEvent npEvent;

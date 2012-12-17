@@ -210,6 +210,8 @@ void InRegionScrollerPrivate::calculateInRegionScrollableAreasForPoint(const Web
         return;
 
     RenderLayer* layer = node->renderer()->enclosingLayer();
+    if (!layer)
+        return;
     do {
         RenderObject* renderer = layer->renderer();
 
@@ -394,8 +396,15 @@ static RenderLayer* parentLayer(RenderLayer* layer)
         return layer->parent();
 
     RenderObject* renderer = layer->renderer();
-    if (renderer->document() && renderer->document()->ownerElement() && renderer->document()->ownerElement()->renderer())
-        return renderer->document()->ownerElement()->renderer()->enclosingLayer();
+    Document* document = renderer->document();
+    if (document) {
+        HTMLFrameOwnerElement* ownerElement = document->ownerElement();
+        if (ownerElement) {
+            RenderObject* subRenderer = ownerElement->renderer();
+            if (subRenderer)
+                return subRenderer->enclosingLayer();
+        }
+    }
 
     return 0;
 }

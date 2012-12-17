@@ -19,6 +19,7 @@
 #ifndef BackingStoreClient_h
 #define BackingStoreClient_h
 
+#include "BlackBerryPlatformMisc.h"
 #include "WebPage_p.h"
 #include <wtf/Vector.h>
 
@@ -107,6 +108,7 @@ private:
     BackingStore* m_backingStore;
     bool m_isClientGeneratedScroll;
     bool m_isScrollNotificationSuppressed;
+    DISABLE_COPY(BackingStoreClient)
 };
 
 }

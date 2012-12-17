@@ -20,6 +20,7 @@
 #define WebPageGroupLoadDeferrer_h
 
 #include "BlackBerryGlobal.h"
+#include "BlackBerryPlatformMisc.h"
 
 namespace WebCore {
 class PageGroupLoadDeferrer;
@@ -38,6 +39,7 @@ public:
     ~WebPageGroupLoadDeferrer();
 private:
     WebCore::PageGroupLoadDeferrer* m_pageGroupLoadDeferrer;
+    DISABLE_COPY(WebPageGroupLoadDeferrer)
 };
 
 } // namespace WebKit
