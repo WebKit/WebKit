@@ -169,7 +169,7 @@ class StreamTestingMixin(object):
         self.assertTrue(stream.getvalue())
 
 
-class MainTest(unittest.TestCase, StreamTestingMixin):
+class RunTest(unittest.TestCase, StreamTestingMixin):
     def setUp(self):
         # A real PlatformInfo object is used here instead of a
         # MockPlatformInfo because we need to actually check for
@@ -748,16 +748,16 @@ class MainTest(unittest.TestCase, StreamTestingMixin):
 
     def test_no_http_tests(self):
         batch_tests_dryrun = get_tests_run(['LayoutTests/http', 'websocket/'])
-        self.assertTrue(MainTest.has_test_of_type(batch_tests_dryrun, 'http'))
-        self.assertTrue(MainTest.has_test_of_type(batch_tests_dryrun, 'websocket'))
+        self.assertTrue(RunTest.has_test_of_type(batch_tests_dryrun, 'http'))
+        self.assertTrue(RunTest.has_test_of_type(batch_tests_dryrun, 'websocket'))
 
         batch_tests_run_no_http = get_tests_run(['--no-http', 'LayoutTests/http', 'websocket/'])
-        self.assertFalse(MainTest.has_test_of_type(batch_tests_run_no_http, 'http'))
-        self.assertFalse(MainTest.has_test_of_type(batch_tests_run_no_http, 'websocket'))
+        self.assertFalse(RunTest.has_test_of_type(batch_tests_run_no_http, 'http'))
+        self.assertFalse(RunTest.has_test_of_type(batch_tests_run_no_http, 'websocket'))
 
         batch_tests_run_http = get_tests_run(['--http', 'LayoutTests/http', 'websocket/'])
-        self.assertTrue(MainTest.has_test_of_type(batch_tests_run_http, 'http'))
-        self.assertTrue(MainTest.has_test_of_type(batch_tests_run_http, 'websocket'))
+        self.assertTrue(RunTest.has_test_of_type(batch_tests_run_http, 'http'))
+        self.assertTrue(RunTest.has_test_of_type(batch_tests_run_http, 'websocket'))
 
     def test_platform_tests_are_found(self):
         tests_run = get_tests_run(['--platform', 'test-mac-leopard', 'http'])
@@ -921,3 +921,39 @@ class PortTest(unittest.TestCase):
 
     def disabled_test_mac_lion(self):
         self.assert_mock_port_works('mac-lion')
+
+
+class MainTest(unittest.TestCase):
+    def test_exception_handling(self):
+        orig_run_fn = run_webkit_tests.run
+
+        # unused args pylint: disable=W0613
+        def interrupting_run(port, options, args, stderr):
+            raise KeyboardInterrupt
+
+        def successful_run(port, options, args, stderr):
+
+            class FakeRunDetails(object):
+                exit_code = -1
+
+            return FakeRunDetails()
+
+        def exception_raising_run(port, options, args, stderr):
+            assert False
+
+        stdout = StringIO.StringIO()
+        stderr = StringIO.StringIO()
+        try:
+            run_webkit_tests.run = interrupting_run
+            res = run_webkit_tests.main([], stdout, stderr)
+            self.assertEqual(res, run_webkit_tests.INTERRUPTED_EXIT_STATUS)
+
+            run_webkit_tests.run = successful_run
+            res = run_webkit_tests.main(['--platform', 'test'], stdout, stderr)
+            self.assertEqual(res, -1)
+
+            run_webkit_tests.run = exception_raising_run
+            res = run_webkit_tests.main([], stdout, stderr)
+            self.assertEqual(res, run_webkit_tests.EXCEPTIONAL_EXIT_STATUS)
+        finally:
+            run_webkit_tests.run = orig_run_fn
