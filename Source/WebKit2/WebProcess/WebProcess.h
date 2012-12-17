@@ -26,6 +26,7 @@
 #ifndef WebProcess_h
 #define WebProcess_h
 
+#include "AuthenticationManager.h"
 #include "CacheModel.h"
 #include "ChildProcess.h"
 #include "DownloadManager.h"
@@ -217,6 +218,7 @@ public:
     void destroyPrivateBrowsingSession();
 
     DownloadManager& downloadManager();
+    AuthenticationManager& authenticationManager() { return m_authenticationManager; }
 
 private:
     WebProcess();
@@ -393,6 +395,7 @@ private:
     WebSoupRequestManager m_soupRequestManager;
 #endif
 
+    AuthenticationManager m_authenticationManager;
 };
 
 } // namespace WebKit

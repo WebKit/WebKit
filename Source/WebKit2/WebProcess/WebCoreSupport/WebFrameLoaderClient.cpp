@@ -211,7 +211,7 @@ void WebFrameLoaderClient::dispatchDidReceiveAuthenticationChallenge(DocumentLoa
     if (!webPage)
         return;
 
-    AuthenticationManager::shared().didReceiveAuthenticationChallenge(m_frame, challenge);
+    WebProcess::shared().authenticationManager().didReceiveAuthenticationChallenge(m_frame, challenge);
 }
 
 void WebFrameLoaderClient::dispatchDidCancelAuthenticationChallenge(DocumentLoader*, unsigned long /*identifier*/, const AuthenticationChallenge&)    

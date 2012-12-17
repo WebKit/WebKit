@@ -30,9 +30,10 @@
 #include <wtf/HashMap.h>
 
 namespace CoreIPC {
-    class ArgumentDecoder;
-    class Connection;
-    class MessageID;
+class ArgumentDecoder;
+class Connection;
+class MessageID;
+class MessageReceiverMap;
 }
 
 namespace WebCore {
@@ -50,7 +51,10 @@ class AuthenticationManager : private CoreIPC::MessageReceiver {
     WTF_MAKE_NONCOPYABLE(AuthenticationManager);
 
 public:
-    static AuthenticationManager& shared();
+    // FIXME: ChildProcess should just have a MessageReceiverMap, and this should take a ChildProcess.
+    explicit AuthenticationManager(CoreIPC::MessageReceiverMap&);
+
+    void setConnection(CoreIPC::Connection*);
 
     void didReceiveAuthenticationChallenge(WebFrame*, const WebCore::AuthenticationChallenge&);
     void didReceiveAuthenticationChallenge(Download*, const WebCore::AuthenticationChallenge&);
@@ -60,14 +64,15 @@ public:
     void cancelChallenge(uint64_t challengeID);
 
 private:
-    AuthenticationManager();
 
     // CoreIPC::MessageReceiver
     virtual void didReceiveMessage(CoreIPC::Connection*, CoreIPC::MessageID, CoreIPC::MessageDecoder&) OVERRIDE;
     void didReceiveAuthenticationManagerMessage(CoreIPC::Connection*, CoreIPC::MessageID, CoreIPC::MessageDecoder&);
 
     bool tryUsePlatformCertificateInfoForChallenge(const WebCore::AuthenticationChallenge&, const PlatformCertificateInfo&);
-    
+
+    RefPtr<CoreIPC::Connection> m_connection;
+
     typedef HashMap<uint64_t, WebCore::AuthenticationChallenge> AuthenticationChallengeMap;
     AuthenticationChallengeMap m_challenges;
 };

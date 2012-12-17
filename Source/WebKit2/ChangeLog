@@ -1,5 +1,43 @@
 2012-12-16  Anders Carlsson  <andersca@apple.com>
 
+        Authentication manager cleanup
+        https://bugs.webkit.org/show_bug.cgi?id=105144
+
+        Reviewed by Sam Weinig.
+
+        Some cleanup to make it possible to reuse the authentication manager from the network process.
+
+        * UIProcess/Authentication/AuthenticationChallengeProxy.cpp:
+        (WebKit::AuthenticationChallengeProxy::AuthenticationChallengeProxy):
+        (WebKit::AuthenticationChallengeProxy::~AuthenticationChallengeProxy):
+        (WebKit::AuthenticationChallengeProxy::useCredential):
+        (WebKit::AuthenticationChallengeProxy::cancel):
+        * UIProcess/Authentication/AuthenticationChallengeProxy.h:
+        (WebKit::AuthenticationChallengeProxy::create):
+        (AuthenticationChallengeProxy):
+        * UIProcess/Downloads/DownloadProxy.cpp:
+        (WebKit::DownloadProxy::didReceiveAuthenticationChallenge):
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::didReceiveAuthenticationChallenge):
+        * WebProcess/Authentication/AuthenticationManager.cpp:
+        (WebKit::AuthenticationManager::AuthenticationManager):
+        (WebKit::AuthenticationManager::setConnection):
+        (WebKit::AuthenticationManager::didReceiveAuthenticationChallenge):
+        (WebKit::AuthenticationManager::useCredentialForChallenge):
+        * WebProcess/Authentication/AuthenticationManager.h:
+        * WebProcess/Downloads/Download.cpp:
+        (WebKit::Download::didReceiveAuthenticationChallenge):
+        * WebProcess/WebCoreSupport/WebFrameLoaderClient.cpp:
+        (WebKit::WebFrameLoaderClient::dispatchDidReceiveAuthenticationChallenge):
+        * WebProcess/WebProcess.cpp:
+        (WebKit::WebProcess::WebProcess):
+        (WebKit::WebProcess::initialize):
+        * WebProcess/WebProcess.h:
+        (WebKit::WebProcess::authenticationManager):
+        (WebProcess):
+
+2012-12-16  Anders Carlsson  <andersca@apple.com>
+
         Rudimentary support for main resource downloads
         https://bugs.webkit.org/show_bug.cgi?id=105141
 

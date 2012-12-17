@@ -28,19 +28,19 @@
 
 #include "AuthenticationDecisionListener.h"
 #include "AuthenticationManagerMessages.h"
+#include "ChildProcessProxy.h"
 #include "WebCertificateInfo.h"
 #include "WebCoreArgumentCoders.h"
 #include "WebCredential.h"
-#include "WebPageProxy.h"
 #include "WebProcessProxy.h"
 #include "WebProtectionSpace.h"
 
 namespace WebKit {
 
-AuthenticationChallengeProxy::AuthenticationChallengeProxy(const WebCore::AuthenticationChallenge& authenticationChallenge, uint64_t challengeID, WebProcessProxy* process)
+AuthenticationChallengeProxy::AuthenticationChallengeProxy(const WebCore::AuthenticationChallenge& authenticationChallenge, uint64_t challengeID, CoreIPC::Connection* connection)
     : m_coreAuthenticationChallenge(authenticationChallenge)
     , m_challengeID(challengeID)
-    , m_process(process)
+    , m_connection(connection)
 {
     ASSERT(m_challengeID);
     m_listener = AuthenticationDecisionListener::create(this);
@@ -49,9 +49,9 @@ AuthenticationChallengeProxy::AuthenticationChallengeProxy(const WebCore::Authen
 AuthenticationChallengeProxy::~AuthenticationChallengeProxy()
 {
     // If an outstanding AuthenticationChallengeProxy is being destroyed even though it hasn't been responded to yet,
-    // we cancel it here so the WebProcess isn't waiting for an answer forever.
+    // we cancel it here so the process isn't waiting for an answer forever.
     if (m_challengeID)
-        m_process->send(Messages::AuthenticationManager::CancelChallenge(m_challengeID), 0);
+        m_connection->send(Messages::AuthenticationManager::CancelChallenge(m_challengeID), 0);
 
     if (m_listener)
         m_listener->detachChallenge();
@@ -63,11 +63,11 @@ void AuthenticationChallengeProxy::useCredential(WebCredential* credential)
         return;
 
     if (!credential)
-        m_process->send(Messages::AuthenticationManager::ContinueWithoutCredentialForChallenge(m_challengeID), 0);
+        m_connection->send(Messages::AuthenticationManager::ContinueWithoutCredentialForChallenge(m_challengeID), 0);
     else {
         WebCertificateInfo* certificateInfo = credential->certificateInfo();
         PlatformCertificateInfo platformInfo = certificateInfo ? certificateInfo->platformCertificateInfo() : PlatformCertificateInfo();
-        m_process->send(Messages::AuthenticationManager::UseCredentialForChallenge(m_challengeID, credential->core(), platformInfo), 0);
+        m_connection->send(Messages::AuthenticationManager::UseCredentialForChallenge(m_challengeID, credential->core(), platformInfo), 0);
     }
 
     m_challengeID = 0;
@@ -78,7 +78,7 @@ void AuthenticationChallengeProxy::cancel()
     if (!m_challengeID)
         return;
 
-    m_process->send(Messages::AuthenticationManager::CancelChallenge(m_challengeID), 0);
+    m_connection->send(Messages::AuthenticationManager::CancelChallenge(m_challengeID), 0);
 
     m_challengeID = 0;
 }

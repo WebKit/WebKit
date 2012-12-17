@@ -174,6 +174,7 @@ WebProcess::WebProcess()
 #if USE(SOUP)
     , m_soupRequestManager(this)
 #endif
+    , m_authenticationManager(m_messageReceiverMap)
 {
 #if USE(PLATFORM_STRATEGIES)
     // Initialize our platform strategies.
@@ -200,6 +201,8 @@ void WebProcess::initialize(CoreIPC::Connection::Identifier serverIdentifier, Ru
     m_webConnection = WebConnectionToUIProcess::create(this);
 
     m_runLoop = runLoop;
+
+    m_authenticationManager.setConnection(m_connection.get());
 
     startRandomCrashThreadIfRequested();
 }

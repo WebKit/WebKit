@@ -39,17 +39,17 @@ namespace CoreIPC {
 namespace WebKit {
 
 class AuthenticationDecisionListener;
+class ChildProcessProxy;
 class WebCredential;
-class WebProcessProxy;
 class WebProtectionSpace;
 
 class AuthenticationChallengeProxy : public APIObject {
 public:
     static const Type APIType = TypeAuthenticationChallenge;
 
-    static PassRefPtr<AuthenticationChallengeProxy> create(const WebCore::AuthenticationChallenge& authenticationChallenge, uint64_t challengeID, WebProcessProxy* process)
+    static PassRefPtr<AuthenticationChallengeProxy> create(const WebCore::AuthenticationChallenge& authenticationChallenge, uint64_t challengeID, CoreIPC::Connection* connection)
     {
-        return adoptRef(new AuthenticationChallengeProxy(authenticationChallenge, challengeID, process));
+        return adoptRef(new AuthenticationChallengeProxy(authenticationChallenge, challengeID, connection));
     }
     
     ~AuthenticationChallengeProxy();
@@ -64,13 +64,13 @@ public:
     const WebCore::AuthenticationChallenge& core() { return m_coreAuthenticationChallenge; }
 
 private:
-    AuthenticationChallengeProxy(const WebCore::AuthenticationChallenge&, uint64_t challengeID, WebProcessProxy*);
+    AuthenticationChallengeProxy(const WebCore::AuthenticationChallenge&, uint64_t challengeID, CoreIPC::Connection*);
 
     virtual Type type() const { return APIType; }
     
     WebCore::AuthenticationChallenge m_coreAuthenticationChallenge;
     uint64_t m_challengeID;
-    RefPtr<WebProcessProxy> m_process;
+    RefPtr<CoreIPC::Connection> m_connection;
     RefPtr<AuthenticationDecisionListener> m_listener;
     mutable RefPtr<WebCredential> m_webCredential;
     mutable RefPtr<WebProtectionSpace> m_webProtectionSpace;
