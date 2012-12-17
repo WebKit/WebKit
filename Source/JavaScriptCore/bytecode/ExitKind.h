@@ -36,7 +36,10 @@ enum ExitKind {
     BadIndexingType, // We exited because an indexing type was wrong.
     Overflow, // We exited because of overflow.
     NegativeZero, // We exited because we encountered negative zero.
+    StoreToHole, // We had a store to a hole.
+    LoadFromHole, // We had a load from a hole.
     OutOfBounds, // We had an out-of-bounds access to an array.
+    StoreToHoleOrOutOfBounds, // We're simultaneously speculating that we're in bounds and not accessing a hole, and one of those things didn't pan out.
     InadequateCoverage, // We exited because we ended up in code that didn't have profiling coverage.
     ArgumentsEscaped, // We exited because arguments escaped but we didn't expect them to.
     Uncountable, // We exited for none of the above reasons, and we should not count it. Most uses of this should be viewed as a FIXME.

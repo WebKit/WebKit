@@ -2070,19 +2070,19 @@ void SpeculativeJIT::compileContiguousPutByVal(Node& node, BaseOperandType& base
         return;
     }
     
-    MacroAssembler::JumpList slowCases;
+    MacroAssembler::Jump slowCase;
 
     if (arrayMode.isInBounds()) {
         speculationCheck(
-            Uncountable, JSValueRegs(), NoNode,
+            StoreToHoleOrOutOfBounds, JSValueRegs(), NoNode,
             m_jit.branch32(MacroAssembler::AboveOrEqual, propertyReg, MacroAssembler::Address(storageReg, Butterfly::offsetOfPublicLength())));
     } else {
         MacroAssembler::Jump inBounds = m_jit.branch32(MacroAssembler::Below, propertyReg, MacroAssembler::Address(storageReg, Butterfly::offsetOfPublicLength()));
         
-        slowCases.append(m_jit.branch32(MacroAssembler::AboveOrEqual, propertyReg, MacroAssembler::Address(storageReg, Butterfly::offsetOfVectorLength())));
+        slowCase = m_jit.branch32(MacroAssembler::AboveOrEqual, propertyReg, MacroAssembler::Address(storageReg, Butterfly::offsetOfVectorLength()));
         
         if (!arrayMode.isOutOfBounds())
-            speculationCheck(Uncountable, JSValueRegs(), NoNode, slowCases);
+            speculationCheck(OutOfBounds, JSValueRegs(), NoNode, slowCase);
         
         m_jit.add32(TrustedImm32(1), propertyReg);
         m_jit.store32(propertyReg, MacroAssembler::Address(storageReg, Butterfly::offsetOfPublicLength()));
@@ -2102,7 +2102,7 @@ void SpeculativeJIT::compileContiguousPutByVal(Node& node, BaseOperandType& base
     if (arrayMode.isOutOfBounds()) {
         addSlowPathGenerator(
             slowPathCall(
-                slowCases, this,
+                slowCase, this,
                 m_jit.codeBlock()->isStrictMode() ? operationPutByValBeyondArrayBoundsStrict : operationPutByValBeyondArrayBoundsNonStrict,
                 NoResult, baseReg, propertyReg, valueTag, valuePayloadReg));
     }
@@ -2645,7 +2645,7 @@ void SpeculativeJIT::compile(Node& node)
                 
                 GPRTemporary resultTag(this);
                 m_jit.load32(MacroAssembler::BaseIndex(storageReg, propertyReg, MacroAssembler::TimesEight, OBJECT_OFFSETOF(JSValue, u.asBits.tag)), resultTag.gpr());
-                speculationCheck(OutOfBounds, JSValueRegs(), NoNode, m_jit.branch32(MacroAssembler::Equal, resultTag.gpr(), TrustedImm32(JSValue::EmptyValueTag)));
+                speculationCheck(LoadFromHole, JSValueRegs(), NoNode, m_jit.branch32(MacroAssembler::Equal, resultTag.gpr(), TrustedImm32(JSValue::EmptyValueTag)));
                 m_jit.load32(MacroAssembler::BaseIndex(storageReg, propertyReg, MacroAssembler::TimesEight, OBJECT_OFFSETOF(JSValue, u.asBits.payload)), resultPayload.gpr());
                 jsValueResult(resultTag.gpr(), resultPayload.gpr(), m_compileIndex);
                 break;
@@ -2706,7 +2706,7 @@ void SpeculativeJIT::compile(Node& node)
                 FPRTemporary result(this);
                 m_jit.loadDouble(MacroAssembler::BaseIndex(storageReg, propertyReg, MacroAssembler::TimesEight), result.fpr());
                 if (!node.arrayMode().isSaneChain())
-                    speculationCheck(OutOfBounds, JSValueRegs(), NoNode, m_jit.branchDouble(MacroAssembler::DoubleNotEqualOrUnordered, result.fpr(), result.fpr()));
+                    speculationCheck(LoadFromHole, JSValueRegs(), NoNode, m_jit.branchDouble(MacroAssembler::DoubleNotEqualOrUnordered, result.fpr(), result.fpr()));
                 doubleResult(result.fpr(), m_compileIndex);
                 break;
             }
@@ -2762,7 +2762,7 @@ void SpeculativeJIT::compile(Node& node)
                 GPRTemporary resultPayload(this);
 
                 m_jit.load32(MacroAssembler::BaseIndex(storageReg, propertyReg, MacroAssembler::TimesEight, OBJECT_OFFSETOF(ArrayStorage, m_vector[0]) + OBJECT_OFFSETOF(JSValue, u.asBits.tag)), resultTag.gpr());
-                speculationCheck(OutOfBounds, JSValueRegs(), NoNode, m_jit.branch32(MacroAssembler::Equal, resultTag.gpr(), TrustedImm32(JSValue::EmptyValueTag)));
+                speculationCheck(LoadFromHole, JSValueRegs(), NoNode, m_jit.branch32(MacroAssembler::Equal, resultTag.gpr(), TrustedImm32(JSValue::EmptyValueTag)));
                 m_jit.load32(MacroAssembler::BaseIndex(storageReg, propertyReg, MacroAssembler::TimesEight, OBJECT_OFFSETOF(ArrayStorage, m_vector[0]) + OBJECT_OFFSETOF(JSValue, u.asBits.payload)), resultPayload.gpr());
             
                 jsValueResult(resultTag.gpr(), resultPayload.gpr(), m_compileIndex);
@@ -2966,11 +2966,8 @@ void SpeculativeJIT::compile(Node& node)
 
             // Check if we're writing to a hole; if so increment m_numValuesInVector.
             if (arrayMode.isInBounds()) {
-                // This is uncountable because if we take this exit, then the baseline JIT
-                // will immediately count the hole store. So there is no need for exit
-                // profiling.
                 speculationCheck(
-                    Uncountable, JSValueRegs(), NoNode,
+                    StoreToHole, JSValueRegs(), NoNode,
                     m_jit.branch32(MacroAssembler::Equal, MacroAssembler::BaseIndex(storageReg, propertyReg, MacroAssembler::TimesEight, OBJECT_OFFSETOF(ArrayStorage, m_vector[0]) + OBJECT_OFFSETOF(JSValue, u.asBits.tag)), TrustedImm32(JSValue::EmptyValueTag)));
             } else {
                 MacroAssembler::Jump notHoleValue = m_jit.branch32(MacroAssembler::NotEqual, MacroAssembler::BaseIndex(storageReg, propertyReg, MacroAssembler::TimesEight, OBJECT_OFFSETOF(ArrayStorage, m_vector[0]) + OBJECT_OFFSETOF(JSValue, u.asBits.tag)), TrustedImm32(JSValue::EmptyValueTag));

@@ -89,28 +89,22 @@ void ArrayProfile::computeUpdatedPrediction(CodeBlock* codeBlock, OperationInPro
             m_lastSeenStructure->typeInfo().interceptsGetOwnPropertySlotByIndexEvenWhenLengthIsNotZero();
         if (!codeBlock->globalObject()->isOriginalArrayStructure(m_lastSeenStructure))
             m_usesOriginalArrayStructures = false;
-        if (!m_structureIsPolymorphic) {
+        if (!structureIsPolymorphic()) {
             if (!m_expectedStructure)
                 m_expectedStructure = m_lastSeenStructure;
-            else if (m_expectedStructure != m_lastSeenStructure) {
-                m_expectedStructure = 0;
-                m_structureIsPolymorphic = true;
-            }
+            else if (m_expectedStructure != m_lastSeenStructure)
+                m_expectedStructure = polymorphicStructure();
         }
         m_lastSeenStructure = 0;
     }
     
-    if (hasTwoOrMoreBitsSet(m_observedArrayModes)) {
-        m_structureIsPolymorphic = true;
-        m_expectedStructure = 0;
-    }
+    if (hasTwoOrMoreBitsSet(m_observedArrayModes))
+        m_expectedStructure = polymorphicStructure();
     
     if (operation == Collection
-        && m_expectedStructure
-        && !Heap::isMarked(m_expectedStructure)) {
-        m_expectedStructure = 0;
-        m_structureIsPolymorphic = true;
-    }
+        && expectedStructure()
+        && !Heap::isMarked(m_expectedStructure))
+        m_expectedStructure = polymorphicStructure();
 }
 
 CString ArrayProfile::briefDescription(CodeBlock* codeBlock)
@@ -128,7 +122,7 @@ CString ArrayProfile::briefDescription(CodeBlock* codeBlock)
         hasPrinted = true;
     }
     
-    if (m_structureIsPolymorphic) {
+    if (structureIsPolymorphic()) {
         if (hasPrinted)
             out.print(", ");
         out.print("struct = TOP");
@@ -144,6 +138,13 @@ CString ArrayProfile::briefDescription(CodeBlock* codeBlock)
         if (hasPrinted)
             out.print(", ");
         out.print("Hole");
+        hasPrinted = true;
+    }
+    
+    if (m_outOfBounds) {
+        if (hasPrinted)
+            out.print(", ");
+        out.print("OutOfBounds");
         hasPrinted = true;
     }
     

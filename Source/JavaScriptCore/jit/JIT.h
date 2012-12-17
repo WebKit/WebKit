@@ -468,6 +468,7 @@ namespace JSC {
         void emitArrayProfilingSite(RegisterID structureAndIndexingType, RegisterID scratch, ArrayProfile*);
         void emitArrayProfilingSiteForBytecodeIndex(RegisterID structureAndIndexingType, RegisterID scratch, unsigned bytecodeIndex);
         void emitArrayProfileStoreToHoleSpecialCase(ArrayProfile*);
+        void emitArrayProfileOutOfBoundsSpecialCase(ArrayProfile*);
         
         JITArrayMode chooseArrayMode(ArrayProfile*);
         

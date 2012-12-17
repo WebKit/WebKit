@@ -121,8 +121,8 @@ public:
         : m_bytecodeOffset(std::numeric_limits<unsigned>::max())
         , m_lastSeenStructure(0)
         , m_expectedStructure(0)
-        , m_structureIsPolymorphic(false)
         , m_mayStoreToHole(false)
+        , m_outOfBounds(false)
         , m_mayInterceptIndexedAccesses(false)
         , m_usesOriginalArrayStructures(true)
         , m_observedArrayModes(0)
@@ -133,8 +133,8 @@ public:
         : m_bytecodeOffset(bytecodeOffset)
         , m_lastSeenStructure(0)
         , m_expectedStructure(0)
-        , m_structureIsPolymorphic(false)
         , m_mayStoreToHole(false)
+        , m_outOfBounds(false)
         , m_mayInterceptIndexedAccesses(false)
         , m_usesOriginalArrayStructures(true)
         , m_observedArrayModes(0)
@@ -146,6 +146,7 @@ public:
     Structure** addressOfLastSeenStructure() { return &m_lastSeenStructure; }
     ArrayModes* addressOfArrayModes() { return &m_observedArrayModes; }
     bool* addressOfMayStoreToHole() { return &m_mayStoreToHole; }
+    bool* addressOfOutOfBounds() { return &m_outOfBounds; }
     
     void observeStructure(Structure* structure)
     {
@@ -154,10 +155,15 @@ public:
     
     void computeUpdatedPrediction(CodeBlock*, OperationInProgress = NoOperation);
     
-    Structure* expectedStructure() const { return m_expectedStructure; }
+    Structure* expectedStructure() const
+    {
+        if (structureIsPolymorphic())
+            return 0;
+        return m_expectedStructure;
+    }
     bool structureIsPolymorphic() const
     {
-        return m_structureIsPolymorphic;
+        return m_expectedStructure == polymorphicStructure();
     }
     bool hasDefiniteStructure() const
     {
@@ -168,6 +174,7 @@ public:
     bool mayInterceptIndexedAccesses() const { return m_mayInterceptIndexedAccesses; }
     
     bool mayStoreToHole() const { return m_mayStoreToHole; }
+    bool outOfBounds() const { return m_outOfBounds; }
     
     bool usesOriginalArrayStructures() const { return m_usesOriginalArrayStructures; }
     
@@ -176,11 +183,13 @@ public:
 private:
     friend class LLIntOffsetsExtractor;
     
+    static Structure* polymorphicStructure() { return static_cast<Structure*>(reinterpret_cast<void*>(1)); }
+    
     unsigned m_bytecodeOffset;
     Structure* m_lastSeenStructure;
     Structure* m_expectedStructure;
-    bool m_structureIsPolymorphic;
     bool m_mayStoreToHole; // This flag may become overloaded to indicate other special cases that were encountered during array access, as it depends on indexing type. Since we currently have basically just one indexing type (two variants of ArrayStorage), this flag for now just means exactly what its name implies.
+    bool m_outOfBounds;
     bool m_mayInterceptIndexedAccesses;
     bool m_usesOriginalArrayStructures;
     ArrayModes m_observedArrayModes;

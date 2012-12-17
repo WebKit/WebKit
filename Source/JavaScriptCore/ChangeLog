@@ -1,3 +1,55 @@
+2012-12-16  Filip Pizlo  <fpizlo@apple.com>
+
+        Rationalize array profiling for out-of-bounds and hole cases
+        https://bugs.webkit.org/show_bug.cgi?id=105139
+
+        Reviewed by Geoffrey Garen.
+
+        This makes ArrayProfile track whether or not we had out-of-bounds, which allows
+        for more precise decision-making in the DFG.
+        
+        Also cleaned up ExitKinds for out-of-bounds and hole cases to make it easier to
+        look at them in the profiler.
+        
+        Slight speed-up (5-8%) on SunSpider/crypto-md5.
+
+        * bytecode/ArrayProfile.cpp:
+        (JSC::ArrayProfile::computeUpdatedPrediction):
+        (JSC::ArrayProfile::briefDescription):
+        * bytecode/ArrayProfile.h:
+        (JSC::ArrayProfile::ArrayProfile):
+        (JSC::ArrayProfile::addressOfOutOfBounds):
+        (JSC::ArrayProfile::expectedStructure):
+        (JSC::ArrayProfile::structureIsPolymorphic):
+        (JSC::ArrayProfile::outOfBounds):
+        (JSC::ArrayProfile::polymorphicStructure):
+        * bytecode/CodeBlock.cpp:
+        (JSC::dumpChain):
+        * bytecode/ExitKind.cpp:
+        (JSC::exitKindToString):
+        (JSC::exitKindIsCountable):
+        * bytecode/ExitKind.h:
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::getArrayModeAndEmitChecks):
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::compileDoublePutByVal):
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::compileContiguousPutByVal):
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * jit/JIT.h:
+        * jit/JITInlines.h:
+        (JSC::JIT::emitArrayProfileOutOfBoundsSpecialCase):
+        * jit/JITPropertyAccess.cpp:
+        (JSC::JIT::emitSlow_op_get_by_val):
+        (JSC::JIT::emitSlow_op_put_by_val):
+        * jit/JITPropertyAccess32_64.cpp:
+        (JSC::JIT::emitSlow_op_get_by_val):
+        (JSC::JIT::emitSlow_op_put_by_val):
+        * llint/LowLevelInterpreter32_64.asm:
+        * llint/LowLevelInterpreter64.asm:
+
 2012-12-17  Balazs Kilvady  <kilvadyb@homejinni.com>
 
         Implement add64 for MIPS assembler after r136601

@@ -48,8 +48,14 @@ const char* exitKindToString(ExitKind kind)
         return "Overflow";
     case NegativeZero:
         return "NegativeZero";
+    case StoreToHole:
+        return "StoreToHole";
+    case LoadFromHole:
+        return "LoadFromHole";
     case OutOfBounds:
         return "OutOfBounds";
+    case StoreToHoleOrOutOfBounds:
+        return "StoreToHoleOrOutOfBounds";
     case InadequateCoverage:
         return "InadequateCoverage";
     case ArgumentsEscaped:
@@ -59,6 +65,7 @@ const char* exitKindToString(ExitKind kind)
     case UncountableWatchpoint:
         return "UncountableWatchpoint";
     default:
+        ASSERT_NOT_REACHED();
         return "Unknown";
     }
 }
@@ -71,6 +78,10 @@ bool exitKindIsCountable(ExitKind kind)
     case BadType:
     case Uncountable:
     case UncountableWatchpoint:
+    case LoadFromHole: // Already counted directly by the baseline JIT.
+    case StoreToHole: // Already counted directly by the baseline JIT.
+    case OutOfBounds: // Already counted directly by the baseline JIT.
+    case StoreToHoleOrOutOfBounds: // Already counted directly by the baseline JIT.
         return false;
     default:
         return true;

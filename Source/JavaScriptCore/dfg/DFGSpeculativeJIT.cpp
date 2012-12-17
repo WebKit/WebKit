@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011 Apple Inc. All rights reserved.
+ * Copyright (C) 2011, 2012 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -1900,19 +1900,19 @@ void SpeculativeJIT::compileDoublePutByVal(Node& node, SpeculateCellOperand& bas
     GPRTemporary temporary;
     GPRReg temporaryReg = temporaryRegisterForPutByVal(temporary, node);
 
-    MacroAssembler::JumpList slowCases;
+    MacroAssembler::Jump slowCase;
     
     if (arrayMode.isInBounds()) {
         speculationCheck(
-            Uncountable, JSValueRegs(), NoNode,
+            StoreToHoleOrOutOfBounds, JSValueRegs(), NoNode,
             m_jit.branch32(MacroAssembler::AboveOrEqual, propertyReg, MacroAssembler::Address(storageReg, Butterfly::offsetOfPublicLength())));
     } else {
         MacroAssembler::Jump inBounds = m_jit.branch32(MacroAssembler::Below, propertyReg, MacroAssembler::Address(storageReg, Butterfly::offsetOfPublicLength()));
         
-        slowCases.append(m_jit.branch32(MacroAssembler::AboveOrEqual, propertyReg, MacroAssembler::Address(storageReg, Butterfly::offsetOfVectorLength())));
+        slowCase = m_jit.branch32(MacroAssembler::AboveOrEqual, propertyReg, MacroAssembler::Address(storageReg, Butterfly::offsetOfVectorLength()));
         
         if (!arrayMode.isOutOfBounds())
-            speculationCheck(Uncountable, JSValueRegs(), NoNode, slowCases);
+            speculationCheck(OutOfBounds, JSValueRegs(), NoNode, slowCase);
         
         m_jit.add32(TrustedImm32(1), propertyReg, temporaryReg);
         m_jit.store32(temporaryReg, MacroAssembler::Address(storageReg, Butterfly::offsetOfPublicLength()));
@@ -1930,7 +1930,7 @@ void SpeculativeJIT::compileDoublePutByVal(Node& node, SpeculateCellOperand& bas
     if (arrayMode.isOutOfBounds()) {
         addSlowPathGenerator(
             slowPathCall(
-                slowCases, this,
+                slowCase, this,
                 m_jit.codeBlock()->isStrictMode() ? operationPutDoubleByValBeyondArrayBoundsStrict : operationPutDoubleByValBeyondArrayBoundsNonStrict,
                 NoResult, baseReg, propertyReg, valueReg));
     }

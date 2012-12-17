@@ -328,7 +328,7 @@ static void dumpChain(PrintStream& out, ExecState* exec, StructureChain* chain, 
         if (first)
             first = false;
         else
-            dataLogF(", ");
+            out.printf(", ");
         dumpStructure(out, "struct", exec, currentStructure->get(), ident);
     }
     out.printf("]");

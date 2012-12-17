@@ -1040,18 +1040,18 @@ _llint_op_get_by_val:
     bineq t2, ContiguousShape, .opGetByValNotContiguous
 .opGetByValIsContiguous:
 
-    biaeq t1, -sizeof IndexingHeader + IndexingHeader::m_publicLength[t3], .opGetByValSlow
+    biaeq t1, -sizeof IndexingHeader + IndexingHeader::m_publicLength[t3], .opGetByValOutOfBounds
     loadisFromInstruction(1, t0)
     loadq [t3, t1, 8], t2
-    btqz t2, .opGetByValSlow
+    btqz t2, .opGetByValOutOfBounds
     jmp .opGetByValDone
 
 .opGetByValNotContiguous:
     bineq t2, DoubleShape, .opGetByValNotDouble
-    biaeq t1, -sizeof IndexingHeader + IndexingHeader::m_publicLength[t3], .opGetByValSlow
+    biaeq t1, -sizeof IndexingHeader + IndexingHeader::m_publicLength[t3], .opGetByValOutOfBounds
     loadis 8[PB, PC, 8], t0
     loadd [t3, t1, 8], ft0
-    bdnequn ft0, ft0, .opGetByValSlow
+    bdnequn ft0, ft0, .opGetByValOutOfBounds
     fd2q ft0, t2
     subq tagTypeNumber, t2
     jmp .opGetByValDone
@@ -1059,10 +1059,10 @@ _llint_op_get_by_val:
 .opGetByValNotDouble:
     subi ArrayStorageShape, t2
     bia t2, SlowPutArrayStorageShape - ArrayStorageShape, .opGetByValSlow
-    biaeq t1, -sizeof IndexingHeader + IndexingHeader::m_vectorLength[t3], .opGetByValSlow
+    biaeq t1, -sizeof IndexingHeader + IndexingHeader::m_vectorLength[t3], .opGetByValOutOfBounds
     loadisFromInstruction(1, t0)
     loadq ArrayStorage::m_vector[t3, t1, 8], t2
-    btqz t2, .opGetByValSlow
+    btqz t2, .opGetByValOutOfBounds
 
 .opGetByValDone:
     storeq t2, [cfr, t0, 8]
@@ -1070,6 +1070,11 @@ _llint_op_get_by_val:
     valueProfile(t2, t0)
     dispatch(6)
 
+.opGetByValOutOfBounds:
+    if VALUE_PROFILER
+        loadpFromInstruction(4, t0)
+        storeb 1, ArrayProfile::m_outOfBounds[t0]
+    end
 .opGetByValSlow:
     callSlowPath(_llint_slow_path_get_by_val)
     dispatch(6)
@@ -1140,7 +1145,7 @@ macro contiguousPutByVal(storeCallback)
     dispatch(5)
 
 .outOfBounds:
-    biaeq t3, -sizeof IndexingHeader + IndexingHeader::m_vectorLength[t0], .opPutByValSlow
+    biaeq t3, -sizeof IndexingHeader + IndexingHeader::m_vectorLength[t0], .opPutByValOutOfBounds
     if VALUE_PROFILER
         loadp 32[PB, PC, 8], t2
         storeb 1, ArrayProfile::m_mayStoreToHole[t2]
@@ -1197,7 +1202,7 @@ _llint_op_put_by_val:
 
 .opPutByValNotContiguous:
     bineq t2, ArrayStorageShape, .opPutByValSlow
-    biaeq t3, -sizeof IndexingHeader + IndexingHeader::m_vectorLength[t0], .opPutByValSlow
+    biaeq t3, -sizeof IndexingHeader + IndexingHeader::m_vectorLength[t0], .opPutByValOutOfBounds
     btqz ArrayStorage::m_vector[t0, t3, 8], .opPutByValArrayStorageEmpty
 .opPutByValArrayStorageStoreResult:
     loadisFromInstruction(3, t2)
@@ -1217,6 +1222,11 @@ _llint_op_put_by_val:
     storei t1, -sizeof IndexingHeader + IndexingHeader::m_publicLength[t0]
     jmp .opPutByValArrayStorageStoreResult
 
+.opPutByValOutOfBounds:
+    if VALUE_PROFILER
+        loadpFromInstruction(4, t0)
+        storeb 1, ArrayProfile::m_outOfBounds[t0]
+    end
 .opPutByValSlow:
     callSlowPath(_llint_slow_path_put_by_val)
     dispatch(5)

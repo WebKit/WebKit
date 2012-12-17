@@ -939,8 +939,8 @@ private:
 #endif
         
         bool makeSafe =
-            m_inlineStackTop->m_profiledBlock->couldTakeSlowCase(m_currentIndex)
-            || m_inlineStackTop->m_exitProfile.hasExitSite(m_currentIndex, OutOfBounds);
+            m_inlineStackTop->m_profiledBlock->likelyToTakeSlowCase(m_currentIndex)
+            || profile->outOfBounds();
         
         ArrayMode result = ArrayMode::fromObserved(profile, action, makeSafe);
         

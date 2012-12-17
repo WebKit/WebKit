@@ -528,6 +528,15 @@ inline void JIT::emitArrayProfileStoreToHoleSpecialCase(ArrayProfile* arrayProfi
 #endif
 }
 
+inline void JIT::emitArrayProfileOutOfBoundsSpecialCase(ArrayProfile* arrayProfile)
+{
+#if ENABLE(VALUE_PROFILER)    
+    store8(TrustedImm32(1), arrayProfile->addressOfOutOfBounds());
+#else
+    UNUSED_PARAM(arrayProfile);
+#endif
+}
+
 static inline bool arrayProfileSaw(ArrayModes arrayModes, IndexingType capability)
 {
 #if ENABLE(VALUE_PROFILER)
