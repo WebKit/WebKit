@@ -73,12 +73,8 @@ CoordinatedLayerTreeHost::~CoordinatedLayerTreeHost()
 #endif
     purgeBackingStores();
 
-    // Prevent setCoordinatedGraphicsLayerClient(0) -> detachLayer() from modifying the set while we iterate it.
-    HashSet<WebCore::CoordinatedGraphicsLayer*> registeredLayers;
-    registeredLayers.swap(m_registeredLayers);
-
-    HashSet<WebCore::CoordinatedGraphicsLayer*>::iterator end = registeredLayers.end();
-    for (HashSet<WebCore::CoordinatedGraphicsLayer*>::iterator it = registeredLayers.begin(); it != end; ++it)
+    HashSet<WebCore::CoordinatedGraphicsLayer*>::iterator end = m_registeredLayers.end();
+    for (HashSet<WebCore::CoordinatedGraphicsLayer*>::iterator it = m_registeredLayers.begin(); it != end; ++it)
         (*it)->setCoordinator(0);
 }
 

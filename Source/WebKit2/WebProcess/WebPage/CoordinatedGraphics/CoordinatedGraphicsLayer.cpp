@@ -44,12 +44,6 @@ using namespace WebKit;
 
 namespace WebCore {
 
-static HashMap<CoordinatedLayerID, CoordinatedGraphicsLayer*>& layerByIDMap()
-{
-    static HashMap<CoordinatedLayerID, CoordinatedGraphicsLayer*> globalMap;
-    return globalMap;
-}
-
 static CoordinatedLayerID toCoordinatedLayerID(GraphicsLayer* layer)
 {
     return layer ? toCoordinatedGraphicsLayer(layer)->id() : 0;
@@ -128,13 +122,10 @@ CoordinatedGraphicsLayer::CoordinatedGraphicsLayer(GraphicsLayerClient* client)
 {
     static CoordinatedLayerID nextLayerID = 1;
     m_id = nextLayerID++;
-    layerByIDMap().add(id(), this);
 }
 
 CoordinatedGraphicsLayer::~CoordinatedGraphicsLayer()
 {
-    layerByIDMap().remove(id());
-
     if (m_coordinator) {
         purgeBackingStores();
         m_coordinator->detachLayer(this);
