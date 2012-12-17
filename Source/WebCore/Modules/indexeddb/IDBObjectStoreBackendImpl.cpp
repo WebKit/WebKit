@@ -308,22 +308,22 @@ void IDBObjectStoreBackendImpl::ObjectStoreRetrievalOperation::perform(IDBTransa
         key = backingStoreCursor->key();
     }
 
-    String wireData;
+    Vector<uint8_t> wireData;
     bool ok = m_objectStore->backingStore()->getRecord(transaction->backingStoreTransaction(), m_objectStore->databaseId(), m_objectStore->id(), *key, wireData);
     if (!ok) {
         m_callbacks->onError(IDBDatabaseError::create(IDBDatabaseException::UnknownError, "Internal error in getRecord."));
         return;
     }
-    if (wireData.isNull()) {
+    if (wireData.isEmpty()) {
         m_callbacks->onSuccess();
         return;
     }
 
     if (m_objectStore->autoIncrement() && !m_objectStore->keyPath().isNull()) {
-        m_callbacks->onSuccess(SerializedScriptValue::createFromWire(wireData), key, m_objectStore->keyPath());
+        m_callbacks->onSuccess(SerializedScriptValue::createFromWireBytes(wireData), key, m_objectStore->keyPath());
         return;
     }
-    m_callbacks->onSuccess(SerializedScriptValue::createFromWire(wireData));
+    m_callbacks->onSuccess(SerializedScriptValue::createFromWireBytes(wireData));
 }
 
 void IDBObjectStoreBackendImpl::put(PassRefPtr<SerializedScriptValue> value, PassRefPtr<IDBKey> key, PutMode putMode, PassRefPtr<IDBCallbacks> prpCallbacks, IDBTransactionBackendInterface* transactionPtr, const Vector<int64_t>& indexIds, const Vector<IndexKeys>& indexKeys)
@@ -560,7 +560,7 @@ void IDBObjectStoreBackendImpl::ObjectStoreStorageOperation::perform(IDBTransact
 
     // Before this point, don't do any mutation.  After this point, rollback the transaction in case of error.
 
-    backingStoreSuccess = m_objectStore->backingStore()->putRecord(transaction->backingStoreTransaction(), m_objectStore->databaseId(), m_objectStore->id(), *m_key, m_value->toWireString(), &recordIdentifier);
+    backingStoreSuccess = m_objectStore->backingStore()->putRecord(transaction->backingStoreTransaction(), m_objectStore->databaseId(), m_objectStore->id(), *m_key, m_value->toWireBytes(), &recordIdentifier);
     if (!backingStoreSuccess) {
         m_callbacks->onError(IDBDatabaseError::create(IDBDatabaseException::UnknownError, "Internal error: backing store error performing put/add."));
         return;

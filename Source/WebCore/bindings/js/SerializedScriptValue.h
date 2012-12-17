@@ -104,8 +104,11 @@ public:
     JSC::JSValue deserialize(JSC::ExecState*, JSC::JSGlobalObject*);
 #endif
 
-    static PassRefPtr<SerializedScriptValue> createFromWire(const String& data);
-    String toWireString() const;
+    static PassRefPtr<SerializedScriptValue> createFromWireBytes(const Vector<uint8_t>& data)
+    {
+        return adoptRef(new SerializedScriptValue(data));
+    }
+    const Vector<uint8_t>& toWireBytes() const { return m_data; }
 
     ~SerializedScriptValue();
 
@@ -115,6 +118,7 @@ private:
     static bool serializationDidCompleteSuccessfully(SerializationReturnCode);
     static PassOwnPtr<ArrayBufferContentsArray> transferArrayBuffers(ArrayBufferArray&, SerializationReturnCode&);
 
+    SerializedScriptValue(const Vector<unsigned char>&);
     SerializedScriptValue(Vector<unsigned char>&);
     SerializedScriptValue(Vector<unsigned char>&, Vector<String>& blobURLs);
     SerializedScriptValue(Vector<unsigned char>&, Vector<String>& blobURLs, PassOwnPtr<ArrayBufferContentsArray>);

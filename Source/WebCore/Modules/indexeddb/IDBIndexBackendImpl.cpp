@@ -237,22 +237,22 @@ void IDBIndexBackendImpl::IndexReferencedValueRetrievalOperation::perform(IDBTra
         return;
     }
 
-    String value;
+    Vector<uint8_t> value;
     ok = m_index->backingStore()->getRecord(transaction->backingStoreTransaction(), m_index->databaseId(), m_index->m_objectStoreBackend->id(), *primaryKey, value);
     if (!ok) {
         m_callbacks->onError(IDBDatabaseError::create(IDBDatabaseException::UnknownError, "Internal error in getRecord."));
         return;
     }
 
-    if (value.isNull()) {
+    if (value.isEmpty()) {
         m_callbacks->onSuccess();
         return;
     }
     if (m_index->m_objectStoreBackend->autoIncrement() && !m_index->m_objectStoreBackend->keyPath().isNull()) {
-        m_callbacks->onSuccess(SerializedScriptValue::createFromWire(value), primaryKey, m_index->m_objectStoreBackend->keyPath());
+        m_callbacks->onSuccess(SerializedScriptValue::createFromWireBytes(value), primaryKey, m_index->m_objectStoreBackend->keyPath());
         return;
     }
-    m_callbacks->onSuccess(SerializedScriptValue::createFromWire(value));
+    m_callbacks->onSuccess(SerializedScriptValue::createFromWireBytes(value));
 }
 
 

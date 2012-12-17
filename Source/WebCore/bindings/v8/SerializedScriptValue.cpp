@@ -64,6 +64,7 @@
 #include <wtf/ArrayBuffer.h>
 #include <wtf/ArrayBufferView.h>
 #include <wtf/Assertions.h>
+#include <wtf/ByteOrder.h>
 #include <wtf/Float32Array.h>
 #include <wtf/Float64Array.h>
 #include <wtf/Int16Array.h>
@@ -2249,6 +2250,20 @@ PassRefPtr<SerializedScriptValue> SerializedScriptValue::createFromWire(const St
     return adoptRef(new SerializedScriptValue(data));
 }
 
+PassRefPtr<SerializedScriptValue> SerializedScriptValue::createFromWireBytes(const Vector<uint8_t>& data)
+{
+    // Decode wire data from big endian to host byte order.
+    ASSERT(!(data.size() % sizeof(UChar)));
+    size_t length = data.size() / sizeof(UChar);
+    Vector<UChar> buffer(length);
+    const UChar* src = reinterpret_cast<const UChar*>(data.data());
+    UChar* dst = buffer.data();
+    for (size_t i = 0; i < length; i++)
+        dst[i] = ntohs(src[i]);
+
+    return createFromWire(String::adopt(buffer));
+}
+
 PassRefPtr<SerializedScriptValue> SerializedScriptValue::create(const String& data, v8::Isolate* isolate)
 {
     Writer writer(isolate);
@@ -2295,6 +2310,20 @@ PassRefPtr<SerializedScriptValue> SerializedScriptValue::numberValue(double valu
     writer.writeNumber(value);
     String wireData = StringImpl::adopt(writer.data());
     return adoptRef(new SerializedScriptValue(wireData));
+}
+
+Vector<uint8_t> SerializedScriptValue::toWireBytes() const
+{
+    // Convert serialized string to big endian wire data.
+    size_t length = m_data.length();
+    Vector<uint8_t> result(length * sizeof(UChar));
+
+    const UChar* src = m_data.characters();
+    UChar* dst = reinterpret_cast<UChar*>(result.data());
+    for (size_t i = 0; i < length; i++)
+        dst[i] = htons(src[i]);
+
+    return result;
 }
 
 PassRefPtr<SerializedScriptValue> SerializedScriptValue::release()

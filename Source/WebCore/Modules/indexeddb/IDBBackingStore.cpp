@@ -766,7 +766,7 @@ bool IDBBackingStore::deleteObjectStore(IDBBackingStore::Transaction* transactio
     return true;
 }
 
-bool IDBBackingStore::getRecord(IDBBackingStore::Transaction* transaction, int64_t databaseId, int64_t objectStoreId, const IDBKey& key, String& record)
+bool IDBBackingStore::getRecord(IDBBackingStore::Transaction* transaction, int64_t databaseId, int64_t objectStoreId, const IDBKey& key, Vector<uint8_t>& record)
 {
     IDB_TRACE("IDBBackingStore::getRecord");
     LevelDBTransaction* levelDBTransaction = IDBBackingStore::Transaction::levelDBTransactionFrom(transaction);
@@ -774,10 +774,11 @@ bool IDBBackingStore::getRecord(IDBBackingStore::Transaction* transaction, int64
     const Vector<char> leveldbKey = ObjectStoreDataKey::encode(databaseId, objectStoreId, key);
     Vector<char> data;
 
+    record.clear();
+
     bool found = false;
     bool ok = levelDBTransaction->safeGet(leveldbKey, data, found);
     if (!ok) {
-        record = String();
         InternalError(IDBLevelDBBackingStoreReadErrorGetRecord);
         return false;
     }
@@ -786,11 +787,10 @@ bool IDBBackingStore::getRecord(IDBBackingStore::Transaction* transaction, int64
     const char* p = decodeVarInt(data.begin(), data.end(), version);
     if (!p) {
         InternalError(IDBLevelDBBackingStoreReadErrorGetRecord);
-        record = String();
         return false;
     }
 
-    record = decodeString(p, data.end());
+    record.appendRange(p, static_cast<const char*>(data.end()));
     return true;
 }
 
@@ -820,7 +820,7 @@ WARN_UNUSED_RETURN static bool getNewVersionNumber(LevelDBTransaction* transacti
     return true;
 }
 
-bool IDBBackingStore::putRecord(IDBBackingStore::Transaction* transaction, int64_t databaseId, int64_t objectStoreId, const IDBKey& key, const String& value, RecordIdentifier* recordIdentifier)
+bool IDBBackingStore::putRecord(IDBBackingStore::Transaction* transaction, int64_t databaseId, int64_t objectStoreId, const IDBKey& key, const Vector<uint8_t>& value, RecordIdentifier* recordIdentifier)
 {
     IDB_TRACE("IDBBackingStore::putRecord");
     ASSERT(key.isValid());
@@ -834,7 +834,7 @@ bool IDBBackingStore::putRecord(IDBBackingStore::Transaction* transaction, int64
 
     Vector<char> v;
     v.append(encodeVarInt(version));
-    v.append(encodeString(value));
+    v.appendVector(value);
 
     levelDBTransaction->put(objectStoredataKey, v);
 
@@ -1389,7 +1389,7 @@ public:
     }
 
     // IDBBackingStore::Cursor
-    virtual String value() const { ASSERT_NOT_REACHED(); return String(); }
+    virtual const Vector<uint8_t>& value() const { ASSERT_NOT_REACHED(); return *new Vector<uint8_t>(); }
     virtual bool loadCurrentRow();
 
 private:
@@ -1402,7 +1402,6 @@ private:
         : IDBBackingStore::Cursor(other)
     {
     }
-
 };
 
 bool ObjectStoreKeyCursorImpl::loadCurrentRow()
@@ -1445,7 +1444,7 @@ public:
     }
 
     // IDBBackingStore::Cursor
-    virtual String value() const { return m_currentValue; }
+    virtual const Vector<uint8_t>& value() const { return m_currentValue; }
     virtual bool loadCurrentRow();
 
 private:
@@ -1460,7 +1459,7 @@ private:
     {
     }
 
-    String m_currentValue;
+    Vector<uint8_t> m_currentValue;
 };
 
 bool ObjectStoreCursorImpl::loadCurrentRow()
@@ -1487,7 +1486,8 @@ bool ObjectStoreCursorImpl::loadCurrentRow()
     // FIXME: This re-encodes what was just decoded; try and optimize.
     m_recordIdentifier.reset(encodeIDBKey(*m_currentKey), version);
 
-    m_currentValue = decodeString(valuePosition, m_iterator->value().end());
+    m_currentValue.clear();
+    m_currentValue.appendRange(valuePosition, static_cast<const char*>(m_iterator->value().end()));
 
     return true;
 }
@@ -1505,7 +1505,7 @@ public:
     }
 
     // IDBBackingStore::Cursor
-    virtual String value() const { ASSERT_NOT_REACHED(); return String(); }
+    virtual const Vector<uint8_t>& value() const { ASSERT_NOT_REACHED(); return *new Vector<uint8_t>(); }
     virtual PassRefPtr<IDBKey> primaryKey() const { return m_primaryKey; }
     virtual const IDBBackingStore::RecordIdentifier& recordIdentifier() const { ASSERT_NOT_REACHED(); return m_recordIdentifier; }
     virtual bool loadCurrentRow();
@@ -1584,7 +1584,7 @@ public:
     }
 
     // IDBBackingStore::Cursor
-    virtual String value() const { return m_value; }
+    virtual const Vector<uint8_t>& value() const { return m_currentValue; }
     virtual PassRefPtr<IDBKey> primaryKey() const { return m_primaryKey; }
     virtual const IDBBackingStore::RecordIdentifier& recordIdentifier() const { ASSERT_NOT_REACHED(); return m_recordIdentifier; }
     bool loadCurrentRow();
@@ -1598,13 +1598,13 @@ private:
     IndexCursorImpl(const IndexCursorImpl* other)
         : IDBBackingStore::Cursor(other)
         , m_primaryKey(other->m_primaryKey)
-        , m_value(other->m_value)
+        , m_currentValue(other->m_currentValue)
         , m_primaryLevelDBKey(other->m_primaryLevelDBKey)
     {
     }
 
     RefPtr<IDBKey> m_primaryKey;
-    String m_value;
+    Vector<uint8_t> m_currentValue;
     Vector<char> m_primaryLevelDBKey;
 };
 
@@ -1653,7 +1653,8 @@ bool IndexCursorImpl::loadCurrentRow()
         return false;
     }
 
-    m_value = decodeString(t, result.end());
+    m_currentValue.clear();
+    m_currentValue.appendRange(t, static_cast<const char*>(result.end()));
     return true;
 }
 
