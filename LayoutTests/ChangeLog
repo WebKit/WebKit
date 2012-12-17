@@ -2,6 +2,15 @@
 
         Unreviewed EFL gardening.
 
+        Mark new compositing/overflow/automatically-opt-into-composited-scrolling.html
+        test introduced in r137828 as failing on EFL WK2.
+
+        * platform/efl-wk2/TestExpectations:
+
+2012-12-16  Christophe Dumez  <christophe.dumez@intel.com>
+
+        Unreviewed EFL gardening.
+
         Mark editing/execCommand/indent-paragraphs.html as expected to
         crash on EFL port until Bug 105042 is fixed.
 
