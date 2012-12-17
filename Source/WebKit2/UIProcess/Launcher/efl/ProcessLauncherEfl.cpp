@@ -40,14 +40,14 @@ void ProcessLauncher::launchProcess()
         return;
     }
 
-    String executablePath;
+    const char* executablePath = 0;
     switch (m_launchOptions.processType) {
     case WebProcess:
-        executablePath = executablePathOfWebProcess();
+        executablePath = executablePathOfWebProcess().utf8().data();
         break;
 #if ENABLE(PLUGIN_PROCESS)
     case PluginProcess:
-        executablePath = executablePathOfPluginProcess();
+        executablePath = executablePathOfPluginProcess().utf8().data();
         break;
 #endif
     default:
@@ -55,30 +55,37 @@ void ProcessLauncher::launchProcess()
         return;
     }
 
-    String socket = String::format("%d", sockets[0]);
+    char socket[5];
+    snprintf(socket, sizeof(socket), "%d", sockets[0]);
 
 #ifndef NDEBUG
-    String prefixedExecutablePath;
-    if (!m_launchOptions.processCmdPrefix.isEmpty())
-        prefixedExecutablePath = m_launchOptions.processCmdPrefix + ' ' + executablePath + ' ' + socket;
+    const char* prefixedExecutablePath = 0;
+    String prefixedExecutablePathStr;
+    if (!m_launchOptions.processCmdPrefix.isEmpty()) {
+        prefixedExecutablePathStr = m_launchOptions.processCmdPrefix + ' ' + executablePath + ' ' + socket;
+        prefixedExecutablePath = prefixedExecutablePathStr.utf8().data();
+    }
 #endif
 
+    // Do not perform memory allocation in the middle of the fork()
+    // exec() below. FastMalloc can potentially deadlock because
+    // the fork() doesn't inherit the running threads.
     pid_t pid = fork();
     if (!pid) { // Child process.
         close(sockets[1]);
 #ifndef NDEBUG
-        if (!prefixedExecutablePath.isEmpty()) {
+        if (prefixedExecutablePath) {
             // FIXME: This is not correct because it invokes the shell
             // and keeps this process waiting. Should be changed to
             // something like execvp().
-            if (system(prefixedExecutablePath.utf8().data()) == -1) {
+            if (system(prefixedExecutablePath) == -1) {
                 ASSERT_NOT_REACHED();
                 exit(EXIT_FAILURE);
             } else
                 exit(EXIT_SUCCESS);
         }
 #endif
-        execl(executablePath.utf8().data(), executablePath.utf8().data(), socket.utf8().data(), static_cast<char*>(0));
+        execl(executablePath, executablePath, socket, static_cast<char*>(0));
     } else if (pid > 0) { // parent process;
         close(sockets[0]);
         m_processIdentifier = pid;
