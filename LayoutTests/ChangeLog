@@ -1,5 +1,13 @@
 2012-12-16  Kentaro Hara  <haraken@chromium.org>
 
+        Unreviewed. Rebaselined virtual/gpu/compositedscrolling/scrollbars/scrollbar-orientation.html.
+
+        * platform/chromium-mac-lion/platform/chromium/virtual/gpu/compositedscrolling/scrollbars/scrollbar-orientation-expected.png: Added.
+        * platform/chromium-mac-snowleopard/platform/chromium/virtual/gpu/compositedscrolling/scrollbars/scrollbar-orientation-expected.png: Added.
+        * platform/chromium-mac/platform/chromium/virtual/gpu/compositedscrolling/scrollbars/scrollbar-orientation-expected.png: Added.
+
+2012-12-16  Kentaro Hara  <haraken@chromium.org>
+
         Unreviewed. Rebaselined virtual/gpu/compositedscrolling/scrollbars/scrollbar-buttons.html.
 
         * platform/chromium-mac-lion/platform/chromium/virtual/gpu/compositedscrolling/scrollbars/scrollbar-buttons-expected.png: Added.
