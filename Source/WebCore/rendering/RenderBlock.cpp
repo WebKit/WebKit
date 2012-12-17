@@ -3818,8 +3818,23 @@ void RenderBlock::removeFloatingObjectsBelow(FloatingObject* lastFloat, int logi
 LayoutPoint RenderBlock::computeLogicalLocationForFloat(const FloatingObject* floatingObject, LayoutUnit logicalTopOffset) const
 {
     RenderBox* childBox = floatingObject->renderer();
-    LayoutUnit logicalRightOffset = logicalRightOffsetForContent(logicalTopOffset); // Constant part of right offset.
     LayoutUnit logicalLeftOffset = logicalLeftOffsetForContent(logicalTopOffset); // Constant part of left offset.
+    LayoutUnit logicalRightOffset; // Constant part of right offset.
+#if ENABLE(CSS_EXCLUSIONS)
+    // FIXME Bug 102948: This only works for shape outside directly set on this block.
+    ExclusionShapeInsideInfo* shapeInsideInfo = exclusionShapeInsideInfo();
+    // FIXME Bug 102846: Take into account the height of the content. The offset should be
+    // equal to the maximum segment length.
+    if (shapeInsideInfo && shapeInsideInfo->hasSegments() && shapeInsideInfo->segments().size() == 1) {
+        // FIXME Bug 102949: Add support for shapes with multipe segments.
+
+        // The segment offsets are relative to the content box.
+        logicalRightOffset = logicalLeftOffset + shapeInsideInfo->segments()[0].logicalRight;
+        logicalLeftOffset += shapeInsideInfo->segments()[0].logicalLeft;
+    } else
+#endif
+        logicalRightOffset = logicalRightOffsetForContent(logicalTopOffset);
+
     LayoutUnit floatLogicalWidth = min(logicalWidthForFloat(floatingObject), logicalRightOffset - logicalLeftOffset); // The width we look for.
 
     LayoutUnit floatLogicalLeft;

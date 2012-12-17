@@ -1,41 +1,40 @@
 <!DOCTYPE html>
 <html>
 <head>
-<script>
-    if (window.internals)
-        window.internals.settings.setCSSExclusionsEnabled(true);
-</script>
-<style>
-    div {
-        width: 200px;
-        height: 200px;
-    }
-    #shape-inside {
-        padding: 10px;
-        position: relative;
-        -webkit-shape-inside: rectangle(0, 0, 200px, 200px);
-    }
-    #border {
-        position: absolute;
-        top: 8px;
-        left: 8px;
-        border: 2px solid blue;
+<script src="../resources/simple-rectangle.js"></script>
+<style id="stylesheet">
+    .container {
+        font: 10px/1 Ahem, sans-serif;
     }
     .spacer {
-        width: 73px;
-        height: 73px;
-        border: 1px solid green;
+        width: 50px;
+        height: 50px;
+        background-color: green;
+    }
+    .vertical-lr {
+        -webkit-writing-mode: vertical-lr;
+    }
+    .vertical-rl {
+        -webkit-writing-mode: vertical-rl;
     }
 </style>
+<script>
+    window.onload = function () {
+        var content = 'XXXXXXXXXXXXXXX\nXXXXXXXXXXXXXXX\nXXXXXXXXXXXXXXX\n<div class="spacer" style="float:right"></div>\n<div class="spacer" style="float:left"></div>\nXXXXX\nXXXXX\nXXXXX\nXXXXX\nXXXXX\nXXXXXXXXXXXXXXX\nXXXXXXXXXXXXXXX\nXXXXXXXXXXXXXXX\nXXXXXXXXXXXXXXX\nXXXXXXXXXXXXXXX\nXXXXXXXXXXXXXXX\nXXXXXXXXXXXXXXX';
+        createRectangleTest('base', 'stylesheet', { height: 200, width: 200 }, { x: 25, y: 0, width: 150, height: 150 }, 'px', content);
+        createRectangleTest('rl', 'stylesheet', { height: 200, width: 200 }, { x: 0, y: 25, width: 150, height: 150 }, 'px', content);
+        createRectangleTest('lr', 'stylesheet', { height: 200, width: 200 }, { x: 0, y: 25, width: 150, height: 150 }, 'px', content);
+    };
+</script>
 </head>
 <body>
-    <div id="shape-inside">
-        <div id="border"></div>
-        <div class="spacer" style="float:left"></div>
-        <div class="spacer" style="float:right"></div>
-        The blue box should contain a green square in both the upper left
-        and upper right corners. This text should flow around the green squares,
-        but within the blue outline.
+    <h1>The following tests should all be large black squares that contain two smaller green squares on the same line.</h1>
+    <h2>Standard left right writing mode</h2>
+    <div id="base" class="container">
     </div>
+    <h2>Vertical Right Left writing mode</h2>
+    <div id="rl" class="container vertical-rl"></div>
+    <h2>Vertical Left Right writing mode</h2>
+    <div id="lr" class="container vertical-lr"></div>
 </body>
 </html>

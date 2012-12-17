@@ -1,3 +1,23 @@
+2012-12-17  Bem Jones-Bey  <bjonesbe@adobe.com>
+
+        [CSS Exclusions] Floats should respect shape-inside on exclusions
+        https://bugs.webkit.org/show_bug.cgi?id=89261
+
+        Reviewed by David Hyatt.
+
+        Position floats properly with respect to an exclusion shape. Note that
+        this will not attempt to position floats in a polygon that has
+        multiple segments. In the multiple segment case, the floats will be
+        positioned as if the exclusion did not exist.
+
+        Updated an existing test case to test for this.
+        Test: fast/exclusions/shape-inside/shape-inside-floats-simple.html
+
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::computeLogicalLocationForFloat): Adjust the
+        right and left offsets to take into account the right and left offset
+        contributed by the exclusion shape.
+
 2012-12-17  Antoine Quint  <graouts@apple.com>
 
         GraphicsLayer's repaint count should update even when debugging option to show it is off
