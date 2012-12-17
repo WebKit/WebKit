@@ -31,6 +31,7 @@
 {
     'variables': {
         'TestWebKitAPI_files': [
+            'Tests/WebCore/LayoutUnit.cpp',
             'Tests/WTF/AtomicString.cpp',
             'Tests/WTF/CheckedArithmeticOperations.cpp',
             'Tests/WTF/CString.cpp',

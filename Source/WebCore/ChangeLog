@@ -1,3 +1,20 @@
+2012-12-17  Emil A Eklund  <eae@chromium.org>
+
+        Clamp values in LayoutUnit::operator/ when SATURATED_LAYOUT_ARITHMETIC is enabled
+        https://bugs.webkit.org/show_bug.cgi?id=104955
+
+        Reviewed by Julien Chaffraix.
+
+        LayoutUnit::operator/ currently does not clamp values and
+        instead overflows when given a value greater than INT_MAX or
+        less than INT_MIN. 
+
+        Test: TestWebKitAPI/Tests/WebCore/LayoutUnit.cpp
+
+        * platform/LayoutUnit.h:
+        (WebCore::operator/):
+        Clamp value if SATURATED_LAYOUT_ARITHMETIC is enabled.
+
 2012-12-17  Simon Fraser  <simon.fraser@apple.com>
 
         Don't allow edge TileCache tiles to be larger than necessary

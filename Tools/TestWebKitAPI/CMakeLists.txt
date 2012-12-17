@@ -104,6 +104,7 @@ add_executable(test_webcore
     ${test_main_SOURCES}
     ${TESTWEBKITAPI_DIR}/TestsController.cpp
     ${TESTWEBKITAPI_DIR}/Tests/WebCore/KURL.cpp
+    ${TESTWEBKITAPI_DIR}/Tests/WebCore/LayoutUnit.cpp
 )
 
 target_link_libraries(test_webcore ${test_webcore_LIBRARIES})

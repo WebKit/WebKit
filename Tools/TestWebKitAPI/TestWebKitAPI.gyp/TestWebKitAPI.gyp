@@ -54,6 +54,7 @@
             'target_name': 'TestWebKitAPI',
             'type': 'executable',
             'dependencies': [
+                '<(source_dir)/WebCore/WebCore.gyp/WebCore.gyp:webcore',
                 '<(source_dir)/WebKit/chromium/WebKit.gyp:webkit',
                 '<(source_dir)/WTF/WTF.gyp/WTF.gyp:wtf',
                 '<(chromium_src_dir)/build/temp_gyp/googleurl.gyp:googleurl',
@@ -68,6 +69,7 @@
                 # Needed by tests/RunAllTests.cpp, as well as ChromiumCurrentTime.cpp and
                 # ChromiumThreading.cpp in chromium shared library configuration.
                 '<(source_dir)/WebKit/chromium/public',
+                '<(tools_dir)/TestWebKitAPI/ForwardingHeaders',
             ],
             'sources': [
                 # Reuse the same testing driver of Chromium's webkit_unit_tests.

@@ -415,6 +415,10 @@
 						>
 					</File>
 				</Filter>
+				<File
+					RelativePath="..\Tests\WebCore\LayoutUnit.cpp"
+					>
+				</File>
 			</Filter>
 			<Filter
 				Name="WTF"

@@ -553,7 +553,11 @@ inline LayoutUnit operator/(const LayoutUnit& a, const LayoutUnit& b)
 #if ENABLE(SUBPIXEL_LAYOUT)
     LayoutUnit returnVal;
     long long rawVal = static_cast<long long>(kFixedPointDenominator) * a.rawValue() / b.rawValue();
+#if ENABLE(SATURATED_LAYOUT_ARITHMETIC)
+    returnVal.setRawValue(clampTo<int>(rawVal));
+#else
     returnVal.setRawValue(rawVal);
+#endif
     return returnVal;
 #else
     return a.rawValue() / b.rawValue();
