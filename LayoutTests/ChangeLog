@@ -1,3 +1,14 @@
+2012-12-16  Hayato Ito  <hayato@chromium.org>
+
+        [Shadow DOM] Kill ShadowRoot constructor
+        https://bugs.webkit.org/show_bug.cgi?id=102913
+
+        Reviewed by Dimitri Glazkov.
+
+        * fast/js/global-constructors-expected.txt:
+        * platform/efl/fast/js/global-constructors-expected.txt:
+        * platform/gtk/fast/js/global-constructors-expected.txt:
+
 2012-12-16  Kentaro Hara  <haraken@chromium.org>
 
         Unreviewed. Rebaselined virtual/gpu/compositedscrolling/scrollbars/scrollbar-orientation.html.
