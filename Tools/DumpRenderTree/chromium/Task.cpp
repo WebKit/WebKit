@@ -33,8 +33,8 @@
 
 #include "WebKit.h"
 #include "WebTask.h"
-#include "platform/WebKitPlatformSupport.h"
 #include "webkit/support/webkit_support.h"
+#include <public/Platform.h>
 #include <wtf/OwnPtr.h>
 #include <wtf/PassOwnPtr.h>
 
@@ -70,7 +70,7 @@ private:
 
 void postTask(WebTask* task)
 {
-    webKitPlatformSupport()->callOnMainThread(invokeTask, static_cast<void*>(task));
+    Platform::current()->callOnMainThread(invokeTask, static_cast<void*>(task));
 }
 
 void postDelayedTask(WebTask* task, long long ms)

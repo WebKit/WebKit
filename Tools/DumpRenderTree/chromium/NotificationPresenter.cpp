@@ -34,13 +34,13 @@
 #if ENABLE(NOTIFICATIONS) || ENABLE(LEGACY_NOTIFICATIONS)
 
 #include "WebKit.h"
-#include "platform/WebKitPlatformSupport.h"
 #include "WebNotification.h"
 #include "WebNotificationPermissionCallback.h"
 #include "WebSecurityOrigin.h"
 #include "platform/WebString.h"
 #include "platform/WebURL.h"
 #include "googleurl/src/gurl.h"
+#include <public/Platform.h>
 #include <wtf/text/CString.h>
 #include <wtf/text/WTFString.h>
 
@@ -111,7 +111,7 @@ bool NotificationPresenter::show(const WebNotification& notification)
     WTF::String id(identifier.data(), identifier.length());
     m_activeNotifications.set(id, notification);
 
-    webKitPlatformSupport()->callOnMainThread(deferredDisplayDispatch, new WebNotification(notification));
+    Platform::current()->callOnMainThread(deferredDisplayDispatch, new WebNotification(notification));
     return true;
 }
 
