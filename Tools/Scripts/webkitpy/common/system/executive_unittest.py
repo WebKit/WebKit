@@ -118,6 +118,11 @@ class ExecutiveTest(unittest.TestCase):
         executive.run_command(command_line('echo', 1))
         executive.popen(command_line('echo', 1)).wait()
 
+    def test_popen_args(self):
+        executive = Executive()
+        # Explicitly naming the 'args' argument should not thow an exception.
+        executive.popen(args=command_line('echo', 1)).wait()
+
     def test_run_command_with_unicode(self):
         """Validate that it is safe to pass unicode() objects
         to Executive.run* methods, and they will return unicode()

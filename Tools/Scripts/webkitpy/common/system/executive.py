@@ -471,13 +471,14 @@ class Executive(object):
             return argument
         return argument.encode(self._child_process_encoding())
 
-    def _stringify_args(self, *args):
+    def _stringify_args(self, args):
         # Popen will throw an exception if args are non-strings (like int())
-        string_args = map(unicode, *args)
+        string_args = map(unicode, args)
         # The Windows implementation of Popen cannot handle unicode strings. :(
         return map(self._encode_argument_if_needed, string_args)
 
-    def popen(self, *args, **kwargs):
+    # The only required arugment to popen is named "args", the rest are optional keyword arguments.
+    def popen(self, args, **kwargs):
         # FIXME: We should always be stringifying the args, but callers who pass shell=True
         # expect that the exact bytes passed will get passed to the shell (even if they're wrongly encoded).
         # shell=True is wrong for many other reasons, and we should remove this
@@ -485,7 +486,7 @@ class Executive(object):
         if kwargs.get('shell') == True:
             string_args = args
         else:
-            string_args = self._stringify_args(*args)
+            string_args = self._stringify_args(args)
         return subprocess.Popen(string_args, **kwargs)
 
     def run_in_parallel(self, command_lines_and_cwds, processes=None):
