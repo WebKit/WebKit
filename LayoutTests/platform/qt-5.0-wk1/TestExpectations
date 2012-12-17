@@ -176,3 +176,6 @@ fast/forms/post-popup-no-multiple-windows.html
 
 # [Qt][WK1] new fast/images/webgl-teximage2d.html introduced in r134816 fails
 webkit.org/b/102471 fast/images/webgl-teximage2d.html
+
+# [Qt][WK1]REGRESSION(r137811): compositing/tiling/crash-huge-layer.html makes the following test crash on 32 bit
+webkit.org/b/105158 compositing/tiling/crash-huge-layer.html

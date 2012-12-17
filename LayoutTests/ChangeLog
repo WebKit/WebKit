@@ -1,3 +1,12 @@
+2012-12-17  Csaba Osztrogonác  <ossy@webkit.org>
+
+        [Qt][WK1]REGRESSION(r137811): compositing/tiling/crash-huge-layer.html makes the following test crash on 32 bit
+        https://bugs.webkit.org/show_bug.cgi?id=105158
+
+        Unreviewed gardening, skip the culprit test to paint the bots green.
+
+        * platform/qt-5.0-wk1/TestExpectations:
+
 2012-12-16  Csaba Osztrogonác  <ossy@webkit.org>
 
         [Qt] Unreviewed gardening. Update expected files after r137798.
