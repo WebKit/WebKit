@@ -903,7 +903,7 @@ EwkWindowFeatures* EwkViewImpl::windowFeatures()
     return m_windowFeatures.get();
 }
 
-WKPageRef EwkViewImpl::createNewPage(ImmutableDictionary* windowFeatures)
+WKPageRef EwkViewImpl::createNewPage(PassRefPtr<EwkUrlRequest> request, ImmutableDictionary* windowFeatures)
 {
     Ewk_View_Smart_Data* sd = smartData();
     ASSERT(sd->api);
@@ -913,7 +913,7 @@ WKPageRef EwkViewImpl::createNewPage(ImmutableDictionary* windowFeatures)
 
     RefPtr<EwkWindowFeatures> ewkWindowFeatures = EwkWindowFeatures::create(windowFeatures, this);
 
-    Evas_Object* newEwkView = sd->api->window_create(sd, ewkWindowFeatures.get());
+    Evas_Object* newEwkView = sd->api->window_create(sd, request->url(), ewkWindowFeatures.get());
     if (!newEwkView)
         return 0;
 

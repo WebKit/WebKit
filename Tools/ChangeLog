@@ -1,3 +1,13 @@
+2012-12-17  Kenneth Rohde Christiansen  <kenneth@webkit.org>
+
+        [EFL][WK2] window_create doesn't receive the url
+        https://bugs.webkit.org/show_bug.cgi?id=105184
+
+        Reviewed by Alexis Menard.
+
+        * MiniBrowser/efl/main.c: Use the url supplied to window_create
+        (on_window_create):
+
 2012-12-17  Ilya Tikhonovsky  <loislo@chromium.org>
 
         Web Inspector: Native Memory Instrumentation: MemoryInstrumentation doesn't detect reportMemoryUsage method defined in a base class.

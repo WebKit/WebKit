@@ -27,6 +27,7 @@
 #include "WKEinaSharedString.h"
 #include "WKGeometry.h"
 #include "WKRetainPtr.h"
+#include "ewk_url_request_private.h"
 #include <Evas.h>
 #include <WebCore/FloatPoint.h>
 #include <WebCore/IntRect.h>
@@ -169,7 +170,7 @@ public:
     void dismissColorPicker();
 #endif
 
-    WKPageRef createNewPage(WebKit::ImmutableDictionary* windowFeatures);
+    WKPageRef createNewPage(PassRefPtr<EwkUrlRequest>, WebKit::ImmutableDictionary* windowFeatures);
     void closePage();
 
     void requestPopupMenu(WebKit::WebPopupMenuProxyEfl*, const WebCore::IntRect&, WebCore::TextDirection, double pageScaleFactor, const Vector<WebKit::WebPopupItem>& items, int32_t selectedIndex);

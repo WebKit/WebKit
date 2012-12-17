@@ -1,3 +1,23 @@
+2012-12-17  Kenneth Rohde Christiansen  <kenneth@webkit.org>
+
+        [EFL][WK2] window_create doesn't receive the url
+        https://bugs.webkit.org/show_bug.cgi?id=105184
+
+        Reviewed by Alexis Menard.
+
+        Pass the url to the window_create method.
+
+        * UIProcess/API/efl/EwkViewImpl.cpp:
+        (EwkViewImpl::createNewPage):
+        * UIProcess/API/efl/EwkViewImpl.h:
+        (EwkViewImpl):
+        * UIProcess/API/efl/ewk_view.h:
+        * UIProcess/API/efl/tests/test_ewk2_window_features.cpp:
+        (createDefaultWindow):
+        (createWindow):
+        * UIProcess/efl/PageUIClientEfl.cpp:
+        (WebKit::PageUIClientEfl::createNewPage):
+
 2012-12-17  Mikhail Pozdnyakov  <mikhail.pozdnyakov@intel.com>
 
         [WK2] TiledBackingStore: css3/device-adapt/viewport-width-not-affecting-next-page.html is flaky

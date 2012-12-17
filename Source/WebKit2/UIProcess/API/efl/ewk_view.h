@@ -154,7 +154,7 @@ struct Ewk_View_Smart_Class {
 
     // window creation and closing:
     //   - Create a new window with specified features and close window.
-    Evas_Object *(*window_create)(Ewk_View_Smart_Data *sd, const Ewk_Window_Features *window_features);
+    Evas_Object *(*window_create)(Ewk_View_Smart_Data *sd, const char* url, const Ewk_Window_Features *window_features);
     void (*window_close)(Ewk_View_Smart_Data *sd);
 };
 

@@ -789,7 +789,7 @@ static Eina_Bool on_fullscreen_exit(Ewk_View_Smart_Data *sd)
 }
 
 static Evas_Object *
-on_window_create(Ewk_View_Smart_Data *smartData, const Ewk_Window_Features *window_features)
+on_window_create(Ewk_View_Smart_Data *smartData, const char *url, const Ewk_Window_Features *window_features)
 {
     int x = 0;
     int y = 0;
@@ -804,12 +804,12 @@ on_window_create(Ewk_View_Smart_Data *smartData, const Ewk_Window_Features *wind
     if (!height)
         height = window_height;
 
-    Browser_Window *window = window_create(NULL, width, height);
+    Browser_Window *window = window_create(url, width, height);
     Evas_Object *new_view = window->ewk_view;
 
     windows = eina_list_append(windows, window);
 
-    info("minibrowser: location(%d,%d) size=(%d,%d)\n", x, y, width, height);
+    info("minibrowser: location(%d,%d) size=(%d,%d) url=%s\n", x, y, width, height, url);
 
     return new_view;
 }

@@ -50,9 +50,10 @@ void PageUIClientEfl::closePage(WKPageRef, const void* clientInfo)
     toPageUIClientEfl(clientInfo)->m_viewImpl->closePage();
 }
 
-WKPageRef PageUIClientEfl::createNewPage(WKPageRef, WKURLRequestRef, WKDictionaryRef wkWindowFeatures, WKEventModifiers, WKEventMouseButton, const void* clientInfo)
+WKPageRef PageUIClientEfl::createNewPage(WKPageRef, WKURLRequestRef wkRequest, WKDictionaryRef wkWindowFeatures, WKEventModifiers, WKEventMouseButton, const void* clientInfo)
 {
-    return toPageUIClientEfl(clientInfo)->m_viewImpl->createNewPage(toImpl(wkWindowFeatures));
+    RefPtr<EwkUrlRequest> request = EwkUrlRequest::create(wkRequest);
+    return toPageUIClientEfl(clientInfo)->m_viewImpl->createNewPage(request, toImpl(wkWindowFeatures));
 }
 
 void PageUIClientEfl::runJavaScriptAlert(WKPageRef, WKStringRef alertText, WKFrameRef, const void* clientInfo)
