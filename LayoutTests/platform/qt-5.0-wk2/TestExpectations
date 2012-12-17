@@ -763,3 +763,6 @@ webkit.org/b/103876 fast/dom/Geolocation/cached-position-iframe.html
 
 # [Qt][WK2] compositing/overflow/automatically-opt-into-composited-scrolling.html makes other tests fail
 webkit.org/b/105173 compositing/overflow/automatically-opt-into-composited-scrolling.html
+
+# [Qt][WK2] The new compositing/repaint/resize-repaint.html fails
+webkit.org/b/105182 compositing/repaint/resize-repaint.html

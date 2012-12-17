@@ -1,0 +1,16 @@
+ERROR: TestRunner::overridePreference() does not support the 'WebKitMinimumFontSize' preference
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
+      RenderBlock {P} at (0,0) size 784x38
+        RenderText {#text} at (0,0) size 727x38
+          text run at (0,0) width 727: "Test that text with 0px font size is not displayed, even if a non-zero minimum font size setting is specified. On success, this"
+          text run at (0,19) width 319: "paragraph should be the only text visible on the page."
+      RenderBlock {DIV} at (0,54) size 784x0 [color=#FF0000]
+        RenderText {#text} at (0,0) size 0x0
+          text run at (0,0) width 0: "FAIL"
+      RenderBlock {DIV} at (0,54) size 784x0 [color=#FF0000]
+        RenderText {#text} at (0,0) size 0x0
+          text run at (0,0) width 0: "FAIL"

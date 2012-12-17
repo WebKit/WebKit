@@ -1,5 +1,15 @@
 2012-12-17  Csaba Osztrogonác  <ossy@webkit.org>
 
+        [Qt][WK2] Unreviewed gardening.
+
+        * platform/qt-5.0-wk2/TestExpectations: Skip a new failing test.
+        * platform/qt-5.0-wk2/compositing/iframes/page-cache-layer-tree-expected.txt: Added because of minor pixel differences.
+        * platform/qt-5.0-wk2/fast/images/crossfade-client-not-removed-crash-expected.txt: Added WK2 specific result.
+        * platform/qt-5.0-wk2/fast/text/zero-font-size-expected.txt: Added after r137902.
+        * platform/qt-5.0-wk2/http/tests/security/cross-origin-xsl-BLOCKED-expected.txt: Updated.
+
+2012-12-17  Csaba Osztrogonác  <ossy@webkit.org>
+
         [Qt][WK2] compositing/overflow/automatically-opt-into-composited-scrolling.html makes other tests fail
         https://bugs.webkit.org/show_bug.cgi?id=105173
 
