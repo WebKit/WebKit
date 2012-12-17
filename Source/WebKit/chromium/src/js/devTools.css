@@ -2,49 +2,39 @@
     line-height: 120%;
 }
 
-body.compact #toolbar {
-    height: 34px;
-    border-top: 1px solid rgb(100, 100, 100);
+body.dock-to-bottom #toolbar {
+    border-top-color: white;
     cursor: default; /* overriden */
-    padding-left: 0;
 }
 
 /* Chrome theme overrides */
-
-body.compact.platform-mac #toolbar {
-  /* Match Chrome's toolbar. */
-  background-image: -webkit-gradient(linear, left top, left bottom, from(rgb(230, 229, 229)), to(rgb(206, 207, 207))) !important;
-  border-top-color: white;
-  border-bottom-color: rgb(122, 122, 122);
-}
-
-body.compact.platform-mac.inactive #toolbar {
-  background-image: -webkit-gradient(linear, left top, left bottom, from(rgb(235, 235, 235)), to(rgb(216, 216, 216))) !important;
-  border-bottom-color: rgb(142, 142, 142);
-}
-
-body.platform-mac.inactive #toolbar .toolbar-label {
-  opacity: 0.8;
-}
 
 body.platform-windows #toolbar, body.platform-windows.inactive #toolbar {
     background-image: none;
 }
 
-body.detached.platform-mac-leopard #toolbar {
+body.undocked.platform-mac-leopard #toolbar {
     background-image: -webkit-gradient(linear, left top, left bottom, from(rgb(175, 175, 175)), to(rgb(151, 151, 151))) !important;
 }
 
-body.detached.platform-mac-leopard.inactive #toolbar {
+body.undocked.platform-mac-leopard.inactive #toolbar {
     background-image: -webkit-gradient(linear, left top, left bottom, from(rgb(221, 221, 221)), to(rgb(207, 207, 207))) !important;
 }
 
-body.detached.platform-mac-snowleopard #toolbar {
+body.undocked.platform-mac-snowleopard #toolbar {
     background-image: -webkit-gradient(linear, left top, left bottom, from(rgb(189, 189, 189)), to(rgb(167, 167, 167))) !important;
 }
 
-body.detached.platform-mac-snowleopard.inactive #toolbar {
+body.undocked.platform-mac-snowleopard.inactive #toolbar {
     background-image: -webkit-gradient(linear, left top, left bottom, from(rgb(228, 228, 228)), to(rgb(216, 216, 216))) !important;
+}
+
+body.undocked.platform-mac-mountain-lion #toolbar {
+    background-image: -webkit-gradient(linear, left top, left bottom, from(rgb(208, 208, 208)), to(rgb(200, 200, 200))) !important;
+}
+
+body.undocked.platform-mac-mountain-lion.inactive #toolbar {
+    background-image: -webkit-gradient(linear, left top, left bottom, from(rgb(238, 238, 238)), to(rgb(224, 224, 224))) !important;
 }
 
 body.platform-linux #scripts-files {

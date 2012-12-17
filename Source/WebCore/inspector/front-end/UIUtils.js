@@ -747,7 +747,9 @@ WebInspector.PlatformFlavor = {
     WindowsVista: "windows-vista",
     MacTiger: "mac-tiger",
     MacLeopard: "mac-leopard",
-    MacSnowLeopard: "mac-snowleopard"
+    MacSnowLeopard: "mac-snowleopard",
+    MacLion: "mac-lion",
+    MacMountainLion: "mac-mountain-lion"
 }
 
 WebInspector.platformFlavor = function()
@@ -771,8 +773,13 @@ WebInspector.platformFlavor = function()
                 case 5:
                     return WebInspector.PlatformFlavor.MacLeopard;
                 case 6:
-                default:
                     return WebInspector.PlatformFlavor.MacSnowLeopard;
+                case 7:
+                    return WebInspector.PlatformFlavor.MacLion;
+                case 8:
+                    return WebInspector.PlatformFlavor.MacMountainLion;
+                default:
+                    return "";
             }
         }
     }

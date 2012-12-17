@@ -55,6 +55,7 @@ input[type="search"]:focus, input[type="text"]:focus {
     height: 26px;
     background-image: -webkit-gradient(linear, left top, left bottom, from(rgb(191, 191, 191)), to(rgb(151, 151, 151)));
     padding-top: 1px;
+    padding-left: 5px;
     border-bottom: 1px solid rgb(80, 80, 80);
     -webkit-box-orient: horizontal;
     -webkit-background-origin: padding;
@@ -83,7 +84,6 @@ body.dock-to-bottom #toolbar {
     padding-top: 0;
     border-top: 1px solid rgb(100, 100, 100);
     cursor: ns-resize;
-    padding-left: 0;
 }
 
 body.dock-to-bottom.port-qt #toolbar {
@@ -96,7 +96,7 @@ body.dock-to-bottom.inactive #toolbar {
 
 .toolbar-item {
     margin: 0;
-    padding: 0 6px;
+    padding-right: 6px;
     background-color: transparent;
     border-style: none;
     border-color: transparent;
