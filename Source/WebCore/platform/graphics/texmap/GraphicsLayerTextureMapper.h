@@ -29,8 +29,6 @@
 
 namespace WebCore {
 
-class TextureMapper;
-
 class GraphicsLayerTextureMapper : public GraphicsLayer {
     friend class TextureMapperLayer;
 
@@ -101,7 +99,6 @@ public:
 private:
     virtual void willBeDestroyed();
     void didFlushCompositingState();
-    void didFlushCompositingStateRecursive();
     void updateBackingStore();
     void prepareBackingStore();
     bool shouldHaveBackingStore() const;

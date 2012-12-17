@@ -364,13 +364,9 @@ TextureMapper* TextureMapperLayer::textureMapper() const
     return rootLayer()->m_textureMapper;
 }
 
-void TextureMapperLayer::flushCompositingState(GraphicsLayerTextureMapper* graphicsLayer, int options)
+void TextureMapperLayer::flushCompositingStateForThisLayerOnly(GraphicsLayerTextureMapper* graphicsLayer)
 {
-    flushCompositingState(graphicsLayer, textureMapper(), options);
-}
-
-void TextureMapperLayer::flushCompositingStateSelf(GraphicsLayerTextureMapper* graphicsLayer, TextureMapper*)
-{
+    ASSERT(graphicsLayer);
     int changeMask = graphicsLayer->changeMask();
 
     if (changeMask == NoChanges && graphicsLayer->m_animations.isEmpty())
@@ -454,6 +450,8 @@ void TextureMapperLayer::flushCompositingStateSelf(GraphicsLayerTextureMapper* g
     m_transform.setSize(m_state.size);
     m_transform.setFlattening(!m_state.preserves3D);
     m_transform.setChildrenTransform(m_state.childrenTransform);
+
+    syncAnimations();
 }
 
 bool TextureMapperLayer::descendantsOrSelfHaveRunningAnimations() const
@@ -487,39 +485,6 @@ void TextureMapperLayer::syncAnimations()
     if (!m_animations.hasActiveAnimationsOfType(AnimatedPropertyWebkitFilter))
         setFilters(m_state.filters);
 #endif
-}
-
-void TextureMapperLayer::flushCompositingState(GraphicsLayerTextureMapper* graphicsLayer, TextureMapper* textureMapper, int options)
-{
-    if (!textureMapper)
-        return;
-
-    if (graphicsLayer && !(options & ComputationsOnly))
-        flushCompositingStateSelf(graphicsLayer, textureMapper);
-
-    if (graphicsLayer && m_state.maskLayer)
-        m_state.maskLayer->flushCompositingState(toGraphicsLayerTextureMapper(graphicsLayer->maskLayer()), textureMapper);
-
-    if (m_state.replicaLayer)
-        m_state.replicaLayer->flushCompositingState(toGraphicsLayerTextureMapper(graphicsLayer->replicaLayer()), textureMapper);
-
-    syncAnimations();
-
-    if (!(options & TraverseDescendants))
-        options = ComputationsOnly;
-
-    if (graphicsLayer) {
-        Vector<GraphicsLayer*> children = graphicsLayer->children();
-        for (int i = children.size() - 1; i >= 0; --i) {
-            TextureMapperLayer* layer = toTextureMapperLayer(children[i]);
-            if (!layer)
-                continue;
-            layer->flushCompositingState(toGraphicsLayerTextureMapper(children[i]), textureMapper, options);
-        }
-    } else {
-        for (int i = m_children.size() - 1; i >= 0; --i)
-            m_children[i]->flushCompositingState(0, textureMapper, options);
-    }
 }
 
 bool TextureMapperLayer::isAncestorFixedToViewport() const

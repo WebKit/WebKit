@@ -404,36 +404,31 @@ void GraphicsLayerTextureMapper::setContentsToMedia(TextureMapperPlatformLayer* 
 */
 void GraphicsLayerTextureMapper::flushCompositingStateForThisLayerOnly()
 {
-    m_layer->flushCompositingState(this);
+    m_layer->flushCompositingStateForThisLayerOnly(this);
+    updateBackingStore();
     didFlushCompositingState();
 }
 
 /* \reimp (GraphicsLayer.h)
 */
-void GraphicsLayerTextureMapper::flushCompositingState(const FloatRect&)
+void GraphicsLayerTextureMapper::flushCompositingState(const FloatRect& rect)
 {
     if (!m_layer->textureMapper())
         return;
 
-    m_layer->flushCompositingState(this, TextureMapperLayer::TraverseDescendants);
-    didFlushCompositingStateRecursive();
+    flushCompositingStateForThisLayerOnly();
+
+    if (maskLayer())
+        maskLayer()->flushCompositingState(rect);
+    if (replicaLayer())
+        replicaLayer()->flushCompositingState(rect);
+    for (size_t i = 0; i < children().size(); ++i)
+        children()[i]->flushCompositingState(rect);
 }
 
 void GraphicsLayerTextureMapper::didFlushCompositingState()
 {
-    updateBackingStore();
     m_changeMask = 0;
-}
-
-void GraphicsLayerTextureMapper::didFlushCompositingStateRecursive()
-{
-    didFlushCompositingState();
-    for (size_t i = 0; i < children().size(); ++i)
-        toGraphicsLayerTextureMapper(children()[i])->didFlushCompositingStateRecursive();
-    if (maskLayer())
-        toGraphicsLayerTextureMapper(maskLayer())->didFlushCompositingStateRecursive();
-    if (replicaLayer())
-        toGraphicsLayerTextureMapper(replicaLayer())->didFlushCompositingStateRecursive();
 }
 
 void GraphicsLayerTextureMapper::updateBackingStore()

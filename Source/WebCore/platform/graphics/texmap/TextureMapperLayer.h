@@ -87,11 +87,6 @@ public:
         FilterChange =              (1L << 23)
     };
 
-    enum SyncOptions {
-        TraverseDescendants = 1,
-        ComputationsOnly = 2
-    };
-
     TextureMapperLayer()
         : m_parent(0)
         , m_effectTarget(0)
@@ -104,8 +99,7 @@ public:
     virtual ~TextureMapperLayer();
 
     TextureMapper* textureMapper() const;
-    void flushCompositingState(GraphicsLayerTextureMapper*, int syncOptions = 0);
-    void flushCompositingState(GraphicsLayerTextureMapper*, TextureMapper*, int syncOptions = 0);
+    void flushCompositingStateForThisLayerOnly(GraphicsLayerTextureMapper*);
     IntSize size() const { return IntSize(m_size.width(), m_size.height()); }
     void setTransform(const TransformationMatrix&);
     void setOpacity(float value) { m_opacity = value; }
@@ -136,7 +130,6 @@ private:
     FloatRect targetRectForTileRect(const FloatRect& totalTargetRect, const FloatRect& tileRect) const;
     void invalidateViewport(const FloatRect&);
     void notifyChange(ChangeMask);
-    void flushCompositingStateSelf(GraphicsLayerTextureMapper*, TextureMapper*);
 
     static int compareGraphicsLayersZValue(const void* a, const void* b);
     static void sortByZOrder(Vector<TextureMapperLayer* >& array, int first, int last);
