@@ -1,0 +1,52 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x276
+  RenderBlock {HTML} at (0,0) size 800x276
+    RenderBody {BODY} at (8,16) size 784x252
+      RenderBlock {P} at (0,0) size 784x18
+        RenderText {#text} at (0,0) size 496x18
+          text run at (0,0) width 496: "The iframes below should remain grey with no repaint artifacts when scrolling."
+      RenderBlock {DIV} at (0,34) size 784x218
+        RenderBlock {DIV} at (0,0) size 234x218
+        RenderText {#text} at (234,200) size 4x18
+          text run at (234,200) width 4: " "
+        RenderBlock {DIV} at (238,0) size 234x218
+        RenderText {#text} at (0,0) size 0x0
+layer at (88,60) size 154x208
+  RenderBlock {DIV} at (80,10) size 154x208
+layer at (88,60) size 154x208
+  RenderBlock (relative positioned) zI: 1 {DIV} at (0,0) size 154x208
+layer at (88,61) size 154x208
+  RenderBlock (relative positioned) zI: 1 {DIV} at (0,0) size 154x208
+    RenderPartObject {IFRAME} at (0,0) size 154x204 [border: (2px inset #000000)]
+      layer at (0,0) size 135x1016
+        RenderView at (0,0) size 135x200
+      layer at (0,0) size 135x1016
+        RenderBlock {HTML} at (0,0) size 135x1016
+          RenderBody {BODY} at (8,8) size 119x1000 [bgcolor=#C0C0C0]
+    RenderText zI: 1 {#text} at (0,0) size 0x0
+layer at (326,60) size 154x208
+  RenderBlock (relative positioned) zI: 1 {DIV} at (80,10) size 154x208
+layer at (326,61) size 154x208
+  RenderBlock (relative positioned) zI: 1 {DIV} at (0,0) size 154x208
+layer at (326,61) size 154x208
+  RenderBlock (relative positioned) zI: 1 {DIV} at (0,0) size 154x208
+layer at (326,61) size 154x208
+  RenderBlock {DIV} at (0,0) size 154x208
+layer at (326,62) size 154x208
+  RenderBlock (relative positioned) zI: 1 {DIV} at (0,0) size 154x208
+layer at (326,62) size 154x208
+  RenderBlock (relative positioned) zI: 1 {DIV} at (0,0) size 154x208
+layer at (326,62) size 154x208
+  RenderBlock (relative positioned) zI: 1 {DIV} at (0,0) size 154x208
+layer at (326,62) size 154x208
+  RenderBlock {DIV} at (0,0) size 154x208
+layer at (326,63) size 154x208
+  RenderBlock (relative positioned) zI: 1 {DIV} at (0,0) size 154x208
+    RenderPartObject {IFRAME} at (0,0) size 154x204 [border: (2px inset #000000)]
+      layer at (0,0) size 135x1016
+        RenderView at (0,0) size 135x200
+      layer at (0,0) size 135x1016
+        RenderBlock {HTML} at (0,0) size 135x1016
+          RenderBody {BODY} at (8,8) size 119x1000 [bgcolor=#C0C0C0]
+    RenderText zI: 1 {#text} at (0,0) size 0x0
