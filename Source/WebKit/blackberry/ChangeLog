@@ -1,3 +1,26 @@
+2012-12-17  Mike Fenton  <mifenton@rim.com>
+
+        [BlackBerry] Improve DOMSupport visibleSelectionForClosestActualWordStart for content editable.
+        https://bugs.webkit.org/show_bug.cgi?id=105198
+
+        Reviewed by Rob Buis.
+
+        PR 258038.
+
+        Improve closest word matching by giving preference to the left when
+        distances are equal.
+
+        Also enforce container matching to avoid selecting the paragraph
+        marker if a CE div is followed immediately by a CE paragraph.
+
+        Minor refactor - don't calculate the distance if the selection
+        isn't on a word.
+
+        Reviewed Internally by Gen Mak and Nima Ghanavatian.
+
+        * WebKitSupport/DOMSupport.cpp:
+        (BlackBerry::WebKit::DOMSupport::visibleSelectionForClosestActualWordStart):
+
 2012-12-17  Jakob Petsovits  <jpetsovits@rim.com>
 
         [BlackBerry] Clean up log output in WebKit/blackberry.

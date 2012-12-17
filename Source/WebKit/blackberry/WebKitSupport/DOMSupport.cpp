@@ -467,24 +467,30 @@ VisibleSelection visibleSelectionForClosestActualWordStart(const VisibleSelectio
     // it selects the paragraph marker. As well, if the position is at the end of a word, it will select
     // only the space between words. We want to select an actual word so we move the selection to
     // the start of the leftmost word if the character after the selection point is whitespace.
-    if (selection.selectionType() != VisibleSelection::RangeSelection) {
-        VisibleSelection leftSelection(previousWordPosition(selection.start()));
-        bool leftSelectionIsOnWord = !isWhitespace(leftSelection.visibleStart().characterAfter());
 
-        VisibleSelection rangeSelection(endOfWord(leftSelection.start()), selection.visibleStart());
-        int leftDistance = TextIterator::rangeLength(rangeSelection.toNormalizedRange().get());
+    if (selection.selectionType() != VisibleSelection::RangeSelection) {
+        int leftDistance = 0;
+        int rightDistance = 0;
+
+        VisibleSelection leftSelection(previousWordPosition(selection.start()));
+        bool leftSelectionIsOnWord = !isWhitespace(leftSelection.visibleStart().characterAfter()) && leftSelection.start().containerNode() == selection.start().containerNode();
+        if (leftSelectionIsOnWord) {
+            VisibleSelection rangeSelection(endOfWord(leftSelection.start()), selection.visibleStart());
+            leftDistance = TextIterator::rangeLength(rangeSelection.toNormalizedRange().get());
+        }
 
         VisibleSelection rightSelection = previousWordPosition(nextWordPosition(selection.start()));
-        bool rightSelectionIsOnWord = !isWhitespace(rightSelection.visibleStart().characterAfter());
-
-        rangeSelection = VisibleSelection(rightSelection.visibleStart(), selection.visibleStart());
-        int rightDistance = TextIterator::rangeLength(rangeSelection.toNormalizedRange().get());
+        bool rightSelectionIsOnWord = !isWhitespace(rightSelection.visibleStart().characterAfter()) && rightSelection.start().containerNode() == selection.start().containerNode();
+        if (rightSelectionIsOnWord) {
+            VisibleSelection rangeSelection = VisibleSelection(rightSelection.visibleStart(), selection.visibleStart());
+            rightDistance = TextIterator::rangeLength(rangeSelection.toNormalizedRange().get());
+        }
 
         // Make sure we found an actual word. If not, return the original selection.
         if (!leftSelectionIsOnWord && !rightSelectionIsOnWord)
             return selection;
 
-        if (!rightSelectionIsOnWord || (leftSelectionIsOnWord && leftDistance < rightDistance)) {
+        if (!rightSelectionIsOnWord || (leftSelectionIsOnWord && leftDistance <= rightDistance)) {
             // Left is closer or right is invalid.
             return leftSelection;
         }
