@@ -1,5 +1,11 @@
 2012-12-16  Kentaro Hara  <haraken@chromium.org>
 
+        Unreviewed. Rebaselined virtual/gpu/compositedscrolling/overflow/updating-scrolling-content.html.
+
+        * platform/chromium-mac/platform/chromium/virtual/gpu/compositedscrolling/overflow/updating-scrolling-content-expected.txt: Added.
+
+2012-12-16  Kentaro Hara  <haraken@chromium.org>
+
         Unreviewed. Rebaselined virtual/gpu/compositedscrolling/overflow/textarea-scroll-touch.html.
 
         * platform/chromium-mac/platform/chromium/virtual/gpu/compositedscrolling/overflow/textarea-scroll-touch-expected.txt: Added.
