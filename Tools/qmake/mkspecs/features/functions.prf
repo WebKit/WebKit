@@ -256,6 +256,7 @@ defineTest(linkAgainstLibrary) {
         } else:win32-msvc*|wince*|win32-icc {
             LIBS += /OPT:REF -l$$target
         } else {
+            CONFIG *= no_smart_library_merge
             LIBS += -Wl,-whole-archive -l$$target -Wl,-no-whole-archive
         }
 
