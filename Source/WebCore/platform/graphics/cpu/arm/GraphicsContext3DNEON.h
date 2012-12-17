@@ -32,10 +32,13 @@
 
 namespace WebCore {
 
-namespace ARM {
+namespace SIMD {
 
-ALWAYS_INLINE void unpackOneRowOfRGBA4444ToRGBA8NEON(const uint16_t* source, uint8_t* destination, unsigned pixelSize)
+ALWAYS_INLINE void unpackOneRowOfRGBA4444ToRGBA8(const uint16_t*& source, uint8_t*& destination, unsigned& pixelsPerRow)
 {
+    unsigned tailPixels = pixelsPerRow % 8;
+    unsigned pixelSize = pixelsPerRow - tailPixels;
+
     uint16x8_t immediate0x0f = vdupq_n_u16(0x0F);
     for (unsigned i = 0; i < pixelSize; i += 8) {
         uint16x8_t eightPixels = vld1q_u16(source + i);
@@ -54,10 +57,17 @@ ALWAYS_INLINE void unpackOneRowOfRGBA4444ToRGBA8NEON(const uint16_t* source, uin
         vst4_u8(destination, destComponents);
         destination += 32;
     }
+
+    source += pixelSize;
+    pixelsPerRow = tailPixels;
 }
 
-ALWAYS_INLINE void packOneRowOfRGBA8ToUnsignedShort4444NEON(const uint8_t* source, uint16_t* destination, unsigned componentsSize)
+ALWAYS_INLINE void packOneRowOfRGBA8ToUnsignedShort4444(const uint8_t*& source, uint16_t*& destination, unsigned& pixelsPerRow)
 {
+    unsigned componentsPerRow = pixelsPerRow * 4;
+    unsigned tailComponents = componentsPerRow % 32;
+    unsigned componentsSize = componentsPerRow - tailComponents;
+
     uint8_t* dst = reinterpret_cast<uint8_t*>(destination);
     uint8x8_t immediate0xf0 = vdup_n_u8(0xF0);
     for (unsigned i = 0; i < componentsSize; i += 32) {
@@ -74,10 +84,17 @@ ALWAYS_INLINE void packOneRowOfRGBA8ToUnsignedShort4444NEON(const uint8_t* sourc
         vst2_u8(dst, RGBA4);
         dst += 16;
     }
+
+    source += componentsSize;
+    destination += componentsSize / 4;
+    pixelsPerRow = tailComponents / 4;
 }
 
-ALWAYS_INLINE void unpackOneRowOfRGBA5551ToRGBA8NEON(const uint16_t* source, uint8_t* destination, unsigned pixelSize)
+ALWAYS_INLINE void unpackOneRowOfRGBA5551ToRGBA8(const uint16_t*& source, uint8_t*& destination, unsigned& pixelsPerRow)
 {
+    unsigned tailPixels = pixelsPerRow % 8;
+    unsigned pixelSize = pixelsPerRow - tailPixels;
+
     uint8x8_t immediate0x7 = vdup_n_u8(0x7);
     uint8x8_t immediate0xff = vdup_n_u8(0xFF);
     uint16x8_t immediate0x1f = vdupq_n_u16(0x1F);
@@ -100,10 +117,17 @@ ALWAYS_INLINE void unpackOneRowOfRGBA5551ToRGBA8NEON(const uint16_t* source, uin
         vst4_u8(destination, destComponents);
         destination += 32;
     }
+
+    source += pixelSize;
+    pixelsPerRow = tailPixels;
 }
 
-ALWAYS_INLINE void packOneRowOfRGBA8ToUnsignedShort5551NEON(const uint8_t* source, uint16_t* destination, unsigned componentsSize)
+ALWAYS_INLINE void packOneRowOfRGBA8ToUnsignedShort5551(const uint8_t*& source, uint16_t*& destination, unsigned& pixelsPerRow)
 {
+    unsigned componentsPerRow = pixelsPerRow * 4;
+    unsigned tailComponents = componentsPerRow % 32;
+    unsigned componentsSize = componentsPerRow - tailComponents;
+
     uint8_t* dst = reinterpret_cast<uint8_t*>(destination);
 
     uint8x8_t immediate0xf8 = vdup_n_u8(0xF8);
@@ -124,10 +148,17 @@ ALWAYS_INLINE void packOneRowOfRGBA8ToUnsignedShort5551NEON(const uint8_t* sourc
         vst2_u8(dst, RGBA5551);
         dst += 16;
     }
+
+    source += componentsSize;
+    destination += componentsSize / 4;
+    pixelsPerRow = tailComponents / 4;
 }
 
-ALWAYS_INLINE void unpackOneRowOfRGB565ToRGBA8NEON(const uint16_t* source, uint8_t* destination, unsigned pixelSize)
+ALWAYS_INLINE void unpackOneRowOfRGB565ToRGBA8(const uint16_t*& source, uint8_t*& destination, unsigned& pixelsPerRow)
 {
+    unsigned tailPixels = pixelsPerRow % 8;
+    unsigned pixelSize = pixelsPerRow - tailPixels;
+
     uint16x8_t immediate0x3f = vdupq_n_u16(0x3F);
     uint16x8_t immediate0x1f = vdupq_n_u16(0x1F);
     uint8x8_t immediate0x3 = vdup_n_u8(0x3);
@@ -150,10 +181,16 @@ ALWAYS_INLINE void unpackOneRowOfRGB565ToRGBA8NEON(const uint16_t* source, uint8
         vst4_u8(destination, destComponents);
         destination += 32;
     }
+
+    source += pixelSize;
+    pixelsPerRow = tailPixels;
 }
 
-ALWAYS_INLINE void packOneRowOfRGBA8ToUnsignedShort565NEON(const uint8_t* source, uint16_t* destination, unsigned componentsSize)
+ALWAYS_INLINE void packOneRowOfRGBA8ToUnsignedShort565(const uint8_t*& source, uint16_t*& destination, unsigned& pixelsPerRow)
 {
+    unsigned componentsPerRow = pixelsPerRow * 4;
+    unsigned tailComponents = componentsPerRow % 32;
+    unsigned componentsSize = componentsPerRow - tailComponents;
     uint8_t* dst = reinterpret_cast<uint8_t*>(destination);
 
     uint8x8_t immediate0xf8 = vdup_n_u8(0xF8);
@@ -172,9 +209,13 @@ ALWAYS_INLINE void packOneRowOfRGBA8ToUnsignedShort565NEON(const uint8_t* source
         vst2_u8(dst, RGB565);
         dst += 16;
     }
+
+    source += componentsSize;
+    destination += componentsSize / 4;
+    pixelsPerRow = tailComponents / 4;
 }
 
-} // namespace ARM
+} // namespace SIMD
 
 } // namespace WebCore
 
