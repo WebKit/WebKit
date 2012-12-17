@@ -1,3 +1,29 @@
+2012-12-17  Hans Muller  <hmuller@adobe.com>
+
+        [CSS Exclusions] Add helper functions for converting floats to LayoutUnits
+        https://bugs.webkit.org/show_bug.cgi?id=103450
+
+        Reviewed by Dirk Schulze.
+
+        When a float logicalTop value is converted to a LayoutUnit it's necessary to
+        use LayoutUnit::fromFloatCeil() to ensure that we're snapping to a value that's
+        inside the ExclusionShape.  Similarly, to convert a logicalBottom value from
+        float to LayoutUnit we use LayoutUnit::fromFloatFloor().  Added a pair of private
+        ExlcusionShapeInsideInfo methods that do the conversions and refactored existing
+        code to use them.
+
+        This is just a cleanup.  No new tests are needed, the existing tests cover
+        these changes.
+
+        * rendering/ExclusionShapeInsideInfo.cpp:
+        (WebCore::ExclusionShapeInsideInfo::adjustLogicalLineTop): Use the new floatLogicalTopToLayoutUnit() method.
+        * rendering/ExclusionShapeInsideInfo.h:
+        (WebCore::ExclusionShapeInsideInfo::shapeLogicalTop): Use the new floatLogicalTopToLayoutUnit() method.
+        (WebCore::ExclusionShapeInsideInfo::shapeLogicalBottom): Use the new floatLogicalBottomToLayoutUnit() method.
+        (ExclusionShapeInsideInfo):
+        (WebCore::ExclusionShapeInsideInfo::floatLogicalTopToLayoutUnit): Convert a float to a LayoutUnit with LayoutUnit::fromFloatCeil().
+        (WebCore::ExclusionShapeInsideInfo::floatLogicalBottomToLayoutUnit): Convert a float to a LayoutUnit with LayoutUnit::fromFloatFloor().
+
 2012-12-17  Antoine Quint  <graouts@apple.com>
 
         Web Inspector: Provide the paint count of layers through the LayerTreeAgent

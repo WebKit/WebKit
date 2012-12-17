@@ -66,8 +66,16 @@ public:
     static void removeExclusionShapeInsideInfoForRenderBlock(const RenderBlock*);
     static bool isExclusionShapeInsideInfoEnabledForRenderBlock(const RenderBlock*);
 
-    LayoutUnit shapeLogicalTop() const { return shapeLogicalBoundsY(); }
-    LayoutUnit shapeLogicalBottom() const { return shapeLogicalBoundsMaxY(); }
+    LayoutUnit shapeLogicalTop() const
+    {
+        ASSERT(m_shape);
+        return floatLogicalTopToLayoutUnit(m_shape->shapeLogicalBoundingBox().y());
+    }
+    LayoutUnit shapeLogicalBottom() const
+    {
+        ASSERT(m_shape);
+        return floatLogicalBottomToLayoutUnit(m_shape->shapeLogicalBoundingBox().maxY());
+    }
     bool lineOverlapsShapeBounds() const { return m_lineTop < shapeLogicalBottom() && m_lineTop + m_lineHeight >= shapeLogicalTop(); }
 
     bool hasSegments() const
@@ -98,19 +106,9 @@ public:
 private:
     ExclusionShapeInsideInfo(RenderBlock*);
 
-    inline LayoutUnit shapeLogicalBoundsY() const
-    {
-        ASSERT(m_shape);
-        // Use fromFloatCeil() to ensure that the returned LayoutUnit value is within the shape's bounds.
-        return LayoutUnit::fromFloatCeil(m_shape->shapeLogicalBoundingBox().y());
-    }
-
-    inline LayoutUnit shapeLogicalBoundsMaxY() const
-    {
-        ASSERT(m_shape);
-        // Use fromFloatFloor() to ensure that the returned LayoutUnit value is within the shape's bounds.
-        return LayoutUnit::fromFloatFloor(m_shape->shapeLogicalBoundingBox().maxY());
-    }
+    // Use ceil and floor to ensure that the returned LayoutUnit value is within the shape's bounds.
+    LayoutUnit floatLogicalTopToLayoutUnit(float logicalTop) const { return LayoutUnit::fromFloatCeil(logicalTop); }
+    LayoutUnit floatLogicalBottomToLayoutUnit(float logicalBottom) const { return LayoutUnit::fromFloatFloor(logicalBottom); }
 
     RenderBlock* m_block;
     OwnPtr<ExclusionShape> m_shape;
