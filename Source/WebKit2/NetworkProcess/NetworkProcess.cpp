@@ -89,7 +89,8 @@ void NetworkProcess::removeNetworkConnectionToWebProcess(NetworkConnectionToWebP
 
 bool NetworkProcess::shouldTerminate()
 {
-    return true;
+    // Network process keeps session cookies and credentials, so it should never terminate (as long as UI process connection is alive).
+    return false;
 }
 
 void NetworkProcess::didReceiveMessage(CoreIPC::Connection* connection, CoreIPC::MessageID messageID, CoreIPC::MessageDecoder& decoder)
