@@ -54,46 +54,6 @@ INTERRUPTED_EXIT_STATUS = signal.SIGINT + 128
 EXCEPTIONAL_EXIT_STATUS = 254
 
 
-def lint(port, options, logging_stream):
-    host = port.host
-    logging.getLogger().setLevel(logging.DEBUG if options.debug_rwt_logging else logging.INFO)
-    printer = printing.Printer(port, options, logging_stream, logger=logging.getLogger())
-
-    if options.platform:
-        ports_to_lint = [port]
-    else:
-        ports_to_lint = [host.port_factory.get(name) for name in host.port_factory.all_port_names()]
-
-    files_linted = set()
-    lint_failed = False
-
-    for port_to_lint in ports_to_lint:
-        expectations_dict = port_to_lint.expectations_dict()
-
-        # FIXME: This won't work if multiple ports share a TestExpectations file but support different modifiers in the file.
-        for expectations_file in expectations_dict.keys():
-            if expectations_file in files_linted:
-                continue
-
-            try:
-                test_expectations.TestExpectations(port_to_lint, expectations_to_lint={expectations_file: expectations_dict[expectations_file]})
-            except test_expectations.ParseError, e:
-                lint_failed = True
-                _log.error('')
-                for warning in e.warnings:
-                    _log.error(warning)
-                _log.error('')
-            files_linted.add(expectations_file)
-
-    if lint_failed:
-        _log.error('Lint failed.')
-        printer.cleanup()
-        return -1
-    _log.info('Lint succeeded.')
-    printer.cleanup()
-    return 0
-
-
 def run(port, options, args, logging_stream):
     try:
         printer = printing.Printer(port, options, logging_stream, logger=logging.getLogger())
@@ -401,7 +361,8 @@ def main(argv=None, stdout=sys.stdout, stderr=sys.stderr):
     logging.getLogger().setLevel(logging.DEBUG if options.debug_rwt_logging else logging.INFO)
 
     if options.lint_test_files:
-        return lint(port, options, stderr)
+        from webkitpy.layout_tests.lint_test_expectations import lint
+        return lint(host, options, stderr)
 
     try:
         run_details = run(port, options, args, stderr)
