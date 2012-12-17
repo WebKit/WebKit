@@ -1,7 +1,7 @@
 include(../tests.pri)
 SOURCES += tst_qmltests.cpp
 TARGET = tst_qmltests_WebView
-OBJECTS_DIR = obj_WebView/$$activeBuildConfig()
+OBJECTS_DIR = .obj_WebView
 
 QT += webkit-private
 CONFIG += warn_on testcase
