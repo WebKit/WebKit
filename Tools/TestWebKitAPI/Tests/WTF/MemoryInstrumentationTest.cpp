@@ -872,5 +872,21 @@ TEST(MemoryInstrumentationTest, doNotReportEdgeTwice)
     instrumentation.addRootObject(instance.get());
     EXPECT_EQ(1, client.linkCount());
 }
+
+class DerivedClass : public Instrumented {
+public:
+    size_t m_member;
+};
+
+TEST(MemoryInstrumentationTest, detectBaseClassInstrumentation)
+{
+    OwnPtr<DerivedClass> instance = adoptPtr(new DerivedClass());
+
+    InstrumentationTestHelper helper;
+    helper.addRootObject(instance.get(), TestType);
+    EXPECT_EQ(sizeof(Instrumented) + sizeof(NotInstrumented), helper.reportedSizeForAllTypes());
+    EXPECT_EQ(2u, helper.visitedObjects());
+}
+
 } // namespace
 
