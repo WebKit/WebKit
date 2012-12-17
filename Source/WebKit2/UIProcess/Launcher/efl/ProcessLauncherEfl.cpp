@@ -40,38 +40,45 @@ void ProcessLauncher::launchProcess()
         return;
     }
 
-    pid_t pid = fork();
-    if (!pid) { // child process
-        close(sockets[1]);
-        String socket = String::format("%d", sockets[0]);
-        String executablePath;
-        switch (m_launchOptions.processType) {
-        case WebProcess:
-            executablePath = executablePathOfWebProcess();
-            break;
+    String executablePath;
+    switch (m_launchOptions.processType) {
+    case WebProcess:
+        executablePath = executablePathOfWebProcess();
+        break;
 #if ENABLE(PLUGIN_PROCESS)
-        case PluginProcess:
-            executablePath = executablePathOfPluginProcess();
-            break;
+    case PluginProcess:
+        executablePath = executablePathOfPluginProcess();
+        break;
 #endif
-        default:
-            ASSERT_NOT_REACHED();
-            return;
-        }
+    default:
+        ASSERT_NOT_REACHED();
+        return;
+    }
+
+    String socket = String::format("%d", sockets[0]);
 
 #ifndef NDEBUG
-        if (m_launchOptions.processCmdPrefix.isEmpty())
+    String prefixedExecutablePath;
+    if (!m_launchOptions.processCmdPrefix.isEmpty())
+        prefixedExecutablePath = m_launchOptions.processCmdPrefix + ' ' + executablePath + ' ' + socket;
 #endif
-            execl(executablePath.utf8().data(), executablePath.utf8().data(), socket.utf8().data(), static_cast<char*>(0));
+
+    pid_t pid = fork();
+    if (!pid) { // Child process.
+        close(sockets[1]);
 #ifndef NDEBUG
-        else {
-            String cmd = makeString(m_launchOptions.processCmdPrefix, ' ', executablePath, ' ', socket);
-            if (system(cmd.utf8().data()) == -1) {
+        if (!prefixedExecutablePath.isEmpty()) {
+            // FIXME: This is not correct because it invokes the shell
+            // and keeps this process waiting. Should be changed to
+            // something like execvp().
+            if (system(prefixedExecutablePath.utf8().data()) == -1) {
                 ASSERT_NOT_REACHED();
-                return;
-            }
+                exit(EXIT_FAILURE);
+            } else
+                exit(EXIT_SUCCESS);
         }
 #endif
+        execl(executablePath.utf8().data(), executablePath.utf8().data(), socket.utf8().data(), static_cast<char*>(0));
     } else if (pid > 0) { // parent process;
         close(sockets[0]);
         m_processIdentifier = pid;
