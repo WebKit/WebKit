@@ -1,5 +1,12 @@
 2012-12-16  Kentaro Hara  <haraken@chromium.org>
 
+        Unreviewed. Rebaselined images for fast/inline/justify-emphasis-inline-box.html.
+
+        * platform/chromium-mac-lion/fast/inline/justify-emphasis-inline-box-expected.png: Copied from LayoutTests/platform/chromium-mac/fast/inline/justify-emphasis-inline-box-expected.png.
+        * platform/chromium-mac/fast/inline/justify-emphasis-inline-box-expected.png:
+
+2012-12-16  Kentaro Hara  <haraken@chromium.org>
+
         Unreviewed. Rebaselined fast/css/nested-layers-with-hover.html.
 
         * platform/chromium-win/fast/css/nested-layers-with-hover-expected.txt: Removed.
