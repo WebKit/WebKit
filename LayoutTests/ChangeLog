@@ -1,3 +1,13 @@
+2012-12-16  Kentaro Hara  <haraken@chromium.org>
+
+        Unreviewed. Rebaselined fast/css/nested-layers-with-hover.html.
+
+        * platform/chromium-win/fast/css/nested-layers-with-hover-expected.txt: Removed.
+        * platform/chromium/fast/css/nested-layers-with-hover-expected.txt: Removed.
+        * platform/efl/fast/css/nested-layers-with-hover-expected.txt: Removed.
+        * platform/gtk/fast/css/nested-layers-with-hover-expected.txt: Removed.
+        * platform/qt/fast/css/nested-layers-with-hover-expected.txt: Removed.
+
 2012-12-16  Levi Weintraub  <leviw@chromium.org>
 
         Push pixel snapping logic into TransformState
