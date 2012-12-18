@@ -8,12 +8,12 @@ On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE
 
 AXRole: AXWebArea AXValue: 
     AXRole: AXGroup AXValue: 
-        AXRole: AXGroup AXValue:      << fieldset's titleUIElement
+        AXRole: AXLegend AXValue:      << fieldset's titleUIElement
             AXRole: AXStaticText AXValue: Choose a shipping method:
         AXRole: AXGroup AXValue: 
-            AXRole: AXRadioButton AXValue: 0
+            AXRole: AXRadioButton AXValue: 
             AXRole: AXStaticText AXValue: Overnight
-    AXRole: AXGroup AXValue: 
+    AXRole: AXDiv AXValue: 
         AXRole: AXStaticText AXValue: End of test
 PASS titleUIElement != null is true
 PASS titleUIElementText.stringValue is 'AXValue: Choose a shipping method:'
