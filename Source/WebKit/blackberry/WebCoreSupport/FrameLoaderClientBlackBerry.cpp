@@ -894,7 +894,6 @@ void FrameLoaderClientBlackBerry::dispatchDidLayout(LayoutMilestones milestones)
         if (m_webPagePrivate->shouldZoomToInitialScaleOnLoad()) {
             BackingStorePrivate* backingStorePrivate = m_webPagePrivate->m_backingStore->d;
             m_webPagePrivate->zoomToInitialScaleOnLoad(); // Set the proper zoom level first.
-            backingStorePrivate->clearVisibleZoom(); // Clear the visible zoom since we're explicitly rendering+blitting below.
             backingStorePrivate->renderAndBlitVisibleContentsImmediately();
         }
 
