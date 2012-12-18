@@ -5106,6 +5106,7 @@
 				3713F0231429063D0036387F /* Check For Inappropriate Objective-C Class Names */,
 				5DF408C6131DD49700130071 /* Check For Framework Include Consistency */,
 				5DF408D1131DDBEC00130071 /* Check For Inappropriate Files In Framework */,
+				A55DEAA61670402E003DB841 /* Check For Inappropriate Macros in External Headers */,
 			);
 			buildRules = (
 			);
@@ -5341,6 +5342,7 @@
 			files = (
 			);
 			inputPaths = (
+				"$(TARGET_BUILD_DIR)/$(EXECUTABLE_PATH)",
 			);
 			name = "Check For Framework Include Consistency";
 			outputPaths = (
@@ -5355,6 +5357,7 @@
 			files = (
 			);
 			inputPaths = (
+				"$(TARGET_BUILD_DIR)/$(EXECUTABLE_PATH)",
 			);
 			name = "Check For Inappropriate Files In Framework";
 			outputPaths = (
@@ -5362,6 +5365,21 @@
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "if [ \"${ACTION}\" = \"installhdrs\" ]; then\n    exit 0;\nfi\n\nif [ -f ../../Tools/Scripts/check-for-inappropriate-files-in-framework ]; then\n    ../../Tools/Scripts/check-for-inappropriate-files-in-framework || exit $?\nfi\n";
+		};
+		A55DEAA61670402E003DB841 /* Check For Inappropriate Macros in External Headers */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+				"$(TARGET_BUILD_DIR)/$(EXECUTABLE_PATH)",
+			);
+			name = "Check For Inappropriate Macros in External Headers";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "if [ \"${ACTION}\" = \"installhdrs\" ]; then\n    exit 0;\nfi\n\nif [ -f ../../Tools/Scripts/check-for-inappropriate-macros-in-external-headers ]; then\n    ../../Tools/Scripts/check-for-inappropriate-macros-in-external-headers Headers || exit $?\nfi";
 		};
 		BCFFCA8A160D6DEA003DF315 /* Add XPCServices symlink */ = {
 			isa = PBXShellScriptBuildPhase;

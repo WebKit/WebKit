@@ -26245,6 +26245,7 @@
 			files = (
 			);
 			inputPaths = (
+				"$(TARGET_BUILD_DIR)/$(EXECUTABLE_PATH)",
 			);
 			name = "Check For Inappropriate Files In Framework";
 			outputPaths = (

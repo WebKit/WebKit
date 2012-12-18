@@ -1,3 +1,14 @@
+2012-12-18  Joseph Pecoraro  <pecoraro@apple.com>
+
+        [Mac] Add Build Phase to Check Headers for Inappropriate Macros (Platform.h macros)
+        https://bugs.webkit.org/show_bug.cgi?id=104279
+
+        Reviewed by David Kilzer.
+
+        Set the executable as an input path on the check-* build phases.
+        
+        * WebCore.xcodeproj/project.pbxproj:
+
 2012-12-18  Adam Klein  <adamk@chromium.org>
 
         [HTMLTemplateElement] Prevent first-level recursive <template> from resetting the implied context

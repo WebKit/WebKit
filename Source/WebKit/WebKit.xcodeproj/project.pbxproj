@@ -1650,6 +1650,7 @@
 				5D0D54210E98631D0029E223 /* Check For Weak VTables and Externals */,
 				3713F018142905B70036387F /* Check For Inappropriate Objective-C Class Names */,
 				5D88EE6C11407DE800BC3ABC /* Check For Framework Include Consistency */,
+				A55DEAA516703F9F003DB841 /* Check For Inappropriate Macros in External Headers */,
 				5DE6D18C0FCF231B002DE28C /* Symlink WebKitPluginHost in to place */,
 			);
 			buildRules = (
@@ -1794,6 +1795,7 @@
 			files = (
 			);
 			inputPaths = (
+				"$(TARGET_BUILD_DIR)/$(EXECUTABLE_PATH)",
 			);
 			name = "Check For Framework Include Consistency";
 			outputPaths = (
@@ -1832,6 +1834,21 @@
 			runOnlyForDeploymentPostprocessing = 1;
 			shellPath = /bin/sh;
 			shellScript = "ln -sf Versions/Current/Frameworks \"$TARGET_BUILD_DIR/WebKit.framework/Frameworks\"\n";
+		};
+		A55DEAA516703F9F003DB841 /* Check For Inappropriate Macros in External Headers */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+				"$(TARGET_BUILD_DIR)/$(EXECUTABLE_PATH)",
+			);
+			name = "Check For Inappropriate Macros in External Headers";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "if [ \"${ACTION}\" = \"installhdrs\" ]; then\n    exit 0;\nfi\n\nif [ -f ../../Tools/Scripts/check-for-inappropriate-macros-in-external-headers ]; then\n    ../../Tools/Scripts/check-for-inappropriate-macros-in-external-headers Headers || exit $?\nfi";
 		};
 /* End PBXShellScriptBuildPhase section */
 

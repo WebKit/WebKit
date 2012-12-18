@@ -1,3 +1,15 @@
+2012-12-18  Joseph Pecoraro  <pecoraro@apple.com>
+
+        [Mac] Add Build Phase to Check Headers for Inappropriate Macros (Platform.h macros)
+        https://bugs.webkit.org/show_bug.cgi?id=104279
+
+        Reviewed by David Kilzer.
+
+        Add a build phase to check the public JavaScriptCore headers for
+        inappropriate macros.
+
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+
 2012-12-18  Michael Saboff  <msaboff@apple.com>
 
         [Qt] Fix the ARMv7 build after r137976

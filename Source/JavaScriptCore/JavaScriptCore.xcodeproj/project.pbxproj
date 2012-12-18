@@ -3261,6 +3261,7 @@
 				932F5BD20822A1C700736975 /* Frameworks */,
 				5D29D8BE0E9860B400C3D2D0 /* Check For Weak VTables and Externals */,
 				3713F014142905240036387F /* Check For Inappropriate Objective-C Class Names */,
+				A55DEAA416703DF7003DB841 /* Check For Inappropriate Macros in External Headers */,
 			);
 			buildRules = (
 			);
@@ -3452,6 +3453,21 @@
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "mkdir -p \"${BUILT_PRODUCTS_DIR}/DerivedSources/JavaScriptCore/docs\"\ncd \"${BUILT_PRODUCTS_DIR}/DerivedSources/JavaScriptCore\"\n\n/bin/ln -sfh \"${SRCROOT}\" JavaScriptCore\nexport JavaScriptCore=\"JavaScriptCore\"\nexport BUILT_PRODUCTS_DIR=\"../..\"\n\nmake --no-builtin-rules -f \"JavaScriptCore/DerivedSources.make\" -j `/usr/sbin/sysctl -n hw.ncpu` || exit 1\n\n/usr/bin/env ruby JavaScriptCore/offlineasm/asm.rb JavaScriptCore/llint/LowLevelInterpreter.asm ${BUILT_PRODUCTS_DIR}/JSCLLIntOffsetsExtractor LLIntAssembly.h || exit 1\n";
+		};
+		A55DEAA416703DF7003DB841 /* Check For Inappropriate Macros in External Headers */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+				"$(TARGET_BUILD_DIR)/$(EXECUTABLE_PATH)",
+			);
+			name = "Check For Inappropriate Macros in External Headers";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "if [ \"${ACTION}\" = \"installhdrs\" ]; then\n    exit 0;\nfi\n\nif [ -f ../../Tools/Scripts/check-for-inappropriate-macros-in-external-headers ]; then\n    ../../Tools/Scripts/check-for-inappropriate-macros-in-external-headers Headers || exit $?\nfi";
 		};
 /* End PBXShellScriptBuildPhase section */
 
