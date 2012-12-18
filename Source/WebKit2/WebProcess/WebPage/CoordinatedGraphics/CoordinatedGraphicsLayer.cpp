@@ -439,6 +439,12 @@ CoordinatedLayerID CoordinatedGraphicsLayer::id() const
 
 void CoordinatedGraphicsLayer::flushCompositingState(const FloatRect& rect)
 {
+    if (!m_coordinator->isFlushingLayerChanges()) {
+        if (client())
+            client()->notifyFlushRequired(this);
+        return;
+    }
+
     if (CoordinatedGraphicsLayer* mask = toCoordinatedGraphicsLayer(maskLayer()))
         mask->flushCompositingStateForThisLayerOnly();
 
@@ -585,6 +591,8 @@ void CoordinatedGraphicsLayer::createCanvasIfNeeded()
 
 void CoordinatedGraphicsLayer::flushCompositingStateForThisLayerOnly()
 {
+    ASSERT(m_coordinator->isFlushingLayerChanges());
+
     // Sets the values.
     computePixelAlignment(m_adjustedPosition, m_adjustedSize, m_adjustedAnchorPoint, m_pixelAlignmentOffset);
 

@@ -83,6 +83,7 @@ CoordinatedLayerTreeHost::CoordinatedLayerTreeHost(WebPage* webPage)
     , m_notifyAfterScheduledLayerFlush(false)
     , m_isValid(true)
     , m_isPurging(false)
+    , m_isFlushingLayerChanges(false)
     , m_waitingForUIProcess(true)
     , m_isSuspended(false)
     , m_contentsScale(1)
@@ -265,6 +266,8 @@ bool CoordinatedLayerTreeHost::flushPendingLayerChanges()
 {
     if (m_waitingForUIProcess)
         return false;
+
+    TemporaryChange<bool> protector(m_isFlushingLayerChanges, true);
 
     initializeRootCompositingLayerIfNeeded();
 

@@ -51,6 +51,8 @@ namespace WebKit {
 
 class CoordinatedGraphicsLayerClient {
 public:
+    virtual bool isFlushingLayerChanges() const = 0;
+
     // CoordinatedTileClient
     virtual void createTile(CoordinatedLayerID, uint32_t tileID, const SurfaceUpdateInfo&, const WebCore::IntRect&) = 0;
     virtual void updateTile(CoordinatedLayerID, uint32_t tileID, const SurfaceUpdateInfo&, const WebCore::IntRect&) = 0;

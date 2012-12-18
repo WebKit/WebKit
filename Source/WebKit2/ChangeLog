@@ -1,3 +1,34 @@
+2012-12-17  Huang Dongsung  <luxtella@company100.net>
+
+        [CoordinatedGraphics] Assertion hit in WebKit::LayerTreeRenderer::setLayerState()
+        https://bugs.webkit.org/show_bug.cgi?id=104518
+
+        Reviewed by Noam Rosenthal.
+
+        CoordinatedGraphicsLayer::flushCompositingStateForThisLayerOnly() must perform
+        only during flushing pending layer changes in CoordinatedLayerTreeHost.
+        RenderLayerCompositor can call GraphicsLayer::flushCompositingState() regardless
+        of CoordinatedLayerTreeHost and it breaks our assumption. It means that
+        CoordinatedGraphicsLayer can send messages although m_waitingForUIProcess in
+        CoordinatedLayerTreeHost is true.
+
+        Assertion hits because of the same reason. If RenderLayerCompositor calls
+        flushCompositingState() before the first CoordinatedLayerTreeHost::flushPendingLayerChanges(),
+        SetCompositingLayerState message can be prior to SetRootCompositingLayer message.
+
+        We fix this by ensuring that we perform the layer flush only in the code
+        path originating from CoordinatedLayerTreeHost.
+
+        * WebProcess/WebPage/CoordinatedGraphics/CoordinatedGraphicsLayer.cpp:
+        (WebCore::CoordinatedGraphicsLayer::flushCompositingState):
+        (WebCore::CoordinatedGraphicsLayer::flushCompositingStateForThisLayerOnly):
+        * WebProcess/WebPage/CoordinatedGraphics/CoordinatedGraphicsLayer.h:
+        (CoordinatedGraphicsLayerClient):
+        * WebProcess/WebPage/CoordinatedGraphics/CoordinatedLayerTreeHost.cpp:
+        (WebKit::CoordinatedLayerTreeHost::CoordinatedLayerTreeHost):
+        (WebKit::CoordinatedLayerTreeHost::flushPendingLayerChanges):
+        * WebProcess/WebPage/CoordinatedGraphics/CoordinatedLayerTreeHost.h:
+
 2012-12-17  Alexey Proskuryakov  <ap@apple.com>
 
         <rdar://problem/12895354> NetworkProcess should not exit after downloading
