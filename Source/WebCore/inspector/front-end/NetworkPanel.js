@@ -925,10 +925,13 @@ WebInspector.NetworkLogView.prototype = {
         if (!this._allowPopover)
             return;
         var anchor = element.enclosingNodeOrSelfWithClass("network-graph-bar") || element.enclosingNodeOrSelfWithClass("network-graph-label");
-        if (!anchor)
-            return null;
-        var request = anchor.parentElement.request;
-        return request && request.timing ? anchor : null;
+        if (anchor && anchor.parentElement.request && anchor.parentElement.request.timing)
+            return anchor;
+        anchor = element.enclosingNodeOrSelfWithClass("network-script-initiated");
+        if (anchor && anchor.request && anchor.request.initiator)
+            return anchor;
+
+        return null;
     },
 
     /**
@@ -937,9 +940,31 @@ WebInspector.NetworkLogView.prototype = {
      */
     _showPopover: function(anchor, popover)
     {
-        var request = anchor.parentElement.request;
-        var tableElement = WebInspector.RequestTimingView.createTimingTable(request);
-        popover.show(tableElement, anchor);
+        var content;
+        if (anchor.hasStyleClass("network-script-initiated"))
+            content = this._generateScriptInitiatedPopoverContent(anchor.request);
+        else
+            content = WebInspector.RequestTimingView.createTimingTable(anchor.parentElement.request);
+        popover.show(content, anchor);
+    },
+
+    /**
+     * @param {!WebInspector.NetworkRequest} request
+     * @return {!Element}
+     */
+    _generateScriptInitiatedPopoverContent: function(request)
+    {
+        var stackTrace = request.initiator.stackTrace;
+        var framesTable = document.createElement("table");
+        for (var i = 0; i < stackTrace.length; ++i) {
+            var stackFrame = stackTrace[i];
+            var row = document.createElement("tr");
+            row.createChild("td").textContent = stackFrame.functionName ? stackFrame.functionName : WebInspector.UIString("(anonymous function)");
+            row.createChild("td").textContent = " @ ";
+            row.createChild("td").appendChild(this._linkifier.linkifyLocation(stackFrame.url, stackFrame.lineNumber - 1, 0));
+            framesTable.appendChild(row);
+        }
+        return framesTable;
     },
 
     _contextMenu: function(event)
@@ -2010,9 +2035,13 @@ WebInspector.NetworkDataGridNode.prototype = {
 
     _refreshInitiatorCell: function()
     {
+        this._initiatorCell.removeStyleClass("network-dim-cell");
+        this._initiatorCell.removeStyleClass("network-script-initiated");
+        delete this._initiatorCell.request;
+        this._initiatorCell.title = null;
+
         var initiator = this._request.initiator;
         if ((initiator && initiator.type !== "other") || this._request.redirectSource) {
-            this._initiatorCell.removeStyleClass("network-dim-cell");
             this._initiatorCell.removeChildren();
             if (this._request.redirectSource) {
                 var redirectSource = this._request.redirectSource;
@@ -2027,10 +2056,12 @@ WebInspector.NetworkDataGridNode.prototype = {
                     this._initiatorCell.setTextAndTitle(WebInspector.UIString("Other"));
                     return;
                 }
-                this._initiatorCell.title = topFrame.url + ":" + topFrame.lineNumber;
                 var urlElement = this._parentView._linkifier.linkifyLocation(topFrame.url, topFrame.lineNumber - 1, 0);
+                urlElement.title = null;
                 this._initiatorCell.appendChild(urlElement);
                 this._appendSubtitle(this._initiatorCell, WebInspector.UIString("Script"));
+                this._initiatorCell.addStyleClass("network-script-initiated");
+                this._initiatorCell.request = this._request;
             } else { // initiator.type === "parser"
                 this._initiatorCell.title = initiator.url + ":" + initiator.lineNumber;
                 this._initiatorCell.appendChild(WebInspector.linkifyResourceAsNode(initiator.url, initiator.lineNumber - 1));
