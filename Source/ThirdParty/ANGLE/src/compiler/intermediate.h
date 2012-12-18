@@ -389,7 +389,7 @@ protected:
 //
 class TIntermBinary : public TIntermOperator {
 public:
-    TIntermBinary(TOperator o) : TIntermOperator(o) {}
+    TIntermBinary(TOperator o) : TIntermOperator(o), addIndexClamp(false) {}
 
     virtual TIntermBinary* getAsBinaryNode() { return this; }
     virtual void traverse(TIntermTraverser*);
