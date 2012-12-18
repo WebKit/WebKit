@@ -1,3 +1,18 @@
+2012-12-17  Sean Wang  <Xuewen.Wang@torchmobile.com.cn>
+
+        [BlackBerry] Editable text element can't be selected
+        https://bugs.webkit.org/show_bug.cgi?id=105240
+
+        Reviewed by Rob Buis.
+        Internally reviewed by Genevieve Mak and Mike Fenton.
+
+        Internal PR266755
+        When the target is Text, we should allow it to collect text nodes in
+        the shadow tree of text editable elements.
+
+        * WebKitSupport/FatFingers.cpp:
+        (BlackBerry::WebKit::FatFingers::getNodesFromRect):
+
 2012-12-17  Yongxin Dai  <yodai@rim.com>
 
         [BlackBerry] Prevent selection handles from being rendered after selection was canceled
