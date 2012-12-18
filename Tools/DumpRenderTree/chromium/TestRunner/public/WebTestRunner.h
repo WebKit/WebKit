@@ -28,42 +28,18 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WebTestInterfaces_h
-#define WebTestInterfaces_h
-
-namespace WebKit {
-class WebFrame;
-class WebView;
-}
+#ifndef WebTestRunner_h
+#define WebTestRunner_h
 
 namespace WebTestRunner {
 
-class WebAccessibilityController;
-class WebEventSender;
-class WebTestDelegate;
-class WebTestRunner;
-
-class WebTestInterfaces {
+// FIXME: Once the TestRunner class is complete, this class should take a
+// TestRunner* as ctor argument, and not have default implementations.
+class WebTestRunner {
 public:
-    WebTestInterfaces();
-    ~WebTestInterfaces();
-
-    void setWebView(WebKit::WebView*);
-    void setDelegate(WebTestDelegate*);
-    void bindTo(WebKit::WebFrame*);
-    void resetAll();
-
-    WebAccessibilityController* accessibilityController();
-    WebEventSender* eventSender();
-    WebTestRunner* testRunner();
-    // FIXME: Remove this once TestRunner is complete.
-    void setTestRunner(WebTestRunner*);
-
-private:
-    class Internal;
-    Internal* m_internal;
+    virtual bool shouldDumpEditingCallbacks() const { return false; }
 };
 
 }
 
-#endif // WebTestInterfaces_h
+#endif // WebTestRunner_h

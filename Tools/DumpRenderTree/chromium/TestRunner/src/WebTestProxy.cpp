@@ -37,14 +37,81 @@
 #include "WebElement.h"
 #include "WebEventSender.h"
 #include "WebNode.h"
+#include "WebRange.h"
 #include "WebTestDelegate.h"
 #include "WebTestInterfaces.h"
+#include "WebTestRunner.h"
 #include "platform/WebCString.h"
+#include <wtf/StringExtras.h>
 
 using namespace WebKit;
 using namespace std;
 
 namespace WebTestRunner {
+
+namespace {
+
+void printNodeDescription(WebTestDelegate* delegate, const WebNode& node, int exception)
+{
+    if (exception) {
+        delegate->printMessage("ERROR");
+        return;
+    }
+    if (node.isNull()) {
+        delegate->printMessage("(null)");
+        return;
+    }
+    delegate->printMessage(node.nodeName().utf8().data());
+    const WebNode& parent = node.parentNode();
+    if (!parent.isNull()) {
+        delegate->printMessage(" > ");
+        printNodeDescription(delegate, parent, 0);
+    }
+}
+
+void printRangeDescription(WebTestDelegate* delegate, const WebRange& range)
+{
+    if (range.isNull()) {
+        delegate->printMessage("(null)");
+        return;
+    }
+    char buffer[100];
+    snprintf(buffer, sizeof(buffer), "range from %d of ", range.startOffset());
+    delegate->printMessage(buffer);
+    int exception = 0;
+    WebNode startNode = range.startContainer(exception);
+    printNodeDescription(delegate, startNode, exception);
+    snprintf(buffer, sizeof(buffer), " to %d of ", range.endOffset());
+    delegate->printMessage(buffer);
+    WebNode endNode = range.endContainer(exception);
+    printNodeDescription(delegate, endNode, exception);
+}
+
+string editingActionDescription(WebEditingAction action)
+{
+    switch (action) {
+    case WebKit::WebEditingActionTyped:
+        return "WebViewInsertActionTyped";
+    case WebKit::WebEditingActionPasted:
+        return "WebViewInsertActionPasted";
+    case WebKit::WebEditingActionDropped:
+        return "WebViewInsertActionDropped";
+    }
+    return "(UNKNOWN ACTION)";
+}
+
+string textAffinityDescription(WebTextAffinity affinity)
+{
+    switch (affinity) {
+    case WebKit::WebTextAffinityUpstream:
+        return "NSSelectionAffinityUpstream";
+    case WebKit::WebTextAffinityDownstream:
+        return "NSSelectionAffinityDownstream";
+    }
+    return "(UNKNOWN AFFINITY)";
+}
+
+}
 
 WebTestProxyBase::WebTestProxyBase()
     : m_testInterfaces(0)
@@ -197,7 +264,7 @@ void WebTestProxyBase::postAccessibilityNotification(const WebKit::WebAccessibil
     m_testInterfaces->accessibilityController()->notificationReceived(obj, notificationName);
 
     if (m_testInterfaces->accessibilityController()->shouldLogAccessibilityEvents()) {
-        std::string message("AccessibilityNotification - ");
+        string message("AccessibilityNotification - ");
         message += notificationName;
 
         WebKit::WebNode node = obj.node();
@@ -218,6 +285,111 @@ void WebTestProxyBase::startDragging(WebFrame*, const WebDragData& data, WebDrag
     // When running a test, we need to fake a drag drop operation otherwise
     // Windows waits for real mouse events to know when the drag is over.
     m_testInterfaces->eventSender()->doDragDrop(data, mask);
+}
+
+// The output from these methods in layout test mode should match that
+// expected by the layout tests. See EditingDelegate.m in DumpRenderTree.
+
+// FIXME: Remove the 0 checks for m_testInterfaces->testRunner() once the
+// TestInterfaces class owns the TestRunner.
+
+bool WebTestProxyBase::shouldBeginEditing(const WebRange& range)
+{
+    if (m_testInterfaces->testRunner() && m_testInterfaces->testRunner()->shouldDumpEditingCallbacks()) {
+        m_delegate->printMessage("EDITING DELEGATE: shouldBeginEditingInDOMRange:");
+        printRangeDescription(m_delegate, range);
+        m_delegate->printMessage("\n");
+    }
+    return true;
+}
+
+bool WebTestProxyBase::shouldEndEditing(const WebRange& range)
+{
+    if (m_testInterfaces->testRunner() && m_testInterfaces->testRunner()->shouldDumpEditingCallbacks()) {
+        m_delegate->printMessage("EDITING DELEGATE: shouldEndEditingInDOMRange:");
+        printRangeDescription(m_delegate, range);
+        m_delegate->printMessage("\n");
+    }
+    return true;
+}
+
+bool WebTestProxyBase::shouldInsertNode(const WebNode& node, const WebRange& range, WebEditingAction action)
+{
+    if (m_testInterfaces->testRunner() && m_testInterfaces->testRunner()->shouldDumpEditingCallbacks()) {
+        m_delegate->printMessage("EDITING DELEGATE: shouldInsertNode:");
+        printNodeDescription(m_delegate, node, 0);
+        m_delegate->printMessage(" replacingDOMRange:");
+        printRangeDescription(m_delegate, range);
+        printf(" givenAction:%s\n", editingActionDescription(action).c_str());
+    }
+    return true;
+}
+
+bool WebTestProxyBase::shouldInsertText(const WebString& text, const WebRange& range, WebEditingAction action)
+{
+    if (m_testInterfaces->testRunner() && m_testInterfaces->testRunner()->shouldDumpEditingCallbacks()) {
+        m_delegate->printMessage(string("EDITING DELEGATE: shouldInsertText:") + text.utf8().data() + " replacingDOMRange:");
+        printRangeDescription(m_delegate, range);
+        m_delegate->printMessage(string(" givenAction:") + editingActionDescription(action) + "\n");
+    }
+    return true;
+}
+
+bool WebTestProxyBase::shouldChangeSelectedRange(
+    const WebRange& fromRange, const WebRange& toRange, WebTextAffinity affinity, bool stillSelecting)
+{
+    if (m_testInterfaces->testRunner() && m_testInterfaces->testRunner()->shouldDumpEditingCallbacks()) {
+        m_delegate->printMessage("EDITING DELEGATE: shouldChangeSelectedDOMRange:");
+        printRangeDescription(m_delegate, fromRange);
+        m_delegate->printMessage(" toDOMRange:");
+        printRangeDescription(m_delegate, toRange);
+        m_delegate->printMessage(string(" affinity:") + textAffinityDescription(affinity) + " stillSelecting:" + (stillSelecting ? "TRUE" : "FALSE") + "\n");
+    }
+    return true;
+}
+
+bool WebTestProxyBase::shouldDeleteRange(const WebRange& range)
+{
+    if (m_testInterfaces->testRunner() && m_testInterfaces->testRunner()->shouldDumpEditingCallbacks()) {
+        m_delegate->printMessage("EDITING DELEGATE: shouldDeleteDOMRange:");
+        printRangeDescription(m_delegate, range);
+        m_delegate->printMessage("\n");
+    }
+    return true;
+}
+
+bool WebTestProxyBase::shouldApplyStyle(const WebString& style, const WebRange& range)
+{
+    if (m_testInterfaces->testRunner() && m_testInterfaces->testRunner()->shouldDumpEditingCallbacks()) {
+        m_delegate->printMessage(string("EDITING DELEGATE: shouldApplyStyle:") + style.utf8().data() + " toElementsInDOMRange:");
+        printRangeDescription(m_delegate, range);
+        m_delegate->printMessage("\n");
+    }
+    return true;
+}
+
+void WebTestProxyBase::didBeginEditing()
+{
+    if (m_testInterfaces->testRunner() && m_testInterfaces->testRunner()->shouldDumpEditingCallbacks())
+        m_delegate->printMessage("EDITING DELEGATE: webViewDidBeginEditing:WebViewDidBeginEditingNotification\n");
+}
+
+void WebTestProxyBase::didChangeSelection(bool isEmptySelection)
+{
+    if (m_testInterfaces->testRunner() && m_testInterfaces->testRunner()->shouldDumpEditingCallbacks())
+        m_delegate->printMessage("EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification\n");
+}
+
+void WebTestProxyBase::didChangeContents()
+{
+    if (m_testInterfaces->testRunner() && m_testInterfaces->testRunner()->shouldDumpEditingCallbacks())
+        m_delegate->printMessage("EDITING DELEGATE: webViewDidChange:WebViewDidChangeNotification\n");
+}
+
+void WebTestProxyBase::didEndEditing()
+{
+    if (m_testInterfaces->testRunner() && m_testInterfaces->testRunner()->shouldDumpEditingCallbacks())
+        m_delegate->printMessage("EDITING DELEGATE: webViewDidEndEditing:WebViewDidEndEditingNotification\n");
 }
 
 }

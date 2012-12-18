@@ -68,6 +68,7 @@
             'chromium/TestRunner/public/WebTestInterfaces.h',
             'chromium/TestRunner/public/WebTestPlugin.h',
             'chromium/TestRunner/public/WebTestProxy.h',
+            'chromium/TestRunner/public/WebTestRunner.h',
             'chromium/TestRunner/src/AccessibilityControllerChromium.cpp',
             'chromium/TestRunner/src/AccessibilityControllerChromium.h',
             'chromium/TestRunner/src/AccessibilityUIElementChromium.cpp',

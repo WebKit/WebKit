@@ -134,7 +134,6 @@ DRTTestRunner::DRTTestRunner(TestShell* shell)
     bindMethod("dumpBackForwardList", &DRTTestRunner::dumpBackForwardList);
     bindMethod("dumpChildFramesAsText", &DRTTestRunner::dumpChildFramesAsText);
     bindMethod("dumpChildFrameScrollPositions", &DRTTestRunner::dumpChildFrameScrollPositions);
-    bindMethod("dumpEditingCallbacks", &DRTTestRunner::dumpEditingCallbacks);
     bindMethod("dumpFrameLoadCallbacks", &DRTTestRunner::dumpFrameLoadCallbacks);
     bindMethod("dumpProgressFinishedCallback", &DRTTestRunner::dumpProgressFinishedCallback);
     bindMethod("dumpUserGestureInFrameLoadCallbacks", &DRTTestRunner::dumpUserGestureInFrameLoadCallbacks);
@@ -274,12 +273,6 @@ void DRTTestRunner::dumpAsText(const CppArgumentList& arguments, CppVariant* res
     if (arguments.size() > 0 && arguments[0].isBool())
         m_generatePixelResults = arguments[0].value.boolValue;
 
-    result->setNull();
-}
-
-void DRTTestRunner::dumpEditingCallbacks(const CppArgumentList&, CppVariant* result)
-{
-    m_dumpEditingCallbacks = true;
     result->setNull();
 }
 
@@ -548,7 +541,6 @@ void DRTTestRunner::reset()
     m_dumpAsText = false;
     m_dumpAsAudio = false;
     m_dumpCreateView = false;
-    m_dumpEditingCallbacks = false;
     m_dumpFrameLoadCallbacks = false;
     m_dumpProgressFinishedCallback = false;
     m_dumpUserGestureInFrameLoadCallbacks = false;

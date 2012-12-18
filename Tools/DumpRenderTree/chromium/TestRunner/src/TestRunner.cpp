@@ -114,6 +114,9 @@ TestRunner::TestRunner()
     bindMethod("setMinimumTimerInterval", &TestRunner::setMinimumTimerInterval);
     bindMethod("setTouchDragDropEnabled", &TestRunner::setTouchDragDropEnabled);
 
+    // The following modify the state of the TestRunner.
+    bindMethod("dumpEditingCallbacks", &TestRunner::dumpEditingCallbacks);
+
     // Properties.
     bindProperty("workerThreadCount", &TestRunner::workerThreadCount);
     bindProperty("globalFlag", &m_globalFlag);
@@ -151,6 +154,10 @@ TestRunner::TestRunner()
     bindFallbackMethod(&TestRunner::fallbackMethod);
 }
 
+TestRunner::~TestRunner()
+{
+}
+
 void TestRunner::reset()
 {
     if (m_webView) {
@@ -169,10 +176,17 @@ void TestRunner::reset()
     WebFontRendering::setSubpixelPositioning(false);
 #endif
 
+    m_dumpEditingCallbacks = false;
+
     m_globalFlag.set(false);
     m_platformName.set("chromium");
 
     m_userStyleSheetLocation = WebURL();
+}
+
+bool TestRunner::shouldDumpEditingCallbacks() const
+{
+    return m_dumpEditingCallbacks;
 }
 
 void TestRunner::setTabKeyCyclesThroughElements(const CppArgumentList& arguments, CppVariant* result)
@@ -834,6 +848,12 @@ void TestRunner::setTouchDragDropEnabled(const CppArgumentList& arguments, CppVa
         m_delegate->preferences()->touchDragDropEnabled = arguments[0].toBoolean();
         m_delegate->applyPreferences();
     }
+    result->setNull();
+}
+
+void TestRunner::dumpEditingCallbacks(const CppArgumentList&, CppVariant* result)
+{
+    m_dumpEditingCallbacks = true;
     result->setNull();
 }
 

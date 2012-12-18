@@ -203,45 +203,6 @@ static void printNodeDescription(const WebNode& node, int exception)
     }
 }
 
-static void printRangeDescription(const WebRange& range)
-{
-    if (range.isNull()) {
-        fputs("(null)", stdout);
-        return;
-    }
-    printf("range from %d of ", range.startOffset());
-    int exception = 0;
-    WebNode startNode = range.startContainer(exception);
-    printNodeDescription(startNode, exception);
-    printf(" to %d of ", range.endOffset());
-    WebNode endNode = range.endContainer(exception);
-    printNodeDescription(endNode, exception);
-}
-
-static string editingActionDescription(WebEditingAction action)
-{
-    switch (action) {
-    case WebKit::WebEditingActionTyped:
-        return "WebViewInsertActionTyped";
-    case WebKit::WebEditingActionPasted:
-        return "WebViewInsertActionPasted";
-    case WebKit::WebEditingActionDropped:
-        return "WebViewInsertActionDropped";
-    }
-    return "(UNKNOWN ACTION)";
-}
-
-static string textAffinityDescription(WebTextAffinity affinity)
-{
-    switch (affinity) {
-    case WebKit::WebTextAffinityUpstream:
-        return "NSSelectionAffinityUpstream";
-    case WebKit::WebTextAffinityDownstream:
-        return "NSSelectionAffinityDownstream";
-    }
-    return "(UNKNOWN AFFINITY)";
-}
-
 // WebViewClient -------------------------------------------------------------
 
 WebView* WebViewHost::createView(WebFrame* creator, const WebURLRequest& request, const WebWindowFeatures&, const WebString&, WebNavigationPolicy)
@@ -325,83 +286,39 @@ void WebViewHost::didStopLoading()
     m_shell->setIsLoading(false);
 }
 
-// The output from these methods in layout test mode should match that
-// expected by the layout tests. See EditingDelegate.m in DumpRenderTree.
-
 bool WebViewHost::shouldBeginEditing(const WebRange& range)
 {
-    if (testRunner()->shouldDumpEditingCallbacks()) {
-        fputs("EDITING DELEGATE: shouldBeginEditingInDOMRange:", stdout);
-        printRangeDescription(range);
-        fputs("\n", stdout);
-    }
     return true;
 }
 
 bool WebViewHost::shouldEndEditing(const WebRange& range)
 {
-    if (testRunner()->shouldDumpEditingCallbacks()) {
-        fputs("EDITING DELEGATE: shouldEndEditingInDOMRange:", stdout);
-        printRangeDescription(range);
-        fputs("\n", stdout);
-    }
     return true;
 }
 
 bool WebViewHost::shouldInsertNode(const WebNode& node, const WebRange& range, WebEditingAction action)
 {
-    if (testRunner()->shouldDumpEditingCallbacks()) {
-        fputs("EDITING DELEGATE: shouldInsertNode:", stdout);
-        printNodeDescription(node, 0);
-        fputs(" replacingDOMRange:", stdout);
-        printRangeDescription(range);
-        printf(" givenAction:%s\n", editingActionDescription(action).c_str());
-    }
     return true;
 }
 
 bool WebViewHost::shouldInsertText(const WebString& text, const WebRange& range, WebEditingAction action)
 {
-    if (testRunner()->shouldDumpEditingCallbacks()) {
-        printf("EDITING DELEGATE: shouldInsertText:%s replacingDOMRange:", text.utf8().data());
-        printRangeDescription(range);
-        printf(" givenAction:%s\n", editingActionDescription(action).c_str());
-    }
     return true;
 }
 
 bool WebViewHost::shouldChangeSelectedRange(
     const WebRange& fromRange, const WebRange& toRange, WebTextAffinity affinity, bool stillSelecting)
 {
-    if (testRunner()->shouldDumpEditingCallbacks()) {
-        fputs("EDITING DELEGATE: shouldChangeSelectedDOMRange:", stdout);
-        printRangeDescription(fromRange);
-        fputs(" toDOMRange:", stdout);
-        printRangeDescription(toRange);
-        printf(" affinity:%s stillSelecting:%s\n",
-               textAffinityDescription(affinity).c_str(),
-               (stillSelecting ? "TRUE" : "FALSE"));
-    }
     return true;
 }
 
 bool WebViewHost::shouldDeleteRange(const WebRange& range)
 {
-    if (testRunner()->shouldDumpEditingCallbacks()) {
-        fputs("EDITING DELEGATE: shouldDeleteDOMRange:", stdout);
-        printRangeDescription(range);
-        fputs("\n", stdout);
-    }
     return true;
 }
 
 bool WebViewHost::shouldApplyStyle(const WebString& style, const WebRange& range)
 {
-    if (testRunner()->shouldDumpEditingCallbacks()) {
-        printf("EDITING DELEGATE: shouldApplyStyle:%s toElementsInDOMRange:", style.utf8().data());
-        printRangeDescription(range);
-        fputs("\n", stdout);
-    }
     return true;
 }
 
@@ -413,34 +330,6 @@ bool WebViewHost::isSmartInsertDeleteEnabled()
 bool WebViewHost::isSelectTrailingWhitespaceEnabled()
 {
     return m_selectTrailingWhitespaceEnabled;
-}
-
-void WebViewHost::didBeginEditing()
-{
-    if (!testRunner()->shouldDumpEditingCallbacks())
-        return;
-    fputs("EDITING DELEGATE: webViewDidBeginEditing:WebViewDidBeginEditingNotification\n", stdout);
-}
-
-void WebViewHost::didChangeSelection(bool isEmptySelection)
-{
-    if (testRunner()->shouldDumpEditingCallbacks())
-        fputs("EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification\n", stdout);
-    // No need to update clipboard with the selected text in DRT.
-}
-
-void WebViewHost::didChangeContents()
-{
-    if (!testRunner()->shouldDumpEditingCallbacks())
-        return;
-    fputs("EDITING DELEGATE: webViewDidChange:WebViewDidChangeNotification\n", stdout);
-}
-
-void WebViewHost::didEndEditing()
-{
-    if (!testRunner()->shouldDumpEditingCallbacks())
-        return;
-    fputs("EDITING DELEGATE: webViewDidEndEditing:WebViewDidEndEditingNotification\n", stdout);
 }
 
 bool WebViewHost::handleCurrentKeyboardEvent()

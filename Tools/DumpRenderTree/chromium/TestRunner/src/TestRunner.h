@@ -33,6 +33,7 @@
 #define TestRunner_h
 
 #include "CppBoundClass.h"
+#include "WebTestRunner.h"
 #include "platform/WebURL.h"
 
 namespace WebKit {
@@ -43,9 +44,10 @@ namespace WebTestRunner {
 
 class WebTestDelegate;
 
-class TestRunner : public CppBoundClass {
+class TestRunner : public CppBoundClass, public WebTestRunner {
 public:
     TestRunner();
+    virtual ~TestRunner();
 
     // FIXME: once DRTTestRunner is moved entirely to this class, change this
     // method to take a TestDelegate* instead.
@@ -53,6 +55,9 @@ public:
     void setWebView(WebKit::WebView* webView) { m_webView = webView; }
 
     void reset();
+
+    // WebTestRunner implementation.
+    virtual bool shouldDumpEditingCallbacks() const OVERRIDE;
 
 protected:
     // FIXME: make these private once the move from DRTTestRunner to TestRunner
@@ -173,6 +178,14 @@ private:
     void setTouchDragDropEnabled(const CppArgumentList&, CppVariant*);
 
     ///////////////////////////////////////////////////////////////////////////
+    // Methods that modify the state of TestRunner
+
+    // This function sets a flag that tells the test_shell to print a line of
+    // descriptive text for each editing command. It takes no arguments, and
+    // ignores any that may be present.
+    void dumpEditingCallbacks(const CppArgumentList&, CppVariant*);
+
+    ///////////////////////////////////////////////////////////////////////////
     // Properties
     void workerThreadCount(CppVariant*);
 
@@ -203,6 +216,10 @@ private:
 
     // Bound variable to return the name of this platform (chromium).
     CppVariant m_platformName;
+
+    // If true, the test_shell will write a descriptive line for each editing
+    // command.
+    bool m_dumpEditingCallbacks;
 
     WebTestDelegate* m_delegate;
     WebKit::WebView* m_webView;

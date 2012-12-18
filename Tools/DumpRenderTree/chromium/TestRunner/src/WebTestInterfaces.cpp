@@ -55,6 +55,8 @@ public:
     void setDelegate(WebTestDelegate*);
     WebAccessibilityController* accessibilityController() { return &m_accessibilityController; }
     WebEventSender* eventSender() { return &m_eventSender; }
+    WebTestRunner* testRunner() { return m_testRunner; }
+    void setTestRunner(WebTestRunner* testRunner) { m_testRunner = testRunner; }
 
     // TestDelegate implementation.
     virtual void clearContextMenuData();
@@ -74,12 +76,14 @@ private:
     TestInterfaces m_interfaces;
     WebAccessibilityController m_accessibilityController;
     WebEventSender m_eventSender;
+    WebTestRunner* m_testRunner;
     WebTestDelegate* m_delegate;
 };
 
 WebTestInterfaces::Internal::Internal()
     : m_accessibilityController(m_interfaces.accessibilityController())
     , m_eventSender(m_interfaces.eventSender())
+    , m_testRunner(0)
     , m_delegate(0)
 {
 }
@@ -197,6 +201,16 @@ WebAccessibilityController* WebTestInterfaces::accessibilityController()
 WebEventSender* WebTestInterfaces::eventSender()
 {
     return m_internal->eventSender();
+}
+
+WebTestRunner* WebTestInterfaces::testRunner()
+{
+    return m_internal->testRunner();
+}
+
+void WebTestInterfaces::setTestRunner(WebTestRunner* testRunner)
+{
+    m_internal->setTestRunner(testRunner);
 }
 
 }

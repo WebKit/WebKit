@@ -163,6 +163,7 @@ void TestShell::initialize()
     m_webPermissions = adoptPtr(new WebPermissions(this));
     m_testInterfaces = adoptPtr(new WebTestInterfaces());
     m_testRunner = adoptPtr(new DRTTestRunner(this));
+    m_testInterfaces->setTestRunner(m_testRunner.get());
 #if ENABLE(NOTIFICATIONS) || ENABLE(LEGACY_NOTIFICATIONS)
     m_notificationPresenter = adoptPtr(new NotificationPresenter(this));
 #endif
@@ -751,7 +752,7 @@ WebViewHost* TestShell::createNewWindow(const WebKit::WebURL& url)
 
 WebViewHost* TestShell::createNewWindow(const WebKit::WebURL& url, DRTDevToolsAgent* devToolsAgent)
 {
-    WebTestRunner::WebTestProxy<WebViewHost, TestShell*>* host = new WebTestRunner::WebTestProxy<WebViewHost, TestShell*>(this);
+    WebTestProxy<WebViewHost, TestShell*>* host = new WebTestProxy<WebViewHost, TestShell*>(this);
     host->setInterfaces(m_testInterfaces.get());
     if (m_webViewHost)
         host->setDelegate(m_webViewHost.get());

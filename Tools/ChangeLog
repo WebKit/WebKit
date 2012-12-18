@@ -1,3 +1,92 @@
+2012-12-18  Jochen Eisinger  <jochen@chromium.org>
+
+        [chromium] move editing callback dumping to the WebTestProxy
+        https://bugs.webkit.org/show_bug.cgi?id=105013
+
+        Reviewed by Darin Fisher.
+
+        To decide whether or not to dump the editing callbacks, the WebTestProxy
+        needs to query the TestRunner. For this purpose, I introduce a
+        WebTestRunner class that just exposes the shouldDumpEditingCallbacks
+        method. In contrast to e.g. WebEventSender, the WebTestRunner is just
+        an interface, and it is not owned by the WebTestInterfaces, but the
+        embedder of the TestRunner library must provide it. This will change
+        once all TestRunner methods are in the library.
+
+        * DumpRenderTree/DumpRenderTree.gypi:
+        * DumpRenderTree/chromium/DRTTestRunner.cpp:
+        (DRTTestRunner::DRTTestRunner):
+        (DRTTestRunner::reset):
+        * DumpRenderTree/chromium/DRTTestRunner.h:
+        (DRTTestRunner):
+        (DRTTestRunner::taskList):
+        (DRTTestRunner::WorkQueue::taskList):
+        * DumpRenderTree/chromium/TestRunner/public/WebTestInterfaces.h:
+        (WebTestRunner):
+        (WebTestInterfaces):
+        * DumpRenderTree/chromium/TestRunner/public/WebTestProxy.h:
+        (WebKit):
+        (WebTestRunner):
+        (WebTestProxyBase):
+        (WebTestRunner::WebTestProxy::shouldBeginEditing):
+        (WebTestRunner::WebTestProxy::shouldEndEditing):
+        (WebTestRunner::WebTestProxy::shouldInsertNode):
+        (WebTestRunner::WebTestProxy::shouldInsertText):
+        (WebTestRunner::WebTestProxy::shouldChangeSelectedRange):
+        (WebTestRunner::WebTestProxy::shouldDeleteRange):
+        (WebTestRunner::WebTestProxy::shouldApplyStyle):
+        (WebTestRunner::WebTestProxy::didBeginEditing):
+        (WebTestRunner::WebTestProxy::didChangeSelection):
+        (WebTestRunner::WebTestProxy::didChangeContents):
+        (WebTestRunner::WebTestProxy::didEndEditing):
+        * DumpRenderTree/chromium/TestRunner/public/WebTestRunner.h: Copied from Tools/DumpRenderTree/chromium/TestRunner/public/WebTestInterfaces.h.
+        (WebTestRunner):
+        (WebTestRunner::WebTestRunner::shouldDumpEditingCallbacks):
+        * DumpRenderTree/chromium/TestRunner/src/TestRunner.cpp:
+        (WebTestRunner::TestRunner::TestRunner):
+        (WebTestRunner::TestRunner::~TestRunner):
+        (WebTestRunner):
+        (WebTestRunner::TestRunner::reset):
+        (WebTestRunner::TestRunner::shouldDumpEditingCallbacks):
+        (WebTestRunner::TestRunner::dumpEditingCallbacks):
+        * DumpRenderTree/chromium/TestRunner/src/TestRunner.h:
+        (TestRunner):
+        * DumpRenderTree/chromium/TestRunner/src/WebTestInterfaces.cpp:
+        (WebTestRunner::WebTestInterfaces::Internal::testRunner):
+        (WebTestRunner::WebTestInterfaces::Internal::setTestRunner):
+        (WebTestInterfaces::Internal):
+        (WebTestRunner::WebTestInterfaces::Internal::Internal):
+        (WebTestRunner::WebTestInterfaces::testRunner):
+        (WebTestRunner):
+        (WebTestRunner::WebTestInterfaces::setTestRunner):
+        * DumpRenderTree/chromium/TestRunner/src/WebTestProxy.cpp:
+        (WebTestRunner::WebTestProxyBase::postAccessibilityNotification):
+        (WebTestRunner):
+        (WebTestRunner::WebTestProxyBase::shouldBeginEditing):
+        (WebTestRunner::WebTestProxyBase::shouldEndEditing):
+        (WebTestRunner::WebTestProxyBase::shouldInsertNode):
+        (WebTestRunner::WebTestProxyBase::shouldInsertText):
+        (WebTestRunner::WebTestProxyBase::shouldChangeSelectedRange):
+        (WebTestRunner::WebTestProxyBase::shouldDeleteRange):
+        (WebTestRunner::WebTestProxyBase::shouldApplyStyle):
+        (WebTestRunner::WebTestProxyBase::didBeginEditing):
+        (WebTestRunner::WebTestProxyBase::didChangeSelection):
+        (WebTestRunner::WebTestProxyBase::didChangeContents):
+        (WebTestRunner::WebTestProxyBase::didEndEditing):
+        * DumpRenderTree/chromium/TestShell.cpp:
+        (TestShell::initialize):
+        (TestShell::createNewWindow):
+        * DumpRenderTree/chromium/WebViewHost.cpp:
+        (WebViewHost::shouldBeginEditing):
+        (WebViewHost::shouldEndEditing):
+        (WebViewHost::shouldInsertNode):
+        (WebViewHost::shouldInsertText):
+        (WebViewHost::shouldChangeSelectedRange):
+        (WebViewHost::shouldDeleteRange):
+        (WebViewHost::shouldApplyStyle):
+        * DumpRenderTree/chromium/WebViewHost.h:
+        (WebViewHost):
+
 2012-12-17  Jochen Eisinger  <jochen@chromium.org>
 
         [chromium] Fix methods in TestRunner that directly modify the settings instead of going through WebPreferences

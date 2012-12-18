@@ -178,10 +178,6 @@ class WebViewHost : public WebKit::WebViewClient, public WebKit::WebFrameClient,
     virtual bool shouldApplyStyle(const WebKit::WebString& style, const WebKit::WebRange&);
     virtual bool isSmartInsertDeleteEnabled();
     virtual bool isSelectTrailingWhitespaceEnabled();
-    virtual void didBeginEditing();
-    virtual void didChangeSelection(bool isSelectionEmpty);
-    virtual void didChangeContents();
-    virtual void didEndEditing();
     virtual bool handleCurrentKeyboardEvent();
     virtual void runModalAlertDialog(WebKit::WebFrame*, const WebKit::WebString&);
     virtual bool runModalConfirmDialog(WebKit::WebFrame*, const WebKit::WebString&);

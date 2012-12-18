@@ -65,6 +65,8 @@ class TestShell;
 
 using WebTestRunner::CppArgumentList;
 using WebTestRunner::CppVariant;
+using WebTestRunner::WebMethodTask;
+using WebTestRunner::WebTaskList;
 
 class DRTTestRunner : public WebTestRunner::TestRunner {
 public:
@@ -72,17 +74,12 @@ public:
     // object.
     DRTTestRunner(TestShell*);
 
-    ~DRTTestRunner();
+    virtual ~DRTTestRunner();
 
     // This function sets a flag that tells the test_shell to dump pages as
     // plain text, rather than as a text representation of the renderer's state.
     // It takes an optional argument, whether to dump pixels results or not.
     void dumpAsText(const CppArgumentList&, CppVariant*);
-
-    // This function sets a flag that tells the test_shell to print a line of
-    // descriptive text for each editing command. It takes no arguments, and
-    // ignores any that may be present.
-    void dumpEditingCallbacks(const CppArgumentList&, CppVariant*);
 
     // This function sets a flag that tells the test_shell to print a line of
     // descriptive text for each frame load callback. It takes no arguments, and
@@ -295,7 +292,6 @@ public:
     void setShouldDumpAsAudio(bool dumpAsAudio) { m_dumpAsAudio = dumpAsAudio; } 
     bool shouldDumpAsText() { return m_dumpAsText; }
     void setShouldDumpAsText(bool value) { m_dumpAsText = value; }
-    bool shouldDumpEditingCallbacks() { return m_dumpEditingCallbacks; }
     bool shouldDumpFrameLoadCallbacks() { return m_dumpFrameLoadCallbacks; }
     void setShouldDumpFrameLoadCallbacks(bool value) { m_dumpFrameLoadCallbacks = value; }
     bool shouldDumpProgressFinishedCallback() { return m_dumpProgressFinishedCallback; }
@@ -357,7 +353,7 @@ public:
         virtual bool run(TestShell*) = 0;
     };
 
-    WebTestRunner::WebTaskList* taskList() { return &m_taskList; }
+    WebTaskList* taskList() { return &m_taskList; }
 
     bool shouldStayOnPageAfterHandlingBeforeUnload() const { return m_shouldStayOnPageAfterHandlingBeforeUnload; }
 
@@ -380,30 +376,30 @@ private:
 
         void setFrozen(bool frozen) { m_frozen = frozen; }
         bool isEmpty() { return m_queue.isEmpty(); }
-        WebTestRunner::WebTaskList* taskList() { return &m_taskList; }
+        WebTaskList* taskList() { return &m_taskList; }
 
     private:
         void processWork();
-        class WorkQueueTask: public WebTestRunner::WebMethodTask<WorkQueue> {
+        class WorkQueueTask: public WebMethodTask<WorkQueue> {
         public:
-            WorkQueueTask(WorkQueue* object): WebTestRunner::WebMethodTask<WorkQueue>(object) { }
+            WorkQueueTask(WorkQueue* object): WebMethodTask<WorkQueue>(object) { }
             virtual void runIfValid() { m_object->processWork(); }
         };
 
-        WebTestRunner::WebTaskList m_taskList;
+        WebTaskList m_taskList;
         Deque<WorkItem*> m_queue;
         bool m_frozen;
         DRTTestRunner* m_controller;
     };
     void completeNotifyDone(bool isTimeout);
-    class NotifyDoneTimedOutTask: public WebTestRunner::WebMethodTask<DRTTestRunner> {
+    class NotifyDoneTimedOutTask: public WebMethodTask<DRTTestRunner> {
     public:
-        NotifyDoneTimedOutTask(DRTTestRunner* object): WebTestRunner::WebMethodTask<DRTTestRunner>(object) { }
+        NotifyDoneTimedOutTask(DRTTestRunner* object): WebMethodTask<DRTTestRunner>(object) { }
         virtual void runIfValid() { m_object->completeNotifyDone(true); }
     };
 
     // Used for test timeouts.
-    WebTestRunner::WebTaskList m_taskList;
+    WebTaskList m_taskList;
 
     // Non-owning pointer. The DRTTestRunner is owned by the host.
     TestShell* m_shell;
@@ -414,10 +410,6 @@ private:
 
     // If true, the test_shell will output a base64 encoded WAVE file.
     bool m_dumpAsAudio;
-
-    // If true, the test_shell will write a descriptive line for each editing
-    // command.
-    bool m_dumpEditingCallbacks;
 
     // If true, the test_shell will draw the bounds of the current selection rect
     // taking possible transforms of the selection rect into account.
