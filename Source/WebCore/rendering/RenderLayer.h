@@ -673,6 +673,7 @@ public:
     bool isComposited() const { return false; }
     bool hasCompositedMask() const { return false; }
     bool usesCompositedScrolling() const { return false; }
+    bool needsCompositedScrolling() const { return false; }
 #endif
 
     bool paintsWithTransparency(PaintBehavior paintBehavior) const
@@ -956,10 +957,10 @@ private:
     void setIndirectCompositingReason(IndirectCompositingReason reason) { m_indirectCompositingReason = reason; }
     IndirectCompositingReason indirectCompositingReason() const { return static_cast<IndirectCompositingReason>(m_indirectCompositingReason); }
     bool mustCompositeForIndirectReasons() const { return m_indirectCompositingReason; }
+#endif
 
     // Returns true if z ordering would not change if this layer were to establish a stacking context.
     bool canSafelyEstablishAStackingContext() const;
-#endif
 
     friend class RenderLayerBacking;
     friend class RenderLayerCompositor;
