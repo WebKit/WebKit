@@ -1,3 +1,24 @@
+2012-12-18  Dominic Mazzoni  <dmazzoni@google.com>
+
+        AX: support clickPoint in DRT for chromium
+        https://bugs.webkit.org/show_bug.cgi?id=97359
+
+        Reviewed by Chris Fleizach.
+
+        Enable four more tests now that clickPointX, clickPointY,
+        and elementAtPoint are implemented for Chromium.
+
+        Minor fixes to two tests to make them more robust
+        across platfoms and when run in parallel.
+
+        * accessibility/svg-bounds.html: Updated
+        * accessibility/svg-bounds-expected.txt: Added (made cross-platform
+        * accessibility/svg-remote-element.html: Updated
+        * accessibility/svg-remote-element-expected.txt: Added (made cross-platform)
+        * platform/mac/accessibility/svg-bounds-expected.txt: Deleted
+        * platform/mac/accessibility/svg-remote-element-expected.txt: Deleted
+        * platform/chromium/TestExpectations: Updated
+
 2012-12-18  Adam Klein  <adamk@chromium.org>
 
         [HTMLTemplateElement] Prevent first-level recursive <template> from resetting the implied context
