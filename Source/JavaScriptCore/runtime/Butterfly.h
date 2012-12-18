@@ -110,7 +110,9 @@ public:
 
     void* base(size_t preCapacity, size_t propertyCapacity) { return propertyStorage() - propertyCapacity - preCapacity; }
     void* base(Structure*);
-    
+
+    static Butterfly* createOrGrowArrayRight(Butterfly*, JSGlobalData&, Structure* oldStructure, size_t propertyCapacity, bool hadIndexingHeader, size_t oldIndexingPayloadSizeInBytes, size_t newIndexingPayloadSizeInBytes); 
+
     // The butterfly reallocation methods perform the reallocation itself but do not change any
     // of the meta-data to reflect that the reallocation occurred. Note that this set of
     // methods is not exhaustive and is not intended to encapsulate all possible allocation

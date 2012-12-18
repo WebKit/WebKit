@@ -99,6 +99,13 @@ inline Butterfly* Butterfly::growPropertyStorage(JSGlobalData& globalData, Struc
         globalData, oldStructure, oldStructure->outOfLineCapacity(), newPropertyCapacity);
 }
 
+inline Butterfly* Butterfly::createOrGrowArrayRight(Butterfly* oldButterfly, JSGlobalData& globalData, Structure* oldStructure, size_t propertyCapacity, bool hadIndexingHeader, size_t oldIndexingPayloadSizeInBytes, size_t newIndexingPayloadSizeInBytes)
+{
+    if (!oldButterfly)
+        return create(globalData, 0, propertyCapacity, true, IndexingHeader(), newIndexingPayloadSizeInBytes);
+    return oldButterfly->growArrayRight(globalData, oldStructure, propertyCapacity, hadIndexingHeader, oldIndexingPayloadSizeInBytes, newIndexingPayloadSizeInBytes);
+}
+
 inline Butterfly* Butterfly::growArrayRight(JSGlobalData& globalData, Structure* oldStructure, size_t propertyCapacity, bool hadIndexingHeader, size_t oldIndexingPayloadSizeInBytes, size_t newIndexingPayloadSizeInBytes)
 {
     ASSERT_UNUSED(oldStructure, !indexingHeader()->preCapacity(oldStructure));
