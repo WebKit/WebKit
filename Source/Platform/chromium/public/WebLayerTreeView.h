@@ -189,7 +189,7 @@ public:
     virtual void setShowPaintRects(bool) { }
 
     // Simulates a lost context. For testing only.
-    virtual void loseCompositorContext(int numTimes) = 0;
+    virtual void loseCompositorContext(int numTimes) { }
 };
 
 } // namespace WebKit
