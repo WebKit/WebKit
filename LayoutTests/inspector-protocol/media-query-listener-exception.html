@@ -1,0 +1,36 @@
+<html>
+<head>
+<script type="text/javascript" src="../http/tests/inspector-protocol/resources/protocol-test.js"></script>
+<script>
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+}
+
+var theMediaQueryList = window.matchMedia("print");
+
+theMediaQueryList.addListener(function(aMediaQueryList) {
+    objectThatDoesNotExist.produceError();
+});
+
+function test()
+{
+    function didSetEmulatedMedia(messageObject)
+    {
+        if (messageObject.error)
+            InspectorTest.log("FAILED: " + messageObject.error.message);
+        InspectorTest.sendCommand("Page.disable", {});
+        InspectorTest.completeTest();
+    }
+
+    InspectorTest.sendCommand("Page.enable", {});
+    InspectorTest.sendCommand("Page.setEmulatedMedia", {
+        "media": "print"
+    }, didSetEmulatedMedia);
+}
+</script>
+</head>
+<body onload="runTest()">
+<p>Test that uncaught exception in MediaQueryListListener will be reported to the console. On success you should see two exceptions in the listener logged to the console (first time when the media type is overridden and second - when they are restored). <a href="https://bugs.webkit.org/show_bug.cgi?id=105162">Bug 105162.</p>
+</body>
+</html>

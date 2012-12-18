@@ -77,7 +77,6 @@ namespace WebCore {
         ScriptCallback(ScriptState*, const ScriptValue&);
 
         ScriptValue call();
-        ScriptValue call(bool& hadException);
 
     private:
         ScriptValue m_function;

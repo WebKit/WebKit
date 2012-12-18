@@ -198,12 +198,6 @@ ScriptCallback::ScriptCallback(ScriptState* state, const ScriptValue& function)
 
 ScriptValue ScriptCallback::call()
 {
-    bool hadException;
-    return call(hadException);
-}
-
-ScriptValue ScriptCallback::call(bool& hadException)
-{
     JSLockHolder lock(m_exec);
 
     CallData callData;
@@ -212,7 +206,7 @@ ScriptValue ScriptCallback::call(bool& hadException)
         return ScriptValue();
 
     JSValue result = JSC::call(m_exec, m_function.jsValue(), callType, callData, m_function.jsValue(), m_arguments);
-    hadException = m_exec->hadException();
+    bool hadException = m_exec->hadException();
 
     if (hadException) {
         reportException(m_exec, m_exec->exception());

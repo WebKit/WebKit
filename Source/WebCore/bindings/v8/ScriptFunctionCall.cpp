@@ -185,16 +185,11 @@ ScriptCallback::ScriptCallback(ScriptState* state, const ScriptValue& function)
 
 ScriptValue ScriptCallback::call()
 {
-    bool hadException = false;
-    return call(hadException);
-}
-
-ScriptValue ScriptCallback::call(bool& hadException)
-{
     ASSERT(v8::Context::InContext());
     ASSERT(m_function.v8Value()->IsFunction());
 
     v8::TryCatch exceptionCatcher;
+    exceptionCatcher.SetVerbose(true);
     v8::Handle<v8::Object> object = v8::Context::GetCurrent()->Global();
     v8::Handle<v8::Function> function = v8::Handle<v8::Function>::Cast(m_function.v8Value());
 
@@ -203,13 +198,6 @@ ScriptValue ScriptCallback::call(bool& hadException)
         args[i] = m_arguments[i].v8Value();
 
     v8::Handle<v8::Value> result = ScriptController::callFunctionWithInstrumentation(0, function, object, m_arguments.size(), args.get());
-
-    if (exceptionCatcher.HasCaught()) {
-        hadException = true;
-        m_scriptState->setException(exceptionCatcher.Exception());
-        return ScriptValue();
-    }
-
     return ScriptValue(result);
 }
 

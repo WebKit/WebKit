@@ -63,6 +63,10 @@ function closeTest()
 
 function runTest()
 {
+    if (!window.testRunner) {
+        console.error("This test requires DumpRenderTree");
+        return;
+    }
     testRunner.dumpAsText();
     testRunner.waitUntilDone();
     testRunner.setCanOpenWindows(true);
