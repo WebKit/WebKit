@@ -1,3 +1,44 @@
+2012-12-18  David Grogan  <dgrogan@chromium.org>
+
+        IndexedDB: Split BackingStore histogram
+        https://bugs.webkit.org/show_bug.cgi?id=105222
+
+        Reviewed by Tony Chang.
+
+        Add separate histograms for Consistency, Write, and Read errors.
+        Recategorize some read errors as consistency errors.
+
+        Tested the preprocessor logic by manually making some functions fail
+        and printing the histogram string from chromium code.
+
+        Next up is logging successes to get an idea of which functions have
+        the highest failure _rate_.
+
+        * Modules/indexeddb/IDBBackingStore.cpp:
+        (WebCore::recordInternalError):
+        (WebCore):
+        (WebCore::setUpMetadata):
+        (WebCore::IDBBackingStore::getIDBDatabaseMetaData):
+        (WebCore::getNewDatabaseId):
+        (WebCore::IDBBackingStore::createIDBDatabaseMetaData):
+        (WebCore::IDBBackingStore::getObjectStores):
+        (WebCore::setMaxObjectStoreId):
+        (WebCore::IDBBackingStore::deleteObjectStore):
+        (WebCore::IDBBackingStore::getRecord):
+        (WebCore::getNewVersionNumber):
+        (WebCore::IDBBackingStore::getKeyGeneratorCurrentNumber):
+        (WebCore::IDBBackingStore::keyExistsInObjectStore):
+        (WebCore::IDBBackingStore::getIndexes):
+        (WebCore::setMaxIndexId):
+        (WebCore::versionExists):
+        (WebCore::IDBBackingStore::findKeyInIndex):
+        (WebCore::IDBBackingStore::getPrimaryKeyViaIndex):
+        (WebCore::IDBBackingStore::keyExistsInIndex):
+        (WebCore::ObjectStoreKeyCursorImpl::loadCurrentRow):
+        (WebCore::ObjectStoreCursorImpl::loadCurrentRow):
+        (WebCore::IndexKeyCursorImpl::loadCurrentRow):
+        (WebCore::IndexCursorImpl::loadCurrentRow):
+
 2012-12-18  Dean Jackson  <dino@apple.com>
 
         Track menu needs localization
