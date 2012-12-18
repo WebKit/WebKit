@@ -54,7 +54,7 @@ namespace JSC { namespace DFG {
                                 
 #define NodeBackPropMask         0x7C00
 #define NodeUseBottom            0x0000
-#define NodeUsedAsNumber          0x400 // The result of this computation may be used in a context that observes fractional results.
+#define NodeUsedAsNumber          0x400 // The result of this computation may be used in a context that observes fractional, or bigger-than-int32, results.
 #define NodeNeedsNegZero          0x800 // The result of this computation may be used in a context that observes -0.
 #define NodeUsedAsOther          0x1000 // The result of this computation may be used in a context that distinguishes between NaN and other things (like undefined).
 #define NodeUsedAsValue          (NodeUsedAsNumber | NodeNeedsNegZero | NodeUsedAsOther)

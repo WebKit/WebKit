@@ -211,7 +211,13 @@ private:
         case SetLocal: {
             VariableAccessData* variableAccessData = node.variableAccessData();
             changed |= variableAccessData->predict(m_graph[node.child1()].prediction());
-            changed |= m_graph[node.child1()].mergeFlags(variableAccessData->flags());
+
+            // Assume conservatively that a SetLocal implies that the value may flow through a loop,
+            // and so we would have overflow leading to the program "observing" numbers even if all
+            // users of the value are doing toInt32. It might be worthwhile to revisit this at some
+            // point and actually check if the data flow involves loops, but right now I don't think
+            // we have evidence that this would be beneficial for benchmarks.
+            changed |= m_graph[node.child1()].mergeFlags(variableAccessData->flags() | NodeUsedAsNumber);
             break;
         }
             

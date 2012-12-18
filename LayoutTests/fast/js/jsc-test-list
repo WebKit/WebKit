@@ -133,6 +133,7 @@ fast/js/dfg-inline-new-array-buffer
 fast/js/dfg-inline-unused-this-method-check
 fast/js/dfg-inline-unused-this
 fast/js/dfg-inlining-reg-alloc
+fast/js/dfg-int-overflow-in-loop
 fast/js/dfg-int16array
 fast/js/dfg-int32-to-double-on-known-number
 fast/js/dfg-int32array-overflow-values
