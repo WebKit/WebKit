@@ -1,3 +1,14 @@
+2012-12-18  Nico Weber  <thakis@chromium.org>
+
+        Fix broken loop in style guide
+        https://bugs.webkit.org/show_bug.cgi?id=105346
+
+        Reviewed by Ryosuke Niwa.
+
+        Found by Sean Silva <silvas@purdue.edu>
+
+        * coding/coding-style.html:
+
 2012-12-11  Ryosuke Niwa  <rniwa@webkit.org>
 
         Add instructions on how to build WebKit on Xcode 4 to build.html
