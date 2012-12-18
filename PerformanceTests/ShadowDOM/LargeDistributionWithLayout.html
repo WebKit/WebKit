@@ -23,14 +23,15 @@ function setup()
         host.appendChild(div);
     }
 
-    var content = document.createElement('content');
-    var shadowRoot = new WebKitShadowRoot(host);
+    window.content = document.createElement('content');
+    var shadowRoot = host.webkitCreateShadowRoot();
     shadowRoot.appendChild(content);
 }
 
 function run()
 {
     var host = document.getElementById('host');
+    var content = window.content;
     var nLoops = window.nLoops;
 
     var div = document.createElement('div');
@@ -46,10 +47,9 @@ function done()
     wrapper.innerHTML = '';
 }
 
-
 setup();
 
-PerfTestRunner.measureTime({
+PerfTestRunner.measureRunsPerSecond({
     description: "Measure Distribution and Layout time (with a lot of host children)",
     run: run,
     done: done

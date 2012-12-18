@@ -1,3 +1,17 @@
+2012-12-17  Shinya Kawanaka  <shinyak@chromium.org>
+
+        [Shadow] LargeDistributionWithLayout.html should be updated
+        https://bugs.webkit.org/show_bug.cgi?id=105242
+
+        Reviewed by Ryosuke Niwa.
+
+        Since this test was written when distribution took O(N^2). However, now it's almost O(N), so this test finishes
+        in very short time. We should convert it unit to runs/s.
+
+        This test contains a some error to cause test failure, e.g. using obsolete API, so they also should be fixed.
+
+        * ShadowDOM/LargeDistributionWithLayout.html:
+
 2012-12-13  Ryosuke Niwa  <rniwa@webkit.org>
 
         [chromium perf] DOM/DOMWalk.html failures
