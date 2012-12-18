@@ -2476,6 +2476,7 @@ fast/js/kde/Array.html
 
 # No support for exposing in-band text tracks
 webkit.org/b/103770 media/track/track-in-band.html [ Skip ]
+webkit.org/b/103770 media/track/track-in-band-cues-added-once.html [ Skip ]
 
 # https://bugs.webkit.org/show_bug.cgi?id=97026
 fast/events/keydown-leftright-keys.html

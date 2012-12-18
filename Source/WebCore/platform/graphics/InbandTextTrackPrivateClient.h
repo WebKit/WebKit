@@ -39,6 +39,7 @@ public:
     virtual ~InbandTextTrackPrivateClient() { }
     
     virtual void addCue(InbandTextTrackPrivate*, double /*start*/, double /*end*/, const String& /*id*/, const String& /*content*/, const String& /*settings*/) = 0;
+    virtual bool hasCue(InbandTextTrackPrivate*, double /*start*/, double /*end*/, const String& /*id*/, const String& /*content*/, const String& /*settings*/) = 0;
 };
 
 } // namespace WebCore

@@ -835,6 +835,7 @@ TextTrackCue::CueSetting TextTrackCue::settingName(const String& name)
 
 void TextTrackCue::setCueSettings(const String& input)
 {
+    m_settings = input;
     unsigned position = 0;
 
     while (position < input.length()) {

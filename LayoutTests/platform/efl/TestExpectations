@@ -1653,6 +1653,7 @@ Bug(EFL) editing/spelling/context-menu-suggestions.html [ Failure ]
 
 # No support for exposing in-band text tracks
 Bug(EFL) media/track/track-in-band.html [ Skip ]
+Bug(EFL) media/track/track-in-band-cues-added-once.html [ Skip ]
 
 # Newly added test in r136225 fails on GTK bot too.
 webkit.org/b/103740 editing/selection/caret-alignment-for-vertical-text.html [ Failure ]

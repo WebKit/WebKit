@@ -119,6 +119,7 @@ public:
     const String& text() const { return m_content; }
     void setText(const String&);
 
+    const String& cueSettings() const { return m_settings; }
     void setCueSettings(const String&);
 
     int cueIndex();
@@ -185,6 +186,7 @@ private:
     double m_startTime;
     double m_endTime;
     String m_content;
+    String m_settings;
     int m_linePosition;
     int m_computedLinePosition;
     int m_textPosition;

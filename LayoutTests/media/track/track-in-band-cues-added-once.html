@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+
+        <script src=../media-file.js></script>
+        <script src=../video-test.js></script>
+        <script>
+
+            var addtrackEventCount = 0;
+            var seekedCount = 0;
+            var cuesStarts = [];
+
+            function trackAdded(event)
+            {
+                consoleWrite("EVENT(" + event.type + ")");
+                compareTracks("event.track", "video.textTracks[" + addtrackEventCount + "]");
+                ++addtrackEventCount;
+                consoleWrite("");
+            }
+
+            function compareTracks(track1, track2)
+            {
+                var equal = (eval(track1) == eval(track2));
+                reportExpected(equal, track1, "==", track2, track1);
+            }
+
+            function pollProgress()
+            {
+                if (video.currentTime < 2)
+                    return;
+
+                testExpected("inbandTrack1.cues.length", 0, ">");
+
+                if (!seekedCount) {
+                    // Collect the start times of all cues, seek back to the beginning and play
+                    // the same segment of the video file.
+                    run("video.pause()");
+                    for (var i = 0; i < inbandTrack1.cues.length; ++i)
+                        cuesStarts.push(inbandTrack1.cues[i].startTime);
+                    run("video.currentTime = 0");
+                    run("video.play()");
+                    consoleWrite("");
+                    return;
+                }
+
+                run("video.pause()");
+                for (var i = 0; i < cuesStarts.length; ++i) {
+                    if (cuesStarts[i] != inbandTrack1.cues[i].startTime)
+                        logResult(false, "Found unexpected cue starting at " + inbandTrack1.cues[i].startTime);
+                }
+                endTest();
+            }
+
+            function canplaythrough()
+            {
+                video.textTracks.removeEventListener("addtrack", trackAdded, false);
+
+                consoleWrite("<br><i>** Check initial in-band track states<" + "/i>");
+                testExpected("video.textTracks.length", 1);
+                run("inbandTrack1 = video.textTracks[0]");
+                testExpected("inbandTrack1.mode", "disabled");
+                testExpected("inbandTrack1.cues", null);
+                testExpected("inbandTrack1.language", "en");
+                testExpected("inbandTrack1.kind", "captions");
+
+
+                consoleWrite("");
+
+                waitForEvent('seeked', function() { ++seekedCount; });
+                setInterval(pollProgress, 100);
+                run("inbandTrack1.mode = 'showing'");
+                run("video.play()");
+            }
+
+            function setup()
+            {
+                findMediaElement();
+                video.textTracks.addEventListener("addtrack", trackAdded);
+                video.src = '../content/counting-captioned.mov';
+                waitForEvent('canplaythrough', canplaythrough);
+            }
+
+        </script>
+    </head>
+    <body onload="setup()">
+        <video controls></video>
+        <p>In-band text tracks.</p>
+    </body>
+</html>

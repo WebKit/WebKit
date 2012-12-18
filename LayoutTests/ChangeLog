@@ -1,3 +1,21 @@
+2012-12-18  Eric Carlson  <eric.carlson@apple.com>
+
+        Add in-band text track cues only once
+        https://bugs.webkit.org/show_bug.cgi?id=104593
+
+        Reviewed by Dean Jackson.
+
+        Test to ensure that in-band text track cues are not added to the the cue list more than once.
+
+        * media/track/track-in-band-cues-added-once-expected.txt: Added.
+        * media/track/track-in-band-cues-added-once.html: Added.
+        * platform/chromium/TestExpectations:
+        * platform/efl/TestExpectations:
+        * platform/gtk/TestExpectations:
+        * platform/mac/TestExpectations:
+        * platform/qt/TestExpectations:
+        * platform/win/TestExpectations:
+
 2012-12-18  Thiago Marcos P. Santos  <thiago.santos@intel.com>
 
         [WK2] Unreviewed gardening.

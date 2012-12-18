@@ -222,6 +222,9 @@ void InbandTextTrackPrivateAVF::processCueAttributes(CFAttributedStringRef attri
 
 void InbandTextTrackPrivateAVF::processCue(CFArrayRef attributedStrings, double time)
 {
+    if (!m_player)
+        return;
+    
     if (m_havePartialCue) {
         // Cues do not have an explicit duration, they are displayed until the next "cue" (which might be empty) is emitted.
         m_currentCueEndTime = time;
@@ -268,6 +271,9 @@ void InbandTextTrackPrivateAVF::resetCueValues()
 
 void InbandTextTrackPrivateAVF::setMode(InbandTextTrackPrivate::Mode newMode)
 {
+    if (!m_player)
+        return;
+
     InbandTextTrackPrivate::Mode oldMode = mode();
     InbandTextTrackPrivate::setMode(newMode);
 

@@ -1197,8 +1197,12 @@ MediaPlayer::MediaKeyException MediaPlayerPrivateAVFoundationObjC::cancelKeyRequ
 
 void MediaPlayerPrivateAVFoundationObjC::clearTextTracks()
 {
-    for (unsigned i = 0; i < m_textTracks.size(); ++i)
-        player()->removeTextTrack(m_textTracks[i].get());
+    for (unsigned i = 0; i < m_textTracks.size(); ++i) {
+        RefPtr<InbandTextTrackPrivateAVF> track = m_textTracks[i];
+        player()->removeTextTrack(track);
+        track->disconnect();
+    }
+    m_textTracks.clear();
 }
 
 void MediaPlayerPrivateAVFoundationObjC::processTextTracks()

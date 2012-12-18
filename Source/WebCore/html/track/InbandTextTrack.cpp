@@ -115,7 +115,59 @@ void InbandTextTrack::addCue(InbandTextTrackPrivate* trackPrivate, double start,
     if (client())
         client()->textTrackAddCues(this, m_cues.get());
 }
+
+bool InbandTextTrack::hasCue(InbandTextTrackPrivate*, double startTime, double endTime, const String& id, const String& content, const String& settings)
+{
+
+    if (startTime < 0 || endTime < 0)
+        return false;
+
+    if (!cues()->length())
+        return false;
+
+    size_t searchStart = 0;
+    size_t searchEnd = cues()->length();
+
+    while (1) {
+        ASSERT(searchStart <= cues()->length());
+        ASSERT(searchEnd <= cues()->length());
+        
+        TextTrackCue* cue;
+        
+        // Cues in the TextTrackCueList are maintained in start time order.
+        if (searchStart == searchEnd) {
+            if (!searchStart)
+                return false;
+            
+            cue = cues()->item(searchStart - 1);
+            if (!cue)
+                return false;
+            if (cue->startTime() != startTime)
+                return false;
+            if (cue->endTime() != endTime)
+                return false;
+            if (cue->text() != content)
+                return false;
+            if (cue->cueSettings() != settings)
+                return false;
+            if (cue->id() != id)
+                return false;
+            
+            return true;
+        }
+        
+        size_t index = (searchStart + searchEnd) / 2;
+        cue = cues()->item(index);
+        if (startTime < cue->startTime() || (startTime == cue->startTime() && endTime > cue->endTime()))
+            searchEnd = index;
+        else
+            searchStart = index + 1;
+    }
     
+    ASSERT_NOT_REACHED();
+    return false;
+}
+
 } // namespace WebCore
 
 #endif

@@ -52,6 +52,7 @@ private:
     InbandTextTrack(ScriptExecutionContext*, TextTrackClient*, PassRefPtr<InbandTextTrackPrivate>);
 
     virtual void addCue(InbandTextTrackPrivate*, double, double, const String&, const String&, const String&) OVERRIDE;
+    virtual bool hasCue(InbandTextTrackPrivate*, double, double, const String&, const String&, const String&) OVERRIDE;
 
     RefPtr<InbandTextTrackPrivate> m_private;
 };
