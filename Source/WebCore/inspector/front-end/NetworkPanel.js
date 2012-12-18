@@ -48,7 +48,6 @@ WebInspector.NetworkLogView = function()
     WebInspector.View.call(this);
     this.registerRequiredCSS("networkLogView.css");
 
-    this._allowRequestSelection = false;
     this._requests = [];
     this._requestsById = {};
     this._requestsByURL = {};
@@ -1489,7 +1488,6 @@ WebInspector.NetworkPanel.prototype = {
 
         this._networkLogView.switchToDetailedView();
         this._networkLogView.allowPopover = true;
-        this._networkLogView._allowRequestSelection = false;
     },
 
     _toggleViewingRequestMode: function()
@@ -1501,7 +1499,6 @@ WebInspector.NetworkPanel.prototype = {
         this.element.addStyleClass("viewing-resource");
         this.splitView.showMainElement();
         this._networkLogView.allowPopover = false;
-        this._networkLogView._allowRequestSelection = true;
         this._networkLogView.switchToBriefView();
     },
 
@@ -1846,8 +1843,9 @@ WebInspector.NetworkDataGridNode.prototype = {
         this._sizeCell = this._createDivInTD("size");
         this._timeCell = this._createDivInTD("time");
         this._createTimelineCell();
-        this._nameCell.addEventListener("click", this.select.bind(this), false);
+        this._nameCell.addEventListener("mousedown", this.select.bind(this), false);
         this._nameCell.addEventListener("dblclick", this._openInNewTab.bind(this), false);
+        this.selectable = false;
     },
 
     isFilteredOut: function()
@@ -1882,11 +1880,6 @@ WebInspector.NetworkDataGridNode.prototype = {
     _openInNewTab: function()
     {
         InspectorFrontendHost.openInNewTab(this._request.url);
-    },
-
-    get selectable()
-    {
-        return this._parentView._allowRequestSelection && !this.isFilteredOut();
     },
 
     _createDivInTD: function(columnIdentifier)
