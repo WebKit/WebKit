@@ -1,12 +1,10 @@
 <!DOCTYPE html>
 <html>
 <head>
+<script src="../../js/resources/js-test-pre.js"></script>
 </head>
 <body>
 <script>
-if (window.testRunner)
-    testRunner.dumpAsText();
-
 function makeOrphanShadow() {
     var host = document.createElement("div");
     var shadow = host.webkitCreateShadowRoot();
@@ -23,5 +21,6 @@ shadow.applyAuthorStyles = false;
 
 document.body.innerHTML = "PASS unless crash.";
 </script>
+<script src="../../js/resources/js-test-post.js"></script>
 </body>
 </html>

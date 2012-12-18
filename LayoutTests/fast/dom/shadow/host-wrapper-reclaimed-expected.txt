@@ -1,1 +1,4 @@
+PASS successfullyParsed is true
+
+TEST COMPLETE
 PASS unless crash.

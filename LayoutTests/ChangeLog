@@ -1,3 +1,17 @@
+2012-12-17  Takashi Sakamoto  <tasak@google.com>
+
+        fast/dom/shadow/host-wrapper-reclaimed.html is failing on EFL bots
+        https://bugs.webkit.org/show_bug.cgi?id=103109
+
+        Reviewed by Kentaro Hara.
+
+        host-wrapper-reclaimed uses gc(), but the function gc is not defined
+        in all platforms, e.g. "ReferenceError: Can't find variable: gc".
+        So we should include js-test-pre.js, which defines gc.
+
+        * fast/dom/shadow/host-wrapper-reclaimed-expected.txt:
+        * fast/dom/shadow/host-wrapper-reclaimed.html:
+
 2012-12-17  Dean Jackson  <dino@apple.com>
 
         Track menu should be sorted
