@@ -1677,8 +1677,6 @@ webkit.org/b/104571 http/tests/security/xssAuditor/script-tag-with-source-null-c
 webkit.org/b/104571 http/tests/xmlhttprequest/origin-exact-matching.html [ Failure ]
 
 webkit.org/b/104788 css3/flexbox/flex-algorithm.html [ Failure ]
-webkit.org/b/104788 fast/css/large-number-round-trip.html [ Failure ]
-webkit.org/b/104788 fast/css/large-numbers.html [ Failure ]
 
 # Fixed positioning reftest failing
 webkit.org/b/104808 compositing/geometry/fixed-position-composited-page-scale-smaller-than-viewport.html [ ImageOnlyFailure ]

@@ -1,3 +1,27 @@
+2012-12-18  Emil A Eklund  <eae@chromium.org>
+
+        Have kFixedPointDenominator be constant across ports
+        https://bugs.webkit.org/show_bug.cgi?id=104843
+
+        Reviewed by Julien Chaffraix.
+
+        Currently the kFixedPointDenominator constant is set to either
+        64 or 1 depending on the SUBPIXEL_LAYOUT flag. As this constant
+        is used to limit the range of supported values this results in
+        inconsistencies across ports.
+
+        Change kFixedPointDenominator to always be 64 and introduce a
+        new constant (kEffectiveFixedPointDenominator) that varies.
+        This ensures that the same range of values are supported across
+        ports regardless of the SUBPIXEL_LAYOUT flag.
+        
+        Covered by fast/css/large-numbers.html and fast/css/large-number-round-trip.html
+
+        * platform/LayoutUnit.h:
+        Add kEffectiveFixedPointDenominator constant and change
+        LayoutUnit code to use it instead of kFixedPointDenominator
+        which is now set to 64 regardless of the SUBPIXEL_LAYOUT flag.
+
 2012-12-18  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r137979.
