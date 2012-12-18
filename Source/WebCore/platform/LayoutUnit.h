@@ -483,15 +483,19 @@ inline bool operator==(const float a, const LayoutUnit& b)
 inline LayoutUnit boundedMultiply(const LayoutUnit& a, const LayoutUnit& b)
 {
 #if ENABLE(SUBPIXEL_LAYOUT)
+    int64_t result = static_cast<int64_t>(a.rawValue()) * static_cast<int64_t>(b.rawValue()) / kEffectiveFixedPointDenominator;
+    int32_t high = result >> 32;
+    int32_t low = result;
+    uint32_t saturated = (static_cast<uint32_t>(a.rawValue() ^ b.rawValue()) >> 31) + std::numeric_limits<int>::max();
+    // If the higher 32 bits does not match the lower 32 with sign extension the operation overflowed.
+    if (high != low >> 31)
+        result = saturated;
+
     LayoutUnit returnVal;
-    long long rawVal = static_cast<long long>(a.rawValue()) * b.rawValue() / kEffectiveFixedPointDenominator;
-    if (rawVal > std::numeric_limits<int>::max())
-        return LayoutUnit::max();
-    if (rawVal < std::numeric_limits<int>::min())
-        return LayoutUnit::min();
-    returnVal.setRawValue(rawVal);
+    returnVal.setRawValue(static_cast<int>(result));
     return returnVal;
 #else
+    // FIXME: Should be bounded even in the non-subpixel case.
     return a.rawValue() * b.rawValue();
 #endif
 }

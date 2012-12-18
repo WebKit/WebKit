@@ -1,3 +1,25 @@
+2012-12-17  Emil A Eklund  <eae@chromium.org>
+
+        Optimize LayoutUnit::boundedMultiply
+        https://bugs.webkit.org/show_bug.cgi?id=105216
+
+        Reviewed by Levi Weintraub.
+
+        LayoutUnit::boundedMultiply is used for multiplication that's
+        prone to overflow and for all LayoutUnit multiplication if
+        SATURATED_LAYOUT_ARITHMETIC is enabled. The current approach is
+        quite inefficient.
+
+        Change it to use a more efficient saturated multiplication
+        implementation. As the implementation needs to use
+        kFixedPointDenominator it is implemented in LayoutUnit.h instead
+        of in wtf/SaturatedArithmetic.h.
+
+        Test: Covered by TestWebKitAPI/Tests/WebCore/LayoutUnit.cpp
+
+        * platform/LayoutUnit.h:
+        (WebCore::boundedMultiply):
+
 2012-12-18  Bear Travis  <betravis@adobe.com>
 
         [CSS Exclusions] Blocks should not re-use their parent's ExclusionShapeInsideInfo
