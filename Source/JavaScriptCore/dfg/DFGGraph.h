@@ -72,6 +72,12 @@ struct PutToBaseOperationData {
     unsigned putToBaseOperationIndex;
 };
 
+enum AddSpeculationMode {
+    DontSpeculateInteger,
+    SpeculateIntegerButAlwaysWatchOverflow,
+    SpeculateInteger
+};
+    
 
 //
 // === Graph ===
@@ -209,7 +215,7 @@ public:
         return speculationFromValue(node.valueOfJSConstant(m_codeBlock));
     }
     
-    bool addShouldSpeculateInteger(Node& add)
+    AddSpeculationMode addSpeculationMode(Node& add)
     {
         ASSERT(add.op() == ValueAdd || add.op() == ArithAdd || add.op() == ArithSub);
         
@@ -221,7 +227,12 @@ public:
         if (right.hasConstant())
             return addImmediateShouldSpeculateInteger(add, left, right);
         
-        return Node::shouldSpeculateIntegerExpectingDefined(left, right) && add.canSpeculateInteger();
+        return (Node::shouldSpeculateIntegerExpectingDefined(left, right) && add.canSpeculateInteger()) ? SpeculateInteger : DontSpeculateInteger;
+    }
+    
+    bool addShouldSpeculateInteger(Node& add)
+    {
+        return addSpeculationMode(add) != DontSpeculateInteger;
     }
     
     bool mulShouldSpeculateInteger(Node& mul)
@@ -700,26 +711,26 @@ private:
     
     void handleSuccessor(Vector<BlockIndex, 16>& worklist, BlockIndex blockIndex, BlockIndex successorIndex);
     
-    bool addImmediateShouldSpeculateInteger(Node& add, Node& variable, Node& immediate)
+    AddSpeculationMode addImmediateShouldSpeculateInteger(Node& add, Node& variable, Node& immediate)
     {
         ASSERT(immediate.hasConstant());
         
         JSValue immediateValue = immediate.valueOfJSConstant(m_codeBlock);
         if (!immediateValue.isNumber())
-            return false;
+            return DontSpeculateInteger;
         
         if (!variable.shouldSpeculateIntegerExpectingDefined())
-            return false;
+            return DontSpeculateInteger;
         
         if (immediateValue.isInt32())
-            return add.canSpeculateInteger();
+            return add.canSpeculateInteger() ? SpeculateInteger : DontSpeculateInteger;
         
         double doubleImmediate = immediateValue.asDouble();
         const double twoToThe48 = 281474976710656.0;
         if (doubleImmediate < -twoToThe48 || doubleImmediate > twoToThe48)
-            return false;
+            return DontSpeculateInteger;
         
-        return nodeCanTruncateInteger(add.arithNodeFlags());
+        return nodeCanTruncateInteger(add.arithNodeFlags()) ? SpeculateIntegerButAlwaysWatchOverflow : DontSpeculateInteger;
     }
     
     bool mulImmediateShouldSpeculateInteger(Node& mul, Node& variable, Node& immediate)

@@ -1,3 +1,16 @@
+2012-12-17  Filip Pizlo  <fpizlo@apple.com>
+
+        DFG is too aggressive eliding overflow checks for additions involving large constants
+        https://bugs.webkit.org/show_bug.cgi?id=105239
+
+        Reviewed by Gavin Barraclough.
+
+        * fast/js/dfg-int-overflow-large-constants-in-a-line-expected.txt: Added.
+        * fast/js/dfg-int-overflow-large-constants-in-a-line.html: Added.
+        * fast/js/jsc-test-list:
+        * fast/js/script-tests/dfg-int-overflow-large-constants-in-a-line.js: Added.
+        (foo):
+
 2012-12-17  Shinya Kawanaka  <shinyak@chromium.org>
 
         Web Inspector: need to visually distinguish UA shadow roots
