@@ -411,9 +411,6 @@ webkit.org/b/95959 css3/device-adapt [ Skip ]
 # Requires HighDPI canvas support
 webkit.org/b/102180 fast/canvas/canvas-resize-reset-pixelRatio.html [ Failure ]
 
-# Skip tests in fast/text/shaping
-webkit.org/b/90951 fast/text/shaping [ Missing ]
-
 # Fails until we enable the User Timing API.
 webkit.org/b/84893 http/tests/w3c/webperf/submission/Intel/user-timing [ Skip ]
 
@@ -504,8 +501,6 @@ webkit.org/b/100688 fast/text/custom-font-data-crash2.html [ Crash Pass ]
 webkit.org/b/100688 fast/css/first-letter-text-fragment-crash.html [ Crash Pass ]
 webkit.org/b/100688 editing/selection/first-letter-selection-crash.html [ Crash Pass ]
 webkit.org/b/100688 editing/text-iterator/backward-textiterator-first-letter-crash.html [ Crash Pass ]
-
-webkit.org/b/104533 fast/block/float/overhanging-tall-block.html [ Crash ]
 
 webkit.org/b/104684 fast/xmlhttprequest/xmlhttprequest-recursive-sync-event.html [ Crash Pass ]
 
@@ -717,10 +712,6 @@ Bug(GTK) media/progress-events-generated-correctly.html [ Failure Timeout ]
 
 webkit.org/b/102257 fast/dom/Window/open-window-min-size.html [ Timeout ]
 
-webkit.org/b/104571 http/tests/security/xssAuditor/anchor-url-dom-write-location-inline-event-null-char.html [ Timeout ]
-webkit.org/b/104571 http/tests/security/xssAuditor/javascript-link-null-char.html [ Timeout ]
-webkit.org/b/104571 http/tests/security/xssAuditor/object-embed-tag-null-char.html [ Timeout ]
-
 webkit.org/b/104648 fast/images/webgl-teximage2d.html [ Timeout ]
 
 # Misses setMediaType() implementation
@@ -846,7 +837,6 @@ Bug(GTK) http/tests/loading/bad-scheme-subframe.html [ Failure ]
 Bug(GTK) http/tests/loading/bad-server-subframe.html [ Failure ]
 
 # Needed to cover the fix for <rdar://problem/6727495>
-Bug(rdar6727495) http/tests/loading/deleted-host-in-resource-load-delegate-callback.html [ Failure ]
 Bug(rdar6727495) http/tests/loading/text-content-type-with-binary-extension.html [ Failure ]
 
 Bug(GTK) http/tests/media/video-play-stall-seek.html [ Skip ]
@@ -858,9 +848,6 @@ Bug(GTK) http/tests/misc/redirect-to-external-url.html [ Failure ]
 Bug(GTK) http/tests/misc/window-dot-stop.html [ Failure ]
 
 Bug(GTK) http/tests/plugins/npapi-response-headers.html [ Failure ]
-Bug(GTK) http/tests/security/mixedContent/insecure-iframe-in-main-frame.html [ Failure ]
-Bug(GTK) http/tests/security/mixedContent/redirect-http-to-https-iframe-in-main-frame.html [ Failure ]
-Bug(GTK) http/tests/security/mixedContent/redirect-https-to-http-iframe-in-main-frame.html [ Failure ]
 Bug(GTK) [ Release ] http/tests/security/XFrameOptions/x-frame-options-deny-meta-tag-in-body.html [ Failure ]
 Bug(GTK) http/tests/security/XFrameOptions/x-frame-options-deny-meta-tag-parent-same-origin-allow.html [ Failure ]
 Bug(GTK) http/tests/security/XFrameOptions/x-frame-options-deny-meta-tag-parent-same-origin-deny.html [ Failure ]
@@ -910,9 +897,6 @@ Bug(GTK) editing/selection/5825350-2.html [ Failure ]
 
 # Requires willSendRequestReturnsNullOnRedirect + willSendRequest + didFinishLoading
 Bug(GTK) http/tests/misc/will-send-request-returns-null-on-redirect.html [ Failure ]
-
-# Requires willPerformClientRedirectToURL
-webkit.org/b/58526 http/tests/loading/onload-vs-immediate-refresh.pl [ Failure ]
 
 # Needs platform specific API implemented in DRT, maybe not relevant for non-Mac and non-Windows ports
 Bug(GTK) fast/loader/api-test-new-window-data-load-base-url.html [ Failure ]
@@ -1188,8 +1172,6 @@ webkit.org/b/82020 plugins/netscape-dom-access-and-reload.html [ Failure ]
 # EditorClient::checkTextOfParagraph() is not implemented.
 Bug(GTK) editing/spelling/spelling-marker-description.html [ Failure ]
 
-webkit.org/b/84025 media/sources-fallback-codecs.html [ Failure ]
-
 webkit.org/b/83906 ietestcenter/css3/grid/grid-column-001.htm [ ImageOnlyFailure ]
 webkit.org/b/83907 ietestcenter/css3/grid/grid-column-002.htm [ ImageOnlyFailure ]
 webkit.org/b/83909 ietestcenter/css3/grid/grid-column-003.htm [ ImageOnlyFailure ]
@@ -1293,8 +1275,6 @@ webkit.org/b/93976 fast/css-generated-content/quotes-lang.html [ ImageOnlyFailur
 # This has always failed on Gtk/Efl - exposed by bug 89826
 webkit.org/b/94009 css2.1/20110323/c541-word-sp-000.htm [ ImageOnlyFailure ]
 
-webkit.org/b/94083 media/video-controls-fullscreen-volume.html [ Failure ]
-
 webkit.org/b/70485 fast/events/drag-selects-image.html [ Failure ]
 
 webkit.org/b/77631 fast/multicol/span/span-as-immediate-child-property-removal.html [ Failure ]
@@ -1334,8 +1314,6 @@ webkit.org/b/49142 fast/regions/style-scoped-in-flow-override-region-styling-mul
 
 # Missing support in DRT for Geolocation's Coordinate attributes.
 Bug(GTK) fast/dom/Geolocation/coordinates-interface-attributes.html [ Failure ]
-
-webkit.org/b/98585 fast/exclusions/shape-inside/shape-inside-rounded-rectangle-003.html [ ImageOnlyFailure ]
 
 webkit.org/b/98587 fast/writing-mode/vertical-subst-font-vert-no-dflt.html [ ImageOnlyFailure ]
 
