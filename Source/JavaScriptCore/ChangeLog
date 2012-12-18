@@ -1,3 +1,15 @@
+2012-12-18  Michael Saboff  <msaboff@apple.com>
+
+        [Qt] Fix the ARMv7 build after r137976
+        https://bugs.webkit.org/show_bug.cgi?id=105270
+
+        Reviewed by Csaba Osztrogonác.
+
+        Add default value for Jump parameter to fix build.
+
+        * assembler/AbstractMacroAssembler.h:
+        (JSC::AbstractMacroAssembler::Jump::Jump):
+
 2012-12-17  Geoffrey Garen  <ggaren@apple.com>
 
         Constant fold !{number} in the parser

@@ -510,7 +510,7 @@ public:
         
 #if CPU(ARM_THUMB2)
         // Fixme: this information should be stored in the instruction stream, not in the Jump object.
-        Jump(AssemblerLabel jmp, ARMv7Assembler::JumpType type, ARMv7Assembler::Condition condition = ARMv7Assembler::ConditionInvalid)
+        Jump(AssemblerLabel jmp, ARMv7Assembler::JumpType type = ARMv7Assembler::JumpNoCondition, ARMv7Assembler::Condition condition = ARMv7Assembler::ConditionInvalid)
             : m_label(jmp)
             , m_type(type)
             , m_condition(condition)
