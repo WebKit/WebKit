@@ -156,6 +156,9 @@ namespace WebCore {
             PseudoOutOfRange,
             PseudoUserAgentCustomElement,
             PseudoWebKitCustomElement,
+#if ENABLE(VIDEO_TRACK)
+            PseudoCue,
+#endif
         };
 
         enum MarginBoxType {

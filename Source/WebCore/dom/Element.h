@@ -431,6 +431,11 @@ public:
 #if ENABLE(SVG)
     virtual bool childShouldCreateRenderer(const NodeRenderingContext&) const;
 #endif
+
+#if ENABLE(VIDEO_TRACK)
+    bool isWebVTTNode() const;
+    void setIsWebVTTNode(bool flag);
+#endif
     
 #if ENABLE(FULLSCREEN_API)
     enum {

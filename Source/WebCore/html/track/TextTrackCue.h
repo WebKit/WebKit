@@ -125,6 +125,7 @@ public:
     void invalidateCueIndex();
 
     PassRefPtr<DocumentFragment> getCueAsHTML();
+    void markNodesAsWebVTTNodes(Node*);
 
     virtual bool dispatchEvent(PassRefPtr<Event>);
     bool dispatchEvent(PassRefPtr<Event>, ExceptionCode&);

@@ -41,6 +41,7 @@
 #include "Event.h"
 #include "HTMLDivElement.h"
 #include "HTMLMediaElement.h"
+#include "NodeTraversal.h"
 #include "RenderTextTrackCue.h"
 #include "Text.h"
 #include "TextTrack.h"
@@ -487,6 +488,12 @@ void TextTrackCue::invalidateCueIndex()
     m_cueIndex = invalidCueIndex;
 }
 
+void TextTrackCue::markNodesAsWebVTTNodes(Node* root)
+{
+    for (Element* child = ElementTraversal::firstWithin(root); child; child = ElementTraversal::next(child, root))
+        child->setIsWebVTTNode(true);
+}
+
 PassRefPtr<DocumentFragment> TextTrackCue::getCueAsHTML()
 {
     RefPtr<DocumentFragment> clonedFragment;
@@ -509,6 +516,7 @@ PassRefPtr<DocumentFragment> TextTrackCue::getCueAsHTML()
 
     clonedFragment = DocumentFragment::create(document);
     m_documentFragment->cloneChildNodes(clonedFragment.get());
+    markNodesAsWebVTTNodes(clonedFragment.get());
 
     return clonedFragment.release();
 }

@@ -145,6 +145,9 @@ void RuleSet::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
     reportAtomRuleMap(&info, m_tagRules);
     reportAtomRuleMap(&info, m_shadowPseudoElementRules);
     info.addMember(m_linkPseudoClassRules);
+#if ENABLE(VIDEO_TRACK)
+    info.addMember(m_cuePseudoRules);
+#endif
     info.addMember(m_focusPseudoClassRules);
     info.addMember(m_universalRules);
     info.addMember(m_pageRules);
@@ -208,6 +211,12 @@ void RuleSet::addRule(StyleRule* rule, unsigned selectorIndex, AddRuleFlags addR
         addToRuleSet(selector->value().impl(), m_shadowPseudoElementRules, ruleData);
         return;
     }
+#if ENABLE(VIDEO_TRACK)
+    if (selector->pseudoType() == CSSSelector::PseudoCue) {
+        m_cuePseudoRules.append(ruleData);
+        return;
+    }
+#endif
     if (SelectorChecker::isCommonPseudoClassSelector(selector)) {
         switch (selector->pseudoType()) {
         case CSSSelector::PseudoLink:
@@ -377,6 +386,9 @@ void RuleSet::shrinkToFit()
     shrinkMapVectorsToFit(m_tagRules);
     shrinkMapVectorsToFit(m_shadowPseudoElementRules);
     m_linkPseudoClassRules.shrinkToFit();
+#if ENABLE(VIDEO_TRACK)
+    m_cuePseudoRules.shrinkToFit();
+#endif
     m_focusPseudoClassRules.shrinkToFit();
     m_universalRules.shrinkToFit();
     m_pageRules.shrinkToFit();

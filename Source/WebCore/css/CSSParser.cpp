@@ -9485,6 +9485,10 @@ inline void CSSParser::detectFunctionTypeToken(int length)
             m_token = NOTFUNCTION;
         else if (isASCIIAlphaCaselessEqual(name[0], 'u') && isASCIIAlphaCaselessEqual(name[1], 'r') && isASCIIAlphaCaselessEqual(name[2], 'l'))
             m_token = URI;
+#if ENABLE(VIDEO_TRACK)
+        else if (isASCIIAlphaCaselessEqual(name[0], 'c') && isASCIIAlphaCaselessEqual(name[1], 'u') && isASCIIAlphaCaselessEqual(name[2], 'e'))
+            m_token = CUEFUNCTION;
+#endif
         return;
 
     case 9:
@@ -10602,7 +10606,10 @@ void CSSParser::updateSpecifiersWithElementName(const AtomicString& namespacePre
     AtomicString determinedNamespace = namespacePrefix != nullAtom && m_styleSheet ? m_styleSheet->determineNamespace(namespacePrefix) : m_defaultNamespace;
     QualifiedName tag = QualifiedName(namespacePrefix, elementName, determinedNamespace);
     if (!specifiers->isCustomPseudoElement()) {
-        specifiers->setTag(tag);
+#if ENABLE(VIDEO_TRACK)
+        if (!(specifiers->pseudoType() == CSSSelector::PseudoCue))
+#endif
+            specifiers->setTag(tag);
         return;
     }
 
@@ -10629,7 +10636,11 @@ void CSSParser::updateSpecifiersWithElementName(const AtomicString& namespacePre
 
 CSSParserSelector* CSSParser::updateSpecifiers(CSSParserSelector* specifiers, CSSParserSelector* newSpecifier)
 {
+#if ENABLE(VIDEO_TRACK)
+    if (newSpecifier->isCustomPseudoElement() || newSpecifier->pseudoType() == CSSSelector::PseudoCue) {
+#else
     if (newSpecifier->isCustomPseudoElement()) {
+#endif
         // Unknown pseudo element always goes at the top of selector chain.
         newSpecifier->appendTagHistory(CSSSelector::ShadowDescendant, sinkFloatingSelector(specifiers));
         return newSpecifier;

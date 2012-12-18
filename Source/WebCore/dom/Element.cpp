@@ -2278,7 +2278,19 @@ bool Element::childShouldCreateRenderer(const NodeRenderingContext& childContext
     return ContainerNode::childShouldCreateRenderer(childContext);
 }
 #endif
-    
+
+#if ENABLE(VIDEO_TRACK)
+bool Element::isWebVTTNode() const
+{
+    return hasRareData() && elementRareData()->isWebVTTNode();
+}
+
+void Element::setIsWebVTTNode(bool flag)
+{
+    ensureElementRareData()->setIsWebVTTNode(flag);
+}
+#endif
+
 #if ENABLE(FULLSCREEN_API)
 void Element::webkitRequestFullscreen()
 {

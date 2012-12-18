@@ -1132,6 +1132,20 @@ bool SelectorChecker::checkOneSelector(const SelectorCheckingContext& context, c
         }
         return false;
     }
+#if ENABLE(VIDEO_TRACK)
+    else if (selector->m_match == CSSSelector::PseudoElement && selector->pseudoType() == CSSSelector::PseudoCue) {
+        SelectorCheckingContext subContext(context);
+        subContext.isSubSelector = true;
+
+        PseudoId ignoreDynamicPseudo = NOPSEUDO;
+        CSSSelector* const & selector = context.selector;
+        for (subContext.selector = selector->selectorList()->first(); subContext.selector; subContext.selector = CSSSelectorList::next(subContext.selector)) {
+            if (checkSelector(subContext, ignoreDynamicPseudo) == SelectorMatches)
+                return true;
+        }
+        return false;
+    }
+#endif
     // ### add the rest of the checks...
     return true;
 }

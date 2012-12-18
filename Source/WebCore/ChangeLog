@@ -1,3 +1,64 @@
+2012-12-17  Dima Gorbik  <dgorbik@apple.com>
+
+        Implement matching cue by the class name with ::cue pseudo element
+        https://bugs.webkit.org/show_bug.cgi?id=104191
+
+        Reviewed by Antti Koivisto.
+
+        Implemented the ::cue() pseudo-element with an argument that may hold a simple selector list.
+        This enables matching cue objects by the class name.
+
+        Test: media/track/track-css-matching.html
+
+        * css/CSSGrammar.y.in: support parsing the ::cue() with an argument.
+        * css/CSSParser.cpp:
+        (WebCore::CSSParser::detectFunctionTypeToken): tokenize the 'cue'.
+        (WebCore::CSSParser::updateSpecifiersWithElementName): do not set the tag for the cue pseudo-element because
+        the ::cue may match elements with different tags.
+        (WebCore::CSSParser::updateSpecifiers): the behavior for the PseudoCue selector should be same as for
+        unknown pseudo elements - the pseudo-element should stay on top of the selector chain.
+        * css/CSSSelector.cpp: added the type detection for the new selector.
+        (WebCore::CSSSelector::pseudoId):
+        (WebCore::nameToPseudoTypeMap):
+        (WebCore::CSSSelector::extractPseudoType):
+        * css/CSSSelector.h:
+        * css/RuleSet.cpp: add a new list to hold all the rulesets for the new pseudo element.
+        (WebCore::RuleSet::reportMemoryUsage):
+        (WebCore::RuleSet::addRule):
+        (WebCore::RuleSet::shrinkToFit):
+        * css/RuleSet.h:
+        (RuleSet):
+        (WebCore::RuleSet::cuePseudoRules):
+        * css/SelectorChecker.cpp:
+        (WebCore::SelectorChecker::checkOneSelector):
+        * css/SelectorChecker.h:
+        (WebCore::SelectorChecker::SelectorCheckingContext::SelectorCheckingContext):
+        * css/StyleResolver.cpp:
+        (WebCore::StyleResolver::collectMatchingRules):
+        * dom/Element.cpp: an addition to the rare data to be able to find out if the node is a webvtt node.
+        (WebCore):
+        (WebCore::Element::isWebVTTNode):
+        (WebCore::Element::setIsWebVTTNode):
+        (WebCore::Element::cloneDataFromElement):
+        * dom/Element.h:
+        (Element):
+        * dom/ElementRareData.h:
+        (ElementRareData):
+        * dom/NodeRareData.h:
+        (WebCore::NodeRareData::NodeRareData):
+        (NodeRareData):
+        (WebCore::NodeRareData::isWebVTTNode):
+        (WebCore::NodeRareData::setIsWebVTTNode):
+        * html/track/TextTrackCue.cpp:
+        (WebCore::TextTrackCue::markNodesAsWebVTTNodes): mark the cloned nodes as WebVTT nodes.
+        (WebCore):
+        (WebCore::TextTrackCue::getCueAsHTML):
+        * html/track/TextTrackCue.h:
+        (TextTrackCue):
+        * html/track/WebVTTParser.cpp:
+        (WebCore::WebVTTParser::constructTreeFromToken):
+        * rendering/style/RenderStyleConstants.h:
+
 2012-12-17  Michael Pruett  <michael@68k.org>
 
         IndexedDB: Don't use strings to represent serialized values

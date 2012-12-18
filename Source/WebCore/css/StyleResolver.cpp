@@ -649,6 +649,10 @@ void StyleResolver::collectMatchingRules(RuleSet* rules, int& firstRuleIndex, in
         collectMatchingRulesForList(rules->shadowPseudoElementRules(pseudoId.impl()), firstRuleIndex, lastRuleIndex, options);
     }
 
+#if ENABLE(VIDEO_TRACK)
+    if (m_element->isWebVTTNode())
+        collectMatchingRulesForList(rules->cuePseudoRules(), firstRuleIndex, lastRuleIndex, options);
+#endif
     // Check whether other types of rules are applicable in the current tree scope. Criteria for this:
     // a) it's a UA rule
     // b) the tree scope allows author rules

@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+
+        <script src=../media-file.js></script>
+        <script src=../video-test.js></script>
+        <script src=../media-controls.js></script>
+
+        <style>
+
+        video::cue(.red, .red2) { color:red }
+        #testvideo::cue(.green) { color:green }
+
+        </style>
+
+        <script>
+
+        var cueNode;
+
+        function seeked()
+        {
+            cueNode = textTrackDisplayElement(video, 'past-nodes').firstChild;
+            testExpected("getComputedStyle(cueNode).color", "rgb(255, 0, 0)");
+            cueNode = cueNode.nextSibling;
+            testExpected("getComputedStyle(cueNode).color", "rgb(0, 128, 0)");
+            cueNode = cueNode.nextSibling;
+            testExpected("getComputedStyle(cueNode).color", "rgb(255, 0, 0)");
+            endTest();
+        }
+
+        function loaded()
+        {
+            consoleWrite("Test that cues are being matched properly by the class name");
+            findMediaElement();
+            video.src = findMediaFile('video', '../content/test');
+            video.id = "testvideo";
+            waitForEvent('seeked', seeked);
+            waitForEvent('canplaythrough', function() { video.currentTime = 1.5; });
+        }
+
+        </script>
+    </head>
+    <body onload="loaded()">
+        <video controls >
+            <track src="captions-webvtt/styling.vtt" kind="captions" default>
+        </video>
+    </body>
+</html>

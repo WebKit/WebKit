@@ -220,6 +220,9 @@ PseudoId CSSSelector::pseudoId(PseudoType type)
     case PseudoOutOfRange:
     case PseudoUserAgentCustomElement:
     case PseudoWebKitCustomElement:
+#if ENABLE(VIDEO_TRACK)
+    case PseudoCue:
+#endif
         return NOPSEUDO;
     case PseudoNotParsed:
         ASSERT_NOT_REACHED();
@@ -302,6 +305,9 @@ static HashMap<AtomicStringImpl*, CSSSelector::PseudoType>* nameToPseudoTypeMap(
     DEFINE_STATIC_LOCAL(AtomicString, fullScreenAncestor, ("-webkit-full-screen-ancestor", AtomicString::ConstructFromLiteral));
     DEFINE_STATIC_LOCAL(AtomicString, animatingFullScreenTransition, ("-webkit-animating-full-screen-transition", AtomicString::ConstructFromLiteral));
 #endif
+#if ENABLE(VIDEO_TRACK)
+    DEFINE_STATIC_LOCAL(AtomicString, cue, ("cue(", AtomicString::ConstructFromLiteral));
+#endif
     DEFINE_STATIC_LOCAL(AtomicString, inRange, ("in-range", AtomicString::ConstructFromLiteral));
     DEFINE_STATIC_LOCAL(AtomicString, outOfRange, ("out-of-range", AtomicString::ConstructFromLiteral));
 
@@ -377,6 +383,9 @@ static HashMap<AtomicStringImpl*, CSSSelector::PseudoType>* nameToPseudoTypeMap(
         nameToPseudoType->set(fullScreenAncestor.impl(), CSSSelector::PseudoFullScreenAncestor);
         nameToPseudoType->set(animatingFullScreenTransition.impl(), CSSSelector::PseudoAnimatingFullScreenTransition);
 #endif
+#if ENABLE(VIDEO_TRACK)
+        nameToPseudoType->set(cue.impl(), CSSSelector::PseudoCue);
+#endif
         nameToPseudoType->set(inRange.impl(), CSSSelector::PseudoInRange);
         nameToPseudoType->set(outOfRange.impl(), CSSSelector::PseudoOutOfRange);
     }
@@ -421,6 +430,9 @@ void CSSSelector::extractPseudoType() const
     switch (m_pseudoType) {
     case PseudoAfter:
     case PseudoBefore:
+#if ENABLE(VIDEO_TRACK)
+    case PseudoCue:
+#endif
     case PseudoFirstLetter:
     case PseudoFirstLine:
         compat = true;

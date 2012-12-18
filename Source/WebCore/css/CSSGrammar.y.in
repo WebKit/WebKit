@@ -173,6 +173,9 @@ static inline int cssyyerror(void*, const char*)
 %token <string> URI
 %token <string> FUNCTION
 %token <string> ANYFUNCTION
+#if ENABLE_VIDEO_TRACK
+%token <string> CUEFUNCTION
+#endif
 %token <string> NOTFUNCTION
 %token <string> CALCFUNCTION
 %token <string> MINFUNCTION
@@ -1323,6 +1326,21 @@ pseudo:
         if (type == CSSSelector::PseudoUnknown)
             $$ = 0;
     }
+#if ENABLE_VIDEO_TRACK
+    // used by ::cue(:past/:future)
+    | ':' ':' CUEFUNCTION maybe_space simple_selector_list maybe_space ')' {
+        if ($5) {
+            $$ = parser->createFloatingSelector();
+            $$->setMatch(CSSSelector::PseudoClass);
+            $$->adoptSelectorVector(*parser->sinkFloatingSelectorVector($5));
+            $$->setValue($3);
+            CSSSelector::PseudoType type = $$->pseudoType();
+            if (type != CSSSelector::PseudoCue)
+                $$ = 0;
+        } else
+            $$ = 0;
+    }
+#endif
     // use by :-webkit-any.
     // FIXME: should we support generic selectors here or just simple_selectors?
     // Use simple_selector_list for now to match -moz-any.

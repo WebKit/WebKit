@@ -1,0 +1,8 @@
+Test that cues are being matched properly by the class name
+EVENT(canplaythrough)
+EVENT(seeked)
+EXPECTED (getComputedStyle(cueNode).color == 'rgb(255, 0, 0)') OK
+EXPECTED (getComputedStyle(cueNode).color == 'rgb(0, 128, 0)') OK
+EXPECTED (getComputedStyle(cueNode).color == 'rgb(255, 0, 0)') OK
+END OF TEST
+

@@ -120,6 +120,9 @@ public:
     const Vector<RuleData>* tagRules(AtomicStringImpl* key) const { return m_tagRules.get(key); }
     const Vector<RuleData>* shadowPseudoElementRules(AtomicStringImpl* key) const { return m_shadowPseudoElementRules.get(key); }
     const Vector<RuleData>* linkPseudoClassRules() const { return &m_linkPseudoClassRules; }
+#if ENABLE(VIDEO_TRACK)
+    const Vector<RuleData>* cuePseudoRules() const { return &m_cuePseudoRules; }
+#endif
     const Vector<RuleData>* focusPseudoClassRules() const { return &m_focusPseudoClassRules; }
     const Vector<RuleData>* universalRules() const { return &m_universalRules; }
     const Vector<StyleRulePage*>& pageRules() const { return m_pageRules; }
@@ -134,6 +137,9 @@ public:
     AtomRuleMap m_tagRules;
     AtomRuleMap m_shadowPseudoElementRules;
     Vector<RuleData> m_linkPseudoClassRules;
+#if ENABLE(VIDEO_TRACK)
+    Vector<RuleData> m_cuePseudoRules;
+#endif
     Vector<RuleData> m_focusPseudoClassRules;
     Vector<RuleData> m_universalRules;
     Vector<StyleRulePage*> m_pageRules;
