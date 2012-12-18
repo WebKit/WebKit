@@ -268,9 +268,9 @@ bool BackingStorePrivate::shouldDirectRenderingToWindow() const
     if (!isActive())
         return !m_webPage->d->compositorDrawsRootLayer();
 
-    const BackingStoreGeometry* currentState = frontState();
+    const BackingStoreGeometry* geometry = frontState();
     const unsigned tilesNecessary = minimumNumberOfTilesWide() * minimumNumberOfTilesHigh();
-    const unsigned tilesAvailable = currentState->numberOfTilesWide() * currentState->numberOfTilesHigh();
+    const unsigned tilesAvailable = geometry->numberOfTilesWide() * geometry->numberOfTilesHigh();
     return tilesAvailable < tilesNecessary;
 }
 
@@ -734,36 +734,36 @@ void BackingStorePrivate::setBackingStoreRect(const Platform::IntRect& backingSt
     if (m_suspendBackingStoreUpdates)
         return;
 
-    Platform::IntRect currentBackingStoreRect = frontState()->backingStoreRect();
+    Platform::IntRect oldBackingStoreRect = frontState()->backingStoreRect();
     double currentScale = frontState()->scale();
 
-    if (backingStoreRect == currentBackingStoreRect && scale == currentScale)
+    if (backingStoreRect == oldBackingStoreRect && scale == currentScale)
         return;
 
 #if DEBUG_TILEMATRIX
     Platform::logAlways(Platform::LogLevelCritical,
         "BackingStorePrivate::setBackingStoreRect changed from %s to %s",
-        currentBackingStoreRect.toString().c_str(),
+        oldBackingStoreRect.toString().c_str(),
         backingStoreRect.toString().c_str());
 #endif
 
-    BackingStoreGeometry* currentState = frontState();
-    TileMap currentMap = currentState->tileMap();
+    BackingStoreGeometry* oldGeometry = frontState();
+    TileMap oldTileMap = oldGeometry->tileMap();
 
     TileIndexList indexesToFill = indexesForBackingStoreRect(backingStoreRect);
 
-    ASSERT(static_cast<int>(indexesToFill.size()) == currentMap.size());
+    ASSERT(static_cast<int>(indexesToFill.size()) == oldTileMap.size());
 
-    m_renderQueue->clear(currentBackingStoreRect, RenderQueue::DontClearRegularRenderJobs);
-    m_renderQueue->backingStoreRectChanging(currentBackingStoreRect, backingStoreRect);
+    m_renderQueue->clear(oldBackingStoreRect, RenderQueue::DontClearRegularRenderJobs);
+    m_renderQueue->backingStoreRectChanging(oldBackingStoreRect, backingStoreRect);
 
     TileMap newTileMap;
     TileMap leftOverTiles;
 
     // Iterate through our current tile map and add tiles that are rendered with
     // our new backing store rect.
-    TileMap::const_iterator tileMapEnd = currentMap.end();
-    for (TileMap::const_iterator it = currentMap.begin(); it != tileMapEnd; ++it) {
+    TileMap::const_iterator tileMapEnd = oldTileMap.end();
+    for (TileMap::const_iterator it = oldTileMap.begin(); it != tileMapEnd; ++it) {
         TileIndex oldIndex = it->key;
         TileBuffer* oldTileBuffer = it->value;
 
@@ -800,7 +800,7 @@ void BackingStorePrivate::setBackingStoreRect(const Platform::IntRect& backingSt
     }
 
     // Checks to make sure we haven't lost any tiles.
-    ASSERT(currentMap.size() == newTileMap.size());
+    ASSERT(oldTileMap.size() == newTileMap.size());
 
     BackingStoreGeometry* newGeometry = new BackingStoreGeometry;
     newGeometry->setScale(scale);
@@ -816,18 +816,18 @@ void BackingStorePrivate::setBackingStoreRect(const Platform::IntRect& backingSt
 
 void BackingStorePrivate::updateTilesAfterBackingStoreRectChange()
 {
-    BackingStoreGeometry* currentState = frontState();
-    TileMap currentMap = currentState->tileMap();
+    BackingStoreGeometry* geometry = frontState();
+    TileMap currentMap = geometry->tileMap();
 
     TileMap::const_iterator end = currentMap.end();
     for (TileMap::const_iterator it = currentMap.begin(); it != end; ++it) {
         TileIndex index = it->key;
         TileBuffer* tileBuffer = it->value;
-        Platform::IntPoint tileOrigin = currentState->originOfTile(index);
+        Platform::IntPoint tileOrigin = geometry->originOfTile(index);
         // The rect in transformed contents coordinates.
         Platform::IntRect rect(tileOrigin, tileSize());
 
-        if (currentState->isTileCorrespondingToBuffer(index, tileBuffer)) {
+        if (geometry->isTileCorrespondingToBuffer(index, tileBuffer)) {
             if (m_renderQueue->regularRenderJobsPreviouslyAttemptedButNotRendered(rect)) {
                 // If the render queue previously tried to render this tile, but the
                 // tile wasn't visible at the time we can't simply restore the tile
@@ -838,15 +838,15 @@ void BackingStorePrivate::updateTilesAfterBackingStoreRectChange()
                 // Intersect the tile with the not rendered region to get the areas
                 // of the tile that we need to clear.
                 Platform::IntRectRegion tileNotRenderedRegion = Platform::IntRectRegion::intersectRegions(m_renderQueue->regularRenderJobsNotRenderedRegion(), rect);
-                clearAndUpdateTileOfNotRenderedRegion(index, tileBuffer, tileNotRenderedRegion, currentState);
+                clearAndUpdateTileOfNotRenderedRegion(index, tileBuffer, tileNotRenderedRegion, geometry);
 #if DEBUG_BACKINGSTORE
                 Platform::logAlways(Platform::LogLevelCritical,
                     "BackingStorePrivate::updateTilesAfterBackingStoreRectChange did clear tile %s",
                     tileNotRenderedRegion.extents().toString().c_str());
 #endif
             } else {
-                if (!tileBuffer || !tileBuffer->isRendered(tileVisibleContentsRect(index, currentState), currentState->scale())
-                    && !isCurrentVisibleJob(index, currentState))
+                if (!tileBuffer || !tileBuffer->isRendered(tileVisibleContentsRect(index, geometry), geometry->scale())
+                    && !isCurrentVisibleJob(index, geometry))
                     updateTile(tileOrigin, false /*immediate*/);
             }
         } else if (rect.intersects(expandedContentsRect()))
@@ -1046,15 +1046,15 @@ TileIndexList BackingStorePrivate::render(const TileIndexList& tileIndexList)
     if (tileIndexList.isEmpty())
         return tileIndexList;
 
-    BackingStoreGeometry* currentState = frontState();
-    TileMap oldTileMap = currentState->tileMap();
-    double currentScale = currentState->scale();
+    BackingStoreGeometry* geometry = frontState();
+    TileMap oldTileMap = geometry->tileMap();
+    double currentScale = geometry->scale();
 
     BackingStoreGeometry* newGeometry = new BackingStoreGeometry;
-    newGeometry->setScale(currentState->scale());
-    newGeometry->setNumberOfTilesWide(currentState->numberOfTilesWide());
-    newGeometry->setNumberOfTilesHigh(currentState->numberOfTilesHigh());
-    newGeometry->setBackingStoreOffset(currentState->backingStoreOffset());
+    newGeometry->setScale(geometry->scale());
+    newGeometry->setNumberOfTilesWide(geometry->numberOfTilesWide());
+    newGeometry->setNumberOfTilesHigh(geometry->numberOfTilesHigh());
+    newGeometry->setBackingStoreOffset(geometry->backingStoreOffset());
     TileMap newTileMap(oldTileMap); // copy a new, writable version
     TileIndexList renderedTiles;
 
@@ -1069,12 +1069,12 @@ TileIndexList BackingStorePrivate::render(const TileIndexList& tileIndexList)
             // newGeometry is now the front state and shouldn't be messed with.
             // Let's create a new one. (The old one will be automatically
             // destroyed by adoptAsFrontState() on being swapped out again.)
-            currentState = frontState();
+            geometry = frontState();
             newGeometry = new BackingStoreGeometry;
-            newGeometry->setScale(currentState->scale());
-            newGeometry->setNumberOfTilesWide(currentState->numberOfTilesWide());
-            newGeometry->setNumberOfTilesHigh(currentState->numberOfTilesHigh());
-            newGeometry->setBackingStoreOffset(currentState->backingStoreOffset());
+            newGeometry->setScale(geometry->scale());
+            newGeometry->setNumberOfTilesWide(geometry->numberOfTilesWide());
+            newGeometry->setNumberOfTilesHigh(geometry->numberOfTilesHigh());
+            newGeometry->setBackingStoreOffset(geometry->backingStoreOffset());
         }
 
         // Paint default background if contents rect is empty.
@@ -1104,7 +1104,7 @@ TileIndexList BackingStorePrivate::render(const TileIndexList& tileIndexList)
         if (!backBuffer->backgroundPainted())
             backBuffer->paintBackground();
 
-        Platform::IntPoint tileOrigin = currentState->originOfTile(index);
+        Platform::IntPoint tileOrigin = geometry->originOfTile(index);
         backBuffer->setLastRenderScale(currentScale);
         backBuffer->setLastRenderOrigin(tileOrigin);
         backBuffer->clearRenderedRegion();
@@ -1289,9 +1289,9 @@ void BackingStorePrivate::blitVisibleContents(bool force)
     if (isActive() && !m_webPage->d->compositorDrawsRootLayer()) {
         paintDefaultBackground(dstRect, viewportAccessor, false /*flush*/);
 
-        BackingStoreGeometry* currentState = frontState();
-        TileMap currentMap = currentState->tileMap();
-        double currentScale = currentState->scale();
+        BackingStoreGeometry* geometry = frontState();
+        TileMap currentMap = geometry->tileMap();
+        double currentScale = geometry->scale();
 
         const Platform::IntRect transformedContentsRect = Platform::IntRect(Platform::IntPoint(0, 0), m_client->transformedContentsSize());
 
@@ -1319,7 +1319,7 @@ void BackingStorePrivate::blitVisibleContents(bool force)
             }
 
             Platform::IntRectRegion transformedSrcRegion = clippedTransformedSrcRect;
-            Platform::IntRectRegion backingStoreRegion = currentState->backingStoreRect();
+            Platform::IntRectRegion backingStoreRegion = geometry->backingStoreRect();
             Platform::IntRectRegion checkeredRegion
                 = Platform::IntRectRegion::subtractRegions(transformedSrcRegion, backingStoreRegion);
 
@@ -1341,7 +1341,7 @@ void BackingStorePrivate::blitVisibleContents(bool force)
         }
 
         // Get the list of tile rects that makeup the content.
-        TileRectList tileRectList = mapFromPixelContentsToTiles(clippedTransformedSrcRect, currentState);
+        TileRectList tileRectList = mapFromPixelContentsToTiles(clippedTransformedSrcRect, geometry);
         for (size_t i = 0; i < tileRectList.size(); ++i) {
             TileRect tileRect = tileRectList[i];
             TileIndex index = tileRect.first;
@@ -1364,7 +1364,7 @@ void BackingStorePrivate::blitVisibleContents(bool force)
 
             TileBuffer* tileBuffer = currentMap.get(index);
 
-            bool isTileCorrespondingToBuffer = currentState->isTileCorrespondingToBuffer(index, tileBuffer);
+            bool isTileCorrespondingToBuffer = geometry->isTileCorrespondingToBuffer(index, tileBuffer);
             bool rendered = tileBuffer && tileBuffer->isRendered(tileRect.second, currentScale);
             bool paintCheckered = !isTileCorrespondingToBuffer || !rendered;
 
@@ -1395,7 +1395,7 @@ void BackingStorePrivate::blitVisibleContents(bool force)
                     if (dirtyRenderedRect.isEmpty())
                         continue;
                     // Blit the rendered parts.
-                    blitTileRect(tileBuffer, dirtyRenderedRect, origin, transformation, currentState);
+                    blitTileRect(tileBuffer, dirtyRenderedRect, origin, transformation, geometry);
                 }
                 blittedTiles.append(tileBuffer);
             }
@@ -1483,12 +1483,12 @@ void BackingStorePrivate::compositeContents(WebCore::LayerRenderer* layerRendere
     if (m_webPage->d->compositorDrawsRootLayer())
         return;
 
-    BackingStoreGeometry* currentState = frontState();
-    TileMap currentMap = currentState->tileMap();
+    BackingStoreGeometry* geometry = frontState();
+    TileMap currentMap = geometry->tileMap();
     Vector<TileBuffer*> compositedTiles;
 
     Platform::IntRectRegion transformedContentsRegion = transformedContents;
-    Platform::IntRectRegion backingStoreRegion = currentState->backingStoreRect();
+    Platform::IntRectRegion backingStoreRegion = geometry->backingStoreRect();
     Platform::IntRectRegion checkeredRegion
         = Platform::IntRectRegion::subtractRegions(transformedContentsRegion, backingStoreRegion);
 
@@ -1498,14 +1498,14 @@ void BackingStorePrivate::compositeContents(WebCore::LayerRenderer* layerRendere
         layerRenderer->drawCheckerboardPattern(transform, m_webPage->d->mapFromTransformedFloatRect(WebCore::IntRect(checkeredRects.at(i))));
 
     // Get the list of tile rects that makeup the content.
-    TileRectList tileRectList = mapFromPixelContentsToTiles(transformedContents, currentState);
+    TileRectList tileRectList = mapFromPixelContentsToTiles(transformedContents, geometry);
     for (size_t i = 0; i < tileRectList.size(); ++i) {
         TileRect tileRect = tileRectList[i];
         TileIndex index = tileRect.first;
         Platform::IntRect dirtyRect = tileRect.second;
         TileBuffer* tileBuffer = currentMap.get(index);
 
-        if (!tileBuffer || !currentState->isTileCorrespondingToBuffer(index, tileBuffer))
+        if (!tileBuffer || !geometry->isTileCorrespondingToBuffer(index, tileBuffer))
             layerRenderer->drawCheckerboardPattern(transform, m_webPage->d->mapFromTransformedFloatRect(Platform::FloatRect(dirtyRect)));
         else {
             Platform::IntPoint tileOrigin = tileBuffer->lastRenderOrigin();
@@ -1631,17 +1631,17 @@ void BackingStorePrivate::resetRenderQueue()
 
 void BackingStorePrivate::resetTiles()
 {
-    BackingStoreGeometry* currentState = frontState();
+    BackingStoreGeometry* geometry = frontState();
 
-    m_renderQueue->clear(currentState->backingStoreRect(), RenderQueue::ClearAnyJobs);
+    m_renderQueue->clear(geometry->backingStoreRect(), RenderQueue::ClearAnyJobs);
 
     BackingStoreGeometry* newGeometry = new BackingStoreGeometry;
-    newGeometry->setScale(currentState->scale());
-    newGeometry->setNumberOfTilesWide(currentState->numberOfTilesWide());
-    newGeometry->setNumberOfTilesHigh(currentState->numberOfTilesHigh());
-    newGeometry->setBackingStoreOffset(currentState->backingStoreOffset());
+    newGeometry->setScale(geometry->scale());
+    newGeometry->setNumberOfTilesWide(geometry->numberOfTilesWide());
+    newGeometry->setNumberOfTilesHigh(geometry->numberOfTilesHigh());
+    newGeometry->setBackingStoreOffset(geometry->backingStoreOffset());
 
-    TileMap currentMap = currentState->tileMap();
+    TileMap currentMap = geometry->tileMap();
     TileMap newTileMap;
 
     TileMap::const_iterator end = currentMap.end();
@@ -1657,15 +1657,15 @@ void BackingStorePrivate::updateTiles(bool updateVisible, bool immediate)
     if (!isActive())
         return;
 
-    BackingStoreGeometry* currentState = frontState();
-    TileMap currentMap = currentState->tileMap();
+    BackingStoreGeometry* geometry = frontState();
+    TileMap currentMap = geometry->tileMap();
 
     TileMap::const_iterator end = currentMap.end();
     for (TileMap::const_iterator it = currentMap.begin(); it != end; ++it) {
-        bool isVisible = isTileVisible(it->key, currentState);
+        bool isVisible = isTileVisible(it->key, geometry);
         if (!updateVisible && isVisible)
             continue;
-        updateTile(currentState->originOfTile(it->key), immediate);
+        updateTile(geometry->originOfTile(it->key), immediate);
     }
 }
 
@@ -1677,8 +1677,8 @@ void BackingStorePrivate::updateTilesForScrollOrNotRenderedRegion(bool checkLoad
     // render job, but they were not visible at the time, then update them and if
     // they are currently visible, reset them.
 
-    BackingStoreGeometry* currentState = frontState();
-    TileMap currentMap = currentState->tileMap();
+    BackingStoreGeometry* geometry = frontState();
+    TileMap currentMap = geometry->tileMap();
 
     bool isLoading = m_client->loadState() == WebPagePrivate::Committed;
     bool forceVisible = checkLoading && isLoading;
@@ -1687,11 +1687,11 @@ void BackingStorePrivate::updateTilesForScrollOrNotRenderedRegion(bool checkLoad
     for (TileMap::const_iterator it = currentMap.begin(); it != end; ++it) {
         TileIndex index = it->key;
         TileBuffer* tileBuffer = it->value;
-        bool isVisible = isTileVisible(index, currentState);
-        Platform::IntPoint tileOrigin = currentState->originOfTile(index);
+        bool isVisible = isTileVisible(index, geometry);
+        Platform::IntPoint tileOrigin = geometry->originOfTile(index);
         // The rect in transformed contents coordinates.
         Platform::IntRect rect(tileOrigin, tileSize());
-        if (currentState->isTileCorrespondingToBuffer(index, tileBuffer)
+        if (geometry->isTileCorrespondingToBuffer(index, tileBuffer)
             && m_renderQueue->regularRenderJobsPreviouslyAttemptedButNotRendered(rect)) {
             // If the render queue previously tried to render this tile, but the
             // tile wasn't visible at the time we can't simply restore the tile
@@ -1701,15 +1701,8 @@ void BackingStorePrivate::updateTilesForScrollOrNotRenderedRegion(bool checkLoad
             if (isVisible) {
                 // Intersect the tile with the not rendered region to get the areas
                 // of the tile that we need to clear.
-                Platform::IntRectRegion tileNotRenderedRegion
-                    = Platform::IntRectRegion::intersectRegions(
-                        m_renderQueue->regularRenderJobsNotRenderedRegion(),
-                        rect);
-                clearAndUpdateTileOfNotRenderedRegion(index,
-                                                      tileBuffer,
-                                                      tileNotRenderedRegion,
-                                                      currentState,
-                                                      false /*update*/);
+                Platform::IntRectRegion tileNotRenderedRegion = Platform::IntRectRegion::intersectRegions(m_renderQueue->regularRenderJobsNotRenderedRegion(), rect);
+                clearAndUpdateTileOfNotRenderedRegion(index, tileBuffer, tileNotRenderedRegion, geometry, false /*update*/);
 #if DEBUG_BACKINGSTORE
                 Platform::logAlways(Platform::LogLevelCritical,
                     "BackingStorePrivate::updateTilesForScroll did clear tile %s",
@@ -1718,8 +1711,8 @@ void BackingStorePrivate::updateTilesForScrollOrNotRenderedRegion(bool checkLoad
             }
             updateTile(tileOrigin, false /*immediate*/);
         } else if (isVisible
-            && (forceVisible || !tileBuffer || !tileBuffer->isRendered(tileVisibleContentsRect(index, currentState), currentState->scale()))
-            && !isCurrentVisibleJob(index, currentState))
+            && (forceVisible || !tileBuffer || !tileBuffer->isRendered(tileVisibleContentsRect(index, geometry), geometry->scale()))
+            && !isCurrentVisibleJob(index, geometry))
             updateTile(tileOrigin, false /*immediate*/);
     }
 }
@@ -1815,10 +1808,10 @@ void BackingStorePrivate::actualVisibleSizeChanged(const Platform::IntSize& size
 
 void BackingStorePrivate::createSurfaces()
 {
-    BackingStoreGeometry* currentState = frontState();
-    TileMap currentMap = currentState->tileMap();
+    BackingStoreGeometry* geometry = frontState();
+    TileMap initialMap = geometry->tileMap();
 
-    ASSERT(currentMap.isEmpty());
+    ASSERT(initialMap.isEmpty());
 
     if (m_webPage->isVisible()) {
         // This method is only to be called as part of setting up a new web page instance and
