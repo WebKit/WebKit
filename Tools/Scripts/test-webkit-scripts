@@ -28,7 +28,7 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-"""Run unit tests of WebKit's Perl and Python scripts."""
+"""Run unit tests of WebKit's Perl, Python, and Ruby scripts."""
 
 # The docstring above is passed as the "description" to the OptionParser
 # used in this script's __main__ block.
@@ -72,11 +72,12 @@ class ScriptsTester(object):
         self.run_test_script('Perl scripts', self.script_path('test-webkitperl'))
         self.run_test_script('Python scripts', self.script_path('test-webkitpy'),
                              ['--all'] if options.all else None)
+        self.run_test_script('Ruby scripts', self.script_path('test-webkitruby'))
 
         # FIXME: Display a cumulative indication of success or failure.
         #        In addition, call sys.exit() with 0 or 1 depending on that
         #        cumulative success or failure.
-        print('Note: Perl and Python results appear separately above.')
+        print('Note: Perl, Python, and Ruby results appear separately above.')
 
 
 if __name__ == '__main__':
