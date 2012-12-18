@@ -2808,7 +2808,6 @@ webkit.org/b/70887 [ Debug ] jquery/css.html [ Pass Timeout ]
 # The following tests need updated baselines.
 webkit.org/b/105121 platform/chromium/virtual/gpu/compositedscrolling/scrollbars/overflow-scrollbar-combinations.html [ ImageOnlyFailure ]
 webkit.org/b/105121 platform/chromium/virtual/gpu/compositedscrolling/overflow/nested-scrolling.html [ ImageOnlyFailure ]
-webkit.org/b/105121 platform/chromium/virtual/gpu/compositedscrolling/scrollbars/scrollbars-on-positioned-content.html [ ImageOnlyFailure ]
 webkit.org/b/105121 platform/chromium/virtual/gpu/compositedscrolling/overflow/overflow-auto-with-touch-toggle.html [ Failure ]
 
 webkit.org/b/65009 [ Mac ] scrollbars/scrollbar-drag-thumb-with-large-content.html [ Failure ]
@@ -2877,7 +2876,6 @@ crbug.com/33287 [ Mac ] fast/canvas/set-colors.html [ Failure ]
 webkit.org/b/69060 [ Android ] fast/repaint/selection-clear.html [ Failure ]
 
 webkit.org/b/69103 [ Android Linux Win ] fast/text/line-initial-and-final-swashes.html [ Failure ]
-webkit.org/b/69103 [ Mac ] fast/text/line-initial-and-final-swashes.html [ ImageOnlyFailure ]
 
 webkit.org/b/69136 [ Mac ] fast/frames/frame-set-rotation-hit.html [ ImageOnlyFailure ]
 webkit.org/b/69136 [ Mac ] fast/frames/frame-set-scaling-hit.html [ ImageOnlyFailure ]
@@ -3644,9 +3642,6 @@ webkit.org/b/85856 [ Lion MountainLion ] platform/chromium/virtual/gpu/composite
 webkit.org/b/85856 scrollbars/rtl/div-horizontal.html [ Failure ]
 webkit.org/b/85856 platform/chromium/virtual/gpu/compositedscrolling/scrollbars/rtl/div-horizontal.html [ Failure ]
 
-# Bug 93148 changed this to a testRunner test and it started timing out on Mac.
-webkit.org/b/93148 [ Mac ] fast/css/nested-layers-with-hover.html [ Timeout ]
-
 webkit.org/b/93247 [ Debug ] fast/lists/list-marker-remove-crash.html [ Crash ]
 
 webkit.org/b/93565 [ Debug ] fast/dom/Document/document-reopen.html [ Failure Pass ]
@@ -4118,9 +4113,6 @@ webkit.org/b/102131 [ Win ] fast/workers/worker-exception-during-navigation.html
 webkit.org/b/102264 [ Debug ] css3/filters/custom/custom-filter-property-computed-style.html [ Pass Timeout ]
 webkit.org/b/102277 fast/events/frame-scroll-fake-mouse-move.html [ Pass Failure ]
 webkit.org/b/102277 fast/events/overflow-scroll-fake-mouse-move.html [ Pass Failure ]
-webkit.org/b/102294 [ Mac ] platform/chromium/virtual/deferred/fast/images/exif-orientation.html [ ImageOnlyFailure ]
-webkit.org/b/102294 [ Mac ] platform/chromium/virtual/deferred/fast/images/exif-orientation-css.html [ ImageOnlyFailure ]
-webkit.org/b/102294 [ Mac ] platform/chromium/virtual/deferred/fast/images/gray-scale-jpeg-with-color-profile.html [ ImageOnlyFailure ]
 
 # This test is consistently leaking state into the next test.
 webkit.org/b/85522 http/tests/security/sandboxed-iframe-form-top.html [ Skip ]
@@ -4247,5 +4239,3 @@ webkit.org/b/104848 [ Linux XP SnowLeopard Lion Release ] fast/frames/sandboxed-
 webkit.org/b/104848 [ SnowLeopard Debug ] fast/frames/sandboxed-iframe-attribute-parsing.html [ Pass Failure ]
 webkit.org/b/104848 [ Release ] fast/frames/sandboxed-iframe-parsing-space-characters.html [ Pass Failure ]
 
-# New test
-webkit.org/b/104631 fast/inline/justify-emphasis-inline-box.html [ Missing ]

@@ -1,3 +1,12 @@
+2012-12-18  Dirk Pranke  <dpranke@chromium.org>
+
+        Remove entries for passing tests and one bad expectation for a reftest.
+
+        Unreviewed.
+
+        * platform/chromium-mac/compositing/background-color/background-color-change-to-text-expected.png: Removed.
+        * platform/chromium/TestExpectations:
+
 2012-12-18  Dean Jackson  <dino@apple.com>
 
         Track menu needs localization
