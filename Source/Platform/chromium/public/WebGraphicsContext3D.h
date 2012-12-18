@@ -240,6 +240,9 @@ public:
     // Destroys the stream for the given texture.
     virtual void destroyStreamTextureCHROMIUM(WebGLId texture) { }
 
+    // GL_CHROMIUM_lose_context
+    virtual void loseContextCHROMIUM(WGC3Denum current, WGC3Denum other) { }
+
     // The entry points below map directly to the OpenGL ES 2.0 API.
     // See: http://www.khronos.org/registry/gles/
     // and: http://www.khronos.org/opengles/sdk/docs/man/
