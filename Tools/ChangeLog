@@ -1,3 +1,14 @@
+2012-12-18  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Build fix after r138045.
+
+        * Scripts/webkitpy/performance_tests/perftestsrunner.py:
+        (PerfTestsRunner._collect_tests): Use relative_path. We skip only when this path
+        is not explicitly specified. The condition was backwards but never matched so we
+        always ran the test regardless of whether it's listed in the skipped list or not.
+        * Scripts/webkitpy/performance_tests/perftestsrunner_unittest.py:
+        (test_collect_tests_with_ignored_skipped_list): Renamed so that it actually runs.
+
 2012-12-18  Emil A Eklund  <eae@chromium.org>
 
         TestWebKitAPI/Tests/WebCore/LayoutUnit fails on mac

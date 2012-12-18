@@ -153,7 +153,7 @@ class PerfTestsRunner(object):
         tests = []
         for path in test_files:
             relative_path = filesystem.relpath(path, self._base_path).replace('\\', '/')
-            if self._options.use_skipped_list and self._port.skips_perf_test(relative_path) and filesystem.normpath(path) in paths:
+            if self._options.use_skipped_list and self._port.skips_perf_test(relative_path) and filesystem.normpath(relative_path) not in paths:
                 continue
             test = PerfTestFactory.create_perf_test(self._port, relative_path, path)
             tests.append(test)

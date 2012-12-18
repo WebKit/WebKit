@@ -580,7 +580,7 @@ max 548000 bytes
         self.assertEqual(self._collect_tests_and_sort_test_name(runner),
             ['SkippedSuite/Test1.html', 'Suite/SkippedTest1.html', 'Suite/Test1.html'])
 
-    def test_collect_tests_with_skipped_list(self):
+    def test_collect_tests_with_ignored_skipped_list(self):
         runner, port = self.create_runner(args=['--force'])
 
         self._add_file(runner, 'inspector', 'test1.html')
