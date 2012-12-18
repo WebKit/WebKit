@@ -228,7 +228,15 @@ void RenderImage::imageDimensionsChanged(bool imageSizeChanged, const IntRect* r
         computeLogicalHeight(height(), 0, computedValues);
         LayoutUnit newHeight = computedValues.m_extent;
 
-        if (imageSizeChanged || width() != newWidth || height() != newHeight) {
+        // FIXME: We only need to recompute the containing block's preferred size
+        // if the containing block's size depends on the image's size (i.e., the container uses shrink-to-fit sizing).
+        // There's no easy way to detect that shrink-to-fit is needed, always force a layout.
+        bool containingBlockNeedsToRecomputePreferredSize =
+            style()->logicalWidth().type() == Percent
+            || style()->logicalMaxWidth().type() == Percent
+            || style()->logicalMinWidth().type() == Percent;
+
+        if (imageSizeChanged || width() != newWidth || height() != newHeight || containingBlockNeedsToRecomputePreferredSize) {
             shouldRepaint = false;
             if (!selfNeedsLayout())
                 setNeedsLayout(true);

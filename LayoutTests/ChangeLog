@@ -1,3 +1,15 @@
+2012-12-17  KyungTae Kim  <ktf.kim@samsung.com>
+
+        Percentage width replaced element incorrectly rendered when intrinsic size changed
+        https://bugs.webkit.org/show_bug.cgi?id=102784
+
+        Reviewed by Tony Chang.
+
+        Add test to check when the source of images with percentage width is changed.
+
+        * fast/css/percent-width-img-src-change.html: Added.
+        * fast/css/percent-width-img-src-change-expected.txt: Added.
+
 2012-12-17  Simon Fraser  <simon.fraser@apple.com>
 
         Fix repositioning of fixed elements on zooming
