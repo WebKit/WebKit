@@ -203,10 +203,7 @@ double PerformanceResourceTiming::responseStart() const
 
 double PerformanceResourceTiming::responseEnd() const
 {
-    if (!m_shouldReportDetails)
-        return 0.0;
-
-    if (!m_timing)
+    if (!m_finishTime)
         return responseStart();
 
     return monotonicTimeToDocumentMilliseconds(m_requestingDocument.get(), m_finishTime);
