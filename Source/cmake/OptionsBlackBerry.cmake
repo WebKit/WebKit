@@ -116,7 +116,7 @@ endif ()
 
 # Set custom CFLAGS for our port
 if (CMAKE_COMPILER_IS_GNUCC)
-    set(CMAKE_CXX_FLAGS "-fstack-protector -fno-rtti -Wformat -Wformat-security -Werror=format-security ${CMAKE_CXX_FLAGS}")
+    set(CMAKE_CXX_FLAGS "-fno-exceptions -fstack-protector -fno-rtti -Wformat -Wformat-security -Werror=format-security ${CMAKE_CXX_FLAGS}")
     set(CMAKE_C_FLAGS "-fstack-protector -Wformat -Wformat-security -Werror=format-security ${CMAKE_C_FLAGS}")
     set(JSC_LINK_FLAGS "-Wl,-z,defs -Wl,-z,relro -N1024K")
 endif ()
