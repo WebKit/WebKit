@@ -73,9 +73,9 @@ public:
     inline bool compileFEColorMatrix();
     inline bool compileFETurbulence();
 
-    inline void applyFEColorMatrix(OpenCLHandle, IntSize, OpenCLHandle, IntPoint, void*, int);
+    inline void applyFEColorMatrix(OpenCLHandle, IntSize, OpenCLHandle, IntPoint, float*, int);
     inline void applyFETurbulence(OpenCLHandle, IntSize, int, void*, void*, void*, void*, void*,
-        void*, int, int, int, int, float, float, bool, int, int);
+        int*, int, int, int, int, float, float, bool, int, int);
 
 private:
 

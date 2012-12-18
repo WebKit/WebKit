@@ -102,7 +102,7 @@ OpenCLHandle FilterContextOpenCL::createOpenCLImage(IntSize paintSize)
 }
 
 static const char* transformColorSpaceKernelProgram =
-PROGRAM_STR(
+PROGRAM(
 const sampler_t sampler = CLK_NORMALIZED_COORDS_FALSE | CLK_ADDRESS_CLAMP_TO_EDGE | CLK_FILTER_NEAREST;
 
 __kernel void transformColorSpace(__read_only image2d_t source, __write_only image2d_t destination, __constant float *clLookUpTable)
@@ -110,12 +110,12 @@ __kernel void transformColorSpace(__read_only image2d_t source, __write_only ima
     int2 sourceCoord = (int2) (get_global_id(0), get_global_id(1));
     float4 pixel = read_imagef(source, sampler, sourceCoord);
 
-    pixel = (float4)(clLookUpTable[(int)(round(pixel.x * 255))], clLookUpTable[(int)(round(pixel.y * 255))],
-        clLookUpTable[(int)(round(pixel.z * 255))], pixel.w);
+    pixel = (float4) (clLookUpTable[(int)(round(pixel.x * 255))], clLookUpTable[(int)(round(pixel.y * 255))],
+        clLookUpTable[(int) (round(pixel.z * 255))], pixel.w);
 
     write_imagef(destination, sourceCoord, pixel);
 }
-);
+); // End of OpenCL kernels
 
 void FilterContextOpenCL::openCLTransformColorSpace(OpenCLHandle& source, IntRect sourceSize, ColorSpace srcColorSpace, ColorSpace dstColorSpace)
 {

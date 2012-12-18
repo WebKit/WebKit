@@ -36,7 +36,7 @@
 namespace WebCore {
 
 static const char* turbulenceKernelProgram =
-PROGRAM_STR(
+PROGRAM(
 __constant int s_perlinNoise = 4096;
 __constant int s_blockSize = 256;
 __constant int s_blockMask = 255;
@@ -165,7 +165,7 @@ __kernel void Turbulence(__write_only image2d_t destination, __constant float *t
 
     write_imagef(destination, (int2)(get_global_id(0), get_global_id(1)), turbulenceFunctionResult);
 }
-);
+); // End of OpenCL kernels
 
 inline bool FilterContextOpenCL::compileFETurbulence()
 {
@@ -181,25 +181,25 @@ inline bool FilterContextOpenCL::compileFETurbulence()
         return false;
 
     m_turbulenceCompileStatus = openclCompileSuccessful;
-    return openclCompileFailed;
+    return openclCompileSuccessful;
 }
 
 inline void FilterContextOpenCL::applyFETurbulence(OpenCLHandle destination,
-    IntSize destinationSize, int blockSize,
+    IntSize destinationSize, int totalBlockSize,
     void* transform, void* redComponent, void* greenComponent,
     void* blueComponent, void* alphaComponent,
-    void* latticeSelector, int offsetX, int offsetY, int tileWidth, int tileHeight,
+    int* latticeSelector, int offsetX, int offsetY, int tileWidth, int tileHeight,
     float baseFrequencyX, float baseFrequencyY, bool stitchTiles, int numOctaves, int type)
 {
     RunKernel kernel(this, m_turbulenceOperation, destinationSize.width(), destinationSize.height());
 
     kernel.addArgument(destination);
     OpenCLHandle transformHandle(kernel.addArgument(transform, sizeof(float) * 6));
-    OpenCLHandle redComponentHandle(kernel.addArgument(redComponent, sizeof(float) * (2 * blockSize + 2) * 2));
-    OpenCLHandle greenComponentHandle(kernel.addArgument(greenComponent, sizeof(float) * (2 * blockSize + 2) * 2));
-    OpenCLHandle blueComponentHandle(kernel.addArgument(blueComponent, sizeof(float) * (2 * blockSize + 2) * 2));
-    OpenCLHandle alphaComponentHandle(kernel.addArgument(alphaComponent, sizeof(float) * (2 * blockSize + 2) * 2));
-    OpenCLHandle latticeSelectorHandle(kernel.addArgument(latticeSelector, sizeof(int) * (2 * blockSize + 2)));
+    OpenCLHandle redComponentHandle(kernel.addArgument(redComponent, sizeof(float) * totalBlockSize * 2));
+    OpenCLHandle greenComponentHandle(kernel.addArgument(greenComponent, sizeof(float) * totalBlockSize * 2));
+    OpenCLHandle blueComponentHandle(kernel.addArgument(blueComponent, sizeof(float) * totalBlockSize * 2));
+    OpenCLHandle alphaComponentHandle(kernel.addArgument(alphaComponent, sizeof(float) * totalBlockSize * 2));
+    OpenCLHandle latticeSelectorHandle(kernel.addArgument(latticeSelector, sizeof(int) * totalBlockSize));
     kernel.addArgument(offsetX);
     kernel.addArgument(offsetY);
     kernel.addArgument(tileWidth);
@@ -235,7 +235,7 @@ bool FETurbulence::platformApplyOpenCL()
     AffineTransform invertedTransform = reinterpret_cast<SVGFilter*>(filter())->absoluteTransform().inverse();
     float transformComponents[6] = { invertedTransform.a(), invertedTransform.b(), invertedTransform.c(), invertedTransform.d(), invertedTransform.e(), invertedTransform.f() };
 
-    context->applyFETurbulence(destination, absolutePaintRect().size(), s_blockSize, transformComponents, paintingData.gradient,
+    context->applyFETurbulence(destination, absolutePaintRect().size(), 2 * s_blockSize + 2, transformComponents, paintingData.gradient,
         paintingData.gradient + 1, paintingData.gradient + 2, paintingData.gradient + 3, paintingData.latticeSelector,
         absolutePaintRect().x(), absolutePaintRect().y(), paintingData.filterSize.width(), paintingData.filterSize.height(),
         m_baseFrequencyX, m_baseFrequencyY, m_stitchTiles, m_numOctaves, m_type);

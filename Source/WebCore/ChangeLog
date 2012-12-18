@@ -1,3 +1,25 @@
+2012-12-18  Tamas Czene  <tczene@inf.u-szeged.hu>
+
+        Style fix to OpenCL SVG Filters
+        https://bugs.webkit.org/show_bug.cgi?id=105265
+
+        Reviewed by Zoltan Herczeg.
+
+        Inserted missing spaces and correct copyright text. There were no vital changes.
+
+        * platform/graphics/gpu/opencl/FilterContextOpenCL.cpp:
+        (WebCore):
+        * platform/graphics/gpu/opencl/FilterContextOpenCL.h:
+        (FilterContextOpenCL):
+        * platform/graphics/gpu/opencl/OpenCLFEColorMatrix.cpp:
+        (WebCore::FilterContextOpenCL::applyFEColorMatrix):
+        * platform/graphics/gpu/opencl/OpenCLFETurbulence.cpp:
+        (WebCore):
+        (WebCore::FilterContextOpenCL::compileFETurbulence):
+        (WebCore::FilterContextOpenCL::applyFETurbulence):
+        (WebCore::FETurbulence::platformApplyOpenCL):
+        * platform/graphics/gpu/opencl/OpenCLHandle.h:
+
 2012-12-17  Andrey Adaikin  <aandrey@chromium.org>
 
         Web Inspector: [WebGL] handle video elements used in WebGL

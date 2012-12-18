@@ -90,7 +90,7 @@ inline bool FilterContextOpenCL::compileFEColorMatrix()
     return openclCompileSuccessful;
 }
 
-inline void FilterContextOpenCL::applyFEColorMatrix(OpenCLHandle destination, IntSize destinationSize, OpenCLHandle source, IntPoint relativeSourceLocation, void* values, int type)
+inline void FilterContextOpenCL::applyFEColorMatrix(OpenCLHandle destination, IntSize destinationSize, OpenCLHandle source, IntPoint relativeSourceLocation, float* values, int type)
 {
     cl_kernel colorMatrix;
     OpenCLHandle clValues;
