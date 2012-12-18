@@ -132,7 +132,7 @@ static const Ecore_Getopt options = {
     }
 };
 
-static Browser_Window *window_create(const char *url, int width, int height);
+static Browser_Window *window_create(Evas_Object* opener, const char *url, int width, int height);
 
 static Browser_Window *window_find_with_elm_window(Evas_Object *elm_window)
 {
@@ -224,7 +224,7 @@ on_key_down(void *user_data, Evas *e, Evas_Object *ewk_view, void *event_info)
             info("Change Pagination Mode (F7) was pressed, but NOT changed!");
     } else if (!strcmp(ev->key, "n") && ctrlPressed) {
         info("Create new window (Ctrl+n) was pressed.\n");
-        Browser_Window *window = window_create(DEFAULT_URL, 0, 0);
+        Browser_Window *window = window_create(0, DEFAULT_URL, 0, 0);
         // 0 equals default width and height.
         windows = eina_list_append(windows, window);
     } else if (!strcmp(ev->key, "i") && ctrlPressed) {
@@ -804,7 +804,7 @@ on_window_create(Ewk_View_Smart_Data *smartData, const char *url, const Ewk_Wind
     if (!height)
         height = window_height;
 
-    Browser_Window *window = window_create(url, width, height);
+    Browser_Window *window = window_create(smartData->self, url, width, height);
     Evas_Object *new_view = window->ewk_view;
 
     windows = eina_list_append(windows, window);
@@ -996,7 +996,7 @@ create_toolbar_button(Evas_Object *elm_window, const char *icon_name)
     return button;
 }
 
-static Browser_Window *window_create(const char *url, int width, int height)
+static Browser_Window *window_create(Evas_Object *opener, const char *url, int width, int height)
 {
     Browser_Window *window = malloc(sizeof(Browser_Window));
     if (!window) {
@@ -1097,7 +1097,8 @@ static Browser_Window *window_create(const char *url, int width, int height)
         window->ewk_view = (Evas_Object*)WKViewCreate(evas, 0, 0);
     } else {
         Evas_Smart *smart = evas_smart_class_new(&ewkViewClass->sc);
-        window->ewk_view = ewk_view_smart_add(evas, smart, ewk_context_default_get());
+        Ewk_Context* context = opener ? ewk_view_context_get(opener) : ewk_context_default_get();
+        window->ewk_view = ewk_view_smart_add(evas, smart, context);
     }
     ewk_view_theme_set(window->ewk_view, THEME_DIR "/default.edj");
     if (device_pixel_ratio)
@@ -1228,10 +1229,10 @@ elm_main(int argc, char *argv[])
 
     if (args < argc) {
         char *url = url_from_user_input(argv[args]);
-        window = window_create(url, 0, 0);
+        window = window_create(0, url, 0, 0);
         free(url);
     } else
-        window = window_create(DEFAULT_URL, 0, 0);
+        window = window_create(0, DEFAULT_URL, 0, 0);
 
     if (!window)
         return quit(EINA_FALSE, "ERROR: could not create browser window.\n");
