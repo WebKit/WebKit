@@ -694,10 +694,10 @@ void LayerRenderer::updateLayersRecursive(LayerCompositingThread* layer, const T
         // This trick allows us to display fixed positioned elements aligned to top or
         // bottom correctly when panning and zooming, without actually knowing the
         // numeric values of the top and bottom CSS attributes.
-        // In fact, the position is the location of the anchor, so to find the top left
-        // we have to subtract the anchor times the bounds. The anchor defaults to
-        // (0.5, 0.5) for most layers.
-        if (position.y() - anchorPoint.y() * bounds.height() > layoutY + m_layoutRect.height() / 2) {
+        // In fact, the position is the location of the anchor, so to find the mid-point
+        // we have to subtract the anchor offset from the middle (0.5) times the bounds.
+        // The anchor defaults to (0.5, 0.5) for most layers.
+        if (position.y() + (0.5 - anchorPoint.y()) * bounds.height() > layoutY + m_layoutRect.height() / 2) {
             visibleY = min<float>(m_contentsSize.height(), m_visibleRect.y() + m_visibleRect.height());
             layoutY = min(m_contentsSize.height(), max(0, m_layoutRect.y()) + m_layoutRect.height());
         }
