@@ -79,8 +79,11 @@ public:
     virtual void setRate(float);
 
     virtual bool paused() const;
+    virtual bool muted() const;
+    virtual bool supportsMuting() const { return true; }
 
     virtual void setVolume(float);
+    virtual void setMuted(bool);
 
     virtual MediaPlayer::NetworkState networkState() const;
     virtual MediaPlayer::ReadyState readyState() const;

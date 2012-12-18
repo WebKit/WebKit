@@ -130,9 +130,8 @@ MediaPlayerPrivate::~MediaPlayerPrivate()
     if (m_isAuthenticationChallenging)
         AuthenticationChallengeManager::instance()->cancelAuthenticationChallenge(this);
 
-    if (isFullscreen()) {
+    if (isFullscreen())
         m_webCorePlayer->mediaPlayerClient()->mediaPlayerExitFullscreen();
-    }
 #if USE(ACCELERATED_COMPOSITING)
     // Remove media player from platform layer.
     if (m_platformLayer)
@@ -313,6 +312,19 @@ void MediaPlayerPrivate::setVolume(float volume)
 {
     if (m_platformPlayer)
         m_platformPlayer->setVolume(volume);
+}
+
+void MediaPlayerPrivate::setMuted(bool muted)
+{
+    if (m_platformPlayer)
+        m_platformPlayer->setMuted(muted);
+}
+
+bool MediaPlayerPrivate::muted() const
+{
+    if (m_platformPlayer)
+        return m_platformPlayer->muted();
+    return false;
 }
 
 MediaPlayer::NetworkState MediaPlayerPrivate::networkState() const
@@ -719,9 +731,9 @@ static ProtectionSpace generateProtectionSpaceFromMMRAuthChallenge(const MMRAuth
     ASSERT(url.isValid());
 
     return ProtectionSpace(url.host(), url.port(),
-                           static_cast<ProtectionSpaceServerType>(authChallenge.serverType()),
-                           authChallenge.realm().c_str(),
-                           static_cast<ProtectionSpaceAuthenticationScheme>(authChallenge.authScheme()));
+        static_cast<ProtectionSpaceServerType>(authChallenge.serverType()),
+        authChallenge.realm().c_str(),
+        static_cast<ProtectionSpaceAuthenticationScheme>(authChallenge.authScheme()));
 }
 
 void MediaPlayerPrivate::onAuthenticationNeeded(MMRAuthChallenge& authChallenge)
@@ -753,8 +765,8 @@ void MediaPlayerPrivate::notifyChallengeResult(const KURL& url, const Protection
         return;
 
     m_platformPlayer->reloadWithCredential(credential.user().utf8(String::StrictConversion).data(),
-                                        credential.password().utf8(String::StrictConversion).data(),
-                                        static_cast<MMRAuthChallenge::CredentialPersistence>(credential.persistence()));
+        credential.password().utf8(String::StrictConversion).data(),
+        static_cast<MMRAuthChallenge::CredentialPersistence>(credential.persistence()));
 }
 
 void MediaPlayerPrivate::onAuthenticationAccepted(const MMRAuthChallenge& authChallenge) const
@@ -933,9 +945,9 @@ void MediaPlayerPrivate::setBuffering(bool buffering)
     }
 }
 
-static unsigned int allocateTextureId()
+static unsigned allocateTextureId()
 {
-    unsigned int texid;
+    unsigned texid;
     glGenTextures(1, &texid);
     glBindTexture(GL_TEXTURE_2D, texid);
     // Do basic linear filtering on resize.
@@ -958,7 +970,7 @@ void MediaPlayerPrivate::drawBufferingAnimation(const TransformationMatrix& matr
         renderMatrix.rotate(time.tv_nsec / 1000000000.0 * 360.0);
 
         static bool initialized = false;
-        static unsigned int texId = allocateTextureId();
+        static unsigned texId = allocateTextureId();
         glBindTexture(GL_TEXTURE_2D, texId);
         if (!initialized) {
             initialized = true;
