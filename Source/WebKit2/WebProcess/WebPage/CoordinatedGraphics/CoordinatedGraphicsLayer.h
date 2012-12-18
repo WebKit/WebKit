@@ -59,7 +59,6 @@ public:
     virtual void removeTile(CoordinatedLayerID, uint32_t tileID) = 0;
 
     virtual WebCore::FloatRect visibleContentsRect() const = 0;
-    virtual bool layerTreeTileUpdatesAllowed() const = 0;
     virtual PassRefPtr<CoordinatedImageBacking> createImageBackingIfNeeded(WebCore::Image*) = 0;
     virtual void syncLayerState(CoordinatedLayerID, const CoordinatedLayerInfo&) = 0;
     virtual void syncLayerChildren(CoordinatedLayerID, const Vector<CoordinatedLayerID>&) = 0;
@@ -151,7 +150,7 @@ public:
     virtual void tiledBackingStorePaintBegin() OVERRIDE;
     virtual void tiledBackingStorePaint(GraphicsContext*, const IntRect&) OVERRIDE;
     virtual void tiledBackingStorePaintEnd(const Vector<IntRect>& paintedArea) OVERRIDE;
-    virtual bool tiledBackingStoreUpdatesAllowed() const OVERRIDE;
+    virtual void tiledBackingStoreHasPendingTileCreation() OVERRIDE;
     virtual IntRect tiledBackingStoreContentsRect() OVERRIDE;
     virtual IntRect tiledBackingStoreVisibleRect() OVERRIDE;
     virtual Color tiledBackingStoreBackgroundColor() const OVERRIDE;
@@ -164,7 +163,7 @@ public:
 
     void setCoordinator(WebKit::CoordinatedGraphicsLayerClient*);
 
-    void adjustVisibleRect();
+    void setNeedsVisibleRectAdjustment();
     void purgeBackingStores();
     bool hasPendingVisibleChanges();
 
@@ -219,7 +218,9 @@ private:
     FloatPoint m_adjustedPosition;
     FloatPoint3D m_adjustedAnchorPoint;
 
-    bool m_inUpdateMode : 1;
+#ifndef NDEBUG
+    bool m_isPurging;
+#endif
     bool m_shouldUpdateVisibleRect: 1;
     bool m_shouldSyncLayerState: 1;
     bool m_shouldSyncChildren: 1;
@@ -230,6 +231,8 @@ private:
     bool m_canvasNeedsDisplay : 1;
     bool m_canvasNeedsCreate : 1;
     bool m_canvasNeedsDestroy : 1;
+    bool m_pendingContentsScaleAdjustment : 1;
+    bool m_pendingVisibleRectAdjustment : 1;
 
     WebKit::CoordinatedGraphicsLayerClient* m_coordinator;
     OwnPtr<TiledBackingStore> m_mainBackingStore;

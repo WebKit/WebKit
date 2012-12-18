@@ -33,7 +33,7 @@ public:
     virtual void tiledBackingStorePaintBegin() = 0;
     virtual void tiledBackingStorePaint(GraphicsContext*, const IntRect&) = 0;
     virtual void tiledBackingStorePaintEnd(const Vector<IntRect>& paintedArea) = 0;
-    virtual bool tiledBackingStoreUpdatesAllowed() const { return true; }
+    virtual void tiledBackingStoreHasPendingTileCreation() { }
     virtual IntRect tiledBackingStoreContentsRect() = 0;
     virtual IntRect tiledBackingStoreVisibleRect() = 0;
     virtual Color tiledBackingStoreBackgroundColor() const = 0;
