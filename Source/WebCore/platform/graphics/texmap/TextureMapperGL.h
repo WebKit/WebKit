@@ -33,7 +33,6 @@ namespace WebCore {
 class CustomFilterProgram;
 class CustomFilterCompiledProgram;
 class TextureMapperGLData;
-class GraphicsContext;
 class TextureMapperShaderProgram;
 
 // An OpenGL-ES2 implementation of TextureMapper.
@@ -64,9 +63,7 @@ public:
     virtual void endClip() OVERRIDE;
     virtual IntSize maxTextureSize() const OVERRIDE { return IntSize(2000, 2000); }
     virtual PassRefPtr<BitmapTexture> createTexture() OVERRIDE;
-    virtual GraphicsContext* graphicsContext() OVERRIDE { return m_context; }
     inline GraphicsContext3D* graphicsContext3D() const { return m_context3D.get(); }
-    virtual void setGraphicsContext(GraphicsContext* context) OVERRIDE { m_context = context; }
 
 #if ENABLE(CSS_FILTERS)
     void drawFiltered(const BitmapTexture& sourceTexture, const BitmapTexture& contentTexture, const FilterOperation&, int pass);
@@ -122,7 +119,6 @@ private:
     void bindDefaultSurface();
     ClipStack& clipStack();
     inline TextureMapperGLData& data() { return *m_data; }
-    GraphicsContext* m_context;
     RefPtr<GraphicsContext3D> m_context3D;
     TextureMapperGLData* m_data;
     ClipStack m_clipStack;

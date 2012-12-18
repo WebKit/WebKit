@@ -137,8 +137,8 @@ public:
 
     // makes a surface the target for the following drawTexture calls.
     virtual void bindSurface(BitmapTexture* surface) = 0;
-    virtual void setGraphicsContext(GraphicsContext* context) { m_context = context; }
-    virtual GraphicsContext* graphicsContext() { return m_context; }
+    void setGraphicsContext(GraphicsContext* context) { m_context = context; }
+    GraphicsContext* graphicsContext() { return m_context; }
     virtual void beginClip(const TransformationMatrix&, const FloatRect&) = 0;
     virtual void endClip() = 0;
     virtual PassRefPtr<BitmapTexture> createTexture() = 0;
@@ -164,6 +164,8 @@ public:
 protected:
     explicit TextureMapper(AccelerationMode);
 
+    GraphicsContext* m_context;
+
 private:
 #if USE(TEXTURE_MAPPER_GL)
     static PassOwnPtr<TextureMapper> platformCreateAccelerated();
@@ -176,7 +178,6 @@ private:
     InterpolationQuality m_interpolationQuality;
     TextDrawingModeFlags m_textDrawingMode;
     OwnPtr<BitmapTexturePool> m_texturePool;
-    GraphicsContext* m_context;
     AccelerationMode m_accelerationMode;
 };
 

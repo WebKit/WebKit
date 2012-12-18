@@ -136,10 +136,10 @@ PassOwnPtr<TextureMapper> TextureMapper::create(AccelerationMode mode)
 }
 
 TextureMapper::TextureMapper(AccelerationMode accelerationMode)
-    : m_interpolationQuality(InterpolationDefault)
+    : m_context(0)
+    , m_interpolationQuality(InterpolationDefault)
     , m_textDrawingMode(TextModeFill)
     , m_texturePool(adoptPtr(new BitmapTexturePool()))
-    , m_context(0)
     , m_accelerationMode(accelerationMode)
 { }
 

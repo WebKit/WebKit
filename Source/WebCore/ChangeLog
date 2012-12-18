@@ -1,3 +1,26 @@
+2012-12-17  Huang Dongsung  <luxtella@company100.net>
+
+        REGRESSION(r137442): Crash because of an uninitialized member.
+        https://bugs.webkit.org/show_bug.cgi?id=105246
+
+        Reviewed by Noam Rosenthal.
+
+        TextureMapperGL defines m_context although TextureMapper defines m_context.
+        r137442 removes the initialization code in TextureMapperGL, which is
+        what causes this regression. This patch removes the duplicated member
+        in TextureMapperGL.
+
+        No new tests. Covered by existing tests.
+
+        * platform/graphics/texmap/TextureMapper.cpp:
+        (WebCore::TextureMapper::TextureMapper):
+        * platform/graphics/texmap/TextureMapper.h:
+        (WebCore::TextureMapper::setGraphicsContext):
+        (WebCore::TextureMapper::graphicsContext):
+        (TextureMapper):
+        * platform/graphics/texmap/TextureMapperGL.h:
+        (WebCore):
+
 2012-12-17  Philip Rogers  <pdr@google.com>
 
         Queue container size requests while images are loading.
