@@ -359,6 +359,10 @@ inspector/geolocation-success.html
 # https://bugs.webkit.org/show_bug.cgi?id=103861
 storage/domstorage/localstorage/close-idle-localstorage-databases-immediately.html
 
+[WK2] The new npruntime/embed-property-iframe-equality.html fails
+# https://bugs.webkit.org/show_bug.cgi?id=105266
+npruntime/embed-property-iframe-equality.html
+
 ### END OF (1) Classified failures with bug reports
 ########################################
 
