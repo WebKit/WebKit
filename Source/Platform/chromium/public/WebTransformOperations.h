@@ -25,7 +25,7 @@
 #ifndef WebTransformOperations_h
 #define WebTransformOperations_h
 
-#include <public/WebTransformationMatrix.h>
+#include "WebTransformationMatrix.h"
 
 namespace WebKit {
 
