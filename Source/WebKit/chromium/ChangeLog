@@ -1,3 +1,15 @@
+2012-12-18  Wei Jia  <wjia@chromium.org>
+
+        Enable media stream on Android for Chromium
+        https://bugs.webkit.org/show_bug.cgi?id=102545
+
+        Reviewed by Eric Seidel.
+
+        Put all webrtc related stuff under one flag "enable_webrtc" which is set to 1
+        on Linux/Windows/Mac and 0 on Android.
+
+        * features.gypi:
+
 2012-12-18  Yaron Friedman  <yfriedman@chromium.org>
 
         Chrome Android java output is too verbose
