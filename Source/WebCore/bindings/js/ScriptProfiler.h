@@ -80,6 +80,7 @@ public:
     static void visitExternalArrays(ExternalArrayVisitor*) { }
     static void collectBindingMemoryInfo(MemoryInstrumentation*) { }
     static size_t profilerSnapshotsSize() { return 0; }
+    static HashMap<String, double>* currentProfileNameIdleTimeMap() { return 0; }
 };
 
 } // namespace WebCore

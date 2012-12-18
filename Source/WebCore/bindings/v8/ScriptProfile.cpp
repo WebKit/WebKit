@@ -65,6 +65,11 @@ PassRefPtr<ScriptProfileNode> ScriptProfile::bottomUpHead() const
     return ScriptProfileNode::create(m_profile->GetBottomUpRoot());
 }
 
+double ScriptProfile::idleTime() const
+{
+    return m_idleTime;
+}
+
 #if ENABLE(INSPECTOR)
 static PassRefPtr<InspectorObject> buildInspectorObjectFor(const v8::CpuProfileNode* node)
 {

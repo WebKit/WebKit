@@ -47,9 +47,9 @@ class InspectorObject;
 
 class ScriptProfile : public RefCounted<ScriptProfile> {
 public:
-    static PassRefPtr<ScriptProfile> create(const v8::CpuProfile* profile)
+    static PassRefPtr<ScriptProfile> create(const v8::CpuProfile* profile, double idleTime)
     {
-        return adoptRef(new ScriptProfile(profile));
+        return adoptRef(new ScriptProfile(profile, idleTime));
     }
     virtual ~ScriptProfile();
 
@@ -57,6 +57,7 @@ public:
     unsigned int uid() const;
     PassRefPtr<ScriptProfileNode> head() const;
     PassRefPtr<ScriptProfileNode> bottomUpHead() const;
+    double idleTime() const;
 
 #if ENABLE(INSPECTOR)
     PassRefPtr<InspectorObject> buildInspectorObjectForHead() const;
@@ -64,11 +65,13 @@ public:
 #endif
 
 private:
-    ScriptProfile(const v8::CpuProfile* profile)
+    ScriptProfile(const v8::CpuProfile* profile, double idleTime)
         : m_profile(profile)
+        , m_idleTime(idleTime)
     {}
 
     const v8::CpuProfile* m_profile;
+    double m_idleTime;
 };
 
 } // namespace WebCore

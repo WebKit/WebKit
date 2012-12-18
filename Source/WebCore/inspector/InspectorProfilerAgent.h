@@ -102,6 +102,9 @@ public:
 
     virtual void reportMemoryUsage(MemoryObjectInfo*) const OVERRIDE;
 
+    void willProcessTask();
+    void didProcessTask();
+
 protected:
     InspectorProfilerAgent(InstrumentingAgents*, InspectorConsoleAgent*, InspectorState*, InjectedScriptManager*);
     virtual void startProfiling(const String& title) = 0;
@@ -121,13 +124,17 @@ private:
     InjectedScriptManager* m_injectedScriptManager;
     InspectorFrontend::Profiler* m_frontend;
     bool m_enabled;
-    bool m_recordingUserInitiatedProfile;
+    bool m_recordingCPUProfile;
     bool m_headersRequested;
     int m_currentUserInitiatedProfileNumber;
     unsigned m_nextUserInitiatedProfileNumber;
     unsigned m_nextUserInitiatedHeapSnapshotNumber;
     ProfilesMap m_profiles;
     HeapSnapshotsMap m_snapshots;
+
+    typedef HashMap<String, double> ProfileNameIdleTimeMap;
+    ProfileNameIdleTimeMap* m_profileNameIdleTimeMap;
+    double m_previousTaskEndTime;
 };
 
 } // namespace WebCore

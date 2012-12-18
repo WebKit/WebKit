@@ -2980,7 +2980,8 @@
                 "description": "Profile.",
                 "properties": [
                     { "name": "head", "type": "object", "optional": true },
-                    { "name": "bottomUpHead", "type": "object", "optional": true }
+                    { "name": "bottomUpHead", "type": "object", "optional": true },
+                    { "name": "idleTime", "type": "number", "optional": true }
                 ]
             },
             {

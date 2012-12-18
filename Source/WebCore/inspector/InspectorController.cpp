@@ -413,12 +413,18 @@ void InspectorController::willProcessTask()
 {
     if (InspectorTimelineAgent* timelineAgent = m_instrumentingAgents->inspectorTimelineAgent())
         timelineAgent->willProcessTask();
+#if ENABLE(JAVASCRIPT_DEBUGGER)
+    m_profilerAgent->willProcessTask();
+#endif
 }
 
 void InspectorController::didProcessTask()
 {
     if (InspectorTimelineAgent* timelineAgent = m_instrumentingAgents->inspectorTimelineAgent())
         timelineAgent->didProcessTask();
+#if ENABLE(JAVASCRIPT_DEBUGGER)
+    m_profilerAgent->didProcessTask();
+#endif
 }
 
 } // namespace WebCore

@@ -33,5 +33,6 @@
     readonly attribute DOMString title;
     readonly attribute unsigned long uid;
     readonly attribute ScriptProfileNode head;
+    readonly attribute double idleTime;
 };
 

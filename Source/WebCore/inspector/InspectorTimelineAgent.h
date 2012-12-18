@@ -153,10 +153,11 @@ public:
     void willFireAnimationFrame(int callbackId, Frame*);
     void didFireAnimationFrame();
 
-    virtual void didGC(double, double, size_t);
-
     void willProcessTask();
     void didProcessTask();
+
+    // ScriptGCEventListener methods.
+    virtual void didGC(double, double, size_t);
 
     // PlatformInstrumentationClient methods.
     virtual void willDecodeImage(const String& imageType) OVERRIDE;

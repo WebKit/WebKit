@@ -51,6 +51,7 @@ public:
     unsigned int uid() const;
     ScriptProfileNode* head() const;
     PassRefPtr<ScriptProfileNode> bottomUpHead() const;
+    double idleTime() const;
 
 #if ENABLE(INSPECTOR)
     PassRefPtr<InspectorObject> buildInspectorObjectForHead() const;

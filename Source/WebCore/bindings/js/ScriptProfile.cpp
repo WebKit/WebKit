@@ -75,6 +75,11 @@ PassRefPtr<ScriptProfileNode> ScriptProfile::bottomUpHead() const
     return 0;
 }
 
+double ScriptProfile::idleTime() const
+{
+    return 0.0;
+}
+
 #if ENABLE(INSPECTOR)
 static PassRefPtr<InspectorObject> buildInspectorObjectFor(const JSC::ProfileNode* node)
 {

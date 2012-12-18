@@ -1,3 +1,40 @@
+2012-12-18  Eugene Klyuchnikov  <eustas@chromium.org>
+
+        Web Inspector: Calculate "idle" time for CPU profiles.
+        https://bugs.webkit.org/show_bug.cgi?id=103120
+
+        Reviewed by Pavel Feldman.
+
+        CPU profiles contain a very confusing "(program)" item.
+        It is time when there is no JS stack.
+        That could be either idle time, or time when browser is doing something.
+
+        To split "(program)" item to idle and really program time we are to
+        calculate idle time during profiling.
+
+        * bindings/js/ScriptProfile.cpp: Added "idleTime" getter.
+        * bindings/js/ScriptProfile.h: Ditto.
+        * bindings/js/ScriptProfiler.h:
+        Added getter of thread-local map of currently written profiles.
+        * bindings/v8/ScriptProfile.cpp: Added "idleTime" getter.
+        * bindings/v8/ScriptProfile.h: Ditto.
+        * bindings/v8/ScriptProfiler.cpp:
+        (WebCore::ScriptProfiler::start): Put profile name to map.
+        (WebCore::ScriptProfiler::stop): Remove profile name from map;
+        pass idleTime to profile constructor.
+        * bindings/v8/ScriptProfiler.h:
+        Added getter of thread-local map of currently written profiles.
+        * inspector/Inspector.json: Added "idleTime" field to profile.
+        * inspector/InspectorController.cpp: Pass hooks to profiler agent.
+        * inspector/InspectorProfilerAgent.cpp:
+        Add idle time to currently written profiles.
+        * inspector/InspectorProfilerAgent.h:
+        Added member to hold reference to map of currently written profiles.
+        * inspector/InspectorTimelineAgent.h:
+        Cleanup.
+        * inspector/ScriptProfile.idl:
+        Add "idleTime" member.
+
 2012-12-17  Yury Semikhatsky  <yurys@chromium.org>
 
         Web Inspector: MediaQueryList listener silently catches errors
