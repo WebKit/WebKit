@@ -1,3 +1,18 @@
+2012-12-17  Ilya Tikhonovsky  <loislo@chromium.org>
+
+        Unreviewed rebaseline after r137593.
+
+        * platform/chromium-linux-x86/editing/selection/move-by-character-6-expected.txt: Added.
+        * platform/chromium-linux/editing/selection/move-by-character-6-expected.png:
+        * platform/chromium-linux/editing/selection/move-by-character-6-expected.txt: Added.
+        * platform/chromium-mac-lion/editing/selection/move-by-character-6-expected.png:
+        * platform/chromium-mac-lion/editing/selection/move-by-character-6-expected.txt: Added.
+        * platform/chromium-mac-snowleopard/editing/selection/move-by-character-6-expected.txt: Added.
+        * platform/chromium-mac/editing/selection/move-by-character-6-expected.png:
+        * platform/chromium-mac/editing/selection/move-by-character-6-expected.txt: Added.
+        * platform/chromium-win/editing/selection/move-by-character-6-expected.png:
+        * platform/chromium-win/editing/selection/move-by-character-6-expected.txt:
+
 2012-12-17  Philip Rogers  <pdr@google.com>
 
         Queue container size requests while images are loading.
