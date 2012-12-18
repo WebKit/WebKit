@@ -99,12 +99,25 @@ NPError enterSandbox(const char* sandboxProfile, const char* readOnlyPaths[], co
 
 #if __MAC_OS_X_VERSION_MIN_REQUIRED >= 1080
     // Use private temporary and cache directories.
-    String systemDirectorySuffix = "com.apple.WebKit.PluginProcess+" + PluginProcess::shared().netscapePluginModule()->module()->bundleIdentifier();
-    setenv("DIRHELPER_USER_DIR_SUFFIX", fileSystemRepresentation(systemDirectorySuffix).data(), 0);
     char temporaryDirectory[PATH_MAX];
     if (!confstr(_CS_DARWIN_USER_TEMP_DIR, temporaryDirectory, sizeof(temporaryDirectory))) {
+        WTFLogAlways("PluginProcess: couldn't retrieve system temporary directory path: %d\n", errno);
+        exit(EX_OSERR);
+    }
+
+    if (strlcpy(temporaryDirectory, [[[[NSFileManager defaultManager] stringWithFileSystemRepresentation:temporaryDirectory length:strlen(temporaryDirectory)] stringByAppendingPathComponent:@"WebKitPlugin-XXXXXX"] fileSystemRepresentation], sizeof(temporaryDirectory)) >= sizeof(temporaryDirectory)
+        || !mkdtemp(temporaryDirectory)) {
+        WTFLogAlways("PluginProcess: couldn't create private temporary directory\n");
+        exit(EX_OSERR);
+    }
+
+    char* systemDirectorySuffix = strdup([[[[NSFileManager defaultManager] stringWithFileSystemRepresentation:temporaryDirectory length:strlen(temporaryDirectory)] lastPathComponent] fileSystemRepresentation]);
+    setenv("DIRHELPER_USER_DIR_SUFFIX", systemDirectorySuffix, 0);
+    free(systemDirectorySuffix);
+
+    if (!confstr(_CS_DARWIN_USER_TEMP_DIR, temporaryDirectory, sizeof(temporaryDirectory))) {
         WTFLogAlways("PluginProcess: couldn't retrieve private temporary directory path: %d\n", errno);
-        exit(EX_NOPERM);
+        exit(EX_OSERR);
     }
     setenv("TMPDIR", temporaryDirectory, 1);
     if (chdir(temporaryDirectory) == -1) {
@@ -139,6 +152,8 @@ NPError enterSandbox(const char* sandboxProfile, const char* readOnlyPaths[], co
     char darwinUserTempDirectory[PATH_MAX];
     if (confstr(_CS_DARWIN_USER_TEMP_DIR, darwinUserTempDirectory, PATH_MAX) > 0)
         extendedReadWritePaths.append(darwinUserTempDirectory);
+    else
+        exit(EX_OSERR);
 
     char darwinUserCacheDirectory[PATH_MAX];
     if (confstr(_CS_DARWIN_USER_CACHE_DIR, darwinUserCacheDirectory, PATH_MAX) > 0)
@@ -152,9 +167,15 @@ NPError enterSandbox(const char* sandboxProfile, const char* readOnlyPaths[], co
     // WKEnterPluginSandbox canonicalizes path arrays, but not parameters (because it cannot know if one is a path).
     char* homeDirectory = realpath([NSHomeDirectory() fileSystemRepresentation], 0);
     if (!homeDirectory)
-        exit(EX_NOPERM);
-    const char* sandboxParameters[] = { "HOME_DIR", homeDirectory, 0, 0 };
+        exit(EX_OSERR);
 
+    // We already allow reading and writing to the private temp dir via extendedReadWritePaths above.
+    // Pass it again as a parameter in case a specific plugin profile has to apply additional rules.
+    char* tempDirectory = realpath(darwinUserTempDirectory, 0);
+    if (!tempDirectory)
+        exit(EX_OSERR);
+
+    const char* sandboxParameters[] = { "HOME_DIR", homeDirectory, "TEMP_DIR", tempDirectory, 0, 0 };
     if (!WKEnterPluginSandbox(sandboxProfile, sandboxParameters, extendedReadOnlyPaths.data(), extendedReadWritePaths.data())) {
         WTFLogAlways("Couldn't initialize sandbox profile\n");
         exit(EX_NOPERM);
@@ -166,6 +187,7 @@ NPError enterSandbox(const char* sandboxProfile, const char* readOnlyPaths[], co
     }
 
     free(homeDirectory);
+    free(tempDirectory);
     enteredSandbox = true;
 
     RetainPtr<NSDictionary> defaults = adoptNS([[NSDictionary alloc] initWithObjectsAndKeys:[NSNumber numberWithBool:YES], @"NSUseRemoteSavePanel", nil]);
