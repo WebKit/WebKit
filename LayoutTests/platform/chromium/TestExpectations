@@ -3399,7 +3399,7 @@ webkit.org/b/81416 fast/dom/wrapper-scope.html [ Failure ]
 webkit.org/b/86439 inspector/extensions/extensions-events.html [ Pass Timeout ]
 webkit.org/b/86439 [ Debug ] inspector/extensions/extensions-sidebar.html [ Pass Timeout ]
 
-webkit.org/b/86114 [ Mac Win Debug ] animations/combo-transform-translate+scale.html [ Failure Pass ]
+webkit.org/b/86114 [ Mac Win Linux Debug ] animations/combo-transform-translate+scale.html [ Failure Pass ]
 
 webkit.org/b/92279 http/tests/inspector/resource-har-pages.html [ Failure Pass Slow ]
 
