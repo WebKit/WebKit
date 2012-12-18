@@ -1,3 +1,15 @@
+2012-12-18  Zan Dobersek  <zandobersek@gmail.com>
+
+        Unreviewed GTK gardening.
+
+        Rebaselining a test after r137953.
+        Adding back failure expectations for SVG viewspec tests after the rollout in r137947.
+        Enhancing failure expectation for a slow HTTP multipart test that can pass,
+        fail or timeout.
+
+        * platform/gtk/TestExpectations:
+        * platform/gtk/editing/selection/move-by-character-6-expected.txt:
+
 2012-12-17  Ilya Tikhonovsky  <loislo@chromium.org>
 
         Unreviewed rebaseline after r137593.
