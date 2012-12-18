@@ -1642,6 +1642,7 @@
                     { "name": "xmlVersion", "type": "string", "optional": true, "description": "<code>Document</code>'s XML version in case of XML documents." },
                     { "name": "name", "type": "string", "optional": true, "description": "<code>Attr</code>'s name." },
                     { "name": "value", "type": "string", "optional": true, "description": "<code>Attr</code>'s value." },
+                    { "name": "frameId", "$ref": "Network.FrameId", "optional": true, "description": "Frame ID for frame owner elements." },
                     { "name": "contentDocument", "$ref": "Node", "optional": true, "description": "Content document for frame owner elements." },
                     { "name": "shadowRoots", "type": "array", "optional": true, "items": { "$ref": "Node" }, "description": "Shadow root list for given element host." }
                 ],

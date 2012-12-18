@@ -1279,6 +1279,9 @@ PassRefPtr<TypeBuilder::DOM::Node> InspectorDOMAgent::buildObjectForNode(Node* n
         value->setAttributes(buildArrayForElementAttributes(element));
         if (node->isFrameOwnerElement()) {
             HTMLFrameOwnerElement* frameOwner = static_cast<HTMLFrameOwnerElement*>(node);
+            Frame* frame = frameOwner->contentFrame();
+            if (frame)
+                value->setFrameId(m_pageAgent->frameId(frame));
             Document* doc = frameOwner->contentDocument();
             if (doc)
                 value->setContentDocument(buildObjectForNode(doc, 0, nodesMap));
