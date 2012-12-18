@@ -347,7 +347,7 @@ class TestRunner:
             sys.stdout.write("Tests skipped:\n%s\n" % "\n".join([str(skipped) for skipped in self._skipped_tests]))
             sys.stdout.flush()
 
-        return len(failed_tests)
+        return len(failed_tests) + len(timed_out_tests)
 
 if __name__ == "__main__":
     if not jhbuildutils.enter_jhbuild_environment_if_available("gtk"):
