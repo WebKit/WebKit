@@ -51,31 +51,6 @@ static const HashTableValue JSTestEventConstructorConstructorTableValues[] =
 };
 
 static const HashTable JSTestEventConstructorConstructorTable = { 1, 0, JSTestEventConstructorConstructorTableValues, 0 };
-const ClassInfo JSTestEventConstructorConstructor::s_info = { "TestEventConstructorConstructor", &Base::s_info, &JSTestEventConstructorConstructorTable, 0, CREATE_METHOD_TABLE(JSTestEventConstructorConstructor) };
-
-JSTestEventConstructorConstructor::JSTestEventConstructorConstructor(Structure* structure, JSDOMGlobalObject* globalObject)
-    : DOMConstructorObject(structure, globalObject)
-{
-}
-
-void JSTestEventConstructorConstructor::finishCreation(ExecState* exec, JSDOMGlobalObject* globalObject)
-{
-    Base::finishCreation(exec->globalData());
-    ASSERT(inherits(&s_info));
-    putDirect(exec->globalData(), exec->propertyNames().prototype, JSTestEventConstructorPrototype::self(exec, globalObject), DontDelete | ReadOnly);
-    putDirect(exec->globalData(), exec->propertyNames().length, jsNumber(2), ReadOnly | DontDelete | DontEnum);
-}
-
-bool JSTestEventConstructorConstructor::getOwnPropertySlot(JSCell* cell, ExecState* exec, PropertyName propertyName, PropertySlot& slot)
-{
-    return getStaticValueSlot<JSTestEventConstructorConstructor, JSDOMWrapper>(exec, &JSTestEventConstructorConstructorTable, jsCast<JSTestEventConstructorConstructor*>(cell), propertyName, slot);
-}
-
-bool JSTestEventConstructorConstructor::getOwnPropertyDescriptor(JSObject* object, ExecState* exec, PropertyName propertyName, PropertyDescriptor& descriptor)
-{
-    return getStaticValueDescriptor<JSTestEventConstructorConstructor, JSDOMWrapper>(exec, &JSTestEventConstructorConstructorTable, jsCast<JSTestEventConstructorConstructor*>(object), propertyName, descriptor);
-}
-
 EncodedJSValue JSC_HOST_CALL JSTestEventConstructorConstructor::constructJSTestEventConstructor(ExecState* exec)
 {
     JSTestEventConstructorConstructor* jsConstructor = jsCast<JSTestEventConstructorConstructor*>(exec->callee());
@@ -112,6 +87,31 @@ bool fillTestEventConstructorInit(TestEventConstructorInit& eventInit, JSDiction
     if (!dictionary.tryGetProperty("attr2", eventInit.attr2))
         return false;
     return true;
+}
+
+const ClassInfo JSTestEventConstructorConstructor::s_info = { "TestEventConstructorConstructor", &Base::s_info, &JSTestEventConstructorConstructorTable, 0, CREATE_METHOD_TABLE(JSTestEventConstructorConstructor) };
+
+JSTestEventConstructorConstructor::JSTestEventConstructorConstructor(Structure* structure, JSDOMGlobalObject* globalObject)
+    : DOMConstructorObject(structure, globalObject)
+{
+}
+
+void JSTestEventConstructorConstructor::finishCreation(ExecState* exec, JSDOMGlobalObject* globalObject)
+{
+    Base::finishCreation(exec->globalData());
+    ASSERT(inherits(&s_info));
+    putDirect(exec->globalData(), exec->propertyNames().prototype, JSTestEventConstructorPrototype::self(exec, globalObject), DontDelete | ReadOnly);
+    putDirect(exec->globalData(), exec->propertyNames().length, jsNumber(2), ReadOnly | DontDelete | DontEnum);
+}
+
+bool JSTestEventConstructorConstructor::getOwnPropertySlot(JSCell* cell, ExecState* exec, PropertyName propertyName, PropertySlot& slot)
+{
+    return getStaticValueSlot<JSTestEventConstructorConstructor, JSDOMWrapper>(exec, &JSTestEventConstructorConstructorTable, jsCast<JSTestEventConstructorConstructor*>(cell), propertyName, slot);
+}
+
+bool JSTestEventConstructorConstructor::getOwnPropertyDescriptor(JSObject* object, ExecState* exec, PropertyName propertyName, PropertyDescriptor& descriptor)
+{
+    return getStaticValueDescriptor<JSTestEventConstructorConstructor, JSDOMWrapper>(exec, &JSTestEventConstructorConstructorTable, jsCast<JSTestEventConstructorConstructor*>(object), propertyName, descriptor);
 }
 
 ConstructType JSTestEventConstructorConstructor::getConstructData(JSCell*, ConstructData& constructData)

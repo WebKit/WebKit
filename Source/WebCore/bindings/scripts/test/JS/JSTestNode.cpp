@@ -48,6 +48,13 @@ static const HashTableValue JSTestNodeConstructorTableValues[] =
 };
 
 static const HashTable JSTestNodeConstructorTable = { 1, 0, JSTestNodeConstructorTableValues, 0 };
+EncodedJSValue JSC_HOST_CALL JSTestNodeConstructor::constructJSTestNode(ExecState* exec)
+{
+    JSTestNodeConstructor* castedThis = jsCast<JSTestNodeConstructor*>(exec->callee());
+    RefPtr<TestNode> object = TestNode::create();
+    return JSValue::encode(asObject(toJS(exec, castedThis->globalObject(), object.get())));
+}
+
 const ClassInfo JSTestNodeConstructor::s_info = { "TestNodeConstructor", &Base::s_info, &JSTestNodeConstructorTable, 0, CREATE_METHOD_TABLE(JSTestNodeConstructor) };
 
 JSTestNodeConstructor::JSTestNodeConstructor(Structure* structure, JSDOMGlobalObject* globalObject)
@@ -71,13 +78,6 @@ bool JSTestNodeConstructor::getOwnPropertySlot(JSCell* cell, ExecState* exec, Pr
 bool JSTestNodeConstructor::getOwnPropertyDescriptor(JSObject* object, ExecState* exec, PropertyName propertyName, PropertyDescriptor& descriptor)
 {
     return getStaticValueDescriptor<JSTestNodeConstructor, JSDOMWrapper>(exec, &JSTestNodeConstructorTable, jsCast<JSTestNodeConstructor*>(object), propertyName, descriptor);
-}
-
-EncodedJSValue JSC_HOST_CALL JSTestNodeConstructor::constructJSTestNode(ExecState* exec)
-{
-    JSTestNodeConstructor* castedThis = jsCast<JSTestNodeConstructor*>(exec->callee());
-    RefPtr<TestNode> object = TestNode::create();
-    return JSValue::encode(asObject(toJS(exec, castedThis->globalObject(), object.get())));
 }
 
 ConstructType JSTestNodeConstructor::getConstructData(JSCell*, ConstructData& constructData)

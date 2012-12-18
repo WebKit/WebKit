@@ -1,3 +1,53 @@
+2012-12-18  Tommy Widenflycht  <tommyw@chromium.org>
+
+        [JSC] Refactoring CodeGeneratorJS.pm to simplify adding support for overloaded constructors
+        https://bugs.webkit.org/show_bug.cgi?id=105271
+
+        Reviewed by Kentaro Hara.
+
+        This patch splits the very large function that generates constructor code into a few smaller ones.
+        No changes in actual generated code but some functions in the generated bindings code moves.
+
+        Existing tests cover patch.
+
+        * bindings/scripts/CodeGeneratorJS.pm:
+        (GenerateImplementation):
+        (GenerateConstructorDefinitions):
+        (GenerateConstructorDefinition):
+        (GenerateConstructorSupportDefinitions):
+        (IsCustomConstructable):
+        (IsConstructable):
+        * bindings/scripts/test/JS/JSFloat64Array.cpp:
+        (WebCore::JSFloat64ArrayConstructor::constructJSFloat64Array):
+        (WebCore):
+        (WebCore::toJS):
+        (WebCore::JSFloat64Array::indexSetter):
+        * bindings/scripts/test/JS/JSTestEventConstructor.cpp:
+        (WebCore):
+        (WebCore::JSTestEventConstructorConstructor::JSTestEventConstructorConstructor):
+        (WebCore::JSTestEventConstructorConstructor::finishCreation):
+        (WebCore::JSTestEventConstructorConstructor::getOwnPropertySlot):
+        (WebCore::JSTestEventConstructorConstructor::getOwnPropertyDescriptor):
+        * bindings/scripts/test/JS/JSTestInterface.cpp:
+        (WebCore::JSTestInterfaceConstructor::constructJSTestInterface):
+        (WebCore):
+        * bindings/scripts/test/JS/JSTestNamedConstructor.cpp:
+        (WebCore):
+        (WebCore::JSTestNamedConstructorNamedConstructor::JSTestNamedConstructorNamedConstructor):
+        (WebCore::JSTestNamedConstructorNamedConstructor::finishCreation):
+        * bindings/scripts/test/JS/JSTestNode.cpp:
+        (WebCore::JSTestNodeConstructor::constructJSTestNode):
+        (WebCore):
+        * bindings/scripts/test/JS/JSTestObj.cpp:
+        (WebCore::JSTestObjConstructor::constructJSTestObj):
+        (WebCore):
+        * bindings/scripts/test/JS/JSTestOverloadedConstructors.cpp:
+        (WebCore::JSTestOverloadedConstructorsConstructor::constructJSTestOverloadedConstructors):
+        (WebCore):
+        * bindings/scripts/test/JS/JSTestSerializedScriptValueInterface.cpp:
+        (WebCore::JSTestSerializedScriptValueInterfaceConstructor::constructJSTestSerializedScriptValueInterface):
+        (WebCore):
+
 2012-12-18  Max Feil  <mfeil@rim.com>
 
         [BlackBerry] Add support for setMuted() for media

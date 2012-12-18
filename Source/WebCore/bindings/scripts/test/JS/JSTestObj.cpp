@@ -199,6 +199,18 @@ COMPILE_ASSERT(0X20 == TestObj::CONST_VALUE_13, TestObjEnumCONST_VALUE_13IsWrong
 COMPILE_ASSERT(0x1abc == TestObj::CONST_VALUE_14, TestObjEnumCONST_VALUE_14IsWrongUseDoNotCheckConstants);
 COMPILE_ASSERT(15 == TestObj::CONST_IMPL, TestObjEnumCONST_IMPLIsWrongUseDoNotCheckConstants);
 
+EncodedJSValue JSC_HOST_CALL JSTestObjConstructor::constructJSTestObj(ExecState* exec)
+{
+    JSTestObjConstructor* castedThis = jsCast<JSTestObjConstructor*>(exec->callee());
+    if (exec->argumentCount() < 1)
+        return throwVMError(exec, createNotEnoughArgumentsError(exec));
+    if (exec->argumentCount() <= 0 || !exec->argument(0).isFunction())
+        return throwVMTypeError(exec);
+    RefPtr<TestCallback> testCallback = JSTestCallback::create(asObject(exec->argument(0)), castedThis->globalObject());
+    RefPtr<TestObj> object = TestObj::create(testCallback);
+    return JSValue::encode(asObject(toJS(exec, castedThis->globalObject(), object.get())));
+}
+
 const ClassInfo JSTestObjConstructor::s_info = { "TestObjectConstructor", &Base::s_info, &JSTestObjConstructorTable, 0, CREATE_METHOD_TABLE(JSTestObjConstructor) };
 
 JSTestObjConstructor::JSTestObjConstructor(Structure* structure, JSDOMGlobalObject* globalObject)
@@ -222,18 +234,6 @@ bool JSTestObjConstructor::getOwnPropertySlot(JSCell* cell, ExecState* exec, Pro
 bool JSTestObjConstructor::getOwnPropertyDescriptor(JSObject* object, ExecState* exec, PropertyName propertyName, PropertyDescriptor& descriptor)
 {
     return getStaticPropertyDescriptor<JSTestObjConstructor, JSDOMWrapper>(exec, &JSTestObjConstructorTable, jsCast<JSTestObjConstructor*>(object), propertyName, descriptor);
-}
-
-EncodedJSValue JSC_HOST_CALL JSTestObjConstructor::constructJSTestObj(ExecState* exec)
-{
-    JSTestObjConstructor* castedThis = jsCast<JSTestObjConstructor*>(exec->callee());
-    if (exec->argumentCount() < 1)
-        return throwVMError(exec, createNotEnoughArgumentsError(exec));
-    if (exec->argumentCount() <= 0 || !exec->argument(0).isFunction())
-        return throwVMTypeError(exec);
-    RefPtr<TestCallback> testCallback = JSTestCallback::create(asObject(exec->argument(0)), castedThis->globalObject());
-    RefPtr<TestObj> object = TestObj::create(testCallback);
-    return JSValue::encode(asObject(toJS(exec, castedThis->globalObject(), object.get())));
 }
 
 ConstructType JSTestObjConstructor::getConstructData(JSCell*, ConstructData& constructData)
