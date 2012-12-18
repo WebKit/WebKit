@@ -327,8 +327,8 @@ void ExclusionPolygon::getExcludedIntervals(float logicalTop, float logicalHeigh
     if (isEmpty())
         return;
 
-    float y1 = minYForLogicalLine(logicalTop, logicalHeight);
-    float y2 = maxYForLogicalLine(logicalTop, logicalHeight);
+    float y1 = logicalTop;
+    float y2 = y1 + logicalHeight;
 
     Vector<ExclusionInterval> y1XIntervals, y2XIntervals;
     computeXIntersections(y1, true, y1XIntervals);
@@ -354,8 +354,8 @@ void ExclusionPolygon::getIncludedIntervals(float logicalTop, float logicalHeigh
     if (isEmpty())
         return;
 
-    float y1 = minYForLogicalLine(logicalTop, logicalHeight);
-    float y2 = maxYForLogicalLine(logicalTop, logicalHeight);
+    float y1 = logicalTop;
+    float y2 = y1 + logicalHeight;
 
     Vector<ExclusionInterval> y1XIntervals, y2XIntervals;
     computeXIntersections(y1, true, y1XIntervals);
@@ -383,8 +383,8 @@ bool ExclusionPolygon::firstIncludedIntervalLogicalTop(float minLogicalIntervalT
     if (minLogicalIntervalSize.width() > m_boundingBox.width())
         return false;
 
-    float minY = minYForLogicalLine(minLogicalIntervalTop, minLogicalIntervalSize.height());
-    float maxY = maxYForLogicalLine(minLogicalIntervalTop, minLogicalIntervalSize.height());
+    float minY = std::max(m_boundingBox.y(), minLogicalIntervalTop);
+    float maxY = minY + minLogicalIntervalSize.height();
     if (minY < m_boundingBox.y() || maxY > m_boundingBox.maxY())
         return false;
 

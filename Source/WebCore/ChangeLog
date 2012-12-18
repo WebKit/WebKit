@@ -1,3 +1,34 @@
+2012-12-18  Hans Muller  <hmuller@adobe.com>
+
+        [CSS Exclusions] shape-inside layout fails to adjust first line correctly for writing-mode: vertical-rl
+        https://bugs.webkit.org/show_bug.cgi?id=104419
+
+        Reviewed by Dirk Schulze.
+
+        ExclusionShapes no longer maintain a private "internal" coordinate system,
+        they're now defined in logical coordinates. The createExclusionShape() method
+        now handles the one-time conversion from physical to logical coordinates.
+
+        Test: fast/exclusions/shape-inside/shape-inside-rounded-rectangle-fit-003.html
+
+        * rendering/ExclusionPolygon.cpp:
+        (WebCore::ExclusionPolygon::getExcludedIntervals): Removed logical to internal coordinate conversions.
+        (WebCore::ExclusionPolygon::getIncludedIntervals): Ditto.
+        (WebCore::ExclusionPolygon::firstIncludedIntervalLogicalTop): Ditto.
+        * rendering/ExclusionPolygon.h:
+        * rendering/ExclusionRectangle.cpp:
+        (WebCore::ExclusionRectangle::getExcludedIntervals): Removed logical to internal coordinate conversions.
+        (WebCore::ExclusionRectangle::getIncludedIntervals): Ditto.
+        (WebCore::ExclusionRectangle::firstIncludedIntervalLogicalTop): Ditto.
+        * rendering/ExclusionRectangle.h:
+        * rendering/ExclusionShape.cpp:
+        (WebCore::physicalRectToLogical): Convert a FloatRect defined with coordinates to logical coordinates.
+        (WebCore::physicalPointToLogical): Similar.
+        (WebCore::physicalSizeToLogical): Simlar.
+        (WebCore::ExclusionShape::createExclusionShape): Convert shapes from physical to logical coordinates.
+        * rendering/ExclusionShape.h:
+        (ExclusionShape): Removed internal to logical coordinate conversion utility methods.
+
 2012-12-17  Emil A Eklund  <eae@chromium.org>
 
         Optimize LayoutUnit::boundedMultiply

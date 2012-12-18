@@ -51,8 +51,8 @@ void ExclusionRectangle::getExcludedIntervals(float logicalTop, float logicalHei
     if (isEmpty())
         return;
 
-    float y1 = minYForLogicalLine(logicalTop, logicalHeight);
-    float y2 = maxYForLogicalLine(logicalTop, logicalHeight);
+    float y1 = logicalTop;
+    float y2 = y1 + logicalHeight;
 
     if (y2 < m_y || y1 >= m_y + m_height)
         return;
@@ -82,8 +82,8 @@ void ExclusionRectangle::getIncludedIntervals(float logicalTop, float logicalHei
     if (isEmpty())
         return;
 
-    float y1 = minYForLogicalLine(logicalTop, logicalHeight);
-    float y2 = maxYForLogicalLine(logicalTop, logicalHeight);
+    float y1 = logicalTop;
+    float y2 = y1 + logicalHeight;
 
     if (y1 < m_y || y2 > m_y + m_height)
         return;
@@ -133,8 +133,9 @@ bool ExclusionRectangle::firstIncludedIntervalLogicalTop(float minLogicalInterva
     if (minLogicalIntervalSize.width() > m_width)
         return false;
 
-    float minY = std::max(m_y, minYForLogicalLine(minLogicalIntervalTop, minLogicalIntervalSize.height()));
+    float minY = std::max(m_y, minLogicalIntervalTop);
     float maxY = minY + minLogicalIntervalSize.height();
+
     if (maxY > m_y + m_height)
         return false;
 
@@ -142,7 +143,7 @@ bool ExclusionRectangle::firstIncludedIntervalLogicalTop(float minLogicalInterva
     bool intervalOverlapsMaxCorner = maxY > m_y + m_height - m_ry;
 
     if (!intervalOverlapsMinCorner && !intervalOverlapsMaxCorner) {
-        result = logicalTopForMinY(minY, minLogicalIntervalSize.height());
+        result = minY;
         return true;
     }
 
@@ -153,18 +154,18 @@ bool ExclusionRectangle::firstIncludedIntervalLogicalTop(float minLogicalInterva
 
     if (intervalOverlapsMinCorner && (!intervalOverlapsMaxCorner || minCornerDefinesX)) {
         if (intervalFitsWithinCorners || m_y + cornerIntercept.y() < minY) {
-            result = logicalTopForMinY(minY, minLogicalIntervalSize.height());
+            result = minY;
             return true;
         }
         if (minLogicalIntervalSize.height() < m_height - (2 * cornerIntercept.y())) {
-            result = logicalTopForMinY(m_y + cornerIntercept.y(), minLogicalIntervalSize.height());
+            result = m_y + cornerIntercept.y();
             return true;
         }
     }
 
     if (intervalOverlapsMaxCorner && (!intervalOverlapsMinCorner || !minCornerDefinesX)) {
         if (intervalFitsWithinCorners || minY <=  m_y + m_height - cornerIntercept.y() - minLogicalIntervalSize.height()) {
-            result = logicalTopForMinY(minY, minLogicalIntervalSize.height());
+            result = minY;
             return true;
         }
     }

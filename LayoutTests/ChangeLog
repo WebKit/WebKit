@@ -1,3 +1,16 @@
+2012-12-18  Hans Muller  <hmuller@adobe.com>
+
+        [CSS Exclusions] shape-inside layout fails to adjust first line correctly for writing-mode: vertical-rl
+        https://bugs.webkit.org/show_bug.cgi?id=104419
+
+        Reviewed by Dirk Schulze.
+
+        For the vertical writing modes, verify that rounded rectangle shape-inside content is
+        adjusted in the logical down direction when it will not fit betwen the rounded corners.
+
+        * fast/exclusions/shape-inside/shape-inside-rounded-rectangle-fit-003-expected.html: Added.
+        * fast/exclusions/shape-inside/shape-inside-rounded-rectangle-fit-003.html: Added.
+
 2012-12-18  Bear Travis  <betravis@adobe.com>
 
         [CSS Exclusions] Blocks should not re-use their parent's ExclusionShapeInsideInfo

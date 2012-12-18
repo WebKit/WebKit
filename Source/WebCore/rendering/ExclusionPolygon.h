@@ -62,7 +62,7 @@ public:
     const ExclusionPolygonEdge& edgeAt(unsigned index) const { return m_edges[index]; }
     unsigned numberOfEdges() const { return m_edges.size(); }
 
-    virtual FloatRect shapeLogicalBoundingBox() const OVERRIDE { return internalToLogicalBoundingBox(m_boundingBox); }
+    virtual FloatRect shapeLogicalBoundingBox() const OVERRIDE { return m_boundingBox; }
     virtual bool isEmpty() const OVERRIDE { return m_empty; }
     virtual void getExcludedIntervals(float logicalTop, float logicalHeight, SegmentList&) const OVERRIDE;
     virtual void getIncludedIntervals(float logicalTop, float logicalHeight, SegmentList&) const OVERRIDE;
