@@ -1,3 +1,17 @@
+2012-12-18  Jer Noble  <jer.noble@apple.com>
+
+        REGRESSION: Using the Exit Full Screen button in the menu bar to exit HTML5 / media full screen breaks Safari windows
+        https://bugs.webkit.org/show_bug.cgi?id=104610
+
+        Reviewed by Anders Carlsson.
+
+        When a user clicks on the menu-bar exit fullscreen button, that skips notifying the document that 
+        the window is exiting fullscreen and tearing down the placeholder. Manually call that part of the code
+        when we detect that it has been skipped.
+
+        * UIProcess/mac/WKFullScreenWindowController.mm:
+        (-[WKFullScreenWindowController _startExitFullScreenAnimationWithDuration:]):
+
 2012-12-18  Brady Eidson  <beidson@apple.com>
 
         WebProcesses often crash if they access the network after a NetworkProcess crash.

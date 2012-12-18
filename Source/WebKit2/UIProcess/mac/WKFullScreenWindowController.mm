@@ -567,6 +567,13 @@ static NSRect windowFrameFromApparentFrames(NSRect screenFrame, NSRect initialFr
 
 - (void)_startExitFullScreenAnimationWithDuration:(NSTimeInterval)duration
 {
+    if (_isFullScreen) {
+        // We still believe we're in full screen mode, so we must have been asked to exit full
+        // screen by the system full screen button.
+        [self exitFullScreen];
+        _isExitingFullScreen = YES;
+    }
+
     NSRect screenFrame = [[[self window] screen] frame];
     NSRect initialWindowFrame = windowFrameFromApparentFrames(screenFrame, _initialFrame, _finalFrame);
 
