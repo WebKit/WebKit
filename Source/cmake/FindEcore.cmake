@@ -68,9 +68,14 @@ FIND_EFL_LIBRARY(ECORE_X
     LIBRARY ecore_x
 )
 FIND_EFL_LIBRARY(ECORE_IMF
-    HEADERS Ecore_IMF.h Ecore_IMF_Evas.h
+    HEADERS Ecore_IMF.h
     HEADER_PREFIXES ecore-1
     LIBRARY ecore_imf
+)
+FIND_EFL_LIBRARY(ECORE_IMF_EVAS
+    HEADERS Ecore_IMF_Evas.h
+    HEADER_PREFIXES ecore-1
+    LIBRARY ecore_imf_evas
 )
 
 foreach (_component ${Ecore_FIND_COMPONENTS})

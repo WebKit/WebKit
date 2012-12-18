@@ -1,3 +1,14 @@
+2012-12-17  Halton Huo  <halton.huo@intel.com>
+
+        [EFL] Add ecore_imf_evas to FindEcore.cmake
+        https://bugs.webkit.org/show_bug.cgi?id=105159
+
+        Reviewed by Laszlo Gombos.
+
+        ecore_imf_evas is a separate library, we should add for EFL port as well.
+
+        * Source/cmake/FindEcore.cmake: Add finding FIND_EFL_LIBRARY for ecore_imf_evas
+
 2012-12-17  Kenneth Rohde Christiansen  <kenneth@webkit.org>
 
         Add manual test to verify that geometry methods (moveTo, etc) work
