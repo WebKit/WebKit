@@ -3611,6 +3611,7 @@ webkit.org/b/94242 [ Android Debug ] media/track/track-cues-sorted-before-dispat
 # Chromium still has the CC toggle button, not the menu of tracks.
 webkit.org/b/101670 media/video-controls-captions-trackmenu.html [ Skip ]
 webkit.org/b/101670 media/video-controls-captions-trackmenu-sorted.html [ Skip ]
+webkit.org/b/101670 media/video-controls-captions-trackmenu-localized.html [ Skip ]
 
 webkit.org/b/92835 [ Android Mac Win Debug ] svg/as-background-image/svg-as-background-5.html [ Pass Slow ]
 

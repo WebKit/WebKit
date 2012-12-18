@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Testing that the track menu gets localized strings</title>
+        <script src="media-controls.js"></script>
+        <script src="media-file.js"></script>
+        <script src="video-test.js"></script>
+        <script src="trackmenu-test.js"></script>
+        <script>
+
+        var captionsSection;
+        var item;
+
+        if (window.testRunner)
+            testRunner.dumpAsText();
+
+        function testMenuHeaders()
+        {
+            var trackListElement = getTrackListElement();
+            if (!trackListElement)
+                return;
+
+            // Track list should have two <section> elements.
+            var trackListSections = trackListElement.querySelectorAll("h3");
+            if (!trackListSections || trackListSections.length != 2) {
+                failTest("There should be two section elements in track list menu");
+                return;
+            }
+
+            captionsSection = trackListSections[0];
+            logConsole("First section should be labelled 'Closed Captions'");
+            testExpected("captionsSection.textContent", "Closed Captions");
+            captionsSection = trackListSections[1];
+            logConsole("Second section should be labelled 'Subtitles'");
+            testExpected("captionsSection.textContent", "Subtitles");
+
+            var captionsEntries = trackListElement.querySelectorAll("li");
+            if (!captionsEntries || captionsEntries.length <= 0) {
+                failTest("Not enough items in captions menu");
+                return;
+            }
+
+            item = captionsEntries[0];
+            logConsole("First item in captions menu should be labelled 'Off'");
+            testExpected("item.textContent", "Off");
+            item = captionsEntries[1];
+            logConsole("Second item in captions menu should be labelled 'No label'");
+            testExpected("item.textContent", "No label");
+            endTest();
+        }
+
+        function start()
+        {
+            findMediaElement();
+            waitForEvent('canplaythrough', function () { startTrackMenuTest(testMenuHeaders); });
+        }
+        </script>
+    </head>
+
+    <body onload="start()">
+        <p>Test that captions and subtitles menu items are localized.</p>
+        <video width="500" height="300" controls>
+            <source src="content/test.mp4" type="video/mp4">
+            <source src="content/test.ogv" type="video/ogg">
+            <track kind="captions" src="track/captions-webvtt/captions-fast.vtt">
+            <track kind="subtitles" src="track/captions-webvtt/captions-fast.vtt">
+        </video>
+    </body>
+</html>
+

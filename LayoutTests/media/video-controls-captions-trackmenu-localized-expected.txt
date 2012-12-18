@@ -1,0 +1,12 @@
+Test that captions and subtitles menu items are localized.
+
+EVENT(canplaythrough)
+
+*** Set the user language preference.
+RUN(internals.setUserPreferredLanguages(['en']))
+EXPECTED (captionsSection.textContent == 'Closed Captions') OK
+EXPECTED (captionsSection.textContent == 'Subtitles') OK
+EXPECTED (item.textContent == 'Off') OK
+EXPECTED (item.textContent == 'No label') OK
+END OF TEST
+

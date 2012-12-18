@@ -1642,6 +1642,7 @@ webkit.org/b/102493 fast/events/mouse-cursor.html [ Failure ]
 # EFL still has the CC toggle button, not the menu of tracks.
 webkit.org/b/101670 media/video-controls-captions-trackmenu.html [ Skip ]
 webkit.org/b/101670 media/video-controls-captions-trackmenu-sorted.html [ Skip ]
+webkit.org/b/101670 media/video-controls-captions-trackmenu-localized.html [ Skip ]
 
 # Fails until we enable the Resource Timing API.
 webkit.org/b/61138 http/tests/w3c/webperf/submission/resource-timing [ Skip ]

@@ -5,45 +5,16 @@
         <script src="media-controls.js"></script>
         <script src="media-file.js"></script>
         <script src="video-test.js"></script>
+        <script src="trackmenu-test.js"></script>
         <script>
-            var captionsButtonCoordinates;
-
             if (window.testRunner)
                 testRunner.dumpAsText();
 
-            function clickCCButton()
-            {
-                eventSender.mouseMoveTo(captionsButtonCoordinates[0], captionsButtonCoordinates[1]);
-                eventSender.mouseDown();
-                eventSender.mouseUp();
-            }
-
-            function startTest()
-            {
-                if (window.eventSender) {
-                    consoleWrite("<br>*** Set the user language preference.");
-                    run("internals.setUserPreferredLanguages(['en'])");
-
-                    try {
-                        captionsButtonCoordinates = mediaControlsButtonCoordinates(video, "toggle-closed-captions-button");
-                    } catch (exception) {
-                        failTest(exception.description);
-                        return;
-                    }
-                    clickCCButton();
-                    window.setTimeout(testSortedMenu, 100);
-                }
-            }
-
             function testSortedMenu()
             {
-                var trackListElement;
-                try {
-                    trackListElement = mediaControlsElement(internals.shadowRoot(video).firstChild, "-webkit-media-controls-closed-captions-track-list");
-                } catch (exception) {
-                    failTest(exception.description);
+                var trackListElement = getTrackListElement();
+                if (!trackListElement)
                     return;
-                }
                 // Track list should have two <ul> elements.
                 var trackListSections = trackListElement.querySelectorAll("ul");
                 if (!trackListSections || trackListSections.length != 2) {
@@ -78,7 +49,7 @@
             function start()
             {
                 findMediaElement();
-                waitForEvent('canplaythrough', startTest);
+                waitForEvent('canplaythrough', function () { startTrackMenuTest(testSortedMenu); });
             }
         </script>
     </head>

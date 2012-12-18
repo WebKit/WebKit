@@ -874,26 +874,26 @@ void MediaControlClosedCaptionsTrackListElement::rebuildTrackListMenu()
 
     RefPtr<Element> captionsSection = doc->createElement(sectionTag, ASSERT_NO_EXCEPTION);
     RefPtr<Element> captionsHeader = doc->createElement(h3Tag, ASSERT_NO_EXCEPTION);
-    captionsHeader->appendChild(doc->createTextNode("Closed Captions"));
+    captionsHeader->appendChild(doc->createTextNode(textTrackClosedCaptionsText()));
     captionsSection->appendChild(captionsHeader);
     RefPtr<Element> captionsMenuList = doc->createElement(ulTag, ASSERT_NO_EXCEPTION);
 
     RefPtr<Element> subtitlesSection = doc->createElement(sectionTag, ASSERT_NO_EXCEPTION);
     RefPtr<Element> subtitlesHeader = doc->createElement(h3Tag, ASSERT_NO_EXCEPTION);
-    subtitlesHeader->appendChild(doc->createTextNode("Subtitles"));
+    subtitlesHeader->appendChild(doc->createTextNode(textTrackSubtitlesText()));
     subtitlesSection->appendChild(subtitlesHeader);
     RefPtr<Element> subtitlesMenuList = doc->createElement(ulTag, ASSERT_NO_EXCEPTION);
 
     RefPtr<Element> trackItem;
 
     trackItem = doc->createElement(liTag, ASSERT_NO_EXCEPTION);
-    trackItem->appendChild(doc->createTextNode("Off"));
+    trackItem->appendChild(doc->createTextNode(textTrackOffText()));
     trackItem->setAttribute(trackIndexAttributeName(), textTracksOffAttrValue, ASSERT_NO_EXCEPTION);
     captionsMenuList->appendChild(trackItem);
     m_menuItems.append(trackItem);
 
     trackItem = doc->createElement(liTag, ASSERT_NO_EXCEPTION);
-    trackItem->appendChild(doc->createTextNode("Off"));
+    trackItem->appendChild(doc->createTextNode(textTrackOffText()));
     trackItem->setAttribute(trackIndexAttributeName(), textTracksOffAttrValue, ASSERT_NO_EXCEPTION);
     subtitlesMenuList->appendChild(trackItem);
     m_menuItems.append(trackItem);
@@ -915,7 +915,7 @@ void MediaControlClosedCaptionsTrackListElement::rebuildTrackListMenu()
         if (labelText.isNull() || labelText.isEmpty())
             labelText = displayNameForLanguageLocale(track->language());
         if (labelText.isNull() || labelText.isEmpty())
-            labelText = "No Label";
+            labelText = textTrackNoLabelText();
         trackItem->appendChild(doc->createTextNode(labelText));
 
         if (track->kind() == track->captionsKeyword()) {

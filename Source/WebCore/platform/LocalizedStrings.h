@@ -263,6 +263,13 @@ namespace WebCore {
 
     String clickToExitFullScreenText();
 
+#if ENABLE(VIDEO_TRACK)
+    String textTrackClosedCaptionsText();
+    String textTrackSubtitlesText();
+    String textTrackOffText();
+    String textTrackNoLabelText();
+#endif
+
 #if !PLATFORM(CHROMIUM)
 #define WEB_UI_STRING(string, description) WebCore::localizedString(string)
 #define WEB_UI_STRING_KEY(string, key, description) WebCore::localizedString(key)

@@ -720,6 +720,7 @@ Bug(GTK) fast/media/print-restores-previous-mediatype.html [ Timeout ]
 # GTK still has the CC toggle button, not the menu of tracks.
 webkit.org/b/101670 media/video-controls-captions-trackmenu.html [ Skip ]
 webkit.org/b/101670 media/video-controls-captions-trackmenu-sorted.html [ Skip ]
+webkit.org/b/101670 media/video-controls-captions-trackmenu-localized.html [ Skip ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Tests timing out
