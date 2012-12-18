@@ -55,8 +55,7 @@ SurfacePool* SurfacePool::globalSurfacePool()
 }
 
 SurfacePool::SurfacePool()
-    : m_visibleTileBuffer(0)
-    , m_numberOfFrontBuffers(0)
+    : m_numberOfFrontBuffers(0)
     , m_tileRenderingSurface(0)
     , m_initialized(false)
     , m_buffersSuspended(false)
@@ -79,9 +78,7 @@ void SurfacePool::initialize(const Platform::IntSize& tileSize)
     const unsigned maxNumberOfTiles = Platform::Settings::instance()->maximumNumberOfBackingStoreTilesAcrossProcesses();
 
     if (m_numberOfFrontBuffers) { // Only allocate if we actually use a backingstore.
-        Platform::IntSize screenSize = BlackBerry::Platform::Settings::instance()->applicationSize();
         unsigned byteLimit = maxNumberOfTiles * tileSize.width() * tileSize.height() * 4;
-        byteLimit += screenSize.width() * screenSize.height() * 4; // visible tile buffer - FIXME, fragile for further maintenance as its size doesn't sync up with the rest
         bool success = Platform::Graphics::createPixmapGroup(SHARED_PIXMAP_GROUP, byteLimit);
         if (!success) {
             Platform::logAlways(Platform::LogLevelWarn,
@@ -148,14 +145,6 @@ void SurfacePool::releaseTileRenderingSurface(PlatformGraphicsContext* context) 
     Platform::Graphics::releaseBufferDrawable(m_tileRenderingSurface);
 }
 
-void SurfacePool::initializeVisibleTileBuffer(const Platform::IntSize& visibleSize)
-{
-    if (!m_visibleTileBuffer || m_visibleTileBuffer->size() != visibleSize) {
-        delete m_visibleTileBuffer;
-        m_visibleTileBuffer = new TileBuffer(visibleSize);
-    }
-}
-
 unsigned SurfacePool::numberOfAvailableBackBuffers() const
 {
     return m_availableBackBufferPool.size();
@@ -201,9 +190,6 @@ void SurfacePool::createBuffers()
             Platform::Graphics::createPixmapBuffer(m_tileBufferPool[i]->nativeBuffer());
     }
 
-    if (m_visibleTileBuffer && m_visibleTileBuffer->wasNativeBufferCreated())
-        Platform::Graphics::createPixmapBuffer(m_visibleTileBuffer->nativeBuffer());
-
     m_buffersSuspended = false;
 }
 
@@ -222,12 +208,6 @@ void SurfacePool::releaseBuffers()
         // Clear the buffer to prevent accidental leakage of (possibly sensitive) pixel data.
         Platform::Graphics::clearBuffer(m_tileBufferPool[i]->nativeBuffer(), 0, 0, 0, 0);
         Platform::Graphics::destroyPixmapBuffer(m_tileBufferPool[i]->nativeBuffer());
-    }
-
-    if (m_visibleTileBuffer && m_visibleTileBuffer->wasNativeBufferCreated()) {
-        m_visibleTileBuffer->clearRenderedRegion();
-        Platform::Graphics::clearBuffer(m_visibleTileBuffer->nativeBuffer(), 0, 0, 0, 0);
-        Platform::Graphics::destroyPixmapBuffer(m_visibleTileBuffer->nativeBuffer());
     }
 
     Platform::userInterfaceThreadMessageClient()->dispatchSyncMessage(

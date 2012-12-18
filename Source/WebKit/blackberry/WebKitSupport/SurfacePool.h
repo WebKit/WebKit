@@ -45,9 +45,6 @@ public:
     PlatformGraphicsContext* createPlatformGraphicsContext(BlackBerry::Platform::Graphics::Drawable*) const;
     PlatformGraphicsContext* lockTileRenderingSurface() const;
     void releaseTileRenderingSurface(PlatformGraphicsContext*) const;
-    TileBuffer* visibleTileBuffer() const { return m_visibleTileBuffer; }
-
-    void initializeVisibleTileBuffer(const BlackBerry::Platform::IntSize&);
 
     // The surface pool will allocate as many back buffers as specified by
     // Platform::Settings::instance()->numberOfBackingStoreBackBuffers() which
@@ -80,7 +77,6 @@ private:
     typedef WTF::Vector<TileBuffer*> TileBufferList;
     TileBufferList m_tileBufferPool;
     TileBufferList m_availableBackBufferPool;
-    TileBuffer* m_visibleTileBuffer;
     unsigned m_numberOfFrontBuffers;
     BlackBerry::Platform::Graphics::Buffer* m_tileRenderingSurface;
     bool m_initialized; // SurfacePool has been set up, with or without buffers.

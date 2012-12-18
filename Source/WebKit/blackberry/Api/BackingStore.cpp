@@ -1386,42 +1386,7 @@ void BackingStorePrivate::blitVisibleContents(bool force)
             }
 
             // Blit the visible buffer here if we have visible zoom jobs.
-            if (m_renderQueue->hasCurrentVisibleZoomJob()) {
-
-                // Needs to be in same coordinate system as dirtyRect.
-                Platform::IntRect visibleTileBufferRect = m_visibleTileBufferRect;
-                visibleTileBufferRect.move(-origin.x(), -origin.y());
-
-                // Clip to the visibleTileBufferRect.
-                dirtyRect.intersect(visibleTileBufferRect);
-
-                // Clip to the dirtyRect.
-                visibleTileBufferRect.intersect(dirtyRect);
-
-                if (!dirtyRect.isEmpty() && !visibleTileBufferRect.isEmpty()) {
-                    TileBuffer* visibleTileBuffer = SurfacePool::globalSurfacePool()->visibleTileBuffer();
-                    ASSERT(visibleTileBuffer->size() == visibleContentsRect().size());
-
-                    // The offset of the current viewport with the visble tile buffer.
-                    Platform::IntPoint difference = origin - m_visibleTileBufferRect.location();
-                    Platform::IntSize offset = Platform::IntSize(difference.x(), difference.y());
-
-                    // Map to the visibleTileBuffer coordinates.
-                    Platform::IntRect dirtyTileRect = visibleTileBufferRect;
-                    dirtyTileRect.move(offset.width(), offset.height());
-
-                    Platform::IntRect dirtyRectT = transformation.mapRect(dirtyRect);
-
-                    if (!transformation.isIdentity()) {
-                        // Because of rounding it is possible that dirtyRect could be off-by-one larger
-                        // than the surface size of the dst buffer. We prevent this here, by clamping
-                        // it to ensure that can't happen.
-                        dirtyRectT.intersect(Platform::IntRect(Platform::IntPoint(0, 0), surfaceSize()));
-                    }
-
-                    blitToWindow(dirtyRectT, visibleTileBuffer->nativeBuffer(), dirtyTileRect, BlackBerry::Platform::Graphics::SourceCopy, 255);
-                }
-            } else if (isTileCorrespondingToBuffer) {
+            if (isTileCorrespondingToBuffer) {
                 // Intersect the rendered region.
                 Platform::IntRectRegion renderedRegion = tileBuffer->renderedRegion();
                 std::vector<Platform::IntRect> dirtyRenderedRects = renderedRegion.rects();
@@ -1828,60 +1793,12 @@ void BackingStorePrivate::transformChanged()
     if (!m_webPage->isVisible())
         return;
 
+    m_renderQueue->reset();
+
     if (!isActive()) {
-        m_renderQueue->reset();
-        m_renderQueue->addToQueue(RenderQueue::VisibleZoom, visibleContentsRect());
         m_webPage->d->setShouldResetTilesWhenShown(true);
         return;
     }
-
-    BackingStoreGeometry* currentState = frontState();
-    TileMap currentMap = currentState->tileMap();
-
-    bool hasCurrentVisibleZoomJob = m_renderQueue->hasCurrentVisibleZoomJob();
-    bool isLoading = m_client->isLoading();
-    if (isLoading) {
-        if (!hasCurrentVisibleZoomJob)
-            m_visibleTileBufferRect = visibleContentsRect(); // Cache this for blitVisibleContents.
-
-        // FIXME: With m_renderQueue->reset() called right afterwards, this call
-        //   seems like a pointless exercise. Figure out how to deal with it.
-        m_renderQueue->addToQueue(RenderQueue::VisibleZoom, visibleContentsRect());
-
-        // Add the currently visible tiles to the render queue as visible zoom jobs.
-        TileRectList tileRectList = mapFromPixelContentsToTiles(visibleContentsRect(), currentState);
-
-        for (size_t i = 0; i < tileRectList.size(); ++i) {
-            TileRect tileRect = tileRectList[i];
-            TileIndex index = tileRect.first;
-            Platform::IntRect dirtyRect = tileRect.second;
-            TileBuffer* tileBuffer = currentMap.get(index);
-
-            if (!tileBuffer)
-                continue;
-
-            // Copy the visible contents into the visibleTileBuffer if we don't have
-            // any current visible zoom jobs.
-            if (!hasCurrentVisibleZoomJob) {
-                Platform::IntRect tileSrcRect = dirtyRect;
-                Platform::IntPoint tileOrigin = currentState->originOfTile(index);
-                tileSrcRect.move(-tileOrigin.x(), -tileOrigin.y());
-
-                // Map to the destination's coordinate system.
-                Platform::IntPoint visibleTileOrigin = m_visibleTileBufferRect.location();
-                Platform::IntRect visibleTileDstRect = dirtyRect;
-                visibleTileDstRect.move(-visibleTileOrigin.x(), -visibleTileOrigin.y());
-
-                TileBuffer* visibleTileBuffer = SurfacePool::globalSurfacePool()->visibleTileBuffer();
-                ASSERT(visibleTileBuffer->size() == Platform::IntSize(m_webPage->d->transformedViewportSize()));
-                BlackBerry::Platform::Graphics::blitToBuffer(
-                    visibleTileBuffer->nativeBuffer(), visibleTileDstRect,
-                    tileBuffer->nativeBuffer(), tileSrcRect);
-            }
-        }
-    }
-
-    m_renderQueue->reset();
     resetTiles();
 }
 
@@ -1890,18 +1807,10 @@ void BackingStorePrivate::orientationChanged()
     ASSERT(BlackBerry::Platform::webKitThreadMessageClient()->isCurrentThread());
     setTileMatrixNeedsUpdate();
     updateTileMatrixIfNeeded();
-    createVisibleTileBuffer();
 }
 
 void BackingStorePrivate::actualVisibleSizeChanged(const Platform::IntSize& size)
 {
-}
-
-static void createVisibleTileBufferForWebPage(WebPagePrivate* page)
-{
-    ASSERT(page);
-    SurfacePool* surfacePool = SurfacePool::globalSurfacePool();
-    surfacePool->initializeVisibleTileBuffer(page->transformedViewportSize());
 }
 
 void BackingStorePrivate::createSurfaces()
@@ -1949,16 +1858,6 @@ void BackingStorePrivate::createSurfaces()
     newGeometry->setNumberOfTilesHigh(divisor.second);
     newGeometry->setTileMap(newTileMap);
     adoptAsFrontState(newGeometry); // swap into UI thread
-
-    createVisibleTileBufferForWebPage(m_webPage->d);
-}
-
-void BackingStorePrivate::createVisibleTileBuffer()
-{
-    if (!m_webPage->isVisible() || !isActive())
-        return;
-
-    createVisibleTileBufferForWebPage(m_webPage->d);
 }
 
 Platform::IntPoint BackingStoreGeometry::originOfTile(const TileIndex& index) const

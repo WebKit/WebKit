@@ -1,5 +1,50 @@
 2012-12-18  Jakob Petsovits  <jpetsovits@rim.com>
 
+        [BlackBerry] Remove the visible tile buffer from the BackingStore.
+        https://bugs.webkit.org/show_bug.cgi?id=105302
+        RIM PR 260232
+
+        Reviewed by George Staikos.
+
+        The visible tile buffer was introduced as an additional
+        buffering solution that was necessary because other
+        buffers would only cover part of the screen and could
+        only be swapped one by one, with long blocking calls
+        between each newly rendered tile. By carrying an old copy
+        of all tiles at once, we were avoiding checkerboard and
+        visual artifacts during load time when much zoom-to-fit
+        action is going on.
+
+        These days, the visual tile buffer hurts more than it helps,
+        not only taking up lots of memory but also requiring
+        complexity that we'd rather get rid of. Now that multiple
+        buffers are being swapped into the user interface thread
+        at once, the need for the visible tile buffer is no longer
+        there and can be exchanged for standard geometry behavior.
+
+        This patch simply deletes the visible tile buffer to use
+        existing other code instead. Differences in behavior are
+        non-existent or negligible.
+
+        * Api/BackingStore.cpp:
+        (BlackBerry::WebKit::BackingStorePrivate::blitVisibleContents):
+        (BlackBerry::WebKit::BackingStorePrivate::transformChanged):
+        (BlackBerry::WebKit::BackingStorePrivate::orientationChanged):
+        (BlackBerry::WebKit::BackingStorePrivate::createSurfaces):
+        * Api/BackingStore_p.h:
+        (BackingStorePrivate):
+        * Api/WebPage.cpp:
+        (BlackBerry::WebKit::WebPagePrivate::setViewportSize):
+        * WebKitSupport/SurfacePool.cpp:
+        (BlackBerry::WebKit::SurfacePool::SurfacePool):
+        (BlackBerry::WebKit::SurfacePool::initialize):
+        (BlackBerry::WebKit::SurfacePool::createBuffers):
+        (BlackBerry::WebKit::SurfacePool::releaseBuffers):
+        * WebKitSupport/SurfacePool.h:
+        (SurfacePool):
+
+2012-12-18  Jakob Petsovits  <jpetsovits@rim.com>
+
         [BlackBerry] Restructure the render queue to process multiple tiles at once.
         https://bugs.webkit.org/show_bug.cgi?id=105199
         RIM PR 260232

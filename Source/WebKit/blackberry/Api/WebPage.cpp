@@ -3632,13 +3632,6 @@ void WebPagePrivate::setViewportSize(const IntSize& transformedActualVisibleSize
     bool atTop = !scrollPosition().y();
     bool atLeft = !scrollPosition().x();
 
-    // We need to reorient the visibleTileRect because the following code
-    // could cause BackingStore::transformChanged to be called, where it
-    // is used.
-    // It is only dependent on the transformedViewportSize which has been
-    // updated by now.
-    m_backingStore->d->createVisibleTileBuffer();
-
     setDefaultLayoutSize(transformedActualVisibleSize);
 
     // Recompute our virtual viewport.

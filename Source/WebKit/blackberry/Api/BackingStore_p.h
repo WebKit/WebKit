@@ -293,7 +293,6 @@ public:
 
     // Create the surfaces of the backing store.
     void createSurfaces();
-    void createVisibleTileBuffer();
 
     // Various calculations of quantities relevant to backing store.
     int minimumNumberOfTilesWide() const;
