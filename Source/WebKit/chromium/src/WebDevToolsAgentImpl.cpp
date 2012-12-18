@@ -612,8 +612,12 @@ void WebDevToolsAgentImpl::bringFrontendToFront()
 void WebDevToolsAgentImpl::paintPageOverlay(WebCanvas* canvas)
 {
     InspectorController* ic = inspectorController();
-    if (ic)
-        ic->drawHighlight(GraphicsContextBuilder(canvas).context());
+    if (ic) {
+        GraphicsContextBuilder builder(canvas);
+        GraphicsContext& context = builder.context();
+        context.platformContext()->setDrawingToImageBuffer(true);
+        ic->drawHighlight(context);
+    }
 }
 
 void WebDevToolsAgentImpl::highlight()
