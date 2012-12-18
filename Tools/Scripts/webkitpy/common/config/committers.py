@@ -162,6 +162,7 @@ contributors_who_are_not_committers = [
     Contributor("Raul Hudea", "rhudea@adobe.com", "rhudea"),
     Contributor("Roland Takacs", "rtakacs@inf.u-szeged.hu", "rtakacs"),
     Contributor(u"Sami Ky\u00f6stil\u00e4", "skyostil@chromium.org", "skyostil"),
+    Contributor("Silvia Pfeiffer", "silviapf@chromium.org", "silvia"),
     Contributor("Szilard Ledan-Muntean", "szledan@inf.u-szeged.hu", "szledan"),
     Contributor("Tab Atkins", ["tabatkins@google.com", "jackalmage@gmail.com"], "tabatkins"),
     Contributor("Tamas Czene", ["tczene@inf.u-szeged.hu", "Czene.Tamas@stud.u-szeged.hu"], "tczene"),
