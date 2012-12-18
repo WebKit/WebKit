@@ -38,6 +38,7 @@
 namespace WebKit {
 struct WebContextMenuData;
 class WebGamepads;
+class WebIntentRequest;
 }
 
 namespace WebTestRunner {
@@ -71,6 +72,8 @@ public:
     virtual WebKit::WebURL rewriteLayoutTestsURL(const std::string&) { return WebKit::WebURL(); }
     virtual WebPreferences* preferences() { return 0; }
     virtual void applyPreferences() { };
+    virtual void setCurrentWebIntentRequest(const WebKit::WebIntentRequest&) { };
+    virtual WebKit::WebIntentRequest* currentWebIntentRequest() { return 0; }
 };
 
 }

@@ -43,10 +43,13 @@ class WebAccessibilityObject;
 class WebDragData;
 class WebFrame;
 class WebImage;
+class WebIntentRequest;
+class WebIntentServiceInfo;
 class WebNode;
 class WebRange;
 class WebString;
 struct WebPoint;
+class WebSerializedScriptValue;
 struct WebSize;
 }
 
@@ -88,6 +91,8 @@ protected:
     void didChangeSelection(bool isEmptySelection);
     void didChangeContents();
     void didEndEditing();
+    void registerIntentService(WebKit::WebFrame*, const WebKit::WebIntentServiceInfo&);
+    void dispatchIntent(WebKit::WebFrame* source, const WebKit::WebIntentRequest&);
 
 private:
     WebTestInterfaces* m_testInterfaces;
@@ -207,6 +212,16 @@ public:
     {
         WebTestProxyBase::didEndEditing();
         WebViewClientImpl::didEndEditing();
+    }
+    virtual void registerIntentService(WebKit::WebFrame* frame, const WebKit::WebIntentServiceInfo& service)
+    {
+        WebTestProxyBase::registerIntentService(frame, service);
+        WebViewClientImpl::registerIntentService(frame, service);
+    }
+    virtual void dispatchIntent(WebKit::WebFrame* source, const WebKit::WebIntentRequest& request)
+    {
+        WebTestProxyBase::dispatchIntent(source, request);
+        WebViewClientImpl::dispatchIntent(source, request);
     }
 };
 

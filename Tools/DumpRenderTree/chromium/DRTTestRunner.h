@@ -43,7 +43,6 @@
 #define DRTTestRunner_h
 
 #include "TestRunner/src/TestRunner.h"
-#include "WebDeliveredIntentClient.h"
 #include "WebTask.h"
 #include "WebTextDirection.h"
 #include "platform/WebArrayBufferView.h"
@@ -273,13 +272,6 @@ public:
     void setPointerLockWillFailSynchronously(const CppArgumentList&, CppVariant*);
     void setPointerLockWillRespondAsynchronously(const CppArgumentList&, CppVariant*);
 #endif
-
-    // Expects one string argument for sending successful result, zero
-    // arguments for sending a failure result.
-    void sendWebIntentResponse(const CppArgumentList&, CppVariant*);
-
-    // Cause the web intent to be delivered to this context.
-    void deliverWebIntent(const CppArgumentList&, CppVariant*);
 
     // Used to set the device scale factor.
     void setBackingScaleFactor(const CppArgumentList&, CppVariant*);
@@ -514,9 +506,6 @@ private:
 
     // WAV audio data is stored here.
     WebKit::WebArrayBufferView m_audioData;
-
-    // Mock object for testing delivering web intents.
-    OwnPtr<WebKit::WebDeliveredIntentClient> m_intentClient;
 
     bool m_shouldStayOnPageAfterHandlingBeforeUnload;
 };

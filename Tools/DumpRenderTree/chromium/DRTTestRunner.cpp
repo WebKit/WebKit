@@ -50,8 +50,6 @@
 #include "WebGeolocationClientMock.h"
 #include "WebIDBFactory.h"
 #include "WebInputElement.h"
-#include "WebIntent.h"
-#include "WebIntentRequest.h"
 #include "WebKit.h"
 #include "WebNotificationPresenter.h"
 #include "WebPermissions.h"
@@ -87,23 +85,12 @@ using namespace WebKit;
 using namespace WebTestRunner;
 using namespace std;
 
-class EmptyWebDeliveredIntentClient : public WebKit::WebDeliveredIntentClient {
-public:
-    EmptyWebDeliveredIntentClient() { }
-    ~EmptyWebDeliveredIntentClient() { }
-
-    virtual void postResult(const WebSerializedScriptValue& data) const { }
-    virtual void postFailure(const WebSerializedScriptValue& data) const { }
-    virtual void destroy() { }
-};
-
 DRTTestRunner::DRTTestRunner(TestShell* shell)
     : m_shell(shell)
     , m_closeRemainingWindows(false)
     , m_deferMainResourceDataLoad(false)
     , m_showDebugLayerTree(false)
     , m_workQueue(this)
-    , m_intentClient(adoptPtr(new EmptyWebDeliveredIntentClient))
     , m_shouldStayOnPageAfterHandlingBeforeUnload(false)
 {
 
@@ -208,8 +195,6 @@ DRTTestRunner::DRTTestRunner(TestShell* shell)
     bindProperty("webHistoryItemCount", &m_webHistoryItemCount);
     bindProperty("titleTextDirection", &m_titleTextDirection);
     bindProperty("interceptPostMessage", &m_interceptPostMessage);
-    bindMethod("sendWebIntentResponse", &DRTTestRunner::sendWebIntentResponse);
-    bindMethod("deliverWebIntent", &DRTTestRunner::deliverWebIntent);
 }
 
 DRTTestRunner::~DRTTestRunner()
@@ -1049,49 +1034,6 @@ void DRTTestRunner::setShouldStayOnPageAfterHandlingBeforeUnload(const CppArgume
         m_shouldStayOnPageAfterHandlingBeforeUnload = arguments[0].toBoolean();
 
     result->setNull();
-}
-
-void DRTTestRunner::sendWebIntentResponse(const CppArgumentList& arguments, CppVariant* result)
-{
-    v8::HandleScope scope;
-    v8::Local<v8::Context> ctx = m_shell->webView()->mainFrame()->mainWorldScriptContext();
-    result->set(m_shell->webView()->mainFrame()->selectionAsMarkup().utf8());
-    v8::Context::Scope cscope(ctx);
-
-    WebKit::WebIntentRequest* request = m_shell->webViewHost()->currentIntentRequest();
-    if (request->isNull())
-        return;
-
-    if (arguments.size() == 1) {
-        WebKit::WebCString reply = cppVariantToWebString(arguments[0]).utf8();
-        v8::Handle<v8::Value> v8value = v8::String::New(reply.data(), reply.length());
-        request->postResult(WebKit::WebSerializedScriptValue::serialize(v8value));
-    } else {
-        v8::Handle<v8::Value> v8value = v8::String::New("ERROR");
-        request->postFailure(WebKit::WebSerializedScriptValue::serialize(v8value));
-    }
-    result->setNull();
-}
-
-void DRTTestRunner::deliverWebIntent(const CppArgumentList& arguments, CppVariant* result)
-{
-    if (arguments.size() <  3)
-        return;
-
-    v8::HandleScope scope;
-    v8::Local<v8::Context> ctx = m_shell->webView()->mainFrame()->mainWorldScriptContext();
-    result->set(m_shell->webView()->mainFrame()->selectionAsMarkup().utf8());
-    v8::Context::Scope cscope(ctx);
-
-    WebString action = cppVariantToWebString(arguments[0]);
-    WebString type = cppVariantToWebString(arguments[1]);
-    WebKit::WebCString data = cppVariantToWebString(arguments[2]).utf8();
-    WebSerializedScriptValue serializedData = WebSerializedScriptValue::serialize(
-        v8::String::New(data.data(), data.length()));
-
-    WebIntent intent = WebIntent::create(action, type, serializedData.toString(), WebVector<WebString>(), WebVector<WebString>());
-
-    m_shell->webView()->mainFrame()->deliverIntent(intent, 0, m_intentClient.get());
 }
 
 class InvokeCallbackTask : public WebMethodTask<DRTTestRunner> {

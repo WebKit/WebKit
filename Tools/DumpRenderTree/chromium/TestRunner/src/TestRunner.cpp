@@ -39,6 +39,8 @@
 #include "WebFindOptions.h"
 #include "WebFrame.h"
 #include "WebInputElement.h"
+#include "WebIntent.h"
+#include "WebIntentRequest.h"
 #include "WebPreferences.h"
 #include "WebScriptSource.h"
 #include "WebSecurityPolicy.h"
@@ -48,6 +50,7 @@
 #include "WebView.h"
 #include "WebWorkerInfo.h"
 #include "platform/WebPoint.h"
+#include "platform/WebSerializedScriptValue.h"
 #include "v8/include/v8.h"
 #include <wtf/text/WTFString.h>
 
@@ -60,9 +63,24 @@ using namespace std;
 
 namespace WebTestRunner {
 
+namespace {
+
+class EmptyWebDeliveredIntentClient : public WebDeliveredIntentClient {
+public:
+    EmptyWebDeliveredIntentClient() { }
+    ~EmptyWebDeliveredIntentClient() { }
+
+    virtual void postResult(const WebSerializedScriptValue& data) const { }
+    virtual void postFailure(const WebSerializedScriptValue& data) const { }
+    virtual void destroy() { }
+};
+
+}
+
 TestRunner::TestRunner()
     : m_delegate(0)
     , m_webView(0)
+    , m_intentClient(adoptPtr(new EmptyWebDeliveredIntentClient))
 {
     // Methods implemented in terms of chromium's public WebKit API.
     bindMethod("setTabKeyCyclesThroughElements", &TestRunner::setTabKeyCyclesThroughElements);
@@ -116,6 +134,10 @@ TestRunner::TestRunner()
 
     // The following modify the state of the TestRunner.
     bindMethod("dumpEditingCallbacks", &TestRunner::dumpEditingCallbacks);
+
+    // The following methods interact with the WebTestProxy.
+    bindMethod("sendWebIntentResponse", &TestRunner::sendWebIntentResponse);
+    bindMethod("deliverWebIntent", &TestRunner::deliverWebIntent);
 
     // Properties.
     bindProperty("workerThreadCount", &TestRunner::workerThreadCount);
@@ -849,6 +871,48 @@ void TestRunner::setTouchDragDropEnabled(const CppArgumentList& arguments, CppVa
         m_delegate->applyPreferences();
     }
     result->setNull();
+}
+
+void TestRunner::sendWebIntentResponse(const CppArgumentList& arguments, CppVariant* result)
+{
+    v8::HandleScope scope;
+    v8::Local<v8::Context> ctx = m_webView->mainFrame()->mainWorldScriptContext();
+    result->set(m_webView->mainFrame()->selectionAsMarkup().utf8());
+    v8::Context::Scope cscope(ctx);
+
+    WebIntentRequest* request = m_delegate->currentWebIntentRequest();
+    if (request->isNull())
+        return;
+
+    if (arguments.size() == 1) {
+        WebCString reply = cppVariantToWebString(arguments[0]).utf8();
+        v8::Handle<v8::Value> v8value = v8::String::New(reply.data(), reply.length());
+        request->postResult(WebSerializedScriptValue::serialize(v8value));
+    } else {
+        v8::Handle<v8::Value> v8value = v8::String::New("ERROR");
+        request->postFailure(WebSerializedScriptValue::serialize(v8value));
+    }
+    result->setNull();
+}
+
+void TestRunner::deliverWebIntent(const CppArgumentList& arguments, CppVariant* result)
+{
+    if (arguments.size() <  3)
+        return;
+
+    v8::HandleScope scope;
+    v8::Local<v8::Context> ctx = m_webView->mainFrame()->mainWorldScriptContext();
+    result->set(m_webView->mainFrame()->selectionAsMarkup().utf8());
+    v8::Context::Scope cscope(ctx);
+
+    WebString action = cppVariantToWebString(arguments[0]);
+    WebString type = cppVariantToWebString(arguments[1]);
+    WebCString data = cppVariantToWebString(arguments[2]).utf8();
+    WebSerializedScriptValue serializedData = WebSerializedScriptValue::serialize(v8::String::New(data.data(), data.length()));
+
+    WebIntent intent = WebIntent::create(action, type, serializedData.toString(), WebVector<WebString>(), WebVector<WebString>());
+
+    m_webView->mainFrame()->deliverIntent(intent, 0, m_intentClient.get());
 }
 
 void TestRunner::dumpEditingCallbacks(const CppArgumentList&, CppVariant* result)

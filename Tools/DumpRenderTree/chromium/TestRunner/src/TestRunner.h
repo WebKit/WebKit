@@ -33,6 +33,7 @@
 #define TestRunner_h
 
 #include "CppBoundClass.h"
+#include "WebDeliveredIntentClient.h"
 #include "WebTestRunner.h"
 #include "platform/WebURL.h"
 
@@ -186,6 +187,16 @@ private:
     void dumpEditingCallbacks(const CppArgumentList&, CppVariant*);
 
     ///////////////////////////////////////////////////////////////////////////
+    // Methods interacting with the WebTestProxy
+
+    // Expects one string argument for sending successful result, zero
+    // arguments for sending a failure result.
+    void sendWebIntentResponse(const CppArgumentList&, CppVariant*);
+
+    // Cause the web intent to be delivered to this context.
+    void deliverWebIntent(const CppArgumentList&, CppVariant*);
+
+    ///////////////////////////////////////////////////////////////////////////
     // Properties
     void workerThreadCount(CppVariant*);
 
@@ -223,6 +234,9 @@ private:
 
     WebTestDelegate* m_delegate;
     WebKit::WebView* m_webView;
+
+    // Mock object for testing delivering web intents.
+    OwnPtr<WebKit::WebDeliveredIntentClient> m_intentClient;
 };
 
 }

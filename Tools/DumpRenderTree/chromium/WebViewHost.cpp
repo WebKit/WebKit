@@ -50,8 +50,6 @@
 #include "WebFrame.h"
 #include "WebGeolocationClientMock.h"
 #include "WebHistoryItem.h"
-#include "WebIntent.h"
-#include "WebIntentServiceInfo.h"
 #include "WebKit.h"
 #include "WebNode.h"
 #include "WebPluginParams.h"
@@ -1183,50 +1181,6 @@ bool WebViewHost::willCheckAndDispatchMessageEvent(WebFrame* sourceFrame, WebFra
     return false;
 }
 
-void WebViewHost::registerIntentService(WebKit::WebFrame*, const WebKit::WebIntentServiceInfo& service)
-{
-    printf("Registered Web Intent Service: action=%s type=%s title=%s url=%s disposition=%s\n",
-           service.action().utf8().data(), service.type().utf8().data(), service.title().utf8().data(), service.url().spec().data(), service.disposition().utf8().data());
-}
-
-void WebViewHost::dispatchIntent(WebFrame* source, const WebIntentRequest& request)
-{
-    printf("Received Web Intent: action=%s type=%s\n",
-           request.intent().action().utf8().data(),
-           request.intent().type().utf8().data());
-    WebMessagePortChannelArray* ports = request.intent().messagePortChannelsRelease();
-    m_currentRequest = request;
-    if (ports) {
-        printf("Have %d ports\n", static_cast<int>(ports->size()));
-        for (size_t i = 0; i < ports->size(); ++i)
-            (*ports)[i]->destroy();
-        delete ports;
-    }
-
-    if (!request.intent().service().isEmpty())
-        printf("Explicit intent service: %s\n", request.intent().service().spec().data());
-
-    WebVector<WebString> extras = request.intent().extrasNames();
-    for (size_t i = 0; i < extras.size(); ++i) {
-        printf("Extras[%s] = %s\n", extras[i].utf8().data(),
-               request.intent().extrasValue(extras[i]).utf8().data());
-    }
-
-    WebVector<WebURL> suggestions = request.intent().suggestions();
-    for (size_t i = 0; i < suggestions.size(); ++i)
-        printf("Have suggestion %s\n", suggestions[i].spec().data());
-}
-
-void WebViewHost::deliveredIntentResult(WebFrame* frame, int id, const WebSerializedScriptValue& data)
-{
-    printf("Web intent success for id %d\n", id);
-}
-
-void WebViewHost::deliveredIntentFailure(WebFrame* frame, int id, const WebSerializedScriptValue& data)
-{
-    printf("Web intent failure for id %d\n", id);
-}
-
 // WebTestDelegate ------------------------------------------------------------
 
 WebContextMenuData* WebViewHost::lastContextMenuData() const
@@ -1309,6 +1263,16 @@ WebPreferences* WebViewHost::preferences()
 void WebViewHost::applyPreferences()
 {
     m_shell->applyPreferences();
+}
+
+void WebViewHost::setCurrentWebIntentRequest(const WebIntentRequest& request)
+{
+    m_currentRequest = request;
+}
+
+WebIntentRequest* WebViewHost::currentWebIntentRequest()
+{
+    return &m_currentRequest;
 }
 
 // Public functions -----------------------------------------------------------

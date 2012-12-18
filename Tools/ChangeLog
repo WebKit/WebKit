@@ -1,5 +1,47 @@
 2012-12-18  Jochen Eisinger  <jochen@chromium.org>
 
+        [chromium] move webintent related methods to TestRunner library
+        https://bugs.webkit.org/show_bug.cgi?id=105164
+
+        Reviewed by Darin Fisher.
+
+        Also deleted the unused deliveredIntentFailure and
+        deliveredIntentResult methods.
+
+        * DumpRenderTree/chromium/DRTTestRunner.cpp:
+        (DRTTestRunner::DRTTestRunner):
+        * DumpRenderTree/chromium/DRTTestRunner.h:
+        (DRTTestRunner):
+        * DumpRenderTree/chromium/TestRunner/public/WebTestDelegate.h:
+        (WebKit):
+        (WebTestRunner::WebTestDelegate::setCurrentWebIntentRequest):
+        (WebTestRunner::WebTestDelegate::currentWebIntentRequest):
+        * DumpRenderTree/chromium/TestRunner/public/WebTestProxy.h:
+        (WebKit):
+        (WebTestProxyBase):
+        (WebTestRunner::WebTestProxy::registerIntentService):
+        (WebTestRunner::WebTestProxy::dispatchIntent):
+        * DumpRenderTree/chromium/TestRunner/src/TestRunner.cpp:
+        (WebTestRunner::TestRunner::TestRunner):
+        (WebTestRunner::TestRunner::sendWebIntentResponse):
+        (WebTestRunner):
+        (WebTestRunner::TestRunner::deliverWebIntent):
+        * DumpRenderTree/chromium/TestRunner/src/TestRunner.h:
+        (TestRunner):
+        * DumpRenderTree/chromium/TestRunner/src/WebTestProxy.cpp:
+        (WebTestRunner::WebTestProxyBase::postAccessibilityNotification):
+        (WebTestRunner::WebTestProxyBase::registerIntentService):
+        (WebTestRunner):
+        (WebTestRunner::WebTestProxyBase::dispatchIntent):
+        * DumpRenderTree/chromium/WebViewHost.cpp:
+        (WebViewHost::setCurrentWebIntentRequest):
+        (WebViewHost::currentWebIntentRequest):
+        * DumpRenderTree/chromium/WebViewHost.h:
+        (WebKit):
+        (WebViewHost):
+
+2012-12-18  Jochen Eisinger  <jochen@chromium.org>
+
         [chromium] move editing callback dumping to the WebTestProxy
         https://bugs.webkit.org/show_bug.cgi?id=105013
 
