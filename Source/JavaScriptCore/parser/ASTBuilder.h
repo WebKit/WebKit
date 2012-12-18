@@ -145,7 +145,13 @@ public:
     ExpressionNode* makeRightShiftNode(const JSTokenLocation&, ExpressionNode* left, ExpressionNode* right, bool rightHasAssignments);
     ExpressionNode* makeURightShiftNode(const JSTokenLocation&, ExpressionNode* left, ExpressionNode* right, bool rightHasAssignments);
 
-    ExpressionNode* createLogicalNot(const JSTokenLocation& location, ExpressionNode* expr) { return new (m_globalData) LogicalNotNode(location, expr); }
+    ExpressionNode* createLogicalNot(const JSTokenLocation& location, ExpressionNode* expr)
+    {
+        if (expr->isNumber())
+            return createBoolean(location, !static_cast<NumberNode*>(expr)->value());
+
+        return new (m_globalData) LogicalNotNode(location, expr);
+    }
     ExpressionNode* createUnaryPlus(const JSTokenLocation& location, ExpressionNode* expr) { return new (m_globalData) UnaryPlusNode(location, expr); }
     ExpressionNode* createVoid(const JSTokenLocation& location, ExpressionNode* expr)
     {
