@@ -985,6 +985,7 @@ WebInspector.StylePropertiesSection.prototype = {
     {
         if (this.styleRule.selectorText)
             this._selectorElement.textContent = this.styleRule.selectorText;
+        this._markSelectorMatches();
         if (full) {
             this.propertiesTreeOutline.removeChildren();
             this.populated = false;

@@ -1,3 +1,15 @@
+2012-12-18  Alexander Pavlov  <apavlov@chromium.org>
+
+        Web Inspector: [Styles] Selector matches are not marked after property editing
+        https://bugs.webkit.org/show_bug.cgi?id=105284
+
+        Reviewed by Vsevolod Vlasov.
+
+        Once a property edit is committed, the selector markup is reset and needs to be re-applied.
+
+        * inspector/front-end/StylesSidebarPane.js:
+        (WebInspector.StylePropertiesSection.prototype.update):
+
 2012-12-18  Eric Carlson  <eric.carlson@apple.com>
 
         Add in-band text track cues only once
