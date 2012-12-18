@@ -1,3 +1,15 @@
+2012-12-17  Andrey Adaikin  <aandrey@chromium.org>
+
+        Web Inspector: [WebGL] handle video elements used in WebGL
+        https://bugs.webkit.org/show_bug.cgi?id=105170
+
+        Reviewed by Yury Semikhatsky.
+
+        Copy current image of video elements into a canvas to use it later in the replay.
+
+        * inspector/InjectedScriptCanvasModuleSource.js:
+        (.):
+
 2012-12-17  Luke Macpherson   <macpherson@chromium.org>
 
         Add ASSERTions to ensure that CSSPropertys that are variables only ever refer to CSSValues that are variables.

@@ -91,29 +91,16 @@ var TypeUtils = {
             var img = /** @type {HTMLImageElement} */ (obj);
             // Special case for Images with Blob URIs: cloneNode will fail if the Blob URI has already been revoked.
             // FIXME: Maybe this is a bug in WebKit core?
-            if (/^blob:/.test(img.src)) {
-                var canvas = inspectedWindow.document.createElement("canvas");
-                var context = /** @type {CanvasRenderingContext2D} */ (Resource.wrappedObject(canvas.getContext("2d")));
-                canvas.width = img.width;
-                canvas.height = img.height;
-                context.drawImage(img, 0, 0);
-                return canvas;
-            }
+            if (/^blob:/.test(img.src))
+                return TypeUtils.cloneIntoCanvas(img, img.width, img.height);
             return img.cloneNode(true);
         }
 
-        if (obj instanceof HTMLCanvasElement) {
-            var result = obj.cloneNode(true);
-            var context = /** @type {CanvasRenderingContext2D} */ (Resource.wrappedObject(result.getContext("2d")));
-            context.drawImage(obj, 0, 0);
-            return result;
-        }
+        if (obj instanceof HTMLCanvasElement)
+            return TypeUtils.cloneIntoCanvas(obj, obj.width, obj.height);
 
-        if (obj instanceof HTMLVideoElement) {
-            var result = obj.cloneNode(true);
-            // FIXME: Copy HTMLVideoElement's current image into a 2d canvas.
-            return result;
-        }
+        if (obj instanceof HTMLVideoElement)
+            return TypeUtils.cloneIntoCanvas(obj, obj.videoWidth, obj.videoHeight);
 
         if (obj instanceof ImageData) {
             var context = TypeUtils._dummyCanvas2dContext();
@@ -126,6 +113,22 @@ var TypeUtils = {
 
         console.error("ASSERT_NOT_REACHED: failed to clone object: ", obj);
         return obj;
+    },
+
+    /**
+     * @param {HTMLImageElement|HTMLCanvasElement|HTMLVideoElement} obj
+     * @param {number} width
+     * @param {number} height
+     * @return {HTMLCanvasElement}
+     */
+    cloneIntoCanvas: function(obj, width, height)
+    {
+        var canvas = /** @type {HTMLCanvasElement} */ (inspectedWindow.document.createElement("canvas"));
+        canvas.width = width;
+        canvas.height = height;
+        var context = /** @type {CanvasRenderingContext2D} */ (Resource.wrappedObject(canvas.getContext("2d")));
+        context.drawImage(obj, 0, 0);
+        return canvas;
     },
 
     /**
@@ -149,7 +152,7 @@ var TypeUtils = {
     {
         var context = TypeUtils._dummyCanvas2dContextInstance;
         if (!context) {
-            var canvas = inspectedWindow.document.createElement("canvas");
+            var canvas = /** @type {HTMLCanvasElement} */ (inspectedWindow.document.createElement("canvas"));
             context = /** @type {CanvasRenderingContext2D} */ (Resource.wrappedObject(canvas.getContext("2d")));
             TypeUtils._dummyCanvas2dContextInstance = context;
         }
