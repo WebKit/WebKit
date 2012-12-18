@@ -703,6 +703,9 @@ void LayerRenderer::updateLayersRecursive(LayerCompositingThread* layer, const T
         }
 
         position.setY(position.y() + (visibleY - layoutY));
+
+        float visibleX = max(0.0f, visibleRect.x());
+        position.setX(position.x() + visibleX);
     }
 
     // Offset between anchor point and the center of the quad.
