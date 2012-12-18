@@ -71,9 +71,8 @@ IndexingType leastUpperBoundOfIndexingTypeAndValue(IndexingType indexingType, JS
     return leastUpperBoundOfIndexingTypeAndType(indexingType, speculationFromValue(value));
 }
 
-const char* indexingTypeToString(IndexingType indexingType)
+void dumpIndexingType(PrintStream& out, IndexingType indexingType)
 {
-    static char result[128];
     const char* basicName;
     switch (indexingType & AllArrayTypes) {
     case NonArray:
@@ -120,11 +119,7 @@ const char* indexingTypeToString(IndexingType indexingType)
         break;
     }
     
-    snprintf(
-        result, sizeof(result), "%s%s", basicName,
-        (indexingType & MayHaveIndexedAccessors) ? "|MayHaveIndexedAccessors" : "");
-    
-    return result;
+    out.printf("%s%s", basicName, (indexingType & MayHaveIndexedAccessors) ? "|MayHaveIndexedAccessors" : "");
 }
 
 } // namespace JSC

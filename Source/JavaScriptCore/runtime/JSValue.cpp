@@ -213,15 +213,16 @@ void JSValue::dump(PrintStream& out) const
     } else if (isCell()) {
         if (asCell()->inherits(&Structure::s_info)) {
             Structure* structure = jsCast<Structure*>(asCell());
-            out.printf(
-                "Structure: %p: %s, %s",
-                structure, structure->classInfo()->className,
-                indexingTypeToString(structure->indexingTypeIncludingHistory()));
+            out.print(
+                "Structure: ", RawPointer(structure), ": ", structure->classInfo()->className,
+                ", ", IndexingTypeDump(structure->indexingTypeIncludingHistory()));
         } else {
-            out.printf(
-                "Cell: %p -> %p (%p: %s, %s)",
-                asCell(), isObject() ? asObject(*this)->butterfly() : 0, asCell()->structure(), asCell()->structure()->classInfo()->className,
-                indexingTypeToString(asCell()->structure()->indexingTypeIncludingHistory()));
+            out.print("Cell: ", RawPointer(asCell()));
+            if (isObject() && asObject(*this)->butterfly())
+                out.print("->", RawPointer(asObject(*this)->butterfly()));
+            out.print(
+                " (", RawPointer(asCell()->structure()), ": ", asCell()->structure()->classInfo()->className,
+                ", ", IndexingTypeDump(asCell()->structure()->indexingTypeIncludingHistory()), ")");
         }
     } else if (isTrue())
         out.print("True");

@@ -213,12 +213,12 @@ void Graph::dump(PrintStream& out, const char* prefix, NodeIndex nodeIndex)
     }
     if (node.hasStructureSet()) {
         for (size_t i = 0; i < node.structureSet().size(); ++i) {
-            out.print(hasPrinted ? ", " : "", "struct(", RawPointer(node.structureSet()[i]), ": ", indexingTypeToString(node.structureSet()[i]->indexingType()), ")");
+            out.print(hasPrinted ? ", " : "", "struct(", RawPointer(node.structureSet()[i]), ": ", IndexingTypeDump(node.structureSet()[i]->indexingType()), ")");
             hasPrinted = true;
         }
     }
     if (node.hasStructure()) {
-        out.print(hasPrinted ? ", " : "", "struct(", RawPointer(node.structure()), ": ", indexingTypeToString(node.structure()->indexingType()), ")");
+        out.print(hasPrinted ? ", " : "", "struct(", RawPointer(node.structure()), ": ", IndexingTypeDump(node.structure()->indexingType()), ")");
         hasPrinted = true;
     }
     if (node.hasStructureTransitionData()) {
@@ -260,7 +260,7 @@ void Graph::dump(PrintStream& out, const char* prefix, NodeIndex nodeIndex)
     if (node.hasIndexingType()) {
         if (hasPrinted)
             out.print(", ");
-        out.print(indexingTypeToString(node.indexingType()));
+        out.print(IndexingTypeDump(node.indexingType()));
         hasPrinted = true;
     }
     if (node.hasExecutionCounter()) {

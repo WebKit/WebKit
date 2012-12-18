@@ -149,7 +149,8 @@ IndexingType leastUpperBoundOfIndexingTypes(IndexingType, IndexingType);
 IndexingType leastUpperBoundOfIndexingTypeAndType(IndexingType, SpeculatedType);
 IndexingType leastUpperBoundOfIndexingTypeAndValue(IndexingType, JSValue);
 
-const char* indexingTypeToString(IndexingType);
+void dumpIndexingType(PrintStream&, IndexingType);
+MAKE_PRINT_ADAPTOR(IndexingTypeDump, IndexingType, dumpIndexingType);
 
 // Mask of all possible types.
 static const IndexingType AllArrayTypes            = 31;
