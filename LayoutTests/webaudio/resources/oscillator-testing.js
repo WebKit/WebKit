@@ -27,7 +27,7 @@ var OSC = {
 
 function generateExponentialOscillatorSweep(oscillatorType) {
     // Create offline audio context.
-    context = new webkitAudioContext(1, sampleRate * lengthInSeconds, sampleRate);
+    context = new webkitOfflineAudioContext(1, sampleRate * lengthInSeconds, sampleRate);
 
     var osc = context.createOscillator();
     if (oscillatorType == OSC.CUSTOM) {
