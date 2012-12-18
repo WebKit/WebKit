@@ -288,12 +288,6 @@ void ResourceHandle::cancel()
 {
     LOG(Network, "Handle %p cancel connection %p", this, d->m_connection.get());
 
-    if (!d->m_proxy) {
-        // If the proxy is null, the connection has been handed off to NSURLDownload, so ResourceHandle should not cancel it.
-        // FIXME: We should do what we do in the CFNetwork port and null out the NSURLConnection object instead.
-        return;
-    }
-
     // Leaks were seen on HTTP tests without this; can be removed once <rdar://problem/6886937> is fixed.
     if (d->m_currentMacChallenge)
         [[d->m_currentMacChallenge sender] cancelAuthenticationChallenge:d->m_currentMacChallenge];
