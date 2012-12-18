@@ -1,3 +1,14 @@
+2012-12-18  Adam Klein  <adamk@chromium.org>
+
+        [HTMLTemplateElement] Prevent first-level recursive <template> from resetting the implied context
+        https://bugs.webkit.org/show_bug.cgi?id=104142
+
+        Reviewed by Eric Seidel.
+
+        Added test that the original template context is retained after inner template.
+
+        * html5lib/resources/template.dat:
+
 2012-12-18  Hans Muller  <hmuller@adobe.com>
 
         [CSS Exclusions] shape-inside layout fails to adjust first line correctly for writing-mode: vertical-rl

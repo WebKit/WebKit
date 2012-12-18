@@ -303,6 +303,12 @@ HTMLTreeBuilder::HTMLTreeBuilder(HTMLDocumentParser* parser, DocumentFragment* f
         // For efficiency, we skip step 4.2 ("Let root be a new html element with no attributes")
         // and instead use the DocumentFragment as a root node.
         m_tree.openElements()->pushRootNode(HTMLStackItem::create(fragment, HTMLStackItem::ItemForDocumentFragmentNode));
+
+#if ENABLE(TEMPLATE_ELEMENT)
+        if (contextElement->hasLocalName(templateTag))
+            m_templateInsertionModes.append(TemplateContentsMode);
+#endif
+
         resetInsertionModeAppropriately();
         m_tree.setForm(closestFormAncestor(contextElement));
     }
@@ -960,11 +966,11 @@ void HTMLTreeBuilder::processStartTagForInBody(AtomicHTMLToken* token)
 }
 
 #if ENABLE(TEMPLATE_ELEMENT)
-
 void HTMLTreeBuilder::processTemplateStartTag(AtomicHTMLToken* token)
 {
     m_tree.activeFormattingElements()->appendMarker();
     m_tree.insertHTMLElement(token);
+    m_templateInsertionModes.append(TemplateContentsMode);
     setInsertionMode(TemplateContentsMode);
 }
 
@@ -979,6 +985,7 @@ void HTMLTreeBuilder::processTemplateEndTag(AtomicHTMLToken* token)
         parseError(token);
     m_tree.openElements()->popUntilPopped(token->name());
     m_tree.activeFormattingElements()->clearToLastMarker();
+    m_templateInsertionModes.removeLast();
     resetInsertionModeAppropriately();
 }
 #endif
@@ -1441,18 +1448,24 @@ void HTMLTreeBuilder::processStartTag(AtomicHTMLToken* token)
             return;
         }
 
+        InsertionMode insertionMode = TemplateContentsMode;
         if (token->name() == frameTag)
-            setInsertionMode(InFramesetMode);
+            insertionMode = InFramesetMode;
         else if (token->name() == colTag)
-            setInsertionMode(InColumnGroupMode);
+            insertionMode = InColumnGroupMode;
         else if (isCaptionColOrColgroupTag(token->name()) || isTableBodyContextTag(token->name()))
-            setInsertionMode(InTableMode);
+            insertionMode = InTableMode;
         else if (token->name() == trTag)
-            setInsertionMode(InTableBodyMode);
+            insertionMode = InTableBodyMode;
         else if (isTableCellContextTag(token->name()))
-            setInsertionMode(InRowMode);
+            insertionMode = InRowMode;
         else
-            setInsertionMode(InBodyMode);
+            insertionMode = InBodyMode;
+
+        ASSERT(insertionMode != TemplateContentsMode);
+        ASSERT(m_templateInsertionModes.last() == TemplateContentsMode);
+        m_templateInsertionModes.last() = insertionMode;
+        setInsertionMode(insertionMode);
 
         processStartTag(token);
 #else
@@ -1641,9 +1654,8 @@ void HTMLTreeBuilder::resetInsertionModeAppropriately()
             item = HTMLStackItem::create(m_fragmentContext.contextElement(), HTMLStackItem::ItemForContextElement);
         }
 #if ENABLE(TEMPLATE_ELEMENT)
-        // FIXME: https://www.w3.org/Bugs/Public/show_bug.cgi?id=20130 (should <template> clear the "implied context element".
         if (item->hasTagName(templateTag))
-            return setInsertionMode(TemplateContentsMode);
+            return setInsertionMode(m_templateInsertionModes.last());
 #endif
         if (item->hasTagName(selectTag)) {
             return setInsertionMode(InSelectMode);
@@ -2275,6 +2287,7 @@ void HTMLTreeBuilder::processEndTag(AtomicHTMLToken* token)
         if (token->name() == templateTag) {
             ASSERT(m_tree.currentStackItem()->hasTagName(templateTag));
             m_tree.openElements()->pop();
+            m_templateInsertionModes.removeLast();
             resetInsertionModeAppropriately();
             return;
         }
@@ -2501,6 +2514,9 @@ void HTMLTreeBuilder::processCharacterBufferForInBody(ExternalCharacterTokenBuff
 void HTMLTreeBuilder::processEndOfFile(AtomicHTMLToken* token)
 {
     ASSERT(token->type() == HTMLTokenTypes::EndOfFile);
+#if ENABLE(TEMPLATE_ELEMENT)
+    m_templateInsertionModes.clear();
+#endif
     switch (insertionMode()) {
     case InitialMode:
         ASSERT(insertionMode() == InitialMode);
@@ -2884,7 +2900,11 @@ void HTMLTreeBuilder::finished()
 {
     if (isParsingFragment())
         return;
-    
+
+#if ENABLE(TEMPLATE_ELEMENT)
+    ASSERT(m_templateInsertionModes.isEmpty());
+#endif
+
     ASSERT(m_document);
     // Warning, this may detach the parser. Do not do anything else after this.
     m_document->finishedParsing();

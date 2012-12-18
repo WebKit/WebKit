@@ -840,4 +840,22 @@
 |         <tr>
 |         <template>
 |           #document-fragment
-|         <td>
+|         <tr>
+|           <td>
+
+#data
+<body><template><thead></thead><template><tr></tr></template><tr></tr><tfoot></tfoot></template>
+#errors
+#document
+| <html>
+|   <head>
+|   <body>
+|     <template>
+|       #document-fragment
+|         <thead>
+|         <template>
+|           #document-fragment
+|             <tr>
+|         <tbody>
+|           <tr>
+|         <tfoot>

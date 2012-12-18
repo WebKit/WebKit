@@ -37,6 +37,7 @@
 #include <wtf/PassOwnPtr.h>
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefPtr.h>
+#include <wtf/Vector.h>
 #include <wtf/text/StringBuilder.h>
 #include <wtf/text/TextPosition.h>
 #include <wtf/unicode/Unicode.h>
@@ -231,6 +232,10 @@ private:
 
     // http://www.whatwg.org/specs/web-apps/current-work/multipage/parsing.html#original-insertion-mode
     InsertionMode m_originalInsertionMode;
+
+#if ENABLE(TEMPLATE_ELEMENT)
+    Vector<InsertionMode> m_templateInsertionModes;
+#endif
 
     // http://www.whatwg.org/specs/web-apps/current-work/multipage/tokenization.html#pending-table-character-tokens
     StringBuilder m_pendingTableCharacters;
