@@ -1,3 +1,21 @@
+2012-12-18  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Running a skipped test with run-perf-tests could alert the user
+        https://bugs.webkit.org/show_bug.cgi?id=105219
+
+        Reviewed by Eric Seidel.
+
+        Force run skipped performance tests explicitly specified in the command line.
+        Also warn the user when the specified paths don't exist.
+
+        * Scripts/webkitpy/layout_tests/port/base.py:
+        (Port.relative_test_filename):
+        * Scripts/webkitpy/performance_tests/perftestsrunner.py:
+        (PerfTestsRunner._parse_args):
+        (PerfTestsRunner._collect_tests):
+        * Scripts/webkitpy/performance_tests/perftestsrunner_unittest.py:
+        (test_collect_tests_with_skipped_list_and_files):
+
 2012-12-18  Yaron Friedman  <yfriedman@chromium.org>
 
         Chrome Android java output is too verbose

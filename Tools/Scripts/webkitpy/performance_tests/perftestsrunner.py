@@ -116,7 +116,7 @@ class PerfTestsRunner(object):
                 help="Use WebKitTestRunner rather than DumpRenderTree."),
             optparse.make_option("--replay", dest="replay", action="store_true", default=False,
                 help="Run replay tests."),
-            optparse.make_option("--force", dest="skipped", action="store_true", default=False,
+            optparse.make_option("--force", dest="use_skipped_list", action="store_false", default=True,
                 help="Run all tests, including the ones in the Skipped list."),
             optparse.make_option("--profile", action="store_true",
                 help="Output per-test profile information."),
@@ -139,17 +139,21 @@ class PerfTestsRunner(object):
 
         paths = []
         for arg in self._args:
-            paths.append(arg)
-            relpath = filesystem.relpath(arg, self._base_path)
-            if relpath:
-                paths.append(relpath)
+            if filesystem.exists(filesystem.join(self._base_path, arg)):
+                paths.append(arg)
+            else:
+                relpath = filesystem.relpath(arg, self._base_path)
+                if filesystem.exists(filesystem.join(self._base_path, relpath)):
+                    paths.append(filesystem.normpath(relpath))
+                else:
+                    _log.warn('Path was not found:' + arg)
 
         skipped_directories = set(['.svn', 'resources'])
         test_files = find_files.find(filesystem, self._base_path, paths, skipped_directories, _is_test_file)
         tests = []
         for path in test_files:
-            relative_path = self._port.relative_perf_test_filename(path).replace('\\', '/')
-            if self._port.skips_perf_test(relative_path) and not self._options.skipped:
+            relative_path = filesystem.relpath(path, self._base_path).replace('\\', '/')
+            if self._options.use_skipped_list and self._port.skips_perf_test(relative_path) and filesystem.normpath(path) in paths:
                 continue
             test = PerfTestFactory.create_perf_test(self._port, relative_path, path)
             tests.append(test)

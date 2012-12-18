@@ -567,6 +567,19 @@ max 548000 bytes
         port.skipped_perf_tests = lambda: ['inspector/unsupported_test1.html', 'unsupported']
         self.assertEqual(self._collect_tests_and_sort_test_name(runner), ['inspector/test1.html', 'inspector/test2.html'])
 
+    def test_collect_tests_with_skipped_list_and_files(self):
+        runner, port = self.create_runner(args=['Suite/Test1.html', 'Suite/SkippedTest1.html', 'SkippedSuite/Test1.html'])
+
+        self._add_file(runner, 'SkippedSuite', 'Test1.html')
+        self._add_file(runner, 'SkippedSuite', 'Test2.html')
+        self._add_file(runner, 'Suite', 'Test1.html')
+        self._add_file(runner, 'Suite', 'Test2.html')
+        self._add_file(runner, 'Suite', 'SkippedTest1.html')
+        self._add_file(runner, 'Suite', 'SkippedTest2.html')
+        port.skipped_perf_tests = lambda: ['Suite/SkippedTest1.html', 'Suite/SkippedTest1.html', 'SkippedSuite']
+        self.assertEqual(self._collect_tests_and_sort_test_name(runner),
+            ['SkippedSuite/Test1.html', 'Suite/SkippedTest1.html', 'Suite/Test1.html'])
+
     def test_collect_tests_with_skipped_list(self):
         runner, port = self.create_runner(args=['--force'])
 

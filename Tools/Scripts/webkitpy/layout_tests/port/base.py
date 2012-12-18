@@ -828,12 +828,6 @@ class Port(object):
         else:
             return self.host.filesystem.abspath(filename)
 
-    def relative_perf_test_filename(self, filename):
-        if filename.startswith(self.perf_tests_dir()):
-            return self.host.filesystem.relpath(filename, self.perf_tests_dir())
-        else:
-            return self.host.filesystem.abspath(filename)
-
     @memoized
     def abspath_for_test(self, test_name):
         """Returns the full path to the file for a given test name. This is the
