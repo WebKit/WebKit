@@ -31,7 +31,6 @@
 #import "NetworkProcessCreationParameters.h"
 #import "PlatformCertificateInfo.h"
 #import "SandboxExtension.h"
-#import <Foundation/NSURLRequestPrivate.h>
 #import <WebCore/LocalizedStrings.h>
 #import <WebKitSystemInterface.h>
 #import <mach/host_info.h>
@@ -40,6 +39,10 @@
 #import <wtf/text/WTFString.h>
 
 using namespace WebCore;
+
+@interface NSURLRequest (Details) 
++ (void)setAllowsSpecificHTTPSCertificate:(NSArray *)allow forHost:(NSString *)host;
+@end
 
 namespace WebKit {
 
