@@ -87,7 +87,8 @@ TEST(WTF, clampToIntLongLong)
     EXPECT_EQ(clampTo<int>(underflowInt), minInt);
 }
 
-TEST(WTF, clampToIntegerFloat)
+// https://bugs.webkit.org/show_bug.cgi?id=105253
+TEST(WTF, DISABLED_clampToIntegerFloat)
 {
     // This test is inaccurate as floats will round the min / max integer
     // due to the narrow mantissa. However it will properly checks within
@@ -144,7 +145,8 @@ TEST(WTF, clampToFloat)
     EXPECT_EQ(clampToFloat(-std::numeric_limits<float>::infinity()), minFloat);
 }
 
-TEST(WTF, clampToUnsigned)
+// https://bugs.webkit.org/show_bug.cgi?id=105253
+TEST(WTF, DISABLED_clampToUnsigned)
 {
     unsigned long maxUnsigned = std::numeric_limits<unsigned>::max();
     unsigned long overflowUnsigned = maxUnsigned + 1;
