@@ -1,3 +1,10 @@
+2012-12-18  Ilya Tikhonovsky  <loislo@chromium.org>
+
+        Unreviewed rebaseline new test introdiced at r138003
+
+        * inspector-protocol/media-query-listener-exception-expected.txt:
+        * platform/chromium/inspector-protocol/media-query-listener-exception-expected.txt: Copied from LayoutTests/inspector-protocol/media-query-listener-exception-expected.txt.
+
 2012-12-18  Thiago Marcos P. Santos  <thiago.santos@intel.com>
 
         [EFL] Unreviewed gardening
