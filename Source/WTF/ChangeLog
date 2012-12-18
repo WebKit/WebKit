@@ -1,3 +1,22 @@
+2012-12-18  Uli Schlachter  <psychon@znc.in>
+
+        Implement uncommitted memory for Linux.
+        https://bugs.webkit.org/show_bug.cgi?id=65766
+
+        Reviewed by Simon Hausmann.
+
+        The old approach used MAP_NORESERVE to allocate address space without
+        committing it. However, that flag gets ignored if
+        /proc/sys/vm/overcommit_memory is set to 2. The new approach uses a
+        mapping with PROT_NONE. This works because mappings which aren't even
+        readable don't get accounted as committed on Linux.
+
+        * wtf/OSAllocatorPosix.cpp:
+        (WTF::OSAllocator::reserveUncommitted):
+        (WTF::OSAllocator::reserveAndCommit):
+        (WTF::OSAllocator::commit):
+        (WTF::OSAllocator::decommit):
+
 2012-12-17  Ilya Tikhonovsky  <loislo@chromium.org>
 
         Web Inspector: Native Memory Instrumentation: MemoryInstrumentation doesn't detect reportMemoryUsage method defined in a base class.
