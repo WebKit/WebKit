@@ -971,9 +971,16 @@ void WebProcess::postInjectedBundleMessage(const CoreIPC::DataReference& message
 #if ENABLE(NETWORK_PROCESS)
 NetworkProcessConnection* WebProcess::networkConnection()
 {
-    // FIXME (NetworkProcess): How do we handle not having the connection when the WebProcess needs it?
-    // If the NetworkProcess crashed, for example.  Do we respawn it?
-    ASSERT(m_networkProcessConnection);
+    ASSERT(m_usesNetworkProcess);
+
+    // If we've lost our connection to the network process (e.g. it crashed) try to re-establish it.
+    if (!m_networkProcessConnection)
+        ensureNetworkProcessConnection();
+    
+    // If we failed to re-establish it then we are beyond recovery and should crash.
+    if (!m_networkProcessConnection)
+        CRASH();
+    
     return m_networkProcessConnection.get();
 }
 
