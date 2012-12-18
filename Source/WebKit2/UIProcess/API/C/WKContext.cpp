@@ -267,6 +267,11 @@ void WKContextSetIconDatabasePath(WKContextRef contextRef, WKStringRef iconDatab
     toImpl(contextRef)->setIconDatabasePath(toImpl(iconDatabasePath)->string());
 }
 
+void WKContextAllowSpecificHTTPSCertificateForHost(WKContextRef contextRef, WKCertificateInfoRef certificateRef, WKStringRef hostRef)
+{
+    toImpl(contextRef)->allowSpecificHTTPSCertificateForHost(toImpl(certificateRef), toImpl(hostRef)->string());
+}
+
 void WKContextSetDatabaseDirectory(WKContextRef contextRef, WKStringRef databaseDirectory)
 {
     toImpl(contextRef)->setDatabaseDirectory(toImpl(databaseDirectory)->string());

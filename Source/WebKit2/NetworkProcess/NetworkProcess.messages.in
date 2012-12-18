@@ -43,6 +43,8 @@ messages -> NetworkProcess {
     RegisterSchemeForCustomProtocol(WTF::String name)
     UnregisterSchemeForCustomProtocol(WTF::String name)
 #endif
+
+    AllowSpecificHTTPSCertificateForHost(WebKit::PlatformCertificateInfo certificate, WTF::String host)
 }
 
 #endif // ENABLE(NETWORK_PROCESS)

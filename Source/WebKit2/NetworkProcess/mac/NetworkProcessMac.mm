@@ -29,7 +29,9 @@
 #if ENABLE(NETWORK_PROCESS)
 
 #import "NetworkProcessCreationParameters.h"
+#import "PlatformCertificateInfo.h"
 #import "SandboxExtension.h"
+#import <Foundation/NSURLRequestPrivate.h>
 #import <WebCore/LocalizedStrings.h>
 #import <WebKitSystemInterface.h>
 #import <mach/host_info.h>
@@ -109,6 +111,11 @@ void NetworkProcess::platformSetCacheModel(CacheModel cacheModel)
     NSURLCache *nsurlCache = [NSURLCache sharedURLCache];
     [nsurlCache setMemoryCapacity:urlCacheMemoryCapacity];
     [nsurlCache setDiskCapacity:std::max<unsigned long>(urlCacheDiskCapacity, [nsurlCache diskCapacity])]; // Don't shrink a big disk cache, since that would cause churn.
+}
+
+void NetworkProcess::allowSpecificHTTPSCertificateForHost(const PlatformCertificateInfo& certificateInfo, const String& host)
+{
+    [NSURLRequest setAllowsSpecificHTTPSCertificate:(NSArray *)certificateInfo.certificateChain() forHost:(NSString *)host];
 }
 
 } // namespace WebKit

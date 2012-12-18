@@ -56,6 +56,8 @@ WK_EXPORT void WKContextSetDomainRelaxationForbiddenForURLScheme(WKContextRef co
 
 WK_EXPORT void WKContextSetIconDatabasePath(WKContextRef context, WKStringRef iconDatabasePath);
 
+WK_EXPORT void WKContextAllowSpecificHTTPSCertificateForHost(WKContextRef context, WKCertificateInfoRef certificate, WKStringRef host);
+
 // FIXME: These functions are only effective if called before the Web process is launched. But
 // we should really change these settings to be on WebPreferences and changeable at runtime.
 WK_EXPORT void WKContextSetDatabaseDirectory(WKContextRef context, WKStringRef databaseDirectory);

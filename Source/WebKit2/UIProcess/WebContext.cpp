@@ -1043,6 +1043,18 @@ String WebContext::cookieStorageDirectory() const
     return platformDefaultCookieStorageDirectory();
 }
 
+void WebContext::allowSpecificHTTPSCertificateForHost(const WebCertificateInfo* certificate, const String& host)
+{
+#if ENABLE(NETWORK_PROCESS)
+    if (m_usesNetworkProcess && m_networkProcess) {
+        m_networkProcess->send(Messages::NetworkProcess::AllowSpecificHTTPSCertificateForHost(certificate->platformCertificateInfo(), host), 0);
+        return;
+    }
+#endif
+    // FIXME: It's unclear whether we want this SPI to be exposed and used for clients that don't use the NetworkProcess.
+    ASSERT_NOT_REACHED();
+}
+
 void WebContext::setHTTPPipeliningEnabled(bool enabled)
 {
 #if PLATFORM(MAC)

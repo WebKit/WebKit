@@ -227,6 +227,8 @@ public:
     void setDiskCacheDirectory(const String& dir) { m_overrideDiskCacheDirectory = dir; }
     void setCookieStorageDirectory(const String& dir) { m_overrideCookieStorageDirectory = dir; }
 
+    void allowSpecificHTTPSCertificateForHost(const WebCertificateInfo*, const String& host);
+
     WebProcessProxy* ensureSharedWebProcess();
     WebProcessProxy* createNewWebProcessRespectingProcessCountLimit(); // Will return an existing one if limit is met.
     void warmInitialProcess();

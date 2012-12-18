@@ -93,6 +93,8 @@ private:
     void unregisterSchemeForCustomProtocol(const String&);
 #endif
 
+    void allowSpecificHTTPSCertificateForHost(const PlatformCertificateInfo&, const String& host);
+
     // Platform Helpers
     void platformSetCacheModel(CacheModel);
 
