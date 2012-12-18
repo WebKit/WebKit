@@ -217,6 +217,11 @@ WebNodeList WebNode::getElementsByTagName(const WebString& tag) const
     return WebNodeList(m_private->getElementsByTagName(tag));
 }
 
+WebElement WebNode::querySelector(const WebString& tag, WebExceptionCode& ec) const
+{
+    return WebElement(m_private->querySelector(tag, ec));
+}
+
 WebElement WebNode::rootEditableElement() const
 {
     return WebElement(m_private->rootEditableElement());

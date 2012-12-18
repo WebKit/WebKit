@@ -31,6 +31,7 @@
 #ifndef WebNode_h
 #define WebNode_h
 
+#include "WebExceptionCode.h"
 #include "platform/WebCommon.h"
 #include "platform/WebPrivatePtr.h"
 #include "platform/WebString.h"
@@ -112,6 +113,7 @@ public:
     WEBKIT_EXPORT bool dispatchEvent(const WebDOMEvent&);
     WEBKIT_EXPORT void simulateClick();
     WEBKIT_EXPORT WebNodeList getElementsByTagName(const WebString&) const;
+    WEBKIT_EXPORT WebElement querySelector(const WebString&, WebExceptionCode&) const;
     WEBKIT_EXPORT WebElement rootEditableElement() const;
     WEBKIT_EXPORT bool focused() const;
     WEBKIT_EXPORT bool remove();
