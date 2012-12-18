@@ -1,5 +1,6 @@
 This test verified #shadow-root is displayed when showShadowRoot is enabled.
 
+
 - <div id="container">
     - <div id="test1">
           #shadow-root
@@ -13,5 +14,9 @@ This test verified #shadow-root is displayed when showShadowRoot is enabled.
           "with "
           <span>elements</span>
       </div>
+    - <input id="input" type="text">
+        - #webkit-shadow-root
+          <div></div>
+      </input>
   </div>
 

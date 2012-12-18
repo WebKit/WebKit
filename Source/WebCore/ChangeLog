@@ -1,3 +1,22 @@
+2012-12-17  Shinya Kawanaka  <shinyak@chromium.org>
+
+        Web Inspector: need to visually distinguish UA shadow roots
+        https://bugs.webkit.org/show_bug.cgi?id=104877
+
+        Reviewed by Yury Semikhatsky.
+
+        Now we have an option to show ShadowRoot in the Inspector. Since the Inspector has displayed UserAgent ShadowRoot and
+        Author ShadowRoot as the same #shadow-root, a user could not distinguish them.
+
+        We would like to show UserAgent ShadowRoot as #webkit-shadow-root.
+
+        Test: inspector/shadow-root.html
+
+        * inspector/InspectorDOMAgent.cpp:
+        (WebCore::InspectorDOMAgent::buildObjectForNode): Make nodeName of UserAgent ShadowRoot #webkit-shadow-root.
+        Since the correct nodeName of ShadowRoot is #document-fragment, we have to specify the nodeName of Author ShadowRoot
+        as #shadow-root here.
+
 2012-12-17  Huang Dongsung  <luxtella@company100.net>
 
         Coordinated Graphics: Refactor TiledBackingStore code in CoordinatedGraphicsLayer.

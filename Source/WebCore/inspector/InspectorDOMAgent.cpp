@@ -1251,6 +1251,15 @@ PassRefPtr<TypeBuilder::DOM::Node> InspectorDOMAgent::buildObjectForNode(Node* n
         localName = node->localName();
         break;
     case Node::DOCUMENT_FRAGMENT_NODE:
+        if (node->isShadowRoot()) {
+            if (toShadowRoot(node)->type() == ShadowRoot::UserAgentShadowRoot)
+                nodeName = "#webkit-shadow-root";
+            else
+                nodeName = "#shadow-root";
+        } else
+            nodeName = node->nodeName();
+        localName = node->localName();
+        break;
     case Node::DOCUMENT_NODE:
     case Node::ELEMENT_NODE:
     default:
