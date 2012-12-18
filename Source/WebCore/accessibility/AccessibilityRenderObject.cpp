@@ -467,7 +467,7 @@ RenderObject* AccessibilityRenderObject::renderParentObject() const
 AccessibilityObject* AccessibilityRenderObject::parentObjectIfExists() const
 {
     // WebArea's parent should be the scroll view containing it.
-    if (isWebArea())
+    if (isWebArea() || isSeamlessWebArea())
         return axObjectCache()->get(m_renderer->frame()->view());
 
     return axObjectCache()->get(renderParentObject());
@@ -493,7 +493,7 @@ AccessibilityObject* AccessibilityRenderObject::parentObject() const
         return axObjectCache()->getOrCreate(parentObj);
     
     // WebArea's parent should be the scroll view containing it.
-    if (isWebArea())
+    if (isWebArea() || isSeamlessWebArea())
         return axObjectCache()->getOrCreate(m_renderer->frame()->view());
     
     return 0;
@@ -786,7 +786,7 @@ LayoutRect AccessibilityRenderObject::boundingBoxRect() const
     Vector<FloatQuad> quads;
     if (obj->isText())
         toRenderText(obj)->absoluteQuads(quads, 0, RenderText::ClipToEllipsis);
-    else if (isWebArea())
+    else if (isWebArea() || isSeamlessWebArea())
         obj->absoluteQuads(quads);
     else
         obj->absoluteFocusRingQuads(quads);
@@ -800,7 +800,7 @@ LayoutRect AccessibilityRenderObject::boundingBoxRect() const
 #endif
     
     // The size of the web area should be the content size, not the clipped size.
-    if (isWebArea() && obj->frame()->view())
+    if ((isWebArea() || isSeamlessWebArea()) && obj->frame()->view())
         result.setSize(obj->frame()->view()->contentsSize());
     
     return result;
@@ -1272,7 +1272,7 @@ bool AccessibilityRenderObject::accessibilityIsIgnored() const
         // Otherwise fall through; use presence of help text, title, or description to decide.
     }
 
-    if (isWebArea() || m_renderer->isListMarker())
+    if (isWebArea() || isSeamlessWebArea() || m_renderer->isListMarker())
         return false;
     
     // Using the help text, title or accessibility description (so we
@@ -2427,8 +2427,12 @@ AccessibilityRole AccessibilityRenderObject::determineAccessibilityRole()
     if (node && node->hasTagName(canvasTag))
         return CanvasRole;
 
-    if (cssBox && cssBox->isRenderView())
+    if (cssBox && cssBox->isRenderView()) {
+        // If the iframe is seamless, it should not be announced as a web area to AT clients.
+        if (document() && document()->shouldDisplaySeamlesslyWithParent())
+            return SeamlessWebAreaRole;
         return WebAreaRole;
+    }
     
     if (cssBox && cssBox->isTextField())
         return TextFieldRole;

@@ -117,6 +117,7 @@ enum WebAccessibilityRole {
     WebAccessibilityRoleRulerMarker,
     WebAccessibilityRoleScrollArea,
     WebAccessibilityRoleScrollBar,
+    WebAccessibilityRoleSeamlessWebArea,
     WebAccessibilityRoleSheet,
     WebAccessibilityRoleSlider,
     WebAccessibilityRoleSliderThumb,

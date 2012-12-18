@@ -212,6 +212,7 @@ COMPILE_ASSERT_MATCHING_ENUM(WebAccessibilityRoleImageMap, ImageMapRole);
 COMPILE_ASSERT_MATCHING_ENUM(WebAccessibilityRoleListMarker, ListMarkerRole);
 COMPILE_ASSERT_MATCHING_ENUM(WebAccessibilityRoleMathElement, MathElementRole);
 COMPILE_ASSERT_MATCHING_ENUM(WebAccessibilityRoleWebArea, WebAreaRole);
+COMPILE_ASSERT_MATCHING_ENUM(WebAccessibilityRoleSeamlessWebArea, SeamlessWebAreaRole);
 COMPILE_ASSERT_MATCHING_ENUM(WebAccessibilityRoleHeading, HeadingRole);
 COMPILE_ASSERT_MATCHING_ENUM(WebAccessibilityRoleListBox, ListBoxRole);
 COMPILE_ASSERT_MATCHING_ENUM(WebAccessibilityRoleListBoxOption, ListBoxOptionRole);

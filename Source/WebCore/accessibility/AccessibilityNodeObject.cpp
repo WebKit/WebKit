@@ -403,11 +403,6 @@ bool AccessibilityNodeObject::canvasHasFallbackContent() const
     return false;
 }
 
-bool AccessibilityNodeObject::isWebArea() const
-{
-    return roleValue() == WebAreaRole;
-}
-
 bool AccessibilityNodeObject::isImageButton() const
 {
     return isNativeImage() && isButton();

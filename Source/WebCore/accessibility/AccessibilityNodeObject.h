@@ -91,7 +91,6 @@ public:
     virtual bool isProgressIndicator() const;
     virtual bool isSearchField() const;
     virtual bool isSlider() const;
-    virtual bool isWebArea() const;
 
     virtual bool isChecked() const;
     virtual bool isEnabled() const;

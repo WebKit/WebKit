@@ -1585,6 +1585,7 @@ static const AccessibilityRoleMap& createAccessibilityRoleMap()
         { ImageMapRole, @"AXImageMap" },
         { ListMarkerRole, @"AXListMarker" },
         { WebAreaRole, @"AXWebArea" },
+        { SeamlessWebAreaRole, NSAccessibilityGroupRole },
         { HeadingRole, @"AXHeading" },
         { ListBoxRole, NSAccessibilityListRole },
         { ListBoxOptionRole, NSAccessibilityStaticTextRole },

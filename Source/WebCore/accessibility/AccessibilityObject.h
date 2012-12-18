@@ -172,6 +172,7 @@ enum AccessibilityRole {
     RulerMarkerRole,
     ScrollAreaRole,
     ScrollBarRole,
+    SeamlessWebAreaRole,
     SheetRole,
     SliderRole,
     SliderThumbRole,
@@ -377,7 +378,8 @@ public:
     virtual bool isPasswordField() const { return false; }
     virtual bool isNativeTextControl() const { return false; }
     virtual bool isSearchField() const { return false; }
-    virtual bool isWebArea() const { return false; }
+    bool isWebArea() const { return roleValue() == WebAreaRole; }
+    bool isSeamlessWebArea() const { return roleValue() == SeamlessWebAreaRole; }
     virtual bool isCheckbox() const { return roleValue() == CheckBoxRole; }
     virtual bool isRadioButton() const { return roleValue() == RadioButtonRole; }
     virtual bool isListBox() const { return roleValue() == ListBoxRole; }
