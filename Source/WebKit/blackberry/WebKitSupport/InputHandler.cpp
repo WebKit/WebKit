@@ -139,7 +139,7 @@ InputHandler::InputHandler(WebPagePrivate* page)
     , m_delayKeyboardVisibilityChange(false)
     , m_request(0)
     , m_processingTransactionId(-1)
-    , m_receivedBackspaceKeyDown(false)
+    , m_shouldNotifyWebView(true)
     , m_expectedKeyUpChar(0)
     , m_didSpellCheckWord(false)
 {
@@ -1120,7 +1120,7 @@ void InputHandler::setInputValue(const WTF::String& value)
 
 void InputHandler::nodeTextChanged(const Node* node)
 {
-    if (processingChange() || !node || node != m_currentFocusElement || m_receivedBackspaceKeyDown)
+    if (processingChange() || !node || node != m_currentFocusElement || !m_shouldNotifyWebView)
         return;
 
     InputLog(Platform::LogLevelInfo, "InputHandler::nodeTextChanged");
@@ -1499,7 +1499,7 @@ void InputHandler::selectionChanged()
 
     ASSERT(m_currentFocusElement->document() && m_currentFocusElement->document()->frame());
 
-    if (m_receivedBackspaceKeyDown)
+    if (!m_shouldNotifyWebView)
         return;
 
     int newSelectionStart = selectionStart();
@@ -1576,8 +1576,8 @@ bool InputHandler::handleKeyboardInput(const Platform::KeyboardEvent& keyboardEv
         "InputHandler::handleKeyboardInput received character='%c', type=%d",
         keyboardEvent.character(), keyboardEvent.type());
 
-    // Clearing the m_receivedBackspaceKeyDown state on any KeyboardEvent.
-    m_receivedBackspaceKeyDown = false;
+    // Clearing the m_shouldNotifyWebView state on any KeyboardEvent.
+    m_shouldNotifyWebView = true;
 
     // Enable input mode if we are processing a key event.
     setInputModeEnabled();
@@ -1619,15 +1619,13 @@ bool InputHandler::handleKeyboardInput(const Platform::KeyboardEvent& keyboardEv
         else if (type == Platform::KeyboardEvent::KeyDown) {
             m_expectedKeyUpChar = keyboardEvent.character();
 
-            // If we receive the KeyDown of a Backspace, set this flag to prevent sending unnecessary selection and caret changes to IMF.
-            if (keyboardEvent.character() == KEYCODE_BACKSPACE)
-                m_receivedBackspaceKeyDown = true;
+            m_shouldNotifyWebView = shouldNotifyWebView(keyboardEvent);
         }
 
         Platform::KeyboardEvent adjustedKeyboardEvent(keyboardEvent.character(), type, adjustedModifiers);
         keyboardEventHandled = focusedFrame->eventHandler()->keyEvent(PlatformKeyboardEvent(adjustedKeyboardEvent));
 
-        m_receivedBackspaceKeyDown = false;
+        m_shouldNotifyWebView = true;
 
         if (isKeyChar) {
             type = Platform::KeyboardEvent::KeyUp;
@@ -1639,6 +1637,12 @@ bool InputHandler::handleKeyboardInput(const Platform::KeyboardEvent& keyboardEv
             ensureFocusTextElementVisible(EdgeIfNeeded);
     }
     return keyboardEventHandled;
+}
+
+bool InputHandler::shouldNotifyWebView(const Platform::KeyboardEvent& keyboardEvent)
+{
+    // If we receive the KeyDown of a Backspace or Enter key, set this flag to prevent sending unnecessary selection and caret changes to IMF.
+    return !(keyboardEvent.character() == KEYCODE_BACKSPACE || keyboardEvent.character() == KEYCODE_RETURN || keyboardEvent.character() == KEYCODE_KP_ENTER);
 }
 
 bool InputHandler::deleteSelection()

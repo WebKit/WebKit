@@ -209,6 +209,8 @@ private:
     bool shouldSpellCheckElement(const WebCore::Element*) const;
     bool didSpellCheckWord() const { return m_didSpellCheckWord; }
 
+    bool shouldNotifyWebView(const Platform::KeyboardEvent&);
+
     WebPagePrivate* m_webPage;
 
     RefPtr<WebCore::Element> m_currentFocusElement;
@@ -229,7 +231,7 @@ private:
     RefPtr<WebCore::TextCheckingRequest> m_request;
     int32_t m_processingTransactionId;
 
-    bool m_receivedBackspaceKeyDown;
+    bool m_shouldNotifyWebView;
     unsigned short m_expectedKeyUpChar;
 
     imf_sp_text_t m_spellCheckingOptionsRequest;
