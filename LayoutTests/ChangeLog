@@ -1,3 +1,14 @@
+2012-12-18  Thiago Marcos P. Santos  <thiago.santos@intel.com>
+
+        [EFL] Unreviewed gardening.
+
+        Added new baselines marked tests flaky due to Accessibility code
+        crashes.
+
+        * platform/efl-wk2/TestExpectations:
+        * platform/efl-wk2/editing/selection/move-by-character-6-expected.png: Added.
+        * platform/efl-wk2/editing/selection/move-by-character-6-expected.txt: Added.
+
 2012-12-18  Emil A Eklund  <eae@chromium.org>
 
         Have kFixedPointDenominator be constant across ports
