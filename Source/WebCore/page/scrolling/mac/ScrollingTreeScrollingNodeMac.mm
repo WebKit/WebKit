@@ -279,8 +279,7 @@ void ScrollingTreeScrollingNodeMac::setScrollLayerPosition(const IntPoint& posit
     if (!m_children)
         return;
 
-    IntSize scrollOffsetForFixedChildren = WebCore::scrollOffsetForFixedPosition(viewportRect(), contentsSize(), position,
-        scrollOrigin(), 1, false);
+    IntSize scrollOffsetForFixedChildren = WebCore::scrollOffsetForFixedPosition(viewportRect(), contentsSize(), position, scrollOrigin(), frameScaleFactor(), false);
     IntRect viewportRect = this->viewportRect();
     viewportRect.setLocation(toPoint(scrollOffsetForFixedChildren));
 

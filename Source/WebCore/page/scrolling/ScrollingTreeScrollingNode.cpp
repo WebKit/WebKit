@@ -34,6 +34,7 @@ namespace WebCore {
 
 ScrollingTreeScrollingNode::ScrollingTreeScrollingNode(ScrollingTree* scrollingTree)
     : ScrollingTreeNode(scrollingTree)
+    , m_frameScaleFactor(1)
     , m_shouldUpdateScrollLayerPositionOnMainThread(0)
     , m_horizontalScrollElasticity(ScrollElasticityNone)
     , m_verticalScrollElasticity(ScrollElasticityNone)
@@ -57,6 +58,9 @@ void ScrollingTreeScrollingNode::update(ScrollingStateNode* stateNode)
 
     if (state->changedProperties() & ScrollingStateScrollingNode::ContentsSize)
         m_contentsSize = state->contentsSize();
+
+    if (state->changedProperties() & ScrollingStateScrollingNode::FrameScaleFactor)
+        m_frameScaleFactor = state->frameScaleFactor();
 
     if (state->changedProperties() & ScrollingStateScrollingNode::ShouldUpdateScrollLayerPositionOnMainThread)
         m_shouldUpdateScrollLayerPositionOnMainThread = state->shouldUpdateScrollLayerPositionOnMainThread();

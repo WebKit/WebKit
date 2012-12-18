@@ -1,3 +1,41 @@
+2012-12-17  Simon Fraser  <simon.fraser@apple.com>
+
+        Fix repositioning of fixed elements on zooming
+        https://bugs.webkit.org/show_bug.cgi?id=105223
+
+        Reviewed by Beth Dakin.
+
+        When zoomed, scrolling would move the layers of fixed-position
+        elements oddly. This happened because on the scrolling thread we
+        passed a scale of 1, rather than the actual page scale to 
+        scrollOffsetForFixedPosition().
+        
+        Fix by plumbing the page scale through the scrolling state node
+        to the scrolling node.
+
+        Test: platform/mac/tiled-drawing/fixed/four-bars-zoomed.html
+
+        * page/scrolling/ScrollingStateScrollingNode.cpp:
+        (WebCore::ScrollingStateScrollingNode::ScrollingStateScrollingNode):
+        (WebCore::ScrollingStateScrollingNode::setFrameScaleFactor):
+        (WebCore::ScrollingStateScrollingNode::dumpProperties):
+        * page/scrolling/ScrollingStateScrollingNode.h:
+        (WebCore::ScrollingStateScrollingNode::frameScaleFactor):
+        (ScrollingStateScrollingNode):
+        * page/scrolling/ScrollingTreeScrollingNode.cpp:
+        (WebCore::ScrollingTreeScrollingNode::ScrollingTreeScrollingNode):
+        (WebCore::ScrollingTreeScrollingNode::update):
+        * page/scrolling/ScrollingTreeScrollingNode.h:
+        (WebCore::ScrollingTreeScrollingNode::frameScaleFactor):
+        (ScrollingTreeScrollingNode):
+        * page/scrolling/mac/ScrollingCoordinatorMac.h:
+        (ScrollParameters):
+        * page/scrolling/mac/ScrollingCoordinatorMac.mm:
+        (WebCore::ScrollingCoordinatorMac::frameViewLayoutUpdated):
+        (WebCore::ScrollingCoordinatorMac::setScrollParametersForNode):
+        * page/scrolling/mac/ScrollingTreeScrollingNodeMac.mm:
+        (WebCore::ScrollingTreeScrollingNodeMac::setScrollLayerPosition):
+
 2012-12-17  Dima Gorbik  <dgorbik@apple.com>
 
         Implement matching cue by the class name with ::cue pseudo element

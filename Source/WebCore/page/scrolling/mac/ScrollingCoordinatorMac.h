@@ -108,6 +108,8 @@ private:
 
         IntRect viewportRect;
         IntSize contentsSize;
+        
+        float frameScaleFactor;
     };
 
     void setScrollParametersForNode(const ScrollParameters&, ScrollingStateScrollingNode*);

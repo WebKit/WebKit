@@ -61,6 +61,8 @@ protected:
     const IntRect& viewportRect() const { return m_viewportRect; }
     const IntSize& contentsSize() const { return m_contentsSize; }
 
+    float frameScaleFactor() const { return m_frameScaleFactor; }
+
     ScrollElasticity horizontalScrollElasticity() const { return m_horizontalScrollElasticity; }
     ScrollElasticity verticalScrollElasticity() const { return m_verticalScrollElasticity; }
 
@@ -75,6 +77,8 @@ private:
     IntRect m_viewportRect;
     IntSize m_contentsSize;
     IntPoint m_scrollOrigin;
+    
+    float m_frameScaleFactor;
 
     MainThreadScrollingReasons m_shouldUpdateScrollLayerPositionOnMainThread;
 

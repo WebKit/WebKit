@@ -48,17 +48,18 @@ public:
     enum ChangedProperty {
         ViewportRect = 1 << 0,
         ContentsSize = 1 << 1,
-        NonFastScrollableRegion = 1 << 2,
-        WheelEventHandlerCount = 1 << 3,
-        ShouldUpdateScrollLayerPositionOnMainThread = 1 << 4,
-        HorizontalScrollElasticity = 1 << 5,
-        VerticalScrollElasticity = 1 << 6,
-        HasEnabledHorizontalScrollbar = 1 << 7,
-        HasEnabledVerticalScrollbar = 1 << 8,
-        HorizontalScrollbarMode = 1 << 9,
-        VerticalScrollbarMode = 1 << 10,
-        ScrollOrigin = 1 << 11,
-        RequestedScrollPosition = 1 << 12,
+        FrameScaleFactor = 1 << 2,
+        NonFastScrollableRegion = 1 << 3,
+        WheelEventHandlerCount = 1 << 4,
+        ShouldUpdateScrollLayerPositionOnMainThread = 1 << 5,
+        HorizontalScrollElasticity = 1 << 6,
+        VerticalScrollElasticity = 1 << 7,
+        HasEnabledHorizontalScrollbar = 1 << 8,
+        HasEnabledVerticalScrollbar = 1 << 9,
+        HorizontalScrollbarMode = 1 << 10,
+        VerticalScrollbarMode = 1 << 11,
+        ScrollOrigin = 1 << 12,
+        RequestedScrollPosition = 1 << 13,
     };
 
     virtual bool isScrollingNode() OVERRIDE { return true; }
@@ -72,6 +73,9 @@ public:
 
     const IntSize& contentsSize() const { return m_contentsSize; }
     void setContentsSize(const IntSize&);
+
+    float frameScaleFactor() const { return m_frameScaleFactor; }
+    void setFrameScaleFactor(float);
 
     const Region& nonFastScrollableRegion() const { return m_nonFastScrollableRegion; }
     void setNonFastScrollableRegion(const Region&);
@@ -118,6 +122,8 @@ private:
 
     IntRect m_viewportRect;
     IntSize m_contentsSize;
+    
+    float m_frameScaleFactor;
 
     Region m_nonFastScrollableRegion;
 
