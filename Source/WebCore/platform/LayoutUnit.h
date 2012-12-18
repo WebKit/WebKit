@@ -484,8 +484,8 @@ inline LayoutUnit boundedMultiply(const LayoutUnit& a, const LayoutUnit& b)
 {
 #if ENABLE(SUBPIXEL_LAYOUT)
     int64_t result = static_cast<int64_t>(a.rawValue()) * static_cast<int64_t>(b.rawValue()) / kEffectiveFixedPointDenominator;
-    int32_t high = result >> 32;
-    int32_t low = result;
+    int32_t high = static_cast<int32_t>(result >> 32);
+    int32_t low = static_cast<int32_t>(result);
     uint32_t saturated = (static_cast<uint32_t>(a.rawValue() ^ b.rawValue()) >> 31) + std::numeric_limits<int>::max();
     // If the higher 32 bits does not match the lower 32 with sign extension the operation overflowed.
     if (high != low >> 31)

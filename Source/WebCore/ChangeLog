@@ -1,3 +1,12 @@
+2012-12-18  Tim Horton  <timothy_horton@apple.com>
+
+        Unreviewed build fix after http://trac.webkit.org/changeset/138041
+
+        Need to cast int64_t to int32_t to avoid a warning on some compilers.
+
+        * platform/LayoutUnit.h:
+        (WebCore::boundedMultiply):
+
 2012-12-18  Hans Muller  <hmuller@adobe.com>
 
         [CSS Exclusions] shape-inside layout fails to adjust first line correctly for writing-mode: vertical-rl
