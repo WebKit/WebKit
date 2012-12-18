@@ -35,6 +35,7 @@
 #include "ScrollingTreeFixedNode.h"
 #include "ScrollingTreeNode.h"
 #include "ScrollingTreeScrollingNode.h"
+#include "ScrollingTreeStickyNode.h"
 #include <wtf/MainThread.h>
 #include <wtf/TemporaryChange.h>
 
@@ -166,8 +167,11 @@ void ScrollingTree::updateTreeFromStateNode(ScrollingStateNode* stateNode)
                 newNode = ScrollingTreeScrollingNode::create(this);
             else if (stateNode->isFixedNode())
                 newNode = ScrollingTreeFixedNode::create(this);
+            else if (stateNode->isStickyNode())
+                newNode = ScrollingTreeStickyNode::create(this);
             else
                 ASSERT_NOT_REACHED();
+
             ScrollingTreeNode* newNodeRawPtr = newNode.get();
             m_nodeMap.set(stateNode->scrollingNodeID(), newNodeRawPtr);
             ScrollingTreeNodeMap::const_iterator it = m_nodeMap.find(stateNode->parent()->scrollingNodeID());

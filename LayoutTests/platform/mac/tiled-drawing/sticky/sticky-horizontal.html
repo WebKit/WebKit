@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+  <style>
+    body {
+      width: 2000px;
+    }
+    
+    .container {
+      position: relative;
+      height: 450px;
+      width: 800px;
+      margin: 20px auto;
+      background-color: #eee;
+      border: 1px solid black;
+    }
+    
+    .left {
+      float: left;
+      width: 200px;
+      height: 100%;
+      background-color: #ddd;
+    }
+    
+    .sticky {
+      position: -webkit-sticky;
+      display: inline-block;
+      background: silver;
+      margin: 4px;
+      height: 60px;
+      width: 300px;
+    }
+    
+    .box {
+      display: none;
+      width: 100px;
+      height: 100px;
+      background-color: blue;
+    }
+  </style>
+  <script>
+    if (window.testRunner) {
+      testRunner.waitUntilDone();
+      testRunner.dumpAsText();
+    }
+
+    function doScroll()
+    {
+      window.setTimeout(function() {
+        window.scrollTo(800, 0);
+        if (window.testRunner) {
+          document.getElementById('results').innerText = window.internals.scrollingStateTreeAsText(document);
+          testRunner.notifyDone();
+        }
+      }, 10);
+    }
+    
+    window.addEventListener('load', doScroll, false);
+  </script>
+</head>
+<body>
+  <div class="container">
+    <div class="left"></div>
+    <div class="horizontal sticky" style="left: 20px">Left sticky <div class="composited box"></div></div>
+    <div class="horizontal sticky" style="right: 20px">Right sticky <div class="composited box"></div></div>
+    <div class="horizontal sticky" style="left: 20%">Left % sticky <div class="composited box"></div></div>
+    <div class="horizontal sticky" style="right: 20%">Right % sticky <div class="composited box"></div></div>
+
+    <div class="horizontal sticky" style="left: 20px; right: 20px">Left and Right <div class="composited box"></div></div>
+    <div class="horizontal sticky" style="left: 20%; right: 20%">Left and Right %<div class="composited box"></div></div>
+  </div>
+<pre id="results"></pre>
+</body>
+</html>

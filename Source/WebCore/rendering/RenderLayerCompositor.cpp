@@ -1973,12 +1973,25 @@ bool RenderLayerCompositor::requiresCompositingForPosition(RenderObject* rendere
     // position:fixed elements that create their own stacking context (e.g. have an explicit z-index,
     // opacity, transform) can get their own composited layer. A stacking context is required otherwise
     // z-index and clipping will be broken.
-    if (!(renderer->isOutOfFlowPositioned() && renderer->style()->position() == FixedPosition && layer->isStackingContext()))
+    if (!renderer->isPositioned())
+        return false;
+    
+    EPosition position = renderer->style()->position();
+    bool isFixed = renderer->isOutOfFlowPositioned() && position == FixedPosition;
+    if (isFixed && !layer->isStackingContext())
+        return false;
+    
+    bool isSticky = renderer->isInFlowPositioned() && position == StickyPosition;
+    if (!isFixed && !isSticky)
         return false;
 
+    // FIXME: acceleratedCompositingForFixedPositionEnabled should probably be renamed acceleratedCompositingForViewportConstrainedPositionEnabled().
     if (Settings* settings = m_renderView->document()->settings())
         if (!settings->acceleratedCompositingForFixedPositionEnabled())
             return false;
+
+    if (isSticky)
+        return true;
 
     RenderObject* container = renderer->container();
     // If the renderer is not hooked up yet then we have to wait until it is.
@@ -2628,7 +2641,7 @@ void RenderLayerCompositor::removeViewportConstrainedLayer(RenderLayer* layer)
     m_viewportConstrainedLayers.remove(layer);
 }
 
-const FixedPositionViewportConstraints RenderLayerCompositor::computeFixedViewportConstraints(RenderLayer* layer)
+FixedPositionViewportConstraints RenderLayerCompositor::computeFixedViewportConstraints(RenderLayer* layer) const
 {
     ASSERT(layer->isComposited());
 
@@ -2668,7 +2681,7 @@ const FixedPositionViewportConstraints RenderLayerCompositor::computeFixedViewpo
     return constraints;
 }
 
-const StickyPositionViewportConstraints RenderLayerCompositor::computeStickyViewportConstraints(RenderLayer* layer)
+StickyPositionViewportConstraints RenderLayerCompositor::computeStickyViewportConstraints(RenderLayer* layer) const
 {
     ASSERT(layer->isComposited());
 
@@ -2707,17 +2720,17 @@ void RenderLayerCompositor::registerOrUpdateViewportConstrainedLayer(RenderLayer
 {
     // FIXME: We should support sticky position here! And we should eventuall support fixed/sticky elements
     // that are inside non-main frames once we get non-main frames scrolling with the ScrollingCoordinator.
-    if (layer->renderer()->isStickyPositioned() || m_renderView->document()->ownerElement())
+    if (m_renderView->document()->ownerElement())
         return;
 
     ScrollingCoordinator* scrollingCoordinator = this->scrollingCoordinator();
     if (!scrollingCoordinator)
         return;
 
+    // FIXME: rename to supportsViewportConstrainedPositionLayers()?
     if (!scrollingCoordinator->supportsFixedPositionLayers() || !layer->parent())
         return;
 
-    ASSERT(layer->renderer()->style()->position() == FixedPosition);
     ASSERT(m_viewportConstrainedLayers.contains(layer));
     ASSERT(layer->isComposited());
 

@@ -51,6 +51,7 @@ public:
 
     virtual bool isScrollingNode() { return false; }
     virtual bool isFixedNode() { return false; }
+    virtual bool isStickyNode() { return false; }
 
     virtual PassOwnPtr<ScrollingStateNode> clone() = 0;
     PassOwnPtr<ScrollingStateNode> cloneAndReset();
@@ -60,6 +61,8 @@ public:
     virtual unsigned changedProperties() const = 0;
     virtual void resetChangedProperties() = 0;
     virtual void setHasChangedProperties() { setScrollLayerDidChange(true); }
+
+    virtual void syncLayerPositionForViewportRect(const LayoutRect& /*viewportRect*/) { }
 
     GraphicsLayer* graphicsLayer() { return m_graphicsLayer; }
     PlatformLayer* platformScrollLayer() const;

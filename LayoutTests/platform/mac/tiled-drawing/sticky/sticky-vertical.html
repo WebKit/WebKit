@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+  <style>
+    body {
+      height: 2500px;
+    }
+    
+    p {
+      line-height: 1.5;
+    }
+    .container {
+      position: relative;
+      width: 650px;
+      margin: 400px auto;
+      border: 1px solid black;
+    }
+    
+    .sticky {
+      float: left;
+      position: -webkit-sticky;
+      background: silver;
+      margin: 5px;
+      height: 300px;
+      width: 80px;
+    }
+  </style>
+  <script>
+    if (window.testRunner) {
+      testRunner.waitUntilDone();
+      testRunner.dumpAsText();
+    }
+
+    function doScroll()
+    {
+      window.setTimeout(function() {
+        window.scrollTo(0, 580);
+        if (window.testRunner) {
+          document.getElementById('results').innerText = window.internals.scrollingStateTreeAsText(document);
+          testRunner.notifyDone();
+        }
+      }, 10);
+    }
+    
+    window.addEventListener('load', doScroll, false);
+  </script>
+</head>
+<body>
+  <div class="container">
+    <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
+
+    <div class="vertical sticky" style="top: 20px">Top sticky</div>
+    <div class="vertical sticky" style="bottom: 20px">Bottom sticky</div>
+    <div class="vertical sticky" style="top: 20%">Top % sticky</div>
+    <div class="vertical sticky" style="bottom: 20%">Bottom % sticky</div>
+
+    <div class="vertical sticky" style="top: 20px; bottom: 20px;">Top and Bottom</div>
+    <div class="vertical sticky" style="top: 20%; bottom: 20%">Top and Bottom %</div>
+    <br clear="all">
+
+    <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
+  </div>
+  <pre id="results"></pre>
+</body>
+</html>

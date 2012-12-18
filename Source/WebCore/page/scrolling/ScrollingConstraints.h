@@ -124,8 +124,25 @@ public:
     void setTopOffset(float offset) { m_topOffset = offset; }
     void setBottomOffset(float offset) { m_bottomOffset = offset; }
 
+    FloatRect absoluteContainingBlockRect() const { return m_absoluteContainingBlockRect; }
     void setAbsoluteContainingBlockRect(const FloatRect& rect) { m_absoluteContainingBlockRect = rect; }
+
+    FloatRect absoluteStickyBoxRect() const { return m_absoluteStickyBoxRect; }
     void setAbsoluteStickyBoxRect(const FloatRect& rect) { m_absoluteStickyBoxRect = rect; }
+
+    bool operator==(const StickyPositionViewportConstraints& other) const
+    {
+        return m_leftOffset == other.m_leftOffset
+            && m_rightOffset == other.m_rightOffset
+            && m_topOffset == other.m_topOffset
+            && m_bottomOffset == other.m_bottomOffset
+            && m_absoluteContainingBlockRect == other.m_absoluteContainingBlockRect
+            && m_absoluteStickyBoxRect == other.m_absoluteStickyBoxRect
+            && m_stickyOffsetAtLastLayout == other.m_stickyOffsetAtLastLayout
+            && m_layerPositionAtLastLayout == other.m_layerPositionAtLastLayout;
+    }
+
+    bool operator!=(const StickyPositionViewportConstraints& other) const { return !(*this == other); }
 
 private:
     virtual ConstraintType constraintType() const OVERRIDE { return StickyPositionConstraint; };

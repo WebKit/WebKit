@@ -275,6 +275,10 @@
 		0F605AED15F94848004DF0C0 /* ScrollingConstraints.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F605AEB15F94848004DF0C0 /* ScrollingConstraints.h */; };
 		0FA24D79162DF91900A3F4C0 /* GraphicsLayerUpdater.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0FA24D77162DF91900A3F4C0 /* GraphicsLayerUpdater.cpp */; };
 		0FA24D7A162DF91900A3F4C0 /* GraphicsLayerUpdater.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FA24D78162DF91900A3F4C0 /* GraphicsLayerUpdater.h */; };
+		0FB8890A167D2FA10010CDA5 /* ScrollingTreeStickyNode.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FB88908167D2FA10010CDA5 /* ScrollingTreeStickyNode.h */; };
+		0FB8890B167D2FA10010CDA5 /* ScrollingTreeStickyNode.mm in Sources */ = {isa = PBXBuildFile; fileRef = 0FB88909167D2FA10010CDA5 /* ScrollingTreeStickyNode.mm */; };
+		0FB8890E167D30160010CDA5 /* ScrollingStateStickyNode.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0FB8890C167D30160010CDA5 /* ScrollingStateStickyNode.cpp */; };
+		0FB8890F167D30160010CDA5 /* ScrollingStateStickyNode.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FB8890D167D30160010CDA5 /* ScrollingStateStickyNode.h */; };
 		0FCF33240F2B9715004B6795 /* ColorCG.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0FCF33230F2B9715004B6795 /* ColorCG.cpp */; };
 		0FCF332C0F2B9A25004B6795 /* WebTiledLayer.mm in Sources */ = {isa = PBXBuildFile; fileRef = 0FCF33280F2B9A25004B6795 /* WebTiledLayer.mm */; };
 		0FCF332D0F2B9A25004B6795 /* WebTiledLayer.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FCF33290F2B9A25004B6795 /* WebTiledLayer.h */; };
@@ -7419,6 +7423,10 @@
 		0F605AEB15F94848004DF0C0 /* ScrollingConstraints.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ScrollingConstraints.h; sourceTree = "<group>"; };
 		0FA24D77162DF91900A3F4C0 /* GraphicsLayerUpdater.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = GraphicsLayerUpdater.cpp; sourceTree = "<group>"; };
 		0FA24D78162DF91900A3F4C0 /* GraphicsLayerUpdater.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GraphicsLayerUpdater.h; sourceTree = "<group>"; };
+		0FB88908167D2FA10010CDA5 /* ScrollingTreeStickyNode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ScrollingTreeStickyNode.h; sourceTree = "<group>"; };
+		0FB88909167D2FA10010CDA5 /* ScrollingTreeStickyNode.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = ScrollingTreeStickyNode.mm; sourceTree = "<group>"; };
+		0FB8890C167D30160010CDA5 /* ScrollingStateStickyNode.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ScrollingStateStickyNode.cpp; sourceTree = "<group>"; };
+		0FB8890D167D30160010CDA5 /* ScrollingStateStickyNode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ScrollingStateStickyNode.h; sourceTree = "<group>"; };
 		0FCF33230F2B9715004B6795 /* ColorCG.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ColorCG.cpp; sourceTree = "<group>"; };
 		0FCF33280F2B9A25004B6795 /* WebTiledLayer.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebTiledLayer.mm; sourceTree = "<group>"; };
 		0FCF33290F2B9A25004B6795 /* WebTiledLayer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebTiledLayer.h; sourceTree = "<group>"; };
@@ -14799,6 +14807,8 @@
 				931CBD07161A44E900E4C874 /* ScrollingStateNode.h */,
 				931CBD08161A44E900E4C874 /* ScrollingStateScrollingNode.cpp */,
 				931CBD09161A44E900E4C874 /* ScrollingStateScrollingNode.h */,
+				0FB8890C167D30160010CDA5 /* ScrollingStateStickyNode.cpp */,
+				0FB8890D167D30160010CDA5 /* ScrollingStateStickyNode.h */,
 				931CBD0A161A44E900E4C874 /* ScrollingStateTree.cpp */,
 				931CBD0B161A44E900E4C874 /* ScrollingStateTree.h */,
 				1AF62F2014DAFE790041556C /* ScrollingThread.cpp */,
@@ -14824,6 +14834,8 @@
 				93C38C02164473DD00091EB2 /* ScrollingTreeFixedNode.mm */,
 				93C4A4131629DF5A00C3EB6E /* ScrollingTreeScrollingNodeMac.h */,
 				93C4A4141629DF5A00C3EB6E /* ScrollingTreeScrollingNodeMac.mm */,
+				0FB88908167D2FA10010CDA5 /* ScrollingTreeStickyNode.h */,
+				0FB88909167D2FA10010CDA5 /* ScrollingTreeStickyNode.mm */,
 			);
 			path = mac;
 			sourceTree = "<group>";
@@ -25961,6 +25973,8 @@
 				FDA9325E16703B2A008982DC /* OfflineAudioContext.h in Headers */,
 				FDA9326716703BA9008982DC /* JSOfflineAudioContext.h in Headers */,
 				F37A56231679CF7B00C57046 /* HeapGraphSerializer.h in Headers */,
+				0FB8890A167D2FA10010CDA5 /* ScrollingTreeStickyNode.h in Headers */,
+				0FB8890F167D30160010CDA5 /* ScrollingStateStickyNode.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -29076,6 +29090,8 @@
 				F37A56221679CF7B00C57046 /* HeapGraphSerializer.cpp in Sources */,
 				CD1E7347167BC78E009A885D /* TextTrackRepresentation.cpp in Sources */,
 				9A9CEF8D163B3EA100DE7EFE /* ExclusionShapeOutsideInfo.cpp in Sources */,
+				0FB8890B167D2FA10010CDA5 /* ScrollingTreeStickyNode.mm in Sources */,
+				0FB8890E167D30160010CDA5 /* ScrollingStateStickyNode.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

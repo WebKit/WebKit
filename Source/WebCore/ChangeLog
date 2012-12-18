@@ -1,3 +1,77 @@
+2012-12-18  Simon Fraser  <simon.fraser@apple.com>
+
+        Allow position:sticky elements to be moved by the scrolling thread
+        https://bugs.webkit.org/show_bug.cgi?id=105245
+
+        Reviewed by Beth Dakin.
+
+        Allow sticky position elements to be repositioned on the scrolling thread.
+        
+        RenderLayerCompositor::requiresCompositingForPosition() is changed to make
+        all position:-webkit-sticky elements composited.
+        
+        Sticky position constraints are already communicated to the ScrollingCoordinator,
+        but now we created ScrollingStateStickyNodes for them, and send the constraints
+        over to the scrolling thread for new ScrollingTreeStickyNodes. That allows
+        their layers to be repositioned on the scrolling thread.
+
+        Tests: platform/mac/tiled-drawing/sticky/sticky-horizontal.html
+               platform/mac/tiled-drawing/sticky/sticky-vertical.html
+
+        * WebCore.xcodeproj/project.pbxproj: Add new files.
+        * page/scrolling/ScrollingConstraints.h:
+        (WebCore::StickyPositionViewportConstraints::absoluteContainingBlockRect): New accessors.
+        (WebCore::StickyPositionViewportConstraints::absoluteStickyBoxRect):
+        (WebCore::StickyPositionViewportConstraints::operator==):
+        (WebCore::StickyPositionViewportConstraints::operator!=):
+        * page/scrolling/ScrollingCoordinator.h: Added StickyNode type.
+        * page/scrolling/ScrollingStateFixedNode.cpp:
+        (WebCore::ScrollingStateFixedNode::syncLayerPositionForViewportRect):
+        New virtual method that allows different kinds of nodes to sync layer positions.
+        * page/scrolling/ScrollingStateFixedNode.h:
+        * page/scrolling/ScrollingStateNode.h:
+        (WebCore::ScrollingStateNode::isStickyNode):
+        (WebCore::ScrollingStateNode::syncLayerPositionForViewportRect):
+        * page/scrolling/ScrollingStateStickyNode.cpp: Added.
+        (WebCore::ScrollingStateStickyNode::create):
+        (WebCore::ScrollingStateStickyNode::ScrollingStateStickyNode):
+        (WebCore::ScrollingStateStickyNode::~ScrollingStateStickyNode):
+        (WebCore::ScrollingStateStickyNode::clone):
+        (WebCore::ScrollingStateStickyNode::updateConstraints):
+        (WebCore::ScrollingStateStickyNode::syncLayerPositionForViewportRect):
+        (WebCore::ScrollingStateStickyNode::dumpProperties):
+        * page/scrolling/ScrollingStateStickyNode.h: Copied from Source/WebCore/page/scrolling/ScrollingStateFixedNode.h.
+        (ScrollingStateStickyNode):
+        (WebCore::ScrollingStateStickyNode::viewportConstraints):
+        (WebCore::toScrollingStateStickyNode):
+        * page/scrolling/ScrollingTree.cpp:
+        (WebCore::ScrollingTree::updateTreeFromStateNode):
+        * page/scrolling/mac/ScrollingCoordinatorMac.mm:
+        (WebCore::ScrollingCoordinatorMac::attachToStateTree): Handle sticky nodes.
+        (WebCore::ScrollingCoordinatorMac::syncChildPositions): Generalize to different kinds of nodes by
+        calling a virtual method on the node.
+        (WebCore::ScrollingCoordinatorMac::updateViewportConstrainedNode):
+        * page/scrolling/mac/ScrollingTreeFixedNode.mm:
+        (WebCore::ScrollingTreeFixedNode::ScrollingTreeFixedNode):
+        * page/scrolling/mac/ScrollingTreeStickyNode.h: Added.
+        (ScrollingTreeStickyNode):
+        * page/scrolling/mac/ScrollingTreeStickyNode.mm: Copied from Source/WebCore/page/scrolling/mac/ScrollingTreeFixedNode.mm.
+        (WebCore::ScrollingTreeStickyNode::create):
+        (WebCore::ScrollingTreeStickyNode::ScrollingTreeStickyNode):
+        (WebCore::ScrollingTreeStickyNode::~ScrollingTreeStickyNode):
+        (WebCore::ScrollingTreeStickyNode::update):
+        (WebCore::operator*):
+        (WebCore::ScrollingTreeStickyNode::parentScrollPositionDidChange):
+        * rendering/RenderLayerBacking.cpp:
+        (WebCore::RenderLayerBacking::attachToScrollingCoordinator):
+        * rendering/RenderLayerCompositor.cpp:
+        (WebCore::RenderLayerCompositor::requiresCompositingForPosition):
+        (WebCore::RenderLayerCompositor::computeFixedViewportConstraints):
+        (WebCore::RenderLayerCompositor::computeStickyViewportConstraints):
+        (WebCore::RenderLayerCompositor::registerOrUpdateViewportConstrainedLayer):
+        * rendering/RenderLayerCompositor.h:
+        (RenderLayerCompositor):
+
 2012-12-18  David Grogan  <dgrogan@chromium.org>
 
         IndexedDB: Split BackingStore histogram

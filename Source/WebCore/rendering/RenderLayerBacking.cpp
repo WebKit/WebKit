@@ -1084,6 +1084,8 @@ void RenderLayerBacking::attachToScrollingCoordinator(RenderLayerBacking* parent
     ScrollingNodeType nodeType;
     if (renderer()->style()->position() == FixedPosition)
         nodeType = FixedNode;
+    else if (renderer()->style()->position() == StickyPosition)
+        nodeType = StickyNode;
     else
         nodeType = ScrollingNode;
 

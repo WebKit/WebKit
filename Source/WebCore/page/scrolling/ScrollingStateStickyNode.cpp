@@ -24,7 +24,7 @@
  */
 
 #include "config.h"
-#include "ScrollingStateFixedNode.h"
+#include "ScrollingStateStickyNode.h"
 
 #include "GraphicsLayer.h"
 #include "ScrollingStateTree.h"
@@ -35,34 +35,34 @@
 
 namespace WebCore {
 
-PassOwnPtr<ScrollingStateFixedNode> ScrollingStateFixedNode::create(ScrollingStateTree* stateTree, ScrollingNodeID nodeID)
+PassOwnPtr<ScrollingStateStickyNode> ScrollingStateStickyNode::create(ScrollingStateTree* stateTree, ScrollingNodeID nodeID)
 {
-    return adoptPtr(new ScrollingStateFixedNode(stateTree, nodeID));
+    return adoptPtr(new ScrollingStateStickyNode(stateTree, nodeID));
 }
 
-ScrollingStateFixedNode::ScrollingStateFixedNode(ScrollingStateTree* tree, ScrollingNodeID nodeID)
+ScrollingStateStickyNode::ScrollingStateStickyNode(ScrollingStateTree* tree, ScrollingNodeID nodeID)
     : ScrollingStateNode(tree, nodeID)
     , m_changedProperties(0)
 {
 }
 
-ScrollingStateFixedNode::ScrollingStateFixedNode(const ScrollingStateFixedNode& node)
+ScrollingStateStickyNode::ScrollingStateStickyNode(const ScrollingStateStickyNode& node)
     : ScrollingStateNode(node)
-    , m_constraints(FixedPositionViewportConstraints(node.viewportConstraints()))
+    , m_constraints(StickyPositionViewportConstraints(node.viewportConstraints()))
     , m_changedProperties(node.changedProperties())
 {
 }
 
-ScrollingStateFixedNode::~ScrollingStateFixedNode()
+ScrollingStateStickyNode::~ScrollingStateStickyNode()
 {
 }
 
-PassOwnPtr<ScrollingStateNode> ScrollingStateFixedNode::clone()
+PassOwnPtr<ScrollingStateNode> ScrollingStateStickyNode::clone()
 {
-    return adoptPtr(new ScrollingStateFixedNode(*this));
+    return adoptPtr(new ScrollingStateStickyNode(*this));
 }
 
-void ScrollingStateFixedNode::updateConstraints(const FixedPositionViewportConstraints& constraints)
+void ScrollingStateStickyNode::updateConstraints(const StickyPositionViewportConstraints& constraints)
 {
     if (m_constraints == constraints)
         return;
@@ -72,15 +72,15 @@ void ScrollingStateFixedNode::updateConstraints(const FixedPositionViewportConst
     m_scrollingStateTree->setHasChangedProperties(true);
 }
 
-void ScrollingStateFixedNode::syncLayerPositionForViewportRect(const LayoutRect& viewportRect)
+void ScrollingStateStickyNode::syncLayerPositionForViewportRect(const LayoutRect& viewportRect)
 {
     FloatPoint position = m_constraints.layerPositionForViewportRect(viewportRect);
     graphicsLayer()->syncPosition(position);
 }
 
-void ScrollingStateFixedNode::dumpProperties(TextStream& ts, int indent) const
+void ScrollingStateStickyNode::dumpProperties(TextStream& ts, int indent) const
 {
-    ts << "(" << "Fixed node" << "\n";
+    ts << "(" << "Sticky node" << "\n";
 
     if (m_constraints.anchorEdges()) {
         writeIndent(ts, indent + 1);
@@ -90,27 +90,46 @@ void ScrollingStateFixedNode::dumpProperties(TextStream& ts, int indent) const
         if (m_constraints.hasAnchorEdge(ViewportConstraints::AnchorEdgeRight))
             ts << "AnchorEdgeRight ";
         if (m_constraints.hasAnchorEdge(ViewportConstraints::AnchorEdgeTop))
-            ts << "AnchorEdgeTop";
+            ts << "AnchorEdgeTop ";
         if (m_constraints.hasAnchorEdge(ViewportConstraints::AnchorEdgeBottom))
             ts << "AnchorEdgeBottom";
         ts << ")\n";
     }
 
-    if (!m_constraints.alignmentOffset().isEmpty()) {
+    if (m_constraints.hasAnchorEdge(ViewportConstraints::AnchorEdgeLeft)) {
         writeIndent(ts, indent + 1);
-        ts << "(alignment offset " << m_constraints.alignmentOffset().width() << " " << m_constraints.alignmentOffset().height() << ")\n";
+        ts << "(left offset " << m_constraints.leftOffset() << ")\n";
+    }
+    if (m_constraints.hasAnchorEdge(ViewportConstraints::AnchorEdgeRight)) {
+        writeIndent(ts, indent + 1);
+        ts << "(right offset " << m_constraints.rightOffset() << ")\n";
+    }
+    if (m_constraints.hasAnchorEdge(ViewportConstraints::AnchorEdgeTop)) {
+        writeIndent(ts, indent + 1);
+        ts << "(top offset " << m_constraints.topOffset() << ")\n";
+    }
+    if (m_constraints.hasAnchorEdge(ViewportConstraints::AnchorEdgeBottom)) {
+        writeIndent(ts, indent + 1);
+        ts << "(bottom offset " << m_constraints.bottomOffset() << ")\n";
     }
 
-    if (!m_constraints.viewportRectAtLastLayout().isEmpty()) {
-        writeIndent(ts, indent + 1);
-        FloatRect viewportRect = m_constraints.viewportRectAtLastLayout();
-        ts << "(viewport rect at last layout: " << viewportRect.x() << " " << viewportRect.y() << " " << viewportRect.width() << " " << viewportRect.height() << ")\n";
-    }
+    writeIndent(ts, indent + 1);
+    FloatRect r = m_constraints.absoluteContainingBlockRect();
+    ts << "(containing block rect " << r.x() << ", " << r.y() << " " << r.width() << " x " << r.height() << ")\n";
 
-    if (m_constraints.layerPositionAtLastLayout() != FloatPoint()) {
-        writeIndent(ts, indent + 1);
-        ts << "(layer position at last layout " << m_constraints.layerPositionAtLastLayout().x() << " " << m_constraints.layerPositionAtLastLayout().y() << ")\n";
-    }
+    writeIndent(ts, indent + 1);
+    r = m_constraints.absoluteStickyBoxRect();
+    ts << "(sticky box rect " << r.x() << " " << r.y() << " " << r.width() << " " << r.height() << ")\n";
+
+    writeIndent(ts, indent + 1);
+    r = m_constraints.absoluteStickyBoxRect();
+    ts << "(sticky box rect " << r.x() << " " << r.y() << " " << r.width() << " " << r.height() << ")\n";
+
+    writeIndent(ts, indent + 1);
+    ts << "(sticky offset at last layout " << m_constraints.stickyOffsetAtLastLayout().width() << " " << m_constraints.stickyOffsetAtLastLayout().height() << ")\n";
+
+    writeIndent(ts, indent + 1);
+    ts << "(layer position at last layout " << m_constraints.layerPositionAtLastLayout().x() << " " << m_constraints.layerPositionAtLastLayout().y() << ")\n";
 }
 
 } // namespace WebCore

@@ -24,37 +24,37 @@
  */
 
 #include "config.h"
-#include "ScrollingTreeFixedNode.h"
+#include "ScrollingTreeStickyNode.h"
 
 #if ENABLE(THREADED_SCROLLING)
 
-#include "ScrollingStateFixedNode.h"
+#include "ScrollingStateStickyNode.h"
 #include "ScrollingTree.h"
 
 namespace WebCore {
 
-PassOwnPtr<ScrollingTreeFixedNode> ScrollingTreeFixedNode::create(ScrollingTree* scrollingTree)
+PassOwnPtr<ScrollingTreeStickyNode> ScrollingTreeStickyNode::create(ScrollingTree* scrollingTree)
 {
-    return adoptPtr(new ScrollingTreeFixedNode(scrollingTree));
+    return adoptPtr(new ScrollingTreeStickyNode(scrollingTree));
 }
 
-ScrollingTreeFixedNode::ScrollingTreeFixedNode(ScrollingTree* scrollingTree)
+ScrollingTreeStickyNode::ScrollingTreeStickyNode(ScrollingTree* scrollingTree)
     : ScrollingTreeNode(scrollingTree)
 {
 }
 
-ScrollingTreeFixedNode::~ScrollingTreeFixedNode()
+ScrollingTreeStickyNode::~ScrollingTreeStickyNode()
 {
 }
 
-void ScrollingTreeFixedNode::update(ScrollingStateNode* stateNode)
+void ScrollingTreeStickyNode::update(ScrollingStateNode* stateNode)
 {
-    ScrollingStateFixedNode* state = toScrollingStateFixedNode(stateNode);
+    ScrollingStateStickyNode* state = toScrollingStateStickyNode(stateNode);
 
     if (state->scrollLayerDidChange())
         m_layer = state->platformScrollLayer();
 
-    if (stateNode->changedProperties() & ScrollingStateFixedNode::ViewportConstraints)
+    if (stateNode->changedProperties() & ScrollingStateStickyNode::ViewportConstraints)
         m_constraints = state->viewportConstraints();
 }
 
@@ -63,7 +63,7 @@ static inline CGPoint operator*(CGPoint& a, const CGSize& b)
     return CGPointMake(a.x * b.width, a.y * b.height);
 }
 
-void ScrollingTreeFixedNode::parentScrollPositionDidChange(const IntRect& viewportRect)
+void ScrollingTreeStickyNode::parentScrollPositionDidChange(const IntRect& viewportRect)
 {
     FloatPoint layerPosition = m_constraints.layerPositionForViewportRect(viewportRect);
 

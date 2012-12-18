@@ -49,7 +49,7 @@ namespace WebCore {
 typedef unsigned MainThreadScrollingReasons;
 typedef uint64_t ScrollingNodeID;
 
-enum ScrollingNodeType { ScrollingNode, FixedNode };
+enum ScrollingNodeType { ScrollingNode, FixedNode, StickyNode };
 
 class Document;
 class Frame;

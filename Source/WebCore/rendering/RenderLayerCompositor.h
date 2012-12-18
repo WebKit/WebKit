@@ -326,8 +326,8 @@ private:
     void registerOrUpdateViewportConstrainedLayer(RenderLayer*);
     void unregisterViewportConstrainedLayer(RenderLayer*);
 
-    const FixedPositionViewportConstraints computeFixedViewportConstraints(RenderLayer*);
-    const StickyPositionViewportConstraints computeStickyViewportConstraints(RenderLayer*);
+    FixedPositionViewportConstraints computeFixedViewportConstraints(RenderLayer*) const;
+    StickyPositionViewportConstraints computeStickyViewportConstraints(RenderLayer*) const;
 
     bool requiresScrollLayer(RootLayerAttachment) const;
     bool requiresHorizontalScrollbarLayer() const;

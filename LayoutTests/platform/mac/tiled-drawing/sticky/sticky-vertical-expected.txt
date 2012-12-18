@@ -1,0 +1,69 @@
+Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+
+Top stickyBottom stickyTop % stickyBottom % stickyTop and BottomTop and Bottom %
+Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+
+(Scrolling node
+  (viewport rect 0 0 785 600)
+  (contents size 785 2908)
+  (requested scroll position 0 580)
+  (children 6
+    (Sticky node
+      (anchor edges: AnchorEdgeTop )
+      (top offset 20.00)
+      (containing block rect 73.00, 406.00 640.00 x 604.00)
+      (sticky box rect 73.00 558.00 80.00 300.00)
+      (sticky box rect 73.00 558.00 80.00 300.00)
+      (sticky offset at last layout 0.00 42.00)
+      (layer position at last layout 73.00 558.00)
+    )
+    (Sticky node
+      (anchor edges: AnchorEdgeBottom)
+      (bottom offset 20.00)
+      (containing block rect 73.00, 406.00 640.00 x 604.00)
+      (sticky box rect 163.00 558.00 80.00 300.00)
+      (sticky box rect 163.00 558.00 80.00 300.00)
+      (sticky offset at last layout 0.00 0.00)
+      (layer position at last layout 163.00 406.00)
+    )
+    (Sticky node
+      (anchor edges: AnchorEdgeTop )
+      (top offset 120.00)
+      (containing block rect 73.00, 406.00 640.00 x 604.00)
+      (sticky box rect 253.00 558.00 80.00 300.00)
+      (sticky box rect 253.00 558.00 80.00 300.00)
+      (sticky offset at last layout 0.00 142.00)
+      (layer position at last layout 253.00 558.00)
+    )
+    (Sticky node
+      (anchor edges: AnchorEdgeBottom)
+      (bottom offset 120.00)
+      (containing block rect 73.00, 406.00 640.00 x 604.00)
+      (sticky box rect 343.00 558.00 80.00 300.00)
+      (sticky box rect 343.00 558.00 80.00 300.00)
+      (sticky offset at last layout 0.00 0.00)
+      (layer position at last layout 343.00 406.00)
+    )
+    (Sticky node
+      (anchor edges: AnchorEdgeTop AnchorEdgeBottom)
+      (top offset 20.00)
+      (bottom offset 20.00)
+      (containing block rect 73.00, 406.00 640.00 x 604.00)
+      (sticky box rect 433.00 558.00 80.00 300.00)
+      (sticky box rect 433.00 558.00 80.00 300.00)
+      (sticky offset at last layout 0.00 42.00)
+      (layer position at last layout 433.00 406.00)
+    )
+    (Sticky node
+      (anchor edges: AnchorEdgeTop AnchorEdgeBottom)
+      (top offset 120.00)
+      (bottom offset 120.00)
+      (containing block rect 73.00, 406.00 640.00 x 604.00)
+      (sticky box rect 523.00 558.00 80.00 300.00)
+      (sticky box rect 523.00 558.00 80.00 300.00)
+      (sticky offset at last layout 0.00 142.00)
+      (layer position at last layout 523.00 406.00)
+    )
+  )
+)
+

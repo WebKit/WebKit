@@ -23,8 +23,8 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef ScrollingStateFixedNode_h
-#define ScrollingStateFixedNode_h
+#ifndef ScrollingStateStickyNode_h
+#define ScrollingStateStickyNode_h
 
 #if ENABLE(THREADED_SCROLLING)
 
@@ -35,30 +35,30 @@
 
 namespace WebCore {
 
-class FixedPositionViewportConstraints;
+class StickyPositionViewportConstraints;
 
-class ScrollingStateFixedNode : public ScrollingStateNode {
+class ScrollingStateStickyNode : public ScrollingStateNode {
 public:
-    static PassOwnPtr<ScrollingStateFixedNode> create(ScrollingStateTree*, ScrollingNodeID);
+    static PassOwnPtr<ScrollingStateStickyNode> create(ScrollingStateTree*, ScrollingNodeID);
 
     virtual PassOwnPtr<ScrollingStateNode> clone();
 
-    virtual ~ScrollingStateFixedNode();
+    virtual ~ScrollingStateStickyNode();
 
-    enum ChangedPropertyForFixed {
+    enum ChangedPropertyForSticky {
         ViewportConstraints = 1 << 0
     };
 
     virtual unsigned changedProperties() const OVERRIDE { return m_changedProperties; }
 
-    void updateConstraints(const FixedPositionViewportConstraints&);
-    const FixedPositionViewportConstraints& viewportConstraints() const { return m_constraints; }
+    void updateConstraints(const StickyPositionViewportConstraints&);
+    const StickyPositionViewportConstraints& viewportConstraints() const { return m_constraints; }
 
 private:
-    ScrollingStateFixedNode(ScrollingStateTree*, ScrollingNodeID);
-    ScrollingStateFixedNode(const ScrollingStateFixedNode&);
+    ScrollingStateStickyNode(ScrollingStateTree*, ScrollingNodeID);
+    ScrollingStateStickyNode(const ScrollingStateStickyNode&);
 
-    virtual bool isFixedNode() OVERRIDE { return true; }
+    virtual bool isStickyNode() OVERRIDE { return true; }
 
     virtual bool hasChangedProperties() const OVERRIDE { return m_changedProperties; }
     virtual void resetChangedProperties() OVERRIDE { m_changedProperties = 0; }
@@ -66,21 +66,21 @@ private:
 
     virtual void dumpProperties(TextStream&, int indent) const OVERRIDE;
 
-    FixedPositionViewportConstraints m_constraints;
+    StickyPositionViewportConstraints m_constraints;
     unsigned m_changedProperties;
 };
 
-inline ScrollingStateFixedNode* toScrollingStateFixedNode(ScrollingStateNode* node)
+inline ScrollingStateStickyNode* toScrollingStateStickyNode(ScrollingStateNode* node)
 {
-    ASSERT(!node || node->isFixedNode());
-    return static_cast<ScrollingStateFixedNode*>(node);
+    ASSERT(!node || node->isStickyNode());
+    return static_cast<ScrollingStateStickyNode*>(node);
 }
     
 // This will catch anyone doing an unnecessary cast.
-void toScrollingStateFixedNode(const ScrollingStateFixedNode*);
+void toScrollingStateStickyNode(const ScrollingStateStickyNode*);
 
 } // namespace WebCore
 
 #endif // ENABLE(THREADED_SCROLLING)
 
-#endif // ScrollingStateFixedNode_h
+#endif // ScrollingStateStickyNode_h

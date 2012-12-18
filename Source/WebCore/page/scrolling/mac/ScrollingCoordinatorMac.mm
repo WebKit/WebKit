@@ -43,6 +43,7 @@
 #include "ScrollingConstraints.h"
 #include "ScrollingStateFixedNode.h"
 #include "ScrollingStateScrollingNode.h"
+#include "ScrollingStateStickyNode.h"
 #include "ScrollingStateTree.h"
 #include "ScrollingThread.h"
 #include "ScrollingTree.h"
@@ -242,6 +243,13 @@ ScrollingNodeID ScrollingCoordinatorMac::attachToStateTree(ScrollingNodeType nod
             parent->appendChild(fixedNode.release());
             break;
         }
+        case StickyNode: {
+            ASSERT(supportsFixedPositionLayers());
+            OwnPtr<ScrollingStateStickyNode> stickyNode = ScrollingStateStickyNode::create(m_scrollingStateTree.get(), newNodeID);
+            newNode = stickyNode.get();
+            parent->appendChild(stickyNode.release());
+            break;
+        }
         case ScrollingNode: {
             // FIXME: We currently only support child nodes that are fixed.
             ASSERT_NOT_REACHED();
@@ -376,9 +384,8 @@ void ScrollingCoordinatorMac::syncChildPositions(const LayoutRect& viewportRect)
     // FIXME: We'll have to traverse deeper into the tree at some point.
     size_t size = children->size();
     for (size_t i = 0; i < size; ++i) {
-        ScrollingStateFixedNode* child = toScrollingStateFixedNode(children->at(i).get());
-        FloatPoint position = child->viewportConstraints().layerPositionForViewportRect(viewportRect);
-        child->graphicsLayer()->syncPosition(position);
+        ScrollingStateNode* child = children->at(i).get();
+        child->syncLayerPositionForViewportRect(viewportRect);
     }
 }
 
@@ -386,13 +393,20 @@ void ScrollingCoordinatorMac::updateViewportConstrainedNode(ScrollingNodeID node
 {
     ASSERT(supportsFixedPositionLayers());
 
-    // FIXME: We should support sticky position here!
-    if (constraints.constraintType() == ViewportConstraints::StickyPositionConstraint)
-        return;
-
-    ScrollingStateFixedNode* node = toScrollingStateFixedNode(stateNodeForID(nodeID));
-    setScrollLayerForNode(graphicsLayer, node);
-    node->updateConstraints((const FixedPositionViewportConstraints&)constraints);
+    switch (constraints.constraintType()) {
+    case ViewportConstraints::FixedPositionConstaint: {
+        ScrollingStateFixedNode* node = toScrollingStateFixedNode(stateNodeForID(nodeID));
+        setScrollLayerForNode(graphicsLayer, node);
+        node->updateConstraints((const FixedPositionViewportConstraints&)constraints);
+        break;
+    }
+    case ViewportConstraints::StickyPositionConstraint: {
+        ScrollingStateStickyNode* node = toScrollingStateStickyNode(stateNodeForID(nodeID));
+        setScrollLayerForNode(graphicsLayer, node);
+        node->updateConstraints((const StickyPositionViewportConstraints&)constraints);
+        break;
+    }
+    }
 }
 
 void ScrollingCoordinatorMac::scheduleTreeStateCommit()
