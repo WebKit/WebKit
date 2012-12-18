@@ -61,9 +61,17 @@ public:
     bool customAllocation() const { return m_customAllocation; }
     void setCustomAllocation(bool customAllocation) { m_customAllocation = customAllocation; }
 
-    void setClassName(const String& className) { m_className = className; }
+    void setClassName(const String& className)
+    {
+        if (m_className.isEmpty())
+            m_className = className;
+    }
     const String& className() const { return m_className; }
-    void setName(const String& name) { m_name = name; }
+    void setName(const String& name)
+    {
+        if (m_name.isEmpty())
+            m_name = name;
+    }
     const String& name() const { return m_name; }
 
     MemoryInstrumentation* memoryInstrumentation() { return m_memoryInstrumentation; }

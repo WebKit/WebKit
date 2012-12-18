@@ -36,14 +36,17 @@
 #include "SkCanvas.h"
 #include "SkDevice.h"
 #include "SkPixelRef.h"
+#include <wtf/MemoryObjectInfo.h>
 
 void reportMemoryUsage(const SkBitmap* const& image, WTF::MemoryObjectInfo* memoryObjectInfo)
 {
     WTF::MemoryClassInfo info(memoryObjectInfo, image);
+    memoryObjectInfo->setClassName("SkBitmap");
+
     SkPixelRef* pixelRef = image->pixelRef();
     info.addMember(pixelRef);
     if (pixelRef)
-        info.addRawBuffer(pixelRef->pixels(), image->getSize());
+        info.addRawBuffer(pixelRef->pixels(), image->getSize(), 0, "pixels");
 }
 
 void reportMemoryUsage(const SkDevice* const& device, WTF::MemoryObjectInfo* memoryObjectInfo)

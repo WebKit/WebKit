@@ -39,10 +39,10 @@ WebInspector.NativeMemorySnapshotView = function(profile)
     this.registerRequiredCSS("nativeMemoryProfiler.css");
 
     this.element.addStyleClass("native-snapshot-view");
-    this._containmentDataGrid = new WebInspector.NativeSnapshotDataGrid(profile._memoryBlock);
+    this._containmentDataGrid = new WebInspector.NativeSnapshotDataGrid(profile);
     this._containmentDataGrid.show(this.element);
 
-    this._heapGraphDataGrid = new WebInspector.NativeHeapGraphDataGrid(new WebInspector.NativeHeapGraph(profile._graph));
+    this._heapGraphDataGrid = new WebInspector.NativeHeapGraphDataGrid(profile._graph);
 
     this._viewSelectElement = document.createElement("select");
     this._viewSelectElement.className = "status-bar-item";
@@ -90,7 +90,7 @@ WebInspector.NativeMemorySnapshotView.prototype = {
 /**
  * @constructor
  * @extends {WebInspector.DataGrid}
- * @param {MemoryAgent.MemoryBlock} profile
+ * @param {WebInspector.NativeMemoryProfileHeader} profile
  */
 WebInspector.NativeSnapshotDataGrid = function(profile)
 {
@@ -99,7 +99,8 @@ WebInspector.NativeSnapshotDataGrid = function(profile)
         size: { title: WebInspector.UIString("Size"), sortable: true, sort: "descending" },
     };
     WebInspector.DataGrid.call(this, columns);
-    this._totalNode = new WebInspector.NativeSnapshotNode(profile, profile);
+    this._profile = profile;
+    this._totalNode = new WebInspector.NativeSnapshotNode(profile._memoryBlock, profile._memoryBlock);
     if (WebInspector.settings.showNativeSnapshotUninstrumentedSize.get()) {
         this.setRootNode(new WebInspector.DataGridNode(null, true));
         this.rootNode().appendChild(this._totalNode)
@@ -145,12 +146,12 @@ WebInspector.NativeSnapshotDataGrid.prototype = {
  * @constructor
  * @extends {WebInspector.DataGridNode}
  * @param {MemoryAgent.MemoryBlock} nodeData
- * @param {MemoryAgent.MemoryBlock} profile
+ * @param {MemoryAgent.MemoryBlock} rootMemoryBlock
  */
-WebInspector.NativeSnapshotNode = function(nodeData, profile)
+WebInspector.NativeSnapshotNode = function(nodeData, rootMemoryBlock)
 {
     this._nodeData = nodeData;
-    this._profile = profile;
+    this._rootMemoryBlock = rootMemoryBlock;
     var viewProperties = WebInspector.MemoryBlockViewProperties._forMemoryBlock(nodeData);
     var data = { name: viewProperties._description, size: this._nodeData.size };
     var hasChildren = !!nodeData.children && nodeData.children.length !== 0;
@@ -223,7 +224,7 @@ WebInspector.NativeSnapshotNode.prototype = {
         }
 
         var sizeKB = this._nodeData.size / 1024;
-        var totalSize = this._profile.size;
+        var totalSize = this._rootMemoryBlock.size;
         var percentage = this._nodeData.size / totalSize  * 100;
 
         var cell = document.createElement("td");
@@ -259,14 +260,110 @@ WebInspector.NativeSnapshotNode.prototype = {
     _populate: function() {
         this.removeEventListener("populate", this._populate, this);
         this._nodeData.children.sort(this.dataGrid._sortingFunction.bind(this.dataGrid));
+
         for (var node in this._nodeData.children) {
             var nodeData = this._nodeData.children[node];
+            this._addChildrenFromGraph(nodeData);
             if (WebInspector.settings.showNativeSnapshotUninstrumentedSize.get() || nodeData.name !== "Other")
-                this.appendChild(new WebInspector.NativeSnapshotNode(nodeData, this._profile));
+                this.appendChild(new WebInspector.NativeSnapshotNode(nodeData, this._rootMemoryBlock));
         }
     },
 
+    /**
+     * @param {MemoryAgent.MemoryBlock} memoryBlock
+     */
+    _addChildrenFromGraph: function(memoryBlock)
+    {
+        if (memoryBlock.children)
+            return;
+        if (memoryBlock.name !== "Image" || this._nodeData.name !== "MemoryCache")
+            return;
+
+        // Collect objects on the path MemoryCache -> CachedImage -m_image-> BitmapImage -m_frames-> FrameData -m_frame-> SkBitmap -> SkPixelRef
+        var graph = this.dataGrid._profile._graph;
+        var roots = graph.rootNodes();
+        var memoryCache;
+        for (var i = 0; i < roots.length; i++) {
+            var root = roots[i];
+            if (root.className() === "MemoryCache") {
+                memoryCache = root;
+                break;
+            }
+        }
+        var edges = memoryCache.outgoingEdges();
+        var cachedImages = [];
+        for (var i = 0; i < edges.length; i++) {
+            var target = edges[i].target();
+            if (target.className() === "CachedImage") {
+                var cachedImage = {
+                    name: target.name(),
+                    size: target.size(),
+                    children: []
+                };
+                cachedImages.push(cachedImage);
+                var image = target.targetOfEdge("m_image");
+                if (image.className() === "BitmapImage") {
+                    var frames = image.targetsOfAllEdges("m_frame");
+                    for (var j = 0; j < frames.length; j++) {
+                        var pixels = frames[j].targetOfEdge("pixels");
+                        if (pixels) {
+                            cachedImage.size += pixels.size();
+                            cachedImage.children.push({
+                                name: "Bitmap pixels",
+                                size: pixels.size()
+                            });
+                        }
+                    }
+                }
+            }
+        }
+        memoryBlock.children = cachedImages;
+    },
+
     __proto__: WebInspector.DataGridNode.prototype
+}
+
+
+/**
+ * @constructor
+ * @param {WebInspector.NativeHeapGraph} graph
+ * @param {number} position
+ */
+WebInspector.NativeHeapGraphEdge = function(graph, position)
+{
+    this._graph = graph;
+    this._position = position;
+}
+
+WebInspector.NativeHeapGraphEdge.prototype = {
+    type: function()
+    {
+        return this._getStringField(this._graph._edgeTypeOffset);
+    },
+
+    name: function()
+    {
+        return this._getStringField(this._graph._edgeNameOffset);
+    },
+
+    target: function()
+    {
+        var edges = this._graph._edges;
+        var targetPosition = edges[this._position + this._graph._edgeTargetOffset] * this._graph._nodeFieldCount;
+        return new WebInspector.NativeHeapGraphNode(this._graph, targetPosition);
+    },
+
+    _getStringField: function(offset)
+    {
+        var typeIndex = this._graph._edges[this._position + offset];
+        return this._graph._rawGraph.strings[typeIndex];
+    },
+
+    toString: function()
+    {
+        return "Edge#" + this._position + " -" + this.name() + "-> " + this.target();
+    }
+
 }
 
 
@@ -294,7 +391,7 @@ WebInspector.NativeHeapGraphNode.prototype = {
 
     size: function()
     {
-        return this._graph._rawGraph.nodes[this._position + this._graph._nodeSizeOffset];
+        return this._graph._nodes[this._position + this._graph._nodeSizeOffset];
     },
 
     className: function()
@@ -314,8 +411,8 @@ WebInspector.NativeHeapGraphNode.prototype = {
 
     referencedNodes: function()
     {
-        var edges = this._graph._rawGraph.edges;
-        var nodes = this._graph._rawGraph.nodes;
+        var edges = this._graph._edges;
+        var nodes = this._graph._nodes;
         var edgeFieldCount = this._graph._edgeFieldCount;
         var nodeFieldCount = this._graph._nodeFieldCount;
 
@@ -327,27 +424,61 @@ WebInspector.NativeHeapGraphNode.prototype = {
         return result;
     },
 
+    outgoingEdges: function()
+    {
+        var edges = this._graph._edges;
+        var edgeFieldCount = this._graph._edgeFieldCount;
+
+        var firstEdgePosition = this._firstEdgePoistion();
+        var afterLastEdgePosition = this._afterLastEdgePosition();
+        var result = [];
+        for (var i = firstEdgePosition; i < afterLastEdgePosition; i += edgeFieldCount)
+            result.push(new WebInspector.NativeHeapGraphEdge(this._graph, i));
+        return result;
+    },
+
+    targetOfEdge: function(edgeName)
+    {
+        return this.targetsOfAllEdges(edgeName)[0];
+    },
+
+    targetsOfAllEdges: function(edgeName)
+    {
+        var edges = this._graph._edges;
+        var edgeFieldCount = this._graph._edgeFieldCount;
+
+        var firstEdgePosition = this._firstEdgePoistion();
+        var afterLastEdgePosition = this._afterLastEdgePosition();
+
+        var edge = new WebInspector.NativeHeapGraphEdge(this._graph, firstEdgePosition)
+        var result = [];
+        for (var i = firstEdgePosition; i < afterLastEdgePosition; i += edgeFieldCount) {
+            edge._position = i;
+            if (edge.name() === edgeName)
+                result.push(edge.target());
+        }
+        return result;
+    },
+
     _firstEdgePoistion: function()
     {
-        return this._graph._rawGraph.nodes[this._position + this._graph._nodeFirstEdgeOffset] * this._graph._edgeFieldCount;
+        return this._graph._nodes[this._position + this._graph._nodeFirstEdgeOffset] * this._graph._edgeFieldCount;
     },
 
     _afterLastEdgePosition: function()
     {
-        var edges = this._graph._rawGraph.edges;
-        var nodes = this._graph._rawGraph.nodes;
-        var afterLastEdgePosition = nodes[this._position + this._graph._nodeFieldCount + this._graph._nodeFirstEdgeOffset];
-        if (afterLastEdgePosition)
-            afterLastEdgePosition *= this._graph._edgeFieldCount;
-        else
-            afterLastEdgePosition = edges.length;
-        return afterLastEdgePosition;
+        return this._graph._nodes[this._position + this._graph._nodeFieldCount + this._graph._nodeFirstEdgeOffset] * this._graph._edgeFieldCount;
     },
 
     _getStringField: function(offset)
     {
-        var typeIndex = this._graph._rawGraph.nodes[this._position + offset];
+        var typeIndex = this._graph._nodes[this._position + offset];
         return this._graph._rawGraph.strings[typeIndex];
+    },
+
+    toString: function()
+    {
+        return "Node#" + this.id() + " " + this.name() + "(" + this.className() + ")";
     }
 }
 
@@ -372,14 +503,19 @@ WebInspector.NativeHeapGraph = function(rawGraph)
     this._edgeTargetOffset = 1;
     this._edgeNameOffset = 2;
 
+    this._nodeCount = rawGraph.nodes.length / this._nodeFieldCount;
+    this._nodes = rawGraph.nodes;
+    this._edges = rawGraph.edges;
+    this._strings = rawGraph.strings;
+
     this._calculateNodeEdgeIndexes();
 }
 
 WebInspector.NativeHeapGraph.prototype = {
     rootNodes: function()
     {
-        var nodeHasIncomingEdges = new Uint8Array(this._rawGraph.nodes.length / this._nodeFieldCount);
-        var edges = this._rawGraph.edges;
+        var nodeHasIncomingEdges = new Uint8Array(this._nodeCount);
+        var edges = this._edges;
         var edgesLength = edges.length;
         var edgeFieldCount = this._edgeFieldCount;
         var nodeFieldCount = this._nodeFieldCount;
@@ -398,7 +534,7 @@ WebInspector.NativeHeapGraph.prototype = {
 
     _calculateNodeEdgeIndexes: function()
     {
-        var nodes = this._rawGraph.nodes;
+        var nodes = this._nodes;
         var nodeFieldCount = this._nodeFieldCount;
         var nodeLength = nodes.length;
         var firstEdgeIndex = 0;
@@ -407,6 +543,15 @@ WebInspector.NativeHeapGraph.prototype = {
             nodes[i] = firstEdgeIndex;
             firstEdgeIndex += count;
         }
+        this._addDummyNode();
+    },
+
+    _addDummyNode: function()
+    {
+        var firstEdgePosition = this._nodes.length + this._nodeFirstEdgeOffset;
+        for (var i = 0; i < this._nodeFieldCount; i++)
+            this._nodes.push(0);
+        this._nodes[firstEdgePosition] = this._edges.length;
     }
 }
 
@@ -545,7 +690,7 @@ WebInspector.NativeMemoryProfileType.prototype = {
                 }
             }
             profileHeader._memoryBlock = memoryBlock;
-            profileHeader._graph = graph;
+            profileHeader._graph = new WebInspector.NativeHeapGraph(graph);
             profileHeader.isTemporary = false;
             profileHeader.sidebarElement.subtitle = Number.bytesToString(/** @type{number} */(memoryBlock.size));
         }

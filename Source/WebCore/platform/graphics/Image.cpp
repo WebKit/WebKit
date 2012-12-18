@@ -38,6 +38,7 @@
 #include "SharedBuffer.h"
 #include <math.h>
 #include <wtf/MainThread.h>
+#include <wtf/MemoryObjectInfo.h>
 #include <wtf/StdLibExtras.h>
 
 #if USE(CG)
@@ -201,7 +202,8 @@ void Image::computeIntrinsicDimensions(Length& intrinsicWidth, Length& intrinsic
 void Image::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
 {
     MemoryClassInfo info(memoryObjectInfo, this, PlatformMemoryTypes::Image);
-    info.addMember(m_data);
+    memoryObjectInfo->setClassName("Image");
+    info.addMember(m_data, "m_data");
     info.addWeakPointer(m_imageObserver);
 }
 

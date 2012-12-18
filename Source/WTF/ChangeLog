@@ -1,3 +1,17 @@
+2012-12-18  Yury Semikhatsky  <yurys@chromium.org>
+
+        Web Inspector: show cached images under MemoryCache -> Images section
+        https://bugs.webkit.org/show_bug.cgi?id=105261
+
+        Reviewed by Pavel Feldman.
+
+        Use first provided name and class name. If one of the ancestors tries to overwrite
+        it just ignore the call.
+
+        * wtf/MemoryObjectInfo.h:
+        (WTF::MemoryObjectInfo::setClassName):
+        (WTF::MemoryObjectInfo::setName):
+
 2012-12-18  Uli Schlachter  <psychon@znc.in>
 
         Implement uncommitted memory for Linux.

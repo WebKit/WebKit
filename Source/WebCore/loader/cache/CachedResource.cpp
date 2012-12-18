@@ -51,6 +51,7 @@
 #include <wtf/MathExtras.h>
 #include <wtf/MemoryInstrumentationHashCountedSet.h>
 #include <wtf/MemoryInstrumentationHashSet.h>
+#include <wtf/MemoryObjectInfo.h>
 #include <wtf/RefCountedLeakCounter.h>
 #include <wtf/StdLibExtras.h>
 #include <wtf/text/CString.h>
@@ -888,6 +889,7 @@ void CachedResource::CachedResourceCallback::timerFired(Timer<CachedResourceCall
 void CachedResource::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
 {
     MemoryClassInfo info(memoryObjectInfo, this, WebCoreMemoryTypes::CachedResource);
+    memoryObjectInfo->setName(url().string());
     info.addMember(m_resourceRequest);
     info.addMember(m_clients);
     info.addMember(m_accept);

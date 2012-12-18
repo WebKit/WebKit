@@ -1,3 +1,52 @@
+2012-12-18  Yury Semikhatsky  <yurys@chromium.org>
+
+        Web Inspector: show cached images under MemoryCache -> Images section
+        https://bugs.webkit.org/show_bug.cgi?id=105261
+
+        Reviewed by Pavel Feldman.
+
+        Provided class name and name for several objects related to CachedImage.
+        Changed native memory snapsho view so that MemoryCache.Image section can
+        be expanded into individual images.
+
+        * inspector/front-end/NativeMemorySnapshotView.js:
+        (WebInspector.NativeMemorySnapshotView):
+        (WebInspector.NativeSnapshotNode.prototype._addChildrenFromGraph):
+        (WebInspector.NativeHeapGraphEdge):
+        (WebInspector.NativeHeapGraphEdge.prototype.type):
+        (WebInspector.NativeHeapGraphEdge.prototype.name):
+        (WebInspector.NativeHeapGraphEdge.prototype.target):
+        (WebInspector.NativeHeapGraphEdge.prototype._getStringField):
+        (WebInspector.NativeHeapGraphEdge.prototype.toString):
+        (WebInspector.NativeHeapGraphNode.prototype.size):
+        (WebInspector.NativeHeapGraphNode.prototype.referencedNodes):
+        (WebInspector.NativeHeapGraphNode.prototype.outgoingEdges):
+        (WebInspector.NativeHeapGraphNode.prototype.targetOfEdge):
+        (WebInspector.NativeHeapGraphNode.prototype.targetsOfAllEdges):
+        (WebInspector.NativeHeapGraphNode.prototype._firstEdgePoistion):
+        (WebInspector.NativeHeapGraphNode.prototype._afterLastEdgePosition):
+        (WebInspector.NativeHeapGraphNode.prototype._getStringField):
+        (WebInspector.NativeHeapGraphNode.prototype.toString):
+        (WebInspector.NativeHeapGraph):
+        (WebInspector.NativeHeapGraph.prototype.rootNodes):
+        (WebInspector.NativeHeapGraph.prototype._calculateNodeEdgeIndexes):
+        (WebInspector.NativeHeapGraph.prototype._addDummyNode):
+        (WebInspector.NativeMemoryProfileType.prototype.buttonClicked.didReceiveMemorySnapshot):
+        (WebInspector.NativeMemoryProfileType.prototype.buttonClicked):
+        * loader/cache/CachedImage.cpp:
+        (WebCore::CachedImage::reportMemoryUsage):
+        * loader/cache/CachedResource.cpp:
+        (WebCore::CachedResource::reportMemoryUsage):
+        * loader/cache/MemoryCache.cpp:
+        (WebCore::MemoryCache::reportMemoryUsage):
+        * platform/graphics/BitmapImage.cpp:
+        (WebCore::BitmapImage::reportMemoryUsage):
+        (WebCore::FrameData::reportMemoryUsage):
+        * platform/graphics/Image.cpp:
+        (WebCore::Image::reportMemoryUsage):
+        * platform/graphics/skia/MemoryInstrumentationSkia.cpp:
+        (reportMemoryUsage):
+
 2012-12-18  Eugene Klyuchnikov  <eustas@chromium.org>
 
         Web Inspector: Calculate "idle" time for CPU profiles.

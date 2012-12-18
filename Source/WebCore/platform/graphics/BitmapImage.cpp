@@ -35,6 +35,7 @@
 #include "Timer.h"
 #include <wtf/CurrentTime.h>
 #include <wtf/MemoryInstrumentationVector.h>
+#include <wtf/MemoryObjectInfo.h>
 #include <wtf/Vector.h>
 #include <wtf/text/WTFString.h>
 
@@ -576,21 +577,23 @@ Color BitmapImage::solidColor() const
 void BitmapImage::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
 {
     MemoryClassInfo info(memoryObjectInfo, this, PlatformMemoryTypes::Image);
+    memoryObjectInfo->setClassName("BitmapImage");
     Image::reportMemoryUsage(memoryObjectInfo);
-    info.addMember(m_source);
+    info.addMember(m_source, "m_source");
     info.addMember(m_frameTimer);
-    info.addMember(m_frames);
+    info.addMember(m_frames, "m_frames");
 }
 
 void FrameData::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
 {
     MemoryClassInfo info(memoryObjectInfo, this, PlatformMemoryTypes::Image);
+    memoryObjectInfo->setClassName("FrameData");
 #if OS(WINCE) && !PLATFORM(QT)
     info.addRawBuffer(m_frame.get(), m_frameBytes);
 #elif USE(SKIA)
-    info.addMember(m_frame);
+    info.addMember(m_frame, "m_frame");
 #else
-    info.addRawBuffer(m_frame, m_frameBytes);
+    info.addRawBuffer(m_frame, m_frameBytes, "m_frame");
 #endif
 }
 
