@@ -50,6 +50,8 @@ public:
     void pin();
     bool isPinned();
 
+    bool isOversize();
+
     unsigned liveBytes();
     void reportLiveBytes(JSCell*, unsigned);
     void didSurviveGC();
@@ -166,6 +168,11 @@ inline void CopiedBlock::pin()
 inline bool CopiedBlock::isPinned()
 {
     return m_isPinned;
+}
+
+inline bool CopiedBlock::isOversize()
+{
+    return region()->isCustomSize();
 }
 
 inline unsigned CopiedBlock::liveBytes()

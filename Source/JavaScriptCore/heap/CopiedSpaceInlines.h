@@ -47,9 +47,8 @@ inline bool CopiedSpace::contains(void* ptr, CopiedBlock*& result)
         result = block;
         return true;
     }
-    block = oversizeBlockFor(ptr);
-    result = block;
-    return contains(block);
+    result = 0;
+    return false;
 }
 
 inline void CopiedSpace::pin(CopiedBlock* block)
@@ -153,7 +152,7 @@ inline CheckedBoolean CopiedSpace::tryAllocate(size_t bytes, void** outPtr)
 {
     ASSERT(!m_heap->globalData()->isInitializingObject());
 
-    if (isOversize(bytes) || !m_allocator.tryAllocate(bytes, outPtr))
+    if (!m_allocator.tryAllocate(bytes, outPtr))
         return tryAllocateSlowCase(bytes, outPtr);
     
     ASSERT(*outPtr);
@@ -168,11 +167,6 @@ inline bool CopiedSpace::isOversize(size_t bytes)
 inline bool CopiedSpace::isPinned(void* ptr)
 {
     return blockFor(ptr)->m_isPinned;
-}
-
-inline CopiedBlock* CopiedSpace::oversizeBlockFor(void* ptr)
-{
-    return reinterpret_cast<CopiedBlock*>(reinterpret_cast<size_t>(ptr) & WTF::pageMask());
 }
 
 inline CopiedBlock* CopiedSpace::blockFor(void* ptr)

@@ -68,6 +68,7 @@ public:
     size_t blockSize() const { return m_blockSize; }
     bool isFull() const { return m_blocksInUse == m_totalBlocks; }
     bool isEmpty() const { return !m_blocksInUse; }
+    bool isCustomSize() const { return m_isCustomSize; }
 
     DeadBlock* allocate();
     void deallocate(void*);
@@ -81,6 +82,7 @@ private:
     size_t m_totalBlocks;
     size_t m_blocksInUse;
     size_t m_blockSize;
+    bool m_isCustomSize;
     Region* m_prev;
     Region* m_next;
     DoublyLinkedList<DeadBlock> m_deadBlocks;
@@ -101,7 +103,9 @@ inline Region* Region::createCustomSize(size_t blockSize, size_t blockAlignment)
     PageAllocationAligned allocation = PageAllocationAligned::allocate(blockSize, blockAlignment, OSAllocator::JSGCHeapPages);
     if (!static_cast<bool>(allocation))
         CRASH();
-    return new Region(allocation, blockSize, 1);
+    Region* region = new Region(allocation, blockSize, 1);
+    region->m_isCustomSize = true;
+    return region;
 }
 
 inline Region::Region(PageAllocationAligned& allocation, size_t blockSize, size_t totalBlocks)
@@ -110,6 +114,7 @@ inline Region::Region(PageAllocationAligned& allocation, size_t blockSize, size_
     , m_totalBlocks(totalBlocks)
     , m_blocksInUse(0)
     , m_blockSize(blockSize)
+    , m_isCustomSize(false)
     , m_prev(0)
     , m_next(0)
 {
@@ -300,6 +305,7 @@ template<typename T>
 inline void BlockAllocator::deallocateCustomSize(T* block)
 {
     Region* region = block->region();
+    ASSERT(region->isCustomSize());
     region->deallocate(block);
     delete region;
 }

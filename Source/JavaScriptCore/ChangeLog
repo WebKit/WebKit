@@ -1,3 +1,54 @@
+2012-12-18  Mark Hahnenberg  <mhahnenberg@apple.com>
+
+        Restrictions on oversize CopiedBlock allocations should be relaxed
+        https://bugs.webkit.org/show_bug.cgi?id=105339
+
+        Reviewed by Filip Pizlo.
+
+        Currently the DFG has a single branch in the inline allocation path for property/array storage where 
+        it checks to see if the number of bytes requested will fit in the current block. This does not match 
+        what the C++ allocation path does; it checks if the requested number of bytes is oversize, and then 
+        if it's not, it tries to fit it in the current block. The garbage collector assumes that ALL allocations 
+        that are greater than 16KB are in oversize blocks. Therefore, this mismatch can lead to crashes when 
+        the collector tries to perform some operation on a CopiedBlock.
+
+        To avoid adding an extra branch to the inline allocation path in the JIT, we should make it so that 
+        oversize blocks are allocated on the same alignment boundaries so that there is a single mask to find 
+        the block header of any CopiedBlock (rather than two, one for normal and one for oversize blocks), and 
+        we should figure out if a block is oversize by some other method than just whatever the JSObject says 
+        it is. One way we could record this info Region of the block, since we allocate a one-off Region for 
+        oversize blocks.
+
+        * heap/BlockAllocator.h:
+        (JSC::Region::isCustomSize): 
+        (Region):
+        (JSC::Region::createCustomSize):
+        (JSC::Region::Region):
+        (JSC::BlockAllocator::deallocateCustomSize):
+        * heap/CopiedBlock.h:
+        (CopiedBlock):
+        (JSC::CopiedBlock::isOversize): 
+        (JSC):
+        * heap/CopiedSpace.cpp:
+        (JSC::CopiedSpace::tryAllocateOversize):
+        (JSC::CopiedSpace::tryReallocate):
+        (JSC::CopiedSpace::tryReallocateOversize):
+        * heap/CopiedSpace.h:
+        (CopiedSpace): 
+        * heap/CopiedSpaceInlines.h:
+        (JSC::CopiedSpace::contains):
+        (JSC::CopiedSpace::tryAllocate):
+        (JSC):
+        * heap/CopyVisitor.h:
+        (CopyVisitor):
+        * heap/CopyVisitorInlines.h:
+        (JSC::CopyVisitor::checkIfShouldCopy):
+        (JSC::CopyVisitor::didCopy):
+        * heap/SlotVisitorInlines.h:
+        (JSC::SlotVisitor::copyLater):
+        * runtime/JSObject.cpp:
+        (JSC::JSObject::copyButterfly):
+
 2012-12-18  Joseph Pecoraro  <pecoraro@apple.com>
 
         [Mac] Add Build Phase to Check Headers for Inappropriate Macros (Platform.h macros)

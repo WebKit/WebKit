@@ -40,14 +40,11 @@ inline void CopyVisitor::visitCell(JSCell* cell)
     JSObject::copyBackingStore(cell, *this);
 }
 
-inline bool CopyVisitor::checkIfShouldCopy(void* oldPtr, size_t bytes)
+inline bool CopyVisitor::checkIfShouldCopy(void* oldPtr)
 {
-    if (CopiedSpace::isOversize(bytes))
+    CopiedBlock* block = CopiedSpace::blockFor(oldPtr);
+    if (block->isOversize() || block->isPinned())
         return false;
-
-    if (CopiedSpace::blockFor(oldPtr)->isPinned())
-        return false;
-
     return true;
 }
 
@@ -92,8 +89,8 @@ inline void CopyVisitor::doneCopying()
 
 inline void CopyVisitor::didCopy(void* ptr, size_t bytes)
 {
-    ASSERT(!CopiedSpace::isOversize(bytes));
     CopiedBlock* block = CopiedSpace::blockFor(ptr);
+    ASSERT(!block->isOversize());
     ASSERT(!block->isPinned());
 
     block->didEvacuateBytes(bytes);
