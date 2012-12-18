@@ -314,7 +314,7 @@ private:
     virtual void defaultEventHandler(Event*) OVERRIDE;
 
     typedef Vector<RefPtr<Element> > TrackMenuItems;
-    TrackMenuItems menuItems;
+    TrackMenuItems m_menuItems;
     MediaControls* m_controls;
     bool m_trackListHasChanged;
 };

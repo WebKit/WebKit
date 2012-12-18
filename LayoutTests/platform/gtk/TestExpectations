@@ -725,7 +725,8 @@ webkit.org/b/104648 fast/images/webgl-teximage2d.html [ Timeout ]
 Bug(GTK) fast/media/print-restores-previous-mediatype.html [ Timeout ]
 
 # GTK still has the CC toggle button, not the menu of tracks.
-webkit.org/b/101670 media/video-controls-captions-trackmenu.html [ Timeout ]
+webkit.org/b/101670 media/video-controls-captions-trackmenu.html [ Skip ]
+webkit.org/b/101670 media/video-controls-captions-trackmenu-sorted.html [ Skip ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Tests timing out

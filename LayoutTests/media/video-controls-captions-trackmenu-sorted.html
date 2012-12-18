@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Testing that the list of tracks is sorted</title>
+        <script src="media-controls.js"></script>
+        <script src="media-file.js"></script>
+        <script src="video-test.js"></script>
+        <script>
+            var captionsButtonCoordinates;
+
+            if (window.testRunner)
+                testRunner.dumpAsText();
+
+            function clickCCButton()
+            {
+                eventSender.mouseMoveTo(captionsButtonCoordinates[0], captionsButtonCoordinates[1]);
+                eventSender.mouseDown();
+                eventSender.mouseUp();
+            }
+
+            function startTest()
+            {
+                if (window.eventSender) {
+                    consoleWrite("<br>*** Set the user language preference.");
+                    run("internals.setUserPreferredLanguages(['en'])");
+
+                    try {
+                        captionsButtonCoordinates = mediaControlsButtonCoordinates(video, "toggle-closed-captions-button");
+                    } catch (exception) {
+                        failTest(exception.description);
+                        return;
+                    }
+                    clickCCButton();
+                    window.setTimeout(testSortedMenu, 100);
+                }
+            }
+
+            function testSortedMenu()
+            {
+                var trackListElement;
+                try {
+                    trackListElement = mediaControlsElement(internals.shadowRoot(video).firstChild, "-webkit-media-controls-closed-captions-track-list");
+                } catch (exception) {
+                    failTest(exception.description);
+                    return;
+                }
+                // Track list should have two <ul> elements.
+                var trackListSections = trackListElement.querySelectorAll("ul");
+                if (!trackListSections || trackListSections.length != 2) {
+                    failTest("There should be two ul elements in track list menu");
+                    return;
+                }
+                for (var i = 0; i < trackListSections.length; i++) {
+                    consoleWrite("<br>*** Test menu section " + i + ".");
+                    var lastTrackLabel = null;
+                    var trackListItems = trackListSections[i].querySelectorAll("li");
+                    if (!trackListItems || trackListItems.length != 5) {
+                        failTest("There should be five li elements in this section");
+                        return;
+                    }
+                    for (var j = 0; j < trackListItems.length; j++) {
+                        var item = trackListItems[j];
+                        if (j == 0)
+                            logResult(item.textContent == "Off", "First item should be labelled off");
+                        else {
+                            if (lastTrackLabel)
+                                logResult(item.textContent > lastTrackLabel, lastTrackLabel + " comes before " + item.textContent);
+                            else
+                                logResult(true, item.textContent + " is the first real item in the list");
+                            lastTrackLabel = item.textContent;
+                        }
+                    }
+                    consoleWrite("Menu section " + i + " was ok.<br>");
+                }
+                endTest();
+            }
+
+            function start()
+            {
+                findMediaElement();
+                waitForEvent('canplaythrough', startTest);
+            }
+        </script>
+    </head>
+
+    <body onload="start()">
+        <p>Test that captions and subtitles are sorted in the menu.</p>
+        <video width="500" height="300" controls>
+            <source src="content/test.mp4" type="video/mp4">
+            <source src="content/test.ogv" type="video/ogg">
+            <track label="c" kind="captions" src="track/captions-webvtt/captions-fast.vtt" srclang="ja">
+            <track label="b" kind="captions" src="track/captions-webvtt/captions-fast.vtt" srclang="en-au">
+            <track label="a" kind="captions" src="track/captions-webvtt/captions-fast.vtt" srclang="en">
+            <track label="d" kind="captions" src="track/captions-webvtt/captions-fast.vtt" srclang="ja">
+            <track label="b" kind="subtitles" src="track/captions-webvtt/captions-fast.vtt" srclang="ja">
+            <track label="a" kind="subtitles" src="track/captions-webvtt/captions-fast.vtt" srclang="en-au">
+            <track label="c" kind="subtitles" src="track/captions-webvtt/captions-fast.vtt" srclang="en">
+            <track label="d" kind="subtitles" src="track/captions-webvtt/captions-fast.vtt" srclang="ja">
+        </video>
+    </body>
+</html>
+

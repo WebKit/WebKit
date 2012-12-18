@@ -1,3 +1,24 @@
+2012-12-17  Dean Jackson  <dino@apple.com>
+
+        Track menu should be sorted
+        https://bugs.webkit.org/show_bug.cgi?id=105229
+
+        Reviewed by Eric Carlson.
+
+        Make sure that the <li> elements in the track menu are correctly
+        sorted as they are built. This uses insertion sort, but it shouldn't
+        be horrible given that we don't expect a huge number of tracks.
+
+        Test: media/video-controls-captions-trackmenu-sorted.html
+
+        * html/shadow/MediaControlElements.cpp:
+        (WebCore::MediaControlClosedCaptionsTrackListElement::updateDisplay):
+        (WebCore::insertTextTrackMenuItemIntoSortedContainer): New function that calls insertBefore with
+        the correct parameters to ensure the <ul> is correctly sorted.
+        (WebCore::MediaControlClosedCaptionsTrackListElement::rebuildTrackListMenu):
+        * html/shadow/MediaControlElements.h:
+        (MediaControlClosedCaptionsTrackListElement): Rename menuItems to m_menuItems for consistency.
+
 2012-12-17  Matthew Dempsky  <mdempsky@google.com>
 
         Regression causing DOM objects to have unstable NPObject* references with v8 bindings

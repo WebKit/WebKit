@@ -803,8 +803,8 @@ void MediaControlClosedCaptionsTrackListElement::updateDisplay()
         rebuildTrackListMenu();
     
     bool captionsVisible = mediaElement->closedCaptionsVisible();
-    for (unsigned i = 0, length = menuItems.size(); i < length; ++i) {
-        RefPtr<Element> trackItem = menuItems[i];
+    for (unsigned i = 0, length = m_menuItems.size(); i < length; ++i) {
+        RefPtr<Element> trackItem = m_menuItems[i];
         int trackIndex = trackListIndexForElement(trackItem.get());
         if (trackIndex != HTMLMediaElement::textTracksIndexNotFound()) {
             if (trackIndex == HTMLMediaElement::textTracksOffIndex()) {
@@ -826,12 +826,35 @@ void MediaControlClosedCaptionsTrackListElement::updateDisplay()
 #endif
 }
 
+#if ENABLE(VIDEO_TRACK)
+static void insertTextTrackMenuItemIntoSortedContainer(RefPtr<Element>& item, RefPtr<Element>& container)
+{
+    // The container will always have the "Off" entry already present and it
+    // should remain at the start of the list.
+    ASSERT(container->childNodeCount() > 0);
+    ASSERT(item->childNodeCount() == 1); // Each item should have a single text node child for the label.
+    String itemLabel = toText(item->firstChild())->wholeText();
+
+    // This is an insertion sort :( However, there shouldn't be a horrible number of text track items.
+    for (int i = 1, numChildNodes = container->childNodeCount(); i < numChildNodes; ++i) {
+        Node* child = container->childNode(i);
+        ASSERT(child->childNodeCount() == 1); // Each item should have a single text node child for the label.
+        String childLabel = toText(child->firstChild())->wholeText();
+        if (codePointCompareLessThan(itemLabel, childLabel)) {
+            container->insertBefore(item, child);
+            return;
+        }
+    }
+    container->appendChild(item);
+}
+#endif
+
 void MediaControlClosedCaptionsTrackListElement::rebuildTrackListMenu()
 {
 #if ENABLE(VIDEO_TRACK)
     // Remove any existing content.
     removeChildren();
-    menuItems.clear();
+    m_menuItems.clear();
 
     m_trackListHasChanged = false;
 
@@ -853,27 +876,27 @@ void MediaControlClosedCaptionsTrackListElement::rebuildTrackListMenu()
     RefPtr<Element> captionsHeader = doc->createElement(h3Tag, ASSERT_NO_EXCEPTION);
     captionsHeader->appendChild(doc->createTextNode("Closed Captions"));
     captionsSection->appendChild(captionsHeader);
-    RefPtr<Element> captionsList = doc->createElement(ulTag, ASSERT_NO_EXCEPTION);
+    RefPtr<Element> captionsMenuList = doc->createElement(ulTag, ASSERT_NO_EXCEPTION);
 
     RefPtr<Element> subtitlesSection = doc->createElement(sectionTag, ASSERT_NO_EXCEPTION);
     RefPtr<Element> subtitlesHeader = doc->createElement(h3Tag, ASSERT_NO_EXCEPTION);
     subtitlesHeader->appendChild(doc->createTextNode("Subtitles"));
     subtitlesSection->appendChild(subtitlesHeader);
-    RefPtr<Element> subtitlesList = doc->createElement(ulTag, ASSERT_NO_EXCEPTION);
+    RefPtr<Element> subtitlesMenuList = doc->createElement(ulTag, ASSERT_NO_EXCEPTION);
 
     RefPtr<Element> trackItem;
 
     trackItem = doc->createElement(liTag, ASSERT_NO_EXCEPTION);
     trackItem->appendChild(doc->createTextNode("Off"));
     trackItem->setAttribute(trackIndexAttributeName(), textTracksOffAttrValue, ASSERT_NO_EXCEPTION);
-    captionsList->appendChild(trackItem);
-    menuItems.append(trackItem);
+    captionsMenuList->appendChild(trackItem);
+    m_menuItems.append(trackItem);
 
     trackItem = doc->createElement(liTag, ASSERT_NO_EXCEPTION);
     trackItem->appendChild(doc->createTextNode("Off"));
     trackItem->setAttribute(trackIndexAttributeName(), textTracksOffAttrValue, ASSERT_NO_EXCEPTION);
-    subtitlesList->appendChild(trackItem);
-    menuItems.append(trackItem);
+    subtitlesMenuList->appendChild(trackItem);
+    m_menuItems.append(trackItem);
 
     bool hasCaptions = false;
     bool hasSubtitles = false;
@@ -893,21 +916,21 @@ void MediaControlClosedCaptionsTrackListElement::rebuildTrackListMenu()
             labelText = displayNameForLanguageLocale(track->language());
         if (labelText.isNull() || labelText.isEmpty())
             labelText = "No Label";
+        trackItem->appendChild(doc->createTextNode(labelText));
 
         if (track->kind() == track->captionsKeyword()) {
             hasCaptions = true;
-            captionsList->appendChild(trackItem);
+            insertTextTrackMenuItemIntoSortedContainer(trackItem, captionsMenuList);
         }
         if (track->kind() == track->subtitlesKeyword()) {
             hasSubtitles = true;
-            subtitlesList->appendChild(trackItem);
+            insertTextTrackMenuItemIntoSortedContainer(trackItem, subtitlesMenuList);
         }
-        trackItem->appendChild(doc->createTextNode(labelText));
-        menuItems.append(trackItem);
+        m_menuItems.append(trackItem);
     }
 
-    captionsSection->appendChild(captionsList);
-    subtitlesSection->appendChild(subtitlesList);
+    captionsSection->appendChild(captionsMenuList);
+    subtitlesSection->appendChild(subtitlesMenuList);
 
     if (hasCaptions)
         appendChild(captionsSection);

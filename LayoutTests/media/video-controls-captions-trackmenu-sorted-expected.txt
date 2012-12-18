@@ -1,0 +1,26 @@
+Test that captions and subtitles are sorted in the menu.
+
+EVENT(canplaythrough)
+
+*** Set the user language preference.
+RUN(internals.setUserPreferredLanguages(['en']))
+
+*** Test menu section 0.
+First item should be labelled off OK
+a is the first real item in the list OK
+a comes before b OK
+b comes before c OK
+c comes before d OK
+Menu section 0 was ok.
+
+
+*** Test menu section 1.
+First item should be labelled off OK
+a is the first real item in the list OK
+a comes before b OK
+b comes before c OK
+c comes before d OK
+Menu section 1 was ok.
+
+END OF TEST
+
