@@ -1,3 +1,35 @@
+2012-12-17  Yongxin Dai  <yodai@rim.com>
+
+        [BlackBerry] Prevent selection handles from being rendered after selection was canceled
+        https://bugs.webkit.org/show_bug.cgi?id=105203
+
+        Reviewed by Rob Buis.
+
+        PR255438
+
+        Here is the explanation why handles occur without selection overlay.
+        1. Still touch at current selection (Selection A) initiated by touch-hold
+        2. Selection expanding (Selection B) is ongoing
+        3. Finger moves. In UI thread:
+            1) SelectionHander::cancelSelection() gets called.
+                a. Selection A is canceled immediately (clear selecting state and hide handles)
+                b. Post a request to webkit thread to cancel Selection A.
+        4. In webkit thread:
+            1) Selection B becomes active selection
+                a. Show selection overlay for Selection B
+                b. Dispatch Selection B to UI thread to show handles
+            2) Handle the request of canceling Selection A. The selection A was gone. Instead the active Selection B is canceled.
+            The visual change is Selection overlay for Selection B becomes invisible..
+        5. In UI thread:
+            Selection B is rendered. The start handle and the end handle occur without selection overlay.
+
+        The fix is to notify client with a empty selection whenever the selection is canceled in webkit thread.
+
+        Reviewed Internally by Mike Fenton.
+
+        * WebKitSupport/SelectionHandler.cpp:
+        (BlackBerry::WebKit::SelectionHandler::cancelSelection):
+
 2012-12-17  Yong Li  <yoli@rim.com>
 
         [BlackBerry] Null pointer access in compositorDrawsRootLayer

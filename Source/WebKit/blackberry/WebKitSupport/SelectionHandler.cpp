@@ -85,6 +85,10 @@ void SelectionHandler::cancelSelection()
 
     if (m_webPage->m_selectionOverlay)
         m_webPage->m_selectionOverlay->hide();
+    // Notify client with empty selection to ensure the handles are removed if
+    // rendering happened prior to processing on webkit thread
+    m_webPage->m_client->notifySelectionDetailsChanged(WebCore::IntRect(DOMSupport::InvalidPoint, WebCore::IntSize()),
+        WebCore::IntRect(DOMSupport::InvalidPoint, WebCore::IntSize()), IntRectRegion());
 
     SelectionLog(Platform::LogLevelInfo, "SelectionHandler::cancelSelection");
 
