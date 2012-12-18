@@ -1028,6 +1028,8 @@ namespace JSC {
         // to avoid thrashing.
         unsigned reoptimizationRetryCounter() const;
         void countReoptimization();
+
+        int32_t codeTypeThresholdMultiplier() const;
         
         int32_t counterValueForOptimizeAfterWarmUp();
         int32_t counterValueForOptimizeAfterLongWarmUp();

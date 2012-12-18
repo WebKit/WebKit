@@ -2944,6 +2944,14 @@ void CodeBlock::countReoptimization()
         m_reoptimizationRetryCounter = Options::reoptimizationRetryCounterMax();
 }
 
+int32_t CodeBlock::codeTypeThresholdMultiplier() const
+{
+    if (codeType() == EvalCode)
+        return Options::evalThresholdMultiplier();
+    
+    return 1;
+}
+
 double CodeBlock::optimizationThresholdScalingFactor()
 {
     // This expression arises from doing a least-squares fit of
@@ -3014,9 +3022,9 @@ double CodeBlock::optimizationThresholdScalingFactor()
     
     double result = d + a * sqrt(instructionCount + b) + c * instructionCount;
 #if ENABLE(JIT_VERBOSE_OSR)
-    dataLog(*this, ": instruction count is ", instructionCount, ", scaling execution counter by ", result, "\n");
+    dataLog(*this, ": instruction count is ", instructionCount, ", scaling execution counter by ", result, " * ", codeTypeThresholdMultiplier(), "\n");
 #endif
-    return result;
+    return result * codeTypeThresholdMultiplier();
 }
 
 static int32_t clipThreshold(double threshold)
@@ -3102,12 +3110,12 @@ uint32_t CodeBlock::adjustedExitCountThreshold(uint32_t desiredThreshold)
 
 uint32_t CodeBlock::exitCountThresholdForReoptimization()
 {
-    return adjustedExitCountThreshold(Options::osrExitCountForReoptimization());
+    return adjustedExitCountThreshold(Options::osrExitCountForReoptimization() * codeTypeThresholdMultiplier());
 }
 
 uint32_t CodeBlock::exitCountThresholdForReoptimizationFromLoop()
 {
-    return adjustedExitCountThreshold(Options::osrExitCountForReoptimizationFromLoop());
+    return adjustedExitCountThreshold(Options::osrExitCountForReoptimizationFromLoop() * codeTypeThresholdMultiplier());
 }
 
 bool CodeBlock::shouldReoptimizeNow()

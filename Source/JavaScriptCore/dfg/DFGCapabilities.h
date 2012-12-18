@@ -49,10 +49,6 @@ bool mightInlineFunctionForConstruct(CodeBlock*);
 // Opcode checking.
 inline bool canInlineResolveOperations(OpcodeID opcode, ResolveOperations* operations)
 {
-    // Don't try to inline a resolve for which we have no information
-    if (operations->isEmpty())
-        return false;
-
     for (unsigned i = 0; i < operations->size(); i++) {
         switch (operations->data()[i].m_operation) {
         case ResolveOperation::ReturnGlobalObjectAsBase:
@@ -68,13 +64,18 @@ inline bool canInlineResolveOperations(OpcodeID opcode, ResolveOperations* opera
             continue;
 
         case ResolveOperation::Fail:
-            // The DFG can handle generic cases of failed resolves
-            ASSERT(opcode != op_resolve_base_to_global_dynamic);
-            ASSERT(opcode != op_resolve_base_to_scope_with_top_scope_check);
-            ASSERT(opcode != op_resolve_base_to_global);
-            ASSERT(opcode != op_resolve_base_to_scope);
-            if (opcode != op_resolve && opcode != op_resolve_base)
+            switch (opcode) {
+            case op_resolve_base_to_global_dynamic:
+            case op_resolve_base_to_scope_with_top_scope_check:
+            case op_resolve_base_to_global:
+            case op_resolve_base_to_scope:
+                CRASH();
+            case op_resolve_with_base:
+            case op_resolve_with_this:
                 return false;
+            default:
+                continue;
+            }
 
         case ResolveOperation::SkipTopScopeNode:
             // We don't inline code blocks that create activations. Creation of

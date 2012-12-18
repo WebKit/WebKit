@@ -95,6 +95,8 @@ namespace JSC {
     v(int32, executionCounterIncrementForLoop, 1) \
     v(int32, executionCounterIncrementForReturn, 15) \
     \
+    v(int32, evalThresholdMultiplier, 10) \
+    \
     v(bool, randomizeExecutionCountsBetweenCheckpoints, false) \
     v(int32, maximumExecutionCountsBetweenCheckpoints, 1000) \
     \

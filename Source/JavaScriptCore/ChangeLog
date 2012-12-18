@@ -1,5 +1,44 @@
 2012-12-18  Filip Pizlo  <fpizlo@apple.com>
 
+        SunSpider/date-format-tofte shouldn't compile each of the tiny worthless eval's only to OSR exit in the prologue every time
+        https://bugs.webkit.org/show_bug.cgi?id=105335
+
+        Reviewed by Geoffrey Garen.
+
+        The first thing I did was restructure the logic of canInlineResolveOperations(),
+        because I didn't understand it. This was relevant because the OSR exits are
+        caused by a resolve that the DFG cannot handle.
+        
+        I was then going to make it so that we didn't compile the resolve at all, but
+        realized that this would not be the best fix: it didn't seem sensible to me to
+        be optimizing these evals after only 60 invocations. Evals should have a higher
+        threshold, since they often contain code for which the baseline JIT does a
+        pretty good job already (if all you've got is a single heap access or a single
+        hard-to-inline call, then the baseline JIT has got you covered), and typically
+        if we see one eval code block we expect to see more (from the same eval site):
+        so our typical low threshold could lead to a *lot* of compilation. As such, the
+        main effect of this patch is to introduce an evalThresholdMultiplier, which is
+        now set to 10.
+        
+        This is a ~5% speed-up on data-format-tofte. No regressions anywhere as far as
+        I can see.
+
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::codeTypeThresholdMultiplier):
+        (JSC):
+        (JSC::CodeBlock::optimizationThresholdScalingFactor):
+        (JSC::CodeBlock::exitCountThresholdForReoptimization):
+        (JSC::CodeBlock::exitCountThresholdForReoptimizationFromLoop):
+        * bytecode/CodeBlock.h:
+        (CodeBlock):
+        * dfg/DFGCapabilities.h:
+        (JSC::DFG::canInlineResolveOperations):
+        * dfg/DFGOSRExitCompiler.cpp:
+        * runtime/Options.h:
+        (JSC):
+
+2012-12-18  Filip Pizlo  <fpizlo@apple.com>
+
         Convert indexingTypeToString to IndexingTypeDump
         https://bugs.webkit.org/show_bug.cgi?id=105351
 
