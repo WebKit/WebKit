@@ -38,7 +38,7 @@ using namespace WebCore;
 
 namespace TestWebKitAPI {
 
-TEST(WebCore, LayoutUnitInt)
+TEST(WebCoreLayoutUnit, LayoutUnitInt)
 {
     ASSERT_EQ(LayoutUnit(INT_MIN).toInt(), intMinForLayoutUnit);
     ASSERT_EQ(LayoutUnit(INT_MIN / 2).toInt(), intMinForLayoutUnit);
@@ -64,7 +64,7 @@ TEST(WebCore, LayoutUnitInt)
     ASSERT_EQ(LayoutUnit(INT_MAX).toInt(), intMaxForLayoutUnit);
 }
 
-TEST(WebCore, LayoutUnitFloat)
+TEST(WebCoreLayoutUnit, LayoutUnitFloat)
 {
     const float tolerance = 1.0f / kFixedPointDenominator;
     ASSERT_FLOAT_EQ(LayoutUnit(1.0f).toFloat(), 1.0f);
@@ -79,7 +79,7 @@ TEST(WebCore, LayoutUnitFloat)
     ASSERT_NEAR(LayoutUnit(-345634).toFloat(), -345634.0f, tolerance);    
 }
 
-TEST(WebCore, LayoutUnitRounding)
+TEST(WebCoreLayoutUnit, LayoutUnitRounding)
 {
     ASSERT_EQ(LayoutUnit(-1.5f).round(), -2);
     ASSERT_EQ(LayoutUnit(-1.49f).round(), -1);
@@ -98,7 +98,7 @@ TEST(WebCore, LayoutUnitRounding)
     ASSERT_EQ(LayoutUnit(1.5f).round(), 2);
 }
 
-TEST(WebCore, LayoutUnitSnapSizeToPixel)
+TEST(WebCoreLayoutUnit, LayoutUnitSnapSizeToPixel)
 {
     ASSERT_EQ(snapSizeToPixel(LayoutUnit(1), LayoutUnit(0)), 1);
     ASSERT_EQ(snapSizeToPixel(LayoutUnit(1), LayoutUnit(0.5)), 1);
@@ -120,7 +120,7 @@ TEST(WebCore, LayoutUnitSnapSizeToPixel)
     ASSERT_EQ(snapSizeToPixel(LayoutUnit(intMinForLayoutUnit), LayoutUnit(-0.3)), intMinForLayoutUnit);
 }
 
-TEST(WebCore, LayoutUnitMultiplication)
+TEST(WebCoreLayoutUnit, LayoutUnitMultiplication)
 {
     ASSERT_EQ((LayoutUnit(1) * LayoutUnit(1)).toInt(), 1);
     ASSERT_EQ((LayoutUnit(1) * LayoutUnit(2)).toInt(), 2);
@@ -154,7 +154,7 @@ TEST(WebCore, LayoutUnitMultiplication)
     ASSERT_EQ((LayoutUnit(quarterMax) * LayoutUnit(5)).toInt(), intMaxForLayoutUnit);
 }
 
-TEST(WebCore, LayoutUnitDivision)
+TEST(WebCoreLayoutUnit, LayoutUnitDivision)
 {
     ASSERT_EQ((LayoutUnit(1) / LayoutUnit(1)).toInt(), 1);
     ASSERT_EQ((LayoutUnit(1) / LayoutUnit(2)).toInt(), 0);
