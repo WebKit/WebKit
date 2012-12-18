@@ -162,8 +162,7 @@ max 548000 bytes
 
     def run_test(self, test_name):
         runner, port = self.create_runner()
-        driver = MainTest.TestDriver()
-        return runner._run_single_test(ChromiumStylePerfTest(port, test_name, runner._host.filesystem.join('some-dir', test_name)), driver)
+        return runner._run_single_test(ChromiumStylePerfTest(port, test_name, runner._host.filesystem.join('some-dir', test_name)))
 
     def test_run_passing_test(self):
         self.assertTrue(self.run_test('pass.html'))
@@ -223,26 +222,6 @@ max 548000 bytes
         unexpected_result_count = runner._run_tests_set(tests, port)
 
         self.assertEqual(TestDriverWithStopCount.stop_count, 6)
-
-    def test_run_test_pause_before_testing(self):
-        class TestDriverWithStartCount(MainTest.TestDriver):
-            start_count = 0
-
-            def start(self):
-                TestDriverWithStartCount.start_count += 1
-
-        runner, port = self.create_runner(args=["--pause-before-testing"], driver_class=TestDriverWithStartCount)
-        tests = self._tests_for_runner(runner, ['inspector/pass.html'])
-
-        output = OutputCapture()
-        output.capture_output()
-        try:
-            unexpected_result_count = runner._run_tests_set(tests, port)
-            self.assertEqual(TestDriverWithStartCount.start_count, 1)
-        finally:
-            stdout, stderr, log = output.restore_output()
-        self.assertEqual(self.normalizeFinishedTime(log),
-            "Ready to run test?\nRunning inspector/pass.html (1 of 1)\nRESULT group_name: test_name= 42 ms\nFinished: 0.1 s\n\n")
 
     def test_run_test_set_for_parser_tests(self):
         runner, port = self.create_runner()

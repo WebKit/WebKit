@@ -53,29 +53,36 @@ _log = logging.getLogger(__name__)
 
 
 class PerfTest(object):
-    def __init__(self, port, test_name, path_or_url):
+    def __init__(self, port, test_name, test_path):
         self._port = port
         self._test_name = test_name
-        self._path_or_url = path_or_url
+        self._test_path = test_path
 
     def test_name(self):
         return self._test_name
 
-    def path_or_url(self):
-        return self._path_or_url
+    def test_path(self):
+        return self._test_path
 
     def prepare(self, time_out_ms):
         return True
 
-    def run(self, driver, time_out_ms):
-        output = self.run_single(driver, self.path_or_url(), time_out_ms)
+    def run(self, time_out_ms):
+        driver = self._port.create_driver(worker_number=0, no_timeout=True)
+        try:
+            return self._run_with_driver(driver, time_out_ms)
+        finally:
+            driver.stop()
+
+    def _run_with_driver(self, driver, time_out_ms):
+        output = self.run_single(driver, self.test_path(), time_out_ms)
         self._filter_stderr(output)
         if self.run_failed(output):
             return None
         return self.parse_output(output)
 
-    def run_single(self, driver, path_or_url, time_out_ms, should_run_pixel_test=False):
-        return driver.run_test(DriverInput(path_or_url, time_out_ms, image_hash=None, should_run_pixel_test=should_run_pixel_test), stop_when_done=False)
+    def run_single(self, driver, test_path, time_out_ms, should_run_pixel_test=False):
+        return driver.run_test(DriverInput(test_path, time_out_ms, image_hash=None, should_run_pixel_test=should_run_pixel_test), stop_when_done=False)
 
     def run_failed(self, output):
         if output.text == None or output.error:
@@ -208,8 +215,8 @@ class PerfTest(object):
 class ChromiumStylePerfTest(PerfTest):
     _chromium_style_result_regex = re.compile(r'^RESULT\s+(?P<name>[^=]+)\s*=\s+(?P<value>\d+(\.\d+)?)\s*(?P<unit>\w+)$')
 
-    def __init__(self, port, test_name, path_or_url):
-        super(ChromiumStylePerfTest, self).__init__(port, test_name, path_or_url)
+    def __init__(self, port, test_name, test_path):
+        super(ChromiumStylePerfTest, self).__init__(port, test_name, test_path)
 
     def parse_output(self, output):
         test_failed = False
@@ -229,14 +236,14 @@ class ChromiumStylePerfTest(PerfTest):
 class PageLoadingPerfTest(PerfTest):
     _FORCE_GC_FILE = 'resources/force-gc.html'
 
-    def __init__(self, port, test_name, path_or_url):
-        super(PageLoadingPerfTest, self).__init__(port, test_name, path_or_url)
+    def __init__(self, port, test_name, test_path):
+        super(PageLoadingPerfTest, self).__init__(port, test_name, test_path)
         self.force_gc_test = self._port.host.filesystem.join(self._port.perf_tests_dir(), self._FORCE_GC_FILE)
 
-    def run_single(self, driver, path_or_url, time_out_ms, should_run_pixel_test=False):
+    def run_single(self, driver, test_path, time_out_ms, should_run_pixel_test=False):
         # Force GC to prevent pageload noise. See https://bugs.webkit.org/show_bug.cgi?id=98203
         super(PageLoadingPerfTest, self).run_single(driver, self.force_gc_test, time_out_ms, False)
-        return super(PageLoadingPerfTest, self).run_single(driver, path_or_url, time_out_ms, should_run_pixel_test)
+        return super(PageLoadingPerfTest, self).run_single(driver, test_path, time_out_ms, should_run_pixel_test)
 
     def calculate_statistics(self, values):
         sorted_values = sorted(values)
@@ -258,12 +265,12 @@ class PageLoadingPerfTest(PerfTest):
             'stdev': math.sqrt(squareSum / (len(sorted_values) - 1))}
         return result
 
-    def run(self, driver, time_out_ms):
+    def _run_with_driver(self, driver, time_out_ms):
         results = {}
         results.setdefault(self.test_name(), {'unit': 'ms', 'values': []})
 
         for i in range(0, 20):
-            output = self.run_single(driver, self.path_or_url(), time_out_ms)
+            output = self.run_single(driver, self.test_path(), time_out_ms)
             if not output or self.run_failed(output):
                 return None
             if i == 0:
@@ -325,8 +332,8 @@ class ReplayServer(object):
 
 
 class ReplayPerfTest(PageLoadingPerfTest):
-    def __init__(self, port, test_name, path_or_url):
-        super(ReplayPerfTest, self).__init__(port, test_name, path_or_url)
+    def __init__(self, port, test_name, test_path):
+        super(ReplayPerfTest, self).__init__(port, test_name, test_path)
 
     def _start_replay_server(self, archive, record):
         try:
@@ -339,11 +346,11 @@ class ReplayPerfTest(PageLoadingPerfTest):
 
     def prepare(self, time_out_ms):
         filesystem = self._port.host.filesystem
-        path_without_ext = filesystem.splitext(self.path_or_url())[0]
+        path_without_ext = filesystem.splitext(self.test_path())[0]
 
         self._archive_path = filesystem.join(path_without_ext + '.wpr')
         self._expected_image_path = filesystem.join(path_without_ext + '-expected.png')
-        self._url = filesystem.read_text_file(self.path_or_url()).split('\n')[0]
+        self._url = filesystem.read_text_file(self.test_path()).split('\n')[0]
 
         if filesystem.isfile(self._archive_path) and filesystem.isfile(self._expected_image_path):
             _log.info("Replay ready for %s" % self._archive_path)

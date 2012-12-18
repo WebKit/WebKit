@@ -169,7 +169,7 @@ class TestPageLoadingPerfTest(unittest.TestCase):
         output_capture = OutputCapture()
         output_capture.capture_output()
         try:
-            self.assertEqual(test.run(driver, None),
+            self.assertEqual(test._run_with_driver(driver, None),
                 {'some-test': {'max': 20000, 'avg': 11000.0, 'median': 11000, 'stdev': 5627.314338711378, 'min': 2000, 'unit': 'ms',
                     'values': [i * 1000 for i in range(2, 21)]}})
         finally:
@@ -187,7 +187,7 @@ class TestPageLoadingPerfTest(unittest.TestCase):
         output_capture = OutputCapture()
         output_capture.capture_output()
         try:
-            self.assertEqual(test.run(driver, None),
+            self.assertEqual(test._run_with_driver(driver, None),
                 {'some-test': {'max': 20000, 'avg': 11000.0, 'median': 11000, 'stdev': 5627.314338711378, 'min': 2000, 'unit': 'ms',
                     'values': [i * 1000 for i in range(2, 21)]},
                  'some-test:Malloc': {'max': 10, 'avg': 10.0, 'median': 10, 'min': 10, 'stdev': 0.0, 'unit': 'bytes',
@@ -209,7 +209,7 @@ class TestPageLoadingPerfTest(unittest.TestCase):
             port = MockPort()
             test = PageLoadingPerfTest(port, 'some-test', '/path/some-dir/some-test')
             driver = TestPageLoadingPerfTest.MockDriver([1, 2, 3, 4, 5, 6, 7, 'some error', 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20], test)
-            self.assertEqual(test.run(driver, None), None)
+            self.assertEqual(test._run_with_driver(driver, None), None)
         finally:
             actual_stdout, actual_stderr, actual_logs = output_capture.restore_output()
         self.assertEqual(actual_stdout, '')

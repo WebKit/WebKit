@@ -98,8 +98,6 @@ class PerfTestsRunner(object):
                 help="Path to the directory under which build files are kept (should not include configuration)"),
             optparse.make_option("--time-out-ms", default=600 * 1000,
                 help="Set the timeout for each test"),
-            optparse.make_option("--pause-before-testing", dest="pause_before_testing", action="store_true", default=False,
-                help="Pause before running the tests to let user attach a performance monitor."),
             optparse.make_option("--no-results", action="store_false", dest="generate_results", default=True,
                 help="Do no generate results JSON and results page."),
             optparse.make_option("--output-json-path", action='callback', callback=_expand_path, type="str",
@@ -316,30 +314,19 @@ class PerfTestsRunner(object):
         driver = None
 
         for test in tests:
-            driver = port.create_driver(worker_number=0, no_timeout=True)
-
-            if self._options.pause_before_testing:
-                driver.start()
-                if not self._host.user.confirm("Ready to run test?"):
-                    driver.stop()
-                    return unexpected
-
             _log.info('Running %s (%d of %d)' % (test.test_name(), expected + unexpected + 1, len(tests)))
-            if self._run_single_test(test, driver):
+            if self._run_single_test(test):
                 expected = expected + 1
             else:
                 unexpected = unexpected + 1
 
             _log.info('')
 
-            driver.stop()
-
         return unexpected
 
-    def _run_single_test(self, test, driver):
+    def _run_single_test(self, test):
         start_time = time.time()
-
-        new_results = test.run(driver, self._options.time_out_ms)
+        new_results = test.run(self._options.time_out_ms)
         if new_results:
             self._results.update(new_results)
         else:
