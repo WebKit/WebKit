@@ -51,6 +51,8 @@
 
                     { "name": "google-windows-1", "platform": "chromium-win" },
                     { "name": "google-windows-2", "platform": "chromium-win" },
+                    { "name": "google-windows-3", "platform": "chromium-win" },
+                    { "name": "google-windows-4", "platform": "chromium-win" },
                     { "name": "google-windows-perf", "platform": "chromium-win" },
                     { "name": "google-mac-1", "platform": "chromium-mac" },
                     { "name": "google-mac-2", "platform": "chromium-mac" },
@@ -252,12 +254,12 @@
                       "name": "Chromium Win Release", "type": "Build", "builddir": "chromium-win-release",
                       "platform": "chromium-win", "configuration": "release", "architectures": ["i386"],
                       "triggers": ["chromium-win-release-tests", "chromium-win-perf-tests"],
-                      "slavenames": ["google-windows-1"]
+                      "slavenames": ["google-windows-1", "google-windows-3"]
                     },
                     {
                       "name": "Chromium Win Release (Tests)", "type": "Test", "builddir": "chromium-win-release-tests",
                       "platform": "chromium-win", "configuration": "release", "architectures": ["i386"],
-                      "slavenames": ["google-windows-2"]
+                      "slavenames": ["google-windows-2", "google-windows-4"]
                     },
                     {
                       "name": "Chromium Win Release (Perf)", "type": "DownloadAndPerfTest", "builddir": "chromium-win-perf-tests",
