@@ -1,3 +1,35 @@
+2012-12-18  Bear Travis  <betravis@adobe.com>
+
+        [CSS Exclusions] Blocks should not re-use their parent's ExclusionShapeInsideInfo
+        if they participate in inline layout
+        https://bugs.webkit.org/show_bug.cgi?id=104582
+
+        Reviewed by Julien Chaffraix.
+
+        Blocks that participate in inline layout should not re-use a parent's
+        ExclusionShapeInsideInfo, as the parent and child would both use the info for
+        layout at the same time. This patch alters LayoutState to not include
+        ExclusionShapeInsideInfo if the current block participates in inline layout (ie,
+        it is a float, inline-block, or inline-table).
+
+        Test: fast/exclusions/shape-inside/shape-inside-recursive-layout.html
+
+        * rendering/ExclusionShapeInsideInfo.h:
+        (WebCore::ExclusionShapeInsideInfo::ownerBlock): Return the block associated with
+        the shape-inside style.
+        * rendering/LayoutState.cpp:
+        (WebCore::LayoutState::LayoutState): Do not re-use ExclusionShapeInsideInfo
+        on a block that participates in inline layout (floats and inline blocks).
+        * rendering/RenderBlock.h:
+        (WebCore::RenderBlock::allowsExclusionShapeInsideInfoSharing): Returns whether the
+        block can re-use an ExclusionShapeInsideInfo from its parent block.
+        * rendering/RenderBlockLineLayout.cpp:
+        (WebCore::RenderBlock::layoutRunsAndFloatsInRange): Adding an assert to make sure
+        we do not overwrite ExclusionShapeInsideInfo's state during a recursive layout.
+        * rendering/RenderView.h:
+        (WebCore::RenderView::pushLayoutState): Push a new LayoutState in the case that
+        ExclusionShapeInsideInfo exists but should not be propagated.
+
 2012-12-18  Tony Chang  <tony@chromium.org>
 
         REGRESSION(r136324): flex items with percent heights not resizing

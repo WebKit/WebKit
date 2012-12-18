@@ -102,6 +102,7 @@ public:
     void dirtyShapeSize() { m_shapeSizeDirty = true; }
 
     LayoutUnit logicalLineTop() const { return m_lineTop; }
+    RenderBlock* ownerBlock() const { return m_block; }
 
 private:
     ExclusionShapeInsideInfo(RenderBlock*);

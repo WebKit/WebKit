@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src='../resources/simple-rectangle.js'></script>
+<style id='stylesheet'>
+.content {
+    font: 50px/1 Ahem, sans-serif;
+    color: green;
+    word-break: break-all;
+    width: 100px;
+    height: 100px;
+    margin: 0;
+    padding: 0;
+}
+#inline-block * {
+    display: inline-block;
+}
+#float * {
+    float: left;
+}
+#list ul {
+    display: inline-block;
+    list-style: none;
+}
+#table table {
+    display: inline-table;
+    border-collapse: collapse;
+}
+#table tr {
+    dispay: inline-table;
+}
+#table td, #table tr {
+    padding: 0; margin: 0;
+}
+#old-flexbox {
+    display: -webkit-inline-box;
+}
+#new-flexbox {
+    display: -webkit-inline-flex;
+}
+#grid {
+    display: -webkit-inline-grid;
+    -webkit-grid-rows: 100px;
+    -webkit-grid-columns: 100px;
+}
+#grid > .content {
+    -webkit-grid-row: 1;
+    -webkit-grid-column: 1;
+}
+</style>
+<script>
+window.onload = function() {
+    var elementBounds = { width: 200, height: 200 };
+    var shapeBounds = { x: 50, y: 50, width: 100, height: 100 };
+    createRectangleTestResult('inline-block', 'stylesheet', elementBounds, shapeBounds, 'px');
+    createRectangleTestResult('float', 'stylesheet', elementBounds, shapeBounds, 'px');
+    createRectangleTestResult('list', 'stylesheet', elementBounds, shapeBounds, 'px');
+    createRectangleTestResult('table', 'stylesheet', elementBounds, shapeBounds, 'px');
+    createRectangleTestResult('old-flexbox', 'stylesheet', elementBounds, shapeBounds, 'px');
+    createRectangleTestResult('new-flexbox', 'stylesheet', elementBounds, shapeBounds, 'px');
+    createRectangleTestResult('grid', 'stylesheet', elementBounds, shapeBounds, 'px');
+}
+</script>
+</head>
+<body>
+<p>This set of tests ensures that basic recursive layouts with inline-block elements
+function correctly with shape-inside. They require the Ahem font, and should each display
+a green square within a blue border.</p>
+
+<p>Inline-block div</p>
+<div id='inline-block'>
+    <div class='content'>xxxx</div>
+</div>
+
+<p>Floating div</p>
+<div id='float'>
+    <div class='content'>xxxx</div>
+</div>
+
+<p>Inline list</p>
+<div id='list'>
+    <ul class='content'>
+        <li>xx</li>
+        <li>xx</li>
+    </ul>
+</div>
+
+<p>Inline table</p>
+<div id='table'>
+    <table class='content'>
+        <tr><td>x</td><td>x</td></tr>
+        <tr><td>x</td><td>x</td></tr>
+    </table>
+</div>
+
+<p>Old flexbox</p>
+<div id='old-flexbox'>
+    <div class='content'>xxxx</div>
+</div>
+
+<p>New flexbox</p>
+<div id='new-flexbox'>
+    <div class='content'>xxxx</div>
+</div>
+
+<p>Grid</p>
+<div id='grid'>
+    <div class='content'>xxxx</div>
+</div>
+</body>
+</html>

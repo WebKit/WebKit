@@ -249,6 +249,7 @@ private:
             || m_layoutState->lineGrid() || (renderer->style()->lineGrid() != RenderStyle::initialLineGrid() && renderer->isBlockFlow())
 #if ENABLE(CSS_EXCLUSIONS)
             || (renderer->isRenderBlock() && toRenderBlock(renderer)->exclusionShapeInsideInfo())
+            || (m_layoutState->exclusionShapeInsideInfo() && renderer->isRenderBlock() && !toRenderBlock(renderer)->allowsExclusionShapeInsideInfoSharing())
 #endif
             ) {
             m_layoutState = new (renderArena()) LayoutState(m_layoutState, renderer, offset, pageHeight, pageHeightChanged, colInfo);

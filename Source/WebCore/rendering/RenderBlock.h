@@ -434,6 +434,7 @@ public:
 
 #if ENABLE(CSS_EXCLUSIONS)
     ExclusionShapeInsideInfo* exclusionShapeInsideInfo() const;
+    bool allowsExclusionShapeInsideInfoSharing() const { return !isInline() && !isFloating(); }
 #endif
 
     virtual void reportMemoryUsage(MemoryObjectInfo*) const OVERRIDE;

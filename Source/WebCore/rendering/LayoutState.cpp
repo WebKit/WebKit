@@ -112,8 +112,9 @@ LayoutState::LayoutState(LayoutState* prev, RenderBox* renderer, const LayoutSiz
 
 #if ENABLE(CSS_EXCLUSIONS)
     if (renderer->isRenderBlock()) {
-        m_exclusionShapeInsideInfo = toRenderBlock(renderer)->exclusionShapeInsideInfo();
-        if (!m_exclusionShapeInsideInfo)
+        const RenderBlock* renderBlock = toRenderBlock(renderer);
+        m_exclusionShapeInsideInfo = renderBlock->exclusionShapeInsideInfo();
+        if (!m_exclusionShapeInsideInfo && m_next->m_exclusionShapeInsideInfo && renderBlock->allowsExclusionShapeInsideInfoSharing())
             m_exclusionShapeInsideInfo = m_next->m_exclusionShapeInsideInfo;
     }
 #endif

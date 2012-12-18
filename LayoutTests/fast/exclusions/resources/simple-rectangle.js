@@ -24,7 +24,7 @@ function createRectangleTest(elementId, stylesheetId, bounds, shapeBounds, units
     rules.push('left: ' + (shapeBounds.x - 1) + units, 'top: ' + (shapeBounds.y - 1) + units, 'width: ' + rectangleBounds[2], 'height: ' + rectangleBounds[3]);
     rules.push('position: absolute', 'display: block', 'content: \' \'');
     rules.push('border: 1px solid blue');
-    stylesheet.insertRule('#' + elementId + '::before{' + rules.join(';') + '}');
+    stylesheet.insertRule('#' + elementId + ':before{' + rules.join(';') + '}');
     if (content)
         elem.innerHTML = content;
 }
@@ -51,7 +51,7 @@ function createRectangleTestResult(elementId, stylesheetId, bounds, shapeBounds,
     rules.push('left: ' + (shapeBounds.x - 1) + units, 'top: ' + (shapeBounds.y - 1) + units, 'width: ' + shapeBounds.width + units, 'height: ' + shapeBounds.height + units);
     rules.push('position: absolute', 'display: block', 'content: \' \'');
     rules.push('border: 1px solid blue');
-    stylesheet.insertRule('#' + elementId + '::before{' + rules.join(';') + '}');
+    stylesheet.insertRule('#' + elementId + ':before{' + rules.join(';') + '}');
     if (content)
         elem.innerHTML = content;
 }
