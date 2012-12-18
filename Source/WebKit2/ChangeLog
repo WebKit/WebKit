@@ -1,3 +1,12 @@
+2012-12-18  Beth Dakin  <bdakin@apple.com>
+
+        https://bugs.webkit.org/show_bug.cgi?id=102579
+        [mac] Enable scaled cursors
+
+        Reviewed by Dean Jackson.
+
+        * Configurations/FeatureDefines.xcconfig:
+
 2012-12-18  Joseph Pecoraro  <pecoraro@apple.com>
 
         [Mac] Add Build Phase to Check Headers for Inappropriate Macros (Platform.h macros)
