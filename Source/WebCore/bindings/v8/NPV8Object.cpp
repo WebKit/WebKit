@@ -155,16 +155,15 @@ NPObject* npCreateV8ScriptObject(NPP npp, v8::Handle<v8::Object> object, DOMWind
             V8NPObjectVector& objects = iter->value;
             for (size_t index = 0; index < objects.size(); ++index) {
                 V8NPObject* v8npObject = objects.at(index);
-                if (v8npObject->rootObject == root) {
-                    ASSERT(v8npObject->v8Object == object);
+                if (v8npObject->v8Object == object && v8npObject->rootObject == root) {
                     _NPN_RetainObject(&v8npObject->object);
                     return reinterpret_cast<NPObject*>(v8npObject);
                 }
             }
         } else {
             iter = v8NPObjectMap->set(v8ObjectHash, V8NPObjectVector()).iterator;
-            objectVector = &iter->value;
         }
+        objectVector = &iter->value;
     }
     V8NPObject* v8npObject = reinterpret_cast<V8NPObject*>(_NPN_CreateObject(npp, &V8NPObjectClass));
     v8npObject->v8Object = v8::Persistent<v8::Object>::New(object);

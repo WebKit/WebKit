@@ -1,3 +1,18 @@
+2012-12-17  Mathew Dempsky  <mdempsky@google.com>
+
+        Regression causing DOM objects to have unstable NPObject* references with v8 bindings
+        https://bugs.webkit.org/show_bug.cgi?id=104921
+
+        Reviewed by Kentaro Hara.
+
+        Add variant of embed-property-equality test to verify that the
+        test still passes when the object being tested for equality
+        has already been remembered by a plugin from a different
+        JavaScript context.
+
+        * plugins/npruntime/embed-property-iframe-equality.html: Added.
+        * plugins/npruntime/embed-property-iframe-equality-expected.txt: Added.
+
 2012-12-17  Filip Pizlo  <fpizlo@apple.com>
 
         DFG is too aggressive with eliding overflow checks in loops
