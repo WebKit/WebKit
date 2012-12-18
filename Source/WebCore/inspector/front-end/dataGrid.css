@@ -107,6 +107,10 @@
     overflow: hidden;
 }
 
+.data-grid td.editing > div {
+    text-overflow: clip;
+}
+
 .data-grid .centered div {
     text-align: center;
 }
