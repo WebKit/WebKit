@@ -1,3 +1,12 @@
+2012-12-17  Vsevolod Vlasov  <vsevik@chromium.org>
+
+        Web Inspector: Make inspector scripts sourceURL absolute.
+        https://bugs.webkit.org/show_bug.cgi?id=105166
+
+        Reviewed by Yury Semikhatsky.
+
+        * inspector/front-end/utilities.js:
+
 2012-12-17  Huang Dongsung  <luxtella@company100.net>
 
         REGRESSION(r137442): Crash because of an uninitialized member.

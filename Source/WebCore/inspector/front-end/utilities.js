@@ -858,5 +858,6 @@ function importScript(scriptName)
     var xhr = new XMLHttpRequest();
     xhr.open("GET", scriptName, false);
     xhr.send(null);
-    window.eval(xhr.responseText + "\n//@ sourceURL=" + scriptName);
+    var sourceURL = WebInspector.ParsedURL.completeURL(window.location.href, scriptName); 
+    window.eval(xhr.responseText + "\n//@ sourceURL=" + sourceURL);
 }
