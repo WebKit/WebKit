@@ -528,6 +528,8 @@ protected:
     void updateRegionsAndExclusionsLogicalSize();
     void computeRegionRangeForBlock();
 
+    void updateBlockChildDirtyBitsBeforeLayout(bool relayoutChildren, RenderBox*);
+
     virtual void checkForPaginationLogicalHeightChange(LayoutUnit& pageLogicalHeight, bool& pageLogicalHeightChanged, bool& hasSpecifiedPageLogicalHeight);
 
 private:
