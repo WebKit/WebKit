@@ -133,6 +133,8 @@ deps = {
     From('chromium_deps', 'src/third_party/pyftpdlib/src'),
   'third_party/icu':
     From('chromium_deps', 'src/third_party/icu'),
+  'third_party/opus/src':
+    From('chromium_deps', 'src/third_party/opus/src'),
   'third_party/ots':
     From('chromium_deps', 'src/third_party/ots'),
   'third_party/yasm/source/patched-yasm':

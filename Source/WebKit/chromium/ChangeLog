@@ -1,5 +1,13 @@
 2012-12-18  Dirk Pranke  <dpranke@chromium.org>
 
+        Pull in the opus codec sources.
+
+        Unreviewed, build fix.
+
+        * DEPS:
+
+2012-12-18  Dirk Pranke  <dpranke@chromium.org>
+
         Unreviewed, roll chromium deps to r173769
 
         * DEPS:
