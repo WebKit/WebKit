@@ -510,6 +510,8 @@
                         '<(PRODUCT_DIR)/DumpRenderTree_apk',
                         '--strip-binary=<(android_strip)',
                         '--ant-args',
+                        '-quiet',
+                        '--ant-args',
                         '-DANDROID_SDK=<(android_sdk)',
                         '--ant-args',
                         '-DANDROID_SDK_ROOT=<(android_sdk_root)',
