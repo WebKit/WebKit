@@ -362,6 +362,7 @@ sputnik/Unicode/Unicode_218/S7.6_A5.2_T1.html
 ### START OF (5) Features that are not supported in WebKit1, so skipped in mac/TestExpectations then re-enabled here
 
 platform/mac/tiled-drawing/ [ Pass ]
+fast/css/sticky/sticky-top-zoomed.html [ Pass ]
 
 ### END OF (5) Features that are not supported in WebKit1, so skipped in mac/TestExpectations then re-enabled here
 ########################################

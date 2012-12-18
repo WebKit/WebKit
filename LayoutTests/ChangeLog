@@ -1,3 +1,20 @@
+2012-12-17  Simon Fraser  <simon.fraser@apple.com>
+
+        Fix position:-webkit-sticky behavior when zoomed
+        https://bugs.webkit.org/show_bug.cgi?id=105251
+
+        Reviewed by Dean Jackson.
+
+        Ref test for sticky elements in a zoomed page.
+        
+        This test is marked as failing for WK1, because scrollbars always show on
+        zoomed pages and cannot be hidden there.
+
+        * fast/css/sticky/sticky-top-zoomed-expected.html: Added.
+        * fast/css/sticky/sticky-top-zoomed.html: Added.
+        * platform/mac-wk2/TestExpectations:
+        * platform/mac/TestExpectations:
+
 2012-12-18  Thiago Marcos P. Santos  <thiago.santos@intel.com>
 
         [EFL] Unreviewed gardening.
