@@ -33,10 +33,10 @@
 
 namespace JSC { namespace DFG {
 
-OSRExit::OSRExit(ExitKind kind, JSValueSource jsValueSource, MethodOfGettingAValueProfile valueProfile, MacroAssembler::Jump check, SpeculativeJIT* jit, unsigned streamIndex, unsigned recoveryIndex)
+OSRExit::OSRExit(ExitKind kind, JSValueSource jsValueSource, MethodOfGettingAValueProfile valueProfile, SpeculativeJIT* jit, unsigned streamIndex, unsigned recoveryIndex)
     : m_jsValueSource(jsValueSource)
     , m_valueProfile(valueProfile)
-    , m_check(check)
+    , m_patchableCodeOffset(0)
     , m_nodeIndex(jit->m_compileIndex)
     , m_codeOrigin(jit->m_codeOriginForOSR)
     , m_codeOriginForExitProfile(m_codeOrigin)
@@ -48,6 +48,28 @@ OSRExit::OSRExit(ExitKind kind, JSValueSource jsValueSource, MethodOfGettingAVal
     , m_lastSetOperand(jit->m_lastSetOperand)
 {
     ASSERT(m_codeOrigin.isSet());
+}
+
+void OSRExit::setPatchableCodeOffset(MacroAssembler::PatchableJump check)
+{
+    m_patchableCodeOffset = check.m_jump.m_label.m_offset;
+}
+
+MacroAssembler::Jump OSRExit::getPatchableCodeOffsetAsJump() const
+{
+    return MacroAssembler::Jump(AssemblerLabel(m_patchableCodeOffset));
+}
+
+CodeLocationJump OSRExit::codeLocationForRepatch(CodeBlock* dfgCodeBlock) const
+{
+    return CodeLocationJump(dfgCodeBlock->getJITCode().dataAddressAtOffset(m_patchableCodeOffset));
+}
+
+void OSRExit::correctJump(LinkBuffer& linkBuffer)
+{
+    MacroAssembler::Label label;
+    label.m_label.m_offset = m_patchableCodeOffset;
+    m_patchableCodeOffset = linkBuffer.offsetOf(label);
 }
 
 bool OSRExit::considerAddingAsFrequentExitSiteSlow(CodeBlock* dfgCodeBlock, CodeBlock* profiledCodeBlock)

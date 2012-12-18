@@ -34,6 +34,7 @@
 #include "DFGFPRInfo.h"
 #include "DFGGPRInfo.h"
 #include "DFGGraph.h"
+#include "DFGOSRExitCompilationInfo.h"
 #include "DFGRegisterBank.h"
 #include "DFGRegisterSet.h"
 #include "JITCode.h"
@@ -343,6 +344,8 @@ public:
     SpeculatedType getSpeculation(NodeIndex nodeIndex) { return getSpeculation(graph()[nodeIndex]); }
     SpeculatedType getSpeculation(Edge nodeUse) { return getSpeculation(nodeUse.index()); }
 
+    void appendExitJump(MacroAssembler::Jump jumpToFail) { m_exitCompilationInfo.append(OSRExitCompilationInfo(jumpToFail)); }
+
 #if USE(JSVALUE32_64)
     void* addressOfDoubleConstant(NodeIndex nodeIndex)
     {
@@ -460,6 +463,7 @@ private:
     
     Vector<PropertyAccessRecord, 4> m_propertyAccesses;
     Vector<JSCallRecord, 4> m_jsCalls;
+    Vector<OSRExitCompilationInfo> m_exitCompilationInfo;
     Vector<Label> m_exitSiteLabels;
     unsigned m_currentCodeOriginIndex;
 };

@@ -186,8 +186,6 @@ javascriptcore_sources += \
 	Source/JavaScriptCore/dfg/DFGCFAPhase.cpp \
 	Source/JavaScriptCore/dfg/DFGCFAPhase.h \
 	Source/JavaScriptCore/dfg/DFGCommon.h \
-	Source/JavaScriptCore/dfg/DFGCorrectableJumpPoint.cpp \
-	Source/JavaScriptCore/dfg/DFGCorrectableJumpPoint.h \
 	Source/JavaScriptCore/dfg/DFGConstantFoldingPhase.cpp \
 	Source/JavaScriptCore/dfg/DFGConstantFoldingPhase.h \
 	Source/JavaScriptCore/dfg/DFGCSEPhase.cpp \
@@ -228,6 +226,7 @@ javascriptcore_sources += \
 	Source/JavaScriptCore/dfg/DFGOSRExitCompiler.h \
 	Source/JavaScriptCore/dfg/DFGOSRExit.h \
 	Source/JavaScriptCore/dfg/DFGOSRExit.cpp \
+	Source/JavaScriptCore/dfg/DFGOSRExitCompilationInfo.h \
 	Source/JavaScriptCore/dfg/DFGPhase.cpp \
 	Source/JavaScriptCore/dfg/DFGPhase.h \
 	Source/JavaScriptCore/dfg/DFGPredictionPropagationPhase.cpp \

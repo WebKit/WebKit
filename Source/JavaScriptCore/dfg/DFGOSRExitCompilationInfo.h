@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011 Apple Inc. All rights reserved.
+ * Copyright (C) 2012 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,21 +23,35 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#include "config.h"
-#include "DFGCorrectableJumpPoint.h"
+#ifndef DFGOSRExitCompilationInfo_h
+#define DFGOSRExitCompilationInfo_h
+
+#include <wtf/Platform.h>
 
 #if ENABLE(DFG_JIT)
 
-#include "CodeBlock.h"
+#include "CodeOrigin.h"
+#include "DFGCommon.h"
+#include "MacroAssembler.h"
 
 namespace JSC { namespace DFG {
 
-CodeLocationJump CorrectableJumpPoint::codeLocationForRepatch(CodeBlock* codeBlock) const
-{
-    ASSERT(m_mode == CorrectedJump);
-    return CodeLocationJump(codeBlock->getJITCode().dataAddressAtOffset(m_codeOffset));
-}
+class OSRExitCompilationInfo {
+public:
+    OSRExitCompilationInfo(MacroAssembler::Jump failureJump)
+        : m_failureJump(failureJump)
+    {
+    }
+
+    MacroAssembler::Jump& failureJump() { return m_failureJump; }
+
+private:
+    MacroAssembler::Jump m_failureJump;
+};
 
 } } // namespace JSC::DFG
 
 #endif // ENABLE(DFG_JIT)
+
+#endif // DFGOSRExitCompilationInfo_h
+
