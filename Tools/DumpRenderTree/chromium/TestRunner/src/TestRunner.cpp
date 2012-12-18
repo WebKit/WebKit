@@ -66,7 +66,6 @@ TestRunner::TestRunner()
 {
     // Methods implemented in terms of chromium's public WebKit API.
     bindMethod("setTabKeyCyclesThroughElements", &TestRunner::setTabKeyCyclesThroughElements);
-    bindMethod("setAsynchronousSpellCheckingEnabled", &TestRunner::setAsynchronousSpellCheckingEnabled);
     bindMethod("execCommand", &TestRunner::execCommand);
     bindMethod("isCommandEnabled", &TestRunner::isCommandEnabled);
     bindMethod("pauseAnimationAtTimeOnElementWithId", &TestRunner::pauseAnimationAtTimeOnElementWithId);
@@ -89,7 +88,6 @@ TestRunner::TestRunner()
     bindMethod("loseCompositorContext", &TestRunner::loseCompositorContext);
     bindMethod("markerTextForListItem", &TestRunner::markerTextForListItem);
     bindMethod("findString", &TestRunner::findString);
-    bindMethod("setMinimumTimerInterval", &TestRunner::setMinimumTimerInterval);
     bindMethod("setAutofilled", &TestRunner::setAutofilled);
     bindMethod("setValueForUser", &TestRunner::setValueForUser);
     bindMethod("enableFixedLayoutMode", &TestRunner::enableFixedLayoutMode);
@@ -100,7 +98,6 @@ TestRunner::TestRunner()
     bindMethod("setPageVisibility", &TestRunner::setPageVisibility);
     bindMethod("setTextDirection", &TestRunner::setTextDirection);
     bindMethod("textSurroundingNode", &TestRunner::textSurroundingNode);
-    bindMethod("setTouchDragDropEnabled", &TestRunner::setTouchDragDropEnabled);
 
     // The following modify WebPreferences.
     bindMethod("setUserStyleSheetEnabled", &TestRunner::setUserStyleSheetEnabled);
@@ -113,6 +110,9 @@ TestRunner::TestRunner()
     bindMethod("setAllowFileAccessFromFileURLs", &TestRunner::setAllowFileAccessFromFileURLs);
     bindMethod("overridePreference", &TestRunner::overridePreference);
     bindMethod("setPluginsEnabled", &TestRunner::setPluginsEnabled);
+    bindMethod("setAsynchronousSpellCheckingEnabled", &TestRunner::setAsynchronousSpellCheckingEnabled);
+    bindMethod("setMinimumTimerInterval", &TestRunner::setMinimumTimerInterval);
+    bindMethod("setTouchDragDropEnabled", &TestRunner::setTouchDragDropEnabled);
 
     // Properties.
     bindProperty("workerThreadCount", &TestRunner::workerThreadCount);
@@ -179,13 +179,6 @@ void TestRunner::setTabKeyCyclesThroughElements(const CppArgumentList& arguments
 {
     if (arguments.size() > 0 && arguments[0].isBool())
         m_webView->setTabKeyCyclesThroughElements(arguments[0].toBoolean());
-    result->setNull();
-}
-
-void TestRunner::setAsynchronousSpellCheckingEnabled(const CppArgumentList& arguments, CppVariant* result)
-{
-    if (arguments.size() > 0 && arguments[0].isBool())
-        m_webView->settings()->setAsynchronousSpellCheckingEnabled(cppVariantToBool(arguments[0]));
     result->setNull();
 }
 
@@ -539,14 +532,6 @@ void TestRunner::findString(const CppArgumentList& arguments, CppVariant* result
     result->set(findResult);
 }
 
-void TestRunner::setMinimumTimerInterval(const CppArgumentList& arguments, CppVariant* result)
-{
-    result->setNull();
-    if (arguments.size() < 1 || !arguments[0].isNumber())
-        return;
-    m_webView->settings()->setMinimumTimerInterval(arguments[0].toDouble());
-}
-
 void TestRunner::setAutofilled(const CppArgumentList& arguments, CppVariant* result)
 {
     result->setNull();
@@ -679,15 +664,6 @@ void TestRunner::textSurroundingNode(const CppArgumentList& arguments, CppVarian
         return;
 
     result->set(surroundingText.textContent().utf8());
-}
-
-void TestRunner::setTouchDragDropEnabled(const CppArgumentList& arguments, CppVariant* result)
-{
-    result->setNull();
-    if (arguments.size() != 1 || !arguments[0].isBool())
-        return;
-
-    m_webView->settings()->setTouchDragDropEnabled(arguments[0].toBoolean());
 }
 
 void TestRunner::setUserStyleSheetEnabled(const CppArgumentList& arguments, CppVariant* result)
@@ -829,6 +805,33 @@ void TestRunner::setPluginsEnabled(const CppArgumentList& arguments, CppVariant*
 {
     if (arguments.size() > 0 && arguments[0].isBool()) {
         m_delegate->preferences()->pluginsEnabled = arguments[0].toBoolean();
+        m_delegate->applyPreferences();
+    }
+    result->setNull();
+}
+
+void TestRunner::setAsynchronousSpellCheckingEnabled(const CppArgumentList& arguments, CppVariant* result)
+{
+    if (arguments.size() > 0 && arguments[0].isBool()) {
+        m_delegate->preferences()->asynchronousSpellCheckingEnabled = cppVariantToBool(arguments[0]);
+        m_delegate->applyPreferences();
+    }
+    result->setNull();
+}
+
+void TestRunner::setMinimumTimerInterval(const CppArgumentList& arguments, CppVariant* result)
+{
+    if (arguments.size() > 0 && arguments[0].isNumber()) {
+        m_delegate->preferences()->minimumTimerInterval = arguments[0].toDouble();
+        m_delegate->applyPreferences();
+    }
+    result->setNull();
+}
+
+void TestRunner::setTouchDragDropEnabled(const CppArgumentList& arguments, CppVariant* result)
+{
+    if (arguments.size() > 0 && arguments[0].isBool()) {
+        m_delegate->preferences()->touchDragDropEnabled = arguments[0].toBoolean();
         m_delegate->applyPreferences();
     }
     result->setNull();

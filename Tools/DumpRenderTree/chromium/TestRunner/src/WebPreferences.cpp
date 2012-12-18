@@ -129,6 +129,9 @@ void WebPreferences::reset()
     mockScrollbarsEnabled = false;
     cssCustomFilterEnabled = false;
     shouldRespectImageOrientation = false;
+    asynchronousSpellCheckingEnabled = false;
+    minimumTimerInterval = 0.010; // 10 milliseconds.
+    touchDragDropEnabled = false;
 }
 
 void WebPreferences::applyTo(WebView* webView)
@@ -196,6 +199,9 @@ void WebPreferences::applyTo(WebView* webView)
     settings->setMediaPlaybackRequiresUserGesture(mediaPlaybackRequiresUserGesture);
     settings->setMockScrollbarsEnabled(mockScrollbarsEnabled);
     settings->setShouldRespectImageOrientation(shouldRespectImageOrientation);
+    settings->setAsynchronousSpellCheckingEnabled(asynchronousSpellCheckingEnabled);
+    settings->setMinimumTimerInterval(minimumTimerInterval);
+    settings->setTouchDragDropEnabled(touchDragDropEnabled);
 
     // Fixed values.
     settings->setTextDirectionSubmenuInclusionBehaviorNeverIncluded();

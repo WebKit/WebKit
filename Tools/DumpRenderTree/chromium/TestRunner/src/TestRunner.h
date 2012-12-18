@@ -71,9 +71,6 @@ private:
     // or inserts a '\t' char in text area
     void setTabKeyCyclesThroughElements(const CppArgumentList&, CppVariant*);
 
-    // Changes asynchronous spellchecking flag on the settings.
-    void setAsynchronousSpellCheckingEnabled(const CppArgumentList&, CppVariant*);
-
     // Executes an internal command (superset of document.execCommand() commands).
     void execCommand(const CppArgumentList&, CppVariant*);
 
@@ -113,8 +110,6 @@ private:
     void markerTextForListItem(const CppArgumentList&, CppVariant*);
     void findString(const CppArgumentList&, CppVariant*);
 
-    void setMinimumTimerInterval(const CppArgumentList&, CppVariant*);
-
     // Expects the first argument to be an input element and the second argument to be a boolean.
     // Forwards the setAutofilled() call to the element.
     void setAutofilled(const CppArgumentList&, CppVariant*);
@@ -147,7 +142,6 @@ private:
     // point coordinates relative to the node and the fourth the maximum text
     // length to retrieve.
     void textSurroundingNode(const CppArgumentList&, CppVariant*);
-    void setTouchDragDropEnabled(const CppArgumentList&, CppVariant*);
 
     ///////////////////////////////////////////////////////////////////////////
     // Methods modifying WebPreferences.
@@ -171,6 +165,12 @@ private:
 
     // Enable or disable plugins.
     void setPluginsEnabled(const CppArgumentList&, CppVariant*);
+
+    // Changes asynchronous spellchecking flag on the settings.
+    void setAsynchronousSpellCheckingEnabled(const CppArgumentList&, CppVariant*);
+
+    void setMinimumTimerInterval(const CppArgumentList&, CppVariant*);
+    void setTouchDragDropEnabled(const CppArgumentList&, CppVariant*);
 
     ///////////////////////////////////////////////////////////////////////////
     // Properties

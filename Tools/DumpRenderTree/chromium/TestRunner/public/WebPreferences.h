@@ -101,6 +101,9 @@ struct WebPreferences {
     bool mockScrollbarsEnabled;
     bool cssCustomFilterEnabled;
     bool shouldRespectImageOrientation;
+    bool asynchronousSpellCheckingEnabled;
+    double minimumTimerInterval;
+    bool touchDragDropEnabled;
 
     WebPreferences() { reset(); }
     void reset();

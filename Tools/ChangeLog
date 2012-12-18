@@ -1,3 +1,27 @@
+2012-12-17  Jochen Eisinger  <jochen@chromium.org>
+
+        [chromium] Fix methods in TestRunner that directly modify the settings instead of going through WebPreferences
+        https://bugs.webkit.org/show_bug.cgi?id=105154
+
+        Reviewed by Tony Chang.
+
+        If the settings are modified directly, the embedder can't keep track of
+        them and might accidentially override the changed settings.
+
+        * DumpRenderTree/chromium/TestRunner/public/WebPreferences.h:
+        (WebPreferences):
+        * DumpRenderTree/chromium/TestRunner/src/TestRunner.cpp:
+        (WebTestRunner::TestRunner::TestRunner):
+        (WebTestRunner::TestRunner::setAsynchronousSpellCheckingEnabled):
+        (WebTestRunner):
+        (WebTestRunner::TestRunner::setMinimumTimerInterval):
+        (WebTestRunner::TestRunner::setTouchDragDropEnabled):
+        * DumpRenderTree/chromium/TestRunner/src/TestRunner.h:
+        (TestRunner):
+        * DumpRenderTree/chromium/TestRunner/src/WebPreferences.cpp:
+        (WebTestRunner::WebPreferences::reset):
+        (WebTestRunner::WebPreferences::applyTo):
+
 2012-12-17  Julien Chaffraix  <jchaffraix@webkit.org>
 
         Unreviewed unit test skipping.
