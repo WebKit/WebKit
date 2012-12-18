@@ -45,6 +45,7 @@ WebInspector.CookiesTable = function(expandable, deleteCallback, refreshCallback
     columns[0].sortable = true;
     columns[0].disclosure = expandable;
     columns[0].width = "24%";
+    columns[0].sort = "ascending";
     columns[1].title = WebInspector.UIString("Value");
     columns[1].sortable = true;
     columns[1].width = "34%";

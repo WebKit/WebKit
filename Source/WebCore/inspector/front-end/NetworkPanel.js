@@ -1846,7 +1846,7 @@ WebInspector.NetworkDataGridNode.prototype = {
         this._sizeCell = this._createDivInTD("size");
         this._timeCell = this._createDivInTD("time");
         this._createTimelineCell();
-        this._nameCell.addEventListener("click", this.select.bind(this), false);
+        this._nameCell.addEventListener("click", this._onClick.bind(this), false);
         this._nameCell.addEventListener("dblclick", this._openInNewTab.bind(this), false);
     },
 
@@ -1857,6 +1857,12 @@ WebInspector.NetworkDataGridNode.prototype = {
         if (!this._parentView._hiddenCategories.all)
             return false;
         return this._request.type.name() in this._parentView._hiddenCategories;
+    },
+
+    _onClick: function()
+    {
+        if (!this._parentView._allowRequestSelection)
+            this.select();
     },
 
     select: function()
