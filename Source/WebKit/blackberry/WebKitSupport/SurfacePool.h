@@ -53,7 +53,7 @@ public:
     // Platform::Settings::instance()->numberOfBackingStoreBackBuffers() which
     // allows for at least one back buffer to be available for drawing before
     // swapping buffers/geometry to the front.
-    bool hasBackBuffer() const;
+    unsigned numberOfAvailableBackBuffers() const;
     TileBuffer* takeBackBuffer();
     void addBackBuffer(TileBuffer*);
 

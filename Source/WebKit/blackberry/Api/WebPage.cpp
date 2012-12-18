@@ -1053,10 +1053,9 @@ void WebPagePrivate::setLoadState(LoadState state)
     switch (m_loadState) {
     case Provisional:
         if (isFirstLoad) {
-            // Paints the visible backingstore as white to prevent initial checkerboard on
-            // the first blit.
-            if (m_backingStore->d->renderVisibleContents() && !m_backingStore->d->isSuspended() && !m_backingStore->d->shouldDirectRenderingToWindow())
-                m_backingStore->d->blitVisibleContents();
+            // Paints the visible backingstore as settings()->backgroundColor()
+            // to prevent initial checkerboard on the first blit.
+            m_backingStore->d->renderAndBlitVisibleContentsImmediately();
         }
         break;
     case Committed:
@@ -1139,14 +1138,11 @@ void WebPagePrivate::setLoadState(LoadState state)
 
             // FIXME: Do we really need to suspend/resume both backingstore and screen here?
             m_backingStore->d->resumeBackingStoreUpdates();
-            m_backingStore->d->resumeScreenUpdates(BackingStore::None);
-
             // Paints the visible backingstore as white. Note it is important we do
             // this strictly after re-setting the scroll position to origin and resetting
             // the scales otherwise the visible contents calculation is wrong and we
             // can end up blitting artifacts instead. See: RIM Bug #401.
-            if (m_backingStore->d->renderVisibleContents() && !m_backingStore->d->isSuspended() && !m_backingStore->d->shouldDirectRenderingToWindow())
-                m_backingStore->d->blitVisibleContents();
+            m_backingStore->d->resumeScreenUpdates(BackingStore::RenderAndBlit);
 
             // Update cursor status.
             updateCursor();
@@ -1271,13 +1267,6 @@ bool WebPagePrivate::zoomAboutPoint(double unclampedScale, const FloatPoint& anc
     m_backingStore->d->updateTiles(isLoading /* updateVisible */, false /* immediate */);
 
     bool shouldRender = !isLoading || m_userPerformedManualZoom || forceRendering;
-    bool shouldClearVisibleZoom = isLoading && shouldRender;
-
-    if (shouldClearVisibleZoom) {
-        // If we are loading and rendering then we need to clear the render queue's
-        // visible zoom jobs as they will be irrelevant with the render below.
-        m_backingStore->d->clearVisibleZoom();
-    }
 
     m_client->scaleChanged();
 
@@ -3566,13 +3555,7 @@ void WebPagePrivate::resumeBackingStore()
         m_backingStore->d->resetTiles();
         m_backingStore->d->updateTiles(false /* updateVisible */, false /* immediate */);
 
-        // This value may have changed, so we need to update it.
-        directRendering = m_backingStore->d->shouldDirectRenderingToWindow();
-        if (m_backingStore->d->renderVisibleContents()) {
-            if (!m_backingStore->d->isSuspended() && !directRendering)
-                m_backingStore->d->blitVisibleContents();
-            m_client->notifyPixelContentRendered(m_backingStore->d->visibleContentsRect());
-        }
+        m_backingStore->d->renderAndBlitVisibleContentsImmediately();
     } else {
         if (m_backingStore->d->isOpenGLCompositing())
            setCompositorDrawsRootLayer(false);

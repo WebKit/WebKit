@@ -177,12 +177,12 @@ public:
     void setBackingStoreRect(const Platform::IntRect&, double scale);
     void updateTilesAfterBackingStoreRectChange();
 
-    typedef WTF::Vector<TileIndex> TileIndexList;
     TileIndexList indexesForBackingStoreRect(const Platform::IntRect&) const;
+    TileIndexList indexesForVisibleContentsRect(BackingStoreGeometry*) const;
 
     TileIndex indexOfTile(const Platform::IntPoint& origin, const Platform::IntRect& backingStoreRect) const;
     void clearAndUpdateTileOfNotRenderedRegion(const TileIndex&, TileBuffer*, const Platform::IntRectRegion&, BackingStoreGeometry*, bool update = true);
-    bool isCurrentVisibleJob(const TileIndex&, TileBuffer*, BackingStoreGeometry*) const;
+    bool isCurrentVisibleJob(const TileIndex&, BackingStoreGeometry*) const;
 
     // Not thread safe. Call only when threads are in sync.
     void clearRenderedRegion(TileBuffer*, const Platform::IntRectRegion&);
@@ -191,21 +191,23 @@ public:
     // tile matrix geometry.
     void scrollBackingStore(int deltaX, int deltaY);
 
-    // Render the tiles dirty rect and invalidate the screen.
-    bool renderDirectToWindow(const Platform::IntRect&);
+    // Render the given dirty rect and invalidate the screen.
+    Platform::IntRect renderDirectToWindow(const Platform::IntRect&);
 
-    // Render the tiles dirty rect.
-    // NOTE: This will not update the screen. To do that you should call
-    // blitVisibleContents() after this method.
-    bool render(const Platform::IntRect&);
+    // Render the given tiles if enough back buffers are available.
+    // Return the actual set of rendered tiles.
+    // NOTE: This should only be called by RenderQueue and resumeScreenUpdates().
+    //   If you want to render to get contents to the screen, you should call
+    //   renderAndBlitImmediately() or renderAndBlitVisibleContentsImmediately().
+    TileIndexList render(const TileIndexList&);
 
     // Called by the render queue to ensure that the queue is in a
     // constant state before performing a render job.
     void requestLayoutIfNeeded() const;
 
     // Helper render methods.
-    bool renderVisibleContents();
-    bool renderBackingStore();
+    void renderAndBlitVisibleContentsImmediately();
+    void renderAndBlitImmediately(const Platform::IntRect&);
     void blitVisibleContents(bool force = false);
 
     // Assumes the rect to be in window/viewport coordinates.
@@ -241,7 +243,7 @@ public:
     bool isTileVisible(const Platform::IntPoint&) const;
 
     // Returns a rect that is the union of all tiles that are visible.
-    Platform::IntRect visibleTilesRect(BackingStoreGeometry*) const;
+    TileIndexList visibleTileIndexes(BackingStoreGeometry*) const;
 
     // Used to clip to the visible content for instance.
     Platform::IntRect tileVisibleContentsRect(const TileIndex&, BackingStoreGeometry*) const;
@@ -251,8 +253,6 @@ public:
 
     // This is called by WebPage once load is committed to reset the render queue.
     void resetRenderQueue();
-    // This is called by FrameLoaderClient that explicitly paints on first visible layout.
-    void clearVisibleZoom();
 
     // This is called by WebPage once load is committed to reset all the tiles.
     void resetTiles();
@@ -339,7 +339,7 @@ public:
     BlackBerry::Platform::IntSize surfaceSize() const;
     BlackBerry::Platform::Graphics::Buffer* buffer() const;
 
-    void didRenderContent(const Platform::IntRect& renderedRect);
+    void didRenderContent(const Platform::IntRectRegion& renderedRegion);
 
     static WebPage* s_currentBackingStoreOwner;
 

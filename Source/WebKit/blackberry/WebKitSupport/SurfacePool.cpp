@@ -156,14 +156,14 @@ void SurfacePool::initializeVisibleTileBuffer(const Platform::IntSize& visibleSi
     }
 }
 
-bool SurfacePool::hasBackBuffer() const
+unsigned SurfacePool::numberOfAvailableBackBuffers() const
 {
-    return !m_availableBackBufferPool.isEmpty();
+    return m_availableBackBufferPool.size();
 }
 
 TileBuffer* SurfacePool::takeBackBuffer()
 {
-    ASSERT(hasBackBuffer());
+    ASSERT(!m_availableBackBufferPool.isEmpty());
     if (m_availableBackBufferPool.isEmpty())
         return 0;
 

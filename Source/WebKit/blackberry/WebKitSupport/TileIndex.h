@@ -20,6 +20,7 @@
 #define TileIndex_h
 
 #include <limits>
+#include <wtf/Vector.h>
 
 namespace BlackBerry {
 namespace WebKit {
@@ -62,6 +63,9 @@ inline bool operator!=(const BlackBerry::WebKit::TileIndex& a, const BlackBerry:
 {
     return a.i() != b.i() || a.j() != b.j();
 }
+
+typedef WTF::Vector<TileIndex> TileIndexList;
+
 }
 }
 

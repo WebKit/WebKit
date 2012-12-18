@@ -19,16 +19,16 @@
 #ifndef RenderQueue_h
 #define RenderQueue_h
 
+#include "TileIndex.h"
+
 #include <BlackBerryPlatformIntRectRegion.h>
 #include <BlackBerryPlatformPrimitives.h>
-#include <vector>
 
 namespace BlackBerry {
 namespace WebKit {
 
 class BackingStorePrivate;
-
-typedef std::vector<Platform::IntRect> IntRectList;
+class BackingStoreGeometry;
 
 enum SortDirection {
     LeftToRight = 0,
@@ -38,102 +38,85 @@ enum SortDirection {
     NumSortDirections
 };
 
-class RenderRect : public Platform::IntRect {
-public:
-    RenderRect() { }
-    RenderRect(const Platform::IntPoint& location, const Platform::IntSize&, int splittingFactor);
-    RenderRect(int x, int y, int width, int height, int splittingFactor);
-    RenderRect(const Platform::IntRect&);
-
-    Platform::IntRect rectForRendering();
-
-    bool isCompleted() const { return !m_subRects.size(); }
-
-    const IntRectList& subRects() const { return m_subRects; }
-    void updateSortDirection(SortDirection primary, SortDirection secondary);
-
-private:
-    void initialize(int splittingFactor);
-    void split();
-    void quickSort();
-    int m_splittingFactor;
-    IntRectList m_subRects;
-    SortDirection m_primarySortDirection;
-    SortDirection m_secondarySortDirection;
-};
-
-typedef std::vector<RenderRect> RenderRectList;
-
 class RenderQueue {
 public:
     enum JobType { VisibleZoom, VisibleScroll, RegularRender, NonVisibleScroll };
+
+    enum ClearJobsFlags {
+        ClearRegularRenderJobs = 1 << 0,
+        ClearIncompleteScrollJobs = 1 << 1,
+        ClearIncompleteZoomJobs = 1 << 2,
+        ClearCompletedJobs = 1 << 3,
+
+        ClearAnyJobs = 0xFFFFFFFF,
+
+        DontClearRegularRenderJobs = ClearAnyJobs & ~ClearRegularRenderJobs,
+        DontClearCompletedJobs = ClearAnyJobs & ~ClearCompletedJobs,
+    };
+
     RenderQueue(BackingStorePrivate*);
 
     void reset();
-    RenderRect convertToRenderRect(const Platform::IntRect&) const;
 
     bool isEmpty(bool shouldPerformRegularRenderJobs = true) const;
 
     bool hasCurrentRegularRenderJob() const;
     bool hasCurrentVisibleZoomJob() const;
     bool hasCurrentVisibleScrollJob() const;
-    bool isCurrentVisibleScrollJob(const Platform::IntRect&) const;
-    bool isCurrentVisibleScrollJobCompleted(const Platform::IntRect&) const;
-    bool isCurrentRegularRenderJob(const Platform::IntRect&) const;
+    bool isCurrentVisibleZoomJob(const TileIndex&) const;
+    bool isCurrentVisibleZoomJobCompleted(const TileIndex&) const;
+    bool isCurrentVisibleScrollJob(const TileIndex&) const;
+    bool isCurrentVisibleScrollJobCompleted(const TileIndex&) const;
+    bool isCurrentRegularRenderJob(const TileIndex&, BackingStoreGeometry*) const;
 
     bool currentRegularRenderJobBatchUnderPressure() const;
     void setCurrentRegularRenderJobBatchUnderPressure(bool);
 
     void eventQueueCycled();
 
-    void addToQueue(JobType, const Platform::IntRect&);
-    void addToQueue(JobType, const IntRectList&);
+    void addToQueue(JobType, const Platform::IntRectRegion&);
 
     void updateSortDirection(int lastDeltaX, int lastDeltaY);
     void visibleContentChanged(const Platform::IntRect&);
-    void clear(const Platform::IntRectRegion&, bool clearRegularRenderJobs);
-    void clear(const Platform::IntRect&, bool clearRegularRenderJobs);
-    void clearRegularRenderJobs(const Platform::IntRect&);
-    void clearVisibleZoom();
+    void backingStoreRectChanging(const Platform::IntRect& oldRect, const Platform::IntRect& newRect);
+    void clear(const TileIndexList&, BackingStoreGeometry*, ClearJobsFlags);
+    void clear(const Platform::IntRectRegion&, ClearJobsFlags);
     bool regularRenderJobsPreviouslyAttemptedButNotRendered(const Platform::IntRect&);
     Platform::IntRectRegion regularRenderJobsNotRenderedRegion() const { return m_regularRenderJobsNotRenderedRegion; }
 
     void render(bool shouldPerformRegularRenderJobs = true);
-    void renderAllCurrentRegularRenderJobs();
 
 private:
-    void startRegularRenderJobBatchIfNeeded();
+    TileIndexList tileIndexesIntersectingRegion(const Platform::IntRectRegion&, BackingStoreGeometry*) const;
+    TileIndexList tileIndexesFullyContainedInRegion(const Platform::IntRectRegion&, BackingStoreGeometry*) const;
+    Platform::IntRectRegion tileRegion(const TileIndexList&, BackingStoreGeometry*) const;
 
-    // Render an item from the queue.
-    void renderVisibleZoomJob();
-    void renderVisibleScrollJob();
-    void renderRegularRenderJob();
-    void renderNonVisibleScrollJob();
+    void clearRegions(const Platform::IntRectRegion&, ClearJobsFlags);
+    void clearTileIndexes(const TileIndexList&, ClearJobsFlags);
 
-    // Methods to handle a completed set of scroll jobs.
-    void visibleScrollJobsCompleted(bool shouldBlit);
-    void nonVisibleScrollJobsCompleted();
+    // Render items from the queue.
+    void renderRegularRenderJobs(bool allAtOnceIfPossible);
+    void renderScrollZoomJobs(TileIndexList* outstandingJobs, TileIndexList* completedJobs, bool allAtOnceIfPossible, bool shouldBlitWhenCompleted);
+    void scrollZoomJobsCompleted(const TileIndexList& outstandingJobs, TileIndexList* completedJobs, bool shouldBlit);
 
     // Internal method to add to the various queues.
-    void addToRegularQueue(const Platform::IntRect&);
-    void addToScrollZoomQueue(const RenderRect&, RenderRectList* queue);
-    void quickSort(RenderRectList*);
-
-    // The splitting factor for render rects.
-    int splittingFactor(const Platform::IntRect&) const;
+    void addToRegularQueue(const Platform::IntRectRegion&);
+    void addToScrollZoomQueue(const TileIndexList&, TileIndexList* queue);
+    void quickSort(TileIndexList*);
 
     BackingStorePrivate* m_parent;
 
     // The highest priority queue.
-    RenderRectList m_visibleZoomJobs;
-    RenderRectList m_visibleScrollJobs;
-    RenderRectList m_visibleScrollJobsCompleted;
+    TileIndexList m_visibleZoomJobs;
+    TileIndexList m_visibleZoomJobsCompleted;
+    TileIndexList m_visibleScrollJobs;
+    TileIndexList m_visibleScrollJobsCompleted;
     // The lowest priority queue.
-    RenderRectList m_nonVisibleScrollJobs;
-    RenderRectList m_nonVisibleScrollJobsCompleted;
+    TileIndexList m_nonVisibleScrollJobs;
+    TileIndexList m_nonVisibleScrollJobsCompleted;
     // The regular render jobs are in the middle.
     Platform::IntRectRegion m_regularRenderJobsRegion;
-    IntRectList m_currentRegularRenderJobsBatch;
+    TileIndexList m_currentRegularRenderJobsBatch;
     Platform::IntRectRegion m_currentRegularRenderJobsBatchRegion;
     bool m_rectsAddedToRegularRenderJobsInCurrentCycle;
     bool m_currentRegularRenderJobsBatchUnderPressure;

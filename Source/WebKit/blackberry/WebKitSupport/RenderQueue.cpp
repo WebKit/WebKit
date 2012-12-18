@@ -20,8 +20,11 @@
 #include "RenderQueue.h"
 
 #include "BackingStore_p.h"
+#include "SurfacePool.h"
 #include "WebPageClient.h"
 #include "WebPage_p.h"
+
+#include <wtf/NonCopyingSort.h>
 
 #define DEBUG_RENDER_QUEUE 0
 #define DEBUG_RENDER_QUEUE_SORT 0
@@ -35,17 +38,17 @@ namespace BlackBerry {
 namespace WebKit {
 
 template<SortDirection sortDirection>
-static inline int compareRectOneDirection(const Platform::IntRect& r1, const Platform::IntRect& r2)
+static inline int compareRectOneDirection(const TileIndex& t1, const TileIndex& t2)
 {
     switch (sortDirection) {
     case LeftToRight:
-        return r1.x() - r2.x();
+        return t1.i() - t2.i();
     case RightToLeft:
-        return r2.x() - r1.x();
+        return t2.i() - t1.i();
     case TopToBottom:
-        return r1.y() - r2.y();
+        return t1.j() - t2.j();
     case BottomToTop:
-        return r2.y() - r1.y();
+        return t2.j() - t1.j();
     default:
         break;
     }
@@ -54,22 +57,22 @@ static inline int compareRectOneDirection(const Platform::IntRect& r1, const Pla
 }
 
 template<SortDirection primarySortDirection, SortDirection secondarySortDirection>
-static bool rectIsLessThan(const Platform::IntRect& r1, const Platform::IntRect& r2)
+static bool tileIndexIsLessThan(const TileIndex& t1, const TileIndex& t2)
 {
-    int primaryResult = compareRectOneDirection<primarySortDirection>(r1, r2);
+    int primaryResult = compareRectOneDirection<primarySortDirection>(t1, t2);
     if (primaryResult || secondarySortDirection == primarySortDirection)
         return primaryResult < 0;
-    return compareRectOneDirection<secondarySortDirection>(r1, r2) < 0;
+    return compareRectOneDirection<secondarySortDirection>(t1, t2) < 0;
 }
 
-typedef bool (*FuncRectLessThan)(const Platform::IntRect& r1, const Platform::IntRect& r2);
-static FuncRectLessThan rectLessThanFunction(SortDirection primary, SortDirection secondary)
+typedef bool (*FuncTileIndexLessThan)(const TileIndex& t1, const TileIndex& t2);
+static FuncTileIndexLessThan tileIndexLessThanFunction(SortDirection primary, SortDirection secondary)
 {
-    static FuncRectLessThan s_rectLessThanFunctions[NumSortDirections][NumSortDirections] = { { 0 } };
+    static FuncTileIndexLessThan s_tileIndexLessThanFunctions[NumSortDirections][NumSortDirections] = { { 0 } };
     static bool s_initialized = false;
     if (!s_initialized) {
 #define ADD_COMPARE_FUNCTION(_primary, _secondary) \
-        s_rectLessThanFunctions[_primary][_secondary] = rectIsLessThan<_primary, _secondary>
+        s_tileIndexLessThanFunctions[_primary][_secondary] = tileIndexIsLessThan<_primary, _secondary>
 
         ADD_COMPARE_FUNCTION(LeftToRight, LeftToRight);
         ADD_COMPARE_FUNCTION(LeftToRight, RightToLeft);
@@ -95,117 +98,24 @@ static FuncRectLessThan rectLessThanFunction(SortDirection primary, SortDirectio
         s_initialized = true;
     }
 
-    return s_rectLessThanFunctions[primary][secondary];
+    return s_tileIndexLessThanFunctions[primary][secondary];
 }
 
-class RectLessThan {
+class TileIndexLessThan {
 public:
-    RectLessThan(SortDirection primarySortDirection, SortDirection secondarySortDirection)
-        : m_rectIsLessThan(rectLessThanFunction(primarySortDirection, secondarySortDirection))
+    TileIndexLessThan(SortDirection primarySortDirection, SortDirection secondarySortDirection)
+        : m_tileIndexIsLessThan(tileIndexLessThanFunction(primarySortDirection, secondarySortDirection))
     {
     }
 
-    bool operator()(const Platform::IntRect& r1, const Platform::IntRect& r2)
+    bool operator()(const TileIndex& t1, const TileIndex& t2)
     {
-        return m_rectIsLessThan(r1, r2);
+        return m_tileIndexIsLessThan(t1, t2);
     }
 
 private:
-    FuncRectLessThan m_rectIsLessThan;
+    FuncTileIndexLessThan m_tileIndexIsLessThan;
 };
-
-class RenderRectLessThan {
-public:
-    RenderRectLessThan(SortDirection primarySortDirection, SortDirection secondarySortDirection)
-        : m_rectIsLessThan(rectLessThanFunction(primarySortDirection, secondarySortDirection))
-    {
-    }
-
-    bool operator()(const RenderRect& r1, const RenderRect& r2)
-    {
-        return m_rectIsLessThan(r1.subRects()[0], r2.subRects()[0]);
-    }
-
-private:
-    FuncRectLessThan m_rectIsLessThan;
-};
-
-RenderRect::RenderRect(const Platform::IntPoint& location, const Platform::IntSize& size, int splittingFactor)
-    : Platform::IntRect(location, size)
-    , m_splittingFactor(0)
-    , m_primarySortDirection(TopToBottom)
-    , m_secondarySortDirection(LeftToRight)
-{
-    initialize(splittingFactor);
-}
-
-RenderRect::RenderRect(int x, int y, int width, int height, int splittingFactor)
-    : Platform::IntRect(x, y, width, height)
-    , m_splittingFactor(0)
-    , m_primarySortDirection(TopToBottom)
-    , m_secondarySortDirection(LeftToRight)
-{
-    initialize(splittingFactor);
-}
-
-void RenderRect::initialize(int splittingFactor)
-{
-    m_subRects.push_back(*this);
-    for (int i = 0; i < splittingFactor; ++i)
-        split();
-    quickSort();
-}
-
-static void splitRectInHalfAndAddToList(const Platform::IntRect& rect, bool vertical, IntRectList& renderRectList)
-{
-    if (vertical) {
-        int width1 = static_cast<int>(ceilf(rect.width() / 2.0));
-        int width2 = static_cast<int>(floorf(rect.width() / 2.0));
-        renderRectList.push_back(Platform::IntRect(rect.x(), rect.y(), width1, rect.height()));
-        renderRectList.push_back(Platform::IntRect(rect.x() + width1, rect.y(), width2, rect.height()));
-    } else {
-        int height1 = static_cast<int>(ceilf(rect.height() / 2.0));
-        int height2 = static_cast<int>(floorf(rect.height() / 2.0));
-        renderRectList.push_back(Platform::IntRect(rect.x(), rect.y(), rect.width(), height1));
-        renderRectList.push_back(Platform::IntRect(rect.x(), rect.y() + height1, rect.width(), height2));
-    }
-}
-
-void RenderRect::split()
-{
-    ++m_splittingFactor;
-
-    bool vertical = !(m_splittingFactor % 2);
-
-    IntRectList subRects;
-    for (size_t i = 0; i < m_subRects.size(); ++i)
-        splitRectInHalfAndAddToList(m_subRects.at(i), vertical, subRects);
-    m_subRects.swap(subRects);
-}
-
-Platform::IntRect RenderRect::rectForRendering()
-{
-    ASSERT(!m_subRects.empty());
-    Platform::IntRect rect = m_subRects[0];
-    m_subRects.erase(m_subRects.begin());
-    return rect;
-}
-
-void RenderRect::updateSortDirection(SortDirection primary, SortDirection secondary)
-{
-    if (primary == m_primarySortDirection && secondary == m_secondarySortDirection)
-        return;
-
-    m_primarySortDirection = primary;
-    m_secondarySortDirection = secondary;
-
-    quickSort();
-}
-
-void RenderRect::quickSort()
-{
-    std::sort(m_subRects.begin(), m_subRects.begin(), RectLessThan(m_primarySortDirection, m_secondarySortDirection));
-}
 
 RenderQueue::RenderQueue(BackingStorePrivate* parent)
     : m_parent(parent)
@@ -223,6 +133,7 @@ void RenderQueue::reset()
     m_primarySortDirection = TopToBottom;
     m_secondarySortDirection = LeftToRight;
     m_visibleZoomJobs.clear();
+    m_visibleZoomJobsCompleted.clear();
     m_visibleScrollJobs.clear();
     m_visibleScrollJobsCompleted.clear();
     m_nonVisibleScrollJobs.clear();
@@ -234,64 +145,59 @@ void RenderQueue::reset()
     ASSERT(isEmpty());
 }
 
-int RenderQueue::splittingFactor(const Platform::IntRect& rect) const
-{
-    // This method is used to split up regular render rect jobs and we want it to
-    // to be zoom invariant with respect to WebCore. In other words, if WebCore sends
-    // us a rect of viewport size to invalidate at zoom 1.0 then we split that up
-    // in the exact same way we would at zoom 2.0. The amount of content that is
-    // rendered in any one pass should stay fixed with regard to the zoom level.
-    Platform::IntRect untransformedRect = m_parent->m_webPage->d->mapFromTransformed(rect);
-    double rectArea = untransformedRect.width() * untransformedRect.height();
-    double maxArea = m_parent->tileWidth() * m_parent->tileHeight();
-
-    const unsigned splitFactor = 1 << 0;
-    double renderRectArea = maxArea / splitFactor;
-    return ceil(log(rectArea / renderRectArea) / log(2.0));
-}
-
-RenderRect RenderQueue::convertToRenderRect(const Platform::IntRect& rect) const
-{
-    return RenderRect(rect.location(), rect.size(), splittingFactor(rect));
-}
-
 bool RenderQueue::isEmpty(bool shouldPerformRegularRenderJobs) const
 {
-    return m_visibleZoomJobs.empty() && m_visibleScrollJobs.empty()
-        && (!shouldPerformRegularRenderJobs || m_currentRegularRenderJobsBatch.empty())
+    return m_visibleZoomJobs.isEmpty() && m_visibleScrollJobs.isEmpty()
+        && (!shouldPerformRegularRenderJobs || m_currentRegularRenderJobsBatch.isEmpty())
         && (!shouldPerformRegularRenderJobs || m_regularRenderJobsRegion.isEmpty())
-        && m_nonVisibleScrollJobs.empty();
+        && m_nonVisibleScrollJobs.isEmpty();
 }
 
 bool RenderQueue::hasCurrentRegularRenderJob() const
 {
-    return !m_currentRegularRenderJobsBatch.empty() || !m_regularRenderJobsRegion.isEmpty();
+    return !m_currentRegularRenderJobsBatch.isEmpty() || !m_regularRenderJobsRegion.isEmpty();
 }
 
 bool RenderQueue::hasCurrentVisibleZoomJob() const
 {
-    return !m_visibleZoomJobs.empty();
+    return !m_visibleZoomJobs.isEmpty();
 }
 
 bool RenderQueue::hasCurrentVisibleScrollJob() const
 {
-    return !m_visibleScrollJobs.empty();
+    return !m_visibleScrollJobs.isEmpty();
 }
 
-bool RenderQueue::isCurrentVisibleScrollJob(const Platform::IntRect& rect) const
+bool RenderQueue::isCurrentVisibleZoomJob(const TileIndex& index) const
 {
-    return std::find(m_visibleScrollJobs.begin(), m_visibleScrollJobs.end(), rect) != m_visibleScrollJobs.end();
+    return m_visibleZoomJobs.contains(index);
 }
 
-bool RenderQueue::isCurrentVisibleScrollJobCompleted(const Platform::IntRect& rect) const
+bool RenderQueue::isCurrentVisibleZoomJobCompleted(const TileIndex& index) const
 {
-    return std::find(m_visibleScrollJobsCompleted.begin(), m_visibleScrollJobsCompleted.end(), rect) != m_visibleScrollJobsCompleted.end();
+    return m_visibleZoomJobsCompleted.contains(index);
 }
 
-bool RenderQueue::isCurrentRegularRenderJob(const Platform::IntRect& rect) const
+bool RenderQueue::isCurrentVisibleScrollJob(const TileIndex& index) const
 {
-    return m_regularRenderJobsRegion.isRectInRegion(rect) == Platform::IntRectRegion::ContainedInRegion
-        || m_currentRegularRenderJobsBatchRegion.isRectInRegion(rect) == Platform::IntRectRegion::ContainedInRegion;
+    return m_visibleScrollJobs.contains(index);
+}
+
+bool RenderQueue::isCurrentVisibleScrollJobCompleted(const TileIndex& index) const
+{
+    return m_visibleScrollJobsCompleted.contains(index);
+}
+
+bool RenderQueue::isCurrentRegularRenderJob(const TileIndex& index, BackingStoreGeometry* geometry) const
+{
+    Platform::IntRect tileRect(geometry->originOfTile(index), m_parent->tileSize());
+    Platform::IntRectRegion::IntersectionState regularJobsState = m_regularRenderJobsRegion.isRectInRegion(tileRect);
+    Platform::IntRectRegion::IntersectionState currentRegularJobsState = m_currentRegularRenderJobsBatchRegion.isRectInRegion(tileRect);
+
+    return regularJobsState == Platform::IntRectRegion::ContainedInRegion
+        || regularJobsState == Platform::IntRectRegion::PartiallyContainedInRegion
+        || currentRegularJobsState == Platform::IntRectRegion::ContainedInRegion
+        || currentRegularJobsState == Platform::IntRectRegion::PartiallyContainedInRegion;
 }
 
 bool RenderQueue::currentRegularRenderJobBatchUnderPressure() const
@@ -313,96 +219,154 @@ void RenderQueue::eventQueueCycled()
     m_rectsAddedToRegularRenderJobsInCurrentCycle = false;
 }
 
-void RenderQueue::addToQueue(JobType type, const IntRectList& rectList)
+TileIndexList RenderQueue::tileIndexesIntersectingRegion(const Platform::IntRectRegion& region, BackingStoreGeometry* geometry) const
 {
-    for (size_t i = 0; i < rectList.size(); ++i)
-        addToQueue(type, rectList.at(i));
+    TileIndexList indexes;
+    TileIndexList allIndexes = m_parent->indexesForBackingStoreRect(geometry->backingStoreRect());
+
+    for (size_t i = 0; i < allIndexes.size(); ++i) {
+        Platform::IntRect tileRect(geometry->originOfTile(allIndexes[i]), m_parent->tileSize());
+        Platform::IntRectRegion::IntersectionState state = region.isRectInRegion(tileRect);
+        if (state == Platform::IntRectRegion::ContainedInRegion || state == Platform::IntRectRegion::PartiallyContainedInRegion)
+            indexes.append(allIndexes[i]);
+    }
+    return indexes;
 }
 
-void RenderQueue::addToQueue(JobType type, const Platform::IntRect& rect)
+TileIndexList RenderQueue::tileIndexesFullyContainedInRegion(const Platform::IntRectRegion& region, BackingStoreGeometry* geometry) const
 {
-    if (type == NonVisibleScroll && std::find(m_visibleScrollJobs.begin(), m_visibleScrollJobs.end(), rect) != m_visibleScrollJobs.end())
-        return; // |rect| is in a higher priority queue.
+    TileIndexList indexes;
+    TileIndexList allIndexes = m_parent->indexesForBackingStoreRect(geometry->backingStoreRect());
 
-    switch (type) {
-    case VisibleZoom:
-        addToScrollZoomQueue(convertToRenderRect(rect), &m_visibleZoomJobs);
-        return;
-    case VisibleScroll:
-        addToScrollZoomQueue(convertToRenderRect(rect), &m_visibleScrollJobs);
-        return;
-    case RegularRender:
-        {
-            // Flag that we added rects in the current event queue cycle.
-            m_rectsAddedToRegularRenderJobsInCurrentCycle = true;
+    for (size_t i = 0; i < allIndexes.size(); ++i) {
+        Platform::IntRect tileRect(geometry->originOfTile(allIndexes[i]), m_parent->tileSize());
+        Platform::IntRectRegion::IntersectionState state = region.isRectInRegion(tileRect);
+        if (state == Platform::IntRectRegion::ContainedInRegion)
+            indexes.append(allIndexes[i]);
+    }
+    return indexes;
+}
 
-            // We try and detect if this newly added rect intersects or is contained in the currently running
-            // batch of render jobs. If so, then we have to start the batch over since we decompose individual
-            // rects into subrects and might have already rendered one of them. If the web page's content has
-            // changed state then this can lead to artifacts. We mark this by noting the batch is now under pressure
-            // and the backingstore will attempt to clear it at the next available opportunity.
-            Platform::IntRectRegion::IntersectionState state = m_currentRegularRenderJobsBatchRegion.isRectInRegion(rect);
+Platform::IntRectRegion RenderQueue::tileRegion(const TileIndexList& indexes, BackingStoreGeometry* geometry) const
+{
+    Platform::IntRectRegion region;
+
+    // Chances are the tiles comprise a perfect rectangle. If we add rectangles
+    // row by row or column by column, IntRectRegion should have an easier time
+    // merging them as the individual rows or columns will merge into another
+    // plain rectangle.
+    Platform::IntRectRegion currentRowOrColumnRegion;
+    size_t lastI = 0;
+    size_t lastJ = 0;
+
+    for (size_t i = 0; i < indexes.size(); ++i) {
+        Platform::IntRect tileRect(geometry->originOfTile(indexes[i]), m_parent->tileSize());
+        bool extendsCurrentRowOrColumn = i && (lastI == indexes[i].i() || lastJ == indexes[i].j());
+
+        if (extendsCurrentRowOrColumn)
+            currentRowOrColumnRegion = Platform::IntRectRegion::unionRegions(currentRowOrColumnRegion, tileRect);
+        else {
+            region = Platform::IntRectRegion::unionRegions(region, currentRowOrColumnRegion);
+            currentRowOrColumnRegion = tileRect;
+        }
+        lastI = indexes[i].i();
+        lastJ = indexes[i].j();
+    }
+
+    return Platform::IntRectRegion::unionRegions(region, currentRowOrColumnRegion);
+}
+
+void RenderQueue::addToQueue(JobType type, const Platform::IntRectRegion& region)
+{
+    if (type == RegularRender) {
+        // Flag that we added rects in the current event queue cycle.
+        m_rectsAddedToRegularRenderJobsInCurrentCycle = true;
+
+        // We try and detect if this newly added region intersects or is contained in the currently running
+        // batch of render jobs. If so, then we have to start the batch over since we decompose individual
+        // rects into subrects and might have already rendered one of them. If the web page's content has
+        // changed state then this can lead to artifacts. We mark this by noting the batch is now under pressure
+        // and the backingstore will attempt to clear it at the next available opportunity.
+        std::vector<Platform::IntRect> rectsInRegion = region.rects();
+        for (size_t i = 0; i < rectsInRegion.size(); ++i) {
+            Platform::IntRectRegion::IntersectionState state = m_currentRegularRenderJobsBatchRegion.isRectInRegion(rectsInRegion[i]);
             if (state == Platform::IntRectRegion::ContainedInRegion || state == Platform::IntRectRegion::PartiallyContainedInRegion) {
                 m_regularRenderJobsRegion = Platform::IntRectRegion::unionRegions(m_regularRenderJobsRegion, m_currentRegularRenderJobsBatchRegion);
                 m_currentRegularRenderJobsBatch.clear();
                 m_currentRegularRenderJobsBatchRegion = Platform::IntRectRegion();
                 m_currentRegularRenderJobsBatchUnderPressure = true;
             }
-            addToRegularQueue(rect);
         }
+        addToRegularQueue(region);
+        return;
+    }
+
+    TileIndexList indexes = tileIndexesIntersectingRegion(region, m_parent->frontState());
+
+    switch (type) {
+    case VisibleZoom:
+        addToScrollZoomQueue(indexes, &m_visibleZoomJobs);
+        return;
+    case VisibleScroll:
+        addToScrollZoomQueue(indexes, &m_visibleScrollJobs);
         return;
     case NonVisibleScroll:
-        addToScrollZoomQueue(convertToRenderRect(rect), &m_nonVisibleScrollJobs);
+        addToScrollZoomQueue(indexes, &m_nonVisibleScrollJobs);
         return;
+    default:
+        ASSERT_NOT_REACHED();
     }
-    ASSERT_NOT_REACHED();
 }
 
-void RenderQueue::addToRegularQueue(const Platform::IntRect& rect)
+void RenderQueue::addToRegularQueue(const Platform::IntRectRegion& region)
 {
 #if DEBUG_RENDER_QUEUE
-    if (m_regularRenderJobsRegion.isRectInRegion(rect) != Platform::IntRectRegion::ContainedInRegion) {
-        Platform::logAlways(Platform::LogLevelCritical,
-            "RenderQueue::addToRegularQueue %s",
-            rect.toString().c_str());
+    std::vector<Platform::IntRect> rectsInRegion = region.rects();
+    for (size_t i = 0; i < rectsInRegion.size(); ++i) {
+        if (m_regularRenderJobsRegion.isRectInRegion(rectsInRegion[i]) != Platform::IntRectRegion::ContainedInRegion) {
+            Platform::logAlways(Platform::LogLevelCritical,
+                "RenderQueue::addToRegularQueue region within %s",
+                region.extents().toString().c_str());
+            break;
+        }
     }
 #endif
+
+    m_regularRenderJobsRegion = Platform::IntRectRegion::unionRegions(m_regularRenderJobsRegion, region);
 
     // Do not let the regular render queue grow past a maximum of 3 disjoint rects.
     if (m_regularRenderJobsRegion.numRects() > 2)
-        m_regularRenderJobsRegion = Platform::unionOfRects(m_regularRenderJobsRegion.extents(), rect);
-    else
-        m_regularRenderJobsRegion = Platform::IntRectRegion::unionRegions(m_regularRenderJobsRegion, rect);
+        m_regularRenderJobsRegion = m_regularRenderJobsRegion.extents();
 
     if (!isEmpty())
         m_parent->dispatchRenderJob();
 }
 
-void RenderQueue::addToScrollZoomQueue(const RenderRect& rect, RenderRectList* rectList)
+void RenderQueue::addToScrollZoomQueue(const TileIndexList& addedTiles, TileIndexList* alreadyQueuedTiles)
 {
-    if (std::find(rectList->begin(), rectList->end(), rect) != rectList->end())
-        return;
+    for (size_t i = 0; i < addedTiles.size(); ++i) {
+        if (alreadyQueuedTiles->contains(addedTiles[i]))
+            continue;
 
 #if DEBUG_RENDER_QUEUE
-    Platform::logAlways(Platform::LogLevelCritical,
-        "RenderQueue::addToScrollZoomQueue %s",
-        rect.toString().c_str());
+        Platform::logAlways(Platform::LogLevelCritical,
+            "RenderQueue::addToScrollZoomQueue tile at %s",
+            m_parent->frontState()->originOfTile(addedTiles[i]).toString().c_str());
 #endif
-    rectList->push_back(rect);
+        alreadyQueuedTiles->append(addedTiles[i]);
+    }
 
     if (!isEmpty())
         m_parent->dispatchRenderJob();
 }
 
-void RenderQueue::quickSort(RenderRectList* queue)
+void RenderQueue::quickSort(TileIndexList* queue)
 {
     size_t length = queue->size();
     if (!length)
         return;
 
-    for (size_t i = 0; i < length; ++i)
-        queue->at(i).updateSortDirection(m_primarySortDirection, m_secondarySortDirection);
-    return std::sort(queue->begin(), queue->end(), RenderRectLessThan(m_primarySortDirection, m_secondarySortDirection));
+    WTF::nonCopyingSort(queue->begin(), queue->end(), TileIndexLessThan(m_primarySortDirection, m_secondarySortDirection));
 }
 
 void RenderQueue::updateSortDirection(int lastDeltaX, int lastDeltaY)
@@ -419,28 +383,30 @@ void RenderQueue::updateSortDirection(int lastDeltaX, int lastDeltaY)
 
 void RenderQueue::visibleContentChanged(const Platform::IntRect& visibleContent)
 {
-    if (m_visibleScrollJobs.empty() && m_nonVisibleScrollJobs.empty()) {
-        ASSERT(m_visibleScrollJobsCompleted.empty() && m_nonVisibleScrollJobsCompleted.empty());
+    if (m_visibleScrollJobs.isEmpty() && m_nonVisibleScrollJobs.isEmpty()) {
+        ASSERT(m_visibleScrollJobsCompleted.isEmpty() && m_nonVisibleScrollJobsCompleted.isEmpty());
         return;
     }
+
+    TileIndexList visibleTiles = tileIndexesIntersectingRegion(visibleContent, m_parent->frontState());
 
     // Move visibleScrollJobs to nonVisibleScrollJobs if they do not intersect
     // the visible content rect.
     for (size_t i = 0; i < m_visibleScrollJobs.size(); ++i) {
-        RenderRect rect = m_visibleScrollJobs.at(i);
-        if (!rect.intersects(visibleContent)) {
-            m_visibleScrollJobs.erase(m_visibleScrollJobs.begin() + i);
-            addToScrollZoomQueue(rect, &m_nonVisibleScrollJobs);
+        if (!visibleTiles.contains(m_visibleScrollJobs[i])) {
+            ASSERT(!m_nonVisibleScrollJobs.contains(m_visibleScrollJobs[i]));
+            m_nonVisibleScrollJobs.append(m_visibleScrollJobs[i]);
+            m_visibleScrollJobs.remove(i);
             --i;
         }
     }
 
     // Do the same for the completed list.
     for (size_t i = 0; i < m_visibleScrollJobsCompleted.size(); ++i) {
-        RenderRect rect = m_visibleScrollJobsCompleted.at(i);
-        if (!rect.intersects(visibleContent)) {
-            m_visibleScrollJobsCompleted.erase(m_visibleScrollJobsCompleted.begin() + i);
-            addToScrollZoomQueue(rect, &m_nonVisibleScrollJobsCompleted);
+        if (!visibleTiles.contains(m_visibleScrollJobsCompleted[i])) {
+            ASSERT(!m_nonVisibleScrollJobsCompleted.contains(m_visibleScrollJobsCompleted[i]));
+            m_nonVisibleScrollJobsCompleted.append(m_visibleScrollJobsCompleted[i]);
+            m_visibleScrollJobsCompleted.remove(i);
             --i;
         }
     }
@@ -448,29 +414,29 @@ void RenderQueue::visibleContentChanged(const Platform::IntRect& visibleContent)
     // Move nonVisibleScrollJobs to visibleScrollJobs if they do intersect
     // the visible content rect.
     for (size_t i = 0; i < m_nonVisibleScrollJobs.size(); ++i) {
-        RenderRect rect = m_nonVisibleScrollJobs.at(i);
-        if (rect.intersects(visibleContent)) {
-            m_nonVisibleScrollJobs.erase(m_nonVisibleScrollJobs.begin() + i);
-            addToScrollZoomQueue(rect, &m_visibleScrollJobs);
+        if (visibleTiles.contains(m_nonVisibleScrollJobs[i])) {
+            ASSERT(!m_visibleScrollJobs.contains(m_nonVisibleScrollJobs[i]));
+            m_visibleScrollJobs.append(m_nonVisibleScrollJobs[i]);
+            m_nonVisibleScrollJobs.remove(i);
             --i;
         }
     }
 
     // Do the same for the completed list.
     for (size_t i = 0; i < m_nonVisibleScrollJobsCompleted.size(); ++i) {
-        RenderRect rect = m_nonVisibleScrollJobsCompleted.at(i);
-        if (rect.intersects(visibleContent)) {
-            m_nonVisibleScrollJobsCompleted.erase(m_nonVisibleScrollJobsCompleted.begin() + i);
-            addToScrollZoomQueue(rect, &m_visibleScrollJobsCompleted);
+        if (visibleTiles.contains(m_nonVisibleScrollJobsCompleted[i])) {
+            ASSERT(!m_visibleScrollJobsCompleted.contains(m_nonVisibleScrollJobsCompleted[i]));
+            m_visibleScrollJobsCompleted.append(m_nonVisibleScrollJobsCompleted[i]);
+            m_nonVisibleScrollJobsCompleted.remove(i);
             --i;
         }
     }
 
-    if (m_visibleScrollJobs.empty() && !m_visibleScrollJobsCompleted.empty())
-        visibleScrollJobsCompleted(false /*shouldBlit*/);
+    if (m_visibleScrollJobs.isEmpty() && !m_visibleScrollJobsCompleted.isEmpty())
+        scrollZoomJobsCompleted(m_visibleScrollJobs, &m_visibleScrollJobsCompleted, false /*shouldBlit*/);
 
-    if (m_nonVisibleScrollJobs.empty() && !m_nonVisibleScrollJobsCompleted.empty())
-        nonVisibleScrollJobsCompleted();
+    if (m_nonVisibleScrollJobs.isEmpty() && !m_nonVisibleScrollJobsCompleted.isEmpty())
+        scrollZoomJobsCompleted(m_nonVisibleScrollJobs, &m_nonVisibleScrollJobsCompleted, false /*shouldBlit*/);
 
     // We shouldn't be empty because the early return above and the fact that this
     // method just shuffles rects from queue to queue hence the total number of
@@ -478,74 +444,117 @@ void RenderQueue::visibleContentChanged(const Platform::IntRect& visibleContent)
     ASSERT(!isEmpty());
 }
 
-void RenderQueue::clear(const Platform::IntRectRegion& region, bool clearRegularRenderJobs)
+void RenderQueue::backingStoreRectChanging(const Platform::IntRect& oldRect, const Platform::IntRect& newRect)
 {
-    IntRectList rects = region.rects();
-    for (size_t i = 0; i < rects.size(); ++i)
-        clear(rects.at(i), clearRegularRenderJobs);
+    // We could empty them here instead of in BackingStorePrivate::setBackingStoreRect(),
+    // but it seems cleaner to do it there and still avoid code to manually move them.
+    ASSERT(m_visibleZoomJobs.isEmpty());
+    ASSERT(m_visibleZoomJobsCompleted.isEmpty());
+    ASSERT(m_visibleScrollJobs.isEmpty());
+    ASSERT(m_visibleScrollJobsCompleted.isEmpty());
+    ASSERT(m_nonVisibleScrollJobs.isEmpty());
+    ASSERT(m_nonVisibleScrollJobsCompleted.isEmpty());
+
+    // Empty the tile-based current batch and merge its remaining region with
+    // the one from other upcoming regular render jobs. We'll pick all of them
+    // up next time renderRegularRenderJobs() is called.
+    m_regularRenderJobsRegion = Platform::IntRectRegion::unionRegions(m_regularRenderJobsRegion, m_currentRegularRenderJobsBatchRegion);
+    m_currentRegularRenderJobsBatchRegion = Platform::IntRectRegion();
+    m_currentRegularRenderJobsBatch.clear();
 }
 
-void RenderQueue::clear(const Platform::IntRect& rect, bool clearRegularRenderJobs)
+void RenderQueue::clear(const Platform::IntRectRegion& region, ClearJobsFlags clearJobsFlags)
 {
-    if (m_visibleScrollJobs.empty() && m_nonVisibleScrollJobs.empty())
-        ASSERT(m_visibleScrollJobsCompleted.empty() && m_nonVisibleScrollJobsCompleted.empty());
-
-    // Remove all rects from all queues that are contained by this rect.
-    for (size_t i = 0; i < m_visibleScrollJobs.size(); ++i) {
-        if (rect.contains(m_visibleScrollJobs.at(i))) {
-            m_visibleScrollJobs.erase(m_visibleScrollJobs.begin() + i);
-            --i;
-        }
-    }
-
-    for (size_t i = 0; i < m_visibleScrollJobsCompleted.size(); ++i) {
-        if (rect.contains(m_visibleScrollJobsCompleted.at(i))) {
-            m_visibleScrollJobsCompleted.erase(m_visibleScrollJobsCompleted.begin() + i);
-            --i;
-        }
-    }
-
-    for (size_t i = 0; i < m_nonVisibleScrollJobs.size(); ++i) {
-        if (rect.contains(m_nonVisibleScrollJobs.at(i))) {
-            m_nonVisibleScrollJobs.erase(m_nonVisibleScrollJobs.begin() + i);
-            --i;
-        }
-    }
-
-    for (size_t i = 0; i < m_nonVisibleScrollJobsCompleted.size(); ++i) {
-        if (rect.contains(m_nonVisibleScrollJobsCompleted.at(i))) {
-            m_nonVisibleScrollJobsCompleted.erase(m_nonVisibleScrollJobsCompleted.begin() + i);
-            --i;
-        }
-    }
-
-    // Only clear the regular render jobs if the flag has been set.
-    if (clearRegularRenderJobs)
-        this->clearRegularRenderJobs(rect);
-
-    if (m_visibleScrollJobs.empty() && !m_visibleScrollJobsCompleted.empty())
-        visibleScrollJobsCompleted(false /*shouldBlit*/);
-
-    if (m_nonVisibleScrollJobs.empty() && !m_nonVisibleScrollJobsCompleted.empty())
-        nonVisibleScrollJobsCompleted();
+    clearRegions(region, clearJobsFlags);
+    clearTileIndexes(tileIndexesFullyContainedInRegion(region, m_parent->frontState()), clearJobsFlags);
 }
 
-void RenderQueue::clearRegularRenderJobs(const Platform::IntRect& rect)
+void RenderQueue::clear(const TileIndexList& indexes, BackingStoreGeometry* geometry, ClearJobsFlags clearJobsFlags)
 {
-    for (size_t i = 0; i < m_currentRegularRenderJobsBatch.size(); ++i) {
-        if (rect.contains(m_currentRegularRenderJobsBatch.at(i))) {
-            m_currentRegularRenderJobsBatch.erase(m_currentRegularRenderJobsBatch.begin() + i);
-            --i;
-        }
-    }
-    m_regularRenderJobsRegion = Platform::IntRectRegion::subtractRegions(m_regularRenderJobsRegion, rect);
-    m_currentRegularRenderJobsBatchRegion = Platform::IntRectRegion::subtractRegions(m_currentRegularRenderJobsBatchRegion, rect);
-    m_regularRenderJobsNotRenderedRegion = Platform::IntRectRegion::subtractRegions(m_regularRenderJobsNotRenderedRegion, rect);
+    clearRegions(tileRegion(indexes, geometry), clearJobsFlags);
+    clearTileIndexes(indexes, clearJobsFlags);
 }
 
-void RenderQueue::clearVisibleZoom()
+void RenderQueue::clearRegions(const Platform::IntRectRegion& region, ClearJobsFlags clearJobsFlags)
 {
-    m_visibleZoomJobs.clear();
+    if (clearJobsFlags & ClearRegularRenderJobs) {
+        m_regularRenderJobsRegion = Platform::IntRectRegion::subtractRegions(m_regularRenderJobsRegion, region);
+        m_currentRegularRenderJobsBatchRegion = Platform::IntRectRegion::subtractRegions(m_currentRegularRenderJobsBatchRegion, region);
+        m_regularRenderJobsNotRenderedRegion = Platform::IntRectRegion::subtractRegions(m_regularRenderJobsNotRenderedRegion, region);
+    }
+}
+
+void RenderQueue::clearTileIndexes(const TileIndexList& indexes, ClearJobsFlags clearJobsFlags)
+{
+    if (m_visibleScrollJobs.isEmpty() && m_nonVisibleScrollJobs.isEmpty())
+        ASSERT(m_visibleScrollJobsCompleted.isEmpty() && m_nonVisibleScrollJobsCompleted.isEmpty());
+
+    // Remove all indexes from all queues that are being marked as cleared.
+    if (clearJobsFlags & ClearIncompleteZoomJobs) {
+        for (size_t i = 0; i < m_visibleZoomJobs.size(); ++i) {
+            if (indexes.contains(m_visibleZoomJobs.at(i))) {
+                m_visibleZoomJobs.remove(i);
+                --i;
+            }
+        }
+    }
+
+    if (clearJobsFlags & ClearIncompleteScrollJobs) {
+        for (size_t i = 0; i < m_visibleScrollJobs.size(); ++i) {
+            if (indexes.contains(m_visibleScrollJobs.at(i))) {
+                m_visibleScrollJobs.remove(i);
+                --i;
+            }
+        }
+
+        for (size_t i = 0; i < m_nonVisibleScrollJobs.size(); ++i) {
+            if (indexes.contains(m_nonVisibleScrollJobs.at(i))) {
+                m_nonVisibleScrollJobs.remove(i);
+                --i;
+            }
+        }
+    }
+
+    if (clearJobsFlags & ClearCompletedJobs) {
+        for (size_t i = 0; i < m_visibleZoomJobsCompleted.size(); ++i) {
+            if (indexes.contains(m_visibleZoomJobsCompleted.at(i))) {
+                m_visibleZoomJobsCompleted.remove(i);
+                --i;
+            }
+        }
+
+        for (size_t i = 0; i < m_visibleScrollJobsCompleted.size(); ++i) {
+            if (indexes.contains(m_visibleScrollJobsCompleted.at(i))) {
+                m_visibleScrollJobsCompleted.remove(i);
+                --i;
+            }
+        }
+
+        for (size_t i = 0; i < m_nonVisibleScrollJobsCompleted.size(); ++i) {
+            if (indexes.contains(m_nonVisibleScrollJobsCompleted.at(i))) {
+                m_nonVisibleScrollJobsCompleted.remove(i);
+                --i;
+            }
+        }
+    }
+
+    if (clearJobsFlags & ClearRegularRenderJobs) {
+        for (size_t i = 0; i < m_currentRegularRenderJobsBatch.size(); ++i) {
+            if (indexes.contains(m_currentRegularRenderJobsBatch.at(i))) {
+                m_currentRegularRenderJobsBatch.remove(i);
+                --i;
+            }
+        }
+    }
+
+    if (m_visibleZoomJobs.isEmpty() && !m_visibleZoomJobsCompleted.isEmpty())
+        scrollZoomJobsCompleted(m_visibleZoomJobs, &m_visibleZoomJobsCompleted, false /*shouldBlit*/);
+
+    if (m_visibleScrollJobs.isEmpty() && !m_visibleScrollJobsCompleted.isEmpty())
+        scrollZoomJobsCompleted(m_visibleScrollJobs, &m_visibleScrollJobsCompleted, false /*shouldBlit*/);
+
+    if (m_nonVisibleScrollJobs.isEmpty() && !m_nonVisibleScrollJobsCompleted.isEmpty())
+        scrollZoomJobsCompleted(m_nonVisibleScrollJobs, &m_nonVisibleScrollJobsCompleted, false /*shouldBlit*/);
 }
 
 bool RenderQueue::regularRenderJobsPreviouslyAttemptedButNotRendered(const Platform::IntRect& rect)
@@ -567,6 +576,7 @@ void RenderQueue::render(bool shouldPerformRegularRenderJobs)
 #endif
 
     m_parent->requestLayoutIfNeeded();
+    m_parent->updateTileMatrixIfNeeded();
 
 #if DEBUG_RENDER_QUEUE
     double elapsed = WTF::currentTime() - time;
@@ -575,262 +585,208 @@ void RenderQueue::render(bool shouldPerformRegularRenderJobs)
 #endif
 
     // Empty the queues in a precise order of priority.
-    if (!m_visibleZoomJobs.empty())
-        renderVisibleZoomJob();
-    else if (!m_visibleScrollJobs.empty())
-        renderVisibleScrollJob();
-    else if (shouldPerformRegularRenderJobs && (!m_currentRegularRenderJobsBatch.empty() || !m_regularRenderJobsRegion.isEmpty())) {
-        if (currentRegularRenderJobBatchUnderPressure())
-            renderAllCurrentRegularRenderJobs();
-        else
-            renderRegularRenderJob();
-    } else if (!m_nonVisibleScrollJobs.empty())
-        renderNonVisibleScrollJob();
+    if (!m_visibleZoomJobs.isEmpty())
+        renderScrollZoomJobs(&m_visibleZoomJobs, &m_visibleZoomJobsCompleted, true /*allAtOnceIfPossible*/, true /*shouldBlitWhenCompleted*/);
+    else if (!m_visibleScrollJobs.isEmpty())
+        renderScrollZoomJobs(&m_visibleScrollJobs, &m_visibleScrollJobsCompleted, false /*allAtOnceIfPossible*/, true /*shouldBlitWhenCompleted*/);
+    else if (shouldPerformRegularRenderJobs && (!m_currentRegularRenderJobsBatch.isEmpty() || !m_regularRenderJobsRegion.isEmpty())) {
+        bool allAtOnceIfPossible = currentRegularRenderJobBatchUnderPressure();
+        renderRegularRenderJobs(allAtOnceIfPossible);
+    } else if (!m_nonVisibleScrollJobs.isEmpty())
+        renderScrollZoomJobs(&m_nonVisibleScrollJobs, &m_nonVisibleScrollJobsCompleted, false /*allAtOnceIfPossible*/, false /*shouldBlitWhenCompleted*/);
 }
 
-void RenderQueue::renderAllCurrentRegularRenderJobs()
+void RenderQueue::renderRegularRenderJobs(bool allAtOnceIfPossible)
 {
 #if DEBUG_RENDER_QUEUE
-    // Start the time measurement...
+    // Start the time measurement.
     double time = WTF::currentTime();
 #endif
 
-    // Request layout first
-    m_parent->requestLayoutIfNeeded();
+    ASSERT(!m_currentRegularRenderJobsBatch.isEmpty() || !m_regularRenderJobsRegion.isEmpty());
 
-#if DEBUG_RENDER_QUEUE
-    double elapsed = WTF::currentTime() - time;
-    if (elapsed)
-        Platform::logAlways(Platform::LogLevelCritical, "RenderQueue::renderAllCurrentRegularRenderJobs layout elapsed=%f", elapsed);
-#endif
-
-    // The state of render queue may be modified from inside requestLayoutIfNeeded.
-    // In fact, it can even be emptied entirely! Layout can trigger a call to
-    // RenderQueue::clear. See PR#101811 for instance. So we should check again here.
-    if (!hasCurrentRegularRenderJob())
-        return;
-
-    // If there is no current batch of jobs, then create one.
-    if (m_currentRegularRenderJobsBatchRegion.isEmpty()) {
-
-        // Create a current region object from our regular render region.
-        m_currentRegularRenderJobsBatchRegion = m_regularRenderJobsRegion;
+    if (allAtOnceIfPossible && !m_currentRegularRenderJobsBatchRegion.isEmpty()) {
+        // If there is a current batch of jobs already, merge it back into the
+        // whole area so that we will pick up all of it for the next run.
+        m_regularRenderJobsRegion = Platform::IntRectRegion::unionRegions(m_regularRenderJobsRegion, m_currentRegularRenderJobsBatchRegion);
 
         // Clear this since we're about to render everything.
-        m_regularRenderJobsRegion = Platform::IntRectRegion();
-    }
-
-    Platform::IntRectRegion regionNotRendered;
-    if (m_parent->shouldSuppressNonVisibleRegularRenderJobs()) {
-        // Record any part of the region that doesn't intersect the current visible contents rect.
-        regionNotRendered = Platform::IntRectRegion::subtractRegions(m_currentRegularRenderJobsBatchRegion, m_parent->visibleContentsRect());
-        m_regularRenderJobsNotRenderedRegion = Platform::IntRectRegion::unionRegions(m_regularRenderJobsNotRenderedRegion, regionNotRendered);
-
-#if DEBUG_RENDER_QUEUE
-        if (!regionNotRendered.isEmpty())
-            Platform::logAlways(Platform::LogLevelCritical, "RenderQueue::renderAllCurrentRegularRenderJobs region not completely rendered!");
-#endif
-
-        // Clip to the visible contents so we'll be faster.
-        m_currentRegularRenderJobsBatchRegion = Platform::IntRectRegion::intersectRegions(m_currentRegularRenderJobsBatchRegion, m_parent->visibleContentsRect());
-    }
-
-    bool rendered = false;
-    if (!m_currentRegularRenderJobsBatchRegion.isEmpty()) {
-        std::vector<Platform::IntRect> rectList = m_currentRegularRenderJobsBatchRegion.rects();
-        for (size_t i = 0; i < rectList.size(); ++i)
-            rendered = m_parent->render(rectList.at(i)) ? true : rendered;
-    }
-
-#if DEBUG_RENDER_QUEUE
-    // Stop the time measurement.
-    elapsed = WTF::currentTime() - time;
-    Platform::logAlways(Platform::LogLevelCritical,
-        "RenderQueue::renderAllCurrentRegularRenderJobs extents=%s numberOfRects=%d elapsed=%f",
-        m_currentRegularRenderJobsBatchRegion.extents().toString().c_str(),
-        m_currentRegularRenderJobsBatchRegion.rects().size(),
-        elapsed);
-#endif
-
-    // Clear the region and blit since this batch is now complete.
-    Platform::IntRect renderedRect = m_currentRegularRenderJobsBatchRegion.extents();
-    m_currentRegularRenderJobsBatch.clear();
-    m_currentRegularRenderJobsBatchRegion = Platform::IntRectRegion();
-    m_currentRegularRenderJobsBatchUnderPressure = false;
-
-    if (rendered)
-        m_parent->didRenderContent(renderedRect);
-
-    if (m_parent->shouldSuppressNonVisibleRegularRenderJobs() && !regionNotRendered.isEmpty())
-        m_parent->updateTilesForScrollOrNotRenderedRegion(false /*checkLoading*/);
-}
-
-void RenderQueue::startRegularRenderJobBatchIfNeeded()
-{
-    if (!m_currentRegularRenderJobsBatch.empty())
-        return;
-
-    // Decompose the current regular render job region into render rect pieces.
-    IntRectList regularRenderJobs = m_regularRenderJobsRegion.rects();
-
-    // The current batch...
-    m_currentRegularRenderJobsBatch = regularRenderJobs;
-
-    // Create a region object that will be checked when adding new rects before
-    // this batch has been completed.
-    m_currentRegularRenderJobsBatchRegion = m_regularRenderJobsRegion;
-
-    // Clear the former region since it is now part of this batch.
-    m_regularRenderJobsRegion = Platform::IntRectRegion();
-
-#if DEBUG_RENDER_QUEUE
-    Platform::logAlways(Platform::LogLevelCritical,
-        "RenderQueue::startRegularRenderJobBatchIfNeeded batch size is %d!",
-        m_currentRegularRenderJobsBatch.size());
-#endif
-}
-
-void RenderQueue::renderVisibleZoomJob()
-{
-    ASSERT(m_visibleZoomJobs.size() > 0);
-
-#if DEBUG_RENDER_QUEUE
-    // Start the time measurement.
-    double time = WTF::currentTime();
-#endif
-
-    RenderRect* rect = &m_visibleZoomJobs[0];
-    ASSERT(!rect->isCompleted());
-    Platform::IntRect subRect = rect->rectForRendering();
-    if (rect->isCompleted())
-        m_visibleZoomJobs.erase(m_visibleZoomJobs.begin());
-
-    m_parent->render(subRect);
-
-    // Record that it has now been rendered via a different type of job...
-    clearRegularRenderJobs(subRect);
-
-#if DEBUG_RENDER_QUEUE
-    // Stop the time measurement
-    double elapsed = WTF::currentTime() - time;
-    Platform::logAlways(Platform::LogLevelCritical,
-        "RenderQueue::renderVisibleZoomJob rect=%s elapsed=%f",
-        subRect.toString().c_str(),
-        elapsed);
-#endif
-}
-
-void RenderQueue::renderVisibleScrollJob()
-{
-    ASSERT(!m_visibleScrollJobs.empty());
-
-#if DEBUG_RENDER_QUEUE || DEBUG_RENDER_QUEUE_SORT
-    // Start the time measurement.
-    double time = WTF::currentTime();
-    double elapsed;
-#endif
-
-    quickSort(&m_visibleScrollJobs);
-
-#if DEBUG_RENDER_QUEUE_SORT
-    // Stop the time measurement
-    elapsed = WTF::currentTime() - time;
-    Platform::logAlways(Platform::LogLevelCritical, "RenderQueue::renderVisibleScrollJob sort elapsed=%f", elapsed);
-#endif
-
-    RenderRect rect = m_visibleScrollJobs[0];
-    m_visibleScrollJobs.erase(m_visibleScrollJobs.begin());
-
-    ASSERT(!rect.isCompleted());
-    Platform::IntRect subRect = rect.rectForRendering();
-    if (rect.isCompleted())
-        m_visibleScrollJobsCompleted.push_back(rect);
-    else
-        m_visibleScrollJobs.insert(m_visibleScrollJobs.begin(), rect);
-
-    m_parent->render(subRect);
-
-    // Record that it has now been rendered via a different type of job...
-    clearRegularRenderJobs(subRect);
-
-#if DEBUG_RENDER_QUEUE
-    // Stop the time measurement
-    elapsed = WTF::currentTime() - time;
-    Platform::logAlways(Platform::LogLevelCritical,
-        "RenderQueue::renderVisibleScrollJob rect=%s elapsed=%f",
-        subRect.toString().c_str(),
-        elapsed);
-#endif
-
-    if (m_visibleScrollJobs.empty())
-        visibleScrollJobsCompleted(true /*shouldBlit*/);
-}
-
-void RenderQueue::renderRegularRenderJob()
-{
-#if DEBUG_RENDER_QUEUE
-    // Start the time measurement.
-    double time = WTF::currentTime();
-#endif
-
-    ASSERT(!m_currentRegularRenderJobsBatch.empty() || !m_regularRenderJobsRegion.isEmpty());
-
-    startRegularRenderJobBatchIfNeeded();
-
-    // Take the first job from the regular render job queue.
-    Platform::IntRect rect = m_currentRegularRenderJobsBatch[0];
-    m_currentRegularRenderJobsBatchRegion = Platform::IntRectRegion::subtractRegions(m_currentRegularRenderJobsBatchRegion, Platform::IntRectRegion(rect));
-    m_currentRegularRenderJobsBatch.erase(m_currentRegularRenderJobsBatch.begin());
-
-    Platform::IntRectRegion regionNotRendered;
-    if (m_parent->shouldSuppressNonVisibleRegularRenderJobs()) {
-        // Record any part of the region that doesn't intersect the current visible tiles rect.
-        regionNotRendered = Platform::IntRectRegion::subtractRegions(rect, m_parent->visibleContentsRect());
-        m_regularRenderJobsNotRenderedRegion = Platform::IntRectRegion::unionRegions(m_regularRenderJobsNotRenderedRegion, regionNotRendered);
-
-#if DEBUG_RENDER_QUEUE
-        if (!regionNotRendered.isEmpty()) {
-            Platform::logAlways(Platform::LogLevelCritical,
-                "RenderQueue::renderRegularRenderJob rect %s not completely rendered!",
-                rect.toString().c_str());
-        }
-#endif
-
-        // Clip to the visible tiles so we'll be faster.
-        rect.intersect(m_parent->visibleContentsRect());
-    }
-
-    if (!rect.isEmpty())
-        m_parent->render(rect);
-
-#if DEBUG_RENDER_QUEUE
-    // Stop the time measurement.
-    double elapsed = WTF::currentTime() - time;
-    Platform::logAlways(Platform::LogLevelCritical,
-        "RenderQueue::renderRegularRenderJob rect=%s elapsed=%f",
-        rect.toString().c_str(),
-        elapsed);
-#endif
-
-    if (m_currentRegularRenderJobsBatch.empty()) {
-        Platform::IntRect renderedRect = m_currentRegularRenderJobsBatchRegion.extents();
-        // Clear the region and the and blit since this batch is now complete.
         m_currentRegularRenderJobsBatchRegion = Platform::IntRectRegion();
-        m_currentRegularRenderJobsBatchUnderPressure = false;
-        m_parent->didRenderContent(renderedRect);
+        m_currentRegularRenderJobsBatch.clear();
     }
+
+    bool shouldDirectRenderingToWindow = m_parent->shouldDirectRenderingToWindow();
+    Platform::IntRect contentsRect = m_parent->expandedContentsRect();
+
+    // Start new batch if needed.
+    if (m_currentRegularRenderJobsBatchRegion.isEmpty()) {
+        // Don't try to render anything outside the whole contents rectangle.
+        m_regularRenderJobsRegion = Platform::IntRectRegion::intersectRegions(m_regularRenderJobsRegion, contentsRect);
+
+        // Split the current regular render job region into tiles.
+        if (!shouldDirectRenderingToWindow)
+            m_currentRegularRenderJobsBatch = tileIndexesIntersectingRegion(m_regularRenderJobsRegion, m_parent->frontState());
+
+        // Create a region object that will be checked when adding new rects before
+        // this batch has been completed.
+        m_currentRegularRenderJobsBatchRegion = m_regularRenderJobsRegion;
+
+        // Clear the former region since it is now part of this batch.
+        m_regularRenderJobsRegion = Platform::IntRectRegion();
+
+#if DEBUG_RENDER_QUEUE
+        Platform::logAlways(Platform::LogLevelCritical,
+            "RenderQueue::renderRegularRenderJobs batch size is %d!",
+            m_currentRegularRenderJobsBatch.size());
+#endif
+    }
+
+    Platform::IntRectRegion changingRegion = m_currentRegularRenderJobsBatchRegion;
+    Platform::IntRectRegion changingRegionScheduledForLater = m_regularRenderJobsRegion;
+    Platform::IntRectRegion regionNotRenderedThisTime;
+
+    TileIndexList* outstandingJobs = &m_currentRegularRenderJobsBatch;
+    TileIndexList completedJobs;
+    TileIndexList tilesToRender;
+
+    unsigned numberOfAvailableBackBuffers = shouldDirectRenderingToWindow
+        ? 0
+        : SurfacePool::globalSurfacePool()->numberOfAvailableBackBuffers();
+
+    while (!outstandingJobs->isEmpty() && numberOfAvailableBackBuffers) {
+        // Render as many tiles at once as we can handle.
+        for (size_t i = 0; i < outstandingJobs->size() && numberOfAvailableBackBuffers; ++i) {
+            TileIndex index = (*outstandingJobs)[i];
+
+            BackingStoreGeometry* geometry = m_parent->frontState();
+            Platform::IntRect tileRect(geometry->originOfTile(index), m_parent->tileSize());
+
+            if (!contentsRect.intersects(tileRect)) {
+                // This is a safety fallback, at this point we should only
+                // encounter tiles outside of the contents rect if we're in
+                // a second run of the same batch and the contents size has
+                // changed since the last run. Otherwise, see the cropping above.
+#if DEBUG_RENDER_QUEUE
+                Platform::logAlways(Platform::LogLevelCritical,
+                    "RenderQueue::renderRegularRenderJobs tile at %s outside of expanded contents rect %s, ignoring.",
+                    tileRect.toString().c_str(),
+                    contentsRect.toString().c_str());
+#endif
+                outstandingJobs->remove(i);
+                --i;
+                m_currentRegularRenderJobsBatchRegion = Platform::IntRectRegion::intersectRegions(m_currentRegularRenderJobsBatchRegion, contentsRect);
+                continue;
+            }
+
+            if (m_parent->shouldSuppressNonVisibleRegularRenderJobs()) {
+                // If a tile is not visible, remember it as not rendered to be
+                // picked up later by updateTilesForScrollOrNotRenderedRegion()
+                // or updateTilesAfterBackingStoreRectChange().
+                Platform::IntRectRegion tileRegionNotRendered;
+
+                if (!m_parent->isTileVisible(index, geometry)) {
+                    tileRegionNotRendered = Platform::IntRectRegion::intersectRegions(tileRect, m_currentRegularRenderJobsBatchRegion);
+                    regionNotRenderedThisTime = Platform::IntRectRegion::unionRegions(regionNotRenderedThisTime, tileRegionNotRendered);
+                }
+
+                if (!regionNotRenderedThisTime.isEmpty()) {
+#if DEBUG_RENDER_QUEUE
+                    Platform::logAlways(Platform::LogLevelCritical,
+                        "RenderQueue::renderRegularRenderJobs region within %s not completely rendered!",
+                        tileRegionNotRendered.extents().toString().c_str());
+#endif
+                    outstandingJobs->remove(i);
+                    --i;
+                    continue;
+                }
+            }
+
+            tilesToRender.append(index);
+            --numberOfAvailableBackBuffers;
+        }
+
+        if (tilesToRender.isEmpty())
+            break;
+
+        // This will also clear the rendered tiles in outstandingJobs.
+        TileIndexList renderedTiles = m_parent->render(tilesToRender);
+
+        // Update number of available back buffers now that we've used them.
+        numberOfAvailableBackBuffers = SurfacePool::globalSurfacePool()->numberOfAvailableBackBuffers();
+
+        ASSERT(!renderedTiles.isEmpty());
+        if (renderedTiles.isEmpty()) {
+#if DEBUG_RENDER_QUEUE
+            Platform::logAlways(Platform::LogLevelCritical,
+                "RenderQueue::renderRegularRenderJobs no tiles rendered (%d attempted), available back buffers: %d",
+                tilesToRender.size(),
+                numberOfAvailableBackBuffers);
+#endif
+            break; // Something bad happened, make sure not to try again for now.
+        }
+
+        for (size_t i = 0; i < renderedTiles.size(); ++i) {
+            if (!completedJobs.contains(renderedTiles[i]))
+                completedJobs.append(renderedTiles[i]);
+        }
+
+        if (!allAtOnceIfPossible)
+            break; // We can do the rest next time.
+    }
+
+    Platform::IntRectRegion renderedRegion;
+
+    if (shouldDirectRenderingToWindow) {
+        // Try rendering once, if we're suspended there will be another
+        // full-screen update later on anyways.
+        renderedRegion = m_parent->renderDirectToWindow(m_currentRegularRenderJobsBatchRegion.extents());
+        m_currentRegularRenderJobsBatchRegion = Platform::IntRectRegion();
+    } else {
+        renderedRegion = tileRegion(completedJobs, m_parent->frontState());
+    }
+
+    m_regularRenderJobsNotRenderedRegion = Platform::IntRectRegion::unionRegions(m_regularRenderJobsNotRenderedRegion, regionNotRenderedThisTime);
+
+#if DEBUG_RENDER_QUEUE
+    // Stop the time measurement.
+    double elapsed = WTF::currentTime() - time;
+    Platform::logAlways(Platform::LogLevelCritical,
+        "RenderQueue::renderRegularRenderJobs within %s: completed = %d, outstanding = %d, elapsed=%f",
+        changingRegion.extents().toString().c_str(),
+        completedJobs.size(),
+        outstandingJobs->size(),
+        elapsed);
+#endif
 
     // Make sure we didn't alter state of the queues that should have been empty
     // before this method was called.
-    ASSERT(m_visibleScrollJobs.empty());
+    ASSERT(m_visibleZoomJobs.isEmpty());
+    ASSERT(m_visibleScrollJobs.isEmpty());
 
-    if (m_parent->shouldSuppressNonVisibleRegularRenderJobs() && !regionNotRendered.isEmpty())
+    if (m_currentRegularRenderJobsBatchRegion.isEmpty()) {
+        // If the whole scheduled area has been rendered, all outstanding jobs
+        // should have been cleared as well.
+        ASSERT(outstandingJobs->isEmpty());
+        m_currentRegularRenderJobsBatchUnderPressure = false;
+
+        // Notify about the newly rendered content.
+        // In case we picked up an unfinished batch from before, because we
+        // paint a larger area it's possible that we also rendered other
+        // regions that were originally scheduled for later.
+        Platform::IntRectRegion wholeScheduledRegion = Platform::IntRectRegion::unionRegions(changingRegion, changingRegionScheduledForLater);
+        Platform::IntRectRegion renderedChangedRegion = Platform::IntRectRegion::intersectRegions(wholeScheduledRegion, renderedRegion);
+
+        // Blit since this batch is now complete.
+        m_parent->didRenderContent(renderedChangedRegion);
+    }
+
+    if (m_parent->shouldSuppressNonVisibleRegularRenderJobs() && !regionNotRenderedThisTime.isEmpty())
         m_parent->updateTilesForScrollOrNotRenderedRegion(false /*checkLoading*/);
 }
 
-void RenderQueue::renderNonVisibleScrollJob()
+void RenderQueue::renderScrollZoomJobs(TileIndexList* outstandingJobs, TileIndexList* completedJobs, bool allAtOnceIfPossible, bool shouldBlitWhenCompleted)
 {
-    ASSERT(!m_nonVisibleScrollJobs.empty());
+    ASSERT(!outstandingJobs->isEmpty());
 
 #if DEBUG_RENDER_QUEUE || DEBUG_RENDER_QUEUE_SORT
     // Start the time measurement.
@@ -838,59 +794,109 @@ void RenderQueue::renderNonVisibleScrollJob()
     double elapsed;
 #endif
 
-    quickSort(&m_nonVisibleScrollJobs);
+    bool shouldDirectRenderingToWindow = m_parent->shouldDirectRenderingToWindow();
+    Platform::IntRect contentsRect = m_parent->expandedContentsRect();
+
+    unsigned numberOfAvailableBackBuffers = shouldDirectRenderingToWindow
+        ? 0
+        : SurfacePool::globalSurfacePool()->numberOfAvailableBackBuffers();
+
+    // If we take multiple turns to render, we sort to make them appear in the right order.
+    if (!allAtOnceIfPossible && outstandingJobs->size() > numberOfAvailableBackBuffers)
+        quickSort(outstandingJobs);
 
 #if DEBUG_RENDER_QUEUE_SORT
-    // Stop the time measurement.
+    // Stop the time measurement
     elapsed = WTF::currentTime() - time;
-    Platform::logAlways(Platform::LogLevelCritical, "RenderQueue::renderNonVisibleScrollJob sort elapsed=%f", elapsed);
+    Platform::logAlways(Platform::LogLevelCritical, "RenderQueue::renderScrollZoomJobs sort elapsed=%f", elapsed);
 #endif
 
-    RenderRect rect = m_nonVisibleScrollJobs[0];
-    m_nonVisibleScrollJobs.erase(m_nonVisibleScrollJobs.begin());
+    TileIndexList tilesToRender;
 
-    ASSERT(!rect.isCompleted());
-    Platform::IntRect subRect = rect.rectForRendering();
-    if (rect.isCompleted())
-        m_nonVisibleScrollJobsCompleted.push_back(rect);
-    else
-        m_nonVisibleScrollJobs.insert(m_nonVisibleScrollJobs.begin(), rect);
+    while (!outstandingJobs->isEmpty() && numberOfAvailableBackBuffers) {
+        // Render as many tiles at once as we can handle.
+        for (size_t i = 0; i < outstandingJobs->size() && numberOfAvailableBackBuffers; ++i) {
+            TileIndex index = (*outstandingJobs)[i];
+            Platform::IntRect tileRect(m_parent->frontState()->originOfTile(index), m_parent->tileSize());
 
-    m_parent->render(subRect);
+            // Make sure we only try to render tiles containing contents.
+            if (!contentsRect.intersects(tileRect)) {
+#if DEBUG_RENDER_QUEUE
+                Platform::logAlways(Platform::LogLevelCritical,
+                    "RenderQueue::renderScrollZoomJobs tile at %s outside of expanded contents rect %s, ignoring.",
+                    tileRect.toString().c_str(),
+                    contentsRect.toString().c_str());
+#endif
+                outstandingJobs->remove(i);
+                --i;
+                continue;
+            }
 
-    // Record that it has now been rendered via a different type of job...
-    clearRegularRenderJobs(subRect);
+            tilesToRender.append((*outstandingJobs)[i]);
+            --numberOfAvailableBackBuffers;
+        }
 
-    // Make sure we didn't alter state of the queues that should have been empty
-    // before this method was called.
-    ASSERT(m_visibleScrollJobs.empty());
+        if (tilesToRender.isEmpty())
+            break;
+
+        // This will clear the rendered tiles in outstandingJobs.
+        TileIndexList renderedTiles = m_parent->render(tilesToRender);
+
+        // Update number of available back buffers now that we've used them.
+        numberOfAvailableBackBuffers = SurfacePool::globalSurfacePool()->numberOfAvailableBackBuffers();
+
+        ASSERT(!renderedTiles.isEmpty());
+        if (renderedTiles.isEmpty()) {
+#if DEBUG_RENDER_QUEUE
+            Platform::logAlways(Platform::LogLevelCritical,
+                "RenderQueue::renderScrollZoomJobs no tiles rendered (%d attempted, available back buffers: %d)",
+                tilesToRender.size(),
+                numberOfAvailableBackBuffers);
+#endif
+            break; // Something bad happened, make sure not to try again for now.
+        }
+
+        for (size_t i = 0; i < renderedTiles.size(); ++i) {
+            if (!completedJobs->contains(renderedTiles[i]))
+                completedJobs->append(renderedTiles[i]);
+        }
+
+        if (!allAtOnceIfPossible)
+            break; // We can do the rest next time.
+    }
+
+    if (shouldDirectRenderingToWindow) {
+        // In direct rendering mode, any zoom or scroll job would require a
+        // full-screen update.
+        Platform::IntRect visibleContentsRect = m_parent->visibleContentsRect();
+        Platform::IntRect renderedRect = m_parent->renderDirectToWindow(visibleContentsRect);
+        if (!renderedRect.isEmpty())
+            outstandingJobs->clear();
+    }
 
 #if DEBUG_RENDER_QUEUE
     // Stop the time measurement.
     elapsed = WTF::currentTime() - time;
     Platform::logAlways(Platform::LogLevelCritical,
-        "RenderQueue::renderNonVisibleScrollJob rect=%s elapsed=%f",
-        subRect.toString().c_str(), elapsed);
+        "RenderQueue::renderScrollZoomJobs completed=%d, outstanding=%d, elapsed=%f",
+        completedJobs->size(),
+        outstandingJobs->size(),
+        elapsed);
 #endif
 
-    if (m_nonVisibleScrollJobs.empty())
-        nonVisibleScrollJobsCompleted();
+    if (outstandingJobs->isEmpty())
+        scrollZoomJobsCompleted(*outstandingJobs, completedJobs, shouldBlitWhenCompleted);
 }
 
-void RenderQueue::visibleScrollJobsCompleted(bool shouldBlit)
-{
-    // Now blit to the screen if we are done and get rid of the completed list!
-    ASSERT(m_visibleScrollJobs.empty());
-    m_visibleScrollJobsCompleted.clear();
-    if (shouldBlit)
-        m_parent->didRenderContent(m_parent->visibleContentsRect());
-}
-
-void RenderQueue::nonVisibleScrollJobsCompleted()
+void RenderQueue::scrollZoomJobsCompleted(const TileIndexList& outstandingJobs, TileIndexList* completedJobs, bool shouldBlit)
 {
     // Get rid of the completed list!
-    ASSERT(m_nonVisibleScrollJobs.empty());
-    m_nonVisibleScrollJobsCompleted.clear();
+    ASSERT(outstandingJobs.isEmpty());
+    completedJobs->clear();
+
+    // Now blit to the screen if we are done!
+    if (shouldBlit)
+        m_parent->didRenderContent(m_parent->visibleContentsRect());
 }
 
 } // namespace WebKit

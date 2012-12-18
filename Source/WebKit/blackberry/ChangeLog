@@ -1,3 +1,129 @@
+2012-12-18  Jakob Petsovits  <jpetsovits@rim.com>
+
+        [BlackBerry] Restructure the render queue to process multiple tiles at once.
+        https://bugs.webkit.org/show_bug.cgi?id=105199
+        RIM PR 260232
+
+        Reviewed by George Staikos.
+        Internally reviewed by Arvid Nilsson.
+
+        Since my last big commit, r136442, the BackingStore's render()
+        function is able to fetch multiple back buffers and swap them
+        into the user interface thread in one go. However, it turns out
+        that this is not enough to actually render to all of the
+        available back buffers at once. The RenderQueue class was still
+        working with a model based on processing one rectangle after
+        another.
+
+        This commit rewrites large parts of RenderQueue to issue
+        render() calls for multiple tiles at once. As WebCore painting
+        gets cheaper and blocking becomes more of an issue, this commit
+        does away with paints smaller than tile size and always renders
+        whole tiles at once. This means the demise of RenderRect.
+        As an additional benefit, this means we can remove the
+        copyPreviousContentsToTileBuffer() function which caused
+        potential threading issues as it was accessing a buffer
+        now owned by the UI thread from the WebKit thread.
+
+        RenderQueue is also smarter than before in assigning batches,
+        it now takes into account the number of available back buffers
+        for rendering as well as excludes tiles outside contents
+        boundaries. Regular render jobs continue being tracked as
+        regions (and are being issued to didRenderContent()) with only
+        the changed content regions. Everything else switches over to
+        tile index lists from previously lists of rectangles.
+        By default, we render as many tiles at once as we can grab
+        back buffers, or until a given set of jobs is done.
+        For high-priority jobs, render() will be called in a loop.
+
+        To allow for the necessary changes in render() and improve
+        reliability in the same go, we now call render() almost
+        exclusively through RenderQueue. Other places would often
+        call renderVisibleContents() in situations where rendering
+        is not possible, geometries don't get updated, or content
+        rendered notifications would not get issued to the client.
+        By replacing renderVisibleContents() with a scheduled
+        high-priority queue that's immediately being processed
+        (but only if possible), these problems go away.
+
+        * Api/BackingStore.cpp:
+        (BlackBerry::WebKit::BackingStorePrivate::resumeScreenUpdates):
+        (BlackBerry::WebKit::BackingStorePrivate::repaint):
+        (BlackBerry::WebKit::BackingStorePrivate::slowScroll):
+        (BlackBerry::WebKit::BackingStorePrivate::renderJob):
+        (BlackBerry::WebKit::BackingStorePrivate::setBackingStoreRect):
+        (BlackBerry::WebKit::BackingStorePrivate::updateTilesAfterBackingStoreRectChange):
+        (BlackBerry::WebKit::BackingStorePrivate::indexesForBackingStoreRect):
+        (BlackBerry::WebKit::BackingStorePrivate::clearAndUpdateTileOfNotRenderedRegion):
+        (BlackBerry::WebKit::BackingStorePrivate::isCurrentVisibleJob):
+        (BlackBerry::WebKit::BackingStorePrivate::renderDirectToWindow):
+        (BlackBerry::WebKit::BackingStorePrivate::render):
+        (BlackBerry::WebKit::BackingStorePrivate::renderAndBlitVisibleContentsImmediately):
+        (BlackBerry::WebKit::BackingStorePrivate::renderAndBlitImmediately):
+        (BlackBerry::WebKit::BackingStorePrivate::paintDefaultBackground):
+        (BlackBerry::WebKit::BackingStorePrivate::blitVisibleContents):
+        (BlackBerry::WebKit::BackingStorePrivate::compositeContents):
+        (BlackBerry::WebKit::BackingStorePrivate::visibleTileIndexes):
+        (BlackBerry::WebKit::BackingStorePrivate::resetTiles):
+        (BlackBerry::WebKit::BackingStorePrivate::updateTilesForScrollOrNotRenderedRegion):
+        (BlackBerry::WebKit::BackingStorePrivate::updateTile):
+        (BlackBerry::WebKit::BackingStorePrivate::transformChanged):
+        (BlackBerry::WebKit::BackingStorePrivate::didRenderContent):
+        * Api/BackingStore_p.h:
+        (BackingStorePrivate):
+        * Api/WebPage.cpp:
+        (BlackBerry::WebKit::WebPagePrivate::setLoadState):
+        (BlackBerry::WebKit::WebPagePrivate::zoomAboutPoint):
+        (BlackBerry::WebKit::WebPagePrivate::resumeBackingStore):
+        * Api/WebPageCompositor.cpp:
+        (BlackBerry::WebKit::WebPageCompositorPrivate::animationFrameChanged):
+        * WebCoreSupport/FrameLoaderClientBlackBerry.cpp:
+        (WebCore::FrameLoaderClientBlackBerry::dispatchDidLayout):
+        * WebKitSupport/RenderQueue.cpp:
+        (BlackBerry::WebKit::compareRectOneDirection):
+        (BlackBerry::WebKit::tileIndexIsLessThan):
+        (WebKit):
+        (BlackBerry::WebKit::tileIndexLessThanFunction):
+        (BlackBerry::WebKit::TileIndexLessThan::TileIndexLessThan):
+        (BlackBerry::WebKit::TileIndexLessThan::operator()):
+        (TileIndexLessThan):
+        (BlackBerry::WebKit::RenderQueue::reset):
+        (BlackBerry::WebKit::RenderQueue::isEmpty):
+        (BlackBerry::WebKit::RenderQueue::hasCurrentRegularRenderJob):
+        (BlackBerry::WebKit::RenderQueue::hasCurrentVisibleZoomJob):
+        (BlackBerry::WebKit::RenderQueue::hasCurrentVisibleScrollJob):
+        (BlackBerry::WebKit::RenderQueue::isCurrentVisibleZoomJob):
+        (BlackBerry::WebKit::RenderQueue::isCurrentVisibleZoomJobCompleted):
+        (BlackBerry::WebKit::RenderQueue::isCurrentVisibleScrollJob):
+        (BlackBerry::WebKit::RenderQueue::isCurrentVisibleScrollJobCompleted):
+        (BlackBerry::WebKit::RenderQueue::isCurrentRegularRenderJob):
+        (BlackBerry::WebKit::RenderQueue::tileIndexesIntersectingRegion):
+        (BlackBerry::WebKit::RenderQueue::tileIndexesFullyContainedInRegion):
+        (BlackBerry::WebKit::RenderQueue::tileRegion):
+        (BlackBerry::WebKit::RenderQueue::addToQueue):
+        (BlackBerry::WebKit::RenderQueue::addToRegularQueue):
+        (BlackBerry::WebKit::RenderQueue::addToScrollZoomQueue):
+        (BlackBerry::WebKit::RenderQueue::quickSort):
+        (BlackBerry::WebKit::RenderQueue::visibleContentChanged):
+        (BlackBerry::WebKit::RenderQueue::backingStoreRectChanging):
+        (BlackBerry::WebKit::RenderQueue::clear):
+        (BlackBerry::WebKit::RenderQueue::clearRegions):
+        (BlackBerry::WebKit::RenderQueue::clearTileIndexes):
+        (BlackBerry::WebKit::RenderQueue::render):
+        (BlackBerry::WebKit::RenderQueue::renderRegularRenderJobs):
+        (BlackBerry::WebKit::RenderQueue::renderScrollZoomJobs):
+        (BlackBerry::WebKit::RenderQueue::scrollZoomJobsCompleted):
+        * WebKitSupport/RenderQueue.h:
+        (WebKit):
+        (RenderQueue):
+        * WebKitSupport/SurfacePool.cpp:
+        (BlackBerry::WebKit::SurfacePool::numberOfAvailableBackBuffers):
+        (BlackBerry::WebKit::SurfacePool::takeBackBuffer):
+        * WebKitSupport/SurfacePool.h:
+        (SurfacePool):
+        * WebKitSupport/TileIndex.h:
+        (WebKit):
+
 2012-12-17  Sean Wang  <Xuewen.Wang@torchmobile.com.cn>
 
         [BlackBerry] Editable text element can't be selected

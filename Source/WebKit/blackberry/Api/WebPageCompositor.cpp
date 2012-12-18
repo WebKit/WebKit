@@ -239,7 +239,7 @@ void WebPageCompositorPrivate::animationFrameChanged()
         using namespace BlackBerry::Platform;
 
         backingStore->d->setDirectRenderingAnimationMessageScheduled();
-        webKitThreadMessageClient()->dispatchMessage(createMethodCallMessage(&BackingStorePrivate::renderVisibleContents, backingStore->d));
+        webKitThreadMessageClient()->dispatchMessage(createMethodCallMessage(&BackingStorePrivate::renderAndBlitVisibleContentsImmediately, backingStore->d));
         return;
     }
 
