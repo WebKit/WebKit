@@ -26,8 +26,10 @@
 #include "CachedResource.h"
 #include "ImageObserver.h"
 #include "IntRect.h"
+#include "IntSizeHash.h"
 #include "LayoutSize.h"
 #include "SVGImageCache.h"
+#include <wtf/HashMap.h>
 #include <wtf/Vector.h>
 
 namespace WebCore {
@@ -59,7 +61,7 @@ public:
 
     bool canRender(const RenderObject* renderer, float multiplier) { return !errorOccurred() && !imageSizeForRenderer(renderer, multiplier).isEmpty(); }
 
-    void setContainerSizeForRenderer(const RenderObject*, const IntSize&, float);
+    void setContainerSizeForRenderer(const CachedImageClient*, const IntSize&, float);
     bool usesImageContainerSize() const;
     bool imageHasRelativeWidth() const;
     bool imageHasRelativeHeight() const;
@@ -106,6 +108,10 @@ private:
     void notifyObservers(const IntRect* changeRect = 0);
     virtual PurgePriority purgePriority() const { return PurgeFirst; }
     void checkShouldPaintBrokenImage();
+
+    typedef pair<IntSize, float> SizeAndZoom;
+    typedef HashMap<const CachedImageClient*, SizeAndZoom> ContainerSizeRequests;
+    ContainerSizeRequests m_pendingContainerSizeRequests;
 
     RefPtr<Image> m_image;
 #if ENABLE(SVG)

@@ -1,3 +1,35 @@
+2012-12-17  Philip Rogers  <pdr@google.com>
+
+        Queue container size requests while images are loading.
+        https://bugs.webkit.org/show_bug.cgi?id=105097
+
+        Reviewed by Dean Jackson.
+
+        We use CachedImage::setContainerSizeForRenderer(...) to notify images of requesting
+        container sizes. Unfortunately, if the image is not yet loaded we ignore this container
+        size information! This patch stores requesting container sizes made while the image is
+        not yet loaded.
+
+        This patch fixes a bug where SVG images would display incorrectly on the first load but
+        correctly thereafter. Additionally, this bug caused the SVGImageCache to not be used in many
+        real world scenarios.
+
+        This patch is loosely based on a patch by blambov in WK98403.
+
+        Test: http/tests/misc/svg-image-delayed-size-negotiation.html
+
+        * loader/cache/CachedImage.cpp:
+        (WebCore::CachedImage::didRemoveClient):
+        (WebCore::CachedImage::allClientsRemoved):
+        (WebCore::CachedImage::setContainerSizeForRenderer):
+        (WebCore::CachedImage::clear):
+        (WebCore::CachedImage::createImage):
+        * loader/cache/CachedImage.h:
+
+            A new map has been added to track renderer -> size information before an image has
+            loaded. Note that this affects all images (not just images that require container size
+            information) but we cannot know the image type before the image has loaded.
+
 2012-12-17  Shinya Kawanaka  <shinyak@chromium.org>
 
         Web Inspector: need to visually distinguish UA shadow roots
