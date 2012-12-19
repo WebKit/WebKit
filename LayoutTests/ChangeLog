@@ -1,5 +1,35 @@
 2012-12-19  Levi Weintraub  <leviw@chromium.org>
 
+        Unreviewed gardening. Updating expectations following r137847.
+
+        * platform/chromium-linux-x86/fast/dom/Window: Added.
+        * platform/chromium-linux-x86/fast/dom/Window/webkitConvertPoint-expected.txt: Added.
+        * platform/chromium-linux/fast/dom/Window/webkitConvertPoint-expected.txt: Added.
+        * platform/chromium-linux/fast/sub-pixel/transformed-iframe-copy-on-scroll-expected.txt: Removed.
+        * platform/chromium-linux/platform/chromium/fast/forms/suggestion-picker/date-suggestion-picker-appearance-with-scroll-bar-expected.png:
+        * platform/chromium-linux/platform/chromium/fast/forms/suggestion-picker/month-suggestion-picker-appearance-with-scroll-bar-expected.png:
+        * platform/chromium-linux/platform/chromium/fast/forms/suggestion-picker/week-suggestion-picker-appearance-with-scroll-bar-expected.png:
+        * platform/chromium-mac-lion/fast/sub-pixel/sub-pixel-iframe-copy-on-scroll-expected.png:
+        * platform/chromium-mac-lion/platform/chromium/fast/forms/suggestion-picker/date-suggestion-picker-appearance-with-scroll-bar-expected.png:
+        * platform/chromium-mac-lion/platform/chromium/fast/forms/suggestion-picker/month-suggestion-picker-appearance-with-scroll-bar-expected.png:
+        * platform/chromium-mac-lion/platform/chromium/fast/forms/suggestion-picker/week-suggestion-picker-appearance-with-scroll-bar-expected.png:
+        * platform/chromium-mac-snowleopard/fast/sub-pixel/sub-pixel-iframe-copy-on-scroll-expected.png:
+        * platform/chromium-mac-snowleopard/fast/sub-pixel/transformed-iframe-copy-on-scroll-expected.png
+        * platform/chromium-mac/fast/sub-pixel/sub-pixel-iframe-copy-on-scroll-expected.png:
+        * platform/chromium-mac/fast/sub-pixel/sub-pixel-iframe-copy-on-scroll-expected.txt:
+        * platform/chromium-mac/platform/chromium/fast/forms/suggestion-picker/date-suggestion-picker-appearance-with-scroll-bar-expected.png:
+        * platform/chromium-mac/platform/chromium/fast/forms/suggestion-picker/month-suggestion-picker-appearance-with-scroll-bar-expected.png:
+        * platform/chromium-mac/platform/chromium/fast/forms/suggestion-picker/week-suggestion-picker-appearance-with-scroll-bar-expected.png:
+        * platform/chromium-win/fast/sub-pixel/sub-pixel-iframe-copy-on-scroll-expected.png:
+        * platform/chromium-win/fast/sub-pixel/transformed-iframe-copy-on-scroll-expected.png: Added.
+        * platform/chromium-win/fast/sub-pixel/transformed-iframe-copy-on-scroll-expected.txt: Added.
+        * platform/chromium-win/platform/chromium/fast/forms/suggestion-picker/date-suggestion-picker-appearance-with-scroll-bar-expected.png:
+        * platform/chromium-win/platform/chromium/fast/forms/suggestion-picker/month-suggestion-picker-appearance-with-scroll-bar-expected.png:
+        * platform/chromium-win/platform/chromium/fast/forms/suggestion-picker/week-suggestion-picker-appearance-with-scroll-bar-expected.png:
+        * platform/chromium/TestExpectations:
+
+2012-12-19  Levi Weintraub  <leviw@chromium.org>
+
         Unreviewed. Fixing incorrect include path and unskipping broken test.
 
         * fast/events/touch/touch-input-element-change-documents.html:
