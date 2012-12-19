@@ -1,3 +1,35 @@
+2012-12-19  Ryosuke Niwa  <rniwa@webkit.org>
+
+        PerfTest.parse_output does too much
+        https://bugs.webkit.org/show_bug.cgi?id=105391
+
+        Reviewed by Tony Chang.
+
+        Moved the code to filter lines into PerfTest._filter_output, which has been renamed from _filter_stderr.
+        Also moved the code to output test results into PerfTest._run_with_driver.
+
+        * Scripts/webkitpy/performance_tests/perftest.py:
+        (PerfTest.__init__): Added _description.
+        (PerfTest.description): Added.
+        (PerfTest._run_with_driver): Moved the code to output test description and test results.
+        (PerfTest._filter_output): Moved and renamed from PerfTest._filter_stderr.
+        (PerfTest.parse_output): Removed the code to output test results. Return test results and description
+        respectively. Also removed the code that allowed some tests to omit values since all tests report each
+        iteration now since r136492.
+        (PerfTest.output_statistics): Removed the code to print test description, now done in _run_with_driver.
+        (ChromiumStylePerfTest._run_with_driver): Added. Chromium style tests are sufficiently different from
+        regular PerfTest that it doesn't make much sense to share _run_with_driver. But really, we should just
+        get rid of this type of test altogether in favor of regular performance tests that uses runner.js.
+        (ChromiumStylePerfTest.parse_and_log_output): Renamed from parse_output.
+        (PageLoadingPerfTest._run_with_driver): Removed the explicit '' for the test description.
+        * Scripts/webkitpy/performance_tests/perftest_unittest.py:
+        (MainTest.test_parse_output): Removed the expected logs since parse_output no longer prints out results.
+        Also added a call to _filter_output since parse_output doesn't filter the output text anymore.
+        (MainTest.test_parse_output_with_failing_line): Added a call to _filter_output. Also added ',' after 'Time:'
+        so that it's not string-concatenated with the next line.
+        (MainTest.test_parse_output_with_description): Added; a test for PerfTest.description().
+        (MainTest.test_parse_output_with_subtests): Removed the expected logs, and added a call to _filter_output.
+
 2012-12-19  Alexis Menard  <alexis@webkit.org>
 
         Implement CSS parsing for CSS transitions unprefixed.

@@ -57,12 +57,16 @@ class PerfTest(object):
         self._port = port
         self._test_name = test_name
         self._test_path = test_path
+        self._description = None
 
     def test_name(self):
         return self._test_name
 
     def test_path(self):
         return self._test_path
+
+    def description(self):
+        return self._description
 
     def prepare(self, time_out_ms):
         return True
@@ -76,10 +80,21 @@ class PerfTest(object):
 
     def _run_with_driver(self, driver, time_out_ms):
         output = self.run_single(driver, self.test_path(), time_out_ms)
-        self._filter_stderr(output)
+        self._filter_output(output)
         if self.run_failed(output):
             return None
-        return self.parse_output(output)
+
+        results = self.parse_output(output)
+        if not results:
+            return None
+
+        if not self._port.get_option('profile'):
+            if self._description:
+                _log.info('DESCRIPTION: %s' % self._description)
+            for result_name in sorted(results.keys()):
+                self.output_statistics(result_name, results[result_name])
+
+        return results
 
     def run_single(self, driver, test_path, time_out_ms, should_run_pixel_test=False):
         return driver.run_test(DriverInput(test_path, time_out_ms, image_hash=None, should_run_pixel_test=should_run_pixel_test), stop_when_done=False)
@@ -116,12 +131,6 @@ class PerfTest(object):
     def _should_ignore_line_in_stderr(self, line):
         return self._should_ignore_line(self._lines_to_ignore_in_stderr, line)
 
-    def _filter_stderr(self, output):
-        if not output.error:
-            return
-        filtered_error = '\n'.join([line for line in re.split('\n', output.error) if not self._should_ignore_line_in_stderr(line)])
-        output.error = filtered_error if filtered_error else None
-
     _lines_to_ignore_in_parser_result = [
         re.compile(r'^Running \d+ times$'),
         re.compile(r'^Ignoring warm-up '),
@@ -142,6 +151,13 @@ class PerfTest(object):
     def _should_ignore_line_in_parser_test_result(self, line):
         return self._should_ignore_line(self._lines_to_ignore_in_parser_result, line)
 
+    def _filter_output(self, output):
+        if output.error:
+            filtered_error = '\n'.join([line for line in re.split('\n', output.error) if not self._should_ignore_line_in_stderr(line)])
+            output.error = filtered_error if filtered_error else None
+        if output.text:
+            output.text = '\n'.join([line for line in re.split('\n', output.text) if not self._should_ignore_line_in_parser_test_result(line)])
+
     _description_regex = re.compile(r'^Description: (?P<description>.*)$', re.IGNORECASE)
     _result_classes = ['Time', 'JS Heap', 'Malloc']
     _result_class_regex = re.compile(r'^(?P<resultclass>' + r'|'.join(_result_classes) + '):')
@@ -151,14 +167,15 @@ class PerfTest(object):
     def parse_output(self, output):
         test_failed = False
         results = {}
-        ordered_results_keys = []
         test_name = re.sub(r'\.\w+$', '', self._test_name)
-        description_string = ""
         result_class = ""
         for line in re.split('\n', output.text):
-            description = self._description_regex.match(line)
-            if description:
-                description_string = description.group('description')
+            if not line:
+                continue
+
+            description_match = self._description_regex.match(line)
+            if description_match:
+                self._description = description_match.group('description')
                 continue
 
             result_class_match = self._result_class_regex.match(line)
@@ -177,37 +194,25 @@ class PerfTest(object):
                 name = test_name
                 if result_class != 'Time':
                     name += ':' + result_class.replace(' ', '')
-                if name not in ordered_results_keys:
-                    ordered_results_keys.append(name)
                 results.setdefault(name, {})
                 results[name]['unit'] = unit
                 results[name][key] = value
                 continue
 
-            if not self._should_ignore_line_in_parser_test_result(line):
-                test_failed = True
-                _log.error(line)
+            test_failed = True
+            _log.error('ERROR: ' + line)
 
         if test_failed:
             return None
 
-        if set(self._statistics_keys) != set(results[test_name].keys() + ['values']):
-            # values is not provided by Dromaeo tests.
+        if set(self._statistics_keys) != set(results[test_name].keys()):
             _log.error("The test didn't report all statistics.")
             return None
 
-        if not self._port.get_option('profile'):
-            for result_name in ordered_results_keys:
-                if result_name == test_name:
-                    self.output_statistics(result_name, results[result_name], description_string)
-                else:
-                    self.output_statistics(result_name, results[result_name])
         return results
 
-    def output_statistics(self, test_name, results, description_string=None):
+    def output_statistics(self, test_name, results):
         unit = results['unit']
-        if description_string:
-            _log.info('DESCRIPTION: %s' % description_string)
         _log.info('RESULT %s= %s %s' % (test_name.replace(':', ': ').replace('/', ': '), results['avg'], unit))
         _log.info(', '.join(['%s= %s %s' % (key, results[key], unit) for key in self._statistics_keys[1:5]]))
 
@@ -218,7 +223,15 @@ class ChromiumStylePerfTest(PerfTest):
     def __init__(self, port, test_name, test_path):
         super(ChromiumStylePerfTest, self).__init__(port, test_name, test_path)
 
-    def parse_output(self, output):
+    def _run_with_driver(self, driver, time_out_ms):
+        output = self.run_single(driver, self.test_path(), time_out_ms)
+        self._filter_output(output)
+        if self.run_failed(output):
+            return None
+
+        return self.parse_and_log_output(output)
+
+    def parse_and_log_output(self, output):
         test_failed = False
         results = {}
         for line in re.split('\n', output.text):
@@ -291,7 +304,7 @@ class PageLoadingPerfTest(PerfTest):
 
         for result_class in results.keys():
             results[result_class].update(self.calculate_statistics(results[result_class]['values']))
-            self.output_statistics(result_class, results[result_class], '')
+            self.output_statistics(result_class, results[result_class])
 
         return results
 
