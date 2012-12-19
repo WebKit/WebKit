@@ -106,8 +106,14 @@ InRegionScrollableArea::InRegionScrollableArea(WebPagePrivate* webPage, RenderLa
         m_contentsSize = m_webPage->mapToTransformed(scrollableArea->contentsSize());
         m_viewportSize = m_webPage->mapToTransformed(scrollableArea->visibleContentRect(false /*includeScrollbars*/)).size();
 
-        m_scrollsHorizontally = box->scrollWidth() != box->clientWidth() && box->scrollsOverflowX();
-        m_scrollsVertically = box->scrollHeight() != box->clientHeight() && box->scrollsOverflowY();
+        m_scrollsHorizontally = box->scrollWidth() != box->clientWidth();
+        m_scrollsVertically = box->scrollHeight() != box->clientHeight();
+
+        // Check the overflow if its not an input field because overflow can be set to hidden etc. by the content.
+        if (!box->node() || !box->node()->rendererIsEditable()) {
+            m_scrollsHorizontally = m_scrollsHorizontally && box->scrollsOverflowX();
+            m_scrollsVertically = m_scrollsVertically && box->scrollsOverflowY();
+        }
 
         m_scrollTarget = BlockElement;
 
