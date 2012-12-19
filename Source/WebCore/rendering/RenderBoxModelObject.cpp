@@ -357,8 +357,7 @@ void RenderBoxModelObject::updateFromStyle()
     RenderStyle* styleToUse = style();
     setHasBoxDecorations(hasBackground() || styleToUse->hasBorder() || styleToUse->hasAppearance() || styleToUse->boxShadow());
     setInline(styleToUse->isDisplayInlineType());
-    setRelPositioned(styleToUse->position() == RelativePosition);
-    setStickyPositioned(styleToUse->position() == StickyPosition);
+    setPositionState(styleToUse->position());
     setHorizontalWritingMode(styleToUse->isHorizontalWritingMode());
 }
 

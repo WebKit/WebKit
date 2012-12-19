@@ -143,7 +143,7 @@ void RenderScrollbarPart::styleDidChange(StyleDifference diff, const RenderStyle
 {
     RenderBlock::styleDidChange(diff, oldStyle);
     setInline(false);
-    setPositioned(false);
+    clearPositionedState();
     setFloating(false);
     setHasOverflowClip(false);
     if (oldStyle && m_scrollbar && m_part != NoPart && diff >= StyleDifferenceRepaint)

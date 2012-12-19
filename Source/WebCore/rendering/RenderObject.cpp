@@ -1891,9 +1891,7 @@ void RenderObject::styleWillChange(StyleDifference diff, const RenderStyle* newS
         // reset style flags
         if (diff == StyleDifferenceLayout || diff == StyleDifferenceLayoutPositionedMovementOnly) {
             setFloating(false);
-            setPositioned(false);
-            setRelPositioned(false);
-            setStickyPositioned(false);
+            clearPositionedState();
         }
         setHorizontalWritingMode(true);
         setPaintBackground(false);

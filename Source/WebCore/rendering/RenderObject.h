@@ -540,11 +540,11 @@ public:
 
     bool isFloating() const { return m_bitfields.floating(); }
 
-    bool isOutOfFlowPositioned() const { return m_bitfields.positioned(); } // absolute or fixed positioning
-    bool isInFlowPositioned() const { return m_bitfields.relPositioned() || m_bitfields.stickyPositioned(); } // relative or sticky positioning
-    bool isRelPositioned() const { return m_bitfields.relPositioned(); } // relative positioning
-    bool isStickyPositioned() const { return m_bitfields.stickyPositioned(); }
-    bool isPositioned() const { return m_bitfields.positioned() || m_bitfields.relPositioned() || m_bitfields.stickyPositioned(); }
+    bool isOutOfFlowPositioned() const { return m_bitfields.isOutOfFlowPositioned(); } // absolute or fixed positioning
+    bool isInFlowPositioned() const { return m_bitfields.isRelPositioned() || m_bitfields.isStickyPositioned(); } // relative or sticky positioning
+    bool isRelPositioned() const { return m_bitfields.isRelPositioned(); } // relative positioning
+    bool isStickyPositioned() const { return m_bitfields.isStickyPositioned(); }
+    bool isPositioned() const { return m_bitfields.isPositioned(); }
 
     bool isText() const  { return m_bitfields.isText(); }
     bool isBox() const { return m_bitfields.isBox(); }
@@ -658,9 +658,13 @@ public:
         setPreferredLogicalWidthsDirty(true);
     }
 
-    void setPositioned(bool b = true)  { m_bitfields.setPositioned(b);  }
-    void setRelPositioned(bool b = true) { m_bitfields.setRelPositioned(b); }
-    void setStickyPositioned(bool b = true) { m_bitfields.setStickyPositioned(b); }
+    void setPositionState(EPosition position)
+    {
+        ASSERT((position != AbsolutePosition && position != FixedPosition) || isBox());
+        m_bitfields.setPositionedState(position);
+    }
+    void clearPositionedState() { m_bitfields.clearPositionedState(); }
+
     void setFloating(bool b = true) { m_bitfields.setFloating(b); }
     void setInline(bool b = true) { m_bitfields.setIsInline(b); }
     void setHasBoxDecorations(bool b = true) { m_bitfields.setPaintBackground(b); }
@@ -1027,6 +1031,12 @@ private:
         void set##Name(bool name) { m_##name = name; }\
 
     class RenderObjectBitfields {
+        enum PositionedState {
+            IsStaticlyPositioned = 0,
+            IsRelativelyPositioned = 1,
+            IsOutOfFlowPositioned = 2,
+            IsStickyPositioned = 3
+        };
     public:
         RenderObjectBitfields(Node* node)
             : m_needsLayout(false)
@@ -1036,9 +1046,6 @@ private:
             , m_needsSimplifiedNormalFlowLayout(false)
             , m_preferredLogicalWidthsDirty(false)
             , m_floating(false)
-            , m_positioned(false)
-            , m_relPositioned(false)
-            , m_stickyPositioned(false)
             , m_paintBackground(false)
             , m_isAnonymous(node == node->document())
             , m_isText(false)
@@ -1058,6 +1065,7 @@ private:
             , m_marginBeforeQuirk(false) 
             , m_marginAfterQuirk(false)
             , m_hasColumns(false)
+            , m_positionedState(IsStaticlyPositioned)
             , m_selectionState(SelectionNone)
         {
         }
@@ -1071,9 +1079,6 @@ private:
         ADD_BOOLEAN_BITFIELD(preferredLogicalWidthsDirty, PreferredLogicalWidthsDirty);
         ADD_BOOLEAN_BITFIELD(floating, Floating);
 
-        ADD_BOOLEAN_BITFIELD(positioned, Positioned);
-        ADD_BOOLEAN_BITFIELD(relPositioned, RelPositioned);
-        ADD_BOOLEAN_BITFIELD(stickyPositioned, StickyPositioned);
         ADD_BOOLEAN_BITFIELD(paintBackground, PaintBackground); // if the box has something to paint in the
         // background painting phase (background, border, etc)
 
@@ -1104,9 +1109,22 @@ private:
         ADD_BOOLEAN_BITFIELD(hasColumns, HasColumns);
 
     private:
+        unsigned m_positionedState : 2; // PositionedState
         unsigned m_selectionState : 3; // SelectionState
 
     public:
+        bool isOutOfFlowPositioned() const { return m_positionedState == IsOutOfFlowPositioned; }
+        bool isRelPositioned() const { return m_positionedState == IsRelativelyPositioned; }
+        bool isStickyPositioned() const { return m_positionedState == IsStickyPositioned; }
+        bool isPositioned() const { return m_positionedState != IsStaticlyPositioned; }
+
+        void setPositionedState(int positionState)
+        {
+            // This mask maps FixedPosition and AbsolutePosition to IsOutOfFlowPositioned, saving one bit.
+            m_positionedState = static_cast<PositionedState>(positionState & 0x3);
+        }
+        void clearPositionedState() { m_positionedState = StaticPosition; }
+
         ALWAYS_INLINE SelectionState selectionState() const { return static_cast<SelectionState>(m_selectionState); }
         ALWAYS_INLINE void setSelectionState(SelectionState selectionState) { m_selectionState = selectionState; }
     };

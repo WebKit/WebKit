@@ -81,7 +81,7 @@ RenderView::RenderView(Node* node, FrameView* view)
 
     setPreferredLogicalWidthsDirty(true, MarkOnlyThis);
     
-    setPositioned(true); // to 0,0 :)
+    setPositionState(AbsolutePosition); // to 0,0 :)
 }
 
 RenderView::~RenderView()
