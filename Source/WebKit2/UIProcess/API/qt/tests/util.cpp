@@ -74,26 +74,6 @@ void suppressDebugOutput()
 }
 
 #if defined(HAVE_QTQUICK) && HAVE_QTQUICK
-class LoadSpy : public QEventLoop {
-    Q_OBJECT
-public:
-    LoadSpy(QQuickWebView* webView)
-    {
-        connect(webView, SIGNAL(loadingChanged(QWebLoadRequest*)), SLOT(onLoadingChanged(QWebLoadRequest*)));
-    }
-Q_SIGNALS:
-    void loadSucceeded();
-    void loadFailed();
-private Q_SLOTS:
-    void onLoadingChanged(QWebLoadRequest* loadRequest)
-    {
-        if (loadRequest->status() == QQuickWebView::LoadSucceededStatus)
-            emit loadSucceeded();
-        else if (loadRequest->status() == QQuickWebView::LoadFailedStatus)
-            emit loadFailed();
-    }
-};
-
 bool waitForLoadSucceeded(QQuickWebView* webView, int timeout)
 {
     QEventLoop loop;
@@ -133,6 +113,19 @@ bool waitForViewportReady(QQuickWebView* webView, int timeout)
     return waitForSignal(webView->experimental(), SIGNAL(loadVisuallyCommitted()), timeout);
 }
 
+LoadSpy::LoadSpy(QQuickWebView* webView)
+{
+    connect(webView, SIGNAL(loadingChanged(QWebLoadRequest*)), SLOT(onLoadingChanged(QWebLoadRequest*)));
+}
+
+void LoadSpy::onLoadingChanged(QWebLoadRequest* loadRequest)
+{
+    if (loadRequest->status() == QQuickWebView::LoadSucceededStatus)
+        emit loadSucceeded();
+    else if (loadRequest->status() == QQuickWebView::LoadFailedStatus)
+        emit loadFailed();
+}
+
 LoadStartedCatcher::LoadStartedCatcher(QQuickWebView* webView)
     : m_webView(webView)
 {
@@ -148,5 +141,3 @@ void LoadStartedCatcher::onLoadingChanged(QWebLoadRequest* loadRequest)
     }
 }
 #endif
-
-#include "util.moc"

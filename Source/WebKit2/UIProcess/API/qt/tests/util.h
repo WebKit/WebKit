@@ -38,6 +38,17 @@ bool waitForLoadSucceeded(QQuickWebView* webView, int timeout = 10000);
 bool waitForLoadFailed(QQuickWebView* webView, int timeout = 10000);
 bool waitForViewportReady(QQuickWebView* webView, int timeout = 10000);
 
+class LoadSpy : public QEventLoop {
+    Q_OBJECT
+public:
+    LoadSpy(QQuickWebView* webView);
+Q_SIGNALS:
+    void loadSucceeded();
+    void loadFailed();
+private Q_SLOTS:
+    void onLoadingChanged(QWebLoadRequest* loadRequest);
+};
+
 class LoadStartedCatcher : public QObject {
     Q_OBJECT
 public:
