@@ -71,4 +71,8 @@ PASS window.internals.touchEventHandlerCount(document) is 3
 PASS window.internals.touchEventHandlerCount(document) is 2
 PASS window.internals.touchEventHandlerCount(document) is 2
 PASS window.internals.touchEventHandlerCount(document) is 0
+Test that nested Documents' touch handlers are properly removed from their parent Document.
+PASS window.internals.touchEventHandlerCount(document) is 0
+PASS window.internals.touchEventHandlerCount(document) is 1
+PASS window.internals.touchEventHandlerCount(document) is 0
 

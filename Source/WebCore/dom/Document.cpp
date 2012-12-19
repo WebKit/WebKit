@@ -5659,6 +5659,9 @@ void Document::didRemoveEventTargetNode(Node* handler)
 {
     if (m_touchEventTargets.get())
         m_touchEventTargets->removeAll(handler);
+    if (handler == this)
+        if (Document* parentDocument = this->parentDocument())
+            parentDocument->didRemoveEventTargetNode(this);
 }
 #endif
 

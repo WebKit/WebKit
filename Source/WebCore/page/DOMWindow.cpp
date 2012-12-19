@@ -1685,6 +1685,10 @@ void DOMWindow::removeAllEventListeners()
     if (DeviceOrientationController* controller = DeviceOrientationController::from(page()))
         controller->removeAllDeviceEventListeners(this);
 #endif
+#if ENABLE(TOUCH_EVENTS)
+    if (Document* document = this->document())
+        document->didRemoveEventTargetNode(document);
+#endif
 
     removeAllUnloadEventListeners(this);
     removeAllBeforeUnloadEventListeners(this);

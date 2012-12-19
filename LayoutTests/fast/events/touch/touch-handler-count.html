@@ -204,5 +204,24 @@ debug("Test setting touch handlers on a new div.");
     shouldBe('window.internals.touchEventHandlerCount(document)', '0');
 })();
 
+debug("Test that nested Documents' touch handlers are properly removed from their parent Document.");
+(function() {
+    var iframe = document.createElement('iframe');
+    var touchtarget = document.getElementById('touchtarget');
+
+    shouldBe('window.internals.touchEventHandlerCount(document)', '0');
+
+    touchtarget.appendChild(iframe);
+
+    var nestedDocument = iframe.contentWindow.document;
+    nestedDocument.open('text/html', 'replace');
+    nestedDocument.write("<!DOCTYPE html>\n<html><body onload=\"window.ontouchstart = function() { };\"></body>");
+    nestedDocument.close();
+
+    shouldBe('window.internals.touchEventHandlerCount(document)', '1');
+
+    touchtarget.removeChild(iframe);
+    shouldBe('window.internals.touchEventHandlerCount(document)', '0');
+})();
 </script>
 </body>
