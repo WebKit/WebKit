@@ -407,6 +407,7 @@ void InspectorPageAgent::disable(ErrorString*)
     m_state->setLong(PageAgentState::pageAgentScreenHeightOverride, 0);
     m_state->setDouble(PageAgentState::pageAgentFontScaleFactorOverride, 1);
     m_state->setBoolean(PageAgentState::pageAgentFitWindow, false);
+    m_state->remove(PageAgentState::pageAgentScriptsToEvaluateOnLoad);
     updateViewMetrics(0, 0, 1, false);
 }
 

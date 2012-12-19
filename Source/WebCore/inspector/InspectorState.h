@@ -65,6 +65,7 @@ public:
     void setDouble(const String& propertyName, double value) { setValue(propertyName, InspectorBasicValue::create(value)); }
     void setObject(const String& propertyName, PassRefPtr<InspectorObject> value) { setValue(propertyName, value); }
 
+    void remove(const String&);
 private:
     void updateCookie();
     void setValue(const String& propertyName, PassRefPtr<InspectorValue>);

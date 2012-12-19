@@ -75,6 +75,11 @@ void InspectorState::setValue(const String& propertyName, PassRefPtr<InspectorVa
     updateCookie();
 }
 
+void InspectorState::remove(const String& propertyName)
+{
+    m_properties->remove(propertyName);
+}
+
 bool InspectorState::getBoolean(const String& propertyName)
 {
     InspectorObject::iterator it = m_properties->find(propertyName);
