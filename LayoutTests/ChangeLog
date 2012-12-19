@@ -1,3 +1,9 @@
+2012-12-19  Csaba Osztrogonác  <ossy@webkit.org>
+
+        Unreviewed gardening, skip flakey tests.
+
+        * platform/qt-5.0-wk2/TestExpectations:
+
 2012-12-19  Renata Hodovan  <reni@webkit.org>
 
         CSSParser crases, when no context is available, and the value is a valid keyword
