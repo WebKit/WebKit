@@ -89,6 +89,8 @@ GraphicsLayerClutter::~GraphicsLayerClutter()
     if (graphicsLayerActorGetLayerType(m_layer.get()) == GraphicsLayerClutter::LayerTypeRootLayer)
         return;
 
+    willBeDestroyed();
+
     // We destroy the actors on an idle so that the main loop can run enough to
     // repaint the background that will replace the actor.
     if (m_layer) {
