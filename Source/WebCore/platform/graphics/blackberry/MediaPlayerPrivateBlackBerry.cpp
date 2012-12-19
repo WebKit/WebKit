@@ -706,7 +706,11 @@ void MediaPlayerPrivate::waitMetadataTimerFired(Timer<MediaPlayerPrivate>*)
     }
     m_waitMetadataPopDialogCounter = 0;
 
+    // Need to prevent re-entrant play here
+    m_platformPlayer->setPreventReentrantPlay(true);
     int wait = showErrorDialog(PlatformPlayer::MediaMetaDataTimeoutError);
+    m_platformPlayer->setPreventReentrantPlay(false);
+
     if (!wait)
         onPauseNotified();
     else {

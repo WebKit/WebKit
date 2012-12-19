@@ -1,3 +1,24 @@
+2012-12-19  Max Feil  <mfeil@rim.com>
+
+        [BlackBerry] Fix undesired re-entrant calls during media error dialog
+        https://bugs.webkit.org/show_bug.cgi?id=105398
+
+        Reviewed by Rob Buis.
+
+        A recent change in libwebview (PR194379) to the dialog
+        handling means that dialogs are not truly blocking anymore.
+        While the dialog is up, a sub-event loop is called. Therefore
+        the HTML5 media code will continue processing pps messages from
+        mm-renderer, responding to periodic timers, etc., all while a
+        media error dialog call higher up in the stack is waiting for
+        the user to respond. Unfortunately certain places in our code
+        do not anticipate being called in this re-entrant way.
+
+        This patch restores previous behaviour, covered by existing tests.
+
+        * platform/graphics/blackberry/MediaPlayerPrivateBlackBerry.cpp:
+        (WebCore::MediaPlayerPrivate::waitMetadataTimerFired):
+
 2012-12-19  Alexander Pavlov  <apavlov@chromium.org>
 
         Web Inspector: [REGRESSION] The last remembered tab is not restored when the Settings dialog is opened
