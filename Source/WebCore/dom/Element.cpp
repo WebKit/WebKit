@@ -1101,16 +1101,19 @@ Node::InsertionNotificationRequest Element::insertedInto(ContainerNode* insertio
     if (!insertionPoint->isInTreeScope())
         return InsertionDone;
 
+    TreeScope* scope = insertionPoint->treeScope();
+    if (scope != treeScope())
+        return InsertionDone;
+
     const AtomicString& idValue = getIdAttribute();
     if (!idValue.isNull())
-        updateId(nullAtom, idValue);
+        updateId(scope, nullAtom, idValue);
 
     const AtomicString& nameValue = getNameAttribute();
     if (!nameValue.isNull())
         updateName(nullAtom, nameValue);
 
     if (hasTagName(labelTag)) {
-        TreeScope* scope = treeScope();
         if (scope->shouldCacheLabelsByForAttribute())
             updateLabel(scope, nullAtom, fastGetAttribute(forAttr));
     }
@@ -1134,9 +1137,9 @@ void Element::removedFrom(ContainerNode* insertionPoint)
 
     setSavedLayerScrollOffset(IntSize());
 
-    if (insertionPoint->inDocument()) {
+    if (insertionPoint->isInTreeScope() && treeScope() == document()) {
         const AtomicString& idValue = getIdAttribute();
-        if (!idValue.isNull() && inDocument())
+        if (!idValue.isNull())
             updateId(insertionPoint->treeScope(), idValue, nullAtom);
 
         const AtomicString& nameValue = getNameAttribute();

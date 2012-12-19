@@ -1,3 +1,13 @@
+2012-12-18  Shinya Kawanaka  <shinyak@chromium.org>
+
+        ShadowRoot.getElementById() returns a deleted element
+        https://bugs.webkit.org/show_bug.cgi?id=105243
+
+        Reviewed by Dimitri Glazkov.
+
+        * fast/dom/shadow/getelementbyid-shadow-expected.txt: Added.
+        * fast/dom/shadow/getelementbyid-shadow.html: Added.
+
 2012-12-18  Ilya Tikhonovsky  <loislo@chromium.org>
 
         Unreviewed, rolling out r138061.
