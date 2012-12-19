@@ -1,3 +1,12 @@
+2012-12-19  János Badics  <jbadics@inf.u-szeged.hu>
+
+        [Qt] Gardening after r138095, skip a newly added, but failing test.
+        https://bugs.webkit.org/show_bug.cgi?id=105406
+
+        Reviewed by Csaba Osztrogonác.
+
+        * platform/qt/TestExpectations:
+
 2012-12-19  Ilya Tikhonovsky  <loislo@chromium.org>
 
         Unreviewed gardening. Move chromium-mac image to chromium where it will also be used for win and linux.

@@ -2272,6 +2272,9 @@ fast/regions/overflow-size-change-with-stacking-context.html
 fast/profiler/apply.html
 http/tests/w3c/webperf/approved/navigation-timing/html/test_timing_xserver_redirect.html
 
+# [Qt] New fast/events/touch/touch-input-element-change-documents.html fails on JSC platforms
+webkit.org/b/104054 fast/events/touch/touch-input-element-change-documents.html
+
 # =========================================================================== #
 #       End of entries merged in from the old Skipped file                    #
 # =========================================================================== #
