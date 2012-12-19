@@ -251,9 +251,16 @@ WebInspector.ScriptsPanel.prototype = {
     _uiSourceCodeRemoved: function(event)
     {
         var uiSourceCode = /** @type {WebInspector.UISourceCode} */ (event.data);
+        var wasCurrent = uiSourceCode === this._currentUISourceCode;
         this._editorContainer.removeUISourceCode(uiSourceCode);
         this._navigator.removeUISourceCode(uiSourceCode);
         this._removeSourceFrame(uiSourceCode);
+        // Replace debugger script-based uiSourceCode with a network-based one.
+        if (wasCurrent && uiSourceCode.isTemporary) {
+            var newUISourceCode = WebInspector.workspace.uiSourceCodeForURL(uiSourceCode.url);
+            if (newUISourceCode)
+                this._showFile(newUISourceCode);
+        }
     },
 
     _consoleCommandEvaluatedInSelectedCallFrame: function(event)

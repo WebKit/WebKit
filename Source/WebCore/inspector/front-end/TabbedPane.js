@@ -138,11 +138,21 @@ WebInspector.TabbedPane.prototype = {
      */
     closeTab: function(id, userGesture)
     {
-        this._innerCloseTab(id, userGesture);
-        this._updateTabElements();
-        if (this._tabsHistory.length)
-            this.selectTab(this._tabsHistory[0].id, userGesture);
+        this.closeTabs([id], userGesture);
     },
+
+     /**
+      * @param {Array.<string>} ids
+      * @param {boolean=} userGesture
+      */
+     closeTabs: function(ids, userGesture)
+     {
+         for (var i = 0; i < ids.length; ++i)
+             this._innerCloseTab(ids[i], userGesture);
+         this._updateTabElements();
+         if (this._tabsHistory.length)
+             this.selectTab(this._tabsHistory[0].id, userGesture);
+     },
 
     /**
      * @param {string} id

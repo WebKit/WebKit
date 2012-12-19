@@ -203,8 +203,8 @@ WebInspector.TabbedEditorContainer.prototype = {
         var tabId = this._tabIds.get(uiSourceCode) || this._appendFileTab(uiSourceCode, false);
 
         // Select tab if this file was the last to be shown.
-        if (index === 0)
-            this._innerShowFile(uiSourceCode, false);
+        if (!index)
+            this._innerShowFile(uiSourceCode, true);
     },
 
     /**
@@ -212,17 +212,22 @@ WebInspector.TabbedEditorContainer.prototype = {
      */
     removeUISourceCode: function(uiSourceCode)
     {
-        var wasCurrent = this._currentFile === uiSourceCode;
+        this.removeUISourceCodes([uiSourceCode]);
+    },
 
-        var tabId = this._tabIds.get(uiSourceCode);
-        if (tabId)
-            this._tabbedPane.closeTab(tabId);
-        
-        if (wasCurrent && uiSourceCode.isTemporary) {
-            var newUISourceCode = WebInspector.workspace.uiSourceCodeForURL(uiSourceCode.url);
-            if (newUISourceCode)
-                this._innerShowFile(newUISourceCode, false);
+    /**
+     * @param {Array.<WebInspector.UISourceCode>} uiSourceCodes
+     */
+    removeUISourceCodes: function(uiSourceCodes)
+    {
+        var tabIds = [];
+        for (var i = 0; i < uiSourceCodes.length; ++i) {
+            var uiSourceCode = uiSourceCodes[i];
+            var tabId = this._tabIds.get(uiSourceCode);
+            if (tabId)
+                tabIds.push(tabId);
         }
+        this._tabbedPane.closeTabs(tabIds);
     },
 
     /**
