@@ -2649,6 +2649,7 @@ webkit.org/b/57593 [ Win Mac Android ] fast/preloader/document-write.html [ Fail
 crbug.com/780807 http/tests/misc/webtiming-origins.html [ Failure Pass ]
 
 crbug.com/78835 [ Mac ] plugins/npp-set-window-called-during-destruction.html [ Failure ]
+crbug.com/78835 [ Win ] plugins/npp-set-window-called-during-destruction.html [ Failure Pass ]
 # http://trac.webkit.org/changeset/83411/ merged some frame tests into one.
 # The merged test is flaky on Chromium since then.
 crbug.com/78998 [ Debug ] fast/frames/frame-element-name.html [ Failure Pass ]
