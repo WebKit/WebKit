@@ -57,6 +57,7 @@
 		37DC6791140D7D7600ABCCDB /* DOMRangeOfString.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = 37DC678F140D7D3A00ABCCDB /* DOMRangeOfString.html */; };
 		440A1D3914A0103A008A66F2 /* KURL.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 440A1D3814A0103A008A66F2 /* KURL.cpp */; };
 		4BB4160216815B2600824238 /* JSWrapperForNodeInWebFrame.mm in Sources */ = {isa = PBXBuildFile; fileRef = 4BB4160116815B2600824238 /* JSWrapperForNodeInWebFrame.mm */; };
+		4BB4160416815F9100824238 /* ElementAtPointInWebFrame.mm in Sources */ = {isa = PBXBuildFile; fileRef = 4BB4160316815F9100824238 /* ElementAtPointInWebFrame.mm */; };
 		4BFDFFA71314776C0061F24B /* HitTestResultNodeHandle_Bundle.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4BFDFFA61314776C0061F24B /* HitTestResultNodeHandle_Bundle.cpp */; };
 		4BFDFFA9131477770061F24B /* HitTestResultNodeHandle.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4BFDFFA8131477770061F24B /* HitTestResultNodeHandle.cpp */; };
 		4F4D2C0E1626FE2700320FE1 /* MemoryInstrumentationTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4F4D2C0D1626FE2700320FE1 /* MemoryInstrumentationTest.cpp */; };
@@ -306,6 +307,7 @@
 		440A1D3814A0103A008A66F2 /* KURL.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = KURL.cpp; sourceTree = "<group>"; };
 		44A622C114A0E2B60048515B /* WTFStringUtilities.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WTFStringUtilities.h; sourceTree = "<group>"; };
 		4BB4160116815B2600824238 /* JSWrapperForNodeInWebFrame.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = JSWrapperForNodeInWebFrame.mm; sourceTree = "<group>"; };
+		4BB4160316815F9100824238 /* ElementAtPointInWebFrame.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = ElementAtPointInWebFrame.mm; sourceTree = "<group>"; };
 		4BFDFFA61314776C0061F24B /* HitTestResultNodeHandle_Bundle.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = HitTestResultNodeHandle_Bundle.cpp; sourceTree = "<group>"; };
 		4BFDFFA8131477770061F24B /* HitTestResultNodeHandle.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = HitTestResultNodeHandle.cpp; sourceTree = "<group>"; };
 		4F4D2C0D1626FE2700320FE1 /* MemoryInstrumentationTest.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = MemoryInstrumentationTest.cpp; path = WTF/MemoryInstrumentationTest.cpp; sourceTree = "<group>"; };
@@ -759,6 +761,7 @@
 				C07E6CAE13FD67650038B22B /* DynamicDeviceScaleFactor.mm */,
 				3776BC62150946BC0043A66D /* DeviceScaleFactorInDashboardRegions.mm */,
 				939BA91614103412001A01BD /* DeviceScaleFactorOnBack.mm */,
+				4BB4160316815F9100824238 /* ElementAtPointInWebFrame.mm */,
 				9B4F8FA3159D52B1002D9F94 /* HTMLCollectionNamedItem.mm */,
 				9B26FC6B159D061000CC3765 /* HTMLFormCollectionNamedItem.mm */,
 				C507E8A614C6545B005D6B3B /* InspectorBar.mm */,
@@ -1038,6 +1041,7 @@
 				29AB8AA4164C7A9300D49BEC /* TestBrowsingContextLoadDelegate.mm in Sources */,
 				14464013167A8305000BD218 /* LayoutUnit.cpp in Sources */,
 				4BB4160216815B2600824238 /* JSWrapperForNodeInWebFrame.mm in Sources */,
+				4BB4160416815F9100824238 /* ElementAtPointInWebFrame.mm in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

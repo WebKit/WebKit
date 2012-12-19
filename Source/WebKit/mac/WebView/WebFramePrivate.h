@@ -140,4 +140,6 @@ typedef enum {
 
 - (JSValueRef)jsWrapperForNode:(DOMNode *)node inScriptWorld:(WebScriptWorld *)world;
 
+- (NSDictionary *)elementAtPoint:(NSPoint)point;
+
 @end

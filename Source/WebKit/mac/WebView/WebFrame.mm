@@ -40,6 +40,7 @@
 #import "WebDataSourceInternal.h"
 #import "WebDocumentLoaderMac.h"
 #import "WebDynamicScrollBarsView.h"
+#import "WebElementDictionary.h"
 #import "WebFrameLoaderClient.h"
 #import "WebFrameViewInternal.h"
 #import "WebHTMLView.h"
@@ -1255,6 +1256,14 @@ static inline WebDataSource *dataSource(DocumentLoader* loader)
 
     JSC::JSLockHolder lock(exec);
     return toRef(exec, toJS(exec, globalObject, core(node)));
+}
+
+- (NSDictionary *)elementAtPoint:(NSPoint)point
+{
+    Frame* coreFrame = _private->coreFrame;
+    if (!coreFrame)
+        return nil;
+    return [[[WebElementDictionary alloc] initWithHitTestResult:coreFrame->eventHandler()->hitTestResultAtPoint(IntPoint(point), false, true)] autorelease];
 }
 
 @end
