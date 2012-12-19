@@ -1,3 +1,11 @@
+2012-12-18  Simon Fraser  <simon.fraser@apple.com>
+
+        Disable the SimplifyMarkup API test, wich asserts in debug builds.
+        Tracked by https://bugs.webkit.org/show_bug.cgi?id=105370.
+        
+        * TestWebKitAPI/Tests/mac/SimplifyMarkup.mm:
+        (TestWebKitAPI::TEST):
+
 2012-12-18  Joseph Pecoraro  <pecoraro@apple.com>
 
         [Mac] Add Build Phase to Check Headers for Inappropriate Macros (Platform.h macros)
