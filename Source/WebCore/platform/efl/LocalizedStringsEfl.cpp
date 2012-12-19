@@ -594,4 +594,26 @@ String localizedString(const char* key)
     return String::fromUTF8(key, strlen(key));
 }
 
+#if ENABLE(VIDEO_TRACK)
+String textTrackClosedCaptionsText()
+{
+    return String::fromUTF8("Closed Captions");
+}
+
+String textTrackSubtitlesText()
+{
+    return String::fromUTF8("Subtitles");
+}
+
+String textTrackOffText()
+{
+    return String::fromUTF8("Off");
+}
+
+String textTrackNoLabelText()
+{
+    return String::fromUTF8("No label");
+}
+#endif
+
 }
