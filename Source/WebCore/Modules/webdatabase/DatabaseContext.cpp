@@ -33,9 +33,9 @@
 #include "Chrome.h"
 #include "ChromeClient.h"
 #include "Database.h"
+#include "DatabaseManager.h"
 #include "DatabaseTask.h"
 #include "DatabaseThread.h"
-#include "DatabaseTracker.h"
 #include "Document.h"
 #include "Page.h"
 #include "SchemeRegistry.h"
@@ -134,7 +134,7 @@ void DatabaseContext::databaseExceededQuota(const String& name)
 #if !PLATFORM(CHROMIUM)
     // FIXME: This needs a real implementation; this is a temporary solution for testing.
     const unsigned long long defaultQuota = 5 * 1024 * 1024;
-    DatabaseTracker::tracker().setQuota(m_scriptExecutionContext->securityOrigin(), defaultQuota);
+    DatabaseManager::manager().setQuota(m_scriptExecutionContext->securityOrigin(), defaultQuota);
 #endif
 }
 

@@ -35,11 +35,10 @@
 #include "CrossThreadTask.h"
 #include "DatabaseCallback.h"
 #include "DatabaseContext.h"
+#include "DatabaseManager.h"
 #include "DatabaseTask.h"
 #include "DatabaseThread.h"
-#include "DatabaseTracker.h"
 #include "Document.h"
-#include "InspectorDatabaseInstrumentation.h"
 #include "Logging.h"
 #include "NotImplemented.h"
 #include "Page.h"
@@ -65,62 +64,6 @@
 #endif
 
 namespace WebCore {
-
-class DatabaseCreationCallbackTask : public ScriptExecutionContext::Task {
-public:
-    static PassOwnPtr<DatabaseCreationCallbackTask> create(PassRefPtr<Database> database, PassRefPtr<DatabaseCallback> creationCallback)
-    {
-        return adoptPtr(new DatabaseCreationCallbackTask(database, creationCallback));
-    }
-
-    virtual void performTask(ScriptExecutionContext*)
-    {
-        m_creationCallback->handleEvent(m_database.get());
-    }
-
-private:
-    DatabaseCreationCallbackTask(PassRefPtr<Database> database, PassRefPtr<DatabaseCallback> callback)
-        : m_database(database)
-        , m_creationCallback(callback)
-    {
-    }
-
-    RefPtr<Database> m_database;
-    RefPtr<DatabaseCallback> m_creationCallback;
-};
-
-PassRefPtr<Database> Database::openDatabase(ScriptExecutionContext* context, const String& name,
-                                            const String& expectedVersion, const String& displayName,
-                                            unsigned long estimatedSize, PassRefPtr<DatabaseCallback> creationCallback,
-                                            ExceptionCode& e)
-{
-    if (!DatabaseTracker::tracker().canEstablishDatabase(context, name, displayName, estimatedSize)) {
-        LOG(StorageAPI, "Database %s for origin %s not allowed to be established", name.ascii().data(), context->securityOrigin()->toString().ascii().data());
-        return 0;
-    }
-
-    RefPtr<Database> database = adoptRef(new Database(context, name, expectedVersion, displayName, estimatedSize));
-
-    String errorMessage;
-    if (!database->openAndVerifyVersion(!creationCallback, e, errorMessage)) {
-        database->logErrorMessage(errorMessage);
-        DatabaseTracker::tracker().removeOpenDatabase(database.get());
-        return 0;
-    }
-
-    DatabaseTracker::tracker().setDatabaseDetails(context->securityOrigin(), name, displayName, estimatedSize);
-
-    DatabaseContext::from(context)->setHasOpenDatabases();
-
-    InspectorInstrumentation::didOpenDatabase(context, database, context->securityOrigin()->host(), name, expectedVersion);
-
-    if (database->isNew() && creationCallback.get()) {
-        LOG(StorageAPI, "Scheduling DatabaseCreationCallbackTask for database %p\n", database.get());
-        database->m_scriptExecutionContext->postTask(DatabaseCreationCallbackTask::create(database, creationCallback));
-    }
-
-    return database;
-}
 
 Database::Database(ScriptExecutionContext* context, const String& name, const String& expectedVersion, const String& displayName, unsigned long estimatedSize)
     : AbstractDatabase(context, name, expectedVersion, displayName, estimatedSize, AsyncDatabase)
@@ -228,7 +171,7 @@ void Database::close()
     RefPtr<Database> protect = this;
     databaseContext()->databaseThread()->recordDatabaseClosed(this);
     databaseContext()->databaseThread()->unscheduleDatabaseTasks(this);
-    DatabaseTracker::tracker().removeOpenDatabase(this);
+    DatabaseManager::manager().removeOpenDatabase(this);
 }
 
 void Database::closeImmediately()
@@ -243,7 +186,7 @@ void Database::closeImmediately()
 
 unsigned long long Database::maximumSize() const
 {
-    return DatabaseTracker::tracker().getMaxSizeForDatabase(this);
+    return DatabaseManager::manager().getMaxSizeForDatabase(this);
 }
 
 bool Database::performOpenAndVerify(bool setVersionInNewDatabase, ExceptionCode& e, String& errorMessage)

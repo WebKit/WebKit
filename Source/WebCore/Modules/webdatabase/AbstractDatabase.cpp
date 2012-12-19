@@ -33,7 +33,7 @@
 
 #include "DatabaseAuthorizer.h"
 #include "DatabaseContext.h"
-#include "DatabaseTracker.h"
+#include "DatabaseManager.h"
 #include "ExceptionCode.h"
 #include "Logging.h"
 #include "SQLiteStatement.h"
@@ -115,7 +115,7 @@ static Mutex& guidMutex()
     return mutex;
 }
 
-typedef HashMap<int, String> GuidVersionMap;
+typedef HashMap<DatabaseGuid, String> GuidVersionMap;
 static GuidVersionMap& guidToVersionMap()
 {
     // Ensure the the mutex is locked.
@@ -125,7 +125,7 @@ static GuidVersionMap& guidToVersionMap()
 }
 
 // NOTE: Caller must lock guidMutex().
-static inline void updateGuidVersionMap(int guid, String newVersion)
+static inline void updateGuidVersionMap(DatabaseGuid guid, String newVersion)
 {
     // Ensure the the mutex is locked.
     ASSERT(!guidMutex().tryLock());
@@ -140,7 +140,7 @@ static inline void updateGuidVersionMap(int guid, String newVersion)
     guidToVersionMap().set(guid, newVersion.isEmpty() ? String() : newVersion.isolatedCopy());
 }
 
-typedef HashMap<int, HashSet<AbstractDatabase*>*> GuidDatabaseMap;
+typedef HashMap<DatabaseGuid, HashSet<AbstractDatabase*>*> GuidDatabaseMap;
 static GuidDatabaseMap& guidToDatabaseMap()
 {
     // Ensure the the mutex is locked.
@@ -149,7 +149,7 @@ static GuidDatabaseMap& guidToDatabaseMap()
     return map;
 }
 
-static int guidForOriginAndName(const String& origin, const String& name)
+static DatabaseGuid guidForOriginAndName(const String& origin, const String& name)
 {
     // Ensure the the mutex is locked.
     ASSERT(!guidMutex().tryLock());
@@ -158,7 +158,7 @@ static int guidForOriginAndName(const String& origin, const String& name)
 
     typedef HashMap<String, int> IDGuidMap;
     DEFINE_STATIC_LOCAL(IDGuidMap, stringIdentifierToGUIDMap, ());
-    int guid = stringIdentifierToGUIDMap.get(stringID);
+    DatabaseGuid guid = stringIdentifierToGUIDMap.get(stringID);
     if (!guid) {
         static int currentNewGUID = 1;
         guid = currentNewGUID++;
@@ -166,18 +166,6 @@ static int guidForOriginAndName(const String& origin, const String& name)
     }
 
     return guid;
-}
-
-static bool isDatabaseAvailable = true;
-
-bool AbstractDatabase::isAvailable()
-{
-    return isDatabaseAvailable;
-}
-
-void AbstractDatabase::setIsAvailable(bool available)
-{
-    isDatabaseAvailable = available;
 }
 
 // static
@@ -219,8 +207,8 @@ AbstractDatabase::AbstractDatabase(ScriptExecutionContext* context, const String
         hashSet->add(this);
     }
 
-    m_filename = DatabaseTracker::tracker().fullPathForDatabase(securityOrigin(), m_name);
-    DatabaseTracker::tracker().addOpenDatabase(this);
+    m_filename = DatabaseManager::manager().fullPathForDatabase(securityOrigin(), m_name);
+    DatabaseManager::manager().addOpenDatabase(this);
 }
 
 AbstractDatabase::~AbstractDatabase()
@@ -539,7 +527,7 @@ void AbstractDatabase::resetAuthorizer()
 
 unsigned long long AbstractDatabase::maximumSize() const
 {
-    return DatabaseTracker::tracker().getMaxSizeForDatabase(this);
+    return DatabaseManager::manager().getMaxSizeForDatabase(this);
 }
 
 void AbstractDatabase::incrementalVacuumIfNeeded()

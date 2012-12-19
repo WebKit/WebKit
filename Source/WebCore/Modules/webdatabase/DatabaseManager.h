@@ -28,15 +28,17 @@
 
 #if ENABLE(SQL_DATABASE)
 
-#include "DatabaseDetails.h"
-#include <wtf/RefPtr.h>
-#include <wtf/Vector.h>
-#include <wtf/text/WTFString.h>
+#include "AbstractDatabaseServer.h"
+#include "DatabaseBasicTypes.h"
+#include <wtf/PassRefPtr.h>
 
 namespace WebCore {
 
 class AbstractDatabaseServer;
+class Database;
+class DatabaseCallback;
 class DatabaseManagerClient;
+class DatabaseSync;
 class DatabaseTaskSynchronizer;
 class SecurityOrigin;
 class ScriptExecutionContext;
@@ -47,17 +49,18 @@ public:
     static DatabaseManager& manager();
 
     void initialize(const String& databasePath);
-#if !PLATFORM(CHROMIUM)
     void setClient(DatabaseManagerClient*);
     String databaseDirectoryPath() const;
     void setDatabaseDirectoryPath(const String&);
-#endif
 
     bool isAvailable();
     void setIsAvailable(bool);
 
+    PassRefPtr<Database> openDatabase(ScriptExecutionContext*, const String& name, const String& expectedVersion, const String& displayName, unsigned long estimatedSize, PassRefPtr<DatabaseCallback>, ExceptionCode&);
+    PassRefPtr<DatabaseSync> openDatabaseSync(ScriptExecutionContext*, const String& name, const String& expectedVersion, const String& displayName, unsigned long estimatedSize, PassRefPtr<DatabaseCallback>, ExceptionCode&);
+
     bool hasOpenDatabases(ScriptExecutionContext*);
-    // When the database cleanup is done, cleanupSync will be signalled.
+    void setHasOpenDatabases(ScriptExecutionContext*);
     void stopDatabases(ScriptExecutionContext*, DatabaseTaskSynchronizer*);
 
     String fullPathForDatabase(SecurityOrigin*, const String& name, bool createIfDoesNotExist = true);
@@ -77,17 +80,31 @@ public:
     bool deleteOrigin(SecurityOrigin*);
     bool deleteDatabase(SecurityOrigin*, const String& name);
 
+    // From a secondary thread, must be thread safe with its data
+    void scheduleNotifyDatabaseChanged(SecurityOrigin*, const String& name);
+
+    void databaseChanged(AbstractDatabase*);
+
 #else // PLATFORM(CHROMIUM)
     void closeDatabasesImmediately(const String& originIdentifier, const String& name);
 #endif // PLATFORM(CHROMIUM)
 
     void interruptAllDatabasesForContext(const ScriptExecutionContext*);
 
+    bool canEstablishDatabase(ScriptExecutionContext*, const String& name, const String& displayName, unsigned long estimatedSize);
+    void addOpenDatabase(AbstractDatabase*);
+    void removeOpenDatabase(AbstractDatabase*);
+
+    void setDatabaseDetails(SecurityOrigin*, const String& name, const String& displayName, unsigned long estimatedSize);
+    unsigned long long getMaxSizeForDatabase(const AbstractDatabase*);
+
 private:
     DatabaseManager();
     ~DatabaseManager() { }
 
     AbstractDatabaseServer* m_server;
+    DatabaseManagerClient* m_client;
+    bool m_databaseIsAvailable;
 };
 
 } // namespace WebCore

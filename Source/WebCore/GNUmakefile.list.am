@@ -2110,6 +2110,7 @@ webcore_modules_sources += \
 	Source/WebCore/Modules/webdatabase/DatabaseThread.h \
 	Source/WebCore/Modules/webdatabase/DatabaseTracker.cpp \
 	Source/WebCore/Modules/webdatabase/DatabaseTracker.h \
+	Source/WebCore/Modules/webdatabase/DBBackendServer.cpp \
 	Source/WebCore/Modules/webdatabase/DBBackendServer.h \
 	Source/WebCore/Modules/webdatabase/OriginQuotaManager.cpp \
 	Source/WebCore/Modules/webdatabase/OriginQuotaManager.h \

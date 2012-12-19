@@ -37,6 +37,46 @@ class Server: public AbstractDatabaseServer {
 public:
     Server() { };
     virtual ~Server() { }
+
+    virtual void initialize(const String& databasePath);
+
+    virtual void setClient(DatabaseManagerClient*);
+    virtual String databaseDirectoryPath() const;
+    virtual void setDatabaseDirectoryPath(const String&);
+
+    virtual String fullPathForDatabase(SecurityOrigin*, const String& name, bool createIfDoesNotExist);
+
+#if !PLATFORM(CHROMIUM)
+    virtual bool hasEntryForOrigin(SecurityOrigin*);
+    virtual void origins(Vector<RefPtr<SecurityOrigin> >& result);
+    virtual bool databaseNamesForOrigin(SecurityOrigin*, Vector<String>& result);
+    virtual DatabaseDetails detailsForNameAndOrigin(const String&, SecurityOrigin*);
+
+    virtual unsigned long long usageForOrigin(SecurityOrigin*);
+    virtual unsigned long long quotaForOrigin(SecurityOrigin*);
+
+    virtual void setQuota(SecurityOrigin*, unsigned long long);
+
+    virtual void deleteAllDatabases();
+    virtual bool deleteOrigin(SecurityOrigin*);
+    virtual bool deleteDatabase(SecurityOrigin*, const String& name);
+
+    // From a secondary thread, must be thread safe with its data
+    virtual void scheduleNotifyDatabaseChanged(SecurityOrigin*, const String& name);
+    virtual void databaseChanged(AbstractDatabase*);
+
+#else // PLATFORM(CHROMIUM)
+    virtual void closeDatabasesImmediately(const String& originIdentifier, const String& name);
+#endif // PLATFORM(CHROMIUM)
+
+    virtual void interruptAllDatabasesForContext(const ScriptExecutionContext*);
+
+    virtual bool canEstablishDatabase(ScriptExecutionContext*, const String& name, const String& displayName, unsigned long estimatedSize);
+    virtual void addOpenDatabase(AbstractDatabase*);
+    virtual void removeOpenDatabase(AbstractDatabase*);
+
+    virtual void setDatabaseDetails(SecurityOrigin*, const String& name, const String& displayName, unsigned long estimatedSize);
+    virtual unsigned long long getMaxSizeForDatabase(const AbstractDatabase*);
 };
 
 } // namespace DBBackend

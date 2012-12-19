@@ -952,6 +952,7 @@ set(WebCore_SOURCES
     Modules/webdatabase/DatabaseTask.cpp
     Modules/webdatabase/DatabaseThread.cpp
     Modules/webdatabase/DatabaseTracker.cpp
+    Modules/webdatabase/DBBackendServer.cpp
     Modules/webdatabase/OriginQuotaManager.cpp
     Modules/webdatabase/OriginUsageRecord.cpp
     Modules/webdatabase/SQLException.cpp

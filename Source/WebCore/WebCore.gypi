@@ -999,6 +999,7 @@
             'Modules/webdatabase/DatabaseThread.cpp',
             'Modules/webdatabase/DatabaseThread.h',
             'Modules/webdatabase/DatabaseTracker.cpp',
+            'Modules/webdatabase/DBBackendServer.cpp',
             'Modules/webdatabase/DBBackendServer.h',
             'Modules/webdatabase/DOMWindowWebDatabase.cpp',
             'Modules/webdatabase/DOMWindowWebDatabase.h',

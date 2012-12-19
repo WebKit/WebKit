@@ -35,7 +35,7 @@
 
 #include "AbstractDatabase.h"
 #include "DatabaseContext.h"
-#include "DatabaseTracker.h"
+#include "DatabaseManager.h"
 #include "ScriptExecutionContext.h"
 #include "SecurityOrigin.h"
 
@@ -43,21 +43,21 @@ namespace WebCore {
 
 void SQLTransactionClient::didCommitWriteTransaction(AbstractDatabase* database)
 {
-    DatabaseTracker::tracker().scheduleNotifyDatabaseChanged(
+    DatabaseManager::manager().scheduleNotifyDatabaseChanged(
         database->securityOrigin(), database->stringIdentifier());
 }
 
 void SQLTransactionClient::didExecuteStatement(AbstractDatabase* database)
 {
-    DatabaseTracker::tracker().databaseChanged(database);
+    DatabaseManager::manager().databaseChanged(database);
 }
 
 bool SQLTransactionClient::didExceedQuota(AbstractDatabase* database)
 {
     ASSERT(database->scriptExecutionContext()->isContextThread());
-    unsigned long long currentQuota = DatabaseTracker::tracker().quotaForOrigin(database->securityOrigin());
+    unsigned long long currentQuota = DatabaseManager::manager().quotaForOrigin(database->securityOrigin());
     database->databaseContext()->databaseExceededQuota(database->stringIdentifier());
-    unsigned long long newQuota = DatabaseTracker::tracker().quotaForOrigin(database->securityOrigin());
+    unsigned long long newQuota = DatabaseManager::manager().quotaForOrigin(database->securityOrigin());
     return (newQuota > currentQuota);
 }
 

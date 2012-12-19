@@ -25277,6 +25277,10 @@
 					>
 				</File>
 				<File
+					RelativePath="..\Modules\webdatabase\DBBackendServer.cpp"
+					>
+				</File>
+				<File
 					RelativePath="..\Modules\webdatabase\DBBackendServer.h"
 					>
 				</File>

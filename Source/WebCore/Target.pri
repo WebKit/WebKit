@@ -25,6 +25,7 @@ SOURCES += \
     Modules/webdatabase/DatabaseAuthorizer.cpp \
     Modules/webdatabase/DatabaseContext.cpp \
     Modules/webdatabase/DatabaseSync.cpp \
+    Modules/webdatabase/DBBackendServer.cpp \
     Modules/webdatabase/WorkerContextWebDatabase.cpp \
     \
     accessibility/AccessibilityImageMapLink.cpp \

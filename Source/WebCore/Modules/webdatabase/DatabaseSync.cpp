@@ -34,7 +34,7 @@
 #if ENABLE(SQL_DATABASE)
 
 #include "DatabaseCallback.h"
-#include "DatabaseTracker.h"
+#include "DatabaseManager.h"
 #include "Logging.h"
 #include "SQLException.h"
 #include "SQLTransactionSync.h"
@@ -47,35 +47,6 @@
 
 namespace WebCore {
 
-PassRefPtr<DatabaseSync> DatabaseSync::openDatabaseSync(ScriptExecutionContext* context, const String& name, const String& expectedVersion, const String& displayName,
-                                                        unsigned long estimatedSize, PassRefPtr<DatabaseCallback> creationCallback, ExceptionCode& ec)
-{
-    ASSERT(context->isContextThread());
-
-    if (!DatabaseTracker::tracker().canEstablishDatabase(context, name, displayName, estimatedSize)) {
-        LOG(StorageAPI, "Database %s for origin %s not allowed to be established", name.ascii().data(), context->securityOrigin()->toString().ascii().data());
-        return 0;
-    }
-
-    RefPtr<DatabaseSync> database = adoptRef(new DatabaseSync(context, name, expectedVersion, displayName, estimatedSize));
-
-    String errorMessage;
-    if (!database->performOpenAndVerify(!creationCallback, ec, errorMessage)) {
-        database->logErrorMessage(errorMessage);
-        DatabaseTracker::tracker().removeOpenDatabase(database.get());
-        return 0;
-    }
-
-    DatabaseTracker::tracker().setDatabaseDetails(context->securityOrigin(), name, displayName, estimatedSize);
-
-    if (database->isNew() && creationCallback.get()) {
-        LOG(StorageAPI, "Invoking the creation callback for database %p\n", database.get());
-        creationCallback->handleEvent(database.get());
-    }
-
-    return database;
-}
-
 DatabaseSync::DatabaseSync(ScriptExecutionContext* context, const String& name, const String& expectedVersion,
                            const String& displayName, unsigned long estimatedSize)
     : AbstractDatabase(context, name, expectedVersion, displayName, estimatedSize, SyncDatabase)
@@ -87,7 +58,7 @@ DatabaseSync::~DatabaseSync()
     ASSERT(m_scriptExecutionContext->isContextThread());
 
     if (opened()) {
-        DatabaseTracker::tracker().removeOpenDatabase(this);
+        DatabaseManager::manager().removeOpenDatabase(this);
         closeDatabase();
     }
 }
@@ -211,7 +182,7 @@ void DatabaseSync::closeImmediately()
         return;
 
     logErrorMessage("forcibly closing database");
-    DatabaseTracker::tracker().removeOpenDatabase(this);
+    DatabaseManager::manager().removeOpenDatabase(this);
     closeDatabase();
 }
 

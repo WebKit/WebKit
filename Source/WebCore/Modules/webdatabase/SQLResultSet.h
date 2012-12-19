@@ -31,12 +31,11 @@
 
 #if ENABLE(SQL_DATABASE)
 
+#include "DatabaseBasicTypes.h"
 #include "SQLResultSetRowList.h"
 #include <wtf/ThreadSafeRefCounted.h>
 
 namespace WebCore {
-
-typedef int ExceptionCode;
 
 class SQLResultSet : public ThreadSafeRefCounted<SQLResultSet> {
 public:

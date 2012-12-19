@@ -31,6 +31,7 @@
 
 #if ENABLE(SQL_DATABASE)
 
+#include "DatabaseBasicTypes.h"
 #include "SQLiteDatabase.h"
 #include <wtf/Forward.h>
 #include <wtf/ThreadSafeRefCounted.h>
@@ -47,13 +48,8 @@ class DatabaseContext;
 class ScriptExecutionContext;
 class SecurityOrigin;
 
-typedef int ExceptionCode;
-
 class AbstractDatabase : public ThreadSafeRefCounted<AbstractDatabase> {
 public:
-    static bool isAvailable();
-    static void setIsAvailable(bool available);
-
     virtual ~AbstractDatabase();
 
     virtual String version() const;
@@ -143,7 +139,7 @@ protected:
 #endif
 
 private:
-    int m_guid;
+    DatabaseGuid m_guid;
     bool m_opened;
     bool m_new;
     const bool m_isSyncDatabase;

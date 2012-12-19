@@ -1,3 +1,128 @@
+2012-12-18  Mark Lam  <mark.lam@apple.com>
+
+        Initial refactoring of database functionality into the manager and server.
+        https://bugs.webkit.org/show_bug.cgi?id=104748.
+
+        Reviewed by Brady Eidson.
+
+        This is not a complete refactor, but a stepping stone on the way to isolating
+        script side database activity from the SQL backend.
+
+        No new tests.
+
+        * CMakeLists.txt:
+        * GNUmakefile.list.am:
+        * Modules/webdatabase/AbstractDatabase.cpp:
+        (WebCore):
+        (WebCore::updateGuidVersionMap):
+        (WebCore::guidForOriginAndName):
+        (WebCore::AbstractDatabase::AbstractDatabase):
+        (WebCore::AbstractDatabase::maximumSize):
+        * Modules/webdatabase/AbstractDatabase.h:
+        (AbstractDatabase):
+        - Moved isAvailable() and setIsAvailable() to the DatabaseManager.
+        * Modules/webdatabase/AbstractDatabaseServer.h:
+        (AbstractDatabaseServer):
+        * Modules/webdatabase/DBBackendServer.cpp: Added.
+        (WebCore::DBBackend::Server::initialize):
+        (WebCore::DBBackend::Server::setClient):
+        (WebCore::DBBackend::Server::databaseDirectoryPath):
+        (WebCore::DBBackend::Server::setDatabaseDirectoryPath):
+        (WebCore::DBBackend::Server::fullPathForDatabase):
+        (WebCore::DBBackend::Server::hasEntryForOrigin):
+        (WebCore::DBBackend::Server::origins):
+        (WebCore::DBBackend::Server::databaseNamesForOrigin):
+        (WebCore::DBBackend::Server::detailsForNameAndOrigin):
+        (WebCore::DBBackend::Server::usageForOrigin):
+        (WebCore::DBBackend::Server::quotaForOrigin):
+        (WebCore::DBBackend::Server::setQuota):
+        (WebCore::DBBackend::Server::deleteAllDatabases):
+        (WebCore::DBBackend::Server::deleteOrigin):
+        (WebCore::DBBackend::Server::deleteDatabase):
+        (WebCore::DBBackend::Server::scheduleNotifyDatabaseChanged):
+        (WebCore::DBBackend::Server::databaseChanged):
+        (WebCore::DBBackend::Server::closeDatabasesImmediately):
+        (WebCore::DBBackend::Server::interruptAllDatabasesForContext):
+        (WebCore::DBBackend::Server::canEstablishDatabase):
+        (WebCore::DBBackend::Server::addOpenDatabase):
+        (WebCore::DBBackend::Server::removeOpenDatabase):
+        (WebCore::DBBackend::Server::setDatabaseDetails):
+        (WebCore::DBBackend::Server::getMaxSizeForDatabase):
+        - Refactored all calls to the DatabaseTracker to go thru the DBBackend::Server.
+        * Modules/webdatabase/DBBackendServer.h:
+        * Modules/webdatabase/DOMWindowWebDatabase.cpp:
+        (WebCore::DOMWindowWebDatabase::openDatabase):
+        * Modules/webdatabase/Database.cpp:
+        (WebCore::Database::close):
+        (WebCore::Database::maximumSize):
+        * Modules/webdatabase/Database.h:
+        (Database):
+        - Moved the openDatabase() factory method to the DatabaseManager.
+        - Removed the unused deliverPendingCallback() prototype.
+        * Modules/webdatabase/DatabaseBasicTypes.h: Added.
+        - A place to define some common basic types used by the database module.
+        * Modules/webdatabase/DatabaseContext.cpp:
+        (WebCore::DatabaseContext::databaseExceededQuota):
+        * Modules/webdatabase/DatabaseManager.cpp:
+        (WebCore::DatabaseManager::DatabaseManager):
+        (WebCore::DatabaseManager::initialize):
+        (WebCore::DatabaseManager::setClient):
+        (WebCore::DatabaseManager::databaseDirectoryPath):
+        (WebCore::DatabaseManager::setDatabaseDirectoryPath):
+        (WebCore::DatabaseManager::isAvailable):
+        (WebCore::DatabaseManager::setIsAvailable):
+        (DatabaseCreationCallbackTask):
+        (WebCore::DatabaseCreationCallbackTask::create):
+        (WebCore::DatabaseCreationCallbackTask::performTask):
+        (WebCore::DatabaseCreationCallbackTask::DatabaseCreationCallbackTask):
+        (WebCore::DatabaseManager::openDatabase):
+        (WebCore::DatabaseManager::openDatabaseSync):
+        (WebCore::DatabaseManager::setHasOpenDatabases):
+        (WebCore::DatabaseManager::fullPathForDatabase):
+        (WebCore::DatabaseManager::hasEntryForOrigin):
+        (WebCore::DatabaseManager::origins):
+        (WebCore::DatabaseManager::databaseNamesForOrigin):
+        (WebCore::DatabaseManager::detailsForNameAndOrigin):
+        (WebCore::DatabaseManager::usageForOrigin):
+        (WebCore::DatabaseManager::quotaForOrigin):
+        (WebCore::DatabaseManager::setQuota):
+        (WebCore::DatabaseManager::deleteAllDatabases):
+        (WebCore::DatabaseManager::deleteOrigin):
+        (WebCore::DatabaseManager::deleteDatabase):
+        (WebCore::DatabaseManager::scheduleNotifyDatabaseChanged):
+        (WebCore::DatabaseManager::databaseChanged):
+        (WebCore::DatabaseManager::closeDatabasesImmediately):
+        (WebCore::DatabaseManager::interruptAllDatabasesForContext):
+        (WebCore::DatabaseManager::canEstablishDatabase):
+        (WebCore::DatabaseManager::addOpenDatabase):
+        (WebCore::DatabaseManager::removeOpenDatabase):
+        (WebCore::DatabaseManager::setDatabaseDetails):
+        (WebCore::DatabaseManager::getMaxSizeForDatabase):
+        * Modules/webdatabase/DatabaseManager.h:
+        (DatabaseManager):
+        * Modules/webdatabase/DatabaseSync.cpp:
+        (WebCore::DatabaseSync::~DatabaseSync):
+        (WebCore::DatabaseSync::closeImmediately):
+        * Modules/webdatabase/DatabaseSync.h:
+        (DatabaseSync):
+        - Moved the openDatabaseSync() factory method to the DatabaseManager.
+        * Modules/webdatabase/DatabaseTask.h:
+        * Modules/webdatabase/SQLResultSet.h:
+        * Modules/webdatabase/SQLStatementSync.h:
+        * Modules/webdatabase/SQLTransaction.h:
+        * Modules/webdatabase/SQLTransactionClient.cpp:
+        (WebCore::SQLTransactionClient::didCommitWriteTransaction):
+        (WebCore::SQLTransactionClient::didExecuteStatement):
+        (WebCore::SQLTransactionClient::didExceedQuota):
+        * Modules/webdatabase/SQLTransactionSync.h:
+        * Modules/webdatabase/WorkerContextWebDatabase.cpp:
+        (WebCore::WorkerContextWebDatabase::openDatabase):
+        (WebCore::WorkerContextWebDatabase::openDatabaseSync):
+        * Target.pri:
+        * WebCore.gypi:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+
 2012-12-18  Per-Erik Brodin  <per-erik.brodin@ericsson.com>
 
         EventSource should support CORS

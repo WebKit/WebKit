@@ -34,6 +34,7 @@
 #if ENABLE(SQL_DATABASE)
 
 #include "AbstractDatabase.h"
+#include "DatabaseBasicTypes.h"
 #include <wtf/Forward.h>
 #include <wtf/text/WTFString.h>
 
@@ -49,15 +50,11 @@ class SQLTransactionSyncCallback;
 class ScriptExecutionContext;
 class SecurityOrigin;
 
-typedef int ExceptionCode;
-
 // Instances of this class should be created and used only on the worker's context thread.
 class DatabaseSync : public AbstractDatabase {
 public:
     virtual ~DatabaseSync();
 
-    static PassRefPtr<DatabaseSync> openDatabaseSync(ScriptExecutionContext*, const String& name, const String& expectedVersion,
-                                                     const String& displayName, unsigned long estimatedSize, PassRefPtr<DatabaseCallback>, ExceptionCode&);
     void changeVersion(const String& oldVersion, const String& newVersion, PassRefPtr<SQLTransactionSyncCallback>, ExceptionCode&);
     void transaction(PassRefPtr<SQLTransactionSyncCallback>, ExceptionCode&);
     void readTransaction(PassRefPtr<SQLTransactionSyncCallback>, ExceptionCode&);
@@ -82,6 +79,8 @@ private:
     void runTransaction(PassRefPtr<SQLTransactionSyncCallback>, bool readOnly, ExceptionCode&);
 
     String m_lastErrorMessage;
+
+    friend class DatabaseManager;
 };
 
 } // namespace WebCore

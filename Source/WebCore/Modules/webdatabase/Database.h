@@ -32,6 +32,7 @@
 #if ENABLE(SQL_DATABASE)
 
 #include "AbstractDatabase.h"
+#include "DatabaseBasicTypes.h"
 #include <wtf/Deque.h>
 #include <wtf/Forward.h>
 #include <wtf/text/WTFString.h>
@@ -49,15 +50,11 @@ class SQLTransactionErrorCallback;
 class SQLTransactionWrapper;
 class VoidCallback;
 
-typedef int ExceptionCode;
-
 class Database : public AbstractDatabase {
 public:
     virtual ~Database();
 
     // Direct support for the DOM API
-    static PassRefPtr<Database> openDatabase(ScriptExecutionContext*, const String& name, const String& expectedVersion, const String& displayName,
-                                             unsigned long estimatedSize, PassRefPtr<DatabaseCallback>, ExceptionCode&);
     virtual String version() const;
     void changeVersion(const String& oldVersion, const String& newVersion, PassRefPtr<SQLTransactionCallback>,
                        PassRefPtr<SQLTransactionErrorCallback>, PassRefPtr<VoidCallback> successCallback);
@@ -103,8 +100,6 @@ private:
 
     Vector<String> performGetTableNames();
 
-    static void deliverPendingCallback(void*);
-
     Deque<RefPtr<SQLTransaction> > m_transactionQueue;
     Mutex m_transactionInProgressMutex;
     bool m_transactionInProgress;
@@ -113,6 +108,8 @@ private:
     RefPtr<SecurityOrigin> m_databaseThreadSecurityOrigin;
 
     bool m_deleted;
+
+    friend class DatabaseManager;
 };
 
 } // namespace WebCore

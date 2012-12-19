@@ -30,6 +30,7 @@
 
 #if ENABLE(SQL_DATABASE)
 
+#include "DatabaseBasicTypes.h"
 #include "SQLStatement.h"
 #include <wtf/Deque.h>
 #include <wtf/Forward.h>
@@ -48,8 +49,6 @@ class SQLTransactionCallback;
 class SQLTransactionErrorCallback;
 class SQLValue;
 class VoidCallback;
-
-typedef int ExceptionCode;
 
 class SQLTransactionWrapper : public ThreadSafeRefCounted<SQLTransactionWrapper> {
 public:
