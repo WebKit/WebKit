@@ -751,6 +751,15 @@ webkit.org/b/103383 fast/css/counters/element-removal-crash.xhtml [ Failure Pass
 
 webkit.org/b/103880 fast/writing-mode/vertical-font-vmtx-units-per-em.html [ Failure Pass ]
 
+# flaky console output problem
+webkit.org/b/105280 http/tests/xmlhttprequest/origin-whitelisting-https.html [ Failure Pass ]
+webkit.org/b/105280 http/tests/xmlhttprequest/access-control-preflight-async-header-denied.html [ Failure Pass ]
+webkit.org/b/105280 http/tests/xmlhttprequest/simple-cross-origin-denied-events.html [ Failure Pass ]
+webkit.org/b/105280 http/tests/xmlhttprequest/access-control-preflight-async-method-denied.html [ Failure Pass ]
+webkit.org/b/105280 http/tests/xmlhttprequest/cross-site-denied-response.html [ Failure Pass ]
+webkit.org/b/105280 http/tests/xmlhttprequest/simple-cross-origin-denied-events-post.html [ Failure Pass ]
+webkit.org/b/105280 http/tests/xmlhttprequest/access-control-preflight-async-not-supported.html [ Failure Pass ]
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # FAILING TESTS
 #////////////////////////////////////////////////////////////////////////////////////////
