@@ -14,7 +14,7 @@ PASS DOMParser.length is 0
 PASS DataView.length is 3
 PASS ErrorEvent.length is 2
 PASS Event.length is 2
-PASS EventSource.length is 1
+PASS EventSource.length is 2
 PASS Float32Array.length is 1
 PASS Float64Array.length is 1
 PASS FileReader.length is 0

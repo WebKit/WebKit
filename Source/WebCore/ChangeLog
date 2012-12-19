@@ -1,3 +1,53 @@
+2012-12-18  Per-Erik Brodin  <per-erik.brodin@ericsson.com>
+
+        EventSource should support CORS
+        https://bugs.webkit.org/show_bug.cgi?id=61862
+
+        Reviewed by Alexey Proskuryakov.
+
+        Enabled CORS in EventSource with optional constructor argument to
+        indicate whether credentials should be included or not, as per the spec.
+        Added didFailAccessControlCheck to ThreadableLoaderClient to be able to
+        properly distinguish CORS failures from other errors.
+
+        Tests: http/tests/eventsource/eventsource-cors-basic.html
+               http/tests/eventsource/eventsource-cors-no-server.html
+               http/tests/eventsource/eventsource-cors-with-credentials.html
+
+        * loader/DocumentThreadableLoader.cpp:
+        (WebCore::DocumentThreadableLoader::makeSimpleCrossOriginAccessRequest):
+        (WebCore::DocumentThreadableLoader::didReceiveResponse):
+        (WebCore::DocumentThreadableLoader::preflightFailure):
+        * loader/ThreadableLoaderClient.h:
+        (WebCore::ThreadableLoaderClient::didFailAccessControlCheck):
+        * loader/ThreadableLoaderClientWrapper.h:
+        (WebCore::ThreadableLoaderClientWrapper::didFailAccessControlCheck):
+        (ThreadableLoaderClientWrapper):
+        * loader/WorkerThreadableLoader.cpp:
+        (WebCore::workerContextDidFailAccessControlCheck):
+        (WebCore):
+        (WebCore::WorkerThreadableLoader::MainThreadBridge::didFailAccessControlCheck):
+        * loader/WorkerThreadableLoader.h:
+        (MainThreadBridge):
+        * page/EventSource.cpp:
+        (WebCore::EventSource::EventSource):
+        (WebCore::EventSource::create):
+        (WebCore::EventSource::connect):
+        (WebCore::EventSource::withCredentials):
+        (WebCore):
+        (WebCore::EventSource::didReceiveResponse):
+        (WebCore::EventSource::didFailAccessControlCheck):
+        (WebCore::EventSource::didFailRedirectCheck):
+        (WebCore::EventSource::abortConnectionAttempt):
+        (WebCore::EventSource::parseEventStreamLine):
+        (WebCore::EventSource::createMessageEvent):
+        * page/EventSource.h:
+        (WebCore):
+        (EventSource):
+        (WebCore::EventSource::refEventTarget):
+        (WebCore::EventSource::derefEventTarget):
+        * page/EventSource.idl:
+
 2012-12-18  Michael Pruett  <michael@68k.org>
 
         IndexedDB: Implement custom bindings for parsing options

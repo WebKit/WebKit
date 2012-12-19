@@ -3,5 +3,6 @@ Test EventSource constructor functionality. Should print a series of PASS messag
 PASS: missing argument to EventSource constructor resulted in an exception (TypeError: Not enough arguments)
 PASS: passing an empty string to the EventSource constructor resulted in an exception (Error: SyntaxError: DOM Exception 12)
 PASS: passing an invalid URL to the EventSource constructor resulted in an exception (Error: SyntaxError: DOM Exception 12)
+PASS: no exception when passing a second argument to the EventSource constructor
 DONE
 

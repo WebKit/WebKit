@@ -94,6 +94,13 @@ public:
             m_client->didFail(error);
     }
 
+    void didFailAccessControlCheck(const ResourceError& error)
+    {
+        m_done = true;
+        if (m_client)
+            m_client->didFailAccessControlCheck(error);
+    }
+
     void didFailRedirectCheck()
     {
         m_done = true;

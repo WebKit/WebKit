@@ -14,7 +14,7 @@ PASS DOMParser.length is 0
 FAIL DataView.length should be 3. Was 0.
 FAIL ErrorEvent.length should be 2. Was 0.
 FAIL Event.length should be 2. Was 0.
-FAIL EventSource.length should be 1. Was 0.
+FAIL EventSource.length should be 2. Was 0.
 FAIL Float32Array.length should be 1. Was 0.
 FAIL Float64Array.length should be 1. Was 0.
 PASS FileReader.length is 0

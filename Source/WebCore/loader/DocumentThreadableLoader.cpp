@@ -127,7 +127,7 @@ void DocumentThreadableLoader::makeSimpleCrossOriginAccessRequest(const Resource
 
     // Cross-origin requests are only allowed for HTTP and registered schemes. We would catch this when checking response headers later, but there is no reason to send a request that's guaranteed to be denied.
     if (!SchemeRegistry::shouldTreatURLSchemeAsCORSEnabled(request.url().protocol())) {
-        m_client->didFail(ResourceError(errorDomainWebKitInternal, 0, request.url().string(), "Cross origin requests are only supported for HTTP."));
+        m_client->didFailAccessControlCheck(ResourceError(errorDomainWebKitInternal, 0, request.url().string(), "Cross origin requests are only supported for HTTP."));
         return;
     }
 
@@ -274,7 +274,7 @@ void DocumentThreadableLoader::didReceiveResponse(unsigned long identifier, cons
     } else {
         if (!m_sameOriginRequest && m_options.crossOriginRequestPolicy == UseAccessControl) {
             if (!passesAccessControlCheck(response, m_options.allowCredentials, securityOrigin(), accessControlErrorDescription)) {
-                m_client->didFail(ResourceError(errorDomainWebKitInternal, 0, response.url().string(), accessControlErrorDescription));
+                m_client->didFailAccessControlCheck(ResourceError(errorDomainWebKitInternal, 0, response.url().string(), accessControlErrorDescription));
                 return;
             }
         }
@@ -352,7 +352,7 @@ void DocumentThreadableLoader::preflightSuccess()
 void DocumentThreadableLoader::preflightFailure(const String& url, const String& errorDescription)
 {
     m_actualRequest = nullptr; // Prevent didFinishLoading() from bypassing access check.
-    m_client->didFail(ResourceError(errorDomainWebKitInternal, 0, url, errorDescription));
+    m_client->didFailAccessControlCheck(ResourceError(errorDomainWebKitInternal, 0, url, errorDescription));
 }
 
 void DocumentThreadableLoader::loadRequest(const ResourceRequest& request, SecurityCheckPolicy securityCheck)

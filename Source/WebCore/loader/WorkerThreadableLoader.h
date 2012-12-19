@@ -118,6 +118,7 @@ namespace WebCore {
             virtual void didReceiveCachedMetadata(const char*, int dataLength);
             virtual void didFinishLoading(unsigned long identifier, double finishTime);
             virtual void didFail(const ResourceError&);
+            virtual void didFailAccessControlCheck(const ResourceError&);
             virtual void didFailRedirectCheck();
 
             // Only to be used on the main thread.

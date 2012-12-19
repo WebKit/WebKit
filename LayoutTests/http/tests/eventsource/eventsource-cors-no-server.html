@@ -1,0 +1,55 @@
+<html>
+<body>
+<p>Test that EventSource tries to reconnect if there's no server response when making cross-origin requests. Should print a series of PASS messages followed by DONE.</p>
+<div id="result"></div>
+<script>
+function log(msg) {
+    document.getElementById("result").innerHTML += msg + "<br>";
+}
+
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+}
+
+function end() {
+    if (window.testRunner)
+        testRunner.notifyDone();
+}
+
+var count = 0;
+var hosts = ["http://127.0.0.1:12345/event-stream", "http://localhost:54321/event-stream"];
+
+function create_es() {
+    try {
+        var es = new EventSource(hosts[count]);
+    }
+    catch (ex) {
+        log("FAIL: EventSource constructor threw exception: " + ex);
+        end();
+        return;
+    }
+
+    es.onerror = function () {
+        if (es.readyState == es.CONNECTING) {
+            log("PASS: got error event and readyState is CONNECTING");
+            es.close();
+            end();
+            return;
+        }
+
+        if (es.readyState == es.CLOSED)
+            log("FAIL: got error event but readyState is CLOSED");
+
+        if (++count == hosts.length) {
+            log("DONE");
+            end();
+        }
+        else
+            setTimeout(create_es);
+    };
+}
+create_es();
+</script>
+</body>
+</html>

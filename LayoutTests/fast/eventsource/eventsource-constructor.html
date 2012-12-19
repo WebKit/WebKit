@@ -34,7 +34,19 @@ try {
 }
 catch (ex) {
     log("PASS: passing an invalid URL to the EventSource constructor resulted in an exception (" + ex + ")");
-    log("DONE");
+}
+
+try {
+    var es = new EventSource("http://127.0.0.1/", {"withCredentials": false});
+    es.close();
+    if (!es.withCredentials) {
+        log("PASS: no exception when passing a second argument to the EventSource constructor");
+        log("DONE");
+    } else
+        log("FAIL: the 'withCredentials' property is unexpectedly true");
+}
+catch (ex) {
+    log("FAIL: passing a second argument to the EventSource constructor resulted in an exception (" + ex + ")");
 }
 
 if (window.testRunner)

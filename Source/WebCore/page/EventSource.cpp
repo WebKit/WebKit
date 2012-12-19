@@ -1,6 +1,5 @@
 /*
- * Copyright (C) 2009 Ericsson AB
- * All rights reserved.
+ * Copyright (C) 2009, 2012 Ericsson AB. All rights reserved.
  * Copyright (C) 2010 Apple Inc. All rights reserved.
  * Copyright (C) 2011, Code Aurora Forum. All rights reserved.
  *
@@ -36,6 +35,7 @@
 
 #include "ContentSecurityPolicy.h"
 #include "DOMWindow.h"
+#include "Dictionary.h"
 #include "Event.h"
 #include "EventException.h"
 #include "ExceptionCode.h"
@@ -56,20 +56,21 @@ namespace WebCore {
 
 const unsigned long long EventSource::defaultReconnectDelay = 3000;
 
-inline EventSource::EventSource(const KURL& url, ScriptExecutionContext* context)
+inline EventSource::EventSource(ScriptExecutionContext* context, const KURL& url, const Dictionary& eventSourceInit)
     : ActiveDOMObject(context, this)
     , m_url(url)
+    , m_withCredentials(false)
     , m_state(CONNECTING)
     , m_decoder(TextResourceDecoder::create("text/plain", "UTF-8"))
     , m_reconnectTimer(this, &EventSource::reconnectTimerFired)
     , m_discardTrailingNewline(false)
     , m_requestInFlight(false)
     , m_reconnectDelay(defaultReconnectDelay)
-    , m_origin(context->securityOrigin()->toString())
 {
+    eventSourceInit.get("withCredentials", m_withCredentials);
 }
 
-PassRefPtr<EventSource> EventSource::create(ScriptExecutionContext* context, const String& url, ExceptionCode& ec)
+PassRefPtr<EventSource> EventSource::create(ScriptExecutionContext* context, const String& url, const Dictionary& eventSourceInit, ExceptionCode& ec)
 {
     if (url.isEmpty()) {
         ec = SYNTAX_ERR;
@@ -82,19 +83,13 @@ PassRefPtr<EventSource> EventSource::create(ScriptExecutionContext* context, con
         return 0;
     }
 
-    // FIXME: Should support at least some cross-origin requests.
-    if (!context->securityOrigin()->canRequest(fullURL)) {
-        ec = SECURITY_ERR;
-        return 0;
-    }
-
     if (!context->contentSecurityPolicy()->allowConnectToSource(fullURL)) {
         // FIXME: Should this be throwing an exception?
         ec = SECURITY_ERR;
         return 0;
     }
 
-    RefPtr<EventSource> source = adoptRef(new EventSource(fullURL, context));
+    RefPtr<EventSource> source = adoptRef(new EventSource(context, fullURL, eventSourceInit));
 
     source->setPendingActivity(source.get());
     source->connect();
@@ -121,11 +116,16 @@ void EventSource::connect()
     if (!m_lastEventId.isEmpty())
         request.setHTTPHeaderField("Last-Event-ID", m_lastEventId);
 
+    SecurityOrigin* origin = scriptExecutionContext()->securityOrigin();
+
     ThreadableLoaderOptions options;
     options.sendLoadCallbacks = SendCallbacks;
     options.sniffContent = DoNotSniffContent;
-    options.allowCredentials = AllowStoredCredentials;
+    options.allowCredentials = (origin->canRequest(m_url) || m_withCredentials) ? AllowStoredCredentials : DoNotAllowStoredCredentials;
+    options.preflightPolicy = PreventPreflight;
+    options.crossOriginRequestPolicy = UseAccessControl;
     options.shouldBufferData = DoNotBufferData;
+    options.securityOrigin = origin;
 
     m_loader = ThreadableLoader::create(scriptExecutionContext(), this, request, options);
 
@@ -161,6 +161,11 @@ void EventSource::reconnectTimerFired(Timer<EventSource>*)
 String EventSource::url() const
 {
     return m_url.string();
+}
+
+bool EventSource::withCredentials() const
+{
+    return m_withCredentials;
 }
 
 EventSource::State EventSource::readyState() const
@@ -202,6 +207,7 @@ void EventSource::didReceiveResponse(unsigned long, const ResourceResponse& resp
     ASSERT(m_state == CONNECTING);
     ASSERT(m_requestInFlight);
 
+    m_eventStreamOrigin = SecurityOrigin::create(response.url())->toString();
     int statusCode = response.httpStatusCode();
     bool mimeTypeIsValid = response.mimeType() == "text/event-stream";
     bool responseIsValid = statusCode == 200 && mimeTypeIsValid;
@@ -274,7 +280,20 @@ void EventSource::didFail(const ResourceError& error)
     networkRequestEnded();
 }
 
+void EventSource::didFailAccessControlCheck(const ResourceError& error)
+{
+    String message = makeString("EventSource cannot load ", error.failingURL(), ". ", error.localizedDescription());
+    scriptExecutionContext()->addConsoleMessage(JSMessageSource, ErrorMessageLevel, message);
+
+    abortConnectionAttempt();
+}
+
 void EventSource::didFailRedirectCheck()
+{
+    abortConnectionAttempt();
+}
+
+void EventSource::abortConnectionAttempt()
 {
     ASSERT(m_state == CONNECTING);
     ASSERT(m_requestInFlight);
@@ -330,7 +349,7 @@ void EventSource::parseEventStream()
         m_receiveBuf.remove(0, bufPos);
 }
 
-void EventSource::parseEventStreamLine(unsigned int bufPos, int fieldLength, int lineLength)
+void EventSource::parseEventStreamLine(unsigned bufPos, int fieldLength, int lineLength)
 {
     if (!lineLength) {
         if (!m_data.isEmpty()) {
@@ -387,7 +406,7 @@ void EventSource::stop()
 PassRefPtr<MessageEvent> EventSource::createMessageEvent()
 {
     RefPtr<MessageEvent> event = MessageEvent::create();
-    event->initMessageEvent(m_eventName.isEmpty() ? eventNames().messageEvent : AtomicString(m_eventName), false, false, SerializedScriptValue::create(String::adopt(m_data)), m_origin, m_lastEventId, 0, 0);
+    event->initMessageEvent(m_eventName.isEmpty() ? eventNames().messageEvent : AtomicString(m_eventName), false, false, SerializedScriptValue::create(String::adopt(m_data)), m_eventStreamOrigin, m_lastEventId, 0, 0);
     return event.release();
 }
 
