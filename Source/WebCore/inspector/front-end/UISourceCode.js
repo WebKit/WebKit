@@ -198,6 +198,7 @@ WebInspector.UISourceCode.prototype = {
             WebInspector.fileManager.save(this._url, this._content, false);
             WebInspector.fileManager.close(this._url);
         }
+        this._workspace.setFileContent(this, this._content, function() { });
     },
 
     /**

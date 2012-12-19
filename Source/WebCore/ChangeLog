@@ -1,5 +1,20 @@
 2012-12-19  Vsevolod Vlasov  <vsevik@chromium.org>
 
+        Web Inspector: Add Workspace.setFileContent() method
+        https://bugs.webkit.org/show_bug.cgi?id=105434
+
+        Reviewed by Pavel Feldman.
+
+        Added method that will be usedto save file system-based uiSourceCodes to the disk.
+
+        * inspector/front-end/UISourceCode.js:
+        (WebInspector.UISourceCode.prototype._commitContent):
+        * inspector/front-end/Workspace.js:
+        (WebInspector.WorkspaceProvider.prototype.setFileContent):
+        (WebInspector.Project.prototype.setFileContent):
+
+2012-12-19  Vsevolod Vlasov  <vsevik@chromium.org>
+
         Web Inspector: Rename workspace path to uri.
         https://bugs.webkit.org/show_bug.cgi?id=105433
 

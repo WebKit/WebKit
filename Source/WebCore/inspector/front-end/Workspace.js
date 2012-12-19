@@ -91,6 +91,14 @@ WebInspector.WorkspaceProvider.prototype = {
     requestFileContent: function(uri, callback) { },
 
     /**
+     * @param {string} uri
+     * @param {string} newContent
+     * @param {function(?string)} callback
+     */
+    setFileContent: function(uri, newContent, callback) { },
+
+    /**
+     * @param {string} uri
      * @param {string} query
      * @param {boolean} caseSensitive
      * @param {boolean} isRegex
@@ -195,6 +203,17 @@ WebInspector.Project.prototype = {
     },
 
     /**
+     * @param {string} uri
+     * @param {string} newContent
+     * @param {function(?string)} callback
+     */
+    setFileContent: function(uri, newContent, callback)
+    {
+        this._workspaceProvider.setFileContent(uri, newContent, callback);
+    },
+
+    /**
+     * @param {string} uri
      * @param {string} query
      * @param {boolean} caseSensitive
      * @param {boolean} isRegex
@@ -297,6 +316,18 @@ WebInspector.Workspace.prototype = {
             return;
         }
         this._project.requestFileContent(uiSourceCode.url, callback);
+    },
+
+    /**
+     * @param {WebInspector.UISourceCode} uiSourceCode
+     * @param {string} newContent
+     * @param {function(?string)} callback
+     */
+    setFileContent: function(uiSourceCode, newContent, callback)
+    {
+        if (this._temporaryContentProviders.get(uiSourceCode))
+            return;
+        this._project.setFileContent(uiSourceCode.url, newContent, callback);
     },
 
     /**
