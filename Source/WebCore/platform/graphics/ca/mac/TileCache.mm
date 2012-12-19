@@ -601,7 +601,6 @@ void TileCache::revalidateTiles(TileValidationPolicy validationPolicy)
     
     // Ensure primary tile coverage tiles.
     m_primaryTileCoverageRect = IntRect();
-    int primaryLayerCount = 0;
     
     for (int y = topLeft.y(); y <= bottomRight.y(); ++y) {
         for (int x = topLeft.x(); x <= bottomRight.x(); ++x) {
@@ -617,12 +616,12 @@ void TileCache::revalidateTiles(TileValidationPolicy validationPolicy)
             } else {
                 // We already have a layer for this tile. Ensure that its size is correct.
                 FloatSize tileLayerSize([tileInfo.layer.get() frame].size);
-                if (tileLayerSize != FloatSize(tileRect.size()))
-                    [tileInfo.layer.get() setFrame:tileRect];
+                if (tileLayerSize == FloatSize(tileRect.size()))
+                    continue;
+
+                [tileInfo.layer.get() setFrame:tileRect];
             }
             
-            ++primaryLayerCount;
-
             FloatRect scaledTileRect = tileRect;
             scaledTileRect.scale(1 / m_scale);
             dirtyRects.append(scaledTileRect);
