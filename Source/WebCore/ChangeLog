@@ -1,3 +1,23 @@
+2012-12-19  Pan Deng  <pan.deng@intel.com>
+
+        Web Inspector: Use Document* as argument in WebSocket Instrumentation.
+        https://bugs.webkit.org/show_bug.cgi?id=105279.
+
+        Reviewed by Pavel Feldman.
+
+        Some WebSocket instrumentation fuctions adopted ScriptExecutionContext* as argument, it is not clear that
+        their clients and implementations are all using Document*. This patch adopt Document* as argument, and 
+        Document* could supply more information in future.
+
+        No functionality changed, no new tests.
+
+        * inspector/InspectorInstrumentation.h:
+        (InspectorInstrumentation):
+        (WebCore::InspectorInstrumentation::didCreateWebSocket):
+        (WebCore::InspectorInstrumentation::willSendWebSocketHandshakeRequest):
+        (WebCore::InspectorInstrumentation::didReceiveWebSocketHandshakeResponse):
+        (WebCore::InspectorInstrumentation::didCloseWebSocket):
+
 2012-12-19  Tim Volodine  <timvolodine@chromium.org>
 
         Text Autosizing: Work out what to do about form controls
