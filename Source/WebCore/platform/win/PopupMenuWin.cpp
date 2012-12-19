@@ -168,14 +168,8 @@ void PopupMenuWin::show(const IntRect& r, FrameView* view, int index)
     if (shouldAnimate) {
         RECT viewRect = {0};
         ::GetWindowRect(hostWindow, &viewRect);
-
-        if (!::IsRectEmpty(&viewRect)) {
-            // Popups should slide into view away from the <select> box
-            // NOTE: This may have to change for Vista
-            DWORD slideDirection = (m_windowRect.y() < viewRect.top + view->contentsToWindow(r.location()).y()) ? AW_VER_NEGATIVE : AW_VER_POSITIVE;
-
-            ::AnimateWindow(m_popup, defaultAnimationDuration, AW_SLIDE | slideDirection);
-        }
+        if (!::IsRectEmpty(&viewRect))
+            ::AnimateWindow(m_popup, defaultAnimationDuration, AW_BLEND);
     } else
 #endif
         ::ShowWindow(m_popup, SW_SHOWNOACTIVATE);
