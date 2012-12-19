@@ -1,5 +1,16 @@
 2012-12-18  Mark Lam  <mark.lam@apple.com>
 
+        Fixed bad merge in "Initial refactoring of database functionality into the manager and server".
+        https://bugs.webkit.org/show_bug.cgi?id=104748.
+
+        Not reviewed.
+
+        No new tests.
+
+        * Modules/webdatabase/DBBackendServer.cpp:
+
+2012-12-18  Mark Lam  <mark.lam@apple.com>
+
         Initial refactoring of database functionality into the manager and server.
         https://bugs.webkit.org/show_bug.cgi?id=104748.
 
