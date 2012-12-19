@@ -1,3 +1,12 @@
+2012-12-18  Simon Fraser  <simon.fraser@apple.com>
+
+        Rebaseline some tests on Lion.
+
+        * platform/mac-lion/fast/text/decorations-with-text-combine-expected.txt: Added.
+        * platform/mac-lion/fast/text/orientation-sideways-expected.txt: Added.
+        * platform/mac-lion/fast/writing-mode/broken-ideographic-font-expected.txt:
+        * platform/mac-lion/fast/writing-mode/vertical-baseline-alignment-expected.txt:
+
 2012-12-18  Filip Pizlo  <fpizlo@apple.com>
 
         Fix the test description.
