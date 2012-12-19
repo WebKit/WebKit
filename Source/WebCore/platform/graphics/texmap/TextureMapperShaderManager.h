@@ -59,9 +59,10 @@ public:
     TEXMAP_DECLARE_SAMPLER(mask)
 
 #if ENABLE(CSS_FILTERS)
-    TEXMAP_DECLARE_UNIFORM(filterAmount)
+    TEXMAP_DECLARE_UNIFORM(amount)
     TEXMAP_DECLARE_UNIFORM(gaussianKernel)
     TEXMAP_DECLARE_UNIFORM(blurRadius)
+    TEXMAP_DECLARE_UNIFORM(shadowColor)
     TEXMAP_DECLARE_UNIFORM(shadowOffset)
     TEXMAP_DECLARE_SAMPLER(contentTexture)
 #endif
@@ -81,37 +82,36 @@ private:
 
 class TextureMapperShaderManager {
 public:
-    enum Option {
-        Matrix           = 1L << 0,
-        Texture          = 1L << 1,
-        Rect             = 1L << 2,
-        SolidColor       = 1L << 3,
-        Opacity          = 1L << 4,
-        Mask             = 1L << 5,
-        Antialias        = 1L << 6,
-        GrayscaleFilter  = 1L << 7,
-        SepiaFilter      = 1L << 8,
-        SaturateFilter   = 1L << 9,
-        HueRotateFilter  = 1L << 10,
-        BrightnessFilter = 1L << 11,
-        ContrastFilter   = 1L << 12,
-        InvertFilter     = 1L << 13,
-        OpacityFilter    = 1L << 14,
-        BlurFilter       = 1L << 15,
-        AlphaBlur        = 1L << 16,
-        ContentTexture   = 1L << 17
+    enum ShaderKey {
+        Invalid = 0,
+        Default,
+        Rect,
+        Masked,
+        MaskedRect,
+        SolidColor,
+        Antialiased,
+        GrayscaleFilter,
+        SepiaFilter,
+        SaturateFilter,
+        HueRotateFilter,
+        BrightnessFilter,
+        ContrastFilter,
+        OpacityFilter,
+        InvertFilter,
+        BlurFilter,
+        ShadowFilterPass1,
+        ShadowFilterPass2,
+        LastFilter
     };
-
-    typedef unsigned Options;
 
     TextureMapperShaderManager() { }
     explicit TextureMapperShaderManager(GraphicsContext3D*);
     virtual ~TextureMapperShaderManager();
 
-    PassRefPtr<TextureMapperShaderProgram> getShaderProgram(Options);
+    PassRefPtr<TextureMapperShaderProgram> getShaderProgram(ShaderKey);
 
 private:
-    typedef HashMap<Options, RefPtr<TextureMapperShaderProgram> > TextureMapperShaderProgramMap;
+    typedef HashMap<ShaderKey, RefPtr<TextureMapperShaderProgram>, DefaultHash<int>::Hash, HashTraits<int> > TextureMapperShaderProgramMap;
     TextureMapperShaderProgramMap m_programs;
     RefPtr<GraphicsContext3D> m_context;
 };
