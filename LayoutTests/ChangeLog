@@ -1,3 +1,11 @@
+2012-12-19  Levi Weintraub  <leviw@chromium.org>
+
+        Re-skipping touch-input-element-chang-documents.html since it's still
+        failing on qt and efl.
+
+        * platform/efl/TestExpectations:
+        * platform/qt/TestExpectations:
+
 2012-12-19  Alexis Menard  <alexis@webkit.org>
 
         Implement CSS parsing for CSS transitions unprefixed.
