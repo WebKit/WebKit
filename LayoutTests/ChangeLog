@@ -1,5 +1,16 @@
 2012-12-19  Ilya Tikhonovsky  <loislo@chromium.org>
 
+        Unreviewed gardening. Restore expectations for mac.
+
+        The tests still have problem with scroller image.
+
+        * platform/chromium/TestExpectations:
+        added: webkit.org/b/102294 [ Mac ] platform/chromium/virtual/deferred/fast/images/exif-orientation.html [ ImageOnlyFailure ]
+        added: webkit.org/b/102294 [ Mac ] platform/chromium/virtual/deferred/fast/images/exif-orientation-css.html [ ImageOnlyFailure ]
+        added: webkit.org/b/102294 [ Mac ] platform/chromium/virtual/deferred/fast/images/gray-scale-jpeg-with-color-profile.html [ ImageOnlyFailure ]
+
+2012-12-19  Ilya Tikhonovsky  <loislo@chromium.org>
+
         Unreviewed gardening. Update expectation for mac and remove wrong expectation for win.
 
         * platform/chromium-mac-snowleopard/fast/text/line-initial-and-final-swashes-expected.png: Added.
