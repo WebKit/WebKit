@@ -1151,6 +1151,11 @@ void WebContext::addPlugInAutoStartOriginHash(const String& pageOrigin, unsigned
     m_plugInAutoStartProvider.addAutoStartOrigin(pageOrigin, plugInOriginHash);
 }
 
+PassRefPtr<ImmutableDictionary> WebContext::plugInAutoStartOriginHashes() const
+{
+    return m_plugInAutoStartProvider.autoStartOriginsTableCopy();
+}
+
 #if ENABLE(CUSTOM_PROTOCOLS)
 void WebContext::registerSchemeForCustomProtocol(const WTF::String& scheme)
 {

@@ -337,6 +337,11 @@ void WKContextSetUsesNetworkProcess(WKContextRef contextRef, bool usesNetworkPro
     toImpl(contextRef)->setUsesNetworkProcess(usesNetworkProcess);
 }
 
+WKDictionaryRef WKContextCopyPlugInAutoStartOriginHashes(WKContextRef contextRef)
+{
+    return toAPI(toImpl(contextRef)->plugInAutoStartOriginHashes().leakRef());
+}
+
 // Deprecated functions.
 void _WKContextSetAdditionalPluginsDirectory(WKContextRef context, WKStringRef pluginsDirectory)
 {

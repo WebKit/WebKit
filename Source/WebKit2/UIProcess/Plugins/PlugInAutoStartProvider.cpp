@@ -27,6 +27,7 @@
 #include "PlugInAutoStartProvider.h"
 
 #include "WebContext.h"
+#include "WebContextClient.h"
 #include "WebProcessMessages.h"
 
 using namespace WebCore;
@@ -50,6 +51,7 @@ void PlugInAutoStartProvider::addAutoStartOrigin(const String& pageOrigin, unsig
     it->value.add(plugInOriginHash);
     m_autoStartHashes.add(plugInOriginHash);
     m_context->sendToAllProcesses(Messages::WebProcess::DidAddPlugInAutoStartOrigin(plugInOriginHash));
+    m_context->client().plugInAutoStartOriginHashesChanged(m_context);
 }
 
 Vector<unsigned> PlugInAutoStartProvider::autoStartOriginsCopy() const
@@ -57,6 +59,22 @@ Vector<unsigned> PlugInAutoStartProvider::autoStartOriginsCopy() const
     Vector<unsigned> copyVector;
     copyToVector(m_autoStartHashes, copyVector);
     return copyVector;
+}
+
+PassRefPtr<ImmutableDictionary> PlugInAutoStartProvider::autoStartOriginsTableCopy() const
+{
+    ImmutableDictionary::MapType map;
+    AutoStartTable::const_iterator end = m_autoStartTable.end();
+    for (AutoStartTable::const_iterator it = m_autoStartTable.begin(); it != end; ++it) {
+        Vector<RefPtr<APIObject> > hashes;
+        HashSet<unsigned>::iterator valueEnd = it->value.end();
+        for (HashSet<unsigned>::iterator valueIt = it->value.begin(); valueIt != valueEnd; ++valueIt)
+            hashes.append(WebUInt64::create(*valueIt));
+
+        map.set(it->key, ImmutableArray::adopt(hashes));
+    }
+
+    return ImmutableDictionary::adopt(map);
 }
 
 } // namespace WebKit

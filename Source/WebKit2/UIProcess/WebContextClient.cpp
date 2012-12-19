@@ -26,6 +26,16 @@
 #include "config.h"
 #include "WebContextClient.h"
 
+#include "WebContext.h"
+
 namespace WebKit {
+
+void WebContextClient::plugInAutoStartOriginHashesChanged(WebContext* context)
+{
+    if (!m_client.plugInAutoStartOriginHashesChanged)
+        return;
+
+    m_client.plugInAutoStartOriginHashesChanged(toAPI(context), m_client.clientInfo);
+}
 
 } // namespace WebKit

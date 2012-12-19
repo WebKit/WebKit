@@ -33,6 +33,7 @@
 
 namespace WebKit {
 
+class ImmutableDictionary;
 class WebContext;
 
 class PlugInAutoStartProvider {
@@ -41,7 +42,9 @@ public:
     explicit PlugInAutoStartProvider(WebContext*);
 
     void addAutoStartOrigin(const String& pageOrigin, unsigned plugInOriginHash);
+
     Vector<unsigned> autoStartOriginsCopy() const;
+    PassRefPtr<ImmutableDictionary> autoStartOriginsTableCopy() const;
 
 private:
     WebContext* m_context;

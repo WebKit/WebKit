@@ -31,7 +31,11 @@
 
 namespace WebKit {
 
+class WebContext;
+
 class WebContextClient : public APIClient<WKContextClient, kWKContextClientCurrentVersion> {
+public:
+    void plugInAutoStartOriginHashesChanged(WebContext*);
 };
 
 } // namespace WebKit

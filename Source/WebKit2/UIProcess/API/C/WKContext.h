@@ -40,9 +40,12 @@ enum {
 typedef uint32_t WKCacheModel;
 
 // Context Client
+typedef void (*WKContextPlugInAutoStartOriginHashesChangedCallback)(WKContextRef context, const void *clientInfo);
+
 struct WKContextClient {
     int                                                                 version;
     const void *                                                        clientInfo;
+    WKContextPlugInAutoStartOriginHashesChangedCallback                 plugInAutoStartOriginHashesChanged;
 };
 typedef struct WKContextClient WKContextClient;
 
@@ -186,6 +189,8 @@ WK_EXPORT void WKContextGetStatistics(WKContextRef context, void* functionContex
     
 WK_EXPORT void WKContextGarbageCollectJavaScriptObjects(WKContextRef context);
 WK_EXPORT void WKContextSetJavaScriptGarbageCollectorTimerEnabled(WKContextRef context, bool enable);
+
+WK_EXPORT WKDictionaryRef WKContextCopyPlugInAutoStartOriginHashes(WKContextRef context);
 
 #ifdef __cplusplus
 }

@@ -29,6 +29,7 @@
 #include "APIObject.h"
 #include "DownloadProxyMap.h"
 #include "GenericCallback.h"
+#include "ImmutableDictionary.h"
 #include "MessageReceiver.h"
 #include "MessageReceiverMap.h"
 #include "PlugInAutoStartProvider.h"
@@ -257,6 +258,7 @@ public:
 
     void textCheckerStateChanged();
 
+    PassRefPtr<ImmutableDictionary> plugInAutoStartOriginHashes() const;
 
     // Network Process Management
 
