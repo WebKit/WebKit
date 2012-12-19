@@ -101,6 +101,8 @@ deps = {
     Var('chromium_svn')+'/media@'+Var('chromium_rev'),
   'printing':
     Var('chromium_svn')+'/printing@'+Var('chromium_rev'),
+  'webkit/media/crypto/ppapi/cdm':
+    From('chromium_deps', 'src/webkit/media/crypto/ppapi/cdm'),
   'ppapi':
     Var('chromium_svn')+'/ppapi@'+Var('chromium_rev'),
   'sql':
