@@ -1,3 +1,16 @@
+2012-12-19  KyungTae Kim  <ktf.kim@samsung.com>
+
+        Unused parameters on WebContext.cpp
+        https://bugs.webkit.org/show_bug.cgi?id=105395
+
+        Reviewed by Kentaro Hara.
+
+        Because the parameters 'certficate', 'host' are not used if !ENABLE(NETWORK_PROCESS), 
+        use UNUSED_PARAM macro to fix build warning -Wunused-parameter.
+
+        * UIProcess/WebContext.cpp:
+        (WebKit::WebContext::allowSpecificHTTPSCertificateForHost):
+
 2012-12-18  Alexey Proskuryakov  <ap@apple.com>
 
         Remove unnecessary functions from CookiesStrategy

@@ -1055,6 +1055,9 @@ void WebContext::allowSpecificHTTPSCertificateForHost(const WebCertificateInfo* 
         m_networkProcess->send(Messages::NetworkProcess::AllowSpecificHTTPSCertificateForHost(certificate->platformCertificateInfo(), host), 0);
         return;
     }
+#else
+    UNUSED_PARAM(certificate);
+    UNUSED_PARAM(host);
 #endif
     // FIXME: It's unclear whether we want this SPI to be exposed and used for clients that don't use the NetworkProcess.
     ASSERT_NOT_REACHED();
