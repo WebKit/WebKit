@@ -1,3 +1,21 @@
+2012-12-19  Zan Dobersek  <zandobersek@gmail.com>
+
+        [GTK] Enable Navigation Timing by default
+        https://bugs.webkit.org/show_bug.cgi?id=105322
+
+        Reviewed by Martin Robinson.
+
+        The Navigation Timing specification (of which implementation is guarder
+        by the ENABLE_WEB_TIMING feature define) has been promoted to the W3C Recommendation
+        status. Because of this we should enable it by default in the release builds of
+        the GTK port.
+
+        No new tests - they already exist and are in majority passing.
+
+        * GNUmakefile.am:
+        * bindings/gobject/GNUmakefile.am: Move the DOM bindings for interfaces related to this
+        feature out of the unstable features define guard and into the general list.
+
 2012-12-19  Pavel Feldman  <pfeldman@chromium.org>
 
         Web Inspector: default font on mac is Monaco (should do be Menlo)

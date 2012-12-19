@@ -229,6 +229,12 @@ webkitgtk_gdom_built_sources += \
 	DerivedSources/webkitdom/WebKitDOMNodeList.cpp \
 	DerivedSources/webkitdom/WebKitDOMNodeListPrivate.h \
 	DerivedSources/webkitdom/WebKitDOMNodePrivate.h \
+	DerivedSources/webkitdom/WebKitDOMPerformance.cpp \
+	DerivedSources/webkitdom/WebKitDOMPerformancePrivate.h \
+	DerivedSources/webkitdom/WebKitDOMPerformanceNavigation.cpp \
+	DerivedSources/webkitdom/WebKitDOMPerformanceNavigationPrivate.h \
+	DerivedSources/webkitdom/WebKitDOMPerformanceTiming.cpp \
+	DerivedSources/webkitdom/WebKitDOMPerformanceTimingPrivate.h \
 	DerivedSources/webkitdom/WebKitDOMProcessingInstruction.cpp \
 	DerivedSources/webkitdom/WebKitDOMProcessingInstructionPrivate.h \
 	DerivedSources/webkitdom/WebKitDOMPropertyNodeList.cpp \
@@ -408,6 +414,9 @@ webkitgtk_gdom_built_h_api += \
 	DerivedSources/webkitdom/WebKitDOMXPathExpression.h \
 	DerivedSources/webkitdom/WebKitDOMXPathNSResolver.h \
 	DerivedSources/webkitdom/WebKitDOMXPathResult.h \
+	DerivedSources/webkitdom/WebKitDOMPerformance.h \
+	DerivedSources/webkitdom/WebKitDOMPerformanceNavigation.h \
+	DerivedSources/webkitdom/WebKitDOMPerformanceTiming.h \
 	DerivedSources/webkitdom/webkitdom.h \
 	DerivedSources/webkitdom/webkitdomdefines.h
 
@@ -441,21 +450,6 @@ webkitgtk_gdom_built_sources += \
 	DerivedSources/webkitdom/WebKitDOMTrackEvent.cpp \
 	DerivedSources/webkitdom/WebKitDOMTrackEventPrivate.h
 endif
-endif
-
-# Web Timing feature is currently considered unstable.
-if ENABLE_UNSTABLE_FEATURES
-webkitgtk_gdom_built_h_api += \
-	$(top_builddir)/DerivedSources/webkitdom/WebKitDOMPerformance.h \
-	$(top_builddir)/DerivedSources/webkitdom/WebKitDOMPerformanceNavigation.h \
-	$(top_builddir)/DerivedSources/webkitdom/WebKitDOMPerformanceTiming.h
-webkitgtk_gdom_built_sources += \
-	DerivedSources/webkitdom/WebKitDOMPerformance.cpp \
-	DerivedSources/webkitdom/WebKitDOMPerformancePrivate.h \
-	DerivedSources/webkitdom/WebKitDOMPerformanceNavigation.cpp \
-	DerivedSources/webkitdom/WebKitDOMPerformanceNavigationPrivate.h \
-	DerivedSources/webkitdom/WebKitDOMPerformanceTiming.cpp \
-	DerivedSources/webkitdom/WebKitDOMPerformanceTimingPrivate.h
 endif
 
 BUILT_SOURCES += \
