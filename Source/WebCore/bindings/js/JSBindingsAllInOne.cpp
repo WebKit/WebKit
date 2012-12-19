@@ -152,7 +152,6 @@
 #include "JSWebKitCSSKeyframeRuleCustom.cpp"
 #include "JSWebKitCSSKeyframesRuleCustom.cpp"
 #include "JSWebKitPointCustom.cpp"
-#include "JSWebSocketCustom.cpp"
 #include "JSWorkerContextBase.cpp"
 #include "JSWorkerContextCustom.cpp"
 #include "JSWorkerCustom.cpp"

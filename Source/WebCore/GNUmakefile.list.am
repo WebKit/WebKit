@@ -2409,7 +2409,6 @@ webcore_sources += \
 	Source/WebCore/bindings/js/JSWebKitCSSKeyframesRuleCustom.cpp \
 	Source/WebCore/bindings/js/JSWebGLRenderingContextCustom.cpp \
 	Source/WebCore/bindings/js/JSWebKitPointCustom.cpp \
-	Source/WebCore/bindings/js/JSWebSocketCustom.cpp \
 	Source/WebCore/bindings/js/JSWorkerContextBase.cpp \
 	Source/WebCore/bindings/js/JSWorkerContextBase.h \
 	Source/WebCore/bindings/js/JSWorkerContextCustom.cpp \

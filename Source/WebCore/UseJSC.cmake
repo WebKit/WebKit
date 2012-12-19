@@ -208,12 +208,6 @@ if (ENABLE_INDEXED_DATABASE)
     )
 endif ()
 
-if (ENABLE_WEB_SOCKETS)
-    list(APPEND WebCore_SOURCES
-        bindings/js/JSWebSocketCustom.cpp
-    )
-endif ()
-
 if (ENABLE_WORKERS)
     list(APPEND WebCore_SOURCES
         bindings/js/JSDedicatedWorkerContextCustom.cpp

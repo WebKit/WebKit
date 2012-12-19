@@ -3920,9 +3920,6 @@ enable?(WEB_SOCKETS) {
         platform/network/SocketStreamHandleBase.cpp \
         platform/network/qt/SocketStreamHandleQt.cpp
 
-    SOURCES += \
-        bindings/js/JSWebSocketCustom.cpp
-
     enable?(WORKERS) {
         HEADERS += \
             Modules/websockets/WorkerThreadableWebSocketChannel.h

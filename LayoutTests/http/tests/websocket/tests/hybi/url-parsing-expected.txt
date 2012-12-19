@@ -1,6 +1,6 @@
-CONSOLE MESSAGE: Invalid url for WebSocket null
+CONSOLE MESSAGE: Wrong url scheme for WebSocket http://127.0.0.1:8000/websocket/tests/hybi/null
 CONSOLE MESSAGE: Invalid url for WebSocket ws://javascript:a
-CONSOLE MESSAGE: Invalid url for WebSocket /applet
+CONSOLE MESSAGE: Wrong url scheme for WebSocket http://127.0.0.1:8000/applet
 CONSOLE MESSAGE: Wrong url scheme for WebSocket javascript:a
 CONSOLE MESSAGE: WebSocket port 25 blocked
 CONSOLE MESSAGE: URL has fragment component ws://127.0.0.1/path#

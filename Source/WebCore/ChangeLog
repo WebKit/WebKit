@@ -1,3 +1,39 @@
+2012-12-19  Tommy Widenflycht  <tommyw@chromium.org>
+
+        [JSC] Add support for overloaded constructors
+        https://bugs.webkit.org/show_bug.cgi?id=103226
+
+        Reviewed by Kentaro Hara.
+
+        This patch adds the same support for overloaded constructors to JSC as V8.
+        As proof of implementation soundness WebSockets custom constructor is removed.
+
+        Existing tests cover patch. As they should.
+
+        * GNUmakefile.list.am:
+        * Modules/websockets/WebSocket.idl:
+        * Target.pri:
+        * UseJSC.cmake:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * bindings/js/JSBindingsAllInOne.cpp:
+        * bindings/js/JSWebSocketCustom.cpp: Removed.
+        * bindings/scripts/CodeGeneratorJS.pm:
+        (GenerateConstructorDeclaration):
+        (GenerateConstructorDefinitions):
+        (GenerateOverloadedConstructorDefinition):
+        (GenerateConstructorDefinition):
+        (GenerateConstructorHelperMethods):
+        * bindings/scripts/test/JS/JSTestOverloadedConstructors.cpp:
+        (WebCore::JSTestOverloadedConstructorsConstructor::constructJSTestOverloadedConstructors1):
+        (WebCore):
+        (WebCore::JSTestOverloadedConstructorsConstructor::constructJSTestOverloadedConstructors2):
+        (WebCore::JSTestOverloadedConstructorsConstructor::constructJSTestOverloadedConstructors3):
+        (WebCore::JSTestOverloadedConstructorsConstructor::constructJSTestOverloadedConstructors4):
+        (WebCore::JSTestOverloadedConstructorsConstructor::constructJSTestOverloadedConstructors):
+        * bindings/scripts/test/JS/JSTestOverloadedConstructors.h:
+        (JSTestOverloadedConstructorsConstructor):
+
 2012-12-19  Seokju Kwon  <seokju.kwon@gmail.com>
 
         Pass debuggerTaskMode as a parameter in WorkerScriptDebugServer constructor

@@ -3672,6 +3672,17 @@ sub GenerateConstructorDeclaration
 
     if (IsConstructable($interface) && !$interface->extendedAttributes->{"NamedConstructor"}) {
         push(@$outputArray, "    static JSC::EncodedJSValue JSC_HOST_CALL construct${className}(JSC::ExecState*);\n");
+
+        if (!HasCustomConstructor($interface)) {
+            my @constructors = @{$interface->constructors};
+            if (@constructors > 1) {
+                foreach my $constructor (@constructors) {
+                    my $overloadedIndex = "" . $constructor->{overloadedIndex};
+                    push(@$outputArray, "    static JSC::EncodedJSValue JSC_HOST_CALL construct${className}${overloadedIndex}(JSC::ExecState*);\n");
+                }
+            }
+        }
+
         push(@$outputArray, "    static JSC::ConstructType getConstructData(JSC::JSCell*, JSC::ConstructData&);\n");
     }
     push(@$outputArray, "};\n\n");
@@ -3721,12 +3732,63 @@ sub GenerateConstructorDefinitions
     my $interface = shift;
     my $generatingNamedConstructor = shift;
 
-    # FIXME: Add support for overloaded constructors to JS as well.
-    # For now mimic the old behaviour by only generating code for the last "Constructor" attribute.
-    my $function = @{$interface->constructors}[-1];
+    if (IsConstructable($interface)) {
+        my @constructors = @{$interface->constructors};
+        if (@constructors > 1) {
+            foreach my $constructor (@constructors) {
+                GenerateConstructorDefinition($outputArray, $className, $protoClassName, $interfaceName, $visibleInterfaceName, $interface, $generatingNamedConstructor, $constructor);
+            }
+            GenerateOverloadedConstructorDefinition($outputArray, $className, $interface);
+        } elsif (@constructors == 1) {
+            GenerateConstructorDefinition($outputArray, $className, $protoClassName, $interfaceName, $visibleInterfaceName, $interface, $generatingNamedConstructor, $constructors[0]);
+        } else {
+            GenerateConstructorDefinition($outputArray, $className, $protoClassName, $interfaceName, $visibleInterfaceName, $interface, $generatingNamedConstructor);
+        }
+    }
 
-    GenerateConstructorDefinition($outputArray, $className, $protoClassName, $interfaceName, $visibleInterfaceName, $interface, $generatingNamedConstructor, $function);
-    GenerateConstructorHelperMethods($outputArray, $className, $protoClassName, $interfaceName, $visibleInterfaceName, $interface, $generatingNamedConstructor, $function);
+    GenerateConstructorHelperMethods($outputArray, $className, $protoClassName, $interfaceName, $visibleInterfaceName, $interface, $generatingNamedConstructor);
+}
+
+sub GenerateOverloadedConstructorDefinition
+{
+    my $outputArray = shift;
+    my $className = shift;
+    my $interface = shift;
+
+    my $functionName = "${className}Constructor::construct${className}";
+    push(@$outputArray, <<END);
+EncodedJSValue JSC_HOST_CALL ${functionName}(ExecState* exec)
+{
+    size_t argsCount = exec->argumentCount();
+END
+
+    my %fetchedArguments = ();
+    my $leastNumMandatoryParams = 255;
+
+    my @constructors = @{$interface->constructors};
+    foreach my $overload (@constructors) {
+        my ($numMandatoryParams, $parametersCheck, @neededArguments) = GenerateFunctionParametersCheck($overload);
+        $leastNumMandatoryParams = $numMandatoryParams if ($numMandatoryParams < $leastNumMandatoryParams);
+
+        foreach my $parameterIndex (@neededArguments) {
+            next if exists $fetchedArguments{$parameterIndex};
+            push(@$outputArray, "    JSValue arg$parameterIndex(exec->argument($parameterIndex));\n");
+            $fetchedArguments{$parameterIndex} = 1;
+        }
+
+        push(@$outputArray, "    if ($parametersCheck)\n");
+        push(@$outputArray, "        return ${functionName}$overload->{overloadedIndex}(exec);\n");
+    }
+
+    if ($leastNumMandatoryParams >= 1) {
+        push(@$outputArray, "    if (argsCount < $leastNumMandatoryParams)\n");
+        push(@$outputArray, "        return throwVMError(exec, createNotEnoughArgumentsError(exec));\n");
+    }
+    push(@$outputArray, <<END);
+    return throwVMTypeError(exec);
+}
+
+END
 }
 
 sub GenerateConstructorDefinition
@@ -3832,7 +3894,12 @@ END
                 push(@$outputArray, "}\n\n");
             }
         } elsif (!HasCustomConstructor($interface) && (!$interface->extendedAttributes->{"NamedConstructor"} || $generatingNamedConstructor)) {
-            push(@$outputArray, "EncodedJSValue JSC_HOST_CALL ${constructorClassName}::construct${className}(ExecState* exec)\n");
+            my $overloadedIndexString = "";
+            if ($function->{overloadedIndex} && $function->{overloadedIndex} > 0) {
+                $overloadedIndexString .= $function->{overloadedIndex};
+            }
+
+            push(@$outputArray, "EncodedJSValue JSC_HOST_CALL ${constructorClassName}::construct${className}${overloadedIndexString}(ExecState* exec)\n");
             push(@$outputArray, "{\n");
             push(@$outputArray, "    ${constructorClassName}* castedThis = jsCast<${constructorClassName}*>(exec->callee());\n");
 
@@ -3902,7 +3969,6 @@ sub GenerateConstructorHelperMethods
     my $visibleInterfaceName = shift;
     my $interface = shift;
     my $generatingNamedConstructor = shift;
-    my $function = shift;
 
     my $constructorClassName = $generatingNamedConstructor ? "${className}NamedConstructor" : "${className}Constructor";
     my $numberOfConstructorParameters = $interface->extendedAttributes->{"ConstructorParameters"};
@@ -3910,7 +3976,14 @@ sub GenerateConstructorHelperMethods
         if ($codeGenerator->IsConstructorTemplate($interface, "Event")) {
             $numberOfConstructorParameters = 2;
         } elsif ($interface->extendedAttributes->{"Constructor"}) {
-            $numberOfConstructorParameters = @{$function->parameters};
+            my @constructors = @{$interface->constructors};
+            $numberOfConstructorParameters = 255;
+            foreach my $constructor (@constructors) {
+                my $currNumberOfParameters = @{$constructor->parameters};
+                if ($currNumberOfParameters < $numberOfConstructorParameters) {
+                    $numberOfConstructorParameters = $currNumberOfParameters;
+                }
+            }
         }
     }
 
