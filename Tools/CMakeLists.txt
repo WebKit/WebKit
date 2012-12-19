@@ -3,7 +3,7 @@ if (ENABLE_WEBKIT2)
 endif ()
 
 if ("${PORT}" STREQUAL "Efl")
-    add_subdirectory(efl/ImageDiff)
+    add_subdirectory(ImageDiff)
     add_subdirectory(EWebLauncher/ControlTheme)
 
     if (ENABLE_WEBKIT)
