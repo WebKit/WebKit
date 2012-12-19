@@ -1,3 +1,26 @@
+2012-12-19  Andrey Lushnikov  <lushnikov@chromium.com>
+
+        Web Inspector: refactor DefaultTextEditor's |expanded| setters
+        https://bugs.webkit.org/show_bug.cgi?id=105415
+
+        Reviewed by Pavel Feldman.
+
+        Refactor |expanded| setters and getters into |collapse()|, |expand()|
+        and |expanded()| methods
+
+        * inspector/front-end/DefaultTextEditor.js:
+        (WebInspector.TextEditorChunkedPanel.prototype._splitChunkOnALine):
+        (WebInspector.TextEditorChunkedPanel.prototype._expandChunks):
+        (WebInspector.TextEditorGutterPanel.prototype.textChanged):
+        (WebInspector.TextEditorGutterChunk.prototype.expanded): Added.
+        (WebInspector.TextEditorGutterChunk.prototype.collapse): Added.
+        (WebInspector.TextEditorGutterChunk.prototype.expand): Added.
+        (WebInspector.TextEditorMainPanel.prototype.markAndRevealRange):
+        (WebInspector.TextEditorMainPanel.prototype._updateHighlightsForRange):
+        (WebInspector.TextEditorMainChunk.prototype.expanded): Added.
+        (WebInspector.TextEditorMainChunk.prototype.collapse): Added.
+        (WebInspector.TextEditorMainChunk.prototype.expand): Added.
+
 2012-12-19  Pan Deng  <pan.deng@intel.com>
 
         Web Inspector: Use Document* as argument in WebSocket Instrumentation.
