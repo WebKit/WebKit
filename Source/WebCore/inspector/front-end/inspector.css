@@ -874,14 +874,14 @@ body.drawer-visible #drawer {
 }
 
 body.platform-mac .monospace, body.platform-mac .source-code {
-    font-family: Monaco, monospace;
-}
-
-/* Keep .platform-mac to make the rule more specific than the general one above. */
-body.platform-mac.platform-mac-snowleopard .monospace,
-body.platform-mac.platform-mac-snowleopard .source-code {
     font-size: 11px !important;
     font-family: Menlo, monospace;
+}
+
+body.platform-mac.platform-mac-tiger .monospace,
+body.platform-mac.platform-mac-tiger .source-code {
+    font-size: 10px !important;
+    font-family: Monaco, monospace;
 }
 
 body.platform-windows .monospace, body.platform-windows .source-code {
