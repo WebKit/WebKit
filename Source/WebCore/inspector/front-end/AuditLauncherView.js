@@ -132,6 +132,7 @@ WebInspector.AuditLauncherView.prototype = {
             return;
         this._auditRunning = auditRunning;
         this._updateButton();
+        this._toggleUIComponents(this._auditRunning);
         if (this._auditRunning)
             this._startAudit();
         else
@@ -164,6 +165,17 @@ WebInspector.AuditLauncherView.prototype = {
         this._progressIndicator.cancel();
         this._progressIndicator.done();
         delete this._progressIndicator;
+    },
+
+    /**
+     * @param {boolean} disable
+     */
+    _toggleUIComponents: function(disable)
+    {
+        this._selectAllCheckboxElement.disabled = disable;
+        this._categoriesElement.disabled = disable;
+        this._auditPresentStateElement.disabled = disable;
+        this._auditReloadedStateElement.disabled = disable;
     },
 
     _launchButtonClicked: function(event)
@@ -232,7 +244,7 @@ WebInspector.AuditLauncherView.prototype = {
         this._selectAllCheckboxElement.addEventListener("click", handleSelectAllClick.bind(this), false);
         this._contentElement.appendChild(categoryElement);
 
-        this._categoriesElement = this._contentElement.createChild("div", "audit-categories-container");
+        this._categoriesElement = this._contentElement.createChild("fieldset", "audit-categories-container");
         this._currentCategoriesCount = 0;
 
         this._contentElement.createChild("div", "flexible-space");
@@ -248,9 +260,9 @@ WebInspector.AuditLauncherView.prototype = {
         labelElement.appendChild(this._auditPresentStateLabelElement);
 
         labelElement = this._buttonContainerElement.createChild("label");
-        this.auditReloadedStateElement = labelElement.createChild("input");
-        this.auditReloadedStateElement.name = "audit-mode";
-        this.auditReloadedStateElement.type = "radio";
+        this._auditReloadedStateElement = labelElement.createChild("input");
+        this._auditReloadedStateElement.name = "audit-mode";
+        this._auditReloadedStateElement.type = "radio";
         labelElement.appendChild(document.createTextNode("Reload Page and Audit on Load"));
 
         this._launchButton = this._buttonContainerElement.createChild("button");

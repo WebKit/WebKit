@@ -86,12 +86,13 @@
     padding: 16px 0;
 }
 
-.audit-launcher-view div.audit-categories-container {
+.audit-launcher-view fieldset.audit-categories-container {
     position: relative;
     top: 11px;
     left: 0;
     width: 100%;
     overflow-y: auto;
+    border: 0 none;
 }
 
 .audit-launcher-view button {
