@@ -1,3 +1,16 @@
+2012-12-19  Jussi Kukkonen  <jussi.kukkonen@intel.com>
+
+        transitions/interrupted-accelerated-transition.html should use pauseAPI
+        https://bugs.webkit.org/show_bug.cgi?id=103524
+
+        Reviewed by Simon Fraser.
+
+        In certain situations interrupted-accelerated-transition.html exceeds the
+        test tolerance, making the test flaky. Use the pauseAPI so we don't
+        depend on javascript timing.
+
+        * transitions/resources/interrupted-accelerated-transition-final.html:
+
 2012-12-19  Ilya Tikhonovsky  <loislo@chromium.org>
 
         Unreviewed gardening. Restore expectations for mac.
