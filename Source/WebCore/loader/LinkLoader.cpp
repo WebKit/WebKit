@@ -63,6 +63,10 @@ LinkLoader::~LinkLoader()
 {
     if (m_cachedLinkResource)
         m_cachedLinkResource->removeClient(this);
+#if ENABLE(LINK_PRERENDER)
+    if (m_prerenderHandle)
+        m_prerenderHandle->removeClient();
+#endif
 }
 
 void LinkLoader::linkLoadTimerFired(Timer<LinkLoader>* timer)
@@ -172,6 +176,7 @@ void LinkLoader::released()
 #if ENABLE(LINK_PRERENDER)
     if (m_prerenderHandle) {
         m_prerenderHandle->cancel();
+        m_prerenderHandle->removeClient();
         m_prerenderHandle.clear();
     }
 #endif

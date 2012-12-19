@@ -437,4 +437,23 @@ TEST_F(PrerenderingTest, ShortLivedClient)
     webPrerender.didStartPrerender();
 }
 
+TEST_F(PrerenderingTest, FastRemoveElement)
+{
+    initialize("http://www.foo.com/", "prerender/single_prerender.html");
+
+    WebPrerender webPrerender = prerendererClient()->releaseWebPrerender();
+    EXPECT_FALSE(webPrerender.isNull());
+
+    EXPECT_EQ(1u, prerenderingSupport()->addCount(webPrerender));
+    EXPECT_EQ(1u, prerenderingSupport()->totalCount());
+
+    // Race removing & starting the prerender against each other, as if the element was removed very quickly.
+    executeScript("removePrerender()");
+    EXPECT_FALSE(webPrerender.isNull());
+    webPrerender.didStartPrerender();
+
+    // The page should be totally disconnected from the Prerender at this point, so the console should not have updated.
+    EXPECT_EQ(0u, consoleLength());
+}
+
 } // namespace

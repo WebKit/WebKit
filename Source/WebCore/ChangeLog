@@ -1,3 +1,18 @@
+2012-12-19  Gavin Peters  <gavinp@chromium.org>
+
+        [chromium] WebCore::Prerender::didStartPrerender depends on LinkLoader
+        https://bugs.webkit.org/show_bug.cgi?id=105290
+
+        Reviewed by Abhishek Arya.
+
+        The LinkLoader now removes itself from its prerender in time.
+
+        Tested in unit tests, PrerenderingTest.FastRemoveElement.
+
+        * loader/LinkLoader.cpp:
+        (WebCore::LinkLoader::~LinkLoader):
+        (WebCore::LinkLoader::released):
+
 2012-12-19  Brian Salomon  <bsalomon@google.com>
 
         [Chromium/Skia] Check whether bitmap has pixels in image encoders
