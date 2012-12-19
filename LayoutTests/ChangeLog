@@ -1,3 +1,9 @@
+2012-12-18  Filip Pizlo  <fpizlo@apple.com>
+
+        Unreviewed, fix expected file to have the right test description.
+
+        * fast/js/dfg-ensure-array-storage-on-window-expected.txt:
+
 2012-12-18  Tim Horton  <timothy_horton@apple.com>
 
         fast/css/image-set-value-not-removed-crash.html should not InsertText with an apostrophe
