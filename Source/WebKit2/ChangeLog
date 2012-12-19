@@ -1,3 +1,16 @@
+2012-12-19  Kenneth Rohde Christiansen  <kenneth@webkit.org>
+
+        [EFL][Qt][WK2] Going back to 47-amazing-css3-animation-demos shows nothing or wrong position
+        https://bugs.webkit.org/show_bug.cgi?id=104414
+
+        Reviewed by Simon Hausmann.
+
+        When contents size changes, make sure to apply any pending position
+        change if possible.
+
+        * UIProcess/PageViewportController.cpp:
+        (WebKit::PageViewportController::didChangeContentsSize):
+
 2012-12-19  Alberto Garcia  <agarcia@igalia.com>
 
         [GTK] [WK2] Trailing semicolon in an #include line
