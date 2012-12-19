@@ -32,6 +32,7 @@
 #include "JSGlobalData.h"
 #include "JSScriptRefPrivate.h"
 #include "OpaqueJSString.h"
+#include "Parser.h"
 #include "SourceCode.h"
 #include "SourceProvider.h"
 
@@ -49,7 +50,7 @@ public:
         return m_source;
     }
 
-    const JSGlobalData* globalData() const { return m_globalData; }
+    JSGlobalData* globalData() const { return m_globalData; }
 
 private:
     OpaqueJSScript(JSGlobalData* globalData, const String& url, int startingLineNumber, const String& source)
@@ -65,60 +66,64 @@ private:
     String m_source;
 };
 
+static bool parseScript(JSGlobalData* globalData, const SourceCode& source, ParserError& error)
+{
+    return JSC::parse<JSC::ProgramNode>(globalData, source, 0, Identifier(), JSParseNormal, JSParseProgramCode, error);
+}
+
 extern "C" {
 
-JSScriptRef JSScriptCreateReferencingImmortalASCIIText(JSContextRef context, JSStringRef url, int startingLineNumber, const char* source, size_t length, JSValueRef* exception)
+JSScriptRef JSScriptCreateReferencingImmortalASCIIText(JSContextGroupRef contextGroup, JSStringRef url, int startingLineNumber, const char* source, size_t length, JSStringRef* errorMessage, int* errorLine)
 {
-    ExecState* exec = toJS(context);
-    APIEntryShim entryShim(exec);
-    JSGlobalData* globalData = &exec->globalData();
+    JSGlobalData* globalData = toJS(contextGroup);
+    APIEntryShim entryShim(globalData);
     for (size_t i = 0; i < length; i++) {
         if (!isASCII(source[i]))
             return 0;
     }
 
     RefPtr<OpaqueJSScript> result = OpaqueJSScript::create(globalData, url->string(), startingLineNumber, String(StringImpl::createFromLiteral(source, length)));
-    JSValue exceptionValue;
-    if (!checkSyntax(exec, SourceCode(result), &exceptionValue)) {
-        if (exception)
-            *exception = toRef(exec, exceptionValue);
+
+    ParserError error;
+    if (!parseScript(globalData, SourceCode(result), error)) {
+        if (errorMessage)
+            *errorMessage = OpaqueJSString::create(error.m_message).leakRef();
+        if (errorLine)
+            *errorLine = error.m_line;
         return 0;
     }
 
     return result.release().leakRef();
 }
 
-JSScriptRef JSScriptCreateFromString(JSContextRef context, JSStringRef url, int startingLineNumber, JSStringRef source, JSValueRef* exception)
+JSScriptRef JSScriptCreateFromString(JSContextGroupRef contextGroup, JSStringRef url, int startingLineNumber, JSStringRef source, JSStringRef* errorMessage, int* errorLine)
 {
-    ExecState* exec = toJS(context);
-    APIEntryShim entryShim(exec);
-    JSGlobalData* globalData = &exec->globalData();
+    JSGlobalData* globalData = toJS(contextGroup);
+    APIEntryShim entryShim(globalData);
 
     RefPtr<OpaqueJSScript> result = OpaqueJSScript::create(globalData, url->string(), startingLineNumber, source->string());
-    JSValue exceptionValue;
-    if (!checkSyntax(exec, SourceCode(result), &exceptionValue)) {
-        if (exception)
-            *exception = toRef(exec, exceptionValue);
+
+    ParserError error;
+    if (!parseScript(globalData, SourceCode(result), error)) {
+        if (errorMessage)
+            *errorMessage = OpaqueJSString::create(error.m_message).leakRef();
+        if (errorLine)
+            *errorLine = error.m_line;
         return 0;
     }
+
     return result.release().leakRef();
 }
 
-void JSScriptRetain(JSContextRef context, JSScriptRef script)
+void JSScriptRetain(JSScriptRef script)
 {
-    ExecState* exec = toJS(context);
-    APIEntryShim entryShim(exec);
-    if (script->globalData() != &exec->globalData())
-        CRASH();
+    APIEntryShim entryShim(script->globalData());
     script->ref();
 }
 
-void JSScriptRelease(JSContextRef context, JSScriptRef script)
+void JSScriptRelease(JSScriptRef script)
 {
-    ExecState* exec = toJS(context);
-    APIEntryShim entryShim(exec);
-    if (script->globalData() != &exec->globalData())
-        CRASH();
+    APIEntryShim entryShim(script->globalData());
     script->deref();
 }
 

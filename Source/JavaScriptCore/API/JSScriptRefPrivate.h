@@ -40,45 +40,45 @@ typedef struct OpaqueJSScript* JSScriptRef;
 /*!
  @function
  @abstract Creates a script reference from an ascii string, without copying or taking ownership of the string
- @param ctx The context to use.
+ @param contextGroup The context group the script is to be used in.
  @param url The source url to be reported in errors and exceptions.
  @param startingLineNumber An integer value specifying the script's starting line number in the file located at sourceURL. This is only used when reporting exceptions.
  @param source The source string.  This is required to be pure ASCII and to never be deallocated.
  @param length The length of the source string.
- @param exception A pointer to a JSValueRef in which to store an exception if the source is not valid. Pass NULL if you do not care to store an exception.
+ @param errorMessage A pointer to a JSStringRef in which to store the parse error message if the source is not valid. Pass NULL if you do not care to store an error message.
+ @param errorLine A pointer to an int in which to store the line number of a parser error. Pass NULL if you do not care to store an error line.
  @result A JSScriptRef for the provided source, or NULL if any non-ASCII character is found in source or if the source is not a valid JavaScript program. Ownership follows the Create Rule.
  @discussion Use this function to create a reusable script reference with a constant
  buffer as the backing string.  The source string must outlive the global context.
  */
-JS_EXPORT JSScriptRef JSScriptCreateReferencingImmortalASCIIText(JSContextRef ctx, JSStringRef url, int startingLineNumber, const char* source, size_t length, JSValueRef* exception);
+JS_EXPORT JSScriptRef JSScriptCreateReferencingImmortalASCIIText(JSContextGroupRef contextGroup, JSStringRef url, int startingLineNumber, const char* source, size_t length, JSStringRef* errorMessage, int* errorLine);
 
 /*!
  @function
  @abstract Creates a script reference from a string
- @param ctx The context to use.
+ @param contextGroup The context group the script is to be used in.
  @param url The source url to be reported in errors and exceptions.
  @param startingLineNumber An integer value specifying the script's starting line number in the file located at sourceURL. This is only used when reporting exceptions.
  @param source The source string.
- @param exception A pointer to a JSValueRef in which to store an exception if the source is not valid. Pass NULL if you do not care to store an exception.
+ @param errorMessage A pointer to a JSStringRef in which to store the parse error message if the source is not valid. Pass NULL if you do not care to store an error message.
+ @param errorLine A pointer to an int in which to store the line number of a parser error. Pass NULL if you do not care to store an error line.
  @result A JSScriptRef for the provided source, or NULL is the source is not a valid JavaScript program.  Ownership follows the Create Rule.
  */
-JS_EXPORT JSScriptRef JSScriptCreateFromString(JSContextRef ctx, JSStringRef url, int startingLineNumber, JSStringRef source, JSValueRef* exception);
+JS_EXPORT JSScriptRef JSScriptCreateFromString(JSContextGroupRef contextGroup, JSStringRef url, int startingLineNumber, JSStringRef source, JSStringRef* errorMessage, int* errorLine);
 
 /*!
  @function
  @abstract Retains a JavaScript script.
- @param ctx The context that the script is defined in.
  @param script The script to retain.
  */
-JS_EXPORT void JSScriptRetain(JSContextRef ctx, JSScriptRef script);
+JS_EXPORT void JSScriptRetain(JSScriptRef script);
 
 /*!
  @function
  @abstract Releases a JavaScript script.
- @param ctx The context that the script is defined in.
  @param script The script to release.
  */
-JS_EXPORT void JSScriptRelease(JSContextRef ctx, JSScriptRef script);
+JS_EXPORT void JSScriptRelease(JSScriptRef script);
 
 /*!
  @function

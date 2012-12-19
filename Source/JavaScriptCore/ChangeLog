@@ -1,3 +1,20 @@
+2012-12-19  Oliver Hunt  <oliver@apple.com>
+
+        Tidy up JSScriptRef API
+        https://bugs.webkit.org/show_bug.cgi?id=105470
+
+        Reviewed by Anders Carlsson.
+
+        People found the API's use of a context confusing, so we'll switch to a JSContextGroup based
+        API, and drop a number of the unnecessary uses of contexts.
+
+        * API/JSScriptRef.cpp:
+        (OpaqueJSScript::globalData):
+        (parseScript):
+        * API/JSScriptRefPrivate.h:
+        * API/tests/testapi.c:
+        (main):
+
 2012-12-19  Alexis Menard  <alexis@webkit.org>
 
         Implement CSS parsing for CSS transitions unprefixed.
