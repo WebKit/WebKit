@@ -188,7 +188,7 @@ bool JPEGImageEncoder::encode(const SkBitmap& bitmap, int quality, Vector<unsign
 {
     SkAutoLockPixels bitmapLock(bitmap);
 
-    if (bitmap.config() != SkBitmap::kARGB_8888_Config)
+    if (bitmap.config() != SkBitmap::kARGB_8888_Config || !bitmap.getPixels())
         return false; // Only support 32 bit/pixel skia bitmaps.
 
     return encodePixels(IntSize(bitmap.width(), bitmap.height()), static_cast<unsigned char *>(bitmap.getPixels()), true, quality, output);
