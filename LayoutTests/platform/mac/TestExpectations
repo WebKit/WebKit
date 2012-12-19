@@ -72,6 +72,9 @@ fast/events/mouseover-button.html
 # Skipped until https://bugs.webkit.org/show_bug.cgi?id=33923 is resolved.
 platform/mac/accessibility/change-notification-on-scroll.html
 
+# Asserts: https://bugs.webkit.org/show_bug.cgi?id=105372
+[ Debug ] accessibility/svg-bounds.html
+
 # See https://bugs.webkit.org/show_bug.cgi?id=34287
 http/tests/media/video-cookie.html
 
@@ -469,6 +472,9 @@ media/track/track-cue-rendering-horizontal.html
 media/track/track-cue-rendering-snap-to-lines-not-set.html
 media/track/track-cue-rendering-vertical.html
 media/track/track-webvtt-tc028-unsupported-markup.html
+
+# Asserts: https://bugs.webkit.org/show_bug.cgi?id=105371
+[ Debug ] media/video-controls-captions-trackmenu.html
 
 # Opera-submitted tests to W3C for <track>, a lot of failures still.
 # Opera-submitted tests to W3C for <track>, a lot of failures still.
