@@ -2834,41 +2834,48 @@ IntRect FrameView::scrollableAreaBoundingBox() const
     return frameRect();
 }
 
-void FrameView::updateScrollableAreaSet()
+bool FrameView::isScrollable()
 {
-    // That ensures that only inner frames are cached.
-    if (!parentFrameView())
-        return;
-
     // Check for:
-    // 1) display:none or visibility:hidden set to self or inherited.
-    // 2) overflow{-x,-y}: hidden;
-    // 3) scrolling: no;
+    // 1) If there an actual overflow.
+    // 2) display:none or visibility:hidden set to self or inherited.
+    // 3) overflow{-x,-y}: hidden;
+    // 4) scrolling: no;
 
-    // Covers #1.
-    HTMLFrameOwnerElement* owner = m_frame->ownerElement();
-    if (!owner || !owner->renderer() || !owner->renderer()->visibleToHitTesting()) {
-        parentFrameView()->removeScrollableArea(this);
-        return;
-    }
-
+    // Covers #1
     IntSize contentSize = contentsSize();
     IntSize visibleContentSize = visibleContentRect().size();
-    if ((contentSize.height() <= visibleContentSize.height() && contentSize.width() <= visibleContentSize.width())) {
-        parentFrameView()->removeScrollableArea(this);
-        return;
-    }
+    if ((contentSize.height() <= visibleContentSize.height() && contentSize.width() <= visibleContentSize.width()))
+        return false;
 
-    // Cover #2 and #3.
+    // Covers #2.
+    HTMLFrameOwnerElement* owner = m_frame->ownerElement();
+    if (owner && (!owner->renderer() || !owner->renderer()->visibleToHitTesting()))
+        return false;
+
+    // Cover #3 and #4.
     ScrollbarMode horizontalMode;
     ScrollbarMode verticalMode;
     calculateScrollbarModesForLayout(horizontalMode, verticalMode, RulesFromWebContentOnly);
-    if (horizontalMode == ScrollbarAlwaysOff && verticalMode == ScrollbarAlwaysOff) {
-        parentFrameView()->removeScrollableArea(this);
+    if (horizontalMode == ScrollbarAlwaysOff && verticalMode == ScrollbarAlwaysOff)
+        return false;
+
+    return true;
+}
+
+void FrameView::updateScrollableAreaSet()
+{
+    // That ensures that only inner frames are cached.
+    FrameView* parentFrameView = this->parentFrameView();
+    if (!parentFrameView)
+        return;
+
+    if (!isScrollable()) {
+        parentFrameView->removeScrollableArea(this);
         return;
     }
 
-    parentFrameView()->addScrollableArea(this);
+    parentFrameView->addScrollableArea(this);
 }
 
 bool FrameView::shouldSuspendScrollAnimations() const

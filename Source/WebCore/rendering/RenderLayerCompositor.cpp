@@ -1797,8 +1797,8 @@ bool RenderLayerCompositor::requiresCompositingForScrollableFrame() const
     // Need this done first to determine overflow.
     ASSERT(!m_renderView->needsLayout());
 
-    ScrollView* scrollView = m_renderView->frameView();
-    return scrollView->verticalScrollbar() || scrollView->horizontalScrollbar();
+    FrameView* frameView = m_renderView->frameView();
+    return frameView->isScrollable();
 }
 
 bool RenderLayerCompositor::requiresCompositingForTransform(RenderObject* renderer) const
