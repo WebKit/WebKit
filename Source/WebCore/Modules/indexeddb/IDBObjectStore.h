@@ -84,7 +84,8 @@ public:
 
     PassRefPtr<IDBIndex> createIndex(ScriptExecutionContext* context, const String& name, const String& keyPath, const Dictionary& options, ExceptionCode& ec) { return createIndex(context, name, IDBKeyPath(keyPath), options, ec); }
     PassRefPtr<IDBIndex> createIndex(ScriptExecutionContext* context, const String& name, const Vector<String>& keyPath, const Dictionary& options, ExceptionCode& ec) { return createIndex(context, name, IDBKeyPath(keyPath), options, ec); }
-    PassRefPtr<IDBIndex> createIndex(ScriptExecutionContext*, const String&, const IDBKeyPath&, const Dictionary&, ExceptionCode&);
+    PassRefPtr<IDBIndex> createIndex(ScriptExecutionContext*, const String& name, const IDBKeyPath&, const Dictionary&, ExceptionCode&);
+    PassRefPtr<IDBIndex> createIndex(ScriptExecutionContext*, const String& name, const IDBKeyPath&, bool unique, bool multiEntry, ExceptionCode&);
 
     PassRefPtr<IDBIndex> index(const String& name, ExceptionCode&);
     void deleteIndex(const String& name, ExceptionCode&);

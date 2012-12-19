@@ -38,7 +38,7 @@
     attribute EventListener onerror;
     attribute EventListener onversionchange;
 
-    IDBObjectStore createObjectStore(in DOMString name, in [Optional] Dictionary options)
+    [JSCustom] IDBObjectStore createObjectStore(in DOMString name, in [Optional] Dictionary options)
         raises (DOMException);
     void deleteObjectStore(in DOMString name)
         raises (DOMException);

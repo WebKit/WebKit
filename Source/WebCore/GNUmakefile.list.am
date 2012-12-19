@@ -2346,7 +2346,9 @@ webcore_sources += \
 	Source/WebCore/bindings/js/JSHistoryCustom.cpp \
 	Source/WebCore/bindings/js/JSHistoryCustom.h \
 	Source/WebCore/bindings/js/JSIDBAnyCustom.cpp \
+	Source/WebCore/bindings/js/JSIDBDatabaseCustom.cpp \
 	Source/WebCore/bindings/js/JSIDBKeyCustom.cpp \
+	Source/WebCore/bindings/js/JSIDBObjectStoreCustom.cpp \
 	Source/WebCore/bindings/js/JSImageConstructor.cpp \
 	Source/WebCore/bindings/js/JSImageConstructor.h \
 	Source/WebCore/bindings/js/JSImageDataCustom.cpp \

@@ -141,16 +141,8 @@ PassRefPtr<IDBAny> IDBDatabase::version() const
 
 PassRefPtr<IDBObjectStore> IDBDatabase::createObjectStore(const String& name, const Dictionary& options, ExceptionCode& ec)
 {
-    if (!m_versionChangeTransaction) {
-        ec = IDBDatabaseException::InvalidStateError;
-        return 0;
-    }
-    if (!m_versionChangeTransaction->isActive()) {
-        ec = IDBDatabaseException::TransactionInactiveError;
-        return 0;
-    }
-
     IDBKeyPath keyPath;
+    bool autoIncrement = false;
     if (!options.isUndefinedOrNull()) {
         String keyPathString;
         Vector<String> keyPathArray;
@@ -158,6 +150,22 @@ PassRefPtr<IDBObjectStore> IDBDatabase::createObjectStore(const String& name, co
             keyPath = IDBKeyPath(keyPathArray);
         else if (options.getWithUndefinedOrNullCheck("keyPath", keyPathString))
             keyPath = IDBKeyPath(keyPathString);
+
+        options.get("autoIncrement", autoIncrement);
+    }
+
+    return createObjectStore(name, keyPath, autoIncrement, ec);
+}
+
+PassRefPtr<IDBObjectStore> IDBDatabase::createObjectStore(const String& name, const IDBKeyPath& keyPath, bool autoIncrement, ExceptionCode& ec)
+{
+    if (!m_versionChangeTransaction) {
+        ec = IDBDatabaseException::InvalidStateError;
+        return 0;
+    }
+    if (!m_versionChangeTransaction->isActive()) {
+        ec = IDBDatabaseException::TransactionInactiveError;
+        return 0;
     }
 
     if (containsObjectStore(name)) {
@@ -169,10 +177,6 @@ PassRefPtr<IDBObjectStore> IDBDatabase::createObjectStore(const String& name, co
         ec = IDBDatabaseException::SyntaxError;
         return 0;
     }
-
-    bool autoIncrement = false;
-    if (!options.isUndefinedOrNull())
-        options.get("autoIncrement", autoIncrement);
 
     if (autoIncrement && ((keyPath.type() == IDBKeyPath::StringType && keyPath.string().isEmpty()) || keyPath.type() == IDBKeyPath::ArrayType)) {
         ec = IDBDatabaseException::InvalidAccessError;

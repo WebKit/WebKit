@@ -118,6 +118,16 @@ PassRefPtr<IDBKey> createIDBKeyFromValue(ExecState* exec, JSValue value)
     return IDBKey::createInvalid();
 }
 
+IDBKeyPath idbKeyPathFromValue(ExecState* exec, JSValue keyPathValue)
+{
+    IDBKeyPath keyPath;
+    if (isJSArray(keyPathValue))
+        keyPath = IDBKeyPath(toNativeArray<String>(exec, keyPathValue));
+    else
+        keyPath = IDBKeyPath(keyPathValue.toString(exec)->value(exec));
+    return keyPath;
+}
+
 static JSValue getNthValueOnKeyPath(ExecState* exec, JSValue rootValue, const Vector<String>& keyPathElements, size_t index)
 {
     JSValue currentValue(rootValue);

@@ -52,9 +52,9 @@
     [CallWith=ScriptExecutionContext] IDBRequest openCursor(in IDBKey key, in [Optional] DOMString direction)
         raises (DOMException);
 
-    [CallWith=ScriptExecutionContext] IDBIndex createIndex(in DOMString name, in sequence<DOMString> keyPath, in [Optional] Dictionary options)
+    [CallWith=ScriptExecutionContext, JSCustom] IDBIndex createIndex(in DOMString name, in sequence<DOMString> keyPath, in [Optional] Dictionary options)
         raises (DOMException);
-    [CallWith=ScriptExecutionContext] IDBIndex createIndex(in DOMString name, in DOMString keyPath, in [Optional] Dictionary options)
+    [CallWith=ScriptExecutionContext, JSCustom] IDBIndex createIndex(in DOMString name, in DOMString keyPath, in [Optional] Dictionary options)
         raises (DOMException);
     IDBIndex index(in DOMString name)
         raises (DOMException);

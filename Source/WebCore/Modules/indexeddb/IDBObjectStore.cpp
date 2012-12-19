@@ -353,6 +353,17 @@ private:
 
 PassRefPtr<IDBIndex> IDBObjectStore::createIndex(ScriptExecutionContext* context, const String& name, const IDBKeyPath& keyPath, const Dictionary& options, ExceptionCode& ec)
 {
+    bool unique = false;
+    options.get("unique", unique);
+
+    bool multiEntry = false;
+    options.get("multiEntry", multiEntry);
+
+    return createIndex(context, name, keyPath, unique, multiEntry, ec);
+}
+
+PassRefPtr<IDBIndex> IDBObjectStore::createIndex(ScriptExecutionContext* context, const String& name, const IDBKeyPath& keyPath, bool unique, bool multiEntry, ExceptionCode& ec)
+{
     IDB_TRACE("IDBObjectStore::createIndex");
     if (!m_transaction->isVersionChange() || m_deleted) {
         ec = IDBDatabaseException::InvalidStateError;
@@ -374,12 +385,6 @@ PassRefPtr<IDBIndex> IDBObjectStore::createIndex(ScriptExecutionContext* context
         ec = IDBDatabaseException::ConstraintError;
         return 0;
     }
-
-    bool unique = false;
-    options.get("unique", unique);
-
-    bool multiEntry = false;
-    options.get("multiEntry", multiEntry);
 
     if (keyPath.type() == IDBKeyPath::ArrayType && multiEntry) {
         ec = IDBDatabaseException::InvalidAccessError;

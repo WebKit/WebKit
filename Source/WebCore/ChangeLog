@@ -1,3 +1,41 @@
+2012-12-18  Michael Pruett  <michael@68k.org>
+
+        IndexedDB: Implement custom bindings for parsing options
+        https://bugs.webkit.org/show_bug.cgi?id=96614
+
+        Reviewed by Darin Adler.
+
+        Parsing the options dictionary in IDBDatabase.createObjectStore()
+        and IDBObjectStore.createIndex() requires custom bindings in JSC.
+
+        Tests: storage/indexeddb/*
+
+        * GNUmakefile.list.am:
+        * Modules/indexeddb/IDBDatabase.cpp:
+        (WebCore::IDBDatabase::createObjectStore):
+        (WebCore):
+        * Modules/indexeddb/IDBDatabase.h:
+        (IDBDatabase):
+        * Modules/indexeddb/IDBDatabase.idl:
+        * Modules/indexeddb/IDBObjectStore.cpp:
+        (WebCore::IDBObjectStore::createIndex):
+        (WebCore):
+        * Modules/indexeddb/IDBObjectStore.h:
+        (IDBObjectStore):
+        * Modules/indexeddb/IDBObjectStore.idl:
+        * UseJSC.cmake:
+        * bindings/js/IDBBindingUtilities.cpp:
+        (WebCore::idbKeyPathFromValue): Added utility function for converting a JSValue to an IDBKeyPath.
+        (WebCore):
+        * bindings/js/IDBBindingUtilities.h:
+        (WebCore):
+        * bindings/js/JSIDBDatabaseCustom.cpp: Added.
+        (WebCore):
+        (WebCore::JSIDBDatabase::createObjectStore):
+        * bindings/js/JSIDBObjectStoreCustom.cpp: Added.
+        (WebCore):
+        (WebCore::JSIDBObjectStore::createIndex):
+
 2012-12-18  Yuki Sekiguchi  <yuki.sekiguchi@access-company.com>
 
         Cannot click an element at 2nd line or more inside inline-block in vertical writing mode.
