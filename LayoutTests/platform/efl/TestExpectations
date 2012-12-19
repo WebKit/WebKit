@@ -1728,6 +1728,3 @@ webkit.org/b/105028 fast/canvas/webgl/tex-image-and-sub-image-2d-with-video-rgba
 # Note webkit.org/b/104506, random crashes
 webkit.org/b/105029 fast/canvas/webgl/webgl-composite-modes.html [ ImageOnlyFailure Crash ]
 webkit.org/b/105029 fast/canvas/webgl/webgl-composite-modes-repaint.html [ ImageOnlyFailure Crash ]
-
-# Failing touch events case
-webkit.org/b/105406 fast/events/touch/touch-input-element-change-documents.html [ Failure ]
