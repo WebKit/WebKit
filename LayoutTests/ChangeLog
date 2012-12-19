@@ -1,3 +1,17 @@
+2012-12-19  Kunihiko Sakamoto  <ksakamoto@chromium.org>
+
+        INPUT_MULTIPLE_FIELDS_UI: Make year field readonly if min and max have the same year
+        https://bugs.webkit.org/show_bug.cgi?id=105383
+
+        Reviewed by Kent Tamura.
+
+        * fast/forms/date-multiple-fields/date-multiple-fields-readonly-subfield-expected.txt: Added.
+        * fast/forms/date-multiple-fields/date-multiple-fields-readonly-subfield.html: Added.
+        * fast/forms/date-multiple-fields/resources/preserve-value-after-history-back-frame.html: Tweak so year field is focusable.
+        * fast/forms/datetimelocal-multiple-fields/resources/preserve-value-after-history-back-frame.html: Ditto.
+        * fast/forms/month-multiple-fields/resources/preserve-value-after-history-back-frame.html: Ditto.
+        * fast/forms/week-multiple-fields/resources/preserve-value-after-history-back-frame.html: Ditto.
+
 2012-12-19  Csaba Osztrogonác  <ossy@webkit.org>
 
         Unreviewed gardening, skip flakey tests.

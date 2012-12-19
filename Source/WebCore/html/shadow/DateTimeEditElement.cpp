@@ -64,6 +64,7 @@ private:
     bool shouldMillisecondFieldReadOnly() const;
     bool shouldMinuteFieldReadOnly() const;
     bool shouldSecondFieldReadOnly() const;
+    bool shouldYearFieldReadOnly() const;
     inline const StepRange& stepRange() const { return m_parameters.stepRange; }
     DateTimeNumericFieldElement::Parameters createNumericFieldParameters(const Decimal& msPerFieldUnit, const Decimal& msPerFieldSize) const;
 
@@ -255,7 +256,12 @@ void DateTimeEditBuilder::visitField(DateTimeFormat::FieldType fieldType, int co
             std::swap(yearParams.minIsSpecified, yearParams.maxIsSpecified);
         }
         yearParams.placeholder = m_parameters.placeholderForYear;
-        m_editElement.addField(DateTimeYearFieldElement::create(document, m_editElement, yearParams));
+        RefPtr<DateTimeFieldElement> field = DateTimeYearFieldElement::create(document, m_editElement, yearParams);
+        m_editElement.addField(field);
+        if (shouldYearFieldReadOnly()) {
+            field->setValueAsDate(m_dateValue);
+            field->setReadOnly();
+        }
         return;
     }
 
@@ -289,6 +295,13 @@ bool DateTimeEditBuilder::shouldSecondFieldReadOnly() const
     const Decimal decimalMsPerMinute(static_cast<int>(msPerMinute));
     Decimal secondPartOfMinimum = (stepRange().minimum().abs().remainder(decimalMsPerMinute) / static_cast<int>(msPerSecond)).floor();
     return secondPartOfMinimum == m_dateValue.second() && stepRange().step().remainder(decimalMsPerMinute).isZero();
+}
+
+bool DateTimeEditBuilder::shouldYearFieldReadOnly() const
+{
+    return m_parameters.minimumYear != m_parameters.undefinedYear()
+        && m_parameters.minimumYear == m_parameters.maximumYear
+        && m_parameters.minimumYear == m_dateValue.fullYear();
 }
 
 void DateTimeEditBuilder::visitLiteral(const String& text)

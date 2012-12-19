@@ -573,6 +573,7 @@ input::-webkit-datetime-edit-year-field:focus {
     outline: none;
 }
 
+input::-webkit-datetime-edit-year-field[readonly],
 input::-webkit-datetime-edit-ampm-field[readonly],
 input::-webkit-datetime-edit-hour-field[readonly],
 input::-webkit-datetime-edit-millisecond-field[readonly],

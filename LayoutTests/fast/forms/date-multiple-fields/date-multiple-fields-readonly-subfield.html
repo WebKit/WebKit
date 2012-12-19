@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<body>
+<script src="../../js/resources/js-test-pre.js"></script>
+<script>
+function createDateInput(min, max, value) {
+    var input = document.createElement('input');
+    input.type = 'date';
+    if (min)
+        input.min = min;
+    if (max)
+        input.max = max;
+    if (value)
+        input.value = value;
+    return input;
+}
+
+function isReadOnlyField(input, pseudo) {
+    var node = internals.youngestShadowRoot(input).querySelector('*[pseudo="' + pseudo + '"]');
+    if (!node)
+        testFailed('Requested node is missing.');
+    return node && node.hasAttribute('readonly');
+}
+
+var pseudoDay = '-webkit-datetime-edit-day-field';
+var pseudoMonth = '-webkit-datetime-edit-month-field';
+var pseudoYear = '-webkit-datetime-edit-year-field';
+
+description('Sub-fields in input[type=date] should be read-only in some cases. This requires window.internals.');
+debug('createDateInput argument order: min, max, value');
+debug('');
+
+debug('Year field:');
+shouldBeFalse('isReadOnlyField(createDateInput("", "", ""), pseudoYear)');
+shouldBeFalse('isReadOnlyField(createDateInput("2012-12-17", "", ""), pseudoYear)');
+shouldBeFalse('isReadOnlyField(createDateInput("", "2012-12-17", ""), pseudoYear)');
+shouldBeFalse('isReadOnlyField(createDateInput("", "", "2012-12-17"), pseudoYear)');
+shouldBeTrue('isReadOnlyField(createDateInput("2012-01-01", "2012-12-31", ""), pseudoYear)');
+shouldBeFalse('isReadOnlyField(createDateInput("2012-01-01", "2013-12-31", ""), pseudoYear)');
+shouldBeTrue('isReadOnlyField(createDateInput("2012-01-01", "2012-12-31", "2012-05-30"), pseudoYear)');
+shouldBeFalse('isReadOnlyField(createDateInput("2012-01-01", "2012-12-31", "2013-01-01"), pseudoYear)');
+
+</script>
+<script src="../../js/resources/js-test-post.js"></script>
+</body>
+
