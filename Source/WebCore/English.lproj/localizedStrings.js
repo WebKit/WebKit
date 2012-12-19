@@ -126,6 +126,7 @@ localizedStrings["Copy all as HAR"] = "Copy all as HAR";
 localizedStrings["Copy All as HAR"] = "Copy All as HAR";
 localizedStrings["Save as HAR with content"] = "Save as HAR with content";
 localizedStrings["Save as HAR with Content"] = "Save as HAR with Content";
+localizedStrings["Specification for \"%s\""] = "Specification for \"%s\"";
 localizedStrings["Copy link address"] = "Copy link address";
 localizedStrings["Copy Link Address"] = "Copy Link Address";
 localizedStrings["Copy request headers"] = "Copy request headers";

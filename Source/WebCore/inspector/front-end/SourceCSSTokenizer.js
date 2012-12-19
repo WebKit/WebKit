@@ -52,8 +52,8 @@ WebInspector.SourceCSSTokenizer = function()
 {
     WebInspector.SourceTokenizer.call(this);
 
-    this._propertyKeywords = WebInspector.CSSCompletions.cssPropertiesMetainfoKeySet();
-    this._colorKeywords = WebInspector.CSSKeywordCompletions.colors();
+    this._propertyKeywords = WebInspector.CSSMetadata.cssPropertiesMetainfoKeySet();
+    this._colorKeywords = WebInspector.CSSMetadata.colors();
 
     this._valueKeywords = [
         "above", "absolute", "activeborder", "activecaption", "afar", "after-white-space", "ahead", "alias", "all", "all-scroll",

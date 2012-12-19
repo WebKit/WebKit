@@ -30,8 +30,7 @@
     <file>CookieParser.js</file>
     <file>CookiesTable.js</file>
     <file>CPUProfileView.js</file>
-    <file>CSSCompletions.js</file>
-    <file>CSSKeywordCompletions.js</file>
+    <file>CSSMetadata.js</file>
     <file>CSSNamedFlowCollectionsView.js</file>
     <file>CSSNamedFlowView.js</file>
     <file>CSSSelectorProfileView.js</file>

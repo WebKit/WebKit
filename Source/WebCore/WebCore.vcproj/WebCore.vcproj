@@ -76417,11 +76417,7 @@
 					>
 				</File>
 				<File
-					RelativePath="..\inspector\front-end\CSSCompletions.js"
-					>
-				</File>
-				<File
-					RelativePath="..\inspector\front-end\CSSKeywordCompletions.js"
+					RelativePath="..\inspector\front-end\CSSMetadata.js"
 					>
 				</File>
 				<File

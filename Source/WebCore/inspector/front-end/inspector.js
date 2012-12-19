@@ -395,7 +395,7 @@ WebInspector._doLoadedDoneWithCapabilities = function()
     this.console.addEventListener(WebInspector.ConsoleModel.Events.MessageAdded, this._updateErrorAndWarningCounts, this);
     this.console.addEventListener(WebInspector.ConsoleModel.Events.RepeatCountUpdated, this._updateErrorAndWarningCounts, this);
 
-    WebInspector.CSSCompletions.requestCSSNameCompletions();
+    WebInspector.CSSMetadata.requestCSSShorthandData();
 
     this.drawer = new WebInspector.Drawer();
 

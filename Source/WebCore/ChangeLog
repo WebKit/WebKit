@@ -1,3 +1,55 @@
+2012-12-14  Alexander Pavlov  <apavlov@chromium.org>
+
+        Web Inspector: Refactor CSS[Keyword]Completions to augment property metadata
+        https://bugs.webkit.org/show_bug.cgi?id=105020
+
+        Reviewed by Pavel Feldman.
+
+        - CSSCompletions and CSSKeywordCompletions of WebInspector have been merged into CSSMetadata.
+        - Valid value keyword lists have been added or augmented for some properties.
+        - Some properties have been made inherited or color-aware.
+
+        * English.lproj/localizedStrings.js:
+        * WebCore.gypi:
+        * WebCore.vcproj/WebCore.vcproj:
+        * inspector/compile-front-end.py:
+        * inspector/front-end/CSSCompletions.js: Removed.
+        * inspector/front-end/CSSKeywordCompletions.js: Removed.
+        * inspector/front-end/CSSMetadata.js: Added.
+        (WebInspector.CSSMetadata):
+        (WebInspector.CSSMetadata.isColorAwareProperty):
+        (WebInspector.CSSMetadata.colors):
+        (WebInspector.CSSMetadata.valuesForProperty):
+        (WebInspector.CSSMetadata.descriptor):
+        (WebInspector.CSSMetadata.requestCSSShorthandData):
+        (WebInspector.CSSMetadata.cssPropertiesMetainfoKeySet):
+        (WebInspector.CSSMetadata.prototype.startsWith):
+        (WebInspector.CSSMetadata.prototype.mostUsedOf):
+        (WebInspector.CSSMetadata.prototype._firstIndexOfPrefix):
+        (WebInspector.CSSMetadata.prototype.keySet):
+        (WebInspector.CSSMetadata.prototype.next):
+        (WebInspector.CSSMetadata.prototype.previous):
+        (WebInspector.CSSMetadata.prototype._closest):
+        (WebInspector.CSSMetadata.prototype.longhands):
+        (WebInspector.CSSMetadata.prototype.shorthands):
+        * inspector/front-end/CSSStyleModel.js:
+        (WebInspector.CSSStyleDeclaration.prototype.longhandProperties):
+        * inspector/front-end/SourceCSSTokenizer.js:
+        (WebInspector.SourceCSSTokenizer):
+        * inspector/front-end/SourceCSSTokenizer.re2js:
+        * inspector/front-end/StylesSidebarPane.js:
+        (WebInspector.StylesSidebarPane.createExclamationMark):
+        (WebInspector.StylesSidebarPane.prototype._markUsedProperties):
+        (WebInspector.StylesSidebarPane.prototype._containsInherited):
+        (WebInspector.StylePropertiesSection.prototype.isPropertyInherited):
+        (WebInspector.StylePropertiesSection.prototype.isPropertyOverloaded):
+        (WebInspector.StylePropertiesSection.prototype.onpopulate):
+        (WebInspector.ComputedStylePropertiesSection.prototype.rebuildComputedTrace):
+        (WebInspector.StylePropertyTreeElement.prototype):
+        * inspector/front-end/WebKit.qrc:
+        * inspector/front-end/inspector.html:
+        * inspector/front-end/inspector.js:
+
 2012-12-19  No'am Rosenthal  <noam@webkit.org>
 
         [Texmap] Instead of having multiple shaders sources with lots of duplication, we should have one shader source with MACRO variants

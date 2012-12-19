@@ -719,7 +719,7 @@ WebInspector.CSSStyleDeclaration.prototype = {
      */
     longhandProperties: function(name)
     {
-        var longhands = WebInspector.CSSCompletions.cssPropertiesMetainfo.longhands(name);
+        var longhands = WebInspector.CSSMetadata.cssPropertiesMetainfo.longhands(name);
         var result = [];
         for (var i = 0; longhands && i < longhands.length; ++i) {
             var property = this._livePropertyMap[longhands[i]];
