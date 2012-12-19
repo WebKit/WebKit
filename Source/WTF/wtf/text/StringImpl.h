@@ -729,6 +729,12 @@ public:
 #endif
 
 private:
+
+    bool isASCIILiteral() const
+    {
+        return is8Bit() && hasInternalBuffer() && reinterpret_cast<const void*>(m_data8) != reinterpret_cast<const void*>(this + 1);
+    }
+
     // This number must be at least 2 to avoid sharing empty, null as well as 1 character strings from SmallStrings.
     static const unsigned s_copyCharsInlineCutOff = 20;
 
@@ -1126,6 +1132,8 @@ static inline bool isSpaceOrNewline(UChar c)
 
 inline PassRefPtr<StringImpl> StringImpl::isolatedCopy() const
 {
+    if (isASCIILiteral())
+        return StringImpl::createFromLiteral(reinterpret_cast<const char*>(m_data8), m_length);
     if (is8Bit())
         return create(m_data8, m_length);
     return create(m_data16, m_length);
