@@ -265,12 +265,6 @@ void WebMediaPlayerClientImpl::keyMessage(const WebString& keySystem, const WebS
 #endif
 }
 
-// FIXME(ddorwin): Remove after rolling WebKit in Chromium and Chromium is updated to use the new signature.
-void WebMediaPlayerClient::keyMessage(const WebString& keySystem, const WebString& sessionId, const unsigned char* message, unsigned messageLength)
-{
-    keyMessage(keySystem, sessionId, message, messageLength, WebURL());
-}
-
 void WebMediaPlayerClientImpl::keyNeeded(const WebString& keySystem, const WebString& sessionId, const unsigned char* initData, unsigned initDataLength)
 {
 #if ENABLE(ENCRYPTED_MEDIA)

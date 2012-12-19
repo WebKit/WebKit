@@ -1,3 +1,13 @@
+2012-12-18  David Dorwin  <ddorwin@chromium.org>
+
+        [Chromium] Remove temporary backwards compatible interface code (from r137724).
+        https://bugs.webkit.org/show_bug.cgi?id=105205
+
+        Reviewed by James Robinson.
+
+        * public/WebMediaPlayerClient.h:
+        * src/WebMediaPlayerClientImpl.cpp:
+
 2012-12-18  Dirk Pranke  <dpranke@chromium.org>
 
         [chromium] pull in the CDM module recently added to media
