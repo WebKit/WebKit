@@ -56,19 +56,26 @@ void CachedRawResource::data(PassRefPtr<ResourceBuffer> data, bool allDataReceiv
         incrementalData = data->data() + previousDataLength;
         incrementalDataLength = data->size() - previousDataLength;
     }
-    
+
     if (m_options.shouldBufferData == BufferData) {
         if (data)
             setEncodedSize(data->size());
         m_data = data;
     }
-    
+
+    DataBufferingPolicy dataBufferingPolicy = m_options.shouldBufferData;
     if (incrementalDataLength) {
         CachedResourceClientWalker<CachedRawResourceClient> w(m_clients);
         while (CachedRawResourceClient* c = w.next())
             c->dataReceived(this, incrementalData, incrementalDataLength);
     }
     CachedResource::data(m_data, allDataReceived);
+
+    if (dataBufferingPolicy == BufferData && m_options.shouldBufferData == DoNotBufferData) {
+        if (m_loader)
+            m_loader->setShouldBufferData(DoNotBufferData);
+        clear();
+    }
 }
 
 void CachedRawResource::didAddClient(CachedResourceClient* c)

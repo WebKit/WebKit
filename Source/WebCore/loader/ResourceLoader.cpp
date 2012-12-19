@@ -194,7 +194,7 @@ void ResourceLoader::setShouldBufferData(DataBufferingPolicy shouldBufferData)
     m_options.shouldBufferData = shouldBufferData; 
 
     // Reset any already buffered data
-    if (!shouldBufferData)
+    if (shouldBufferData == DoNotBufferData)
         m_resourceData = 0;
 }
     

@@ -1,3 +1,19 @@
+2012-12-19  Nate Chapin  <japhet@chromium.org>
+
+        REGRESSION(r137607): PluginDocument loads consume huge amounts of memory
+        https://bugs.webkit.org/show_bug.cgi?id=105359
+
+        Reviewed by Alexey Proskuryakov.
+
+        No new tests, verified manually that http://www.scb.se/statistik/_publikationer/NR0001_2012K02_TI_A28TI1203.pdf
+        no longer consumes several GB of memory.
+
+        * loader/ResourceLoader.cpp:
+        (WebCore::ResourceLoader::setShouldBufferData): shouldBufferData is an enum, not a boolean, so this is reversed.
+        * loader/cache/CachedRawResource.cpp:
+        (WebCore::CachedRawResource::data): If the dataReceived() callback tells us to stop buffering data, be sure to
+            notify the ResourceLoader and clear the data buffer.
+
 2012-12-19  Gavin Peters  <gavinp@chromium.org>
 
         [chromium] WebCore::Prerender::didStartPrerender depends on LinkLoader
