@@ -126,21 +126,6 @@ void WebPlatformStrategies::deleteCookie(NetworkingContext* context, const KURL&
     WebCore::deleteCookie(context, url, cookieName);
 }
 
-void WebPlatformStrategies::getHostnamesWithCookies(NetworkingContext* context, HashSet<String>& hostnames)
-{
-    WebCore::getHostnamesWithCookies(context, hostnames);
-}
-
-void WebPlatformStrategies::deleteCookiesForHostname(NetworkingContext* context, const String& hostname)
-{
-    WebCore::deleteCookiesForHostname(context, hostname);
-}
-
-void WebPlatformStrategies::deleteAllCookies(NetworkingContext* context)
-{
-    WebCore::deleteAllCookies(context);
-}
-
 void WebPlatformStrategies::refreshPlugins()
 {
     PluginDatabase::installedPlugins()->refresh();

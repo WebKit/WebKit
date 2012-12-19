@@ -108,31 +108,4 @@ void deleteCookie(const Document* document, const KURL& url, const String& cooki
 #endif
 }
 
-void getHostnamesWithCookies(HashSet<String>& hostnames)
-{
-#if USE(PLATFORM_STRATEGIES)
-    platformStrategies()->cookiesStrategy()->getHostnamesWithCookies(0, hostnames);
-#else
-    getHostnamesWithCookies(0, hostnames);
-#endif
-}
-
-void deleteCookiesForHostname(const String& hostname)
-{
-#if USE(PLATFORM_STRATEGIES)
-    platformStrategies()->cookiesStrategy()->deleteCookiesForHostname(0, hostname);
-#else
-    deleteCookiesForHostname(0, hostname);
-#endif
-}
-
-void deleteAllCookies()
-{
-#if USE(PLATFORM_STRATEGIES)
-    platformStrategies()->cookiesStrategy()->deleteAllCookies(0);
-#else
-    deleteAllCookies(0);
-#endif
-}
-
 }

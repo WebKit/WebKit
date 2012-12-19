@@ -29,8 +29,8 @@
 #include "MessageID.h"
 #include "WebCookieManagerProxyMessages.h"
 #include "WebProcess.h"
-#include <WebCore/CookieJar.h>
 #include <WebCore/CookieStorage.h>
+#include <WebCore/PlatformCookieJar.h>
 
 using namespace WebCore;
 
@@ -57,7 +57,7 @@ void WebCookieManager::getHostnamesWithCookies(uint64_t callbackID)
 
     HashSet<String> hostnames;
 
-    WebCore::getHostnamesWithCookies(hostnames);
+    WebCore::getHostnamesWithCookies(0, hostnames);
 
     Vector<String> hostnameList;
     copyToVector(hostnames, hostnameList);
@@ -69,14 +69,14 @@ void WebCookieManager::deleteCookiesForHostname(const String& hostname)
 {
     WebProcess::LocalTerminationDisabler terminationDisabler(WebProcess::shared());
 
-    WebCore::deleteCookiesForHostname(hostname);
+    WebCore::deleteCookiesForHostname(0, hostname);
 }
 
 void WebCookieManager::deleteAllCookies()
 {
     WebProcess::LocalTerminationDisabler terminationDisabler(WebProcess::shared());
 
-    WebCore::deleteAllCookies();
+    WebCore::deleteAllCookies(0);
 }
 
 void WebCookieManager::startObservingCookieChanges()

@@ -93,9 +93,6 @@ private:
     void cookieRequestHeaderFieldValue(bool privateBrowsingEnabled, const WebCore::KURL& firstParty, const WebCore::KURL&, String& result);
     void getRawCookies(bool privateBrowsingEnabled, const WebCore::KURL& firstParty, const WebCore::KURL&, Vector<WebCore::Cookie>&);
     void deleteCookie(bool privateBrowsingEnabled, const WebCore::KURL&, const String& cookieName);
-    void getHostnamesWithCookies(bool privateBrowsingEnabled, Vector<String>& hostnames);
-    void deleteCookiesForHostname(bool privateBrowsingEnabled, const String& hostname);
-    void deleteAllCookies(bool privateBrowsingEnabled);
 
     RefPtr<CoreIPC::Connection> m_connection;
     

@@ -47,9 +47,6 @@ messages -> NetworkConnectionToWebProcess {
     CookieRequestHeaderFieldValue(bool privateBrowsingEnabled, WebCore::KURL firstParty, WebCore::KURL url) -> (WTF::String result)
     GetRawCookies(bool privateBrowsingEnabled, WebCore::KURL firstParty, WebCore::KURL url) -> (WTF::Vector<WebCore::Cookie> cookies)
     DeleteCookie(bool privateBrowsingEnabled, WebCore::KURL url, WTF::String cookieName)
-    GetHostnamesWithCookies(bool privateBrowsingEnabled) -> (WTF::Vector<WTF::String> hostnames)
-    DeleteCookiesForHostname(bool privateBrowsingEnabled, WTF::String hostname)
-    DeleteAllCookies(bool privateBrowsingEnabled)
 }
 
 #endif // ENABLE(NETWORK_PROCESS)

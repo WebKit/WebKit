@@ -113,21 +113,6 @@ void PlatformStrategiesWinCE::deleteCookie(NetworkingContext* context, const KUR
     WebCore::deleteCookie(context, url, cookieName);
 }
 
-void PlatformStrategiesWinCE::getHostnamesWithCookies(NetworkingContext* context, HashSet<String>& hostnames)
-{
-    WebCore::getHostnamesWithCookies(context, hostnames);
-}
-
-void PlatformStrategiesWinCE::deleteCookiesForHostname(NetworkingContext* context, const String& hostname)
-{
-    WebCore::deleteCookiesForHostname(context, hostname);
-}
-
-void PlatformStrategiesWinCE::deleteAllCookies(NetworkingContext* context)
-{
-    WebCore::deleteAllCookies(context);
-}
-
 void PlatformStrategiesWinCE::refreshPlugins()
 {
     PluginDatabase::installedPlugins()->refresh();

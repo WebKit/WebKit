@@ -66,9 +66,6 @@ private:
     virtual String cookieRequestHeaderFieldValue(WebCore::NetworkingContext*, const WebCore::KURL& firstParty, const WebCore::KURL&) OVERRIDE;
     virtual bool getRawCookies(WebCore::NetworkingContext*, const WebCore::KURL& firstParty, const WebCore::KURL&, Vector<WebCore::Cookie>&) OVERRIDE;
     virtual void deleteCookie(WebCore::NetworkingContext*, const WebCore::KURL&, const String&) OVERRIDE;
-    virtual void getHostnamesWithCookies(WebCore::NetworkingContext*, HashSet<String>& hostnames) OVERRIDE;
-    virtual void deleteCookiesForHostname(WebCore::NetworkingContext*, const String& hostname) OVERRIDE;
-    virtual void deleteAllCookies(WebCore::NetworkingContext*) OVERRIDE;
 
     // WebCore::DatabaseStrategy
 #if ENABLE(SQL_DATABASE)

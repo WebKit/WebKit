@@ -57,9 +57,6 @@ public:
     virtual String cookieRequestHeaderFieldValue(NetworkingContext*, const KURL& firstParty, const KURL&) = 0;
     virtual bool getRawCookies(NetworkingContext*, const KURL& firstParty, const KURL&, Vector<Cookie>&) = 0;
     virtual void deleteCookie(NetworkingContext*, const KURL&, const String& cookieName) = 0;
-    virtual void getHostnamesWithCookies(NetworkingContext*, HashSet<String>& hostnames) = 0;
-    virtual void deleteCookiesForHostname(NetworkingContext*, const String& hostname) = 0;
-    virtual void deleteAllCookies(NetworkingContext*) = 0;
 
 protected:
     virtual ~CookiesStrategy() { }

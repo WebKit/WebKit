@@ -110,21 +110,6 @@ void PlatformStrategiesGtk::deleteCookie(NetworkingContext* context, const KURL&
     WebCore::deleteCookie(context, url, cookieName);
 }
 
-void PlatformStrategiesGtk::getHostnamesWithCookies(NetworkingContext* context, HashSet<String>& hostnames)
-{
-    WebCore::getHostnamesWithCookies(context, hostnames);
-}
-
-void PlatformStrategiesGtk::deleteCookiesForHostname(NetworkingContext* context, const String& hostname)
-{
-    WebCore::deleteCookiesForHostname(context, hostname);
-}
-
-void PlatformStrategiesGtk::deleteAllCookies(NetworkingContext* context)
-{
-    WebCore::deleteAllCookies(context);
-}
-
 // PluginStrategy
 void PlatformStrategiesGtk::refreshPlugins()
 {

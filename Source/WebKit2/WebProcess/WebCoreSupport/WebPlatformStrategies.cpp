@@ -199,45 +199,6 @@ void WebPlatformStrategies::deleteCookie(NetworkingContext* context, const KURL&
     WebCore::deleteCookie(context, url, cookieName);
 }
 
-void WebPlatformStrategies::getHostnamesWithCookies(NetworkingContext* context, HashSet<String>& hostnames)
-{
-#if ENABLE(NETWORK_PROCESS)
-    if (WebProcess::shared().usesNetworkProcess()) {
-        Vector<String> hostnamesVector;
-        WebProcess::shared().networkConnection()->connection()->sendSync(Messages::NetworkConnectionToWebProcess::GetHostnamesWithCookies(context && context->inPrivateBrowsingMode()), Messages::NetworkConnectionToWebProcess::GetHostnamesWithCookies::Reply(hostnamesVector), 0);
-        for (unsigned i = 0; i != hostnamesVector.size(); ++i)
-            hostnames.add(hostnamesVector[i]);
-        return;
-    }
-#endif
-
-    WebCore::getHostnamesWithCookies(context, hostnames);
-}
-
-void WebPlatformStrategies::deleteCookiesForHostname(NetworkingContext* context, const String& hostname)
-{
-#if ENABLE(NETWORK_PROCESS)
-    if (WebProcess::shared().usesNetworkProcess()) {
-        WebProcess::shared().networkConnection()->connection()->send(Messages::NetworkConnectionToWebProcess::DeleteCookiesForHostname(context && context->inPrivateBrowsingMode(), hostname), 0);
-        return;
-    }
-#endif
-
-    WebCore::deleteCookiesForHostname(context, hostname);
-}
-
-void WebPlatformStrategies::deleteAllCookies(NetworkingContext* context)
-{
-#if ENABLE(NETWORK_PROCESS)
-    if (WebProcess::shared().usesNetworkProcess()) {
-        WebProcess::shared().networkConnection()->connection()->send(Messages::NetworkConnectionToWebProcess::DeleteAllCookies(context && context->inPrivateBrowsingMode()), 0);
-        return;
-    }
-#endif
-
-    WebCore::deleteAllCookies(context);
-}
-
 // DatabaseStrategy
 
 #if ENABLE(SQL_DATABASE)

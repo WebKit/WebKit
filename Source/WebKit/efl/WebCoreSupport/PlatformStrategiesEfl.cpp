@@ -116,21 +116,6 @@ void PlatformStrategiesEfl::deleteCookie(NetworkingContext* context, const KURL&
     WebCore::deleteCookie(context, url, cookieName);
 }
 
-void PlatformStrategiesEfl::getHostnamesWithCookies(NetworkingContext* context, HashSet<String>& hostnames)
-{
-    WebCore::getHostnamesWithCookies(context, hostnames);
-}
-
-void PlatformStrategiesEfl::deleteCookiesForHostname(NetworkingContext* context, const String& hostname)
-{
-    WebCore::deleteCookiesForHostname(context, hostname);
-}
-
-void PlatformStrategiesEfl::deleteAllCookies(NetworkingContext* context)
-{
-    WebCore::deleteAllCookies(context);
-}
-
 void PlatformStrategiesEfl::refreshPlugins()
 {
 #if ENABLE(NETSCAPE_PLUGIN_API)

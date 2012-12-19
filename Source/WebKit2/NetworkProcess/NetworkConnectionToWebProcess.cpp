@@ -202,23 +202,6 @@ void NetworkConnectionToWebProcess::deleteCookie(bool privateBrowsingEnabled, co
     WebCore::deleteCookie(networkingContext(privateBrowsingEnabled), url, cookieName);
 }
 
-void NetworkConnectionToWebProcess::getHostnamesWithCookies(bool privateBrowsingEnabled, Vector<String>& hostnames)
-{
-    HashSet<String> hostnamesSet;
-    WebCore::getHostnamesWithCookies(networkingContext(privateBrowsingEnabled), hostnamesSet);
-    WTF::copyToVector(hostnamesSet, hostnames);
-}
-
-void NetworkConnectionToWebProcess::deleteCookiesForHostname(bool privateBrowsingEnabled, const String& hostname)
-{
-    WebCore::deleteCookiesForHostname(networkingContext(privateBrowsingEnabled), hostname);
-}
-
-void NetworkConnectionToWebProcess::deleteAllCookies(bool privateBrowsingEnabled)
-{
-    WebCore::deleteAllCookies(networkingContext(privateBrowsingEnabled));
-}
-
 } // namespace WebKit
 
 #endif // ENABLE(NETWORK_PROCESS)

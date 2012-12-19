@@ -129,21 +129,6 @@ void PlatformStrategiesQt::deleteCookie(NetworkingContext* context, const KURL& 
     WebCore::deleteCookie(context, url, cookieName);
 }
 
-void PlatformStrategiesQt::getHostnamesWithCookies(NetworkingContext* context, HashSet<String>& hostnames)
-{
-    WebCore::getHostnamesWithCookies(context, hostnames);
-}
-
-void PlatformStrategiesQt::deleteCookiesForHostname(NetworkingContext* context, const String& hostname)
-{
-    WebCore::deleteCookiesForHostname(context, hostname);
-}
-
-void PlatformStrategiesQt::deleteAllCookies(NetworkingContext* context)
-{
-    WebCore::deleteAllCookies(context);
-}
-
 void PlatformStrategiesQt::refreshPlugins()
 {
     PluginDatabase::installedPlugins()->refresh();

@@ -52,9 +52,6 @@ private:
     virtual String cookieRequestHeaderFieldValue(WebCore::NetworkingContext*, const WebCore::KURL& firstParty, const WebCore::KURL&);
     virtual bool getRawCookies(WebCore::NetworkingContext*, const WebCore::KURL& firstParty, const WebCore::KURL&, Vector<WebCore::Cookie>&);
     virtual void deleteCookie(WebCore::NetworkingContext*, const WebCore::KURL&, const String&);
-    virtual void getHostnamesWithCookies(WebCore::NetworkingContext*, HashSet<String>& hostnames);
-    virtual void deleteCookiesForHostname(WebCore::NetworkingContext*, const String& hostname);
-    virtual void deleteAllCookies(WebCore::NetworkingContext*);
 
     // WebCore::DatabaseStrategy
     // - Using default implementation.
