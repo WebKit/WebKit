@@ -14,9 +14,16 @@ description("Tests for ShadowRoot JS APIs. Can only run within DRT");
 
 if (window.testRunner)
     testRunner.dumpAsText();
+
+shouldBeUndefined("window.ShadowRoot");
+shouldBeDefined("window.WebKitShadowRoot");
+shouldThrow("new window.WebKitShadowRoot(document.createElement('div'))");
+
 var shadowHost = document.createElement('div');
 document.body.appendChild(shadowHost);
 var shadowRoot = shadowHost.webkitCreateShadowRoot();
+
+shouldBeTrue("shadowRoot instanceof window.WebKitShadowRoot");
 
 var div1 = document.createElement("div");
 div1.setAttribute("id", "div1");

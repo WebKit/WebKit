@@ -3,6 +3,10 @@ Tests for ShadowRoot JS APIs. Can only run within DRT
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 
 
+PASS window.ShadowRoot is undefined.
+PASS window.WebKitShadowRoot is defined.
+PASS new window.WebKitShadowRoot(document.createElement('div')) threw exception TypeError: Illegal constructor.
+PASS shadowRoot instanceof window.WebKitShadowRoot is true
 PASS shadowRoot.getElementById('div1') is div1
 PASS shadowRoot.getElementById('foo') is null
 PASS shadowRoot.getElementsByClassName('class2') is [div2]

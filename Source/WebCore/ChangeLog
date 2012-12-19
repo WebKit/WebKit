@@ -1,3 +1,20 @@
+2012-12-19  Hayato Ito  <hayato@chromium.org>
+
+        Expose WebKitShadowRoot constructor to DOMWindow.
+        https://bugs.webkit.org/show_bug.cgi?id=105385
+
+        Reviewed by Dimitri Glazkov.
+
+        This is a follow-up patch for r137870.  WebKitShadowRoot
+        constructor should be in DOMWindow, just like all of the other
+        not-callable-constructors like HTMLDivElement, etc.  We need it
+        for instanceof tests and so on.
+
+        Test: fast/dom/shadow/shadow-root-js-api.html
+              fast/js/global-constructors-expected.html
+
+        * page/DOMWindow.idl:
+
 2012-12-19  Andrey Lushnikov  <lushnikov@chromium.com>
 
         Web Inspector: refactor DefaultTextEditor's |expanded| setters
