@@ -107,8 +107,8 @@ public:
     ~EwkViewImpl();
 
     static EwkViewImpl* fromEvasObject(const Evas_Object* view);
-
     Evas_Object* view() { return m_view; }
+
     WKPageRef wkPage();
     WebKit::WebPageProxy* page() { return m_pageProxy.get(); }
     EwkContext* ewkContext() { return m_context.get(); }
@@ -119,6 +119,8 @@ public:
     WebCore::IntSize size() const;
     bool isFocused() const;
     bool isVisible() const;
+
+    void setDeviceScaleFactor(float scale);
 
     WebCore::AffineTransform transformToScene() const;
     WebCore::AffineTransform transformFromScene() const;

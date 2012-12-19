@@ -289,11 +289,17 @@ void EwkViewImpl::setCursor(const Cursor& cursor)
     ecore_evas_object_cursor_set(ecoreEvas, cursorObject.release().leakRef(), EVAS_LAYER_MAX, hotspotX, hotspotY);
 }
 
+void EwkViewImpl::setDeviceScaleFactor(float scale)
+{
+    page()->setIntrinsicDeviceScaleFactor(scale);
+}
+
 AffineTransform EwkViewImpl::transformFromScene() const
 {
     AffineTransform transform;
 
 #if USE(TILED_BACKING_STORE)
+    // Note that the scale factor incl page and device scale for now.
     transform.scale(1 / m_scaleFactor);
     transform.translate(pagePosition().x(), pagePosition().y());
 #endif
