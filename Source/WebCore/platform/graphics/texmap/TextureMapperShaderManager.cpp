@@ -23,15 +23,15 @@
 #include "TextureMapperShaderManager.h"
 
 #if USE(ACCELERATED_COMPOSITING) && USE(TEXTURE_MAPPER)
-
 #include "LengthFunctions.h"
 #include "Logging.h"
 #include "TextureMapperGL.h"
 
+#include <wtf/text/StringBuilder.h>
+
 #define STRINGIFY(...) #__VA_ARGS__
 
 namespace WebCore {
-
 
 static inline bool compositingLogEnabled()
 {
@@ -106,423 +106,289 @@ TextureMapperShaderProgram::~TextureMapperShaderProgram()
     m_context->deleteProgram(programID);
 }
 
-struct ShaderSpec {
-    String vertexShader;
-    String fragmentShader;
-    ShaderSpec(const char* vertex = 0, const char* fragment = 0)
-        : vertexShader(vertex ? String(ASCIILiteral(vertex)) : String())
-        , fragmentShader(fragment ? String(ASCIILiteral(fragment)) : String())
-    {
-    }
-};
+static const char* vertexShaderSource =
+    STRINGIFY(
+        uniform mat4 u_matrix;
+        uniform float u_flip;
+        uniform vec2 u_textureSize;
+        attribute vec4 a_vertex;
+        varying vec2 v_texCoord;
+        varying vec2 v_maskTexCoord;
 
-static void getShaderSpec(TextureMapperShaderManager::ShaderKey key, String& vertexSource, String& fragmentSource)
+        void main(void)
+        {
+            vec4 position = a_vertex;
+            v_texCoord = vec2(position.x, mix(position.y, 1. - position.y, u_flip)) * u_textureSize;
+            v_maskTexCoord = vec2(position);
+            gl_Position = u_matrix * a_vertex;
+        }
+    );
+
+#define GLSL_DIRECTIVE(...) "#"#__VA_ARGS__"\n"
+#define DEFINE_APPLIER(Name) \
+    "#ifdef ENABLE_"#Name"\n" \
+    "#define apply"#Name"IfNeeded apply"#Name"\n"\
+    "#else\n"\
+    "#define apply"#Name"IfNeeded noop\n"\
+    "#endif\n"
+
+#define RECT_TEXTURE_DIRECTIVE \
+    GLSL_DIRECTIVE(ifdef ENABLE_Rect) \
+        GLSL_DIRECTIVE(define SamplerType sampler2DRect) \
+        GLSL_DIRECTIVE(define SamplerFunction texture2DRect) \
+    GLSL_DIRECTIVE(else) \
+        GLSL_DIRECTIVE(define SamplerType sampler2D) \
+        GLSL_DIRECTIVE(define SamplerFunction texture2D) \
+    GLSL_DIRECTIVE(endif)
+
+#define ENABLE_APPLIER(Name) "#define ENABLE_"#Name"\n"
+#define BLUR_CONSTANTS \
+    GLSL_DIRECTIVE(define GAUSSIAN_KERNEL_HALF_WIDTH 11) \
+    GLSL_DIRECTIVE(define GAUSSIAN_KERNEL_STEP 0.2)
+
+
+static const char* fragmentTemplate =
+    DEFINE_APPLIER(Texture)
+    DEFINE_APPLIER(SolidColor)
+    DEFINE_APPLIER(Opacity)
+    DEFINE_APPLIER(Mask)
+    DEFINE_APPLIER(Antialias)
+    DEFINE_APPLIER(GrayscaleFilter)
+    DEFINE_APPLIER(SepiaFilter)
+    DEFINE_APPLIER(SaturateFilter)
+    DEFINE_APPLIER(HueRotateFilter)
+    DEFINE_APPLIER(InvertFilter)
+    DEFINE_APPLIER(BrightnessFilter)
+    DEFINE_APPLIER(ContrastFilter)
+    DEFINE_APPLIER(OpacityFilter)
+    DEFINE_APPLIER(BlurFilter)
+    DEFINE_APPLIER(AlphaBlur)
+    DEFINE_APPLIER(ContentTexture)
+    RECT_TEXTURE_DIRECTIVE
+    BLUR_CONSTANTS
+    STRINGIFY(
+        precision mediump float;
+        uniform SamplerType s_sampler;
+        uniform sampler2D s_mask;
+        uniform sampler2D s_contentTexture;
+        uniform float u_opacity;
+        varying vec2 v_texCoord;
+        varying vec2 v_maskTexCoord;
+        uniform vec3 u_expandedQuadEdgesInScreenSpace[8];
+        uniform float u_filterAmount;
+        uniform vec2 u_blurRadius;
+        uniform vec2 u_shadowOffset;
+        uniform vec4 u_color;
+        uniform float u_gaussianKernel[GAUSSIAN_KERNEL_HALF_WIDTH];
+
+        void noop(vec4) { }
+
+        // The data passed in u_expandedQuadEdgesInScreenSpace is merely the
+        // pre-scaled coeffecients of the line equations describing the four edges
+        // of the expanded quad in screen space and the rectangular bounding box
+        // of the expanded quad.
+        //
+        float normalizedDistance(vec3 edgeCoefficient)
+        {
+            // We are doing a simple distance calculation here according to the formula:
+            // (A*p.x + B*p.y + C) / sqrt(A^2 + B^2) = distance from line to p
+            // Note that A, B and C have already been scaled by 1 / sqrt(A^2 + B^2).
+            return clamp(dot(edgeCoefficient, vec3(gl_FragCoord.xy, 1.)), 0., 1.);
+        }
+
+        float antialiasQuad(vec3 coefficient1, vec3 coefficient2, vec3 coefficient3, vec3 coefficient4)
+        {
+            // Now we want to reduce the alpha value of the fragment if it is close to the
+            // edges of the expanded quad (or rectangular bounding box -- which seems to be
+            // important for backfacing quads). Note that we are combining the contribution
+            // from the (top || bottom) and (left || right) edge by simply multiplying. This follows
+            // the approach described at: http://http.developer.nvidia.com/GPUGems2/gpugems2_chapter22.html,
+            // in this case without using Gaussian weights.
+            return min(normalizedDistance(coefficient1), normalizedDistance(coefficient2))
+                * min(normalizedDistance(coefficient3), normalizedDistance(coefficient4));
+        }
+
+        float antialias()
+        {
+            float antialiasValueForQuad = 
+                antialiasQuad(u_expandedQuadEdgesInScreenSpace[0],
+                    u_expandedQuadEdgesInScreenSpace[1],
+                    u_expandedQuadEdgesInScreenSpace[2],
+                    u_expandedQuadEdgesInScreenSpace[3]);
+
+            float antialiasValueForBoundingRect = 
+                antialiasQuad(u_expandedQuadEdgesInScreenSpace[4],
+                    u_expandedQuadEdgesInScreenSpace[5],
+                    u_expandedQuadEdgesInScreenSpace[6],
+                    u_expandedQuadEdgesInScreenSpace[7]);
+
+            return min(antialiasValueForQuad, antialiasValueForBoundingRect);           
+        }
+
+        void applyTexture(inout vec4 color) { color = SamplerFunction(s_sampler, v_texCoord); }
+        void applyOpacity(inout vec4 color) { color *= u_opacity; }
+        void applyAntialias(inout vec4 color) { color *= antialias(); }
+        void applyMask(inout vec4 color) { color *= texture2D(s_mask, v_maskTexCoord).a; }
+
+        void applyGrayscaleFilter(inout vec4 color)
+        {
+            float amount = 1.0 - u_filterAmount;
+            color = vec4((0.2126 + 0.7874 * amount) * color.r + (0.7152 - 0.7152 * amount) * color.g + (0.0722 - 0.0722 * amount) * color.b,
+                (0.2126 - 0.2126 * amount) * color.r + (0.7152 + 0.2848 * amount) * color.g + (0.0722 - 0.0722 * amount) * color.b,
+                (0.2126 - 0.2126 * amount) * color.r + (0.7152 - 0.7152 * amount) * color.g + (0.0722 + 0.9278 * amount) * color.b,
+                color.a);
+        }
+
+        void applySepiaFilter(inout vec4 color)
+        {
+            float amount = 1.0 - u_filterAmount;
+            color = vec4((0.393 + 0.607 * amount) * color.r + (0.769 - 0.769 * amount) * color.g + (0.189 - 0.189 * amount) * color.b,
+                (0.349 - 0.349 * amount) * color.r + (0.686 + 0.314 * amount) * color.g + (0.168 - 0.168 * amount) * color.b,
+                (0.272 - 0.272 * amount) * color.r + (0.534 - 0.534 * amount) * color.g + (0.131 + 0.869 * amount) * color.b,
+                color.a);
+        }
+
+        void applySaturateFilter(inout vec4 color)
+        {
+            color = vec4((0.213 + 0.787 * u_filterAmount) * color.r + (0.715 - 0.715 * u_filterAmount) * color.g + (0.072 - 0.072 * u_filterAmount) * color.b,
+                (0.213 - 0.213 * u_filterAmount) * color.r + (0.715 + 0.285 * u_filterAmount) * color.g + (0.072 - 0.072 * u_filterAmount) * color.b,
+                (0.213 - 0.213 * u_filterAmount) * color.r + (0.715 - 0.715 * u_filterAmount) * color.g + (0.072 + 0.928 * u_filterAmount) * color.b,
+                color.a);
+        }
+
+        void applyHueRotateFilter(inout vec4 color)
+        {
+            float pi = 3.14159265358979323846;
+            float c = cos(u_filterAmount * pi / 180.0);
+            float s = sin(u_filterAmount * pi / 180.0);
+            color = vec4(color.r * (0.213 + c * 0.787 - s * 0.213) + color.g * (0.715 - c * 0.715 - s * 0.715) + color.b * (0.072 - c * 0.072 + s * 0.928),
+                color.r * (0.213 - c * 0.213 + s * 0.143) + color.g * (0.715 + c * 0.285 + s * 0.140) + color.b * (0.072 - c * 0.072 - s * 0.283),
+                color.r * (0.213 - c * 0.213 - s * 0.787) +  color.g * (0.715 - c * 0.715 + s * 0.715) + color.b * (0.072 + c * 0.928 + s * 0.072),
+                color.a);
+        }
+
+        float invert(float n) { return (1.0 - n) * u_filterAmount + n * (1.0 - u_filterAmount); }
+        void applyInvertFilter(inout vec4 color)
+        {
+            color = vec4(invert(color.r), invert(color.g), invert(color.b), color.a);
+        }
+
+        void applyBrightnessFilter(inout vec4 color)
+        {
+            color = vec4(color.rgb * (1.0 + u_filterAmount), color.a);
+        }
+
+        float contrast(float n) { return (n - 0.5) * u_filterAmount + 0.5; }
+        void applyContrastFilter(inout vec4 color)
+        {
+            color = vec4(contrast(color.r), contrast(color.g), contrast(color.b), color.a);
+        }
+
+        void applyOpacityFilter(inout vec4 color)
+        {
+            color = vec4(color.r, color.g, color.b, color.a * u_filterAmount);
+        }
+
+        vec4 sampleColorAtRadius(float radius)
+        {
+            vec2 coord = v_texCoord + radius * u_blurRadius;
+            return SamplerFunction(s_sampler, coord) * float(coord.x > 0. && coord.y > 0. && coord.x < 1. && coord.y < 1.);
+        }
+
+        float sampleAlphaAtRadius(float radius)
+        {
+            vec2 coord = v_texCoord - u_shadowOffset + radius * u_blurRadius;
+            return SamplerFunction(s_sampler, coord).a * float(coord.x > 0. && coord.y > 0. && coord.x < 1. && coord.y < 1.);
+        }
+
+        void applyBlurFilter(inout vec4 color)
+        {
+            vec4 total = sampleColorAtRadius(0.) * u_gaussianKernel[0];
+            for (int i = 1; i < GAUSSIAN_KERNEL_HALF_WIDTH; i++) {
+                total += sampleColorAtRadius(float(i) * GAUSSIAN_KERNEL_STEP) * u_gaussianKernel[i];
+                total += sampleColorAtRadius(float(-1 * i) * GAUSSIAN_KERNEL_STEP) * u_gaussianKernel[i];
+            }
+
+            color = total;
+        }
+
+        void applyAlphaBlur(inout vec4 color)
+        {
+            float total = sampleAlphaAtRadius(0.) * u_gaussianKernel[0];
+            for (int i = 1; i < GAUSSIAN_KERNEL_HALF_WIDTH; i++) {
+                total += sampleAlphaAtRadius(float(i) * GAUSSIAN_KERNEL_STEP) * u_gaussianKernel[i];
+                total += sampleAlphaAtRadius(float(-1 * i) * GAUSSIAN_KERNEL_STEP) * u_gaussianKernel[i];
+            }
+
+            color *= total;
+        }
+
+        vec4 sourceOver(vec4 src, vec4 dst) { return src + dst * (1. - dst.a); }
+
+        void applyContentTexture(inout vec4 color)
+        {
+            vec4 contentColor = texture2D(s_contentTexture, v_texCoord);
+            color = sourceOver(contentColor, color);
+        }
+
+        void applySolidColor(inout vec4 color)
+        {
+            color *= u_color;
+        }
+
+        void main(void)
+        {
+            vec4 color = vec4(1., 1., 1., 1.);
+            applyTextureIfNeeded(color);
+            applySolidColorIfNeeded(color);
+            applyAntialiasIfNeeded(color);
+            applyMaskIfNeeded(color);
+            applyOpacityIfNeeded(color);
+            applyGrayscaleFilterIfNeeded(color);
+            applySepiaFilterIfNeeded(color);
+            applySaturateFilterIfNeeded(color);
+            applyHueRotateFilterIfNeeded(color);
+            applyInvertFilterIfNeeded(color);
+            applyBrightnessFilterIfNeeded(color);
+            applyContrastFilterIfNeeded(color);
+            applyOpacityFilterIfNeeded(color);
+            applyBlurFilterIfNeeded(color);
+            applyAlphaBlurIfNeeded(color);
+            applyContentTextureIfNeeded(color);
+            gl_FragColor = color;
+        }
+    );
+
+
+static void getShaderSpec(TextureMapperShaderManager::Options options, String& vertexSource, String& fragmentSource)
 {
-    static Vector<ShaderSpec> specs = Vector<ShaderSpec>();
-    static const char* fragmentOpacityAndMask =
-        STRINGIFY(
-            precision mediump float;
-            uniform sampler2D s_sampler;
-            uniform sampler2D s_mask;
-            uniform float u_opacity;
-            varying vec2 v_sourceTexCoord;
-            varying vec2 v_maskTexCoord;
-            void main(void)
-            {
-                vec4 color = texture2D(s_sampler, v_sourceTexCoord);
-                vec4 maskColor = texture2D(s_mask, v_maskTexCoord);
-                float fragmentAlpha = u_opacity * maskColor.a;
-                gl_FragColor = vec4(color.rgb * fragmentAlpha, color.a * fragmentAlpha);
-            }
-        );
+    StringBuilder fragmentBuilder;
+#define SET_APPLIER_FROM_OPTIONS(Applier) \
+    if (options & TextureMapperShaderManager::Applier) \
+        fragmentBuilder.append(ENABLE_APPLIER(Applier));
 
-    static const char* fragmentRectOpacityAndMask =
-        STRINGIFY(
-            precision mediump float;
-            uniform sampler2DRect s_sampler;
-            uniform sampler2DRect s_mask;
-            uniform float u_opacity;
-            varying vec2 v_sourceTexCoord;
-            varying vec2 v_maskTexCoord;
-            void main(void)
-            {
-                vec4 color = texture2DRect(s_sampler, v_sourceTexCoord);
-                vec4 maskColor = texture2DRect(s_mask, v_maskTexCoord);
-                float fragmentAlpha = u_opacity * maskColor.a;
-                gl_FragColor = vec4(color.rgb * fragmentAlpha, color.a * fragmentAlpha);
-            }
-        );
+    SET_APPLIER_FROM_OPTIONS(Matrix)
+    SET_APPLIER_FROM_OPTIONS(Texture)
+    SET_APPLIER_FROM_OPTIONS(Rect)
+    SET_APPLIER_FROM_OPTIONS(SolidColor)
+    SET_APPLIER_FROM_OPTIONS(Opacity)
+    SET_APPLIER_FROM_OPTIONS(Mask)
+    SET_APPLIER_FROM_OPTIONS(Antialias)
+    SET_APPLIER_FROM_OPTIONS(GrayscaleFilter)
+    SET_APPLIER_FROM_OPTIONS(SepiaFilter)
+    SET_APPLIER_FROM_OPTIONS(SaturateFilter)
+    SET_APPLIER_FROM_OPTIONS(HueRotateFilter)
+    SET_APPLIER_FROM_OPTIONS(BrightnessFilter)
+    SET_APPLIER_FROM_OPTIONS(ContrastFilter)
+    SET_APPLIER_FROM_OPTIONS(InvertFilter)
+    SET_APPLIER_FROM_OPTIONS(OpacityFilter)
+    SET_APPLIER_FROM_OPTIONS(BlurFilter)
+    SET_APPLIER_FROM_OPTIONS(AlphaBlur)
+    SET_APPLIER_FROM_OPTIONS(ContentTexture)
 
-    static const char* vertexOpacityAndMask =
-        STRINGIFY(
-            uniform mat4 u_matrix;
-            uniform float u_flip;
-            uniform vec2 u_textureSize;
-            attribute vec4 a_vertex;
-            varying vec2 v_sourceTexCoord;
-            varying vec2 v_maskTexCoord;
-            void main(void)
-            {
-                v_sourceTexCoord = vec2(a_vertex.x, mix(a_vertex.y, 1. - a_vertex.y, u_flip)) * u_textureSize;
-                v_maskTexCoord = vec2(a_vertex);
-                gl_Position = u_matrix * a_vertex;
-            }
-        );
-
-    static const char* fragmentSimple =
-        STRINGIFY(
-            precision mediump float;
-            uniform sampler2D s_sampler;
-            uniform float u_opacity;
-            varying vec2 v_sourceTexCoord;
-            void main(void)
-            {
-                vec4 color = texture2D(s_sampler, v_sourceTexCoord);
-                gl_FragColor = vec4(color.rgb * u_opacity, color.a * u_opacity);
-            }
-        );
-
-    static const char* fragmentAntialiasingNoMask =
-        STRINGIFY(
-            precision mediump float;
-            uniform sampler2D s_sampler;
-            varying vec2 v_sourceTexCoord;
-            uniform float u_opacity;
-            uniform vec3 u_expandedQuadEdgesInScreenSpace[8];
-
-                // The data passed in u_expandedQuadEdgesInScreenSpace is merely the
-                // pre-scaled coeffecients of the line equations describing the four edges
-                // of the expanded quad in screen space and the rectangular bounding box
-                // of the expanded quad.
-                //
-            float normalizedDistance(vec3 edgeCoefficient)
-            {
-                // We are doing a simple distance calculation here according to the formula:
-                // (A*p.x + B*p.y + C) / sqrt(A^2 + B^2) = distance from line to p
-                // Note that A, B and C have already been scaled by 1 / sqrt(A^2 + B^2).
-                return clamp(dot(edgeCoefficient, vec3(gl_FragCoord.xy, 1.)), 0., 1.);
-            }
-
-            float antialiasQuad(vec3 coefficient1, vec3 coefficient2, vec3 coefficient3, vec3 coefficient4)
-            {
-                // Now we want to reduce the alpha value of the fragment if it is close to the
-                // edges of the expanded quad (or rectangular bounding box -- which seems to be
-                // important for backfacing quads). Note that we are combining the contribution
-                // from the (top || bottom) and (left || right) edge by simply multiplying. This follows
-                // the approach described at: http://http.developer.nvidia.com/GPUGems2/gpugems2_chapter22.html,
-                // in this case without using Gaussian weights.
-                return min(normalizedDistance(coefficient1), normalizedDistance(coefficient2))
-                    * min(normalizedDistance(coefficient3), normalizedDistance(coefficient4));
-            }
-
-            float antialias()
-            {
-                float antialiasValueForQuad = 
-                    antialiasQuad(u_expandedQuadEdgesInScreenSpace[0],
-                        u_expandedQuadEdgesInScreenSpace[1],
-                        u_expandedQuadEdgesInScreenSpace[2],
-                        u_expandedQuadEdgesInScreenSpace[3]);
-
-                float antialiasValueForBoundingRect = 
-                    antialiasQuad(u_expandedQuadEdgesInScreenSpace[4],
-                        u_expandedQuadEdgesInScreenSpace[5],
-                        u_expandedQuadEdgesInScreenSpace[6],
-                        u_expandedQuadEdgesInScreenSpace[7]);
-
-                return min(antialiasValueForQuad, antialiasValueForBoundingRect);           
-            }
-
-            void main()
-            {
-                vec4 sampledColor = texture2D(s_sampler, clamp(v_sourceTexCoord, 0.0, 1.0));
-                gl_FragColor = sampledColor * u_opacity * antialias();
-            }
-        );
-
-    static const char* fragmentRectSimple =
-        STRINGIFY(
-            precision mediump float;
-            uniform sampler2DRect s_sampler;
-            uniform float u_opacity;
-            varying vec2 v_sourceTexCoord;
-            void main(void)
-            {
-                vec4 color = texture2DRect(s_sampler, v_sourceTexCoord);
-                gl_FragColor = vec4(color.rgb * u_opacity, color.a * u_opacity);
-            }
-        );
-
-    static const char* vertexSimple =
-        STRINGIFY(
-            uniform mat4 u_matrix;
-            uniform float u_flip;
-            uniform vec2 u_textureSize;
-            attribute vec4 a_vertex;
-            varying vec2 v_sourceTexCoord;
-            void main(void)
-            {
-                v_sourceTexCoord = vec2(a_vertex.x, mix(a_vertex.y, 1. - a_vertex.y, u_flip)) * u_textureSize;
-                gl_Position = u_matrix * a_vertex;
-            }
-        );
-
-    static const char* vertexSolidColor =
-        STRINGIFY(
-            uniform mat4 u_matrix;
-            attribute vec4 a_vertex;
-            void main(void)
-            {
-                gl_Position = u_matrix * a_vertex;
-            }
-        );
-
-
-    static const char* fragmentSolidColor =
-        STRINGIFY(
-            precision mediump float;
-            uniform vec4 u_color;
-            void main(void)
-            {
-                gl_FragColor = u_color;
-            }
-        );
-
-    static const char* vertexFilter =
-        STRINGIFY(
-            attribute vec4 a_vertex;
-            attribute vec4 a_texCoord;
-            varying vec2 v_texCoord;
-            void main(void)
-            {
-                v_texCoord = vec2(a_texCoord);
-                gl_Position = a_vertex;
-            }
-        );
-
-#define STANDARD_FILTER(...) \
-        "precision mediump float;\n"\
-        "varying vec2 v_texCoord;\n"\
-        "uniform float u_amount;\n"\
-        "uniform sampler2D s_sampler;\n"#__VA_ARGS__ \
-        "void main(void)\n { gl_FragColor = shade(texture2D(s_sampler, v_texCoord)); }"
-
-    static const char* fragmentGrayscaleFilter =
-        STANDARD_FILTER(
-            vec4 shade(lowp vec4 color)
-            {
-                float amount = 1.0 - u_amount;
-                return vec4((0.2126 + 0.7874 * amount) * color.r + (0.7152 - 0.7152 * amount) * color.g + (0.0722 - 0.0722 * amount) * color.b,
-                            (0.2126 - 0.2126 * amount) * color.r + (0.7152 + 0.2848 * amount) * color.g + (0.0722 - 0.0722 * amount) * color.b,
-                            (0.2126 - 0.2126 * amount) * color.r + (0.7152 - 0.7152 * amount) * color.g + (0.0722 + 0.9278 * amount) * color.b,
-                            color.a);
-            }
-        );
-
-    static const char* fragmentSepiaFilter =
-        STANDARD_FILTER(
-            vec4 shade(lowp vec4 color)
-            {
-                float amount = 1.0 - u_amount;
-                return vec4((0.393 + 0.607 * amount) * color.r + (0.769 - 0.769 * amount) * color.g + (0.189 - 0.189 * amount) * color.b,
-                            (0.349 - 0.349 * amount) * color.r + (0.686 + 0.314 * amount) * color.g + (0.168 - 0.168 * amount) * color.b,
-                            (0.272 - 0.272 * amount) * color.r + (0.534 - 0.534 * amount) * color.g + (0.131 + 0.869 * amount) * color.b,
-                            color.a);
-            }
-        );
-
-    static const char* fragmentSaturateFilter =
-        STANDARD_FILTER(
-            vec4 shade(lowp vec4 color)
-            {
-                return vec4((0.213 + 0.787 * u_amount) * color.r + (0.715 - 0.715 * u_amount) * color.g + (0.072 - 0.072 * u_amount) * color.b,
-                            (0.213 - 0.213 * u_amount) * color.r + (0.715 + 0.285 * u_amount) * color.g + (0.072 - 0.072 * u_amount) * color.b,
-                            (0.213 - 0.213 * u_amount) * color.r + (0.715 - 0.715 * u_amount) * color.g + (0.072 + 0.928 * u_amount) * color.b,
-                            color.a);
-            }
-        );
-
-    static const char* fragmentHueRotateFilter =
-        STANDARD_FILTER(
-            vec4 shade(lowp vec4 color)
-            {
-                float pi = 3.14159265358979323846;
-                float c = cos(u_amount * pi / 180.0);
-                float s = sin(u_amount * pi / 180.0);
-                return vec4(color.r * (0.213 + c * 0.787 - s * 0.213) + color.g * (0.715 - c * 0.715 - s * 0.715) + color.b * (0.072 - c * 0.072 + s * 0.928),
-                            color.r * (0.213 - c * 0.213 + s * 0.143) + color.g * (0.715 + c * 0.285 + s * 0.140) + color.b * (0.072 - c * 0.072 - s * 0.283),
-                            color.r * (0.213 - c * 0.213 - s * 0.787) +  color.g * (0.715 - c * 0.715 + s * 0.715) + color.b * (0.072 + c * 0.928 + s * 0.072),
-                            color.a);
-            }
-        );
-
-    static const char* fragmentInvertFilter =
-        STANDARD_FILTER(
-            float invert(lowp float n) { return (1.0 - n) * u_amount + n * (1.0 - u_amount); }
-            vec4 shade(lowp vec4 color)
-            {
-                return vec4(invert(color.r), invert(color.g), invert(color.b), color.a);
-            }
-        );
-
-    static const char* fragmentBrightnessFilter =
-        STANDARD_FILTER(
-            vec4 shade(lowp vec4 color)
-            {
-                return vec4(color.rgb * (1.0 + u_amount), color.a);
-            }
-        );
-
-    static const char* fragmentContrastFilter =
-        STANDARD_FILTER(
-            float contrast(lowp float n) { return (n - 0.5) * u_amount + 0.5; }
-            vec4 shade(lowp vec4 color)
-            {
-                return vec4(contrast(color.r), contrast(color.g), contrast(color.b), color.a);
-            }
-        );
-
-    static const char* fragmentOpacityFilter =
-        STANDARD_FILTER(
-            vec4 shade(lowp vec4 color)
-            {
-                return vec4(color.r, color.g, color.b, color.a * u_amount);
-            }
-        );
-
-#define BLUR_CONSTANTS "#define GAUSSIAN_KERNEL_HALF_WIDTH 11\n#define GAUSSIAN_KERNEL_STEP 0.2\n"
-
-    static const char* fragmentBlurFilter =
-        BLUR_CONSTANTS
-        STRINGIFY(
-            // Create a normal distribution of 21 values between -2 and 2.
-            precision mediump float;
-            varying vec2 v_texCoord;
-            uniform vec2 u_blurRadius;
-            uniform sampler2D s_sampler;
-            uniform float u_gaussianKernel[GAUSSIAN_KERNEL_HALF_WIDTH];
-
-            vec4 sampleColor(float radius)
-            {
-                vec2 coord = v_texCoord + radius * u_blurRadius;
-                return texture2D(s_sampler, coord) * float(coord.x > 0. && coord.y > 0. && coord.x < 1. && coord.y < 1.);
-            }
-
-            vec4 blur()
-            {
-                vec4 total = sampleColor(0.) * u_gaussianKernel[0];
-                for (int i = 1; i < GAUSSIAN_KERNEL_HALF_WIDTH; i++) {
-                    total += sampleColor(float(i) * GAUSSIAN_KERNEL_STEP) * u_gaussianKernel[i];
-                    total += sampleColor(float(-1 * i) * GAUSSIAN_KERNEL_STEP) * u_gaussianKernel[i];
-                }
-
-                return total;
-            }
-
-            void main(void)
-            {
-                gl_FragColor = blur();
-            }
-        );
-
-    static const char* fragmentShadowFilter1 =
-        BLUR_CONSTANTS
-        STRINGIFY(
-            precision mediump float;
-            varying vec2 v_texCoord;
-            uniform float u_blurRadius;
-            uniform vec2 u_shadowOffset;
-            uniform sampler2D s_sampler;
-            uniform float u_gaussianKernel[GAUSSIAN_KERNEL_HALF_WIDTH];
-
-            float sampleAlpha(float radius)
-            {
-                vec2 coord = v_texCoord - u_shadowOffset + vec2(radius * u_blurRadius, 0.);
-                return texture2D(s_sampler, coord).a * float(coord.x > 0. && coord.y > 0. && coord.x < 1. && coord.y < 1.);
-            }
-
-            float shadowBlurHorizontal()
-            {
-                float total = sampleAlpha(0.) * u_gaussianKernel[0];
-                for (int i = 1; i < GAUSSIAN_KERNEL_HALF_WIDTH; i++) {
-                    total += sampleAlpha(float(i) * GAUSSIAN_KERNEL_STEP) * u_gaussianKernel[i];
-                    total += sampleAlpha(float(-1 * i) * GAUSSIAN_KERNEL_STEP) * u_gaussianKernel[i];
-                }
-
-                return total;
-            }
-
-            void main(void)
-            {
-                gl_FragColor = vec4(1., 1., 1., 1.) * shadowBlurHorizontal();
-            }
-        );
-
-    // Second pass: vertical alpha blur and composite with origin.
-    static const char* fragmentShadowFilter2 =
-        BLUR_CONSTANTS
-        STRINGIFY(
-            precision mediump float;
-            varying vec2 v_texCoord;
-            uniform float u_blurRadius;
-            uniform vec4 u_shadowColor;
-            uniform sampler2D s_sampler;
-            uniform sampler2D s_contentTexture;
-            uniform float u_gaussianKernel[GAUSSIAN_KERNEL_HALF_WIDTH];
-
-            float sampleAlpha(float r)
-            {
-                vec2 coord = v_texCoord + vec2(0., r * u_blurRadius);
-                return texture2D(s_sampler, coord).a * float(coord.x > 0. && coord.y > 0. && coord.x < 1. && coord.y < 1.);
-            }
-
-            float shadowBlurVertical()
-            {
-                float total = sampleAlpha(0.) * u_gaussianKernel[0];
-                for (int i = 1; i < GAUSSIAN_KERNEL_HALF_WIDTH; i++) {
-                    total += sampleAlpha(float(i) * GAUSSIAN_KERNEL_STEP) * u_gaussianKernel[i];
-                    total += sampleAlpha(float(-1 * i) * GAUSSIAN_KERNEL_STEP) * u_gaussianKernel[i];
-                }
-
-                return total;
-            }
-
-            vec4 sourceOver(lowp vec4 source, vec4 destination)
-            {
-                // Composite the shadow with the original texture.
-                return source + destination * (1. - source.a);
-            }
-
-            void main(void)
-            {
-                gl_FragColor = sourceOver(texture2D(s_contentTexture, v_texCoord), shadowBlurVertical() * u_shadowColor);
-            }
-        );
-
-    if (specs.isEmpty()) {
-        specs.resize(TextureMapperShaderManager::LastFilter);
-        specs[TextureMapperShaderManager::Default] = ShaderSpec(vertexSimple, fragmentSimple);
-        specs[TextureMapperShaderManager::SolidColor] = ShaderSpec(vertexSolidColor, fragmentSolidColor);
-        specs[TextureMapperShaderManager::Rect] = ShaderSpec(vertexSimple, fragmentRectSimple);
-        specs[TextureMapperShaderManager::Masked] = ShaderSpec(vertexOpacityAndMask, fragmentOpacityAndMask);
-        specs[TextureMapperShaderManager::MaskedRect] = ShaderSpec(vertexOpacityAndMask, fragmentRectOpacityAndMask);
-        specs[TextureMapperShaderManager::Antialiased] = ShaderSpec(vertexSimple, fragmentAntialiasingNoMask);
-        specs[TextureMapperShaderManager::GrayscaleFilter] = ShaderSpec(vertexFilter, fragmentGrayscaleFilter);
-        specs[TextureMapperShaderManager::SepiaFilter] = ShaderSpec(vertexFilter, fragmentSepiaFilter);
-        specs[TextureMapperShaderManager::SaturateFilter] = ShaderSpec(vertexFilter, fragmentSaturateFilter);
-        specs[TextureMapperShaderManager::HueRotateFilter] = ShaderSpec(vertexFilter, fragmentHueRotateFilter);
-        specs[TextureMapperShaderManager::BrightnessFilter] = ShaderSpec(vertexFilter, fragmentBrightnessFilter);
-        specs[TextureMapperShaderManager::ContrastFilter] = ShaderSpec(vertexFilter, fragmentContrastFilter);
-        specs[TextureMapperShaderManager::InvertFilter] = ShaderSpec(vertexFilter, fragmentInvertFilter);
-        specs[TextureMapperShaderManager::OpacityFilter] = ShaderSpec(vertexFilter, fragmentOpacityFilter);
-        specs[TextureMapperShaderManager::BlurFilter] = ShaderSpec(vertexFilter, fragmentBlurFilter);
-        specs[TextureMapperShaderManager::ShadowFilterPass1] = ShaderSpec(vertexFilter, fragmentShadowFilter1);
-        specs[TextureMapperShaderManager::ShadowFilterPass2] = ShaderSpec(vertexFilter, fragmentShadowFilter2);
-    }
-
-    ASSERT(specs.size() > key);
-    ShaderSpec& spec = specs[key];
-    vertexSource = spec.vertexShader;
-    fragmentSource = spec.fragmentShader;
+    fragmentBuilder.append(fragmentTemplate);
+    vertexSource = vertexShaderSource;
+    fragmentSource = fragmentBuilder.toString();
 }
 
 TextureMapperShaderManager::TextureMapperShaderManager(GraphicsContext3D* context)
@@ -534,17 +400,17 @@ TextureMapperShaderManager::~TextureMapperShaderManager()
 {
 }
 
-PassRefPtr<TextureMapperShaderProgram> TextureMapperShaderManager::getShaderProgram(ShaderKey key)
+PassRefPtr<TextureMapperShaderProgram> TextureMapperShaderManager::getShaderProgram(Options options)
 {
-    TextureMapperShaderProgramMap::iterator it = m_programs.find(key);
+    TextureMapperShaderProgramMap::iterator it = m_programs.find(options);
     if (it != m_programs.end())
         return it->value;
 
     String vertexShader;
     String fragmentShader;
-    getShaderSpec(key, vertexShader, fragmentShader);
+    getShaderSpec(options, vertexShader, fragmentShader);
     RefPtr<TextureMapperShaderProgram> program = TextureMapperShaderProgram::create(m_context, vertexShader, fragmentShader);
-    m_programs.add(key, program);
+    m_programs.add(options, program);
     return program;
 }
 };

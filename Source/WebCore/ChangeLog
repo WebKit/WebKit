@@ -1,3 +1,40 @@
+2012-12-19  No'am Rosenthal  <noam@webkit.org>
+
+        [Texmap] Instead of having multiple shaders sources with lots of duplication, we should have one shader source with MACRO variants
+        https://bugs.webkit.org/show_bug.cgi?id=104815
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Created templates for the vertex and fragment shaders, and added some MACROs in 
+        TextureMapperShaderManager to allow GLSL precompiler-based configuration.
+
+        The template follows a pattern where the main function in the shader calls
+        applyFooBarIfNeeded(), while applyFooBar() is implemented. The Macros prepended to the template define whether applyIfNeeded resolves to the real function or to a noop.
+
+        In addition, made some small changes to the filter shaders so that they can use the same code as the normal shaders.
+
+        Covered by existing pixel/ref tests when run on Qt/EFL/GTK.
+
+        * platform/graphics/texmap/TextureMapperGL.cpp:
+        (WebCore::TextureMapperGL::drawTexture):
+        (WebCore::TextureMapperGL::drawSolidColor):
+        (WebCore::TextureMapperGL::drawTextureWithAntialiasing):
+        (WebCore::optionsForFilterType):
+        (WebCore):
+        (WebCore::getPassesRequiredForFilter):
+        (WebCore::prepareFilterProgram):
+        (WebCore::TextureMapperGL::drawFiltered):
+        (WebCore::BitmapTextureGL::applyFilters):
+            Always draw using the drawQuad function, and use the new TextureMapperShaderManager::Options mask instead of the old ShaderKey.
+
+        * platform/graphics/texmap/TextureMapperShaderManager.cpp:
+        (WebCore):
+        (WebCore::getShaderSpec):
+        (WebCore::TextureMapperShaderManager::getShaderProgram):
+        * platform/graphics/texmap/TextureMapperShaderManager.h:
+        (TextureMapperShaderProgram):
+        (TextureMapperShaderManager):
+
 2012-12-19  Vsevolod Vlasov  <vsevik@chromium.org>
 
         Web Inspector: Support removing several tabs from TabbedEditorContainer/TabbedPane at once.
