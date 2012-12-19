@@ -87,7 +87,7 @@ PassOwnPtr<WorkerDebuggerAgent> WorkerDebuggerAgent::create(InstrumentingAgents*
 
 WorkerDebuggerAgent::WorkerDebuggerAgent(InstrumentingAgents* instrumentingAgents, InspectorState* inspectorState, WorkerContext* inspectedWorkerContext, InjectedScriptManager* injectedScriptManager)
     : InspectorDebuggerAgent(instrumentingAgents, inspectorState, injectedScriptManager)
-    , m_scriptDebugServer(inspectedWorkerContext)
+    , m_scriptDebugServer(inspectedWorkerContext, WorkerDebuggerAgent::debuggerTaskMode)
     , m_inspectedWorkerContext(inspectedWorkerContext)
 {
     MutexLocker lock(workerDebuggerAgentsMutex());

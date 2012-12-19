@@ -42,11 +42,10 @@
 
 namespace WebCore {
 
-const char* WorkerScriptDebugServer::debuggerTaskMode = "debugger";
-
-WorkerScriptDebugServer::WorkerScriptDebugServer(WorkerContext* context)
+WorkerScriptDebugServer::WorkerScriptDebugServer(WorkerContext* context, const String& mode)
     : ScriptDebugServer()
     , m_workerContext(context)
+    , m_debuggerTaskMode(mode)
 {
 }
 
@@ -93,7 +92,7 @@ void WorkerScriptDebugServer::runEventLoopWhilePaused()
 {
     MessageQueueWaitResult result;
     do {
-        result = m_workerContext->thread()->runLoop().runInMode(m_workerContext, WorkerDebuggerAgent::debuggerTaskMode);
+        result = m_workerContext->thread()->runLoop().runInMode(m_workerContext, m_debuggerTaskMode);
     // Keep waiting until execution is resumed.
     } while (result != MessageQueueTerminated && !m_doneProcessingDebuggerEvents);
 }

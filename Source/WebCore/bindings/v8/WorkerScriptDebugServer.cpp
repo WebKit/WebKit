@@ -43,11 +43,12 @@
 
 namespace WebCore {
 
-WorkerScriptDebugServer::WorkerScriptDebugServer(WorkerContext* workerContext)
+WorkerScriptDebugServer::WorkerScriptDebugServer(WorkerContext* workerContext, const String& mode)
     : ScriptDebugServer()
     , m_listener(0)
     , m_workerContext(workerContext)
     , m_isolate(v8::Isolate::GetCurrent())
+    , m_debuggerTaskMode(mode)
 {
     ASSERT(m_isolate);
 }
@@ -99,7 +100,7 @@ void WorkerScriptDebugServer::runMessageLoopOnPause(v8::Handle<v8::Context>)
 {
     MessageQueueWaitResult result;
     do {
-        result = m_workerContext->thread()->runLoop().runInMode(m_workerContext, WorkerDebuggerAgent::debuggerTaskMode);
+        result = m_workerContext->thread()->runLoop().runInMode(m_workerContext, m_debuggerTaskMode);
     // Keep waiting until execution is resumed.
     } while (result == MessageQueueMessageReceived && isPaused());
     

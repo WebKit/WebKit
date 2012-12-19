@@ -47,7 +47,7 @@ class WorkerThread;
 class WorkerScriptDebugServer : public ScriptDebugServer {
     WTF_MAKE_NONCOPYABLE(WorkerScriptDebugServer);
 public:
-    explicit WorkerScriptDebugServer(WorkerContext*);
+    WorkerScriptDebugServer(WorkerContext*, const String&);
     ~WorkerScriptDebugServer() { }
 
     void addListener(ScriptDebugListener*);
@@ -64,6 +64,7 @@ private:
     ScriptDebugListener* m_listener;
     WorkerContext* m_workerContext;
     v8::Isolate* m_isolate;
+    String m_debuggerTaskMode;
 };
 
 } // namespace WebCore
