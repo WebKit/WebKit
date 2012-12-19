@@ -1,5 +1,5 @@
 description(
-"Tests that creating an indexed setter on the global object doesn't break things."
+"Tests that passing the global object to an array access that will arrayify to ArrayWithArrayStorage doesn't break things."
 );
 
 function foo(array) {
