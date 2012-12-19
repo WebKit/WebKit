@@ -4068,10 +4068,6 @@ bool WebPage::touchEvent(const Platform::TouchEvent& event)
             d->m_preventDefaultOnTouchStart = true;
         return true;
     }
-
-    if (event.isTouchHold())
-        d->m_touchEventHandler->doFatFingers(tEvent.m_points[0]);
-
 #endif
 
     return false;
