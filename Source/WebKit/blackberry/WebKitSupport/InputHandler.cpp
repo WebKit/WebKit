@@ -799,16 +799,19 @@ void InputHandler::requestSpellingCheckingOptions(imf_sp_text_t& spellCheckingOp
         // Get caret position. Though the spelling markers might no longer exist, if this method is called we can assume the caret was placed on top of a marker earlier.
         VisiblePosition caretPosition = m_currentFocusElement->document()->frame()->selection()->selection().visibleStart();
 
-        // Create a range from the start to end of word.
-        RefPtr<Range> rangeSelection = VisibleSelection(startOfWord(caretPosition), endOfWord(caretPosition)).toNormalizedRange();
-        if (!rangeSelection)
-            return;
+        if (HTMLTextFormControlElement* controlElement = DOMSupport::toTextControlElement(m_currentFocusElement.get())) {
+            spellCheckingOptionRequest.startTextPosition = controlElement->indexForVisiblePosition(startOfWord(caretPosition));
+            spellCheckingOptionRequest.endTextPosition = controlElement->indexForVisiblePosition(endOfWord(caretPosition));
+        } else {
+            unsigned location = 0;
+            unsigned length = 0;
 
-        unsigned location = 0;
-        unsigned length = 0;
-        TextIterator::getLocationAndLengthFromRange(m_currentFocusElement.get(), rangeSelection.get(), location, length);
+            // Create a range from the start to end of word.
+            RefPtr<Range> rangeSelection = VisibleSelection(startOfWord(caretPosition), endOfWord(caretPosition)).toNormalizedRange();
+            if (!rangeSelection)
+                return;
 
-        if (location != notFound && length) {
+            TextIterator::getLocationAndLengthFromRange(m_currentFocusElement.get(), rangeSelection.get(), location, length);
             spellCheckingOptionRequest.startTextPosition = location;
             spellCheckingOptionRequest.endTextPosition = location + length;
         }
