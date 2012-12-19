@@ -1,3 +1,202 @@
+2012-12-19  Csaba Osztrogonác  <ossy@webkit.org>
+
+        [Qt] Unreviewed gardening, update pixel results.
+
+        * platform/qt-5.0-wk2/fast/backgrounds/transformed-body-background-expected.png: Removed.
+        * platform/qt-5.0-wk2/fast/backgrounds/transformed-body-html-background-expected.png: Removed.
+        * platform/qt-5.0-wk2/fast/backgrounds/transformed-html-body-background-expected.png: Removed.
+        * platform/qt-5.0-wk2/fast/forms/datalist/input-appearance-range-with-transform-expected.png: Removed.
+        * platform/qt-5.0-wk2/fast/layers/scroll-with-transform-composited-layer-expected.png: Removed.
+        * platform/qt-5.0-wk2/svg/dom/SVGLengthList-getItem-expected.png: Removed.
+        * platform/qt-5.0-wk2/svg/dom/SVGLengthList-initialize-expected.png: Removed.
+        * platform/qt-5.0-wk2/svg/dom/SVGLengthList-replaceItem-expected.png: Removed.
+        * platform/qt/compositing/masks/masked-ancestor-expected.png:
+        * platform/qt/compositing/reflections/reflection-in-composited-expected.png:
+        * platform/qt/compositing/shadows/shadow-drawing-expected.png:
+        * platform/qt/css1/box_properties/border_style-expected.png:
+        * platform/qt/css2.1/t0805-c5517-brdr-s-00-c-expected.png:
+        * platform/qt/css2.1/t0805-c5519-brdr-r-01-e-expected.png:
+        * platform/qt/css2.1/t170602-bdr-conflct-w-04-d-expected.png:
+        * platform/qt/css2.1/t170602-bdr-conflct-w-14-d-expected.png:
+        * platform/qt/css2.1/t170602-bdr-conflct-w-24-d-expected.png:
+        * platform/qt/css2.1/t170602-bdr-conflct-w-34-d-expected.png:
+        * platform/qt/css2.1/t170602-bdr-conflct-w-44-d-expected.png:
+        * platform/qt/css2.1/t170602-bdr-conflct-w-54-d-expected.png:
+        * platform/qt/css2.1/t170602-bdr-conflct-w-64-d-expected.png:
+        * platform/qt/css2.1/t170602-bdr-conflct-w-74-d-expected.png:
+        * platform/qt/css2.1/t170602-bdr-conflct-w-84-d-expected.png:
+        * platform/qt/css2.1/t170602-bdr-conflct-w-94-d-expected.png:
+        * platform/qt/editing/deleting/delete-at-paragraph-boundaries-007-expected.png:
+        * platform/qt/editing/deleting/delete-at-paragraph-boundaries-009-expected.png:
+        * platform/qt/editing/selection/extend-by-character-002-expected.png:
+        * platform/qt/editing/selection/extend-by-character-004-expected.png:
+        * platform/qt/editing/selection/move-by-character-002-expected.png:
+        * platform/qt/editing/selection/move-by-character-004-expected.png:
+        * platform/qt/fast/backgrounds/animated-svg-as-mask-expected.png:
+        * platform/qt/fast/backgrounds/repeat/negative-offset-repeat-transformed-expected.png:
+        * platform/qt/fast/backgrounds/transformed-body-background-expected.png: Added.
+        * platform/qt/fast/backgrounds/transformed-body-html-background-expected.png: Added.
+        * platform/qt/fast/backgrounds/transformed-html-body-background-expected.png: Added.
+        * platform/qt/fast/css/outline-auto-empty-rects-expected.png:
+        * platform/qt/fast/css/outline-auto-location-expected.png:
+        * platform/qt/fast/css/resize-corner-tracking-transformed-expected.png:
+        * platform/qt/fast/css/vertical-text-overflow-ellipsis-text-align-center-expected.png:
+        * platform/qt/fast/forms/datalist/input-appearance-range-with-datalist-expected.png: Renamed from LayoutTests/platform/qt-5.0-wk2/fast/forms/datalist/input-appearance-range-with-datalist-expected.png.
+        * platform/qt/fast/forms/datalist/input-appearance-range-with-datalist-zoomed-expected.png: Renamed from LayoutTests/platform/qt-5.0-wk2/fast/forms/datalist/input-appearance-range-with-datalist-zoomed-expected.png.
+        * platform/qt/fast/forms/datalist/input-appearance-range-with-padding-with-datalist-expected.png: Renamed from LayoutTests/platform/qt-5.0-wk2/fast/forms/datalist/input-appearance-range-with-padding-with-datalist-expected.png.
+        * platform/qt/fast/forms/datalist/input-appearance-range-with-transform-expected.png: Added.
+        * platform/qt/fast/forms/number/number-appearance-rtl-expected.png:
+        * platform/qt/fast/forms/number/number-appearance-spinbutton-disabled-readonly-expected.png:
+        * platform/qt/fast/forms/select-baseline-expected.png:
+        * platform/qt/fast/inline/continuation-outlines-expected.png:
+        * platform/qt/fast/layers/scroll-with-transform-composited-layer-expected.png: Added.
+        * platform/qt/fast/layers/scroll-with-transform-layer-expected.png: Renamed from LayoutTests/platform/qt-5.0-wk2/fast/layers/scroll-with-transform-layer-expected.png.
+        * platform/qt/fast/multicol/vertical-lr/float-avoidance-expected.png:
+        * platform/qt/fast/multicol/vertical-rl/float-avoidance-expected.png:
+        * platform/qt/fast/overflow/overflow-with-local-background-attachment-expected.png:
+        * platform/qt/fast/regions/webkit-flow-inlines-inside-regions-bounds-vertical-expected.png:
+        * platform/qt/fast/regions/webkit-flow-inlines-inside-regions-bounds-vertical-rl-expected.png:
+        * platform/qt/fast/repaint/line-flow-with-floats-in-regions-expected.png:
+        * platform/qt/fast/repaint/reflection-repaint-test-expected.png:
+        * platform/qt/fast/repaint/region-painting-invalidation-expected.png:
+        * platform/qt/fast/repaint/region-painting-via-layout-expected.png:
+        * platform/qt/fast/repaint/transform-repaint-descendants-expected.png:
+        * platform/qt/fast/replaced/selection-rect-transform-expected.png:
+        * platform/qt/fast/table/035-vertical-expected.png:
+        * platform/qt/fast/table/border-collapsing/001-expected.png:
+        * platform/qt/fast/table/border-collapsing/001-vertical-expected.png:
+        * platform/qt/fast/table/border-collapsing/004-vertical-expected.png:
+        * platform/qt/fast/transforms/transform-table-row-expected.png:
+        * platform/qt/fast/transforms/transformed-caret-expected.png:
+        * platform/qt/fast/writing-mode/box-shadow-vertical-lr-expected.png:
+        * platform/qt/fast/writing-mode/box-shadow-vertical-rl-expected.png:
+        * platform/qt/svg/W3C-SVG-1.1/animate-elem-11-t-expected.png:
+        * platform/qt/svg/W3C-SVG-1.1/animate-elem-22-b-expected.png:
+        * platform/qt/svg/W3C-SVG-1.1/animate-elem-33-t-expected.png:
+        * platform/qt/svg/W3C-SVG-1.1/animate-elem-84-t-expected.png:
+        * platform/qt/svg/W3C-SVG-1.1/filters-composite-02-b-expected.png:
+        * platform/qt/svg/W3C-SVG-1.1/filters-comptran-01-b-expected.png:
+        * platform/qt/svg/W3C-SVG-1.1/fonts-kern-01-t-expected.png:
+        * platform/qt/svg/W3C-SVG-1.1/masking-path-03-b-expected.png:
+        * platform/qt/svg/W3C-SVG-1.1/paths-data-04-t-expected.png:
+        * platform/qt/svg/W3C-SVG-1.1/paths-data-06-t-expected.png:
+        * platform/qt/svg/W3C-SVG-1.1/paths-data-08-t-expected.png:
+        * platform/qt/svg/W3C-SVG-1.1/pservers-grad-07-b-expected.png:
+        * platform/qt/svg/W3C-SVG-1.1/text-align-02-b-expected.png:
+        * platform/qt/svg/W3C-SVG-1.1/text-path-01-b-expected.png:
+        * platform/qt/svg/W3C-SVG-1.1/text-tspan-01-b-expected.png:
+        * platform/qt/svg/W3C-SVG-1.1/types-basicDOM-01-b-expected.png:
+        * platform/qt/svg/W3C-SVG-1.2-Tiny/struct-use-recursion-01-t-expected.png:
+        * platform/qt/svg/W3C-SVG-1.2-Tiny/struct-use-recursion-02-t-expected.png:
+        * platform/qt/svg/W3C-SVG-1.2-Tiny/struct-use-recursion-03-t-expected.png:
+        * platform/qt/svg/as-background-image/svg-as-background-5-expected.png:
+        * platform/qt/svg/batik/paints/patternPreserveAspectRatioA-expected.png:
+        * platform/qt/svg/batik/text/smallFonts-expected.png:
+        * platform/qt/svg/batik/text/textAnchor-expected.png:
+        * platform/qt/svg/batik/text/textGlyphOrientationHorizontal-expected.png:
+        * platform/qt/svg/batik/text/textOnPath-expected.png:
+        * platform/qt/svg/batik/text/textOnPath2-expected.png:
+        * platform/qt/svg/batik/text/textOnPathSpaces-expected.png:
+        * platform/qt/svg/batik/text/verticalText-expected.png:
+        * platform/qt/svg/batik/text/verticalTextOnPath-expected.png:
+        * platform/qt/svg/batik/text/xmlSpace-expected.png:
+        * platform/qt/svg/carto.net/button-expected.png:
+        * platform/qt/svg/carto.net/colourpicker-expected.png:
+        * platform/qt/svg/carto.net/slider-expected.png:
+        * platform/qt/svg/carto.net/textbox-expected.png:
+        * platform/qt/svg/carto.net/window-expected.png:
+        * platform/qt/svg/css/text-shadow-multiple-expected.png:
+        * platform/qt/svg/custom/feComponentTransfer-Discrete-expected.png:
+        * platform/qt/svg/custom/feComponentTransfer-Gamma-expected.png:
+        * platform/qt/svg/custom/feComponentTransfer-Linear-expected.png:
+        * platform/qt/svg/custom/feComponentTransfer-Table-expected.png:
+        * platform/qt/svg/custom/focus-ring-expected.png:
+        * platform/qt/svg/custom/font-face-simple-expected.png:
+        * platform/qt/svg/custom/foreign-object-skew-expected.png:
+        * platform/qt/svg/custom/invalid-css-expected.png:
+        * platform/qt/svg/custom/marker-default-width-height-expected.png:
+        * platform/qt/svg/custom/no-inherited-dashed-stroke-expected.png:
+        * platform/qt/svg/custom/preserve-aspect-ratio-syntax-expected.png:
+        * platform/qt/svg/custom/shapes-supporting-markers-expected.png:
+        * platform/qt/svg/custom/stroked-pattern-expected.png:
+        * platform/qt/svg/custom/text-rotated-gradient-expected.png:
+        * platform/qt/svg/custom/text-tref-03-b-change-href-dom-expected.png:
+        * platform/qt/svg/custom/text-tref-03-b-change-href-expected.png:
+        * platform/qt/svg/custom/text-tref-03-b-referenced-element-removal-expected.png:
+        * platform/qt/svg/custom/text-tref-03-b-tref-removal-expected.png:
+        * platform/qt/svg/custom/tref-own-content-removal-expected.png:
+        * platform/qt/svg/custom/use-detach-expected.png:
+        * platform/qt/svg/custom/viewbox-syntax-expected.png:
+        * platform/qt/svg/dom/SVGLengthList-appendItem-expected.png: Renamed from LayoutTests/platform/qt-5.0-wk2/svg/dom/SVGLengthList-appendItem-expected.png.
+        * platform/qt/svg/dom/SVGLengthList-basics-expected.png: Renamed from LayoutTests/platform/qt-5.0-wk2/svg/dom/SVGLengthList-basics-expected.png.
+        * platform/qt/svg/dom/SVGLengthList-getItem-expected.png: Added.
+        * platform/qt/svg/dom/SVGLengthList-initialize-expected.png: Added.
+        * platform/qt/svg/dom/SVGLengthList-insertItemBefore-expected.png: Renamed from LayoutTests/platform/qt-5.0-wk2/svg/dom/SVGLengthList-insertItemBefore-expected.png.
+        * platform/qt/svg/dom/SVGLengthList-removeItem-expected.png: Renamed from LayoutTests/platform/qt-5.0-wk2/svg/dom/SVGLengthList-removeItem-expected.png.
+        * platform/qt/svg/dom/SVGLengthList-replaceItem-expected.png: Added.
+        * platform/qt/svg/dom/SVGLengthList-xml-dom-modifications-expected.png: Renamed from LayoutTests/platform/qt-5.0-wk2/svg/dom/SVGLengthList-xml-dom-modifications-expected.png.
+        * platform/qt/svg/dom/SVGLocatable-getCTM-svg-root-expected.png: Renamed from LayoutTests/platform/qt-5.0-wk2/svg/dom/SVGLocatable-getCTM-svg-root-expected.png.
+        * platform/qt/svg/dom/SVGNumberList-basics-expected.png: Renamed from LayoutTests/platform/qt-5.0-wk2/svg/dom/SVGNumberList-basics-expected.png.
+        * platform/qt/svg/dom/SVGPathSegList-appendItem-expected.png: Renamed from LayoutTests/platform/qt-5.0-wk2/svg/dom/SVGPathSegList-appendItem-expected.png.
+        * platform/qt/svg/dom/SVGPathSegList-clear-and-initialize-expected.png: Renamed from LayoutTests/platform/qt-5.0-wk2/svg/dom/SVGPathSegList-clear-and-initialize-expected.png.
+        * platform/qt/svg/dom/SVGPathSegList-insertItemBefore-expected.png: Renamed from LayoutTests/platform/qt-5.0-wk2/svg/dom/SVGPathSegList-insertItemBefore-expected.png.
+        * platform/qt/svg/dom/SVGPathSegList-removeItem-expected.png: Renamed from LayoutTests/platform/qt-5.0-wk2/svg/dom/SVGPathSegList-removeItem-expected.png.
+        * platform/qt/svg/dom/SVGPathSegList-replaceItem-expected.png: Renamed from LayoutTests/platform/qt-5.0-wk2/svg/dom/SVGPathSegList-replaceItem-expected.png.
+        * platform/qt/svg/dom/SVGPathSegList-xml-dom-synchronization-expected.png: Renamed from LayoutTests/platform/qt-5.0-wk2/svg/dom/SVGPathSegList-xml-dom-synchronization-expected.png.
+        * platform/qt/svg/dom/SVGPointList-basics-expected.png: Renamed from LayoutTests/platform/qt-5.0-wk2/svg/dom/SVGPointList-basics-expected.png.
+        * platform/qt/svg/dom/SVGStringList-basics-expected.png: Renamed from LayoutTests/platform/qt-5.0-wk2/svg/dom/SVGStringList-basics-expected.png.
+        * platform/qt/svg/dom/SVGTransformList-basics-expected.png: Renamed from LayoutTests/platform/qt-5.0-wk2/svg/dom/SVGTransformList-basics-expected.png.
+        * platform/qt/svg/dynamic-updates/SVGUseElement-svgdom-href1-prop-expected.png:
+        * platform/qt/svg/hixie/perf/003-expected.png:
+        * platform/qt/svg/text/select-textLength-spacing-squeeze-3-expected.png:
+        * platform/qt/svg/text/select-textLength-spacing-stretch-1-expected.png:
+        * platform/qt/svg/text/select-textLength-spacingAndGlyphs-squeeze-1-expected.png:
+        * platform/qt/svg/text/select-textLength-spacingAndGlyphs-stretch-1-expected.png:
+        * platform/qt/svg/text/select-x-list-1-expected.png:
+        * platform/qt/svg/text/select-x-list-with-tspans-1-expected.png:
+        * platform/qt/svg/text/small-fonts-2-expected.png:
+        * platform/qt/svg/text/small-fonts-3-expected.png:
+        * platform/qt/svg/text/text-align-01-b-expected.png:
+        * platform/qt/svg/text/text-align-02-b-expected.png:
+        * platform/qt/svg/text/text-align-03-b-expected.png:
+        * platform/qt/svg/text/text-align-06-b-expected.png:
+        * platform/qt/svg/text/text-fonts-02-t-expected.png:
+        * platform/qt/svg/text/text-path-01-b-expected.png:
+        * platform/qt/svg/text/text-text-03-b-expected.png:
+        * platform/qt/svg/text/text-text-05-t-expected.png:
+        * platform/qt/svg/text/text-tref-01-b-expected.png:
+        * platform/qt/svg/text/text-tselect-01-b-expected.png:
+        * platform/qt/svg/text/text-tspan-01-b-expected.png:
+        * platform/qt/svg/transforms/animated-path-inside-transformed-html-expected.png:
+        * platform/qt/svg/transforms/svg-css-transforms-expected.png:
+        * platform/qt/svg/transforms/text-with-mask-with-svg-transform-expected.png:
+        * platform/qt/svg/transforms/text-with-pattern-inside-transformed-html-expected.png:
+        * platform/qt/svg/transforms/text-with-pattern-with-svg-transform-expected.png:
+        * platform/qt/svg/zoom/page/zoom-mask-with-percentages-expected.png:
+        * platform/qt/svg/zoom/text/zoom-coords-viewattr-01-b-expected.png:
+        * platform/qt/svg/zoom/text/zoom-foreignObject-expected.png:
+        * platform/qt/tables/mozilla/bugs/bug6674-expected.png:
+        * platform/qt/tables/mozilla/marvin/backgr_position-table-expected.png:
+        * platform/qt/tables/mozilla/marvin/backgr_simple-table-cell-expected.png:
+        * platform/qt/tables/mozilla/marvin/backgr_simple-table-expected.png:
+        * platform/qt/tables/mozilla/marvin/backgr_simple-table-row-group-expected.png:
+        * platform/qt/tables/mozilla_expected_failures/marvin/backgr_border-table-cell-expected.png:
+        * platform/qt/tables/mozilla_expected_failures/marvin/backgr_border-table-column-expected.png:
+        * platform/qt/tables/mozilla_expected_failures/marvin/backgr_border-table-column-group-expected.png:
+        * platform/qt/tables/mozilla_expected_failures/marvin/backgr_border-table-expected.png:
+        * platform/qt/tables/mozilla_expected_failures/marvin/backgr_border-table-quirks-expected.png:
+        * platform/qt/tables/mozilla_expected_failures/marvin/backgr_border-table-row-expected.png:
+        * platform/qt/tables/mozilla_expected_failures/marvin/backgr_border-table-row-group-expected.png:
+        * platform/qt/tables/mozilla_expected_failures/marvin/backgr_fixed-bg-expected.png:
+        * platform/qt/tables/mozilla_expected_failures/marvin/backgr_layers-hide-expected.png:
+        * platform/qt/tables/mozilla_expected_failures/marvin/backgr_position-table-cell-expected.png:
+        * platform/qt/tables/mozilla_expected_failures/marvin/backgr_position-table-column-expected.png:
+        * platform/qt/tables/mozilla_expected_failures/marvin/backgr_position-table-column-group-expected.png:
+        * platform/qt/tables/mozilla_expected_failures/marvin/backgr_position-table-row-expected.png:
+        * platform/qt/tables/mozilla_expected_failures/marvin/backgr_position-table-row-group-expected.png:
+        * platform/qt/tables/mozilla_expected_failures/marvin/table_overflow_dirty_reflow_tbody-expected.png:
+        * platform/qt/transforms/svg-vs-css-expected.png:
+
 2012-12-19  Kunihiko Sakamoto  <ksakamoto@chromium.org>
 
         INPUT_MULTIPLE_FIELDS_UI: Make year field readonly if min and max have the same year
