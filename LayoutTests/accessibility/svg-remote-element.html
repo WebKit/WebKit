@@ -3,13 +3,14 @@
 <body>
 <script src="../fast/js/resources/js-test-pre.js"></script>
 
+<br><br>
+
 <img tabindex="0" id="svg-image" src="resources/svg-face.svg" alt="interactive SVG" >
 
 <div id="console"></div>
 <script>
 
 description("This test ensures that accessibility elements can be created out of what a remote SVG image defines.")
-window.jsTestIsAsync = true;
 
 // Return the page's relative coordinates. If we rely on the x() or y() of the accessibility object, then
 // accessibility transforms are applied that fail because there is no window available
@@ -22,6 +23,7 @@ function pageY(element) {
 }
 
 if (window.accessibilityController) {
+    window.testRunner.waitUntilDone();
     document.getElementById("svg-image").addEventListener("load", runAXTest);
 }
 
@@ -58,10 +60,10 @@ function runAXTest() {
     debug('Mouth role: ' + mouth.role);
     debug('Mouth label: ' + mouth.description);
     debug('MouthX: ' + (pageX(mouth) - x));
-    debug('MouthY: ' + Math.floor(Math.abs(pageY(mouth) - y)));
+    debug('MouthY: ' + Math.abs(pageY(mouth) - y));
     debug('<br>');
 
-    finishJSTest();
+    window.testRunner.notifyDone();
 }
 
 </script>

@@ -94,8 +94,6 @@ private:
     void isValidGetterCallback(CppVariant*);
     void isReadOnlyGetterCallback(CppVariant*);
     void orientationGetterCallback(CppVariant*);
-    void clickPointXGetterCallback(CppVariant*);
-    void clickPointYGetterCallback(CppVariant*);
 
     // Bound methods.
     void allAttributesCallback(const CppArgumentList&, CppVariant*);
