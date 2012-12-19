@@ -539,7 +539,7 @@ WebInspector.SettingsController.prototype =
      */
     _mouseUp: function(event)
     {
-        this.showSettingsScreen(WebInspector.SettingsScreen.Tabs.General);
+        this.showSettingsScreen();
     },
 
     _onHideSettingsScreen: function()

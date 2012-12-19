@@ -1,3 +1,15 @@
+2012-12-19  Alexander Pavlov  <apavlov@chromium.org>
+
+        Web Inspector: [REGRESSION] The last remembered tab is not restored when the Settings dialog is opened
+        https://bugs.webkit.org/show_bug.cgi?id=105414
+
+        Reviewed by Vsevolod Vlasov.
+
+        Do not force the "General" tab when opening settings upon the Cog button click.
+
+        * inspector/front-end/SettingsScreen.js:
+        (WebInspector.SettingsController.prototype._mouseUp):
+
 2012-12-19  Renata Hodovan  <reni@webkit.org>
 
         CSSParser crases, when no context is available, and the value is a valid keyword
