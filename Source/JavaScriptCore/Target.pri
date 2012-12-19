@@ -40,6 +40,7 @@ SOURCES += \
     API/JSClassRef.cpp \
     API/JSContextRef.cpp \
     API/JSObjectRef.cpp \
+    API/JSScriptRef.cpp \
     API/JSStringRef.cpp \
     API/JSValueRef.cpp \
     API/JSWeakObjectMapRefPrivate.cpp \

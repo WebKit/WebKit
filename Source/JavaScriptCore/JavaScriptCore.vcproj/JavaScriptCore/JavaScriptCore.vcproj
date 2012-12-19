@@ -1462,6 +1462,14 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\API\JSScriptRef.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\API\JSScriptRefPrivate.h"
+				>
+			</File>
+			<File
 				RelativePath="..\..\API\JSStringRef.cpp"
 				>
 			</File>

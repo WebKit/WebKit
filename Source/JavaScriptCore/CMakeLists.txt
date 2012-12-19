@@ -32,6 +32,7 @@ set(JavaScriptCore_SOURCES
     API/JSContextRef.cpp
     API/JSObjectRef.cpp
     API/JSProfilerPrivate.cpp
+    API/JSScriptRef.cpp
     API/JSStringRef.cpp
     API/JSValueRef.cpp
     API/JSWeakObjectMapRefPrivate.cpp
@@ -450,6 +451,7 @@ set(JavaScriptCore_FORWARDING_HEADERS_FILES
     API/JSContextRefPrivate.h
     API/JSObjectRef.h
     API/JSObjectRefPrivate.h
+    API/JSScriptRefPrivate.h
     API/JSStringRef.h
     API/JSStringRefCF.h
     API/JSStringRefBSTR.h
