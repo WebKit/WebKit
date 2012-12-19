@@ -723,7 +723,11 @@ sub builtDylibPathForName
     }
     if (isQt()) {
         my $isSearchingForWebCore = $libraryName =~ "WebCore";
-        $libraryName = "Qt5WebKitWidgets";
+        if (isDarwin() || isWindows()) {
+            $libraryName = "QtWebKitWidgets";
+        } else {
+            $libraryName = "Qt5WebKitWidgets";
+        }
         my $result;
         if (isDarwin() and -d "$configurationProductDir/lib/$libraryName.framework") {
             $result = "$configurationProductDir/lib/$libraryName.framework/$libraryName";
