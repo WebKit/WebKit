@@ -1,3 +1,20 @@
+2012-12-18  Alice Liu  <alice.liu@apple.com>
+
+        Test for https://bugs.webkit.org/show_bug.cgi?id=105262
+        Add SPI to WebKit1 WebFrame for node conversion to JSValueRef
+
+        Reviewed by Anders Carlsson.
+
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj: Added file Tests/mac/JSWrapperForNodeInWebFrame.mm.mm
+        * TestWebKitAPI/Tests/mac/JSWrapperForNodeInWebFrame.mm.mm: Added.
+        (TestWebKitAPI::TEST): Tests for the correct JS wrapper for a DOMNode, provided a WebScriptWorld.
+        Loads html with a single div element. In an isolated world, creates a property on that node.
+        Also, in the standard world, creates a different property on that node.  Then tests for 4 things:
+            - Existence of the isolated property in the isolated world.
+            - Existence of the standard property in the standard world.
+            - Non-existence of the isolated property in the standard world.
+            - Non-existence of the standard property in the isolated world.
+
 2012-12-18  Simon Fraser  <simon.fraser@apple.com>
 
         Disable the SimplifyMarkup API test, wich asserts in debug builds.

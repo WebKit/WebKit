@@ -76,6 +76,7 @@
 #import <WebCore/HTMLNames.h>
 #import <WebCore/HistoryItem.h>
 #import <WebCore/HitTestResult.h>
+#import <WebCore/JSNode.h>
 #import <WebCore/LegacyWebArchive.h>
 #import <WebCore/Page.h>
 #import <WebCore/PlatformEventFactoryMac.h>
@@ -1241,6 +1242,19 @@ static inline WebDataSource *dataSource(DocumentLoader* loader)
     for (size_t i = 0; i < size; ++i)
         [pages addObject:[NSValue valueWithRect:NSRect(pageRects[i])]];
     return pages;
+}
+
+- (JSValueRef)jsWrapperForNode:(DOMNode *)node inScriptWorld:(WebScriptWorld *)world
+{
+    Frame* coreFrame = _private->coreFrame;
+    if (!coreFrame)
+        return 0;
+
+    JSDOMWindow* globalObject = coreFrame->script()->globalObject(core(world));
+    JSC::ExecState* exec = globalObject->globalExec();
+
+    JSC::JSLockHolder lock(exec);
+    return toRef(exec, toJS(exec, globalObject, core(node)));
 }
 
 @end
