@@ -3,7 +3,7 @@
         Remove unnecessary functions from CookiesStrategy
         https://bugs.webkit.org/show_bug.cgi?id=105369
 
-        Reviewed by Sam Weinig.
+        Reviewed by Brady Eidson.
 
         Remove CookieJar functions that are only ever called from WebKit.
 
