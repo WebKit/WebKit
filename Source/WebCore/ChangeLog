@@ -1,3 +1,65 @@
+2012-12-18  Anton Vayvod  <avayvod@chromium.org>
+
+        Text Autosizing: containers wider than their enclosing clusters should be autosized as separate clusters
+        https://bugs.webkit.org/show_bug.cgi?id=103627
+
+        Reviewed by Julien Chaffraix.
+
+        Some blocks of texts might be wider than their parent clusters and need to be autosized separately.
+
+        isAutosizingCluster() now checks for the width of the container being greater than the width of the lowest
+        common ancestor of the text nodes of the enclosing cluster. This block containing all text is passed to all
+        tree traversal methods.
+        An overloaded version is added for cases when we don't have the lowest common ancestor yet.
+
+        The change fixes several cases covered by existing tests.
+
+        * rendering/TextAutosizer.cpp:
+        (WebCore::TextAutosizer::processSubtree):
+
+            Calls processCluster with a new number of arguments.
+
+        (WebCore::TextAutosizer::processCluster):
+
+            Passes block containing all text nodes into processContainer. Assertion removed since it can no longer be
+            checked without passing an additional parameter (the parent block containing all text) to the function
+            for the sake of this assertion only.
+
+        (WebCore::TextAutosizer::processContainer):
+
+            |parentBlockContainingAllText| parameter passed into isAutosizingCluster.
+
+        (WebCore::TextAutosizer::isAutosizingCluster(const RenderBlock*, const RenderBlock*)):
+
+            The overloaded method that is used when the render block checked is already known to be an autosizing
+            container and there's full information necessary to determine if it's a cluster like the parent block
+            containing all text within the enclosing cluster. 
+            Considers a block a cluster if it is wider than its parent block containing all text within enclosing
+            cluster.
+
+        (WebCore::TextAutosizer::isAutosizingCluster(const RenderObject*)):
+
+            The overloaded method that checks for the given object to be an autosizing container first (for
+            convenience of the caller) and doesn't require information about the parent cluster. Used when such
+            information is not available, for example, in the process of retrieving the information for the parent
+            cluster or when looking for the root cluster in the tree.
+
+        (WebCore::TextAutosizer::clusterShouldBeAutosized):
+
+            Passes new parameter to measureDescendantTextWidth.
+
+        (WebCore::TextAutosizer::measureDescendantTextWidth):
+
+            Uses blockContainingAllText parameter to pass to isAutosizingCluster.
+
+        (WebCore::TextAutosizer::findDeepestBlockContainingAllText):
+
+            Assertion removed since it can no longer be checked without passing an additional parameter (the
+            parent block containing all text) to the function for the sake of this assertion only.
+
+        (WebCore::TextAutosizer::findFirstTextLeafNotInCluster):
+            Uses shorter isAutosizingCluster call.
+
 2012-12-18  Alexey Proskuryakov  <ap@apple.com>
 
         Remove unnecessary functions from CookiesStrategy

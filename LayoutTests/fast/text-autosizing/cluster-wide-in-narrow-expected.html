@@ -17,13 +17,13 @@ body { width: 800px; margin: 0; overflow-y: hidden; }
         Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
     </div>
 
-    <div style="width: 800px; font-size: 1.25rem">
-        This text should be autosized to just 20px computed font-size (16 * 400/320), since despite its width:800px it is part of the 400px wide root cluster.<br>
+    <div style="width: 600px; font-size: 1.875rem">
+        This text should be autosized to 30px computed font-size (16 * 600/320), since its width:600px makes it wider than the lowest common ancestor of its enclosing cluster, hence it will itself become a cluster.<br>
         Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
     </div>
 
     <div style="font-size: 1.25rem">
-        This text should similarly be autosized to 20px.<br>
+        This text should be autosized to 20px computed font-size (16 * 400 / 320), since it's not an autosizing cluster itself and its parent element is the enclosing autosizing cluster which is 400px wide.<br>
         Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
     </div>
 </div>

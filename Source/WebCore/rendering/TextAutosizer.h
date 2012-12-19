@@ -28,17 +28,14 @@
 
 #if ENABLE(TEXT_AUTOSIZING)
 
-#include "IntSize.h"
 #include <wtf/Noncopyable.h>
 #include <wtf/PassOwnPtr.h>
-#include <wtf/PassRefPtr.h>
 
 namespace WebCore {
 
 class Document;
 class RenderBlock;
 class RenderObject;
-class RenderStyle;
 class RenderText;
 struct TextAutosizingWindowInfo;
 
@@ -63,22 +60,21 @@ private:
     explicit TextAutosizer(Document*);
 
     void processCluster(RenderBlock* cluster, RenderBlock* container, RenderObject* subtreeRoot, const TextAutosizingWindowInfo&);
-    void processContainer(float multiplier, RenderBlock* container, RenderObject* subtreeRoot, const TextAutosizingWindowInfo&);
+    void processContainer(float multiplier, RenderBlock* container, const RenderBlock* blockContainingAllText, RenderObject* subtreeRoot, const TextAutosizingWindowInfo&);
 
     void setMultiplier(RenderObject*, float);
 
     static bool isAutosizingContainer(const RenderObject*);
-    static bool isAutosizingCluster(const RenderBlock*);
+    static bool isAutosizingCluster(const RenderBlock*, const RenderBlock* parentBlockContainingAllText);
+    static bool isAutosizingCluster(const RenderObject*);
 
-    static bool containerShouldbeAutosized(const RenderBlock* container);
-    static bool clusterShouldBeAutosized(const RenderBlock* lowestCommonAncestor, float commonAncestorWidth);
-    static void measureDescendantTextWidth(const RenderBlock* container, float minTextWidth, float& textWidth);
+    static bool containerShouldBeAutosized(const RenderBlock* container);
+    static bool clusterShouldBeAutosized(const RenderBlock* blockContainingAllText, float blockWidth);
+    static void measureDescendantTextWidth(const RenderBlock* container, const RenderBlock* blockContainingAllText, float minTextWidth, float& textWidth);
 
     // Use to traverse the tree of descendants, excluding descendants of containers (but returning the containers themselves).
-    static RenderObject* nextInPreOrderSkippingDescendantsOfContainers(const RenderObject* current, const RenderObject* stayWithin);
+    static RenderObject* nextInPreOrderSkippingDescendantsOfContainers(const RenderObject*, const RenderObject* stayWithin);
 
-    // Finds the lowest common ancestor of the first and the last descendant
-    // text node (excluding those belonging to other autosizing clusters).
     static const RenderBlock* findDeepestBlockContainingAllText(const RenderBlock* cluster);
 
     // Depending on the traversal direction specified, finds the first or the last leaf text node child that doesn't

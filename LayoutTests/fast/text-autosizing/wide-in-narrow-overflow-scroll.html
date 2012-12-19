@@ -21,17 +21,17 @@ if (window.internals) {
 <body>
 
 <div style="width: 400px">
-  <div style="overflow-x: scroll">
-    <div style="width: 800px">
-        This text should be autosized to 20px computed font size (16 * 400/320), since this is part of the root cluster, whose text descendants are all contained within the 400px wide grandparent of this div.<br>
-        Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
+    <div style="overflow-x: scroll">
+        <div style="width: 800px">
+            This text should be autosized to 40px computed font size (16 * 800/320) since it's wider than the lowest common ancestor of  its enclosing cluster so it becomes a cluster itself.<br>
+            Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
+        </div>
     </div>
-  </div>
 
-  <div>
+    <div>
         This text should be autosized to 20px computed font size (16 * 400/320).<br>
         Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
-  </div>
+    </div>
 </div>
 
 </body>
