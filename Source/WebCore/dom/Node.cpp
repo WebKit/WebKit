@@ -2095,6 +2095,25 @@ ScriptExecutionContext* Node::scriptExecutionContext() const
     return document();
 }
 
+Node::InsertionNotificationRequest Node::insertedInto(ContainerNode* insertionPoint)
+{
+    ASSERT(insertionPoint->inDocument() || isContainerNode());
+    if (insertionPoint->inDocument())
+        setFlag(InDocumentFlag);
+    if (parentOrHostNode()->isInShadowTree())
+        setFlag(IsInShadowTreeFlag);
+    return InsertionDone;
+}
+
+void Node::removedFrom(ContainerNode* insertionPoint)
+{
+    ASSERT(insertionPoint->inDocument() || isContainerNode());
+    if (insertionPoint->inDocument())
+        clearFlag(InDocumentFlag);
+    if (isInShadowTree() && !treeScope()->rootNode()->isShadowRoot())
+        clearFlag(IsInShadowTreeFlag);
+}
+
 void Node::didMoveToNewDocument(Document* oldDocument)
 {
     TreeScopeAdopter::ensureDidMoveToNewDocumentWasCalled(oldDocument);
