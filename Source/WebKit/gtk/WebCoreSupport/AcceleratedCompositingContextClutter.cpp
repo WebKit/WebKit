@@ -221,6 +221,7 @@ void AcceleratedCompositingContext::flushAndRenderLayers()
     Frame* frame = core(m_webView)->mainFrame();
     if (!frame || !frame->contentRenderer() || !frame->view())
         return;
+    frame->view()->updateLayoutAndStyleIfNeededRecursive();
 
     if (!flushPendingLayerChanges())
         return;
@@ -228,11 +229,11 @@ void AcceleratedCompositingContext::flushAndRenderLayers()
 
 void AcceleratedCompositingContext::notifyAnimationStarted(const WebCore::GraphicsLayer*, double time)
 {
-    ASSERT_NOT_REACHED();
+    notImplemented();
 }
 void AcceleratedCompositingContext::notifyFlushRequired(const WebCore::GraphicsLayer*)
 {
-    ASSERT_NOT_REACHED();
+    notImplemented();
 }
 
 void AcceleratedCompositingContext::paintContents(const WebCore::GraphicsLayer*, WebCore::GraphicsContext& context, WebCore::GraphicsLayerPaintingPhase, const WebCore::IntRect& rectToPaint)

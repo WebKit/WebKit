@@ -1,3 +1,22 @@
+2012-12-18  ChangSeok Oh  <shivamidow@gmail.com>
+
+        [GTK][AC] Fix assertion failures for AC with clutter
+        https://bugs.webkit.org/show_bug.cgi?id=105039
+
+        Reviewed by Gustavo Noronha Silva.
+
+        AcceleratedCompositingContext could be a client of GraphicsLayerClutter
+        not only RenderLayerBacking. So inserting ASSERT_NOT_REACH in notifyFlushRequired()
+        causes a crash by calling GraphicsLayerClutter::noteLayerPropertyChanged in debug build.
+        And also I added flushCompositingStateIncludingSubframes taken from
+        AcceleratedCompositingContextGL to flushAndRenderLayers(). If not so,
+        ASSERT(!needsLayout()) failed in FrameView::paintContents() too in debug build.
+
+        * WebCoreSupport/AcceleratedCompositingContextClutter.cpp:
+        (WebKit::AcceleratedCompositingContext::flushAndRenderLayers): Add updateLayoutAndStyleIfNeededRecursive()
+        (WebKit::AcceleratedCompositingContext::notifyAnimationStarted): Removed ASSERT_NOT_REACHED()
+        (WebKit::AcceleratedCompositingContext::notifyFlushRequired): Removed ASSERT_NOT_REACHED()
+
 2012-12-15  Anders Carlsson  <andersca@apple.com>
 
         Rename FrameLoaderClient::download to convertMainResourceLoadToDownload
