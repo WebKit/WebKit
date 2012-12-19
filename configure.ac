@@ -681,6 +681,14 @@ AC_ARG_ENABLE(xslt,
               [],[enable_xslt="yes"])
 AC_MSG_RESULT([$enable_xslt])
 
+# check whether to enable unprefixed support for CSS Transforms, Animations and Transitions
+AC_MSG_CHECKING([whether to enable support for unprefixed CSS Transforms, Animations and Transitions])
+AC_ARG_ENABLE(xslt,
+              AC_HELP_STRING([--enable-unprefixed-css-transforms-animations-transitions],
+                             [enable support for for unprefixed CSS Transforms, Animations and Transitions [default=yes]]),
+              [],[enable_css_transforms_animations_transitions_unprefixed="yes"])
+AC_MSG_RESULT([$enable_css_transforms_animations_transitions_unprefixed])
+
 # check whether to enable geolocation support
 AC_MSG_CHECKING([whether to enable geolocation support])
 AC_ARG_ENABLE(geolocation,
@@ -1174,6 +1182,7 @@ AM_CONDITIONAL([ENABLE_PLUGIN_PROCESS],[test "$enable_plugin_process" = "yes"])
 AM_CONDITIONAL([ENABLE_SPELLCHECK],[test "$enable_spellcheck" = "yes"])
 AM_CONDITIONAL([ENABLE_CSS_FILTERS],[test "$enable_css_filters" = "yes"])
 AM_CONDITIONAL([ENABLE_CSS_SHADERS],[test "$enable_css_shaders" = "yes"])
+AM_CONDITIONAL([ENABLE_CSS_TRANSFORMS_ANIMATIONS_TRANSITIONS_UNPREFIXED],[test "$enable_css_transforms_animations_transitions_unprefixed" = "yes"])
 
 # Gtk conditionals
 AM_CONDITIONAL([ENABLE_INTROSPECTION],[test "$enable_introspection" = "yes"])
@@ -1237,6 +1246,7 @@ Features:
  SVG fonts support                                        : $enable_svg_fonts
  SVG support                                              : $enable_svg
  Spellcheck support                                       : $enable_spellcheck
+ Unprefixed support for CSS Transforms, animations and transtions : enable_css_transforms_animations_transitions_unprefixed
  Web Audio support                                        : $enable_web_audio
  WebGL                                                    : $enable_webgl
  XSLT support                                             : $enable_xslt

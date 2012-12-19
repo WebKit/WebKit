@@ -197,6 +197,15 @@ feature_defines_overrides += ENABLE_XSLT=0
 endif # END ENABLE_XSLT
 
 # ----
+# Unprefixed CSS Transforms, Animation and Transitions
+# ----
+if ENABLE_CSS_TRANSFORMS_ANIMATIONS_TRANSITIONS_UNPREFIXED
+feature_defines_overrides += ENABLE_CSS_TRANSFORMS_ANIMATIONS_TRANSITIONS_UNPREFIXED=1
+else
+feature_defines_overrides += ENABLE_CSS_TRANSFORMS_ANIMATIONS_TRANSITIONS_UNPREFIXED=0
+endif # END ENABLE_CSS_TRANSFORMS_ANIMATIONS_TRANSITIONS_UNPREFIXED
+
+# ----
 # Shaders
 # ----
 if ENABLE_CSS_SHADERS

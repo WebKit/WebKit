@@ -1,3 +1,19 @@
+2012-12-19  Alexis Menard  <alexis@webkit.org>
+
+        Implement CSS parsing for CSS transitions unprefixed.
+        https://bugs.webkit.org/show_bug.cgi?id=104804
+
+        Reviewed by Dean Jackson.
+
+        Add a new flag ENABLE_CSS_TRANSFORMS_ANIMATIONS_TRANSITIONS_UNPREFIXED
+        to cover the work of unprefixing Transforms, Animations and 
+        Transitions. It will let the possibility of each ports to turn it off 
+        in their release branches until we're confident that these CSS 
+        properties are ready to be unprefixed.
+
+        * win/tools/vsprops/FeatureDefines.vsprops:
+        * win/tools/vsprops/FeatureDefinesCairo.vsprops:
+
 2012-12-12  Roger Fong  <roger_fong@apple.com>
 
         Enable VIDEO_TRACK on Windows.
