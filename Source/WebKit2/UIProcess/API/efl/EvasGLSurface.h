@@ -39,7 +39,13 @@ public:
     {
         ASSERT(evasGL);
         ASSERT(cfg);
-        Evas_GL_Surface* surface = evas_gl_surface_create(evasGL, cfg, size.width(), size.height());
+
+        Evas_GL_Surface* surface = 0;
+
+        // Ensure that the surface is created with valid size.
+        if (size.width() && size.height())
+            surface = evas_gl_surface_create(evasGL, cfg, size.width(), size.height());
+
         if (!surface)
             return nullptr;
 

@@ -373,6 +373,9 @@ void EwkViewImpl::displayTimerFired(Timer<EwkViewImpl>*)
     if (m_pendingSurfaceResize) {
         // Create a GL surface here so that Evas has no chance of painting to an empty GL surface.
         createGLSurface(IntSize(sd->view.w, sd->view.h));
+        if (!m_evasGLSurface)
+            return;
+
         m_pendingSurfaceResize = false;
     } else
         evas_gl_make_current(m_evasGL.get(), evasGLSurface(), evasGLContext());
