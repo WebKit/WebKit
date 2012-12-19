@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html>
+<body style="margin: 0px">
+<div style="-webkit-writing-mode: vertical-rl; border: solid 1px black; font-family: Ahem">
+<br />
+<span style="display: inline-block"><a>b</a></span>
+</div>
+<div id="result"></div>
+<script>
+function runTests() {
+    var obj = document.elementFromPoint(5, 5);
+    var hitResult = (obj.nodeName.toLowerCase() == "a");
+    var result = document.getElementById("result");
+    result.innerHTML = hitResult ? "PASS" : "FAIL: We cannot hit a element at (5, 5)."
+    if (window.testRunner)
+        testRunner.dumpAsText();
+}
+runTests();
+</script>
+</body>
+</html>
