@@ -1,3 +1,17 @@
+2012-12-18  Tim Horton  <timothy_horton@apple.com>
+
+        fast/css/image-set-value-not-removed-crash.html should not InsertText with an apostrophe
+        https://bugs.webkit.org/show_bug.cgi?id=105375
+
+        Reviewed by Beth Dakin.
+
+        Don't InsertText text content with an apostrophe in it, as this can break
+        on platforms where apostrophes turn into curly quotes.
+
+        * fast/css/image-set-value-not-removed-crash-expected.txt:
+        * fast/css/image-set-value-not-removed-crash.html:
+        * platform/win/fast/css/image-set-value-not-removed-crash-expected.txt: Removed.
+
 2012-12-18  Levi Weintraub  <leviw@chromium.org>
 
         Input elements with default touch handlers don't update handler counts when changing documents

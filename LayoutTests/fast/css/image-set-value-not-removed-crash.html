@@ -30,7 +30,7 @@ function crash() {
     test1.setAttribute("class", "class1");
     docElement.appendChild(test1);
     document.execCommand("SelectAll", false, null)
-    document.execCommand("InsertText", false, "PASS. WebKit didn't crash.")
+    document.execCommand("InsertText", false, "PASS. WebKit did not crash.")
     for (i = 0; i != 49; i++)
          window.getSelection().modify("move", "forward", "character");
 
