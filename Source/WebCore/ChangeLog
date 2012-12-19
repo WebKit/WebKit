@@ -1,3 +1,29 @@
+2012-12-19  Tim Volodine  <timvolodine@chromium.org>
+
+        Text Autosizing: Work out what to do about form controls
+        https://bugs.webkit.org/show_bug.cgi?id=102560
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Disallow autosizing of form input controls like buttons, text input fields, selection controls, radio buttons
+        and check boxes. This is a short term solution to avoid inconsistent autosizing of form controls (which is
+        worse than not autosizing at all).
+
+        Tests: fast/text-autosizing/form-controls-autosizing-button-input-elements.html
+               fast/text-autosizing/form-controls-autosizing-checkbox-input-element.html
+               fast/text-autosizing/form-controls-autosizing-radio-input-element.html
+               fast/text-autosizing/form-controls-autosizing-select-element.html
+               fast/text-autosizing/form-controls-autosizing-textfield-input-elements.html
+
+        * rendering/TextAutosizer.cpp:
+        (WebCore):
+        (WebCore::formInputTags):
+        (WebCore::TextAutosizer::isAutosizingContainer):
+        (WebCore::TextAutosizer::contentHeightIsConstrained):
+        (WebCore::TextAutosizer::containerShouldBeAutosized):
+        (WebCore::TextAutosizer::containerContainsOneOfTags):
+        * rendering/TextAutosizer.h:
+
 2012-12-19  Vsevolod Vlasov  <vsevik@chromium.org>
 
         Web Inspector: Add Workspace.setFileContent() method

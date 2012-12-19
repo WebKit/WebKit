@@ -1,3 +1,24 @@
+2012-12-19  Tim Volodine  <timvolodine@chromium.org>
+
+        Text Autosizing: Work out what to do about form controls
+        https://bugs.webkit.org/show_bug.cgi?id=102560
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Tests for form input elements autosizing. Added tests to check that various kinds of form elements
+        don't get autosized, i.e. buttons, textareas, check boxes, radio button and selection menus.
+
+        * fast/text-autosizing/form-controls-autosizing-button-input-elements-expected.html: Added.
+        * fast/text-autosizing/form-controls-autosizing-button-input-elements.html: Added.
+        * fast/text-autosizing/form-controls-autosizing-checkbox-input-element-expected.html: Added.
+        * fast/text-autosizing/form-controls-autosizing-checkbox-input-element.html: Added.
+        * fast/text-autosizing/form-controls-autosizing-radio-input-element-expected.html: Added.
+        * fast/text-autosizing/form-controls-autosizing-radio-input-element.html: Added.
+        * fast/text-autosizing/form-controls-autosizing-select-element-expected.html: Added.
+        * fast/text-autosizing/form-controls-autosizing-select-element.html: Added.
+        * fast/text-autosizing/form-controls-autosizing-textfield-input-elements-expected.html: Added.
+        * fast/text-autosizing/form-controls-autosizing-textfield-input-elements.html: Added.
+
 2012-12-19  Csaba Osztrogonác  <ossy@webkit.org>
 
         [Qt] Unreviewed gardening, update pixel results.

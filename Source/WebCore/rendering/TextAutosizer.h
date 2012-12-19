@@ -28,6 +28,7 @@
 
 #if ENABLE(TEXT_AUTOSIZING)
 
+#include "HTMLNames.h"
 #include <wtf/Noncopyable.h>
 #include <wtf/PassOwnPtr.h>
 
@@ -69,6 +70,8 @@ private:
     static bool isAutosizingCluster(const RenderObject*);
 
     static bool containerShouldBeAutosized(const RenderBlock* container);
+    static bool containerContainsOneOfTags(const RenderBlock* cluster, const Vector<QualifiedName>& tags);
+    static bool contentHeightIsConstrained(const RenderBlock* container);
     static bool clusterShouldBeAutosized(const RenderBlock* blockContainingAllText, float blockWidth);
     static void measureDescendantTextWidth(const RenderBlock* container, const RenderBlock* blockContainingAllText, float minTextWidth, float& textWidth);
 

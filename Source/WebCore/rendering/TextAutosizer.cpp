@@ -25,6 +25,7 @@
 #include "TextAutosizer.h"
 
 #include "Document.h"
+#include "HTMLElement.h"
 #include "InspectorInstrumentation.h"
 #include "IntSize.h"
 #include "RenderObject.h"
@@ -35,13 +36,29 @@
 #include "StyleInheritedData.h"
 
 #include <algorithm>
+#include <wtf/StdLibExtras.h>
 
 namespace WebCore {
+
+using namespace HTMLNames;
 
 struct TextAutosizingWindowInfo {
     IntSize windowSize;
     IntSize minLayoutSize;
 };
+
+
+static const Vector<QualifiedName>& formInputTags()
+{
+    // Returns the tags for the form input elements.
+    DEFINE_STATIC_LOCAL(Vector<QualifiedName>, formInputTags, ());
+    if (formInputTags.isEmpty()) {
+        formInputTags.append(inputTag);
+        formInputTags.append(buttonTag);
+        formInputTags.append(selectTag);
+    }
+    return formInputTags;
+}
 
 TextAutosizer::TextAutosizer(Document* document)
     : m_document(document)
@@ -192,6 +209,11 @@ bool TextAutosizer::isAutosizingContainer(const RenderObject* renderer)
         return false;
     if (renderer->isListItem())
         return renderer->isFloating() || renderer->isOutOfFlowPositioned();
+    // Avoid creating containers for text within text controls, buttons, or <select> buttons.
+    Node* parentNode = renderer->parent() ? renderer->parent()->generatingNode() : 0;
+    if (parentNode && parentNode->isElementNode() && formInputTags().contains(toElement(parentNode)->tagQName()))
+        return false;
+
     return true;
 }
 
@@ -242,7 +264,35 @@ bool TextAutosizer::isAutosizingCluster(const RenderObject* object)
     return isAutosizingContainer(object) && isAutosizingCluster(toRenderBlock(object), 0);
 }
 
-static bool contentHeightIsConstrained(const RenderBlock* container)
+bool TextAutosizer::containerShouldBeAutosized(const RenderBlock* container)
+{
+    if (containerContainsOneOfTags(container, formInputTags()))
+        return false;
+
+    // Don't autosize block-level text that can't wrap (as it's likely to
+    // expand sideways and break the page's layout).
+    if (!container->style()->autoWrap())
+        return false;
+
+    return !contentHeightIsConstrained(container);
+}
+
+bool TextAutosizer::containerContainsOneOfTags(const RenderBlock* container, const Vector<QualifiedName>& tags)
+{
+    const RenderObject* renderer = container;
+    while (renderer) {
+        const Node* rendererNode = renderer->node();
+        if (rendererNode && rendererNode->isElementNode()) {
+            if (tags.contains(toElement(rendererNode)->tagQName()))
+                return true;
+        }
+        renderer = nextInPreOrderSkippingDescendantsOfContainers(renderer, container);
+    }
+
+    return false;
+}
+
+bool TextAutosizer::contentHeightIsConstrained(const RenderBlock* container)
 {
     // FIXME: Propagate constrainedness down the tree, to avoid inefficiently walking back up from each box.
     // FIXME: This code needs to take into account vertical writing modes.
@@ -260,16 +310,6 @@ static bool contentHeightIsConstrained(const RenderBlock* container)
             return false;
     }
     return false;
-}
-
-bool TextAutosizer::containerShouldBeAutosized(const RenderBlock* container)
-{
-    // Don't autosize block-level text that can't wrap (as it's likely to
-    // expand sideways and break the page's layout).
-    if (!container->style()->autoWrap())
-        return false;
-
-    return !contentHeightIsConstrained(container);
 }
 
 bool TextAutosizer::clusterShouldBeAutosized(const RenderBlock* blockContainingAllText, float blockWidth)
