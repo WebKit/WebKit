@@ -1,3 +1,14 @@
+2012-12-19  Zan Dobersek  <zandobersek@gmail.com>
+
+        Unreviewed GTK gardening.
+
+        Rebaselining two tests after r137953 and r138102.
+        Updating test expectations as necessary.
+
+        * platform/gtk/TestExpectations:
+        * platform/gtk/editing/selection/move-by-character-6-expected.txt:
+        * platform/gtk/fast/css/image-set-value-not-removed-crash-expected.txt:
+
 2012-12-19  Arpita Bahuguna  <arpitabahuguna@gmail.com>
 
         Unable to place the caret at the end of the first line, when followed by a block, in the vertical writing mode.
