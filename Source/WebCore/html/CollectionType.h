@@ -60,6 +60,7 @@ enum CollectionType {
     ClassNodeListType,
     NameNodeListType,
     TagNodeListType,
+    HTMLTagNodeListType,
     RadioNodeListType,
     LabelsNodeListType,
     MicroDataItemListType,

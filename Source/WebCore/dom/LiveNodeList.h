@@ -103,6 +103,7 @@ public:
 protected:
     Document* document() const { return m_ownerNode->document(); }
     Node* rootNode() const;
+    ContainerNode* rootContainerNode() const;
     bool overridesItemAfter() const { return m_overridesItemAfter; }
 
     ALWAYS_INLINE bool isItemCacheValid() const { return m_isItemCacheValid; }
@@ -133,15 +134,16 @@ protected:
     bool hasNameCache() const { return m_isNameCacheValid; }
     void setHasNameCache() const { m_isNameCacheValid = true; }
 
-    Node* itemBeforeOrAfterCachedItem(unsigned offset) const;
-    Node* itemAfter(unsigned&, Node* previousItem) const;
+    bool shouldOnlyIncludeDirectChildren() const { return m_shouldOnlyIncludeDirectChildren; }
 
 private:
-    bool shouldOnlyIncludeDirectChildren() const { return m_shouldOnlyIncludeDirectChildren; }
+    Node* itemBeforeOrAfterCachedItem(unsigned offset, ContainerNode* root) const;
+    Node* traverseChildNodeListForwardToOffset(unsigned offset, Node* currentNode, unsigned& currentOffset) const;
+    Element* traverseLiveNodeListFirstElement(ContainerNode* root) const;
+    Element* traverseLiveNodeListForwardToOffset(unsigned offset, Element* currentElement, unsigned& currentOffset, ContainerNode* root) const;
     bool isLastItemCloserThanLastOrCachedItem(unsigned offset) const;
     bool isFirstItemCloserThanCachedItem(unsigned offset) const;
-    template <bool forward> Node* iterateForNextNode(Node* current) const;
-    template<bool forward> Node* itemBeforeOrAfter(Node* previousItem) const;    
+    Node* iterateForPreviousNode(Node* current) const;
     Node* itemBefore(Node* previousItem) const;
 
     RefPtr<Node> m_ownerNode;

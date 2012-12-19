@@ -1,3 +1,109 @@
+2012-12-19  Antti Koivisto  <antti@apple.com>
+
+        Use ElementTraversal in LiveNodeListBase
+        https://bugs.webkit.org/show_bug.cgi?id=105324
+
+        Reviewed by Ryosuke Niwa.
+
+        Factor the code so that we get clean minimally branchy traversal functions for all the common cases.
+
+        This patch changes the more performance critical forward traversal only, backwards traversal is unaffected for now.
+
+        Instruments thinks it is a progression at least in DOM/DOMDivWalk.html. Bots should tell more.
+
+        * dom/ClassNodeList.cpp:
+        (WebCore::ClassNodeList::nodeMatches):
+        * dom/ClassNodeList.h:
+        (ClassNodeList):
+        (WebCore::ClassNodeList::create):
+        (WebCore):
+        (WebCore::ClassNodeList::nodeMatchesInlined):
+
+            Add inlined version of the matching function for class lists.
+
+        * dom/LiveNodeList.cpp:
+        (WebCore::LiveNodeListBase::rootContainerNode):
+
+            Root is always ContainerNode if the list has anything in it. Traversal functions are slightly more
+            efficient if we know we are operating on ContainerNodes.
+
+        (WebCore):
+        * dom/LiveNodeList.h:
+        (LiveNodeListBase):
+        (WebCore::LiveNodeListBase::shouldOnlyIncludeDirectChildren):
+        * dom/Node.cpp:
+        (WebCore::Node::getElementsByTagName):
+        * dom/TagNodeList.cpp:
+        (WebCore::TagNodeList::TagNodeList):
+        (WebCore::TagNodeList::~TagNodeList):
+        (WebCore::HTMLTagNodeList::HTMLTagNodeList):
+        (WebCore::HTMLTagNodeList::nodeMatches):
+        * dom/TagNodeList.h:
+        (WebCore):
+        (TagNodeList):
+        (WebCore::TagNodeList::create):
+        (HTMLTagNodeList):
+        (WebCore::HTMLTagNodeList::create):
+
+            Use separate ContainerType enum value for HTMLTagNodeList so we can tell it apart from TagNodeList.
+
+        (WebCore::HTMLTagNodeList::nodeMatchesInlined):
+
+            Add inlined version of the matching function for tag lists.
+
+        * html/CollectionType.h:
+        * html/HTMLCollection.cpp:
+        (WebCore::shouldOnlyIncludeDirectChildren):
+        (WebCore::rootTypeFromCollectionType):
+        (WebCore::invalidationTypeExcludingIdAndNameAttributes):
+        (WebCore):
+        (WebCore::isMatchingElement):
+        
+            List type templated matching functions for common cases.
+
+        (WebCore::HTMLCollection::HTMLCollection):
+        (WebCore::HTMLCollection::create):
+        (WebCore::HTMLCollection::~HTMLCollection):
+        (WebCore::previousNode):
+        (WebCore::lastNode):
+        (WebCore::LiveNodeListBase::iterateForPreviousNode):
+        (WebCore::LiveNodeListBase::itemBefore):
+
+            Leave the backwards traversal unchanged for now but remove the forward traversal code.
+
+        (WebCore::firstMatchingElement):
+        (WebCore::nextMatchingElement):
+        (WebCore::firstMatchingChildElement):
+        (WebCore::nextMatchingChildElement):
+        (WebCore::traverseMatchingElementsForwardToOffset):
+
+            List type templated traversal functions with matching. Separate functions for first and subsequent elements
+
+        (WebCore::LiveNodeListBase::traverseChildNodeListForwardToOffset):
+        (WebCore::LiveNodeListBase::traverseLiveNodeListFirstElement):
+        (WebCore::LiveNodeListBase::traverseLiveNodeListForwardToOffset):
+
+            LiveNodeList traversal, picking the right template.
+
+        (WebCore::LiveNodeListBase::item):
+        (WebCore::LiveNodeListBase::itemBeforeOrAfterCachedItem):
+
+            Switch to new traversal functions.
+
+        (WebCore::HTMLCollection::traverseFirstElement):
+        (WebCore::HTMLCollection::traverseForwardToOffset):
+        (WebCore::HTMLCollection::traverseNextElement):
+
+            HTMLCollection traversal, picking the right template.
+
+        (WebCore::HTMLCollection::namedItem):
+        (WebCore::HTMLCollection::updateNameCache):
+
+            Switch to new traversal functions.
+
+        * html/HTMLCollection.h:
+        (HTMLCollection):
+
 2012-12-19  Alexey Proskuryakov  <ap@apple.com>
 
         <rdar://problem/12896478> Cannot log into gmail/facebook with NetworkProcess and private browsing enabled

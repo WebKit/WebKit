@@ -50,15 +50,7 @@ ClassNodeList::~ClassNodeList()
 
 bool ClassNodeList::nodeMatches(Element* testNode) const
 {
-    if (!testNode->hasClass())
-        return false;
-    if (!m_classNames.size())
-        return false;
-    // FIXME: DOM4 allows getElementsByClassName to return non StyledElement.
-    // https://bugs.webkit.org/show_bug.cgi?id=94718
-    if (!testNode->isStyledElement())
-        return false;
-    return testNode->classNames().containsAll(m_classNames);
+    return nodeMatchesInlined(testNode);
 }
 
 } // namespace WebCore

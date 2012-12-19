@@ -30,29 +30,45 @@
 #ifndef ClassNodeList_h
 #define ClassNodeList_h
 
+#include "Element.h"
 #include "LiveNodeList.h"
 #include "Node.h"
 #include "SpaceSplitString.h"
 
 namespace WebCore {
 
-    class ClassNodeList : public LiveNodeList {
-    public:
-        static PassRefPtr<ClassNodeList> create(PassRefPtr<Node> rootNode, const String& classNames)
-        {
-            return adoptRef(new ClassNodeList(rootNode, classNames));
-        }
+class ClassNodeList : public LiveNodeList {
+public:
+    static PassRefPtr<ClassNodeList> create(PassRefPtr<Node> rootNode, const String& classNames)
+    {
+        return adoptRef(new ClassNodeList(rootNode, classNames));
+    }
 
-        virtual ~ClassNodeList();
+    virtual ~ClassNodeList();
 
-    private:
-        ClassNodeList(PassRefPtr<Node> rootNode, const String& classNames);
+    bool nodeMatchesInlined(Element*) const;
 
-        virtual bool nodeMatches(Element*) const;
+private:
+    ClassNodeList(PassRefPtr<Node> rootNode, const String& classNames);
 
-        SpaceSplitString m_classNames;
-        String m_originalClassNames;
-    };
+    virtual bool nodeMatches(Element*) const;
+
+    SpaceSplitString m_classNames;
+    String m_originalClassNames;
+};
+
+inline bool ClassNodeList::nodeMatchesInlined(Element* testNode) const
+{
+    if (!testNode->hasClass())
+        return false;
+    if (!m_classNames.size())
+        return false;
+    // FIXME: DOM4 allows getElementsByClassName to return non StyledElement.
+    // https://bugs.webkit.org/show_bug.cgi?id=94718
+    if (!testNode->isStyledElement())
+        return false;
+    return testNode->classNames().containsAll(m_classNames);
+}
 
 } // namespace WebCore
 
