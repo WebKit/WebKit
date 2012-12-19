@@ -87,8 +87,7 @@ TEST(WTF, clampToIntLongLong)
     EXPECT_EQ(clampTo<int>(underflowInt), minInt);
 }
 
-// https://bugs.webkit.org/show_bug.cgi?id=105253
-TEST(WTF, DISABLED_clampToIntegerFloat)
+TEST(WTF, clampToIntegerFloat)
 {
     // This test is inaccurate as floats will round the min / max integer
     // due to the narrow mantissa. However it will properly checks within
@@ -101,10 +100,11 @@ TEST(WTF, DISABLED_clampToIntegerFloat)
     EXPECT_GT(overflowInt, maxInt);
     EXPECT_LT(underflowInt, minInt);
 
-    EXPECT_EQ(clampToInteger(maxInt), maxInt);
+    // If maxInt == 2^31 - 1 (ie on I32 architecture), the closest float used to represent it is 2^31.
+    EXPECT_NEAR(clampToInteger(maxInt), maxInt, 1);
     EXPECT_EQ(clampToInteger(minInt), minInt);
 
-    EXPECT_EQ(clampToInteger(overflowInt), maxInt);
+    EXPECT_NEAR(clampToInteger(overflowInt), maxInt, 1);
     EXPECT_EQ(clampToInteger(underflowInt), minInt);
 }
 
@@ -143,17 +143,6 @@ TEST(WTF, clampToFloat)
 
     EXPECT_EQ(clampToFloat(std::numeric_limits<float>::infinity()), maxFloat);
     EXPECT_EQ(clampToFloat(-std::numeric_limits<float>::infinity()), minFloat);
-}
-
-// https://bugs.webkit.org/show_bug.cgi?id=105253
-TEST(WTF, DISABLED_clampToUnsigned)
-{
-    unsigned long maxUnsigned = std::numeric_limits<unsigned>::max();
-    unsigned long overflowUnsigned = maxUnsigned + 1;
-    EXPECT_EQ(clampTo<unsigned>(maxUnsigned), maxUnsigned);
-
-    EXPECT_EQ(clampTo<unsigned>(overflowUnsigned), maxUnsigned);
-    EXPECT_EQ(clampTo<unsigned>(-1), 0u);
 }
 
 TEST(WTF, clampToUnsignedLong)
