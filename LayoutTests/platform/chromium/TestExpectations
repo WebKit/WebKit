@@ -1388,7 +1388,6 @@ crbug.com/10322 platform/mac/accessibility
 crbug.com/10322 platform/win/accessibility
 crbug.com/10322 accessibility/aria-activedescendant-crash.html [ Skip ]
 crbug.com/10322 accessibility/aria-combobox.html [ Skip ]
-crbug.com/10322 accessibility/aria-controls-with-tabs.html [ Skip ]
 crbug.com/10322 accessibility/aria-invalid.html [ Skip ]
 crbug.com/10322 accessibility/aria-labelledby-overrides-label.html [ Skip ]
 crbug.com/10322 accessibility/aria-menubar-menuitems.html [ Skip ]

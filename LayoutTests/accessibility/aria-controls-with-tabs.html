@@ -30,9 +30,7 @@
 
     if (window.accessibilityController) {
 
-          var root = accessibilityController.rootElement;
-          var body = root.childAtIndex(0);
-          var tabList = body.childAtIndex(0);
+          var tabList = accessibilityController.accessibleElementById('tablist_1');
           var tab1 = tabList.childAtIndex(0);
           var tab2 = tabList.childAtIndex(1);
 
