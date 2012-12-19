@@ -1229,16 +1229,18 @@ bool CSSParser::parseValue(StylePropertySet* declaration, CSSPropertyID property
         return true;
     if (parseColorValue(declaration, propertyID, string, important, cssParserMode))
         return true;
-    if (parseKeywordValue(declaration, propertyID, string, important, contextStyleSheet->parserContext()))
-        return true;
-    if (parseTranslateTransformValue(declaration, propertyID, string, important))
-        return true;
 
     CSSParserContext context(cssParserMode);
     if (contextStyleSheet) {
         context = contextStyleSheet->parserContext();
         context.mode = cssParserMode;
     }
+
+    if (parseKeywordValue(declaration, propertyID, string, important, context))
+        return true;
+    if (parseTranslateTransformValue(declaration, propertyID, string, important))
+        return true;
+
     CSSParser parser(context);
     return parser.parseValue(declaration, propertyID, string, important, contextStyleSheet);
 }
