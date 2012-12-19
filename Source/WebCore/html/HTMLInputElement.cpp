@@ -163,7 +163,7 @@ HTMLInputElement::~HTMLInputElement()
         document()->formController()->checkedRadioButtons().removeButton(this);
 #if ENABLE(TOUCH_EVENTS)
     if (m_hasTouchEventHandler)
-        document()->didRemoveTouchEventHandler(this);
+        document()->didRemoveEventTargetNode(this);
 #endif
 }
 
@@ -488,11 +488,11 @@ void HTMLInputElement::updateType()
 #if ENABLE(TOUCH_EVENTS)
     bool hasTouchEventHandler = m_inputType->hasTouchEventHandler();
     if (hasTouchEventHandler != m_hasTouchEventHandler) {
-      if (hasTouchEventHandler)
-        document()->didAddTouchEventHandler(this);
-      else
-        document()->didRemoveTouchEventHandler(this);
-      m_hasTouchEventHandler = hasTouchEventHandler;
+        if (hasTouchEventHandler)
+            document()->didAddTouchEventHandler(this);
+        else
+            document()->didRemoveTouchEventHandler(this);
+        m_hasTouchEventHandler = hasTouchEventHandler;
     }
 #endif
 
@@ -1499,10 +1499,19 @@ void HTMLInputElement::didMoveToNewDocument(Document* oldDocument)
             oldDocument->unregisterForPageCacheSuspensionCallbacks(this);
         if (isRadioButton())
             oldDocument->formController()->checkedRadioButtons().removeButton(this);
+#if ENABLE(TOUCH_EVENTS)
+        if (m_hasTouchEventHandler)
+            oldDocument->didRemoveEventTargetNode(this);
+#endif
     }
 
     if (needsSuspensionCallback)
         document()->registerForPageCacheSuspensionCallbacks(this);
+
+#if ENABLE(TOUCH_EVENTS)
+    if (m_hasTouchEventHandler)
+        document()->didAddTouchEventHandler(this);
+#endif
 
     HTMLTextFormControlElement::didMoveToNewDocument(oldDocument);
 }

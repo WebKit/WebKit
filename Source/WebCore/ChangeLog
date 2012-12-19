@@ -1,3 +1,27 @@
+2012-12-18  Levi Weintraub  <leviw@chromium.org>
+
+        Input elements with default touch handlers don't update handler counts when changing documents
+        https://bugs.webkit.org/show_bug.cgi?id=105334
+
+        Reviewed by James Robinson.
+
+        When an Input element with default touch event handlers changes documents, it failed to
+        update the touch event handler sets in both the old and new document. This patch fixes this
+        case.
+
+        Test: fast/events/touch/touch-input-element-change-documents.html
+
+        * dom/Document.h:
+        (WebCore::Document::didRemoveTouchEventTargetNode) This function makes sense when touch
+        handling is enabled, regardless of whether we're tracking the rects.
+        * dom/Document.cpp:
+        * html/HTMLInputElement.cpp:
+        (WebCore::HTMLInputElement::~HTMLInputElement): Switch from didRemoveTouchEventHandler to
+        didRemoveTouchEventTargetNode, since we don't care about counts in the destructor.
+        (WebCore::HTMLInputElement::updateType): Fixing incorrect indentation.
+        (WebCore::HTMLInputElement::didMoveToNewDocument): Adding the node to the new document and
+        removing it from the old.
+
 2012-12-18  Mark Lam  <mark.lam@apple.com>
 
         Fixed bad merge in "Initial refactoring of database functionality into the manager and server".

@@ -1,0 +1,12 @@
+This test checks that we correctly update the touch event handler count when an Input element with default touch handlers changes documents.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS window.internals.touchEventHandlerCount(document) is 0
+PASS window.internals.touchEventHandlerCount(document) is 0
+PASS window.internals.touchEventHandlerCount(document) is 2
+PASS window.internals.touchEventHandlerCount(document) is 3
+PASS window.internals.touchEventHandlerCount(document) is 2
+PASS window.internals.touchEventHandlerCount(document) is 0
+

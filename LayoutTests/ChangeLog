@@ -1,3 +1,13 @@
+2012-12-18  Levi Weintraub  <leviw@chromium.org>
+
+        Input elements with default touch handlers don't update handler counts when changing documents
+        https://bugs.webkit.org/show_bug.cgi?id=105334
+
+        Reviewed by James Robinson.
+
+        * fast/events/touch/touch-input-element-change-documents-expected.txt: Added.
+        * fast/events/touch/touch-input-element-change-documents.html: Added.
+
 2012-12-18  Simon Fraser  <simon.fraser@apple.com>
 
         Skip two asserting tests in Debug.

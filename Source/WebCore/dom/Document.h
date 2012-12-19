@@ -1128,7 +1128,7 @@ public:
     void didAddTouchEventHandler(Node*);
     void didRemoveTouchEventHandler(Node*);
 
-#if ENABLE(TOUCH_EVENT_TRACKING)
+#if ENABLE(TOUCH_EVENTS)
     void didRemoveEventTargetNode(Node*);
 #endif
 
