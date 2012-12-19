@@ -49,7 +49,7 @@ PassRefPtr<HTMLTitleElement> HTMLTitleElement::create(const QualifiedName& tagNa
 Node::InsertionNotificationRequest HTMLTitleElement::insertedInto(ContainerNode* insertionPoint)
 {
     HTMLElement::insertedInto(insertionPoint);
-    if (insertionPoint->inDocument())
+    if (inDocument() && !isInShadowTree())
         document()->setTitleElement(m_title, this);
     return InsertionDone;
 }
@@ -57,7 +57,7 @@ Node::InsertionNotificationRequest HTMLTitleElement::insertedInto(ContainerNode*
 void HTMLTitleElement::removedFrom(ContainerNode* insertionPoint)
 {
     HTMLElement::removedFrom(insertionPoint);
-    if (insertionPoint->inDocument())
+    if (insertionPoint->inDocument() && !insertionPoint->isInShadowTree())
         document()->removeTitle(this);
 }
 
@@ -65,8 +65,12 @@ void HTMLTitleElement::childrenChanged(bool changedByParser, Node* beforeChange,
 {
     HTMLElement::childrenChanged(changedByParser, beforeChange, afterChange, childCountDelta);
     m_title = textWithDirection();
-    if (inDocument())
-        document()->setTitleElement(m_title, this);
+    if (inDocument()) {
+        if (!isInShadowTree())
+            document()->setTitleElement(m_title, this);
+        else
+            document()->removeTitle(this);
+    }
 }
 
 String HTMLTitleElement::text() const
