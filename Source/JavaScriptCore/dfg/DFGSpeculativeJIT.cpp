@@ -438,7 +438,7 @@ JITCompiler::JumpList SpeculativeJIT::jumpSlowForUnwantedArrayMode(GPRReg tempGP
             }
             m_jit.and32(TrustedImm32(IsArray | IndexingShapeMask), tempGPR);
             result.append(
-                m_jit.branch32(invert ? MacroAssembler::Equal : MacroAssembler::NotEqual, tempGPR, TrustedImm32(ArrayStorageShape)));
+                m_jit.branch32(invert ? MacroAssembler::Equal : MacroAssembler::NotEqual, tempGPR, TrustedImm32(IsArray | ArrayStorageShape)));
             break;
         }
         m_jit.and32(TrustedImm32(IndexingShapeMask), tempGPR);

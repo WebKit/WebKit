@@ -1,0 +1,10 @@
+Tests that creating an indexed setter on the global object doesn't break things.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS thingy is "foo"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+
