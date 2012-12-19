@@ -1,0 +1,29 @@
+Tests for ShadowRoot JS APIs. Can only run within DRT
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS window.ShadowRoot is undefined.
+PASS window.WebKitShadowRoot is defined.
+PASS new window.WebKitShadowRoot(document.createElement('div')) threw exception TypeError: '[object ShadowRootConstructor]' is not a constructor (evaluating 'new window.WebKitShadowRoot(document.createElement('div'))').
+PASS shadowRoot instanceof window.WebKitShadowRoot is true
+PASS shadowRoot.getElementById('div1') is div1
+PASS shadowRoot.getElementById('foo') is null
+PASS shadowRoot.getElementsByClassName('class2') is [div2]
+PASS shadowRoot.getElementsByClassName('foo') is []
+PASS shadowRoot.getElementsByTagName('div') is [div1, div2]
+PASS shadowRoot.getElementsByTagName('foo') is []
+PASS shadowRoot.getElementsByTagNameNS('*', 'div') is [div1, div2]
+PASS shadowRoot.getElementsByTagNameNS('', 'div') is []
+PASS shadowRoot.getElementsByTagNameNS('*', 'foo') is []
+PASS shadowRoot.querySelector('#div1') is div1
+PASS shadowRoot.querySelector('#foo') is null
+PASS shadowRoot.querySelector('.class2') is div2
+PASS shadowRoot.querySelector('.foo') is null
+PASS shadowRoot.querySelectorAll('div') is [div1, div2]
+PASS shadowRoot.querySelectorAll('foo') is []
+PASS youngerShadowRoot is not shadowRoot
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

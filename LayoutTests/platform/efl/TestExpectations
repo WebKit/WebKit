@@ -744,6 +744,8 @@ webkit.org/b/100636 [ Debug ] jquery/traversing.html [ Failure Crash Pass ]
 
 webkit.org/b/102928 svg/foreignObject/viewport-foreignobject-crash.html [ Crash Failure Pass ]
 
+webkit.org/b/105444 fast/selectors/querySelector-in-range-crash.html [ Crash Pass ]
+
 # Issue with timing for suspend/resumeAnimations()?
 webkit.org/b/49182 animations/stop-animation-on-suspend.html [ Failure Pass ]
 
