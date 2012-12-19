@@ -94,6 +94,10 @@ WebInspector.CPUProfileView = function(profile)
             return;
         }
         this.profile.head = profile.head;
+
+        if (profile.idleTime)
+            this._injectIdleTimeNode();
+
         this._assignParentsInProfile();
         this._changeView();
         this._updatePercentButton();
@@ -534,6 +538,39 @@ WebInspector.CPUProfileView.prototype = {
                     nodesToTraverse.push({ parent: children[i], children: children[i].children });
             }
         }
+    },
+
+    _injectIdleTimeNode: function()
+    {
+        var profile = this.profile;
+        var idleTime = profile.idleTime;
+        var nodes = profile.head.children;
+
+        var programNode = {selfTime: 0};
+        for (var i = nodes.length - 1; i >= 0; --i) {
+            if (nodes[i].functionName === "(program)") {
+                programNode = nodes[i];
+                break;
+            }
+        }
+        var programTime = programNode.selfTime;
+        if (idleTime > programTime)
+            idleTime = programTime;
+        programTime = programTime - idleTime;
+        programNode.selfTime = programTime;
+        programNode.totalTime = programTime;
+        var idleNode = {
+            functionName: "(idle)",
+            url: null,
+            lineNumber: 0,
+            totalTime: idleTime,
+            selfTime: idleTime,
+            numberOfCalls: 0,
+            visible: true,
+            callUID: 0,
+            children: []
+        };
+        nodes.push(idleNode);
     },
 
     __proto__: WebInspector.View.prototype
