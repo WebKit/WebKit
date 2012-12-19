@@ -323,6 +323,8 @@
 		31A2EC5614899C0900810D71 /* NotificationPermissionRequest.h in Headers */ = {isa = PBXBuildFile; fileRef = 31A2EC531489982500810D71 /* NotificationPermissionRequest.h */; };
 		31A2EC74148D59CA00810D71 /* WKNotificationPermissionRequest.h in Headers */ = {isa = PBXBuildFile; fileRef = 31A2EC72148D59BB00810D71 /* WKNotificationPermissionRequest.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		31A2EC77148D662E00810D71 /* WKNotificationPermissionRequest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 31A2EC75148D65BB00810D71 /* WKNotificationPermissionRequest.cpp */; };
+		31A505F91680025500A930EB /* WebContextClient.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 31A505F71680025500A930EB /* WebContextClient.cpp */; };
+		31A505FA1680025500A930EB /* WebContextClient.h in Headers */ = {isa = PBXBuildFile; fileRef = 31A505F81680025500A930EB /* WebContextClient.h */; };
 		31A67E0C165B2A99006CBA66 /* PlugInAutoStartProvider.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 31A67E0A165B2A99006CBA66 /* PlugInAutoStartProvider.cpp */; };
 		31A67E0D165B2A99006CBA66 /* PlugInAutoStartProvider.h in Headers */ = {isa = PBXBuildFile; fileRef = 31A67E0B165B2A99006CBA66 /* PlugInAutoStartProvider.h */; };
 		31BA924D148831260062EDB5 /* WebNotificationManagerMessageReceiver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 31BA9248148830810062EDB5 /* WebNotificationManagerMessageReceiver.cpp */; };
@@ -1551,6 +1553,8 @@
 		31A2EC541489982E00810D71 /* NotificationPermissionRequest.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = NotificationPermissionRequest.cpp; sourceTree = "<group>"; };
 		31A2EC72148D59BB00810D71 /* WKNotificationPermissionRequest.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WKNotificationPermissionRequest.h; sourceTree = "<group>"; };
 		31A2EC75148D65BB00810D71 /* WKNotificationPermissionRequest.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WKNotificationPermissionRequest.cpp; sourceTree = "<group>"; };
+		31A505F71680025500A930EB /* WebContextClient.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebContextClient.cpp; sourceTree = "<group>"; };
+		31A505F81680025500A930EB /* WebContextClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebContextClient.h; sourceTree = "<group>"; };
 		31A67E0A165B2A99006CBA66 /* PlugInAutoStartProvider.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PlugInAutoStartProvider.cpp; sourceTree = "<group>"; };
 		31A67E0B165B2A99006CBA66 /* PlugInAutoStartProvider.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PlugInAutoStartProvider.h; sourceTree = "<group>"; };
 		31BA9248148830810062EDB5 /* WebNotificationManagerMessageReceiver.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebNotificationManagerMessageReceiver.cpp; sourceTree = "<group>"; };
@@ -3518,6 +3522,8 @@
 				BCB9E2421120DACA00A137E0 /* WebContext.cpp */,
 				BCB9E2411120DACA00A137E0 /* WebContext.h */,
 				BCEE7D0912846AED009827DA /* WebContext.messages.in */,
+				31A505F71680025500A930EB /* WebContextClient.cpp */,
+				31A505F81680025500A930EB /* WebContextClient.h */,
 				BC09B8F6147460F7005F5625 /* WebContextConnectionClient.cpp */,
 				BC09B8F7147460F7005F5625 /* WebContextConnectionClient.h */,
 				BCDE059A11CDA8AE00E41AF1 /* WebContextInjectedBundleClient.cpp */,
@@ -5016,6 +5022,7 @@
 				31D5929F166E060000E6BF02 /* WebPlugInClient.h in Headers */,
 				1AD25E96167AB08100EA9BCD /* DownloadProxyMap.h in Headers */,
 				2989A414167D184B004F96D2 /* CustomProtocolManager.h in Headers */,
+				31A505FA1680025500A930EB /* WebContextClient.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -5990,6 +5997,7 @@
 				1AD25E95167AB08100EA9BCD /* DownloadProxyMap.cpp in Sources */,
 				BCF18638167D071E00A1A85A /* CacheModel.cpp in Sources */,
 				2989A411167D1834004F96D2 /* CustomProtocolManagerMac.mm in Sources */,
+				31A505F91680025500A930EB /* WebContextClient.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

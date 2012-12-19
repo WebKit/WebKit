@@ -39,6 +39,15 @@ enum {
 };
 typedef uint32_t WKCacheModel;
 
+// Context Client
+struct WKContextClient {
+    int                                                                 version;
+    const void *                                                        clientInfo;
+};
+typedef struct WKContextClient WKContextClient;
+
+enum { kWKContextClientCurrentVersion = 0 };
+
 // Injected Bundle Client
 typedef void (*WKContextDidReceiveMessageFromInjectedBundleCallback)(WKContextRef page, WKStringRef messageName, WKTypeRef messageBody, const void *clientInfo);
 typedef void (*WKContextDidReceiveSynchronousMessageFromInjectedBundleCallback)(WKContextRef page, WKStringRef messageName, WKTypeRef messageBody, WKTypeRef* returnData, const void *clientInfo);
@@ -134,6 +143,7 @@ WK_EXPORT WKTypeID WKContextGetTypeID();
 WK_EXPORT WKContextRef WKContextCreate();
 WK_EXPORT WKContextRef WKContextCreateWithInjectedBundlePath(WKStringRef path);
 
+WK_EXPORT void WKContextSetClient(WKContextRef context, const WKContextClient* client);
 WK_EXPORT void WKContextSetInjectedBundleClient(WKContextRef context, const WKContextInjectedBundleClient* client);
 WK_EXPORT void WKContextSetHistoryClient(WKContextRef context, const WKContextHistoryClient* client);
 WK_EXPORT void WKContextSetDownloadClient(WKContextRef context, const WKContextDownloadClient* client);

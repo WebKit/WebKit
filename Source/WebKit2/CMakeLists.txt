@@ -254,6 +254,7 @@ set(WebKit2_SOURCES
     UIProcess/WebColorPickerResultListenerProxy.cpp
     UIProcess/WebConnectionToWebProcess.cpp
     UIProcess/WebContext.cpp
+    UIProcess/WebContextClient.cpp
     UIProcess/WebContextConnectionClient.cpp
     UIProcess/WebContextInjectedBundleClient.cpp
     UIProcess/WebContextMenuProxy.cpp

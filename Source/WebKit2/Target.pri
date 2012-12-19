@@ -245,6 +245,7 @@ HEADERS += \
     UIProcess/WebColorPickerResultListenerProxy.h \
     UIProcess/WebConnectionToWebProcess.h \
     UIProcess/WebContext.h \
+    UIProcess/WebContextClient.h \
     UIProcess/WebContextConnectionClient.h \
     UIProcess/WebContextInjectedBundleClient.h \
     UIProcess/WebContextMenuProxy.h \
@@ -607,6 +608,7 @@ SOURCES += \
     UIProcess/WebColorPickerResultListenerProxy.cpp \
     UIProcess/WebConnectionToWebProcess.cpp \
     UIProcess/WebContext.cpp \
+    UIProcess/WebContextClient.cpp \
     UIProcess/WebContextConnectionClient.cpp \
     UIProcess/WebContextInjectedBundleClient.cpp \
     UIProcess/WebContextMenuProxy.cpp \

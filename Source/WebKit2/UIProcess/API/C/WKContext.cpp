@@ -62,6 +62,11 @@ WKContextRef WKContextCreateWithInjectedBundlePath(WKStringRef pathRef)
     return toAPI(context.release().leakRef());
 }
 
+void WKContextSetClient(WKContextRef contextRef, const WKContextClient* wkClient)
+{
+    toImpl(contextRef)->initializeClient(wkClient);
+}
+
 void WKContextSetInjectedBundleClient(WKContextRef contextRef, const WKContextInjectedBundleClient* wkClient)
 {
     toImpl(contextRef)->initializeInjectedBundleClient(wkClient);

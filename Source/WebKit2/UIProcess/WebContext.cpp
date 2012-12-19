@@ -260,6 +260,11 @@ WebContext::~WebContext()
 #endif
 }
 
+void WebContext::initializeClient(const WKContextClient* client)
+{
+    m_client.initialize(client);
+}
+
 void WebContext::initializeInjectedBundleClient(const WKContextInjectedBundleClient* client)
 {
     m_injectedBundleClient.initialize(client);

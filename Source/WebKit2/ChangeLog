@@ -1,3 +1,35 @@
+2012-12-18  Jon Lee  <jonlee@apple.com>
+
+        [WK2] Create a context client
+        https://bugs.webkit.org/show_bug.cgi?id=105316
+        <rdar://problem/12901762>
+
+        Reviewed by Brady Eidson.
+
+        Web contexts already have clients related to downloads or history.
+        Miscellaneous callbacks can be grouped into a generic client for the
+        web context.
+
+        * UIProcess/API/C/WKContext.cpp:
+        (WKContextSetClient): Set the client for the context.
+        * UIProcess/API/C/WKContext.h: Define a new, empty WKContextClient.
+
+        * UIProcess/WebContext.cpp:
+        (WebKit::WebContext::initializeClient):
+        * UIProcess/WebContext.h: Add a variable for the new client. Move the
+        download client so that all the clients are grouped together.
+        (WebKit::WebContext::client): Returns the context client.
+        * UIProcess/WebContextClient.cpp: Added. Currently empty, but will be
+        filled out in a pending patch.
+        * UIProcess/WebContextClient.h: Added.
+
+        Add WebContextClient.{h,cpp}.
+        * CMakeLists.txt:
+        * GNUmakefile.list.am:
+        * Target.pri:
+        * WebKit2.xcodeproj/project.pbxproj:
+        * win/WebKit2.vcproj:
+
 2012-12-18  Ivan Krstić  <ike@apple.com>
 
         <rdar://problem/12720539> per-pid private temporary directories for sandboxed webkit2 plugins

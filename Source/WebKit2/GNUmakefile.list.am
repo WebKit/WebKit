@@ -858,6 +858,8 @@ webkit2_sources += \
 	Source/WebKit2/UIProcess/WebConnectionToWebProcess.h \
 	Source/WebKit2/UIProcess/WebContext.cpp \
 	Source/WebKit2/UIProcess/WebContext.h \
+	Source/WebKit2/UIProcess/WebContextClient.cpp \
+	Source/WebKit2/UIProcess/WebContextClient.h \
 	Source/WebKit2/UIProcess/WebContextConnectionClient.cpp \
 	Source/WebKit2/UIProcess/WebContextConnectionClient.h \
 	Source/WebKit2/UIProcess/WebContextInjectedBundleClient.cpp \

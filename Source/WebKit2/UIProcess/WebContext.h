@@ -35,6 +35,7 @@
 #include "PluginInfoStore.h"
 #include "ProcessModel.h"
 #include "VisitedLinkProvider.h"
+#include "WebContextClient.h"
 #include "WebContextConnectionClient.h"
 #include "WebContextInjectedBundleClient.h"
 #include "WebDownloadClient.h"
@@ -102,6 +103,7 @@ public:
     bool dispatchMessage(CoreIPC::Connection*, CoreIPC::MessageID, CoreIPC::MessageDecoder&);
     bool dispatchSyncMessage(CoreIPC::Connection*, CoreIPC::MessageID, CoreIPC::MessageDecoder&, OwnPtr<CoreIPC::MessageEncoder>&);
 
+    void initializeClient(const WKContextClient*);
     void initializeInjectedBundleClient(const WKContextInjectedBundleClient*);
     void initializeConnectionClient(const WKContextConnectionClient*);
     void initializeHistoryClient(const WKContextHistoryClient*);
@@ -186,6 +188,7 @@ public:
     WebDownloadClient& downloadClient() { return m_downloadClient; }
 
     WebHistoryClient& historyClient() { return m_historyClient; }
+    WebContextClient& client() { return m_client; }
 
     static HashSet<String, CaseFoldingHash> pdfAndPostScriptMIMETypes();
 
@@ -367,8 +370,9 @@ private:
     String m_injectedBundlePath;
     WebContextInjectedBundleClient m_injectedBundleClient;
 
+    WebContextClient m_client;
     WebContextConnectionClient m_connectionClient;
-
+    WebDownloadClient m_downloadClient;
     WebHistoryClient m_historyClient;
 
 #if ENABLE(NETSCAPE_PLUGIN_API)
@@ -398,8 +402,6 @@ private:
 
     CacheModel m_cacheModel;
 
-    WebDownloadClient m_downloadClient;
-    
     bool m_memorySamplerEnabled;
     double m_memorySamplerInterval;
 
