@@ -1,3 +1,21 @@
+2012-12-19  Alexey Proskuryakov  <ap@apple.com>
+
+        <rdar://problem/12896478> Cannot log into gmail/facebook with NetworkProcess and private browsing enabled
+        https://bugs.webkit.org/show_bug.cgi?id=105454
+
+        Reviewed by Brady Eidson.
+
+        Request was using a wrong session after a redirect, because session cannot be
+        preserved over IPC.
+
+        Just set the storage session after calling the client, it is not really meaningful
+        for a client to change session behind WebKit's back.
+
+        * platform/network/cf/ResourceHandleCFNet.cpp:
+        (WebCore::ResourceHandle::willSendRequest):
+        * platform/network/mac/ResourceHandleMac.mm:
+        (WebCore::ResourceHandle::willSendRequest):
+
 2012-12-19  Alexis Menard  <alexis@webkit.org>
 
         Implement CSS parsing for CSS transitions unprefixed.
