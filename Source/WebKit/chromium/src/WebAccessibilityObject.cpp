@@ -692,6 +692,9 @@ WebAccessibilityObject WebAccessibilityObject::titleUIElement() const
     if (isDetached())
         return WebAccessibilityObject();
 
+    if (!m_private->exposesTitleUIElement())
+        return WebAccessibilityObject();
+
     return WebAccessibilityObject(m_private->titleUIElement());
 }
 

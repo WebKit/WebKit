@@ -1,0 +1,13 @@
+Shut down computer after  minutes
+This tests that if aria-labelledby is used, then label elements are not used
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS text.description is 'AXDescription: Shut down computer after 10 minutes'
+PASS text.titleUIElement() != null && text.titleUIElement().isValid is false
+Label element role is: AXRole: AXGroup
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

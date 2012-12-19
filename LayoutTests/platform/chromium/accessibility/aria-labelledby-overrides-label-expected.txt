@@ -6,7 +6,7 @@ On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE
 
 PASS text.description is 'AXDescription: Shut down computer after 10 minutes'
 PASS text.titleUIElement() != null && text.titleUIElement().isValid is false
-PASS labelElement.role is 'AXRole: AXStaticText'
+Label element role is: AXRole: AXLabel
 PASS successfullyParsed is true
 
 TEST COMPLETE

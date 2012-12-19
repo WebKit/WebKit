@@ -5,7 +5,7 @@
 </head>
 <body id="body">
 
-<span id="labelShutdown"><label for="shutdownTime">Shut down computer after</label></span>
+<span id="labelShutdown"><label id="labelElement" for="shutdownTime">Shut down computer after</label></span>
 <input id="shutdownTime" type="text" value="10" aria-labelledby="labelShutdown shutdownTime shutdownUnit" />
 <span id="shutdownUnit">minutes</span>
 
@@ -27,12 +27,10 @@
           // There should be no title UI element.
           shouldBe("text.titleUIElement() != null && text.titleUIElement().isValid", "false");
           
-          // The label element is in a group, in a group, in the web area.
-          var labelElement = accessibilityController.rootElement.childAtIndex(0).childAtIndex(0).childAtIndex(0).childAtIndex(0);
-
+          var labelElement = accessibilityController.accessibleElementById("labelElement");
           // This just makes sure that the label element is still visible in the AX hierarchy, even though
           // it's a label element (sometimes they are ignored).
-          shouldBe("labelElement.role", "'AXRole: AXStaticText'");
+          debug("Label element role is: " + labelElement.role);
     }
 
 </script>
