@@ -30,51 +30,13 @@
 
 namespace WebCore {
 
-SharedX11Resources* SharedX11Resources::m_staticSharedResource = 0;
-
 static const int pbufferAttributes[] = { GLX_PBUFFER_WIDTH, 1, GLX_PBUFFER_HEIGHT, 1, 0 };
-
-GLXSurface::GLXSurface()
-    : GLPlatformSurface()
-{
-    m_sharedResources = SharedX11Resources::create();
-    m_sharedDisplay = m_sharedResources->display();
-}
-
-GLXSurface::~GLXSurface()
-{
-}
-
-XVisualInfo* GLXSurface::visualInfo()
-{
-    return m_sharedResources->visualInfo();
-}
-
-Window GLXSurface::xWindow()
-{
-    return m_sharedResources->getXWindow();
-}
-
-GLXFBConfig GLXSurface::pBufferConfiguration()
-{
-    return m_sharedResources->pBufferContextConfig();
-}
-
-GLXFBConfig GLXSurface::transportSurfaceConfiguration()
-{
-    return m_sharedResources->surfaceContextConfig();
-}
-
-bool GLXSurface::isXRenderExtensionSupported()
-{
-    return m_sharedResources->isXRenderExtensionSupported();
-}
 
 #if USE(GRAPHICS_SURFACE)
 GLXTransportSurface::GLXTransportSurface()
-    : GLXSurface()
+    : X11OffScreenWindow()
 {
-    initialize();
+    createOffscreenWindow();
 }
 
 GLXTransportSurface::~GLXTransportSurface()
@@ -83,7 +45,7 @@ GLXTransportSurface::~GLXTransportSurface()
 
 PlatformSurfaceConfig GLXTransportSurface::configuration()
 {
-    return transportSurfaceConfiguration();
+    return m_sharedResources->surfaceContextConfig();
 }
 
 void GLXTransportSurface::swapBuffers()
@@ -101,64 +63,15 @@ void GLXTransportSurface::swapBuffers()
         glXSwapBuffers(sharedDisplay(), m_drawable);
 }
 
-void GLXTransportSurface::setGeometry(const IntRect& newRect)
-{
-    GLPlatformSurface::setGeometry(newRect);
-    int width = newRect.width();
-    int height = newRect.height();
-    XResizeWindow(sharedDisplay(), m_drawable, width, height);
-}
-
-void GLXTransportSurface::initialize()
-{
-    Display* display = sharedDisplay();
-    GLXFBConfig config = transportSurfaceConfiguration();
-    if (!config)
-        return;
-
-    XVisualInfo* visInfo = visualInfo();
-    if (!visInfo)
-        return;
-
-    Colormap cmap = XCreateColormap(display, xWindow(), visInfo->visual, AllocNone);
-    XSetWindowAttributes attribute;
-    attribute.background_pixel = WhitePixel(display, 0);
-    attribute.border_pixel = BlackPixel(display, 0);
-    attribute.colormap = cmap;
-    m_drawable = XCreateWindow(display, xWindow(), 0, 0, 1, 1, 0, visInfo->depth, InputOutput, visInfo->visual, CWBackPixel | CWBorderPixel | CWColormap, &attribute);
-    if (!m_drawable)
-        return;
-
-    XSetWindowBackgroundPixmap(display, m_drawable, 0);
-    XCompositeRedirectWindow(display, m_drawable, CompositeRedirectManual);
-
-    if (isXRenderExtensionSupported())
-        XMapWindow(display, m_drawable);
-}
-
 void GLXTransportSurface::destroy()
 {
-    freeResources();
-    GLPlatformSurface::destroy();
+    destroyWindow();
 }
 
-void GLXTransportSurface::freeResources()
-{
-    if (!m_drawable)
-        return;
-
-    GLPlatformSurface::destroy();
-    Display* display = sharedDisplay();
-    if (!display)
-        return;
-
-    XDestroyWindow(display, m_drawable);
-    m_drawable = 0;
-}
 #endif
 
 GLXPBuffer::GLXPBuffer()
-    : GLXSurface()
+    : X11OffScreenWindow()
 {
     initialize();
 }
@@ -170,7 +83,7 @@ GLXPBuffer::~GLXPBuffer()
 void GLXPBuffer::initialize()
 {
     Display* display = sharedDisplay();
-    GLXFBConfig config = pBufferConfiguration();
+    GLXFBConfig config = m_sharedResources->pBufferContextConfig();
     if (!config)
         return;
 
@@ -179,7 +92,7 @@ void GLXPBuffer::initialize()
 
 PlatformSurfaceConfig GLXPBuffer::configuration()
 {
-    return pBufferConfiguration();
+    return m_sharedResources->pBufferContextConfig();
 }
 
 void GLXPBuffer::destroy()
@@ -199,6 +112,11 @@ void GLXPBuffer::freeResources()
 
     glXDestroyPbuffer(display, m_drawable);
     m_drawable = 0;
+}
+
+void GLXPBuffer::setGeometry(const IntRect& newRect)
+{
+    GLPlatformSurface::setGeometry(newRect);
 }
 
 }

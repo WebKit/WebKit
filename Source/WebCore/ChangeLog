@@ -1,3 +1,59 @@
+2012-12-19  Kondapally Kalyan  <kalyan.kondapally@intel.com>
+
+        [EFL][WebGL] Refactor GLXSurface.
+        https://bugs.webkit.org/show_bug.cgi?id=105357
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        This is in preparation for adding EGL support.
+        There is lot of X related code which could be shared between our current GLX implementation
+        and EGL. This patch makes it possible to share the common code but doesn't change any functionality.
+
+        * PlatformEfl.cmake:
+        * platform/graphics/surfaces/glx/GLXSurface.cpp:
+        (WebCore):
+        (WebCore::GLXTransportSurface::GLXTransportSurface):
+        (WebCore::GLXTransportSurface::configuration):
+        (WebCore::GLXTransportSurface::destroy):
+        (WebCore::GLXTransportSurface::freeResources):
+        (WebCore::GLXPBuffer::GLXPBuffer):
+        (WebCore::GLXPBuffer::initialize):
+        (WebCore::GLXPBuffer::configuration):
+        (WebCore::GLXPBuffer::setGeometry):
+        * platform/graphics/surfaces/glx/GLXSurface.h:
+        (GLXTransportSurface):
+        (GLXPBuffer):
+
+        GLX related implementation.
+        * platform/graphics/surfaces/glx/GLXWindowResources.h: Added.
+        (WebCore):
+        (SharedGLXResources):
+        (WebCore::SharedGLXResources::create):
+        (WebCore::SharedGLXResources::nativeDisplay):
+        (WebCore::SharedGLXResources::pBufferContextConfig):
+        (WebCore::SharedGLXResources::surfaceContextConfig):
+        (WebCore::SharedGLXResources::SharedGLXResources):
+        (WebCore::SharedGLXResources::createConfig):
+
+        Moving X related code to a seperate class.
+        * platform/graphics/surfaces/glx/X11WindowResources.cpp: Added.
+        (WebCore):
+        (WebCore::X11OffScreenWindow::X11OffScreenWindow):
+        (WebCore::X11OffScreenWindow::~X11OffScreenWindow):
+        (WebCore::X11OffScreenWindow::setGeometry):
+        (WebCore::X11OffScreenWindow::createOffscreenWindow):
+        * platform/graphics/surfaces/glx/X11WindowResources.h: Added.
+        (WebCore):
+        (SharedX11Resources):
+        (WebCore::SharedX11Resources::deref):
+        (WebCore::SharedX11Resources::x11Display):
+        (WebCore::SharedX11Resources::getXWindow):
+        (WebCore::SharedX11Resources::visualInfo):
+        (WebCore::SharedX11Resources::isXRenderExtensionSupported):
+        (WebCore::SharedX11Resources::SharedX11Resources):
+        (WebCore::SharedX11Resources::~SharedX11Resources):
+        (X11OffScreenWindow):
+
 2012-12-19  Tommy Widenflycht  <tommyw@chromium.org>
 
         [JSC] Add support for overloaded constructors

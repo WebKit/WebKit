@@ -276,6 +276,7 @@ if (WTF_USE_3D_GRAPHICS)
         platform/graphics/surfaces/glx/GLXSurface.cpp
         platform/graphics/surfaces/glx/GLXContext.cpp
         platform/graphics/surfaces/glx/GraphicsSurfaceGLX.cpp
+        platform/graphics/surfaces/glx/X11WindowResources.cpp
         platform/graphics/texmap/TextureMapperGL.cpp
         platform/graphics/texmap/TextureMapperShaderManager.cpp
     )
