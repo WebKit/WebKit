@@ -1,3 +1,25 @@
+2012-12-19  Arpita Bahuguna  <arpitabahuguna@gmail.com>
+
+        Unable to place the caret at the end of the first line, when followed by a block, in the vertical writing mode.
+        https://bugs.webkit.org/show_bug.cgi?id=104794
+
+        Reviewed by Ryosuke Niwa.
+
+        In the vertical writing mode, when trying to place the caret at the end
+        of a text line which is followed by a block, the local point sent as
+        part of the hitTest result in the mouse click event is not correct.
+
+        When clicking on the empty region (beyond the text) in the first line,
+        the local point computed is not in accordance with the writing mode.
+
+        Test: editing/selection/caret-at-end-of-text-line-followed-by-block-in-vertical-mode.html
+
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::nodeAtPoint):
+        Modified the code to handle the point as per the writing mode when
+        computing the hitTest result. Calling flipForWritingMode() on the
+        point for achieving the same.
+
 2012-12-19  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r138157.

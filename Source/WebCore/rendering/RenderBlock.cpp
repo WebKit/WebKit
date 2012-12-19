@@ -4760,7 +4760,7 @@ bool RenderBlock::nodeAtPoint(const HitTestRequest& request, HitTestResult& resu
         // Hit test contents if we don't have columns.
         if (!hasColumns()) {
             if (hitTestContents(request, result, locationInContainer, toLayoutPoint(scrolledOffset), hitTestAction)) {
-                updateHitTestResult(result, locationInContainer.point() - localOffset);
+                updateHitTestResult(result, flipForWritingMode(locationInContainer.point() - localOffset));
                 return true;
             }
             if (hitTestAction == HitTestFloat && hitTestFloats(request, result, locationInContainer, toLayoutPoint(scrolledOffset)))

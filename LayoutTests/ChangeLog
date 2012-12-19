@@ -1,3 +1,15 @@
+2012-12-19  Arpita Bahuguna  <arpitabahuguna@gmail.com>
+
+        Unable to place the caret at the end of the first line, when followed by a block, in the vertical writing mode.
+        https://bugs.webkit.org/show_bug.cgi?id=104794
+
+        Reviewed by Ryosuke Niwa.
+
+        * editing/selection/caret-at-end-of-text-line-followed-by-block-in-vertical-mode-expected.txt: Added.
+        * editing/selection/caret-at-end-of-text-line-followed-by-block-in-vertical-mode.html: Added.
+        Test added for verifying that a caret is painted at the end of the text
+        in the first vertical line, when followed by a block.
+
 2012-12-19  Hayato Ito  <hayato@chromium.org>
 
         Expose WebKitShadowRoot constructor to DOMWindow.
