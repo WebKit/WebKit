@@ -26,7 +26,7 @@ function setup()
 
     for (var i = 0; i < numShadowRoots; ++i) {
         var content = document.createElement('shadow');
-        var shadowRoot = new WebKitShadowRoot(host);
+        var shadowRoot = host.webkitCreateShadowRoot();
         shadowRoot.appendChild(content);
     }
 }
