@@ -1,5 +1,16 @@
 2012-12-19  Levi Weintraub  <leviw@chromium.org>
 
+        Unreviewed gardening. The previous rebaseline didn't quite get it right for Mac.
+
+        * platform/chromium-mac-lion/platform/chromium/fast/forms/suggestion-picker/date-suggestion-picker-appearance-with-scroll-bar-expected.png:
+        * platform/chromium-mac-lion/platform/chromium/fast/forms/suggestion-picker/month-suggestion-picker-appearance-with-scroll-bar-expected.png:
+        * platform/chromium-mac-lion/platform/chromium/fast/forms/suggestion-picker/week-suggestion-picker-appearance-with-scroll-bar-expected.png:
+        * platform/chromium-mac/platform/chromium/fast/forms/suggestion-picker/date-suggestion-picker-appearance-with-scroll-bar-expected.png:
+        * platform/chromium-mac/platform/chromium/fast/forms/suggestion-picker/month-suggestion-picker-appearance-with-scroll-bar-expected.png:
+        * platform/chromium-mac/platform/chromium/fast/forms/suggestion-picker/week-suggestion-picker-appearance-with-scroll-bar-expected.png:
+
+2012-12-19  Levi Weintraub  <leviw@chromium.org>
+
         Unreviewed gardening. Updating expectations following r137847.
 
         * platform/chromium-linux-x86/fast/dom/Window: Added.
