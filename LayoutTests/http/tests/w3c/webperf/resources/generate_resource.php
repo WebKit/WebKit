@@ -1,4 +1,9 @@
 <?php
+  if (isset($_SERVER['HTTP_IF_NONE_MATCH'])) {
+    header('HTTP/1.1 304 Not Modified');
+    exit;
+  }
+
   $type = $_GET["type"];
 
   $response_code = 200;
@@ -43,6 +48,7 @@
 
   header("HTTP/1.1 $response_code");
   header("Content-type: $content_type");
+  header("Etag: 7");
   print($body);
   exit;
 ?>

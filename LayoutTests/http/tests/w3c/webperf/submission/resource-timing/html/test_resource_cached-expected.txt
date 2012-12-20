@@ -1,0 +1,9 @@
+Description
+
+This test validates that a 304 Not Modified resource appears in the buffer.
+
+
+
+PASS There should be two entries 
+PASS Both entries should have the same name 
+
