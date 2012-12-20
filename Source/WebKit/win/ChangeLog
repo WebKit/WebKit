@@ -1,3 +1,36 @@
+2012-12-20  Anders Carlsson  <andersca@apple.com>
+
+        Copy files from WebKit2/win (back) to WebKit/win/WebKit.vcproj.
+
+        Rubber-stamped by Tim Horton.
+
+        * WebKit.vcproj/deleteButton.png: Added.
+        * WebKit.vcproj/deleteButtonPressed.png: Added.
+        * WebKit.vcproj/fsVideoAudioVolumeHigh.png: Added.
+        * WebKit.vcproj/fsVideoAudioVolumeLow.png: Added.
+        * WebKit.vcproj/fsVideoExitFullscreen.png: Added.
+        * WebKit.vcproj/fsVideoPause.png: Added.
+        * WebKit.vcproj/fsVideoPlay.png: Added.
+        * WebKit.vcproj/missingImage.png: Added.
+        * WebKit.vcproj/nullplugin.png: Added.
+        * WebKit.vcproj/panEastCursor.png: Added.
+        * WebKit.vcproj/panIcon.png: Added.
+        * WebKit.vcproj/panNorthCursor.png: Added.
+        * WebKit.vcproj/panNorthEastCursor.png: Added.
+        * WebKit.vcproj/panNorthWestCursor.png: Added.
+        * WebKit.vcproj/panSouthCursor.png: Added.
+        * WebKit.vcproj/panSouthEastCursor.png: Added.
+        * WebKit.vcproj/panSouthWestCursor.png: Added.
+        * WebKit.vcproj/panWestCursor.png: Added.
+        * WebKit.vcproj/searchCancel.png: Added.
+        * WebKit.vcproj/searchCancelPressed.png: Added.
+        * WebKit.vcproj/searchMagnifier.png: Added.
+        * WebKit.vcproj/searchMagnifierResults.png: Added.
+        * WebKit.vcproj/textAreaResizeCorner.png: Added.
+        * WebKit.vcproj/verticalTextCursor.png: Added.
+        * WebKit.vcproj/zoomInCursor.png: Added.
+        * WebKit.vcproj/zoomOutCursor.png: Added.
+
 2012-12-19  Anders Carlsson  <andersca@apple.com>
 
         Build WebKit2ExportGenerator before WebKitLib
