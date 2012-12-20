@@ -95,6 +95,18 @@ class ChromiumMacPortTest(chromium_port_testcase.ChromiumPortTestCase):
         options = MockOptions(configuration='Release', build_directory=None)
         self.assert_build_path(options, ['/mock-checkout/Source/WebKit/chromium/xcodebuild/Release', '/mock-checkout/Source/WebKit/chromium/out/Release'], '/mock-checkout/Source/WebKit/chromium/xcodebuild/Release')
 
+    def test_build_path_timestamps(self):
+        options = MockOptions(configuration='Release', build_directory=None)
+        port = self.make_port(options=options)
+        port.host.filesystem.maybe_make_directory('/mock-checkout/out/Release')
+        port.host.filesystem.maybe_make_directory('/mock-checkout/xcodebuild/Release')
+        # Check with 'out' being newer.
+        port.host.filesystem.mtime = lambda f: 5 if '/out/' in f else 4
+        self.assertEqual(port._build_path(), '/mock-checkout/out/Release')
+        # Check with 'xcodebuild' being newer.
+        port.host.filesystem.mtime = lambda f: 5 if '/xcodebuild/' in f else 4
+        self.assertEqual(port._build_path(), '/mock-checkout/xcodebuild/Release')
+
     def test_driver_name_option(self):
         self.assertTrue(self.make_port()._path_to_driver().endswith('DumpRenderTree'))
         self.assertTrue(self.make_port(options=MockOptions(driver_name='OtherDriver'))._path_to_driver().endswith('OtherDriver'))

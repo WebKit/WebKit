@@ -1,3 +1,23 @@
+2012-12-20  Nico Weber  <thakis@chromium.org>
+
+        chromium nrwt: Pick the newest binary found in DEFAULT_BUILD_DIRECTORIES, not the first
+        https://bugs.webkit.org/show_bug.cgi?id=105498
+
+        Reviewed by Dirk Pranke.
+
+        Use the newest binary available rather than an than always picking one
+        build directory over another based on iteration order.
+
+        * Scripts/webkitpy/layout_tests/port/chromium.py:
+        (ChromiumPort._static_build_path):
+        Check for timestamps.
+        * Scripts/webkitpy/layout_tests/port/chromium_mac_unittest.py:
+        (ChromiumMacPortTest.test_build_path_timestamps):
+        Test that out / xcodebuild selection happens based on timestamps
+        * Scripts/webkitpy/layout_tests/port/chromium_win_unittest.py:
+        (ChromiumWinPortTest.test_build_path_timestamps):
+        Test that out / build selection happens based on timestamps
+
 2012-12-19  Simon Fraser  <simon.fraser@apple.com>
 
         Lots of sticky tests failing in WK2

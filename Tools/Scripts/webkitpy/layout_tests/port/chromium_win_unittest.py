@@ -114,6 +114,18 @@ class ChromiumWinTest(chromium_port_testcase.ChromiumPortTestCase):
         options = MockOptions(configuration='Release', build_directory=None)
         self.assert_build_path(options, ['/mock-checkout/Source/WebKit/chromium/build/Release', '/mock-checkout/Source/WebKit/chromium/out'], '/mock-checkout/Source/WebKit/chromium/build/Release')
 
+    def test_build_path_timestamps(self):
+        options = MockOptions(configuration='Release', build_directory=None)
+        port = self.make_port(options=options)
+        port.host.filesystem.maybe_make_directory('/mock-checkout/out/Release')
+        port.host.filesystem.maybe_make_directory('/mock-checkout/build/Release')
+        # Check with 'out' being newer.
+        port.host.filesystem.mtime = lambda f: 5 if '/out/' in f else 4
+        self.assertEqual(port._build_path(), '/mock-checkout/out/Release')
+        # Check with 'build' being newer.
+        port.host.filesystem.mtime = lambda f: 5 if '/build/' in f else 4
+        self.assertEqual(port._build_path(), '/mock-checkout/build/Release')
+
     def test_operating_system(self):
         self.assertEqual('win', self.make_port().operating_system())
 
