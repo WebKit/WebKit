@@ -223,6 +223,8 @@ void ResourceRequest::doUpdateResourceRequest()
 
 void ResourceRequest::setStorageSession(CFURLStorageSessionRef storageSession)
 {
+    updatePlatformRequest();
+
     CFMutableURLRequestRef cfRequest = CFURLRequestCreateMutableCopy(0, m_cfRequest.get());
     wkSetRequestStorageSession(storageSession, cfRequest);
     m_cfRequest.adoptCF(cfRequest);

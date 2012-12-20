@@ -1,3 +1,18 @@
+2012-12-20  Alexey Proskuryakov  <ap@apple.com>
+
+        REGRESSION (r138191): Tests fail in ResourceRequest::setStorageSession
+        https://bugs.webkit.org/show_bug.cgi?id=105563
+
+        Reviewed by Sam Weinig.
+
+        * platform/network/cf/ResourceHandleCFNet.cpp: (WebCore::ResourceHandle::willSendRequest):
+        * platform/network/mac/ResourceHandleMac.mm: (WebCore::ResourceHandle::willSendRequest):
+        Don't try to appky a session if client canceled the request by setting it ot a null one.
+
+        * platform/network/cf/ResourceRequestCFNet.cpp: (WebCore::ResourceRequest::setStorageSession):
+        * platform/network/mac/ResourceRequestMac.mm: (WebCore::ResourceRequest::setStorageSession):
+        Update platform request, so that the session does not get lost once it's updated later.
+
 2012-12-20  Nate Chapin  <japhet@chromium.org>
 
         Rename shouldBufferData to dataBufferingPolicy

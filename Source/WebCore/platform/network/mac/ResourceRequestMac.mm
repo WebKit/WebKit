@@ -187,6 +187,7 @@ void ResourceRequest::applyWebArchiveHackForMail()
 
 void ResourceRequest::setStorageSession(CFURLStorageSessionRef storageSession)
 {
+    updatePlatformRequest();
     m_nsRequest.adoptNS(wkCopyRequestWithStorageSession(storageSession, m_nsRequest.get()));
 }
     

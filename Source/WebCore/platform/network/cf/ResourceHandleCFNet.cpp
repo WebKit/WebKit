@@ -562,7 +562,8 @@ void ResourceHandle::willSendRequest(ResourceRequest& request, const ResourceRes
     client()->willSendRequest(this, request, redirectResponse);
 
     // Client call may not preserve the session, especially if the request is sent over IPC.
-    request.setStorageSession(d->m_storageSession.get());
+    if (!request.isNull())
+        request.setStorageSession(d->m_storageSession.get());
 }
 
 bool ResourceHandle::shouldUseCredentialStorage()
