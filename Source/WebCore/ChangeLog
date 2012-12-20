@@ -1,3 +1,46 @@
+2012-12-20  Antoine Quint  <graouts@apple.com>
+
+        onload callback for <track> element attached to <video> does not fire
+        https://bugs.webkit.org/show_bug.cgi?id=103258
+
+        Reviewed by Eric Carlson.
+
+        We now correctly implement the track processing model per the latest spec at
+        http://www.whatwg.org/specs/web-apps/current-work/multipage/the-video-element.html#start-the-track-processing-model.
+        
+        For a <track> to load, three conditions must be met:
+        
+        1. it must have a non-empty src
+        2. it must have a mode other than "disabled" (the default)
+        3. it must have a parent media element
+        
+        We used to only check if we were able to load upon setting the track's src,
+        whereas a change of any of those conditions should have done this, which this
+        patch now correctly implements.
+        
+        We also correctly implement the load model asynchronously after step 4, per
+        the spec, hence the split of the code previously entirely contained in
+        HTMLTrackElement::scheduleLoad() in another method fired on a timer.
+
+        Test: media/track/track-element-load-event.html
+
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::textTrackModeChanged):
+        * html/HTMLTrackElement.cpp:
+        (WebCore::HTMLTrackElement::HTMLTrackElement):
+        (WebCore::HTMLTrackElement::insertedInto):
+        (WebCore::HTMLTrackElement::parseAttribute):
+        (WebCore::HTMLTrackElement::scheduleLoad):
+        (WebCore):
+        (WebCore::HTMLTrackElement::loadTimerFired):
+        (WebCore::HTMLTrackElement::textTrackModeChanged):
+        * html/HTMLTrackElement.h:
+        * html/track/TextTrack.cpp:
+        (WebCore::TextTrack::removeAllCues):
+        (WebCore):
+        * html/track/TextTrack.h:
+        (TextTrack):
+
 2012-12-20  Joshua Bell  <jsbell@chromium.org>
 
         IndexedDB: Layout test showing delete database getting two blocked events

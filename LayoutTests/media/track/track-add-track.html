@@ -41,8 +41,9 @@
                 video.textTracks.addEventListener("addtrack", trackAdded);
 
                 run("trackElement.src = 'captions-webvtt/tc004-webvtt-file.vtt'");
+                run("trackElement.track.mode = 'hidden'");
                 testExpected("video.textTracks.length", 1);
-                testExpected("trackElement.readyState", HTMLTrackElement.LOADING);
+                testExpected("trackElement.readyState", HTMLTrackElement.NONE);
             }
 
         </script>

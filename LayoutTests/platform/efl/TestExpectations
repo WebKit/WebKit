@@ -790,6 +790,12 @@ webkit.org/b/103926 media/track/opera/track/webvtt/parsing-cue-data/tests/tree-b
 webkit.org/b/103926 media/track/opera/track/webvtt/rendering/adhoc/cue_font_size_transition.html [ Skip ]
 webkit.org/b/103926 media/track/opera/track/webvtt/rendering/adhoc/voice_with_evil_timestamp.html [ Skip ]
 
+# After fixing webkit.org/b/103258, these tests fail when they used to simply timeout.
+# At any rate, there is no regression, just a different type of failure.
+webkit.org/b/105536 media/track/opera/interfaces/TextTrack/addCue.html [ Failure ]
+webkit.org/b/105536 media/track/opera/interfaces/TextTrackCue/endTime.html [ Failure ]
+webkit.org/b/105536 media/track/opera/interfaces/TextTrackCue/startTime.html [ Failure ]
+
 webkit.org/b/100636 [ Debug ] jquery/traversing.html [ Failure Crash Pass ]
 
 webkit.org/b/102928 svg/foreignObject/viewport-foreignobject-crash.html [ Crash Failure Pass ]

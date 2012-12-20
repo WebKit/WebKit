@@ -1,3 +1,36 @@
+2012-12-20  Antoine Quint  <graouts@apple.com>
+
+        onload callback for <track> element attached to <video> does not fire
+        https://bugs.webkit.org/show_bug.cgi?id=103258
+
+        Reviewed by Eric Carlson.
+
+        As a result of fixing this bug, a few new failures were uncovered and TestExpectations
+        needed to be updated to take this into account. Additionally, some existing tests were
+        incorrect or outdated and were fixed as well. Finally, a new test was added to thoroughly
+        test the various conditions required for a <track> element to successfully load.
+
+        * fast/events/constructors/track-event-constructor.html: Update the test to correctly set
+        a non-disabled mode on the text track such that it may load per the rules enforced with this patch.
+        * http/tests/security/text-track-crossorigin.html: Update the test to correctly set a non-disabled
+        mode on the text track such that it may load per the rules enforced with this patch.
+        * media/track/track-add-track-expected.txt: Update the output to match changes made to test.
+        * media/track/track-add-track.html: Update the test to correctly set a non-disabled mode on
+        the text track such that it may load per the rules enforced with this patch. Also, ensure
+        the .readyState of the text track is correctly assumed to be NONE vs. LOADING as it would
+        have to wait until the next run loop to be changed to anything but NONE.
+        * media/track/track-element-load-event-expected.txt: Added.
+        * media/track/track-element-load-event.html: Added.
+        * media/track/track-load-from-src-readyState.html: Update the test to correctly set a
+        non-disabled mode on the text track such that it may load per the rules enforced with
+        this patch.
+        * platform/chromium/TestExpectations: Skip tests that now fail instead of timing out.
+        * platform/efl/TestExpectations: Skip tests that now fail instead of timing out.
+        * platform/gtk/TestExpectations: Skip tests that now fail instead of timing out.
+        * platform/mac/TestExpectations: Skip tests that now fail instead of timing out.
+        * platform/qt/TestExpectations: Skip tests that now fail instead of timing out.
+        * platform/win/TestExpectations: Skip tests that now fail instead of timing out.
+
 2012-12-20  Joshua Bell  <jsbell@chromium.org>
 
         IndexedDB: Layout test showing delete database getting two blocked events
