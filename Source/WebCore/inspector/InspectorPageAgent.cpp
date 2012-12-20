@@ -1048,7 +1048,7 @@ void InspectorPageAgent::setGeolocationOverride(ErrorString* error, const double
     GeolocationController* controller = GeolocationController::from(m_page);
     GeolocationPosition* position = 0;
     if (!controller) {
-        *error = "Internal error: unable to override geolocation.";
+        *error = "Internal error: unable to override geolocation";
         return;
     }
     position = controller->lastPosition();
@@ -1063,7 +1063,7 @@ void InspectorPageAgent::setGeolocationOverride(ErrorString* error, const double
 
     controller->positionChanged(0); // Kick location update.
 #else
-    *error = "Geolocation is not available.";
+    *error = "Geolocation is not available";
     UNUSED_PARAM(latitude);
     UNUSED_PARAM(longitude);
     UNUSED_PARAM(accuracy);
@@ -1083,7 +1083,7 @@ void InspectorPageAgent::clearGeolocationOverride(ErrorString* error)
     if (controller && m_platformGeolocationPosition.get())
         controller->positionChanged(m_platformGeolocationPosition.get());
 #else
-    *error = "Geolocation is not available.";
+    *error = "Geolocation is not available";
 #endif
 }
 
@@ -1110,7 +1110,7 @@ void InspectorPageAgent::setDeviceOrientationOverride(ErrorString* error, double
 {
     DeviceOrientationController* controller = DeviceOrientationController::from(m_page);
     if (!controller) {
-        *error = "Internal error: unable to override device orientation.";
+        *error = "Internal error: unable to override device orientation";
         return;
     }
 
@@ -1182,7 +1182,7 @@ void InspectorPageAgent::getCompositingBordersVisible(ErrorString* error, bool* 
 {
     Settings* settings = m_page->settings();
     if (!settings) {
-        *error = "Internal error: unable to read settings.";
+        *error = "Internal error: unable to read settings";
         return;
     }
 
@@ -1197,6 +1197,12 @@ void InspectorPageAgent::setCompositingBordersVisible(ErrorString*, bool visible
 
     settings->setShowDebugBorders(visible);
     settings->setShowRepaintCounter(visible);
+}
+
+void InspectorPageAgent::captureScreenshot(ErrorString* errorString, String* data)
+{
+    if (!m_client->captureScreenshot(data))
+        *errorString = "Could not capture screenshot";
 }
 
 } // namespace WebCore

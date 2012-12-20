@@ -81,6 +81,8 @@ public:
     virtual void getAllocatedObjects(HashSet<const void*>&) { }
     virtual void dumpUncountedAllocatedObjects(const HashMap<const void*, size_t>&) { }
 
+    virtual bool captureScreenshot(String*) { return false; }
+
     static bool doDispatchMessageOnFrontendPage(Page* frontendPage, const String& message);
 };
 

@@ -1,3 +1,35 @@
+2012-12-19  Pavel Feldman  <pfeldman@chromium.org>
+
+        Web Inspector: introduce Page.captureScreenshot
+        https://bugs.webkit.org/show_bug.cgi?id=105315
+
+        Reviewed by Yury Semikhatsky.
+
+        Introduces a way for browser to handle protocol commands:
+        embedder will ask WebKit whether it should override the command
+        result and will get a hint value. Based on that hint, browser
+        will prepare the data and ask WebKit again to patch this data in.
+
+        * public/WebDevToolsAgent.h:
+        (WebDevToolsAgent):
+        * src/InspectorClientImpl.cpp:
+        (WebKit::InspectorClientImpl::captureScreenshot):
+        (WebKit):
+        * src/InspectorClientImpl.h:
+        (InspectorClientImpl):
+        * src/WebDevToolsAgentImpl.cpp:
+        (BrowserDataHintStringValues):
+        (WebKit):
+        (WebKit::WebDevToolsAgentImpl::WebDevToolsAgentImpl):
+        (WebKit::WebDevToolsAgentImpl::captureScreenshot):
+        (WebKit::browserHintToString):
+        (WebKit::browserHintFromString):
+        (WebKit::WebDevToolsAgentImpl::sendMessageToFrontend):
+        (WebKit::WebDevToolsAgent::shouldPatchWithBrowserData):
+        (WebKit::WebDevToolsAgent::patchWithBrowserData):
+        * src/WebDevToolsAgentImpl.h:
+        (WebDevToolsAgentImpl):
+
 2012-12-20  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r138215.

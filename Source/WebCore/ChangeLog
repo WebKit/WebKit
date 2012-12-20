@@ -1,3 +1,22 @@
+2012-12-19  Pavel Feldman  <pfeldman@chromium.org>
+
+        Web Inspector: introduce Page.captureScreenshot
+        https://bugs.webkit.org/show_bug.cgi?id=105315
+
+        Reviewed by Yury Semikhatsky.
+
+        It will be primarily used by the automation clients, but maybe we find a good place
+        for it in the front-end as well.
+
+        * inspector/Inspector.json:
+        * inspector/InspectorClient.h:
+        (WebCore::InspectorClient::captureScreenshot):
+        (InspectorClient):
+        * inspector/InspectorPageAgent.cpp:
+        (WebCore::InspectorPageAgent::captureScreenshot):
+        (WebCore):
+        * inspector/InspectorPageAgent.h:
+
 2012-12-19  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Make order iterator member stack allocated in RenderFlexibleBox

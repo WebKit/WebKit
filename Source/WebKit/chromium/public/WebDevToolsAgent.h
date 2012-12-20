@@ -47,6 +47,12 @@ struct WebURLError;
 
 class WebDevToolsAgent {
 public:
+    // Hint for the browser on the data it should prepare for message patching.
+    enum BrowserDataHint {
+        BrowserDataHintNone = 0,
+        BrowserDataHintScreenshot = 1,
+    };
+
     virtual ~WebDevToolsAgent() {}
 
     // Returns WebKit WebInspector protocol version.
@@ -87,8 +93,12 @@ public:
     // in order to let it know that it has disconnected from the agent.
     WEBKIT_EXPORT static WebString workerDisconnectedFromWorkerEvent();
 
-    // FIXME: remove once migrated to workerDisconnectedFromWorkerEvent().
-    WEBKIT_EXPORT static WebString disconnectEventAsText();
+    // Determines whether given message response should be patch with the data calculatd in browser.
+    // Returns the hint on the data browser should prepare for patching.
+    WEBKIT_EXPORT static BrowserDataHint shouldPatchWithBrowserData(const char* message, size_t messageLength);
+
+    // Patches message response with the data calculated in browser.
+    WEBKIT_EXPORT static WebString patchWithBrowserData(const WebString& message, BrowserDataHint, const WebString& hintData);
 };
 
 } // namespace WebKit

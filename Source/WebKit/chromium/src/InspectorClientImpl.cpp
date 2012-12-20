@@ -189,6 +189,13 @@ void InspectorClientImpl::dumpUncountedAllocatedObjects(const HashMap<const void
         agent->dumpUncountedAllocatedObjects(map);
 }
 
+bool InspectorClientImpl::captureScreenshot(String* data)
+{
+    if (WebDevToolsAgentImpl* agent = devToolsAgent())
+        return agent->captureScreenshot(data);
+    return false;
+}
+
 WebDevToolsAgentImpl* InspectorClientImpl::devToolsAgent()
 {
     return static_cast<WebDevToolsAgentImpl*>(m_inspectedWebView->devToolsAgent());

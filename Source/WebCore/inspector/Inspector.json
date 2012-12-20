@@ -456,6 +456,14 @@
                     { "name": "visible", "type": "boolean", "description": "True for showing compositing borders." }
                 ],
                 "hidden": true
+            },
+            {
+                "name": "captureScreenshot",
+                "description": "Capture page screenshot.",
+                "returns": [
+                    { "name": "data", "type": "string", "description": "Base64-encoded image data (PNG)." }
+                ],
+                "hidden": true
             }
         ],
         "events": [

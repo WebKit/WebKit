@@ -84,6 +84,8 @@ public:
     virtual void getAllocatedObjects(HashSet<const void*>&);
     virtual void dumpUncountedAllocatedObjects(const HashMap<const void*, size_t>&);
 
+    virtual bool captureScreenshot(WTF::String* data);
+
 private:
     WebDevToolsAgentImpl* devToolsAgent();
 
