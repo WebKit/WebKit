@@ -94,12 +94,17 @@ class AbstractQueue(Command, QueueEngineDelegate):
         if self._options.port:
             webkit_patch_args += ["--port=%s" % self._options.port]
         webkit_patch_args.extend(args)
-        # FIXME: There is probably no reason to use run_and_throw_if_fail anymore.
-        # run_and_throw_if_fail was invented to support tee'd output
-        # (where we write both to a log file and to the console at once),
-        # but the queues don't need live-progress, a dump-of-output at the
-        # end should be sufficient.
-        return self._tool.executive.run_and_throw_if_fail(webkit_patch_args, cwd=self._tool.scm().checkout_root)
+
+        try:
+            args_for_printing = list(webkit_patch_args)
+            args_for_printing[0] = 'webkit-patch'  # Printing our path for each log is redundant.
+            _log.info("Running: %s" % self._tool.executive.command_for_printing(args_for_printing))
+            command_output = self._tool.executive.run_command(webkit_patch_args, cwd=self._tool.scm().checkout_root)
+        except ScriptError, e:
+            # Make sure the whole output gets printed if the command failed.
+            _log.error(e.message_with_output(output_limit=None))
+            raise
+        return command_output
 
     def _log_directory(self):
         return os.path.join("..", "%s-logs" % self.name)

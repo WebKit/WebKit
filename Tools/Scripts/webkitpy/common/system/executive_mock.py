@@ -86,6 +86,10 @@ class MockExecutive(object):
             raise ScriptError("Exception for %s" % args, output="MOCK command output")
         return "MOCK output of child process"
 
+    def command_for_printing(self, args):
+        string_args = map(unicode, args)
+        return " ".join(string_args)
+
     def run_command(self,
                     args,
                     cwd=None,
@@ -108,6 +112,10 @@ class MockExecutive(object):
                 input_string = ", input=%s" % input
             _log.info("MOCK run_command: %s, cwd=%s%s%s" % (args, cwd, env_string, input_string))
         output = "MOCK output of child process"
+
+        if self._should_throw_when_run.intersection(args):
+            raise ScriptError("Exception for %s" % args, output="MOCK command output")
+
         if self._should_throw:
             raise ScriptError("MOCK ScriptError", output=output)
         return output

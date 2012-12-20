@@ -52,39 +52,43 @@ class AbstractEarlyWarningSystemTest(QueuesTest):
 
 class EarlyWarningSytemTest(QueuesTest):
     def _default_expected_logs(self, ews):
-        string_replacemnts = {
+        string_replacements = {
             "name": ews.name,
             "port": ews.port_name,
         }
+        if ews._default_run_tests:
+            run_tests_line = "Running: webkit-patch --status-host=example.com build-and-test --no-clean --no-update --test --non-interactive --port=%(port)s\n" % string_replacements
+        else:
+            run_tests_line = ""
+        string_replacements['run_tests_line'] = run_tests_line
+
         expected_logs = {
             "begin_work_queue": self._default_begin_work_queue_logs(ews.name),
-            "process_work_item": "MOCK: update_status: %(name)s Pass\nMOCK: release_work_item: %(name)s 10000\n" % string_replacemnts,
+            "process_work_item": """Running: webkit-patch --status-host=example.com clean --port=%(port)s
+Running: webkit-patch --status-host=example.com update --port=%(port)s
+Running: webkit-patch --status-host=example.com apply-attachment --no-update --non-interactive 10000 --port=%(port)s
+Running: webkit-patch --status-host=example.com build --no-clean --no-update --build-style=release --port=%(port)s
+%(run_tests_line)sMOCK: update_status: %(name)s Pass
+MOCK: release_work_item: %(name)s 10000
+""" % string_replacements,
             "handle_unexpected_error": "Mock error message\n",
             "handle_script_error": "ScriptError error message\n\nMOCK output\n",
         }
         return expected_logs
 
-    def _test_builder_ews(self, ews):
+    def _test_ews(self, ews):
         ews.bind_to_tool(MockTool())
         options = Mock()
         options.port = None
         options.run_tests = ews._default_run_tests
         self.assert_queue_outputs(ews, expected_logs=self._default_expected_logs(ews), options=options)
 
-    def _test_testing_ews(self, ews):
-        ews.test_results = lambda: None
-        ews.bind_to_tool(MockTool())
-        expected_logs = self._default_expected_logs(ews)
-        self.assert_queue_outputs(ews, expected_logs=expected_logs)
-
-    def test_builder_ewses(self):
-        self._test_builder_ews(MacEWS())
-        self._test_builder_ews(ChromiumWindowsEWS())
-        self._test_builder_ews(ChromiumAndroidEWS())
-        self._test_builder_ews(QtEWS())
-        self._test_builder_ews(QtWK2EWS())
-        self._test_builder_ews(GtkEWS())
-        self._test_builder_ews(EflEWS())
-
-    def test_testing_ewses(self):
-        self._test_testing_ews(ChromiumLinuxEWS())
+    def _test_ewses(self):
+        self._test_ews(MacEWS())
+        self._test_ews(ChromiumLinuxEWS())
+        self._test_ews(ChromiumWindowsEWS())
+        self._test_ews(ChromiumAndroidEWS())
+        self._test_ews(QtEWS())
+        self._test_ews(QtWK2EWS())
+        self._test_ews(GtkEWS())
+        self._test_ews(EflEWS())

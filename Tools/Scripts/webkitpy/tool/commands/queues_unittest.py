@@ -88,7 +88,7 @@ class AbstractQueueTest(CommandsTest):
         if port:
             expected_run_args.append("--port=%s" % port)
         expected_run_args.extend(run_args)
-        tool.executive.run_and_throw_if_fail.assert_called_with(expected_run_args, cwd='/mock-checkout')
+        tool.executive.run_command.assert_called_with(expected_run_args, cwd='/mock-checkout')
 
     def test_run_webkit_patch(self):
         self._assert_run_webkit_patch([1])
@@ -236,12 +236,19 @@ class CommitQueueTest(QueuesTest):
         tool.filesystem.write_text_file('/tmp/layout-test-results/webkit_unit_tests_output.xml', '')
         expected_logs = {
             "begin_work_queue": self._default_begin_work_queue_logs("commit-queue"),
-            "process_work_item": """MOCK: update_status: commit-queue Cleaned working directory
+            "process_work_item": """Running: webkit-patch --status-host=example.com clean --port=chromium-xvfb
+MOCK: update_status: commit-queue Cleaned working directory
+Running: webkit-patch --status-host=example.com update --port=chromium-xvfb
 MOCK: update_status: commit-queue Updated working directory
+Running: webkit-patch --status-host=example.com apply-attachment --no-update --non-interactive 10000 --port=chromium-xvfb
 MOCK: update_status: commit-queue Applied patch
+Running: webkit-patch --status-host=example.com validate-changelog --non-interactive 10000 --port=chromium-xvfb
 MOCK: update_status: commit-queue ChangeLog validated
+Running: webkit-patch --status-host=example.com build --no-clean --no-update --build-style=release --port=chromium-xvfb
 MOCK: update_status: commit-queue Built patch
+Running: webkit-patch --status-host=example.com build-and-test --no-clean --no-update --test --non-interactive --port=chromium-xvfb
 MOCK: update_status: commit-queue Passed tests
+Running: webkit-patch --status-host=example.com land-attachment --force-clean --non-interactive --parent-command=commit-queue 10000 --port=chromium-xvfb
 MOCK: update_status: commit-queue Landed patch
 MOCK: update_status: commit-queue Pass
 MOCK: release_work_item: commit-queue 10000
@@ -307,54 +314,54 @@ MOCK: release_work_item: commit-queue 10000
         self.assert_queue_outputs(queue, expected_logs=expected_logs)
 
     def test_rollout(self):
-        tool = MockTool(log_executive=True)
+        tool = MockTool()
         tool.filesystem.write_text_file('/tmp/layout-test-results/full_results.json', '')  # Otherwise the commit-queue will hit a KeyError trying to read the results from the MockFileSystem.
         tool.filesystem.write_text_file('/tmp/layout-test-results/webkit_unit_tests_output.xml', '')
         tool.buildbot.light_tree_on_fire()
         expected_logs = {
             "begin_work_queue": self._default_begin_work_queue_logs("commit-queue"),
-            "process_work_item": """MOCK run_and_throw_if_fail: ['echo', '--status-host=example.com', 'clean', '--port=%(port_name)s'], cwd=/mock-checkout
+            "process_work_item": """Running: webkit-patch --status-host=example.com clean --port=%(port)s
 MOCK: update_status: commit-queue Cleaned working directory
-MOCK run_and_throw_if_fail: ['echo', '--status-host=example.com', 'update', '--port=%(port_name)s'], cwd=/mock-checkout
+Running: webkit-patch --status-host=example.com update --port=%(port)s
 MOCK: update_status: commit-queue Updated working directory
-MOCK run_and_throw_if_fail: ['echo', '--status-host=example.com', 'apply-attachment', '--no-update', '--non-interactive', 10000, '--port=%(port_name)s'], cwd=/mock-checkout
+Running: webkit-patch --status-host=example.com apply-attachment --no-update --non-interactive 10000 --port=%(port)s
 MOCK: update_status: commit-queue Applied patch
-MOCK run_and_throw_if_fail: ['echo', '--status-host=example.com', 'validate-changelog', '--non-interactive', 10000, '--port=%(port_name)s'], cwd=/mock-checkout
+Running: webkit-patch --status-host=example.com validate-changelog --non-interactive 10000 --port=%(port)s
 MOCK: update_status: commit-queue ChangeLog validated
-MOCK run_and_throw_if_fail: ['echo', '--status-host=example.com', 'build', '--no-clean', '--no-update', '--build-style=release', '--port=%(port_name)s'], cwd=/mock-checkout
+Running: webkit-patch --status-host=example.com build --no-clean --no-update --build-style=release --port=%(port)s
 MOCK: update_status: commit-queue Built patch
-MOCK run_and_throw_if_fail: ['echo', '--status-host=example.com', 'build-and-test', '--no-clean', '--no-update', '--test', '--non-interactive', '--port=%(port_name)s'], cwd=/mock-checkout
+Running: webkit-patch --status-host=example.com build-and-test --no-clean --no-update --test --non-interactive --port=%(port)s
 MOCK: update_status: commit-queue Passed tests
-MOCK run_and_throw_if_fail: ['echo', '--status-host=example.com', 'land-attachment', '--force-clean', '--non-interactive', '--parent-command=commit-queue', 10000, '--port=%(port_name)s'], cwd=/mock-checkout
+Running: webkit-patch --status-host=example.com land-attachment --force-clean --non-interactive --parent-command=commit-queue 10000 --port=%(port)s
 MOCK: update_status: commit-queue Landed patch
 MOCK: update_status: commit-queue Pass
 MOCK: release_work_item: commit-queue 10000
-""" % {"port_name": CommitQueue.port_name},
+""" % {"port": CommitQueue.port_name},
             "handle_script_error": "ScriptError error message\n\nMOCK output\n",
             "handle_unexpected_error": "MOCK setting flag 'commit-queue' to '-' on attachment '10000' with comment 'Rejecting attachment 10000 from commit-queue.' and additional comment 'Mock error message'\n",
         }
         self.assert_queue_outputs(CommitQueue(), tool=tool, expected_logs=expected_logs)
 
     def test_rollout_lands(self):
-        tool = MockTool(log_executive=True)
+        tool = MockTool()
         tool.buildbot.light_tree_on_fire()
         rollout_patch = tool.bugs.fetch_attachment(10005)  # _patch6, a rollout patch.
         assert(rollout_patch.is_rollout())
         expected_logs = {
             "begin_work_queue": self._default_begin_work_queue_logs("commit-queue"),
-            "process_work_item": """MOCK run_and_throw_if_fail: ['echo', '--status-host=example.com', 'clean', '--port=%(port_name)s'], cwd=/mock-checkout
+            "process_work_item": """Running: webkit-patch --status-host=example.com clean --port=%(port)s
 MOCK: update_status: commit-queue Cleaned working directory
-MOCK run_and_throw_if_fail: ['echo', '--status-host=example.com', 'update', '--port=%(port_name)s'], cwd=/mock-checkout
+Running: webkit-patch --status-host=example.com update --port=%(port)s
 MOCK: update_status: commit-queue Updated working directory
-MOCK run_and_throw_if_fail: ['echo', '--status-host=example.com', 'apply-attachment', '--no-update', '--non-interactive', 10005, '--port=%(port_name)s'], cwd=/mock-checkout
+Running: webkit-patch --status-host=example.com apply-attachment --no-update --non-interactive 10005 --port=%(port)s
 MOCK: update_status: commit-queue Applied patch
-MOCK run_and_throw_if_fail: ['echo', '--status-host=example.com', 'validate-changelog', '--non-interactive', 10005, '--port=%(port_name)s'], cwd=/mock-checkout
+Running: webkit-patch --status-host=example.com validate-changelog --non-interactive 10005 --port=%(port)s
 MOCK: update_status: commit-queue ChangeLog validated
-MOCK run_and_throw_if_fail: ['echo', '--status-host=example.com', 'land-attachment', '--force-clean', '--non-interactive', '--parent-command=commit-queue', 10005, '--port=%(port_name)s'], cwd=/mock-checkout
+Running: webkit-patch --status-host=example.com land-attachment --force-clean --non-interactive --parent-command=commit-queue 10005 --port=%(port)s
 MOCK: update_status: commit-queue Landed patch
 MOCK: update_status: commit-queue Pass
 MOCK: release_work_item: commit-queue 10005
-""" % {"port_name": CommitQueue.port_name},
+""" % {"port": CommitQueue.port_name},
             "handle_script_error": "ScriptError error message\n\nMOCK output\n",
             "handle_unexpected_error": "MOCK setting flag 'commit-queue' to '-' on attachment '10005' with comment 'Rejecting attachment 10005 from commit-queue.' and additional comment 'Mock error message'\n",
         }
@@ -384,11 +391,17 @@ MOCK: update_status: commit-queue Tests passed, but commit failed (checkout out 
         queue._tool.filesystem.write_text_file('/tmp/layout-test-results/webkit_unit_tests_output.xml', '')
         queue._options = Mock()
         queue._options.port = None
-        expected_logs = """MOCK: update_status: commit-queue Cleaned working directory
+        expected_logs = """Running: webkit-patch --status-host=example.com clean --port=chromium-xvfb
+MOCK: update_status: commit-queue Cleaned working directory
+Running: webkit-patch --status-host=example.com update --port=chromium-xvfb
 MOCK: update_status: commit-queue Updated working directory
+Running: webkit-patch --status-host=example.com apply-attachment --no-update --non-interactive 10000 --port=chromium-xvfb
 MOCK: update_status: commit-queue Applied patch
+Running: webkit-patch --status-host=example.com validate-changelog --non-interactive 10000 --port=chromium-xvfb
 MOCK: update_status: commit-queue ChangeLog validated
+Running: webkit-patch --status-host=example.com build --no-clean --no-update --build-style=release --port=chromium-xvfb
 MOCK: update_status: commit-queue Built patch
+Running: webkit-patch --status-host=example.com build-and-test --no-clean --no-update --test --non-interactive --port=chromium-xvfb
 MOCK: update_status: commit-queue Passed tests
 MOCK: update_status: commit-queue Retry
 MOCK: release_work_item: commit-queue 10000
@@ -449,15 +462,15 @@ class StyleQueueTest(QueuesTest):
     def test_style_queue_with_style_exception(self):
         expected_logs = {
             "begin_work_queue": self._default_begin_work_queue_logs("style-queue"),
-            "process_work_item": """MOCK run_and_throw_if_fail: ['echo', '--status-host=example.com', 'clean'], cwd=/mock-checkout
+            "process_work_item": """Running: webkit-patch --status-host=example.com clean
 MOCK: update_status: style-queue Cleaned working directory
-MOCK run_and_throw_if_fail: ['echo', '--status-host=example.com', 'update'], cwd=/mock-checkout
+Running: webkit-patch --status-host=example.com update
 MOCK: update_status: style-queue Updated working directory
-MOCK run_and_throw_if_fail: ['echo', '--status-host=example.com', 'apply-attachment', '--no-update', '--non-interactive', 10000], cwd=/mock-checkout
+Running: webkit-patch --status-host=example.com apply-attachment --no-update --non-interactive 10000
 MOCK: update_status: style-queue Applied patch
-MOCK run_and_throw_if_fail: ['echo', '--status-host=example.com', 'apply-watchlist-local', 50000], cwd=/mock-checkout
+Running: webkit-patch --status-host=example.com apply-watchlist-local 50000
 MOCK: update_status: style-queue Watchlist applied
-MOCK run_and_throw_if_fail: ['echo', '--status-host=example.com', 'check-style-local', '--non-interactive', '--quiet'], cwd=/mock-checkout
+Running: webkit-patch --status-host=example.com check-style-local --non-interactive --quiet
 MOCK: update_status: style-queue Style checked
 MOCK: update_status: style-queue Pass
 MOCK: release_work_item: style-queue 10000
@@ -465,21 +478,24 @@ MOCK: release_work_item: style-queue 10000
             "handle_unexpected_error": "Mock error message\n",
             "handle_script_error": "MOCK output\n",
         }
-        tool = MockTool(log_executive=True, executive_throws_when_run=set(['check-style']))
+        tool = MockTool(executive_throws_when_run=set(['check-style']))
         self.assert_queue_outputs(StyleQueue(), expected_logs=expected_logs, tool=tool)
 
     def test_style_queue_with_watch_list_exception(self):
         expected_logs = {
             "begin_work_queue": self._default_begin_work_queue_logs("style-queue"),
-            "process_work_item": """MOCK run_and_throw_if_fail: ['echo', '--status-host=example.com', 'clean'], cwd=/mock-checkout
+            "process_work_item": """Running: webkit-patch --status-host=example.com clean
 MOCK: update_status: style-queue Cleaned working directory
-MOCK run_and_throw_if_fail: ['echo', '--status-host=example.com', 'update'], cwd=/mock-checkout
+Running: webkit-patch --status-host=example.com update
 MOCK: update_status: style-queue Updated working directory
-MOCK run_and_throw_if_fail: ['echo', '--status-host=example.com', 'apply-attachment', '--no-update', '--non-interactive', 10000], cwd=/mock-checkout
+Running: webkit-patch --status-host=example.com apply-attachment --no-update --non-interactive 10000
 MOCK: update_status: style-queue Applied patch
-MOCK run_and_throw_if_fail: ['echo', '--status-host=example.com', 'apply-watchlist-local', 50000], cwd=/mock-checkout
+Running: webkit-patch --status-host=example.com apply-watchlist-local 50000
+Exception for ['echo', '--status-host=example.com', 'apply-watchlist-local', 50000]
+
+MOCK command output
 MOCK: update_status: style-queue Unabled to apply watchlist
-MOCK run_and_throw_if_fail: ['echo', '--status-host=example.com', 'check-style-local', '--non-interactive', '--quiet'], cwd=/mock-checkout
+Running: webkit-patch --status-host=example.com check-style-local --non-interactive --quiet
 MOCK: update_status: style-queue Style checked
 MOCK: update_status: style-queue Pass
 MOCK: release_work_item: style-queue 10000
@@ -487,5 +503,5 @@ MOCK: release_work_item: style-queue 10000
             "handle_unexpected_error": "Mock error message\n",
             "handle_script_error": "MOCK output\n",
         }
-        tool = MockTool(log_executive=True, executive_throws_when_run=set(['apply-watchlist-local']))
+        tool = MockTool(executive_throws_when_run=set(['apply-watchlist-local']))
         self.assert_queue_outputs(StyleQueue(), expected_logs=expected_logs, tool=tool)

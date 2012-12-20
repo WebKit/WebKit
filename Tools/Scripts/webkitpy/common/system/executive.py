@@ -380,9 +380,10 @@ class Executive(object):
             input = input.encode(self._child_process_encoding())
         return (self.PIPE, input)
 
-    def _command_for_printing(self, args):
+    def command_for_printing(self, args):
         """Returns a print-ready string representing command args.
         The string should be copy/paste ready for execution in a shell."""
+        args = self._stringify_args(args)
         escaped_args = []
         for arg in args:
             if isinstance(arg, unicode):
@@ -427,7 +428,7 @@ class Executive(object):
         # http://bugs.python.org/issue1731717
         exit_code = process.wait()
 
-        _log.debug('"%s" took %.2fs' % (self._command_for_printing(args), time.time() - start_time))
+        _log.debug('"%s" took %.2fs' % (self.command_for_printing(args), time.time() - start_time))
 
         if return_exit_code:
             return exit_code

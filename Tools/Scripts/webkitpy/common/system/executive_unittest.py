@@ -117,6 +117,7 @@ class ExecutiveTest(unittest.TestCase):
         executive = Executive()
         executive.run_command(command_line('echo', 1))
         executive.popen(command_line('echo', 1)).wait()
+        self.assertEqual('echo 1', executive.command_for_printing(['echo', 1]))
 
     def test_popen_args(self):
         executive = Executive()
