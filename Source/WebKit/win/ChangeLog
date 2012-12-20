@@ -1,5 +1,13 @@
 2012-12-20  Anders Carlsson  <andersca@apple.com>
 
+        Copy WebKit2.rc to back to WebKit/win/WebKit.vcproj.
+
+        Rubber-stamped by Tim Horton.
+
+        * WebKit.vcproj/WebKit.rc: Added.
+
+2012-12-20  Anders Carlsson  <andersca@apple.com>
+
         Copy files from WebKit2/win (back) to WebKit/win/WebKit.vcproj.
 
         Rubber-stamped by Tim Horton.
