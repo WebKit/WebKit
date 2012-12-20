@@ -1,3 +1,14 @@
+2012-12-20  Emil A Eklund  <eae@chromium.org>
+
+        [flexbox] Fix handling of very large flex grow/shrink values
+        https://bugs.webkit.org/show_bug.cgi?id=105579
+
+        Reviewed by Tony Chang.
+
+        Update expectations for element with very large flex grow value.
+
+        * css3/flexbox/flex-algorithm.html:
+
 2012-12-20  Simon Fraser  <simon.fraser@apple.com>
 
         Remove an incorrect WK2 result, and two there were identical to the WK1 results.
