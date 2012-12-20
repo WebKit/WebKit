@@ -525,9 +525,16 @@ bool RSSFilterStream::convertContentToHtml(std::string& result)
     if (!success)
         return false;
 
+    // FIXME:
+    // The HTML string generated below purports to be a UTF8-encoded
+    // WTF::String, although its characters8() data should be Latin1.
+    // We build then extract this string, pretending that we don't know
+    // that we pass incorrectly-encoded char data both ways.
+    // We should use BlackBerry::Platform::String instead of WTF::String.
     OwnPtr<RSSGenerator> generator = adoptPtr(new RSSGenerator());
     String html = generator->generateHtml(parser->m_root);
-    result = html.utf8(String::StrictConversion).data();
+    ASSERT(html.is8Bit());
+    result.assign(reinterpret_cast<const char*>(html.characters8()), html.length());
 
     return true;
 }

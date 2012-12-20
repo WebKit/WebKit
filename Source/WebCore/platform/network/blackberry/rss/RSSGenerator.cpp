@@ -83,10 +83,10 @@ String RSSGenerator::generateHtml(RSSFeed* feed)
         builder.append(articleName);
         builder.appendLiteral("\" class=\"article\">\n<a href=\"");
         if (!item->m_link.isEmpty())
-            builder.append(item->m_link.utf8(String::StrictConversion).data());
+            builder.append(item->m_link);
         builder.appendLiteral("\"><b>");
         if (!item->m_title.isEmpty())
-            builder.append(item->m_title.utf8(String::StrictConversion).data());
+            builder.append(item->m_title);
         else
             builder.append(s_defaultEntryTitle);
         builder.appendLiteral("</b></a>\n<br />");
@@ -94,13 +94,13 @@ String RSSGenerator::generateHtml(RSSFeed* feed)
         if (!item->m_author.isEmpty()) {
             builder.append(i18n("By"));
             builder.appendLiteral(" <b>");
-            builder.append(item->m_author.utf8(String::StrictConversion).data());
+            builder.append(item->m_author);
             builder.appendLiteral("</b> ");
         } else {
             if (!feed->m_author.isEmpty()) {
                 builder.append(i18n("By"));
                 builder.appendLiteral(" <b>");
-                builder.append(feed->m_author.utf8(String::StrictConversion).data());
+                builder.append(feed->m_author);
                 builder.appendLiteral("</b> ");
             }
         }
@@ -113,7 +113,7 @@ String RSSGenerator::generateHtml(RSSFeed* feed)
 
             for (unsigned i = 0; i < item->m_categories.size() ; ++i) {
                 builder.appendLiteral("<b>");
-                builder.append(item->m_categories[i].utf8(String::StrictConversion).data());
+                builder.append(item->m_categories[i]);
                 builder.appendLiteral("</b>");
 
                 if (i < item->m_categories.size() - 1)
@@ -123,11 +123,11 @@ String RSSGenerator::generateHtml(RSSFeed* feed)
 
         builder.appendLiteral("<br />");
         if (!item->m_pubDate.isEmpty())
-            builder.append(item->m_pubDate.utf8(String::StrictConversion).data());
+            builder.append(item->m_pubDate);
 
         builder.appendLiteral("<br />");
         if (!item->m_description.isEmpty())
-            builder.append(item->m_description.utf8(String::StrictConversion).data());
+            builder.append(item->m_description);
         builder.appendLiteral("<br />");
 
         if (item->m_enclosure) {
