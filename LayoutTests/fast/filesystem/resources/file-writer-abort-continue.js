@@ -16,6 +16,12 @@ var blobSize = 1100000;
 var currentTest = 0;
 var blob = getBlob();
 
+// fileSystemOverhead is an estimate of extra size needed to save a full file
+// system, it need to be large enough to avoid test failure due to file system
+// quota limit.
+var fileSystemOverhead = blobSize * 5 / 1000 + 1024;
+var fileSystemSize = blobSize * 2 + fileSystemOverhead;
+
 var methodSet = [
   {  // Setup method set that writes, then aborts that write before completion.
     action : startWrite,
@@ -174,7 +180,7 @@ function runTest() {
 }
 
 var jsTestIsAsync = true;
-setupAndRunTest(2*1024*1024, 'file-writer-abort',
+setupAndRunTest(fileSystemSize, 'file-writer-abort',
                 function (fileEntry, fileWriter) {
                     fileEntryForCleanup = fileEntry;
                     writer = fileWriter;

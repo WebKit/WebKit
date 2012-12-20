@@ -5,7 +5,7 @@ var testCases = [
             {fullPath:'/tmp'},
             {fullPath:'/file1', size:0},
             {fullPath:'/file2', size:10},
-            {fullPath:'/file3', size:100},
+            {fullPath:'/file3', size:90},
         ],
         tests: [
             function(helper) { helper.getMetadata('/'); },
