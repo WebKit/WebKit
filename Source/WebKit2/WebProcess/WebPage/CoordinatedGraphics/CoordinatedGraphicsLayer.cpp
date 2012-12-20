@@ -927,16 +927,6 @@ void CoordinatedGraphicsLayer::computeTransformedVisibleRect()
     setNeedsVisibleRectAdjustment();
 }
 
-static PassOwnPtr<GraphicsLayer> createCoordinatedGraphicsLayer(GraphicsLayerClient* client)
-{
-    return adoptPtr(new CoordinatedGraphicsLayer(client));
-}
-
-void CoordinatedGraphicsLayer::initFactory()
-{
-    GraphicsLayer::setGraphicsLayerFactory(createCoordinatedGraphicsLayer);
-}
-
 bool CoordinatedGraphicsLayer::shouldHaveBackingStore() const
 {
     return drawsContent() && contentsAreVisible() && !m_size.isEmpty();

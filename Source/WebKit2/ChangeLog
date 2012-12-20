@@ -1,3 +1,20 @@
+2012-12-20  Huang Dongsung  <luxtella@company100.net>
+
+        Remove GraphicsLayer::setGraphicsLayerFactory().
+        https://bugs.webkit.org/show_bug.cgi?id=105503
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        We don't need GraphicsLayer::setGraphicsLayerFactory() anymore. After r130302,
+        we have used a graphics layer factory explicitly.
+
+        * WebProcess/WebPage/CoordinatedGraphics/CoordinatedGraphicsLayer.cpp:
+        * WebProcess/WebPage/CoordinatedGraphics/CoordinatedGraphicsLayer.h:
+        * WebProcess/efl/WebProcessMainEfl.cpp:
+        (WebKit::WebProcessMainEfl):
+        * WebProcess/qt/WebProcessMainQt.cpp:
+        (WebKit::WebProcessMainQt):
+
 2012-12-20  Dominik Röttsches  <dominik.rottsches@intel.com>
 
         [WK2] WebAudio WKTR support

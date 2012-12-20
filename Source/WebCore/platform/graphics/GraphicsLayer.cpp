@@ -410,15 +410,6 @@ void GraphicsLayer::distributeOpacity(float accumulatedOpacity)
     }
 }
 
-#if PLATFORM(QT) || PLATFORM(GTK) || PLATFORM(EFL)
-GraphicsLayer::GraphicsLayerFactoryCallback* GraphicsLayer::s_graphicsLayerFactory = 0;
-
-void GraphicsLayer::setGraphicsLayerFactory(GraphicsLayer::GraphicsLayerFactoryCallback factory)
-{
-    s_graphicsLayerFactory = factory;
-}
-#endif
-
 #if ENABLE(CSS_FILTERS)
 static inline const FilterOperations* filterOperationsAt(const KeyframeValueList& valueList, size_t index)
 {

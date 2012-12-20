@@ -144,8 +144,6 @@ public:
 
     IntRect coverRect() const { return m_mainBackingStore ? m_mainBackingStore->mapToContents(m_mainBackingStore->coverRect()) : IntRect(); }
 
-    static void initFactory();
-
     // TiledBackingStoreClient
     virtual void tiledBackingStorePaintBegin() OVERRIDE;
     virtual void tiledBackingStorePaint(GraphicsContext*, const IntRect&) OVERRIDE;

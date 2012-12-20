@@ -52,10 +52,6 @@ static int dummyExtensionErrorHandler(Display*, _Xconst char*, _Xconst char*)
 }
 #endif
 
-#if USE(COORDINATED_GRAPHICS)
-#include "CoordinatedGraphicsLayer.h"
-#endif
-
 using namespace WebCore;
 
 namespace WebKit {
@@ -114,10 +110,6 @@ WK_EXPORT int WebProcessMainEfl(int argc, char* argv[])
     SoupCache* soupCache = soup_cache_new(soupCacheDirectory.utf8().data(), SOUP_CACHE_SINGLE_USER);
     soup_session_add_feature(session, SOUP_SESSION_FEATURE(soupCache));
     soup_cache_load(soupCache);
-
-#if USE(COORDINATED_GRAPHICS)
-    CoordinatedGraphicsLayer::initFactory();
-#endif
 
     WebCore::ResourceHandle::setIgnoreSSLErrors(true);
 

@@ -44,8 +44,6 @@ PassOwnPtr<GraphicsLayer> GraphicsLayer::create(GraphicsLayerFactory* factory, G
 
 PassOwnPtr<GraphicsLayer> GraphicsLayer::create(GraphicsLayerClient* client)
 {
-    if (s_graphicsLayerFactory)
-        return (*s_graphicsLayerFactory)(client);
     return adoptPtr(new GraphicsLayerTextureMapper(client));
 }
 

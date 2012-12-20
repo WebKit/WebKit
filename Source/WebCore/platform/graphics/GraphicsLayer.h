@@ -419,13 +419,6 @@ public:
     void resetTrackedRepaints();
     void addRepaintRect(const FloatRect&);
 
-#if PLATFORM(QT) || PLATFORM(GTK) || PLATFORM(EFL)
-    // This allows several alternative GraphicsLayer implementations in the same port,
-    // e.g. if a different GraphicsLayer implementation is needed in WebKit1 vs. WebKit2.
-    typedef PassOwnPtr<GraphicsLayer> GraphicsLayerFactoryCallback(GraphicsLayerClient*);
-    static void setGraphicsLayerFactory(GraphicsLayerFactoryCallback);
-#endif
-
     static bool supportsBackgroundColorContent()
     {
 #if USE(CA) || USE(TEXTURE_MAPPER)
@@ -527,10 +520,6 @@ protected:
     IntRect m_contentsRect;
 
     int m_repaintCount;
-
-#if PLATFORM(QT) || PLATFORM(GTK) || PLATFORM(EFL)
-    static GraphicsLayer::GraphicsLayerFactoryCallback* s_graphicsLayerFactory;
-#endif
 };
 
 
