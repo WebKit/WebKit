@@ -1,3 +1,21 @@
+2012-12-20  Alexey Proskuryakov  <ap@apple.com>
+
+        LocalTerminationDisabler is not needed in WebCookieManager.cpp
+        https://bugs.webkit.org/show_bug.cgi?id=105581
+
+        Reviewed by Anders Carlsson.
+
+        All WebCookieManager functions are synchronous, and all LocalTerminationDisabler does
+        is enable/disable a timer that cannot fire inside the function anyway.
+
+        * WebProcess/Cookies/WebCookieManager.cpp:
+        (WebKit::WebCookieManager::getHostnamesWithCookies):
+        (WebKit::WebCookieManager::deleteCookiesForHostname):
+        (WebKit::WebCookieManager::deleteAllCookies):
+        (WebKit::WebCookieManager::startObservingCookieChanges):
+        (WebKit::WebCookieManager::setHTTPCookieAcceptPolicy):
+        (WebKit::WebCookieManager::getHTTPCookieAcceptPolicy):
+
 2012-12-20  Brady Eidson  <beidson@apple.com>
 
         NetworkProcess has no need for suspend/resumePendingRequests.

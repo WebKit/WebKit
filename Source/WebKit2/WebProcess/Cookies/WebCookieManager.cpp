@@ -53,8 +53,6 @@ void WebCookieManager::didReceiveMessage(CoreIPC::Connection* connection, CoreIP
 
 void WebCookieManager::getHostnamesWithCookies(uint64_t callbackID)
 {
-    WebProcess::LocalTerminationDisabler terminationDisabler(WebProcess::shared());
-
     HashSet<String> hostnames;
 
     WebCore::getHostnamesWithCookies(0, hostnames);
@@ -67,22 +65,16 @@ void WebCookieManager::getHostnamesWithCookies(uint64_t callbackID)
 
 void WebCookieManager::deleteCookiesForHostname(const String& hostname)
 {
-    WebProcess::LocalTerminationDisabler terminationDisabler(WebProcess::shared());
-
     WebCore::deleteCookiesForHostname(0, hostname);
 }
 
 void WebCookieManager::deleteAllCookies()
 {
-    WebProcess::LocalTerminationDisabler terminationDisabler(WebProcess::shared());
-
     WebCore::deleteAllCookies(0);
 }
 
 void WebCookieManager::startObservingCookieChanges()
 {
-    WebProcess::LocalTerminationDisabler terminationDisabler(WebProcess::shared());
-
     WebCore::startObservingCookieChanges();
 }
 
@@ -98,13 +90,11 @@ void WebCookieManager::dispatchCookiesDidChange()
 
 void WebCookieManager::setHTTPCookieAcceptPolicy(HTTPCookieAcceptPolicy policy)
 {
-    WebProcess::LocalTerminationDisabler terminationDisabler(WebProcess::shared());
     platformSetHTTPCookieAcceptPolicy(policy);
 }
 
 void WebCookieManager::getHTTPCookieAcceptPolicy(uint64_t callbackID)
 {
-    WebProcess::LocalTerminationDisabler terminationDisabler(WebProcess::shared());
     WebProcess::shared().connection()->send(Messages::WebCookieManagerProxy::DidGetHTTPCookieAcceptPolicy(platformGetHTTPCookieAcceptPolicy(), callbackID), 0);
 }
 
