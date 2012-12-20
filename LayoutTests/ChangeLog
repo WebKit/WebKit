@@ -1,5 +1,13 @@
 2012-12-20  Simon Fraser  <simon.fraser@apple.com>
 
+        Remove an incorrect WK2 result, and two there were identical to the WK1 results.
+
+        * platform/mac-wk2/svg/zoom/page/zoom-svg-through-object-with-absolute-size-expected.txt: Removed.
+        * platform/mac-wk2/svg/zoom/page/zoom-svg-through-object-with-huge-size-expected.txt: Removed.
+        * platform/mac-wk2/svg/zoom/page/zoom-svg-through-object-with-override-size-expected.txt: Removed.
+
+2012-12-20  Simon Fraser  <simon.fraser@apple.com>
+
         Skip tests in WK2 that rely on eventSender.beginDragWithFiles.
 
         * platform/mac-wk2/TestExpectations:
