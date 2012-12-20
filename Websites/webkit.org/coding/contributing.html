@@ -129,7 +129,27 @@ issue tracking system and mark it as ready for review.</p>
 <h3 id="changelogs">ChangeLog files</h3>
 <p>ChangeLogs are simple text files which provide historical documentation for all changes to the WebKit project.  All patches require an entry to the ChangeLog. The <code>webkit-patch upload</code> script will create a basic entry containing a list of all files that have been changed.  The first line contains the date, your full name, and your email address.  Use this to write up a brief summary of the changes you've made.  Don't worry about the "Reviewed by NOBODY (OOPS!)" line, the person landing your patch will fill this in.</p>
 
-<p>There is one ChangeLog per top-level directory, if you changed code and tests you will need to edit at least two ChangeLogs. The <code>prepare-ChangeLog</code> script will create a stub entries for you.  You should edit these stubs to describe your change, including the full url to the bug (<a href="http://trac.webkit.org/changeset/43259">example entry</a>, note that you can use <code>--bug</code> flag).  (You should set EMAIL_ADDRESS and CHANGE_LOG_NAME in your environment if you will be running this script frequently.)</p>
+<p>There is one ChangeLog per top-level directory, if you changed code and tests you will need to edit at least two ChangeLogs. The <code>prepare-ChangeLog</code> script (automatically ran by <code>webkit-patch</code>) will create a stub entries for you.  You should edit these stubs to describe your change, including the full url to the bug (<a href="http://trac.webkit.org/changeset/43259">example entry</a>, note that you can use <code>--bug</code> flag).  (You should set EMAIL_ADDRESS and CHANGE_LOG_NAME in your environment if you will be running this script frequently.)</p>
+
+<p>A typical change log entry before being submitted to Bugzilla looks like this:</p>
+<pre><code>2012-10-04  Enrica Casucci  &lt;enrica@apple.com&gt;
+
+        Font::glyphDataAndPageForCharacter doesn't account for text orientation when using systemFallback on a cold cache.
+        https://bugs.webkit.org/show_bug.cgi?id=98452.
+
+        Reviewed by NOBODY (OOPS!).
+
+        The text orientation was considered only when there is a cache hit.
+        This change moves the logic to handle text orientation to a separate
+        inline function that is called also when the glyph is added to the cache.
+
+        Test: fast/text/vertical-rl-rtl-linebreak.html
+
+        * platform/graphics/FontFastPath.cpp:
+        (WebCore::applyTextOrientationForCharacter): Added.
+        (WebCore::Font::glyphDataAndPageForCharacter): Modified to use the new function in
+        both cases of cold and warm cache.
+</code></pre>
 
 <p>The "No new tests. (OOPS!)" line appears if <code>webkit-patch</code> did not detect the addition of test cases.  If your patch does not require test cases (or test cases are not possible), remove this line and explain why you didn't write tests. Otherwise all changes require test cases which should be mentioned in the ChangeLog. If you keep this line in your ChangeLog entry, your patch will be rejected by the commit bot.</p>
 
