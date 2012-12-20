@@ -1,3 +1,52 @@
+2012-12-20  Yury Semikhatsky  <yurys@chromium.org>
+
+        Web Inspector: extract native heap graph representation into a separate file
+        https://bugs.webkit.org/show_bug.cgi?id=105524
+
+        Reviewed by Alexander Pavlov.
+
+        Moved native heap graph parser into NativeHeapGraph.js, renamed NativeHeapGraphNode to NativeHeapGraph.Node
+        and NativeHeapGraphEdge to NativeHeapGraph.Edge
+        Removed unused pie chart view.
+
+        * WebCore.gypi:
+        * WebCore.vcproj/WebCore.vcproj:
+        * inspector/InspectorMemoryAgent.cpp:
+        (WebCore::InspectorMemoryAgent::getProcessMemoryDistribution): fixed optional parameter handling
+        * WebCore.gypi:
+        * inspector/InspectorMemoryAgent.cpp:
+        (WebCore::InspectorMemoryAgent::getProcessMemoryDistribution):
+        * inspector/compile-front-end.py:
+        * inspector/front-end/NativeHeapGraph.js: Added.
+        (WebInspector.NativeHeapGraph):
+        (WebInspector.NativeHeapGraph.prototype.rootNodes):
+        (WebInspector.NativeHeapGraph.prototype._calculateNodeEdgeIndexes):
+        (WebInspector.NativeHeapGraph.prototype._addDummyNode):
+        (WebInspector.NativeHeapGraph.Edge):
+        (WebInspector.NativeHeapGraph.Edge.prototype.type):
+        (WebInspector.NativeHeapGraph.Edge.prototype.name):
+        (WebInspector.NativeHeapGraph.Edge.prototype.target):
+        (WebInspector.NativeHeapGraph.Edge.prototype._getStringField):
+        (WebInspector.NativeHeapGraph.Edge.prototype.toString):
+        (WebInspector.NativeHeapGraph.Node):
+        (WebInspector.NativeHeapGraph.Node.prototype.id):
+        (WebInspector.NativeHeapGraph.Node.prototype.type):
+        (WebInspector.NativeHeapGraph.Node.prototype.size):
+        (WebInspector.NativeHeapGraph.Node.prototype.className):
+        (WebInspector.NativeHeapGraph.Node.prototype.name):
+        (WebInspector.NativeHeapGraph.Node.prototype.hasReferencedNodes):
+        (WebInspector.NativeHeapGraph.Node.prototype.referencedNodes):
+        (WebInspector.NativeHeapGraph.Node.prototype.outgoingEdges):
+        (WebInspector.NativeHeapGraph.Node.prototype.targetOfEdge):
+        (WebInspector.NativeHeapGraph.Node.prototype.targetsOfAllEdges):
+        (WebInspector.NativeHeapGraph.Node.prototype._firstEdgePoistion):
+        (WebInspector.NativeHeapGraph.Node.prototype._afterLastEdgePosition):
+        (WebInspector.NativeHeapGraph.Node.prototype._getStringField):
+        (WebInspector.NativeHeapGraph.Node.prototype.toString):
+        * inspector/front-end/NativeMemorySnapshotView.js:
+        * inspector/front-end/ProfilesPanel.js:
+        * inspector/front-end/WebKit.qrc:
+
 2012-12-20  Eugene Klyuchnikov  <eustas.bug@gmail.com>
 
         Web Inspector: Timeline: enhance short-records filter.

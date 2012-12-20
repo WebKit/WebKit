@@ -539,7 +539,7 @@ static void addPlatformComponentsInfo(PassRefPtr<InspectorMemoryBlocks> children
 void InspectorMemoryAgent::getProcessMemoryDistribution(ErrorString*, const bool* reportGraph, RefPtr<InspectorMemoryBlock>& processMemory, RefPtr<InspectorObject>& graph)
 {
     OwnPtr<HeapGraphSerializer> graphSerializer;
-    if (reportGraph)
+    if (reportGraph && *reportGraph)
         graphSerializer = adoptPtr(new HeapGraphSerializer());
     MemoryInstrumentationClientImpl memoryInstrumentationClient(graphSerializer.get());
     m_inspectorClient->getAllocatedObjects(memoryInstrumentationClient.allocatedObjects());
