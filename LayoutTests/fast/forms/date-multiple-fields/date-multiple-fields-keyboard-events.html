@@ -94,7 +94,7 @@ keyDown('downArrow'); //  -> 11/[01]/yyyy
 keyDown('rightArrow'); // -> 11/01/[yyyy]
 var currentYear = new Date().getFullYear();
 keyDown('upArrow'); // -> 11/01/[current year]
-shouldBeEqualToString('input.value', currentYear + '-11-01');
+shouldBe('input.value', 'currentYear + "-11-01"');
 
 beginTest('Up/Down keys on empty value 2');
 keyDown('upArrow'); //    -> [01]/dd/yyyy
@@ -107,7 +107,7 @@ keyDown('downArrow'); //  -> 02/[28]/yyyy
 keyDown('rightArrow'); // -> 02/28/[yyyy]
 currentYear = new Date().getFullYear();
 keyDown('downArrow'); // -> 02/28/[current year]
-shouldBeEqualToString('input.value', currentYear + '-02-28');
+shouldBe('input.value', 'currentYear + "-02-28"');
 
 beginTest('Tab key', '2012-09-30');
 keyDown('\t'); // -> 09/[30]/2012

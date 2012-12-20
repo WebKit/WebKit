@@ -21,9 +21,9 @@ PASS document.activeElement.id is "input"
 PASS input.value is "2012-W10"
 PASS input.value is "2012-W08"
 == Up/Down keys on empty value ==
-PASS input.value is "2012-W52"
+PASS input.value is currentYear + "-W52"
 == Up/Down keys on empty value 2 ==
-PASS input.value is "2012-W02"
+PASS input.value is currentYear + "-W02"
 == Tab key ==
 PASS input.value is "0005-W09"
 PASS input.value is "0005-W07"

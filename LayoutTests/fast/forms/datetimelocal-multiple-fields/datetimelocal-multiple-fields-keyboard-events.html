@@ -112,7 +112,7 @@ keyDown('rightArrow'); // -> 11/01/currentYear 01:[--] --
 keyDown('downArrow'); //  -> 11/01/currentYear 01:[59] --
 keyDown('rightArrow'); // -> 11/01/currentYear 01:59 [--]
 keyDown('upArrow'); //    -> 11/01/currentYear 01:59 [AM]
-shouldBeEqualToString('input.value', currentYear + '-11-01T01:59');
+shouldBe('input.value', 'currentYear + "-11-01T01:59"');
 
 beginTest('Tab key', '2012-09-30T00:00');
 keyDown('\t'); // -> 09/[30]/2012 12:00 AM

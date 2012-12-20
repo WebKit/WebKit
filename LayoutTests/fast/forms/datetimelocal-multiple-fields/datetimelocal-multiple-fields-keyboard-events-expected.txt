@@ -21,7 +21,7 @@ PASS document.activeElement.id is "input"
 PASS input.value is "2012-10-29T00:00"
 PASS input.value is "2012-08-29T00:00"
 == Up/Down keys on empty value ==
-PASS input.value is "2012-11-01T01:59"
+PASS input.value is currentYear + "-11-01T01:59"
 == Tab key ==
 PASS input.value is "2012-09-05T12:00"
 PASS document.activeElement.id is "after"

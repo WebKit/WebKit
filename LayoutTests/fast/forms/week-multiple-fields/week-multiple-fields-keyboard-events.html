@@ -90,7 +90,7 @@ keyDown('downArrow'); //  -> Week [52], yyyy
 keyDown('rightArrow'); // -> Week 52, [yyyy]
 var currentYear = new Date().getFullYear();
 keyDown('upArrow'); // -> Week 52, [current year]
-shouldBeEqualToString('input.value', currentYear + '-W52');
+shouldBe('input.value', 'currentYear + "-W52"');
 
 beginTest('Up/Down keys on empty value 2');
 keyDown('upArrow'); //    -> Week [01], yyyy
@@ -98,7 +98,7 @@ keyDown('upArrow'); //    -> Week [02], yyyy
 keyDown('rightArrow'); // -> Week 02, [yyyy]
 currentYear = new Date().getFullYear();
 keyDown('downArrow'); // -> Week 02, [current year]
-shouldBeEqualToString('input.value', currentYear + '-W02');
+shouldBe('input.value', 'currentYear + "-W02"');
 
 beginTest('Tab key', '2012-W09');
 keyDown('\t'); // -> Week 09, [2012]
