@@ -82,6 +82,9 @@ Node* InjectedScriptHost::scriptValueAsNode(ScriptValue value)
 
 ScriptValue InjectedScriptHost::nodeAsScriptValue(ScriptState* state, Node* node)
 {
+    if (!shouldAllowAccessToNode(state, node))
+        return ScriptValue(state->globalData(), jsNull());
+
     JSLockHolder lock(state);
     return ScriptValue(state->globalData(), toJS(state, deprecatedGlobalObjectForPrototype(state), node));
 }

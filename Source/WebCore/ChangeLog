@@ -1,3 +1,20 @@
+2012-12-19  Yury Semikhatsky  <yurys@chromium.org>
+
+        Web Inspector: deny access from injected script to nodes from document with another origin
+        https://bugs.webkit.org/show_bug.cgi?id=105423
+
+        Reviewed by Pavel Feldman.
+
+        Check that calling context can access the document inspected node belong to
+        before returning JS wrapper for the node.
+
+        Test: http/tests/inspector-protocol/access-inspected-object.html
+
+        * bindings/js/JSInjectedScriptHostCustom.cpp:
+        (WebCore::JSInjectedScriptHost::inspectedObject):
+        * bindings/v8/custom/V8InjectedScriptHostCustom.cpp:
+        (WebCore::InjectedScriptHost::nodeAsScriptValue):
+
 2012-12-19  Nico Weber  <thakis@chromium.org>
 
         Remove slighly confusing "} if" pattern

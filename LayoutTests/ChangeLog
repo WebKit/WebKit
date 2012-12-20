@@ -1,3 +1,17 @@
+2012-12-19  Yury Semikhatsky  <yurys@chromium.org>
+
+        Web Inspector: deny access from injected script to nodes from document with another origin
+        https://bugs.webkit.org/show_bug.cgi?id=105423
+
+        Reviewed by Pavel Feldman.
+
+        Test that $0 is ineaccible in the main frame if it is a node from an iframe that
+        is not accassible beacause of cross origin access checks.
+
+        * http/tests/inspector-protocol/access-inspected-object-expected.txt: Added.
+        * http/tests/inspector-protocol/access-inspected-object.html: Added.
+        * http/tests/inspector-protocol/resources/test-page.html: Added.
+
 2012-12-19  Eric Carlson  <eric.carlson@apple.com>
 
         Crash in TextTrack::trackIndexRelativeToRenderedTracks()
