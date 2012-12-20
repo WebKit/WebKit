@@ -52,6 +52,7 @@
         function start()
         {
             findMediaElement();
+            video.src = findMediaFile('video', 'content/test');
             waitForEvent('canplaythrough', function () { startTrackMenuTest(testMenuHeaders); });
         }
         </script>
@@ -60,8 +61,6 @@
     <body onload="start()">
         <p>Test that captions and subtitles menu items are localized.</p>
         <video width="500" height="300" controls>
-            <source src="content/test.mp4" type="video/mp4">
-            <source src="content/test.ogv" type="video/ogg">
             <track kind="captions" src="track/captions-webvtt/captions-fast.vtt">
             <track kind="subtitles" src="track/captions-webvtt/captions-fast.vtt">
         </video>

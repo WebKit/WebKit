@@ -5,48 +5,23 @@
         <script src="media-controls.js"></script>
         <script src="media-file.js"></script>
         <script src="video-test.js"></script>
+        <script src="trackmenu-test.js"></script>
         <script>
-            var captionsButtonCoordinates;
-
             if (window.testRunner)
                 testRunner.dumpAsText();
-
-            function clickCCButton()
-            {
-                consoleWrite("<br>*** Click the CC button.");
-                eventSender.mouseMoveTo(captionsButtonCoordinates[0], captionsButtonCoordinates[1]);
-                eventSender.mouseDown();
-                eventSender.mouseUp();
-            }
 
             function startTest()
             {
                 consoleWrite("<br>*** Add another text track.");
                 run('video.addTextTrack("captions", "Commentary", "ru")');
-                if (window.eventSender) {
-                    consoleWrite("<br>*** Set the user language preference.");
-                    run("internals.setUserPreferredLanguages(['en'])");
-
-                    try {
-                        captionsButtonCoordinates = mediaControlsButtonCoordinates(video, "toggle-closed-captions-button");
-                    } catch (exception) {
-                        failTest(exception.description);
-                        return;
-                    }
-                    clickCCButton();
-                    window.setTimeout(turnCaptionsOn, 100);
-                }
+                window.setTimeout(turnCaptionsOn, 100);
             }
 
             function trackMenuList()
             {
-                var trackListElement;
-                try {
-                    trackListElement = mediaControlsElement(internals.shadowRoot(video).firstChild, "-webkit-media-controls-closed-captions-track-list");
-                } catch (exception) {
-                    failTest(exception.description);
+                var trackListElement = getTrackListElement();
+                if (!trackListElement)
                     return;
-                }
                 // Track list should have a <ul> with five <li> children (One of them is "Off").
                 var trackList = trackListElement.querySelector("ul");
                 if (!trackList) {
@@ -55,7 +30,7 @@
                 }
                 var trackListItems = trackList.querySelectorAll("li");
                 if (!trackListItems) {
-                    failTest("Could not find a child li elements in track list menu");
+                    failTest("Could not find child li elements in track list menu");
                     return;
                 }
 
@@ -66,11 +41,8 @@
             {
                 var trackListItems = trackMenuList();
                 var expectedItemCount = video.textTracks.length + 1;
-                if (trackListItems.length != expectedItemCount) {
-                    failTest("Expected " + expectedItemCount + " items in menu but found " + trackListItems.length);
-                    return;
-                }
-                logResult(true, "Found " + expectedItemCount + " menu items");
+                consoleWrite("There should be " + expectedItemCount + " items in the menu.");
+                testExpected(trackListItems.length, expectedItemCount);
             }
 
             function selectCaptionMenuItem(index, nextStep)
@@ -136,7 +108,8 @@
             function start()
             {
                 findMediaElement();
-                waitForEvent('canplaythrough', startTest);
+                video.src = findMediaFile('video', 'content/test');
+                waitForEvent('canplaythrough', function () { startTrackMenuTest(startTest); });
             }
         </script>
     </head>
@@ -144,8 +117,6 @@
     <body onload="start()">
         <p>Test that we are able to trigger the list of captions, and select from the list.</p>
         <video width="500" height="300" controls>
-            <source src="content/test.mp4" type="video/mp4">
-            <source src="content/test.ogv" type="video/ogg">
             <track kind="captions" src="track/captions-webvtt/captions-fast.vtt" srclang="en">
             <track kind="captions" src="track/captions-webvtt/captions-fast.vtt" srclang="en-au">
             <track kind="captions" src="track/captions-webvtt/captions-fast.vtt" srclang="ja">

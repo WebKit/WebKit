@@ -49,6 +49,7 @@
             function start()
             {
                 findMediaElement();
+                video.src = findMediaFile('video', 'content/test');
                 waitForEvent('canplaythrough', function () { startTrackMenuTest(testSortedMenu); });
             }
         </script>
@@ -57,8 +58,6 @@
     <body onload="start()">
         <p>Test that captions and subtitles are sorted in the menu.</p>
         <video width="500" height="300" controls>
-            <source src="content/test.mp4" type="video/mp4">
-            <source src="content/test.ogv" type="video/ogg">
             <track label="c" kind="captions" src="track/captions-webvtt/captions-fast.vtt" srclang="ja">
             <track label="b" kind="captions" src="track/captions-webvtt/captions-fast.vtt" srclang="en-au">
             <track label="a" kind="captions" src="track/captions-webvtt/captions-fast.vtt" srclang="en">
