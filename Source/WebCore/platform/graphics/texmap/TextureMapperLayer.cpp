@@ -374,37 +374,8 @@ void TextureMapperLayer::flushCompositingStateForThisLayerOnly(GraphicsLayerText
 
     graphicsLayer->updateDebugIndicators();
 
-    if (changeMask & ParentChange) {
-        TextureMapperLayer* newParent = toTextureMapperLayer(graphicsLayer->parent());
-        if (newParent != m_parent) {
-            // Remove layer from current from child list first.
-            if (m_parent) {
-                size_t index = m_parent->m_children.find(this);
-                m_parent->m_children.remove(index);
-                m_parent = 0;
-            }
-            // Set new layer parent and add layer to the parents child list.
-            if (newParent) {
-                m_parent = newParent;
-                m_parent->m_children.append(this);
-            }
-        }
-    }
-
-    if (changeMask & ChildrenChange) {
-        // Clear children parent pointer to avoid unsync and crash on layer delete.
-        for (size_t i = 0; i < m_children.size(); i++)
-            m_children[i]->m_parent = 0;
-
-        m_children.clear();
-        for (size_t i = 0; i < graphicsLayer->children().size(); ++i) {
-            TextureMapperLayer* child = toTextureMapperLayer(graphicsLayer->children()[i]);
-            if (!child)
-                continue;
-            m_children.append(child);
-            child->m_parent = this;
-        }
-    }
+    if (changeMask & ChildrenChange)
+        setChildren(graphicsLayer->children());
 
     m_size = graphicsLayer->size();
 
@@ -453,6 +424,52 @@ void TextureMapperLayer::flushCompositingStateForThisLayerOnly(GraphicsLayerText
 
     syncAnimations();
 }
+
+void TextureMapperLayer::setChildren(const Vector<GraphicsLayer*>& newChildren)
+{
+    removeAllChildren();
+    for (size_t i = 0; i < newChildren.size(); ++i) {
+        TextureMapperLayer* child = toTextureMapperLayer(newChildren[i]);
+        ASSERT(child);
+        addChild(child);
+    }
+}
+
+void TextureMapperLayer::addChild(TextureMapperLayer* childLayer)
+{
+    ASSERT(childLayer != this);
+
+    if (childLayer->m_parent)
+        childLayer->removeFromParent();
+
+    childLayer->m_parent = this;
+    m_children.append(childLayer);
+}
+
+void TextureMapperLayer::removeFromParent()
+{
+    if (m_parent) {
+        unsigned i;
+        for (i = 0; i < m_parent->m_children.size(); i++) {
+            if (this == m_parent->m_children[i]) {
+                m_parent->m_children.remove(i);
+                break;
+            }
+        }
+
+        m_parent = 0;
+    }
+}
+
+void TextureMapperLayer::removeAllChildren()
+{
+    while (m_children.size()) {
+        TextureMapperLayer* curLayer = m_children[0];
+        ASSERT(curLayer->m_parent);
+        curLayer->removeFromParent();
+    }
+}
+
 
 bool TextureMapperLayer::descendantsOrSelfHaveRunningAnimations() const
 {

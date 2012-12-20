@@ -40,14 +40,12 @@ public:
     virtual void setNeedsDisplay();
     virtual void setContentsNeedsDisplay();
     virtual void setNeedsDisplayInRect(const FloatRect&);
-    virtual void setParent(GraphicsLayer* layer);
     virtual bool setChildren(const Vector<GraphicsLayer*>&);
     virtual void addChild(GraphicsLayer*);
     virtual void addChildAtIndex(GraphicsLayer*, int index);
     virtual void addChildAbove(GraphicsLayer* layer, GraphicsLayer* sibling);
     virtual void addChildBelow(GraphicsLayer* layer, GraphicsLayer* sibling);
     virtual bool replaceChild(GraphicsLayer* oldChild, GraphicsLayer* newChild);
-    virtual void removeFromParent();
     virtual void setMaskLayer(GraphicsLayer* layer);
     virtual void setPosition(const FloatPoint& p);
     virtual void setAnchorPoint(const FloatPoint3D& p);

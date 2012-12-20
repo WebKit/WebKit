@@ -1,3 +1,36 @@
+2012-12-20  Huang Dongsung  <luxtella@company100.net>
+
+        [TexMap] Remove ParentChange in TextureMapperLayer.
+        https://bugs.webkit.org/show_bug.cgi?id=105494
+
+        Reviewed by Noam Rosenthal.
+
+        ParentChange is useless, because ChildrenChange is enough. In addition,
+        GraphicsLayer uses setParent() method internally. This patch copies
+        GraphicsLayer::setChildren() into TextureMapperLayer::setChildren().
+
+        No new tests. Covered by existing tests.
+
+        * platform/graphics/texmap/GraphicsLayerTextureMapper.cpp:
+        (WebCore):
+        (WebCore::GraphicsLayerTextureMapper::setChildren):
+          Match the similar style of replaceChild().
+        * platform/graphics/texmap/GraphicsLayerTextureMapper.h:
+        (GraphicsLayerTextureMapper):
+        * platform/graphics/texmap/TextureMapperLayer.cpp:
+        (WebCore::TextureMapperLayer::flushCompositingStateForThisLayerOnly):
+        (WebCore::TextureMapperLayer::setChildren):
+          Copied from GraphicsLayer::setChildren().
+        (WebCore):
+        (WebCore::TextureMapperLayer::addChild):
+          Copied from GraphicsLayer::addChild().
+        (WebCore::TextureMapperLayer::removeFromParent):
+          Copied from GraphicsLayer::removeFromParent().
+        (WebCore::TextureMapperLayer::removeAllChildren):
+          Copied from GraphicsLayer::removeAllChildren().
+        * platform/graphics/texmap/TextureMapperLayer.h:
+        (TextureMapperLayer):
+
 2012-12-20  Alec Flett  <alecflett@chromium.org>
 
         IndexedDB: Cursor and IndexWriter cleanup for refactor

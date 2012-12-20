@@ -57,7 +57,6 @@ public:
     enum ChangeMask {
         NoChanges =                 0,
 
-        ParentChange =              (1L << 0),
         ChildrenChange =            (1L << 1),
         MaskLayerChange =           (1L << 2),
         PositionChange =            (1L << 3),
@@ -137,6 +136,11 @@ private:
     PassRefPtr<BitmapTexture> texture() { return m_backingStore ? m_backingStore->texture() : 0; }
     FloatPoint adjustedPosition() const { return m_state.pos + m_scrollPositionDelta; }
     bool isAncestorFixedToViewport() const;
+
+    void setChildren(const Vector<GraphicsLayer*>&);
+    void addChild(TextureMapperLayer*);
+    void removeFromParent();
+    void removeAllChildren();
 
     void paintRecursive(const TextureMapperPaintOptions&);
     void paintSelf(const TextureMapperPaintOptions&);
