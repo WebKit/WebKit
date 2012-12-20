@@ -1,3 +1,10 @@
+2012-12-20  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Unreviewed. Skip unit test /webkit/atk/getTextInParagraphAndBodyModerate
+
+        * Scripts/run-gtk-tests:
+        (TestRunner):
+
 2012-12-20  Thiago Marcos P. Santos  <thiago.santos@intel.com>
 
         [Qt] Move ImageDiff to the Tools directory root
