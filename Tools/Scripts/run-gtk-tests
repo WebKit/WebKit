@@ -335,16 +335,18 @@ class TestRunner:
 
         if failed_tests:
             names = [test.replace(self._programs_path, '', 1) for test in failed_tests]
-            sys.stdout.write("Tests failed: %s\n" % ", ".join(names))
+            sys.stdout.write("Tests failed (%d): %s\n" % (len(names), ", ".join(names)))
             sys.stdout.flush()
 
         if timed_out_tests:
             names = [test.replace(self._programs_path, '', 1) for test in timed_out_tests]
-            sys.stdout.write("Tests that timed out: %s\n" % ", ".join(names))
+            sys.stdout.write("Tests that timed out (%d): %s\n" % (len(names), ", ".join(names)))
             sys.stdout.flush()
 
         if self._skipped_tests and self._options.skipped_action == 'skip':
-            sys.stdout.write("Tests skipped:\n%s\n" % "\n".join([str(skipped) for skipped in self._skipped_tests]))
+            sys.stdout.write("Tests skipped (%d):\n%s\n" %
+                             (len(self._skipped_tests),
+                              "\n".join([str(skipped) for skipped in self._skipped_tests])))
             sys.stdout.flush()
 
         return len(failed_tests) + len(timed_out_tests)

@@ -1,3 +1,20 @@
+2012-12-20  Alberto Garcia  <agarcia@igalia.com>
+
+        [GTK] Count failed and timed out tests separately
+        https://bugs.webkit.org/show_bug.cgi?id=105448
+
+        Reviewed by Carlos Garcia Campos.
+
+        Display the number of tests that fail, time out and are skipped
+        separately in the buildbot page.
+
+        * BuildSlaveSupport/build.webkit.org-config/master.cfg:
+        (RunGtkAPITests.commandComplete):
+        (RunGtkAPITests.evaluateCommand):
+        (RunGtkAPITests.getText2):
+        * Scripts/run-gtk-tests:
+        (TestRunner.run_tests):
+
 2012-12-19  Ryosuke Niwa  <rniwa@webkit.org>
 
         PerfTest.parse_output does too much
