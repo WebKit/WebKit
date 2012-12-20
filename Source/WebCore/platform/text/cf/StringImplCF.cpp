@@ -137,8 +137,8 @@ RetainPtr<CFStringRef> StringImpl::createCFString()
 {
     if (!m_length || !isMainThread()) {
         if (is8Bit())
-            return CFStringCreateWithBytes(0, reinterpret_cast<const UInt8*>(characters8()), m_length, kCFStringEncodingISOLatin1, false);
-        return CFStringCreateWithCharacters(0, reinterpret_cast<const UniChar*>(characters16()), m_length);
+            return adoptCF(CFStringCreateWithBytes(0, reinterpret_cast<const UInt8*>(characters8()), m_length, kCFStringEncodingISOLatin1, false));
+        return adoptCF(CFStringCreateWithCharacters(0, reinterpret_cast<const UniChar*>(characters16()), m_length));
     }
     CFAllocatorRef allocator = StringWrapperCFAllocator::allocator();
 
