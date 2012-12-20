@@ -95,8 +95,6 @@ WebInspector.StatusBarButton = function(title, className, states)
     this._visible = true;
 }
 
-WebInspector.StatusBarButton.width = 31;
-
 WebInspector.StatusBarButton.prototype = {
     _clicked: function()
     {

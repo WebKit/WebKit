@@ -200,7 +200,10 @@ WebInspector.Panel.prototype = {
     {
     },
 
-    sidebarResized: function(width)
+    /**
+     * @param {WebInspector.Event} event
+     */
+    sidebarResized: function(event)
     {
     },
 

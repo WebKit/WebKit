@@ -1,3 +1,26 @@
+2012-12-20  Eugene Klyuchnikov  <eustas.bug@gmail.com>
+
+        Web Inspector: Timeline: enhance short-records filter.
+        https://bugs.webkit.org/show_bug.cgi?id=101749
+
+        Reviewed by Pavel Feldman.
+
+        Currently filter could be "on" (accepting records longer than 15ms) or
+        "off" (accepting all records). Adding some options between 0ms and 15ms
+        will make this feature much more useful.
+
+        Additional changes:
+        - removed hardcoded size constant WebInspector.StatusBarComboBox.width
+
+        * English.lproj/localizedStrings.js: Added new / removed orphan strings.
+        * inspector/front-end/ProfilesPanel.js: Changed offset calculation.
+        * inspector/front-end/TimelineOverviewPane.js: Enhanced filter.
+        * inspector/front-end/TimelinePanel.js: Replaced button with combobox.
+        (WebInspector.TimelineIsLongFilter): Enhanced filter.
+        * inspector/front-end/TimelinePresentationModel.js:
+        Removed Record "isLong" method.
+        * inspector/front-end/timelinePanel.css: Removed orphan styles.
+
 2012-12-20  Eugene Klyuchnikov  <eustas@chromium.org>
 
         Web Inspector: [CPU Profile] Idle time is always 0

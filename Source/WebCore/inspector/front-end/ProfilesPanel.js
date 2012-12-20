@@ -1054,13 +1054,23 @@ WebInspector.ProfilesPanel.prototype = {
      */
     sidebarResized: function(event)
     {
-        this.onResize();
+        var sidebarWidth = /** @type {number} */ (event.data);
+        this._resize(sidebarWidth);
     },
 
     onResize: function()
     {
-        var minFloatingStatusBarItemsOffset = document.getElementById("panel-status-bar").totalOffsetLeft() + this._statusBarButtons.length * WebInspector.StatusBarButton.width;
-        this.profileViewStatusBarItemsContainer.style.left = Math.max(minFloatingStatusBarItemsOffset, this.splitView.sidebarWidth()) + "px";
+        this._resize(this.splitView.sidebarWidth());
+    },
+
+    /**
+     * @param {number} sidebarWidth
+     */
+    _resize: function(sidebarWidth)
+    {
+        var lastItemElement = this._statusBarButtons[this._statusBarButtons.length - 1].element;
+        var minFloatingStatusBarItemsOffset = lastItemElement.totalOffsetLeft() + lastItemElement.offsetWidth;
+        this.profileViewStatusBarItemsContainer.style.left = Math.max(minFloatingStatusBarItemsOffset, sidebarWidth) + "px";
     },
 
     /**

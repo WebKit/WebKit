@@ -333,11 +333,11 @@ WebInspector.TimelineOverviewPane.prototype = {
     },
 
     /**
-     * @param {boolean} value
+     * @param {number} value
      */
-    setShowShortEvents: function(value)
+    setMinimumRecordDuration: function(value)
     {
-        this._categoryStrips.setShowShortEvents(value);
+        this._categoryStrips.setMinimumRecordDuration(value);
     },
 
     _scheduleRefresh: function()
@@ -884,6 +884,7 @@ WebInspector.TimelineCategoryStrips = function(model)
     this._model = model;
     this.element = document.createElement("canvas");
     this._context = this.element.getContext("2d");
+    this._minimumRecordDuration = 0;
 
     this._fillStyles = {};
     var categories = WebInspector.TimelinePresentationModel.categories();
@@ -926,8 +927,7 @@ WebInspector.TimelineCategoryStrips.prototype = {
 
         function appendRecord(record)
         {
-            var isLong = WebInspector.TimelineModel.durationInSeconds(record) > WebInspector.TimelinePresentationModel.shortRecordThreshold;
-            if (!(this._showShortEvents || isLong))
+            if (!!this._minimumRecordDuration && (WebInspector.TimelineModel.durationInSeconds(record) < this._minimumRecordDuration))
                 return;
             if (record.type === WebInspector.TimelineModel.RecordType.BeginFrame)
                 return;
@@ -956,11 +956,11 @@ WebInspector.TimelineCategoryStrips.prototype = {
     },
 
     /**
-     * @param {boolean} value
+     * @param {number} value
      */
-    setShowShortEvents: function(value)
+    setMinimumRecordDuration: function(value)
     {
-        this._showShortEvents = value;
+        this._minimumRecordDuration = value;
         this.update();
     },
 

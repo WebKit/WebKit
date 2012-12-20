@@ -41,8 +41,6 @@ WebInspector.TimelinePresentationModel = function()
     this.reset();
 }
 
-WebInspector.TimelinePresentationModel.shortRecordThreshold = 0.015;
-
 WebInspector.TimelinePresentationModel.categories = function()
 {
     if (WebInspector.TimelinePresentationModel._categories)
@@ -653,11 +651,6 @@ WebInspector.TimelinePresentationModel.Record.prototype = {
     get cpuTime()
     {
         return this._cpuTime;
-    },
-
-    isLong: function()
-    {
-        return (this._lastChildEndTime - this.startTime) > WebInspector.TimelinePresentationModel.shortRecordThreshold;
     },
 
     /**
