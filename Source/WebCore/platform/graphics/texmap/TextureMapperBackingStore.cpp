@@ -39,9 +39,9 @@ void TextureMapperSurfaceBackingStore::setGraphicsSurface(PassRefPtr<GraphicsSur
     m_graphicsSurface = surface;
 }
 
-void TextureMapperSurfaceBackingStore::swapBuffersIfNeeded(uint32_t)
+void TextureMapperSurfaceBackingStore::swapBuffersIfNeeded(uint32_t frontBuffer)
 {
-    if (m_graphicsSurface)
+    if (m_graphicsSurface && m_graphicsSurface->frontBuffer() != frontBuffer)
         m_graphicsSurface->swapBuffers();
 }
 
