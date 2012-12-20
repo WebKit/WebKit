@@ -1,3 +1,10 @@
+2012-12-20  Ilya Tikhonovsky  <loislo@chromium.org>
+
+        Unreviewed build fix for chromium mac after r138206.
+
+        * WebCoreSupport/WebSystemInterface.mm:
+        (InitWebCoreSystemInterface):
+
 2012-12-19  Alexey Proskuryakov  <ap@apple.com>
 
         <rdar://problem/12890242> [WK2 NetworkProcess] Client doesn't receive SSL certificates

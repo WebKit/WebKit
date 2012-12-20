@@ -58,7 +58,9 @@ void InitWebCoreSystemInterface(void)
     INIT(CopyCFLocalizationPreferredName);
     INIT(CopyCONNECTProxyResponse);
     INIT(CopyNSURLResponseStatusLine);
+#if PLATFORM(MAC)
     INIT(CopyNSURLResponseCertificateChain);
+#endif
     INIT(CreateCustomCFReadStream);
     INIT(CreateNSURLConnectionDelegateProxy);
     INIT(DrawCapsLockIndicator);
