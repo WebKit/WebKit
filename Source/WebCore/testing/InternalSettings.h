@@ -46,8 +46,8 @@ class InternalSettings : public RefCountedSupplement<Page, InternalSettings> {
 public:
     class Backup {
     public:
-        Backup(Page*, Settings*);
-        void restoreTo(Page*, Settings*);
+        Backup(Settings*);
+        void restoreTo(Settings*);
 
         double m_originalPasswordEchoDurationInSeconds;
         bool m_originalPasswordEchoEnabled;
@@ -78,7 +78,6 @@ public:
 #if ENABLE(DIALOG_ELEMENT)
         bool m_originalDialogElementEnabled;
 #endif
-        bool m_canStartMedia;
         bool m_originalForceCompositingMode;
         bool m_originalCompositingForFixedPositionEnabled;
         bool m_originalCompositingForScrollableFramesEnabled;

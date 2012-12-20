@@ -1,3 +1,22 @@
+2012-12-19  Simon Fraser  <simon.fraser@apple.com>
+
+        Lots of sticky tests failing in WK2
+        https://bugs.webkit.org/show_bug.cgi?id=105464
+
+        Reviewed by Beth Dakin.
+
+        WebKitTestRunner had a race between snapshotting in the UI process,
+        and resettting after the test in the web process. InjectedBundle::done()
+        was a bad place to call page()->resetAfterTest(), because of this race;
+        it could reset the scroll position before the UI snapshot had been obtained.
+        
+        Fix by moving the call to page()->resetAfterTest() into didReceiveMessage(),
+        for the "Reset" message which will come in before the next test.
+
+        * WebKitTestRunner/InjectedBundle/InjectedBundle.cpp:
+        (WTR::InjectedBundle::didReceiveMessage):
+        (WTR::InjectedBundle::done):
+
 2012-12-19  Filip Pizlo  <fpizlo@apple.com>
 
         DFG speculation checks that take JumpList should consolidate OSRExits

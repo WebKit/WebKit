@@ -61,7 +61,7 @@
 
 namespace WebCore {
 
-InternalSettings::Backup::Backup(Page* page, Settings* settings)
+InternalSettings::Backup::Backup(Settings* settings)
     : m_originalPasswordEchoDurationInSeconds(settings->passwordEchoDurationInSeconds())
     , m_originalPasswordEchoEnabled(settings->passwordEchoEnabled())
     , m_originalFixedElementsLayoutRelativeToFrame(settings->fixedElementsLayoutRelativeToFrame())
@@ -91,7 +91,6 @@ InternalSettings::Backup::Backup(Page* page, Settings* settings)
 #if ENABLE(DIALOG_ELEMENT)
     , m_originalDialogElementEnabled(RuntimeEnabledFeatures::dialogElementEnabled())
 #endif
-    , m_canStartMedia(page->canStartMedia())
     , m_originalForceCompositingMode(settings->forceCompositingMode())
     , m_originalCompositingForFixedPositionEnabled(settings->acceleratedCompositingForFixedPositionEnabled())
     , m_originalCompositingForScrollableFramesEnabled(settings->acceleratedCompositingForScrollableFramesEnabled())
@@ -108,7 +107,7 @@ InternalSettings::Backup::Backup(Page* page, Settings* settings)
 }
 
 
-void InternalSettings::Backup::restoreTo(Page* page, Settings* settings)
+void InternalSettings::Backup::restoreTo(Settings* settings)
 {
     settings->setPasswordEchoDurationInSeconds(m_originalPasswordEchoDurationInSeconds);
     settings->setPasswordEchoEnabled(m_originalPasswordEchoEnabled);
@@ -139,7 +138,6 @@ void InternalSettings::Backup::restoreTo(Page* page, Settings* settings)
 #if ENABLE(DIALOG_ELEMENT)
     RuntimeEnabledFeatures::setDialogElementEnabled(m_originalDialogElementEnabled);
 #endif
-    page->setCanStartMedia(m_canStartMedia);
     settings->setForceCompositingMode(m_originalForceCompositingMode);
     settings->setAcceleratedCompositingForFixedPositionEnabled(m_originalCompositingForFixedPositionEnabled);
     settings->setAcceleratedCompositingForScrollableFramesEnabled(m_originalCompositingForScrollableFramesEnabled);
@@ -168,16 +166,17 @@ InternalSettings::~InternalSettings()
 
 InternalSettings::InternalSettings(Page* page)
     : m_page(page)
-    , m_backup(page, page->settings())
+    , m_backup(page->settings())
 {
 }
 
 void InternalSettings::reset()
 {
     page()->setPageScaleFactor(1, IntPoint(0, 0));
+    page()->setCanStartMedia(true);
 
-    m_backup.restoreTo(page(), settings());
-    m_backup = Backup(page(), settings());
+    m_backup.restoreTo(settings());
+    m_backup = Backup(settings());
 }
 
 Settings* InternalSettings::settings() const
