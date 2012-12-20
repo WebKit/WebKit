@@ -1,3 +1,17 @@
+2012-12-20  Erik Arvidsson  <arv@chromium.org>
+
+        REGRESSION(r138263): Don't use fastGetAttribute for HTMLNames::classAttr because it breaks on SVGElement
+        https://bugs.webkit.org/show_bug.cgi?id=105555
+
+        Reviewed by Tony Chang.
+
+        The code generated generated code that uses fastGetAttribute for the className WebIDL attribute getter.
+        However, this attribute is animatable in SVG so we cannot use the fast function for it.
+
+        No new tests. The assert is no longer hit.
+
+        * bindings/scripts/CodeGenerator.pm:
+
 2012-12-20  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] Add API to set a TLS errors policy to WebKit2 GTK+ API
