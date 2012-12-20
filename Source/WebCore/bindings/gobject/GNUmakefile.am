@@ -423,22 +423,17 @@ webkitgtk_gdom_built_h_api += \
 if ENABLE_VIDEO
 webkitgtk_gdom_built_h_api += \
 	$(top_builddir)/DerivedSources/webkitdom/WebKitDOMHTMLAudioElement.h \
-	$(top_builddir)/DerivedSources/webkitdom/WebKitDOMHTMLVideoElement.h
-webkitgtk_gdom_built_sources += \
-	DerivedSources/webkitdom/WebKitDOMHTMLAudioElement.cpp \
-	DerivedSources/webkitdom/WebKitDOMHTMLAudioElementPrivate.h \
-	DerivedSources/webkitdom/WebKitDOMHTMLVideoElement.cpp \
-	DerivedSources/webkitdom/WebKitDOMHTMLVideoElementPrivate.h
-
-# Video Track feature currently depends on HTML Video and is considered unstable.
-if ENABLE_UNSTABLE_FEATURES
-webkitgtk_gdom_built_h_api += \
+	$(top_builddir)/DerivedSources/webkitdom/WebKitDOMHTMLVideoElement.h \
 	$(top_builddir)/DerivedSources/webkitdom/WebKitDOMTextTrack.h \
 	$(top_builddir)/DerivedSources/webkitdom/WebKitDOMTextTrackList.h \
 	$(top_builddir)/DerivedSources/webkitdom/WebKitDOMTextTrackCue.h \
 	$(top_builddir)/DerivedSources/webkitdom/WebKitDOMTextTrackCueList.h \
 	$(top_builddir)/DerivedSources/webkitdom/WebKitDOMTrackEvent.h
 webkitgtk_gdom_built_sources += \
+	DerivedSources/webkitdom/WebKitDOMHTMLAudioElement.cpp \
+	DerivedSources/webkitdom/WebKitDOMHTMLAudioElementPrivate.h \
+	DerivedSources/webkitdom/WebKitDOMHTMLVideoElement.cpp \
+	DerivedSources/webkitdom/WebKitDOMHTMLVideoElementPrivate.h \
 	DerivedSources/webkitdom/WebKitDOMTextTrack.cpp \
 	DerivedSources/webkitdom/WebKitDOMTextTrackPrivate.h \
 	DerivedSources/webkitdom/WebKitDOMTextTrackList.cpp \
@@ -449,7 +444,6 @@ webkitgtk_gdom_built_sources += \
 	DerivedSources/webkitdom/WebKitDOMTextTrackCueListPrivate.h \
 	DerivedSources/webkitdom/WebKitDOMTrackEvent.cpp \
 	DerivedSources/webkitdom/WebKitDOMTrackEventPrivate.h
-endif
 endif
 
 BUILT_SOURCES += \

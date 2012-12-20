@@ -62,7 +62,6 @@ MOFILES :=
 ALL_MOFILES :=
 feature_defines_defaults :=
 feature_defines_overrides :=
-feature_defines_unstable :=
 feature_defines :=
 dom_binding_idls :=
 wtf_sources :=

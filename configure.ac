@@ -500,14 +500,6 @@ AC_ARG_ENABLE(optimizations,
               [if test "$enable_debug" = "yes"; then enable_optimizations="no"; else enable_optimizations="yes"; fi])
 AC_MSG_RESULT([$enable_optimizations])
 
-# check whether to enable unstable features
-AC_MSG_CHECKING([whether to enable unstable features])
-AC_ARG_ENABLE(unstable_features,
-              AC_HELP_STRING([--enable-unstable-features],
-                             [enable unstable features [default=no]]),
-              [],[enable_unstable_features="no"])
-AC_MSG_RESULT([$enable_unstable_features])
-
 found_opengl=no
 AC_ARG_ENABLE(glx,
               AC_HELP_STRING([--enable-glx], [enable support for GLX [default=auto]]),
@@ -649,7 +641,7 @@ AC_MSG_CHECKING([whether to enable Gamepad support])
 AC_ARG_ENABLE(gamepad,
               AC_HELP_STRING([--enable-gamepad],
                              [enable Gamepad support [default=no]]),
-              [],[enable_gamepad=$enable_unstable_features])
+              [],[enable_gamepad="no"])
 AC_MSG_RESULT([$enable_gamepad])
 
 if test "$enable_gamepad" = "yes" && test "$os_linux" = no; then
@@ -670,7 +662,7 @@ AC_MSG_CHECKING([whether to enable media stream support])
 AC_ARG_ENABLE(media_stream,
               AC_HELP_STRING([--enable-media-stream],
                              [enable media stream support (incomplete) [default=no]]),
-              [],[enable_media_stream=$enable_unstable_features])
+              [],[enable_media_stream="no"])
 AC_MSG_RESULT([$enable_media_stream])
 
 # check whether to enable XSLT support
@@ -854,11 +846,11 @@ AC_ARG_ENABLE([introspection],
   [],[enable_introspection=no])
 AC_MSG_RESULT([$enable_introspection])
 
-# Enable CSS Filters and Shaders if unstable_features and accelerated_compositing are turned on.
+# Enable CSS Filters and Shaders if accelerated_compositing is turned on.
 enable_css_filters=no;
 enable_css_shaders=no;
 AC_MSG_CHECKING([whether to enable CSS Filters and Shaders])
-if test "$enable_unstable_features" = "yes" && test "$enable_accelerated_compositing" = "yes" && test "$with_acceleration_backend" = "opengl"; then
+if test "$enable_accelerated_compositing" = "yes" && test "$with_acceleration_backend" = "opengl"; then
     enable_css_filters=yes;
     enable_css_shaders=yes;
 fi
@@ -1164,7 +1156,6 @@ AM_CONDITIONAL([USE_FARSTREAM], [test "$have_farstream" = "yes"])
 
 # WebKit feature conditionals
 AM_CONDITIONAL([ENABLE_DEBUG],[test "$enable_debug_features" = "yes"])
-AM_CONDITIONAL([ENABLE_UNSTABLE_FEATURES],[test "$enable_unstable_features" = "yes"])
 AM_CONDITIONAL([ENABLE_WEBGL],[test "$enable_webgl" = "yes"])
 AM_CONDITIONAL([ENABLE_GAMEPAD],[test "$enable_gamepad" = "yes"])
 AM_CONDITIONAL([ENABLE_XSLT],[test "$enable_xslt" = "yes"])

@@ -342,22 +342,6 @@ else
 feature_defines_overrides += ENABLE_SPELLCHECK=0
 endif  # END ENABLE_SPELLCHECK
 
-# ---
-# Unstable features
-# If unstable features should not be enabled, their defines should be overriden with a 0 value.
-# ---
-if !ENABLE_UNSTABLE_FEATURES
-feature_defines_unstable += \
-	ENABLE_CSP_NEXT=0 \
-	ENABLE_CSS3_TEXT=0 \
-	ENABLE_CSS_STICKY_POSITION=0 \
-	ENABLE_LINK_PREFETCH=0 \
-	ENABLE_MICRODATA=0 \
-	ENABLE_MUTATION_OBSERVERS=0 \
-	ENABLE_STYLE_SCOPED=0 \
-	ENABLE_VIDEO_TRACK=0
-endif
-
 
 # Fill the feature_defines variable with all the defines, making it possible
 # to override the default define value (as set in feature_defines_defaults)
@@ -369,12 +353,9 @@ feature_defines += $(strip $(foreach bare_define, \
 			$(if $(findstring =$(fvalue),$(define)),$(patsubst %=$(fvalue),%,$(define))) \
 		) \
 	), \
-	$(if $(findstring $(bare_define)=, $(feature_defines_unstable)), \
-		$(filter $(bare_define)=%,$(feature_defines_unstable)), \
-		$(if $(findstring $(bare_define)=, $(feature_defines_overrides)), \
-			$(filter $(bare_define)=%,$(feature_defines_overrides)), \
-			$(filter $(bare_define)=%,$(feature_defines_defaults)) \
-		) \
+	$(if $(findstring $(bare_define)=, $(feature_defines_overrides)), \
+		$(filter $(bare_define)=%,$(feature_defines_overrides)), \
+		$(filter $(bare_define)=%,$(feature_defines_defaults)) \
 	) \
 ))
 
