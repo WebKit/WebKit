@@ -27,22 +27,23 @@
 #define ProfilerOSRExitSite_h
 
 #include "JSValue.h"
+#include <wtf/Vector.h>
 
 namespace JSC { namespace Profiler {
 
 class OSRExitSite {
 public:
-    explicit OSRExitSite(const void* codeAddress)
-        : m_codeAddress(codeAddress)
+    explicit OSRExitSite(const Vector<const void*>& codeAddresses)
+        : m_codeAddresses(codeAddresses)
     {
     }
     
-    const void* codeAddress() const { return m_codeAddress; }
+    const Vector<const void*>& codeAddress() const { return m_codeAddresses; }
     
     JSValue toJS(ExecState*) const;
 
 private:
-    const void* m_codeAddress;
+    Vector<const void*> m_codeAddresses;
 };
 
 } } // namespace JSC::Profiler

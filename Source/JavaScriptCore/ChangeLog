@@ -1,3 +1,44 @@
+2012-12-19  Filip Pizlo  <fpizlo@apple.com>
+
+        DFG speculation checks that take JumpList should consolidate OSRExits
+        https://bugs.webkit.org/show_bug.cgi?id=105401
+
+        Reviewed by Oliver Hunt.
+
+        Change OSRExitCompilationInfo to always contain a JumpList, and change JumpList
+        to be more compact. This way, a speculationCheck that takes a JumpList only has
+        to emit one OSRExit structure, and one OSRExit landing pad.
+        
+        The downside is that we get less precise information about *where* we exited
+        from. So, this also includes changes to the profiler to be more relaxed about
+        what an ExitSite is.
+
+        * assembler/AbstractMacroAssembler.h:
+        (JumpList):
+        * dfg/DFGJITCompiler.cpp:
+        (JSC::DFG::JITCompiler::linkOSRExits):
+        (JSC::DFG::JITCompiler::link):
+        * dfg/DFGJITCompiler.h:
+        (DFG):
+        (JSC::DFG::JITCompiler::appendExitInfo):
+        (JITCompiler):
+        * dfg/DFGOSRExitCompilationInfo.h:
+        (OSRExitCompilationInfo):
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::speculationCheck):
+        (JSC::DFG::SpeculativeJIT::speculationWatchpoint):
+        (JSC::DFG::SpeculativeJIT::forwardSpeculationCheck):
+        * profiler/ProfilerCompilation.cpp:
+        (JSC::Profiler::Compilation::addOSRExitSite):
+        * profiler/ProfilerCompilation.h:
+        (Compilation):
+        * profiler/ProfilerOSRExitSite.cpp:
+        (JSC::Profiler::OSRExitSite::toJS):
+        * profiler/ProfilerOSRExitSite.h:
+        (JSC::Profiler::OSRExitSite::OSRExitSite):
+        (JSC::Profiler::OSRExitSite::codeAddress):
+        (OSRExitSite):
+
 2012-12-19  Oliver Hunt  <oliver@apple.com>
 
         Fix some incorrect tests in testapi.c

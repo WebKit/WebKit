@@ -60,7 +60,7 @@ public:
     
     void addDescription(const CompiledBytecode&);
     ExecutionCounter* executionCounterFor(const OriginStack&);
-    void addOSRExitSite(const void* codeAddress);
+    void addOSRExitSite(const Vector<const void*>& codeAddresses);
     OSRExit* addOSRExit(unsigned id, const OriginStack&, ExitKind, bool isWatchpoint);
     
     JSValue toJS(ExecState*) const;

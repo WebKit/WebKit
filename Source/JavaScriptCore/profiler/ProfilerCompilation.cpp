@@ -74,9 +74,9 @@ ExecutionCounter* Compilation::executionCounterFor(const OriginStack& origin)
     return result;
 }
 
-void Compilation::addOSRExitSite(const void* codeAddress)
+void Compilation::addOSRExitSite(const Vector<const void*>& codeAddresses)
 {
-    m_osrExitSites.append(OSRExitSite(codeAddress));
+    m_osrExitSites.append(OSRExitSite(codeAddresses));
 }
 
 OSRExit* Compilation::addOSRExit(unsigned id, const OriginStack& originStack, ExitKind exitKind, bool isWatchpoint)

@@ -109,7 +109,7 @@ void SpeculativeJIT::speculationCheck(ExitKind kind, JSValueSource jsValueSource
     if (!m_compileOkay)
         return;
     ASSERT(at(m_compileIndex).canExit() || m_isCheckingArgumentTypes);
-    m_jit.appendExitJump(jumpToFail);
+    m_jit.appendExitInfo(jumpToFail);
     m_jit.codeBlock()->appendOSRExit(OSRExit(kind, jsValueSource, m_jit.graph().methodOfGettingAValueProfileFor(nodeIndex), this, m_stream->size()));
 }
 
@@ -121,10 +121,11 @@ void SpeculativeJIT::speculationCheck(ExitKind kind, JSValueSource jsValueSource
 
 void SpeculativeJIT::speculationCheck(ExitKind kind, JSValueSource jsValueSource, NodeIndex nodeIndex, const MacroAssembler::JumpList& jumpsToFail)
 {
+    if (!m_compileOkay)
+        return;
     ASSERT(at(m_compileIndex).canExit() || m_isCheckingArgumentTypes);
-    Vector<MacroAssembler::Jump, 16> jumpVector = jumpsToFail.jumps();
-    for (unsigned i = 0; i < jumpVector.size(); ++i)
-        speculationCheck(kind, jsValueSource, nodeIndex, jumpVector[i]);
+    m_jit.appendExitInfo(jumpsToFail);
+    m_jit.codeBlock()->appendOSRExit(OSRExit(kind, jsValueSource, m_jit.graph().methodOfGettingAValueProfileFor(nodeIndex), this, m_stream->size()));
 }
 
 void SpeculativeJIT::speculationCheck(ExitKind kind, JSValueSource jsValueSource, Edge nodeUse, const MacroAssembler::JumpList& jumpsToFail)
@@ -139,7 +140,7 @@ void SpeculativeJIT::speculationCheck(ExitKind kind, JSValueSource jsValueSource
         return;
     ASSERT(at(m_compileIndex).canExit() || m_isCheckingArgumentTypes);
     m_jit.codeBlock()->appendSpeculationRecovery(recovery);
-    m_jit.appendExitJump(jumpToFail);
+    m_jit.appendExitInfo(jumpToFail);
     m_jit.codeBlock()->appendOSRExit(OSRExit(kind, jsValueSource, m_jit.graph().methodOfGettingAValueProfileFor(nodeIndex), this, m_stream->size(), m_jit.codeBlock()->numberOfSpeculationRecoveries()));
 }
 
@@ -161,7 +162,7 @@ JumpReplacementWatchpoint* SpeculativeJIT::speculationWatchpoint(ExitKind kind, 
     if (!m_compileOkay)
         return 0;
     ASSERT(at(m_compileIndex).canExit() || m_isCheckingArgumentTypes);
-    m_jit.appendExitJump(JITCompiler::Jump());
+    m_jit.appendExitInfo(JITCompiler::JumpList());
     OSRExit& exit = m_jit.codeBlock()->osrExit(
         m_jit.codeBlock()->appendOSRExit(
             OSRExit(kind, jsValueSource,
@@ -270,9 +271,8 @@ void SpeculativeJIT::forwardSpeculationCheck(ExitKind kind, JSValueSource jsValu
 void SpeculativeJIT::forwardSpeculationCheck(ExitKind kind, JSValueSource jsValueSource, NodeIndex nodeIndex, const MacroAssembler::JumpList& jumpsToFail, const ValueRecovery& valueRecovery)
 {
     ASSERT(at(m_compileIndex).canExit() || m_isCheckingArgumentTypes);
-    Vector<MacroAssembler::Jump, 16> jumpVector = jumpsToFail.jumps();
-    for (unsigned i = 0; i < jumpVector.size(); ++i)
-        forwardSpeculationCheck(kind, jsValueSource, nodeIndex, jumpVector[i], valueRecovery);
+    speculationCheck(kind, jsValueSource, nodeIndex, jumpsToFail);
+    convertLastOSRExitToForward(valueRecovery);
 }
 
 void SpeculativeJIT::speculationCheck(ExitKind kind, JSValueSource jsValueSource, NodeIndex nodeIndex, MacroAssembler::Jump jumpToFail, SpeculationDirection direction)

@@ -55,19 +55,23 @@ void JITCompiler::linkOSRExits()
     if (m_graph.m_compilation) {
         for (unsigned i = 0; i < codeBlock()->numberOfOSRExits(); ++i) {
             OSRExit& exit = codeBlock()->osrExit(i);
-            if (exit.m_watchpointIndex == std::numeric_limits<unsigned>::max())
-                m_exitSiteLabels.append(m_exitCompilationInfo[i].failureJump().label());
-            else
-                m_exitSiteLabels.append(codeBlock()->watchpoint(exit.m_watchpointIndex).sourceLabel());
+            Vector<Label> labels;
+            if (exit.m_watchpointIndex == std::numeric_limits<unsigned>::max()) {
+                OSRExitCompilationInfo& info = m_exitCompilationInfo[i];
+                for (unsigned j = 0; j < info.m_failureJumps.jumps().size(); ++j)
+                    labels.append(info.m_failureJumps.jumps()[j].label());
+            } else
+                labels.append(codeBlock()->watchpoint(exit.m_watchpointIndex).sourceLabel());
+            m_exitSiteLabels.append(labels);
         }
     }
     
     for (unsigned i = 0; i < codeBlock()->numberOfOSRExits(); ++i) {
         OSRExit& exit = codeBlock()->osrExit(i);
-        Jump& failureJump = m_exitCompilationInfo[i].failureJump();
-        ASSERT(!failureJump.isSet() == (exit.m_watchpointIndex != std::numeric_limits<unsigned>::max()));
+        JumpList& failureJumps = m_exitCompilationInfo[i].m_failureJumps;
+        ASSERT(failureJumps.empty() == (exit.m_watchpointIndex != std::numeric_limits<unsigned>::max()));
         if (exit.m_watchpointIndex == std::numeric_limits<unsigned>::max())
-            failureJump.link(this);
+            failureJumps.link(this);
         else
             codeBlock()->watchpoint(exit.m_watchpointIndex).setDestination(label());
         jitAssertHasValidCallFrame();
@@ -221,8 +225,11 @@ void JITCompiler::link(LinkBuffer& linkBuffer)
     if (m_graph.m_compilation) {
         ASSERT(m_exitSiteLabels.size() == codeBlock()->numberOfOSRExits());
         for (unsigned i = 0; i < m_exitSiteLabels.size(); ++i) {
-            m_graph.m_compilation->addOSRExitSite(
-                linkBuffer.locationOf(m_exitSiteLabels[i]).executableAddress());
+            Vector<Label>& labels = m_exitSiteLabels[i];
+            Vector<const void*> addresses;
+            for (unsigned j = 0; j < labels.size(); ++j)
+                addresses.append(linkBuffer.locationOf(labels[j]).executableAddress());
+            m_graph.m_compilation->addOSRExitSite(addresses);
         }
     } else
         ASSERT(!m_exitSiteLabels.size());

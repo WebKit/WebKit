@@ -308,12 +308,12 @@ class ExecutionCounter
 end
 
 class OSRExit
-    attr_reader :compilation, :origin, :codeAddress, :exitKind, :isWatchpoint, :count
+    attr_reader :compilation, :origin, :codeAddresses, :exitKind, :isWatchpoint, :count
     
-    def initialize(compilation, origin, codeAddress, exitKind, isWatchpoint, count)
+    def initialize(compilation, origin, codeAddresses, exitKind, isWatchpoint, count)
         @compilation = compilation
         @origin = origin
-        @codeAddress = codeAddress
+        @codeAddresses = codeAddresses
         @exitKind = exitKind
         @isWatchpoint = isWatchpoint
         @count = count
@@ -358,10 +358,16 @@ class Compilation
         json["osrExits"].each {
             | subJson |
             osrExit = OSRExit.new(self, originStackFromJSON(subJson["origin"]),
-                                  json["osrExitSites"][subJson["id"]].hex, subJson["exitKind"],
-                                  subJson["isWatchpoint"], subJson["count"])
-            osrExits[osrExit.codeAddress] = [] unless osrExits[osrExit.codeAddress]
-            osrExits[osrExit.codeAddress] << osrExit
+                                  json["osrExitSites"][subJson["id"]].map {
+                                      | value |
+                                      value.hex
+                                  }, subJson["exitKind"], subJson["isWatchpoint"],
+                                  subJson["count"])
+            osrExit.codeAddresses.each {
+                | codeAddress |
+                osrExits[codeAddress] = [] unless osrExits[codeAddress]
+                osrExits[codeAddress] << osrExit
+            }
             osrExit.origin[-1].osrExits << osrExit
         }
         @profiledBytecodes = []

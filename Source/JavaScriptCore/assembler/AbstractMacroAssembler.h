@@ -592,7 +592,7 @@ public:
         friend class LinkBuffer;
 
     public:
-        typedef Vector<Jump, 16> JumpVector;
+        typedef Vector<Jump, 2> JumpVector;
         
         JumpList() { }
         

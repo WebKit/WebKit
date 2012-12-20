@@ -36,17 +36,8 @@
 
 namespace JSC { namespace DFG {
 
-class OSRExitCompilationInfo {
-public:
-    OSRExitCompilationInfo(MacroAssembler::Jump failureJump)
-        : m_failureJump(failureJump)
-    {
-    }
-
-    MacroAssembler::Jump& failureJump() { return m_failureJump; }
-
-private:
-    MacroAssembler::Jump m_failureJump;
+struct OSRExitCompilationInfo {
+    MacroAssembler::JumpList m_failureJumps;
 };
 
 } } // namespace JSC::DFG
