@@ -1,3 +1,16 @@
+2012-12-20  Eugene Klyuchnikov  <eustas@chromium.org>
+
+        Web Inspector: [CPU Profile] Idle time is always 0
+        https://bugs.webkit.org/show_bug.cgi?id=105509
+
+        Reviewed by Pavel Feldman.
+
+        Fix: pass correct profile object to method.
+
+        * inspector/front-end/CPUProfileView.js:
+        (WebInspector.CPUProfileView.profileCallback):
+        (WebInspector.CPUProfileView.prototype._injectIdleTimeNode):
+
 2012-12-20  Andrey Lushnikov  <lushnikov@chromium.com>
 
         Web Inspector: fix |_repaintAll| behaviour of a DefaultTextEditor

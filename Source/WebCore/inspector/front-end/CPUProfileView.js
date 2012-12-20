@@ -96,7 +96,7 @@ WebInspector.CPUProfileView = function(profile)
         this.profile.head = profile.head;
 
         if (profile.idleTime)
-            this._injectIdleTimeNode();
+            this._injectIdleTimeNode(profile);
 
         this._assignParentsInProfile();
         this._changeView();
@@ -540,9 +540,8 @@ WebInspector.CPUProfileView.prototype = {
         }
     },
 
-    _injectIdleTimeNode: function()
+    _injectIdleTimeNode: function(profile)
     {
-        var profile = this.profile;
         var idleTime = profile.idleTime;
         var nodes = profile.head.children;
 
