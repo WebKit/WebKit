@@ -2456,3 +2456,6 @@ http/tests/xmlhttprequest/post-blob-content-type-async.html
 http/tests/xmlhttprequest/post-blob-content-type-sync.html
 
 webkit.org/b/104788 css3/flexbox/flex-algorithm.html [ Failure ]
+
+# [Qt]REGRESSION(r138222): It made fast/forms/number/number-spinbutton-click-in-iframe.html crash
+webkit.org/b/105529 fast/forms/number/number-spinbutton-click-in-iframe.html
