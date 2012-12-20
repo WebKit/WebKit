@@ -946,6 +946,8 @@ void InjectedBundlePage::dump()
     case TestRunner::AllFramesText:
         dumpAllFramesText(stringBuilder);
         break;
+    case TestRunner::Audio:
+        break;
     }
 
     if (InjectedBundle::shared().testRunner()->shouldDumpAllFrameScrollPositions())

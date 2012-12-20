@@ -24,6 +24,7 @@ WEBCORE_GENERATED_HEADERS_FOR_WEBKIT2 += \
     $$WEBCORE_GENERATED_SOURCES_DIR/JSNode.h \
     $$WEBCORE_GENERATED_SOURCES_DIR/JSNotification.h \
     $$WEBCORE_GENERATED_SOURCES_DIR/JSRange.h \
+    $$WEBCORE_GENERATED_SOURCES_DIR/JSUint8Array.h \
 
 defineReplace(message_header_generator_output) {
   FILENAME=$$basename(1)

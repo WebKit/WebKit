@@ -160,7 +160,10 @@ public:
 
     void setValueForUser(JSContextRef, JSValueRef element, JSStringRef value);
 
-    enum WhatToDump { RenderTree, MainFrameText, AllFramesText };
+    // Audio testing.
+    void setAudioData(JSContextRef, JSValueRef data);
+
+    enum WhatToDump { RenderTree, MainFrameText, AllFramesText, Audio };
     WhatToDump whatToDump() const { return m_whatToDump; }
 
     bool shouldDumpAllFrameScrollPositions() const { return m_shouldDumpAllFrameScrollPositions; }

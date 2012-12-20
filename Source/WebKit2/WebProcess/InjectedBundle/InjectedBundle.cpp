@@ -38,6 +38,7 @@
 #include "WebContextMessageKinds.h"
 #include "WebCookieManager.h"
 #include "WebCoreArgumentCoders.h"
+#include "WebData.h"
 #include "WebDatabaseManager.h"
 #include "WebFrame.h"
 #include "WebFrameNetworkingContext.h"
@@ -56,6 +57,7 @@
 #include <WebCore/GeolocationPosition.h>
 #include <WebCore/JSDOMWindow.h>
 #include <WebCore/JSNotification.h>
+#include <WebCore/JSUint8Array.h>
 #include <WebCore/Page.h>
 #include <WebCore/PageGroup.h>
 #include <WebCore/PageVisibilityState.h>
@@ -629,6 +631,13 @@ uint64_t InjectedBundle::webNotificationID(JSContextRef jsContext, JSValueRef js
     UNUSED_PARAM(jsNotification);
     return 0;
 #endif
+}
+
+PassRefPtr<WebData> InjectedBundle::createWebDataFromUint8Array(JSContextRef context, JSValueRef data)
+{
+    JSC::ExecState* execState = toJS(context);
+    RefPtr<Uint8Array> arrayData = WebCore::toUint8Array(toJS(execState, data));
+    return WebData::create(static_cast<unsigned char*>(arrayData->baseAddress()), arrayData->byteLength());
 }
 
 void InjectedBundle::setTabKeyCyclesThroughElements(WebPage* page, bool enabled)

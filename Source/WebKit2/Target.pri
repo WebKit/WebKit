@@ -47,6 +47,7 @@ HEADERS += \
     Shared/API/c/WKConnectionRef.h \
     Shared/API/c/WKContextMenuItem.h \
     Shared/API/c/WKContextMenuItemTypes.h \
+    Shared/API/c/WKData.h \
     Shared/API/c/WKDictionary.h \
     Shared/API/c/WKError.h \
     Shared/API/c/WKGeometry.h \
@@ -421,6 +422,7 @@ SOURCES += \
     Shared/API/c/WKCertificateInfo.cpp \
     Shared/API/c/WKConnectionRef.cpp \
     Shared/API/c/WKContextMenuItem.cpp \
+    Shared/API/c/WKData.cpp \
     Shared/API/c/WKDictionary.cpp \
     Shared/API/c/WKError.cpp \
     Shared/API/c/WKGeometry.cpp \

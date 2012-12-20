@@ -32,8 +32,9 @@
 #include "TestController.h"
 #include <climits>
 #include <cstdio>
-#include <WebKit2/WKDictionary.h>
 #include <WebKit2/WKContextPrivate.h>
+#include <WebKit2/WKData.h>
+#include <WebKit2/WKDictionary.h>
 #include <WebKit2/WKInspector.h>
 #include <WebKit2/WKRetainPtr.h>
 #include <wtf/OwnArrayPtr.h>
@@ -287,13 +288,42 @@ void TestInvocation::dump(const char* textToStdout, const char* textToStderr, bo
 
 void TestInvocation::dumpResults()
 {
-    dump(m_textOutput.toString().utf8().data());
+    if (m_textOutput.length())
+        dump(m_textOutput.toString().utf8().data());
+    else if (m_audioResult)
+        dumpAudio(m_audioResult.get());
 
     if (m_dumpPixels && m_pixelResult)
         dumpPixelsAndCompareWithExpected(m_pixelResult.get(), m_repaintRects.get());
 
     fputs("#EOF\n", stdout);
     fflush(stdout);
+    fflush(stderr);
+}
+
+void TestInvocation::dumpAudio(WKDataRef audioData)
+{
+    size_t length = WKDataGetSize(audioData);
+    if (!length)
+        return;
+
+    const unsigned char* data = WKDataGetBytes(audioData);
+
+    printf("Content-Type: audio/wav\n");
+    printf("Content-Length: %lu\n", static_cast<unsigned long>(length));
+
+    const size_t bytesToWriteInOneChunk = 1 << 15;
+    size_t dataRemainingToWrite = length;
+    while (dataRemainingToWrite) {
+        size_t bytesToWriteInThisChunk = std::min(dataRemainingToWrite, bytesToWriteInOneChunk);
+        size_t bytesWritten = fwrite(data, 1, bytesToWriteInThisChunk, stdout);
+        if (bytesWritten != bytesToWriteInThisChunk)
+            break;
+        dataRemainingToWrite -= bytesWritten;
+        data += bytesWritten;
+    }
+    printf("#EOF\n");
+    fprintf(stderr, "#EOF\n");
 }
 
 bool TestInvocation::compareActualHashToExpectedAndDumpResults(const char actualHash[33])
@@ -345,6 +375,9 @@ void TestInvocation::didReceiveMessageFromInjectedBundle(WKStringRef messageName
 
         WKRetainPtr<WKStringRef> repaintRectsKey = adoptWK(WKStringCreateWithUTF8CString("RepaintRects"));
         m_repaintRects = static_cast<WKArrayRef>(WKDictionaryGetItemForKey(messageBodyDictionary, repaintRectsKey.get()));
+
+        WKRetainPtr<WKStringRef> audioResultKey =  adoptWK(WKStringCreateWithUTF8CString("AudioResult"));
+        m_audioResult = static_cast<WKDataRef>(WKDictionaryGetItemForKey(messageBodyDictionary, audioResultKey.get()));
 
         m_gotFinalMessage = true;
         TestController::shared().notifyDone();

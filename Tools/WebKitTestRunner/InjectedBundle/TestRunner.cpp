@@ -41,6 +41,7 @@
 #include <WebKit2/WKBundlePagePrivate.h>
 #include <WebKit2/WKBundlePrivate.h>
 #include <WebKit2/WKBundleScriptWorld.h>
+#include <WebKit2/WKData.h>
 #include <WebKit2/WKRetainPtr.h>
 #include <WebKit2/WKSerializedScriptValue.h>
 #include <WebKit2/WebKit2_C.h>
@@ -431,6 +432,13 @@ void TestRunner::setValueForUser(JSContextRef context, JSValueRef element, JSStr
 
     WKRetainPtr<WKBundleNodeHandleRef> nodeHandle(AdoptWK, WKBundleNodeHandleCreate(context, const_cast<JSObjectRef>(element)));
     WKBundleNodeHandleSetHTMLInputElementValueForUser(nodeHandle.get(), toWK(value).get());
+}
+
+void TestRunner::setAudioData(JSContextRef context, JSValueRef data)
+{
+    WKRetainPtr<WKDataRef> audioData(AdoptWK, WKBundleCreateWKDataFromUInt8Array(InjectedBundle::shared().bundle(), context, data));
+    InjectedBundle::shared().setAudioResult(audioData.get());
+    m_whatToDump = Audio;
 }
 
 unsigned TestRunner::windowCount()

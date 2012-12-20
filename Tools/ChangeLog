@@ -1,3 +1,38 @@
+2012-12-20  Dominik Röttsches  <dominik.rottsches@intel.com>
+
+        [WK2] WebAudio WKTR support
+        https://bugs.webkit.org/show_bug.cgi?id=95084
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Implementing audio data dump support for WebKitTestRunner,
+        by adding the API to the IDL, enabling IPC for transferring
+        the audio data as bytebuffer and dumping it according
+        to run-webkit-tests script's expectations.
+        This enables audio testing on WebKit2 ports.
+        Based on initial wip-patch from Philippe Normand - thanks.
+
+        * WebKitTestRunner/InjectedBundle/Bindings/TestRunner.idl: Adding setAudioData API.
+        * WebKitTestRunner/InjectedBundle/TestRunner.cpp: Assign audio buffer data to a local WKDataRef after extracting it from WK2 using WKBundleDataFromUint8Array bundle API.
+        (WTR::TestRunner::setAudioData):
+        (WTR):
+        * WebKitTestRunner/InjectedBundle/TestRunner.h: Add a whatToDump state for dumping Audio.
+        (TestRunner):
+        * WebKitTestRunner/InjectedBundle/InjectedBundle.cpp: Add audio to the message that's transferred to the WKTR process.
+        (WTR::InjectedBundle::done):
+        * WebKitTestRunner/InjectedBundle/InjectedBundle.h: Allow setting and audio result handle to be transferred.
+        (WTR::InjectedBundle::setAudioResult):
+        (InjectedBundle):
+        * WebKitTestRunner/InjectedBundle/InjectedBundlePage.cpp:
+        (WTR::InjectedBundlePage::dump): Dummy handling the Audio case in the switch, build fix for Mac.
+        * WebKitTestRunner/TestInvocation.cpp: Audio dump support, dump audio if we haven't received a text dump from the web process.
+        (WTR::TestInvocation::dumpResults):
+        (WTR):
+        (WTR::TestInvocation::dumpAudio):
+        (WTR::TestInvocation::didReceiveMessageFromInjectedBundle): Storing received audio data before dumping.
+        * WebKitTestRunner/TestInvocation.h:
+        (TestInvocation):
+
 2012-12-20  Alberto Garcia  <agarcia@igalia.com>
 
         [GTK] Count failed and timed out tests separately

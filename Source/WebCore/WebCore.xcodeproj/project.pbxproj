@@ -1403,13 +1403,13 @@
 		49EECF06105070C400099FAB /* JSInt16Array.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 49EECEF8105070C400099FAB /* JSInt16Array.cpp */; };
 		49EECF07105070C400099FAB /* JSInt16Array.h in Headers */ = {isa = PBXBuildFile; fileRef = 49EECEF9105070C400099FAB /* JSInt16Array.h */; };
 		49EECF08105070C400099FAB /* JSUint8Array.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 49EECEFA105070C400099FAB /* JSUint8Array.cpp */; };
-		49EECF09105070C400099FAB /* JSUint8Array.h in Headers */ = {isa = PBXBuildFile; fileRef = 49EECEFB105070C400099FAB /* JSUint8Array.h */; };
+		49EECF09105070C400099FAB /* JSUint8Array.h in Headers */ = {isa = PBXBuildFile; fileRef = 49EECEFB105070C400099FAB /* JSUint8Array.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		49EECF0A105070C400099FAB /* JSUint32Array.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 49EECEFC105070C400099FAB /* JSUint32Array.cpp */; };
 		49EECF0B105070C400099FAB /* JSUint32Array.h in Headers */ = {isa = PBXBuildFile; fileRef = 49EECEFD105070C400099FAB /* JSUint32Array.h */; };
 		49EECF0C105070C400099FAB /* JSUint16Array.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 49EECEFE105070C400099FAB /* JSUint16Array.cpp */; };
 		49EECF0D105070C400099FAB /* JSUint16Array.h in Headers */ = {isa = PBXBuildFile; fileRef = 49EECEFF105070C400099FAB /* JSUint16Array.h */; };
 		49EECF1B105072F300099FAB /* JSArrayBufferView.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 49EECF19105072F300099FAB /* JSArrayBufferView.cpp */; };
-		49EECF1C105072F300099FAB /* JSArrayBufferView.h in Headers */ = {isa = PBXBuildFile; fileRef = 49EECF1A105072F300099FAB /* JSArrayBufferView.h */; };
+		49EECF1C105072F300099FAB /* JSArrayBufferView.h in Headers */ = {isa = PBXBuildFile; fileRef = 49EECF1A105072F300099FAB /* JSArrayBufferView.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		49EED1421051969400099FAB /* JSCanvasRenderingContext.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 49EED13C1051969400099FAB /* JSCanvasRenderingContext.cpp */; };
 		49EED1431051969400099FAB /* JSCanvasRenderingContext.h in Headers */ = {isa = PBXBuildFile; fileRef = 49EED13D1051969400099FAB /* JSCanvasRenderingContext.h */; };
 		49EED1441051969400099FAB /* JSCanvasRenderingContext2D.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 49EED13E1051969400099FAB /* JSCanvasRenderingContext2D.cpp */; };

@@ -182,6 +182,9 @@ interface TestRunner {
     void setMockGeolocationPosition(in double latitude, in double longitude, in double accuracy, in [Optional=DefaultIsUndefined] object altitude, in [Optional] object altitudeAccuracy, in [Optional] object heading, in [Optional] object speed);
     void setMockGeolocationPositionUnavailableError(in DOMString errorMessage);
 
+    // Audio testing.
+    [PassContext] void setAudioData(in object data);
+
     boolean callShouldCloseOnWebView();
 
     // Work queue.

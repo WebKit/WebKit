@@ -51,6 +51,7 @@ private:
     void dumpResults();
     static void dump(const char* textToStdout, const char* textToStderr = 0, bool seenError = false);
     void dumpPixelsAndCompareWithExpected(WKImageRef, WKArrayRef repaintRects);
+    void dumpAudio(WKDataRef);
     bool compareActualHashToExpectedAndDumpResults(const char[33]);
 
 #if PLATFORM(QT) || PLATFORM(EFL)
@@ -70,6 +71,7 @@ private:
     bool m_error;
 
     StringBuilder m_textOutput;
+    WKRetainPtr<WKDataRef> m_audioResult;
     WKRetainPtr<WKImageRef> m_pixelResult;
     WKRetainPtr<WKArrayRef> m_repaintRects;
     std::string m_errorMessage;
