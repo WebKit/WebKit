@@ -50,6 +50,7 @@
 #include "JSInterfaceJIT.h"
 #include "LegacyProfiler.h"
 #include "Opcode.h"
+#include "UnusedPointer.h"
 #include <bytecode/SamplingTool.h>
 
 namespace JSC {
@@ -292,7 +293,7 @@ namespace JSC {
         using MacroAssembler::JumpList;
         using MacroAssembler::Label;
 
-        static const int patchGetByIdDefaultStructure = -1;
+        static const uintptr_t patchGetByIdDefaultStructure = unusedPointer;
         static const int patchGetByIdDefaultOffset = 0;
         // Magic number - initial offset cannot be representable as a signed 8bit value, or the X86Assembler
         // will compress the displacement, and we may not be able to fit a patched offset.

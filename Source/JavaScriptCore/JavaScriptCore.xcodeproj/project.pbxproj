@@ -1291,6 +1291,7 @@
 		65621E6B089E859700760F35 /* PropertySlot.cpp */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PropertySlot.cpp; sourceTree = "<group>"; tabWidth = 8; };
 		65621E6C089E859700760F35 /* PropertySlot.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = PropertySlot.h; sourceTree = "<group>"; tabWidth = 8; };
 		65987F2C167FE84B003C2F8D /* DFGOSRExitCompilationInfo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DFGOSRExitCompilationInfo.h; path = dfg/DFGOSRExitCompilationInfo.h; sourceTree = "<group>"; };
+		65987F2F16828A7E003C2F8D /* UnusedPointer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UnusedPointer.h; sourceTree = "<group>"; };
 		65C02FBB0637462A003E7EE6 /* Protect.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = Protect.h; sourceTree = "<group>"; tabWidth = 8; };
 		65C7A1710A8EAACB00FA37EA /* JSWrapperObject.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = JSWrapperObject.cpp; sourceTree = "<group>"; };
 		65C7A1720A8EAACB00FA37EA /* JSWrapperObject.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = JSWrapperObject.h; sourceTree = "<group>"; };
@@ -1897,6 +1898,7 @@
 			children = (
 				0F73D7AB165A142A00ACAB71 /* ClosureCallStubRoutine.cpp */,
 				0F73D7AC165A142A00ACAB71 /* ClosureCallStubRoutine.h */,
+				65987F2F16828A7E003C2F8D /* UnusedPointer.h */,
 				0FD82E37141AB14200179C94 /* CompactJITCodeMap.h */,
 				A7B48DB60EE74CFC00DCBDB6 /* ExecutableAllocator.cpp */,
 				A7B48DB50EE74CFC00DCBDB6 /* ExecutableAllocator.h */,

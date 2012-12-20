@@ -1,3 +1,37 @@
+2012-12-20  Michael Saboff  <msaboff@apple.com>
+
+        JIT: Change uninitialized pointer value -1 to constant
+        https://bugs.webkit.org/show_bug.cgi?id=105576
+
+        Rubber stamped by Gavin Barraclough.
+
+        Changed the use of -1 as a pointer value in the JITs to be the constant unusedPointer defined in the
+        new file jit/UnusedPointer.h.  Made it's value 0xd1e7beef, which is a bad pointer on most architectures
+        because it is odd, and to distinguish it from other common values.
+
+        * GNUmakefile.list.am:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * dfg/DFGRepatch.cpp:
+        (JSC::DFG::dfgResetGetByID):
+        (JSC::DFG::dfgResetPutByID):
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::cachedGetById):
+        (JSC::DFG::SpeculativeJIT::cachedPutById):
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::cachedGetById):
+        (JSC::DFG::SpeculativeJIT::cachedPutById):
+        * jit/JIT.h:
+        * jit/JITPropertyAccess.cpp:
+        (JSC::JIT::resetPatchGetById):
+        (JSC::JIT::resetPatchPutById):
+        * jit/JITPropertyAccess32_64.cpp:
+        (JSC::JIT::resetPatchGetById):
+        (JSC::JIT::resetPatchPutById):
+        * jit/JITWriteBarrier.h:
+        (JSC::JITWriteBarrierBase::clearToUnusedPointer):
+        (JSC::JITWriteBarrierBase::get):
+        * jit/UnusedPointer.h: Added.
+
 2012-12-20  Filip Pizlo  <fpizlo@apple.com>
 
         DFG shouldn't emit CheckStructure on array accesses if exit profiling tells it not to

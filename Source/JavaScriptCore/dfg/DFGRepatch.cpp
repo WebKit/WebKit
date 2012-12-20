@@ -1258,9 +1258,9 @@ void dfgResetGetByID(RepatchBuffer& repatchBuffer, StructureStubInfo& stubInfo)
             MacroAssembler::Address(
                 static_cast<MacroAssembler::RegisterID>(stubInfo.patch.dfg.baseGPR),
                 JSCell::structureOffset()),
-            reinterpret_cast<void*>(-1));
+            reinterpret_cast<void*>(unusedPointer));
     }
-    repatchBuffer.repatch(structureLabel, reinterpret_cast<void*>(-1));
+    repatchBuffer.repatch(structureLabel, reinterpret_cast<void*>(unusedPointer));
 #if USE(JSVALUE64)
     repatchBuffer.repatch(stubInfo.callReturnLocation.dataLabelCompactAtOffset(stubInfo.patch.dfg.deltaCallToLoadOrStore), 0);
 #else
@@ -1292,9 +1292,9 @@ void dfgResetPutByID(RepatchBuffer& repatchBuffer, StructureStubInfo& stubInfo)
             MacroAssembler::Address(
                 static_cast<MacroAssembler::RegisterID>(stubInfo.patch.dfg.baseGPR),
                 JSCell::structureOffset()),
-            reinterpret_cast<void*>(-1));
+            reinterpret_cast<void*>(unusedPointer));
     }
-    repatchBuffer.repatch(structureLabel, reinterpret_cast<void*>(-1));
+    repatchBuffer.repatch(structureLabel, reinterpret_cast<void*>(unusedPointer));
 #if USE(JSVALUE64)
     repatchBuffer.repatch(stubInfo.callReturnLocation.dataLabel32AtOffset(stubInfo.patch.dfg.deltaCallToLoadOrStore), 0);
 #else

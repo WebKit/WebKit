@@ -438,6 +438,7 @@ javascriptcore_sources += \
 	Source/JavaScriptCore/jit/SpecializedThunkJIT.h \
 	Source/JavaScriptCore/jit/ThunkGenerators.cpp \
 	Source/JavaScriptCore/jit/ThunkGenerators.h \
+	Source/JavaScriptCore/jit/UnusedPointer.h \
 	Source/JavaScriptCore/llint/LLIntCommon.h \
 	Source/JavaScriptCore/llint/LLIntCLoop.cpp \
 	Source/JavaScriptCore/llint/LLIntCLoop.h \

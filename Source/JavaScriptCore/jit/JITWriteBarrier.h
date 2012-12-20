@@ -31,6 +31,7 @@
 #include "MacroAssembler.h"
 #include "SlotVisitor.h"
 #include "WriteBarrier.h"
+#include "jit/UnusedPointer.h"
 
 namespace JSC {
 
@@ -69,7 +70,7 @@ public:
     }
     
     void clear() { clear(0); }
-    void clearToMaxUnsigned() { clear(reinterpret_cast<void*>(-1)); }
+    void clearToUnusedPointer() { clear(reinterpret_cast<void*>(unusedPointer)); }
 
 protected:
     JITWriteBarrierBase()
@@ -90,8 +91,7 @@ protected:
         if (!m_location || m_location.executableAddress() == JITWriteBarrierFlag)
             return 0;
         void* result = static_cast<JSCell*>(MacroAssembler::readPointer(m_location));
-        // We use -1 to indicate a "safe" empty value in the instruction stream
-        if (result == (void*)-1)
+        if (result == reinterpret_cast<void*>(unusedPointer))
             return 0;
         return static_cast<JSCell*>(result);
     }
