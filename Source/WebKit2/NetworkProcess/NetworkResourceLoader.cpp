@@ -33,6 +33,7 @@
 #include "NetworkConnectionToWebProcess.h"
 #include "NetworkProcess.h"
 #include "NetworkResourceLoadParameters.h"
+#include "PlatformCertificateInfo.h"
 #include "RemoteNetworkingContext.h"
 #include "SharedMemory.h"
 #include "WebCoreArgumentCoders.h"
@@ -151,7 +152,7 @@ void NetworkResourceLoader::didReceiveResponse(ResourceHandle*, const ResourceRe
     // FIXME (NetworkProcess): Cache the response.
     if (FormData* formData = m_requestParameters.request().httpBody())
         formData->removeGeneratedFilesIfNeeded();
-    send(Messages::WebResourceLoader::DidReceiveResponse(response));
+    send(Messages::WebResourceLoader::DidReceiveResponseWithCertificateInfo(response, PlatformCertificateInfo(response)));
 }
 
 void NetworkResourceLoader::didReceiveData(ResourceHandle*, const char* data, int length, int encodedDataLength)

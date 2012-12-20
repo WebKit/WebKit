@@ -29,7 +29,6 @@
 #import "ArgumentCodersCF.h"
 #import "ArgumentDecoder.h"
 #import "ArgumentEncoder.h"
-#import <WebKitSystemInterface.h>
 
 using namespace WebCore;
 
@@ -40,7 +39,7 @@ PlatformCertificateInfo::PlatformCertificateInfo()
 }
 
 PlatformCertificateInfo::PlatformCertificateInfo(const ResourceResponse& response)
-    : m_certificateChain(AdoptCF, WKCopyNSURLResponseCertificateChain(response.nsURLResponse()))
+    : m_certificateChain(response.certificateChain())
 {
 }
 

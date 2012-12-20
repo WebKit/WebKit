@@ -88,6 +88,11 @@ public:
     NSURLResponse *nsURLResponse() const;
 #endif
 
+#if PLATFORM(MAC) || USE(CFNETWORK)
+    void setCertificateChain(CFArrayRef);
+    RetainPtr<CFArrayRef> certificateChain() const;
+#endif
+
 private:
     friend class ResourceResponseBase;
 
@@ -105,6 +110,10 @@ private:
 #endif
 #if PLATFORM(MAC)
     mutable RetainPtr<NSURLResponse> m_nsResponse;
+#endif
+#if PLATFORM(MAC) || USE(CFNETWORK)
+    // Certificate chain is normally part of NS/CFURLResponse, but there is no way to re-add it to a deserialized response after IPC.
+    RetainPtr<CFArrayRef> m_externalCertificateChain;
 #endif
     InitLevel m_initLevel;
 };

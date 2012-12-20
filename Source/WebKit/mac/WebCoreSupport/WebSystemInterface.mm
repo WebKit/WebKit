@@ -58,6 +58,7 @@ void InitWebCoreSystemInterface(void)
     INIT(CopyCFLocalizationPreferredName);
     INIT(CopyCONNECTProxyResponse);
     INIT(CopyNSURLResponseStatusLine);
+    INIT(CopyNSURLResponseCertificateChain);
     INIT(CreateCustomCFReadStream);
     INIT(CreateNSURLConnectionDelegateProxy);
     INIT(DrawCapsLockIndicator);

@@ -52,6 +52,7 @@ class ResourceResponse;
 
 namespace WebKit {
 
+class PlatformCertificateInfo;
 typedef uint64_t ResourceLoadIdentifier;
 
 class WebResourceLoader : public RefCounted<WebResourceLoader>, public CoreIPC::MessageSender<WebResourceLoader>, public WebCore::AuthenticationClient {
@@ -77,7 +78,7 @@ private:
     WebResourceLoader(PassRefPtr<WebCore::ResourceLoader>);
 
     void willSendRequest(uint64_t requestID, const WebCore::ResourceRequest&, const WebCore::ResourceResponse& redirectResponse);
-    void didReceiveResponse(const WebCore::ResourceResponse&);
+    void didReceiveResponseWithCertificateInfo(const WebCore::ResourceResponse&, const PlatformCertificateInfo&);
     void didReceiveData(const CoreIPC::DataReference&, int64_t encodedDataLength, bool allAtOnce);
     void didFinishResourceLoad(double finishTime);
     void didFailResourceLoad(const WebCore::ResourceError&);

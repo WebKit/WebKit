@@ -50,6 +50,7 @@ void InitWebCoreSystemInterface(void)
 #endif
         INIT(CopyCONNECTProxyResponse);
         INIT(CopyNSURLResponseStatusLine);
+        INIT(CopyNSURLResponseCertificateChain);
         INIT(CreateCTLineWithUniCharProvider);
         INIT(CreateCustomCFReadStream);
         INIT(CreateNSURLConnectionDelegateProxy);
