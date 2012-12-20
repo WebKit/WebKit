@@ -600,7 +600,13 @@ sub GetterExpression
     } elsif ($attribute->signature->type eq "unsigned long") {
         $functionName = "getUnsignedIntegralAttribute";
     } else {
-        if ($generator->CanUseFastAttribute($attribute)) {
+        if ($contentAttributeName eq "WebCore::HTMLNames::idAttr") {
+            $functionName = "getIdAttribute";
+            $contentAttributeName = "";
+        } elsif ($contentAttributeName eq "WebCore::HTMLNames::nameAttr") {
+            $functionName = "getNameAttribute";
+            $contentAttributeName = "";
+        } elsif ($generator->CanUseFastAttribute($attribute)) {
             $functionName = "fastGetAttribute";
         } else {
             $functionName = "getAttribute";
