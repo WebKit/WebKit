@@ -146,16 +146,14 @@ void IDBIndexBackendImpl::OpenIndexCursorOperation::perform(IDBTransactionBacken
     RefPtr<IDBBackingStore::Cursor> backingStoreCursor;
 
     switch (m_cursorType) {
-    case IDBCursorBackendInterface::IndexKeyCursor:
+    case IDBCursorBackendInterface::KeyOnly:
         backingStoreCursor = m_index->backingStore()->openIndexKeyCursor(transaction->backingStoreTransaction(), m_index->databaseId(), m_index->m_objectStoreBackend->id(), m_index->id(), m_keyRange.get(), direction);
         break;
-    case IDBCursorBackendInterface::IndexCursor:
+    case IDBCursorBackendInterface::KeyAndValue:
         backingStoreCursor = m_index->backingStore()->openIndexCursor(transaction->backingStoreTransaction(), m_index->databaseId(), m_index->m_objectStoreBackend->id(), m_index->id(), m_keyRange.get(), direction);
         break;
-    case IDBCursorBackendInterface::ObjectStoreCursor:
-    case IDBCursorBackendInterface::InvalidCursorType:
+    default:
         ASSERT_NOT_REACHED();
-        break;
     }
 
     if (!backingStoreCursor) {
@@ -172,7 +170,7 @@ void IDBIndexBackendImpl::openCursor(PassRefPtr<IDBKeyRange> keyRange, unsigned 
     IDB_TRACE("IDBIndexBackendImpl::openCursor");
     RefPtr<IDBCallbacks> callbacks = prpCallbacks;
     RefPtr<IDBTransactionBackendImpl> transaction = IDBTransactionBackendImpl::from(transactionPtr);
-    if (!transaction->scheduleTask(OpenIndexCursorOperation::create(this, keyRange, direction, IDBCursorBackendInterface::IndexCursor, callbacks)))
+    if (!transaction->scheduleTask(OpenIndexCursorOperation::create(this, keyRange, direction, IDBCursorBackendInterface::KeyAndValue, callbacks)))
         callbacks->onError(IDBDatabaseError::create(IDBDatabaseException::AbortError));
 }
 
@@ -181,7 +179,7 @@ void IDBIndexBackendImpl::openKeyCursor(PassRefPtr<IDBKeyRange> keyRange, unsign
     IDB_TRACE("IDBIndexBackendImpl::openKeyCursor");
     RefPtr<IDBCallbacks> callbacks = prpCallbacks;
     RefPtr<IDBTransactionBackendImpl> transaction = IDBTransactionBackendImpl::from(transactionPtr);
-    if (!transaction->scheduleTask(OpenIndexCursorOperation::create(this, keyRange, direction, IDBCursorBackendInterface::IndexKeyCursor, callbacks)))
+    if (!transaction->scheduleTask(OpenIndexCursorOperation::create(this, keyRange, direction, IDBCursorBackendInterface::KeyOnly, callbacks)))
         callbacks->onError(IDBDatabaseError::create(IDBDatabaseException::AbortError));
 }
 

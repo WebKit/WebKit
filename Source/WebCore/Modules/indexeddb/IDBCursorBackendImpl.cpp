@@ -208,15 +208,19 @@ void IDBCursorBackendImpl::CursorPrefetchIterationOperation::perform(IDBTransact
         foundKeys.append(m_cursor->m_cursor->key());
         foundPrimaryKeys.append(m_cursor->m_cursor->primaryKey());
 
-        if (m_cursor->m_cursorType != IDBCursorBackendInterface::IndexKeyCursor)
-            foundValues.append(SerializedScriptValue::createFromWireBytes(m_cursor->m_cursor->value()));
-        else
+        switch (m_cursor->m_cursorType) {
+        case KeyOnly:
             foundValues.append(SerializedScriptValue::create());
-
+            break;
+        case KeyAndValue:
+            sizeEstimate += m_cursor->m_cursor->value().size();
+            foundValues.append(SerializedScriptValue::createFromWireBytes(m_cursor->m_cursor->value()));
+            break;
+        default:
+            ASSERT_NOT_REACHED();
+        }
         sizeEstimate += m_cursor->m_cursor->key()->sizeEstimate();
         sizeEstimate += m_cursor->m_cursor->primaryKey()->sizeEstimate();
-        if (m_cursor->m_cursorType != IDBCursorBackendInterface::IndexKeyCursor)
-            sizeEstimate += m_cursor->m_cursor->value().size();
 
         if (sizeEstimate > maxSizeEstimate)
             break;

@@ -67,7 +67,7 @@ public:
 
     PassRefPtr<IDBKey> key() const { return m_cursor->key(); }
     PassRefPtr<IDBKey> primaryKey() const { return m_cursor->primaryKey(); }
-    PassRefPtr<SerializedScriptValue> value() const { return (m_cursorType == IndexKeyCursor) ? 0 : SerializedScriptValue::createFromWireBytes(m_cursor->value()); }
+    PassRefPtr<SerializedScriptValue> value() const { return (m_cursorType == KeyOnly) ? 0 : SerializedScriptValue::createFromWireBytes(m_cursor->value()); }
     void close();
 
 private:

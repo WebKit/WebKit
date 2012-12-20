@@ -46,10 +46,8 @@ public:
     virtual ~IDBCursorBackendInterface() {}
 
     enum CursorType {
-        InvalidCursorType = 0,
-        IndexCursor,
-        IndexKeyCursor,
-        ObjectStoreCursor
+        KeyAndValue = 0,
+        KeyOnly
     };
 
     virtual void advance(unsigned long count, PassRefPtr<IDBCallbacks>, ExceptionCode&) = 0;

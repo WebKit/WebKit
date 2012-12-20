@@ -503,7 +503,7 @@ PassRefPtr<IDBRequest> IDBObjectStore::openCursor(ScriptExecutionContext* contex
         return 0;
 
     RefPtr<IDBRequest> request = IDBRequest::create(context, IDBAny::create(this), m_transaction.get());
-    request->setCursorDetails(IDBCursorBackendInterface::ObjectStoreCursor, direction);
+    request->setCursorDetails(IDBCursorBackendInterface::KeyAndValue, direction);
     m_backend->openCursor(range, direction, request, taskType, m_transaction->backend(), ec);
     ASSERT(!ec);
     return request.release();
