@@ -1,3 +1,25 @@
+2012-12-20  Elliott Sprehn  <esprehn@gmail.com>
+
+        Block level pseudo elements bleed background color to <html>
+        https://bugs.webkit.org/show_bug.cgi?id=104855
+
+        Reviewed by Julien Chaffraix.
+
+        Before r137336 placing a pseudo element :before or :after that was display
+        block on the <html> element would also set the background color of the
+        root of the document.
+
+        This was because RenderObject::isRoot checked if document()->documentElement() == m_node,
+        which was true for html:before or html:after with the old implementation
+        of generated content. Instead it should have compared against node() which
+        would have compensated for the anonymous generated content.
+
+        This is fixed by the new generated content implementation that was turned
+        on in r137336 because m_node is now the PseudoElement, not the generatingNode.
+
+        * fast/css-generated-content/html-pseudo-background-color-expected.html: Added.
+        * fast/css-generated-content/html-pseudo-background-color.html: Added.
+
 2012-12-20  Dominic Mazzoni  <dmazzoni@google.com>
 
         Unreviewed. Adjust Mac TestExpectations.
