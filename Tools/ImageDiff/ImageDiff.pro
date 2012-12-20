@@ -11,4 +11,4 @@ DESTDIR = $$ROOT_BUILD_DIR/bin
 
 QT = core gui widgets
 
-SOURCES = ImageDiff.cpp
+SOURCES = qt/ImageDiff.cpp

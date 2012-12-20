@@ -10,7 +10,6 @@ CONFIG += ordered
 build?(webkit1) {
     build?(testbrowser): SUBDIRS += QtTestBrowser/QtTestBrowser.pro
     build?(drt): SUBDIRS += DumpRenderTree/qt/DumpRenderTree.pro
-    build?(imagediff): SUBDIRS += DumpRenderTree/qt/ImageDiff.pro
 }
 
 build?(webkit2) {
@@ -22,6 +21,8 @@ build?(webkit2) {
         SUBDIRS += MiniBrowser/qt/raw/MiniBrowserRaw.pro
     }
 }
+
+build?(imagediff): SUBDIRS += ImageDiff/ImageDiff.pro
 
 build?(test_npapi): SUBDIRS += DumpRenderTree/qt/TestNetscapePlugin/TestNetscapePlugin.pro
 
