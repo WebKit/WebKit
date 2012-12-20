@@ -64,25 +64,7 @@ public:
     // Causes the container to report its current geometry via
     // WebPlugin::updateGeometry.
     virtual void reportGeometry() = 0;
-    
-    // Sets the id of the texture used for hw-accel compositing.
-    // The default value for id is zero which indicates software rendering.
-    // A non-zero value will trigger hw-accelerated compositing.
-    virtual void setBackingTextureId(unsigned) = 0;
-    // Notifies the container that the plugin allocated a new IOSurface for
-    // its rendering, and that the compositor should bind to this texture
-    // and use it for subsequent rendering. A non-zero ioSurfaceId triggers
-    // hardware-accelerated compositing; a zero value switches back to the
-    // software rendered path. (This entry point is used only on Mac OS,
-    // but is defined on all platforms for simplicity.)
-    virtual void setBackingIOSurfaceId(int width,
-                                       int height,
-                                       uint32_t ioSurfaceId) = 0;
-    // Called when the backing texture is ready to be composited.
-    // FIXME: consider renaming to something more general, now that
-    // there are multiple providers. One idea: commitBackingStore.
-    virtual void commitBackingTexture() {}
-    
+
     // Drop any references to script objects allocated by the plugin.
     // These are objects derived from WebPlugin::scriptableObject.  This is
     // called when the plugin is being destroyed or if it needs to be
@@ -110,9 +92,6 @@ public:
     // Notifies that the zoom level has changed.
     // Note, this does NOT affect pageScaleFactor or pageZoomFactor
     virtual void zoomLevelChanged(double zoomLevel) = 0;
-
-    // Notifies whether the contents of the plugin are entirely opaque.
-    virtual void setOpaque(bool) = 0;
 
     // Determines whether the given rectangle in this plugin is above all other
     // content. The rectangle is in the plugin's coordinate system.
