@@ -156,8 +156,10 @@ void MonthInputType::setupLayoutParameters(DateTimeEditElement::LayoutParameters
 {
     layoutParameters.dateTimeFormat = layoutParameters.locale.monthFormat();
     layoutParameters.fallbackDateTimeFormat = "MM/yyyy";
-    layoutParameters.minimumYear = fullYear(element()->fastGetAttribute(minAttr));
-    layoutParameters.maximumYear = fullYear(element()->fastGetAttribute(maxAttr));
+    if (!parseToDateComponents(element()->fastGetAttribute(minAttr), &layoutParameters.minimum))
+        layoutParameters.minimum = DateComponents();
+    if (!parseToDateComponents(element()->fastGetAttribute(maxAttr), &layoutParameters.maximum))
+        layoutParameters.maximum = DateComponents();
     layoutParameters.placeholderForMonth = "--";
     layoutParameters.placeholderForYear = "----";
 }

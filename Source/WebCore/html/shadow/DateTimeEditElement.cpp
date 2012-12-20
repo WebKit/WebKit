@@ -237,18 +237,18 @@ void DateTimeEditBuilder::visitField(DateTimeFormat::FieldType fieldType, int co
 
     case DateTimeFormat::FieldTypeYear: {
         DateTimeYearFieldElement::Parameters yearParams;
-        if (m_parameters.minimumYear == m_parameters.undefinedYear()) {
+        if (m_parameters.minimum.type() == DateComponents::Invalid) {
             yearParams.minimumYear = DateComponents::minimumYear();
             yearParams.minIsSpecified = false;
         } else {
-            yearParams.minimumYear = m_parameters.minimumYear;
+            yearParams.minimumYear = m_parameters.minimum.fullYear();
             yearParams.minIsSpecified = true;
         }
-        if (m_parameters.maximumYear == m_parameters.undefinedYear()) {
+        if (m_parameters.maximum.type() == DateComponents::Invalid) {
             yearParams.maximumYear = DateComponents::maximumYear();
             yearParams.maxIsSpecified = false;
         } else {
-            yearParams.maximumYear = m_parameters.maximumYear;
+            yearParams.maximumYear = m_parameters.maximum.fullYear();
             yearParams.maxIsSpecified = true;
         }
         if (yearParams.minimumYear > yearParams.maximumYear) {
@@ -299,9 +299,10 @@ bool DateTimeEditBuilder::shouldSecondFieldReadOnly() const
 
 bool DateTimeEditBuilder::shouldYearFieldReadOnly() const
 {
-    return m_parameters.minimumYear != m_parameters.undefinedYear()
-        && m_parameters.minimumYear == m_parameters.maximumYear
-        && m_parameters.minimumYear == m_dateValue.fullYear();
+    return m_parameters.minimum.type() != DateComponents::Invalid
+        && m_parameters.maximum.type() != DateComponents::Invalid
+        && m_parameters.minimum.fullYear() == m_parameters.maximum.fullYear()
+        && m_parameters.minimum.fullYear() == m_dateValue.fullYear();
 }
 
 void DateTimeEditBuilder::visitLiteral(const String& text)

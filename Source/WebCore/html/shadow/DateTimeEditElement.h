@@ -27,6 +27,7 @@
 #define DateTimeEditElement_h
 
 #if ENABLE(INPUT_MULTIPLE_FIELDS_UI)
+#include "DateComponents.h"
 #include "DateTimeFieldElement.h"
 #include "StepRange.h"
 
@@ -65,8 +66,8 @@ public:
         String fallbackDateTimeFormat;
         Locale& locale;
         const StepRange stepRange;
-        int minimumYear;
-        int maximumYear;
+        DateComponents minimum;
+        DateComponents maximum;
         String placeholderForDay;
         String placeholderForMonth;
         String placeholderForYear;
@@ -74,12 +75,8 @@ public:
         LayoutParameters(Locale& locale, const StepRange& stepRange)
             : locale(locale)
             , stepRange(stepRange)
-            , minimumYear(undefinedYear())
-            , maximumYear(undefinedYear())
         {
         }
-
-        static inline int undefinedYear() { return -1; }
     };
 
     static PassRefPtr<DateTimeEditElement> create(Document*, EditControlOwner&);

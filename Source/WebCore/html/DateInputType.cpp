@@ -113,8 +113,10 @@ void DateInputType::setupLayoutParameters(DateTimeEditElement::LayoutParameters&
 {
     layoutParameters.dateTimeFormat = layoutParameters.locale.dateFormat();
     layoutParameters.fallbackDateTimeFormat = ASCIILiteral("yyyy-MM-dd");
-    layoutParameters.minimumYear = fullYear(element()->fastGetAttribute(minAttr));
-    layoutParameters.maximumYear = fullYear(element()->fastGetAttribute(maxAttr));
+    if (!parseToDateComponents(element()->fastGetAttribute(minAttr), &layoutParameters.minimum))
+        layoutParameters.minimum = DateComponents();
+    if (!parseToDateComponents(element()->fastGetAttribute(maxAttr), &layoutParameters.maximum))
+        layoutParameters.maximum = DateComponents();
     layoutParameters.placeholderForDay = placeholderForDayOfMonthField();
     layoutParameters.placeholderForMonth = placeholderForMonthField();
     layoutParameters.placeholderForYear = placeholderForYearField();

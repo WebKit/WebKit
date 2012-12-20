@@ -110,8 +110,10 @@ void WeekInputType::setupLayoutParameters(DateTimeEditElement::LayoutParameters&
 {
     layoutParameters.dateTimeFormat = weekFormatInLDML();
     layoutParameters.fallbackDateTimeFormat = "'Week' ww-yyyy";
-    layoutParameters.minimumYear = fullYear(element()->fastGetAttribute(minAttr));
-    layoutParameters.maximumYear = fullYear(element()->fastGetAttribute(maxAttr));
+    if (!parseToDateComponents(element()->fastGetAttribute(minAttr), &layoutParameters.minimum))
+        layoutParameters.minimum = DateComponents();
+    if (!parseToDateComponents(element()->fastGetAttribute(maxAttr), &layoutParameters.maximum))
+        layoutParameters.maximum = DateComponents();
     layoutParameters.placeholderForYear = "----";
 }
 #endif
