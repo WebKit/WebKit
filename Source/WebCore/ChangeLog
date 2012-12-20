@@ -1,3 +1,15 @@
+2012-12-19  Gustavo Noronha Silva  <gns@gnome.org>
+
+        Unreviewed. Add new strings to GTK+'s implementation of
+        LocalizedStrings, using glib's context-aware macro.
+
+        * platform/gtk/LocalizedStringsGtk.cpp:
+        (WebCore):
+        (WebCore::textTrackClosedCaptionsText):
+        (WebCore::textTrackSubtitlesText):
+        (WebCore::textTrackOffText):
+        (WebCore::textTrackNoLabelText):
+
 2012-12-18  James Simonsen  <simonjam@chromium.org>
 
         Set the original resource's response even on a 304

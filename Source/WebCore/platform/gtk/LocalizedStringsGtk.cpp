@@ -747,4 +747,26 @@ String validationMessageBadInputForNumberText()
     return validationMessageTypeMismatchText();
 }
 
+#if ENABLE(VIDEO_TRACK)
+String textTrackClosedCaptionsText()
+{
+    return String::fromUTF8(C_("Closed Captions", "Menu section heading for closed captions"));
+}
+
+String textTrackSubtitlesText()
+{
+    return String::fromUTF8(C_("Subtitles", "Menu section heading for subtitles"));
+}
+
+String textTrackOffText()
+{
+    return String::fromUTF8(C_("Off", "Menu item label for the track that represents disabling closed captions"));
+}
+
+String textTrackNoLabelText()
+{
+    return String::fromUTF8(C_("No label", "Menu item label for a closed captions track that has no other name"));
+}
+#endif
+
 }
