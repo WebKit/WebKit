@@ -29,6 +29,7 @@
 #include "ArgumentDecoder.h"
 #include "ArgumentEncoder.h"
 #include "DataReference.h"
+#include <WebCore/ResourceError.h>
 #include <WebCore/ResourceResponse.h>
 #include <libsoup/soup.h>
 
@@ -44,6 +45,12 @@ PlatformCertificateInfo::PlatformCertificateInfo()
 PlatformCertificateInfo::PlatformCertificateInfo(const ResourceResponse& response)
     : m_certificate(response.soupMessageCertificate())
     , m_tlsErrors(response.soupMessageTLSErrors())
+{
+}
+
+PlatformCertificateInfo::PlatformCertificateInfo(const ResourceError& resourceError)
+    : m_certificate(resourceError.certificate())
+    , m_tlsErrors(static_cast<GTlsCertificateFlags>(resourceError.tlsErrors()))
 {
 }
 

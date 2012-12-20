@@ -282,6 +282,11 @@ public:
     static void willStartUsingPrivateBrowsing();
     static void willStopUsingPrivateBrowsing();
 
+#if USE(SOUP)
+    void setIgnoreTLSErrors(bool);
+    bool ignoreTLSErrors() const { return m_ignoreTLSErrors; }
+#endif
+
 private:
     WebContext(ProcessModel, const String& injectedBundlePath);
     void platformInitialize();
@@ -462,6 +467,10 @@ private:
 
 #if PLATFORM(MAC)
     static bool s_applicationIsOccluded;
+#endif
+
+#if USE(SOUP)
+    bool m_ignoreTLSErrors;
 #endif
 };
 

@@ -176,12 +176,19 @@ void WebProcess::platformInitializeWebProcess(const WebProcessCreationParameters
     }
     WebCookieManager::shared().setHTTPCookieAcceptPolicy(parameters.cookieAcceptPolicy);
 
+    setIgnoreTLSErrors(parameters.ignoreTLSErrors);
+
     WebCore::addLanguageChangeObserver(this, languageChanged);
 }
 
 void WebProcess::platformTerminate()
 {
     WebCore::removeLanguageChangeObserver(this);
+}
+
+void WebProcess::setIgnoreTLSErrors(bool ignoreTLSErrors)
+{
+    WebCore::ResourceHandle::setIgnoreSSLErrors(ignoreTLSErrors);
 }
 
 } // namespace WebKit

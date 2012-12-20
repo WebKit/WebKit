@@ -62,6 +62,18 @@ typedef enum {
 } WebKitCacheModel;
 
 /**
+ * WebKitTLSErrorsPolicy:
+ * @WEBKIT_TLS_ERRORS_POLICY_IGNORE: Ignore TLS errors.
+ * @WEBKIT_TLS_ERRORS_POLICY_FAIL: TLS errors make the load to finish with an error.
+ *
+ * Enum values used to denote the TLS errors policy.
+ */
+typedef enum {
+    WEBKIT_TLS_ERRORS_POLICY_IGNORE,
+    WEBKIT_TLS_ERRORS_POLICY_FAIL
+} WebKitTLSErrorsPolicy;
+
+/**
  * WebKitURISchemeRequestCallback:
  * @request: the #WebKitURISchemeRequest
  * @user_data: user data passed to the callback
@@ -164,6 +176,13 @@ webkit_web_context_set_spell_checking_languages     (WebKitWebContext           
 WEBKIT_API void
 webkit_web_context_set_preferred_languages          (WebKitWebContext              *context,
                                                      const gchar * const           *languages);
+
+WEBKIT_API void
+webkit_web_context_set_tls_errors_policy            (WebKitWebContext              *context,
+                                                     WebKitTLSErrorsPolicy          policy);
+
+WEBKIT_API WebKitTLSErrorsPolicy
+webkit_web_context_get_tls_errors_policy            (WebKitWebContext              *context);
 
 G_END_DECLS
 

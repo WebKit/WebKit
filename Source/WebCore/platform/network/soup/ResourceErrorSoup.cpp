@@ -69,10 +69,13 @@ ResourceError ResourceError::genericIOError(GError* error, SoupRequest* request)
         failingURI(request), String::fromUTF8(error->message));
 }
 
-ResourceError ResourceError::tlsError(SoupRequest* request, unsigned /* tlsErrors */, GTlsCertificate*)
+ResourceError ResourceError::tlsError(SoupRequest* request, unsigned tlsErrors, GTlsCertificate* certificate)
 {
-    return ResourceError(g_quark_to_string(SOUP_HTTP_ERROR), SOUP_STATUS_SSL_FAILED,
+    ResourceError resourceError(g_quark_to_string(SOUP_HTTP_ERROR), SOUP_STATUS_SSL_FAILED,
         failingURI(request), unacceptableTLSCertificate());
+    resourceError.setTLSErrors(tlsErrors);
+    resourceError.setCertificate(certificate);
+    return resourceError;
 }
 
 ResourceError ResourceError::timeoutError(const String& failingURL)
@@ -86,6 +89,17 @@ ResourceError ResourceError::timeoutError(const String& failingURL)
     ResourceError error = ResourceError(errorDomain, timeoutError, failingURL, "Request timed out");
     error.setIsTimeout(true);
     return error;
+}
+
+void ResourceError::platformCopy(ResourceError& errorCopy) const
+{
+    errorCopy.m_certificate = m_certificate;
+    errorCopy.m_tlsErrors = m_tlsErrors;
+}
+
+bool ResourceError::platformCompare(const ResourceError& a, const ResourceError& b)
+{
+    return a.tlsErrors() == b.tlsErrors();
 }
 
 } // namespace WebCore

@@ -84,6 +84,7 @@ struct WebProcessCreationParameters {
     String cookiePersistentStoragePath;
     uint32_t cookiePersistentStorageType;
     HTTPCookieAcceptPolicy cookieAcceptPolicy;
+    bool ignoreTLSErrors;
 #endif
 
     CacheModel cacheModel;

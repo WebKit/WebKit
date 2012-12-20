@@ -1,3 +1,79 @@
+2012-12-20  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] Add API to set a TLS errors policy to WebKit2 GTK+ API
+        https://bugs.webkit.org/show_bug.cgi?id=104482
+
+        Reviewed by Martin Robinson.
+
+        Add an emum for TLS errors policy with values IGNORE and FAIL and
+        API to WebKitWebContext to set/get the policy.
+
+        * Shared/WebProcessCreationParameters.cpp:
+        (WebKit::WebProcessCreationParameters::encode): Encode ignoreTLSErrors.
+        (WebKit::WebProcessCreationParameters::decode): Decode ignoreTLSErrors.
+        * Shared/WebProcessCreationParameters.h:
+        (WebProcessCreationParameters): Add ignoreTLSErrors when building
+        with soup network backend.
+        * Shared/soup/PlatformCertificateInfo.cpp:
+        (WebKit::PlatformCertificateInfo::PlatformCertificateInfo): Add a
+        constructor that receives a ResourceError.
+        * Shared/soup/PlatformCertificateInfo.h:
+        * Shared/soup/WebCoreArgumentCodersSoup.cpp:
+        (CoreIPC::::encodePlatformData): Encode the
+        PlatformCertificateInfo as part for the ResourceError.
+        (CoreIPC::::decodePlatformData): Decode the
+        PlatformCertificateInfo and set certificate and TLS errors in the
+        ResourceError.
+        * UIProcess/API/gtk/WebKitLoaderClient.cpp:
+        (didFailProvisionalLoadWithErrorForFrame): Call
+        webkitWebViewLoadFailedWithTLSErrors() if the load failed due to
+        TLS errors.
+        * UIProcess/API/gtk/WebKitWebContext.cpp:
+        (_WebKitWebContextPrivate): Add tlsErrorsPolicy member.
+        (createDefaultWebContext): Initiales tlsErrorsPolicy.
+        (webkit_web_context_set_tls_errors_policy): Set the TLS errors
+        policy notify WebContext to ignore TLS errors or not.
+        (webkit_web_context_get_tls_errors_policy): Return the current TLS
+        errors policy.
+        * UIProcess/API/gtk/WebKitWebContext.h:
+        * UIProcess/API/gtk/WebKitWebView.cpp:
+        (webkitWebViewLoadFailedWithTLSErrors): Finish the load with an
+        error if the TLS errors policy is FAIL.
+        * UIProcess/API/gtk/WebKitWebViewPrivate.h:
+        * UIProcess/API/gtk/docs/webkit2gtk-sections.txt: Add new symbols.
+        * UIProcess/API/gtk/tests/TestSSL.cpp:
+        (testTLSErrorsPolicy):
+        (beforeAll):
+        * UIProcess/WebContext.cpp:
+        (WebKit::WebContext::WebContext): Initialize m_ignoreTLSErrors.
+        * UIProcess/WebContext.h:
+        (WebContext): Add m_ignoreTLSErrors member.
+        (WebKit::WebContext::ignoreTLSErrors): Return m_ignoreTLSErrors.
+        * UIProcess/efl/WebContextEfl.cpp:
+        (WebKit::WebContext::platformInitializeWebProcess): Set
+        ignoreTLSErrors parameter.
+        (WebKit::WebContext::setIgnoreTLSErrors): Send SetIgnoreTLSErrors
+        message to the web process.
+        * UIProcess/gtk/WebContextGtk.cpp:
+        (WebKit::WebContext::platformInitializeWebProcess): Set
+        ignoreTLSErrors parameter.
+        (WebKit::WebContext::setIgnoreTLSErrors): Send SetIgnoreTLSErrors
+        message to the web process.
+        (WebKit):
+        * WebProcess/WebProcess.h:
+        * WebProcess/WebProcess.messages.in:
+        * WebProcess/efl/WebProcessMainEfl.cpp:
+        (WebKit::WebProcessMainEfl): Remove the call to
+        ResourceHandle::setIgnoreSSLErrors().
+        * WebProcess/gtk/WebProcessMainGtk.cpp:
+        (WebKit::WebProcessMainGtk): Remove the call to
+        ResourceHandle::setIgnoreSSLErrors().
+        * WebProcess/soup/WebProcessSoup.cpp:
+        (WebKit::WebProcess::platformInitializeWebProcess):
+        (WebKit::WebProcess::setIgnoreTLSErrors): Call
+        ResourceHandle::setIgnoreSSLErrors().
+        (WebKit):
+
 2012-12-20  Dominik Röttsches  <dominik.rottsches@intel.com>
 
         [EFL] MiniBrowser does not play Infinite Gangnam Style

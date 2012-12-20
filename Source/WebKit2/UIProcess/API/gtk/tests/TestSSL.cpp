@@ -38,6 +38,12 @@ public:
     {
     }
 
+    virtual void provisionalLoadFailed(const gchar* failingURI, GError* error)
+    {
+        g_assert_error(error, SOUP_HTTP_ERROR, SOUP_STATUS_SSL_FAILED);
+        LoadTrackingTest::provisionalLoadFailed(failingURI, error);
+    }
+
     virtual void loadCommitted()
     {
         WebKitWebResource* resource = webkit_web_view_get_main_resource(m_webView);
@@ -48,6 +54,7 @@ public:
         GTlsCertificate* certificate = 0;
         webkit_uri_response_get_https_status(response, &certificate, &m_tlsErrors);
         m_certificate = certificate;
+        LoadTrackingTest::loadCommitted();
     }
 
     void waitUntilLoadFinished()
@@ -113,6 +120,23 @@ static void testInsecureContent(InsecureContentTest* test, gconstpointer)
     g_assert(test->m_insecureContentDisplayed);
 }
 
+static void testTLSErrorsPolicy(SSLTest* test, gconstpointer)
+{
+    WebKitWebContext* context = webkit_web_view_get_context(test->m_webView);
+    // TLS errors are ignored by default.
+    g_assert(webkit_web_context_get_tls_errors_policy(context) == WEBKIT_TLS_ERRORS_POLICY_IGNORE);
+    test->loadURI(kHttpsServer->getURIForPath("/").data());
+    test->waitUntilLoadFinished();
+    g_assert(!test->m_loadFailed);
+
+    webkit_web_context_set_tls_errors_policy(context, WEBKIT_TLS_ERRORS_POLICY_FAIL);
+    test->loadURI(kHttpsServer->getURIForPath("/").data());
+    test->waitUntilLoadFinished();
+    g_assert(test->m_loadFailed);
+    g_assert(test->m_loadEvents.contains(LoadTrackingTest::ProvisionalLoadFailed));
+    g_assert(!test->m_loadEvents.contains(LoadTrackingTest::LoadCommitted));
+}
+
 static void httpsServerCallback(SoupServer* server, SoupMessage* message, const char* path, GHashTable*, SoupClientContext*, gpointer)
 {
     if (message->method != SOUP_METHOD_GET) {
@@ -172,6 +196,7 @@ void beforeAll()
 
     SSLTest::add("WebKitWebView", "ssl", testSSL);
     InsecureContentTest::add("WebKitWebView", "insecure-content", testInsecureContent);
+    SSLTest::add("WebKitWebContext", "tls-errors-policy", testTLSErrorsPolicy);
 }
 
 void afterAll()

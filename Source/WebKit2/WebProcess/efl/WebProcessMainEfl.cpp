@@ -111,8 +111,6 @@ WK_EXPORT int WebProcessMainEfl(int argc, char* argv[])
     soup_session_add_feature(session, SOUP_SESSION_FEATURE(soupCache));
     soup_cache_load(soupCache);
 
-    WebCore::ResourceHandle::setIgnoreSSLErrors(true);
-
     int socket = atoi(argv[1]);
     WebProcess::shared().initialize(socket, RunLoop::main());
     RunLoop::run();

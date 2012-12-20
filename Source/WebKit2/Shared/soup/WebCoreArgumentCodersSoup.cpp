@@ -27,12 +27,14 @@
 #include "config.h"
 #include "WebCoreArgumentCoders.h"
 
+#include "PlatformCertificateInfo.h"
 #include <WebCore/ResourceError.h>
 #include <WebCore/ResourceRequest.h>
 #include <WebCore/ResourceResponse.h>
 #include <wtf/text/CString.h>
 
 using namespace WebCore;
+using namespace WebKit;
 
 namespace CoreIPC {
 
@@ -66,12 +68,19 @@ bool ArgumentCoder<ResourceResponse>::decodePlatformData(ArgumentDecoder* decode
 }
 
 
-void ArgumentCoder<ResourceError>::encodePlatformData(ArgumentEncoder&, const ResourceError&)
+void ArgumentCoder<ResourceError>::encodePlatformData(ArgumentEncoder& encoder, const ResourceError& resourceError)
 {
+    encoder << PlatformCertificateInfo(resourceError);
 }
 
-bool ArgumentCoder<ResourceError>::decodePlatformData(ArgumentDecoder*, ResourceError&)
+bool ArgumentCoder<ResourceError>::decodePlatformData(ArgumentDecoder* decoder, ResourceError& resourceError)
 {
+    PlatformCertificateInfo certificateInfo;
+    if (!decoder->decode(certificateInfo))
+        return false;
+
+    resourceError.setCertificate(certificateInfo.certificate());
+    resourceError.setTLSErrors(certificateInfo.tlsErrors());
     return true;
 }
 

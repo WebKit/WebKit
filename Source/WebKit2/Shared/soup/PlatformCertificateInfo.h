@@ -36,6 +36,7 @@ class ArgumentEncoder;
 }
 
 namespace WebCore {
+class ResourceError;
 class ResourceResponse;
 }
 
@@ -45,6 +46,7 @@ class PlatformCertificateInfo {
 public:
     PlatformCertificateInfo();
     explicit PlatformCertificateInfo(const WebCore::ResourceResponse&);
+    explicit PlatformCertificateInfo(const WebCore::ResourceError&);
     ~PlatformCertificateInfo();
 
     GTlsCertificate* certificate() const { return m_certificate.get(); }

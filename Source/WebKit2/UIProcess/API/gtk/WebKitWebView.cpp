@@ -1366,6 +1366,19 @@ void webkitWebViewLoadFailed(WebKitWebView* webView, WebKitLoadEvent loadEvent, 
     g_signal_emit(webView, signals[LOAD_CHANGED], 0, WEBKIT_LOAD_FINISHED);
 }
 
+void webkitWebViewLoadFailedWithTLSErrors(WebKitWebView* webView, const char* failingURI, GError *error, GTlsCertificateFlags tlsErrors, GTlsCertificate* certificate)
+{
+    webkitWebViewSetIsLoading(webView, false);
+
+    WebKitTLSErrorsPolicy tlsErrorsPolicy = webkit_web_context_get_tls_errors_policy(webView->priv->context);
+    if (tlsErrorsPolicy == WEBKIT_TLS_ERRORS_POLICY_FAIL) {
+        webkitWebViewLoadFailed(webView, WEBKIT_LOAD_STARTED, failingURI, error);
+        return;
+    }
+
+    g_signal_emit(webView, signals[LOAD_CHANGED], 0, WEBKIT_LOAD_FINISHED);
+}
+
 void webkitWebViewSetTitle(WebKitWebView* webView, const CString& title)
 {
     WebKitWebViewPrivate* priv = webView->priv;

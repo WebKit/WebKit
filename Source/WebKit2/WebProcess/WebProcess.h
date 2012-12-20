@@ -285,6 +285,10 @@ private:
     void garbageCollectJavaScriptObjects();
     void setJavaScriptGarbageCollectorTimerEnabled(bool flag);
 
+#if USE(SOUP)
+    void setIgnoreTLSErrors(bool);
+#endif
+
     void postInjectedBundleMessage(const CoreIPC::DataReference& messageData);
 
 #if USE(SECURITY_FRAMEWORK)

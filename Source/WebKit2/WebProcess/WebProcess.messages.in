@@ -54,6 +54,9 @@ messages -> WebProcess {
 #if PLATFORM(WIN)
     SetShouldPaintNativeControls(bool shouldPaintNativeControls)
 #endif
+#if USE(SOUP)
+    SetIgnoreTLSErrors(bool ignoreTLSErrors)
+#endif
 
     // Private browsing session is per process. Individual pages or page groups may use the private session or the default one as appropriate.
     EnsurePrivateBrowsingSession()

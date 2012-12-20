@@ -136,6 +136,7 @@ struct _WebKitWebContextPrivate {
     OwnPtr<WebKitTextChecker> textChecker;
 #endif
     CString faviconDatabaseDirectory;
+    WebKitTLSErrorsPolicy tlsErrorsPolicy;
 };
 
 static guint signals[LAST_SIGNAL] = { 0, };
@@ -171,6 +172,7 @@ static gpointer createDefaultWebContext(gpointer)
     priv->context = WebContext::create(String());
     priv->requestManager = webContext->priv->context->soupRequestManagerProxy();
     priv->context->setCacheModel(CacheModelPrimaryWebBrowser);
+    priv->tlsErrorsPolicy = WEBKIT_TLS_ERRORS_POLICY_IGNORE;
 
     attachDownloadClientToContext(webContext.get());
     attachRequestManagerClientToContext(webContext.get());
@@ -692,6 +694,41 @@ void webkit_web_context_set_preferred_languages(WebKitWebContext* context, const
 
     WebCore::overrideUserPreferredLanguages(languages);
     WebCore::languageDidChange();
+}
+
+/**
+ * webkit_web_context_set_tls_errors_policy:
+ * @context: a #WebKitWebContext
+ * @policy: a #WebKitTLSErrorsPolicy
+ *
+ * Set the TLS errors policy of @context as @policy
+ */
+void webkit_web_context_set_tls_errors_policy(WebKitWebContext* context, WebKitTLSErrorsPolicy policy)
+{
+    g_return_if_fail(WEBKIT_IS_WEB_CONTEXT(context));
+
+    if (context->priv->tlsErrorsPolicy == policy)
+        return;
+
+    context->priv->tlsErrorsPolicy = policy;
+    bool ignoreTLSErrors = policy == WEBKIT_TLS_ERRORS_POLICY_IGNORE;
+    if (context->priv->context->ignoreTLSErrors() != ignoreTLSErrors)
+        context->priv->context->setIgnoreTLSErrors(ignoreTLSErrors);
+}
+
+/**
+ * webkit_web_context_get_tls_errors_policy:
+ * @context: a #WebKitWebContext
+ *
+ * Get the TLS errors policy of @context
+ *
+ * Returns: a #WebKitTLSErrorsPolicy
+ */
+WebKitTLSErrorsPolicy webkit_web_context_get_tls_errors_policy(WebKitWebContext* context)
+{
+    g_return_val_if_fail(WEBKIT_IS_WEB_CONTEXT(context), WEBKIT_TLS_ERRORS_POLICY_IGNORE);
+
+    return context->priv->tlsErrorsPolicy;
 }
 
 WebKitDownload* webkitWebContextGetOrCreateDownload(DownloadProxy* downloadProxy)

@@ -24,6 +24,7 @@ WEBKIT_OBSOLETE_API
 <TITLE>WebKitWebContext</TITLE>
 WebKitWebContext
 WebKitCacheModel
+WebKitTLSErrorsPolicy
 webkit_web_context_get_default
 webkit_web_context_get_cache_model
 webkit_web_context_set_cache_model
@@ -42,6 +43,8 @@ webkit_web_context_set_spell_checking_enabled
 webkit_web_context_get_spell_checking_languages
 webkit_web_context_set_spell_checking_languages
 webkit_web_context_set_preferred_languages
+webkit_web_context_set_tls_errors_policy
+webkit_web_context_get_tls_errors_policy
 
 <SUBSECTION URI Scheme>
 WebKitURISchemeRequestCallback

@@ -56,9 +56,14 @@ public:
     static ResourceError authenticationError(SoupMessage*);
 
     unsigned tlsErrors() const { return m_tlsErrors; }
+    void setTLSErrors(unsigned tlsErrors) { m_tlsErrors = tlsErrors; }
     GTlsCertificate* certificate() const { return m_certificate.get(); }
+    void setCertificate(GTlsCertificate* certificate) { m_certificate = certificate; }
 
 private:
+    void platformCopy(ResourceError&) const;
+    static bool platformCompare(const ResourceError& a, const ResourceError& b);
+
     unsigned m_tlsErrors;
     GRefPtr<GTlsCertificate> m_certificate;
 };

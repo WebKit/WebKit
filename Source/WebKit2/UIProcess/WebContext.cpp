@@ -142,6 +142,9 @@ WebContext::WebContext(ProcessModel processModel, const String& injectedBundlePa
 #if ENABLE(NETWORK_PROCESS)
     , m_usesNetworkProcess(false)
 #endif
+#if USE(SOUP)
+    , m_ignoreTLSErrors(true)
+#endif
 {
     platformInitialize();
 
