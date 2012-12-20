@@ -1,5 +1,11 @@
 2012-12-20  Ryosuke Niwa  <rniwa@webkit.org>
 
+        Add a Mac test expectation per bug 104848.
+
+        * platform/mac/TestExpectations:
+
+2012-12-20  Ryosuke Niwa  <rniwa@webkit.org>
+
         Update Mac test expectation per bugs 105566 and 105567.
 
         * platform/mac/TestExpectations:
