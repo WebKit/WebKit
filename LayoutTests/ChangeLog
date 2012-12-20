@@ -1,3 +1,12 @@
+2012-12-20  David Dorwin  <ddorwin@chromium.org>
+
+        [Chromium] Restore WebM EME canPlayType() expectations.
+        https://bugs.webkit.org/show_bug.cgi?id=105070
+
+        Unreviewed TestExpectations revert of r137225.
+
+        * platform/chromium/TestExpectations:
+
 2012-12-20  Ryosuke Niwa  <rniwa@webkit.org>
 
         Add a Mac test expectation per bug 104848.

@@ -4268,9 +4268,6 @@ webkit.org/b/103767  [ Win Mac Linux ] media/track/track-in-band-cues-added-once
 webkit.org/b/104489 [ Win ] http/tests/w3c/webperf/submission/resource-timing/html/test_resource_attribute_order.html [ Failure Pass ]
 webkit.org/b/104489 [ Win ] http/tests/w3c/webperf/submission/resource-timing/html/test_resource_script_types.html [ Timeout Pass ]
 
-# Broken by Chromium r172175
-crbug.com/165315 media/encrypted-media/encrypted-media-can-play-type-webm.html [ Failure ]
-
 # New test added in r137331
 webkit.org/b/104715 [ MountainLion ] fast/block/float/floats-wrap-inside-inline-007.html [ ImageOnlyFailure ]
 
