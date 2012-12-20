@@ -38,10 +38,10 @@ namespace WebCore {
 
 PassOwnPtr<GLPlatformSurface> GLPlatformSurface::createOffscreenSurface()
 {
-#if HAVE(GLX)
+#if USE(GLX)
     OwnPtr<GLPlatformSurface> surface = adoptPtr(new GLXPBuffer());
 
-    if (surface->handle())
+    if (surface->handle() && surface->drawable())
         return surface.release();
 #endif
 
@@ -50,7 +50,7 @@ PassOwnPtr<GLPlatformSurface> GLPlatformSurface::createOffscreenSurface()
 
 PassOwnPtr<GLPlatformSurface> GLPlatformSurface::createTransportSurface()
 {
-#if HAVE(GLX) && USE(GRAPHICS_SURFACE)
+#if USE(GLX) && USE(GRAPHICS_SURFACE)
     OwnPtr<GLPlatformSurface> surface = adoptPtr(new GLXTransportSurface());
 
     if (surface->handle())
@@ -65,6 +65,7 @@ GLPlatformSurface::GLPlatformSurface()
     , m_fboId(0)
     , m_sharedDisplay(0)
     , m_drawable(0)
+    , m_bufferHandle(0)
 {
 }
 
@@ -72,7 +73,12 @@ GLPlatformSurface::~GLPlatformSurface()
 {
 }
 
-PlatformSurface GLPlatformSurface::handle() const
+PlatformBufferHandle GLPlatformSurface::handle() const
+{
+    return m_bufferHandle;
+}
+
+PlatformDrawable GLPlatformSurface::drawable() const
 {
     return m_drawable;
 }

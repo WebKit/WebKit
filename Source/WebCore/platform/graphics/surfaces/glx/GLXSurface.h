@@ -26,7 +26,7 @@
 #ifndef GLXSurface_h
 #define GLXSurface_h
 
-#if USE(ACCELERATED_COMPOSITING) && HAVE(GLX)
+#if USE(ACCELERATED_COMPOSITING) && USE(GLX)
 
 #include "GLXWindowResources.h"
 

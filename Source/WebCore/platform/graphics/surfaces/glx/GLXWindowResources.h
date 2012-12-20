@@ -28,7 +28,7 @@
 
 #include "X11WindowResources.h"
 
-#if USE(ACCELERATED_COMPOSITING) && HAVE(GLX)
+#if USE(ACCELERATED_COMPOSITING) && USE(GLX)
 
 namespace WebCore {
 

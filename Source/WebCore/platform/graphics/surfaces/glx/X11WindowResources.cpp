@@ -36,8 +36,13 @@ PlatformSharedResources* SharedX11Resources::m_staticSharedResource = 0;
 
 X11OffScreenWindow::X11OffScreenWindow()
     : GLPlatformSurface()
+    , m_sharedResources(0)
 {
     m_sharedResources = PlatformSharedResources::create();
+
+    if (!m_sharedResources)
+        return;
+
     m_sharedDisplay = m_sharedResources->nativeDisplay();
 }
 
@@ -48,16 +53,19 @@ X11OffScreenWindow::~X11OffScreenWindow()
 void X11OffScreenWindow::setGeometry(const IntRect& newRect)
 {
     GLPlatformSurface::setGeometry(newRect);
-    XResizeWindow(m_sharedResources->x11Display(), m_drawable, newRect.width(), newRect.height());
+    XResizeWindow(m_sharedResources->x11Display(), m_bufferHandle, newRect.width(), newRect.height());
 }
 
 void X11OffScreenWindow::createOffscreenWindow()
 {
+    if (!m_sharedResources)
+        return;
+
     Display* display = m_sharedResources->x11Display();
     if (!display)
         return;
 
-    GLXFBConfig config = m_sharedResources->surfaceContextConfig();
+    PlatformSurfaceConfig config = m_sharedResources->surfaceContextConfig();
 
     if (!config) {
         LOG_ERROR("Failed to retrieve a valid configiration.");
@@ -80,33 +88,33 @@ void X11OffScreenWindow::createOffscreenWindow()
     attribute.background_pixel = WhitePixel(display, 0);
     attribute.border_pixel = BlackPixel(display, 0);
     attribute.colormap = cmap;
-    m_drawable = XCreateWindow(display, xWindow, 0, 0, 1, 1, 0, visInfo->depth, InputOutput, visInfo->visual, CWBackPixel | CWBorderPixel | CWColormap, &attribute);
+    m_bufferHandle = XCreateWindow(display, xWindow, 0, 0, 1, 1, 0, visInfo->depth, InputOutput, visInfo->visual, CWBackPixel | CWBorderPixel | CWColormap, &attribute);
 
-    if (!m_drawable) {
+    if (!m_bufferHandle) {
         LOG_ERROR("Failed to create offscreen window");
         return;
     }
 
-    XSetWindowBackgroundPixmap(display, m_drawable, 0);
-    XCompositeRedirectWindow(display, m_drawable, CompositeRedirectManual);
+    XSetWindowBackgroundPixmap(display, m_bufferHandle, 0);
+    XCompositeRedirectWindow(display, m_bufferHandle, CompositeRedirectManual);
 
     if (m_sharedResources->isXRenderExtensionSupported())
-        XMapWindow(display, m_drawable);
+        XMapWindow(display, m_bufferHandle);
 
 }
 
 void X11OffScreenWindow::destroyWindow()
 {
-    if (!m_drawable)
+    if (!m_bufferHandle)
         return;
 
     GLPlatformSurface::destroy();
-    Display* display = sharedDisplay();
+    Display* display = m_sharedResources->x11Display();
     if (!display)
         return;
 
-    XDestroyWindow(display, m_drawable);
-    m_drawable = 0;
+    XDestroyWindow(display, m_bufferHandle);
+    m_bufferHandle = 0;
 }
 
 }

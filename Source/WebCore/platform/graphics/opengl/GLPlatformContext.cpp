@@ -28,7 +28,7 @@
 
 #if USE(ACCELERATED_COMPOSITING)
 
-#if HAVE(GLX)
+#if USE(GLX)
 #include "GLXContext.h"
 #endif
 
@@ -45,7 +45,7 @@ PassOwnPtr<GLPlatformContext> GLPlatformContext::createContext(GraphicsContext3D
         return nullptr;
 
     if (!glGetGraphicsResetStatusARB) {
-#if HAVE(GLX)
+#if USE(GLX)
         glGetGraphicsResetStatusARB = reinterpret_cast<PFNGLGETGRAPHICSRESETSTATUSARBPROC>(glXGetProcAddressARB(reinterpret_cast<const GLubyte*>("glGetGraphicsResetStatusARB")));
 #endif
     }
@@ -69,7 +69,7 @@ PassOwnPtr<GLPlatformContext> GLPlatformContext::createContext(GraphicsContext3D
 
 PassOwnPtr<GLPlatformContext> GLPlatformContext::createOffScreenContext()
 {
-#if HAVE(GLX)
+#if USE(GLX)
     OwnPtr<GLPlatformContext> glxContext = adoptPtr(new GLXOffScreenContext());
     return glxContext.release();
 #endif
@@ -79,7 +79,7 @@ PassOwnPtr<GLPlatformContext> GLPlatformContext::createOffScreenContext()
 
 PassOwnPtr<GLPlatformContext> GLPlatformContext::createCurrentContextWrapper()
 {
-#if HAVE(GLX)
+#if USE(GLX)
     OwnPtr<GLPlatformContext> glxContext = adoptPtr(new GLXCurrentContextWrapper());
     return glxContext.release();
 #endif

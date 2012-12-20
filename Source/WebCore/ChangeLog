@@ -1,3 +1,55 @@
+2012-12-20  Kondapally Kalyan  <kalyan.kondapally@intel.com>
+
+        [EFL][WebGL][Wk2] Replace HAVE(GLX) checks with USE(GLX)
+        https://bugs.webkit.org/show_bug.cgi?id=105431
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        This patch changes the check HAVE(GLX) to USE(GLX).
+        This would enable us to choose our preferred GL backend during build time.
+        This patch also adds an additional api to query the shared buffer handle.
+        Buffer handle is not same as gl surface and would depend on how the content is
+        backed up.
+
+        * platform/graphics/opengl/GLDefs.h:
+        (WebCore):
+        * platform/graphics/opengl/GLPlatformContext.cpp:
+        (WebCore::GLPlatformContext::createContext):
+        (WebCore::GLPlatformContext::createOffScreenContext):
+        (WebCore::GLPlatformContext::createCurrentContextWrapper):
+        * platform/graphics/opengl/GLPlatformSurface.cpp:
+        (WebCore::GLPlatformSurface::createOffscreenSurface):
+        (WebCore::GLPlatformSurface::createTransportSurface):
+        (WebCore::GLPlatformSurface::GLPlatformSurface):
+        (WebCore::GLPlatformSurface::handle):
+        (WebCore):
+        (WebCore::GLPlatformSurface::drawable):
+        * platform/graphics/opengl/GLPlatformSurface.h:
+        (GLPlatformSurface):
+        * platform/graphics/surfaces/glx/GLXContext.cpp:
+        * platform/graphics/surfaces/glx/GLXContext.h:
+        * platform/graphics/surfaces/glx/GLXSurface.cpp:
+        (WebCore::GLXTransportSurface::GLXTransportSurface):
+        (WebCore::GLXTransportSurface::destroy):
+        (WebCore::GLXPBuffer::initialize):
+        (WebCore::GLXPBuffer::freeResources):
+        * platform/graphics/surfaces/glx/GLXSurface.h:
+        * platform/graphics/surfaces/glx/GLXWindowResources.h:
+        * platform/graphics/surfaces/glx/X11WindowResources.cpp:
+        (WebCore::X11OffScreenWindow::X11OffScreenWindow):
+        (WebCore::X11OffScreenWindow::setGeometry):
+        (WebCore::X11OffScreenWindow::createOffscreenWindow):
+        (WebCore::X11OffScreenWindow::destroyWindow):
+        * platform/graphics/surfaces/glx/X11WindowResources.h:
+        (WebCore):
+        (DummySharedResources):
+        (WebCore::DummySharedResources::create):
+        (WebCore::DummySharedResources::nativeDisplay):
+        (WebCore::DummySharedResources::pBufferContextConfig):
+        (WebCore::DummySharedResources::surfaceContextConfig):
+        (WebCore::DummySharedResources::DummySharedResources):
+        (WebCore::DummySharedResources::~DummySharedResources):
+
 2012-12-20  Emil A Eklund  <eae@chromium.org>
 
         [flexbox] Fix handling of very large flex grow/shrink values

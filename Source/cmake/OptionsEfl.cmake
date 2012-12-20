@@ -169,6 +169,8 @@ if (ENABLE_WEBGL OR WTF_USE_TILED_BACKING_STORE)
 
     if (OPENGLX_FOUND)
         add_definitions(-DHAVE_GLX)
+        add_definitions(-DWTF_USE_GLX=1)
+
         if (X11_Xcomposite_FOUND AND X11_Xrender_FOUND)
            set(USE_GRAPHICS_SURFACE 1)
         endif ()

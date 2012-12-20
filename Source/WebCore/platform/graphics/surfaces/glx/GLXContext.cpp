@@ -26,7 +26,7 @@
 #include "config.h"
 #include "GLXContext.h"
 
-#if USE(ACCELERATED_COMPOSITING) && HAVE(GLX)
+#if USE(ACCELERATED_COMPOSITING) && USE(GLX)
 
 namespace WebCore {
 

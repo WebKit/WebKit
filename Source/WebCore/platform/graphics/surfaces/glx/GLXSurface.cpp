@@ -26,7 +26,7 @@
 #include "config.h"
 #include "GLXSurface.h"
 
-#if USE(ACCELERATED_COMPOSITING) && HAVE(GLX)
+#if USE(ACCELERATED_COMPOSITING) && USE(GLX)
 
 namespace WebCore {
 
@@ -37,6 +37,7 @@ GLXTransportSurface::GLXTransportSurface()
     : X11OffScreenWindow()
 {
     createOffscreenWindow();
+    m_drawable = m_bufferHandle;
 }
 
 GLXTransportSurface::~GLXTransportSurface()
@@ -66,6 +67,7 @@ void GLXTransportSurface::swapBuffers()
 void GLXTransportSurface::destroy()
 {
     destroyWindow();
+    m_bufferHandle = 0;
 }
 
 #endif
@@ -88,6 +90,7 @@ void GLXPBuffer::initialize()
         return;
 
     m_drawable = glXCreatePbuffer(display, config, pbufferAttributes);
+    m_bufferHandle = m_drawable;
 }
 
 PlatformSurfaceConfig GLXPBuffer::configuration()
@@ -112,6 +115,7 @@ void GLXPBuffer::freeResources()
 
     glXDestroyPbuffer(display, m_drawable);
     m_drawable = 0;
+    m_bufferHandle = 0;
 }
 
 void GLXPBuffer::setGeometry(const IntRect& newRect)

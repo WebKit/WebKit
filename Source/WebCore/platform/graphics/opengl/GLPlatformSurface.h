@@ -52,8 +52,10 @@ public:
 
     const IntRect& geometry() const;
 
-    // Get the underlying platform specific surface handle.
-    PlatformSurface handle() const;
+    // Get the underlying platform specific buffer handle.
+    PlatformBufferHandle handle() const;
+
+    PlatformDrawable drawable() const;
 
     PlatformDisplay sharedDisplay() const;
 
@@ -78,7 +80,8 @@ protected:
     IntRect m_rect;
     GLuint m_fboId;
     PlatformDisplay m_sharedDisplay;
-    PlatformSurface m_drawable;
+    PlatformDrawable m_drawable;
+    PlatformBufferHandle m_bufferHandle;
 };
 
 }

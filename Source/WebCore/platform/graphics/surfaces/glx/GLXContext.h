@@ -26,7 +26,7 @@
 #ifndef GLXContext_h
 #define GLXContext_h
 
-#if USE(ACCELERATED_COMPOSITING) && HAVE(GLX)
+#if USE(ACCELERATED_COMPOSITING) && USE(GLX)
 
 #include "GLPlatformContext.h"
 

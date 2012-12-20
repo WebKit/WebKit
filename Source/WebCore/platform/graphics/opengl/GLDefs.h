@@ -38,22 +38,24 @@
 #include <GL/glext.h>
 #endif
 
-#if HAVE(GLX)
+#if USE(GLX)
 #include <GL/glx.h>
 #endif
 
 namespace WebCore {
 
-#if HAVE(GLX)
+typedef uint32_t PlatformBufferHandle;
+
+#if USE(GLX)
 typedef GLXContext PlatformContext;
 typedef Display* PlatformDisplay;
 typedef GLXFBConfig PlatformSurfaceConfig;
-typedef GLXDrawable PlatformSurface;
+typedef GLXDrawable PlatformDrawable;
 #else
 typedef void* PlatformContext;
 typedef void* PlatformDisplay;
 typedef void* PlatformSurfaceConfig;
-typedef void* PlatformSurface;
+typedef void* PlatformDrawable;
 #endif
 
 }
