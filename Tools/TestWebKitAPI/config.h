@@ -64,7 +64,7 @@
 
 #include <stdint.h>
 
-#if !PLATFORM(CHROMIUM) || (PLATFORM(GTK) && defined(BUILDING_WEBKIT2__))
+#if (!PLATFORM(CHROMIUM) && !PLATFORM(WIN)) || (PLATFORM(GTK) && defined(BUILDING_WEBKIT2__))
 #include <WebKit2/WebKit2_C.h>
 #endif
 

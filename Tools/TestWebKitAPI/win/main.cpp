@@ -25,6 +25,7 @@
 
 #include "config.h"
 #include "TestsController.h"
+#include <windows.h>
 
 int main(int argc, char** argv)
 {
