@@ -1389,6 +1389,10 @@ webkit.org/b/87734 svg/dom/viewspec-parser-5.html [ Failure ]
 webkit.org/b/87734 svg/dom/viewspec-parser-6.html [ Failure ]
 webkit.org/b/87734 svg/dom/viewspec-parser-7.html [ Failure ]
 
+webkit.org/b/105443 accessibility/aria-controls-with-tabs.html [ Failure ]
+
+webkit.org/b/105522 transitions/transitions-parsing.html [ Failure ]
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Tests failing
 #////////////////////////////////////////////////////////////////////////////////////////
