@@ -1,5 +1,24 @@
 2012-12-19  Dean Jackson  <dino@apple.com>
 
+        Track menu in wrong location when fullscreen
+        https://bugs.webkit.org/show_bug.cgi?id=105234
+
+        Reviewed by Eric Carlson.
+
+        Add a rule to position the captions menu in the correct location
+        when the <video> is fullscreen. Also a drive-by removal of unnecessary
+        CSS selectors, and changing an encoded PNG into an SVG.
+
+        * css/fullscreenQuickTime.css:
+        (video:-webkit-full-screen::-webkit-media-controls-closed-captions-container): Add a rule to position
+        the menu when in fullscreen.
+        * css/mediaControlsQuickTime.css: Remove the unnecessary <audio> selectors.
+        (video::-webkit-media-controls-toggle-closed-captions-button):
+        (video::-webkit-media-controls-closed-captions-container):
+        (video::-webkit-media-controls-closed-captions-track-list):
+
+2012-12-19  Dean Jackson  <dino@apple.com>
+
         Follow WebVTT line breaking rules
         https://bugs.webkit.org/show_bug.cgi?id=105496
 

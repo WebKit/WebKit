@@ -166,3 +166,9 @@ video:-webkit-full-screen::-webkit-media-controls-status-display {
     left: 8px;
     right: 8px;
 }
+
+video:-webkit-full-screen::-webkit-media-controls-closed-captions-container {
+    bottom: 64px;
+    margin-left: 205px;
+}
+
