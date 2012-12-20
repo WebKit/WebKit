@@ -118,6 +118,9 @@ void FEImage::platformApplySoftware()
     IntPoint paintLocation = absolutePaintRect().location();
     destRect.move(-paintLocation.x(), -paintLocation.y());
 
+    // FEImage results are always in ColorSpaceDeviceRGB
+    setResultColorSpace(ColorSpaceDeviceRGB);
+
     if (renderer) {
         const AffineTransform& absoluteTransform = svgFilter->absoluteTransform();
         resultImage->context()->concatCTM(absoluteTransform);

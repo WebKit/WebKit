@@ -164,6 +164,8 @@ public:
 protected:
     FilterEffect(Filter*);
 
+    void setResultColorSpace(ColorSpace colorSpace) { m_resultColorSpace = colorSpace; }
+
     ImageBuffer* createImageBufferResult();
     Uint8ClampedArray* createUnmultipliedImageResult();
     Uint8ClampedArray* createPremultipliedImageResult();

@@ -1,3 +1,45 @@
+2012-12-20  Florin Malita  <fmalita@chromium.org>
+
+        Incorrect color space conversion for FEImage
+        https://bugs.webkit.org/show_bug.cgi?id=105437
+
+        Reviewed by Dirk Schulze.
+
+        When no color-interpolation-filters property is specified, SVG filters are assumed to
+        operate in LinearRGB color space (http://www.w3.org/TR/SVG/filters.html#FilterPrimitivesOverviewIntro).
+        Currently, FilterEffect relies on filters generating results in the same color space they
+        are requested to use (LinearRGB by default) - but this is not true for FEImage as its
+        result is always a DeviceRGB image buffer. Hence, in FEImage's case, the filter chain
+        performs an invalid LinearRGB->DeviceRGB conversion at the end (for an image buffer already
+        encoded in DeviceRGB).
+
+        This patch introduces a mechanism for filters to override the requested result color space
+        and updates FEImage to always mark its result as DeviceRGB. If a dependent filter requires
+        input in a different color space, FilterEffect::apply() already handles the conversion.
+
+        No new tests - existing tests cover this extensively, after rebaseline.
+
+        * platform/graphics/filters/FilterEffect.cpp:
+        (WebCore::FilterEffect::transformResultColorSpace):
+        Minor cleanup: asImageBuffer() already handles this logic.
+
+        * platform/graphics/filters/FilterEffect.h:
+        (WebCore::FilterEffect::setResultColorSpace):
+        (FilterEffect):
+        New method for overriding the result color space.
+
+        * rendering/FilterEffectRenderer.cpp:
+        (WebCore::FilterEffectRenderer::apply):
+        * rendering/svg/RenderSVGResourceFilter.cpp:
+        (WebCore::RenderSVGResourceFilter::postApplyResource):
+        Do not perform an explicit conversion in these places, as the result color space may be
+        different from the requested color space. Let FilterEffect::transformResultColorSpace()
+        figure it out.
+
+        * svg/graphics/filters/SVGFEImage.cpp:
+        (WebCore::FEImage::platformApplySoftware):
+        FEImage results are always ColorSpaceDeviceRGB.
+
 2012-12-20  Dominik Röttsches  <dominik.rottsches@intel.com>
 
         [EFL] MiniBrowser does not play Infinite Gangnam Style

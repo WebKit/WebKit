@@ -409,11 +409,9 @@ void FilterEffectRenderer::clearIntermediateResults()
 
 void FilterEffectRenderer::apply()
 {
-    lastEffect()->apply();
-
-#if !USE(CG)
-    output()->transformColorSpace(lastEffect()->colorSpace(), ColorSpaceDeviceRGB);
-#endif
+    RefPtr<FilterEffect> effect = lastEffect();
+    effect->apply();
+    effect->transformResultColorSpace(ColorSpaceDeviceRGB);
 }
 
 LayoutRect FilterEffectRenderer::computeSourceImageRectForDirtyRect(const LayoutRect& filterBoxRect, const LayoutRect& dirtyRect)

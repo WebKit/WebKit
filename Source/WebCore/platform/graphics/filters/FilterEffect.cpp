@@ -448,8 +448,6 @@ void FilterEffect::transformResultColorSpace(ColorSpace dstColorSpace)
     if (!hasResult() || dstColorSpace == m_resultColorSpace)
         return;
 
-    // FIXME: We can avoid this potentially unnecessary ImageBuffer conversion by adding
-    // color space transform support for the {pre,un}multiplied arrays.
 #if ENABLE(OPENCL)
     if (openCLImage()) {
         FilterContextOpenCL* context = FilterContextOpenCL::context();
@@ -457,18 +455,15 @@ void FilterEffect::transformResultColorSpace(ColorSpace dstColorSpace)
         context->openCLTransformColorSpace(m_openCLImageResult, absolutePaintRect(), m_resultColorSpace, dstColorSpace);
         if (m_imageBufferResult)
             m_imageBufferResult.clear();
-        goto skipSoftwareCodePath;
-    }
+    } else {
 #endif
-    if (!m_imageBufferResult) {
-        asImageBuffer();
-        ASSERT(m_imageBufferResult);
-    }
 
-    m_imageBufferResult->transformColorSpace(m_resultColorSpace, dstColorSpace);
+    // FIXME: We can avoid this potentially unnecessary ImageBuffer conversion by adding
+    // color space transform support for the {pre,un}multiplied arrays.
+    asImageBuffer()->transformColorSpace(m_resultColorSpace, dstColorSpace);
 
 #if ENABLE(OPENCL)
-skipSoftwareCodePath:
+    }
 #endif
 
     m_resultColorSpace = dstColorSpace;

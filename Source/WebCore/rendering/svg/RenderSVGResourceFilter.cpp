@@ -311,11 +311,7 @@ void RenderSVGResourceFilter::postApplyResource(RenderObject* object, GraphicsCo
             filterData->state = FilterData::Applying;
             lastEffect->apply();
             lastEffect->correctFilterResultIfNeeded();
-#if !USE(CG)
-            ImageBuffer* resultImage = lastEffect->asImageBuffer();
-            if (resultImage)
-                resultImage->transformColorSpace(lastEffect->colorSpace(), ColorSpaceDeviceRGB);
-#endif
+            lastEffect->transformResultColorSpace(ColorSpaceDeviceRGB);
         }
         filterData->state = FilterData::Built;
 

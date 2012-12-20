@@ -1,3 +1,58 @@
+2012-12-20  Florin Malita  <fmalita@chromium.org>
+
+        Incorrect color space conversion for FEImage
+        https://bugs.webkit.org/show_bug.cgi?id=105437
+
+        Reviewed by Dirk Schulze.
+
+        Rebaselined Chromium(Linux) results, updated Chromium/EFL/Gtk/Qt expectations.
+
+        * platform/chromium-linux/svg/W3C-SVG-1.1-SE/filters-image-03-f-expected.png:
+        * platform/chromium-linux/svg/W3C-SVG-1.1-SE/filters-image-05-f-expected.png:
+        * platform/chromium-linux/svg/W3C-SVG-1.1/filters-displace-01-f-expected.png:
+        * platform/chromium-linux/svg/W3C-SVG-1.1/filters-image-01-b-expected.png:
+        * platform/chromium-linux/svg/dynamic-updates/SVGFEDisplacementMapElement-dom-in-attr-expected.png:
+        * platform/chromium-linux/svg/dynamic-updates/SVGFEDisplacementMapElement-dom-in2-attr-expected.png:
+        * platform/chromium-linux/svg/dynamic-updates/SVGFEDisplacementMapElement-dom-scale-attr-expected.png:
+        * platform/chromium-linux/svg/dynamic-updates/SVGFEDisplacementMapElement-dom-xChannelSelector-attr-expected.png:
+        * platform/chromium-linux/svg/dynamic-updates/SVGFEDisplacementMapElement-dom-yChannelSelector-attr-expected.png:
+        * platform/chromium-linux/svg/dynamic-updates/SVGFEDisplacementMapElement-svgdom-in-prop-expected.png:
+        * platform/chromium-linux/svg/dynamic-updates/SVGFEDisplacementMapElement-svgdom-in2-prop-expected.png:
+        * platform/chromium-linux/svg/dynamic-updates/SVGFEDisplacementMapElement-svgdom-scale-prop-expected.png:
+        * platform/chromium-linux/svg/dynamic-updates/SVGFEDisplacementMapElement-svgdom-xChannelSelector-prop-expected.png:
+        * platform/chromium-linux/svg/dynamic-updates/SVGFEDisplacementMapElement-svgdom-yChannelSelector-prop-expected.png:
+        * platform/chromium-linux/svg/dynamic-updates/SVGFEImageElement-dom-preserveAspectRatio-attr-expected.png:
+        * platform/chromium-linux/svg/dynamic-updates/SVGFEImageElement-svgdom-preserveAspectRatio-prop-expected.png:
+        * platform/chromium-linux/svg/filters/feImage-filterUnits-objectBoundingBox-primitiveUnits-objectBoundingBox-expected.png:
+        * platform/chromium-linux/svg/filters/feImage-filterUnits-objectBoundingBox-primitiveUnits-userSpaceOnUse-expected.png:
+        * platform/chromium-linux/svg/filters/feImage-filterUnits-userSpaceOnUse-primitiveUnits-objectBoundingBox-expected.png:
+        * platform/chromium-linux/svg/filters/feImage-filterUnits-userSpaceOnUse-primitiveUnits-userSpaceOnUse-expected.png:
+        * platform/chromium-linux/svg/filters/feImage-late-indirect-update-expected.png:
+        * platform/chromium-win/svg/custom/feDisplacementMap-01-expected.png:
+        * platform/chromium-win/svg/filters/feImage-animated-transform-on-target-rect-expected.png:
+        * platform/chromium-win/svg/filters/feImage-multiple-targets-id-change-expected.png:
+        * platform/chromium-win/svg/filters/feImage-position-expected.png:
+        * platform/chromium-win/svg/filters/feImage-preserveAspectratio-expected.png:
+        * platform/chromium-win/svg/filters/feImage-reference-invalidation-expected.png:
+        * platform/chromium-win/svg/filters/feImage-subregions-expected.png:
+        * platform/chromium-win/svg/filters/feImage-subregions-preseveAspectRatio-none-expected.png:
+        * platform/chromium-win/svg/filters/feImage-subregions-preseveAspectRatio-none-with-viewBox-expected.png:
+        * platform/chromium-win/svg/filters/feImage-target-add-to-document-expected.png:
+        * platform/chromium-win/svg/filters/feImage-target-attribute-change-expected.png:
+        * platform/chromium-win/svg/filters/feImage-target-attribute-change-with-use-indirection-2-expected.png:
+        * platform/chromium-win/svg/filters/feImage-target-attribute-change-with-use-indirection-expected.png:
+        * platform/chromium-win/svg/filters/feImage-target-changes-id-expected.png:
+        * platform/chromium-win/svg/filters/feImage-target-id-change-expected.png:
+        * platform/chromium-win/svg/filters/feImage-target-inline-style-change-expected.png:
+        * platform/chromium-win/svg/filters/feImage-target-property-change-expected.png:
+        * platform/chromium-win/svg/filters/feImage-target-reappend-to-document-expected.png:
+        * platform/chromium-win/svg/filters/feImage-target-remove-from-document-expected.png:
+        * platform/chromium-win/svg/filters/feImage-target-style-change-expected.png:
+        * platform/chromium/TestExpectations:
+        * platform/efl/TestExpectations:
+        * platform/gtk/TestExpectations:
+        * platform/qt/TestExpectations:
+
 2012-12-20  Dominik Röttsches  <dominik.rottsches@intel.com>
 
         [EFL] MiniBrowser does not play Infinite Gangnam Style
