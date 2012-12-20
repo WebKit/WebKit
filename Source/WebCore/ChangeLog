@@ -1,3 +1,30 @@
+2012-12-20  Viatcheslav Ostapenko  <sl.ostapenko@samsung.com>
+
+        [EFL] [WebGL] [Wk2] Contents are not rendered properly.
+        https://bugs.webkit.org/show_bug.cgi?id=104664
+
+        Reviewed by Noam Rosenthal.
+
+        WebGL pages that render more than one frame are broken. Only 1st
+        frame comes to the UI side. All webgl repaint tests fail because
+        of this.
+        Specification of EXT_texture_from_pixmap extension here
+        http://www.opengl.org/registry/specs/EXT/texture_from_pixmap.txt
+        says, that:
+        "The contents of the texture after the drawable has been bound are defined
+        as the result of all rendering that has completed before the call to
+        glXBindTexImageEXT."
+        It means that in order to get updates for every frame glXBindTexImageEXT has
+        to be called on every frame update.
+
+        Covered by existing fast/canavs/webgl/*repaint tests.
+
+        * platform/graphics/surfaces/glx/GraphicsSurfaceGLX.cpp:
+        (WebCore::GraphicsSurfacePrivate::isReceiver):
+        (WebCore::GraphicsSurface::platformSwapBuffers):
+        * platform/graphics/texmap/TextureMapperBackingStore.cpp:
+        (WebCore::TextureMapperSurfaceBackingStore::swapBuffersIfNeeded):
+
 2012-12-20  Erik Arvidsson  <arv@chromium.org>
 
         CodeGen: Make [Reflect] use fastGetAttribute and fastHasAttribute
