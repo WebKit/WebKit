@@ -2846,11 +2846,6 @@ crbug.com/89474 [ Android Linux Win ] fast/js/call-base-resolution.html [ Failur
 webkit.org/b/70888 [ Mac Debug ] animations/dynamic-stylesheet-loading.html [ Failure Pass ]
 webkit.org/b/70887 [ Debug ] jquery/css.html [ Pass Timeout ]
 
-# The following tests need updated baselines.
-webkit.org/b/105121 platform/chromium/virtual/gpu/compositedscrolling/scrollbars/overflow-scrollbar-combinations.html [ ImageOnlyFailure ]
-webkit.org/b/105121 platform/chromium/virtual/gpu/compositedscrolling/overflow/nested-scrolling.html [ ImageOnlyFailure ]
-webkit.org/b/105121 platform/chromium/virtual/gpu/compositedscrolling/overflow/overflow-auto-with-touch-toggle.html [ Failure ]
-
 webkit.org/b/65009 [ Mac ] scrollbars/scrollbar-drag-thumb-with-large-content.html [ Failure ]
 webkit.org/b/65009 [ Mac ] platform/chromium/virtual/gpu/compositedscrolling/scrollbars/scrollbar-drag-thumb-with-large-content.html [ Failure ]
 
@@ -4017,13 +4012,12 @@ webkit.org/b/99873 platform/chromium/virtual/gpu/fast/canvas/webgl/array-bounds-
 # These tests are failing already and because of virtual test suite for deferred
 # image decoding they need to be suppressed again.
 webkit.org/b/94240 platform/chromium/virtual/deferred/fast/images/animated-gif-restored-from-bfcache.html [ Failure ]
-webkit.org/b/94240 [ Linux Win ] platform/chromium/virtual/deferred/fast/images/color-jpeg-with-color-profile.html [ ImageOnlyFailure ]
+webkit.org/b/94240 [ Linux ] platform/chromium/virtual/deferred/fast/images/color-jpeg-with-color-profile.html [ ImageOnlyFailure ]
 webkit.org/b/94240 [ Android ] platform/chromium/virtual/deferred/fast/images/embed-image.html [ Failure ]
-webkit.org/b/94240 [ Linux Win SnowLeopard ] platform/chromium/virtual/deferred/fast/images/favicon-as-image.html [ Failure ]
+webkit.org/b/94240 [ Linux SnowLeopard ] platform/chromium/virtual/deferred/fast/images/favicon-as-image.html [ Failure ]
 webkit.org/b/94240 [ Linux Win SnowLeopard ] platform/chromium/virtual/deferred/fast/images/gif-large-checkerboard.html [ ImageOnlyFailure ]
 webkit.org/b/94240 platform/chromium/virtual/deferred/fast/images/gif-loop-count.html [ ImageOnlyFailure ]
 webkit.org/b/94240 [ XP ] platform/chromium/virtual/deferred/fast/images/imagemap-circle-focus-ring.html [ Failure ]
-webkit.org/b/94240 [ Win ] platform/chromium/virtual/deferred/fast/images/imagemap-focus-ring-outline-color-not-inherited-from-map.html [ Failure ]
 webkit.org/b/94240 platform/chromium/virtual/deferred/fast/images/pdf-as-image-landscape.html [ WontFix ]
 webkit.org/b/94240 [ Win Mac Android ] platform/chromium/virtual/deferred/fast/images/pixel-crack-image-background-webkit-transform-scale.html [ ImageOnlyFailure ]
 webkit.org/b/94240 [ Mac Android ] platform/chromium/virtual/deferred/fast/images/support-broken-image-delegate.html [ Failure ]
@@ -4114,7 +4108,6 @@ webkit.org/b/100478  [ Mac ] css3/filters/custom/effect-custom.html [ ImageOnlyF
 webkit.org/b/100424 editing/selection/user-select-all-selection.html [ Failure ]
 webkit.org/b/100475 compositing/tiling/tile-cache-zoomed.html [ Failure ]
 webkit.org/b/100475 platform/chromium/virtual/softwarecompositing/tiling/tile-cache-zoomed.html [ Failure ]
-webkit.org/b/100477 [ Win ] platform/chromium/fast/forms/suggestion-picker/date-suggestion-picker-key-operations.html [ Failure ]
 
 webkit.org/b/100647 [ Win ] webaudio/audiobuffersource-loop-points.html [ Failure ]
 

@@ -2,6 +2,23 @@
 
         [chromium] Unreviewed gardening.
 
+        Rebaseline tests mentioned in 105121 and remove tests that are passing on Win bots according to the flakiness dashboard.
+
+        * platform/chromium-linux/platform/chromium/virtual/gpu/compositedscrolling/overflow/nested-scrolling-expected.png: Added.
+        * platform/chromium-linux/platform/chromium/virtual/gpu/compositedscrolling/scrollbars/overflow-scrollbar-combinations-expected.png: Added.
+        * platform/chromium-mac-lion/platform/chromium/virtual/gpu/compositedscrolling/overflow/nested-scrolling-expected.png: Added.
+        * platform/chromium-mac-lion/platform/chromium/virtual/gpu/compositedscrolling/scrollbars/overflow-scrollbar-combinations-expected.png: Added.
+        * platform/chromium-mac-snowleopard/platform/chromium/virtual/gpu/compositedscrolling/overflow/nested-scrolling-expected.png: Added.
+        * platform/chromium-mac-snowleopard/platform/chromium/virtual/gpu/compositedscrolling/scrollbars/overflow-scrollbar-combinations-expected.png: Added.
+        * platform/chromium-mac/platform/chromium/virtual/gpu/compositedscrolling/overflow/nested-scrolling-expected.png: Added.
+        * platform/chromium-mac/platform/chromium/virtual/gpu/compositedscrolling/scrollbars/overflow-scrollbar-combinations-expected.png: Added.
+        * platform/chromium/TestExpectations:
+        * platform/chromium/platform/chromium/virtual/gpu/compositedscrolling/overflow/overflow-auto-with-touch-toggle-expected.txt: Added.
+
+2012-12-20  Tony Chang  <tony@chromium.org>
+
+        [chromium] Unreviewed gardening.
+
         Mark an inspector test as flakey and update form date tests after r138255.
 
         * platform/chromium-win-xp/fast/forms/date-multiple-fields/date-multiple-fields-keyboard-events-expected.txt:
