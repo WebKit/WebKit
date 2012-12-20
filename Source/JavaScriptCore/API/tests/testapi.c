@@ -1634,8 +1634,8 @@ int main(int argc, char* argv[])
         JSStringRef errorMessage = 0;
         int errorLine = 0;
         JSScriptRef scriptObject = JSScriptCreateFromString(contextGroup, url, 1, script, &errorMessage, &errorLine);
-        ASSERT((!scriptObject) != (!exception));
-        if (exception) {
+        ASSERT((!scriptObject) != (!errorMessage));
+        if (!scriptObject) {
             printf("FAIL: Test script did not parse\n\t%s:%d\n\t", scriptPath, errorLine);
             CFStringRef errorCF = JSStringCopyCFString(kCFAllocatorDefault, errorMessage);
             CFShow(errorCF);
