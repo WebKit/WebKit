@@ -188,6 +188,23 @@ function shouldBe(_a, _b, quiet)
     testFailed(_a + " should be " + _bv + " (of type " + typeof _bv + "). Was " + _av + " (of type " + typeof _av + ").");
 }
 
+function shouldBeType(_a, _type) {
+  var exception;
+  var _av;
+  try {
+    _av = eval(_a);
+  } catch (e) {
+    exception = e;
+  }
+
+  var _typev = eval(_type);
+  if (_av instanceof _typev) {
+    testPassed(_a + " is an instance of " + _type);
+  } else {
+    testFailed(_a + " is not an instance of " + _type);
+  }
+}
+
 // Variant of shouldBe()--confirms that result of eval(_to_eval) is within
 // numeric _tolerance of numeric _target.
 function shouldBeCloseTo(_to_eval, _target, _tolerance, quiet)

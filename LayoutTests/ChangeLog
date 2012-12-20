@@ -1,3 +1,21 @@
+2012-12-20  Ryan Sleevi  <rsleevi@chromium.org>
+
+        window.crypto.getRandomValues should return the input ArrayBufferView
+        https://bugs.webkit.org/show_bug.cgi?id=104845
+
+        Reviewed by Kentaro Hara.
+
+        * fast/js/resources/js-test-pre.js:
+        (shouldBeType):
+        Added helper to assert that an expression returns an object of the
+        correct type.
+        * security/crypto-random-values-types-expected.txt:
+        * security/crypto-random-values-types.html:
+        Test all possible TypedArray integer types and ensure that both the
+        correct TypedArray type is returned and that it is equal to the input
+        type; that is, that the input type is modified in place, rather then
+        copied.
+
 2012-12-20  Tony Chang  <tony@chromium.org>
 
         [chromium] Unreviewed gardening.

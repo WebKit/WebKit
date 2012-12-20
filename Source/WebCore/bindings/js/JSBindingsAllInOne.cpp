@@ -51,6 +51,7 @@
 #include "JSClipboardCustom.cpp"
 #include "JSConsoleCustom.cpp"
 #include "JSCoordinatesCustom.cpp"
+#include "JSCryptoCustom.cpp"
 #include "JSCustomSQLStatementErrorCallback.cpp"
 #include "JSCustomXPathNSResolver.cpp"
 #include "JSDictionary.cpp"

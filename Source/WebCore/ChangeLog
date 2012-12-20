@@ -1,3 +1,39 @@
+2012-12-20  Ryan Sleevi  <rsleevi@chromium.org>
+
+        window.crypto.getRandomValues should return the input ArrayBufferView
+        https://bugs.webkit.org/show_bug.cgi?id=104845
+
+        The W3C Web Crypto API FPWD, as well as the WHATWG February 2012 draft,
+        define crypto.getRandomValues() as returning the input ArrayBufferView,
+        to allow function call chaining. Update the implementation to match
+        the current spec, rather than the old spec of void/undefined.
+
+        Reviewed by Kentaro Hara.
+
+        Test: security/crypto-random-values-types.html
+
+        * GNUmakefile.list.am:
+        * Target.pri:
+        * UseJSC.cmake:
+        * WebCore.gypi:
+        * WebCore.xcodeproj/project.pbxproj:
+        * bindings/js/JSBindingsAllInOne.cpp:
+        * bindings/js/JSCryptoCustom.cpp: Added.
+        (WebCore):
+        (WebCore::JSCrypto::getRandomValues):
+        Added custom getRandomValues implementation so that the input wrapped
+        ArrayBufferView can be returned directly to the caller. This is to
+        preserve the underlying type and indexing accessor for the TypedArray
+        subclass.
+        * bindings/v8/custom/V8CryptoCustom.cpp: Added.
+        (WebCore):
+        (WebCore::V8Crypto::getRandomValuesCallback):
+        Added custom getRandomValues implementation so that the input wrapped
+        ArrayBufferView can be returned directly to the caller. This is to
+        preserve the underlying type and indexing accessor for the TypedArray
+        subclass.
+        * page/Crypto.idl:
+
 2012-12-20  Erik Arvidsson  <arv@chromium.org>
 
         CodeGen: Make [Reflect] use getIdAttribute and getNameAttribute

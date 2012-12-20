@@ -29,6 +29,6 @@
 [
     OmitConstructor
 ] interface Crypto {
-    void getRandomValues(in ArrayBufferView array) raises(DOMException);
+    [Custom] ArrayBufferView getRandomValues(in ArrayBufferView array) raises(DOMException);
 };
 
