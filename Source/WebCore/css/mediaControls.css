@@ -233,6 +233,7 @@ video::-webkit-media-text-track-container {
     text-decoration: none;
     pointer-events: none;
     -webkit-user-select: none;
+    word-break: break-word;
 
     -webkit-box-flex: 1;
 }

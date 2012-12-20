@@ -252,6 +252,7 @@ audio::-webkit-media-controls-closed-captions-container, video::-webkit-media-co
     background-color: rgba(0, 0, 0, 0.85);
     border: 1px solid rgb(66, 66, 66);
     border-radius: 8px;
+    cursor: default;
 }
 
 audio::-webkit-media-controls-closed-captions-track-list, video::-webkit-media-controls-closed-captions-track-list {
@@ -268,6 +269,7 @@ audio::-webkit-media-controls-closed-captions-track-list, video::-webkit-media-c
     font-family: "Helvetica Bold", "Helvetica";
     font-weight: bold;
     font-size: 9pt;
+    -webkit-user-select: none;
 }
 
 audio::-webkit-media-controls-closed-captions-track-list h3,

@@ -1,0 +1,41 @@
+<html>
+    <head>
+        <script src=../media-file.js></script>
+        <script src=../video-test.js></script>
+        <script src=../media-controls.js></script>
+        <script>
+
+        var singleLineRect;
+
+        function testUnbreakableLine()
+        {
+            var multiLineRect = textTrackDisplayElement(video).firstChild.firstChild.getBoundingClientRect();
+            var ratio = multiLineRect.height / singleLineRect.height;
+            logResult(ratio > 2, "Second caption was more than twice as tall as first caption.")
+            endTest();
+        }
+
+        function testSingleLine()
+        {
+            singleLineRect = textTrackDisplayElement(video).firstChild.firstChild.getBoundingClientRect();
+            consoleWrite("Single line caption height recorded.");
+            video.currentTime = 3;
+        }
+
+        function loaded()
+        {
+            consoleWrite('Test that line breaks are forced in captions.');
+            findMediaElement();
+            waitForEvent('canplaythrough', testSingleLine);
+            waitForEvent('seeked', testUnbreakableLine);
+            video.src = findMediaFile('video', '../content/test');
+        }
+
+        </script>
+    </head>
+    <body onload="loaded()">
+        <video controls >
+            <track src="captions-webvtt/long-word.vtt" kind="captions" default>
+        </video>
+    </body>
+</html>

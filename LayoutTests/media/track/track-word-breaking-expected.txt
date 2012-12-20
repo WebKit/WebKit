@@ -1,0 +1,7 @@
+Test that line breaks are forced in captions.
+EVENT(canplaythrough)
+Single line caption height recorded.
+EVENT(seeked)
+Second caption was more than twice as tall as first caption. OK
+END OF TEST
+

@@ -1,3 +1,20 @@
+2012-12-19  Dean Jackson  <dino@apple.com>
+
+        Follow WebVTT line breaking rules
+        https://bugs.webkit.org/show_bug.cgi?id=105496
+
+        Reviewed by Eric Carlson.
+
+        Test that captions do emergency line breaking. Since we can't
+        rely on text dimensions, the test simply compares a caption that
+        will be on one line to a caption with a single huge word, that must
+        break at least twice. If the bounding rectangle of the second caption
+        is bigger than the first, we know we broke.
+
+        * media/track/captions-webvtt/long-word.vtt: Added.
+        * media/track/track-word-breaking-expected.txt: Added.
+        * media/track/track-word-breaking.html: Added.
+
 2012-12-20  James Simonsen  <simonjam@chromium.org>
 
         [Resource Timing] 304 responses should show up in the timing buffer
