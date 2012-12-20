@@ -726,7 +726,7 @@ void EditorClientImpl::checkSpellingOfString(const UChar* text, int length,
     int spellLength = 0;
 
     // Check to see if the provided text is spelled correctly.
-    if (isContinuousSpellCheckingEnabled() && m_webView->spellCheckClient())
+    if (m_webView->spellCheckClient())
         m_webView->spellCheckClient()->spellCheck(WebString(text, length), spellLocation, spellLength, 0);
     else {
         spellLocation = 0;
