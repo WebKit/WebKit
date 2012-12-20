@@ -3,17 +3,17 @@
 <body>
 <script src="../fast/js/resources/js-test-pre.js"></script>
 
-<div id="container" style="position: relative; top: 1000px; left: 1000px; width:400px; height: 400px;" role="group" tabindex="0">
+<div id="container" style="position: relative; top: 100px; left: 600px; width:400px; height: 400px;" role="group" tabindex="0">
 
-<svg>
+<svg role="group" id="svgroot">
 
   <circle role="button" aria-label="face" id="face" r="200" cx="200" cy="200" stroke="red" stroke-width="1" fill="yellow" />
   <ellipse role="button" aria-label="left-eye" id="left-eye" cx="120" cy="180" rx="18" ry="33" fill="black"/>
   <ellipse role="button" aria-label="right-eye" id="right-eye" cx="280" cy="120" rx="18" ry="33" fill="black"/>
   <ellipse role="button" aria-label="nose" id="nose" cx="200" cy="220" rx="8" ry="15" fill="black"/>
   <path role="button" aria-label="smile" id="smile" stroke-width="10" stroke="black" fill="none" stroke-linecap="round" d="M120,280 Q200,330 290,280"/>
-  <text x="0" y="15" fill="red">Test</text>  
-  <image x="20" y="20" width="300" height="80" aria-label="Test Image" xlink:href="resources/cake.ong" />
+  <text x="150" y="130" fill="red">Test</text>  
+  <image x="20" y="20" width="300" height="80" aria-label="Test Image" xlink:href="resources/cake.png" />
 
 </svg>
 </div>
@@ -37,7 +37,7 @@ function pageY(element) {
 if (window.testRunner && window.accessibilityController) {
     window.testRunner.dumpAsText();
  
-    var container = accessibilityController.rootElement.childAtIndex(0).childAtIndex(0);
+    var container = accessibilityController.accessibleElementById("svgroot");
 
     var x = pageX(container) - 1;
     var y = pageY(container) - 1;
@@ -69,13 +69,15 @@ if (window.testRunner && window.accessibilityController) {
     debug('Mouth role: ' + mouth.role);
     debug('Mouth label: ' + mouth.description);
     debug('MouthX: ' + (pageX(mouth) - x));
-    debug('MouthY: ' + Math.abs(pageY(mouth) - y));
+    debug('MouthY: ' + Math.floor(Math.abs(pageY(mouth) - y)));
     debug('<br>');
 
+    // Text varies by about 1 - 2 pixels depending on the platform,
+    // so just print the text coordinates divided by 10.
     var text = container.childAtIndex(5).childAtIndex(0);
     debug('Text role: ' + text.role);
-    debug('TextX: ' + (pageX(text) - x));
-    debug('TextY: ' + Math.abs(pageY(text) - y));
+    debug('TextX/10: ' + Math.floor((pageX(text) - x) / 10));
+    debug('TextY/10: ' + Math.floor(Math.abs(pageY(text) - y) / 10));
     debug('<br>');
 
     var image = container.childAtIndex(6);

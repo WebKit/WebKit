@@ -490,6 +490,14 @@ bool WebAccessibilityObject::canvasHasFallbackContent() const
     return m_private->canvasHasFallbackContent();
 }
 
+WebPoint WebAccessibilityObject::clickPoint() const
+{
+    if (isDetached())
+        return WebPoint();
+
+    return WebPoint(m_private->clickPoint());
+}
+
 double WebAccessibilityObject::estimatedLoadingProgress() const
 {
     if (isDetached())

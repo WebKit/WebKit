@@ -397,6 +397,8 @@ AccessibilityUIElement::AccessibilityUIElement(const WebAccessibilityObject& obj
     bindProperty("isValid", &AccessibilityUIElement::isValidGetterCallback);
     bindProperty("isReadOnly", &AccessibilityUIElement::isReadOnlyGetterCallback);
     bindProperty("orientation", &AccessibilityUIElement::orientationGetterCallback);
+    bindProperty("clickPointX", &AccessibilityUIElement::clickPointXGetterCallback);
+    bindProperty("clickPointY", &AccessibilityUIElement::clickPointYGetterCallback);
 
     //
     // Methods
@@ -648,6 +650,16 @@ void AccessibilityUIElement::orientationGetterCallback(CppVariant* result)
     result->set(getOrientation(accessibilityObject()));
 }
 
+void AccessibilityUIElement::clickPointXGetterCallback(CppVariant* result)
+{
+    result->set(accessibilityObject().clickPoint().x);
+}
+
+void AccessibilityUIElement::clickPointYGetterCallback(CppVariant* result)
+{
+    result->set(accessibilityObject().clickPoint().y);
+}
+
 //
 // Methods
 //
@@ -725,9 +737,21 @@ void AccessibilityUIElement::childAtIndexCallback(const CppArgumentList& argumen
     result->set(*(child->getAsCppVariant()));
 }
 
-void AccessibilityUIElement::elementAtPointCallback(const CppArgumentList&, CppVariant* result)
+void AccessibilityUIElement::elementAtPointCallback(const CppArgumentList& arguments, CppVariant* result)
 {
     result->setNull();
+
+    if (arguments.size() != 2 || !arguments[0].isNumber() || !arguments[1].isNumber())
+        return;
+
+    int x = arguments[0].toInt32();
+    int y = arguments[1].toInt32();
+    WebPoint point(x, y);
+    WebAccessibilityObject obj = accessibilityObject().hitTest(point);
+    if (obj.isNull())
+        return;
+
+    result->set(*(m_factory->getOrCreate(obj)->getAsCppVariant()));
 }
 
 void AccessibilityUIElement::attributesOfColumnHeadersCallback(const CppArgumentList&, CppVariant* result)

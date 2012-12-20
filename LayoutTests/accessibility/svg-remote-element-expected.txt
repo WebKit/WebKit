@@ -1,15 +1,10 @@
 
-
-
 This test ensures that accessibility elements can be created out of what a remote SVG image defines.
 
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 
 
-PASS successfullyParsed is true
-
-TEST COMPLETE
-container location: (7, 43)
+container location: (7, 7)
 Face role: AXRole: AXButton
 Face label: AXDescription: face
 FaceX: 0
@@ -31,7 +26,10 @@ NoseY: 206
 Mouth role: AXRole: AXButton
 Mouth label: AXDescription: smile
 MouthX: 115
-MouthY: 274.5
+MouthY: 275
 
 
+PASS successfullyParsed is true
+
+TEST COMPLETE
 

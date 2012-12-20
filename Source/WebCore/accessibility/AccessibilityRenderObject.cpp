@@ -783,10 +783,16 @@ LayoutRect AccessibilityRenderObject::boundingBoxRect() const
     
     // absoluteFocusRingQuads will query the hierarchy below this element, which for large webpages can be very slow.
     // For a web area, which will have the most elements of any element, absoluteQuads should be used.
+    // We should also use absoluteQuads for SVG elements, otherwise transforms won't be applied.
     Vector<FloatQuad> quads;
+    bool isSVGRoot = false;
+#if ENABLE(SVG)
+    if (obj->isSVGRoot())
+        isSVGRoot = true;
+#endif
     if (obj->isText())
         toRenderText(obj)->absoluteQuads(quads, 0, RenderText::ClipToEllipsis);
-    else if (isWebArea() || isSeamlessWebArea())
+    else if (isWebArea() || isSeamlessWebArea() || isSVGRoot)
         obj->absoluteQuads(quads);
     else
         obj->absoluteFocusRingQuads(quads);
