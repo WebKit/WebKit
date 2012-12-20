@@ -499,7 +499,6 @@ sub generateNewChangeLogs($$$$$$$$$$$)
         print CHANGE_LOG normalizeLineEndings("\n", $endl);
 
         print CHANGE_LOG normalizeLineEndings("        Reviewed by $reviewer.\n\n", $endl);
-        print CHANGE_LOG normalizeLineEndings("        Additional information of the change such as approach, rationale. Please add per-function descriptions below (OOPS!).\n\n", $endl);
 
         if ($prefix =~ m/WebCore/ || `pwd` =~ m/WebCore/) {
             if (@$addedRegressionTests) {
