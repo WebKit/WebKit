@@ -2151,23 +2151,19 @@ bool StyleResolver::checkRegionStyle(Element* regionElement)
     return false;
 }
 
-static void checkForOrientationChange(RenderStyle* style, const RenderStyle* parentStyle)
+static void checkForOrientationChange(RenderStyle* style)
 {
-    FontOrientation childFontOrientation;
-    NonCJKGlyphOrientation childGlyphOrientation;
-    getFontAndGlyphOrientation(style, childFontOrientation, childGlyphOrientation);
+    FontOrientation fontOrientation;
+    NonCJKGlyphOrientation glyphOrientation;
+    getFontAndGlyphOrientation(style, fontOrientation, glyphOrientation);
 
-    FontOrientation parentFontOrientation;
-    NonCJKGlyphOrientation parentGlyphOrientation;
-    getFontAndGlyphOrientation(parentStyle, parentFontOrientation, parentGlyphOrientation);
-
-    if (childFontOrientation == parentFontOrientation && childGlyphOrientation == parentGlyphOrientation)
+    const FontDescription& fontDescription = style->fontDescription();
+    if (fontDescription.orientation() == fontOrientation && fontDescription.nonCJKGlyphOrientation() == glyphOrientation)
         return;
 
-    const FontDescription& childFont = style->fontDescription();
-    FontDescription newFontDescription(childFont);
-    newFontDescription.setNonCJKGlyphOrientation(childGlyphOrientation);
-    newFontDescription.setOrientation(childFontOrientation);
+    FontDescription newFontDescription(fontDescription);
+    newFontDescription.setNonCJKGlyphOrientation(glyphOrientation);
+    newFontDescription.setOrientation(fontOrientation);
     style->setFontDescription(newFontDescription);
 }
 
@@ -2179,7 +2175,7 @@ void StyleResolver::updateFont()
     checkForTextSizeAdjust();
     checkForGenericFamilyChange(style(), m_parentStyle);
     checkForZoomChange(style(), m_parentStyle);
-    checkForOrientationChange(style(), m_parentStyle);
+    checkForOrientationChange(style());
     m_style->font().update(m_fontSelector);
     m_fontDirty = false;
 }

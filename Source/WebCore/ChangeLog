@@ -1,3 +1,23 @@
+2012-12-20  Antti Koivisto  <antti@apple.com>
+
+        Font description not synchronized correctly on orientation affecting property changes
+        https://bugs.webkit.org/show_bug.cgi?id=105533
+
+        Reviewed by Enrica Casucci.
+
+        In StyleResolver checkForOrientationChange() function checks if the new computed orientation differs from the parent
+        orientation and updates the style's font description only if it does. This is not correct as equal values do not guarantee
+        the new font description is actually up to date. We can leave the function with the computed orientation and the font
+        description still out of sync.
+        
+        Fix by bailing out fast only if the font description is already in sync.
+        
+        No layout test yet, verified with a test app.
+
+        * css/StyleResolver.cpp:
+        (WebCore::checkForOrientationChange):
+        (WebCore::StyleResolver::updateFont):
+
 2012-12-20  Ryan Sleevi  <rsleevi@chromium.org>
 
         window.crypto.getRandomValues should return the input ArrayBufferView
