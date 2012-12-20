@@ -139,16 +139,6 @@ void NetworkConnectionToWebProcess::servePendingRequests(uint32_t resourceLoadPr
     NetworkProcess::shared().networkResourceLoadScheduler().servePendingRequests(static_cast<ResourceLoadPriority>(resourceLoadPriority));
 }
 
-void NetworkConnectionToWebProcess::suspendPendingRequests()
-{
-    NetworkProcess::shared().networkResourceLoadScheduler().suspendPendingRequests();
-}
-
-void NetworkConnectionToWebProcess::resumePendingRequests()
-{
-    NetworkProcess::shared().networkResourceLoadScheduler().resumePendingRequests();
-}
-
 void NetworkConnectionToWebProcess::setSerialLoadingEnabled(bool enabled)
 {
     m_serialLoadingEnabled = enabled;

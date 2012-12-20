@@ -83,8 +83,6 @@ private:
     void removeLoadIdentifier(ResourceLoadIdentifier);
     void crossOriginRedirectReceived(ResourceLoadIdentifier, const WebCore::KURL& redirectURL);
     void servePendingRequests(uint32_t resourceLoadPriority);
-    void suspendPendingRequests();
-    void resumePendingRequests();
     void setSerialLoadingEnabled(bool);
     void startDownload(bool privateBrowsingEnabled, uint64_t downloadID, const WebCore::ResourceRequest&);
     void cookiesForDOM(bool privateBrowsingEnabled, const WebCore::KURL& firstParty, const WebCore::KURL&, String& result);

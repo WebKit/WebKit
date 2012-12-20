@@ -33,9 +33,6 @@ messages -> NetworkConnectionToWebProcess {
     RemoveLoadIdentifier(uint64_t resourceLoadIdentifier)
     
     ServePendingRequests(uint32_t resourceLoadPriority)
-
-    SuspendPendingRequests() -> ()
-    ResumePendingRequests() -> ()
     
     SetSerialLoadingEnabled(bool enabled) -> ()
 

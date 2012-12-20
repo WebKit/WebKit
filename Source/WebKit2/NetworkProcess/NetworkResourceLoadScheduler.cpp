@@ -209,22 +209,6 @@ void NetworkResourceLoadScheduler::servePendingRequestsForHost(HostRecord* host,
     }
 }
 
-void NetworkResourceLoadScheduler::suspendPendingRequests()
-{
-    ++m_suspendPendingRequestsCount;
-}
-
-void NetworkResourceLoadScheduler::resumePendingRequests()
-{
-    ASSERT(m_suspendPendingRequestsCount);
-    --m_suspendPendingRequestsCount;
-    if (m_suspendPendingRequestsCount)
-        return;
-
-    if (!m_hosts.isEmpty() || m_nonHTTPProtocolHost->hasRequests())
-        scheduleServePendingRequests();
-}
-
 static bool removeScheduledLoadIdentifiersCalled = false;
 
 void NetworkResourceLoadScheduler::removeScheduledLoadIdentifiers(void* context)

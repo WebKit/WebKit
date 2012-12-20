@@ -1,3 +1,28 @@
+2012-12-20  Brady Eidson  <beidson@apple.com>
+
+        NetworkProcess has no need for suspend/resumePendingRequests.
+        <rdar://problem/12866005> and https://bugs.webkit.org/show_bug.cgi?id=105550
+
+        Reviewed by Alexey Proskuryakov.
+
+        suspend/resumePendingRequests were important in a single-process, WebKit1 API world to help prevent
+        client callbacks from occurring during layout/painting.
+
+        In a WebKit2 + NetworkProcess world, they aren't important.
+
+        Remove the Web->Network process messages:
+        * NetworkProcess/NetworkConnectionToWebProcess.cpp:
+        * NetworkProcess/NetworkConnectionToWebProcess.h:
+        * NetworkProcess/NetworkConnectionToWebProcess.messages.in:
+        * NetworkProcess/NetworkResourceLoadScheduler.cpp:
+        * NetworkProcess/NetworkResourceLoadScheduler.h:
+
+        For now, still keep the per-WebProcess count to help keep servePendingRequest working as WebCore intends:
+        * WebProcess/Network/WebResourceLoadScheduler.cpp:
+        (WebKit::WebResourceLoadScheduler::servePendingRequests):
+        (WebKit::WebResourceLoadScheduler::suspendPendingRequests):
+        (WebKit::WebResourceLoadScheduler::resumePendingRequests):
+
 2012-12-20  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] Add API to set a TLS errors policy to WebKit2 GTK+ API

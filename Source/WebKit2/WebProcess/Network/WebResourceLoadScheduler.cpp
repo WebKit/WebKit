@@ -162,8 +162,8 @@ void WebResourceLoadScheduler::servePendingRequests(ResourceLoadPriority minimum
 {
     LOG(NetworkScheduling, "(WebProcess) WebResourceLoadScheduler::servePendingRequests");
     
-    // If this WebProcess has its own request suspension count then we don't even
-    // have to bother messaging the NetworkProcess.
+    // The NetworkProcess scheduler is good at making sure loads are serviced until there are no more pending requests.
+    // If this WebProcess isn't expecting requests to be served then we can ignore messaging the NetworkProcess right now.
     if (m_suspendPendingRequestsCount)
         return;
 
@@ -172,15 +172,11 @@ void WebResourceLoadScheduler::servePendingRequests(ResourceLoadPriority minimum
 
 void WebResourceLoadScheduler::suspendPendingRequests()
 {
-    WebProcess::shared().networkConnection()->connection()->sendSync(Messages::NetworkConnectionToWebProcess::SuspendPendingRequests(), Messages::NetworkConnectionToWebProcess::SuspendPendingRequests::Reply(), 0);
-
     ++m_suspendPendingRequestsCount;
 }
 
 void WebResourceLoadScheduler::resumePendingRequests()
 {
-    WebProcess::shared().networkConnection()->connection()->sendSync(Messages::NetworkConnectionToWebProcess::ResumePendingRequests(), Messages::NetworkConnectionToWebProcess::ResumePendingRequests::Reply(), 0);
-
     ASSERT(m_suspendPendingRequestsCount);
     --m_suspendPendingRequestsCount;
 }

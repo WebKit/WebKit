@@ -61,8 +61,6 @@ public:
 
     void receivedRedirect(ResourceLoadIdentifier, const WebCore::KURL& redirectURL);
     void servePendingRequests(WebCore::ResourceLoadPriority = WebCore::ResourceLoadPriorityVeryLow);
-    void suspendPendingRequests();
-    void resumePendingRequests();
     
     NetworkResourceLoader* networkResourceLoaderForIdentifier(ResourceLoadIdentifier);
 
