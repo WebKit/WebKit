@@ -1,3 +1,18 @@
+2012-12-19  Mark Pilgrim  <pilgrim@chromium.org>
+
+        [Chromium] Remove idbFactory from PlatformSupport
+        https://bugs.webkit.org/show_bug.cgi?id=105460
+
+        Reviewed by Darin Fisher.
+
+        Part of a larger refactoring series; see tracking bug 82948.
+
+        * WebCore.gyp/WebCore.gyp:
+        * WebCore.gypi:
+        * platform/chromium/PlatformSupport.h: Removed.
+        * storage/chromium: Removed.
+        * storage/chromium/IDBFactoryBackendInterface.cpp: Removed.
+
 2012-12-19  Eric Carlson  <eric.carlson@apple.com>
 
         Crash in TextTrack::trackIndexRelativeToRenderedTracks()

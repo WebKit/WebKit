@@ -28,7 +28,7 @@
 #include "config.h"
 #include "IDBFactoryBackendInterface.h"
 
-#include "PlatformSupport.h"
+#include "IDBFactoryBackendProxy.h"
 
 #if ENABLE(INDEXED_DATABASE)
 
@@ -36,7 +36,9 @@ namespace WebCore {
 
 PassRefPtr<IDBFactoryBackendInterface> IDBFactoryBackendInterface::create()
 {
-    return PlatformSupport::idbFactory();
+    // There's no reason why we need to allocate a new proxy each time, but
+    // there's also no strong reason not to.
+    return WebKit::IDBFactoryBackendProxy::create();
 }
 
 } // namespace WebCore

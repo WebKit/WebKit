@@ -144,7 +144,6 @@
       '../rendering/style',
       '../rendering/svg',
       '../storage',
-      '../storage/chromium',
       '../svg',
       '../svg/animation',
       '../svg/graphics',
