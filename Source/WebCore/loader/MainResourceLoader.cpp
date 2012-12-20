@@ -73,6 +73,7 @@ MainResourceLoader::MainResourceLoader(DocumentLoader* documentLoader)
     , m_loadingMultipartContent(false)
     , m_waitingForContentPolicy(false)
     , m_timeOfLastDataReceived(0.0)
+    , m_substituteDataLoadIdentifier(0)
 #if PLATFORM(MAC) && !PLATFORM(IOS) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 1080
     , m_filter(0)
 #endif
@@ -412,6 +413,9 @@ void MainResourceLoader::responseReceived(CachedResource* resource, const Resour
 
     m_response = r;
 
+    if (!loader())
+        frameLoader()->notifier()->dispatchDidReceiveResponse(documentLoader(), identifier(), m_response, 0);
+
     ASSERT(!m_waitingForContentPolicy);
     m_waitingForContentPolicy = true;
     ref(); // balanced by deref in continueAfterContentPolicy and cancel
@@ -476,6 +480,9 @@ void MainResourceLoader::dataReceived(CachedResource* resource, const char* data
     }
 #endif
 
+    if (!loader())
+        frameLoader()->notifier()->dispatchDidReceiveData(documentLoader(), identifier(), data, length, -1);
+
     documentLoader()->applicationCacheHost()->mainResourceDataReceived(data, length, -1, false);
 
     // The additional processing can do anything including possibly removing the last
@@ -512,6 +519,9 @@ void MainResourceLoader::didFinishLoading(double finishTime)
     // reference to this object.
     RefPtr<MainResourceLoader> protect(this);
     RefPtr<DocumentLoader> dl = documentLoader();
+
+    if (!loader())
+        frameLoader()->notifier()->dispatchDidFinishLoading(documentLoader(), identifier(), finishTime);
 
 #if PLATFORM(MAC) && !PLATFORM(IOS) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 1080
     if (m_filter) {
@@ -634,6 +644,9 @@ void MainResourceLoader::load(const ResourceRequest& initialRequest, const Subst
 
     if (m_substituteData.isValid()) {
         handleSubstituteDataLoadSoon(request);
+        m_substituteDataLoadIdentifier = m_documentLoader->frame()->page()->progress()->createUniqueIdentifier();
+        frameLoader()->notifier()->assignIdentifierToInitialRequest(m_substituteDataLoadIdentifier, documentLoader(), request);
+        frameLoader()->notifier()->dispatchWillSendRequest(documentLoader(), m_substituteDataLoadIdentifier, request, ResourceResponse());
         return;
     }
 
@@ -679,6 +692,9 @@ ResourceLoader* MainResourceLoader::loader() const
 
 unsigned long MainResourceLoader::identifier() const
 {
+    ASSERT(!m_substituteDataLoadIdentifier || !loader() || !loader()->identifier());
+    if (m_substituteDataLoadIdentifier)
+        return m_substituteDataLoadIdentifier;
     if (ResourceLoader* resourceLoader = loader())
         return resourceLoader->identifier();
     return 0;

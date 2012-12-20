@@ -1,3 +1,19 @@
+2012-12-19  Nate Chapin  <japhet@chromium.org>
+
+        REGRESSION(r137607): resource load client callbacks are not called for the main resource when loading HTML string
+        https://bugs.webkit.org/show_bug.cgi?id=105330
+
+        Reviewed by Brady Eidson.
+
+        * loader/MainResourceLoader.cpp:
+        (WebCore::MainResourceLoader::responseReceived):
+        (WebCore::MainResourceLoader::dataReceived):
+        (WebCore::MainResourceLoader::didFinishLoading):
+        (WebCore::MainResourceLoader::load):
+        (WebCore::MainResourceLoader::identifier):
+        * loader/MainResourceLoader.h:
+        (MainResourceLoader):
+
 2012-12-19  Cosmin Truta  <ctruta@rim.com>
 
         [BlackBerry] RSS reader mangles UTF-8
