@@ -12,10 +12,10 @@ RUN(internals.setUserPreferredLanguages(['en']))
 *** Turning captions on
 Found 5 menu items OK
 EXPECTED (video.textTracks.length == '4') OK
-Track 0 should be disabled
-EXPECTED (video.textTracks[0].mode == 'disabled') OK
-Track 1 should be showing
-EXPECTED (video.textTracks[1].mode == 'showing') OK
+Track 0 should be showing
+EXPECTED (video.textTracks[0].mode == 'showing') OK
+Track 1 should be disabled
+EXPECTED (video.textTracks[1].mode == 'disabled') OK
 Track 2 should be disabled
 EXPECTED (video.textTracks[2].mode == 'disabled') OK
 Track 3 should be disabled

@@ -97,10 +97,10 @@
             function testCaptionsVisible()
             {
                 testExpected("video.textTracks.length", 4);
-                consoleWrite("Track 0 should be disabled");
-                testExpected("video.textTracks[0].mode", "disabled");
-                consoleWrite("Track 1 should be showing");
-                testExpected("video.textTracks[1].mode", "showing");
+                consoleWrite("Track 0 should be showing");
+                testExpected("video.textTracks[0].mode", "showing");
+                consoleWrite("Track 1 should be disabled");
+                testExpected("video.textTracks[1].mode", "disabled");
                 consoleWrite("Track 2 should be disabled");
                 testExpected("video.textTracks[2].mode", "disabled");
                 consoleWrite("Track 3 should be disabled");
