@@ -1,3 +1,12 @@
+2012-12-20  Dominik Röttsches  <dominik.rottsches@intel.com>
+
+        [EFL] Unreviewed gardening.
+
+        Marking inspector-protocol/nmi-webaudio* tests as failing,
+        they don't work yet after r138248.
+
+        * platform/efl/TestExpectations:
+
 2012-12-20  Florin Malita  <fmalita@chromium.org>
 
         Incorrect color space conversion for FEImage
