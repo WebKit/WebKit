@@ -944,7 +944,9 @@ private:
         
         ArrayMode result = ArrayMode::fromObserved(profile, action, makeSafe);
         
-        if (profile->hasDefiniteStructure() && result.benefitsFromStructureCheck())
+        if (profile->hasDefiniteStructure()
+            && result.benefitsFromStructureCheck()
+            && !m_inlineStackTop->m_exitProfile.hasExitSite(m_currentIndex, BadCache))
             addToGraph(CheckStructure, OpInfo(m_graph.addStructureSet(profile->expectedStructure())), base);
         
         return result;
