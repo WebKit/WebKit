@@ -100,6 +100,11 @@
 #define FORCE_SYSTEM_MALLOC 1
 #endif
 
+// Harden the pointers stored in the TCMalloc linked lists
+#if COMPILER(GCC)
+#define ENABLE_TCMALLOC_HARDENING 1
+#endif
+
 // Use a background thread to periodically scavenge memory to release back to the system
 #if PLATFORM(IOS)
 #define USE_BACKGROUND_THREAD_TO_SCAVENGE_MEMORY 0
@@ -496,6 +501,23 @@ namespace WTF {
 #define MESSAGE LOG_ERROR
 #define CHECK_CONDITION ASSERT
 
+#if ENABLE(TCMALLOC_HARDENING)
+/*
+ * To make it harder to exploit use-after free style exploits
+ * we mask the addresses we put into our linked lists with the
+ * address of kLLHardeningMask.  Due to ASLR the address of
+ * kLLHardeningMask should be sufficiently randomized to make direct
+ * freelist manipulation much more difficult.
+ */
+static const char kLLHardeningMask = 0;
+#define MASK_PTR(ptr) (reinterpret_cast<typeof(ptr)>(reinterpret_cast<uintptr_t>(ptr)^reinterpret_cast<uintptr_t>(&kLLHardeningMask)))
+#define UNMASK_PTR(ptr) (reinterpret_cast<typeof(ptr)>(reinterpret_cast<uintptr_t>(ptr)^reinterpret_cast<uintptr_t>(&kLLHardeningMask)))
+#else
+#define MASK_PTR(ptr) (ptr)
+#define UNMASK_PTR(ptr) (ptr)
+#endif
+
+
 //-------------------------------------------------------------------
 // Configuration
 //-------------------------------------------------------------------
@@ -662,11 +684,11 @@ static inline int LgFloor(size_t n) {
 // storage.
 
 static inline void *SLL_Next(void *t) {
-  return *(reinterpret_cast<void**>(t));
+  return UNMASK_PTR(*(reinterpret_cast<void**>(t)));
 }
 
 static inline void SLL_SetNext(void *t, void *n) {
-  *(reinterpret_cast<void**>(t)) = n;
+  *(reinterpret_cast<void**>(t)) = MASK_PTR(n);
 }
 
 static inline void SLL_Push(void **list, void *element) {
