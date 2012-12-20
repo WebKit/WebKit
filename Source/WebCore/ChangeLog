@@ -1,3 +1,23 @@
+2012-12-20  Ryosuke Niwa  <rniwa@webkit.org>
+
+        REGRESSION(r133820?): SimplifyMarkupTest API test asserts
+        https://bugs.webkit.org/show_bug.cgi?id=105370
+
+        Reviewed by Simon Fraser.
+
+        The bug was caused by SimplifyMarkupCommand::doApply calling removeNodePreservingChildren on nodes
+        that have already been removed. We normally check this condition in pruneSubsequentAncestorsToRemove
+        but we weren't checking it when there were no ancestor to remove because we early exited in that case.
+
+        Fixed the bug by doing the early exit for when the node's parent had already been removed first.
+
+        Test: TestWebKitAPI/Tests/mac/SimplifyMarkup.mm
+
+        * editing/SimplifyMarkupCommand.cpp:
+        (WebCore::SimplifyMarkupCommand::doApply):
+        (WebCore::SimplifyMarkupCommand::pruneSubsequentAncestorsToRemove): Also removed an unused variable
+        nodeAfterHighestAncestorToRemove.
+
 2012-12-20  Antti Koivisto  <antti@apple.com>
 
         Font description not synchronized correctly on orientation affecting property changes
