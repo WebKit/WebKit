@@ -36,10 +36,14 @@
 #include "ConsoleTypes.h"
 #include "Element.h"
 #include "Frame.h"
+#include "HitTestResult.h"
 #include "Page.h"
 #include "ScriptExecutionContext.h"
 #include "ScriptState.h"
 #include "StorageArea.h"
+#include "WebSocketFrame.h"
+#include "WebSocketHandshakeRequest.h"
+#include "WebSocketHandshakeResponse.h"
 #include <wtf/UnusedParam.h>
 
 namespace WebCore {
@@ -56,7 +60,6 @@ class DocumentLoader;
 class DeviceOrientationData;
 class GeolocationPosition;
 class GraphicsContext;
-class HitTestResult;
 class InspectorCSSAgent;
 class InspectorTimelineAgent;
 class InstrumentingAgents;
@@ -80,12 +83,6 @@ class ThreadableLoaderClient;
 class WorkerContext;
 class WorkerContextProxy;
 class XMLHttpRequest;
-
-#if ENABLE(WEB_SOCKETS)
-struct WebSocketFrame;
-class WebSocketHandshakeRequest;
-class WebSocketHandshakeResponse;
-#endif
 
 #define FAST_RETURN_IF_NO_FRONTENDS(value) if (!hasFrontends()) return value;
 
