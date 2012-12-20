@@ -893,7 +893,7 @@ private:
 QMetaType::Type QtMethodMatchType::typeId() const
 {
     if (isVariant())
-        return (QMetaType::Type) QMetaType::type("QVariant");
+        return (QMetaType::Type) qMetaTypeId<QVariant>();
     return (QMetaType::Type) (isMetaEnum() ? QMetaType::Int : m_typeId);
 }
 
@@ -1086,6 +1086,7 @@ static int findMethodIndex(JSContextRef context,
                 && (matchDistance == 0)) {
                 // perfect match, use this one
                 chosenIndex = index;
+                chosenTypes = types;
                 break;
             }
             QtMethodMatchData currentMatch(matchDistance, index, types, args);
@@ -1163,6 +1164,7 @@ static int findMethodIndex(JSContextRef context,
             setException(context, exception, message);
         } else {
             chosenIndex = bestMatch.index;
+            chosenTypes = bestMatch.types;
             args = bestMatch.args;
         }
     }
@@ -1173,7 +1175,10 @@ static int findMethodIndex(JSContextRef context,
         vars.resize(args.count());
         for (i=0; i < args.count(); i++) {
             vars[i] = args[i];
-            vvars[i] = vars[i].data();
+            if (chosenTypes[i].isVariant())
+                vvars[i] = &vars[i];
+            else
+                vvars[i] = vars[i].data();
         }
     }
 
@@ -1238,14 +1243,15 @@ JSValueRef QtRuntimeMethod::call(JSContextRef context, JSObjectRef function, JSO
 
     QVarLengthArray<QVariant, 10> vargs;
     void* qargs[11];
+    const QMetaObject* metaObject = obj->metaObject();
 
-    int methodIndex = findMethodIndex(context, obj->metaObject(), d->m_identifier,  argumentCount, arguments,
+    int methodIndex = findMethodIndex(context, metaObject, d->m_identifier,  argumentCount, arguments,
                                       (d->m_flags & AllowPrivate), vargs, (void **)qargs, exception);
 
     if (QMetaObject::metacall(obj, QMetaObject::InvokeMetaMethod, methodIndex, qargs) >= 0)
         return JSValueMakeUndefined(context);
 
-    if (vargs.size() > 0 && vargs[0].isValid())
+    if (vargs.size() > 0 && metaObject->method(methodIndex).returnType() != QMetaType::Void)
         return convertQVariantToValue(context, d->m_instance->rootObject(), vargs[0], exception);
 
     return JSValueMakeUndefined(context);

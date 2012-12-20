@@ -1,3 +1,49 @@
+2012-12-19  Simon Hausmann  <simon.hausmann@digia.com>, Jedrzej Nowacki <jedrzej.nowacki@digia.com>
+
+        [Qt] JS bridge does not transmit QVariants anymore in Qt5
+        https://bugs.webkit.org/show_bug.cgi?id=104540
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        A data corruption exists in the QObject bridge when calling slots that
+        take a QVariant.
+
+        The calling convention for slots is that the void* parameter array must
+        contain pointers to the actually required destination argument type. If
+        a function takes an int for example, the corresponding entry in the
+        void* parameter array must be a pointer to an int that the moc
+        generated code then can "safely" cast to an int* and dereference.
+        Similarly if the function takes a QVariant it must be a pointer to a
+        QVariant.
+
+        We implement this calling convention by constructing QVariants of the
+        requested parameter types and passing the value of data() into the
+        void* parameter array. This works fine for all types except if the
+        requested type is a QVariant. In that case data() will _not_ return a
+        pointer that can later be safely casted to a QVariant pointer and
+        dereferenced. Instead we must use the address of our variant to ensure
+        a working cast.
+
+        Our auto tests cover this case, but they worked by accident because the
+        provided pointer when casted to a QVariant happens to have the correct
+        type id that doesn't produce the warning seen in the test case of the
+        provided example and the unit test just copies the QVariant and thus
+        pointer.
+
+        * bridge/qt/qt_runtime.cpp:
+        (JSC::Bindings::QtMethodMatchType::typeId): Replace string based meta
+        type id determination of QVariant with a quicker table lookup.
+        (JSC::Bindings::findMethodIndex): Remember the chosen (requested) types
+        and pass the pointer to the QVariant instead of its data() pointer if
+        requested.
+        (JSC::Bindings::QtRuntimeMethod::call): Fixed determination of whether
+        we need to convert a return value or not solely based on the return
+        type _specified_ in the meta method instead of the variant value
+        returned. The latter is not sufficient because a slot can return an
+        invalid variant, which is not the same as returning void. This was
+        triggered by an unit test that accidentally passed due to this memory
+        corruption in the first place.
+
 2012-12-20  Yury Semikhatsky  <yurys@chromium.org>
 
         Web Inspector: extract native heap graph representation into a separate file
