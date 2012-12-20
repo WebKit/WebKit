@@ -279,7 +279,7 @@ static v8::Handle<v8::Value> reflectedStringAttrAttrGetter(v8::Local<v8::String>
 {
     INC_STATS("DOM.TestObj.reflectedStringAttr._get");
     TestObj* imp = V8TestObj::toNative(info.Holder());
-    return v8String(imp->getAttribute(WebCore::HTMLNames::reflectedstringattrAttr), info.GetIsolate());
+    return v8String(imp->fastGetAttribute(WebCore::HTMLNames::reflectedstringattrAttr), info.GetIsolate());
 }
 
 static void reflectedStringAttrAttrSetter(v8::Local<v8::String> name, v8::Local<v8::Value> value, const v8::AccessorInfo& info)
@@ -327,7 +327,7 @@ static v8::Handle<v8::Value> reflectedBooleanAttrAttrGetter(v8::Local<v8::String
 {
     INC_STATS("DOM.TestObj.reflectedBooleanAttr._get");
     TestObj* imp = V8TestObj::toNative(info.Holder());
-    return v8Boolean(imp->hasAttribute(WebCore::HTMLNames::reflectedbooleanattrAttr), info.GetIsolate());
+    return v8Boolean(imp->fastHasAttribute(WebCore::HTMLNames::reflectedbooleanattrAttr), info.GetIsolate());
 }
 
 static void reflectedBooleanAttrAttrSetter(v8::Local<v8::String> name, v8::Local<v8::Value> value, const v8::AccessorInfo& info)
@@ -359,7 +359,7 @@ static v8::Handle<v8::Value> reflectedStringAttrAttrGetter(v8::Local<v8::String>
 {
     INC_STATS("DOM.TestObj.reflectedStringAttr._get");
     TestObj* imp = V8TestObj::toNative(info.Holder());
-    return v8String(imp->getAttribute(WebCore::HTMLNames::customContentStringAttrAttr), info.GetIsolate());
+    return v8String(imp->fastGetAttribute(WebCore::HTMLNames::customContentStringAttrAttr), info.GetIsolate());
 }
 
 static void reflectedStringAttrAttrSetter(v8::Local<v8::String> name, v8::Local<v8::Value> value, const v8::AccessorInfo& info)
@@ -391,7 +391,7 @@ static v8::Handle<v8::Value> reflectedCustomBooleanAttrAttrGetter(v8::Local<v8::
 {
     INC_STATS("DOM.TestObj.reflectedCustomBooleanAttr._get");
     TestObj* imp = V8TestObj::toNative(info.Holder());
-    return v8Boolean(imp->hasAttribute(WebCore::HTMLNames::customContentBooleanAttrAttr), info.GetIsolate());
+    return v8Boolean(imp->fastHasAttribute(WebCore::HTMLNames::customContentBooleanAttrAttr), info.GetIsolate());
 }
 
 static void reflectedCustomBooleanAttrAttrSetter(v8::Local<v8::String> name, v8::Local<v8::Value> value, const v8::AccessorInfo& info)

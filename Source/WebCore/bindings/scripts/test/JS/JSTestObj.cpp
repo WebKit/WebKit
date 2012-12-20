@@ -538,7 +538,7 @@ JSValue jsTestObjReflectedStringAttr(ExecState* exec, JSValue slotBase, Property
     JSTestObj* castedThis = jsCast<JSTestObj*>(asObject(slotBase));
     UNUSED_PARAM(exec);
     TestObj* impl = static_cast<TestObj*>(castedThis->impl());
-    JSValue result = jsStringWithCache(exec, impl->getAttribute(WebCore::HTMLNames::reflectedstringattrAttr));
+    JSValue result = jsStringWithCache(exec, impl->fastGetAttribute(WebCore::HTMLNames::reflectedstringattrAttr));
     return result;
 }
 
@@ -568,7 +568,7 @@ JSValue jsTestObjReflectedBooleanAttr(ExecState* exec, JSValue slotBase, Propert
     JSTestObj* castedThis = jsCast<JSTestObj*>(asObject(slotBase));
     UNUSED_PARAM(exec);
     TestObj* impl = static_cast<TestObj*>(castedThis->impl());
-    JSValue result = jsBoolean(impl->hasAttribute(WebCore::HTMLNames::reflectedbooleanattrAttr));
+    JSValue result = jsBoolean(impl->fastHasAttribute(WebCore::HTMLNames::reflectedbooleanattrAttr));
     return result;
 }
 
@@ -588,7 +588,7 @@ JSValue jsTestObjReflectedStringAttr(ExecState* exec, JSValue slotBase, Property
     JSTestObj* castedThis = jsCast<JSTestObj*>(asObject(slotBase));
     UNUSED_PARAM(exec);
     TestObj* impl = static_cast<TestObj*>(castedThis->impl());
-    JSValue result = jsStringWithCache(exec, impl->getAttribute(WebCore::HTMLNames::customContentStringAttrAttr));
+    JSValue result = jsStringWithCache(exec, impl->fastGetAttribute(WebCore::HTMLNames::customContentStringAttrAttr));
     return result;
 }
 
@@ -608,7 +608,7 @@ JSValue jsTestObjReflectedCustomBooleanAttr(ExecState* exec, JSValue slotBase, P
     JSTestObj* castedThis = jsCast<JSTestObj*>(asObject(slotBase));
     UNUSED_PARAM(exec);
     TestObj* impl = static_cast<TestObj*>(castedThis->impl());
-    JSValue result = jsBoolean(impl->hasAttribute(WebCore::HTMLNames::customContentBooleanAttrAttr));
+    JSValue result = jsBoolean(impl->fastHasAttribute(WebCore::HTMLNames::customContentBooleanAttrAttr));
     return result;
 }
 

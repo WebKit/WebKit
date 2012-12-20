@@ -331,7 +331,7 @@ static void webkit_dom_test_obj_get_property(GObject* object, guint propertyId, 
         break;
     }
     case PROP_REFLECTED_STRING_ATTR: {
-        g_value_take_string(value, convertToUTF8String(coreSelf->getAttribute(WebCore::HTMLNames::reflectedstringattrAttr)));
+        g_value_take_string(value, convertToUTF8String(coreSelf->fastGetAttribute(WebCore::HTMLNames::reflectedstringattrAttr)));
         break;
     }
     case PROP_REFLECTED_INTEGRAL_ATTR: {
@@ -343,7 +343,7 @@ static void webkit_dom_test_obj_get_property(GObject* object, guint propertyId, 
         break;
     }
     case PROP_REFLECTED_BOOLEAN_ATTR: {
-        g_value_set_boolean(value, coreSelf->hasAttribute(WebCore::HTMLNames::reflectedbooleanattrAttr));
+        g_value_set_boolean(value, coreSelf->fastHasAttribute(WebCore::HTMLNames::reflectedbooleanattrAttr));
         break;
     }
     case PROP_REFLECTED_URL_ATTR: {
@@ -351,7 +351,7 @@ static void webkit_dom_test_obj_get_property(GObject* object, guint propertyId, 
         break;
     }
     case PROP_REFLECTED_STRING_ATTR: {
-        g_value_take_string(value, convertToUTF8String(coreSelf->getAttribute(WebCore::HTMLNames::customContentStringAttrAttr)));
+        g_value_take_string(value, convertToUTF8String(coreSelf->fastGetAttribute(WebCore::HTMLNames::customContentStringAttrAttr)));
         break;
     }
     case PROP_REFLECTED_CUSTOM_INTEGRAL_ATTR: {
@@ -359,7 +359,7 @@ static void webkit_dom_test_obj_get_property(GObject* object, guint propertyId, 
         break;
     }
     case PROP_REFLECTED_CUSTOM_BOOLEAN_ATTR: {
-        g_value_set_boolean(value, coreSelf->hasAttribute(WebCore::HTMLNames::customContentBooleanAttrAttr));
+        g_value_set_boolean(value, coreSelf->fastHasAttribute(WebCore::HTMLNames::customContentBooleanAttrAttr));
         break;
     }
     case PROP_REFLECTED_CUSTOM_URL_ATTR: {
@@ -1623,7 +1623,7 @@ webkit_dom_test_obj_get_reflected_string_attr(WebKitDOMTestObj* self)
     WebCore::JSMainThreadNullState state;
     g_return_val_if_fail(WEBKIT_DOM_IS_TEST_OBJ(self), 0);
     WebCore::TestObj* item = WebKit::core(self);
-    gchar* result = convertToUTF8String(item->getAttribute(WebCore::HTMLNames::reflectedstringattrAttr));
+    gchar* result = convertToUTF8String(item->fastGetAttribute(WebCore::HTMLNames::reflectedstringattrAttr));
     return result;
 }
 
@@ -1682,7 +1682,7 @@ webkit_dom_test_obj_get_reflected_boolean_attr(WebKitDOMTestObj* self)
     WebCore::JSMainThreadNullState state;
     g_return_val_if_fail(WEBKIT_DOM_IS_TEST_OBJ(self), FALSE);
     WebCore::TestObj* item = WebKit::core(self);
-    gboolean result = item->hasAttribute(WebCore::HTMLNames::reflectedbooleanattrAttr);
+    gboolean result = item->fastHasAttribute(WebCore::HTMLNames::reflectedbooleanattrAttr);
     return result;
 }
 
@@ -1722,7 +1722,7 @@ webkit_dom_test_obj_get_reflected_string_attr(WebKitDOMTestObj* self)
     WebCore::JSMainThreadNullState state;
     g_return_val_if_fail(WEBKIT_DOM_IS_TEST_OBJ(self), 0);
     WebCore::TestObj* item = WebKit::core(self);
-    gchar* result = convertToUTF8String(item->getAttribute(WebCore::HTMLNames::customContentStringAttrAttr));
+    gchar* result = convertToUTF8String(item->fastGetAttribute(WebCore::HTMLNames::customContentStringAttrAttr));
     return result;
 }
 
@@ -1762,7 +1762,7 @@ webkit_dom_test_obj_get_reflected_custom_boolean_attr(WebKitDOMTestObj* self)
     WebCore::JSMainThreadNullState state;
     g_return_val_if_fail(WEBKIT_DOM_IS_TEST_OBJ(self), FALSE);
     WebCore::TestObj* item = WebKit::core(self);
-    gboolean result = item->hasAttribute(WebCore::HTMLNames::customContentBooleanAttrAttr);
+    gboolean result = item->fastHasAttribute(WebCore::HTMLNames::customContentBooleanAttrAttr);
     return result;
 }
 

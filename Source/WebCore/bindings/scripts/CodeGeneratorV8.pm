@@ -931,11 +931,9 @@ END
         my $url = $attribute->signature->extendedAttributes->{"URL"};
         if ($getterStringUsesImp && $reflect && !$url && $codeGenerator->IsSubType($interface, "Node") && $codeGenerator->IsStringType($attrType)) {
             # Generate super-compact call for regular attribute getter:
-            my $contentAttributeName = $reflect eq "VALUE_IS_MISSING" ? lc $attrName : $reflect;
-            my $namespace = $codeGenerator->NamespaceForAttributeName($interfaceName, $contentAttributeName);
-            AddToImplIncludes("${namespace}.h");
+            my ($functionName, @arguments) = $codeGenerator->GetterExpression(\%implIncludes, $interfaceName, $attribute);
             push(@implContentDecls, "    Element* imp = V8Element::toNative(info.Holder());\n");
-            push(@implContentDecls, "    return v8String(imp->getAttribute(${namespace}::${contentAttributeName}Attr), info.GetIsolate());\n");
+            push(@implContentDecls, "    return v8String(imp->${functionName}(" . join(", ", @arguments) . "), info.GetIsolate());\n");
             push(@implContentDecls, "}\n\n");
             push(@implContentDecls, "#endif // ${conditionalString}\n\n") if $conditionalString;
             return;

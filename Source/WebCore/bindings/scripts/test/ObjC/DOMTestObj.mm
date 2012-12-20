@@ -232,7 +232,7 @@
 - (NSString *)reflectedStringAttr
 {
     WebCore::JSMainThreadNullState state;
-    return IMPL->getAttribute(WebCore::HTMLNames::reflectedstringattrAttr);
+    return IMPL->fastGetAttribute(WebCore::HTMLNames::reflectedstringattrAttr);
 }
 
 - (void)setReflectedStringAttr:(NSString *)newReflectedStringAttr
@@ -268,7 +268,7 @@
 - (BOOL)reflectedBooleanAttr
 {
     WebCore::JSMainThreadNullState state;
-    return IMPL->hasAttribute(WebCore::HTMLNames::reflectedbooleanattrAttr);
+    return IMPL->fastHasAttribute(WebCore::HTMLNames::reflectedbooleanattrAttr);
 }
 
 - (void)setReflectedBooleanAttr:(BOOL)newReflectedBooleanAttr
@@ -292,7 +292,7 @@
 - (NSString *)reflectedStringAttr
 {
     WebCore::JSMainThreadNullState state;
-    return IMPL->getAttribute(WebCore::HTMLNames::customContentStringAttrAttr);
+    return IMPL->fastGetAttribute(WebCore::HTMLNames::customContentStringAttrAttr);
 }
 
 - (void)setReflectedStringAttr:(NSString *)newReflectedStringAttr
@@ -316,7 +316,7 @@
 - (BOOL)reflectedCustomBooleanAttr
 {
     WebCore::JSMainThreadNullState state;
-    return IMPL->hasAttribute(WebCore::HTMLNames::customContentBooleanAttrAttr);
+    return IMPL->fastHasAttribute(WebCore::HTMLNames::customContentBooleanAttrAttr);
 }
 
 - (void)setReflectedCustomBooleanAttr:(BOOL)newReflectedCustomBooleanAttr
