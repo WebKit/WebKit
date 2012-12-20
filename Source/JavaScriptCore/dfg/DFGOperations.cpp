@@ -1420,44 +1420,59 @@ char* DFG_OPERATION operationReallocateButterflyToGrowPropertyStorage(ExecState*
     return reinterpret_cast<char*>(result);
 }
 
-char* DFG_OPERATION operationEnsureInt32(ExecState* exec, JSObject* object)
+char* DFG_OPERATION operationEnsureInt32(ExecState* exec, JSCell* cell)
 {
     JSGlobalData& globalData = exec->globalData();
     NativeCallFrameTracer tracer(&globalData, exec);
     
-    return reinterpret_cast<char*>(object->ensureInt32(globalData));
+    if (!cell->isObject())
+        return 0;
+    
+    return reinterpret_cast<char*>(asObject(cell)->ensureInt32(globalData));
 }
 
-char* DFG_OPERATION operationEnsureDouble(ExecState* exec, JSObject* object)
+char* DFG_OPERATION operationEnsureDouble(ExecState* exec, JSCell* cell)
 {
     JSGlobalData& globalData = exec->globalData();
     NativeCallFrameTracer tracer(&globalData, exec);
     
-    return reinterpret_cast<char*>(object->ensureDouble(globalData));
+    if (!cell->isObject())
+        return 0;
+    
+    return reinterpret_cast<char*>(asObject(cell)->ensureDouble(globalData));
 }
 
-char* DFG_OPERATION operationEnsureContiguous(ExecState* exec, JSObject* object)
+char* DFG_OPERATION operationEnsureContiguous(ExecState* exec, JSCell* cell)
 {
     JSGlobalData& globalData = exec->globalData();
     NativeCallFrameTracer tracer(&globalData, exec);
     
-    return reinterpret_cast<char*>(object->ensureContiguous(globalData));
+    if (!cell->isObject())
+        return 0;
+    
+    return reinterpret_cast<char*>(asObject(cell)->ensureContiguous(globalData));
 }
 
-char* DFG_OPERATION operationRageEnsureContiguous(ExecState* exec, JSObject* object)
+char* DFG_OPERATION operationRageEnsureContiguous(ExecState* exec, JSCell* cell)
 {
     JSGlobalData& globalData = exec->globalData();
     NativeCallFrameTracer tracer(&globalData, exec);
     
-    return reinterpret_cast<char*>(object->rageEnsureContiguous(globalData));
+    if (!cell->isObject())
+        return 0;
+    
+    return reinterpret_cast<char*>(asObject(cell)->rageEnsureContiguous(globalData));
 }
 
-char* DFG_OPERATION operationEnsureArrayStorage(ExecState* exec, JSObject* object)
+char* DFG_OPERATION operationEnsureArrayStorage(ExecState* exec, JSCell* cell)
 {
     JSGlobalData& globalData = exec->globalData();
     NativeCallFrameTracer tracer(&globalData, exec);
+    
+    if (!cell->isObject())
+        return 0;
 
-    return reinterpret_cast<char*>(object->ensureArrayStorage(globalData));
+    return reinterpret_cast<char*>(asObject(cell)->ensureArrayStorage(globalData));
 }
 
 StringImpl* DFG_OPERATION operationResolveRope(ExecState* exec, JSString* string)

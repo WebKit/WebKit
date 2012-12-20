@@ -578,7 +578,7 @@ void JSObject::enterDictionaryIndexingMode(JSGlobalData& globalData)
     case ALL_CONTIGUOUS_INDEXING_TYPES:
         // NOTE: this is horribly inefficient, as it will perform two conversions. We could optimize
         // this case if we ever cared.
-        enterDictionaryIndexingModeWhenArrayStorageAlreadyExists(globalData, ensureArrayStorageSlowNoCheck(globalData));
+        enterDictionaryIndexingModeWhenArrayStorageAlreadyExists(globalData, ensureArrayStorageSlow(globalData));
         break;
     case ALL_ARRAY_STORAGE_INDEXING_TYPES:
         enterDictionaryIndexingModeWhenArrayStorageAlreadyExists(globalData, m_butterfly->arrayStorage());
@@ -951,8 +951,7 @@ void JSObject::convertDoubleToContiguousWhilePerformingSetIndex(JSGlobalData& gl
 
 WriteBarrier<Unknown>* JSObject::ensureInt32Slow(JSGlobalData& globalData)
 {
-    if (structure()->typeInfo().interceptsGetOwnPropertySlotByIndexEvenWhenLengthIsNotZero())
-        CRASH();
+    ASSERT(inherits(&s_info));
     
     switch (structure()->indexingType()) {
     case ALL_BLANK_INDEXING_TYPES:
@@ -976,8 +975,7 @@ WriteBarrier<Unknown>* JSObject::ensureInt32Slow(JSGlobalData& globalData)
 
 double* JSObject::ensureDoubleSlow(JSGlobalData& globalData)
 {
-    if (structure()->typeInfo().interceptsGetOwnPropertySlotByIndexEvenWhenLengthIsNotZero())
-        CRASH();
+    ASSERT(inherits(&s_info));
     
     switch (structure()->indexingType()) {
     case ALL_BLANK_INDEXING_TYPES:
@@ -1003,8 +1001,7 @@ double* JSObject::ensureDoubleSlow(JSGlobalData& globalData)
 
 WriteBarrier<Unknown>* JSObject::ensureContiguousSlow(JSGlobalData& globalData, DoubleToContiguousMode mode)
 {
-    if (structure()->typeInfo().interceptsGetOwnPropertySlotByIndexEvenWhenLengthIsNotZero())
-        CRASH();
+    ASSERT(inherits(&s_info));
     
     switch (structure()->indexingType()) {
     case ALL_BLANK_INDEXING_TYPES:
@@ -1042,8 +1039,10 @@ WriteBarrier<Unknown>* JSObject::rageEnsureContiguousSlow(JSGlobalData& globalDa
     return ensureContiguousSlow(globalData, RageConvertDoubleToValue);
 }
 
-ArrayStorage* JSObject::ensureArrayStorageSlowNoCheck(JSGlobalData& globalData)
+ArrayStorage* JSObject::ensureArrayStorageSlow(JSGlobalData& globalData)
 {
+    ASSERT(inherits(&s_info));
+    
     switch (structure()->indexingType()) {
     case ALL_BLANK_INDEXING_TYPES:
         if (UNLIKELY(indexingShouldBeSparse()))
@@ -1074,14 +1073,6 @@ ArrayStorage* JSObject::ensureArrayStorageSlowNoCheck(JSGlobalData& globalData)
         ASSERT_NOT_REACHED();
         return 0;
     }
-}
-
-ArrayStorage* JSObject::ensureArrayStorageSlow(JSGlobalData& globalData)
-{
-    if (structure()->typeInfo().interceptsGetOwnPropertySlotByIndexEvenWhenLengthIsNotZero())
-        CRASH();
-    
-    return ensureArrayStorageSlowNoCheck(globalData);
 }
 
 ArrayStorage* JSObject::ensureArrayStorageExistsAndEnterDictionaryIndexingMode(JSGlobalData& globalData)
@@ -1932,7 +1923,7 @@ void JSObject::putByIndexBeyondVectorLengthWithoutAttributes(ExecState* exec, un
         || (i >= MIN_SPARSE_ARRAY_INDEX
             && !isDenseEnoughForVector(i, countElements<indexingShape>(m_butterfly)))) {
         ASSERT(i <= MAX_ARRAY_INDEX);
-        ensureArrayStorageSlowNoCheck(globalData);
+        ensureArrayStorageSlow(globalData);
         SparseArrayValueMap* map = allocateSparseIndexMap(globalData);
         map->putEntry(exec, this, i, value, false);
         ASSERT(i >= arrayStorage()->length());

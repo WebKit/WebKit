@@ -1182,6 +1182,11 @@ public:
         m_jit.setupArgumentsExecState();
         return appendCallWithExceptionCheckSetResult(operation, result);
     }
+    JITCompiler::Call callOperation(P_DFGOperation_EC operation, GPRReg result, GPRReg cell)
+    {
+        m_jit.setupArgumentsWithExecState(cell);
+        return appendCallWithExceptionCheckSetResult(operation, result);
+    }
     JITCompiler::Call callOperation(P_DFGOperation_EO operation, GPRReg result, GPRReg object)
     {
         m_jit.setupArgumentsWithExecState(object);
@@ -1542,6 +1547,11 @@ public:
     JITCompiler::Call callOperation(P_DFGOperation_E operation, GPRReg result)
     {
         m_jit.setupArgumentsExecState();
+        return appendCallWithExceptionCheckSetResult(operation, result);
+    }
+    JITCompiler::Call callOperation(P_DFGOperation_EC operation, GPRReg result, GPRReg arg1)
+    {
+        m_jit.setupArgumentsWithExecState(arg1);
         return appendCallWithExceptionCheckSetResult(operation, result);
     }
     JITCompiler::Call callOperation(P_DFGOperation_EO operation, GPRReg result, GPRReg arg1)

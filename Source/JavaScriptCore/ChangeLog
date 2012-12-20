@@ -1,3 +1,41 @@
+2012-12-19  Filip Pizlo  <fpizlo@apple.com>
+
+        JSObject::ensure<IndexingType> should gracefully handle InterceptsGetOwn..., and should never be called when the 'this' is not an object
+        https://bugs.webkit.org/show_bug.cgi?id=105468
+
+        Reviewed by Mark Hahnenberg, Oliver Hunt, and Gavin Barraclough.
+
+        Changed JSObject::ensure<IndexingType> methods to gracefully handle
+        InterceptsGetOwnPropertySlotByIndexEvenWhenLengthIsNotZero. Most of them handle it by returning
+        null as a result of indexingShouldBeSparse() returning true, while ensureArrayStorage handles it
+        by entering dictionary indexing mode, which forces the object to behave correctly even if there
+        is proxying or weird prototype stuff going on.
+        
+        Changed DFGOperations entrypoints to reject non-objects, so that JSObject doesn't have to deal
+        with pretending to be JSString. In particular, this would go wrong in the ArrayStorage case
+        since we'd try to resize a butterfly on a JSString, but JSString has something other than
+        m_butterfly at that offset.
+        
+        Finally, removed all InterceptsGetOwnPropertySlotByIndexEvenWhenLengthIsNotZero from JIT code
+        since those are now redundant.
+
+        * dfg/DFGOperations.cpp:
+        * dfg/DFGOperations.h:
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::arrayify):
+        * dfg/DFGSpeculativeJIT.h:
+        (JSC::DFG::SpeculativeJIT::callOperation):
+        * runtime/JSObject.cpp:
+        (JSC::JSObject::enterDictionaryIndexingMode):
+        (JSC::JSObject::ensureInt32Slow):
+        (JSC::JSObject::ensureDoubleSlow):
+        (JSC::JSObject::ensureContiguousSlow):
+        (JSC::JSObject::ensureArrayStorageSlow):
+        (JSC):
+        (JSC::JSObject::putByIndexBeyondVectorLengthWithoutAttributes):
+        * runtime/JSObject.h:
+        (JSObject):
+
 2012-12-19  Oliver Hunt  <oliver@apple.com>
 
         Tidy up JSScriptRef API

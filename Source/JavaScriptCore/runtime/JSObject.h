@@ -979,7 +979,6 @@ private:
     WriteBarrier<Unknown>* ensureContiguousSlow(JSGlobalData&);
     WriteBarrier<Unknown>* rageEnsureContiguousSlow(JSGlobalData&);
     ArrayStorage* ensureArrayStorageSlow(JSGlobalData&);
-    ArrayStorage* ensureArrayStorageSlowNoCheck(JSGlobalData&);
     
     enum DoubleToContiguousMode { EncodeValueAsDouble, RageConvertDoubleToValue };
     template<DoubleToContiguousMode mode>

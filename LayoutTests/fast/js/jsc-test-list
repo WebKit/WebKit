@@ -103,6 +103,8 @@ fast/js/dfg-dead-speculation
 fast/js/dfg-dead-variable-on-exit
 fast/js/dfg-double-use-of-post-simplification-double-prediction
 fast/js/dfg-double-vote-fuzz
+fast/js/dfg-ensure-array-storage-on-string
+fast/js/dfg-ensure-contiguous-on-string
 fast/js/dfg-exception
 fast/js/dfg-float32array
 fast/js/dfg-float64array
