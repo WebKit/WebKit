@@ -348,7 +348,7 @@ bool HTMLTokenizer::nextToken(SegmentedString& source, HTMLToken& token)
         else if (isASCIIUpper(cc)) {
             m_token->appendToName(toLowerCase(cc));
             HTML_ADVANCE_TO(TagNameState);
-        } if (cc == InputStreamPreprocessor::endOfFileMarker) {
+        } else if (cc == InputStreamPreprocessor::endOfFileMarker) {
             parseError();
             HTML_RECONSUME_IN(DataState);
         } else {
@@ -616,7 +616,7 @@ bool HTMLTokenizer::nextToken(SegmentedString& source, HTMLToken& token)
         else if (cc == '>') {
             bufferCharacter(cc);
             HTML_ADVANCE_TO(ScriptDataState);
-        } if (cc == InputStreamPreprocessor::endOfFileMarker) {
+        } else if (cc == InputStreamPreprocessor::endOfFileMarker) {
             parseError();
             HTML_RECONSUME_IN(DataState);
         } else {
