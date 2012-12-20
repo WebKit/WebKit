@@ -47,6 +47,9 @@ const unsigned lineWidth = 1;
 const float marginSize = 4;
 const float mediaControlsHeight = 44;
 const float mediaBackButtonHeight = 33;
+// Scale exit-fullscreen button size.
+const float mediaFullscreenButtonHeightRatio = 5 / 11.0;
+const float mediaFullscreenButtonWidthRatio = 3 / 11.0;
 const float mediaSliderOutlineWidth = 2;
 const float mediaSliderTrackRadius = 3;
 const float mediaSliderThumbWidth = 25;
@@ -1002,11 +1005,16 @@ bool RenderThemeBlackBerry::paintMediaFullscreenButton(RenderObject* object, con
     static Image* mediaExitFullscreen = Image::loadPlatformResource("back").leakRef();
 
     Image* buttonImage = mediaEnterFullscreen;
+    IntRect currentRect(rect);
 #if ENABLE(FULLSCREEN_API)
-    if (mediaElement->document()->webkitIsFullScreen() && mediaElement->document()->webkitCurrentFullScreenElement() == mediaElement)
+    if (mediaElement->document()->webkitIsFullScreen() && mediaElement->document()->webkitCurrentFullScreenElement() == mediaElement) {
         buttonImage = mediaExitFullscreen;
+        IntRect fullscreenRect(rect.x() + (1 - mediaFullscreenButtonWidthRatio) * rect.width() / 2, rect.y() + (1 - mediaFullscreenButtonHeightRatio) * rect.height() / 2,
+            rect.width() * mediaFullscreenButtonWidthRatio, rect.height() * mediaFullscreenButtonHeightRatio);
+        currentRect = fullscreenRect;
+    }
 #endif
-    return paintMediaButton(paintInfo.context, rect, buttonImage);
+    return paintMediaButton(paintInfo.context, currentRect, buttonImage);
 #else
     UNUSED_PARAM(object);
     UNUSED_PARAM(paintInfo);
