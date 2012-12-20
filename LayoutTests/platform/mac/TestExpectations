@@ -1262,3 +1262,6 @@ webkit.org/b/104962 platform/mac/fast/loader/file-url-mimetypes-2.html [ Failure
 
 webkit.org/b/105049 compositing/layer-creation/fixed-position-out-of-view-scaled-iframe-scroll.html [ Failure ]
 webkit.org/b/105049 compositing/layer-creation/fixed-position-out-of-view-scaled-iframe.html [ Failure ]
+
+webkit.org/b/105566 media/track/track-webvtt-tc006-cue-identifiers.html [ Crash Pass ]
+webkit.org/b/105567 http/tests/security/data-url-inline.css.html [ Crash Pass ]

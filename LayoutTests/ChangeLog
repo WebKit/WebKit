@@ -1,3 +1,9 @@
+2012-12-20  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Update Mac test expectation per bugs 105566 and 105567.
+
+        * platform/mac/TestExpectations:
+
 2012-12-19  Dean Jackson  <dino@apple.com>
 
         Cleanup some captions menu tests
