@@ -404,11 +404,11 @@ void CachedImage::error(CachedResource::Status status)
     notifyObservers();
 }
 
-void CachedImage::setResponse(const ResourceResponse& response)
+void CachedImage::responseReceived(const ResourceResponse& response)
 {
     if (!m_response.isNull())
         clear();
-    CachedResource::setResponse(response);
+    CachedResource::responseReceived(response);
 }
 
 void CachedImage::destroyDecodedData()

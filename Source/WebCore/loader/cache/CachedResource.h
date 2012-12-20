@@ -185,7 +185,8 @@ public:
     ResourceBuffer* resourceBuffer() const { ASSERT(!m_purgeableData); return m_data.get(); }
 
     virtual void willSendRequest(ResourceRequest&, const ResourceResponse&) { m_requestedFromNetworkingLayer = true; }
-    virtual void setResponse(const ResourceResponse&);
+    virtual void responseReceived(const ResourceResponse&);
+    void setResponse(const ResourceResponse& response) { m_response = response; }
     const ResourceResponse& response() const { return m_response; }
 
     // Sets the serialized metadata retrieved from the platform's cache.

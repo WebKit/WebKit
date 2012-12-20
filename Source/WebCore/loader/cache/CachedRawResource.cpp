@@ -114,11 +114,11 @@ void CachedRawResource::willSendRequest(ResourceRequest& request, const Resource
     CachedResource::willSendRequest(request, response);
 }
 
-void CachedRawResource::setResponse(const ResourceResponse& response)
+void CachedRawResource::responseReceived(const ResourceResponse& response)
 {
     if (!m_identifier)
         m_identifier = m_loader->identifier();
-    CachedResource::setResponse(response);
+    CachedResource::responseReceived(response);
     CachedResourceClientWalker<CachedRawResourceClient> w(m_clients);
     while (CachedRawResourceClient* c = w.next())
         c->responseReceived(this, m_response);

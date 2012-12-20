@@ -171,6 +171,7 @@ void SubresourceLoader::didReceiveResponse(const ResourceResponse& response)
         if (response.httpStatusCode() == 304) {
             // 304 Not modified / Use local copy
             // Existing resource is ok, just use it updating the expiration time.
+            m_resource->setResponse(response);
             memoryCache()->revalidationSucceeded(m_resource, response);
             if (!reachedTerminalState())
                 ResourceLoader::didReceiveResponse(response);
@@ -180,7 +181,7 @@ void SubresourceLoader::didReceiveResponse(const ResourceResponse& response)
         memoryCache()->revalidationFailed(m_resource);
     }
 
-    m_resource->setResponse(response);
+    m_resource->responseReceived(response);
     if (reachedTerminalState())
         return;
     ResourceLoader::didReceiveResponse(response);

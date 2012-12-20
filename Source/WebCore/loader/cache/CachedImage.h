@@ -78,7 +78,7 @@ public:
 
     virtual void data(PassRefPtr<ResourceBuffer> data, bool allDataReceived);
     virtual void error(CachedResource::Status);
-    virtual void setResponse(const ResourceResponse&);
+    virtual void responseReceived(const ResourceResponse&);
     
     // For compatibility, images keep loading even if there are HTTP errors.
     virtual bool shouldIgnoreHTTPStatusCodeErrors() const { return true; }

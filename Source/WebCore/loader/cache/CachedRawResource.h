@@ -60,7 +60,7 @@ private:
     virtual void allClientsRemoved();
 
     virtual void willSendRequest(ResourceRequest&, const ResourceResponse&);
-    virtual void setResponse(const ResourceResponse&);
+    virtual void responseReceived(const ResourceResponse&);
     virtual void didSendData(unsigned long long bytesSent, unsigned long long totalBytesToBeSent);
 #if PLATFORM(CHROMIUM)
     virtual void didDownloadData(int);

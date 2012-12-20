@@ -409,9 +409,9 @@ double CachedResource::freshnessLifetime() const
     return 0;
 }
 
-void CachedResource::setResponse(const ResourceResponse& response)
+void CachedResource::responseReceived(const ResourceResponse& response)
 {
-    m_response = response;
+    setResponse(response);
     m_responseTimestamp = currentTime();
     String encoding = response.textEncodingName();
     if (!encoding.isNull())
