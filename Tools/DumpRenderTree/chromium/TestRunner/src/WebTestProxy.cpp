@@ -323,7 +323,7 @@ bool WebTestProxyBase::shouldInsertNode(const WebNode& node, const WebRange& ran
         printNodeDescription(m_delegate, node, 0);
         m_delegate->printMessage(" replacingDOMRange:");
         printRangeDescription(m_delegate, range);
-        printf(" givenAction:%s\n", editingActionDescription(action).c_str());
+        m_delegate->printMessage(string(" givenAction:") + editingActionDescription(action) + "\n");
     }
     return true;
 }
