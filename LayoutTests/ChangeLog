@@ -1,3 +1,13 @@
+2012-12-20  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [Qt]REGRESSION(r138222): It made fast/forms/number/number-spinbutton-click-in-iframe.html crash
+        https://bugs.webkit.org/show_bug.cgi?id=105529
+
+        Reviewed by Nate Chapin.
+
+        * platform/qt/TestExpectations: Unskip
+        fast/forms/number/number-spinbutton-click-in-iframe.html.
+
 2012-12-20  Lianghui Chen  <liachen@rim.com>
 
         2 fast/filesystem test cases ask for more space than the size they request when creating the file system

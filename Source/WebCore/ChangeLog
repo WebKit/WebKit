@@ -1,3 +1,21 @@
+2012-12-20  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [Qt]REGRESSION(r138222): It made fast/forms/number/number-spinbutton-click-in-iframe.html crash
+        https://bugs.webkit.org/show_bug.cgi?id=105529
+
+        Reviewed by Nate Chapin.
+
+        Make sure assignIdentifierToInitialRequest() and
+        dispatchWillSendRequest() are called before all other
+        notification callbacks for the substitute data.
+
+        Fixes a crash in fast/forms/number/number-spinbutton-click-in-iframe.html.
+
+        * loader/MainResourceLoader.cpp:
+        (WebCore::MainResourceLoader::load): Call
+        handleSubstituteDataLoadSoon() after assigning the substitute data
+        identifier.
+
 2012-12-20  Kunihiko Sakamoto  <ksakamoto@chromium.org>
 
         INPUT_MULTIPLE_FIELDS_UI: Add minimum/maximum value to DateTimeEditElement::LayoutParameters
