@@ -36,6 +36,7 @@
 namespace WebKit {
 
 class WebIDBFactory; // FIXME: Does this belong in platform?
+class WebSharedWorkerRepository; // FIXME: Does this belong in platform?
 
 // FIXME: Eventually all these API will need to move to WebKit::Platform.
 class WebKitPlatformSupport : public Platform {
@@ -43,6 +44,11 @@ public:
     // Indexed Database ----------------------------------------------------
 
     virtual WebIDBFactory* idbFactory() { return 0; }
+
+
+    // Shared Workers ------------------------------------------------------
+
+    virtual WebSharedWorkerRepository* sharedWorkerRepository() { return 0; }
 
 protected:
     ~WebKitPlatformSupport() { }
