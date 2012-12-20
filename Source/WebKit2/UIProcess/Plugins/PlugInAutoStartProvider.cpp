@@ -77,4 +77,28 @@ PassRefPtr<ImmutableDictionary> PlugInAutoStartProvider::autoStartOriginsTableCo
     return ImmutableDictionary::adopt(map);
 }
 
+void PlugInAutoStartProvider::setAutoStartOriginsTable(ImmutableDictionary& table)
+{
+    m_autoStartTable.clear();
+    m_autoStartHashes.clear();
+    Vector<unsigned> hashVector;
+
+    ImmutableDictionary::MapType::const_iterator end = table.map().end();
+    for (ImmutableDictionary::MapType::const_iterator it = table.map().begin(); it != end; ++it) {
+        HashSet<unsigned> hashes;
+        ImmutableArray* tableHashes = static_cast<ImmutableArray*>(it->value.get());
+        size_t hashSetSize = tableHashes->size();
+        for (size_t i = 0; i < hashSetSize; ++i) {
+            unsigned hash = static_cast<unsigned>(tableHashes->at<WebUInt64>(i)->value());
+            hashes.add(hash);
+            m_autoStartHashes.add(hash);
+            hashVector.append(hash);
+        }
+
+        m_autoStartTable.add(it->key, hashes);
+    }
+
+    m_context->sendToAllProcesses(Messages::WebProcess::PlugInAutoStartOriginsChanged(hashVector));
+}
+
 } // namespace WebKit

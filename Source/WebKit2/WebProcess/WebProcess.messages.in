@@ -68,6 +68,7 @@ messages -> WebProcess {
     ClearPluginSiteData(Vector<WTF::String> pluginPaths, Vector<WTF::String> sites, uint64_t flags, uint64_t maxAgeInSeconds, uint64_t callbackID)
 #endif
     DidAddPlugInAutoStartOrigin(uint32_t hash)
+    PlugInAutoStartOriginsChanged(Vector<uint32_t> hashes)
 
 #if ENABLE(PLUGIN_PROCESS)
     PluginProcessCrashed(String pluginProcess, uint32_t processType) DispatchOnConnectionQueue

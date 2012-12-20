@@ -342,6 +342,13 @@ WKDictionaryRef WKContextCopyPlugInAutoStartOriginHashes(WKContextRef contextRef
     return toAPI(toImpl(contextRef)->plugInAutoStartOriginHashes().leakRef());
 }
 
+void WKContextSetPlugInAutoStartOriginHashes(WKContextRef contextRef, WKDictionaryRef dictionaryRef)
+{
+    if (!dictionaryRef)
+        return;
+    toImpl(contextRef)->setPlugInAutoStartOriginHashes(*toImpl(dictionaryRef));
+}
+
 // Deprecated functions.
 void _WKContextSetAdditionalPluginsDirectory(WKContextRef context, WKStringRef pluginsDirectory)
 {

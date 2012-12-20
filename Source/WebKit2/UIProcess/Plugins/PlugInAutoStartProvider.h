@@ -45,6 +45,7 @@ public:
 
     Vector<unsigned> autoStartOriginsCopy() const;
     PassRefPtr<ImmutableDictionary> autoStartOriginsTableCopy() const;
+    void setAutoStartOriginsTable(ImmutableDictionary&);
 
 private:
     WebContext* m_context;

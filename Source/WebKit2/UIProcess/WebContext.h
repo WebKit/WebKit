@@ -259,6 +259,7 @@ public:
     void textCheckerStateChanged();
 
     PassRefPtr<ImmutableDictionary> plugInAutoStartOriginHashes() const;
+    void setPlugInAutoStartOriginHashes(ImmutableDictionary&);
 
     // Network Process Management
 

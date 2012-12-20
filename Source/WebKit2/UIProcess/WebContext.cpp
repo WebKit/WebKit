@@ -1156,6 +1156,11 @@ PassRefPtr<ImmutableDictionary> WebContext::plugInAutoStartOriginHashes() const
     return m_plugInAutoStartProvider.autoStartOriginsTableCopy();
 }
 
+void WebContext::setPlugInAutoStartOriginHashes(ImmutableDictionary& dictionary)
+{
+    return m_plugInAutoStartProvider.setAutoStartOriginsTable(dictionary);
+}
+
 #if ENABLE(CUSTOM_PROTOCOLS)
 void WebContext::registerSchemeForCustomProtocol(const WTF::String& scheme)
 {

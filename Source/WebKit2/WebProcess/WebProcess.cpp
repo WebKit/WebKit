@@ -832,6 +832,13 @@ void WebProcess::didAddPlugInAutoStartOrigin(unsigned plugInOriginHash)
     m_plugInAutoStartOrigins.add(plugInOriginHash);
 }
 
+void WebProcess::plugInAutoStartOriginsChanged(const Vector<unsigned>& hashes)
+{
+    m_plugInAutoStartOrigins.clear();
+    for (size_t i = 0; i < hashes.size(); ++i)
+        didAddPlugInAutoStartOrigin(hashes[i]);
+}
+
 static void fromCountedSetToHashMap(TypeCountSet* countedSet, HashMap<String, uint64_t>& map)
 {
     TypeCountSet::const_iterator end = countedSet->end();

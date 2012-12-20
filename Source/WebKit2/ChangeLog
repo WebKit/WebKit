@@ -1,3 +1,37 @@
+2012-12-19  Jon Lee  <jonlee@apple.com>
+
+        Add a function to set the origin hash table
+        https://bugs.webkit.org/show_bug.cgi?id=105447
+        <rdar://problem/12910985>
+
+        Reviewed by Brian Weinstein.
+
+        Add a new API called WKContextSetPlugInAutoStartOriginHashes. It assigns the table of hashes,
+        keyed by main frame origin, to the WebContext. That, in turn, notifies all existing web
+        processes, so that each web process can update its copy of the auto-start hashes.
+
+        * UIProcess/API/C/WKContext.cpp:
+        (WKContextSetPlugInAutoStartOriginHashes): To clear the table, an empty dictionary must be
+        provided.
+        * UIProcess/API/C/WKContext.h:
+
+        * UIProcess/WebContext.cpp:
+        (WebKit::WebContext::setPlugInAutoStartOriginHashes): Forward to PlugInAutoStartProvider.
+        * UIProcess/WebContext.h:
+
+        * UIProcess/Plugins/PlugInAutoStartProvider.cpp:
+        (WebKit::PlugInAutoStartProvider::setAutoStartOriginsTable): Clear the map and set of hashes,
+        and convert the data from the provided dictionary. Also add it to a temporary vector, which will
+        be used to pass along to all of the active web processes.
+        * UIProcess/Plugins/PlugInAutoStartProvider.h:
+
+        * WebProcess/WebProcess.messages.in: Add plugInAutoStartOriginsChanged. Takes in a vector of
+        the new set of hashes.
+        * WebProcess/WebProcess.cpp:
+        (WebKit::WebProcess::plugInAutoStartOriginsChanged): Clear the existing set, and copy the new
+        hashes.
+        * WebProcess/WebProcess.h:
+
 2012-12-18  Jon Lee  <jonlee@apple.com>
 
         Notify context client of change to table, and allow client to get a copy of it

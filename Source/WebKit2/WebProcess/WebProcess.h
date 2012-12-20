@@ -253,6 +253,7 @@ private:
     void allVisitedLinkStateChanged();
 
     void didAddPlugInAutoStartOrigin(unsigned plugInOriginHash);
+    void plugInAutoStartOriginsChanged(const Vector<unsigned>& hashes);
 
     void platformSetCacheModel(CacheModel);
     void platformClearResourceCaches(ResourceCachesToClear);
