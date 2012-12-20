@@ -232,6 +232,8 @@ if (ENABLE_VIDEO OR ENABLE_WEB_AUDIO)
         ${GSTREAMER_INTERFACES_LIBRARIES}
         ${GSTREAMER_PBUTILS_LIBRARIES}
     )
+    # Avoiding a GLib deprecation warning due to GStreamer API using deprecated classes.
+    set_source_files_properties(platform/audio/gstreamer/WebKitWebAudioSourceGStreamer.cpp PROPERTIES COMPILE_DEFINITIONS "GLIB_DISABLE_DEPRECATION_WARNINGS=1")
 endif ()
 
 if (ENABLE_VIDEO)

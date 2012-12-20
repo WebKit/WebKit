@@ -1,3 +1,14 @@
+2012-12-20  Dominik Röttsches  <dominik.rottsches@intel.com>
+
+        [EFL] MiniBrowser does not play Infinite Gangnam Style
+        https://bugs.webkit.org/show_bug.cgi?id=103531
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Marked remaining webaudio failures.
+
+        * platform/efl/TestExpectations:
+
 2012-12-20  Csaba Osztrogonác  <ossy@webkit.org>
 
         Unreviewed gardening, skip a crashing test to paint the bots green.

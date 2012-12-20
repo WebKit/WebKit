@@ -646,6 +646,13 @@ webkit.org/b/100519 fast/images/png-with-color-profile.html [ Skip ]
 webkit.org/b/100519 fast/images/paletted-png-with-color-profile.html [ Skip ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
+# CRASHES
+#////////////////////////////////////////////////////////////////////////////////////////
+
+webkit.org/b/105299 webaudio/javascriptaudionode.html [ Crash ]
+webkit.org/b/105299 webaudio/javascriptaudionode-upmix2-8channel-input.html [ Pass Crash ]
+
+#////////////////////////////////////////////////////////////////////////////////////////
 # FLAKY TESTS
 #////////////////////////////////////////////////////////////////////////////////////////
 
@@ -761,6 +768,8 @@ webkit.org/b/105280 http/tests/xmlhttprequest/access-control-preflight-async-met
 webkit.org/b/105280 http/tests/xmlhttprequest/cross-site-denied-response.html [ Failure Pass ]
 webkit.org/b/105280 http/tests/xmlhttprequest/simple-cross-origin-denied-events-post.html [ Failure Pass ]
 webkit.org/b/105280 http/tests/xmlhttprequest/access-control-preflight-async-not-supported.html [ Failure Pass ]
+
+webkit.org/b/105296 webaudio/delaynode-maxdelay.html [ Failure Pass ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # FAILING TESTS
@@ -1158,11 +1167,6 @@ webkit.org/b/95297 fast/events/constructors/media-key-event-constructor.html [ S
 # Requires POINTER_LOCK support.
 webkit.org/b/88080 pointer-lock [ Skip ]
 webkit.org/b/88080 http/tests/pointer-lock [ Skip ]
-
-# Requires WEB_AUDIO support.
-webkit.org/b/91738 webaudio [ Skip ]
-webkit.org/b/91738 inspector-protocol/nmi-webaudio.html [ Skip ]
-webkit.org/b/91738 inspector-protocol/nmi-webaudio-leak-test.html [ Skip ]
 
 # Requires MEDIA_STREAM support.
 webkit.org/b/87662 fast/mediastream [ Skip ]
@@ -1729,5 +1733,26 @@ webkit.org/b/105028 fast/canvas/webgl/tex-image-and-sub-image-2d-with-video-rgba
 webkit.org/b/105029 fast/canvas/webgl/webgl-composite-modes.html [ ImageOnlyFailure Crash ]
 webkit.org/b/105029 fast/canvas/webgl/webgl-composite-modes-repaint.html [ ImageOnlyFailure Crash ]
 
-# Failing touch events case 
-webkit.org/b/105406 fast/events/touch/touch-input-element-change-documents.html [ Failure ] 
+# Failing touch events case
+webkit.org/b/105406 fast/events/touch/touch-input-element-change-documents.html [ Failure ]
+
+# WebAudio remaining issues
+webkit.org/b/105289 webaudio/mediastreamaudiosourcenode.html [ Failure ]
+webkit.org/b/105289 webaudio/mediastreamaudiodestinationnode.html [ Failure ]
+webkit.org/b/105291 webaudio/oscillator-square.html [ Failure ]
+webkit.org/b/105291 webaudio/oscillator-sine.html [ Failure ]
+webkit.org/b/105291 webaudio/oscillator-custom.html [ Failure ]
+webkit.org/b/105291 webaudio/oscillator-triangle.html [ Failure ]
+webkit.org/b/105291 webaudio/oscillator-sawtooth.html [ Failure ]
+webkit.org/b/105294 webaudio/codec-tests/aac/vbr-128kbps-44khz.html [ Failure ]
+webkit.org/b/105294 webaudio/codec-tests/mp3/128kbps-44khz.html [ Failure ]
+webkit.org/b/105294 webaudio/codec-tests/vorbis/vbr-128kbps-44khz.html [ Failure ]
+webkit.org/b/105294 webaudio/codec-tests/vorbis/vbr-96kbps-44khz.html [ Failure ]
+webkit.org/b/105294 webaudio/codec-tests/vorbis/vbr-70kbps-44khz.html [ Failure ]
+webkit.org/b/105294 webaudio/codec-tests/wav/24bit-44khz.html [ Failure ]
+webkit.org/b/105294 webaudio/codec-tests/wav/24bit-22khz-resample.html [ Failure ]
+webkit.org/b/105296 webaudio/delaynode-scheduling.html [ Failure ]
+webkit.org/b/105296 webaudio/delaynode-max-nondefault-delay.html [ Failure ]
+webkit.org/b/105297 webaudio/audiobuffersource-loop-points.html [ Failure ]
+webkit.org/b/105297 webaudio/audiobuffersource-playbackrate.html [ Failure ]
+webkit.org/b/105298 webaudio/decode-audio-data-basic.html [ Failure ]

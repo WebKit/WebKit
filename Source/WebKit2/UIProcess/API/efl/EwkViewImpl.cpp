@@ -164,6 +164,9 @@ EwkViewImpl::EwkViewImpl(Evas_Object* view, PassRefPtr<EwkContext> context, Pass
     m_pageProxy->fullScreenManager()->setWebView(m_view);
     m_pageProxy->pageGroup()->preferences()->setFullScreenEnabled(true);
 #endif
+#if ENABLE(WEB_AUDIO)
+    m_pageProxy->pageGroup()->preferences()->setWebAudioEnabled(true);
+#endif
 
     m_pageProxy->pageGroup()->preferences()->setOfflineWebApplicationCacheEnabled(true);
 

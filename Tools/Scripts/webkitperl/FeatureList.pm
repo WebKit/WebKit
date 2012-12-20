@@ -430,7 +430,7 @@ my @features = (
       define => "ENABLE_WEBGL", default => (isAppleMacWebKit() || isGtk() || isEfl()), value => \$webglSupport },
 
     { option => "web-audio", desc => "Toggle Web Audio support",
-      define => "ENABLE_WEB_AUDIO", default => 0, value => \$webAudioSupport },
+      define => "ENABLE_WEB_AUDIO", default => (isEfl()), value => \$webAudioSupport },
 
     { option => "web-intents", desc => "Toggle Web Intents support",
       define => "ENABLE_WEB_INTENTS", default => isEfl(), value => \$webIntentsSupport },
