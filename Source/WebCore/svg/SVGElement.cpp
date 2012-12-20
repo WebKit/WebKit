@@ -646,12 +646,11 @@ RenderStyle* SVGElement::computedStyle(PseudoId pseudoElementSpecifier)
 }
 
 #ifndef NDEBUG
-bool SVGElement::isAnimatableAttribute(const QualifiedName& name)
+bool SVGElement::isAnimatableAttribute(const QualifiedName& name) const
 {
     DEFINE_STATIC_LOCAL(HashSet<QualifiedName>, animatableAttributes, ());
 
     if (animatableAttributes.isEmpty()) {
-        animatableAttributes.add(classAttr);
         animatableAttributes.add(XLinkNames::hrefAttr);
         animatableAttributes.add(SVGNames::amplitudeAttr);
         animatableAttributes.add(SVGNames::azimuthAttr);
@@ -746,6 +745,10 @@ bool SVGElement::isAnimatableAttribute(const QualifiedName& name)
         animatableAttributes.add(SVGNames::yChannelSelectorAttr);
         animatableAttributes.add(SVGNames::zAttr);
     }
+
+    if (name == classAttr)
+        return isStyled();
+
     return animatableAttributes.contains(name);
 }
 #endif

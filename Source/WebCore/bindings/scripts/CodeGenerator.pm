@@ -567,13 +567,10 @@ sub ContentAttributeName
 
 sub CanUseFastAttribute
 {
-    my ($generator, $attribute, $contentAttributeName) = @_;
+    my ($generator, $attribute) = @_;
     my $attributeType = $attribute->signature->type;
     # HTMLNames::styleAttr cannot be used with fast{Get,Has}Attribute but we do not [Reflect] the
     # style attribute.
-
-    # Unfortunately SVG makes class animatable.
-    return 0 if $contentAttributeName eq "WebCore::HTMLNames::classAttr";
 
     return !$generator->IsSVGAnimatedType($attributeType);
 }
@@ -593,7 +590,7 @@ sub GetterExpression
         $functionName = "getURLAttribute";
     } elsif ($attribute->signature->type eq "boolean") {
         my $namespace = $generator->NamespaceForAttributeName($interfaceName, $contentAttributeName);
-        if ($generator->CanUseFastAttribute($attribute, $contentAttributeName)) {
+        if ($generator->CanUseFastAttribute($attribute)) {
             $functionName = "fastHasAttribute";
         } else {
             $functionName = "hasAttribute";
@@ -603,7 +600,7 @@ sub GetterExpression
     } elsif ($attribute->signature->type eq "unsigned long") {
         $functionName = "getUnsignedIntegralAttribute";
     } else {
-        if ($generator->CanUseFastAttribute($attribute, $contentAttributeName)) {
+        if ($generator->CanUseFastAttribute($attribute)) {
             $functionName = "fastGetAttribute";
         } else {
             $functionName = "getAttribute";

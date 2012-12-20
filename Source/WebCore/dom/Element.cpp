@@ -2443,7 +2443,7 @@ bool Element::fastAttributeLookupAllowed(const QualifiedName& name) const
 
 #if ENABLE(SVG)
     if (isSVGElement())
-        return !SVGElement::isAnimatableAttribute(name);
+        return !static_cast<const SVGElement*>(this)->isAnimatableAttribute(name);
 #endif
 
     return true;

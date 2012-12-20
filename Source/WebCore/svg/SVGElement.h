@@ -113,7 +113,7 @@ public:
     virtual SVGAttributeToPropertyMap& localAttributeToPropertyMap();
 
 #ifndef NDEBUG
-    static bool isAnimatableAttribute(const QualifiedName&);
+    bool isAnimatableAttribute(const QualifiedName&) const;
 #endif
 
     StylePropertySet* animatedSMILStyleProperties() const;
