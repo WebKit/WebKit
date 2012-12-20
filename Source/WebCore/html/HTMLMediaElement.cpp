@@ -202,6 +202,25 @@ static ExceptionCode exceptionCodeForMediaKeyException(MediaPlayer::MediaKeyExce
 }
 #endif
 
+#if ENABLE(VIDEO_TRACK)
+class TrackDisplayUpdateScope {
+public:
+    TrackDisplayUpdateScope(HTMLMediaElement* mediaElement)
+    {
+        m_mediaElement = mediaElement;
+        m_mediaElement->beginIgnoringTrackDisplayUpdateRequests();
+    }
+    ~TrackDisplayUpdateScope()
+    {
+        ASSERT(m_mediaElement);
+        m_mediaElement->endIgnoringTrackDisplayUpdateRequests();
+    }
+    
+private:
+    HTMLMediaElement* m_mediaElement;
+};
+#endif
+
 HTMLMediaElement::HTMLMediaElement(const QualifiedName& tagName, Document* document, bool createdByParser)
     : HTMLElement(tagName, document)
     , ActiveDOMObject(document, this)
@@ -1352,22 +1371,31 @@ void HTMLMediaElement::textTrackKindChanged(TextTrack* track)
         track->setMode(TextTrack::hiddenKeyword());
 }
 
+void HTMLMediaElement::beginIgnoringTrackDisplayUpdateRequests()
+{
+    ++m_ignoreTrackDisplayUpdate;
+}
+
+void HTMLMediaElement::endIgnoringTrackDisplayUpdateRequests()
+{
+    ASSERT(m_ignoreTrackDisplayUpdate);
+    --m_ignoreTrackDisplayUpdate;
+    if (!m_ignoreTrackDisplayUpdate)
+        updateActiveTextTrackCues(currentTime());
+}
+
 void HTMLMediaElement::textTrackAddCues(TextTrack*, const TextTrackCueList* cues) 
 {
-    beginIgnoringTrackDisplayUpdateRequests();
+    TrackDisplayUpdateScope(this);
     for (size_t i = 0; i < cues->length(); ++i)
         textTrackAddCue(cues->item(i)->track(), cues->item(i));
-    endIgnoringTrackDisplayUpdateRequests();
-    updateActiveTextTrackCues(currentTime());
 }
 
 void HTMLMediaElement::textTrackRemoveCues(TextTrack*, const TextTrackCueList* cues) 
 {
-    beginIgnoringTrackDisplayUpdateRequests();
+    TrackDisplayUpdateScope(this);
     for (size_t i = 0; i < cues->length(); ++i)
         textTrackRemoveCue(cues->item(i)->track(), cues->item(i));
-    endIgnoringTrackDisplayUpdateRequests();
-    updateActiveTextTrackCues(currentTime());
 }
 
 void HTMLMediaElement::textTrackAddCue(TextTrack*, PassRefPtr<TextTrackCue> cue)
@@ -2773,12 +2801,11 @@ void HTMLMediaElement::mediaPlayerDidRemoveTrack(PassRefPtr<InbandTextTrackPriva
 
 void HTMLMediaElement::removeTrack(TextTrack* track)
 {
-    beginIgnoringTrackDisplayUpdateRequests();
-    m_textTracks->remove(track);
+    TrackDisplayUpdateScope(this);
     TextTrackCueList* cues = track->cues();
     if (cues)
         textTrackRemoveCues(track, cues);
-    endIgnoringTrackDisplayUpdateRequests();
+    m_textTracks->remove(track);
 }
 
 void HTMLMediaElement::removeAllInbandTracks()
@@ -2786,14 +2813,13 @@ void HTMLMediaElement::removeAllInbandTracks()
     if (!m_textTracks)
         return;
 
-    beginIgnoringTrackDisplayUpdateRequests();
+    TrackDisplayUpdateScope(this);
     for (int i = m_textTracks->length() - 1; i >= 0; --i) {
         TextTrack* track = m_textTracks->item(i);
 
         if (track->trackType() == TextTrack::InBand)
             removeTrack(track);
     }
-    endIgnoringTrackDisplayUpdateRequests();
 }
 
 PassRefPtr<TextTrack> HTMLMediaElement::addTextTrack(const String& kind, const String& label, const String& language, ExceptionCode& ec)
@@ -2897,14 +2923,7 @@ void HTMLMediaElement::didRemoveTrack(HTMLTrackElement* trackElement)
     // When a track element's parent element changes and the old parent was a media element, 
     // then the user agent must remove the track element's corresponding text track from the 
     // media element's list of text tracks.
-    m_textTracks->remove(textTrack.get());
-    if (textTrack->cues()) {
-        TextTrackCueList* cues = textTrack->cues();
-        beginIgnoringTrackDisplayUpdateRequests();
-        for (size_t i = 0; i < cues->length(); ++i)
-            textTrackRemoveCue(cues->item(i)->track(), cues->item(i));
-        endIgnoringTrackDisplayUpdateRequests();
-    }
+    removeTrack(textTrack.get());
 
     if (hasMediaControls())
         mediaControls()->closedCaptionTracksChanged();

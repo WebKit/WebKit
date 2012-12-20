@@ -372,7 +372,13 @@ protected:
     
     void addBehaviorRestriction(BehaviorRestrictions restriction) { m_restrictions |= restriction; }
     void removeBehaviorRestriction(BehaviorRestrictions restriction) { m_restrictions &= ~restriction; }
-    
+
+#if ENABLE(VIDEO_TRACK)
+    bool ignoreTrackDisplayUpdateRequests() const { return m_ignoreTrackDisplayUpdate > 0; }
+    void beginIgnoringTrackDisplayUpdateRequests();
+    void endIgnoringTrackDisplayUpdateRequests();
+#endif
+
 private:
     void createMediaPlayer();
 
@@ -500,10 +506,6 @@ private:
 #if ENABLE(VIDEO_TRACK)
     void updateActiveTextTrackCues(float);
     HTMLTrackElement* showingTrackWithSameKind(HTMLTrackElement*) const;
-
-    bool ignoreTrackDisplayUpdateRequests() const { return m_ignoreTrackDisplayUpdate > 0; }
-    void beginIgnoringTrackDisplayUpdateRequests() { ++m_ignoreTrackDisplayUpdate; }
-    void endIgnoringTrackDisplayUpdateRequests() { ASSERT(m_ignoreTrackDisplayUpdate); --m_ignoreTrackDisplayUpdate; }
 
     void markCaptionAndSubtitleTracksAsUnconfigured();
     virtual void captionPreferencesChanged() OVERRIDE;
@@ -701,6 +703,8 @@ private:
 #if PLATFORM(MAC)
     OwnPtr<DisplaySleepDisabler> m_sleepDisabler;
 #endif
+
+    friend class TrackDisplayUpdateScope;
 };
 
 #if ENABLE(VIDEO_TRACK)

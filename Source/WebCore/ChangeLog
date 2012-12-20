@@ -1,3 +1,31 @@
+2012-12-19  Eric Carlson  <eric.carlson@apple.com>
+
+        Crash in TextTrack::trackIndexRelativeToRenderedTracks()
+        https://bugs.webkit.org/show_bug.cgi?id=105371
+
+        Reviewed by Simon Fraser.
+
+        Add an RAII object to manage text track update blocking, use it to always process the 
+        current cues to ensure that cues from a track that is deleted are removed from the 
+        shadow DOM before the next layout.
+
+        No new tests, this fixes a crash in media/video-controls-captions-trackmenu.html.
+
+        * html/HTMLMediaElement.cpp:
+        (WebCore::TrackDisplayUpdateScope::TrackDisplayUpdateScope): New, call beginIgnoringTrackDisplayUpdateRequests.
+        (WebCore::TrackDisplayUpdateScope::~TrackDisplayUpdateScope): New, call endIgnoringTrackDisplayUpdateRequests.
+        (WebCore::HTMLMediaElement::beginIgnoringTrackDisplayUpdateRequests):
+        (WebCore::HTMLMediaElement::endIgnoringTrackDisplayUpdateRequests): Call updateActiveTextTrackCues
+            when the ignore count reaches zero.
+        (WebCore::HTMLMediaElement::textTrackAddCues): Use TrackDisplayUpdateScope instead of calling 
+            beginIgnoringTrackDisplayUpdateRequests and endIgnoringTrackDisplayUpdateRequests directly.
+        (WebCore::HTMLMediaElement::textTrackRemoveCues): Ditto.
+        (WebCore::HTMLMediaElement::removeTrack): Ditto.
+        (WebCore::HTMLMediaElement::removeAllInbandTracks): Ditto.
+        (WebCore::HTMLMediaElement::didRemoveTrack): Ditto. Call removeTrack.
+        * html/HTMLMediaElement.h: Declare TrackDisplayUpdateScope as a friend of HTMLMediaElement so it
+            can call protected methods.
+
 2012-12-19  Nate Chapin  <japhet@chromium.org>
 
         REGRESSION(r137607): resource load client callbacks are not called for the main resource when loading HTML string

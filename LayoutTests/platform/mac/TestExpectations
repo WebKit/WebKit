@@ -473,9 +473,6 @@ media/track/track-cue-rendering-snap-to-lines-not-set.html
 media/track/track-cue-rendering-vertical.html
 media/track/track-webvtt-tc028-unsupported-markup.html
 
-# Asserts: https://bugs.webkit.org/show_bug.cgi?id=105371
-[ Debug ] media/video-controls-captions-trackmenu.html
-
 # Opera-submitted tests to W3C for <track>, a lot of failures still.
 # Opera-submitted tests to W3C for <track>, a lot of failures still.
 webkit.org/b/103926 media/track/opera/idl/media-idl-tests.html [ Skip ]
