@@ -2356,6 +2356,11 @@ sub buildQMakeProjects
     my $maybeNeedsCleanBuild = 0;
     my $needsIncrementalBuild = 0;
 
+    # Full incremental build (run qmake) needed on buildbots and EWS bots always.
+    if (grep(/CONFIG\+=buildbot/,@buildParams)) {
+        $needsIncrementalBuild = 1;
+    }
+
     if ($svnRevision ne $previousSvnRevision) {
         print "Last built revision was " . $previousSvnRevision .
             ", now at revision $svnRevision. Full incremental build needed.\n";

@@ -1,3 +1,13 @@
+2012-12-20  Csaba Osztrogonác  <ossy@webkit.org>
+
+        [Qt] EWS bots should call qmake always
+        https://bugs.webkit.org/show_bug.cgi?id=90049
+
+        Reviewed by Simon Hausmann.
+
+        * Scripts/webkitdirs.pm:
+        (buildQMakeProjects):
+
 2012-12-20  Jochen Eisinger  <jochen@chromium.org>
 
         [chromium] fix stray printf in TestRunner's WebTestProxy
