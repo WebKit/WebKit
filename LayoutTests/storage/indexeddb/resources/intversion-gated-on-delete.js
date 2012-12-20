@@ -69,7 +69,6 @@ function connection2VersionChangeCallback(evt)
 function deleteDatabaseBlockedCallback(evt)
 {
     preamble(evt);
-    debug("FIXME: this function should only be called once, http://crbug.com/139695");
     evalAndLog("connection1.close()");
 }
 

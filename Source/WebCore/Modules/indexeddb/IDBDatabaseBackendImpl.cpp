@@ -472,16 +472,17 @@ void IDBDatabaseBackendImpl::processPendingCalls()
     if (m_runningVersionChangeTransaction)
         return;
 
-    // Pending calls may be requeued.
-    Deque<OwnPtr<PendingDeleteCall> > pendingDeleteCalls;
-    m_pendingDeleteCalls.swap(pendingDeleteCalls);
-    while (!pendingDeleteCalls.isEmpty()) {
-        OwnPtr<PendingDeleteCall> pendingDeleteCall = pendingDeleteCalls.takeFirst();
-        deleteDatabase(pendingDeleteCall->callbacks());
+    if (!m_pendingDeleteCalls.isEmpty() && isDeleteDatabaseBlocked())
+        return;
+    while (!m_pendingDeleteCalls.isEmpty()) {
+        OwnPtr<PendingDeleteCall> pendingDeleteCall = m_pendingDeleteCalls.takeFirst();
+        deleteDatabaseFinal(pendingDeleteCall->callbacks());
     }
+    // deleteDatabaseFinal should never re-queue calls.
+    ASSERT(m_pendingDeleteCalls.isEmpty());
 
     // This check is also not really needed, openConnection would just requeue its calls.
-    if (m_runningVersionChangeTransaction || !m_pendingDeleteCalls.isEmpty())
+    if (m_runningVersionChangeTransaction)
         return;
 
     Deque<OwnPtr<PendingOpenWithVersionCall> > pendingOpenWithVersionCalls;
@@ -604,23 +605,30 @@ void IDBDatabaseBackendImpl::openConnectionWithVersion(PassRefPtr<IDBCallbacks> 
 
 void IDBDatabaseBackendImpl::deleteDatabase(PassRefPtr<IDBCallbacks> prpCallbacks)
 {
-    if (m_runningVersionChangeTransaction) {
-        m_pendingDeleteCalls.append(PendingDeleteCall::create(prpCallbacks));
-        return;
-    }
     RefPtr<IDBCallbacks> callbacks = prpCallbacks;
-    for (DatabaseCallbacksSet::const_iterator it = m_databaseCallbacksSet.begin(); it != m_databaseCallbacksSet.end(); ++it) {
-        // Front end ensures the event is not fired at connections that have closePending set.
-        (*it)->onVersionChange(NoStringVersion);
-    }
-    // FIXME: Only fire onBlocked if there are open connections after the
-    // VersionChangeEvents are received, not just set up to fire.
-    // https://bugs.webkit.org/show_bug.cgi?id=71130
-    if (connectionCount()) {
-        m_pendingDeleteCalls.append(PendingDeleteCall::create(callbacks));
+    if (isDeleteDatabaseBlocked()) {
+        for (DatabaseCallbacksSet::const_iterator it = m_databaseCallbacksSet.begin(); it != m_databaseCallbacksSet.end(); ++it) {
+            // Front end ensures the event is not fired at connections that have closePending set.
+            (*it)->onVersionChange(NoStringVersion);
+        }
+        // FIXME: Only fire onBlocked if there are open connections after the
+        // VersionChangeEvents are received, not just set up to fire.
+        // https://bugs.webkit.org/show_bug.cgi?id=71130
         callbacks->onBlocked();
+        m_pendingDeleteCalls.append(PendingDeleteCall::create(callbacks.release()));
         return;
     }
+    deleteDatabaseFinal(callbacks.release());
+}
+
+bool IDBDatabaseBackendImpl::isDeleteDatabaseBlocked()
+{
+    return connectionCount();
+}
+
+void IDBDatabaseBackendImpl::deleteDatabaseFinal(PassRefPtr<IDBCallbacks> callbacks)
+{
+    ASSERT(!isDeleteDatabaseBlocked());
     ASSERT(m_backingStore);
     if (!m_backingStore->deleteDatabase(m_metadata.name)) {
         callbacks->onError(IDBDatabaseError::create(IDBDatabaseException::UnknownError, "Internal error deleting database."));

@@ -5,12 +5,10 @@ if (this.importScripts) {
 
 description("Test that deleteDatabase is delayed if a VERSION_CHANGE transaction is running");
 
-
-indexedDBTest(prepareDatabase);
+indexedDBTest(prepareDatabase, onOpenSuccess);
 function prepareDatabase()
 {
     evalAndLog("versionChangeComplete = false");
-    event.target.transaction.onabort = unexpectedAbortCallback;
     evalAndLog("h = event.target.result");
 
     h.onversionchange = function onVersionChange(evt) {
@@ -29,12 +27,16 @@ function prepareDatabase()
     request.onerror = unexpectedErrorCallback;
     request.onblocked = function deleteDatabaseOnBlocked(evt) {
         preamble(evt);
-
-        evalAndLog("h.close()");
     };
     request.onsuccess = function deleteDatabaseOnSuccess(evt) {
         preamble(evt);
         shouldBeTrue("versionChangeComplete");
         finishJSTest();
     };
+}
+
+function onOpenSuccess()
+{
+    evalAndLog("h = event.target.result");
+    evalAndLog("h.close()");
 }

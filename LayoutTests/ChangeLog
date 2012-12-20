@@ -1,3 +1,26 @@
+2012-12-20  Joshua Bell  <jsbell@chromium.org>
+
+        IndexedDB: Layout test showing delete database getting two blocked events
+        https://bugs.webkit.org/show_bug.cgi?id=92674
+
+        Reviewed by Tony Chang.
+
+        Update/add tests to match the expected behavior where blocked/versionchange events fire
+        even when a "versionchange" transaction is running.
+
+        * storage/indexeddb/delete-in-upgradeneeded-close-in-open-success-expected.txt: Copied from LayoutTests/storage/indexeddb/intversion-delete-in-upgradeneeded-expected.txt.
+        * storage/indexeddb/delete-in-upgradeneeded-close-in-open-success.html: Copied from LayoutTests/storage/indexeddb/intversion-delete-in-upgradeneeded.html.
+        * storage/indexeddb/delete-in-upgradeneeded-close-in-versionchange-expected.txt: Renamed from LayoutTests/storage/indexeddb/intversion-delete-in-upgradeneeded-expected.txt.
+        * storage/indexeddb/delete-in-upgradeneeded-close-in-versionchange.html: Renamed from LayoutTests/storage/indexeddb/intversion-delete-in-upgradeneeded.html.
+        * storage/indexeddb/deletedatabase-delayed-by-open-and-versionchange-expected.txt:
+        * storage/indexeddb/deletedatabase-delayed-by-versionchange-expected.txt:
+        * storage/indexeddb/intversion-gated-on-delete-expected.txt:
+        * storage/indexeddb/resources/delete-in-upgradeneeded-close-in-open-success.js: Copied from LayoutTests/storage/indexeddb/resources/intversion-delete-in-upgradeneeded.js.
+        * storage/indexeddb/resources/delete-in-upgradeneeded-close-in-versionchange.js: Renamed from LayoutTests/storage/indexeddb/resources/intversion-delete-in-upgradeneeded.js.
+        * storage/indexeddb/resources/deletedatabase-delayed-by-open-and-versionchange.js:
+        * storage/indexeddb/resources/factory-deletedatabase.js:
+        * storage/indexeddb/resources/intversion-gated-on-delete.js:
+
 2012-12-20  Tony Chang  <tony@chromium.org>
 
         [chromium] Unreviewed gardening.

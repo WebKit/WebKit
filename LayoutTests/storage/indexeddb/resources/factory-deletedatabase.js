@@ -36,7 +36,7 @@ function addIndex()
     evalAndLog("db.close()");
 
     request = evalAndLog("indexedDB.open(dbname, 2)");
-    request.onupgradeneeded = deleteDatabase;
+    request.onsuccess = deleteDatabase;
     request.onerror = unexpectedErrorCallback;
 }
 

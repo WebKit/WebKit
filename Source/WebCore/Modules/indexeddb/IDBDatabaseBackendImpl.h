@@ -96,6 +96,9 @@ private:
     size_t connectionCount();
     void processPendingCalls();
 
+    bool isDeleteDatabaseBlocked();
+    void deleteDatabaseFinal(PassRefPtr<IDBCallbacks>);
+
     class CreateObjectStoreOperation;
     class DeleteObjectStoreOperation;
     class VersionChangeOperation;

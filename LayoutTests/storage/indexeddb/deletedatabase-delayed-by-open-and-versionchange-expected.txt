@@ -12,14 +12,15 @@ versionChangeComplete = false
 h = event.target.result
 indexedDB.deleteDatabase(dbname)
 
-transactionOnComplete():
-versionChangeComplete = true
-
 onVersionChange():
 old = 1
 new = ""
 
 deleteDatabaseOnBlocked():
+
+transactionOnComplete():
+versionChangeComplete = true
+h = event.target.result
 h.close()
 
 deleteDatabaseOnSuccess():

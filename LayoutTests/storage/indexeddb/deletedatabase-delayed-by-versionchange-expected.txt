@@ -46,10 +46,6 @@ deleteDatabaseOnBlocked():
 deleteDatabaseBlockedEventFired = true
 h1.close()
 
-deleteDatabaseOnBlocked():
-deleteDatabaseBlockedEventFired = true
-h1.close()
-
 deleteDatabaseOnSuccess():
 deleteDatabaseComplete = true
 

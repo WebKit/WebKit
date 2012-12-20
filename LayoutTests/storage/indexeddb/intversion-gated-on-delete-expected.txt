@@ -37,11 +37,6 @@ PASS event.type is "versionchange"
 event.target.close()
 
 deleteDatabaseBlockedCallback():
-FIXME: this function should only be called once, http://crbug.com/139695
-connection1.close()
-
-deleteDatabaseBlockedCallback():
-FIXME: this function should only be called once, http://crbug.com/139695
 connection1.close()
 
 deleteDatabaseSuccessCallback():
