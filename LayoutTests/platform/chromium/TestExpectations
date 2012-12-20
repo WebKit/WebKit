@@ -3716,6 +3716,7 @@ webkit.org/b/93938 [ Linux Win7 ] fast/forms/range/slider-onchange-event.html [ 
 webkit.org/b/89826 [ Mac Win ] fast/css/word-space-extra.html [ Failure ]
 
 webkit.org/b/94002 [ Win7 Debug ] inspector/debugger [ Pass Timeout ]
+webkit.org/b/94002 [ Win7 Debug ] inspector/debugger/event-listener-breakpoints.html [ Pass Timeout Failure ]
 
 # Flaky
 webkit.org/b/99389 [ Win ] inspector/debugger/xhr-breakpoints.html [ Pass Failure ]
