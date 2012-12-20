@@ -60,9 +60,6 @@ ChildProcess::ChildProcess()
     : m_terminationTimeout(0)
     , m_terminationCounter(0)
     , m_terminationTimer(RunLoop::main(), this, &ChildProcess::terminationTimerFired)
-#if PLATFORM(MAC)
-    , m_applicationIsOccluded(false)
-#endif
 {
     // FIXME: The termination timer should not be scheduled on the main run loop.
     // It won't work with the threaded mode, but it's not really useful anyway as is.

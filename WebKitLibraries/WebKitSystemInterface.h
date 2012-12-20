@@ -530,6 +530,13 @@ typedef void (*WKOcclusionNotificationHandler)(uint32_t, void*, uint32_t, void*,
 
 bool WKRegisterOcclusionNotificationHandler(WKOcclusionNotificationType, WKOcclusionNotificationHandler);
 bool WKUnregisterOcclusionNotificationHandler(WKOcclusionNotificationType, WKOcclusionNotificationHandler);
+
+enum {
+    WKProcessAssertionTypeVisible = (1UL << 10)
+};
+
+typedef NSUInteger WKProcessAssertionTypes;
+id WKNSProcessInfoProcessAssertionWithTypes(WKProcessAssertionTypes);
 #endif
 
 bool WKIsJavaPlugInActive(void);

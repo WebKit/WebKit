@@ -26,61 +26,30 @@
 #import "config.h"
 #import "ChildProcess.h"
 
+#import "WebKitSystemInterface.h"
 #import <mach/task.h>
 
 namespace WebKit {
 
-NSString * const ChildProcess::processSuppressionVisibleApplicationReason = @"Application is Visible";
-
 void ChildProcess::setApplicationIsOccluded(bool applicationIsOccluded)
 {
-    if (m_applicationIsOccluded == applicationIsOccluded)
+    if (this->applicationIsOccluded() == applicationIsOccluded)
         return;
 
 #if __MAC_OS_X_VERSION_MIN_REQUIRED >= 1090
-    m_applicationIsOccluded = applicationIsOccluded;
-    if (m_applicationIsOccluded)
-        enableProcessSuppression(processSuppressionVisibleApplicationReason);
+    if (applicationIsOccluded)
+        m_processVisibleAssertion.clear();
     else
-        disableProcessSuppression(processSuppressionVisibleApplicationReason);
+        m_processVisibleAssertion = WKNSProcessInfoProcessAssertionWithTypes(WKProcessAssertionTypeVisible);
 #endif
 }
-
-void ChildProcess::disableProcessSuppression(NSString *reason)
-{
-#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 1090
-    // The following assumes that a process enabling AutomaticTerminationSupport also
-    // takes a AutomaticTermination assertion for the lifetime of the process.
-    [[NSProcessInfo processInfo] disableAutomaticTermination:reason];
-#endif
-}
-
-void ChildProcess::enableProcessSuppression(NSString *reason)
-{
-#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 1090
-    // The following assumes that a process enabling AutomaticTerminationSupport also
-    // takes a AutomaticTermination assertion for the lifetime of the process.
-    [[NSProcessInfo processInfo] enableAutomaticTermination:reason];
-#endif
-}
-
-#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 1090
-static void initializeTimerCoalescingPolicy()
-{
-    // Set task_latency and task_throughput QOS tiers as appropriate for a visible application.
-    struct task_qos_policy qosinfo = { LATENCY_QOS_TIER_0, THROUGHPUT_QOS_TIER_0 };
-    kern_return_t kr = task_policy_set(mach_task_self(), TASK_BASE_QOS_POLICY, (task_policy_t)&qosinfo, TASK_QOS_POLICY_COUNT);
-    ASSERT_UNUSED(kr, kr == KERN_SUCCESS);
-}
-#endif
 
 void ChildProcess::platformInitialize()
 {
 #if __MAC_OS_X_VERSION_MIN_REQUIRED >= 1090
     setpriority(PRIO_DARWIN_PROCESS, 0, 0);
-    initializeTimerCoalescingPolicy();
 #endif
-    disableProcessSuppression(processSuppressionVisibleApplicationReason);
+    setApplicationIsOccluded(false);
 }
 
 }
