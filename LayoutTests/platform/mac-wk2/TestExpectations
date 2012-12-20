@@ -118,6 +118,7 @@ fast/events/mouse-click-events.html
 fast/events/mouseup-from-button2.html
 fast/events/node-event-anchor-lock.html
 fast/events/ondragenter.html
+fast/events/only-valid-drop-targets-receive-file-drop.html
 fast/events/open-window-from-another-frame.html
 fast/events/popup-when-select-change.html
 fast/events/right-click-focus.html
@@ -130,6 +131,7 @@ fast/events/wheelevent-in-vertical-scrollbar-in-rtl.html
 fast/events/wheelevent-direction-inverted-from-device.html
 fast/forms/drag-into-textarea.html
 fast/forms/drag-out-of-textarea.html
+fast/forms/file/input-file-value.html
 fast/forms/input-readonly-autoscroll.html
 fast/forms/input-text-drag-down.html
 fast/forms/listbox-typeahead-cyrillic.html
