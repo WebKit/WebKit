@@ -1,3 +1,23 @@
+2012-12-19  Mark Pilgrim  <pilgrim@chromium.org>
+
+        [Chromium] add setIDBFactory method for embedders to call
+        https://bugs.webkit.org/show_bug.cgi?id=105465
+
+        Reviewed by Darin Fisher.
+
+        This is step 1 of getting rid of WebKitPlatform::idbFactory. This
+        adds a setter for embedders to call upon initialization, which (if
+        set) will be used instead of calling the idbFactory()
+        method. Eventually the idbFactory() method will go away, and this
+        setter will be the only way to initialize the Indexed Database API.
+
+        * public/WebIDBFactory.h:
+        (WebKit):
+        * src/IDBFactoryBackendProxy.cpp:
+        (WebKit):
+        (WebKit::setIDBFactory):
+        (WebKit::IDBFactoryBackendProxy::IDBFactoryBackendProxy):
+
 2012-12-19  Rachel Blum  <groby@chromium.org>
 
         [Chromium] Check Document now should work with continuous check off

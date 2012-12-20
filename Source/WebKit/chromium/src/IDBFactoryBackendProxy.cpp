@@ -61,14 +61,24 @@ using namespace WebCore;
 
 namespace WebKit {
 
+static WebIDBFactory* s_webIDBFactory = 0;
+
+void setIDBFactory(WebIDBFactory* factory)
+{
+    s_webIDBFactory = factory;
+}
+
 PassRefPtr<IDBFactoryBackendInterface> IDBFactoryBackendProxy::create()
 {
     return adoptRef(new IDBFactoryBackendProxy());
 }
 
 IDBFactoryBackendProxy::IDBFactoryBackendProxy()
-    : m_webIDBFactory(webKitPlatformSupport()->idbFactory())
 {
+    if (s_webIDBFactory)
+        m_webIDBFactory = s_webIDBFactory;
+    else
+        m_webIDBFactory = webKitPlatformSupport()->idbFactory();
 }
 
 IDBFactoryBackendProxy::~IDBFactoryBackendProxy()

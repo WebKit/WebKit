@@ -63,6 +63,9 @@ public:
     virtual void deleteDatabase(const WebString& name, WebIDBCallbacks*, const WebSecurityOrigin&, WebFrame*, const WebString& dataDir) { WEBKIT_ASSERT_NOT_REACHED(); }
 };
 
+// Initializes IndexedDB support.
+WEBKIT_EXPORT void setIDBFactory(WebIDBFactory*);
+
 } // namespace WebKit
 
 #endif // WebIDBFactory_h
