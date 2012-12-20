@@ -124,7 +124,7 @@ void EventSource::connect()
     options.allowCredentials = (origin->canRequest(m_url) || m_withCredentials) ? AllowStoredCredentials : DoNotAllowStoredCredentials;
     options.preflightPolicy = PreventPreflight;
     options.crossOriginRequestPolicy = UseAccessControl;
-    options.shouldBufferData = DoNotBufferData;
+    options.dataBufferingPolicy = DoNotBufferData;
     options.securityOrigin = origin;
 
     m_loader = ThreadableLoader::create(scriptExecutionContext(), this, request, options);

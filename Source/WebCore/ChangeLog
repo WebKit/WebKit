@@ -1,3 +1,46 @@
+2012-12-20  Nate Chapin  <japhet@chromium.org>
+
+        Rename shouldBufferData to dataBufferingPolicy
+        https://bugs.webkit.org/show_bug.cgi?id=105450
+
+        Reviewed by Alexey Proskuryakov.
+
+        No new tests, simple rename.
+
+        * html/MediaDocument.cpp:
+        (WebCore::MediaDocumentParser::createDocumentStructure):
+        * html/PluginDocument.cpp:
+        (WebCore::PluginDocumentParser::appendBytes):
+        * inspector/InspectorResourceAgent.cpp:
+        (WebCore::InspectorResourceAgent::didReceiveData):
+        * loader/DocumentThreadableLoader.cpp:
+        (WebCore::DocumentThreadableLoader::loadRequest):
+        * loader/MainResourceLoader.cpp:
+        (WebCore::MainResourceLoader::setDataBufferingPolicy):
+        * loader/MainResourceLoader.h:
+        (MainResourceLoader):
+        * loader/ResourceLoader.cpp:
+        (WebCore::ResourceLoader::setDataBufferingPolicy):
+        (WebCore::ResourceLoader::addData):
+        (WebCore::ResourceLoader::willStopBufferingData):
+        * loader/ResourceLoader.h:
+        (ResourceLoader):
+        * loader/ResourceLoaderOptions.h:
+        (WebCore::ResourceLoaderOptions::ResourceLoaderOptions):
+        (ResourceLoaderOptions):
+        * loader/cache/CachedRawResource.cpp:
+        (WebCore::CachedRawResource::data):
+        (WebCore::CachedRawResource::setDataBufferingPolicy):
+        (WebCore::CachedRawResource::canReuse):
+        * loader/cache/CachedRawResource.h:
+        (CachedRawResource):
+        * loader/cache/CachedResource.h:
+        (WebCore::CachedResource::dataBufferingPolicy):
+        * loader/mac/ResourceLoaderMac.mm:
+        (WebCore::ResourceLoader::didReceiveDataArray):
+        * page/EventSource.cpp:
+        (WebCore::EventSource::connect):
+
 2012-12-19  Dean Jackson  <dino@apple.com>
 
         Track menu in wrong location when fullscreen

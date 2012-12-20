@@ -679,10 +679,10 @@ bool MainResourceLoader::defersLoading() const
     return loader() ? loader()->defersLoading() : false;
 }
 
-void MainResourceLoader::setShouldBufferData(DataBufferingPolicy shouldBufferData)
+void MainResourceLoader::setDataBufferingPolicy(DataBufferingPolicy dataBufferingPolicy)
 {
     ASSERT(m_resource);
-    m_resource->setShouldBufferData(shouldBufferData);
+    m_resource->setDataBufferingPolicy(dataBufferingPolicy);
 }
 
 ResourceLoader* MainResourceLoader::loader() const

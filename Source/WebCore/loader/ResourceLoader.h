@@ -146,7 +146,7 @@ public:
 
     const ResourceRequest& request() const { return m_request; }
 
-    void setShouldBufferData(DataBufferingPolicy);
+    void setDataBufferingPolicy(DataBufferingPolicy);
 
     virtual void reportMemoryUsage(MemoryObjectInfo*) const;
 

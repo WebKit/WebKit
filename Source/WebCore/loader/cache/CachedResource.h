@@ -215,7 +215,7 @@ public:
     bool loadFailedOrCanceled() { return !m_error.isNull(); }
 
     bool shouldSendResourceLoadCallbacks() const { return m_options.sendLoadCallbacks == SendCallbacks; }
-    bool shouldBufferData() const { return m_options.shouldBufferData == BufferData; }
+    DataBufferingPolicy dataBufferingPolicy() const { return m_options.dataBufferingPolicy; }
     
     virtual void destroyDecodedData() { }
 

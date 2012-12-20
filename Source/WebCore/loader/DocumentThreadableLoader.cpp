@@ -371,7 +371,7 @@ void DocumentThreadableLoader::loadRequest(const ResourceRequest& request, Secur
             options.sendLoadCallbacks = DoNotSendCallbacks;
             options.sniffContent = DoNotSniffContent;
             // Keep buffering the data for the preflight request.
-            options.shouldBufferData = BufferData;
+            options.dataBufferingPolicy = BufferData;
         }
 
         CachedResourceRequest newRequest(request, options);

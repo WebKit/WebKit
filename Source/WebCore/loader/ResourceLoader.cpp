@@ -189,19 +189,19 @@ FrameLoader* ResourceLoader::frameLoader() const
     return m_frame->loader();
 }
 
-void ResourceLoader::setShouldBufferData(DataBufferingPolicy shouldBufferData)
+void ResourceLoader::setDataBufferingPolicy(DataBufferingPolicy dataBufferingPolicy)
 { 
-    m_options.shouldBufferData = shouldBufferData; 
+    m_options.dataBufferingPolicy = dataBufferingPolicy; 
 
     // Reset any already buffered data
-    if (shouldBufferData == DoNotBufferData)
+    if (dataBufferingPolicy == DoNotBufferData)
         m_resourceData = 0;
 }
     
 
 void ResourceLoader::addData(const char* data, int length, bool allAtOnce)
 {
-    if (m_options.shouldBufferData == DoNotBufferData)
+    if (m_options.dataBufferingPolicy == DoNotBufferData)
         return;
 
     if (allAtOnce) {
@@ -299,7 +299,7 @@ void ResourceLoader::didReceiveData(const char* data, int length, long long enco
 
 void ResourceLoader::willStopBufferingData(const char* data, int length)
 {
-    if (m_options.shouldBufferData == DoNotBufferData)
+    if (m_options.dataBufferingPolicy == DoNotBufferData)
         return;
 
     ASSERT(!m_resourceData);

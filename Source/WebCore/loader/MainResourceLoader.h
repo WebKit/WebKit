@@ -64,7 +64,7 @@ public:
     PassRefPtr<ResourceBuffer> resourceData();
 
     void setDefersLoading(bool);
-    void setShouldBufferData(DataBufferingPolicy);
+    void setDataBufferingPolicy(DataBufferingPolicy);
 
 #if HAVE(RUNLOOP_TIMER)
     typedef RunLoopTimer<MainResourceLoader> MainResourceLoaderTimer;

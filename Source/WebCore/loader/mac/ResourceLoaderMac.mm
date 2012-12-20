@@ -82,7 +82,7 @@ void ResourceLoader::didReceiveDataArray(CFArrayRef dataArray)
         CFDataRef data = static_cast<CFDataRef>(CFArrayGetValueAtIndex(dataArray, i));
         int dataLen = static_cast<int>(CFDataGetLength(data));
 
-        if (m_options.shouldBufferData == BufferData) {
+        if (m_options.dataBufferingPolicy == BufferData) {
             if (!m_resourceData)
                 m_resourceData = ResourceBuffer::create();
             m_resourceData->append(data);
