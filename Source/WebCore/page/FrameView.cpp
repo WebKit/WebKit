@@ -3748,6 +3748,20 @@ void FrameView::removeChild(Widget* widget)
 
 bool FrameView::wheelEvent(const PlatformWheelEvent& wheelEvent)
 {
+    if (!isScrollable())
+        return false;
+
+    if (delegatesScrolling()) {
+        IntSize offset = scrollOffset();
+        IntSize newOffset = IntSize(offset.width() - wheelEvent.deltaX(), offset.height() - wheelEvent.deltaY());
+        if (offset != newOffset) {
+            ScrollView::scrollTo(newOffset);
+            scrollPositionChanged();
+            frame()->loader()->client()->didChangeScrollOffset();
+        }
+        return true;
+    }
+
     // We don't allow mouse wheeling to happen in a ScrollView that has had its scrollbars explicitly disabled.
     if (!canHaveScrollbars())
         return false;

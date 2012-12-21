@@ -1226,6 +1226,7 @@ void WebFrameLoaderClient::transitionToCommittedForNewPage()
 
     Color backgroundColor = webPage->drawsTransparentBackground() ? Color::transparent : Color::white;
     bool isMainFrame = webPage->mainWebFrame() == m_frame;
+    bool isTransparent = !webPage->drawsBackground();
     bool shouldUseFixedLayout = isMainFrame && webPage->useFixedLayout();
     IntRect currentFixedVisibleContentRect = m_frame->coreFrame()->view() ? m_frame->coreFrame()->view()->fixedVisibleContentRect() : IntRect();
 
@@ -1233,12 +1234,16 @@ void WebFrameLoaderClient::transitionToCommittedForNewPage()
     m_frameHasCustomRepresentation = isMainFrame && webPage->shouldUseCustomRepresentationForResponse(response);
     m_frameCameFromPageCache = false;
 
-    m_frame->coreFrame()->createView(webPage->size(), backgroundColor, /* transparent */ false, IntSize(), currentFixedVisibleContentRect, shouldUseFixedLayout);
-    m_frame->coreFrame()->view()->setTransparent(!webPage->drawsBackground());
-
 #if USE(TILED_BACKING_STORE)
+    m_frame->coreFrame()->createView(webPage->size(), backgroundColor, isTransparent,
+        IntSize(), currentFixedVisibleContentRect, shouldUseFixedLayout,
+        ScrollbarAlwaysOff, /* lock */ true, ScrollbarAlwaysOff, /* lock */ true);
+
     m_frame->coreFrame()->view()->setDelegatesScrolling(shouldUseFixedLayout);
     m_frame->coreFrame()->view()->setPaintsEntireContents(shouldUseFixedLayout);
+#else
+    m_frame->coreFrame()->createView(webPage->size(), backgroundColor, isTransparent,
+        IntSize(), currentFixedVisibleContentRect, shouldUseFixedLayout);
 #endif
 }
 
