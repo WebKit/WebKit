@@ -55,8 +55,7 @@ public:
     static const int64_t InvalidId = 0;
     int64_t id() const { return m_metadata.id; }
 
-    void openConnection(PassRefPtr<IDBCallbacks>, PassRefPtr<IDBDatabaseCallbacks>, int64_t transactionId);
-    void openConnectionWithVersion(PassRefPtr<IDBCallbacks>, PassRefPtr<IDBDatabaseCallbacks>, int64_t transactionId, int64_t version);
+    void openConnection(PassRefPtr<IDBCallbacks>, PassRefPtr<IDBDatabaseCallbacks>, int64_t transactionId, int64_t version);
     void deleteDatabase(PassRefPtr<IDBCallbacks>);
 
     // IDBDatabaseBackendInterface
@@ -126,10 +125,7 @@ private:
 
     class PendingOpenCall;
     Deque<OwnPtr<PendingOpenCall> > m_pendingOpenCalls;
-
-    class PendingOpenWithVersionCall;
-    Deque<OwnPtr<PendingOpenWithVersionCall> > m_pendingOpenWithVersionCalls;
-    OwnPtr<PendingOpenWithVersionCall> m_pendingSecondHalfOpenWithVersion;
+    OwnPtr<PendingOpenCall> m_pendingSecondHalfOpen;
 
     class PendingDeleteCall;
     Deque<OwnPtr<PendingDeleteCall> > m_pendingDeleteCalls;

@@ -1,3 +1,12 @@
+2012-12-21  Joshua Bell  <jsbell@chromium.org>
+
+        IndexedDB: Combine openConnection and openConnectionWithVersion
+        https://bugs.webkit.org/show_bug.cgi?id=105658
+
+        Reviewed by Tony Chang.
+
+        * tests/IDBDatabaseBackendTest.cpp:
+
 2012-12-20  Noel Gordon  <noel.gordon@gmail.com>
 
         [chromium] Disable color profile support for WebImageSkia users 

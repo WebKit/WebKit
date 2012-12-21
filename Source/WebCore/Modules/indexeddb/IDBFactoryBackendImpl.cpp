@@ -165,10 +165,7 @@ void IDBFactoryBackendImpl::open(const String& name, int64_t version, int64_t tr
     } else
         databaseBackend = it->value;
 
-    if (version == IDBDatabaseMetadata::NoIntVersion)
-        databaseBackend->openConnection(callbacks, databaseCallbacks, transactionId);
-    else
-        databaseBackend->openConnectionWithVersion(callbacks, databaseCallbacks, transactionId, version);
+    databaseBackend->openConnection(callbacks, databaseCallbacks, transactionId, version);
 }
 
 } // namespace WebCore
