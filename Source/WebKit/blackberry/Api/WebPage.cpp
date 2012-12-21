@@ -5839,6 +5839,40 @@ void WebPagePrivate::exitFullScreenForElement(Element* element)
     }
 #endif
 }
+
+// FIXME: Move this method to WebCore.
+void WebPagePrivate::adjustFullScreenElementDimensionsIfNeeded()
+{
+    // If we are in fullscreen video mode, and we change the FrameView::viewportRect,
+    // we need to adjust the media container to the new size.
+    if (!m_fullscreenVideoNode || !m_fullscreenVideoNode->renderer()
+        || !m_fullscreenVideoNode->document() || !m_fullscreenVideoNode->document()->fullScreenRenderer())
+        return;
+
+    ASSERT(m_fullscreenVideoNode->isElementNode());
+    ASSERT(static_cast<Element*>(m_fullscreenVideoNode.get())->isMediaElement());
+
+    Document* document = m_fullscreenVideoNode->document();
+    RenderStyle* fullScreenStyle = document->fullScreenRenderer()->style();
+    ASSERT(fullScreenStyle);
+
+    // In order to compensate possible round errors when we scale the fullscreen
+    // container element to fit to the viewport, lets make the fullscreen 1px wider
+    // than the viewport size on the right, and one pixel longer at the bottom
+    // of the scroll position.
+    IntRect viewportRect = m_mainFrame->view()->visibleContentRect();
+    int viewportWidth = viewportRect.width() + 1;
+    int viewportHeight = viewportRect.height() + 1;
+
+    fullScreenStyle->setWidth(Length(viewportWidth, WebCore::Fixed));
+    fullScreenStyle->setHeight(Length(viewportHeight, WebCore::Fixed));
+    fullScreenStyle->setLeft(Length(0, WebCore::Fixed));
+    fullScreenStyle->setTop(Length(0, WebCore::Fixed));
+    fullScreenStyle->setBackgroundColor(Color::black);
+
+    document->fullScreenRenderer()->setNeedsLayoutAndPrefWidthsRecalc();
+    document->recalcStyle(Node::Force);
+}
 #endif
 
 void WebPagePrivate::didChangeSettings(WebSettings* webSettings)

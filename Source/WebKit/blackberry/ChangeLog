@@ -1,3 +1,21 @@
+2012-12-21  Max Feil  <mfeil@rim.com>
+
+        [BlackBerry] Fullscreen video fixed position container horizontal position is wrong
+        https://bugs.webkit.org/show_bug.cgi?id=105488
+
+        Reviewed by George Staikos.
+
+        The fix for https://bugs.webkit.org/show_bug.cgi?id=105333 has
+        broken fullscreen video, which was compensating by doing its
+        own positioning in x. My patch fixes things by making vertical
+        and horizontal handling symmetrical.
+        NOTE: This function was not upstreamed before, so you can't
+        actually see my diff. See the bug.
+
+        * Api/WebPage.cpp:
+        (WebKit):
+        (BlackBerry::WebKit::WebPagePrivate::adjustFullScreenElementDimensionsIfNeeded):
+
 2012-12-18  Nima Ghanavatian  <nghanavatian@rim.com>
 
         [BlackBerry] Calculate correct word offsets for form elements.
