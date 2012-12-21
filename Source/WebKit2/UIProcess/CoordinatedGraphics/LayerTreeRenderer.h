@@ -49,7 +49,6 @@ namespace WebKit {
 class CoordinatedBackingStore;
 class CoordinatedLayerTreeHostProxy;
 class CoordinatedLayerInfo;
-class CoordinatedLayerUpdateInfo;
 
 class LayerTreeRenderer : public ThreadSafeRefCounted<LayerTreeRenderer>, public WebCore::GraphicsLayerClient {
 public:

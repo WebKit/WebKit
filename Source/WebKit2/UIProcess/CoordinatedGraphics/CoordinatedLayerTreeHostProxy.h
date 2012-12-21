@@ -44,7 +44,6 @@ namespace WebKit {
 
 class CoordinatedLayerInfo;
 class LayerTreeRenderer;
-class CoordinatedLayerUpdateInfo;
 
 class CoordinatedLayerTreeHostProxy {
     WTF_MAKE_NONCOPYABLE(CoordinatedLayerTreeHostProxy);
