@@ -1,3 +1,10 @@
+2012-12-20  Ryosuke Niwa  <rniwa@webkit.org>
+
+        More fix after r138348.
+
+        * platform/network/cf/SocketStreamHandleCFNet.cpp:
+        (WebCore::SocketStreamHandle::createStreams):
+
 2012-12-20  Alexey Proskuryakov  <ap@apple.com>
 
         Disable Nagle algorithm on WebSocket implementation for CF.
