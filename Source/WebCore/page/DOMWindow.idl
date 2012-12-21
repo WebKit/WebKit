@@ -529,6 +529,7 @@
     attribute DOMStringMapConstructor DOMStringMap;
 
     attribute ArrayBufferConstructor ArrayBuffer; // Usable with new operator
+    attribute ArrayBufferViewConstructor ArrayBufferView;
     attribute Int8ArrayConstructor Int8Array; // Usable with new operator
     attribute Uint8ArrayConstructor Uint8Array; // Usable with new operator
     attribute Uint8ClampedArrayConstructor Uint8ClampedArray; // Usable with new operator

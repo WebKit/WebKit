@@ -2,6 +2,21 @@ Verifies the functionality of the new array-like objects in the TypedArray spec
 
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 
+PASS testSlice
+test inheritance hierarchy of typed array views
+PASS ArrayBufferView does not have [NoInterfaceObject] extended attribute and should be defined
+PASS new Int8Array(1) instanceof ArrayBufferView is true
+PASS new Uint8Array(1) instanceof ArrayBufferView is true
+PASS new Uint8ClampedArray(1) instanceof ArrayBufferView is true
+PASS new Int16Array(1) instanceof ArrayBufferView is true
+PASS new Uint16Array(1) instanceof ArrayBufferView is true
+PASS new Int32Array(1) instanceof ArrayBufferView is true
+PASS new Uint32Array(1) instanceof ArrayBufferView is true
+PASS new Float32Array(1) instanceof ArrayBufferView is true
+PASS new Float64Array(1) instanceof ArrayBufferView is true
+PASS new DataView(new ArrayBuffer(8)) instanceof ArrayBufferView is true
+PASS new ArrayBufferView() threw TypeError
+PASS new Uint8ClampedArray(1) instanceof Uint8Array is true
 PASS test Float32Array SetAndGetPos10ToNeg10
 PASS test Float32Array ConstructWithArrayOfSignedValues
 PASS test Float32Array ConstructWithTypedArrayOfSignedValues

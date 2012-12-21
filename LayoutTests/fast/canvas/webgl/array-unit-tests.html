@@ -70,6 +70,7 @@ function testSlice() {
   }
 
   try {
+    running('testSlice');
     var buffer = new ArrayBuffer(32);
     var array = new Int8Array(buffer);
     for (var i = 0; i < 32; ++i)
@@ -102,6 +103,7 @@ function testSlice() {
     test("buffer.slice(-20, -8)", 12, 12);
     test("buffer.slice(-40, 16)", 0, 16);
     test("buffer.slice(-40, 40)", 0, 32);
+    pass();
   } catch (e) {
     fail(e);
   }
@@ -218,11 +220,11 @@ function testIntegralArrayTruncationBehavior(type, name, unsigned) {
   var expectedResults;
 
   if (unsigned) {
-    sourceData = [0.6, 10.6];
+    sourceData = [0.6, 10.6, 0.2, 10.2, 10.5, 11.5];
     if (type === Uint8ClampedArray) {
-      expectedResults = [1, 11];
+      expectedResults = [1, 11, 0, 10, 10, 12];
     } else {
-      expectedResults = [0, 10];
+      expectedResults = [0, 10, 0, 10, 10, 11];
     }
   } else {
     sourceData = [0.6, 10.6, -0.6, -10.6];
@@ -549,6 +551,22 @@ function shouldThrowIndexSizeErr(func, text) {
         testFailed(errorText);
     } catch (e) {
         testPassed(text + " threw an exception");
+    }
+}
+
+function shouldThrowTypeError(func, text) {
+    var ok = false;
+    try {
+        func();
+    } catch (e) {
+        if (e instanceof TypeError) {
+            ok = true;
+        }
+    }
+    if (ok) {
+        testPassed(text + " threw TypeError");
+    } else {
+        testFailed(text + " should throw TypeError");
     }
 }
 
@@ -901,6 +919,34 @@ function testNaNConversion(type, name) {
   }
 }
 
+function testInheritanceHierarchy() {
+  debug('test inheritance hierarchy of typed array views');
+
+  try {
+    var foo = ArrayBufferView;
+    testPassed('ArrayBufferView does not have [NoInterfaceObject] extended attribute and should be defined');
+
+    shouldBe('new Int8Array(1) instanceof ArrayBufferView', 'true');
+    shouldBe('new Uint8Array(1) instanceof ArrayBufferView', 'true');
+    shouldBe('new Uint8ClampedArray(1) instanceof ArrayBufferView', 'true');
+    shouldBe('new Int16Array(1) instanceof ArrayBufferView', 'true');
+    shouldBe('new Uint16Array(1) instanceof ArrayBufferView', 'true');
+    shouldBe('new Int32Array(1) instanceof ArrayBufferView', 'true');
+    shouldBe('new Uint32Array(1) instanceof ArrayBufferView', 'true');
+    shouldBe('new Float32Array(1) instanceof ArrayBufferView', 'true');
+    shouldBe('new Float64Array(1) instanceof ArrayBufferView', 'true');
+    shouldBe('new DataView(new ArrayBuffer(8)) instanceof ArrayBufferView', 'true');
+
+    shouldThrowTypeError(function() { new ArrayBufferView() }, "new ArrayBufferView()");
+  } catch (e) {
+    testFailed('ArrayBufferView does not have [NoInterfaceObject] extended attribute but was not defined');
+  }
+
+  // There is currently only one kind of view that inherits from another
+  shouldBe('new Uint8ClampedArray(1) instanceof Uint8Array', 'true');
+}
+
+
 //
 // Test driver
 //
@@ -909,6 +955,7 @@ function runTests() {
   allPassed = true;
 
   testSlice();
+  testInheritanceHierarchy();
 
   // The "name" attribute is a concession to browsers which don't
   // implement the "name" property on function objects
