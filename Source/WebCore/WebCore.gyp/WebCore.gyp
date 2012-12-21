@@ -246,10 +246,6 @@
       ['use_x11==1 or OS=="android"', {
         'webcore_include_dirs': [
           '../platform/graphics/harfbuzz',
-        ],
-      }],
-      ['use_x11==1', {
-        'webcore_include_dirs': [
           '../platform/graphics/harfbuzz/ng',
         ],
       }],
@@ -1702,7 +1698,7 @@
             ['exclude', 'platform/chromium/ScrollbarThemeChromiumDefault.h'],
           ],
         }],
-        ['use_x11 == 1', {
+        ['use_x11==1 or OS=="android"', {
           'sources/': [
             # Cherry-pick files excluded by the broader regular expressions above.
             ['include', 'platform/graphics/harfbuzz/FontHarfBuzz\\.cpp$'],
@@ -1715,10 +1711,17 @@
             ['include', 'platform/graphics/opentype/OpenTypeVerticalData\\.(cpp|h)$'],
             ['include', 'platform/graphics/skia/SimpleFontDataSkia\\.cpp$'],
           ],
-        }, { # use_x11==0
+          'dependencies': [
+            '<(chromium_src_dir)/third_party/harfbuzz-ng/harfbuzz.gyp:harfbuzz-ng',
+          ],
+        }, { # use_x11==0 and OS!="android"
+          'sources/': [
+            ['exclude', 'Harfbuzz[^/]+\\.(cpp|h)$'],
+          ],
+        }],
+        ['use_x11!=1', {
           'sources/': [
             ['exclude', 'Linux\\.cpp$'],
-            ['exclude', 'Harfbuzz[^/]+\\.(cpp|h)$'],
           ],
         }],
         ['toolkit_uses_gtk == 1', {
@@ -1729,16 +1732,6 @@
         }, { # toolkit_uses_gtk==0
           'sources/': [
             ['exclude', 'Gtk\\.cpp$'],
-          ],
-        }],
-        ['use_x11==1', {
-          'dependencies': [
-            '<(chromium_src_dir)/third_party/harfbuzz-ng/harfbuzz.gyp:harfbuzz-ng',
-          ],
-        }],
-        ['OS=="android"', {
-          'dependencies': [
-            '<(chromium_src_dir)/third_party/harfbuzz/harfbuzz.gyp:harfbuzz',
           ],
         }],
         ['OS=="mac"', {
@@ -1911,15 +1904,7 @@
             ['include', 'platform/graphics/chromium/GlyphPageTreeNodeLinux\\.cpp$'],
             ['exclude', 'platform/graphics/chromium/IconChromium\\.cpp$'],
             ['include', 'platform/graphics/chromium/VDMXParser\\.cpp$'],
-            ['include', 'platform/graphics/harfbuzz/ComplexTextControllerHarfBuzz\\.cpp$'],
-            ['include', 'platform/graphics/harfbuzz/FontHarfBuzz\\.cpp$'],
-            ['include', 'platform/graphics/harfbuzz/FontPlatformDataHarfBuzz\\.cpp$'],
-            ['include', 'platform/graphics/harfbuzz/HarfBuzzSkia\\.cpp$'],
-            ['include', 'platform/graphics/harfbuzz/HarfBuzzShaperBase\\.cpp$'],
-            ['include', 'platform/graphics/opentype/OpenTypeTypes\\.h$'],
-            ['include', 'platform/graphics/opentype/OpenTypeVerticalData\\.(cpp|h)$'],
             ['exclude', 'platform/graphics/skia/FontCacheSkia\\.cpp$'],
-            ['include', 'platform/graphics/skia/SimpleFontDataSkia\\.cpp$'],
           ],
         }, { # OS!="android"
           'sources/': [

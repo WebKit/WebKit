@@ -235,7 +235,7 @@
           'WTF_USE_SKIA_ON_MAC_CHROMIUM=1',
         ],
       }],
-      ['use_x11==1', {
+      ['use_x11==1 or OS=="android"', {
         'feature_defines': [
           'WTF_USE_HARFBUZZ_NG=1',
         ],
