@@ -1380,7 +1380,7 @@ void HTMLMediaElement::endIgnoringTrackDisplayUpdateRequests()
 {
     ASSERT(m_ignoreTrackDisplayUpdate);
     --m_ignoreTrackDisplayUpdate;
-    if (!m_ignoreTrackDisplayUpdate)
+    if (!m_ignoreTrackDisplayUpdate && m_inActiveDocument)
         updateActiveTextTrackCues(currentTime());
 }
 
