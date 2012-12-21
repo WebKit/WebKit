@@ -1,3 +1,42 @@
+2012-12-20  Stephen Chenney  <schenney@chromium.org>
+
+        SVG: <altglpyh> for a surrogate pair character in a ligature fails
+        https://bugs.webkit.org/show_bug.cgi?id=102969
+
+        Reviewed by Dirk Schulze.
+
+        There are two issues with SVG <altglyph> tags applied to surrogate
+        fonts, particularly when mixed with non-standard forms (arabic,
+        vertical, etc.).
+
+        First, there is an assertion that is invalid when an alt glyph is
+        substituted for the surrogate, because the text chunk that is consumed
+        by an alt glyph is the entire run, whereas we assert that a
+        surrogate's chunk is length 2 regardless. That assertion has been
+        removed.
+
+        Second, when an arabic character or some other characters requiring a
+        special form appears before the surrogate pair character inside the alt
+        glyph tag, we reject the alt glyph because it is not compatible with the form.
+        However, when we process the next character - the surrogate pair - we
+        do accept the alt glyph. This breaks all the indexes because we have
+        already consumed part of the run that is now considered the alt glyph.
+        Chaos ensues. This patch forces us to always accept alt glyph
+        characters (assuming we have some glyph to draw). This better matches
+        the intent of the spec - if someone specifies an alt glyph they are
+        explicitly stating which glyph they want used. We should not argue
+        with the content author.
+
+        Tests: svg/text/alt-glyph-for-surrogate-pair-expected.svg
+               svg/text/alt-glyph-for-surrogate-pair.svg
+
+        * rendering/svg/SVGTextLayoutEngine.cpp:
+        (WebCore::SVGTextLayoutEngine::layoutTextOnLineOrPath): Fix some poor code.
+        * rendering/svg/SVGTextMetricsBuilder.cpp:
+        (WebCore::SVGTextMetricsBuilder::advanceSimpleText): Remove an assert that is not always valid.
+        * svg/SVGFontData.cpp:
+        (WebCore::SVGFontData::applySVGGlyphSelection): Always return an altGlyph when found. Do not check it compatibility.
+
 2012-12-20  Adam Klein  <adamk@chromium.org>
 
         Properly process <template> end tags when in TemplateContentsMode
