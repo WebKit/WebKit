@@ -172,6 +172,7 @@ protected:
     virtual bool handlesPageScaleFactor() OVERRIDE;
 
     virtual bool shouldAllowScripting() OVERRIDE { return false; }
+    virtual bool shouldAllowNavigationFromDrags() { return true; }
 
     WebCore::IntSize m_scrollOffset;
 

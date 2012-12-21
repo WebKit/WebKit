@@ -208,6 +208,7 @@ private:
     virtual bool isEditingCommandEnabled(const String&) OVERRIDE;
 
     virtual bool shouldAllowScripting() OVERRIDE;
+    virtual bool shouldAllowNavigationFromDrags() OVERRIDE;
     
     virtual bool handlesPageScaleFactor() OVERRIDE;
 

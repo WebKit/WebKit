@@ -926,6 +926,11 @@ bool NetscapePlugin::shouldAllowScripting()
     return true;
 }
 
+bool NetscapePlugin::shouldAllowNavigationFromDrags()
+{
+    return false;
+}
+
 bool NetscapePlugin::handlesPageScaleFactor()
 {
     return false;

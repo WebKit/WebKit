@@ -105,6 +105,7 @@ private:
     virtual bool handleEditingCommand(const String& commandName, const String& argument) OVERRIDE;
     virtual bool isEditingCommandEnabled(const String& commandName) OVERRIDE;
     virtual bool shouldAllowScripting() OVERRIDE { return true; }
+    virtual bool shouldAllowNavigationFromDrags() OVERRIDE { return false; }
     
     virtual bool handlesPageScaleFactor();
     

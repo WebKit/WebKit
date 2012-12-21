@@ -197,6 +197,9 @@ public:
 
     // Ask the plug-in whether it should be allowed to execute JavaScript or navigate to JavaScript URLs.
     virtual bool shouldAllowScripting() = 0;
+
+    // Ask the plug-in whether it wants URLs and files dragged onto it to cause navigation.
+    virtual bool shouldAllowNavigationFromDrags() = 0;
     
     // Ask the plug-in whether it wants to override full-page zoom.
     virtual bool handlesPageScaleFactor() = 0;

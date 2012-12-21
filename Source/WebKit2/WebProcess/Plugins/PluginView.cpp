@@ -856,6 +856,14 @@ bool PluginView::shouldAllowScripting()
     return m_plugin->shouldAllowScripting();
 }
 
+bool PluginView::shouldAllowNavigationFromDrags() const
+{
+    if (!m_isInitialized || !m_plugin)
+        return false;
+
+    return m_plugin->shouldAllowNavigationFromDrags();
+}
+
 void PluginView::notifyWidget(WidgetNotification notification)
 {
     switch (notification) {

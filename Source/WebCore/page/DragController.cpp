@@ -58,6 +58,8 @@
 #include "Node.h"
 #include "Page.h"
 #include "PlatformKeyboardEvent.h"
+#include "PluginDocument.h"
+#include "PluginViewBase.h"
 #include "RenderFileUploadControl.h"
 #include "RenderImage.h"
 #include "RenderView.h"
@@ -405,7 +407,18 @@ DragOperation DragController::operationForLoad(DragData* dragData)
 {
     ASSERT(dragData);
     Document* doc = m_page->mainFrame()->documentAtPoint(dragData->clientPosition());
-    if (doc && (m_didInitiateDrag || doc->isPluginDocument() || doc->rendererIsEditable()))
+
+    bool pluginDocumentAcceptsDrags = false;
+
+    if (doc && doc->isPluginDocument()) {
+        const Widget* widget = static_cast<PluginDocument*>(doc)->pluginWidget();
+        const PluginViewBase* pluginView = (widget && widget->isPluginViewBase()) ? static_cast<const PluginViewBase*>(widget) : 0;
+
+        if (pluginView)
+            pluginDocumentAcceptsDrags = pluginView->shouldAllowNavigationFromDrags();
+    }
+
+    if (doc && (m_didInitiateDrag || (doc->isPluginDocument() && !pluginDocumentAcceptsDrags) || doc->rendererIsEditable()))
         return DragOperationNone;
     return dragOperation(dragData);
 }
