@@ -14,4 +14,4 @@ layer at (12,33) size 89x16 scrollWidth 295
   RenderBlock {DIV} at (2,3) size 89x16
     RenderText {#text} at (0,0) size 294x16
       text run at (0,0) width 294: "012345678901012345678901234567890123456789"
-caret: position 12 of child 0 {#text} of child 0 {DIV} of {#document-fragment} of child 3 {INPUT} of body
+caret: position 12 of child 0 {#text} of child 0 {DIV} of {#shadow-root} of child 3 {INPUT} of body

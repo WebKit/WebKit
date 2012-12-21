@@ -6,7 +6,7 @@ Running: testDumpInitial
 ========= Original ========
 - <div id="container">
     - <input type="text" id="input1">
-        - #document-fragment
+        - #shadow-root
           <div></div>
       </input>
   </div>
@@ -15,7 +15,7 @@ Running: testAppend
 ======== Type text =========
 - <div id="container">
     - <input type="text" id="input1">
-        - #document-fragment
+        - #shadow-root
         + <div>Bar</div>
       </input>
   </div>

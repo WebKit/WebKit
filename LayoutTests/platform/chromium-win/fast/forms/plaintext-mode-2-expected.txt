@@ -38,4 +38,4 @@ layer at (10,13) size 596x16
   RenderBlock {DIV} at (2,3) size 596x16
     RenderText {#text} at (0,0) size 511x16
       text run at (0,0) width 511: "This styled text, and link will be pasted into the textfield. All richness should be stripped."
-caret: position 94 of child 0 {#text} of child 0 {DIV} of {#document-fragment} of child 0 {INPUT} of body
+caret: position 94 of child 0 {#text} of child 0 {DIV} of {#shadow-root} of child 0 {INPUT} of body

@@ -29,4 +29,4 @@ layer at (116,105) size 59x19
   RenderBlock {DIV} at (2,3) size 59x19
     RenderText {#text} at (0,0) size 52x18
       text run at (0,0) width 52: "WebKit"
-caret: position 5 of child 0 {#text} of child 0 {DIV} of {#document-fragment} of child 1 {INPUT} of child 5 {DIV} of body
+caret: position 5 of child 0 {#text} of child 0 {DIV} of {#shadow-root} of child 1 {INPUT} of child 5 {DIV} of body

@@ -52,7 +52,8 @@ function isShadowHost(node)
 
 function isShadowRoot(node)
 {
-    return (node instanceof WebKitShadowRoot);
+    // FIXME: window.internals should have internals.isShadowRoot(node).
+    return node.nodeName == "#shadow-root";
 }
 
 function isIframeElement(element)

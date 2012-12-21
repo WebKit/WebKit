@@ -37,4 +37,4 @@ layer at (10,30) size 179x100 clip at (11,31) size 162x98 scrollHeight 146
         text run at (8,112) width 0: " "
       RenderText {#text} at (0,128) size 0x16
         text run at (0,128) width 0: " "
-caret: position 0 of child 9 {#text} of child 0 {DIV} of {#document-fragment} of child 3 {TEXTAREA} of body
+caret: position 0 of child 9 {#text} of child 0 {DIV} of {#shadow-root} of child 3 {TEXTAREA} of body

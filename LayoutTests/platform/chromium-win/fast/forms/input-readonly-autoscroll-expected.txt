@@ -25,5 +25,5 @@ layer at (12,85) size 149x16 scrollX 15 scrollWidth 164
   RenderBlock {DIV} at (2,3) size 149x16
     RenderText {#text} at (0,0) size 164x16
       text run at (0,0) width 164: "abcdefghijklmnopqrstuvwxyz"
-selection start: position 1 of child 0 {#text} of child 0 {DIV} of {#document-fragment} of child 5 {INPUT} of body
-selection end:   position 26 of child 0 {#text} of child 0 {DIV} of {#document-fragment} of child 5 {INPUT} of body
+selection start: position 1 of child 0 {#text} of child 0 {DIV} of {#shadow-root} of child 5 {INPUT} of body
+selection end:   position 26 of child 0 {#text} of child 0 {DIV} of {#shadow-root} of child 5 {INPUT} of body

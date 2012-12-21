@@ -218,7 +218,7 @@ Markup._get = function(node, depth)
 
         break;
     case Node.DOCUMENT_FRAGMENT_NODE:
-        if (node instanceof WebKitShadowRoot)
+        if (node.nodeName == "#shadow-root")
           str += "<shadow:root>";
         else
           str += "#document-fragment";
