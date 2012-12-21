@@ -634,7 +634,7 @@ webkit.org/b/105437 svg/filters/feImage-filterUnits-objectBoundingBox-primitiveU
 webkit.org/b/105437 svg/filters/feImage-filterUnits-userSpaceOnUse-primitiveUnits-objectBoundingBox.svg [ ImageOnlyFailure Pass ]
 webkit.org/b/105437 svg/filters/feImage-filterUnits-userSpaceOnUse-primitiveUnits-userSpaceOnUse.svg [ ImageOnlyFailure Pass ]
 webkit.org/b/105437 svg/filters/feImage-late-indirect-update.svg [ ImageOnlyFailure Pass ]
-webkit.org/b/105437 svg/custom/feDisplacementMap-01.svg [ ImageOnlyFailure Pass ]
+webkit.org/b/105437 svg/custom/feDisplacementMap-01.svg [ Missing ImageOnlyFailure Pass ]
 webkit.org/b/105437 svg/filters/feImage-animated-transform-on-target-rect.svg [ ImageOnlyFailure Pass ]
 webkit.org/b/105437 svg/filters/feImage-multiple-targets-id-change.svg [ ImageOnlyFailure Pass ]
 webkit.org/b/105437 svg/filters/feImage-position.svg [ ImageOnlyFailure Pass ]
