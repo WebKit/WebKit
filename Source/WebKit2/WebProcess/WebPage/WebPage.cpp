@@ -1031,10 +1031,10 @@ void WebPage::sendViewportAttributesChanged()
 
     ViewportAttributes attr = computeViewportAttributes(m_page->viewportArguments(), minimumLayoutFallbackWidth, deviceWidth, deviceHeight, m_page->deviceScaleFactor(), m_viewportSize);
 
-    // Keep the current position, update size only.
-    // For the new loads position is already reset to (0,0).
     FrameView* view = m_page->mainFrame()->view();
-    IntPoint contentFixedOrigin = view->fixedVisibleContentRect().location();
+
+    // If no layout was done yet set contentFixedOrigin to (0,0).
+    IntPoint contentFixedOrigin = view->didFirstLayout() ? view->fixedVisibleContentRect().location() : IntPoint();
 
     // Put the width and height to the viewport width and height. In css units however.
     // Use FloatSize to avoid truncated values during scale.

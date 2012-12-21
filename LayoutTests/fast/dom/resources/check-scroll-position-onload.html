@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <style type="text/css">
+        div { min-height: 3000px; }
+    </style>
+    <script type="text/javascript">
+        function load() {
+            var result = document.getElementById("result");
+            result.innerHTML = (document.body.scrollTop == 0) ? "PASS" : "FAIL";
+            if (window.testRunner) {
+                testRunner.notifyDone();
+            }
+        }
+    </script>
+</head>
+<body onload="load()">
+    <div id="result">
+        <p></p>
+    </div>
+<body>
+</html>

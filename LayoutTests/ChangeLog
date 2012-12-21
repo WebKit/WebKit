@@ -1,3 +1,16 @@
+2012-12-21  Mikhail Pozdnyakov  <mikhail.pozdnyakov@intel.com>
+
+        [WK2] TiledBackingStore: Scroll position is not reset when new page is loaded
+        https://bugs.webkit.org/show_bug.cgi?id=105627
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Added a layout test checking scroll position for newly loaded pages.
+
+        * fast/dom/resources/check-scroll-position-onload.html: Added.
+        * fast/dom/scroll-position-for-new-loads-expected.txt: Added.
+        * fast/dom/scroll-position-for-new-loads.html: Added.
+
 2012-12-21  Ilya Tikhonovsky  <loislo@chromium.org>
 
         Unreviewed gardening. Rebaseline after r138365.
