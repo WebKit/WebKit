@@ -43,6 +43,7 @@ enum {
     kWKErrorCodePlugInCancelledConnection =                      203,
     kWKErrorCodePlugInWillHandleLoad =                           204,
     kWKErrorCodeInsecurePlugInVersion =                          205,
+    kWKErrorInternal =                                           300,
 };
 typedef uint32_t WKErrorCode;
 

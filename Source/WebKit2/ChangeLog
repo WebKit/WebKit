@@ -1,3 +1,33 @@
+2012-12-21  Brady Eidson  <beidson@apple.com>
+
+        Perform cleanup in WebProcess if the NetworkProcess crashes.
+        <rdar://problem/12903117> and https://bugs.webkit.org/show_bug.cgi?id=105592
+
+        Reviewed by Alexey Proskuryakov.
+
+        If the NetworkProcess crashes, a whole bunch of WebResourceLoaders (and WebCore::ResourceLoaders)
+        might be orphaned in the WebProcess.
+
+        These loaders need to fail once it is apparent they will never finish loading.
+
+        * Shared/API/c/WKError.h: Add a new error representing an "WebKit Internal Error."
+
+        * WebProcess/WebCoreSupport/WebErrors.h:
+        * WebProcess/WebCoreSupport/mac/WebErrorsMac.mm:
+        (WebKit::internalError):
+
+        * WebProcess/Network/WebResourceLoadScheduler.cpp:
+        (WebKit::WebResourceLoadScheduler::networkProcessCrashed): Call didFail all outstanding ResourceLoaders
+          and tell all WebResourceLoaders the NetworkProcess crashed.
+        * WebProcess/Network/WebResourceLoadScheduler.h:
+
+        * WebProcess/Network/WebResourceLoader.cpp:
+        (WebKit::WebResourceLoader::networkProcessCrashed): Call didFail with the new InternalError
+        * WebProcess/Network/WebResourceLoader.h:
+
+        * WebProcess/WebProcess.cpp:
+        (WebKit::WebProcess::networkProcessConnectionClosed): Tell the scheduled the NetworkProcess crashed.
+
 2012-12-21  Kenneth Rohde Christiansen  <kenneth@webkit.org>
 
         [EFL][WK2] Never create WebCore scrollbars for EFL/WK2

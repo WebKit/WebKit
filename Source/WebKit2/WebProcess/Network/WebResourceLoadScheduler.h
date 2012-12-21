@@ -60,6 +60,8 @@ public:
 
     WebResourceLoader* webResourceLoaderForIdentifier(ResourceLoadIdentifier identifier) const { return m_webResourceLoaders.get(identifier).get(); }
 
+    void networkProcessCrashed();
+
 private:
     void scheduleLoad(WebCore::ResourceLoader*, WebCore::ResourceLoadPriority);
     

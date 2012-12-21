@@ -999,6 +999,8 @@ void WebProcess::networkProcessConnectionClosed(NetworkProcessConnection* connec
     ASSERT(m_networkProcessConnection == connection);
 
     m_networkProcessConnection = 0;
+    
+    m_webResourceLoadScheduler.networkProcessCrashed();
 }
 #endif
 

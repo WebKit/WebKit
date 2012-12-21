@@ -31,6 +31,7 @@
 #include "NetworkProcessConnection.h"
 #include "NetworkResourceLoadParameters.h"
 #include "WebCoreArgumentCoders.h"
+#include "WebErrors.h"
 #include "WebProcess.h"
 #include "WebResourceLoader.h"
 #include <WebCore/DocumentLoader.h>
@@ -184,6 +185,25 @@ void WebResourceLoadScheduler::resumePendingRequests()
 void WebResourceLoadScheduler::setSerialLoadingEnabled(bool enabled)
 {
     WebProcess::shared().networkConnection()->connection()->sendSync(Messages::NetworkConnectionToWebProcess::SetSerialLoadingEnabled(enabled), Messages::NetworkConnectionToWebProcess::SetSerialLoadingEnabled::Reply(), 0);
+}
+
+void WebResourceLoadScheduler::networkProcessCrashed()
+{
+    Vector<RefPtr<ResourceLoader> > coreResourceLoaders;
+    copyValuesToVector(m_coreResourceLoaders, coreResourceLoaders);
+    
+    for (size_t i = 0; i < coreResourceLoaders.size(); ++i)
+        coreResourceLoaders[i]->didFail(internalError(coreResourceLoaders[i]->url()));
+
+    ASSERT(m_coreResourceLoaders.isEmpty());
+
+    Vector<RefPtr<WebResourceLoader> > webResourceLoaders;
+    copyValuesToVector(m_webResourceLoaders, webResourceLoaders);
+    
+    for (size_t i = 0; i < webResourceLoaders.size(); ++i)
+        webResourceLoaders[i]->networkProcessCrashed();
+
+    ASSERT(m_webResourceLoaders.isEmpty());
 }
 
 } // namespace WebKit

@@ -74,6 +74,8 @@ public:
     virtual void receivedRequestToContinueWithoutCredential(const WebCore::AuthenticationChallenge&);
     virtual void receivedCancellation(const WebCore::AuthenticationChallenge&);
 
+    void networkProcessCrashed();
+
 private:
     WebResourceLoader(PassRefPtr<WebCore::ResourceLoader>);
 
