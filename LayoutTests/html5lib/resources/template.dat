@@ -859,3 +859,19 @@
 |         <tbody>
 |           <tr>
 |         <tfoot>
+
+#data
+<body><template><template><b><template></template></template>text</template>
+#errors
+#document
+| <html>
+|   <head>
+|   <body>
+|     <template>
+|       #document-fragment
+|         <template>
+|           #document-fragment
+|             <b>
+|               <template>
+|                 #document-fragment
+|         "text"

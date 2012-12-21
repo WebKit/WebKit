@@ -2283,12 +2283,8 @@ void HTMLTreeBuilder::processEndTag(AtomicHTMLToken* token)
         break;
     case TemplateContentsMode:
 #if ENABLE(TEMPLATE_ELEMENT)
-        // FIXME: https://www.w3.org/Bugs/Public/show_bug.cgi?id=19966
         if (token->name() == templateTag) {
-            ASSERT(m_tree.currentStackItem()->hasTagName(templateTag));
-            m_tree.openElements()->pop();
-            m_templateInsertionModes.removeLast();
-            resetInsertionModeAppropriately();
+            processTemplateEndTag(token);
             return;
         }
         setInsertionMode(InBodyMode);
