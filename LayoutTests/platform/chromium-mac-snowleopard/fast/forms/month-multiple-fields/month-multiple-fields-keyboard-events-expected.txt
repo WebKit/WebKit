@@ -13,7 +13,7 @@ Tab - Move focus field
 Backspace - Make value empty
   
 == Digit keys ==
-FAIL input.value should be 0012-09. Was 0112-09.
+PASS input.value is "0012-09"
 == Left/Right keys ==
 PASS input.value is "0005-06"
 PASS document.activeElement.id is "input"

@@ -1,3 +1,9 @@
+2012-12-21  Ilya Tikhonovsky  <loislo@chromium.org>
+
+        Unreviewed gardening. Rebaseline after r138365.
+
+        * platform/chromium-mac-snowleopard/fast/forms/month-multiple-fields/month-multiple-fields-keyboard-events-expected.txt:
+
 2012-12-21  Keishi Hattori  <keishi@webkit.org>
 
         Fix typing zero into multiple field input
