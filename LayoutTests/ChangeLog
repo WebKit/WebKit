@@ -2,6 +2,15 @@
 
         Unreviewed GTK gardening.
 
+        Removing a list of failure expectations that were added as a precaution
+        in r138250 in case of regressions (which in the end didn't occur).
+
+        * platform/gtk/TestExpectations:
+
+2012-12-21  Zan Dobersek  <zandobersek@gmail.com>
+
+        Unreviewed GTK gardening.
+
         Adding a few missing expectations for tests that require their baselines
         to be checked before they are added.
         Adding and modifying expectations where necessary to accommodate recent
