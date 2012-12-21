@@ -77,9 +77,6 @@ public:
 #if USE(CF)
     CFDataRef createCFData();
 #endif
-#if HAVE(NETWORK_CFDATA_ARRAY_CALLBACK)
-    void append(CFDataRef);
-#endif
 
     void reportMemoryUsage(MemoryObjectInfo*) const;
 

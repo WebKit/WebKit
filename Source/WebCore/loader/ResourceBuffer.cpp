@@ -126,13 +126,6 @@ CFDataRef ResourceBuffer::createCFData()
 }
 #endif
 
-#if HAVE(NETWORK_CFDATA_ARRAY_CALLBACK)
-void ResourceBuffer::append(CFDataRef dataRef)
-{
-    m_sharedBuffer->append(dataRef);
-}
-#endif
-
 void ResourceBuffer::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
 {
     MemoryClassInfo info(memoryObjectInfo, this);
