@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<script src="../../fast/js/resources/js-test-pre.js"></script>
+<select size="2">
+  <option>PASS</option>FAIL
+</select>
+<script>
+description('Check that a select control does not render children that are not &lt;option&gt; or &lt;optgroup&gt;.');
+
+var select = document.querySelector('select');
+
+var div = select.appendChild(document.createElement('div'));
+div.innerText = 'FAIL';
+div.style.background = 'red';
+
+// innerText uses the render tree, and the "FAIL" text (from either the initial 
+// HTML or the dynamially inserted <div>) should not be in the render tree, thus 
+// not appear.
+shouldBeEqualToString('select.innerText', '');
+</script>
+<script src="../../fast/js/resources/js-test-post.js"></script>

@@ -1,3 +1,16 @@
+2012-12-21  Mihai Parparita  <mihaip@chromium.org>
+
+        Slow performance with <select> with many options and size >= 2
+        https://bugs.webkit.org/show_bug.cgi?id=105483
+
+        Reviewed by Eric Seidel.
+
+        Test that checks that text and non-<option> and <optgroup> element 
+        children of <select> do not get a renderer.
+
+        * fast/forms/menulist-no-renderer-for-unexpected-children-expected.txt: Added.
+        * fast/forms/menulist-no-renderer-for-unexpected-children.html: Added.
+
 2012-12-21  Sudarsana Nagineni  <sudarsana.nagineni@intel.com>
 
         Unreviewed EFL gardening.
