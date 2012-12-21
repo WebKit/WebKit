@@ -708,6 +708,7 @@ private:
     void getResourceDataFromFrame(uint64_t frameID, const String& resourceURL, uint64_t callbackID);
     void getRenderTreeExternalRepresentation(uint64_t callbackID);
     void getSelectionOrContentsAsString(uint64_t callbackID);
+    void getSelectionAsWebArchiveData(uint64_t callbackID);
     void getSourceForFrame(uint64_t frameID, uint64_t callbackID);
     void getWebArchiveOfFrame(uint64_t frameID, uint64_t callbackID);
     void runJavaScriptInMainFrame(const String&, uint64_t callbackID);

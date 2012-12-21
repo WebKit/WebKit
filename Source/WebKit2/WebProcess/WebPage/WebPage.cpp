@@ -161,6 +161,7 @@
 #if ENABLE(PDFKIT_PLUGIN)
 #include "PDFPlugin.h"
 #endif
+#include <WebCore/LegacyWebArchive.h>
 #endif
 
 #if PLATFORM(QT)
@@ -2082,6 +2083,37 @@ void WebPage::getRenderTreeExternalRepresentation(uint64_t callbackID)
 {
     String resultString = renderTreeExternalRepresentation();
     send(Messages::WebPageProxy::StringCallback(resultString, callbackID));
+}
+
+#if PLATFORM(MAC)
+static Frame* frameWithSelection(Page* page)
+{
+    for (Frame* frame = page->mainFrame(); frame; frame = frame->tree()->traverseNext()) {
+        if (frame->selection()->isRange())
+            return frame;
+    }
+
+    return 0;
+}
+#endif
+
+void WebPage::getSelectionAsWebArchiveData(uint64_t callbackID)
+{
+    CoreIPC::DataReference dataReference;
+
+#if PLATFORM(MAC)
+    RefPtr<LegacyWebArchive> archive;
+    RetainPtr<CFDataRef> data;
+
+    Frame* frame = frameWithSelection(m_page.get());
+    if (frame) {
+        archive = LegacyWebArchive::createFromSelection(frame);
+        data = archive->rawDataRepresentation();
+        dataReference = CoreIPC::DataReference(CFDataGetBytePtr(data.get()), CFDataGetLength(data.get()));
+    }
+#endif
+
+    send(Messages::WebPageProxy::DataCallback(dataReference, callbackID));
 }
 
 void WebPage::getSelectionOrContentsAsString(uint64_t callbackID)
