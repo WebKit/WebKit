@@ -2178,6 +2178,7 @@ fast/sub-pixel/block-with-margin-overflow.html
 svg/custom/anchor-on-use.svg
 svg/animations/animateTransform-rotate-around-point.svg
 svg/animations/animateMotion-additive-1.svg
+svg/text/alt-glyph-for-surrogate-pair.svg
 svg/transforms/transformed-text-fill-gradient.html
 fast/regions/floats-basic-in-variable-width-regions.html
 fast/regions/region-style-rule-position.html
