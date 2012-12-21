@@ -1,3 +1,26 @@
+2012-12-20  Elliott Sprehn  <esprehn@chromium.org>
+
+        Replace documentFragmentIsShadowRoot with isTreeScope
+        https://bugs.webkit.org/show_bug.cgi?id=105345
+
+        Reviewed by Dimitri Glazkov.
+
+        We can replace documentFragmentIsShadowRoot with isTreeScope() which is
+        trival to detect by checking treeScope()->rootNode() == this;
+
+        No new tests, just refactoring.
+
+        * WebCore.exp.in:
+        * dom/DocumentFragment.h:
+        (DocumentFragment):
+        * dom/Node.cpp:
+        (WebCore::Node::isTreeScope):
+        * dom/Node.h:
+        (Node):
+        (WebCore::Node::isShadowRoot):
+        * dom/ShadowRoot.h:
+        (ShadowRoot):
+
 2012-12-20  Rik Cabanier  <cabanier@adobe.com>
 
         Add canvas blending modes using Core Graphics

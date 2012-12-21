@@ -246,12 +246,12 @@ public:
     virtual bool isCharacterDataNode() const { return false; }
     virtual bool isFrameOwnerElement() const { return false; }
     virtual bool isPluginElement() const { return false; }
-    virtual bool documentFragmentIsShadowRoot() const;
     virtual bool isInsertionPointNode() const { return false; }
 
     bool isDocumentNode() const;
+    bool isTreeScope() const;
     bool isDocumentFragment() const { return getFlag(IsDocumentFragmentFlag); }
-    bool isShadowRoot() const { return isDocumentFragment() && documentFragmentIsShadowRoot(); }
+    bool isShadowRoot() const { return isDocumentFragment() && isTreeScope(); }
     bool isInsertionPoint() const { return getFlag(NeedsShadowTreeWalkerFlag) && isInsertionPointNode(); }
 
     bool needsShadowTreeWalker() const;

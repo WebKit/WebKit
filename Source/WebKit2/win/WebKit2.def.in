@@ -301,6 +301,7 @@ EXPORTS
         ?toJS@WebCore@@YA?AVJSValue@JSC@@PAVExecState@3@PAVJSDOMGlobalObject@1@PAVNodeList@1@@Z
         ?toRange@WebCore@@YAPAVRange@1@VJSValue@JSC@@@Z
         ?treeScope@Node@WebCore@@QBEPAVTreeScope@2@XZ
+        ?isTreeScope@Node@WebCore@@QBE_NXZ
         ?updateLayoutIgnorePendingStylesheets@Document@WebCore@@QAEXXZ
         ?userPreferredLanguages@WebCore@@YA?AV?$Vector@VString@WTF@@$0A@@WTF@@XZ
         ?utf8@String@WTF@@QBE?AVCString@2@W4ConversionMode@12@@Z

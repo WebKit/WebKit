@@ -46,7 +46,6 @@ private:
     virtual NodeType nodeType() const;
     virtual PassRefPtr<Node> cloneNode(bool deep);
     virtual bool childTypeAllowed(NodeType) const;
-    virtual bool documentFragmentIsShadowRoot() const OVERRIDE { return false; }
 };
 
 } //namespace
