@@ -70,7 +70,7 @@ private:
 
     virtual void layout();
 
-    virtual LayoutUnit computeReplacedLogicalWidth(bool includeMaxWidth = true) const;
+    virtual LayoutUnit computeReplacedLogicalWidth(ShouldComputePreferred  = ComputeActual) const OVERRIDE;
     virtual LayoutUnit computeReplacedLogicalHeight() const;
     virtual LayoutUnit minimumReplacedHeight() const OVERRIDE;
 

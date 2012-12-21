@@ -32,7 +32,7 @@ public:
     RenderReplaced(Node*, const LayoutSize& intrinsicSize);
     virtual ~RenderReplaced();
 
-    virtual LayoutUnit computeReplacedLogicalWidth(bool includeMaxWidth = true) const;
+    virtual LayoutUnit computeReplacedLogicalWidth(ShouldComputePreferred  = ComputeActual) const OVERRIDE;
     virtual LayoutUnit computeReplacedLogicalHeight() const;
 
     bool hasReplacedLogicalWidth() const;
