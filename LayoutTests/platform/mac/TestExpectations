@@ -1264,6 +1264,7 @@ webkit.org/b/73865 media/track/tracklist-is-reachable.html [ Crash Pass ]
 webkit.org/b/73865 media/track/text-track-cue-is-reachable.html [ Crash Pass ]
 webkit.org/b/73865 media/track/text-track-is-reachable.html [ Crash Pass ]
 webkit.org/b/73865 media/track/track-webvtt-tc005-header-comment.html [ Crash Pass ]
+webkit.org/b/73865 media/track/track-webvtt-tc004-magic-header.html [ Crash Pass ]
 
 webkit.org/b/105567 http/tests/security/data-url-inline.css.html [ Crash Pass ]
 
@@ -1274,3 +1275,5 @@ webkit.org/b/104848 fast/frames/sandboxed-iframe-parsing-space-characters.html [
 bug(rniwa) http/tests/appcache/main-resource-redirect.html [ Crash ]
 
 webkit.org/b/105601 svg/zoom/page/zoom-replaced-intrinsic-ratio-001.htm [ Crash Pass ]
+
+webkit.org/b/105603 http/tests/cookies/single-quoted-value.html [ Failure Pass ]
