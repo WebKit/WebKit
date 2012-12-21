@@ -1351,6 +1351,8 @@ void HTMLMediaElement::textTrackModeChanged(TextTrack* track)
             if (track->mode() != TextTrack::disabledKeyword()) {
                 if (trackElement->readyState() == HTMLTrackElement::LOADED)
                     textTrackAddCues(track, track->cues());
+                else if (trackElement->readyState() == HTMLTrackElement::NONE)
+                    trackElement->scheduleLoad();
 
                 // If this is the first added track, create the list of text tracks.
                 if (!m_textTracks)

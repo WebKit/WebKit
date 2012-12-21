@@ -79,8 +79,6 @@ private:
     virtual void removedFrom(ContainerNode*) OVERRIDE;
     virtual bool isURLAttribute(const Attribute&) const OVERRIDE;
 
-    void loadTimerFired(Timer<HTMLTrackElement>*);
-
 #if ENABLE(MICRODATA)
     virtual String itemValueText() const OVERRIDE;
     virtual void setItemValueText(const String&, ExceptionCode&) OVERRIDE;
@@ -100,7 +98,6 @@ private:
     virtual bool canLoadUrl(const KURL&);
 
     RefPtr<LoadableTextTrack> m_track;
-    Timer<HTMLTrackElement> m_loadTimer;
 };
 
 }

@@ -123,8 +123,6 @@ public:
     virtual bool isDefault() const { return false; }
     virtual void setIsDefault(bool) { }
 
-    void removeAllCues();
-
 protected:
     TextTrack(ScriptExecutionContext*, TextTrackClient*, const AtomicString& kind, const AtomicString& label, const AtomicString& language, TextTrackType);
 

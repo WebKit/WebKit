@@ -1,3 +1,25 @@
+2012-12-20  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r138270.
+        http://trac.webkit.org/changeset/138270
+        https://bugs.webkit.org/show_bug.cgi?id=105589
+
+        Many media tests are failing/crashing intermittently, often
+        pointing at WebCore::HTMLTrackElement::didCompleteLoad as
+        culprit (Requested by dino_ on #webkit).
+
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::textTrackModeChanged):
+        * html/HTMLTrackElement.cpp:
+        (WebCore::HTMLTrackElement::HTMLTrackElement):
+        (WebCore::HTMLTrackElement::insertedInto):
+        (WebCore::HTMLTrackElement::parseAttribute):
+        (WebCore::HTMLTrackElement::scheduleLoad):
+        (WebCore::HTMLTrackElement::textTrackModeChanged):
+        * html/HTMLTrackElement.h:
+        * html/track/TextTrack.cpp:
+        * html/track/TextTrack.h:
+
 2012-12-20  Pratik Solanki  <psolanki@apple.com>
 
         Rename HAVE(NETWORK_CFDATA_ARRAY_CALLBACK) to USE(NETWORK_CFDATA_ARRAY_CALLBACK)
