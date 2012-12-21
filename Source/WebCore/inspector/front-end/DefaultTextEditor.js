@@ -813,7 +813,6 @@ WebInspector.TextEditorChunkedPanel.prototype = {
             lineChunk.expand();
             if (suffixChunk)
                 suffixChunk.expand();
-            this._repaintAll();
         }
 
         this.endDomUpdates();
@@ -933,7 +932,7 @@ WebInspector.TextEditorChunkedPanel.prototype = {
         delete this._repaintAllTimer;
 
         if (this._paintCoalescingLevel)
-            return false;
+            return;
 
         var visibleFrom = this._scrollTop();
         var visibleTo = visibleFrom + this._clientHeight();
@@ -942,7 +941,6 @@ WebInspector.TextEditorChunkedPanel.prototype = {
             var result = this._findVisibleChunks(visibleFrom, visibleTo);
             this._expandChunks(result.start, result.end);
         }
-        return true;
     },
 
     _scrollTop: function()
@@ -1361,25 +1359,6 @@ WebInspector.TextEditorMainPanel.prototype = {
     {
         this._detachMutationObserver();
         this._isShowing = false;
-    },
-
-    _repaintAll: function()
-    {
-        // calling overridden |_repaintAll| method
-        if (!WebInspector.TextEditorChunkedPanel.prototype._repaintAll.call(this))
-            return false;
-
-        var visibleFrom = this._scrollTop();
-        var visibleTo = visibleFrom + this._clientHeight();
-
-        if (visibleTo) {
-            var result = this._findVisibleChunks(visibleFrom, visibleTo);
-            for(var i = result.start; i < result.end; i++) {
-                var chunk = this._textChunks[i];
-                this._paintLines(chunk.startLine, chunk.startLine + chunk.linesCount, true);
-            }
-        }
-        return true;
     },
 
     _attachMutationObserver: function()
@@ -2679,8 +2658,10 @@ WebInspector.TextEditorMainChunk.prototype = {
 
         this._expanded = true;
 
-        if (this.linesCount === 1)
+        if (this.linesCount === 1) {
+            this._chunkedPanel._paintLine(this.element);
             return;
+        }
 
         this._chunkedPanel.beginDomUpdates();
 
@@ -2692,6 +2673,7 @@ WebInspector.TextEditorMainChunk.prototype = {
             this._expandedLineRows.push(lineRow);
         }
         parentElement.removeChild(this.element);
+        this._chunkedPanel._paintLines(this.startLine, this.startLine + this.linesCount);
 
         this._chunkedPanel.endDomUpdates();
     },
