@@ -50,7 +50,7 @@ namespace WebKit {
 
 class AreaAllocator {
 public:
-    AreaAllocator(const WebCore::IntSize&);
+    explicit AreaAllocator(const WebCore::IntSize&);
     virtual ~AreaAllocator();
 
     WebCore::IntSize size() const { return m_size; }
@@ -79,7 +79,7 @@ protected:
 
 class GeneralAreaAllocator : public AreaAllocator {
 public:
-    GeneralAreaAllocator(const WebCore::IntSize&);
+    explicit GeneralAreaAllocator(const WebCore::IntSize&);
     virtual ~GeneralAreaAllocator();
 
     void expand(const WebCore::IntSize&);

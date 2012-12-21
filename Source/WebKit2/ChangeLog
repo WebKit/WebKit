@@ -1,3 +1,16 @@
+2012-12-20  Helder Correia  <helder.correia@nokia.com>
+
+        [CoordGfx] Make single-argument AreaAllocator constructors explicit
+        https://bugs.webkit.org/show_bug.cgi?id=105598
+
+        Reviewed by Noam Rosenthal.
+
+        Follow the coding style for AreaAllocator and GeneralAreaAllocator.
+
+        * WebProcess/WebPage/CoordinatedGraphics/AreaAllocator.h:
+        (AreaAllocator):
+        (GeneralAreaAllocator):
+
 2012-12-20  Elliott Sprehn  <esprehn@chromium.org>
 
         Replace documentFragmentIsShadowRoot with isTreeScope
