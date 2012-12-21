@@ -1,5 +1,14 @@
 2012-12-20  Ilya Tikhonovsky  <loislo@chromium.org>
 
+        Unreviewed, rolling out r138347.
+        http://trac.webkit.org/changeset/138347
+
+        media/track tests still failing
+
+        * platform/chromium/TestExpectations:
+
+2012-12-20  Ilya Tikhonovsky  <loislo@chromium.org>
+
         Unreviewed. Rollout Crash Pass expectation changes for media/track after rolling out r138320.
 
         * platform/chromium/TestExpectations:
