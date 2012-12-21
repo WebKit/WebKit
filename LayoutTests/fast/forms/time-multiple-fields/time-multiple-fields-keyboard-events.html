@@ -48,6 +48,23 @@ keyDown('6');
 keyDown('A');
 shouldBeEqualToString('input.value', '07:56');
 
+beginTest('Digit keys starting with zero');
+keyDown('0'); // -> [00]:-- --
+keyDown('2'); // -> 02:[--] --
+keyDown('0'); // -> 02:[00] --
+keyDown('3'); // -> 02:03 [--]
+keyDown('P'); // -> 02:03 [PM]
+shouldBeEqualToString('input.value', '14:03');
+
+beginTest('Digit keys and backspace key','01:01');
+keyDown('0'); // -> [00]:-- --
+keyDown('\b'); // -> [--]:-- --
+keyDown('5'); // -> 05:[--] --
+keyDown('6'); // -> 05:06 [--]
+keyDown('\b'); // -> 05:06 [--]
+keyDown('P'); // -> 05:06 [PM]
+shouldBeEqualToString('input.value', '17:06');
+
 // FIXME: We should test type ahead time out. When event.leapForward() affects
 // keyboard event time stamp, we can uncomment this fragment.
 /*

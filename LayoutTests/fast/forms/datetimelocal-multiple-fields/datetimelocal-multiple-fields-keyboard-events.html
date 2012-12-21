@@ -58,6 +58,38 @@ keyDown('6'); // -> 09/20/98765 07:56 [--]
 keyDown('A'); // -> 09/20/98765 07:56 AM
 shouldBeEqualToString('input.value', '98765-09-20T07:56');
 
+beginTest('Digit keys starting with zero', null, null, '9999-12-31T23:59');
+keyDown('0'); // -> [00]/dd/yyyy --:-- --
+keyDown('2'); // -> 02/[dd]/yyyy --:-- --
+keyDown('0'); // -> 02/[00]/yyyy --:-- --
+keyDown('3'); // -> 02/03/[yyyy] --:-- --
+keyDown('0'); // -> 02/03/[0000] --:-- --
+keyDown('0'); // -> 02/03/[0000] --:-- --
+keyDown('4'); // -> 02/03/[0044] --:-- --
+keyDown('4'); // -> 02/03/[0044] --:-- --
+keyDown('0'); // -> 02/03/0044 [00]:-- --
+keyDown('5'); // -> 02/03/0044 05:[--] --
+keyDown('0'); // -> 02/03/0044 01:[01] --
+keyDown('6'); // -> 02/03/0044 05:06 [--]
+keyDown('A'); // -> 02/03/0044 05:06 AM
+shouldBeEqualToString('input.value', '0044-02-03T05:06');
+
+beginTest('Digit keys and backspace key');
+keyDown('1'); // -> [01]/dd/yyyy --:-- --
+keyDown("\b"); // -> [mm]/20/2012 --:-- --
+keyDown('5'); // -> 05/[dd]/yyyy --:-- --
+keyDown('6'); // -> 05/06/[yyyy] --:-- --
+keyDown("\b"); // -> 05/06/[yyyy] --:-- --
+keyDown('7'); // -> 05/06/[0007] --:-- --
+keyDown("\b"); // -> 05/06/[yyyy] --:-- --
+keyDown('8'); // -> 05/06/[0008] --:-- --
+keyDown('rightArrow'); // -> 05/06/0008 [--]:-- --
+keyDown('9'); // -> 05/06/0008 09:[--] --
+keyDown('1'); // -> 05/06/0008 09:[01] --
+keyDown('0'); // -> 05/06/0008 09:10 [--]
+keyDown('A'); // -> 05/06/0008 09:10 [AM]
+shouldBeEqualToString('input.value', '0008-05-06T09:10');
+
 // FIXME: We should test type ahead time out. When event.leapForward() affects
 // keyboard event time stamp, we can uncomment this fragment.
 /*

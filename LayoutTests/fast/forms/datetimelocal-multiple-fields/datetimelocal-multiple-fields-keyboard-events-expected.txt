@@ -14,6 +14,10 @@ Backspace - Make value empty
   
 == Digit keys ==
 PASS input.value is "98765-09-20T07:56"
+== Digit keys starting with zero ==
+PASS input.value is "0044-02-03T05:06"
+== Digit keys and backspace key ==
+PASS input.value is "0008-05-06T09:10"
 == Left/Right keys ==
 PASS input.value is "0004-09-05T19:05"
 PASS document.activeElement.id is "input"

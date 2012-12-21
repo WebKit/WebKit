@@ -87,6 +87,7 @@ private:
     String formatValue(int) const;
     int roundUp(int) const;
     int roundDown(int) const;
+    int typeAheadValue() const;
 
     DOMTimeStamp m_lastDigitCharTime;
     const String m_placeholder;
@@ -95,6 +96,7 @@ private:
     bool m_hasValue;
     int m_step;
     int m_stepBase;
+    mutable StringBuilder m_typeAheadBuffer;
 };
 
 } // namespace WebCore

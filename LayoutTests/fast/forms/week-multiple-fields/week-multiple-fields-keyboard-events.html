@@ -52,6 +52,24 @@ keyDown('2'); // -> Week 09, [0012]
 keyDown('A'); // Ignored.
 shouldBeEqualToString('input.value', '0012-W09');
 
+beginTest('Digit keys starting with zero');
+keyDown('0'); // -> Week [00], yyyy
+keyDown('2'); // -> Week 02, [yyyy]
+keyDown('0'); // -> Week 02, [0000]
+keyDown('3'); // -> Week 02, [0003]
+keyDown('0'); // -> Week 02, [0030]
+keyDown('0'); // -> Week 02, [0300]
+shouldBeEqualToString('input.value', '0300-W02');
+
+beginTest('Digit keys and backspace key');
+keyDown('0'); // -> Week [00], yyyy
+keyDown('\b'); // -> Week [ww], yyyy
+keyDown('0'); // -> Week [00], yyyy
+keyDown('0'); // -> Week 01, [yyyy]
+keyDown('0'); // -> Week 01, [0000]
+keyDown('6'); // -> Week 05, [0006]
+shouldBeEqualToString('input.value', '0006-W01');
+
 // FIXME: We should test type ahead time out. When event.leapForward() affects
 // keyboard event time stamp, we can uncomment this fragment.
 /*
