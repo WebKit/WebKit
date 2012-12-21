@@ -3,7 +3,7 @@
 <body>
 <script src="../fast/js/resources/js-test-pre.js"></script>
 
-<img tabindex="0" id="svg-image" src="resources/svg-face.svg" alt="interactive SVG" >
+<img tabindex="0" id="svg-image" alt="interactive SVG" >
 
 <div id="console"></div>
 <script>
@@ -19,10 +19,6 @@ function pageX(element) {
 
 function pageY(element) {
     return element.clickPointY - element.height/2;
-}
-
-if (window.accessibilityController) {
-    document.getElementById("svg-image").addEventListener("load", runAXTest);
 }
 
 function runAXTest() {    
@@ -63,6 +59,11 @@ function runAXTest() {
 
     finishJSTest();
 }
+
+if (window.accessibilityController) {
+    document.getElementById("svg-image").addEventListener("load", runAXTest);
+}
+document.getElementById("svg-image").src = "resources/svg-face.svg";
 
 </script>
 
