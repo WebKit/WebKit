@@ -12,9 +12,9 @@ There should be 5 items in the menu.
 EXPECTED (5 == '5') OK
 EXPECTED (video.textTracks.length == '4') OK
 Track 0 should be showing
-EXPECTED (video.textTracks[0].mode == 'showing') OK
+EXPECTED (video.textTracks[0].mode == 'disabled') OK
 Track 1 should be disabled
-EXPECTED (video.textTracks[1].mode == 'disabled') OK
+EXPECTED (video.textTracks[1].mode == 'showing') OK
 Track 2 should be disabled
 EXPECTED (video.textTracks[2].mode == 'disabled') OK
 Track 3 should be disabled
