@@ -1,3 +1,23 @@
+2012-12-21  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r138338.
+        http://trac.webkit.org/changeset/138338
+        https://bugs.webkit.org/show_bug.cgi?id=105621
+
+        speculative rollout because fast/dom/shadow/content-element-
+        distributed-nodes.html is crashing on linux debug. (Requested
+        by loislo on #webkit).
+
+        * WebCore.exp.in:
+        * dom/DocumentFragment.h:
+        * dom/Node.cpp:
+        (WebCore::Node::documentFragmentIsShadowRoot):
+        (WebCore):
+        * dom/Node.h:
+        (Node):
+        (WebCore::Node::isShadowRoot):
+        * dom/ShadowRoot.h:
+
 2012-12-21  Adam Bergkvist  <adam.bergkvist@ericsson.com>
 
         MediaStream API: Update the MediaStream constructor

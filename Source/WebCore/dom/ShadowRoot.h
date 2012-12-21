@@ -121,6 +121,7 @@ private:
     virtual PassRefPtr<Node> cloneNode(bool deep);
     virtual bool childTypeAllowed(NodeType) const;
     virtual void childrenChanged(bool changedByParser, Node* beforeChange, Node* afterChange, int childCountDelta) OVERRIDE;
+    virtual bool documentFragmentIsShadowRoot() const OVERRIDE { return true; }
 
     void setType(ShadowRootType type) { m_isAuthorShadowRoot = type == AuthorShadowRoot; }
 
