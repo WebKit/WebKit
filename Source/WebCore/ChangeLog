@@ -1,3 +1,17 @@
+2012-12-20  Filip Pizlo  <fpizlo@apple.com>
+
+        Create a variable name for a RAII scope so it doesn't die immediately.
+
+        Reviewed by Sam Weinig.
+
+        No new tests.
+
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::textTrackAddCues):
+        (WebCore::HTMLMediaElement::textTrackRemoveCues):
+        (WebCore::HTMLMediaElement::removeTrack):
+        (WebCore::HTMLMediaElement::removeAllInbandTracks):
+
 2012-12-20  Elliott Sprehn  <esprehn@chromium.org>
 
         Replace documentFragmentIsShadowRoot with isTreeScope

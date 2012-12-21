@@ -1386,14 +1386,14 @@ void HTMLMediaElement::endIgnoringTrackDisplayUpdateRequests()
 
 void HTMLMediaElement::textTrackAddCues(TextTrack*, const TextTrackCueList* cues) 
 {
-    TrackDisplayUpdateScope(this);
+    TrackDisplayUpdateScope scope(this);
     for (size_t i = 0; i < cues->length(); ++i)
         textTrackAddCue(cues->item(i)->track(), cues->item(i));
 }
 
 void HTMLMediaElement::textTrackRemoveCues(TextTrack*, const TextTrackCueList* cues) 
 {
-    TrackDisplayUpdateScope(this);
+    TrackDisplayUpdateScope scope(this);
     for (size_t i = 0; i < cues->length(); ++i)
         textTrackRemoveCue(cues->item(i)->track(), cues->item(i));
 }
@@ -2801,7 +2801,7 @@ void HTMLMediaElement::mediaPlayerDidRemoveTrack(PassRefPtr<InbandTextTrackPriva
 
 void HTMLMediaElement::removeTrack(TextTrack* track)
 {
-    TrackDisplayUpdateScope(this);
+    TrackDisplayUpdateScope scope(this);
     TextTrackCueList* cues = track->cues();
     if (cues)
         textTrackRemoveCues(track, cues);
@@ -2813,7 +2813,7 @@ void HTMLMediaElement::removeAllInbandTracks()
     if (!m_textTracks)
         return;
 
-    TrackDisplayUpdateScope(this);
+    TrackDisplayUpdateScope scope(this);
     for (int i = m_textTracks->length() - 1; i >= 0; --i) {
         TextTrack* track = m_textTracks->item(i);
 
