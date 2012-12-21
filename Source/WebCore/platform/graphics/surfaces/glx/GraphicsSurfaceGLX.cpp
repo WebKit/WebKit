@@ -168,17 +168,7 @@ struct GraphicsSurfacePrivate {
         GLXFBConfig* fbConfigs = glXChooseFBConfig(m_display, DefaultScreen(m_display), attributes, &numReturned);
 
         // Make sure that we choose a configuration that supports an alpha mask.
-        for (int i = 0; i < numReturned; ++i) {
-            XVisualInfo* visualInfo = glXGetVisualFromFBConfig(m_display, fbConfigs[i]);
-            if (!visualInfo)
-                continue;
-
-            XRenderPictFormat* format = XRenderFindVisualFormat(m_display, visualInfo->visual);
-            if (format && format->direct.alphaMask > 0) {
-                m_fbConfig = fbConfigs[i];
-                break;
-            }
-        }
+        m_fbConfig = findFBConfigWithAlpha(fbConfigs, numReturned);
 
         XFree(fbConfigs);
 
@@ -255,8 +245,11 @@ struct GraphicsSurfacePrivate {
         int numberOfConfigs;
         GLXFBConfig* configs = glXChooseFBConfig(m_display, XDefaultScreen(m_display), glxSpec, &numberOfConfigs);
 
+        // If origin window has alpha then find config with alpha.
+        GLXFBConfig& config = m_hasAlpha ? findFBConfigWithAlpha(configs, numberOfConfigs) : configs[0];
+
         m_xPixmap = XCompositeNameWindowPixmap(m_display, winId);
-        m_glxPixmap = glXCreatePixmap(m_display, *configs, m_xPixmap, glxAttributes);
+        m_glxPixmap = glXCreatePixmap(m_display, config, m_xPixmap, glxAttributes);
 
         uint inverted = 0;
         glXQueryDrawable(m_display, m_glxPixmap, GLX_Y_INVERTED_EXT, &inverted);
@@ -356,6 +349,24 @@ struct GraphicsSurfacePrivate {
 
     bool isReceiver() const { return m_isReceiver; }
 private:
+    GLXFBConfig& findFBConfigWithAlpha(GLXFBConfig* fbConfigs, int numberOfConfigs)
+    {
+        for (int i = 0; i < numberOfConfigs; ++i) {
+            XVisualInfo* visualInfo = glXGetVisualFromFBConfig(m_display, fbConfigs[i]);
+            if (!visualInfo)
+                continue;
+
+            XRenderPictFormat* format = XRenderFindVisualFormat(m_display, visualInfo->visual);
+            if (format && format->direct.alphaMask > 0) {
+                return fbConfigs[i];
+                break;
+            }
+        }
+
+        // Return 1st config as a fallback with no alpha support.
+        return fbConfigs[0];
+    }
+
     OffScreenRootWindow m_offScreenWindow;
     IntSize m_size;
     Display* m_display;
