@@ -1235,16 +1235,19 @@ void WebFrameLoaderClient::transitionToCommittedForNewPage()
     m_frameCameFromPageCache = false;
 
 #if USE(TILED_BACKING_STORE)
-    m_frame->coreFrame()->createView(webPage->size(), backgroundColor, isTransparent,
-        IntSize(), currentFixedVisibleContentRect, shouldUseFixedLayout,
-        ScrollbarAlwaysOff, /* lock */ true, ScrollbarAlwaysOff, /* lock */ true);
+    if (shouldUseFixedLayout) {
+        m_frame->coreFrame()->createView(webPage->size(), backgroundColor, isTransparent,
+            IntSize(), currentFixedVisibleContentRect, shouldUseFixedLayout,
+            ScrollbarAlwaysOff, /* lock */ true, ScrollbarAlwaysOff, /* lock */ true);
 
-    m_frame->coreFrame()->view()->setDelegatesScrolling(shouldUseFixedLayout);
-    m_frame->coreFrame()->view()->setPaintsEntireContents(shouldUseFixedLayout);
-#else
+        m_frame->coreFrame()->view()->setDelegatesScrolling(shouldUseFixedLayout);
+        m_frame->coreFrame()->view()->setPaintsEntireContents(shouldUseFixedLayout);
+        return;
+    }
+#endif
+
     m_frame->coreFrame()->createView(webPage->size(), backgroundColor, isTransparent,
         IntSize(), currentFixedVisibleContentRect, shouldUseFixedLayout);
-#endif
 }
 
 void WebFrameLoaderClient::didSaveToPageCache()

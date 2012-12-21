@@ -1,3 +1,12 @@
+2012-12-21  Kenneth Rohde Christiansen  <kenneth@webkit.org>
+
+        Unreviewed potential fix EFL/Qt test breakage on WK2
+
+        Only disable scrollbars when in fixed layout mode.
+
+        * WebProcess/WebCoreSupport/WebFrameLoaderClient.cpp:
+        (WebKit::WebFrameLoaderClient::transitionToCommittedForNewPage):
+
 2012-12-21  Brady Eidson  <beidson@apple.com>
 
         Remove ResourceLoadScheduler::addMainResourceLoad and all related code
