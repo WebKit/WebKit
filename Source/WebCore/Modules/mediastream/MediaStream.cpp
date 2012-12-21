@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2011 Google Inc. All rights reserved.
- * Copyright (C) 2011 Ericsson AB. All rights reserved.
+ * Copyright (C) 2011, 2012 Ericsson AB. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -36,47 +36,66 @@
 
 namespace WebCore {
 
-static void processTrackList(PassRefPtr<MediaStreamTrackList> prpTracks, const String& kind, MediaStreamSourceVector& sources, ExceptionCode& ec)
+static bool containsSource(MediaStreamSourceVector& sourceVector, MediaStreamSource* source)
 {
-    RefPtr<MediaStreamTrackList> tracks = prpTracks;
-    if (!tracks)
-        return;
-
-    for (unsigned i = 0; i < tracks->length(); ++i) {
-        MediaStreamTrack* track = tracks->item(i);
-        if (track->kind() != kind) {
-            ec = SYNTAX_ERR;
-            return;
-        }
-        MediaStreamSource* source = track->component()->source();
-        bool isDuplicate = false;
-        for (MediaStreamSourceVector::iterator j = sources.begin(); j < sources.end(); ++j) {
-            if ((*j)->id() == source->id()) {
-                isDuplicate = true;
-                break;
-            }
-        }
-        if (!isDuplicate)
-            sources.append(source);
+    for (size_t i = 0; i < sourceVector.size(); ++i) {
+        if (source->id() == sourceVector[i]->id())
+            return true;
     }
+    return false;
 }
 
-PassRefPtr<MediaStream> MediaStream::create(ScriptExecutionContext* context, PassRefPtr<MediaStreamTrackList> audioTracks, PassRefPtr<MediaStreamTrackList> videoTracks, ExceptionCode& ec)
+static void processTrack(MediaStreamTrack* track, MediaStreamSourceVector& sourceVector)
 {
-    MediaStreamSourceVector audioSources;
-    processTrackList(audioTracks, "audio", audioSources, ec);
-    if (ec)
-        return 0;
+    if (track->readyState() == MediaStreamTrack::ENDED)
+        return;
 
-    MediaStreamSourceVector videoSources;
-    processTrackList(videoTracks, "video", videoSources, ec);
-    if (ec)
-        return 0;
+    MediaStreamSource* source = track->component()->source();
+    if (!containsSource(sourceVector, source))
+        sourceVector.append(source);
+}
 
+static PassRefPtr<MediaStream> createFromSourceVectors(ScriptExecutionContext* context, const MediaStreamSourceVector& audioSources, const MediaStreamSourceVector& videoSources)
+{
     RefPtr<MediaStreamDescriptor> descriptor = MediaStreamDescriptor::create(createCanonicalUUIDString(), audioSources, videoSources);
     MediaStreamCenter::instance().didCreateMediaStream(descriptor.get());
 
-    return adoptRef(new MediaStream(context, descriptor.release()));
+    return MediaStream::create(context, descriptor.release());
+}
+
+PassRefPtr<MediaStream> MediaStream::create(ScriptExecutionContext* context)
+{
+    MediaStreamSourceVector audioSources;
+    MediaStreamSourceVector videoSources;
+
+    return createFromSourceVectors(context, audioSources, videoSources);
+}
+
+PassRefPtr<MediaStream> MediaStream::create(ScriptExecutionContext* context, PassRefPtr<MediaStream> stream)
+{
+    ASSERT(stream);
+
+    MediaStreamSourceVector audioSources;
+    MediaStreamSourceVector videoSources;
+
+    for (size_t i = 0; i < stream->audioTracks()->length(); ++i)
+        processTrack(stream->audioTracks()->item(i), audioSources);
+
+    for (size_t i = 0; i < stream->videoTracks()->length(); ++i)
+        processTrack(stream->videoTracks()->item(i), videoSources);
+
+    return createFromSourceVectors(context, audioSources, videoSources);
+}
+
+PassRefPtr<MediaStream> MediaStream::create(ScriptExecutionContext* context, const MediaStreamTrackVector& tracks)
+{
+    MediaStreamSourceVector audioSources;
+    MediaStreamSourceVector videoSources;
+
+    for (size_t i = 0; i < tracks.size(); ++i)
+        processTrack(tracks[i].get(), tracks[i]->kind() == "audio" ? audioSources : videoSources);
+
+    return createFromSourceVectors(context, audioSources, videoSources);
 }
 
 PassRefPtr<MediaStream> MediaStream::create(ScriptExecutionContext* context, PassRefPtr<MediaStreamDescriptor> streamDescriptor)

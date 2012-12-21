@@ -44,8 +44,10 @@ public:
         ENDED = 2
     };
 
+    static PassRefPtr<MediaStream> create(ScriptExecutionContext*);
+    static PassRefPtr<MediaStream> create(ScriptExecutionContext*, PassRefPtr<MediaStream>);
+    static PassRefPtr<MediaStream> create(ScriptExecutionContext*, const MediaStreamTrackVector&);
     static PassRefPtr<MediaStream> create(ScriptExecutionContext*, PassRefPtr<MediaStreamDescriptor>);
-    static PassRefPtr<MediaStream> create(ScriptExecutionContext*, PassRefPtr<MediaStreamTrackList>, PassRefPtr<MediaStreamTrackList>, ExceptionCode&);
     virtual ~MediaStream();
 
     DEFINE_ATTRIBUTE_EVENT_LISTENER(ended);

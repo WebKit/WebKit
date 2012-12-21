@@ -1,3 +1,25 @@
+2012-12-21  Adam Bergkvist  <adam.bergkvist@ericsson.com>
+
+        MediaStream API: Update the MediaStream constructor
+        https://bugs.webkit.org/show_bug.cgi?id=98416
+
+        Reviewed by Adam Barth.
+
+        Updated the MediaStream constructor to support the more general argument
+        list from the latest Media Capture and Streams specification:
+        http://dev.w3.org/2011/webrtc/editor/getusermedia.html
+
+        Added more test cases to existing tests.
+
+        * Modules/mediastream/MediaStream.cpp:
+        (WebCore::containsSource):
+        (WebCore):
+        (WebCore::processTrack):
+        (WebCore::createFromSourceVectors):
+        (WebCore::MediaStream::create):
+        * Modules/mediastream/MediaStream.h:
+        * Modules/mediastream/MediaStream.idl:
+
 2012-12-20  Ryosuke Niwa  <rniwa@webkit.org>
 
         More fix after r138348.

@@ -25,9 +25,11 @@
 [
     Conditional=MEDIA_STREAM,
     EventTarget,
-    Constructor(in MediaStreamTrackList audioTracks, in MediaStreamTrackList videoTracks),
+    Constructor,
+    Constructor(in MediaStream stream),
+    Constructor(in MediaStreamTrack[] tracks),
+    ConstructorParameters=0,
     CallWith=ScriptExecutionContext,
-    ConstructorRaisesException
    ] interface MediaStream {
     readonly attribute DOMString label;
     readonly attribute MediaStreamTrackList audioTracks;

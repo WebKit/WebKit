@@ -7,12 +7,55 @@ PASS Got local stream.
 PASS localStream.audioTracks.length is 1
 PASS localStream.videoTracks.length is 1
 PASS typeof webkitMediaStream === 'function' is true
-PASS stream = new webkitMediaStream(localStream.audioTracks, localStream.videoTracks); did not throw exception.
+PASS new webkitMediaStream(document) threw exception TypeError: Type error.
+PASS new webkitMediaStream([document]) threw exception TypeError: Invalid Array element type.
+PASS new webkitMediaStream([stream.audioTracks[0], document]) threw exception TypeError: Invalid Array element type.
+PASS new webkitMediaStream([null]) threw exception TypeError: Invalid Array element type.
+PASS new webkitMediaStream([undefined]) threw exception TypeError: Invalid Array element type.
+PASS new webkitMediaStream(null) threw exception TypeError: Type error.
+PASS new webkitMediaStream(undefined) threw exception TypeError: Type error.
+PASS Stream constructed
 PASS [object MediaStream] is non-null.
 PASS [object MediaStream] is defined.
-PASS stream.constructor.name is 'MediaStream'
-PASS stream.audioTracks.length is 1
-PASS stream.videoTracks.length is 1
+PASS newStream.constructor.name is 'MediaStream'
+PASS newStream.audioTracks.length is nAudio
+PASS newStream.videoTracks.length is nVideo
+PASS Stream constructed
+PASS [object MediaStream] is non-null.
+PASS [object MediaStream] is defined.
+PASS newStream.constructor.name is 'MediaStream'
+PASS newStream.audioTracks.length is nAudio
+PASS newStream.videoTracks.length is nVideo
+PASS Stream constructed
+PASS [object MediaStream] is non-null.
+PASS [object MediaStream] is defined.
+PASS newStream.constructor.name is 'MediaStream'
+PASS newStream.audioTracks.length is nAudio
+PASS newStream.videoTracks.length is nVideo
+PASS Stream constructed
+PASS [object MediaStream] is non-null.
+PASS [object MediaStream] is defined.
+PASS newStream.constructor.name is 'MediaStream'
+PASS newStream.audioTracks.length is nAudio
+PASS newStream.videoTracks.length is nVideo
+PASS Stream constructed
+PASS [object MediaStream] is non-null.
+PASS [object MediaStream] is defined.
+PASS newStream.constructor.name is 'MediaStream'
+PASS newStream.audioTracks.length is nAudio
+PASS newStream.videoTracks.length is nVideo
+PASS Stream constructed
+PASS [object MediaStream] is non-null.
+PASS [object MediaStream] is defined.
+PASS newStream.constructor.name is 'MediaStream'
+PASS newStream.audioTracks.length is nAudio
+PASS newStream.videoTracks.length is nVideo
+PASS Stream constructed
+PASS [object MediaStream] is non-null.
+PASS [object MediaStream] is defined.
+PASS newStream.constructor.name is 'MediaStream'
+PASS newStream.audioTracks.length is nAudio
+PASS newStream.videoTracks.length is nVideo
 PASS successfullyParsed is true
 
 TEST COMPLETE

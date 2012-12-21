@@ -10,6 +10,12 @@
 <script>
 description("Tests webkitMediaStream.");
 
+var undefined;
+var stream;
+var newStream;
+var nAudio;
+var nVideo;
+
 function error() {
     testFailed('Stream generation failed.');
     finishJSTest();
@@ -30,15 +36,45 @@ function gotStream(s) {
     shouldBe('localStream.audioTracks.length', '1');
     shouldBe('localStream.videoTracks.length', '1');
 
-    stream = null;
     shouldBeTrue("typeof webkitMediaStream === 'function'");
-    shouldNotThrow("stream = new webkitMediaStream(localStream.audioTracks, localStream.videoTracks);");
-    shouldBeNonNull(stream);
-    shouldBeDefined(stream);
-    shouldBe("stream.constructor.name", "'MediaStream'");
-    shouldBe('stream.audioTracks.length', '1');
-    shouldBe('stream.videoTracks.length', '1');
+
+    testConstructor(localStream);
+
     finishJSTest();
+}
+
+function testConstructor(s) {
+    stream = s;
+    shouldThrow('new webkitMediaStream(document)');
+    shouldThrow('new webkitMediaStream([document])');
+    shouldThrow('new webkitMediaStream([stream.audioTracks[0], document])');
+    shouldThrow('new webkitMediaStream([null])');
+    shouldThrow('new webkitMediaStream([undefined])');
+    shouldThrow('new webkitMediaStream(null)');
+    shouldThrow('new webkitMediaStream(undefined)');
+
+    verifyStream(new webkitMediaStream(), 0, 0);
+    verifyStream(new webkitMediaStream([]), 0, 0);
+
+    verifyStream(new webkitMediaStream(s), s.audioTracks.length, s.videoTracks.length);
+
+    verifyStream(new webkitMediaStream([s.audioTracks[0]]), 1, 0);
+    verifyStream(new webkitMediaStream([s.videoTracks[0]]), 0, 1);
+    verifyStream(new webkitMediaStream([s.audioTracks[0], s.videoTracks[0]]), 1, 1);
+    verifyStream(new webkitMediaStream([s.videoTracks[0], s.audioTracks[0], s.videoTracks[0]]), 1, 1);
+}
+
+function verifyStream(s, numAudioTracks, numVideoTracks) {
+    newStream = s;
+    nAudio = numAudioTracks;
+    nVideo = numVideoTracks;
+
+    testPassed('Stream constructed');
+    shouldBeNonNull(newStream);
+    shouldBeDefined(newStream);
+    shouldBe("newStream.constructor.name", "'MediaStream'");
+    shouldBe('newStream.audioTracks.length', 'nAudio');
+    shouldBe('newStream.videoTracks.length', 'nVideo');
 }
 
 getUserMedia({video:true, audio:true}, gotStream);

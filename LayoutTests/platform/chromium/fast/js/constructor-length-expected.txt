@@ -25,7 +25,7 @@ FAIL Int32Array.length should be 1. Was 0.
 FAIL Int8Array.length should be 1. Was 0.
 FAIL Intent.length should be 3. Threw exception ReferenceError: Intent is not defined
 PASS MediaController.length is 0
-FAIL MediaStream.length should be 2. Threw exception ReferenceError: MediaStream is not defined
+FAIL MediaStream.length should be 0. Threw exception ReferenceError: MediaStream is not defined
 PASS MessageChannel.length is 0
 FAIL MessageEvent.length should be 2. Was 0.
 FAIL OverflowEvent.length should be 2. Was 0.

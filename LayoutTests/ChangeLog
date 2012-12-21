@@ -1,3 +1,23 @@
+2012-12-21  Adam Bergkvist  <adam.bergkvist@ericsson.com>
+
+        MediaStream API: Update the MediaStream constructor
+        https://bugs.webkit.org/show_bug.cgi?id=98416
+
+        Reviewed by Adam Barth.
+
+        Updated the MediaStream constructor to support the more general argument
+        list from the latest Media Capture and Streams specification:
+        http://dev.w3.org/2011/webrtc/editor/getusermedia.html
+
+        * fast/js/constructor-length.html:
+        * fast/mediastream/MediaStreamConstructor-expected.txt:
+        * fast/mediastream/MediaStreamConstructor.html:
+        * platform/blackberry/fast/js/constructor-length-expected.txt:
+        * platform/chromium/fast/js/constructor-length-expected.txt:
+        * platform/gtk/fast/js/constructor-length-expected.txt:
+        * platform/mac/fast/js/constructor-length-expected.txt:
+        * platform/qt/fast/js/constructor-length-expected.txt:
+
 2012-12-21  Zeno Albisser  <zeno@webkit.org>
 
         [Qt] Add new TestExpectations for qt-5.0-mac-wk2.
