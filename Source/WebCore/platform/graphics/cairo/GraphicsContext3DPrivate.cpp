@@ -85,6 +85,8 @@ void GraphicsContext3DPrivate::paintToTextureMapper(TextureMapper* textureMapper
 
     ASSERT(m_renderStyle == GraphicsContext3D::RenderOffscreen);
 
+    m_context->markLayerComposited();
+
     // FIXME: We do not support mask for the moment with TextureMapperImageBuffer.
     if (textureMapper->accelerationMode() != TextureMapper::OpenGLMode) {
         GraphicsContext* context = textureMapper->graphicsContext();

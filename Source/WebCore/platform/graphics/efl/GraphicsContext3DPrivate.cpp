@@ -134,6 +134,8 @@ uint32_t GraphicsContext3DPrivate::copyToGraphicsSurface()
     if (!m_platformContext || !makeContextCurrent())
         return 0;
 
+    m_context->markLayerComposited();
+
     if (m_pendingSurfaceResize) {
         m_pendingSurfaceResize = false;
         m_platformSurface->setGeometry(IntRect(0, 0, m_context->m_currentWidth, m_context->m_currentHeight));
