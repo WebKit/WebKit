@@ -23,4 +23,4 @@ layer at (0,0) size 800x600
             text run at (0,0) width 21: "baz"
 layer at (12,109) size 149x16
   RenderBlock {DIV} at (2,3) size 149x16
-caret: position 0 of child 0 {DIV} of {#shadow-root} of child 1 {INPUT} of child 2 {DIV} of body
+caret: position 0 of child 0 {DIV} of {#document-fragment} of child 1 {INPUT} of child 2 {DIV} of body

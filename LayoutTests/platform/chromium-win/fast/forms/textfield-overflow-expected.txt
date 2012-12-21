@@ -8,4 +8,4 @@ layer at (0,0) size 800x600
       RenderText {#text} at (0,0) size 0x0
 layer at (12,11) size 149x4 scrollHeight 16
   RenderBlock {DIV} at (2,3) size 149x4
-caret: position 0 of child 0 {DIV} of {#shadow-root} of child 1 {INPUT} of body
+caret: position 0 of child 0 {DIV} of {#document-fragment} of child 1 {INPUT} of body

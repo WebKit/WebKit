@@ -1,3 +1,87 @@
+2012-12-21  Shinya Kawanaka  <shinyak@chromium.org>
+
+        [Shadow DOM]: ShadowRoot wrong nodeName attribute
+        https://bugs.webkit.org/show_bug.cgi?id=104995
+
+        Reviewed by Dimitri Glazkov.
+
+        Uses 'instanceof' to check the instance is ShadowRoot or not.
+        Update dump-as-markup.js to see 'instanceof' instead of nodeType.
+        Also, a lot of rebaselines have been conducted.
+
+        * editing/deleting/delete-ligature-001-expected.txt:
+        * editing/pasteboard/copy-in-password-field-expected.txt:
+        * editing/selection/select-all-textarea-expected.txt:
+        * fast/dom/shadow/layout-tests-can-access-shadow-expected.txt:
+        * fast/dom/shadow/layout-tests-can-access-shadow.html:
+        * fast/dom/shadow/resources/shadow-dom.js:
+        (isShadowRoot):
+        * fast/events/5056619-expected.txt:
+        * fast/forms/focus-selection-input-expected.txt:
+        * inspector/elements/shadow-dom-modify-chardata-expected.txt:
+        * inspector/elements/shadow-root-expected.txt:
+        * inspector/elements/update-shadowdom-expected.txt:
+        * platform/chromium-linux/editing/selection/select-from-textfield-outwards-expected.txt:
+        * platform/chromium-linux/fast/forms/input-text-double-click-expected.txt:
+        * platform/chromium-linux/fast/forms/textfield-outline-expected.txt:
+        * platform/chromium-linux/fast/forms/validation-message-appearance-expected.txt:
+        * platform/chromium-win/editing/deleting/delete-all-text-in-text-field-assertion-expected.txt:
+        * platform/chromium-win/editing/input/caret-at-the-edge-of-input-expected.txt:
+        * platform/chromium-win/editing/input/reveal-caret-of-multiline-input-expected.txt:
+        * platform/chromium-win/editing/inserting/4960120-1-expected.txt:
+        * platform/chromium-win/editing/pasteboard/drop-text-without-selection-expected.txt:
+        * platform/chromium-win/editing/pasteboard/pasting-tabs-expected.txt:
+        * platform/chromium-win/editing/selection/4895428-3-expected.txt:
+        * platform/chromium-win/editing/selection/4975120-expected.txt:
+        * platform/chromium-win/editing/selection/select-across-readonly-input-1-expected.txt:
+        * platform/chromium-win/editing/selection/select-across-readonly-input-4-expected.txt:
+        * platform/chromium-win/editing/selection/select-across-readonly-input-5-expected.txt:
+        * platform/chromium-win/fast/events/autoscroll-expected.txt:
+        * platform/chromium-win/fast/events/context-no-deselect-expected.txt:
+        * platform/chromium-win/fast/forms/input-appearance-focus-expected.txt:
+        * platform/chromium-win/fast/forms/input-appearance-readonly-expected.txt:
+        * platform/chromium-win/fast/forms/input-appearance-selection-expected.txt:
+        * platform/chromium-win/fast/forms/input-double-click-selection-gap-bug-expected.txt:
+        * platform/chromium-win/fast/forms/input-placeholder-visibility-1-expected.txt:
+        * platform/chromium-win/fast/forms/input-placeholder-visibility-3-expected.txt:
+        * platform/chromium-win/fast/forms/input-readonly-autoscroll-expected.txt:
+        * platform/chromium-win/fast/forms/input-text-click-inside-expected.txt:
+        * platform/chromium-win/fast/forms/input-text-drag-down-expected.txt:
+        * platform/chromium-win/fast/forms/input-text-option-delete-expected.txt:
+        * platform/chromium-win/fast/forms/input-text-scroll-left-on-blur-expected.txt:
+        * platform/chromium-win/fast/forms/input-text-self-emptying-click-expected.txt:
+        * platform/chromium-win/fast/forms/number/number-appearance-rtl-expected.txt:
+        * platform/chromium-win/fast/forms/plaintext-mode-2-expected.txt:
+        * platform/chromium-win/fast/forms/search-rtl-expected.txt:
+        * platform/chromium-win/fast/forms/tabbing-input-iframe-expected.txt:
+        * platform/chromium-win/fast/forms/textarea-placeholder-visibility-1-expected.txt:
+        * platform/chromium-win/fast/forms/textarea-placeholder-visibility-2-expected.txt:
+        * platform/chromium-win/fast/forms/textarea-scrollbar-expected.txt:
+        * platform/chromium-win/fast/forms/textarea-scrolled-type-expected.txt:
+        * platform/chromium-win/fast/forms/textfield-focus-ring-expected.txt:
+        * platform/chromium-win/fast/forms/textfield-overflow-expected.txt:
+        * platform/chromium-win/fast/frames/take-focus-from-iframe-expected.txt:
+        * platform/chromium-win/fast/html/details-add-summary-1-and-click-expected.txt:
+        * platform/chromium-win/fast/html/details-add-summary-10-and-click-expected.txt:
+        * platform/chromium-win/fast/html/details-add-summary-2-and-click-expected.txt:
+        * platform/chromium-win/fast/html/details-add-summary-3-and-click-expected.txt:
+        * platform/chromium-win/fast/html/details-add-summary-4-and-click-expected.txt:
+        * platform/chromium-win/fast/html/details-add-summary-5-and-click-expected.txt:
+        * platform/chromium-win/fast/html/details-add-summary-6-and-click-expected.txt:
+        * platform/chromium-win/fast/html/details-add-summary-7-and-click-expected.txt:
+        * platform/chromium-win/fast/html/details-add-summary-8-and-click-expected.txt:
+        * platform/chromium-win/fast/html/details-add-summary-9-and-click-expected.txt:
+        * platform/chromium-win/fast/html/details-remove-summary-1-and-click-expected.txt:
+        * platform/chromium-win/fast/html/details-remove-summary-2-and-click-expected.txt:
+        * platform/chromium-win/fast/html/details-remove-summary-3-and-click-expected.txt:
+        * platform/chromium-win/fast/html/details-remove-summary-4-and-click-expected.txt:
+        * platform/chromium-win/fast/html/details-remove-summary-5-and-click-expected.txt:
+        * platform/chromium-win/fast/html/details-remove-summary-6-and-click-expected.txt:
+        * platform/chromium-win/fast/repaint/renderer-destruction-by-invalidateSelection-crash-expected.txt:
+        * platform/chromium-win/fast/transforms/transformed-focused-text-input-expected.txt:
+        * resources/dump-as-markup.js:
+        (Markup._get):
+
 2012-12-21  Ilya Tikhonovsky  <loislo@chromium.org>
 
         Unreviewed rebaseline.

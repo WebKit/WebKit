@@ -15,7 +15,7 @@ if (window.internals) {
     // Make assertions about a built-in shadow
     var keygen = document.getElementById('keys');
     var shadow = internals.shadowRoot(keygen);
-    shouldBe('shadow.nodeName', '"#shadow-root"');
+    shouldBe('shadow.nodeName', '"#document-fragment"');
 
     // Shadow roots aren't elements, so accessing their shadow should
     // raise
@@ -33,7 +33,7 @@ if (window.internals) {
 
     // Can bless ordinary elements with shadows
     shadow = internals.ensureShadowRoot(p);
-    shouldBe('shadow.nodeName', '"#shadow-root"');
+    shouldBe('shadow.nodeName', '"#document-fragment"');
     shouldBe('shadow === internals.shadowRoot(p)', 'true');
 }
 </script>

@@ -2,14 +2,14 @@ This test verified #shadow-root is displayed when showShadowRoot is enabled.
 
 - <div id="container">
     - <div id="test1">
-          #shadow-root
+          #document-fragment
       </div>
     - <div id="test2">
-          #shadow-root
+          #document-fragment
           "only test"
       </div>
     - <div id="test3">
-          #shadow-root
+          #document-fragment
           "with "
           <span>elements</span>
       </div>
