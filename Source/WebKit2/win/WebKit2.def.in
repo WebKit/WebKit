@@ -200,6 +200,7 @@ EXPORTS
         ?hasShadowInsertionPoint@ShadowRoot@WebCore@@QBE_NXZ
         ?hasContentElement@ShadowRoot@WebCore@@QBE_NXZ
         ?inputTag@HTMLNames@WebCore@@3VQualifiedName@2@B
+        ?isTreeScope@Node@WebCore@@QBE_NXZ
 #if ENABLE(INSPECTOR)
         ?getHighlight@InspectorController@WebCore@@QBEXPAUHighlight@2@@Z
         ?instrumentingAgentsForPage@InspectorInstrumentation@WebCore@@CAPAVInstrumentingAgents@2@PAVPage@2@@Z
