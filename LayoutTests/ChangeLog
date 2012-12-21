@@ -1,3 +1,13 @@
+2012-12-21  Shinya Kawanaka  <shinyak@chromium.org>
+
+        Implement ShadowRoot::elementFromPoint
+        https://bugs.webkit.org/show_bug.cgi?id=104579
+
+        Reviewed by Dimitri Glazkov.
+
+        * fast/dom/shadow/elementfrompoint-expected.txt: Added.
+        * fast/dom/shadow/elementfrompoint.html: Added.
+
 2012-12-21  Ilya Tikhonovsky  <loislo@chromium.org>
 
         Unreviewed. Add Crash test expectation to the media/track/ tests which have explicit expectations.

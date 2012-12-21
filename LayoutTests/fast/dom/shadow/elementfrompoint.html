@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="resources/polyfill.js"></script>
+<script src="../resources/event-sender-util.js"></script>
+<script src="../../js/resources/js-test-pre.js"></script>
+</head>
+<body>
+
+<div id="host"></div>
+<pre id="console"></pre>
+
+<script>
+function createBox() {
+    var div = document.createElement('div');
+    div.style.width = '100px';
+    div.style.height = '100px';
+    return div;
+}
+
+var shadowRoot = host.webkitCreateShadowRoot();
+var box11 = createBox();
+var box12 = createBox();
+var box13 = createBox();
+shadowRoot.appendChild(box11);
+shadowRoot.appendChild(box12);
+shadowRoot.appendChild(box13);
+
+var nestedHost = document.createElement('div');
+var nestedShadowRoot = nestedHost.webkitCreateShadowRoot();
+var box21 = createBox();
+var box22 = createBox();
+var box23 = createBox();
+nestedShadowRoot.appendChild(box21);
+nestedShadowRoot.appendChild(box22);
+nestedShadowRoot.appendChild(box23);
+
+shadowRoot.appendChild(nestedHost);
+
+var x12 = box12.offsetLeft + box12.offsetWidth / 2;
+var y12 = box12.offsetTop + box12.offsetHeight / 2;
+var x22 = box22.offsetLeft + box22.offsetWidth / 2;
+var y22 = box22.offsetTop + box22.offsetHeight / 2;
+
+shouldBe('shadowRoot.elementFromPoint(x12, y12)', 'box12');
+shouldBe('nestedShadowRoot.elementFromPoint(x22, y22)', 'box22');
+
+shouldBe('shadowRoot.elementFromPoint(x22, y22)', 'nestedHost');
+shouldBe('document.elementFromPoint(x22, y22)', 'host');
+</script>
+
+<script src="../../js/resources/js-test-post.js"></script>
+</body>
+</html>

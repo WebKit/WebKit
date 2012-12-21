@@ -44,4 +44,7 @@
     NodeList getElementsByTagName(in [Optional=DefaultIsUndefined] DOMString tagName);
     NodeList getElementsByTagNameNS(in [TreatNullAs=NullString,Optional=DefaultIsUndefined] DOMString namespaceURI,
                                     in [Optional=DefaultIsUndefined] DOMString localName);
+
+    Element elementFromPoint(in [Optional=DefaultIsUndefined] long x, 
+                             in [Optional=DefaultIsUndefined] long y);
 };

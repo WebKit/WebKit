@@ -1418,40 +1418,12 @@ PassRefPtr<NodeList> Document::handleZeroPadding(const HitTestRequest& request, 
     return StaticHashSetNodeList::adopt(list);
 }
 
-static Node* nodeFromPoint(Frame* frame, RenderView* renderView, int x, int y, LayoutPoint* localPoint = 0)
-{
-    if (!frame)
-        return 0;
-    FrameView* frameView = frame->view();
-    if (!frameView)
-        return 0;
-
-    float scaleFactor = frame->pageZoomFactor() * frame->frameScaleFactor();
-    IntPoint point = roundedIntPoint(FloatPoint(x * scaleFactor  + frameView->scrollX(), y * scaleFactor + frameView->scrollY()));
-
-    if (!frameView->visibleContentRect().contains(point))
-        return 0;
-
-    HitTestRequest request(HitTestRequest::ReadOnly | HitTestRequest::Active);
-    HitTestResult result(point);
-    renderView->hitTest(request, result);
-
-    if (localPoint)
-        *localPoint = result.localPoint();
-
-    return result.innerNode();
-}
-
 Element* Document::elementFromPoint(int x, int y) const
 {
     if (!renderer())
         return 0;
-    Node* node = nodeFromPoint(frame(), renderView(), x, y);
-    while (node && !node->isElementNode())
-        node = node->parentNode();
-    if (node)
-        node = ancestorInThisScope(node);
-    return static_cast<Element*>(node);
+
+    return TreeScope::elementFromPoint(x, y);
 }
 
 PassRefPtr<Range> Document::caretRangeFromPoint(int x, int y)
@@ -1459,7 +1431,7 @@ PassRefPtr<Range> Document::caretRangeFromPoint(int x, int y)
     if (!renderer())
         return 0;
     LayoutPoint localPoint;
-    Node* node = nodeFromPoint(frame(), renderView(), x, y, &localPoint);
+    Node* node = nodeFromPoint(this, x, y, &localPoint);
     if (!node)
         return 0;
 

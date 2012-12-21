@@ -35,15 +35,18 @@
 #include "Element.h"
 #include "FocusController.h"
 #include "Frame.h"
+#include "FrameView.h"
 #include "HTMLAnchorElement.h"
 #include "HTMLFrameOwnerElement.h"
 #include "HTMLLabelElement.h"
 #include "HTMLMapElement.h"
 #include "HTMLNames.h"
+#include "HitTestResult.h"
 #include "IdTargetObserverRegistry.h"
 #include "InsertionPoint.h"
 #include "NodeTraversal.h"
 #include "Page.h"
+#include "RenderView.h"
 #include "RuntimeEnabledFeatures.h"
 #include "ShadowRoot.h"
 #include "TreeScopeAdopter.h"
@@ -165,6 +168,42 @@ HTMLMapElement* TreeScope::getImageMap(const String& url) const
     if (rootNode()->document()->isHTMLDocument())
         return static_cast<HTMLMapElement*>(m_imageMapsByName->getElementByLowercasedMapName(AtomicString(name.lower()).impl(), this));
     return static_cast<HTMLMapElement*>(m_imageMapsByName->getElementByMapName(AtomicString(name).impl(), this));
+}
+
+Node* nodeFromPoint(Document* document, int x, int y, LayoutPoint* localPoint)
+{
+    Frame* frame = document->frame();
+
+    if (!frame)
+        return 0;
+    FrameView* frameView = frame->view();
+    if (!frameView)
+        return 0;
+
+    float scaleFactor = frame->pageZoomFactor() * frame->frameScaleFactor();
+    IntPoint point = roundedIntPoint(FloatPoint(x * scaleFactor  + frameView->scrollX(), y * scaleFactor + frameView->scrollY()));
+
+    if (!frameView->visibleContentRect().contains(point))
+        return 0;
+
+    HitTestRequest request(HitTestRequest::ReadOnly | HitTestRequest::Active);
+    HitTestResult result(point);
+    document->renderView()->hitTest(request, result);
+
+    if (localPoint)
+        *localPoint = result.localPoint();
+
+    return result.innerNode();
+}
+
+Element* TreeScope::elementFromPoint(int x, int y) const
+{
+    Node* node = nodeFromPoint(rootNode()->document(), x, y);
+    while (node && !node->isElementNode())
+        node = node->parentNode();
+    if (node)
+        node = ancestorInThisScope(node);
+    return toElement(node);
 }
 
 void TreeScope::addLabel(const AtomicString& forAttributeValue, HTMLLabelElement* element)

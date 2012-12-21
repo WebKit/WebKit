@@ -1,3 +1,29 @@
+2012-12-21  Shinya Kawanaka  <shinyak@chromium.org>
+
+        Implement ShadowRoot::elementFromPoint
+        https://bugs.webkit.org/show_bug.cgi?id=104579
+
+        Reviewed by Dimitri Glazkov.
+
+        Move elementFromPoint and nodeFromPoint to TreeScope from Document so that ShadowRoot can call it.
+        In the elementFromPoint(), the element taken by nodeFromPoint is not in the same tree scope, its ancestor is returned.
+
+        Since nodeFromPoint does not return the shadow ancestor of the result node, I don't make it TreeScope method.
+
+        Test: fast/dom/shadow/elementfrompoint.html
+
+        * dom/Document.cpp:
+        (WebCore::Document::elementFromPoint): Code is shared with TreeScope.
+        (WebCore::Document::caretRangeFromPoint):
+        * dom/ShadowRoot.idl:
+        * dom/TreeScope.cpp:
+        (WebCore::nodeFromPoint): Moved from Document.cpp
+        (WebCore):
+        (WebCore::TreeScope::elementFromPoint):
+        * dom/TreeScope.h:
+        (WebCore):
+        (TreeScope):
+
 2012-12-21  Kenneth Rohde Christiansen  <kenneth@webkit.org>
 
         [EFL][WK2] Never create WebCore scrollbars for EFL/WK2

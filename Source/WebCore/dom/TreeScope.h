@@ -35,9 +35,11 @@ namespace WebCore {
 
 class ContainerNode;
 class DOMSelection;
+class Document;
 class Element;
 class HTMLLabelElement;
 class HTMLMapElement;
+class LayoutPoint;
 class IdTargetObserverRegistry;
 class Node;
 
@@ -63,6 +65,8 @@ public:
     void addImageMap(HTMLMapElement*);
     void removeImageMap(HTMLMapElement*);
     HTMLMapElement* getImageMap(const String& url) const;
+
+    Element* elementFromPoint(int x, int y) const;
 
     // For accessibility.
     bool shouldCacheLabelsByForAttribute() const { return m_labelsByForAttribute; }
@@ -121,6 +125,7 @@ inline bool TreeScope::containsMultipleElementsWithId(const AtomicString& id) co
     return m_elementsById && m_elementsById->containsMultiple(id.impl());
 }
 
+Node* nodeFromPoint(Document*, int x, int y, LayoutPoint* localPoint = 0);
 TreeScope* commonTreeScope(Node*, Node*);
 
 } // namespace WebCore
