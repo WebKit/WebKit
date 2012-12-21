@@ -1,3 +1,17 @@
+2012-12-20  Alexey Proskuryakov  <ap@apple.com>
+
+        REGRESSION (r138191): Tests crash in ResourceRequest::setStorageSession
+        https://bugs.webkit.org/show_bug.cgi?id=105563
+
+        Reviewed by Brady Eidson.
+
+        Partially fixes crashing http/tests/appcache/main-resource-redirect.html
+        (but there is an unrelated regression affecting this test).
+
+        * platform/network/cf/ResourceHandleCFNet.cpp: (WebCore::ResourceHandle::willSendRequest):
+        * platform/network/mac/ResourceHandleMac.mm: (WebCore::ResourceHandle::willSendRequest):
+        The client can make the object get destoryed, protect it to avoid accessing deleted memory.
+
 2012-12-20  Viatcheslav Ostapenko  <sl.ostapenko@samsung.com>
 
         [EFL] [WebGL] [Wk2] Contents are not rendered properly.
