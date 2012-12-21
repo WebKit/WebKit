@@ -1,3 +1,15 @@
+2012-12-20  Elliott Sprehn  <esprehn@chromium.org>
+
+        RenderBlock hit testing should ignore PseudoElements
+        https://bugs.webkit.org/show_bug.cgi?id=105545
+
+        Reviewed by Eric Seidel.
+
+        Add test for hit testing on pseudo element generated blocks and boxes.
+
+        * fast/css-generated-content/block-and-box-hit-testing-expected.txt: Added.
+        * fast/css-generated-content/block-and-box-hit-testing.html: Added.
+
 2012-12-20  Stephen Chenney  <schenney@chromium.org>
 
         SVG: <altglpyh> for a surrogate pair character in a ligature fails

@@ -4935,22 +4935,22 @@ Position RenderBlock::positionForBox(InlineBox *box, bool start) const
     if (!box)
         return Position();
 
-    if (!box->renderer()->node())
-        return createLegacyEditingPosition(node(), start ? caretMinOffset() : caretMaxOffset());
+    if (!box->renderer()->nonPseudoNode())
+        return createLegacyEditingPosition(nonPseudoNode(), start ? caretMinOffset() : caretMaxOffset());
 
     if (!box->isInlineTextBox())
-        return createLegacyEditingPosition(box->renderer()->node(), start ? box->renderer()->caretMinOffset() : box->renderer()->caretMaxOffset());
+        return createLegacyEditingPosition(box->renderer()->nonPseudoNode(), start ? box->renderer()->caretMinOffset() : box->renderer()->caretMaxOffset());
 
     InlineTextBox* textBox = toInlineTextBox(box);
-    return createLegacyEditingPosition(box->renderer()->node(), start ? textBox->start() : textBox->start() + textBox->len());
+    return createLegacyEditingPosition(box->renderer()->nonPseudoNode(), start ? textBox->start() : textBox->start() + textBox->len());
 }
 
 static inline bool isEditingBoundary(RenderObject* ancestor, RenderObject* child)
 {
-    ASSERT(!ancestor || ancestor->node());
-    ASSERT(child && child->node());
+    ASSERT(!ancestor || ancestor->nonPseudoNode());
+    ASSERT(child && child->nonPseudoNode());
     return !ancestor || !ancestor->parent() || (ancestor->hasLayer() && ancestor->parent()->isRenderView())
-        || ancestor->node()->rendererIsEditable() == child->node()->rendererIsEditable();
+        || ancestor->nonPseudoNode()->rendererIsEditable() == child->nonPseudoNode()->rendererIsEditable();
 }
 
 // FIXME: This function should go on RenderObject as an instance method. Then
@@ -4966,14 +4966,14 @@ static VisiblePosition positionForPointRespectingEditingBoundaries(RenderBlock* 
     LayoutPoint pointInChildCoordinates(toLayoutPoint(pointInParentCoordinates - childLocation));
 
     // If this is an anonymous renderer, we just recur normally
-    Node* childNode = child->node();
+    Node* childNode = child->nonPseudoNode();
     if (!childNode)
         return child->positionForPoint(pointInChildCoordinates);
 
     // Otherwise, first make sure that the editability of the parent and child agree.
     // If they don't agree, then we return a visible position just before or after the child
     RenderObject* ancestor = parent;
-    while (ancestor && !ancestor->node())
+    while (ancestor && !ancestor->nonPseudoNode())
         ancestor = ancestor->parent();
 
     // If we can't find an ancestor to check editability on, or editability is unchanged, we recur like normal
