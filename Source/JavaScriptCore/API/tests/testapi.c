@@ -1047,7 +1047,6 @@ int main(int argc, char* argv[])
     
     // Test garbage collection with a fresh context
     context = JSGlobalContextCreateInGroup(NULL, NULL);
-    JSContextGroupRef contextGroup = JSContextGetGroup(context);
     TestInitializeFinalize = true;
     testInitializeFinalize();
     JSGlobalContextRelease(context);
@@ -1063,6 +1062,8 @@ int main(int argc, char* argv[])
     JSClassRef globalObjectClass = JSClassCreate(&globalObjectClassDefinition);
     context = JSGlobalContextCreateInGroup(NULL, globalObjectClass);
 
+    JSContextGroupRef contextGroup = JSContextGetGroup(context);
+    
     JSGlobalContextRetain(context);
     JSGlobalContextRelease(context);
     ASSERT(JSContextGetGlobalContext(context) == context);

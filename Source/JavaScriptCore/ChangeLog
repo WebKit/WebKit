@@ -1,5 +1,12 @@
 2012-12-20  Oliver Hunt  <oliver@apple.com>
 
+        Finally found the problem.  Using the wrong JSContextGroup.
+
+        * API/tests/testapi.c:
+        (main):
+
+2012-12-20  Oliver Hunt  <oliver@apple.com>
+
         Try to convince bots to be happy with testapi.
 
         * API/JSScriptRefPrivate.h:
