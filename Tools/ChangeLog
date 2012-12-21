@@ -1,3 +1,26 @@
+2012-12-20  Dirk Pranke  <dpranke@chromium.org>
+
+        TestExpectation fallback is broken
+        https://bugs.webkit.org/show_bug.cgi?id=105583
+
+        Reviewed by Ryosuke Niwa.
+
+        When I added support for the -wk2 in port names, it looks
+        like I broke the way we computed the list of TestExpectations
+        files so that the implementation-version directory was left out :(.
+        Fixed and cleaned up the tests.
+
+        * Scripts/webkitpy/layout_tests/port/base.py:
+        (Port.expectations_files):
+        * Scripts/webkitpy/layout_tests/port/port_testcase.py:
+        (TestWebKitPort.__init__):
+        (PortTestCase.test_skipped_directories_for_symbols):
+        (test_skipped_directories_for_features):
+        (test_skipped_directories_for_features_no_matching_tests_in_test_list):
+        (test_skipped_tests_for_unsupported_features_empty_test_list):
+        (test_skipped_layout_tests):
+        (test_expectations_files):
+
 2012-12-20  Anders Carlsson  <andersca@apple.com>
 
         Don't include WebKit2 headers when building TestWebKitAPI on windows

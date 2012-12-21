@@ -1071,13 +1071,15 @@ class Port(object):
         # Unlike baseline_search_path, we only want to search [WK2-PORT, PORT-VERSION, PORT] and any directories
         # included via --additional-platform-directory, not the full casade.
         search_paths = [self.port_name]
-        if self.name() != self.port_name:
-            search_paths.append(self.name())
+
+        non_wk2_name = self.name().replace('-wk2', '')
+        if non_wk2_name != self.port_name:
+            search_paths.append(non_wk2_name)
 
         if self.get_option('webkit_test_runner'):
             # Because nearly all of the skipped tests for WebKit 2 are due to cross-platform
             # issues, all wk2 ports share a skipped list under platform/wk2.
-            search_paths.extend([self._wk2_port_name(), "wk2"])
+            search_paths.extend(["wk2", self._wk2_port_name()])
 
         search_paths.extend(self.get_option("additional_platform_directory", []))
 
