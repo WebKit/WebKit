@@ -50,7 +50,7 @@ class QtPortTest(port_testcase.PortTestCase):
         {'search_paths':['qt-4.8', 'qt-win', 'qt'], 'os_name':'win', 'use_webkit2':False},
         {'search_paths':['qt-4.8', 'qt-linux', 'qt'], 'os_name':'linux', 'use_webkit2':False},
 
-        {'search_paths':['qt-5.0-wk2', 'qt-5.0', 'qt-mac', 'qt'], 'os_name':'mac', 'use_webkit2':True, 'qt_version':'5.0'},
+        {'search_paths':['qt-5.0-mac-wk2', 'qt-5.0-wk2', 'qt-5.0', 'qt-mac', 'qt'], 'os_name':'mac', 'use_webkit2':True, 'qt_version':'5.0'},
         {'search_paths':['qt-5.0-wk2', 'qt-5.0', 'qt-win', 'qt'], 'os_name':'win', 'use_webkit2':True, 'qt_version':'5.0'},
         {'search_paths':['qt-5.0-wk2', 'qt-5.0', 'qt-linux', 'qt'], 'os_name':'linux', 'use_webkit2':True, 'qt_version':'5.0'},
 

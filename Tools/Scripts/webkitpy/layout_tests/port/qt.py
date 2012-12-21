@@ -115,6 +115,8 @@ class QtPort(Port):
         return version
 
     def _search_paths(self):
+        #                 qt-5.0-mac-wk2
+        #                /
         # qt-5.0-wk1    qt-5.0-wk2
         #            \/
         #         qt-5.0    qt-4.8
@@ -126,6 +128,8 @@ class QtPort(Port):
         version = self.qt_version()
         if '5.0' in version:
             if self.get_option('webkit_test_runner'):
+                if self.operating_system() == 'mac':
+                    search_paths.append('qt-5.0-mac-wk2')
                 search_paths.append('qt-5.0-wk2')
             else:
                 search_paths.append('qt-5.0-wk1')

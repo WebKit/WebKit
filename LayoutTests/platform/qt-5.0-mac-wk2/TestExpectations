@@ -1,0 +1,84 @@
+# These are the layout test expectations for the Qt port of WebKit.
+#
+# See http://trac.webkit.org/wiki/TestExpectations for more information on this file.
+
+#
+# For the qt-mac build we only want to test a minor subset of all the tests.
+#
+
+accessibility [ Skip ]
+animations [ Skip ]
+batterystatus [ Skip ]
+canvas [ Skip ]
+compositing [ Skip ]
+css1 [ Skip ]
+css2.1 [ Skip ]
+css3 [ Skip ]
+cssom [ Skip ]
+dom [ Skip ]
+editing [ Skip ]
+fast [ Skip ]
+fonts [ Skip ]
+fullscreen [ Skip ]
+gamepad [ Skip ]
+html5lib [ Skip ]
+http [ Skip ]
+ietestcenter [ Skip ]
+inspector [ Skip ]
+inspector-protocol [ Skip ]
+java [ Skip ]
+jquery [ Skip ]
+loader [ Skip ]
+media [ Skip ]
+mhtml [ Skip ]
+networkinformation [ Skip ]
+perf [ Skip ]
+platform [ Skip ]
+plugins [ Skip ]
+pointer-lock [ Skip ]
+printing [ Skip ]
+proximity [ Skip ]
+resources [ Skip ]
+scrollbars [ Skip ]
+security [ Skip ]
+sputnik [ Skip ]
+storage [ Skip ]
+svg [ Skip ]
+tables [ Skip ]
+touchadjustment [ Skip ]
+transforms [ Skip ]
+transitions [ Skip ]
+traversal [ Skip ]
+userscripts [ Skip ]
+webarchive [ Skip ]
+webaudio [ Skip ]
+webintents [ Skip ]
+xmlviewer [ Skip ]
+
+#
+# We are whitelisting a few specific tests we are interested in.
+#
+
+Bug(zalbisser) fast/canvas/webgl [ Pass ]
+
+#
+# The following tests are currently failing and need investigation before unskipping.
+#
+
+Bug(zalbisser) fast/canvas/webgl/arraybuffer-transfer-of-control.html [ Skip ]
+Bug(zalbisser) fast/canvas/webgl/css-webkit-canvas.html [ Skip ]
+Bug(zalbisser) fast/canvas/webgl/css-webkit-canvas-repaint.html [ Skip ]
+Bug(zalbisser) fast/canvas/webgl/framebuffer-object-attachment.html [ Skip ]
+Bug(zalbisser) fast/canvas/webgl/oes-element-index-uint.html [ Skip ]
+Bug(zalbisser) fast/canvas/webgl/oes-vertex-array-object.html [ Skip ]
+Bug(zalbisser) fast/canvas/webgl/premultiplyalpha-test.html [ Skip ]
+Bug(zalbisser) fast/canvas/webgl/tex-image-and-sub-image-2d-with-array-buffer-view.html [ Skip ]
+Bug(zalbisser) fast/canvas/webgl/tex-image-and-sub-image-2d-with-image-data-rgb565.html [ Skip ]
+Bug(zalbisser) fast/canvas/webgl/tex-image-and-sub-image-2d-with-image-data-rgba4444.html [ Skip ]
+Bug(zalbisser) fast/canvas/webgl/tex-image-and-sub-image-2d-with-image-data-rgba5551.html [ Skip ]
+Bug(zalbisser) fast/canvas/webgl/tex-image-and-sub-image-2d-with-image-data.html [ Skip ]
+Bug(zalbisser) fast/canvas/webgl/tex-image-and-sub-image-2d-with-video-rgb565.html [ Skip ]
+Bug(zalbisser) fast/canvas/webgl/tex-image-and-sub-image-2d-with-video-rgba4444.html [ Skip ]
+Bug(zalbisser) fast/canvas/webgl/tex-image-and-sub-image-2d-with-video-rgba5551.html [ Skip ]
+Bug(zalbisser) fast/canvas/webgl/tex-image-and-sub-image-2d-with-video.html [ Skip ]
+
