@@ -100,6 +100,19 @@ class GtkPort(Port, PulseAudioSanitizer):
                 return full_library
         return None
 
+    def _search_paths(self):
+        search_paths = []
+        if self.get_option('webkit_test_runner'):
+            search_paths.extend([self.port_name + '-wk2', 'wk2'])
+        else:
+            search_paths.append(self.port_name + '-wk1')
+        search_paths.append(self.port_name)
+        search_paths.extend(self.get_option("additional_platform_directory", []))
+        return search_paths
+
+    def expectations_files(self):
+        return [self._filesystem.join(self._webkit_baseline_path(p), 'TestExpectations') for p in reversed(self._search_paths())]
+
     # FIXME: We should find a way to share this implmentation with Gtk,
     # or teach run-launcher how to call run-safari and move this down to Port.
     def show_results_html_file(self, results_filename):

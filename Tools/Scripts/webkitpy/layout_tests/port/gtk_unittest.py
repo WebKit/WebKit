@@ -43,6 +43,13 @@ class GtkPortTest(port_testcase.PortTestCase):
     port_name = 'gtk'
     port_maker = GtkPort
 
+    def test_expectations_files(self):
+        port = self.make_port()
+        self.assertEquals(port.expectations_files(), ['/mock-checkout/LayoutTests/platform/gtk/TestExpectations', '/mock-checkout/LayoutTests/platform/gtk-wk1/TestExpectations'])
+
+        port = self.make_port(options=MockOptions(webkit_test_runner=True))
+        self.assertEquals(port.expectations_files(), ['/mock-checkout/LayoutTests/platform/gtk/TestExpectations', '/mock-checkout/LayoutTests/platform/wk2/TestExpectations', '/mock-checkout/LayoutTests/platform/gtk-wk2/TestExpectations'])
+
     def test_show_results_html_file(self):
         port = self.make_port()
         port._executive = MockExecutive(should_log=True)
