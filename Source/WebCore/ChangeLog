@@ -1,3 +1,14 @@
+2012-12-20  Alexey Proskuryakov  <ap@apple.com>
+
+        Disable Nagle algorithm on WebSocket implementation for CF.
+        https://bugs.webkit.org/show_bug.cgi?id=102079
+
+        Build fix. Disable the new code on Lion, _kCFStreamSocketSetNoDelay apparently
+        cannot be used on this OS version.
+
+        * platform/network/cf/SocketStreamHandleCFNet.cpp:
+        (WebCore::SocketStreamHandle::createStreams):
+
 2012-12-20  KyungTae Kim  <ktf.kim@samsung.com>
 
         Fix build warnings related with gstreamer
