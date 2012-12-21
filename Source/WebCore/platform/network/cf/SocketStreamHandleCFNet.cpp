@@ -53,6 +53,9 @@
 #include "WebCoreSystemInterface.h"
 #endif
 
+#if !PLATFORM(WIN)
+extern "C" const CFStringRef _kCFStreamSocketSetNoDelay;
+#endif
 
 namespace WebCore {
 
@@ -275,6 +278,10 @@ void SocketStreamHandle::createStreams()
     CFReadStreamRef readStream = 0;
     CFWriteStreamRef writeStream = 0;
     CFStreamCreatePairWithSocketToHost(0, host.get(), port(), &readStream, &writeStream);
+#if !PLATFORM(WIN)
+    // <rdar://problem/12855587> _kCFStreamSocketSetNoDelay is not exported on Windows
+    CFWriteStreamSetProperty(writeStream, _kCFStreamSocketSetNoDelay, kCFBooleanTrue);
+#endif
 
     m_readStream.adoptCF(readStream);
     m_writeStream.adoptCF(writeStream);
