@@ -1,3 +1,27 @@
+2012-12-20  Ryuan Choi  <ryuan.choi@samsung.com>
+
+        [EFL] Build break with latest EFL libraries.
+        https://bugs.webkit.org/show_bug.cgi?id=104827
+
+        Reviewed by Laszlo Gombos.
+
+        The eo EFL package is introduced and evas and ecore use it since 1.8.
+        While introducing Eo, EFL changed several structures of Evas and Ecore
+        from own specific class to Eo.
+
+        So, this patch adds FindEo and changes declaration of Evas, Evas_Object,
+        Ecore_Timer to build with latest EFL libraries.
+
+        * DumpRenderTree/efl/CMakeLists.txt: Includes eo EFL library.
+        * EWebLauncher/CMakeLists.txt: Ditto.
+        * MiniBrowser/efl/CMakeLists.txt: Ditto.
+        * ImageDiff/PlatformEfl.cmake: Ditto.
+        * TestWebKitAPI/PlatformEfl.cmake: Ditto.
+        * TestWebKitAPI/PlatformWebView.h: Modified declaration of Evas_Object.
+        * WebKitTestRunner/InjectedBundle/TestRunner.h: Modified declaration of Ecore_Timer.
+        * WebKitTestRunner/PlatformEfl.cmake: Includes eo EFL library.
+        * WebKitTestRunner/PlatformWebView.h: Modified declaration of Evas_Object.
+
 2012-12-20  Dirk Pranke  <dpranke@chromium.org>
 
         TestExpectation fallback is broken

@@ -30,7 +30,6 @@
 #include <wtf/Vector.h>
 #include <wtf/text/WTFString.h>
 
-typedef struct _Evas_Object Evas_Object;
 typedef struct _Ewk_History_Item Ewk_History_Item;
 typedef struct _Ewk_Intent Ewk_Intent;
 typedef struct _Ewk_Intent_Request Ewk_Intent_Request;

@@ -41,8 +41,6 @@
 #include <wtf/Deque.h>
 #include <wtf/Forward.h>
 
-typedef struct _Evas_Object Evas_Object;
-
 struct Ewk_Should_Insert_Node_Event {
     WebCore::Node* node;
     WebCore::Range* range;

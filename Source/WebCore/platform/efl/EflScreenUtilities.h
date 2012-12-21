@@ -21,7 +21,11 @@
 
 #include <wtf/text/WTFString.h>
 
+#if USE(EO)
+typedef struct _Eo Evas;
+#else
 typedef struct _Evas Evas;
+#endif
 
 namespace WebCore {
 

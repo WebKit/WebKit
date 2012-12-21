@@ -22,7 +22,11 @@
 
 #include <WebKit2/WKBase.h>
 
+#if USE(EO)
+typedef struct _Eo Evas;
+#else
 typedef struct _Evas Evas;
+#endif
 
 #ifdef __cplusplus
 extern "C" {

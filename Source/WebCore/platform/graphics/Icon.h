@@ -35,8 +35,6 @@ typedef struct HICON__* HICON;
 #include <QIcon>
 #elif PLATFORM(GTK)
 typedef struct _GdkPixbuf GdkPixbuf;
-#elif PLATFORM(EFL)
-typedef struct _Evas_Object Evas_Object;
 #elif PLATFORM(CHROMIUM)
 #include "Image.h"
 #include "PlatformIcon.h"

@@ -24,7 +24,11 @@
 #error "Please #include \"WKAPICast.h\" instead of this file directly."
 #endif
 
+#if USE(EO)
+typedef struct _Eo Evas_Object;
+#else
 typedef struct _Evas_Object Evas_Object;
+#endif
 
 namespace WebKit {
 

@@ -1,3 +1,25 @@
+2012-12-20  Ryuan Choi  <ryuan.choi@samsung.com>
+
+        [EFL] Build break with latest EFL libraries.
+        https://bugs.webkit.org/show_bug.cgi?id=104827
+
+        Reviewed by Laszlo Gombos.
+
+        The eo EFL package is introduced and evas and ecore use it since 1.8.
+        While introducing Eo, EFL changed several structures of Evas and Ecore
+        from own specific class to Eo.
+
+        So, this patch adds FindEo and changes declaration of Evas, Evas_Object,
+        Ecore_Timer to build with latest EFL libraries.
+
+        * PlatformEfl.cmake: Includes eo EFL library.
+        * platform/Widget.h: Modified declaration of Evas and Evas_Object.
+        In addition, removed unnecessary declaration.
+        * platform/efl/EflScreenUtilities.h: Modified declaration of Evas.
+        * platform/efl/RenderThemeEfl.h: Removed unnecessary declaration.
+        * platform/graphics/Icon.h: Ditto.
+        * platform/graphics/Image.h: Modified declaration of Evas and Evas_Object.
+
 2012-12-20  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r138270.

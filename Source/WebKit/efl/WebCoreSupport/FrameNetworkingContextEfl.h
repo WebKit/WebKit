@@ -31,8 +31,6 @@
 
 #include "FrameNetworkingContext.h"
 
-typedef struct _Evas_Object Evas_Object;
-
 namespace WebCore {
 
 class FrameNetworkingContextEfl : public WebCore::FrameNetworkingContext {

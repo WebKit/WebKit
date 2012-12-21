@@ -123,6 +123,12 @@ find_package(Eeze 1.6 REQUIRED)
 find_package(Efreet 1.6 REQUIRED)
 find_package(E_DBus 1.6 COMPONENTS EUKit)
 
+# Add Eo dependency if EFL version is 1.8
+if (${EVAS_VERSION} VERSION_EQUAL 1.8 AND ${ECORE_VERSION} VERSION_EQUAL 1.8)
+    find_package(Eo)
+    add_definitions(-DWTF_USE_EO=1)
+endif ()
+
 # Prefer and promote EFL version 1.7+ as the reference configuration
 if ((${EINA_VERSION} STRLESS 1.7) OR (${EVAS_VERSION} STRLESS 1.7) OR (${ECORE_VERSION} STRLESS 1.7) OR (${EDJE_VERSION} STRLESS 1.7) OR
     (${EET_VERSION} STRLESS 1.7) OR (${EEZE_VERSION} STRLESS 1.7) OR (${EFREET_VERSION} STRLESS 1.7) OR (${E_DBUS_VERSION} STRLESS 1.7))

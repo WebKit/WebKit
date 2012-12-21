@@ -28,8 +28,6 @@
 
 #include "WebPopupMenuProxy.h"
 
-typedef struct _Evas_Object Evas_Object;
-
 namespace WebCore {
 class IntRect;
 }

@@ -42,10 +42,15 @@ typedef struct HRGN__* HRGN;
 typedef struct _Ecore_Evas Ecore_Evas;
 typedef struct _Ecore_IMF_Context Ecore_IMF_Context;
 typedef struct _Ecore_Pipe Ecore_Pipe;
-typedef struct _Ecore_Timer Ecore_Timer;
 typedef struct _Eina_Hash Eina_Hash;
 typedef struct _Eina_Module Eina_Module;
+#if USE(EO)
+typedef struct _Eo Ecore_Timer;
+typedef struct _Eo Evas_Object;
+#else
+typedef struct _Ecore_Timer Ecore_Timer;
 typedef struct _Evas_Object Evas_Object;
+#endif
 #if USE(ACCELERATED_COMPOSITING)
 typedef struct _Evas_GL Evas_GL;
 #endif

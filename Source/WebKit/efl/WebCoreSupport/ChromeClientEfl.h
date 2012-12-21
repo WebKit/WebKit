@@ -36,8 +36,6 @@
 #include "NotificationClient.h"
 #endif
 
-typedef struct _Evas_Object Evas_Object;
-
 namespace WebCore {
 
 class ChromeClientEfl : public ChromeClient {

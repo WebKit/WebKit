@@ -39,9 +39,6 @@
 #include <cairo.h>
 #include <wtf/efl/RefPtrEfl.h>
 
-typedef struct _Ecore_Evas Ecore_Evas;
-typedef struct _Evas_Object Evas_Object;
-
 namespace WebCore {
 
 enum FormType { // KEEP IN SYNC WITH edjeGroupFromFormType()

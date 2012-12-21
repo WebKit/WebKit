@@ -23,7 +23,6 @@
 #include "IntRect.h"
 
 typedef struct _Evas_Native_Surface Evas_Native_Surface;
-typedef struct _Evas_Object Evas_Object;
 
 namespace WebCore {
 class GraphicsContext3D;
