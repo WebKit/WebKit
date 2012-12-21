@@ -47,7 +47,10 @@ webkit.org/b/84045 accessibility/image-map2.html [ Missing ]
 webkit.org/b/70606 accessibility/menu-list-sends-change-notification.html [ Missing ]
 webkit.org/b/70606 accessibility/multiselect-list-reports-active-option.html [ Missing ]
 webkit.org/b/70606 accessibility/notification-listeners.html [ Missing ]
-webkit.org/b/98146 accessibility/svg-bounds.html [ Missing ]
+webkit.org/b/105638 accessibility//aria-labelledby-overrides-label.html [ Missing ]
+
+webkit.org/b/105639 fast/inline/justify-emphasis-inline-box.html [ Missing ]
+
 webkit.org/b/105437 svg/W3C-SVG-1.1-SE/filters-image-03-f.svg [ ImageOnlyFailure Pass ]
 webkit.org/b/105437 svg/W3C-SVG-1.1-SE/filters-image-05-f.svg [ ImageOnlyFailure Pass ]
 webkit.org/b/105437 svg/W3C-SVG-1.1/filters-displace-01-f.svg [ ImageOnlyFailure Pass ]
@@ -553,6 +556,8 @@ webkit.org/b/105042 editing/execCommand/indent-paragraphs.html [ Crash ]
 
 webkit.org/b/105043 [ Debug ] fast/loader/javascript-url-iframe-remove-on-navigate.html [ Crash ]
 
+webkit.org/b/105580 media/track/track-prefer-captions.html [ Crash Pass ]
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Crashing tests
 #////////////////////////////////////////////////////////////////////////////////////////
@@ -651,12 +656,12 @@ webkit.org/b/98133 fast/css/sticky/sticky-writing-mode-vertical-rl.html [ ImageO
 
 webkit.org/b/68878 media/video-playing-and-pause.html [ Failure Pass ]
 
-webkit.org/b/104809 media/adopt-node-crash.html [ Timeout Pass ]
-webkit.org/b/104809 media/encrypted-media/encrypted-media-not-loaded.html [ Failure Pass ]
+webkit.org/b/104809 media/adopt-node-crash.html [ Crash Timeout Pass ]
+webkit.org/b/104809 media/encrypted-media/encrypted-media-not-loaded.html [ Crash Pass ]
 webkit.org/b/104809 media/event-queue-crash.html [ Crash Pass ]
 webkit.org/b/104809 media/track/track-cues-pause-on-exit.html [ Timeout Pass ]
 webkit.org/b/104809 media/video-source-type-params.html [ Crash Timeout Pass ]
-webkit.org/b/104809 media/video-src-set.html [ Timeout Pass ]
+webkit.org/b/104809 media/video-src-set.html [ Crash Timeout Pass ]
 webkit.org/b/104809 media/W3C/video/events/event_loadstart_manual.html [ Crash Pass ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
@@ -1435,6 +1440,8 @@ webkit.org/b/87734 svg/dom/viewspec-parser-7.html [ Failure ]
 webkit.org/b/105443 accessibility/aria-controls-with-tabs.html [ Failure ]
 
 webkit.org/b/105522 transitions/transitions-parsing.html [ Failure ]
+
+webkit.org/b/98146 accessibility/svg-bounds.html [ Failure ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Tests failing
