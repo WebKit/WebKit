@@ -1,5 +1,17 @@
 2012-12-20  Ryosuke Niwa  <rniwa@webkit.org>
 
+        Update Mac test expectation once more.
+
+        It turned out that the bug 73865 had been fixed for JSC. So filed the bug 105606 instead.
+        At this point, I have to add [ Crash Pass ] expectation to the entire media/track for
+        the lack of alternatives.
+
+        i.e. now these media/track tests crashes are tracked by the bug 105606.
+
+        * platform/mac/TestExpectations:
+
+2012-12-20  Ryosuke Niwa  <rniwa@webkit.org>
+
         Even more Mac test expectation for bug 73865.
 
         * platform/mac/TestExpectations:

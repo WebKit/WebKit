@@ -1260,12 +1260,7 @@ webkit.org/b/105049 compositing/layer-creation/fixed-position-out-of-view-scaled
 webkit.org/b/105566 media/track/track-webvtt-tc006-cue-identifiers.html [ Crash Pass ]
 webkit.org/b/105580 media/track/track-prefer-captions.html [ Crash Pass ]
 
-webkit.org/b/73865 media/track/tracklist-is-reachable.html [ Crash Pass ]
-webkit.org/b/73865 media/track/text-track-cue-is-reachable.html [ Crash Pass ]
-webkit.org/b/73865 media/track/text-track-is-reachable.html [ Crash Pass ]
-webkit.org/b/73865 media/track/track-webvtt-tc005-header-comment.html [ Crash Pass ]
-webkit.org/b/73865 media/track/track-webvtt-tc004-magic-header.html [ Crash Pass ]
-webkit.org/b/73865 media/track/track-webvtt-tc016-align-positioning.html [ Crash Pass ]
+webkit.org/b/105606 media/track [ Crash Pass ]
 
 webkit.org/b/105567 http/tests/security/data-url-inline.css.html [ Crash Pass ]
 
