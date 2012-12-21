@@ -1,3 +1,9 @@
+2012-12-20  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Add a crash test expectation on Mac. ap is looking into the problem as we speak.
+
+        * platform/mac/TestExpectations:
+
 2012-12-20  Elliott Sprehn  <esprehn@chromium.org>
 
         RenderBlock hit testing should ignore PseudoElements
