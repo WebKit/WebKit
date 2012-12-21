@@ -1,3 +1,9 @@
+2012-12-20  Tony Chang  <tony@chromium.org>
+
+        [chromium] Unreviewed, mark a new test as failing on Chromium Mac.
+
+        * platform/chromium/TestExpectations:
+
 2012-12-20  KyungTae Kim  <ktf.kim@samsung.com>
 
         Percentage min/max width replaced element may incorrectly rendered
