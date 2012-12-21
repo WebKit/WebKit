@@ -30,12 +30,12 @@
 #include <JavaScriptCore/JSStringRef.h>
 #include <JavaScriptCore/JSValueRef.h>
 
+/*! @typedef JSScriptRef A JavaScript script reference. */
+typedef struct OpaqueJSScript* JSScriptRef;
+
 #ifdef __cplusplus
 extern "C" {
 #endif
-
-/*! @typedef JSScriptRef A JavaScript script reference. */
-typedef struct OpaqueJSScript* JSScriptRef;
 
 /*!
  @function
