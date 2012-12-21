@@ -19,10 +19,9 @@ function deleteSuccess(evt) {
     preamble(evt);
 
     evalAndLog("request = indexedDB.open(dbname, 7)");
-    request.onsuccess = openSuccess;
+    request.onsuccess = request.onerror = openSuccessOrError;
     request.onupgradeneeded = upgradeNeeded;
     request.onblocked = unexpectedBlockedCallback;
-    request.onerror = unexpectedErrorCallback;
 }
 
 var sawTransactionComplete = false;
@@ -50,7 +49,7 @@ function upgradeNeeded(evt)
 }
 
 var didCallCloseDB = false;
-var didGetOpenSuccess = false;
+var didGetOpenSuccessOrError = false;
 
 function closeDB()
 {
@@ -59,9 +58,11 @@ function closeDB()
     checkFinished();
 }
 
-function openSuccess(evt)
+function openSuccessOrError(evt)
 {
-    didGetOpenSuccess = true;
+    // May get either a success or error event, depending on when the timeout fires
+    // relative to the open steps.
+    didGetOpenSuccessOrError = true;
 
     var quiet = true;
     if (didCallCloseDB) {
@@ -77,7 +78,7 @@ function checkFinished()
 {
     preamble();
 
-    if (!didCallCloseDB || !didGetOpenSuccess) {
+    if (!didCallCloseDB || !didGetOpenSuccessOrError) {
         debug("Not done yet...");
         return;
     }
