@@ -772,10 +772,3 @@ webkit.org/b/105182 compositing/repaint/resize-repaint.html
 svg/text/select-textLength-spacing-stretch-1.svg
 svg/text/select-x-list-with-tspans-1.svg
 svg/text/select-x-list-1.svg
-
-# [Qt][WK2] REGRESSION(r138232): It made 4 tests timeout
-# https://bugs.webkit.org/show_bug.cgi?id=105623
-http/tests/misc/slow-loading-mask.html
-http/tests/navigation/back-twice-without-commit.html
-fast/repaint/table-hover-on-link.html
-fast/events/overflow-viewport-renderer-deleted.html
