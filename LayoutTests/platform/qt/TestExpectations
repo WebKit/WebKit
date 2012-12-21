@@ -2495,5 +2495,3 @@ webkit.org/b/104150 fast/media/implicit-media-all.html [ ImageOnlyFailure ]
 # https://bugs.webkit.org/show_bug.cgi?id=104352
 http/tests/xmlhttprequest/post-blob-content-type-async.html
 http/tests/xmlhttprequest/post-blob-content-type-sync.html
-
-webkit.org/b/104788 css3/flexbox/flex-algorithm.html [ Failure ]
