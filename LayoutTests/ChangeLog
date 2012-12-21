@@ -1,3 +1,9 @@
+2012-12-20  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Add Mac test expectations for the bug 73865.
+
+        * platform/mac/TestExpectations:
+
 2012-12-20  Dominic Mazzoni  <dmazzoni@google.com>
 
         accessibility/svg-remote-element.html is flaky (times out)
