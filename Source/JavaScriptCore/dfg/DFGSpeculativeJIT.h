@@ -34,6 +34,7 @@
 #include "DFGGenerationInfo.h"
 #include "DFGJITCompiler.h"
 #include "DFGOSRExit.h"
+#include "DFGOSRExitJumpPlaceholder.h"
 #include "DFGOperations.h"
 #include "DFGSilentRegisterSavePlan.h"
 #include "DFGValueSource.h"
@@ -2445,6 +2446,9 @@ public:
     // Add a speculation check without additional recovery.
     void speculationCheck(ExitKind, JSValueSource, NodeIndex, MacroAssembler::Jump jumpToFail);
     void speculationCheck(ExitKind, JSValueSource, Edge, MacroAssembler::Jump jumpToFail);
+    // Add a speculation check without additional recovery, and with a promise to supply a jump later.
+    OSRExitJumpPlaceholder speculationCheck(ExitKind, JSValueSource, NodeIndex);
+    OSRExitJumpPlaceholder speculationCheck(ExitKind, JSValueSource, Edge);
     // Add a set of speculation checks without additional recovery.
     void speculationCheck(ExitKind, JSValueSource, NodeIndex, const MacroAssembler::JumpList& jumpsToFail);
     void speculationCheck(ExitKind, JSValueSource, Edge, const MacroAssembler::JumpList& jumpsToFail);

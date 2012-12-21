@@ -172,6 +172,7 @@ javascriptcore_sources += \
 	Source/JavaScriptCore/dfg/DFGArgumentsSimplificationPhase.h \
 	Source/JavaScriptCore/dfg/DFGArrayMode.cpp \
 	Source/JavaScriptCore/dfg/DFGArrayMode.h \
+	Source/JavaScriptCore/dfg/DFGArrayifySlowPathGenerator.h \
 	Source/JavaScriptCore/dfg/DFGAssemblyHelpers.cpp \
 	Source/JavaScriptCore/dfg/DFGAssemblyHelpers.h \
 	Source/JavaScriptCore/dfg/DFGBasicBlock.h \
@@ -229,6 +230,8 @@ javascriptcore_sources += \
 	Source/JavaScriptCore/dfg/DFGOSRExit.h \
 	Source/JavaScriptCore/dfg/DFGOSRExit.cpp \
 	Source/JavaScriptCore/dfg/DFGOSRExitCompilationInfo.h \
+	Source/JavaScriptCore/dfg/DFGOSRExitJumpPlaceholder.cpp \
+	Source/JavaScriptCore/dfg/DFGOSRExitJumpPlaceholder.h \
 	Source/JavaScriptCore/dfg/DFGPhase.cpp \
 	Source/JavaScriptCore/dfg/DFGPhase.h \
 	Source/JavaScriptCore/dfg/DFGPredictionPropagationPhase.cpp \

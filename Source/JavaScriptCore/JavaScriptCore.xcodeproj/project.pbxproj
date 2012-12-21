@@ -58,6 +58,7 @@
 /* End PBXAggregateTarget section */
 
 /* Begin PBXBuildFile section */
+		0F05C3B41683CF9200BAF45B /* DFGArrayifySlowPathGenerator.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F05C3B21683CF8F00BAF45B /* DFGArrayifySlowPathGenerator.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		0F0776BF14FF002B00102332 /* JITCompilationEffort.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F0776BD14FF002800102332 /* JITCompilationEffort.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		0F0B839A14BCF45D00885B4F /* LLIntEntrypoints.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0F0B839514BCF45A00885B4F /* LLIntEntrypoints.cpp */; };
 		0F0B839B14BCF46000885B4F /* LLIntEntrypoints.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F0B839614BCF45A00885B4F /* LLIntEntrypoints.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -258,6 +259,8 @@
 		0FE228EE1436AB2C00196C48 /* Options.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0FE228EA1436AB2300196C48 /* Options.cpp */; };
 		0FEB3ECD16237F4D00AB67AD /* TypedArrayDescriptor.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FEB3ECB16237F4700AB67AD /* TypedArrayDescriptor.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		0FEB3ECF16237F6C00AB67AD /* MacroAssembler.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0FEB3ECE16237F6700AB67AD /* MacroAssembler.cpp */; };
+		0FEFC9AA1681A3B300567F53 /* DFGOSRExitJumpPlaceholder.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0FEFC9A71681A3B000567F53 /* DFGOSRExitJumpPlaceholder.cpp */; };
+		0FEFC9AB1681A3B600567F53 /* DFGOSRExitJumpPlaceholder.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FEFC9A81681A3B000567F53 /* DFGOSRExitJumpPlaceholder.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		0FF42731158EBD54004CB9FF /* Disassembler.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FF4272F158EBD44004CB9FF /* Disassembler.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		0FF42732158EBD58004CB9FF /* UDis86Disassembler.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0FF42730158EBD44004CB9FF /* UDis86Disassembler.cpp */; };
 		0FF42740158EBE8B004CB9FF /* udis86_decode.c in Sources */ = {isa = PBXBuildFile; fileRef = 0FF42734158EBD94004CB9FF /* udis86_decode.c */; };
@@ -891,6 +894,7 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		0F05C3B21683CF8F00BAF45B /* DFGArrayifySlowPathGenerator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DFGArrayifySlowPathGenerator.h; path = dfg/DFGArrayifySlowPathGenerator.h; sourceTree = "<group>"; };
 		0F0776BD14FF002800102332 /* JITCompilationEffort.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JITCompilationEffort.h; sourceTree = "<group>"; };
 		0F0B839514BCF45A00885B4F /* LLIntEntrypoints.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = LLIntEntrypoints.cpp; path = llint/LLIntEntrypoints.cpp; sourceTree = "<group>"; };
 		0F0B839614BCF45A00885B4F /* LLIntEntrypoints.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = LLIntEntrypoints.h; path = llint/LLIntEntrypoints.h; sourceTree = "<group>"; };
@@ -1095,6 +1099,8 @@
 		0FE228EB1436AB2300196C48 /* Options.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Options.h; sourceTree = "<group>"; };
 		0FEB3ECB16237F4700AB67AD /* TypedArrayDescriptor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TypedArrayDescriptor.h; sourceTree = "<group>"; };
 		0FEB3ECE16237F6700AB67AD /* MacroAssembler.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MacroAssembler.cpp; sourceTree = "<group>"; };
+		0FEFC9A71681A3B000567F53 /* DFGOSRExitJumpPlaceholder.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = DFGOSRExitJumpPlaceholder.cpp; path = dfg/DFGOSRExitJumpPlaceholder.cpp; sourceTree = "<group>"; };
+		0FEFC9A81681A3B000567F53 /* DFGOSRExitJumpPlaceholder.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DFGOSRExitJumpPlaceholder.h; path = dfg/DFGOSRExitJumpPlaceholder.h; sourceTree = "<group>"; };
 		0FF4272F158EBD44004CB9FF /* Disassembler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Disassembler.h; path = disassembler/Disassembler.h; sourceTree = "<group>"; };
 		0FF42730158EBD44004CB9FF /* UDis86Disassembler.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = UDis86Disassembler.cpp; path = disassembler/UDis86Disassembler.cpp; sourceTree = "<group>"; };
 		0FF42734158EBD94004CB9FF /* udis86_decode.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = udis86_decode.c; path = disassembler/udis86/udis86_decode.c; sourceTree = "<group>"; };
@@ -2460,7 +2466,6 @@
 		86EC9DB31328DF44002B2AD7 /* dfg */ = {
 			isa = PBXGroup;
 			children = (
-				65987F2C167FE84B003C2F8D /* DFGOSRExitCompilationInfo.h */,
 				0F62016D143FCD2F0068B77C /* DFGAbstractState.cpp */,
 				0F62016E143FCD2F0068B77C /* DFGAbstractState.h */,
 				0F62016F143FCD2F0068B77C /* DFGAbstractValue.h */,
@@ -2468,6 +2473,7 @@
 				0F1E3A431534CBAD000F9456 /* DFGArgumentPosition.h */,
 				0F16015A156198BF00C2587C /* DFGArgumentsSimplificationPhase.cpp */,
 				0F16015B156198BF00C2587C /* DFGArgumentsSimplificationPhase.h */,
+				0F05C3B21683CF8F00BAF45B /* DFGArrayifySlowPathGenerator.h */,
 				0F63948115E48114006A597C /* DFGArrayMode.cpp */,
 				0F63948215E48114006A597C /* DFGArrayMode.h */,
 				0FC0976B1468AB4A00CF2442 /* DFGAssemblyHelpers.cpp */,
@@ -2521,10 +2527,13 @@
 				0FD82E53141DAEDE00179C94 /* DFGOSREntry.h */,
 				0FC0978E146A6F6300CF2442 /* DFGOSRExit.cpp */,
 				0FC097681468A6EF00CF2442 /* DFGOSRExit.h */,
+				65987F2C167FE84B003C2F8D /* DFGOSRExitCompilationInfo.h */,
 				0FC0978F146A6F6300CF2442 /* DFGOSRExitCompiler.cpp */,
 				0FC0976F14693AEF00CF2442 /* DFGOSRExitCompiler.h */,
 				0FC09775146943AD00CF2442 /* DFGOSRExitCompiler32_64.cpp */,
 				0FC0977014693AEF00CF2442 /* DFGOSRExitCompiler64.cpp */,
+				0FEFC9A71681A3B000567F53 /* DFGOSRExitJumpPlaceholder.cpp */,
+				0FEFC9A81681A3B000567F53 /* DFGOSRExitJumpPlaceholder.h */,
 				0FFFC94F14EF909500C72532 /* DFGPhase.cpp */,
 				0FFFC95014EF909500C72532 /* DFGPhase.h */,
 				0FFFC95114EF909500C72532 /* DFGPredictionPropagationPhase.cpp */,
@@ -3183,6 +3192,8 @@
 				0F13912A16771C36009CCB07 /* ProfilerBytecodeSequence.h in Headers */,
 				0F13912C16771C3D009CCB07 /* ProfilerProfiledBytecodes.h in Headers */,
 				A7C0C4AC168103020017011D /* JSScriptRefPrivate.h in Headers */,
+				0FEFC9AB1681A3B600567F53 /* DFGOSRExitJumpPlaceholder.h in Headers */,
+				0F05C3B41683CF9200BAF45B /* DFGArrayifySlowPathGenerator.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -3801,6 +3812,7 @@
 				0F13912916771C33009CCB07 /* ProfilerBytecodeSequence.cpp in Sources */,
 				0F13912B16771C3A009CCB07 /* ProfilerProfiledBytecodes.cpp in Sources */,
 				A7C0C4AD1681067E0017011D /* JSScriptRef.cpp in Sources */,
+				0FEFC9AA1681A3B300567F53 /* DFGOSRExitJumpPlaceholder.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -132,6 +132,7 @@ SOURCES += \
     dfg/DFGOSRExitCompiler.cpp \
     dfg/DFGOSRExitCompiler64.cpp \
     dfg/DFGOSRExitCompiler32_64.cpp \
+    dfg/DFGOSRExitJumpPlaceholder.cpp \
     dfg/DFGPhase.cpp \
     dfg/DFGPredictionPropagationPhase.cpp \
     dfg/DFGRepatch.cpp \

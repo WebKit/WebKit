@@ -95,6 +95,7 @@ set(JavaScriptCore_SOURCES
     dfg/DFGOSRExitCompiler.cpp
     dfg/DFGOSRExitCompiler32_64.cpp
     dfg/DFGOSRExitCompiler64.cpp
+    dfg/DFGOSRExitJumpPlaceholder.cpp
     dfg/DFGOperations.cpp
     dfg/DFGPhase.cpp
     dfg/DFGPredictionPropagationPhase.cpp
