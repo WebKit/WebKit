@@ -132,11 +132,6 @@ PassRefPtr<NetscapePlugInStreamLoader> ResourceLoadScheduler::schedulePluginStre
     return loader;
 }
 
-void ResourceLoadScheduler::addMainResourceLoad(ResourceLoader* resourceLoader)
-{
-    hostForURL(resourceLoader->url(), CreateIfNotFound)->addLoadInProgress(resourceLoader);
-}
-
 void ResourceLoadScheduler::scheduleLoad(ResourceLoader* resourceLoader, ResourceLoadPriority priority)
 {
     ASSERT(resourceLoader);

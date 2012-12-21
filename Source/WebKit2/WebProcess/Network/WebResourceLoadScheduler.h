@@ -47,7 +47,6 @@ public:
     virtual PassRefPtr<WebCore::SubresourceLoader> scheduleSubresourceLoad(WebCore::Frame*, WebCore::CachedResource*, const WebCore::ResourceRequest&, WebCore::ResourceLoadPriority, const WebCore::ResourceLoaderOptions&) OVERRIDE;
     virtual PassRefPtr<WebCore::NetscapePlugInStreamLoader> schedulePluginStreamLoad(WebCore::Frame*, WebCore::NetscapePlugInStreamLoaderClient*, const WebCore::ResourceRequest&) OVERRIDE;
     
-    virtual void addMainResourceLoad(WebCore::ResourceLoader*) OVERRIDE;
     virtual void remove(WebCore::ResourceLoader*) OVERRIDE;
     virtual void crossOriginRedirectReceived(WebCore::ResourceLoader*, const WebCore::KURL& redirectURL) OVERRIDE;
     
@@ -65,7 +64,6 @@ public:
 private:
     void scheduleLoad(WebCore::ResourceLoader*, WebCore::ResourceLoadPriority);
     
-    HashMap<unsigned long, RefPtr<WebCore::ResourceLoader> > m_coreResourceLoaders;
     HashMap<unsigned long, RefPtr<WebResourceLoader> > m_webResourceLoaders;
     
     unsigned m_suspendPendingRequestsCount;

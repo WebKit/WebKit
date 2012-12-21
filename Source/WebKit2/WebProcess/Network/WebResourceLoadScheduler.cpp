@@ -112,22 +112,6 @@ void WebResourceLoadScheduler::scheduleLoad(ResourceLoader* resourceLoader, Reso
     notifyDidScheduleResourceRequest(resourceLoader);
 }
 
-void WebResourceLoadScheduler::addMainResourceLoad(ResourceLoader* resourceLoader)
-{
-    LOG(NetworkScheduling, "(WebProcess) WebResourceLoadScheduler::addMainResourceLoad, url '%s'", resourceLoader->url().string().utf8().data());
-
-    ResourceLoadIdentifier identifier;
-
-    if (!WebProcess::shared().networkConnection()->connection()->sendSync(Messages::NetworkConnectionToWebProcess::AddLoadInProgress(resourceLoader->url()), Messages::NetworkConnectionToWebProcess::AddLoadInProgress::Reply(identifier), 0)) {
-        // FIXME (NetworkProcess): What should we do if this fails?
-        ASSERT_NOT_REACHED();
-    }
-
-    resourceLoader->setIdentifier(identifier);
-    
-    m_coreResourceLoaders.set(identifier, resourceLoader);
-}
-
 void WebResourceLoadScheduler::remove(ResourceLoader* resourceLoader)
 {
     ASSERT(resourceLoader);
@@ -148,9 +132,8 @@ void WebResourceLoadScheduler::remove(ResourceLoader* resourceLoader)
     // If a resource load was actually started within the NetworkProcess then the NetworkProcess handles clearing out the identifier.
     WebProcess::shared().networkConnection()->connection()->send(Messages::NetworkConnectionToWebProcess::RemoveLoadIdentifier(identifier), 0);
     
-    ASSERT(m_webResourceLoaders.contains(identifier) || m_coreResourceLoaders.contains(identifier));
+    ASSERT(m_webResourceLoaders.contains(identifier));
     m_webResourceLoaders.remove(identifier);
-    m_coreResourceLoaders.remove(identifier);
 }
 
 void WebResourceLoadScheduler::crossOriginRedirectReceived(ResourceLoader*, const KURL&)
@@ -189,14 +172,6 @@ void WebResourceLoadScheduler::setSerialLoadingEnabled(bool enabled)
 
 void WebResourceLoadScheduler::networkProcessCrashed()
 {
-    Vector<RefPtr<ResourceLoader> > coreResourceLoaders;
-    copyValuesToVector(m_coreResourceLoaders, coreResourceLoaders);
-    
-    for (size_t i = 0; i < coreResourceLoaders.size(); ++i)
-        coreResourceLoaders[i]->didFail(internalError(coreResourceLoaders[i]->url()));
-
-    ASSERT(m_coreResourceLoaders.isEmpty());
-
     Vector<RefPtr<WebResourceLoader> > webResourceLoaders;
     copyValuesToVector(m_webResourceLoaders, webResourceLoaders);
     

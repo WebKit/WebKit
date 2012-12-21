@@ -52,7 +52,6 @@ public:
 
     virtual PassRefPtr<SubresourceLoader> scheduleSubresourceLoad(Frame*, CachedResource*, const ResourceRequest&, ResourceLoadPriority, const ResourceLoaderOptions&);
     virtual PassRefPtr<NetscapePlugInStreamLoader> schedulePluginStreamLoad(Frame*, NetscapePlugInStreamLoaderClient*, const ResourceRequest&);
-    virtual void addMainResourceLoad(ResourceLoader*);
     virtual void remove(ResourceLoader*);
     virtual void crossOriginRedirectReceived(ResourceLoader*, const KURL& redirectURL);
     
