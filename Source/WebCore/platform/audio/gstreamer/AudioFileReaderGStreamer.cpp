@@ -100,22 +100,22 @@ static GstFlowReturn onAppsinkNewBufferCallback(GstAppSink* sink, gpointer userD
     return static_cast<AudioFileReader*>(userData)->handleBuffer(sink);
 }
 
-gboolean messageCallback(GstBus* bus, GstMessage* message, AudioFileReader* reader)
+gboolean messageCallback(GstBus*, GstMessage* message, AudioFileReader* reader)
 {
     return reader->handleMessage(message);
 }
 
-static void onGStreamerDeinterleavePadAddedCallback(GstElement* element, GstPad* pad, AudioFileReader* reader)
+static void onGStreamerDeinterleavePadAddedCallback(GstElement*, GstPad* pad, AudioFileReader* reader)
 {
     reader->handleNewDeinterleavePad(pad);
 }
 
-static void onGStreamerDeinterleaveReadyCallback(GstElement* element, AudioFileReader* reader)
+static void onGStreamerDeinterleaveReadyCallback(GstElement*, AudioFileReader* reader)
 {
     reader->deinterleavePadsConfigured();
 }
 
-static void onGStreamerDecodebinPadAddedCallback(GstElement* element, GstPad* pad, AudioFileReader* reader)
+static void onGStreamerDecodebinPadAddedCallback(GstElement*, GstPad* pad, AudioFileReader* reader)
 {
     reader->plugDeinterleave(pad);
 }

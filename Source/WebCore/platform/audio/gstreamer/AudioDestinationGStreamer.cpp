@@ -46,7 +46,7 @@ float AudioDestination::hardwareSampleRate()
     return 44100;
 }
 
-static void onGStreamerWavparsePadAddedCallback(GstElement* element, GstPad* pad, AudioDestinationGStreamer* destination)
+static void onGStreamerWavparsePadAddedCallback(GstElement*, GstPad* pad, AudioDestinationGStreamer* destination)
 {
     destination->finishBuildingPipelineAfterWavParserPadReady(pad);
 }
