@@ -1272,3 +1272,5 @@ webkit.org/b/104848 fast/frames/sandboxed-iframe-parsing-space-characters.html [
 
 # ap is looking into this crash.
 bug(rniwa) http/tests/appcache/main-resource-redirect.html [ Crash ]
+
+webkit.org/b/105601 svg/zoom/page/zoom-replaced-intrinsic-ratio-001.htm [ Crash Pass ]
