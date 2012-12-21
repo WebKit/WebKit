@@ -288,9 +288,9 @@ void TestInvocation::dump(const char* textToStdout, const char* textToStderr, bo
 
 void TestInvocation::dumpResults()
 {
-    if (m_textOutput.length())
+    if (m_textOutput.length() || !m_audioResult)
         dump(m_textOutput.toString().utf8().data());
-    else if (m_audioResult)
+    else
         dumpAudio(m_audioResult.get());
 
     if (m_dumpPixels && m_pixelResult)
