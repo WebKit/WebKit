@@ -1187,6 +1187,11 @@ css3/filters/custom/custom-filter-transforms-animation.html
 css3/filters/custom/custom-filter-blend-modes.html
 css3/filters/custom/custom-filter-array-blending.html
 
+# The following test fail because blending is not yet implemented
+# https://bugs.webkit.org/show_bug.cgi?id=100072
+fast/canvas/canvas-blend-image.html
+fast/canvas/canvas-blend-solid.html
+
 # ReferenceError: Can't find variable: MediaKeyError
 # http://trac.webkit.org/changeset/114067
 fast/events/constructors/media-key-event-constructor.html

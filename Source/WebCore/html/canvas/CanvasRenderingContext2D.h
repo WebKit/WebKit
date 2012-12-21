@@ -174,7 +174,7 @@ public:
     void drawImage(HTMLCanvasElement*, float x, float y, float width, float height, ExceptionCode&);
     void drawImage(HTMLCanvasElement*, float sx, float sy, float sw, float sh, float dx, float dy, float dw, float dh, ExceptionCode&);
     void drawImage(HTMLCanvasElement*, const FloatRect& srcRect, const FloatRect& dstRect, ExceptionCode&);
-    void drawImage(HTMLImageElement*, const FloatRect& srcRect, const FloatRect& dstRect, const CompositeOperator&, ExceptionCode&);
+    void drawImage(HTMLImageElement*, const FloatRect& srcRect, const FloatRect& dstRect, const CompositeOperator&, const BlendMode&, ExceptionCode&);
 #if ENABLE(VIDEO)
     void drawImage(HTMLVideoElement*, float x, float y, ExceptionCode&);
     void drawImage(HTMLVideoElement*, float x, float y, float width, float height, ExceptionCode&);

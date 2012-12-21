@@ -128,6 +128,10 @@ crbug.com/24189 fast/dom/open-and-close-by-DOM.html [ Skip ]
 
 # Fails because Blend Mode is not enabled on Chromium yet 
 webkit.org/b/98950 transitions/blendmode-transitions.html [ Skip ]
+webkit.org/b/100071 fast/canvas/canvas-blend-image.html [ Skip ]
+webkit.org/b/100071 fast/canvas/canvas-blend-solid.html [ Skip ]
+webkit.org/b/100071 platform/chromium/virtual/gpu/fast/canvas/canvas-blend-image.html [ Skip ]
+webkit.org/b/100071 platform/chromium/virtual/gpu/fast/canvas/canvas-blend-solid.html [ Skip ]
 
 # Implement java testing harness.
 crbug.com/36681 java [ Skip ]

@@ -1,3 +1,25 @@
+2012-12-20  Rik Cabanier  <cabanier@adobe.com>
+
+        Add canvas blending modes using Core Graphics
+        https://bugs.webkit.org/show_bug.cgi?id=100070
+
+        Reviewed by Dirk Schulze.
+
+        globalCompositeOperation is extended so it takes blend modes as well as compositing operators.
+        This patch adds an implementation for the Core Graphics port.
+
+        Tests: fast/canvas/canvas-blend-image.html
+               fast/canvas/canvas-blend-solid.html
+
+        * html/canvas/CanvasRenderingContext2D.cpp:
+        (WebCore::CanvasRenderingContext2D::setGlobalCompositeOperation): Passed blendMode to underlying layer.
+        (WebCore::CanvasRenderingContext2D::drawImage): Passed blendMode to underlying drawImage call.
+        (WebCore::CanvasRenderingContext2D::drawImageFromRect): Passed blendMode to platofrm layer.
+        * html/canvas/CanvasRenderingContext2D.h:
+        (CanvasRenderingContext2D): Eextended drawImage with new blendmode parameter.
+        * platform/graphics/cg/GraphicsContextCG.cpp:
+        (WebCore::GraphicsContext::setPlatformCompositeOperation): Passed blendmode to Core Graphics API.
+
 2012-12-20  KyungTae Kim  <ktf.kim@samsung.com>
 
         Percentage min/max width replaced element may incorrectly rendered

@@ -688,6 +688,10 @@ webkit.org/b/100519 fast/images/jpeg-with-color-profile.html [ Skip ]
 webkit.org/b/100519 fast/images/png-with-color-profile.html [ Skip ]
 webkit.org/b/100519 fast/images/paletted-png-with-color-profile.html [ Skip ]
 
+# The following test fail because blending is not yet implemented
+webkit.org/b/105542 fast/canvas/canvas-blend-image.html [ Skip ]
+webkit.org/b/105542 fast/canvas/canvas-blend-solid.html [ Skip ]
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # CRASHES
 #////////////////////////////////////////////////////////////////////////////////////////
