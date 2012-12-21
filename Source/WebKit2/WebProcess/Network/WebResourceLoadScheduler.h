@@ -30,6 +30,7 @@
 #include <WebCore/ResourceLoadPriority.h>
 #include <WebCore/ResourceLoadScheduler.h>
 #include <WebCore/ResourceLoader.h>
+#include <WebCore/RunLoop.h>
 
 #if ENABLE(NETWORK_PROCESS)
 
@@ -63,6 +64,11 @@ public:
 
 private:
     void scheduleLoad(WebCore::ResourceLoader*, WebCore::ResourceLoadPriority);
+    void addUnschedulableLoad(WebCore::ResourceLoader*);
+    void unscheduledLoadTimerFired();
+    
+    HashSet<RefPtr<WebCore::ResourceLoader> > m_unschedulableResourceLoaders;
+    WebCore::RunLoop::Timer<WebResourceLoadScheduler> m_unschedulableLoadTimer;
     
     HashMap<unsigned long, RefPtr<WebResourceLoader> > m_webResourceLoaders;
     

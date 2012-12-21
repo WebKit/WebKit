@@ -51,7 +51,8 @@ using namespace WebCore;
 namespace WebKit {
 
 WebResourceLoadScheduler::WebResourceLoadScheduler()
-    : m_suspendPendingRequestsCount(0)
+    : m_unschedulableLoadTimer(RunLoop::main(), this, &WebResourceLoadScheduler::unscheduledLoadTimerFired)
+    , m_suspendPendingRequestsCount(0)
 {
 }
 
@@ -102,8 +103,10 @@ void WebResourceLoadScheduler::scheduleLoad(ResourceLoader* resourceLoader, Reso
 
     NetworkResourceLoadParameters loadParameters(request, priority, resourceLoader->shouldSniffContent() ? SniffContent : DoNotSniffContent, allowStoredCredentials, resourceLoader->frameLoader()->frame()->settings()->privateBrowsingEnabled());
     if (!WebProcess::shared().networkConnection()->connection()->sendSync(Messages::NetworkConnectionToWebProcess::ScheduleResourceLoad(loadParameters), Messages::NetworkConnectionToWebProcess::ScheduleResourceLoad::Reply(identifier), 0)) {
-        // FIXME (NetworkProcess): What should we do if this fails?
-        ASSERT_NOT_REACHED();
+        // We probably failed to schedule this load with the NetworkProcess because it had crashed.
+        // This load will never succeed so we will schedule it to fail asynchronously.
+        addUnschedulableLoad(resourceLoader);
+        return;
     }
     
     resourceLoader->setIdentifier(identifier);
@@ -112,10 +115,30 @@ void WebResourceLoadScheduler::scheduleLoad(ResourceLoader* resourceLoader, Reso
     notifyDidScheduleResourceRequest(resourceLoader);
 }
 
+void WebResourceLoadScheduler::addUnschedulableLoad(WebCore::ResourceLoader* resourceLoader)
+{
+    m_unschedulableResourceLoaders.add(resourceLoader);
+    m_unschedulableLoadTimer.startOneShot(0);
+}
+
+void WebResourceLoadScheduler::unscheduledLoadTimerFired()
+{
+    Vector<RefPtr<ResourceLoader> > unschedulableLoaders;
+    copyToVector(m_unschedulableResourceLoaders, unschedulableLoaders);
+    
+    for (size_t i = 0; i < unschedulableLoaders.size(); ++i)
+        unschedulableLoaders[i]->didFail(internalError(unschedulableLoaders[i]->url()));
+}
+
 void WebResourceLoadScheduler::remove(ResourceLoader* resourceLoader)
 {
     ASSERT(resourceLoader);
     LOG(NetworkScheduling, "(WebProcess) WebResourceLoadScheduler::remove, url '%s'", resourceLoader->url().string().utf8().data());
+
+    if (m_unschedulableResourceLoaders.contains(resourceLoader)) {
+        m_unschedulableResourceLoaders.remove(resourceLoader);
+        return;
+    }
 
     // FIXME (NetworkProcess): It's possible for a resourceLoader to be removed before it ever started,
     // meaning before it even has an identifier.
