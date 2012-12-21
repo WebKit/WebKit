@@ -1818,7 +1818,13 @@ bool EventHandler::handleMouseReleaseEvent(const PlatformMouseEvent& mouseEvent)
         clickTarget = clickTarget->shadowAncestorNode();
     Node* adjustedClickNode = m_clickNode ? m_clickNode->shadowAncestorNode() : 0;
 
-    bool swallowClickEvent = m_clickCount > 0 && mouseEvent.button() != RightButton && clickTarget == adjustedClickNode && !dispatchMouseEvent(eventNames().clickEvent, mev.targetNode(), true, m_clickCount, mouseEvent, true);
+    bool contextMenuEvent = mouseEvent.button() == RightButton;
+#if PLATFORM(CHROMIUM) && OS(DARWIN)
+    // FIXME: The Mac port achieves the same behavior by checking whether the context menu is currently open in WebPage::mouseEvent(). Consider merging the implementations.
+    if (mouseEvent.button() == LeftButton && mouseEvent.modifiers() & PlatformEvent::CtrlKey)
+        contextMenuEvent = true;
+#endif
+    bool swallowClickEvent = m_clickCount > 0 && !contextMenuEvent && clickTarget == adjustedClickNode && !dispatchMouseEvent(eventNames().clickEvent, mev.targetNode(), true, m_clickCount, mouseEvent, true);
 
     if (m_resizeLayer) {
         m_resizeLayer->setInResizeMode(false);
