@@ -472,13 +472,15 @@ static void prepareDataForPrintingOnSecondaryThread(void* untypedContext)
 {
     ASSERT(isMainThread());
 
-    IntRect rect(nsRect);
-    rect.scale(1 / _totalScaleFactorForPrinting);
-    HashMap<WebCore::IntRect, RefPtr<ShareableBitmap> >::iterator pagePreviewIterator = _pagePreviews.find(rect);
+    IntRect scaledPrintingRect(nsRect);
+    scaledPrintingRect.scale(1 / _totalScaleFactorForPrinting);
+    IntSize imageSize(nsRect.size);
+    imageSize.scale(_webFrame->page()->deviceScaleFactor());
+    HashMap<WebCore::IntRect, RefPtr<ShareableBitmap> >::iterator pagePreviewIterator = _pagePreviews.find(scaledPrintingRect);
     if (pagePreviewIterator == _pagePreviews.end())  {
         // It's too early to ask for page preview if we don't even know page size and scale.
         if ([self _hasPageRects]) {
-            if (uint64_t existingCallback = [self _expectedPreviewCallbackForRect:rect]) {
+            if (uint64_t existingCallback = [self _expectedPreviewCallbackForRect:scaledPrintingRect]) {
                 // We've already asked for a preview of this page, and are waiting for response.
                 // There is no need to ask again.
                 _latestExpectedPreviewCallback = existingCallback;
@@ -493,12 +495,12 @@ static void prepareDataForPrintingOnSecondaryThread(void* untypedContext)
                 IPCCallbackContext* context = new IPCCallbackContext;
                 RefPtr<ImageCallback> callback = ImageCallback::create(context, pageDidDrawToImage);
                 _latestExpectedPreviewCallback = callback->callbackID();
-                _expectedPreviewCallbacks.add(_latestExpectedPreviewCallback, rect);
+                _expectedPreviewCallbacks.add(_latestExpectedPreviewCallback, scaledPrintingRect);
 
                 context->view = self;
                 context->callbackID = callback->callbackID();
 
-                _webFrame->page()->drawRectToImage(_webFrame.get(), PrintInfo([_printOperation printInfo]), rect, callback.get());
+                _webFrame->page()->drawRectToImage(_webFrame.get(), PrintInfo([_printOperation printInfo]), scaledPrintingRect, imageSize, callback.get());
                 return;
             }
         }
@@ -513,14 +515,7 @@ static void prepareDataForPrintingOnSecondaryThread(void* untypedContext)
     GraphicsContext context(cgContext);
     GraphicsContextStateSaver stateSaver(context);
 
-    context.translate(nsRect.origin.x, nsRect.origin.y);
-    context.scale(FloatSize(_totalScaleFactorForPrinting, _totalScaleFactorForPrinting));
-
-    // FIXME: Should we get the WebPage's deviceScaleFactor from here instead?
-    const IntRect& imageBounds = bitmap->bounds();
-    float imageScaleFactor = imageBounds.width() / rect.width();
-
-    bitmap->paint(context, imageScaleFactor, IntPoint(), imageBounds);
+    bitmap->paint(context, _webFrame->page()->deviceScaleFactor(), IntPoint(nsRect.origin), bitmap->bounds());
 }
 
 - (void)drawRect:(NSRect)nsRect

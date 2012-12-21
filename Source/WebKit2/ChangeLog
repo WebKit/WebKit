@@ -1,3 +1,34 @@
+2012-12-21  Tim Horton  <timothy_horton@apple.com>
+
+        Reducing print preview scale significantly causes a crash
+        https://bugs.webkit.org/show_bug.cgi?id=105519
+        <rdar://problem/12807090>
+
+        Reviewed by Alexey Proskuryakov.
+
+        The bitmap image used for print previews was being created respecting the print preview scale.
+        This doesn't make any sense, as the scale does not affect the size of the image required to
+        represent the previewed page. Instead, we should not scale the size, creating the buffer at a
+        size that is constant regardless of scale, and do the scaling when drawing *into* the buffer instead.
+
+        In some cases, this could cause an out-of-memory crash.
+
+        * UIProcess/API/mac/WKPrintingView.mm:
+        (-[WKPrintingView _drawPreview:]): Rename rect to scaledPrintingRect for clarity. Compute print
+        preview bitmap image size from the original non-scaled drawing size and the device scale factor.
+        Hand the image size to drawRectToImage. Draw the image without scaling, as it's always created
+        at the correct size. Don't compute the scale factor from the size of the image, we can know it from WebPageProxy.
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::drawRectToImage): Add a parameter to drawRectForImage, imageSize.
+        * UIProcess/WebPageProxy.h:
+        (WebPageProxy): Add a parameter to drawRectForImage, imageSize.
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::drawRectToImage): Use imageSize to size our buffer, and scale up to make the printing rect
+        fit in the bitmap's bounds.
+        * WebProcess/WebPage/WebPage.h:
+        (WebPage): Add a parameter to drawRectForImage, imageSize.
+        * WebProcess/WebPage/WebPage.messages.in: Add a parameter to drawRectForImage, imageSize.
+
 2012-12-20  Helder Correia  <helder.correia@nokia.com>
 
         [CoordGfx] Make single-argument AreaAllocator constructors explicit

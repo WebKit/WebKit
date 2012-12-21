@@ -520,7 +520,7 @@ public:
     void endPrinting();
     void computePagesForPrinting(uint64_t frameID, const PrintInfo&, uint64_t callbackID);
 #if PLATFORM(MAC) || PLATFORM(WIN)
-    void drawRectToImage(uint64_t frameID, const PrintInfo&, const WebCore::IntRect&, uint64_t callbackID);
+    void drawRectToImage(uint64_t frameID, const PrintInfo&, const WebCore::IntRect&, const WebCore::IntSize&, uint64_t callbackID);
     void drawPagesToPDF(uint64_t frameID, const PrintInfo&, uint32_t first, uint32_t count, uint64_t callbackID);
 #elif PLATFORM(GTK)
     void drawPagesForPrinting(uint64_t frameID, const PrintInfo&, uint64_t callbackID);

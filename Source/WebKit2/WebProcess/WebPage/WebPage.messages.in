@@ -217,7 +217,7 @@ messages -> WebPage {
     EndPrinting()
     ComputePagesForPrinting(uint64_t frameID, WebKit::PrintInfo printInfo, uint64_t callbackID)
 #if PLATFORM(MAC) || PLATFORM(WIN)
-    DrawRectToImage(uint64_t frameID, WebKit::PrintInfo printInfo, WebCore::IntRect rect, uint64_t callbackID)
+    DrawRectToImage(uint64_t frameID, WebKit::PrintInfo printInfo, WebCore::IntRect rect, WebCore::IntSize imageSize, uint64_t callbackID)
     DrawPagesToPDF(uint64_t frameID, WebKit::PrintInfo printInfo, uint32_t first, uint32_t count, uint64_t callbackID)
 #endif
 #if PLATFORM(GTK)

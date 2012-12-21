@@ -3262,7 +3262,7 @@ void WebPage::computePagesForPrinting(uint64_t frameID, const PrintInfo& printIn
 }
 
 #if PLATFORM(MAC) || PLATFORM(WIN)
-void WebPage::drawRectToImage(uint64_t frameID, const PrintInfo& printInfo, const WebCore::IntRect& rect, uint64_t callbackID)
+void WebPage::drawRectToImage(uint64_t frameID, const PrintInfo& printInfo, const WebCore::IntRect& rect, const WebCore::IntSize& imageSize, uint64_t callbackID)
 {
     WebFrame* frame = WebProcess::shared().webFrame(frameID);
     Frame* coreFrame = frame ? frame->coreFrame() : 0;
@@ -3277,8 +3277,11 @@ void WebPage::drawRectToImage(uint64_t frameID, const PrintInfo& printInfo, cons
         ASSERT(coreFrame->document()->printing());
 #endif
 
-        RefPtr<ShareableBitmap> bitmap = ShareableBitmap::createShareable(rect.size(), ShareableBitmap::SupportsAlpha);
+        RefPtr<ShareableBitmap> bitmap = ShareableBitmap::createShareable(imageSize, ShareableBitmap::SupportsAlpha);
         OwnPtr<GraphicsContext> graphicsContext = bitmap->createGraphicsContext();
+
+        float printingScale = static_cast<float>(imageSize.width()) / rect.width();
+        graphicsContext->scale(FloatSize(printingScale, printingScale));
 
 #if PLATFORM(MAC)
         if (RetainPtr<PDFDocument> pdfDocument = pdfDocumentForPrintingFrame(coreFrame)) {
