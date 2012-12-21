@@ -1,5 +1,18 @@
 2012-12-21  Zeno Albisser  <zeno@webkit.org>
 
+        [Qt][Mac] run-launcher cannot find Qt5WebKitWidgets.
+        https://bugs.webkit.org/show_bug.cgi?id=105309
+
+        On Windows the library name is Qt5WebKitWidgets as well.
+        So r138136 should not have adjusted the library name for Windows.
+
+        Reviewed by Simon Hausmann.
+
+        * Scripts/webkitdirs.pm:
+        (builtDylibPathForName):
+
+2012-12-21  Zeno Albisser  <zeno@webkit.org>
+
         [Qt] Add new TestExpectations for qt-5.0-mac-wk2.
         https://bugs.webkit.org/show_bug.cgi?id=105424
 
