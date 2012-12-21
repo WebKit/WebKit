@@ -3,7 +3,6 @@
 	ProjectType="Visual C++"
 	Version="8.00"
 	Name="WebKitLibCommon"
-	OutputDirectory="$(ConfigurationBuildDir)\lib"
 	>
 	<Tool
 		Name="VCCLCompilerTool"
@@ -15,4 +14,12 @@
 		DisableSpecificWarnings="4819"
 		ForcedIncludeFiles="WebKitPrefix.h;ICUVersion.h"
 	/>
+  <Tool
+    Name="VCLinkerTool"
+		AdditionalDependencies="delayimp.lib kernel32.lib user32.lib gdi32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib usp10.lib comctl32.lib version.lib shlwapi.lib libxml2$(LibraryConfigSuffix).lib libxslt$(LibraryConfigSuffix).lib libicuin$(LibraryConfigSuffix).lib libicuuc$(LibraryConfigSuffix).lib SQLite3$(LibraryConfigSuffix).lib pthreadVC2$(LibraryConfigSuffix).lib JavaScriptCore$(WebKitDLLConfigSuffix).lib WebCore$(WebKitConfigSuffix).lib WebKitGUID$(WebKitConfigSuffix).lib msimg32.lib crypt32.lib iphlpapi.lib winmm.lib comsuppw.lib rpcrt4.lib zdll$(LibraryConfigSuffix).lib"
+		OutputFile="$(OutDir)\WebKit$(WebKitDLLConfigSuffix).dll"
+		AdditionalLibraryDirectories="&quot;$(IntDir)\lib&quot;"
+		ModuleDefinitionFile="$(ConfigurationBuildDir)\obj\WebKit2ExportGenerator\WebKit2.def"
+		DelayLoadDLLs="usp10.dll;comctl32.dll;version.dll;libxslt$(LibraryConfigSuffix).dll;SQLite3$(LibraryConfigSuffix).dll;iphlpapi.dll"
+  />
 </VisualStudioPropertySheet>
