@@ -354,6 +354,7 @@ struct GraphicsSurfacePrivate {
         return m_size;
     }
 
+    bool isReceiver() const { return m_isReceiver; }
 private:
     OffScreenRootWindow m_offScreenWindow;
     IntSize m_size;
@@ -437,6 +438,14 @@ uint32_t GraphicsSurface::platformFrontBuffer() const
 
 uint32_t GraphicsSurface::platformSwapBuffers()
 {
+    if (m_private->isReceiver()) {
+        glBindTexture(GL_TEXTURE_2D, platformGetTextureID());
+        // Release previous lock and rebind texture to surface to get frame update.
+        pGlXReleaseTexImageEXT(m_private->display(), m_private->glxPixmap(), GLX_FRONT_EXT);
+        pGlXBindTexImageEXT(m_private->display(), m_private->glxPixmap(), GLX_FRONT_EXT, 0);
+        return 0;
+    }
+
     m_private->swapBuffers();
     return 0;
 }
