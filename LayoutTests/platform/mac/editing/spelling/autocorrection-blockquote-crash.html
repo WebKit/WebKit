@@ -4,7 +4,7 @@
     <script src="../../../../fast/js/resources/js-test-pre.js"></script>
 </head>
 <body>
-    <p id="description">This test checks that markers are correct when auto correcting in the blockquote. If you type "n" and " ", there should be blue dots under the word: "information". This test also makes sure that the replacement does not cause breaking out of blockquotes. <br> Note, this test can fail due to user specific spell checking data. If the user has previously dismissed 'information' as the correct spelling of 'infomation' several times, the spell checker will not provide 'information' as a suggestion anymore. To fix this, remove all files in ~/Library/Spelling. and kill AppleSpell.service</p>
+    <p id="description">This test checks that markers are correct when auto correcting in the blockquote. If you type "l" and " ", there should be blue dots under the word: "notational". This test also makes sure that the replacement does not cause breaking out of blockquotes.</p>
 <div id="console"></div>
 
 <div id = "test" contentEditable="true" spellCheck="true"><blockquote type="cite"><font style = "font-family:Arial"><br> would this <b id = "bold"><br></b><b><br></b>make a difference?<span><br></span><span><br></span></font></blockquote></div>
@@ -12,12 +12,12 @@
 <script language="javascript">
     // Insert some text with a typographical error in it, so autocorrection occurs.
     window.getSelection().setPosition(document.getElementById("bold"), 1);
-    document.execCommand("InsertText", false, "test infomatio");
-    eventSender.keyDown('n');
+    document.execCommand("InsertText", false, "test notation");
+    eventSender.keyDown('l');
     eventSender.keyDown(' ');
     
     if(window.internals)
-        shouldBeTrue('internals.hasAutocorrectedMarker(document, 5, 11)');
+        shouldBeTrue('internals.hasAutocorrectedMarker(document, 5, 10)');
 </script>
 <script src="../../../../fast/js/resources/js-test-post.js"></script>
 </body>

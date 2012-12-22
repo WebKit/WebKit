@@ -47,6 +47,9 @@ void InjectedBundle::platformInitialize(WKTypeRef)
         [NSNumber numberWithBool:NO],     @"NSOverlayScrollersEnabled",
         @"Always",                        @"AppleShowScrollBars",
         [NSArray arrayWithObject:@"en"],  @"AppleLanguages",
+#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 1070
+        [NSDictionary dictionaryWithObjectsAndKeys:@"notational", @"notationl", nil], @"NSTestCorrectionDictionary",
+#endif
         nil];
 
     [[NSUserDefaults standardUserDefaults] setVolatileDomain:dict forName:NSArgumentDomain];
