@@ -429,7 +429,8 @@ static void paintTextWithShadows(GraphicsContext* context, const Font& font, con
                     context->drawText(font, textRun, textOrigin + extraOffset,  0, endOffset);
                 else
                     context->drawEmphasisMarks(font, textRun, emphasisMark, textOrigin + extraOffset + IntSize(0, emphasisMarkOffset),  0, endOffset);
-            } if (startOffset < truncationPoint) {
+            }
+            if (startOffset < truncationPoint) {
                 if (emphasisMark.isEmpty())
                     context->drawText(font, textRun, textOrigin + extraOffset, startOffset, truncationPoint);
                 else
