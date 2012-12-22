@@ -113,9 +113,9 @@ void ElementShadow::removeAllShadowRoots()
 
         m_shadowRoots.removeHead();
         oldRoot->setHost(0);
+        oldRoot->setParentTreeScope(shadowHost->document());
         oldRoot->setPrev(0);
         oldRoot->setNext(0);
-        shadowHost->document()->adoptIfNeeded(oldRoot.get());
         ChildNodeRemovalNotifier(shadowHost).notify(oldRoot.get());
     }
 

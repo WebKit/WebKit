@@ -449,6 +449,8 @@ void Node::setDocument(Document* document)
 
 void Node::setTreeScope(TreeScope* scope)
 {
+    ASSERT(!isShadowRoot());
+
     if (!hasRareData() && scope->rootNode()->isDocumentNode())
         return;
 
@@ -913,6 +915,11 @@ bool Node::isFocusable() const
     return true;
 }
 
+bool Node::isTreeScope() const
+{
+    return treeScope()->rootNode() == this;
+}
+
 bool Node::isKeyboardFocusable(KeyboardEvent*) const
 {
     return isFocusable() && tabIndex() >= 0;
@@ -921,12 +928,6 @@ bool Node::isKeyboardFocusable(KeyboardEvent*) const
 bool Node::isMouseFocusable() const
 {
     return isFocusable();
-}
-
-bool Node::documentFragmentIsShadowRoot() const
-{
-    ASSERT_NOT_REACHED();
-    return false;
 }
 
 Node* Node::focusDelegate()

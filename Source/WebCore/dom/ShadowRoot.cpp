@@ -88,6 +88,11 @@ ShadowRoot::~ShadowRoot()
     ASSERT(!m_prev);
     ASSERT(!m_next);
 
+    // We must remove all of our children first before the TreeScope destructor
+    // runs so we don't go through TreeScopeAdopter for each child with a
+    // destructed tree scope in each descendant.
+    removeAllChildren();
+
     // We must call clearRareData() here since a ShadowRoot class inherits TreeScope
     // as well as Node. See a comment on TreeScope.h for the reason.
     if (hasRareData())
