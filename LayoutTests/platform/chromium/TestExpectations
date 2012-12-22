@@ -2974,9 +2974,8 @@ webkit.org/b/94688 fast/js/toString-overrides.html [ Failure ]
 
 webkit.org/b/91944 platform/chromium/virtual/gpu/fast/canvas/canvas-transforms-fillRect-shadow.html [ Failure ]
 
-webkit.org/b/73865 media/track/text-track-cue-is-reachable.html [ Failure Crash ]
-webkit.org/b/73865 media/track/text-track-is-reachable.html [ Failure Crash ]
-webkit.org/b/73865 media/track [ Crash Pass ]
+webkit.org/b/73865 media/track/text-track-cue-is-reachable.html [ Failure ]
+webkit.org/b/73865 media/track/text-track-is-reachable.html [ Failure ]
 
 # Opera-submitted tests to W3C for <track>, a lot of failures still.
 webkit.org/b/103926 media/track/opera/idl/media-idl-tests.html [ Skip ]
@@ -3544,7 +3543,7 @@ webkit.org/b/88939 [ Debug ] fast/events/before-unload-adopt-subframe-to-outside
 # The test has its own notion of timeouts that manifest timeouts as FAIL.
 webkit.org/b/88833 [ Debug ] media/video-played-collapse.html [ Failure Pass ]
 
-webkit.org/b/88833 [ Win Debug ] media/track/track-kind.html [ Pass Timeout Crash ]
+webkit.org/b/88833 [ Win Debug ] media/track/track-kind.html [ Pass Timeout ]
 webkit.org/b/88833 http/tests/media/video-play-progress.html [ Pass Timeout ]
 
 webkit.org/b/88832 [ XP ] http/tests/xmlhttprequest/origin-exact-matching.html [ Pass Timeout ]
@@ -3644,7 +3643,7 @@ webkit.org/b/92570 [ Win Debug ] inspector/debugger/dom-breakpoints.html [ Pass 
 webkit.org/b/92570 [ Win Debug ] inspector/timeline/timeline-network-received-data.html [ Failure Pass Timeout ]
 webkit.org/b/92570 [ Win Debug ] inspector/timeline/timeline-start-time.html [ Failure Pass Timeout ]
 
-webkit.org/b/94242 [ Android Debug ] media/track/track-cues-sorted-before-dispatch.html [ Crash Pass Timeout ]
+webkit.org/b/94242 [ Android Debug ] media/track/track-cues-sorted-before-dispatch.html [ Pass Timeout ]
 
 # Chromium still has the CC toggle button, not the menu of tracks.
 webkit.org/b/101670 media/video-controls-captions-trackmenu.html [ Skip ]
@@ -3831,7 +3830,7 @@ crbug.com/145590 [ Android ] media/video-source-type-params.html [ Failure ]
 crbug.com/145590 [ Android ] platform/chromium/compositing/video-frame-size-change.html [ Timeout ]
 crbug.com/145590 [ Android ] platform/chromium/media/video-frame-size-change.html [ Timeout ]
 
-webkit.org/b/89167 media/track/track-cue-rendering-snap-to-lines-not-set.html [ Failure Pass Crash ]
+webkit.org/b/89167 media/track/track-cue-rendering-snap-to-lines-not-set.html [ Failure Pass ]
 
 webkit.org/b/95588 [ Mac ] fast/dom/shadow/shadowdom-for-textarea-complex-shadow.html [ ImageOnlyFailure ]
 
@@ -3972,8 +3971,8 @@ webkit.org/b/86146 css3/supports.html
 webkit.org/b/95959 css3/device-adapt [ Skip ]
 
 # Require rebaselining after webkit.org/b/97800
-webkit.org/b/89167 media/track/track-cue-rendering-horizontal.html [ Failure Crash ]
-webkit.org/b/89167 media/track/track-cue-rendering-vertical.html [ Failure Crash ]
+webkit.org/b/89167 media/track/track-cue-rendering-horizontal.html [ Failure ]
+webkit.org/b/89167 media/track/track-cue-rendering-vertical.html [ Failure ]
 # [Chromium-Android] Subtitles (and video) do not work on Android (Disabled to make linter happy)
 #webkit.org/b/98766 [ Android ] media/track/track-cue-rendering-vertical.html [ Failure ]
 #webkit.org/b/98766 [ Android ] media/track/track-cue-rendering-horizontal.html [ Failure ]

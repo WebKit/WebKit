@@ -1,3 +1,9 @@
+2012-12-21  Ilya Tikhonovsky  <loislo@chromium.org>
+
+        Unreviewed. Remove Crash expectation from media/track tests after r138381.
+
+        * platform/chromium/TestExpectations:
+
 2012-12-21  Ryosuke Niwa  <rniwa@webkit.org>
 
         [Mountain Lion] platform/mac/editing/spelling/removing-underline-after-accepting-autocorrection-using-punctuation.html failing
