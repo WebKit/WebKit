@@ -1,3 +1,14 @@
+2012-12-21  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r138331.
+        http://trac.webkit.org/changeset/138331
+        https://bugs.webkit.org/show_bug.cgi?id=105668
+
+        Broke Windows clean builds; can't figure out how to fix it
+        (Requested by rniwa on #webkit).
+
+        * win/WebKit2.def.in:
+
 2012-12-21  Brady Eidson  <beidson@apple.com>
 
         ASSERT in WebResourceLoadScheduler::scheduleLoad with a crashed NetworkProcess.

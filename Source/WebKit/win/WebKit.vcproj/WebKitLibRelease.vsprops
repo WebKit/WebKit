@@ -3,6 +3,6 @@
 	ProjectType="Visual C++"
 	Version="8.00"
 	Name="WebKitLibRelease"
-	InheritedPropertySheets="$(WebKitVSPropsRedirectionDir)..\..\..\..\WebKitLibraries\win\tools\vsprops\FeatureDefines.vsprops;$(WebKitVSPropsRedirectionDir)..\..\..\..\WebKitLibraries\win\tools\vsprops\common.vsprops;$(WebKitVSPropsRedirectionDir)..\..\..\..\WebKitLibraries\win\tools\vsprops\releaseproduction.vsprops;$(WebKitVSPropsRedirectionDir)..\..\..\..\WebKitLibraries\win\tools\vsprops\release.vsprops;.\WebKitLibCommon.vsprops;.\WebKitDirectX.vsprops;.\WebKitApple.vsprops"
+	InheritedPropertySheets="$(WebKitVSPropsRedirectionDir)..\..\..\..\WebKitLibraries\win\tools\vsprops\FeatureDefines.vsprops;$(WebKitVSPropsRedirectionDir)..\..\..\..\WebKitLibraries\win\tools\vsprops\common.vsprops;$(WebKitVSPropsRedirectionDir)..\..\..\..\WebKitLibraries\win\tools\vsprops\releaseproduction.vsprops;$(WebKitVSPropsRedirectionDir)..\..\..\..\WebKitLibraries\win\tools\vsprops\release.vsprops;.\WebKitLibCommon.vsprops"
 	>
 </VisualStudioPropertySheet>

@@ -283,6 +283,7 @@ EXPORTS
         ?setMediaTypeOverride@Settings@WebCore@@QAEXABVString@WTF@@@Z
         ?settings@Document@WebCore@@QBEPAVSettings@2@XZ
         ?settings@Frame@WebCore@@QBEPAVSettings@2@XZ
+        ?setFixedElementsLayoutRelativeToFrame@Settings@WebCore@@QAEX_N@Z
         ?shadow@Element@WebCore@@QBEPAVElementShadow@2@XZ
         ?substring@String@WTF@@QBE?AV12@II@Z
         ?suggestedValue@HTMLInputElement@WebCore@@QBEABVString@WTF@@XZ
