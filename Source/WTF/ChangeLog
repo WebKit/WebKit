@@ -1,5 +1,12 @@
 2012-12-21  Ilya Tikhonovsky  <loislo@chromium.org>
 
+        Unreviewed. Another try to fix Apple Win Release build.
+
+        * wtf/FastMalloc.cpp:
+        (WTF::ClassIndex):
+
+2012-12-21  Ilya Tikhonovsky  <loislo@chromium.org>
+
         Unreviewed compilation fix for Apple Win Release after r138398.
 
         * wtf/FastMalloc.cpp:

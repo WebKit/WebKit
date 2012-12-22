@@ -517,7 +517,7 @@ enum {
 #define ROTATE_VALUE(value, amount) (((value) >> (amount)) | ((value) << (sizeof(value) * 8 - (amount))))
 #define XOR_MASK_PTR_WITH_KEY(ptr, key) (reinterpret_cast<typeof(ptr)>(reinterpret_cast<uintptr_t>(ptr)^ROTATE_VALUE(reinterpret_cast<uintptr_t>(key), MaskKeyShift)^ROTATE_VALUE(reinterpret_cast<uintptr_t>(&kLLHardeningMask), MaskAddrShift)))
 #else
-#define XOR_MASK_PTR_WITH_KEY(ptr, key) (ptr1)
+#define XOR_MASK_PTR_WITH_KEY(ptr, key) (ptr)
 #endif
 
 
