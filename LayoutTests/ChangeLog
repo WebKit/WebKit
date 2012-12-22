@@ -1,3 +1,13 @@
+2012-12-21  Zan Dobersek  <zandobersek@gmail.com>
+
+        Unreviewed GTK gardening.
+
+        Rebaselining the global constructors test after r138393.
+        Adjusting and merging expectations as required.
+
+        * platform/gtk/TestExpectations:
+        * platform/gtk/fast/js/global-constructors-expected.txt:
+
 2012-12-21  Ilya Tikhonovsky  <loislo@chromium.org>
 
         Unreviewed. Remove Crash expectation from media/track tests after r138381.

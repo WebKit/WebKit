@@ -47,7 +47,7 @@ webkit.org/b/84045 accessibility/image-map2.html [ Missing ]
 webkit.org/b/70606 accessibility/menu-list-sends-change-notification.html [ Missing ]
 webkit.org/b/70606 accessibility/multiselect-list-reports-active-option.html [ Missing ]
 webkit.org/b/70606 accessibility/notification-listeners.html [ Missing ]
-webkit.org/b/105638 accessibility//aria-labelledby-overrides-label.html [ Missing ]
+webkit.org/b/105638 accessibility/aria-labelledby-overrides-label.html [ Missing ]
 
 webkit.org/b/105639 fast/inline/justify-emphasis-inline-box.html [ Missing ]
 
@@ -615,7 +615,7 @@ webkit.org/b/98133 fast/css/sticky/sticky-writing-mode-vertical-rl.html [ ImageO
 webkit.org/b/68878 media/video-playing-and-pause.html [ Failure Pass ]
 
 webkit.org/b/104809 media/adopt-node-crash.html [ Crash Timeout Pass ]
-webkit.org/b/104809 media/encrypted-media/encrypted-media-not-loaded.html [ Crash Pass ]
+webkit.org/b/104809 media/encrypted-media/encrypted-media-not-loaded.html [ Crash Failure ]
 webkit.org/b/104809 media/event-queue-crash.html [ Crash Pass ]
 webkit.org/b/104809 media/track/track-cues-pause-on-exit.html [ Timeout Pass ]
 webkit.org/b/104809 media/video-source-type-params.html [ Crash Timeout Pass ]
@@ -768,7 +768,6 @@ webkit.org/b/73766 css3/unicode-bidi-isolate-aharon-failing.html [ ImageOnlyFail
 webkit.org/b/79757 fast/selectors/selection-window-inactive.html [ ImageOnlyFailure ]
 
 webkit.org/b/98353 accessibility/aria-hidden-with-elements.html [ Failure ]
-webkit.org/b/98354 accessibility/aria-labelledby-overrides-label.html [ Failure ]
 webkit.org/b/98355 accessibility/aria-link-supports-press.html [ Failure ]
 webkit.org/b/98357 accessibility/aria-readonly.html [ Failure ]
 webkit.org/b/98358 accessibility/aria-scrollbar-role.html [ Failure ]
