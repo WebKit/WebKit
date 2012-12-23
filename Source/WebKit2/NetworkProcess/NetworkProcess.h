@@ -101,8 +101,6 @@ private:
     // The connection to the UI process.
     RefPtr<CoreIPC::Connection> m_uiConnection;
 
-    CoreIPC::MessageReceiverMap m_messageReceiverMap;
-
     // Connections to WebProcesses.
     Vector<RefPtr<NetworkConnectionToWebProcess> > m_webProcessConnections;
 

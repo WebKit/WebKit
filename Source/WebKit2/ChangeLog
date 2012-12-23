@@ -1,3 +1,44 @@
+2012-12-22  Sam Weinig  <sam@webkit.org>
+
+        Give the ChildProcess a MessageReceiverMap
+        https://bugs.webkit.org/show_bug.cgi?id=105681
+
+        Reviewed by Dan Bernstein.
+
+        Moving the MessageReceiverMap to the ChildProcess will help shared code
+        between the WebProcess and NetworkProcess.
+
+        * NetworkProcess/NetworkProcess.cpp:
+        (WebKit::NetworkProcess::NetworkProcess):
+        Pass 'this' instead of the MessageReceiverMap, now that ChildProcess
+        can be used to access the MessageReceiverMap.
+
+        * NetworkProcess/NetworkProcess.h:
+        (NetworkProcess):
+        Remove the now extraneous MessageReceiverMap.
+
+        * Shared/ChildProcess.cpp:
+        (WebKit::ChildProcess::ChildProcess):
+        (WebKit):
+        (WebKit::ChildProcess::~ChildProcess):
+        (WebKit::ChildProcess::addMessageReceiver):
+        (WebKit::ChildProcess::removeMessageReceiver):
+        * Shared/ChildProcess.h:
+        (ChildProcess):
+        Add a MessageReceiverMap and helper functions from WebProcess.
+
+        * WebProcess/Authentication/AuthenticationManager.cpp:
+        (WebKit::AuthenticationManager::AuthenticationManager):
+        * WebProcess/Authentication/AuthenticationManager.h:
+        (AuthenticationManager):
+        Fix the FIXME, passing the ChildProcess rather than the MessageReceiverMap.
+
+        * WebProcess/WebProcess.cpp:
+        (WebKit::WebProcess::WebProcess):
+        * WebProcess/WebProcess.h:
+        (WebProcess):
+        Remove the MessageReceiverMap and helper functions.
+
 2012-12-22  Alexey Proskuryakov  <ap@apple.com>
 
         Windows build fix.

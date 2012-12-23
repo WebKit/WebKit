@@ -27,10 +27,10 @@
 #include "AuthenticationManager.h"
 
 #include "AuthenticationManagerMessages.h"
+#include "ChildProcess.h"
 #include "Download.h"
 #include "DownloadProxyMessages.h"
 #include "MessageID.h"
-#include "MessageReceiverMap.h"
 #include "WebCoreArgumentCoders.h"
 #include "WebFrame.h"
 #include "WebPage.h"
@@ -48,9 +48,9 @@ static uint64_t generateAuthenticationChallengeID()
     return uniqueAuthenticationChallengeID++;
 }
 
-AuthenticationManager::AuthenticationManager(CoreIPC::MessageReceiverMap& messageReceiverMap)
+AuthenticationManager::AuthenticationManager(ChildProcess* childProcess)
 {
-    messageReceiverMap.addMessageReceiver(Messages::AuthenticationManager::messageReceiverName(), this);
+    childProcess->addMessageReceiver(Messages::AuthenticationManager::messageReceiverName(), this);
 }
 
 void AuthenticationManager::setConnection(CoreIPC::Connection* connection)

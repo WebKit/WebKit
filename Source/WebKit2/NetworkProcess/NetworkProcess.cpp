@@ -54,7 +54,7 @@ NetworkProcess& NetworkProcess::shared()
 NetworkProcess::NetworkProcess()
     : m_hasSetCacheModel(false)
     , m_cacheModel(CacheModelDocumentViewer)
-    , m_downloadsAuthenticationManager(m_messageReceiverMap)
+    , m_downloadsAuthenticationManager(this)
 {
 }
 

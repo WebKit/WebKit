@@ -43,6 +43,7 @@ namespace WebCore {
 
 namespace WebKit {
 
+class ChildProcess;
 class Download;
 class PlatformCertificateInfo;
 class WebFrame;
@@ -51,8 +52,7 @@ class AuthenticationManager : private CoreIPC::MessageReceiver {
     WTF_MAKE_NONCOPYABLE(AuthenticationManager);
 
 public:
-    // FIXME: ChildProcess should just have a MessageReceiverMap, and this should take a ChildProcess.
-    explicit AuthenticationManager(CoreIPC::MessageReceiverMap&);
+    explicit AuthenticationManager(ChildProcess*);
 
     void setConnection(CoreIPC::Connection*);
 
@@ -64,7 +64,6 @@ public:
     void cancelChallenge(uint64_t challengeID);
 
 private:
-
     // CoreIPC::MessageReceiver
     virtual void didReceiveMessage(CoreIPC::Connection*, CoreIPC::MessageID, CoreIPC::MessageDecoder&) OVERRIDE;
     void didReceiveAuthenticationManagerMessage(CoreIPC::Connection*, CoreIPC::MessageID, CoreIPC::MessageDecoder&);

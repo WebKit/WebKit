@@ -118,11 +118,6 @@ public:
 
     CoreIPC::Connection* connection() const { return m_connection.get(); }
     WebCore::RunLoop* runLoop() const { return m_runLoop; }
-
-    void addMessageReceiver(CoreIPC::StringReference messageReceiverName, CoreIPC::MessageReceiver*);
-    void addMessageReceiver(CoreIPC::StringReference messageReceiverName, uint64_t destinationID, CoreIPC::MessageReceiver*);
-    void removeMessageReceiver(CoreIPC::StringReference messageReceiverName, uint64_t destinationID);
-
     WebConnectionToUIProcess* webConnectionToUIProcess() const { return m_webConnection.get(); }
 
     WebPage* webPage(uint64_t pageID) const;
@@ -327,8 +322,6 @@ private:
 #endif
 
     RefPtr<CoreIPC::Connection> m_connection;
-    CoreIPC::MessageReceiverMap m_messageReceiverMap;
-
     RefPtr<WebConnectionToUIProcess> m_webConnection;
 
     HashMap<uint64_t, RefPtr<WebPage> > m_pageMap;

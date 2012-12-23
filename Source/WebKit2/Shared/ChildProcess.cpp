@@ -34,6 +34,36 @@ using namespace WebCore;
 
 namespace WebKit {
 
+ChildProcess::ChildProcess()
+    : m_terminationTimeout(0)
+    , m_terminationCounter(0)
+    , m_terminationTimer(RunLoop::main(), this, &ChildProcess::terminationTimerFired)
+{
+    // FIXME: The termination timer should not be scheduled on the main run loop.
+    // It won't work with the threaded mode, but it's not really useful anyway as is.
+    
+    platformInitialize();
+}
+
+ChildProcess::~ChildProcess()
+{
+}
+
+void ChildProcess::addMessageReceiver(CoreIPC::StringReference messageReceiverName, CoreIPC::MessageReceiver* messageReceiver)
+{
+    m_messageReceiverMap.addMessageReceiver(messageReceiverName, messageReceiver);
+}
+
+void ChildProcess::addMessageReceiver(CoreIPC::StringReference messageReceiverName, uint64_t destinationID, CoreIPC::MessageReceiver* messageReceiver)
+{
+    m_messageReceiverMap.addMessageReceiver(messageReceiverName, destinationID, messageReceiver);
+}
+
+void ChildProcess::removeMessageReceiver(CoreIPC::StringReference messageReceiverName, uint64_t destinationID)
+{
+    m_messageReceiverMap.removeMessageReceiver(messageReceiverName, destinationID);
+}
+
 void ChildProcess::disableTermination()
 {
     m_terminationCounter++;
@@ -54,21 +84,6 @@ void ChildProcess::enableTermination()
     }
 
     m_terminationTimer.startOneShot(m_terminationTimeout);
-}
-
-ChildProcess::ChildProcess()
-    : m_terminationTimeout(0)
-    , m_terminationCounter(0)
-    , m_terminationTimer(RunLoop::main(), this, &ChildProcess::terminationTimerFired)
-{
-    // FIXME: The termination timer should not be scheduled on the main run loop.
-    // It won't work with the threaded mode, but it's not really useful anyway as is.
-    
-    platformInitialize();
-}
-
-ChildProcess::~ChildProcess()
-{
 }
 
 void ChildProcess::terminationTimerFired()

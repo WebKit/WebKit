@@ -27,6 +27,7 @@
 #define ChildProcess_h
 
 #include "Connection.h"
+#include "MessageReceiverMap.h"
 #include <WebCore/RunLoop.h>
 #include <wtf/RetainPtr.h>
 
@@ -62,6 +63,10 @@ public:
         ChildProcess& m_childProcess;
     };
 
+    void addMessageReceiver(CoreIPC::StringReference messageReceiverName, CoreIPC::MessageReceiver*);
+    void addMessageReceiver(CoreIPC::StringReference messageReceiverName, uint64_t destinationID, CoreIPC::MessageReceiver*);
+    void removeMessageReceiver(CoreIPC::StringReference messageReceiverName, uint64_t destinationID);
+
 #if PLATFORM(MAC)
     bool applicationIsOccluded() const { return !m_processVisibleAssertion; }
     void setApplicationIsOccluded(bool);
@@ -71,9 +76,11 @@ public:
 
 protected:
     explicit ChildProcess();
-    ~ChildProcess();
+    virtual ~ChildProcess();
 
     void setTerminationTimeout(double seconds) { m_terminationTimeout = seconds; }
+
+    CoreIPC::MessageReceiverMap m_messageReceiverMap;
 
 private:
     void terminationTimerFired();
