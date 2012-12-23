@@ -28,7 +28,7 @@
 
 #include <CFNetwork/CFHTTPCookiesPriv.h>
 #include <WebCore/CookieStorage.h>
-#include <WebCore/CookieStorageCFNet.h>
+#include <WebCore/NetworkStorageSession.h>
 
 #if PLATFORM(MAC)
 #include <WebKitSystemInterface.h>
