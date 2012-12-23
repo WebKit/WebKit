@@ -1062,46 +1062,32 @@ AC_ARG_ENABLE(webkit2,
     [], [enable_webkit2="yes"])
 AC_MSG_RESULT([$enable_webkit2])
 if test "$enable_webkit2" = "yes"; then
-   if test "$GTK_API_VERSION" = "2.0"; then
-      AC_MSG_ERROR([WebKit2 requires GTK+ 3.x, use --with-gtk=3.0])
-   fi
+    if test "$GTK_API_VERSION" = "2.0"; then
+        AC_MSG_ERROR([WebKit2 requires GTK+ 3.x, use --with-gtk=3.0])
+    fi
 
-   # Check Unix printing
-   PKG_CHECK_MODULES(GTK_UNIX_PRINTING, gtk+-unix-print-3.0,
+    # Make sure we have GTK+ 2.x to build the plugin process.
+    PKG_CHECK_MODULES(GTK2, gtk+-2.0 >= $GTK2_REQUIRED_VERSION gail >= $GAIL2_REQUIRED_VERSION)
+    AC_SUBST(GTK2_CFLAGS)
+    AC_SUBST(GTK2_LIBS)
+
+    # Check Unix printing
+    PKG_CHECK_MODULES(GTK_UNIX_PRINTING, gtk+-unix-print-3.0,
                      [have_gtk_unix_printing=yes],
                      [have_gtk_unix_printing=no])
-   AC_SUBST(GTK_UNIX_PRINTING_CFLAGS)
-   AC_SUBST(GTK_UNIX_PRINTING_LIBS)
-   if test "$have_gtk_unix_printing" = "yes"; then
-       AC_DEFINE([HAVE_GTK_UNIX_PRINTING], [1], [Define if GTK+ UNIX Printing is available])
-   fi
+    AC_SUBST(GTK_UNIX_PRINTING_CFLAGS)
+    AC_SUBST(GTK_UNIX_PRINTING_LIBS)
+    if test "$have_gtk_unix_printing" = "yes"; then
+        AC_DEFINE([HAVE_GTK_UNIX_PRINTING], [1], [Define if GTK+ UNIX Printing is available])
+    fi
 
-   # On some Linux/Unix platforms, shm_* may only be available if linking
-   # against librt
-   if test "$os_win32" = "no"; then
-       AC_SEARCH_LIBS([shm_open], [rt], [SHM_LIBS="-lrt"])
-       AC_SUBST(SHM_LIBS)
-   fi
+    # On some Linux/Unix platforms, shm_* may only be available if linking
+    # against librt
+    if test "$os_win32" = "no"; then
+        AC_SEARCH_LIBS([shm_open], [rt], [SHM_LIBS="-lrt"])
+        AC_SUBST(SHM_LIBS)
+    fi
 fi
-
-# Plugin Process
-AC_MSG_CHECKING([whether to build plugin process for WebKit2])
-AC_ARG_ENABLE(plugin_process,
-            AC_HELP_STRING([--enable-plugin-process], [build plugin process for WebKit2 [default=yes]]),
-                           [], [enable_plugin_process="yes"])
-AC_MSG_RESULT([$enable_plugin_process])
-
-# Build the plugin process only when building Webkit2.
-if test "$enable_webkit2" = "no"; then
-    enable_plugin_process=no
-fi
-
-# Make sure we have GTK+ 2.x to build the plugin process.
-if test "$enable_plugin_process" = "yes"; then
-   PKG_CHECK_MODULES(GTK2, gtk+-2.0 >= $GTK2_REQUIRED_VERSION gail >= $GAIL2_REQUIRED_VERSION)
-fi
-AC_SUBST(GTK2_CFLAGS)
-AC_SUBST(GTK2_LIBS)
 
 GTK_DOC_CHECK([1.10])
 
@@ -1169,7 +1155,6 @@ AM_CONDITIONAL([ENABLE_FAST_MALLOC],[test "$enable_fast_malloc" = "yes"])
 AM_CONDITIONAL([ENABLE_WEB_AUDIO],[test "$enable_web_audio" = "yes"])
 AM_CONDITIONAL([ENABLE_OPCODE_STATS],[test "$enable_opcode_stats" = "yes"])
 AM_CONDITIONAL([ENABLE_WEBKIT2],[test "$enable_webkit2" = "yes"])
-AM_CONDITIONAL([ENABLE_PLUGIN_PROCESS],[test "$enable_plugin_process" = "yes"])
 AM_CONDITIONAL([ENABLE_SPELLCHECK],[test "$enable_spellcheck" = "yes"])
 AM_CONDITIONAL([ENABLE_CSS_FILTERS],[test "$enable_css_filters" = "yes"])
 AM_CONDITIONAL([ENABLE_CSS_SHADERS],[test "$enable_css_shaders" = "yes"])
@@ -1227,6 +1212,7 @@ Build configuration:
 
 Features:
 =======
+ WebKit2 support                                          : $enable_webkit2
  Accelerated Compositing                                  : $enable_accelerated_compositing
  Gamepad support                                          : $enable_gamepad
  Geolocation support                                      : $enable_geolocation
@@ -1242,9 +1228,6 @@ Features:
  WebGL                                                    : $enable_webgl
  XSLT support                                             : $enable_xslt
 
-WebKit2 support:
- WebKit2 support                                          : $enable_webkit2
- WebKit2 plugin process                                   : $enable_plugin_process
 
 GTK+ configuration:
  GTK+ version                                             : $with_gtk

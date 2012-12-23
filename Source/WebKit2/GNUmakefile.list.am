@@ -1216,8 +1216,6 @@ webkit2_sources += \
    Source/WebKit2/WebProcess/WebPage/gtk/LayerTreeHostGtk.h
 endif # END USE_TEXTURE_MAPPER_GL
 
-if ENABLE_PLUGIN_PROCESS
-
 webkit2_plugin_process_built_sources += \
 	DerivedSources/WebKit2/NPObjectMessageReceiverMessageReceiver.cpp \
 	DerivedSources/WebKit2/NPObjectMessageReceiverMessages.h \
@@ -1332,5 +1330,3 @@ webkit2_plugin_process_sources += \
 	Source/WebKit2/WebProcess/Plugins/Netscape/NetscapePluginStream.h \
 	Source/WebKit2/WebProcess/Plugins/Netscape/x11/NetscapePluginX11.cpp \
 	Source/WebKit2/unix/PluginMainUnix.cpp
-
-endif # ENABLE_PLUGIN_PROCESS

@@ -1,5 +1,19 @@
 include $(srcdir)/Source/WebKit2/GNUmakefile.list.am
 
+if ENABLE_WEBKIT2
+# Shared libraries
+lib_LTLIBRARIES += \
+	libwebkit2gtk-@WEBKITGTK_API_MAJOR_VERSION@.@WEBKITGTK_API_MINOR_VERSION@.la
+
+# We need to make sure plugin process is always built with gtk2, because plugins like flash
+# still use gtk2. Since webcore was built with gtk3, we need to build webcoregtk sources again with gtk2
+noinst_LTLIBRARIES += \
+	libWebCoreGtk2.la
+
+libexec_PROGRAMS += \
+	Programs/WebKitPluginProcess
+endif
+
 libwebkit2gtk_@WEBKITGTK_API_MAJOR_VERSION@_@WEBKITGTK_API_MINOR_VERSION@_la_HEADERS = \
 	$(webkit2_h_api)
 
@@ -100,6 +114,7 @@ libwebkit2gtk_@WEBKITGTK_API_MAJOR_VERSION@_@WEBKITGTK_API_MINOR_VERSION@_la_CPP
 	-I$(top_builddir)/DerivedSources/WebKit2/include/WebKit2 \
 	-DLIBEXECDIR=\""$(libexecdir)"\" \
 	-DWEBKIT2_COMPILATION \
+	-DENABLE_PLUGIN_PROCESS=1 \
 	$(webcore_cppflags) \
 	$(webcoregtk_cppflags) \
 	$(javascriptcore_cppflags) \
@@ -122,12 +137,6 @@ libwebkit2gtk_@WEBKITGTK_API_MAJOR_VERSION@_@WEBKITGTK_API_MINOR_VERSION@_la_CXX
 libwebkit2gtk_@WEBKITGTK_API_MAJOR_VERSION@_@WEBKITGTK_API_MINOR_VERSION@_la_CFLAGS = \
 	$(global_cflags)
 
-if ENABLE_WEBKIT2
-# Shared libraries
-lib_LTLIBRARIES += \
-	libwebkit2gtk-@WEBKITGTK_API_MAJOR_VERSION@.@WEBKITGTK_API_MINOR_VERSION@.la
-endif
-
 # Artificial dependency to make sure libwebkit2gtk and libwebkitgtk are not linked at the same time
 # The variable creation is to avoid having automake override the entire rule instead of adding the
 # dependency.
@@ -147,12 +156,6 @@ endif
 if TARGET_X11
 libwebkit2gtk_@WEBKITGTK_API_MAJOR_VERSION@_@WEBKITGTK_API_MINOR_VERSION@_la_CPPFLAGS += \
 	-DMOZ_X11
-endif
-
-# Plugin process
-if ENABLE_PLUGIN_PROCESS
-libwebkit2gtk_@WEBKITGTK_API_MAJOR_VERSION@_@WEBKITGTK_API_MINOR_VERSION@_la_CPPFLAGS += \
-	-DENABLE_PLUGIN_PROCESS=1
 endif
 
 libwebkit2gtk_@WEBKITGTK_API_MAJOR_VERSION@_@WEBKITGTK_API_MINOR_VERSION@_la_LDFLAGS = \
@@ -437,14 +440,6 @@ Programs_WebKitWebProcess_LDADD = \
 	$(GTK_UNIX_PRINTING_LIBS) \
 	$(LIBSOUP_LIBS)
 
-# PluginProcess
-if ENABLE_PLUGIN_PROCESS
-
-# We need to make sure plugin process is always built with gtk2, because plugins like flash
-# still use gtk2. Since webcore was built with gtk3, we need to build webcoregtk sources again with gtk2
-noinst_LTLIBRARIES += \
-	libWebCoreGtk2.la
-
 libWebCoreGtk2_la_SOURCES = \
 	$(webcoregtk_sources)
 
@@ -480,9 +475,6 @@ libWebCoreGtk2_la_CPPFLAGS = \
 	$(UNICODE_CFLAGS) \
 	$(XRENDER_CFLAGS) \
 	$(XT_CFLAGS)
-
-libexec_PROGRAMS += \
-	Programs/WebKitPluginProcess
 
 # Serialize linking of the plugin process with both webkit libraries.
 plugin_process_for_dep = Programs/WebKitPluginProcess
@@ -588,8 +580,6 @@ Programs_WebKitPluginProcess_LDFLAGS = \
 Programs_WebKitPluginProcess_CXXFLAGS = \
 	$(SYMBOL_VISIBILITY_INLINES) \
 	$(global_cxxflags)
-
-endif # ENABLE_PLUGIN_PROCESS
 
 EXTRA_DIST += \
 	$(WebKit2)/UIProcess/API/gtk/docs/webkit2gtk-docs.sgml \

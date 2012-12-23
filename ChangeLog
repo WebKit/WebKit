@@ -1,3 +1,19 @@
+2012-12-20  Martin Robinson  <mrobinson@igalia.com>
+
+        [GTK] Remove plugin process configuration option
+        https://bugs.webkit.org/show_bug.cgi?id=105564
+
+        Reviewed by Carlos Garcia Campos.
+
+        Remove the --enable-plugin-process configuration option, opting instead to
+        always build the plugin process when building WebKit2. It isn't very interesting
+        for downstream to enable or disable the plugin process. It should always be
+        enabled for WebKit2 and it's better for us not to have to keep a disabled plugin
+        process building. Additionally, the in-process plugin isn't functional, since
+        plugins depend on GTK+ 2 and WebKit2 depends on GTK+ 3.
+
+        * configure.ac: Remove the configuration option.
+
 2012-12-21  Elliott Sprehn  <esprehn@chromium.org>
 
         Replace documentFragmentIsShadowRoot with isTreeScope
