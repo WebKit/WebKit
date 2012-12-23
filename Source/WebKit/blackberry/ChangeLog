@@ -1,3 +1,17 @@
+2012-12-23  Jakob Petsovits  <jpetsovits@rim.com>
+
+        [BlackBerry] Specify tile usage enum for backingstore tiles.
+        https://bugs.webkit.org/show_bug.cgi?id=105688
+        RIM PR 262120
+
+        Reviewed by George Staikos.
+
+        This enables us to have separate tile sizes for
+        backingstore / root layer purposes and generic layers.
+
+        * Api/BackingStore.cpp:
+        (BlackBerry::WebKit::BackingStorePrivate::tileSize):
+
 2012-12-21  Max Feil  <mfeil@rim.com>
 
         [BlackBerry] Fullscreen video fixed position container horizontal position is wrong

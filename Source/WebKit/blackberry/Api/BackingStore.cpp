@@ -1888,7 +1888,7 @@ int BackingStorePrivate::tileHeight()
 
 Platform::IntSize BackingStorePrivate::tileSize()
 {
-    static Platform::IntSize tileSize = BlackBerry::Platform::Settings::instance()->tileSize();
+    static Platform::IntSize tileSize = Platform::Settings::instance()->tileSize(Platform::BackingStoreTileUsage);
     return tileSize;
 }
 
