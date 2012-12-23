@@ -62,62 +62,68 @@ inline NetworkStorageSession& storageSession(const Document* document)
     NetworkingContext* context = networkingContext(document);
     return context ? context->storageSession() : NetworkStorageSession::defaultStorageSession();
 }
-#define SESSION(document) storageSession(document)
+#define LOCAL_SESSION(document) NetworkStorageSession& session = storageSession(document);
 #else
-#define SESSION(document) NetworkStorageSession(networkingContext(document))
+#define LOCAL_SESSION(document) NetworkStorageSession session(networkingContext(document));
 #endif
 
 String cookies(const Document* document, const KURL& url)
 {
+    LOCAL_SESSION(document)
 #if USE(PLATFORM_STRATEGIES)
-    return platformStrategies()->cookiesStrategy()->cookiesForDOM(SESSION(document), document->firstPartyForCookies(), url);
+    return platformStrategies()->cookiesStrategy()->cookiesForDOM(session, document->firstPartyForCookies(), url);
 #else
-    return cookiesForDOM(SESSION(document), document->firstPartyForCookies(), url);
+    return cookiesForDOM(session, document->firstPartyForCookies(), url);
 #endif
 }
 
 void setCookies(Document* document, const KURL& url, const String& cookieString)
 {
+    LOCAL_SESSION(document)
 #if USE(PLATFORM_STRATEGIES)
-    platformStrategies()->cookiesStrategy()->setCookiesFromDOM(SESSION(document), document->firstPartyForCookies(), url, cookieString);
+    platformStrategies()->cookiesStrategy()->setCookiesFromDOM(session, document->firstPartyForCookies(), url, cookieString);
 #else
-    setCookiesFromDOM(SESSION(document), document->firstPartyForCookies(), url, cookieString);
+    setCookiesFromDOM(session, document->firstPartyForCookies(), url, cookieString);
 #endif
 }
 
 bool cookiesEnabled(const Document* document)
 {
+    LOCAL_SESSION(document)
 #if USE(PLATFORM_STRATEGIES)
-    return platformStrategies()->cookiesStrategy()->cookiesEnabled(SESSION(document), document->firstPartyForCookies(), document->cookieURL());
+    return platformStrategies()->cookiesStrategy()->cookiesEnabled(session, document->firstPartyForCookies(), document->cookieURL());
 #else
-    return cookiesEnabled(SESSION(document), document->firstPartyForCookies(), document->cookieURL());
+    return cookiesEnabled(session, document->firstPartyForCookies(), document->cookieURL());
 #endif
 }
 
 String cookieRequestHeaderFieldValue(const Document* document, const KURL& url)
 {
+    LOCAL_SESSION(document)
 #if USE(PLATFORM_STRATEGIES)
-    return platformStrategies()->cookiesStrategy()->cookieRequestHeaderFieldValue(SESSION(document), document->firstPartyForCookies(), url);
+    return platformStrategies()->cookiesStrategy()->cookieRequestHeaderFieldValue(session, document->firstPartyForCookies(), url);
 #else
-    return cookieRequestHeaderFieldValue(SESSION(document), document->firstPartyForCookies(), url);
+    return cookieRequestHeaderFieldValue(session, document->firstPartyForCookies(), url);
 #endif
 }
 
 bool getRawCookies(const Document* document, const KURL& url, Vector<Cookie>& cookies)
 {
+    LOCAL_SESSION(document)
 #if USE(PLATFORM_STRATEGIES)
-    return platformStrategies()->cookiesStrategy()->getRawCookies(SESSION(document), document->firstPartyForCookies(), url, cookies);
+    return platformStrategies()->cookiesStrategy()->getRawCookies(session, document->firstPartyForCookies(), url, cookies);
 #else
-    return getRawCookies(SESSION(document), document->firstPartyForCookies(), url, cookies);
+    return getRawCookies(session, document->firstPartyForCookies(), url, cookies);
 #endif
 }
 
 void deleteCookie(const Document* document, const KURL& url, const String& cookieName)
 {
+    LOCAL_SESSION(document)
 #if USE(PLATFORM_STRATEGIES)
-    platformStrategies()->cookiesStrategy()->deleteCookie(SESSION(document), url, cookieName);
+    platformStrategies()->cookiesStrategy()->deleteCookie(session, url, cookieName);
 #else
-    deleteCookie(SESSION(document), url, cookieName);
+    deleteCookie(session, url, cookieName);
 #endif
 }
 
