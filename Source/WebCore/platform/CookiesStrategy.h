@@ -33,30 +33,22 @@
 #include <wtf/Vector.h>
 #include <wtf/text/WTFString.h>
 
-#if PLATFORM(MAC) || USE(CFNETWORK)
-typedef struct OpaqueCFHTTPCookieStorage*  CFHTTPCookieStorageRef;
-#endif
-
 namespace WebCore {
 
 class KURL;
-class NetworkingContext;
+class NetworkStorageSession;
 struct Cookie;
 
 class CookiesStrategy {
 public:
     virtual void notifyCookiesChanged() = 0;
 
-#if PLATFORM(MAC) || USE(CFNETWORK)
-    virtual RetainPtr<CFHTTPCookieStorageRef> defaultCookieStorage() = 0;
-#endif
-
-    virtual String cookiesForDOM(NetworkingContext*, const KURL& firstParty, const KURL&) = 0;
-    virtual void setCookiesFromDOM(NetworkingContext*, const KURL& firstParty, const KURL&, const String& cookieString) = 0;
-    virtual bool cookiesEnabled(NetworkingContext*, const KURL& firstParty, const KURL&) = 0;
-    virtual String cookieRequestHeaderFieldValue(NetworkingContext*, const KURL& firstParty, const KURL&) = 0;
-    virtual bool getRawCookies(NetworkingContext*, const KURL& firstParty, const KURL&, Vector<Cookie>&) = 0;
-    virtual void deleteCookie(NetworkingContext*, const KURL&, const String& cookieName) = 0;
+    virtual String cookiesForDOM(const NetworkStorageSession&, const KURL& firstParty, const KURL&) = 0;
+    virtual void setCookiesFromDOM(const NetworkStorageSession&, const KURL& firstParty, const KURL&, const String& cookieString) = 0;
+    virtual bool cookiesEnabled(const NetworkStorageSession&, const KURL& firstParty, const KURL&) = 0;
+    virtual String cookieRequestHeaderFieldValue(const NetworkStorageSession&, const KURL& firstParty, const KURL&) = 0;
+    virtual bool getRawCookies(const NetworkStorageSession&, const KURL& firstParty, const KURL&, Vector<Cookie>&) = 0;
+    virtual void deleteCookie(const NetworkStorageSession&, const KURL&, const String& cookieName) = 0;
 
 protected:
     virtual ~CookiesStrategy() { }

@@ -42,6 +42,8 @@ public:
     static void ensurePrivateBrowsingSession();
     static void destroyPrivateBrowsingSession();
 
+    static WebCore::NetworkStorageSession& privateBrowsingSession(); // Can only be called when the session exists.
+
 private:
     RemoteNetworkingContext(bool needsSiteSpecificQuirks, bool localFileContentSniffingEnabled, bool privateBrowsingEnabled);
 
@@ -49,8 +51,7 @@ private:
 
     virtual bool needsSiteSpecificQuirks() const OVERRIDE;
     virtual bool localFileContentSniffingEnabled() const OVERRIDE;
-    virtual bool inPrivateBrowsingMode() const OVERRIDE;
-    virtual CFURLStorageSessionRef storageSession() const OVERRIDE;
+    virtual WebCore::NetworkStorageSession& storageSession() const OVERRIDE;
     virtual NSOperationQueue *scheduledOperationQueue() const OVERRIDE;
     virtual WebCore::ResourceError blockedError(const WebCore::ResourceRequest&) const OVERRIDE;
 

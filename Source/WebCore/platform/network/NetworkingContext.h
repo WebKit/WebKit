@@ -20,7 +20,9 @@
 #ifndef NetworkingContext_h
 #define NetworkingContext_h
 
+#include "NetworkStorageSession.h"
 #include <wtf/RefCounted.h>
+#include <wtf/RetainPtr.h>
 
 #if PLATFORM(MAC)
 #include "SchedulePair.h"
@@ -38,10 +40,6 @@ class WebCookieJar;
 
 #if PLATFORM(MAC)
 OBJC_CLASS NSOperationQueue;
-#endif
-
-#if PLATFORM(MAC) || USE(CFNETWORK)
-typedef const struct __CFURLStorageSession* CFURLStorageSessionRef;
 #endif
 
 #if PLATFORM(QT)
@@ -68,6 +66,7 @@ public:
     virtual bool isValid() const { return true; }
 
 #if PLATFORM(CHROMIUM)
+    // FIXME: Wrap WebCookieJar into a NetworkStorageSession to make the code cross-platform.
     virtual WebKit::WebCookieJar* cookieJar() const = 0;
 #endif
 
@@ -80,11 +79,12 @@ public:
 #endif
 
 #if PLATFORM(MAC) || USE(CFNETWORK)
-    virtual bool inPrivateBrowsingMode() const = 0;
-    virtual CFURLStorageSessionRef storageSession() const = 0;
+
+    virtual NetworkStorageSession& storageSession() const = 0;
 #endif
 
 #if PLATFORM(QT)
+    // FIXME: Wrap QNetworkAccessManager into a NetworkStorageSession to make the code cross-platform.
     virtual QObject* originatingObject() const = 0;
     virtual QNetworkAccessManager* networkAccessManager() const = 0;
     virtual bool mimeSniffingEnabled() const = 0;
@@ -98,6 +98,7 @@ public:
 #endif
 
 #if USE(SOUP)
+    // FIXME: Wrap SoupSession into a NetworkStorageSession to make the code cross-platform.
     virtual SoupSession* soupSession() const = 0;
     virtual uint64_t initiatingPageID() const = 0;
 #endif

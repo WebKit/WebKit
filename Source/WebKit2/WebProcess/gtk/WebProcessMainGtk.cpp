@@ -30,6 +30,8 @@
 #define LIBSOUP_USE_UNSTABLE_REQUEST_API
 
 #include "WKBase.h"
+#include <WebCore/AuthenticationChallenge.h>
+#include <WebCore/NetworkingContext.h>
 #include <WebCore/ResourceHandle.h>
 #include <WebCore/RunLoop.h>
 #include <WebKit2/WebProcess.h>

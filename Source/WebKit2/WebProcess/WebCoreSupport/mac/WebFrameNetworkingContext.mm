@@ -21,7 +21,6 @@
 #import "config.h"
 #import "WebFrameNetworkingContext.h"
 
-#import <WebCore/CookieStorageCFNet.h>
 #import <WebCore/FrameLoaderClient.h>
 #import <WebCore/Page.h>
 #import <WebCore/ResourceError.h>
@@ -32,8 +31,11 @@ using namespace WebCore;
 
 namespace WebKit {
 
-static CFURLStorageSessionRef defaultCFStorageSession;
-static CFURLStorageSessionRef privateBrowsingStorageSession;
+static OwnPtr<NetworkStorageSession>& privateBrowsingStorageSession()
+{
+    DEFINE_STATIC_LOCAL(OwnPtr<NetworkStorageSession>, session, ());
+    return session;
+}
 
 bool WebFrameNetworkingContext::needsSiteSpecificQuirks() const
 {
@@ -67,26 +69,17 @@ void WebFrameNetworkingContext::setPrivateBrowsingStorageSessionIdentifierBase(c
     privateBrowsingStorageSessionIdentifierBase() = identifier;
 }
 
-void WebFrameNetworkingContext::switchToNewTestingSession()
-{
-    // Set a private session for testing to avoid interfering with global cookies. This should be different from private browsing session.
-    if (defaultCFStorageSession)
-        CFRelease(defaultCFStorageSession);
-    defaultCFStorageSession = WKCreatePrivateStorageSession(CFSTR("Private WebKit Session"));
-}
-
 void WebFrameNetworkingContext::ensurePrivateBrowsingSession()
 {
     // FIXME (NetworkProcess): Don't create an unnecessary session when using network process.
 
     ASSERT(isMainThread());
-    if (privateBrowsingStorageSession)
+    if (privateBrowsingStorageSession())
         return;
 
-    String base = privateBrowsingStorageSessionIdentifierBase().isNull() ? String([[NSBundle mainBundle] bundleIdentifier]) : privateBrowsingStorageSessionIdentifierBase();
-    RetainPtr<CFStringRef> cfIdentifier = String(base + ".PrivateBrowsing").createCFString();
+    String identifierBase = privateBrowsingStorageSessionIdentifierBase().isNull() ? String([[NSBundle mainBundle] bundleIdentifier]) : privateBrowsingStorageSessionIdentifierBase();
 
-    privateBrowsingStorageSession = WKCreatePrivateStorageSession(cfIdentifier.get());
+    privateBrowsingStorageSession() = NetworkStorageSession::createPrivateBrowsingSession(identifierBase);
 }
 
 void WebFrameNetworkingContext::destroyPrivateBrowsingSession()
@@ -94,39 +87,28 @@ void WebFrameNetworkingContext::destroyPrivateBrowsingSession()
     if (!privateBrowsingStorageSession)
         return;
 
-    CFRelease(privateBrowsingStorageSession);
-    privateBrowsingStorageSession = 0;
+    privateBrowsingStorageSession() = nullptr;
 }
 
-CFURLStorageSessionRef WebFrameNetworkingContext::defaultStorageSession()
+NetworkStorageSession& WebFrameNetworkingContext::storageSession() const
 {
-    return defaultCFStorageSession;
-}
-
-bool WebFrameNetworkingContext::inPrivateBrowsingMode() const
-{
-    return frame() && frame()->settings() && frame()->settings()->privateBrowsingEnabled();
-}
-
-CFURLStorageSessionRef WebFrameNetworkingContext::storageSession() const
-{
-    if (inPrivateBrowsingMode()) {
-        ASSERT(privateBrowsingStorageSession);
-        return privateBrowsingStorageSession;
+    bool inPrivateBrowsingMode = frame() && frame()->settings() && frame()->settings()->privateBrowsingEnabled();
+    if (inPrivateBrowsingMode) {
+        ASSERT(privateBrowsingStorageSession());
+        return *privateBrowsingStorageSession();
     }
-    return defaultCFStorageSession;
+    return NetworkStorageSession::defaultStorageSession();
 }
 
 void WebFrameNetworkingContext::setCookieAcceptPolicyForAllContexts(HTTPCookieAcceptPolicy policy)
 {
     [[NSHTTPCookieStorage sharedHTTPCookieStorage] setCookieAcceptPolicy:static_cast<NSHTTPCookieAcceptPolicy>(policy)];
 
-    if (RetainPtr<CFHTTPCookieStorageRef> cookieStorage = defaultCFHTTPCookieStorage())
+    if (RetainPtr<CFHTTPCookieStorageRef> cookieStorage = NetworkStorageSession::defaultStorageSession().cookieStorage())
         WKSetHTTPCookieAcceptPolicy(cookieStorage.get(), policy);
 
-    if (privateBrowsingStorageSession) {
-        RetainPtr<CFHTTPCookieStorageRef> privateBrowsingCookieStorage = adoptCF(WKCopyHTTPCookieStorage(privateBrowsingStorageSession));
-        WKSetHTTPCookieAcceptPolicy(privateBrowsingCookieStorage.get(), policy);
+    if (privateBrowsingStorageSession()) {
+        WKSetHTTPCookieAcceptPolicy(privateBrowsingStorageSession()->cookieStorage().get(), policy);
     }
 }
 

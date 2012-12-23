@@ -27,6 +27,7 @@
 #include "DownloadSoupErrors.h"
 
 #include <WebCore/ErrorsGtk.h>
+#include <WebCore/ResourceError.h>
 
 using namespace WebCore;
 

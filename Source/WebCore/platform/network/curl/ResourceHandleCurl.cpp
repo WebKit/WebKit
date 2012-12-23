@@ -29,6 +29,7 @@
 #include "ResourceHandle.h"
 
 #include "CachedResourceLoader.h"
+#include "NetworkingContext.h"
 #include "NotImplemented.h"
 #include "ResourceHandleInternal.h"
 #include "ResourceHandleManager.h"

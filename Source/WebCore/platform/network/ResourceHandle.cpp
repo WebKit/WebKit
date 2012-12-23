@@ -29,6 +29,7 @@
 
 #include "BlobRegistry.h"
 #include "Logging.h"
+#include "NetworkingContext.h"
 #include "ResourceHandleClient.h"
 #include "Timer.h"
 #include <algorithm>

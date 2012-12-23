@@ -58,12 +58,12 @@ private:
     
     // WebCore::CookiesStrategy
     virtual void notifyCookiesChanged();
-    virtual String cookiesForDOM(WebCore::NetworkingContext*, const WebCore::KURL& firstParty, const WebCore::KURL&);
-    virtual void setCookiesFromDOM(WebCore::NetworkingContext*, const WebCore::KURL& firstParty, const WebCore::KURL&, const String&);
-    virtual bool cookiesEnabled(WebCore::NetworkingContext*, const WebCore::KURL& firstParty, const WebCore::KURL&);
-    virtual String cookieRequestHeaderFieldValue(WebCore::NetworkingContext*, const WebCore::KURL& firstParty, const WebCore::KURL&);
-    virtual bool getRawCookies(WebCore::NetworkingContext*, const WebCore::KURL& firstParty, const WebCore::KURL&, Vector<WebCore::Cookie>&);
-    virtual void deleteCookie(WebCore::NetworkingContext*, const WebCore::KURL&, const String&);
+    virtual String cookiesForDOM(const WebCore::NetworkStorageSession&, const WebCore::KURL& firstParty, const WebCore::KURL&);
+    virtual void setCookiesFromDOM(const WebCore::NetworkStorageSession&, const WebCore::KURL& firstParty, const WebCore::KURL&, const String&);
+    virtual bool cookiesEnabled(const WebCore::NetworkStorageSession&, const WebCore::KURL& firstParty, const WebCore::KURL&);
+    virtual String cookieRequestHeaderFieldValue(const WebCore::NetworkStorageSession&, const WebCore::KURL& firstParty, const WebCore::KURL&);
+    virtual bool getRawCookies(const WebCore::NetworkStorageSession&, const WebCore::KURL& firstParty, const WebCore::KURL&, Vector<WebCore::Cookie>&);
+    virtual void deleteCookie(const WebCore::NetworkStorageSession&, const WebCore::KURL&, const String&);
 
     // WebCore::DatabaseStrategy
     // - Using default implementation.

@@ -2037,7 +2037,6 @@
 		7EE6846112D26E3800E79415 /* AuthenticationChallenge.h in Headers */ = {isa = PBXBuildFile; fileRef = 7EE6844E12D26E3800E79415 /* AuthenticationChallenge.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		7EE6846212D26E3800E79415 /* CookieJarCFNet.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7EE6844F12D26E3800E79415 /* CookieJarCFNet.cpp */; };
 		7EE6846312D26E3800E79415 /* CookieStorageCFNet.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7EE6845012D26E3800E79415 /* CookieStorageCFNet.cpp */; };
-		7EE6846412D26E3800E79415 /* CookieStorageCFNet.h in Headers */ = {isa = PBXBuildFile; fileRef = 7EE6845112D26E3800E79415 /* CookieStorageCFNet.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		7EE6846512D26E3800E79415 /* CredentialStorageCFNet.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7EE6845212D26E3800E79415 /* CredentialStorageCFNet.cpp */; };
 		7EE6846612D26E3800E79415 /* FormDataStreamCFNet.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7EE6845312D26E3800E79415 /* FormDataStreamCFNet.cpp */; };
 		7EE6846712D26E3800E79415 /* FormDataStreamCFNet.h in Headers */ = {isa = PBXBuildFile; fileRef = 7EE6845412D26E3800E79415 /* FormDataStreamCFNet.h */; };
@@ -6095,6 +6094,8 @@
 		E134F5AB12EE343F004EC58D /* IntRectHash.h in Headers */ = {isa = PBXBuildFile; fileRef = E134F5AA12EE343F004EC58D /* IntRectHash.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		E139866315478474001E3F65 /* StyleResolver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E139866115478474001E3F65 /* StyleResolver.cpp */; };
 		E139866415478474001E3F65 /* StyleResolver.h in Headers */ = {isa = PBXBuildFile; fileRef = E139866215478474001E3F65 /* StyleResolver.h */; };
+		E13EF3441684ECF40034C83F /* NetworkStorageSession.h in Headers */ = {isa = PBXBuildFile; fileRef = E13EF3421684ECF40034C83F /* NetworkStorageSession.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		E13EF34916850C470034C83F /* NetworkStorageSessionCFNet.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E13EF34716850C470034C83F /* NetworkStorageSessionCFNet.cpp */; };
 		E13F01F11270E19000DFBA71 /* CookieStorageMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = E13F01F01270E19000DFBA71 /* CookieStorageMac.mm */; };
 		E1424C8A164B3B4E00F32D40 /* PlatformCookieJar.h in Headers */ = {isa = PBXBuildFile; fileRef = E1424C89164B3B4E00F32D40 /* PlatformCookieJar.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		E1424C90164B460B00F32D40 /* CookieJarMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = E1424C8F164B460B00F32D40 /* CookieJarMac.mm */; };
@@ -9370,7 +9371,6 @@
 		7EE6844E12D26E3800E79415 /* AuthenticationChallenge.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AuthenticationChallenge.h; sourceTree = "<group>"; };
 		7EE6844F12D26E3800E79415 /* CookieJarCFNet.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CookieJarCFNet.cpp; sourceTree = "<group>"; };
 		7EE6845012D26E3800E79415 /* CookieStorageCFNet.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CookieStorageCFNet.cpp; sourceTree = "<group>"; };
-		7EE6845112D26E3800E79415 /* CookieStorageCFNet.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CookieStorageCFNet.h; sourceTree = "<group>"; };
 		7EE6845212D26E3800E79415 /* CredentialStorageCFNet.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CredentialStorageCFNet.cpp; sourceTree = "<group>"; };
 		7EE6845312D26E3800E79415 /* FormDataStreamCFNet.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = FormDataStreamCFNet.cpp; sourceTree = "<group>"; };
 		7EE6845412D26E3800E79415 /* FormDataStreamCFNet.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FormDataStreamCFNet.h; sourceTree = "<group>"; };
@@ -13576,6 +13576,8 @@
 		E134F5AA12EE343F004EC58D /* IntRectHash.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IntRectHash.h; sourceTree = "<group>"; };
 		E139866115478474001E3F65 /* StyleResolver.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = StyleResolver.cpp; sourceTree = "<group>"; };
 		E139866215478474001E3F65 /* StyleResolver.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StyleResolver.h; sourceTree = "<group>"; };
+		E13EF3421684ECF40034C83F /* NetworkStorageSession.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NetworkStorageSession.h; sourceTree = "<group>"; };
+		E13EF34716850C470034C83F /* NetworkStorageSessionCFNet.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = NetworkStorageSessionCFNet.cpp; sourceTree = "<group>"; };
 		E13F01EA1270E10D00DFBA71 /* CookieStorage.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CookieStorage.h; sourceTree = "<group>"; };
 		E13F01F01270E19000DFBA71 /* CookieStorageMac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = CookieStorageMac.mm; sourceTree = "<group>"; };
 		E1424C89164B3B4E00F32D40 /* PlatformCookieJar.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PlatformCookieJar.h; path = network/PlatformCookieJar.h; sourceTree = "<group>"; };
@@ -15833,6 +15835,7 @@
 				37DDCD9213844FD50008B793 /* MIMEHeader.cpp */,
 				37DDCD9313844FD50008B793 /* MIMEHeader.h */,
 				628D214B12131ED10055DCFC /* NetworkingContext.h */,
+				E13EF3421684ECF40034C83F /* NetworkStorageSession.h */,
 				1A7FA61A0DDA3BBE0028F8A5 /* NetworkStateNotifier.cpp */,
 				1A7FA6180DDA3B3A0028F8A5 /* NetworkStateNotifier.h */,
 				447958021643B47B001E0A7F /* ParsedContentType.cpp */,
@@ -20403,13 +20406,13 @@
 				7EE6844E12D26E3800E79415 /* AuthenticationChallenge.h */,
 				7EE6844F12D26E3800E79415 /* CookieJarCFNet.cpp */,
 				7EE6845012D26E3800E79415 /* CookieStorageCFNet.cpp */,
-				7EE6845112D26E3800E79415 /* CookieStorageCFNet.h */,
 				7EE6845212D26E3800E79415 /* CredentialStorageCFNet.cpp */,
 				B2F34FE80E82F82700F627CD /* DNSCFNet.cpp */,
 				7EE6845312D26E3800E79415 /* FormDataStreamCFNet.cpp */,
 				7EE6845412D26E3800E79415 /* FormDataStreamCFNet.h */,
 				7EE6845512D26E3800E79415 /* LoaderRunLoopCF.cpp */,
 				7EE6845612D26E3800E79415 /* LoaderRunLoopCF.h */,
+				E13EF34716850C470034C83F /* NetworkStorageSessionCFNet.cpp */,
 				1AF8E1C1125673E000230FF7 /* ProxyServerCFNet.cpp */,
 				7EE6845712D26E3800E79415 /* ResourceError.h */,
 				7EE6845812D26E3800E79415 /* ResourceErrorCF.cpp */,
@@ -22894,7 +22897,6 @@
 				D8B6152F1032495100C8554A /* Cookie.h in Headers */,
 				339B5B63131DAA3200F48D02 /* CookiesStrategy.h in Headers */,
 				33D0212D131DB37B004091A8 /* CookieStorage.h in Headers */,
-				7EE6846412D26E3800E79415 /* CookieStorageCFNet.h in Headers */,
 				FE6FD4880F676E5700092873 /* Coordinates.h in Headers */,
 				A80E6D040A1989CA007FB8C5 /* Counter.h in Headers */,
 				BC5EB9790E82069200B25965 /* CounterContent.h in Headers */,
@@ -25982,6 +25984,7 @@
 				F37A56231679CF7B00C57046 /* HeapGraphSerializer.h in Headers */,
 				0FB8890A167D2FA10010CDA5 /* ScrollingTreeStickyNode.h in Headers */,
 				0FB8890F167D30160010CDA5 /* ScrollingStateStickyNode.h in Headers */,
+				E13EF3441684ECF40034C83F /* NetworkStorageSession.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -29100,6 +29103,7 @@
 				0FB8890B167D2FA10010CDA5 /* ScrollingTreeStickyNode.mm in Sources */,
 				0FB8890E167D30160010CDA5 /* ScrollingStateStickyNode.cpp in Sources */,
 				209B456B16796A7E00E54E4E /* JSCryptoCustom.cpp in Sources */,
+				E13EF34916850C470034C83F /* NetworkStorageSessionCFNet.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -26,6 +26,7 @@
 #import "config.h"
 #import "Download.h"
 
+#import <WebCore/AuthenticationChallenge.h>
 #import <WebCore/AuthenticationMac.h>
 #import <WebCore/NotImplemented.h>
 #import <WebCore/ResourceHandle.h>

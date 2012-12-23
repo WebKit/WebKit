@@ -40,6 +40,7 @@
 #include "FileSystem.h"
 #include "HTTPParsers.h"
 #include "KURL.h"
+#include "NetworkingContext.h"
 #include "ResourceError.h"
 #include "ResourceHandleClient.h"
 #include "ResourceRequest.h"

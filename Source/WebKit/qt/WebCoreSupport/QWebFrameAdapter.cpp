@@ -37,6 +37,7 @@
 #include "JSDOMWindowBase.h"
 #include "KURL.h"
 #include "NavigationScheduler.h"
+#include "NetworkingContext.h"
 #include "NodeList.h"
 #include "Page.h"
 #include "QWebPageAdapter.h"

@@ -32,6 +32,8 @@
 #include "WKBase.h"
 #include <Ecore.h>
 #include <Efreet.h>
+#include <WebCore/AuthenticationChallenge.h>
+#include <WebCore/NetworkingContext.h>
 #include <WebCore/ResourceHandle.h>
 #include <WebCore/RunLoop.h>
 #include <WebKit2/WebProcess.h>

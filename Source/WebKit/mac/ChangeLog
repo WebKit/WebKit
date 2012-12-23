@@ -1,3 +1,37 @@
+2012-12-22  Alexey Proskuryakov  <ap@apple.com>
+
+        Add a separate class for networking related storage
+        https://bugs.webkit.org/show_bug.cgi?id=105676
+
+        Reviewed by Sam Weinig.
+
+        * WebCoreSupport/WebFrameLoaderClient.mm:
+        Updated for ResourceHandle include changes.
+
+        * WebCoreSupport/WebFrameNetworkingContext.h:
+        * WebCoreSupport/WebFrameNetworkingContext.mm:
+        This class is now simpler, with more session tracking being in WebCore now.
+
+        * WebCoreSupport/WebPlatformStrategies.h:
+        * WebCoreSupport/WebPlatformStrategies.mm:
+        (WebPlatformStrategies::cookiesForDOM):
+        (WebPlatformStrategies::setCookiesFromDOM):
+        (WebPlatformStrategies::cookiesEnabled):
+        (WebPlatformStrategies::cookieRequestHeaderFieldValue):
+        (WebPlatformStrategies::getRawCookies):
+        (WebPlatformStrategies::deleteCookie):
+        We no longer need a function for default cookie storage! Other cookie functions
+        now take a session.
+
+        * WebView/WebPreferences.mm:
+        (+[WebPreferences _switchNetworkLoaderToNewTestingSession]): Initialize WCSI before
+        calling a WebCore that uses it.
+        (+[WebPreferences _setCurrentNetworkLoaderSessionCookieAcceptPolicy:]): Use
+        NetworkStorageSession for session tracking.
+
+        * WebView/WebView.mm: (-[WebView _cachedResponseForURL:]): Updated for networking
+        context now returning a class for session.
+
 2012-12-20  Ilya Tikhonovsky  <loislo@chromium.org>
 
         Unreviewed build fix for chromium mac after r138206.

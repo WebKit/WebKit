@@ -154,7 +154,6 @@
 #if USE(CFNETWORK)
 #include <CFNetwork/CFURLCachePriv.h>
 #include <CFNetwork/CFURLProtocolPriv.h>
-#include <WebCore/CookieStorageCFNet.h>
 #include <WebKitSystemInterface/WebKitSystemInterface.h> 
 #endif
 

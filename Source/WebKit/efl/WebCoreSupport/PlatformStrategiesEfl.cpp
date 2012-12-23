@@ -86,34 +86,34 @@ void PlatformStrategiesEfl::notifyCookiesChanged()
 {
 }
 
-String PlatformStrategiesEfl::cookiesForDOM(NetworkingContext* context, const KURL& firstParty, const KURL& url)
+String PlatformStrategiesEfl::cookiesForDOM(const NetworkStorageSession& session, const KURL& firstParty, const KURL& url)
 {
-    return WebCore::cookiesForDOM(context, firstParty, url);
+    return WebCore::cookiesForDOM(session, firstParty, url);
 }
 
-void PlatformStrategiesEfl::setCookiesFromDOM(NetworkingContext* context, const KURL& firstParty, const KURL& url, const String& cookieString)
+void PlatformStrategiesEfl::setCookiesFromDOM(const NetworkStorageSession& session, const KURL& firstParty, const KURL& url, const String& cookieString)
 {
-    WebCore::setCookiesFromDOM(context, firstParty, url, cookieString);
+    WebCore::setCookiesFromDOM(session, firstParty, url, cookieString);
 }
 
-bool PlatformStrategiesEfl::cookiesEnabled(NetworkingContext* context, const KURL& firstParty, const KURL& url)
+bool PlatformStrategiesEfl::cookiesEnabled(const NetworkStorageSession& session, const KURL& firstParty, const KURL& url)
 {
-    return WebCore::cookiesEnabled(context, firstParty, url);
+    return WebCore::cookiesEnabled(session, firstParty, url);
 }
 
-String PlatformStrategiesEfl::cookieRequestHeaderFieldValue(NetworkingContext* context, const KURL& firstParty, const KURL& url)
+String PlatformStrategiesEfl::cookieRequestHeaderFieldValue(const NetworkStorageSession& session, const KURL& firstParty, const KURL& url)
 {
-    return WebCore::cookieRequestHeaderFieldValue(context, firstParty, url);
+    return WebCore::cookieRequestHeaderFieldValue(session, firstParty, url);
 }
 
-bool PlatformStrategiesEfl::getRawCookies(NetworkingContext* context, const KURL& firstParty, const KURL& url, Vector<Cookie>& rawCookies)
+bool PlatformStrategiesEfl::getRawCookies(const NetworkStorageSession& session, const KURL& firstParty, const KURL& url, Vector<Cookie>& rawCookies)
 {
-    return WebCore::getRawCookies(context, firstParty, url, rawCookies);
+    return WebCore::getRawCookies(session, firstParty, url, rawCookies);
 }
 
-void PlatformStrategiesEfl::deleteCookie(NetworkingContext* context, const KURL& url, const String& cookieName)
+void PlatformStrategiesEfl::deleteCookie(const NetworkStorageSession& session, const KURL& url, const String& cookieName)
 {
-    WebCore::deleteCookie(context, url, cookieName);
+    WebCore::deleteCookie(session, url, cookieName);
 }
 
 void PlatformStrategiesEfl::refreshPlugins()

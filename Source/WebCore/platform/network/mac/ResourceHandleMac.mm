@@ -33,7 +33,6 @@
 #import "BlobRegistry.h"
 #import "BlockExceptions.h"
 #import "CookieStorage.h"
-#import "CookieStorageCFNet.h"
 #import "CredentialStorage.h"
 #import "CachedResourceLoader.h"
 #import "EmptyProtocolDefinitions.h"
@@ -42,6 +41,7 @@
 #import "FrameLoader.h"
 #import "Logging.h"
 #import "MIMETypeRegistry.h"
+#import "NetworkingContext.h"
 #import "Page.h"
 #import "ResourceError.h"
 #import "ResourceResponse.h"
@@ -147,7 +147,7 @@ static bool shouldRelaxThirdPartyCookiePolicy(NetworkingContext* context, const 
 {
     // If a URL already has cookies, then we'll relax the 3rd party cookie policy and accept new cookies.
 
-    RetainPtr<CFHTTPCookieStorageRef> cfCookieStorage = currentCFHTTPCookieStorage(context);
+    RetainPtr<CFHTTPCookieStorageRef> cfCookieStorage = context->storageSession().cookieStorage();
     NSHTTPCookieAcceptPolicy cookieAcceptPolicy = static_cast<NSHTTPCookieAcceptPolicy>(wkGetHTTPCookieAcceptPolicy(cfCookieStorage.get()));
 
     if (cookieAcceptPolicy != NSHTTPCookieAcceptPolicyOnlyFromMainDocumentDomain)
@@ -230,7 +230,7 @@ bool ResourceHandle::start(NetworkingContext* context)
     if (!context->isValid())
         return false;
 
-    d->m_storageSession = context->storageSession();
+    d->m_storageSession = context->storageSession().platformSession();
 
     ASSERT(!d->m_proxy);
     d->m_proxy.adoptNS(wkCreateNSURLConnectionDelegateProxy());
@@ -396,7 +396,7 @@ void ResourceHandle::loadResourceSynchronously(NetworkingContext* context, const
 
     RefPtr<ResourceHandle> handle = adoptRef(new ResourceHandle(request, client.get(), false /*defersLoading*/, true /*shouldContentSniff*/));
 
-    handle->d->m_storageSession = context->storageSession();
+    handle->d->m_storageSession = context->storageSession().platformSession();
 
     if (context && handle->d->m_scheduledFailureType != NoFailure) {
         error = context->blockedError(request);

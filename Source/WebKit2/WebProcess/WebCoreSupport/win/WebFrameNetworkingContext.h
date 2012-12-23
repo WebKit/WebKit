@@ -45,8 +45,7 @@ private:
     virtual WebCore::ResourceError blockedError(const WebCore::ResourceRequest&) const;
 
 #if USE(CFNETWORK)
-    virtual bool inPrivateBrowsingMode() const;
-    virtual CFURLStorageSessionRef storageSession() const;
+    virtual WebCore::NetworkStorageSession& storageSession() const;
 #endif
 
     String m_userAgent;

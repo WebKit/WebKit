@@ -26,9 +26,7 @@
 #include "config.h"
 #include "CookieStorage.h"
 
-#include "CookieStorageCFNet.h"
-
-#include "ResourceHandle.h"
+#include "NetworkStorageSession.h"
 #include <wtf/MainThread.h>
 
 #if PLATFORM(MAC)
@@ -47,56 +45,6 @@
 namespace WebCore {
 
 #if PLATFORM(WIN)
-
-static RetainPtr<CFHTTPCookieStorageRef>& cookieStorageOverride()
-{
-    DEFINE_STATIC_LOCAL(RetainPtr<CFHTTPCookieStorageRef>, cookieStorage, ());
-    return cookieStorage;
-}
-
-#endif
-
-RetainPtr<CFHTTPCookieStorageRef> currentCFHTTPCookieStorage(NetworkingContext* context)
-{
-#if PLATFORM(WIN)
-    if (RetainPtr<CFHTTPCookieStorageRef>& override = cookieStorageOverride())
-        return override;
-#endif
-
-    if (CFURLStorageSessionRef session = context->storageSession())
-        return RetainPtr<CFHTTPCookieStorageRef>(AdoptCF, wkCopyHTTPCookieStorage(session));
-
-#if USE(CFNETWORK)
-    return wkGetDefaultHTTPCookieStorage();
-#else
-    // When using NSURLConnection, we also use its shared cookie storage.
-    return 0;
-#endif
-}
-
-RetainPtr<CFHTTPCookieStorageRef> defaultCFHTTPCookieStorage()
-{
-#if PLATFORM(WIN)
-    if (RetainPtr<CFHTTPCookieStorageRef>& override = cookieStorageOverride())
-        return override;
-#endif
-
-    return platformStrategies()->cookiesStrategy()->defaultCookieStorage();
-}
-
-#if PLATFORM(WIN)
-
-void overrideCookieStorage(CFHTTPCookieStorageRef cookieStorage)
-{
-    ASSERT(isMainThread());
-    // FIXME: Why don't we retain it? The only caller is an API method that takes cookie storage as a raw argument.
-    cookieStorageOverride().adoptCF(cookieStorage);
-}
-
-CFHTTPCookieStorageRef overridenCookieStorage()
-{
-    return cookieStorageOverride().get();
-}
 
 static void notifyCookiesChangedOnMainThread(void*)
 {
@@ -130,7 +78,7 @@ void startObservingCookieChanges()
     CFRunLoopRef runLoop = cookieStorageObserverRunLoop();
     ASSERT(runLoop);
 
-    RetainPtr<CFHTTPCookieStorageRef> cookieStorage = defaultCFHTTPCookieStorage();
+    RetainPtr<CFHTTPCookieStorageRef> cookieStorage = NetworkStorageSession::defaultStorageSession().cookieStorage();
     ASSERT(cookieStorage);
 
     CFHTTPCookieStorageScheduleWithRunLoop(cookieStorage.get(), runLoop, kCFRunLoopCommonModes);
@@ -144,7 +92,7 @@ void stopObservingCookieChanges()
     CFRunLoopRef runLoop = cookieStorageObserverRunLoop();
     ASSERT(runLoop);
 
-    RetainPtr<CFHTTPCookieStorageRef> cookieStorage = defaultCFHTTPCookieStorage();
+    RetainPtr<CFHTTPCookieStorageRef> cookieStorage = NetworkStorageSession::defaultStorageSession().cookieStorage();
     ASSERT(cookieStorage);
 
     CFHTTPCookieStorageRemoveObserver(cookieStorage.get(), runLoop, kCFRunLoopDefaultMode, notifyCookiesChanged, 0);

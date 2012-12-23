@@ -29,7 +29,6 @@
 
 #include "AuthenticationCF.h"
 #include "AuthenticationChallenge.h"
-#include "CookieStorageCFNet.h"
 #include "CredentialStorage.h"
 #include "CachedResourceLoader.h"
 #include "FormDataStreamCFNet.h"
@@ -38,6 +37,7 @@
 #include "LoaderRunLoopCF.h"
 #include "Logging.h"
 #include "MIMETypeRegistry.h"
+#include "NetworkingContext.h"
 #include "ResourceError.h"
 #include "ResourceHandleClient.h"
 #include "ResourceResponse.h"
@@ -399,7 +399,7 @@ static bool shouldRelaxThirdPartyCookiePolicy(NetworkingContext* context, const 
 {
     // If a URL already has cookies, then we'll relax the 3rd party cookie policy and accept new cookies.
 
-    RetainPtr<CFHTTPCookieStorageRef> cfCookieStorage = currentCFHTTPCookieStorage(context);
+    RetainPtr<CFHTTPCookieStorageRef> cfCookieStorage = context->storageSession().cookieStorage();
     CFHTTPCookieStorageAcceptPolicy cookieAcceptPolicy = CFHTTPCookieStorageGetCookieAcceptPolicy(cfCookieStorage.get());
 
     if (cookieAcceptPolicy != CFHTTPCookieStorageAcceptPolicyOnlyFromMainDocumentDomain)
@@ -506,7 +506,7 @@ bool ResourceHandle::start(NetworkingContext* context)
     if (!context->isValid())
         return false;
 
-    d->m_storageSession = context->storageSession();
+    d->m_storageSession = context->storageSession().platformSession();
 
     bool shouldUseCredentialStorage = !client() || client()->shouldUseCredentialStorage(this);
 
@@ -741,7 +741,7 @@ void ResourceHandle::loadResourceSynchronously(NetworkingContext* context, const
 
     RefPtr<ResourceHandle> handle = adoptRef(new ResourceHandle(request, client.get(), false /*defersLoading*/, true /*shouldContentSniff*/));
 
-    handle->d->m_storageSession = context->storageSession();
+    handle->d->m_storageSession = context->storageSession().platformSession();
 
     if (handle->d->m_scheduledFailureType != NoFailure) {
         error = context->blockedError(request);

@@ -1,3 +1,20 @@
+2012-12-22  Alexey Proskuryakov  <ap@apple.com>
+
+        Add a separate class for networking related storage
+        https://bugs.webkit.org/show_bug.cgi?id=105676
+
+        Reviewed by Sam Weinig.
+
+        * WebCoreSupport/PlatformStrategiesWinCE.cpp:
+        (PlatformStrategiesWinCE::cookiesForDOM):
+        (PlatformStrategiesWinCE::setCookiesFromDOM):
+        (PlatformStrategiesWinCE::cookiesEnabled):
+        (PlatformStrategiesWinCE::cookieRequestHeaderFieldValue):
+        (PlatformStrategiesWinCE::getRawCookies):
+        (PlatformStrategiesWinCE::deleteCookie):
+        * WebCoreSupport/PlatformStrategiesWinCE.h:
+        Cookie functions now take a NetworkStorageSession, not a NetworkingContext.
+
 2012-12-18  Alexey Proskuryakov  <ap@apple.com>
 
         Remove unnecessary functions from CookiesStrategy

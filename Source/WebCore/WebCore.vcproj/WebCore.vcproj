@@ -32621,6 +32621,10 @@
 					>
 				</File>
 				<File
+					RelativePath="..\platform\network\NetworkStorageSession.h"
+					>
+				</File>
+				<File
 					RelativePath="..\platform\network\NetworkingContext.h"
 					>
 				</File>
@@ -32844,10 +32848,6 @@
 						</FileConfiguration>
 					</File>
 					<File
-						RelativePath="..\platform\network\cf\CookieStorageCFNet.h"
-						>
-					</File>
-					<File
 						RelativePath="..\platform\network\cf\CredentialStorageCFNet.cpp"
 						>
 						<FileConfiguration
@@ -32937,6 +32937,10 @@
 					</File>
 					<File
 						RelativePath="..\platform\network\cf\LoaderRunLoopCF.h"
+						>
+					</File>
+					<File
+						RelativePath="..\platform\network\cf\NetworkStorageSessionCFNet.cpp"
 						>
 					</File>
 					<File

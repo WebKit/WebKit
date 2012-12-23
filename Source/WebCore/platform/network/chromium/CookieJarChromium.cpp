@@ -41,55 +41,55 @@
 
 namespace WebCore {
 
-void setCookiesFromDOM(NetworkingContext* context, const KURL& firstPartyForCookies, const KURL& url, const String& cookieStr)
+void setCookiesFromDOM(const NetworkStorageSession& session, const KURL& firstPartyForCookies, const KURL& url, const String& cookieStr)
 {
-    if (!context)
+    if (!session.context())
         return;
-    WebKit::WebCookieJar* cookieJar = context->cookieJar();
+    WebKit::WebCookieJar* cookieJar = session.context()->cookieJar();
     if (cookieJar)
         cookieJar->setCookie(url, firstPartyForCookies, cookieStr);
 }
 
-String cookiesForDOM(NetworkingContext* context, const KURL& firstPartyForCookies, const KURL& url)
+String cookiesForDOM(const NetworkStorageSession& session, const KURL& firstPartyForCookies, const KURL& url)
 {
-    if (!context)
+    if (!session.context())
         return String();
     String result;
-    WebKit::WebCookieJar* cookieJar = context->cookieJar();
+    WebKit::WebCookieJar* cookieJar = session.context()->cookieJar();
     if (cookieJar)
         result = cookieJar->cookies(url, firstPartyForCookies);
     return result;
 }
 
-String cookieRequestHeaderFieldValue(NetworkingContext* context, const KURL& firstPartyForCookies, const KURL& url)
+String cookieRequestHeaderFieldValue(const NetworkStorageSession& session, const KURL& firstPartyForCookies, const KURL& url)
 {
-    if (!context)
+    if (!session.context())
         return String();
     String result;
-    WebKit::WebCookieJar* cookieJar = context->cookieJar();
+    WebKit::WebCookieJar* cookieJar = session.context()->cookieJar();
     if (cookieJar)
         result = cookieJar->cookieRequestHeaderFieldValue(url, firstPartyForCookies);
     return result;
 }
 
-bool cookiesEnabled(NetworkingContext* context, const KURL& cookieURL, const KURL& firstPartyForCookies)
+bool cookiesEnabled(const NetworkStorageSession& session, const KURL& cookieURL, const KURL& firstPartyForCookies)
 {
     bool result = false;
-    if (!context)
+    if (!session.context())
         return result;
-    WebKit::WebCookieJar* cookieJar = context->cookieJar();
+    WebKit::WebCookieJar* cookieJar = session.context()->cookieJar();
     if (cookieJar)
         result = cookieJar->cookiesEnabled(cookieURL, firstPartyForCookies);
     return result;
 }
 
-bool getRawCookies(NetworkingContext* context, const KURL& firstPartyForCookies, const KURL& url, Vector<Cookie>& rawCookies)
+bool getRawCookies(const NetworkStorageSession& session, const KURL& firstPartyForCookies, const KURL& url, Vector<Cookie>& rawCookies)
 {
     rawCookies.clear();
-    if (!context)
+    if (!session.context())
         return false;
     WebKit::WebVector<WebKit::WebCookie> webCookies;
-    WebKit::WebCookieJar* cookieJar = context->cookieJar();
+    WebKit::WebCookieJar* cookieJar = session.context()->cookieJar();
     if (cookieJar)
         cookieJar->rawCookies(url, firstPartyForCookies, webCookies);
     for (unsigned i = 0; i < webCookies.size(); ++i) {
@@ -100,26 +100,26 @@ bool getRawCookies(NetworkingContext* context, const KURL& firstPartyForCookies,
     return true;
 }
 
-void deleteCookie(NetworkingContext* context, const KURL& url, const String& cookieName)
+void deleteCookie(const NetworkStorageSession& session, const KURL& url, const String& cookieName)
 {
-    if (!context)
+    if (!session.context())
         return;
-    WebKit::WebCookieJar* cookieJar = context->cookieJar();
+    WebKit::WebCookieJar* cookieJar = session.context()->cookieJar();
     if (cookieJar)
         cookieJar->deleteCookie(url, cookieName);
 }
 
-void getHostnamesWithCookies(NetworkingContext* /*context*/, HashSet<String>& /*hostnames*/)
+void getHostnamesWithCookies(const NetworkStorageSession&, HashSet<String>& /*hostnames*/)
 {
     // FIXME: Not yet implemented
 }
 
-void deleteCookiesForHostname(NetworkingContext* /*context*/, const String& /*hostname*/)
+void deleteCookiesForHostname(const NetworkStorageSession&, const String& /*hostname*/)
 {
     // FIXME: Not yet implemented
 }
 
-void deleteAllCookies(NetworkingContext* /*context*/)
+void deleteAllCookies(const NetworkStorageSession&)
 {
     // FIXME: Not yet implemented
 }

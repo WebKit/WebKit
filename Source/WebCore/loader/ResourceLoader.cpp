@@ -32,6 +32,7 @@
 
 #include "ApplicationCacheHost.h"
 #include "AsyncFileStream.h"
+#include "AuthenticationChallenge.h"
 #include "DocumentLoader.h"
 #include "Frame.h"
 #include "FrameLoader.h"

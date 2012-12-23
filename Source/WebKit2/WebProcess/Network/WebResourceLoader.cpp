@@ -37,6 +37,7 @@
 #include "WebCoreArgumentCoders.h"
 #include "WebErrors.h"
 #include "WebProcess.h"
+#include <WebCore/AuthenticationChallenge.h>
 #include <WebCore/ResourceLoader.h>
 
 using namespace WebCore;

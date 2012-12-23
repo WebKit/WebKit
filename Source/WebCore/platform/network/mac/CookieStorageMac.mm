@@ -25,7 +25,6 @@
 
 #include "config.h"
 #include "CookieStorage.h"
-#include "CookieStorageCFNet.h"
 
 #import "ResourceHandle.h"
 

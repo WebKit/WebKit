@@ -31,6 +31,7 @@
 
 #pragma warning(push, 0)
 #include <WebCore/AuthenticationCF.h>
+#include <WebCore/AuthenticationChallenge.h>
 #include <WebCore/DownloadBundle.h>
 #include <WebCore/LoaderRunLoopCF.h>
 #include <WebCore/NotImplemented.h>

@@ -33,6 +33,7 @@
 #import "WebCoreArgumentCoders.h"
 #import "WebProcess.h"
 #import <WebCore/KURL.h>
+#import <WebCore/ResourceError.h>
 
 using namespace WebKit;
 

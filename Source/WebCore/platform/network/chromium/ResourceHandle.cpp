@@ -31,9 +31,12 @@
 #include "config.h"
 #include "ResourceHandle.h"
 
+#include "NetworkingContext.h"
+#include "ResourceError.h"
 #include "ResourceHandleClient.h"
 #include "ResourceHandleInternal.h"
 #include "ResourceRequest.h"
+#include "ResourceResponse.h"
 #include "SharedBuffer.h"
 #include "WrappedResourceRequest.h"
 #include "WrappedResourceResponse.h"

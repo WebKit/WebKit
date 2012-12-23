@@ -29,14 +29,10 @@ public:
     static PassRefPtr<WebFrameNetworkingContext> create(WebCore::Frame*, const WTF::String& userAgent);
 
     static void setPrivateBrowsingStorageSessionIdentifierBase(const String&);
-    static void switchToNewTestingSession();
     static void ensurePrivateBrowsingSession();
     static void destroyPrivateBrowsingSession();
 
 #if USE(CFNETWORK)
-    static CFURLStorageSessionRef defaultStorageSession();
-
-    static void setCookieAcceptPolicyForTestingContext(CFHTTPCookieStorageAcceptPolicy);
     static void setCookieAcceptPolicyForAllContexts(CFHTTPCookieStorageAcceptPolicy);
 #endif
 
@@ -50,8 +46,7 @@ private:
     virtual WTF::String userAgent() const;
     virtual WTF::String referrer() const;
 #if USE(CFNETWORK)
-    virtual bool inPrivateBrowsingMode() const;
-    virtual CFURLStorageSessionRef storageSession() const;
+    virtual WebCore::NetworkStorageSession& storageSession() const;
 #endif
     virtual WebCore::ResourceError blockedError(const WebCore::ResourceRequest&) const;
 

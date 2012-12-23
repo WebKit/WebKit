@@ -77,6 +77,10 @@
 #include <WebCore/RuntimeEnabledFeatures.h>
 #endif
 
+#if PLATFORM(MAC)
+#include "WebSystemInterface.h"
+#endif
+
 using namespace WebCore;
 using namespace JSC;
 
@@ -303,7 +307,8 @@ void InjectedBundle::switchNetworkLoaderToNewTestingSession()
 {
 #if (PLATFORM(MAC) || USE(CFNETWORK)) && !PLATFORM(WIN)
     // FIXME (NetworkProcess): Do this in network process, too.
-    WebFrameNetworkingContext::switchToNewTestingSession();
+    InitWebCoreSystemInterface();
+    NetworkStorageSession::switchToNewTestingSession();
 #endif
 }
 

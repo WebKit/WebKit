@@ -30,6 +30,7 @@
 
 #include "GOwnPtrSoup.h"
 #include "ResourceHandle.h"
+#include <libsoup/soup.h>
 #include <wtf/MainThread.h>
 #include <wtf/text/CString.h>
 

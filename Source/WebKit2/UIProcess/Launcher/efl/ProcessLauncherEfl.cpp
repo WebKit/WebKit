@@ -22,7 +22,9 @@
 
 #include "Connection.h"
 #include "ProcessExecutablePath.h"
+#include <WebCore/AuthenticationChallenge.h>
 #include <WebCore/FileSystem.h>
+#include <WebCore/NetworkingContext.h>
 #include <WebCore/ResourceHandle.h>
 #include <WebCore/RunLoop.h>
 #include <wtf/text/CString.h>

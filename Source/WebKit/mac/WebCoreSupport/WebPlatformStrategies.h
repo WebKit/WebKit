@@ -53,13 +53,12 @@ private:
 
     // WebCore::CookiesStrategy
     virtual void notifyCookiesChanged() OVERRIDE;
-    virtual RetainPtr<CFHTTPCookieStorageRef> defaultCookieStorage() OVERRIDE;
-    virtual String cookiesForDOM(WebCore::NetworkingContext*, const WebCore::KURL& firstParty, const WebCore::KURL&) OVERRIDE;
-    virtual void setCookiesFromDOM(WebCore::NetworkingContext*, const WebCore::KURL& firstParty, const WebCore::KURL&, const String&) OVERRIDE;
-    virtual bool cookiesEnabled(WebCore::NetworkingContext*, const WebCore::KURL& firstParty, const WebCore::KURL&) OVERRIDE;
-    virtual String cookieRequestHeaderFieldValue(WebCore::NetworkingContext*, const WebCore::KURL& firstParty, const WebCore::KURL&) OVERRIDE;
-    virtual bool getRawCookies(WebCore::NetworkingContext*, const WebCore::KURL& firstParty, const WebCore::KURL&, Vector<WebCore::Cookie>&) OVERRIDE;
-    virtual void deleteCookie(WebCore::NetworkingContext*, const WebCore::KURL&, const String&) OVERRIDE;
+    virtual String cookiesForDOM(const WebCore::NetworkStorageSession&, const WebCore::KURL& firstParty, const WebCore::KURL&) OVERRIDE;
+    virtual void setCookiesFromDOM(const WebCore::NetworkStorageSession&, const WebCore::KURL& firstParty, const WebCore::KURL&, const String&) OVERRIDE;
+    virtual bool cookiesEnabled(const WebCore::NetworkStorageSession&, const WebCore::KURL& firstParty, const WebCore::KURL&) OVERRIDE;
+    virtual String cookieRequestHeaderFieldValue(const WebCore::NetworkStorageSession&, const WebCore::KURL& firstParty, const WebCore::KURL&) OVERRIDE;
+    virtual bool getRawCookies(const WebCore::NetworkStorageSession&, const WebCore::KURL& firstParty, const WebCore::KURL&, Vector<WebCore::Cookie>&) OVERRIDE;
+    virtual void deleteCookie(const WebCore::NetworkStorageSession&, const WebCore::KURL&, const String&) OVERRIDE;
 
     // WebCore::DatabaseStrategy
     // - Using default implementation.

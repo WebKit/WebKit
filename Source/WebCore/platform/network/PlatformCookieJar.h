@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2003, 2006, 2008 Apple Inc. All rights reserved.
+ * Copyright (C) 2003, 2006, 2008, 2012 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -34,19 +34,20 @@
 namespace WebCore {
 
 class KURL;
-class NetworkingContext;
+class NetworkStorageSession;
 struct Cookie;
 
-// If networking context is null, default cookie storage is used.
-String cookiesForDOM(NetworkingContext*, const KURL& firstParty, const KURL&);
-void setCookiesFromDOM(NetworkingContext*, const KURL& firstParty, const KURL&, const String&);
-bool cookiesEnabled(NetworkingContext*, const KURL& firstParty, const KURL&);
-String cookieRequestHeaderFieldValue(NetworkingContext*, const KURL& firstParty, const KURL&);
-bool getRawCookies(NetworkingContext*, const KURL& firstParty, const KURL&, Vector<Cookie>&);
-void deleteCookie(NetworkingContext*, const KURL&, const String&);
-void getHostnamesWithCookies(NetworkingContext*, HashSet<String>& hostnames);
-void deleteCookiesForHostname(NetworkingContext*, const String& hostname);
-void deleteAllCookies(NetworkingContext*);
+// FIXME: These should probably be NetworkStorageSession member functions.
+
+String cookiesForDOM(const NetworkStorageSession&, const KURL& firstParty, const KURL&);
+void setCookiesFromDOM(const NetworkStorageSession&, const KURL& firstParty, const KURL&, const String&);
+bool cookiesEnabled(const NetworkStorageSession&, const KURL& firstParty, const KURL&);
+String cookieRequestHeaderFieldValue(const NetworkStorageSession&, const KURL& firstParty, const KURL&);
+bool getRawCookies(const NetworkStorageSession&, const KURL& firstParty, const KURL&, Vector<Cookie>&);
+void deleteCookie(const NetworkStorageSession&, const KURL&, const String&);
+void getHostnamesWithCookies(const NetworkStorageSession&, HashSet<String>& hostnames);
+void deleteCookiesForHostname(const NetworkStorageSession&, const String& hostname);
+void deleteAllCookies(const NetworkStorageSession&);
 
 }
 

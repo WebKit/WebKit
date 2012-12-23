@@ -26,6 +26,7 @@
 #include "CachePolicy.h"
 #include "FrameLoaderTypes.h"
 #include "PurgePriority.h"
+#include "ResourceError.h"
 #include "ResourceLoadPriority.h"
 #include "ResourceLoaderOptions.h"
 #include "ResourceRequest.h"

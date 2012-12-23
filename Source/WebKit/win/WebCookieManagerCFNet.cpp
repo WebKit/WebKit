@@ -28,7 +28,7 @@
 #include "WebCookieManager.h"
 
 #include <CFNetwork/CFHTTPCookiesPriv.h>
-#include <WebCore/CookieStorageCFNet.h>
+#include <WebCore/NetworkStorageSession.h>
 
 using namespace WebCore;
 

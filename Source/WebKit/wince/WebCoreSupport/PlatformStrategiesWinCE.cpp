@@ -83,34 +83,34 @@ void PlatformStrategiesWinCE::notifyCookiesChanged()
 {
 }
 
-String PlatformStrategiesWinCE::cookiesForDOM(NetworkingContext* context, const KURL& firstParty, const KURL& url)
+String PlatformStrategiesWinCE::cookiesForDOM(const NetworkStorageSession& session, const KURL& firstParty, const KURL& url)
 {
-    return WebCore::cookiesForDOM(context, firstParty, url);
+    return WebCore::cookiesForDOM(session, firstParty, url);
 }
 
-void PlatformStrategiesWinCE::setCookiesFromDOM(NetworkingContext* context, const KURL& firstParty, const KURL& url, const String& cookieString)
+void PlatformStrategiesWinCE::setCookiesFromDOM(const NetworkStorageSession& session, const KURL& firstParty, const KURL& url, const String& cookieString)
 {
-    WebCore::setCookiesFromDOM(context, firstParty, url, cookieString);
+    WebCore::setCookiesFromDOM(session, firstParty, url, cookieString);
 }
 
-bool PlatformStrategiesWinCE::cookiesEnabled(NetworkingContext* context, const KURL& firstParty, const KURL& url)
+bool PlatformStrategiesWinCE::cookiesEnabled(const NetworkStorageSession& session, const KURL& firstParty, const KURL& url)
 {
-    return WebCore::cookiesEnabled(context, firstParty, url);
+    return WebCore::cookiesEnabled(session, firstParty, url);
 }
 
-String PlatformStrategiesWinCE::cookieRequestHeaderFieldValue(NetworkingContext* context, const KURL& firstParty, const KURL& url)
+String PlatformStrategiesWinCE::cookieRequestHeaderFieldValue(const NetworkStorageSession& session, const KURL& firstParty, const KURL& url)
 {
-    return WebCore::cookieRequestHeaderFieldValue(context, firstParty, url);
+    return WebCore::cookieRequestHeaderFieldValue(session, firstParty, url);
 }
 
-bool PlatformStrategiesWinCE::getRawCookies(NetworkingContext* context, const KURL& firstParty, const KURL& url, Vector<Cookie>& rawCookies)
+bool PlatformStrategiesWinCE::getRawCookies(const NetworkStorageSession& session, const KURL& firstParty, const KURL& url, Vector<Cookie>& rawCookies)
 {
-    return WebCore::getRawCookies(context, firstParty, url, rawCookies);
+    return WebCore::getRawCookies(session, firstParty, url, rawCookies);
 }
 
-void PlatformStrategiesWinCE::deleteCookie(NetworkingContext* context, const KURL& url, const String& cookieName)
+void PlatformStrategiesWinCE::deleteCookie(const NetworkStorageSession& session, const KURL& url, const String& cookieName)
 {
-    WebCore::deleteCookie(context, url, cookieName);
+    WebCore::deleteCookie(session, url, cookieName);
 }
 
 void PlatformStrategiesWinCE::refreshPlugins()

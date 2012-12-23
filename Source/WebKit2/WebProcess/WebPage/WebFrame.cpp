@@ -55,6 +55,7 @@
 #include <WebCore/JSElement.h>
 #include <WebCore/JSRange.h>
 #include <WebCore/MainResourceLoader.h>
+#include <WebCore/NetworkingContext.h>
 #include <WebCore/NodeTraversal.h>
 #include <WebCore/Page.h>
 #include <WebCore/PluginDocument.h>
@@ -248,7 +249,7 @@ void WebFrame::startDownload(const WebCore::ResourceRequest& request)
 
 #if ENABLE(NETWORK_PROCESS)
     if (WebProcess::shared().usesNetworkProcess()) {
-        bool privateBrowsingEnabled = m_coreFrame->loader()->networkingContext()->inPrivateBrowsingMode();
+        bool privateBrowsingEnabled = m_coreFrame->loader()->networkingContext()->storageSession().isPrivateBrowsingSession();
         WebProcess::shared().networkConnection()->connection()->send(Messages::NetworkConnectionToWebProcess::StartDownload(privateBrowsingEnabled, policyDownloadID, request), 0);
         return;
     }

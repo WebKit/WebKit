@@ -39,8 +39,9 @@
 #import "WebKitVersionChecks.h"
 #import "WebNSDictionaryExtras.h"
 #import "WebNSURLExtras.h"
+#import "WebSystemInterface.h"
 #import <WebCore/ApplicationCacheStorage.h>
-#import <WebCore/CookieStorageCFNet.h>
+#import <WebCore/NetworkStorageSession.h>
 #import <WebCore/ResourceHandle.h>
 #import <wtf/RetainPtr.h>
 
@@ -1286,12 +1287,13 @@ static NSString *classIBCreatorID = nil;
 
 + (void)_switchNetworkLoaderToNewTestingSession
 {
-    WebFrameNetworkingContext::switchToNewTestingSession();
+    InitWebCoreSystemInterface();
+    NetworkStorageSession::switchToNewTestingSession();
 }
 
 + (void)_setCurrentNetworkLoaderSessionCookieAcceptPolicy:(NSHTTPCookieAcceptPolicy)policy
 {
-    WebFrameNetworkingContext::setCookieAcceptPolicyForTestingContext(policy);
+    WKSetHTTPCookieAcceptPolicy(NetworkStorageSession::defaultStorageSession().cookieStorage().get(), policy);
 }
 
 - (BOOL)isDOMPasteAllowed

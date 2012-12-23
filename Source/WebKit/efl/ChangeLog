@@ -1,3 +1,20 @@
+2012-12-22  Alexey Proskuryakov  <ap@apple.com>
+
+        Add a separate class for networking related storage
+        https://bugs.webkit.org/show_bug.cgi?id=105676
+
+        Reviewed by Sam Weinig.
+
+        * WebCoreSupport/PlatformStrategiesEfl.cpp:
+        (PlatformStrategiesEfl::cookiesForDOM):
+        (PlatformStrategiesEfl::setCookiesFromDOM):
+        (PlatformStrategiesEfl::cookiesEnabled):
+        (PlatformStrategiesEfl::cookieRequestHeaderFieldValue):
+        (PlatformStrategiesEfl::getRawCookies):
+        (PlatformStrategiesEfl::deleteCookie):
+        * WebCoreSupport/PlatformStrategiesEfl.h:
+        Cookie functions now take a NetworkStorageSession, not a NetworkingContext.
+
 2012-12-21  Seokju Kwon  <seokju.kwon@gmail.com>
 
         [EFL] Add guard around ContextMenuItemTagInspectElement

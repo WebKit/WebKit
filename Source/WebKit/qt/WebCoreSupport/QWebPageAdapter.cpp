@@ -58,6 +58,7 @@
 #include "LocalizedStrings.h"
 #include "MIMETypeRegistry.h"
 #include "MemoryCache.h"
+#include "NetworkingContext.h"
 #include "NodeList.h"
 #include "NotificationPresenterClientQt.h"
 #include "PageGroup.h"

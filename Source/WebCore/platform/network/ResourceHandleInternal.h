@@ -26,6 +26,7 @@
 #ifndef ResourceHandleInternal_h
 #define ResourceHandleInternal_h
 
+#include "NetworkingContext.h"
 #include "ResourceHandle.h"
 #include "ResourceRequest.h"
 #include "AuthenticationChallenge.h"

@@ -40,6 +40,7 @@
 #include "LocalizedStrings.h"
 #include "Logging.h"
 #include "MIMETypeRegistry.h"
+#include "NetworkingContext.h"
 #include "NotImplemented.h"
 #include "Page.h"
 #include "ResourceError.h"
