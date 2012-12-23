@@ -1,3 +1,13 @@
+2012-12-22  Dan Winship  <danw@gnome.org>
+
+        Add a patch to fix libxml2 2.9.0 regression
+        https://bugs.webkit.org/show_bug.cgi?id=104494
+
+        Reviewed by Martin Robinson.
+
+        * gtk/jhbuild.modules:
+        * gtk/patches/libxml2-2.9.0-dtd.patch: patch from upstream
+
 2012-12-23  Allan Sandfeld Jensen  <allan.jensen@digia.com>
 
         Unreviewed update of status to reviewer.

@@ -234,7 +234,9 @@
     <branch module="/libxml2/libxml2-2.9.0.tar.gz" version="2.9.0"
             repo="xmlsoft.org"
             hash="sha256:ad25d91958b7212abdc12b9611cfb4dc4e5cddb6d1e9891532f48aacee422b82"
-            md5sum="5b9bebf4f5d2200ae2c4efe8fa6103f7"/>
+            md5sum="5b9bebf4f5d2200ae2c4efe8fa6103f7">
+      <patch file="libxml2-2.9.0-dtd.patch" strip="1"/>
+    </branch>
   </autotools>
 
   <autotools id="gstreamer">
