@@ -516,6 +516,10 @@ webkit.org/b/105043 [ Debug ] fast/loader/javascript-url-iframe-remove-on-naviga
 
 webkit.org/b/105580 media/track/track-prefer-captions.html [ Crash Pass ]
 
+webkit.org/b/105689 [ Debug ] plugins/npruntime/embed-property-iframe-equality.html [ Crash ]
+
+webkit.org/b/105691 [ Debug ] http/tests/appcache/main-resource-redirect.html [ Crash ]
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Crashing tests
 #////////////////////////////////////////////////////////////////////////////////////////

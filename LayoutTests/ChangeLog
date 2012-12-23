@@ -1,3 +1,12 @@
+2012-12-23  Zan Dobersek  <zandobersek@gmail.com>
+
+        Unreviewed GTK gardening.
+
+        Adding crashing expectations for two tests that constantly crash
+        in debug builds.
+
+        * platform/gtk/TestExpectations:
+
 2012-12-22  Dan Winship  <danw@gnome.org>
 
         Unskip tests that were failing in libxml 2.9.0
