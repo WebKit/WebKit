@@ -56,6 +56,9 @@ NetworkProcess::NetworkProcess()
     , m_cacheModel(CacheModelDocumentViewer)
     , m_downloadsAuthenticationManager(this)
 {
+#if ENABLE(CUSTOM_PROTOCOLS)
+    CustomProtocolManager::shared().initialize(this);
+#endif
 }
 
 NetworkProcess::~NetworkProcess()
@@ -97,13 +100,6 @@ void NetworkProcess::didReceiveMessage(CoreIPC::Connection* connection, CoreIPC:
 {
     if (m_messageReceiverMap.dispatchMessage(connection, messageID, decoder))
         return;
-
-#if ENABLE(CUSTOM_PROTOCOLS)
-    if (messageID.is<CoreIPC::MessageClassCustomProtocolManager>()) {
-        CustomProtocolManager::shared().didReceiveMessage(connection, messageID, decoder);
-        return;
-    }
-#endif
 
     didReceiveNetworkProcessMessage(connection, messageID, decoder);
 }
@@ -163,7 +159,7 @@ void NetworkProcess::initializeNetworkProcess(const NetworkProcessCreationParame
         RemoteNetworkingContext::ensurePrivateBrowsingSession();
 
 #if ENABLE(CUSTOM_PROTOCOLS)
-    CustomProtocolManager::shared().initialize(m_uiConnection);
+    CustomProtocolManager::shared().connectionEstablished();
     for (size_t i = 0; i < parameters.urlSchemesRegisteredForCustomProtocols.size(); ++i)
         CustomProtocolManager::shared().registerScheme(parameters.urlSchemesRegisteredForCustomProtocols[i]);
 #endif

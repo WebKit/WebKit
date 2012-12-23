@@ -55,6 +55,8 @@ private:
 
     // ChildProcess
     virtual bool shouldTerminate();
+    virtual CoreIPC::Connection* connection() const OVERRIDE { return m_connection.get(); }
+    virtual uint64_t destinationID() const OVERRIDE { return 0; }
 
     // CoreIPC::Connection::Client
     virtual void didReceiveMessage(CoreIPC::Connection*, CoreIPC::MessageID, CoreIPC::MessageDecoder&);

@@ -1,3 +1,66 @@
+2012-12-22  Sam Weinig  <sam@webkit.org>
+
+        Make CustomProtocolManager a MessageReceiver to remove more special casing
+        https://bugs.webkit.org/show_bug.cgi?id=105682
+
+        Reviewed by Dan Bernstein.
+
+        To avoid storing a Connection in CustomProtocolManager, which is not a great idea without
+        it being the Connection::Client and therefore getting death notifications, I also made
+        ChildProcess a MessageSender so that extensions to it, like CustomProtocolManager, can
+        easily send messages to the parent process.
+
+        * NetworkProcess/NetworkProcess.cpp:
+        (WebKit::NetworkProcess::NetworkProcess):
+        Initialize the shared CustomProtocolManager, which will add it to the MessageReceiverMap in 
+        the ChildProcess.
+
+        (WebKit::NetworkProcess::didReceiveMessage):
+        Remove the special case for CustomProtocolManager.
+
+        (WebKit::NetworkProcess::initializeNetworkProcess):
+        Call connectionEstablished on the CustomProtocolManager to make it start working as a NSURLProtocol handler.
+
+        * NetworkProcess/NetworkProcess.h:
+        Add overrides necessary for MessageSender.
+
+        * PluginProcess/PluginProcess.h:
+        Ditto.
+
+        * Shared/ChildProcess.h:
+        (ChildProcess):
+        Make ChildProcess a MessageSender.
+
+        * Shared/Network/CustomProtocols/CustomProtocolManager.h:
+        (CustomProtocolManager):
+        (WebKit::CustomProtocolManager::childProcess):
+        * Shared/Network/CustomProtocols/mac/CustomProtocolManagerMac.mm:
+        (-[WKCustomProtocol startLoading]):
+        (-[WKCustomProtocol stopLoading]):
+        (WebKit::CustomProtocolManager::CustomProtocolManager):
+        (WebKit::CustomProtocolManager::initialize):
+        (WebKit::CustomProtocolManager::connectionEstablished):
+        Make CustomProtocolManager a MessageReceiver and split initialization and the time when it can 
+        start acting as protocol handler as these happen at different times now. It also now stores a
+        ChildProcess rather than a Connection.
+
+        * SharedWorkerProcess/SharedWorkerProcess.h:
+        Add overrides necessary for MessageSender.
+
+        * WebProcess/WebProcess.cpp:
+        (WebKit::WebProcess::WebProcess):
+        Initialize the shared CustomProtocolManager, which will add it to the MessageReceiverMap in 
+        the ChildProcess.
+
+        (WebKit::WebProcess::didReceiveMessage):
+        Remove the special case for CustomProtocolManager.
+
+        (WebKit::WebProcess::initializeCustomProtocolManager):
+        Call connectionEstablished on the CustomProtocolManager to make it start working as a NSURLProtocol handler.
+
+        * WebProcess/WebProcess.h:
+        Add overrides necessary for MessageSender.
+
 2012-12-20  Martin Robinson  <mrobinson@igalia.com>
 
         [GTK] Remove plugin process configuration option

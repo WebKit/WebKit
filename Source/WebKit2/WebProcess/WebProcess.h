@@ -116,7 +116,9 @@ public:
 
     void initialize(CoreIPC::Connection::Identifier, WebCore::RunLoop*);
 
-    CoreIPC::Connection* connection() const { return m_connection.get(); }
+    virtual CoreIPC::Connection* connection() const OVERRIDE { return m_connection.get(); }
+    virtual uint64_t destinationID() const OVERRIDE { return 0; }
+
     WebCore::RunLoop* runLoop() const { return m_runLoop; }
     WebConnectionToUIProcess* webConnectionToUIProcess() const { return m_webConnection.get(); }
 

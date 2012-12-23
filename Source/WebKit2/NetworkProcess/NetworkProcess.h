@@ -45,7 +45,7 @@ namespace WebKit {
 class NetworkConnectionToWebProcess;
 struct NetworkProcessCreationParameters;
 
-class NetworkProcess : ChildProcess, DownloadManager::Client {
+class NetworkProcess : public ChildProcess, DownloadManager::Client {
     WTF_MAKE_NONCOPYABLE(NetworkProcess);
 public:
     static NetworkProcess& shared();
@@ -66,6 +66,8 @@ private:
 
     // ChildProcess
     virtual bool shouldTerminate() OVERRIDE;
+    virtual CoreIPC::Connection* connection() const OVERRIDE { return m_uiConnection.get(); }
+    virtual uint64_t destinationID() const OVERRIDE { return 0; }
 
     // CoreIPC::Connection::Client
     virtual void didReceiveMessage(CoreIPC::Connection*, CoreIPC::MessageID, CoreIPC::MessageDecoder&) OVERRIDE;

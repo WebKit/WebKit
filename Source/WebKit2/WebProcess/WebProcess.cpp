@@ -160,6 +160,10 @@ WebProcess::WebProcess()
     WebCore::initializeLoggingChannelsIfNecessary();
     WebKit::initializeLogChannelsIfNecessary();
 #endif // !LOG_DISABLED
+
+#if ENABLE(CUSTOM_PROTOCOLS)
+    CustomProtocolManager::shared().initialize(this);
+#endif
 }
 
 void WebProcess::initialize(CoreIPC::Connection::Identifier serverIdentifier, RunLoop* runLoop)
@@ -602,13 +606,6 @@ void WebProcess::didReceiveMessage(CoreIPC::Connection* connection, CoreIPC::Mes
         WebResourceCacheManager::shared().didReceiveMessage(connection, messageID, decoder);
         return;
     }
-    
-#if ENABLE(CUSTOM_PROTOCOLS)
-    if (messageID.is<CoreIPC::MessageClassCustomProtocolManager>()) {
-        CustomProtocolManager::shared().didReceiveMessage(connection, messageID, decoder);
-        return;
-    }
-#endif
 
     if (messageID.is<CoreIPC::MessageClassWebPageGroupProxy>()) {
         uint64_t pageGroupID = decoder.destinationID();
@@ -1078,7 +1075,7 @@ void WebProcess::initializeCustomProtocolManager(const WebProcessCreationParamet
         return;
 #endif
 
-    CustomProtocolManager::shared().initialize(m_connection);
+    CustomProtocolManager::shared().connectionEstablished();
     for (size_t i = 0; i < parameters.urlSchemesRegisteredForCustomProtocols.size(); ++i)
         CustomProtocolManager::shared().registerScheme(parameters.urlSchemesRegisteredForCustomProtocols[i]);
 }

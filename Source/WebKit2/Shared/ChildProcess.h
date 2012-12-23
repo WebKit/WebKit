@@ -28,6 +28,7 @@
 
 #include "Connection.h"
 #include "MessageReceiverMap.h"
+#include "MessageSender.h"
 #include <WebCore/RunLoop.h>
 #include <wtf/RetainPtr.h>
 
@@ -37,7 +38,7 @@ OBJC_CLASS NSString;
 
 namespace WebKit {
 
-class ChildProcess : protected CoreIPC::Connection::Client {
+class ChildProcess : protected CoreIPC::Connection::Client, public CoreIPC::MessageSender<ChildProcess> {
     WTF_MAKE_NONCOPYABLE(ChildProcess);
 
 public:
@@ -73,6 +74,10 @@ public:
 #endif
 
     static void didCloseOnConnectionWorkQueue(WorkQueue&, CoreIPC::Connection*);
+
+    // Used by CoreIPC::MessageSender
+    virtual CoreIPC::Connection* connection() const = 0;
+    virtual uint64_t destinationID() const = 0;
 
 protected:
     explicit ChildProcess();
