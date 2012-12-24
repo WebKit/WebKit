@@ -1,3 +1,9 @@
+2012-12-24  Csaba Osztrogonác  <ossy@webkit.org>
+
+        [Qt][Win] Unreviewed Xmas buildfix after r138433.
+
+        * WebProcess/Cookies/WebCookieManager.h:
+
 2012-12-23  Seokju Kwon  <seokju.kwon@gmail.com>
 
         Fix the incorrect use of preprocessor statement in API header
