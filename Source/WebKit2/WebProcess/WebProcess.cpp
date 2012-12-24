@@ -131,6 +131,9 @@ WebProcess::WebProcess()
     , m_applicationCacheManager(this)
     , m_resourceCacheManager(this)
     , m_cookieManager(this)
+#if ENABLE(SQL_DATABASE)
+    , m_databaseManager(0)
+#endif
 #if ENABLE(BATTERY_STATUS)
     , m_batteryManager(this)
 #endif
@@ -159,9 +162,6 @@ WebProcess::WebProcess()
     WebKit::initializeLogChannelsIfNecessary();
 #endif // !LOG_DISABLED
 
-#if ENABLE(SQL_DATABASE)
-    m_databaseManager = new WebDatabaseManager(this);
-#endif
 
 #if ENABLE(CUSTOM_PROTOCOLS)
     CustomProtocolManager::shared().initialize(this);
@@ -230,6 +230,7 @@ void WebProcess::initializeWebProcess(const WebProcessCreationParameters& parame
 #if ENABLE(SQL_DATABASE)
     // Make sure the WebDatabaseManager is initialized so that the Database directory is set.
     WebDatabaseManager::initialize(parameters.databaseDirectory);
+    m_databaseManager = new WebDatabaseManager(this);
 #endif
 
 #if ENABLE(ICONDATABASE)

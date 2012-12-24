@@ -1,5 +1,13 @@
 2012-12-24  Sam Weinig  <sam@webkit.org>
 
+        Assert fix take 2.
+
+        * WebProcess/WebProcess.cpp:
+        (WebKit::WebProcess::WebProcess):
+        (WebKit::WebProcess::initializeWebProcess):
+
+2012-12-24  Sam Weinig  <sam@webkit.org>
+
         Fix WebKit2 asserting on launch.
 
         * WebProcess/WebProcess.cpp:
