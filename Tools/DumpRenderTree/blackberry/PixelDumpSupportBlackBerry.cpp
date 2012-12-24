@@ -62,11 +62,11 @@ PassRefPtr<BitmapContext> createBitmapContextFromWebView(bool /*onscreen*/, bool
     const Platform::IntSize& windowSize = window->viewportSize();
     unsigned char* data = new unsigned char[windowSize.width() * windowSize.height() * 4];
 
+#if USE(SKIA)
     // We need to force a synchronous update to the window or we may get an empty bitmap.
     // For example, running DRT with one test case that finishes before the screen is updated.
     window->post(windowRect);
 
-#if USE(SKIA)
     SkBitmap bitmap;
     bitmap.setConfig(SkBitmap::kARGB_8888_Config, windowSize.width(), windowSize.height());
     bitmap.allocPixels();
