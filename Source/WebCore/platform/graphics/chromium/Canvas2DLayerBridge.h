@@ -42,8 +42,6 @@ class WebGraphicsContext3D;
 
 namespace WebCore {
 
-class LayerChromium;
-
 class Canvas2DLayerBridge : public WebKit::WebExternalTextureLayerClient, public SkDeferredCanvas::NotificationClient, public DoublyLinkedListNode<Canvas2DLayerBridge> {
     WTF_MAKE_NONCOPYABLE(Canvas2DLayerBridge);
 public:
