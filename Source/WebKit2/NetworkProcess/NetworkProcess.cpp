@@ -56,6 +56,7 @@ NetworkProcess::NetworkProcess()
     : m_hasSetCacheModel(false)
     , m_cacheModel(CacheModelDocumentViewer)
     , m_downloadsAuthenticationManager(this)
+    , m_cookieManager(new WebCookieManager(this))
 {
 #if ENABLE(CUSTOM_PROTOCOLS)
     CustomProtocolManager::shared().initialize(this);
@@ -79,9 +80,6 @@ void NetworkProcess::initialize(CoreIPC::Connection::Identifier serverIdentifier
     m_uiConnection = CoreIPC::Connection::createClientConnection(serverIdentifier, this, runLoop);
     m_uiConnection->setDidCloseOnConnectionWorkQueueCallback(didCloseOnConnectionWorkQueue);
     m_uiConnection->open();
-
-    m_downloadsAuthenticationManager.setConnection(m_uiConnection.get());
-    WebCookieManager::shared().setConnection(m_uiConnection.get());
 }
 
 void NetworkProcess::removeNetworkConnectionToWebProcess(NetworkConnectionToWebProcess* connection)
@@ -102,11 +100,6 @@ void NetworkProcess::didReceiveMessage(CoreIPC::Connection* connection, CoreIPC:
 {
     if (m_messageReceiverMap.dispatchMessage(connection, messageID, decoder))
         return;
-
-    if (messageID.is<CoreIPC::MessageClassWebCookieManager>()) {
-        WebCookieManager::shared().didReceiveMessage(connection, messageID, decoder);
-        return;
-    }
 
     didReceiveNetworkProcessMessage(connection, messageID, decoder);
 }

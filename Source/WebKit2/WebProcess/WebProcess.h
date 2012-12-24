@@ -41,6 +41,7 @@
 #include "VisitedLinkTable.h"
 #include "WebApplicationCacheManager.h"
 #include "WebConnectionToUIProcess.h"
+#include "WebCookieManager.h"
 #include "WebGeolocationManager.h"
 #include "WebIconDatabaseProxy.h"
 #include "WebPageGroupProxy.h"
@@ -187,6 +188,9 @@ public:
 
     // Resource Cache
     WebResourceCacheManager& resourceCacheManager() { return m_resourceCacheManager; }
+
+    // Cookies
+    WebCookieManager& cookieManager() { return m_cookieManager; }
 
 #if ENABLE(SQL_DATABASE)
     // Database
@@ -387,6 +391,7 @@ private:
     WebGeolocationManager m_geolocationManager;
     WebApplicationCacheManager m_applicationCacheManager;
     WebResourceCacheManager m_resourceCacheManager;
+    WebCookieManager m_cookieManager;
 
 #if ENABLE(SQL_DATABASE)
     WebDatabaseManager m_databaseManager;

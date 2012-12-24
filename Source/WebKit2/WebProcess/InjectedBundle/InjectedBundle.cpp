@@ -139,7 +139,7 @@ void InjectedBundle::setShouldTrackVisitedLinks(bool shouldTrackVisitedLinks)
 
 void InjectedBundle::setAlwaysAcceptCookies(bool accept)
 {
-    WebCookieManager::shared().setHTTPCookieAcceptPolicy(accept ? HTTPCookieAcceptPolicyAlways : HTTPCookieAcceptPolicyOnlyFromMainDocumentDomain);
+    WebProcess::shared().cookieManager().setHTTPCookieAcceptPolicy(accept ? HTTPCookieAcceptPolicyAlways : HTTPCookieAcceptPolicyOnlyFromMainDocumentDomain);
 }
 
 void InjectedBundle::removeAllVisitedLinks()

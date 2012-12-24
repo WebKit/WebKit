@@ -29,13 +29,6 @@
 #include "MessageReceiver.h"
 #include <wtf/HashMap.h>
 
-namespace CoreIPC {
-class ArgumentDecoder;
-class Connection;
-class MessageID;
-class MessageReceiverMap;
-}
-
 namespace WebCore {
     class AuthenticationChallenge;
     class Credential;
@@ -50,11 +43,8 @@ class WebFrame;
 
 class AuthenticationManager : private CoreIPC::MessageReceiver {
     WTF_MAKE_NONCOPYABLE(AuthenticationManager);
-
 public:
     explicit AuthenticationManager(ChildProcess*);
-
-    void setConnection(CoreIPC::Connection*);
 
     void didReceiveAuthenticationChallenge(WebFrame*, const WebCore::AuthenticationChallenge&);
     void didReceiveAuthenticationChallenge(Download*, const WebCore::AuthenticationChallenge&);
@@ -70,7 +60,7 @@ private:
 
     bool tryUsePlatformCertificateInfoForChallenge(const WebCore::AuthenticationChallenge&, const PlatformCertificateInfo&);
 
-    RefPtr<CoreIPC::Connection> m_connection;
+    ChildProcess* m_process;
 
     typedef HashMap<uint64_t, WebCore::AuthenticationChallenge> AuthenticationChallengeMap;
     AuthenticationChallengeMap m_challenges;

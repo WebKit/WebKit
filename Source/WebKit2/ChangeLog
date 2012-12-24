@@ -1,5 +1,48 @@
 2012-12-23  Sam Weinig  <sam@webkit.org>
 
+        Switch WebCookieManager and AuthenticationManager to use the ChildProcess rather than holding on to a Connection
+        https://bugs.webkit.org/show_bug.cgi?id=105703
+
+        Reviewed by Dan Bernstein.
+
+        Also switches WebCookieManager over to be a MessageReceiver while we are at it.
+
+        * NetworkProcess/NetworkProcess.cpp:
+        (WebKit::NetworkProcess::NetworkProcess):
+        (WebKit::NetworkProcess::initialize):
+        (WebKit::NetworkProcess::didReceiveMessage):
+        * NetworkProcess/NetworkProcess.h:
+        (WebKit):
+        * WebProcess/Authentication/AuthenticationManager.cpp:
+        (WebKit::AuthenticationManager::AuthenticationManager):
+        (WebKit::AuthenticationManager::didReceiveAuthenticationChallenge):
+        * WebProcess/Authentication/AuthenticationManager.h:
+        (AuthenticationManager):
+        * WebProcess/Cookies/WebCookieManager.cpp:
+        (WebKit):
+        (WebKit::WebCookieManager::WebCookieManager):
+        (WebKit::WebCookieManager::didReceiveMessage):
+        (WebKit::WebCookieManager::getHostnamesWithCookies):
+        (WebKit::WebCookieManager::cookiesDidChange):
+        (WebKit::WebCookieManager::dispatchCookiesDidChange):
+        (WebKit::WebCookieManager::getHTTPCookieAcceptPolicy):
+        * WebProcess/Cookies/WebCookieManager.h:
+        (WebKit):
+        (WebCookieManager):
+        * WebProcess/Cookies/soup/WebCookieManagerSoup.cpp:
+        (WebKit::WebCookieManager::setCookiePersistentStorage):
+        * WebProcess/InjectedBundle/InjectedBundle.cpp:
+        (WebKit::InjectedBundle::setAlwaysAcceptCookies):
+        * WebProcess/WebProcess.cpp:
+        (WebKit::WebProcess::WebProcess):
+        (WebKit::WebProcess::initialize):
+        (WebKit::WebProcess::didReceiveMessage):
+        * WebProcess/WebProcess.h:
+        (WebProcess):
+        (WebKit::WebProcess::cookieManager):
+
+2012-12-23  Sam Weinig  <sam@webkit.org>
+
         Try to fix the Qt build.
 
         * WebProcess/WebCoreSupport/WebDatabaseManager.h:

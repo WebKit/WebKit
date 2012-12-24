@@ -33,7 +33,6 @@
 #include "SandboxExtension.h"
 #include "StatisticsData.h"
 #include "WebContextMessages.h"
-#include "WebCookieManager.h"
 #include "WebCoreArgumentCoders.h"
 #include "WebFrame.h"
 #include "WebFrameNetworkingContext.h"
@@ -131,6 +130,7 @@ WebProcess::WebProcess()
     , m_geolocationManager(this)
     , m_applicationCacheManager(this)
     , m_resourceCacheManager(this)
+    , m_cookieManager(this)
 #if ENABLE(SQL_DATABASE)
     , m_databaseManager(this)
 #endif
@@ -181,9 +181,6 @@ void WebProcess::initialize(CoreIPC::Connection::Identifier serverIdentifier, Ru
     m_webConnection = WebConnectionToUIProcess::create(this);
 
     m_runLoop = runLoop;
-
-    m_authenticationManager.setConnection(m_connection.get());
-    WebCookieManager::shared().setConnection(m_connection.get());
 }
 
 void WebProcess::didCreateDownload()
@@ -574,11 +571,6 @@ void WebProcess::didReceiveMessage(CoreIPC::Connection* connection, CoreIPC::Mes
 
     if (messageID.is<CoreIPC::MessageClassWebProcess>()) {
         didReceiveWebProcessMessage(connection, messageID, decoder);
-        return;
-    }
-
-    if (messageID.is<CoreIPC::MessageClassWebCookieManager>()) {
-        WebCookieManager::shared().didReceiveMessage(connection, messageID, decoder);
         return;
     }
 

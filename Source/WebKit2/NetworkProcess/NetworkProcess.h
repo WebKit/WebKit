@@ -43,6 +43,7 @@ namespace WebCore {
 namespace WebKit {
 
 class NetworkConnectionToWebProcess;
+class WebCookieManager;
 struct NetworkProcessCreationParameters;
 
 class NetworkProcess : public ChildProcess, DownloadManager::Client {
@@ -113,6 +114,8 @@ private:
     CacheModel m_cacheModel;
 
     AuthenticationManager m_downloadsAuthenticationManager;
+
+    WebCookieManager* m_cookieManager;
 };
 
 } // namespace WebKit

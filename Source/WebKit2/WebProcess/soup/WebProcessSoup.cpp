@@ -171,10 +171,10 @@ void WebProcess::platformInitializeWebProcess(const WebProcessCreationParameters
         m_soupRequestManager.registerURIScheme(parameters.urlSchemesRegistered[i]);
 
     if (!parameters.cookiePersistentStoragePath.isEmpty()) {
-        WebCookieManager::shared().setCookiePersistentStorage(parameters.cookiePersistentStoragePath,
+        cookieManager().setCookiePersistentStorage(parameters.cookiePersistentStoragePath,
             parameters.cookiePersistentStorageType);
     }
-    WebCookieManager::shared().setHTTPCookieAcceptPolicy(parameters.cookieAcceptPolicy);
+    cookieManager().setHTTPCookieAcceptPolicy(parameters.cookieAcceptPolicy);
 
     setIgnoreTLSErrors(parameters.ignoreTLSErrors);
 
