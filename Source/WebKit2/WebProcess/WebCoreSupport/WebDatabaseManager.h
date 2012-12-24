@@ -30,6 +30,7 @@
 
 #include "MessageReceiver.h"
 #include <WebCore/DatabaseManagerClient.h>
+#include <stdint.h>
 #include <wtf/Noncopyable.h>
 
 namespace WebKit {
