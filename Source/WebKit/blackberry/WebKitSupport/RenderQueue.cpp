@@ -624,8 +624,12 @@ void RenderQueue::renderRegularRenderJobs(bool allAtOnceIfPossible)
         m_regularRenderJobsRegion = Platform::IntRectRegion::intersectRegions(m_regularRenderJobsRegion, contentsRect);
 
         // Split the current regular render job region into tiles.
-        if (!shouldDirectRenderingToWindow)
+        if (!shouldDirectRenderingToWindow) {
+            // Discard regions outside of the region covered by these tiles.
+            // They'll be rendered when the geometry changes.
+            m_regularRenderJobsRegion = Platform::IntRectRegion::intersectRegions(m_regularRenderJobsRegion, m_parent->frontState()->backingStoreRect());
             m_currentRegularRenderJobsBatch = tileIndexesIntersectingRegion(m_regularRenderJobsRegion, m_parent->frontState());
+        }
 
         // Create a region object that will be checked when adding new rects before
         // this batch has been completed.
@@ -689,7 +693,7 @@ void RenderQueue::renderRegularRenderJobs(bool allAtOnceIfPossible)
                     regionNotRenderedThisTime = Platform::IntRectRegion::unionRegions(regionNotRenderedThisTime, tileRegionNotRendered);
                 }
 
-                if (!regionNotRenderedThisTime.isEmpty()) {
+                if (!tileRegionNotRendered.isEmpty()) {
 #if DEBUG_RENDER_QUEUE
                     Platform::logAlways(Platform::LogLevelCritical,
                         "RenderQueue::renderRegularRenderJobs region within %s not completely rendered!",
@@ -746,6 +750,7 @@ void RenderQueue::renderRegularRenderJobs(bool allAtOnceIfPossible)
     }
 
     m_regularRenderJobsNotRenderedRegion = Platform::IntRectRegion::unionRegions(m_regularRenderJobsNotRenderedRegion, regionNotRenderedThisTime);
+    m_currentRegularRenderJobsBatchRegion = Platform::IntRectRegion::subtractRegions(m_currentRegularRenderJobsBatchRegion, regionNotRenderedThisTime);
 
 #if DEBUG_RENDER_QUEUE
     // Stop the time measurement.
