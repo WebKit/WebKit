@@ -47,7 +47,7 @@
 namespace WebCore {
 
 namespace CanvasAgentState {
-static const char canvasAgentEnabled[] = "canvasAgentEnabled";
+static const char enabled[] = "enabled";
 };
 
 InspectorCanvasAgent::InspectorCanvasAgent(InstrumentingAgents* instrumentingAgents, InspectorState* state, Page* page, InjectedScriptManager* injectedScriptManager)
@@ -76,7 +76,7 @@ void InspectorCanvasAgent::clearFrontend()
 
 void InspectorCanvasAgent::restore()
 {
-    if (m_state->getBoolean(CanvasAgentState::canvasAgentEnabled)) {
+    if (m_state->getBoolean(CanvasAgentState::enabled)) {
         ErrorString error;
         enable(&error);
     }
@@ -84,14 +84,14 @@ void InspectorCanvasAgent::restore()
 
 void InspectorCanvasAgent::enable(ErrorString*)
 {
-    m_state->setBoolean(CanvasAgentState::canvasAgentEnabled, true);
+    m_state->setBoolean(CanvasAgentState::enabled, true);
     m_instrumentingAgents->setInspectorCanvasAgent(this);
 }
 
 void InspectorCanvasAgent::disable(ErrorString*)
 {
     m_instrumentingAgents->setInspectorCanvasAgent(0);
-    m_state->setBoolean(CanvasAgentState::canvasAgentEnabled, false);
+    m_state->setBoolean(CanvasAgentState::enabled, false);
 }
 
 void InspectorCanvasAgent::dropTraceLog(ErrorString* errorString, const String& traceLogId)

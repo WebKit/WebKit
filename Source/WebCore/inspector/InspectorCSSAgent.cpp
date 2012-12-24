@@ -63,7 +63,7 @@
 #include <wtf/text/StringConcatenate.h>
 
 namespace CSSAgentState {
-static const char cssAgentEnabled[] = "cssAgentEnabled";
+static const char enabled[] = "enabled";
 static const char isSelectorProfiling[] = "isSelectorProfiling";
 }
 
@@ -561,7 +561,7 @@ void InspectorCSSAgent::discardAgent()
 
 void InspectorCSSAgent::restore()
 {
-    if (m_state->getBoolean(CSSAgentState::cssAgentEnabled)) {
+    if (m_state->getBoolean(CSSAgentState::enabled)) {
         ErrorString error;
         enable(&error);
     }
@@ -590,14 +590,14 @@ void InspectorCSSAgent::resetNonPersistentData()
 
 void InspectorCSSAgent::enable(ErrorString*)
 {
-    m_state->setBoolean(CSSAgentState::cssAgentEnabled, true);
+    m_state->setBoolean(CSSAgentState::enabled, true);
     m_instrumentingAgents->setInspectorCSSAgent(this);
 }
 
 void InspectorCSSAgent::disable(ErrorString*)
 {
     m_instrumentingAgents->setInspectorCSSAgent(0);
-    m_state->setBoolean(CSSAgentState::cssAgentEnabled, false);
+    m_state->setBoolean(CSSAgentState::enabled, false);
 }
 
 void InspectorCSSAgent::mediaQueryResultChanged()

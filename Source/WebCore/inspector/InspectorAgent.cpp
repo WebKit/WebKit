@@ -60,7 +60,7 @@ using namespace std;
 namespace WebCore {
 
 namespace InspectorAgentState {
-static const char inspectorAgentEnabled[] = "inspectorAgentEnabled";
+static const char enabled[] = "enabled";
 }
 
 InspectorAgent::InspectorAgent(Page* page, InjectedScriptManager* injectedScriptManager, InstrumentingAgents* instrumentingAgents, InspectorState* state)
@@ -113,7 +113,7 @@ void InspectorAgent::didCommitLoad()
 
 void InspectorAgent::enable(ErrorString*)
 {
-    m_state->setBoolean(InspectorAgentState::inspectorAgentEnabled, true);
+    m_state->setBoolean(InspectorAgentState::enabled, true);
 
     if (m_pendingInspectData.first)
         inspect(m_pendingInspectData.first, m_pendingInspectData.second);
@@ -125,7 +125,7 @@ void InspectorAgent::enable(ErrorString*)
 
 void InspectorAgent::disable(ErrorString*)
 {
-    m_state->setBoolean(InspectorAgentState::inspectorAgentEnabled, false);
+    m_state->setBoolean(InspectorAgentState::enabled, false);
 }
 
 void InspectorAgent::domContentLoadedEventFired()
@@ -140,7 +140,7 @@ bool InspectorAgent::isMainResourceLoader(DocumentLoader* loader, const KURL& re
 
 void InspectorAgent::evaluateForTestInFrontend(long callId, const String& script)
 {
-    if (m_state->getBoolean(InspectorAgentState::inspectorAgentEnabled))
+    if (m_state->getBoolean(InspectorAgentState::enabled))
         m_frontend->inspector()->evaluateForTestInFrontend(static_cast<int>(callId), script);
     else
         m_pendingEvaluateTestCommands.append(pair<long, String>(callId, script));
@@ -153,7 +153,7 @@ void InspectorAgent::setInjectedScriptForOrigin(const String& origin, const Stri
 
 void InspectorAgent::inspect(PassRefPtr<TypeBuilder::Runtime::RemoteObject> objectToInspect, PassRefPtr<InspectorObject> hints)
 {
-    if (m_state->getBoolean(InspectorAgentState::inspectorAgentEnabled) && m_frontend) {
+    if (m_state->getBoolean(InspectorAgentState::enabled) && m_frontend) {
         m_frontend->inspector()->inspect(objectToInspect, hints);
         m_pendingInspectData.first = 0;
         m_pendingInspectData.second = 0;

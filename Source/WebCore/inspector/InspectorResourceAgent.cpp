@@ -78,7 +78,7 @@
 namespace WebCore {
 
 namespace ResourceAgentState {
-static const char resourceAgentEnabled[] = "resourceAgentEnabled";
+static const char enabled[] = "enabled";
 static const char extraRequestHeaders[] = "extraRequestHeaders";
 static const char cacheDisabled[] = "cacheDisabled";
 static const char userAgentOverride[] = "userAgentOverride";
@@ -98,7 +98,7 @@ void InspectorResourceAgent::clearFrontend()
 
 void InspectorResourceAgent::restore()
 {
-    if (m_state->getBoolean(ResourceAgentState::resourceAgentEnabled))
+    if (m_state->getBoolean(ResourceAgentState::enabled))
         enable();
 }
 
@@ -200,7 +200,7 @@ static PassRefPtr<TypeBuilder::Network::CachedResource> buildObjectForCachedReso
 
 InspectorResourceAgent::~InspectorResourceAgent()
 {
-    if (m_state->getBoolean(ResourceAgentState::resourceAgentEnabled)) {
+    if (m_state->getBoolean(ResourceAgentState::enabled)) {
         ErrorString error;
         disable(&error);
     }
@@ -561,14 +561,14 @@ void InspectorResourceAgent::enable()
 {
     if (!m_frontend)
         return;
-    m_state->setBoolean(ResourceAgentState::resourceAgentEnabled, true);
+    m_state->setBoolean(ResourceAgentState::enabled, true);
     m_instrumentingAgents->setInspectorResourceAgent(this);
 }
 
 void InspectorResourceAgent::disable(ErrorString*)
 {
-    m_state->setBoolean(ResourceAgentState::resourceAgentEnabled, false);
-    m_state->setString(ResourceAgentState::userAgentOverride, "");
+    m_state->setBoolean(ResourceAgentState::enabled, false);
+    m_state->remove(ResourceAgentState::userAgentOverride);
     m_instrumentingAgents->setInspectorResourceAgent(0);
     m_resourcesData->clear();
 }

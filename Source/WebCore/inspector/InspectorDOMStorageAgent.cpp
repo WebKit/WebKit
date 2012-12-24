@@ -53,7 +53,7 @@
 namespace WebCore {
 
 namespace DOMStorageAgentState {
-static const char domStorageAgentEnabled[] = "domStorageAgentEnabled";
+static const char enabled[] = "enabled";
 };
 
 InspectorDOMStorageAgent::InspectorDOMStorageAgent(InstrumentingAgents* instrumentingAgents, InspectorState* state)
@@ -86,7 +86,7 @@ void InspectorDOMStorageAgent::clearFrontend()
 
 void InspectorDOMStorageAgent::restore()
 {
-    m_enabled =  m_state->getBoolean(DOMStorageAgentState::domStorageAgentEnabled);
+    m_enabled =  m_state->getBoolean(DOMStorageAgentState::enabled);
 }
 
 void InspectorDOMStorageAgent::enable(ErrorString*)
@@ -94,7 +94,7 @@ void InspectorDOMStorageAgent::enable(ErrorString*)
     if (m_enabled)
         return;
     m_enabled = true;
-    m_state->setBoolean(DOMStorageAgentState::domStorageAgentEnabled, m_enabled);
+    m_state->setBoolean(DOMStorageAgentState::enabled, m_enabled);
 
     DOMStorageResourcesMap::iterator resourcesEnd = m_resources.end();
     for (DOMStorageResourcesMap::iterator it = m_resources.begin(); it != resourcesEnd; ++it)
@@ -106,7 +106,7 @@ void InspectorDOMStorageAgent::disable(ErrorString*)
     if (!m_enabled)
         return;
     m_enabled = false;
-    m_state->setBoolean(DOMStorageAgentState::domStorageAgentEnabled, m_enabled);
+    m_state->setBoolean(DOMStorageAgentState::enabled, m_enabled);
 }
 
 void InspectorDOMStorageAgent::getDOMStorageEntries(ErrorString*, const String& storageId, RefPtr<TypeBuilder::Array<TypeBuilder::Array<String> > >& entries)

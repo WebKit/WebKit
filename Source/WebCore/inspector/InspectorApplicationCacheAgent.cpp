@@ -46,7 +46,7 @@
 namespace WebCore {
 
 namespace ApplicationCacheAgentState {
-static const char applicationCacheAgentEnabled[] = "applicationCacheAgentEnabled";
+static const char enabled[] = "enabled";
 }
 
 InspectorApplicationCacheAgent::InspectorApplicationCacheAgent(InstrumentingAgents* instrumentingAgents, InspectorState* state, InspectorPageAgent* pageAgent)
@@ -69,7 +69,7 @@ void InspectorApplicationCacheAgent::clearFrontend()
 
 void InspectorApplicationCacheAgent::restore()
 {
-    if (m_state->getBoolean(ApplicationCacheAgentState::applicationCacheAgentEnabled)) {
+    if (m_state->getBoolean(ApplicationCacheAgentState::enabled)) {
         ErrorString error;
         enable(&error);
     }
@@ -77,7 +77,7 @@ void InspectorApplicationCacheAgent::restore()
 
 void InspectorApplicationCacheAgent::enable(ErrorString*)
 {
-    m_state->setBoolean(ApplicationCacheAgentState::applicationCacheAgentEnabled, true);
+    m_state->setBoolean(ApplicationCacheAgentState::enabled, true);
     m_instrumentingAgents->setInspectorApplicationCacheAgent(this);
 
     // We need to pass initial navigator.onOnline.

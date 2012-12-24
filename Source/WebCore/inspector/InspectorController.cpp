@@ -82,81 +82,81 @@ namespace WebCore {
 InspectorController::InspectorController(Page* page, InspectorClient* inspectorClient)
     : m_instrumentingAgents(adoptPtr(new InstrumentingAgents()))
     , m_injectedScriptManager(InjectedScriptManager::createForPage())
-    , m_state(adoptPtr(new InspectorState(inspectorClient)))
+    , m_state(adoptPtr(new InspectorCompositeState(inspectorClient)))
     , m_overlay(InspectorOverlay::create(page, inspectorClient))
     , m_page(page)
     , m_inspectorClient(inspectorClient)
 {
-    OwnPtr<InspectorAgent> inspectorAgentPtr(InspectorAgent::create(page, m_injectedScriptManager.get(), m_instrumentingAgents.get(), m_state.get()));
+    OwnPtr<InspectorAgent> inspectorAgentPtr(InspectorAgent::create(page, m_injectedScriptManager.get(), m_instrumentingAgents.get(), m_state->createAgentState()));
     m_inspectorAgent = inspectorAgentPtr.get();
     m_agents.append(inspectorAgentPtr.release());
 
-    OwnPtr<InspectorPageAgent> pageAgentPtr(InspectorPageAgent::create(m_instrumentingAgents.get(), page, m_inspectorAgent, m_state.get(), m_injectedScriptManager.get(), inspectorClient, m_overlay.get()));
+    OwnPtr<InspectorPageAgent> pageAgentPtr(InspectorPageAgent::create(m_instrumentingAgents.get(), page, m_inspectorAgent, m_state->createAgentState(), m_injectedScriptManager.get(), inspectorClient, m_overlay.get()));
     InspectorPageAgent* pageAgent = pageAgentPtr.get();
     m_pageAgent = pageAgentPtr.get();
     m_agents.append(pageAgentPtr.release());
 
-    OwnPtr<InspectorDOMAgent> domAgentPtr(InspectorDOMAgent::create(m_instrumentingAgents.get(), pageAgent, m_state.get(), m_injectedScriptManager.get(), m_overlay.get()));
+    OwnPtr<InspectorDOMAgent> domAgentPtr(InspectorDOMAgent::create(m_instrumentingAgents.get(), pageAgent, m_state->createAgentState(), m_injectedScriptManager.get(), m_overlay.get()));
     m_domAgent = domAgentPtr.get();
     m_agents.append(domAgentPtr.release());
 
-    m_agents.append(InspectorCSSAgent::create(m_instrumentingAgents.get(), m_state.get(), m_domAgent));
+    m_agents.append(InspectorCSSAgent::create(m_instrumentingAgents.get(), m_state->createAgentState(), m_domAgent));
 
 #if ENABLE(SQL_DATABASE)
-    OwnPtr<InspectorDatabaseAgent> databaseAgentPtr(InspectorDatabaseAgent::create(m_instrumentingAgents.get(), m_state.get()));
+    OwnPtr<InspectorDatabaseAgent> databaseAgentPtr(InspectorDatabaseAgent::create(m_instrumentingAgents.get(), m_state->createAgentState()));
     InspectorDatabaseAgent* databaseAgent = databaseAgentPtr.get();
     m_agents.append(databaseAgentPtr.release());
 #endif
 
 #if ENABLE(INDEXED_DATABASE)
-    m_agents.append(InspectorIndexedDBAgent::create(m_instrumentingAgents.get(), m_state.get(), m_injectedScriptManager.get(), pageAgent));
+    m_agents.append(InspectorIndexedDBAgent::create(m_instrumentingAgents.get(), m_state->createAgentState(), m_injectedScriptManager.get(), pageAgent));
 #endif
 
 #if ENABLE(FILE_SYSTEM)
-    m_agents.append(InspectorFileSystemAgent::create(m_instrumentingAgents.get(), pageAgent, m_state.get()));
+    m_agents.append(InspectorFileSystemAgent::create(m_instrumentingAgents.get(), pageAgent, m_state->createAgentState()));
 #endif
-    OwnPtr<InspectorDOMStorageAgent> domStorageAgentPtr(InspectorDOMStorageAgent::create(m_instrumentingAgents.get(), m_state.get()));
+    OwnPtr<InspectorDOMStorageAgent> domStorageAgentPtr(InspectorDOMStorageAgent::create(m_instrumentingAgents.get(), m_state->createAgentState()));
     InspectorDOMStorageAgent* domStorageAgent = domStorageAgentPtr.get();
     m_agents.append(domStorageAgentPtr.release());
-    m_agents.append(InspectorMemoryAgent::create(m_instrumentingAgents.get(), inspectorClient, m_state.get(), m_page));
-    m_agents.append(InspectorTimelineAgent::create(m_instrumentingAgents.get(), pageAgent, m_state.get(), InspectorTimelineAgent::PageInspector,
+    m_agents.append(InspectorMemoryAgent::create(m_instrumentingAgents.get(), inspectorClient, m_state->createAgentState(), m_page));
+    m_agents.append(InspectorTimelineAgent::create(m_instrumentingAgents.get(), pageAgent, m_state->createAgentState(), InspectorTimelineAgent::PageInspector,
        inspectorClient));
-    m_agents.append(InspectorApplicationCacheAgent::create(m_instrumentingAgents.get(), m_state.get(), pageAgent));
+    m_agents.append(InspectorApplicationCacheAgent::create(m_instrumentingAgents.get(), m_state->createAgentState(), pageAgent));
 
-    OwnPtr<InspectorResourceAgent> resourceAgentPtr(InspectorResourceAgent::create(m_instrumentingAgents.get(), pageAgent, inspectorClient, m_state.get()));
+    OwnPtr<InspectorResourceAgent> resourceAgentPtr(InspectorResourceAgent::create(m_instrumentingAgents.get(), pageAgent, inspectorClient, m_state->createAgentState()));
     m_resourceAgent = resourceAgentPtr.get();
     m_agents.append(resourceAgentPtr.release());
 
-    OwnPtr<InspectorRuntimeAgent> runtimeAgentPtr(PageRuntimeAgent::create(m_instrumentingAgents.get(), m_state.get(), m_injectedScriptManager.get(), page, pageAgent));
+    OwnPtr<InspectorRuntimeAgent> runtimeAgentPtr(PageRuntimeAgent::create(m_instrumentingAgents.get(), m_state->createAgentState(), m_injectedScriptManager.get(), page, pageAgent));
     InspectorRuntimeAgent* runtimeAgent = runtimeAgentPtr.get();
     m_agents.append(runtimeAgentPtr.release());
 
-    OwnPtr<InspectorConsoleAgent> consoleAgentPtr(PageConsoleAgent::create(m_instrumentingAgents.get(), m_inspectorAgent, m_state.get(), m_injectedScriptManager.get(), m_domAgent));
+    OwnPtr<InspectorConsoleAgent> consoleAgentPtr(PageConsoleAgent::create(m_instrumentingAgents.get(), m_inspectorAgent, m_state->createAgentState(), m_injectedScriptManager.get(), m_domAgent));
     InspectorConsoleAgent* consoleAgent = consoleAgentPtr.get();
     m_agents.append(consoleAgentPtr.release());
 
 #if ENABLE(JAVASCRIPT_DEBUGGER)
-    OwnPtr<InspectorDebuggerAgent> debuggerAgentPtr(PageDebuggerAgent::create(m_instrumentingAgents.get(), m_state.get(), pageAgent, m_injectedScriptManager.get(), m_overlay.get()));
+    OwnPtr<InspectorDebuggerAgent> debuggerAgentPtr(PageDebuggerAgent::create(m_instrumentingAgents.get(), m_state->createAgentState(), pageAgent, m_injectedScriptManager.get(), m_overlay.get()));
     m_debuggerAgent = debuggerAgentPtr.get();
     m_agents.append(debuggerAgentPtr.release());
 
-    m_agents.append(InspectorDOMDebuggerAgent::create(m_instrumentingAgents.get(), m_state.get(), m_domAgent, m_debuggerAgent, m_inspectorAgent));
+    m_agents.append(InspectorDOMDebuggerAgent::create(m_instrumentingAgents.get(), m_state->createAgentState(), m_domAgent, m_debuggerAgent, m_inspectorAgent));
 
-    OwnPtr<InspectorProfilerAgent> profilerAgentPtr(InspectorProfilerAgent::create(m_instrumentingAgents.get(), consoleAgent, page, m_state.get(), m_injectedScriptManager.get()));
+    OwnPtr<InspectorProfilerAgent> profilerAgentPtr(InspectorProfilerAgent::create(m_instrumentingAgents.get(), consoleAgent, page, m_state->createAgentState(), m_injectedScriptManager.get()));
     m_profilerAgent = profilerAgentPtr.get();
     m_agents.append(profilerAgentPtr.release());
 #endif
 
 #if ENABLE(WORKERS)
-    m_agents.append(InspectorWorkerAgent::create(m_instrumentingAgents.get(), m_state.get()));
+    m_agents.append(InspectorWorkerAgent::create(m_instrumentingAgents.get(), m_state->createAgentState()));
 #endif
 
-    m_agents.append(InspectorCanvasAgent::create(m_instrumentingAgents.get(), m_state.get(), page, m_injectedScriptManager.get()));
+    m_agents.append(InspectorCanvasAgent::create(m_instrumentingAgents.get(), m_state->createAgentState(), page, m_injectedScriptManager.get()));
 
-    m_agents.append(InspectorInputAgent::create(m_instrumentingAgents.get(), m_state.get(), page));
+    m_agents.append(InspectorInputAgent::create(m_instrumentingAgents.get(), m_state->createAgentState(), page));
 
 #if USE(ACCELERATED_COMPOSITING)
-    m_agents.append(InspectorLayerTreeAgent::create(m_instrumentingAgents.get(), m_state.get(), page));
+    m_agents.append(InspectorLayerTreeAgent::create(m_instrumentingAgents.get(), m_state->createAgentState(), page));
 #endif
 
     ASSERT_ARG(inspectorClient, inspectorClient);
