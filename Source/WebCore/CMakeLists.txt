@@ -1078,6 +1078,7 @@ set(WebCore_SOURCES
     css/RuleSet.h
     css/RuleSet.cpp
     css/SelectorChecker.cpp
+    css/SelectorFilter.cpp
     css/ShadowValue.cpp
     css/StyleBuilder.cpp
     css/StyleInvalidationAnalysis.cpp

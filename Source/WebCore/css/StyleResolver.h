@@ -31,6 +31,7 @@
 #include "RuleFeature.h"
 #include "RuntimeEnabledFeatures.h"
 #include "SelectorChecker.h"
+#include "SelectorFilter.h"
 #include "StyleInheritedData.h"
 #include "StyleScopeResolver.h"
 #include "ViewportStyleResolver.h"
@@ -491,6 +492,7 @@ private:
     PseudoId m_pseudoStyle;
 
     SelectorChecker m_checker;
+    SelectorFilter m_selectorFilter;
 
     RefPtr<RenderStyle> m_style;
     RenderStyle* m_parentStyle;

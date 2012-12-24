@@ -1060,6 +1060,8 @@
 		4138D3361244054800323D33 /* EventContext.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4138D3341244054800323D33 /* EventContext.cpp */; };
 		414B867313AD074E00B4B373 /* FileIconLoader.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 414B867113AD074E00B4B373 /* FileIconLoader.cpp */; };
 		414B867413AD074E00B4B373 /* FileIconLoader.h in Headers */ = {isa = PBXBuildFile; fileRef = 414B867213AD074E00B4B373 /* FileIconLoader.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		415071571685067300C3C7B3 /* SelectorFilter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 415071551685067300C3C7B3 /* SelectorFilter.cpp */; };
+		415071581685067300C3C7B3 /* SelectorFilter.h in Headers */ = {isa = PBXBuildFile; fileRef = 415071561685067300C3C7B3 /* SelectorFilter.h */; };
 		4150F9F112B6E0E70008C860 /* SliderThumbElement.h in Headers */ = {isa = PBXBuildFile; fileRef = 4150F9EF12B6E0E70008C860 /* SliderThumbElement.h */; };
 		4150F9F212B6E0E70008C860 /* SliderThumbElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4150F9F012B6E0E70008C860 /* SliderThumbElement.cpp */; };
 		4157AF8012F1FB0400A8C6F5 /* MediaControlsApple.h in Headers */ = {isa = PBXBuildFile; fileRef = 4157AF7E12F1FB0400A8C6F5 /* MediaControlsApple.h */; };
@@ -8288,6 +8290,8 @@
 		4138D3341244054800323D33 /* EventContext.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = EventContext.cpp; sourceTree = "<group>"; };
 		414B867113AD074E00B4B373 /* FileIconLoader.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = FileIconLoader.cpp; sourceTree = "<group>"; };
 		414B867213AD074E00B4B373 /* FileIconLoader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FileIconLoader.h; sourceTree = "<group>"; };
+		415071551685067300C3C7B3 /* SelectorFilter.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SelectorFilter.cpp; sourceTree = "<group>"; };
+		415071561685067300C3C7B3 /* SelectorFilter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SelectorFilter.h; sourceTree = "<group>"; };
 		4150F9EF12B6E0E70008C860 /* SliderThumbElement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SliderThumbElement.h; sourceTree = "<group>"; };
 		4150F9F012B6E0E70008C860 /* SliderThumbElement.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SliderThumbElement.cpp; sourceTree = "<group>"; };
 		4157AF7E12F1FB0400A8C6F5 /* MediaControlsApple.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MediaControlsApple.h; sourceTree = "<group>"; };
@@ -21580,6 +21584,8 @@
 				A79BADA0161E7F3F00C2E652 /* RuleSet.h */,
 				E44B4BB1141650D7002B1D8B /* SelectorChecker.cpp */,
 				E44B4BB2141650D7002B1D8B /* SelectorChecker.h */,
+				415071551685067300C3C7B3 /* SelectorFilter.cpp */,
+				415071561685067300C3C7B3 /* SelectorFilter.h */,
 				A80E6CCA0A1989CA007FB8C5 /* ShadowValue.cpp */,
 				A80E6CBE0A1989CA007FB8C5 /* ShadowValue.h */,
 				5728BD9D1625369600C40B56 /* SiblingTraversalStrategies.h */,
@@ -25985,6 +25991,7 @@
 				0FB8890A167D2FA10010CDA5 /* ScrollingTreeStickyNode.h in Headers */,
 				0FB8890F167D30160010CDA5 /* ScrollingStateStickyNode.h in Headers */,
 				E13EF3441684ECF40034C83F /* NetworkStorageSession.h in Headers */,
+				415071581685067300C3C7B3 /* SelectorFilter.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -29104,6 +29111,7 @@
 				0FB8890E167D30160010CDA5 /* ScrollingStateStickyNode.cpp in Sources */,
 				209B456B16796A7E00E54E4E /* JSCryptoCustom.cpp in Sources */,
 				E13EF34916850C470034C83F /* NetworkStorageSessionCFNet.cpp in Sources */,
+				415071571685067300C3C7B3 /* SelectorFilter.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -36,6 +36,7 @@
 #include "MediaQueryEvaluator.h"
 #include "SecurityOrigin.h"
 #include "SelectorChecker.h"
+#include "SelectorFilter.h"
 #include "StyleResolver.h"
 #include "StyleRule.h"
 #include "StyleRuleImport.h"
@@ -122,7 +123,7 @@ RuleData::RuleData(StyleRule* rule, unsigned selectorIndex, unsigned position, A
 {
     ASSERT(m_position == position);
     ASSERT(m_selectorIndex == selectorIndex);
-    SelectorChecker::collectIdentifierHashes(selector(), m_descendantSelectorIdentifierHashes, maximumIdentifierCount);
+    SelectorFilter::collectIdentifierHashes(selector(), m_descendantSelectorIdentifierHashes, maximumIdentifierCount);
 }
 
 void RuleData::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const

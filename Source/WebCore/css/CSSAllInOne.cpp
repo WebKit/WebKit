@@ -68,6 +68,7 @@
 #include "CSSValuePool.cpp"
 #include "RuleFeature.cpp"
 #include "RuleSet.cpp"
+#include "SelectorFilter.cpp"
 #include "StyleBuilder.cpp"
 #include "StylePropertySet.cpp"
 #include "StylePropertyShorthand.cpp"

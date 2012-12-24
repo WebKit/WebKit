@@ -1549,6 +1549,8 @@
             'css/SVGCSSStyleSelector.cpp',
             'css/SelectorChecker.cpp',
             'css/SelectorChecker.h',
+            'css/SelectorFilter.cpp',
+            'css/SelectorFilter.h',
             'css/ShadowValue.cpp',
             'css/ShadowValue.h',
             'css/SiblingTraversalStrategies.h',

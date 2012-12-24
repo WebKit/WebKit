@@ -2631,6 +2631,8 @@ webcore_sources += \
 	Source/WebCore/css/RuleSet.h \
 	Source/WebCore/css/SelectorChecker.cpp \
 	Source/WebCore/css/SelectorChecker.h \
+    Source/WebCore/css/SelectorFilter.cpp \
+    Source/WebCore/css/SelectorFilter.h \
 	Source/WebCore/css/ShadowValue.cpp \
 	Source/WebCore/css/ShadowValue.h \
 	Source/WebCore/css/SiblingTraversalStrategies.h \
