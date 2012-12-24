@@ -131,9 +131,6 @@ WebProcess::WebProcess()
     , m_applicationCacheManager(this)
     , m_resourceCacheManager(this)
     , m_cookieManager(this)
-#if ENABLE(SQL_DATABASE)
-    , m_databaseManager(this)
-#endif
 #if ENABLE(BATTERY_STATUS)
     , m_batteryManager(this)
 #endif
@@ -161,6 +158,10 @@ WebProcess::WebProcess()
     WebCore::initializeLoggingChannelsIfNecessary();
     WebKit::initializeLogChannelsIfNecessary();
 #endif // !LOG_DISABLED
+
+#if ENABLE(SQL_DATABASE)
+    m_databaseManager = new WebDatabaseManager(this);
+#endif
 
 #if ENABLE(CUSTOM_PROTOCOLS)
     CustomProtocolManager::shared().initialize(this);

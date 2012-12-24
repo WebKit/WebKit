@@ -194,7 +194,7 @@ public:
 
 #if ENABLE(SQL_DATABASE)
     // Database
-    WebDatabaseManager& databaseManager() { return m_databaseManager; }
+    WebDatabaseManager& databaseManager() { return *m_databaseManager; }
 #endif
 
 #if ENABLE(BATTERY_STATUS)
@@ -394,7 +394,7 @@ private:
     WebCookieManager m_cookieManager;
 
 #if ENABLE(SQL_DATABASE)
-    WebDatabaseManager m_databaseManager;
+    WebDatabaseManager* m_databaseManager;
 #endif
 #if ENABLE(BATTERY_STATUS)
     WebBatteryManager m_batteryManager;
