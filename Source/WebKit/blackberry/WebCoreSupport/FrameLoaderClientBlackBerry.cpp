@@ -967,8 +967,7 @@ void FrameLoaderClientBlackBerry::notifyBackForwardListChanged() const
 
 Frame* FrameLoaderClientBlackBerry::dispatchCreatePage(const NavigationAction& navigation)
 {
-    UNUSED_PARAM(navigation);
-    WebPage* webPage = m_webPagePrivate->m_client->createWindow(0, 0, -1, -1, WebPageClient::FlagWindowDefault, BlackBerry::Platform::String::emptyString(), BlackBerry::Platform::String::emptyString());
+    WebPage* webPage = m_webPagePrivate->m_client->createWindow(0, 0, -1, -1, WebPageClient::FlagWindowDefault, navigation.url().string(), BlackBerry::Platform::String::emptyString());
     if (!webPage)
         return 0;
 
