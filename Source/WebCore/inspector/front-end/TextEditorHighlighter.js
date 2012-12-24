@@ -56,6 +56,23 @@ WebInspector.TextEditorHighlighter.prototype = {
     },
 
     /**
+     * @param {number} lineNumber
+     * @return {Array.<{startColumn: number, endColumn: number, token: string}>}
+     */
+    orderedRangesPerLine: function(lineNumber)
+    {
+        var syntaxTokenHighligh = this._textModel.getAttribute(lineNumber, "highlight");
+        if (!syntaxTokenHighligh)
+            return [];
+
+        syntaxTokenHighligh.ranges.sort(function(a, b) {
+            return a.startColumn - b.startColumn;
+        });
+
+        return syntaxTokenHighligh.ranges;
+    },
+
+    /**
      * @param {boolean=} forceRun
      */
     highlight: function(endLine, forceRun)
@@ -175,11 +192,16 @@ WebInspector.TextEditorHighlighter.prototype = {
                 this._tokenizer.condition = JSON.parse(postConditionStringified);
 
                 // Highlight line.
+                state.ranges = [];
                 do {
                     var newColumn = this._tokenizer.nextToken(lastHighlightedColumn);
                     var tokenType = this._tokenizer.tokenType;
                     if (tokenType)
-                        state[lastHighlightedColumn] = { length: newColumn - lastHighlightedColumn, tokenType: tokenType };
+                        state.ranges.push({
+                            startColumn: lastHighlightedColumn,
+                            endColumn: newColumn - 1,
+                            token: tokenType
+                        });
                     lastHighlightedColumn = newColumn;
                     if (++tokensCount > this._highlightChunkLimit)
                         break;

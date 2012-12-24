@@ -1,3 +1,17 @@
+2012-12-24  Andrey Lushnikov  <lushnikov@chromium.com>
+
+        Web Inspector: refactor TextEditorHighlighter's highlight attributes to dense array
+        https://bugs.webkit.org/show_bug.cgi?id=105626
+
+        Reviewed by Pavel Feldman.
+
+        Fix tests according to new highlight attribute structure.
+
+        * inspector/editor/highlighter-long-line.html:
+        * inspector/editor/highlighter-test.js:
+        (initialize_HighlighterTests.InspectorTest.dumpTextModel):
+        (initialize_HighlighterTests):
+
 2012-12-23  Zan Dobersek  <zandobersek@gmail.com>
 
         Unreviewed GTK gardening.

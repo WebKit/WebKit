@@ -25,14 +25,14 @@ function test()
         var commentsFound = 0;
         for (var lineNumber = 0; lineNumber < textModel.linesCount; ++lineNumber) {
             var highlight = textModel.getAttribute(lineNumber, "highlight");
-            for (var i = 0; i < textModel.lineLength(lineNumber); ++i) {
-                if (highlight[i]) {
-                    if (highlight[i].length !== 10 || (i % 11)) {
-                        InspectorTest.addResult("ERROR: unexpected highlight result: i=" + i + ", length=" + highlight[i].length);
-                        break;
-                    }
-                    ++commentsFound;
+            for (var i = 0; i < highlight.ranges.length; ++i) {
+                const range = highlight.ranges[i];
+                const rangeLength = range.endColumn - range.startColumn + 1;
+                if (rangeLength !== 10 || (range.startColumn % 11)) {
+                    InspectorTest.addResult("ERROR: unexpected highlight result: i=" + range.startColumn + ", length=" + rangeLength);
+                    break;
                 }
+                ++commentsFound;
             }
         }
         if (comments !== commentsFound)

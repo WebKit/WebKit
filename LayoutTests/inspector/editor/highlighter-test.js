@@ -9,9 +9,10 @@ InspectorTest.dumpTextModel = function(textModel)
         var highlight = textModel.getAttribute(i, "highlight");
         var result = (i + 1) + " : " + line + " :";
         if (highlight) {
-            for (var j = 0; j < line.length; ++j)
-                if (highlight[j])
-                    result += " " + highlight[j].tokenType + "[" + j + "-" + (j + highlight[j].length) + "]";
+            for (var j = 0; j < highlight.ranges.length; ++j) {
+                var range = highlight.ranges[j];
+                result += " " + range.token + "[" + range.startColumn + "-" + (range.endColumn + 1) + "]";
+            }
         } else
             result += " null";
         lines.push(result);
