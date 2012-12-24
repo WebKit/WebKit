@@ -1,3 +1,17 @@
+2012-12-24  Kondapally Kalyan  <kalyan.kondapally@intel.com>
+
+        [EFL [WebGL] GLES2 detection is broken.
+        https://bugs.webkit.org/show_bug.cgi?id=105677
+
+        We use the logic in FindGLES.cmake to detect GLES2 support during compile time.
+        OPENGLES2_FOUND is never set, even though OPENGLES2_INCLUDE_DIR and OPENGLES2_LIBRARY
+        contain right information. The name passed to find_package_handle_standard_args seems to be the issue here.
+        This patch changes the name passed to find_package_handle_standard_args to OPENGLES2.
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        * Source/cmake/FindGLES.cmake:
+
 2012-12-20  Martin Robinson  <mrobinson@igalia.com>
 
         [GTK] Remove plugin process configuration option
