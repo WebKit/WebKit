@@ -32,14 +32,11 @@
 #include "Logging.h"
 #include "SandboxExtension.h"
 #include "StatisticsData.h"
-#include "WebApplicationCacheManager.h"
 #include "WebContextMessages.h"
 #include "WebCookieManager.h"
 #include "WebCoreArgumentCoders.h"
-#include "WebDatabaseManager.h"
 #include "WebFrame.h"
 #include "WebFrameNetworkingContext.h"
-#include "WebGeolocationManagerMessages.h"
 #include "WebKeyValueStorageManager.h"
 #include "WebMediaCacheManager.h"
 #include "WebMemorySampler.h"
@@ -50,7 +47,6 @@
 #include "WebProcessCreationParameters.h"
 #include "WebProcessMessages.h"
 #include "WebProcessProxyMessages.h"
-#include "WebResourceCacheManager.h"
 #include <JavaScriptCore/JSLock.h>
 #include <JavaScriptCore/MemoryStatistics.h>
 #include <WebCore/AXObjectCache.h>
@@ -133,6 +129,11 @@ WebProcess::WebProcess()
 #endif
     , m_textCheckerState()
     , m_geolocationManager(this)
+    , m_applicationCacheManager(this)
+    , m_resourceCacheManager(this)
+#if ENABLE(SQL_DATABASE)
+    , m_databaseManager(this)
+#endif
 #if ENABLE(BATTERY_STATUS)
     , m_batteryManager(this)
 #endif
@@ -576,22 +577,10 @@ void WebProcess::didReceiveMessage(CoreIPC::Connection* connection, CoreIPC::Mes
         return;
     }
 
-    if (messageID.is<CoreIPC::MessageClassWebApplicationCacheManager>()) {
-        WebApplicationCacheManager::shared().didReceiveMessage(connection, messageID, decoder);
-        return;
-    }
-
     if (messageID.is<CoreIPC::MessageClassWebCookieManager>()) {
         WebCookieManager::shared().didReceiveMessage(connection, messageID, decoder);
         return;
     }
-
-#if ENABLE(SQL_DATABASE)
-    if (messageID.is<CoreIPC::MessageClassWebDatabaseManager>()) {
-        WebDatabaseManager::shared().didReceiveMessage(connection, messageID, decoder);
-        return;
-    }
-#endif
 
     if (messageID.is<CoreIPC::MessageClassWebKeyValueStorageManager>()) {
         WebKeyValueStorageManager::shared().didReceiveMessage(connection, messageID, decoder);
@@ -600,11 +589,6 @@ void WebProcess::didReceiveMessage(CoreIPC::Connection* connection, CoreIPC::Mes
 
     if (messageID.is<CoreIPC::MessageClassWebMediaCacheManager>()) {
         WebMediaCacheManager::shared().didReceiveMessage(connection, messageID, decoder);
-        return;
-    }
-    
-    if (messageID.is<CoreIPC::MessageClassWebResourceCacheManager>()) {
-        WebResourceCacheManager::shared().didReceiveMessage(connection, messageID, decoder);
         return;
     }
 

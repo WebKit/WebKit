@@ -344,7 +344,7 @@ void InjectedBundle::resetOriginAccessWhitelists()
 void InjectedBundle::clearAllDatabases()
 {
 #if ENABLE(SQL_DATABASE)
-    WebDatabaseManager::shared().deleteAllDatabases();
+    WebProcess::shared().databaseManager().deleteAllDatabases();
 #endif
 }
 
@@ -353,13 +353,13 @@ void InjectedBundle::setDatabaseQuota(uint64_t quota)
 #if ENABLE(SQL_DATABASE)
     // Historically, we've used the following (somewhat non-sensical) string
     // for the databaseIdentifier of local files.
-    WebDatabaseManager::shared().setQuotaForOrigin("file__0", quota);
+    WebProcess::shared().databaseManager().setQuotaForOrigin("file__0", quota);
 #endif
 }
 
 void InjectedBundle::clearApplicationCache()
 {
-    WebApplicationCacheManager::shared().deleteAllEntries();
+    WebProcess::shared().applicationCacheManager().deleteAllEntries();
 }
 
 void InjectedBundle::clearApplicationCacheForOrigin(const String& originString)
@@ -370,7 +370,7 @@ void InjectedBundle::clearApplicationCacheForOrigin(const String& originString)
 
 void InjectedBundle::setAppCacheMaximumSize(uint64_t size)
 {
-    WebApplicationCacheManager::shared().setAppCacheMaximumSize(size);
+    WebProcess::shared().applicationCacheManager().setAppCacheMaximumSize(size);
 }
 
 uint64_t InjectedBundle::appCacheUsageForOrigin(const String& originString)

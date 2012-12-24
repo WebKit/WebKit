@@ -39,10 +39,12 @@
 #include "SharedMemory.h"
 #include "TextCheckerState.h"
 #include "VisitedLinkTable.h"
+#include "WebApplicationCacheManager.h"
 #include "WebConnectionToUIProcess.h"
 #include "WebGeolocationManager.h"
 #include "WebIconDatabaseProxy.h"
 #include "WebPageGroupProxy.h"
+#include "WebResourceCacheManager.h"
 #include <WebCore/LinkHash.h>
 #include <wtf/Forward.h>
 #include <wtf/HashMap.h>
@@ -80,6 +82,10 @@ QT_END_NAMESPACE
 
 #if ENABLE(PLUGIN_PROCESS)
 #include "PluginProcessConnectionManager.h"
+#endif
+
+#if ENABLE(SQL_DATABASE)
+#include "WebDatabaseManager.h"
 #endif
 
 namespace WebCore {
@@ -175,6 +181,17 @@ public:
 
     // Geolocation
     WebGeolocationManager& geolocationManager() { return m_geolocationManager; }
+
+    // Application Cache
+    WebApplicationCacheManager& applicationCacheManager() { return m_applicationCacheManager; }
+
+    // Resource Cache
+    WebResourceCacheManager& resourceCacheManager() { return m_resourceCacheManager; }
+
+#if ENABLE(SQL_DATABASE)
+    // Database
+    WebDatabaseManager& databaseManager() { return m_databaseManager; }
+#endif
 
 #if ENABLE(BATTERY_STATUS)
     WebBatteryManager& batteryManager() { return m_batteryManager; }
@@ -368,6 +385,12 @@ private:
 
     TextCheckerState m_textCheckerState;
     WebGeolocationManager m_geolocationManager;
+    WebApplicationCacheManager m_applicationCacheManager;
+    WebResourceCacheManager m_resourceCacheManager;
+
+#if ENABLE(SQL_DATABASE)
+    WebDatabaseManager m_databaseManager;
+#endif
 #if ENABLE(BATTERY_STATUS)
     WebBatteryManager m_batteryManager;
 #endif

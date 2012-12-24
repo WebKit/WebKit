@@ -103,6 +103,11 @@ void NetworkProcess::didReceiveMessage(CoreIPC::Connection* connection, CoreIPC:
     if (m_messageReceiverMap.dispatchMessage(connection, messageID, decoder))
         return;
 
+    if (messageID.is<CoreIPC::MessageClassWebCookieManager>()) {
+        WebCookieManager::shared().didReceiveMessage(connection, messageID, decoder);
+        return;
+    }
+
     didReceiveNetworkProcessMessage(connection, messageID, decoder);
 }
 
@@ -159,11 +164,6 @@ void NetworkProcess::initializeNetworkProcess(const NetworkProcessCreationParame
 
     if (parameters.privateBrowsingEnabled)
         RemoteNetworkingContext::ensurePrivateBrowsingSession();
-
-    if (messageID.is<CoreIPC::MessageClassWebCookieManager>()) {
-        WebCookieManager::shared().didReceiveMessage(connection, messageID, decoder);
-        return;
-    }
 
 #if ENABLE(CUSTOM_PROTOCOLS)
     CustomProtocolManager::shared().connectionEstablished();
