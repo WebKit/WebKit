@@ -32,6 +32,7 @@
 #include <WebCore/CookieStorage.h>
 #include <WebCore/NetworkStorageSession.h>
 #include <WebCore/PlatformCookieJar.h>
+#include <wtf/MainThread.h>
 
 using namespace WebCore;
 
@@ -47,8 +48,15 @@ WebCookieManager::WebCookieManager()
 {
 }
 
+void WebCookieManager::setConnection(CoreIPC::Connection* connection)
+{
+    ASSERT(!m_connection);
+    m_connection = connection;
+}
+
 void WebCookieManager::didReceiveMessage(CoreIPC::Connection* connection, CoreIPC::MessageID messageID, CoreIPC::MessageDecoder& decoder)
 {
+    ASSERT(connection == m_connection.get());
     didReceiveWebCookieManagerMessage(connection, messageID, decoder);
 }
 
@@ -61,7 +69,7 @@ void WebCookieManager::getHostnamesWithCookies(uint64_t callbackID)
     Vector<String> hostnameList;
     copyToVector(hostnames, hostnameList);
 
-    WebProcess::shared().connection()->send(Messages::WebCookieManagerProxy::DidGetHostnamesWithCookies(hostnameList, callbackID), 0);
+    m_connection->send(Messages::WebCookieManagerProxy::DidGetHostnamesWithCookies(hostnameList, callbackID), 0);
 }
 
 void WebCookieManager::deleteCookiesForHostname(const String& hostname)
@@ -76,7 +84,7 @@ void WebCookieManager::deleteAllCookies()
 
 void WebCookieManager::startObservingCookieChanges()
 {
-    WebCore::startObservingCookieChanges();
+    WebCore::startObservingCookieChanges(cookiesDidChange);
 }
 
 void WebCookieManager::stopObservingCookieChanges()
@@ -84,9 +92,15 @@ void WebCookieManager::stopObservingCookieChanges()
     WebCore::stopObservingCookieChanges();
 }
 
+void WebCookieManager::cookiesDidChange()
+{
+    WebCookieManager::shared().dispatchCookiesDidChange();
+}
+
 void WebCookieManager::dispatchCookiesDidChange()
 {
-    WebProcess::shared().connection()->send(Messages::WebCookieManagerProxy::CookiesDidChange(), 0);
+    ASSERT(isMainThread());
+    m_connection->send(Messages::WebCookieManagerProxy::CookiesDidChange(), 0);
 }
 
 void WebCookieManager::setHTTPCookieAcceptPolicy(HTTPCookieAcceptPolicy policy)
@@ -96,7 +110,7 @@ void WebCookieManager::setHTTPCookieAcceptPolicy(HTTPCookieAcceptPolicy policy)
 
 void WebCookieManager::getHTTPCookieAcceptPolicy(uint64_t callbackID)
 {
-    WebProcess::shared().connection()->send(Messages::WebCookieManagerProxy::DidGetHTTPCookieAcceptPolicy(platformGetHTTPCookieAcceptPolicy(), callbackID), 0);
+    m_connection->send(Messages::WebCookieManagerProxy::DidGetHTTPCookieAcceptPolicy(platformGetHTTPCookieAcceptPolicy(), callbackID), 0);
 }
 
 } // namespace WebKit

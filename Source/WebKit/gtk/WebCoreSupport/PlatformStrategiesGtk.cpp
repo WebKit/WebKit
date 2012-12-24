@@ -76,10 +76,6 @@ VisitedLinkStrategy* PlatformStrategiesGtk::createVisitedLinkStrategy()
 }
 
 // CookiesStrategy
-void PlatformStrategiesGtk::notifyCookiesChanged()
-{
-}
-
 String PlatformStrategiesGtk::cookiesForDOM(const NetworkStorageSession& session, const KURL& firstParty, const KURL& url)
 {
     return WebCore::cookiesForDOM(session, firstParty, url);

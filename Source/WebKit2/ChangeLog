@@ -1,3 +1,73 @@
+2012-12-23  Alexey Proskuryakov  <ap@apple.com>
+
+        <rdar://problem/12808377> Network process should respect cookie accept policy
+        https://bugs.webkit.org/show_bug.cgi?id=105684
+
+        Reviewed by Sam Weinig.
+
+        * NetworkProcess/NetworkProcess.cpp:
+        (WebKit::NetworkProcess::initialize): Tell cookie manager which connection to
+        make calls on. Now that the code can run in either WebProcess or NetworkProcess,
+        it cannot use WebProcess singleton.
+        (WebKit::NetworkProcess::didReceiveMessage): Dispatch WebCookieManager messages.
+
+        * WebProcess/WebProcess.cpp:
+        (WebKit::WebProcess::initialize): Tell cookie manager which connection to
+        make calls on.
+
+        * UIProcess/Downloads/DownloadProxy.cpp:
+        (WebKit::DownloadProxy::didReceiveAuthenticationChallenge): Changed to use
+        WebContext::networkingProcessConnection() instead of deciding upon the connection here.
+
+        * UIProcess/Network/NetworkProcessProxy.cpp:
+        (WebKit::NetworkProcessProxy::didReceiveMessage): Call m_webContext->dispatchMessage),
+        as WebCookieManagerProxy handlers are registered on the context. This may seem wasteful,
+        but a lot of registered managers will need the ame handling soon.
+
+        * UIProcess/WebContext.cpp:
+        (WebKit::WebContext::networkingProcessConnection): Added a way to get connection
+        to whichever process performs networking.
+        (WebKit::WebContext::removeNetworkProcessProxy): Invalidate cookie manager proxy,
+        so that expected responses could be cleared.
+        (WebKit::WebContext::disconnectProcess): Updated a FIXME.
+
+        * UIProcess/WebContext.h: Deleted deprecatedSharedProcess().
+        (WebKit::WebContext::networkingProcessConnection): Added.
+        (WebKit::WebContext::sendToNetworkingProcess): Added.
+        (WebKit::WebContext::sendToNetworkingProcessRelaunchingIfNecessary): Added.
+
+        * UIProcess/WebCookieManagerProxy.cpp:
+        (WebKit::WebCookieManagerProxy::shouldTerminate): Should not prevent WebProcess
+        termination when NetworkProcess is in use.
+        (WebKit::WebCookieManagerProxy::getHostnamesWithCookies): Removed a useless ASSERT
+        that neiter documents expectations nor helps find bugs. Send a message to correct
+        process, whether WebProcess or NetworkProcess.
+        (WebKit::WebCookieManagerProxy::deleteCookiesForHostname): Ditto.
+        (WebKit::WebCookieManagerProxy::deleteAllCookies): Ditto.
+        (WebKit::WebCookieManagerProxy::startObservingCookieChanges): Ditto.
+        (WebKit::WebCookieManagerProxy::stopObservingCookieChanges): Ditto.
+        (WebKit::WebCookieManagerProxy::setHTTPCookieAcceptPolicy): Ditto.
+        (WebKit::WebCookieManagerProxy::getHTTPCookieAcceptPolicy): Ditto.
+
+        * WebProcess/Cookies/WebCookieManager.h:
+        * WebProcess/Cookies/WebCookieManager.cpp: Made the class usable in either WebProcess
+        or NetworkProcess.
+        (WebKit::WebCookieManager::setConnection): WebCookieManager now remembers which
+        connection to talk back on.
+        (WebKit::WebCookieManager::didReceiveMessage): Added an assertion that stored connection
+        matches the one being used to reciev messages.
+        (WebKit::WebCookieManager::getHostnamesWithCookies): Use the stored connection to
+        send a reply.
+        (WebKit::WebCookieManager::startObservingCookieChanges): Pass a callback function,
+        so that WebCore doesn't have to use a platform strategy.
+        (WebKit::WebCookieManager::cookiesDidChange): The new callback.
+        (WebKit::WebCookieManager::dispatchCookiesDidChange): Use the stored connection.
+        (WebKit::WebCookieManager::getHTTPCookieAcceptPolicy): Use the stored connection.
+
+        * WebProcess/WebCoreSupport/WebPlatformStrategies.cpp:
+        * WebProcess/WebCoreSupport/WebPlatformStrategies.h:
+        Removed notifyCookiesChanged() which is no longer part of CookiesStrategy.
+
 2012-12-22  Sam Weinig  <sam@webkit.org>
 
         Make CustomProtocolManager a MessageReceiver to remove more special casing

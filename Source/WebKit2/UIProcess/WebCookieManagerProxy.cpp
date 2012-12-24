@@ -60,7 +60,8 @@ void WebCookieManagerProxy::invalidate()
 
 bool WebCookieManagerProxy::shouldTerminate(WebProcessProxy*) const
 {
-    return m_arrayCallbacks.isEmpty() && m_httpCookieAcceptPolicyCallbacks.isEmpty();
+    return m_webContext->processModel() != ProcessModelSharedSecondaryProcess
+        || (m_arrayCallbacks.isEmpty() && m_httpCookieAcceptPolicyCallbacks.isEmpty());
 }
 
 void WebCookieManagerProxy::initializeClient(const WKCookieManagerClient* client)
@@ -75,14 +76,11 @@ void WebCookieManagerProxy::didReceiveMessage(CoreIPC::Connection* connection, C
 
 void WebCookieManagerProxy::getHostnamesWithCookies(PassRefPtr<ArrayCallback> prpCallback)
 {
-    ASSERT(m_webContext);
-
     RefPtr<ArrayCallback> callback = prpCallback;
     uint64_t callbackID = callback->callbackID();
     m_arrayCallbacks.set(callbackID, callback.release());
 
-    // FIXME (Multi-WebProcess): <rdar://problem/12239765> Cookies shouldn't be stored in the web process.
-    m_webContext->sendToAllProcessesRelaunchingThemIfNecessary(Messages::WebCookieManager::GetHostnamesWithCookies(callbackID));
+    m_webContext->sendToNetworkingProcessRelaunchingIfNecessary(Messages::WebCookieManager::GetHostnamesWithCookies(callbackID));
 }
     
 void WebCookieManagerProxy::didGetHostnamesWithCookies(const Vector<String>& hostnameList, uint64_t callbackID)
@@ -104,26 +102,22 @@ void WebCookieManagerProxy::didGetHostnamesWithCookies(const Vector<String>& hos
 
 void WebCookieManagerProxy::deleteCookiesForHostname(const String& hostname)
 {
-    ASSERT(m_webContext);
-    m_webContext->sendToAllProcessesRelaunchingThemIfNecessary(Messages::WebCookieManager::DeleteCookiesForHostname(hostname));
+    m_webContext->sendToNetworkingProcessRelaunchingIfNecessary(Messages::WebCookieManager::DeleteCookiesForHostname(hostname));
 }
 
 void WebCookieManagerProxy::deleteAllCookies()
 {
-    ASSERT(m_webContext);
-    m_webContext->sendToAllProcessesRelaunchingThemIfNecessary(Messages::WebCookieManager::DeleteAllCookies());
+    m_webContext->sendToNetworkingProcessRelaunchingIfNecessary(Messages::WebCookieManager::DeleteAllCookies());
 }
 
 void WebCookieManagerProxy::startObservingCookieChanges()
 {
-    ASSERT(m_webContext);
-    m_webContext->sendToAllProcessesRelaunchingThemIfNecessary(Messages::WebCookieManager::StartObservingCookieChanges());
+    m_webContext->sendToNetworkingProcessRelaunchingIfNecessary(Messages::WebCookieManager::StartObservingCookieChanges());
 }
 
 void WebCookieManagerProxy::stopObservingCookieChanges()
 {
-    ASSERT(m_webContext);
-    m_webContext->sendToAllProcesses(Messages::WebCookieManager::StopObservingCookieChanges());
+    m_webContext->sendToNetworkingProcessRelaunchingIfNecessary(Messages::WebCookieManager::StopObservingCookieChanges());
 }
 
 void WebCookieManagerProxy::cookiesDidChange()
@@ -133,7 +127,6 @@ void WebCookieManagerProxy::cookiesDidChange()
 
 void WebCookieManagerProxy::setHTTPCookieAcceptPolicy(HTTPCookieAcceptPolicy policy)
 {
-    ASSERT(m_webContext);
 #if PLATFORM(MAC)
     persistHTTPCookieAcceptPolicy(policy);
 #endif
@@ -141,21 +134,17 @@ void WebCookieManagerProxy::setHTTPCookieAcceptPolicy(HTTPCookieAcceptPolicy pol
     m_webContext->setInitialHTTPCookieAcceptPolicy(policy);
 #endif
 
-    m_webContext->sendToAllProcessesRelaunchingThemIfNecessary(Messages::WebCookieManager::SetHTTPCookieAcceptPolicy(policy));
+    m_webContext->sendToNetworkingProcessRelaunchingIfNecessary(Messages::WebCookieManager::SetHTTPCookieAcceptPolicy(policy));
 }
 
 void WebCookieManagerProxy::getHTTPCookieAcceptPolicy(PassRefPtr<HTTPCookieAcceptPolicyCallback> prpCallback)
 {
-    ASSERT(m_webContext);
-
     RefPtr<HTTPCookieAcceptPolicyCallback> callback = prpCallback;
 
     uint64_t callbackID = callback->callbackID();
     m_httpCookieAcceptPolicyCallbacks.set(callbackID, callback.release());
 
-    // FIXME (Multi-WebProcess): <rdar://problem/12240189> Make cookie policies work with per-tab WebProcess.
-    // We can't ber asking all web processes for this information.
-    m_webContext->sendToAllProcessesRelaunchingThemIfNecessary(Messages::WebCookieManager::GetHTTPCookieAcceptPolicy(callbackID));
+    m_webContext->sendToNetworkingProcessRelaunchingIfNecessary(Messages::WebCookieManager::GetHTTPCookieAcceptPolicy(callbackID));
 }
 
 void WebCookieManagerProxy::didGetHTTPCookieAcceptPolicy(uint32_t policy, uint64_t callbackID)

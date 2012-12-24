@@ -95,10 +95,6 @@ VisitedLinkStrategy* PlatformStrategiesQt::createVisitedLinkStrategy()
     return this;
 }
 
-void PlatformStrategiesQt::notifyCookiesChanged()
-{
-}
-
 String PlatformStrategiesQt::cookiesForDOM(const NetworkStorageSession& session, const KURL& firstParty, const KURL& url)
 {
     return WebCore::cookiesForDOM(session, firstParty, url);

@@ -46,11 +46,10 @@ class WebCookieManager {
     WTF_MAKE_NONCOPYABLE(WebCookieManager);
 public:
     static WebCookieManager& shared();
+    void setConnection(CoreIPC::Connection*);
 
     void didReceiveMessage(CoreIPC::Connection*, CoreIPC::MessageID, CoreIPC::MessageDecoder&);
     
-    void dispatchCookiesDidChange();
-
     void setHTTPCookieAcceptPolicy(HTTPCookieAcceptPolicy);
 
 #if USE(SOUP)
@@ -71,7 +70,12 @@ private:
     void startObservingCookieChanges();
     void stopObservingCookieChanges();
 
+    static void cookiesDidChange();
+    void dispatchCookiesDidChange();
+
     void didReceiveWebCookieManagerMessage(CoreIPC::Connection*, CoreIPC::MessageID, CoreIPC::MessageDecoder&);
+
+    RefPtr<CoreIPC::Connection> m_connection;
 };
 
 } // namespace WebKit

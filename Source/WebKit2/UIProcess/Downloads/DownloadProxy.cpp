@@ -122,19 +122,7 @@ void DownloadProxy::didReceiveAuthenticationChallenge(const AuthenticationChalle
     if (!m_webContext)
         return;
 
-    RefPtr<CoreIPC::Connection> connection;
-
-    if (m_webContext->usesNetworkProcess()) {
-#if ENABLE(NETWORK_PROCESS)
-        if (NetworkProcessProxy* networkProcess = m_webContext->networkProcess())
-            connection = networkProcess->connection();
-#endif
-    } else {
-        // FIXME: Remove WebContext::deprecatedSharedProcess().
-        connection = m_webContext->deprecatedSharedProcess()->connection();
-    }
-
-    RefPtr<AuthenticationChallengeProxy> authenticationChallengeProxy = AuthenticationChallengeProxy::create(authenticationChallenge, challengeID, connection.get());
+    RefPtr<AuthenticationChallengeProxy> authenticationChallengeProxy = AuthenticationChallengeProxy::create(authenticationChallenge, challengeID, m_webContext->networkingProcessConnection());
 
     m_webContext->downloadClient().didReceiveAuthenticationChallenge(m_webContext.get(), this, authenticationChallengeProxy.get());
 }

@@ -57,7 +57,6 @@ private:
     virtual WebCore::VisitedLinkStrategy* createVisitedLinkStrategy();
     
     // WebCore::CookiesStrategy
-    virtual void notifyCookiesChanged();
     virtual String cookiesForDOM(const WebCore::NetworkStorageSession&, const WebCore::KURL& firstParty, const WebCore::KURL&);
     virtual void setCookiesFromDOM(const WebCore::NetworkStorageSession&, const WebCore::KURL& firstParty, const WebCore::KURL&, const String&);
     virtual bool cookiesEnabled(const WebCore::NetworkStorageSession&, const WebCore::KURL& firstParty, const WebCore::KURL&);

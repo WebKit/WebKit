@@ -41,8 +41,6 @@ struct Cookie;
 
 class CookiesStrategy {
 public:
-    virtual void notifyCookiesChanged() = 0;
-
     virtual String cookiesForDOM(const NetworkStorageSession&, const KURL& firstParty, const KURL&) = 0;
     virtual void setCookiesFromDOM(const NetworkStorageSession&, const KURL& firstParty, const KURL&, const String& cookieString) = 0;
     virtual bool cookiesEnabled(const NetworkStorageSession&, const KURL& firstParty, const KURL&) = 0;

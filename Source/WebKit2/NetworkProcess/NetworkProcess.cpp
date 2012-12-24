@@ -36,6 +36,7 @@
 #include "NetworkProcessCreationParameters.h"
 #include "NetworkProcessProxyMessages.h"
 #include "RemoteNetworkingContext.h"
+#include "WebCookieManager.h"
 #include <WebCore/InitializeLogging.h>
 #include <WebCore/ResourceRequest.h>
 #include <WebCore/RunLoop.h>
@@ -80,6 +81,7 @@ void NetworkProcess::initialize(CoreIPC::Connection::Identifier serverIdentifier
     m_uiConnection->open();
 
     m_downloadsAuthenticationManager.setConnection(m_uiConnection.get());
+    WebCookieManager::shared().setConnection(m_uiConnection.get());
 }
 
 void NetworkProcess::removeNetworkConnectionToWebProcess(NetworkConnectionToWebProcess* connection)
@@ -157,6 +159,11 @@ void NetworkProcess::initializeNetworkProcess(const NetworkProcessCreationParame
 
     if (parameters.privateBrowsingEnabled)
         RemoteNetworkingContext::ensurePrivateBrowsingSession();
+
+    if (messageID.is<CoreIPC::MessageClassWebCookieManager>()) {
+        WebCookieManager::shared().didReceiveMessage(connection, messageID, decoder);
+        return;
+    }
 
 #if ENABLE(CUSTOM_PROTOCOLS)
     CustomProtocolManager::shared().connectionEstablished();

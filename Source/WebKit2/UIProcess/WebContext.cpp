@@ -319,12 +319,20 @@ void WebContext::setMaximumNumberOfProcesses(unsigned maximumNumberOfProcesses)
         m_webProcessCountLimit = maximumNumberOfProcesses;
 }
 
-WebProcessProxy* WebContext::deprecatedSharedProcess()
+CoreIPC::Connection* WebContext::networkingProcessConnection()
 {
-    ASSERT(m_processModel == ProcessModelSharedSecondaryProcess);
-    if (m_processes.isEmpty())
-        return 0;
-    return m_processes[0].get();
+    switch (m_processModel) {
+    case ProcessModelSharedSecondaryProcess:
+        return m_processes[0]->connection();
+    case ProcessModelMultipleSecondaryProcesses:
+#if ENABLE(NETWORK_PROCESS)
+        return m_networkProcess->connection();
+#else
+        break;
+#endif
+    }
+    ASSERT_NOT_REACHED();
+    return 0;
 }
 
 void WebContext::languageChanged(void* context)
@@ -394,6 +402,8 @@ void WebContext::removeNetworkProcessProxy(NetworkProcessProxy* networkProcessPr
     ASSERT(networkProcessProxy == m_networkProcess.get());
     
     m_networkProcess = nullptr;
+
+    m_cookieManagerProxy->invalidate();
 }
 
 void WebContext::getNetworkProcessConnection(PassRefPtr<Messages::WebProcessProxy::GetNetworkProcessConnection::DelayedReply> reply)
@@ -628,7 +638,7 @@ void WebContext::disconnectProcess(WebProcessProxy* process)
     if (m_haveInitialEmptyProcess && process == m_processes.last())
         m_haveInitialEmptyProcess = false;
 
-    // FIXME (Multi-WebProcess): <rdar://problem/12239765> All the invalidation calls below are still necessary in multi-process mode, but they should only affect data structures pertaining to the process being disconnected.
+    // FIXME (Multi-WebProcess): <rdar://problem/12239765> Some of the invalidation calls below are still necessary in multi-process mode, but they should only affect data structures pertaining to the process being disconnected.
     // Clearing everything causes assertion failures, so it's less trouble to skip that for now.
     if (m_processModel != ProcessModelSharedSecondaryProcess) {
         RefPtr<WebProcessProxy> protect(process);

@@ -79,10 +79,6 @@ VisitedLinkStrategy* PlatformStrategiesWinCE::createVisitedLinkStrategy()
     return this;
 }
 
-void PlatformStrategiesWinCE::notifyCookiesChanged()
-{
-}
-
 String PlatformStrategiesWinCE::cookiesForDOM(const NetworkStorageSession& session, const KURL& firstParty, const KURL& url)
 {
     return WebCore::cookiesForDOM(session, firstParty, url);

@@ -35,7 +35,7 @@ String signedPublicKeyAndChallengeString(unsigned, const String&, const KURL&) {
 void getSupportedKeySizes(Vector<String>&) { notImplemented(); }
 
 #if !USE(CFNETWORK)
-void startObservingCookieChanges() { notImplemented(); }
+void startObservingCookieChanges(CookieChangeCallbackPtr) { notImplemented(); }
 void stopObservingCookieChanges() { notImplemented(); }
 #endif
 

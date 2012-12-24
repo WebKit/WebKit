@@ -50,10 +50,13 @@
 #include <wtf/text/StringHash.h>
 #include <wtf/text/WTFString.h>
 
+#if ENABLE(NETWORK_PROCESS)
+#include "NetworkProcessProxy.h"
+#endif
+
 namespace WebKit {
 
 class DownloadProxy;
-class NetworkProcessProxy;
 class WebApplicationCacheManagerProxy;
 class WebCookieManagerProxy;
 class WebDatabaseManagerProxy;
@@ -116,11 +119,15 @@ public:
     void setMaximumNumberOfProcesses(unsigned); // Can only be called when there are no processes running.
     unsigned maximumNumberOfProcesses() const { return m_webProcessCountLimit; }
 
-    // FIXME (Multi-WebProcess): Remove. No code should assume that there is a shared process.
-    WebProcessProxy* deprecatedSharedProcess();
+    // WebProcess or NetworkProcess as approporiate for current process model. The connection must be non-null.
+    CoreIPC::Connection* networkingProcessConnection();
 
     template<typename U> void sendToAllProcesses(const U& message);
     template<typename U> void sendToAllProcessesRelaunchingThemIfNecessary(const U& message);
+
+    // Sends the message to WebProcess or NetworkProcess as approporiate for current process model.
+    template<typename U> void sendToNetworkingProcess(const U& message);
+    template<typename U> void sendToNetworkingProcessRelaunchingIfNecessary(const U& message);
     
     void processDidFinishLaunching(WebProcessProxy*);
 
@@ -473,6 +480,44 @@ private:
     bool m_ignoreTLSErrors;
 #endif
 };
+
+template<typename U> inline void WebContext::sendToNetworkingProcess(const U& message)
+{
+    switch (m_processModel) {
+    case ProcessModelSharedSecondaryProcess:
+        if (m_processes[0]->canSendMessage())
+            m_processes[0]->send(message, 0);
+        return;
+    case ProcessModelMultipleSecondaryProcesses:
+#if ENABLE(NETWORK_PROCESS)
+        if (m_networkProcess->canSendMessage())
+            m_networkProcess->send(message, 0);
+        return;
+#else
+        break;
+#endif
+    }
+    ASSERT_NOT_REACHED();
+}
+
+template<typename U> void WebContext::sendToNetworkingProcessRelaunchingIfNecessary(const U& message)
+{
+    switch (m_processModel) {
+    case ProcessModelSharedSecondaryProcess:
+        ensureSharedWebProcess();
+        m_processes[0]->send(message, 0);
+        return;
+    case ProcessModelMultipleSecondaryProcesses:
+#if ENABLE(NETWORK_PROCESS)
+        ensureNetworkProcess();
+        m_networkProcess->send(message, 0);
+        return;
+#else
+        break;
+#endif
+    }
+    ASSERT_NOT_REACHED();
+}
 
 template<typename U> inline void WebContext::sendToAllProcesses(const U& message)
 {

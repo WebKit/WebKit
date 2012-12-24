@@ -22,36 +22,31 @@
 #include "CookieJarSoup.h"
 #include "NotImplemented.h"
 
-#if USE(PLATFORM_STRATEGIES)
-#include "CookiesStrategy.h"
-#include "PlatformStrategies.h"
-#endif
-
 #include <stdio.h>
 
 namespace WebCore {
 
-#if USE(PLATFORM_STRATEGIES)
+static CookieChangeCallbackPtr cookieChangeCallback;
+
 static void soupCookiesChanged(SoupCookieJar* jar, SoupCookie*, SoupCookie*, gpointer)
 {
     if (jar != soupCookieJar())
         return;
-    platformStrategies()->cookiesStrategy()->notifyCookiesChanged();
+    cookieChangeCallback();
 }
-#endif
 
-void startObservingCookieChanges()
+void startObservingCookieChanges(CookieChangeCallbackPtr callback)
 {
-#if USE(PLATFORM_STRATEGIES)
+    ASSERT(!cookieChangeCallback);
+    cookieChangeCallback = callback;
+
     g_signal_connect(soupCookieJar(), "changed", G_CALLBACK(soupCookiesChanged), 0);
-#endif
 }
 
 void stopObservingCookieChanges()
 {
-#if USE(PLATFORM_STRATEGIES)
     g_signal_handlers_disconnect_by_func(soupCookieJar(), reinterpret_cast<void*>(soupCookiesChanged), 0);
-#endif
+    cookieChangeCallback = 0;
 }
 
 }

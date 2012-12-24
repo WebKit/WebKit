@@ -182,6 +182,7 @@ void WebProcess::initialize(CoreIPC::Connection::Identifier serverIdentifier, Ru
     m_runLoop = runLoop;
 
     m_authenticationManager.setConnection(m_connection.get());
+    WebCookieManager::shared().setConnection(m_connection.get());
 }
 
 void WebProcess::didCreateDownload()

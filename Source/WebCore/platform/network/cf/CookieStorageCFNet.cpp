@@ -37,22 +37,16 @@
 #include <WebKitSystemInterface/WebKitSystemInterface.h>
 #endif
 
-#if USE(PLATFORM_STRATEGIES)
-#include "CookiesStrategy.h"
-#include "PlatformStrategies.h"
-#endif
-
 namespace WebCore {
 
 #if PLATFORM(WIN)
 
+static CookieChangeCallbackPtr cookieChangeCallback;
+
 static void notifyCookiesChangedOnMainThread(void*)
 {
     ASSERT(isMainThread());
-
-#if USE(PLATFORM_STRATEGIES)
-    platformStrategies()->cookiesStrategy()->notifyCookiesChanged();
-#endif
+    cookieChangeCallback();
 }
 
 static void notifyCookiesChanged(CFHTTPCookieStorageRef, void *)
@@ -71,9 +65,12 @@ static inline CFRunLoopRef cookieStorageObserverRunLoop()
     return loaderRunLoop();
 }
 
-void startObservingCookieChanges()
+void startObservingCookieChanges(CookieChangeCallbackPtr callback)
 {
     ASSERT(isMainThread());
+
+    ASSERT(!cookieChangeCallback);
+    cookieChangeCallback = callback;
 
     CFRunLoopRef runLoop = cookieStorageObserverRunLoop();
     ASSERT(runLoop);
@@ -88,6 +85,8 @@ void startObservingCookieChanges()
 void stopObservingCookieChanges()
 {
     ASSERT(isMainThread());
+
+    cookieChangeCallback = 0;
 
     CFRunLoopRef runLoop = cookieStorageObserverRunLoop();
     ASSERT(runLoop);

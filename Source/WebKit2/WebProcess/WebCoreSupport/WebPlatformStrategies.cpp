@@ -109,11 +109,6 @@ VisitedLinkStrategy* WebPlatformStrategies::createVisitedLinkStrategy()
 
 // CookiesStrategy
 
-void WebPlatformStrategies::notifyCookiesChanged()
-{
-    WebCookieManager::shared().dispatchCookiesDidChange();
-}
-
 String WebPlatformStrategies::cookiesForDOM(const NetworkStorageSession& session, const KURL& firstParty, const KURL& url)
 {
 #if ENABLE(NETWORK_PROCESS)

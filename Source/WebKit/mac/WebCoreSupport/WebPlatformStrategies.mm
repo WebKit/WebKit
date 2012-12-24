@@ -83,10 +83,6 @@ VisitedLinkStrategy* WebPlatformStrategies::createVisitedLinkStrategy()
     return this;
 }
 
-void WebPlatformStrategies::notifyCookiesChanged()
-{
-}
-
 String WebPlatformStrategies::cookiesForDOM(const NetworkStorageSession& session, const KURL& firstParty, const KURL& url)
 {
     return WebCore::cookiesForDOM(session, firstParty, url);

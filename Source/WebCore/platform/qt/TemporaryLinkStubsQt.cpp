@@ -124,7 +124,7 @@ void setCookieStoragePrivateBrowsingEnabled(bool)
     notImplemented();
 }
 
-void startObservingCookieChanges()
+void startObservingCookieChanges(CookieChangeCallbackPtr)
 {
     notImplemented();
 }

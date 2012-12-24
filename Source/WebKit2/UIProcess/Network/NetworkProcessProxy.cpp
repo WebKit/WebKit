@@ -113,6 +113,9 @@ void NetworkProcessProxy::didReceiveMessage(CoreIPC::Connection* connection, Cor
     if (m_messageReceiverMap.dispatchMessage(connection, messageID, decoder))
         return;
 
+    if (m_webContext->dispatchMessage(connection, messageID, decoder))
+        return;
+
 #if ENABLE(CUSTOM_PROTOCOLS)
     if (messageID.is<CoreIPC::MessageClassCustomProtocolManagerProxy>()) {
         m_customProtocolManagerProxy.didReceiveMessage(connection, messageID, decoder);

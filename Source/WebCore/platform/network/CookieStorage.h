@@ -29,7 +29,9 @@
 namespace WebCore {
 
 // These are always observing the shared cookie storage, even when in private browsing mode.
-void startObservingCookieChanges();
+
+typedef void(*CookieChangeCallbackPtr)();
+void startObservingCookieChanges(CookieChangeCallbackPtr);
 void stopObservingCookieChanges();
 
 }
