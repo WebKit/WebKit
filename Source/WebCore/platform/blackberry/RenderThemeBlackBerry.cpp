@@ -1045,8 +1045,8 @@ bool RenderThemeBlackBerry::paintMediaSliderTrack(RenderObject* object, const Pa
     int wLoaded = ceil((w - mediaSliderThumbWidth * fullScreenMultiplier) * loaded + mediaSliderThumbWidth * fullScreenMultiplier);
 
     IntRect played(x, y, wPlayed, h);
-    IntRect buffered(x, ceil(y + mediaSliderOutlineWidth), wLoaded, ceil(h - 2 * mediaSliderOutlineWidth));
-
+    IntRect buffered(x, y, wLoaded, h);
+#if USE(SKIA)
     // This is to paint main slider bar.
     bool result = paintSliderTrackRect(object, paintInfo, rect2);
 
@@ -1057,6 +1057,21 @@ bool RenderThemeBlackBerry::paintMediaSliderTrack(RenderObject* object, const Pa
         // This is to paint played part of bar (left of slider thumb) using selection color.
         paintSliderTrackRect(object, paintInfo, played, selection, selection, selection, selection);
     }
+#else // GL renderer
+    static Image* mediaBackground = Image::loadPlatformResource("core_slider_video_bg").leakRef();
+    static Image* mediaPlayer = Image::loadPlatformResource("core_slider_played_bg").leakRef();
+    static Image* mediaCache = Image::loadPlatformResource("core_slider_cache").leakRef();
+
+    bool result = paintSliderTrackRect(object, paintInfo, rect2, mediaBackground);
+
+    if (loaded > 0 || position > 0) {
+        // This is to paint buffered bar.
+        paintSliderTrackRect(object, paintInfo, buffered, mediaCache);
+
+        // This is to paint played part of bar (left of slider thumb) using selection color.
+        paintSliderTrackRect(object, paintInfo, played, mediaPlayer);
+    }
+#endif // USE(SKIA)
     return result;
 #else
     UNUSED_PARAM(object);
@@ -1093,7 +1108,7 @@ bool RenderThemeBlackBerry::paintMediaSliderThumb(RenderObject* object, const Pa
 
     return true;
 #else // GL renderer
-    static Image* mediaSliderThumb = Image::loadPlatformResource("core_slider_handle_disabled").leakRef();
+    static Image* mediaSliderThumb = Image::loadPlatformResource("core_media_handle").leakRef();
 
     return paintMediaButton(paintInfo.context, rect, mediaSliderThumb);
 #endif // USE(SKIA)

@@ -129,6 +129,7 @@ audio::-webkit-media-controls-timeline, video::-webkit-media-controls-timeline {
     -webkit-appearance: media-slider;
     display: -webkit-box;
     -webkit-box-flex: 1;
+    margin-bottom: 2px;
 }
 
 video::-webkit-media-controls-fullscreen-fullscreen-button, audio::-webkit-media-controls-fullscreen-fullscreen-button {
