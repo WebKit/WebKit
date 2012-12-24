@@ -1,66 +1,59 @@
 <!doctype html>
+<html>
+    <head>
+        <style>
+            body { font: 16px/1.25 monospace; }
 
- <style>
-    #content {
-        -webkit-flow-into: flow1;
-        text-align: justify;
-        padding: 5px;
-    }
-    
-    #first-box {
-        border: 1px solid blue;
-        height:188px;
-    }
-    
-    #second-box {
-        margin:auto;
-        border: 1px solid green;
-        width:75%
-    }
-    
-    #region1, #region2, #region3 {
-        border: 1px solid black;
-        -webkit-flow-from: flow1;
-    }
+            #content {
+                -webkit-flow-into: flow1;
+                padding: 5px;
+            }
 
-    #region1 {
-        width: 400px;
-        height: 200px;
-    }
-    
-    #region2 {
-        width: 300px;
-        height: 100px;
-    }
+            #first-box {
+                border: 1px solid blue;
+                height:200px;
+            }
 
-    #region3 {
-        width: 0px;
-        height: 0px;
-    }
-</style>
+            #second-box {
+                margin:auto;
+                border: 1px solid green;
+                width:75%;
+            }
 
-<body>
+            #region1, #region2 {
+                border: 1px solid black;
+                -webkit-flow-from: flow1;
+            }
 
-<p>In the test case below, the green block's width should not vary and should use the first region to determine its width.
-It is overflowing downwards out of the blue block, and so the portion that overflows should continue to use the blue block's
-containing block width. The blue block does not exist in region two, so using some hypothetical made-up width is incorrect.
-The overflow should be spilling out of the top of region one and be painted in region two. 
+            #region1 {
+                width: 412px;
+                height: 210px;
+            }
 
-<div id="content">
-    <div id="first-box">
-        <div id="second-box">
-            <p>These lines should all fit to the width of the block in the first region and spill out of the bottom of the first
-            region.</P>
-             <p>These lines should all fit to the width of the block in the first region and spill out of the bottom of the first
-            region.</P>
-             <p>These lines should all fit to the width of the block in the first region and spill out of the bottom of the first
-            region.</P>
+            #region2 {
+                width: 300px;
+                height: 150px;
+            }
+            #p1, #p2, #p3 {
+                margin: 0;
+            }
+        </style>
+    </head>
+    <body>
+        <p>In the test case below, the green block's width should not vary and should use the first region to determine its width. It is overflowing downwards out of the blue block, and so the portion that overflows should continue to use the blue block's containing block width. The blue block does not exist in region two, so using some hypothetical made-up width is incorrect. The overflow should be spilling out of the top of region one and be painted in region two.</p>
+        <div id="content">
+            <div id="first-box">
+                <div id="second-box">
+                    <p id="p1">These lines should all fit to the width of the block in the first region and spill out of the bottom of the first region.</p>
+                    <p id="p2">These lines should all fit to the width of the block in the first region and spill out of the bottom of the first region.</p>
+                    <p id="p3">These lines should all fit to the width of the block in the first region and spill out of the bottom of the first region.</p>
+                </div>
+            </div>
         </div>
-    </div>
-</div>
 
-<div id="container">
-    <div id="region1"></div>
-    <div id="region2"></div>
-    <div id="region3"></div>
-</div>
+        <div id="container">
+            <div id="region1"></div>
+            <div id="region2"></div>
+        </div>
+    </body>
+</html>
