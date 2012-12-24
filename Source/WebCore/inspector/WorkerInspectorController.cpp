@@ -93,25 +93,25 @@ private:
 WorkerInspectorController::WorkerInspectorController(WorkerContext* workerContext)
     : m_workerContext(workerContext)
     , m_stateClient(adoptPtr(new WorkerStateClient(workerContext)))
-    , m_state(adoptPtr(new InspectorCompositeState(m_stateClient.get())))
+    , m_state(adoptPtr(new InspectorState(m_stateClient.get())))
     , m_instrumentingAgents(adoptPtr(new InstrumentingAgents()))
     , m_injectedScriptManager(InjectedScriptManager::createForWorker())
     , m_runtimeAgent(0)
 {
-    OwnPtr<InspectorRuntimeAgent> runtimeAgent = WorkerRuntimeAgent::create(m_instrumentingAgents.get(), m_state->createAgentState(), m_injectedScriptManager.get(), workerContext);
+    OwnPtr<InspectorRuntimeAgent> runtimeAgent = WorkerRuntimeAgent::create(m_instrumentingAgents.get(), m_state.get(), m_injectedScriptManager.get(), workerContext);
     m_runtimeAgent = runtimeAgent.get();
     m_agents.append(runtimeAgent.release());
 
-    OwnPtr<InspectorConsoleAgent> consoleAgent = WorkerConsoleAgent::create(m_instrumentingAgents.get(), m_state->createAgentState(), m_injectedScriptManager.get());
+    OwnPtr<InspectorConsoleAgent> consoleAgent = WorkerConsoleAgent::create(m_instrumentingAgents.get(), m_state.get(), m_injectedScriptManager.get());
 #if ENABLE(JAVASCRIPT_DEBUGGER)
-    OwnPtr<InspectorDebuggerAgent> debuggerAgent = WorkerDebuggerAgent::create(m_instrumentingAgents.get(), m_state->createAgentState(), workerContext, m_injectedScriptManager.get());
+    OwnPtr<InspectorDebuggerAgent> debuggerAgent = WorkerDebuggerAgent::create(m_instrumentingAgents.get(), m_state.get(), workerContext, m_injectedScriptManager.get());
     InspectorDebuggerAgent* debuggerAgentPtr = debuggerAgent.get();
     m_runtimeAgent->setScriptDebugServer(&debuggerAgent->scriptDebugServer());
     m_agents.append(debuggerAgent.release());
 
-    m_agents.append(InspectorProfilerAgent::create(m_instrumentingAgents.get(), consoleAgent.get(), workerContext, m_state->createAgentState(), m_injectedScriptManager.get()));
+    m_agents.append(InspectorProfilerAgent::create(m_instrumentingAgents.get(), consoleAgent.get(), workerContext, m_state.get(), m_injectedScriptManager.get()));
 #endif
-    m_agents.append(InspectorTimelineAgent::create(m_instrumentingAgents.get(), 0, m_state->createAgentState(), InspectorTimelineAgent::WorkerInspector, 0));
+    m_agents.append(InspectorTimelineAgent::create(m_instrumentingAgents.get(), 0, m_state.get(), InspectorTimelineAgent::WorkerInspector, 0));
     m_agents.append(consoleAgent.release());
 
     m_injectedScriptManager->injectedScriptHost()->init(0

@@ -57,7 +57,7 @@
 namespace WebCore {
 
 namespace TimelineAgentState {
-static const char enabled[] = "enabled";
+static const char timelineAgentEnabled[] = "timelineAgentEnabled";
 static const char timelineMaxCallStackDepth[] = "timelineMaxCallStackDepth";
 static const char includeMemoryDetails[] = "includeMemoryDetails";
 }
@@ -149,7 +149,7 @@ void InspectorTimelineAgent::clearFrontend()
 
 void InspectorTimelineAgent::restore()
 {
-    if (m_state->getBoolean(TimelineAgentState::enabled)) {
+    if (m_state->getBoolean(TimelineAgentState::timelineAgentEnabled)) {
         m_maxCallStackDepth = m_state->getLong(TimelineAgentState::timelineMaxCallStackDepth);
         ErrorString error;
         start(&error, &m_maxCallStackDepth);
@@ -170,12 +170,12 @@ void InspectorTimelineAgent::start(ErrorString*, const int* maxCallStackDepth)
 
     m_instrumentingAgents->setInspectorTimelineAgent(this);
     ScriptGCEvent::addEventListener(this);
-    m_state->setBoolean(TimelineAgentState::enabled, true);
+    m_state->setBoolean(TimelineAgentState::timelineAgentEnabled, true);
 }
 
 void InspectorTimelineAgent::stop(ErrorString*)
 {
-    if (!m_state->getBoolean(TimelineAgentState::enabled))
+    if (!m_state->getBoolean(TimelineAgentState::timelineAgentEnabled))
         return;
 
     m_instrumentingAgents->setInspectorTimelineAgent(0);
@@ -184,7 +184,7 @@ void InspectorTimelineAgent::stop(ErrorString*)
     clearRecordStack();
     m_gcEvents.clear();
 
-    m_state->setBoolean(TimelineAgentState::enabled, false);
+    m_state->setBoolean(TimelineAgentState::timelineAgentEnabled, false);
 }
 
 void InspectorTimelineAgent::setIncludeMemoryDetails(ErrorString*, bool value)

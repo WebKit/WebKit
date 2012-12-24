@@ -50,7 +50,7 @@
 namespace WebCore {
 
 namespace LayerTreeAgentState {
-static const char enabled[] = "enabled";
+static const char layerTreeAgentEnabled[] = "layerTreeAgentEnabled";
 };
 
 InspectorLayerTreeAgent::InspectorLayerTreeAgent(InstrumentingAgents* instrumentingAgents, InspectorState* state, Page* page)
@@ -78,7 +78,7 @@ void InspectorLayerTreeAgent::clearFrontend()
 
 void InspectorLayerTreeAgent::restore()
 {
-    if (m_state->getBoolean(LayerTreeAgentState::enabled))
+    if (m_state->getBoolean(LayerTreeAgentState::layerTreeAgentEnabled))
         enable(0);
 }
 
@@ -90,15 +90,15 @@ void InspectorLayerTreeAgent::reset()
 
 void InspectorLayerTreeAgent::enable(ErrorString*)
 {
-    m_state->setBoolean(LayerTreeAgentState::enabled, true);
+    m_state->setBoolean(LayerTreeAgentState::layerTreeAgentEnabled, true);
     m_instrumentingAgents->setInspectorLayerTreeAgent(this);
 }
 
 void InspectorLayerTreeAgent::disable(ErrorString*)
 {
-    if (!m_state->getBoolean(LayerTreeAgentState::enabled))
+    if (!m_state->getBoolean(LayerTreeAgentState::layerTreeAgentEnabled))
         return;
-    m_state->setBoolean(LayerTreeAgentState::enabled, false);
+    m_state->setBoolean(LayerTreeAgentState::layerTreeAgentEnabled, false);
     m_instrumentingAgents->setInspectorLayerTreeAgent(0);
 }
 

@@ -56,7 +56,7 @@ typedef WebCore::InspectorBackendDispatcher::DatabaseCommandHandler::ExecuteSQLC
 namespace WebCore {
 
 namespace DatabaseAgentState {
-static const char enabled[] = "enabled";
+static const char databaseAgentEnabled[] = "databaseAgentEnabled";
 };
 
 namespace {
@@ -241,7 +241,7 @@ void InspectorDatabaseAgent::enable(ErrorString*)
     if (m_enabled)
         return;
     m_enabled = true;
-    m_state->setBoolean(DatabaseAgentState::enabled, m_enabled);
+    m_state->setBoolean(DatabaseAgentState::databaseAgentEnabled, m_enabled);
 
     DatabaseResourcesMap::iterator databasesEnd = m_resources.end();
     for (DatabaseResourcesMap::iterator it = m_resources.begin(); it != databasesEnd; ++it)
@@ -253,12 +253,12 @@ void InspectorDatabaseAgent::disable(ErrorString*)
     if (!m_enabled)
         return;
     m_enabled = false;
-    m_state->setBoolean(DatabaseAgentState::enabled, m_enabled);
+    m_state->setBoolean(DatabaseAgentState::databaseAgentEnabled, m_enabled);
 }
 
 void InspectorDatabaseAgent::restore()
 {
-    m_enabled = m_state->getBoolean(DatabaseAgentState::enabled);
+    m_enabled = m_state->getBoolean(DatabaseAgentState::databaseAgentEnabled);
 }
 
 void InspectorDatabaseAgent::getDatabaseTableNames(ErrorString* error, const String& databaseId, RefPtr<TypeBuilder::Array<String> >& names)

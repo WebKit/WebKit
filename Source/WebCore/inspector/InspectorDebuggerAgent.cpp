@@ -94,7 +94,7 @@ void InspectorDebuggerAgent::enable()
 
 void InspectorDebuggerAgent::disable()
 {
-    m_state->remove(DebuggerAgentState::javaScriptBreakpoints);
+    m_state->setObject(DebuggerAgentState::javaScriptBreakpoints, InspectorObject::create());
     m_state->setLong(DebuggerAgentState::pauseOnExceptionsState, ScriptDebugServer::DontPauseOnExceptions);
     m_instrumentingAgents->setInspectorDebuggerAgent(0);
 

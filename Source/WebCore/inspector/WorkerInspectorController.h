@@ -48,7 +48,7 @@ class InspectorFrontend;
 class InspectorFrontendChannel;
 class InspectorInstrumentation;
 class InspectorRuntimeAgent;
-class InspectorCompositeState;
+class InspectorState;
 class InspectorStateClient;
 class InstrumentingAgents;
 class WorkerContext;
@@ -74,7 +74,7 @@ private:
 
     WorkerContext* m_workerContext;
     OwnPtr<InspectorStateClient> m_stateClient;
-    OwnPtr<InspectorCompositeState> m_state;
+    OwnPtr<InspectorState> m_state;
     OwnPtr<InstrumentingAgents> m_instrumentingAgents;
     OwnPtr<InjectedScriptManager> m_injectedScriptManager;
     InspectorRuntimeAgent* m_runtimeAgent;

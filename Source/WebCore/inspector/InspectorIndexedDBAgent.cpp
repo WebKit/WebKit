@@ -85,7 +85,7 @@ typedef WebCore::InspectorBackendDispatcher::CallbackBase RequestCallback;
 namespace WebCore {
 
 namespace IndexedDBAgentState {
-static const char enabled[] = "enabled";
+static const char indexedDBAgentEnabled[] = "indexedDBAgentEnabled";
 };
 
 namespace {
@@ -574,7 +574,7 @@ void InspectorIndexedDBAgent::clearFrontend()
 
 void InspectorIndexedDBAgent::restore()
 {
-    if (m_state->getBoolean(IndexedDBAgentState::enabled)) {
+    if (m_state->getBoolean(IndexedDBAgentState::indexedDBAgentEnabled)) {
         ErrorString error;
         enable(&error);
     }
@@ -582,12 +582,12 @@ void InspectorIndexedDBAgent::restore()
 
 void InspectorIndexedDBAgent::enable(ErrorString*)
 {
-    m_state->setBoolean(IndexedDBAgentState::enabled, true);
+    m_state->setBoolean(IndexedDBAgentState::indexedDBAgentEnabled, true);
 }
 
 void InspectorIndexedDBAgent::disable(ErrorString*)
 {
-    m_state->setBoolean(IndexedDBAgentState::enabled, false);
+    m_state->setBoolean(IndexedDBAgentState::indexedDBAgentEnabled, false);
 }
 
 static Frame* assertFrame(ErrorString* errorString, const String& frameId, InspectorPageAgent* pageAgent)

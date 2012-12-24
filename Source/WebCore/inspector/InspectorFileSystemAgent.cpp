@@ -77,7 +77,7 @@ typedef WebCore::InspectorBackendDispatcher::FileSystemCommandHandler::DeleteEnt
 namespace WebCore {
 
 namespace FileSystemAgentState {
-static const char enabled[] = "enabled";
+static const char fileSystemAgentEnabled[] = "fileSystemAgentEnabled";
 }
 
 namespace {
@@ -620,7 +620,7 @@ void InspectorFileSystemAgent::enable(ErrorString*)
     if (m_enabled)
         return;
     m_enabled = true;
-    m_state->setBoolean(FileSystemAgentState::enabled, m_enabled);
+    m_state->setBoolean(FileSystemAgentState::fileSystemAgentEnabled, m_enabled);
 }
 
 void InspectorFileSystemAgent::disable(ErrorString*)
@@ -628,7 +628,7 @@ void InspectorFileSystemAgent::disable(ErrorString*)
     if (!m_enabled)
         return;
     m_enabled = false;
-    m_state->setBoolean(FileSystemAgentState::enabled, m_enabled);
+    m_state->setBoolean(FileSystemAgentState::fileSystemAgentEnabled, m_enabled);
 }
 
 void InspectorFileSystemAgent::requestFileSystemRoot(ErrorString* error, const String& origin, const String& type, PassRefPtr<RequestFileSystemRootCallback> requestCallback)
@@ -698,12 +698,12 @@ void InspectorFileSystemAgent::deleteEntry(ErrorString* error, const String& url
 void InspectorFileSystemAgent::clearFrontend()
 {
     m_enabled = false;
-    m_state->setBoolean(FileSystemAgentState::enabled, m_enabled);
+    m_state->setBoolean(FileSystemAgentState::fileSystemAgentEnabled, m_enabled);
 }
 
 void InspectorFileSystemAgent::restore()
 {
-    m_enabled = m_state->getBoolean(FileSystemAgentState::enabled);
+    m_enabled = m_state->getBoolean(FileSystemAgentState::fileSystemAgentEnabled);
 }
 
 InspectorFileSystemAgent::InspectorFileSystemAgent(InstrumentingAgents* instrumentingAgents, InspectorPageAgent* pageAgent, InspectorState* state)

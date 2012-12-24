@@ -36,24 +36,22 @@
 #include "InspectorValues.h"
 #include <wtf/HashMap.h>
 #include <wtf/RefCounted.h>
-#include <wtf/Vector.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
 
 class InspectorStateClient;
 
-class InspectorStateUpdateListener {
-public:
-    virtual ~InspectorStateUpdateListener() { }
-    virtual void inspectorStateUpdated() = 0;
-};
-
 class InspectorState {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    InspectorState(InspectorStateUpdateListener*, PassRefPtr<InspectorObject>);
+    InspectorState(InspectorStateClient*);
     virtual ~InspectorState() {}
+
+    void loadFromCookie(const String& inspectorStateCookie);
+
+    void mute();
+    void unmute();
 
     bool getBoolean(const String& propertyName);
     String getString(const String& propertyName);
@@ -63,50 +61,18 @@ public:
 
     void setBoolean(const String& propertyName, bool value) { setValue(propertyName, InspectorBasicValue::create(value)); }
     void setString(const String& propertyName, const String& value) { setValue(propertyName, InspectorString::create(value)); }
-    void setLong(const String& propertyName, long value) { setValue(propertyName, InspectorBasicValue::create(static_cast<double>(value))); }
+    void setLong(const String& propertyName, long value) { setValue(propertyName, InspectorBasicValue::create((double)value)); }
     void setDouble(const String& propertyName, double value) { setValue(propertyName, InspectorBasicValue::create(value)); }
     void setObject(const String& propertyName, PassRefPtr<InspectorObject> value) { setValue(propertyName, value); }
 
     void remove(const String&);
-
 private:
     void updateCookie();
     void setValue(const String& propertyName, PassRefPtr<InspectorValue>);
 
-    // This gets called from InspectorCompositeState::loadFromCookie().
-    void setFromCookie(PassRefPtr<InspectorObject>);
-
-    friend class InspectorCompositeState;
-
-    InspectorStateUpdateListener* m_listener;
-    RefPtr<InspectorObject> m_properties;
-};
-
-class InspectorCompositeState : public InspectorStateUpdateListener {
-public:
-    InspectorCompositeState(InspectorStateClient* inspectorClient)
-        : m_client(inspectorClient)
-        , m_stateArray(InspectorArray::create())
-        , m_isMuted(false)
-    {
-    }
-    virtual ~InspectorCompositeState() { }
-
-    void mute();
-    void unmute();
-
-    InspectorState* createAgentState();
-    void loadFromCookie(const String&);
-
-private:
-    typedef Vector<OwnPtr<InspectorState> > InspectorStateVector;
-
-    virtual void inspectorStateUpdated();
-
     InspectorStateClient* m_client;
-    RefPtr<InspectorArray> m_stateArray;
-    bool m_isMuted;
-    InspectorStateVector m_states;
+    RefPtr<InspectorObject> m_properties;
+    bool m_isOnMute;
 };
 
 } // namespace WebCore
