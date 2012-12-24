@@ -52,6 +52,7 @@
 #include <WebCore/KURL.h>
 #include <WebCore/MIMETypeRegistry.h>
 #include <WebCore/Page.h>
+#include <wtf/UnusedParam.h>
 
 #if ENABLE(WEB_INTENTS)
 #include "InjectedBundleIntent.h"
@@ -355,12 +356,15 @@ void WKBundlePageDeliverIntentToFrame(WKBundlePageRef pageRef, WKBundleFrameRef 
 #endif
 }
 
-#if defined(ENABLE_INSPECTOR) && ENABLE_INSPECTOR
 WKBundleInspectorRef WKBundlePageGetInspector(WKBundlePageRef pageRef)
 {
+#if ENABLE(INSPECTOR)
     return toAPI(toImpl(pageRef)->inspector());
-}
+#else
+    UNUSED_PARAM(pageRef);
+    return 0;
 #endif
+}
 
 void WKBundlePageForceRepaint(WKBundlePageRef page)
 {

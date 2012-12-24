@@ -1,3 +1,16 @@
+2012-12-23  Seokju Kwon  <seokju.kwon@gmail.com>
+
+        Fix the incorrect use of preprocessor statement in API header
+        https://bugs.webkit.org/show_bug.cgi?id=105675
+
+        Reviewed by Sam Weinig.
+
+        Remove a preprocessor statement in WKBundlePage.h
+
+        * WebProcess/InjectedBundle/API/c/WKBundlePage.cpp:
+        (WKBundlePageGetInspector):
+        * WebProcess/InjectedBundle/API/c/WKBundlePage.h:
+
 2012-12-23  Sam Weinig  <sam@webkit.org>
 
         Switch WebCookieManager and AuthenticationManager to use the ChildProcess rather than holding on to a Connection

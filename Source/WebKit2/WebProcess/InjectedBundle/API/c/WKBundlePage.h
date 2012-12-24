@@ -434,9 +434,7 @@ WK_EXPORT void WKBundlePageListenForLayoutMilestones(WKBundlePageRef page, WKLay
 
 WK_EXPORT void WKBundlePageDeliverIntentToFrame(WKBundlePageRef page, WKBundleFrameRef frame, WKBundleIntentRef intent);
 
-#if defined(ENABLE_INSPECTOR) && ENABLE_INSPECTOR
 WK_EXPORT WKBundleInspectorRef WKBundlePageGetInspector(WKBundlePageRef page);
-#endif
 
 #ifdef __cplusplus
 }
