@@ -50,6 +50,7 @@ public:
         , m_pointer(pointer)
         , m_firstVisit(true)
         , m_customAllocation(false)
+        , m_isRoot(false)
     { }
 
     typedef MemoryClassInfo ClassInfo;
@@ -73,6 +74,8 @@ public:
             m_name = name;
     }
     const String& name() const { return m_name; }
+    bool isRoot() const { return m_isRoot; }
+    void markAsRoot() { m_isRoot = true; }
 
     MemoryInstrumentation* memoryInstrumentation() { return m_memoryInstrumentation; }
 
@@ -98,6 +101,7 @@ private:
     const void* m_pointer;
     bool m_firstVisit;
     bool m_customAllocation;
+    bool m_isRoot;
     String m_className;
     String m_name;
 };

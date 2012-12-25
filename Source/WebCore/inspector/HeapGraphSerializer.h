@@ -62,6 +62,7 @@ public:
 
 private:
     int addString(const String&);
+    void addRootNode();
     void adjutEdgeTargets();
 
     typedef HashMap<String, int> StringMap;
@@ -77,6 +78,7 @@ private:
 
     Vector<HeapGraphNode> m_nodes;
     Vector<HeapGraphEdge> m_edges;
+    Vector<const void*> m_roots;
 
     size_t m_edgeTypes[WTF::LastMemberTypeEntry];
 };

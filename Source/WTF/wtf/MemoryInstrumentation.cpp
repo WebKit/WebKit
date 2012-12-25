@@ -84,7 +84,14 @@ MemoryInstrumentation::WrapperBase::WrapperBase(MemoryObjectType objectType, con
 
 void MemoryInstrumentation::WrapperBase::process(MemoryInstrumentation* memoryInstrumentation)
 {
+    processPointer(memoryInstrumentation, false);
+}
+
+void MemoryInstrumentation::WrapperBase::processPointer(MemoryInstrumentation* memoryInstrumentation, bool isRoot)
+{
     MemoryObjectInfo memoryObjectInfo(memoryInstrumentation, m_ownerObjectType, m_pointer);
+    if (isRoot)
+        memoryObjectInfo.markAsRoot();
     callReportMemoryUsage(&memoryObjectInfo);
 
     const void* realAddress = memoryObjectInfo.reportedPointer();
@@ -107,6 +114,7 @@ void MemoryInstrumentation::WrapperBase::process(MemoryInstrumentation* memoryIn
 void MemoryInstrumentation::WrapperBase::processRootObjectRef(MemoryInstrumentation* memoryInstrumentation)
 {
     MemoryObjectInfo memoryObjectInfo(memoryInstrumentation, m_ownerObjectType, m_pointer);
+    memoryObjectInfo.markAsRoot();
     callReportMemoryUsage(&memoryObjectInfo);
 
     ASSERT(m_pointer == memoryObjectInfo.reportedPointer());

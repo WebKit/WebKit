@@ -115,6 +115,8 @@ void HeapGraphSerializer::reportNode(const WTF::MemoryObjectInfo& info)
     m_lastReportedEdgeIndex = m_edges.size();
 
     m_objectToNodeIndex.set(info.reportedPointer(), m_nodes.size());
+    if (info.isRoot())
+        m_roots.append(info.reportedPointer());
     m_nodes.append(node);
 }
 
@@ -203,6 +205,17 @@ int HeapGraphSerializer::addString(const String& string)
     if (result.isNewEntry)
         m_strings.append(string);
     return result.iterator->value;
+}
+
+void HeapGraphSerializer::addRootNode()
+{
+    for (size_t i = 0; i < m_roots.size(); i++)
+        reportEdge(m_roots[i], 0, WTF::PointerMember);
+    HeapGraphNode node;
+    node.m_name = addString("Root");
+    node.m_edgeCount = m_edges.size() - m_lastReportedEdgeIndex;
+    m_lastReportedEdgeIndex = m_edges.size();
+    m_nodes.append(node);
 }
 
 void HeapGraphSerializer::adjutEdgeTargets()

@@ -88,6 +88,7 @@ protected:
         WTF_EXPORT_PRIVATE WrapperBase(MemoryObjectType, const void* pointer);
         virtual ~WrapperBase() { }
         WTF_EXPORT_PRIVATE void process(MemoryInstrumentation*);
+        WTF_EXPORT_PRIVATE void processPointer(MemoryInstrumentation*, bool isRoot);
         WTF_EXPORT_PRIVATE void processRootObjectRef(MemoryInstrumentation*);
 
     protected:
@@ -200,7 +201,7 @@ private:
         static void addRootObject(MemoryInstrumentation* instrumentation, const T* const& t, MemoryObjectType objectType)
         {
             if (t && !instrumentation->visited(t))
-                Wrapper<T>(t, objectType).process(instrumentation);
+                Wrapper<T>(t, objectType).processPointer(instrumentation, true);
         }
     };
 
