@@ -79,11 +79,20 @@ namespace {
 using WTF::MemoryObjectInfo;
 using WTF::MemoryClassInfo;
 using WTF::MemoryObjectType;
+using WTF::MemberType;
 
 MemoryObjectType TestType = "TestType";
 
 class MemoryInstrumentationTestClient : public WTF::MemoryInstrumentationClient {
 public:
+    MemoryInstrumentationTestClient() : m_links(WTF::LastMemberTypeEntry)
+    {
+        m_links[WTF::PointerMember] = 0;
+        m_links[WTF::ReferenceMember] = 0;
+        m_links[WTF::RefPtrMember] = 0;
+        m_links[WTF::OwnPtrMember] = 0;
+    }
+
     virtual void countObjectSize(const void*, MemoryObjectType objectType, size_t size)
     {
         TypeToSizeMap::AddResult result = m_totalSizes.add(objectType, size);
@@ -93,8 +102,14 @@ public:
     virtual bool visited(const void* object) { return !m_visitedObjects.add(object).isNewEntry; }
     virtual bool checkCountedObject(const void*) { return true; }
     virtual void reportNode(const MemoryObjectInfo&) OVERRIDE { }
-    virtual void reportEdge(const void*, const void*, const char*) OVERRIDE { }
-    virtual void reportLeaf(const void*, const MemoryObjectInfo&, const char*) OVERRIDE { }
+    virtual void reportEdge(const void*, const char*, MemberType memberType) OVERRIDE
+    {
+        ++m_links[memberType];
+    }
+    virtual void reportLeaf(const MemoryObjectInfo&, const char*) OVERRIDE
+    {
+        ++m_links[WTF::OwnPtrMember];
+    }
     virtual void reportBaseAddress(const void*, const void*) OVERRIDE { }
 
     size_t visitedObjects() const { return m_visitedObjects.size(); }
@@ -102,6 +117,11 @@ public:
     {
         TypeToSizeMap::const_iterator i = m_totalSizes.find(objectType);
         return i == m_totalSizes.end() ? 0 : i->value;
+    }
+
+    size_t linksCount(const WTF::MemberType memberType) const
+    {
+        return m_links[memberType];
     }
 
     size_t reportedSizeForAllTypes() const
@@ -116,6 +136,7 @@ private:
     typedef HashMap<MemoryObjectType, size_t> TypeToSizeMap;
     TypeToSizeMap m_totalSizes;
     WTF::HashSet<const void*> m_visitedObjects;
+    WTF::Vector<size_t, WTF::LastMemberTypeEntry> m_links;
 };
 
 class InstrumentationTestImpl : public WTF::MemoryInstrumentation {
@@ -130,6 +151,7 @@ public:
     size_t visitedObjects() const { return m_client->visitedObjects(); }
     size_t reportedSizeForAllTypes() const { return m_client->reportedSizeForAllTypes(); }
     size_t totalSize(const MemoryObjectType objectType) const { return m_client->totalSize(objectType); }
+    size_t linksCount(const WTF::MemberType memberType) const {  return m_client->linksCount(memberType); }
 
 private:
     MemoryInstrumentationTestClient* m_client;
@@ -192,6 +214,7 @@ TEST(MemoryInstrumentationTest, sizeOf)
     helper.addRootObject(instrumented);
     EXPECT_EQ(sizeof(NotInstrumented), helper.reportedSizeForAllTypes());
     EXPECT_EQ(1u, helper.visitedObjects());
+    EXPECT_EQ(1u, helper.linksCount(WTF::PointerMember));
 }
 
 TEST(MemoryInstrumentationTest, nullCheck)
@@ -201,6 +224,7 @@ TEST(MemoryInstrumentationTest, nullCheck)
     helper.addRootObject(instrumented);
     EXPECT_EQ(0u, helper.reportedSizeForAllTypes());
     EXPECT_EQ(0u, helper.visitedObjects());
+    EXPECT_EQ(0u, helper.linksCount(WTF::PointerMember));
 }
 
 TEST(MemoryInstrumentationTest, ptrVsRef)
@@ -211,6 +235,7 @@ TEST(MemoryInstrumentationTest, ptrVsRef)
         helper.addRootObject(&instrumented);
         EXPECT_EQ(sizeof(Instrumented) + sizeof(NotInstrumented), helper.reportedSizeForAllTypes());
         EXPECT_EQ(2u, helper.visitedObjects());
+        EXPECT_EQ(1u, helper.linksCount(WTF::PointerMember));
     }
     {
         InstrumentationTestHelper helper;
@@ -218,6 +243,7 @@ TEST(MemoryInstrumentationTest, ptrVsRef)
         helper.addRootObject(instrumented);
         EXPECT_EQ(sizeof(NotInstrumented), helper.reportedSizeForAllTypes());
         EXPECT_EQ(1u, helper.visitedObjects());
+        EXPECT_EQ(1u, helper.linksCount(WTF::PointerMember));
     }
 }
 
@@ -241,6 +267,8 @@ TEST(MemoryInstrumentationTest, ownPtrNotInstrumented)
     helper.addRootObject(instrumentedWithOwnPtr);
     EXPECT_EQ(2u * sizeof(NotInstrumented), helper.reportedSizeForAllTypes());
     EXPECT_EQ(2u, helper.visitedObjects());
+    EXPECT_EQ(1u, helper.linksCount(WTF::OwnPtrMember));
+    EXPECT_EQ(1u, helper.linksCount(WTF::PointerMember));
 }
 
 class InstrumentedUndefined {
@@ -760,6 +788,7 @@ TEST(MemoryInstrumentationTest, arrayBuffer)
     helper.addRootObject(value);
     EXPECT_EQ(sizeof(int) * 1000 + sizeof(ArrayBuffer), helper.reportedSizeForAllTypes());
     EXPECT_EQ(2u, helper.visitedObjects());
+    EXPECT_EQ(1u, helper.linksCount(WTF::RefPtrMember));
 }
 
 class AncestorWithVirtualMethod {
@@ -851,7 +880,7 @@ private:
 class CountLinksFromInstrumentedObject : public MemoryInstrumentationTestClient {
 public:
     CountLinksFromInstrumentedObject() : m_linkCount(0) { }
-    virtual void reportEdge(const void* source, const void* destination, const char* name) OVERRIDE
+    virtual void reportEdge(const void*, const char* name, MemberType) OVERRIDE
     {
         if (name && !strcmp("m_notInstrumented", name))
             m_linkCount++;

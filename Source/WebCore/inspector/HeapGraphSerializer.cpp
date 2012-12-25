@@ -85,6 +85,18 @@ HeapGraphSerializer::HeapGraphSerializer()
     : m_lastReportedEdgeIndex(0)
 {
     m_strings.append(String());
+
+    memset(m_edgeTypes, 0, sizeof(m_edgeTypes));
+
+    ASSERT(m_strings.size());
+    m_edgeTypes[WTF::PointerMember] = m_strings.size();
+    m_strings.append("weakRef");
+
+    m_edgeTypes[WTF::OwnPtrMember] = m_strings.size();
+    m_strings.append("ownRef");
+
+    m_edgeTypes[WTF::RefPtrMember] = m_strings.size();
+    m_strings.append("countRef");
 }
 
 HeapGraphSerializer::~HeapGraphSerializer()
@@ -106,16 +118,19 @@ void HeapGraphSerializer::reportNode(const WTF::MemoryObjectInfo& info)
     m_nodes.append(node);
 }
 
-void HeapGraphSerializer::reportEdge(const void*, const void* to, const char* name)
+void HeapGraphSerializer::reportEdge(const void* to, const char* name, WTF::MemberType memberType)
 {
     HeapGraphEdge edge;
     ASSERT(to);
+    ASSERT(memberType >= 0);
+    ASSERT(memberType < WTF::LastMemberTypeEntry);
+    edge.m_type = m_edgeTypes[memberType];
     edge.m_toObject = to;
     edge.m_name = addString(name);
     m_edges.append(edge);
 }
 
-void HeapGraphSerializer::reportLeaf(const void*, const WTF::MemoryObjectInfo& info, const char* edgeName)
+void HeapGraphSerializer::reportLeaf(const WTF::MemoryObjectInfo& info, const char* edgeName)
 {
     HeapGraphNode node;
     node.m_type = addString(info.objectType());
@@ -127,6 +142,7 @@ void HeapGraphSerializer::reportLeaf(const void*, const WTF::MemoryObjectInfo& i
     m_nodes.append(node);
 
     HeapGraphEdge edge;
+    edge.m_type = m_edgeTypes[WTF::OwnPtrMember];
     edge.m_toIndex = nodeIndex;
     edge.m_targetIndexIsKnown = true;
     edge.m_name = addString(edgeName);

@@ -1,3 +1,15 @@
+2012-12-24  Ilya Tikhonovsky  <loislo@chromium.org>
+
+        Web Inspector: Native Memory Instrumentation: propagate member type as edge type to the serialized heap graph.
+        https://bugs.webkit.org/show_bug.cgi?id=105725
+
+        Reviewed by Yury Semikhatsky.
+
+        MemberType value names were adjusted according to Style Guide.
+        Existing tests were extended with link type validation.
+
+        * TestWebKitAPI/Tests/WTF/MemoryInstrumentationTest.cpp:
+
 2012-12-24  Xiaobo Wang  <xbwang@torchmobile.com.cn>
 
         [BlackBerry] DRT - Crashed when running pixels tests

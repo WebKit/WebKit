@@ -52,8 +52,8 @@ public:
     HeapGraphSerializer();
     ~HeapGraphSerializer();
     void reportNode(const WTF::MemoryObjectInfo&);
-    void reportEdge(const void*, const void*, const char*);
-    void reportLeaf(const void*, const WTF::MemoryObjectInfo&, const char*);
+    void reportEdge(const void*, const char*, WTF::MemberType);
+    void reportLeaf(const WTF::MemoryObjectInfo&, const char*);
     void reportBaseAddress(const void*, const void*);
 
     PassRefPtr<InspectorObject> serialize();
@@ -77,6 +77,8 @@ private:
 
     Vector<HeapGraphNode> m_nodes;
     Vector<HeapGraphEdge> m_edges;
+
+    size_t m_edgeTypes[WTF::LastMemberTypeEntry];
 };
 
 } // namespace WebCore
