@@ -111,6 +111,11 @@ bool MemoryUsageSupport::processMemorySizesInBytes(size_t*, size_t*)
     return false;
 }
 
+void MemoryUsageSupport::requestProcessMemorySizes(PassOwnPtr<WebCore::MemoryUsageSupport::ProcessMemorySizesCallback> requestCallback)
+{
+    // FIXME: Not implemented.
+}
+
 void MemoryUsageSupport::memoryUsageByComponents(Vector<ComponentInfo>&)
 {
 }

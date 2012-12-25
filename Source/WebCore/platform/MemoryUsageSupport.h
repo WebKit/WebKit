@@ -32,6 +32,7 @@
 #define MemoryUsageSupport_h
 
 #include <wtf/Forward.h>
+#include <wtf/PassOwnPtr.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
@@ -60,6 +61,17 @@ public:
     // memory currently allocated to this process that cannot be shared. Returns
     // false on platform specific error conditions.
     static bool processMemorySizesInBytes(size_t* privateBytes, size_t* sharedBytes);
+
+    // A callback for requestProcessMemorySizes
+    class ProcessMemorySizesCallback {
+    public:
+        virtual ~ProcessMemorySizesCallback() { }
+        virtual void dataReceived(size_t privateBytes, size_t sharedBytes) = 0;
+    };
+
+    // Requests private and shared usage, in bytes. Private bytes is the amount of
+    // memory currently allocated to this process that cannot be shared.
+    static void requestProcessMemorySizes(PassOwnPtr<ProcessMemorySizesCallback> requestCallback);
 
     class ComponentInfo {
     public:

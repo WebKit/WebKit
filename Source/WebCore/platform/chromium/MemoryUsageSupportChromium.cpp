@@ -33,6 +33,7 @@
 
 #include <SkGraphics.h>
 #include <public/Platform.h>
+#include <wtf/OwnPtr.h>
 
 namespace WebCore {
 
@@ -64,6 +65,23 @@ int MemoryUsageSupport::highUsageDeltaMB()
 bool MemoryUsageSupport::processMemorySizesInBytes(size_t* privateBytes, size_t* sharedBytes)
 {
     return WebKit::Platform::current()->processMemorySizesInBytes(privateBytes, sharedBytes);
+}
+
+void MemoryUsageSupport::requestProcessMemorySizes(PassOwnPtr<WebCore::MemoryUsageSupport::ProcessMemorySizesCallback> requestCallback)
+{
+    class ProcessMemorySizesCallbackImpl : public WebKit::Platform::ProcessMemorySizesCallback {
+    public:
+        ProcessMemorySizesCallbackImpl(PassOwnPtr<WebCore::MemoryUsageSupport::ProcessMemorySizesCallback> callback) :
+            m_callback(callback) { }
+        virtual void dataReceived(size_t privateBytes, size_t sharedBytes)
+        {
+            m_callback->dataReceived(privateBytes, sharedBytes);
+        }
+    private:
+        OwnPtr<WebCore::MemoryUsageSupport::ProcessMemorySizesCallback> m_callback;
+    };
+    WebKit::Platform::ProcessMemorySizesCallback* callback = new ProcessMemorySizesCallbackImpl(requestCallback);
+    WebKit::Platform::current()->requestProcessMemorySizes(callback);
 }
 
 void MemoryUsageSupport::memoryUsageByComponents(Vector<ComponentInfo>& components)
