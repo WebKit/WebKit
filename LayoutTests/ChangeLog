@@ -1,3 +1,13 @@
+2012-12-24  Takashi Sakamoto  <tasak@google.com>
+
+        ::first-letter { overflow: -webkit-paged-y } causes crash
+        https://bugs.webkit.org/show_bug.cgi?id=105393
+
+        Reviewed by Beth Dakin.
+
+        * fast/css/pseudo-element-opagedxy-crash-expected.txt: Added.
+        * fast/css/pseudo-element-opagedxy-crash.html: Added.
+
 2012-12-24  Mihnea Ovidenie  <mihnea@adobe.com>
 
         [CSS Regions] Convert some fast/regions pixel tests to reftests

@@ -2049,7 +2049,7 @@ void StyleResolver::adjustRenderStyle(RenderStyle* style, RenderStyle* parentSty
     // Call setStylesForPaginationMode() if a pagination mode is set for any non-root elements. If these
     // styles are specified on a root element, then they will be incorporated in
     // StyleResolver::styleForDocument().
-    if ((style->overflowY() == OPAGEDX || style->overflowY() == OPAGEDY) && !(e->hasTagName(htmlTag) || e->hasTagName(bodyTag)))
+    if ((style->overflowY() == OPAGEDX || style->overflowY() == OPAGEDY) && !(e && (e->hasTagName(htmlTag) || e->hasTagName(bodyTag))))
         setStylesForPaginationMode(WebCore::paginationModeForRenderStyle(style), style);
 
     // Table rows, sections and the table itself will support overflow:hidden and will ignore scroll/auto.
