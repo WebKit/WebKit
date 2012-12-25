@@ -308,14 +308,14 @@ public:
     {
         if (LIKELY(!hasSnapshot())) {
             RefPtr<Node> node = m_currentNode;
-            if (node.get())
+            if (node)
                 m_currentNode = node->nextSibling();
-            return node;
+            return node.release();
         }
-        Vector<RefPtr<Node> >* nodeVector = m_childNodes.get();
-        if (m_currentIndex >= nodeVector->size())
+        Vector<RefPtr<Node> >& nodeVector = *m_childNodes;
+        if (m_currentIndex >= nodeVector.size())
             return 0;
-        return (*nodeVector)[m_currentIndex++];
+        return nodeVector[m_currentIndex++];
     }
 
     void takeSnapshot()
