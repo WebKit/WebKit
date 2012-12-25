@@ -135,7 +135,7 @@ WKRetainPtr<WKImageRef> PlatformWebView::windowSnapshotImage()
     ecore_evas_geometry_get(ee, 0, 0, &width, &height);
     ASSERT(width > 0 && height > 0);
 
-    return adoptWK(WKViewGetSnapshot(toAPI(m_view)));
+    return adoptWK(WKViewCreateSnapshot(toAPI(m_view)));
 }
 
 bool PlatformWebView::viewSupportsOptions(WKDictionaryRef options) const

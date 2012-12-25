@@ -34,25 +34,23 @@
 #include "OpenGLShims.h"
 #endif
 
-unsigned char* getImageFromCurrentTexture(int width, int height, int textureId)
+PassOwnArrayPtr<unsigned char> getImageDataFromFrameBuffer(int x, int y, int width, int height)
 {
-    glBindTexture(GL_TEXTURE_2D, textureId);
-    unsigned char* buffer = new unsigned char[width * height * 4];
-    glReadPixels(0, 0, width, height, GL_BGRA, GL_UNSIGNED_BYTE, buffer);
+    OwnArrayPtr<unsigned char> buffer = adoptArrayPtr(new unsigned char[width * height * 4]);
+    glReadPixels(x, y, width, height, GL_BGRA, GL_UNSIGNED_BYTE, buffer.get());
 
     // Textures are flipped on the Y axis, so we need to flip the image back.
-    unsigned tmp;
-    unsigned* buf = reinterpret_cast<unsigned*>(buffer);
+    unsigned* buf = reinterpret_cast<unsigned*>(buffer.get());
 
     for (int i = 0; i < height / 2; ++i) {
         for (int j = 0; j < width; ++j) {
-            tmp = buf[i * width + j];
+            unsigned tmp = buf[i * width + j];
             buf[i * width + j] = buf[(height - i - 1) * width + j];
             buf[(height - i - 1) * width + j] = tmp;
         }
     }
 
-    return buffer;
+    return buffer.release();
 }
 
 #endif

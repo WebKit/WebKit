@@ -26,8 +26,10 @@
 #ifndef SnapshotImageGL_h
 #define SnapshotImageGL_h
 
+#include <wtf/OwnArrayPtr.h>
+
 #if USE(ACCELERATED_COMPOSITING)
-unsigned char* getImageFromCurrentTexture(int width, int height, int textureId);
+PassOwnArrayPtr<unsigned char> getImageDataFromFrameBuffer(int x, int y, int width, int height);
 #endif
 
 #endif // SnapshotImageGL_h

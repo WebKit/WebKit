@@ -23,6 +23,7 @@
 #include "EwkViewImpl.h"
 #include "WKAPICast.h"
 #include "ewk_view_private.h"
+#include <WebKit2/WKImageCairo.h>
 
 using namespace WebKit;
 
@@ -43,9 +44,9 @@ WKPageRef WKViewGetPage(WKViewRef viewRef)
     return viewImpl->wkPage();
 }
 
-WKImageRef WKViewGetSnapshot(WKViewRef viewRef)
+WKImageRef WKViewCreateSnapshot(WKViewRef viewRef)
 {
     EwkViewImpl* viewImpl = EwkViewImpl::fromEvasObject(toImpl(viewRef));
 
-    return viewImpl->takeSnapshot();
+    return WKImageCreateFromCairoSurface(viewImpl->takeSnapshot().get(), 0 /* options */);
 }

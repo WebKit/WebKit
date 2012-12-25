@@ -31,6 +31,7 @@
 #include <Evas.h>
 #include <WebCore/FloatPoint.h>
 #include <WebCore/IntRect.h>
+#include <WebCore/RefPtrCairo.h>
 #include <WebCore/TextDirection.h>
 #include <WebCore/Timer.h>
 #include <WebKit2/WKBase.h>
@@ -214,7 +215,7 @@ public:
     bool isHardwareAccelerated() const { return m_isHardwareAccelerated; }
     void setDrawsBackground(bool enable) { m_setDrawsBackground = enable; }
 
-    WKImageRef takeSnapshot();
+    PassRefPtr<cairo_surface_t> takeSnapshot();
 
 private:
 #if USE(ACCELERATED_COMPOSITING)

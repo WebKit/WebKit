@@ -1029,21 +1029,17 @@ void EwkViewImpl::onFaviconChanged(const char* pageURL, void* eventInfo)
     viewImpl->informIconChange();
 }
 
-WKImageRef EwkViewImpl::takeSnapshot()
+PassRefPtr<cairo_surface_t> EwkViewImpl::takeSnapshot()
 {
     Ewk_View_Smart_Data* sd = smartData();
 #if USE(ACCELERATED_COMPOSITING)
     if (!m_isHardwareAccelerated)
 #endif
-        return WKImageCreateFromCairoSurface(createSurfaceForImage(sd->image).get(), 0);
+        return createSurfaceForImage(sd->image).get();
 
 #if USE(ACCELERATED_COMPOSITING)
-    Evas_Native_Surface* nativeSurface = evas_object_image_native_surface_get(sd->image);
-    unsigned char* buffer = getImageFromCurrentTexture(sd->view.w, sd->view.h, nativeSurface->data.opengl.texture_id);
-    RefPtr<cairo_surface_t> surface = adoptRef(cairo_image_surface_create_for_data(buffer, CAIRO_FORMAT_ARGB32, sd->view.w, sd->view.h, sd->view.w * 4));
-    WKImageRef image = WKImageCreateFromCairoSurface(surface.get(), 0);
-    delete[] buffer;
+    OwnArrayPtr<unsigned char> buffer = getImageDataFromFrameBuffer(0, 0, sd->view.w, sd->view.h);
 
-    return image;
+    return adoptRef(cairo_image_surface_create_for_data(buffer.get(), CAIRO_FORMAT_ARGB32, sd->view.w, sd->view.h, sd->view.w * 4));
 #endif
 }

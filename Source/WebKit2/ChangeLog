@@ -1,3 +1,36 @@
+2012-12-25  Christophe Dumez  <christophe.dumez@intel.com>
+
+        [EFL][WK2] Refactor snapshot taking code
+        https://bugs.webkit.org/show_bug.cgi?id=105687
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Refactor EFL WK2 snapshot taking code to use
+        smart pointers when possible and follow naming
+        conventions.
+
+        * UIProcess/API/C/efl/WKView.cpp:
+        (WKViewCreateSnapshot):
+        * UIProcess/API/C/efl/WKView.h: Rename WKViewGetSnapshot
+        to WKViewCreateSnapshot to follow C API naming conventions,
+        since the returned value needs to be adopted.
+        * UIProcess/API/efl/EwkViewImpl.cpp:
+        (EwkViewImpl::takeSnapshot):
+        * UIProcess/API/efl/EwkViewImpl.h: Have takeSnapshot() return
+        a cairo_surface_t instead of a WKType. The value should be
+        converted to a WKType at C API level.
+        (EwkViewImpl):
+        * UIProcess/API/efl/SnapshotImageGL.cpp: Use OwnArrayPtr for the
+        buffer to avoid manual memory handling. Remove useless call to
+        glBindTexture() since glReadPixels() reads pixels from the frame
+        buffer, not from the texture.
+        (getImageDataFromFrameBuffer):
+        * UIProcess/API/efl/SnapshotImageGL.h: Rename getImageFromCurrentTexture
+        to getImageDataFromFrameBuffer for consistency since we technically
+        return the pixel data of the image and since glReadPixels does not
+        actually read from the texture. Have the function return a smart
+        pointer instead of a raw one to avoid manual memory handling.
+
 2012-12-25  Tim Horton  <timothy_horton@apple.com>
 
         PDFPlugin: Find-in-page
