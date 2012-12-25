@@ -285,7 +285,9 @@ private:
     OwnPtr<EwkContextMenu> m_contextMenu;
     OwnPtr<EwkPopupMenu> m_popupMenu;
     OwnPtr<WebKit::InputMethodContextEfl> m_inputMethodContext;
+#if ENABLE(INPUT_TYPE_COLOR)
     OwnPtr<EwkColorPicker> m_colorPicker;
+#endif
     bool m_isHardwareAccelerated;
     bool m_setDrawsBackground;
 };
