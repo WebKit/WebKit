@@ -1005,12 +1005,11 @@ WebInspector.NetworkLogView.prototype = {
 
         contextMenu.show();
     },
-    
+
     _replayXHR: function(requestId)
     {
         NetworkAgent.replayXHR(requestId);
     },
-    
 
     _copyAll: function()
     {

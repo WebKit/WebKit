@@ -167,12 +167,20 @@ WebInspector.ConsoleMessageImpl.prototype = {
         var formattedMessage = this.formattedMessage;
         return this._message;
     },
-   
+
     get formattedMessage()
     {
         if (!this._formattedMessage)
             this._formatMessage();
         return this._formattedMessage;
+    },
+
+    /**
+     * @return {?WebInspector.NetworkRequest}
+     */
+    request: function()
+    {
+        return this._request;
     },
 
     _linkifyLocation: function(url, lineNumber, columnNumber)

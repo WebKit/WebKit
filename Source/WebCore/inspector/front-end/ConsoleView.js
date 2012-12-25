@@ -456,6 +456,14 @@ WebInspector.ConsoleView.prototype = {
 
         contextMenu.appendSeparator();
         contextMenu.appendItem(WebInspector.UIString(WebInspector.useLowerCaseMenuTitles() ? "Clear console" : "Clear Console"), this._requestClearMessages.bind(this));
+
+        var messageElement = event.target.enclosingNodeOrSelfWithClass("console-message");
+        var request = (messageElement && messageElement.message) ? messageElement.message.request() : null;
+        if (request && request.type === WebInspector.resourceTypes.XHR) {
+            contextMenu.appendSeparator();
+            contextMenu.appendItem(WebInspector.UIString("Replay XHR"), NetworkAgent.replayXHR.bind(null, request.requestId));
+        }
+
         contextMenu.show();
     },
 
