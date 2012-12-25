@@ -171,6 +171,7 @@ SOURCES += \
     jit/JITPropertyAccess32_64.cpp \
     jit/JITStubRoutine.cpp \
     jit/JITStubs.cpp \
+    jit/JITThunks.cpp \
     jit/JumpReplacementWatchpoint.cpp \
     jit/ThunkGenerators.cpp \
     llint/LLIntCLoop.cpp \

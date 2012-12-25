@@ -27,8 +27,9 @@
 #include "ThunkGenerators.h"
 
 #include "CodeBlock.h"
-#include <wtf/InlineASM.h>
+#include "Operations.h"
 #include "SpecializedThunkJIT.h"
+#include <wtf/InlineASM.h>
 #include <wtf/text/StringImpl.h>
 
 #if ENABLE(JIT)

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010 Apple Inc. All rights reserved.
+ * Copyright (C) 2012 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,27 +23,22 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef ThunkGenerators_h
-#define ThunkGenerators_h
+#ifndef ThunkGenerator_h
+#define ThunkGenerator_h
 
-#include "ThunkGenerator.h"
+#include <wtf/Platform.h>
 
 #if ENABLE(JIT)
+
 namespace JSC {
+class JSGlobalData;
+class MacroAssemblerCodeRef;
 
-MacroAssemblerCodeRef charCodeAtThunkGenerator(JSGlobalData*);
-MacroAssemblerCodeRef charAtThunkGenerator(JSGlobalData*);
-MacroAssemblerCodeRef fromCharCodeThunkGenerator(JSGlobalData*);
-MacroAssemblerCodeRef absThunkGenerator(JSGlobalData*);
-MacroAssemblerCodeRef ceilThunkGenerator(JSGlobalData*);
-MacroAssemblerCodeRef expThunkGenerator(JSGlobalData*);
-MacroAssemblerCodeRef floorThunkGenerator(JSGlobalData*);
-MacroAssemblerCodeRef logThunkGenerator(JSGlobalData*);
-MacroAssemblerCodeRef roundThunkGenerator(JSGlobalData*);
-MacroAssemblerCodeRef sqrtThunkGenerator(JSGlobalData*);
-MacroAssemblerCodeRef powThunkGenerator(JSGlobalData*);
+typedef MacroAssemblerCodeRef (*ThunkGenerator)(JSGlobalData*);
 
-}
+} // namespace JSC
+
 #endif // ENABLE(JIT)
 
 #endif // ThunkGenerator_h
+

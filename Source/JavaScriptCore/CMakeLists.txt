@@ -166,6 +166,7 @@ set(JavaScriptCore_SOURCES
     jit/JITPropertyAccess.cpp
     jit/JITStubRoutine.cpp
     jit/JITStubs.cpp
+    jit/JITThunks.cpp
     jit/JumpReplacementWatchpoint.cpp
     jit/ThunkGenerators.cpp
 

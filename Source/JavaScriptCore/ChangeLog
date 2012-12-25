@@ -1,3 +1,48 @@
+2012-12-25  Filip Pizlo  <fpizlo@apple.com>
+
+        JITThunks should be in its own file
+        https://bugs.webkit.org/show_bug.cgi?id=105744
+
+        Rubber stamped by Sam Weinig.
+        
+        Moved JITThunks into its own file and removed some static methods from it
+        that were not related to what JITThunks currently does. Performed various
+        pagan rituals to get it to build - apparently there is a circular dependency
+        between JSCell, Weak, and JITThunks, which magically resolves itself if you
+        make sure to first include Register.h. Making it so that fewer pagan rituals
+        need to be performed if this code changes in the future is covered by
+        https://bugs.webkit.org/show_bug.cgi?id=105696.
+
+        * CMakeLists.txt:
+        * GNUmakefile.list.am:
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore.vcproj:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * Target.pri:
+        * jit/JITStubs.cpp:
+        (JSC::tryCachePutByID):
+        (JSC::tryCacheGetByID):
+        * jit/JITStubs.h:
+        (JSC::JITStackFrame::returnAddressSlot):
+        (JSC::returnAddressIsInCtiTrampoline):
+        * jit/JITThunks.cpp: Added.
+        (JSC::JITThunks::JITThunks):
+        (JSC::JITThunks::~JITThunks):
+        (JSC::JITThunks::ctiStub):
+        (JSC::JITThunks::hostFunctionStub):
+        (JSC::JITThunks::clearHostFunctionStubs):
+        * jit/JITThunks.h: Added.
+        (JSC::JITThunks::ctiStringLengthTrampoline):
+        (JSC::JITThunks::ctiVirtualCallLink):
+        (JSC::JITThunks::ctiVirtualConstructLink):
+        (JSC::JITThunks::ctiVirtualCall):
+        (JSC::JITThunks::ctiVirtualConstruct):
+        (JSC::JITThunks::ctiNativeCall):
+        (JSC::JITThunks::ctiNativeConstruct):
+        * jit/ThunkGenerator.h: Added.
+        * jit/ThunkGenerators.cpp:
+        * jit/ThunkGenerators.h:
+        * runtime/JSGlobalData.h:
+
 2012-12-25  Ilya Tikhonovsky  <loislo@chromium.org>
 
         Unreviewed follow-up for r138455.

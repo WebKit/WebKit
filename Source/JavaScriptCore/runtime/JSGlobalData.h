@@ -35,6 +35,7 @@
 #include "Heap.h"
 #include "Intrinsic.h"
 #include "JITStubs.h"
+#include "JITThunks.h"
 #include "JSLock.h"
 #include "JSValue.h"
 #include "LLIntData.h"

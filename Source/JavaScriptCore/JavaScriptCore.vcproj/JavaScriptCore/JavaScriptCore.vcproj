@@ -2198,6 +2198,14 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\jit\JITThunks.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\jit\JITThunks.h"
+				>
+			</File>
+			<File
 				RelativePath="..\..\jit\JumpReplacementWatchpoint.cpp"
 				>
 			</File>
@@ -2211,6 +2219,10 @@
 			</File>
 			<File
 				RelativePath="..\..\jit\SpecializedThunkJIT.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\jit\ThunkGenerator.h"
 				>
 			</File>
 			<File

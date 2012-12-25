@@ -434,11 +434,14 @@ javascriptcore_sources += \
 	Source/JavaScriptCore/jit/JITStubRoutine.h \
 	Source/JavaScriptCore/jit/JITStubs.cpp \
 	Source/JavaScriptCore/jit/JITStubs.h \
+	Source/JavaScriptCore/jit/JITThunks.cpp \
+	Source/JavaScriptCore/jit/JITThunks.h \
 	Source/JavaScriptCore/jit/JITWriteBarrier.h \
 	Source/JavaScriptCore/jit/JSInterfaceJIT.h \
 	Source/JavaScriptCore/jit/JumpReplacementWatchpoint.cpp \
 	Source/JavaScriptCore/jit/JumpReplacementWatchpoint.h \
 	Source/JavaScriptCore/jit/SpecializedThunkJIT.h \
+	Source/JavaScriptCore/jit/ThunkGenerator.h \
 	Source/JavaScriptCore/jit/ThunkGenerators.cpp \
 	Source/JavaScriptCore/jit/ThunkGenerators.h \
 	Source/JavaScriptCore/jit/UnusedPointer.h \
