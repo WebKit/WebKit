@@ -52,7 +52,7 @@ class InspectorMemoryAgent : public InspectorBaseAgent<InspectorMemoryAgent>, pu
 public:
     typedef Vector<OwnPtr<InspectorBaseAgentInterface> > InspectorAgents;
 
-    static PassOwnPtr<InspectorMemoryAgent> create(InstrumentingAgents* instrumentingAgents, InspectorClient* client, InspectorState* state, Page* page)
+    static PassOwnPtr<InspectorMemoryAgent> create(InstrumentingAgents* instrumentingAgents, InspectorClient* client, InspectorCompositeState* state, Page* page)
     {
         return adoptPtr(new InspectorMemoryAgent(instrumentingAgents, client, state, page));
     }
@@ -64,7 +64,7 @@ public:
     virtual void reportMemoryUsage(MemoryObjectInfo*) const;
 
 private:
-    InspectorMemoryAgent(InstrumentingAgents*, InspectorClient*, InspectorState*, Page*);
+    InspectorMemoryAgent(InstrumentingAgents*, InspectorClient*, InspectorCompositeState*, Page*);
 
     InspectorClient* m_inspectorClient;
     Page* m_page;

@@ -44,7 +44,7 @@
 
 namespace WebCore {
 
-WorkerRuntimeAgent::WorkerRuntimeAgent(InstrumentingAgents* instrumentingAgents, InspectorState* state, InjectedScriptManager* injectedScriptManager, WorkerContext* workerContext)
+WorkerRuntimeAgent::WorkerRuntimeAgent(InstrumentingAgents* instrumentingAgents, InspectorCompositeState* state, InjectedScriptManager* injectedScriptManager, WorkerContext* workerContext)
     : InspectorRuntimeAgent(instrumentingAgents, state, injectedScriptManager)
     , m_workerContext(workerContext)
     , m_paused(false)

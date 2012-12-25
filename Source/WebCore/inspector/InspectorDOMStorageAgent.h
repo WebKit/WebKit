@@ -51,7 +51,7 @@ typedef String ErrorString;
 
 class InspectorDOMStorageAgent : public InspectorBaseAgent<InspectorDOMStorageAgent>, public InspectorBackendDispatcher::DOMStorageCommandHandler {
 public:
-    static PassOwnPtr<InspectorDOMStorageAgent> create(InstrumentingAgents* instrumentingAgents, InspectorState* state)
+    static PassOwnPtr<InspectorDOMStorageAgent> create(InstrumentingAgents* instrumentingAgents, InspectorCompositeState* state)
     {
         return adoptPtr(new InspectorDOMStorageAgent(instrumentingAgents, state));
     }
@@ -81,7 +81,7 @@ public:
     virtual void reportMemoryUsage(MemoryObjectInfo*) const OVERRIDE;
 
 private:
-    InspectorDOMStorageAgent(InstrumentingAgents*, InspectorState*);
+    InspectorDOMStorageAgent(InstrumentingAgents*, InspectorCompositeState*);
 
     InspectorDOMStorageResource* getDOMStorageResourceForId(const String& storageId);
 

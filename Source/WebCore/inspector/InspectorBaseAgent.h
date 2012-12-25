@@ -39,12 +39,13 @@
 namespace WebCore {
 
 class InspectorFrontend;
+class InspectorCompositeState;
 class InspectorState;
 class InstrumentingAgents;
 
 class InspectorBaseAgentInterface {
 public:
-    InspectorBaseAgentInterface(const String&, InstrumentingAgents*, InspectorState*);
+    InspectorBaseAgentInterface(const String&, InstrumentingAgents*, InspectorCompositeState*);
     virtual ~InspectorBaseAgentInterface();
 
     virtual void setFrontend(InspectorFrontend*) { }
@@ -90,7 +91,7 @@ public:
     }
 
 protected:
-    InspectorBaseAgent(const String& name, InstrumentingAgents* instrumentingAgents, InspectorState* inspectorState)
+    InspectorBaseAgent(const String& name, InstrumentingAgents* instrumentingAgents, InspectorCompositeState* inspectorState)
         : InspectorBaseAgentInterface(name, instrumentingAgents, inspectorState)
     {
     }

@@ -93,7 +93,7 @@ private:
 WorkerInspectorController::WorkerInspectorController(WorkerContext* workerContext)
     : m_workerContext(workerContext)
     , m_stateClient(adoptPtr(new WorkerStateClient(workerContext)))
-    , m_state(adoptPtr(new InspectorState(m_stateClient.get())))
+    , m_state(adoptPtr(new InspectorCompositeState(m_stateClient.get())))
     , m_instrumentingAgents(adoptPtr(new InstrumentingAgents()))
     , m_injectedScriptManager(InjectedScriptManager::createForWorker())
     , m_runtimeAgent(0)

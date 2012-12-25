@@ -51,7 +51,7 @@ static bool asBool(const bool* const b)
     return b ? *b : false;
 }
 
-InspectorRuntimeAgent::InspectorRuntimeAgent(InstrumentingAgents* instrumentingAgents, InspectorState* state, InjectedScriptManager* injectedScriptManager)
+InspectorRuntimeAgent::InspectorRuntimeAgent(InstrumentingAgents* instrumentingAgents, InspectorCompositeState* state, InjectedScriptManager* injectedScriptManager)
     : InspectorBaseAgent<InspectorRuntimeAgent>("Runtime", instrumentingAgents, state)
     , m_enabled(false)
     , m_injectedScriptManager(injectedScriptManager)

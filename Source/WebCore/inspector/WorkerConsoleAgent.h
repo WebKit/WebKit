@@ -41,7 +41,7 @@ namespace WebCore {
 class WorkerConsoleAgent : public InspectorConsoleAgent {
     WTF_MAKE_NONCOPYABLE(WorkerConsoleAgent);
 public:
-    static PassOwnPtr<WorkerConsoleAgent> create(InstrumentingAgents* instrumentingAgents, InspectorState* state, InjectedScriptManager* injectedScriptManager)
+    static PassOwnPtr<WorkerConsoleAgent> create(InstrumentingAgents* instrumentingAgents, InspectorCompositeState* state, InjectedScriptManager* injectedScriptManager)
     {
         return adoptPtr(new WorkerConsoleAgent(instrumentingAgents, state, injectedScriptManager));
     }
@@ -50,7 +50,7 @@ public:
     virtual bool isWorkerAgent() OVERRIDE { return true; }
 
 private:
-    WorkerConsoleAgent(InstrumentingAgents*, InspectorState*, InjectedScriptManager*);
+    WorkerConsoleAgent(InstrumentingAgents*, InspectorCompositeState*, InjectedScriptManager*);
     virtual void addInspectedNode(ErrorString*, int nodeId);
     virtual bool developerExtrasEnabled();
 };

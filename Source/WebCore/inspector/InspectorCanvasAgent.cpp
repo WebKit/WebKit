@@ -50,7 +50,7 @@ namespace CanvasAgentState {
 static const char canvasAgentEnabled[] = "canvasAgentEnabled";
 };
 
-InspectorCanvasAgent::InspectorCanvasAgent(InstrumentingAgents* instrumentingAgents, InspectorState* state, Page* page, InjectedScriptManager* injectedScriptManager)
+InspectorCanvasAgent::InspectorCanvasAgent(InstrumentingAgents* instrumentingAgents, InspectorCompositeState* state, Page* page, InjectedScriptManager* injectedScriptManager)
     : InspectorBaseAgent<InspectorCanvasAgent>("Canvas", instrumentingAgents, state)
     , m_inspectedPage(page)
     , m_injectedScriptManager(injectedScriptManager)

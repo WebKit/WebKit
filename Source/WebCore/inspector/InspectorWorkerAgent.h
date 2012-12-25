@@ -49,7 +49,7 @@ typedef String ErrorString;
 
 class InspectorWorkerAgent : public InspectorBaseAgent<InspectorWorkerAgent>, public InspectorBackendDispatcher::WorkerCommandHandler {
 public:
-    static PassOwnPtr<InspectorWorkerAgent> create(InstrumentingAgents*, InspectorState*);
+    static PassOwnPtr<InspectorWorkerAgent> create(InstrumentingAgents*, InspectorCompositeState*);
     ~InspectorWorkerAgent();
 
     virtual void setFrontend(InspectorFrontend*);
@@ -70,7 +70,7 @@ public:
     virtual void setAutoconnectToWorkers(ErrorString*, bool value);
 
 private:
-    InspectorWorkerAgent(InstrumentingAgents*, InspectorState*);
+    InspectorWorkerAgent(InstrumentingAgents*, InspectorCompositeState*);
     void createWorkerFrontendChannelsForExistingWorkers();
     void createWorkerFrontendChannel(WorkerContextProxy*, const String& url);
     void destroyWorkerFrontendChannels();

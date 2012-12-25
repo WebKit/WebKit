@@ -50,7 +50,7 @@ typedef String ErrorString;
 
 class InspectorLayerTreeAgent : public InspectorBaseAgent<InspectorLayerTreeAgent>, public InspectorBackendDispatcher::LayerTreeCommandHandler {
 public:
-    static PassOwnPtr<InspectorLayerTreeAgent> create(InstrumentingAgents* instrumentingAgents, InspectorState* state, Page* page)
+    static PassOwnPtr<InspectorLayerTreeAgent> create(InstrumentingAgents* instrumentingAgents, InspectorCompositeState* state, Page* page)
     {
         return adoptPtr(new InspectorLayerTreeAgent(instrumentingAgents, state, page));
     }
@@ -71,7 +71,7 @@ public:
     virtual void nodeIdForLayerId(ErrorString*, const String& layerId, int* resultNodeId);
 
 private:
-    InspectorLayerTreeAgent(InstrumentingAgents*, InspectorState*, Page*);
+    InspectorLayerTreeAgent(InstrumentingAgents*, InspectorCompositeState*, Page*);
 
     // RenderLayer-related methods.
     String bind(const RenderLayer*);

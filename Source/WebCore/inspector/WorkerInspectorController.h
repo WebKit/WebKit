@@ -74,7 +74,7 @@ private:
 
     WorkerContext* m_workerContext;
     OwnPtr<InspectorStateClient> m_stateClient;
-    OwnPtr<InspectorState> m_state;
+    OwnPtr<InspectorCompositeState> m_state;
     OwnPtr<InstrumentingAgents> m_instrumentingAgents;
     OwnPtr<InjectedScriptManager> m_injectedScriptManager;
     InspectorRuntimeAgent* m_runtimeAgent;

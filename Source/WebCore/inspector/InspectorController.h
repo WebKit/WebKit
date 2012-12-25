@@ -130,7 +130,7 @@ private:
 
     OwnPtr<InstrumentingAgents> m_instrumentingAgents;
     OwnPtr<InjectedScriptManager> m_injectedScriptManager;
-    OwnPtr<InspectorState> m_state;
+    OwnPtr<InspectorCompositeState> m_state;
     OwnPtr<InspectorOverlay> m_overlay;
 
     InspectorAgent* m_inspectorAgent;

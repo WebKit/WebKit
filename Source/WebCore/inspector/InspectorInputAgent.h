@@ -48,7 +48,7 @@ typedef String ErrorString;
 class InspectorInputAgent : public InspectorBaseAgent<InspectorInputAgent>, public InspectorBackendDispatcher::InputCommandHandler {
     WTF_MAKE_NONCOPYABLE(InspectorInputAgent);
 public:
-    static PassOwnPtr<InspectorInputAgent> create(InstrumentingAgents* instrumentingAgents, InspectorState* inspectorState, Page* page)
+    static PassOwnPtr<InspectorInputAgent> create(InstrumentingAgents* instrumentingAgents, InspectorCompositeState* inspectorState, Page* page)
     {
         return adoptPtr(new InspectorInputAgent(instrumentingAgents, inspectorState, page));
     }
@@ -60,7 +60,7 @@ public:
     virtual void dispatchMouseEvent(ErrorString*, const String& type, int x, int y, const int* modifiers, const double* timestamp, const String* button, const int* clickCount);
 
 private:
-    InspectorInputAgent(InstrumentingAgents*, InspectorState*, Page*);
+    InspectorInputAgent(InstrumentingAgents*, InspectorCompositeState*, Page*);
 
     Page* m_page;
 };

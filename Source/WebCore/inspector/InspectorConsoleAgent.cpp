@@ -63,7 +63,7 @@ static const char consoleMessagesEnabled[] = "consoleMessagesEnabled";
 
 int InspectorConsoleAgent::s_enabledAgentCount = 0;
 
-InspectorConsoleAgent::InspectorConsoleAgent(InstrumentingAgents* instrumentingAgents, InspectorState* state, InjectedScriptManager* injectedScriptManager)
+InspectorConsoleAgent::InspectorConsoleAgent(InstrumentingAgents* instrumentingAgents, InspectorCompositeState* state, InjectedScriptManager* injectedScriptManager)
     : InspectorBaseAgent<InspectorConsoleAgent>("Console", instrumentingAgents, state)
     , m_injectedScriptManager(injectedScriptManager)
     , m_frontend(0)

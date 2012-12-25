@@ -54,7 +54,7 @@ typedef String ErrorString;
 
 class InspectorCanvasAgent : public InspectorBaseAgent<InspectorCanvasAgent>, public InspectorBackendDispatcher::CanvasCommandHandler {
 public:
-    static PassOwnPtr<InspectorCanvasAgent> create(InstrumentingAgents* instrumentingAgents, InspectorState* state, Page* page, InjectedScriptManager* injectedScriptManager)
+    static PassOwnPtr<InspectorCanvasAgent> create(InstrumentingAgents* instrumentingAgents, InspectorCompositeState* state, Page* page, InjectedScriptManager* injectedScriptManager)
     {
         return adoptPtr(new InspectorCanvasAgent(instrumentingAgents, state, page, injectedScriptManager));
     }
@@ -81,7 +81,7 @@ public:
     virtual void replayTraceLog(ErrorString*, const String&, int, String*);
 
 private:
-    InspectorCanvasAgent(InstrumentingAgents*, InspectorState*, Page*, InjectedScriptManager*);
+    InspectorCanvasAgent(InstrumentingAgents*, InspectorCompositeState*, Page*, InjectedScriptManager*);
 
     InjectedScriptCanvasModule injectedScriptCanvasModuleForTraceLogId(ErrorString*, const String&);
 
