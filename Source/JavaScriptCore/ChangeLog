@@ -1,3 +1,9 @@
+2012-12-25  Ilya Tikhonovsky  <loislo@chromium.org>
+
+        Unreviewed follow-up for r138455.
+
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore.def:
+
 2012-12-24  Ilya Tikhonovsky  <loislo@chromium.org>
 
         Unreviewed compilation fix for r138452.

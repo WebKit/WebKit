@@ -306,6 +306,7 @@ EXPORTS
     ?parseDoubleFromLongString@Internal@WTF@@YANPB_WIAAI@Z
     ?positiveInfiniteTime@MediaTime@WTF@@SAABV12@XZ 
     ?process@WrapperBase@MemoryInstrumentation@WTF@@QAEXPAV23@@Z
+    ?processPointer@WrapperBase@MemoryInstrumentation@WTF@@QAEXPAV23@_N@Z
     ?processRootObjectRef@WrapperBase@MemoryInstrumentation@WTF@@QAEXPAV23@@Z
     ?profiler@LegacyProfiler@JSC@@SAPAV12@XZ
     ?protect@Heap@JSC@@QAEXVJSValue@2@@Z
@@ -331,6 +332,7 @@ EXPORTS
     ?removeBlock@MarkedAllocator@JSC@@QAEXPAVMarkedBlock@2@@Z
     ?removeDirect@JSObject@JSC@@QAE_NAAVJSGlobalData@2@VPropertyName@2@@Z
     ?reportAbandonedObjectGraph@Heap@JSC@@QAEXXZ
+    ?reportEdge@MemoryInstrumentation@WTF@@AAEXPBXPBDW4MemberType@2@@Z
     ?reportExtraMemoryCostSlowCase@Heap@JSC@@AAEXI@Z
     ?reportSuccess@HeapStatistics@JSC@@SAXXZ
     ?reserveAndCommit@OSAllocator@WTF@@SAPAXIW4Usage@12@_N11@Z
