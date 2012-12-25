@@ -1,5 +1,17 @@
 2012-12-25  Alexander Pavlov  <apavlov@chromium.org>
 
+        Web Inspector: Crash when modifying a rule that has been removed through JavaScript
+        https://bugs.webkit.org/show_bug.cgi?id=105718
+
+        Reviewed by Yury Semikhatsky.
+
+        * http/tests/inspector/elements-test.js: Add InspectorTest.toggleMatchedStyleProperty.
+        (initialize_ElementTest.InspectorTest.toggleMatchedStyleProperty): Added.
+        * inspector/styles/removed-rule-crash-expected.txt: Added.
+        * inspector/styles/removed-rule-crash.html: Added.
+
+2012-12-25  Alexander Pavlov  <apavlov@chromium.org>
+
         Web Inspector: device-metrics-fit-window.html is failing on Chromium-Mac
         https://bugs.webkit.org/show_bug.cgi?id=104362
 
