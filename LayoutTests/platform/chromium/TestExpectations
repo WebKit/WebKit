@@ -91,6 +91,7 @@ webkit.org/b/102464 [ Debug ] fast/images/webgl-teximage2d.html [ Pass Timeout ]
 webkit.org/b/102464 [ Debug ] platform/chromium/virtual/deferred/fast/images/webgl-teximage2d.html [ Pass Timeout ]
 webkit.org/b/103744 svg/dom/viewspec-parser-7.html [ Pass Timeout ]
 webkit.org/b/103744 svg/dom/viewspec-parser-6.html [ Pass Timeout ]
+crbug.com/24182 [ Debug ] platform/chromium/inspector/styles/device-metrics-fit-window.html [ Pass Slow ]
 
 # These tests started being slow when we switched to DRT.
 webkit.org/b/90488 [ Debug ] inspector [ Pass Slow ]
@@ -3602,9 +3603,6 @@ webkit.org/b/90746 fast/multicol/column-span-parent-continuation-crash.html [ Cr
 
 # Flaky
 webkit.org/b/90896 [ Win Debug ] fast/js/dfg-cross-global-object-inline-new-array-literal.html [ Failure Pass ]
-
-webkit.org/b/104362 [ Mac Release ] platform/chromium/inspector/styles/device-metrics-fit-window.html [ Failure ]
-webkit.org/b/104362 [ Mac Debug ] platform/chromium/inspector/styles/device-metrics-fit-window.html [ Failure Slow ]
 
 webkit.org/b/90900 [ SnowLeopard Lion ] tables/mozilla_expected_failures/other/empty_cells.html [ Failure Pass ]
 
