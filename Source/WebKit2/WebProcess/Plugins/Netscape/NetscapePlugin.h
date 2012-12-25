@@ -213,6 +213,9 @@ private:
     virtual bool handlesPageScaleFactor() OVERRIDE;
 
     virtual NPObject* pluginScriptableNPObject();
+    
+    virtual unsigned countFindMatches(const String&, WebCore::FindOptions, unsigned maxMatchCount) OVERRIDE;
+    virtual bool findString(const String&, WebCore::FindOptions, unsigned maxMatchCount) OVERRIDE;
 
 #if PLATFORM(MAC)
     virtual void windowFocusChanged(bool);

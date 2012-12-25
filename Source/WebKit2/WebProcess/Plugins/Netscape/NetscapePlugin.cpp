@@ -958,6 +958,16 @@ NPObject* NetscapePlugin::pluginScriptableNPObject()
 
     return scriptableNPObject;
 }
+    
+unsigned NetscapePlugin::countFindMatches(const String&, WebCore::FindOptions, unsigned)
+{
+    return 0;
+}
+
+bool NetscapePlugin::findString(const String&, WebCore::FindOptions, unsigned)
+{
+    return false;
+}
 
 void NetscapePlugin::contentsScaleFactorChanged(float scaleFactor)
 {

@@ -26,6 +26,7 @@
 #ifndef Plugin_h
 #define Plugin_h
 
+#include <WebCore/FindOptions.h>
 #include <WebCore/GraphicsLayer.h>
 #include <WebCore/KURL.h>
 #include <WebCore/ScrollTypes.h>
@@ -253,6 +254,10 @@ public:
 #if PLATFORM(MAC)
     virtual RetainPtr<PDFDocument> pdfDocumentForPrinting() const { return 0; }
 #endif
+
+    virtual unsigned countFindMatches(const String& target, WebCore::FindOptions, unsigned maxMatchCount) = 0;
+
+    virtual bool findString(const String& target, WebCore::FindOptions, unsigned maxMatchCount) = 0;
 
     virtual WebCore::IntPoint convertToRootView(const WebCore::IntPoint& pointInLocalCoordinates) const;
 

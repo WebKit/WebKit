@@ -83,7 +83,12 @@
 
 - (NSArray *)findString:(NSString *)string caseSensitive:(BOOL)isCaseSensitive highlightMatches:(BOOL)shouldHighlightMatches;
 
-- (id)currentSelection;
+- (PDFSelection *)currentSelection;
+- (void)setCurrentSelection:(PDFSelection *)selection;
+- (PDFSelection *)searchSelection;
+- (void)setSearchSelection:(PDFSelection *)selection;
+- (void)gotoSelection:(PDFSelection *)selection;
+
 - (void)copySelection;
 - (void)selectAll;
 

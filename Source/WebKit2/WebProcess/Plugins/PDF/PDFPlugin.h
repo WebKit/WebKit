@@ -32,6 +32,7 @@
 #include "SimplePDFPlugin.h"
 #include "WebEvent.h"
 #include <WebCore/AffineTransform.h>
+#include <WebCore/FindOptions.h>
 #include <WebCore/ScrollableArea.h>
 #include <wtf/RetainPtr.h>
 
@@ -41,6 +42,7 @@ typedef const struct OpaqueJSValue* JSValueRef;
 
 OBJC_CLASS PDFAnnotation;
 OBJC_CLASS PDFLayerController;
+OBJC_CLASS PDFSelection;
 OBJC_CLASS WKPDFLayerControllerDelegate;
 
 namespace CoreIPC {
@@ -97,6 +99,11 @@ private:
     virtual bool isEditingCommandEnabled(const String&) OVERRIDE;
     virtual bool handlesPageScaleFactor() OVERRIDE;
 
+    virtual unsigned countFindMatches(const String& target, WebCore::FindOptions, unsigned maxMatchCount) OVERRIDE;
+    virtual bool findString(const String& target, WebCore::FindOptions, unsigned maxMatchCount) OVERRIDE;
+
+    PDFSelection *nextMatchForString(const String& target, BOOL searchForward, BOOL caseSensitive, BOOL wrapSearch, PDFSelection *initialSelection, BOOL startInSelection);
+
     // ScrollableArea functions.
     virtual void setScrollOffset(const WebCore::IntPoint&) OVERRIDE;
     virtual void invalidateScrollbarRect(WebCore::Scrollbar*, const WebCore::IntRect&) OVERRIDE;
@@ -129,6 +136,8 @@ private:
     WebCore::IntPoint m_lastMousePositionInPluginCoordinates;
 
     String m_temporaryPDFUUID;
+
+    String m_lastFoundString;
     
     RetainPtr<WKPDFLayerControllerDelegate> m_pdfLayerControllerDelegate;
 };

@@ -828,7 +828,6 @@ void PDFPlugin::writeItemsToPasteboard(NSArray *items, NSArray *types)
             WebProcess::shared().connection()->send(Messages::WebContext::SetPasteboardBufferForType(NSGeneralPboard, type, handle, buffer->size()), 0);
         }
     }
-
 }
 
 IntPoint PDFPlugin::convertFromPDFViewToRootView(const IntPoint& point) const
@@ -847,6 +846,97 @@ void PDFPlugin::showDefinitionForAttributedString(NSAttributedString *string, CG
     attributedString.string = string;
 
     webFrame()->page()->send(Messages::WebPageProxy::DidPerformDictionaryLookup(attributedString, dictionaryPopupInfo));
+}
+
+unsigned PDFPlugin::countFindMatches(const String& target, WebCore::FindOptions options, unsigned maxMatchCount)
+{
+    if (!target.length())
+        return 0;
+
+    int nsOptions = (options & FindOptionsCaseInsensitive) ? NSCaseInsensitiveSearch : 0;
+
+    return [[pdfDocument().get() findString:target withOptions:nsOptions] count];
+}
+
+PDFSelection *PDFPlugin::nextMatchForString(const String& target, BOOL searchForward, BOOL caseSensitive, BOOL wrapSearch, PDFSelection *initialSelection, BOOL startInSelection)
+{
+    if (!target.length())
+        return nil;
+
+    NSStringCompareOptions options = 0;
+    if (!searchForward)
+        options |= NSBackwardsSearch;
+
+    if (!caseSensitive)
+        options |= NSCaseInsensitiveSearch;
+
+    PDFDocument *document = pdfDocument().get();
+
+    PDFSelection *selectionForInitialSearch = [initialSelection copy];
+    if (startInSelection) {
+        // Initially we want to include the selected text in the search.  So we must modify the starting search
+        // selection to fit PDFDocument's search requirements: selection must have a length >= 1, begin before
+        // the current selection (if searching forwards) or after (if searching backwards).
+        int initialSelectionLength = [[initialSelection string] length];
+        if (searchForward) {
+            [selectionForInitialSearch extendSelectionAtStart:1];
+            [selectionForInitialSearch extendSelectionAtEnd:-initialSelectionLength];
+        } else {
+            [selectionForInitialSearch extendSelectionAtEnd:1];
+            [selectionForInitialSearch extendSelectionAtStart:-initialSelectionLength];
+        }
+    }
+
+    PDFSelection *foundSelection = [document findString:target fromSelection:selectionForInitialSearch withOptions:options];
+    [selectionForInitialSearch release];
+
+    // If we first searched in the selection, and we found the selection, search again from just past the selection.
+    if (startInSelection && [foundSelection isEqual:initialSelection])
+        foundSelection = [document findString:target fromSelection:initialSelection withOptions:options];
+        
+    if (!foundSelection && wrapSearch)
+        foundSelection = [document findString:target fromSelection:nil withOptions:options];
+        
+    return foundSelection;
+}
+
+bool PDFPlugin::findString(const String& target, WebCore::FindOptions options, unsigned maxMatchCount)
+{
+    BOOL searchForward = !(options & FindOptionsBackwards);
+    BOOL caseSensitive = !(options & FindOptionsCaseInsensitive);
+    BOOL wrapSearch = options & FindOptionsWrapAround;
+
+    unsigned matchCount;
+    if (!maxMatchCount) {
+        // If the max was zero, any result means we exceeded the max. We can skip computing the actual count.
+        matchCount = static_cast<unsigned>(kWKMoreThanMaximumMatchCount);
+    } else {
+        matchCount = countFindMatches(target, options, maxMatchCount);
+        if (matchCount > maxMatchCount)
+            matchCount = static_cast<unsigned>(kWKMoreThanMaximumMatchCount);
+    }
+
+    if (target.isEmpty()) {
+        PDFSelection* searchSelection = [m_pdfLayerController.get() searchSelection];
+        [m_pdfLayerController.get() findString:target caseSensitive:caseSensitive highlightMatches:YES];
+        [m_pdfLayerController.get() setSearchSelection:searchSelection];
+        m_lastFoundString = emptyString();
+        return false;
+    }
+
+    if (m_lastFoundString == target) {
+        PDFSelection *selection = nextMatchForString(target, searchForward, caseSensitive, wrapSearch, [m_pdfLayerController.get() searchSelection], NO);
+        if (!selection)
+            return false;
+
+        [m_pdfLayerController.get() setSearchSelection:selection];
+        [m_pdfLayerController.get() gotoSelection:selection];
+    } else {
+        [m_pdfLayerController.get() findString:target caseSensitive:caseSensitive highlightMatches:YES];
+        m_lastFoundString = target;
+    }
+
+    return matchCount > 0;
 }
 
 } // namespace WebKit

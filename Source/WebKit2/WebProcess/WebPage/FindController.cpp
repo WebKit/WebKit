@@ -26,6 +26,7 @@
 #include "config.h"
 #include "FindController.h"
 
+#include "PluginView.h"
 #include "ShareableBitmap.h"
 #include "WKPage.h"
 #include "WebCoreArgumentCoders.h"
@@ -39,6 +40,7 @@
 #include <WebCore/FrameView.h>
 #include <WebCore/GraphicsContext.h>
 #include <WebCore/Page.h>
+#include <WebCore/PluginDocument.h>
 
 using namespace std;
 using namespace WebCore;
@@ -65,13 +67,30 @@ FindController::~FindController()
 {
 }
 
+static PluginView* pluginViewForFrame(Frame* frame)
+{
+    if (!frame->document()->isPluginDocument())
+        return 0;
+
+    PluginDocument* pluginDocument = static_cast<PluginDocument*>(frame->document());
+    return static_cast<PluginView*>(pluginDocument->pluginWidget());
+}
+
 void FindController::countStringMatches(const String& string, FindOptions options, unsigned maxMatchCount)
 {
     if (maxMatchCount == numeric_limits<unsigned>::max())
         --maxMatchCount;
     
-    unsigned matchCount = m_webPage->corePage()->markAllMatchesForText(string, core(options), false, maxMatchCount + 1);
-    m_webPage->corePage()->unmarkAllTextMatches();
+    PluginView* pluginView = pluginViewForFrame(m_webPage->mainFrame());
+    
+    unsigned matchCount;
+
+    if (pluginView)
+        matchCount = pluginView->countFindMatches(string, core(options), maxMatchCount + 1);
+    else {
+        matchCount = m_webPage->corePage()->markAllMatchesForText(string, core(options), false, maxMatchCount + 1);
+        m_webPage->corePage()->unmarkAllTextMatches();
+    }
 
     // Check if we have more matches than allowed.
     if (matchCount > maxMatchCount)
@@ -93,11 +112,14 @@ static Frame* frameWithSelection(Page* page)
 void FindController::updateFindUIAfterPageScroll(bool found, const String& string, FindOptions options, unsigned maxMatchCount)
 {
     Frame* selectedFrame = frameWithSelection(m_webPage->corePage());
+    
+    PluginView* pluginView = pluginViewForFrame(m_webPage->mainFrame());
 
     bool shouldShowOverlay = false;
 
     if (!found) {
-        m_webPage->corePage()->unmarkAllTextMatches();
+        if (!pluginView)
+            m_webPage->corePage()->unmarkAllTextMatches();
 
         // Clear the selection.
         if (selectedFrame)
@@ -116,8 +138,13 @@ void FindController::updateFindUIAfterPageScroll(bool found, const String& strin
             if (maxMatchCount == numeric_limits<unsigned>::max())
                 --maxMatchCount;
 
-            m_webPage->corePage()->unmarkAllTextMatches();
-            matchCount = m_webPage->corePage()->markAllMatchesForText(string, core(options), shouldShowHighlight, maxMatchCount + 1);
+            if (pluginView) {
+                matchCount = pluginView->countFindMatches(string, core(options), maxMatchCount + 1);
+                shouldShowOverlay = false;
+            } else {
+                m_webPage->corePage()->unmarkAllTextMatches();
+                matchCount = m_webPage->corePage()->markAllMatchesForText(string, core(options), shouldShowHighlight, maxMatchCount + 1);
+            }
 
             // Check if we have more matches than allowed.
             if (matchCount > maxMatchCount) {
@@ -155,7 +182,14 @@ void FindController::updateFindUIAfterPageScroll(bool found, const String& strin
 
 void FindController::findString(const String& string, FindOptions options, unsigned maxMatchCount)
 {
-    bool found = m_webPage->corePage()->findString(string, core(options));
+    PluginView* pluginView = pluginViewForFrame(m_webPage->mainFrame());
+    
+    bool found;
+    
+    if (pluginView)
+        found = pluginView->findString(string, core(options), maxMatchCount);
+    else
+        found = m_webPage->corePage()->findString(string, core(options));
 
     m_webPage->drawingArea()->dispatchAfterEnsuringUpdatedScrollPosition(WTF::bind(&FindController::updateFindUIAfterPageScroll, this, found, string, options, maxMatchCount));
 }
@@ -165,7 +199,13 @@ void FindController::hideFindUI()
     if (m_findPageOverlay)
         m_webPage->uninstallPageOverlay(m_findPageOverlay, false);
 
-    m_webPage->corePage()->unmarkAllTextMatches();
+    PluginView* pluginView = pluginViewForFrame(m_webPage->mainFrame());
+    
+    if (pluginView)
+        pluginView->findString(emptyString(), 0, 0);
+    else
+        m_webPage->corePage()->unmarkAllTextMatches();
+    
     hideFindIndicator();
 }
 
