@@ -1,3 +1,18 @@
+2012-12-25  Andreas Kling  <akling@apple.com>
+
+        [WK2][Mac] Call Carbon resource APIs on main thread only.
+        <rdar://problem/11760262>
+        <http://webkit.org/b/105746>
+
+        Reviewed by Anders Carlsson.
+
+        The Carbon resource APIs are not thread-safe, so use a little libdispatch sugar to make
+        sure that plugin enumeration never calls them on a secondary thread.
+
+        * Shared/Plugins/Netscape/mac/NetscapePluginModuleMac.mm:
+        (WebKit::getPluginInfoFromCarbonResourcesOnMainThread):
+        (WebKit::getPluginInfoFromCarbonResources):
+
 2012-12-25  Seokju Kwon  <seokju.kwon@gmail.com>
 
         [EFL][WK2] Build breaks with --no-input-type-color

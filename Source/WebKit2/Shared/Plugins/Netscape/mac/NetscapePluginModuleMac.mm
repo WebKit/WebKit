@@ -31,7 +31,7 @@
 #import "PluginProcessProxy.h"
 #import <WebCore/WebCoreNSStringExtras.h>
 #import <wtf/HashSet.h>
-
+#import <wtf/MainThread.h>
 
 using namespace WebCore;
 
@@ -296,8 +296,10 @@ static const ResID PluginNameOrDescriptionStringNumber = 126;
 static const ResID MIMEDescriptionStringNumber = 127;
 static const ResID MIMEListStringStringNumber = 128;
 
-static bool getPluginInfoFromCarbonResources(CFBundleRef bundle, PluginModuleInfo& plugin)
+static bool getPluginInfoFromCarbonResourcesOnMainThread(CFBundleRef bundle, PluginModuleInfo& plugin)
 {
+    ASSERT(isMainThread());
+
     ResourceMap resourceMap(bundle);
     if (!resourceMap.isValid())
         return false;
@@ -348,6 +350,15 @@ static bool getPluginInfoFromCarbonResources(CFBundleRef bundle, PluginModuleInf
         plugin.info.name = descriptionAndName[1];
 
     return true;
+}
+
+static bool getPluginInfoFromCarbonResources(CFBundleRef bundle, PluginModuleInfo& plugin)
+{
+    __block bool gotPluginInfo = false;
+    dispatch_sync(dispatch_get_main_queue(), ^{
+        gotPluginInfo = getPluginInfoFromCarbonResourcesOnMainThread(bundle, const_cast<PluginModuleInfo&>(plugin));
+    });
+    return gotPluginInfo;
 }
 
 bool NetscapePluginModule::getPluginInfo(const String& pluginPath, PluginModuleInfo& plugin)
