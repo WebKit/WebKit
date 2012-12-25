@@ -32,7 +32,6 @@
 
 #include "SVGNames.h"
 #include "SVGRectElement.h"
-#include <wtf/Platform.h>
 
 namespace WebCore {
 

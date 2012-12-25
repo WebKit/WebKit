@@ -25,7 +25,6 @@
  */
 
 #include "config.h"
-#include <wtf/Platform.h>
 
 #if USE(UDIS86)
 

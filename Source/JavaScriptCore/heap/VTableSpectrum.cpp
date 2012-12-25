@@ -30,7 +30,6 @@
 #include "Structure.h"
 #include <algorithm>
 #include <stdio.h>
-#include <wtf/Platform.h>
 #include <wtf/Vector.h>
 
 #if PLATFORM(MAC)
