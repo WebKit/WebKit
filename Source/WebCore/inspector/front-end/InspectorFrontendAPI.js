@@ -184,7 +184,7 @@ var InspectorFrontendAPI = {
     }
 }
 
-if (window.opener) {
+if (window.opener && window.dispatchStandaloneTestRunnerMessages) {
     function onMessageFromOpener(event)
     {
         if (event.source === window.opener)

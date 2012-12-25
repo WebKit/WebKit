@@ -176,6 +176,7 @@ StandaloneTestRunner.prototype = {
         var height = localStorage.getItem('inspectorHeight') || 400;
         var features = "width=" + Math.max(width , 600) + ",height=" + Math.max(height, 400);
         this._inspectorWindowLoading = window.open(StandaloneTestRunner.FrontendLocation + "?" + this._debuggerURL, "inspector", features);
+        this._inspectorWindowLoading.dispatchStandaloneTestRunnerMessages = true;
         
         window.addEventListener('unload', this.cleanup.bind(this));
 
@@ -345,7 +346,7 @@ This is a standalone test suite for inspector front-end. Here is how you run it:
 <ul>
 <li>Check out WebKit source tree: git clone http://git.chromium.org/external/Webkit.git</li>
 <li>Run "Tools/Scripts/new-run-webkit-httpd --root=. --port=8002 --server=start"</li>
-<li>Run Chrome Canary (ToT Chromium) with following flags: "--remote-debugging-port=9222 --user-data-dir=testProfile http://localhost:8002/Source/WebCore/inspector/front-end/test-runner.html</li>
+<li>Run Chrome Canary (ToT Chromium) with following flags: "--remote-debugging-port=9222 --user-data-dir=testProfile http://localhost:8002/Source/WebCore/inspector/front-end/test-runner.html"</li>
 </ul>
 
 <button onclick="run()">Run</button>
