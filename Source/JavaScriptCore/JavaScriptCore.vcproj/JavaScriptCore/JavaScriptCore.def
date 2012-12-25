@@ -331,7 +331,6 @@ EXPORTS
     ?removeBlock@MarkedAllocator@JSC@@QAEXPAVMarkedBlock@2@@Z
     ?removeDirect@JSObject@JSC@@QAE_NAAVJSGlobalData@2@VPropertyName@2@@Z
     ?reportAbandonedObjectGraph@Heap@JSC@@QAEXXZ
-    ?reportEdge@MemoryInstrumentation@WTF@@AAEXPAVMemoryObjectInfo@2@PBXPBD@Z
     ?reportExtraMemoryCostSlowCase@Heap@JSC@@AAEXI@Z
     ?reportSuccess@HeapStatistics@JSC@@SAXXZ
     ?reserveAndCommit@OSAllocator@WTF@@SAPAXIW4Usage@12@_N11@Z
