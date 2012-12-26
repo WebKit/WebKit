@@ -69,7 +69,7 @@ private:
 #endif
 };
 
-#if PLATFORM(WIN)
+#if PLATFORM(WIN) && USE(CFNETWORK)
 // Needed for WebKit1 API only.
 void overrideCookieStorage(CFHTTPCookieStorageRef);
 CFHTTPCookieStorageRef overridenCookieStorage();
