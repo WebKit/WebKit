@@ -986,7 +986,7 @@ WebInspector.HeapSnapshot.prototype = {
         var node = new WebInspector.HeapSnapshotNode(this, this._rootNodeIndex);
         var distancesToWindow = this._distancesToWindow;
 
-        for (var nodeIndex = this._rootNodeIndex; nodeIndex < nodesLength; nodeIndex += nodeFieldCount) {
+        for (var nodeIndex = 0; nodeIndex < nodesLength; nodeIndex += nodeFieldCount) {
             var nodeOrdinal = nodeIndex / nodeFieldCount;
             if (!(flags[nodeOrdinal] & pageObjectFlag))
                 continue;
@@ -1316,7 +1316,17 @@ WebInspector.HeapSnapshot.prototype = {
         // index 0) as it is the only node that dominates itself.
         var nodeFieldCount = this._nodeFieldCount;
         var dominatorsTree = this._dominatorsTree;
-        for (var nodeOrdinal = 1, l = this.nodeCount; nodeOrdinal < l; ++nodeOrdinal)
+
+        var fromNodeOrdinal = 0;
+        var toNodeOrdinal = this.nodeCount;
+        var rootNodeOrdinal = this._rootNodeIndex / nodeFieldCount;
+        if (rootNodeOrdinal === fromNodeOrdinal)
+            fromNodeOrdinal = 1;
+        else if (rootNodeOrdinal === toNodeOrdinal - 1)
+            toNodeOrdinal = toNodeOrdinal - 1;
+        else
+            throw new Error("Root node is expected to be either first or last");
+        for (var nodeOrdinal = fromNodeOrdinal; nodeOrdinal < toNodeOrdinal; ++nodeOrdinal)
             ++indexArray[dominatorsTree[nodeOrdinal]];
         // Put in the first slot of each dominatedNodes slice the count of entries
         // that will be filled.
@@ -1329,7 +1339,7 @@ WebInspector.HeapSnapshot.prototype = {
         indexArray[this.nodeCount] = dominatedNodes.length;
         // Fill up the dominatedNodes array with indexes of dominated nodes. Skip the root (node at
         // index 0) as it is the only node that dominates itself.
-        for (var nodeOrdinal = 1, l = this.nodeCount; nodeOrdinal < l; ++nodeOrdinal) {
+        for (var nodeOrdinal = fromNodeOrdinal; nodeOrdinal < toNodeOrdinal; ++nodeOrdinal) {
             var dominatorOrdinal = dominatorsTree[nodeOrdinal];
             var dominatedRefIndex = indexArray[dominatorOrdinal];
             dominatedRefIndex += (--dominatedNodes[dominatedRefIndex]);

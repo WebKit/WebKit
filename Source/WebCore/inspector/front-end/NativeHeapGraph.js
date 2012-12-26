@@ -38,44 +38,31 @@ WebInspector.NativeHeapGraph = function(rawGraph)
 
     this._nodeFieldCount = 5;
     this._nodeTypeOffset = 0;
-    this._nodeSizeOffset = 1;
-    this._nodeClassNameOffset = 2;
-    this._nodeNameOffset = 3;
+    this._nodeClassNameOffset = 1;
+    this._nodeNameOffset = 2;
+    this._nodeSizeOffset = 3;
     this._nodeEdgeCountOffset = 4;
     this._nodeFirstEdgeOffset = this._nodeEdgeCountOffset;
 
     this._edgeFieldCount = 3;
     this._edgeTypeOffset = 0;
-    this._edgeTargetOffset = 1;
-    this._edgeNameOffset = 2;
+    this._edgeNameOffset = 1;
+    this._edgeTargetOffset = 2;
 
     this._nodeCount = rawGraph.nodes.length / this._nodeFieldCount;
     this._nodes = rawGraph.nodes;
     this._edges = rawGraph.edges;
     this._strings = rawGraph.strings;
 
+    this._rootNodeIndex = this._nodes.length - this._nodeFieldCount;
     this._calculateNodeEdgeIndexes();
+    this._addDummyNode();
 }
 
 WebInspector.NativeHeapGraph.prototype = {
-    rootNodes: function()
+    root: function()
     {
-        var nodeHasIncomingEdges = new Uint8Array(this._nodeCount);
-        var edges = this._edges;
-        var edgesLength = edges.length;
-        var edgeFieldCount = this._edgeFieldCount;
-        var nodeFieldCount = this._nodeFieldCount;
-        for (var i = this._edgeTargetOffset; i < edgesLength; i += edgeFieldCount) {
-            var targetIndex = edges[i];
-            nodeHasIncomingEdges[targetIndex] = 1;
-        }
-        var roots = [];
-        var nodeCount = nodeHasIncomingEdges.length;
-        for (var i = 0; i < nodeCount; i++) {
-            if (!nodeHasIncomingEdges[i])
-                roots.push(new WebInspector.NativeHeapGraph.Node(this, i * nodeFieldCount));
-        }
-        return roots;
+        return new WebInspector.NativeHeapGraph.Node(this, this._rootNodeIndex);
     },
 
     _calculateNodeEdgeIndexes: function()
@@ -89,7 +76,6 @@ WebInspector.NativeHeapGraph.prototype = {
             nodes[i] = firstEdgeIndex;
             firstEdgeIndex += count;
         }
-        this._addDummyNode();
     },
 
     _addDummyNode: function()
@@ -97,7 +83,7 @@ WebInspector.NativeHeapGraph.prototype = {
         var firstEdgePosition = this._nodes.length + this._nodeFirstEdgeOffset;
         for (var i = 0; i < this._nodeFieldCount; i++)
             this._nodes.push(0);
-        this._nodes[firstEdgePosition] = this._edges.length;
+        this._nodes[firstEdgePosition] = this._edges.length / this._edgeFieldCount;
     }
 }
 
@@ -127,7 +113,7 @@ WebInspector.NativeHeapGraph.Edge.prototype = {
     target: function()
     {
         var edges = this._graph._edges;
-        var targetPosition = edges[this._position + this._graph._edgeTargetOffset] * this._graph._nodeFieldCount;
+        var targetPosition = edges[this._position + this._graph._edgeTargetOffset];
         return new WebInspector.NativeHeapGraph.Node(this._graph, targetPosition);
     },
 
@@ -198,7 +184,7 @@ WebInspector.NativeHeapGraph.Node.prototype = {
         var afterLastEdgePosition = this._afterLastEdgePosition();
         var result = [];
         for (var i = firstEdgePosition + this._graph._edgeTargetOffset; i < afterLastEdgePosition; i += edgeFieldCount)
-            result.push(new WebInspector.NativeHeapGraph.Node(this._graph, edges[i] * nodeFieldCount));
+            result.push(new WebInspector.NativeHeapGraph.Node(this._graph, edges[i]));
         return result;
     },
 

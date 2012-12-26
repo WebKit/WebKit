@@ -281,7 +281,7 @@ WebInspector.NativeSnapshotNode.prototype = {
 
         // Collect objects on the path MemoryCache -> CachedImage -m_image-> BitmapImage -m_frames-> FrameData -m_frame-> SkBitmap -> SkPixelRef
         var graph = this.dataGrid._profile._graph;
-        var roots = graph.rootNodes();
+        var roots = graph.root().referencedNodes();
         var memoryCache;
         for (var i = 0; i < roots.length; i++) {
             var root = roots[i];
@@ -365,7 +365,7 @@ WebInspector.NativeHeapGraphDataGridRoot = function(graph)
 WebInspector.NativeHeapGraphDataGridRoot.prototype = {
     _populate: function() {
         this.removeEventListener("populate", this._populate, this);
-        var roots = this._graph.rootNodes();
+        var roots = this._graph.root().referencedNodes();
         for (var i = 0; i < roots.length; i++)
             this.appendChild(new WebInspector.NativeHeapGraphDataGridNode(roots[i]));
     },

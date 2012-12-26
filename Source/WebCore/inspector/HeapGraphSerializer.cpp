@@ -60,6 +60,7 @@ public:
     int m_className;
     int m_name;
     int m_edgeCount;
+    static const int s_nodeFieldCount = 5;
 };
 
 class HeapGraphEdge {
@@ -158,22 +159,23 @@ void HeapGraphSerializer::reportBaseAddress(const void* base, const void* real)
 
 PassRefPtr<InspectorObject> HeapGraphSerializer::serialize()
 {
+    addRootNode();
     adjutEdgeTargets();
     RefPtr<InspectorArray> nodes = InspectorArray::create();
     for (size_t i = 0; i < m_nodes.size(); i++) {
         HeapGraphNode& node = m_nodes[i];
         nodes->pushInt(node.m_type);
-        nodes->pushInt(node.m_size);
         nodes->pushInt(node.m_className);
         nodes->pushInt(node.m_name);
+        nodes->pushInt(node.m_size);
         nodes->pushInt(node.m_edgeCount);
     }
     RefPtr<InspectorArray> edges = InspectorArray::create();
     for (size_t i = 0; i < m_edges.size(); i++) {
         HeapGraphEdge& edge = m_edges[i];
         edges->pushInt(edge.m_type);
-        edges->pushInt(edge.m_toIndex);
         edges->pushInt(edge.m_name);
+        edges->pushInt(edge.m_toIndex * HeapGraphNode::s_nodeFieldCount);
     }
     RefPtr<InspectorArray> strings = InspectorArray::create();
     for (size_t i = 0; i < m_strings.size(); i++)
