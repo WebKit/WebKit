@@ -177,23 +177,14 @@ set(JavaScriptCore_SOURCES
     parser/SourceProviderCache.cpp
 
     profiler/ProfilerBytecode.cpp
-    profiler/ProfilerBytecode.h
     profiler/ProfilerBytecodeSequence.cpp
     profiler/ProfilerBytecodes.cpp
-    profiler/ProfilerBytecodes.h
     profiler/ProfilerCompilation.cpp
-    profiler/ProfilerCompilation.h
     profiler/ProfilerCompilationKind.cpp
-    profiler/ProfilerCompilationKind.h
     profiler/ProfilerCompiledBytecode.cpp
-    profiler/ProfilerCompiledBytecode.h
     profiler/ProfilerDatabase.cpp
-    profiler/ProfilerDatabase.h
-    profiler/ProfilerExecutionCounter.h
     profiler/ProfilerOrigin.cpp
-    profiler/ProfilerOrigin.h
     profiler/ProfilerOriginStack.cpp
-    profiler/ProfilerOriginStack.h
     profiler/ProfilerOSRExit.cpp
     profiler/ProfilerOSRExitSite.cpp
     profiler/ProfilerProfiledBytecodes.cpp
@@ -264,11 +255,8 @@ set(JavaScriptCore_SOURCES
     runtime/MathObject.cpp
     runtime/MemoryStatistics.cpp
     runtime/NameConstructor.cpp
-    runtime/NameConstructor.h
     runtime/NameInstance.cpp
-    runtime/NameInstance.h
     runtime/NamePrototype.cpp
-    runtime/NamePrototype.h
     runtime/NativeErrorConstructor.cpp
     runtime/NativeErrorPrototype.cpp
     runtime/NumberConstructor.cpp
