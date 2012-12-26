@@ -1,3 +1,19 @@
+2012-12-26  Sean Wang  <Xuewen.Wang@torchmobile.com.cn>
+
+        [BlackBerry] Caret doesn't update position when scrolling text in Input element
+        https://bugs.webkit.org/show_bug.cgi?id=105757
+
+        Reviewed by George Staikos.
+
+        PR 271627
+        Internally reviewed by George Staikos.
+
+        Call FrameSelection's updateAppearence instead of SelectionHandler's
+        selectionPositionChanged to update the caret position.
+
+        * Api/InRegionScroller.cpp:
+        (BlackBerry::WebKit::InRegionScrollerPrivate::setLayerScrollPosition):
+
 2012-12-25  Charles Wei  <charles.wei@torchmobile.com.cn>
 
         [BlackBerry] Need to initialize the onLine in the global
