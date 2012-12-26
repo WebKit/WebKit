@@ -1,3 +1,13 @@
+2012-12-26  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
+
+        Fix build warning in OSAllocatorPosix.cpp
+        https://bugs.webkit.org/show_bug.cgi?id=105761
+
+        Reviewed by Kentaro Hara.
+
+        * wtf/OSAllocatorPosix.cpp:
+        (WTF::OSAllocator::reserveUncommitted): Fix unused param warnings.
+
 2012-12-24  Yury Semikhatsky  <yurys@chromium.org>
 
         Memory instrumentation: provide a way to mark a node as a root
