@@ -43,16 +43,15 @@ WebInspector.NetworkItemView = function(request)
 
     this.addEventListener(WebInspector.TabbedPane.EventTypes.TabSelected, this._tabSelected, this);
 
-    if (request.frames().length > 0) {
+    if (request.type === WebInspector.resourceTypes.WebSocket) {
         var frameView = new WebInspector.ResourceWebSocketFrameView(request);
         this.appendTab("webSocketFrames", WebInspector.UIString("Frames"), frameView);
-        return;
+    } else {
+        var responseView = new WebInspector.RequestResponseView(request);
+        var previewView = new WebInspector.RequestPreviewView(request, responseView);
+        this.appendTab("preview", WebInspector.UIString("Preview"), previewView);
+        this.appendTab("response", WebInspector.UIString("Response"), responseView);
     }
-
-    var responseView = new WebInspector.RequestResponseView(request);
-    var previewView = new WebInspector.RequestPreviewView(request, responseView);
-    this.appendTab("preview", WebInspector.UIString("Preview"), previewView);
-    this.appendTab("response", WebInspector.UIString("Response"), responseView);
 
     if (request.requestCookies || request.responseCookies) {
         this._cookiesView = new WebInspector.RequestCookiesView(request);
