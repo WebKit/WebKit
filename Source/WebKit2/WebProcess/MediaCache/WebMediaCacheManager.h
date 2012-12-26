@@ -27,6 +27,7 @@
 #define WebMediaCacheManager_h
 
 #include "MessageReceiver.h"
+#include <stdint.h>
 #include <wtf/Forward.h>
 #include <wtf/Noncopyable.h>
 

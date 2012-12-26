@@ -1,3 +1,9 @@
+2012-12-26  Csaba Osztrogonác  <ossy@webkit.org>
+
+        Unreviewed Xmas buildfix after r138479.
+
+        * WebProcess/MediaCache/WebMediaCacheManager.h:
+
 2012-12-25  Sam Weinig  <sam@webkit.org>
 
         Convert WebKeyValueStorageManager and WebMediaCacheManager to MessageReceiver
