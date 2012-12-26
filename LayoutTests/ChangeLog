@@ -1,3 +1,9 @@
+2012-12-26  Emil A Eklund  <eae@chromium.org>
+
+        Unreviewed. Enable most sub-pixel tests on mac.
+
+        * platform/mac/TestExpectations:
+
 2012-12-26  Yury Semikhatsky  <yurys@chromium.org>
 
         Web Inspector: extract JS heap profiler specifics into JSHeapSnapshot.js
