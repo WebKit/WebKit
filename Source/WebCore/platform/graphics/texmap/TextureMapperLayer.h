@@ -99,7 +99,6 @@ public:
 
     TextureMapper* textureMapper() const;
     void flushCompositingStateForThisLayerOnly(GraphicsLayerTextureMapper*);
-    IntSize size() const { return IntSize(m_size.width(), m_size.height()); }
     void setTransform(const TransformationMatrix&);
     void setOpacity(float value) { m_opacity = value; }
 #if ENABLE(CSS_FILTERS)
@@ -121,14 +120,8 @@ public:
 private:
     const TextureMapperLayer* rootLayer() const;
     void computeTransformsRecursive();
-    void computeOverlapsIfNeeded();
-    void computeTiles();
     IntRect intermediateSurfaceRect(const TransformationMatrix&);
     IntRect intermediateSurfaceRect();
-    void swapContentsBuffers();
-    FloatRect targetRectForTileRect(const FloatRect& totalTargetRect, const FloatRect& tileRect) const;
-    void invalidateViewport(const FloatRect&);
-    void notifyChange(ChangeMask);
 
     static int compareGraphicsLayersZValue(const void* a, const void* b);
     static void sortByZOrder(Vector<TextureMapperLayer* >& array, int first, int last);
@@ -165,12 +158,12 @@ private:
     ContentsLayerCount countPotentialLayersWithContents() const;
     bool shouldPaintToIntermediateSurface() const;
 
-    GraphicsLayerTransform m_transform;
-
     inline FloatRect layerRect() const
     {
         return FloatRect(FloatPoint::zero(), m_size);
     }
+
+    GraphicsLayerTransform m_transform;
 
     Vector<TextureMapperLayer*> m_children;
     TextureMapperLayer* m_parent;
@@ -183,7 +176,6 @@ private:
     FilterOperations m_filters;
 #endif
     float m_centerZ;
-    String m_name;
 
     struct State {
         FloatPoint pos;
@@ -193,12 +185,11 @@ private:
         TransformationMatrix childrenTransform;
         float opacity;
         FloatRect contentsRect;
-        int descendantsWithContent;
         TextureMapperLayer* maskLayer;
         TextureMapperLayer* replicaLayer;
         Color solidColor;
 #if ENABLE(CSS_FILTERS)
-         FilterOperations filters;
+        FilterOperations filters;
 #endif
 
         bool preserves3D : 1;
@@ -208,8 +199,7 @@ private:
         bool contentsOpaque : 1;
         bool backfaceVisibility : 1;
         bool visible : 1;
-        bool mightHaveOverlaps : 1;
-        bool needsRepaint;
+
         State()
             : opacity(1.f)
             , maskLayer(0)
@@ -221,8 +211,6 @@ private:
             , contentsOpaque(false)
             , backfaceVisibility(false)
             , visible(true)
-            , mightHaveOverlaps(false)
-            , needsRepaint(false)
         {
         }
     };
