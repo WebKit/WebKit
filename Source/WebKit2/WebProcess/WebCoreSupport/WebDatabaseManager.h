@@ -41,7 +41,7 @@ class WebDatabaseManager : public WebCore::DatabaseManagerClient, private CoreIP
     WTF_MAKE_NONCOPYABLE(WebDatabaseManager);
 public:
     WebDatabaseManager(WebProcess*);
-    static void initialize(const String& databaseDirectory);
+    void initialize(const String& databaseDirectory);
 
     void setQuotaForOrigin(const String& originIdentifier, unsigned long long quota) const;
     void deleteAllDatabases() const;

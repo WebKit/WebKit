@@ -41,16 +41,16 @@ using namespace WebCore;
 
 namespace WebKit {
 
-void WebDatabaseManager::initialize(const String& databaseDirectory)
-{
-    DatabaseManager::manager().initialize(databaseDirectory);
-}
-
 WebDatabaseManager::WebDatabaseManager(WebProcess* process)
     : m_process(process)
 {
     m_process->addMessageReceiver(Messages::WebDatabaseManager::messageReceiverName(), this);
 
+}
+
+void WebDatabaseManager::initialize(const String& databaseDirectory)
+{
+    DatabaseManager::manager().initialize(databaseDirectory);
     DatabaseManager::manager().setClient(this);
 }
 
