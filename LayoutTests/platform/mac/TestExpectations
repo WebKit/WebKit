@@ -1278,3 +1278,7 @@ Bug(rniwa) http/tests/appcache/main-resource-redirect.html [ Crash ]
 webkit.org/b/105601 svg/zoom/page/zoom-replaced-intrinsic-ratio-001.htm [ Crash Pass ]
 
 webkit.org/b/105603 http/tests/cookies/single-quoted-value.html [ Failure Pass ]
+
+webkit.org/b/105777 platform/mac/editing/spelling/autocorrection-in-textarea.html [ Failure Pass ]
+
+webkit.org/b/105778 platform/mac/accessibility/file-upload-button-subrole.html [ Failure ]
