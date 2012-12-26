@@ -85,6 +85,7 @@ void globalInitialize()
     BlackBerry::Platform::Settings* settings = BlackBerry::Platform::Settings::instance();
 
     ImageSource::setMaxPixelsPerDecodedImage(settings->maxPixelsPerDecodedImage());
+    updateOnlineStatus(settings->isNetworkAvailable());
 }
 
 void collectJavascriptGarbageNow()
