@@ -884,30 +884,6 @@ void RenderThemeBlackBerry::adjustMediaControlStyle(StyleResolver*, RenderStyle*
     default:
         break;
     }
-
-    if (!isfinite(mediaElement->duration())) {
-        // Live streams have infinite duration with no timeline. Force the mute
-        // and fullscreen buttons to the right. This is needed when webkit does
-        // not render the timeline container because it has a webkit-box-flex
-        // of 1 and normally allows those buttons to be on the right.
-        switch (style->appearance()) {
-        case MediaEnterFullscreenButtonPart:
-        case MediaExitFullscreenButtonPart:
-            style->setPosition(AbsolutePosition);
-            style->setBottom(zero);
-            style->setLeft(zero);
-            style->setRight(controlsHeight);
-            break;
-        case MediaRewindButtonPart:
-            // We hi-jack the Rewind Button ID to use it for the divider image
-            style->setPosition(AbsolutePosition);
-            style->setBottom(zero);
-            style->setLeft(controlsHeight);
-            break;
-        default:
-            break;
-        }
-    }
 }
 
 void RenderThemeBlackBerry::adjustSliderTrackStyle(StyleResolver*, RenderStyle* style, Element* element) const
