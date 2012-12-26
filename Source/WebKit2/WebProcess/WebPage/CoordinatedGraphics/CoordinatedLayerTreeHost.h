@@ -140,6 +140,8 @@ private:
     void createPageOverlayLayer();
     void destroyPageOverlayLayer();
     bool flushPendingLayerChanges();
+    void createCompositingLayers();
+    void deleteCompositingLayers();
     void cancelPendingLayerFlush();
     void performScheduledLayerFlush();
     void didPerformScheduledLayerFlush();
@@ -173,7 +175,8 @@ private:
     OwnPtr<WebCore::GraphicsLayer> m_pageOverlayLayer;
 
     HashSet<WebCore::CoordinatedGraphicsLayer*> m_registeredLayers;
-    Vector<CoordinatedLayerID> m_detachedLayers;
+    Vector<CoordinatedLayerID> m_layersToCreate;
+    Vector<CoordinatedLayerID> m_layersToDelete;
     typedef HashMap<CoordinatedImageBackingID, RefPtr<CoordinatedImageBacking> > ImageBackingMap;
     ImageBackingMap m_imageBackings;
     Vector<OwnPtr<UpdateAtlas> > m_updateAtlases;

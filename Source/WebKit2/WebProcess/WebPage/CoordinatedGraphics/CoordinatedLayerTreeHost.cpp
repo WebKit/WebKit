@@ -269,6 +269,8 @@ bool CoordinatedLayerTreeHost::flushPendingLayerChanges()
 
     TemporaryChange<bool> protector(m_isFlushingLayerChanges, true);
 
+    createCompositingLayers();
+
     initializeRootCompositingLayerIfNeeded();
 
     m_rootLayer->flushCompositingStateForThisLayerOnly();
@@ -280,9 +282,7 @@ bool CoordinatedLayerTreeHost::flushPendingLayerChanges()
 
     flushPendingImageBackingChanges();
 
-    for (size_t i = 0; i < m_detachedLayers.size(); ++i)
-        m_webPage->send(Messages::CoordinatedLayerTreeHostProxy::DeleteCompositingLayer(m_detachedLayers[i]));
-    m_detachedLayers.clear();
+    deleteCompositingLayers();
 
     if (m_shouldSyncFrame) {
         didSync = true;
@@ -301,6 +301,42 @@ bool CoordinatedLayerTreeHost::flushPendingLayerChanges()
     }
 
     return didSync;
+}
+
+void CoordinatedLayerTreeHost::createCompositingLayers()
+{
+    if (m_layersToCreate.isEmpty())
+        return;
+
+    // If a layer gets created and deleted in the same cycle, we can simply remove it from m_layersToCreate and m_layersToDelete.
+    for (int i = m_layersToCreate.size() - 1; i >= 0; --i) {
+        size_t index = m_layersToDelete.find(m_layersToCreate[i]);
+        if (index != notFound) {
+            m_layersToCreate.remove(i);
+            m_layersToDelete.remove(index);
+        }
+    }
+
+    for (size_t i = 0; i < m_layersToCreate.size(); ++i)
+        m_webPage->send(Messages::CoordinatedLayerTreeHostProxy::CreateCompositingLayer(m_layersToCreate[i]));
+    m_layersToCreate.clear();
+    m_shouldSyncFrame = true;
+}
+
+void CoordinatedLayerTreeHost::deleteCompositingLayers()
+{
+    if (m_layersToDelete.isEmpty())
+        return;
+
+    if (m_isPurging) {
+        m_layersToDelete.clear();
+        return;
+    }
+
+    for (size_t i = 0; i < m_layersToDelete.size(); ++i)
+        m_webPage->send(Messages::CoordinatedLayerTreeHostProxy::DeleteCompositingLayer(m_layersToDelete[i]));
+    m_layersToDelete.clear();
+    m_shouldSyncFrame = true;
 }
 
 void CoordinatedLayerTreeHost::initializeRootCompositingLayerIfNeeded()
@@ -422,8 +458,7 @@ void CoordinatedLayerTreeHost::disconnectCustomFilterPrograms()
 void CoordinatedLayerTreeHost::detachLayer(CoordinatedGraphicsLayer* layer)
 {
     m_registeredLayers.remove(layer);
-    m_shouldSyncFrame = true;
-    m_detachedLayers.append(layer->id());
+    m_layersToDelete.append(layer->id());
     scheduleLayerFlush();
 }
 
@@ -637,8 +672,10 @@ PassOwnPtr<GraphicsLayer> CoordinatedLayerTreeHost::createGraphicsLayer(Graphics
     CoordinatedGraphicsLayer* layer = new CoordinatedGraphicsLayer(client);
     layer->setCoordinator(this);
     m_registeredLayers.add(layer);
+    m_layersToCreate.append(layer->id());
     layer->setContentsScale(m_contentsScale);
     layer->setNeedsVisibleRectAdjustment();
+    scheduleLayerFlush();
     return adoptPtr(layer);
 }
 

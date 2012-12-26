@@ -1,3 +1,51 @@
+2012-12-25  Huang Dongsung  <luxtella@company100.net>
+
+        Coordinated Graphics: Manage the lifecycle of CoordinatedGraphicsLayer explicitly.
+        https://bugs.webkit.org/show_bug.cgi?id=104990
+
+        Reviewed by Noam Rosenthal.
+
+        Send explicit commands to the UI process to create/delete compositing
+        layers, instead of having the UI process decide lazily when to create
+        them.
+
+        Avoid creating a compositing layer at all if it was deleted in the same
+        cycle.
+
+        * UIProcess/CoordinatedGraphics/CoordinatedLayerTreeHostProxy.cpp:
+        (WebKit::CoordinatedLayerTreeHostProxy::createCompositingLayer):
+        (WebKit):
+        * UIProcess/CoordinatedGraphics/CoordinatedLayerTreeHostProxy.h:
+        (CoordinatedLayerTreeHostProxy):
+        * UIProcess/CoordinatedGraphics/CoordinatedLayerTreeHostProxy.messages.in:
+        * UIProcess/CoordinatedGraphics/LayerTreeRenderer.cpp:
+        (WebKit::LayerTreeRenderer::createCanvas):
+        (WebKit::LayerTreeRenderer::destroyCanvas):
+        (WebKit::LayerTreeRenderer::setLayerChildren):
+        (WebKit::LayerTreeRenderer::setLayerFilters):
+        (WebKit::LayerTreeRenderer::setLayerState):
+        (WebKit::LayerTreeRenderer::getLayerByIDIfExists):
+        (WebKit):
+        (WebKit::LayerTreeRenderer::createLayer):
+        (WebKit::LayerTreeRenderer::deleteLayer):
+        (WebKit::LayerTreeRenderer::setRootLayerID):
+        (WebKit::LayerTreeRenderer::createTile):
+        (WebKit::LayerTreeRenderer::removeTile):
+        (WebKit::LayerTreeRenderer::updateTile):
+        (WebKit::LayerTreeRenderer::ensureRootLayer):
+        (WebKit::LayerTreeRenderer::setLayerAnimations):
+        * UIProcess/CoordinatedGraphics/LayerTreeRenderer.h:
+        (LayerTreeRenderer):
+        (WebKit::LayerTreeRenderer::layerByID):
+        * WebProcess/WebPage/CoordinatedGraphics/CoordinatedLayerTreeHost.cpp:
+        (WebKit::CoordinatedLayerTreeHost::flushPendingLayerChanges):
+        (WebKit::CoordinatedLayerTreeHost::createCompositingLayers):
+        (WebKit):
+        (WebKit::CoordinatedLayerTreeHost::deleteCompositingLayers):
+        (WebKit::CoordinatedLayerTreeHost::detachLayer):
+        (WebKit::CoordinatedLayerTreeHost::createGraphicsLayer):
+        * WebProcess/WebPage/CoordinatedGraphics/CoordinatedLayerTreeHost.h:
+
 2012-12-25  Sam Weinig  <sam@webkit.org>
 
         Fix Qt build.

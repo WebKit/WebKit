@@ -29,6 +29,7 @@ messages -> CoordinatedLayerTreeHostProxy {
     RemoveCustomFilterProgram(int id)
 #endif
     SetRootCompositingLayer(uint32_t id)
+    CreateCompositingLayer(uint32_t id)
     DeleteCompositingLayer(uint32_t id)
     CreateTileForLayer(uint32_t layerID, uint32_t tileID, WebCore::IntRect tileRect, WebKit::SurfaceUpdateInfo updateInfo)
     UpdateTileForLayer(uint32_t layerID, uint32_t tileID, WebCore::IntRect tileRect, WebKit::SurfaceUpdateInfo updateInfo)
