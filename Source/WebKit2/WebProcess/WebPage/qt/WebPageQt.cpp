@@ -31,6 +31,7 @@
 #include "PopupMenuClient.h"
 #include "WebEditorClient.h"
 #include "WebEvent.h"
+#include "WebPageGroupProxy.h"
 #include "WebPageProxyMessages.h"
 #include "WebPopupMenu.h"
 #include "WebProcess.h"
