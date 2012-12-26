@@ -31,7 +31,6 @@
 #include "WebHitTestResult.h"
 #include "WebPage.h"
 #include "WebPageProxyMessages.h"
-#include "WebProcess.h"
 #include <WebCore/ContextMenu.h>
 #include <WebCore/ContextMenuController.h>
 #include <WebCore/Frame.h>

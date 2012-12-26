@@ -31,6 +31,7 @@
 #include "WebCoreArgumentCoders.h"
 #include "WebProcess.h"
 #include "WebResourceBuffer.h"
+#include "WebResourceLoadScheduler.h"
 #include <WebCore/ResourceBuffer.h>
 
 #if ENABLE(NETWORK_PROCESS)

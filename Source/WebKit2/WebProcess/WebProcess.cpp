@@ -26,16 +26,20 @@
 #include "config.h"
 #include "WebProcess.h"
 
-#include "DownloadManager.h"
+#include "AuthenticationManager.h"
 #include "InjectedBundle.h"
 #include "InjectedBundleUserMessageCoders.h"
 #include "Logging.h"
-#include "SandboxExtension.h"
 #include "StatisticsData.h"
+#include "WebApplicationCacheManager.h"
+#include "WebConnectionToUIProcess.h"
 #include "WebContextMessages.h"
+#include "WebCookieManager.h"
 #include "WebCoreArgumentCoders.h"
 #include "WebFrame.h"
 #include "WebFrameNetworkingContext.h"
+#include "WebGeolocationManager.h"
+#include "WebIconDatabaseProxy.h"
 #include "WebKeyValueStorageManager.h"
 #include "WebMediaCacheManager.h"
 #include "WebMemorySampler.h"
@@ -46,6 +50,7 @@
 #include "WebProcessCreationParameters.h"
 #include "WebProcessMessages.h"
 #include "WebProcessProxyMessages.h"
+#include "WebResourceCacheManager.h"
 #include <JavaScriptCore/JSLock.h>
 #include <JavaScriptCore/MemoryStatistics.h>
 #include <WebCore/AXObjectCache.h>
@@ -74,7 +79,6 @@
 #include <WebCore/StorageTracker.h>
 #include <wtf/HashCountedSet.h>
 #include <wtf/PassRefPtr.h>
-#include <wtf/RandomNumber.h>
 
 #if ENABLE(WEB_INTENTS)
 #include <WebCore/PlatformMessagePortChannel.h>
@@ -98,6 +102,22 @@
 
 #if ENABLE(CUSTOM_PROTOCOLS)
 #include "CustomProtocolManager.h"
+#endif
+
+#if ENABLE(NOTIFICATIONS) || ENABLE(LEGACY_NOTIFICATIONS)
+#include "WebNotificationManager.h"
+#endif
+
+#if ENABLE(SQL_DATABASE)
+#include "WebDatabaseManager.h"
+#endif
+
+#if ENABLE(NETWORK_PROCESS)
+#include "WebResourceLoadScheduler.h"
+#endif
+
+#if ENABLE(PLUGIN_PROCESS)
+#include "PluginProcessConnectionManager.h"
 #endif
 
 using namespace JSC;
@@ -127,12 +147,13 @@ WebProcess::WebProcess()
     , m_networkAccessManager(0)
 #endif
     , m_textCheckerState()
-    , m_geolocationManager(this)
-    , m_applicationCacheManager(this)
-    , m_resourceCacheManager(this)
-    , m_cookieManager(this)
+    , m_geolocationManager(new WebGeolocationManager(this))
+    , m_applicationCacheManager(new WebApplicationCacheManager(this))
+    , m_resourceCacheManager(new WebResourceCacheManager(this))
+    , m_cookieManager(new WebCookieManager(this))
+    , m_authenticationManager(new AuthenticationManager(this))
 #if ENABLE(SQL_DATABASE)
-    , m_databaseManager(0)
+    , m_databaseManager(new WebDatabaseManager(this))
 #endif
 #if ENABLE(BATTERY_STATUS)
     , m_batteryManager(this)
@@ -141,16 +162,19 @@ WebProcess::WebProcess()
     , m_networkInfoManager(this)
 #endif
 #if ENABLE(NOTIFICATIONS) || ENABLE(LEGACY_NOTIFICATIONS)
-    , m_notificationManager(this)
+    , m_notificationManager(new WebNotificationManager(this))
 #endif
-    , m_iconDatabaseProxy(this)
+    , m_iconDatabaseProxy(new WebIconDatabaseProxy(this))
 #if ENABLE(NETWORK_PROCESS)
     , m_usesNetworkProcess(false)
+    , m_webResourceLoadScheduler(new WebResourceLoadScheduler)
+#endif
+#if ENABLE(PLUGIN_PROCESS)
+    , m_pluginProcessConnectionManager(new PluginProcessConnectionManager)
 #endif
 #if USE(SOUP)
     , m_soupRequestManager(this)
 #endif
-    , m_authenticationManager(this)
 {
 #if USE(PLATFORM_STRATEGIES)
     // Initialize our platform strategies.
@@ -201,7 +225,7 @@ CoreIPC::Connection* WebProcess::downloadProxyConnection()
 
 AuthenticationManager& WebProcess::downloadsAuthenticationManager()
 {
-    return m_authenticationManager;
+    return *m_authenticationManager;
 }
 
 void WebProcess::initializeWebProcess(const WebProcessCreationParameters& parameters, CoreIPC::MessageDecoder& decoder)
@@ -234,7 +258,7 @@ void WebProcess::initializeWebProcess(const WebProcessCreationParameters& parame
 #endif
 
 #if ENABLE(ICONDATABASE)
-    m_iconDatabaseProxy.setEnabled(parameters.iconDatabaseEnabled);
+    m_iconDatabaseProxy->setEnabled(parameters.iconDatabaseEnabled);
 #endif
 
     StorageTracker::initializeTracker(parameters.localStorageDirectory, &WebKeyValueStorageManager::shared());
@@ -407,6 +431,26 @@ void WebProcess::destroyPrivateBrowsingSession()
 #endif
 }
 
+WebGeolocationManager& WebProcess::geolocationManager()
+{
+    return *m_geolocationManager;
+}
+
+WebApplicationCacheManager& WebProcess::applicationCacheManager()
+{
+    return *m_applicationCacheManager;
+}
+
+WebResourceCacheManager& WebProcess::resourceCacheManager()
+{
+    return *m_resourceCacheManager;
+}
+
+WebCookieManager& WebProcess::cookieManager()
+{
+    return *m_cookieManager;
+}
+
 DownloadManager& WebProcess::downloadManager()
 {
 #if ENABLE(NETWORK_PROCESS)
@@ -416,6 +460,32 @@ DownloadManager& WebProcess::downloadManager()
     DEFINE_STATIC_LOCAL(DownloadManager, downloadManager, (this));
     return downloadManager;
 }
+
+AuthenticationManager& WebProcess::authenticationManager()
+{
+    return *m_authenticationManager;
+}
+
+#if ENABLE(SQL_DATABASE)
+WebDatabaseManager& WebProcess::databaseManager()
+{
+    return *m_databaseManager;
+}
+#endif
+
+#if ENABLE(NOTIFICATIONS) || ENABLE(LEGACY_NOTIFICATIONS)
+WebNotificationManager& WebProcess::notificationManager()
+{
+    return *m_notificationManager;
+}
+#endif
+
+#if ENABLE(PLUGIN_PROCESS)
+PluginProcessConnectionManager& WebProcess::pluginProcessConnectionManager()
+{
+    return *m_pluginProcessConnectionManager;
+}
+#endif
 
 void WebProcess::setVisitedLinkTable(const SharedMemory::Handle& handle)
 {
@@ -962,14 +1032,20 @@ void WebProcess::networkProcessConnectionClosed(NetworkProcessConnection* connec
 
     m_networkProcessConnection = 0;
     
-    m_webResourceLoadScheduler.networkProcessCrashed();
+    m_webResourceLoadScheduler->networkProcessCrashed();
 }
+
+WebResourceLoadScheduler& WebProcess::webResourceLoadScheduler()
+{
+    return *m_webResourceLoadScheduler;
+}
+
 #endif
 
 #if ENABLE(PLUGIN_PROCESS)
 void WebProcess::pluginProcessCrashed(CoreIPC::Connection*, const String& pluginPath, uint32_t processType)
 {
-    m_pluginProcessConnectionManager.pluginProcessCrashed(pluginPath, static_cast<PluginProcess::Type>(processType));
+    m_pluginProcessConnectionManager->pluginProcessCrashed(pluginPath, static_cast<PluginProcess::Type>(processType));
 }
 #endif
 

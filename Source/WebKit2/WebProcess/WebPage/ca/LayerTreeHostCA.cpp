@@ -28,7 +28,6 @@
 
 #include "DrawingAreaImpl.h"
 #include "WebPage.h"
-#include "WebProcess.h"
 #include <WebCore/Frame.h>
 #include <WebCore/FrameView.h>
 #include <WebCore/GraphicsLayerCA.h>

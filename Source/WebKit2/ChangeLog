@@ -1,3 +1,48 @@
+2012-12-24  Sam Weinig  <sam@webkit.org>
+
+        Reduce the number of includes in WebProcess.h
+        https://bugs.webkit.org/show_bug.cgi?id=105709
+
+        Reviewed by Dan Bernstein.
+
+        * NetworkProcess/NetworkProcess.cpp:
+        (WebKit::NetworkProcess::NetworkProcess):
+        (WebKit::NetworkProcess::downloadsAuthenticationManager):
+        * NetworkProcess/NetworkProcess.h:
+        (WebKit):
+        * Shared/Network/CustomProtocols/mac/CustomProtocolManagerMac.mm:
+        * UIProcess/Launcher/mac/ProcessLauncherMac.mm:
+        * WebProcess/FullScreen/WebFullScreenManager.cpp:
+        * WebProcess/InjectedBundle/InjectedBundle.cpp:
+        * WebProcess/Network/NetworkProcessConnection.cpp:
+        * WebProcess/Notifications/NotificationPermissionRequestManager.cpp:
+        * WebProcess/WebCoreSupport/WebPlatformStrategies.cpp:
+        * WebProcess/WebPage/FindController.cpp:
+        * WebProcess/WebPage/WebContextMenu.cpp:
+        * WebProcess/WebPage/ca/LayerTreeHostCA.cpp:
+        * WebProcess/WebProcess.cpp:
+        (WebKit::WebProcess::WebProcess):
+        (WebKit::WebProcess::downloadsAuthenticationManager):
+        (WebKit::WebProcess::initializeWebProcess):
+        (WebKit::WebProcess::geolocationManager):
+        (WebKit):
+        (WebKit::WebProcess::applicationCacheManager):
+        (WebKit::WebProcess::resourceCacheManager):
+        (WebKit::WebProcess::cookieManager):
+        (WebKit::WebProcess::authenticationManager):
+        (WebKit::WebProcess::databaseManager):
+        (WebKit::WebProcess::notificationManager):
+        (WebKit::WebProcess::pluginProcessConnectionManager):
+        (WebKit::WebProcess::networkProcessConnectionClosed):
+        (WebKit::WebProcess::webResourceLoadScheduler):
+        (WebKit::WebProcess::pluginProcessCrashed):
+        * WebProcess/WebProcess.h:
+        (WebCore):
+        (WebKit):
+        (WebProcess):
+        * WebProcess/mac/WebProcessMac.mm:
+        (WebKit::WebProcess::platformInitializeWebProcess):
+
 2012-12-25  Andreas Kling  <akling@apple.com>
 
         [WK2][Mac] Call Carbon resource APIs on main thread only.

@@ -37,6 +37,10 @@
 #include <WebCore/SecurityOrigin.h>
 #include <WebCore/Settings.h>
 
+#if ENABLE(NOTIFICATIONS) || ENABLE(LEGACY_NOTIFICATIONS)
+#include "WebNotificationManager.h"
+#endif
+
 using namespace WebCore;
 
 namespace WebKit {

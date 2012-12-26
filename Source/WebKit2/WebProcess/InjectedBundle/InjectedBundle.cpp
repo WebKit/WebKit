@@ -35,6 +35,7 @@
 #include "WKAPICast.h"
 #include "WKBundleAPICast.h"
 #include "WebApplicationCacheManager.h"
+#include "WebConnectionToUIProcess.h"
 #include "WebContextMessageKinds.h"
 #include "WebCookieManager.h"
 #include "WebCoreArgumentCoders.h"
@@ -79,6 +80,10 @@
 
 #if PLATFORM(MAC)
 #include "WebSystemInterface.h"
+#endif
+
+#if ENABLE(NOTIFICATIONS) || ENABLE(LEGACY_NOTIFICATIONS)
+#include "WebNotificationManager.h"
 #endif
 
 using namespace WebCore;

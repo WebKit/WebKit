@@ -47,6 +47,7 @@
 #if ENABLE(NETWORK_PROCESS)
 #include "NetworkConnectionToWebProcessMessages.h"
 #include "NetworkProcessConnection.h"
+#include "WebResourceLoadScheduler.h"
 #endif
 
 #if PLATFORM(WIN) && USE(CFNETWORK)

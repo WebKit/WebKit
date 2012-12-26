@@ -48,6 +48,10 @@
 #import <objc/runtime.h>
 #import <stdio.h>
 
+#if ENABLE(NOTIFICATIONS) || ENABLE(LEGACY_NOTIFICATIONS)
+#include "WebNotificationManager.h"
+#endif
+
 #if ENABLE(WEB_PROCESS_SANDBOX)
 #import <pwd.h>
 #import <stdlib.h>
@@ -290,7 +294,7 @@ void WebProcess::platformInitializeWebProcess(const WebProcessCreationParameters
     m_compositingRenderServerPort = parameters.acceleratedCompositingPort.port();
 
 #if ENABLE(NOTIFICATIONS) || ENABLE(LEGACY_NOTIFICATIONS)
-    m_notificationManager.initialize(parameters.notificationPermissions);
+    m_notificationManager->initialize(parameters.notificationPermissions);
 #endif
 
     m_presenterApplicationPid = parameters.presenterApplicationPid;

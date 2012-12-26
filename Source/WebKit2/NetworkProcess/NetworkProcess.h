@@ -28,7 +28,6 @@
 
 #if ENABLE(NETWORK_PROCESS)
 
-#include "AuthenticationManager.h"
 #include "CacheModel.h"
 #include "ChildProcess.h"
 #include "DownloadManager.h"
@@ -42,7 +41,9 @@ namespace WebCore {
 
 namespace WebKit {
 
+class AuthenticationManager;
 class NetworkConnectionToWebProcess;
+class PlatformCertificateInfo;
 class WebCookieManager;
 struct NetworkProcessCreationParameters;
 
@@ -113,8 +114,7 @@ private:
     bool m_hasSetCacheModel;
     CacheModel m_cacheModel;
 
-    AuthenticationManager m_downloadsAuthenticationManager;
-
+    AuthenticationManager* m_downloadsAuthenticationManager;
     WebCookieManager* m_cookieManager;
 };
 

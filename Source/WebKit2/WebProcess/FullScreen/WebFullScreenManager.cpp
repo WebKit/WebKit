@@ -32,7 +32,6 @@
 #include "WebCoreArgumentCoders.h"
 #include "WebFullScreenManagerProxyMessages.h"
 #include "WebPage.h"
-#include "WebProcess.h"
 #include <WebCore/Color.h>
 #include <WebCore/Element.h>
 #include <WebCore/Page.h>

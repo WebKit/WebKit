@@ -28,13 +28,15 @@
 
 #if ENABLE(CUSTOM_PROTOCOLS)
 
+#import "ChildProcess.h"
 #import "CustomProtocolManagerMessages.h"
 #import "CustomProtocolManagerProxyMessages.h"
 #import "DataReference.h"
 #import "WebCoreArgumentCoders.h"
-#import "WebProcess.h"
 #import <WebCore/KURL.h>
 #import <WebCore/ResourceError.h>
+#import <WebCore/ResourceRequest.h>
+#import <WebCore/ResourceResponse.h>
 
 using namespace WebKit;
 

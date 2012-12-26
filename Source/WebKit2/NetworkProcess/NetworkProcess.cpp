@@ -30,6 +30,7 @@
 
 #include "ArgumentCoders.h"
 #include "Attachment.h"
+#include "AuthenticationManager.h"
 #include "CustomProtocolManager.h"
 #include "Logging.h"
 #include "NetworkConnectionToWebProcess.h"
@@ -55,7 +56,7 @@ NetworkProcess& NetworkProcess::shared()
 NetworkProcess::NetworkProcess()
     : m_hasSetCacheModel(false)
     , m_cacheModel(CacheModelDocumentViewer)
-    , m_downloadsAuthenticationManager(this)
+    , m_downloadsAuthenticationManager(new AuthenticationManager(this))
     , m_cookieManager(new WebCookieManager(this))
 {
 #if ENABLE(CUSTOM_PROTOCOLS)
@@ -137,7 +138,7 @@ CoreIPC::Connection* NetworkProcess::downloadProxyConnection()
 
 AuthenticationManager& NetworkProcess::downloadsAuthenticationManager()
 {
-    return m_downloadsAuthenticationManager;
+    return *m_downloadsAuthenticationManager;
 }
 
 void NetworkProcess::initializeNetworkProcess(const NetworkProcessCreationParameters& parameters)
