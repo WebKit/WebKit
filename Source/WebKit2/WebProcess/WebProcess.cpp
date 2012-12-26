@@ -151,6 +151,8 @@ WebProcess::WebProcess()
     , m_applicationCacheManager(new WebApplicationCacheManager(this))
     , m_resourceCacheManager(new WebResourceCacheManager(this))
     , m_cookieManager(new WebCookieManager(this))
+    , m_keyValueStorageManager(new WebKeyValueStorageManager(this))
+    , m_mediaCacheManager(new WebMediaCacheManager(this))
     , m_authenticationManager(new AuthenticationManager(this))
 #if ENABLE(SQL_DATABASE)
     , m_databaseManager(new WebDatabaseManager(this))
@@ -260,7 +262,7 @@ void WebProcess::initializeWebProcess(const WebProcessCreationParameters& parame
     m_iconDatabaseProxy->setEnabled(parameters.iconDatabaseEnabled);
 #endif
 
-    StorageTracker::initializeTracker(parameters.localStorageDirectory, &WebKeyValueStorageManager::shared());
+    StorageTracker::initializeTracker(parameters.localStorageDirectory, m_keyValueStorageManager);
     m_localStorageDirectory = parameters.localStorageDirectory;
 
     if (!parameters.applicationCacheDirectory.isEmpty())
@@ -642,16 +644,6 @@ void WebProcess::didReceiveMessage(CoreIPC::Connection* connection, CoreIPC::Mes
 
     if (messageID.is<CoreIPC::MessageClassWebProcess>()) {
         didReceiveWebProcessMessage(connection, messageID, decoder);
-        return;
-    }
-
-    if (messageID.is<CoreIPC::MessageClassWebKeyValueStorageManager>()) {
-        WebKeyValueStorageManager::shared().didReceiveMessage(connection, messageID, decoder);
-        return;
-    }
-
-    if (messageID.is<CoreIPC::MessageClassWebMediaCacheManager>()) {
-        WebMediaCacheManager::shared().didReceiveMessage(connection, messageID, decoder);
         return;
     }
 

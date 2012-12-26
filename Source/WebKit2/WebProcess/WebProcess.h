@@ -82,6 +82,8 @@ class WebCookieManager;
 class WebFrame;
 class WebGeolocationManager;
 class WebIconDatabaseProxy;
+class WebKeyValueStorageManager;
+class WebMediaCacheManager;
 class WebPage;
 class WebPageGroupProxy;
 class WebResourceCacheManager;
@@ -380,6 +382,8 @@ private:
     WebApplicationCacheManager* m_applicationCacheManager;
     WebResourceCacheManager* m_resourceCacheManager;
     WebCookieManager* m_cookieManager;
+    WebKeyValueStorageManager* m_keyValueStorageManager;
+    WebMediaCacheManager* m_mediaCacheManager;
     AuthenticationManager* m_authenticationManager;
 #if ENABLE(SQL_DATABASE)
     WebDatabaseManager* m_databaseManager;
