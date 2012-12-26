@@ -1,3 +1,19 @@
+2012-12-26  Yury Semikhatsky  <yurys@chromium.org>
+
+        Web Inspector: extract JS heap profiler specifics into JSHeapSnapshot.js
+        https://bugs.webkit.org/show_bug.cgi?id=105768
+
+        Reviewed by Pavel Feldman.
+
+        Inroduced JSHeapSnapshot, JSHeapSnapshotNode, JSHeapSnapshotEdge and JSHeapSnapshotRetainerEdge which
+        should encapsulate logic specific to JS-heap. The tests were switched to the new classes.
+
+        * inspector/profiler/heap-snapshot-loader.html:
+        * inspector/profiler/heap-snapshot-test.js:
+        (initialize_HeapSnapshotTest.InspectorTest.createJSHeapSnapshotMockObject):
+        (initialize_HeapSnapshotTest.InspectorTest.createHeapSnapshotMockRaw):
+        * inspector/profiler/heap-snapshot.html:
+
 2012-12-25  Alexander Pavlov  <apavlov@chromium.org>
 
         Web Inspector: Crash when modifying a rule that has been removed through JavaScript

@@ -1,6 +1,6 @@
 var initialize_HeapSnapshotTest = function() {
 
-InspectorTest.createHeapSnapshotMockObject = function()
+InspectorTest.createJSHeapSnapshotMockObject = function()
 {
     return {
         _rootNodeIndex: 0,
@@ -43,13 +43,16 @@ InspectorTest.createHeapSnapshotMockObject = function()
             1, 10, 12,  // 15: property 'bd' to node 'D'
             1, 11, 15], // 18: property 'ce' to node 'E'
         _strings: ["", "A", "B", "C", "D", "E", "a", "b", "ac", "bc", "bd", "ce"],
-        _firstEdgeIndexes: [0, 6, 12, 18, 21, 21, 21]
+        _firstEdgeIndexes: [0, 6, 12, 18, 21, 21, 21],
+        createNode: WebInspector.JSHeapSnapshot.prototype.createNode,
+        createEdge: WebInspector.JSHeapSnapshot.prototype.createEdge,
+        createRetainingEdge: WebInspector.JSHeapSnapshot.prototype.createRetainingEdge
     };
 };
 
 InspectorTest.createHeapSnapshotMockRaw = function()
 {
-    // Effectively the same graph as in createHeapSnapshotMockObject,
+    // Effectively the same graph as in createJSHeapSnapshotMockObject,
     // but having full set of fields.
     //
     // A triple in parentheses indicates node index, self size and

@@ -76721,6 +76721,10 @@
 					>
 				</File>
 				<File
+					RelativePath="..\inspector\front-end\JSHeapSnapshot.js"
+					>
+				</File>
+				<File
 					RelativePath="..\inspector\front-end\JavaScriptFormatter.js"
 					>
 				</File>

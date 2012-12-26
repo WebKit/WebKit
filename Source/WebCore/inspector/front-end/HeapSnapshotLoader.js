@@ -58,7 +58,7 @@ WebInspector.HeapSnapshotLoader.prototype = {
 
     buildSnapshot: function()
     {
-        var result = new WebInspector.HeapSnapshot(this._snapshot);
+        var result = new WebInspector.JSHeapSnapshot(this._snapshot);
         this._reset();
         return result;
     },

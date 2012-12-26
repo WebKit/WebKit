@@ -330,6 +330,7 @@ modules = [
             "HeapSnapshotView.js",
             "HeapSnapshotWorker.js",
             "HeapSnapshotWorkerDispatcher.js",
+            "JSHeapSnapshot.js",
             "NativeHeapGraph.js",
             "NativeMemorySnapshotView.js",
             "ProfileDataGridTree.js",

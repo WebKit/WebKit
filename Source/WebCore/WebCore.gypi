@@ -5325,6 +5325,7 @@
             'inspector/front-end/HeapSnapshotProxy.js',
             'inspector/front-end/HeapSnapshotView.js',
             'inspector/front-end/HeapSnapshotWorkerDispatcher.js',
+            'inspector/front-end/JSHeapSnapshot.js',
             'inspector/front-end/NativeHeapGraph.js',
             'inspector/front-end/NativeMemorySnapshotView.js',
             'inspector/front-end/ProfileDataGridTree.js',

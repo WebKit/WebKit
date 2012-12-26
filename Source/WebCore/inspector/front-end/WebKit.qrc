@@ -98,6 +98,7 @@
     <file>InspectorFrontendAPI.js</file>
     <file>InspectorFrontendHostStub.js</file>
     <file>InspectorView.js</file>
+    <file>JSHeapSnapshot.js</file>
     <file>JavaScriptFormatter.js</file>
     <file>JavaScriptSourceFrame.js</file>
     <file>jsdifflib.js</file>

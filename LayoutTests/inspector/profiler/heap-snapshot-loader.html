@@ -58,7 +58,7 @@ function test()
             var result = loader.buildSnapshot();
             result._nodes = new Uint32Array(result._nodes);
             result._containmentEdges = new Uint32Array(result._containmentEdges);
-            InspectorTest.assertSnapshotEquals(new WebInspector.HeapSnapshot(InspectorTest.createHeapSnapshotMock()), result);
+            InspectorTest.assertSnapshotEquals(new WebInspector.JSHeapSnapshot(InspectorTest.createHeapSnapshotMock()), result);
             next();
         },
 

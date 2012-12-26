@@ -308,3 +308,7 @@ difflib.SequenceMatcher.prototype.get_opcodes = function() { return []; }
 WebInspector.CodeMirrorTextEditor = function(url, delegate) { }
 
 WebInspector.ProfileURLRegExp = "";
+
+
+/** @type {boolean} */
+window.dispatchStandaloneTestRunnerMessages;
