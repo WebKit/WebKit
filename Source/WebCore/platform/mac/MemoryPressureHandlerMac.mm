@@ -85,15 +85,19 @@ void MemoryPressureHandler::uninstall()
     if (!m_installed)
         return;
 
-    dispatch_source_cancel(_cache_event_source);
-    dispatch_release(_cache_event_source);
-    _cache_event_source = 0;
+    dispatch_async(dispatch_get_main_queue(), ^{
+        if (_cache_event_source) {
+            dispatch_source_cancel(_cache_event_source);
+            dispatch_release(_cache_event_source);
+            _cache_event_source = 0;
+        }
 
-    if (_timer_event_source) {
-        dispatch_source_cancel(_timer_event_source);
-        dispatch_release(_timer_event_source);
-        _timer_event_source = 0;
-    }
+        if (_timer_event_source) {
+            dispatch_source_cancel(_timer_event_source);
+            dispatch_release(_timer_event_source);
+            _timer_event_source = 0;
+        }
+    });
 
     m_installed = false;
     
