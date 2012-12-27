@@ -263,9 +263,6 @@ public:
     bool hasViewportDependentMediaQueries() const { return !m_viewportDependentMediaQueryResults.isEmpty(); }
     bool affectedByViewportChange() const;
 
-    void allVisitedStateChanged() { m_checker.allVisitedStateChanged(); }
-    void visitedStateChanged(LinkHash visitedHash) { m_checker.visitedStateChanged(visitedHash); }
-
     void addKeyframeStyle(PassRefPtr<StyleRuleKeyframes>);
 
     bool checkRegionStyle(Element* regionElement);

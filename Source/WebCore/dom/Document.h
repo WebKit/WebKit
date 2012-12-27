@@ -140,6 +140,7 @@ class StyleSheetList;
 class Text;
 class TextResourceDecoder;
 class TreeWalker;
+class VisitedLinkState;
 class WebKitNamedFlow;
 class XMLHttpRequest;
 class XPathEvaluator;
@@ -672,7 +673,8 @@ public:
     void resetLinkColor();
     void resetVisitedLinkColor();
     void resetActiveLinkColor();
-    
+    VisitedLinkState* visitedLinkState() const { return m_visitedLinkState.get(); }
+
     MouseEventWithHitTestResults prepareMouseEvent(const HitTestRequest&, const LayoutPoint&, const PlatformMouseEvent&);
 
     /* Newly proposed CSS3 mechanism for selecting alternate
@@ -1365,6 +1367,7 @@ private:
     Color m_linkColor;
     Color m_visitedLinkColor;
     Color m_activeLinkColor;
+    OwnPtr<VisitedLinkState> m_visitedLinkState;
 
     bool m_loadingSheet;
     bool m_visuallyOrdered;
