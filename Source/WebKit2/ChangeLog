@@ -1,3 +1,48 @@
+2012-12-27  Sam Weinig  <sam@webkit.org>
+
+        Actually make use of the WebProcessSupplements by adding a supplement map to WebProcess
+        https://bugs.webkit.org/show_bug.cgi?id=105804
+
+        Reviewed by Dan Bernstein.
+
+        This continues the work of adding extensibility to WebProcess by adding a supplement
+        map, and using it as proof of concept for WebDatabaseManager and WebKeyValueStorageManager.
+
+        - A supplement is added to WebProcess by calling:
+            process->addSupplement<SupplementFoo>();
+        - A supplement can be used accessed by calling:
+            process->supplement<SupplementFoo>();
+
+        * WebProcess/InjectedBundle/InjectedBundle.cpp:
+        (WebKit::InjectedBundle::clearAllDatabases):
+        (WebKit::InjectedBundle::setDatabaseQuota):
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::updatePreferences):
+        Switch to using the new supplement accessor.
+
+        * WebProcess/KeyValueStorage/WebKeyValueStorageManager.cpp:
+        (WebKit::WebKeyValueStorageManager::supplementName):
+        * WebProcess/KeyValueStorage/WebKeyValueStorageManager.h:
+        * WebProcess/WebCoreSupport/WebDatabaseManager.cpp:
+        (WebKit::WebDatabaseManager::supplementName):
+        * WebProcess/WebCoreSupport/WebDatabaseManager.h:
+        Add static supplementName functions. We might want to merge this with
+        the message class name, but for now we have both. 
+
+        * WebProcess/WebProcess.cpp:
+        (WebKit::WebProcess::WebProcess):
+        Add supplements the new way. This should eventually move to the caller
+        of WebProcess::initialize, so that we can reduce #ifdefs and ports have
+        a chance to customize.
+        
+        (WebKit::WebProcess::initializeWebProcess):
+        Iterate the supplements to give each a chance to initialize.
+
+        * WebProcess/WebProcess.h:
+        (WebKit::WebProcess::supplement):
+        (WebKit::WebProcess::addSupplement):
+        Add functions to add and get WebProcessSupplements.
+
 2012-12-26  Sam Weinig  <sam@webkit.org>
 
         Add an initial stab at a generic supplemental interface for WebProcess

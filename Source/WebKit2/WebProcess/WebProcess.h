@@ -39,6 +39,8 @@
 #include <wtf/Forward.h>
 #include <wtf/HashMap.h>
 #include <wtf/HashSet.h>
+#include <wtf/text/AtomicString.h>
+#include <wtf/text/AtomicStringHash.h>
 
 #if USE(SOUP)
 #include "WebSoupRequestManager.h"
@@ -86,6 +88,7 @@ class WebKeyValueStorageManager;
 class WebMediaCacheManager;
 class WebPage;
 class WebPageGroupProxy;
+class WebProcessSupplement;
 class WebResourceCacheManager;
 struct WebPageCreationParameters;
 struct WebPageGroupData;
@@ -119,6 +122,18 @@ class PluginProcessConnectionManager;
 class WebProcess : public ChildProcess, private CoreIPC::Connection::QueueClient, private DownloadManager::Client {
 public:
     static WebProcess& shared();
+
+    template <typename T>
+    T* supplement()
+    {
+        return static_cast<T*>(m_supplements.get(T::supplementName()));
+    }
+
+    template <typename T>
+    void addSupplement()
+    {
+        m_supplements.add(T::supplementName(), new T(this));
+    }
 
     void initialize(CoreIPC::Connection::Identifier, WebCore::RunLoop*);
 
@@ -183,13 +198,8 @@ public:
     WebApplicationCacheManager& applicationCacheManager();
     WebResourceCacheManager& resourceCacheManager();
     WebCookieManager& cookieManager();
-    WebKeyValueStorageManager& keyValueStorageManager();
     DownloadManager& downloadManager();
     AuthenticationManager& authenticationManager();
-
-#if ENABLE(SQL_DATABASE)
-     WebDatabaseManager& databaseManager();
-#endif
 
 #if ENABLE(BATTERY_STATUS)
     WebBatteryManager& batteryManager() { return m_batteryManager; }
@@ -376,17 +386,17 @@ private:
     HashMap<uint64_t, RefPtr<WebCore::PlatformMessagePortChannel> > m_messagePortChannels;
 #endif
 
+    typedef HashMap<AtomicString, WebProcessSupplement*> WebProcessSupplementMap;
+    WebProcessSupplementMap m_supplements;
+
     TextCheckerState m_textCheckerState;
     WebGeolocationManager* m_geolocationManager;
     WebApplicationCacheManager* m_applicationCacheManager;
     WebResourceCacheManager* m_resourceCacheManager;
     WebCookieManager* m_cookieManager;
-    WebKeyValueStorageManager* m_keyValueStorageManager;
     WebMediaCacheManager* m_mediaCacheManager;
     AuthenticationManager* m_authenticationManager;
-#if ENABLE(SQL_DATABASE)
-    WebDatabaseManager* m_databaseManager;
-#endif
+
 #if ENABLE(BATTERY_STATUS)
     WebBatteryManager m_batteryManager;
 #endif

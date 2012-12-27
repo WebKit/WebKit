@@ -42,12 +42,14 @@ class WebKeyValueStorageManager : public WebCore::StorageTrackerClient, public W
 public:
     explicit WebKeyValueStorageManager(WebProcess*);
 
-    // WebProcessSupplement
-    virtual void initialize(const WebProcessCreationParameters&) OVERRIDE;
+    static const AtomicString& supplementName();
 
     const String& localStorageDirectory() const { return m_localStorageDirectory; }
 
 private:
+    // WebProcessSupplement
+    virtual void initialize(const WebProcessCreationParameters&) OVERRIDE;
+
     // CoreIPC::MessageReceiver
     virtual void didReceiveMessage(CoreIPC::Connection*, CoreIPC::MessageID, CoreIPC::MessageDecoder&) OVERRIDE;
     void didReceiveWebKeyValueStorageManagerMessage(CoreIPC::Connection*, CoreIPC::MessageID, CoreIPC::MessageDecoder&);

@@ -42,13 +42,15 @@ class WebDatabaseManager : public WebCore::DatabaseManagerClient, public WebProc
 public:
     explicit WebDatabaseManager(WebProcess*);
 
-    // WebProcessSupplement
-    virtual void initialize(const WebProcessCreationParameters&) OVERRIDE;
+    static const AtomicString& supplementName();
 
     void setQuotaForOrigin(const String& originIdentifier, unsigned long long quota) const;
     void deleteAllDatabases() const;
 
 private:
+    // WebProcessSupplement
+    virtual void initialize(const WebProcessCreationParameters&) OVERRIDE;
+
     // CoreIPC::MessageReceiver
     void didReceiveMessage(CoreIPC::Connection*, CoreIPC::MessageID, CoreIPC::MessageDecoder&) OVERRIDE;
     // Implemented in generated WebDatabaseManagerMessageReceiver.cpp

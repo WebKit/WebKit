@@ -39,6 +39,12 @@ using namespace WebCore;
 
 namespace WebKit {
 
+const AtomicString& WebKeyValueStorageManager::supplementName()
+{
+    DEFINE_STATIC_LOCAL(AtomicString, name, ("WebKeyValueStorageManager", AtomicString::ConstructFromLiteral));
+    return name;
+}
+
 WebKeyValueStorageManager::WebKeyValueStorageManager(WebProcess* process)
     : m_process(process)
 {

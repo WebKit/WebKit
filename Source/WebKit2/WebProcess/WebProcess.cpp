@@ -151,12 +151,8 @@ WebProcess::WebProcess()
     , m_applicationCacheManager(new WebApplicationCacheManager(this))
     , m_resourceCacheManager(new WebResourceCacheManager(this))
     , m_cookieManager(new WebCookieManager(this))
-    , m_keyValueStorageManager(new WebKeyValueStorageManager(this))
     , m_mediaCacheManager(new WebMediaCacheManager(this))
     , m_authenticationManager(new AuthenticationManager(this))
-#if ENABLE(SQL_DATABASE)
-    , m_databaseManager(new WebDatabaseManager(this))
-#endif
 #if ENABLE(BATTERY_STATUS)
     , m_batteryManager(this)
 #endif
@@ -191,6 +187,14 @@ WebProcess::WebProcess()
 
 #if ENABLE(CUSTOM_PROTOCOLS)
     CustomProtocolManager::shared().initialize(this);
+#endif
+
+    // FIXME: This should moved to where WebProcess::initialize is called,
+    // so that ports have a chance to customize, and ifdefs in this file are
+    // limited.
+    addSupplement<WebKeyValueStorageManager>();
+#if ENABLE(SQL_DATABASE)
+    addSupplement<WebDatabaseManager>();
 #endif
 }
 
@@ -253,15 +257,14 @@ void WebProcess::initializeWebProcess(const WebProcessCreationParameters& parame
         }
     }
 
-#if ENABLE(SQL_DATABASE)
-    m_databaseManager->initialize(parameters);
-#endif
+    WebProcessSupplementMap::const_iterator it = m_supplements.begin();
+    WebProcessSupplementMap::const_iterator end = m_supplements.end();
+    for (; it != end; ++it)
+        it->value->initialize(parameters);
 
 #if ENABLE(ICONDATABASE)
     m_iconDatabaseProxy->setEnabled(parameters.iconDatabaseEnabled);
 #endif
-
-    m_keyValueStorageManager->initialize(parameters);
 
     if (!parameters.applicationCacheDirectory.isEmpty())
         cacheStorage().setCacheDirectory(parameters.applicationCacheDirectory);
@@ -450,11 +453,6 @@ WebCookieManager& WebProcess::cookieManager()
     return *m_cookieManager;
 }
 
-WebKeyValueStorageManager& WebProcess::keyValueStorageManager()
-{
-    return *m_keyValueStorageManager;
-}
-
 DownloadManager& WebProcess::downloadManager()
 {
 #if ENABLE(NETWORK_PROCESS)
@@ -469,13 +467,6 @@ AuthenticationManager& WebProcess::authenticationManager()
 {
     return *m_authenticationManager;
 }
-
-#if ENABLE(SQL_DATABASE)
-WebDatabaseManager& WebProcess::databaseManager()
-{
-    return *m_databaseManager;
-}
-#endif
 
 #if ENABLE(NOTIFICATIONS) || ENABLE(LEGACY_NOTIFICATIONS)
 WebNotificationManager& WebProcess::notificationManager()

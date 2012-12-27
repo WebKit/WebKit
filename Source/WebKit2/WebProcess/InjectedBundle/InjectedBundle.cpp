@@ -349,7 +349,7 @@ void InjectedBundle::resetOriginAccessWhitelists()
 void InjectedBundle::clearAllDatabases()
 {
 #if ENABLE(SQL_DATABASE)
-    WebProcess::shared().databaseManager().deleteAllDatabases();
+    WebProcess::shared().supplement<WebDatabaseManager>()->deleteAllDatabases();
 #endif
 }
 
@@ -358,7 +358,7 @@ void InjectedBundle::setDatabaseQuota(uint64_t quota)
 #if ENABLE(SQL_DATABASE)
     // Historically, we've used the following (somewhat non-sensical) string
     // for the databaseIdentifier of local files.
-    WebProcess::shared().databaseManager().setQuotaForOrigin("file__0", quota);
+    WebProcess::shared().supplement<WebDatabaseManager>()->setQuotaForOrigin("file__0", quota);
 #endif
 }
 

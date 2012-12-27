@@ -42,6 +42,12 @@ using namespace WebCore;
 
 namespace WebKit {
 
+const AtomicString& WebDatabaseManager::supplementName()
+{
+    DEFINE_STATIC_LOCAL(AtomicString, name, ("WebDatabaseManager", AtomicString::ConstructFromLiteral));
+    return name;
+}
+
 WebDatabaseManager::WebDatabaseManager(WebProcess* process)
     : m_process(process)
 {
