@@ -2433,6 +2433,7 @@ webkit.org/b/99893 svg/animations/mozilla/animateMotion-mpath-targetChange-1.svg
 
 # New inspector/profiler/memory-instrumentation-canvas.html fails on JSC platforms
 webkit.org/b/99001 inspector/profiler/memory-instrumentation-canvas.html
+webkit.org/b/73936 inspector/profiler/canvas2d/canvas-has-uninstrumented-canvases.html
 
 # [Qt] Unidentified pixel failures
 webkit.org/b/99306 animations/additive-transform-animations.html [ ImageOnlyFailure ]
