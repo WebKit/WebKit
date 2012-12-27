@@ -88,6 +88,7 @@
 #include "NodeRenderStyle.h"
 #include "NodeRenderingContext.h"
 #include "Page.h"
+#include "PageGroup.h"
 #include "Pair.h"
 #include "PerspectiveTransformOperation.h"
 #include "QuotesData.h"
@@ -123,7 +124,6 @@
 #include "TranslateTransformOperation.h"
 #include "UserAgentStyleSheets.h"
 #include "ViewportStyleResolver.h"
-#include "VisitedLinkState.h"
 #include "WebCoreMemoryInstrumentation.h"
 #include "WebKitCSSKeyframeRule.h"
 #include "WebKitCSSKeyframesRule.h"
@@ -964,7 +964,7 @@ inline void StyleResolver::initElement(Element* e)
     if (m_element != e) {
         m_element = e;
         m_styledElement = m_element && m_element->isStyledElement() ? static_cast<StyledElement*>(m_element) : 0;
-        m_elementLinkState = e->document()->visitedLinkState()->determineLinkState(m_element);
+        m_elementLinkState = m_checker.determineLinkState(m_element);
         if (e && e == e->document()->documentElement()) {
             e->document()->setDirectionSetOnDocumentElement(false);
             e->document()->setWritingModeSetOnDocumentElement(false);

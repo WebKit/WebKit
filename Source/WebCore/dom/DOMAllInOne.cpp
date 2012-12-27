@@ -149,7 +149,6 @@
 #include "UserGestureIndicator.cpp"
 #include "UserTypingGestureIndicator.cpp"
 #include "ViewportArguments.cpp"
-#include "VisitedLinkState.cpp"
 #include "WebKitAnimationEvent.cpp"
 #include "WebKitNamedFlow.cpp"
 #include "WebKitTransitionEvent.cpp"

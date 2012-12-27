@@ -35,6 +35,7 @@
 #include "FocusController.h"
 #include "Frame.h"
 #include "FrameSelection.h"
+#include "HTMLAnchorElement.h"
 #include "HTMLFrameElementBase.h"
 #include "HTMLInputElement.h"
 #include "HTMLNames.h"
@@ -43,7 +44,9 @@
 #include "HTMLStyleElement.h"
 #include "InspectorInstrumentation.h"
 #include "NodeRenderStyle.h"
+#include "NodeTraversal.h"
 #include "Page.h"
+#include "PageGroup.h"
 #include "RenderObject.h"
 #include "RenderScrollbar.h"
 #include "RenderStyle.h"
@@ -53,6 +56,12 @@
 #include "SiblingTraversalStrategies.h"
 #include "StyledElement.h"
 #include "Text.h"
+#include "XLinkNames.h"
+
+#if USE(PLATFORM_STRATEGIES)
+#include "PlatformStrategies.h"
+#include "VisitedLinkStrategy.h"
+#endif
 
 namespace WebCore {
 
@@ -66,6 +75,56 @@ SelectorChecker::SelectorChecker(Document* document, bool strictParsing)
     , m_documentIsHTML(document->isHTMLDocument())
     , m_mode(ResolvingStyle)
 {
+}
+
+static inline const AtomicString* linkAttribute(Element* element)
+{
+    if (!element->isLink())
+        return 0;
+    if (element->isHTMLElement())
+        return &element->fastGetAttribute(hrefAttr);
+    if (element->isSVGElement())
+        return &element->getAttribute(XLinkNames::hrefAttr);
+    return 0;
+}
+
+EInsideLink SelectorChecker::determineLinkStateSlowCase(Element* element) const
+{
+    ASSERT(element->isLink());
+
+    const AtomicString* attribute = linkAttribute(element);
+    if (!attribute || attribute->isNull())
+        return NotInsideLink;
+
+    // An empty href refers to the document itself which is always visited. It is useful to check this explicitly so
+    // that visited links can be tested in platform independent manner, without explicit support in the test harness.
+    if (attribute->isEmpty())
+        return InsideVisitedLink;
+    
+    LinkHash hash;
+    if (element->hasTagName(aTag)) 
+        hash = static_cast<HTMLAnchorElement*>(element)->visitedLinkHash();
+    else
+        hash = visitedLinkHash(m_document->baseURL(), *attribute);
+
+    if (!hash)
+        return InsideUnvisitedLink;
+
+    Frame* frame = m_document->frame();
+    if (!frame)
+        return InsideUnvisitedLink;
+
+    Page* page = frame->page();
+    if (!page)
+        return InsideUnvisitedLink;
+
+    m_linksCheckedForVisitedState.add(hash);
+
+#if USE(PLATFORM_STRATEGIES)
+    return platformStrategies()->visitedLinkStrategy()->isLinkVisited(page, hash, m_document->baseURL(), *attribute) ? InsideVisitedLink : InsideUnvisitedLink;
+#else
+    return page->group().isLinkVisited(hash) ? InsideVisitedLink : InsideUnvisitedLink;
+#endif
 }
 
 bool SelectorChecker::checkSelector(CSSSelector* sel, Element* element, bool isFastCheckableSelector) const
@@ -1039,6 +1098,31 @@ bool SelectorChecker::checkScrollbarPseudoClass(CSSSelector* sel) const
         return scrollbar->scrollableArea()->isScrollCornerVisible();
     default:
         return false;
+    }
+}
+
+void SelectorChecker::allVisitedStateChanged()
+{
+    if (m_linksCheckedForVisitedState.isEmpty())
+        return;
+    for (Element* element = ElementTraversal::firstWithin(m_document); element; element = ElementTraversal::next(element)) {
+        if (element->isLink())
+            element->setNeedsStyleRecalc();
+    }
+}
+
+void SelectorChecker::visitedStateChanged(LinkHash visitedHash)
+{
+    if (!m_linksCheckedForVisitedState.contains(visitedHash))
+        return;
+    for (Element* element = ElementTraversal::firstWithin(m_document); element; element = ElementTraversal::next(element)) {
+        LinkHash hash = 0;
+        if (element->hasTagName(aTag))
+            hash = static_cast<HTMLAnchorElement*>(element)->visitedLinkHash();
+        else if (const AtomicString* attr = linkAttribute(element))
+            hash = visitedLinkHash(m_document->baseURL(), *attr);
+        if (hash == visitedHash)
+            element->setNeedsStyleRecalc();
     }
 }
 

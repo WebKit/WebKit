@@ -2989,8 +2989,6 @@ webcore_sources += \
 	Source/WebCore/dom/UserTypingGestureIndicator.h \
 	Source/WebCore/dom/ViewportArguments.cpp \
 	Source/WebCore/dom/ViewportArguments.h \
-	Source/WebCore/dom/VisitedLinkState.cpp \
-	Source/WebCore/dom/VisitedLinkState.h \
 	Source/WebCore/dom/WebCoreMemoryInstrumentation.cpp \
 	Source/WebCore/dom/WebCoreMemoryInstrumentation.h \
 	Source/WebCore/dom/WebKitAnimationEvent.cpp \

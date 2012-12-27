@@ -31,6 +31,8 @@
 #include "Attribute.h"
 #include "CSSSelector.h"
 #include "InspectorInstrumentation.h"
+#include "LinkHash.h"
+#include "RenderStyleConstants.h"
 #include "SpaceSplitString.h"
 #include "StyledElement.h"
 #include <wtf/HashSet.h>
@@ -86,6 +88,10 @@ public:
     static bool isFastCheckableSelector(const CSSSelector*);
     bool fastCheckSelector(const CSSSelector*, const Element*) const;
 
+    EInsideLink determineLinkState(Element*) const;
+    void allVisitedStateChanged();
+    void visitedStateChanged(LinkHash visitedHash);
+
     Document* document() const { return m_document; }
     bool strictParsing() const { return m_strictParsing; }
 
@@ -109,11 +115,21 @@ private:
     bool fastCheckRightmostSelector(const CSSSelector*, const Element*, VisitedMatchType) const;
     bool commonPseudoClassSelectorMatches(const Element*, const CSSSelector*, VisitedMatchType) const;
 
+    EInsideLink determineLinkStateSlowCase(Element*) const;
+
     Document* m_document;
     bool m_strictParsing;
     bool m_documentIsHTML;
     Mode m_mode;
+    mutable HashSet<LinkHash, LinkHashHash> m_linksCheckedForVisitedState;
 };
+
+inline EInsideLink SelectorChecker::determineLinkState(Element* element) const
+{
+    if (!element || !element->isLink())
+        return NotInsideLink;
+    return determineLinkStateSlowCase(element);
+}
 
 inline bool SelectorChecker::isCommonPseudoClassSelector(const CSSSelector* selector)
 {
