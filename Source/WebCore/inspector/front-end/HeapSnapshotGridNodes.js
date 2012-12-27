@@ -361,9 +361,9 @@ WebInspector.HeapSnapshotGenericObjectNode = function(tree, node)
     else if (this._type === "object" && this.isWindow(this._name)) {
         this._name = this.shortenWindowURL(this._name, false);
         this._reachableFromWindow = true;
-    } else if (node.flags & tree.snapshot.nodeFlags.canBeQueried)
+    } else if (node.canBeQueried)
         this._reachableFromWindow = true;
-    if (node.flags & tree.snapshot.nodeFlags.detachedDOMTreeNode)
+    if (node.detachedDOMTreeNode)
         this.detachedDOMTreeNode = true;
 };
 
@@ -521,7 +521,6 @@ WebInspector.HeapSnapshotObjectNode = function(tree, isFromBaseSnapshot, edge, p
     WebInspector.HeapSnapshotGenericObjectNode.call(this, tree, edge.node);
     this._referenceName = edge.name;
     this._referenceType = edge.type;
-    this._propertyAccessor = edge.propertyAccessor;
     this._distanceToWindow = edge.distanceToWindow;
     this.showRetainingEdges = tree.showRetainingEdges;
     this._isFromBaseSnapshot = isFromBaseSnapshot;

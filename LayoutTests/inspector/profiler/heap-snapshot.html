@@ -28,7 +28,7 @@ function test()
             var nodeRoot = snapshot.createNode(snapshot._rootNodeIndex);
             var iterator = new WebInspector.HeapSnapshotNodeIterator(nodeRoot);
             var names = [];
-            for (iterator.first(); iterator.hasNext(); iterator.next())
+            for (iterator.rewind(); iterator.hasNext(); iterator.next())
                 names.push(iterator.item().name());
             InspectorTest.assertEquals(",A,B,C,D,E", names.join(","), "node iterator");
             next();
@@ -53,7 +53,7 @@ function test()
             var nodeRoot = snapshot.createNode(snapshot._rootNodeIndex);
             var names = [];
             var iterator = nodeRoot.edges();
-            for (iterator.first(); iterator.hasNext(); iterator.next())
+            for (iterator.rewind(); iterator.hasNext(); iterator.next())
                 names.push(iterator.item().name());
             InspectorTest.assertEquals("a,b", names.join(","), "edge iterator");
             var nodeE = snapshot.createNode(15);
@@ -297,7 +297,7 @@ function test()
             provider.sort(WebInspector.HeapSnapshotFilteredOrderedIterator.prototype.createComparator(["name", false, "id", false]), 0, 2, 3);
             InspectorTest.assertEquals(3, provider.length, "nodes provider length");
             var names = [];
-            for (provider.first(); provider.hasNext(); provider.next())
+            for (provider.rewind(); provider.hasNext(); provider.next())
                 names.push(provider.item().name());
             InspectorTest.assertEquals("E,C,A", names.join(","), "nodes provider names");
             next();
@@ -317,7 +317,7 @@ function test()
             provider.sort(WebInspector.HeapSnapshotFilteredOrderedIterator.prototype.createComparator(["!edgeName", false, "id", false]), 0, 0, 1);
             InspectorTest.assertEquals(1, provider.length, "edges provider length");
             var names = [];
-            for (provider.first(); provider.hasNext(); provider.next())
+            for (provider.rewind(); provider.hasNext(); provider.next())
                 names.push(provider.item().name());
             InspectorTest.assertEquals("b", names.join(","), "edges provider names");
             next();

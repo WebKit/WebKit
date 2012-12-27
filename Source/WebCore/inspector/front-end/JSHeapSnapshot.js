@@ -34,6 +34,14 @@
  */
 WebInspector.JSHeapSnapshot = function(profile)
 {
+    this._nodeFlags = { // bit flags
+        canBeQueried: 1,
+        detachedDOMTreeNode: 2,
+        pageObject: 4, // The idea is to track separately the objects owned by the page and the objects owned by debugger.
+
+        visitedMarkerMask: 0x0ffff, // bits: 0,1111,1111,1111,1111
+        visitedMarker:     0x10000  // bits: 1,0000,0000,0000,0000
+    };
     WebInspector.HeapSnapshot.call(this, profile);
 }
 
@@ -51,6 +59,185 @@ WebInspector.JSHeapSnapshot.prototype = {
     createRetainingEdge: function(retainedNodeIndex, retainerIndex)
     {
         return new WebInspector.JSHeapSnapshotRetainerEdge(this, retainedNodeIndex, retainerIndex);
+    },
+
+    dispose: function()
+    {
+        WebInspector.HeapSnapshot.prototype.dispose.call(this);
+        delete this._flags;
+    },
+
+    _markInvisibleEdges: function()
+    {
+        // Mark hidden edges of global objects as invisible.
+        // FIXME: This is a temporary measure. Normally, we should
+        // really hide all hidden nodes.
+        for (var iter = this.rootNode().edges(); iter.hasNext(); iter.next()) {
+            var edge = iter.edge;
+            if (!edge.isShortcut())
+                continue;
+            var node = edge.node();
+            var propNames = {};
+            for (var innerIter = node.edges(); innerIter.hasNext(); innerIter.next()) {
+                var globalObjEdge = innerIter.edge;
+                if (globalObjEdge.isShortcut())
+                    propNames[globalObjEdge._nameOrIndex()] = true;
+            }
+            for (innerIter.rewind(); innerIter.hasNext(); innerIter.next()) {
+                var globalObjEdge = innerIter.edge;
+                if (!globalObjEdge.isShortcut()
+                    && globalObjEdge.node().isHidden()
+                    && globalObjEdge._hasStringName()
+                    && (globalObjEdge._nameOrIndex() in propNames))
+                    this._containmentEdges[globalObjEdge._edges._start + globalObjEdge.edgeIndex + this._edgeTypeOffset] = this._edgeInvisibleType;
+            }
+        }
+    },
+
+    _calculateFlags: function()
+    {
+        this._flags = new Uint32Array(this.nodeCount);
+        this._markDetachedDOMTreeNodes();
+        this._markQueriableHeapObjects();
+        this._markPageOwnedNodes();
+    },
+
+    userObjectsMapAndFlag: function()
+    {
+        return {
+            map: this._flags,
+            flag: this._nodeFlags.pageObject
+        };
+    },
+
+    _flagsOfNode: function(node)
+    {
+        return this._flags[node.nodeIndex / this._nodeFieldCount];
+    },
+
+    _markDetachedDOMTreeNodes: function()
+    {
+        var flag = this._nodeFlags.detachedDOMTreeNode;
+        var detachedDOMTreesRoot;
+        for (var iter = this.rootNode().edges(); iter.hasNext(); iter.next()) {
+            var node = iter.edge.node();
+            if (node.isDetachedDOMTreesRoot()) {
+                detachedDOMTreesRoot = node;
+                break;
+            }
+        }
+
+        if (!detachedDOMTreesRoot)
+            return;
+
+        for (var iter = detachedDOMTreesRoot.edges(); iter.hasNext(); iter.next()) {
+            var node = iter.edge.node();
+            if (node.isDetachedDOMTree()) {
+                for (var edgesIter = node.edges(); edgesIter.hasNext(); edgesIter.next())
+                    this._flags[edgesIter.edge.node().nodeIndex / this._nodeFieldCount] |= flag;
+            }
+        }
+    },
+
+    _markQueriableHeapObjects: function()
+    {
+        // Allow runtime properties query for objects accessible from Window objects
+        // via regular properties, and for DOM wrappers. Trying to access random objects
+        // can cause a crash due to insonsistent state of internal properties of wrappers.
+        var flag = this._nodeFlags.canBeQueried;
+        var hiddenEdgeType = this._edgeHiddenType;
+        var internalEdgeType = this._edgeInternalType;
+        var invisibleEdgeType = this._edgeInvisibleType;
+        var weakEdgeType = this._edgeWeakType;
+        var edgeToNodeOffset = this._edgeToNodeOffset;
+        var edgeTypeOffset = this._edgeTypeOffset;
+        var edgeFieldsCount = this._edgeFieldsCount;
+        var containmentEdges = this._containmentEdges;
+        var nodes = this._nodes;
+        var nodeCount = this.nodeCount;
+        var nodeFieldCount = this._nodeFieldCount;
+        var firstEdgeIndexes = this._firstEdgeIndexes;
+
+        var flags = this._flags;
+        var list = [];
+
+        for (var iter = this.rootNode().edges(); iter.hasNext(); iter.next()) {
+            if (iter.edge.node().isWindow())
+                list.push(iter.edge.node().nodeIndex / nodeFieldCount);
+        }
+
+        while (list.length) {
+            var nodeOrdinal = list.pop();
+            if (flags[nodeOrdinal] & flag)
+                continue;
+            flags[nodeOrdinal] |= flag;
+            var beginEdgeIndex = firstEdgeIndexes[nodeOrdinal];
+            var endEdgeIndex = firstEdgeIndexes[nodeOrdinal + 1];
+            for (var edgeIndex = beginEdgeIndex; edgeIndex < endEdgeIndex; edgeIndex += edgeFieldsCount) {
+                var childNodeIndex = containmentEdges[edgeIndex + edgeToNodeOffset];
+                var childNodeOrdinal = childNodeIndex / nodeFieldCount;
+                if (flags[childNodeOrdinal] & flag)
+                    continue;
+                var type = containmentEdges[edgeIndex + edgeTypeOffset];
+                if (type === hiddenEdgeType || type === invisibleEdgeType || type === internalEdgeType || type === weakEdgeType)
+                    continue;
+                list.push(childNodeOrdinal);
+            }
+        }
+    },
+
+    _markPageOwnedNodes: function()
+    {
+        var edgeShortcutType = this._edgeShortcutType;
+        var edgeToNodeOffset = this._edgeToNodeOffset;
+        var edgeTypeOffset = this._edgeTypeOffset;
+        var edgeFieldsCount = this._edgeFieldsCount;
+        var edgeWeakType = this._edgeWeakType;
+        var firstEdgeIndexes = this._firstEdgeIndexes;
+        var containmentEdges = this._containmentEdges;
+        var containmentEdgesLength = containmentEdges.length;
+        var nodes = this._nodes;
+        var nodeFieldCount = this._nodeFieldCount;
+        var nodesCount = this.nodeCount;
+
+        var flags = this._flags;
+        var flag = this._nodeFlags.pageObject;
+        var visitedMarker = this._nodeFlags.visitedMarker;
+        var visitedMarkerMask = this._nodeFlags.visitedMarkerMask;
+        var markerAndFlag = visitedMarker | flag;
+
+        var nodesToVisit = new Uint32Array(nodesCount);
+        var nodesToVisitLength = 0;
+
+        var rootNodeOrdinal = this._rootNodeIndex / nodeFieldCount;
+        for (var edgeIndex = firstEdgeIndexes[rootNodeOrdinal], endEdgeIndex = firstEdgeIndexes[rootNodeOrdinal + 1];
+             edgeIndex < endEdgeIndex;
+             edgeIndex += edgeFieldsCount) {
+            if (containmentEdges[edgeIndex + edgeTypeOffset] === edgeShortcutType) {
+                var nodeOrdinal = containmentEdges[edgeIndex + edgeToNodeOffset] / nodeFieldCount;
+                nodesToVisit[nodesToVisitLength++] = nodeOrdinal;
+                flags[nodeOrdinal] |= visitedMarker;
+            }
+        }
+
+        while (nodesToVisitLength) {
+            var nodeOrdinal = nodesToVisit[--nodesToVisitLength];
+            flags[nodeOrdinal] |= flag;
+            flags[nodeOrdinal] &= visitedMarkerMask;
+            var beginEdgeIndex = firstEdgeIndexes[nodeOrdinal];
+            var endEdgeIndex = firstEdgeIndexes[nodeOrdinal + 1];
+            for (var edgeIndex = beginEdgeIndex; edgeIndex < endEdgeIndex; edgeIndex += edgeFieldsCount) {
+                var childNodeIndex = containmentEdges[edgeIndex + edgeToNodeOffset];
+                var childNodeOrdinal = childNodeIndex / nodeFieldCount;
+                if (flags[childNodeOrdinal] & markerAndFlag)
+                    continue;
+                var type = containmentEdges[edgeIndex + edgeTypeOffset];
+                if (type === edgeWeakType)
+                    continue;
+                nodesToVisit[nodesToVisitLength++] = childNodeOrdinal;
+                flags[childNodeOrdinal] |= visitedMarker;
+            }
+        }
     },
 
     __proto__: WebInspector.HeapSnapshot.prototype
@@ -74,7 +261,7 @@ WebInspector.JSHeapSnapshotNode.prototype = {
         return !!(flags & this._snapshot._nodeFlags.canBeQueried);
     },
 
-    isPageObject: function()
+    isUserObject: function()
     {
         var flags = this._snapshot._flagsOfNode(this);
         return !!(flags & this._snapshot._nodeFlags.pageObject);
@@ -122,11 +309,6 @@ WebInspector.JSHeapSnapshotNode.prototype = {
         return this._type() === this._snapshot._nodeHiddenType;
     },
 
-    isNative: function()
-    {
-        return this._type() === this._snapshot._nodeNativeType;
-    },
-
     isSynthetic: function()
     {
         return this._type() === this._snapshot._nodeSyntheticType;
@@ -147,6 +329,17 @@ WebInspector.JSHeapSnapshotNode.prototype = {
     {
         const detachedDOMTreeRE = /^Detached DOM tree/;
         return detachedDOMTreeRE.test(this.className());
+    },
+
+    serialize: function()
+    {
+        var result = WebInspector.HeapSnapshotNode.prototype.serialize.call(this);
+        var flags = this._snapshot._flagsOfNode(this);
+        if (flags & this._snapshot._nodeFlags.canBeQueried)
+            result.canBeQueried = true;
+        if (flags & this._snapshot._nodeFlags.detachedDOMTreeNode)
+            result.detachedDOMTreeNode = true;
+        return result;
     },
 
     __proto__: WebInspector.HeapSnapshotNode.prototype

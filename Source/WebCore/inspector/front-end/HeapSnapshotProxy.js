@@ -488,11 +488,6 @@ WebInspector.HeapSnapshotProxy.prototype = {
         return this._staticData.nodeCount;
     },
 
-    get nodeFlags()
-    {
-        return this._staticData.nodeFlags;
-    },
-
     get rootNodeIndex()
     {
         return this._staticData.rootNodeIndex;
