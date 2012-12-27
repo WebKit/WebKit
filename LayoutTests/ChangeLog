@@ -1,5 +1,11 @@
 2012-12-27  Andrey Adaikin  <aandrey@chromium.org>
 
+        Forgot to SKIP a test on wincairo.
+
+        * platform/wincairo/TestExpectations:
+
+2012-12-27  Andrey Adaikin  <aandrey@chromium.org>
+
         Forgot to SKIP a test on QT.
 
         * platform/qt/TestExpectations:
