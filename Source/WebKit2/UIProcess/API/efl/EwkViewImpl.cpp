@@ -1031,15 +1031,30 @@ void EwkViewImpl::onFaviconChanged(const char* pageURL, void* eventInfo)
 
 PassRefPtr<cairo_surface_t> EwkViewImpl::takeSnapshot()
 {
+    // Suspend all animations before taking the snapshot.
+    m_pageProxy->suspendActiveDOMObjectsAndAnimations();
+
+    // Wait for the pending repaint events to be processed.
+    while (m_displayTimer.isActive())
+        ecore_main_loop_iterate();
+
     Ewk_View_Smart_Data* sd = smartData();
 #if USE(ACCELERATED_COMPOSITING)
-    if (!m_isHardwareAccelerated)
+    if (!m_isHardwareAccelerated) {
 #endif
-        return createSurfaceForImage(sd->image).get();
+        RefPtr<cairo_surface_t> snapshot = createSurfaceForImage(sd->image);
+        // Resume all animations.
+        m_pageProxy->resumeActiveDOMObjectsAndAnimations();
 
+        return snapshot.release();
 #if USE(ACCELERATED_COMPOSITING)
-    OwnArrayPtr<unsigned char> buffer = getImageDataFromFrameBuffer(0, 0, sd->view.w, sd->view.h);
+    }
 
-    return adoptRef(cairo_image_surface_create_for_data(buffer.get(), CAIRO_FORMAT_ARGB32, sd->view.w, sd->view.h, sd->view.w * 4));
+    OwnArrayPtr<unsigned char> buffer = getImageDataFromFrameBuffer(0, 0, sd->view.w, sd->view.h);
+    RefPtr<cairo_surface_t> snapshot = adoptRef(cairo_image_surface_create_for_data(buffer.get(), CAIRO_FORMAT_ARGB32, sd->view.w, sd->view.h, sd->view.w * 4));
+    // Resume all animations.
+    m_pageProxy->resumeActiveDOMObjectsAndAnimations();
+
+    return snapshot.release();
 #endif
 }
