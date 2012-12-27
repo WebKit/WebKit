@@ -144,10 +144,10 @@ WebInspector.ScriptSnippetModel.prototype = {
             return;
 
         var breakpointLocations = this._removeBreakpoints(uiSourceCode);
-        var createdUISourceCode = this._releaseSnippetScript(uiSourceCode);
+        var scriptUISourceCode = this._releaseSnippetScript(uiSourceCode);
         this._restoreBreakpoints(uiSourceCode, breakpointLocations);
-        if (createdUISourceCode)
-            this._restoreBreakpoints(createdUISourceCode, breakpointLocations);
+        if (scriptUISourceCode)
+            this._restoreBreakpoints(scriptUISourceCode, breakpointLocations);
     },
 
     /**
@@ -281,20 +281,6 @@ WebInspector.ScriptSnippetModel.prototype = {
     },
 
     /**
-     * @return {Array.<WebInspector.UISourceCode>}
-     */
-    _releasedUISourceCodes: function()
-    {
-        var result = [];
-        for (var scriptId in this._uiSourceCodeForScriptId) {
-            var uiSourceCode = this._uiSourceCodeForScriptId[scriptId];
-            if (uiSourceCode.isTemporary)
-                result.push(uiSourceCode);
-        }
-        return result;
-    },
-
-    /**
      * @param {WebInspector.Script} script
      */
     _addScript: function(script)
@@ -304,30 +290,14 @@ WebInspector.ScriptSnippetModel.prototype = {
             return;
         var uiSourceCode = this._uiSourceCodeForSnippetId[snippetId];
 
-        if (!uiSourceCode || this._evaluationSourceURL(uiSourceCode) !== script.sourceURL) {
-            this._createUISourceCodeForScript(script);
+        if (!uiSourceCode || this._evaluationSourceURL(uiSourceCode) !== script.sourceURL)
             return;
-        }
 
         console.assert(!this._scriptForUISourceCode.get(uiSourceCode));
         this._uiSourceCodeForScriptId[script.scriptId] = uiSourceCode;
         this._scriptForUISourceCode.put(uiSourceCode, script);
         uiSourceCode.scriptFile().setHasDivergedFromVM(false);
-        script.setSourceMapping(this._snippetScriptMapping);
-    },
-
-    /**
-     * @param {WebInspector.Script} script
-     * @return {WebInspector.UISourceCode} uiSourceCode
-     */
-    _createUISourceCodeForScript: function(script)
-    {
-        var uiSourceCode = this._workspace.addTemporaryUISourceCode(script.sourceURL, script, false, true);
-        uiSourceCode.setSourceMapping(this._snippetScriptMapping);
-        this._uiSourceCodeForScriptId[script.scriptId] = uiSourceCode;
-        this._scriptForUISourceCode.put(uiSourceCode, script);
-        script.setSourceMapping(this._snippetScriptMapping);
-        return uiSourceCode;
+        script.pushSourceMapping(this._snippetScriptMapping);
     },
 
     /**
@@ -370,9 +340,9 @@ WebInspector.ScriptSnippetModel.prototype = {
         delete this._uiSourceCodeForScriptId[script.scriptId];
         this._scriptForUISourceCode.remove(uiSourceCode);
         delete uiSourceCode._evaluationIndex;
-        var createdUISourceCode = this._createUISourceCodeForScript(script);
+        script.popSourceMapping(this._snippetScriptMapping);
         uiSourceCode.scriptFile().setIsDivergingFromVM(false);
-        return createdUISourceCode;
+        return script.rawLocationToUILocation(0, 0).uiSourceCode;
     },
 
     /**
@@ -402,7 +372,6 @@ WebInspector.ScriptSnippetModel.prototype = {
 
     _projectWillReset: function()
     {
-        var removedUISourceCodes = this._releasedUISourceCodes();
         this._uiSourceCodeForScriptId = {};
         this._scriptForUISourceCode = new Map();
         this._uiSourceCodeForSnippetId = {};

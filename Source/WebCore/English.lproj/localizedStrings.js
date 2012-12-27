@@ -821,3 +821,5 @@ localizedStrings["Standard Deviation"] = "Standard Deviation";
 localizedStrings["Time by category"] = "Time by category";
 localizedStrings["Show toolbar icons"] = "Show toolbar icons";
 localizedStrings["Appearance"] = "Appearance";
+localizedStrings["Live Edit"] = "Live Edit";
+localizedStrings["Live edit"] = "Live edit";

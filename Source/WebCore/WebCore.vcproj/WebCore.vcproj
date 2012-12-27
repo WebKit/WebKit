@@ -76473,6 +76473,10 @@
 					>
 				</File>
 				<File
+					RelativePath="..\inspector\front-end\DefaultScriptMapping.js"
+					>
+				</File>
+				<File
 					RelativePath="..\inspector\front-end\DefaultTextEditor.js"
 					>
 				</File>
@@ -76746,6 +76750,10 @@
 				</File>
 				<File
 					RelativePath="..\inspector\front-end\Linkifier.js"
+					>
+				</File>
+				<File
+					RelativePath="..\inspector\front-end\LiveEditSupport.js"
 					>
 				</File>
 				<File

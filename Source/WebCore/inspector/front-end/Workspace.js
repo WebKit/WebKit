@@ -283,14 +283,12 @@ WebInspector.Workspace.prototype = {
      * @param {WebInspector.ContentProvider} contentProvider
      * @param {boolean} isEditable
      * @param {boolean=} isContentScript
-     * @param {boolean=} isSnippet
      */
-    addTemporaryUISourceCode: function(uri, contentProvider, isEditable, isContentScript, isSnippet)
+    addTemporaryUISourceCode: function(uri, contentProvider, isEditable, isContentScript)
     {
         var uiSourceCode = new WebInspector.UISourceCode(this, uri, contentProvider.contentType(), isEditable);
         this._temporaryContentProviders.put(uiSourceCode, contentProvider);
         uiSourceCode.isContentScript = isContentScript;
-        uiSourceCode.isSnippet = isSnippet;
         uiSourceCode.isTemporary = true;
         this.dispatchEventToListeners(WebInspector.UISourceCodeProvider.Events.TemporaryUISourceCodeAdded, uiSourceCode);
         return uiSourceCode;

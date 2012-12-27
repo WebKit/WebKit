@@ -25,6 +25,7 @@
 
 /**
  * @constructor
+ * @extends {WebInspector.Object}
  * @implements {WebInspector.ContentProvider}
  * @param {string} scriptId
  * @param {string} sourceURL
@@ -48,6 +49,11 @@ WebInspector.Script = function(scriptId, sourceURL, startLine, startColumn, endL
     this.sourceMapURL = sourceMapURL;
     this.hasSourceURL = hasSourceURL;
     this._locations = [];
+    this._sourceMappings = [];
+}
+
+WebInspector.Script.Events = {
+    ScriptEdited: "ScriptEdited",
 }
 
 WebInspector.Script.snippetSourceURLPrefix = "snippets:///";
@@ -146,6 +152,8 @@ WebInspector.Script.prototype = {
             if (!error)
                 this._source = newSource;
             callback(error, callFrames);
+            if (!error)
+                this.dispatchEventToListeners(WebInspector.Script.Events.ScriptEdited, newSource);
         }
         if (this.scriptId) {
             // Script failed to parse.
@@ -172,6 +180,22 @@ WebInspector.Script.prototype = {
     },
 
     /**
+     * @param {boolean} isDynamicScript
+     */
+    setIsDynamicScript: function(isDynamicScript)
+    {
+        this._isDynamicScript = isDynamicScript;
+    },
+
+    /**
+     * @return {boolean}
+     */
+    isDynamicScript: function()
+    {
+        return !!this._isDynamicScript;
+    },
+
+    /**
      * @return {boolean}
      */
     isSnippet: function()
@@ -186,16 +210,84 @@ WebInspector.Script.prototype = {
      */
     rawLocationToUILocation: function(lineNumber, columnNumber)
     {
-        var uiLocation = this._sourceMapping.rawLocationToUILocation(new WebInspector.DebuggerModel.Location(this.scriptId, lineNumber, columnNumber || 0));
+        var sourceMappings = this._enabledSourceMappings();
+        var uiLocation;
+        var rawLocation = new WebInspector.DebuggerModel.Location(this.scriptId, lineNumber, columnNumber || 0);
+        for (var i = sourceMappings.length - 1; !uiLocation && i >= 0; --i)
+            uiLocation = sourceMappings[i].rawLocationToUILocation(rawLocation);
+        console.assert(uiLocation, "Script raw location can not be mapped to any ui location.");
         return uiLocation.uiSourceCode.overrideLocation(uiLocation);
+    },
+
+    _enabledSourceMappings: function()
+    {
+        function filter(sourceMapping)
+        {
+            return !this._disabledSourceMappings.get(sourceMapping);
+        }
+
+        var sourceMappings = this._disabledSourceMappings ? this._sourceMappings.filter(filter.bind(this)) : this._sourceMappings.slice();
+        console.assert(sourceMappings.length, "Script does not have any source mapping.");
+        return sourceMappings;
+    },
+
+    /**
+     * @param {Array.<WebInspector.SourceMapping>} oldSourceMappings
+     * @param {Array.<WebInspector.SourceMapping>} newSourceMappings
+     */
+    _sourceMappingsDiffer: function(oldSourceMappings, newSourceMappings)
+    {
+        if (oldSourceMappings.length !== newSourceMappings.length)
+            return true;
+        for (var i = 0; i < newSourceMappings.length; ++i) {
+            if (oldSourceMappings[i] !== newSourceMappings[i])
+                return true;
+        }
+        return false;
     },
 
     /**
      * @param {WebInspector.SourceMapping} sourceMapping
      */
-    setSourceMapping: function(sourceMapping)
+    disableSourceMapping: function(sourceMapping)
     {
-        this._sourceMapping = sourceMapping;
+        var oldSourceMappings = this._enabledSourceMappings();
+        this._disabledSourceMappings = this._disabledSourceMappings || new Map();
+        this._disabledSourceMappings.put(sourceMapping, true);
+        if (this._sourceMappingsDiffer(oldSourceMappings,this._enabledSourceMappings()))
+            this._updateLocations();
+    },
+
+    /**
+     * @param {WebInspector.SourceMapping} sourceMapping
+     */
+    enableSourceMapping: function(sourceMapping)
+    {
+        var oldSourceMappings = this._enabledSourceMappings();
+        this._disabledSourceMappings.remove(sourceMapping);
+        if (!this._disabledSourceMappings.size())
+            delete this._disabledSourceMappings;
+        if (this._sourceMappingsDiffer(oldSourceMappings,this._enabledSourceMappings()))
+            this._updateLocations();
+    },
+
+    /**
+     * @param {WebInspector.SourceMapping} sourceMapping
+     */
+    pushSourceMapping: function(sourceMapping)
+    {
+        this._sourceMappings.push(sourceMapping);
+        this._updateLocations();
+    },
+
+    popSourceMapping: function()
+    {
+        this._sourceMappings.pop();
+        this._updateLocations();
+    },
+
+    _updateLocations: function()
+    {
         for (var i = 0; i < this._locations.length; ++i)
             this._locations[i].update();
     },
@@ -212,7 +304,9 @@ WebInspector.Script.prototype = {
         this._locations.push(location);
         location.update();
         return location;
-    }
+    },
+
+    __proto__: WebInspector.Object.prototype
 }
 
 /**

@@ -110,20 +110,12 @@ Running: testRestoreBreakpointsAfterTemporaryUISourceCodeRemoved
     a.js:20 enabled:false condition:
     b.js:3 enabled:true condition:
   Adding temporary UISourceCode: a.js)
-    debuggerModel.setBreakpoint(a.js:10:foo == bar)
-    breakpointAdded(a.js, 10, foo == bar, true)
-    Location created: a.js:10
-    breakpointAdded(a.js, 20, , false)
   Adding UISourceCode: a.js)
-  Removing temporary UISourceCode: a.js)
-    breakpointRemoved(a.js, 10)
-    Location disposed: a.js:10
-    debuggerModel.removeBreakpoint(a.js:10)
-    breakpointRemoved(a.js, 20)
     debuggerModel.setBreakpoint(a.js:10:foo == bar)
     breakpointAdded(a.js, 10, foo == bar, true)
     Location created: a.js:10
     breakpointAdded(a.js, 20, , false)
+  Removing temporary UISourceCode: a.js)
   Dumping Storage
     a.js:10 enabled:true condition:foo == bar
     a.js:20 enabled:false condition:

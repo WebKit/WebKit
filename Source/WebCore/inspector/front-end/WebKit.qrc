@@ -48,6 +48,7 @@
     <file>DataGrid.js</file>
     <file>DebuggerModel.js</file>
     <file>DebuggerScriptMapping.js</file>
+    <file>DefaultScriptMapping.js</file>
     <file>DefaultTextEditor.js</file>
     <file>Dialog.js</file>
     <file>DirectoryContentView.js</file>
@@ -104,6 +105,7 @@
     <file>jsdifflib.js</file>
     <file>KeyboardShortcut.js</file>
     <file>Linkifier.js</file>
+    <file>LiveEditSupport.js</file>
     <file>MemoryStatistics.js</file>
     <file>MetricsSidebarPane.js</file>
     <file>NativeBreakpointsSidebarPane.js</file>

@@ -167,6 +167,18 @@ WebInspector.JavaScriptSourceFrame.prototype = {
             var evaluateLabel = WebInspector.UIString(WebInspector.useLowerCaseMenuTitles() ? "Evaluate in console" : "Evaluate in Console");
             contextMenu.appendItem(evaluateLabel, WebInspector.evaluateInConsole.bind(WebInspector, selection.toString()));
             contextMenu.appendSeparator();
+        } else if (!this._uiSourceCode.isEditable() && this._uiSourceCode.contentType() === WebInspector.resourceTypes.Script) {
+            function liveEdit(event)
+            {
+                var liveEditUISourceCode = WebInspector.liveEditSupport.uiSourceCodeForLiveEdit(this._uiSourceCode);
+                this._scriptsPanel.showUISourceCode(liveEditUISourceCode, lineNumber)
+            }
+
+            // FIXME: Change condition above to explicitly check that current uiSourceCode is created by default debugger mapping
+            // and move the code adding this menu item to generic context menu provider for UISourceCode.
+            var liveEditLabel = WebInspector.UIString(WebInspector.useLowerCaseMenuTitles() ? "Live edit" : "Live Edit");
+            contextMenu.appendItem(liveEditLabel, liveEdit.bind(this));
+            contextMenu.appendSeparator();
         }
         contextMenu.appendApplicableItems(this._uiSourceCode);
     },

@@ -43,7 +43,7 @@ function test()
         _addScript: function(scriptId, url)
         {
             this._scripts[scriptId] = new WebInspector.Script(scriptId, url);
-            this._scripts[scriptId].setSourceMapping(this._sourceMapping);
+            this._scripts[scriptId].pushSourceMapping(this._sourceMapping);
         },
 
         setBreakpointByScriptLocation: function(location, condition, callback)
@@ -96,10 +96,16 @@ function test()
             this._scripts = {};
         },
 
-        setSourceMapping: function(sourceMapping)
+        pushSourceMapping: function(sourceMapping)
         {
             for (var scriptId in this._scripts)
-                this._scripts[scriptId].setSourceMapping(sourceMapping);
+                this._scripts[scriptId].pushSourceMapping(sourceMapping);
+        },
+
+        disableSourceMapping: function(sourceMapping)
+        {
+            for (var scriptId in this._scripts)
+                this._scripts[scriptId].disableSourceMapping(sourceMapping);
         }
     }
     DebuggerModelMock.prototype.__proto__ = WebInspector.Object.prototype;
@@ -378,10 +384,10 @@ function test()
             var uiSourceCodeA = addUISourceCode(breakpointManager, "a.js");
             InspectorTest.addResult("\n  Toggling source mapping.");
             breakpointManager._sourceMapping = shiftingMapping;
-            breakpointManager._debuggerModel.setSourceMapping(shiftingMapping);
+            breakpointManager._debuggerModel.pushSourceMapping(shiftingMapping);
             InspectorTest.addResult("\n  Toggling source mapping back.");
             breakpointManager._sourceMapping = defaultMapping;
-            breakpointManager._debuggerModel.setSourceMapping(defaultMapping);
+            breakpointManager._debuggerModel.disableSourceMapping(shiftingMapping);
             resetBreakpointManager(breakpointManager, next);
         },
 

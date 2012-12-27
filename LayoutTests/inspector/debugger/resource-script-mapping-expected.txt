@@ -4,8 +4,8 @@ Tests ResourceScriptMapping class.
 Running: testScriptWithPendingResource
 Adding script for pending request.
 UISourceCode: foo.js
-UISourceCode is editable: true
-UISourceCode is content script: true
+UISourceCode is editable: false
+UISourceCode is content script: false
 Mime type: text/javascript
 UISourceCode content: <content script source>
 Adding uiSourceCode for finished resource.
@@ -41,7 +41,7 @@ UISourceCode: index.html
 UISourceCode is editable: false
 UISourceCode is content script: false
 Mime type: text/html
-UISourceCode content:   <script><script source 1></script> <script><script source 2></script>
+UISourceCode content:                                      <script><script source 2></script>
 Adding uiSourceCode for finished resource.
 UISourceCode: index.html
 UISourceCode is editable: false

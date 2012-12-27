@@ -4,10 +4,9 @@ Debugger was enabled.
 Did load front-end
 Paused: false
 didPauseAfterReload
-Script execution paused.
-didShowScript
 Source strings corresponding to the call stack:
-Frame 0) line 6, content: </script><script>function f1() { debugger; }</script> (must be part of function 'f1')
+Script execution paused.
+Frame 0) line 6, content:          <script>function f1() { debugger; }</script> (must be part of function 'f1')
 Frame 1) line 8, content: function f2() { return f1(); } (must be part of function 'f2')
 Frame 2) line 14, content:     return f2(); (must be part of function 'f3')
 Frame 3) line 16, content: f3(); (must be part of function '')

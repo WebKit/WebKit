@@ -88,7 +88,6 @@ function test()
 
             // Plug compiler source mapping.
             workspace.networkWorkspaceProvider.addFile("source.js", contentProvider, false);
-            workspace.removeTemporaryUISourceCode(temporaryUISourceCode);
 
             InspectorTest.dumpScriptsNavigator(panel._navigator);
             next();

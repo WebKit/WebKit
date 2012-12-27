@@ -8,11 +8,15 @@
 
 function test()
 {
+    var defaultScriptMapping;
+    var resourceScriptMapping;
+
     function createCompilerScriptMapping()
     {
         InspectorTest.createWorkspace();
         var compilerScriptMapping = new WebInspector.CompilerScriptMapping(InspectorTest.testWorkspace, InspectorTest.testNetworkWorkspaceProvider);
-        var resourceScriptMapping = new WebInspector.ResourceScriptMapping(InspectorTest.testWorkspace);
+        resourceScriptMapping = new WebInspector.ResourceScriptMapping(InspectorTest.testWorkspace);
+        defaultScriptMapping = new WebInspector.DefaultScriptMapping(InspectorTest.testWorkspace);
         return compilerScriptMapping;
     }
 
@@ -138,6 +142,7 @@ function test()
             var script;
             WebInspector.debuggerModel._reset();
             var mapping = createCompilerScriptMapping();
+            var originalUISourceCode;
             step1();
 
             function step1()
@@ -145,14 +150,22 @@ function test()
                 InspectorTest.waitForWorkspaceTemporaryUISourceCodeAddedEvent(originalUISourceCodeAdded);
                 script = InspectorTest.createScriptMock("compiled.js", 0, 0, true, "");
                 script.sourceMapURL = "http://localhost:8000/inspector/resources/source-map.json";
-                script.setSourceMapping(mapping);
+                defaultScriptMapping.addScript(script);
+                resourceScriptMapping.addScript(script);
                 mapping.addScript(script);
                 afterScriptAdded();
             }
 
             function originalUISourceCodeAdded(uiSourceCode)
             {
+                InspectorTest.waitForWorkspaceUISourceCodeAddedEvent(originalResourceUISourceCodeAdded);
+                InspectorTest.addMockUISourceCodeToWorkspace("compiled.js", WebInspector.resourceTypes.Script, "");
+            }
+
+            function originalResourceUISourceCodeAdded(uiSourceCode)
+            {
                 InspectorTest.waitForWorkspaceUISourceCodeAddedEvent(firstUISourceCodeAdded);
+                originalUISourceCode = uiSourceCode;
             }
 
             function firstUISourceCodeAdded(uiSourceCode)
@@ -160,19 +173,12 @@ function test()
                 InspectorTest.waitForWorkspaceUISourceCodeAddedEvent(secondUISourceCodeAdded);
             }
 
-            function secondUISourceCodeAdded(uiSourceCode)
-            {
-                InspectorTest.waitForWorkspaceUISourceCodeAddedEvent(originalResourceUISourceCodeAdded);
-                InspectorTest.addMockUISourceCodeToWorkspace("compiled.js", WebInspector.resourceTypes.Script, "");
-            }
-
-            function originalResourceUISourceCodeAdded(uiSourceCode) { }
+            function secondUISourceCodeAdded(uiSourceCode) { }
 
             function afterScriptAdded(uiSourceCode)
             {
                 var uiSourceCode1 = InspectorTest.testWorkspace.uiSourceCodeForURL("http://localhost:8000/inspector/resources/source1.js");
                 var uiSourceCode2 = InspectorTest.testWorkspace.uiSourceCodeForURL("http://localhost:8000/inspector/resources/source2.js");
-                var originalUISourceCode = mapping._originalUISourceCodeForScriptId[script.scriptId];
 
                 InspectorTest.checkUILocation(uiSourceCode1, 4, 4, script.rawLocationToUILocation(0, 81));
                 InspectorTest.checkUILocation(uiSourceCode1, 5, 4, script.rawLocationToUILocation(0, 93));
@@ -220,6 +226,8 @@ function test()
 
             function compiledUISourceCodeAdded(uiSourceCode) { }
             
+            defaultScriptMapping.addScript(script);
+            resourceScriptMapping.addScript(script);
             mapping.addScript(script);
 
             var uiSourceCode = InspectorTest.testWorkspace.uiSourceCodeForURL("source.js");

@@ -45,9 +45,6 @@ WebInspector.CompilerScriptMapping = function(workspace, networkWorkspaceProvide
     this._scriptForSourceMap = new Map();
     /** @type {Object.<string, WebInspector.SourceMapParser>} */
     this._sourceMapForURL = {};
-    /** @type {Object.<string, WebInspector.UISourceCode>} */
-    this._originalUISourceCodeForScriptId = {};
-    this._scriptForOriginalUISourceCode = new Map();
     this._workspace.addEventListener(WebInspector.Workspace.Events.ProjectWillReset, this._reset, this);
 }
 
@@ -63,10 +60,8 @@ WebInspector.CompilerScriptMapping.prototype = {
         var lineNumber = debuggerModelLocation.lineNumber;
         var columnNumber = debuggerModelLocation.columnNumber || 0;
         var entry = sourceMap.findEntry(lineNumber, columnNumber);
-        if (entry.length === 2) {
-            var temporaryUISourceCode = this._originalUISourceCodeForScriptId[debuggerModelLocation.scriptId];
-            return new WebInspector.UILocation(temporaryUISourceCode, lineNumber, columnNumber);
-        }
+        if (entry.length === 2)
+            return null;
         var uiSourceCode = this._workspace.uiSourceCodeForURL(entry[2]);
         return new WebInspector.UILocation(uiSourceCode, entry[3], entry[4]);
     },
@@ -79,9 +74,6 @@ WebInspector.CompilerScriptMapping.prototype = {
      */
     uiLocationToRawLocation: function(uiSourceCode, lineNumber, columnNumber)
     {
-        var script = this._scriptForOriginalUISourceCode.get(uiSourceCode);
-        if (script)
-            return WebInspector.debuggerModel.createRawLocation(script, lineNumber, columnNumber);
         var sourceMap = this._sourceMapForURL[uiSourceCode.url];
         var entry = sourceMap.findEntryReversed(uiSourceCode.url, lineNumber);
         return WebInspector.debuggerModel.createRawLocation(this._scriptForSourceMap.get(sourceMap), entry[0], entry[1]);
@@ -92,18 +84,11 @@ WebInspector.CompilerScriptMapping.prototype = {
      */
     addScript: function(script)
     {
-        // FIXME: We should only create temporary uiSourceCodes on demand and should set this as a mapping to 
-        // relevant uiSourceCodes added by NetworkUISourceCodeProvider.
-        var originalUISourceCode = this._workspace.addTemporaryUISourceCode(script.sourceURL, script, false);
-        originalUISourceCode.setSourceMapping(this);
-        this._originalUISourceCodeForScriptId[script.scriptId] = originalUISourceCode;
-        this._scriptForOriginalUISourceCode.put(originalUISourceCode, script);
-
         var sourceMap = this.loadSourceMapForScript(script);
 
         if (this._scriptForSourceMap.get(sourceMap)) {
             this._sourceMapForScriptId[script.scriptId] = sourceMap;
-            script.setSourceMapping(this);
+            script.pushSourceMapping(this);
             return;
         }
 
@@ -127,7 +112,7 @@ WebInspector.CompilerScriptMapping.prototype = {
 
         this._sourceMapForScriptId[script.scriptId] = sourceMap;
         this._scriptForSourceMap.put(sourceMap, script);
-        script.setSourceMapping(this);
+        script.pushSourceMapping(this);
     },
 
     /**
@@ -162,8 +147,6 @@ WebInspector.CompilerScriptMapping.prototype = {
         this._sourceMapForScriptId = {};
         this._scriptForSourceMap = new Map();
         this._sourceMapForURL = {};
-        this._originalUISourceCodeForScriptId = {};
-        this._scriptForOriginalUISourceCode = new Map();
     }
 }
 

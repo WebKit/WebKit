@@ -40,9 +40,9 @@ Setting breakpoint:
     Dumping breakpoint locations
         url: edit-me.js, lineNumber: 2, isTemporary: false
 Editing source:
+    OriginalTextEditor.addBreakpoint(lineNumber = 2, disabled = false)
     TextEditor.removeBreakpoint(lineNumber = 2)
     TextEditor.addBreakpoint(lineNumber = 2, disabled = true)
-    OriginalTextEditor.addBreakpoint(lineNumber = 2, disabled = false)
     Dumping breakpoint storage
         edit-me.js:2, enabled:true
     Dumping breakpoint locations
@@ -69,9 +69,9 @@ Setting breakpoint:
     Dumping breakpoint locations
         url: edit-me.js, lineNumber: 2, isTemporary: false
 Editing source:
+    OriginalTextEditor.addBreakpoint(lineNumber = 2, disabled = false)
     TextEditor.removeBreakpoint(lineNumber = 2)
     TextEditor.addBreakpoint(lineNumber = 2, disabled = true)
-    OriginalTextEditor.addBreakpoint(lineNumber = 2, disabled = false)
     Dumping breakpoint storage
         edit-me.js:2, enabled:true
     Dumping breakpoint locations
@@ -108,9 +108,9 @@ Setting breakpoint:
     Dumping breakpoint locations
         url: edit-me.js, lineNumber: 2, isTemporary: false
 Editing source:
+    OriginalTextEditor.addBreakpoint(lineNumber = 2, disabled = false)
     TextEditor.removeBreakpoint(lineNumber = 2)
     TextEditor.addBreakpoint(lineNumber = 2, disabled = true)
-    OriginalTextEditor.addBreakpoint(lineNumber = 2, disabled = false)
     Dumping breakpoint storage
         edit-me.js:2, enabled:true
     Dumping breakpoint locations
@@ -147,24 +147,14 @@ Showing script source:
 Setting breakpoint:
     TextEditor.addBreakpoint(lineNumber = 2, disabled = false)
     Dumping breakpoint storage
-        :2, enabled:true
     Dumping breakpoint locations
         url: , lineNumber: 2, isTemporary: true
 Editing source:
-    TextEditor.removeBreakpoint(lineNumber = 2)
-    TextEditor.addBreakpoint(lineNumber = 2, disabled = true)
-    OriginalTextEditor.addBreakpoint(lineNumber = 2, disabled = false)
     Dumping breakpoint storage
-        :2, enabled:true
     Dumping breakpoint locations
         url: , lineNumber: 2, isTemporary: true
 Undoing source editing:
-    OriginalTextEditor.removeBreakpoint(lineNumber = 2)
-    TextEditor.removeBreakpoint(lineNumber = 2)
-    TextEditor.removeBreakpoint(lineNumber = 2)
-    TextEditor.addBreakpoint(lineNumber = 2, disabled = false)
     Dumping breakpoint storage
-        :2, enabled:true
     Dumping breakpoint locations
         url: , lineNumber: 2, isTemporary: true
 Finally removing breakpoint:
@@ -180,24 +170,14 @@ Showing script source:
 Setting breakpoint:
     TextEditor.addBreakpoint(lineNumber = 2, disabled = false)
     Dumping breakpoint storage
-        :2, enabled:true
     Dumping breakpoint locations
         url: , lineNumber: 2, isTemporary: true
 Editing source:
-    TextEditor.removeBreakpoint(lineNumber = 2)
-    TextEditor.addBreakpoint(lineNumber = 2, disabled = true)
-    OriginalTextEditor.addBreakpoint(lineNumber = 2, disabled = false)
     Dumping breakpoint storage
-        :2, enabled:true
     Dumping breakpoint locations
         url: , lineNumber: 2, isTemporary: true
 Undoing source editing:
-    OriginalTextEditor.removeBreakpoint(lineNumber = 2)
-    TextEditor.removeBreakpoint(lineNumber = 2)
-    TextEditor.removeBreakpoint(lineNumber = 2)
-    TextEditor.addBreakpoint(lineNumber = 2, disabled = false)
     Dumping breakpoint storage
-        :2, enabled:true
     Dumping breakpoint locations
         url: , lineNumber: 2, isTemporary: true
 Finally removing breakpoint:
