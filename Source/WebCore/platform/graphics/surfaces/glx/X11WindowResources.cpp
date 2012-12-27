@@ -28,7 +28,9 @@
 
 #if USE(ACCELERATED_COMPOSITING)
 
+#if USE(GLX)
 #include "GLXWindowResources.h"
+#endif
 
 namespace WebCore {
 
@@ -37,26 +39,30 @@ PlatformSharedResources* SharedX11Resources::m_staticSharedResource = 0;
 X11OffScreenWindow::X11OffScreenWindow()
     : GLPlatformSurface()
     , m_sharedResources(0)
+    , m_configVisualInfo(0)
 {
     m_sharedResources = PlatformSharedResources::create();
 
     if (!m_sharedResources)
         return;
 
-    m_sharedDisplay = m_sharedResources->nativeDisplay();
+    m_sharedDisplay = m_sharedResources->x11Display();
 }
 
 X11OffScreenWindow::~X11OffScreenWindow()
 {
+    if (m_configVisualInfo) {
+        XFree(m_configVisualInfo);
+        m_configVisualInfo = 0;
+    }
 }
 
-void X11OffScreenWindow::setGeometry(const IntRect& newRect)
+void X11OffScreenWindow::reSizeWindow(const IntRect& newRect, PlatformBufferHandle windowId)
 {
-    GLPlatformSurface::setGeometry(newRect);
-    XResizeWindow(m_sharedResources->x11Display(), m_bufferHandle, newRect.width(), newRect.height());
+    XResizeWindow(m_sharedResources->x11Display(), windowId, newRect.width(), newRect.height());
 }
 
-void X11OffScreenWindow::createOffscreenWindow()
+void X11OffScreenWindow::createOffscreenWindow(PlatformBufferHandle* handleId)
 {
     if (!m_sharedResources)
         return;
@@ -65,14 +71,11 @@ void X11OffScreenWindow::createOffscreenWindow()
     if (!display)
         return;
 
-    PlatformSurfaceConfig config = m_sharedResources->surfaceContextConfig();
-
-    if (!config) {
-        LOG_ERROR("Failed to retrieve a valid configiration.");
-        return;
-    }
-
+#if USE(GLX)
     XVisualInfo* visInfo = m_sharedResources->visualInfo();
+#else
+    XVisualInfo* visInfo = m_configVisualInfo;
+#endif
 
     if (!visInfo) {
         LOG_ERROR("Failed to find valid XVisual");
@@ -88,24 +91,27 @@ void X11OffScreenWindow::createOffscreenWindow()
     attribute.background_pixel = WhitePixel(display, 0);
     attribute.border_pixel = BlackPixel(display, 0);
     attribute.colormap = cmap;
-    m_bufferHandle = XCreateWindow(display, xWindow, 0, 0, 1, 1, 0, visInfo->depth, InputOutput, visInfo->visual, CWBackPixel | CWBorderPixel | CWColormap, &attribute);
+    PlatformBufferHandle tempHandleId;
+    tempHandleId = XCreateWindow(display, xWindow, 0, 0, 1, 1, 0, visInfo->depth, InputOutput, visInfo->visual, CWBackPixel | CWBorderPixel | CWColormap, &attribute);
 
-    if (!m_bufferHandle) {
+    if (!tempHandleId) {
         LOG_ERROR("Failed to create offscreen window");
         return;
     }
 
-    XSetWindowBackgroundPixmap(display, m_bufferHandle, 0);
-    XCompositeRedirectWindow(display, m_bufferHandle, CompositeRedirectManual);
+    XSetWindowBackgroundPixmap(display, tempHandleId, 0);
+    XCompositeRedirectWindow(display, tempHandleId, CompositeRedirectManual);
+    *handleId = tempHandleId;
+    m_bufferHandle = tempHandleId;
 
     if (m_sharedResources->isXRenderExtensionSupported())
-        XMapWindow(display, m_bufferHandle);
+        XMapWindow(display, tempHandleId);
 
 }
 
-void X11OffScreenWindow::destroyWindow()
+void X11OffScreenWindow::destroyWindow(PlatformBufferHandle windowId)
 {
-    if (!m_bufferHandle)
+    if (!windowId)
         return;
 
     GLPlatformSurface::destroy();
@@ -113,9 +119,67 @@ void X11OffScreenWindow::destroyWindow()
     if (!display)
         return;
 
-    XDestroyWindow(display, m_bufferHandle);
-    m_bufferHandle = 0;
+    XDestroyWindow(display, windowId);
 }
+
+Display* X11OffScreenWindow::nativeSharedDisplay()
+{
+    return m_sharedResources->x11Display();
+}
+
+#if USE(EGL)
+bool X11OffScreenWindow::setVisualId(const EGLint id)
+{
+    VisualID visualId = static_cast<VisualID>(id);
+
+    if (!visualId)
+        return false;
+
+    // EGL has suggested a visual id, so get the rest of the visual info for that id.
+    XVisualInfo visualInfoTemplate;
+    memset(&visualInfoTemplate, 0, sizeof(XVisualInfo));
+    visualInfoTemplate.visualid = visualId;
+
+    XVisualInfo* chosenVisualInfo;
+    int matchingCount = 0;
+    chosenVisualInfo = XGetVisualInfo(m_sharedResources->x11Display(), VisualIDMask, &visualInfoTemplate, &matchingCount);
+    if (chosenVisualInfo) {
+#if USE(GRAPHICS_SURFACE)
+        if (m_sharedResources->isXRenderExtensionSupported()) {
+            XRenderPictFormat* format = XRenderFindVisualFormat(m_sharedResources->x11Display(), chosenVisualInfo->visual);
+            if (format && format->direct.alphaMask > 0) {
+                m_configVisualInfo = chosenVisualInfo;
+                return true;
+            }
+        }
+#endif
+        if (chosenVisualInfo->depth == 32) {
+            m_configVisualInfo = chosenVisualInfo;
+            return true;
+        }
+    }
+
+    if (!m_configVisualInfo) {
+        memset(&visualInfoTemplate, 0, sizeof(XVisualInfo));
+        XVisualInfo* matchingVisuals;
+        int matchingCount = 0;
+
+        visualInfoTemplate.depth = chosenVisualInfo->depth;
+        matchingVisuals = XGetVisualInfo(m_sharedResources->x11Display(), VisualDepthMask, &visualInfoTemplate, &matchingCount);
+
+        if (matchingVisuals) {
+            m_configVisualInfo = &matchingVisuals[0];
+            XFree(matchingVisuals);
+            return true;
+        }
+    }
+
+    if (!m_configVisualInfo)
+        LOG_ERROR("Failed to retrieve XVisual Info.");
+
+    return false;
+}
+#endif
 
 }
 

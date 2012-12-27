@@ -64,7 +64,7 @@ public:
     // Doesn't have any effect if this is not the current Context.
     void releaseCurrent();
 
-    PlatformContext handle() const;
+    virtual PlatformContext handle() const;
 
     virtual bool isCurrentContext() const;
 

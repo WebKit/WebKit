@@ -43,6 +43,7 @@ public:
     virtual ~GLXTransportSurface();
     PlatformSurfaceConfig configuration();
     void swapBuffers();
+    void setGeometry(const IntRect&);
     void destroy();
 
 private:

@@ -175,12 +175,25 @@ if (ENABLE_WEBGL OR WTF_USE_TILED_BACKING_STORE)
 
     if (OPENGLX_FOUND)
         add_definitions(-DHAVE_GLX)
-        add_definitions(-DWTF_USE_GLX=1)
-
-        if (X11_Xcomposite_FOUND AND X11_Xrender_FOUND)
-           set(USE_GRAPHICS_SURFACE 1)
-        endif ()
     endif ()
+
+    option(ENABLE_EGL ON)
+
+    if (ENABLE_EGL)
+        find_package(EGL REQUIRED)
+    endif ()
+
+    if (EGL_FOUND)
+        set(WTF_USE_EGL 1)
+        add_definitions(-DWTF_USE_EGL=1)
+     elseif (OPENGLX_FOUND)
+         set(WTF_USE_GLX 1)
+         add_definitions(-DWTF_USE_GLX=1)
+    endif ()
+
+     if ((OPENGLX_FOUND OR EGL_FOUND) AND X11_Xcomposite_FOUND AND X11_Xrender_FOUND)
+         set(USE_GRAPHICS_SURFACE 1)
+     endif ()
 endif ()
 
 if (ENABLE_INSPECTOR)

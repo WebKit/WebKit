@@ -32,6 +32,10 @@
 #include "GLXSurface.h"
 #endif
 
+#if USE(EGL)
+#include "EGLSurface.h"
+#endif
+
 #include "NotImplemented.h"
 
 namespace WebCore {
@@ -50,10 +54,14 @@ PassOwnPtr<GLPlatformSurface> GLPlatformSurface::createOffscreenSurface()
 
 PassOwnPtr<GLPlatformSurface> GLPlatformSurface::createTransportSurface()
 {
-#if USE(GLX) && USE(GRAPHICS_SURFACE)
+#if USE(GRAPHICS_SURFACE)
+#if USE(GLX)
     OwnPtr<GLPlatformSurface> surface = adoptPtr(new GLXTransportSurface());
+#elif USE(EGL)
+    OwnPtr<GLPlatformSurface> surface = adoptPtr(new EGLWindowTransportSurface());
+#endif
 
-    if (surface->handle())
+    if (surface && surface->handle() && surface->drawable())
         return surface.release();
 #endif
 

@@ -28,18 +28,24 @@
 
 #if USE(ACCELERATED_COMPOSITING)
 
-#include "OpenGLShims.h"
-
 #if USE(OPENGL_ES_2)
+#include "OpenGLESShims.h"
 #include <GLES2/gl2.h>
 #include <GLES2/gl2ext.h>
 #else
+#include "OpenGLShims.h"
 #include <GL/gl.h>
 #include <GL/glext.h>
 #endif
 
 #if USE(GLX)
 #include <GL/glx.h>
+#endif
+
+#if USE(EGL)
+#define EGL_EGLEXT_PROTOTYPES 1
+#include <EGL/egl.h>
+#include <EGL/eglext.h>
 #endif
 
 namespace WebCore {
@@ -51,6 +57,16 @@ typedef GLXContext PlatformContext;
 typedef Display* PlatformDisplay;
 typedef GLXFBConfig PlatformSurfaceConfig;
 typedef GLXDrawable PlatformDrawable;
+#elif USE(EGL)
+#if USE(OPENGL_ES_2)
+static const EGLenum eglAPIVersion = EGL_OPENGL_ES_API;
+#else
+static const EGLenum eglAPIVersion = EGL_OPENGL_API;
+#endif
+typedef EGLContext PlatformContext;
+typedef EGLDisplay PlatformDisplay;
+typedef EGLConfig PlatformSurfaceConfig;
+typedef EGLSurface PlatformDrawable;
 #else
 typedef void* PlatformContext;
 typedef void* PlatformDisplay;

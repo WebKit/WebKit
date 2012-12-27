@@ -265,6 +265,14 @@ if (WTF_USE_3D_GRAPHICS)
         "${WEBCORE_DIR}/platform/graphics/surfaces/glx"
         "${WEBCORE_DIR}/platform/graphics/texmap"
     )
+
+    if (WTF_USE_EGL)
+        list(APPEND WebCore_INCLUDE_DIRECTORIES
+            ${EGL_INCLUDE_DIR}
+            "${WEBCORE_DIR}/platform/graphics/surfaces/egl"
+    )
+    endif ()
+
     list(APPEND WebCore_SOURCES
         platform/graphics/OpenGLShims.cpp
         platform/graphics/cairo/DrawingBufferCairo.cpp
@@ -277,18 +285,36 @@ if (WTF_USE_3D_GRAPHICS)
         platform/graphics/opengl/GraphicsContext3DOpenGL.cpp
         platform/graphics/opengl/GraphicsContext3DOpenGLCommon.cpp
         platform/graphics/surfaces/GraphicsSurface.cpp
-        platform/graphics/surfaces/glx/GLXSurface.cpp
-        platform/graphics/surfaces/glx/GLXContext.cpp
         platform/graphics/surfaces/glx/GraphicsSurfaceGLX.cpp
         platform/graphics/surfaces/glx/X11WindowResources.cpp
         platform/graphics/texmap/TextureMapperGL.cpp
         platform/graphics/texmap/TextureMapperShaderManager.cpp
     )
+
+    if (WTF_USE_EGL)
+        list(APPEND WebCore_SOURCES
+            platform/graphics/surfaces/egl/EGLSurface.cpp
+            platform/graphics/surfaces/egl/EGLContext.cpp
+        )
+    endif ()
+
+    if (WTF_USE_GLX)
+        list(APPEND WebCore_SOURCES
+            platform/graphics/surfaces/glx/GLXSurface.cpp
+            platform/graphics/surfaces/glx/GLXContext.cpp
+        )
+    endif ()
+
     list(APPEND WebCore_LIBRARIES
         ${X11_X11_LIB}
         ${X11_Xcomposite_LIB}
         ${X11_Xrender_LIB}
     )
+    if (WTF_USE_EGL)
+        list(APPEND WebCore_LIBRARIES
+            ${EGL_LIBRARY}
+        )
+    endif ()
 endif ()
 
 add_definitions(-DDATA_DIR="${CMAKE_INSTALL_PREFIX}/${DATA_INSTALL_DIR}")

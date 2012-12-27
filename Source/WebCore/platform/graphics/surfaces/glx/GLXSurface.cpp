@@ -36,7 +36,7 @@ static const int pbufferAttributes[] = { GLX_PBUFFER_WIDTH, 1, GLX_PBUFFER_HEIGH
 GLXTransportSurface::GLXTransportSurface()
     : X11OffScreenWindow()
 {
-    createOffscreenWindow();
+    createOffscreenWindow(&m_bufferHandle);
     m_drawable = m_bufferHandle;
 }
 
@@ -47,6 +47,12 @@ GLXTransportSurface::~GLXTransportSurface()
 PlatformSurfaceConfig GLXTransportSurface::configuration()
 {
     return m_sharedResources->surfaceContextConfig();
+}
+
+void GLXTransportSurface::setGeometry(const IntRect& newRect)
+{
+    GLPlatformSurface::setGeometry(newRect);
+    reSizeWindow(newRect, m_drawable);
 }
 
 void GLXTransportSurface::swapBuffers()
@@ -66,7 +72,7 @@ void GLXTransportSurface::swapBuffers()
 
 void GLXTransportSurface::destroy()
 {
-    destroyWindow();
+    destroyWindow(m_bufferHandle);
     m_bufferHandle = 0;
 }
 

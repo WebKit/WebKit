@@ -30,6 +30,8 @@
 
 #if USE(GLX)
 #include "GLXContext.h"
+#elif USE(EGL)
+#include "EGLContext.h"
 #endif
 
 #include "NotImplemented.h"
@@ -44,11 +46,11 @@ PassOwnPtr<GLPlatformContext> GLPlatformContext::createContext(GraphicsContext3D
     if (!initializeOpenGLShims())
         return nullptr;
 
-    if (!glGetGraphicsResetStatusARB) {
 #if USE(GLX)
+    if (!glGetGraphicsResetStatusARB) {
         glGetGraphicsResetStatusARB = reinterpret_cast<PFNGLGETGRAPHICSRESETSTATUSARBPROC>(glXGetProcAddressARB(reinterpret_cast<const GLubyte*>("glGetGraphicsResetStatusARB")));
-#endif
     }
+#endif
 
     switch (renderStyle) {
     case GraphicsContext3D::RenderOffscreen:
@@ -70,8 +72,9 @@ PassOwnPtr<GLPlatformContext> GLPlatformContext::createContext(GraphicsContext3D
 PassOwnPtr<GLPlatformContext> GLPlatformContext::createOffScreenContext()
 {
 #if USE(GLX)
-    OwnPtr<GLPlatformContext> glxContext = adoptPtr(new GLXOffScreenContext());
-    return glxContext.release();
+    return adoptPtr(new GLXOffScreenContext());
+#elif USE(EGL)
+    return adoptPtr(new EGLOffScreenContext());
 #endif
 
     return nullptr;
@@ -80,8 +83,9 @@ PassOwnPtr<GLPlatformContext> GLPlatformContext::createOffScreenContext()
 PassOwnPtr<GLPlatformContext> GLPlatformContext::createCurrentContextWrapper()
 {
 #if USE(GLX)
-    OwnPtr<GLPlatformContext> glxContext = adoptPtr(new GLXCurrentContextWrapper());
-    return glxContext.release();
+    return adoptPtr(new GLXCurrentContextWrapper());
+#elif USE(EGL)
+    return adoptPtr(new EGLCurrentContextWrapper());
 #endif
 
     return nullptr;

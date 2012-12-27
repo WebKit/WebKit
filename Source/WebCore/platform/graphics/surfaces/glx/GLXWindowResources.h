@@ -51,6 +51,14 @@ public:
         return SharedX11Resources::x11Display();
     }
 
+    XVisualInfo* visualInfo()
+    {
+        if (!m_VisualInfo)
+            surfaceContextConfig();
+
+        return m_VisualInfo;
+    }
+
     virtual GLXFBConfig pBufferContextConfig()
     {
         if (!m_pbufferfbConfig) {
@@ -98,11 +106,12 @@ public:
         return m_surfaceContextfbConfig;
     }
 
-private:
+protected:
     SharedGLXResources()
         : SharedX11Resources()
         , m_pbufferfbConfig(0)
         , m_surfaceContextfbConfig(0)
+        , m_VisualInfo(0)
     {
     }
 
@@ -160,10 +169,16 @@ private:
 
         if (m_surfaceContextfbConfig)
             m_surfaceContextfbConfig = 0;
+
+        if (m_VisualInfo) {
+            XFree(m_VisualInfo);
+            m_VisualInfo = 0;
+        }
     }
 
     GLXFBConfig m_pbufferfbConfig;
     GLXFBConfig m_surfaceContextfbConfig;
+    XVisualInfo* m_VisualInfo;
 };
 
 }

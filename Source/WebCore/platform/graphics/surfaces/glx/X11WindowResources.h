@@ -40,13 +40,30 @@
 
 namespace WebCore {
 
+#if USE(GLX)
 class SharedGLXResources;
 typedef SharedGLXResources PlatformSharedResources;
+#elif USE(EGL)
+class SharedX11Resources;
+typedef SharedX11Resources PlatformSharedResources;
+#endif
 
 class SharedX11Resources : public WTF::RefCountedBase {
     WTF_MAKE_NONCOPYABLE(SharedX11Resources);
 
 public:
+#if USE(EGL)
+    static PassRefPtr<PlatformSharedResources> create()
+    {
+        if (!m_staticSharedResource)
+            m_staticSharedResource = new PlatformSharedResources();
+        else
+            m_staticSharedResource->ref();
+
+        return adoptRef(m_staticSharedResource);
+    }
+#endif
+
     void deref()
     {
         if (derefBase()) {
@@ -94,29 +111,16 @@ public:
         return m_window;
     }
 
-    XVisualInfo* visualInfo()
-    {
-        if (!m_VisualInfo)
-            surfaceContextConfig();
-
-        return m_VisualInfo;
-    }
-
     bool isXRenderExtensionSupported()
     {
         return m_supportsXRenderExtension;
     }
-
-    virtual PlatformSurfaceConfig pBufferContextConfig() = 0;
-    virtual PlatformSurfaceConfig surfaceContextConfig() = 0;
-    virtual PlatformDisplay nativeDisplay() = 0;
 
 protected:
     SharedX11Resources()
         : m_supportsXRenderExtension(false)
         , m_window(0)
         , m_display(0)
-        , m_VisualInfo(0)
     {
     }
 
@@ -131,11 +135,6 @@ protected:
             m_window = 0;
         }
 
-        if (m_VisualInfo) {
-            XFree(m_VisualInfo);
-            m_VisualInfo = 0;
-        }
-
         XCloseDisplay(m_display);
         m_display = 0;
     }
@@ -144,7 +143,6 @@ protected:
     bool m_supportsXRenderExtension;
     Window m_window;
     Display* m_display;
-    XVisualInfo* m_VisualInfo;
 };
 
 class X11OffScreenWindow : public GLPlatformSurface {
@@ -153,12 +151,17 @@ class X11OffScreenWindow : public GLPlatformSurface {
 public:
     X11OffScreenWindow();
     virtual ~X11OffScreenWindow();
-    void setGeometry(const IntRect&);
-    void createOffscreenWindow();
-    void destroyWindow();
+    void createOffscreenWindow(PlatformBufferHandle*);
+    void destroyWindow(PlatformBufferHandle);
+    void reSizeWindow(const IntRect&, PlatformBufferHandle);
+    Display* nativeSharedDisplay();
+#if USE(EGL)
+    bool setVisualId(const EGLint);
+#endif
 
 protected:
     RefPtr<PlatformSharedResources> m_sharedResources;
+    XVisualInfo* m_configVisualInfo;
 };
 
 }
