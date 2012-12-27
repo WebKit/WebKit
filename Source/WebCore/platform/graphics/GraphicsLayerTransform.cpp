@@ -31,36 +31,48 @@ GraphicsLayerTransform::GraphicsLayerTransform()
 
 void GraphicsLayerTransform::setPosition(const FloatPoint& position)
 {
+    if (m_position == position)
+        return;
     m_position = position;
     m_dirty = true;
 }
 
 void GraphicsLayerTransform::setSize(const FloatSize& size)
 {
+    if (m_size == size)
+        return;
     m_size = size;
     m_dirty = true;
 }
 
 void GraphicsLayerTransform::setAnchorPoint(const FloatPoint3D& anchorPoint)
 {
+    if (m_anchorPoint == anchorPoint)
+        return;
     m_anchorPoint = anchorPoint;
     m_dirty = true;
 }
 
 void GraphicsLayerTransform::setFlattening(bool flattening)
 {
+    if (m_flattening == flattening)
+        return;
     m_flattening = flattening;
     m_dirty = true;
 }
 
 void GraphicsLayerTransform::setLocalTransform(const TransformationMatrix& transform)
 {
+    if (m_local == transform)
+        return;
     m_local = transform;
     m_dirty = true;
 }
 
 void GraphicsLayerTransform::setChildrenTransform(const TransformationMatrix& transform)
 {
+    if (m_children == transform)
+        return;
     m_children = transform;
     m_dirty = true;
 }
