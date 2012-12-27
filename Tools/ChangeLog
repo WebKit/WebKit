@@ -1,3 +1,23 @@
+2012-12-27  Zan Dobersek  <zandobersek@gmail.com>
+
+        Create a GTK build system watchlist and add myself to it
+        https://bugs.webkit.org/show_bug.cgi?id=105769
+
+        Reviewed by Dirk Pranke.
+
+        Add a GTK build system watchlist, watching the configure.ac, GNUmakefile.am files
+        and the input GNUmakefile.features.am.in file. The GNUmakefile.list.am files are
+        omitted on purpose due to relatively high change rate they are exposed to.
+
+        The new watchlist would be of use to me as the GTK build system recently went
+        through a series of changes that included a changed policy on adding configuration
+        flags to configure.ac and subsequent additions to GNUmakefile.am files. A PSA on the
+        mailing list about this change will be published later, but I'd also like to be
+        notified of any pending changes to these files just so I can check the changes are
+        in compliance with the new policy.
+
+        * Scripts/webkitpy/common/config/watchlist:
+
 2012-12-26  Ilya Tikhonovsky  <loislo@chromium.org>
 
         Unreviewed. Replace find("Tools") with rfind("Tools") because base dir of WebKit may have Tools word.
