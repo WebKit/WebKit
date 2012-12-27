@@ -1,5 +1,16 @@
 2012-12-27  Yury Semikhatsky  <yurys@chromium.org>
 
+        Web Inspector: remove support for legacy heap graph node format
+        https://bugs.webkit.org/show_bug.cgi?id=105802
+
+        Reviewed by Pavel Feldman.
+
+        * inspector/profiler/heap-snapshot-comparison-dom-groups-change.html: switched to the new
+        heap graph node representation: store edge count for each node instead of the first edge
+        index.
+
+2012-12-27  Yury Semikhatsky  <yurys@chromium.org>
+
         Web Inspector: move js heap snapshot preprocessing to JSHeapSnapshot
         https://bugs.webkit.org/show_bug.cgi?id=105798
 

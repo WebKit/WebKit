@@ -579,20 +579,6 @@ WebInspector.HeapSnapshot.prototype = {
 
     _buildEdgeIndexes: function()
     {
-        // Support for old serialization.
-        if (this._nodeEdgeCountOffset === -1) {
-            var nodes = this._nodes;
-            var nodeCount = this.nodeCount;
-            var firstEdgeIndexes = this._firstEdgeIndexes = new Uint32Array(nodeCount + 1);
-            var nodeFieldCount = this._nodeFieldCount;
-            var nodeEdgesIndexOffset = this._metaNode.node_fields.indexOf("edges_index");
-            firstEdgeIndexes[nodeCount] = this._containmentEdges.length;
-            for (var nodeOrdinal = 0; nodeOrdinal < nodeCount; ++nodeOrdinal) {
-                firstEdgeIndexes[nodeOrdinal] = nodes[nodeOrdinal * nodeFieldCount + nodeEdgesIndexOffset];
-            }
-            return;
-        }
-
         var nodes = this._nodes;
         var nodeCount = this.nodeCount;
         var firstEdgeIndexes = this._firstEdgeIndexes = new Uint32Array(nodeCount + 1);
