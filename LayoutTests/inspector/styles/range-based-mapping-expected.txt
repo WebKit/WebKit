@@ -1,0 +1,4 @@
+Tests RangeBasedSourceMap.
+
+PASS
+

@@ -1,0 +1,92 @@
+<html>
+<head>
+<script src="../../http/tests/inspector/inspector-test.js"></script>
+<script src="../../http/tests/inspector/debugger-test.js"></script>
+<script src="../../http/tests/inspector/workspace-test.js"></script>
+
+<script>
+
+function test()
+{
+    function checkMapping(mapping, compiledLine, compiledColumn, sourceURL, sourceStartLine, sourceStartColumn, sourceEndLine, sourceEndColumn)
+    {
+        var range = mapping.findSourceRange(compiledLine, compiledColumn);
+        if (!range) {
+            InspectorTest.assertEquals(null, sourceURL);
+            return;
+        }
+        InspectorTest.assertEquals(sourceURL, range.url);
+        InspectorTest.assertEquals(sourceStartLine, range.startLine);
+        InspectorTest.assertEquals(sourceStartColumn, range.startColumn);
+        InspectorTest.assertEquals(sourceEndLine, range.endLine);
+        InspectorTest.assertEquals(sourceEndColumn, range.endColumn);
+    }
+
+    /*
+        example.scss:
+        0         1         2         3
+        012345678901234567890123456789012345
+        a {
+          foo: bar;
+          / * SOME COMMENT * /
+          font-size: 12px;
+        }
+        ----------------------------------------
+        example.css:
+        0         1         2         3
+        012345678901234567890123456789012345
+        a {
+          foo: bar;
+          / * SOME COMMENT * /
+          font-size: 12px;
+        }
+    */
+    var mappingPayload = {
+        "mappings":";EACE,GAAG,EAAE,GAAG;;EAER,SAAS,EAAE,IAAI",
+        "sources":["example.scss"]
+    };
+    var mapping = new WebInspector.RangeBasedSourceMap("source-map.json", mappingPayload);
+
+    checkMapping(mapping, 0, 0, null);
+    checkMapping(mapping, 0, 1, null);
+    checkMapping(mapping, 1, 1, null);
+    checkMapping(mapping, 1, 2, "example.scss", 1, 2, 1, 5);
+    checkMapping(mapping, 1, 3, "example.scss", 1, 2, 1, 5);
+    checkMapping(mapping, 1, 4, "example.scss", 1, 2, 1, 5);
+    checkMapping(mapping, 1, 5, null);
+    checkMapping(mapping, 1, 6, null);
+    checkMapping(mapping, 1, 7, "example.scss", 1, 7, 1, 10);
+    checkMapping(mapping, 1, 8, "example.scss", 1, 7, 1, 10);
+    checkMapping(mapping, 1, 9, "example.scss", 1, 7, 1, 10);
+    checkMapping(mapping, 1, 10, null);
+    checkMapping(mapping, 2, 10, null);
+    checkMapping(mapping, 3, 2, "example.scss", 3, 2, 3, 11);
+    checkMapping(mapping, 3, 3, "example.scss", 3, 2, 3, 11);
+    checkMapping(mapping, 3, 4, "example.scss", 3, 2, 3, 11);
+    checkMapping(mapping, 3, 5, "example.scss", 3, 2, 3, 11);
+    checkMapping(mapping, 3, 6, "example.scss", 3, 2, 3, 11);
+    checkMapping(mapping, 3, 7, "example.scss", 3, 2, 3, 11);
+    checkMapping(mapping, 3, 8, "example.scss", 3, 2, 3, 11);
+    checkMapping(mapping, 3, 9, "example.scss", 3, 2, 3, 11);
+    checkMapping(mapping, 3, 10, "example.scss", 3, 2, 3, 11);
+    checkMapping(mapping, 3, 11, null);
+    checkMapping(mapping, 3, 12, null);
+    checkMapping(mapping, 3, 13, "example.scss", 3, 13, 3, 17);
+    checkMapping(mapping, 3, 14, "example.scss", 3, 13, 3, 17);
+    checkMapping(mapping, 3, 15, "example.scss", 3, 13, 3, 17);
+    checkMapping(mapping, 3, 16, "example.scss", 3, 13, 3, 17);
+    checkMapping(mapping, 3, 17, null);
+    checkMapping(mapping, 4, 1, null);
+    checkMapping(mapping, 5, 2, null);
+
+    InspectorTest.addResult("PASS");
+    InspectorTest.completeTest();
+};
+</script>
+
+</head>
+
+<body onload="runTest()">
+<p>Tests RangeBasedSourceMap.</p>
+</body>
+</html>

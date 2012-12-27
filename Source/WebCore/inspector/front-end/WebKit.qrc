@@ -184,6 +184,7 @@
     <file>SourceFrame.js</file>
     <file>SourceHTMLTokenizer.js</file>
     <file>SourceJavaScriptTokenizer.js</file>
+    <file>SourceMap.js</file>
     <file>SourceMapping.js</file>
     <file>SourceTokenizer.js</file>
     <file>Spectrum.js</file>

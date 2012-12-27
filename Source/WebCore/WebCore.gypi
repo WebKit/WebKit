@@ -5191,6 +5191,7 @@
             'inspector/front-end/SourceFrame.js',
             'inspector/front-end/SourceHTMLTokenizer.js',
             'inspector/front-end/SourceJavaScriptTokenizer.js',
+            'inspector/front-end/SourceMap.js',
             'inspector/front-end/SourceMapping.js',
             'inspector/front-end/SourceTokenizer.js',
             'inspector/front-end/Spectrum.js',

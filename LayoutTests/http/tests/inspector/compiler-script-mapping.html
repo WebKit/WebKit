@@ -58,7 +58,7 @@ function test()
                 "mappings":"AAASA,QAAAA,IAAG,CAACC,CAAD,CAAaC,CAAb,CACZ,CACI,MAAOD,EAAP,CAAoBC,CADxB,CAIA,IAAIC,OAAS;",
                 "sources":["example.js"]
             };
-            var mapping = new WebInspector.SourceMapParser("source-map.json", mappingPayload);
+            var mapping = new WebInspector.PositionBasedSourceMap("source-map.json", mappingPayload);
 
             checkMapping(0, 9, "example.js", 0, 9, mapping);
             checkMapping(0, 13, "example.js", 0, 13, mapping);
@@ -82,7 +82,7 @@ function test()
                 "mappings":"AAAA,C,CAAE;",
                 "sources":["example.js"]
             };
-            var mapping = new WebInspector.SourceMapParser("source-map.json", mappingPayload);
+            var mapping = new WebInspector.PositionBasedSourceMap("source-map.json", mappingPayload);
             checkMapping(0, 0, "example.js", 0, 0, mapping);
             var entry = mapping.findEntry(0, 1);
             InspectorTest.assertEquals(2, entry.length);
@@ -96,7 +96,7 @@ function test()
                 "mappings":"AAAA;;;CACA",
                 "sources":["example.js"]
             };
-            var mapping = new WebInspector.SourceMapParser("source-map.json", mappingPayload);
+            var mapping = new WebInspector.PositionBasedSourceMap("source-map.json", mappingPayload);
             checkMapping(0, 0, "example.js", 0, 0, mapping);
             checkReverseMapping(3, 1, "example.js", 1, mapping);
             next();
@@ -119,7 +119,7 @@ function test()
                     }
                 }
             ]};
-            var mapping = new WebInspector.SourceMapParser("source-map.json", mappingPayload);
+            var mapping = new WebInspector.PositionBasedSourceMap("source-map.json", mappingPayload);
             InspectorTest.assertEquals(2, mapping.sources().length);
             checkMapping(0, 0, "source1.js", 0, 0, mapping);
             checkMapping(0, 1, "source1.js", 2, 1, mapping);
@@ -130,7 +130,7 @@ function test()
 
         function testResolveSourceMapURL(next)
         {
-            var func = WebInspector.SourceMapParser.prototype._canonicalizeURL;
+            var func = WebInspector.PositionBasedSourceMap.prototype._canonicalizeURL;
             InspectorTest.assertEquals("http://example.com/map.json", func("http://example.com/map.json", "http://example.com/script.js"));
             InspectorTest.assertEquals("http://example.com/map.json", func("/map.json", "http://example.com/script.js"));
             InspectorTest.assertEquals("http://example.com/scripts/../maps/map.json", func("../maps/map.json", "http://example.com/scripts/script.js"));
@@ -270,6 +270,6 @@ function test()
 </head>
 
 <body onload="runTest()">
-<p>Tests SourceMapParser and CompilerScriptMapping.</p>
+<p>Tests PositionBasedSourceMap and CompilerScriptMapping.</p>
 </body>
 </html>

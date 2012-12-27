@@ -77113,6 +77113,10 @@
 					>
 				</File>
 				<File
+					RelativePath="..\inspector\front-end\SourceMap.js"
+					>
+				</File>
+				<File
 					RelativePath="..\inspector\front-end\SourceMapping.js"
 					>
 				</File>
