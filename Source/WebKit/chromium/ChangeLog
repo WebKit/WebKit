@@ -1,3 +1,15 @@
+2012-12-26  Nico Weber  <thakis@chromium.org>
+
+        [chromium] Disable unprefixed css transitions until they're functional
+        https://bugs.webkit.org/show_bug.cgi?id=105771
+
+        Reviewed by Eric Seidel.
+
+        Bug 105647 mentions that this is not fully implemented yet, and the
+        partial support breaks feature detection in modernizr and friends.
+
+        * features.gypi:
+
 2012-12-26  Yury Semikhatsky  <yurys@chromium.org>
 
         Web Inspector: extract JS heap profiler specifics into JSHeapSnapshot.js
