@@ -1,3 +1,9 @@
+2012-12-27  Fady Samuel  <fsamuel@chromium.org>
+
+        Unreviewed rebaseline.
+
+        * platform/chromium-win-xp/inspector/extensions/extensions-resources-expected.txt: Added.
+
 2012-12-27  Yury Semikhatsky  <yurys@chromium.org>
 
         Web Inspector: remove support for legacy heap graph node format
