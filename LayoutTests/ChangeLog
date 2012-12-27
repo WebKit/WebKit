@@ -1,3 +1,15 @@
+2012-12-27  Vsevolod Vlasov  <vsevik@chromium.org>
+
+        Web Inspector: [Regression] Can not set breakpoints in scripts loaded with source map.
+        https://bugs.webkit.org/show_bug.cgi?id=105801
+
+        Reviewed by Alexander Pavlov.
+
+        * http/tests/inspector/compiler-script-mapping-expected.txt:
+        * http/tests/inspector/compiler-script-mapping.html:
+        * http/tests/inspector/debugger-test.js:
+        (initialize_DebuggerTest):
+
 2012-12-27  Christophe Dumez  <christophe.dumez@intel.com>
 
         [EFL][WK2] Regression(135935) layout tests snapshots are flaky

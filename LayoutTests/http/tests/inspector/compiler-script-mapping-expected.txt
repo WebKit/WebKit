@@ -13,6 +13,8 @@ Running: testResolveSourceMapURL
 
 Running: testCompilerScriptMapping
 
+Running: testCompilerScriptMappingWhenResourceWasLoadedAfterSource
+
 Running: testInlinedSourceMap
 
 Running: testSourceMapCouldNotBeLoaded

@@ -255,7 +255,7 @@ WebInspector.Script.prototype = {
         this._disabledSourceMappings = this._disabledSourceMappings || new Map();
         this._disabledSourceMappings.put(sourceMapping, true);
         if (this._sourceMappingsDiffer(oldSourceMappings,this._enabledSourceMappings()))
-            this._updateLocations();
+            this.updateLocations();
     },
 
     /**
@@ -268,7 +268,7 @@ WebInspector.Script.prototype = {
         if (!this._disabledSourceMappings.size())
             delete this._disabledSourceMappings;
         if (this._sourceMappingsDiffer(oldSourceMappings,this._enabledSourceMappings()))
-            this._updateLocations();
+            this.updateLocations();
     },
 
     /**
@@ -277,16 +277,16 @@ WebInspector.Script.prototype = {
     pushSourceMapping: function(sourceMapping)
     {
         this._sourceMappings.push(sourceMapping);
-        this._updateLocations();
+        this.updateLocations();
     },
 
     popSourceMapping: function()
     {
         this._sourceMappings.pop();
-        this._updateLocations();
+        this.updateLocations();
     },
 
-    _updateLocations: function()
+    updateLocations: function()
     {
         for (var i = 0; i < this._locations.length; ++i)
             this._locations[i].update();

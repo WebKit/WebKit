@@ -77,7 +77,8 @@ WebInspector.ResourceScriptMapping.prototype = {
     {
         if (script.isAnonymousScript() || script.isDynamicScript())
             return;
-
+        script.pushSourceMapping(this);
+        
         var scriptsForSourceURL = script.isInlineScript() ? this._inlineScriptsForSourceURL : this._nonInlineScriptsForSourceURL;
         scriptsForSourceURL[script.sourceURL] = scriptsForSourceURL[script.sourceURL] || [];
         scriptsForSourceURL[script.sourceURL].push(script);
@@ -85,7 +86,7 @@ WebInspector.ResourceScriptMapping.prototype = {
         var uiSourceCode = this._workspaceUISourceCodeForScript(script);
         if (!uiSourceCode)
             return;
-            
+
         this._bindUISourceCodeToScripts(uiSourceCode, [script]);
     },
 
@@ -170,7 +171,7 @@ WebInspector.ResourceScriptMapping.prototype = {
         var scriptFile = new WebInspector.ResourceScriptFile(this, uiSourceCode);
         uiSourceCode.setScriptFile(scriptFile);
         for (var i = 0; i < scripts.length; ++i)
-            scripts[i].pushSourceMapping(this);
+            scripts[i].updateLocations();
         uiSourceCode.setSourceMapping(this);
     },
 

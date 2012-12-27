@@ -205,6 +205,67 @@ function test()
             }
         },
 
+        function testCompilerScriptMappingWhenResourceWasLoadedAfterSource(next)
+        {
+            var script;
+            WebInspector.debuggerModel._reset();
+            var mapping = createCompilerScriptMapping();
+            var originalUISourceCode;
+            step1();
+
+            function step1()
+            {
+                InspectorTest.waitForWorkspaceTemporaryUISourceCodeAddedEvent(function() { });
+                script = InspectorTest.createScriptMock("compiled.js", 0, 0, true, "");
+                script.sourceMapURL = "http://localhost:8000/inspector/resources/source-map.json";
+                defaultScriptMapping.addScript(script);
+                resourceScriptMapping.addScript(script);
+                InspectorTest.waitForWorkspaceUISourceCodeAddedEvent(firstUISourceCodeAdded);
+                mapping.addScript(script);
+                InspectorTest.waitForWorkspaceUISourceCodeAddedEvent(originalResourceUISourceCodeAdded);
+                InspectorTest.addMockUISourceCodeToWorkspace("compiled.js", WebInspector.resourceTypes.Script, "");
+                afterScriptAdded();
+            }
+
+            function originalResourceUISourceCodeAdded(uiSourceCode) {
+                originalUISourceCode = uiSourceCode;
+            }
+
+            function firstUISourceCodeAdded(uiSourceCode)
+            {
+                InspectorTest.waitForWorkspaceUISourceCodeAddedEvent(function() { });
+            }
+
+            function afterScriptAdded(uiSourceCode)
+            {
+                var uiSourceCode1 = InspectorTest.testWorkspace.uiSourceCodeForURL("http://localhost:8000/inspector/resources/source1.js");
+                var uiSourceCode2 = InspectorTest.testWorkspace.uiSourceCodeForURL("http://localhost:8000/inspector/resources/source2.js");
+
+                InspectorTest.checkUILocation(uiSourceCode1, 4, 4, script.rawLocationToUILocation(0, 81));
+                InspectorTest.checkUILocation(uiSourceCode1, 5, 4, script.rawLocationToUILocation(0, 93));
+                InspectorTest.checkUILocation(uiSourceCode2, 7, 4, script.rawLocationToUILocation(1, 151));
+                InspectorTest.checkUILocation(originalUISourceCode, 1, 200, script.rawLocationToUILocation(1, 200));
+
+                InspectorTest.checkRawLocation(script, 0, 42, uiSourceCode1.uiLocationToRawLocation(3, 10));
+                InspectorTest.checkRawLocation(script, 1, 85, uiSourceCode2.uiLocationToRawLocation(0, 0));
+                InspectorTest.checkRawLocation(script, 1, 110, uiSourceCode2.uiLocationToRawLocation(5, 2));
+
+                uiSourceCode1.requestContent(didRequestContent1);
+
+                function didRequestContent1(content, contentEncoded, mimeType)
+                {
+                    InspectorTest.assertEquals(0, content.indexOf("window.addEventListener"));
+                    uiSourceCode2.requestContent(didRequestContent2);
+                }
+
+                function didRequestContent2(content, contentEncoded, mimeType)
+                {
+                    InspectorTest.assertEquals(0, content.indexOf("function ClickHandler()"));
+                    next();
+                }
+            }
+        },
+
         function testInlinedSourceMap(next)
         {
             WebInspector.debuggerModel._reset();
