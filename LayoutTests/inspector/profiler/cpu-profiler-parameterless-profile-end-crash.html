@@ -1,0 +1,49 @@
+<html>
+<head>
+<script>
+
+if (window.testRunner)
+    testRunner.dumpAsText();
+if (window.internals)
+    internals.setJavaScriptProfilingEnabled(true);
+
+function pageFunction()
+{
+    console.profile(); // Untitled
+    console.profile("titled");
+    console.profileEnd();
+    console.profileEnd();
+}
+
+function startTest()
+{
+    pageFunction();
+    printResult();
+    if (window.testRunner)
+        testRunner.notifyDone();
+}
+
+function printResult()
+{
+    var preElement = document.createElement("pre");
+    preElement.appendChild(document.createTextNode("\n"));
+
+    var profiles = console.profiles;
+    preElement.appendChild(document.createTextNode("Profiles count: " + profiles.length + "\n"));
+    for (var i = 0; i < profiles.length; ++i) {
+        if (profiles[i].title === "titled")
+            preElement.appendChild(document.createTextNode("Titled profile found.\n"));
+    }
+    document.getElementById("output").appendChild(preElement);
+}
+
+</script>
+</head>
+<body onload="startTest()">
+<p>
+Tests that "console.profileEnd()" do not cause crash.<br>
+<a href="https://bugs.webkit.org/show_bug.cgi?id=105759">Bug 105759.</a><br>
+<div id="output"></div>
+</p>
+</body>
+</html>

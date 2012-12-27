@@ -1,3 +1,15 @@
+2012-12-27  Eugene Klyuchnikov  <eustas@chromium.org>
+
+        Web Inspector: console.profileEnd() crashes if called without arguments
+        https://bugs.webkit.org/show_bug.cgi?id=105759
+
+        Reviewed by Vsevolod Vlasov.
+
+        Added tests to check that browser do not crash.
+
+        * inspector/profiler/cpu-profiler-parameterless-profile-end-crash-expected.txt: Added.
+        * inspector/profiler/cpu-profiler-parameterless-profile-end-crash.html: Added.
+
 2012-12-27  Vsevolod Vlasov  <vsevik@chromium.org>
 
         Unreviewed chromium test expectations update.

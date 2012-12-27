@@ -80,16 +80,19 @@ PassRefPtr<ScriptProfile> ScriptProfiler::stop(ScriptState* state, const String&
     const v8::CpuProfile* profile = state ?
         v8::CpuProfiler::StopProfiling(deprecatedV8String(title), state->context()->GetSecurityToken()) :
         v8::CpuProfiler::StopProfiling(deprecatedV8String(title));
+    if (!profile)
+        return 0;
 
+    String profileTitle = toWebCoreString(profile->GetTitle());
     double idleTime = 0.0;
     ProfileNameIdleTimeMap* profileNameIdleTimeMap = ScriptProfiler::currentProfileNameIdleTimeMap();
-    ProfileNameIdleTimeMap::iterator profileIdleTime = profileNameIdleTimeMap->find(title);
+    ProfileNameIdleTimeMap::iterator profileIdleTime = profileNameIdleTimeMap->find(profileTitle);
     if (profileIdleTime != profileNameIdleTimeMap->end()) {
         idleTime = profileIdleTime->value * 1000.0;
         profileNameIdleTimeMap->remove(profileIdleTime);
     }
 
-    return profile ? ScriptProfile::create(profile, idleTime) : 0;
+    return ScriptProfile::create(profile, idleTime);
 }
 
 PassRefPtr<ScriptProfile> ScriptProfiler::stopForPage(Page*, const String& title)
