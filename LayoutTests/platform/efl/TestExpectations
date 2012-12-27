@@ -1567,6 +1567,7 @@ webkit.org/b/23166 ietestcenter/css3/bordersbackgrounds/border-radius-clip-002.h
 
 # New inspector/profiler/memory-instrumentation-canvas.html fails on JSC platforms
 webkit.org/b/99001 inspector/profiler/memory-instrumentation-canvas.html
+webkit.org/b/73936 inspector/profiler/canvas2d/canvas-has-uninstrumented-canvases.html
 
 # EFL port does not support Emacs commands.
 Bug(EFL) editing/pasteboard/emacs-cntl-y-001.html [ Missing ]

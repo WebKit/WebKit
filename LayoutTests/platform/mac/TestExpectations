@@ -259,6 +259,7 @@ webkit.org/b/50485 inspector-protocol/take-heap-snapshot.html [ Skip ]
 
 # New inspector/profiler/memory-instrumentation-canvas.html fails on JSC platforms
 webkit.org/b/99001 inspector/profiler/memory-instrumentation-canvas.html
+webkit.org/b/73936 inspector/profiler/canvas2d/canvas-has-uninstrumented-canvases.html
 
 # Skipping newly added tests while I'm finding out what is wrong.
 # https://bugs.webkit.org/show_bug.cgi?id=59706

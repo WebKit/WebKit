@@ -3189,14 +3189,15 @@
         "hidden": true,
         "types": [
             {
-                "id": "TraceLogId",
+                "id": "ContextId",
                 "type": "string",
-                "description": "Unique object identifier."
+                "description": "Unique context identifier."
             },
             {
                 "id": "Call",
                 "type": "object",
                 "properties": [
+                    { "name": "contextId", "$ref": "ContextId" },
                     { "name": "functionName", "type": "string", "optional": true },
                     { "name": "arguments", "type": "array", "items": { "type": "string" }, "optional": true },
                     { "name": "property", "type": "string", "optional": true },
@@ -3206,6 +3207,11 @@
                     { "name": "lineNumber", "type": "integer", "optional": true },
                     { "name": "columnNumber", "type": "integer", "optional": true }
                 ]
+            },
+            {
+                "id": "TraceLogId",
+                "type": "string",
+                "description": "Unique trace log identifier."
             },
             {
                 "id": "TraceLog",
@@ -3232,6 +3238,13 @@
                 "parameters": [
                     { "name": "traceLogId", "$ref": "TraceLogId" }
                 ]
+            },
+            {
+                "name": "hasUninstrumentedCanvases",
+                "returns": [
+                    { "name": "result", "type": "boolean" }
+                ],
+                "description": "Checks if there is any uninstrumented canvas in the inspected page."
             },
             {
                 "name": "captureFrame",

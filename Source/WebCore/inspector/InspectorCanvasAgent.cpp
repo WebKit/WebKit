@@ -34,6 +34,10 @@
 
 #include "InspectorCanvasAgent.h"
 
+#include "BindingVisitors.h"
+#include "Frame.h"
+#include "HTMLCanvasElement.h"
+#include "HTMLNames.h"
 #include "InjectedScript.h"
 #include "InjectedScriptCanvasModule.h"
 #include "InjectedScriptManager.h"
@@ -42,6 +46,7 @@
 #include "InstrumentingAgents.h"
 #include "Page.h"
 #include "ScriptObject.h"
+#include "ScriptProfiler.h"
 #include "ScriptState.h"
 
 namespace WebCore {
@@ -55,6 +60,7 @@ InspectorCanvasAgent::InspectorCanvasAgent(InstrumentingAgents* instrumentingAge
     , m_inspectedPage(page)
     , m_injectedScriptManager(injectedScriptManager)
     , m_frontend(0)
+    , m_enabled(false)
 {
 }
 
@@ -84,14 +90,20 @@ void InspectorCanvasAgent::restore()
 
 void InspectorCanvasAgent::enable(ErrorString*)
 {
-    m_state->setBoolean(CanvasAgentState::canvasAgentEnabled, true);
+    if (m_enabled)
+        return;
+    m_enabled = true;
+    m_state->setBoolean(CanvasAgentState::canvasAgentEnabled, m_enabled);
     m_instrumentingAgents->setInspectorCanvasAgent(this);
+    findFramesWithUninstrumentedCanvases();
 }
 
 void InspectorCanvasAgent::disable(ErrorString*)
 {
+    m_enabled = false;
+    m_state->setBoolean(CanvasAgentState::canvasAgentEnabled, m_enabled);
     m_instrumentingAgents->setInspectorCanvasAgent(0);
-    m_state->setBoolean(CanvasAgentState::canvasAgentEnabled, false);
+    m_framesWithUninstrumentedCanvases.clear();
 }
 
 void InspectorCanvasAgent::dropTraceLog(ErrorString* errorString, const String& traceLogId)
@@ -101,8 +113,17 @@ void InspectorCanvasAgent::dropTraceLog(ErrorString* errorString, const String& 
         module.dropTraceLog(errorString, traceLogId);
 }
 
+void InspectorCanvasAgent::hasUninstrumentedCanvases(ErrorString* errorString, bool* result)
+{
+    if (!checkIsEnabled(errorString))
+        return;
+    *result = m_framesWithUninstrumentedCanvases.contains(m_inspectedPage->mainFrame());
+}
+
 void InspectorCanvasAgent::captureFrame(ErrorString* errorString, String* traceLogId)
 {
+    if (!checkIsEnabled(errorString))
+        return;
     ScriptState* scriptState = mainWorldScriptState(m_inspectedPage->mainFrame());
     InjectedScriptCanvasModule module = InjectedScriptCanvasModule::moduleForState(m_injectedScriptManager, scriptState);
     if (module.hasNoValue()) {
@@ -114,6 +135,8 @@ void InspectorCanvasAgent::captureFrame(ErrorString* errorString, String* traceL
 
 void InspectorCanvasAgent::startCapturing(ErrorString* errorString, String* traceLogId)
 {
+    if (!checkIsEnabled(errorString))
+        return;
     ScriptState* scriptState = mainWorldScriptState(m_inspectedPage->mainFrame());
     InjectedScriptCanvasModule module = InjectedScriptCanvasModule::moduleForState(m_injectedScriptManager, scriptState);
     if (module.hasNoValue()) {
@@ -125,6 +148,8 @@ void InspectorCanvasAgent::startCapturing(ErrorString* errorString, String* trac
 
 void InspectorCanvasAgent::stopCapturing(ErrorString* errorString, const String& traceLogId)
 {
+    if (!checkIsEnabled(errorString))
+        return;
     InjectedScriptCanvasModule module = injectedScriptCanvasModuleForTraceLogId(errorString, traceLogId);
     if (!module.hasNoValue())
         module.stopCapturing(errorString, traceLogId);
@@ -132,6 +157,8 @@ void InspectorCanvasAgent::stopCapturing(ErrorString* errorString, const String&
 
 void InspectorCanvasAgent::getTraceLog(ErrorString* errorString, const String& traceLogId, const int* startOffset, RefPtr<TypeBuilder::Canvas::TraceLog>& traceLog)
 {
+    if (!checkIsEnabled(errorString))
+        return;
     InjectedScriptCanvasModule module = injectedScriptCanvasModuleForTraceLogId(errorString, traceLogId);
     if (!module.hasNoValue())
         module.traceLog(errorString, traceLogId, startOffset, &traceLog);
@@ -139,6 +166,8 @@ void InspectorCanvasAgent::getTraceLog(ErrorString* errorString, const String& t
 
 void InspectorCanvasAgent::replayTraceLog(ErrorString* errorString, const String& traceLogId, int stepNo, String* result)
 {
+    if (!checkIsEnabled(errorString))
+        return;
     InjectedScriptCanvasModule module = injectedScriptCanvasModuleForTraceLogId(errorString, traceLogId);
     if (!module.hasNoValue())
         module.replayTraceLog(errorString, traceLogId, stepNo, result);
@@ -188,6 +217,53 @@ InjectedScriptCanvasModule InspectorCanvasAgent::injectedScriptCanvasModuleForTr
         return InjectedScriptCanvasModule();
     }
     return module;
+}
+
+void InspectorCanvasAgent::findFramesWithUninstrumentedCanvases()
+{
+    class NodeVisitor : public WrappedNodeVisitor {
+    public:
+        NodeVisitor(Page* page, FramesWithUninstrumentedCanvases& hasUninstrumentedCanvasesResults)
+            : m_page(page)
+            , m_framesWithUninstrumentedCanvases(hasUninstrumentedCanvasesResults)
+        {
+        }
+
+        virtual void visitNode(Node* node) OVERRIDE
+        {
+            if (!node->hasTagName(HTMLNames::canvasTag) || !node->document() || !node->document()->frame())
+                return;
+            
+            Frame* frame = node->document()->frame();
+            if (frame->page() != m_page)
+                return;
+
+            HTMLCanvasElement* canvas = static_cast<HTMLCanvasElement*>(node);
+            if (canvas->renderingContext())
+                m_framesWithUninstrumentedCanvases.add(frame);
+        }
+
+    private:
+        Page* m_page;
+        FramesWithUninstrumentedCanvases& m_framesWithUninstrumentedCanvases;
+    } nodeVisitor(m_inspectedPage, m_framesWithUninstrumentedCanvases);
+
+    ScriptProfiler::visitNodeWrappers(&nodeVisitor);
+}
+
+bool InspectorCanvasAgent::checkIsEnabled(ErrorString* errorString) const
+{
+    if (m_enabled)
+        return true;
+    *errorString = "Canvas agent is not enabled";
+    return false;
+}
+
+void InspectorCanvasAgent::reset()
+{
+    m_framesWithUninstrumentedCanvases.clear();
+    if (m_enabled)
+        findFramesWithUninstrumentedCanvases();
 }
 
 } // namespace WebCore

@@ -37,12 +37,14 @@
 #include "InspectorFrontend.h"
 #include "InspectorTypeBuilder.h"
 #include "ScriptState.h"
+#include <wtf/HashSet.h>
 #include <wtf/PassOwnPtr.h>
 #include <wtf/PassRefPtr.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
 
+class Frame;
 class InjectedScriptCanvasModule;
 class InjectedScriptManager;
 class InspectorState;
@@ -64,6 +66,9 @@ public:
     virtual void clearFrontend();
     virtual void restore();
 
+    // Called from InspectorInstrumentation
+    void reset();
+
     // Called from InspectorCanvasInstrumentation
     ScriptObject wrapCanvas2DRenderingContextForInstrumentation(const ScriptObject&);
 #if ENABLE(WEBGL)
@@ -74,6 +79,7 @@ public:
     virtual void enable(ErrorString*);
     virtual void disable(ErrorString*);
     virtual void dropTraceLog(ErrorString*, const String&);
+    virtual void hasUninstrumentedCanvases(ErrorString*, bool*);
     virtual void captureFrame(ErrorString*, String*);
     virtual void startCapturing(ErrorString*, String*);
     virtual void stopCapturing(ErrorString*, const String&);
@@ -84,10 +90,15 @@ private:
     InspectorCanvasAgent(InstrumentingAgents*, InspectorCompositeState*, Page*, InjectedScriptManager*);
 
     InjectedScriptCanvasModule injectedScriptCanvasModuleForTraceLogId(ErrorString*, const String&);
+    void findFramesWithUninstrumentedCanvases();
+    bool checkIsEnabled(ErrorString*) const;
 
     Page* m_inspectedPage;
     InjectedScriptManager* m_injectedScriptManager;
     InspectorFrontend::Canvas* m_frontend;
+    bool m_enabled;
+    typedef HashSet<Frame*> FramesWithUninstrumentedCanvases;
+    FramesWithUninstrumentedCanvases m_framesWithUninstrumentedCanvases;
 };
 
 } // namespace WebCore

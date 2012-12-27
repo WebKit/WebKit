@@ -1,0 +1,6 @@
+Tests Canvas hasUninstrumentedCanvases protocol method.
+
+Bug 105721
+hasUninstrumentedCanvases: false
+hasUninstrumentedCanvases: true
+

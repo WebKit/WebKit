@@ -913,6 +913,8 @@ void InspectorInstrumentation::didCommitLoadImpl(InstrumentingAgents* instrument
         if (InspectorLayerTreeAgent* layerTreeAgent = instrumentingAgents->inspectorLayerTreeAgent())
             layerTreeAgent->reset();
 #endif
+        if (InspectorCanvasAgent* canvasAgent = instrumentingAgents->inspectorCanvasAgent())
+            canvasAgent->reset();
         inspectorAgent->didCommitLoad();
     }
     if (InspectorPageAgent* pageAgent = instrumentingAgents->inspectorPageAgent())

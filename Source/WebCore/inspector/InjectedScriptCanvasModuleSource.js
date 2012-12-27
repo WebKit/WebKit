@@ -1015,7 +1015,15 @@ function ReplayableResource(originalResource, data)
 
 ReplayableResource.prototype = {
     /**
-     * @param {Cache} cache
+     * @return {number}
+     */
+    id: function()
+    {
+        return this._data.id;
+    },
+
+    /**
+     * @param {!Cache} cache
      * @return {!Resource}
      */
     replay: function(cache)
@@ -1029,7 +1037,7 @@ ReplayableResource.prototype = {
 
 /**
  * @param {ReplayableResource|*} obj
- * @param {Cache} cache
+ * @param {!Cache} cache
  * @return {*}
  */
 ReplayableResource.replay = function(obj, cache)
@@ -2824,6 +2832,7 @@ InjectedScript.prototype = {
             var stackTrace = call.stackTrace();
             var callFrame = stackTrace ? stackTrace.callFrame(0) || {} : {};
             var traceLogItem = {
+                contextId: this._makeContextId(call.resource().id()),
                 sourceURL: callFrame.sourceURL,
                 lineNumber: callFrame.lineNumber,
                 columnNumber: callFrame.columnNumber
@@ -2879,6 +2888,15 @@ InjectedScript.prototype = {
     _makeTraceLogId: function()
     {
         return "{\"injectedScriptId\":" + injectedScriptId + ",\"traceLogId\":" + (++this._lastTraceLogId) + "}";
+    },
+
+    /**
+     * @param {number} resourceId
+     * @return {string}
+     */
+    _makeContextId: function(resourceId)
+    {
+        return "{\"injectedScriptId\":" + injectedScriptId + ",\"canvasContextId\":" + resourceId + "}";
     },
 
     _onTraceLogPlayerReset: function()

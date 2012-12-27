@@ -1,0 +1,69 @@
+<html>
+<head>
+    <script src="../../../http/tests/inspector/inspector-test.js"></script>
+    <script src="../canvas-profiler-test.js"></script>
+<script>
+
+var canvas;
+
+function createCanvasElement()
+{
+    canvas = document.createElement("canvas");
+    console.assert(canvas, "Failed to create a canvas element");
+}
+
+function getCanvasContext()
+{
+    var context = canvas.getContext("2d");
+    console.assert(context, "Failed to create a canvas context");
+}
+
+function test()
+{
+    InspectorTest.evaluateInConsole("createCanvasElement()", step1);
+    function step1()
+    {
+        InspectorTest.enableCanvasAgent(step2);
+    }
+    function step2()
+    {
+        CanvasAgent.hasUninstrumentedCanvases(hasUninstrumentedCanvasesCallback1);
+    }
+    function hasUninstrumentedCanvasesCallback1(error, result)
+    {
+        InspectorTest.addResult("hasUninstrumentedCanvases: " + result);
+        InspectorTest.assertTrue(!error, "Unexpected error");
+        InspectorTest.assertEquals(false, result, "There should be no uninstrumented canvases");
+        InspectorTest.disableCanvasAgent(step3);
+    }
+    function step3()
+    {
+        InspectorTest.evaluateInConsole("getCanvasContext()", step4);
+    }
+    function step4()
+    {
+        InspectorTest.enableCanvasAgent(step5);
+    }
+    function step5()
+    {
+        CanvasAgent.hasUninstrumentedCanvases(hasUninstrumentedCanvasesCallback2);
+    }
+    function hasUninstrumentedCanvasesCallback2(error, result)
+    {
+        InspectorTest.addResult("hasUninstrumentedCanvases: " + result);
+        InspectorTest.assertTrue(!error, "Unexpected error");
+        InspectorTest.assertEquals(true, result, "There is an uninstrumented canvas!");
+        InspectorTest.completeTest();
+    }
+}
+
+</script>
+</head>
+<body onload="runTest()">
+<p>
+Tests Canvas hasUninstrumentedCanvases protocol method.
+</p>
+<a href="https://bugs.webkit.org/show_bug.cgi?id=105721">Bug 105721</a>
+
+</body>
+</html>
