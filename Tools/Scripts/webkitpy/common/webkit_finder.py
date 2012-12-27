@@ -44,7 +44,7 @@ class WebKitFinder(object):
         if not self._webkit_base:
             self._webkit_base = self._webkit_base
             module_path = self._filesystem.path_to_module(self.__module__)
-            tools_index = module_path.find('Tools')
+            tools_index = module_path.rfind('Tools')
             assert tools_index != -1, "could not find location of this checkout from %s" % module_path
             self._webkit_base = self._filesystem.normpath(module_path[0:tools_index - 1])
         return self._webkit_base
