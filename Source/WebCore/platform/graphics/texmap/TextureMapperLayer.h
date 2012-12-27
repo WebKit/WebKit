@@ -32,24 +32,12 @@
 
 namespace WebCore {
 
+class TextureMapperPaintOptions;
 class TextureMapperPlatformLayer;
 class GraphicsLayerTextureMapper;
 
-class TextureMapperPaintOptions {
-public:
-    RefPtr<BitmapTexture> surface;
-    RefPtr<BitmapTexture> mask;
-    float opacity;
-    TransformationMatrix transform;
-    IntSize offset;
-    TextureMapper* textureMapper;
-    TextureMapperPaintOptions()
-        : opacity(1)
-        , textureMapper(0)
-    { }
-};
-
 class TextureMapperLayer : public GraphicsLayerAnimation::Client {
+    WTF_MAKE_NONCOPYABLE(TextureMapperLayer);
     WTF_MAKE_FAST_ALLOCATED;
 public:
     // This set of flags help us defer which properties of the layer have been

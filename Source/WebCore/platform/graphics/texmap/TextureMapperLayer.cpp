@@ -26,6 +26,20 @@
 
 namespace WebCore {
 
+class TextureMapperPaintOptions {
+public:
+    RefPtr<BitmapTexture> surface;
+    RefPtr<BitmapTexture> mask;
+    float opacity;
+    TransformationMatrix transform;
+    IntSize offset;
+    TextureMapper* textureMapper;
+    TextureMapperPaintOptions()
+        : opacity(1)
+        , textureMapper(0)
+    { }
+};
+
 TextureMapperLayer* toTextureMapperLayer(GraphicsLayer* layer)
 {
     return layer ? toGraphicsLayerTextureMapper(layer)->layer() : 0;
