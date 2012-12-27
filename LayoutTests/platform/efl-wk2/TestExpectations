@@ -59,6 +59,9 @@ webkit.org/b/102651 [ Debug ] networkinformation/updates.html [ Crash ]
 webkit.org/b/102651 [ Debug ] networkinformation/add-listener-from-callback.html [ Crash ]
 webkit.org/b/102651 [ Debug ] networkinformation/basic-operation.html [ Crash ]
 
+# ResourceClient is passed an invalid identifier value (0).
+webkit.org/b/105788 [ Debug ] http/tests/appcache/main-resource-redirect.html [ Crash ]
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # FLAKY TESTS
 #////////////////////////////////////////////////////////////////////////////////////////
