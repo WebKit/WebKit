@@ -254,16 +254,14 @@ void WebProcess::initializeWebProcess(const WebProcessCreationParameters& parame
     }
 
 #if ENABLE(SQL_DATABASE)
-    // Make sure the WebDatabaseManager is initialized so that the Database directory is set.
-    m_databaseManager->initialize(parameters.databaseDirectory);
+    m_databaseManager->initialize(parameters);
 #endif
 
 #if ENABLE(ICONDATABASE)
     m_iconDatabaseProxy->setEnabled(parameters.iconDatabaseEnabled);
 #endif
 
-    StorageTracker::initializeTracker(parameters.localStorageDirectory, m_keyValueStorageManager);
-    m_localStorageDirectory = parameters.localStorageDirectory;
+    m_keyValueStorageManager->initialize(parameters);
 
     if (!parameters.applicationCacheDirectory.isEmpty())
         cacheStorage().setCacheDirectory(parameters.applicationCacheDirectory);
@@ -450,6 +448,11 @@ WebResourceCacheManager& WebProcess::resourceCacheManager()
 WebCookieManager& WebProcess::cookieManager()
 {
     return *m_cookieManager;
+}
+
+WebKeyValueStorageManager& WebProcess::keyValueStorageManager()
+{
+    return *m_keyValueStorageManager;
 }
 
 DownloadManager& WebProcess::downloadManager()

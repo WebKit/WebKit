@@ -28,7 +28,7 @@
 
 #if ENABLE(SQL_DATABASE)
 
-#include "MessageReceiver.h"
+#include "WebProcessSupplement.h"
 #include <WebCore/DatabaseManagerClient.h>
 #include <stdint.h>
 #include <wtf/Noncopyable.h>
@@ -37,11 +37,13 @@ namespace WebKit {
 
 class WebProcess;
 
-class WebDatabaseManager : public WebCore::DatabaseManagerClient, private CoreIPC::MessageReceiver {
+class WebDatabaseManager : public WebCore::DatabaseManagerClient, public WebProcessSupplement {
     WTF_MAKE_NONCOPYABLE(WebDatabaseManager);
 public:
-    WebDatabaseManager(WebProcess*);
-    void initialize(const String& databaseDirectory);
+    explicit WebDatabaseManager(WebProcess*);
+
+    // WebProcessSupplement
+    virtual void initialize(const WebProcessCreationParameters&) OVERRIDE;
 
     void setQuotaForOrigin(const String& originIdentifier, unsigned long long quota) const;
     void deleteAllDatabases() const;

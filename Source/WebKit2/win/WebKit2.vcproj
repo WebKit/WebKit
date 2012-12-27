@@ -1619,6 +1619,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\WebProcess\WebProcessSupplement.h"
+				>
+			</File>
+			<File
 				RelativePath="..\WebProcess\WebProcess.cpp"
 				>
 			</File>

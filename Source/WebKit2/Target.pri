@@ -389,6 +389,7 @@ HEADERS += \
     WebProcess/WebPage/WebPageGroupProxy.h \
     WebProcess/WebPage/WebUndoStep.h \
     WebProcess/WebConnectionToUIProcess.h \
+    WebProcess/WebProcessSupplement.h \
     WebProcess/WebProcess.h \
     WebProcess/qt/QtBuiltinBundle.h \
     WebProcess/qt/QtBuiltinBundlePage.h \

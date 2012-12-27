@@ -33,6 +33,7 @@
 #include "WebDatabaseManagerMessages.h"
 #include "WebDatabaseManagerProxyMessages.h"
 #include "WebProcess.h"
+#include "WebProcessCreationParameters.h"
 #include <WebCore/DatabaseDetails.h>
 #include <WebCore/DatabaseManager.h>
 #include <WebCore/SecurityOrigin.h>
@@ -45,12 +46,11 @@ WebDatabaseManager::WebDatabaseManager(WebProcess* process)
     : m_process(process)
 {
     m_process->addMessageReceiver(Messages::WebDatabaseManager::messageReceiverName(), this);
-
 }
 
-void WebDatabaseManager::initialize(const String& databaseDirectory)
+void WebDatabaseManager::initialize(const WebProcessCreationParameters& parameters)
 {
-    DatabaseManager::manager().initialize(databaseDirectory);
+    DatabaseManager::manager().initialize(parameters.databaseDirectory);
     DatabaseManager::manager().setClient(this);
 }
 

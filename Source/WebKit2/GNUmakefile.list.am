@@ -1207,6 +1207,7 @@ webkit2_sources += \
 	Source/WebKit2/WebProcess/WebPage/WebUndoStep.h \
 	Source/WebKit2/WebProcess/WebConnectionToUIProcess.cpp \
 	Source/WebKit2/WebProcess/WebConnectionToUIProcess.h \
+	Source/WebKit2/WebProcess/WebProcessSupplement.h \
 	Source/WebKit2/WebProcess/WebProcess.cpp \
 	Source/WebKit2/WebProcess/WebProcess.h
 

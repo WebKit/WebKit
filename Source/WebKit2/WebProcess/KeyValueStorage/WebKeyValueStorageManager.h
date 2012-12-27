@@ -26,23 +26,30 @@
 #ifndef WebKeyValueStorageManager_h
 #define WebKeyValueStorageManager_h
 
-#include "MessageReceiver.h"
+#include "WebProcessSupplement.h"
 #include <WebCore/StorageTrackerClient.h>
 #include <wtf/Noncopyable.h>
 #include <wtf/Vector.h>
+#include <wtf/text/WTFString.h>
 
 namespace WebKit {
 
 class WebProcess;
 struct SecurityOriginData;
 
-class WebKeyValueStorageManager : public WebCore::StorageTrackerClient, private CoreIPC::MessageReceiver {
+class WebKeyValueStorageManager : public WebCore::StorageTrackerClient, public WebProcessSupplement {
     WTF_MAKE_NONCOPYABLE(WebKeyValueStorageManager);
 public:
     explicit WebKeyValueStorageManager(WebProcess*);
 
+    // WebProcessSupplement
+    virtual void initialize(const WebProcessCreationParameters&) OVERRIDE;
+
+    const String& localStorageDirectory() const { return m_localStorageDirectory; }
+
 private:
-    void didReceiveMessage(CoreIPC::Connection*, CoreIPC::MessageID, CoreIPC::MessageDecoder&) OVERRIDE;
+    // CoreIPC::MessageReceiver
+    virtual void didReceiveMessage(CoreIPC::Connection*, CoreIPC::MessageID, CoreIPC::MessageDecoder&) OVERRIDE;
     void didReceiveWebKeyValueStorageManagerMessage(CoreIPC::Connection*, CoreIPC::MessageID, CoreIPC::MessageDecoder&);
 
     void getKeyValueStorageOrigins(uint64_t callbackID);
@@ -56,7 +63,7 @@ private:
     virtual void didFinishLoadingOrigins() OVERRIDE;
 
     Vector<uint64_t> m_originsRequestCallbackIDs;
-
+    String m_localStorageDirectory;
     WebProcess* m_process;
 };
 

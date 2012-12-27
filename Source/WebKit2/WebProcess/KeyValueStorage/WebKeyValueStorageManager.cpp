@@ -30,6 +30,7 @@
 #include "WebKeyValueStorageManagerMessages.h"
 #include "WebKeyValueStorageManagerProxyMessages.h"
 #include "WebProcess.h"
+#include "WebProcessCreationParameters.h"
 #include <WebCore/SecurityOrigin.h>
 #include <WebCore/SecurityOriginHash.h>
 #include <WebCore/StorageTracker.h>
@@ -42,6 +43,12 @@ WebKeyValueStorageManager::WebKeyValueStorageManager(WebProcess* process)
     : m_process(process)
 {
     m_process->addMessageReceiver(Messages::WebKeyValueStorageManager::messageReceiverName(), this);
+}
+
+void WebKeyValueStorageManager::initialize(const WebProcessCreationParameters& parameters)
+{
+    StorageTracker::initializeTracker(parameters.localStorageDirectory, this);
+    m_localStorageDirectory = parameters.localStorageDirectory;
 }
 
 void WebKeyValueStorageManager::didReceiveMessage(CoreIPC::Connection* connection, CoreIPC::MessageID messageID, CoreIPC::MessageDecoder& decoder)

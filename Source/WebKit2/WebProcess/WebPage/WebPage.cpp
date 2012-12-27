@@ -68,6 +68,7 @@
 #include "WebInspector.h"
 #include "WebInspectorClient.h"
 #include "WebInspectorMessages.h"
+#include "WebKeyValueStorageManager.h"
 #include "WebNotificationClient.h"
 #include "WebOpenPanelResultListener.h"
 #include "WebPageCreationParameters.h"
@@ -107,6 +108,7 @@
 #include <WebCore/PlatformKeyboardEvent.h>
 #include <WebCore/PluginDocument.h>
 #include <WebCore/PrintContext.h>
+#include <WebCore/Range.h>
 #include <WebCore/RenderLayer.h>
 #include <WebCore/RenderTreeAsText.h>
 #include <WebCore/RenderView.h>
@@ -122,12 +124,10 @@
 #include <WebCore/SharedBuffer.h>
 #include <WebCore/SubstituteData.h>
 #include <WebCore/TextIterator.h>
+#include <WebCore/VisiblePosition.h>
 #include <WebCore/markup.h>
 #include <runtime/JSLock.h>
 #include <runtime/JSValue.h>
-
-#include <WebCore/Range.h>
-#include <WebCore/VisiblePosition.h>
 
 #if ENABLE(MHTML)
 #include <WebCore/MHTMLArchive.h>
@@ -2343,7 +2343,7 @@ void WebPage::updatePreferences(const WebPreferencesStore& store)
     settings->setFullScreenEnabled(store.getBoolValueForKey(WebPreferencesKey::fullScreenEnabledKey()));
 #endif
 
-    settings->setLocalStorageDatabasePath(WebProcess::shared().localStorageDirectory());
+    settings->setLocalStorageDatabasePath(WebProcess::shared().keyValueStorageManager().localStorageDirectory());
 
 #if USE(AVFOUNDATION)
     settings->setAVFoundationEnabled(store.getBoolValueForKey(WebPreferencesKey::isAVFoundationEnabledKey()));

@@ -183,6 +183,7 @@ public:
     WebApplicationCacheManager& applicationCacheManager();
     WebResourceCacheManager& resourceCacheManager();
     WebCookieManager& cookieManager();
+    WebKeyValueStorageManager& keyValueStorageManager();
     DownloadManager& downloadManager();
     AuthenticationManager& authenticationManager();
 
@@ -204,8 +205,6 @@ public:
 
     void clearResourceCaches(ResourceCachesToClear = AllResourceCaches);
     
-    const String& localStorageDirectory() const { return m_localStorageDirectory; }
-
 #if ENABLE(PLUGIN_PROCESS)
     PluginProcessConnectionManager& pluginProcessConnectionManager();
 #endif
@@ -398,8 +397,6 @@ private:
     WebNotificationManager* m_notificationManager;
 #endif
     WebIconDatabaseProxy* m_iconDatabaseProxy;
-    
-    String m_localStorageDirectory;
 
 #if ENABLE(NETWORK_PROCESS)
     void ensureNetworkProcessConnection();
