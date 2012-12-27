@@ -189,10 +189,24 @@ namespace JSC {
 #endif
 
 #if USE(JSVALUE64)
+        Jump emitJumpIfNotJSCell(RegisterID);
         Jump emitJumpIfImmediateNumber(RegisterID reg);
         Jump emitJumpIfNotImmediateNumber(RegisterID reg);
         void emitFastArithImmToInt(RegisterID reg);
+        void emitFastArithIntToImmNoCheck(RegisterID src, RegisterID dest);
 #endif
+
+        Jump emitJumpIfNotType(RegisterID baseReg, RegisterID scratchReg, JSType);
+
+        void emitGetFromCallFrameHeaderPtr(JSStack::CallFrameHeaderEntry, RegisterID to, RegisterID from = callFrameRegister);
+        void emitPutToCallFrameHeader(RegisterID from, JSStack::CallFrameHeaderEntry);
+        void emitPutImmediateToCallFrameHeader(void* value, JSStack::CallFrameHeaderEntry);
+        void emitPutCellToCallFrameHeader(RegisterID from, JSStack::CallFrameHeaderEntry);
+
+        void preserveReturnAddressAfterCall(RegisterID);
+        void restoreReturnAddressBeforeReturn(RegisterID);
+        void restoreReturnAddressBeforeReturn(Address);
+        void restoreArgumentReference();
 
         inline Address payloadFor(int index, RegisterID base = callFrameRegister);
         inline Address intPayloadFor(int index, RegisterID base = callFrameRegister);
@@ -268,6 +282,11 @@ namespace JSC {
 #endif
 
 #if USE(JSVALUE64)
+    ALWAYS_INLINE JSInterfaceJIT::Jump JSInterfaceJIT::emitJumpIfNotJSCell(RegisterID reg)
+    {
+        return branchTest64(NonZero, reg, tagMaskRegister);
+    }
+
     ALWAYS_INLINE JSInterfaceJIT::Jump JSInterfaceJIT::emitJumpIfImmediateNumber(RegisterID reg)
     {
         return branchTest64(NonZero, reg, tagTypeNumberRegister);
@@ -308,6 +327,13 @@ namespace JSC {
     {
     }
     
+    // operand is int32_t, must have been zero-extended if register is 64-bit.
+    ALWAYS_INLINE void JSInterfaceJIT::emitFastArithIntToImmNoCheck(RegisterID src, RegisterID dest)
+    {
+        if (src != dest)
+            move(src, dest);
+        or64(tagTypeNumberRegister, dest);
+    }
 #endif
 
 #if USE(JSVALUE64)
@@ -329,10 +355,120 @@ namespace JSC {
     }
 #endif
 
+    ALWAYS_INLINE JSInterfaceJIT::Jump JSInterfaceJIT::emitJumpIfNotType(RegisterID baseReg, RegisterID scratchReg, JSType type)
+    {
+        loadPtr(Address(baseReg, JSCell::structureOffset()), scratchReg);
+        return branch8(NotEqual, Address(scratchReg, Structure::typeInfoTypeOffset()), TrustedImm32(type));
+    }
+
+    ALWAYS_INLINE void JSInterfaceJIT::emitGetFromCallFrameHeaderPtr(JSStack::CallFrameHeaderEntry entry, RegisterID to, RegisterID from)
+    {
+        loadPtr(Address(from, entry * sizeof(Register)), to);
+    }
+
+    ALWAYS_INLINE void JSInterfaceJIT::emitPutToCallFrameHeader(RegisterID from, JSStack::CallFrameHeaderEntry entry)
+    {
+#if USE(JSVALUE32_64)
+        storePtr(from, payloadFor(entry, callFrameRegister));
+#else
+        store64(from, addressFor(entry, callFrameRegister));
+#endif
+    }
+
+    ALWAYS_INLINE void JSInterfaceJIT::emitPutImmediateToCallFrameHeader(void* value, JSStack::CallFrameHeaderEntry entry)
+    {
+        storePtr(TrustedImmPtr(value), Address(callFrameRegister, entry * sizeof(Register)));
+    }
+
+    ALWAYS_INLINE void JSInterfaceJIT::emitPutCellToCallFrameHeader(RegisterID from, JSStack::CallFrameHeaderEntry entry)
+    {
+#if USE(JSVALUE32_64)
+        store32(TrustedImm32(JSValue::CellTag), tagFor(entry, callFrameRegister));
+        store32(from, payloadFor(entry, callFrameRegister));
+#else
+        store64(from, addressFor(entry, callFrameRegister));
+#endif
+    }
+
     inline JSInterfaceJIT::Address JSInterfaceJIT::addressFor(int virtualRegisterIndex, RegisterID base)
     {
         ASSERT(virtualRegisterIndex < FirstConstantRegisterIndex);
         return Address(base, (static_cast<unsigned>(virtualRegisterIndex) * sizeof(Register)));
+    }
+
+#if CPU(ARM)
+
+    ALWAYS_INLINE void JSInterfaceJIT::preserveReturnAddressAfterCall(RegisterID reg)
+    {
+        move(linkRegister, reg);
+    }
+    
+    ALWAYS_INLINE void JSInterfaceJIT::restoreReturnAddressBeforeReturn(RegisterID reg)
+    {
+        move(reg, linkRegister);
+    }
+    
+    ALWAYS_INLINE void JSInterfaceJIT::restoreReturnAddressBeforeReturn(Address address)
+    {
+        loadPtr(address, linkRegister);
+    }
+#elif CPU(SH4)
+
+    ALWAYS_INLINE void JSInterfaceJIT::preserveReturnAddressAfterCall(RegisterID reg)
+    {
+        m_assembler.stspr(reg);
+    }
+    
+    ALWAYS_INLINE void JSInterfaceJIT::restoreReturnAddressBeforeReturn(RegisterID reg)
+    {
+        m_assembler.ldspr(reg);
+    }
+    
+    ALWAYS_INLINE void JSInterfaceJIT::restoreReturnAddressBeforeReturn(Address address)
+    {
+        loadPtrLinkReg(address);
+    }
+    
+#elif CPU(MIPS)
+
+    ALWAYS_INLINE void JSInterfaceJIT::preserveReturnAddressAfterCall(RegisterID reg)
+    {
+        move(returnAddressRegister, reg);
+    }
+    
+    ALWAYS_INLINE void JSInterfaceJIT::restoreReturnAddressBeforeReturn(RegisterID reg)
+    {
+        move(reg, returnAddressRegister);
+    }
+    
+    ALWAYS_INLINE void JSInterfaceJIT::restoreReturnAddressBeforeReturn(Address address)
+    {
+        loadPtr(address, returnAddressRegister);
+    }
+    
+#else // CPU(X86) || CPU(X86_64)
+
+    ALWAYS_INLINE void JSInterfaceJIT::preserveReturnAddressAfterCall(RegisterID reg)
+    {
+        pop(reg);
+    }
+    
+    ALWAYS_INLINE void JSInterfaceJIT::restoreReturnAddressBeforeReturn(RegisterID reg)
+    {
+        push(reg);
+    }
+    
+    ALWAYS_INLINE void JSInterfaceJIT::restoreReturnAddressBeforeReturn(Address address)
+    {
+        push(address);
+    }
+    
+#endif
+
+    ALWAYS_INLINE void JSInterfaceJIT::restoreArgumentReference()
+    {
+        move(stackPointerRegister, firstArgumentRegister);
+        poke(callFrameRegister, OBJECT_OFFSETOF(struct JITStackFrame, callFrame) / sizeof(void*));
     }
 
 } // namespace JSC

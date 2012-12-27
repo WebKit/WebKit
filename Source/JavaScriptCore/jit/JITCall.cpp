@@ -135,7 +135,7 @@ void JIT::compileCallEvalSlowCase(Vector<SlowCaseEntry>::iterator& iter)
     linkSlowCase(iter);
 
     emitGetFromCallFrameHeader64(JSStack::Callee, regT0);
-    emitNakedCall(m_globalData->jitStubs->ctiVirtualCall());
+    emitNakedCall(m_globalData->getCTIStub(virtualCallGenerator).code());
 
     sampleCodeBlock(m_codeBlock);
 }
@@ -216,7 +216,7 @@ void JIT::compileOpCallSlowCase(OpcodeID opcodeID, Instruction*, Vector<SlowCase
 
     linkSlowCase(iter);
     
-    m_callStructureStubCompilationInfo[callLinkInfoIndex].callReturnLocation = emitNakedCall(opcodeID == op_construct ? m_globalData->jitStubs->ctiVirtualConstructLink() : m_globalData->jitStubs->ctiVirtualCallLink());
+    m_callStructureStubCompilationInfo[callLinkInfoIndex].callReturnLocation = emitNakedCall(opcodeID == op_construct ? m_globalData->getCTIStub(linkConstructGenerator).code() : m_globalData->getCTIStub(linkCallGenerator).code());
 
     sampleCodeBlock(m_codeBlock);
 }

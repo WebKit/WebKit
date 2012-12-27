@@ -359,14 +359,6 @@ namespace JSC {
             jit.privateCompilePutByVal(byValInfo, returnAddress, arrayMode);
         }
 
-        static PassRefPtr<ExecutableMemoryHandle> compileCTIMachineTrampolines(JSGlobalData* globalData, TrampolineStructure *trampolines)
-        {
-            if (!globalData->canUseJIT())
-                return 0;
-            JIT jit(globalData, 0);
-            return jit.privateCompileCTIMachineTrampolines(globalData, trampolines);
-        }
-
         static CodeRef compileCTINativeCall(JSGlobalData* globalData, NativeFunction func)
         {
             if (!globalData->canUseJIT()) {
@@ -415,7 +407,6 @@ namespace JSC {
         void privateCompileGetByVal(ByValInfo*, ReturnAddressPtr, JITArrayMode);
         void privateCompilePutByVal(ByValInfo*, ReturnAddressPtr, JITArrayMode);
 
-        PassRefPtr<ExecutableMemoryHandle> privateCompileCTIMachineTrampolines(JSGlobalData*, TrampolineStructure*);
         Label privateCompileCTINativeCall(JSGlobalData*, bool isConstruct = false);
         CodeRef privateCompileCTINativeCall(JSGlobalData*, NativeFunction);
         void privateCompilePatchGetArrayLength(ReturnAddressPtr returnAddress);
@@ -441,7 +432,6 @@ namespace JSC {
         void emitLoadDouble(int index, FPRegisterID value);
         void emitLoadInt32ToDouble(int index, FPRegisterID value);
         Jump emitJumpIfNotObject(RegisterID structureReg);
-        Jump emitJumpIfNotType(RegisterID baseReg, RegisterID scratchReg, JSType);
 
         Jump addStructureTransitionCheck(JSCell*, Structure*, StructureStubInfo*, RegisterID scratch);
         void addStructureTransitionCheck(JSCell*, Structure*, StructureStubInfo*, JumpList& failureCases, RegisterID scratch);
@@ -596,7 +586,6 @@ namespace JSC {
         Jump emitJumpIfJSCell(RegisterID);
         Jump emitJumpIfBothJSCells(RegisterID, RegisterID, RegisterID);
         void emitJumpSlowCaseIfJSCell(RegisterID);
-        Jump emitJumpIfNotJSCell(RegisterID);
         void emitJumpSlowCaseIfNotJSCell(RegisterID);
         void emitJumpSlowCaseIfNotJSCell(RegisterID, int VReg);
         Jump emitJumpIfImmediateInteger(RegisterID);
@@ -607,7 +596,6 @@ namespace JSC {
         void emitJumpSlowCaseIfNotImmediateIntegers(RegisterID, RegisterID, RegisterID);
 
         void emitFastArithReTagImmediate(RegisterID src, RegisterID dest);
-        void emitFastArithIntToImmNoCheck(RegisterID src, RegisterID dest);
 
         void emitTagAsBoolImmediate(RegisterID reg);
         void compileBinaryArithOp(OpcodeID, unsigned dst, unsigned src1, unsigned src2, OperandTypes opi);
@@ -823,10 +811,7 @@ namespace JSC {
 
         void emitInitRegister(unsigned dst);
 
-        void emitPutToCallFrameHeader(RegisterID from, JSStack::CallFrameHeaderEntry);
-        void emitPutCellToCallFrameHeader(RegisterID from, JSStack::CallFrameHeaderEntry);
         void emitPutIntToCallFrameHeader(RegisterID from, JSStack::CallFrameHeaderEntry);
-        void emitPutImmediateToCallFrameHeader(void* value, JSStack::CallFrameHeaderEntry);
         void emitGetFromCallFrameHeaderPtr(JSStack::CallFrameHeaderEntry, RegisterID to, RegisterID from = callFrameRegister);
         void emitGetFromCallFrameHeader32(JSStack::CallFrameHeaderEntry, RegisterID to, RegisterID from = callFrameRegister);
 #if USE(JSVALUE64)
@@ -857,15 +842,10 @@ namespace JSC {
 
         Jump checkStructure(RegisterID reg, Structure* structure);
 
-        void restoreArgumentReference();
         void restoreArgumentReferenceForTrampoline();
         void updateTopCallFrame();
 
         Call emitNakedCall(CodePtr function = CodePtr());
-
-        void preserveReturnAddressAfterCall(RegisterID);
-        void restoreReturnAddressBeforeReturn(RegisterID);
-        void restoreReturnAddressBeforeReturn(Address);
 
         // Loads the character value of a single character string into dst.
         void emitLoadCharacterString(RegisterID src, RegisterID dst, JumpList& failures);

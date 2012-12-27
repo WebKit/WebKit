@@ -41,8 +41,6 @@ JITThunks::JITThunks(JSGlobalData* globalData)
     if (!globalData->canUseJIT())
         return;
 
-    m_executableMemory = JIT::compileCTIMachineTrampolines(globalData, &m_trampolineStructure);
-    ASSERT(!!m_executableMemory);
 #if CPU(ARM_THUMB2)
     // Unfortunate the arm compiler does not like the use of offsetof on JITStackFrame (since it contains non POD types),
     // and the OBJECT_OFFSETOF macro does not appear constantish enough for it to be happy with its use in COMPILE_ASSERT
@@ -86,6 +84,23 @@ JITThunks::~JITThunks()
 {
 }
 
+MacroAssemblerCodePtr JITThunks::ctiNativeCall(JSGlobalData* globalData)
+{
+#if ENABLE(LLINT)
+    if (!globalData->canUseJIT())
+        return MacroAssemblerCodePtr::createLLIntCodePtr(llint_native_call_trampoline);
+#endif
+    return ctiStub(globalData, nativeCallGenerator).code();
+}
+MacroAssemblerCodePtr JITThunks::ctiNativeConstruct(JSGlobalData* globalData)
+{
+#if ENABLE(LLINT)
+    if (!globalData->canUseJIT())
+        return MacroAssemblerCodePtr::createLLIntCodePtr(llint_native_construct_trampoline);
+#endif
+    return ctiStub(globalData, nativeConstructGenerator).code();
+}
+
 MacroAssemblerCodeRef JITThunks::ctiStub(JSGlobalData* globalData, ThunkGenerator generator)
 {
     CTIStubMap::AddResult entry = m_ctiStubMap.add(generator, MacroAssemblerCodeRef());
@@ -99,7 +114,7 @@ NativeExecutable* JITThunks::hostFunctionStub(JSGlobalData* globalData, NativeFu
     if (NativeExecutable* nativeExecutable = m_hostFunctionStubMap->get(function))
         return nativeExecutable;
 
-    NativeExecutable* nativeExecutable = NativeExecutable::create(*globalData, JIT::compileCTINativeCall(globalData, function), function, MacroAssemblerCodeRef::createSelfManagedCodeRef(ctiNativeConstruct()), constructor, NoIntrinsic);
+    NativeExecutable* nativeExecutable = NativeExecutable::create(*globalData, JIT::compileCTINativeCall(globalData, function), function, MacroAssemblerCodeRef::createSelfManagedCodeRef(ctiNativeConstruct(globalData)), constructor, NoIntrinsic);
     weakAdd(*m_hostFunctionStubMap, function, PassWeak<NativeExecutable>(nativeExecutable));
     return nativeExecutable;
 }
@@ -118,7 +133,7 @@ NativeExecutable* JITThunks::hostFunctionStub(JSGlobalData* globalData, NativeFu
     } else
         code = JIT::compileCTINativeCall(globalData, function);
 
-    NativeExecutable* nativeExecutable = NativeExecutable::create(*globalData, code, function, MacroAssemblerCodeRef::createSelfManagedCodeRef(ctiNativeConstruct()), callHostFunctionAsConstructor, intrinsic);
+    NativeExecutable* nativeExecutable = NativeExecutable::create(*globalData, code, function, MacroAssemblerCodeRef::createSelfManagedCodeRef(ctiNativeConstruct(globalData)), callHostFunctionAsConstructor, intrinsic);
     weakAdd(*m_hostFunctionStubMap, function, PassWeak<NativeExecutable>(nativeExecutable));
     return nativeExecutable;
 }

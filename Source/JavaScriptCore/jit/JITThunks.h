@@ -44,44 +44,13 @@ namespace JSC {
 class JSGlobalData;
 class NativeExecutable;
 
-struct TrampolineStructure {
-    MacroAssemblerCodePtr ctiStringLengthTrampoline;
-    MacroAssemblerCodePtr ctiVirtualCallLink;
-    MacroAssemblerCodePtr ctiVirtualConstructLink;
-    MacroAssemblerCodePtr ctiVirtualCall;
-    MacroAssemblerCodePtr ctiVirtualConstruct;
-    MacroAssemblerCodePtr ctiNativeCall;
-    MacroAssemblerCodePtr ctiNativeConstruct;
-};
-
-class JITThunksPrivateData;
-
 class JITThunks {
 public:
     JITThunks(JSGlobalData*);
     ~JITThunks();
 
-    MacroAssemblerCodePtr ctiStringLengthTrampoline() { return m_trampolineStructure.ctiStringLengthTrampoline; }
-    MacroAssemblerCodePtr ctiVirtualCallLink() { return m_trampolineStructure.ctiVirtualCallLink; }
-    MacroAssemblerCodePtr ctiVirtualConstructLink() { return m_trampolineStructure.ctiVirtualConstructLink; }
-    MacroAssemblerCodePtr ctiVirtualCall() { return m_trampolineStructure.ctiVirtualCall; }
-    MacroAssemblerCodePtr ctiVirtualConstruct() { return m_trampolineStructure.ctiVirtualConstruct; }
-    MacroAssemblerCodePtr ctiNativeCall()
-    {
-#if ENABLE(LLINT)
-        if (!m_executableMemory)
-            return MacroAssemblerCodePtr::createLLIntCodePtr(llint_native_call_trampoline);
-#endif
-        return m_trampolineStructure.ctiNativeCall;
-    }
-    MacroAssemblerCodePtr ctiNativeConstruct()
-    {
-#if ENABLE(LLINT)
-        if (!m_executableMemory)
-            return MacroAssemblerCodePtr::createLLIntCodePtr(llint_native_construct_trampoline);
-#endif
-        return m_trampolineStructure.ctiNativeConstruct;
-    }
+    MacroAssemblerCodePtr ctiNativeCall(JSGlobalData*);
+    MacroAssemblerCodePtr ctiNativeConstruct(JSGlobalData*);
 
     MacroAssemblerCodeRef ctiStub(JSGlobalData*, ThunkGenerator);
 
@@ -95,9 +64,6 @@ private:
     CTIStubMap m_ctiStubMap;
     typedef HashMap<NativeFunction, Weak<NativeExecutable> > HostFunctionStubMap;
     OwnPtr<HostFunctionStubMap> m_hostFunctionStubMap;
-    RefPtr<ExecutableMemoryHandle> m_executableMemory;
-
-    TrampolineStructure m_trampolineStructure;
 };
 
 } // namespace JSC

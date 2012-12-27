@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010 Apple Inc. All rights reserved.
+ * Copyright (C) 2010, 2012 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -30,6 +30,14 @@
 
 #if ENABLE(JIT)
 namespace JSC {
+
+MacroAssemblerCodeRef linkCallGenerator(JSGlobalData*);
+MacroAssemblerCodeRef linkConstructGenerator(JSGlobalData*);
+MacroAssemblerCodeRef virtualCallGenerator(JSGlobalData*);
+MacroAssemblerCodeRef virtualConstructGenerator(JSGlobalData*);
+MacroAssemblerCodeRef stringLengthTrampolineGenerator(JSGlobalData*);
+MacroAssemblerCodeRef nativeCallGenerator(JSGlobalData*);
+MacroAssemblerCodeRef nativeConstructGenerator(JSGlobalData*);
 
 MacroAssemblerCodeRef charCodeAtThunkGenerator(JSGlobalData*);
 MacroAssemblerCodeRef charAtThunkGenerator(JSGlobalData*);

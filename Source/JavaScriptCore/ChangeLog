@@ -1,3 +1,101 @@
+2012-12-26  Filip Pizlo  <fpizlo@apple.com>
+
+        All JIT stubs should go through the getCTIStub API
+        https://bugs.webkit.org/show_bug.cgi?id=105750
+
+        Reviewed by Sam Weinig.
+        
+        Previously JITThunks had two sets of thunks: one static set stored in a struct,
+        which was filled by JIT::privateCompileCTITrampolines, and another set stored in
+        a HashMap. Moreover, the code to generate the code for the CTI trampoline struct
+        had loads of copy-paste between JSVALUE32_64 and JSVALUE64, and was total
+        unmodular with respect to calls versus constructors, among other things.
+                  
+        This changeset removes this struct and rationalizes the code that generates those
+        thunks. All of thunks are now generated through the getCTIStub HashMap API. All
+        thunks for the baseline JIT now use the JSInterfaceJIT and have their codegen
+        located in ThunkGenerators.cpp. All thunks now share as much code as possible -
+        it turns out that they are almost 100% identical between 32_64 and 64, so that
+        works out great. A bunch of call vs. construct duplication was eliminated. And,
+        most of the call link versus virtual call duplication was also eliminated.
+        
+        This does not change behavior but it does make it easier to add more thunks in
+        the future.
+
+        * bytecode/CallLinkInfo.cpp:
+        (JSC::CallLinkInfo::unlink):
+        * jit/JIT.cpp:
+        (JSC::JIT::linkFor):
+        * jit/JIT.h:
+        (JIT):
+        * jit/JITCall.cpp:
+        (JSC::JIT::compileCallEvalSlowCase):
+        (JSC::JIT::compileOpCallSlowCase):
+        * jit/JITCall32_64.cpp:
+        (JSC::JIT::compileCallEvalSlowCase):
+        (JSC::JIT::compileOpCallSlowCase):
+        * jit/JITInlines.h:
+        (JSC):
+        * jit/JITOpcodes.cpp:
+        (JSC):
+        (JSC::JIT::privateCompileCTINativeCall):
+        * jit/JITOpcodes32_64.cpp:
+        (JSC):
+        * jit/JITStubs.cpp:
+        (JSC::tryCacheGetByID):
+        * jit/JITThunks.cpp:
+        (JSC::JITThunks::JITThunks):
+        (JSC::JITThunks::ctiNativeCall):
+        (JSC::JITThunks::ctiNativeConstruct):
+        (JSC):
+        (JSC::JITThunks::hostFunctionStub):
+        * jit/JITThunks.h:
+        (JSC):
+        (JITThunks):
+        * jit/JSInterfaceJIT.h:
+        (JSInterfaceJIT):
+        (JSC::JSInterfaceJIT::emitJumpIfNotJSCell):
+        (JSC):
+        (JSC::JSInterfaceJIT::emitFastArithIntToImmNoCheck):
+        (JSC::JSInterfaceJIT::emitJumpIfNotType):
+        (JSC::JSInterfaceJIT::emitGetFromCallFrameHeaderPtr):
+        (JSC::JSInterfaceJIT::emitPutToCallFrameHeader):
+        (JSC::JSInterfaceJIT::emitPutImmediateToCallFrameHeader):
+        (JSC::JSInterfaceJIT::emitPutCellToCallFrameHeader):
+        (JSC::JSInterfaceJIT::preserveReturnAddressAfterCall):
+        (JSC::JSInterfaceJIT::restoreReturnAddressBeforeReturn):
+        (JSC::JSInterfaceJIT::restoreArgumentReference):
+        * jit/ThunkGenerators.cpp:
+        (JSC::generateSlowCaseFor):
+        (JSC):
+        (JSC::linkForGenerator):
+        (JSC::linkCallGenerator):
+        (JSC::linkConstructGenerator):
+        (JSC::virtualForGenerator):
+        (JSC::virtualCallGenerator):
+        (JSC::virtualConstructGenerator):
+        (JSC::stringLengthTrampolineGenerator):
+        (JSC::nativeForGenerator):
+        (JSC::nativeCallGenerator):
+        (JSC::nativeConstructGenerator):
+        (JSC::charCodeAtThunkGenerator):
+        (JSC::charAtThunkGenerator):
+        (JSC::fromCharCodeThunkGenerator):
+        (JSC::sqrtThunkGenerator):
+        (JSC::floorThunkGenerator):
+        (JSC::ceilThunkGenerator):
+        (JSC::roundThunkGenerator):
+        (JSC::expThunkGenerator):
+        (JSC::logThunkGenerator):
+        (JSC::absThunkGenerator):
+        (JSC::powThunkGenerator):
+        * jit/ThunkGenerators.h:
+        (JSC):
+        * runtime/Executable.h:
+        (NativeExecutable):
+        (JSC::NativeExecutable::nativeFunctionFor):
+        (JSC::NativeExecutable::offsetOfNativeFunctionFor):
+
 2012-12-25  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
 
         [CMAKE] Remove header files in JavaScriptCore/CMakeLists.txt
