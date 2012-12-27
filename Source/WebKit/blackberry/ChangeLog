@@ -1,3 +1,23 @@
+2012-12-26  Jakob Petsovits  <jpetsovits@rim.com>
+
+        [BlackBerry] Set load state for popups manually, in absence of a loader.
+        https://bugs.webkit.org/show_bug.cgi?id=105708
+        RIM PR 257216
+
+        Reviewed by George Staikos.
+        Internally reviewed by Chris Guan.
+
+        The WebPage class relies on the load state for various things,
+        among others it will only emit contents size changes after
+        layouts if a load state other than None is set.
+
+        Given that popups write the web page content itself with no
+        loader that would issue such notifications, the load state
+        should probably just be set manually in this case.
+
+        * WebCoreSupport/PagePopupBlackBerry.cpp:
+        (WebCore::PagePopupBlackBerry::init):
+
 2012-12-26  Sean Wang  <Xuewen.Wang@torchmobile.com.cn>
 
         [BlackBerry] Caret doesn't update position when scrolling text in Input element

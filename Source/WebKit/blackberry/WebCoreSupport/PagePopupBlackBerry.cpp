@@ -67,10 +67,12 @@ bool PagePopupBlackBerry::sendCreatePopupWebViewRequest()
 
 bool PagePopupBlackBerry::init(WebPage* webpage)
 {
-    generateHTML(webpage);
+    webpage->d->setLoadState(WebPagePrivate::Committed);
 
+    generateHTML(webpage);
     installDOMFunction(webpage->d->mainFrame());
 
+    webpage->d->setLoadState(WebPagePrivate::Finished);
     return true;
 }
 
