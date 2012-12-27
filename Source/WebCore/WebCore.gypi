@@ -2944,6 +2944,8 @@
             'dom/UserGestureIndicator.cpp',
             'dom/UserTypingGestureIndicator.cpp',
             'dom/ViewportArguments.cpp',
+            'dom/VisitedLinkState.cpp',
+            'dom/VisitedLinkState.h',
             'dom/WebCoreMemoryInstrumentation.cpp',
             'dom/WebCoreMemoryInstrumentation.h',
             'dom/WebKitAnimationEvent.cpp',

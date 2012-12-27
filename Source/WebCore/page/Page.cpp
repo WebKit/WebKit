@@ -69,8 +69,8 @@
 #include "SharedBuffer.h"
 #include "StorageArea.h"
 #include "StorageNamespace.h"
-#include "StyleResolver.h"
 #include "TextResourceDecoder.h"
+#include "VisitedLinkState.h"
 #include "VoidCallback.h"
 #include "WebCoreMemoryInstrumentation.h"
 #include "Widget.h"
@@ -940,14 +940,12 @@ void Page::allVisitedStateChanged(PageGroup* group)
         Page* page = *it;
         if (page->m_group != group)
             continue;
-        for (Frame* frame = page->m_mainFrame.get(); frame; frame = frame->tree()->traverseNext()) {
-            if (StyleResolver* styleResolver = frame->document()->styleResolver())
-                styleResolver->allVisitedStateChanged();
-        }
+        for (Frame* frame = page->m_mainFrame.get(); frame; frame = frame->tree()->traverseNext())
+            frame->document()->visitedLinkState()->invalidateStyleForAllLinks();
     }
 }
 
-void Page::visitedStateChanged(PageGroup* group, LinkHash visitedLinkHash)
+void Page::visitedStateChanged(PageGroup* group, LinkHash linkHash)
 {
     ASSERT(group);
     if (!allPages)
@@ -958,10 +956,8 @@ void Page::visitedStateChanged(PageGroup* group, LinkHash visitedLinkHash)
         Page* page = *it;
         if (page->m_group != group)
             continue;
-        for (Frame* frame = page->m_mainFrame.get(); frame; frame = frame->tree()->traverseNext()) {
-            if (StyleResolver* styleResolver = frame->document()->styleResolver())
-                styleResolver->visitedStateChanged(visitedLinkHash);
-        }
+        for (Frame* frame = page->m_mainFrame.get(); frame; frame = frame->tree()->traverseNext())
+            frame->document()->visitedLinkState()->invalidateStyleForLink(linkHash);
     }
 }
 

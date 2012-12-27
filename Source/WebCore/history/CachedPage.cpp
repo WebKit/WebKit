@@ -33,7 +33,7 @@
 #include "FrameView.h"
 #include "Node.h"
 #include "Page.h"
-#include "StyleResolver.h"
+#include "VisitedLinkState.h"
 #include <wtf/CurrentTime.h>
 #include <wtf/RefCountedLeakCounter.h>
 #include <wtf/StdLibExtras.h>
@@ -87,10 +87,8 @@ void CachedPage::restore(Page* page)
     }
 
     if (m_needStyleRecalcForVisitedLinks) {
-        for (Frame* frame = page->mainFrame(); frame; frame = frame->tree()->traverseNext()) {
-            if (StyleResolver* styleResolver = frame->document()->styleResolver())
-                styleResolver->allVisitedStateChanged();
-        }
+        for (Frame* frame = page->mainFrame(); frame; frame = frame->tree()->traverseNext())
+            frame->document()->visitedLinkState()->invalidateStyleForAllLinks();
     }
 
     if (m_needsFullStyleRecalc)
