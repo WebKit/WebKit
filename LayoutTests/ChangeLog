@@ -1,3 +1,9 @@
+2012-12-28  Fady Samuel  <fsamuel@chromium.org>
+
+        Unreviewed rebaseline
+
+        * platform/chromium-win-xp/svg/dynamic-updates/SVGFEComponentTransferElement-svgdom-tableValues-prop-expected.png: Added.
+
 2012-12-28  Rafael Weinstein  <rafaelw@chromium.org>
 
         Heap-use-after-free in WebCore::HTMLConstructionSite::mergeAttributesFromTokenIntoElement
