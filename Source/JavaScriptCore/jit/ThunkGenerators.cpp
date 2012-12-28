@@ -30,6 +30,7 @@
 #include "Operations.h"
 #include "SpecializedThunkJIT.h"
 #include <wtf/InlineASM.h>
+#include <wtf/StringPrintStream.h>
 #include <wtf/text/StringImpl.h>
 
 #if ENABLE(JIT)
