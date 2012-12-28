@@ -1,3 +1,15 @@
+2012-12-27  Emil A Eklund  <eae@chromium.org>
+
+        REGRESSION (r138196): Regions with text-overflow: ellipsis; are being ellipsized unnecessarily
+        https://bugs.webkit.org/show_bug.cgi?id=105600
+
+        Reviewed by Darin Adler.
+        
+        Add test for text-overflow: ellipsis inside a table. 
+
+        * fast/sub-pixel/ellipsis-table-expected.html: Added.
+        * fast/sub-pixel/ellipsis-table.html: Added.
+
 2012-12-28  Fady Samuel  <fsamuel@chromium.org>
 
         Unreviewed rebaseline
