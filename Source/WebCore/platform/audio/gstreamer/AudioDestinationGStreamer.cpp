@@ -36,6 +36,11 @@ namespace WebCore {
 // needs to handle this number of frames per cycle as well.
 const unsigned framesToPull = 128;
 
+gboolean messageCallback(GstBus* bus, GstMessage* message, AudioDestinationGStreamer* destination)
+{
+    return destination->handleMessage(message);
+}
+
 PassOwnPtr<AudioDestination> AudioDestination::create(AudioIOCallback& callback, float sampleRate)
 {
     return adoptPtr(new AudioDestinationGStreamer(callback, sampleRate));
@@ -58,6 +63,9 @@ AudioDestinationGStreamer::AudioDestinationGStreamer(AudioIOCallback& callback, 
     , m_isPlaying(false)
 {
     m_pipeline = gst_pipeline_new("play");
+    GRefPtr<GstBus> bus = adoptGRef(gst_pipeline_get_bus(GST_PIPELINE(m_pipeline)));
+    gst_bus_add_signal_watch(bus.get());
+    g_signal_connect(bus.get(), "message", G_CALLBACK(messageCallback), this);
 
     GstElement* webkitAudioSrc = reinterpret_cast<GstElement*>(g_object_new(WEBKIT_TYPE_WEB_AUDIO_SRC,
                                                                             "rate", sampleRate,
@@ -79,6 +87,8 @@ AudioDestinationGStreamer::AudioDestinationGStreamer(AudioIOCallback& callback, 
 
 AudioDestinationGStreamer::~AudioDestinationGStreamer()
 {
+    GRefPtr<GstBus> bus = adoptGRef(gst_pipeline_get_bus(GST_PIPELINE(m_pipeline)));
+    g_signal_handlers_disconnect_by_func(bus.get(), reinterpret_cast<gpointer>(messageCallback), this);
     gst_element_set_state(m_pipeline, GST_STATE_NULL);
     gst_object_unref(m_pipeline);
 }
@@ -117,6 +127,28 @@ void AudioDestinationGStreamer::finishBuildingPipelineAfterWavParserPadReady(Gst
     gst_element_link_pads_full(audioConvert, "src", audioSink.get(), "sink", GST_PAD_LINK_CHECK_NOTHING);
     gst_element_sync_state_with_parent(audioConvert);
     gst_element_sync_state_with_parent(audioSink.leakRef());
+}
+
+gboolean AudioDestinationGStreamer::handleMessage(GstMessage* message)
+{
+    GOwnPtr<GError> error;
+    GOwnPtr<gchar> debug;
+
+    switch (GST_MESSAGE_TYPE(message)) {
+    case GST_MESSAGE_WARNING:
+        gst_message_parse_warning(message, &error.outPtr(), &debug.outPtr());
+        g_warning("Warning: %d, %s. Debug output: %s", error->code,  error->message, debug.get());
+        break;
+    case GST_MESSAGE_ERROR:
+        gst_message_parse_error(message, &error.outPtr(), &debug.outPtr());
+        g_warning("Error: %d, %s. Debug output: %s", error->code,  error->message, debug.get());
+        gst_element_set_state(m_pipeline, GST_STATE_NULL);
+        m_isPlaying = false;
+        break;
+    default:
+        break;
+    }
+    return TRUE;
 }
 
 void AudioDestinationGStreamer::start()

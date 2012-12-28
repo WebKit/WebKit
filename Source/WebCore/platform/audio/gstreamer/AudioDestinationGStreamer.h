@@ -24,6 +24,7 @@
 
 typedef struct _GstElement GstElement;
 typedef struct _GstPad GstPad;
+typedef struct _GstMessage GstMessage;
 
 namespace WebCore {
 
@@ -40,6 +41,7 @@ public:
     AudioIOCallback& callback() const { return m_callback; }
 
     void finishBuildingPipelineAfterWavParserPadReady(GstPad*);
+    gboolean handleMessage(GstMessage*);
 
 private:
     AudioIOCallback& m_callback;
