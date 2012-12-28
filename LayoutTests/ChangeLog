@@ -1,3 +1,9 @@
+2012-12-28  Fady Samuel  <fsamuel@chromium.org>
+      
+        Unreviewed updated TestExpectations. Mark test as fail on XP only.
+
+        * platform/chromium/TestExpectations:
+
 2012-12-28  Rafael Weinstein  <rafaelw@chromium.org>
 
         [Templates]: Fix assert in colgroup parse handling
