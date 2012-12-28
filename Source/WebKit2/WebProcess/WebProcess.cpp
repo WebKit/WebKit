@@ -176,9 +176,6 @@ WebProcess::WebProcess()
 #endif // !LOG_DISABLED
 
 
-#if ENABLE(CUSTOM_PROTOCOLS)
-    CustomProtocolManager::shared().initialize(this);
-#endif
 
     // FIXME: This should moved to where WebProcess::initialize is called,
     // so that ports have a chance to customize, and ifdefs in this file are
@@ -197,6 +194,9 @@ WebProcess::WebProcess()
 #endif
 #if ENABLE(NOTIFICATIONS) || ENABLE(LEGACY_NOTIFICATIONS)
     addSupplement<WebNotificationManager>();
+#endif
+#if ENABLE(CUSTOM_PROTOCOLS)
+    addSupplement<CustomProtocolManager>();
 #endif
 }
 
@@ -322,10 +322,6 @@ void WebProcess::initializeWebProcess(const WebProcessCreationParameters& parame
 
     for (size_t i = 0; i < parameters.plugInAutoStartOrigins.size(); ++i)
         didAddPlugInAutoStartOrigin(parameters.plugInAutoStartOrigins[i]);
-
-#if ENABLE(CUSTOM_PROTOCOLS)
-    initializeCustomProtocolManager(parameters);
-#endif
 }
 
 #if ENABLE(NETWORK_PROCESS)
@@ -1075,30 +1071,5 @@ void WebProcess::didGetPlugins(CoreIPC::Connection*, uint64_t requestID, const V
 #endif
 }
 #endif // ENABLE(PLUGIN_PROCESS)
-
-#if ENABLE(CUSTOM_PROTOCOLS)
-void WebProcess::initializeCustomProtocolManager(const WebProcessCreationParameters& parameters)
-{
-#if ENABLE(NETWORK_PROCESS)
-    ASSERT(parameters.urlSchemesRegisteredForCustomProtocols.isEmpty() || !m_usesNetworkProcess);
-    if (m_usesNetworkProcess)
-        return;
-#endif
-
-    CustomProtocolManager::shared().connectionEstablished();
-    for (size_t i = 0; i < parameters.urlSchemesRegisteredForCustomProtocols.size(); ++i)
-        CustomProtocolManager::shared().registerScheme(parameters.urlSchemesRegisteredForCustomProtocols[i]);
-}
-
-void WebProcess::registerSchemeForCustomProtocol(const WTF::String& scheme)
-{
-    CustomProtocolManager::shared().registerScheme(scheme);
-}
-
-void WebProcess::unregisterSchemeForCustomProtocol(const WTF::String& scheme)
-{
-    CustomProtocolManager::shared().unregisterScheme(scheme);
-}
-#endif // ENABLE(CUSTOM_PROTOCOLS)
 
 } // namespace WebKit

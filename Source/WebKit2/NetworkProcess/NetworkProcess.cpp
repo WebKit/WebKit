@@ -58,10 +58,8 @@ NetworkProcess::NetworkProcess()
     , m_cacheModel(CacheModelDocumentViewer)
     , m_downloadsAuthenticationManager(new AuthenticationManager(this))
     , m_cookieManager(new WebCookieManager(this))
+    , m_customProtocolManager(new CustomProtocolManager(this))
 {
-#if ENABLE(CUSTOM_PROTOCOLS)
-    CustomProtocolManager::shared().initialize(this);
-#endif
 }
 
 NetworkProcess::~NetworkProcess()
@@ -159,11 +157,7 @@ void NetworkProcess::initializeNetworkProcess(const NetworkProcessCreationParame
     if (parameters.privateBrowsingEnabled)
         RemoteNetworkingContext::ensurePrivateBrowsingSession();
 
-#if ENABLE(CUSTOM_PROTOCOLS)
-    CustomProtocolManager::shared().connectionEstablished();
-    for (size_t i = 0; i < parameters.urlSchemesRegisteredForCustomProtocols.size(); ++i)
-        CustomProtocolManager::shared().registerScheme(parameters.urlSchemesRegisteredForCustomProtocols[i]);
-#endif
+    m_customProtocolManager->initialize(parameters);
 }
 
 void NetworkProcess::createNetworkConnectionToWebProcess()
@@ -203,18 +197,6 @@ void NetworkProcess::cancelDownload(uint64_t downloadID)
 {
     downloadManager().cancelDownload(downloadID);
 }
-
-#if ENABLE(CUSTOM_PROTOCOLS)
-void NetworkProcess::registerSchemeForCustomProtocol(const String& scheme)
-{
-    CustomProtocolManager::shared().registerScheme(scheme);
-}
-
-void NetworkProcess::unregisterSchemeForCustomProtocol(const String& scheme)
-{
-    CustomProtocolManager::shared().unregisterScheme(scheme);
-}
-#endif
 
 void NetworkProcess::setCacheModel(uint32_t cm)
 {

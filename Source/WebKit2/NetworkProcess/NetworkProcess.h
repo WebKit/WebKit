@@ -42,6 +42,7 @@ namespace WebCore {
 namespace WebKit {
 
 class AuthenticationManager;
+class CustomProtocolManager;
 class NetworkConnectionToWebProcess;
 class PlatformCertificateInfo;
 class WebCookieManager;
@@ -92,10 +93,6 @@ private:
     void downloadRequest(uint64_t downloadID, const WebCore::ResourceRequest&);
     void cancelDownload(uint64_t downloadID);
     void setCacheModel(uint32_t);
-#if ENABLE(CUSTOM_PROTOCOLS)
-    void registerSchemeForCustomProtocol(const String&);
-    void unregisterSchemeForCustomProtocol(const String&);
-#endif
 
     void allowSpecificHTTPSCertificateForHost(const PlatformCertificateInfo&, const String& host);
 
@@ -116,6 +113,7 @@ private:
 
     AuthenticationManager* m_downloadsAuthenticationManager;
     WebCookieManager* m_cookieManager;
+    CustomProtocolManager* m_customProtocolManager;
 };
 
 } // namespace WebKit

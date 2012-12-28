@@ -27,6 +27,9 @@ messages -> CustomProtocolManager {
     DidLoadData(uint64_t customProtocolID, CoreIPC::DataReference data)
     DidReceiveResponse(uint64_t customProtocolID, WebCore::ResourceResponse response, uint32_t cacheStoragePolicy)
     DidFinishLoading(uint64_t customProtocolID)
+
+    RegisterScheme(WTF::String name)
+    UnregisterScheme(WTF::String name)
 }
 
 #endif // ENABLE(CUSTOM_PROTOCOLS)

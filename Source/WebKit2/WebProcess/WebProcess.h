@@ -309,12 +309,6 @@ private:
     void didGetPlugins(CoreIPC::Connection*, uint64_t requestID, const Vector<WebCore::PluginInfo>&);
 #endif
 
-#if ENABLE(CUSTOM_PROTOCOLS)
-    void initializeCustomProtocolManager(const WebProcessCreationParameters&);
-    void registerSchemeForCustomProtocol(const WTF::String&);
-    void unregisterSchemeForCustomProtocol(const WTF::String&);
-#endif
-
     RefPtr<CoreIPC::Connection> m_connection;
     RefPtr<WebConnectionToUIProcess> m_webConnection;
 

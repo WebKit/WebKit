@@ -39,11 +39,6 @@ messages -> NetworkProcess {
     SetApplicationIsOccluded(bool flag)
 #endif
 
-#if ENABLE(CUSTOM_PROTOCOLS)
-    RegisterSchemeForCustomProtocol(WTF::String name)
-    UnregisterSchemeForCustomProtocol(WTF::String name)
-#endif
-
     AllowSpecificHTTPSCertificateForHost(WebKit::PlatformCertificateInfo certificate, WTF::String host)
 }
 

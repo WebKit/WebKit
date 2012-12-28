@@ -77,6 +77,10 @@
 #include "NetworkProcessProxy.h"
 #endif
 
+#if ENABLE(CUSTOM_PROTOCOLS)
+#include "CustomProtocolManagerMessages.h"
+#endif
+
 #if USE(SOUP)
 #include "WebSoupRequestManagerProxy.h"
 #endif
@@ -1175,26 +1179,14 @@ void WebContext::setPlugInAutoStartOriginHashes(ImmutableDictionary& dictionary)
 }
 
 #if ENABLE(CUSTOM_PROTOCOLS)
-void WebContext::registerSchemeForCustomProtocol(const WTF::String& scheme)
+void WebContext::registerSchemeForCustomProtocol(const String& scheme)
 {
-#if ENABLE(NETWORK_PROCESS)
-    if (m_usesNetworkProcess && m_networkProcess) {
-        m_networkProcess->send(Messages::NetworkProcess::RegisterSchemeForCustomProtocol(scheme), 0);
-        return;
-    }
-#endif
-    sendToAllProcesses(Messages::WebProcess::RegisterSchemeForCustomProtocol(scheme));
+    sendToNetworkingProcess(Messages::CustomProtocolManager::RegisterScheme(scheme));
 }
 
-void WebContext::unregisterSchemeForCustomProtocol(const WTF::String& scheme)
+void WebContext::unregisterSchemeForCustomProtocol(const String& scheme)
 {
-#if ENABLE(NETWORK_PROCESS)
-    if (m_usesNetworkProcess && m_networkProcess) {
-        m_networkProcess->send(Messages::NetworkProcess::UnregisterSchemeForCustomProtocol(scheme), 0);
-        return;
-    }
-#endif
-    sendToAllProcesses(Messages::WebProcess::UnregisterSchemeForCustomProtocol(scheme));
+    sendToNetworkingProcess(Messages::CustomProtocolManager::UnregisterScheme(scheme));
 }
 #endif
 
