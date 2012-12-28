@@ -102,6 +102,11 @@ WebInspector.JSHeapSnapshot.prototype = {
         this._markPageOwnedNodes();
     },
 
+    canHaveDistanceOne: function(node)
+    {
+        return node.isWindow();
+    },
+
     userObjectsMapAndFlag: function()
     {
         return {
@@ -265,11 +270,6 @@ WebInspector.JSHeapSnapshotNode.prototype = {
     {
         var flags = this._snapshot._flagsOfNode(this);
         return !!(flags & this._snapshot._nodeFlags.pageObject);
-    },
-
-    distanceToWindow: function()
-    {
-        return this._snapshot._distancesToWindow[this.nodeIndex / this._snapshot._nodeFieldCount];
     },
 
     className: function()

@@ -7,7 +7,7 @@ function test()
     InspectorTest.measureFunction(WebInspector.HeapSnapshot.prototype, "_calculateFlags");
     InspectorTest.measureFunction(WebInspector.HeapSnapshot.prototype, "_buildAggregates");
     InspectorTest.measureFunction(WebInspector.HeapSnapshot.prototype, "_calculateClassesRetainedSize");
-    InspectorTest.measureFunction(WebInspector.HeapSnapshot.prototype, "_calculateObjectToWindowDistance");
+    InspectorTest.measureFunction(WebInspector.HeapSnapshot.prototype, "_calculateDistances");
     InspectorTest.measureFunction(WebInspector.HeapSnapshot.prototype, "_calculateRetainedSizes");
     InspectorTest.measureFunction(WebInspector.HeapSnapshot.prototype, "_markDetachedDOMTreeNodes");
     InspectorTest.measureFunction(WebInspector.HeapSnapshot.prototype, "_markQueriableHeapObjects");

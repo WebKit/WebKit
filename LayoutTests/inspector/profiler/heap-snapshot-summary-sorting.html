@@ -49,7 +49,7 @@ function test()
                 columns[currentColumn] = newColumnState;
                 var contents = InspectorTest.columnContents(columns[currentColumn]);
                 InspectorTest.assertEquals(true, !!contents.length, "column contents");
-                var sortTypes = { object: "text", distanceToWindow: "number", count: "number", shallowSize: "size", retainedSize: "size" };
+                var sortTypes = { object: "text", distance: "number", count: "number", shallowSize: "size", retainedSize: "size" };
                 InspectorTest.assertEquals(true, !!sortTypes[columns[currentColumn].identifier], "sort by identifier");
                 InspectorTest.checkArrayIsSorted(contents, sortTypes[columns[currentColumn].identifier], columns[currentColumn].sort);
 

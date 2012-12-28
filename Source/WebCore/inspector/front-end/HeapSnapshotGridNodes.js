@@ -351,7 +351,7 @@ WebInspector.HeapSnapshotGenericObjectNode = function(tree, node)
         return;
     this._name = node.name;
     this._type = node.type;
-    this._distanceToWindow = node.distanceToWindow;
+    this._distance = node.distance;
     this._shallowSize = node.selfSize;
     this._retainedSize = node.retainedSize;
     this.snapshotNodeId = node.id;
@@ -444,7 +444,7 @@ WebInspector.HeapSnapshotGenericObjectNode.prototype = {
             valueStyle += " detached-dom-tree-node";
         data["object"] = { valueStyle: valueStyle, value: value, nodeId: this.snapshotNodeId };
 
-        data["distanceToWindow"] =  this._distanceToWindow;
+        data["distance"] =  this._distance;
         data["shallowSize"] = Number.withThousandsSeparator(this._shallowSize);
         data["retainedSize"] = Number.withThousandsSeparator(this._retainedSize);
         data["shallowSize-percent"] = this._toPercentString(this._shallowSizePercent);
@@ -521,7 +521,7 @@ WebInspector.HeapSnapshotObjectNode = function(tree, isFromBaseSnapshot, edge, p
     WebInspector.HeapSnapshotGenericObjectNode.call(this, tree, edge.node);
     this._referenceName = edge.name;
     this._referenceType = edge.type;
-    this._distanceToWindow = edge.distanceToWindow;
+    this._distance = edge.distance;
     this.showRetainingEdges = tree.showRetainingEdges;
     this._isFromBaseSnapshot = isFromBaseSnapshot;
 
@@ -588,7 +588,7 @@ WebInspector.HeapSnapshotObjectNode.prototype = {
             count: ["!edgeName", true, "retainedSize", false],
             shallowSize: ["selfSize", sortAscending, "!edgeName", true],
             retainedSize: ["retainedSize", sortAscending, "!edgeName", true],
-            distanceToWindow: ["distanceToWindow", sortAscending, "_name", true]
+            distance: ["distance", sortAscending, "_name", true]
         }[sortColumnIdentifier] || ["!edgeName", true, "retainedSize", false];
         return WebInspector.HeapSnapshotFilteredOrderedIterator.prototype.createComparator(sortFields);
     },
@@ -617,7 +617,7 @@ WebInspector.HeapSnapshotObjectNode.prototype = {
         }
         data["object"].nameClass = nameClass;
         data["object"].name = name;
-        data["distanceToWindow"] = this._distanceToWindow;
+        data["distance"] = this._distance;
         return data;
     },
 
@@ -685,7 +685,7 @@ WebInspector.HeapSnapshotInstanceNode.prototype = {
         var sortColumnIdentifier = this._dataGrid.sortColumnIdentifier;
         var sortFields = {
             object: ["!edgeName", sortAscending, "retainedSize", false],
-            distanceToWindow: ["distanceToWindow", sortAscending, "retainedSize", false],
+            distance: ["distance", sortAscending, "retainedSize", false],
             count: ["!edgeName", true, "retainedSize", false],
             addedSize: ["selfSize", sortAscending, "!edgeName", true],
             removedSize: ["selfSize", sortAscending, "!edgeName", true],
@@ -733,7 +733,7 @@ WebInspector.HeapSnapshotConstructorNode = function(tree, className, aggregate, 
     WebInspector.HeapSnapshotGridNode.call(this, tree, aggregate.count > 0);
     this._name = className;
     this._aggregatesKey = aggregatesKey;
-    this._distanceToWindow = aggregate.distanceToWindow;
+    this._distance = aggregate.distance;
     this._count = aggregate.count;
     this._shallowSize = aggregate.self;
     this._retainedSize = aggregate.maxRet;
@@ -804,7 +804,7 @@ WebInspector.HeapSnapshotConstructorNode.prototype = {
         var sortColumnIdentifier = this._dataGrid.sortColumnIdentifier;
         var sortFields = {
             object: ["id", sortAscending, "retainedSize", false],
-            distanceToWindow: ["distanceToWindow", true, "retainedSize", false],
+            distance: ["distance", true, "retainedSize", false],
             count: ["id", true, "retainedSize", false],
             shallowSize: ["selfSize", sortAscending, "id", true],
             retainedSize: ["retainedSize", sortAscending, "id", true]
@@ -826,7 +826,7 @@ WebInspector.HeapSnapshotConstructorNode.prototype = {
     {
         var data = { object: this._name };
         data["count"] =  Number.withThousandsSeparator(this._count);
-        data["distanceToWindow"] =  this._distanceToWindow;
+        data["distance"] =  this._distance;
         data["shallowSize"] = Number.withThousandsSeparator(this._shallowSize);
         data["retainedSize"] = Number.withThousandsSeparator(this._retainedSize);
         data["count-percent"] =  this._toPercentString(this._countPercent);
