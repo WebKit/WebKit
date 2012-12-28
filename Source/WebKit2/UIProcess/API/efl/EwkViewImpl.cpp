@@ -1050,8 +1050,7 @@ PassRefPtr<cairo_surface_t> EwkViewImpl::takeSnapshot()
 #if USE(ACCELERATED_COMPOSITING)
     }
 
-    OwnArrayPtr<unsigned char> buffer = getImageDataFromFrameBuffer(0, 0, sd->view.w, sd->view.h);
-    RefPtr<cairo_surface_t> snapshot = adoptRef(cairo_image_surface_create_for_data(buffer.get(), CAIRO_FORMAT_ARGB32, sd->view.w, sd->view.h, sd->view.w * 4));
+    RefPtr<cairo_surface_t> snapshot = getImageSurfaceFromFrameBuffer(0, 0, sd->view.w, sd->view.h);
     // Resume all animations.
     m_pageProxy->resumeActiveDOMObjectsAndAnimations();
 
