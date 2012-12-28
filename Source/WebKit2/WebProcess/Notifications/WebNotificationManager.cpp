@@ -28,13 +28,13 @@
 
 #include "WebPage.h"
 #include "WebProcess.h"
+#include "WebProcessCreationParameters.h"
 
 #if ENABLE(NOTIFICATIONS) || ENABLE(LEGACY_NOTIFICATIONS)
 #include "WebNotification.h"
 #include "WebNotificationManagerMessages.h"
 #include "WebNotificationManagerProxyMessages.h"
 #include "WebPageProxyMessages.h"
-#include "WebProcessCreationParameters.h"
 #include <WebCore/Document.h>
 #include <WebCore/Notification.h>
 #include <WebCore/Page.h>
