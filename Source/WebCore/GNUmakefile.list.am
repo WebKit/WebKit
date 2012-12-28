@@ -5285,6 +5285,12 @@ webcore_platform_sources += \
 	Source/WebCore/platform/audio/VectorMath.h \
 	Source/WebCore/platform/audio/ZeroPole.cpp \
 	Source/WebCore/platform/audio/ZeroPole.h \
+	Source/WebCore/platform/audio/gstreamer/AudioDestinationGStreamer.cpp \
+	Source/WebCore/platform/audio/gstreamer/AudioDestinationGStreamer.h \
+	Source/WebCore/platform/audio/gstreamer/AudioFileReaderGStreamer.cpp \
+	Source/WebCore/platform/audio/gstreamer/FFTFrameGStreamer.cpp \
+	Source/WebCore/platform/audio/gstreamer/WebKitWebAudioSourceGStreamer.cpp \
+	Source/WebCore/platform/audio/gstreamer/WebKitWebAudioSourceGStreamer.h \
 	Source/WebCore/platform/Arena.cpp \
 	Source/WebCore/platform/Arena.h \
 	Source/WebCore/platform/AsyncFileSystem.cpp \
@@ -5540,6 +5546,8 @@ webcore_platform_sources += \
 	Source/WebCore/platform/graphics/GraphicsTypes.cpp \
 	Source/WebCore/platform/graphics/GraphicsTypes.h \
 	Source/WebCore/platform/graphics/GraphicsTypes3D.h \
+	Source/WebCore/platform/graphics/gstreamer/WebKitWebSourceGStreamer.cpp \
+	Source/WebCore/platform/graphics/gstreamer/WebKitWebSourceGStreamer.h \
 	Source/WebCore/platform/graphics/Icon.h \
 	Source/WebCore/platform/graphics/ImageBuffer.cpp \
 	Source/WebCore/platform/graphics/ImageBuffer.h \
@@ -6005,12 +6013,6 @@ webcoregtk_sources += \
 	Source/WebCore/editing/gtk/FrameSelectionGtk.cpp \
 	Source/WebCore/page/gtk/DragControllerGtk.cpp \
 	Source/WebCore/page/gtk/EventHandlerGtk.cpp \
-	Source/WebCore/platform/audio/gstreamer/AudioDestinationGStreamer.cpp \
-	Source/WebCore/platform/audio/gstreamer/AudioDestinationGStreamer.h \
-	Source/WebCore/platform/audio/gstreamer/AudioFileReaderGStreamer.cpp \
-	Source/WebCore/platform/audio/gstreamer/FFTFrameGStreamer.cpp \
-	Source/WebCore/platform/audio/gstreamer/WebKitWebAudioSourceGStreamer.cpp \
-	Source/WebCore/platform/audio/gstreamer/WebKitWebAudioSourceGStreamer.h \
 	Source/WebCore/platform/audio/gtk/AudioBusGtk.cpp \
 	Source/WebCore/platform/cairo/WidgetBackingStore.h \
 	Source/WebCore/platform/geoclue/GeolocationProviderGeoclue.h \
@@ -6030,8 +6032,6 @@ webcoregtk_sources += \
 	Source/WebCore/platform/graphics/gstreamer/PlatformVideoWindow.h \
 	Source/WebCore/platform/graphics/gstreamer/VideoSinkGStreamer.cpp \
 	Source/WebCore/platform/graphics/gstreamer/VideoSinkGStreamer.h \
-	Source/WebCore/platform/graphics/gstreamer/WebKitWebSourceGStreamer.cpp \
-	Source/WebCore/platform/graphics/gstreamer/WebKitWebSourceGStreamer.h \
 	Source/WebCore/platform/graphics/gtk/ColorGtk.cpp \
 	Source/WebCore/platform/graphics/gtk/GdkCairoUtilities.cpp \
 	Source/WebCore/platform/graphics/gtk/GdkCairoUtilities.h \
