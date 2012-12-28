@@ -290,7 +290,7 @@ static MacroAssemblerCodeRef nativeForGenerator(JSGlobalData* globalData, CodeSp
     jit.loadPtr(JSInterfaceJIT::Address(ARMRegisters::r1, JSFunction::offsetOfExecutable()), JSInterfaceJIT::regT2);
     jit.call(JSInterfaceJIT::Address(JSInterfaceJIT::regT2, executableOffsetToFunction));
 
-    jit.restoreReturnAddressBeforeReturn(regT3);
+    jit.restoreReturnAddressBeforeReturn(JSInterfaceJIT::regT3);
 
 #elif CPU(SH4)
     // Load caller frame's scope chain into this callframe so that whatever we call can
@@ -308,7 +308,7 @@ static MacroAssemblerCodeRef nativeForGenerator(JSGlobalData* globalData, CodeSp
 
     jit.emitGetFromCallFrameHeaderPtr(JSStack::Callee, JSInterfaceJIT::regT5);
     jit.move(JSInterfaceJIT::regT2, JSInterfaceJIT::callFrameRegister); // Eagerly restore caller frame register to avoid loading from stack.
-    jit.loadPtr(JSInterfaceJIT::Address(regT5, JSFunction::offsetOfExecutable()), JSInterfaceJIT::regT2);
+    jit.loadPtr(JSInterfaceJIT::Address(JSInterfaceJIT::regT5, JSFunction::offsetOfExecutable()), JSInterfaceJIT::regT2);
 
     jit.call(JSInterfaceJIT::Address(JSInterfaceJIT::regT2, executableOffsetToFunction), JSInterfaceJIT::regT0);
     jit.restoreReturnAddressBeforeReturn(JSInterfaceJIT::regT3);

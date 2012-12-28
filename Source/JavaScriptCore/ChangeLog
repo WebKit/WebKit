@@ -1,3 +1,10 @@
+2012-12-27  Csaba Osztrogonác  <ossy@webkit.org>
+
+        Unreviwed holiday ARM and SH4 buildfixes after r138516.
+
+        * jit/ThunkGenerators.cpp:
+        (JSC::nativeForGenerator):
+
 2012-12-26  Filip Pizlo  <fpizlo@apple.com>
 
         All JIT stubs should go through the getCTIStub API
