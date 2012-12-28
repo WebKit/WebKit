@@ -141,7 +141,7 @@ void WebProcess::platformInitializeWebProcess(const WebProcessCreationParameters
     ResourceHandle::setDefaultStorageSession(defaultStorageSession.get());
 #endif
 
-    cookieManager().setHTTPCookieAcceptPolicy(parameters.initialHTTPCookieAcceptPolicy);
+    supplement<WebCookieManager>()->setHTTPCookieAcceptPolicy(parameters.initialHTTPCookieAcceptPolicy);
 
     // By using the default storage session that came from the ui process, the web process
     // automatically uses the same the URL Cache as ui process.

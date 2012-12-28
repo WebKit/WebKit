@@ -75,21 +75,14 @@ namespace WebCore {
 
 namespace WebKit {
 
-class AuthenticationManager;
 class DownloadManager;
 class InjectedBundle;
-class WebApplicationCacheManager;
 class WebConnectionToUIProcess;
-class WebCookieManager;
 class WebFrame;
-class WebGeolocationManager;
 class WebIconDatabaseProxy;
-class WebKeyValueStorageManager;
-class WebMediaCacheManager;
 class WebPage;
 class WebPageGroupProxy;
 class WebProcessSupplement;
-class WebResourceCacheManager;
 struct WebPageCreationParameters;
 struct WebPageGroupData;
 struct WebPreferencesStore;
@@ -101,14 +94,6 @@ class NetworkProcessConnection;
 
 #if USE(SECURITY_FRAMEWORK)
 class SecItemResponseData;
-#endif
-
-#if ENABLE(SQL_DATABASE)
-class WebDatabaseManager;
-#endif
-
-#if ENABLE(NOTIFICATIONS) || ENABLE(LEGACY_NOTIFICATIONS)
-class WebNotificationManager;
 #endif
 
 #if ENABLE(NETWORK_PROCESS)
@@ -188,29 +173,20 @@ public:
     bool shouldForceScreenFontSubstitution() const { return m_shouldForceScreenFontSubstitution; }
 #endif
     
+    const TextCheckerState& textCheckerState() const { return m_textCheckerState; }
+    DownloadManager& downloadManager();
+
 #if PLATFORM(QT)
     QNetworkAccessManager* networkAccessManager() { return m_networkAccessManager; }
 #endif
-
-    const TextCheckerState& textCheckerState() const { return m_textCheckerState; }
-
-    WebGeolocationManager& geolocationManager();
-    WebApplicationCacheManager& applicationCacheManager();
-    WebResourceCacheManager& resourceCacheManager();
-    WebCookieManager& cookieManager();
-    DownloadManager& downloadManager();
-    AuthenticationManager& authenticationManager();
-
 #if ENABLE(BATTERY_STATUS)
     WebBatteryManager& batteryManager() { return m_batteryManager; }
 #endif
-
 #if ENABLE(NETWORK_INFO)
     WebNetworkInfoManager& networkInfoManager() { return m_networkInfoManager; }
 #endif
-    
-#if ENABLE(NOTIFICATIONS) || ENABLE(LEGACY_NOTIFICATIONS)
-    WebNotificationManager& notificationManager();
+#if USE(SOUP)
+    WebSoupRequestManager& soupRequestManager() { return m_soupRequestManager; }
 #endif
 
     void clearResourceCaches(ResourceCachesToClear = AllResourceCaches);
@@ -220,10 +196,6 @@ public:
 #endif
 
     EventDispatcher& eventDispatcher() { return m_eventDispatcher; }
-
-#if USE(SOUP)
-    WebSoupRequestManager& soupRequestManager() { return m_soupRequestManager; }
-#endif
 
 #if ENABLE(NETWORK_PROCESS)
     NetworkProcessConnection* networkConnection();
@@ -390,21 +362,12 @@ private:
     WebProcessSupplementMap m_supplements;
 
     TextCheckerState m_textCheckerState;
-    WebGeolocationManager* m_geolocationManager;
-    WebApplicationCacheManager* m_applicationCacheManager;
-    WebResourceCacheManager* m_resourceCacheManager;
-    WebCookieManager* m_cookieManager;
-    WebMediaCacheManager* m_mediaCacheManager;
-    AuthenticationManager* m_authenticationManager;
 
 #if ENABLE(BATTERY_STATUS)
     WebBatteryManager m_batteryManager;
 #endif
 #if ENABLE(NETWORK_INFO)
     WebNetworkInfoManager m_networkInfoManager;
-#endif
-#if ENABLE(NOTIFICATIONS) || ENABLE(LEGACY_NOTIFICATIONS)
-    WebNotificationManager* m_notificationManager;
 #endif
     WebIconDatabaseProxy* m_iconDatabaseProxy;
 

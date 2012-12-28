@@ -48,10 +48,6 @@
 #import <objc/runtime.h>
 #import <stdio.h>
 
-#if ENABLE(NOTIFICATIONS) || ENABLE(LEGACY_NOTIFICATIONS)
-#include "WebNotificationManager.h"
-#endif
-
 #if ENABLE(WEB_PROCESS_SANDBOX)
 #import <pwd.h>
 #import <stdlib.h>
@@ -292,10 +288,6 @@ void WebProcess::platformInitializeWebProcess(const WebProcessCreationParameters
     Font::setDefaultTypesettingFeatures(parameters.shouldEnableKerningAndLigaturesByDefault ? Kerning | Ligatures : 0);
 
     m_compositingRenderServerPort = parameters.acceleratedCompositingPort.port();
-
-#if ENABLE(NOTIFICATIONS) || ENABLE(LEGACY_NOTIFICATIONS)
-    m_notificationManager->initialize(parameters.notificationPermissions);
-#endif
 
     m_presenterApplicationPid = parameters.presenterApplicationPid;
 

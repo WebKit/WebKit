@@ -35,6 +35,12 @@ using namespace WebCore;
 
 namespace WebKit {
 
+const AtomicString& WebMediaCacheManager::supplementName()
+{
+    DEFINE_STATIC_LOCAL(AtomicString, name, ("WebMediaCacheManager", AtomicString::ConstructFromLiteral));
+    return name;
+}
+
 WebMediaCacheManager::WebMediaCacheManager(WebProcess* process)
     : m_process(process)
 {

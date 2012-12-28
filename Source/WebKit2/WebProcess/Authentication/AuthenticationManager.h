@@ -26,7 +26,8 @@
 #ifndef AuthenticationManager_h
 #define AuthenticationManager_h
 
-#include "MessageReceiver.h"
+#include "WebProcessSupplement.h"
+#include <wtf/Forward.h>
 #include <wtf/HashMap.h>
 
 namespace WebCore {
@@ -41,10 +42,12 @@ class Download;
 class PlatformCertificateInfo;
 class WebFrame;
 
-class AuthenticationManager : private CoreIPC::MessageReceiver {
+class AuthenticationManager : public WebProcessSupplement {
     WTF_MAKE_NONCOPYABLE(AuthenticationManager);
 public:
     explicit AuthenticationManager(ChildProcess*);
+
+    static const AtomicString& supplementName();
 
     void didReceiveAuthenticationChallenge(WebFrame*, const WebCore::AuthenticationChallenge&);
     void didReceiveAuthenticationChallenge(Download*, const WebCore::AuthenticationChallenge&);

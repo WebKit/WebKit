@@ -27,7 +27,7 @@
 #define WebCookieManager_h
 
 #include "HTTPCookieAcceptPolicy.h"
-#include "MessageReceiver.h"
+#include "WebProcessSupplement.h"
 #include <stdint.h>
 #include <wtf/Forward.h>
 #include <wtf/Noncopyable.h>
@@ -40,10 +40,12 @@ namespace WebKit {
 
 class ChildProcess;
 
-class WebCookieManager  : private CoreIPC::MessageReceiver {
+class WebCookieManager : public WebProcessSupplement {
     WTF_MAKE_NONCOPYABLE(WebCookieManager);
 public:
     WebCookieManager(ChildProcess*);
+
+    static const AtomicString& supplementName();
 
     void setHTTPCookieAcceptPolicy(HTTPCookieAcceptPolicy);
 #if USE(SOUP)

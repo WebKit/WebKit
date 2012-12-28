@@ -40,6 +40,12 @@ using namespace WebCore;
 
 namespace WebKit {
 
+const AtomicString& WebGeolocationManager::supplementName()
+{
+    DEFINE_STATIC_LOCAL(AtomicString, name, ("WebGeolocationManager", AtomicString::ConstructFromLiteral));
+    return name;
+}
+
 WebGeolocationManager::WebGeolocationManager(WebProcess* process)
     : m_process(process)
 {

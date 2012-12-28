@@ -147,20 +147,11 @@ WebProcess::WebProcess()
     , m_networkAccessManager(0)
 #endif
     , m_textCheckerState()
-    , m_geolocationManager(new WebGeolocationManager(this))
-    , m_applicationCacheManager(new WebApplicationCacheManager(this))
-    , m_resourceCacheManager(new WebResourceCacheManager(this))
-    , m_cookieManager(new WebCookieManager(this))
-    , m_mediaCacheManager(new WebMediaCacheManager(this))
-    , m_authenticationManager(new AuthenticationManager(this))
 #if ENABLE(BATTERY_STATUS)
     , m_batteryManager(this)
 #endif
 #if ENABLE(NETWORK_INFO)
     , m_networkInfoManager(this)
-#endif
-#if ENABLE(NOTIFICATIONS) || ENABLE(LEGACY_NOTIFICATIONS)
-    , m_notificationManager(new WebNotificationManager(this))
 #endif
     , m_iconDatabaseProxy(new WebIconDatabaseProxy(this))
 #if ENABLE(NETWORK_PROCESS)
@@ -193,8 +184,19 @@ WebProcess::WebProcess()
     // so that ports have a chance to customize, and ifdefs in this file are
     // limited.
     addSupplement<WebKeyValueStorageManager>();
+
+    addSupplement<WebGeolocationManager>();
+    addSupplement<WebApplicationCacheManager>();
+    addSupplement<WebResourceCacheManager>();
+    addSupplement<WebCookieManager>();
+    addSupplement<WebMediaCacheManager>();
+    addSupplement<AuthenticationManager>();
+    
 #if ENABLE(SQL_DATABASE)
     addSupplement<WebDatabaseManager>();
+#endif
+#if ENABLE(NOTIFICATIONS) || ENABLE(LEGACY_NOTIFICATIONS)
+    addSupplement<WebNotificationManager>();
 #endif
 }
 
@@ -231,7 +233,7 @@ CoreIPC::Connection* WebProcess::downloadProxyConnection()
 
 AuthenticationManager& WebProcess::downloadsAuthenticationManager()
 {
-    return *m_authenticationManager;
+    return *supplement<AuthenticationManager>();
 }
 
 void WebProcess::initializeWebProcess(const WebProcessCreationParameters& parameters, CoreIPC::MessageDecoder& decoder)
@@ -433,26 +435,6 @@ void WebProcess::destroyPrivateBrowsingSession()
 #endif
 }
 
-WebGeolocationManager& WebProcess::geolocationManager()
-{
-    return *m_geolocationManager;
-}
-
-WebApplicationCacheManager& WebProcess::applicationCacheManager()
-{
-    return *m_applicationCacheManager;
-}
-
-WebResourceCacheManager& WebProcess::resourceCacheManager()
-{
-    return *m_resourceCacheManager;
-}
-
-WebCookieManager& WebProcess::cookieManager()
-{
-    return *m_cookieManager;
-}
-
 DownloadManager& WebProcess::downloadManager()
 {
 #if ENABLE(NETWORK_PROCESS)
@@ -462,18 +444,6 @@ DownloadManager& WebProcess::downloadManager()
     DEFINE_STATIC_LOCAL(DownloadManager, downloadManager, (this));
     return downloadManager;
 }
-
-AuthenticationManager& WebProcess::authenticationManager()
-{
-    return *m_authenticationManager;
-}
-
-#if ENABLE(NOTIFICATIONS) || ENABLE(LEGACY_NOTIFICATIONS)
-WebNotificationManager& WebProcess::notificationManager()
-{
-    return *m_notificationManager;
-}
-#endif
 
 #if ENABLE(PLUGIN_PROCESS)
 PluginProcessConnectionManager& WebProcess::pluginProcessConnectionManager()

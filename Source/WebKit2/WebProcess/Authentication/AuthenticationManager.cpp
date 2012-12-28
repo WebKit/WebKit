@@ -47,6 +47,12 @@ static uint64_t generateAuthenticationChallengeID()
     return uniqueAuthenticationChallengeID++;
 }
 
+const AtomicString& AuthenticationManager::supplementName()
+{
+    DEFINE_STATIC_LOCAL(AtomicString, name, ("AuthenticationManager", AtomicString::ConstructFromLiteral));
+    return name;
+}
+
 AuthenticationManager::AuthenticationManager(ChildProcess* process)
     : m_process(process)
 {

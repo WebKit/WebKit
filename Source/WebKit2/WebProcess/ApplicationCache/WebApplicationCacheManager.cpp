@@ -40,6 +40,12 @@ using namespace WebCore;
 
 namespace WebKit {
 
+const AtomicString& WebApplicationCacheManager::supplementName()
+{
+    DEFINE_STATIC_LOCAL(AtomicString, name, ("WebApplicationCacheManager", AtomicString::ConstructFromLiteral));
+    return name;
+}
+
 WebApplicationCacheManager::WebApplicationCacheManager(ChildProcess* childProcess)
     : m_childProcess(childProcess)
 {

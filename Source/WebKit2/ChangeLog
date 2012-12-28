@@ -1,3 +1,74 @@
+2012-12-27  Sam Weinig  <sam@webkit.org>
+
+        Convert a few other WebProcess managers to be WebProcessSupplements
+        https://bugs.webkit.org/show_bug.cgi?id=105812
+
+        Reviewed by Dan Bernstein.
+
+        * WebProcess/ApplicationCache/WebApplicationCacheManager.cpp:
+        (WebKit::WebApplicationCacheManager::supplementName):
+        * WebProcess/ApplicationCache/WebApplicationCacheManager.h:
+        (WebApplicationCacheManager):
+        * WebProcess/Authentication/AuthenticationManager.cpp:
+        (WebKit::AuthenticationManager::supplementName):
+        * WebProcess/Authentication/AuthenticationManager.h:
+        (AuthenticationManager):
+        * WebProcess/Cookies/WebCookieManager.cpp:
+        (WebKit::WebCookieManager::supplementName):
+        * WebProcess/Cookies/WebCookieManager.h:
+        (WebCookieManager):
+        * WebProcess/Geolocation/WebGeolocationManager.cpp:
+        (WebKit::WebGeolocationManager::supplementName):
+        * WebProcess/Geolocation/WebGeolocationManager.h:
+        (WebGeolocationManager):
+        * WebProcess/InjectedBundle/InjectedBundle.cpp:
+        (WebKit::InjectedBundle::setAlwaysAcceptCookies):
+        (WebKit::InjectedBundle::clearApplicationCache):
+        (WebKit::InjectedBundle::setAppCacheMaximumSize):
+        (WebKit::InjectedBundle::webNotificationID):
+        * WebProcess/MediaCache/WebMediaCacheManager.cpp:
+        (WebKit::WebMediaCacheManager::supplementName):
+        * WebProcess/MediaCache/WebMediaCacheManager.h:
+        (WebMediaCacheManager):
+        * WebProcess/Notifications/NotificationPermissionRequestManager.cpp:
+        (WebKit::NotificationPermissionRequestManager::permissionLevel):
+        (WebKit::NotificationPermissionRequestManager::setPermissionLevelForTesting):
+        (WebKit::NotificationPermissionRequestManager::removeAllPermissionsForTesting):
+        (WebKit::NotificationPermissionRequestManager::didReceiveNotificationPermissionDecision):
+        * WebProcess/Notifications/WebNotificationManager.cpp:
+        (WebKit::WebNotificationManager::supplementName):
+        (WebKit::WebNotificationManager::initialize):
+        * WebProcess/Notifications/WebNotificationManager.h:
+        (WebNotificationManager):
+        * WebProcess/ResourceCache/WebResourceCacheManager.cpp:
+        (WebKit::WebResourceCacheManager::supplementName):
+        * WebProcess/ResourceCache/WebResourceCacheManager.h:
+        (WebResourceCacheManager):
+        * WebProcess/WebCoreSupport/WebFrameLoaderClient.cpp:
+        (WebKit::WebFrameLoaderClient::dispatchDidReceiveAuthenticationChallenge):
+        * WebProcess/WebCoreSupport/WebGeolocationClient.cpp:
+        (WebKit::WebGeolocationClient::geolocationDestroyed):
+        (WebKit::WebGeolocationClient::startUpdating):
+        (WebKit::WebGeolocationClient::stopUpdating):
+        * WebProcess/WebCoreSupport/WebNotificationClient.cpp:
+        (WebKit::WebNotificationClient::show):
+        (WebKit::WebNotificationClient::cancel):
+        (WebKit::WebNotificationClient::clearNotifications):
+        (WebKit::WebNotificationClient::notificationObjectDestroyed):
+        * WebProcess/WebProcess.cpp:
+        (WebKit::WebProcess::WebProcess):
+        (WebKit::WebProcess::downloadsAuthenticationManager):
+        * WebProcess/WebProcess.h:
+        (WebKit::WebProcess::textCheckerState):
+        (WebKit::WebProcess::networkAccessManager):
+        (WebKit::WebProcess::soupRequestManager):
+        * WebProcess/mac/WebProcessMac.mm:
+        (WebKit::WebProcess::platformInitializeWebProcess):
+        * WebProcess/soup/WebProcessSoup.cpp:
+        (WebKit::WebProcess::platformInitializeWebProcess):
+        * WebProcess/win/WebProcessWin.cpp:
+        (WebKit::WebProcess::platformInitializeWebProcess):
+
 2012-12-27  Viatcheslav Ostapenko  <sl.ostapenko@samsung.com>
 
         [EFL][WK2] Regression(138462) Sometimes garbage in snapshots

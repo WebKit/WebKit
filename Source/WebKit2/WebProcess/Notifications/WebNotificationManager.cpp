@@ -34,6 +34,7 @@
 #include "WebNotificationManagerMessages.h"
 #include "WebNotificationManagerProxyMessages.h"
 #include "WebPageProxyMessages.h"
+#include "WebProcessCreationParameters.h"
 #include <WebCore/Document.h>
 #include <WebCore/Notification.h>
 #include <WebCore/Page.h>
@@ -55,6 +56,12 @@ static uint64_t generateNotificationID()
 }
 #endif
 
+const AtomicString& WebNotificationManager::supplementName()
+{
+    DEFINE_STATIC_LOCAL(AtomicString, name, ("WebNotificationManager", AtomicString::ConstructFromLiteral));
+    return name;
+}
+
 WebNotificationManager::WebNotificationManager(WebProcess* process)
     : m_process(process)
 {
@@ -72,12 +79,12 @@ void WebNotificationManager::didReceiveMessage(CoreIPC::Connection* connection, 
     didReceiveWebNotificationManagerMessage(connection, messageID, decoder);
 }
 
-void WebNotificationManager::initialize(const HashMap<String, bool>& permissions)
+void WebNotificationManager::initialize(const WebProcessCreationParameters& parameters)
 {
 #if ENABLE(NOTIFICATIONS) || ENABLE(LEGACY_NOTIFICATIONS)
-    m_permissionsMap = permissions;
+    m_permissionsMap = parameters.notificationPermissions;
 #else
-    UNUSED_PARAM(permissions);
+    UNUSED_PARAM(parameters);
 #endif
 }
 

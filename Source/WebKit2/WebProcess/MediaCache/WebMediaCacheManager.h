@@ -26,7 +26,7 @@
 #ifndef WebMediaCacheManager_h
 #define WebMediaCacheManager_h
 
-#include "MessageReceiver.h"
+#include "WebProcessSupplement.h"
 #include <stdint.h>
 #include <wtf/Forward.h>
 #include <wtf/Noncopyable.h>
@@ -35,10 +35,12 @@ namespace WebKit {
 
 class WebProcess;
 
-class WebMediaCacheManager : private CoreIPC::MessageReceiver {
+class WebMediaCacheManager : public WebProcessSupplement {
     WTF_MAKE_NONCOPYABLE(WebMediaCacheManager);
 public:
     explicit WebMediaCacheManager(WebProcess*);
+
+    static const AtomicString& supplementName();
 
 private:
     void didReceiveMessage(CoreIPC::Connection*, CoreIPC::MessageID, CoreIPC::MessageDecoder&) OVERRIDE;

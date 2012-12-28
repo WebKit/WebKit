@@ -40,6 +40,12 @@ using namespace WebCore;
 
 namespace WebKit {
 
+const AtomicString& WebResourceCacheManager::supplementName()
+{
+    DEFINE_STATIC_LOCAL(AtomicString, name, ("WebResourceCacheManager", AtomicString::ConstructFromLiteral));
+    return name;
+}
+
 WebResourceCacheManager::WebResourceCacheManager(WebProcess* process)
     : m_process(process)
 {
@@ -50,7 +56,6 @@ void WebResourceCacheManager::didReceiveMessage(CoreIPC::Connection* connection,
 {
     didReceiveWebResourceCacheManagerMessage(connection, messageID, decoder);
 }
-
 
 void WebResourceCacheManager::getCacheOrigins(uint64_t callbackID) const
 {

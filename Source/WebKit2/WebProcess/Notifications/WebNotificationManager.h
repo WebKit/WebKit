@@ -26,7 +26,7 @@
 #ifndef WebNotificationManager_h
 #define WebNotificationManager_h
 
-#include "MessageReceiver.h"
+#include "WebProcessSupplement.h"
 #include <WebCore/NotificationClient.h>
 #include <wtf/HashMap.h>
 #include <wtf/Noncopyable.h>
@@ -44,13 +44,13 @@ namespace WebKit {
 class WebPage;
 class WebProcess;
 
-class WebNotificationManager : private CoreIPC::MessageReceiver {
+class WebNotificationManager : public WebProcessSupplement {
     WTF_MAKE_NONCOPYABLE(WebNotificationManager);
 public:
     explicit WebNotificationManager(WebProcess*);
     ~WebNotificationManager();
 
-    void initialize(const HashMap<String, bool>& permissions);
+    static const AtomicString& supplementName();
     
     bool show(WebCore::Notification*, WebPage*);
     void cancel(WebCore::Notification*, WebPage*);
@@ -67,8 +67,11 @@ public:
     uint64_t notificationIDForTesting(WebCore::Notification*);
 
 private:
+    // WebProcessSupplement
+    virtual void initialize(const WebProcessCreationParameters&) OVERRIDE;
+
     // CoreIPC::MessageReceiver
-    void didReceiveMessage(CoreIPC::Connection*, CoreIPC::MessageID, CoreIPC::MessageDecoder&) OVERRIDE;
+    virtual void didReceiveMessage(CoreIPC::Connection*, CoreIPC::MessageID, CoreIPC::MessageDecoder&) OVERRIDE;
 
     // Implemented in generated WebNotificationManagerMessageReceiver.cpp
     void didReceiveWebNotificationManagerMessage(CoreIPC::Connection*, CoreIPC::MessageID, CoreIPC::MessageDecoder&);

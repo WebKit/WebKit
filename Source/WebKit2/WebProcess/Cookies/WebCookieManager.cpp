@@ -43,6 +43,12 @@ namespace WebKit {
 
 static WebCookieManager* sharedCookieManager;
 
+const AtomicString& WebCookieManager::supplementName()
+{
+    DEFINE_STATIC_LOCAL(AtomicString, name, ("WebCookieManager", AtomicString::ConstructFromLiteral));
+    return name;
+}
+
 WebCookieManager::WebCookieManager(ChildProcess* process)
     : m_process(process)
 {
