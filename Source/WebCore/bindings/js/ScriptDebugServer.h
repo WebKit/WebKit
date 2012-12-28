@@ -96,6 +96,7 @@ public:
     }
 
     bool isPaused() { return m_paused; }
+    bool runningNestedMessageLoop() { return m_runningNestedMessageLoop; }
 
     void compileScript(ScriptState*, const String& expression, const String& sourceURL, String* scriptId, String* exceptionMessage);
     void clearCompiledScripts();
@@ -155,6 +156,7 @@ protected:
     PauseOnExceptionsState m_pauseOnExceptionsState;
     bool m_pauseOnNextStatement;
     bool m_paused;
+    bool m_runningNestedMessageLoop;
     bool m_doneProcessingDebuggerEvents;
     bool m_breakpointsActivated;
     JavaScriptCallFrame* m_pauseOnCallFrame;

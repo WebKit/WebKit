@@ -140,7 +140,9 @@ InspectorController::InspectorController(Page* page, InspectorClient* inspectorC
     m_debuggerAgent = debuggerAgentPtr.get();
     m_agents.append(debuggerAgentPtr.release());
 
-    m_agents.append(InspectorDOMDebuggerAgent::create(m_instrumentingAgents.get(), m_state.get(), m_domAgent, m_debuggerAgent, m_inspectorAgent));
+    OwnPtr<InspectorDOMDebuggerAgent> domDebuggerAgentPtr(InspectorDOMDebuggerAgent::create(m_instrumentingAgents.get(), m_state.get(), m_domAgent, m_debuggerAgent, m_inspectorAgent));
+    m_domDebuggerAgent = domDebuggerAgentPtr.get();
+    m_agents.append(domDebuggerAgentPtr.release());
 
     OwnPtr<InspectorProfilerAgent> profilerAgentPtr(InspectorProfilerAgent::create(m_instrumentingAgents.get(), consoleAgent, page, m_state.get(), m_injectedScriptManager.get()));
     m_profilerAgent = profilerAgentPtr.get();
@@ -398,6 +400,7 @@ void InspectorController::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) 
     info.addMember(m_pageAgent);
 #if ENABLE(JAVASCRIPT_DEBUGGER)
     info.addMember(m_debuggerAgent);
+    info.addMember(m_domDebuggerAgent);
     info.addMember(m_profilerAgent);
 #endif
 
@@ -424,6 +427,7 @@ void InspectorController::didProcessTask()
         timelineAgent->didProcessTask();
 #if ENABLE(JAVASCRIPT_DEBUGGER)
     m_profilerAgent->didProcessTask();
+    m_domDebuggerAgent->didProcessTask();
 #endif
 }
 

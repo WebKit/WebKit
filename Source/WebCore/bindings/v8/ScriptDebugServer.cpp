@@ -153,6 +153,7 @@ private:
 ScriptDebugServer::ScriptDebugServer()
     : m_pauseOnExceptionsState(DontPauseOnExceptions)
     , m_breakpointsActivated(true)
+    , m_runningNestedMessageLoop(false)
 {
 }
 
@@ -423,7 +424,9 @@ void ScriptDebugServer::breakProgram(v8::Handle<v8::Object> executionState, v8::
     ScriptState* currentCallFrameState = ScriptState::forContext(m_pausedContext);
     listener->didPause(currentCallFrameState, currentCallFrame(), ScriptValue(exception));
 
+    m_runningNestedMessageLoop = true;
     runMessageLoopOnPause(m_pausedContext);
+    m_runningNestedMessageLoop = false;
 }
 
 void ScriptDebugServer::v8DebugEventCallback(const v8::Debug::EventDetails& eventDetails)

@@ -97,6 +97,7 @@ public:
     void runPendingTasks();
 
     bool isPaused();
+    bool runningNestedMessageLoop() { return m_runningNestedMessageLoop; }
 
     v8::Local<v8::Value> functionScopes(v8::Handle<v8::Function>);
     v8::Local<v8::Value> getInternalProperties(v8::Handle<v8::Object>&);
@@ -140,6 +141,7 @@ protected:
 private:
     class ScriptPreprocessor;
     OwnPtr<ScriptPreprocessor> m_scriptPreprocessor;
+    bool m_runningNestedMessageLoop;
 };
 
 } // namespace WebCore

@@ -55,6 +55,7 @@ ScriptDebugServer::ScriptDebugServer()
     , m_pauseOnExceptionsState(DontPauseOnExceptions)
     , m_pauseOnNextStatement(false)
     , m_paused(false)
+    , m_runningNestedMessageLoop(false)
     , m_doneProcessingDebuggerEvents(true)
     , m_breakpointsActivated(true)
     , m_pauseOnCallFrame(0)
@@ -440,8 +441,10 @@ void ScriptDebugServer::pauseIfNeeded(JSGlobalObject* dynamicGlobalObject)
 
     TimerBase::fireTimersInNestedEventLoop();
 
+    m_runningNestedMessageLoop = true;
     m_doneProcessingDebuggerEvents = false;
     runEventLoopWhilePaused();
+    m_runningNestedMessageLoop = false;
 
     didContinue(dynamicGlobalObject);
     dispatchFunctionToListeners(&ScriptDebugServer::dispatchDidContinue, dynamicGlobalObject);

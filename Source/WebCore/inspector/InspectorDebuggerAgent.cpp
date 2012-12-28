@@ -191,6 +191,11 @@ bool InspectorDebuggerAgent::isPaused()
     return scriptDebugServer().isPaused();
 }
 
+bool InspectorDebuggerAgent::runningNestedMessageLoop()
+{
+    return scriptDebugServer().runningNestedMessageLoop();
+}
+
 void InspectorDebuggerAgent::addMessageToConsole(MessageSource source, MessageType type)
 {
     if (scriptDebugServer().pauseOnExceptionsState() != ScriptDebugServer::DontPauseOnExceptions && source == ConsoleAPIMessageSource && type == AssertMessageType)
@@ -458,6 +463,7 @@ void InspectorDebuggerAgent::stepInto(ErrorString* errorString)
     if (!assertPaused(errorString))
         return;
     scriptDebugServer().stepIntoStatement();
+    m_listener->stepInto();
 }
 
 void InspectorDebuggerAgent::stepOut(ErrorString* errorString)
@@ -683,6 +689,8 @@ void InspectorDebuggerAgent::didPause(ScriptState* scriptState, const ScriptValu
         scriptDebugServer().removeBreakpoint(m_continueToLocationBreakpointId);
         m_continueToLocationBreakpointId = "";
     }
+    if (m_listener)
+        m_listener->didPause();
 }
 
 void InspectorDebuggerAgent::didContinue()
