@@ -1,0 +1,46 @@
+Test that re-sizing the FFT arrays does not fail.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+PASS Exception thrown for illegal fftSize -1.
+PASS Exception thrown for illegal fftSize 0.
+PASS Exception thrown for illegal fftSize 1.
+PASS Exception thrown for illegal fftSize 2.
+PASS Exception thrown for illegal fftSize 3.
+PASS Exception thrown for illegal fftSize 4.
+PASS Exception thrown for illegal fftSize 5.
+PASS Exception thrown for illegal fftSize 8.
+PASS Exception thrown for illegal fftSize 9.
+PASS Exception thrown for illegal fftSize 16.
+PASS Exception thrown for illegal fftSize 17.
+PASS Successfully set legal fftSize 32.
+PASS Exception thrown for illegal fftSize 33.
+PASS Exception thrown for illegal fftSize 64.
+PASS Exception thrown for illegal fftSize 65.
+PASS Exception thrown for illegal fftSize 128.
+PASS Exception thrown for illegal fftSize 129.
+PASS Successfully set legal fftSize 256.
+PASS Exception thrown for illegal fftSize 257.
+PASS Successfully set legal fftSize 512.
+PASS Exception thrown for illegal fftSize 513.
+PASS Successfully set legal fftSize 1024.
+PASS Exception thrown for illegal fftSize 1025.
+PASS Successfully set legal fftSize 2048.
+PASS Exception thrown for illegal fftSize 2049.
+PASS Exception thrown for illegal fftSize 4096.
+PASS Exception thrown for illegal fftSize 4097.
+PASS Exception thrown for illegal fftSize 8192.
+PASS Exception thrown for illegal fftSize 8193.
+PASS Exception thrown for illegal fftSize 16384.
+PASS Exception thrown for illegal fftSize 16385.
+PASS Exception thrown for illegal fftSize 32768.
+PASS Exception thrown for illegal fftSize 32769.
+PASS Exception thrown for illegal fftSize 65536.
+PASS Exception thrown for illegal fftSize 65537.
+PASS Exception thrown for illegal fftSize 131072.
+PASS Exception thrown for illegal fftSize 131073.
+PASS webkitAudioContext survived multiple invalid FFT array resizings.
+PASS successfullyParsed is true
+
+TEST COMPLETE
+
