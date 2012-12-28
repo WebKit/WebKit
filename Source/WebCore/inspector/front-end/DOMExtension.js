@@ -560,7 +560,7 @@ function NonLeakingMutationObserver(handler)
 {
     this._observer = new WebKitMutationObserver(handler);
     NonLeakingMutationObserver._instances.push(this);
-    if (!window.testRunner && !window.isUnderTest && !NonLeakingMutationObserver._unloadListener) {
+    if (!NonLeakingMutationObserver._unloadListener) {
         NonLeakingMutationObserver._unloadListener = function() {
             while (NonLeakingMutationObserver._instances.length)
                 NonLeakingMutationObserver._instances[NonLeakingMutationObserver._instances.length - 1].disconnect();
