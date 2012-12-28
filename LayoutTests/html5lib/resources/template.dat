@@ -875,3 +875,47 @@
 |               <template>
 |                 #document-fragment
 |         "text"
+
+#data
+<body><template><col><colgroup>
+#errors
+#document
+| <html>
+|   <head>
+|   <body>
+|     <template>
+|       #document-fragment
+|         <col>
+
+#data
+<body><template><col><colgroup></template></body>
+#errors
+#document
+| <html>
+|   <head>
+|   <body>
+|     <template>
+|       #document-fragment
+|         <col>
+
+#data
+<body><template><col><div>
+#errors
+#document
+| <html>
+|   <head>
+|   <body>
+|     <template>
+|       #document-fragment
+|         <col>
+
+#data
+<body><template><col>Hello
+#errors
+#document
+| <html>
+|   <head>
+|   <body>
+|     <template>
+|       #document-fragment
+|         <col>

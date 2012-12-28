@@ -992,8 +992,8 @@ void HTMLTreeBuilder::processTemplateEndTag(AtomicHTMLToken* token)
 
 bool HTMLTreeBuilder::processColgroupEndTagForInColumnGroup()
 {
-    if (m_tree.currentIsRootNode()) {
-        ASSERT(isParsingFragment());
+    if (m_tree.currentIsRootNode() || m_tree.currentNode()->hasTagName(templateTag)) {
+        ASSERT(isParsingFragmentOrTemplateContents());
         // FIXME: parse error
         return false;
     }
@@ -1208,7 +1208,7 @@ void HTMLTreeBuilder::processStartTag(AtomicHTMLToken* token)
         }
 #endif
         if (!processColgroupEndTagForInColumnGroup()) {
-            ASSERT(isParsingFragment());
+            ASSERT(isParsingFragmentOrTemplateContents());
             return;
         }
         processStartTag(token);
@@ -2437,7 +2437,7 @@ ReprocessBuffer:
         if (buffer.isEmpty())
             return;
         if (!processColgroupEndTagForInColumnGroup()) {
-            ASSERT(isParsingFragment());
+            ASSERT(isParsingFragmentOrTemplateContents());
             // The spec tells us to drop these characters on the floor.
             buffer.skipLeadingNonWhitespace();
             if (buffer.isEmpty())
@@ -2574,7 +2574,7 @@ void HTMLTreeBuilder::processEndOfFile(AtomicHTMLToken* token)
             return; // FIXME: Should we break here instead of returning?
         }
         if (!processColgroupEndTagForInColumnGroup()) {
-            ASSERT(isParsingFragment());
+            ASSERT(isParsingFragmentOrTemplateContents());
             return; // FIXME: Should we break here instead of returning?
         }
         processEndOfFile(token);
