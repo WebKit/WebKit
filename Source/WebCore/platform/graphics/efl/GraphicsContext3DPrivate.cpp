@@ -141,30 +141,28 @@ uint32_t GraphicsContext3DPrivate::copyToGraphicsSurface()
         m_platformSurface->setGeometry(IntRect(0, 0, m_context->m_currentWidth, m_context->m_currentHeight));
     }
 
-    bool enableScissorTest = false;
-    int width = m_context->m_currentWidth;
-    int height = m_context->m_currentHeight;
-
-    // We should copy the full buffer, and not respect the current scissor bounds.
-    // FIXME: It would be more efficient to track the state of the scissor test.
-    if (m_context->isEnabled(GraphicsContext3D::SCISSOR_TEST)) {
-        enableScissorTest = true;
-        m_context->disable(GraphicsContext3D::SCISSOR_TEST);
-    }
-
     if (m_context->m_attrs.antialias) {
+        bool enableScissorTest = false;
+        int width = m_context->m_currentWidth;
+        int height = m_context->m_currentHeight;
+        // We should copy the full buffer, and not respect the current scissor bounds.
+        // FIXME: It would be more efficient to track the state of the scissor test.
+        if (m_context->isEnabled(GraphicsContext3D::SCISSOR_TEST)) {
+            enableScissorTest = true;
+            m_context->disable(GraphicsContext3D::SCISSOR_TEST);
+        }
 
-        glBindFramebuffer(GL_READ_FRAMEBUFFER_EXT, m_context->m_multisampleFBO);
-        glBindFramebuffer(GL_DRAW_FRAMEBUFFER_EXT, m_context->m_fbo);
+        glBindFramebuffer(Extensions3D::READ_FRAMEBUFFER, m_context->m_multisampleFBO);
+        glBindFramebuffer(Extensions3D::DRAW_FRAMEBUFFER, m_context->m_fbo);
 
         // Use NEAREST as no scale is performed during the blit.
-        glBlitFramebuffer(0, 0, width, height, 0, 0, width, height, GraphicsContext3D::COLOR_BUFFER_BIT, GraphicsContext3D::NEAREST);
+        m_context->getExtensions()->blitFramebuffer(0, 0, width, height, 0, 0, width, height, GraphicsContext3D::COLOR_BUFFER_BIT, GraphicsContext3D::NEAREST);
+
+        if (enableScissorTest)
+            m_context->enable(GraphicsContext3D::SCISSOR_TEST);
     }
 
     m_platformSurface->updateContents(m_context->m_texture, m_context->m_boundFBO, m_context->m_boundTexture0);
-
-    if (enableScissorTest)
-        m_context->enable(GraphicsContext3D::SCISSOR_TEST);
 
     return 0;
 }

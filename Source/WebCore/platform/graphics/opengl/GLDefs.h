@@ -28,18 +28,21 @@
 
 #if USE(ACCELERATED_COMPOSITING)
 
+#define GL_GLEXT_PROTOTYPES 1
+
 #if USE(OPENGL_ES_2)
+#include "Extensions3DOpenGLES.h"
 #include "OpenGLESShims.h"
 #include <GLES2/gl2.h>
 #include <GLES2/gl2ext.h>
 #else
+#include "Extensions3DOpenGL.h"
 #include "OpenGLShims.h"
 #include <GL/gl.h>
 #include <GL/glext.h>
-#endif
-
 #if USE(GLX)
 #include <GL/glx.h>
+#endif
 #endif
 
 #if USE(EGL)

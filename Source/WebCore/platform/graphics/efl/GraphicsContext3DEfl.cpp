@@ -23,18 +23,12 @@
 
 #if USE(3D_GRAPHICS) || USE(ACCELERATED_COMPOSITING)
 
+#include "GLDefs.h"
 #include "GraphicsContext3DPrivate.h"
 #include "Image.h"
 #include "ImageSource.h"
 #include "NotImplemented.h"
-#include "OpenGLShims.h"
 #include "PlatformContextCairo.h"
-
-#if USE(OPENGL_ES_2)
-#include "Extensions3DOpenGLES.h"
-#else
-#include "Extensions3DOpenGL.h"
-#endif
 
 namespace WebCore {
 
@@ -106,7 +100,7 @@ GraphicsContext3D::GraphicsContext3D(GraphicsContext3D::Attributes attrs, HostWi
 #if USE(OPENGL_ES_2)
             if (m_attrs.depth)
                 glGenRenderbuffers(1, &m_depthBuffer);
-            if (m_context->m_attrs.stencil)
+            if (m_attrs.stencil)
                 glGenRenderbuffers(1, &m_stencilBuffer);
 #endif
             if (m_attrs.stencil || m_attrs.depth)
