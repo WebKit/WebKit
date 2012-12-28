@@ -355,7 +355,6 @@ public:
     OwnPtr<RenderQueue> m_renderQueue;
     mutable Platform::IntSize m_previousDelta;
 
-    bool m_defersBlit;
     bool m_hasBlitJobs;
 
     WebCore::Color m_webPageBackgroundColor; // for user interface thread operations such as blitting

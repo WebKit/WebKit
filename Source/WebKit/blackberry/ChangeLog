@@ -1,3 +1,21 @@
+2012-12-28  Charles Wei  <charles.wei@torchmobile.com.cn>
+
+        [BlackBerry] Remove unused BackingStorePrivate::m_defersBlit
+        https://bugs.webkit.org/show_bug.cgi?id=105811
+        RIM PR 272067
+
+        Reviewed by George Staikos.
+        Internally Reviewed by Jakob Petsovits.
+
+        BackingStorePrivate::m_defersBlit is not used anywhere, it should
+        be removed to simplify the code and to avoid confusion.
+        * Api/BackingStore.cpp:
+        (BlackBerry::WebKit::BackingStorePrivate::BackingStorePrivate):
+        (BlackBerry::WebKit::BackingStorePrivate::blitVisibleContents):
+        * Api/BackingStore.h:
+        * Api/BackingStore_p.h:
+        (BackingStorePrivate):
+
 2012-12-26  Jakob Petsovits  <jpetsovits@rim.com>
 
         [BlackBerry] Set load state for popups manually, in absence of a loader.

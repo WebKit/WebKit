@@ -66,11 +66,6 @@ public:
     void blitVisibleContents();
     void repaint(int x, int y, int width, int height, bool contentChanged, bool immediate);
 
-    // In the defers blit mode, any blit requests will just return early, and
-    // a blit job will be queued that is executed by calling blitOnIdle().
-    bool defersBlit() const;
-    void setDefersBlit(bool);
-
     bool hasBlitJobs() const;
     void blitOnIdle();
 
