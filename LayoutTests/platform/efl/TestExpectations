@@ -1805,5 +1805,5 @@ webkit.org/b/105298 webaudio/decode-audio-data-basic.html [ Failure ]
 webkit.org/b/105535 inspector-protocol/nmi-webaudio.html [ Failure ]
 webkit.org/b/105535 inspector-protocol/nmi-webaudio-leak-test.html [ Failure ]
 
-# Regression after r138525.
-webkit.org/b/105819 http/tests/security/sandboxed-iframe-form-top.html [ Failure ]
+# Leaking state into the next test.
+webkit.org/b/85522 http/tests/security/sandboxed-iframe-form-top.html [ Skip ]
