@@ -33,13 +33,23 @@
  * @implements {WebInspector.WorkspaceProvider}
  * @extends {WebInspector.Object}
  */
-WebInspector.NetworkWorkspaceProvider = function()
+WebInspector.ContentProviderWorkspaceProvider = function()
 {
     /** @type {Object.<string, WebInspector.ContentProvider>} */
     this._contentProviders = {};
 }
 
-WebInspector.NetworkWorkspaceProvider.prototype = {
+/**
+ * @param {string} url
+ * @return {string}
+ */
+WebInspector.ContentProviderWorkspaceProvider.uriForURL = function(url)
+{
+    var uri = url;
+    return uri;
+},
+
+WebInspector.ContentProviderWorkspaceProvider.prototype = {
     /**
      * @param {string} uri
      * @param {function(?string,boolean,string)} callback
@@ -74,14 +84,16 @@ WebInspector.NetworkWorkspaceProvider.prototype = {
 
     /**
      * @param {string} uri
+     * @param {string} url
      * @param {WebInspector.ContentProvider} contentProvider
      * @param {boolean} isEditable
      * @param {boolean=} isContentScript
      * @param {boolean=} isSnippet
      */
-    addFile: function(uri, contentProvider, isEditable, isContentScript, isSnippet)
+    addFile: function(uri, url, contentProvider, isEditable, isContentScript, isSnippet)
     {
-        var fileDescriptor = new WebInspector.FileDescriptor(uri, contentProvider.contentType(), isEditable, isContentScript, isSnippet);
+        console.assert(!this._contentProviders[uri]);
+        var fileDescriptor = new WebInspector.FileDescriptor(uri, url, contentProvider.contentType(), isEditable, isContentScript, isSnippet);
         this._contentProviders[uri] = contentProvider;
         this.dispatchEventToListeners(WebInspector.WorkspaceProvider.Events.FileAdded, fileDescriptor);
     },
@@ -95,12 +107,50 @@ WebInspector.NetworkWorkspaceProvider.prototype = {
         this.dispatchEventToListeners(WebInspector.WorkspaceProvider.Events.FileRemoved, uri);
     },
 
+    /**
+     * @param {string} uri
+     * @return {string}
+     */
+    uniqueURI: function(uri)
+    {
+        var uniqueURI = uri;
+        for (var i = 1; this._contentProviders[uniqueURI]; ++i)
+            uniqueURI = uri + " (" + i + ")";
+        return uniqueURI;
+    },
+
     reset: function()
     {
         this._contentProviders = {};
     },
     
     __proto__: WebInspector.Object.prototype
+}
+
+/**
+ * @constructor
+ * @extends {WebInspector.ContentProviderWorkspaceProvider}
+ */
+WebInspector.NetworkWorkspaceProvider = function()
+{
+    WebInspector.ContentProviderWorkspaceProvider.call(this);
+}
+
+WebInspector.NetworkWorkspaceProvider.prototype = {
+    /**
+     * @param {string} url
+     * @param {WebInspector.ContentProvider} contentProvider
+     * @param {boolean} isEditable
+     * @param {boolean=} isContentScript
+     * @param {boolean=} isSnippet
+     */
+    addNetworkFile: function(url, contentProvider, isEditable, isContentScript, isSnippet)
+    {
+        var uri = WebInspector.ContentProviderWorkspaceProvider.uriForURL(url);
+        this.addFile(uri, url, contentProvider, isEditable, isContentScript, isSnippet);
+    },
+    
+    __proto__: WebInspector.ContentProviderWorkspaceProvider.prototype
 }
 
 /**

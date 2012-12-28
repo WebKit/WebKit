@@ -34,13 +34,15 @@
  * @extends {WebInspector.Object}
  * @implements {WebInspector.ContentProvider}
  * @param {WebInspector.Workspace} workspace
+ * @param {string} uri
  * @param {string} url
  * @param {WebInspector.ResourceType} contentType
  * @param {boolean} isEditable
  */
-WebInspector.UISourceCode = function(workspace, url, contentType, isEditable)
+WebInspector.UISourceCode = function(workspace, uri, url, contentType, isEditable)
 {
     this._workspace = workspace;
+    this._uri = uri;
     this._url = url;
     this._parsedURL = new WebInspector.ParsedURL(url);
     this._contentType = contentType;
@@ -85,6 +87,14 @@ WebInspector.UISourceCode.prototype = {
     get url()
     {
         return this._url;
+    },
+
+    /**
+     * @return {string}
+     */
+    uri: function()
+    {
+        return this._uri;
     },
 
     /**

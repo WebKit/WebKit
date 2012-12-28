@@ -61,9 +61,8 @@ WebInspector.BreakpointManager.sourceFileId = function(uiSourceCode)
 {
     if (!uiSourceCode.url)
         return "";
-    var isTemporaryPrefix = uiSourceCode.isTemporary ? "temporary:" : "";
     var deobfuscatedPrefix = uiSourceCode.formatted() ? "deobfuscated:" : "";
-    return isTemporaryPrefix + deobfuscatedPrefix + uiSourceCode.url;
+    return deobfuscatedPrefix + uiSourceCode.uri();
 }
 
 WebInspector.BreakpointManager.prototype = {

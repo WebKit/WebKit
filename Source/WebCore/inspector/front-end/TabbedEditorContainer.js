@@ -59,7 +59,7 @@ WebInspector.TabbedEditorContainer = function(delegate, settingName)
 
     this._tabIds = new Map();
     this._files = {};
-    this._loadedURLs = {};
+    this._loadedURIs = {};
 
     this._previouslyViewedFilesSetting = WebInspector.settings.createSetting(settingName, []);
     this._history = WebInspector.TabbedEditorContainer.History.fromObject(this._previouslyViewedFilesSetting.get());
@@ -128,14 +128,14 @@ WebInspector.TabbedEditorContainer.prototype = {
     _scrollChanged: function(event)
     {
         var lineNumber = /** @type {number} */ (event.data);
-        this._history.updateScrollLineNumber(this._currentFile.url, lineNumber);
+        this._history.updateScrollLineNumber(this._currentFile.uri(), lineNumber);
         this._history.save(this._previouslyViewedFilesSetting);
     },
 
     _selectionChanged: function(event)
     {
         var range = /** @type {WebInspector.TextRange} */ (event.data);
-        this._history.updateSelectionRange(this._currentFile.url, range);
+        this._history.updateSelectionRange(this._currentFile.uri(), range);
         this._history.save(this._previouslyViewedFilesSetting);
     },
 
@@ -192,11 +192,11 @@ WebInspector.TabbedEditorContainer.prototype = {
      */
     addUISourceCode: function(uiSourceCode)
     {
-        if (this._userSelectedFiles || this._loadedURLs[uiSourceCode.url])
+        if (this._userSelectedFiles || this._loadedURIs[uiSourceCode.uri()])
             return;
-        this._loadedURLs[uiSourceCode.url] = true;
+        this._loadedURIs[uiSourceCode.uri()] = true;
 
-        var index = this._history.index(uiSourceCode.url)
+        var index = this._history.index(uiSourceCode.uri())
         if (index === -1)
             return;
 
@@ -236,7 +236,7 @@ WebInspector.TabbedEditorContainer.prototype = {
     _editorClosedByUserAction: function(uiSourceCode)
     {
         this._userSelectedFiles = true;
-        this._history.remove(uiSourceCode.url);
+        this._history.remove(uiSourceCode.uri());
         this._updateHistory();
     },
 
@@ -250,12 +250,12 @@ WebInspector.TabbedEditorContainer.prototype = {
     {
         var tabIds = this._tabbedPane.lastOpenedTabIds(WebInspector.TabbedEditorContainer.maximalPreviouslyViewedFilesCount);
         
-        function tabIdToURL(tabId)
+        function tabIdToURI(tabId)
         {
-            return this._files[tabId].url;
+            return this._files[tabId].uri();
         }
         
-        this._history.update(tabIds.map(tabIdToURL.bind(this)));
+        this._history.update(tabIds.map(tabIdToURI.bind(this)));
         this._history.save(this._previouslyViewedFilesSetting);
     },
 
@@ -282,10 +282,10 @@ WebInspector.TabbedEditorContainer.prototype = {
         this._tabIds.put(uiSourceCode, tabId);
         this._files[tabId] = uiSourceCode;
 
-        var savedScrollLineNumber = this._history.scrollLineNumber(uiSourceCode.url);
+        var savedScrollLineNumber = this._history.scrollLineNumber(uiSourceCode.uri());
         if (savedScrollLineNumber)
             view.scrollToLine(savedScrollLineNumber);
-        var savedSelectionRange = this._history.selectionRange(uiSourceCode.url);
+        var savedSelectionRange = this._history.selectionRange(uiSourceCode.uri());
         if (savedSelectionRange)
             view.setSelection(savedSelectionRange);
 
@@ -396,7 +396,7 @@ WebInspector.TabbedEditorContainer.prototype = {
         this._files = {};
         delete this._currentFile;
         delete this._userSelectedFiles;
-        this._loadedURLs = {};
+        this._loadedURIs = {};
     },
 
     /**

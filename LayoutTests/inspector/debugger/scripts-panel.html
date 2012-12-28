@@ -21,6 +21,7 @@ function test()
     {
         var networkWorkspaceProvider = new WebInspector.NetworkWorkspaceProvider();
         var workspace = new WebInspector.Workspace();
+        workspace.debuggerWorkspaceProvider = new WebInspector.DebuggerWorkspaceProvider(workspace);
         workspace.addProject("network", networkWorkspaceProvider);
         workspace.requestFileContent = function(uiSourceCode, callback)
         {
@@ -36,14 +37,14 @@ function test()
         {
             var workspace = createMockWorkspace();
 
-            workspace.networkWorkspaceProvider.addFile("foobar.js", contentProvider, false);
+            workspace.networkWorkspaceProvider.addNetworkFile("foobar.js", contentProvider, false);
 
             var panel = new WebInspector.ScriptsPanel(workspace);
             panel.show();
 
-            workspace.networkWorkspaceProvider.addFile("foo.js", contentProvider, false);
-            workspace.networkWorkspaceProvider.addFile("bar.js", contentProvider, false);
-            workspace.networkWorkspaceProvider.addFile("baz.js", contentProvider, false);
+            workspace.networkWorkspaceProvider.addNetworkFile("foo.js", contentProvider, false);
+            workspace.networkWorkspaceProvider.addNetworkFile("bar.js", contentProvider, false);
+            workspace.networkWorkspaceProvider.addNetworkFile("baz.js", contentProvider, false);
 
             InspectorTest.dumpScriptsNavigator(panel._navigator);
 
@@ -61,14 +62,14 @@ function test()
             var panel = new WebInspector.ScriptsPanel(workspace);
             panel.show();
 
-            workspace.networkWorkspaceProvider.addFile("foo.js", contentProvider, false);
-            workspace.networkWorkspaceProvider.addFile("bar.js", contentProvider, false);
-            workspace.networkWorkspaceProvider.addFile("baz.js", contentProvider, false);
+            workspace.networkWorkspaceProvider.addNetworkFile("foo.js", contentProvider, false);
+            workspace.networkWorkspaceProvider.addNetworkFile("bar.js", contentProvider, false);
+            workspace.networkWorkspaceProvider.addNetworkFile("baz.js", contentProvider, false);
 
             InspectorTest.dumpScriptsNavigator(panel._navigator);
 
             workspaceController._mainFrameNavigated();
-            workspace.networkWorkspaceProvider.addFile("bar.js", contentProvider, false);
+            workspace.networkWorkspaceProvider.addNetworkFile("bar.js", contentProvider, false);
             InspectorTest.dumpScriptsNavigator(panel._navigator);
 
             panel.detach();
@@ -81,13 +82,13 @@ function test()
             var panel = new WebInspector.ScriptsPanel(workspace);
             panel.show();
 
-            workspace.networkWorkspaceProvider.addFile("foo.js", contentProvider, false);
-            var temporaryUISourceCode = workspace.addTemporaryUISourceCode("compiled.js", contentProvider);
+            workspace.networkWorkspaceProvider.addNetworkFile("foo.js", contentProvider, false);
+            var temporaryUISourceCode = workspace.debuggerWorkspaceProvider.addDebuggerFile("compiled.js", contentProvider);
 
             InspectorTest.dumpScriptsNavigator(panel._navigator);
 
             // Plug compiler source mapping.
-            workspace.networkWorkspaceProvider.addFile("source.js", contentProvider, false);
+            workspace.networkWorkspaceProvider.addNetworkFile("source.js", contentProvider, false);
 
             InspectorTest.dumpScriptsNavigator(panel._navigator);
             next();

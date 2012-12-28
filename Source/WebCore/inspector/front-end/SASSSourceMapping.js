@@ -157,7 +157,7 @@ WebInspector.SASSSourceMapping.prototype = {
         if (!uiSourceCode) {
             var content = InspectorFrontendHost.loadResourceSynchronously(url);
             var contentProvider = new WebInspector.StaticContentProvider(WebInspector.resourceTypes.Stylesheet, content, "text/x-scss");
-            this._networkWorkspaceProvider.addFile(url, contentProvider, true);
+            this._networkWorkspaceProvider.addNetworkFile(url, contentProvider, true);
             uiSourceCode = this._workspace.uiSourceCodeForURL(url);
             WebInspector.cssModel.setSourceMapping(rawURL, this);
         }

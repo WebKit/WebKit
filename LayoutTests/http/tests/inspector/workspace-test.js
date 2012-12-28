@@ -5,6 +5,7 @@ InspectorTest.createWorkspace = function()
 {
     InspectorTest.testNetworkWorkspaceProvider = new WebInspector.NetworkWorkspaceProvider();
     InspectorTest.testWorkspace = new WebInspector.Workspace();
+    InspectorTest.testDebuggerWorkspaceProvider = new WebInspector.DebuggerWorkspaceProvider(InspectorTest.testWorkspace);
     InspectorTest.testWorkspace.addProject("network", InspectorTest.testNetworkWorkspaceProvider);
     InspectorTest.testWorkspace.addEventListener(WebInspector.UISourceCodeProvider.Events.UISourceCodeAdded, InspectorTest._defaultUISourceCodeProviderEventHandler);
     InspectorTest.testWorkspace.addEventListener(WebInspector.UISourceCodeProvider.Events.UISourceCodeRemoved, InspectorTest._defaultUISourceCodeProviderEventHandler);
@@ -55,7 +56,7 @@ InspectorTest.addMockUISourceCodeToWorkspace = function(url, type, content)
 {
     var isDocument = type === WebInspector.resourceTypes.Document;
     var mockContentProvider = new WebInspector.StaticContentProvider(type, content);
-    InspectorTest.testNetworkWorkspaceProvider.addFile(url, mockContentProvider, !isDocument);
+    InspectorTest.testNetworkWorkspaceProvider.addNetworkFile(url, mockContentProvider, !isDocument);
 }
 
 InspectorTest._defaultUISourceCodeProviderEventHandler = function(event)

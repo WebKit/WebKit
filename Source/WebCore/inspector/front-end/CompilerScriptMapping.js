@@ -104,7 +104,7 @@ WebInspector.CompilerScriptMapping.prototype = {
                 contentProvider = new WebInspector.StaticContentProvider(WebInspector.resourceTypes.Script, sourceContent);
             else
                 contentProvider = new WebInspector.CompilerSourceMappingContentProvider(sourceURL);
-            this._networkWorkspaceProvider.addFile(sourceURL, contentProvider, true);
+            this._networkWorkspaceProvider.addNetworkFile(sourceURL, contentProvider, true);
             var uiSourceCode = this._workspace.uiSourceCodeForURL(sourceURL);
             uiSourceCode.setSourceMapping(this);
             uiSourceCode.isContentScript = script.isContentScript;

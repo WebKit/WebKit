@@ -14,7 +14,7 @@ function test()
 
     function addUISourceCode(url, isContentScript)
     {
-        var uiSourceCode = new WebInspector.UISourceCode(WebInspector.workspace, url, WebInspector.resourceTypes.Script, null);
+        var uiSourceCode = new WebInspector.UISourceCode(WebInspector.workspace, url, url, WebInspector.resourceTypes.Script, null);
         uiSourceCode.isContentScript = isContentScript;
         navigatorFileSelector.addUISourceCode(uiSourceCode);
     }
