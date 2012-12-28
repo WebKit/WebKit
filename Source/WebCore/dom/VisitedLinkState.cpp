@@ -62,8 +62,9 @@ PassOwnPtr<VisitedLinkState> VisitedLinkState::create(Document* document)
 }
 
 VisitedLinkState::VisitedLinkState(Document* document)
-    :m_document(document)
-{ }
+    : m_document(document)
+{
+}
 
 void VisitedLinkState::invalidateStyleForAllLinks()
 {
@@ -79,8 +80,8 @@ inline static LinkHash linkHashForElement(Document* document, Element* element)
 {
     if (element->hasTagName(aTag))
         return static_cast<HTMLAnchorElement*>(element)->visitedLinkHash();
-    if (const AtomicString* attr = linkAttribute(element))
-        return WebCore::visitedLinkHash(document->baseURL(), *attr);
+    if (const AtomicString* attribute = linkAttribute(element))
+        return WebCore::visitedLinkHash(document->baseURL(), *attribute);
     return 0;
 }
 
