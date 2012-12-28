@@ -156,18 +156,9 @@ public:
         : m_visitor(instance, context)
     {
         instrumentationMethods.push_back("addMember");
-        instrumentationMethods.push_back("addInstrumentedMember");
-        instrumentationMethods.push_back("addVector");
-        instrumentationMethods.push_back("addVectorPtr");
-        instrumentationMethods.push_back("addInstrumentedVector");
-        instrumentationMethods.push_back("addInstrumentedVectorPtr");
-        instrumentationMethods.push_back("addHashSet");
-        instrumentationMethods.push_back("addInstrumentedHashSet");
-        instrumentationMethods.push_back("addHashMap");
-        instrumentationMethods.push_back("addInstrumentedHashMap");
-        instrumentationMethods.push_back("addListHashSet");
         instrumentationMethods.push_back("addRawBuffer");
-        instrumentationMethods.push_back("addString");
+        instrumentationMethods.push_back("addWeakPointer");
+        instrumentationMethods.push_back("ignoreMember");
     }
 
     virtual void HandleTranslationUnit(clang::ASTContext& context)
@@ -200,18 +191,24 @@ const char* ReportMemoryUsageAction::m_helpText =
     "This plugin is checking native memory instrumentation code.\n"
     "The class is instrumented if it has reportMemoryUsage member function.\n"
     "Sample:\n"
-    "class InstrumentedClass {\n"
+    "class InstrumentedClass : public BaseInstrumentedClass {\n"
     "public:\n"
     "    void reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const\n"
     "    {\n"
-    "        MemoryClassInfo<InstrumentedClass> info(memoryObjectInfo, this, MemoryInstrumentation::DOM);\n"
-    "        info.addMember(m_notInstrumentedPtr);\n"
-    "        info.addInstrumentedMember(m_instrumentedObject);\n"
+    "        MemoryClassInfo info(memoryObjectInfo, this, WebCoreMemoryTypes::DOM);\n"
+    "        BaseInstrumentedClass::reportMemoryUsage(memoryObjectInfo);\n"
+    "        info.addMember(m_notInstrumentedObject);\n"
+    "        info.addMember(m_instrumentedObject);\n"
+    "        info.addRawBuffer(m_pointer, m_length);\n"
+    "        info.ignoreMember(m_pointerToInternalField);\n"
     "    }\n"
     "\n"
     "private:\n"
     "    NotInstrumentedClass* m_notInstrumentedPtr;\n"
     "    InstrumentedClass m_instrumentedObject;\n"
+    "    long m_length;\n"
+    "    double* m_pointer;\n"
+    "    Data* m_pointerToInternalField;\n"
     "}\n";
 
 }
