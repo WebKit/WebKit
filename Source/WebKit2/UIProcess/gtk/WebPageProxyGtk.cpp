@@ -109,6 +109,11 @@ void WebPageProxy::windowedPluginGeometryDidChange(const WebCore::IntRect& frame
     webkitWebViewBaseChildMoveResize(WEBKIT_WEB_VIEW_BASE(viewWidget()), plugin, frameRect);
 }
 
+void WebPageProxy::setInputMethodState(bool enabled)
+{
+    webkitWebViewBaseSetInputMethodState(WEBKIT_WEB_VIEW_BASE(viewWidget()), enabled);
+}
+
 #if USE(TEXTURE_MAPPER_GL)
 void WebPageProxy::setAcceleratedCompositingWindowId(uint64_t nativeWindowId)
 {

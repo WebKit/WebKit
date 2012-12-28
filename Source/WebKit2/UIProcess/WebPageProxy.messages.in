@@ -182,6 +182,8 @@ messages -> WebPageProxy {
 
     # Support for connecting the Accessibility worlds of the UI and the Web processes
     BindAccessibilityTree(WTF::String plugID)
+
+    SetInputMethodState(bool enabled);
 #endif
 
     # BackForward messages

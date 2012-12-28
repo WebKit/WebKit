@@ -65,13 +65,16 @@ struct EditorState {
     unsigned anchorPosition;
 
     WebCore::IntRect editorRect;
-    WebCore::IntRect cursorRect;
     WebCore::IntRect compositionRect;
 
     uint64_t inputMethodHints;
 
     WTF::String selectedText;
     WTF::String surroundingText;
+#endif
+
+#if PLATFORM(QT) || PLATFORM(GTK)
+    WebCore::IntRect cursorRect;
 #endif
 
     void encode(CoreIPC::ArgumentEncoder&) const;

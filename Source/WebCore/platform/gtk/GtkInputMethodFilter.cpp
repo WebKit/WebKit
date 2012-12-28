@@ -272,13 +272,13 @@ void GtkInputMethodFilter::sendCompositionAndPreeditWithFakeKeyEvents(ResultsToS
     GOwnPtr<GdkEvent> event(gdk_event_new(GDK_KEY_PRESS));
     event->key.time = GDK_CURRENT_TIME;
     event->key.keyval = gCompositionEventKeyCode;
-    sendKeyEventWithCompositionResults(&event->key, resultsToSend);
+    sendKeyEventWithCompositionResults(&event->key, resultsToSend, EventFaked);
 
     m_confirmedComposition = String();
     m_composingTextCurrently = false;
 
     event->type = GDK_KEY_RELEASE;
-    sendSimpleKeyEvent(&event->key);
+    sendSimpleKeyEvent(&event->key, String(), EventFaked);
     m_justSentFakeKeyUp = true;
 }
 

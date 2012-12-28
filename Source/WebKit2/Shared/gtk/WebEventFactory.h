@@ -28,6 +28,7 @@
 #define WebEventFactory_h
 
 #include "WebEvent.h"
+#include <WebCore/CompositionResults.h>
 
 typedef union _GdkEvent GdkEvent;
 
@@ -37,7 +38,7 @@ class WebEventFactory {
 public:
     static WebMouseEvent createWebMouseEvent(const GdkEvent*, int);
     static WebWheelEvent createWebWheelEvent(const GdkEvent*);
-    static WebKeyboardEvent createWebKeyboardEvent(const GdkEvent*);
+    static WebKeyboardEvent createWebKeyboardEvent(const GdkEvent*, const WebCore::CompositionResults&);
 };
 
 } // namespace WebKit

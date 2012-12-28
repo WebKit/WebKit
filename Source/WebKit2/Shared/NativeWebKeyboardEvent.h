@@ -1,7 +1,7 @@
 /*
  * Copyright (C) 2010 Apple Inc. All rights reserved.
  * Portions Copyright (c) 2010 Motorola Mobility, Inc.  All rights reserved.
- * Copyright (C) 2011 Igalia S.L
+ * Copyright (C) 2011, 2012 Igalia S.L
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -37,6 +37,8 @@ OBJC_CLASS NSView;
 #include <QKeyEvent>
 #elif PLATFORM(GTK)
 #include <GOwnPtrGtk.h>
+#include <WebCore/CompositionResults.h>
+#include <WebCore/GtkInputMethodFilter.h>
 typedef union _GdkEvent GdkEvent;
 #elif PLATFORM(EFL)
 #include <Evas.h>
@@ -54,7 +56,7 @@ public:
     explicit NativeWebKeyboardEvent(QKeyEvent*);
 #elif PLATFORM(GTK)
     NativeWebKeyboardEvent(const NativeWebKeyboardEvent&);
-    NativeWebKeyboardEvent(GdkEvent*);
+    NativeWebKeyboardEvent(GdkEvent*, const WebCore::CompositionResults&, WebCore::GtkInputMethodFilter::EventFakedForComposition);
 #elif PLATFORM(EFL)
     NativeWebKeyboardEvent(const Evas_Event_Key_Down*, bool);
     NativeWebKeyboardEvent(const Evas_Event_Key_Up*);
@@ -68,6 +70,8 @@ public:
     const QKeyEvent* nativeEvent() const { return &m_nativeEvent; }
 #elif PLATFORM(GTK)
     GdkEvent* nativeEvent() const { return m_nativeEvent.get(); }
+    const WebCore::CompositionResults& compositionResults() const  { return m_compositionResults; }
+    bool isFakeEventForComposition() const { return m_fakeEventForComposition; }
 #elif PLATFORM(EFL)
     const void* nativeEvent() const { return m_nativeEvent; }
     bool isFiltered() const { return m_isFiltered; }
@@ -82,6 +86,8 @@ private:
     QKeyEvent m_nativeEvent;
 #elif PLATFORM(GTK)
     GOwnPtr<GdkEvent> m_nativeEvent;
+    WebCore::CompositionResults m_compositionResults;
+    bool m_fakeEventForComposition;
 #elif PLATFORM(EFL)
     const void* m_nativeEvent;
     bool m_isFiltered;

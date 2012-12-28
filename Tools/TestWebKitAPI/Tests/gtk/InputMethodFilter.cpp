@@ -80,21 +80,23 @@ public:
     }
 
 protected:
-    virtual bool sendSimpleKeyEvent(GdkEventKey* event, WTF::String eventString)
+    virtual bool sendSimpleKeyEvent(GdkEventKey* event, WTF::String eventString, EventFakedForComposition faked)
     {
         const char* eventType = event->type == GDK_KEY_RELEASE ? "release" : "press";
+        const char* fakedString = faked == EventFaked ? " (faked)" : "";
         if (!eventString.isNull())
-            m_events.append(String::format("sendSimpleKeyEvent type=%s keycode=%x text='%s'", eventType, event->keyval, eventString.utf8().data()));
+            m_events.append(String::format("sendSimpleKeyEvent type=%s keycode=%x text='%s'%s", eventType, event->keyval, eventString.utf8().data(), fakedString));
         else
-            m_events.append(String::format("sendSimpleKeyEvent type=%s keycode=%x", eventType, event->keyval));
+            m_events.append(String::format("sendSimpleKeyEvent type=%s keycode=%x%s", eventType, event->keyval, fakedString));
 
         return true;
     }
 
-    virtual bool sendKeyEventWithCompositionResults(GdkEventKey* event, ResultsToSend resultsToSend)
+    virtual bool sendKeyEventWithCompositionResults(GdkEventKey* event, ResultsToSend resultsToSend, EventFakedForComposition faked)
     {
         const char* eventType = event->type == GDK_KEY_RELEASE ? "release" : "press";
-        m_events.append(String::format("sendKeyEventWithCompositionResults type=%s keycode=%u", eventType, event->keyval));
+        const char* fakedString = faked == EventFaked ? " (faked)" : "";
+        m_events.append(String::format("sendKeyEventWithCompositionResults type=%s keycode=%u%s", eventType, event->keyval, fakedString));
 
         if (resultsToSend & Composition && !m_confirmedComposition.isNull())
             confirmCompositionText(m_confirmedComposition);
@@ -241,12 +243,12 @@ TEST(GTK, GtkInputMethodFilterContextEventsWithoutKeyEvents)
 
     const Vector<String>& events = inputMethodFilter.events();
     ASSERT_EQ(6, events.size());
-    ASSERT_EQ(String("sendKeyEventWithCompositionResults type=press keycode=16777215"), events[0]);
+    ASSERT_EQ(String("sendKeyEventWithCompositionResults type=press keycode=16777215 (faked)"), events[0]);
     ASSERT_EQ(String("setPreedit text='preedit of doom, bringer of cheese' cursorOffset=3"), events[1]);
-    ASSERT_EQ(String("sendSimpleKeyEvent type=release keycode=ffffff"), events[2]);
-    ASSERT_EQ(String("sendKeyEventWithCompositionResults type=press keycode=16777215"), events[3]);
+    ASSERT_EQ(String("sendSimpleKeyEvent type=release keycode=ffffff (faked)"), events[2]);
+    ASSERT_EQ(String("sendKeyEventWithCompositionResults type=press keycode=16777215 (faked)"), events[3]);
     ASSERT_EQ(String("confirmComposition 'commit text'"), events[4]);
-    ASSERT_EQ(String("sendSimpleKeyEvent type=release keycode=ffffff"), events[5]);
+    ASSERT_EQ(String("sendSimpleKeyEvent type=release keycode=ffffff (faked)"), events[5]);
 }
 
 static bool gSawContextReset = false;

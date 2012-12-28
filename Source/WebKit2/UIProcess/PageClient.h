@@ -130,9 +130,9 @@ public:
     virtual void handleWillSetInputMethodState() = 0;
 #endif // PLATFORM(QT).
 
-#if PLATFORM(QT) || PLATFORM(EFL)
+#if PLATFORM(QT) || PLATFORM(EFL) || PLATFORM(GTK)
     virtual void updateTextInputState() = 0;
-#endif // PLATFORM(QT) || PLATFORM(EFL)
+#endif // PLATFORM(QT) || PLATFORM(EFL) || PLATOFRM(GTK)
 
 #if PLATFORM(QT) || PLATFORM(EFL) || PLATFORM(GTK)
     virtual void handleDownloadRequest(DownloadProxy*) = 0;

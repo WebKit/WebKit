@@ -35,8 +35,8 @@ public:
     void setWebView(WebKitWebView*);
 
 protected:
-    virtual bool sendSimpleKeyEvent(GdkEventKey*, WTF::String eventString);
-    virtual bool sendKeyEventWithCompositionResults(GdkEventKey*, ResultsToSend);
+    virtual bool sendSimpleKeyEvent(GdkEventKey*, WTF::String eventString, EventFakedForComposition);
+    virtual bool sendKeyEventWithCompositionResults(GdkEventKey*, ResultsToSend, EventFakedForComposition);
     virtual bool canEdit();
     virtual void confirmCompositionText(String);
     virtual void confirmCurrentComposition();

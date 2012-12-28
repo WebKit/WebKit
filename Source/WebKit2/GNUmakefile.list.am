@@ -763,6 +763,8 @@ webkit2_sources += \
 	Source/WebKit2/UIProcess/API/gtk/WebKitWindowProperties.cpp \
 	Source/WebKit2/UIProcess/API/gtk/WebKitWindowProperties.h \
 	Source/WebKit2/UIProcess/API/gtk/WebKitWindowPropertiesPrivate.h \
+	Source/WebKit2/UIProcess/API/gtk/WebViewBaseInputMethodFilter.h \
+	Source/WebKit2/UIProcess/API/gtk/WebViewBaseInputMethodFilter.cpp \
 	Source/WebKit2/UIProcess/API/gtk/webkit2.h \
 	Source/WebKit2/UIProcess/Authentication/AuthenticationChallengeProxy.cpp \
 	Source/WebKit2/UIProcess/Authentication/AuthenticationChallengeProxy.h \

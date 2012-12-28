@@ -1,3 +1,80 @@
+2012-12-28  Martin Robinson  <mrobinson@igalia.com>
+
+        [GTK][WK2] Add support for IME Composition
+        https://bugs.webkit.org/show_bug.cgi?id=65093
+
+        Reviewed by Carlos Garcia Campos.
+
+        Add a WebKit2 implementation of the GtkInputMethodFilter and provide
+        the necessary plumbing to pass composition information along with
+        input method events.
+
+        * GNUmakefile.list.am: Add new files to the source list.
+        * Shared/EditorState.cpp: The cursorRect is now passed for GTK+ as well as
+        Qt, so update the encode and decode methods to pass that along.
+        * Shared/EditorState.h: Add the cursorRect member for GTK+ as well.
+        * Shared/NativeWebKeyboardEvent.h:
+        (NativeWebKeyboardEvent): Keyboard events should also have knowledge of
+        the compositionResults and whether or not the event was faked for composition
+        purposes.
+        * Shared/gtk/NativeWebKeyboardEventGtk.cpp: Ditto.
+        * Shared/gtk/WebEventFactory.cpp:
+        (WebKit::WebEventFactory::createWebKeyboardEvent): Copy the logic of PlatformKeyEvent,
+        for properly setting the windows key code and the event text from the composition
+        results.
+        * Shared/gtk/WebEventFactory.h: The createWebKeyboardEvent factory now takes a
+        CompositionResults argument.
+        * UIProcess/API/gtk/PageClientImpl.cpp:
+        (WebKit::PageClientImpl::doneWithKeyEvent): Don't forward keyboard events that
+        were faked for composition reasons. These events originated from WebKit and should
+        never be passed to parent classes.
+        (WebKit::PageClientImpl::updateTextInputState): Plumb through the updateTextInputState
+        method to the WebViewBase.
+        * UIProcess/API/gtk/PageClientImpl.h:
+        (PageClientImpl): Add a updateTextInputState method.
+        * UIProcess/API/gtk/WebKitWebViewBase.cpp: 
+        (_WebKitWebViewBasePrivate): Instead of having an input method context as a member
+        keep a WebViewBaseInputMethodFilter.
+        (webkitWebViewBaseRealize): Set the filter widget when the WebViewBase is realized.
+        (webkit_web_view_base_init): No longer create a input method context during init.
+        (webkitWebViewBaseFocusInEvent): Pass along focus in events to the filter.
+        (webkitWebViewBaseFocusOutEvent): Pass along focus out events to the filter.
+        (webkitWebViewBaseKeyPressEvent): Instead of passing key presses directly to the WebProcess,
+        filter them through the input method filter.
+        (webkitWebViewBaseKeyReleaseEvent): Ditto.
+        (webkitWebViewBaseButtonPressEvent): Notify the input method filter about button press events.
+        (webkitWebViewBaseGetIMContext): The input method filter owns the input method now.
+        (webkitWebViewBaseSetInputMethodState): Add a bit of plumbing for the PageClient.
+        (webkitWebViewBaseUpdateTextInputState): Ditto.
+        * UIProcess/API/gtk/WebKitWebViewBasePrivate.h: Add plumbing declarations.
+        * UIProcess/API/gtk/WebViewBaseInputMethodFilter.cpp: Added. An implementation of GtkInputMethodFilter for WebKit2.
+        * UIProcess/API/gtk/WebViewBaseInputMethodFilter.h: Copied from Source/WebKit/gtk/WebCoreSupport/WebViewInputMethodFilter.h.
+        * UIProcess/PageClient.h:
+        (PageClient): updateInputMethod state is now for both Qt and GTK+.
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::editorStateChanged): Pass the editor state for GTK+ as well as Qt.
+        (WebKit::WebPageProxy::setComposition): Moved this method from WebPageProxyQt as it's used for GTK+ now as well.
+        (WebKit::WebPageProxy::confirmComposition): Ditto.
+        (WebKit::WebPageProxy::cancelComposition): Ditto.
+        * UIProcess/WebPageProxy.h:
+        (WebPageProxy): The setInputMethodState message is for GTK+ as well as Qt now.
+        * UIProcess/WebPageProxy.messages.in: Ditto.
+        * UIProcess/gtk/WebPageProxyGtk.cpp:
+        (WebKit::WebPageProxy::setInputMethodState): Ditto.
+        * UIProcess/qt/WebPageProxyQt.cpp: Move some methods to the platform-independent file.
+        * WebProcess/WebCoreSupport/gtk/WebEditorClientGtk.cpp: More closely match the WebKit1
+        logic for dealing with key events so that composition events will be handled properly.
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::editorState): Properly pass the cursorRect for GTK+.
+        (WebKit::targetFrameForEditing): Moved from the Qt file, because its used by GTK+ as well. They
+        now pass along the updated EditorState as well, just like the Mac versions.
+        (WebKit::WebPage::confirmComposition): Ditto.
+        (WebKit::WebPage::setComposition): Ditto.
+        (WebKit::WebPage::cancelComposition): Ditto.
+        * WebProcess/WebPage/WebPage.h: The above messages are now for GTK+ as well as Qt.
+        * WebProcess/WebPage/WebPage.messages.in: Ditto.
+        * WebProcess/WebPage/qt/WebPageQt.cpp: Moved some methods to the platform-independent file.
+
 2012-12-28  Sam Weinig  <sam@webkit.org>
 
         Appease the Windows Gods.

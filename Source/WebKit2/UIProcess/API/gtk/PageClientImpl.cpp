@@ -212,6 +212,8 @@ void PageClientImpl::doneWithKeyEvent(const NativeWebKeyboardEvent& event, bool 
 {
     if (wasEventHandled)
         return;
+    if (event.isFakeEventForComposition())
+        return;
 
     WebKitWebViewBase* webkitWebViewBase = WEBKIT_WEB_VIEW_BASE(m_viewWidget);
     webkitWebViewBaseForwardNextKeyEvent(webkitWebViewBase);
@@ -295,6 +297,11 @@ void PageClientImpl::findStringInCustomRepresentation(const String&, FindOptions
 void PageClientImpl::countStringMatchesInCustomRepresentation(const String&, FindOptions, unsigned)
 {
     notImplemented();
+}
+
+void PageClientImpl::updateTextInputState()
+{
+    webkitWebViewBaseUpdateTextInputState(WEBKIT_WEB_VIEW_BASE(m_viewWidget));
 }
 
 void PageClientImpl::startDrag(const WebCore::DragData& dragData, PassRefPtr<ShareableBitmap> dragImage)

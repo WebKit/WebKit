@@ -427,10 +427,10 @@ public:
     void commitPageTransitionViewport();
 #endif
 
-#if PLATFORM(QT)
-    void setComposition(const String& text, Vector<WebCore::CompositionUnderline> underlines, uint64_t selectionStart, uint64_t selectionEnd, uint64_t replacementRangeStart, uint64_t replacementRangeEnd);
-    void confirmComposition(const String& text, int64_t selectionStart, int64_t selectionLength);
-    void cancelComposition();
+#if PLATFORM(QT) || PLATFORM(GTK)
+    void setComposition(const String& text, Vector<WebCore::CompositionUnderline> underlines, uint64_t selectionStart, uint64_t selectionEnd, uint64_t replacementRangeStart, uint64_t replacementRangeEnd, EditorState&);
+    void confirmComposition(const String& text, int64_t selectionStart, int64_t selectionLength, EditorState&);
+    void cancelComposition(EditorState&);
 #endif
 
 #if PLATFORM(MAC)

@@ -52,13 +52,13 @@ bool WebViewInputMethodFilter::canEdit()
     return frame && frame->editor()->canEdit();
 }
 
-bool WebViewInputMethodFilter::sendSimpleKeyEvent(GdkEventKey* event, WTF::String simpleString)
+bool WebViewInputMethodFilter::sendSimpleKeyEvent(GdkEventKey* event, WTF::String simpleString, EventFakedForComposition)
 {
     PlatformKeyboardEvent platformEvent(event, CompositionResults(simpleString));
     return focusedOrMainFrame()->eventHandler()->keyEvent(platformEvent);
 }
 
-bool WebViewInputMethodFilter::sendKeyEventWithCompositionResults(GdkEventKey* event, ResultsToSend resultsToSend)
+bool WebViewInputMethodFilter::sendKeyEventWithCompositionResults(GdkEventKey* event, ResultsToSend resultsToSend, EventFakedForComposition)
 {
     PlatformKeyboardEvent platformEvent(event, CompositionResults(CompositionResults::WillSendCompositionResultsSoon));
     if (!focusedOrMainFrame()->eventHandler()->keyEvent(platformEvent))

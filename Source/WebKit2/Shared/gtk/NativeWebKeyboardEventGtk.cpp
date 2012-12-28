@@ -1,7 +1,7 @@
 /*
  * Copyright (C) 2010 Apple Inc. All rights reserved.
  * Portions Copyright (c) 2010 Motorola Mobility, Inc.  All rights reserved.
- * Copyright (C) 2011 Igalia S.L
+ * Copyright (C) 2011, 2012 Igalia S.L
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -31,17 +31,23 @@
 #include "WebEventFactory.h"
 #include <gdk/gdk.h>
 
+using namespace WebCore;
+
 namespace WebKit {
 
-NativeWebKeyboardEvent::NativeWebKeyboardEvent(GdkEvent* event)
-    : WebKeyboardEvent(WebEventFactory::createWebKeyboardEvent(event))
+NativeWebKeyboardEvent::NativeWebKeyboardEvent(GdkEvent* event, const WebCore::CompositionResults& compositionResults, GtkInputMethodFilter::EventFakedForComposition faked)
+    : WebKeyboardEvent(WebEventFactory::createWebKeyboardEvent(event, compositionResults))
     , m_nativeEvent(gdk_event_copy(event))
+    , m_compositionResults(compositionResults)
+    , m_fakeEventForComposition(faked == GtkInputMethodFilter::EventFaked)
 {
 }
 
 NativeWebKeyboardEvent::NativeWebKeyboardEvent(const NativeWebKeyboardEvent& event)
-    : WebKeyboardEvent(WebEventFactory::createWebKeyboardEvent(event.nativeEvent()))
+    : WebKeyboardEvent(WebEventFactory::createWebKeyboardEvent(event.nativeEvent(), event.compositionResults()))
     , m_nativeEvent(gdk_event_copy(event.nativeEvent()))
+    , m_compositionResults(event.compositionResults())
+    , m_fakeEventForComposition(event.isFakeEventForComposition())
 {
 }
 

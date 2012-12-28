@@ -17,6 +17,9 @@
  * Boston, MA 02110-1301, USA.
  */
 
+#ifndef GtkInputMethodFilter_h
+#define GtkInputMethodFilter_h
+
 #include "GRefPtrGtk.h"
 #include "IntRect.h"
 #include <gdk/gdk.h>
@@ -51,6 +54,11 @@ public:
 
     GtkIMContext* context() { return m_context.get(); }
 
+    enum EventFakedForComposition {
+        EventFaked,
+        EventNotFaked
+    };
+
 protected:
     enum ResultsToSend {
         Preedit = 1 << 1,
@@ -60,8 +68,8 @@ protected:
 
     void setWidget(GtkWidget*);
     virtual bool canEdit() = 0;
-    virtual bool sendSimpleKeyEvent(GdkEventKey*, WTF::String eventString = String()) = 0;
-    virtual bool sendKeyEventWithCompositionResults(GdkEventKey*, ResultsToSend = PreeditAndComposition) = 0;
+    virtual bool sendSimpleKeyEvent(GdkEventKey*, WTF::String eventString = String(), EventFakedForComposition = EventNotFaked) = 0;
+    virtual bool sendKeyEventWithCompositionResults(GdkEventKey*, ResultsToSend = PreeditAndComposition, EventFakedForComposition = EventNotFaked) = 0;
     virtual void confirmCompositionText(String composition) = 0;
     virtual void confirmCurrentComposition() = 0;
     virtual void cancelCurrentComposition() = 0;
@@ -88,3 +96,4 @@ private:
 
 } // namespace WebCore
 
+#endif // GtkInputMethodFilter_h

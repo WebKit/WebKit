@@ -2978,7 +2978,7 @@ void WebPageProxy::editorStateChanged(const EditorState& editorState)
 
 #if PLATFORM(MAC)
     m_pageClient->updateTextInputState(couldChangeSecureInputState);
-#elif PLATFORM(QT) || PLATFORM(EFL)
+#elif PLATFORM(QT) || PLATFORM(EFL) || PLATFORM(GTK)
     m_pageClient->updateTextInputState();
 #endif
 }
@@ -4229,5 +4229,32 @@ void WebPageProxy::didReceiveURIRequest(String uriString, uint64_t requestID)
     m_process->context()->soupRequestManagerProxy()->didReceiveURIRequest(uriString, this, requestID);
 }
 #endif
+
+#if PLATFORM(QT) || PLATFORM(GTK)
+void WebPageProxy::setComposition(const String& text, Vector<CompositionUnderline> underlines, uint64_t selectionStart, uint64_t selectionEnd, uint64_t replacementRangeStart, uint64_t replacementRangeEnd)
+{
+    // FIXME: We need to find out how to proper handle the crashes case.
+    if (!isValid())
+        return;
+
+    process()->sendSync(Messages::WebPage::SetComposition(text, underlines, selectionStart, selectionEnd, replacementRangeStart, replacementRangeEnd), Messages::WebPage::SetComposition::Reply(m_editorState), m_pageID);
+}
+
+void WebPageProxy::confirmComposition(const String& compositionString, int64_t selectionStart, int64_t selectionLength)
+{
+    if (!isValid())
+        return;
+
+    process()->sendSync(Messages::WebPage::ConfirmComposition(compositionString, selectionStart, selectionLength), Messages::WebPage::ConfirmComposition::Reply(m_editorState), m_pageID);
+}
+
+void WebPageProxy::cancelComposition()
+{
+    if (!isValid())
+        return;
+
+    process()->sendSync(Messages::WebPage::CancelComposition(), Messages::WebPage::CancelComposition::Reply(m_editorState), m_pageID);
+}
+#endif // PLATFORM(QT) || PLATFORM(GTK)
 
 } // namespace WebKit

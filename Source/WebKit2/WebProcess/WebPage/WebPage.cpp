@@ -1,6 +1,7 @@
 /*
  * Copyright (C) 2010, 2011, 2012 Apple Inc. All rights reserved.
  * Copyright (C) 2012 Intel Corporation. All rights reserved.
+ * Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies)
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -628,6 +629,10 @@ EditorState WebPage::editorState() const
             result.surroundingText.remove(result.anchorPosition, result.cursorPosition - result.anchorPosition);
         }
     }
+#endif
+
+#if PLATFORM(GTK)
+    result.cursorRect = frame->selection()->absoluteCaretBounds();
 #endif
 
     return result;
@@ -3663,5 +3668,99 @@ bool WebPage::shouldUseCustomRepresentationForResponse(const ResourceResponse& r
     // If a plug-in exists that claims to support this response, it should take precedence over the custom representation.
     return !canPluginHandleResponse(response);
 }
+
+#if PLATFORM(QT) || PLATFORM(GTK)
+static Frame* targetFrameForEditing(WebPage* page)
+{
+    Frame* targetFrame = page->corePage()->focusController()->focusedOrMainFrame();
+
+    if (!targetFrame || !targetFrame->editor())
+        return 0;
+
+    Editor* editor = targetFrame->editor();
+    if (!editor->canEdit())
+        return 0;
+
+    if (editor->hasComposition()) {
+        // We should verify the parent node of this IME composition node are
+        // editable because JavaScript may delete a parent node of the composition
+        // node. In this case, WebKit crashes while deleting texts from the parent
+        // node, which doesn't exist any longer.
+        if (PassRefPtr<Range> range = editor->compositionRange()) {
+            Node* node = range->startContainer();
+            if (!node || !node->isContentEditable())
+                return 0;
+        }
+    }
+    return targetFrame;
+}
+
+void WebPage::confirmComposition(const String& compositionString, int64_t selectionStart, int64_t selectionLength, EditorState& newState)
+{
+    Frame* targetFrame = targetFrameForEditing(this);
+    if (!targetFrame) {
+        newState = editorState();
+        return;
+    }
+
+    Editor* editor = targetFrame->editor();
+    editor->confirmComposition(compositionString);
+
+    if (selectionStart == -1) {
+        newState = editorState();
+        return;
+    }
+
+    Element* scope = targetFrame->selection()->rootEditableElement();
+    RefPtr<Range> selectionRange = TextIterator::rangeFromLocationAndLength(scope, selectionStart, selectionLength);
+    ASSERT_WITH_MESSAGE(selectionRange, "Invalid selection: [%lld:%lld] in text of length %d", static_cast<long long>(selectionStart), static_cast<long long>(selectionLength), scope->innerText().length());
+
+    if (selectionRange) {
+        VisibleSelection selection(selectionRange.get(), SEL_DEFAULT_AFFINITY);
+        targetFrame->selection()->setSelection(selection);
+    }
+    newState = editorState();
+}
+
+void WebPage::setComposition(const String& text, Vector<CompositionUnderline> underlines, uint64_t selectionStart, uint64_t selectionEnd, uint64_t replacementStart, uint64_t replacementLength, EditorState& newState)
+{
+    Frame* targetFrame = targetFrameForEditing(this);
+    if (!targetFrame) {
+        newState = editorState();
+        return;
+    }
+
+    if (!targetFrame->selection()->isContentEditable()) {
+        newState = editorState();
+        return;
+    }
+
+    if (replacementLength > 0) {
+        // The layout needs to be uptodate before setting a selection
+        targetFrame->document()->updateLayout();
+
+        Element* scope = targetFrame->selection()->rootEditableElement();
+        RefPtr<Range> replacementRange = TextIterator::rangeFromLocationAndLength(scope, replacementStart, replacementLength);
+        targetFrame->editor()->setIgnoreCompositionSelectionChange(true);
+        targetFrame->selection()->setSelection(VisibleSelection(replacementRange.get(), SEL_DEFAULT_AFFINITY));
+        targetFrame->editor()->setIgnoreCompositionSelectionChange(false);
+    }
+
+    targetFrame->editor()->setComposition(text, underlines, selectionStart, selectionEnd);
+    newState = editorState();
+}
+
+void WebPage::cancelComposition(EditorState& newState)
+{
+    Frame* targetFrame = targetFrameForEditing(this);
+    if (!targetFrame) {
+        newState = editorState();
+        return;
+    }
+
+    targetFrame->editor()->cancelComposition();
+    newState = editorState();
+}
+#endif
 
 } // namespace WebKit

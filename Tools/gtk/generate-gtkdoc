@@ -97,10 +97,11 @@ def get_webkit2_options():
         'cross_reference_deps' : get_gtkdoc_module_paths(xref_deps),
         'ignored_files': glob.glob(src_path('*Private.h')) + \
                          glob.glob(src_path('*Client*')) + \
-                         glob.glob(src_path('WebKitWebViewBaseAccessible.*')) + \
                          glob.glob(src_path('WebKit2GtkAuthenticationDialog.*')) + \
                          glob.glob(src_path('WebKitGeolocationProvider.*')) + \
                          glob.glob(src_path('WebKitTextChecker.*')) + \
+                         glob.glob(src_path('WebKitWebViewBaseAccessible.*')) + \
+                         glob.glob(src_path('WebViewBaseInputMethodFilter.*')) + \
                          glob.glob(derived_sources_path('webkit2gtk', 'webkit2', 'WebKitMarshal.*')) + \
                          glob.glob(derived_sources_path('webkit2gtk', 'webkit2', 'WebKitEnumTypes.*')) + \
                          glob.glob(src_path('tests/*.h'))
