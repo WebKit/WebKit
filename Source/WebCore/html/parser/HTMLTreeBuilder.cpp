@@ -2118,7 +2118,7 @@ void HTMLTreeBuilder::processEndTag(AtomicHTMLToken* token)
         }
 #endif
         if (!processColgroupEndTagForInColumnGroup()) {
-            ASSERT(isParsingFragment());
+            ASSERT(isParsingFragmentOrTemplateContents());
             return;
         }
         processEndTag(token);
