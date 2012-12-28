@@ -1804,3 +1804,6 @@ webkit.org/b/105297 webaudio/audiobuffersource-playbackrate.html [ Failure ]
 webkit.org/b/105298 webaudio/decode-audio-data-basic.html [ Failure ]
 webkit.org/b/105535 inspector-protocol/nmi-webaudio.html [ Failure ]
 webkit.org/b/105535 inspector-protocol/nmi-webaudio-leak-test.html [ Failure ]
+
+# Regression after r138525.
+webkit.org/b/105819 http/tests/security/sandboxed-iframe-form-top.html [ Failure ]
