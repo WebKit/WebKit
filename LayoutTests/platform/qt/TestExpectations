@@ -2502,3 +2502,8 @@ webkit.org/b/104150 fast/media/implicit-media-all.html [ ImageOnlyFailure ]
 # https://bugs.webkit.org/show_bug.cgi?id=104352
 http/tests/xmlhttprequest/post-blob-content-type-async.html
 http/tests/xmlhttprequest/post-blob-content-type-sync.html
+
+# [Qt] REGRESSION(r138517): It made 2 tests fail
+# https://bugs.webkit.org/show_bug.cgi?id=105819
+http/tests/security/cross-frame-access-put.html
+http/tests/security/sandboxed-iframe-form-top.html
