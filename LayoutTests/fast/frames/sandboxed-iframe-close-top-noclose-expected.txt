@@ -1,4 +1,4 @@
-CONSOLE MESSAGE: Unsafe JavaScript attempt to initiate a navigation change for frame with URL close-top.html.
+CONSOLE MESSAGE: Unsafe JavaScript attempt to initiate navigation for frame with URL 'close-top.html'. The frame attempting navigation of the top-level window is sandboxed, but the 'allow-top-navigation' flag is not set.
 
 This test verifies that a sandboxed IFrame can close a top-level frame with allow-top-navigation.
 

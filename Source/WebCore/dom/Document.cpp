@@ -393,11 +393,9 @@ static bool canAccessAncestor(const SecurityOrigin* activeSecurityOrigin, Frame*
     return false;
 }
 
-static void printNavigationErrorMessage(Frame* frame, const KURL& activeURL)
+static void printNavigationErrorMessage(Frame* frame, const KURL& activeURL, const char* reason)
 {
-    // FIXME: this error message should contain more specifics of why the navigation change is not allowed.
-    String message = "Unsafe JavaScript attempt to initiate a navigation change for frame with URL " +
-                     frame->document()->url().string() + " from frame with URL " + activeURL.string() + ".\n";
+    String message = "Unsafe JavaScript attempt to initiate navigation for frame with URL '" + frame->document()->url().string() + "' from frame with URL '" + activeURL.string() + "'. " + reason + "\n";
 
     // FIXME: should we print to the console of the document performing the navigation instead?
     frame->document()->domWindow()->printErrorMessage(message);
@@ -2711,7 +2709,7 @@ bool Document::canNavigate(Frame* targetFrame)
     if (!targetFrame)
         return true;
 
-    // Frame-busting is generally allowed (unless we're sandboxed and prevent from frame-busting).
+    // Frame-busting is generally allowed, but blocked for sandboxed frames lacking the 'allow-top-navigation' flag.
     if (!isSandboxed(SandboxTopNavigation) && targetFrame == m_frame->tree()->top())
         return true;
 
@@ -2719,7 +2717,11 @@ bool Document::canNavigate(Frame* targetFrame)
         if (targetFrame->tree()->isDescendantOf(m_frame))
             return true;
 
-        printNavigationErrorMessage(targetFrame, url());
+        const char* reason = "The frame attempting navigation is sandboxed, and is therefore disallowed from navigating its ancestors.";
+        if (isSandboxed(SandboxTopNavigation) && targetFrame == m_frame->tree()->top())
+            reason = "The frame attempting navigation of the top-level window is sandboxed, but the 'allow-top-navigation' flag is not set.";
+
+        printNavigationErrorMessage(targetFrame, url(), reason);
         return false;
     }
 
@@ -2752,7 +2754,7 @@ bool Document::canNavigate(Frame* targetFrame)
             return true;
     }
 
-    printNavigationErrorMessage(targetFrame, url());
+    printNavigationErrorMessage(targetFrame, url(), "The frame attempting navigation is neither same-origin with the target, nor is it the target's parent or opener.");
     return false;
 }
 

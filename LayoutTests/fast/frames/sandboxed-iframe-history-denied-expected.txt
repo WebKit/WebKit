@@ -1,4 +1,4 @@
-CONSOLE MESSAGE: Unsafe JavaScript attempt to initiate a navigation change for frame with URL script>.
+CONSOLE MESSAGE: Unsafe JavaScript attempt to initiate navigation for frame with URL 'script>'. The frame attempting navigation of the top-level window is sandboxed, but the 'allow-top-navigation' flag is not set.
 
 ALERT: PASS
 This test verifies that a sandboxed IFrame cannot navigate the top-level frame using the history API.

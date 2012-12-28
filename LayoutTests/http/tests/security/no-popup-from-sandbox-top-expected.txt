@@ -1,4 +1,4 @@
-CONSOLE MESSAGE: Unsafe JavaScript attempt to initiate a navigation change for frame with URL http://127.0.0.1:8000/security/no-popup-from-sandbox-top.html from frame with URL data:text/html,       <script>       var win = window.open('about:blank', '_top');       alert(win ?%20'FAIL'%20:%20'PASS');%20%20%20%20%20%20%20%3C/script%3E.
+CONSOLE MESSAGE: Unsafe JavaScript attempt to initiate navigation for frame with URL 'http://127.0.0.1:8000/security/no-popup-from-sandbox-top.html' from frame with URL 'data:text/html,       <script>       var win = window.open('about:blank', '_top');       alert(win ?%20'FAIL'%20:%20'PASS');%20%20%20%20%20%20%20%3C/script%3E'. The frame attempting navigation of the top-level window is sandboxed, but the 'allow-top-navigation' flag is not set.
 
 ALERT: PASS
 To run this test outside of DumpRenderTree, please disable your popup blocker!

@@ -1,4 +1,4 @@
-CONSOLE MESSAGE: Unsafe JavaScript attempt to initiate a navigation change for frame with URL sandboxed-iframe-navigation-source.html.
+CONSOLE MESSAGE: Unsafe JavaScript attempt to initiate navigation for frame with URL 'sandboxed-iframe-navigation-source.html'. The frame attempting navigation is sandboxed, and is therefore disallowed from navigating its ancestors.
 
 This test verifies that a sandboxed IFrame cannot navigate an ancestor in the frame tree by assigning the location attribute.
 
