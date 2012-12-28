@@ -1,3 +1,11 @@
+2012-12-28  Sam Weinig  <sam@webkit.org>
+
+        Fix assert seen when adding a custom protocol handler before an initial
+        web process has been created.
+
+        * UIProcess/WebContext.h:
+        (WebKit::WebContext::sendToNetworkingProcess):
+
 2012-12-28  Martin Robinson  <mrobinson@igalia.com>
 
         [GTK][WK2] Add support for IME Composition

@@ -485,7 +485,7 @@ template<typename U> inline void WebContext::sendToNetworkingProcess(const U& me
 {
     switch (m_processModel) {
     case ProcessModelSharedSecondaryProcess:
-        if (m_processes[0]->canSendMessage())
+        if (!m_processes.isEmpty() && m_processes[0]->canSendMessage())
             m_processes[0]->send(message, 0);
         return;
     case ProcessModelMultipleSecondaryProcesses:
