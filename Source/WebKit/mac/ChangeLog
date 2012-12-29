@@ -1,3 +1,29 @@
+2012-12-29  Adam Roben  <aroben@webkit.org>
+
+        Web Inspector: Mac WK1 Inspector can't save/load timeline data
+        https://bugs.webkit.org/show_bug.cgi?id=105547
+
+        Reviewed by Pavel Feldman.
+
+        * WebCoreSupport/WebInspectorClient.h: Declared new overrides and
+        member variables necessary for save support.
+
+        * WebCoreSupport/WebInspectorClient.mm:
+        (WebInspectorFrontendClient::save):
+        (WebInspectorFrontendClient::append):
+        Implemented these to make saving timeline data work. (It seems to me
+        the InspectorFrontendClient API could be cleaned up a bit. I had to
+        look at Chromium source code to determine that I needed to call back
+        into the InspectorFrontendAPI JS object after saving/appending, and
+        that I needed to keep a map of passed URLs -> chosen URLs.)
+
+        (-[WebInspectorWindowController window:willPositionSheet:usingRect:]):
+        Tweaked the position of the sheet so that open/save sheets look a
+        little bette.r
+
+        (-[WebInspectorWindowController webView:runOpenPanelForFileButtonWithResultListener:allowMultipleFiles:]):
+        Implemented to make loading timeline data work.
+
 2012-12-28  Mark Rowe  <mrowe@apple.com>
 
         Move logic for extracting the OS X marketing version in to WebCore

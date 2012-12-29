@@ -40,8 +40,10 @@
 #import "WebUIDelegate.h"
 #import "WebPolicyDelegate.h"
 #import "WebViewInternal.h"
+#import <WebCore/Frame.h>
 #import <WebCore/InspectorController.h>
 #import <WebCore/Page.h>
+#import <WebCore/ScriptValue.h>
 #import <WebCore/SoftLinking.h>
 #import <WebKit/DOMExtensions.h>
 #import <WebKitSystemInterface.h>
@@ -294,6 +296,50 @@ void WebInspectorFrontendClient::updateWindowTitle() const
     [[m_windowController.get() window] setTitle:title];
 }
 
+void WebInspectorFrontendClient::save(const String& refURL, const String& refContent, bool forceSaveAs)
+{
+    String url = refURL;
+    String content = refContent;
+    auto saveToURL = ^(NSURL *URL) {
+        m_saveURLs.set(url, URL);
+
+        [content writeToURL:URL atomically:YES encoding:NSUTF8StringEncoding error:NULL];
+        core([m_windowController webView])->mainFrame()->script()->executeScript([NSString stringWithFormat:@"InspectorFrontendAPI.savedURL(\"%@\")", URL.absoluteString]);
+    };
+
+    NSURL *URL = m_saveURLs.get(url).get();
+    if (!URL)
+        URL = [NSURL URLWithString:url];
+    else if (!forceSaveAs) {
+        saveToURL(URL);
+        return;
+    }
+
+    NSSavePanel *panel = [NSSavePanel savePanel];
+    panel.nameFieldStringValue = URL.lastPathComponent;
+    panel.directoryURL = [URL URLByDeletingLastPathComponent];
+
+    [panel beginSheetModalForWindow:[[m_windowController webView] window] completionHandler:^(NSInteger result) {
+        if (result == NSFileHandlingPanelCancelButton)
+            return;
+        ASSERT(result == NSFileHandlingPanelOKButton);
+        saveToURL(panel.URL);
+    }];
+}
+
+void WebInspectorFrontendClient::append(const String& url, const String& content)
+{
+    RetainPtr<NSURL> URL = m_saveURLs.get(url);
+    if (!URL)
+        URL = [NSURL URLWithString:url];
+
+    NSFileHandle *handle = [NSFileHandle fileHandleForWritingToURL:URL.get() error:NULL];
+    [handle seekToEndOfFile];
+    [handle writeData:[content dataUsingEncoding:NSUTF8StringEncoding]];
+    [handle closeFile];
+
+    core([m_windowController webView])->mainFrame()->script()->executeScript([NSString stringWithFormat:@"InspectorFrontendAPI.appendedToURL(\"%@\")", [URL absoluteString]]);
+}
 
 // MARK: -
 
@@ -435,6 +481,14 @@ void WebInspectorFrontendClient::updateWindowTitle() const
 }
 
 // MARK: -
+
+- (NSRect)window:(NSWindow *)window willPositionSheet:(NSWindow *)sheet usingRect:(NSRect)rect
+{
+    // AppKit doesn't know about our HTML toolbar, and places the sheet just a little bit too high.
+    // FIXME: It would be better to get the height of the toolbar and use it in this calculation.
+    rect.origin.y -= 1;
+    return rect;
+}
 
 - (BOOL)windowShouldClose:(id)sender
 {
@@ -614,6 +668,29 @@ void WebInspectorFrontendClient::updateWindowTitle() const
 - (NSUInteger)webView:(WebView *)sender dragDestinationActionMaskForDraggingInfo:(id <NSDraggingInfo>)draggingInfo
 {
     return WebDragDestinationActionNone;
+}
+
+- (void)webView:(WebView *)sender runOpenPanelForFileButtonWithResultListener:(id<WebOpenPanelResultListener>)resultListener allowMultipleFiles:(BOOL)allowMultipleFiles
+{
+    NSOpenPanel *panel = [NSOpenPanel openPanel];
+    panel.canChooseDirectories = NO;
+    panel.canChooseFiles = YES;
+    panel.allowsMultipleSelection = allowMultipleFiles;
+
+    [panel beginSheetModalForWindow:_webView.window completionHandler:^(NSInteger result) {
+        if (result == NSFileHandlingPanelCancelButton) {
+            [resultListener cancel];
+            return;
+        }
+        ASSERT(result == NSFileHandlingPanelOKButton);
+
+        NSArray *URLs = panel.URLs;
+        NSMutableArray *filenames = [NSMutableArray arrayWithCapacity:URLs.count];
+        for (NSURL *URL in URLs) {
+            [filenames addObject:URL.path];
+        }
+        [resultListener chooseFilenames:filenames];
+    }];
 }
 
 // MARK: -
