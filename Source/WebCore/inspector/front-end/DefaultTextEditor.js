@@ -92,7 +92,6 @@ WebInspector.DefaultTextEditor = function(url, delegate)
     this._gutterPanel.element.addEventListener("mousewheel", forwardWheelEvent.bind(this), false);
 
     this.element.addEventListener("keydown", this._handleKeyDown.bind(this), false);
-    this.element.addEventListener("cut", this._handleCut.bind(this), false);
     this.element.addEventListener("contextmenu", this._contextMenu.bind(this), true);
 
     this._registerShortcuts();
@@ -419,11 +418,6 @@ WebInspector.DefaultTextEditor.prototype = {
         this._mainPanel.handleKeyDown(e);
     },
 
-    _handleCut: function(e)
-    {
-        this._mainPanel.handleCut(e);
-    },
-
     _contextMenu: function(event)
     {
         var anchor = event.target.enclosingNodeOrSelfWithNodeName("a");
@@ -434,7 +428,7 @@ WebInspector.DefaultTextEditor.prototype = {
         if (target)
             this._delegate.populateLineGutterContextMenu(contextMenu, target.lineNumber);
         else {
-            this._mainPanel.contextMenu(event.target, contextMenu);
+            this._mainPanel.populateContextMenu(event.target, contextMenu);
         }
         contextMenu.show();
     },
@@ -459,7 +453,7 @@ WebInspector.DefaultTextEditor.prototype = {
      */
     selection: function(textRange)
     {
-        return this._mainPanel.getSelection();
+        return this._mainPanel.selection();
     },
 
     /**
@@ -467,7 +461,7 @@ WebInspector.DefaultTextEditor.prototype = {
      */
     lastSelection: function()
     {
-        return this._mainPanel.getLastSelection();
+        return this._mainPanel.lastSelection();
     },
 
     /**
@@ -522,7 +516,7 @@ WebInspector.DefaultTextEditor.prototype = {
     /**
      * @param {number} line
      * @param {string} name
-     * @param {Object?} value
+     * @param {?Object} value
      */
     setAttribute: function(line, name, value)
     {
@@ -553,8 +547,6 @@ WebInspector.DefaultTextEditor.prototype = {
         if (!this.readOnly())
             WebInspector.markBeingEdited(this.element, true);
 
-        this._boundSelectionChangeListener = this._mainPanel.handleSelectionChange.bind(this._mainPanel);
-        document.addEventListener("selectionchange", this._boundSelectionChangeListener, false);
         this._mainPanel.wasShown();
     },
 
@@ -562,8 +554,6 @@ WebInspector.DefaultTextEditor.prototype = {
     {
         this._mainPanel.willHide();
         this._gutterPanel.willHide();
-        document.removeEventListener("selectionchange", this._boundSelectionChangeListener, false);
-        delete this._boundSelectionChangeListener;
 
         if (!this.readOnly())
             WebInspector.markBeingEdited(this.element, false);
@@ -803,7 +793,7 @@ WebInspector.TextEditorChunkedPanel.prototype = {
 
     createNewChunk: function(startLine, endLine)
     {
-        throw new Error("createNewChunk() is not implemented");
+        throw new Error("createNewChunk() should be implemented by descendants");
     },
 
     _scroll: function()
@@ -1344,6 +1334,7 @@ WebInspector.TextEditorMainPanel = function(delegate, textModel, url, syncScroll
 
     this.element.addEventListener("focus", this._handleElementFocus.bind(this), false);
     this.element.addEventListener("textInput", this._handleTextInput.bind(this), false);
+    this.element.addEventListener("cut", this._handleCut.bind(this), false);
 
     this._container.addEventListener("focus", this._handleFocused.bind(this), false);
 
@@ -1354,12 +1345,18 @@ WebInspector.TextEditorMainPanel = function(delegate, textModel, url, syncScroll
 WebInspector.TextEditorMainPanel.prototype = {
     wasShown: function()
     {
+        this._boundSelectionChangeListener = this._handleSelectionChange.bind(this);
+        document.addEventListener("selectionchange", this._boundSelectionChangeListener, false);
+
         this._isShowing = true;
         this._attachMutationObserver();
     },
 
     willHide: function()
     {
+        document.removeEventListener("selectionchange", this._boundSelectionChangeListener, false);
+        delete this._boundSelectionChangeListener;
+
         this._detachMutationObserver();
         this._isShowing = false;
         this._freeCachedElements();
@@ -1369,7 +1366,7 @@ WebInspector.TextEditorMainPanel.prototype = {
      * @param {Element} eventTarget
      * @param {WebInspector.ContextMenu} contextMenu
      */
-    contextMenu: function(eventTarget, contextMenu)
+    populateContextMenu: function(eventTarget, contextMenu)
     {
         var target = this._enclosingLineRowOrSelf(eventTarget);
         this._delegate.populateTextAreaContextMenu(contextMenu, target && target.lineNumber);
@@ -1578,7 +1575,7 @@ WebInspector.TextEditorMainPanel.prototype = {
         if (this.readOnly())
             return false;
 
-        var selection = this.getSelection();
+        var selection = this.selection();
         if (!selection)
             return false;
 
@@ -1609,7 +1606,7 @@ WebInspector.TextEditorMainPanel.prototype = {
         if (this.readOnly())
             return false;
 
-        var range = this.getSelection();
+        var range = this.selection();
         if (!range)
             return false;
 
@@ -1659,7 +1656,7 @@ WebInspector.TextEditorMainPanel.prototype = {
      */
     splitChunkOnALine: function(lineNumber, chunkNumber, createSuffixChunk)
     {
-        var selection = this.getSelection();
+        var selection = this.selection();
         var chunk = WebInspector.TextEditorChunkedPanel.prototype.splitChunkOnALine.call(this, lineNumber, chunkNumber, createSuffixChunk);
         this._restoreSelection(selection);
         return chunk;
@@ -1706,7 +1703,7 @@ WebInspector.TextEditorMainPanel.prototype = {
         var lastChunk = this._textChunks[toIndex - 1];
         var lastVisibleLine = lastChunk.startLine + lastChunk.linesCount;
 
-        var selection = this.getSelection();
+        var selection = this.selection();
 
         this._muteHighlightListener = true;
         this._highlighter.highlight(lastVisibleLine);
@@ -1847,7 +1844,7 @@ WebInspector.TextEditorMainPanel.prototype = {
                     continue;
                 }
                 if (restoreSelection && !selection)
-                    selection = this.getSelection();
+                    selection = this.selection();
                 this._paintLine(lineRow);
                 if (this._paintLinesOperationsCredit < 0) {
                     this._schedulePaintLines(lineNumber + 1, lineChunk.endLine);
@@ -1858,7 +1855,7 @@ WebInspector.TextEditorMainPanel.prototype = {
 
         for (var i = 0; i < invisibleLineRows.length; ++i) {
             if (restoreSelection && !selection)
-                selection = this.getSelection();
+                selection = this.selection();
             this._paintLine(invisibleLineRows[i]);
         }
 
@@ -1953,7 +1950,7 @@ WebInspector.TextEditorMainPanel.prototype = {
      * @param {?Node=} lastUndamagedLineRow
      * @return {WebInspector.TextRange}
      */
-    getSelection: function(lastUndamagedLineRow)
+    selection: function(lastUndamagedLineRow)
     {
         var selection = window.getSelection();
         if (!selection.rangeCount)
@@ -1966,7 +1963,7 @@ WebInspector.TextEditorMainPanel.prototype = {
         return new WebInspector.TextRange(start.line, start.column, end.line, end.column);
     },
 
-    getLastSelection: function()
+    lastSelection: function()
     {
         return this._lastSelection;
     },
@@ -2292,7 +2289,7 @@ WebInspector.TextEditorMainPanel.prototype = {
                 editInfo = new WebInspector.DefaultTextEditor.EditInfo(range, lines.join("\n"));
         }
 
-        var selection = this.getSelection(collectLinesFromNode);
+        var selection = this.selection(collectLinesFromNode);
 
         // Unindent after block
         if (editInfo.text === "}" && editInfo.range.isEmpty() && selection.isEmpty() && !this._textModel.line(editInfo.range.endLine).trim()) {
@@ -2566,25 +2563,37 @@ WebInspector.TextEditorMainPanel.prototype = {
         return textContent.split("\n");
     },
 
-    handleSelectionChange: function(event)
+    /**
+     * @param {Event} event
+     */
+    _handleSelectionChange: function(event)
     {
-        var textRange = this.getSelection();
+        var textRange = this.selection();
         if (textRange)
             this._lastSelection = textRange;
         this._delegate.selectionChanged(textRange);
     },
 
-    _handleTextInput: function(e)
+    /**
+     * @param {Event} event
+     */
+    _handleTextInput: function(event)
     {
-        this._textInputData = e.data;
+        this._textInputData = event.data;
     },
 
-    handleKeyDown: function(e)
+    /**
+     * @param {Event} event
+     */
+    handleKeyDown: function(event)
     {
-        this._keyDownCode = e.keyCode;
+        this._keyDownCode = event.keyCode;
     },
 
-    handleCut: function(e)
+    /**
+     * @param {Event} event
+     */
+    _handleCut: function(event)
     {
         this._keyDownCode = WebInspector.KeyboardShortcut.Keys.Delete.code;
     },
@@ -2630,6 +2639,9 @@ WebInspector.TextEditorMainChunk = function(chunkedPanel, startLine, endLine)
 }
 
 WebInspector.TextEditorMainChunk.prototype = {
+    /**
+     * @param {Element|string} decoration
+     */
     addDecoration: function(decoration)
     {
         this._chunkedPanel.beginDomUpdates();

@@ -15,7 +15,7 @@ function test()
             var chunks = textEditor._mainPanel._textChunks;
             var lastChunk = chunks[chunks.length - 1];
             window.getSelection().setBaseAndExtent(lastChunk.element, 0, lastChunk.element, 0);
-            InspectorTest.addResult(textEditor._mainPanel.getSelection());
+            InspectorTest.addResult(textEditor._mainPanel.selection());
             next();
         },
 
@@ -24,7 +24,7 @@ function test()
             var chunks = textEditor._mainPanel._textChunks;
             var lastChunk = chunks[chunks.length - 1];
             window.getSelection().setBaseAndExtent(lastChunk.element, 1, lastChunk.element, 1);
-            InspectorTest.addResult(textEditor._mainPanel.getSelection());
+            InspectorTest.addResult(textEditor._mainPanel.selection());
             next();
         },
 
@@ -33,7 +33,7 @@ function test()
             var chunks = textEditor._mainPanel._textChunks;
             var lastChunk = chunks[chunks.length - 1];
             window.getSelection().setBaseAndExtent(lastChunk.element.firstChild, 1, lastChunk.element.firstChild, 11);
-            InspectorTest.addResult(textEditor._mainPanel.getSelection());
+            InspectorTest.addResult(textEditor._mainPanel.selection());
             next();
         },
 
@@ -42,7 +42,7 @@ function test()
             var chunks = textEditor._mainPanel._textChunks;
             var firstChunk = chunks[0];
             window.getSelection().setBaseAndExtent(firstChunk.expandedLineRow(3), 0, firstChunk.expandedLineRow(4), 1);
-            InspectorTest.addResult(textEditor._mainPanel.getSelection());
+            InspectorTest.addResult(textEditor._mainPanel.selection());
             next();
         },
 
@@ -51,7 +51,7 @@ function test()
             var chunks = textEditor._mainPanel._textChunks;
             var firstChunk = chunks[0];
             window.getSelection().setBaseAndExtent(firstChunk.expandedLineRow(3).firstChild, 3, firstChunk.expandedLineRow(4).firstChild, 4);
-            InspectorTest.addResult(textEditor._mainPanel.getSelection());
+            InspectorTest.addResult(textEditor._mainPanel.selection());
             next();
         },
     ]);
