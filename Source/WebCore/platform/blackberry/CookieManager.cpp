@@ -535,6 +535,11 @@ void CookieManager::getBackingStoreCookies()
     CookieLog("CookieManager - Backingstore has %d cookies, loading them in memory now", cookies.size());
     for (size_t i = 0; i < cookies.size(); ++i) {
         ParsedCookie* newCookie = cookies[i];
+
+        // The IP flag is not persisted in the database.
+        if (BlackBerry::Platform::isIPAddress(newCookie->domain().utf8().data()))
+            newCookie->setDomain(newCookie->domain(), true);
+
         checkAndTreatCookie(newCookie, BackingStoreCookieEntry);
     }
     CookieLog("CookieManager - Backingstore loading complete.");
