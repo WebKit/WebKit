@@ -1,3 +1,16 @@
+2012-12-29  Zan Dobersek  <zandobersek@gmail.com>
+
+        [webkitpy] Omit webkitpy/thirdparty/BeautifulSoup.py from code coverage checking
+        https://bugs.webkit.org/show_bug.cgi?id=105835
+
+        Reviewed by Dirk Pranke.
+
+        The BeautifulSoup module is a third-party import and as such we don't have much control
+        over its testing. Because of that it should be omitted from code coverage checking.
+
+        * Scripts/webkitpy/test/main.py:
+        (Tester._run_tests):
+
 2012-12-28  Martin Robinson  <mrobinson@igalia.com>
 
         [GTK][WK2] Add support for IME Composition
