@@ -67,7 +67,7 @@ private:
     void emitWarning(SourceLocation, const char* rawError);
     CXXMethodDecl* findInstrumentationMethod(CXXRecordDecl*);
     bool needsToBeInstrumented(const Type*);
-    void CheckMembersCoverage(const CXXRecordDecl* instrumentedClass, const Strings& instrumentedMembers, SourceLocation);
+    void checkMembersCoverage(const CXXRecordDecl* instrumentedClass, const Strings& instrumentedMembers, SourceLocation);
 
     CompilerInstance& m_instance;
     ASTContext* m_context;
@@ -145,7 +145,10 @@ bool AddMemberCallVisitor::VisitCallExpr(CallExpr* callExpr)
     }
     if (instrumented || !methodCallExpr) {
         for (CallExpr::arg_iterator i = callExpr->arg_begin(); i != callExpr->arg_end(); ++i) {
-            if (MemberExpr* memberExpr = dyn_cast<MemberExpr>(*i))
+            Expr* expr = *i;
+            while (ImplicitCastExpr::classof(expr))
+                expr = static_cast<ImplicitCastExpr*>(expr)->getSubExpr();
+            if (MemberExpr* memberExpr = dyn_cast<MemberExpr>(expr))
                 m_instrumentedMembers.push_back(memberExpr->getMemberNameInfo().getAsString());
         }
     }
@@ -159,7 +162,7 @@ bool ReportMemoryUsageVisitor::VisitCXXMethodDecl(clang::CXXMethodDecl* decl)
         if (fullLocation.isValid()) {
             AddMemberCallVisitor visitor;
             visitor.TraverseStmt(decl->getBody());
-            CheckMembersCoverage(decl->getParent(), visitor.instrumentedMembers(), decl->getLocStart());
+            checkMembersCoverage(decl->getParent(), visitor.instrumentedMembers(), decl->getLocStart());
         }
     }
     return true;
@@ -208,7 +211,7 @@ bool ReportMemoryUsageVisitor::needsToBeInstrumented(const Type* type)
     return true;
 }
 
-void ReportMemoryUsageVisitor::CheckMembersCoverage(const CXXRecordDecl* instrumentedClass, const Strings& instrumentedMembers, SourceLocation location)
+void ReportMemoryUsageVisitor::checkMembersCoverage(const CXXRecordDecl* instrumentedClass, const Strings& instrumentedMembers, SourceLocation location)
 {
     for (CXXRecordDecl::field_iterator i = instrumentedClass->field_begin(); i != instrumentedClass->field_end(); ++i) {
         string fieldName = i->getNameAsString();
