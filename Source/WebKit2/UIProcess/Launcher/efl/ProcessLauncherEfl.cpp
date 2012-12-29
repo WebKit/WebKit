@@ -42,14 +42,14 @@ void ProcessLauncher::launchProcess()
         return;
     }
 
-    const char* executablePath = 0;
+    CString executablePath;
     switch (m_launchOptions.processType) {
     case WebProcess:
-        executablePath = executablePathOfWebProcess().utf8().data();
+        executablePath = executablePathOfWebProcess().utf8();
         break;
 #if ENABLE(PLUGIN_PROCESS)
     case PluginProcess:
-        executablePath = executablePathOfPluginProcess().utf8().data();
+        executablePath = executablePathOfPluginProcess().utf8();
         break;
 #endif
     default:
@@ -64,7 +64,7 @@ void ProcessLauncher::launchProcess()
     const char* prefixedExecutablePath = 0;
     String prefixedExecutablePathStr;
     if (!m_launchOptions.processCmdPrefix.isEmpty()) {
-        prefixedExecutablePathStr = m_launchOptions.processCmdPrefix + ' ' + executablePath + ' ' + socket;
+        prefixedExecutablePathStr = m_launchOptions.processCmdPrefix + ' ' + executablePath.data() + ' ' + socket;
         prefixedExecutablePath = prefixedExecutablePathStr.utf8().data();
     }
 #endif
@@ -87,7 +87,7 @@ void ProcessLauncher::launchProcess()
                 exit(EXIT_SUCCESS);
         }
 #endif
-        execl(executablePath, executablePath, socket, static_cast<char*>(0));
+        execl(executablePath.data(), executablePath.data(), socket, static_cast<char*>(0));
     } else if (pid > 0) { // parent process;
         close(sockets[0]);
         m_processIdentifier = pid;

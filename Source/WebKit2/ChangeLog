@@ -1,3 +1,14 @@
+2012-12-28  Ryuan Choi  <ryuan.choi@samsung.com>
+
+        [EFL][WK2] MiniBrowser could not be launched on specific machine
+        https://bugs.webkit.org/show_bug.cgi?id=105844
+
+        Reviewed by Gyuyoung Kim.
+
+        * UIProcess/Launcher/efl/ProcessLauncherEfl.cpp:
+        (WebKit::ProcessLauncher::launchProcess):
+        Modified to avoid bad use of temporary object.
+
 2012-12-28  Joone Hur  <joone.hur@intel.com>
 
         [EFL][WK2] Implement ewk_context_resource_cache_clear
