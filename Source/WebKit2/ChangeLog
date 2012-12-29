@@ -1,3 +1,17 @@
+2012-12-28  Mark Rowe  <mrowe@apple.com>
+
+        Move logic for extracting the OS X marketing version in to WebCore
+        <http://webkit.org/b/105841> / <rdar://problem/10736041>
+
+        Reviewed by Dan Bernstein.
+
+        * UIProcess/mac/WebPageProxyMac.mm:
+        (WebKit::systemMarketingVersionForUserAgentString): Call the WebCore function instead
+        of the WKSI function.
+        (WebKit::WebPageProxy::standardUserAgent):
+        * WebProcess/WebCoreSupport/mac/WebSystemInterface.mm:
+        (InitWebCoreSystemInterface): Remove the code related to the WKSI symbol.
+
 2012-12-28  Sam Weinig  <sam@webkit.org>
 
         Fix assert seen when adding a custom protocol handler before an initial

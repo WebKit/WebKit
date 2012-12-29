@@ -325,7 +325,6 @@ extern dispatch_source_t (*wkCreateVMPressureDispatchOnMainQueue)(void);
 #endif
 
 #if __MAC_OS_X_VERSION_MIN_REQUIRED >= 1080
-extern NSString *(*wkGetMacOSXVersionString)(void);
 extern bool (*wkExecutableWasLinkedOnOrBeforeLion)(void);
 #endif
 

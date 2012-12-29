@@ -42,6 +42,7 @@
 #import <WebCore/DictationAlternative.h>
 #import <WebCore/GraphicsLayer.h>
 #import <WebCore/SharedBuffer.h>
+#import <WebCore/SystemVersionMac.h>
 #import <WebCore/TextAlternativeWithRange.h>
 #import <WebKitSystemInterface.h>
 #import <wtf/text/StringConcatenate.h>
@@ -64,42 +65,13 @@ namespace WebKit {
 #error Unknown architecture
 #endif
 
-#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 1080
-
-static String macOSXVersionString()
+static NSString *systemMarketingVersionForUserAgentString()
 {
     // Use underscores instead of dots because when we first added the Mac OS X version to the user agent string
     // we were concerned about old DHTML libraries interpreting "4." as Netscape 4. That's no longer a concern for us
     // but we're sticking with the underscores for compatibility with the format used by older versions of Safari.
-    return [WKGetMacOSXVersionString() stringByReplacingOccurrencesOfString:@"." withString:@"_"];
+    return [systemMarketingVersion() stringByReplacingOccurrencesOfString:@"." withString:@"_"];
 }
-
-#else
-
-static inline int callGestalt(OSType selector)
-{
-    SInt32 value = 0;
-    Gestalt(selector, &value);
-    return value;
-}
-
-// Uses underscores instead of dots because if "4." ever appears in a user agent string, old DHTML libraries treat it as Netscape 4.
-static String macOSXVersionString()
-{
-    // Can't use -[NSProcessInfo operatingSystemVersionString] because it has too much stuff we don't want.
-    int major = callGestalt(gestaltSystemVersionMajor);
-    ASSERT(major);
-
-    int minor = callGestalt(gestaltSystemVersionMinor);
-    int bugFix = callGestalt(gestaltSystemVersionBugFix);
-    if (bugFix)
-        return String::format("%d_%d_%d", major, minor, bugFix);
-    if (minor)
-        return String::format("%d_%d", major, minor);
-    return String::format("%d", major);
-}
-
-#endif // __MAC_OS_X_VERSION_MIN_REQUIRED >= 1080
 
 static String userVisibleWebKitVersionString()
 {
@@ -117,7 +89,7 @@ static String userVisibleWebKitVersionString()
 
 String WebPageProxy::standardUserAgent(const String& applicationNameForUserAgent)
 {
-    DEFINE_STATIC_LOCAL(String, osVersion, (macOSXVersionString()));
+    DEFINE_STATIC_LOCAL(String, osVersion, (systemMarketingVersionForUserAgentString()));
     DEFINE_STATIC_LOCAL(String, webKitVersion, (userVisibleWebKitVersionString()));
 
     if (applicationNameForUserAgent.isEmpty())

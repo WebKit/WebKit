@@ -1747,6 +1747,8 @@
 		5D925B680F64D4DD00B847F0 /* ScrollBehavior.h in Headers */ = {isa = PBXBuildFile; fileRef = 5D925B660F64D4DD00B847F0 /* ScrollBehavior.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		5DA5E0FC102B953800088CF9 /* JSWebSocket.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5DA5E0FA102B953800088CF9 /* JSWebSocket.cpp */; };
 		5DA5E0FD102B953800088CF9 /* JSWebSocket.h in Headers */ = {isa = PBXBuildFile; fileRef = 5DA5E0FB102B953800088CF9 /* JSWebSocket.h */; };
+		5DA97ECD168E787B000E3676 /* SystemVersionMac.h in Headers */ = {isa = PBXBuildFile; fileRef = 5DA97ECB168E787B000E3676 /* SystemVersionMac.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		5DA97ECE168E787B000E3676 /* SystemVersionMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = 5DA97ECC168E787B000E3676 /* SystemVersionMac.mm */; };
 		5DB1BC6A10715A6400EFAA49 /* TransformSource.h in Headers */ = {isa = PBXBuildFile; fileRef = 5DB1BC6810715A6400EFAA49 /* TransformSource.h */; };
 		5DB1BC6B10715A6400EFAA49 /* TransformSourceLibxslt.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5DB1BC6910715A6400EFAA49 /* TransformSourceLibxslt.cpp */; };
 		5DC87EF011716DF2001C0E6D /* EmptyProtocolDefinitions.h in Headers */ = {isa = PBXBuildFile; fileRef = 5DC87EEF11716DF2001C0E6D /* EmptyProtocolDefinitions.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -9052,6 +9054,8 @@
 		5D925B660F64D4DD00B847F0 /* ScrollBehavior.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ScrollBehavior.h; sourceTree = "<group>"; };
 		5DA5E0FA102B953800088CF9 /* JSWebSocket.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSWebSocket.cpp; sourceTree = "<group>"; };
 		5DA5E0FB102B953800088CF9 /* JSWebSocket.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSWebSocket.h; sourceTree = "<group>"; };
+		5DA97ECB168E787B000E3676 /* SystemVersionMac.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SystemVersionMac.h; sourceTree = "<group>"; };
+		5DA97ECC168E787B000E3676 /* SystemVersionMac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = SystemVersionMac.mm; sourceTree = "<group>"; };
 		5DB1BC6810715A6400EFAA49 /* TransformSource.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TransformSource.h; sourceTree = "<group>"; };
 		5DB1BC6910715A6400EFAA49 /* TransformSourceLibxslt.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TransformSourceLibxslt.cpp; sourceTree = "<group>"; };
 		5DC87EEF11716DF2001C0E6D /* EmptyProtocolDefinitions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EmptyProtocolDefinitions.h; sourceTree = "<group>"; };
@@ -15962,6 +15966,8 @@
 				84B2B24F056BF15F00D2B771 /* SSLKeyGeneratorMac.cpp */,
 				93B2D8170F9920EE006AE6B2 /* SuddenTermination.mm */,
 				6582A15509999D6D00BEEB6D /* SystemTimeMac.cpp */,
+				5DA97ECB168E787B000E3676 /* SystemVersionMac.h */,
+				5DA97ECC168E787B000E3676 /* SystemVersionMac.mm */,
 				BCE659E50EA92FB2007E4533 /* ThemeMac.h */,
 				BCE659E80EA92FFA007E4533 /* ThemeMac.mm */,
 				51DF6D7F0B92A18E00C2DC85 /* ThreadCheck.mm */,
@@ -25999,6 +26005,7 @@
 				E13EF3441684ECF40034C83F /* NetworkStorageSession.h in Headers */,
 				415071581685067300C3C7B3 /* SelectorFilter.h in Headers */,
 				419BC2DF1685329900D64D6D /* VisitedLinkState.h in Headers */,
+				5DA97ECD168E787B000E3676 /* SystemVersionMac.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -29120,6 +29127,7 @@
 				E13EF34916850C470034C83F /* NetworkStorageSessionCFNet.cpp in Sources */,
 				415071571685067300C3C7B3 /* SelectorFilter.cpp in Sources */,
 				419BC2DE1685329900D64D6D /* VisitedLinkState.cpp in Sources */,
+				5DA97ECE168E787B000E3676 /* SystemVersionMac.mm in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
