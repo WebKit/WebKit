@@ -39,31 +39,16 @@ using namespace clang;
 
 namespace {
 
-typedef std::vector<std::string> Strings;
+using namespace std;
+typedef vector<string> Strings;
 
 Strings instrumentationMethods;
-const std::string instrimentingMethodName("reportMemoryUsage");
+const char instrumentingMethodName[] = "reportMemoryUsage";
 
 class AddMemberCallVisitor : public RecursiveASTVisitor<AddMemberCallVisitor> {
 public:
-    bool VisitCallExpr(CallExpr* callExpr)
-    {
-        CXXMemberCallExpr* methodCallExpr = dyn_cast<CXXMemberCallExpr>(callExpr);
-        bool instrumented = false;
-        if (methodCallExpr) {
-            std::string methodName = methodCallExpr->getMethodDecl()->getNameAsString();
-            Strings::iterator i = find(instrumentationMethods.begin(), instrumentationMethods.end(), methodName);
-            instrumented = i != instrumentationMethods.end();
-        }
-        if (instrumented || !methodCallExpr) {
-            for (CallExpr::arg_iterator i = callExpr->arg_begin(); i != callExpr->arg_end(); ++i) {
-                if (MemberExpr* memberExpr = dyn_cast<MemberExpr>(*i))
-                    m_instrumentedMembers.push_back(memberExpr->getMemberNameInfo().getAsString());
-            }
-        }
-        return true;
-    }
 
+    bool VisitCallExpr(CallExpr*);
     const Strings& instrumentedMembers() const { return m_instrumentedMembers; }
 
 private:
@@ -76,75 +61,13 @@ public:
         : m_instance(instance)
         , m_context(context) { }
 
-    bool VisitCXXMethodDecl(clang::CXXMethodDecl* decl)
-    {
-        if (decl->doesThisDeclarationHaveABody() && decl->getNameAsString() == instrimentingMethodName) {
-            FullSourceLoc fullLocation = m_context->getFullLoc(decl->getLocStart());
-            if (fullLocation.isValid()) {
-                AddMemberCallVisitor visitor;
-                visitor.TraverseStmt(decl->getBody());
-                CheckMembersCoverage(decl->getParent(), visitor.instrumentedMembers(), decl->getLocStart());
-            }
-        }
-        return true;
-    }
+    bool VisitCXXMethodDecl(clang::CXXMethodDecl*);
 
 private:
-    void emitWarning(SourceLocation loc, const char* rawError)
-    {
-        FullSourceLoc full(loc, m_instance.getSourceManager());
-        std::string err("[webkit-style] ");
-        err += rawError;
-        DiagnosticsEngine& diagnostic = m_instance.getDiagnostics();
-        DiagnosticsEngine::Level level = diagnostic.getWarningsAsErrors() ? DiagnosticsEngine::Error : DiagnosticsEngine::Warning;
-        unsigned id = diagnostic.getCustomDiagID(level, err);
-        DiagnosticBuilder builder = diagnostic.Report(full, id);
-    }
-
-    CXXMethodDecl* findInstrumentationMethod(CXXRecordDecl* record)
-    {
-        for (CXXRecordDecl::method_iterator m = record->method_begin(); m != record->method_end(); ++m) {
-            if (m->getNameInfo().getAsString() == instrimentingMethodName)
-                return *m;
-        }
-        return 0;
-    }
-
-    bool needsToBeInstrumented(const Type* type)
-    {
-        if (type->isBuiltinType())
-            return false;
-        if (type->isEnumeralType())
-            return false;
-        if (type->isClassType()) {
-            const RecordType* recordType = dyn_cast<RecordType>(type);
-            if (recordType) {
-                CXXRecordDecl* decl = dyn_cast<CXXRecordDecl>(recordType->getDecl());
-                if (decl->getNameAsString() == "String")
-                    return true;
-                if (!decl || !findInstrumentationMethod(decl))
-                    return false;
-            }
-        }
-        if (type->isArrayType()) {
-            const ArrayType* arrayType = dyn_cast<const ArrayType>(type);
-            return needsToBeInstrumented(arrayType->getElementType().getTypePtr());
-        }
-        return true;
-    }
-
-    void CheckMembersCoverage(const CXXRecordDecl* instrumentedClass, const Strings& instrumentedMembers, SourceLocation location)
-    {
-        for (CXXRecordDecl::field_iterator i = instrumentedClass->field_begin(); i != instrumentedClass->field_end(); ++i) {
-            std::string fieldName = i->getNameAsString();
-            if (find(instrumentedMembers.begin(), instrumentedMembers.end(), fieldName) == instrumentedMembers.end()) {
-                if (!needsToBeInstrumented(i->getType().getTypePtr()))
-                    continue;
-                emitWarning(i->getSourceRange().getBegin(), "class member needs to be instrumented in reportMemoryUsage function");
-                emitWarning(location, "located here");
-            }
-        }
-    }
+    void emitWarning(SourceLocation, const char* rawError);
+    CXXMethodDecl* findInstrumentationMethod(CXXRecordDecl*);
+    bool needsToBeInstrumented(const Type*);
+    void CheckMembersCoverage(const CXXRecordDecl* instrumentedClass, const Strings& instrumentedMembers, SourceLocation);
 
     CompilerInstance& m_instance;
     ASTContext* m_context;
@@ -177,7 +100,7 @@ protected:
         return new ReportMemoryUsageConsumer(CI, &CI.getASTContext());
     }
 
-    bool ParseArgs(const CompilerInstance& CI, const std::vector<std::string>& args)
+    bool ParseArgs(const CompilerInstance& CI, const vector<string>& args)
     {
         if (args.size() && args[0] == "help")
             llvm::errs() << m_helpText;
@@ -211,7 +134,94 @@ const char* ReportMemoryUsageAction::m_helpText =
     "    Data* m_pointerToInternalField;\n"
     "}\n";
 
+bool AddMemberCallVisitor::VisitCallExpr(CallExpr* callExpr)
+{
+    CXXMemberCallExpr* methodCallExpr = dyn_cast<CXXMemberCallExpr>(callExpr);
+    bool instrumented = false;
+    if (methodCallExpr) {
+        string methodName = methodCallExpr->getMethodDecl()->getNameAsString();
+        Strings::iterator i = find(instrumentationMethods.begin(), instrumentationMethods.end(), methodName);
+        instrumented = i != instrumentationMethods.end();
+    }
+    if (instrumented || !methodCallExpr) {
+        for (CallExpr::arg_iterator i = callExpr->arg_begin(); i != callExpr->arg_end(); ++i) {
+            if (MemberExpr* memberExpr = dyn_cast<MemberExpr>(*i))
+                m_instrumentedMembers.push_back(memberExpr->getMemberNameInfo().getAsString());
+        }
+    }
+    return true;
 }
+
+bool ReportMemoryUsageVisitor::VisitCXXMethodDecl(clang::CXXMethodDecl* decl)
+{
+    if (decl->doesThisDeclarationHaveABody() && decl->getNameAsString() == instrumentingMethodName) {
+        FullSourceLoc fullLocation = m_context->getFullLoc(decl->getLocStart());
+        if (fullLocation.isValid()) {
+            AddMemberCallVisitor visitor;
+            visitor.TraverseStmt(decl->getBody());
+            CheckMembersCoverage(decl->getParent(), visitor.instrumentedMembers(), decl->getLocStart());
+        }
+    }
+    return true;
+}
+
+void ReportMemoryUsageVisitor::emitWarning(SourceLocation loc, const char* rawError)
+{
+    FullSourceLoc full(loc, m_instance.getSourceManager());
+    string err("[webkit-style] ");
+    err += rawError;
+    DiagnosticsEngine& diagnostic = m_instance.getDiagnostics();
+    DiagnosticsEngine::Level level = diagnostic.getWarningsAsErrors() ? DiagnosticsEngine::Error : DiagnosticsEngine::Warning;
+    unsigned id = diagnostic.getCustomDiagID(level, err);
+    DiagnosticBuilder builder = diagnostic.Report(full, id);
+}
+
+CXXMethodDecl* ReportMemoryUsageVisitor::findInstrumentationMethod(CXXRecordDecl* record)
+{
+    for (CXXRecordDecl::method_iterator m = record->method_begin(); m != record->method_end(); ++m) {
+        if (m->getNameInfo().getAsString() == instrumentingMethodName)
+            return *m;
+    }
+    return 0;
+}
+
+bool ReportMemoryUsageVisitor::needsToBeInstrumented(const Type* type)
+{
+    if (type->isBuiltinType())
+        return false;
+    if (type->isEnumeralType())
+        return false;
+    if (type->isClassType()) {
+        const RecordType* recordType = dyn_cast<RecordType>(type);
+        if (recordType) {
+            CXXRecordDecl* decl = dyn_cast<CXXRecordDecl>(recordType->getDecl());
+            if (decl->getNameAsString() == "String")
+                return true;
+            if (!decl || !findInstrumentationMethod(decl))
+                return false;
+        }
+    }
+    if (type->isArrayType()) {
+        const ArrayType* arrayType = dyn_cast<const ArrayType>(type);
+        return needsToBeInstrumented(arrayType->getElementType().getTypePtr());
+    }
+    return true;
+}
+
+void ReportMemoryUsageVisitor::CheckMembersCoverage(const CXXRecordDecl* instrumentedClass, const Strings& instrumentedMembers, SourceLocation location)
+{
+    for (CXXRecordDecl::field_iterator i = instrumentedClass->field_begin(); i != instrumentedClass->field_end(); ++i) {
+        string fieldName = i->getNameAsString();
+        if (find(instrumentedMembers.begin(), instrumentedMembers.end(), fieldName) == instrumentedMembers.end()) {
+            if (!needsToBeInstrumented(i->getType().getTypePtr()))
+                continue;
+            emitWarning(i->getSourceRange().getBegin(), "class member needs to be instrumented in reportMemoryUsage function");
+            emitWarning(location, "located here");
+        }
+    }
+}
+
+} // namespace
 
 static FrontendPluginRegistry::Add<ReportMemoryUsageAction>
 X("report-memory-usage", "Checks reportMemoryUsage function consistency");
