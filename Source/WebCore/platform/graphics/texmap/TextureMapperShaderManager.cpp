@@ -130,7 +130,7 @@ static const char* vertexTemplate =
         varying vec2 v_maskTexCoord;
         varying float v_antialias;
 
-        void noop(vec2) { }
+        void noop(inout vec2 dummyParameter) { }
 
         vec4 toViewportSpace(vec2 pos) { return vec4(pos, 0., 1.) * u_modelViewMatrix; }
 
