@@ -939,11 +939,10 @@ WebInspector.TimelinePanel.prototype = {
         var lastLeft;
         var lastRight;
 
-        while (taskIndex < tasks.length) {
+        for (; taskIndex < tasks.length; ++taskIndex) {
             var task = tasks[taskIndex];
             if (task.startTime > endTime)
                 break;
-            taskIndex++;
 
             var left = Math.max(0, this._calculator.computePosition(task.startTime) + barOffset - widthAdjustment);
             var right = Math.min(width, this._calculator.computePosition(task.endTime) + barOffset + widthAdjustment);
