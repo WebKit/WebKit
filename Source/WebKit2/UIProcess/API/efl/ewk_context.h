@@ -311,6 +311,14 @@ EAPI Ewk_Cache_Model ewk_context_cache_model_get(const Ewk_Context *context);
  */
 EAPI Eina_Bool ewk_context_additional_plugin_path_set(Ewk_Context *context, const char *path);
 
+/**
+ * Clears HTTP caches in local storage and all resources cached in memory 
+ * such as images, CSS, JavaScript, XSL, and fonts for @a context.
+ *
+ * @param context context object to clear all resource caches
+ */
+EAPI void ewk_context_resource_cache_clear(Ewk_Context *context);
+
 #ifdef __cplusplus
 }
 #endif

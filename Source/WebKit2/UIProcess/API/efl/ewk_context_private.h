@@ -82,6 +82,8 @@ public:
     void setAdditionalPluginPath(const String&);
 #endif
 
+    void clearResourceCache();
+
 private:
     explicit EwkContext(PassRefPtr<WebContext>);
 

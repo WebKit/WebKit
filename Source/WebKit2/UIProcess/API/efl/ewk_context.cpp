@@ -32,6 +32,7 @@
 #include "WKString.h"
 #include "WebContext.h"
 #include "WebIconDatabase.h"
+#include "WebResourceCacheManagerProxy.h"
 #include "WebSoupRequestManagerProxy.h"
 #include "ewk_context_private.h"
 #include "ewk_cookie_manager_private.h"
@@ -208,6 +209,11 @@ void EwkContext::setAdditionalPluginPath(const String& path)
 }
 #endif
 
+void EwkContext::clearResourceCache()
+{
+    m_context->resourceCacheManagerProxy()->clearCacheForAllOrigins(AllResourceCaches);
+}
+
 Ewk_Cookie_Manager* ewk_context_cookie_manager_get(const Ewk_Context* ewkContext)
 {
     EWK_OBJ_GET_IMPL_OR_RETURN(const EwkContext, ewkContext, impl, 0);
@@ -329,3 +335,11 @@ Eina_Bool ewk_context_additional_plugin_path_set(Ewk_Context* ewkContext, const 
     return false;
 #endif
 }
+
+void ewk_context_resource_cache_clear(Ewk_Context* ewkContext)
+{
+    EWK_OBJ_GET_IMPL_OR_RETURN(EwkContext, ewkContext, impl);
+
+    impl->clearResourceCache();
+}
+
