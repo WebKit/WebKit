@@ -47,9 +47,9 @@ public:
     virtual ~TextureMapperShaderProgram();
 
     TEXMAP_DECLARE_ATTRIBUTE(vertex)
-    TEXMAP_DECLARE_ATTRIBUTE(texCoord)
 
-    TEXMAP_DECLARE_UNIFORM(matrix)
+    TEXMAP_DECLARE_UNIFORM(modelViewMatrix)
+    TEXMAP_DECLARE_UNIFORM(projectionMatrix)
     TEXMAP_DECLARE_UNIFORM(flip)
     TEXMAP_DECLARE_UNIFORM(textureSize)
     TEXMAP_DECLARE_UNIFORM(opacity)
@@ -65,6 +65,8 @@ public:
     TEXMAP_DECLARE_UNIFORM(shadowOffset)
     TEXMAP_DECLARE_SAMPLER(contentTexture)
 #endif
+
+    void setMatrix(GC3Duint, const TransformationMatrix&);
 
 private:
     TextureMapperShaderProgram(PassRefPtr<GraphicsContext3D>, const String& vertexShaderSource, const String& fragmentShaderSource);
@@ -87,7 +89,7 @@ public:
         SolidColor       = 1L << 2,
         Opacity          = 1L << 3,
         Mask             = 1L << 4,
-        Antialias        = 1L << 5,
+        Antialiasing     = 1L << 5,
         GrayscaleFilter  = 1L << 6,
         SepiaFilter      = 1L << 7,
         SaturateFilter   = 1L << 8,

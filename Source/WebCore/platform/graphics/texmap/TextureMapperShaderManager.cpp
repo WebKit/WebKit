@@ -70,6 +70,18 @@ TextureMapperShaderProgram::TextureMapperShaderProgram(PassRefPtr<GraphicsContex
     LOG(Compositing, "Program log: %s\n", log.utf8().data());
 }
 
+void TextureMapperShaderProgram::setMatrix(GC3Duint location, const TransformationMatrix& matrix)
+{
+    GC3Dfloat matrixAsFloats[] = {
+        matrix.m11(), matrix.m12(), matrix.m13(), matrix.m14(),
+        matrix.m21(), matrix.m22(), matrix.m23(), matrix.m24(),
+        matrix.m31(), matrix.m32(), matrix.m33(), matrix.m34(),
+        matrix.m41(), matrix.m42(), matrix.m43(), matrix.m44()
+    };
+
+    m_context->uniformMatrix4fv(location, 1, false, matrixAsFloats);
+}
+
 GC3Duint TextureMapperShaderProgram::getLocation(const AtomicString& name, VariableType type)
 {
     HashMap<AtomicString, GC3Duint>::iterator it = m_variables.find(name);
@@ -106,31 +118,66 @@ TextureMapperShaderProgram::~TextureMapperShaderProgram()
     m_context->deleteProgram(programID);
 }
 
-static const char* vertexShaderSource =
+#define GLSL_DIRECTIVE(...) "#"#__VA_ARGS__"\n"
+static const char* vertexTemplate =
     STRINGIFY(
-        uniform mat4 u_matrix;
+        attribute vec4 a_vertex;
+        uniform mat4 u_modelViewMatrix;
+        uniform mat4 u_projectionMatrix;
         uniform float u_flip;
         uniform vec2 u_textureSize;
-        attribute vec4 a_vertex;
+
         varying vec2 v_texCoord;
         varying vec2 v_maskTexCoord;
+        varying float v_antialias;
+
+        void noop(vec2) { }
+
+        vec4 toViewportSpace(vec2 pos) { return vec4(pos, 0., 1.) * u_modelViewMatrix; }
+
+        // This function relies on the assumption that we get edge triangles with control points,
+        // a control point being the nearest point to the coordinate that is on the edge.
+        void applyAntialiasing(inout vec2 position)
+        {
+            // We count on the fact that quad passed in is always a unit rect,
+            // and the transformation matrix applies the real rect.
+            const vec2 center = vec2(0.5, 0.5);
+            const float antialiasInflationDistance = 1.;
+
+            // We pass the control point as the zw coordinates of the vertex.
+            // The control point is the point on the edge closest to the current position.
+            // The control point is used to compute the antialias value.
+            vec2 controlPoint = a_vertex.zw;
+
+            // First we calculate the distance in viewport space.
+            vec4 centerInViewportCoordinates = toViewportSpace(center);
+            vec4 controlPointInViewportCoordinates = toViewportSpace(controlPoint);
+            float viewportSpaceDistance = distance(centerInViewportCoordinates, controlPointInViewportCoordinates);
+
+            // We add the inflation distance to the computed distance, and compute the ratio.
+            float inflationRatio = (viewportSpaceDistance + antialiasInflationDistance) / viewportSpaceDistance;
+
+            // v_antialias needs to be 0 for the outer edge and 1. for the inner edge.
+            // Since the controlPoint is equal to the position in the edge vertices, the value is always 0 for those.
+            // For the center point, the distance is always 0.5, so we normalize to 1. by multiplying by 2.
+            // By multplying by inflationRatio and dividing by (inflationRatio - 1),
+            // We make sure that the varying interpolates between 0 (outer edge), 1 (inner edge) and n > 1 (center).
+            v_antialias = distance(controlPoint, position) * 2. * inflationRatio / (inflationRatio - 1.);
+
+            // Now inflate the actual position. By using this formula instead of inflating position directly,
+            // we ensure that the center vertex is never inflated.
+            position = center + (position - center) * inflationRatio;
+        }
 
         void main(void)
         {
-            vec4 position = a_vertex;
+            vec2 position = a_vertex.xy;
+            applyAntialiasingIfNeeded(position);
             v_texCoord = vec2(position.x, mix(position.y, 1. - position.y, u_flip)) * u_textureSize;
-            v_maskTexCoord = vec2(position);
-            gl_Position = u_matrix * a_vertex;
+            v_maskTexCoord = position;
+            gl_Position = u_projectionMatrix * u_modelViewMatrix * vec4(position, 0., 1.);
         }
     );
-
-#define GLSL_DIRECTIVE(...) "#"#__VA_ARGS__"\n"
-#define DEFINE_APPLIER(Name) \
-    "#ifdef ENABLE_"#Name"\n" \
-    "#define apply"#Name"IfNeeded apply"#Name"\n"\
-    "#else\n"\
-    "#define apply"#Name"IfNeeded noop\n"\
-    "#endif\n"
 
 #define RECT_TEXTURE_DIRECTIVE \
     GLSL_DIRECTIVE(ifdef ENABLE_Rect) \
@@ -141,29 +188,14 @@ static const char* vertexShaderSource =
         GLSL_DIRECTIVE(define SamplerFunction texture2D) \
     GLSL_DIRECTIVE(endif)
 
-#define ENABLE_APPLIER(Name) "#define ENABLE_"#Name"\n"
+#define ENABLE_APPLIER(Name) "#define ENABLE_"#Name"\n#define apply"#Name"IfNeeded apply"#Name"\n"
+#define DISABLE_APPLIER(Name) "#define apply"#Name"IfNeeded noop\n"
 #define BLUR_CONSTANTS \
     GLSL_DIRECTIVE(define GAUSSIAN_KERNEL_HALF_WIDTH 11) \
     GLSL_DIRECTIVE(define GAUSSIAN_KERNEL_STEP 0.2)
 
 
 static const char* fragmentTemplate =
-    DEFINE_APPLIER(Texture)
-    DEFINE_APPLIER(SolidColor)
-    DEFINE_APPLIER(Opacity)
-    DEFINE_APPLIER(Mask)
-    DEFINE_APPLIER(Antialias)
-    DEFINE_APPLIER(GrayscaleFilter)
-    DEFINE_APPLIER(SepiaFilter)
-    DEFINE_APPLIER(SaturateFilter)
-    DEFINE_APPLIER(HueRotateFilter)
-    DEFINE_APPLIER(InvertFilter)
-    DEFINE_APPLIER(BrightnessFilter)
-    DEFINE_APPLIER(ContrastFilter)
-    DEFINE_APPLIER(OpacityFilter)
-    DEFINE_APPLIER(BlurFilter)
-    DEFINE_APPLIER(AlphaBlur)
-    DEFINE_APPLIER(ContentTexture)
     RECT_TEXTURE_DIRECTIVE
     BLUR_CONSTANTS
     STRINGIFY(
@@ -172,9 +204,9 @@ static const char* fragmentTemplate =
         uniform sampler2D s_mask;
         uniform sampler2D s_contentTexture;
         uniform float u_opacity;
+        varying float v_antialias;
         varying vec2 v_texCoord;
         varying vec2 v_maskTexCoord;
-        uniform vec3 u_expandedQuadEdgesInScreenSpace[8];
         uniform float u_filterAmount;
         uniform vec2 u_blurRadius;
         uniform vec2 u_shadowOffset;
@@ -183,51 +215,11 @@ static const char* fragmentTemplate =
 
         void noop(inout vec4 dummyParameter) { }
 
-        // The data passed in u_expandedQuadEdgesInScreenSpace is merely the
-        // pre-scaled coeffecients of the line equations describing the four edges
-        // of the expanded quad in screen space and the rectangular bounding box
-        // of the expanded quad.
-        //
-        float normalizedDistance(vec3 edgeCoefficient)
-        {
-            // We are doing a simple distance calculation here according to the formula:
-            // (A*p.x + B*p.y + C) / sqrt(A^2 + B^2) = distance from line to p
-            // Note that A, B and C have already been scaled by 1 / sqrt(A^2 + B^2).
-            return clamp(dot(edgeCoefficient, vec3(gl_FragCoord.xy, 1.)), 0., 1.);
-        }
-
-        float antialiasQuad(vec3 coefficient1, vec3 coefficient2, vec3 coefficient3, vec3 coefficient4)
-        {
-            // Now we want to reduce the alpha value of the fragment if it is close to the
-            // edges of the expanded quad (or rectangular bounding box -- which seems to be
-            // important for backfacing quads). Note that we are combining the contribution
-            // from the (top || bottom) and (left || right) edge by simply multiplying. This follows
-            // the approach described at: http://http.developer.nvidia.com/GPUGems2/gpugems2_chapter22.html,
-            // in this case without using Gaussian weights.
-            return min(normalizedDistance(coefficient1), normalizedDistance(coefficient2))
-                * min(normalizedDistance(coefficient3), normalizedDistance(coefficient4));
-        }
-
-        float antialias()
-        {
-            float antialiasValueForQuad = 
-                antialiasQuad(u_expandedQuadEdgesInScreenSpace[0],
-                    u_expandedQuadEdgesInScreenSpace[1],
-                    u_expandedQuadEdgesInScreenSpace[2],
-                    u_expandedQuadEdgesInScreenSpace[3]);
-
-            float antialiasValueForBoundingRect = 
-                antialiasQuad(u_expandedQuadEdgesInScreenSpace[4],
-                    u_expandedQuadEdgesInScreenSpace[5],
-                    u_expandedQuadEdgesInScreenSpace[6],
-                    u_expandedQuadEdgesInScreenSpace[7]);
-
-            return min(antialiasValueForQuad, antialiasValueForBoundingRect);           
-        }
+        float antialias() { return smoothstep(v_antialias, 0., 1.); }
 
         void applyTexture(inout vec4 color) { color = SamplerFunction(s_sampler, v_texCoord); }
         void applyOpacity(inout vec4 color) { color *= u_opacity; }
-        void applyAntialias(inout vec4 color) { color *= antialias(); }
+        void applyAntialiasing(inout vec4 color) { color *= antialias(); }
         void applyMask(inout vec4 color) { color *= texture2D(s_mask, v_maskTexCoord).a; }
 
         void applyGrayscaleFilter(inout vec4 color)
@@ -331,17 +323,14 @@ static const char* fragmentTemplate =
             color = sourceOver(contentColor, color);
         }
 
-        void applySolidColor(inout vec4 color)
-        {
-            color *= u_color;
-        }
+        void applySolidColor(inout vec4 color) { color *= u_color; }
 
         void main(void)
         {
             vec4 color = vec4(1., 1., 1., 1.);
             applyTextureIfNeeded(color);
             applySolidColorIfNeeded(color);
-            applyAntialiasIfNeeded(color);
+            applyAntialiasingIfNeeded(color);
             applyMaskIfNeeded(color);
             applyOpacityIfNeeded(color);
             applyGrayscaleFilterIfNeeded(color);
@@ -362,32 +351,35 @@ static const char* fragmentTemplate =
 
 static void getShaderSpec(TextureMapperShaderManager::Options options, String& vertexSource, String& fragmentSource)
 {
-    StringBuilder fragmentBuilder;
+
+    StringBuilder shaderBuilder;
 #define SET_APPLIER_FROM_OPTIONS(Applier) \
-    if (options & TextureMapperShaderManager::Applier) \
-        fragmentBuilder.append(ENABLE_APPLIER(Applier));
+    shaderBuilder.append(\
+        (options & TextureMapperShaderManager::Applier) ? ENABLE_APPLIER(Applier) : DISABLE_APPLIER(Applier))
 
-    SET_APPLIER_FROM_OPTIONS(Texture)
-    SET_APPLIER_FROM_OPTIONS(Rect)
-    SET_APPLIER_FROM_OPTIONS(SolidColor)
-    SET_APPLIER_FROM_OPTIONS(Opacity)
-    SET_APPLIER_FROM_OPTIONS(Mask)
-    SET_APPLIER_FROM_OPTIONS(Antialias)
-    SET_APPLIER_FROM_OPTIONS(GrayscaleFilter)
-    SET_APPLIER_FROM_OPTIONS(SepiaFilter)
-    SET_APPLIER_FROM_OPTIONS(SaturateFilter)
-    SET_APPLIER_FROM_OPTIONS(HueRotateFilter)
-    SET_APPLIER_FROM_OPTIONS(BrightnessFilter)
-    SET_APPLIER_FROM_OPTIONS(ContrastFilter)
-    SET_APPLIER_FROM_OPTIONS(InvertFilter)
-    SET_APPLIER_FROM_OPTIONS(OpacityFilter)
-    SET_APPLIER_FROM_OPTIONS(BlurFilter)
-    SET_APPLIER_FROM_OPTIONS(AlphaBlur)
-    SET_APPLIER_FROM_OPTIONS(ContentTexture)
-
-    fragmentBuilder.append(fragmentTemplate);
-    vertexSource = vertexShaderSource;
-    fragmentSource = fragmentBuilder.toString();
+    SET_APPLIER_FROM_OPTIONS(Texture);
+    SET_APPLIER_FROM_OPTIONS(Rect);
+    SET_APPLIER_FROM_OPTIONS(SolidColor);
+    SET_APPLIER_FROM_OPTIONS(Opacity);
+    SET_APPLIER_FROM_OPTIONS(Mask);
+    SET_APPLIER_FROM_OPTIONS(Antialiasing);
+    SET_APPLIER_FROM_OPTIONS(GrayscaleFilter);
+    SET_APPLIER_FROM_OPTIONS(SepiaFilter);
+    SET_APPLIER_FROM_OPTIONS(SaturateFilter);
+    SET_APPLIER_FROM_OPTIONS(HueRotateFilter);
+    SET_APPLIER_FROM_OPTIONS(BrightnessFilter);
+    SET_APPLIER_FROM_OPTIONS(ContrastFilter);
+    SET_APPLIER_FROM_OPTIONS(InvertFilter);
+    SET_APPLIER_FROM_OPTIONS(OpacityFilter);
+    SET_APPLIER_FROM_OPTIONS(BlurFilter);
+    SET_APPLIER_FROM_OPTIONS(AlphaBlur);
+    SET_APPLIER_FROM_OPTIONS(ContentTexture);
+    StringBuilder vertexBuilder;
+    vertexBuilder.append(shaderBuilder.toString());
+    vertexBuilder.append(vertexTemplate);
+    shaderBuilder.append(fragmentTemplate);
+    vertexSource = vertexBuilder.toString();
+    fragmentSource = shaderBuilder.toString();
 }
 
 TextureMapperShaderManager::TextureMapperShaderManager(GraphicsContext3D* context)

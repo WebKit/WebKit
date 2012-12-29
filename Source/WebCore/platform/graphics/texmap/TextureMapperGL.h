@@ -44,7 +44,8 @@ public:
     enum Flag {
         ShouldBlend = 0x01,
         ShouldFlipTexture = 0x02,
-        ShouldUseARBTextureRect = 0x04
+        ShouldUseARBTextureRect = 0x04,
+        ShouldAntialias = 0x08
     };
 
     typedef int Flags;
@@ -98,22 +99,13 @@ private:
         Vector<ClipState> clipStack;
     };
 
-    struct DrawQuad {
-        DrawQuad(const FloatRect& originalTargetRect, const FloatQuad& targetRectMappedToUnitSquare = FloatRect(FloatPoint(), FloatSize(1, 1)))
-            : originalTargetRect(originalTargetRect)
-            , targetRectMappedToUnitSquare(targetRectMappedToUnitSquare)
-        {
-        }
-
-        FloatRect originalTargetRect;
-        FloatQuad targetRectMappedToUnitSquare;
-    };
-
     TextureMapperGL();
 
-    bool drawTextureWithAntialiasing(uint32_t texture, Flags, const IntSize&, const FloatRect& originalTargetRect, const TransformationMatrix& modelViewMatrix, float opacity, const BitmapTexture* maskTexture, unsigned exposedEdges);
-    void drawTexturedQuadWithProgram(TextureMapperShaderProgram*, uint32_t texture, Flags, const IntSize&, const DrawQuad&, const TransformationMatrix& modelViewMatrix, float opacity, const BitmapTexture* maskTexture);
-    void drawQuad(const DrawQuad&, const TransformationMatrix& modelViewMatrix, TextureMapperShaderProgram*, GC3Denum drawingMode, Flags);
+    void drawTexturedQuadWithProgram(TextureMapperShaderProgram*, uint32_t texture, Flags, const IntSize&, const FloatRect&, const TransformationMatrix& modelViewMatrix, float opacity, const BitmapTexture* maskTexture);
+    void draw(const FloatRect&, const TransformationMatrix& modelViewMatrix, TextureMapperShaderProgram*, GC3Denum drawingMode, Flags);
+
+    void drawUnitRect(TextureMapperShaderProgram*, GC3Denum drawingMode);
+    void drawEdgeTriangles(TextureMapperShaderProgram*);
 
     bool beginScissorClip(const TransformationMatrix&, const FloatRect&);
     void bindDefaultSurface();
