@@ -28,42 +28,44 @@
 
 #if USE(ACCELERATED_COMPOSITING) && USE(GLX)
 
-#include "GLXWindowResources.h"
-
-#include <wtf/Noncopyable.h>
+#include "GLPlatformSurface.h"
+#include "GLXConfigSelector.h"
+#include "X11WindowResources.h"
 
 namespace WebCore {
 
 #if USE(GRAPHICS_SURFACE)
-class GLXTransportSurface : public X11OffScreenWindow {
-    WTF_MAKE_NONCOPYABLE(GLXTransportSurface);
+class GLXTransportSurface : public GLPlatformSurface {
 
 public:
     GLXTransportSurface();
     virtual ~GLXTransportSurface();
-    PlatformSurfaceConfig configuration();
-    void swapBuffers();
-    void setGeometry(const IntRect&);
-    void destroy();
+    virtual PlatformSurfaceConfig configuration() OVERRIDE;
+    virtual void swapBuffers() OVERRIDE;
+    virtual void setGeometry(const IntRect&) OVERRIDE;
+    virtual void destroy() OVERRIDE;
 
 private:
     void initialize();
+    OwnPtr<X11OffScreenWindow> m_nativeResource;
+    OwnPtr<GLXConfigSelector> m_configSelector;
 };
 #endif
 
-class GLXPBuffer : public X11OffScreenWindow {
-    WTF_MAKE_NONCOPYABLE(GLXPBuffer);
+class GLXPBuffer : public GLPlatformSurface {
 
 public:
     GLXPBuffer();
     virtual ~GLXPBuffer();
-    PlatformSurfaceConfig configuration();
-    void setGeometry(const IntRect&);
-    void destroy();
+    virtual PlatformSurfaceConfig configuration() OVERRIDE;
+    virtual void setGeometry(const IntRect&) OVERRIDE;
+    virtual void destroy() OVERRIDE;
 
 private:
     void initialize();
     void freeResources();
+    OwnPtr<X11OffScreenWindow> m_nativeResource;
+    OwnPtr<GLXConfigSelector> m_configSelector;
 };
 
 }

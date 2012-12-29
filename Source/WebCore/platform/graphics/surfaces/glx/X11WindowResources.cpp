@@ -28,25 +28,15 @@
 
 #if USE(ACCELERATED_COMPOSITING)
 
-#if USE(GLX)
-#include "GLXWindowResources.h"
-#endif
-
 namespace WebCore {
 
-PlatformSharedResources* SharedX11Resources::m_staticSharedResource = 0;
+SharedX11Resources* SharedX11Resources::m_staticSharedResource = 0;
 
 X11OffScreenWindow::X11OffScreenWindow()
-    : GLPlatformSurface()
-    , m_sharedResources(0)
+    : m_sharedResources(0)
     , m_configVisualInfo(0)
 {
-    m_sharedResources = PlatformSharedResources::create();
-
-    if (!m_sharedResources)
-        return;
-
-    m_sharedDisplay = m_sharedResources->x11Display();
+    m_sharedResources = SharedX11Resources::create();
 }
 
 X11OffScreenWindow::~X11OffScreenWindow()
@@ -57,12 +47,12 @@ X11OffScreenWindow::~X11OffScreenWindow()
     }
 }
 
-void X11OffScreenWindow::reSizeWindow(const IntRect& newRect, PlatformBufferHandle windowId)
+void X11OffScreenWindow::reSizeWindow(const IntRect& newRect, const uint32_t windowId)
 {
     XResizeWindow(m_sharedResources->x11Display(), windowId, newRect.width(), newRect.height());
 }
 
-void X11OffScreenWindow::createOffscreenWindow(PlatformBufferHandle* handleId)
+void X11OffScreenWindow::createOffscreenWindow(uint32_t* handleId)
 {
     if (!m_sharedResources)
         return;
@@ -71,14 +61,8 @@ void X11OffScreenWindow::createOffscreenWindow(PlatformBufferHandle* handleId)
     if (!display)
         return;
 
-#if USE(GLX)
-    XVisualInfo* visInfo = m_sharedResources->visualInfo();
-#else
-    XVisualInfo* visInfo = m_configVisualInfo;
-#endif
-
-    if (!visInfo) {
-        LOG_ERROR("Failed to find valid XVisual");
+    if (!m_configVisualInfo) {
+        LOG_ERROR("Failed to find valid XVisual.");
         return;
     }
 
@@ -86,35 +70,33 @@ void X11OffScreenWindow::createOffscreenWindow(PlatformBufferHandle* handleId)
     if (!xWindow)
         return;
 
-    Colormap cmap = XCreateColormap(display, xWindow, visInfo->visual, AllocNone);
+    Colormap cmap = XCreateColormap(display, xWindow, m_configVisualInfo->visual, AllocNone);
     XSetWindowAttributes attribute;
     attribute.background_pixel = WhitePixel(display, 0);
     attribute.border_pixel = BlackPixel(display, 0);
     attribute.colormap = cmap;
-    PlatformBufferHandle tempHandleId;
-    tempHandleId = XCreateWindow(display, xWindow, 0, 0, 1, 1, 0, visInfo->depth, InputOutput, visInfo->visual, CWBackPixel | CWBorderPixel | CWColormap, &attribute);
+    uint32_t tempHandleId;
+    tempHandleId = XCreateWindow(display, xWindow, 0, 0, 1, 1, 0, m_configVisualInfo->depth, InputOutput, m_configVisualInfo->visual, CWBackPixel | CWBorderPixel | CWColormap, &attribute);
 
     if (!tempHandleId) {
-        LOG_ERROR("Failed to create offscreen window");
+        LOG_ERROR("Failed to create offscreen window.");
         return;
     }
 
     XSetWindowBackgroundPixmap(display, tempHandleId, 0);
     XCompositeRedirectWindow(display, tempHandleId, CompositeRedirectManual);
     *handleId = tempHandleId;
-    m_bufferHandle = tempHandleId;
 
     if (m_sharedResources->isXRenderExtensionSupported())
         XMapWindow(display, tempHandleId);
 
 }
 
-void X11OffScreenWindow::destroyWindow(PlatformBufferHandle windowId)
+void X11OffScreenWindow::destroyWindow(const uint32_t windowId)
 {
     if (!windowId)
         return;
 
-    GLPlatformSurface::destroy();
     Display* display = m_sharedResources->x11Display();
     if (!display)
         return;
@@ -122,7 +104,7 @@ void X11OffScreenWindow::destroyWindow(PlatformBufferHandle windowId)
     XDestroyWindow(display, windowId);
 }
 
-Display* X11OffScreenWindow::nativeSharedDisplay()
+Display* X11OffScreenWindow::nativeSharedDisplay() const
 {
     return m_sharedResources->x11Display();
 }
@@ -180,6 +162,16 @@ bool X11OffScreenWindow::setVisualId(const EGLint id)
     return false;
 }
 #endif
+
+void X11OffScreenWindow::setVisualInfo(XVisualInfo* visInfo)
+{
+    m_configVisualInfo = visInfo;
+}
+
+bool X11OffScreenWindow::isXRenderExtensionSupported() const
+{
+    return m_sharedResources->isXRenderExtensionSupported();
+}
 
 }
 

@@ -23,8 +23,8 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef GLXWindowResources_h
-#define GLXWindowResources_h
+#ifndef GLXConfigSelector_h
+#define GLXConfigSelector_h
 
 #include "X11WindowResources.h"
 
@@ -32,36 +32,31 @@
 
 namespace WebCore {
 
-class SharedGLXResources : public SharedX11Resources {
-    WTF_MAKE_NONCOPYABLE(SharedGLXResources);
+class GLXConfigSelector {
+    WTF_MAKE_NONCOPYABLE(GLXConfigSelector);
 
 public:
-    static PassRefPtr<SharedGLXResources> create()
+    GLXConfigSelector(Display* xDisplay, bool supportsXRenderExtension)
+        : m_pbufferFBConfig(0)
+        , m_surfaceContextFBConfig(0)
+        , m_visualInfo(0)
+        , m_sharedDisplay(xDisplay)
+        , m_supportsXRenderExtension(supportsXRenderExtension)
     {
-        if (!m_staticSharedResource)
-            m_staticSharedResource = new SharedGLXResources();
-        else
-            m_staticSharedResource->ref();
-
-        return adoptRef(m_staticSharedResource);
     }
 
-    PlatformDisplay nativeDisplay()
+    virtual ~GLXConfigSelector()
     {
-        return SharedX11Resources::x11Display();
     }
 
-    XVisualInfo* visualInfo()
+    XVisualInfo* visualInfo() const
     {
-        if (!m_VisualInfo)
-            surfaceContextConfig();
-
-        return m_VisualInfo;
+        return m_visualInfo;
     }
 
-    virtual GLXFBConfig pBufferContextConfig()
+    GLXFBConfig pBufferContextConfig()
     {
-        if (!m_pbufferfbConfig) {
+        if (!m_pbufferFBConfig) {
             static const int attributes[] = {
                 GLX_LEVEL, 0,
                 GLX_DRAWABLE_TYPE, GLX_PBUFFER_BIT,
@@ -73,19 +68,19 @@ public:
                 None
             };
 
-            int numReturned;
-            GLXFBConfig* temp = glXChooseFBConfig(nativeDisplay(), DefaultScreen(nativeDisplay()), attributes, &numReturned);
-            if (numReturned)
-                m_pbufferfbConfig = temp[0];
+            int numAvailableConfigs;
+            GLXFBConfig* temp = glXChooseFBConfig(m_sharedDisplay, DefaultScreen(m_sharedDisplay), attributes, &numAvailableConfigs);
+            if (numAvailableConfigs)
+                m_pbufferFBConfig = temp[0];
             XFree(temp);
         }
 
-        return m_pbufferfbConfig;
+        return m_pbufferFBConfig;
     }
 
-    virtual GLXFBConfig surfaceContextConfig()
+    GLXFBConfig surfaceContextConfig()
     {
-        if (!m_surfaceContextfbConfig) {
+        if (!m_surfaceContextFBConfig) {
             static int attributes[] = {
                 GLX_LEVEL, 0,
                 GLX_DRAWABLE_TYPE, GLX_WINDOW_BIT,
@@ -100,48 +95,46 @@ public:
                 None
             };
 
-            m_surfaceContextfbConfig = createConfig(attributes);
+            m_surfaceContextFBConfig = createConfig(attributes);
         }
 
-        return m_surfaceContextfbConfig;
+        return m_surfaceContextFBConfig;
     }
 
-protected:
-    SharedGLXResources()
-        : SharedX11Resources()
-        , m_pbufferfbConfig(0)
-        , m_surfaceContextfbConfig(0)
-        , m_VisualInfo(0)
+    void reset()
     {
+        m_pbufferFBConfig = 0;
+        m_surfaceContextFBConfig = 0;
     }
 
+private:
     GLXFBConfig createConfig(const int attributes[])
     {
-        int numReturned;
-        m_VisualInfo = 0;
-        GLXFBConfig* temp = glXChooseFBConfig(nativeDisplay(), DefaultScreen(nativeDisplay()), attributes, &numReturned);
+        int numAvailableConfigs;
+        m_visualInfo = 0;
+        GLXFBConfig* temp = glXChooseFBConfig(m_sharedDisplay, DefaultScreen(m_sharedDisplay), attributes, &numAvailableConfigs);
 
-        if (!numReturned)
+        if (!numAvailableConfigs)
             return 0;
 
         GLXFBConfig selectedConfig = 0;
         bool found = false;
 
-        for (int i = 0; i < numReturned; ++i) {
-            m_VisualInfo = glXGetVisualFromFBConfig(nativeDisplay(), temp[i]);
-            if (!m_VisualInfo)
+        for (int i = 0; i < numAvailableConfigs; ++i) {
+            m_visualInfo = glXGetVisualFromFBConfig(m_sharedDisplay, temp[i]);
+            if (!m_visualInfo)
                 continue;
 #if USE(GRAPHICS_SURFACE)
             if (m_supportsXRenderExtension) {
-                XRenderPictFormat* format = XRenderFindVisualFormat(nativeDisplay(), m_VisualInfo->visual);
+                XRenderPictFormat* format = XRenderFindVisualFormat(m_sharedDisplay, m_visualInfo->visual);
                 if (format && format->direct.alphaMask > 0) {
                     selectedConfig = temp[i];
                     found = true;
                     break;
                 }
-            } else if (m_VisualInfo->depth == 32) {
+            } else if (m_visualInfo->depth == 32) {
 #else
-            if (m_VisualInfo->depth == 32) {
+            if (m_visualInfo->depth == 32) {
 #endif
                 selectedConfig = temp[i];
                 found = true;
@@ -151,7 +144,7 @@ protected:
         // Did not find any visual supporting alpha, select the first available config.
         if (!found) {
             selectedConfig = temp[0];
-            m_VisualInfo = glXGetVisualFromFBConfig(m_display, temp[0]);
+            m_visualInfo = glXGetVisualFromFBConfig(m_sharedDisplay, temp[0]);
         }
 
         XFree(temp);
@@ -159,26 +152,11 @@ protected:
         return selectedConfig;
     }
 
-    virtual ~SharedGLXResources()
-    {
-        if (!m_display)
-            return;
-
-        if (m_pbufferfbConfig)
-            m_pbufferfbConfig = 0;
-
-        if (m_surfaceContextfbConfig)
-            m_surfaceContextfbConfig = 0;
-
-        if (m_VisualInfo) {
-            XFree(m_VisualInfo);
-            m_VisualInfo = 0;
-        }
-    }
-
-    GLXFBConfig m_pbufferfbConfig;
-    GLXFBConfig m_surfaceContextfbConfig;
-    XVisualInfo* m_VisualInfo;
+    GLXFBConfig m_pbufferFBConfig;
+    GLXFBConfig m_surfaceContextFBConfig;
+    XVisualInfo* m_visualInfo;
+    Display* m_sharedDisplay;
+    bool m_supportsXRenderExtension;
 };
 
 }

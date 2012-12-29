@@ -28,41 +28,33 @@
 
 #if USE(ACCELERATED_COMPOSITING)
 
-#include "GLPlatformSurface.h"
+#include "IntRect.h"
+
+#include <opengl/GLDefs.h>
+#include <wtf/Noncopyable.h>
+#include <wtf/PassRefPtr.h>
+#include <wtf/RefCounted.h>
 
 #if USE(GRAPHICS_SURFACE)
 #include <X11/extensions/Xcomposite.h>
 #include <X11/extensions/Xrender.h>
 #endif
 
-#include <wtf/Noncopyable.h>
-#include <wtf/RefCounted.h>
-
 namespace WebCore {
-
-#if USE(GLX)
-class SharedGLXResources;
-typedef SharedGLXResources PlatformSharedResources;
-#elif USE(EGL)
-class SharedX11Resources;
-typedef SharedX11Resources PlatformSharedResources;
-#endif
 
 class SharedX11Resources : public WTF::RefCountedBase {
     WTF_MAKE_NONCOPYABLE(SharedX11Resources);
 
 public:
-#if USE(EGL)
-    static PassRefPtr<PlatformSharedResources> create()
+    static PassRefPtr<SharedX11Resources> create()
     {
         if (!m_staticSharedResource)
-            m_staticSharedResource = new PlatformSharedResources();
+            m_staticSharedResource = new SharedX11Resources();
         else
             m_staticSharedResource->ref();
 
         return adoptRef(m_staticSharedResource);
     }
-#endif
 
     void deref()
     {
@@ -103,7 +95,7 @@ public:
             XMapWindow(dpy, m_window);
 
             if (!m_window) {
-                LOG_ERROR("Failed to create SimpleWindow");
+                LOG_ERROR("Failed to create offscreen root window.");
                 return 0;
             }
         }
@@ -111,7 +103,7 @@ public:
         return m_window;
     }
 
-    bool isXRenderExtensionSupported()
+    bool isXRenderExtensionSupported() const
     {
         return m_supportsXRenderExtension;
     }
@@ -139,28 +131,30 @@ protected:
         m_display = 0;
     }
 
-    static PlatformSharedResources* m_staticSharedResource;
+    static SharedX11Resources* m_staticSharedResource;
     bool m_supportsXRenderExtension;
     Window m_window;
     Display* m_display;
 };
 
-class X11OffScreenWindow : public GLPlatformSurface {
+class X11OffScreenWindow {
     WTF_MAKE_NONCOPYABLE(X11OffScreenWindow);
 
 public:
     X11OffScreenWindow();
     virtual ~X11OffScreenWindow();
-    void createOffscreenWindow(PlatformBufferHandle*);
-    void destroyWindow(PlatformBufferHandle);
-    void reSizeWindow(const IntRect&, PlatformBufferHandle);
-    Display* nativeSharedDisplay();
+    void createOffscreenWindow(uint32_t*);
+    void destroyWindow(const uint32_t);
+    void reSizeWindow(const IntRect&, const uint32_t);
+    Display* nativeSharedDisplay() const;
 #if USE(EGL)
     bool setVisualId(const EGLint);
 #endif
+    void setVisualInfo(XVisualInfo*);
+    bool isXRenderExtensionSupported() const;
 
-protected:
-    RefPtr<PlatformSharedResources> m_sharedResources;
+private:
+    RefPtr<SharedX11Resources> m_sharedResources;
     XVisualInfo* m_configVisualInfo;
 };
 
