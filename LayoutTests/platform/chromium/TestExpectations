@@ -1226,6 +1226,7 @@ crbug.com/62433 [ Win ] fast/images/gif-loop-count.html [ ImageOnlyFailure ]
 
 # Reporting translation of -0.00.
 crbug.com/167819 [ XP ] svg/overflow/overflow-on-inner-svg-element.svg [ Failure ]
+crbug.com/167822 [ XP ] svg/dom/css-transforms.xhtml [ Failure ]
 
 # New in WebKit r52559
 crbug.com/18116 svg/custom/global-constructors.html [ Failure ]

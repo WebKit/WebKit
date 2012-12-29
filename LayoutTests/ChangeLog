@@ -1,4 +1,10 @@
 2012-12-28  Fady Samuel  <fsamuel@chromium.org>
+
+        Unreviewed updated test expectations
+
+        * platform/chromium/TestExpectations:
+
+2012-12-28  Fady Samuel  <fsamuel@chromium.org>
       
         Unreviewed updated TestExpectations. Mark test as fail on XP only.
 
