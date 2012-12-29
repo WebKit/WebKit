@@ -965,6 +965,7 @@
 		BCF049E611FE20F600F86A58 /* WKBundleFramePrivate.h in Headers */ = {isa = PBXBuildFile; fileRef = BCF049E411FE20F600F86A58 /* WKBundleFramePrivate.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		BCF049E711FE20F600F86A58 /* WKBundlePrivate.h in Headers */ = {isa = PBXBuildFile; fileRef = BCF049E511FE20F600F86A58 /* WKBundlePrivate.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		BCF18638167D071E00A1A85A /* CacheModel.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BCF18637167D071E00A1A85A /* CacheModel.cpp */; };
+		BCF4DE23168E4BD500C94AFC /* NetworkProcessSupplement.h in Headers */ = {isa = PBXBuildFile; fileRef = BCF4DE22168E4BD500C94AFC /* NetworkProcessSupplement.h */; };
 		BCF505E71243047B005955AE /* PlatformCertificateInfo.h in Headers */ = {isa = PBXBuildFile; fileRef = BCF505E51243047B005955AE /* PlatformCertificateInfo.h */; };
 		BCF505E81243047B005955AE /* PlatformCertificateInfo.mm in Sources */ = {isa = PBXBuildFile; fileRef = BCF505E61243047B005955AE /* PlatformCertificateInfo.mm */; };
 		BCF50728124329AA005955AE /* WebCertificateInfo.h in Headers */ = {isa = PBXBuildFile; fileRef = BCF50726124329AA005955AE /* WebCertificateInfo.h */; };
@@ -2240,6 +2241,7 @@
 		BCF04C8C11FF9B7D00F86A58 /* APIObject.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = APIObject.h; sourceTree = "<group>"; };
 		BCF04C8E11FF9F6E00F86A58 /* WebString.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebString.h; sourceTree = "<group>"; };
 		BCF18637167D071E00A1A85A /* CacheModel.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CacheModel.cpp; sourceTree = "<group>"; };
+		BCF4DE22168E4BD500C94AFC /* NetworkProcessSupplement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = NetworkProcessSupplement.h; path = Network/NetworkProcessSupplement.h; sourceTree = "<group>"; };
 		BCF505E51243047B005955AE /* PlatformCertificateInfo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PlatformCertificateInfo.h; sourceTree = "<group>"; };
 		BCF505E61243047B005955AE /* PlatformCertificateInfo.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = PlatformCertificateInfo.mm; sourceTree = "<group>"; };
 		BCF5068412431861005955AE /* Security.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Security.framework; path = /System/Library/Frameworks/Security.framework; sourceTree = "<absolute>"; };
@@ -3261,6 +3263,7 @@
 				2989A40E167D1813004F96D2 /* CustomProtocols */,
 				51A8A6121627F325000D90E9 /* NetworkProcessCreationParameters.cpp */,
 				51A8A60F1627F2BD000D90E9 /* NetworkProcessCreationParameters.h */,
+				BCF4DE22168E4BD500C94AFC /* NetworkProcessSupplement.h */,
 				51CBBA0D165219B6005BE8FD /* NetworkResourceLoadParameters.cpp */,
 				51CBBA0E165219B6005BE8FD /* NetworkResourceLoadParameters.h */,
 			);
@@ -5024,6 +5027,7 @@
 				2989A414167D184B004F96D2 /* CustomProtocolManager.h in Headers */,
 				31A505FA1680025500A930EB /* WebContextClient.h in Headers */,
 				BCE0E425168B7A280057E66A /* WebProcessSupplement.h in Headers */,
+				BCF4DE23168E4BD500C94AFC /* NetworkProcessSupplement.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -26,6 +26,7 @@
 #ifndef WebGeolocationManager_h
 #define WebGeolocationManager_h
 
+#include "MessageReceiver.h"
 #include "WebGeolocationPosition.h"
 #include "WebProcessSupplement.h"
 #include <wtf/Forward.h>
@@ -42,7 +43,7 @@ namespace WebKit {
 class WebProcess;
 class WebPage;
 
-class WebGeolocationManager : public WebProcessSupplement {
+class WebGeolocationManager : public WebProcessSupplement, public CoreIPC::MessageReceiver {
     WTF_MAKE_NONCOPYABLE(WebGeolocationManager);
 public:
     explicit WebGeolocationManager(WebProcess*);

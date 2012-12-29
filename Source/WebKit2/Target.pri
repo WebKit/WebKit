@@ -90,6 +90,7 @@ HEADERS += \
     Shared/NativeWebKeyboardEvent.h \
     Shared/NativeWebMouseEvent.h \
     Shared/NativeWebWheelEvent.h \
+    Shared/Network/NetworkProcessSupplement.h \
     Shared/OriginAndDatabases.h \
     Shared/PlatformPopupMenuData.h \
     Shared/PrintInfo.h \

@@ -51,6 +51,7 @@ libwebkit2gtk_@WEBKITGTK_API_MAJOR_VERSION@_@WEBKITGTK_API_MINOR_VERSION@_la_CPP
 	-I$(srcdir)/Source/WebKit2/Shared/API/c/soup \
 	-I$(srcdir)/Source/WebKit2/Shared/CoreIPCSupport \
 	-I$(srcdir)/Source/WebKit2/Shared/gtk \
+	-I$(srcdir)/Source/WebKit2/Shared/Network \
 	-I$(srcdir)/Source/WebKit2/Shared/Plugins \
 	-I$(srcdir)/Source/WebKit2/Shared/Plugins/Netscape \
 	-I$(srcdir)/Source/WebKit2/Shared/Plugins/Netscape/x11 \

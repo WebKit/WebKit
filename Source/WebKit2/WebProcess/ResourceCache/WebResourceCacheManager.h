@@ -26,6 +26,7 @@
 #ifndef WebResourceCacheManager_h
 #define WebResourceCacheManager_h
 
+#include "MessageReceiver.h"
 #include "ResourceCachesToClear.h"
 #include "WebProcessSupplement.h"
 #include <wtf/Noncopyable.h>
@@ -37,7 +38,7 @@ namespace WebKit {
 class WebProcess;
 struct SecurityOriginData;
 
-class WebResourceCacheManager : public WebProcessSupplement {
+class WebResourceCacheManager : public WebProcessSupplement, public CoreIPC::MessageReceiver {
     WTF_MAKE_NONCOPYABLE(WebResourceCacheManager);
 public:
     WebResourceCacheManager(WebProcess*);

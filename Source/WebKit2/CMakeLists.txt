@@ -8,6 +8,7 @@ set(WebKit2_INCLUDE_DIRECTORIES
     "${WEBKIT2_DIR}/Shared/API/c"
     "${WEBKIT2_DIR}/Shared/CoordinatedGraphics"
     "${WEBKIT2_DIR}/Shared/CoreIPCSupport"
+    "${WEBKIT2_DIR}/Shared/Network"
     "${WEBKIT2_DIR}/Shared/Plugins"
     "${WEBKIT2_DIR}/Shared/Plugins/Netscape"
     "${WEBKIT2_DIR}/Shared/Plugins/Netscape/x11"

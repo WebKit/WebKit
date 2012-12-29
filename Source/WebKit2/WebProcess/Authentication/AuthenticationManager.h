@@ -26,6 +26,8 @@
 #ifndef AuthenticationManager_h
 #define AuthenticationManager_h
 
+#include "MessageReceiver.h"
+#include "NetworkProcessSupplement.h"
 #include "WebProcessSupplement.h"
 #include <wtf/Forward.h>
 #include <wtf/HashMap.h>
@@ -42,7 +44,7 @@ class Download;
 class PlatformCertificateInfo;
 class WebFrame;
 
-class AuthenticationManager : public WebProcessSupplement {
+class AuthenticationManager : public WebProcessSupplement, public NetworkProcessSupplement, public CoreIPC::MessageReceiver {
     WTF_MAKE_NONCOPYABLE(AuthenticationManager);
 public:
     explicit AuthenticationManager(ChildProcess*);

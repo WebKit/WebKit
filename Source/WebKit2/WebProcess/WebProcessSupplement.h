@@ -26,13 +26,11 @@
 #ifndef WebProcessSupplement_h
 #define WebProcessSupplement_h
 
-#include "MessageReceiver.h"
-
 namespace WebKit {
 
 struct WebProcessCreationParameters;
 
-class WebProcessSupplement : public CoreIPC::MessageReceiver {
+class WebProcessSupplement {
 public:
     virtual ~WebProcessSupplement()
     {

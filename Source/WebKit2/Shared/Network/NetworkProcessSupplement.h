@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011 Apple Inc. All rights reserved.
+ * Copyright (C) 2012 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,39 +23,26 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WebApplicationCacheManager_h
-#define WebApplicationCacheManager_h
-
-#include "MessageReceiver.h"
-#include "WebProcessSupplement.h"
-#include <wtf/Noncopyable.h>
-#include <wtf/text/WTFString.h>
+#ifndef NetworkProcessSupplement_h
+#define NetworkProcessSupplement_h
 
 namespace WebKit {
 
-class ChildProcess;
-struct SecurityOriginData;
+struct NetworkProcessCreationParameters;
 
-class WebApplicationCacheManager : public WebProcessSupplement, public CoreIPC::MessageReceiver {
-    WTF_MAKE_NONCOPYABLE(WebApplicationCacheManager);
+class NetworkProcessSupplement {
+#if ENABLE(NETWORK_PROCESS)
 public:
-    WebApplicationCacheManager(ChildProcess*);
+    virtual ~NetworkProcessSupplement()
+    {
+    }
 
-    static const AtomicString& supplementName();
-
-    void deleteAllEntries();
-    void setAppCacheMaximumSize(uint64_t);
-
-private:
-    void getApplicationCacheOrigins(uint64_t callbackID);
-    void deleteEntriesForOrigin(const SecurityOriginData&);
-
-    void didReceiveMessage(CoreIPC::Connection*, CoreIPC::MessageID, CoreIPC::MessageDecoder&) OVERRIDE;
-    void didReceiveWebApplicationCacheManagerMessage(CoreIPC::Connection*, CoreIPC::MessageID, CoreIPC::MessageDecoder&);
-
-    ChildProcess* m_childProcess;
+    virtual void initialize(const NetworkProcessCreationParameters&)
+    {
+    }
+#endif
 };
 
 } // namespace WebKit
 
-#endif // WebApplicationCacheManager_h
+#endif // NetworkProcessSupplement_h

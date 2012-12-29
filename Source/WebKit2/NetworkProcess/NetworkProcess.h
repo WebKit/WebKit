@@ -42,16 +42,27 @@ namespace WebCore {
 namespace WebKit {
 
 class AuthenticationManager;
-class CustomProtocolManager;
 class NetworkConnectionToWebProcess;
+class NetworkProcessSupplement;
 class PlatformCertificateInfo;
-class WebCookieManager;
 struct NetworkProcessCreationParameters;
 
 class NetworkProcess : public ChildProcess, DownloadManager::Client {
     WTF_MAKE_NONCOPYABLE(NetworkProcess);
 public:
     static NetworkProcess& shared();
+
+    template <typename T>
+    T* supplement()
+    {
+        return static_cast<T*>(m_supplements.get(T::supplementName()));
+    }
+
+    template <typename T>
+    void addSupplement()
+    {
+        m_supplements.add(T::supplementName(), new T(this));
+    }
 
     void initialize(CoreIPC::Connection::Identifier, WebCore::RunLoop*);
 
@@ -111,9 +122,8 @@ private:
     bool m_hasSetCacheModel;
     CacheModel m_cacheModel;
 
-    AuthenticationManager* m_downloadsAuthenticationManager;
-    WebCookieManager* m_cookieManager;
-    CustomProtocolManager* m_customProtocolManager;
+    typedef HashMap<AtomicString, NetworkProcessSupplement*> NetworkProcessSupplementMap;
+    NetworkProcessSupplementMap m_supplements;
 };
 
 } // namespace WebKit

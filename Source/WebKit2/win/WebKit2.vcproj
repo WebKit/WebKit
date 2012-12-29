@@ -519,6 +519,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\Shared\Network\NetworkProcessSupplement.h"
+				>
+			</File>
+			<File
 				RelativePath="..\Shared\OriginAndDatabases.cpp"
 				>
 			</File>

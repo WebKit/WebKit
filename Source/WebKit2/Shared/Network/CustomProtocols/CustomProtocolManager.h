@@ -28,6 +28,8 @@
 
 #if ENABLE(CUSTOM_PROTOCOLS)
 
+#include "MessageReceiver.h"
+#include "NetworkProcessSupplement.h"
 #include "WebProcessSupplement.h"
 #include <wtf/HashSet.h>
 #include <wtf/text/WTFString.h>
@@ -53,18 +55,12 @@ namespace WebKit {
 class ChildProcess;
 struct NetworkProcessCreationParameters;
 
-class CustomProtocolManager : public WebProcessSupplement {
+class CustomProtocolManager : public WebProcessSupplement, public NetworkProcessSupplement, public CoreIPC::MessageReceiver {
     WTF_MAKE_NONCOPYABLE(CustomProtocolManager);
 public:
     explicit CustomProtocolManager(ChildProcess*);
 
     static const AtomicString& supplementName();
-
-#if ENABLE(NETWORK_PROCESS)
-    // FIXME: Once NetworkProcessSupplement exists, this should
-    // move to the private section.
-    void initialize(const NetworkProcessCreationParameters&);
-#endif
 
     ChildProcess* childProcess() const { return m_childProcess; }
 
@@ -80,6 +76,11 @@ public:
 private:
     // WebProcessSupplement
     void initialize(const WebProcessCreationParameters&) OVERRIDE;
+
+#if ENABLE(NETWORK_PROCESS)
+    // NetworkProcessSupplement
+    void initialize(const NetworkProcessCreationParameters&) OVERRIDE;
+#endif
 
     // CoreIPC::MessageReceiver
     virtual void didReceiveMessage(CoreIPC::Connection*, CoreIPC::MessageID, CoreIPC::MessageDecoder&) OVERRIDE;

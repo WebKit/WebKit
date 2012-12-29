@@ -26,6 +26,7 @@
 #ifndef WebNotificationManager_h
 #define WebNotificationManager_h
 
+#include "MessageReceiver.h"
 #include "WebProcessSupplement.h"
 #include <WebCore/NotificationClient.h>
 #include <wtf/HashMap.h>
@@ -44,7 +45,7 @@ namespace WebKit {
 class WebPage;
 class WebProcess;
 
-class WebNotificationManager : public WebProcessSupplement {
+class WebNotificationManager : public WebProcessSupplement, public CoreIPC::MessageReceiver {
     WTF_MAKE_NONCOPYABLE(WebNotificationManager);
 public:
     explicit WebNotificationManager(WebProcess*);

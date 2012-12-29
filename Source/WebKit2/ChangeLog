@@ -1,3 +1,48 @@
+2012-12-29  Sam Weinig  <sam@webkit.org>
+
+        Add supplementability to the NetworkProcess
+        https://bugs.webkit.org/show_bug.cgi?id=105838
+
+        Reviewed by Dan Bernstein.
+
+        This patch adds a NetworkProcessSupplement, which is almost identical to
+        WebProcessSupplement, but has a different initialization override. It also
+        stops WebProcessSupplement from inheriting from MessageReceiver (and makes
+        everything that is a WebProcessSupplement also a MessageReceiver) as keeping
+        that would cause classes that need to be both WebProcessSupplements and
+        NetworkProcessSupplements inherit from MessageReceiver twice.
+
+        * GNUmakefile.list.am:
+        * NetworkProcess/NetworkProcess.cpp:
+        (WebKit::NetworkProcess::NetworkProcess):
+        (WebKit::NetworkProcess::downloadsAuthenticationManager):
+        (WebKit::NetworkProcess::initializeNetworkProcess):
+        * NetworkProcess/NetworkProcess.h:
+        (WebKit):
+        (NetworkProcess):
+        (WebKit::NetworkProcess::supplement):
+        (WebKit::NetworkProcess::addSupplement):
+        * Shared/Network/CustomProtocols/CustomProtocolManager.h:
+        (CustomProtocolManager):
+        * Shared/Network/NetworkProcessSupplement.h: Added.
+        (WebKit):
+        (NetworkProcessSupplement):
+        (WebKit::NetworkProcessSupplement::~NetworkProcessSupplement):
+        (WebKit::NetworkProcessSupplement::initialize):
+        * Target.pri:
+        * WebKit2.xcodeproj/project.pbxproj:
+        * WebProcess/ApplicationCache/WebApplicationCacheManager.h:
+        * WebProcess/Authentication/AuthenticationManager.h:
+        * WebProcess/Cookies/WebCookieManager.h:
+        * WebProcess/Geolocation/WebGeolocationManager.h:
+        * WebProcess/KeyValueStorage/WebKeyValueStorageManager.h:
+        * WebProcess/MediaCache/WebMediaCacheManager.h:
+        * WebProcess/Notifications/WebNotificationManager.h:
+        * WebProcess/ResourceCache/WebResourceCacheManager.h:
+        * WebProcess/WebCoreSupport/WebDatabaseManager.h:
+        * WebProcess/WebProcessSupplement.h:
+        * win/WebKit2.vcproj:
+
 2012-12-28  Ryuan Choi  <ryuan.choi@samsung.com>
 
         [EFL][WK2] MiniBrowser could not be launched on specific machine

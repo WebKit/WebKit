@@ -56,10 +56,10 @@ NetworkProcess& NetworkProcess::shared()
 NetworkProcess::NetworkProcess()
     : m_hasSetCacheModel(false)
     , m_cacheModel(CacheModelDocumentViewer)
-    , m_downloadsAuthenticationManager(new AuthenticationManager(this))
-    , m_cookieManager(new WebCookieManager(this))
-    , m_customProtocolManager(new CustomProtocolManager(this))
 {
+    addSupplement<AuthenticationManager>();
+    addSupplement<WebCookieManager>();
+    addSupplement<CustomProtocolManager>();
 }
 
 NetworkProcess::~NetworkProcess()
@@ -136,7 +136,7 @@ CoreIPC::Connection* NetworkProcess::downloadProxyConnection()
 
 AuthenticationManager& NetworkProcess::downloadsAuthenticationManager()
 {
-    return *m_downloadsAuthenticationManager;
+    return *supplement<AuthenticationManager>();
 }
 
 void NetworkProcess::initializeNetworkProcess(const NetworkProcessCreationParameters& parameters)
@@ -157,7 +157,10 @@ void NetworkProcess::initializeNetworkProcess(const NetworkProcessCreationParame
     if (parameters.privateBrowsingEnabled)
         RemoteNetworkingContext::ensurePrivateBrowsingSession();
 
-    m_customProtocolManager->initialize(parameters);
+    NetworkProcessSupplementMap::const_iterator it = m_supplements.begin();
+    NetworkProcessSupplementMap::const_iterator end = m_supplements.end();
+    for (; it != end; ++it)
+        it->value->initialize(parameters);
 }
 
 void NetworkProcess::createNetworkConnectionToWebProcess()

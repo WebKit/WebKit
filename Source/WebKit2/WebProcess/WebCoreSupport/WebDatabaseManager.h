@@ -28,6 +28,7 @@
 
 #if ENABLE(SQL_DATABASE)
 
+#include "MessageReceiver.h"
 #include "WebProcessSupplement.h"
 #include <WebCore/DatabaseManagerClient.h>
 #include <stdint.h>
@@ -37,7 +38,7 @@ namespace WebKit {
 
 class WebProcess;
 
-class WebDatabaseManager : public WebCore::DatabaseManagerClient, public WebProcessSupplement {
+class WebDatabaseManager : public WebCore::DatabaseManagerClient, public WebProcessSupplement, public CoreIPC::MessageReceiver {
     WTF_MAKE_NONCOPYABLE(WebDatabaseManager);
 public:
     explicit WebDatabaseManager(WebProcess*);

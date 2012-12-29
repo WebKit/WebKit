@@ -26,6 +26,7 @@
 #ifndef WebKeyValueStorageManager_h
 #define WebKeyValueStorageManager_h
 
+#include "MessageReceiver.h"
 #include "WebProcessSupplement.h"
 #include <WebCore/StorageTrackerClient.h>
 #include <wtf/Noncopyable.h>
@@ -37,7 +38,7 @@ namespace WebKit {
 class WebProcess;
 struct SecurityOriginData;
 
-class WebKeyValueStorageManager : public WebCore::StorageTrackerClient, public WebProcessSupplement {
+class WebKeyValueStorageManager : public WebCore::StorageTrackerClient, public WebProcessSupplement, public CoreIPC::MessageReceiver {
     WTF_MAKE_NONCOPYABLE(WebKeyValueStorageManager);
 public:
     explicit WebKeyValueStorageManager(WebProcess*);

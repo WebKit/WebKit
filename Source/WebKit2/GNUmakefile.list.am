@@ -411,6 +411,7 @@ webkit2_sources += \
 	Source/WebKit2/Shared/NativeWebKeyboardEvent.h \
 	Source/WebKit2/Shared/NativeWebMouseEvent.h \
 	Source/WebKit2/Shared/NativeWebWheelEvent.h \
+	Source/WebKit2/Shared/Network/NetworkProcessSupplement.h \
 	Source/WebKit2/Shared/OriginAndDatabases.cpp \
 	Source/WebKit2/Shared/OriginAndDatabases.h \
 	Source/WebKit2/Shared/PlatformPopupMenuData.cpp \
