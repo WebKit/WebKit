@@ -1,5 +1,11 @@
 2012-12-28  Fady Samuel  <fsamuel@chromium.org>
 
+        Unreviewed rebaseline.
+
+        * platform/chromium-win-xp/inspector/extensions/extensions-resources-expected.txt: Removed.
+
+2012-12-28  Fady Samuel  <fsamuel@chromium.org>
+
         Unreviewed updated test expectations
 
         * platform/chromium/TestExpectations:
