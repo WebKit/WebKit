@@ -147,6 +147,7 @@ public:
     {
         typename MemoryObjectInfo::ClassInfo info(memoryObjectInfo, this);
         info.addRawBuffer(m_allocation, m_size * sizeof(T));
+        info.ignoreMember(m_alignedData);
     }
 
 private:

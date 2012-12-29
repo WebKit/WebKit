@@ -69,7 +69,7 @@ public:
     void reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
     {
         MemoryClassInfo info(memoryObjectInfo, this, WebCoreMemoryTypes::DOM);
-        info.addWeakPointer(const_cast<v8::Persistent<v8::Object>*>(&m_wrapper));
+        info.ignoreMember(m_wrapper);
     }
 
 private:

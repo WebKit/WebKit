@@ -730,6 +730,8 @@ void GraphicsLayer::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
     info.addMember(m_maskLayer);
     info.addMember(m_replicaLayer);
     info.addMember(m_replicatedLayer);
+    info.ignoreMember(m_client);
+    info.addMember(m_name);
 }
 
 } // namespace WebCore

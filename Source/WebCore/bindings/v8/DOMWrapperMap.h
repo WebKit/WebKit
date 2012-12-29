@@ -77,6 +77,7 @@ public:
     {
         MemoryClassInfo info(memoryObjectInfo, this, WebCoreMemoryTypes::Binding);
         info.addMember(m_map);
+        info.ignoreMember(m_callback);
     }
 
     void remove(KeyType* key, v8::Persistent<v8::Object> wrapper)

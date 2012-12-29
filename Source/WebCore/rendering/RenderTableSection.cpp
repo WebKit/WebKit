@@ -1457,6 +1457,7 @@ void RenderTableSection::RowStruct::reportMemoryUsage(MemoryObjectInfo* memoryOb
     MemoryClassInfo info(memoryObjectInfo, this, PlatformMemoryTypes::Rendering);
     info.addMember(row);
     info.addMember(rowRenderer);
+    info.addMember(logicalHeight);
 }
 
 void RenderTableSection::CellStruct::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const

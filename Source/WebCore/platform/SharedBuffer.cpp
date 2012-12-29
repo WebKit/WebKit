@@ -278,10 +278,10 @@ void SharedBuffer::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
 {
     MemoryClassInfo info(memoryObjectInfo, this);
     info.addMember(m_buffer);
-    info.addMember(m_segments);
     for (unsigned i = 0; i < m_segments.size(); ++i)
         info.addRawBuffer(m_segments[i], segmentSize);
-    info.addMember(m_purgeableBuffer.get());
+    info.addMember(m_segments);
+    info.addMember(m_purgeableBuffer);
 }
 
 unsigned SharedBuffer::getSomeData(const char*& someData, unsigned position) const

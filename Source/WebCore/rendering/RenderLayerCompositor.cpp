@@ -60,6 +60,7 @@
 #include "TiledBacking.h"
 #include "TransformState.h"
 #include "WebCoreMemoryInstrumentation.h"
+#include <wtf/MemoryInstrumentationHashMap.h>
 
 #if ENABLE(PLUGIN_PROXY_FOR_VIDEO)
 #include "HTMLMediaElement.h"
@@ -2810,6 +2811,7 @@ void RenderLayerCompositor::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo
     info.addMember(m_contentShadowLayer);
 #endif
     info.addMember(m_layerUpdater);
+    info.addMember(m_fixedPositionLayerNotCompositedReasonMap);
 }
 
 } // namespace WebCore

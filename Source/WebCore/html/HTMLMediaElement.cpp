@@ -4768,6 +4768,10 @@ void HTMLMediaElement::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) con
 #if PLATFORM(MAC)
     info.addMember(m_sleepDisabler);
 #endif
+#if ENABLE(WEB_AUDIO)
+    info.addMember(m_audioSourceNode);
+#endif
+
 }
 
 }

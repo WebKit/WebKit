@@ -397,6 +397,7 @@ void KURLGooglePrivate::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) co
     info.addMember(m_utf8);
     info.addMember(m_string);
     info.addMember(m_innerURL);
+    info.addMember(m_parsed);
 }
 // KURL ------------------------------------------------------------------------
 

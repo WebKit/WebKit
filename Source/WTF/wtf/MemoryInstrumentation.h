@@ -243,11 +243,13 @@ public:
         if (!m_skipMembers)
             m_memoryInstrumentation->addObject(member, m_memoryObjectInfo, edgeName);
     }
+
     WTF_EXPORT_PRIVATE void addRawBuffer(const void* buffer, size_t, const char* nodeName = 0, const char* edgeName = 0);
     WTF_EXPORT_PRIVATE void addPrivateBuffer(size_t, MemoryObjectType ownerObjectType = 0, const char* nodeName = 0, const char* edgeName = 0);
     WTF_EXPORT_PRIVATE void setCustomAllocation(bool);
 
     void addWeakPointer(void*) { }
+    template<typename M> void ignoreMember(const M&) { }
 
 private:
     WTF_EXPORT_PRIVATE void init(const void* pointer, MemoryObjectType, size_t actualSize);

@@ -292,6 +292,8 @@ bool StyleRareInheritedData::shadowDataEquivalent(const StyleRareInheritedData& 
 void StyleRareInheritedData::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
 {
     MemoryClassInfo info(memoryObjectInfo, this, WebCoreMemoryTypes::CSS);
+    info.addMember(listStyleImage);
+    info.addMember(indent);
     info.addMember(textShadow);
     info.addMember(highlight);
     info.addMember(cursorData);

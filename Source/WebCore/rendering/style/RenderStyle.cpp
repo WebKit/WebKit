@@ -1600,6 +1600,8 @@ void RenderStyle::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
 #if ENABLE(SVG)
     info.addMember(m_svgStyle);
 #endif
+    info.addMember(inherited_flags);
+    info.addMember(noninherited_flags);
 }
 
 } // namespace WebCore

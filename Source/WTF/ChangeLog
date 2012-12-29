@@ -1,3 +1,22 @@
+2012-12-28  Ilya Tikhonovsky  <loislo@chromium.org>
+
+        Web Inspector: Native Memory Instrumentation: instrument not instrumented members.
+        https://bugs.webkit.org/show_bug.cgi?id=105830
+
+        Reviewed by Vsevolod Vlasov.
+
+        In some cases we don't want to visit some class members.
+        As example we decided to skip pointers to interface classes such as GraphicLayerClient.
+        We could use addWeakPointer for them but it can't be used for nonpointer members.
+        In the offline discussion we came to a conclusion that we need a new instrumentation
+        method ignoreMember, which will be used for all the members which we won't like to visit/instrument.
+
+        DriveBy: Also I instrumented not yet instrumented members.
+
+        * wtf/MemoryInstrumentation.h:
+        (MemoryClassInfo):
+        (WTF::MemoryClassInfo::ignoreMember):
+
 2012-12-26  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
 
         Fix build warning in OSAllocatorPosix.cpp
