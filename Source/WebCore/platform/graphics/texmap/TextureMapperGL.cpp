@@ -507,9 +507,16 @@ void TextureMapperGL::drawTexturedQuadWithProgram(TextureMapperShaderProgram* pr
     m_context3D->bindTexture(target, texture);
     m_context3D->uniform1i(program->samplerLocation(), 0);
 
-    FloatSize sizeParameter = flags & ShouldUseARBTextureRect ? size : FloatSize(1, 1);
-    m_context3D->uniform2f(program->textureSizeLocation(), sizeParameter.width(), sizeParameter.height());
-    m_context3D->uniform1f(program->flipLocation(), !!(flags & ShouldFlipTexture));
+    TransformationMatrix patternTransform;
+    if (flags & ShouldFlipTexture)
+        patternTransform.flipY();
+    if (flags & ShouldUseARBTextureRect)
+        patternTransform.scaleNonUniform(size.width(), size.height());
+    if (flags & ShouldFlipTexture)
+        patternTransform.translate(0, -1);
+
+
+    program->setMatrix(program->textureSpaceMatrixLocation(), patternTransform);
     m_context3D->uniform1f(program->opacityLocation(), opacity);
 
     if (maskTexture && maskTexture->isValid()) {

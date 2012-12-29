@@ -50,8 +50,7 @@ public:
 
     TEXMAP_DECLARE_UNIFORM(modelViewMatrix)
     TEXMAP_DECLARE_UNIFORM(projectionMatrix)
-    TEXMAP_DECLARE_UNIFORM(flip)
-    TEXMAP_DECLARE_UNIFORM(textureSize)
+    TEXMAP_DECLARE_UNIFORM(textureSpaceMatrix)
     TEXMAP_DECLARE_UNIFORM(opacity)
     TEXMAP_DECLARE_UNIFORM(color)
     TEXMAP_DECLARE_UNIFORM(expandedQuadEdgesInScreenSpace)

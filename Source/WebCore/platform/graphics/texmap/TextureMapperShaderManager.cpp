@@ -124,8 +124,7 @@ static const char* vertexTemplate =
         attribute vec4 a_vertex;
         uniform mat4 u_modelViewMatrix;
         uniform mat4 u_projectionMatrix;
-        uniform float u_flip;
-        uniform vec2 u_textureSize;
+        uniform mat4 u_textureSpaceMatrix;
 
         varying vec2 v_texCoord;
         varying vec2 v_maskTexCoord;
@@ -173,7 +172,11 @@ static const char* vertexTemplate =
         {
             vec2 position = a_vertex.xy;
             applyAntialiasingIfNeeded(position);
-            v_texCoord = vec2(position.x, mix(position.y, 1. - position.y, u_flip)) * u_textureSize;
+
+            // The texture position needs to be clamped to 0..1 before the texture matrix is applied.
+            vec4 clampedPosition = clamp(vec4(position, 0., 1.), 0., 1.);
+            v_texCoord = (u_textureSpaceMatrix * clampedPosition).xy;
+
             v_maskTexCoord = position;
             gl_Position = u_projectionMatrix * u_modelViewMatrix * vec4(position, 0., 1.);
         }
