@@ -1680,8 +1680,6 @@ webkit.org/b/101670 media/video-controls-captions-trackmenu-localized.html [ Ski
 # Fails until we enable the Resource Timing API.
 webkit.org/b/61138 http/tests/w3c/webperf/submission/resource-timing [ Skip ]
 
-webkit.org/b/103109 fast/dom/shadow/host-wrapper-reclaimed.html [ Failure ]
-
 # No spellcheck suggestions in context menu
 Bug(EFL) editing/spelling/context-menu-suggestions.html [ Failure ]
 
