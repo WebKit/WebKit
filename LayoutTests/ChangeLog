@@ -2,6 +2,15 @@
 
         Unreviewed EFL gardening.
 
+        Unskip XSS Auditor test case that has been consistently
+        passing on EFL port for a while.
+
+        * platform/efl/TestExpectations:
+
+2012-12-30  Christophe Dumez  <christophe.dumez@intel.com>
+
+        Unreviewed EFL gardening.
+
         Unskip fast/dom/shadow/host-wrapper-reclaimed.html
         since it is passing after r137978.
 
