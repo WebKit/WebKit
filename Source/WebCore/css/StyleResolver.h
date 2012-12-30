@@ -164,7 +164,7 @@ public:
     RenderStyle* parentStyle() const { return m_parentStyle; }
     RenderStyle* rootElementStyle() const { return m_rootElementStyle; }
     Element* element() const { return m_element; }
-    Document* document() const { return m_checker.document(); }
+    Document* document() const { return m_document; }
     const FontDescription& fontDescription() { return style()->fontDescription(); }
     const FontDescription& parentFontDescription() { return parentStyle()->fontDescription(); }
     void setFontDescription(const FontDescription& fontDescription) { m_fontDirty |= style()->setFontDescription(fontDescription); }
@@ -386,7 +386,7 @@ private:
 
     void matchPageRules(MatchResult&, RuleSet*, bool isLeftPage, bool isFirstPage, const String& pageName);
     void matchPageRulesForList(Vector<StyleRulePage*>& matchedRules, const Vector<StyleRulePage*>&, bool isLeftPage, bool isFirstPage, const String& pageName);
-    Settings* documentSettings() { return m_checker.document()->settings(); }
+    Settings* documentSettings() { return m_document->settings(); }
 
     bool isLeftPage(int pageIndex) const;
     bool isRightPage(int pageIndex) const { return !isLeftPage(pageIndex); }
@@ -488,6 +488,7 @@ private:
     PseudoId m_dynamicPseudo;
     PseudoId m_pseudoStyle;
 
+    Document* m_document;
     SelectorChecker m_checker;
     SelectorFilter m_selectorFilter;
 

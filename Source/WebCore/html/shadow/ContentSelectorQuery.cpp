@@ -35,8 +35,8 @@
 
 namespace WebCore {
 
-ContentSelectorChecker::ContentSelectorChecker(Document* document, bool strictParsing)
-    : m_selectorChecker(document, strictParsing)
+ContentSelectorChecker::ContentSelectorChecker(Document* document)
+    : m_selectorChecker(document)
 {
     m_selectorChecker.setMode(SelectorChecker::CollectingRules);
 }
@@ -66,7 +66,7 @@ bool ContentSelectorDataList::matches(const ContentSelectorChecker& selectorChec
 
 ContentSelectorQuery::ContentSelectorQuery(InsertionPoint* insertionPoint)
     : m_insertionPoint(insertionPoint)
-    , m_selectorChecker(insertionPoint->document(), !insertionPoint->document()->inQuirksMode())
+    , m_selectorChecker(insertionPoint->document())
 {
     if (insertionPoint->isSelectValid())
         m_selectors.initialize(insertionPoint->selectorList());

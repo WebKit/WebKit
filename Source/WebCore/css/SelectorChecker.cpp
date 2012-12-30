@@ -31,7 +31,6 @@
 #include "CSSSelector.h"
 #include "CSSSelectorList.h"
 #include "Document.h"
-#include "DocumentStyleSheetCollection.h"
 #include "FocusController.h"
 #include "Frame.h"
 #include "FrameSelection.h"
@@ -60,9 +59,8 @@ using namespace HTMLNames;
 
 static bool htmlAttributeHasCaseInsensitiveValue(const QualifiedName& attr);
 
-SelectorChecker::SelectorChecker(Document* document, bool strictParsing)
-    : m_document(document)
-    , m_strictParsing(strictParsing)
+SelectorChecker::SelectorChecker(Document* document)
+    : m_strictParsing(!document->inQuirksMode())
     , m_documentIsHTML(document->isHTMLDocument())
     , m_mode(ResolvingStyle)
 {
@@ -592,10 +590,10 @@ bool SelectorChecker::checkOneSelector(const SelectorCheckingContext& context, c
         } else if (context.hasScrollbarPseudo) {
             // CSS scrollbars match a specific subset of pseudo classes, and they have specialized rules for each
             // (since there are no elements involved).
-            return checkScrollbarPseudoClass(selector);
+            return checkScrollbarPseudoClass(element->document(), selector);
         } else if (context.hasSelectionPseudo) {
             if (selector->pseudoType() == CSSSelector::PseudoWindowInactive)
-                return !m_document->page()->focusController()->isActive();
+                return !element->document()->page()->focusController()->isActive();
         }
 
         // Normal element pseudo class checking.
@@ -961,7 +959,7 @@ bool SelectorChecker::checkOneSelector(const SelectorCheckingContext& context, c
     return true;
 }
 
-bool SelectorChecker::checkScrollbarPseudoClass(CSSSelector* sel) const
+bool SelectorChecker::checkScrollbarPseudoClass(Document* document, CSSSelector* sel) const
 {
     RenderScrollbar* scrollbar = RenderScrollbar::scrollbarForStyleResolve();
     ScrollbarPart part = RenderScrollbar::partForStyleResolve();
@@ -969,7 +967,7 @@ bool SelectorChecker::checkScrollbarPseudoClass(CSSSelector* sel) const
     // FIXME: This is a temporary hack for resizers and scrollbar corners. Eventually :window-inactive should become a real
     // pseudo class and just apply to everything.
     if (sel->pseudoType() == CSSSelector::PseudoWindowInactive)
-        return !m_document->page()->focusController()->isActive();
+        return !document->page()->focusController()->isActive();
 
     if (!scrollbar)
         return false;

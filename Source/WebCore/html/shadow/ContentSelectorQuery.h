@@ -45,7 +45,7 @@ class InsertionPoint;
 
 class ContentSelectorChecker {
 public:
-    ContentSelectorChecker(Document*, bool strictParsing);
+    ContentSelectorChecker(Document*);
 
     bool checkContentSelector(CSSSelector*, const Vector<RefPtr<Node> >& siblings, int nthNode) const;
 private:

@@ -152,20 +152,20 @@ SelectorQuery::SelectorQuery(const CSSSelectorList& selectorList)
 
 bool SelectorQuery::matches(Element* element) const
 {
-    SelectorChecker selectorChecker(element->document(), !element->document()->inQuirksMode());
+    SelectorChecker selectorChecker(element->document());
     return m_selectors.matches(selectorChecker, element);
 }
 
 PassRefPtr<NodeList> SelectorQuery::queryAll(Node* rootNode) const
 {
-    SelectorChecker selectorChecker(rootNode->document(), !rootNode->document()->inQuirksMode());
+    SelectorChecker selectorChecker(rootNode->document());
     selectorChecker.setMode(SelectorChecker::QueryingRules);
     return m_selectors.queryAll(selectorChecker, rootNode);
 }
 
 PassRefPtr<Element> SelectorQuery::queryFirst(Node* rootNode) const
 {
-    SelectorChecker selectorChecker(rootNode->document(), !rootNode->document()->inQuirksMode());
+    SelectorChecker selectorChecker(rootNode->document());
     selectorChecker.setMode(SelectorChecker::QueryingRules);
     return m_selectors.queryFirst(selectorChecker, rootNode);
 }
