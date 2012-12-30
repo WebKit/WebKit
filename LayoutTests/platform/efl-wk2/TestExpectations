@@ -366,7 +366,6 @@ webkit.org/b/98741 plugins/refcount-leaks.html [ Failure ]
 
 # New compositing tests introduced in r137051 that fail on WK2 EFL.
 webkit.org/b/104476 compositing/background-color/background-color-padding-change.html [ ImageOnlyFailure ]
-webkit.org/b/104476 compositing/background-color/background-color-text-change.html [ ImageOnlyFailure ]
 
 # These ref tests are failing because the text is blurry.
 webkit.org/b/105766 compositing/text-on-scaled-layer.html [ ImageOnlyFailure ]

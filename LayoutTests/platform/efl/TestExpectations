@@ -1126,10 +1126,6 @@ webkit.org/b/100815 http/tests/security/isolatedWorld/bypass-main-world-csp.html
 Bug(EFL) http/tests/security/isolatedWorld/didClearWindowObject.html
 
 # EFL has accelerated compositing disabled
-webkit.org/b/99050 compositing/culling/filter-occlusion-alpha-large.html [ ImageOnlyFailure ]
-webkit.org/b/99051 compositing/culling/filter-occlusion-alpha.html [ ImageOnlyFailure ]
-webkit.org/b/99185 compositing/culling/filter-occlusion-blur-large.html [ ImageOnlyFailure Missing ]
-webkit.org/b/99185 compositing/culling/filter-occlusion-blur.html [ ImageOnlyFailure Missing ]
 webkit.org/b/79766 compositing/geometry/composited-in-columns.html [ Failure ]
 webkit.org/b/79766 compositing/geometry/layer-due-to-layer-children-deep-switch.html [ Failure ]
 webkit.org/b/79766 compositing/geometry/layer-due-to-layer-children-switch.html [ Failure ]
@@ -1633,7 +1629,6 @@ Bug(EFL) compositing/plugins/large-to-small-composited-plugin.html [ Failure ]
 Bug(EFL) animations/negative-delay.html [ Failure Pass ]
 Bug(EFL) compositing/bounds-in-flipped-writing-mode.html [ Failure ]
 Bug(EFL) compositing/iframes/leave-compositing-iframe.html [ Failure ]
-Bug(EFL) compositing/iframes/scroll-grandchild-iframe.html [ ImageOnlyFailure ]
 Bug(EFL) compositing/repaint/invalidations-on-composited-layers.html [ Failure ]
 Bug(EFL) compositing/visibility/visibility-composited.html [ Failure ]
 Bug(EFL) editing/selection/caret-rtl.html [ Failure Pass ]
@@ -1739,9 +1734,6 @@ webkit.org/b/104571 http/tests/security/xssAuditor/script-tag-addslashes-null-ch
 webkit.org/b/104571 http/tests/security/xssAuditor/script-tag-null-char.html [ Failure ]
 webkit.org/b/104571 http/tests/security/xssAuditor/script-tag-with-source-null-char.html [ Failure ]
 webkit.org/b/104571 http/tests/xmlhttprequest/origin-exact-matching.html [ Failure ]
-
-# Fixed positioning reftest failing
-webkit.org/b/104808 compositing/geometry/fixed-position-composited-page-scale-smaller-than-viewport.html [ ImageOnlyFailure ]
 
 # Rendering failure, also missing expected results:
 # Note webkit.org/b/104506, random crashes

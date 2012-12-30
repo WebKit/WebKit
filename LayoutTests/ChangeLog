@@ -1,3 +1,13 @@
+2012-12-30  Christophe Dumez  <christophe.dumez@intel.com>
+
+        Unreviewed EFL gardening.
+
+        Unskip several compositing test cases that are passing
+        consistently on EFL WK2.
+
+        * platform/efl-wk2/TestExpectations:
+        * platform/efl/TestExpectations:
+
 2012-12-30  Csaba Osztrogonác  <ossy@webkit.org>
 
         Unreviewed gardening, unskip a now passing test.
