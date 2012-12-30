@@ -692,8 +692,14 @@ webkit.org/b/105542 fast/canvas/canvas-blend-solid.html [ Skip ]
 # CRASHES
 #////////////////////////////////////////////////////////////////////////////////////////
 
+# Sometimes hit !m_isolatedWorld->isNormal() || m_wrapper || !m_jsFunction assertion.
 webkit.org/b/105299 webaudio/javascriptaudionode.html [ Crash ]
 webkit.org/b/105299 webaudio/javascriptaudionode-upmix2-8channel-input.html [ Pass Crash ]
+
+# Sometimes hit !m_finishedNodes.size() assertion in AudioContext destructor.
+webkit.org/b/105870 webaudio/audiobuffersource.html [ Pass Crash ]
+webkit.org/b/105870 webaudio/audionode.html [ Pass Crash ]
+webkit.org/b/105870 webaudio/audionode-connect-order.html [ Pass Crash ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # FLAKY TESTS

@@ -2,6 +2,16 @@
 
         Unreviewed EFL gardening.
 
+        Add several webaudio tests to TestExpectations since
+        they sometimes hit !m_finishedNodes.size() assertion
+        in AudioContext destructor.
+
+        * platform/efl/TestExpectations:
+
+2012-12-30  Christophe Dumez  <christophe.dumez@intel.com>
+
+        Unreviewed EFL gardening.
+
         Unskip XSS Auditor test case that has been consistently
         passing on EFL port for a while.
 
