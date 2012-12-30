@@ -382,12 +382,12 @@ PassOwnPtr<AudioBus> AudioFileReader::createBus(float sampleRate, bool mixToMono
     g_main_loop_run(m_loop.get());
     g_main_context_pop_thread_default(context.get());
 
+    if (m_errorOccurred)
+        return nullptr;
+
     unsigned channels = mixToMono ? 1 : 2;
     OwnPtr<AudioBus> audioBus = adoptPtr(new AudioBus(channels, m_channelSize, true));
     audioBus->setSampleRate(m_sampleRate);
-
-    if (m_errorOccurred)
-        return audioBus.release();
 
     copyGstreamerBuffersToAudioChannel(m_frontLeftBuffers, audioBus->channel(0));
     if (!mixToMono)
