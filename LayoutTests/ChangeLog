@@ -1,3 +1,15 @@
+2012-12-30  Christophe Dumez  <christophe.dumez@intel.com>
+
+        Unreviewed EFL gardening.
+
+        Update expectations for 2 fast/dom test cases so
+        that they are not reported as unexpected passes.
+
+        Those tests are passing because their generated
+        expectations are wrong.
+
+        * platform/efl/TestExpectations:
+
 2012-12-30  Philippe Normand  <pnormand@igalia.com>
 
         [GStreamer] webaudio/decode-audio-data-basic.html fails

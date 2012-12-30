@@ -1479,9 +1479,9 @@ webkit.org/b/94024 css3/compositing [ Skip ]
 # Fails because Blend Mode is not enabled yet.
 webkit.org/b/91908 transitions/blendmode-transitions.html [ Skip ]
 
-# Alt text should be displayed if src attribute is not set.
-webkit.org/b/94198 fast/dom/HTMLImageElement/image-alt-text.html [ ImageOnlyFailure ]
-webkit.org/b/94198 fast/dom/HTMLInputElement/input-image-alt-text.html [ ImageOnlyFailure ]
+# Alt text should be displayed if src attribute is not set, generated expectations are wrong.
+webkit.org/b/94198 fast/dom/HTMLImageElement/image-alt-text.html [ Pass ]
+webkit.org/b/94198 fast/dom/HTMLInputElement/input-image-alt-text.html [ Pass ]
 
 webkit.org/b/84037 fast/text/international/spaces-combined-in-vertical-text.html [ Failure ]
 
