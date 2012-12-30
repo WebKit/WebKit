@@ -388,10 +388,6 @@ webkit.org/b/85262 fast/css/image-resolution
 # CSS image-orientation is not yet enabled.
 webkit.org/b/89052 fast/css/image-orientation
 
-# CSS3-text work is still in progress.
-webkit.org/b/94110 fast/css3-text/css3-text-decoration/repaint/repaint-text-decoration-style.html [ ImageOnlyFailure Missing ]
-webkit.org/b/94110 fast/css3-text/css3-text-decoration/text-decoration-style.html [ ImageOnlyFailure Missing ]
-
 # Perf tests are really slow in debug builds and there are few benefits in running them.
 [ Debug ] perf [ WontFix ]
 

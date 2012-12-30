@@ -2,6 +2,15 @@
 
         Unreviewed EFL gardening.
 
+        Unskip text-decoration-style tests passing after
+        r126054 and r132076.
+
+        * platform/efl/TestExpectations:
+
+2012-12-30  Christophe Dumez  <christophe.dumez@intel.com>
+
+        Unreviewed EFL gardening.
+
         Unskip cairo-related tests that are now consistently
         passing on both WK1 and WK2 EFL.
 
