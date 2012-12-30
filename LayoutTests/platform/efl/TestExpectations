@@ -1570,27 +1570,6 @@ Bug(EFL) editing/pasteboard/emacs-cntl-y-001.html [ Missing ]
 Bug(EFL) editing/pasteboard/emacs-ctrl-a-k-y.html [ Missing ]
 Bug(EFL) editing/pasteboard/emacs-ctrl-k-y-001.html [ Missing ]
 
-# Cairo 1.12.4 regressions
-webkit.org/b/99189 fast/backgrounds/background-leakage-transforms.html [ ImageOnlyFailure ]
-webkit.org/b/99189 fast/borders/borderRadiusAllStylesAllCorners.html [ ImageOnlyFailure ]
-webkit.org/b/99189 fast/borders/borderRadiusDashed02.html [ ImageOnlyFailure ]
-webkit.org/b/99189 fast/borders/borderRadiusDashed03.html [ ImageOnlyFailure ]
-webkit.org/b/99189 fast/borders/borderRadiusDashed04.html [ ImageOnlyFailure ]
-webkit.org/b/99189 fast/borders/borderRadiusDashed05.html [ ImageOnlyFailure ]
-webkit.org/b/99189 fast/borders/borderRadiusDashed06.html [ ImageOnlyFailure ]
-webkit.org/b/99189 fast/borders/borderRadiusDotted01.html [ ImageOnlyFailure ]
-webkit.org/b/99189 fast/borders/borderRadiusDotted02.html [ ImageOnlyFailure ]
-webkit.org/b/99189 fast/borders/borderRadiusDotted03.html [ ImageOnlyFailure ]
-webkit.org/b/99189 fast/borders/borderRadiusDotted04.html [ ImageOnlyFailure ]
-webkit.org/b/99189 fast/borders/borderRadiusDotted06.html [ ImageOnlyFailure ]
-webkit.org/b/99189 fast/box-shadow/box-shadow-transformed.html [ ImageOnlyFailure ]
-webkit.org/b/99189 fast/box-shadow/transform-fringing.html [ ImageOnlyFailure ]
-webkit.org/b/99189 fast/borders/inline-mask-overlay-image-outset-vertical-rl.html [ ImageOnlyFailure ]
-webkit.org/b/99189 fast/borders/inline-mask-overlay-image-outset.html [ ImageOnlyFailure ]
-webkit.org/b/99189 fast/borders/inline-mask-overlay-image.html [ ImageOnlyFailure ]
-webkit.org/b/99189 ietestcenter/css3/bordersbackgrounds/border-radius-style-001.htm [ ImageOnlyFailure Missing ]
-webkit.org/b/99189 ietestcenter/css3/bordersbackgrounds/border-radius-style-002.htm [ ImageOnlyFailure Missing ]
-
 # User Timing is not enable yet. so skip it.
 webkit.org/b/84893 http/tests/w3c/webperf/submission/Intel/user-timing [ Skip ]
 
