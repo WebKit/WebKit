@@ -265,7 +265,7 @@ StyleResolver::StyleResolver(Document* document, bool matchAuthorAndUserStyles)
     , m_matchedPropertiesCacheAdditionsSinceLastSweep(0)
     , m_matchedPropertiesCacheSweepTimer(this, &StyleResolver::sweepMatchedPropertiesCache)
     , m_document(document)
-    , m_checker(document)
+    , m_selectorChecker(document)
     , m_parentStyle(0)
     , m_rootElementStyle(0)
     , m_element(0)
@@ -676,7 +676,7 @@ void StyleResolver::collectMatchingRules(RuleSet* rules, int& firstRuleIndex, in
 
     if (m_element->isLink())
         collectMatchingRulesForList(rules->linkPseudoClassRules(), firstRuleIndex, lastRuleIndex, options);
-    if (m_checker.matchesFocusPseudoClass(m_element))
+    if (m_selectorChecker.matchesFocusPseudoClass(m_element))
         collectMatchingRulesForList(rules->focusPseudoClassRules(), firstRuleIndex, lastRuleIndex, options);
     collectMatchingRulesForList(rules->tagRules(m_element->localName().impl()), firstRuleIndex, lastRuleIndex, options);
     collectMatchingRulesForList(rules->universalRules(), firstRuleIndex, lastRuleIndex, options);
@@ -705,7 +705,7 @@ void StyleResolver::sortAndTransferMatchedRules(MatchResult& result)
 
     sortMatchedRules();
 
-    if (m_checker.mode() == SelectorChecker::CollectingRules) {
+    if (m_selectorChecker.mode() == SelectorChecker::CollectingRules) {
         if (!m_ruleList)
             m_ruleList = StaticCSSRuleList::create();
         for (unsigned i = 0; i < m_matchedRules.size(); ++i)
@@ -870,7 +870,7 @@ void StyleResolver::collectMatchingRulesForList(const Vector<RuleData>* rules, i
             // If we're matching normal rules, set a pseudo bit if
             // we really just matched a pseudo-element.
             if (m_dynamicPseudo != NOPSEUDO && m_pseudoStyle == NOPSEUDO) {
-                if (m_checker.mode() == SelectorChecker::CollectingRules) {
+                if (m_selectorChecker.mode() == SelectorChecker::CollectingRules) {
                     InspectorInstrumentation::didMatchRule(cookie, false);
                     continue;
                 }
@@ -1058,9 +1058,9 @@ bool StyleResolver::styleSharingCandidateMatchesRuleSet(RuleSet* ruleSet)
     m_matchedRules.clear();
 
     int firstRuleIndex = -1, lastRuleIndex = -1;
-    m_checker.setMode(SelectorChecker::SharingRules);
+    m_selectorChecker.setMode(SelectorChecker::SharingRules);
     collectMatchingRules(ruleSet, firstRuleIndex, lastRuleIndex, false);
-    m_checker.setMode(SelectorChecker::ResolvingStyle);
+    m_selectorChecker.setMode(SelectorChecker::ResolvingStyle);
     if (m_matchedRules.isEmpty())
         return false;
     m_matchedRules.clear();
@@ -1334,7 +1334,7 @@ void StyleResolver::matchUARules(MatchResult& result)
     matchUARules(result, userAgentStyleSheet);
 
     // In quirks mode, we match rules from the quirks user agent sheet.
-    if (!m_checker.strictParsing())
+    if (!m_selectorChecker.strictParsing())
         matchUARules(result, defaultQuirksStyle);
 
     // If document uses view source styles (in view source mode or in xml viewer mode), then we match rules from the view source style sheet.
@@ -1915,7 +1915,7 @@ void StyleResolver::adjustRenderStyle(RenderStyle* style, RenderStyle* parentSty
         // property.
         // Sites also commonly use display:inline/block on <td>s and <table>s. In quirks mode we force
         // these tags to retain their display types.
-        if (!m_checker.strictParsing() && e) {
+        if (!m_selectorChecker.strictParsing() && e) {
             if (e->hasTagName(tdTag)) {
                 style->setDisplay(TABLE_CELL);
                 style->setFloating(NoFloat);
@@ -1962,7 +1962,7 @@ void StyleResolver::adjustRenderStyle(RenderStyle* style, RenderStyle* parentSty
 
         // Absolute/fixed positioned elements, floating elements and the document element need block-like outside display.
         if (style->hasOutOfFlowPosition() || style->isFloating() || (e && e->document()->documentElement() == e))
-            style->setDisplay(equivalentBlockDisplay(style->display(), style->isFloating(), m_checker.strictParsing()));
+            style->setDisplay(equivalentBlockDisplay(style->display(), style->isFloating(), m_selectorChecker.strictParsing()));
 
         // FIXME: Don't support this mutation for pseudo styles like first-letter or first-line, since it's not completely
         // clear how that should work.
@@ -1992,7 +1992,7 @@ void StyleResolver::adjustRenderStyle(RenderStyle* style, RenderStyle* parentSty
 
         if (isDisplayFlexibleBox(parentStyle->display())) {
             style->setFloating(NoFloat);
-            style->setDisplay(equivalentBlockDisplay(style->display(), style->isFloating(), m_checker.strictParsing()));
+            style->setDisplay(equivalentBlockDisplay(style->display(), style->isFloating(), m_selectorChecker.strictParsing()));
         }
     }
 
@@ -2202,7 +2202,7 @@ PassRefPtr<CSSRuleList> StyleResolver::pseudoStyleRulesForElement(Element* e, Ps
     if (!e || !e->document()->haveStylesheetsLoaded())
         return 0;
 
-    m_checker.setMode(SelectorChecker::CollectingRules);
+    m_selectorChecker.setMode(SelectorChecker::CollectingRules);
 
     initElement(e);
     initForStyleResolve(e, 0, pseudoId);
@@ -2226,7 +2226,7 @@ PassRefPtr<CSSRuleList> StyleResolver::pseudoStyleRulesForElement(Element* e, Ps
         m_sameOriginOnly = false;
     }
 
-    m_checker.setMode(SelectorChecker::ResolvingStyle);
+    m_selectorChecker.setMode(SelectorChecker::ResolvingStyle);
 
     return m_ruleList.release();
 }
@@ -2248,7 +2248,7 @@ inline bool StyleResolver::checkSelector(const RuleData& ruleData, const Contain
             return false;
         if (!SelectorChecker::fastCheckRightmostAttributeSelector(m_element, ruleData.selector()))
             return false;
-        return m_checker.fastCheckSelector(ruleData.selector(), m_element);
+        return m_selectorChecker.fastCheckSelector(ruleData.selector(), m_element);
     }
 
     // Slow path.
@@ -2257,7 +2257,7 @@ inline bool StyleResolver::checkSelector(const RuleData& ruleData, const Contain
     context.elementParentStyle = m_parentNode ? m_parentNode->renderStyle() : 0;
     context.scope = scope;
     context.pseudoStyle = m_pseudoStyle;
-    SelectorChecker::SelectorMatch match = m_checker.checkSelector(context, m_dynamicPseudo);
+    SelectorChecker::SelectorMatch match = m_selectorChecker.checkSelector(context, m_dynamicPseudo);
     if (match != SelectorChecker::SelectorMatches)
         return false;
     if (m_pseudoStyle != NOPSEUDO && m_pseudoStyle != m_dynamicPseudo)
@@ -2273,7 +2273,7 @@ bool StyleResolver::checkRegionSelector(CSSSelector* regionSelector, Element* re
     m_pseudoStyle = NOPSEUDO;
 
     for (CSSSelector* s = regionSelector; s; s = CSSSelectorList::next(s))
-        if (m_checker.checkSelector(s, regionElement))
+        if (m_selectorChecker.checkSelector(s, regionElement))
             return true;
 
     return false;

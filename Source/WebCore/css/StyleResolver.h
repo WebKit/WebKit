@@ -489,7 +489,7 @@ private:
     PseudoId m_pseudoStyle;
 
     Document* m_document;
-    SelectorChecker m_checker;
+    SelectorChecker m_selectorChecker;
     SelectorFilter m_selectorFilter;
 
     RefPtr<RenderStyle> m_style;
