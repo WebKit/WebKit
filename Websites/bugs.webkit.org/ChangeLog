@@ -1,3 +1,16 @@
+2012-12-30  Martin Robinson  <mrobinson@igalia.com>
+
+        PrettyDiff.rb fails to render image diffs with Ruby 1.9.3p194
+        https://bugs.webkit.org/show_bug.cgi?id=104932
+
+        Reviewed by Eric Seidel.
+
+        Ruby 1.9 added the concept of string encodings, so the use of `match' with binary data
+        treats it as UTF-8. Forcing the png_bytes string to have the "binary" encoding avoids
+        this error.
+
+        * PrettyPatch/PrettyPatch.rb: Use force_encoding.
+
 2012-12-06  Ojan Vafai  <ojan@chromium.org>
 
         Review page is super flakey now

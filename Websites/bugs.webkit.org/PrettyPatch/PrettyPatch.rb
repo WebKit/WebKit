@@ -676,6 +676,11 @@ EOF
         end
 
         def self.read_checksum_from_png(png_bytes)
+            # Ruby 1.9 added the concept of string encodings, so to avoid treating binary data as UTF-8,
+            # we can force the encoding to binary at this point.
+            if RUBY_VERSION >= "1.9"
+                png_bytes.force_encoding('binary')
+            end
             match = png_bytes && png_bytes.match(/tEXtchecksum\0([a-fA-F0-9]{32})/)
             match ? match[1] : nil
         end
