@@ -1,3 +1,12 @@
+2012-12-30  Zan Dobersek  <zandobersek@gmail.com>
+
+        Unreviewed GTK gardening of the unit tests.
+
+        Skip the TestInspectorServer unit test that's timing out completely.
+
+        * Scripts/run-gtk-tests:
+        (TestRunner):
+
 2012-12-29  Ilya Tikhonovsky  <loislo@chromium.org>
 
         Web Inspector: Native Memory Instrumentation plugin: do not generate 'not instrumented' warning for instrumented mutable members.
