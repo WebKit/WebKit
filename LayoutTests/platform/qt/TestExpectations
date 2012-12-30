@@ -1819,10 +1819,6 @@ fast/block/positioning/002.html
 # https://bugs.webkit.org/show_bug.cgi?id=92733
 fast/block/positioning/056.html
 
-# REGRESSION (r130557): fast/exclusions/shape-inside/shape-inside-rounded-rectangle-003.html fails on Qt and GTK
-# https://bugs.webkit.org/show_bug.cgi?id=98585
-fast/exclusions/shape-inside/shape-inside-rounded-rectangle-003.html
-
 # REGRESSION (r130570): fast/writing-mode/vertical-subst-font-vert-no-dflt.html fails on non-Chromium platforms
 # https://bugs.webkit.org/show_bug.cgi?id=98587
 fast/writing-mode/vertical-subst-font-vert-no-dflt.html
