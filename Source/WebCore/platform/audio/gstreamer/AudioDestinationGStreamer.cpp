@@ -36,7 +36,7 @@ namespace WebCore {
 // needs to handle this number of frames per cycle as well.
 const unsigned framesToPull = 128;
 
-gboolean messageCallback(GstBus* bus, GstMessage* message, AudioDestinationGStreamer* destination)
+gboolean messageCallback(GstBus*, GstMessage* message, AudioDestinationGStreamer* destination)
 {
     return destination->handleMessage(message);
 }
@@ -63,9 +63,11 @@ AudioDestinationGStreamer::AudioDestinationGStreamer(AudioIOCallback& callback, 
     , m_isPlaying(false)
 {
     m_pipeline = gst_pipeline_new("play");
-    GRefPtr<GstBus> bus = adoptGRef(gst_pipeline_get_bus(GST_PIPELINE(m_pipeline)));
-    gst_bus_add_signal_watch(bus.get());
-    g_signal_connect(bus.get(), "message", G_CALLBACK(messageCallback), this);
+    GstBus* bus = gst_pipeline_get_bus(GST_PIPELINE(m_pipeline));
+    ASSERT(bus);
+    gst_bus_add_signal_watch(bus);
+    g_signal_connect(bus, "message", G_CALLBACK(messageCallback), this);
+    gst_object_unref(bus);
 
     GstElement* webkitAudioSrc = reinterpret_cast<GstElement*>(g_object_new(WEBKIT_TYPE_WEB_AUDIO_SRC,
                                                                             "rate", sampleRate,
@@ -87,8 +89,10 @@ AudioDestinationGStreamer::AudioDestinationGStreamer(AudioIOCallback& callback, 
 
 AudioDestinationGStreamer::~AudioDestinationGStreamer()
 {
-    GRefPtr<GstBus> bus = adoptGRef(gst_pipeline_get_bus(GST_PIPELINE(m_pipeline)));
-    g_signal_handlers_disconnect_by_func(bus.get(), reinterpret_cast<gpointer>(messageCallback), this);
+    GstBus* bus = gst_pipeline_get_bus(GST_PIPELINE(m_pipeline));
+    ASSERT(bus);
+    g_signal_handlers_disconnect_by_func(bus, reinterpret_cast<gpointer>(messageCallback), this);
+    gst_object_unref(bus);
     gst_element_set_state(m_pipeline, GST_STATE_NULL);
     gst_object_unref(m_pipeline);
 }
