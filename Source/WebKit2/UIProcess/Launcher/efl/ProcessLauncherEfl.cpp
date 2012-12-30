@@ -61,11 +61,9 @@ void ProcessLauncher::launchProcess()
     snprintf(socket, sizeof(socket), "%d", sockets[0]);
 
 #ifndef NDEBUG
-    const char* prefixedExecutablePath = 0;
-    String prefixedExecutablePathStr;
+    String prefixedExecutablePath;
     if (!m_launchOptions.processCmdPrefix.isEmpty()) {
-        prefixedExecutablePathStr = m_launchOptions.processCmdPrefix + ' ' + executablePath.data() + ' ' + socket;
-        prefixedExecutablePath = prefixedExecutablePathStr.utf8().data();
+        prefixedExecutablePath = m_launchOptions.processCmdPrefix + ' ' + String::fromUTF8(executablePath.data()) + ' ' + socket;
     }
 #endif
 
@@ -76,11 +74,11 @@ void ProcessLauncher::launchProcess()
     if (!pid) { // Child process.
         close(sockets[1]);
 #ifndef NDEBUG
-        if (prefixedExecutablePath) {
+        if (!prefixedExecutablePath.isNull()) {
             // FIXME: This is not correct because it invokes the shell
             // and keeps this process waiting. Should be changed to
             // something like execvp().
-            if (system(prefixedExecutablePath) == -1) {
+            if (system(prefixedExecutablePath.utf8().data()) == -1) {
                 ASSERT_NOT_REACHED();
                 exit(EXIT_FAILURE);
             } else
