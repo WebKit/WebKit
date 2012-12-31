@@ -870,7 +870,6 @@ void RenderThemeBlackBerry::adjustMediaControlStyle(StyleResolver*, RenderStyle*
         break;
     case MediaCurrentTimePart:
     case MediaTimeRemainingPart:
-        style->setWidth(controlsHeight);
         style->setHeight(displayHeight);
         style->setPaddingRight(padding);
         style->setPaddingLeft(padding);
