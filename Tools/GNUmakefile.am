@@ -1,6 +1,7 @@
 noinst_PROGRAMS += \
 	Programs/DumpRenderTree \
-	Programs/GtkLauncher
+	Programs/GtkLauncher \
+	Programs/ImageDiff
 
 # GtkLauncher
 Programs_GtkLauncher_CPPFLAGS = \
@@ -185,10 +186,35 @@ Programs_DumpRenderTree_LDFLAGS = \
 	-no-fast-install \
 	-no-install
 
+# ImageDiff
+Programs_ImageDiff_CPPFLAGS = $(global_cppflags)
+
+Programs_ImageDiff_SOURCES = \
+   Tools/ImageDiff/gtk/ImageDiff.cpp
+
+Programs_ImageDiff_CXXFLAGS = \
+   $(global_cxxflags) \
+   $(global_cppflags) \
+   $(Programs_ImageDiff_CFLAGS)
+
+Programs_ImageDiff_CFLAGS = \
+   -fno-strict-aliasing \
+   $(global_cflags) \
+   $(GLOBALDEPS_CFLAGS) \
+   $(GTK_CFLAGS)
+
+Programs_ImageDiff_LDADD = \
+   $(GTK_LIBS)
+
+Programs_ImageDiff_LDFLAGS = \
+   -no-fast-install \
+   -no-install
+
 # clean target
 CLEANFILES += \
 	Programs/DumpRenderTree \
-	Programs/GtkLauncher
+	Programs/GtkLauncher \
+	Programs/ImageDiff
 
 if TARGET_X11
 

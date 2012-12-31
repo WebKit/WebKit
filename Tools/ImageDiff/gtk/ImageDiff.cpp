@@ -171,9 +171,8 @@ void printImageDifferences(GdkPixbuf* baselineImage, GdkPixbuf* actualImage)
             g_object_unref(differenceImage);
         }
         printf("diff: %01.2f%% failed\n", difference);
-    } else {
+    } else
         printf("diff: %01.2f%% passed\n", difference);
-    }
 }
 
 int main(int argc, char* argv[])
