@@ -61,9 +61,10 @@ void ProcessLauncher::launchProcess()
     snprintf(socket, sizeof(socket), "%d", sockets[0]);
 
 #ifndef NDEBUG
-    String prefixedExecutablePath;
+    CString prefixedExecutablePath;
     if (!m_launchOptions.processCmdPrefix.isEmpty()) {
-        prefixedExecutablePath = m_launchOptions.processCmdPrefix + ' ' + String::fromUTF8(executablePath.data()) + ' ' + socket;
+        String prefixedExecutablePathStr = m_launchOptions.processCmdPrefix + ' ' + String::fromUTF8(executablePath.data()) + ' ' + socket;
+        prefixedExecutablePath = prefixedExecutablePathStr.utf8();
     }
 #endif
 
@@ -78,7 +79,7 @@ void ProcessLauncher::launchProcess()
             // FIXME: This is not correct because it invokes the shell
             // and keeps this process waiting. Should be changed to
             // something like execvp().
-            if (system(prefixedExecutablePath.utf8().data()) == -1) {
+            if (system(prefixedExecutablePath.data()) == -1) {
                 ASSERT_NOT_REACHED();
                 exit(EXIT_FAILURE);
             } else
