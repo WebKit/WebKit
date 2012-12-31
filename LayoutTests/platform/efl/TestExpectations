@@ -304,10 +304,6 @@ fast/text/unicode-variation-selector.html
 fast/forms/file/input-file-entries.html
 http/tests/security/contentSecurityPolicy/filesystem-urls-match-self.html
 
-# ENABLE(TEMPLATE_ELEMENT) is disabled.
-fast/dom/HTMLTemplateElement
-html5lib/run-template.html
-
 # Transparent image being produced
 fast/frames/transparent-scrollbar.html
 
