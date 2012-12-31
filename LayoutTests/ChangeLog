@@ -2,6 +2,16 @@
 
         Unreviewed EFL gardening.
 
+        Mark fast/dom/Range/range-extract-contents.html as flaky
+        since it sometimes hits an assertion in
+        WebCore::endOfContinuations().
+
+        * platform/efl/TestExpectations:
+
+2012-12-30  Christophe Dumez  <christophe.dumez@intel.com>
+
+        Unreviewed EFL gardening.
+
         Mark editing/pasteboard/4806874.html as flaky since
         it sometimes hits an assertion in RenderObject
         destructor.
