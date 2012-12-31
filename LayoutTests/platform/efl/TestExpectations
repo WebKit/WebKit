@@ -699,6 +699,7 @@ webkit.org/b/105870 webaudio/audionode-connect-order.html [ Pass Crash ]
 
 # Sometimes hit !m_hasAXObject assertion in RenderObject destructor
 webkit.org/b/105879 editing/pasteboard/4806874.html [ Pass Crash ]
+webkit.org/b/105879 editing/spelling/spelling-insert-html.html [ Pass Crash ]
 
 # Sometimes hit cur || !toRenderInline(prev)->continuation() assertion in WebCore::endOfContinuations().
 webkit.org/b/105880 fast/dom/Range/range-extract-contents.html [ Pass Crash ]
