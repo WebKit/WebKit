@@ -1064,6 +1064,27 @@ static void testWebViewSave(SaveWebViewTest* test, gconstpointer)
     g_assert_cmpint(g_file_info_get_size(fileInfo.get()), ==, totalBytesFromStream);
 }
 
+static void testWebViewMode(WebViewTest* test, gconstpointer)
+{
+    static const char* indexHTML = "<html><body><p>Test Web View Mode</p></body></html>";
+
+    // Web mode.
+    g_assert_cmpuint(webkit_web_view_get_view_mode(test->m_webView), ==, WEBKIT_VIEW_MODE_WEB);
+    test->loadHtml(indexHTML, 0);
+    test->waitUntilLoadFinished();
+    WebKitJavascriptResult* javascriptResult = test->runJavaScriptAndWaitUntilFinished("window.document.body.textContent;", 0);
+    GOwnPtr<char> valueString(WebViewTest::javascriptResultToCString(javascriptResult));
+    g_assert_cmpstr(valueString.get(), ==, "Test Web View Mode");
+
+    // Source mode.
+    webkit_web_view_set_view_mode(test->m_webView, WEBKIT_VIEW_MODE_SOURCE);
+    test->loadHtml(indexHTML, 0);
+    test->waitUntilLoadFinished();
+    javascriptResult = test->runJavaScriptAndWaitUntilFinished("window.document.body.textContent;", 0);
+    valueString.set(WebViewTest::javascriptResultToCString(javascriptResult));
+    g_assert_cmpstr(valueString.get(), ==, indexHTML);
+}
+
 void beforeAll()
 {
     WebViewTest::add("WebKitWebView", "default-context", testWebViewDefaultContext);
@@ -1083,6 +1104,7 @@ void beforeAll()
     WebViewTest::add("WebKitWebView", "can-show-mime-type", testWebViewCanShowMIMEType);
     FormClientTest::add("WebKitWebView", "submit-form", testWebViewSubmitForm);
     SaveWebViewTest::add("WebKitWebView", "save", testWebViewSave);
+    WebViewTest::add("WebKitWebView", "view-mode", testWebViewMode);
 }
 
 void afterAll()

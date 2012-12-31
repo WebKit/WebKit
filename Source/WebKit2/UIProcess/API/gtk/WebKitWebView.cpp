@@ -126,7 +126,8 @@ enum {
     PROP_FAVICON,
     PROP_URI,
     PROP_ZOOM_LEVEL,
-    PROP_IS_LOADING
+    PROP_IS_LOADING,
+    PROP_VIEW_MODE
 };
 
 typedef HashMap<uint64_t, GRefPtr<WebKitWebResource> > LoadingResourcesMap;
@@ -149,6 +150,7 @@ struct _WebKitWebViewPrivate {
     double estimatedLoadProgress;
     CString activeURI;
     bool isLoading;
+    WebKitViewMode viewMode;
 
     bool waitingForMainResource;
     unsigned long mainResourceResponseHandlerID;
@@ -487,6 +489,9 @@ static void webkitWebViewSetProperty(GObject* object, guint propId, const GValue
     case PROP_ZOOM_LEVEL:
         webkit_web_view_set_zoom_level(webView, g_value_get_double(value));
         break;
+    case PROP_VIEW_MODE:
+        webkit_web_view_set_view_mode(webView, static_cast<WebKitViewMode>(g_value_get_enum(value)));
+        break;
     default:
         G_OBJECT_WARN_INVALID_PROPERTY_ID(object, propId, paramSpec);
     }
@@ -517,6 +522,9 @@ static void webkitWebViewGetProperty(GObject* object, guint propId, GValue* valu
         break;
     case PROP_IS_LOADING:
         g_value_set_boolean(value, webkit_web_view_is_loading(webView));
+        break;
+    case PROP_VIEW_MODE:
+        g_value_set_enum(value, webkit_web_view_get_view_mode(webView));
         break;
     default:
         G_OBJECT_WARN_INVALID_PROPERTY_ID(object, propId, paramSpec);
@@ -661,6 +669,21 @@ static void webkit_web_view_class_init(WebKitWebViewClass* webViewClass)
                                                          _("Whether the view is loading a page"),
                                                          FALSE,
                                                          WEBKIT_PARAM_READABLE));
+
+    /**
+     * WebKitWebView:view-mode:
+     *
+     * The #WebKitViewMode that is used to display the contents of a #WebKitWebView.
+     * See also webkit_web_view_set_view_mode().
+     */
+    g_object_class_install_property(gObjectClass,
+                                    PROP_VIEW_MODE,
+                                    g_param_spec_enum("view-mode",
+                                                      "View Mode",
+                                                      _("The view mode to display the web view contents"),
+                                                      WEBKIT_TYPE_VIEW_MODE,
+                                                      WEBKIT_VIEW_MODE_WEB,
+                                                      WEBKIT_PARAM_READWRITE));
 
     /**
      * WebKitWebView::load-changed:
@@ -2857,4 +2880,45 @@ WebKitDownload* webkit_web_view_download_uri(WebKitWebView* webView, const char*
     webkitDownloadSetWebView(download, webView);
 
     return download;
+}
+
+/**
+ * webkit_web_view_set_view_mode:
+ * @web_view: a #WebKitWebView
+ * @view_mode: a #WebKitViewMode
+ *
+ * Set the view mode of @web_view to @view_mode. This method should be called
+ * before loading new contents on @web_view so that the new #WebKitViewMode will
+ * be applied to the new contents.
+ */
+void webkit_web_view_set_view_mode(WebKitWebView* webView, WebKitViewMode viewMode)
+{
+    g_return_if_fail(WEBKIT_IS_WEB_VIEW(webView));
+
+    if (webView->priv->viewMode == viewMode)
+        return;
+
+    WebFrameProxy* frame = getPage(webView)->mainFrame();
+    if (!frame)
+        return;
+
+    frame->setInViewSourceMode(viewMode == WEBKIT_VIEW_MODE_SOURCE);
+
+    webView->priv->viewMode = viewMode;
+    g_object_notify(G_OBJECT(webView), "view-mode");
+}
+
+/**
+ * webkit_web_view_get_view_mode:
+ * @web_view: a #WebKitWebView
+ *
+ * Get the view mode of @web_view.
+ *
+ * Returns: the #WebKitViewMode of @web_view.
+ */
+WebKitViewMode webkit_web_view_get_view_mode(WebKitWebView* webView)
+{
+    g_return_val_if_fail(WEBKIT_IS_WEB_VIEW(webView), WEBKIT_VIEW_MODE_WEB);
+
+    return webView->priv->viewMode;
 }

@@ -1,3 +1,51 @@
+2012-12-31  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] Add API to set a WebKitWebView in view source mode to WebKit2
+        https://bugs.webkit.org/show_bug.cgi?id=99315
+
+        Reviewed by Martin Robinson.
+
+        Add a generic API to set/get a view mode. For now there are only
+        two modes, Web and Source, but the API can be extended if we
+        eventually support other view modes like Printing for example.
+
+        * UIProcess/API/gtk/WebKitWebView.cpp:
+        (webkitWebViewSetProperty): Implement setter for view-mode
+        property.
+        (webkitWebViewGetProperty): Implement getter for view-mode
+        property.
+        (webkit_web_view_class_init): Add view-source property.
+        (webkit_web_view_set_view_mode): Public method to set the view
+        mode.
+        (webkit_web_view_get_view_mode): Public method to get the view
+        mode.
+        * UIProcess/API/gtk/WebKitWebView.h: Add WebKitViewMode enum.
+        * UIProcess/API/gtk/docs/webkit2gtk-sections.txt: Add new symbols.
+        * UIProcess/API/gtk/tests/TestWebKitWebView.cpp:
+        (testWebViewMode):
+        (beforeAll):
+        * UIProcess/WebFrameProxy.cpp:
+        (WebKit::WebFrameProxy::WebFrameProxy): Initialize
+        m_inViewSourceMode.
+        (WebKit::WebFrameProxy::setInViewSourceMode): Set
+        m_inViewSourceMode if it has changed and call
+        WebPageProxy::setFrameInViewSourceMode() to notify the WebProcess.
+        * UIProcess/WebFrameProxy.h:
+        (WebKit::WebFrameProxy::inViewSourceMode): Return whether the
+        frame is currently in view source mode.
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::setFrameInViewSourceMode): Send a message
+        to the WebProcess to set the given frame in view source mode or not.
+        * UIProcess/WebPageProxy.h:
+        (WebPageProxy): Add setFrameInViewSourceMode().
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::setFrameInViewSourceMode): Call
+        setInViewSourceMode for the main frame.
+        * WebProcess/WebPage/WebPage.h:
+        (WebPage): Add setFrameInViewSourceMode().
+        * WebProcess/WebPage/WebPage.messages.in: Add new message
+        SetFrameInViewSourceMode.
+
 2012-12-30  Christophe Dumez  <christophe.dumez@intel.com>
 
         [EFL][WK2] Invalid use of temporary object in ProcessLauncher::launchProcess()

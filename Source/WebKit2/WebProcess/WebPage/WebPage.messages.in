@@ -314,4 +314,6 @@ messages -> WebPage {
 #if PLATFORM(GTK) && USE(TEXTURE_MAPPER_GL)
     SetAcceleratedCompositingWindowId(int64_t id)
 #endif
+
+    SetFrameInViewSourceMode(uint64_t frameID, bool inViewSourceMode)
 }

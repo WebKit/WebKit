@@ -108,6 +108,9 @@ public:
     bool isDisplayingMarkupDocument() const;
     bool isDisplayingPDFDocument() const;
 
+    bool inViewSourceMode() const { return m_inViewSourceMode; }
+    void setInViewSourceMode(bool);
+
     void getWebArchive(PassRefPtr<DataCallback>);
     void getMainResourceData(PassRefPtr<DataCallback>);
     void getResourceData(WebURL*, PassRefPtr<DataCallback>);
@@ -154,6 +157,7 @@ private:
     String m_MIMEType;
     String m_title;
     bool m_isFrameSet;
+    bool m_inViewSourceMode;
     RefPtr<WebCertificateInfo> m_certificateInfo;
     RefPtr<WebFrameListenerProxy> m_activeListener;
     uint64_t m_frameID;

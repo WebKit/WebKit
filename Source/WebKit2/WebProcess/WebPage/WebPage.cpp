@@ -3763,4 +3763,10 @@ void WebPage::cancelComposition(EditorState& newState)
 }
 #endif
 
+void WebPage::setFrameInViewSourceMode(uint64_t frameID, bool inViewSourceMode)
+{
+    if (WebFrame* frame = WebProcess::shared().webFrame(frameID))
+        frame->coreFrame()->setInViewSourceMode(inViewSourceMode);
+}
+
 } // namespace WebKit

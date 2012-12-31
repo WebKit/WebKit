@@ -71,6 +71,7 @@ WebKitWebView
 WebKitLoadEvent
 WebKitPolicyDecisionType
 WebKitSaveMode
+WebKitViewMode
 WebKitInsecureContentEvent
 
 <SUBSECTION Editing Commands>
@@ -127,6 +128,8 @@ webkit_web_view_save_finish
 webkit_web_view_save_to_file
 webkit_web_view_save_to_file_finish
 webkit_web_view_download_uri
+webkit_web_view_set_view_mode
+webkit_web_view_get_view_mode
 
 <SUBSECTION WebKitJavascriptResult>
 WebKitJavascriptResult
