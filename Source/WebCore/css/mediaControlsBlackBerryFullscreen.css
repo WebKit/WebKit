@@ -43,7 +43,8 @@ video:-webkit-full-screen::-webkit-media-controls-panel {
     bottom: 0px;
     width: 100%;
     height: auto;
-    background-color: rgba(38, 38, 38, 0.5);
+    background-color: rgba(38, 38, 38, 0.8);
+    color: rgb(250, 250, 250);
 }
 
 video:-webkit-full-screen::-webkit-media-controls-button-group-container {
@@ -63,7 +64,6 @@ video:-webkit-full-screen::-webkit-media-controls-fullscreen-time-display-contai
     -webkit-box-align: center;
     -webkit-box-pack: justify;
     -webkit-box-flex: 1;
-    background-color: rgba(38, 38, 38, 0.5);
 }
 
 video:-webkit-full-screen::-webkit-media-controls-time-display-container {
@@ -88,7 +88,6 @@ video:-webkit-full-screen::-webkit-media-controls-fullscreen-timeline-container 
     -webkit-box-flex: 1;
     height: auto;
     width: 100%;
-    background-color: rgba(38, 38, 38, 0.5);
 }
 
 video:-webkit-full-screen::-webkit-media-controls-timeline-container {
@@ -102,8 +101,6 @@ video:-webkit-full-screen::-webkit-media-controls-fullscreen-current-time-displa
     -webkit-box-align: center;
     -webkit-box-pack: end;
     -webkit-box-flex: 0;
-    background-color: rgba(38, 38, 38, 0.5);
-    color: #fafafa;
 }
 
 video:-webkit-full-screen::-webkit-media-controls-current-time-display {
@@ -117,8 +114,7 @@ video:-webkit-full-screen::-webkit-media-controls-fullscreen-time-remaining-disp
     -webkit-box-align: center;
     -webkit-box-pack: end;
     -webkit-box-flex: 0;
-    background-color: rgba(38, 38, 38, 0.5);
-    color: #fafafa;
+    color: rgb(125, 125, 125);
 }
 
 video:-webkit-full-screen::-webkit-media-controls-time-remaining-display {
@@ -168,7 +164,6 @@ video:-webkit-full-screen::-webkit-media-controls-fullscreen-button-container, v
     -webkit-box-align: center;
     -webkit-box-flex: 1;
     min-width: 100%;
-    background-color: rgb(0, 0, 0);
 }
 
 video:-webkit-full-screen::-webkit-media-controls-fullscreen-button-container {
@@ -183,6 +178,5 @@ video:-webkit-full-screen::-webkit-media-controls-placeholder {
     -webkit-appearance: media-controls-background;
     display: -webkit-box;
     -webkit-box-flex: 1;
-    background-color: rgb(0, 0, 0);
     min-width: 100%;
 }
