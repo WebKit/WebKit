@@ -24,7 +24,7 @@
  */
 
 #include "config.h"
-#include "EGLConfigHelper.h"
+#include "EGLConfigSelector.h"
 
 #if USE(EGL)
 
@@ -55,7 +55,7 @@ void SharedEGLDisplay::deref()
     }
 }
 
-EGLDisplay SharedEGLDisplay::sharedEGLDisplay()
+EGLDisplay SharedEGLDisplay::sharedEGLDisplay() const
 {
     return m_eglDisplay;
 }
@@ -104,23 +104,23 @@ SharedEGLDisplay::~SharedEGLDisplay()
     cleanup();
 }
 
-EGLConfigHelper::EGLConfigHelper(NativeSharedDisplay* display)
+EGLConfigSelector::EGLConfigSelector(NativeSharedDisplay* display)
     : m_pbufferFBConfig(0)
     , m_surfaceContextFBConfig(0)
 {
     m_sharedDisplay = SharedEGLDisplay::create(display);
 }
 
-EGLConfigHelper::~EGLConfigHelper()
+EGLConfigSelector::~EGLConfigSelector()
 {
 }
 
-PlatformDisplay EGLConfigHelper::display()
+PlatformDisplay EGLConfigSelector::display() const
 {
     return m_sharedDisplay->sharedEGLDisplay();
 }
 
-EGLConfig EGLConfigHelper::pBufferContextConfig()
+EGLConfig EGLConfigSelector::pBufferContextConfig()
 {
     if (!m_pbufferFBConfig) {
         configAttributeList[13] = EGL_PIXMAP_BIT;
@@ -130,7 +130,7 @@ EGLConfig EGLConfigHelper::pBufferContextConfig()
     return m_pbufferFBConfig;
 }
 
-EGLConfig EGLConfigHelper::surfaceContextConfig()
+EGLConfig EGLConfigSelector::surfaceContextConfig()
 {
     if (!m_surfaceContextFBConfig) {
         configAttributeList[13] = EGL_WINDOW_BIT;
@@ -140,7 +140,7 @@ EGLConfig EGLConfigHelper::surfaceContextConfig()
     return m_surfaceContextFBConfig;
 }
 
-EGLint EGLConfigHelper::nativeVisualId(const EGLConfig& config)
+EGLint EGLConfigSelector::nativeVisualId(const EGLConfig& config) const
 {
     if (display() == EGL_NO_DISPLAY)
         return -1;
@@ -151,13 +151,13 @@ EGLint EGLConfigHelper::nativeVisualId(const EGLConfig& config)
     return eglValue;
 }
 
-void EGLConfigHelper::reset()
+void EGLConfigSelector::reset()
 {
     m_surfaceContextFBConfig = 0;
     m_pbufferFBConfig = 0;
 }
 
-EGLConfig EGLConfigHelper::createConfig(const int attributes[])
+EGLConfig EGLConfigSelector::createConfig(const int attributes[])
 {
     if (display() == EGL_NO_DISPLAY)
         return 0;

@@ -34,23 +34,23 @@ EGLWindowTransportSurface::EGLWindowTransportSurface()
     : GLPlatformSurface()
 {
     m_nativeResource = adoptPtr(new NativeOffScreenWindow());
-    m_eglConfigHelper = adoptPtr(new EGLConfigHelper(m_nativeResource->nativeSharedDisplay()));
-    m_sharedDisplay = m_eglConfigHelper->display();
+    m_configSelector = adoptPtr(new EGLConfigSelector(m_nativeResource->nativeSharedDisplay()));
+    m_sharedDisplay = m_configSelector->display();
 
     if (m_sharedDisplay == EGL_NO_DISPLAY) {
-        m_eglConfigHelper = nullptr;
+        m_configSelector = nullptr;
         m_nativeResource = nullptr;
         return;
     }
 
-    EGLConfig config = m_eglConfigHelper->surfaceContextConfig();
+    EGLConfig config = m_configSelector->surfaceContextConfig();
 
     if (!config) {
         destroy();
         return;
     }
 
-    EGLint visualId = m_eglConfigHelper->nativeVisualId(config);
+    EGLint visualId = m_configSelector->nativeVisualId(config);
 
     if (visualId == -1) {
         destroy();
@@ -69,7 +69,7 @@ EGLWindowTransportSurface::EGLWindowTransportSurface()
         return;
     }
 
-    m_drawable = eglCreateWindowSurface(m_sharedDisplay, m_eglConfigHelper->surfaceContextConfig(), (EGLNativeWindowType)m_bufferHandle, 0);
+    m_drawable = eglCreateWindowSurface(m_sharedDisplay, m_configSelector->surfaceContextConfig(), (EGLNativeWindowType)m_bufferHandle, 0);
 
     if (m_drawable == EGL_NO_SURFACE) {
         LOG_ERROR("Failed to create EGL surface(%d).", eglGetError());
@@ -83,7 +83,7 @@ EGLWindowTransportSurface::~EGLWindowTransportSurface()
 
 PlatformSurfaceConfig EGLWindowTransportSurface::configuration()
 {
-    return m_eglConfigHelper->surfaceContextConfig();
+    return m_configSelector->surfaceContextConfig();
 }
 
 void EGLWindowTransportSurface::swapBuffers()
@@ -111,7 +111,7 @@ void EGLWindowTransportSurface::destroy()
     m_nativeResource->destroyWindow(m_bufferHandle);
     freeEGLResources();
     m_nativeResource = nullptr;
-    m_eglConfigHelper = nullptr;
+    m_configSelector = nullptr;
     m_bufferHandle = 0;
 }
 

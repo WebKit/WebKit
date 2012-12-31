@@ -23,8 +23,8 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef EGLConfigHelper_h
-#define EGLConfigHelper_h
+#ifndef EGLConfigSelector_h
+#define EGLConfigSelector_h
 
 #if USE(EGL)
 
@@ -53,7 +53,7 @@ public:
     }
 
     void deref();
-    EGLDisplay sharedEGLDisplay();
+    EGLDisplay sharedEGLDisplay() const;
 
 protected:
     SharedEGLDisplay(NativeSharedDisplay*);
@@ -64,16 +64,16 @@ protected:
     EGLDisplay m_eglDisplay;
 };
 
-class EGLConfigHelper {
-    WTF_MAKE_NONCOPYABLE(EGLConfigHelper);
+class EGLConfigSelector {
+    WTF_MAKE_NONCOPYABLE(EGLConfigSelector);
 
 public:
-    EGLConfigHelper(NativeSharedDisplay* = 0);
-    virtual ~EGLConfigHelper();
-    PlatformDisplay display();
+    EGLConfigSelector(NativeSharedDisplay* = 0);
+    virtual ~EGLConfigSelector();
+    PlatformDisplay display() const;
     virtual EGLConfig pBufferContextConfig();
     virtual EGLConfig surfaceContextConfig();
-    EGLint nativeVisualId(const EGLConfig&);
+    EGLint nativeVisualId(const EGLConfig&) const;
     void reset();
 
 private:

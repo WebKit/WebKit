@@ -28,7 +28,7 @@
 
 #if USE(EGL) && USE(GRAPHICS_SURFACE)
 
-#include "EGLConfigHelper.h"
+#include "EGLConfigSelector.h"
 #include "GLPlatformSurface.h"
 
 #include <glx/X11WindowResources.h>
@@ -53,7 +53,7 @@ public:
 private:
     void freeEGLResources();
     OwnPtr<NativeOffScreenWindow> m_nativeResource;
-    OwnPtr<EGLConfigHelper> m_eglConfigHelper;
+    OwnPtr<EGLConfigSelector> m_configSelector;
 };
 
 }
