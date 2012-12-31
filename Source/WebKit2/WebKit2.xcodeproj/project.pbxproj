@@ -966,6 +966,7 @@
 		BCF049E711FE20F600F86A58 /* WKBundlePrivate.h in Headers */ = {isa = PBXBuildFile; fileRef = BCF049E511FE20F600F86A58 /* WKBundlePrivate.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		BCF18638167D071E00A1A85A /* CacheModel.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BCF18637167D071E00A1A85A /* CacheModel.cpp */; };
 		BCF4DE23168E4BD500C94AFC /* NetworkProcessSupplement.h in Headers */ = {isa = PBXBuildFile; fileRef = BCF4DE22168E4BD500C94AFC /* NetworkProcessSupplement.h */; };
+		BCF4DE25168FA44800C94AFC /* WebContextSupplement.h in Headers */ = {isa = PBXBuildFile; fileRef = BCF4DE24168FA44800C94AFC /* WebContextSupplement.h */; };
 		BCF505E71243047B005955AE /* PlatformCertificateInfo.h in Headers */ = {isa = PBXBuildFile; fileRef = BCF505E51243047B005955AE /* PlatformCertificateInfo.h */; };
 		BCF505E81243047B005955AE /* PlatformCertificateInfo.mm in Sources */ = {isa = PBXBuildFile; fileRef = BCF505E61243047B005955AE /* PlatformCertificateInfo.mm */; };
 		BCF50728124329AA005955AE /* WebCertificateInfo.h in Headers */ = {isa = PBXBuildFile; fileRef = BCF50726124329AA005955AE /* WebCertificateInfo.h */; };
@@ -2242,6 +2243,7 @@
 		BCF04C8E11FF9F6E00F86A58 /* WebString.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebString.h; sourceTree = "<group>"; };
 		BCF18637167D071E00A1A85A /* CacheModel.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CacheModel.cpp; sourceTree = "<group>"; };
 		BCF4DE22168E4BD500C94AFC /* NetworkProcessSupplement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = NetworkProcessSupplement.h; path = Network/NetworkProcessSupplement.h; sourceTree = "<group>"; };
+		BCF4DE24168FA44800C94AFC /* WebContextSupplement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebContextSupplement.h; sourceTree = "<group>"; };
 		BCF505E51243047B005955AE /* PlatformCertificateInfo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PlatformCertificateInfo.h; sourceTree = "<group>"; };
 		BCF505E61243047B005955AE /* PlatformCertificateInfo.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = PlatformCertificateInfo.mm; sourceTree = "<group>"; };
 		BCF5068412431861005955AE /* Security.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Security.framework; path = /System/Library/Frameworks/Security.framework; sourceTree = "<absolute>"; };
@@ -3525,6 +3527,7 @@
 				BC4A62A614744EC6006C681A /* WebConnectionToWebProcess.h */,
 				BCB9E2421120DACA00A137E0 /* WebContext.cpp */,
 				BCB9E2411120DACA00A137E0 /* WebContext.h */,
+				BCF4DE24168FA44800C94AFC /* WebContextSupplement.h */,
 				BCEE7D0912846AED009827DA /* WebContext.messages.in */,
 				31A505F71680025500A930EB /* WebContextClient.cpp */,
 				31A505F81680025500A930EB /* WebContextClient.h */,
@@ -5028,6 +5031,7 @@
 				31A505FA1680025500A930EB /* WebContextClient.h in Headers */,
 				BCE0E425168B7A280057E66A /* WebProcessSupplement.h in Headers */,
 				BCF4DE23168E4BD500C94AFC /* NetworkProcessSupplement.h in Headers */,
+				BCF4DE25168FA44800C94AFC /* WebContextSupplement.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

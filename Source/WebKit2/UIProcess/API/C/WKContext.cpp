@@ -28,6 +28,7 @@
 #include "WKContextPrivate.h"
 
 #include "WKAPICast.h"
+#include "WebApplicationCacheManagerProxy.h"
 #include "WebContext.h"
 #include "WebURLRequest.h"
 #include <wtf/PassRefPtr.h>
@@ -188,7 +189,7 @@ WKCookieManagerRef WKContextGetCookieManager(WKContextRef contextRef)
 
 WKApplicationCacheManagerRef WKContextGetApplicationCacheManager(WKContextRef contextRef)
 {
-    return toAPI(toImpl(contextRef)->applicationCacheManagerProxy());
+    return toAPI(toImpl(contextRef)->supplement<WebApplicationCacheManagerProxy>());
 }
 
 WKBatteryManagerRef WKContextGetBatteryManager(WKContextRef contextRef)

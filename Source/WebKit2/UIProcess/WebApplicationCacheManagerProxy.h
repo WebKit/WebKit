@@ -30,6 +30,7 @@
 #include "GenericCallback.h"
 #include "ImmutableArray.h"
 #include "MessageReceiver.h"
+#include "WebContextSupplement.h"
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefPtr.h>
 #include <wtf/Vector.h>
@@ -41,28 +42,26 @@ namespace CoreIPC {
 
 namespace WebKit {
 
-struct SecurityOriginData;
-class WebContext;
-class WebProcessProxy;
 class WebSecurityOrigin;
+struct SecurityOriginData;
 
 typedef GenericCallback<WKArrayRef> ArrayCallback;
 
-class WebApplicationCacheManagerProxy : public APIObject, private CoreIPC::MessageReceiver {
+class WebApplicationCacheManagerProxy : public APIObject, public WebContextSupplement, private CoreIPC::MessageReceiver {
 public:
     static const Type APIType = TypeApplicationCacheManager;
+
+    static const AtomicString& supplementName();
 
     static PassRefPtr<WebApplicationCacheManagerProxy> create(WebContext*);
     virtual ~WebApplicationCacheManagerProxy();
 
-    void invalidate();
-    void clearContext() { m_webContext = 0; }
-    
     void getApplicationCacheOrigins(PassRefPtr<ArrayCallback>);
     void deleteEntriesForOrigin(WebSecurityOrigin*);
     void deleteAllEntries();
 
-    bool shouldTerminate(WebProcessProxy*) const;
+    using APIObject::ref;
+    using APIObject::deref;
 
 private:
     explicit WebApplicationCacheManagerProxy(WebContext*);
@@ -71,11 +70,17 @@ private:
 
     void didGetApplicationCacheOrigins(const Vector<SecurityOriginData>&, uint64_t callbackID);
 
+    // WebContextSupplement
+    virtual void contextDestroyed() OVERRIDE;
+    virtual void processDidClose(WebProcessProxy*) OVERRIDE;
+    virtual bool shouldTerminate(WebProcessProxy*) const OVERRIDE;
+    virtual void refWebContextSupplement() OVERRIDE;
+    virtual void derefWebContextSupplement() OVERRIDE;
+
     // CoreIPC::MessageReceiver
     virtual void didReceiveMessage(CoreIPC::Connection*, CoreIPC::MessageID, CoreIPC::MessageDecoder&) OVERRIDE;
     void didReceiveWebApplicationCacheManagerProxyMessage(CoreIPC::Connection*, CoreIPC::MessageID, CoreIPC::MessageDecoder&);
 
-    WebContext* m_webContext;
     HashMap<uint64_t, RefPtr<ArrayCallback> > m_arrayCallbacks;
 };
 

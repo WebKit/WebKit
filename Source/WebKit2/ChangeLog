@@ -1,3 +1,43 @@
+2012-12-30  Sam Weinig  <sam@webkit.org>
+
+        Add supplementability for WebContext
+        https://bugs.webkit.org/show_bug.cgi?id=105878
+
+        Reviewed by Dan Bernstein.
+
+        Add WebContextSupplement and convert WebApplicationCacheManagerProxy to it.
+
+        * UIProcess/API/C/WKContext.cpp:
+        (WKContextGetApplicationCacheManager):
+        * UIProcess/WebApplicationCacheManagerProxy.cpp:
+        (WebKit::WebApplicationCacheManagerProxy::supplementName):
+        (WebKit::WebApplicationCacheManagerProxy::WebApplicationCacheManagerProxy):
+        (WebKit::WebApplicationCacheManagerProxy::contextDestroyed):
+        (WebKit::WebApplicationCacheManagerProxy::processDidClose):
+        (WebKit::WebApplicationCacheManagerProxy::refWebContextSupplement):
+        (WebKit::WebApplicationCacheManagerProxy::derefWebContextSupplement):
+        (WebKit::WebApplicationCacheManagerProxy::getApplicationCacheOrigins):
+        (WebKit::WebApplicationCacheManagerProxy::deleteEntriesForOrigin):
+        (WebKit::WebApplicationCacheManagerProxy::deleteAllEntries):
+        * UIProcess/WebApplicationCacheManagerProxy.h:
+        (WebApplicationCacheManagerProxy):
+        * UIProcess/WebContext.cpp:
+        (WebKit::WebContext::WebContext):
+        (WebKit::WebContext::~WebContext):
+        (WebKit::WebContext::shouldTerminate):
+        (WebKit::WebContext::disconnectProcess):
+        * UIProcess/WebContext.h:
+        (WebKit::WebContext::supplement):
+        (WebKit::WebContext::addSupplement):
+        * UIProcess/WebContextSupplement.h: Added.
+        (WebKit::WebContextSupplement::WebContextSupplement):
+        (WebKit::WebContextSupplement::~WebContextSupplement):
+        (WebKit::WebContextSupplement::ref):
+        (WebKit::WebContextSupplement::deref):
+        (WebKit::WebContextSupplement::context):
+        (WebKit::WebContextSupplement::clearContext):
+        * WebKit2.xcodeproj/project.pbxproj:
+
 2012-12-31  Christophe Dumez  <christophe.dumez@intel.com>
 
         [EFL[WK2] Regression(r138574): Should not allocate memory in the fork

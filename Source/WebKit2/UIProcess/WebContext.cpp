@@ -38,6 +38,7 @@
 #include "WebApplicationCacheManagerProxy.h"
 #include "WebContextMessageKinds.h"
 #include "WebContextMessages.h"
+#include "WebContextSupplement.h"
 #include "WebContextUserMessageCoders.h"
 #include "WebCookieManagerProxy.h"
 #include "WebCoreArgumentCoders.h"
@@ -156,7 +157,6 @@ WebContext::WebContext(ProcessModel processModel, const String& injectedBundlePa
     addMessageReceiver(CoreIPC::MessageKindTraits<WebContextLegacyMessage::Kind>::messageReceiverName(), this);
 
     // NOTE: These sub-objects must be initialized after m_messageReceiverMap..
-    m_applicationCacheManagerProxy = WebApplicationCacheManagerProxy::create(this);
 #if ENABLE(BATTERY_STATUS)
     m_batteryManagerProxy = WebBatteryManagerProxy::create(this);
 #endif
@@ -179,7 +179,9 @@ WebContext::WebContext(ProcessModel processModel, const String& injectedBundlePa
 #if USE(SOUP)
     m_soupRequestManagerProxy = WebSoupRequestManagerProxy::create(this);
 #endif
-    
+
+    addSupplement<WebApplicationCacheManagerProxy>();
+
     contexts().append(this);
 
     addLanguageChangeObserver(this, languageChanged);
@@ -209,8 +211,12 @@ WebContext::~WebContext()
 
     m_messageReceiverMap.invalidate();
 
-    m_applicationCacheManagerProxy->invalidate();
-    m_applicationCacheManagerProxy->clearContext();
+    WebContextSupplementMap::const_iterator it = m_supplements.begin();
+    WebContextSupplementMap::const_iterator end = m_supplements.end();
+    for (; it != end; ++it) {
+        it->value->contextDestroyed();
+        it->value->clearContext();
+    }
 
 #if ENABLE(BATTERY_STATUS)
     m_batteryManagerProxy->invalidate();
@@ -591,8 +597,13 @@ bool WebContext::shouldTerminate(WebProcessProxy* process)
     if (!m_processTerminationEnabled)
         return false;
 
-    if (!m_applicationCacheManagerProxy->shouldTerminate(process))
-        return false;
+    WebContextSupplementMap::const_iterator it = m_supplements.begin();
+    WebContextSupplementMap::const_iterator end = m_supplements.end();
+    for (; it != end; ++it) {
+        if (!it->value->shouldTerminate(process))
+            return false;
+    }
+
     if (!m_cookieManagerProxy->shouldTerminate(process))
         return false;
 #if ENABLE(SQL_DATABASE)
@@ -650,7 +661,11 @@ void WebContext::disconnectProcess(WebProcessProxy* process)
         return;
     }
 
-    m_applicationCacheManagerProxy->invalidate();
+    WebContextSupplementMap::const_iterator it = m_supplements.begin();
+    WebContextSupplementMap::const_iterator end = m_supplements.end();
+    for (; it != end; ++it)
+        it->value->processDidClose(process);
+
 #if ENABLE(BATTERY_STATUS)
     m_batteryManagerProxy->invalidate();
 #endif

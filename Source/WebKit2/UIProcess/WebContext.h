@@ -44,6 +44,7 @@
 #include "WebProcessProxy.h"
 #include <WebCore/LinkHash.h>
 #include <wtf/Forward.h>
+#include <wtf/HashMap.h>
 #include <wtf/HashSet.h>
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefPtr.h>
@@ -57,7 +58,7 @@
 namespace WebKit {
 
 class DownloadProxy;
-class WebApplicationCacheManagerProxy;
+class WebContextSupplement;
 class WebCookieManagerProxy;
 class WebDatabaseManagerProxy;
 class WebGeolocationManagerProxy;
@@ -99,6 +100,18 @@ public:
     virtual ~WebContext();
 
     static const Vector<WebContext*>& allContexts();
+
+    template <typename T>
+    T* supplement()
+    {
+        return static_cast<T*>(m_supplements.get(T::supplementName()).get());
+    }
+
+    template <typename T>
+    void addSupplement()
+    {
+        m_supplements.add(T::supplementName(), T::create(this));
+    }
 
     void addMessageReceiver(CoreIPC::StringReference messageReceiverName, CoreIPC::MessageReceiver*);
     void addMessageReceiver(CoreIPC::StringReference messageReceiverName, uint64_t destinationID, CoreIPC::MessageReceiver*);
@@ -200,7 +213,6 @@ public:
 
     static HashSet<String, CaseFoldingHash> pdfAndPostScriptMIMETypes();
 
-    WebApplicationCacheManagerProxy* applicationCacheManagerProxy() const { return m_applicationCacheManagerProxy.get(); }
 #if ENABLE(BATTERY_STATUS)
     WebBatteryManagerProxy* batteryManagerProxy() const { return m_batteryManagerProxy.get(); }
 #endif
@@ -420,7 +432,6 @@ private:
     bool m_memorySamplerEnabled;
     double m_memorySamplerInterval;
 
-    RefPtr<WebApplicationCacheManagerProxy> m_applicationCacheManagerProxy;
 #if ENABLE(BATTERY_STATUS)
     RefPtr<WebBatteryManagerProxy> m_batteryManagerProxy;
 #endif
@@ -443,6 +454,9 @@ private:
 #if USE(SOUP)
     RefPtr<WebSoupRequestManagerProxy> m_soupRequestManagerProxy;
 #endif
+
+    typedef HashMap<AtomicString, RefPtr<WebContextSupplement> > WebContextSupplementMap;
+    WebContextSupplementMap m_supplements;
 
 #if PLATFORM(WIN)
     bool m_shouldPaintNativeControls;
