@@ -312,6 +312,16 @@
         "GtkBuildSystem": {
             "filename": r"configure.ac"
                         r"|.*GNUmakefile.(am|features.am.in)",
+        },
+        "ConsoleUsage": {
+            "more": r"[Aa]ddConsoleMessage|reportException|logExceptionToConsole|addMessage|printErrorMessage"
+        },
+        "ContentSecurityPolicyUsage": {
+            "more": r"[Cc]ontentSecurityPolicy(?!\.(h|cpp))",
+        },
+        "ContentSecurityPolicyFiles": {
+            "filename": r"Source/WebCore/page/(Content|DOM)SecurityPolicy\."
+                        r"|LayoutTests/http/tests/security/contentSecurityPolicy"
         }
     },
     "CC_RULES": {
@@ -326,6 +336,8 @@
         "Cairo": [ "dominik.rottsches@intel.com" ],
         "CMake": [ "rakuco@webkit.org", "gyuyoung.kim@samsung.com" ],
         "CoordinatedGraphics" : [ "noam@webkit.org", "zeno@webkit.org" ],
+        "ConsoleUsage" : [ "mkwst+watchlist@chromium.org" ],
+        "ContentSecurityPolicyFiles|ContentSecurityPolicyUsage" : [ "mkwst+watchlist@chromium.org" ],
         "CoreAnimation" : [ "simon.fraser@apple.com" ],
         "CSS": [ "alexis@webkit.org", "macpherson@chromium.org", "cmarcelo@webkit.org", "ojan.autocc@gmail.com"],
         "ChromiumGraphics": [ "jamesr@chromium.org", "cc-bugs@chromium.org" ],

@@ -98,6 +98,7 @@ watchers_who_are_not_contributors = [
     Account("David Levin", ["levin+threading@chromium.org"], ""),
     Account("David Levin", ["levin+watchlist@chromium.org"], ""),
     Account("Kent Tamura", ["tkent+wkapi@chromium.org"], ""),
+    Account("Mike West", ["mkwst+watchlist@chromium.org"], ""),
 ]
 
 
