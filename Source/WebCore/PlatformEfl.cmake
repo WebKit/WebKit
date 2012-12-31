@@ -274,15 +274,12 @@ if (WTF_USE_3D_GRAPHICS)
     endif ()
 
     list(APPEND WebCore_SOURCES
-        platform/graphics/OpenGLShims.cpp
         platform/graphics/cairo/DrawingBufferCairo.cpp
         platform/graphics/efl/GraphicsContext3DEfl.cpp
         platform/graphics/efl/GraphicsContext3DPrivate.cpp
-        platform/graphics/opengl/Extensions3DOpenGL.cpp
         platform/graphics/opengl/Extensions3DOpenGLCommon.cpp
         platform/graphics/opengl/GLPlatformContext.cpp
         platform/graphics/opengl/GLPlatformSurface.cpp
-        platform/graphics/opengl/GraphicsContext3DOpenGL.cpp
         platform/graphics/opengl/GraphicsContext3DOpenGLCommon.cpp
         platform/graphics/surfaces/GraphicsSurface.cpp
         platform/graphics/surfaces/glx/GraphicsSurfaceGLX.cpp
@@ -303,6 +300,19 @@ if (WTF_USE_3D_GRAPHICS)
         list(APPEND WebCore_SOURCES
             platform/graphics/surfaces/glx/GLXSurface.cpp
             platform/graphics/surfaces/glx/GLXContext.cpp
+        )
+    endif ()
+
+    if (WTF_USE_OPENGL_ES_2)
+        list(APPEND WebCore_SOURCES
+            platform/graphics/opengl/Extensions3DOpenGLES.cpp
+            platform/graphics/opengl/GraphicsContext3DOpenGLES.cpp
+        )
+    else ()
+        list(APPEND WebCore_SOURCES
+            platform/graphics/opengl/Extensions3DOpenGL.cpp
+            platform/graphics/opengl/GraphicsContext3DOpenGL.cpp
+            platform/graphics/OpenGLShims.cpp
         )
     endif ()
 
