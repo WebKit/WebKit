@@ -697,6 +697,9 @@ webkit.org/b/105870 webaudio/audiobuffersource.html [ Pass Crash ]
 webkit.org/b/105870 webaudio/audionode.html [ Pass Crash ]
 webkit.org/b/105870 webaudio/audionode-connect-order.html [ Pass Crash ]
 
+# Sometimes hit !m_hasAXObject assertion in RenderObject destructor
+webkit.org/b/105879 editing/pasteboard/4806874.html [ Pass Crash ]
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # FLAKY TESTS
 #////////////////////////////////////////////////////////////////////////////////////////

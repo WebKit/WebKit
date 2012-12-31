@@ -2,6 +2,16 @@
 
         Unreviewed EFL gardening.
 
+        Mark editing/pasteboard/4806874.html as flaky since
+        it sometimes hits an assertion in RenderObject
+        destructor.
+
+        * platform/efl/TestExpectations:
+
+2012-12-30  Christophe Dumez  <christophe.dumez@intel.com>
+
+        Unreviewed EFL gardening.
+
         Rebaseline fast/js/global-constructors.html after
         TEMPLATE_ELEMENT was enabled for EFL port in r138586.
 
