@@ -4384,6 +4384,12 @@ void Document::finishedParsing()
     if (!m_documentTiming.domContentLoadedEventEnd)
         m_documentTiming.domContentLoadedEventEnd = monotonicallyIncreasingTime();
 
+    // Seamless iframes require a forced StyleResolver recalc in order to ensure that they
+    // inherit style from their parent. Without this recalc, frames that don't define any of
+    // their own styles won't discover that there's still work to be done.
+    if (shouldDisplaySeamlesslyWithParent())
+        styleResolverChanged(DeferRecalcStyle);
+
     if (RefPtr<Frame> f = frame()) {
         // FrameLoader::finishedParsing() might end up calling Document::implicitClose() if all
         // resource loads are complete. HTMLObjectElements can start loading their resources from

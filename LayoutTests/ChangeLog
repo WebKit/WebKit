@@ -1,3 +1,19 @@
+2013-01-01  Mike West  <mkwst@chromium.org>
+
+        seamless iframes don't inherit styles when srcdoc is used
+        https://bugs.webkit.org/show_bug.cgi?id=103539
+
+        Reviewed by Eric Seidel.
+
+        * fast/frames/seamless/resources/span.html: Added.
+        * fast/frames/seamless/seamless-contenteditable-not-inherited-expected.txt:
+            Updating the previously FAILing expectation.
+        * fast/frames/seamless/seamless-srcdoc-expected.txt: Added.
+        * fast/frames/seamless/seamless-srcdoc.html: Added.
+            Exciting new test to ensure that this doesn't regress, neither
+            for totally simple srcdoc attriubtes, nor for slightly more
+            complex variations.
+
 2012-12-31  Kangil Han  <kangil.han@samsung.com>
 
         [EFL] css3/masking/clip-path-circle-relative-overflow.html needs expected results update after 97217

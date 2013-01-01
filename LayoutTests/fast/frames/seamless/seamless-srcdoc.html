@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <script src="../../js/resources/js-test-pre.js"></script>
+    <script>
+        window.onload = function () {
+            debug("This test ensures that content inside a seamless srcdoc iframe correctly inherits style, even if it doesn't set any styles of its own.");
+
+            window.srcdocspan = document.getElementById("nostyle").contentDocument.querySelector('span');
+            window.srcdocstylespan = document.getElementById("style").contentDocument.querySelector('span');
+            window.span = document.querySelector('iframe[src]').contentDocument.querySelector('span');
+
+            shouldBeEqualToString("window.getComputedStyle(srcdocspan).getPropertyCSSValue('color').cssText", "rgb(255, 0, 0)");
+            shouldBeEqualToString("window.getComputedStyle(srcdocstylespan).getPropertyCSSValue('color').cssText", "rgb(255, 0, 0)");
+            shouldBeEqualToString("window.getComputedStyle(span).getPropertyCSSValue('color').cssText", "rgb(255, 0, 0)");
+        };
+    </script>
+    <style>
+        span { color: red; }
+    </style>
+</head>
+<body>
+    <iframe id="nostyle" seamless srcdoc="<span>This is a span.</span>"></iframe>
+    <iframe id="style" seamless srcdoc="<style></style><span>This is a span.</span>"></iframe>
+    <iframe seamless src="resources/span.html"></iframe>
+</body>
+</html>
