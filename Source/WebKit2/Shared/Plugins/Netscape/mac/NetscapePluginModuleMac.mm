@@ -354,6 +354,9 @@ static bool getPluginInfoFromCarbonResourcesOnMainThread(CFBundleRef bundle, Plu
 
 static bool getPluginInfoFromCarbonResources(CFBundleRef bundle, PluginModuleInfo& plugin)
 {
+    if (isMainThread())
+        return getPluginInfoFromCarbonResourcesOnMainThread(bundle, const_cast<PluginModuleInfo&>(plugin));
+
     __block bool gotPluginInfo = false;
     dispatch_sync(dispatch_get_main_queue(), ^{
         gotPluginInfo = getPluginInfoFromCarbonResourcesOnMainThread(bundle, const_cast<PluginModuleInfo&>(plugin));

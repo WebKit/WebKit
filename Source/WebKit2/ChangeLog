@@ -1,3 +1,16 @@
+2013-01-02  Alexey Proskuryakov  <ap@apple.com>
+
+        REGRESSION (r138464): Safari hangs when opening Privacy preferences
+        https://bugs.webkit.org/show_bug.cgi?id=105933
+
+        Reviewed by Sam Weinig.
+
+        Quick and dirty fix - added a special case for main thread. But I'm not sure if
+        dispatch_sync on main queue is really the best idiom here.
+
+        * Shared/Plugins/Netscape/mac/NetscapePluginModuleMac.mm:
+        (WebKit::getPluginInfoFromCarbonResources):
+
 2013-01-02  Ryosuke Niwa  <rniwa@webkit.org>
 
         Don't include a header that has been removed in r138413.
