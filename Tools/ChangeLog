@@ -1,3 +1,21 @@
+2013-01-02  Christophe Dumez  <christophe.dumez@intel.com>
+
+        Regression(r138603): Caused 2 webkitpy tests to fail
+        https://bugs.webkit.org/show_bug.cgi?id=105913
+
+        Reviewed by Kentaro Hara.
+
+        Fix 2 webkitpy tests that started to fail after
+        r138603.
+
+        * Scripts/webkitpy/tool/bot/irc_command_unittest.py:
+        (IRCCommandTest._sheriff_test_data_url): Make sure the
+        returned test file URL is valid no matter what the
+        current working directory is.
+        * Scripts/webkitpy/tool/bot/ircbot_unittest.py:
+        (IRCBotTest.test_help): Add "sheriffs" command to the
+        list of available commands.
+
 2013-01-01  Christophe Dumez  <christophe.dumez@intel.com>
 
         [WK2] plugins/clicking-missing-plugin-fires-delegate.html is failing

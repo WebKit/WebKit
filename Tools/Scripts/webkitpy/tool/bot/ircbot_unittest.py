@@ -88,7 +88,7 @@ class IRCBotTest(unittest.TestCase):
         OutputCapture().assert_outputs(self, run, args=["hi"], expected_logs=expected_logs)
 
     def test_help(self):
-        expected_logs = "MOCK: irc.post: mock_nick: Available commands: create-bug, help, hi, restart, roll-chromium-deps, rollout, whois\n"
+        expected_logs = "MOCK: irc.post: mock_nick: Available commands: create-bug, help, hi, restart, roll-chromium-deps, rollout, sheriffs, whois\n"
         OutputCapture().assert_outputs(self, run, args=["help"], expected_logs=expected_logs)
 
     def test_restart(self):

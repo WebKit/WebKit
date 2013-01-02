@@ -61,7 +61,7 @@ class IRCCommandTest(unittest.TestCase):
 
     @staticmethod
     def _sheriff_test_data_url(suffix):
-        return "file://" + os.path.abspath("./webkitpy/tool/bot/testdata/webkit_sheriff_%s.js" % suffix)
+        return "file://" + os.path.join(os.path.dirname(os.path.abspath(__file__)), "testdata", "webkit_sheriff_%s.js" % suffix)
 
     def test_sheriffs(self):
         sheriffs = Sheriffs()
