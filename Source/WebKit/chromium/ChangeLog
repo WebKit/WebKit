@@ -1,3 +1,25 @@
+2013-01-02  Robert Kroeger  <rjkroege@chromium.org>
+
+        [chromium] Use top level field for gesture event source
+        https://bugs.webkit.org/show_bug.cgi?id=105664
+
+        Reviewed by Adam Barth.
+
+        Previously, only GestureFlingStart subtypes of WebGestureEvent
+        had a deviceSource flag. A previous CL added a top-level
+        deviceSource field for all WebGestureEvent. Now that this field
+        is populated in Chromium, use it as necessary in the Chromium
+        WebKit layer.
+
+        No new tests: covered by existing tests.
+
+        * src/WebCompositorInputHandlerImpl.cpp:
+        (WebKit::WebCompositorInputHandlerImpl::handleGestureFling):
+        * src/WebViewImpl.cpp:
+        (WebKit::WebViewImpl::handleGestureEvent):
+        * tests/WebCompositorInputHandlerImplTest.cpp:
+        (WebKit::TEST_F):
+
 2012-12-28  Fady Samuel  <fsamuel@chromium.org>
 
         Roll Chromium DEPS to r174739

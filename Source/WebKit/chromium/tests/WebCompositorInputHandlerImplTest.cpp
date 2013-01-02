@@ -345,14 +345,14 @@ TEST_F(WebCompositorInputHandlerImplTest, gestureFlingStartedTouchpad)
 
     gesture.type = WebInputEvent::GestureFlingStart;
     gesture.data.flingStart.velocityX = 10;
-    gesture.data.flingStart.sourceDevice = WebGestureEvent::Touchpad;
+    gesture.sourceDevice = WebGestureEvent::Touchpad;
     m_inputHandler->handleInputEvent(gesture);
 
     VERIFY_AND_RESET_MOCKS();
 
     // Verify that a GestureFlingCancel during an animation cancels it.
     gesture.type = WebInputEvent::GestureFlingCancel;
-    gesture.data.flingStart.sourceDevice = WebGestureEvent::Touchpad;
+    gesture.sourceDevice = WebGestureEvent::Touchpad;
     m_inputHandler->handleInputEvent(gesture);
 }
 
@@ -366,14 +366,14 @@ TEST_F(WebCompositorInputHandlerImplTest, gestureFlingOnMainThreadTouchpad)
         .WillOnce(testing::Return(WebInputHandlerClient::ScrollStatusOnMainThread));
 
     gesture.type = WebInputEvent::GestureFlingStart;
-    gesture.data.flingStart.sourceDevice = WebGestureEvent::Touchpad;
+    gesture.sourceDevice = WebGestureEvent::Touchpad;
     m_inputHandler->handleInputEvent(gesture);
 
     VERIFY_AND_RESET_MOCKS();
 
     // Even if we didn't start a fling ourselves, we still need to send the cancel event to the widget.
     gesture.type = WebInputEvent::GestureFlingCancel;
-    gesture.data.flingStart.sourceDevice = WebGestureEvent::Touchpad;
+    gesture.sourceDevice = WebGestureEvent::Touchpad;
     m_inputHandler->handleInputEvent(gesture);
 }
 
@@ -386,7 +386,7 @@ TEST_F(WebCompositorInputHandlerImplTest, gestureFlingIgnoredTouchpad)
         .WillOnce(testing::Return(WebInputHandlerClient::ScrollStatusIgnored));
 
     gesture.type = WebInputEvent::GestureFlingStart;
-    gesture.data.flingStart.sourceDevice = WebGestureEvent::Touchpad;
+    gesture.sourceDevice = WebGestureEvent::Touchpad;
     m_inputHandler->handleInputEvent(gesture);
 
     m_expectedDisposition = DropEvent;
@@ -394,7 +394,7 @@ TEST_F(WebCompositorInputHandlerImplTest, gestureFlingIgnoredTouchpad)
 
     // Since the previous fling was ignored, we should also be dropping the next flingCancel.
     gesture.type = WebInputEvent::GestureFlingCancel;
-    gesture.data.flingStart.sourceDevice = WebGestureEvent::Touchpad;
+    gesture.sourceDevice = WebGestureEvent::Touchpad;
     m_inputHandler->handleInputEvent(gesture);
 }
 
@@ -413,7 +413,7 @@ TEST_F(WebCompositorInputHandlerImplTest, gestureFlingAnimatesTouchpad)
     int modifiers = 7;
     gesture.data.flingStart.velocityX = flingDelta.x;
     gesture.data.flingStart.velocityY = flingDelta.y;
-    gesture.data.flingStart.sourceDevice = WebGestureEvent::Touchpad;
+    gesture.sourceDevice = WebGestureEvent::Touchpad;
     gesture.x = flingPoint.x;
     gesture.y = flingPoint.y;
     gesture.globalX = flingGlobalPoint.x;
@@ -499,7 +499,7 @@ TEST_F(WebCompositorInputHandlerImplTest, gestureFlingTransferResetsTouchpad)
     int modifiers = 1;
     gesture.data.flingStart.velocityX = flingDelta.x;
     gesture.data.flingStart.velocityY = flingDelta.y;
-    gesture.data.flingStart.sourceDevice = WebGestureEvent::Touchpad;
+    gesture.sourceDevice = WebGestureEvent::Touchpad;
     gesture.x = flingPoint.x;
     gesture.y = flingPoint.y;
     gesture.globalX = flingGlobalPoint.x;
@@ -582,7 +582,7 @@ TEST_F(WebCompositorInputHandlerImplTest, gestureFlingTransferResetsTouchpad)
     modifiers = 2;
     gesture.data.flingStart.velocityX = flingDelta.x;
     gesture.data.flingStart.velocityY = flingDelta.y;
-    gesture.data.flingStart.sourceDevice = WebGestureEvent::Touchpad;
+    gesture.sourceDevice = WebGestureEvent::Touchpad;
     gesture.x = flingPoint.x;
     gesture.y = flingPoint.y;
     gesture.globalX = flingGlobalPoint.x;
@@ -645,7 +645,7 @@ TEST_F(WebCompositorInputHandlerImplTest, gestureFlingStartedTouchscreen)
 
     gesture.type = WebInputEvent::GestureFlingStart;
     gesture.data.flingStart.velocityX = 10;
-    gesture.data.flingStart.sourceDevice = WebGestureEvent::Touchscreen;
+    gesture.sourceDevice = WebGestureEvent::Touchscreen;
     m_inputHandler->handleInputEvent(gesture);
 
     VERIFY_AND_RESET_MOCKS();
@@ -654,7 +654,7 @@ TEST_F(WebCompositorInputHandlerImplTest, gestureFlingStartedTouchscreen)
 
     // Verify that a GestureFlingCancel during an animation cancels it.
     gesture.type = WebInputEvent::GestureFlingCancel;
-    gesture.data.flingStart.sourceDevice = WebGestureEvent::Touchscreen;
+    gesture.sourceDevice = WebGestureEvent::Touchscreen;
     m_inputHandler->handleInputEvent(gesture);
 }
 
@@ -668,14 +668,14 @@ TEST_F(WebCompositorInputHandlerImplTest, gestureFlingOnMainThreadTouchscreen)
         .WillOnce(testing::Return(WebInputHandlerClient::ScrollStatusOnMainThread));
 
     gesture.type = WebInputEvent::GestureFlingStart;
-    gesture.data.flingStart.sourceDevice = WebGestureEvent::Touchscreen;
+    gesture.sourceDevice = WebGestureEvent::Touchscreen;
     m_inputHandler->handleInputEvent(gesture);
 
     VERIFY_AND_RESET_MOCKS();
 
     // Even if we didn't start a fling ourselves, we still need to send the cancel event to the widget.
     gesture.type = WebInputEvent::GestureFlingCancel;
-    gesture.data.flingStart.sourceDevice = WebGestureEvent::Touchscreen;
+    gesture.sourceDevice = WebGestureEvent::Touchscreen;
     m_inputHandler->handleInputEvent(gesture);
 }
 
@@ -688,14 +688,14 @@ TEST_F(WebCompositorInputHandlerImplTest, gestureFlingIgnoredTouchscreen)
         .WillOnce(testing::Return(WebInputHandlerClient::ScrollStatusIgnored));
 
     gesture.type = WebInputEvent::GestureFlingStart;
-    gesture.data.flingStart.sourceDevice = WebGestureEvent::Touchscreen;
+    gesture.sourceDevice = WebGestureEvent::Touchscreen;
     m_inputHandler->handleInputEvent(gesture);
 
     VERIFY_AND_RESET_MOCKS();
 
     // Even if we didn't start a fling ourselves, we still need to send the cancel event to the widget.
     gesture.type = WebInputEvent::GestureFlingCancel;
-    gesture.data.flingStart.sourceDevice = WebGestureEvent::Touchscreen;
+    gesture.sourceDevice = WebGestureEvent::Touchscreen;
     m_inputHandler->handleInputEvent(gesture);
 }
 
@@ -714,7 +714,7 @@ TEST_F(WebCompositorInputHandlerImplTest, gestureFlingAnimatesTouchscreen)
     int modifiers = 7;
     gesture.data.flingStart.velocityX = flingDelta.x;
     gesture.data.flingStart.velocityY = flingDelta.y;
-    gesture.data.flingStart.sourceDevice = WebGestureEvent::Touchscreen;
+    gesture.sourceDevice = WebGestureEvent::Touchscreen;
     gesture.x = flingPoint.x;
     gesture.y = flingPoint.y;
     gesture.globalX = flingGlobalPoint.x;

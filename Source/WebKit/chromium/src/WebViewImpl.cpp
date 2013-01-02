@@ -702,7 +702,7 @@ bool WebViewImpl::handleGestureEvent(const WebGestureEvent& event)
         m_lastWheelPosition = WebPoint(event.x, event.y);
         m_lastWheelGlobalPosition = WebPoint(event.globalX, event.globalY);
         m_flingModifier = event.modifiers;
-        OwnPtr<WebGestureCurve> flingCurve = adoptPtr(Platform::current()->createFlingAnimationCurve(event.data.flingStart.sourceDevice, WebFloatPoint(event.data.flingStart.velocityX, event.data.flingStart.velocityY), WebSize()));
+        OwnPtr<WebGestureCurve> flingCurve = adoptPtr(Platform::current()->createFlingAnimationCurve(event.sourceDevice, WebFloatPoint(event.data.flingStart.velocityX, event.data.flingStart.velocityY), WebSize()));
         m_gestureAnimation = WebActiveGestureAnimation::createAtAnimationStart(flingCurve.release(), this);
         scheduleAnimation();
         eventSwallowed = true;
