@@ -1,3 +1,32 @@
+2013-01-02  Adam Barth  <abarth@webkit.org>
+
+        Remove old-run-webkit-tests support from webkitpy
+        https://bugs.webkit.org/show_bug.cgi?id=105619
+
+        Reviewed by Eric Seidel.
+
+        This patch removes support for webkitpy parsing the
+        old-run-webkit-tests results format. There doesn't seem to be any
+        reason to keep this code around anymore now that most bots have
+        switched to new-run-webkit-tests.
+
+        * Scripts/webkitpy/common/net/buildbot/buildbot.py:
+        (Builder.fetch_layout_test_results):
+        * Scripts/webkitpy/common/net/layouttestresults.py:
+        (path_for_layout_test):
+        (LayoutTestResults.results_from_string):
+        (LayoutTestResults):
+        * Scripts/webkitpy/common/net/layouttestresults_unittest.py:
+        (LayoutTestResultsTest.test_results_from_string):
+        * Scripts/webkitpy/tool/bot/commitqueuetask_unittest.py:
+        (test_flaky_test_failure):
+        * Scripts/webkitpy/tool/bot/layouttestresultsreader_unittest.py:
+        (LayoutTestResultsReaderTest.test_missing_layout_test_results):
+        * Scripts/webkitpy/tool/bot/patchanalysistask.py:
+        (PatchAnalysisTask._test_patch):
+        * Scripts/webkitpy/tool/commands/queuestest.py:
+        (QueuesTest.assert_queue_outputs):
+
 2013-01-02  Heikki Paajanen  <heikki.paajanen@palm.com>
 
         [Qt][WK2] Add simple UI to find text from page

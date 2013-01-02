@@ -85,10 +85,6 @@ class Builder(object):
     def fetch_layout_test_results(self, results_url):
         # FIXME: This should cache that the result was a 404 and stop hitting the network.
         results_file = NetworkTransaction(convert_404_to_None=True).run(lambda: self._fetch_file_from_results(results_url, "full_results.json"))
-        if not results_file:
-            results_file = NetworkTransaction(convert_404_to_None=True).run(lambda: self._fetch_file_from_results(results_url, "results.html"))
-
-        # results_from_string accepts either ORWT html or NRWT json.
         return LayoutTestResults.results_from_string(results_file)
 
     def url_encoded_name(self):

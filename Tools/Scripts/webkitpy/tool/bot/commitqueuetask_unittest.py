@@ -280,7 +280,7 @@ command_failed: failure_message='Unable to build without patch' script_error='MO
             ScriptError("MOCK tests failure"),
         ])
         # CommitQueueTask will only report flaky tests if we successfully parsed
-        # results.html and returned a LayoutTestResults object, so we fake one.
+        # results.json and returned a LayoutTestResults object, so we fake one.
         commit_queue.test_results = lambda: LayoutTestResults([])
         expected_logs = """run_webkit_patch: ['clean']
 command_passed: success_message='Cleaned working directory' patch='10000'

@@ -192,7 +192,7 @@ class PatchAnalysisTask(object):
             return True
 
         if self._test():
-            # Only report flaky tests if we were successful at parsing results.html and archiving results.
+            # Only report flaky tests if we were successful at parsing results.json and archiving results.
             if first_results and first_results_archive:
                 self._report_flaky_tests(first_results.failing_test_results(), first_results_archive)
             return True
