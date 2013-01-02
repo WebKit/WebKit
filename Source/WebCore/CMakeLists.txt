@@ -2765,6 +2765,7 @@ set(WebCoreTestSupport_IDL_FILES
 set(WebCoreTestSupport_SOURCES
     testing/Internals.cpp
     testing/InternalSettings.cpp
+    ${DERIVED_SOURCES_WEBCORE_DIR}/InternalSettingsGenerated.cpp
 )
 
 # Modules that the bindings generator scripts may use

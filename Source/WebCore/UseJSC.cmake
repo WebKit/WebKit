@@ -304,6 +304,10 @@ foreach (_idl ${WebCoreTestSupport_IDL_FILES})
     set(IDL_FILES_LIST "${IDL_FILES_LIST}${WEBCORE_DIR}/${_idl}\n")
 endforeach ()
 
+set(IDL_FILES_LIST "${IDL_FILES_LIST}${DERIVED_SOURCES_WEBCORE_DIR}/InternalSettingsGenerated.idl\n")
+list(APPEND WebCoreTestSupport_IDL_FILES ${DERIVED_SOURCES_WEBCORE_DIR}/InternalSettingsGenerated.idl)
+list(APPEND IDL_INCLUDES --include=${DERIVED_SOURCES_WEBCORE_DIR})
+
 file(WRITE ${IDL_FILES_TMP} ${IDL_FILES_LIST})
 
 add_custom_command(

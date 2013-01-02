@@ -58,12 +58,16 @@ libWebCoreInternals_la_SOURCES = \
 	Source/WebCore/testing/js/WebCoreTestSupport.h
 
 libwebcoreinternals_built_sources += \
+	DerivedSources/WebCore/InternalSettingsGenerated.cpp \
+	DerivedSources/WebCore/InternalSettingsGenerated.h   \
 	DerivedSources/WebCore/JSMallocStatistics.cpp \
 	DerivedSources/WebCore/JSMallocStatistics.h   \
 	DerivedSources/WebCore/JSInternals.cpp \
 	DerivedSources/WebCore/JSInternals.h   \
 	DerivedSources/WebCore/JSInternalSettings.cpp \
-	DerivedSources/WebCore/JSInternalSettings.h
+	DerivedSources/WebCore/JSInternalSettings.h   \
+	DerivedSources/WebCore/JSInternalSettingsGenerated.cpp \
+	DerivedSources/WebCore/JSInternalSettingsGenerated.h
 
 nodist_libWebCoreInternals_la_SOURCES = $(libwebcoreinternals_built_sources)
 BUILT_SOURCES += $(libwebcoreinternals_built_sources)
