@@ -48,7 +48,7 @@ static double nan(const char*)
 
 #endif
 
-#if PLATFORM(MAC)
+#if JS_OBJC_API_ENABLED
 void testObjectiveCAPI(void);
 #endif
 
@@ -1044,7 +1044,7 @@ int main(int argc, char* argv[])
     ::SetErrorMode(0);
 #endif
 
-#if PLATFORM(MAC)
+#if JS_OBJC_API_ENABLED
     testObjectiveCAPI();
 #endif
 

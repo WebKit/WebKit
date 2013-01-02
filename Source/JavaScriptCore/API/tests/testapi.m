@@ -124,17 +124,11 @@ static void checkResult(NSString *description, bool passed)
 
 static bool blockSignatureContainsClass()
 {
-    enum CheckResult {
-        CheckResultFalse,
-        CheckResultTrue,
-        CheckResultUnknown
-    };
-    static enum CheckResult check = CheckResultUnknown;
-    if (check == CheckResultUnknown) {
+    static bool containsClass = (bool)^{
         id block = ^(NSString *string){ return string; };
-        check = _Block_has_signature(block) && strstr(_Block_signature(block), "NSString") ? CheckResultTrue : CheckResultFalse;
-    }
-    return (bool)check;
+        return _Block_has_signature(block) && strstr(_Block_signature(block), "NSString");
+    };
+    return containsClass;
 }
 
 void testObjectiveCAPI()
@@ -144,7 +138,7 @@ void testObjectiveCAPI()
     @autoreleasepool {
         JSContext *context = [[[JSContext alloc] init] autorelease];
         JSValue *result = [context evaluateScript:@"2 + 2"];
-        checkResult(@"2 + 2", [result toInt32] == 4);
+        checkResult(@"2 + 2", [result isNumber] && [result toInt32] == 4);
     }
 
     @autoreleasepool {
@@ -157,12 +151,13 @@ void testObjectiveCAPI()
         JSContext *context = [[[JSContext alloc] init] autorelease];
         context[@"message"] = @"Hello";
         JSValue *result = [context evaluateScript:@"message + ', World!'"];
-        checkResult(@"Hello, World!", [[result toString] isEqual:@"Hello, World!"]);
+        checkResult(@"Hello, World!", [result isString] && [result isEqualToObject:@"Hello, World!"]);
     }
 
     @autoreleasepool {
         JSContext *context = [[[JSContext alloc] init] autorelease];
         JSValue *result = [context evaluateScript:@"({ x:42 })"];
+        checkResult(@"({ x:42 })", [result isObject] && [result[@"x"] isEqualToObject:@42]);
         id obj = [result toObject];
         checkResult(@"Check dictionary literal", [obj isKindOfClass:[NSDictionary class]]);
         id num = (NSDictionary*)obj[@"x"];
@@ -218,7 +213,7 @@ void testObjectiveCAPI()
             context.exception = [JSValue valueWithNewErrorFromMessage:@"Something went wrong." inContext:context];
         };
         JSValue *result = [context evaluateScript:@"var result; try { callback(); } catch (e) { result = 'Caught exception'; }"];
-        checkResult(@"Explicit throw in callback - was caught by JavaScript", [[result toString] isEqual:@"Caught exception"]);
+        checkResult(@"Explicit throw in callback - was caught by JavaScript", [result isEqualToObject:@"Caught exception"]);
         checkResult(@"Explicit throw in callback - not thrown to Objective-C", !context.exception);
     }
 
@@ -229,7 +224,7 @@ void testObjectiveCAPI()
             [context evaluateScript:@"!@#$%^&*() THIS IS NOT VALID JAVASCRIPT SYNTAX !@#$%^&*()"];
         };
         JSValue *result = [context evaluateScript:@"var result; try { callback(); } catch (e) { result = 'Caught exception'; }"];
-        checkResult(@"Implicit throw in callback - was caught by JavaScript", [[result toString] isEqual:@"Caught exception"]);
+        checkResult(@"Implicit throw in callback - was caught by JavaScript", [result isEqualToObject:@"Caught exception"]);
         checkResult(@"Implicit throw in callback - not thrown to Objective-C", !context.exception);
     }
 
@@ -258,7 +253,7 @@ void testObjectiveCAPI()
                 return result; \
             })"];
         JSValue *result = [mulAddFunction callWithArguments:@[ @[ @2, @4, @8 ], @{ @"x":@0.5, @"y":@42 } ]];
-        checkResult(@"mulAddFunction", [[result toString] isEqual:@"43,44,46"]);
+        checkResult(@"mulAddFunction", [result isObject] && [[result toString] isEqual:@"43,44,46"]);
     }
 
     @autoreleasepool {
@@ -288,7 +283,7 @@ void testObjectiveCAPI()
         [context evaluateScript:@"testXYZ.test('test')"];
         checkResult(@"TextXYZ - testXYZTested", testXYZTested);
         JSValue *result = [context evaluateScript:@"testXYZ.x + ',' + testXYZ.y + ',' + testXYZ.z"];
-        checkResult(@"TextXYZ - result", [[result toString] isEqual:@"13,4,undefined"]);
+        checkResult(@"TextXYZ - result", [result isEqualToObject:@"13,4,undefined"]);
     }
 
     @autoreleasepool {
@@ -321,8 +316,9 @@ void testObjectiveCAPI()
     @autoreleasepool {
         JSContext *context = [[[JSContext alloc] init] autorelease];
         context[@"foo"] = @YES;
+        checkResult(@"@YES is boolean", [context[@"foo"] isBoolean]);
         JSValue *result = [context evaluateScript:@"typeof foo"];
-        checkResult(@"@YES is boolean", [[result toString] isEqual:@"boolean"]);
+        checkResult(@"@YES is boolean", [result isEqualToObject:@"boolean"]);
     }
 
     @autoreleasepool {
@@ -330,7 +326,7 @@ void testObjectiveCAPI()
         TestObject* testObject = [TestObject testObject];
         context[@"testObject"] = testObject;
         JSValue *result = [context evaluateScript:@"String(testObject)"];
-        checkResult(@"String(testObject)", [[result toString] isEqual:@"[object TestObject]"]);
+        checkResult(@"String(testObject)", [result isEqualToObject:@"[object TestObject]"]);
     }
 
     @autoreleasepool {
@@ -338,14 +334,14 @@ void testObjectiveCAPI()
         TestObject* testObject = [TestObject testObject];
         context[@"testObject"] = testObject;
         JSValue *result = [context evaluateScript:@"String(testObject.__proto__)"];
-        checkResult(@"String(testObject.__proto__)", [[result toString] isEqual:@"[object TestObjectPrototype]"]);
+        checkResult(@"String(testObject.__proto__)", [result isEqualToObject:@"[object TestObjectPrototype]"]);
     }
 
     @autoreleasepool {
         JSContext *context = [[[JSContext alloc] init] autorelease];
         context[@"TestObject"] = [TestObject class];
         JSValue *result = [context evaluateScript:@"String(TestObject)"];
-        checkResult(@"String(TestObject)", [[result toString] isEqual:@"[object TestObjectConstructor]"]);
+        checkResult(@"String(TestObject)", [result isEqualToObject:@"[object TestObjectConstructor]"]);
     }
 
     @autoreleasepool {
@@ -367,7 +363,7 @@ void testObjectiveCAPI()
         context[@"testObjectA"] = testObject;
         context[@"testObjectB"] = testObject;
         JSValue *result = [context evaluateScript:@"testObjectA == testObjectB"];
-        checkResult(@"testObjectA == testObjectB", [result toBool]);
+        checkResult(@"testObjectA == testObjectB", [result isBoolean] && [result toBool]);
     }
 
     @autoreleasepool {
@@ -376,7 +372,7 @@ void testObjectiveCAPI()
         context[@"testObject"] = testObject;
         testObject.point = (CGPoint){3,4};
         JSValue *result = [context evaluateScript:@"var result = JSON.stringify(testObject.point); testObject.point = {x:12,y:14}; result"];
-        checkResult(@"testObject.point - result", [[result toString] isEqual:@"{\"x\":3,\"y\":4}"]);
+        checkResult(@"testObject.point - result", [result isEqualToObject:@"{\"x\":3,\"y\":4}"]);
         checkResult(@"testObject.point - {x:12,y:14}", testObject.point.x == 12 && testObject.point.y == 14);
     }
 
@@ -387,7 +383,7 @@ void testObjectiveCAPI()
         context[@"testObject"] = testObject;
         context[@"mul"] = ^(int x, int y){ return x * y; };
         JSValue *result = [context evaluateScript:@"mul(testObject.six, 7)"];
-        checkResult(@"mul(testObject.six, 7)", [result toInt32] == 42);
+        checkResult(@"mul(testObject.six, 7)", [result isNumber] && [result toInt32] == 42);
     }
 
     @autoreleasepool {
@@ -403,14 +399,14 @@ void testObjectiveCAPI()
         JSContext *context = [[[JSContext alloc] init] autorelease];
         context[@"point"] = @{ @"x":@6, @"y":@7 };
         JSValue *result = [context evaluateScript:@"point.x + ',' + point.y"];
-        checkResult(@"point.x + ',' + point.y", [[result toString] isEqual:@"6,7"]);
+        checkResult(@"point.x + ',' + point.y", [result isEqualToObject:@"6,7"]);
     }
 
     @autoreleasepool {
         JSContext *context = [[[JSContext alloc] init] autorelease];
         context[@"point"] = @{ @"x":@6, @"y":@7 };
         JSValue *result = [context evaluateScript:@"point.x + ',' + point.y"];
-        checkResult(@"point.x + ',' + point.y", [[result toString] isEqual:@"6,7"]);
+        checkResult(@"point.x + ',' + point.y", [result isEqualToObject:@"6,7"]);
     }
 
     @autoreleasepool {
@@ -418,7 +414,7 @@ void testObjectiveCAPI()
         TestObject* testObject = [TestObject testObject];
         context[@"testObject"] = testObject;
         JSValue *result = [context evaluateScript:@"testObject.getString()"];
-        checkResult(@"testObject.getString()", [result toInt32] == 42);
+        checkResult(@"testObject.getString()", [result isString] && [result toInt32] == 42);
     }
 
     @autoreleasepool {
@@ -434,7 +430,7 @@ void testObjectiveCAPI()
         TestObject* testObject = [TestObject testObject];
         context[@"testObject"] = testObject;
         JSValue *result = [context evaluateScript:@"testObject.getString.call(testObject)"];
-        checkResult(@"testObject.getString.call(testObject)", [result toInt32] == 42);
+        checkResult(@"testObject.getString.call(testObject)", [result isString] && [result toInt32] == 42);
     }
 
     @autoreleasepool {
@@ -451,7 +447,7 @@ void testObjectiveCAPI()
         TestObject* testObject = [TestObject testObject];
         context[@"testObject"] = testObject;
         JSValue *result = [context evaluateScript:@"var result = 0; testObject.callback(function(x){ result = x; }); result"];
-        checkResult(@"testObject.callback", [result toInt32] == 42);
+        checkResult(@"testObject.callback", [result isNumber] && [result toInt32] == 42);
     }
 
     @autoreleasepool {

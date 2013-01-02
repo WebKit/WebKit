@@ -37,13 +37,13 @@
 
 #if JS_OBJC_API_ENABLED
 
-typedef WTF::HashMap<JSValueRef, size_t> ProtectMap;
+typedef HashMap<JSValueRef, size_t> ProtectMap;
 
 @implementation JSContext {
     JSVirtualMachine *m_virtualMachine;
     JSGlobalContextRef m_context;
     JSWrapperMap *m_wrapperMap;
-    ProtectMap m_protected;
+    ProtectMap m_protectCounts;
 }
 
 @synthesize exception;
@@ -56,7 +56,9 @@ typedef WTF::HashMap<JSValueRef, size_t> ProtectMap;
 
 - (id)initWithVirtualMachine:(JSVirtualMachine *)virtualMachine
 {
-    [super init];
+    self = [super init];
+    if (!self)
+        return nil;
 
     m_virtualMachine = [virtualMachine retain];
     m_context = JSGlobalContextCreateInGroup(getGroupFromVirtualMachine(virtualMachine), 0);
@@ -115,10 +117,10 @@ typedef WTF::HashMap<JSValueRef, size_t> ProtectMap;
     if (!entry->currentArguments) {
         JSContext *context = [JSContext currentContext];
         size_t count = entry->argumentCount;
-        JSValue * args[count];
+        JSValue * argumentArray[count];
         for (size_t i =0; i < count; ++i)
-            args[i] = [JSValue valueWithValue:entry->arguments[i] inContext:context];
-        entry->currentArguments = [[NSArray alloc] initWithObjects:args count:count];
+            argumentArray[i] = [JSValue valueWithValue:entry->arguments[i] inContext:context];
+        entry->currentArguments = [[NSArray alloc] initWithObjects:argumentArray count:count];
     }
 
     return entry->currentArguments;
@@ -138,7 +140,7 @@ typedef WTF::HashMap<JSValueRef, size_t> ProtectMap;
     return [self globalObject][key];
 }
 
-- (void)setObject:(id)object forKeyedSubscript:(id <NSCopying>)key
+- (void)setObject:(id)object forKeyedSubscript:(NSObject <NSCopying> *)key
 {
     [self globalObject][key] = object;
 }
@@ -156,8 +158,8 @@ JSGlobalContextRef contextInternalContext(JSContext* context)
 {
     toJS(m_context)->lexicalGlobalObject()->m_apiData = 0;
 
-    ProtectMap::iterator iterator = m_protected.begin();
-    ProtectMap::iterator end = m_protected.end();
+    ProtectMap::iterator iterator = m_protectCounts.begin();
+    ProtectMap::iterator end = m_protectCounts.end();
     for (; iterator != end; ++iterator)
         JSValueUnprotect(m_context, iterator->key);
 
@@ -207,10 +209,10 @@ JSGlobalContextRef contextInternalContext(JSContext* context)
 
 - (void)protect:(JSValueRef)value
 {
-    // Lock access to m_protected
+    // Lock access to m_protectCounts
     JSC::JSLockHolder lock(toJS(m_context));
 
-    ProtectMap::AddResult result = m_protected.add(value, 1);
+    ProtectMap::AddResult result = m_protectCounts.add(value, 1);
     if (result.isNewEntry)
         JSValueProtect(m_context, value);
     else
@@ -219,12 +221,12 @@ JSGlobalContextRef contextInternalContext(JSContext* context)
 
 - (void)unprotect:(JSValueRef)value
 {
-    // Lock access to m_protected
+    // Lock access to m_protectCounts
     JSC::JSLockHolder lock(toJS(m_context));
 
-    ProtectMap::iterator iterator = m_protected.find(value);
+    ProtectMap::iterator iterator = m_protectCounts.find(value);
     if (iterator->value == 1) {
-        m_protected.remove(value);
+        m_protectCounts.remove(value);
         JSValueUnprotect(m_context, value);
     } else
         --iterator->value;

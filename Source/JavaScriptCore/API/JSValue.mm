@@ -60,30 +60,37 @@ NSString * const JSPropertyDescriptorSetKey = @"set";
 {
     return [JSValue valueWithValue:objectToValue(context, value) inContext:context];
 }
+
 + (JSValue *)valueWithBool:(BOOL)value inContext:(JSContext *)context
 {
     return [JSValue valueWithValue:JSValueMakeBoolean(contextInternalContext(context), value) inContext:context];
 }
+
 + (JSValue *)valueWithDouble:(double)value inContext:(JSContext *)context
 {
     return [JSValue valueWithValue:JSValueMakeNumber(contextInternalContext(context), value) inContext:context];
 }
+
 + (JSValue *)valueWithInt32:(int32_t)value inContext:(JSContext *)context
 {
     return [JSValue valueWithValue:JSValueMakeNumber(contextInternalContext(context), value) inContext:context];
 }
+
 + (JSValue *)valueWithUInt32:(uint32_t)value inContext:(JSContext *)context
 {
     return [JSValue valueWithValue:JSValueMakeNumber(contextInternalContext(context), value) inContext:context];
 }
+
 + (JSValue *)valueWithNewObjectInContext:(JSContext *)context
 {
     return [JSValue valueWithValue:JSObjectMake(contextInternalContext(context), 0, 0) inContext:context];
 }
+
 + (JSValue *)valueWithNewArrayInContext:(JSContext *)context
 {
     return [JSValue valueWithValue:JSObjectMakeArray(contextInternalContext(context), 0, NULL, 0) inContext:context];
 }
+
 + (JSValue *)valueWithNewRegularExpressionFromPattern:(NSString *)pattern flags:(NSString *)flags inContext:(JSContext *)context
 {
     JSStringRef patternString = JSStringCreateWithCFString((CFStringRef)pattern);
@@ -94,6 +101,7 @@ NSString * const JSPropertyDescriptorSetKey = @"set";
 
     return [JSValue valueWithValue:JSObjectMakeRegExp(contextInternalContext(context), 2, arguments, 0) inContext:context];
 }
+
 + (JSValue *)valueWithNewErrorFromMessage:(NSString *)message inContext:(JSContext *)context
 {
     JSStringRef string = JSStringCreateWithCFString((CFStringRef)message);
@@ -102,10 +110,12 @@ NSString * const JSPropertyDescriptorSetKey = @"set";
 
     return [JSValue valueWithValue:JSObjectMakeError(contextInternalContext(context), 1, &argument, 0) inContext:context];
 }
+
 + (JSValue *)valueWithNullInContext:(JSContext *)context
 {
     return [JSValue valueWithValue:JSValueMakeNull(contextInternalContext(context)) inContext:context];
 }
+
 + (JSValue *)valueWithUndefinedInContext:(JSContext *)context
 {
     return [JSValue valueWithValue:JSValueMakeUndefined(contextInternalContext(context)) inContext:context];
@@ -118,17 +128,19 @@ NSString * const JSPropertyDescriptorSetKey = @"set";
         return nil;
     return valueToObject(context, m_value);
 }
-- (id)toObjectOfClass:(Class)cls
+
+- (id)toObjectOfClass:(Class)expectedClass
 {
     id result = [self toObject];
-    return [result isKindOfClass:cls] ? result : nil;
+    return [result isKindOfClass:expectedClass] ? result : nil;
 }
 
 - (BOOL)toBool
 {
     JSContext *context = [self context];
-    return (context && JSValueToBoolean(contextInternalContext(context), m_value)) ? YES : NO;
+    return (context && JSValueToBoolean(contextInternalContext(context), m_value));
 }
+
 - (double)toDouble
 {
     JSContext *context = [self context];
@@ -144,14 +156,17 @@ NSString * const JSPropertyDescriptorSetKey = @"set";
 
     return result;
 }
+
 - (int32_t)toInt32
 {
     return JSC::toInt32([self toDouble]);
 }
+
 - (uint32_t)toUInt32
 {
     return JSC::toUInt32([self toDouble]);
 }
+
 - (NSNumber *)toNumber
 {
     JSContext *context = [self context];
@@ -164,6 +179,7 @@ NSString * const JSPropertyDescriptorSetKey = @"set";
         [context notifyException:exception];
     return result;
 }
+
 - (NSString *)toString
 {
     JSContext *context = [self context];
@@ -176,6 +192,7 @@ NSString * const JSPropertyDescriptorSetKey = @"set";
         [context notifyException:exception];
     return result;
 }
+
 - (NSDate *)toDate
 {
     JSContext *context = [self context];
@@ -188,6 +205,7 @@ NSString * const JSPropertyDescriptorSetKey = @"set";
         [context notifyException:exception];
     return result;
 }
+
 - (NSArray *)toArray
 {
     JSContext *context = [self context];
@@ -200,6 +218,7 @@ NSString * const JSPropertyDescriptorSetKey = @"set";
         [context notifyException:exception];
     return result;
 }
+
 - (NSDictionary *)toDictionary
 {
     JSContext *context = [self context];
@@ -232,6 +251,7 @@ NSString * const JSPropertyDescriptorSetKey = @"set";
 
     return [JSValue valueWithValue:result inContext:context];
 }
+
 - (void)setValue:(id)value forProperty:(NSString *)propertyName
 {
     JSContext *context = [self context];
@@ -253,6 +273,7 @@ NSString * const JSPropertyDescriptorSetKey = @"set";
         return;
     }
 }
+
 - (BOOL)deleteProperty:(NSString *)propertyName
 {
     JSContext *context = [self context];
@@ -265,13 +286,14 @@ NSString * const JSPropertyDescriptorSetKey = @"set";
         return [context boolFromNotifyException:exception];
 
     JSStringRef name = JSStringCreateWithCFString((CFStringRef)propertyName);
-    BOOL result = JSObjectDeleteProperty(contextInternalContext(context), object, name, &exception) ? YES : NO;
+    BOOL result = JSObjectDeleteProperty(contextInternalContext(context), object, name, &exception);
     JSStringRelease(name);
     if (exception)
         return [context boolFromNotifyException:exception];
 
     return result;
 }
+
 - (BOOL)hasProperty:(NSString *)propertyName
 {
     JSContext *context = [self context];
@@ -284,10 +306,11 @@ NSString * const JSPropertyDescriptorSetKey = @"set";
         return [context boolFromNotifyException:exception];
 
     JSStringRef name = JSStringCreateWithCFString((CFStringRef)propertyName);
-    BOOL result = JSObjectHasProperty(contextInternalContext(context), object, name) ? YES : NO;
+    BOOL result = JSObjectHasProperty(contextInternalContext(context), object, name);
     JSStringRelease(name);
     return result;
 }
+
 - (void)defineProperty:(NSString *)property descriptor:(id)descriptor
 {
     JSContext *context = [self context];
@@ -316,6 +339,7 @@ NSString * const JSPropertyDescriptorSetKey = @"set";
 
     return [JSValue valueWithValue:result inContext:context];
 }
+
 - (void)setValue:(id)value atIndex:(NSUInteger)index
 {
     JSContext *context = [self context];
@@ -342,32 +366,37 @@ NSString * const JSPropertyDescriptorSetKey = @"set";
 - (BOOL)isUndefined
 {
     JSContext *context = [self context];
-    return (context && JSValueIsUndefined(contextInternalContext(context), m_value)) ? YES : NO;
+    return (context && JSValueIsUndefined(contextInternalContext(context), m_value));
 }
+
 - (BOOL)isNull
 {
     JSContext *context = [self context];
-    return (context && JSValueIsNull(contextInternalContext(context), m_value)) ? YES : NO;
+    return (context && JSValueIsNull(contextInternalContext(context), m_value));
 }
+
 - (BOOL)isBoolean
 {
     JSContext *context = [self context];
-    return (context && JSValueIsBoolean(contextInternalContext(context), m_value)) ? YES : NO;
+    return (context && JSValueIsBoolean(contextInternalContext(context), m_value));
 }
+
 - (BOOL)isNumber
 {
     JSContext *context = [self context];
-    return (context && JSValueIsNumber(contextInternalContext(context), m_value)) ? YES : NO;
+    return (context && JSValueIsNumber(contextInternalContext(context), m_value));
 }
+
 - (BOOL)isString
 {
     JSContext *context = [self context];
-    return (context && JSValueIsString(contextInternalContext(context), m_value)) ? YES : NO;
+    return (context && JSValueIsString(contextInternalContext(context), m_value));
 }
+
 - (BOOL)isObject
 {
     JSContext *context = [self context];
-    return (context && JSValueIsObject(contextInternalContext(context), m_value)) ? YES : NO;
+    return (context && JSValueIsObject(contextInternalContext(context), m_value));
 }
 
 - (BOOL)isEqualToObject:(id)value
@@ -376,8 +405,9 @@ NSString * const JSPropertyDescriptorSetKey = @"set";
     if (!context)
         return NO;
 
-    return JSValueIsStrictEqual(contextInternalContext(context), m_value, objectToValue(context, value)) ? YES : NO;
+    return JSValueIsStrictEqual(contextInternalContext(context), m_value, objectToValue(context, value));
 }
+
 - (BOOL)isEqualWithTypeCoercionToObject:(id)value
 {
     JSContext *context = [self context];
@@ -385,12 +415,13 @@ NSString * const JSPropertyDescriptorSetKey = @"set";
         return NO;
 
     JSValueRef exception = 0;
-    BOOL result = JSValueIsEqual(contextInternalContext(context), m_value, objectToValue(context, value), &exception) ? YES : NO;
+    BOOL result = JSValueIsEqual(contextInternalContext(context), m_value, objectToValue(context, value), &exception);
     if (exception)
         return [context boolFromNotifyException:exception];
 
     return result;
 }
+
 - (BOOL)isInstanceOf:(id)value
 {
     JSContext *context = [self context];
@@ -402,23 +433,23 @@ NSString * const JSPropertyDescriptorSetKey = @"set";
     if (exception)
         return [context boolFromNotifyException:exception];
 
-    BOOL result = JSValueIsInstanceOfConstructor(contextInternalContext(context), m_value, constructor, &exception) ? YES : NO;
+    BOOL result = JSValueIsInstanceOfConstructor(contextInternalContext(context), m_value, constructor, &exception);
     if (exception)
         return [context boolFromNotifyException:exception];
 
     return result;
 }
 
-- (JSValue *)callWithArguments:(NSArray *)args
+- (JSValue *)callWithArguments:(NSArray *)argumentArray
 {
     JSContext *context = [self context];
     if (!context)
         return nil;
 
-    NSUInteger argumentCount = [args count];
+    NSUInteger argumentCount = [argumentArray count];
     JSValueRef arguments[argumentCount];
     for (unsigned i = 0; i < argumentCount; ++i)
-        arguments[i] = objectToValue(context, [args objectAtIndex:i]);
+        arguments[i] = objectToValue(context, [argumentArray objectAtIndex:i]);
 
     JSValueRef exception = 0;
     JSObjectRef object = JSValueToObject(contextInternalContext(context), m_value, &exception);
@@ -431,16 +462,17 @@ NSString * const JSPropertyDescriptorSetKey = @"set";
 
     return [JSValue valueWithValue:result inContext:context];
 }
-- (JSValue *)constructWithArguments:(NSArray *)args
+
+- (JSValue *)constructWithArguments:(NSArray *)argumentArray
 {
     JSContext *context = [self context];
     if (!context)
         return nil;
 
-    NSUInteger argumentCount = [args count];
+    NSUInteger argumentCount = [argumentArray count];
     JSValueRef arguments[argumentCount];
     for (unsigned i = 0; i < argumentCount; ++i)
-        arguments[i] = objectToValue(context, [args objectAtIndex:i]);
+        arguments[i] = objectToValue(context, [argumentArray objectAtIndex:i]);
 
     JSValueRef exception = 0;
     JSObjectRef object = JSValueToObject(contextInternalContext(context), m_value, &exception);
@@ -453,6 +485,7 @@ NSString * const JSPropertyDescriptorSetKey = @"set";
 
     return [JSValue valueWithValue:result inContext:context];
 }
+
 - (JSValue *)invokeMethod:(NSString *)method withArguments:(NSArray *)arguments
 {
     JSContext *context = [self context];
@@ -460,9 +493,9 @@ NSString * const JSPropertyDescriptorSetKey = @"set";
         return nil;
 
     NSUInteger argumentCount = [arguments count];
-    JSValueRef args[argumentCount];
+    JSValueRef argumentArray[argumentCount];
     for (unsigned i = 0; i < argumentCount; ++i)
-        args[i] = objectToValue(context, [arguments objectAtIndex:i]);
+        argumentArray[i] = objectToValue(context, [arguments objectAtIndex:i]);
 
     JSValueRef exception = 0;
     JSObjectRef thisObject = JSValueToObject(contextInternalContext(context), m_value, &exception);
@@ -470,16 +503,16 @@ NSString * const JSPropertyDescriptorSetKey = @"set";
         return [context valueFromNotifyException:exception];
 
     JSStringRef name = JSStringCreateWithCFString((CFStringRef)method);
-    JSValueRef func = JSObjectGetProperty(contextInternalContext(context), thisObject, name, &exception);
+    JSValueRef function = JSObjectGetProperty(contextInternalContext(context), thisObject, name, &exception);
     JSStringRelease(name);
     if (exception)
         return [context valueFromNotifyException:exception];
 
-    JSObjectRef object = JSValueToObject(contextInternalContext(context), func, &exception);
+    JSObjectRef object = JSValueToObject(contextInternalContext(context), function, &exception);
     if (exception)
         return [context valueFromNotifyException:exception];
 
-    JSValueRef result = JSObjectCallAsFunction(contextInternalContext(context), object, thisObject, argumentCount, args, &exception);
+    JSValueRef result = JSObjectCallAsFunction(contextInternalContext(context), object, thisObject, argumentCount, argumentArray, &exception);
     if (exception)
         return [context valueFromNotifyException:exception];
 
@@ -506,8 +539,8 @@ NSString * const JSPropertyDescriptorSetKey = @"set";
 - (NSRange)toRange
 {
     return (NSRange){
-        (NSUInteger)[self[@"location"] toDouble],
-        (NSUInteger)[self[@"length"] toDouble]
+        [[self[@"location"] toNumber] unsignedIntegerValue],
+        [[self[@"length"] toNumber] unsignedIntegerValue]
     };
 }
 
@@ -530,34 +563,34 @@ NSString * const JSPropertyDescriptorSetKey = @"set";
 + (JSValue *)valueWithPoint:(CGPoint)point inContext:(JSContext *)context
 {
     return [JSValue valueWithObject:@{
-        @"x":[NSNumber numberWithFloat:point.x],
-        @"y":[NSNumber numberWithFloat:point.y]
+        @"x":@(point.x),
+        @"y":@(point.y)
     } inContext:context];
 }
 
 + (JSValue *)valueWithRange:(NSRange)range inContext:(JSContext *)context
 {
     return [JSValue valueWithObject:@{
-        @"location":[NSNumber numberWithFloat:range.location],
-        @"length":[NSNumber numberWithFloat:range.length]
+        @"location":@(range.location),
+        @"length":@(range.length)
     } inContext:context];
 }
 
 + (JSValue *)valueWithRect:(CGRect)rect inContext:(JSContext *)context
 {
     return [JSValue valueWithObject:@{
-        @"x":[NSNumber numberWithFloat:rect.origin.x],
-        @"y":[NSNumber numberWithFloat:rect.origin.y],
-        @"width":[NSNumber numberWithFloat:rect.size.width],
-        @"height":[NSNumber numberWithFloat:rect.size.height]
+        @"x":@(rect.origin.x),
+        @"y":@(rect.origin.y),
+        @"width":@(rect.size.width),
+        @"height":@(rect.size.height)
     } inContext:context];
 }
 
 + (JSValue *)valueWithSize:(CGSize)size inContext:(JSContext *)context
 {
     return [JSValue valueWithObject:@{
-        @"width":[NSNumber numberWithFloat:size.width],
-        @"height":[NSNumber numberWithFloat:size.height]
+        @"width":@(size.width),
+        @"height":@(size.height)
     } inContext:context];
 }
 
@@ -571,7 +604,7 @@ NSString * const JSPropertyDescriptorSetKey = @"set";
     if (!context)
         return nil;
 
-    if (![(NSObject*)key isKindOfClass:[NSString class]]) {
+    if (![key isKindOfClass:[NSString class]]) {
         key = [[JSValue valueWithObject:key inContext:context] toString];
         if (!key)
             return [JSValue valueWithUndefinedInContext:context];
@@ -585,13 +618,13 @@ NSString * const JSPropertyDescriptorSetKey = @"set";
     return [self valueAtIndex:index];
 }
 
-- (void)setObject:(id)object forKeyedSubscript:(id <NSCopying>)key
+- (void)setObject:(id)object forKeyedSubscript:(NSObject <NSCopying> *)key
 {
     JSContext *context = [self context];
     if (!context)
         return;
 
-    if (![(NSObject*)key isKindOfClass:[NSString class]]) {
+    if (![key isKindOfClass:[NSString class]]) {
         key = [[JSValue valueWithObject:key inContext:context] toString];
         if (!key)
             return;
@@ -641,19 +674,19 @@ public:
     }
 
     id convert(JSValueRef property);
-    void add(Task task);
+    void add(Task);
     Task take();
-    bool isWorkListEmpty() { return !m_worklist.size(); }
+    bool isWorkListEmpty() const { return !m_worklist.size(); }
 
 private:
     JSGlobalContextRef m_context;
-    WTF::HashMap<JSValueRef, id> m_objectMap;
-    WTF::Vector<Task> m_worklist;
+    HashMap<JSValueRef, id> m_objectMap;
+    Vector<Task> m_worklist;
 };
 
 inline id JSContainerConvertor::convert(JSValueRef value)
 {
-    WTF::HashMap<JSValueRef, id>::iterator iter = m_objectMap.find(value);
+    HashMap<JSValueRef, id>::iterator iter = m_objectMap.find(value);
     if (iter != m_objectMap.end())
         return iter->value;
 
@@ -785,6 +818,7 @@ id valueToNumber(JSGlobalContextRef context, JSValueRef value, JSValueRef* excep
     double result = JSValueToNumber(context, value, exception);
     return [NSNumber numberWithDouble:*exception ? std::numeric_limits<double>::quiet_NaN() : result];
 }
+
 id valueToString(JSGlobalContextRef context, JSValueRef value, JSValueRef* exception)
 {
     ASSERT(!*exception);
@@ -803,6 +837,7 @@ id valueToString(JSGlobalContextRef context, JSValueRef value, JSValueRef* excep
     JSStringRelease(jsstring);
     return stringNS;
 }
+
 id valueToDate(JSGlobalContextRef context, JSValueRef value, JSValueRef* exception)
 {
     ASSERT(!*exception);
@@ -814,6 +849,7 @@ id valueToDate(JSGlobalContextRef context, JSValueRef value, JSValueRef* excepti
     double result = JSValueToNumber(context, value, exception);
     return *exception ? nil : [NSDate dateWithTimeIntervalSince1970:result];
 }
+
 id valueToArray(JSGlobalContextRef context, JSValueRef value, JSValueRef* exception)
 {
     ASSERT(!*exception);
@@ -829,6 +865,7 @@ id valueToArray(JSGlobalContextRef context, JSValueRef value, JSValueRef* except
         *exception = toRef(JSC::createTypeError(toJS(context), "Cannot convert primitive to NSArray"));
     return nil;
 }
+
 id valueToDictionary(JSGlobalContextRef context, JSValueRef value, JSValueRef* exception)
 {
     ASSERT(!*exception);
@@ -859,14 +896,14 @@ public:
     }
 
     JSValueRef convert(id object);
-    void add(Task task);
+    void add(Task);
     Task take();
-    bool isWorkListEmpty() { return !m_worklist.size(); }
+    bool isWorkListEmpty() const { return !m_worklist.size(); }
 
 private:
     JSContext *m_context;
-    WTF::HashMap<id, JSValueRef> m_objectMap;
-    WTF::Vector<Task> m_worklist;
+    HashMap<id, JSValueRef> m_objectMap;
+    Vector<Task> m_worklist;
 };
 
 JSValueRef ObjcContainerConvertor::convert(id object)
@@ -965,7 +1002,7 @@ JSValueRef objectToValue(JSContext *context, id object)
 
         if (current.type == ContainerArray) {
             ASSERT([current.objc isKindOfClass:[NSArray class]]);
-            NSArray * array = (NSArray *)current.objc;
+            NSArray *array = (NSArray *)current.objc;
             NSUInteger count = [array count];
             for (NSUInteger index = 0; index < count; ++index)
                 JSObjectSetPropertyAtIndex(contextInternalContext(context), js, index, convertor.convert([array objectAtIndex:index]), 0);
@@ -973,8 +1010,7 @@ JSValueRef objectToValue(JSContext *context, id object)
             ASSERT(current.type == ContainerDictionary);
             ASSERT([current.objc isKindOfClass:[NSDictionary class]]);
             NSDictionary* dictionary = (NSDictionary*)current.objc;
-            NSEnumerator* enumerator = [dictionary keyEnumerator];
-            while (id key = [enumerator nextObject]) {
+            for (id key in [dictionary keyEnumerator]) {
                 if ([key isKindOfClass:[NSString class]]) {
                     JSStringRef propertyName = JSStringCreateWithCFString((CFStringRef)key);
                     JSObjectSetProperty(contextInternalContext(context), js, propertyName, convertor.convert([dictionary objectForKey:key]), 0, 0);
@@ -1000,11 +1036,12 @@ JSValueRef valueInternalValue(JSValue * value)
 
 - (JSValue *)initWithValue:(JSValueRef)value inContext:(JSContext*)context
 {
+    self = [super init];
+    if (!self)
+        return nil;
+
     ASSERT(value);
-
     objc_initWeak(&m_weakContext, context);
-
-    [super init];
     [context protect:value];
     m_value = value;
     return self;
@@ -1020,20 +1057,20 @@ static StructTagHandler* getStructTagHandler(const char* encodedType)
     static SpinLock getStructTagHandlerLock = SPINLOCK_INITIALIZER;
     SpinLockHolder lockHolder(&getStructTagHandlerLock);
 
-    typedef WTF::HashMap<RefPtr<StringImpl>, StructTagHandler> StructHandlers;
-    static StructHandlers *m_structHandlers = 0;
+    typedef HashMap<RefPtr<StringImpl>, StructTagHandler> StructHandlers;
+    static StructHandlers* structHandlers = 0;
 
-    if (!m_structHandlers) {
-        m_structHandlers = new StructHandlers();
+    if (!structHandlers) {
+        structHandlers = new StructHandlers();
 
         // Step 1: find all valueWith<Foo>:inContext: class methods in JSValue.
-        size_t valueWithMinLen = strlen("valueWithX:inContext:");
+        size_t valueWithMinLength = strlen("valueWithX:inContext:");
         forEachMethodInClass(object_getClass([JSValue class]), ^(Method method){
-            SEL sel = method_getName(method);
-            const char* name = sel_getName(sel);
-            size_t len = strlen(name);
+            SEL selector = method_getName(method);
+            const char* name = sel_getName(selector);
+            size_t nameLength = strlen(name);
             // Check for valueWith<Foo>:context:
-            if (len < valueWithMinLen || strncmp(name, "valueWith", 9) || strncmp(name + len - 11, ":inContext:", 11))
+            if (nameLength < valueWithMinLength || strncmp(name, "valueWith", 9) || strncmp(name + nameLength - 11, ":inContext:", 11))
                 return;
             // Check for [ id, SEL, <type>, <contextType> ]
             if (method_getNumberOfArguments(method) != 4)
@@ -1051,18 +1088,18 @@ static StructTagHandler* getStructTagHandler(const char* encodedType)
             if (strcmp(idType, "@"))
                 return;
             char* type = method_copyArgumentType(method, 2);
-            m_structHandlers->add(WTF::String(type).impl(), (StructTagHandler){ sel, 0 });
+            structHandlers->add(String(type).impl(), (StructTagHandler){ selector, 0 });
             free(type);
         });
 
         // Step 2: find all to<Foo> instance methods in JSValue.
         size_t minLenValue = strlen("toX");
         forEachMethodInClass([JSValue class], ^(Method method){
-            SEL sel = method_getName(method);
-            const char* name = sel_getName(sel);
-            size_t len = strlen(name);
+            SEL selector = method_getName(method);
+            const char* name = sel_getName(selector);
+            size_t nameLength = strlen(name);
             // Check for to<Foo>
-            if (len < minLenValue || strncmp(name, "to", 2))
+            if (nameLength < minLenValue || strncmp(name, "to", 2))
                 return;
             // Check for [ id, SEL ]
             if (method_getNumberOfArguments(method) != 2)
@@ -1070,38 +1107,38 @@ static StructTagHandler* getStructTagHandler(const char* encodedType)
             // Try to find a matching valueWith<Foo>:context: method.
             char* type = method_copyReturnType(method);
 
-            StructHandlers::iterator iter = m_structHandlers->find(WTF::String(type).impl());
+            StructHandlers::iterator iter = structHandlers->find(String(type).impl());
             free(type);
-            if (iter == m_structHandlers->end())
+            if (iter == structHandlers->end())
                 return;
             StructTagHandler& handler = iter->value;
 
             // check that strlen(<foo>) == strlen(<Foo>)
             const char* valueWithName = sel_getName(handler.typeToValueSEL);
             size_t valueWithLen = strlen(valueWithName);
-            if (valueWithLen - valueWithMinLen != len - minLenValue)
+            if (valueWithLen - valueWithMinLength != nameLength - minLenValue)
                 return;
             // Check that <Foo> == <Foo>
-            if (strncmp(valueWithName + 9, name + 2, len - minLenValue - 1))
+            if (strncmp(valueWithName + 9, name + 2, nameLength - minLenValue - 1))
                 return;
-            handler.valueToTypeSEL = sel;
+            handler.valueToTypeSEL = selector;
         });
 
         // Step 3: clean up - remove entries where we found prospective valueWith<Foo>:inContext: conversions, but no matching to<Foo> methods.
-        typedef WTF::HashSet<RefPtr<WTF::StringImpl> > RemoveSet;
+        typedef HashSet<RefPtr<StringImpl> > RemoveSet;
         RemoveSet removeSet;
-        for (StructHandlers::iterator iter = m_structHandlers->begin(); iter != m_structHandlers->end(); ++iter) {
+        for (StructHandlers::iterator iter = structHandlers->begin(); iter != structHandlers->end(); ++iter) {
             StructTagHandler& handler = iter->value;
             if (!handler.valueToTypeSEL)
                 removeSet.add(iter->key);
         }
 
         for (RemoveSet::iterator iter = removeSet.begin(); iter != removeSet.end(); ++iter)
-            m_structHandlers->remove(*iter);
+            structHandlers->remove(*iter);
     }
 
-    StructHandlers::iterator iter = m_structHandlers->find(WTF::String(encodedType).impl());
-    if (iter == m_structHandlers->end())
+    StructHandlers::iterator iter = structHandlers->find(String(encodedType).impl());
+    if (iter == structHandlers->end())
         return 0;
     return &iter->value;
 }

@@ -29,7 +29,7 @@
 #include <JavaScriptCore/JavaScript.h>
 #include <JavaScriptCore/JSStringRefCF.h>
 
-#if JS_OBJC_API_ENABLED
+#if defined(__OBJC__) && JS_OBJC_API_ENABLED
 
 #import "JSContext.h"
 #import "APIJSValue.h"

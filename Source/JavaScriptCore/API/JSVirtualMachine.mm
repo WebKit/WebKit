@@ -38,7 +38,10 @@
 
 - (id)init
 {
-    [super init];
+    self = [super init];
+    if (!self)
+        return nil;
+
     m_group = JSContextGroupCreate();
     toJS(m_group)->m_apiData = self;
     return self;

@@ -40,8 +40,8 @@
 #import "wtf/OwnPtr.h"
 
 extern "C" {
-id __NSMakeSpecialForwardingCaptureBlock(const char *signature, void (^handler)(NSInvocation *inv));
-};
+id __NSMakeSpecialForwardingCaptureBlock(const char *signature, void (^handler)(NSInvocation *));
+}
 
 class BlockArgument {
 public:
@@ -56,8 +56,7 @@ BlockArgument::~BlockArgument()
 }
 
 class BlockArgumentBoolean : public BlockArgument {
-public:
-    JSValueRef get(NSInvocation* invocation, NSInteger argumentNumber, JSContext* context, JSValueRef*)
+    virtual JSValueRef get(NSInvocation* invocation, NSInteger argumentNumber, JSContext* context, JSValueRef*) override
     {
         bool value;
         [invocation getArgument:&value atIndex:argumentNumber];
@@ -67,8 +66,7 @@ public:
 
 template<typename T>
 class BlockArgumentNumeric : public BlockArgument {
-public:
-    JSValueRef get(NSInvocation* invocation, NSInteger argumentNumber, JSContext* context, JSValueRef*)
+    virtual JSValueRef get(NSInvocation* invocation, NSInteger argumentNumber, JSContext* context, JSValueRef*) override
     {
         T value;
         [invocation getArgument:&value atIndex:argumentNumber];
@@ -77,8 +75,7 @@ public:
 };
 
 class BlockArgumentId : public BlockArgument {
-public:
-    JSValueRef get(NSInvocation* invocation, NSInteger argumentNumber, JSContext* context, JSValueRef*)
+    virtual JSValueRef get(NSInvocation* invocation, NSInteger argumentNumber, JSContext* context, JSValueRef*) override
     {
         id value;
         [invocation getArgument:&value atIndex:argumentNumber];
@@ -90,26 +87,16 @@ class BlockArgumentStruct : public BlockArgument {
 public:
     BlockArgumentStruct(NSInvocation* conversionInvocation, const char* encodedType)
         : m_conversionInvocation(conversionInvocation)
+        , m_buffer(encodedType)
     {
-        [m_conversionInvocation retain];
-        NSUInteger size, alignment;
-        NSGetSizeAndAlignment(encodedType, &size, &alignment);
-        --alignment;
-        m_allocation = (char*)malloc(size + alignment);
-        m_buffer = reinterpret_cast<char*>((reinterpret_cast<intptr_t>(m_allocation) + alignment) & ~alignment);
     }
     
-    virtual ~BlockArgumentStruct()
+private:
+    virtual JSValueRef get(NSInvocation* invocation, NSInteger argumentNumber, JSContext* context, JSValueRef*) override
     {
-        [m_conversionInvocation release];
-        free(m_allocation);
-    }
-    
-    virtual JSValueRef get(NSInvocation* invocation, NSInteger argumentNumber, JSContext* context, JSValueRef*)
-    {
-        [invocation getArgument:m_allocation atIndex:argumentNumber];
+        [invocation getArgument:m_buffer atIndex:argumentNumber];
 
-        [m_conversionInvocation setArgument:m_allocation atIndex:2];
+        [m_conversionInvocation setArgument:m_buffer atIndex:2];
         [m_conversionInvocation setArgument:&context atIndex:3];
         [m_conversionInvocation invokeWithTarget:[JSValue class]];
 
@@ -118,10 +105,8 @@ public:
         return valueInternalValue(value);
     }
 
-private:
-    NSInvocation* m_conversionInvocation;
-    char* m_buffer;
-    char* m_allocation;
+    RetainPtr<NSInvocation> m_conversionInvocation;
+    StructBuffer m_buffer;
 };
 
 class BlockArgumentTypeDelegate {
@@ -148,7 +133,7 @@ public:
     static ResultType typeVoid()
     {
         ASSERT_NOT_REACHED();
-        return nil;
+        return 0;
     }
 
     static ResultType typeId()
@@ -163,7 +148,7 @@ public:
 
     static ResultType typeBlock(const char*, const char*)
     {
-        return nil;
+        return 0;
     }
 
     static ResultType typeStruct(const char* begin, const char* end)
@@ -171,7 +156,7 @@ public:
         StringRange copy(begin, end);
         if (NSInvocation* invocation = valueToTypeInvocationFor(copy))
             return new BlockArgumentStruct(invocation, copy);
-        return nil;
+        return 0;
     }
 };
 
@@ -185,16 +170,14 @@ public:
 };
 
 class BlockResultVoid : public BlockResult {
-public:
-    void set(NSInvocation*, JSContext*, JSValueRef, JSValueRef*)
+    virtual void set(NSInvocation*, JSContext*, JSValueRef, JSValueRef*) override
     {
     }
 };
 
 template<typename T>
 class BlockResultInteger : public BlockResult {
-public:
-    void set(NSInvocation* invocation, JSContext* context, JSValueRef result, JSValueRef* exception)
+    virtual void set(NSInvocation* invocation, JSContext* context, JSValueRef result, JSValueRef* exception) override
     {
         T value = (T)JSC::toInt32(JSValueToNumber(contextInternalContext(context), result, exception));
         [invocation setReturnValue:&value];
@@ -203,8 +186,7 @@ public:
 
 template<typename T>
 class BlockResultDouble : public BlockResult {
-public:
-    void set(NSInvocation* invocation, JSContext* context, JSValueRef result, JSValueRef* exception)
+    virtual void set(NSInvocation* invocation, JSContext* context, JSValueRef result, JSValueRef* exception) override
     {
         T value = (T)JSValueToNumber(contextInternalContext(context), result, exception);
         [invocation setReturnValue:&value];
@@ -212,8 +194,7 @@ public:
 };
 
 class BlockResultBoolean : public BlockResult {
-public:
-    void set(NSInvocation* invocation, JSContext* context, JSValueRef result, JSValueRef*)
+    virtual void set(NSInvocation* invocation, JSContext* context, JSValueRef result, JSValueRef*) override
     {
         bool value = JSValueToBoolean(contextInternalContext(context), result);
         [invocation setReturnValue:&value];
@@ -224,22 +205,12 @@ class BlockResultStruct : public BlockResult {
 public:
     BlockResultStruct(NSInvocation* conversionInvocation, const char* encodedType)
         : m_conversionInvocation(conversionInvocation)
+        , m_buffer(encodedType)
     {
-        [m_conversionInvocation retain];
-        NSUInteger size, alignment;
-        NSGetSizeAndAlignment(encodedType, &size, &alignment);
-        --alignment;
-        m_allocation = (char*)malloc(size + alignment);
-        m_buffer = reinterpret_cast<char*>((reinterpret_cast<intptr_t>(m_allocation) + alignment) & ~alignment);
     }
     
-    virtual ~BlockResultStruct()
-    {
-        [m_conversionInvocation release];
-        free(m_allocation);
-    }
-    
-    void set(NSInvocation* invocation, JSContext* context, JSValueRef result, JSValueRef*)
+private:
+    virtual void set(NSInvocation* invocation, JSContext* context, JSValueRef result, JSValueRef*) override
     {
         JSValue* value = [JSValue valueWithValue:result inContext:context];
         [m_conversionInvocation invokeWithTarget:value];
@@ -247,25 +218,23 @@ public:
         [invocation setReturnValue:&value];
     }
 
-private:
-    NSInvocation* m_conversionInvocation;
-    char* m_buffer;
-    char* m_allocation;
+    RetainPtr<NSInvocation> m_conversionInvocation;
+    StructBuffer m_buffer;
 };
 
 @implementation JSBlockAdaptor {
-    WTF::RetainPtr<NSString> m_signatureWithOffsets;
-    WTF::RetainPtr<NSString> m_signatureWithoutOffsets;
+    RetainPtr<NSString> m_signatureWithOffsets;
+    RetainPtr<NSString> m_signatureWithoutOffsets;
     OwnPtr<BlockResult> m_result;
     OwnPtr<BlockArgument> m_arguments;
     size_t m_argumentCount;
 }
 
 // Helper function to add offset information back into a block signature.
-static NSString* buildBlockSignature(NSString* prefix, const char* begin, const char* end, NSUInteger& offset, NSString* postfix)
+static NSString* buildBlockSignature(NSString* prefix, const char* begin, const char* end, unsigned long long& offset, NSString* postfix)
 {
     StringRange copy(begin, end);
-    NSString* result = [NSString stringWithFormat:@"%@%s%lu%@", prefix, copy.get(), offset, postfix];
+    NSString* result = [NSString stringWithFormat:@"%@%s%@%@", prefix, copy.get(), @(offset), postfix];
     NSUInteger size;
     NSGetSizeAndAlignment(copy, &size, 0);
     if (size < 4)
@@ -276,7 +245,9 @@ static NSString* buildBlockSignature(NSString* prefix, const char* begin, const 
 
 - (id)initWithBlockSignatureFromProtocol:(const char*)encodedType
 {
-    [super init];
+    self = [super init];
+    if (!self)
+        return nil;
 
     m_signatureWithoutOffsets = [NSString stringWithUTF8String:encodedType];
     m_argumentCount = 0;
@@ -288,16 +259,15 @@ static NSString* buildBlockSignature(NSString* prefix, const char* begin, const 
     OwnPtr<BlockResult> result = adoptPtr(new BlockResultVoid);
     const char* resultTypeEnd = encodedType;
 
-    if (encodedType[0] != '@' || encodedType[1] != '?') {
+    if (encodedType[0] != '@' || encodedType[1] != '?')
         return self;
-    }
     encodedType += 2;
 
     // The first argument to a block is the block itself.
     NSString* signature = @"@?0";
-    NSUInteger offset = sizeof(void*);
+    unsigned long long offset = sizeof(void*);
 
-    OwnPtr<BlockArgument> arguments = 0;
+    OwnPtr<BlockArgument> arguments;
     OwnPtr<BlockArgument>* nextArgument = &arguments;
     while (*encodedType) {
         const char* begin = encodedType;
@@ -316,7 +286,7 @@ static NSString* buildBlockSignature(NSString* prefix, const char* begin, const 
 
     // Prefix the signature with the return type & total stackframe size.
     // (this call will also add the return type size to the offset,
-    // which is a nonsesne, but harmless since this is the last use).
+    // which is a nonsense, but harmless since this is the last use).
     signature = buildBlockSignature(@"", resultTypeBegin, resultTypeEnd, offset, signature);
 
     m_signatureWithOffsets = signature;
@@ -334,7 +304,7 @@ static NSString* buildBlockSignature(NSString* prefix, const char* begin, const 
     if (!_Block_has_signature(block))
         return false;
 
-    const char* withoutOffsets= [m_signatureWithoutOffsets UTF8String];
+    const char* withoutOffsets = [m_signatureWithoutOffsets UTF8String];
     const char* signature = _Block_signature(block);
 
     while (true) {
@@ -354,30 +324,30 @@ static NSString* buildBlockSignature(NSString* prefix, const char* begin, const 
 
 - (id)blockFromValue:(JSValueRef)argument inContext:(JSContext*)context withException:(JSValueRef*)exception
 {
-    JSGlobalContextRef ctx = contextInternalContext(context);
+    JSGlobalContextRef contextRef = contextInternalContext(context);
 
     // Check for null/undefined.
-    if (JSValueIsUndefined(ctx, argument) || JSValueIsNull(ctx, argument))
+    if (JSValueIsUndefined(contextRef, argument) || JSValueIsNull(contextRef, argument))
         return nil;
 
     JSObjectRef function = 0;
-    if (id object = tryUnwrapObjcObject(ctx, argument)) {
+    if (id object = tryUnwrapObjcObject(contextRef, argument)) {
         // Check if the argument is an Objective-C block.
         if ([object isKindOfClass:getNSBlockClass()]) {
             if ([self blockMatchesSignature:object])
                 return object;
         }
-    } else if (m_signatureWithOffsets && JSValueIsObject(ctx, argument)) {
+    } else if (m_signatureWithOffsets && JSValueIsObject(contextRef, argument)) {
         // Check if the argument is a JavaScript function
         // (and that were able to create a forwarding block for this signature).
-        JSObjectRef object = JSValueToObject(ctx, argument, exception);
-        if (JSObjectIsFunction(ctx, object))
+        JSObjectRef object = JSValueToObject(contextRef, argument, exception);
+        if (JSObjectIsFunction(contextRef, object))
             function = object;
     }
 
     if (!function) {
-        JSC::APIEntryShim entryShim(toJS(ctx));
-        *exception = toRef(JSC::createTypeError(toJS(ctx), "Invalid argument supplied for Objective-C block"));
+        JSC::APIEntryShim entryShim(toJS(contextRef));
+        *exception = toRef(JSC::createTypeError(toJS(contextRef), "Invalid argument supplied for Objective-C block"));
         return nil;
     }
 
@@ -396,15 +366,15 @@ static NSString* buildBlockSignature(NSString* prefix, const char* begin, const 
         JSContext* context = value.context;
         if (!context)
             return;
-        JSGlobalContextRef ctx = contextInternalContext(context);
+        JSGlobalContextRef contextRef = contextInternalContext(context);
 
-        JSValueRef args[adaptor->m_argumentCount];
+        JSValueRef argumentArray[adaptor->m_argumentCount];
 
         size_t argumentNumber = 0;
         BlockArgument* arguments = adaptor->m_arguments.get();
         for (BlockArgument* argument = arguments; argument; argument = argument->m_next.get()) {
             JSValueRef exception = 0;
-            args[argumentNumber] = argument->get(invocation, argumentNumber + 1, context, &exception);
+            argumentArray[argumentNumber] = argument->get(invocation, argumentNumber + 1, context, &exception);
             if (exception) {
                 [context notifyException:exception];
                 return;
@@ -415,7 +385,7 @@ static NSString* buildBlockSignature(NSString* prefix, const char* begin, const 
         size_t argumentCount = argumentNumber;
 
         JSValueRef exception = 0;
-        JSObjectCallAsFunction(ctx, JSValueToObject(ctx, valueInternalValue(value), 0), 0, argumentCount, args, &exception);
+        JSObjectCallAsFunction(contextRef, JSValueToObject(contextRef, valueInternalValue(value), 0), 0, argumentCount, argumentArray, &exception);
         if (exception) {
             [context notifyException:exception];
             return;

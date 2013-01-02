@@ -46,16 +46,14 @@ inline void forEachProtocolImplementingProtocol(Class cls, Protocol* target, voi
     ASSERT(cls);
     ASSERT(target);
 
-    WTF::Vector<Protocol*> worklist;
-    WTF::HashSet<void*> visited;
+    Vector<Protocol*> worklist;
+    HashSet<void*> visited;
 
     // Initially fill the worklist with the Class's protocols.
     unsigned protocolsCount;
     Protocol** protocols = class_copyProtocolList(cls, &protocolsCount);
-    if (protocolsCount) {
-        worklist.append(protocols, protocolsCount);
-        free(protocols);
-    }
+    worklist.append(protocols, protocolsCount);
+    free(protocols);
 
     while (!worklist.isEmpty()) {
         Protocol* protocol = worklist.last();
@@ -71,52 +69,44 @@ inline void forEachProtocolImplementingProtocol(Class cls, Protocol* target, voi
 
         // Add incorporated protocols to the worklist.
         protocols = protocol_copyProtocolList(protocol, &protocolsCount);
-        if (protocolsCount) {
-            worklist.append(protocols, protocolsCount);
-            free(protocols);
-        }
+        worklist.append(protocols, protocolsCount);
+        free(protocols);
     }
 }
 
-inline void forEachMethodInClass(Class cls, void (^callback)(Method method))
+inline void forEachMethodInClass(Class cls, void (^callback)(Method))
 {
     unsigned count;
     Method* methods = class_copyMethodList(cls, &count);
-    if (count) {
-        for (unsigned i = 0; i < count; ++i)
-            callback(methods[i]);
-        free(methods);
-    }
+    for (unsigned i = 0; i < count; ++i)
+        callback(methods[i]);
+    free(methods);
 }
 
 inline void forEachMethodInProtocol(Protocol* protocol, BOOL isRequiredMethod, BOOL isInstanceMethod, void (^callback)(SEL, const char*))
 {
     unsigned count;
     struct objc_method_description* methods = protocol_copyMethodDescriptionList(protocol, isRequiredMethod, isInstanceMethod, &count);
-    if (count) {
-        for (unsigned i = 0; i < count; ++i)
-            callback(methods[i].name, methods[i].types);
-        free(methods);
-    }
+    for (unsigned i = 0; i < count; ++i)
+        callback(methods[i].name, methods[i].types);
+    free(methods);
 }
 
 inline void forEachPropertyInProtocol(Protocol* protocol, void (^callback)(objc_property_t))
 {
     unsigned count;
     objc_property_t* properties = protocol_copyPropertyList(protocol, &count);
-    if (count) {
-        for (unsigned i = 0; i < count; ++i)
-            callback(properties[i]);
-        free(properties);
-    }
+    for (unsigned i = 0; i < count; ++i)
+        callback(properties[i]);
+    free(properties);
 }
 
 template<char open, char close>
 void skipPair(const char*& position)
 {
-    NSUInteger count = 1;
+    size_t count = 1;
     do {
-        char c = *(position++);
+        char c = *position++;
         if (!c)
             @throw [NSException exceptionWithName:NSInternalInconsistencyException reason:@"Malformed type encoding" userInfo:nil];
         if (c == open)
@@ -127,14 +117,35 @@ void skipPair(const char*& position)
 }
 
 class StringRange {
+    WTF_MAKE_NONCOPYABLE(StringRange);
 public:
     StringRange(const char* begin, const char* end) : m_ptr(strndup(begin, end - begin)) { }
     ~StringRange() { free(m_ptr); }
-    operator const char*() { return m_ptr; }
-    const char* get() { return m_ptr; }
+    operator const char*() const { return m_ptr; }
+    const char* get() const { return m_ptr; }
 
 private:
     char* m_ptr;
+};
+
+class StructBuffer {
+    WTF_MAKE_NONCOPYABLE(StructBuffer);
+public:
+    StructBuffer(const char* encodedType)
+    {
+        NSUInteger size, alignment;
+        NSGetSizeAndAlignment(encodedType, &size, &alignment);
+        --alignment;
+        m_allocation = static_cast<char*>(malloc(size + alignment));
+        m_buffer = reinterpret_cast<char*>((reinterpret_cast<intptr_t>(m_allocation) + alignment) & ~alignment);
+    }
+
+    ~StructBuffer() { free(m_allocation); }
+    operator void*() const { return m_buffer; }
+
+private:
+    void* m_allocation;
+    void* m_buffer;
 };
 
 template<typename DelegateType>
@@ -142,7 +153,7 @@ typename DelegateType::ResultType parseObjCType(const char*& position)
 {
     ASSERT(*position);
 
-    switch (*(position++)) {
+    switch (*position++) {
     case 'c':
         return DelegateType::template typeInteger<char>();
     case 'i':

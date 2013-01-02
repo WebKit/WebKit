@@ -29,7 +29,7 @@
 
 @class JSVirtualMachine, JSValue;
 
-// An instance of JSContext represents a JavaScript execution environment, all
+// An instance of JSContext represents a JavaScript execution environment. All
 // JavaScript execution takes place within a context.
 // JSContext is also used to manage the life-cycle of objects within the
 // JavaScript virtual machine. Every instance of JSValue is associated with a
@@ -38,6 +38,7 @@
 // of JSContext is deallocated and the weak references to it are cleared the
 // JSValues that had been associated with this context will be invalidated, and
 // will cease to keep the values within the JavaScript engine alive.
+
 NS_CLASS_AVAILABLE(10_9, NA)
 @interface JSContext : NSObject
 
@@ -109,7 +110,7 @@ NS_CLASS_AVAILABLE(10_9, NA)
 @interface JSContext(SubscriptSupport)
 
 - (JSValue *)objectForKeyedSubscript:(id)key;
-- (void)setObject:(id)object forKeyedSubscript:(id <NSCopying>)key;
+- (void)setObject:(id)object forKeyedSubscript:(NSObject <NSCopying> *)key;
 
 @end
 

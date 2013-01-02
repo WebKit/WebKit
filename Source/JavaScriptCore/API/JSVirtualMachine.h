@@ -31,6 +31,7 @@
 // or set of execution resources. Thread safety is supported by locking the
 // virtual machine, with concurrent JavaScript execution supported by allocating
 // separate instances of JSVirtualMachine.
+
 NS_CLASS_AVAILABLE(10_9, NA)
 @interface JSVirtualMachine : NSObject
 

@@ -34,9 +34,9 @@
 // originate from the same JSContext as the JSValue on which the method was
 // invoked.
 //
-// The JSContext is used to manage the life-cycle of the refereced JavaScript
+// The JSContext is used to manage the life-cycle of the referenced JavaScript
 // value within the virtual machine. So long as the JSContext is being retained
-// the JSValue will continue to keep the referencd value within the JavaScript
+// the JSValue will continue to keep the referenced value within the JavaScript
 // virtual machine alive. When the JSContext associated with a JSValue is
 // deallocated the weak context property of the JSValue will become nil. After
 // this occurs the value within the JavaScript virtual machine is no longer
@@ -47,7 +47,7 @@
 // For all methods taking arguments of type id, arguments will be converted
 // into a JavaScript value according to the conversion specified below.
 // All JavaScript values are associated with a particular JSVirtualMachine
-// (the associated JSVirtualMachine is avaible indirectly via the context
+// (the associated JSVirtualMachine is available indirectly via the context
 // property). An instance of JSValue may only be passed as an argument to
 // methods on instances of JSValue and JSContext that belong to the same
 // JSVirtualMachine - passing a JSValue to a method on an object originating
@@ -90,8 +90,9 @@
 // the Objective-C instance being retained by the wrapper is returned.
 //
 // *** For Objective-C Class objects a constructor object containing exported
-// class methods will be returned. See JSExport.h sor more information on
+// class methods will be returned. See JSExport.h for more information on
 // constructor objects.
+
 NS_CLASS_AVAILABLE(10_9, NA)
 @interface JSValue : NSObject
 
@@ -115,7 +116,7 @@ NS_CLASS_AVAILABLE(10_9, NA)
 - (id)toObject;
 // Convert this value to a corresponding Objective-C object, if the result is
 // not of the specified class then nil will be returned.
-- (id)toObjectOfClass:(Class)cls;
+- (id)toObjectOfClass:(Class)expectedClass;
 // The value is copied to a boolean according to the conversion specified by the
 // JavaScript language.
 - (BOOL)toBool;
@@ -254,7 +255,7 @@ NS_CLASS_AVAILABLE(10_9, NA)
 
 - (JSValue *)objectForKeyedSubscript:(id)key;
 - (JSValue *)objectAtIndexedSubscript:(NSUInteger)index;
-- (void)setObject:(id)object forKeyedSubscript:(id <NSCopying>)key;
+- (void)setObject:(id)object forKeyedSubscript:(NSObject <NSCopying> *)key;
 - (void)setObject:(id)object atIndexedSubscript:(NSUInteger)index;
 
 @end

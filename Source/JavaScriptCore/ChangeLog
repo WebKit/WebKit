@@ -1,3 +1,180 @@
+2013-01-02  Gavin Barraclough  <barraclough@apple.com>
+
+        Objective-C API for JavaScriptCore
+        https://bugs.webkit.org/show_bug.cgi?id=105889
+
+        Reviewed by Geoff Garen.
+
+        Fixes for a number of issues raised by Darin.
+
+        * API/APIJSValue.h:
+            - Fix typos in comment
+            - Add newline before NS_CLASS_AVAILABLE(10_9, NA)
+            - cls -> expectedClass
+            - key type for -setObject:forKeyedSubscript: is now NSObject <NSCopying> *
+        * API/JSBase.h:
+            - JS_OBJC_API_ENABLED no longer implies __OBJC__
+        * API/JSBlockAdaptor.mm:
+        (BlockArgumentStruct::BlockArgumentStruct):
+        (BlockArgumentStruct):
+            - mark virtual functions as virtual, override, and private
+            - refactor out buffer allocation for struct types
+        (BlockArgumentTypeDelegate::typeVoid):
+        (BlockArgumentTypeDelegate::typeBlock):
+        (BlockArgumentTypeDelegate::typeStruct):
+            - return nil -> return 0
+        (BlockResultStruct::BlockResultStruct):
+        (BlockResultStruct):
+            - mark virtual functions as virtual, override, and private
+            - refactor out buffer allocation for struct types
+        (buildBlockSignature):
+            - %lu is not an appropriate format specifier for NSInteger
+        (-[JSBlockAdaptor initWithBlockSignatureFromProtocol:]):
+            - nil check [super init]
+        (-[JSBlockAdaptor blockMatchesSignature:]):
+        (-[JSBlockAdaptor blockFromValue:inContext:withException:]):
+            - ctx -> contextRef
+        * API/JSContext.h:
+            - Fix typos in comment
+            - Add newline before NS_CLASS_AVAILABLE(10_9, NA)
+            - key type for -setObject:forKeyedSubscript: is now NSObject <NSCopying> *
+        * API/JSContext.mm:
+        (-[JSContext initWithVirtualMachine:]):
+            - nil check [super init]
+        (+[JSContext currentArguments]):
+            - args -> argumentArray
+        (-[JSContext setObject:forKeyedSubscript:]):
+            - key type for -setObject:forKeyedSubscript: is now NSObject <NSCopying> *
+        (-[JSContext dealloc]):
+        (-[JSContext protect:]):
+        (-[JSContext unprotect:]):
+            - m_protected -> m_protectCounts
+        * API/JSValue.mm:
+        (-[JSValue toObjectOfClass:]):
+            - cls -> expectedClass
+        (-[JSValue toBool]):
+        (-[JSValue deleteProperty:]):
+        (-[JSValue hasProperty:]):
+        (-[JSValue isUndefined]):
+        (-[JSValue isNull]):
+        (-[JSValue isBoolean]):
+        (-[JSValue isNumber]):
+        (-[JSValue isString]):
+        (-[JSValue isObject]):
+        (-[JSValue isEqualToObject:]):
+        (-[JSValue isEqualWithTypeCoercionToObject:]):
+        (-[JSValue isInstanceOf:]):
+            - removed ? YES : NO
+        (-[JSValue callWithArguments:]):
+        (-[JSValue constructWithArguments:]):
+        (-[JSValue invokeMethod:withArguments:]):
+            - args -> argumentArray
+        (+[JSValue valueWithPoint:inContext:]):
+        (+[JSValue valueWithRange:inContext:]):
+        (+[JSValue valueWithRect:inContext:]):
+        (+[JSValue valueWithSize:inContext:]):
+            - [NSNumber numberWithFloat:] -> @()
+        (-[JSValue objectForKeyedSubscript:]):
+        (-[JSValue setObject:forKeyedSubscript:]):
+            - key type for -setObject:forKeyedSubscript: is now NSObject <NSCopying> *
+        (JSContainerConvertor):
+        (JSContainerConvertor::isWorkListEmpty):
+        (JSContainerConvertor::convert):
+        (ObjcContainerConvertor):
+        (ObjcContainerConvertor::isWorkListEmpty):
+            - remove WTF::
+            - isWorkListEmpty is const
+        (objectToValue):
+            -  use fast enumeration
+        (-[JSValue initWithValue:inContext:]):
+            - nil check [super init]
+        (getStructTagHandler):
+            - m_structHandlers -> structHandlers
+        * API/JSVirtualMachine.h:
+            - Add newline before NS_CLASS_AVAILABLE(10_9, NA)
+        * API/JSVirtualMachine.mm:
+        (-[JSVirtualMachine init]):
+            - nil check [super init]
+        * API/JSWrapperMap.mm:
+        (selectorToPropertyName):
+        (copyPrototypeProperties):
+            - remove WTF::
+            - use static_cast
+        (-[JSObjCClassInfo initWithContext:forClass:superClassInfo:]):
+        (-[JSWrapperMap initWithContext:]):
+            - nil check [super init]
+        (-[JSWrapperMap wrapperForObject:]):
+        (tryUnwrapObjcObject):
+            - enable ASSERT
+        (getJSExportProtocol):
+        (getNSBlockClass):
+            - remove if check on initializing static
+        * API/JavaScriptCore.h:
+            - JS_OBJC_API_ENABLED no longer implies __OBJC__
+        * API/ObjCCallbackFunction.mm:
+        (CallbackArgumentOfClass):
+        (CallbackArgumentOfClass::~CallbackArgumentOfClass):
+        (CallbackArgumentStruct::CallbackArgumentStruct):
+        (CallbackArgumentStruct):
+        (CallbackArgumentBlockCallback):
+            - mark virtual functions as virtual, override, and private
+            - refactor out buffer allocation for struct types
+        (ArgumentTypeDelegate::typeVoid):
+        (ArgumentTypeDelegate::typeOfClass):
+        (ArgumentTypeDelegate::typeStruct):
+            - return nil -> return 0
+        (CallbackResultStruct::CallbackResultStruct):
+        (CallbackResultStruct):
+            - mark virtual functions as virtual, override, and private
+            - refactor out buffer allocation for struct types
+        (ResultTypeDelegate::typeStruct):
+            - return nil -> return 0
+        (ObjCCallbackFunction):
+            - remove WTF::
+        (objCCallbackFunctionFinalize):
+            - use static_cast
+        (objCCallbackFunctionCallAsFunction):
+            - Fix typos in comment
+        (createObjCCallbackFunctionClass):
+        (objCCallbackFunctionClass):
+            - Split out createObjCCallbackFunctionClass from objCCallbackFunctionClass
+        (ObjCCallbackFunction::call):
+            - ctx -> contextRef
+        (blockSignatureContainsClass):
+            - Remove tri-state enum.
+        (skipNumber):
+            - isdigit -> isASCIIDigit 
+        (objCCallbackFunctionForInvocation):
+            - clean up & comment blockSignatureContainsClass() usage
+        (tryUnwrapBlock):
+            - use static_cast
+        * API/ObjcRuntimeExtras.h:
+        (forEachProtocolImplementingProtocol):
+        (forEachMethodInClass):
+        (forEachMethodInProtocol):
+        (forEachPropertyInProtocol):
+            - Remove WTF::
+            - Remove if (count) checks
+        (skipPair):
+            - NSUInteger -> size_t
+        (StringRange):
+        (StringRange::operator const char*):
+        (StringRange::get):
+        (StructBuffer):
+        (StructBuffer::StructBuffer):
+        (StructBuffer::~StructBuffer):
+        (StructBuffer::operator void*):
+            - Added helper for creating an aligned buffer, used by struct conversion invocations.
+        (parseObjCType):
+            - *(position++) -> *position++
+        * API/tests/testapi.c:
+            - PLATFORM(MAC) -> JS_OBJC_API_ENABLED
+        * API/tests/testapi.m:
+        (blockSignatureContainsClass):
+            - Remove tri-state enum.
+        (testObjectiveCAPI):
+            - Added more result type checks.
+
 2013-01-02  Filip Pizlo  <fpizlo@apple.com>
 
         DFG should not use the InlineCallFrame's callee when it could have used the executable istead

@@ -72,7 +72,7 @@ static NSString* selectorToPropertyName(const char* start)
     size_t header = firstColon - start;
     // The new string needs to be long enough to hold 'header', plus the remainder of the string, excluding
     // at least one ':', but including a '\0'. (This is conservative if there are more than one ':').
-    char* buffer = (char*)malloc(header + strlen(firstColon + 1) + 1);
+    char* buffer = static_cast<char*>(malloc(header + strlen(firstColon + 1) + 1));
     // Copy 'header' characters, set output to point to the end of this & input to point past the first ':'.
     memcpy(buffer, start, header);
     char* output = buffer + header;
@@ -228,7 +228,7 @@ static void copyPrototypeProperties(JSContext* context, Class objcClass, Protoco
         char* getterName;
         char* setterName;
     };
-    __block WTF::Vector<Property> propertyList;
+    __block Vector<Property> propertyList;
 
     // Map recording the methods used as getters/setters.
     NSMutableDictionary *accessorMethods = [NSMutableDictionary dictionary];
@@ -302,7 +302,9 @@ static void copyPrototypeProperties(JSContext* context, Class objcClass, Protoco
 
 - (id)initWithContext:(JSContext*)context forClass:(Class)cls superClassInfo:(JSObjCClassInfo*)superClassInfo
 {
-    [super init];
+    self = [super init];
+    if (!self)
+        return nil;
 
     const char* className = class_getName(cls);
     m_context = context;
@@ -378,7 +380,10 @@ static void copyPrototypeProperties(JSContext* context, Class objcClass, Protoco
 
 - (id)initWithContext:(JSContext*)context
 {
-    [super init];
+    self = [super init];
+    if (!self)
+        return nil;
+
     m_context = context;
     m_classMap = [[NSMutableDictionary alloc] init];
     return self;
@@ -421,7 +426,7 @@ static void copyPrototypeProperties(JSContext* context, Class objcClass, Protoco
 
     // FIXME: https://bugs.webkit.org/show_bug.cgi?id=105891
     // This general approach to wrapper caching is pretty effective, but there are a couple of problems:
-    // (1) For immortal objects JSValues will effectively leaj and this results in error output being logged - we should avoid adding associated objects to immortal objects.
+    // (1) For immortal objects JSValues will effectively leak and this results in error output being logged - we should avoid adding associated objects to immortal objects.
     // (2) A long lived object may rack up many JSValues. When the contexts are released these will unproctect the associated JavaScript objects,
     //     but still, would probably nicer if we made it so that only one associated object was required, broadcasting object dealloc.
     objc_setAssociatedObject(object, m_context, wrapper, OBJC_ASSOCIATION_RETAIN);
@@ -436,7 +441,7 @@ id tryUnwrapObjcObject(JSGlobalContextRef context, JSValueRef value)
         return nil;
     JSValueRef exception = 0;
     JSObjectRef object = JSValueToObject(context, value, &exception);
-    //ASSERT(!exception);
+    ASSERT(!exception);
     if (JSValueIsObjectOfClass(context, object, wrapperClass()))
         return (id)JSObjectGetPrivate(object);
     if (id target = tryUnwrapBlock(context, object))
@@ -446,17 +451,13 @@ id tryUnwrapObjcObject(JSGlobalContextRef context, JSValueRef value)
 
 Protocol* getJSExportProtocol()
 {
-    static Protocol* protocol = 0;
-    if (!protocol)
-        protocol = objc_getProtocol("JSExport");
+    static Protocol* protocol = objc_getProtocol("JSExport");
     return protocol;
 }
 
 Class getNSBlockClass()
 {
-    static Class cls = 0;
-    if (!cls)
-        cls = objc_getClass("NSBlock");
+    static Class cls = objc_getClass("NSBlock");
     return cls;
 }
 
