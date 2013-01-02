@@ -1,3 +1,18 @@
+2013-01-02  Elliott Sprehn  <esprehn@chromium.org>
+
+        Transitions and animations do not apply to CSS ::before and ::after pseudo-elements
+        https://bugs.webkit.org/show_bug.cgi?id=92591
+
+        Reviewed by Eric Seidel.
+
+        Add tests that check if animations and transitions play for pseudo
+        :before and :after pseudo elements.
+
+        * fast/css-generated-content/pseudo-animation-expected.txt: Added.
+        * fast/css-generated-content/pseudo-animation.html: Added.
+        * fast/css-generated-content/pseudo-transition-expected.txt: Added.
+        * fast/css-generated-content/pseudo-transition.html: Added.
+
 2013-01-02  Chris Rogers  <crogers@google.com>
 
         Implement WebIDL-style string constants in WebAudio

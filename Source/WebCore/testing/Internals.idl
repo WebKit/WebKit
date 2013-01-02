@@ -65,6 +65,9 @@
     boolean hasSelectorForAttributeInShadow(in Element host, in DOMString attributeName) raises (DOMException);
     boolean hasSelectorForPseudoClassInShadow(in Element host, in DOMString pseudoClass) raises (DOMException);
 
+    boolean pauseAnimationAtTimeOnPseudoElement(in DOMString animationName, in double pauseTime, in Element element, in DOMString pseudoId) raises (DOMException);
+    boolean pauseTransitionAtTimeOnPseudoElement(in DOMString property, in double pauseTime, in Element element, in DOMString pseudoId) raises (DOMException);
+
     Node nextSiblingByWalker(in Node node) raises(DOMException);
     Node firstChildByWalker(in Node node) raises(DOMException);
     Node lastChildByWalker(in Node node) raises(DOMException);

@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+
+<script src="../js/resources/js-test-pre.js"></script>
+
+<style>
+#before:before,
+#after:after {
+    content: "";
+    display: block;
+    height: 50px;
+    width: 50px;
+    -webkit-transition: width 2s;
+    -moz-transition: width 2s;
+    transition: width 2s;
+}
+
+#before.transition:before,
+#after.transition:after {
+    height: 10px;
+    width: 10px;
+}
+
+#before,
+#after {
+    display: inline-block;
+    border: 1px solid black;
+    background: red;
+}
+
+#after.transition,
+#before.transition {
+    background: green;
+}
+</style>
+
+<div id="before"></div>
+<div id="after"></div>
+
+<script>
+description('Transitions on :before and :after pseudo elements should run');
+
+if (window.testRunner)
+    testRunner.dumpAsText();
+
+function testTransition(id)
+{
+    var div = document.getElementById(id);
+    div.className = 'transition';
+    window.div = div;
+    shouldBe('div.offsetWidth', '52');
+    if (window.internals) {
+        internals.pauseTransitionAtTimeOnPseudoElement('width', 1.0, div, id);
+        shouldBe('div.offsetWidth', '20');
+        internals.pauseTransitionAtTimeOnPseudoElement('width', 2.0, div, id);
+        shouldBe('div.offsetWidth', '12');
+    } else {
+        // This will be flaky, but it's a reasonable approximation for testing
+        // in a browser instead of DRT.
+        setTimeout(function() {
+            window.div = div;
+            shouldBe('div.offsetWidth', '20');
+        }, 1000);
+        setTimeout(function() {
+            window.div = div;
+            shouldBe('div.offsetWidth', '12');
+        }, 2000);
+    }
+}
+
+onload = function() {
+    testTransition('before');
+    testTransition('after');
+    if (window.internals)
+        isSuccessfullyParsed();
+    else
+        setTimeout(isSuccessfullyParsed, 2000);
+};
+</script>

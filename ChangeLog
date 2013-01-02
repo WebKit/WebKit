@@ -1,3 +1,14 @@
+2013-01-02  Elliott Sprehn  <esprehn@chromium.org>
+
+        Transitions and animations do not apply to CSS ::before and ::after pseudo-elements
+        https://bugs.webkit.org/show_bug.cgi?id=92591
+
+        Reviewed by Eric Seidel.
+
+        Expose Element::pseudoElement for Internals.
+
+        * Source/autotools/symbols.filter:
+
 2013-01-01  KwangYong Choi  <ky0.choi@samsung.com>
 
         [EFL] Enable MHTML feature

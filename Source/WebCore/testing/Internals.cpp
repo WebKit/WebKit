@@ -68,6 +68,7 @@
 #include "NodeRenderingContext.h"
 #include "Page.h"
 #include "PrintContext.h"
+#include "PseudoElement.h"
 #include "Range.h"
 #include "RenderObject.h"
 #include "RenderTreeAsText.h"
@@ -385,6 +386,48 @@ bool Internals::hasSelectorForPseudoClassInShadow(Element* host, const String& p
 
     ASSERT_NOT_REACHED();
     return false;
+}
+
+bool Internals::pauseAnimationAtTimeOnPseudoElement(const String& animationName, double pauseTime, Element* element, const String& pseudoId, ExceptionCode& ec)
+{
+    if (!element || pauseTime < 0) {
+        ec = INVALID_ACCESS_ERR;
+        return false;
+    }
+
+    if (pseudoId != "before" && pseudoId != "after") {
+        ec = INVALID_ACCESS_ERR;
+        return false;
+    }
+
+    PseudoElement* pseudoElement = element->pseudoElement(pseudoId == "before" ? BEFORE : AFTER);
+    if (!pseudoElement) {
+        ec = INVALID_ACCESS_ERR;
+        return false;
+    }
+
+    return frame()->animation()->pauseAnimationAtTime(pseudoElement->renderer(), animationName, pauseTime);
+}
+
+bool Internals::pauseTransitionAtTimeOnPseudoElement(const String& property, double pauseTime, Element* element, const String& pseudoId, ExceptionCode& ec)
+{
+    if (!element || pauseTime < 0) {
+        ec = INVALID_ACCESS_ERR;
+        return false;
+    }
+
+    if (pseudoId != "before" && pseudoId != "after") {
+        ec = INVALID_ACCESS_ERR;
+        return false;
+    }
+
+    PseudoElement* pseudoElement = element->pseudoElement(pseudoId == "before" ? BEFORE : AFTER);
+    if (!pseudoElement) {
+        ec = INVALID_ACCESS_ERR;
+        return false;
+    }
+
+    return frame()->animation()->pauseTransitionAtTime(pseudoElement->renderer(), property, pauseTime);
 }
 
 bool Internals::hasShadowInsertionPoint(const Node* root, ExceptionCode& ec) const
