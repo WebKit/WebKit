@@ -74567,6 +74567,22 @@
 			</File>
 		</Filter>
 		<Filter
+			Name="strings"
+			>
+			<File
+				RelativePath="$(ConfigurationBuildDir)\include\private\wtf\text\AtomicString.cpp"
+				>
+			</File>
+			<File
+				RelativePath="$(ConfigurationBuildDir)\include\private\wtf\text\StringImpl.cpp"
+				>
+			</File>
+			<File
+				RelativePath="$(ConfigurationBuildDir)\include\private\wtf\text\WTFString.cpp"
+				>
+			</File>
+		</Filter>
+		<Filter
 			Name="bridge"
 			>
 			<File
