@@ -82,6 +82,7 @@ public:
 
     LayoutUnit constrainLogicalWidthInRegionByMinMax(LayoutUnit, LayoutUnit, RenderBlock*, RenderRegion* = 0, LayoutUnit offsetFromLogicalTopOfFirstPage = 0) const;
     LayoutUnit constrainLogicalHeightByMinMax(LayoutUnit) const;
+    LayoutUnit constrainContentBoxLogicalHeightByMinMax(LayoutUnit) const;
 
     int pixelSnappedLogicalHeight() const { return style()->isHorizontalWritingMode() ? pixelSnappedHeight() : pixelSnappedWidth(); }
     int pixelSnappedLogicalWidth() const { return style()->isHorizontalWritingMode() ? pixelSnappedWidth() : pixelSnappedHeight(); }
@@ -413,7 +414,7 @@ public:
 
     LayoutUnit computeLogicalWidthInRegionUsing(SizeType, LayoutUnit availableLogicalWidth, const RenderBlock* containingBlock, RenderRegion*, LayoutUnit offsetFromLogicalTopOfFirstPage) const;
     LayoutUnit computeLogicalHeightUsing(SizeType, const Length& height) const;
-    LayoutUnit computeContentLogicalHeight(SizeType, const Length& height);
+    LayoutUnit computeContentLogicalHeight(SizeType, const Length& height) const;
     LayoutUnit computeContentAndScrollbarLogicalHeightUsing(SizeType, const Length& height) const;
     LayoutUnit computeReplacedLogicalWidthUsing(SizeType, Length width) const;
     LayoutUnit computeReplacedLogicalWidthRespectingMinMaxWidth(LayoutUnit logicalWidth, ShouldComputePreferred  = ComputeActual) const;

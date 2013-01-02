@@ -1,3 +1,15 @@
+2013-01-02  Bem Jones-Bey  <bjonesbe@adobe.com>
+
+        When a block's height is determined by min-height/max-height, children with percentage heights are sized incorrectly
+        https://bugs.webkit.org/show_bug.cgi?id=26559
+
+        Reviewed by Tony Chang.
+
+        Add tests to ensure percent heights are correctly determined.
+
+        * fast/block/min-max-height-percent-height-child-expected.txt: Added.
+        * fast/block/min-max-height-percent-height-child.html: Added.
+
 2013-01-02  Ryosuke Niwa  <rniwa@webkit.org>
 
         Add a failing test expectation to a test added by r136697.

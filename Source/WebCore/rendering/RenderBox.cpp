@@ -470,6 +470,17 @@ LayoutUnit RenderBox::constrainLogicalHeightByMinMax(LayoutUnit logicalHeight) c
     return max(logicalHeight, computeLogicalHeightUsing(MinSize, styleToUse->logicalMinHeight()));
 }
 
+LayoutUnit RenderBox::constrainContentBoxLogicalHeightByMinMax(LayoutUnit logicalHeight) const
+{
+    RenderStyle* styleToUse = style();
+    if (!styleToUse->logicalMaxHeight().isUndefined()) {
+        LayoutUnit maxH = computeContentLogicalHeight(MaxSize, styleToUse->logicalMaxHeight());
+        if (maxH != -1)
+            logicalHeight = min(logicalHeight, maxH);
+    }
+    return max(logicalHeight, computeContentLogicalHeight(MinSize, styleToUse->logicalMinHeight()));
+}
+
 IntRect RenderBox::absoluteContentBox() const
 {
     // This is wrong with transforms and flipped writing modes.
@@ -2298,7 +2309,7 @@ LayoutUnit RenderBox::computeLogicalHeightUsing(SizeType heightType, const Lengt
     return logicalHeight;
 }
 
-LayoutUnit RenderBox::computeContentLogicalHeight(SizeType heightType, const Length& height)
+LayoutUnit RenderBox::computeContentLogicalHeight(SizeType heightType, const Length& height) const
 {
     LayoutUnit heightIncludingScrollbar = computeContentAndScrollbarLogicalHeightUsing(heightType, height);
     if (heightIncludingScrollbar == -1)
@@ -2381,14 +2392,19 @@ LayoutUnit RenderBox::computePercentageLogicalHeight(const Length& height) const
             includeBorderPadding = true;
         }
     } else if (cbstyle->logicalHeight().isFixed()) {
-        LayoutUnit contentBoxHeightWithScrollbar = cb->adjustContentBoxLogicalHeightForBoxSizing(cbstyle->logicalHeight().value());
-        availableHeight = max<LayoutUnit>(0, contentBoxHeightWithScrollbar - cb->scrollbarLogicalHeight());
+        LayoutUnit contentBoxHeight = cb->adjustContentBoxLogicalHeightForBoxSizing(cbstyle->logicalHeight().value());
+        availableHeight = max<LayoutUnit>(0, cb->constrainContentBoxLogicalHeightByMinMax(contentBoxHeight - cb->scrollbarLogicalHeight()));
     } else if (cbstyle->logicalHeight().isPercent() && !isOutOfFlowPositionedWithSpecifiedHeight) {
         // We need to recur and compute the percentage height for our containing block.
         LayoutUnit heightWithScrollbar = cb->computePercentageLogicalHeight(cbstyle->logicalHeight());
         if (heightWithScrollbar != -1) {
             LayoutUnit contentBoxHeightWithScrollbar = cb->adjustContentBoxLogicalHeightForBoxSizing(heightWithScrollbar);
-            availableHeight = max<LayoutUnit>(0, contentBoxHeightWithScrollbar - cb->scrollbarLogicalHeight());
+            // We need to adjust for min/max height because this method does not
+            // handle the min/max of the current block, its caller does. So the
+            // return value from the recursive call will not have been adjusted
+            // yet.
+            LayoutUnit contentBoxHeight = cb->constrainContentBoxLogicalHeightByMinMax(contentBoxHeightWithScrollbar - cb->scrollbarLogicalHeight());
+            availableHeight = max<LayoutUnit>(0, contentBoxHeight);
         }
     } else if (cb->isRenderView() || isOutOfFlowPositionedWithSpecifiedHeight) {
         // Don't allow this to affect the block' height() member variable, since this
