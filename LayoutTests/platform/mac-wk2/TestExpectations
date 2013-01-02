@@ -272,6 +272,10 @@ webkit.org/b/98960 fast/parser/document-open-in-unload.html [ Skip ]
 webkit.org/b/76359 editing/shadow [ Skip ]
 webkit.org/b/76359 fast/dom/shadow [ Skip ]
 
+# Canvas blending tests fail on Mac WK2
+webkit.org/b/105943 fast/canvas/canvas-blend-image.html [ Failure ]
+webkit.org/b/105943 fast/canvas/canvas-blend-solid.html [ Failure ]
+
 ### END OF (1) Classified failures with bug reports
 ########################################
 

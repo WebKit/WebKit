@@ -1,3 +1,11 @@
+2013-01-02  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Rebaseline tests after r137798 and update test expectations per bug 105943.
+
+        * platform/mac-wk2/TestExpectations:
+        * platform/mac-wk2/compositing/rtl/rtl-fixed-expected.txt:
+        * platform/mac-wk2/compositing/rtl/rtl-fixed-overflow-expected.txt:
+
 2013-01-02  Elliott Sprehn  <esprehn@chromium.org>
 
         View source mode is missing the processing instruction line.
