@@ -1,3 +1,10 @@
+2013-01-02  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Add a failing test expectation to a test added by r138380 on Mac WK2.
+        The failure is tracked by the bug 105948.
+
+        * platform/mac-wk2/TestExpectations:
+
 2013-01-02  Tom Sepez  <tsepez@chromium.org>
 
         X-XSS-Protection report-uri doesn't work with mode=block
