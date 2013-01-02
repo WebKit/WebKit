@@ -1,3 +1,13 @@
+2013-01-02  Robert Hogan  <robert@webkit.org>
+
+        Regression (r132935): WebKit breaks between <nobr> tags
+        https://bugs.webkit.org/show_bug.cgi?id=11857
+
+        Reviewed by David Hyatt.
+
+        * fast/inline/break-between-nobr-expected.html: Added.
+        * fast/inline/break-between-nobr.html: Added.
+
 2013-01-02  Mike West  <mkwst@chromium.org>
 
         sandboxed iframe attribute parsing layout tests are flaky

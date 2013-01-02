@@ -3036,7 +3036,7 @@ InlineIterator RenderBlock::LineBreaker::nextSegmentBreak(InlineBidiResolver& re
         } else
             ASSERT_NOT_REACHED();
 
-        bool checkForBreak = autoWrap || blockStyle->autoWrap();
+        bool checkForBreak = autoWrap;
         if (width.committedWidth() && !width.fitsOnLine() && lBreak.m_obj && currWS == NOWRAP)
             checkForBreak = true;
         else if (next && current.m_obj->isText() && next->isText() && !next->isBR() && (autoWrap || (next->style()->autoWrap()))) {
@@ -3079,6 +3079,10 @@ InlineIterator RenderBlock::LineBreaker::nextSegmentBreak(InlineBidiResolver& re
             // the end label if we still don't fit on the line. -dwh
             if (!width.fitsOnLine())
                 goto end;
+        } else if (blockStyle->autoWrap() && !width.fitsOnLine() && !width.committedWidth()) {
+            // If the container autowraps but the current child does not then we still need to ensure that it
+            // wraps and moves below any floats.
+            width.fitBelowFloats();
         }
 
         if (!current.m_obj->isFloatingOrOutOfFlowPositioned()) {
