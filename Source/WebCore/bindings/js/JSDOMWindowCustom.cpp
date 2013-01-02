@@ -693,13 +693,6 @@ JSValue JSDOMWindow::postMessage(ExecState* exec)
     return handlePostMessage(impl(), exec);
 }
 
-#if ENABLE(LEGACY_VENDOR_PREFIXES)
-JSValue JSDOMWindow::webkitPostMessage(ExecState* exec)
-{
-    return handlePostMessage(impl(), exec);
-}
-#endif
-
 JSValue JSDOMWindow::setTimeout(ExecState* exec)
 {
     ContentSecurityPolicy* contentSecurityPolicy = impl()->document() ? impl()->document()->contentSecurityPolicy() : 0;

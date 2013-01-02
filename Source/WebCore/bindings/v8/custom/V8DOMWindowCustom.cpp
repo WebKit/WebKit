@@ -295,8 +295,10 @@ static bool isLegacyTargetOriginDesignation(v8::Handle<v8::Value> value)
 }
 
 
-static v8::Handle<v8::Value> handlePostMessageCallback(const v8::Arguments& args)
+v8::Handle<v8::Value> V8DOMWindow::postMessageCallback(const v8::Arguments& args)
 {
+    INC_STATS("DOM.DOMWindow.postMessage()");
+
     // None of these need to be RefPtr because args and context are guaranteed
     // to hold on to them.
     DOMWindow* window = V8DOMWindow::toNative(args.Holder());
@@ -340,20 +342,6 @@ static v8::Handle<v8::Value> handlePostMessageCallback(const v8::Arguments& args
     window->postMessage(message.release(), &portArray, targetOrigin, source, ec);
     return setDOMException(ec, args.GetIsolate());
 }
-
-v8::Handle<v8::Value> V8DOMWindow::postMessageCallback(const v8::Arguments& args)
-{
-    INC_STATS("DOM.DOMWindow.postMessage()");
-    return handlePostMessageCallback(args);
-}
-
-#if ENABLE(LEGACY_VENDOR_PREFIXES)
-v8::Handle<v8::Value> V8DOMWindow::webkitPostMessageCallback(const v8::Arguments& args)
-{
-    INC_STATS("DOM.DOMWindow.webkitPostMessage()");
-    return handlePostMessageCallback(args);
-}
-#endif
 
 // FIXME(fqian): returning string is cheating, and we should
 // fix this by calling toString function on the receiver.

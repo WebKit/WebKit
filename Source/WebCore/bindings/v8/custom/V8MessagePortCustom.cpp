@@ -40,8 +40,10 @@
 
 namespace WebCore {
 
-static v8::Handle<v8::Value> handlePostMessageCallback(const v8::Arguments& args)
+v8::Handle<v8::Value> V8MessagePort::postMessageCallback(const v8::Arguments& args)
 {
+    INC_STATS("DOM.MessagePort.postMessage");
+
     MessagePort* messagePort = V8MessagePort::toNative(args.Holder());
     MessagePortArray portArray;
     ArrayBufferArray arrayBufferArray;
@@ -62,19 +64,5 @@ static v8::Handle<v8::Value> handlePostMessageCallback(const v8::Arguments& args
     messagePort->postMessage(message.release(), &portArray, ec);
     return setDOMException(ec, args.GetIsolate());
 }
-
-v8::Handle<v8::Value> V8MessagePort::postMessageCallback(const v8::Arguments& args)
-{
-    INC_STATS("DOM.MessagePort.postMessage");
-    return handlePostMessageCallback(args);
-}
-
-#if ENABLE(LEGACY_VENDOR_PREFIXES)
-v8::Handle<v8::Value> V8MessagePort::webkitPostMessageCallback(const v8::Arguments& args)
-{
-    INC_STATS("DOM.MessagePort.webkitPostMessage");
-    return handlePostMessageCallback(args);
-}
-#endif
 
 } // namespace WebCore

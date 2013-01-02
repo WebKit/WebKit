@@ -38,11 +38,6 @@
     [Custom] void postMessage(in any message, in [Optional] Array messagePorts)
         raises(DOMException);
 
-#if defined(ENABLE_LEGACY_VENDOR_PREFIXES) && ENABLE_LEGACY_VENDOR_PREFIXES
-    [Custom] void webkitPostMessage(in any message, in [Optional] Array transfer)
-        raises(DOMException);
-#endif // defined(ENABLE_LEGACY_VENDOR_PREFIXES) && ENABLE_LEGACY_VENDOR_PREFIXES
-
     void start();
     void close();
 

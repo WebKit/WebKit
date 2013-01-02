@@ -41,12 +41,6 @@
 #if defined(LANGUAGE_JAVASCRIPT) && LANGUAGE_JAVASCRIPT
     [Custom] void postMessage(in any message, in [Optional] Array messagePorts)
         raises(DOMException);
-
-#if defined(ENABLE_LEGACY_VENDOR_PREFIXES) && ENABLE_LEGACY_VENDOR_PREFIXES
-    [Custom] void webkitPostMessage(in any message, in [Optional] Array transferList)
-        raises(DOMException);
-#endif // defined(ENABLE_LEGACY_VENDOR_PREFIXES) && ENABLE_LEGACY_VENDOR_PREFIXES
-
 #else
     // There's no good way to expose an array via the ObjC bindings, so for now just allow passing in a single port.
     void postMessage(in DOMString message, in [Optional] MessagePort messagePort)

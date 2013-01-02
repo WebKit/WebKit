@@ -47,13 +47,6 @@ JSC::JSValue JSDedicatedWorkerContext::postMessage(JSC::ExecState* exec)
     return handlePostMessage(exec, impl());
 }
 
-#if ENABLE(LEGACY_VENDOR_PREFIXES)
-JSC::JSValue JSDedicatedWorkerContext::webkitPostMessage(JSC::ExecState* exec)
-{
-    return handlePostMessage(exec, impl());
-}
-#endif
-
 } // namespace WebCore
 
 #endif // ENABLE(WORKERS)

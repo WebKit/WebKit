@@ -45,13 +45,6 @@ JSC::JSValue JSWorker::postMessage(JSC::ExecState* exec)
     return handlePostMessage(exec, impl());
 }
 
-#if ENABLE(LEGACY_VENDOR_PREFIXES)
-JSC::JSValue JSWorker::webkitPostMessage(JSC::ExecState* exec)
-{
-    return handlePostMessage(exec, impl());
-}
-#endif
-
 EncodedJSValue JSC_HOST_CALL JSWorkerConstructor::constructJSWorker(ExecState* exec)
 {
     JSWorkerConstructor* jsConstructor = jsCast<JSWorkerConstructor*>(exec->callee());
