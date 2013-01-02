@@ -1,3 +1,21 @@
+2013-01-02  Mike West  <mkwst@chromium.org>
+
+        The 'body' of seamless IFrames should default to 'margin: 0'
+        https://bugs.webkit.org/show_bug.cgi?id=90834
+
+        Reviewed by Eric Seidel.
+
+        * fast/frames/seamless/seamless-body-margin-expected.txt: Added.
+        * fast/frames/seamless/seamless-body-margin.html: Added.
+            New test to explicitly check 'body' margins.
+        * fast/frames/seamless/resources/nested-seamless.html:
+        * fast/frames/seamless/resources/quirks-square.html:
+        * fast/frames/seamless/resources/two-inline-blocks.html:
+        * fast/frames/seamless/seamless-inherited-origin-expected.txt:
+        * fast/frames/seamless/seamless-inherited-origin.html:
+            Updated these tests to remove the assumption that the body had an
+            8px margin.
+
 2013-01-01  Christophe Dumez  <christophe.dumez@intel.com>
 
         [WK2] plugins/clicking-missing-plugin-fires-delegate.html is failing

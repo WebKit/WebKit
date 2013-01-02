@@ -1,0 +1,7 @@
+This test ensures that the 'body' element inside a seamless iframe defaults to a margin of 0px rather than 8px, and that we don't break the parent document's 'body' style in the process.
+PASS window.getComputedStyle(document.body).getPropertyCSSValue('margin').cssText is "8px"
+PASS window.getComputedStyle(seamlesssrcdoc).getPropertyCSSValue('margin').cssText is "0px"
+PASS window.getComputedStyle(seamlesssrc).getPropertyCSSValue('margin').cssText is "0px"
+PASS window.getComputedStyle(srcdoc).getPropertyCSSValue('margin').cssText is "8px"
+PASS window.getComputedStyle(src).getPropertyCSSValue('margin').cssText is "8px"
+  
