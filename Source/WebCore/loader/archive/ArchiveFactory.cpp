@@ -70,7 +70,7 @@ static ArchiveMIMETypesMap& archiveMIMETypes()
     mimeTypes.set("multipart/related", archiveFactoryCreate<MHTMLArchive>);
 #if PLATFORM(GTK)
     mimeTypes.set("message/rfc822", archiveFactoryCreate<MHTMLArchive>);
-#elif PLATFORM(QT)
+#elif PLATFORM(QT) || PLATFORM(EFL)
     mimeTypes.set("application/x-mimearchive", archiveFactoryCreate<MHTMLArchive>);
 #endif
 #endif

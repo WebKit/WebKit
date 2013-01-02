@@ -70,6 +70,7 @@ set(WebKit2_INCLUDE_DIRECTORIES
     "${WEBCORE_DIR}/html/track"
     "${WEBCORE_DIR}/inspector"
     "${WEBCORE_DIR}/loader"
+    "${WEBCORE_DIR}/loader/archive"
     "${WEBCORE_DIR}/loader/icon"
     "${WEBCORE_DIR}/loader/cache"
     "${WEBCORE_DIR}/page"

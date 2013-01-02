@@ -1,3 +1,14 @@
+2013-01-01  KwangYong Choi  <ky0.choi@samsung.com>
+
+        [EFL] Enable MHTML feature
+        https://bugs.webkit.org/show_bug.cgi?id=105815
+
+        Reviewed by Laszlo Gombos.
+
+        ENABLE_MHTML is now ON for EFL.
+
+        * Source/cmake/OptionsEfl.cmake:
+
 2012-12-31  Kondapally Kalyan  <kalyan.kondapally@intel.com>
 
         [EFL][WebGL] Add compile time support for GLES2.

@@ -1,3 +1,14 @@
+2013-01-01  KwangYong Choi  <ky0.choi@samsung.com>
+
+        [EFL] Enable MHTML feature
+        https://bugs.webkit.org/show_bug.cgi?id=105815
+
+        Reviewed by Laszlo Gombos.
+
+        Enable MHTML feature for EFL port by default.
+
+        * Scripts/webkitperl/FeatureList.pm:
+
 2013-01-01  Alan Cutter  <alancutter@chromium.org>
 
         sheriff-bot should know who the gardeners/sheriffs are

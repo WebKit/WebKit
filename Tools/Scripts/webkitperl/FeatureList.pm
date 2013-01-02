@@ -332,7 +332,7 @@ my @features = (
       define => "ENABLE_METER_ELEMENT", default => !isAppleWinWebKit(), value => \$meterTagSupport },
 
     { option => "mhtml", desc => "Toggle MHTML support",
-      define => "ENABLE_MHTML", default => isGtk(), value => \$mhtmlSupport },
+      define => "ENABLE_MHTML", default => (isGtk() || isEfl()), value => \$mhtmlSupport },
 
     { option => "microdata", desc => "Toggle Microdata support",
       define => "ENABLE_MICRODATA", default => (isEfl() || isBlackBerry() || isGtk()), value => \$microdataSupport },

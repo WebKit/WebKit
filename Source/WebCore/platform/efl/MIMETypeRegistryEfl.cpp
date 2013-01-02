@@ -51,6 +51,8 @@ static const ExtensionMap extensionMap[] = {
     { "jpeg", "image/jpeg" },
     { "jpg", "image/jpeg" },
     { "js", "application/x-javascript" },
+    { "mht", "application/x-mimearchive" },
+    { "mhtml", "application/x-mimearchive" },
     { "mng", "video/x-mng" },
     { "pbm", "image/x-portable-bitmap" },
     { "pgm", "image/x-portable-graymap" },
