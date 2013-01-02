@@ -363,6 +363,8 @@ storage/domstorage/localstorage/close-idle-localstorage-databases-immediately.ht
 # https://bugs.webkit.org/show_bug.cgi?id=105266
 plugins/npruntime/embed-property-iframe-equality.html
 
+webkit.org/b/105952 fast/loader/submit-form-while-parsing-2.html [ Pass Failure ]
+
 ### END OF (1) Classified failures with bug reports
 ########################################
 
