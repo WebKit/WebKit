@@ -1,3 +1,9 @@
+2013-01-02  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Don't include a header that has been removed in r138413.
+
+        * WebProcess/win/WebProcessWin.cpp:
+
 2013-01-02  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [WK2] Rename SetFrameInViewSourceMode to SetMainFrameInViewSourceMode
