@@ -1,3 +1,25 @@
+2013-01-02  Filip Pizlo  <fpizlo@apple.com>
+
+        DFG inliner should not use the callee's bytecode variable for resolving references to the callee in inlined code
+        https://bugs.webkit.org/show_bug.cgi?id=105938
+
+        Reviewed by Mark Hahnenberg.
+        
+        This simplifies a bunch of code for referring to the callee. It also ought to simplify how we do
+        closure call inlining: for inlined closure call frames we will simply require that the callee is
+        already stashed on the stack in the Callee slot in the inline call frame header.
+
+        * dfg/DFGByteCodeParser.cpp:
+        (ByteCodeParser):
+        (JSC::DFG::ByteCodeParser::getDirect):
+        (JSC::DFG::ByteCodeParser::get):
+        (InlineStackEntry):
+        (JSC::DFG::ByteCodeParser::InlineStackEntry::remapOperand):
+        (JSC::DFG::ByteCodeParser::handleCall):
+        (JSC::DFG::ByteCodeParser::handleInlining):
+        (JSC::DFG::ByteCodeParser::InlineStackEntry::InlineStackEntry):
+        (JSC::DFG::ByteCodeParser::parse):
+
 2013-01-02  Ryosuke Niwa  <rniwa@webkit.org>
 
         Another Windows port build fix attempt. Try not exporting this symbol from JSC

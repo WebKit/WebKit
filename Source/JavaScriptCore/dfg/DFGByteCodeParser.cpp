@@ -162,7 +162,7 @@ private:
     void handleCall(Interpreter*, Instruction* currentInstruction, NodeType op, CodeSpecializationKind);
     void emitFunctionCheck(JSFunction* expectedFunction, NodeIndex callTarget, int registerOffset, CodeSpecializationKind);
     // Handle inlining. Return true if it succeeded, false if we need to plant a call.
-    bool handleInlining(bool usesResult, int callTarget, NodeIndex callTargetNodeIndex, int resultOperand, bool certainAboutExpectedFunction, JSFunction*, int registerOffset, int argumentCountIncludingThis, unsigned nextOffset, CodeSpecializationKind);
+    bool handleInlining(bool usesResult, NodeIndex callTargetNodeIndex, int resultOperand, bool certainAboutExpectedFunction, JSFunction*, int registerOffset, int argumentCountIncludingThis, unsigned nextOffset, CodeSpecializationKind);
     // Handle setting the result of an intrinsic.
     void setIntrinsicResult(bool usesResult, int resultOperand, NodeIndex);
     // Handle intrinsic functions. Return true if it succeeded, false if we need to plant a call.
@@ -218,8 +218,7 @@ private:
             return getJSConstant(constant);
         }
 
-        if (operand == JSStack::Callee)
-            return getCallee();
+        ASSERT(operand != JSStack::Callee);
         
         // Is this an argument?
         if (operandIsArgument(operand))
@@ -230,6 +229,13 @@ private:
     }
     NodeIndex get(int operand)
     {
+        if (operand == JSStack::Callee) {
+            if (m_inlineStackTop->m_inlineCallFrame)
+                return cellConstant(m_inlineStackTop->m_inlineCallFrame->callee.get());
+            
+            return getCallee();
+        }
+        
         return getDirect(m_inlineStackTop->remapOperand(operand));
     }
     enum SetMode { NormalSet, SetOnEntry };
@@ -1153,7 +1159,6 @@ private:
         CodeBlock* m_codeBlock;
         CodeBlock* m_profiledBlock;
         InlineCallFrame* m_inlineCallFrame;
-        VirtualRegister m_calleeVR; // absolute virtual register, not relative to call frame
         
         ScriptExecutable* executable() { return m_codeBlock->ownerExecutable(); }
         
@@ -1217,7 +1222,6 @@ private:
             CodeBlock*,
             CodeBlock* profiledBlock,
             BlockIndex callsiteBlockHead,
-            VirtualRegister calleeVR,
             JSFunction* callee,
             VirtualRegister returnValueVR,
             VirtualRegister inlineCallFrameStart,
@@ -1240,8 +1244,7 @@ private:
                 return result;
             }
 
-            if (operand == JSStack::Callee)
-                return m_calleeVR;
+            ASSERT(operand != JSStack::Callee);
 
             return operand + m_inlineCallFrame->stackOffset;
         }
@@ -1386,7 +1389,7 @@ void ByteCodeParser::handleCall(Interpreter* interpreter, Instruction* currentIn
                 
                 return;
             }
-        } else if (handleInlining(usesResult, currentInstruction[1].u.operand, callTarget, resultOperand, certainAboutExpectedFunction, expectedFunction, registerOffset, argumentCountIncludingThis, nextOffset, kind))
+        } else if (handleInlining(usesResult, callTarget, resultOperand, certainAboutExpectedFunction, expectedFunction, registerOffset, argumentCountIncludingThis, nextOffset, kind))
             return;
     }
     
@@ -1403,7 +1406,7 @@ void ByteCodeParser::emitFunctionCheck(JSFunction* expectedFunction, NodeIndex c
     addToGraph(CheckFunction, OpInfo(expectedFunction), callTarget, thisArgument);
 }
 
-bool ByteCodeParser::handleInlining(bool usesResult, int callTarget, NodeIndex callTargetNodeIndex, int resultOperand, bool certainAboutExpectedFunction, JSFunction* expectedFunction, int registerOffset, int argumentCountIncludingThis, unsigned nextOffset, CodeSpecializationKind kind)
+bool ByteCodeParser::handleInlining(bool usesResult, NodeIndex callTargetNodeIndex, int resultOperand, bool certainAboutExpectedFunction, JSFunction* expectedFunction, int registerOffset, int argumentCountIncludingThis, unsigned nextOffset, CodeSpecializationKind kind)
 {
     // First, the really simple checks: do we have an actual JS function?
     if (!expectedFunction)
@@ -1481,8 +1484,7 @@ bool ByteCodeParser::handleInlining(bool usesResult, int callTarget, NodeIndex c
 
     InlineStackEntry inlineStackEntry(
         this, codeBlock, profiledBlock, m_graph.m_blocks.size() - 1,
-        (VirtualRegister)m_inlineStackTop->remapOperand(callTarget), expectedFunction,
-        (VirtualRegister)m_inlineStackTop->remapOperand(
+        expectedFunction, (VirtualRegister)m_inlineStackTop->remapOperand(
             usesResult ? resultOperand : InvalidVirtualRegister),
         (VirtualRegister)inlineCallFrameStart, argumentCountIncludingThis, kind);
     
@@ -3495,7 +3497,6 @@ ByteCodeParser::InlineStackEntry::InlineStackEntry(
     CodeBlock* codeBlock,
     CodeBlock* profiledBlock,
     BlockIndex callsiteBlockHead,
-    VirtualRegister calleeVR,
     JSFunction* callee,
     VirtualRegister returnValueVR,
     VirtualRegister inlineCallFrameStart,
@@ -3504,7 +3505,6 @@ ByteCodeParser::InlineStackEntry::InlineStackEntry(
     : m_byteCodeParser(byteCodeParser)
     , m_codeBlock(codeBlock)
     , m_profiledBlock(profiledBlock)
-    , m_calleeVR(calleeVR)
     , m_exitProfile(profiledBlock->exitProfile())
     , m_callsiteBlockHead(callsiteBlockHead)
     , m_returnValue(returnValueVR)
@@ -3530,7 +3530,6 @@ ByteCodeParser::InlineStackEntry::InlineStackEntry(
         // Inline case.
         ASSERT(codeBlock != byteCodeParser->m_codeBlock);
         ASSERT(callee);
-        ASSERT(calleeVR != InvalidVirtualRegister);
         ASSERT(inlineCallFrameStart != InvalidVirtualRegister);
         ASSERT(callsiteBlockHead != NoBlock);
         
@@ -3632,7 +3631,6 @@ ByteCodeParser::InlineStackEntry::InlineStackEntry(
         // Machine code block case.
         ASSERT(codeBlock == byteCodeParser->m_codeBlock);
         ASSERT(!callee);
-        ASSERT(calleeVR == InvalidVirtualRegister);
         ASSERT(returnValueVR == InvalidVirtualRegister);
         ASSERT(inlineCallFrameStart == InvalidVirtualRegister);
         ASSERT(callsiteBlockHead == NoBlock);
@@ -3773,9 +3771,8 @@ bool ByteCodeParser::parse()
 #endif
     
     InlineStackEntry inlineStackEntry(
-        this, m_codeBlock, m_profiledBlock, NoBlock, InvalidVirtualRegister, 0,
-        InvalidVirtualRegister, InvalidVirtualRegister, m_codeBlock->numParameters(),
-        CodeForCall);
+        this, m_codeBlock, m_profiledBlock, NoBlock, 0, InvalidVirtualRegister, InvalidVirtualRegister,
+        m_codeBlock->numParameters(), CodeForCall);
     
     parseCodeBlock();
 
