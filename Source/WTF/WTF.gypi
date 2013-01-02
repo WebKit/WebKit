@@ -81,7 +81,6 @@
             'wtf/PassRefPtr.h',
             'wtf/PassTraits.h',
             'wtf/Platform.h',
-            'wtf/Platform.h',
             'wtf/PossiblyNull.h',
             'wtf/PrintStream.h',
             'wtf/RandomNumber.h',
