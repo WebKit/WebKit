@@ -130,17 +130,6 @@ bool LevelDBTransaction::safeGet(const LevelDBSlice& key, Vector<char>& value, b
     return true;
 }
 
-bool LevelDBTransaction::get(const LevelDBSlice& key, Vector<char>& value)
-{
-    bool found = false;
-    bool ok = safeGet(key, value, found);
-    if (!ok) {
-        ASSERT(!found);
-        ASSERT_NOT_REACHED();
-    }
-    return ok && found;
-}
-
 bool LevelDBTransaction::commit()
 {
     ASSERT(!m_finished);

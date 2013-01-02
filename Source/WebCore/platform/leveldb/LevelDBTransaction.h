@@ -54,9 +54,8 @@ public:
     ~LevelDBTransaction();
     void put(const LevelDBSlice& key, const Vector<char>& value);
     void remove(const LevelDBSlice& key);
+    // FIXME: Rename safeGet to get.
     bool safeGet(const LevelDBSlice& key, Vector<char>& value, bool& found);
-    // FIXME: Convert all callers of get to safeGet then remove get.
-    bool get(const LevelDBSlice& key, Vector<char>& value);
     bool commit();
     void rollback();
 

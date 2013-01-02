@@ -1556,7 +1556,13 @@ bool IndexKeyCursorImpl::loadCurrentRow()
     Vector<char> primaryLevelDBKey = ObjectStoreDataKey::encode(indexDataKey.databaseId(), indexDataKey.objectStoreId(), *m_primaryKey);
 
     Vector<char> result;
-    if (!m_transaction->get(primaryLevelDBKey, result)) {
+    bool found = false;
+    bool ok = m_transaction->safeGet(primaryLevelDBKey, result, found);
+    if (!ok) {
+        INTERNAL_READ_ERROR(LoadCurrentRow);
+        return false;
+    }
+    if (!found) {
         m_transaction->remove(m_iterator->key());
         return false;
     }
@@ -1641,7 +1647,13 @@ bool IndexCursorImpl::loadCurrentRow()
     m_primaryLevelDBKey = ObjectStoreDataKey::encode(indexDataKey.databaseId(), indexDataKey.objectStoreId(), *m_primaryKey);
 
     Vector<char> result;
-    if (!m_transaction->get(m_primaryLevelDBKey, result)) {
+    bool found = false;
+    bool ok = m_transaction->safeGet(m_primaryLevelDBKey, result, found);
+    if (!ok) {
+        INTERNAL_READ_ERROR(LoadCurrentRow);
+        return false;
+    }
+    if (!found) {
         m_transaction->remove(m_iterator->key());
         return false;
     }

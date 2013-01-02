@@ -128,11 +128,13 @@ TEST(LevelDBDatabaseTest, Transaction)
     success = leveldb->put(key, newValue);
     EXPECT_TRUE(success);
 
-    success = transaction->get(key, gotValue);
+    bool found = false;
+    success = transaction->safeGet(key, gotValue, found);
     EXPECT_TRUE(success);
+    EXPECT_TRUE(found);
     EXPECT_EQ(comparator.compare(gotValue, oldValue), 0);
 
-    bool found = false;
+    found = false;
     success = leveldb->safeGet(key, gotValue, found);
     EXPECT_TRUE(success);
     EXPECT_TRUE(found);
@@ -148,8 +150,9 @@ TEST(LevelDBDatabaseTest, Transaction)
     EXPECT_TRUE(found);
     EXPECT_EQ(comparator.compare(gotValue, addedValue), 0);
 
-    success = transaction->get(addedKey, gotValue);
-    EXPECT_FALSE(success);
+    success = transaction->safeGet(addedKey, gotValue, found);
+    EXPECT_TRUE(success);
+    EXPECT_FALSE(found);
 }
 
 TEST(LevelDBDatabaseTest, TransactionIterator)
