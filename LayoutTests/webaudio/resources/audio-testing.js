@@ -174,3 +174,19 @@ function grainLengthInSampleFrames(grainOffset, duration, sampleRate) {
 function isValidNumber(x) {
     return !isNaN(x) && (x != Infinity) && (x != -Infinity);
 }
+
+function shouldThrowTypeError(func, text) {
+    var ok = false;
+    try {
+        func();
+    } catch (e) {
+        if (e instanceof TypeError) {
+            ok = true;
+        }
+    }
+    if (ok) {
+        testPassed(text + " threw TypeError.");
+    } else {
+        testFailed(text + " should throw TypeError.");
+    }
+}

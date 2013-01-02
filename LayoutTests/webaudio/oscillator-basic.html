@@ -20,11 +20,11 @@ description("Basic test of setting Oscillator node types.");
 var sampleRate = 44100;
 var renderLengthSeconds = 0.25;
 
-var oscTypes = [{type: 0, name: "SINE"},
-                {type: 1, name: "SQUARE"},
-                {type: 2, name: "SAWTOOTH"},
-                {type: 3, name: "TRIANGLE"},
-                {type: 4, name: "CUSTOM"}];
+var oscTypes = [{type: "sine", integerType: 0, name: "SINE"},
+                {type: "square", integerType: 1, name: "SQUARE"},
+                {type: "sawtooth", integerType: 2, name: "SAWTOOTH"},
+                {type: "triangle", integerType: 3, name: "TRIANGLE"},
+                {type: "custom", integerType: 4, name: "CUSTOM"}];
 
 function runTest() 
 {
@@ -40,12 +40,23 @@ function runTest()
     var osc = context.createOscillator();
 
     // Set each possible oscillator type (except CUSTOM) and verify that the type is correct.
+    // Here we're setting the type using WebIDL enum values which are strings.
     for (var k = 0; k < oscTypes.length - 1; ++k) {
-        osc.type = oscTypes[k].type
+        osc.type = oscTypes[k].type;
         if (osc.type == oscTypes[k].type)
             testPassed("Oscillator correctly set to " + oscTypes[k].name + " type.");
         else
             testFailed("Oscillator set to " + oscTypes[k].name + " type, but returns " + oscTypes[osc.type].name + " type.");
+    }
+
+    // For legacy support, verify that we can set the type attribute as an integer value and
+    // verify that this translates correctly to the WebIDL enum value.
+    for (var k = 0; k < oscTypes.length - 1; ++k) {
+        osc.type = oscTypes[k].integerType;
+        if (osc.type == oscTypes[k].type)
+            testPassed("Oscillator correctly set to " + oscTypes[k].name + " type using legacy integer value.");
+        else
+            testFailed("Oscillator set to " + oscTypes[k].name + " type, but returns " + oscTypes[osc.type].name + " type using legacy integer value.");
     }
 
     // Now set a custom oscillator
@@ -53,14 +64,14 @@ function runTest()
     var coeffB = new Float32Array([0, 0, 0]);        
     var wavetable = context.createWaveTable(coeffA, coeffB);
     osc.setWaveTable(wavetable);
-    if (osc.type == osc.CUSTOM)
+    if (osc.type == "custom")
         testPassed("Oscillator correctly set to CUSTOM type using setWaveTable.");
     else
         testFailed("Oscillator set to CUSTOM type, but returns " + oscTypes[osc.type].name + " type.");
 
     // Try setting some invalid types
     try {
-        osc.type = osc.CUSTOM;
+        osc.type = "custom";
         testFailed("Directly setting oscillator type to CUSTOM did not throw exception.");
     } catch (e) {
         testPassed("Directly setting oscillator type to CUSTOM correctly throws exception.");
@@ -73,6 +84,10 @@ function runTest()
     } catch (e) {
         testPassed("Setting oscillator to invalid type " + oscType + " correctly throws exception.");
     }
+
+    // Check specifically that we throw a TypeError.
+    shouldThrowTypeError(function() { osc.type = "xyz12349jfksd"; }, "Setting .type to illegal string value");
+    shouldThrowTypeError(function() { osc.type = new Float32Array(1); }, "Setting .type to illegal type of Float32Array");
 
     finishJSTest();
 }

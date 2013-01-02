@@ -6,9 +6,15 @@ PASS Oscillator correctly set to SINE type.
 PASS Oscillator correctly set to SQUARE type.
 PASS Oscillator correctly set to SAWTOOTH type.
 PASS Oscillator correctly set to TRIANGLE type.
+PASS Oscillator correctly set to SINE type using legacy integer value.
+PASS Oscillator correctly set to SQUARE type using legacy integer value.
+PASS Oscillator correctly set to SAWTOOTH type using legacy integer value.
+PASS Oscillator correctly set to TRIANGLE type using legacy integer value.
 PASS Oscillator correctly set to CUSTOM type using setWaveTable.
 PASS Directly setting oscillator type to CUSTOM correctly throws exception.
 PASS Setting oscillator to invalid type 5 correctly throws exception.
+PASS Setting .type to illegal string value threw TypeError.
+PASS Setting .type to illegal type of Float32Array threw TypeError.
 PASS successfullyParsed is true
 
 TEST COMPLETE

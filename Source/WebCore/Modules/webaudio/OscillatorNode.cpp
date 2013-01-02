@@ -69,8 +69,7 @@ OscillatorNode::OscillatorNode(AudioContext* context, float sampleRate)
     m_detune = AudioParam::create(context, "detune", 0, -4800, 4800);
 
     // Sets up default wavetable.
-    ExceptionCode ec;
-    setType(m_type, ec);
+    setType(m_type);
 
     // An oscillator is always mono.
     addOutput(adoptPtr(new AudioNodeOutput(this, 1)));
@@ -83,7 +82,40 @@ OscillatorNode::~OscillatorNode()
     uninitialize();
 }
 
-void OscillatorNode::setType(unsigned short type, ExceptionCode& ec)
+String OscillatorNode::type() const
+{
+    switch (m_type) {
+    case SINE:
+        return "sine";
+    case SQUARE:
+        return "square";
+    case SAWTOOTH:
+        return "sawtooth";
+    case TRIANGLE:
+        return "triangle";
+    case CUSTOM:
+        return "custom";
+    default:
+        ASSERT_NOT_REACHED();
+        return "custom";
+    }
+}
+
+void OscillatorNode::setType(const String& type)
+{
+    if (type == "sine")
+        setType(SINE);
+    else if (type == "square")
+        setType(SQUARE);
+    else if (type == "sawtooth")
+        setType(SAWTOOTH);
+    else if (type == "triangle")
+        setType(TRIANGLE);
+    else
+        ASSERT_NOT_REACHED();
+}
+
+bool OscillatorNode::setType(unsigned type)
 {
     WaveTable* waveTable = 0;
     float sampleRate = this->sampleRate();
@@ -111,14 +143,14 @@ void OscillatorNode::setType(unsigned short type, ExceptionCode& ec)
         break;
     case CUSTOM:
     default:
-        // Throw exception for invalid types, including CUSTOM since setWaveTable() method must be
+        // Return error for invalid types, including CUSTOM since setWaveTable() method must be
         // called explicitly.
-        ec = NOT_SUPPORTED_ERR;
-        return;
+        return false;
     }
 
     setWaveTable(waveTable);
     m_type = type;
+    return true;
 }
 
 bool OscillatorNode::calculateSampleAccuratePhaseIncrements(size_t framesToProcess)

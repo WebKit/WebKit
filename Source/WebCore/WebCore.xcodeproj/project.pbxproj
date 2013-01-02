@@ -6641,6 +6641,7 @@
 		FDB052E01561A42C00B500D6 /* AudioSummingJunction.h in Headers */ = {isa = PBXBuildFile; fileRef = FDB052DE1561A42C00B500D6 /* AudioSummingJunction.h */; };
 		FDB1700514A2BAB200A2B5D9 /* MultiChannelResampler.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FDB1700314A2BAB200A2B5D9 /* MultiChannelResampler.cpp */; };
 		FDB1700614A2BAB200A2B5D9 /* MultiChannelResampler.h in Headers */ = {isa = PBXBuildFile; fileRef = FDB1700414A2BAB200A2B5D9 /* MultiChannelResampler.h */; };
+		FDBD1DFC167FE27D0051A11E /* JSOscillatorNodeCustom.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FDBD1DFB167FE27D0051A11E /* JSOscillatorNodeCustom.cpp */; };
 		FDBD480C159BC6870093EB4F /* JSMediaStreamAudioSourceNode.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FDBD480A159BC6870093EB4F /* JSMediaStreamAudioSourceNode.cpp */; };
 		FDBD480D159BC6870093EB4F /* JSMediaStreamAudioSourceNode.h in Headers */ = {isa = PBXBuildFile; fileRef = FDBD480B159BC6870093EB4F /* JSMediaStreamAudioSourceNode.h */; };
 		FDC54F041399B0DA008D9117 /* BiquadFilterNode.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FDC54F011399B0DA008D9117 /* BiquadFilterNode.cpp */; };
@@ -14218,6 +14219,7 @@
 		FDB052DE1561A42C00B500D6 /* AudioSummingJunction.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AudioSummingJunction.h; sourceTree = "<group>"; };
 		FDB1700314A2BAB200A2B5D9 /* MultiChannelResampler.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MultiChannelResampler.cpp; sourceTree = "<group>"; };
 		FDB1700414A2BAB200A2B5D9 /* MultiChannelResampler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MultiChannelResampler.h; sourceTree = "<group>"; };
+		FDBD1DFB167FE27D0051A11E /* JSOscillatorNodeCustom.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSOscillatorNodeCustom.cpp; sourceTree = "<group>"; };
 		FDBD480A159BC6870093EB4F /* JSMediaStreamAudioSourceNode.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSMediaStreamAudioSourceNode.cpp; sourceTree = "<group>"; };
 		FDBD480B159BC6870093EB4F /* JSMediaStreamAudioSourceNode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSMediaStreamAudioSourceNode.h; sourceTree = "<group>"; };
 		FDC54F011399B0DA008D9117 /* BiquadFilterNode.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = BiquadFilterNode.cpp; sourceTree = "<group>"; };
@@ -20733,6 +20735,7 @@
 				1A750DD30A90E729000FF215 /* JSNodeIteratorCustom.cpp */,
 				BCD9C2610C17AA67005C90A2 /* JSNodeListCustom.cpp */,
 				31FE6E6C1501A3BF0004EBC4 /* JSNotificationCustom.cpp */,
+				FDBD1DFB167FE27D0051A11E /* JSOscillatorNodeCustom.cpp */,
 				A85F22081430377D007CC884 /* JSPopStateEventCustom.cpp */,
 				E1AD12D51295D0BD00ACA989 /* JSProcessingInstructionCustom.cpp */,
 				4998AED313FC417F0090B1AA /* JSRequestAnimationFrameCallbackCustom.cpp */,
@@ -29128,6 +29131,7 @@
 				415071571685067300C3C7B3 /* SelectorFilter.cpp in Sources */,
 				419BC2DE1685329900D64D6D /* VisitedLinkState.cpp in Sources */,
 				5DA97ECE168E787B000E3676 /* SystemVersionMac.mm in Sources */,
+				FDBD1DFC167FE27D0051A11E /* JSOscillatorNodeCustom.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

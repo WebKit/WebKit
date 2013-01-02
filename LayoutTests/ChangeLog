@@ -1,3 +1,14 @@
+2013-01-02  Chris Rogers  <crogers@google.com>
+
+        Implement WebIDL-style string constants in WebAudio
+        https://bugs.webkit.org/show_bug.cgi?id=105058
+
+        Reviewed by Kentaro Hara.
+
+        * webaudio/oscillator-basic-expected.txt:
+        * webaudio/oscillator-basic.html:
+        * webaudio/resources/audio-testing.js:
+
 2013-01-02  Robert Hogan  <robert@webkit.org>
 
         Regression (r132935): WebKit breaks between <nobr> tags

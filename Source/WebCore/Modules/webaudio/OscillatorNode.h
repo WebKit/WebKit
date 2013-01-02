@@ -60,8 +60,10 @@ public:
     virtual void process(size_t framesToProcess);
     virtual void reset();
 
-    unsigned short type() const { return m_type; }
-    void setType(unsigned short, ExceptionCode&);
+    String type() const;
+
+    bool setType(unsigned); // Returns true on success.
+    void setType(const String&);
 
     AudioParam* frequency() { return m_frequency.get(); }
     AudioParam* detune() { return m_detune.get(); }

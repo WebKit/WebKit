@@ -35,8 +35,7 @@
     const unsigned short TRIANGLE = 3;
     const unsigned short CUSTOM = 4;
 
-    attribute unsigned short type
-        setter raises(DOMException);        
+    [CustomSetter] attribute DOMString type;
 
     // Playback state constants.
     const unsigned short UNSCHEDULED_STATE = 0;
