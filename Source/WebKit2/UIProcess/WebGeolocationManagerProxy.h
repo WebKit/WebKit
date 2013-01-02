@@ -28,6 +28,7 @@
 
 #include "APIObject.h"
 #include "MessageReceiver.h"
+#include "WebContextSupplement.h"
 #include "WebGeolocationProvider.h"
 #include <wtf/text/WTFString.h>
 
@@ -36,25 +37,33 @@ namespace WebKit {
 class WebContext;
 class WebGeolocationPosition;
 
-class WebGeolocationManagerProxy : public APIObject, private CoreIPC::MessageReceiver {
+class WebGeolocationManagerProxy : public APIObject, public WebContextSupplement, private CoreIPC::MessageReceiver {
 public:
     static const Type APIType = TypeGeolocationManager;
 
+    static const AtomicString& supplementName();
+
     static PassRefPtr<WebGeolocationManagerProxy> create(WebContext*);
     virtual ~WebGeolocationManagerProxy();
-
-    void invalidate();
-    void clearContext() { m_context = 0; }
 
     void initializeProvider(const WKGeolocationProvider*);
 
     void providerDidChangePosition(WebGeolocationPosition*);
     void providerDidFailToDeterminePosition(const String& errorMessage = String());
 
+    using APIObject::ref;
+    using APIObject::deref;
+
 private:
     explicit WebGeolocationManagerProxy(WebContext*);
 
     virtual Type type() const { return APIType; }
+
+    // WebContextSupplement
+    virtual void contextDestroyed() OVERRIDE;
+    virtual void processDidClose(WebProcessProxy*) OVERRIDE;
+    virtual void refWebContextSupplement() OVERRIDE;
+    virtual void derefWebContextSupplement() OVERRIDE;
 
     // CoreIPC::MessageReceiver
     virtual void didReceiveMessage(CoreIPC::Connection*, CoreIPC::MessageID, CoreIPC::MessageDecoder&) OVERRIDE;
@@ -67,7 +76,6 @@ private:
 
     bool m_isUpdating;
 
-    WebContext* m_context;
     WebGeolocationProvider m_provider;
 };
 

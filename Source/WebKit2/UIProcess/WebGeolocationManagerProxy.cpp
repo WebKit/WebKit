@@ -32,25 +32,26 @@
 
 namespace WebKit {
 
+const AtomicString& WebGeolocationManagerProxy::supplementName()
+{
+    DEFINE_STATIC_LOCAL(AtomicString, name, ("WebGeolocationManagerProxy", AtomicString::ConstructFromLiteral));
+    return name;
+}
+
 PassRefPtr<WebGeolocationManagerProxy> WebGeolocationManagerProxy::create(WebContext* context)
 {
     return adoptRef(new WebGeolocationManagerProxy(context));
 }
 
 WebGeolocationManagerProxy::WebGeolocationManagerProxy(WebContext* context)
-    : m_isUpdating(false)
-    , m_context(context)
+    : WebContextSupplement(context)
+    , m_isUpdating(false)
 {
-    m_context->addMessageReceiver(Messages::WebGeolocationManagerProxy::messageReceiverName(), this);
+    WebContextSupplement::context()->addMessageReceiver(Messages::WebGeolocationManagerProxy::messageReceiverName(), this);
 }
 
 WebGeolocationManagerProxy::~WebGeolocationManagerProxy()
 {
-}
-
-void WebGeolocationManagerProxy::invalidate()
-{
-    stopUpdating();
 }
 
 void WebGeolocationManagerProxy::initializeProvider(const WKGeolocationProvider* provider)
@@ -58,25 +59,49 @@ void WebGeolocationManagerProxy::initializeProvider(const WKGeolocationProvider*
     m_provider.initialize(provider);
 }
 
-void WebGeolocationManagerProxy::providerDidChangePosition(WebGeolocationPosition* position)
-{
-    if (!m_context)
-        return;
+// WebContextSupplement
 
-    m_context->sendToAllProcesses(Messages::WebGeolocationManager::DidChangePosition(position->data()));
+void WebGeolocationManagerProxy::contextDestroyed()
+{
+    stopUpdating();
 }
 
-void WebGeolocationManagerProxy::providerDidFailToDeterminePosition(const String& errorMessage)
+void WebGeolocationManagerProxy::processDidClose(WebProcessProxy*)
 {
-    if (!m_context)
-        return;
-
-    m_context->sendToAllProcesses(Messages::WebGeolocationManager::DidFailToDeterminePosition(errorMessage));
+    stopUpdating();
 }
+
+void WebGeolocationManagerProxy::refWebContextSupplement()
+{
+    APIObject::ref();
+}
+
+void WebGeolocationManagerProxy::derefWebContextSupplement()
+{
+    APIObject::deref();
+}
+
+// CoreIPC::MessageReceiver
 
 void WebGeolocationManagerProxy::didReceiveMessage(CoreIPC::Connection* connection, CoreIPC::MessageID messageID, CoreIPC::MessageDecoder& decoder)
 {
     didReceiveWebGeolocationManagerProxyMessage(connection, messageID, decoder);
+}
+
+void WebGeolocationManagerProxy::providerDidChangePosition(WebGeolocationPosition* position)
+{
+    if (!context())
+        return;
+
+    context()->sendToAllProcesses(Messages::WebGeolocationManager::DidChangePosition(position->data()));
+}
+
+void WebGeolocationManagerProxy::providerDidFailToDeterminePosition(const String& errorMessage)
+{
+    if (!context())
+        return;
+
+    context()->sendToAllProcesses(Messages::WebGeolocationManager::DidFailToDeterminePosition(errorMessage));
 }
 
 void WebGeolocationManagerProxy::startUpdating()

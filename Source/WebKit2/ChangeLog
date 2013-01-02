@@ -1,3 +1,165 @@
+2012-12-31  Sam Weinig  <sam@webkit.org>
+
+        Convert more classes to be WebContextSupplements
+        https://bugs.webkit.org/show_bug.cgi?id=105890
+
+        Reviewed by Dan Bernstein.
+
+        * UIProcess/API/C/WKContext.cpp:
+        (WKContextGetCookieManager):
+        (WKContextGetDatabaseManager):
+        (WKContextGetGeolocationManager):
+        (WKContextGetKeyValueStorageManager):
+        (WKContextGetMediaCacheManager):
+        (WKContextGetNotificationManager):
+        (WKContextGetResourceCacheManager):
+        * UIProcess/API/efl/ewk_context.cpp:
+        (EwkContext::cookieManager):
+        (EwkContext::clearResourceCache):
+        * UIProcess/API/efl/ewk_database_manager_private.h:
+        (EwkDatabaseManager::create):
+        * UIProcess/API/efl/ewk_storage_manager_private.h:
+        (EwkStorageManager::create):
+        * UIProcess/API/gtk/WebKitWebContext.cpp:
+        (createDefaultWebContext):
+        (webkit_web_context_clear_cache):
+        (webkit_web_context_get_cookie_manager):
+        * UIProcess/Notifications/WebNotificationManagerProxy.cpp:
+        (WebKit::WebNotificationManagerProxy::supplementName):
+        (WebKit):
+        (WebKit::WebNotificationManagerProxy::WebNotificationManagerProxy):
+        (WebKit::WebNotificationManagerProxy::initializeProvider):
+        (WebKit::WebNotificationManagerProxy::contextDestroyed):
+        (WebKit::WebNotificationManagerProxy::processDidClose):
+        (WebKit::WebNotificationManagerProxy::refWebContextSupplement):
+        (WebKit::WebNotificationManagerProxy::derefWebContextSupplement):
+        (WebKit::WebNotificationManagerProxy::didReceiveMessage):
+        (WebKit::WebNotificationManagerProxy::providerDidShowNotification):
+        (WebKit::WebNotificationManagerProxy::providerDidClickNotification):
+        (WebKit::WebNotificationManagerProxy::providerDidCloseNotifications):
+        (WebKit::WebNotificationManagerProxy::providerDidUpdateNotificationPolicy):
+        (WebKit::WebNotificationManagerProxy::providerDidRemoveNotificationPolicies):
+        * UIProcess/Notifications/WebNotificationManagerProxy.h:
+        (WebNotificationManagerProxy):
+        * UIProcess/WebContext.cpp:
+        (WebKit::WebContext::WebContext):
+        (WebKit::WebContext::~WebContext):
+        (WebKit::WebContext::removeNetworkProcessProxy):
+        (WebKit::WebContext::createNewWebProcess):
+        (WebKit::WebContext::shouldTerminate):
+        (WebKit::WebContext::disconnectProcess):
+        * UIProcess/WebContext.h:
+        (WebKit):
+        (WebContext):
+        (WebKit::WebContext::iconDatabase):
+        * UIProcess/WebContextSupplement.h:
+        (WebKit):
+        (WebKit::WebContextSupplement::contextDestroyed):
+        (WebKit::WebContextSupplement::processDidClose):
+        (WebContextSupplement):
+        (WebKit::WebContextSupplement::shouldTerminate):
+        (WebKit::WebContextSupplement::ref):
+        (WebKit::WebContextSupplement::deref):
+        * UIProcess/WebCookieManagerProxy.cpp:
+        (WebKit::WebCookieManagerProxy::supplementName):
+        (WebKit):
+        (WebKit::WebCookieManagerProxy::WebCookieManagerProxy):
+        (WebKit::WebCookieManagerProxy::initializeClient):
+        (WebKit::WebCookieManagerProxy::contextDestroyed):
+        (WebKit::WebCookieManagerProxy::processDidClose):
+        (WebKit::WebCookieManagerProxy::shouldTerminate):
+        (WebKit::WebCookieManagerProxy::refWebContextSupplement):
+        (WebKit::WebCookieManagerProxy::derefWebContextSupplement):
+        (WebKit::WebCookieManagerProxy::getHostnamesWithCookies):
+        (WebKit::WebCookieManagerProxy::deleteCookiesForHostname):
+        (WebKit::WebCookieManagerProxy::deleteAllCookies):
+        (WebKit::WebCookieManagerProxy::startObservingCookieChanges):
+        (WebKit::WebCookieManagerProxy::stopObservingCookieChanges):
+        (WebKit::WebCookieManagerProxy::setHTTPCookieAcceptPolicy):
+        (WebKit::WebCookieManagerProxy::getHTTPCookieAcceptPolicy):
+        * UIProcess/WebCookieManagerProxy.h:
+        (WebCookieManagerProxy):
+        * UIProcess/WebDatabaseManagerProxy.cpp:
+        (WebKit::WebDatabaseManagerProxy::supplementName):
+        (WebKit):
+        (WebKit::WebDatabaseManagerProxy::WebDatabaseManagerProxy):
+        (WebKit::WebDatabaseManagerProxy::initializeClient):
+        (WebKit::WebDatabaseManagerProxy::contextDestroyed):
+        (WebKit::WebDatabaseManagerProxy::processDidClose):
+        (WebKit::WebDatabaseManagerProxy::refWebContextSupplement):
+        (WebKit::WebDatabaseManagerProxy::derefWebContextSupplement):
+        (WebKit::WebDatabaseManagerProxy::didReceiveMessage):
+        (WebKit::WebDatabaseManagerProxy::getDatabasesByOrigin):
+        (WebKit::WebDatabaseManagerProxy::getDatabaseOrigins):
+        (WebKit::WebDatabaseManagerProxy::deleteDatabaseWithNameForOrigin):
+        (WebKit::WebDatabaseManagerProxy::deleteDatabasesForOrigin):
+        (WebKit::WebDatabaseManagerProxy::deleteAllDatabases):
+        (WebKit::WebDatabaseManagerProxy::setQuotaForOrigin):
+        * UIProcess/WebDatabaseManagerProxy.h:
+        (WebDatabaseManagerProxy):
+        * UIProcess/WebGeolocationManagerProxy.cpp:
+        (WebKit::WebGeolocationManagerProxy::supplementName):
+        (WebKit):
+        (WebKit::WebGeolocationManagerProxy::WebGeolocationManagerProxy):
+        (WebKit::WebGeolocationManagerProxy::initializeProvider):
+        (WebKit::WebGeolocationManagerProxy::contextDestroyed):
+        (WebKit::WebGeolocationManagerProxy::processDidClose):
+        (WebKit::WebGeolocationManagerProxy::refWebContextSupplement):
+        (WebKit::WebGeolocationManagerProxy::derefWebContextSupplement):
+        (WebKit::WebGeolocationManagerProxy::didReceiveMessage):
+        (WebKit::WebGeolocationManagerProxy::providerDidChangePosition):
+        (WebKit::WebGeolocationManagerProxy::providerDidFailToDeterminePosition):
+        * UIProcess/WebGeolocationManagerProxy.h:
+        (WebGeolocationManagerProxy):
+        * UIProcess/WebKeyValueStorageManagerProxy.cpp:
+        (WebKit::WebKeyValueStorageManagerProxy::supplementName):
+        (WebKit):
+        (WebKit::WebKeyValueStorageManagerProxy::WebKeyValueStorageManagerProxy):
+        (WebKit::WebKeyValueStorageManagerProxy::contextDestroyed):
+        (WebKit::WebKeyValueStorageManagerProxy::processDidClose):
+        (WebKit::WebKeyValueStorageManagerProxy::refWebContextSupplement):
+        (WebKit::WebKeyValueStorageManagerProxy::derefWebContextSupplement):
+        (WebKit::WebKeyValueStorageManagerProxy::getKeyValueStorageOrigins):
+        (WebKit::WebKeyValueStorageManagerProxy::deleteEntriesForOrigin):
+        (WebKit::WebKeyValueStorageManagerProxy::deleteAllEntries):
+        * UIProcess/WebKeyValueStorageManagerProxy.h:
+        (WebKeyValueStorageManagerProxy):
+        * UIProcess/WebMediaCacheManagerProxy.cpp:
+        (WebKit::WebMediaCacheManagerProxy::supplementName):
+        (WebKit):
+        (WebKit::WebMediaCacheManagerProxy::WebMediaCacheManagerProxy):
+        (WebKit::WebMediaCacheManagerProxy::contextDestroyed):
+        (WebKit::WebMediaCacheManagerProxy::processDidClose):
+        (WebKit::WebMediaCacheManagerProxy::refWebContextSupplement):
+        (WebKit::WebMediaCacheManagerProxy::derefWebContextSupplement):
+        (WebKit::WebMediaCacheManagerProxy::getHostnamesWithMediaCache):
+        (WebKit::WebMediaCacheManagerProxy::clearCacheForHostname):
+        (WebKit::WebMediaCacheManagerProxy::clearCacheForAllHostnames):
+        * UIProcess/WebMediaCacheManagerProxy.h:
+        (WebMediaCacheManagerProxy):
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::showNotification):
+        * UIProcess/WebResourceCacheManagerProxy.cpp:
+        (WebKit::WebResourceCacheManagerProxy::supplementName):
+        (WebKit):
+        (WebKit::WebResourceCacheManagerProxy::WebResourceCacheManagerProxy):
+        (WebKit::WebResourceCacheManagerProxy::contextDestroyed):
+        (WebKit::WebResourceCacheManagerProxy::processDidClose):
+        (WebKit::WebResourceCacheManagerProxy::refWebContextSupplement):
+        (WebKit::WebResourceCacheManagerProxy::derefWebContextSupplement):
+        (WebKit::WebResourceCacheManagerProxy::didReceiveMessage):
+        (WebKit::WebResourceCacheManagerProxy::getCacheOrigins):
+        (WebKit::WebResourceCacheManagerProxy::clearCacheForOrigin):
+        (WebKit::WebResourceCacheManagerProxy::clearCacheForAllOrigins):
+        * UIProcess/WebResourceCacheManagerProxy.h:
+        (WebResourceCacheManagerProxy):
+        * UIProcess/efl/WebContextEfl.cpp:
+        (WebKit::WebContext::platformInitializeWebProcess):
+        * UIProcess/gtk/WebContextGtk.cpp:
+        (WebKit::WebContext::platformInitializeWebProcess):
+        * UIProcess/qt/WebContextQt.cpp:
+        (WebKit::WebContext::platformInitializeWebProcess):
+
 2013-01-01  Dan Bernstein  <mitz@apple.com>
 
         <rdar://problem/12942239> Update copyright strings

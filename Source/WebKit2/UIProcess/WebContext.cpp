@@ -160,27 +160,26 @@ WebContext::WebContext(ProcessModel processModel, const String& injectedBundlePa
 #if ENABLE(BATTERY_STATUS)
     m_batteryManagerProxy = WebBatteryManagerProxy::create(this);
 #endif
-    m_cookieManagerProxy = WebCookieManagerProxy::create(this);
-#if ENABLE(SQL_DATABASE)
-    m_databaseManagerProxy = WebDatabaseManagerProxy::create(this);
-#endif
-    m_geolocationManagerProxy = WebGeolocationManagerProxy::create(this);
-    m_iconDatabase = WebIconDatabase::create(this);
-    m_keyValueStorageManagerProxy = WebKeyValueStorageManagerProxy::create(this);
-    m_mediaCacheManagerProxy = WebMediaCacheManagerProxy::create(this);
 #if ENABLE(NETWORK_INFO)
     m_networkInfoManagerProxy = WebNetworkInfoManagerProxy::create(this);
 #endif
-    m_notificationManagerProxy = WebNotificationManagerProxy::create(this);
 #if ENABLE(NETSCAPE_PLUGIN_API)
     m_pluginSiteDataManager = WebPluginSiteDataManager::create(this);
 #endif // ENABLE(NETSCAPE_PLUGIN_API)
-    m_resourceCacheManagerProxy = WebResourceCacheManagerProxy::create(this);
 #if USE(SOUP)
     m_soupRequestManagerProxy = WebSoupRequestManagerProxy::create(this);
 #endif
 
     addSupplement<WebApplicationCacheManagerProxy>();
+    addSupplement<WebCookieManagerProxy>();
+    addSupplement<WebGeolocationManagerProxy>();
+    addSupplement<WebKeyValueStorageManagerProxy>();
+    addSupplement<WebMediaCacheManagerProxy>();
+    addSupplement<WebNotificationManagerProxy>();
+    addSupplement<WebResourceCacheManagerProxy>();
+#if ENABLE(SQL_DATABASE)
+    addSupplement<WebDatabaseManagerProxy>();
+#endif
 
     contexts().append(this);
 
@@ -223,41 +222,18 @@ WebContext::~WebContext()
     m_batteryManagerProxy->clearContext();
 #endif
 
-    m_cookieManagerProxy->invalidate();
-    m_cookieManagerProxy->clearContext();
-
-#if ENABLE(SQL_DATABASE)
-    m_databaseManagerProxy->invalidate();
-    m_databaseManagerProxy->clearContext();
-#endif
-    
-    m_geolocationManagerProxy->invalidate();
-    m_geolocationManagerProxy->clearContext();
-
     m_iconDatabase->invalidate();
     m_iconDatabase->clearContext();
     
-    m_keyValueStorageManagerProxy->invalidate();
-    m_keyValueStorageManagerProxy->clearContext();
-
-    m_mediaCacheManagerProxy->invalidate();
-    m_mediaCacheManagerProxy->clearContext();
-
 #if ENABLE(NETWORK_INFO)
     m_networkInfoManagerProxy->invalidate();
     m_networkInfoManagerProxy->clearContext();
 #endif
-    
-    m_notificationManagerProxy->invalidate();
-    m_notificationManagerProxy->clearContext();
 
 #if ENABLE(NETSCAPE_PLUGIN_API)
     m_pluginSiteDataManager->invalidate();
     m_pluginSiteDataManager->clearContext();
 #endif
-
-    m_resourceCacheManagerProxy->invalidate();
-    m_resourceCacheManagerProxy->clearContext();
 
 #if USE(SOUP)
     m_soupRequestManagerProxy->invalidate();
@@ -410,10 +386,13 @@ void WebContext::removeNetworkProcessProxy(NetworkProcessProxy* networkProcessPr
 {
     ASSERT(m_networkProcess);
     ASSERT(networkProcessProxy == m_networkProcess.get());
-    
-    m_networkProcess = nullptr;
 
-    m_cookieManagerProxy->invalidate();
+    WebContextSupplementMap::const_iterator it = m_supplements.begin();
+    WebContextSupplementMap::const_iterator end = m_supplements.end();
+    for (; it != end; ++it)
+        it->value->processDidClose(networkProcessProxy);
+
+    m_networkProcess = nullptr;
 }
 
 void WebContext::getNetworkProcessConnection(PassRefPtr<Messages::WebProcessProxy::GetNetworkProcessConnection::DelayedReply> reply)
@@ -530,7 +509,8 @@ WebProcessProxy* WebContext::createNewWebProcess()
     parameters.defaultRequestTimeoutInterval = WebURLRequest::defaultTimeoutInterval();
 
 #if ENABLE(NOTIFICATIONS) || ENABLE(LEGACY_NOTIFICATIONS)
-    m_notificationManagerProxy->populateCopyOfNotificationPermissions(parameters.notificationPermissions);
+    // FIXME: There should be a generic way for supplements to add to the intialization parameters.
+    supplement<WebNotificationManagerProxy>()->populateCopyOfNotificationPermissions(parameters.notificationPermissions);
 #endif
 
 #if ENABLE(NETWORK_PROCESS)
@@ -604,22 +584,10 @@ bool WebContext::shouldTerminate(WebProcessProxy* process)
             return false;
     }
 
-    if (!m_cookieManagerProxy->shouldTerminate(process))
-        return false;
-#if ENABLE(SQL_DATABASE)
-    if (!m_databaseManagerProxy->shouldTerminate(process))
-        return false;
-#endif
-    if (!m_keyValueStorageManagerProxy->shouldTerminate(process))
-        return false;
-    if (!m_mediaCacheManagerProxy->shouldTerminate(process))
-        return false;
 #if ENABLE(NETSCAPE_PLUGIN_API)
     if (!m_pluginSiteDataManager->shouldTerminate(process))
         return false;
 #endif
-    if (!m_resourceCacheManagerProxy->shouldTerminate(process))
-        return false;
 
     return true;
 }
@@ -669,18 +637,9 @@ void WebContext::disconnectProcess(WebProcessProxy* process)
 #if ENABLE(BATTERY_STATUS)
     m_batteryManagerProxy->invalidate();
 #endif
-    m_cookieManagerProxy->invalidate();
-#if ENABLE(SQL_DATABASE)
-    m_databaseManagerProxy->invalidate();
-#endif
-    m_geolocationManagerProxy->invalidate();
-    m_keyValueStorageManagerProxy->invalidate();
-    m_mediaCacheManagerProxy->invalidate();
 #if ENABLE(NETWORK_INFO)
     m_networkInfoManagerProxy->invalidate();
 #endif
-    m_notificationManagerProxy->invalidate();
-    m_resourceCacheManagerProxy->invalidate();
 #if USE(SOUP)
     m_soupRequestManagerProxy->invalidate();
 #endif

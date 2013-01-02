@@ -30,6 +30,7 @@
 #include "GenericCallback.h"
 #include "ImmutableArray.h"
 #include "MessageReceiver.h"
+#include "WebContextSupplement.h"
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefPtr.h>
 #include <wtf/Vector.h>
@@ -41,21 +42,21 @@ class WebProcessProxy;
 
 typedef GenericCallback<WKArrayRef> ArrayCallback;
 
-class WebMediaCacheManagerProxy : public APIObject, private CoreIPC::MessageReceiver {
+class WebMediaCacheManagerProxy : public APIObject, public WebContextSupplement, private CoreIPC::MessageReceiver {
 public:
     static const Type APIType = TypeMediaCacheManager;
 
+    static const AtomicString& supplementName();
+
     static PassRefPtr<WebMediaCacheManagerProxy> create(WebContext*);
     virtual ~WebMediaCacheManagerProxy();
-
-    void invalidate();
-    void clearContext() { m_webContext = 0; }
     
     void getHostnamesWithMediaCache(PassRefPtr<ArrayCallback>);
     void clearCacheForHostname(const String&);
     void clearCacheForAllHostnames();
 
-    bool shouldTerminate(WebProcessProxy*) const;
+    using APIObject::ref;
+    using APIObject::deref;
 
 private:
     explicit WebMediaCacheManagerProxy(WebContext*);
@@ -64,11 +65,17 @@ private:
 
     void didGetHostnamesWithMediaCache(const Vector<String>&, uint64_t callbackID);
 
+    // WebContextSupplement
+    virtual void contextDestroyed() OVERRIDE;
+    virtual void processDidClose(WebProcessProxy*) OVERRIDE;
+    virtual bool shouldTerminate(WebProcessProxy*) const OVERRIDE;
+    virtual void refWebContextSupplement() OVERRIDE;
+    virtual void derefWebContextSupplement() OVERRIDE;
+
     // CoreIPC::MessageReceiver
     virtual void didReceiveMessage(CoreIPC::Connection*, CoreIPC::MessageID, CoreIPC::MessageDecoder&) OVERRIDE;
     void didReceiveWebMediaCacheManagerProxyMessage(CoreIPC::Connection*, CoreIPC::MessageID, CoreIPC::MessageDecoder&);
 
-    WebContext* m_webContext;
     HashMap<uint64_t, RefPtr<ArrayCallback> > m_arrayCallbacks;
 };
 

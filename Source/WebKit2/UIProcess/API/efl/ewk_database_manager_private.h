@@ -40,7 +40,7 @@ public:
     static PassOwnPtr<EwkDatabaseManager> create(PassRefPtr<WebContext> context)
     {
         ASSERT(context);
-        return adoptPtr(new EwkDatabaseManager(context->databaseManagerProxy()));
+        return adoptPtr(new EwkDatabaseManager(context->supplement<WebDatabaseManagerProxy>()));
     }
 
     Eina_List* createOriginList(WKArrayRef wkList) const;

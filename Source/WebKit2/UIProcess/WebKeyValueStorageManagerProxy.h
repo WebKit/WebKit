@@ -30,6 +30,7 @@
 #include "GenericCallback.h"
 #include "ImmutableArray.h"
 #include "MessageReceiver.h"
+#include "WebContextSupplement.h"
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefPtr.h>
 #include <wtf/Vector.h>
@@ -43,21 +44,21 @@ class WebSecurityOrigin;
 
 typedef GenericCallback<WKArrayRef> ArrayCallback;
 
-class WebKeyValueStorageManagerProxy : public APIObject, private CoreIPC::MessageReceiver {
+class WebKeyValueStorageManagerProxy : public APIObject, public WebContextSupplement, private CoreIPC::MessageReceiver {
 public:
     static const Type APIType = TypeKeyValueStorageManager;
+
+    static const AtomicString& supplementName();
 
     static PassRefPtr<WebKeyValueStorageManagerProxy> create(WebContext*);
     virtual ~WebKeyValueStorageManagerProxy();
 
-    void invalidate();
-    void clearContext() { m_webContext = 0; }
-    
     void getKeyValueStorageOrigins(PassRefPtr<ArrayCallback>);
     void deleteEntriesForOrigin(WebSecurityOrigin*);
     void deleteAllEntries();
 
-    bool shouldTerminate(WebProcessProxy*) const;
+    using APIObject::ref;
+    using APIObject::deref;
 
 private:
     explicit WebKeyValueStorageManagerProxy(WebContext*);
@@ -66,11 +67,17 @@ private:
 
     void didGetKeyValueStorageOrigins(const Vector<SecurityOriginData>&, uint64_t callbackID);
 
+    // WebContextSupplement
+    virtual void contextDestroyed() OVERRIDE;
+    virtual void processDidClose(WebProcessProxy*) OVERRIDE;
+    virtual bool shouldTerminate(WebProcessProxy*) const OVERRIDE;
+    virtual void refWebContextSupplement() OVERRIDE;
+    virtual void derefWebContextSupplement() OVERRIDE;
+
     // CoreIPC::MessageReceiver
     virtual void didReceiveMessage(CoreIPC::Connection*, CoreIPC::MessageID, CoreIPC::MessageDecoder&) OVERRIDE;
     void didReceiveWebKeyValueStorageManagerProxyMessage(CoreIPC::Connection*, CoreIPC::MessageID, CoreIPC::MessageDecoder&);
 
-    WebContext* m_webContext;
     HashMap<uint64_t, RefPtr<ArrayCallback> > m_arrayCallbacks;
 };
 

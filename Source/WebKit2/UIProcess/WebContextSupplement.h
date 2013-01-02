@@ -28,6 +28,7 @@
 
 namespace WebKit {
 
+class NetworkProcessProxy;
 class WebContext;
 class WebProcessProxy;
 
@@ -42,15 +43,28 @@ public:
     {
     }
 
-    void ref() { refWebContextSupplement(); }
-    void deref() { derefWebContextSupplement(); }
+    virtual void contextDestroyed()
+    {
+    }
 
-    virtual void contextDestroyed() = 0;
-    virtual void processDidClose(WebProcessProxy*) = 0;
-    virtual bool shouldTerminate(WebProcessProxy*) const = 0;
+    virtual void processDidClose(WebProcessProxy*)
+    {
+    }
+
+    virtual void processDidClose(NetworkProcessProxy*)
+    {
+    }
+
+    virtual bool shouldTerminate(WebProcessProxy*) const
+    {
+        return true;
+    }
 
     WebContext* context() const { return m_context; }
     void clearContext() { m_context = 0; }
+
+    void ref() { refWebContextSupplement(); }
+    void deref() { derefWebContextSupplement(); }
 
 private:
     virtual void refWebContextSupplement() = 0;

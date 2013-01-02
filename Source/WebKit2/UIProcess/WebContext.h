@@ -59,16 +59,9 @@ namespace WebKit {
 
 class DownloadProxy;
 class WebContextSupplement;
-class WebCookieManagerProxy;
-class WebDatabaseManagerProxy;
-class WebGeolocationManagerProxy;
 class WebIconDatabase;
-class WebKeyValueStorageManagerProxy;
-class WebMediaCacheManagerProxy;
-class WebNotificationManagerProxy;
 class WebPageGroup;
 class WebPageProxy;
-class WebResourceCacheManagerProxy;
 struct StatisticsData;
 struct WebProcessCreationParameters;
     
@@ -216,22 +209,13 @@ public:
 #if ENABLE(BATTERY_STATUS)
     WebBatteryManagerProxy* batteryManagerProxy() const { return m_batteryManagerProxy.get(); }
 #endif
-    WebCookieManagerProxy* cookieManagerProxy() const { return m_cookieManagerProxy.get(); }
-#if ENABLE(SQL_DATABASE)
-    WebDatabaseManagerProxy* databaseManagerProxy() const { return m_databaseManagerProxy.get(); }
-#endif
-    WebGeolocationManagerProxy* geolocationManagerProxy() const { return m_geolocationManagerProxy.get(); }
     WebIconDatabase* iconDatabase() const { return m_iconDatabase.get(); }
-    WebKeyValueStorageManagerProxy* keyValueStorageManagerProxy() const { return m_keyValueStorageManagerProxy.get(); }
-    WebMediaCacheManagerProxy* mediaCacheManagerProxy() const { return m_mediaCacheManagerProxy.get(); }
 #if ENABLE(NETWORK_INFO)
     WebNetworkInfoManagerProxy* networkInfoManagerProxy() const { return m_networkInfoManagerProxy.get(); }
 #endif
-    WebNotificationManagerProxy* notificationManagerProxy() const { return m_notificationManagerProxy.get(); }
 #if ENABLE(NETSCAPE_PLUGIN_API)
     WebPluginSiteDataManager* pluginSiteDataManager() const { return m_pluginSiteDataManager.get(); }
 #endif
-    WebResourceCacheManagerProxy* resourceCacheManagerProxy() const { return m_resourceCacheManagerProxy.get(); }
 #if USE(SOUP)
     WebSoupRequestManagerProxy* soupRequestManagerProxy() const { return m_soupRequestManagerProxy.get(); }
 #endif
@@ -435,22 +419,13 @@ private:
 #if ENABLE(BATTERY_STATUS)
     RefPtr<WebBatteryManagerProxy> m_batteryManagerProxy;
 #endif
-    RefPtr<WebCookieManagerProxy> m_cookieManagerProxy;
-#if ENABLE(SQL_DATABASE)
-    RefPtr<WebDatabaseManagerProxy> m_databaseManagerProxy;
-#endif
-    RefPtr<WebGeolocationManagerProxy> m_geolocationManagerProxy;
     RefPtr<WebIconDatabase> m_iconDatabase;
-    RefPtr<WebKeyValueStorageManagerProxy> m_keyValueStorageManagerProxy;
-    RefPtr<WebMediaCacheManagerProxy> m_mediaCacheManagerProxy;
 #if ENABLE(NETWORK_INFO)
     RefPtr<WebNetworkInfoManagerProxy> m_networkInfoManagerProxy;
 #endif
-    RefPtr<WebNotificationManagerProxy> m_notificationManagerProxy;
 #if ENABLE(NETSCAPE_PLUGIN_API)
     RefPtr<WebPluginSiteDataManager> m_pluginSiteDataManager;
 #endif
-    RefPtr<WebResourceCacheManagerProxy> m_resourceCacheManagerProxy;
 #if USE(SOUP)
     RefPtr<WebSoupRequestManagerProxy> m_soupRequestManagerProxy;
 #endif

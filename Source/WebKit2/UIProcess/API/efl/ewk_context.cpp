@@ -31,6 +31,7 @@
 #include "WKRetainPtr.h"
 #include "WKString.h"
 #include "WebContext.h"
+#include "WebCookieManagerProxy.h"
 #include "WebIconDatabase.h"
 #include "WebResourceCacheManagerProxy.h"
 #include "WebSoupRequestManagerProxy.h"
@@ -135,7 +136,7 @@ PassRefPtr<EwkContext> EwkContext::defaultContext()
 EwkCookieManager* EwkContext::cookieManager()
 {
     if (!m_cookieManager)
-        m_cookieManager = EwkCookieManager::create(m_context->cookieManagerProxy());
+        m_cookieManager = EwkCookieManager::create(m_context->supplement<WebCookieManagerProxy>());
 
     return m_cookieManager.get();
 }
@@ -211,7 +212,7 @@ void EwkContext::setAdditionalPluginPath(const String& path)
 
 void EwkContext::clearResourceCache()
 {
-    m_context->resourceCacheManagerProxy()->clearCacheForAllOrigins(AllResourceCaches);
+    m_context->supplement<WebResourceCacheManagerProxy>()->clearCacheForAllOrigins(AllResourceCaches);
 }
 
 Ewk_Cookie_Manager* ewk_context_cookie_manager_get(const Ewk_Context* ewkContext)

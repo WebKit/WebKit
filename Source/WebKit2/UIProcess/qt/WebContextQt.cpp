@@ -32,13 +32,15 @@
 #include "QtDefaultDataLocation.h"
 #include "QtWebContext.h"
 #include "WKSharedAPICast.h"
-#if ENABLE(GEOLOCATION)
-#include "WebGeolocationProviderQt.h"
-#endif
 #include "WebProcessCreationParameters.h"
 #include <QCoreApplication>
 #include <QDir>
 #include <QProcess>
+
+#if ENABLE(GEOLOCATION)
+#include "WebGeolocationManagerProxy.h"
+#include "WebGeolocationProviderQt.h"
+#endif
 
 namespace WebKit {
 
@@ -72,8 +74,8 @@ void WebContext::platformInitializeWebProcess(WebProcessCreationParameters& para
 {
     qRegisterMetaType<QProcess::ExitStatus>("QProcess::ExitStatus");
 #if ENABLE(GEOLOCATION)
-    static WebGeolocationProviderQt* location = WebGeolocationProviderQt::create(toAPI(geolocationManagerProxy()));
-    WKGeolocationManagerSetProvider(toAPI(geolocationManagerProxy()), WebGeolocationProviderQt::provider(location));
+    static WebGeolocationProviderQt* location = WebGeolocationProviderQt::create(toAPI(supplement<WebGeolocationManagerProxy>()));
+    WKGeolocationManagerSetProvider(toAPI(supplement<WebGeolocationManagerProxy>()), WebGeolocationProviderQt::provider(location));
 #endif
 }
 

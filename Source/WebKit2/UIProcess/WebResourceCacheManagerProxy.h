@@ -31,6 +31,7 @@
 #include "GenericCallback.h"
 #include "MessageReceiver.h"
 #include "ResourceCachesToClear.h"
+#include "WebContextSupplement.h"
 #include <wtf/HashMap.h>
 #include <wtf/PassRefPtr.h>
 
@@ -43,26 +44,33 @@ class WebSecurityOrigin;
 
 typedef GenericCallback<WKArrayRef> ArrayCallback;
 
-class WebResourceCacheManagerProxy : public APIObject, private CoreIPC::MessageReceiver {
+class WebResourceCacheManagerProxy : public APIObject, public WebContextSupplement, private CoreIPC::MessageReceiver {
 public:
     static const Type APIType = TypeCacheManager;
 
+    static const AtomicString& supplementName();
+
     static PassRefPtr<WebResourceCacheManagerProxy> create(WebContext*);
     virtual ~WebResourceCacheManagerProxy();
-
-    void invalidate();
-    void clearContext() { m_webContext = 0; }
 
     void getCacheOrigins(PassRefPtr<ArrayCallback>);
     void clearCacheForOrigin(WebSecurityOrigin*, ResourceCachesToClear);
     void clearCacheForAllOrigins(ResourceCachesToClear);
 
-    bool shouldTerminate(WebProcessProxy*) const;
+    using APIObject::ref;
+    using APIObject::deref;
 
 private:
     explicit WebResourceCacheManagerProxy(WebContext*);
 
     virtual Type type() const { return APIType; }
+
+    // WebContextSupplement
+    virtual void contextDestroyed() OVERRIDE;
+    virtual void processDidClose(WebProcessProxy*) OVERRIDE;
+    virtual bool shouldTerminate(WebProcessProxy*) const OVERRIDE;
+    virtual void refWebContextSupplement() OVERRIDE;
+    virtual void derefWebContextSupplement() OVERRIDE;
 
     // CoreIPC::MessageReceiver
     virtual void didReceiveMessage(CoreIPC::Connection*, CoreIPC::MessageID, CoreIPC::MessageDecoder&) OVERRIDE;
@@ -71,7 +79,6 @@ private:
     // Message handlers.
     void didGetCacheOrigins(const Vector<SecurityOriginData>& originIdentifiers, uint64_t callbackID);
 
-    WebContext* m_webContext;
     HashMap<uint64_t, RefPtr<ArrayCallback> > m_arrayCallbacks;
 };
 

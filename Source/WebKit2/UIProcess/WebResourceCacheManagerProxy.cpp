@@ -38,22 +38,35 @@ using namespace WebCore;
 
 namespace WebKit {
 
+const AtomicString& WebResourceCacheManagerProxy::supplementName()
+{
+    DEFINE_STATIC_LOCAL(AtomicString, name, ("WebResourceCacheManagerProxy", AtomicString::ConstructFromLiteral));
+    return name;
+}
+
 PassRefPtr<WebResourceCacheManagerProxy> WebResourceCacheManagerProxy::create(WebContext* webContext)
 {
     return adoptRef(new WebResourceCacheManagerProxy(webContext));
 }
 
 WebResourceCacheManagerProxy::WebResourceCacheManagerProxy(WebContext* webContext)
-    : m_webContext(webContext)
+    : WebContextSupplement(webContext)
 {
-    m_webContext->addMessageReceiver(Messages::WebResourceCacheManagerProxy::messageReceiverName(), this);
+    WebContextSupplement::context()->addMessageReceiver(Messages::WebResourceCacheManagerProxy::messageReceiverName(), this);
 }
 
 WebResourceCacheManagerProxy::~WebResourceCacheManagerProxy()
 {
 }
 
-void WebResourceCacheManagerProxy::invalidate()
+// WebContextSupplement
+
+void WebResourceCacheManagerProxy::contextDestroyed()
+{
+    invalidateCallbackMap(m_arrayCallbacks);
+}
+
+void WebResourceCacheManagerProxy::processDidClose(WebProcessProxy*)
 {
     invalidateCallbackMap(m_arrayCallbacks);
 }
@@ -63,6 +76,23 @@ bool WebResourceCacheManagerProxy::shouldTerminate(WebProcessProxy*) const
     return m_arrayCallbacks.isEmpty();
 }
 
+void WebResourceCacheManagerProxy::refWebContextSupplement()
+{
+    APIObject::ref();
+}
+
+void WebResourceCacheManagerProxy::derefWebContextSupplement()
+{
+    APIObject::deref();
+}
+
+// CoreIPC::MessageReceiver
+
+void WebResourceCacheManagerProxy::didReceiveMessage(CoreIPC::Connection* connection, CoreIPC::MessageID messageID, CoreIPC::MessageDecoder& decoder)
+{
+    didReceiveWebResourceCacheManagerProxyMessage(connection, messageID, decoder);
+}
+
 void WebResourceCacheManagerProxy::getCacheOrigins(PassRefPtr<ArrayCallback> prpCallback)
 {
     RefPtr<ArrayCallback> callback = prpCallback;
@@ -70,7 +100,7 @@ void WebResourceCacheManagerProxy::getCacheOrigins(PassRefPtr<ArrayCallback> prp
     m_arrayCallbacks.set(callbackID, callback.release());
 
     // FIXME (Multi-WebProcess): <rdar://problem/12239765> When multi-process is enabled, we need to aggregate the callback data from all processes.
-    m_webContext->sendToAllProcessesRelaunchingThemIfNecessary(Messages::WebResourceCacheManager::GetCacheOrigins(callbackID));
+    context()->sendToAllProcessesRelaunchingThemIfNecessary(Messages::WebResourceCacheManager::GetCacheOrigins(callbackID));
 }
 
 void WebResourceCacheManagerProxy::didGetCacheOrigins(const Vector<SecurityOriginData>& origins, uint64_t callbackID)
@@ -87,18 +117,13 @@ void WebResourceCacheManagerProxy::clearCacheForOrigin(WebSecurityOrigin* origin
     securityOrigin.port = origin->port();
 
     // FIXME (Multi-WebProcess): <rdar://problem/12239765> There is no need to relaunch all processes. One process to take care of persistent cache is enough.
-    m_webContext->sendToAllProcessesRelaunchingThemIfNecessary(Messages::WebResourceCacheManager::ClearCacheForOrigin(securityOrigin, cachesToClear));
+    context()->sendToAllProcessesRelaunchingThemIfNecessary(Messages::WebResourceCacheManager::ClearCacheForOrigin(securityOrigin, cachesToClear));
 }
 
 void WebResourceCacheManagerProxy::clearCacheForAllOrigins(ResourceCachesToClear cachesToClear)
 {
     // FIXME (Multi-WebProcess): <rdar://problem/12239765> There is no need to relaunch all processes. One process to take care of persistent cache is enough.
-    m_webContext->sendToAllProcessesRelaunchingThemIfNecessary(Messages::WebResourceCacheManager::ClearCacheForAllOrigins(cachesToClear));
-}
-
-void WebResourceCacheManagerProxy::didReceiveMessage(CoreIPC::Connection* connection, CoreIPC::MessageID messageID, CoreIPC::MessageDecoder& decoder)
-{
-    didReceiveWebResourceCacheManagerProxyMessage(connection, messageID, decoder);
+    context()->sendToAllProcessesRelaunchingThemIfNecessary(Messages::WebResourceCacheManager::ClearCacheForAllOrigins(cachesToClear));
 }
 
 } // namespace WebKit

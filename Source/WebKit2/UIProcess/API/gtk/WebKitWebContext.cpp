@@ -20,6 +20,8 @@
 #include "config.h"
 #include "WebKitWebContext.h"
 
+#include "WebCookieManagerProxy.h"
+#include "WebGeolocationManagerProxy.h"
 #include "WebKitCookieManagerPrivate.h"
 #include "WebKitDownloadClient.h"
 #include "WebKitDownloadPrivate.h"
@@ -178,7 +180,7 @@ static gpointer createDefaultWebContext(gpointer)
     attachRequestManagerClientToContext(webContext.get());
 
 #if ENABLE(GEOLOCATION)
-    priv->geolocationProvider = WebKitGeolocationProvider::create(priv->context->geolocationManagerProxy());
+    priv->geolocationProvider = WebKitGeolocationProvider::create(priv->context->supplement<WebGeolocationManagerProxy>());
 #endif
 #if ENABLE(SPELLCHECK)
     priv->textChecker = WebKitTextChecker::create();
@@ -286,7 +288,7 @@ void webkit_web_context_clear_cache(WebKitWebContext* context)
 {
     g_return_if_fail(WEBKIT_IS_WEB_CONTEXT(context));
 
-    context->priv->context->resourceCacheManagerProxy()->clearCacheForAllOrigins(AllResourceCaches);
+    context->priv->context->supplement<WebResourceCacheManagerProxy>()->clearCacheForAllOrigins(AllResourceCaches);
 }
 
 typedef HashMap<DownloadProxy*, GRefPtr<WebKitDownload> > DownloadsMap;
@@ -332,7 +334,7 @@ WebKitCookieManager* webkit_web_context_get_cookie_manager(WebKitWebContext* con
 
     WebKitWebContextPrivate* priv = context->priv;
     if (!priv->cookieManager)
-        priv->cookieManager = adoptGRef(webkitCookieManagerCreate(priv->context->cookieManagerProxy()));
+        priv->cookieManager = adoptGRef(webkitCookieManagerCreate(priv->context->supplement<WebCookieManagerProxy>()));
 
     return priv->cookieManager.get();
 }
