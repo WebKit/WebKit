@@ -909,7 +909,6 @@
               '../css/mediaControlsChromium.css',
               '../css/mediaControlsChromiumAndroid.css',
               '../css/fullscreen.css',
-              '../css/seamless.css',
               # Skip fullscreenQuickTime.
             ],
           },

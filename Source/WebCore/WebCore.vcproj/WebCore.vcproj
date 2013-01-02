@@ -38162,10 +38162,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\css\seamless.css"
-				>
-			</File>
-			<File
 				RelativePath="..\css\ViewportStyleResolver.cpp"
 				>
 			</File>

@@ -1,3 +1,20 @@
+2013-01-02  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r138611.
+        http://trac.webkit.org/changeset/138611
+        https://bugs.webkit.org/show_bug.cgi?id=105916
+
+        Not an optimal solution, needs more discussion. (Requested by
+        mkwst_ on #webkit).
+
+        * fast/frames/seamless/resources/nested-seamless.html:
+        * fast/frames/seamless/resources/quirks-square.html:
+        * fast/frames/seamless/resources/two-inline-blocks.html:
+        * fast/frames/seamless/seamless-body-margin-expected.txt: Removed.
+        * fast/frames/seamless/seamless-body-margin.html: Removed.
+        * fast/frames/seamless/seamless-inherited-origin-expected.txt:
+        * fast/frames/seamless/seamless-inherited-origin.html:
+
 2013-01-02  Mike West  <mkwst@chromium.org>
 
         The 'body' of seamless IFrames should default to 'margin: 0'

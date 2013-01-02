@@ -206,7 +206,6 @@ if (isInitial) { \
 static RuleSet* defaultStyle;
 static RuleSet* defaultQuirksStyle;
 static RuleSet* defaultPrintStyle;
-static RuleSet* defaultSeamlessStyle;
 static RuleSet* defaultViewSourceStyle;
 static StyleSheetContents* simpleDefaultStyleSheet;
 static StyleSheetContents* defaultStyleSheet;
@@ -543,15 +542,6 @@ static void loadViewSourceStyle()
     ASSERT(!defaultViewSourceStyle);
     defaultViewSourceStyle = RuleSet::create().leakPtr();
     defaultViewSourceStyle->addRulesFromSheet(parseUASheet(sourceUserAgentStyleSheet, sizeof(sourceUserAgentStyleSheet)), screenEval());
-}
-
-static void loadSeamlessStyle()
-{
-    ASSERT(!defaultSeamlessStyle);
-#if ENABLE(IFRAME_SEAMLESS)
-    defaultSeamlessStyle = RuleSet::create().leakPtr();
-    defaultSeamlessStyle->addRulesFromSheet(parseUASheet(seamlessUserAgentStyleSheet, sizeof(seamlessUserAgentStyleSheet)), screenEval());
-#endif
 }
 
 static void ensureDefaultStyleSheetsForElement(Element* element)
@@ -1352,13 +1342,6 @@ void StyleResolver::matchUARules(MatchResult& result)
         if (!defaultViewSourceStyle)
             loadViewSourceStyle();
         matchUARules(result, defaultViewSourceStyle);
-    }
-
-    // If the document is loaded inside a seamless iframe, then we match rules from the seamless sheet.
-    if (document()->shouldDisplaySeamlesslyWithParent()) {
-        if (!defaultSeamlessStyle)
-            loadSeamlessStyle();
-        matchUARules(result, defaultSeamlessStyle);
     }
 }
 
@@ -5298,11 +5281,6 @@ void StyleResolver::collectFeatures()
             loadViewSourceStyle();
         m_features.add(defaultViewSourceStyle->features());
     }
-    if (document()->shouldDisplaySeamlesslyWithParent()) {
-        if (!defaultSeamlessStyle)
-            loadSeamlessStyle();
-        m_features.add(defaultSeamlessStyle->features());
-    }
 
     if (m_scopeResolver)
         m_scopeResolver->collectFeaturesTo(m_features);
@@ -5358,7 +5336,6 @@ void StyleResolver::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
     info.addMember(defaultStyle);
     info.addMember(defaultQuirksStyle);
     info.addMember(defaultPrintStyle);
-    info.addMember(defaultSeamlessStyle);
     info.addMember(defaultViewSourceStyle);
 }
 
