@@ -357,6 +357,7 @@ private:
                 continue;
 
             XRenderPictFormat* format = XRenderFindVisualFormat(m_display, visualInfo->visual);
+            XFree(visualInfo);
             if (format && format->direct.alphaMask > 0) {
                 return fbConfigs[i];
                 break;
