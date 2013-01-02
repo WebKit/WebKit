@@ -514,7 +514,7 @@ bool FrameLoaderClientBlackBerry::canShowMIMETypeAsHTML(const String&) const
 
 bool FrameLoaderClientBlackBerry::isMainFrame() const
 {
-    return m_frame == m_webPagePrivate->m_mainFrame;
+    return m_webPagePrivate && m_frame == m_webPagePrivate->m_mainFrame;
 }
 
 void FrameLoaderClientBlackBerry::dispatchDidStartProvisionalLoad()
@@ -976,11 +976,18 @@ Frame* FrameLoaderClientBlackBerry::dispatchCreatePage(const NavigationAction& n
 
 void FrameLoaderClientBlackBerry::detachedFromParent2()
 {
+    // It is possible this function is called from CachedFrame::destroy() after the frame is detached from its previous page.
+    if (!m_webPagePrivate)
+        return;
+
     if (m_frame->document())
         m_webPagePrivate->clearDocumentData(m_frame->document());
 
     m_webPagePrivate->frameUnloaded(m_frame);
     m_webPagePrivate->m_client->notifyFrameDetached(m_frame);
+
+    // Do not access the page again from this point.
+    m_webPagePrivate = 0;
 }
 
 void FrameLoaderClientBlackBerry::dispatchWillSendRequest(DocumentLoader* docLoader, long unsigned, ResourceRequest& request, const ResourceResponse&)
@@ -1255,6 +1262,11 @@ void FrameLoaderClientBlackBerry::didSaveToPageCache()
     // When page goes into PageCache, clean up any possible
     // document data cache we might have.
     m_webPagePrivate->clearDocumentData(m_frame->document());
+
+    if (!isMainFrame()) {
+        // Clear the reference to the WebPagePrivate object as the page may be destroyed when the frame is still in the page cache.
+        m_webPagePrivate = 0;
+    }
 }
 
 void FrameLoaderClientBlackBerry::provisionalLoadStarted()
@@ -1275,6 +1287,11 @@ ResourceError FrameLoaderClientBlackBerry::cannotShowURLError(const ResourceRequ
 
 void FrameLoaderClientBlackBerry::didRestoreFromPageCache()
 {
+    if (!isMainFrame()) {
+        // Reconnect to the WebPagePrivate object now. We know the page must exist at this point.
+        m_webPagePrivate = static_cast<FrameLoaderClientBlackBerry*>(m_frame->page()->mainFrame()->loader()->client())->m_webPagePrivate;
+    }
+
     m_webPagePrivate->m_didRestoreFromPageCache = true;
 }
 

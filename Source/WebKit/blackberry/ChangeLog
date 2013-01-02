@@ -1,3 +1,21 @@
+2013-01-02  Yong Li  <yoli@rim.com>
+
+        [BlackBerry] Cached frame shouldn't access the page when being destroyed
+        https://bugs.webkit.org/show_bug.cgi?id=105942
+
+        Reviewed by George Staikos.
+
+        In order to prevent our FrameLoaderClient from dangling WebPagePrivate object in any case,
+        this patches clear the m_webPagePrivate pointer when the frame is detached or cached.
+
+        RIM PR# 272137.
+
+        * WebCoreSupport/FrameLoaderClientBlackBerry.cpp:
+        (WebCore::FrameLoaderClientBlackBerry::isMainFrame):
+        (WebCore::FrameLoaderClientBlackBerry::detachedFromParent2):
+        (WebCore::FrameLoaderClientBlackBerry::didSaveToPageCache):
+        (WebCore::FrameLoaderClientBlackBerry::didRestoreFromPageCache):
+
 2013-01-02  Nima Ghanavatian  <nghanavatian@rim.com>
 
         [BlackBerry] Use fatfingers result when checking for misspelled words
