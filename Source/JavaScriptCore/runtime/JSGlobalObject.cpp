@@ -114,6 +114,7 @@ JSGlobalObject::JSGlobalObject(JSGlobalData& globalData, Structure* structure, c
     , m_weakRandom(Options::forceWeakRandomSeed() ? Options::forcedWeakRandomSeed() : static_cast<unsigned>(randomNumber() * (std::numeric_limits<unsigned>::max() + 1.0)))
     , m_evalEnabled(true)
     , m_globalObjectMethodTable(globalObjectMethodTable ? globalObjectMethodTable : &s_globalObjectMethodTable)
+    , m_apiData(0)
 {
 }
 

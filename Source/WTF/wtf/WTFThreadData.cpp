@@ -32,7 +32,8 @@ namespace WTF {
 ThreadSpecific<WTFThreadData>* WTFThreadData::staticData;
 
 WTFThreadData::WTFThreadData()
-    : m_atomicStringTable(0)
+    : m_apiData(0)
+    , m_atomicStringTable(0)
     , m_atomicStringTableDestructor(0)
 #if USE(JSC)
     , m_defaultIdentifierTable(new JSC::IdentifierTable())

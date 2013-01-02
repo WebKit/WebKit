@@ -1,3 +1,424 @@
+2012-12-31  Gavin Barraclough  <barraclough@apple.com>
+
+        Objective-C API for JavaScriptCore
+        https://bugs.webkit.org/show_bug.cgi?id=105889
+
+        Reviewed by Filip Pizlo.
+
+        For a detailed description of the API implemented here, see:
+            JSContext.h
+            APIJSValue.h
+            JSVirtualMachine.h
+            JSExport.h
+        Still to do -
+            (1) Shoud rename APIJSValue.h -> JSValue.h (but we'll have to rename JSValue.h first).
+            (2) Numerous FIXMEs, all with separate bugs filed.
+
+        * API/APIJSValue.h: Added.
+            - this Objective-C class is used to reference a JavaScript object.
+        * API/JSBase.h:
+            - added JS_OBJC_API_ENABLED macro to control ObjC API support.
+        * API/JSBlockAdaptor.h: Added.
+            - this Objective-C class is used in creating a special NSBlock proxying a JavaScript function.
+        * API/JSBlockAdaptor.mm: Added.
+        (BlockArgument):
+        (BlockArgument::~BlockArgument):
+        (BlockArgumentBoolean):
+        (BlockArgumentBoolean::get):
+        (BlockArgumentNumeric):
+        (BlockArgumentNumeric::get):
+        (BlockArgumentId):
+        (BlockArgumentId::get):
+        (BlockArgumentStruct):
+        (BlockArgumentStruct::BlockArgumentStruct):
+        (BlockArgumentStruct::~BlockArgumentStruct):
+        (BlockArgumentStruct::get):
+            - decoded arguent type information of a JSBlockAdaptor.
+        (BlockArgumentTypeDelegate):
+        (BlockArgumentTypeDelegate::typeInteger):
+        (BlockArgumentTypeDelegate::typeDouble):
+        (BlockArgumentTypeDelegate::typeBool):
+        (BlockArgumentTypeDelegate::typeVoid):
+        (BlockArgumentTypeDelegate::typeId):
+        (BlockArgumentTypeDelegate::typeOfClass):
+        (BlockArgumentTypeDelegate::typeBlock):
+        (BlockArgumentTypeDelegate::typeStruct):
+            - delegate for use in conjunction with parseObjCType.
+        (BlockResult):
+        (BlockResult::~BlockResult):
+        (BlockResultVoid):
+        (BlockResultVoid::set):
+        (BlockResultInteger):
+        (BlockResultInteger::set):
+        (BlockResultDouble):
+        (BlockResultDouble::set):
+        (BlockResultBoolean):
+        (BlockResultBoolean::set):
+        (BlockResultStruct):
+        (BlockResultStruct::BlockResultStruct):
+        (BlockResultStruct::~BlockResultStruct):
+        (BlockResultStruct::set):
+            - decoded result type information of a JSBlockAdaptor.
+        (buildBlockSignature):
+            - partial step in constructing a signature with stack offset information from one without.
+        (-[JSBlockAdaptor initWithBlockSignatureFromProtocol:]):
+            - constructor.
+        (-[JSBlockAdaptor blockMatchesSignature:]):
+            - check whether signature strings match, where only one contains stack frame offsets.
+        (-[JSBlockAdaptor blockFromValue:inContext:withException:]):
+            - use the adaptor to create a special forwarding block.
+        * API/JSCallbackObjectFunctions.h:
+        (JSC::::inherits):
+            - add missing braces to multiline for statement.
+        * API/JSContext.h: Added.
+            - this Objective-C class is used to reference a JavaScript context.
+        * API/JSContext.mm: Added.
+        (-[JSContext init]):
+            - constructor.
+        (-[JSContext initWithVirtualMachine:]):
+            - construct in a given VM (JSGlobalData).
+        (-[JSContext evaluateScript:]):
+        (-[JSContext globalObject]):
+            - evaluate a script, global object accessor.
+        (+[JSContext currentContext]):
+        (+[JSContext currentThis]):
+        (+[JSContext currentArguments]):
+            - These methods obtain context, this, arguments from within a callback.
+        (-[JSContext virtualMachine]):
+            - implementation for .virtualMachine property.
+        (-[JSContext objectForKeyedSubscript:]):
+        (-[JSContext setObject:forKeyedSubscript:]):
+            - support for subscript property access.
+        (contextInternalContext):
+            - internal accessor to m_context.
+        (-[JSContext dealloc]):
+            - desctructor.
+        (-[JSContext notifyException:]):
+        (-[JSContext valueFromNotifyException:]):
+        (-[JSContext boolFromNotifyException:]):
+            - internal method to record an exception was thrown.
+        (-[JSContext beginCallbackWithData:thisValue:argumentCount:arguments:]):
+        (-[JSContext endCallbackWithData:]):
+            - internal methods to push/pop a callback record.
+        (-[JSContext protect:]):
+        (-[JSContext unprotect:]):
+            - internal methods to add a value to a protect set (used to protect the internal property of JSValue).
+        (-[JSContext wrapperForObject:]):
+            - internal method to create a wrapper object.
+        (WeakContextRef::WeakContextRef):
+        (WeakContextRef::~WeakContextRef):
+        (WeakContextRef::get):
+        (WeakContextRef::set):
+            - Helper class to implement a weak reference to a JSContext.
+        * API/JSContextInternal.h: Added.
+        (CallbackData):
+        (WeakContextRef):
+            - see API/JSContext.mm for description of internal methods.
+        * API/JSExport.h: Added.
+            - Provides JSExport protocol & JSExportAs macro.
+        * API/JSValue.mm: Added.
+        (+[JSValue valueWithObject:inContext:]):
+        (+[JSValue valueWithBool:inContext:]):
+        (+[JSValue valueWithDouble:inContext:]):
+        (+[JSValue valueWithInt32:inContext:]):
+        (+[JSValue valueWithUInt32:inContext:]):
+        (+[JSValue valueWithNewObjectInContext:]):
+        (+[JSValue valueWithNewArrayInContext:]):
+        (+[JSValue valueWithNewRegularExpressionFromPattern:flags:inContext:]):
+        (+[JSValue valueWithNewErrorFromMessage:inContext:]):
+        (+[JSValue valueWithNullInContext:]):
+        (+[JSValue valueWithUndefinedInContext:]):
+            - Constructors.
+        (-[JSValue toObject]):
+        (-[JSValue toObjectOfClass:]):
+        (-[JSValue toBool]):
+        (-[JSValue toDouble]):
+        (-[JSValue toInt32]):
+        (-[JSValue toUInt32]):
+        (-[JSValue toNumber]):
+        (-[JSValue toString]):
+        (-[JSValue toDate]):
+        (-[JSValue toArray]):
+        (-[JSValue toDictionary]):
+            - Conversion to Objective-C types.
+        (-[JSValue valueForProperty:]):
+        (-[JSValue setValue:forProperty:]):
+        (-[JSValue deleteProperty:]):
+        (-[JSValue hasProperty:]):
+        (-[JSValue defineProperty:descriptor:]):
+            - Property access by property name.
+        (-[JSValue valueAtIndex:]):
+        (-[JSValue setValue:atIndex:]):
+            - Property access by index.
+        (-[JSValue isUndefined]):
+        (-[JSValue isNull]):
+        (-[JSValue isBoolean]):
+        (-[JSValue isNumber]):
+        (-[JSValue isString]):
+        (-[JSValue isObject]):
+            - Test JavaScript type.
+        (-[JSValue isEqualToObject:]):
+        (-[JSValue isEqualWithTypeCoercionToObject:]):
+        (-[JSValue isInstanceOf:]):
+            - ===, ==, instanceof operators.
+        (-[JSValue callWithArguments:]):
+        (-[JSValue constructWithArguments:]):
+        (-[JSValue invokeMethod:withArguments:]):
+            - Call & construct.
+        (-[JSValue context]):
+            - implementation for .context property.
+        (-[JSValue toPoint]):
+        (-[JSValue toRange]):
+        (-[JSValue toRect]):
+        (-[JSValue toSize]):
+        (+[JSValue valueWithPoint:inContext:]):
+        (+[JSValue valueWithRange:inContext:]):
+        (+[JSValue valueWithRect:inContext:]):
+        (+[JSValue valueWithSize:inContext:]):
+            - Support for NS struct types.
+        (-[JSValue objectForKeyedSubscript:]):
+        (-[JSValue objectAtIndexedSubscript:]):
+        (-[JSValue setObject:forKeyedSubscript:]):
+        (-[JSValue setObject:atIndexedSubscript:]):
+            - support for subscript property access.
+        (isDate):
+        (isArray):
+            - internal helper functions to check for instances of JS Date, Array types.
+        (JSContainerConvertor):
+        (Task):
+        (JSContainerConvertor::JSContainerConvertor):
+        (JSContainerConvertor::isWorkListEmpty):
+        (JSContainerConvertor::convert):
+        (JSContainerConvertor::add):
+        (JSContainerConvertor::take):
+            - helper class for tracking state while converting to Array/Dictionary objects.
+        (valueToObjectWithoutCopy):
+        (containerValueToObject):
+        (valueToObject):
+        (valueToNumber):
+        (valueToString):
+        (valueToDate):
+        (valueToArray):
+        (valueToDictionary):
+            - function for converting JavaScript values to Objective-C objects.
+        (ObjcContainerConvertor):
+        (ObjcContainerConvertor::ObjcContainerConvertor):
+        (ObjcContainerConvertor::isWorkListEmpty):
+        (ObjcContainerConvertor::convert):
+        (ObjcContainerConvertor::add):
+        (ObjcContainerConvertor::take):
+            - helper class for tracking state while converting to Array/Dictionary values.
+        (objectToValueWithoutCopy):
+        (objectToValue):
+        (valueInternalValue):
+            - function for converting Objective-C objects to JavaScript values.
+        (+[JSValue valueWithValue:inContext:]):
+        (-[JSValue initWithValue:inContext:]):
+            - internal constructors.
+        (StructTagHandler):
+        (getStructTagHandler):
+        (+[JSValue selectorForStructToValue:]):
+        (+[JSValue selectorForValueToStruct:]):
+            - methods to tracking struct types that support conversion to/from JSValue.
+        (-[JSValue dealloc]):
+            - destructor.
+        (-[JSValue description]):
+            - Objective-C to-NSString conversion.
+        (typeToValueInvocationFor):
+        (valueToTypeInvocationFor):
+            - create invocation objects for conversion to/from JSValue.
+        * API/JSValueInternal.h: Added.
+            - see API/JSValue.mm for description of internal methods.
+        * API/JSVirtualMachine.h: Added.
+            - this Objective-C class is used to reference a JavaScript virtual machine (JSGlobalData).
+        * API/JSVirtualMachine.mm: Added.
+        (-[JSVirtualMachine init]):
+        (-[JSVirtualMachine dealloc]):
+            - constructor & destructor.
+        (getGroupFromVirtualMachine):
+            - internal accessor for m_group property.
+        * API/JSVirtualMachineInternal.h: Added.
+            - see API/JSVirtualMachine.mm for description of internal methods.
+        * API/JSWrapperMap.h: Added.
+        * API/JSWrapperMap.mm: Added.
+        (wrapperClass):
+            - singleton root for detction (& unwrapping) of wrapper objects.
+        (selectorToPropertyName):
+            - default selector to property name conversion.
+        (createObjectWithCustomBrand):
+            - creates a JSObject with a custom NativeBrand (class name).
+        (createRenameMap):
+            - parse @optional properties of a JSExport protocol.
+        (putNonEnumerable):
+            - property put with enumerable=false.
+        (copyMethodsToObject):
+            - iterate methods in a protocol; add functions to a JSObject.
+        (parsePropertyAttributes):
+            - examine protocol property metadata.
+        (makeSetterName):
+            - "foo" -> "setFoo"
+        (copyPrototypeProperties):
+            - create properties on a Protocol object reflecting the instance methods & properties of a protocol.
+        (-[JSObjCClassInfo initWithContext:forClass:superClassInfo:]):
+        (-[JSObjCClassInfo dealloc]):
+        (-[JSObjCClassInfo wrapperForObject:]):
+        (-[JSObjCClassInfo constructor]):
+            - cache the Protocol/Constructor objects for an Objective-C type.
+        (-[JSWrapperMap initWithContext:]):
+        (-[JSWrapperMap dealloc]):
+            - constructor & desctructor.
+        (-[JSWrapperMap classInfoForClass:]):
+            - maps Class -> JSObjCClassInfo.
+        (-[JSWrapperMap wrapperForObject:]):
+            - cretae or retrieve a cached wrapper value for an object.
+        (tryUnwrapObjcObject):
+            - check whether a value is a wrapper object; unwrap if so.
+        * API/JavaScriptCore.h:
+            - Added includes for new API headers.
+        * API/ObjCCallbackFunction.h: Added.
+            - this class is used to wrap Objective-C instance methods, class methods & blocks as JSFunction objects.
+        * API/ObjCCallbackFunction.mm: Added.
+        (CallbackArgument):
+        (CallbackArgument::~CallbackArgument):
+        (CallbackArgumentBoolean):
+        (CallbackArgumentBoolean::set):
+        (CallbackArgumentInteger):
+        (CallbackArgumentInteger::set):
+        (CallbackArgumentDouble):
+        (CallbackArgumentDouble::set):
+        (CallbackArgumentJSValue):
+        (CallbackArgumentJSValue::set):
+        (CallbackArgumentId):
+        (CallbackArgumentId::set):
+        (CallbackArgumentOfClass):
+        (CallbackArgumentOfClass::CallbackArgumentOfClass):
+        (CallbackArgumentOfClass::~CallbackArgumentOfClass):
+        (CallbackArgumentOfClass::set):
+        (CallbackArgumentNSNumber):
+        (CallbackArgumentNSNumber::set):
+        (CallbackArgumentNSString):
+        (CallbackArgumentNSString::set):
+        (CallbackArgumentNSDate):
+        (CallbackArgumentNSDate::set):
+        (CallbackArgumentNSArray):
+        (CallbackArgumentNSArray::set):
+        (CallbackArgumentNSDictionary):
+        (CallbackArgumentNSDictionary::set):
+        (CallbackArgumentStruct):
+        (CallbackArgumentStruct::CallbackArgumentStruct):
+        (CallbackArgumentStruct::~CallbackArgumentStruct):
+        (CallbackArgumentStruct::set):
+        (CallbackArgumentBlockCallback):
+        (CallbackArgumentBlockCallback::CallbackArgumentBlockCallback):
+        (CallbackArgumentBlockCallback::~CallbackArgumentBlockCallback):
+        (CallbackArgumentBlockCallback::set):
+            - decoded arguent type information of a ObjCCallbackFunction.
+        (ArgumentTypeDelegate):
+        (ArgumentTypeDelegate::typeInteger):
+        (ArgumentTypeDelegate::typeDouble):
+        (ArgumentTypeDelegate::typeBool):
+        (ArgumentTypeDelegate::typeVoid):
+        (ArgumentTypeDelegate::typeId):
+        (ArgumentTypeDelegate::typeOfClass):
+        (ArgumentTypeDelegate::typeBlock):
+        (ArgumentTypeDelegate::typeStruct):
+            - delegate for use in conjunction with parseObjCType.
+        (CallbackResult):
+        (CallbackResult::~CallbackResult):
+        (CallbackResultVoid):
+        (CallbackResultVoid::get):
+        (CallbackResultId):
+        (CallbackResultId::get):
+        (CallbackResultNumeric):
+        (CallbackResultNumeric::get):
+        (CallbackResultBoolean):
+        (CallbackResultBoolean::get):
+        (CallbackResultStruct):
+        (CallbackResultStruct::CallbackResultStruct):
+        (CallbackResultStruct::~CallbackResultStruct):
+        (CallbackResultStruct::get):
+            - decoded result type information of a ObjCCallbackFunction.
+        (ResultTypeDelegate):
+        (ResultTypeDelegate::typeInteger):
+        (ResultTypeDelegate::typeDouble):
+        (ResultTypeDelegate::typeBool):
+        (ResultTypeDelegate::typeVoid):
+        (ResultTypeDelegate::typeId):
+        (ResultTypeDelegate::typeOfClass):
+        (ResultTypeDelegate::typeBlock):
+        (ResultTypeDelegate::typeStruct):
+            - delegate for use in conjunction with parseObjCType.
+        (ObjCCallbackFunction):
+        (ObjCCallbackFunction::ObjCCallbackFunction):
+        (ObjCCallbackFunction::~ObjCCallbackFunction):
+            - constructor & destructor.
+        (ObjCCallbackFunction::context):
+            - accessor.
+        (ObjCCallbackFunction::wrappedBlock):
+            - attemmpt to unwrap a block object.
+        (objCCallbackFunctionFinalize):
+        (objCCallbackFunctionCallAsFunction):
+        (objCCallbackFunctionClass):
+            - JSClassRef used to represent ObjCCallbackFunction objects.
+        (ObjCCallbackFunction::call):
+        (blockSignatureContainsClass):
+            - helper function to determine if we're running on a recent Clang.
+        (skipNumber):
+            - helper used in parsing signature strings.
+        (objCCallbackFunctionForInvocation):
+        (objCCallbackFunctionForMethod):
+        (objCCallbackFunctionForBlock):
+            - functions to try to create ObjCCallbackFunction instances for methods/blocks.
+        (tryUnwrapBlock):
+            - attemmpt to unwrap a block object.
+        * API/ObjcRuntimeExtras.h: Added.
+        (protocolImplementsProtocol):
+        (forEachProtocolImplementingProtocol):
+        (forEachMethodInClass):
+        (forEachMethodInProtocol):
+        (forEachPropertyInProtocol):
+            - functions used in reflecting on Objective-C types.
+        (skipPair):
+            - parsing helper used by parseObjCType, scans for matching parentheses.
+        (StringRange):
+        (StringRange::StringRange):
+        (StringRange::~StringRange):
+        (StringRange::operator const char*):
+        (StringRange::get):
+            - Helper class - create a c string copy of a range of an existing string.
+        (parseObjCType):
+            - function to parse Objective-C type strings, makes callbacks to a deleagte.
+        * API/tests/testapi.c:
+        (main):
+            - added call to testObjectiveCAPI (in testapi.m).
+        * API/tests/testapi.m: Added.
+        (+[ParentObject parentTest]):
+        (+[TestObject testObject]):
+        (+[TestObject classTest]):
+        (-[TestObject getString]):
+        (-[TestObject testArgumentTypesWithInt:double:boolean:string:number:array:dictionary:]):
+        (-[TestObject callback:]):
+        (-[TextXYZ test:]):
+            - test object, used in various test vases.
+        (checkResult):
+            - helper function.
+        (blockSignatureContainsClass):
+            - helper function to determine if we're running on a recent Clang.
+        (testObjectiveCAPI):
+            - new test cases.
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+            - added new files.
+        * runtime/JSGlobalData.cpp:
+        (JSC::JSGlobalData::JSGlobalData):
+        * runtime/JSGlobalData.h:
+        (JSGlobalData):
+            - added m_apiData - provide convenient storage for use by the API.
+        * runtime/JSGlobalObject.cpp:
+        (JSC::JSGlobalObject::JSGlobalObject):
+        * runtime/JSGlobalObject.h:
+        (JSGlobalObject):
+            - added m_apiData - provide convenient storage for use by the API.
+
 2012-12-27  Csaba Osztrogonác  <ossy@webkit.org>
 
         One more unreviwed holiday MIPS and SH4 buildfixes after r138516.

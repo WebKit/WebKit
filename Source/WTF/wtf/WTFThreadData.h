@@ -123,6 +123,8 @@ public:
 #endif
 #endif // USE(JSC)
 
+    void* m_apiData;
+
 private:
     AtomicStringTable* m_atomicStringTable;
     AtomicStringTableDestructor m_atomicStringTableDestructor;

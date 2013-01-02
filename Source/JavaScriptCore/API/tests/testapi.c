@@ -48,8 +48,12 @@ static double nan(const char*)
 
 #endif
 
+#if PLATFORM(MAC)
+void testObjectiveCAPI(void);
+#endif
+
 static JSGlobalContextRef context;
-static int failed;
+int failed;
 static void assertEqualsAsBoolean(JSValueRef value, bool expectedValue)
 {
     if (JSValueToBoolean(context, value) != expectedValue) {
@@ -1038,6 +1042,10 @@ int main(int argc, char* argv[])
     // testing/debugging, as it causes the post-mortem debugger not to be invoked. We reset the
     // error mode here to work around Cygwin's behavior. See <http://webkit.org/b/55222>.
     ::SetErrorMode(0);
+#endif
+
+#if PLATFORM(MAC)
+    testObjectiveCAPI();
 #endif
 
     const char *scriptPath = "testapi.js";

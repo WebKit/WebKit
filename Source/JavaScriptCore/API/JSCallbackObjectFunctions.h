@@ -508,10 +508,10 @@ void* JSCallbackObject<Parent>::getPrivate()
 template <class Parent>
 bool JSCallbackObject<Parent>::inherits(JSClassRef c) const
 {
-    for (JSClassRef jsClass = classRef(); jsClass; jsClass = jsClass->parentClass)
+    for (JSClassRef jsClass = classRef(); jsClass; jsClass = jsClass->parentClass) {
         if (jsClass == c)
             return true;
-    
+    }
     return false;
 }
 

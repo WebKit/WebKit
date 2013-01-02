@@ -196,6 +196,8 @@ namespace JSC {
         bool hasDebugger() const { return m_debugger; }
         bool hasProfiler() const { return globalObjectMethodTable()->supportsProfiling(this); }
 
+        void* m_apiData;
+
     protected:
         JS_EXPORT_PRIVATE explicit JSGlobalObject(JSGlobalData&, Structure*, const GlobalObjectMethodTable* = 0);
 
