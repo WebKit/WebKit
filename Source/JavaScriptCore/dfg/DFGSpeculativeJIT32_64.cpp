@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011, 2012 Apple Inc. All rights reserved.
+ * Copyright (C) 2011, 2012, 2013 Apple Inc. All rights reserved.
  * Copyright (C) 2011 Intel Corporation. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -3964,7 +3964,7 @@ void SpeculativeJIT::compile(Node& node)
 
     case GetCallee: {
         GPRTemporary result(this);
-        m_jit.loadPtr(JITCompiler::payloadFor(static_cast<VirtualRegister>(JSStack::Callee)), result.gpr());
+        m_jit.loadPtr(JITCompiler::payloadFor(static_cast<VirtualRegister>(node.codeOrigin.stackOffset() + static_cast<int>(JSStack::Callee))), result.gpr());
         cellResult(result.gpr(), m_compileIndex);
         break;
     }
@@ -3973,7 +3973,7 @@ void SpeculativeJIT::compile(Node& node)
         GPRTemporary result(this);
         GPRReg resultGPR = result.gpr();
 
-        m_jit.loadPtr(JITCompiler::payloadFor(static_cast<VirtualRegister>(JSStack::ScopeChain)), resultGPR);
+        m_jit.loadPtr(JITCompiler::payloadFor(static_cast<VirtualRegister>(node.codeOrigin.stackOffset() + static_cast<int>(JSStack::ScopeChain))), resultGPR);
         cellResult(resultGPR, m_compileIndex);
         break;
     }

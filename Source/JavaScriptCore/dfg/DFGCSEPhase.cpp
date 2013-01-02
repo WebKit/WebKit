@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011, 2012 Apple Inc. All rights reserved.
+ * Copyright (C) 2011, 2012, 2013 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -88,8 +88,10 @@ private:
 #endif
         return result;
     }
-    
-    NodeIndex pureCSE(Node& node)
+
+    enum InlineCallFrameRequirement { RequireSameInlineCallFrame, DoNotCareAboutInlineCallFrame };
+    template<InlineCallFrameRequirement inlineCallFrameRequirement>
+    NodeIndex genericPureCSE(Node& node)
     {
         NodeIndex child1 = canonicalize(node.child1());
         NodeIndex child2 = canonicalize(node.child2());
@@ -108,6 +110,10 @@ private:
                 continue;
             
             if (node.arithNodeFlags() != otherNode.arithNodeFlags())
+                continue;
+            
+            if (inlineCallFrameRequirement == RequireSameInlineCallFrame
+                && node.codeOrigin.inlineCallFrame != otherNode.codeOrigin.inlineCallFrame)
                 continue;
             
             NodeIndex otherChild = canonicalize(otherNode.child1());
@@ -131,6 +137,16 @@ private:
             return index;
         }
         return NoNode;
+    }
+    
+    NodeIndex pureCSE(Node& node)
+    {
+        return genericPureCSE<DoNotCareAboutInlineCallFrame>(node);
+    }
+    
+    NodeIndex pureCSERequiringSameInlineCallFrame(Node& node)
+    {
+        return genericPureCSE<RequireSameInlineCallFrame>(node);
     }
     
     NodeIndex constantCSE(Node& node)
@@ -799,12 +815,14 @@ private:
         return NoNode;
     }
     
-    NodeIndex getMyScopeLoadElimination()
+    NodeIndex getMyScopeLoadElimination(InlineCallFrame* inlineCallFrame)
     {
         for (unsigned i = m_indexInBlock; i--;) {
             NodeIndex index = m_currentBlock->at(i);
             Node& node = m_graph[index];
             if (!node.shouldGenerate())
+                continue;
+            if (node.codeOrigin.inlineCallFrame != inlineCallFrame)
                 continue;
             switch (node.op()) {
             case CreateActivation:
@@ -1112,7 +1130,6 @@ private:
         case ArithMin:
         case ArithMax:
         case ArithSqrt:
-        case GetCallee:
         case StringCharAt:
         case StringCharCodeAt:
         case Int32ToDouble:
@@ -1130,6 +1147,10 @@ private:
             setReplacement(pureCSE(node));
             break;
             
+        case GetCallee:
+            setReplacement(pureCSERequiringSameInlineCallFrame(node));
+            break;
+
         case GetLocal: {
             VariableAccessData* variableAccessData = node.variableAccessData();
             if (!variableAccessData->isCaptured())
@@ -1241,7 +1262,7 @@ private:
             break;
 
         case GetMyScope:
-            setReplacement(getMyScopeLoadElimination());
+            setReplacement(getMyScopeLoadElimination(node.codeOrigin.inlineCallFrame));
             break;
             
         // Handle nodes that are conditionally pure: these are pure, and can

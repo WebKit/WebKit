@@ -1,3 +1,48 @@
+2013-01-02  Filip Pizlo  <fpizlo@apple.com>
+
+        DFG inlining machinery should be robust against the inline callee varying while the executable stays the same
+        https://bugs.webkit.org/show_bug.cgi?id=105953
+
+        Reviewed by Mark Hahnenberg.
+        
+        This institutes the policy that if InlineCallFrame::callee is null, then the callee and scope have already
+        been stored into the true call frame (i.e. the place where the call frame of the inlined call would have
+        been) and so any attempt to access the callee or scope should do a load instead of assuming that the value
+        is constant. This wires the changes through the bytecode parser, the stack scanning logic, and the compiler
+        optimization phases and backends.
+
+        * bytecode/CodeOrigin.cpp:
+        (JSC::InlineCallFrame::dump):
+        * bytecode/CodeOrigin.h:
+        (CodeOrigin):
+        (InlineCallFrame):
+        (JSC::InlineCallFrame::isClosureCall):
+        (JSC::CodeOrigin::stackOffset):
+        (JSC):
+        * dfg/DFGAssemblyHelpers.h:
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::get):
+        (InlineStackEntry):
+        (JSC::DFG::ByteCodeParser::getScope):
+        (JSC::DFG::ByteCodeParser::InlineStackEntry::InlineStackEntry):
+        * dfg/DFGCSEPhase.cpp:
+        (CSEPhase):
+        (JSC::DFG::CSEPhase::genericPureCSE):
+        (JSC::DFG::CSEPhase::pureCSE):
+        (JSC::DFG::CSEPhase::pureCSERequiringSameInlineCallFrame):
+        (JSC::DFG::CSEPhase::getMyScopeLoadElimination):
+        (JSC::DFG::CSEPhase::performNodeCSE):
+        * dfg/DFGOSRExitCompiler32_64.cpp:
+        (JSC::DFG::OSRExitCompiler::compileExit):
+        * dfg/DFGOSRExitCompiler64.cpp:
+        (JSC::DFG::OSRExitCompiler::compileExit):
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * interpreter/CallFrame.cpp:
+        (JSC::CallFrame::trueCallFrame):
+
 2013-01-02  Gavin Barraclough  <barraclough@apple.com>
 
         Objective-C API for JavaScriptCore

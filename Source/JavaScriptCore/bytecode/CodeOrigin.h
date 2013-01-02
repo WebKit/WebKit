@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011, 2012 Apple Inc. All rights reserved.
+ * Copyright (C) 2011, 2012, 2013 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -83,6 +83,8 @@ struct CodeOrigin {
     // would have owned the code if it had not been inlined. Otherwise returns 0.
     ExecutableBase* codeOriginOwner() const;
     
+    unsigned stackOffset() const;
+    
     static unsigned inlineDepthForCallFrame(InlineCallFrame*);
     
     bool operator==(const CodeOrigin& other) const;
@@ -98,13 +100,15 @@ struct CodeOrigin {
 struct InlineCallFrame {
     Vector<ValueRecovery> arguments;
     WriteBarrier<ExecutableBase> executable;
-    WriteBarrier<JSFunction> callee;
+    WriteBarrier<JSFunction> callee; // This may be null, indicating that this is a closure call and that the JSFunction and JSScope are already on the stack.
     CodeOrigin caller;
     BitVector capturedVars; // Indexed by the machine call frame's variable numbering.
     unsigned stackOffset : 31;
     bool isCall : 1;
     
     CodeSpecializationKind specializationKind() const { return specializationFromIsCall(isCall); }
+    
+    bool isClosureCall() const { return !callee; }
     
     CodeBlockHash hash() const;
     
@@ -117,6 +121,14 @@ struct CodeOriginAtCallReturnOffset {
     CodeOrigin codeOrigin;
     unsigned callReturnOffset;
 };
+
+inline unsigned CodeOrigin::stackOffset() const
+{
+    if (!inlineCallFrame)
+        return 0;
+    
+    return inlineCallFrame->stackOffset;
+}
 
 inline bool CodeOrigin::operator==(const CodeOrigin& other) const
 {

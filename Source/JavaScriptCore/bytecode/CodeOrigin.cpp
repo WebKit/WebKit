@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012 Apple Inc. All rights reserved.
+ * Copyright (C) 2012, 2013 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -81,7 +81,12 @@ CodeBlock* InlineCallFrame::baselineCodeBlock() const
 
 void InlineCallFrame::dump(PrintStream& out) const
 {
-    out.print("#", hash(), ":<", RawPointer(executable.get()), ", bc#", caller.bytecodeIndex, ", ", specializationKind(), ">");
+    out.print("#", hash(), ":<", RawPointer(executable.get()), ", bc#", caller.bytecodeIndex, ", ", specializationKind());
+    if (callee)
+        out.print(", known callee: ", JSValue(callee.get()));
+    else
+        out.print(", closure call");
+    out.print(">");
 }
 
 } // namespace JSC

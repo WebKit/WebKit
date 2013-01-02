@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008 Apple Inc. All Rights Reserved.
+ * Copyright (C) 2008, 2013 Apple Inc. All Rights Reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -138,8 +138,8 @@ CallFrame* CallFrame::trueCallFrame(AbstractPC pc)
         
         // Fill in the inlinedCaller
         inlinedCaller->setCodeBlock(machineCodeBlock);
-        
-        inlinedCaller->setScope(calleeAsFunction->scope());
+        if (calleeAsFunction)
+            inlinedCaller->setScope(calleeAsFunction->scope());
         if (nextInlineCallFrame)
             inlinedCaller->setCallerFrame(this + nextInlineCallFrame->stackOffset);
         else
@@ -147,7 +147,8 @@ CallFrame* CallFrame::trueCallFrame(AbstractPC pc)
         
         inlinedCaller->setInlineCallFrame(inlineCallFrame);
         inlinedCaller->setArgumentCountIncludingThis(inlineCallFrame->arguments.size());
-        inlinedCaller->setCallee(calleeAsFunction);
+        if (calleeAsFunction)
+            inlinedCaller->setCallee(calleeAsFunction);
         
         inlineCallFrame = nextInlineCallFrame;
     }

@@ -230,7 +230,7 @@ private:
     NodeIndex get(int operand)
     {
         if (operand == JSStack::Callee) {
-            if (m_inlineStackTop->m_inlineCallFrame)
+            if (m_inlineStackTop->m_inlineCallFrame && m_inlineStackTop->m_inlineCallFrame->callee)
                 return cellConstant(m_inlineStackTop->m_inlineCallFrame->callee.get());
             
             return getCallee();
@@ -1222,7 +1222,7 @@ private:
             CodeBlock*,
             CodeBlock* profiledBlock,
             BlockIndex callsiteBlockHead,
-            JSFunction* callee,
+            JSFunction* callee, // Null if this is a closure call.
             VirtualRegister returnValueVR,
             VirtualRegister inlineCallFrameStart,
             int argumentCountIncludingThis,
@@ -1892,7 +1892,7 @@ void ByteCodeParser::prepareToParseBlock()
 NodeIndex ByteCodeParser::getScope(bool skipTop, unsigned skipCount)
 {
     NodeIndex localBase;
-    if (m_inlineStackTop->m_inlineCallFrame) {
+    if (m_inlineStackTop->m_inlineCallFrame && !m_inlineStackTop->m_inlineCallFrame->isClosureCall()) {
         ASSERT(m_inlineStackTop->m_inlineCallFrame->callee);
         localBase = cellConstant(m_inlineStackTop->m_inlineCallFrame->callee->scope());
     } else
@@ -3497,7 +3497,7 @@ ByteCodeParser::InlineStackEntry::InlineStackEntry(
     CodeBlock* codeBlock,
     CodeBlock* profiledBlock,
     BlockIndex callsiteBlockHead,
-    JSFunction* callee,
+    JSFunction* callee, // Null if this is a closure call.
     VirtualRegister returnValueVR,
     VirtualRegister inlineCallFrameStart,
     int argumentCountIncludingThis,
@@ -3529,14 +3529,14 @@ ByteCodeParser::InlineStackEntry::InlineStackEntry(
     if (m_caller) {
         // Inline case.
         ASSERT(codeBlock != byteCodeParser->m_codeBlock);
-        ASSERT(callee);
         ASSERT(inlineCallFrameStart != InvalidVirtualRegister);
         ASSERT(callsiteBlockHead != NoBlock);
         
         InlineCallFrame inlineCallFrame;
         inlineCallFrame.executable.set(*byteCodeParser->m_globalData, byteCodeParser->m_codeBlock->ownerExecutable(), codeBlock->ownerExecutable());
         inlineCallFrame.stackOffset = inlineCallFrameStart + JSStack::CallFrameHeaderSize;
-        inlineCallFrame.callee.set(*byteCodeParser->m_globalData, byteCodeParser->m_codeBlock->ownerExecutable(), callee);
+        if (callee)
+            inlineCallFrame.callee.set(*byteCodeParser->m_globalData, byteCodeParser->m_codeBlock->ownerExecutable(), callee);
         inlineCallFrame.caller = byteCodeParser->currentCodeOrigin();
         inlineCallFrame.arguments.resize(argumentCountIncludingThis); // Set the number of arguments including this, but don't configure the value recoveries, yet.
         inlineCallFrame.isCall = isCall(kind);
