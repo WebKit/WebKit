@@ -281,6 +281,8 @@ webkit.org/b/105948 fast/events/controlclick-no-onclick.html [ Failure ]
 
 webkit.org/b/105954 http/tests/navigation/reload-subframe-object.html [ Failure ]
 
+webkit.org/b/105956 inspector/geolocation-watchPosition.html [ Pass Failure ]
+
 ### END OF (1) Classified failures with bug reports
 ########################################
 
