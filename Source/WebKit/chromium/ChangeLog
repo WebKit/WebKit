@@ -1,3 +1,25 @@
+2013-01-02  Alec Flett  <alecflett@chromium.org>
+
+        IndexedDB: Use non-const buffers in put() to avoid copies
+        https://bugs.webkit.org/show_bug.cgi?id=105572
+
+        Reviewed by Adam Barth.
+
+        Pass on non-const Vectors to allow buffer adoption rather than copies.
+
+        * public/WebIDBDatabase.h:
+        (WebIDBDatabase):
+        (WebKit::WebIDBDatabase::put):
+        * src/IDBDatabaseBackendProxy.cpp:
+        (WebKit::IDBDatabaseBackendProxy::put):
+        * src/IDBDatabaseBackendProxy.h:
+        (IDBDatabaseBackendProxy):
+        * src/WebIDBDatabaseImpl.cpp:
+        (WebKit::WebIDBDatabaseImpl::put):
+        * src/WebIDBDatabaseImpl.h:
+        (WebIDBDatabaseImpl):
+        * tests/IDBDatabaseBackendTest.cpp:
+
 2013-01-02  Robert Kroeger  <rjkroege@chromium.org>
 
         [chromium] Use top level field for gesture event source

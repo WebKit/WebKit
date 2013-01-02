@@ -82,7 +82,8 @@ public:
     typedef WebVector<WebIDBKey> WebIndexKeys;
 
     virtual void get(long long transactionId, long long objectStoreId, long long indexId, const WebIDBKeyRange&, bool keyOnly, WebIDBCallbacks*) { WEBKIT_ASSERT_NOT_REACHED(); }
-    virtual void put(long long transactionId, long long objectStoreId, const WebVector<unsigned char>& value, const WebIDBKey&, PutMode, WebIDBCallbacks*, const WebVector<long long>& indexIds, const WebVector<WebIndexKeys>&) { WEBKIT_ASSERT_NOT_REACHED(); }
+    // Note that 'value' may be consumed/adopted by this call.
+    virtual void put(long long transactionId, long long objectStoreId, WebVector<unsigned char>* value, const WebIDBKey&, PutMode, WebIDBCallbacks*, const WebVector<long long>& indexIds, const WebVector<WebIndexKeys>&) { WEBKIT_ASSERT_NOT_REACHED(); }
     virtual void setIndexKeys(long long transactionId, long long objectStoreId, const WebIDBKey&, const WebVector<long long>& indexIds, const WebVector<WebIndexKeys>&) { WEBKIT_ASSERT_NOT_REACHED(); }
     virtual void setIndexesReady(long long transactionId, long long objectStoreId, const WebVector<long long>& indexIds) { WEBKIT_ASSERT_NOT_REACHED(); }
     virtual void openCursor(long long transactionId, long long objectStoreId, long long indexId, const WebIDBKeyRange&, unsigned short direction, bool keyOnly, TaskType, WebIDBCallbacks*) { WEBKIT_ASSERT_NOT_REACHED(); }

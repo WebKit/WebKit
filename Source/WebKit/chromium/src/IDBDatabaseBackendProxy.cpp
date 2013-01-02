@@ -128,10 +128,13 @@ void IDBDatabaseBackendProxy::get(int64_t transactionId, int64_t objectStoreId, 
         m_webIDBDatabase->get(transactionId, objectStoreId, indexId, keyRange, keyOnly, new WebIDBCallbacksImpl(callbacks));
 }
 
-void IDBDatabaseBackendProxy::put(int64_t transactionId, int64_t objectStoreId, const Vector<uint8_t>& buffer, PassRefPtr<IDBKey> key, PutMode putMode, PassRefPtr<IDBCallbacks> callbacks, const Vector<int64_t>& indexIds, const Vector<IndexKeys>& indexKeys)
+void IDBDatabaseBackendProxy::put(int64_t transactionId, int64_t objectStoreId, Vector<uint8_t>* buffer, PassRefPtr<IDBKey> key, PutMode putMode, PassRefPtr<IDBCallbacks> callbacks, const Vector<int64_t>& indexIds, const Vector<IndexKeys>& indexKeys)
 {
-    if (m_webIDBDatabase)
-        m_webIDBDatabase->put(transactionId, objectStoreId, buffer, key, static_cast<WebIDBDatabase::PutMode>(putMode), new WebIDBCallbacksImpl(callbacks), indexIds, indexKeys);
+    if (m_webIDBDatabase) {
+        WebVector<unsigned char> webBuffer(buffer->size());
+        webBuffer.assign(buffer->data(), buffer->size());
+        m_webIDBDatabase->put(transactionId, objectStoreId, &webBuffer, key, static_cast<WebIDBDatabase::PutMode>(putMode), new WebIDBCallbacksImpl(callbacks), indexIds, indexKeys);
+    }
 }
 
 void IDBDatabaseBackendProxy::setIndexKeys(int64_t transactionId, int64_t objectStoreId, PassRefPtr<IDBKey> primaryKey, const Vector<int64_t>& indexIds, const Vector<IndexKeys>& indexKeys)

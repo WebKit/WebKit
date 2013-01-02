@@ -321,7 +321,7 @@ void IDBDatabaseBackendImpl::get(int64_t transactionId, int64_t objectStoreId, i
     ASSERT_NOT_REACHED();
 }
 
-void IDBDatabaseBackendImpl::put(int64_t transactionId, int64_t objectStoreId, const Vector<uint8_t>&, PassRefPtr<IDBKey>, PutMode, PassRefPtr<IDBCallbacks>, const Vector<int64_t>& indexIds, const Vector<IndexKeys>&)
+void IDBDatabaseBackendImpl::put(int64_t transactionId, int64_t objectStoreId, Vector<uint8_t>* value, PassRefPtr<IDBKey>, PutMode, PassRefPtr<IDBCallbacks>, const Vector<int64_t>& indexIds, const Vector<IndexKeys>&)
 {
     ASSERT_NOT_REACHED();
 }
