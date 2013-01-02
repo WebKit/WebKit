@@ -1,3 +1,10 @@
+2013-01-02  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Another Windows port build fix attempt. Try not exporting this symbol from JSC
+        since it's also compiled in WebCore.
+
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore.def:
+
 2013-01-02  Csaba Osztrogonác  <ossy@webkit.org>
 
         One more unreviewed buildfix after r138609.
