@@ -757,8 +757,10 @@ static QString readUserScript(const QUrl& url)
 
 void QQuickWebViewPrivate::updateUserScripts()
 {
-    Vector<String> scripts;
-    scripts.reserveCapacity(userScripts.size());
+    // This feature works per-WebView because we keep an unique page group for
+    // each Page/WebView pair we create.
+    WebPageGroup* pageGroup = webPageProxy->pageGroup();
+    pageGroup->removeAllUserScripts();
 
     for (unsigned i = 0; i < userScripts.size(); ++i) {
         const QUrl& url = userScripts.at(i);
@@ -770,10 +772,8 @@ void QQuickWebViewPrivate::updateUserScripts()
         QString contents = readUserScript(url);
         if (contents.isEmpty())
             continue;
-        scripts.append(String(contents));
+        pageGroup->addUserScript(String(contents), emptyString(), 0, 0, InjectInTopFrameOnly, InjectAtDocumentEnd);
     }
-
-    webPageProxy->setUserScripts(scripts);
 }
 
 QPointF QQuickWebViewPrivate::contentPos() const

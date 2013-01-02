@@ -86,11 +86,6 @@ void WebPageProxy::sendApplicationSchemeReply(const QQuickNetworkReply* reply)
 #endif
 }
 
-void WebPageProxy::setUserScripts(const Vector<String>& scripts)
-{
-    process()->send(Messages::WebPage::SetUserScripts(scripts), m_pageID);
-}
-
 void WebPageProxy::didFindZoomableArea(const IntPoint& target, const IntRect& area)
 {
     m_pageClient->didFindZoomableArea(target, area);

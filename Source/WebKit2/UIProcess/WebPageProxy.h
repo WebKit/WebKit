@@ -373,7 +373,6 @@ public:
     void authenticationRequiredRequest(const String& hostname, const String& realm, const String& prefilledUsername, String& username, String& password);
     void certificateVerificationRequest(const String& hostname, bool& ignoreErrors);
     void proxyAuthenticationRequiredRequest(const String& hostname, uint16_t port, const String& prefilledUsername, String& username, String& password);
-    void setUserScripts(const Vector<String>&);
 #endif // PLATFORM(QT).
 #if PLATFORM(EFL)
     void setThemePath(const String&);

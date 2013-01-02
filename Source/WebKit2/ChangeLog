@@ -1,3 +1,22 @@
+2013-01-02  Caio Marcelo de Oliveira Filho  <caio.oliveira@openbossa.org>
+
+        [Qt] Use WebPageGroup to create user scripts instead of Qt-specific function in WebPage
+        https://bugs.webkit.org/show_bug.cgi?id=105921
+
+        Reviewed by Simon Hausmann.
+
+        After r131281 the WebPageGroup.h (in UIProcess) exposes a way to add user scripts, so we can
+        use this directly to implement the user script functionality in Qt. The previous solution was
+        a Qt-port specific function in WebPage that can be removed now.
+
+        * UIProcess/API/qt/qquickwebview.cpp:
+        (QQuickWebViewPrivate::updateUserScripts): Use WebPageGroup functions to manipulate user scripts directly.
+        * UIProcess/WebPageProxy.h:
+        (WebPageProxy): Remove now unused function.
+        * UIProcess/qt/WebPageProxyQt.cpp: Ditto.
+        * WebProcess/WebPage/WebPage.messages.in: Ditto.
+        * WebProcess/WebPage/qt/WebPageQt.cpp: Remove now unused function and headers.
+
 2013-01-02  Heikki Paajanen  <heikki.paajanen@palm.com>
 
         [Qt][WK2] Add experimental API to find text from page

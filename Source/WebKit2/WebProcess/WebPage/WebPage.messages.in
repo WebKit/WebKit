@@ -74,7 +74,6 @@ messages -> WebPage {
 #if PLATFORM(QT)
     ApplicationSchemeReply(WebKit::QtNetworkReplyData reply)
     RegisterApplicationScheme(WTF::String scheme)
-    SetUserScripts(WTF::Vector<WTF::String> script)
 #endif
 
     StopLoadingFrame(uint64_t frameID)

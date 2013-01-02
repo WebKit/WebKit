@@ -31,18 +31,15 @@
 #include "PopupMenuClient.h"
 #include "WebEditorClient.h"
 #include "WebEvent.h"
-#include "WebPageGroupProxy.h"
 #include "WebPageProxyMessages.h"
 #include "WebPopupMenu.h"
 #include "WebProcess.h"
 #include <QClipboard>
 #include <QGuiApplication>
-#include <WebCore/DOMWrapperWorld.h>
 #include <WebCore/FocusController.h>
 #include <WebCore/Frame.h>
 #include <WebCore/KeyboardEvent.h>
 #include <WebCore/Page.h>
-#include <WebCore/PageGroup.h>
 #include <WebCore/PlatformKeyboardEvent.h>
 #include <WebCore/Range.h>
 #include <WebCore/Settings.h>
@@ -332,15 +329,6 @@ void WebPage::applicationSchemeReply(const QtNetworkReplyData& replyData)
     QtNetworkReply* networkReply = m_applicationSchemeReplies.take(replyData.m_replyUuid);
     networkReply->setReplyData(replyData);
     networkReply->finalize();
-}
-
-void WebPage::setUserScripts(const Vector<String>& scripts)
-{
-    // This works because we keep an unique page group for each Page.
-    PageGroup* pageGroup = PageGroup::pageGroup(this->pageGroup()->identifier());
-    pageGroup->removeUserScriptsFromWorld(mainThreadNormalWorld());
-    for (unsigned i = 0; i < scripts.size(); ++i)
-        pageGroup->addUserScriptToWorld(mainThreadNormalWorld(), scripts.at(i), KURL(), Vector<String>(), Vector<String>(), InjectAtDocumentEnd, InjectInTopFrameOnly);
 }
 
 void WebPage::selectedIndex(int32_t newIndex)
