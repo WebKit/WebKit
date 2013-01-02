@@ -1,3 +1,9 @@
+2013-01-02  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Yet another Windows build fix attempt. Try exporting more symbols.
+
+        * win/WebKit2.def.in:
+
 2013-01-02  Alexey Proskuryakov  <ap@apple.com>
 
         REGRESSION (r138464): Safari hangs when opening Privacy preferences
