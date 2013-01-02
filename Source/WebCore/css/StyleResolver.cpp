@@ -537,11 +537,13 @@ static void loadSimpleDefaultStyle()
     // No need to initialize quirks sheet yet as there are no quirk rules for elements allowed in simple default style.
 }
 
-static void loadViewSourceStyle()
+static RuleSet* viewSourceStyle()
 {
-    ASSERT(!defaultViewSourceStyle);
-    defaultViewSourceStyle = RuleSet::create().leakPtr();
-    defaultViewSourceStyle->addRulesFromSheet(parseUASheet(sourceUserAgentStyleSheet, sizeof(sourceUserAgentStyleSheet)), screenEval());
+    if (!defaultViewSourceStyle) {
+        defaultViewSourceStyle = RuleSet::create().leakPtr();
+        defaultViewSourceStyle->addRulesFromSheet(parseUASheet(sourceUserAgentStyleSheet, sizeof(sourceUserAgentStyleSheet)), screenEval());
+    }
+    return defaultViewSourceStyle;
 }
 
 static void ensureDefaultStyleSheetsForElement(Element* element)
@@ -1338,11 +1340,8 @@ void StyleResolver::matchUARules(MatchResult& result)
         matchUARules(result, defaultQuirksStyle);
 
     // If document uses view source styles (in view source mode or in xml viewer mode), then we match rules from the view source style sheet.
-    if (document()->isViewSource()) {
-        if (!defaultViewSourceStyle)
-            loadViewSourceStyle();
-        matchUARules(result, defaultViewSourceStyle);
-    }
+    if (document()->isViewSource())
+        matchUARules(result, viewSourceStyle());
 }
 
 static void setStylesForPaginationMode(Pagination::Mode paginationMode, RenderStyle* style)
@@ -5276,11 +5275,8 @@ void StyleResolver::collectFeatures()
     // sharing candidates.
     m_features.add(defaultStyle->features());
     m_features.add(m_authorStyle->features());
-    if (document()->isViewSource()) {
-        if (!defaultViewSourceStyle)
-            loadViewSourceStyle();
-        m_features.add(defaultViewSourceStyle->features());
-    }
+    if (document()->isViewSource())
+        m_features.add(viewSourceStyle()->features());
 
     if (m_scopeResolver)
         m_scopeResolver->collectFeaturesTo(m_features);
