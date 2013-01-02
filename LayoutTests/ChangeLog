@@ -1,3 +1,15 @@
+2013-01-01  Kangil Han  <kangil.han@samsung.com>
+
+        [EFL][WK1] Skip some webaudio test cases due to lack of implementation
+        https://bugs.webkit.org/show_bug.cgi?id=105882
+
+        Unreviewed, EFL gardening.
+
+        Bunch of webaudio test cases need setAudioData implementation and DRT has not it.
+        So, skips those cases.
+
+        * platform/efl-wk1/TestExpectations:
+
 2013-01-01  Mike West  <mkwst@chromium.org>
 
         seamless iframes don't inherit styles when srcdoc is used
