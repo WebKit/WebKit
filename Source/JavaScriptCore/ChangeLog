@@ -1,3 +1,9 @@
+2013-01-02  Csaba Osztrogonác  <ossy@webkit.org>
+
+        Unreviewed buildfix after r138609.
+
+        * jit/JITCall32_64.cpp: Add a missing include.
+
 2013-01-01  Filip Pizlo  <fpizlo@apple.com>
 
         Baseline JIT should have closure call caching
