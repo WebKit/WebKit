@@ -41,14 +41,12 @@ template <typename T> void V8_USE(T) { }
 
 static v8::Handle<v8::Value> excitingAttrAttrGetter(v8::Local<v8::String> name, const v8::AccessorInfo& info)
 {
-    INC_STATS("DOM.TestActiveDOMObject.excitingAttr._get");
     TestActiveDOMObject* imp = V8TestActiveDOMObject::toNative(info.Holder());
     return v8Integer(imp->excitingAttr(), info.GetIsolate());
 }
 
 static v8::Handle<v8::Value> excitingFunctionCallback(const v8::Arguments& args)
 {
-    INC_STATS("DOM.TestActiveDOMObject.excitingFunction");
     if (args.Length() < 1)
         return throwNotEnoughArgumentsError(args.GetIsolate());
     TestActiveDOMObject* imp = V8TestActiveDOMObject::toNative(args.Holder());
@@ -61,7 +59,6 @@ static v8::Handle<v8::Value> excitingFunctionCallback(const v8::Arguments& args)
 
 static v8::Handle<v8::Value> postMessageCallback(const v8::Arguments& args)
 {
-    INC_STATS("DOM.TestActiveDOMObject.postMessage");
     if (args.Length() < 1)
         return throwNotEnoughArgumentsError(args.GetIsolate());
     TestActiveDOMObject* imp = V8TestActiveDOMObject::toNative(args.Holder());
@@ -72,7 +69,6 @@ static v8::Handle<v8::Value> postMessageCallback(const v8::Arguments& args)
 
 static v8::Handle<v8::Value> postMessageAttrGetter(v8::Local<v8::String> name, const v8::AccessorInfo& info)
 {
-    INC_STATS("DOM.TestActiveDOMObject.postMessage._get");
     static v8::Persistent<v8::FunctionTemplate> privateTemplate = v8::Persistent<v8::FunctionTemplate>::New(v8::FunctionTemplate::New(TestActiveDOMObjectV8Internal::postMessageCallback, v8Undefined(), v8::Signature::New(V8TestActiveDOMObject::GetRawTemplate())));
     v8::Handle<v8::Object> holder = info.This()->FindInstanceInPrototypeChain(V8TestActiveDOMObject::GetTemplate());
     if (holder.IsEmpty()) {
@@ -95,7 +91,6 @@ static v8::Handle<v8::Value> postMessageAttrGetter(v8::Local<v8::String> name, c
 
 static void TestActiveDOMObjectDomainSafeFunctionSetter(v8::Local<v8::String> name, v8::Local<v8::Value> value, const v8::AccessorInfo& info)
 {
-    INC_STATS("DOM.TestActiveDOMObject._set");
     v8::Handle<v8::Object> holder = info.This()->FindInstanceInPrototypeChain(V8TestActiveDOMObject::GetTemplate());
     if (holder.IsEmpty())
         return;

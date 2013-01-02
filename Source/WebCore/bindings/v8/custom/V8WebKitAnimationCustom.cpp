@@ -35,7 +35,6 @@ namespace WebCore {
 
 v8::Handle<v8::Value> V8WebKitAnimation::iterationCountAccessorGetter(v8::Local<v8::String> name, const v8::AccessorInfo& info)
 {
-    INC_STATS("DOM.WebKitAnimation.iterationCount._get");
     v8::Handle<v8::Object> holder = info.Holder();
     WebKitAnimation* imp = V8WebKitAnimation::toNative(holder);
     int count = imp->iterationCount();

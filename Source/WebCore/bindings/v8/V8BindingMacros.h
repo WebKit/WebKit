@@ -33,12 +33,6 @@
 
 namespace WebCore {
 
-#if defined(ENABLE_DOM_STATS_COUNTERS) && PLATFORM(CHROMIUM)
-#define INC_STATS(name) StatsCounter::incrementStatsCounter(name)
-#else
-#define INC_STATS(name)
-#endif
-
 enum ParameterDefaultPolicy {
     DefaultIsUndefined,
     DefaultIsNullString

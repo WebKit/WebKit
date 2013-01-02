@@ -81,7 +81,6 @@ ScriptValue InjectedScriptHost::nodeAsScriptValue(ScriptState* state, Node* node
 
 v8::Handle<v8::Value> V8InjectedScriptHost::inspectedObjectCallback(const v8::Arguments& args)
 {
-    INC_STATS("InjectedScriptHost.inspectedObject()");
     if (args.Length() < 1)
         return v8::Undefined();
 
@@ -95,7 +94,6 @@ v8::Handle<v8::Value> V8InjectedScriptHost::inspectedObjectCallback(const v8::Ar
 
 v8::Handle<v8::Value> V8InjectedScriptHost::internalConstructorNameCallback(const v8::Arguments& args)
 {
-    INC_STATS("InjectedScriptHost.internalConstructorName()");
     if (args.Length() < 1)
         return v8::Undefined();
 
@@ -107,7 +105,6 @@ v8::Handle<v8::Value> V8InjectedScriptHost::internalConstructorNameCallback(cons
 
 v8::Handle<v8::Value> V8InjectedScriptHost::isHTMLAllCollectionCallback(const v8::Arguments& args)
 {
-    INC_STATS("InjectedScriptHost.isHTMLAllCollectionCallback()");
     if (args.Length() < 1)
         return v8::Undefined();
 
@@ -120,7 +117,6 @@ v8::Handle<v8::Value> V8InjectedScriptHost::isHTMLAllCollectionCallback(const v8
 
 v8::Handle<v8::Value> V8InjectedScriptHost::typeCallback(const v8::Arguments& args)
 {
-    INC_STATS("InjectedScriptHost.typeCallback()");
     if (args.Length() < 1)
         return v8::Undefined();
 
@@ -156,7 +152,6 @@ v8::Handle<v8::Value> V8InjectedScriptHost::typeCallback(const v8::Arguments& ar
 
 v8::Handle<v8::Value> V8InjectedScriptHost::functionDetailsCallback(const v8::Arguments& args)
 {
-    INC_STATS("InjectedScriptHost.functionDetailsCallback()");
     if (args.Length() < 1)
         return v8::Undefined();
 
@@ -196,7 +191,6 @@ v8::Handle<v8::Value> V8InjectedScriptHost::functionDetailsCallback(const v8::Ar
 
 v8::Handle<v8::Value> V8InjectedScriptHost::getInternalPropertiesCallback(const v8::Arguments& args)
 {
-    INC_STATS("InjectedScriptHost.getInternalProperties()");
     if (args.Length() < 1)
         return v8::Undefined();
 
@@ -243,7 +237,6 @@ static v8::Handle<v8::Array> getJSListenerFunctions(Document* document, const Ev
 
 v8::Handle<v8::Value> V8InjectedScriptHost::getEventListenersCallback(const v8::Arguments& args)
 {
-    INC_STATS("InjectedScriptHost.queryEventListenerCallback()");
     if (args.Length() < 1)
         return v8::Undefined();
 
@@ -278,7 +271,6 @@ v8::Handle<v8::Value> V8InjectedScriptHost::getEventListenersCallback(const v8::
 
 v8::Handle<v8::Value> V8InjectedScriptHost::inspectCallback(const v8::Arguments& args)
 {
-    INC_STATS("InjectedScriptHost.inspect()");
     if (args.Length() < 2)
         return v8::Undefined();
 
@@ -292,7 +284,6 @@ v8::Handle<v8::Value> V8InjectedScriptHost::inspectCallback(const v8::Arguments&
 
 v8::Handle<v8::Value> V8InjectedScriptHost::databaseIdCallback(const v8::Arguments& args)
 {
-    INC_STATS("InjectedScriptHost.databaseId()");
     if (args.Length() < 1)
         return v8::Undefined();
 #if ENABLE(SQL_DATABASE)
@@ -308,7 +299,6 @@ v8::Handle<v8::Value> V8InjectedScriptHost::storageIdCallback(const v8::Argument
 {
     if (args.Length() < 1)
         return v8::Undefined();
-    INC_STATS("InjectedScriptHost.storageId()");
     InjectedScriptHost* host = V8InjectedScriptHost::toNative(args.Holder());
     Storage* storage = V8Storage::toNative(v8::Handle<v8::Object>::Cast(args[0]));
     if (storage)
@@ -318,7 +308,6 @@ v8::Handle<v8::Value> V8InjectedScriptHost::storageIdCallback(const v8::Argument
 
 v8::Handle<v8::Value> V8InjectedScriptHost::evaluateCallback(const v8::Arguments& args)
 {
-    INC_STATS("InjectedScriptHost.evaluate()");
     if (args.Length() < 1)
         return v8::ThrowException(v8::Exception::Error(v8::String::New("One argument expected.")));
 

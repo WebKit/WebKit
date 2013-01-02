@@ -44,7 +44,6 @@ namespace WebCore {
 
 v8::Handle<v8::Value> V8NamedNodeMap::indexedPropertyGetter(uint32_t index, const v8::AccessorInfo& info)
 {
-    INC_STATS("DOM.NamedNodeMap.IndexedPropertyGetter");
     NamedNodeMap* imp = V8NamedNodeMap::toNative(info.Holder());
     RefPtr<Node> result = imp->item(index);
     if (!result)
@@ -55,7 +54,6 @@ v8::Handle<v8::Value> V8NamedNodeMap::indexedPropertyGetter(uint32_t index, cons
 
 v8::Handle<v8::Value> V8NamedNodeMap::namedPropertyGetter(v8::Local<v8::String> name, const v8::AccessorInfo& info)
 {
-    INC_STATS("DOM.NamedNodeMap.NamedPropertyGetter");
 
     if (!info.Holder()->GetRealNamedPropertyInPrototypeChain(name).IsEmpty())
         return v8Undefined();

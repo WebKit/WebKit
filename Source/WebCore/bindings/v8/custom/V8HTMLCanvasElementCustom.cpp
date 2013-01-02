@@ -50,7 +50,6 @@ namespace WebCore {
 
 v8::Handle<v8::Value> V8HTMLCanvasElement::getContextCallback(const v8::Arguments& args)
 {
-    INC_STATS("DOM.HTMLCanvasElement.context");
     v8::Handle<v8::Object> holder = args.Holder();
     HTMLCanvasElement* imp = V8HTMLCanvasElement::toNative(holder);
     String contextId = toWebCoreString(args[0]);

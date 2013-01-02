@@ -33,7 +33,6 @@ namespace WebCore {
 
 v8::Handle<v8::Value> V8Coordinates::altitudeAccessorGetter(v8::Local<v8::String> name, const v8::AccessorInfo& info)
 {
-    INC_STATS("DOM.Coordinates.altitude._get");
     v8::Handle<v8::Object> holder = info.Holder();
     Coordinates* imp = V8Coordinates::toNative(holder);
     if (!imp->canProvideAltitude())
@@ -43,7 +42,6 @@ v8::Handle<v8::Value> V8Coordinates::altitudeAccessorGetter(v8::Local<v8::String
 
 v8::Handle<v8::Value> V8Coordinates::altitudeAccuracyAccessorGetter(v8::Local<v8::String> name, const v8::AccessorInfo& info)
 {
-    INC_STATS("DOM.Coordinates.altitudeAccuracy._get");
     v8::Handle<v8::Object> holder = info.Holder();
     Coordinates* imp = V8Coordinates::toNative(holder);
     if (!imp->canProvideAltitudeAccuracy())
@@ -53,7 +51,6 @@ v8::Handle<v8::Value> V8Coordinates::altitudeAccuracyAccessorGetter(v8::Local<v8
 
 v8::Handle<v8::Value> V8Coordinates::headingAccessorGetter(v8::Local<v8::String> name, const v8::AccessorInfo& info)
 {
-    INC_STATS("DOM.Coordinates.heading._get");
     v8::Handle<v8::Object> holder = info.Holder();
     Coordinates* imp = V8Coordinates::toNative(holder);
     if (!imp->canProvideHeading())
@@ -63,7 +60,6 @@ v8::Handle<v8::Value> V8Coordinates::headingAccessorGetter(v8::Local<v8::String>
 
 v8::Handle<v8::Value> V8Coordinates::speedAccessorGetter(v8::Local<v8::String> name, const v8::AccessorInfo& info)
 {
-    INC_STATS("DOM.Coordinates.speed._get");
     v8::Handle<v8::Object> holder = info.Holder();
     Coordinates* imp = V8Coordinates::toNative(holder);
     if (!imp->canProvideSpeed())

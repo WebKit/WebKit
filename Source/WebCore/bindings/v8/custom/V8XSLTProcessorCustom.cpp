@@ -50,7 +50,6 @@ namespace WebCore {
 
 v8::Handle<v8::Value> V8XSLTProcessor::setParameterCallback(const v8::Arguments& args)
 {
-    INC_STATS("DOM.XSLTProcessor.setParameter");
     if (isUndefinedOrNull(args[1]) || isUndefinedOrNull(args[2]))
         return v8::Undefined();
 
@@ -66,7 +65,6 @@ v8::Handle<v8::Value> V8XSLTProcessor::setParameterCallback(const v8::Arguments&
 
 v8::Handle<v8::Value> V8XSLTProcessor::getParameterCallback(const v8::Arguments& args)
 {
-    INC_STATS("DOM.XSLTProcessor.getParameter");
     if (isUndefinedOrNull(args[1]))
         return v8::Undefined();
 
@@ -83,7 +81,6 @@ v8::Handle<v8::Value> V8XSLTProcessor::getParameterCallback(const v8::Arguments&
 
 v8::Handle<v8::Value> V8XSLTProcessor::removeParameterCallback(const v8::Arguments& args)
 {
-    INC_STATS("DOM.XSLTProcessor.removeParameter");
     if (isUndefinedOrNull(args[1]))
         return v8::Undefined();
 

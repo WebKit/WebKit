@@ -39,7 +39,6 @@ namespace WebCore {
 
 v8::Handle<v8::Value> V8HTMLInputElement::selectionStartAccessorGetter(v8::Local<v8::String> name, const v8::AccessorInfo& info)
 {
-    INC_STATS("DOM.HTMLInputElement.selectionStart._get");
     v8::Handle<v8::Object> holder = info.Holder();
     HTMLInputElement* imp = V8HTMLInputElement::toNative(holder);
 
@@ -52,7 +51,6 @@ v8::Handle<v8::Value> V8HTMLInputElement::selectionStartAccessorGetter(v8::Local
 
 void V8HTMLInputElement::selectionStartAccessorSetter(v8::Local<v8::String> name, v8::Local<v8::Value> value, const v8::AccessorInfo& info)
 {
-    INC_STATS("DOM.HTMLInputElement.selectionStart._set");
     v8::Handle<v8::Object> holder = info.Holder();
     HTMLInputElement* imp = V8HTMLInputElement::toNative(holder);
 
@@ -65,7 +63,6 @@ void V8HTMLInputElement::selectionStartAccessorSetter(v8::Local<v8::String> name
 
 v8::Handle<v8::Value> V8HTMLInputElement::selectionEndAccessorGetter(v8::Local<v8::String> name, const v8::AccessorInfo& info)
 {
-    INC_STATS("DOM.HTMLInputElement.selectionEnd._get");
     v8::Handle<v8::Object> holder = info.Holder();
     HTMLInputElement* imp = V8HTMLInputElement::toNative(holder);
 
@@ -78,7 +75,6 @@ v8::Handle<v8::Value> V8HTMLInputElement::selectionEndAccessorGetter(v8::Local<v
 
 void V8HTMLInputElement::selectionEndAccessorSetter(v8::Local<v8::String> name, v8::Local<v8::Value> value, const v8::AccessorInfo& info)
 {
-    INC_STATS("DOM.HTMLInputElement.selectionEnd._set");
     v8::Handle<v8::Object> holder = info.Holder();
     HTMLInputElement* imp = V8HTMLInputElement::toNative(holder);
 
@@ -92,7 +88,6 @@ void V8HTMLInputElement::selectionEndAccessorSetter(v8::Local<v8::String> name, 
 
 v8::Handle<v8::Value> V8HTMLInputElement::selectionDirectionAccessorGetter(v8::Local<v8::String> name, const v8::AccessorInfo& info)
 {
-    INC_STATS("DOM.HTMLInputElement.selectionDirection._get");
     v8::Handle<v8::Object> holder = info.Holder();
     HTMLInputElement* imp = V8HTMLInputElement::toNative(holder);
 
@@ -104,7 +99,6 @@ v8::Handle<v8::Value> V8HTMLInputElement::selectionDirectionAccessorGetter(v8::L
 
 void V8HTMLInputElement::selectionDirectionAccessorSetter(v8::Local<v8::String> name, v8::Local<v8::Value> value, const v8::AccessorInfo& info)
 {
-    INC_STATS("DOM.HTMLInputElement.selectionDirection._set");
     v8::Handle<v8::Object> holder = info.Holder();
     HTMLInputElement* imp = V8HTMLInputElement::toNative(holder);
 
@@ -118,7 +112,6 @@ void V8HTMLInputElement::selectionDirectionAccessorSetter(v8::Local<v8::String> 
 
 v8::Handle<v8::Value> V8HTMLInputElement::setSelectionRangeCallback(const v8::Arguments& args)
 {
-    INC_STATS("DOM.HTMLInputElement.setSelectionRange");
     v8::Handle<v8::Object> holder = args.Holder();
     HTMLInputElement* imp = V8HTMLInputElement::toNative(holder);
 

@@ -43,7 +43,6 @@ namespace WebCore {
 
 v8::Handle<v8::Value> V8History::stateAccessorGetter(v8::Local<v8::String> name, const v8::AccessorInfo& info)
 {
-    INC_STATS("DOM.History.state");
     History* history = V8History::toNative(info.Holder());
 
     v8::Handle<v8::Value> value = info.Holder()->GetHiddenValue(V8HiddenPropertyName::state());

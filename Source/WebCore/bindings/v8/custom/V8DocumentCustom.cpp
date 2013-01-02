@@ -66,7 +66,6 @@ namespace WebCore {
 
 v8::Handle<v8::Value> V8Document::evaluateCallback(const v8::Arguments& args)
 {
-    INC_STATS("DOM.Document.evaluate()");
 
     RefPtr<Document> document = V8Document::toNative(args.Holder());
     ExceptionCode ec = 0;

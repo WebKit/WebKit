@@ -86,14 +86,12 @@ static v8::Handle<v8::Value> storageGetter(v8::Local<v8::String> v8Name, const v
 
 v8::Handle<v8::Value> V8Storage::indexedPropertyGetter(uint32_t index, const v8::AccessorInfo& info)
 {
-    INC_STATS("DOM.Storage.IndexedPropertyGetter");
     v8::Handle<v8::Integer> indexV8 = v8Integer(index, info.GetIsolate());
     return storageGetter(indexV8->ToString(), info);
 }
 
 v8::Handle<v8::Value> V8Storage::namedPropertyGetter(v8::Local<v8::String> name, const v8::AccessorInfo& info)
 {
-    INC_STATS("DOM.Storage.NamedPropertyGetter");
     if (!info.Holder()->GetRealNamedPropertyInPrototypeChain(name).IsEmpty())
         return v8Undefined();
     return storageGetter(name, info);
@@ -101,7 +99,6 @@ v8::Handle<v8::Value> V8Storage::namedPropertyGetter(v8::Local<v8::String> name,
 
 v8::Handle<v8::Integer> V8Storage::namedPropertyQuery(v8::Local<v8::String> v8Name, const v8::AccessorInfo& info)
 {
-    INC_STATS("DOM.Storage.NamedPropertyQuery");
 
     Storage* storage = V8Storage::toNative(info.Holder());
     String name = toWebCoreString(v8Name);
@@ -140,14 +137,12 @@ static v8::Handle<v8::Value> storageSetter(v8::Local<v8::String> v8Name, v8::Loc
 
 v8::Handle<v8::Value> V8Storage::indexedPropertySetter(uint32_t index, v8::Local<v8::Value> value, const v8::AccessorInfo& info)
 {
-    INC_STATS("DOM.Storage.NamedPropertyGetter");
     v8::Handle<v8::Integer> indexV8 = v8Integer(index, info.GetIsolate());
     return storageSetter(indexV8->ToString(), value, info);
 }
 
 v8::Handle<v8::Value> V8Storage::namedPropertySetter(v8::Local<v8::String> name, v8::Local<v8::Value> value, const v8::AccessorInfo& info)
 {
-    INC_STATS("DOM.Storage.NamedPropertySetter");
     return storageSetter(name, value, info);
 }
 
@@ -170,14 +165,12 @@ static v8::Handle<v8::Boolean> storageDeleter(v8::Local<v8::String> v8Name, cons
 
 v8::Handle<v8::Boolean> V8Storage::indexedPropertyDeleter(uint32_t index, const v8::AccessorInfo& info)
 {
-    INC_STATS("DOM.Storage.IndexedPropertyDeleter");
     v8::Handle<v8::Integer> indexV8 = v8Integer(index, info.GetIsolate());
     return storageDeleter(indexV8->ToString(), info);
 }
 
 v8::Handle<v8::Boolean> V8Storage::namedPropertyDeleter(v8::Local<v8::String> name, const v8::AccessorInfo& info)
 {
-    INC_STATS("DOM.Storage.NamedPropertyDeleter");
     return storageDeleter(name, info);
 }
 

@@ -39,7 +39,6 @@ template <typename T> void V8_USE(T) { }
 
 static v8::Handle<v8::Value> nameAttrGetter(v8::Local<v8::String> name, const v8::AccessorInfo& info)
 {
-    INC_STATS("DOM.TestException.name._get");
     TestException* imp = V8TestException::toNative(info.Holder());
     return v8String(imp->name(), info.GetIsolate());
 }

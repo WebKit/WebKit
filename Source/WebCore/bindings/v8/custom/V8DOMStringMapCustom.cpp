@@ -40,7 +40,6 @@ namespace WebCore {
 
 v8::Handle<v8::Integer> V8DOMStringMap::namedPropertyQuery(v8::Local<v8::String> name, const v8::AccessorInfo& info)
 {
-    INC_STATS("DOM.DOMStringMap.NamedPropertyQuery");
     if (V8DOMStringMap::toNative(info.Holder())->contains(toWebCoreString(name)))
         return v8Integer(0, info.GetIsolate());
     return v8::Handle<v8::Integer>();
@@ -48,7 +47,6 @@ v8::Handle<v8::Integer> V8DOMStringMap::namedPropertyQuery(v8::Local<v8::String>
 
 v8::Handle<v8::Value> V8DOMStringMap::namedPropertyGetter(v8::Local<v8::String> name, const v8::AccessorInfo& info)
 {
-    INC_STATS("DOM.DOMStringMap.NamedPropertyGetter");
     String value = V8DOMStringMap::toNative(info.Holder())->item(toWebCoreString(name));
     if (value.isNull())
         return v8Undefined();
@@ -57,7 +55,6 @@ v8::Handle<v8::Value> V8DOMStringMap::namedPropertyGetter(v8::Local<v8::String> 
 
 v8::Handle<v8::Array> V8DOMStringMap::namedPropertyEnumerator(const v8::AccessorInfo& info)
 {
-    INC_STATS("DOM.DOMStringMap.NamedPropertyEnumerator");
     Vector<String> names;
     V8DOMStringMap::toNative(info.Holder())->getNames(names);
     v8::Handle<v8::Array> properties = v8::Array::New(names.size());
@@ -68,7 +65,6 @@ v8::Handle<v8::Array> V8DOMStringMap::namedPropertyEnumerator(const v8::Accessor
 
 v8::Handle<v8::Boolean> V8DOMStringMap::namedPropertyDeleter(v8::Local<v8::String> name, const v8::AccessorInfo& info)
 {
-    INC_STATS("DOM.DOMStringMap.NamedPropertyDeleter");
     ExceptionCode ec = 0;
     V8DOMStringMap::toNative(info.Holder())->deleteItem(toWebCoreString(name), ec);
     return v8Boolean(!ec, info.GetIsolate());
@@ -76,7 +72,6 @@ v8::Handle<v8::Boolean> V8DOMStringMap::namedPropertyDeleter(v8::Local<v8::Strin
 
 v8::Handle<v8::Value> V8DOMStringMap::namedPropertySetter(v8::Local<v8::String> name, v8::Local<v8::Value> value, const v8::AccessorInfo& info)
 {
-    INC_STATS("DOM.DOMStringMap.NamedPropertySetter");
     ExceptionCode ec = 0;
     V8DOMStringMap::toNative(info.Holder())->setItem(toWebCoreString(name), toWebCoreString(value), ec);
     if (ec)

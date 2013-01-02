@@ -55,7 +55,6 @@ static v8::Handle<v8::Value> getNamedItems(HTMLFormControlsCollection* collectio
 
 v8::Handle<v8::Value> V8HTMLFormControlsCollection::namedPropertyGetter(v8::Local<v8::String> name, const v8::AccessorInfo& info)
 {
-    INC_STATS("DOM.HTMLCollection.NamedPropertyGetter");
 
     if (!info.Holder()->GetRealNamedPropertyInPrototypeChain(name).IsEmpty())
         return v8Undefined();
@@ -68,7 +67,6 @@ v8::Handle<v8::Value> V8HTMLFormControlsCollection::namedPropertyGetter(v8::Loca
 
 v8::Handle<v8::Value> V8HTMLFormControlsCollection::namedItemCallback(const v8::Arguments& args)
 {
-    INC_STATS("DOM.HTMLCollection.namedItem()");
     HTMLFormControlsCollection* imp = V8HTMLFormControlsCollection::toNative(args.Holder());
     v8::Handle<v8::Value> result = getNamedItems(imp, toWebCoreString(args[0]), args.Holder(), args.GetIsolate());
 

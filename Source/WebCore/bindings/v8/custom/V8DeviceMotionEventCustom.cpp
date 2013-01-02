@@ -123,7 +123,6 @@ RefPtr<DeviceMotionData::RotationRate> readRotationRateArgument(v8::Local<v8::Va
 
 v8::Handle<v8::Value> V8DeviceMotionEvent::accelerationAccessorGetter(v8::Local<v8::String> name, const v8::AccessorInfo& info)
 {
-    INC_STATS("DOM.DeviceMotionEvent.acceleration._get");
     v8::Handle<v8::Object> holder = info.Holder();
     DeviceMotionEvent* imp = V8DeviceMotionEvent::toNative(holder);
     if (!imp->deviceMotionData()->acceleration())
@@ -133,7 +132,6 @@ v8::Handle<v8::Value> V8DeviceMotionEvent::accelerationAccessorGetter(v8::Local<
 
 v8::Handle<v8::Value> V8DeviceMotionEvent::accelerationIncludingGravityAccessorGetter(v8::Local<v8::String> name, const v8::AccessorInfo& info)
 {
-    INC_STATS("DOM.DeviceMotionEvent.accelerationIncludingGravity._get");
     v8::Handle<v8::Object> holder = info.Holder();
     DeviceMotionEvent* imp = V8DeviceMotionEvent::toNative(holder);
     if (!imp->deviceMotionData()->accelerationIncludingGravity())
@@ -143,7 +141,6 @@ v8::Handle<v8::Value> V8DeviceMotionEvent::accelerationIncludingGravityAccessorG
 
 v8::Handle<v8::Value> V8DeviceMotionEvent::rotationRateAccessorGetter(v8::Local<v8::String> name, const v8::AccessorInfo& info)
 {
-    INC_STATS("DOM.DeviceMotionEvent.rotationRate._get");
     v8::Handle<v8::Object> holder = info.Holder();
     DeviceMotionEvent* imp = V8DeviceMotionEvent::toNative(holder);
     if (!imp->deviceMotionData()->rotationRate())
@@ -153,7 +150,6 @@ v8::Handle<v8::Value> V8DeviceMotionEvent::rotationRateAccessorGetter(v8::Local<
 
 v8::Handle<v8::Value> V8DeviceMotionEvent::intervalAccessorGetter(v8::Local<v8::String> name, const v8::AccessorInfo& info)
 {
-    INC_STATS("DOM.DeviceMotionEvent.interval._get");
     v8::Handle<v8::Object> holder = info.Holder();
     DeviceMotionEvent* imp = V8DeviceMotionEvent::toNative(holder);
     if (!imp->deviceMotionData()->canProvideInterval())

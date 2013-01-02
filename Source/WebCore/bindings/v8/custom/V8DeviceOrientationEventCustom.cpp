@@ -37,7 +37,6 @@ namespace WebCore {
 
 v8::Handle<v8::Value> V8DeviceOrientationEvent::alphaAccessorGetter(v8::Local<v8::String> name, const v8::AccessorInfo& info)
 {
-    INC_STATS("DOM.DeviceOrientationEvent.alpha._get");
     v8::Handle<v8::Object> holder = info.Holder();
     DeviceOrientationEvent* imp = V8DeviceOrientationEvent::toNative(holder);
     if (!imp->orientation()->canProvideAlpha())
@@ -47,7 +46,6 @@ v8::Handle<v8::Value> V8DeviceOrientationEvent::alphaAccessorGetter(v8::Local<v8
 
 v8::Handle<v8::Value> V8DeviceOrientationEvent::betaAccessorGetter(v8::Local<v8::String> name, const v8::AccessorInfo& info)
 {
-    INC_STATS("DOM.DeviceOrientationEvent.beta._get");
     v8::Handle<v8::Object> holder = info.Holder();
     DeviceOrientationEvent* imp = V8DeviceOrientationEvent::toNative(holder);
     if (!imp->orientation()->canProvideBeta())
@@ -57,7 +55,6 @@ v8::Handle<v8::Value> V8DeviceOrientationEvent::betaAccessorGetter(v8::Local<v8:
 
 v8::Handle<v8::Value> V8DeviceOrientationEvent::gammaAccessorGetter(v8::Local<v8::String> name, const v8::AccessorInfo& info)
 {
-    INC_STATS("DOM.DeviceOrientationEvent.gamma._get");
     v8::Handle<v8::Object> holder = info.Holder();
     DeviceOrientationEvent* imp = V8DeviceOrientationEvent::toNative(holder);
     if (!imp->orientation()->canProvideGamma())
@@ -67,7 +64,6 @@ v8::Handle<v8::Value> V8DeviceOrientationEvent::gammaAccessorGetter(v8::Local<v8
 
 v8::Handle<v8::Value> V8DeviceOrientationEvent::absoluteAccessorGetter(v8::Local<v8::String> name, const v8::AccessorInfo& info)
 {
-    INC_STATS("DOM.DeviceOrientationEvent.absolute._get");
     v8::Handle<v8::Object> holder = info.Holder();
     DeviceOrientationEvent* imp = V8DeviceOrientationEvent::toNative(holder);
     if (!imp->orientation()->canProvideAbsolute())

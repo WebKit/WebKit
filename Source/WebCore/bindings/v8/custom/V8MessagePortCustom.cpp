@@ -42,7 +42,6 @@ namespace WebCore {
 
 v8::Handle<v8::Value> V8MessagePort::postMessageCallback(const v8::Arguments& args)
 {
-    INC_STATS("DOM.MessagePort.postMessage");
 
     MessagePort* messagePort = V8MessagePort::toNative(args.Holder());
     MessagePortArray portArray;

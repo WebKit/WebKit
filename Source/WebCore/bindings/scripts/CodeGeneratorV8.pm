@@ -789,7 +789,6 @@ sub GenerateDomainSafeFunctionGetter
     push(@implContentDecls, <<END);
 static v8::Handle<v8::Value> ${funcName}AttrGetter(v8::Local<v8::String> name, const v8::AccessorInfo& info)
 {
-    INC_STATS(\"DOM.$interfaceName.$funcName._get\");
     static v8::Persistent<v8::FunctionTemplate> privateTemplate = v8::Persistent<v8::FunctionTemplate>::New($newTemplateString);
     v8::Handle<v8::Object> holder = info.This()->FindInstanceInPrototypeChain(${v8InterfaceName}::GetTemplate());
     if (holder.IsEmpty()) {
@@ -821,7 +820,6 @@ sub GenerateDomainSafeFunctionSetter
     push(@implContentDecls, <<END);
 static void ${interfaceName}DomainSafeFunctionSetter(v8::Local<v8::String> name, v8::Local<v8::Value> value, const v8::AccessorInfo& info)
 {
-    INC_STATS("DOM.$interfaceName._set");
     v8::Handle<v8::Object> holder = info.This()->FindInstanceInPrototypeChain(${v8InterfaceName}::GetTemplate());
     if (holder.IsEmpty())
         return;
@@ -843,7 +841,6 @@ sub GenerateConstructorGetter
     push(@implContentDecls, <<END);
 static v8::Handle<v8::Value> ${interfaceName}ConstructorGetter(v8::Local<v8::String> name, const v8::AccessorInfo& info)
 {
-    INC_STATS(\"DOM.$interfaceName.constructors._get\");
     v8::Handle<v8::Value> data = info.Data();
     ASSERT(data->IsExternal());
     V8PerContextData* perContextData = V8PerContextData::from(info.Holder()->CreationContext());
@@ -889,7 +886,6 @@ sub GenerateNormalAttrGetter
     push(@implContentDecls, <<END);
 static v8::Handle<v8::Value> ${attrName}AttrGetter(v8::Local<v8::String> name, const v8::AccessorInfo& info)
 {
-    INC_STATS("DOM.$interfaceName.$attrName._get");
 END
     push(@implContentDecls, GenerateFeatureObservation($attrExt->{"V8MeasureAs"}));
 
@@ -1133,7 +1129,6 @@ sub GenerateReplaceableAttrSetter
     push(@implContentDecls, <<END);
 static void ${interfaceName}ReplaceableAttrSetter(v8::Local<v8::String> name, v8::Local<v8::Value> value, const v8::AccessorInfo& info)
 {
-    INC_STATS("DOM.$interfaceName.replaceable._set");
 END
     push(@implContentDecls, GenerateFeatureObservation($interface->extendedAttributes->{"V8MeasureAs"}));
 
@@ -1167,7 +1162,6 @@ sub GenerateNormalAttrSetter
     push(@implContentDecls, "#if ${conditionalString}\n\n") if $conditionalString;
 
     push(@implContentDecls, "static void ${attrName}AttrSetter(v8::Local<v8::String> name, v8::Local<v8::Value> value, const v8::AccessorInfo& info)\n{\n");
-    push(@implContentDecls, "    INC_STATS(\"DOM.$interfaceName.$attrName._set\");\n");
     push(@implContentDecls, GenerateFeatureObservation($attribute->signature->extendedAttributes->{"V8MeasureAs"}));
 
     # If the "StrictTypeChecking" extended attribute is present, and the attribute's type is an
@@ -1364,7 +1358,6 @@ sub GenerateEventListenerCallback
     push(@implContentDecls, <<END);
 static v8::Handle<v8::Value> ${functionName}EventListenerCallback(const v8::Arguments& args)
 {
-    INC_STATS("DOM.${interfaceName}.${functionName}EventListener()");
     RefPtr<EventListener> listener = V8DOMWrapper::getEventListener(args[1], false, ListenerFind${lookupType});
     if (listener) {
         V8TRYCATCH_FOR_V8STRINGRESOURCE(V8StringResource<WithNullCheck>, stringResource, args[0]);
@@ -1473,7 +1466,6 @@ sub GenerateOverloadedFunctionCallback
     push(@implContentDecls, <<END);
 static v8::Handle<v8::Value> ${name}Callback(const v8::Arguments& args)
 {
-    INC_STATS(\"DOM.$interfaceName.$name\");
 END
     push(@implContentDecls, GenerateFeatureObservation($function->signature->extendedAttributes->{"V8MeasureAs"}));
 
@@ -1524,7 +1516,6 @@ sub GenerateFunctionCallback
     push(@implContentDecls, <<END);
 static v8::Handle<v8::Value> ${name}Callback(const v8::Arguments& args)
 {
-    INC_STATS(\"DOM.$interfaceName.$name\");
 END
     push(@implContentDecls, GenerateFeatureObservation($function->signature->extendedAttributes->{"V8MeasureAs"}));
 
@@ -1848,7 +1839,6 @@ sub GenerateOverloadedConstructorCallback
     push(@implContent, <<END);
 v8::Handle<v8::Value> V8${interfaceName}::constructorCallback(const v8::Arguments& args)
 {
-    INC_STATS("DOM.${interfaceName}.Constructor");
 END
     push(@implContent, GenerateConstructorHeader());
 
@@ -1900,7 +1890,6 @@ sub GenerateSingleConstructorCallback
     push(@implContent, <<END);
 v8::Handle<v8::Value> V8${interfaceName}::constructor${overloadedIndexString}Callback(const v8::Arguments& args)
 {
-    INC_STATS("DOM.${interfaceName}.Constructor${overloadedIndexString}");
     ${maybeObserveFeature}
 END
 
@@ -1978,7 +1967,6 @@ sub GenerateCustomConstructorCallback
     push(@implContent, <<END);
 v8::Handle<v8::Value> V8${interfaceName}::constructorCallback(const v8::Arguments& args)
 {
-    INC_STATS("DOM.${interfaceName}.Constructor");
     ${maybeObserveFeature}
 END
     push(@implContent, GenerateConstructorHeader());
@@ -2014,7 +2002,6 @@ sub GenerateEventConstructorCallback
     push(@implContent, <<END);
 v8::Handle<v8::Value> V8${interfaceName}::constructorCallback(const v8::Arguments& args)
 {
-    INC_STATS("DOM.${interfaceName}.Constructor");
 END
     push(@implContent, GenerateConstructorHeader());
 
@@ -2075,7 +2062,6 @@ sub GenerateTypedArrayConstructorCallback
     push(@implContent, <<END);
 v8::Handle<v8::Value> V8${interfaceName}::constructorCallback(const v8::Arguments& args)
 {
-    INC_STATS("DOM.${interfaceName}.Contructor");
     return constructWebGLArray<$interfaceName, V8${interfaceName}, $type>(args, &info, $viewType);
 }
 
@@ -2117,7 +2103,6 @@ WrapperTypeInfo ${v8InterfaceName}Constructor::info = { ${v8InterfaceName}Constr
 
 static v8::Handle<v8::Value> ${v8InterfaceName}ConstructorCallback(const v8::Arguments& args)
 {
-    INC_STATS("DOM.${interfaceName}.Constructor");
     ${maybeObserveFeature}
 END
     push(@implContent, GenerateConstructorHeader());

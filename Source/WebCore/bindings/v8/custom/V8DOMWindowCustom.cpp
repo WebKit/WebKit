@@ -227,7 +227,6 @@ void V8DOMWindow::openerAccessorSetter(v8::Local<v8::String> name, v8::Local<v8:
 
 v8::Handle<v8::Value> V8DOMWindow::addEventListenerCallback(const v8::Arguments& args)
 {
-    INC_STATS("DOM.DOMWindow.addEventListener()");
 
     String eventType = toWebCoreString(args[0]);
     bool useCapture = args[2]->BooleanValue();
@@ -259,7 +258,6 @@ v8::Handle<v8::Value> V8DOMWindow::addEventListenerCallback(const v8::Arguments&
 
 v8::Handle<v8::Value> V8DOMWindow::removeEventListenerCallback(const v8::Arguments& args)
 {
-    INC_STATS("DOM.DOMWindow.removeEventListener()");
 
     String eventType = toWebCoreString(args[0]);
     bool useCapture = args[2]->BooleanValue();
@@ -297,7 +295,6 @@ static bool isLegacyTargetOriginDesignation(v8::Handle<v8::Value> value)
 
 v8::Handle<v8::Value> V8DOMWindow::postMessageCallback(const v8::Arguments& args)
 {
-    INC_STATS("DOM.DOMWindow.postMessage()");
 
     // None of these need to be RefPtr because args and context are guaranteed
     // to hold on to them.
@@ -349,7 +346,6 @@ v8::Handle<v8::Value> V8DOMWindow::postMessageCallback(const v8::Arguments& args
 // switching context of receiver. I consider it is dangerous.
 v8::Handle<v8::Value> V8DOMWindow::toStringCallback(const v8::Arguments& args)
 {
-    INC_STATS("DOM.DOMWindow.toString()");
     v8::Handle<v8::Object> domWrapper = args.This()->FindInstanceInPrototypeChain(V8DOMWindow::GetTemplate());
     if (domWrapper.IsEmpty())
         return args.This()->ObjectProtoToString();
@@ -358,13 +354,11 @@ v8::Handle<v8::Value> V8DOMWindow::toStringCallback(const v8::Arguments& args)
 
 v8::Handle<v8::Value> V8DOMWindow::releaseEventsCallback(const v8::Arguments& args)
 {
-    INC_STATS("DOM.DOMWindow.nop()");
     return v8::Undefined();
 }
 
 v8::Handle<v8::Value> V8DOMWindow::captureEventsCallback(const v8::Arguments& args)
 {
-    INC_STATS("DOM.DOMWindow.nop()");
     return v8::Undefined();
 }
 
@@ -412,7 +406,6 @@ static void setUpDialog(DOMWindow* dialog, void* handler)
 
 v8::Handle<v8::Value> V8DOMWindow::showModalDialogCallback(const v8::Arguments& args)
 {
-    INC_STATS("DOM.DOMWindow.showModalDialog()");
     DOMWindow* impl = V8DOMWindow::toNative(args.Holder());
     BindingState* state = BindingState::instance();
     if (!BindingSecurity::shouldAllowAccessToFrame(state, impl->frame()))
@@ -430,7 +423,6 @@ v8::Handle<v8::Value> V8DOMWindow::showModalDialogCallback(const v8::Arguments& 
 
 v8::Handle<v8::Value> V8DOMWindow::openCallback(const v8::Arguments& args)
 {
-    INC_STATS("DOM.DOMWindow.open()");
     DOMWindow* impl = V8DOMWindow::toNative(args.Holder());
     BindingState* state = BindingState::instance();
     if (!BindingSecurity::shouldAllowAccessToFrame(state, impl->frame()))
@@ -450,7 +442,6 @@ v8::Handle<v8::Value> V8DOMWindow::openCallback(const v8::Arguments& args)
 
 v8::Handle<v8::Value> V8DOMWindow::indexedPropertyGetter(uint32_t index, const v8::AccessorInfo& info)
 {
-    INC_STATS("DOM.DOMWindow.IndexedPropertyGetter");
 
     DOMWindow* window = V8DOMWindow::toNative(info.Holder());
     if (!window)
@@ -469,7 +460,6 @@ v8::Handle<v8::Value> V8DOMWindow::indexedPropertyGetter(uint32_t index, const v
 
 v8::Handle<v8::Value> V8DOMWindow::namedPropertyGetter(v8::Local<v8::String> name, const v8::AccessorInfo& info)
 {
-    INC_STATS("DOM.DOMWindow.NamedPropertyGetter");
 
     DOMWindow* window = V8DOMWindow::toNative(info.Holder());
     if (!window)
@@ -510,14 +500,12 @@ v8::Handle<v8::Value> V8DOMWindow::namedPropertyGetter(v8::Local<v8::String> nam
 
 v8::Handle<v8::Value> V8DOMWindow::setTimeoutCallback(const v8::Arguments& args)
 {
-    INC_STATS("DOM.DOMWindow.setTimeout()");
     return WindowSetTimeoutImpl(args, true);
 }
 
 
 v8::Handle<v8::Value> V8DOMWindow::setIntervalCallback(const v8::Arguments& args)
 {
-    INC_STATS("DOM.DOMWindow.setInterval()");
     return WindowSetTimeoutImpl(args, false);
 }
 

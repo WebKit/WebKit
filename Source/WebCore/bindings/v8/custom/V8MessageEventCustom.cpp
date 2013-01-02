@@ -44,7 +44,6 @@ namespace WebCore {
 
 v8::Handle<v8::Value> V8MessageEvent::dataAccessorGetter(v8::Local<v8::String> name, const v8::AccessorInfo& info)
 {
-    INC_STATS("DOM.MessageEvent.data");
     MessageEvent* event = V8MessageEvent::toNative(info.Holder());
 
     v8::Handle<v8::Value> result;
@@ -89,7 +88,6 @@ v8::Handle<v8::Value> V8MessageEvent::dataAccessorGetter(v8::Local<v8::String> n
 
 v8::Handle<v8::Value> V8MessageEvent::portsAccessorGetter(v8::Local<v8::String> name, const v8::AccessorInfo& info)
 {
-    INC_STATS("DOM.MessageEvent.ports");
     MessageEvent* event = V8MessageEvent::toNative(info.Holder());
 
     MessagePortArray* ports = event->ports();
@@ -107,7 +105,6 @@ v8::Handle<v8::Value> V8MessageEvent::portsAccessorGetter(v8::Local<v8::String> 
 
 v8::Handle<v8::Value> V8MessageEvent::initMessageEventCallback(const v8::Arguments& args)
 {
-    INC_STATS("DOM.MessageEvent.initMessageEvent");
     MessageEvent* event = V8MessageEvent::toNative(args.Holder());
     String typeArg = toWebCoreString(args[0]);
     bool canBubbleArg = args[1]->BooleanValue();
@@ -136,7 +133,6 @@ v8::Handle<v8::Value> V8MessageEvent::initMessageEventCallback(const v8::Argumen
 
 v8::Handle<v8::Value> V8MessageEvent::webkitInitMessageEventCallback(const v8::Arguments& args)
 {
-    INC_STATS("DOM.MessageEvent.webkitInitMessageEvent");
     return initMessageEventCallback(args);
 }
 

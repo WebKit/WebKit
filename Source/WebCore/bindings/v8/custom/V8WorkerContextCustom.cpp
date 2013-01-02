@@ -92,7 +92,6 @@ v8::Handle<v8::Value> SetTimeoutOrInterval(const v8::Arguments& args, bool singl
 
 v8::Handle<v8::Value> V8WorkerContext::importScriptsCallback(const v8::Arguments& args)
 {
-    INC_STATS("DOM.WorkerContext.importScripts()");
     if (!args.Length())
         return v8::Undefined();
 
@@ -117,13 +116,11 @@ v8::Handle<v8::Value> V8WorkerContext::importScriptsCallback(const v8::Arguments
 
 v8::Handle<v8::Value> V8WorkerContext::setTimeoutCallback(const v8::Arguments& args)
 {
-    INC_STATS("DOM.WorkerContext.setTimeout()");
     return SetTimeoutOrInterval(args, true);
 }
 
 v8::Handle<v8::Value> V8WorkerContext::setIntervalCallback(const v8::Arguments& args)
 {
-    INC_STATS("DOM.WorkerContext.setInterval()");
     return SetTimeoutOrInterval(args, false);
 }
 

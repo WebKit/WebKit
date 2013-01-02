@@ -117,7 +117,6 @@ static String writeHelperGetString(const v8::Arguments& args)
 
 v8::Handle<v8::Value> V8HTMLDocument::writeCallback(const v8::Arguments& args)
 {
-    INC_STATS("DOM.HTMLDocument.write()");
     HTMLDocument* htmlDocument = V8HTMLDocument::toNative(args.Holder());
     htmlDocument->write(writeHelperGetString(args), activeDOMWindow(BindingState::instance())->document());
     return v8::Undefined();
@@ -125,7 +124,6 @@ v8::Handle<v8::Value> V8HTMLDocument::writeCallback(const v8::Arguments& args)
 
 v8::Handle<v8::Value> V8HTMLDocument::writelnCallback(const v8::Arguments& args)
 {
-    INC_STATS("DOM.HTMLDocument.writeln()");
     HTMLDocument* htmlDocument = V8HTMLDocument::toNative(args.Holder());
     htmlDocument->writeln(writeHelperGetString(args), activeDOMWindow(BindingState::instance())->document());
     return v8::Undefined();
@@ -133,7 +131,6 @@ v8::Handle<v8::Value> V8HTMLDocument::writelnCallback(const v8::Arguments& args)
 
 v8::Handle<v8::Value> V8HTMLDocument::openCallback(const v8::Arguments& args)
 {
-    INC_STATS("DOM.HTMLDocument.open()");
     HTMLDocument* htmlDocument = V8HTMLDocument::toNative(args.Holder());
 
     if (args.Length() > 2) {

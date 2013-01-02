@@ -50,7 +50,6 @@ template <typename T> void V8_USE(T) { }
 
 static v8::Handle<v8::Value> fooCallback(const v8::Arguments& args)
 {
-    INC_STATS("DOM.Float64Array.foo");
     if (args.Length() < 1)
         return throwNotEnoughArgumentsError(args.GetIsolate());
     Float64Array* imp = V8Float64Array::toNative(args.Holder());
@@ -60,7 +59,6 @@ static v8::Handle<v8::Value> fooCallback(const v8::Arguments& args)
 
 static v8::Handle<v8::Value> setCallback(const v8::Arguments& args)
 {
-    INC_STATS("DOM.Float64Array.set");
     return setWebGLArrayHelper<Float64Array, V8Float64Array>(args);
 }
 
@@ -81,7 +79,6 @@ static const V8DOMConfiguration::BatchedCallback V8Float64ArrayCallbacks[] = {
 
 v8::Handle<v8::Value> V8Float64Array::constructorCallback(const v8::Arguments& args)
 {
-    INC_STATS("DOM.Float64Array.Contructor");
     return constructWebGLArray<Float64Array, V8Float64Array, double>(args, &info, v8::kExternalDoubleArray);
 }
 

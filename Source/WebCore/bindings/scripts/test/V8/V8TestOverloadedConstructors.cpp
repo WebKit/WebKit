@@ -47,7 +47,6 @@ template <typename T> void V8_USE(T) { }
 
 v8::Handle<v8::Value> V8TestOverloadedConstructors::constructor1Callback(const v8::Arguments& args)
 {
-    INC_STATS("DOM.TestOverloadedConstructors.Constructor1");
     
     V8TRYCATCH(ArrayBuffer*, arrayBuffer, V8ArrayBuffer::HasInstance(MAYBE_MISSING_PARAMETER(args, 0, DefaultIsUndefined)) ? V8ArrayBuffer::toNative(v8::Handle<v8::Object>::Cast(MAYBE_MISSING_PARAMETER(args, 0, DefaultIsUndefined))) : 0);
 
@@ -60,7 +59,6 @@ v8::Handle<v8::Value> V8TestOverloadedConstructors::constructor1Callback(const v
 
 v8::Handle<v8::Value> V8TestOverloadedConstructors::constructor2Callback(const v8::Arguments& args)
 {
-    INC_STATS("DOM.TestOverloadedConstructors.Constructor2");
     
     V8TRYCATCH(ArrayBufferView*, arrayBufferView, V8ArrayBufferView::HasInstance(MAYBE_MISSING_PARAMETER(args, 0, DefaultIsUndefined)) ? V8ArrayBufferView::toNative(v8::Handle<v8::Object>::Cast(MAYBE_MISSING_PARAMETER(args, 0, DefaultIsUndefined))) : 0);
 
@@ -73,7 +71,6 @@ v8::Handle<v8::Value> V8TestOverloadedConstructors::constructor2Callback(const v
 
 v8::Handle<v8::Value> V8TestOverloadedConstructors::constructor3Callback(const v8::Arguments& args)
 {
-    INC_STATS("DOM.TestOverloadedConstructors.Constructor3");
     
     V8TRYCATCH(Blob*, blob, V8Blob::HasInstance(MAYBE_MISSING_PARAMETER(args, 0, DefaultIsUndefined)) ? V8Blob::toNative(v8::Handle<v8::Object>::Cast(MAYBE_MISSING_PARAMETER(args, 0, DefaultIsUndefined))) : 0);
 
@@ -86,7 +83,6 @@ v8::Handle<v8::Value> V8TestOverloadedConstructors::constructor3Callback(const v
 
 v8::Handle<v8::Value> V8TestOverloadedConstructors::constructor4Callback(const v8::Arguments& args)
 {
-    INC_STATS("DOM.TestOverloadedConstructors.Constructor4");
     
     V8TRYCATCH_FOR_V8STRINGRESOURCE(V8StringResource<>, string, MAYBE_MISSING_PARAMETER(args, 0, DefaultIsUndefined));
 
@@ -99,7 +95,6 @@ v8::Handle<v8::Value> V8TestOverloadedConstructors::constructor4Callback(const v
 
 v8::Handle<v8::Value> V8TestOverloadedConstructors::constructorCallback(const v8::Arguments& args)
 {
-    INC_STATS("DOM.TestOverloadedConstructors.Constructor");
     if (!args.IsConstructCall())
         return throwTypeError("DOM object constructor cannot be called as a function.");
 

@@ -42,7 +42,6 @@ namespace WebCore {
 
 v8::Handle<v8::Value> V8FileReader::resultAccessorGetter(v8::Local<v8::String> name, const v8::AccessorInfo& info)
 {
-    INC_STATS("DOM.FileReader.result._get");
     v8::Handle<v8::Object> holder = info.Holder();
     FileReader* imp = V8FileReader::toNative(holder);
     if (imp->readType() == FileReaderLoader::ReadAsArrayBuffer)

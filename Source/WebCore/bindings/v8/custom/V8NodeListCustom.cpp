@@ -44,7 +44,6 @@ namespace WebCore {
 
 v8::Handle<v8::Value> V8NodeList::namedPropertyGetter(v8::Local<v8::String> name, const v8::AccessorInfo& info)
 {
-    INC_STATS("DOM.NodeList.NamedPropertyGetter");
     NodeList* list = V8NodeList::toNative(info.Holder());
     AtomicString key = toWebCoreAtomicString(name);
 

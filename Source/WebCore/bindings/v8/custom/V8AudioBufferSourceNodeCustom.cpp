@@ -38,7 +38,6 @@ namespace WebCore {
 
 void V8AudioBufferSourceNode::bufferAccessorSetter(v8::Local<v8::String> name, v8::Local<v8::Value> value, const v8::AccessorInfo& info)
 {
-    INC_STATS("DOM.AudioBufferSourceNode.buffer._set");
     v8::Handle<v8::Object> holder = info.Holder();
     AudioBufferSourceNode* imp = V8AudioBufferSourceNode::toNative(holder);
 

@@ -53,7 +53,6 @@ v8::Handle<v8::Value> V8DOMFormData::constructorCallbackCustom(const v8::Argumen
 
 v8::Handle<v8::Value> V8DOMFormData::appendCallback(const v8::Arguments& args)
 {
-    INC_STATS("DOM.FormData.append()");
     
     if (args.Length() < 2)
         return throwError(v8SyntaxError, "Not enough arguments", args.GetIsolate());

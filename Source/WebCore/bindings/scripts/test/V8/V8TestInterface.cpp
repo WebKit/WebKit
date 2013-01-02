@@ -50,7 +50,6 @@ template <typename T> void V8_USE(T) { }
 
 static v8::Handle<v8::Value> supplementalStaticReadOnlyAttrAttrGetter(v8::Local<v8::String> name, const v8::AccessorInfo& info)
 {
-    INC_STATS("DOM.TestInterface.supplementalStaticReadOnlyAttr._get");
     return v8Integer(TestSupplemental::supplementalStaticReadOnlyAttr(), info.GetIsolate());
 }
 
@@ -60,7 +59,6 @@ static v8::Handle<v8::Value> supplementalStaticReadOnlyAttrAttrGetter(v8::Local<
 
 static v8::Handle<v8::Value> supplementalStaticAttrAttrGetter(v8::Local<v8::String> name, const v8::AccessorInfo& info)
 {
-    INC_STATS("DOM.TestInterface.supplementalStaticAttr._get");
     return v8String(TestSupplemental::supplementalStaticAttr(), info.GetIsolate());
 }
 
@@ -70,7 +68,6 @@ static v8::Handle<v8::Value> supplementalStaticAttrAttrGetter(v8::Local<v8::Stri
 
 static void supplementalStaticAttrAttrSetter(v8::Local<v8::String> name, v8::Local<v8::Value> value, const v8::AccessorInfo& info)
 {
-    INC_STATS("DOM.TestInterface.supplementalStaticAttr._set");
     V8TRYCATCH_FOR_V8STRINGRESOURCE_VOID(V8StringResource<>, v, value);
     TestSupplemental::setSupplementalStaticAttr(v);
     return;
@@ -82,7 +79,6 @@ static void supplementalStaticAttrAttrSetter(v8::Local<v8::String> name, v8::Loc
 
 static v8::Handle<v8::Value> supplementalStr1AttrGetter(v8::Local<v8::String> name, const v8::AccessorInfo& info)
 {
-    INC_STATS("DOM.TestInterface.supplementalStr1._get");
     TestInterface* imp = V8TestInterface::toNative(info.Holder());
     return v8String(TestSupplemental::supplementalStr1(imp), info.GetIsolate());
 }
@@ -93,7 +89,6 @@ static v8::Handle<v8::Value> supplementalStr1AttrGetter(v8::Local<v8::String> na
 
 static v8::Handle<v8::Value> supplementalStr2AttrGetter(v8::Local<v8::String> name, const v8::AccessorInfo& info)
 {
-    INC_STATS("DOM.TestInterface.supplementalStr2._get");
     TestInterface* imp = V8TestInterface::toNative(info.Holder());
     return v8String(TestSupplemental::supplementalStr2(imp), info.GetIsolate());
 }
@@ -104,7 +99,6 @@ static v8::Handle<v8::Value> supplementalStr2AttrGetter(v8::Local<v8::String> na
 
 static void supplementalStr2AttrSetter(v8::Local<v8::String> name, v8::Local<v8::Value> value, const v8::AccessorInfo& info)
 {
-    INC_STATS("DOM.TestInterface.supplementalStr2._set");
     TestInterface* imp = V8TestInterface::toNative(info.Holder());
     V8TRYCATCH_FOR_V8STRINGRESOURCE_VOID(V8StringResource<>, v, value);
     TestSupplemental::setSupplementalStr2(imp, v);
@@ -117,7 +111,6 @@ static void supplementalStr2AttrSetter(v8::Local<v8::String> name, v8::Local<v8:
 
 static v8::Handle<v8::Value> supplementalNodeAttrGetter(v8::Local<v8::String> name, const v8::AccessorInfo& info)
 {
-    INC_STATS("DOM.TestInterface.supplementalNode._get");
     TestInterface* imp = V8TestInterface::toNative(info.Holder());
     return toV8Fast(TestSupplemental::supplementalNode(imp), info, imp);
 }
@@ -128,7 +121,6 @@ static v8::Handle<v8::Value> supplementalNodeAttrGetter(v8::Local<v8::String> na
 
 static void supplementalNodeAttrSetter(v8::Local<v8::String> name, v8::Local<v8::Value> value, const v8::AccessorInfo& info)
 {
-    INC_STATS("DOM.TestInterface.supplementalNode._set");
     TestInterface* imp = V8TestInterface::toNative(info.Holder());
     Node* v = V8Node::HasInstance(value) ? V8Node::toNative(v8::Handle<v8::Object>::Cast(value)) : 0;
     TestSupplemental::setSupplementalNode(imp, WTF::getPtr(v));
@@ -141,7 +133,6 @@ static void supplementalNodeAttrSetter(v8::Local<v8::String> name, v8::Local<v8:
 
 static v8::Handle<v8::Value> supplementalMethod1Callback(const v8::Arguments& args)
 {
-    INC_STATS("DOM.TestInterface.supplementalMethod1");
     TestInterface* imp = V8TestInterface::toNative(args.Holder());
     TestSupplemental::supplementalMethod1(imp);
     return v8Undefined();
@@ -153,7 +144,6 @@ static v8::Handle<v8::Value> supplementalMethod1Callback(const v8::Arguments& ar
 
 static v8::Handle<v8::Value> supplementalMethod2Callback(const v8::Arguments& args)
 {
-    INC_STATS("DOM.TestInterface.supplementalMethod2");
     if (args.Length() < 2)
         return throwNotEnoughArgumentsError(args.GetIsolate());
     TestInterface* imp = V8TestInterface::toNative(args.Holder());
@@ -177,7 +167,6 @@ static v8::Handle<v8::Value> supplementalMethod2Callback(const v8::Arguments& ar
 
 static v8::Handle<v8::Value> supplementalMethod4Callback(const v8::Arguments& args)
 {
-    INC_STATS("DOM.TestInterface.supplementalMethod4");
     TestSupplemental::supplementalMethod4();
     return v8Undefined();
 }
@@ -241,7 +230,6 @@ COMPILE_ASSERT(2 == TestSupplemental::CONST_IMPL, TestInterfaceEnumCONST_IMPLIsW
 
 v8::Handle<v8::Value> V8TestInterface::constructorCallback(const v8::Arguments& args)
 {
-    INC_STATS("DOM.TestInterface.Constructor");
     
     if (!args.IsConstructCall())
         return throwTypeError("DOM object constructor cannot be called as a function.");

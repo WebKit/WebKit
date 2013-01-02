@@ -56,7 +56,6 @@ v8::Handle<v8::Object> wrap(DataView* impl, v8::Handle<v8::Object> creationConte
 
 v8::Handle<v8::Value> V8DataView::getInt8Callback(const v8::Arguments& args)
 {
-    INC_STATS("DOM.DataView.getInt8");
     if (args.Length() < 1)
         return throwNotEnoughArgumentsError(args.GetIsolate());
 
@@ -71,7 +70,6 @@ v8::Handle<v8::Value> V8DataView::getInt8Callback(const v8::Arguments& args)
 
 v8::Handle<v8::Value> V8DataView::getUint8Callback(const v8::Arguments& args)
 {
-    INC_STATS("DOM.DataView.getUint8");
     if (args.Length() < 1)
         return throwNotEnoughArgumentsError(args.GetIsolate());
 
@@ -86,7 +84,6 @@ v8::Handle<v8::Value> V8DataView::getUint8Callback(const v8::Arguments& args)
 
 v8::Handle<v8::Value> V8DataView::setInt8Callback(const v8::Arguments& args)
 {
-    INC_STATS("DOM.DataView.setInt8");
     if (args.Length() < 2)
         return throwNotEnoughArgumentsError(args.GetIsolate());
 
@@ -102,7 +99,6 @@ v8::Handle<v8::Value> V8DataView::setInt8Callback(const v8::Arguments& args)
 
 v8::Handle<v8::Value> V8DataView::setUint8Callback(const v8::Arguments& args)
 {
-    INC_STATS("DOM.DataView.setUint8");
     if (args.Length() < 2)
         return throwNotEnoughArgumentsError(args.GetIsolate());
 

@@ -48,7 +48,6 @@ namespace WebCore {
 
 v8::Handle<v8::Value> V8CustomEvent::detailAccessorGetter(v8::Local<v8::String> name, const v8::AccessorInfo& info)
 {
-    INC_STATS("DOM.CustomEvent.detail._get");
     CustomEvent* imp = V8CustomEvent::toNative(info.Holder());
     SerializedScriptValue* serialized = imp->serializedScriptValue().get();
     if (serialized) {

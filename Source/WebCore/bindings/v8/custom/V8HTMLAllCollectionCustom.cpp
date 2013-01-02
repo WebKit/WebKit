@@ -74,7 +74,6 @@ static v8::Handle<v8::Value> getItem(HTMLAllCollection* collection, v8::Handle<v
 
 v8::Handle<v8::Value> V8HTMLAllCollection::namedPropertyGetter(v8::Local<v8::String> name, const v8::AccessorInfo& info)
 {
-    INC_STATS("DOM.HTMLAllCollection.NamedPropertyGetter");
 
     if (!info.Holder()->GetRealNamedPropertyInPrototypeChain(name).IsEmpty())
         return v8Undefined();
@@ -87,14 +86,12 @@ v8::Handle<v8::Value> V8HTMLAllCollection::namedPropertyGetter(v8::Local<v8::Str
 
 v8::Handle<v8::Value> V8HTMLAllCollection::itemCallback(const v8::Arguments& args)
 {
-    INC_STATS("DOM.HTMLAllCollection.item()");
     HTMLAllCollection* imp = V8HTMLAllCollection::toNative(args.Holder());
     return getItem(imp, args[0], args.Holder(), args.GetIsolate());
 }
 
 v8::Handle<v8::Value> V8HTMLAllCollection::namedItemCallback(const v8::Arguments& args)
 {
-    INC_STATS("DOM.HTMLAllCollection.namedItem()");
     HTMLAllCollection* imp = V8HTMLAllCollection::toNative(args.Holder());
     v8::Handle<v8::Value> result = getNamedItems(imp, toWebCoreString(args[0]), args.Holder(), args.GetIsolate());
 
@@ -106,7 +103,6 @@ v8::Handle<v8::Value> V8HTMLAllCollection::namedItemCallback(const v8::Arguments
 
 v8::Handle<v8::Value> V8HTMLAllCollection::callAsFunctionCallback(const v8::Arguments& args)
 {
-    INC_STATS("DOM.HTMLAllCollection.callAsFunction()");
     if (args.Length() < 1)
         return v8::Undefined();
 

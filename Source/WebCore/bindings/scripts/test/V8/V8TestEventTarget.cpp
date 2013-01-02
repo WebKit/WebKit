@@ -43,7 +43,6 @@ template <typename T> void V8_USE(T) { }
 
 static v8::Handle<v8::Value> itemCallback(const v8::Arguments& args)
 {
-    INC_STATS("DOM.TestEventTarget.item");
     if (args.Length() < 1)
         return throwNotEnoughArgumentsError(args.GetIsolate());
     TestEventTarget* imp = V8TestEventTarget::toNative(args.Holder());
@@ -62,7 +61,6 @@ static v8::Handle<v8::Value> itemCallback(const v8::Arguments& args)
 
 static v8::Handle<v8::Value> addEventListenerCallback(const v8::Arguments& args)
 {
-    INC_STATS("DOM.TestEventTarget.addEventListener()");
     RefPtr<EventListener> listener = V8DOMWrapper::getEventListener(args[1], false, ListenerFindOrCreate);
     if (listener) {
         V8TRYCATCH_FOR_V8STRINGRESOURCE(V8StringResource<WithNullCheck>, stringResource, args[0]);
@@ -74,7 +72,6 @@ static v8::Handle<v8::Value> addEventListenerCallback(const v8::Arguments& args)
 
 static v8::Handle<v8::Value> removeEventListenerCallback(const v8::Arguments& args)
 {
-    INC_STATS("DOM.TestEventTarget.removeEventListener()");
     RefPtr<EventListener> listener = V8DOMWrapper::getEventListener(args[1], false, ListenerFindOnly);
     if (listener) {
         V8TRYCATCH_FOR_V8STRINGRESOURCE(V8StringResource<WithNullCheck>, stringResource, args[0]);
@@ -86,7 +83,6 @@ static v8::Handle<v8::Value> removeEventListenerCallback(const v8::Arguments& ar
 
 static v8::Handle<v8::Value> dispatchEventCallback(const v8::Arguments& args)
 {
-    INC_STATS("DOM.TestEventTarget.dispatchEvent");
     if (args.Length() < 1)
         return throwNotEnoughArgumentsError(args.GetIsolate());
     TestEventTarget* imp = V8TestEventTarget::toNative(args.Holder());

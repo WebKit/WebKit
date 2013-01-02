@@ -272,7 +272,6 @@ enum WhichProgramCall {
 
 v8::Handle<v8::Value> V8WebGLRenderingContext::getAttachedShadersCallback(const v8::Arguments& args)
 {
-    INC_STATS("DOM.WebGLRenderingContext.getAttachedShaders()");
 
     if (args.Length() < 1)
         return throwNotEnoughArgumentsError(args.GetIsolate());
@@ -298,13 +297,11 @@ v8::Handle<v8::Value> V8WebGLRenderingContext::getAttachedShadersCallback(const 
 
 v8::Handle<v8::Value> V8WebGLRenderingContext::getBufferParameterCallback(const v8::Arguments& args)
 {
-    INC_STATS("DOM.WebGLRenderingContext.getBufferParameter()");
     return getObjectParameter(args, kBuffer);
 }
 
 v8::Handle<v8::Value> V8WebGLRenderingContext::getExtensionCallback(const v8::Arguments& args)
 {
-    INC_STATS("DOM.WebGLRenderingContext.getExtensionCallback()");
     WebGLRenderingContext* imp = V8WebGLRenderingContext::toNative(args.Holder());
     if (args.Length() < 1)
         return throwNotEnoughArgumentsError(args.GetIsolate());
@@ -315,7 +312,6 @@ v8::Handle<v8::Value> V8WebGLRenderingContext::getExtensionCallback(const v8::Ar
 
 v8::Handle<v8::Value> V8WebGLRenderingContext::getFramebufferAttachmentParameterCallback(const v8::Arguments& args)
 {
-    INC_STATS("DOM.WebGLRenderingContext.getFramebufferAttachmentParameter()");
 
     if (args.Length() != 3)
         return throwNotEnoughArgumentsError(args.GetIsolate());
@@ -333,7 +329,6 @@ v8::Handle<v8::Value> V8WebGLRenderingContext::getFramebufferAttachmentParameter
 
 v8::Handle<v8::Value> V8WebGLRenderingContext::getParameterCallback(const v8::Arguments& args)
 {
-    INC_STATS("DOM.WebGLRenderingContext.getParameter()");
 
     if (args.Length() != 1)
         return throwNotEnoughArgumentsError(args.GetIsolate());
@@ -349,7 +344,6 @@ v8::Handle<v8::Value> V8WebGLRenderingContext::getParameterCallback(const v8::Ar
 
 v8::Handle<v8::Value> V8WebGLRenderingContext::getProgramParameterCallback(const v8::Arguments& args)
 {
-    INC_STATS("DOM.WebGLRenderingContext.getProgramParameter()");
 
     if (args.Length() != 2)
         return throwNotEnoughArgumentsError(args.GetIsolate());
@@ -368,13 +362,11 @@ v8::Handle<v8::Value> V8WebGLRenderingContext::getProgramParameterCallback(const
 
 v8::Handle<v8::Value> V8WebGLRenderingContext::getRenderbufferParameterCallback(const v8::Arguments& args)
 {
-    INC_STATS("DOM.WebGLRenderingContext.getRenderbufferParameter()");
     return getObjectParameter(args, kRenderbuffer);
 }
 
 v8::Handle<v8::Value> V8WebGLRenderingContext::getShaderParameterCallback(const v8::Arguments& args)
 {
-    INC_STATS("DOM.WebGLRenderingContext.getShaderParameter()");
 
     if (args.Length() != 2)
         return throwNotEnoughArgumentsError(args.GetIsolate());
@@ -393,7 +385,6 @@ v8::Handle<v8::Value> V8WebGLRenderingContext::getShaderParameterCallback(const 
 
 v8::Handle<v8::Value> V8WebGLRenderingContext::getSupportedExtensionsCallback(const v8::Arguments& args)
 {
-    INC_STATS("DOM.WebGLRenderingContext.getSupportedExtensionsCallback()");
     WebGLRenderingContext* imp = V8WebGLRenderingContext::toNative(args.Holder());
     if (imp->isContextLost())
         return v8Null(args.GetIsolate());
@@ -407,13 +398,11 @@ v8::Handle<v8::Value> V8WebGLRenderingContext::getSupportedExtensionsCallback(co
 
 v8::Handle<v8::Value> V8WebGLRenderingContext::getTexParameterCallback(const v8::Arguments& args)
 {
-    INC_STATS("DOM.WebGLRenderingContext.getTexParameter()");
     return getObjectParameter(args, kTexture);
 }
 
 v8::Handle<v8::Value> V8WebGLRenderingContext::getUniformCallback(const v8::Arguments& args)
 {
-    INC_STATS("DOM.WebGLRenderingContext.getUniform()");
 
     if (args.Length() != 2)
         return throwNotEnoughArgumentsError(args.GetIsolate());
@@ -437,7 +426,6 @@ v8::Handle<v8::Value> V8WebGLRenderingContext::getUniformCallback(const v8::Argu
 
 v8::Handle<v8::Value> V8WebGLRenderingContext::getVertexAttribCallback(const v8::Arguments& args)
 {
-    INC_STATS("DOM.WebGLRenderingContext.getVertexAttrib()");
     return getObjectParameter(args, kVertexAttrib);
 }
 
@@ -608,49 +596,41 @@ static v8::Handle<v8::Value> uniformHelperi(const v8::Arguments& args,
 
 v8::Handle<v8::Value> V8WebGLRenderingContext::uniform1fvCallback(const v8::Arguments& args)
 {
-    INC_STATS("DOM.WebGLRenderingContext.uniform1fv()");
     return vertexAttribAndUniformHelperf(args, kUniform1v);
 }
 
 v8::Handle<v8::Value> V8WebGLRenderingContext::uniform1ivCallback(const v8::Arguments& args)
 {
-    INC_STATS("DOM.WebGLRenderingContext.uniform1iv()");
     return uniformHelperi(args, kUniform1v);
 }
 
 v8::Handle<v8::Value> V8WebGLRenderingContext::uniform2fvCallback(const v8::Arguments& args)
 {
-    INC_STATS("DOM.WebGLRenderingContext.uniform2fv()");
     return vertexAttribAndUniformHelperf(args, kUniform2v);
 }
 
 v8::Handle<v8::Value> V8WebGLRenderingContext::uniform2ivCallback(const v8::Arguments& args)
 {
-    INC_STATS("DOM.WebGLRenderingContext.uniform2iv()");
     return uniformHelperi(args, kUniform2v);
 }
 
 v8::Handle<v8::Value> V8WebGLRenderingContext::uniform3fvCallback(const v8::Arguments& args)
 {
-    INC_STATS("DOM.WebGLRenderingContext.uniform3fv()");
     return vertexAttribAndUniformHelperf(args, kUniform3v);
 }
 
 v8::Handle<v8::Value> V8WebGLRenderingContext::uniform3ivCallback(const v8::Arguments& args)
 {
-    INC_STATS("DOM.WebGLRenderingContext.uniform3iv()");
     return uniformHelperi(args, kUniform3v);
 }
 
 v8::Handle<v8::Value> V8WebGLRenderingContext::uniform4fvCallback(const v8::Arguments& args)
 {
-    INC_STATS("DOM.WebGLRenderingContext.uniform4fv()");
     return vertexAttribAndUniformHelperf(args, kUniform4v);
 }
 
 v8::Handle<v8::Value> V8WebGLRenderingContext::uniform4ivCallback(const v8::Arguments& args)
 {
-    INC_STATS("DOM.WebGLRenderingContext.uniform4iv()");
     return uniformHelperi(args, kUniform4v);
 }
 
@@ -717,43 +697,36 @@ static v8::Handle<v8::Value> uniformMatrixHelper(const v8::Arguments& args,
 
 v8::Handle<v8::Value> V8WebGLRenderingContext::uniformMatrix2fvCallback(const v8::Arguments& args)
 {
-    INC_STATS("DOM.WebGLRenderingContext.uniformMatrix2fv()");
     return uniformMatrixHelper(args, 2);
 }
 
 v8::Handle<v8::Value> V8WebGLRenderingContext::uniformMatrix3fvCallback(const v8::Arguments& args)
 {
-    INC_STATS("DOM.WebGLRenderingContext.uniformMatrix3fv()");
     return uniformMatrixHelper(args, 3);
 }
 
 v8::Handle<v8::Value> V8WebGLRenderingContext::uniformMatrix4fvCallback(const v8::Arguments& args)
 {
-    INC_STATS("DOM.WebGLRenderingContext.uniformMatrix4fv()");
     return uniformMatrixHelper(args, 4);
 }
 
 v8::Handle<v8::Value> V8WebGLRenderingContext::vertexAttrib1fvCallback(const v8::Arguments& args)
 {
-    INC_STATS("DOM.WebGLRenderingContext.vertexAttrib1fv()");
     return vertexAttribAndUniformHelperf(args, kVertexAttrib1v);
 }
 
 v8::Handle<v8::Value> V8WebGLRenderingContext::vertexAttrib2fvCallback(const v8::Arguments& args)
 {
-    INC_STATS("DOM.WebGLRenderingContext.vertexAttrib2fv()");
     return vertexAttribAndUniformHelperf(args, kVertexAttrib2v);
 }
 
 v8::Handle<v8::Value> V8WebGLRenderingContext::vertexAttrib3fvCallback(const v8::Arguments& args)
 {
-    INC_STATS("DOM.WebGLRenderingContext.vertexAttrib3fv()");
     return vertexAttribAndUniformHelperf(args, kVertexAttrib3v);
 }
 
 v8::Handle<v8::Value> V8WebGLRenderingContext::vertexAttrib4fvCallback(const v8::Arguments& args)
 {
-    INC_STATS("DOM.WebGLRenderingContext.vertexAttrib4fv()");
     return vertexAttribAndUniformHelperf(args, kVertexAttrib4v);
 }
 

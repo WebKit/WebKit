@@ -40,14 +40,12 @@ template <typename T> void V8_USE(T) { }
 
 static v8::Handle<v8::Value> attr1AttrGetter(v8::Local<v8::String> name, const v8::AccessorInfo& info)
 {
-    INC_STATS("DOM.TestEventConstructor.attr1._get");
     TestEventConstructor* imp = V8TestEventConstructor::toNative(info.Holder());
     return v8String(imp->attr1(), info.GetIsolate());
 }
 
 static v8::Handle<v8::Value> attr2AttrGetter(v8::Local<v8::String> name, const v8::AccessorInfo& info)
 {
-    INC_STATS("DOM.TestEventConstructor.attr2._get");
     TestEventConstructor* imp = V8TestEventConstructor::toNative(info.Holder());
     return v8String(imp->attr2(), info.GetIsolate());
 }
@@ -63,7 +61,6 @@ static const V8DOMConfiguration::BatchedAttribute V8TestEventConstructorAttrs[] 
 
 v8::Handle<v8::Value> V8TestEventConstructor::constructorCallback(const v8::Arguments& args)
 {
-    INC_STATS("DOM.TestEventConstructor.Constructor");
     if (!args.IsConstructCall())
         return throwTypeError("DOM object constructor cannot be called as a function.");
 

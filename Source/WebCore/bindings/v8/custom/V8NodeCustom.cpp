@@ -63,7 +63,6 @@ namespace WebCore {
 // This function is customized to take advantage of the optional 4th argument: shouldLazyAttach
 v8::Handle<v8::Value> V8Node::insertBeforeCallback(const v8::Arguments& args)
 {
-    INC_STATS("DOM.Node.insertBefore");
     v8::Handle<v8::Object> holder = args.Holder();
     Node* imp = V8Node::toNative(holder);
     ExceptionCode ec = 0;
@@ -80,7 +79,6 @@ v8::Handle<v8::Value> V8Node::insertBeforeCallback(const v8::Arguments& args)
 // This function is customized to take advantage of the optional 4th argument: shouldLazyAttach
 v8::Handle<v8::Value> V8Node::replaceChildCallback(const v8::Arguments& args)
 {
-    INC_STATS("DOM.Node.replaceChild");
     v8::Handle<v8::Object> holder = args.Holder();
     Node* imp = V8Node::toNative(holder);
     ExceptionCode ec = 0;
@@ -96,7 +94,6 @@ v8::Handle<v8::Value> V8Node::replaceChildCallback(const v8::Arguments& args)
 
 v8::Handle<v8::Value> V8Node::removeChildCallback(const v8::Arguments& args)
 {
-    INC_STATS("DOM.Node.removeChild");
     v8::Handle<v8::Object> holder = args.Holder();
     Node* imp = V8Node::toNative(holder);
     ExceptionCode ec = 0;
@@ -112,7 +109,6 @@ v8::Handle<v8::Value> V8Node::removeChildCallback(const v8::Arguments& args)
 // This function is customized to take advantage of the optional 4th argument: shouldLazyAttach
 v8::Handle<v8::Value> V8Node::appendChildCallback(const v8::Arguments& args)
 {
-    INC_STATS("DOM.Node.appendChild");
     v8::Handle<v8::Object> holder = args.Holder();
     Node* imp = V8Node::toNative(holder);
     ExceptionCode ec = 0;

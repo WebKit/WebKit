@@ -41,7 +41,6 @@ template <typename T> void V8_USE(T) { }
 
 static v8::Handle<v8::Value> methodCallback(const v8::Arguments& args)
 {
-    INC_STATS("DOM.TestMediaQueryListListener.method");
     if (args.Length() < 1)
         return throwNotEnoughArgumentsError(args.GetIsolate());
     TestMediaQueryListListener* imp = V8TestMediaQueryListListener::toNative(args.Holder());

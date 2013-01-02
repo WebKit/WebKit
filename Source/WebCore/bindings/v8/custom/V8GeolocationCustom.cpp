@@ -130,7 +130,6 @@ static PassRefPtr<PositionOptions> createPositionOptions(v8::Local<v8::Value> va
 
 v8::Handle<v8::Value> V8Geolocation::getCurrentPositionCallback(const v8::Arguments& args)
 {
-    INC_STATS("DOM.Geolocation.getCurrentPosition()");
 
     bool succeeded = false;
 
@@ -156,7 +155,6 @@ v8::Handle<v8::Value> V8Geolocation::getCurrentPositionCallback(const v8::Argume
 
 v8::Handle<v8::Value> V8Geolocation::watchPositionCallback(const v8::Arguments& args)
 {
-    INC_STATS("DOM.Geolocation.watchPosition()");
 
     bool succeeded = false;
 
