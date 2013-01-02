@@ -279,6 +279,8 @@ webkit.org/b/105943 fast/canvas/canvas-blend-solid.html [ Failure ]
 # fast/events/controlclick-no-onclick.html fails on Mac WK2
 webkit.org/b/105948 fast/events/controlclick-no-onclick.html [ Failure ]
 
+webkit.org/b/105954 http/tests/navigation/reload-subframe-object.html [ Failure ]
+
 ### END OF (1) Classified failures with bug reports
 ########################################
 

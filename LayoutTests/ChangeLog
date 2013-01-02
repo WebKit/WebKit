@@ -1,3 +1,9 @@
+2013-01-02  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Add a failing test expectation for the bug 105954.
+
+        * platform/mac-wk2/TestExpectations:
+
 2013-01-02  Douglas Stockwell  <dstockwell@chromium.org>
 
         Crash in WebCore::InlineBox::deleteLine
