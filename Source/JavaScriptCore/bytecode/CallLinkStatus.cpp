@@ -39,9 +39,9 @@ CallLinkStatus CallLinkStatus::computeFromLLInt(CodeBlock* profiledBlock, unsign
     Instruction* instruction = profiledBlock->instructions().begin() + bytecodeIndex;
     LLIntCallLinkInfo* callLinkInfo = instruction[4].u.callLinkInfo;
     
-    return CallLinkStatus(callLinkInfo->lastSeenCallee.get(), false);
+    return CallLinkStatus(callLinkInfo->lastSeenCallee.get(), false, false);
 #else
-    return CallLinkStatus(0, false);
+    return CallLinkStatus(0, false, false);
 #endif
 }
 
@@ -56,13 +56,14 @@ CallLinkStatus CallLinkStatus::computeFor(CodeBlock* profiledBlock, unsigned byt
     if (profiledBlock->couldTakeSlowCase(bytecodeIndex))
         return CallLinkStatus(0, true);
     
-    JSFunction* target = profiledBlock->getCallLinkInfo(bytecodeIndex).lastSeenCallee.get();
+    CallLinkInfo& callLinkInfo = profiledBlock->getCallLinkInfo(bytecodeIndex);
+    JSFunction* target = callLinkInfo.lastSeenCallee.get();
     if (!target)
         return computeFromLLInt(profiledBlock, bytecodeIndex);
     
-    return CallLinkStatus(target, false);
+    return CallLinkStatus(target, false, !!callLinkInfo.stub);
 #else
-    return CallLinkStatus(0, false);
+    return CallLinkStatus(0, false, false);
 #endif
 }
 

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008, 2009, 2012 Apple Inc. All rights reserved.
+ * Copyright (C) 2008, 2009, 2012, 2013 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -870,12 +870,26 @@ void JIT::linkFor(JSFunction* callee, CodeBlock* callerCodeBlock, CodeBlock* cal
 
     // Patch the slow patch so we do not continue to try to link.
     if (kind == CodeForCall) {
+        ASSERT(callLinkInfo->callType == CallLinkInfo::Call
+               || callLinkInfo->callType == CallLinkInfo::CallVarargs);
+        if (callLinkInfo->callType == CallLinkInfo::Call) {
+            repatchBuffer.relink(callLinkInfo->callReturnLocation, globalData->getCTIStub(linkClosureCallGenerator).code());
+            return;
+        }
+
         repatchBuffer.relink(callLinkInfo->callReturnLocation, globalData->getCTIStub(virtualCallGenerator).code());
         return;
     }
 
     ASSERT(kind == CodeForConstruct);
     repatchBuffer.relink(callLinkInfo->callReturnLocation, globalData->getCTIStub(virtualConstructGenerator).code());
+}
+
+void JIT::linkSlowCall(CodeBlock* callerCodeBlock, CallLinkInfo* callLinkInfo)
+{
+    RepatchBuffer repatchBuffer(callerCodeBlock);
+
+    repatchBuffer.relink(callLinkInfo->callReturnLocation, callerCodeBlock->globalData()->getCTIStub(virtualCallGenerator).code());
 }
 
 } // namespace JSC

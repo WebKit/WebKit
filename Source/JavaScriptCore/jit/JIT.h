@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008, 2012 Apple Inc. All rights reserved.
+ * Copyright (C) 2008, 2012, 2013 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -304,6 +304,13 @@ namespace JSC {
         {
             return JIT(globalData, codeBlock).privateCompile(functionEntryArityCheck, effort);
         }
+        
+        static void compileClosureCall(JSGlobalData* globalData, CallLinkInfo* callLinkInfo, CodeBlock* callerCodeBlock, CodeBlock* calleeCodeBlock, Structure* expectedStructure, ExecutableBase* expectedExecutable, MacroAssemblerCodePtr codePtr)
+        {
+            JIT jit(globalData, callerCodeBlock);
+            jit.m_bytecodeOffset = callLinkInfo->codeOrigin.bytecodeIndex;
+            jit.privateCompileClosureCall(callLinkInfo, calleeCodeBlock, expectedStructure, expectedExecutable, codePtr);
+        }
 
         static void compileGetByIdProto(JSGlobalData* globalData, CallFrame* callFrame, CodeBlock* codeBlock, StructureStubInfo* stubInfo, Structure* structure, Structure* prototypeStructure, const Identifier& ident, const PropertySlot& slot, PropertyOffset cachedOffset, ReturnAddressPtr returnAddress)
         {
@@ -388,6 +395,7 @@ namespace JSC {
         }
 
         static void linkFor(JSFunction* callee, CodeBlock* callerCodeBlock, CodeBlock* calleeCodeBlock, CodePtr, CallLinkInfo*, JSGlobalData*, CodeSpecializationKind);
+        static void linkSlowCall(CodeBlock* callerCodeBlock, CallLinkInfo*);
 
     private:
         JIT(JSGlobalData*, CodeBlock* = 0);
@@ -396,6 +404,8 @@ namespace JSC {
         void privateCompileLinkPass();
         void privateCompileSlowCases();
         JITCode privateCompile(CodePtr* functionEntryArityCheck, JITCompilationEffort);
+        
+        void privateCompileClosureCall(CallLinkInfo*, CodeBlock* calleeCodeBlock, Structure*, ExecutableBase*, MacroAssemblerCodePtr);
         
         void privateCompileGetByIdProto(StructureStubInfo*, Structure*, Structure* prototypeStructure, const Identifier&, const PropertySlot&, PropertyOffset cachedOffset, ReturnAddressPtr, CallFrame*);
         void privateCompileGetByIdSelfList(StructureStubInfo*, PolymorphicAccessStructureList*, int, Structure*, const Identifier&, const PropertySlot&, PropertyOffset cachedOffset);

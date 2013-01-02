@@ -36,12 +36,14 @@ public:
     CallLinkStatus()
         : m_callTarget(0)
         , m_couldTakeSlowPath(false)
+        , m_isClosureCall(false)
     {
     }
     
-    CallLinkStatus(JSFunction* callTarget, bool couldTakeSlowPath)
+    CallLinkStatus(JSFunction* callTarget, bool couldTakeSlowPath, bool isClosureCall = false)
         : m_callTarget(callTarget)
         , m_couldTakeSlowPath(couldTakeSlowPath)
+        , m_isClosureCall(isClosureCall)
     {
     }
     
@@ -52,6 +54,7 @@ public:
     bool operator!() const { return !isSet(); }
     
     bool couldTakeSlowPath() const { return m_couldTakeSlowPath; }
+    bool isClosureCall() const { return m_isClosureCall; }
     
     JSFunction* callTarget() const { return m_callTarget; }
     
@@ -60,6 +63,7 @@ private:
     
     JSFunction* m_callTarget;
     bool m_couldTakeSlowPath;
+    bool m_isClosureCall;
 };
 
 } // namespace JSC

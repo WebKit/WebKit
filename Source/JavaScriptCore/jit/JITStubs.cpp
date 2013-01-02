@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008, 2009 Apple Inc. All rights reserved.
+ * Copyright (C) 2008, 2009, 2013 Apple Inc. All rights reserved.
  * Copyright (C) 2008 Cameron Zwarich <cwzwarich@uwaterloo.ca>
  * Copyright (C) Research In Motion Limited 2010, 2011. All rights reserved.
  *
@@ -2107,6 +2107,68 @@ DEFINE_STUB_FUNCTION(void*, vm_lazyLinkCall)
         return throwExceptionFromOpCall<void*>(stackFrame, callFrame, STUB_RETURN_ADDRESS);
 
     return result;
+}
+
+DEFINE_STUB_FUNCTION(void*, vm_lazyLinkClosureCall)
+{
+    STUB_INIT_STACK_FRAME(stackFrame);
+
+    CallFrame* callFrame = stackFrame.callFrame;
+    
+    CodeBlock* callerCodeBlock = callFrame->callerFrame()->codeBlock();
+    JSGlobalData* globalData = callerCodeBlock->globalData();
+    CallLinkInfo* callLinkInfo = &callerCodeBlock->getCallLinkInfo(callFrame->returnPC());
+    JSFunction* callee = jsCast<JSFunction*>(callFrame->callee());
+    ExecutableBase* executable = callee->executable();
+    Structure* structure = callee->structure();
+    
+    ASSERT(callLinkInfo->callType == CallLinkInfo::Call);
+    ASSERT(callLinkInfo->isLinked());
+    ASSERT(callLinkInfo->callee);
+    ASSERT(callee != callLinkInfo->callee.get());
+    
+    bool shouldLink = false;
+    CodeBlock* calleeCodeBlock = 0;
+    MacroAssemblerCodePtr codePtr;
+    
+    if (executable == callLinkInfo->callee.get()->executable()
+        && structure == callLinkInfo->callee.get()->structure()) {
+        
+        shouldLink = true;
+        
+        ASSERT(executable->hasJITCodeForCall());
+        codePtr = executable->generatedJITCodeForCall().addressForCall();
+        if (!callee->executable()->isHostFunction()) {
+            calleeCodeBlock = &jsCast<FunctionExecutable*>(executable)->generatedBytecodeForCall();
+            if (callFrame->argumentCountIncludingThis() < static_cast<size_t>(calleeCodeBlock->numParameters())) {
+                shouldLink = false;
+                codePtr = executable->generatedJITCodeWithArityCheckFor(CodeForCall);
+            }
+        }
+    } else if (callee->isHostFunction())
+        codePtr = executable->generatedJITCodeForCall().addressForCall();
+    else {
+        // Need to clear the code block before compilation, because compilation can GC.
+        callFrame->setCodeBlock(0);
+        
+        FunctionExecutable* functionExecutable = jsCast<FunctionExecutable*>(executable);
+        JSScope* scopeChain = callee->scope();
+        JSObject* error = functionExecutable->compileFor(callFrame, scopeChain, CodeForCall);
+        if (error) {
+            callFrame->globalData().exception = error;
+            return 0;
+        }
+        
+        codePtr = functionExecutable->generatedJITCodeWithArityCheckFor(CodeForCall);
+    }
+    
+    if (shouldLink) {
+        ASSERT(codePtr);
+        JIT::compileClosureCall(globalData, callLinkInfo, callerCodeBlock, calleeCodeBlock, structure, executable, codePtr);
+    } else
+        JIT::linkSlowCall(callerCodeBlock, callLinkInfo);
+
+    return codePtr.executableAddress();
 }
 
 DEFINE_STUB_FUNCTION(void*, vm_lazyLinkConstruct)

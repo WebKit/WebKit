@@ -1,3 +1,39 @@
+2013-01-01  Filip Pizlo  <fpizlo@apple.com>
+
+        Baseline JIT should have closure call caching
+        https://bugs.webkit.org/show_bug.cgi?id=105900
+
+        Reviewed by Gavin Barraclough.
+        
+        This is not a speed-up by itself, but is meant to allow the DFG inliner to
+        accurately discern between closure calls and non-closure calls, so that it can
+        do closure call inlining in the future.
+
+        * bytecode/CallLinkStatus.cpp:
+        (JSC::CallLinkStatus::computeFromLLInt):
+        (JSC::CallLinkStatus::computeFor):
+        * bytecode/CallLinkStatus.h:
+        (JSC::CallLinkStatus::CallLinkStatus):
+        (JSC::CallLinkStatus::isClosureCall):
+        (CallLinkStatus):
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::handleCall):
+        * jit/JIT.cpp:
+        (JSC::JIT::linkFor):
+        (JSC::JIT::linkSlowCall):
+        * jit/JIT.h:
+        (JSC::JIT::compileClosureCall):
+        * jit/JITCall.cpp:
+        (JSC::JIT::privateCompileClosureCall):
+        * jit/JITCall32_64.cpp:
+        (JSC::JIT::privateCompileClosureCall):
+        * jit/JITStubs.cpp:
+        (JSC::DEFINE_STUB_FUNCTION):
+        * jit/JITStubs.h:
+        * jit/ThunkGenerators.cpp:
+        (JSC::linkClosureCallGenerator):
+        * jit/ThunkGenerators.h:
+
 2013-01-01  Dan Bernstein  <mitz@apple.com>
 
         <rdar://problem/12942239> Update copyright strings

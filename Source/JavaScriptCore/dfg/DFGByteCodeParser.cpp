@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011, 2012 Apple Inc. All rights reserved.
+ * Copyright (C) 2011, 2012, 2013 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -1316,6 +1316,7 @@ void ByteCodeParser::handleCall(Interpreter* interpreter, Instruction* currentIn
                 m_graph.valueOfInternalFunctionConstant(callTarget));
 #endif
     } else if (callLinkStatus.isSet() && !callLinkStatus.couldTakeSlowPath()
+               && !callLinkStatus.isClosureCall() // We will eventually optimize this, I promise.
                && !m_inlineStackTop->m_exitProfile.hasExitSite(m_currentIndex, BadCache)) {
         callType = LinkedFunction;
 #if DFG_ENABLE(DEBUG_VERBOSE)

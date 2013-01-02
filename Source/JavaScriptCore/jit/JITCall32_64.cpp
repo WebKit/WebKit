@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008 Apple Inc. All rights reserved.
+ * Copyright (C) 2008, 2013 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -36,6 +36,7 @@
 #include "JITStubCall.h"
 #include "JSArray.h"
 #include "JSFunction.h"
+#include "RepatchBuffer.h"
 #include "ResultType.h"
 #include "SamplingTool.h"
 
@@ -300,6 +301,52 @@ void JIT::compileOpCallSlowCase(OpcodeID opcodeID, Instruction*, Vector<SlowCase
     m_callStructureStubCompilationInfo[callLinkInfoIndex].callReturnLocation = emitNakedCall(opcodeID == op_construct ? m_globalData->getCTIStub(linkConstructGenerator).code() : m_globalData->getCTIStub(linkCallGenerator).code());
 
     sampleCodeBlock(m_codeBlock);
+}
+
+void JIT::privateCompileClosureCall(CallLinkInfo* callLinkInfo, CodeBlock* calleeCodeBlock, Structure* expectedStructure, ExecutableBase* expectedExecutable, MacroAssemblerCodePtr codePtr)
+{
+    JumpList slowCases;
+
+    slowCases.append(branch32(NotEqual, regT1, TrustedImm32(JSValue::CellTag)));
+    slowCases.append(branchPtr(NotEqual, Address(regT0, JSCell::structureOffset()), TrustedImmPtr(expectedStructure)));
+    slowCases.append(branchPtr(NotEqual, Address(regT0, JSFunction::offsetOfExecutable()), TrustedImmPtr(expectedExecutable)));
+    
+    loadPtr(Address(regT0, JSFunction::offsetOfScopeChain()), regT1);
+    emitPutCellToCallFrameHeader(regT1, JSStack::ScopeChain);
+    
+    Call call = nearCall();
+    Jump done = jump();
+    
+    slowCases.link(this);
+    move(TrustedImmPtr(callLinkInfo->callReturnLocation.executableAddress()), regT2);
+    restoreReturnAddressBeforeReturn(regT2);
+    Jump slow = jump();
+    
+    LinkBuffer patchBuffer(*m_globalData, this, m_codeBlock);
+    
+    patchBuffer.link(call, FunctionPtr(codePtr.executableAddress()));
+    patchBuffer.link(done, callLinkInfo->hotPathOther.labelAtOffset(0));
+    patchBuffer.link(slow, CodeLocationLabel(m_globalData->getCTIStub(virtualCallGenerator).code()));
+    
+    RefPtr<ClosureCallStubRoutine> stubRoutine = adoptRef(new ClosureCallStubRoutine(
+        FINALIZE_CODE(
+            patchBuffer,
+            ("Baseline closure call stub for %s, return point %p, target %p (%s)",
+                toCString(*m_codeBlock).data(),
+                callLinkInfo->hotPathOther.labelAtOffset(0).executableAddress(),
+                codePtr.executableAddress(),
+                toCString(*calleeCodeBlock).data())),
+        *m_globalData, m_codeBlock->ownerExecutable(), expectedStructure, expectedExecutable,
+        callLinkInfo->codeOrigin));
+    
+    RepatchBuffer repatchBuffer(m_codeBlock);
+    
+    repatchBuffer.replaceWithJump(
+        RepatchBuffer::startOfBranchPtrWithPatchOnRegister(callLinkInfo->hotPathBegin),
+        CodeLocationLabel(stubRoutine->code().code()));
+    repatchBuffer.relink(callLinkInfo->callReturnLocation, m_globalData->getCTIStub(virtualCallGenerator).code());
+    
+    callLinkInfo->stub = stubRoutine.release();
 }
 
 } // namespace JSC

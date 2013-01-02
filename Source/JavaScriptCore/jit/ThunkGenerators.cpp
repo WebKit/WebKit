@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010, 2012 Apple Inc. All rights reserved.
+ * Copyright (C) 2010, 2012, 2013 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -104,6 +104,11 @@ MacroAssemblerCodeRef linkCallGenerator(JSGlobalData* globalData)
 MacroAssemblerCodeRef linkConstructGenerator(JSGlobalData* globalData)
 {
     return linkForGenerator(globalData, FunctionPtr(cti_vm_lazyLinkConstruct), FunctionPtr(cti_op_construct_NotJSConstruct), "construct");
+}
+
+MacroAssemblerCodeRef linkClosureCallGenerator(JSGlobalData* globalData)
+{
+    return linkForGenerator(globalData, FunctionPtr(cti_vm_lazyLinkClosureCall), FunctionPtr(cti_op_call_NotJSFunction), "closure call");
 }
 
 static MacroAssemblerCodeRef virtualForGenerator(JSGlobalData* globalData, FunctionPtr compile, FunctionPtr notJSFunction, const char* name, CodeSpecializationKind kind)

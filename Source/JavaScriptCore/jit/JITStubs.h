@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008 Apple Inc. All rights reserved.
+ * Copyright (C) 2008, 2013 Apple Inc. All rights reserved.
  * Copyright (C) Research In Motion Limited 2010. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -411,6 +411,7 @@ void* JIT_STUB cti_op_switch_string(STUB_ARGS_DECLARATION) WTF_INTERNAL;
 void* JIT_STUB cti_op_throw(STUB_ARGS_DECLARATION) WTF_INTERNAL;
 void* JIT_STUB cti_stack_check(STUB_ARGS_DECLARATION) WTF_INTERNAL;
 void* JIT_STUB cti_vm_lazyLinkCall(STUB_ARGS_DECLARATION) WTF_INTERNAL;
+void* JIT_STUB cti_vm_lazyLinkClosureCall(STUB_ARGS_DECLARATION) WTF_INTERNAL;
 void* JIT_STUB cti_vm_lazyLinkConstruct(STUB_ARGS_DECLARATION) WTF_INTERNAL;
 void* JIT_STUB cti_vm_throw(STUB_ARGS_DECLARATION) REFERENCED_FROM_ASM WTF_INTERNAL;
 } // extern "C"
