@@ -283,6 +283,8 @@ webkit.org/b/105954 http/tests/navigation/reload-subframe-object.html [ Failure 
 
 webkit.org/b/105956 inspector/geolocation-watchPosition.html [ Pass Failure ]
 
+webkit.org/b/105958 platform/mac/fast/events/numpad-keycode-mapping.html [ Failure ]
+
 ### END OF (1) Classified failures with bug reports
 ########################################
 
