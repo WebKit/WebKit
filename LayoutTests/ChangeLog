@@ -1,5 +1,12 @@
 2013-01-02  Ryosuke Niwa  <rniwa@webkit.org>
 
+        Add a failing test expectation to a test added by r136697.
+        The failure is tracked by the bug 105960.
+
+        * platform/mac-wk2/TestExpectations:
+
+2013-01-02  Ryosuke Niwa  <rniwa@webkit.org>
+
         Add a failing test expectations to a test added by r132411.
         The patch updated DumpRenderTree but didn't update WebKitTestRunner.
         The failure is tracked by the bug 105958.
