@@ -1,3 +1,12 @@
+2013-01-02  Roger Fong  <roger_fong@apple.com>
+
+        Unreviewed. Build fix after reintroducing r138331.
+
+        Attempted to remove WebKit2 from Apple Windows port in r138331 but two vsprops files were missing.
+
+        * WebKit.vcproj/WebKitApple.vsprops: Added.
+        * WebKit.vcproj/WebKitDirectX.vsprops: Added.
+
 2013-01-02  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r138403.
