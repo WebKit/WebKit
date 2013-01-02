@@ -56,6 +56,8 @@ direct_attachment_url = r"https?://bug-(?P<bug_id>\d+)-attachments.%s/attachment
 buildbot_url = "http://build.webkit.org"
 chromium_buildbot_url = "http://build.chromium.org/p/chromium.webkit"
 
+chromium_webkit_sheriff_url = "http://build.chromium.org/p/chromium.webkit/sheriff_webkit.js"
+
 omahaproxy_url = "http://omahaproxy.appspot.com/"
 
 def parse_bug_id(string):

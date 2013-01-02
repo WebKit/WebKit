@@ -1,3 +1,24 @@
+2013-01-01  Alan Cutter  <alancutter@chromium.org>
+
+        sheriff-bot should know who the gardeners/sheriffs are
+        https://bugs.webkit.org/show_bug.cgi?id=105698
+
+        Reviewed by Eric Seidel.
+
+        Added a "sheriffs" command to sheriffbot to fetch the current Chromium Webkit sheriffs.
+
+        * Scripts/webkitpy/tool/bot/irc_command.py:
+        (Current):
+        (Current._retrieve_webkit_sheriffs):
+        (Current.execute):
+        * Scripts/webkitpy/tool/bot/irc_command_unittest.py:
+        (IRCCommandTest.test_current):
+        * Scripts/webkitpy/tool/bot/testdata/webkit_sheriff_0.js: Added.
+        * Scripts/webkitpy/tool/bot/testdata/webkit_sheriff_1.js: Added.
+        * Scripts/webkitpy/tool/bot/testdata/webkit_sheriff_2.js: Added.
+        * Scripts/webkitpy/tool/bot/testdata/webkit_sheriff_malformed.js: Added.
+        * Scripts/webkitpy/tool/bot/testdata/webkit_sheriff_zero.js: Added.
+
 2012-12-31  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] Move ImageDiff to the Tools directory root

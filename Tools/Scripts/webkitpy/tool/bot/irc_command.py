@@ -33,6 +33,7 @@ import re
 from webkitpy.common.config import irc as config_irc
 from webkitpy.common.config import urls
 from webkitpy.common.config.committers import CommitterList
+from webkitpy.common.net.web import Web
 from webkitpy.common.system.executive import ScriptError
 from webkitpy.tool.bot.queueengine import TerminateQueue
 from webkitpy.tool.grammar import join_with_separators
@@ -140,6 +141,41 @@ class Rollout(IRCCommand):
             _post_error_and_check_for_bug_url(tool, nicks_string, e)
 
 
+class Sheriffs(IRCCommand):
+    def _retrieve_webkit_sheriffs(self, url):
+        try:
+            sheriff_js = Web().get_binary(url, True)
+        except:
+            return None
+        if sheriff_js == None:
+            return None
+
+        match = re.search(r"document.write\('(.*)'\)", sheriff_js)
+
+        try:
+            return match.group(1)
+        except:
+            return None
+
+    def execute(self, nick, args, tool, sheriff):
+        if not args:
+            url = urls.chromium_webkit_sheriff_url
+        else:
+            url = args[0]
+
+        sheriffs = self._retrieve_webkit_sheriffs(url)
+        if sheriffs == None:
+            return "%s: Failed to parse URL: %s" % (nick, url)
+
+        sheriff_name = "Chromium Webkit sheriff"
+        sheriff_count = len(sheriffs.split())
+        if sheriff_count == 0:
+            return "%s: There are no %ss currently assigned." % (nick, sheriff_name)
+        if sheriff_count == 1:
+            return "%s: The current %s is: %s" % (nick, sheriff_name, sheriffs)
+        return "%s: The current %ss are: %s" % (nick, sheriff_name, sheriffs)
+
+
 class RollChromiumDEPS(IRCCommand):
     def _parse_args(self, args):
         if not args:
@@ -237,6 +273,7 @@ visible_commands = {
     "hi": Hi,
     "restart": Restart,
     "rollout": Rollout,
+    "sheriffs": Sheriffs,
     "whois": Whois,
     "create-bug": CreateBug,
     "roll-chromium-deps": RollChromiumDEPS,
