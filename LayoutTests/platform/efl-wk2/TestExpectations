@@ -327,7 +327,6 @@ webkit.org/b/98523 fast/images/repaint-subrect-grid.html [ Failure ]
 webkit.org/b/98746 plugins/netscape-plugin-setwindow-size-2.html [ Failure ]
 
 # Mouse event problem with plugin test.
-webkit.org/b/98745 plugins/clicking-missing-plugin-fires-delegate.html [ Failure ]
 webkit.org/b/98745 plugins/keyboard-events.html [ Failure ]
 webkit.org/b/98745 plugins/mouse-events-fixedpos.html [ Failure ]
 webkit.org/b/98745 plugins/mouse-events.html [ Failure ]

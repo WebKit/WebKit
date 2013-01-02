@@ -1,3 +1,17 @@
+2013-01-01  Christophe Dumez  <christophe.dumez@intel.com>
+
+        [WK2] plugins/clicking-missing-plugin-fires-delegate.html is failing
+        https://bugs.webkit.org/show_bug.cgi?id=105897
+
+        Reviewed by Alexey Proskuryakov.
+
+        Unskip plugins/clicking-missing-plugin-fires-delegate.html for
+        WK2 now that WebKitTestRunner is dumping the expected text when
+        the missing plugin button is clicked.
+
+        * platform/efl-wk2/TestExpectations:
+        * platform/mac-wk2/TestExpectations:
+
 2013-01-01  Kangil Han  <kangil.han@samsung.com>
 
         [EFL][WK1] Skip some webaudio test cases due to lack of implementation

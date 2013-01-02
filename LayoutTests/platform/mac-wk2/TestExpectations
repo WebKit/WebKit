@@ -157,7 +157,6 @@ media/controls-right-click-on-timebar.html
 platform/mac/editing/pasteboard/dataTransfer-set-data-file-url.html
 platform/mac/editing/pasteboard/drag-selections-to-contenteditable.html
 platform/mac/fast/forms/listbox-scrollbar-hit-test.html
-plugins/clicking-missing-plugin-fires-delegate.html
 scrollbars/scrollbar-iframe-click-does-not-blur-content.html
 scrollbars/scrollevent-iframe-no-scrolling-wheel.html
 svg/custom/foreignObject-crash-on-hover.xml

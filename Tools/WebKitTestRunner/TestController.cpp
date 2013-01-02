@@ -412,7 +412,7 @@ void TestController::createWebViewWithOptions(WKDictionaryRef options)
         createOtherPage,
         0, // mouseDidMoveOverElement
         decidePolicyForNotificationPermissionRequest, // decidePolicyForNotificationPermissionRequest
-        0, // unavailablePluginButtonClicked
+        unavailablePluginButtonClicked,
         0, // showColorPicker
         0, // hideColorPicker
     };
@@ -1107,6 +1107,11 @@ void TestController::decidePolicyForNotificationPermissionRequest(WKPageRef page
 void TestController::decidePolicyForNotificationPermissionRequest(WKPageRef, WKSecurityOriginRef, WKNotificationPermissionRequestRef request)
 {
     WKNotificationPermissionRequestAllow(request);
+}
+
+void TestController::unavailablePluginButtonClicked(WKPageRef, WKPluginUnavailabilityReason, WKStringRef, WKStringRef, WKStringRef, const void*)
+{
+    printf("MISSING PLUGIN BUTTON PRESSED\n");
 }
 
 void TestController::decidePolicyForNavigationAction(WKPageRef, WKFrameRef, WKFrameNavigationType, WKEventModifiers, WKEventMouseButton, WKURLRequestRef, WKFramePolicyListenerRef listener, WKTypeRef, const void* clientInfo)
