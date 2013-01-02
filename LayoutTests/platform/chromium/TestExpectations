@@ -4267,10 +4267,6 @@ webkit.org/b/103667 [ Linux ] fast/ruby/position-after.html [ ImageOnlyFailure ]
 
 webkit.org/b/104834 [ MountainLion ] fast/css/nested-rounded-corners.html [ Failure Pass ]
 
-webkit.org/b/104848 [ Linux XP SnowLeopard Lion Release ] fast/frames/sandboxed-iframe-attribute-parsing.html [ Pass Failure ]
-webkit.org/b/104848 [ SnowLeopard Debug ] fast/frames/sandboxed-iframe-attribute-parsing.html [ Pass Failure ]
-webkit.org/b/104848 [ Release ] fast/frames/sandboxed-iframe-parsing-space-characters.html [ Pass Failure ]
-
 webkit.org/b/105471 [ Win ] platform/chromium/virtual/gpu/compositedscrolling/overflow/scrolling-without-painting.html
 webkit.org/b/105471 [ Win ] platform/chromium/virtual/gpu/compositedscrolling/overflow/updating-scrolling-content.html
 

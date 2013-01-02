@@ -1,5 +1,59 @@
 2013-01-02  Mike West  <mkwst@chromium.org>
 
+        sandboxed iframe attribute parsing layout tests are flaky
+        https://bugs.webkit.org/show_bug.cgi?id=104848
+
+        Reviewed by Adam Barth.
+
+        This patch breaks the monolithic sandboxed-iframe-attribute-parsing.html
+        test into separate tests for each case. The flaky failures were due to
+        one of the 14 frames loading out of order, which shifted console message
+        positions around. Breaking them into separate tests should both speed up
+        the tests, as more can run in parallel, and solve the flake.
+
+        * fast/frames/resources/sandboxed-iframe-attribute-test.js: Added.
+        (fail):
+        (setStatus):
+        (allowedCallFromSandbox):
+        (disallowedCallFromSandbox):
+        (disallowedFormSubmitted):
+        (window.onload):
+        * fast/frames/sandboxed-iframe-attribute-parsing-01-expected.txt: Added.
+        * fast/frames/sandboxed-iframe-attribute-parsing-01.html: Added.
+        * fast/frames/sandboxed-iframe-attribute-parsing-02-expected.txt: Added.
+        * fast/frames/sandboxed-iframe-attribute-parsing-02.html: Added.
+        * fast/frames/sandboxed-iframe-attribute-parsing-03-expected.txt: Added.
+        * fast/frames/sandboxed-iframe-attribute-parsing-03.html: Added.
+        * fast/frames/sandboxed-iframe-attribute-parsing-04-expected.txt: Added.
+        * fast/frames/sandboxed-iframe-attribute-parsing-04.html: Added.
+        * fast/frames/sandboxed-iframe-attribute-parsing-05-expected.txt: Added.
+        * fast/frames/sandboxed-iframe-attribute-parsing-05.html: Added.
+        * fast/frames/sandboxed-iframe-attribute-parsing-06-expected.txt: Added.
+        * fast/frames/sandboxed-iframe-attribute-parsing-06.html: Added.
+        * fast/frames/sandboxed-iframe-attribute-parsing-07-expected.txt: Added.
+        * fast/frames/sandboxed-iframe-attribute-parsing-07.html: Added.
+        * fast/frames/sandboxed-iframe-attribute-parsing-08-expected.txt: Added.
+        * fast/frames/sandboxed-iframe-attribute-parsing-08.html: Added.
+        * fast/frames/sandboxed-iframe-attribute-parsing-09-expected.txt: Added.
+        * fast/frames/sandboxed-iframe-attribute-parsing-09.html: Added.
+        * fast/frames/sandboxed-iframe-attribute-parsing-10-expected.txt: Added.
+        * fast/frames/sandboxed-iframe-attribute-parsing-10.html: Added.
+        * fast/frames/sandboxed-iframe-attribute-parsing-11-expected.txt: Added.
+        * fast/frames/sandboxed-iframe-attribute-parsing-11.html: Added.
+        * fast/frames/sandboxed-iframe-attribute-parsing-12-expected.txt: Added.
+        * fast/frames/sandboxed-iframe-attribute-parsing-12.html: Added.
+        * fast/frames/sandboxed-iframe-attribute-parsing-13-expected.txt: Added.
+        * fast/frames/sandboxed-iframe-attribute-parsing-13.html: Added.
+        * fast/frames/sandboxed-iframe-attribute-parsing-14-expected.txt: Added.
+        * fast/frames/sandboxed-iframe-attribute-parsing-14.html: Added.
+        * fast/frames/sandboxed-iframe-attribute-parsing-expected.txt: Removed.
+        * fast/frames/sandboxed-iframe-attribute-parsing.html: Removed.
+        * platform/chromium/TestExpectations:
+        * platform/mac/TestExpectations:
+        * platform/qt-arm/TestExpectations:
+
+2013-01-02  Mike West  <mkwst@chromium.org>
+
         Sandboxed iframes should not be granted notification permission of the parent frame unless allow-same-origin is specified
         https://bugs.webkit.org/show_bug.cgi?id=36732
 

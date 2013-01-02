@@ -1270,7 +1270,6 @@ webkit.org/b/105606 media/track [ Crash Pass ]
 
 webkit.org/b/105567 http/tests/security/data-url-inline.css.html [ Crash Pass ]
 
-webkit.org/b/104848 fast/frames/sandboxed-iframe-attribute-parsing.html [ Failure Pass ]
 webkit.org/b/104848 fast/frames/sandboxed-iframe-parsing-space-characters.html [ Failure Pass ]
 
 # ap is looking into this crash.
