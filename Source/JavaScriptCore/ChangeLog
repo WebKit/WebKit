@@ -1,3 +1,11 @@
+2013-01-01  Dan Bernstein  <mitz@apple.com>
+
+        <rdar://problem/12942239> Update copyright strings
+
+        Reviewed by Sam Weinig.
+
+        * Info.plist:
+
 2012-12-31  Gavin Barraclough  <barraclough@apple.com>
 
         Objective-C API for JavaScriptCore

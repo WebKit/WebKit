@@ -1,3 +1,17 @@
+2013-01-01  Dan Bernstein  <mitz@apple.com>
+
+        <rdar://problem/12942239> Update copyright strings
+
+        Reviewed by Sam Weinig.
+
+        * Info.plist:
+        * NetworkProcess/Info.plist:
+        * PluginProcess/Info.plist:
+        * SharedWorkerProcess/Info.plist:
+        * WebProcess/Info.plist:
+        * WebProcessService/Info.plist:
+        * WebProcessServiceForWebKitDevelopment/Info.plist:
+
 2013-01-01  KwangYong Choi  <ky0.choi@samsung.com>
 
         [EFL] Enable MHTML feature
