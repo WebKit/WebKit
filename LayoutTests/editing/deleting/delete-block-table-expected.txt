@@ -2,7 +2,7 @@ This test checks that deleting into a table works properly. When deleting three 
 
 Before
 Foo	 baz
-bar      	 buffalfter
+bar	 buffalfter
 execDeleteCommand: <div>Before</div> <table style="border:3px solid #aaa;"> <tbody><tr> <td> Foo </td> <td> baz </td> </tr> <tr> <td> bar </td> <td> buffalo </td> </tr> </tbody></table> <span id="start">fter</span>
 execDeleteCommand: <div>Before</div> <table style="border:3px solid #aaa;"> <tbody><tr> <td> Foo </td> <td> baz </td> </tr> <tr> <td> bar </td> <td> buffalofter</td></tr></tbody></table>
 execDeleteCommand: <div>Before</div> <table style="border:3px solid #aaa;"> <tbody><tr> <td> Foo </td> <td> baz </td> </tr> <tr> <td> bar </td> <td> buffalfter</td></tr></tbody></table>

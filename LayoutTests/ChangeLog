@@ -1,3 +1,34 @@
+2013-01-02  Douglas Stockwell  <dstockwell@chromium.org>
+
+        Crash in WebCore::InlineBox::deleteLine
+        https://bugs.webkit.org/show_bug.cgi?id=93448
+
+        Reviewed by Eric Seidel.
+
+        * editing/deleting/delete-block-table-expected.txt:
+        * editing/execCommand/selectAll-expected.txt: Renamed from LayoutTests/platform/chromium/editing/execCommand/selectAll-expected.txt.
+        * fast/text/whitespace/inline-whitespace-wrapping-1-expected.html: Added.
+        * fast/text/whitespace/inline-whitespace-wrapping-1.html: Added.
+        * fast/text/whitespace/inline-whitespace-wrapping-2-expected.html: Added.
+        * fast/text/whitespace/inline-whitespace-wrapping-2.html: Added.
+        * fast/text/whitespace/inline-whitespace-wrapping-3-expected.html: Added.
+        * fast/text/whitespace/inline-whitespace-wrapping-3.html: Added.
+        * fast/text/whitespace/inline-whitespace-wrapping-4-expected.html: Added.
+        * fast/text/whitespace/inline-whitespace-wrapping-4.html: Added.
+        * fast/text/whitespace/nowrap-white-space-collapse-expected.html: Added.
+        * fast/text/whitespace/nowrap-white-space-collapse.html: Added.
+        * fast/text/whitespace/pre-block-normal-inline-crash-1-expected.txt: Added.
+        * fast/text/whitespace/pre-block-normal-inline-crash-1.html: Added.
+        * fast/text/whitespace/pre-block-normal-inline-crash-2-expected.txt: Added.
+        * fast/text/whitespace/pre-block-normal-inline-crash-2.html: Added.
+        * platform/chromium-win/editing/deleting/delete-to-select-table-expected.txt:
+        * platform/chromium-win/editing/execCommand/print-expected.txt:
+        * platform/chromium-win/editing/execCommand/selectAll-expected.txt:
+        * platform/chromium-win/editing/inserting/editable-html-element-expected.txt:
+        * platform/efl/editing/execCommand/selectAll-expected.txt: Removed.
+        * platform/gtk/editing/execCommand/selectAll-expected.txt: Removed.
+        * platform/mac/editing/execCommand/selectAll-expected.txt: Removed.
+
 2013-01-02  Ryosuke Niwa  <rniwa@webkit.org>
 
         Add a test expectation for the bug 105952.

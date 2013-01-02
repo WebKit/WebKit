@@ -2912,7 +2912,9 @@ InlineIterator RenderBlock::LineBreaker::nextSegmentBreak(InlineBidiResolver& re
                                     wordMeasurement.width = charWidth;
                                 }
                             }
-                            goto end; // Didn't fit. Jump to the end.
+                            // Didn't fit. Jump to the end unless there's still an opportunity to collapse whitespace.
+                            if (ignoringSpaces || !currentStyle->collapseWhiteSpace() || !currentCharacterIsSpace || !previousCharacterIsSpace)
+                                goto end;
                         } else {
                             if (!betweenWords || (midWordBreak && !autoWrap))
                                 width.addUncommittedWidth(-additionalTmpW);
@@ -3039,17 +3041,17 @@ InlineIterator RenderBlock::LineBreaker::nextSegmentBreak(InlineBidiResolver& re
         bool checkForBreak = autoWrap;
         if (width.committedWidth() && !width.fitsOnLine() && lBreak.m_obj && currWS == NOWRAP)
             checkForBreak = true;
-        else if (next && current.m_obj->isText() && next->isText() && !next->isBR() && (autoWrap || (next->style()->autoWrap()))) {
-            if (currentCharacterIsSpace)
+        else if (next && current.m_obj->isText() && next->isText() && !next->isBR() && (autoWrap || next->style()->autoWrap())) {
+            if (autoWrap && currentCharacterIsSpace)
                 checkForBreak = true;
             else {
                 RenderText* nextText = toRenderText(next);
                 if (nextText->textLength()) {
                     UChar c = nextText->characterAt(0);
-                    checkForBreak = (c == ' ' || c == '\t' || (c == '\n' && !next->preservesNewline()));
                     // If the next item on the line is text, and if we did not end with
                     // a space, then the next text run continues our word (and so it needs to
-                    // keep adding to |tmpW|. Just update and continue.
+                    // keep adding to the uncommitted width. Just update and continue.
+                    checkForBreak = !currentCharacterIsSpace && (c == ' ' || c == '\t' || (c == '\n' && !next->preservesNewline()));
                 } else if (nextText->isWordBreak())
                     checkForBreak = true;
 
@@ -3108,15 +3110,8 @@ InlineIterator RenderBlock::LineBreaker::nextSegmentBreak(InlineBidiResolver& re
  end:
     if (lBreak == resolver.position() && (!lBreak.m_obj || !lBreak.m_obj->isBR())) {
         // we just add as much as possible
-        if (blockStyle->whiteSpace() == PRE) {
-            // FIXME: Don't really understand this case.
-            if (current.m_pos) {
-                // FIXME: This should call moveTo which would clear m_nextBreakablePosition
-                // this code as-is is likely wrong.
-                lBreak.m_obj = current.m_obj;
-                lBreak.m_pos = current.m_pos - 1;
-            } else
-                lBreak.moveTo(last, last->isText() ? last->length() : 0);
+        if (blockStyle->whiteSpace() == PRE && !current.m_pos) {
+            lBreak.moveTo(last, last->isText() ? last->length() : 0);
         } else if (lBreak.m_obj) {
             // Don't ever break in the middle of a word if we can help it.
             // There's no room at all. We just have to be on this line,

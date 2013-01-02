@@ -33,7 +33,6 @@ layer at (0,0) size 800x600
               text run at (0,112) width 126: "ignore them. "
               text run at (126,112) width 278: "Because they change things. "
               text run at (404,112) width 342: "They push the human race forward."
-              text run at (746,112) width 10: "  "
               text run at (0,140) width 475: "And while some may see them as the crazy ones, "
               text run at (475,140) width 144: "we see genius. "
               text run at (619,140) width 117: "Because the"
