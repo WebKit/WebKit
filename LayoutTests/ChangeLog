@@ -1,5 +1,19 @@
 2013-01-02  Elliott Sprehn  <esprehn@chromium.org>
 
+        View source mode is missing the processing instruction line.
+        https://bugs.webkit.org/show_bug.cgi?id=15961
+
+        Reviewed by Adam Barth.
+
+        Add a test for XML documents shown in viewsource mode. The bug
+        with the missing processing instruction line was fixed long
+        ago with the HTML5 parser rewrite so this just adds a test.
+
+        * fast/frames/viewsource-xml-expected.txt: Added.
+        * fast/frames/viewsource-xml.html: Added.
+
+2013-01-02  Elliott Sprehn  <esprehn@chromium.org>
+
         Transitions and animations do not apply to CSS ::before and ::after pseudo-elements
         https://bugs.webkit.org/show_bug.cgi?id=92591
 
