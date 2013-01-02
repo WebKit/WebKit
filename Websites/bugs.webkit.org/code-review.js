@@ -72,6 +72,7 @@ var CODE_REVIEW_UNITTEST;
   var WEBKIT_BASE_DIR = "http://svn.webkit.org/repository/webkit/trunk/";
   var SIDE_BY_SIDE_DIFFS_KEY = 'sidebysidediffs';
   var g_displayed_draft_comments = false;
+  var g_next_line_id = 0;
   var KEY_CODE = {
     down: 40,
     enter: 13,
@@ -90,13 +91,11 @@ var CODE_REVIEW_UNITTEST;
 
   function forEachLine(callback) {
     var i = 0;
-    var line;
-    do {
-      line = $('#' + idForLine(i));
+    for (var i = 0; i < g_next_line_id; i++) {
+      var line = $('#' + idForLine(i));
       if (line[0])
         callback(line);
-      i++;
-    } while (line[0]);
+    }
   }
 
   function hoverify() {
@@ -597,9 +596,9 @@ var CODE_REVIEW_UNITTEST;
   }
 
   function crawlDiff() {
-    var next_line_id = 0;
+    g_next_line_id = 0;
     var idify = function() {
-      this.id = idForLine(next_line_id++);
+      this.id = idForLine(g_next_line_id++);
     }
 
     $('.Line').each(idify).each(hoverify);
@@ -740,10 +739,15 @@ var CODE_REVIEW_UNITTEST;
     return revision[0] ? revision.first().text() : null;
   }
 
+  function setFileContents(file_name, original_contents, patched_contents) {
+    original_file_contents[file_name] = original_contents;
+    patched_file_contents[file_name] = patched_contents;
+  }
+
   function getWebKitSourceFile(file_name, onLoad, expand_bar) {
     function handleLoad(contents) {
-      original_file_contents[file_name] = contents.split('\n');
-      patched_file_contents[file_name] = applyDiff(original_file_contents[file_name], file_name);
+      var split_contents = contents.split('\n');
+      setFileContents(file_name, split_contents, applyDiff(split_contents, file_name));
       onLoad();
     };
 
@@ -1361,8 +1365,10 @@ var CODE_REVIEW_UNITTEST;
 
     $(line).replaceWith(new_line);
 
-    var line = $(document.getElementById(id));
-    line.after(commentsToTransferFor(line));
+    if (!line.classList.contains('context')) {
+      var line = $(document.getElementById(id));
+      line.after(commentsToTransferFor(line));
+    }
   }
 
   function convertExpansionLine(diff_type, line) {
@@ -1817,9 +1823,11 @@ var CODE_REVIEW_UNITTEST;
 
   $('.lineNumber').live('click', function(e) {
     var line = lineFromLineDescendant($(this));
-    if (line.hasClass('commentContext'))
-      trimCommentContextToBefore(previousLineFor(line), line.attr('data-comment-base-line'));
-    else if (e.shiftKey)
+    if (line.hasClass('commentContext')) {
+      var previous_line = previousLineFor(line);
+      if (previous_line[0])
+        trimCommentContextToBefore(previous_line, line.attr('data-comment-base-line'));
+    } else if (e.shiftKey)
       extendCommentContextTo(line);
   }).live('mousedown', function(e) {
     // preventDefault to avoid selecting text when dragging to select comment context lines.
@@ -1829,11 +1837,14 @@ var CODE_REVIEW_UNITTEST;
       return;
 
     var line = lineFromLineDescendant($(this));
+    if (line.hasClass('context'))
+      return;
+
     drag_select_start_index = numberFrom(line.attr('id'));
     line.addClass('selected');
   });
 
-  $('.LineContainer').live('mouseenter', function(e) {
+  $('.LineContainer:not(.context)').live('mouseenter', function(e) {
     if (drag_select_start_index == -1 || e.shiftKey)
       return;
     selectToLineContainer(this);
@@ -2033,7 +2044,7 @@ var CODE_REVIEW_UNITTEST;
 
   $('#comment_form .winter').live('click', hideCommentForm);
 
-  function fillInReviewForm() {
+  function serializedComments() {
     var comments_in_context = []
     forEachLine(function(line) {
       if (line.attr('data-has-comment') != 'true')
@@ -2057,8 +2068,12 @@ var CODE_REVIEW_UNITTEST;
     comment += comments_in_context.join('\n\n');
     if (comments_in_context.length > 0)
       comment = 'View in context: ' + window.location + '\n\n' + comment;
+    return comment;
+  }
+
+  function fillInReviewForm() {
     var review_form = $('#reviewform').contents();
-    review_form.find('#comment').val(comment);
+    review_form.find('#comment').val(serializedComments());
     review_form.find('#flags select').each(function() {
       var control = findControlForFlag(this);
       if (!control.size())
@@ -2092,6 +2107,7 @@ var CODE_REVIEW_UNITTEST;
   
   if (CODE_REVIEW_UNITTEST) {
     window.DraftCommentSaver = DraftCommentSaver;
+    window.addCommentFor = addCommentFor;
     window.addPreviousComment = addPreviousComment;
     window.tracLinks = tracLinks;
     window.crawlDiff = crawlDiff;
@@ -2103,6 +2119,8 @@ var CODE_REVIEW_UNITTEST;
     window.acceptComment = acceptComment;
     window.appendToolbar = appendToolbar;
     window.eraseDraftComments = eraseDraftComments;
+    window.serializedComments = serializedComments;
+    window.setFileContents = setFileContents;
     window.unfreezeComment = unfreezeComment;
     window.g_draftCommentSaver = g_draftCommentSaver;
     window.isChangeLog = isChangeLog;

@@ -303,7 +303,6 @@ function testSideBySideDiffWithPreviousCommentsOnSharedLine() {
         '</div>' +
       '</div>';
 
-  next_line_id = 0;
   eraseDraftComments();
   crawlDiff();
 
@@ -400,6 +399,62 @@ function testIsChangeLog() {
   ASSERT("prepare-ChangeLog is not a ChangeLog file", !isChangeLog("Tools/Scripts/prepare-ChangeLog"));
   ASSERT("ChangeLog-script is not a ChangeLog file", !isChangeLog("Tools/Scripts/ChangeLog-script"));
 }
+
+function testSaveCommentsWithMissingLineIds() {
+  document.getElementById('diff-content').innerHTML =
+      '<div class="FileDiff">' +
+        '<h1><a href="http://trac.webkit.org/browser/trunk/Source/WebCore/ChangeLog">Source/WebCore/dummy.txt</a></h1>' +
+        '<div class="DiffSection">' +
+          '<div class="DiffBlock">' +
+            '<div class="DiffBlockPart shared">' +
+              '<div class="Line LineContainer">' +
+              '<span class="from lineNumber">6</span><span class="to lineNumber">8</span><span class="text">a</span>' +
+              '</div>' +
+              '<div class="Line LineContainer">' +
+              '<span class="from lineNumber">7</span><span class="to lineNumber">9</span><span class="text">b</span>' +
+              '</div>' +
+              '<div class="Line LineContainer">' +
+              '<span class="from lineNumber">8</span><span class="to lineNumber">10</span><span class="text">c</span>' +
+              '</div>' +
+            '</div><div class="clear_float">' +
+          '</div>' +
+        '</div>' +
+        '<div class="DiffSection">' +
+          '<div class="Line LineContainer context">' +
+            '<span class="from lineNumber">@</span><span class="to lineNumber">@</span><span class="text">static void willRemoveChildren(ContainerNode* container)</span>' +
+          '</div>' +
+          '<div class="DiffBlock">' +
+            '<div class="DiffBlockPart shared">' +
+            '<div class="Line LineContainer">' +
+              '<span class="from lineNumber">15</span><span class="to lineNumber">17</span><span class="text">d</span>' +
+            '</div>' +
+          '</div><div class="clear_float"></div></div>' +
+        '</div>' +
+      '</div>';
+
+  var file_name = "Source/WebCore/dummy.txt";
+  var file_contents = [];
+  for (var i = 0; i < 20; i++)
+    file_contents[i] = i;
+  setFileContents(file_name, file_contents, file_contents);
+
+  eraseDraftComments();
+  crawlDiff();
+
+  var new_comment = addCommentFor($('#line4'));
+  new_comment.find('textarea').val("dummy content");
+  acceptComment(new_comment);
+
+  $('.ExpandLink')[0].click();
+
+  // Strip the link to the context since that points to window.location.
+  ASSERT_EQUAL(serializedComments().replace(/View in context.*code-review-test.html/, ''),
+    '\n\n' +
+    '> Source/WebCore/dummy.txt:17\n\n\n' +
+    'dummy content');
+  document.getElementById('diff-content').innerHTML = '';
+}
+
 
 for (var property in window) {
   if (property.indexOf('test') == 0) {
