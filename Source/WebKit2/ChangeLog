@@ -1,3 +1,14 @@
+2013-01-02  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r138403.
+        http://trac.webkit.org/changeset/138403
+        https://bugs.webkit.org/show_bug.cgi?id=105950
+
+        Fixing e138331 which was rolled out in r138403 (Requested by
+        rfong on #webkit).
+
+        * win/WebKit2.def.in:
+
 2013-01-02  Ryosuke Niwa  <rniwa@webkit.org>
 
         Yet another Windows build fix attempt. Try exporting more symbols.
