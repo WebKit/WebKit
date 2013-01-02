@@ -1,3 +1,33 @@
+2013-01-02  Heikki Paajanen  <heikki.paajanen@palm.com>
+
+        [Qt][WK2] Add experimental API to find text from page
+        https://bugs.webkit.org/show_bug.cgi?id=96481
+
+        Reviewed by Jocelyn Turcotte.
+
+        Expose findString and PageFindClient provided functionality to QtQuick
+        applications.
+
+        * Target.pri:
+        * UIProcess/API/qt/qquickwebview.cpp:
+        (QQuickWebViewPrivate::initialize):
+        (QQuickWebViewExperimental::findText):
+        (QQuickWebViewPrivate::didFindString):
+        * UIProcess/API/qt/qquickwebview_p.h:
+        (WebKit):
+        * UIProcess/API/qt/qquickwebview_p_p.h:
+        (QQuickWebViewPrivate):
+        * UIProcess/API/qt/tests/qmltests/WebView/tst_findText.qml: Added.
+        * UIProcess/qt/QtWebPageFindClient.cpp: Added.
+        (WebKit):
+        (WebKit::QtWebPageFindClient::QtWebPageFindClient):
+        (WebKit::QtWebPageFindClient::didFindString):
+        (WebKit::toQtWebPageFindClient):
+        (WebKit::QtWebPageFindClient::didFailToFindString):
+        * UIProcess/qt/QtWebPageFindClient.h: Added.
+        (WebKit):
+        (QtWebPageFindClient):
+
 2013-01-02  Christophe Dumez  <christophe.dumez@intel.com>
 
         Regression(r138607): Causes crashes related to WebIconDatabase

@@ -123,6 +123,10 @@ bool MiniBrowserApplication::notify(QObject* target, QEvent* event)
             browserWindow->focusAddressBar();
             return true;
         }
+        if ((keyEvent->key() == Qt::Key_F && keyEvent->modifiers() == Qt::ControlModifier) || keyEvent->key() == Qt::Key_F3) {
+            browserWindow->toggleFind();
+            return true;
+        }
     }
 
     if (event->type() == QEvent::KeyRelease && static_cast<QKeyEvent*>(event)->key() == Qt::Key_Control) {

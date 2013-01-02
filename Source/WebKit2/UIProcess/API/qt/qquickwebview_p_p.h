@@ -84,6 +84,8 @@ public:
     virtual void loadDidFail(const WebKit::QtWebError& error);
     virtual void handleMouseEvent(QMouseEvent*);
 
+    void didFindString(unsigned matchCount);
+
     virtual void didChangeViewportProperties(const WebCore::ViewportAttributes& attr) { }
 
     int loadProgress() const { return m_loadProgress; }
@@ -166,6 +168,7 @@ protected:
     OwnPtr<QWebPreferences> preferences;
 
     QScopedPointer<WebKit::QtWebPageLoadClient> pageLoadClient;
+    QScopedPointer<WebKit::QtWebPageFindClient> pageFindClient;
     QScopedPointer<WebKit::QtWebPagePolicyClient> pagePolicyClient;
     QScopedPointer<WebKit::QtWebPageUIClient> pageUIClient;
 

@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2011 Nokia Corporation and/or its subsidiary(-ies)
+ * Copyright (c) 2012 Hewlett-Packard Development Company, L.P.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -30,9 +31,11 @@
 #include "QtWebError.h"
 #include "QtWebIconDatabaseClient.h"
 #include "QtWebPageEventHandler.h"
+#include "QtWebPageFindClient.h"
 #include "QtWebPageLoadClient.h"
 #include "QtWebPagePolicyClient.h"
 #include "WebBackForwardList.h"
+#include "WebFindOptions.h"
 #if ENABLE(INSPECTOR_SERVER)
 #include "WebInspectorProxy.h"
 #include "WebInspectorServer.h"
@@ -65,6 +68,7 @@
 #include <WKSerializedScriptValue.h>
 #include <WebCore/IntPoint.h>
 #include <WebCore/IntRect.h>
+#include <limits>
 #include <wtf/Assertions.h>
 #include <wtf/MainThread.h>
 #include <wtf/Vector.h>
@@ -307,6 +311,7 @@ void QQuickWebViewPrivate::initialize(WKContextRef contextRef, WKPageGroupRef pa
     QQuickWebPagePrivate* const pageViewPrivate = pageView.data()->d;
     pageViewPrivate->initialize(webPageProxy.get());
 
+    pageFindClient.reset(new QtWebPageFindClient(toAPI(webPageProxy.get()), q_ptr));
     pageLoadClient.reset(new QtWebPageLoadClient(toAPI(webPageProxy.get()), q_ptr));
     pagePolicyClient.reset(new QtWebPagePolicyClient(toAPI(webPageProxy.get()), q_ptr));
     pageUIClient.reset(new QtWebPageUIClient(toAPI(webPageProxy.get()), q_ptr));
@@ -1247,6 +1252,26 @@ void QQuickWebViewExperimental::evaluateJavaScript(const QString& script, const 
     d_ptr->webPageProxy.get()->runJavaScriptInMainFrame(script, ScriptValueCallback::create(closure, javaScriptCallback));
 }
 
+void QQuickWebViewExperimental::findText(const QString& string, FindFlags options)
+{
+    Q_D(QQuickWebView);
+    if (string.isEmpty()) {
+        d->webPageProxy->hideFindUI();
+        return;
+    }
+    WebKit::FindOptions wkOptions = WebKit::FindOptionsCaseInsensitive;
+    if (options & FindCaseSensitively)
+        wkOptions = static_cast<WebKit::FindOptions>(wkOptions & ~WebKit::FindOptionsCaseInsensitive);
+    if (options & FindBackward)
+        wkOptions = static_cast<WebKit::FindOptions>(wkOptions | FindOptionsBackwards);
+    if (options & FindWrapsAroundDocument)
+        wkOptions = static_cast<WebKit::FindOptions>(wkOptions | FindOptionsWrapAround);
+    if (options & FindHighlightAllOccurrences)
+        wkOptions = static_cast<WebKit::FindOptions>(wkOptions | FindOptionsShowHighlight);
+
+    d->webPageProxy->findString(string, wkOptions, std::numeric_limits<unsigned>::max() - 1);
+}
+
 QList<QUrl> QQuickWebViewExperimental::userScripts() const
 {
     Q_D(const QQuickWebView);
@@ -2007,6 +2032,12 @@ void QQuickWebView::setAllowAnyHTTPSCertificateForLocalHost(bool allow)
 {
     Q_D(QQuickWebView);
     d->m_allowAnyHTTPSCertificateForLocalHost = allow;
+}
+
+void QQuickWebViewPrivate::didFindString(unsigned matchCount)
+{
+    Q_Q(QQuickWebView);
+    emit q->experimental()->textFound(matchCount);
 }
 
 /*!

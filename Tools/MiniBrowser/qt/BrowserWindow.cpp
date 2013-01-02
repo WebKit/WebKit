@@ -104,6 +104,11 @@ void BrowserWindow::focusAddressBar()
     QMetaObject::invokeMethod(rootObject(), "focusAddressBar", Qt::DirectConnection);
 }
 
+void BrowserWindow::toggleFind()
+{
+    QMetaObject::invokeMethod(rootObject(), "toggleFind", Qt::DirectConnection);
+}
+
 BrowserWindow* BrowserWindow::newWindow(const QString& url)
 {
     BrowserWindow* window = new BrowserWindow(m_windowOptions);

@@ -1,3 +1,22 @@
+2013-01-02  Heikki Paajanen  <heikki.paajanen@palm.com>
+
+        [Qt][WK2] Add simple UI to find text from page
+        https://bugs.webkit.org/show_bug.cgi?id=96481
+
+        Reviewed by Jocelyn Turcotte.
+
+        Find bar that slides between navigation bar and WebView.
+
+        * MiniBrowser/qt/BrowserWindow.cpp:
+        (BrowserWindow::toggleFind):
+        * MiniBrowser/qt/BrowserWindow.h:
+        (BrowserWindow):
+        * MiniBrowser/qt/MiniBrowser.qrc:
+        * MiniBrowser/qt/MiniBrowserApplication.cpp:
+        (MiniBrowserApplication::notify):
+        * MiniBrowser/qt/icons/find.png: Added.
+        * MiniBrowser/qt/qml/BrowserWindow.qml:
+
 2013-01-02  Christophe Dumez  <christophe.dumez@intel.com>
 
         Regression(r138603): Caused 2 webkitpy tests to fail

@@ -45,6 +45,7 @@ public:
     void load(const QString& url);
     void reload();
     void focusAddressBar();
+    void toggleFind();
     QQuickWebView* webView() const;
     QQuickWebViewExperimental* webViewExperimental() const;
 
