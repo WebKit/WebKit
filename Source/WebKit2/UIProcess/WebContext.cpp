@@ -160,6 +160,7 @@ WebContext::WebContext(ProcessModel processModel, const String& injectedBundlePa
 #if ENABLE(BATTERY_STATUS)
     m_batteryManagerProxy = WebBatteryManagerProxy::create(this);
 #endif
+    m_iconDatabase = WebIconDatabase::create(this);
 #if ENABLE(NETWORK_INFO)
     m_networkInfoManagerProxy = WebNetworkInfoManagerProxy::create(this);
 #endif
