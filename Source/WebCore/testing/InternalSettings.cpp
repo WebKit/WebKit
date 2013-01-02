@@ -105,7 +105,6 @@ InternalSettings::Backup::Backup(Settings* settings)
 {
 }
 
-
 void InternalSettings::Backup::restoreTo(Settings* settings)
 {
     settings->setFixedElementsLayoutRelativeToFrame(m_originalFixedElementsLayoutRelativeToFrame);
