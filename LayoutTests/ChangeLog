@@ -1,3 +1,18 @@
+2013-01-02  Tom Sepez  <tsepez@chromium.org>
+
+        X-XSS-Protection report-uri doesn't work with mode=block
+        https://bugs.webkit.org/show_bug.cgi?id=105907
+
+        Reviewed by Adam Barth.
+
+        Appears to work as-is, but the test was missing for this case. Checking
+        for completion is complicated by the frame navigating to about:blank, rather
+        than the echo-report page, so check it from the parent frame.
+        
+        * http/tests/security/xssAuditor/report-script-tag-full-block-expected.txt: Added.
+        * http/tests/security/xssAuditor/report-script-tag-full-block.html: Added.
+        * http/tests/security/xssAuditor/resources/echo-intertag.pl:
+
 2013-01-02  Terry Anderson  <tdanderson@chromium.org>
 
         [chromium] Mark webaudio/automatic-pull-node.html as Timeout for XP
