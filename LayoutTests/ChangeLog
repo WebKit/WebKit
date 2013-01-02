@@ -1,3 +1,18 @@
+2013-01-02  Mike West  <mkwst@chromium.org>
+
+        Sandboxed iframes should not be granted notification permission of the parent frame unless allow-same-origin is specified
+        https://bugs.webkit.org/show_bug.cgi?id=36732
+
+        Reviewed by Adam Barth.
+
+        The behavior was fixed in wkbug.com/79704, but there aren't currently
+        any tests ensuring that it doesn't regress for sandboxed frames. This
+        patch adds one.
+
+        * fast/notifications/notifications-sandbox-permission-expected.txt: Added.
+        * fast/notifications/notifications-sandbox-permission.html: Added.
+        * fast/notifications/resources/notifications-iframe.html: Added.
+
 2013-01-02  Ryosuke Niwa  <rniwa@webkit.org>
 
         Update Mac test expectation per bug 105932.

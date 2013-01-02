@@ -1,0 +1,13 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Notifications: Iframe test.</title>
+</head>
+<body>
+    <p id="hasPermission"></p>
+    <script>
+        document.getElementById("hasPermission").innerText =
+            !webkitNotifications.checkPermission() ? "Allowed" : "Denied";
+    </script>
+</body>
+</html>
