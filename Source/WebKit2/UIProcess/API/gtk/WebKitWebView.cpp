@@ -2898,11 +2898,7 @@ void webkit_web_view_set_view_mode(WebKitWebView* webView, WebKitViewMode viewMo
     if (webView->priv->viewMode == viewMode)
         return;
 
-    WebFrameProxy* frame = getPage(webView)->mainFrame();
-    if (!frame)
-        return;
-
-    frame->setInViewSourceMode(viewMode == WEBKIT_VIEW_MODE_SOURCE);
+    getPage(webView)->setMainFrameInViewSourceMode(viewMode == WEBKIT_VIEW_MODE_SOURCE);
 
     webView->priv->viewMode = viewMode;
     g_object_notify(G_OBJECT(webView), "view-mode");

@@ -4257,9 +4257,9 @@ void WebPageProxy::cancelComposition()
 }
 #endif // PLATFORM(QT) || PLATFORM(GTK)
 
-void WebPageProxy::setFrameInViewSourceMode(WebFrameProxy* frame, bool inViewSourceMode)
+void WebPageProxy::setMainFrameInViewSourceMode(bool inViewSourceMode)
 {
-    m_process->send(Messages::WebPage::SetFrameInViewSourceMode(frame->frameID(), inViewSourceMode), m_pageID);
+    m_process->send(Messages::WebPage::SetMainFrameInViewSourceMode(inViewSourceMode), m_pageID);
 }
 
 } // namespace WebKit

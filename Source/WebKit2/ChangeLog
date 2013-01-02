@@ -1,3 +1,32 @@
+2013-01-02  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [WK2] Rename SetFrameInViewSourceMode to SetMainFrameInViewSourceMode
+        https://bugs.webkit.org/show_bug.cgi?id=105885
+
+        Reviewed by Martin Robinson.
+
+        This way we don't depend on a WebFrameProxy and
+        webkit_web_view_set_view_mode() works even if the main frame proxy
+        hasn't been created yet.
+
+        * UIProcess/API/gtk/WebKitWebView.cpp:
+        (webkit_web_view_set_view_mode): Call
+        WebPageProxy::setMainFrameInViewSourceMode() directly.
+        * UIProcess/WebFrameProxy.cpp:
+        (WebKit::WebFrameProxy::WebFrameProxy): Remove
+        setInViewSourceMode().
+        * UIProcess/WebFrameProxy.h:
+        (WebFrameProxy):
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::setMainFrameInViewSourceMode):
+        * UIProcess/WebPageProxy.h:
+        (WebPageProxy):
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::setMainFrameInViewSourceMode):
+        * WebProcess/WebPage/WebPage.h:
+        (WebPage):
+        * WebProcess/WebPage/WebPage.messages.in:
+
 2013-01-02  Caio Marcelo de Oliveira Filho  <caio.oliveira@openbossa.org>
 
         [Qt] Use WebPageGroup to create user scripts instead of Qt-specific function in WebPage

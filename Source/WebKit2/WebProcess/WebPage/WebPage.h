@@ -791,7 +791,7 @@ private:
 
     bool canHandleUserEvents() const;
 
-    void setFrameInViewSourceMode(uint64_t frameID, bool inViewSourceMode);
+    void setMainFrameInViewSourceMode(bool);
 
     static bool platformCanHandleRequest(const WebCore::ResourceRequest&);
 

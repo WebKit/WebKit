@@ -51,7 +51,6 @@ WebFrameProxy::WebFrameProxy(WebPageProxy* page, uint64_t frameID)
     , m_lastChild(0)
     , m_loadState(LoadStateFinished)
     , m_isFrameSet(false)
-    , m_inViewSourceMode(false)
     , m_frameID(frameID)
 {
     WebContext::statistics().wkFrameCount++;
@@ -136,15 +135,6 @@ bool WebFrameProxy::isDisplayingPDFDocument() const
         return false;
 
     return WebContext::pdfAndPostScriptMIMETypes().contains(m_MIMEType);
-}
-
-void WebFrameProxy::setInViewSourceMode(bool mode)
-{
-    if (m_inViewSourceMode == mode)
-        return;
-
-    m_inViewSourceMode = mode;
-    m_page->setFrameInViewSourceMode(this, m_inViewSourceMode);
 }
 
 void WebFrameProxy::didStartProvisionalLoad(const String& url)

@@ -771,7 +771,7 @@ public:
     double minimumLayoutWidth() const { return m_minimumLayoutWidth; }
     void setMinimumLayoutWidth(double);
 
-    void setFrameInViewSourceMode(WebFrameProxy*, bool inViewSourceMode);
+    void setMainFrameInViewSourceMode(bool);
 
 private:
     WebPageProxy(PageClient*, PassRefPtr<WebProcessProxy>, WebPageGroup*, uint64_t pageID);

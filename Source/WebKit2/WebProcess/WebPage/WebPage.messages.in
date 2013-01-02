@@ -314,5 +314,5 @@ messages -> WebPage {
     SetAcceleratedCompositingWindowId(int64_t id)
 #endif
 
-    SetFrameInViewSourceMode(uint64_t frameID, bool inViewSourceMode)
+    SetMainFrameInViewSourceMode(bool inViewSourceMode)
 }
