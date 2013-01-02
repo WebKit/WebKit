@@ -29,13 +29,10 @@
 #if ENABLE(NETWORK_PROCESS)
 
 #import "CommandLine.h"
-#import "EnvironmentUtilities.h"
-#import "NetworkProcess.h"
-#import "WebSystemInterface.h"
+#import "NetworkProcessInitialization.h"
 #import <WebCore/RunLoop.h>
 #import <WebKitSystemInterface.h>
 #import <mach/mach_error.h>
-#import <runtime/InitializeThreading.h>
 #import <servers/bootstrap.h>
 #import <stdio.h>
 #import <wtf/MainThread.h>
@@ -79,15 +76,15 @@ int NetworkProcessMain(const CommandLine& commandLine)
     signal(SIGSEGV, _exit);
 #endif
 
-    InitWebCoreSystemInterface();
-    JSC::initializeThreading();
-    WTF::initializeMainThread();
-    RunLoop::initializeMainRunLoop();
-
-    // Initialize the network process connection.
-    NetworkProcess::shared().initialize(CoreIPC::Connection::Identifier(serverPort), RunLoop::main());
-
+    // FIXME: The Network process should not need to use AppKit, but right now, WebCore::RunLoop depends
+    // on the outer most runloop being an AppKit runloop.
     [NSApplication sharedApplication];
+
+    NetworkProcessInitializationParameters parameters;
+    parameters.uiProcessName = commandLine["ui-process-name"];
+    parameters.clientIdentifier = commandLine["client-identifier"];
+    parameters.connectionIdentifier = serverPort;
+    initializeNetworkProcess(parameters);
 
     RunLoop::run();
 

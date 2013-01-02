@@ -64,6 +64,7 @@ public:
         m_supplements.add(T::supplementName(), new T(this));
     }
 
+    void initializeSandbox(const String& clientIdentifier);
     void initialize(CoreIPC::Connection::Identifier, WebCore::RunLoop*);
 
     void removeNetworkConnectionToWebProcess(NetworkConnectionToWebProcess*);

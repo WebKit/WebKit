@@ -647,6 +647,8 @@
 		BC111B5D112F629800337BAB /* WebEventFactory.h in Headers */ = {isa = PBXBuildFile; fileRef = BC111B5B112F629800337BAB /* WebEventFactory.h */; };
 		BC111B5E112F629800337BAB /* WebEventFactory.mm in Sources */ = {isa = PBXBuildFile; fileRef = BC111B5C112F629800337BAB /* WebEventFactory.mm */; };
 		BC131BC911726C2800B69727 /* CoreIPCMessageKinds.h in Headers */ = {isa = PBXBuildFile; fileRef = BC131BC811726C2800B69727 /* CoreIPCMessageKinds.h */; };
+		BC13E9771694E2D000BC6C00 /* NetworkProcessInitialization.mm in Sources */ = {isa = PBXBuildFile; fileRef = BC13E9751694E2D000BC6C00 /* NetworkProcessInitialization.mm */; };
+		BC13E9781694E2D000BC6C00 /* NetworkProcessInitialization.h in Headers */ = {isa = PBXBuildFile; fileRef = BC13E9761694E2D000BC6C00 /* NetworkProcessInitialization.h */; };
 		BC14DF77120B5B7900826C0C /* InjectedBundleScriptWorld.h in Headers */ = {isa = PBXBuildFile; fileRef = BC14DF75120B5B7900826C0C /* InjectedBundleScriptWorld.h */; };
 		BC14DF78120B5B7900826C0C /* InjectedBundleScriptWorld.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC14DF76120B5B7900826C0C /* InjectedBundleScriptWorld.cpp */; };
 		BC14DF9E120B635F00826C0C /* WKBundleScriptWorld.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC14DF9C120B635F00826C0C /* WKBundleScriptWorld.cpp */; };
@@ -1915,6 +1917,8 @@
 		BC122FA3132707F300F7EAC1 /* PluginProcess.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = PluginProcess.xcconfig; sourceTree = "<group>"; };
 		BC122FA61327087400F7EAC1 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = Info.plist; path = PluginProcess/Info.plist; sourceTree = "<group>"; };
 		BC131BC811726C2800B69727 /* CoreIPCMessageKinds.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CoreIPCMessageKinds.h; sourceTree = "<group>"; };
+		BC13E9751694E2D000BC6C00 /* NetworkProcessInitialization.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = NetworkProcessInitialization.mm; sourceTree = "<group>"; };
+		BC13E9761694E2D000BC6C00 /* NetworkProcessInitialization.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NetworkProcessInitialization.h; sourceTree = "<group>"; };
 		BC14DF75120B5B7900826C0C /* InjectedBundleScriptWorld.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InjectedBundleScriptWorld.h; sourceTree = "<group>"; };
 		BC14DF76120B5B7900826C0C /* InjectedBundleScriptWorld.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = InjectedBundleScriptWorld.cpp; sourceTree = "<group>"; };
 		BC14DF9C120B635F00826C0C /* WKBundleScriptWorld.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WKBundleScriptWorld.cpp; sourceTree = "<group>"; };
@@ -3176,6 +3180,8 @@
 		510CC7DC16138E2900D03ED3 /* mac */ = {
 			isa = PBXGroup;
 			children = (
+				BC13E9751694E2D000BC6C00 /* NetworkProcessInitialization.mm */,
+				BC13E9761694E2D000BC6C00 /* NetworkProcessInitialization.h */,
 				51A8A6151627F3F9000D90E9 /* NetworkProcessMac.mm */,
 				510CC7DD16138E2900D03ED3 /* NetworkProcessMainMac.mm */,
 				512C068F16390E6900ABB911 /* NetworkResourceLoadSchedulerMac.mm */,
@@ -5032,6 +5038,7 @@
 				BCE0E425168B7A280057E66A /* WebProcessSupplement.h in Headers */,
 				BCF4DE23168E4BD500C94AFC /* NetworkProcessSupplement.h in Headers */,
 				BCF4DE25168FA44800C94AFC /* WebContextSupplement.h in Headers */,
+				BC13E9781694E2D000BC6C00 /* NetworkProcessInitialization.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -6006,6 +6013,7 @@
 				BCF18638167D071E00A1A85A /* CacheModel.cpp in Sources */,
 				2989A411167D1834004F96D2 /* CustomProtocolManagerMac.mm in Sources */,
 				31A505F91680025500A930EB /* WebContextClient.cpp in Sources */,
+				BC13E9771694E2D000BC6C00 /* NetworkProcessInitialization.mm in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

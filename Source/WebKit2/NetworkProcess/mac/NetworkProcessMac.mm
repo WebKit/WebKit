@@ -46,6 +46,11 @@ using namespace WebCore;
 
 namespace WebKit {
 
+void NetworkProcess::initializeSandbox(const String&)
+{
+    // FIXME: Initialize the sandbox.
+}
+
 void NetworkProcess::platformInitialize(const NetworkProcessCreationParameters& parameters)
 {
     m_diskCacheDirectory = parameters.diskCacheDirectory;
@@ -58,12 +63,6 @@ void NetworkProcess::platformInitialize(const NetworkProcessCreationParameters& 
         RetainPtr<NSURLCache> parentProcessURLCache(AdoptNS, [[NSURLCache alloc] initWithMemoryCapacity:cacheMemoryCapacity diskCapacity:cacheDiskCapacity diskPath:parameters.diskCacheDirectory]);
         [NSURLCache setSharedURLCache:parentProcessURLCache.get()];
     }
-
-    // FIXME: This should be moved to earlier in the setup process, as this won't work once sandboxing is enable.
-    NSString *applicationName = [NSString stringWithFormat:WEB_UI_STRING("%@ Networking", "visible name of the network process. The argument is the application name."),
-        (NSString *)parameters.parentProcessName];
-    
-    WKSetVisibleApplicationName((CFStringRef)applicationName);
 }
 
 static uint64_t memorySize()

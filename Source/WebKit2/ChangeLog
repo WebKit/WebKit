@@ -1,3 +1,22 @@
+2013-01-02  Sam Weinig  <sam@webkit.org>
+
+        Factor out NetworkProcess initialization into its own function in preparation of adding a NetworkProcess service
+        https://bugs.webkit.org/show_bug.cgi?id=105946
+
+        Reviewed by Brady Eidson.
+
+        * NetworkProcess/NetworkProcess.h:
+        * NetworkProcess/mac/NetworkProcessInitialization.h: Added.
+        (NetworkProcessInitializationParameters):
+        * NetworkProcess/mac/NetworkProcessInitialization.mm: Added.
+        (WebKit::initializeNetworkProcess):
+        * NetworkProcess/mac/NetworkProcessMac.mm:
+        (WebKit::NetworkProcess::initializeSandbox):
+        (WebKit::NetworkProcess::platformInitialize):
+        * NetworkProcess/mac/NetworkProcessMainMac.mm:
+        (WebKit::NetworkProcessMain):
+        * WebKit2.xcodeproj/project.pbxproj:
+
 2013-01-02  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r138403.
