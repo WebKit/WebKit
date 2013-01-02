@@ -72,7 +72,7 @@ class FloatQuad;
 class TransformationMatrix {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-#if CPU(APPLE_ARMV7S)
+#if CPU(APPLE_ARMV7S) || CPU(X86_64)
     typedef double Matrix4[4][4] __attribute__((aligned (16)));
 #else
     typedef double Matrix4[4][4];
@@ -226,7 +226,7 @@ public:
     double f() const { return m_matrix[3][1]; }
     void setF(double f) { m_matrix[3][1] = f; }
 
-    // this = this * mat
+    // this = mat * this.
     TransformationMatrix& multiply(const TransformationMatrix&);
 
     TransformationMatrix& scale(double);
