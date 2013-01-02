@@ -38,15 +38,15 @@ static int Attribs[] = {
     GLX_LOSE_CONTEXT_ON_RESET_ARB,
     0 };
 
-static void initializeARBExtensions()
+static void initializeARBExtensions(Display* display)
 {
     static bool initialized = false;
-
     if (initialized)
         return;
 
     initialized = true;
-    glXCreateContextAttribsARB = reinterpret_cast<GLXCREATECONTEXTATTRIBSARBPROC>(glXGetProcAddress(reinterpret_cast<const GLubyte*>("glXCreateContextAttribsARB")));
+    if (GLPlatformContext::supportsGLXExtension(display, "GLX_ARB_create_context_robustness"))
+        glXCreateContextAttribsARB = reinterpret_cast<GLXCREATECONTEXTATTRIBSARBPROC>(glXGetProcAddress(reinterpret_cast<const GLubyte*>("glXCreateContextAttribsARB")));
 }
 
 GLXOffScreenContext::GLXOffScreenContext()
@@ -67,14 +67,23 @@ bool GLXOffScreenContext::initialize(GLPlatformSurface* surface)
     GLXFBConfig config = surface->configuration();
 
     if (config) {
-        initializeARBExtensions();
+        initializeARBExtensions(m_display);
 
         if (glXCreateContextAttribsARB)
             m_contextHandle = glXCreateContextAttribsARB(m_display, config, 0, true, Attribs);
 
-        if (m_contextHandle)
-            m_resetLostContext = true;
-        else
+        if (m_contextHandle) {
+            // The GLX_ARB_create_context_robustness spec requires that a context created with
+            // GLX_CONTEXT_ROBUST_ACCESS_BIT_ARB bit set must also support GL_ARB_robustness or
+            // a version of OpenGL incorporating equivalent functionality.
+            // The spec also defines similar requirements for attribute GLX_CONTEXT_RESET_NOTIFICATION_STRATEGY_ARB.
+            if (platformMakeCurrent(surface) && GLPlatformContext::supportsGLExtension("GL_ARB_robustness"))
+                m_resetLostContext = true;
+            else
+                glXDestroyContext(m_display, m_contextHandle);
+        }
+
+        if (!m_contextHandle)
             m_contextHandle = glXCreateNewContext(m_display, config, GLX_RGBA_TYPE, 0, true);
 
         if (m_contextHandle)

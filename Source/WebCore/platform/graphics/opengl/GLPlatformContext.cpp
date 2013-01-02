@@ -38,38 +38,14 @@
 
 namespace WebCore {
 
-static PFNGLGETGRAPHICSRESETSTATUSARBPROC glGetGraphicsResetStatusARB = 0;
+#if USE(OPENGL_ES_2)
+static PFNGLGETGRAPHICSRESETSTATUSEXTPROC glGetGraphicsResetStatus = 0;
+#else
+static PFNGLGETGRAPHICSRESETSTATUSARBPROC glGetGraphicsResetStatus = 0;
+#endif
 static GLPlatformContext* m_currentContext = 0;
 
-PassOwnPtr<GLPlatformContext> GLPlatformContext::createContext(GraphicsContext3D::RenderStyle renderStyle)
-{
-    if (!initializeOpenGLShims())
-        return nullptr;
-
-#if USE(GLX)
-    if (!glGetGraphicsResetStatusARB) {
-        glGetGraphicsResetStatusARB = reinterpret_cast<PFNGLGETGRAPHICSRESETSTATUSARBPROC>(glXGetProcAddressARB(reinterpret_cast<const GLubyte*>("glGetGraphicsResetStatusARB")));
-    }
-#endif
-
-    switch (renderStyle) {
-    case GraphicsContext3D::RenderOffscreen:
-        if (OwnPtr<GLPlatformContext> glxContext = GLPlatformContext::createOffScreenContext())
-            return glxContext.release();
-        break;
-    case GraphicsContext3D::RenderToCurrentGLContext:
-        if (OwnPtr<GLPlatformContext> glxContext = GLPlatformContext::createCurrentContextWrapper())
-            return glxContext.release();
-        break;
-    case GraphicsContext3D::RenderDirectlyToHostWindow:
-        ASSERT_NOT_REACHED();
-        break;
-    }
-
-    return nullptr;
-}
-
-PassOwnPtr<GLPlatformContext> GLPlatformContext::createOffScreenContext()
+static PassOwnPtr<GLPlatformContext> createOffScreenContext()
 {
 #if USE(GLX)
     return adoptPtr(new GLXOffScreenContext());
@@ -80,7 +56,7 @@ PassOwnPtr<GLPlatformContext> GLPlatformContext::createOffScreenContext()
     return nullptr;
 }
 
-PassOwnPtr<GLPlatformContext> GLPlatformContext::createCurrentContextWrapper()
+static PassOwnPtr<GLPlatformContext> createCurrentContextWrapper()
 {
 #if USE(GLX)
     return adoptPtr(new GLXCurrentContextWrapper());
@@ -90,6 +66,113 @@ PassOwnPtr<GLPlatformContext> GLPlatformContext::createCurrentContextWrapper()
 
     return nullptr;
 }
+
+static HashSet<String> parseExtensions(const String& extensionsString)
+{
+    Vector<String> extNames;
+    extensionsString.split(" ", extNames);
+    HashSet<String> splitExtNames;
+    unsigned size = extNames.size();
+    for (unsigned i = 0; i < size; ++i)
+        splitExtNames.add(extNames[i]);
+    extNames.clear();
+
+    return splitExtNames;
+}
+
+static void resolveResetStatusExtension()
+{
+    static bool resolvedRobustnessExtension = false;
+    if (!resolvedRobustnessExtension) {
+        resolvedRobustnessExtension = true;
+#if USE(OPENGL_ES_2)
+        glGetGraphicsResetStatus = reinterpret_cast<PFNGLGETGRAPHICSRESETSTATUSEXTPROC>(eglGetProcAddress("glGetGraphicsResetStatusEXT"));
+#elif USE(EGL)
+        glGetGraphicsResetStatus = reinterpret_cast<PFNGLGETGRAPHICSRESETSTATUSARBPROC>(eglGetProcAddress("glGetGraphicsResetStatusARB"));
+#elif USE(GLX)
+        glGetGraphicsResetStatus = reinterpret_cast<PFNGLGETGRAPHICSRESETSTATUSARBPROC>(glXGetProcAddressARB(reinterpret_cast<const GLubyte*>("glGetGraphicsResetStatusARB")));
+#endif
+    }
+}
+
+PassOwnPtr<GLPlatformContext> GLPlatformContext::createContext(GraphicsContext3D::RenderStyle renderStyle)
+{
+#if !USE(OPENGL_ES_2)
+    if (!initializeOpenGLShims())
+        return nullptr;
+#endif
+
+    switch (renderStyle) {
+    case GraphicsContext3D::RenderOffscreen:
+        if (OwnPtr<GLPlatformContext> glxContext = createOffScreenContext())
+            return glxContext.release();
+        break;
+    case GraphicsContext3D::RenderToCurrentGLContext:
+        if (OwnPtr<GLPlatformContext> glxContext = createCurrentContextWrapper())
+            return glxContext.release();
+        break;
+    case GraphicsContext3D::RenderDirectlyToHostWindow:
+        ASSERT_NOT_REACHED();
+        break;
+    }
+
+    return nullptr;
+}
+
+bool GLPlatformContext::supportsGLExtension(const String& name)
+{
+    static HashSet<String> supportedExtensions;
+
+    if (!supportedExtensions.size()) {
+        String rawExtensions = reinterpret_cast<const char*>(::glGetString(GL_EXTENSIONS));
+        supportedExtensions = parseExtensions(rawExtensions);
+    }
+
+    if (supportedExtensions.contains(name))
+        return true;
+
+    return false;
+}
+
+#if USE(EGL)
+bool GLPlatformContext::supportsEGLExtension(EGLDisplay display, const String& name)
+{
+    static HashSet<String> supportedExtensions;
+
+    if (!supportedExtensions.size()) {
+        if (display == EGL_NO_DISPLAY)
+            return false;
+
+        String rawExtensions = reinterpret_cast<const char*>(eglQueryString(display, EGL_EXTENSIONS));
+        supportedExtensions = parseExtensions(rawExtensions);
+    }
+
+    if (supportedExtensions.contains(name))
+        return true;
+
+    return false;
+}
+#endif
+
+#if USE(GLX)
+bool GLPlatformContext::supportsGLXExtension(Display* display, const String& name)
+{
+    static HashSet<String> supportedExtensions;
+
+    if (!supportedExtensions.size()) {
+        if (!display)
+            return false;
+
+        String rawExtensions = glXQueryExtensionsString(display, DefaultScreen(display));
+        supportedExtensions = parseExtensions(rawExtensions);
+    }
+
+    if (supportedExtensions.contains(name))
+        return true;
+
+    return false;
+}
+#endif
 
 GLPlatformContext::GLPlatformContext()
     : m_contextHandle(0)
@@ -117,22 +200,26 @@ bool GLPlatformContext::makeCurrent(GLPlatformSurface* surface)
     else if (platformMakeCurrent(surface))
         m_currentContext = this;
 
-    if (m_resetLostContext && glGetGraphicsResetStatusARB) {
-        GLenum status = glGetGraphicsResetStatusARB();
+    if (m_resetLostContext) {
+        resolveResetStatusExtension();
 
-        switch (status) {
-        case PLATFORMCONTEXT_NO_ERROR:
-            break;
-        case PLATFORMCONTEXT_GUILTY_CONTEXT_RESET:
-            m_contextLost = true;
-            break;
-        case PLATFORMCONTEXT_INNOCENT_CONTEXT_RESET:
-            break;
-        case PLATFORMCONTEXT_UNKNOWN_CONTEXT_RESET:
-            m_contextLost = true;
-            break;
-        default:
-            break;
+        if (glGetGraphicsResetStatus) {
+            GLenum status = glGetGraphicsResetStatus();
+
+            switch (status) {
+            case PLATFORMCONTEXT_NO_ERROR:
+                break;
+            case PLATFORMCONTEXT_GUILTY_CONTEXT_RESET:
+                m_contextLost = true;
+                break;
+            case PLATFORMCONTEXT_INNOCENT_CONTEXT_RESET:
+                break;
+            case PLATFORMCONTEXT_UNKNOWN_CONTEXT_RESET:
+                m_contextLost = true;
+                break;
+            default:
+                break;
+            }
         }
     }
 

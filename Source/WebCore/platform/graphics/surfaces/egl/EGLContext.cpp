@@ -59,12 +59,7 @@ static bool isRobustnessExtSupported(EGLDisplay display)
 
     if (!didQueryForRobustnessExtension) {
         didQueryForRobustnessExtension = true;
-        String supportedExtensions = reinterpret_cast<const char*>(eglQueryString(display, EGL_EXTENSIONS));
-
-        if (!supportedExtensions.isEmpty()) {
-            supportedExtensions.append(" ");
-            isRobustnessExtensionSupported = supportedExtensions.contains("EGL_EXT_create_context_robustness");
-        }
+        isRobustnessExtensionSupported = GLPlatformContext::supportsEGLExtension(display, "EGL_EXT_create_context_robustness");
     }
 
     return isRobustnessExtensionSupported;
@@ -108,9 +103,18 @@ bool EGLOffScreenContext::initialize(GLPlatformSurface* surface)
     if (isRobustnessExtSupported(m_display))
         m_contextHandle = eglCreateContext(m_display, config, EGL_NO_CONTEXT, contextRobustnessAttributes);
 
-    if (m_contextHandle != EGL_NO_CONTEXT)
-        m_resetLostContext = true;
-    else
+    if (m_contextHandle != EGL_NO_CONTEXT) {
+        // The EGL_EXT_create_context_robustness spec requires that a context created with
+        // EGL_CONTEXT_OPENGL_RESET_NOTIFICATION_STRATEGY_EXT bit set must also support GL_EXT_robustness or
+        // a version of OpenGL incorporating equivalent functionality.
+        // The spec also defines similar requirements for attribute EGL_LOSE_CONTEXT_ON_RESET_EXT.
+        if (platformMakeCurrent(surface) && (GLPlatformContext::supportsGLExtension("GL_EXT_robustness")))
+            m_resetLostContext = true;
+        else
+            eglDestroyContext(m_display, m_contextHandle);
+    }
+
+    if (m_contextHandle == EGL_NO_CONTEXT)
         m_contextHandle = eglCreateContext(m_display, config, EGL_NO_CONTEXT, contextAttributes);
 
     if (m_contextHandle != EGL_NO_CONTEXT)
