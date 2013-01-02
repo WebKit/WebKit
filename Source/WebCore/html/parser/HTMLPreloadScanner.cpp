@@ -123,7 +123,7 @@ public:
         m_urlToLoad = stripLeadingAndTrailingHTMLSpaces(attributeValue);
     }
 
-    void preload(Document* document, bool scanningBody, const KURL& baseURL)
+    void preload(Document* document, const KURL& baseURL)
     {
         if (m_urlToLoad.isEmpty())
             return;
@@ -133,12 +133,12 @@ public:
         request.setInitiator(tagName());
         if (m_tagName == scriptTag) {
             request.mutableResourceRequest().setAllowCookies(crossOriginModeAllowsCookies());
-            cachedResourceLoader->preload(CachedResource::Script, request, m_charset, scanningBody);
+            cachedResourceLoader->preload(CachedResource::Script, request, m_charset);
         }
         else if (m_tagName == imgTag || (m_tagName == inputTag && m_inputIsImage))
-            cachedResourceLoader->preload(CachedResource::ImageResource, request, String(), scanningBody);
+            cachedResourceLoader->preload(CachedResource::ImageResource, request, String());
         else if (m_tagName == linkTag && m_linkIsStyleSheet && m_linkMediaAttributeIsScreen) 
-            cachedResourceLoader->preload(CachedResource::CSSStyleSheet, request, m_charset, scanningBody);
+            cachedResourceLoader->preload(CachedResource::CSSStyleSheet, request, m_charset);
     }
 
     const AtomicString& tagName() const { return m_tagName; }
@@ -165,7 +165,6 @@ HTMLPreloadScanner::HTMLPreloadScanner(Document* document)
     : m_document(document)
     , m_cssScanner(document)
     , m_tokenizer(HTMLTokenizer::create(HTMLDocumentParser::usePreHTML5ParserQuirks(document)))
-    , m_bodySeen(false)
     , m_inStyle(false)
 {
 }
@@ -192,7 +191,7 @@ void HTMLPreloadScanner::processToken()
 {
     if (m_inStyle) {
         if (m_token.type() == HTMLTokenTypes::Character)
-            m_cssScanner.scan(m_token, scanningBody());
+            m_cssScanner.scan(m_token);
         else if (m_token.type() == HTMLTokenTypes::EndTag) {
             m_inStyle = false;
             m_cssScanner.reset();
@@ -205,21 +204,13 @@ void HTMLPreloadScanner::processToken()
     PreloadTask task(m_token);
     m_tokenizer->updateStateFor(task.tagName(), m_document->frame());
 
-    if (task.tagName() == bodyTag)
-        m_bodySeen = true;
-
     if (task.tagName() == styleTag)
         m_inStyle = true;
 
     if (task.tagName() == baseTag)
         updatePredictedBaseElementURL(KURL(m_document->url(), task.baseElementHref()));
 
-    task.preload(m_document, scanningBody(), m_predictedBaseElementURL.isEmpty() ? m_document->baseURL() : m_predictedBaseElementURL);
-}
-
-bool HTMLPreloadScanner::scanningBody() const
-{
-    return m_document->body() || m_bodySeen;
+    task.preload(m_document, m_predictedBaseElementURL.isEmpty() ? m_document->baseURL() : m_predictedBaseElementURL);
 }
 
 void HTMLPreloadScanner::updatePredictedBaseElementURL(const KURL& baseElementURL)

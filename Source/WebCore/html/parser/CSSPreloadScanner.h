@@ -40,7 +40,7 @@ public:
     explicit CSSPreloadScanner(Document*);
 
     void reset();
-    void scan(const HTMLToken&, bool scanningBody);
+    void scan(const HTMLToken&);
 
 private:
     enum State {
@@ -63,7 +63,6 @@ private:
     StringBuilder m_rule;
     StringBuilder m_ruleValue;
 
-    bool m_scanningBody;
     Document* m_document;
 };
 

@@ -48,7 +48,6 @@ public:
 
 private:
     void processToken();
-    bool scanningBody() const;
     void updatePredictedBaseElementURL(const KURL& baseElementURL);
 
     Document* m_document;
@@ -56,7 +55,6 @@ private:
     CSSPreloadScanner m_cssScanner;
     OwnPtr<HTMLTokenizer> m_tokenizer;
     HTMLToken m_token;
-    bool m_bodySeen;
     bool m_inStyle;
     KURL m_predictedBaseElementURL;
 };

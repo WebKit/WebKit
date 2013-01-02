@@ -790,11 +790,8 @@ void CachedResourceLoader::decrementRequestCount(const CachedResource* res)
     ASSERT(m_requestCount > -1);
 }
 
-void CachedResourceLoader::preload(CachedResource::Type type, CachedResourceRequest& request, const String& charset, bool referencedFromBody)
+void CachedResourceLoader::preload(CachedResource::Type type, CachedResourceRequest& request, const String& charset)
 {
-    // FIXME: Rip this out when we are sure it is no longer necessary (even for mobile).
-    UNUSED_PARAM(referencedFromBody);
-
     bool delaySubresourceLoad = true;
 #if PLATFORM(IOS) || PLATFORM(CHROMIUM)
     delaySubresourceLoad = false;

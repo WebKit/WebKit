@@ -130,7 +130,7 @@ public:
     bool isPreloaded(const String& urlString) const;
     void clearPreloads();
     void clearPendingPreloads();
-    void preload(CachedResource::Type, CachedResourceRequest&, const String& charset, bool referencedFromBody);
+    void preload(CachedResource::Type, CachedResourceRequest&, const String& charset);
     void checkForPendingPreloads();
     void printPreloadStats();
     bool canRequest(CachedResource::Type, const KURL&, bool forPreload = false);

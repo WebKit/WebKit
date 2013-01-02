@@ -40,7 +40,6 @@ namespace WebCore {
 
 CSSPreloadScanner::CSSPreloadScanner(Document* document)
     : m_state(Initial)
-    , m_scanningBody(false)
     , m_document(document)
 {
 }
@@ -52,10 +51,8 @@ void CSSPreloadScanner::reset()
     m_ruleValue.clear();
 }
 
-void CSSPreloadScanner::scan(const HTMLToken& token, bool scanningBody)
+void CSSPreloadScanner::scan(const HTMLToken& token)
 {
-    m_scanningBody = scanningBody;
-
     const HTMLToken::DataVector& characters = token.characters();
     for (HTMLToken::DataVector::const_iterator iter = characters.begin(); iter != characters.end() && m_state != DoneParsingImportRules; ++iter)
         tokenize(*iter);
@@ -200,7 +197,7 @@ void CSSPreloadScanner::emitRule()
         if (!value.isEmpty()) {
             CachedResourceRequest request(ResourceRequest(m_document->completeURL(value)));
             request.setInitiator(cachedResourceRequestInitiators().css);
-            m_document->cachedResourceLoader()->preload(CachedResource::CSSStyleSheet, request, String(), m_scanningBody);
+            m_document->cachedResourceLoader()->preload(CachedResource::CSSStyleSheet, request, String());
         }
         m_state = Initial;
     } else if (equalIgnoringCase("charset", m_rule.characters(), m_rule.length()))
