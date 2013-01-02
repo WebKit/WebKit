@@ -310,7 +310,7 @@ public:
     {
         if (!codeOrigin.inlineCallFrame)
             return codeBlock()->isStrictMode();
-        return codeOrigin.inlineCallFrame->callee->jsExecutable()->isStrictMode();
+        return jsCast<FunctionExecutable*>(codeOrigin.inlineCallFrame->executable.get())->isStrictMode();
     }
     
     ExecutableBase* executableFor(const CodeOrigin& codeOrigin);

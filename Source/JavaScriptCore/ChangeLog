@@ -1,5 +1,19 @@
 2013-01-02  Filip Pizlo  <fpizlo@apple.com>
 
+        DFG should not use the InlineCallFrame's callee when it could have used the executable istead
+        https://bugs.webkit.org/show_bug.cgi?id=105947
+
+        Reviewed by Mark Hahnenberg.
+        
+        We shouldn't use the callee to get the executable when we have the executable already. Not only
+        does this make the logic more clear, but it also allows for a world where the executable is known
+        but the callee isn't.
+
+        * dfg/DFGAssemblyHelpers.h:
+        (JSC::DFG::AssemblyHelpers::strictModeFor):
+
+2013-01-02  Filip Pizlo  <fpizlo@apple.com>
+
         DFG inliner should not use the callee's bytecode variable for resolving references to the callee in inlined code
         https://bugs.webkit.org/show_bug.cgi?id=105938
 
