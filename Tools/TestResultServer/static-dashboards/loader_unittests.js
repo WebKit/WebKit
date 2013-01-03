@@ -134,3 +134,19 @@ test('results file failing to load', 2, function() {
     equal(resourceLoadCount, 2);
 
 });
+
+test('Default builder gets set.', 3, function() {
+    resetGlobals();
+    loadBuildersList('@ToT - chromium.org', 'layout-tests');
+    
+    var defaultBuilder = g_defaultBuilderName;
+    ok(defaultBuilder, "Default builder should exist.");
+   
+    // Simulate error loading the default builder data, then make sure
+    // a new defaultBuilder is set, and isn't the now invalid one.
+    var resourceLoader = new loader.Loader();
+    resourceLoader._handleResultsFileLoadError(defaultBuilder);
+    var newDefaultBuilder = g_defaultBuilderName;
+    ok(newDefaultBuilder, "There should still be a default builder.");
+    notEqual(newDefaultBuilder, defaultBuilder, "Default builder should not be the old default builder");
+});
