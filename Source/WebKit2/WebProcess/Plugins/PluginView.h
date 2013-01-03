@@ -128,6 +128,7 @@ private:
     void redeliverManualStream();
 
     void pluginSnapshotTimerFired(WebCore::DeferrableOneShotTimer<PluginView>*);
+    void pluginDidReceiveUserInteraction();
 
     // WebCore::PluginViewBase
 #if PLATFORM(MAC)
@@ -257,6 +258,7 @@ private:
     // This timer is used when plugin snapshotting is enabled, to capture a plugin placeholder.
     WebCore::DeferrableOneShotTimer<PluginView> m_pluginSnapshotTimer;
     unsigned m_countSnapshotRetries;
+    bool m_didReceiveUserInteraction;
 
     double m_pageScaleFactor;
 };

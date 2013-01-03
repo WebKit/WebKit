@@ -144,7 +144,7 @@ struct WebProcessCreationParameters {
     bool usesNetworkProcess;
 #endif
 
-    Vector<unsigned> plugInAutoStartOrigins;
+    HashMap<unsigned, double> plugInAutoStartOrigins;
 };
 
 } // namespace WebKit

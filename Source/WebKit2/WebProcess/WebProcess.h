@@ -153,8 +153,9 @@ public:
     void addVisitedLink(WebCore::LinkHash);
     bool isLinkVisited(WebCore::LinkHash) const;
 
-    bool isPlugInAutoStartOrigin(unsigned plugInOriginhash);
+    bool isPlugInAutoStartOrigin(unsigned plugInOriginHash);
     void addPlugInAutoStartOrigin(const String& pageOrigin, unsigned plugInOriginHash);
+    void plugInDidReceiveUserInteraction(unsigned plugInOriginHash);
 
     bool fullKeyboardAccessEnabled() const { return m_fullKeyboardAccessEnabled; }
 
@@ -238,8 +239,8 @@ private:
     void visitedLinkStateChanged(const Vector<WebCore::LinkHash>& linkHashes);
     void allVisitedLinkStateChanged();
 
-    void didAddPlugInAutoStartOrigin(unsigned plugInOriginHash);
-    void plugInAutoStartOriginsChanged(const Vector<unsigned>& hashes);
+    void didAddPlugInAutoStartOrigin(unsigned plugInOriginHash, double expirationTime);
+    void resetPlugInAutoStartOrigins(const HashMap<unsigned, double>& hashes);
 
     void platformSetCacheModel(CacheModel);
     void platformClearResourceCaches(ResourceCachesToClear);
@@ -321,7 +322,7 @@ private:
     VisitedLinkTable m_visitedLinkTable;
     bool m_shouldTrackVisitedLinks;
 
-    HashSet<unsigned> m_plugInAutoStartOrigins;
+    HashMap<unsigned, double> m_plugInAutoStartOrigins;
 
     bool m_hasSetCacheModel;
     CacheModel m_cacheModel;

@@ -43,16 +43,17 @@ public:
 
     void addAutoStartOrigin(const String& pageOrigin, unsigned plugInOriginHash);
 
-    Vector<unsigned> autoStartOriginsCopy() const;
+    HashMap<unsigned, double> autoStartOriginsCopy() const;
     PassRefPtr<ImmutableDictionary> autoStartOriginsTableCopy() const;
     void setAutoStartOriginsTable(ImmutableDictionary&);
+    void didReceiveUserInteraction(unsigned plugInOriginHash);
 
 private:
     WebContext* m_context;
     
-    typedef HashMap<String, HashSet<unsigned>, CaseFoldingHash> AutoStartTable;
+    typedef HashMap<String, HashMap<unsigned, double>, CaseFoldingHash> AutoStartTable;
     AutoStartTable m_autoStartTable;
-    HashSet<unsigned> m_autoStartHashes;
+    HashMap<unsigned, String> m_autoStartHashes;
 };
 
 } // namespace WebKit

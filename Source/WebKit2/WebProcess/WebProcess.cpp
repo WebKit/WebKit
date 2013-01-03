@@ -77,6 +77,7 @@
 #include <WebCore/SecurityOrigin.h>
 #include <WebCore/Settings.h>
 #include <WebCore/StorageTracker.h>
+#include <wtf/CurrentTime.h>
 #include <wtf/HashCountedSet.h>
 #include <wtf/PassRefPtr.h>
 
@@ -122,6 +123,9 @@
 
 using namespace JSC;
 using namespace WebCore;
+
+// This should be less than plugInAutoStartExpirationTimeThreshold in PlugInAutoStartProvider.
+static const double plugInAutoStartExpirationTimeUpdateThreshold = 29 * 24 * 60;
 
 namespace WebKit {
 
@@ -318,8 +322,7 @@ void WebProcess::initializeWebProcess(const WebProcessCreationParameters& parame
 #endif
     setTerminationTimeout(parameters.terminationTimeout);
 
-    for (size_t i = 0; i < parameters.plugInAutoStartOrigins.size(); ++i)
-        didAddPlugInAutoStartOrigin(parameters.plugInAutoStartOrigins[i]);
+    resetPlugInAutoStartOrigins(parameters.plugInAutoStartOrigins);
 }
 
 #if ENABLE(NETWORK_PROCESS)
@@ -782,7 +785,10 @@ void WebProcess::clearPluginSiteData(const Vector<String>& pluginPaths, const Ve
 
 bool WebProcess::isPlugInAutoStartOrigin(unsigned plugInOriginHash)
 {
-    return m_plugInAutoStartOrigins.contains(plugInOriginHash);
+    HashMap<unsigned, double>::const_iterator it = m_plugInAutoStartOrigins.find(plugInOriginHash);
+    if (it == m_plugInAutoStartOrigins.end())
+        return false;
+    return currentTime() < it->value;
 }
 
 void WebProcess::addPlugInAutoStartOrigin(const String& pageOrigin, unsigned plugInOriginHash)
@@ -795,16 +801,30 @@ void WebProcess::addPlugInAutoStartOrigin(const String& pageOrigin, unsigned plu
     connection()->send(Messages::WebContext::AddPlugInAutoStartOriginHash(pageOrigin, plugInOriginHash), 0);
 }
 
-void WebProcess::didAddPlugInAutoStartOrigin(unsigned plugInOriginHash)
+void WebProcess::didAddPlugInAutoStartOrigin(unsigned plugInOriginHash, double expirationTime)
 {
-    m_plugInAutoStartOrigins.add(plugInOriginHash);
+    // When called, some web process (which also might be this one) added the origin for auto-starting,
+    // or received user interaction.
+    // Set the bit to avoid having redundantly call into the UI process upon user interaction.
+    m_plugInAutoStartOrigins.set(plugInOriginHash, expirationTime);
 }
 
-void WebProcess::plugInAutoStartOriginsChanged(const Vector<unsigned>& hashes)
+void WebProcess::resetPlugInAutoStartOrigins(const HashMap<unsigned, double>& hashes)
 {
-    m_plugInAutoStartOrigins.clear();
-    for (size_t i = 0; i < hashes.size(); ++i)
-        didAddPlugInAutoStartOrigin(hashes[i]);
+    m_plugInAutoStartOrigins.swap(const_cast<HashMap<unsigned, double>&>(hashes));
+}
+
+void WebProcess::plugInDidReceiveUserInteraction(unsigned plugInOriginHash)
+{
+    if (!plugInOriginHash)
+        return;
+
+    HashMap<unsigned, double>::iterator it = m_plugInAutoStartOrigins.find(plugInOriginHash);
+    ASSERT(it != m_plugInAutoStartOrigins.end());
+    if (it->value - currentTime() > plugInAutoStartExpirationTimeUpdateThreshold)
+        return;
+
+    connection()->send(Messages::WebContext::PlugInDidReceiveUserInteraction(plugInOriginHash), 0);
 }
 
 static void fromCountedSetToHashMap(TypeCountSet* countedSet, HashMap<String, uint64_t>& map)

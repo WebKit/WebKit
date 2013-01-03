@@ -1143,6 +1143,11 @@ void WebContext::addPlugInAutoStartOriginHash(const String& pageOrigin, unsigned
     m_plugInAutoStartProvider.addAutoStartOrigin(pageOrigin, plugInOriginHash);
 }
 
+void WebContext::plugInDidReceiveUserInteraction(unsigned plugInOriginHash)
+{
+    m_plugInAutoStartProvider.didReceiveUserInteraction(plugInOriginHash);
+}
+
 PassRefPtr<ImmutableDictionary> WebContext::plugInAutoStartOriginHashes() const
 {
     return m_plugInAutoStartProvider.autoStartOriginsTableCopy();

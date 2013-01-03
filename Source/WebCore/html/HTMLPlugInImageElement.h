@@ -108,7 +108,6 @@ private:
     RefPtr<RenderStyle> m_customStyleForPageCache;
     RefPtr<MouseEvent> m_pendingClickEventFromSnapshot;
     DeferrableOneShotTimer<HTMLPlugInImageElement> m_simulatedMouseClickTimer;
-    unsigned m_plugInOriginHash;
 };
 
 } // namespace WebCore

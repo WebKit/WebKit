@@ -366,6 +366,7 @@ private:
 #endif
 
     void addPlugInAutoStartOriginHash(const String& pageOrigin, unsigned plugInOriginHash);
+    void plugInDidReceiveUserInteraction(unsigned plugInOriginHash);
 
     CoreIPC::MessageReceiverMap m_messageReceiverMap;
 

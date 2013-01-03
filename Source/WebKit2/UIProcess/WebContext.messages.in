@@ -54,4 +54,5 @@ messages -> WebContext {
 
     # Plug-in messages.
     void AddPlugInAutoStartOriginHash(WTF::String pageOrigin, uint32_t hash)
+    void PlugInDidReceiveUserInteraction(uint32_t hash)
 }

@@ -1,3 +1,77 @@
+2013-01-02  Jon Lee  <jonlee@apple.com>
+
+        Revert auto-start plugins to snapshotted plugins after a period of inactivity
+        https://bugs.webkit.org/show_bug.cgi?id=105973
+        <rdar://problem/12947865>
+
+        Reviewed by Brady Eidson.
+
+        Change the set of origin hashes maintained by the web process to a hash map that associates
+        a timestamp for each hash. If the plug-in's origin is marked for auto-start, we also check
+        it against the timestamp. If the time is later, then we consider the entry stale, and snapshot
+        the plug-in instead.
+
+        But, if the user interacts with the plug-in, we delay that expiration timestamp out, so that
+        it expires a month from first interaction. To avoid too much chatter between the web processes
+        and UI process, we only update the timestamp if a day a passed since the last change to the
+        timestamp.
+
+        * WebProcess/Plugins/PluginView.h:
+        (PluginView): Add a member variable to flag whether the user had interacted with the plug-in.
+        * WebProcess/Plugins/PluginView.cpp:
+        (WebKit::PluginView::PluginView): Initialize the flag to false.
+        (WebKit::PluginView::handleEvent): We consider mouse down, up, wheel, context menu, and keyboard
+        events as user interaction. Do not consider mouse enter, leave, and move events as user
+        interaction. Also, remove unneeded comments.
+        (WebKit::PluginView::pluginDidReceiveUserInteraction): If this is the first time the function is
+        called, tell the web process, so that the expiration timestamp can be updated.
+
+        * WebProcess/WebProcess.messages.in: Update the messages to include the expiration time.
+        * WebProcess/WebProcess.h:
+        (WebProcess): Update the cached copy of the auto-start origins to include their expiration
+        timestamps. Update the message signatures. Add a function to update the expiration timestamp
+        for a specific origin. Rename plugInAutoStartOriginsChanged to resetPlugInAutoStartOrigins.
+        * WebProcess/WebProcess.cpp:
+        (WebKit::WebProcess::initializeWebProcess): Instead of individually adding the origins in the
+        provided vector, just call resetPlugInAutoStartOrigins().
+        (WebKit::WebProcess::isPlugInAutoStartOrigin): Check to see if the origin is in the table, and if
+        so, check the current time against the expiration time.
+        (WebKit::WebProcess::didAddPlugInAutoStartOrigin): Update the cached table.
+        (WebKit::WebProcess::resetPlugInAutoStartOrigins): Swap the tables between the provided parameter
+        and the member variable. We can safely do this because the function is called in two cases where
+        the parameter is afterwards thrown away: when a new web process is created, and when it is called
+        through an IPC message.
+        (WebKit::WebProcess::plugInDidReceiveUserInteraction): When invoked, we tell the UI process to
+        update the expiration time for the given origin if the time difference between the expiration
+        time and the current time is less than the threshold plugInAutoStartExpirationTimeUpdateThreshold.
+
+        * UIProcess/WebContext.messages.in: Add message that is called when the web process wants to
+        update the expiration timestamp for the plug-in origin.
+        * UIProcess/WebContext.cpp:
+        (WebKit::WebContext::plugInDidReceiveUserInteraction): Forward to the provider.
+        * UIProcess/WebContext.h:
+
+        * UIProcess/Plugins/PlugInAutoStartProvider.cpp:
+        (WebKit::expirationTimeFromNow): Returns a new time based on the current time + 1 month.
+        (WebKit::PlugInAutoStartProvider::addAutoStartOrigin): Refactor. Set the expiration time for the
+        added origin.
+        (WebKit::PlugInAutoStartProvider::autoStartOriginsCopy): Refactor.
+        (WebKit::PlugInAutoStartProvider::autoStartOriginsTableCopy): Refactor to include the expiration
+        times. Also, check the current time against the expiration time. If we are past the time, remove
+        the entry from the copy.
+        (WebKit::PlugInAutoStartProvider::setAutoStartOriginsTable): Refactor to extract and duplicate
+        the provided map of origins and expiration timestamps.
+        (WebKit::PlugInAutoStartProvider::didReceiveUserInteraction): Look for the origin hash. If found,
+        update the expiration time. Update all existing web processes with the new expiration time, and
+        tell the context client that the hashes have changed.
+        * UIProcess/Plugins/PlugInAutoStartProvider.h:
+        (PlugInAutoStartProvider): Change the m_autoStartHashes variable to a map of a hash to its domain
+        entry in the auto-start table. It is used to cross-reference the auto-start table and update
+        the origin's expiration time.
+
+        * Shared/WebProcessCreationParameters.h:
+        (WebProcessCreationParameters): Switch the creation parameter to seed the origin table to a map.
+
 2013-01-03  Alexis Menard  <alexis@webkit.org>
 
         Querying transition-timing-function value on the computed style does not return keywords when it should.
