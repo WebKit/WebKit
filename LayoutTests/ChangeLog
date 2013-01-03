@@ -1,3 +1,13 @@
+2013-01-03  Vincent Scheib  <scheib@chromium.org>
+
+        Sandbox-blocked pointer lock should log to the console.
+        https://bugs.webkit.org/show_bug.cgi?id=105794
+
+        Reviewed by Adrienne Walker.
+
+        * http/tests/pointer-lock/iframe-sandboxed-expected.txt:
+        * http/tests/pointer-lock/iframe-sandboxed-nested-disallow-then-allow-pointer-lock-expected.txt:
+
 2013-01-03  Alexis Menard  <alexis@webkit.org>
 
         Add tests to cover what transition-timing-function accepts for cubic-bezier values.
