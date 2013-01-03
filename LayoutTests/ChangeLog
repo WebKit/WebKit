@@ -1,3 +1,12 @@
+2013-01-03  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Update Mac test expectations after merging the bug 105987 into the bug 105986.
+
+        Also add one more test expectation for the bug.
+
+        * platform/mac-wk2/TestExpectations:
+        * platform/mac/TestExpectations:
+
 2013-01-02  Levi Weintraub  <leviw@chromium.org>
 
         Fix incorrect assumption about in-flow descendants of inlines in touch event rect tracking
