@@ -1,3 +1,29 @@
+2013-01-03  Roger Fong  <roger_fong@apple.com>
+
+        Remove all traces of Windows from WebKit2 folder.
+        https://bugs.webkit.org/show_bug.cgi?id=105585.
+
+        Reviewed by Sam Weinig.
+
+        WebKitExportGenerator project needs to be moved out of the WebKit2/win folder and into WebKit/win.
+
+        * WebKit.vcproj/WebKit.def.in: Added.
+        * WebKit.vcproj/WebKit.sln:
+        * WebKit.vcproj/WebKit.vcproj:
+        * WebKit.vcproj/WebKitCFLite.vsprops: Added.
+        * WebKit.vcproj/WebKitExportGenerator.vcproj: Added.
+        * WebKit.vcproj/WebKitExportGeneratorBuildCmd.cmd: Added.
+        * WebKit.vcproj/WebKitExportGeneratorCommon.vsprops: Added.
+        * WebKit.vcproj/WebKitExportGeneratorDebug.vsprops: Added.
+        * WebKit.vcproj/WebKitExportGeneratorDebugAll.vsprops: Added.
+        * WebKit.vcproj/WebKitExportGeneratorDebugCairoCFLite.vsprops: Added.
+        * WebKit.vcproj/WebKitExportGeneratorPostBuild.cmd: Added.
+        * WebKit.vcproj/WebKitExportGeneratorPreBuild.cmd: Added.
+        * WebKit.vcproj/WebKitExportGeneratorProduction.vsprops: Added.
+        * WebKit.vcproj/WebKitExportGeneratorRelease.vsprops: Added.
+        * WebKit.vcproj/WebKitExportGeneratorReleaseCairoCFLite.vsprops: Added.
+        * WebKit.vcproj/WebKitLibCommon.vsprops:
+
 2013-01-03  Csaba Osztrogonác  <ossy@webkit.org>
 
         Unreviewed fix after r138656 to make GIT-SVN repositories happy.

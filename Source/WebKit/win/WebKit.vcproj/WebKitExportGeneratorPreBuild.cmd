@@ -2,14 +2,14 @@
 if errorlevel 1 set PATH=%SystemDrive%\cygwin\bin;%PATH%
 
 echo Preparing generator output directory...
-set GeneratorDirectory=%CONFIGURATIONBUILDDIR%/obj/WebKit2ExportGenerator
+set GeneratorDirectory=%CONFIGURATIONBUILDDIR%/obj/WebKitExportGenerator
 mkdir "%GeneratorDirectory%" 2>NUL
 mkdir "%GeneratorDirectory%\DerivedSources" 2>NUL
 
 echo Clearing old definition file...
-del /F /Q "%GeneratorDirectory%\WebKit2.def"
-del /F /Q "%GeneratorDirectory%\DerivedSources\WebKit2ExportGenerator.cpp"
-del /F /Q "%OUTDIR%\WebKit2ExportGenerator.exe"
+del /F /Q "%GeneratorDirectory%\WebKit.def"
+del /F /Q "%GeneratorDirectory%\DerivedSources\WebKitExportGenerator.cpp"
+del /F /Q "%OUTDIR%\WebKitExportGenerator.exe"
 
 cmd /c
 if exist "%CONFIGURATIONBUILDDIR%\buildfailed" grep XX%PROJECTNAME%XX "%CONFIGURATIONBUILDDIR%\buildfailed"
