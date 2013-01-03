@@ -86,6 +86,7 @@ public:
     void observationEnded(MutationObserverRegistration*);
     void enqueueMutationRecord(PassRefPtr<MutationRecord>);
     void setHasTransientRegistration();
+    bool canDeliver();
 
     HashSet<Node*> getObservedNodes() const;
 

@@ -3286,6 +3286,8 @@ END
     }
 
     push(@headerContent, <<END);
+  
+    virtual ScriptExecutionContext* scriptExecutionContext() const { return ContextDestructionObserver::scriptExecutionContext(); }
 
 private:
     ${v8InterfaceName}(v8::Handle<v8::Object>, ScriptExecutionContext*, v8::Handle<v8::Object>);

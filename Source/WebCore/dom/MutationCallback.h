@@ -49,6 +49,7 @@ public:
     virtual ~MutationCallback() { }
 
     virtual bool handleEvent(MutationRecordArray*, MutationObserver*) = 0;
+    virtual ScriptExecutionContext* scriptExecutionContext() const = 0;
 };
 
 }

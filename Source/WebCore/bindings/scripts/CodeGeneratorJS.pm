@@ -2829,6 +2829,9 @@ sub GenerateCallbackHeader
     push(@headerContent, "        return adoptRef(new $className(callback, globalObject));\n");
     push(@headerContent, "    }\n\n");
 
+    # ScriptExecutionContext
+    push(@headerContent, "    virtual ScriptExecutionContext* scriptExecutionContext() const { return ContextDestructionObserver::scriptExecutionContext(); }\n\n");
+
     # Destructor
     push(@headerContent, "    virtual ~$className();\n");
 
