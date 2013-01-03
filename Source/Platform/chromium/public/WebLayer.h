@@ -51,7 +51,6 @@ class WebLayerImpl;
 
 class WebLayer {
 public:
-#define WEBLAYER_IS_PURE_VIRTUAL
     WEBKIT_EXPORT static WebLayer* create();
 
     virtual ~WebLayer() { }

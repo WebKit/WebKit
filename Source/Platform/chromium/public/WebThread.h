@@ -29,8 +29,6 @@
 
 namespace WebKit {
 
-#define WEBTHREAD_HAS_LONGLONG_CHANGE
-
 // Provides an interface to an embedder-defined thread implementation.
 //
 // Deleting the thread blocks until all pending, non-delayed tasks have been

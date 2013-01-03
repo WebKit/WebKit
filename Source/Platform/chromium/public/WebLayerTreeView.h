@@ -78,7 +78,6 @@ public:
         WebSize maxUntiledLayerSize;
     };
 
-#define WEBLAYERTREEVIEW_IS_PURE_VIRTUAL
     // Attempts to initialize this WebLayerTreeView with the given client, root layer, and settings.
     // If initialization fails, this will return nil.
     WEBKIT_EXPORT static WebLayerTreeView* create(WebLayerTreeViewClient*, const WebLayer& root, const Settings&);

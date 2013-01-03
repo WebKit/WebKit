@@ -41,9 +41,6 @@ public:
     // Optionally, the implementation may set |opaque| to a rect covering pixels that
     // the implementation knows are opaque. This information can be used for various
     // optimizations.
-#define WEBCONTENTLAYERCLIENT_HAS_OPAQUE 1
-#define WEBCONTENTLAYERCLIENT_FLOAT_OPAQUE_RECT 1
-#define WEBCONTENTLAYERCLIENT_HAS_CANPAINTLCDTEXT 1
     virtual void paintContents(WebCanvas*, const WebRect& clip, bool canPaintLCDText, WebFloatRect& opaque) = 0;
 
 protected:
