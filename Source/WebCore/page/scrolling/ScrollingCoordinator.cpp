@@ -179,15 +179,20 @@ Region ScrollingCoordinator::computeNonFastScrollableRegion(Frame* frame, const 
 }
 
 #if ENABLE(TOUCH_EVENT_TRACKING)
-static void accumulateRendererTouchEventTargetRects(Vector<IntRect>& rects, const RenderObject* renderer)
+static void accumulateRendererTouchEventTargetRects(Vector<IntRect>& rects, const RenderObject* renderer, const IntRect& parentRect = IntRect())
 {
-    // FIXME: This method is O(N^2) as it walks the tree to the root for every renderer. RenderGeometryMap would fix this.
-    rects.append(enclosingIntRect(renderer->clippedOverflowRectForRepaint(0)));
-    if (renderer->isRenderBlock()) {
-        const RenderBlock* block = toRenderBlock(renderer);
-        for (RenderObject* child = block->firstChild(); child; child = child->nextSibling())
-            accumulateRendererTouchEventTargetRects(rects, child);
+    IntRect adjustedParentRect = parentRect;
+    if (parentRect.isEmpty() || renderer->isFloating() || renderer->isPositioned() || renderer->hasTransform()) {
+        // FIXME: This method is O(N^2) as it walks the tree to the root for every renderer. RenderGeometryMap would fix this.
+        IntRect r = enclosingIntRect(renderer->clippedOverflowRectForRepaint(0));
+        if (!r.isEmpty() && !parentRect.contains(r)) {
+            rects.append(r);
+            adjustedParentRect = r;
+        }
     }
+
+    for (RenderObject* child = renderer->firstChild(); child; child = child->nextSibling())
+        accumulateRendererTouchEventTargetRects(rects, child, adjustedParentRect);
 }
 
 static void accumulateDocumentEventTargetRects(Vector<IntRect>& rects, const Document* document)
@@ -203,8 +208,11 @@ static void accumulateDocumentEventTargetRects(Vector<IntRect>& rects, const Doc
             continue;
 
         if (touchTarget == document) {
-            if (RenderView* view = document->renderView())
-                rects.append(enclosingIntRect(view->clippedOverflowRectForRepaint(0)));
+            if (RenderView* view = document->renderView()) {
+                IntRect r = enclosingIntRect(view->clippedOverflowRectForRepaint(0));
+                if (!r.isEmpty())
+                    rects.append(r);
+            }
             return;
         }
 
