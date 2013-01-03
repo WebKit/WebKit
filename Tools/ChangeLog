@@ -1,3 +1,43 @@
+2013-01-02  Byungwoo Lee  <bw80.lee@samsung.com>
+
+        [EFL][WK2] Fix tooltip bugs in MiniBrowser.
+        https://bugs.webkit.org/show_bug.cgi?id=102209
+
+        Reviewed by Gyuyoung Kim.
+
+        Set tooltip on the elm_window instead of ewk_view, and add delay to
+        show the tooltip window.
+
+        Setting tooltip on the ewk_view makes elementary error message because
+        ewk_view is not an elementary widget. To remove the error message,
+        tooltip should be set on the elm_window.
+
+        Most browsers show the tooltip after a mouse pointer stays on an
+        element object that has tooltip text.
+        But elm_tooltip widget itself doesn't have delay or handle mouse
+        events to show/hide.
+
+        So additional codes are added to show/hide tooltip widget along with
+        mouse events.
+          1) When a mouse pointer stays for a second on an element which has
+             tooltip text, then tooltip widget is displayed.
+          2) When a mouse pointer is moved or out of ewk_view, hide the tooltip
+             widget.
+
+        * MiniBrowser/efl/main.c:
+        (_Tooltip_Information):
+        (_Browser_Window):
+        (on_tooltip_show):
+        (window_tooltip_hide):
+        (window_tooltip_update):
+        (on_mouse_in):
+        (on_mouse_move):
+        (on_mouse_out):
+        (window_free):
+        (on_tooltip_text_set):
+        (on_tooltip_text_unset):
+        (window_create):
+
 2013-01-02  Tony Chang  <tony@chromium.org>
 
         Unreviewed, rolling out r138661.
