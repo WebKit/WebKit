@@ -1223,7 +1223,10 @@ void RenderBoxModelObject::calculateBackgroundImageGeometry(const FillLayer* fil
         } else
             positioningAreaSize = pixelSnappedIntSize(paintRect.size() - LayoutSize(left + right, top + bottom), paintRect.location());
     } else {
-        geometry.setDestRect(pixelSnappedIntRect(viewRect()));
+        IntRect viewportRect = pixelSnappedIntRect(viewRect());
+        if (FrameView* frameView = view()->frameView())
+            viewportRect.setLocation(IntPoint(frameView->scrollOffsetForFixedPosition()));
+        geometry.setDestRect(pixelSnappedIntRect(viewportRect));
         positioningAreaSize = geometry.destRect().size();
     }
 
