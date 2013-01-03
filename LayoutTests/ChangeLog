@@ -1,3 +1,9 @@
+2013-01-02  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Add flaky crash expectations for multiple tests on Mac WebKit2.
+
+        * platform/mac-wk2/TestExpectations:
+
 2013-01-02  Kenneth Russell  <kbr@google.com>
 
         [chromium] Creation of dedicated workers (isolates) leaks reference to HTMLDocument
