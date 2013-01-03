@@ -58,17 +58,17 @@ public:
     static void sendPing(Frame*, const KURL& pingURL, const KURL& destinationURL);
     static void sendViolationReport(Frame*, const KURL& reportURL, PassRefPtr<FormData> report);
 
-    ~PingLoader();
+    virtual ~PingLoader();
 
 private:
     PingLoader(Frame*, ResourceRequest&);
 
-    void didReceiveResponse(ResourceHandle*, const ResourceResponse&) { delete this; }
-    void didReceiveData(ResourceHandle*, const char*, int, int) { delete this; }
-    void didFinishLoading(ResourceHandle*, double) { delete this; }
-    void didFail(ResourceHandle*, const ResourceError&) { delete this; }
+    virtual void didReceiveResponse(ResourceHandle*, const ResourceResponse&) OVERRIDE { delete this; }
+    virtual void didReceiveData(ResourceHandle*, const char*, int, int) OVERRIDE { delete this; }
+    virtual void didFinishLoading(ResourceHandle*, double) OVERRIDE { delete this; }
+    virtual void didFail(ResourceHandle*, const ResourceError&) OVERRIDE { delete this; }
+    virtual bool shouldUseCredentialStorage(ResourceHandle*)  OVERRIDE { return m_shouldUseCredentialStorage; }
     void timeout(Timer<PingLoader>*) { delete this; }
-    bool shouldUseCredentialStorage(ResourceHandle*) { return m_shouldUseCredentialStorage; }
 
     RefPtr<ResourceHandle> m_handle;
     Timer<PingLoader> m_timeout;
