@@ -200,11 +200,11 @@ WebProcess::WebProcess()
 #endif
 }
 
-void WebProcess::initialize(CoreIPC::Connection::Identifier serverIdentifier, RunLoop* runLoop)
+void WebProcess::initializeConnection(CoreIPC::Connection::Identifier serverIdentifier)
 {
     ASSERT(!m_connection);
 
-    m_connection = CoreIPC::Connection::createClientConnection(serverIdentifier, this, runLoop);
+    m_connection = CoreIPC::Connection::createClientConnection(serverIdentifier, this, RunLoop::main());
     m_connection->setDidCloseOnConnectionWorkQueueCallback(ChildProcess::didCloseOnConnectionWorkQueue);
     m_connection->setShouldExitOnSyncMessageSendFailure(true);
     m_connection->addQueueClient(&m_eventDispatcher);
@@ -212,8 +212,6 @@ void WebProcess::initialize(CoreIPC::Connection::Identifier serverIdentifier, Ru
     m_connection->open();
 
     m_webConnection = WebConnectionToUIProcess::create(this);
-
-    m_runLoop = runLoop;
 }
 
 void WebProcess::didCreateDownload()
@@ -545,18 +543,8 @@ void WebProcess::removeWebPage(uint64_t pageID)
     enableTermination();
 }
 
-bool WebProcess::isSeparateProcess() const
-{
-    // If we're running on the main run loop, we assume that we're in a separate process.
-    return m_runLoop == RunLoop::main();
-}
- 
 bool WebProcess::shouldTerminate()
 {
-    // Keep running forever if we're running in the same process.
-    if (!isSeparateProcess())
-        return false;
-
     ASSERT(m_pageMap.isEmpty());
 
 #if ENABLE(NETWORK_PROCESS)
@@ -589,7 +577,7 @@ void WebProcess::terminate()
     m_webConnection = nullptr;
 
     platformTerminate();
-    m_runLoop->stop();
+    RunLoop::main()->stop();
 }
 
 void WebProcess::didReceiveSyncMessage(CoreIPC::Connection* connection, CoreIPC::MessageID messageID, CoreIPC::MessageDecoder& decoder, OwnPtr<CoreIPC::MessageEncoder>& replyEncoder)
@@ -622,9 +610,6 @@ void WebProcess::didReceiveMessage(CoreIPC::Connection* connection, CoreIPC::Mes
 
 void WebProcess::didClose(CoreIPC::Connection*)
 {
-    // When running in the same process the connection will never be closed.
-    ASSERT(isSeparateProcess());
-
 #ifndef NDEBUG
     m_inDidClose = true;
 
@@ -640,7 +625,7 @@ void WebProcess::didClose(CoreIPC::Connection*)
 #endif    
 
     // The UI process closed this connection, shut down.
-    m_runLoop->stop();
+    RunLoop::main()->stop();
 }
 
 void WebProcess::didReceiveInvalidMessage(CoreIPC::Connection*, CoreIPC::StringReference, CoreIPC::StringReference)

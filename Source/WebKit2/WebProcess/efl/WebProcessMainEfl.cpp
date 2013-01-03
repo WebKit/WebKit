@@ -114,7 +114,7 @@ WK_EXPORT int WebProcessMainEfl(int argc, char* argv[])
     soup_cache_load(soupCache);
 
     int socket = atoi(argv[1]);
-    WebProcess::shared().initialize(socket, RunLoop::main());
+    WebProcess::shared().initializeConnection(socket);
     RunLoop::run();
 
     soup_cache_flush(soupCache);

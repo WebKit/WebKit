@@ -1,5 +1,46 @@
 2013-01-02  Sam Weinig  <sam@webkit.org>
 
+        Stop pretending its possible to run the WebProcess in threaded mode
+        https://bugs.webkit.org/show_bug.cgi?id=105969
+
+        Reviewed by Alexey Proskuryakov.
+
+        - Removes WebProcess::isSeparateProcess()
+        - Stop storing a RunLoop on the WebProcess and just use RunLoop::main().
+
+        * WebProcess/Network/NetworkProcessConnection.cpp:
+        (WebKit::NetworkProcessConnection::NetworkProcessConnection):
+        * WebProcess/Plugins/Netscape/NPRuntimeObjectMap.cpp:
+        (WebKit::NPRuntimeObjectMap::NPRuntimeObjectMap):
+        * WebProcess/Plugins/PluginProcessConnection.cpp:
+        (WebKit::PluginProcessConnection::PluginProcessConnection):
+        * WebProcess/WebPage/DrawingAreaImpl.cpp:
+        (WebKit::DrawingAreaImpl::DrawingAreaImpl):
+        * WebProcess/WebPage/PageOverlay.cpp:
+        (WebKit::PageOverlay::PageOverlay):
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::WebPage):
+        (WebKit::WebPage::close):
+        * WebProcess/WebProcess.cpp:
+        (WebKit::WebProcess::initializeConnection):
+        (WebKit::WebProcess::shouldTerminate):
+        (WebKit::WebProcess::terminate):
+        (WebKit::WebProcess::didClose):
+        * WebProcess/WebProcess.h:
+        (WebProcess):
+        * WebProcess/efl/WebProcessMainEfl.cpp:
+        (WebKit::WebProcessMainEfl):
+        * WebProcess/gtk/WebProcessMainGtk.cpp:
+        (WebKit::WebProcessMainGtk):
+        * WebProcess/mac/WebProcessInitialization.mm:
+        (WebKit::initializeWebProcess):
+        * WebProcess/qt/WebProcessMainQt.cpp:
+        (WebKit::WebProcessMainQt):
+        * WebProcess/win/WebProcessMainWin.cpp:
+        (WebKit::WebProcessMain):
+
+2013-01-02  Sam Weinig  <sam@webkit.org>
+
         Factor out NetworkProcess initialization into its own function in preparation of adding a NetworkProcess service
         https://bugs.webkit.org/show_bug.cgi?id=105946
 

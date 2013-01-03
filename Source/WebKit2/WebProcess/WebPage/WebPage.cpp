@@ -245,7 +245,7 @@ WebPage::WebPage(uint64_t pageID, const WebPageCreationParameters& parameters)
 #elif PLATFORM(GTK)
     , m_accessibilityObject(0)
 #endif
-    , m_setCanStartMediaTimer(WebProcess::shared().runLoop(), this, &WebPage::setCanStartMediaTimerFired)
+    , m_setCanStartMediaTimer(RunLoop::main(), this, &WebPage::setCanStartMediaTimerFired)
     , m_findController(this)
 #if ENABLE(TOUCH_EVENTS)
 #if PLATFORM(QT)
@@ -808,7 +808,7 @@ void WebPage::close()
     WebProcess::shared().removeWebPage(m_pageID);
 
     if (isRunningModal)
-        WebProcess::shared().runLoop()->stop();
+        RunLoop::main()->stop();
 }
 
 void WebPage::tryClose()

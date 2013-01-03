@@ -47,7 +47,7 @@ PluginProcessConnection::PluginProcessConnection(PluginProcessConnectionManager*
     , m_supportsAsynchronousPluginInitialization(supportsAsynchronousPluginInitialization)
     , m_processType(processType)
 {
-    m_connection = CoreIPC::Connection::createClientConnection(connectionIdentifier, this, WebProcess::shared().runLoop());
+    m_connection = CoreIPC::Connection::createClientConnection(connectionIdentifier, this, RunLoop::main());
 
     m_npRemoteObjectMap = NPRemoteObjectMap::create(m_connection.get());
 

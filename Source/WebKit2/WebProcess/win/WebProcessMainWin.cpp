@@ -78,7 +78,8 @@ int WebProcessMain(const CommandLine& commandLine)
     if (!clientIdentifier)
         return 0;
 
-    WebProcess::shared().initialize(clientIdentifier, RunLoop::main());
+    WebProcess::shared().initializeConnection(clientIdentifier);
+
     RunLoop::run();
 
     return 0;

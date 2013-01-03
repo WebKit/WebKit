@@ -120,12 +120,11 @@ public:
         m_supplements.add(T::supplementName(), new T(this));
     }
 
-    void initialize(CoreIPC::Connection::Identifier, WebCore::RunLoop*);
+    void initializeConnection(CoreIPC::Connection::Identifier);
 
     virtual CoreIPC::Connection* connection() const OVERRIDE { return m_connection.get(); }
     virtual uint64_t destinationID() const OVERRIDE { return 0; }
 
-    WebCore::RunLoop* runLoop() const { return m_runLoop; }
     WebConnectionToUIProcess* webConnectionToUIProcess() const { return m_webConnection.get(); }
 
     WebPage* webPage(uint64_t pageID) const;
@@ -140,8 +139,6 @@ public:
 #endif
 
     InjectedBundle* injectedBundle() const { return m_injectedBundle.get(); }
-
-    bool isSeparateProcess() const;
 
 #if PLATFORM(MAC)
     void initializeShim();
@@ -319,8 +316,6 @@ private:
     EventDispatcher m_eventDispatcher;
 
     bool m_inDidClose;
-
-    WebCore::RunLoop* m_runLoop;
 
     // FIXME: The visited link table should not be per process.
     VisitedLinkTable m_visitedLinkTable;

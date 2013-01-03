@@ -54,7 +54,7 @@ void initializeWebProcess(const WebProcessInitializationParameters& parameters)
         WebProcess& webProcess = WebProcess::shared();
         webProcess.initializeShim();
         webProcess.initializeSandbox(parameters.clientIdentifier);
-        webProcess.initialize(parameters.connectionIdentifier, RunLoop::main());
+        webProcess.initializeConnection(parameters.connectionIdentifier);
         
         WKAXRegisterRemoteApp();
     }

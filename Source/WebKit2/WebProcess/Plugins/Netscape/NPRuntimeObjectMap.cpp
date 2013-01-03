@@ -49,7 +49,7 @@ namespace WebKit {
 
 NPRuntimeObjectMap::NPRuntimeObjectMap(PluginView* pluginView)
     : m_pluginView(pluginView)
-    , m_finalizationTimer(WebProcess::shared().runLoop(), this, &NPRuntimeObjectMap::invalidateQueuedObjects)
+    , m_finalizationTimer(RunLoop::main(), this, &NPRuntimeObjectMap::invalidateQueuedObjects)
 {
 }
 

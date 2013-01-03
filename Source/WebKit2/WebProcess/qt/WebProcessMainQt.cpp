@@ -184,7 +184,7 @@ Q_DECL_EXPORT int WebProcessMainQt(QGuiApplication* app)
 #endif
 #endif
 
-    WebKit::WebProcess::shared().initialize(identifier, RunLoop::main());
+    WebKit::WebProcess::shared().initializeConnection(identifier);
 
     RunLoop::run();
 

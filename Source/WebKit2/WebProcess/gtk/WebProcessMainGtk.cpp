@@ -63,7 +63,7 @@ WK_EXPORT int WebProcessMainGtk(int argc, char* argv[])
 
     RunLoop::initializeMainRunLoop();
     int socket = atoi(argv[1]);
-    WebProcess::shared().initialize(socket, RunLoop::main());
+    WebProcess::shared().initializeConnection(socket);
 
     // Despite using system CAs to validate certificates we're
     // accepting invalid certificates by default. New API will be
