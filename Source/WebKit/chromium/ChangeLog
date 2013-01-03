@@ -1,3 +1,15 @@
+2013-01-02  David Tseng  <dtseng@google.com>
+
+        AX: Chromium needs platform localized strings for media controls.
+        https://bugs.webkit.org/show_bug.cgi?id=105940
+
+        Reviewed by Tony Chang.
+
+        * src/LocalizedStrings.cpp:
+        (WebCore::localizedMediaControlElementString):
+        (WebCore):
+        (WebCore::localizedMediaControlElementHelpText):
+
 2013-01-02  Mark Pilgrim  <pilgrim@chromium.org>
 
         [Chromium] Add Platform/chromium to include_dirs

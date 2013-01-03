@@ -418,16 +418,98 @@ String textTrackOffText() { return String(); }
 String textTrackNoLabelText() { return String(); }
 #endif
 
-String localizedMediaControlElementString(const String& /*name*/)
+String localizedMediaControlElementString(const String& name)
 {
-    // FIXME: to be fixed.
-    return String();
+    if (name == "AudioElement")
+        return query(WebLocalizedString::AXMediaAudioElement);
+    if (name == "VideoElement")
+        return query(WebLocalizedString::AXMediaVideoElement);
+    if (name == "MuteButton")
+        return query(WebLocalizedString::AXMediaMuteButton);
+    if (name == "UnMuteButton")
+        return query(WebLocalizedString::AXMediaUnMuteButton);
+    if (name == "PlayButton")
+        return query(WebLocalizedString::AXMediaPlayButton);
+    if (name == "PauseButton")
+        return query(WebLocalizedString::AXMediaPauseButton);
+    if (name == "Slider")
+        return query(WebLocalizedString::AXMediaSlider);
+    if (name == "SliderThumb")
+        return query(WebLocalizedString::AXMediaSliderThumb);
+    if (name == "RewindButton")
+        return query(WebLocalizedString::AXMediaRewindButton);
+    if (name == "ReturnToRealtimeButton")
+        return query(WebLocalizedString::AXMediaReturnToRealTime);
+    if (name == "CurrentTimeDisplay")
+        return query(WebLocalizedString::AXMediaCurrentTimeDisplay);
+    if (name == "TimeRemainingDisplay")
+        return query(WebLocalizedString::AXMediaTimeRemainingDisplay);
+    if (name == "StatusDisplay")
+        return query(WebLocalizedString::AXMediaStatusDisplay);
+    if (name == "EnterFullscreenButton")
+        return query(WebLocalizedString::AXMediaEnterFullscreenButton);
+    if (name == "ExitFullscreenButton")
+        return query(WebLocalizedString::AXMediaExitFullscreenButton);
+    if (name == "SeekForwardButton")
+        return query(WebLocalizedString::AXMediaSeekForwardButton);
+    if (name == "SeekBackButton")
+        return query(WebLocalizedString::AXMediaSeekBackButton);
+    if (name == "ShowClosedCaptionsButton")
+        return query(WebLocalizedString::AXMediaShowClosedCaptionsButton);
+    if (name == "HideClosedCaptionsButton")
+        return query(WebLocalizedString::AXMediaHideClosedCaptionsButton);
+
+    // FIXME: the ControlsPanel container should never be visible in the accessibility hierarchy.
+    if (name == "ControlsPanel")
+        return query(WebLocalizedString::AXMediaDefault);
+
+    ASSERT_NOT_REACHED();
+    return query(WebLocalizedString::AXMediaDefault);
 }
 
-String localizedMediaControlElementHelpText(const String& /*name*/)
+String localizedMediaControlElementHelpText(const String& name)
 {
-    // FIXME: to be fixed.
-    return String();
+    if (name == "AudioElement")
+        return query(WebLocalizedString::AXMediaAudioElementHelp);
+    if (name == "VideoElement")
+        return query(WebLocalizedString::AXMediaVideoElementHelp);
+    if (name == "MuteButton")
+        return query(WebLocalizedString::AXMediaMuteButtonHelp);
+    if (name == "UnMuteButton")
+        return query(WebLocalizedString::AXMediaUnMuteButtonHelp);
+    if (name == "PlayButton")
+        return query(WebLocalizedString::AXMediaPlayButtonHelp);
+    if (name == "PauseButton")
+        return query(WebLocalizedString::AXMediaPauseButtonHelp);
+    if (name == "Slider")
+        return query(WebLocalizedString::AXMediaSliderHelp);
+    if (name == "SliderThumb")
+        return query(WebLocalizedString::AXMediaSliderThumbHelp);
+    if (name == "RewindButton")
+        return query(WebLocalizedString::AXMediaRewindButtonHelp);
+    if (name == "ReturnToRealtimeButton")
+        return query(WebLocalizedString::AXMediaReturnToRealTimeHelp);
+    if (name == "CurrentTimeDisplay")
+        return query(WebLocalizedString::AXMediaCurrentTimeDisplayHelp);
+    if (name == "TimeRemainingDisplay")
+        return query(WebLocalizedString::AXMediaTimeRemainingDisplayHelp);
+    if (name == "StatusDisplay")
+        return query(WebLocalizedString::AXMediaStatusDisplayHelp);
+    if (name == "EnterFullscreenButton")
+        return query(WebLocalizedString::AXMediaEnterFullscreenButtonHelp);
+    if (name == "ExitFullscreenButton")
+        return query(WebLocalizedString::AXMediaExitFullscreenButtonHelp);
+    if (name == "SeekForwardButton")
+        return query(WebLocalizedString::AXMediaSeekForwardButtonHelp);
+    if (name == "SeekBackButton")
+        return query(WebLocalizedString::AXMediaSeekBackButtonHelp);
+    if (name == "ShowClosedCaptionsButton")
+        return query(WebLocalizedString::AXMediaShowClosedCaptionsButtonHelp);
+    if (name == "HideClosedCaptionsButton")
+        return query(WebLocalizedString::AXMediaHideClosedCaptionsButtonHelp);
+
+    ASSERT_NOT_REACHED();
+    return query(WebLocalizedString::AXMediaDefault);
 }
 
 String localizedMediaTimeDescription(float /*time*/)
