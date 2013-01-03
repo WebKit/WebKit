@@ -1,3 +1,19 @@
+2013-01-03  Mike West  <mkwst@chromium.org>
+
+        seamless iframes don't inherit styles when srcdoc is used
+        https://bugs.webkit.org/show_bug.cgi?id=103539
+
+        Reviewed by Antti Koivisto.
+
+        * fast/frames/seamless/resources/span.html: Added.
+        * fast/frames/seamless/seamless-contenteditable-not-inherited-expected.txt:
+            Updating the previously failing expectation.
+        * fast/frames/seamless/seamless-srcdoc-expected.txt: Added.
+        * fast/frames/seamless/seamless-srcdoc.html: Added.
+            Exciting new test to ensure that this doesn't regress, neither
+            for totally simple srcdoc attriubtes, nor for slightly more
+            complex variations.
+
 2013-01-02  Ryosuke Niwa  <rniwa@webkit.org>
 
         Add failing test expectations for two canvas tests on Mac Lion

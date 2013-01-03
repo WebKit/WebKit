@@ -1,0 +1,5 @@
+This test ensures that content inside a seamless srcdoc iframe correctly inherits style, even if it doesn't set any styles of its own.
+PASS window.getComputedStyle(srcdocspan).getPropertyCSSValue('color').cssText is "rgb(255, 0, 0)"
+PASS window.getComputedStyle(srcdocstylespan).getPropertyCSSValue('color').cssText is "rgb(255, 0, 0)"
+PASS window.getComputedStyle(span).getPropertyCSSValue('color').cssText is "rgb(255, 0, 0)"
+

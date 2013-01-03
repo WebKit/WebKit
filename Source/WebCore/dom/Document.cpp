@@ -2254,6 +2254,12 @@ void Document::implicitOpen()
 
     setCompatibilityMode(NoQuirksMode);
 
+    // Documents rendered seamlessly should start out requiring a stylesheet
+    // collection update in order to ensure they inherit all the relevant data
+    // from their parent.
+    if (shouldDisplaySeamlesslyWithParent())
+        styleResolverChanged(DeferRecalcStyle);
+
     m_parser = createParser();
     setParsing(true);
     setReadyState(Loading);
