@@ -1,3 +1,22 @@
+2013-01-03  Alexis Menard  <alexis@webkit.org>
+
+        Add tests to cover what transition-timing-function accepts for cubic-bezier values.
+        https://bugs.webkit.org/show_bug.cgi?id=105426
+
+        Reviewed by Simon Fraser.
+
+        http://www.w3.org/TR/css3-transitions/#transition-timing-function-property
+        has not yet been updated following the discussions
+        http://lists.w3.org/Archives/Public/www-style/2010Apr/0489.html and
+        http://lists.w3.org/Archives/Public/www-style/2010Jun/0254.html where
+        the range restriction of Y values for cubic-bezier type has been
+        removed. This patch add tests to cover that behavior to avoid breakage
+        in the future and test also various other different cubic-bezier use
+        cases.
+
+        * transitions/transitions-parsing-expected.txt:
+        * transitions/transitions-parsing.html:
+
 2013-01-03  Ryosuke Niwa  <rniwa@webkit.org>
 
         Update Mac test expectations after merging the bug 105987 into the bug 105986.
