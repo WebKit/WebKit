@@ -1,3 +1,30 @@
+2013-01-02  Jacky Jiang  <zhajiang@rim.com>
+
+        [BlackBerry] file:/// pages don't get correct scales after several rotations and history navigations
+        https://bugs.webkit.org/show_bug.cgi?id=105996
+
+        Reviewed by George Staikos.
+
+        PR: 273541
+        When navigating back to the previous page on portrait mode, we were
+        trying to set virtual viewport after recalculation. However, we didn't
+        change the fixed layout size so that we still layouted the contents at
+        the old virtual viewport size. In this case, the old virtual viewport
+        was 570 * 293 which was set in landscape mode unfortunately. There
+        would be no chance for such kind of contents size to fit the portrait
+        mode screen size nicely.
+        This was a regression of webkit/cc31d9bad where setViewMode() was
+        removed as a noop. So just get setViewMode() back to apply the fixed
+        layout size with a little bit change as SVG document path was proved
+        invalid in that patch. Thanks to George for the float comparison change.
+        Put a FIXME as we don't have a way to save the scale precisely before
+        the rotation and history navigation currently.
+
+        * Api/WebPage.cpp:
+        (BlackBerry::WebKit::WebPagePrivate::setLoadState):
+        * WebCoreSupport/FrameLoaderClientBlackBerry.cpp:
+        (WebCore::FrameLoaderClientBlackBerry::saveViewStateToItem):
+
 2013-01-02  Otto Derek Cheung  <otcheung@rim.com>
 
         [BlackBerry] Do not determine db quota limit using db file size

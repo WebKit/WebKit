@@ -1065,7 +1065,11 @@ void FrameLoaderClientBlackBerry::saveViewStateToItem(HistoryItem* item)
     HistoryItemViewState& viewState = item->viewState();
     if (viewState.shouldSaveViewState) {
         viewState.orientation = m_webPagePrivate->mainFrame()->orientation();
-        viewState.isZoomToFitScale = m_webPagePrivate->currentScale() == m_webPagePrivate->zoomToFitScale();
+        viewState.isZoomToFitScale = fabsf(m_webPagePrivate->currentScale() - m_webPagePrivate->zoomToFitScale()) < 0.01;
+        // FIXME: for the web page which has viewport, if the page was rotated, we can get the correct scale
+        // as initial-scale or zoomToFitScale isn't changed most of the time and the scale can still be clamped
+        // during zoomAboutPoint when restoring the view state. However, there are still chances to get the
+        // wrong scale in theory, we don't have a way to save the scale of the previous orientation currently.
         viewState.scale = m_webPagePrivate->currentScale();
         viewState.shouldReflowBlock = m_webPagePrivate->m_shouldReflowBlock;
         viewState.minimumScale = m_webPagePrivate->m_minimumScale;
