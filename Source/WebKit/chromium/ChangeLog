@@ -1,3 +1,24 @@
+2013-01-03  Mark Pilgrim  <pilgrim@chromium.org>
+
+        [Chromium] Remove all references to sharedWorkerRepository()
+        https://bugs.webkit.org/show_bug.cgi?id=104704
+
+        Reviewed by Adam Barth.
+
+        Now that Chromium calls setSharedWorkerRepository upon
+        initializing WebKit (
+        https://codereview.chromium.org/10990121/ and
+        https://codereview.chromium.org/11576028/ ) and no longer
+        tries to override sharedWorkerRepository, it is safe to remove
+        all references to this function.
+
+        * public/platform/WebKitPlatformSupport.h:
+        (WebKit):
+        (WebKit::WebKitPlatformSupport::idbFactory):
+        * src/SharedWorkerRepository.cpp:
+        (WebKit::sharedWorkerRepository):
+        (WebCore::SharedWorkerRepository::isAvailable):
+
 2013-01-03  Tommy Widenflycht  <tommyw@google.com>
 
         MediaStream API: Add a missing state to RTCPeerConnection
