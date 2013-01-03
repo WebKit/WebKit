@@ -35,8 +35,6 @@
 #include "platform/WebSize.h"
 #include <unicode/uscript.h>
 
-#define HAS_WEBAUDIO_FEATURE_ENABLE 1
-
 namespace WebKit {
 
 class WebString;

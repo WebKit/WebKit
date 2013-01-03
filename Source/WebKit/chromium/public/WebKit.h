@@ -33,8 +33,6 @@
 
 #include "platform/WebCommon.h"
 
-#define HAVE_WEBCOMPOSITOR
-
 namespace WebKit {
 
 class WebKitPlatformSupport;

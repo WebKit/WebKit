@@ -31,8 +31,6 @@
 #ifndef WebRuntimeFeatures_h
 #define WebRuntimeFeatures_h
 
-#define HAS_WEBAUDIO_RUNTIMEFEATURES 1
-
 #include "platform/WebCommon.h"
 
 namespace WebKit {

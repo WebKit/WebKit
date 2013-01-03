@@ -41,9 +41,6 @@ class WebString;
 class WebURL;
 struct WebFileInfo;
 
-// Temporary hack to ease a 4-phase Chromium/WebKit commit.
-#define WEBFILESYSTEMCALLBACKS_USE_URL_NOT_STRING 1
-
 class WebFileSystemCallbacks {
 public:
     // Callback for WebFileSystem's various operations that don't require

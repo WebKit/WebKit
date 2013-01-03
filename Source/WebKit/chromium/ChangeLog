@@ -1,3 +1,19 @@
+2013-01-02  James Robinson  <jamesr@chromium.org>
+
+        [chromium] Remove unused transitional #defines from WebKit Client API
+        https://bugs.webkit.org/show_bug.cgi?id=105974
+
+        Reviewed by Adam Barth.
+
+        The transitions these #defines helped with have completed.
+
+        * public/WebFileSystemCallbacks.h:
+        (WebKit):
+        * public/WebKit.h:
+        * public/WebRuntimeFeatures.h:
+        * public/WebSettings.h:
+        * public/WebWidget.h:
+
 2013-01-02  Cris Neckar  <cdn@chromium.org>
 
         Initialize WebInputEvent to prevent sending uninitialized bytes with IPC messages.
