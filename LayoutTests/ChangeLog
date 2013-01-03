@@ -1,3 +1,10 @@
+2013-01-03  Roger Fong  <roger_fong@apple.com>
+
+        Unreviewed gardening of Apple Windows port.
+
+        * platform/win/TestExpectations:
+        * platform/win/fast/inline/justify-emphasis-inline-box-expected.txt: Added.
+
 2013-01-03  Adam Klein  <adamk@chromium.org>
 
         [HTMLTemplateElement] Disallow cycles within template content

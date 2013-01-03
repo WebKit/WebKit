@@ -2231,6 +2231,7 @@ http/tests/inspector/appcache/appcache-manifest-with-non-existing-file.html
 http/tests/inspector/console-resource-errors.html
 http/tests/inspector/resource-tree/resource-request-content-while-loading.html
 http/tests/inspector/search/resources-search-match-index.html
+http/tests/inspector/network/network-initiator-from-console.html
 inspector/profiler/heap-snapshot.html
 inspector/profiler/memory-instrumentation-cached-images.html
 inspector/styles/media-queries.html
