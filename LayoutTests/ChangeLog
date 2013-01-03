@@ -1,3 +1,12 @@
+2013-01-03  Terry Anderson  <tdanderson@chromium.org>
+
+        css3/filters/effect-invert.html is flaky/has incorrect image output on Win
+
+        Unreviewed gardening. Marked this as [ Failure Pass ] for Win7 and
+        as [ Failure ] for XP.
+
+        * platform/chromium/TestExpectations:
+
 2013-01-03  Uday Kiran  <udaykiran@motorola.com>
 
         webkit fails IETC column-width-negative-001.htm

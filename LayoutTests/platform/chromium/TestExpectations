@@ -3736,6 +3736,9 @@ webkit.org/b/94492 [ Win ] css3/filters/custom/filter-repaint-custom-clipped.htm
 webkit.org/b/94492 [ Win ] css3/filters/custom/filter-repaint-custom.html [ ImageOnlyFailure ]
 webkit.org/b/94492 [ Win ] css3/filters/custom/filter-repaint-custom-rotated.html [ ImageOnlyFailure ]
 
+webkit.org/b/106044 [ Win7 ] css3/filters/effect-invert.html [ Failure Pass ]
+webkit.org/b/106044 [ XP ] css3/filters/effect-invert.html [ Failure ]
+
 webkit.org/b/95581 http/tests/xmlhttprequest/zero-length-response.html [ Pass Timeout ]
 webkit.org/b/95581 http/tests/misc/javascript-url-stop-loaders.html [ Pass Timeout ]
 
