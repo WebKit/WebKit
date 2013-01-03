@@ -1,3 +1,17 @@
+2013-01-03  Dan Bernstein  <mitz@apple.com>
+
+        No way to obtain a DOMNode given a JS wrapper for a Node
+        https://bugs.webkit.org/show_bug.cgi?id=106033
+
+        Added a test for +[DOMNode _nodeFromJSWrapper:].
+
+        Reviewed by Sam Weinig.
+
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        * TestWebKitAPI/Tests/mac/DOMNodeFromJSObject.mm: Added.
+        (TestWebKitAPI):
+        (TestWebKitAPI::TEST):
+
 2013-01-03  Emil A Eklund  <eae@chromium.org>
 
         Fix overflow in LayoutUnit::ceil and floor for SATURATED_LAYOUT_ARITHMETIC

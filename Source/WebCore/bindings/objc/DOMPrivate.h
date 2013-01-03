@@ -31,6 +31,10 @@
 - (NSArray *)textRects;
 @end
 
+@interface DOMNode (WebPrivate)
++ (id)_nodeFromJSWrapper:(JSObjectRef)jsWrapper;
+@end
+
 // FIXME: this should be removed as soon as all internal Apple uses of it have been replaced with
 // calls to the public method - (NSColor *)color.
 @interface DOMRGBColor (WebPrivate)

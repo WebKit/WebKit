@@ -40,9 +40,11 @@
 #import "HTMLNames.h"
 #import "HTMLParserIdioms.h"
 #import "Image.h"
+#import "JSNode.h"
 #import "NodeFilter.h"
 #import "RenderImage.h"
 #import "WebScriptObjectPrivate.h"
+#import <JavaScriptCore/APICast.h>
 #import <wtf/HashMap.h>
 
 #if ENABLE(SVG_DOM_OBJC_BINDINGS)
@@ -385,6 +387,21 @@ id <DOMEventTarget> kit(WebCore::EventTarget* eventTarget)
     Vector<WebCore::IntRect> rects;
     core(self)->textRects(rects);
     return kit(rects);
+}
+
+@end
+
+@implementation DOMNode (WebPrivate)
+
++ (id)_nodeFromJSWrapper:(JSObjectRef)jsWrapper
+{
+    JSObject* object = toJS(jsWrapper);
+
+    if (!object->inherits(&JSNode::s_info))
+        return nil;
+
+    WebCore::Node* node = jsCast<JSNode*>(object)->impl();
+    return kit(node);
 }
 
 @end
