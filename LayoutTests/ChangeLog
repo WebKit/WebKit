@@ -1,5 +1,17 @@
 2013-01-02  Ryosuke Niwa  <rniwa@webkit.org>
 
+        One more Mac rebaseline attempt for r138654. Also remove an entry for the bug 105514
+        which has been dup'ed with the bug 103663 for which we have more specific expectations.
+
+        * platform/mac-lion/editing/deleting: Removed.
+        * platform/mac-lion/editing/deleting/delete-to-select-table-expected.txt: Removed.
+        * platform/mac-wk2/editing/deleting: Removed.
+        * platform/mac-wk2/editing/deleting/delete-to-select-table-expected.txt: Removed.
+        * platform/mac/TestExpectations:
+        * platform/mac/editing/deleting/delete-to-select-table-expected.txt:
+
+2013-01-02  Ryosuke Niwa  <rniwa@webkit.org>
+
         Mac and Chromium rebaselines after r138654.
 
         * editing/deleting/delete-to-select-table-expected.txt: Added.
