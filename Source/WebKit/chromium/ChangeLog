@@ -1,3 +1,19 @@
+2013-01-02  Mark Pilgrim  <pilgrim@chromium.org>
+
+        [Chromium] Add Platform/chromium to include_dirs
+        https://bugs.webkit.org/show_bug.cgi?id=105955
+
+        Reviewed by James Robinson.
+
+        Currently the headers in WebKit/chromium/public/Web*.h can not
+        include headers from the new Platform/chromium/ directory with the
+        "#include <public/WebFoo.h>" syntax, because the include_dirs for
+        dependent builds (like Chromium-within-WebKit) do not include the
+        new Platform/chromium/ directory. This patch adds that capability
+        without managing to break anything else.
+
+        * WebKit.gyp:
+
 2013-01-02  Alec Flett  <alecflett@chromium.org>
 
         IndexedDB: Use non-const buffers in put() to avoid copies

@@ -854,6 +854,11 @@
                     ],
                 }],
             ],
+            'direct_dependent_settings': {
+                'include_dirs': [
+                    '../../Platform/chromium/',
+                ],
+            },
             'target_conditions': [
                 ['OS=="android"', {
                     'sources/': [
@@ -902,6 +907,7 @@
                     'include_dirs': [
                         'public',
                         '../../WebCore/testing/v8', # for WebCoreTestSupport.h, needed to link in window.internals code.
+                        '../../Platform/chromium/',
                     ],
                     'sources': [
                         'src/WebTestingSupport.cpp',
