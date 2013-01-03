@@ -1,3 +1,10 @@
+2013-01-03  Csaba Osztrogonác  <ossy@webkit.org>
+
+        Unreviewed fix after r138656 to make GIT-SVN repositories happy.
+
+        * WebKit.vcproj/WebKitApple.vsprops: Added property svn:eol-style. Removed property svn:mime-type.
+        * WebKit.vcproj/WebKitDirectX.vsprops: Added property svn:eol-style. Removed property svn:mime-type.
+
 2013-01-02  Roger Fong  <roger_fong@apple.com>
 
         Unreviewed. Build fix after reintroducing r138331.
