@@ -31,38 +31,15 @@
 #include "config.h"
 #include "V8DOMWrapper.h"
 
-#include <wtf/ArrayBufferView.h>
-#include "DocumentLoader.h"
-#include "Frame.h"
-#include "FrameLoaderClient.h"
-#include "StylePropertySet.h"
-#include "V8AbstractEventListener.h"
 #include "V8Binding.h"
-#include "V8Collection.h"
 #include "V8DOMWindow.h"
-#include "V8EventListener.h"
 #include "V8EventListenerList.h"
 #include "V8HTMLCollection.h"
 #include "V8HTMLDocument.h"
 #include "V8HiddenPropertyName.h"
-#include "V8Location.h"
-#include "V8NamedNodeMap.h"
-#include "V8NodeFilterCondition.h"
-#include "V8NodeList.h"
 #include "V8ObjectConstructor.h"
 #include "V8PerContextData.h"
-#include "V8StyleSheet.h"
 #include "V8WorkerContextEventListener.h"
-#include "WebGLContextAttributes.h"
-#include "WebGLUniformLocation.h"
-#include "WrapperTypeInfo.h"
-#include <algorithm>
-#include <utility>
-#include <v8-debug.h>
-#include <wtf/Assertions.h>
-#include <wtf/OwnArrayPtr.h>
-#include <wtf/StdLibExtras.h>
-#include <wtf/UnusedParam.h>
 
 namespace WebCore {
 
