@@ -355,7 +355,7 @@ void ScrollingCoordinator::updateMainFrameScrollPosition(const IntPoint& scrollP
         else {
             scrollLayer->syncPosition(-frameView->scrollPosition());
             LayoutRect viewportRect = frameView->visibleContentRect();
-            viewportRect.setLocation(toPoint(frameView->scrollOffsetForFixedPosition()));
+            viewportRect.setLocation(IntPoint(frameView->scrollOffsetForFixedPosition()));
             syncChildPositions(viewportRect);
         }
     }

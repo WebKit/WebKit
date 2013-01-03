@@ -1975,7 +1975,7 @@ void RenderLayer::scrollToOffset(const IntSize& scrollOffset, ScrollOffsetClampi
 {
     IntSize newScrollOffset = clamp == ScrollOffsetClamped ? clampScrollOffset(scrollOffset) : scrollOffset;
     if (newScrollOffset != this->scrollOffset())
-        scrollToOffsetWithoutAnimation(toPoint(newScrollOffset));
+        scrollToOffsetWithoutAnimation(IntPoint(newScrollOffset));
 }
 
 void RenderLayer::scrollTo(int x, int y)
@@ -2784,7 +2784,7 @@ IntSize RenderLayer::offsetFromResizeCorner(const IntPoint& absolutePoint) const
     IntSize elementSize = size();
     if (renderer()->style()->shouldPlaceBlockDirectionScrollbarOnLogicalLeft())
         elementSize.setWidth(0);
-    IntPoint resizerPoint = toPoint(elementSize);
+    IntPoint resizerPoint = IntPoint(elementSize);
     IntPoint localPoint = roundedIntPoint(absoluteToContents(absolutePoint));
     return localPoint - resizerPoint;
 }
@@ -3009,7 +3009,7 @@ void RenderLayer::updateScrollInfoAfterLayout()
     updateScrollbarsAfterLayout();
 
     if (originalScrollOffset != scrollOffset())
-        scrollToOffsetWithoutAnimation(toPoint(scrollOffset()));
+        scrollToOffsetWithoutAnimation(IntPoint(scrollOffset()));
 
 #if USE(ACCELERATED_COMPOSITING)
     // Composited scrolling may need to be enabled or disabled if the amount of overflow changed.

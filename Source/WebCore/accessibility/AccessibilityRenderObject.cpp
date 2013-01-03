@@ -2168,8 +2168,8 @@ AccessibilityObject* AccessibilityRenderObject::remoteSVGElementHitTest(const In
     if (!remote)
         return 0;
     
-    IntSize offsetPoint = point - roundedIntPoint(boundingBoxRect().location());
-    return remote->accessibilityHitTest(toPoint(offsetPoint));
+    IntSize offset = point - roundedIntPoint(boundingBoxRect().location());
+    return remote->accessibilityHitTest(IntPoint(offset));
 }
 
 AccessibilityObject* AccessibilityRenderObject::elementAccessibilityHitTest(const IntPoint& point) const

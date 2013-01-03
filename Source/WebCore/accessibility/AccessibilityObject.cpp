@@ -1522,7 +1522,7 @@ AccessibilityObject* AccessibilityObject::elementAccessibilityHitTest(const IntP
         Widget* widget = widgetForAttachmentView();
         // Normalize the point for the widget's bounds.
         if (widget && widget->isFrameView())
-            return axObjectCache()->getOrCreate(widget)->accessibilityHitTest(toPoint(point - widget->frameRect().location()));
+            return axObjectCache()->getOrCreate(widget)->accessibilityHitTest(IntPoint(point - widget->frameRect().location()));
     }
     
     // Check if there are any mock elements that need to be handled.
