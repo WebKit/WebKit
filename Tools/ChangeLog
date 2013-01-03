@@ -1,3 +1,11 @@
+2013-01-03  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Disable an intermittently failing unit test for now.
+        The failure is tracked by the bug 106051.
+
+        * TestWebKitAPI/Tests/mac/MemoryCachePruneWithinResourceLoadDelegate.mm:
+        (TestWebKitAPI::TEST):
+
 2013-01-03  Dan Bernstein  <mitz@apple.com>
 
         No way to obtain a DOMNode given a JS wrapper for a Node

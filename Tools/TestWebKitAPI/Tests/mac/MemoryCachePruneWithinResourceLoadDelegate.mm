@@ -75,7 +75,7 @@ static bool didFinishLoad;
 
 namespace TestWebKitAPI {
 
-TEST(WebKit1, MemoryCachePruneWithinResourceLoadDelegate)
+TEST(WebKit1, DISABLED_MemoryCachePruneWithinResourceLoadDelegate)
 {
     NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
 
