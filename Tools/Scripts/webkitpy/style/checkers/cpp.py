@@ -1216,6 +1216,7 @@ class _EnumState(object):
 
     def __init__(self):
         self.in_enum_decl = False
+        self.is_webidl_enum = False
 
     def process_clean_line(self, line):
         # FIXME: The regular expressions for expr_all_uppercase and expr_enum_end only accept integers
@@ -1228,21 +1229,27 @@ class _EnumState(object):
         if self.in_enum_decl:
             if match(r'\s*' + expr_enum_end + r'$', line):
                 self.in_enum_decl = False
+                self.is_webidl_enum = False
             elif match(expr_all_uppercase, line):
-                return False
+                return self.is_webidl_enum
             elif match(expr_starts_lowercase, line):
                 return False
         else:
-            if match(expr_enum_start + r'$', line):
+            matched = match(expr_enum_start + r'$', line)
+            if matched:
                 self.in_enum_decl = True
             else:
                 matched = match(expr_enum_start + r'(?P<members>.*)' + expr_enum_end + r'$', line)
                 if matched:
                     members = matched.group('members').split(',')
+                    found_invalid_member = False
                     for member in members:
                         if match(expr_all_uppercase, member):
-                            return False
+                            found_invalid_member = not self.is_webidl_enum
                         if match(expr_starts_lowercase, member):
+                            found_invalid_member = True
+                        if found_invalid_member:
+                            self.is_webidl_enum = False
                             return False
                     return True
         return True
@@ -2086,6 +2093,8 @@ def check_enum_casing(clean_lines, line_number, enum_state, error):
       enum_state: A _EnumState instance which maintains enum declaration state.
       error: The function to call with any errors found.
     """
+
+    enum_state.is_webidl_enum |= bool(match(r'\s*// Web(?:Kit)?IDL enum\s*$', clean_lines.raw_lines[line_number]))
 
     line = clean_lines.elided[line_number]  # Get rid of comments and strings.
     if not enum_state.process_clean_line(line):

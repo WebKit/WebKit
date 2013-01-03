@@ -3294,6 +3294,21 @@ class NoNonVirtualDestructorsTest(CppStyleTestBase):
                 };''',
             '')
 
+        self.assert_multi_line_lint(
+            '''\
+                // WebIDL enum
+                enum Foo {
+                    FOO_ONE = 1,
+                    FOO_TWO = 2,
+                };''',
+            '')
+
+        self.assert_multi_line_lint(
+            '''\
+                // WebKitIDL enum
+                enum Foo { FOO_ONE, FOO_TWO };''',
+            '')
+
     def test_destructor_non_virtual_when_virtual_needed(self):
         self.assert_multi_line_lint_re(
             '''\

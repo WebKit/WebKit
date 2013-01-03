@@ -1,3 +1,28 @@
+2013-01-03  Zan Dobersek  <zandobersek@gmail.com>
+
+        [style] WebIDL-reflecting uppercase enums reported as style violation
+        https://bugs.webkit.org/show_bug.cgi?id=105832
+
+        Reviewed by Tony Chang.
+
+        Recognize the enum as WebIDL-reflecting one if there's a comment present that
+        indicates this. In enums spanning over multiple lines, the comment is expected
+        on the first line. In enums placed in one line, the comment is expected at the
+        end of that line.
+
+        WebIDL-reflecting enum values are required to be written in uppercase and as such
+        violate the common rule of these values being written in InterCaps. Annotating
+        enums this way makes it possible to avoid false style violation reports.
+
+        The comment is of form '// Web(?:Kit)?IDL enum'.
+
+        * Scripts/webkitpy/style/checkers/cpp.py:
+        (_EnumState.__init__):
+        (_EnumState.process_clean_line):
+        (check_enum_casing):
+        * Scripts/webkitpy/style/checkers/cpp_unittest.py:
+        (NoNonVirtualDestructorsTest.test_enum_casing):
+
 2013-01-03  Tim 'mithro' Ansell  <mithro@mithis.com>
 
         Adding favicon.ico to the garden-o-matic.
