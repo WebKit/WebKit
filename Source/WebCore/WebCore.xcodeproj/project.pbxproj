@@ -1678,10 +1678,6 @@
 		5317612313C516690026E454 /* StyleFlexibleBoxData.h in Headers */ = {isa = PBXBuildFile; fileRef = 5317612113C516690026E454 /* StyleFlexibleBoxData.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		53C8298D13D8D92700DE2DEB /* RenderFlexibleBox.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 53C8298B13D8D92700DE2DEB /* RenderFlexibleBox.cpp */; };
 		53C8298E13D8D92700DE2DEB /* RenderFlexibleBox.h in Headers */ = {isa = PBXBuildFile; fileRef = 53C8298C13D8D92700DE2DEB /* RenderFlexibleBox.h */; };
-		53E29E5E167A8A1900586D3D /* InternalSettingsGenerated.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 53E29E5C167A8A1900586D3D /* InternalSettingsGenerated.cpp */; };
-		53E29E5F167A8A1900586D3D /* InternalSettingsGenerated.h in Headers */ = {isa = PBXBuildFile; fileRef = 53E29E5D167A8A1900586D3D /* InternalSettingsGenerated.h */; };
-		53ED3FDE167A88E7006762E6 /* JSInternalSettingsGenerated.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 53ED3FDC167A88E7006762E6 /* JSInternalSettingsGenerated.cpp */; };
-		53ED3FDF167A88E7006762E6 /* JSInternalSettingsGenerated.h in Headers */ = {isa = PBXBuildFile; fileRef = 53ED3FDD167A88E7006762E6 /* JSInternalSettingsGenerated.h */; };
 		53EF766B16530A61004CBE49 /* SettingsMacros.h in Headers */ = {isa = PBXBuildFile; fileRef = 53EF766A16530A61004CBE49 /* SettingsMacros.h */; };
 		53EF766C16531994004CBE49 /* SettingsMacros.h in Copy Generated Headers */ = {isa = PBXBuildFile; fileRef = 53EF766A16530A61004CBE49 /* SettingsMacros.h */; };
 		550A0BC9085F6039007353D6 /* QualifiedName.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 550A0BC7085F6039007353D6 /* QualifiedName.cpp */; };
@@ -8991,10 +8987,6 @@
 		5317612113C516690026E454 /* StyleFlexibleBoxData.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = StyleFlexibleBoxData.h; path = style/StyleFlexibleBoxData.h; sourceTree = "<group>"; };
 		53C8298B13D8D92700DE2DEB /* RenderFlexibleBox.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RenderFlexibleBox.cpp; sourceTree = "<group>"; };
 		53C8298C13D8D92700DE2DEB /* RenderFlexibleBox.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RenderFlexibleBox.h; sourceTree = "<group>"; };
-		53E29E5C167A8A1900586D3D /* InternalSettingsGenerated.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = InternalSettingsGenerated.cpp; sourceTree = "<group>"; };
-		53E29E5D167A8A1900586D3D /* InternalSettingsGenerated.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InternalSettingsGenerated.h; sourceTree = "<group>"; };
-		53ED3FDC167A88E7006762E6 /* JSInternalSettingsGenerated.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSInternalSettingsGenerated.cpp; sourceTree = "<group>"; };
-		53ED3FDD167A88E7006762E6 /* JSInternalSettingsGenerated.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSInternalSettingsGenerated.h; sourceTree = "<group>"; };
 		53EF766A16530A61004CBE49 /* SettingsMacros.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SettingsMacros.h; sourceTree = "<group>"; };
 		550A0BC7085F6039007353D6 /* QualifiedName.cpp */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.cpp.cpp; path = QualifiedName.cpp; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		550A0BC8085F6039007353D6 /* QualifiedName.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = QualifiedName.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
@@ -15334,8 +15326,6 @@
 				417DA71C13735DFA007C57FB /* JSInternals.h */,
 				A7B4EA7814C9348400C8F5BF /* JSInternalSettings.cpp */,
 				A7B4EA7914C9348400C8F5BF /* JSInternalSettings.h */,
-				53ED3FDC167A88E7006762E6 /* JSInternalSettingsGenerated.cpp */,
-				53ED3FDD167A88E7006762E6 /* JSInternalSettingsGenerated.h */,
 				A7B4EA6814C9348400C8F5BF /* JSMallocStatistics.cpp */,
 				A7B4EA6914C9348400C8F5BF /* JSMallocStatistics.h */,
 			);
@@ -15788,8 +15778,6 @@
 				A8BC04911214F69600B5F122 /* HTMLEntityTable.cpp */,
 				A8D06B380A265DCD005E7203 /* HTMLNames.cpp */,
 				A8D06B370A265DCD005E7203 /* HTMLNames.h */,
-				53E29E5C167A8A1900586D3D /* InternalSettingsGenerated.cpp */,
-				53E29E5D167A8A1900586D3D /* InternalSettingsGenerated.h */,
 				938E65F609F0985D008A48EC /* JSHTMLElementWrapperFactory.cpp */,
 				938E65F009F09840008A48EC /* JSHTMLElementWrapperFactory.h */,
 				8574D1F10ADE6122004CBA11 /* JSSVGElementWrapperFactory.cpp */,
@@ -22655,8 +22643,6 @@
 				A740B5A514C935AB00A77FA4 /* JSInternalSettings.h in Headers */,
 				A740B59514C935AB00A77FA4 /* JSMallocStatistics.h in Headers */,
 				41815C1F138319830057AAA4 /* WebCoreTestSupport.h in Headers */,
-				53ED3FDF167A88E7006762E6 /* JSInternalSettingsGenerated.h in Headers */,
-				53E29E5F167A8A1900586D3D /* InternalSettingsGenerated.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -26343,8 +26329,6 @@
 				A740B5A714C935AF00A77FA4 /* JSInternalSettings.cpp in Sources */,
 				A740B59714C935AF00A77FA4 /* JSMallocStatistics.cpp in Sources */,
 				41815C1E138319830057AAA4 /* WebCoreTestSupport.cpp in Sources */,
-				53ED3FDE167A88E7006762E6 /* JSInternalSettingsGenerated.cpp in Sources */,
-				53E29E5E167A8A1900586D3D /* InternalSettingsGenerated.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -30,16 +30,6 @@ use InFilesCompiler;
 my %defaultParameters = (
 );
 
-my %webcoreTypeToIdlType = (
-    'int' => 'long',
-    'unsigned' => 'unsigned long',
-    'size_t' => 'unsigned long',
-    'double' => 'double',
-    'float' => 'float',
-    'String' => 'DOMString',
-    'bool' => 'boolean'
-);
-
 sub defaultItemFactory
 {
     return (
@@ -59,13 +49,10 @@ sub generateCode()
     my $parsedParametersRef = shift;
     my $parsedItemsRef = shift;
 
-    generateSettingsMacrosHeader($parsedItemsRef);
-    generateInternalSettingsIdlFile($parsedItemsRef);
-    generateInternalSettingsHeaderFile($parsedItemsRef);
-    generateInternalSettingsCppFile($parsedItemsRef);
+    generateHeader($parsedItemsRef);
 }
 
-sub generateSettingsMacrosHeader($)
+sub generateHeader($)
 {
     my $parsedItemsRef = shift;
 
@@ -211,21 +198,14 @@ sub printMemberVariables($$$$)
     print $file "// End of SETTINGS_MEMBER_VARIABLES.\n\n";
 }
 
-sub setterFunctionName($)
+sub printGetterAndSetter($$$)
 {
-    my $settingName = shift;
+    my ($file, $settingName, $type) = @_;
     my $setterFunctionName = "set" . $settingName;
     substr($setterFunctionName, 3, 1) = uc(substr($setterFunctionName, 3, 1));
     if (substr($settingName, 0, 3) eq "css" || substr($settingName, 0, 3) eq "xss" || substr($settingName, 0, 3) eq "ftp") {
         substr($setterFunctionName, 3, 3) = uc(substr($setterFunctionName, 3, 3));
     }
-    return $setterFunctionName;
-}
-
-sub printGetterAndSetter($$$)
-{
-    my ($file, $settingName, $type) = @_;
-    my $setterFunctionName = setterFunctionName($settingName);
     if (lc(substr($type, 0, 1)) eq substr($type, 0, 1)) {
         print $file "    $type $settingName() const { return m_$settingName; } \\\n";
         print $file "    void $setterFunctionName($type $settingName) { m_$settingName = $settingName; } \\\n";
@@ -272,207 +252,4 @@ sub printInitializer($$$)
     die "Must provide an initial value for $settingName." if ($initialValue eq '' && lc(substr($type, 0, 1)) eq substr($type, 0, 1));
     return if ($initialValue eq '');
     print $file "    , m_$settingName($initialValue) \\\n"
-}
-
-sub enumerateParsedItems($$$)
-{
-    my ($file, $parsedItemsRef, $visitorFunction) = @_;
-    my %parsedItems = %{ $parsedItemsRef };
-
-    for my $settingName (sort keys %parsedItems) {
-        my $type = $parsedItems{$settingName}{"type"};
-        # FIXME: Learn how to auto-generate code for enumerate types.
-        next if (!defined($webcoreTypeToIdlType{$type}));
-
-        &$visitorFunction($file, $parsedItemsRef, $settingName)
-    }
-}
-
-sub generateInternalSettingsIdlFile($)
-{
-    my $parsedItemsRef = shift;
-
-    my $filename = "$outputDir/InternalSettingsGenerated.idl";
-    open my $file, ">$filename" or die "Failed to open file: $!";
-    print $file $InCompiler->license();
-
-    print $file "[\n";
-    print $file "    OmitConstructor\n";
-    print $file "] interface InternalSettingsGenerated {\n";
-
-    sub writeIdlSetter($$$) {
-        my ($file, $parsedItemsRef, $settingName) = @_;
-        my %parsedItems = %{ $parsedItemsRef };
-        my $type = $parsedItems{$settingName}{"type"};
-        my $idlType = $webcoreTypeToIdlType{$type};
-        my $setterFunctionName = setterFunctionName($settingName);
-        print $file "    void $setterFunctionName(in $idlType $settingName);\n";
-    };
-
-    enumerateParsedItems($file, $parsedItemsRef, \&writeIdlSetter);
-
-    print $file "};\n";
-    close $file;
-}
-
-sub generateInternalSettingsHeaderFile($)
-{
-    my $parsedItemsRef = shift;
-    my %parsedItems = %{ $parsedItemsRef };
-
-    my $filename = "$outputDir/InternalSettingsGenerated.h";
-    open my $file, ">$filename" or die "Failed to open file: $!";
-    print $file $InCompiler->license();
-
-    print $file <<EOF;
-#ifndef InternalSettingsGenerated_h
-#define InternalSettingsGenerated_h
-
-#include "RefCountedSupplement.h"
-#include <wtf/PassRefPtr.h>
-#include <wtf/RefCounted.h>
-#include <wtf/text/WTFString.h>
-
-namespace WebCore {
-
-class Page;
-
-class InternalSettingsGenerated : public RefCounted<InternalSettingsGenerated> {
-public:
-    explicit InternalSettingsGenerated(Page*);
-    virtual ~InternalSettingsGenerated();
-    void resetToConsistentState();
-EOF
-    sub writeHeaderPrototypes($$$) {
-        my ($file, $parsedItemsRef, $settingName) = @_;
-        my %parsedItems = %{ $parsedItemsRef };
-        my $type = $parsedItems{$settingName}{"type"};
-        my $setterFunctionName = setterFunctionName($settingName);
-        $type = "const String&" if $type eq "String";
-        print $file "    void $setterFunctionName($type $settingName);\n";
-    };
-    enumerateParsedItems($file, $parsedItemsRef, \&writeHeaderPrototypes);
-
-    print $file <<EOF;
-
-private:
-    Page* m_page;
-
-EOF
-
-    sub writeBackupMembers($$$) {
-        my ($file, $parsedItemsRef, $settingName) = @_;
-        my %parsedItems = %{ $parsedItemsRef };
-        my $type = $parsedItems{$settingName}{"type"};
-        my $conditional = $parsedItems{$settingName}{"conditional"};
-        if ($conditional) {
-            print $file "#if " . $InCompiler->conditionalStringFromAttributeValue($conditional) . "\n";
-        }
-        print $file "    $type m_$settingName;\n";
-        if ($conditional) {
-            print $file "#endif\n";
-        }
-    };
-    enumerateParsedItems($file, $parsedItemsRef, \&writeBackupMembers);
-
-    print $file "};\n\n";
-    print $file "} // namespace WebCore\n";
-    print $file "#endif // InternalSettingsGenerated_h\n";
-
-    close $file;
-}
-
-sub generateInternalSettingsCppFile($)
-{
-    my $parsedItemsRef = shift;
-    my %parsedItems = %{ $parsedItemsRef };
-
-    my $filename = "$outputDir/InternalSettingsGenerated.cpp";
-    open my $file, ">$filename" or die "Failed to open file: $!";
-    print $file $InCompiler->license();
-
-    print $file <<EOF;
-#include "config.h"
-#include "InternalSettingsGenerated.h"
-
-#include "Page.h"
-#include "Settings.h"
-
-namespace WebCore {
-
-InternalSettingsGenerated::InternalSettingsGenerated(Page* page)
-    : m_page(page)
-EOF
-
-    sub writeBackupInitializers($$$) {
-        my ($file, $parsedItemsRef, $settingName) = @_;
-        my %parsedItems = %{ $parsedItemsRef };
-        my $type = $parsedItems{$settingName}{"type"};
-        my $conditional = $parsedItems{$settingName}{"conditional"};
-        if ($conditional) {
-            print $file "#if " . $InCompiler->conditionalStringFromAttributeValue($conditional) . "\n";
-        }
-        print $file "    , m_$settingName(page->settings()->$settingName())\n";
-        if ($conditional) {
-            print $file "#endif\n";
-        }
-    };
-    enumerateParsedItems($file, $parsedItemsRef, \&writeBackupInitializers);
-
-    print $file <<EOF;
-{
-}
-
-InternalSettingsGenerated::~InternalSettingsGenerated()
-{
-}
-
-void InternalSettingsGenerated::resetToConsistentState()
-{
-EOF
-    sub writeResetToConsistentState($$$) {
-        my ($file, $parsedItemsRef, $settingName) = @_;
-        my %parsedItems = %{ $parsedItemsRef };
-        my $type = $parsedItems{$settingName}{"type"};
-        my $setterFunctionName = setterFunctionName($settingName);
-        my $conditional = $parsedItems{$settingName}{"conditional"};
-        if ($conditional) {
-            print $file "#if " . $InCompiler->conditionalStringFromAttributeValue($conditional) . "\n";
-        }
-        print $file "    m_page->settings()->$setterFunctionName(m_$settingName);\n";
-        if ($conditional) {
-            print $file "#endif\n";
-        }
-    };
-    enumerateParsedItems($file, $parsedItemsRef, \&writeResetToConsistentState);
-
-    print $file "}\n";
-
-    sub writeSetterFunctions($$$) {
-        my ($file, $parsedItemsRef, $settingName) = @_;
-        my %parsedItems = %{ $parsedItemsRef };
-        my $type = $parsedItems{$settingName}{"type"};
-        my $conditional = $parsedItems{$settingName}{"conditional"};
-        my $setterFunctionName = setterFunctionName($settingName);
-        $type = "const String&" if $type eq "String";
-
-        print $file "void InternalSettingsGenerated::$setterFunctionName($type $settingName)\n";
-        print $file "{\n";
-
-        if ($conditional) {
-            print $file "#if " . $InCompiler->conditionalStringFromAttributeValue($conditional) . "\n";
-        }
-        print $file "    m_page->settings()->$setterFunctionName($settingName);\n";
-        if ($conditional) {
-            print $file "#else\n";
-            print $file "    UNUSED_PARAM($settingName);\n";
-            print $file "#endif\n";
-        }
-        print $file "}\n\n";
-    };
-    enumerateParsedItems($file, $parsedItemsRef, \&writeSetterFunctions);
-
-    print $file "} // namespace WebCore\n";
-
-    close $file;
 }

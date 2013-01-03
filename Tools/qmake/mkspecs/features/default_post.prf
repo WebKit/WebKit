@@ -121,9 +121,6 @@ contains(TEMPLATE, derived) {
 } else {
     # Make sure the generated sources are compiled as well
     for(generator, GENERATORS) {
-        prependEach($${generator}.extra_sources, $${GENERATED_SOURCES_DESTDIR}/)
-        SOURCES += $$eval($${generator}.extra_sources)
-
         isEqual($${generator}.add_output_to_sources, false): next()
 
         output = $$eval($${generator}.output)
@@ -149,6 +146,9 @@ contains(TEMPLATE, derived) {
                 eval($$output_variable += $$output_file)
             }
         }
+
+        prependEach($${generator}.extra_sources, $${GENERATED_SOURCES_DESTDIR}/)
+        SOURCES += $$eval($${generator}.extra_sources)
     }
 }
 

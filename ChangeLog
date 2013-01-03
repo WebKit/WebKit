@@ -1,5 +1,15 @@
 2013-01-02  Tony Chang  <tony@chromium.org>
 
+        Unreviewed, rolling out r138661.
+        http://trac.webkit.org/changeset/138661
+        https://bugs.webkit.org/show_bug.cgi?id=104740
+
+        Compile problems on EFL
+
+        * Source/cmake/WebKitMacros.cmake:
+
+2013-01-02  Tony Chang  <tony@chromium.org>
+
         Generate internal.settings from Settings.in
         https://bugs.webkit.org/show_bug.cgi?id=104740
 

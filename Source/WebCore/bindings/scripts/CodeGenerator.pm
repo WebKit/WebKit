@@ -267,7 +267,6 @@ sub IDLFileForInterface
     unless ($idlFiles) {
         my $sourceRoot = $ENV{SOURCE_ROOT};
         my @directories = map { $_ = "$sourceRoot/$_" if $sourceRoot && -d "$sourceRoot/$_"; $_ } @$useDirectories;
-        push(@directories, ".");
 
         $idlFiles = { };
 

@@ -28,7 +28,7 @@
 
 #include "EditingBehaviorTypes.h"
 #include "IntSize.h"
-#include "InternalSettingsGenerated.h"
+#include "RefCountedSupplement.h"
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefCounted.h>
 #include <wtf/text/WTFString.h>
@@ -42,13 +42,15 @@ class Document;
 class Page;
 class Settings;
 
-class InternalSettings : public InternalSettingsGenerated {
+class InternalSettings : public RefCountedSupplement<Page, InternalSettings> {
 public:
     class Backup {
     public:
-        explicit Backup(Settings*);
+        Backup(Settings*);
         void restoreTo(Settings*);
 
+        double m_originalPasswordEchoDurationInSeconds;
+        bool m_originalPasswordEchoEnabled;
         bool m_originalFixedElementsLayoutRelativeToFrame;
         bool m_originalCSSExclusionsEnabled;
         bool m_originalCSSVariablesEnabled;
@@ -91,15 +93,11 @@ public:
 #endif
     };
 
-    static PassRefPtr<InternalSettings> create(Page* page)
-    {
-        return adoptRef(new InternalSettings(page));
-    }
+    typedef RefCountedSupplement<Page, InternalSettings> SuperType;
     static InternalSettings* from(Page*);
-    void hostDestroyed() { m_page = 0; }
 
     virtual ~InternalSettings();
-    void resetToConsistentState();
+    void reset();
 
     void setForceCompositingMode(bool enabled, ExceptionCode&);
     void setEnableCompositingForFixedPosition(bool enabled, ExceptionCode&);
@@ -109,6 +107,8 @@ public:
     void setAcceleratedFiltersEnabled(bool enabled, ExceptionCode&);
     void setMockScrollbarsEnabled(bool enabled, ExceptionCode&);
     void setUsesOverlayScrollbars(bool enabled, ExceptionCode&);
+    void setPasswordEchoEnabled(bool enabled, ExceptionCode&);
+    void setPasswordEchoDurationInSeconds(double durationInSeconds, ExceptionCode&);
     void setFixedElementsLayoutRelativeToFrame(bool, ExceptionCode&);
     void setUnifiedTextCheckingEnabled(bool, ExceptionCode&);
     bool unifiedTextCheckingEnabled(ExceptionCode&);
@@ -151,6 +151,7 @@ public:
 
 private:
     explicit InternalSettings(Page*);
+    virtual void hostDestroyed() OVERRIDE { m_page = 0; }
 
     Settings* settings() const;
     Page* page() const { return m_page; }

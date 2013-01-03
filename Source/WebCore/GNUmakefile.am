@@ -462,11 +462,8 @@ DerivedSources/WebCore/EventTargetHeaders.h DerivedSources/WebCore/EventTargetIn
 DerivedSources/WebCore/ExceptionCodeDescription.cpp DerivedSources/WebCore/ExceptionCodeDescription.h DerivedSources/WebCore/ExceptionHeaders.h DerivedSources/WebCore/ExceptionInterfaces.h: $(WebCore)/dom/make_dom_exceptions.pl $(WebCore)/dom/DOMExceptions.in
 	$(AM_V_GEN)$(PERL) -I$(WebCore)/bindings/scripts $< --input $(WebCore)/dom/DOMExceptions.in --outputDir "$(GENSOURCES_WEBCORE)"
 
-DerivedSources/WebCore/SettingsMacros.h DerivedSources/WebCore/InternalSettingsGenerated.idl DerivedSources/WebCore/InternalSettingsGenerated.cpp DerivedSources/WebCore/InternalSettingsGenerated.h: $(WebCore)/page/make_settings.pl $(WebCore)/page/Settings.in
+DerivedSources/WebCore/SettingsMacros.h: $(WebCore)/page/make_settings.pl $(WebCore)/page/Settings.in
 	$(AM_V_GEN)$(PERL) -I$(WebCore)/bindings/scripts $< --input $(WebCore)/page/Settings.in --outputDir "$(GENSOURCES_WEBCORE)"
-
-dom_binding_idls += \
-  DerivedSources/WebCore/InternalSettingsGenerated.idl
 
 # All Web Inspector generated files are created with this one call to CodeGeneratorInspector.py
 DerivedSources/WebCore/InspectorProtocolVersion.h : $(WebCore)/inspector/Inspector.json $(WebCore)/inspector/generate-inspector-protocol-version
@@ -551,10 +548,6 @@ DerivedSources/WebCore/JS%.cpp: DerivedSources/WebCore/JS%.h;
 
 .SECONDARY:
 DerivedSources/WebCore/JS%.h: %.idl $(SCRIPTS_FOR_GENERATE_BINDINGS) $(WebCore)/bindings/scripts/CodeGeneratorJS.pm $(supplemental_dependency_file)
-	$(AM_V_GEN)$(PERL) -I$(WebCore)/bindings/scripts $(WebCore)/bindings/scripts/generate-bindings.pl $(IDL_PATH:%=--include "%") --outputDir "$(GENSOURCES_WEBCORE)" --defines "LANGUAGE_JAVASCRIPT=1 $(feature_defines)" --generator JS --supplementalDependencyFile $(supplemental_dependency_file) $<
-
-.SECONDARY:
-DerivedSources/WebCore/JSInternalSettingsGenerated.h: DerivedSources/WebCore/InternalSettingsGenerated.idl $(SCRIPTS_FOR_GENERATE_BINDINGS) $(WebCore)/bindings/scripts/CodeGeneratorJS.pm $(supplemental_dependency_file)
 	$(AM_V_GEN)$(PERL) -I$(WebCore)/bindings/scripts $(WebCore)/bindings/scripts/generate-bindings.pl $(IDL_PATH:%=--include "%") --outputDir "$(GENSOURCES_WEBCORE)" --defines "LANGUAGE_JAVASCRIPT=1 $(feature_defines)" --generator JS --supplementalDependencyFile $(supplemental_dependency_file) $<
 
 # See https://bugs.webkit.org/show_bug.cgi?id=76388

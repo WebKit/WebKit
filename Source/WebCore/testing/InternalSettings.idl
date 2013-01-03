@@ -24,9 +24,8 @@
  */
 
 [
-    OmitConstructor,
-    JSGenerateToJSObject
-] interface InternalSettings : InternalSettingsGenerated {
+    OmitConstructor
+] interface InternalSettings {
     void setForceCompositingMode(in boolean enabled) raises(DOMException);
     void setEnableCompositingForFixedPosition(in boolean enabled) raises(DOMException);
     void setEnableCompositingForScrollableFrames(in boolean enabled) raises(DOMException);
@@ -34,6 +33,8 @@
     void setAcceleratedDrawingEnabled(in boolean enabled) raises(DOMException);
     void setAcceleratedFiltersEnabled(in boolean enabled) raises(DOMException);
     void setMockScrollbarsEnabled(in boolean enabled) raises(DOMException);
+    void setPasswordEchoEnabled(in boolean enabled) raises(DOMException);
+    void setPasswordEchoDurationInSeconds(in double durationInSeconds) raises(DOMException);
     void setFixedElementsLayoutRelativeToFrame(in boolean enabled) raises(DOMException);
     void setUnifiedTextCheckingEnabled(in boolean enabled) raises (DOMException);
     boolean unifiedTextCheckingEnabled() raises (DOMException);
