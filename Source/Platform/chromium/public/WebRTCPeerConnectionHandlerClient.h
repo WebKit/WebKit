@@ -41,14 +41,15 @@ public:
     enum ReadyState {
         ReadyStateNew = 1,
         ReadyStateHaveLocalOffer = 2,
-        ReadyStateHaveLocalPrAnswer = 3,
-        ReadyStateHaveRemotePrAnswer = 4,
-        ReadyStateActive = 5,
-        ReadyStateClosed = 6,
+        ReadyStateHaveRemoteOffer = 3,
+        ReadyStateHaveLocalPrAnswer = 4,
+        ReadyStateHaveRemotePrAnswer = 5,
+        ReadyStateActive = 6,
+        ReadyStateClosed = 7,
 
         // DEPRECATED
-        ReadyStateClosing = 7,
-        ReadyStateOpening = 8
+        ReadyStateClosing = 8,
+        ReadyStateOpening = 9
     };
 
     enum ICEState {

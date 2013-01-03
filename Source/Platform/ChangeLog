@@ -1,3 +1,14 @@
+2013-01-03  Tommy Widenflycht  <tommyw@google.com>
+
+        MediaStream API: Add a missing state to RTCPeerConnection
+        https://bugs.webkit.org/show_bug.cgi?id=106017
+
+        Reviewed by Adam Barth.
+
+        Adding the missing ReadyStateHaveRemoteOffer which will show up in the spec soon.
+
+        * chromium/public/WebRTCPeerConnectionHandlerClient.h:
+
 2013-01-02  James Robinson  <jamesr@chromium.org>
 
         [chromium] Remove unused transitional #defines from Platform API

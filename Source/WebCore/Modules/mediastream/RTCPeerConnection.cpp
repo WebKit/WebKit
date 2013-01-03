@@ -313,6 +313,8 @@ String RTCPeerConnection::readyState() const
         return ASCIILiteral("new");
     case ReadyStateHaveLocalOffer:
         return ASCIILiteral("have-local-offer");
+    case ReadyStateHaveRemoteOffer:
+        return ASCIILiteral("have-remote-offer");
     case ReadyStateHaveLocalPrAnswer:
         return ASCIILiteral("have-local-pranswer");
     case ReadyStateHaveRemotePrAnswer:
