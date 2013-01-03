@@ -54,16 +54,16 @@
       "webkitAnimationFillMode"
     ];
     const kExpectedResults = [
-      { id: 'a',  values: [ "none", "0s", "cubic-bezier(0.25, 0.1, 0.25, 1)", "0s", "1", "normal", "none" ] },
-      { id: 'b',  values: [ "none", "0s", "cubic-bezier(0.25, 0.1, 0.25, 1)", "0s", "1", "normal", "none" ] },
-      { id: 'c',  values: [ "anim1", "10s", "cubic-bezier(0.25, 0.1, 0.25, 1)", "0s", "1", "normal", "none" ] },
+      { id: 'a',  values: [ "none", "0s", "ease", "0s", "1", "normal", "none" ] },
+      { id: 'b',  values: [ "none", "0s", "ease", "0s", "1", "normal", "none" ] },
+      { id: 'c',  values: [ "anim1", "10s", "ease", "0s", "1", "normal", "none" ] },
       { id: 'd',  values: [ "anim1", "10s", "linear", "0s", "1", "normal", "none" ] },
       { id: 'e',  values: [ "anim1", "10s", "linear", "5s", "1", "normal", "none" ] },
       { id: 'f',  values: [ "anim1", "10s", "linear", "5s", "3", "normal", "none" ] },
       { id: 'g',  values: [ "anim1", "10s", "linear", "5s", "infinite", "alternate", "none" ] },
       { id: 'h',  values: [ "anim1", "10s", "linear", "5s", "infinite", "alternate", "forwards" ] },
       { id: 'i',  values: [ "anim1", "10s", "linear", "0s", "1", "normal", "none" ] },
-      { id: 'j',  values: [ "anim1, anim2, anim3", "10s, 3s, 5s", "linear, cubic-bezier(0.25, 0.1, 0.25, 1), cubic-bezier(0.25, 0.1, 0.25, 1)", "0s, 0s, 0s", "infinite, 1, 1", "normal, normal, normal", "backwards, none, both" ] }
+      { id: 'j',  values: [ "anim1, anim2, anim3", "10s, 3s, 5s", "linear, ease, ease", "0s, 0s, 0s", "infinite, 1, 1", "normal, normal, normal", "backwards, none, both" ] }
     ];
     
     function start()

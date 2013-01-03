@@ -199,39 +199,44 @@ shouldBe("computedStyle.webkitTransitionDuration", "'0s'");
 
 debug("Valid transition-timing-function values.");
 // Initial test.
-shouldBe("computedStyle.transitionTimingFunction", "'cubic-bezier(0.25, 0.1, 0.25, 1)'");
-shouldBe("computedStyle.webkitTransitionTimingFunction", "'cubic-bezier(0.25, 0.1, 0.25, 1)'");
+shouldBe("computedStyle.transitionTimingFunction", "'ease'");
+shouldBe("computedStyle.webkitTransitionTimingFunction", "'ease'");
 
-// Tracked by https://bugs.webkit.org/show_bug.cgi?id=105442.
-/*style.transitionTimingFunction = "linear";
+style.transitionTimingFunction = "linear";
 shouldBe("style.transitionTimingFunction", "'linear'");
-shouldBe("computedStyle.transitionTimingFunction", "'cubic-bezier(0, 0, 1, 1)'");
+shouldBe("computedStyle.transitionTimingFunction", "'linear'");
 shouldBe("style.webkitTransitionTimingFunction", "'linear'");
-shouldBe("computedStyle.webkitTransitionTimingFunction", "'cubic-bezier(0, 0, 1, 1)'");*/
+shouldBe("computedStyle.webkitTransitionTimingFunction", "'linear'");
 
 style.transitionTimingFunction = "ease";
 shouldBe("style.transitionTimingFunction", "'ease'");
-shouldBe("computedStyle.transitionTimingFunction", "'cubic-bezier(0.25, 0.1, 0.25, 1)'");
+shouldBe("computedStyle.transitionTimingFunction", "'ease'");
 shouldBe("style.webkitTransitionTimingFunction", "'ease'");
-shouldBe("computedStyle.webkitTransitionTimingFunction", "'cubic-bezier(0.25, 0.1, 0.25, 1)'");
+shouldBe("computedStyle.webkitTransitionTimingFunction", "'ease'");
 
 style.transitionTimingFunction = "ease-in";
 shouldBe("style.transitionTimingFunction", "'ease-in'");
-shouldBe("computedStyle.transitionTimingFunction", "'cubic-bezier(0.42, 0, 1, 1)'");
+shouldBe("computedStyle.transitionTimingFunction", "'ease-in'");
 shouldBe("style.webkitTransitionTimingFunction", "'ease-in'");
-shouldBe("computedStyle.webkitTransitionTimingFunction", "'cubic-bezier(0.42, 0, 1, 1)'");
+shouldBe("computedStyle.webkitTransitionTimingFunction", "'ease-in'");
 
 style.transitionTimingFunction = "ease-out";
 shouldBe("style.transitionTimingFunction", "'ease-out'");
-shouldBe("computedStyle.transitionTimingFunction", "'cubic-bezier(0, 0, 0.58, 1)'");
+shouldBe("computedStyle.transitionTimingFunction", "'ease-out'");
 shouldBe("style.webkitTransitionTimingFunction", "'ease-out'");
-shouldBe("computedStyle.webkitTransitionTimingFunction", "'cubic-bezier(0, 0, 0.58, 1)'");
+shouldBe("computedStyle.webkitTransitionTimingFunction", "'ease-out'");
 
 style.transitionTimingFunction = "ease-in-out";
 shouldBe("style.transitionTimingFunction", "'ease-in-out'");
-shouldBe("computedStyle.transitionTimingFunction", "'cubic-bezier(0.42, 0, 0.58, 1)'");
+shouldBe("computedStyle.transitionTimingFunction", "'ease-in-out'");
 shouldBe("style.webkitTransitionTimingFunction", "'ease-in-out'");
-shouldBe("computedStyle.webkitTransitionTimingFunction", "'cubic-bezier(0.42, 0, 0.58, 1)'");
+shouldBe("computedStyle.webkitTransitionTimingFunction", "'ease-in-out'");
+
+style.transitionTimingFunction = "cubic-bezier(0.25, 0.1, 0.25, 1)";
+shouldBe("style.transitionTimingFunction", "'cubic-bezier(0.25, 0.1, 0.25, 1)'");
+shouldBe("computedStyle.transitionTimingFunction", "'cubic-bezier(0.25, 0.1, 0.25, 1)'");
+shouldBe("style.webkitTransitionTimingFunction", "'cubic-bezier(0.25, 0.1, 0.25, 1)'");
+shouldBe("computedStyle.webkitTransitionTimingFunction", "'cubic-bezier(0.25, 0.1, 0.25, 1)'");
 
 style.transitionTimingFunction = "cubic-bezier(0.1, 0, 0.23, 0.4)";
 shouldBe("style.transitionTimingFunction", "'cubic-bezier(0.1, 0, 0.23, 0.4)'");
@@ -345,21 +350,21 @@ style.transitionProperty = "opacity, width";
 
 style.transitionTimingFunction = "ease-in-out, ease-in";
 shouldBe("style.transitionTimingFunction", "'ease-in-out, ease-in'");
-shouldBe("computedStyle.transitionTimingFunction", "'cubic-bezier(0.42, 0, 0.58, 1), cubic-bezier(0.42, 0, 1, 1)'");
+shouldBe("computedStyle.transitionTimingFunction", "'ease-in-out, ease-in'");
 shouldBe("style.webkitTransitionTimingFunction", "'ease-in-out, ease-in'");
-shouldBe("computedStyle.webkitTransitionTimingFunction", "'cubic-bezier(0.42, 0, 0.58, 1), cubic-bezier(0.42, 0, 1, 1)'");
+shouldBe("computedStyle.webkitTransitionTimingFunction", "'ease-in-out, ease-in'");
 
 style.transitionTimingFunction = "ease-in-out, cubic-bezier(0.1, 0, 0.23, 0.4)";
 shouldBe("style.transitionTimingFunction", "'ease-in-out, cubic-bezier(0.1, 0, 0.23, 0.4)'");
-shouldBe("computedStyle.transitionTimingFunction", "'cubic-bezier(0.42, 0, 0.58, 1), cubic-bezier(0.1, 0, 0.23, 0.4)'");
+shouldBe("computedStyle.transitionTimingFunction", "'ease-in-out, cubic-bezier(0.1, 0, 0.23, 0.4)'");
 shouldBe("style.webkitTransitionTimingFunction", "'ease-in-out, cubic-bezier(0.1, 0, 0.23, 0.4)'");
-shouldBe("computedStyle.webkitTransitionTimingFunction", "'cubic-bezier(0.42, 0, 0.58, 1), cubic-bezier(0.1, 0, 0.23, 0.4)'");
+shouldBe("computedStyle.webkitTransitionTimingFunction", "'ease-in-out, cubic-bezier(0.1, 0, 0.23, 0.4)'");
 
 style.transitionTimingFunction = "steps(3, start), ease-in-out";
 shouldBe("style.transitionTimingFunction", "'steps(3, start), ease-in-out'");
-shouldBe("computedStyle.transitionTimingFunction", "'steps(3, start), cubic-bezier(0.42, 0, 0.58, 1)'");
+shouldBe("computedStyle.transitionTimingFunction", "'steps(3, start), ease-in-out'");
 shouldBe("style.webkitTransitionTimingFunction", "'steps(3, start), ease-in-out'");
-shouldBe("computedStyle.webkitTransitionTimingFunction", "'steps(3, start), cubic-bezier(0.42, 0, 0.58, 1)'");
+shouldBe("computedStyle.webkitTransitionTimingFunction", "'steps(3, start), ease-in-out'");
 
 debug("Invalid transition-timing-function values.");
 style.transitionProperty = "";
@@ -367,51 +372,51 @@ style.transitionTimingFunction = "";
 
 style.transitionTimingFunction = "steps(5, 3)";
 shouldBe("style.transitionTimingFunction", "''");
-shouldBe("computedStyle.transitionTimingFunction", "'cubic-bezier(0.25, 0.1, 0.25, 1)'");
+shouldBe("computedStyle.transitionTimingFunction", "'ease'");
 shouldBe("style.webkitTransitionTimingFunction", "''");
-shouldBe("computedStyle.webkitTransitionTimingFunction", "'cubic-bezier(0.25, 0.1, 0.25, 1)'");
+shouldBe("computedStyle.webkitTransitionTimingFunction", "'ease'");
 
 style.transitionTimingFunction = "steps(-5, start)";
 shouldBe("style.transitionTimingFunction", "''");
-shouldBe("computedStyle.transitionTimingFunction", "'cubic-bezier(0.25, 0.1, 0.25, 1)'");
+shouldBe("computedStyle.transitionTimingFunction", "'ease'");
 shouldBe("style.webkitTransitionTimingFunction", "''");
-shouldBe("computedStyle.webkitTransitionTimingFunction", "'cubic-bezier(0.25, 0.1, 0.25, 1)'");
+shouldBe("computedStyle.webkitTransitionTimingFunction", "'ease'");
 
 style.transitionTimingFunction = "steps(5, start, end)";
 shouldBe("style.transitionTimingFunction", "''");
-shouldBe("computedStyle.transitionTimingFunction", "'cubic-bezier(0.25, 0.1, 0.25, 1)'");
+shouldBe("computedStyle.transitionTimingFunction", "'ease'");
 shouldBe("style.webkitTransitionTimingFunction", "''");
-shouldBe("computedStyle.webkitTransitionTimingFunction", "'cubic-bezier(0.25, 0.1, 0.25, 1)'");
+shouldBe("computedStyle.webkitTransitionTimingFunction", "'ease'");
 
 style.transitionTimingFunction = "step(5)";
 shouldBe("style.transitionTimingFunction", "''");
-shouldBe("computedStyle.transitionTimingFunction", "'cubic-bezier(0.25, 0.1, 0.25, 1)'");
+shouldBe("computedStyle.transitionTimingFunction", "'ease'");
 shouldBe("style.webkitTransitionTimingFunction", "''");
-shouldBe("computedStyle.webkitTransitionTimingFunction", "'cubic-bezier(0.25, 0.1, 0.25, 1)'");
+shouldBe("computedStyle.webkitTransitionTimingFunction", "'ease'");
 
 style.transitionTimingFunction = "red";
 shouldBe("style.transitionTimingFunction", "''");
-shouldBe("computedStyle.transitionTimingFunction", "'cubic-bezier(0.25, 0.1, 0.25, 1)'");
+shouldBe("computedStyle.transitionTimingFunction", "'ease'");
 shouldBe("style.webkitTransitionTimingFunction", "''");
-shouldBe("computedStyle.webkitTransitionTimingFunction", "'cubic-bezier(0.25, 0.1, 0.25, 1)'");
+shouldBe("computedStyle.webkitTransitionTimingFunction", "'ease'");
 
 style.transitionTimingFunction = "cubic-bezier(0.25, 0.1, 0.25)";
 shouldBe("style.transitionTimingFunction", "''");
-shouldBe("computedStyle.transitionTimingFunction", "'cubic-bezier(0.25, 0.1, 0.25, 1)'");
+shouldBe("computedStyle.transitionTimingFunction", "'ease'");
 shouldBe("style.webkitTransitionTimingFunction", "''");
-shouldBe("computedStyle.webkitTransitionTimingFunction", "'cubic-bezier(0.25, 0.1, 0.25, 1)'");
+shouldBe("computedStyle.webkitTransitionTimingFunction", "'ease'");
 
 style.transitionTimingFunction = "cubic-bezier(0.25, 0.1, 0.25, 1, 2)";
 shouldBe("style.transitionTimingFunction", "''");
-shouldBe("computedStyle.transitionTimingFunction", "'cubic-bezier(0.25, 0.1, 0.25, 1)'");
+shouldBe("computedStyle.transitionTimingFunction", "'ease'");
 shouldBe("style.webkitTransitionTimingFunction", "''");
-shouldBe("computedStyle.webkitTransitionTimingFunction", "'cubic-bezier(0.25, 0.1, 0.25, 1)'");
+shouldBe("computedStyle.webkitTransitionTimingFunction", "'ease'");
 
 style.transitionTimingFunction = "cubic-foo(0.25, 0.1, 0.25, 1)";
 shouldBe("style.transitionTimingFunction", "''");
-shouldBe("computedStyle.transitionTimingFunction", "'cubic-bezier(0.25, 0.1, 0.25, 1)'");
+shouldBe("computedStyle.transitionTimingFunction", "'ease'");
 shouldBe("style.webkitTransitionTimingFunction", "''");
-shouldBe("computedStyle.webkitTransitionTimingFunction", "'cubic-bezier(0.25, 0.1, 0.25, 1)'");
+shouldBe("computedStyle.webkitTransitionTimingFunction", "'ease'");
 
 debug("Valid transition-delay values.");
 // Initial test.

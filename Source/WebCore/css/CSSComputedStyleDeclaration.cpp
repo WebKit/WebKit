@@ -1074,34 +1074,54 @@ static PassRefPtr<CSSValue> getDurationValue(const AnimationList* animList)
     return list.release();
 }
 
+static PassRefPtr<CSSValue> createAnimationValue(const TimingFunction* timingFunction)
+{
+    if (timingFunction->isCubicBezierTimingFunction()) {
+        const CubicBezierTimingFunction* bezierTimingFunction = static_cast<const CubicBezierTimingFunction*>(timingFunction);
+        if (bezierTimingFunction->timingFunctionPreset() != CubicBezierTimingFunction::Custom) {
+            CSSValueID valueId = CSSValueInvalid;
+            switch (bezierTimingFunction->timingFunctionPreset()) {
+            case CubicBezierTimingFunction::Ease:
+                valueId = CSSValueEase;
+                break;
+            case CubicBezierTimingFunction::EaseIn:
+                valueId = CSSValueEaseIn;
+                break;
+            case CubicBezierTimingFunction::EaseOut:
+                valueId = CSSValueEaseOut;
+                break;
+            case CubicBezierTimingFunction::EaseInOut:
+                valueId = CSSValueEaseInOut;
+                break;
+            default:
+                ASSERT_NOT_REACHED();
+                return 0;
+            }
+            return cssValuePool().createIdentifierValue(valueId);
+        }
+        return CSSCubicBezierTimingFunctionValue::create(bezierTimingFunction->x1(), bezierTimingFunction->y1(), bezierTimingFunction->x2(), bezierTimingFunction->y2());
+    }
+
+    if (timingFunction->isStepsTimingFunction()) {
+        const StepsTimingFunction* stepsTimingFunction = static_cast<const StepsTimingFunction*>(timingFunction);
+        return CSSStepsTimingFunctionValue::create(stepsTimingFunction->numberOfSteps(), stepsTimingFunction->stepAtStart());
+    }
+
+    return CSSLinearTimingFunctionValue::create();
+}
+
 static PassRefPtr<CSSValue> getTimingFunctionValue(const AnimationList* animList)
 {
     RefPtr<CSSValueList> list = CSSValueList::createCommaSeparated();
     if (animList) {
         for (size_t i = 0; i < animList->size(); ++i) {
-            const TimingFunction* tf = animList->animation(i)->timingFunction().get();
-            if (tf->isCubicBezierTimingFunction()) {
-                const CubicBezierTimingFunction* ctf = static_cast<const CubicBezierTimingFunction*>(tf);
-                list->append(CSSCubicBezierTimingFunctionValue::create(ctf->x1(), ctf->y1(), ctf->x2(), ctf->y2()));
-            } else if (tf->isStepsTimingFunction()) {
-                const StepsTimingFunction* stf = static_cast<const StepsTimingFunction*>(tf);
-                list->append(CSSStepsTimingFunctionValue::create(stf->numberOfSteps(), stf->stepAtStart()));
-            } else {
-                list->append(CSSLinearTimingFunctionValue::create());
-            }
+            RefPtr<TimingFunction> timingFunction = animList->animation(i)->timingFunction();
+            list->append(createAnimationValue(timingFunction.get()));
         }
     } else {
         // Note that initialAnimationTimingFunction() is used for both transitions and animations
-        RefPtr<TimingFunction> tf = Animation::initialAnimationTimingFunction();
-        if (tf->isCubicBezierTimingFunction()) {
-            const CubicBezierTimingFunction* ctf = static_cast<const CubicBezierTimingFunction*>(tf.get());
-            list->append(CSSCubicBezierTimingFunctionValue::create(ctf->x1(), ctf->y1(), ctf->x2(), ctf->y2()));
-        } else if (tf->isStepsTimingFunction()) {
-            const StepsTimingFunction* stf = static_cast<const StepsTimingFunction*>(tf.get());
-            list->append(CSSStepsTimingFunctionValue::create(stf->numberOfSteps(), stf->stepAtStart()));
-        } else {
-            list->append(CSSLinearTimingFunctionValue::create());
-        }
+        RefPtr<TimingFunction> timingFunction = Animation::initialAnimationTimingFunction();
+        list->append(createAnimationValue(timingFunction.get()));
     }
     return list.release();
 }

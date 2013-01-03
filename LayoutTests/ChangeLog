@@ -1,3 +1,28 @@
+2013-01-03  Alexis Menard  <alexis@webkit.org>
+
+        Querying transition-timing-function value on the computed style does not return keywords when it should.
+        https://bugs.webkit.org/show_bug.cgi?id=105442
+
+        Reviewed by Simon Fraser.
+
+        Update the tests to match the correct behavior of returning a keyword
+        rather than a cubic-bezier() form when using predefined values for the
+        transition-timing-function property.
+
+        * animations/animation-shorthand-name-order-expected.txt:
+        * animations/animation-shorthand-name-order.html:
+        * animations/animation-shorthand-removed.html:
+        * animations/animation-shorthand.html:
+        * animations/computed-style-expected.txt:
+        * animations/computed-style.html:
+        * fast/css/getComputedStyle/computed-style-expected.txt:
+        * fast/css/getComputedStyle/computed-style-without-renderer-expected.txt:
+        * svg/css/getComputedStyle-basic-expected.txt:
+        * transitions/inherit-other-props-expected.txt:
+        * transitions/inherit-other-props.html:
+        * transitions/transitions-parsing-expected.txt:
+        * transitions/transitions-parsing.html:
+
 2013-01-03  Rik Cabanier  <cabanier@adobe.com>
 
         Canvas blending tests fail on Mac WK2

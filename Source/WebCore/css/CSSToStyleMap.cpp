@@ -457,13 +457,13 @@ void CSSToStyleMap::mapAnimationTimingFunction(Animation* animation, CSSValue* v
             animation->setTimingFunction(CubicBezierTimingFunction::create());
             break;
         case CSSValueEaseIn:
-            animation->setTimingFunction(CubicBezierTimingFunction::create(0.42, 0.0, 1.0, 1.0));
+            animation->setTimingFunction(CubicBezierTimingFunction::create(CubicBezierTimingFunction::EaseIn));
             break;
         case CSSValueEaseOut:
-            animation->setTimingFunction(CubicBezierTimingFunction::create(0.0, 0.0, 0.58, 1.0));
+            animation->setTimingFunction(CubicBezierTimingFunction::create(CubicBezierTimingFunction::EaseOut));
             break;
         case CSSValueEaseInOut:
-            animation->setTimingFunction(CubicBezierTimingFunction::create(0.42, 0.0, 0.58, 1.0));
+            animation->setTimingFunction(CubicBezierTimingFunction::create(CubicBezierTimingFunction::EaseInOut));
             break;
         case CSSValueStepStart:
             animation->setTimingFunction(StepsTimingFunction::create(1, true));

@@ -216,7 +216,7 @@ rect: style.getPropertyValue(-webkit-animation-name) : none
 rect: style.getPropertyCSSValue(-webkit-animation-name) : [object CSSValueList]
 rect: style.getPropertyValue(-webkit-animation-play-state) : running
 rect: style.getPropertyCSSValue(-webkit-animation-play-state) : [object CSSValueList]
-rect: style.getPropertyValue(-webkit-animation-timing-function) : cubic-bezier(0.25, 0.1, 0.25, 1)
+rect: style.getPropertyValue(-webkit-animation-timing-function) : ease
 rect: style.getPropertyCSSValue(-webkit-animation-timing-function) : [object CSSValueList]
 rect: style.getPropertyValue(-webkit-appearance) : none
 rect: style.getPropertyCSSValue(-webkit-appearance) : [object CSSPrimitiveValue]
@@ -414,7 +414,7 @@ rect: style.getPropertyValue(-webkit-transition-duration) : 0s
 rect: style.getPropertyCSSValue(-webkit-transition-duration) : [object CSSValueList]
 rect: style.getPropertyValue(-webkit-transition-property) : all
 rect: style.getPropertyCSSValue(-webkit-transition-property) : [object CSSValueList]
-rect: style.getPropertyValue(-webkit-transition-timing-function) : cubic-bezier(0.25, 0.1, 0.25, 1)
+rect: style.getPropertyValue(-webkit-transition-timing-function) : ease
 rect: style.getPropertyCSSValue(-webkit-transition-timing-function) : [object CSSValueList]
 rect: style.getPropertyValue(-webkit-user-drag) : auto
 rect: style.getPropertyCSSValue(-webkit-user-drag) : [object CSSPrimitiveValue]
@@ -716,7 +716,7 @@ g: style.getPropertyValue(-webkit-animation-name) : none
 g: style.getPropertyCSSValue(-webkit-animation-name) : [object CSSValueList]
 g: style.getPropertyValue(-webkit-animation-play-state) : running
 g: style.getPropertyCSSValue(-webkit-animation-play-state) : [object CSSValueList]
-g: style.getPropertyValue(-webkit-animation-timing-function) : cubic-bezier(0.25, 0.1, 0.25, 1)
+g: style.getPropertyValue(-webkit-animation-timing-function) : ease
 g: style.getPropertyCSSValue(-webkit-animation-timing-function) : [object CSSValueList]
 g: style.getPropertyValue(-webkit-appearance) : none
 g: style.getPropertyCSSValue(-webkit-appearance) : [object CSSPrimitiveValue]
@@ -914,7 +914,7 @@ g: style.getPropertyValue(-webkit-transition-duration) : 0s
 g: style.getPropertyCSSValue(-webkit-transition-duration) : [object CSSValueList]
 g: style.getPropertyValue(-webkit-transition-property) : all
 g: style.getPropertyCSSValue(-webkit-transition-property) : [object CSSValueList]
-g: style.getPropertyValue(-webkit-transition-timing-function) : cubic-bezier(0.25, 0.1, 0.25, 1)
+g: style.getPropertyValue(-webkit-transition-timing-function) : ease
 g: style.getPropertyCSSValue(-webkit-transition-timing-function) : [object CSSValueList]
 g: style.getPropertyValue(-webkit-user-drag) : auto
 g: style.getPropertyCSSValue(-webkit-user-drag) : [object CSSPrimitiveValue]

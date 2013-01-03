@@ -78,14 +78,39 @@ private:
     
 class CubicBezierTimingFunction : public TimingFunction {
 public:
+    enum TimingFunctionPreset {
+        Ease,
+        EaseIn,
+        EaseOut,
+        EaseInOut,
+        Custom
+    };
+    
     static PassRefPtr<CubicBezierTimingFunction> create(double x1, double y1, double x2, double y2)
     {
-        return adoptRef(new CubicBezierTimingFunction(x1, y1, x2, y2));
+        return adoptRef(new CubicBezierTimingFunction(Custom, x1, y1, x2, y2));
     }
 
     static PassRefPtr<CubicBezierTimingFunction> create()
     {
         return adoptRef(new CubicBezierTimingFunction());
+    }
+    
+    static PassRefPtr<CubicBezierTimingFunction> create(TimingFunctionPreset preset)
+    {
+        switch (preset) {
+        case Ease:
+            return adoptRef(new CubicBezierTimingFunction());
+        case EaseIn:
+            return adoptRef(new CubicBezierTimingFunction(EaseIn, 0.42, 0.0, 1.0, 1.0));
+        case EaseOut:
+            return adoptRef(new CubicBezierTimingFunction(EaseOut, 0.0, 0.0, 0.58, 1.0));
+        case EaseInOut:
+            return adoptRef(new CubicBezierTimingFunction(EaseInOut, 0.42, 0.0, 0.58, 1.0));
+        default:
+            ASSERT_NOT_REACHED();
+            return 0;
+        }
     }
 
     ~CubicBezierTimingFunction() { }
@@ -94,6 +119,9 @@ public:
     {
         if (other.isCubicBezierTimingFunction()) {
             const CubicBezierTimingFunction* ctf = static_cast<const CubicBezierTimingFunction*>(&other);
+            if (m_timingFunctionPreset != Custom)
+                return m_timingFunctionPreset == ctf->m_timingFunctionPreset;
+            
             return m_x1 == ctf->m_x1 && m_y1 == ctf->m_y1 && m_x2 == ctf->m_x2 && m_y2 == ctf->m_y2;
         }
         return false;
@@ -104,6 +132,8 @@ public:
     double x2() const { return m_x2; }
     double y2() const { return m_y2; }
     
+    TimingFunctionPreset timingFunctionPreset() const { return m_timingFunctionPreset; }
+    
     static const CubicBezierTimingFunction* defaultTimingFunction()
     {
         static const CubicBezierTimingFunction* dtf = create().leakRef();
@@ -111,12 +141,13 @@ public:
     }
     
 private:
-    CubicBezierTimingFunction(double x1 = 0.25, double y1 = 0.1, double x2 = 0.25, double y2 = 1.0)
+    explicit CubicBezierTimingFunction(TimingFunctionPreset preset = Ease, double x1 = 0.25, double y1 = 0.1, double x2 = 0.25, double y2 = 1.0)
         : TimingFunction(CubicBezierFunction)
         , m_x1(x1)
         , m_y1(y1)
         , m_x2(x2)
         , m_y2(y2)
+        , m_timingFunctionPreset(preset)
     {
     }
 
@@ -124,6 +155,7 @@ private:
     double m_y1;
     double m_x2;
     double m_y2;
+    TimingFunctionPreset m_timingFunctionPreset;
 };
 
 class StepsTimingFunction : public TimingFunction {

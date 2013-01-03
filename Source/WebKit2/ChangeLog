@@ -1,3 +1,18 @@
+2013-01-03  Alexis Menard  <alexis@webkit.org>
+
+        Querying transition-timing-function value on the computed style does not return keywords when it should.
+        https://bugs.webkit.org/show_bug.cgi?id=105442
+
+        Reviewed by Simon Fraser.
+
+        Update the code to pass the animations from one process to another as
+        the constructor of TimingFunction changed to take an extra parameter
+        holding the type of the cubic-bezier form.
+
+        * Shared/CoordinatedGraphics/CoordinatedGraphicsArgumentCoders.cpp:
+        (CoreIPC::encodeTimingFunction):
+        (CoreIPC::decodeTimingFunction):
+
 2013-01-03  Rik Cabanier  <cabanier@adobe.com>
 
         Canvas blending tests fail on Mac WK2

@@ -1,27 +1,27 @@
 PASS Test 1: webkitAnimationName was test
 PASS Test 1: webkitAnimationDuration was 3s
-PASS Test 1: webkitAnimationTimingFunction was cubic-bezier(0.25, 0.1, 0.25, 1)
+PASS Test 1: webkitAnimationTimingFunction was ease
 PASS Test 1: webkitAnimationDelay was 0s
 PASS Test 1: webkitAnimationIterationCount was 1
 PASS Test 1: webkitAnimationDirection was normal
 PASS Test 1: webkitAnimationFillMode was none
 PASS Test 2: webkitAnimationName was test
 PASS Test 2: webkitAnimationDuration was 3s
-PASS Test 2: webkitAnimationTimingFunction was cubic-bezier(0.25, 0.1, 0.25, 1)
+PASS Test 2: webkitAnimationTimingFunction was ease
 PASS Test 2: webkitAnimationDelay was 0s
 PASS Test 2: webkitAnimationIterationCount was 1
 PASS Test 2: webkitAnimationDirection was normal
 PASS Test 2: webkitAnimationFillMode was none
 PASS Test 3: webkitAnimationName was test
 PASS Test 3: webkitAnimationDuration was 3s
-PASS Test 3: webkitAnimationTimingFunction was cubic-bezier(0.25, 0.1, 0.25, 1)
+PASS Test 3: webkitAnimationTimingFunction was ease
 PASS Test 3: webkitAnimationDelay was 0s
 PASS Test 3: webkitAnimationIterationCount was 1
 PASS Test 3: webkitAnimationDirection was normal
 PASS Test 3: webkitAnimationFillMode was forwards
 PASS Test 4: webkitAnimationName was test
 PASS Test 4: webkitAnimationDuration was 3s
-PASS Test 4: webkitAnimationTimingFunction was cubic-bezier(0.25, 0.1, 0.25, 1)
+PASS Test 4: webkitAnimationTimingFunction was ease
 PASS Test 4: webkitAnimationDelay was 0s
 PASS Test 4: webkitAnimationIterationCount was 1
 PASS Test 4: webkitAnimationDirection was normal
@@ -63,7 +63,7 @@ PASS Test 9: webkitAnimationDirection was alternate
 PASS Test 9: webkitAnimationFillMode was none
 PASS Test 10: webkitAnimationName was linear
 PASS Test 10: webkitAnimationDuration was 3s
-PASS Test 10: webkitAnimationTimingFunction was cubic-bezier(0.25, 0.1, 0.25, 1)
+PASS Test 10: webkitAnimationTimingFunction was ease
 PASS Test 10: webkitAnimationDelay was 4s
 PASS Test 10: webkitAnimationIterationCount was infinite
 PASS Test 10: webkitAnimationDirection was alternate

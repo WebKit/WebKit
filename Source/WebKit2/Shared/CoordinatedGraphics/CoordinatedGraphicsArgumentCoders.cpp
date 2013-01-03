@@ -555,6 +555,7 @@ static void encodeTimingFunction(ArgumentEncoder& encoder, const TimingFunction*
         break;
     case TimingFunction::CubicBezierFunction: {
         const CubicBezierTimingFunction* cubic = static_cast<const CubicBezierTimingFunction*>(timingFunction);
+        encoder.encodeEnum(cubic->timingFunctionPreset());
         encoder << cubic->x1();
         encoder << cubic->y1();
         encoder << cubic->x2();
@@ -585,6 +586,13 @@ bool decodeTimingFunction(ArgumentDecoder* decoder, RefPtr<TimingFunction>& timi
         return true;
     case TimingFunction::CubicBezierFunction: {
         double x1, y1, x2, y2;
+        CubicBezierTimingFunction::TimingFunctionPreset bezierPreset;
+        if (!decoder->decodeEnum(bezierPreset))
+            return false;
+        if (bezierPreset != CubicBezierTimingFunction::Custom) {
+            timingFunction = CubicBezierTimingFunction::create(bezierPreset);
+            return true;
+        }
         if (!decoder->decodeDouble(x1))
             return false;
         if (!decoder->decodeDouble(y1))

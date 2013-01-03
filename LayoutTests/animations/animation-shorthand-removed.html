@@ -51,7 +51,7 @@
         values: [ "anim1", "10s", "linear", "5s", "infinite", "alternate", "forwards" ]
       }
     ];
-    const kExpectedResults = [ "none", "0s", "cubic-bezier(0.25, 0.1, 0.25, 1)", "0s", "1", "normal", "none" ];
+    const kExpectedResults = [ "none", "0s", "ease", "0s", "1", "normal", "none" ];
 
     function start() {
       kElements.forEach(function(curEl) {
