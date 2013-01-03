@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012 Apple Inc. All rights reserved.
+ * Copyright (C) 2012, 2013 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,44 +26,75 @@
 #ifndef CallLinkStatus_h
 #define CallLinkStatus_h
 
+#include "CodeSpecializationKind.h"
+#include "Intrinsic.h"
+#include "JSValue.h"
+
 namespace JSC {
 
-class JSFunction;
 class CodeBlock;
+class ExecutableBase;
+class InternalFunction;
+class JSFunction;
+class Structure;
 
 class CallLinkStatus {
 public:
     CallLinkStatus()
-        : m_callTarget(0)
+        : m_executable(0)
+        , m_structure(0)
         , m_couldTakeSlowPath(false)
-        , m_isClosureCall(false)
+        , m_isProved(false)
     {
     }
     
-    CallLinkStatus(JSFunction* callTarget, bool couldTakeSlowPath, bool isClosureCall = false)
-        : m_callTarget(callTarget)
-        , m_couldTakeSlowPath(couldTakeSlowPath)
-        , m_isClosureCall(isClosureCall)
+    static CallLinkStatus takesSlowPath()
+    {
+        CallLinkStatus result;
+        result.m_couldTakeSlowPath = true;
+        return result;
+    }
+    
+    explicit CallLinkStatus(JSValue);
+    
+    CallLinkStatus(ExecutableBase* executable, Structure* structure)
+        : m_executable(executable)
+        , m_structure(structure)
+        , m_couldTakeSlowPath(false)
+        , m_isProved(false)
     {
     }
+    
+    CallLinkStatus& setIsProved(bool);
     
     static CallLinkStatus computeFor(CodeBlock*, unsigned bytecodeIndex);
     
-    bool isSet() const { return !!m_callTarget || m_couldTakeSlowPath; }
+    bool isSet() const { return m_callTarget || m_executable || m_couldTakeSlowPath; }
     
     bool operator!() const { return !isSet(); }
     
     bool couldTakeSlowPath() const { return m_couldTakeSlowPath; }
-    bool isClosureCall() const { return m_isClosureCall; }
+    bool isClosureCall() const { return !m_callTarget; }
     
-    JSFunction* callTarget() const { return m_callTarget; }
+    JSValue callTarget() const { return m_callTarget; }
+    JSFunction* function() const;
+    InternalFunction* internalFunction() const;
+    Intrinsic intrinsicFor(CodeSpecializationKind) const;
+    ExecutableBase* executable() const { return m_executable; }
+    Structure* structure() const { return m_structure; }
+    bool isProved() const { return m_isProved; }
+    bool canOptimize() const { return (m_callTarget || m_executable) && !m_couldTakeSlowPath; }
+    
+    void dump(PrintStream&);
     
 private:
     static CallLinkStatus computeFromLLInt(CodeBlock*, unsigned bytecodeIndex);
     
-    JSFunction* m_callTarget;
+    JSValue m_callTarget;
+    ExecutableBase* m_executable;
+    Structure* m_structure;
     bool m_couldTakeSlowPath;
-    bool m_isClosureCall;
+    bool m_isProved;
 };
 
 } // namespace JSC

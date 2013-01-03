@@ -1283,115 +1283,78 @@ void ByteCodeParser::handleCall(Interpreter* interpreter, Instruction* currentIn
     ASSERT(OPCODE_LENGTH(op_call) == OPCODE_LENGTH(op_construct));
     
     NodeIndex callTarget = get(currentInstruction[1].u.operand);
-    enum {
-        ConstantFunction,
-        ConstantInternalFunction,
-        LinkedFunction,
-        UnknownFunction
-    } callType;
-            
-    CallLinkStatus callLinkStatus = CallLinkStatus::computeFor(
-        m_inlineStackTop->m_profiledBlock, m_currentIndex);
+    
+    CallLinkStatus callLinkStatus;
+
+    if (m_graph.isConstant(callTarget))
+        callLinkStatus = CallLinkStatus(m_graph.valueOfJSConstant(callTarget)).setIsProved(true);
+    else
+        callLinkStatus = CallLinkStatus::computeFor(m_inlineStackTop->m_profiledBlock, m_currentIndex);
     
 #if DFG_ENABLE(DEBUG_VERBOSE)
-    dataLogF("For call at @%lu bc#%u: ", m_graph.size(), m_currentIndex);
-    if (callLinkStatus.isSet()) {
-        if (callLinkStatus.couldTakeSlowPath())
-            dataLogF("could take slow path, ");
-        dataLogF("target = %p\n", callLinkStatus.callTarget());
-    } else
-        dataLogF("not set.\n");
+    dataLog("For call at @", m_graph.size(), " bc#", m_currentIndex, ": ", callLinkStatus, "\n");
 #endif
     
-    if (m_graph.isFunctionConstant(callTarget)) {
-        callType = ConstantFunction;
-#if DFG_ENABLE(DEBUG_VERBOSE)
-        dataLogF("Call at [@%lu, bc#%u] has a function constant: %p, exec %p.\n",
-                m_graph.size(), m_currentIndex,
-                m_graph.valueOfFunctionConstant(callTarget),
-                m_graph.valueOfFunctionConstant(callTarget)->executable());
-#endif
-    } else if (m_graph.isInternalFunctionConstant(callTarget)) {
-        callType = ConstantInternalFunction;
-#if DFG_ENABLE(DEBUG_VERBOSE)
-        dataLogF("Call at [@%lu, bc#%u] has an internal function constant: %p.\n",
-                m_graph.size(), m_currentIndex,
-                m_graph.valueOfInternalFunctionConstant(callTarget));
-#endif
-    } else if (callLinkStatus.isSet() && !callLinkStatus.couldTakeSlowPath()
-               && !callLinkStatus.isClosureCall() // We will eventually optimize this, I promise.
-               && !m_inlineStackTop->m_exitProfile.hasExitSite(m_currentIndex, BadCache)) {
-        callType = LinkedFunction;
-#if DFG_ENABLE(DEBUG_VERBOSE)
-        dataLogF("Call at [@%lu, bc#%u] is linked to: %p, exec %p.\n",
-                m_graph.size(), m_currentIndex, callLinkStatus.callTarget(),
-                callLinkStatus.callTarget()->executable());
-#endif
-    } else {
-        callType = UnknownFunction;
-#if DFG_ENABLE(DEBUG_VERBOSE)
-        dataLogF("Call at [@%lu, bc#%u] is has an unknown or ambiguous target.\n",
-                m_graph.size(), m_currentIndex);
-#endif
-    }
-    if (callType != UnknownFunction) {
-        int argumentCountIncludingThis = currentInstruction[2].u.operand;
-        int registerOffset = currentInstruction[3].u.operand;
-
-        // Do we have a result?
-        bool usesResult = false;
-        int resultOperand = 0; // make compiler happy
-        unsigned nextOffset = m_currentIndex + OPCODE_LENGTH(op_call);
-        Instruction* putInstruction = currentInstruction + OPCODE_LENGTH(op_call);
-        SpeculatedType prediction = SpecNone;
-        if (interpreter->getOpcodeID(putInstruction->u.opcode) == op_call_put_result) {
-            resultOperand = putInstruction[1].u.operand;
-            usesResult = true;
-            m_currentProfilingIndex = nextOffset;
-            prediction = getPrediction();
-            nextOffset += OPCODE_LENGTH(op_call_put_result);
-        }
-
-        if (callType == ConstantInternalFunction) {
-            if (handleConstantInternalFunction(usesResult, resultOperand, m_graph.valueOfInternalFunctionConstant(callTarget), registerOffset, argumentCountIncludingThis, prediction, kind))
-                return;
-            
-            // Can only handle this using the generic call handler.
-            addCall(interpreter, currentInstruction, op);
-            return;
-        }
+    if (!callLinkStatus.canOptimize()) {
+        // Oddly, this conflates calls that haven't executed with calls that behaved sufficiently polymorphically
+        // that we cannot optimize them.
         
-        JSFunction* expectedFunction;
-        Intrinsic intrinsic;
-        bool certainAboutExpectedFunction;
-        if (callType == ConstantFunction) {
-            expectedFunction = m_graph.valueOfFunctionConstant(callTarget);
-            intrinsic = expectedFunction->executable()->intrinsicFor(kind);
-            certainAboutExpectedFunction = true;
-        } else {
-            ASSERT(callType == LinkedFunction);
-            expectedFunction = callLinkStatus.callTarget();
-            intrinsic = expectedFunction->executable()->intrinsicFor(kind);
-            certainAboutExpectedFunction = false;
-        }
-                
-        if (intrinsic != NoIntrinsic) {
-            if (!certainAboutExpectedFunction)
-                emitFunctionCheck(expectedFunction, callTarget, registerOffset, kind);
-            
-            if (handleIntrinsic(usesResult, resultOperand, intrinsic, registerOffset, argumentCountIncludingThis, prediction)) {
-                if (!certainAboutExpectedFunction) {
-                    // Need to keep the call target alive for OSR. We could easily optimize this out if we wanted
-                    // to, since at this point we know that the call target is a constant. It's just that OSR isn't
-                    // smart enough to figure that out, since it doesn't understand CheckFunction.
-                    addToGraph(Phantom, callTarget);
-                }
-                
-                return;
-            }
-        } else if (handleInlining(usesResult, callTarget, resultOperand, certainAboutExpectedFunction, expectedFunction, registerOffset, argumentCountIncludingThis, nextOffset, kind))
-            return;
+        addCall(interpreter, currentInstruction, op);
+        return;
     }
+    
+    int argumentCountIncludingThis = currentInstruction[2].u.operand;
+    int registerOffset = currentInstruction[3].u.operand;
+
+    // Do we have a result?
+    bool usesResult = false;
+    int resultOperand = 0; // make compiler happy
+    unsigned nextOffset = m_currentIndex + OPCODE_LENGTH(op_call);
+    Instruction* putInstruction = currentInstruction + OPCODE_LENGTH(op_call);
+    SpeculatedType prediction = SpecNone;
+    if (interpreter->getOpcodeID(putInstruction->u.opcode) == op_call_put_result) {
+        resultOperand = putInstruction[1].u.operand;
+        usesResult = true;
+        m_currentProfilingIndex = nextOffset;
+        prediction = getPrediction();
+        nextOffset += OPCODE_LENGTH(op_call_put_result);
+    }
+
+    if (InternalFunction* function = callLinkStatus.internalFunction()) {
+        if (handleConstantInternalFunction(usesResult, resultOperand, function, registerOffset, argumentCountIncludingThis, prediction, kind))
+            return;
+            
+        // Can only handle this using the generic call handler.
+        addCall(interpreter, currentInstruction, op);
+        return;
+    }
+        
+    JSFunction* expectedFunction = callLinkStatus.function();
+    if (!expectedFunction) {
+        // For now we have no way of reasoning about what it means to not have a specific function. This will
+        // change soon, though.
+        
+        addCall(interpreter, currentInstruction, op);
+        return;
+    }
+        
+    Intrinsic intrinsic = callLinkStatus.intrinsicFor(kind);
+    if (intrinsic != NoIntrinsic) {
+        if (!callLinkStatus.isProved())
+            emitFunctionCheck(expectedFunction, callTarget, registerOffset, kind);
+            
+        if (handleIntrinsic(usesResult, resultOperand, intrinsic, registerOffset, argumentCountIncludingThis, prediction)) {
+            if (!callLinkStatus.isProved()) {
+                // Need to keep the call target alive for OSR. We could easily optimize this out if we wanted
+                // to, since at this point we know that the call target is a constant. It's just that OSR isn't
+                // smart enough to figure that out, since it doesn't understand CheckFunction.
+                addToGraph(Phantom, callTarget);
+            }
+                
+            return;
+        }
+    } else if (handleInlining(usesResult, callTarget, resultOperand, callLinkStatus.isProved(), expectedFunction, registerOffset, argumentCountIncludingThis, nextOffset, kind))
+        return;
     
     addCall(interpreter, currentInstruction, op);
 }

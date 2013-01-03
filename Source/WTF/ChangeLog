@@ -1,3 +1,19 @@
+2013-01-03  Filip Pizlo  <fpizlo@apple.com>
+
+        CallLinkStatus should be aware of closure calls, and the DFG bytecode parser should use that as its sole internal notion of how to optimize calls
+        https://bugs.webkit.org/show_bug.cgi?id=106027
+
+        Reviewed by Mark Hahnenberg.
+        
+        I got tired of the various idioms for printing a list of things with comma in between, so I wrote a helper.
+
+        * WTF.xcodeproj/project.pbxproj:
+        * wtf/CommaPrinter.h: Added.
+        (WTF):
+        (CommaPrinter):
+        (WTF::CommaPrinter::CommaPrinter):
+        (WTF::CommaPrinter::dump):
+
 2013-01-02  Simon Hausmann  <simon.hausmann@digia.com>
 
         [MinGW-w64] Centralize workaround for pow() implementation

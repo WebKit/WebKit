@@ -1,3 +1,41 @@
+2013-01-03  Filip Pizlo  <fpizlo@apple.com>
+
+        CallLinkStatus should be aware of closure calls, and the DFG bytecode parser should use that as its sole internal notion of how to optimize calls
+        https://bugs.webkit.org/show_bug.cgi?id=106027
+
+        Reviewed by Mark Hahnenberg.
+        
+        Previously, the DFG bytecode parser had its own internal notion of exactly what CallLinkStatus was
+        meant to do, in the form of a CallType, expectedFunction, intrinsic, etc. This change makes CallLinkStatus
+        smart enough to do all of that, and also gives it the ability to understand closure calls.
+
+        * bytecode/CallLinkStatus.cpp:
+        (JSC::CallLinkStatus::CallLinkStatus):
+        (JSC):
+        (JSC::CallLinkStatus::function):
+        (JSC::CallLinkStatus::internalFunction):
+        (JSC::CallLinkStatus::intrinsicFor):
+        (JSC::CallLinkStatus::setIsProved):
+        (JSC::CallLinkStatus::computeFromLLInt):
+        (JSC::CallLinkStatus::computeFor):
+        (JSC::CallLinkStatus::dump):
+        * bytecode/CallLinkStatus.h:
+        (JSC):
+        (JSC::CallLinkStatus::CallLinkStatus):
+        (CallLinkStatus):
+        (JSC::CallLinkStatus::takesSlowPath):
+        (JSC::CallLinkStatus::isSet):
+        (JSC::CallLinkStatus::isClosureCall):
+        (JSC::CallLinkStatus::callTarget):
+        (JSC::CallLinkStatus::executable):
+        (JSC::CallLinkStatus::structure):
+        (JSC::CallLinkStatus::isProved):
+        (JSC::CallLinkStatus::canOptimize):
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::handleCall):
+        * dfg/DFGGraph.h:
+        (JSC::DFG::Graph::valueOfFunctionConstant):
+
 2013-01-02  Simon Hausmann  <simon.hausmann@digia.com>
 
         [MinGW-w64] Centralize workaround for pow() implementation

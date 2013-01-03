@@ -331,10 +331,6 @@ public:
         ASSERT(function);
         return jsCast<JSFunction*>(function);
     }
-    InternalFunction* valueOfInternalFunctionConstant(NodeIndex nodeIndex)
-    {
-        return jsCast<InternalFunction*>(valueOfJSConstant(nodeIndex).asCell());
-    }
 
     static const char *opName(NodeType);
     
