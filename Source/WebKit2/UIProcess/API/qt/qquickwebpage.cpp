@@ -97,15 +97,18 @@ QSGNode* QQuickWebPage::updatePaintNode(QSGNode* oldNode, UpdatePaintNodeData*)
 
     if (window && d->webPageProxy->deviceScaleFactor() != window->devicePixelRatio()) {
         d->webPageProxy->setIntrinsicDeviceScaleFactor(window->devicePixelRatio());
-        d->viewportItem->experimental()->test()->devicePixelRatioChanged();
+        // This signal is queued since if we are running a threaded renderer. This might cause failures
+        // if tests are reading the new value between the property change and the signal emission.
+        emit d->viewportItem->experimental()->test()->devicePixelRatioChanged();
     }
 
     if (!node)
-        node = new QtWebPageSGNode(this);
+        node = new QtWebPageSGNode;
 
     node->setRenderer(renderer);
 
     node->setScale(d->contentsScale);
+    node->setDevicePixelRatio(window->devicePixelRatio());
     QColor backgroundColor = d->webPageProxy->drawsTransparentBackground() ? Qt::transparent : Qt::white;
     QRectF backgroundRect(QPointF(0, 0), d->contentsSize);
     node->setBackground(backgroundRect, backgroundColor);

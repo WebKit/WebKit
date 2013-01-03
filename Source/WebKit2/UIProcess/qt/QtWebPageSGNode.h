@@ -36,16 +36,17 @@ class LayerTreeRenderer;
 
 class QtWebPageSGNode : public QSGTransformNode {
     public:
-        QtWebPageSGNode(const QQuickItem*);
+        QtWebPageSGNode();
         void setBackground(const QRectF&, const QColor&);
         void setScale(float);
         void setRenderer(PassRefPtr<LayerTreeRenderer>);
-        qreal devicePixelRatio() const;
+        qreal devicePixelRatio() const { return m_devicePixelRatio; }
+        void setDevicePixelRatio(qreal devicePixelRatio) { m_devicePixelRatio = devicePixelRatio; }
 
     private:
         ContentsSGNode* m_contentsNode;
         QSGSimpleRectNode* m_backgroundNode;
-        const QQuickItem* const m_item;
+        qreal m_devicePixelRatio;
 };
 
 } // namespace WebKit

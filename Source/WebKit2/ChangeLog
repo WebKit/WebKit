@@ -1,3 +1,29 @@
+2013-01-03  Jocelyn Turcotte  <jocelyn.turcotte@digia.com>
+
+        [Qt] Fix a crash when the QQuickWebPage is destroyed between the scene graph sync and render.
+        https://bugs.webkit.org/show_bug.cgi?id=106018
+
+        Reviewed by Simon Hausmann.
+
+        The main and rendering threads are only guaranteed to be synchronised in
+        the updatePaintNode call. In every other cases, QQuickItems cannot be
+        safely accessed from the rendering thread.
+
+        Do as the first patch version in
+        https://bugs.webkit.org/show_bug.cgi?id=104574 was doing and copy the
+        ratio value directly to fix the issue.
+
+        Also add a note about the threading issue in QQuickWebPage::updatePaintNode.
+
+        * UIProcess/API/qt/qquickwebpage.cpp:
+        (QQuickWebPage::updatePaintNode):
+        * UIProcess/qt/QtWebPageSGNode.cpp:
+        (WebKit::QtWebPageSGNode::QtWebPageSGNode):
+        * UIProcess/qt/QtWebPageSGNode.h:
+        (QtWebPageSGNode):
+        (WebKit::QtWebPageSGNode::devicePixelRatio):
+        (WebKit::QtWebPageSGNode::setDevicePixelRatio):
+
 2013-01-02  Sam Weinig  <sam@webkit.org>
 
         Stop pretending its possible to run the WebProcess in threaded mode
