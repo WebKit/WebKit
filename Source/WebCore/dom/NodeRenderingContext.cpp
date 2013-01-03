@@ -165,6 +165,12 @@ void NodeRenderingContext::moveToFlowThreadIfNeeded()
     if (m_node->isInShadowTree())
         return;
 
+#if ENABLE(FULLSCREEN_API)
+    Document* document = m_node->document();
+    if (document->webkitIsFullScreen() && document->webkitCurrentFullScreenElement() == m_node)
+        return;
+#endif
+
 #if ENABLE(SVG)
     // Allow only svg root elements to be directly collected by a render flow thread.
     if (m_node->isSVGElement()

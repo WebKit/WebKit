@@ -1,3 +1,16 @@
+2013-01-03  Zoltan Horvath  <zoltan@webkit.org>
+
+        [CSS Regions] Don't apply region flow to fullscreen video playing
+        https://bugs.webkit.org/show_bug.cgi?id=102388
+
+        Reviewed by David Hyatt.
+
+        In case of full screen video playing we want to watch the video full screen without applying the region flow.
+
+        * fast/regions/full-screen-video-from-region-expected.txt: Added.
+        * fast/regions/full-screen-video-from-region.html: Added.
+        * platform/chromium-mac/fast/regions/full-screen-video-from-region-expected.png: Added.
+
 2013-01-03  Rafael Weinstein  <rafaelw@chromium.org>
 
         [Mutation Observers] prevent delivery while recipient context is suspended

@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <script>
+        var runPixelTests = true;
+            
+        function init() {
+            // Bail out early if the full screen API is not enabled or is missing:
+            if (Element.prototype.webkitRequestFullScreen == undefined) {
+                logResult(false, "Element.prototype.webkitRequestFullScreen == undefined");
+                endTest();
+            } else {
+                waitForEventAndEnd(document, 'webkitfullscreenchange');
+                runWithKeyDown(goFullScreen);
+            }
+        }
+            
+        function goFullScreen() {
+            video.webkitRequestFullScreen();
+        }
+    </script>
+    <script src="../../fullscreen/full-screen-test.js"></script>
+    <style>
+        .content {
+            -webkit-flow-into: content-flow;
+        }
+
+        .region {
+            -webkit-flow-from: content-flow;
+            border: 1px solid red;
+            margin: 10px;
+            padding: 10px;
+            height: 480px;
+        }
+   </style>
+</head>
+<body onload="init()">
+    <div>This tests the full screen video playing from a region flow.
+         After entering full screen mode, only the full screen video should be visible.
+         Click <button onclick="goFullScreen()">go full screen</button> to run the test.</div>
+    <video class="content" height="270" width="480" id="video" controls autoplay loop></video>
+    <div class="region"></div>
+</body>
+</html>
