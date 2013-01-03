@@ -32,7 +32,6 @@
 #include "Internals.h"
 #include "ScriptExecutionContext.h"
 #include "V8Internals.h"
-#include "V8PagePopupController.h"
 
 #include <v8.h>
 
@@ -63,7 +62,7 @@ void resetInternalsObject(v8::Local<v8::Context> context)
     ASSERT(scriptContext->isDocument());
     Page* page = static_cast<Document*>(scriptContext)->frame()->page();
     Internals::resetToConsistentState(page);
-    InternalSettings::from(page)->reset();
+    InternalSettings::from(page)->resetToConsistentState();
 }
 
 }

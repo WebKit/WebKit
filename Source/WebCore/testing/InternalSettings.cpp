@@ -35,6 +35,7 @@
 #include "Page.h"
 #include "RuntimeEnabledFeatures.h"
 #include "Settings.h"
+#include "Supplementable.h"
 #include "TextRun.h"
 
 #if ENABLE(INPUT_TYPE_COLOR)
@@ -62,9 +63,7 @@
 namespace WebCore {
 
 InternalSettings::Backup::Backup(Settings* settings)
-    : m_originalPasswordEchoDurationInSeconds(settings->passwordEchoDurationInSeconds())
-    , m_originalPasswordEchoEnabled(settings->passwordEchoEnabled())
-    , m_originalFixedElementsLayoutRelativeToFrame(settings->fixedElementsLayoutRelativeToFrame())
+    : m_originalFixedElementsLayoutRelativeToFrame(settings->fixedElementsLayoutRelativeToFrame())
     , m_originalCSSExclusionsEnabled(RuntimeEnabledFeatures::cssExclusionsEnabled())
     , m_originalCSSVariablesEnabled(settings->cssVariablesEnabled())
 #if ENABLE(SHADOW_DOM)
@@ -109,8 +108,6 @@ InternalSettings::Backup::Backup(Settings* settings)
 
 void InternalSettings::Backup::restoreTo(Settings* settings)
 {
-    settings->setPasswordEchoDurationInSeconds(m_originalPasswordEchoDurationInSeconds);
-    settings->setPasswordEchoEnabled(m_originalPasswordEchoEnabled);
     settings->setFixedElementsLayoutRelativeToFrame(m_originalFixedElementsLayoutRelativeToFrame);
     RuntimeEnabledFeatures::setCSSExclusionsEnabled(m_originalCSSExclusionsEnabled);
     settings->setCSSVariablesEnabled(m_originalCSSVariablesEnabled);
@@ -153,12 +150,29 @@ void InternalSettings::Backup::restoreTo(Settings* settings)
 #endif
 }
 
+// We can't use RefCountedSupplement because that would try to make InternalSettings RefCounted
+// and InternalSettings is already RefCounted via its base class, InternalSettingsGenerated.
+// Instead, we manually make InternalSettings supplement Page.
+class InternalSettingsWrapper : public Supplement<Page> {
+public:
+    explicit InternalSettingsWrapper(Page* page)
+        : m_internalSettings(InternalSettings::create(page)) { }
+    virtual ~InternalSettingsWrapper() { m_internalSettings->hostDestroyed(); }
+#if !ASSERT_DISABLED
+    virtual bool isRefCountedWrapper() const OVERRIDE { return true; }
+#endif
+    InternalSettings* internalSettings() const { return m_internalSettings.get(); }
+
+private:
+    RefPtr<InternalSettings> m_internalSettings;
+};
+
 InternalSettings* InternalSettings::from(Page* page)
 {
     DEFINE_STATIC_LOCAL(AtomicString, name, ("InternalSettings", AtomicString::ConstructFromLiteral));
-    if (!SuperType::from(page, name))
-        SuperType::provideTo(page, name, adoptRef(new InternalSettings(page)));
-    return static_cast<InternalSettings*>(SuperType::from(page, name));
+    if (!Supplement<Page>::from(page, name))
+        Supplement<Page>::provideTo(page, name, adoptPtr(new InternalSettingsWrapper(page)));
+    return static_cast<InternalSettingsWrapper*>(Supplement<Page>::from(page, name))->internalSettings();
 }
 
 InternalSettings::~InternalSettings()
@@ -166,18 +180,21 @@ InternalSettings::~InternalSettings()
 }
 
 InternalSettings::InternalSettings(Page* page)
-    : m_page(page)
+    : InternalSettingsGenerated(page)
+    , m_page(page)
     , m_backup(page->settings())
 {
 }
 
-void InternalSettings::reset()
+void InternalSettings::resetToConsistentState()
 {
     page()->setPageScaleFactor(1, IntPoint(0, 0));
     page()->setCanStartMedia(true);
 
     m_backup.restoreTo(settings());
     m_backup = Backup(settings());
+
+    InternalSettingsGenerated::resetToConsistentState();
 }
 
 Settings* InternalSettings::settings() const
@@ -227,18 +244,6 @@ void InternalSettings::setMockScrollbarsEnabled(bool enabled, ExceptionCode& ec)
 {
     InternalSettingsGuardForSettings();
     settings()->setMockScrollbarsEnabled(enabled);
-}
-
-void InternalSettings::setPasswordEchoEnabled(bool enabled, ExceptionCode& ec)
-{
-    InternalSettingsGuardForSettings();
-    settings()->setPasswordEchoEnabled(enabled);
-}
-
-void InternalSettings::setPasswordEchoDurationInSeconds(double durationInSeconds, ExceptionCode& ec)
-{
-    InternalSettingsGuardForSettings();
-    settings()->setPasswordEchoDurationInSeconds(durationInSeconds);
 }
 
 void InternalSettings::setFixedElementsLayoutRelativeToFrame(bool enabled, ExceptionCode& ec)

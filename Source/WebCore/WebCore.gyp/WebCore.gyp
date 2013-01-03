@@ -528,10 +528,36 @@
       ]
     },
     {
+      'target_name': 'generate_settings',
+      'type': 'none',
+      'actions': [
+        {
+          'action_name': 'Settings',
+          'inputs': [
+            '../page/make_settings.pl',
+            '../page/Settings.in',
+          ],
+          'outputs': [
+            '<(SHARED_INTERMEDIATE_DIR)/webkit/SettingsMacros.h',
+            '<(SHARED_INTERMEDIATE_DIR)/webkit/InternalSettingsGenerated.idl',
+            '<(SHARED_INTERMEDIATE_DIR)/webkit/InternalSettingsGenerated.cpp',
+            '<(SHARED_INTERMEDIATE_DIR)/webkit/InternalSettingsGenerated.h',
+          ],
+          'action': [
+            'python',
+            'scripts/action_makenames.py',
+            '<@(_outputs)',
+            '--',
+            '<@(_inputs)',
+          ],
+        },
+      ]
+    },
+    {
       'target_name': 'generate_supplemental_dependency',
       'type': 'none',
       'actions': [
-         {
+        {
           'action_name': 'generateSupplementalDependency',
           'variables': {
             # Write sources into a file, so that the action command line won't
@@ -574,6 +600,7 @@
       'hard_dependency': 1,
       'dependencies': [
         'generate_supplemental_dependency',
+        'generate_settings',
       ],
       'sources': [
         # bison rule
@@ -866,23 +893,6 @@
             '--',
             '--factory',
             '--extraDefines', '<(feature_defines)'
-          ],
-        },
-        {
-          'action_name': 'Settings',
-          'inputs': [
-            '../page/make_settings.pl',
-            '../page/Settings.in',
-          ],
-          'outputs': [
-            '<(SHARED_INTERMEDIATE_DIR)/webkit/SettingsMacros.h',
-          ],
-          'action': [
-            'python',
-            'scripts/action_makenames.py',
-            '<@(_outputs)',
-            '--',
-            '<@(_inputs)',
           ],
         },
         {
@@ -1189,6 +1199,7 @@
               '--include', '../testing',
               '--include', '../workers',
               '--include', '../xml',
+              '--include', '<(SHARED_INTERMEDIATE_DIR)/webkit',
             ],
           },
           'msvs_cygwin_shell': 0,
@@ -2246,6 +2257,8 @@
         '<(SHARED_INTERMEDIATE_DIR)/webkit/bindings/V8Internals.h',
         '<(SHARED_INTERMEDIATE_DIR)/webcore/bindings/V8InternalSettings.cpp',
         '<(SHARED_INTERMEDIATE_DIR)/webkit/bindings/V8InternalSettings.h',
+        '<(SHARED_INTERMEDIATE_DIR)/webcore/bindings/V8InternalSettingsGenerated.cpp',
+        '<(SHARED_INTERMEDIATE_DIR)/webkit/bindings/V8InternalSettingsGenerated.h',
       ],
       'sources/': [
         ['exclude', 'testing/js'],

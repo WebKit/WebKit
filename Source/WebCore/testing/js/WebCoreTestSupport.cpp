@@ -58,7 +58,7 @@ void resetInternalsObject(JSContextRef context)
     ASSERT(scriptContext->isDocument());
     Page* page = static_cast<Document*>(scriptContext)->frame()->page();
     Internals::resetToConsistentState(page);
-    InternalSettings::from(page)->reset();
+    InternalSettings::from(page)->resetToConsistentState();
 }
 
 }

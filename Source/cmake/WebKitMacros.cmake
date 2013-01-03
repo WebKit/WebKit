@@ -100,7 +100,7 @@ macro(GENERATE_SETTINGS_MACROS _infile _outfile)
     set(NAMES_GENERATOR ${WEBCORE_DIR}/page/make_settings.pl)
 
     add_custom_command(
-        OUTPUT  ${DERIVED_SOURCES_WEBCORE_DIR}/${_outfile}
+        OUTPUT ${DERIVED_SOURCES_WEBCORE_DIR}/${_outfile} ${DERIVED_SOURCES_WEBCORE_DIR}/InternalSettingsGenerated.h ${DERIVED_SOURCES_WEBCORE_DIR}/InternalSettingsGenerated.cpp ${DERIVED_SOURCES_WEBCORE_DIR}/InternalSettingsGenerated.idl
         MAIN_DEPENDENCY ${_infile}
         DEPENDS ${NAMES_GENERATOR} ${SCRIPTS_BINDINGS}
         COMMAND ${PERL_EXECUTABLE} -I${WEBCORE_DIR}/bindings/scripts ${NAMES_GENERATOR} --input ${_infile} --outputDir ${DERIVED_SOURCES_WEBCORE_DIR}

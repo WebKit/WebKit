@@ -5063,6 +5063,7 @@
           'testing/Internals.idl',
           'testing/InternalSettings.idl',
           'testing/MallocStatistics.idl',
+          '<(SHARED_INTERMEDIATE_DIR)/webkit/InternalSettingsGenerated.idl',
         ],
         'webcore_test_support_files': [
             'inspector/InspectorFrontendClientLocal.cpp',
@@ -5078,6 +5079,8 @@
             'testing/MallocStatistics.h',
             'testing/MockPagePopupDriver.cpp',
             'testing/MockPagePopupDriver.h',
+            '<(SHARED_INTERMEDIATE_DIR)/webkit/InternalSettingsGenerated.cpp',
+            '<(SHARED_INTERMEDIATE_DIR)/webkit/InternalSettingsGenerated.h',
         ],
         'webinspector_files': [
             'inspector/front-end/inspector.html',

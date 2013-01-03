@@ -1,3 +1,12 @@
+2013-01-03  Tony Chang  <tony@chromium.org>
+
+        Generate internal.settings from Settings.in
+        https://bugs.webkit.org/show_bug.cgi?id=104740
+
+        Reviewed by Adam Barth.
+
+        * Source/cmake/WebKitMacros.cmake: Specify additional output files from make_settings.pl.
+
 2013-01-02  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
 
         [EFL][CMAKE] Remove duplicated conditionals

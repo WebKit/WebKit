@@ -618,6 +618,7 @@ BINDING_IDLS = \
     $(WebCore)/xml/XPathNSResolver.idl \
     $(WebCore)/xml/XPathResult.idl \
     $(WebCore)/xml/XSLTProcessor.idl \
+    InternalSettingsGenerated.idl
 #
 
 .PHONY : all
@@ -927,9 +928,7 @@ MathMLElementFactory.cpp MathMLNames.cpp : dom/make_names.pl mathml/mathtags.in 
 
 # --------
 
-all : SettingsMacros.h
-
-SettingsMacros.h : page/make_settings.pl page/Settings.in
+InternalSettingsGenerated.idl InternalSettingsGenerated.cpp InternalSettingsGenerated.h SettingsMacros.h : page/make_settings.pl page/Settings.in
 	perl -I $(WebCore)/bindings/scripts $< --input $(WebCore)/page/Settings.in
 
 # --------
