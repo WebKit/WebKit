@@ -48,7 +48,6 @@ namespace WebCore {
 
 v8::Handle<v8::Value> V8SQLTransaction::executeSqlCallback(const v8::Arguments& args)
 {
-
     if (args.Length() == 0)
         return setDOMException(SYNTAX_ERR, args.GetIsolate());
 

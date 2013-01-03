@@ -227,7 +227,6 @@ void V8DOMWindow::openerAccessorSetter(v8::Local<v8::String> name, v8::Local<v8:
 
 v8::Handle<v8::Value> V8DOMWindow::addEventListenerCallback(const v8::Arguments& args)
 {
-
     String eventType = toWebCoreString(args[0]);
     bool useCapture = args[2]->BooleanValue();
 
@@ -258,7 +257,6 @@ v8::Handle<v8::Value> V8DOMWindow::addEventListenerCallback(const v8::Arguments&
 
 v8::Handle<v8::Value> V8DOMWindow::removeEventListenerCallback(const v8::Arguments& args)
 {
-
     String eventType = toWebCoreString(args[0]);
     bool useCapture = args[2]->BooleanValue();
 
@@ -295,7 +293,6 @@ static bool isLegacyTargetOriginDesignation(v8::Handle<v8::Value> value)
 
 v8::Handle<v8::Value> V8DOMWindow::postMessageCallback(const v8::Arguments& args)
 {
-
     // None of these need to be RefPtr because args and context are guaranteed
     // to hold on to them.
     DOMWindow* window = V8DOMWindow::toNative(args.Holder());

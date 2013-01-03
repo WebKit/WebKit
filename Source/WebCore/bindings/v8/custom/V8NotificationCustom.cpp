@@ -36,7 +36,6 @@ namespace WebCore {
 
 v8::Handle<v8::Value> V8Notification::requestPermissionCallback(const v8::Arguments& args)
 {
-
     bool succeeded = false;
     RefPtr<V8NotificationPermissionCallback> callback = createFunctionOnlyCallback<V8NotificationPermissionCallback>(args[0], succeeded, args.GetIsolate());
     if (!succeeded)

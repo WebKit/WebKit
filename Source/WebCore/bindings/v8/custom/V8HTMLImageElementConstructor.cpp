@@ -47,7 +47,6 @@ WrapperTypeInfo V8HTMLImageElementConstructor::info = { V8HTMLImageElementConstr
 
 static v8::Handle<v8::Value> v8HTMLImageElementConstructorCallback(const v8::Arguments& args)
 {
-
     if (!args.IsConstructCall())
         return throwTypeError("DOM object constructor cannot be called as a function.", args.GetIsolate());
 

@@ -99,7 +99,6 @@ v8::Handle<v8::Value> V8Storage::namedPropertyGetter(v8::Local<v8::String> name,
 
 v8::Handle<v8::Integer> V8Storage::namedPropertyQuery(v8::Local<v8::String> v8Name, const v8::AccessorInfo& info)
 {
-
     Storage* storage = V8Storage::toNative(info.Holder());
     String name = toWebCoreString(v8Name);
 

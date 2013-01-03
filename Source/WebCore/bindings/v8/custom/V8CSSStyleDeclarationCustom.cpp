@@ -181,7 +181,6 @@ v8::Handle<v8::Array> V8CSSStyleDeclaration::namedPropertyEnumerator(const v8::A
 
 v8::Handle<v8::Integer> V8CSSStyleDeclaration::namedPropertyQuery(v8::Local<v8::String> v8Name, const v8::AccessorInfo& info)
 {
-
     if (cssPropertyInfo(v8Name))
         return v8Integer(0, info.GetIsolate());
 

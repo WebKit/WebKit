@@ -272,7 +272,6 @@ enum WhichProgramCall {
 
 v8::Handle<v8::Value> V8WebGLRenderingContext::getAttachedShadersCallback(const v8::Arguments& args)
 {
-
     if (args.Length() < 1)
         return throwNotEnoughArgumentsError(args.GetIsolate());
 
@@ -312,7 +311,6 @@ v8::Handle<v8::Value> V8WebGLRenderingContext::getExtensionCallback(const v8::Ar
 
 v8::Handle<v8::Value> V8WebGLRenderingContext::getFramebufferAttachmentParameterCallback(const v8::Arguments& args)
 {
-
     if (args.Length() != 3)
         return throwNotEnoughArgumentsError(args.GetIsolate());
 
@@ -329,7 +327,6 @@ v8::Handle<v8::Value> V8WebGLRenderingContext::getFramebufferAttachmentParameter
 
 v8::Handle<v8::Value> V8WebGLRenderingContext::getParameterCallback(const v8::Arguments& args)
 {
-
     if (args.Length() != 1)
         return throwNotEnoughArgumentsError(args.GetIsolate());
 
@@ -344,7 +341,6 @@ v8::Handle<v8::Value> V8WebGLRenderingContext::getParameterCallback(const v8::Ar
 
 v8::Handle<v8::Value> V8WebGLRenderingContext::getProgramParameterCallback(const v8::Arguments& args)
 {
-
     if (args.Length() != 2)
         return throwNotEnoughArgumentsError(args.GetIsolate());
 
@@ -367,7 +363,6 @@ v8::Handle<v8::Value> V8WebGLRenderingContext::getRenderbufferParameterCallback(
 
 v8::Handle<v8::Value> V8WebGLRenderingContext::getShaderParameterCallback(const v8::Arguments& args)
 {
-
     if (args.Length() != 2)
         return throwNotEnoughArgumentsError(args.GetIsolate());
 
@@ -403,7 +398,6 @@ v8::Handle<v8::Value> V8WebGLRenderingContext::getTexParameterCallback(const v8:
 
 v8::Handle<v8::Value> V8WebGLRenderingContext::getUniformCallback(const v8::Arguments& args)
 {
-
     if (args.Length() != 2)
         return throwNotEnoughArgumentsError(args.GetIsolate());
 

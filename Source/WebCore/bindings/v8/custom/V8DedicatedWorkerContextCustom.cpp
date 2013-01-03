@@ -43,7 +43,6 @@ namespace WebCore {
 
 v8::Handle<v8::Value> V8DedicatedWorkerContext::postMessageCallback(const v8::Arguments& args)
 {
-
     DedicatedWorkerContext* workerContext = V8DedicatedWorkerContext::toNative(args.Holder());
     MessagePortArray ports;
     ArrayBufferArray arrayBuffers;

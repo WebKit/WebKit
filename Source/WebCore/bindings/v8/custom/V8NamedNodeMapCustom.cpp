@@ -54,7 +54,6 @@ v8::Handle<v8::Value> V8NamedNodeMap::indexedPropertyGetter(uint32_t index, cons
 
 v8::Handle<v8::Value> V8NamedNodeMap::namedPropertyGetter(v8::Local<v8::String> name, const v8::AccessorInfo& info)
 {
-
     if (!info.Holder()->GetRealNamedPropertyInPrototypeChain(name).IsEmpty())
         return v8Undefined();
     if (info.Holder()->HasRealNamedCallbackProperty(name))
