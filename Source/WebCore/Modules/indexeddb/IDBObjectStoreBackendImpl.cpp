@@ -289,8 +289,7 @@ void IDBObjectStoreBackendImpl::get(PassRefPtr<IDBKeyRange> keyRange, PassRefPtr
     IDB_TRACE("IDBObjectStoreBackendImpl::get");
     RefPtr<IDBCallbacks> callbacks = prpCallbacks;
     RefPtr<IDBTransactionBackendImpl> transaction = IDBTransactionBackendImpl::from(transactionPtr);
-    if (!transaction->scheduleTask(ObjectStoreRetrievalOperation::create(this, keyRange, callbacks)))
-        callbacks->onError(IDBDatabaseError::create(IDBDatabaseException::AbortError));
+    transaction->scheduleTask(ObjectStoreRetrievalOperation::create(this, keyRange, callbacks));
 }
 
 void IDBObjectStoreBackendImpl::ObjectStoreRetrievalOperation::perform(IDBTransactionBackendImpl* transaction)
@@ -339,8 +338,7 @@ void IDBObjectStoreBackendImpl::put(PassRefPtr<SerializedScriptValue> value, Pas
 
     ASSERT(autoIncrement() || key.get());
 
-    if (!transaction->scheduleTask(ObjectStoreStorageOperation::create(this, value, key, putMode, callbacks, newIndexIds.release(), newIndexKeys.release())))
-        callbacks->onError(IDBDatabaseError::create(IDBDatabaseException::AbortError));
+    transaction->scheduleTask(ObjectStoreStorageOperation::create(this, value, key, putMode, callbacks, newIndexIds.release(), newIndexKeys.release()));
 }
 
 bool IDBObjectStoreBackendImpl::IndexWriter::verifyIndexKeys(IDBBackingStore& backingStore, IDBBackingStore::Transaction* transaction, int64_t databaseId, int64_t objectStoreId, int64_t indexId, bool& canAddKeys, const IDBKey* primaryKey, String* errorMessage) const
@@ -555,16 +553,13 @@ void IDBObjectStoreBackendImpl::ObjectStoreStorageOperation::perform(IDBTransact
     m_callbacks->onSuccess(m_key.release());
 }
 
-void IDBObjectStoreBackendImpl::deleteFunction(PassRefPtr<IDBKeyRange> keyRange, PassRefPtr<IDBCallbacks> prpCallbacks, IDBTransactionBackendInterface* transactionPtr, ExceptionCode&)
+void IDBObjectStoreBackendImpl::deleteFunction(PassRefPtr<IDBKeyRange> keyRange, PassRefPtr<IDBCallbacks> callbacks, IDBTransactionBackendInterface* transactionPtr, ExceptionCode&)
 {
     IDB_TRACE("IDBObjectStoreBackendImpl::delete");
 
     RefPtr<IDBTransactionBackendImpl> transaction = IDBTransactionBackendImpl::from(transactionPtr);
     ASSERT(transaction->mode() != IDBTransaction::READ_ONLY);
-    RefPtr<IDBCallbacks> callbacks = prpCallbacks;
-
-    if (!transaction->scheduleTask(ObjectStoreDeletionOperation::create(this, keyRange, callbacks)))
-        callbacks->onError(IDBDatabaseError::create(IDBDatabaseException::AbortError));
+    transaction->scheduleTask(ObjectStoreDeletionOperation::create(this, keyRange, callbacks));
 }
 
 void IDBObjectStoreBackendImpl::ObjectStoreDeletionOperation::perform(IDBTransactionBackendImpl* transaction)
@@ -583,16 +578,13 @@ void IDBObjectStoreBackendImpl::ObjectStoreDeletionOperation::perform(IDBTransac
     m_callbacks->onSuccess();
 }
 
-void IDBObjectStoreBackendImpl::clear(PassRefPtr<IDBCallbacks> prpCallbacks, IDBTransactionBackendInterface* transactionPtr, ExceptionCode&)
+void IDBObjectStoreBackendImpl::clear(PassRefPtr<IDBCallbacks> callbacks, IDBTransactionBackendInterface* transactionPtr, ExceptionCode&)
 {
     IDB_TRACE("IDBObjectStoreBackendImpl::clear");
 
     RefPtr<IDBTransactionBackendImpl> transaction = IDBTransactionBackendImpl::from(transactionPtr);
     ASSERT(transaction->mode() != IDBTransaction::READ_ONLY);
-    RefPtr<IDBCallbacks> callbacks = prpCallbacks;
-
-    if (!transaction->scheduleTask(ObjectStoreClearOperation::create(this, callbacks)))
-        callbacks->onError(IDBDatabaseError::create(IDBDatabaseException::AbortError));
+    transaction->scheduleTask(ObjectStoreClearOperation::create(this, callbacks));
 }
 
 void IDBObjectStoreBackendImpl::ObjectStoreClearOperation::perform(IDBTransactionBackendImpl* transaction)
@@ -665,9 +657,7 @@ void IDBObjectStoreBackendImpl::openCursor(PassRefPtr<IDBKeyRange> range, IDBCur
     IDB_TRACE("IDBObjectStoreBackendImpl::openCursor");
     RefPtr<IDBCallbacks> callbacks = prpCallbacks;
     RefPtr<IDBTransactionBackendImpl> transaction = IDBTransactionBackendImpl::from(transactionPtr);
-    if (!transaction->scheduleTask(OpenObjectStoreCursorOperation::create(this, range, direction, callbacks, taskType))) {
-        callbacks->onError(IDBDatabaseError::create(IDBDatabaseException::AbortError));
-    }
+    transaction->scheduleTask(OpenObjectStoreCursorOperation::create(this, range, direction, callbacks, taskType));
 }
 
 void IDBObjectStoreBackendImpl::OpenObjectStoreCursorOperation::perform(IDBTransactionBackendImpl* transaction)
@@ -695,8 +685,7 @@ void IDBObjectStoreBackendImpl::count(PassRefPtr<IDBKeyRange> range, PassRefPtr<
     IDB_TRACE("IDBObjectStoreBackendImpl::count");
     RefPtr<IDBCallbacks> callbacks = prpCallbacks;
     RefPtr<IDBTransactionBackendImpl> transaction = IDBTransactionBackendImpl::from(transactionPtr);
-    if (!transaction->scheduleTask(ObjectStoreCountOperation::create(this, range, callbacks)))
-        callbacks->onError(IDBDatabaseError::create(IDBDatabaseException::AbortError));
+    transaction->scheduleTask(ObjectStoreCountOperation::create(this, range, callbacks));
 }
 
 void IDBObjectStoreBackendImpl::ObjectStoreCountOperation::perform(IDBTransactionBackendImpl* transaction)

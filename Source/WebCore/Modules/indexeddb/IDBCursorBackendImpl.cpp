@@ -127,17 +127,14 @@ void IDBCursorBackendImpl::continueFunction(PassRefPtr<IDBKey> key, PassRefPtr<I
 {
     IDB_TRACE("IDBCursorBackendImpl::continue");
     RefPtr<IDBCallbacks> callbacks = prpCallbacks;
-    if (!m_transaction->scheduleTask(m_taskType, CursorIterationOperation::create(this, key, callbacks)))
-        callbacks->onError(IDBDatabaseError::create(IDBDatabaseException::AbortError));
+    m_transaction->scheduleTask(m_taskType, CursorIterationOperation::create(this, key, callbacks));
 }
 
 void IDBCursorBackendImpl::advance(unsigned long count, PassRefPtr<IDBCallbacks> prpCallbacks, ExceptionCode&)
 {
     IDB_TRACE("IDBCursorBackendImpl::advance");
     RefPtr<IDBCallbacks> callbacks = prpCallbacks;
-
-    if (!m_transaction->scheduleTask(CursorAdvanceOperation::create(this, count, callbacks)))
-        callbacks->onError(IDBDatabaseError::create(IDBDatabaseException::AbortError));
+    m_transaction->scheduleTask(CursorAdvanceOperation::create(this, count, callbacks));
 }
 
 void IDBCursorBackendImpl::CursorAdvanceOperation::perform(IDBTransactionBackendImpl*)
@@ -181,8 +178,7 @@ void IDBCursorBackendImpl::prefetchContinue(int numberToFetch, PassRefPtr<IDBCal
 {
     IDB_TRACE("IDBCursorBackendImpl::prefetchContinue");
     RefPtr<IDBCallbacks> callbacks = prpCallbacks;
-    if (!m_transaction->scheduleTask(m_taskType, CursorPrefetchIterationOperation::create(this, numberToFetch, callbacks)))
-        callbacks->onError(IDBDatabaseError::create(IDBDatabaseException::AbortError));
+    m_transaction->scheduleTask(m_taskType, CursorPrefetchIterationOperation::create(this, numberToFetch, callbacks));
 }
 
 void IDBCursorBackendImpl::CursorPrefetchIterationOperation::perform(IDBTransactionBackendImpl*)

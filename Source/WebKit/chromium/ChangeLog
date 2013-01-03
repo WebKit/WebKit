@@ -1,3 +1,24 @@
+2013-01-03  Joshua Bell  <jsbell@chromium.org>
+
+        IndexedDB: Simplify IDBTransactionBackendImpl::scheduleTask usage
+        https://bugs.webkit.org/show_bug.cgi?id=103536
+
+        Reviewed by Tony Chang.
+
+        Track whether IDBCallbacks has fired before being destructed. If not it probably
+        came in after a transaction had asynchronously aborted; fire an abort error which
+        will be ignored on the front-end but will clean up lingering IPC tracking.
+
+        * public/WebIDBDatabaseException.h:
+        * src/AssertMatchingEnums.cpp:
+        * src/IDBCallbacksProxy.cpp:
+        (WebKit::IDBCallbacksProxy::IDBCallbacksProxy):
+        (WebKit::IDBCallbacksProxy::~IDBCallbacksProxy):
+        (WebKit::IDBCallbacksProxy::onError):
+        (WebKit::IDBCallbacksProxy::onSuccess):
+        * src/IDBCallbacksProxy.h:
+        (IDBCallbacksProxy):
+
 2013-01-02  Kenneth Russell  <kbr@google.com>
 
         [chromium] Creation of dedicated workers (isolates) leaks reference to HTMLDocument
