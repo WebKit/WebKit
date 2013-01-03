@@ -1,3 +1,10 @@
+2013-01-03  Terry Anderson  <tdanderson@chromium.org>
+
+        Unreviewed gardening. Marking webaudio/automatic-pull-node.html as
+        [ Pass Slow ] instead of [ Pass Timeout ] for XP.
+
+        * platform/chromium/TestExpectations:
+
 2013-01-03  Csaba Osztrogonác  <ossy@webkit.org>
 
         [Qt] Unreviewed gardening, skip a new failing test.
