@@ -277,6 +277,7 @@ public:
     Node* nonBoundaryShadowTreeRootNode();
 
     // Node's parent, shadow tree host.
+    // FIXME: These methods should be renamed parentOrShadowHost*
     ContainerNode* parentOrHostNode() const;
     Element* parentOrHostElement() const;
     void setParentOrHostNode(ContainerNode*);
@@ -488,7 +489,8 @@ public:
     void checkSetPrefix(const AtomicString& prefix, ExceptionCode&);
     bool isDescendantOf(const Node*) const;
     bool contains(const Node*) const;
-    bool containsIncludingShadowDOM(Node*);
+    bool containsIncludingShadowDOM(const Node*) const;
+    bool containsIncludingHostElements(const Node*) const;
 
     // Used to determine whether range offsets use characters or node indices.
     virtual bool offsetInCharacters() const;

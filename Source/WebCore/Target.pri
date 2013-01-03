@@ -1645,6 +1645,7 @@ HEADERS += \
     dom/StyledElement.h \
     dom/StyleElement.h \
     dom/TagNodeList.h \
+    dom/TemplateContentDocumentFragment.h \
     dom/TextEvent.h \
     dom/TextEventInputType.h \
     dom/Text.h \

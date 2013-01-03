@@ -54990,6 +54990,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\dom\TemplateContentDocumentFragment.h"
+				>
+			</File>
+			<File
 				RelativePath="..\dom\Text.cpp"
 				>
 				<FileConfiguration

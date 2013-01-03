@@ -1,3 +1,17 @@
+2013-01-03  Adam Klein  <adamk@chromium.org>
+
+        [HTMLTemplateElement] Disallow cycles within template content
+        https://bugs.webkit.org/show_bug.cgi?id=105066
+
+        Reviewed by Ojan Vafai.
+
+        * fast/dom/HTMLTemplateElement/cycles-expected.txt: Added.
+        * fast/dom/HTMLTemplateElement/cycles-in-shadow-expected.txt: Added.
+        * fast/dom/HTMLTemplateElement/cycles-in-shadow.html: Added.
+        * fast/dom/HTMLTemplateElement/cycles.html: Added.
+        * fast/dom/shadow/shadow-hierarchy-exception-expected.txt: Added.
+        * fast/dom/shadow/shadow-hierarchy-exception.html: Added.
+
 2013-01-03  Alexis Menard  <alexis@webkit.org>
 
         Querying transition-timing-function value on the computed style does not return keywords when it should.

@@ -46,6 +46,7 @@
 #include "DOMImplementation.h"
 #include "DOMSettableTokenList.h"
 #include "Document.h"
+#include "DocumentFragment.h"
 #include "DocumentType.h"
 #include "Element.h"
 #include "ElementRareData.h"
@@ -96,6 +97,7 @@
 #include "StorageEvent.h"
 #include "StyleResolver.h"
 #include "TagNodeList.h"
+#include "TemplateContentDocumentFragment.h"
 #include "Text.h"
 #include "TextEvent.h"
 #include "TreeScopeAdopter.h"
@@ -1055,15 +1057,30 @@ bool Node::contains(const Node* node) const
     return this == node || node->isDescendantOf(this);
 }
 
-bool Node::containsIncludingShadowDOM(Node* node)
+bool Node::containsIncludingShadowDOM(const Node* node) const
 {
-    if (!node)
-        return false;
-    for (Node* n = node; n; n = n->parentOrHostNode()) {
-        if (n == this)
+    for (; node; node = node->parentOrHostNode()) {
+        if (node == this)
             return true;
     }
     return false;
+}
+
+bool Node::containsIncludingHostElements(const Node* node) const
+{
+#if ENABLE(TEMPLATE_ELEMENT)
+    while (node) {
+        if (node == this)
+            return true;
+        if (node->isDocumentFragment() && static_cast<const DocumentFragment*>(node)->isTemplateContent())
+            node = static_cast<const TemplateContentDocumentFragment*>(node)->host();
+        else
+            node = node->parentOrHostNode();
+    }
+    return false;
+#else
+    return containsIncludingShadowDOM(node);
+#endif
 }
 
 void Node::attach()

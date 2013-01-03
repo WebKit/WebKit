@@ -47,6 +47,7 @@
 #include "RenderTheme.h"
 #include "RenderWidget.h"
 #include "RootInlineBox.h"
+#include "TemplateContentDocumentFragment.h"
 #include <wtf/CurrentTime.h>
 #include <wtf/Vector.h>
 
@@ -137,6 +138,24 @@ static inline bool isChildTypeAllowed(ContainerNode* newParent, Node* child)
     return true;
 }
 
+static inline bool isInTemplateContent(const Node* node)
+{
+#if ENABLE(TEMPLATE_ELEMENT)
+    Document* document = node->document();
+    return document && document == document->templateContentsOwnerDocument();
+#else
+    UNUSED(node);
+    return false;
+#endif
+}
+
+static inline bool containsConsideringHostElements(const Node* newChild, const Node* newParent)
+{
+    return (newParent->isInShadowTree() || isInTemplateContent(newParent))
+        ? newChild->containsIncludingHostElements(newParent)
+        : newChild->contains(newParent);
+}
+
 static inline ExceptionCode checkAcceptChild(ContainerNode* newParent, Node* newChild, Node* oldChild)
 {
     // Not mentioned in spec: throw NOT_FOUND_ERR if newChild is null
@@ -148,7 +167,7 @@ static inline ExceptionCode checkAcceptChild(ContainerNode* newParent, Node* new
         ASSERT(!newParent->isReadOnlyNode());
         ASSERT(!newParent->isDocumentTypeNode());
         ASSERT(isChildTypeAllowed(newParent, newChild));
-        if (newChild->contains(newParent))
+        if (containsConsideringHostElements(newChild, newParent))
             return HIERARCHY_REQUEST_ERR;
         return 0;
     }
@@ -162,7 +181,7 @@ static inline ExceptionCode checkAcceptChild(ContainerNode* newParent, Node* new
         return NO_MODIFICATION_ALLOWED_ERR;
     if (newChild->inDocument() && newChild->isDocumentTypeNode())
         return HIERARCHY_REQUEST_ERR;
-    if (newChild->contains(newParent))
+    if (containsConsideringHostElements(newChild, newParent))
         return HIERARCHY_REQUEST_ERR;
 
     if (oldChild && newParent->isDocumentNode()) {

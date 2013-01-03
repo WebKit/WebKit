@@ -5945,18 +5945,15 @@ Locale& Document::getCachedLocale(const AtomicString& locale)
 }
 
 #if ENABLE(TEMPLATE_ELEMENT)
-Document* Document::templateContentsOwnerDocument()
+Document* Document::ensureTemplateContentsOwnerDocument()
 {
-    // If DOCUMENT does not have a browsing context, Let TEMPLATE CONTENTS OWNER be DOCUMENT and abort these steps.
-    if (!m_frame)
-        return this;
+    if (const Document* document = templateContentsOwnerDocument())
+        return const_cast<Document*>(document);
 
-    if (!m_templateContentsOwnerDocument) {
-        if (isHTMLDocument())
-            m_templateContentsOwnerDocument = HTMLDocument::create(0, blankURL());
-        else
-            m_templateContentsOwnerDocument = Document::create(0, blankURL());
-    }
+    if (isHTMLDocument())
+        m_templateContentsOwnerDocument = HTMLDocument::create(0, blankURL());
+    else
+        m_templateContentsOwnerDocument = Document::create(0, blankURL());
 
     return m_templateContentsOwnerDocument.get();
 }

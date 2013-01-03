@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<body>
+<script src="../../js/resources/js-test-pre.js"></script>
+<div id=container>
+  <template><div></div></template>
+</div>
+<script>
+description('Test that cycle detection traverses over both templates and shadow roots');
+var outerDiv = document.getElementById('container');
+var template = document.querySelector('template');
+var div = template.content.firstChild;
+var shadowRoot = div.webkitCreateShadowRoot();
+var shadowDiv = shadowRoot.appendChild(document.createElement('div'));
+shouldThrow('shadowDiv.appendChild(outerDiv)');
+</script>
+<script src="../../js/resources/js-test-post.js"></script>
+</body>

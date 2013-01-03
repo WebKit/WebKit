@@ -37,6 +37,7 @@
 #include "DOMImplementation.h"
 #include "DocumentFragment.h"
 #include "HTMLDocument.h"
+#include "TemplateContentDocumentFragment.h"
 #include "markup.h"
 
 namespace WebCore {
@@ -62,7 +63,7 @@ PassRefPtr<HTMLTemplateElement> HTMLTemplateElement::create(const QualifiedName&
 DocumentFragment* HTMLTemplateElement::content() const
 {
     if (!m_content)
-        m_content = DocumentFragment::create(ownerDocument()->templateContentsOwnerDocument());
+        m_content = TemplateContentDocumentFragment::create(document()->ensureTemplateContentsOwnerDocument(), this);
 
     return m_content.get();
 }

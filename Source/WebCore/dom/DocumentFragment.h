@@ -37,6 +37,7 @@ public:
     bool parseXML(const String&, Element* contextElement, FragmentScriptingPermission = AllowScriptingContent);
     
     virtual bool canContainRangeEndPoint() const { return true; }
+    virtual bool isTemplateContent() const { return false; }
 
 protected:
     DocumentFragment(Document*, ConstructionType = CreateContainer);

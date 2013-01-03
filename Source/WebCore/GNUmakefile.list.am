@@ -2961,6 +2961,7 @@ webcore_sources += \
 	Source/WebCore/dom/StyleElement.h \
 	Source/WebCore/dom/TagNodeList.cpp \
 	Source/WebCore/dom/TagNodeList.h \
+	Source/WebCore/dom/TemplateContentDocumentFragment.h \
 	Source/WebCore/dom/Text.cpp \
 	Source/WebCore/dom/TextEvent.cpp \
 	Source/WebCore/dom/TextEvent.h \

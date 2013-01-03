@@ -1192,7 +1192,8 @@ public:
 #endif
 
 #if ENABLE(TEMPLATE_ELEMENT)
-    Document* templateContentsOwnerDocument();
+    const Document* templateContentsOwnerDocument() const;
+    Document* ensureTemplateContentsOwnerDocument();
 #endif
 
     virtual void addConsoleMessage(MessageSource, MessageLevel, const String& message, unsigned long requestIdentifier = 0);
@@ -1569,6 +1570,17 @@ inline void Document::notifyRemovePendingSheetIfNeeded()
     if (m_needsNotifyRemoveAllPendingStylesheet)
         didRemoveAllPendingStylesheet();
 }
+
+#if ENABLE(TEMPLATE_ELEMENT)
+inline const Document* Document::templateContentsOwnerDocument() const
+{
+    // If DOCUMENT does not have a browsing context, Let TEMPLATE CONTENTS OWNER be DOCUMENT and abort these steps.
+    if (!m_frame)
+        return this;
+
+    return m_templateContentsOwnerDocument.get();
+}
+#endif
 
 // Put these methods here, because they require the Document definition, but we really want to inline them.
 

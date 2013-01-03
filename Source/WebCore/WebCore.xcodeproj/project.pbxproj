@@ -5905,6 +5905,7 @@
 		C5D4AA7A116BAFB60069CA93 /* GlyphMetricsMap.h in Headers */ = {isa = PBXBuildFile; fileRef = C5D4AA78116BAFB60069CA93 /* GlyphMetricsMap.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		C5E9B67710697E1300C7BB1A /* StorageEventDispatcher.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C5E9B67610697E1300C7BB1A /* StorageEventDispatcher.cpp */; };
 		C5EBDD84105EDDEC0056816F /* StorageEventDispatcher.h in Headers */ = {isa = PBXBuildFile; fileRef = C5EBDD81105EDDEC0056816F /* StorageEventDispatcher.h */; };
+		C65046A9167BFB5500CC2A4D /* TemplateContentDocumentFragment.h in Headers */ = {isa = PBXBuildFile; fileRef = C65046A8167BFB5500CC2A4D /* TemplateContentDocumentFragment.h */; };
 		C6A703325C9D0B6CDCBC4D77 /* JSEventTarget.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C6A703325C9D0B6CDCBC4D78 /* JSEventTarget.cpp */; };
 		C6B31B2E14F841FB0089F23F /* ScrollbarThemeClient.h in Headers */ = {isa = PBXBuildFile; fileRef = C691614714F6EBA70046375C /* ScrollbarThemeClient.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		C6D74AD509AA282E000B0A52 /* ModifySelectionListLevel.h in Headers */ = {isa = PBXBuildFile; fileRef = C6D74AD309AA282E000B0A52 /* ModifySelectionListLevel.h */; };
@@ -13365,6 +13366,7 @@
 		C5EBDD81105EDDEC0056816F /* StorageEventDispatcher.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StorageEventDispatcher.h; sourceTree = "<group>"; };
 		C5F765B414E1D414006C899B /* PasteboardStrategy.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PasteboardStrategy.h; sourceTree = "<group>"; };
 		C5F765BA14E1ECF4006C899B /* PlatformPasteboardMac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = PlatformPasteboardMac.mm; sourceTree = "<group>"; };
+		C65046A8167BFB5500CC2A4D /* TemplateContentDocumentFragment.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TemplateContentDocumentFragment.h; sourceTree = "<group>"; };
 		C691614714F6EBA70046375C /* ScrollbarThemeClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ScrollbarThemeClient.h; sourceTree = "<group>"; };
 		C6A703325C9D0B6CDCBC4D78 /* JSEventTarget.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = JSEventTarget.cpp; sourceTree = "<group>"; };
 		C6D74AD309AA282E000B0A52 /* ModifySelectionListLevel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ModifySelectionListLevel.h; sourceTree = "<group>"; };
@@ -22278,6 +22280,7 @@
 				AA4C3A750B2B1679002334A2 /* StyleElement.h */,
 				BCE3BEC00D222B1D007E06E4 /* TagNodeList.cpp */,
 				BCE3BEC10D222B1D007E06E4 /* TagNodeList.h */,
+				C65046A8167BFB5500CC2A4D /* TemplateContentDocumentFragment.h */,
 				6550B69B099DF0270090D781 /* Text.cpp */,
 				6550B69C099DF0270090D781 /* Text.h */,
 				93EEC1F609C2877700C515D1 /* Text.idl */,
@@ -25704,6 +25707,7 @@
 				A8CFF0510A154F09000A4234 /* TableLayout.h in Headers */,
 				BCE3BEC30D222B1D007E06E4 /* TagNodeList.h in Headers */,
 				F55B3DD61251F12D003EF269 /* TelephoneInputType.h in Headers */,
+				C65046A9167BFB5500CC2A4D /* TemplateContentDocumentFragment.h in Headers */,
 				6550B6A6099DF0270090D781 /* Text.h in Headers */,
 				93309E17099E64920056E581 /* TextAffinity.h in Headers */,
 				CE7B2DB51586ABAD0098B3FA /* TextAlternativeWithRange.h in Headers */,
