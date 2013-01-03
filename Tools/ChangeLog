@@ -1,3 +1,19 @@
+2013-01-03  Jonathan Liu  <net147@gmail.com>
+
+        [Qt] Fix library linking order
+        https://bugs.webkit.org/show_bug.cgi?id=105818
+
+        Some Qt libraries are linked before the private static libraries
+        that depend on them which results in QtWebKit failing to link.
+
+        Copy Qt module dependencies from QT to QT_PRIVATE when creating
+        module to ensure the Qt libraries are linked after the private
+        static libraries that depend on them.
+
+        Reviewed by Tor Arne Vestbø.
+
+        * qmake/mkspecs/features/default_post.prf:
+
 2013-01-02  Byungwoo Lee  <bw80.lee@samsung.com>
 
         [EFL][WK2] Fix tooltip bugs in MiniBrowser.

@@ -202,6 +202,10 @@ creating_module {
     # to end up in as public API dependenices in the QtWebKit prl file.
     LIBS_PRIVATE += $$LIBS
     unset(LIBS)
+    # Copy Qt module dependencies from QT to QT_PRIVATE to ensure the
+    # Qt libraries are linked after the private static libraries that
+    # depend on them
+    QT_PRIVATE += $$QT
 }
 
 equals(_PRO_FILE_, $${ROOT_WEBKIT_DIR}/WebKit.pro):!isEmpty(OVERRIDE_SUBDIRS) {
