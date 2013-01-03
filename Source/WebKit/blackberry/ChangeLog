@@ -1,3 +1,19 @@
+2013-01-02  Otto Derek Cheung  <otcheung@rim.com>
+
+        [BlackBerry] Do not determine db quota limit using db file size
+        https://bugs.webkit.org/show_bug.cgi?id=105991
+
+        PR 267191
+
+        Reviewed by George Staikos.
+
+        Passing the current quota to WebPageClientImpl::databaseQuota so we can determine a better
+        quota limit without using the db file size.
+
+        * Api/WebPageClient.h:
+        * WebCoreSupport/ChromeClientBlackBerry.cpp:
+        (WebCore::ChromeClientBlackBerry::exceededDatabaseQuota):
+
 2013-01-02  Yong Li  <yoli@rim.com>
 
         [BlackBerry] Cached frame shouldn't access the page when being destroyed
