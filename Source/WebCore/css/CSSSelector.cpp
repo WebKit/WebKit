@@ -223,6 +223,9 @@ PseudoId CSSSelector::pseudoId(PseudoType type)
 #if ENABLE(VIDEO_TRACK)
     case PseudoCue:
 #endif
+#if ENABLE(IFRAME_SEAMLESS)
+    case PseudoSeamlessDocument:
+#endif
         return NOPSEUDO;
     case PseudoNotParsed:
         ASSERT_NOT_REACHED();
@@ -308,6 +311,9 @@ static HashMap<AtomicStringImpl*, CSSSelector::PseudoType>* nameToPseudoTypeMap(
 #if ENABLE(VIDEO_TRACK)
     DEFINE_STATIC_LOCAL(AtomicString, cue, ("cue(", AtomicString::ConstructFromLiteral));
 #endif
+#if ENABLE(IFRAME_SEAMLESS)
+    DEFINE_STATIC_LOCAL(AtomicString, seamlessDocument, ("-webkit-seamless-document", AtomicString::ConstructFromLiteral));
+#endif
     DEFINE_STATIC_LOCAL(AtomicString, inRange, ("in-range", AtomicString::ConstructFromLiteral));
     DEFINE_STATIC_LOCAL(AtomicString, outOfRange, ("out-of-range", AtomicString::ConstructFromLiteral));
 
@@ -385,6 +391,9 @@ static HashMap<AtomicStringImpl*, CSSSelector::PseudoType>* nameToPseudoTypeMap(
 #endif
 #if ENABLE(VIDEO_TRACK)
         nameToPseudoType->set(cue.impl(), CSSSelector::PseudoCue);
+#endif
+#if ENABLE(IFRAME_SEAMLESS)
+        nameToPseudoType->set(seamlessDocument.impl(), CSSSelector::PseudoSeamlessDocument);
 #endif
         nameToPseudoType->set(inRange.impl(), CSSSelector::PseudoInRange);
         nameToPseudoType->set(outOfRange.impl(), CSSSelector::PseudoOutOfRange);
@@ -504,6 +513,9 @@ void CSSSelector::extractPseudoType() const
     case PseudoFullScreenDocument:
     case PseudoFullScreenAncestor:
     case PseudoAnimatingFullScreenTransition:
+#endif
+#if ENABLE(IFRAME_SEAMLESS)
+    case PseudoSeamlessDocument:
 #endif
     case PseudoInRange:
     case PseudoOutOfRange:

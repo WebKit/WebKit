@@ -59,6 +59,12 @@ body {
     margin: 8px
 }
 
+#if defined(ENABLE_IFRAME_SEAMLESS) && ENABLE_IFRAME_SEAMLESS
+body:-webkit-seamless-document {
+    margin: 0px;
+}
+#endif
+
 p {
     display: block;
     -webkit-margin-before: 1__qem;

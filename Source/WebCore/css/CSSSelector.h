@@ -159,6 +159,9 @@ namespace WebCore {
 #if ENABLE(VIDEO_TRACK)
             PseudoCue,
 #endif
+#if ENABLE(IFRAME_SEAMLESS)
+            PseudoSeamlessDocument
+#endif
         };
 
         enum MarginBoxType {

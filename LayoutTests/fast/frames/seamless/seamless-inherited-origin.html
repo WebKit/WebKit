@@ -10,9 +10,8 @@ window.onload = function () {
     shouldBeTrue("iframe.seamless");
 
     shouldBeEqualToString("window.getComputedStyle(iframe).width", "200px");
-    // Initially about:blank has no content, thus no height, except the body
-    // element defaults to margin: 8px (which gets collapsed to 8px when rendered).
-    shouldBeEqualToString("window.getComputedStyle(iframe).height", "8px");
+    // Initially about:blank has no content, thus no height.
+    shouldBeEqualToString("window.getComputedStyle(iframe).height", "0px");
 
     // Replace the empty document with a 100x100px square to test if it displays seamlessly.
     window.iframe.contentDocument.write("<!DOCTYPE html><html style='width: 100px; height: 100px; background-color: green'></html>");

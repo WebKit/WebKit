@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <script src="../../js/resources/js-test-pre.js"></script>
+    <script>
+        window.onload = function () {
+            debug("This test ensures that the 'body' element inside a seamless iframe defaults to a margin of 0px rather than 8px, and that we don't break the parent document's 'body' style in the process.");
+
+            window.seamlesssrcdoc = document.getElementById('seamlesssrcdoc').contentDocument.querySelector('body');
+            window.seamlesssrc = document.getElementById('seamlesssrc').contentDocument.querySelector('body');
+            window.srcdoc = document.getElementById('srcdoc').contentDocument.querySelector('body');
+            window.src = document.getElementById('src').contentDocument.querySelector('body');
+
+            shouldBeEqualToString("window.getComputedStyle(document.body).getPropertyCSSValue('margin').cssText", "8px");
+            shouldBeEqualToString("window.getComputedStyle(seamlesssrcdoc).getPropertyCSSValue('margin').cssText", "0px");
+            shouldBeEqualToString("window.getComputedStyle(seamlesssrc).getPropertyCSSValue('margin').cssText", "0px");
+            shouldBeEqualToString("window.getComputedStyle(srcdoc).getPropertyCSSValue('margin').cssText", "8px");
+            shouldBeEqualToString("window.getComputedStyle(src).getPropertyCSSValue('margin').cssText", "8px");
+        };
+    </script>
+</head>
+<body>
+    <iframe id="seamlesssrc" seamless src="resources/span.html"></iframe>
+    <iframe id="seamlesssrcdoc" seamless srcdoc="<span>This is a span.</span>"></iframe>
+    <iframe id="src" src="resources/span.html"></iframe>
+    <iframe id="srcdoc" srcdoc="<span>This is a span.</span>"></iframe>
+</body>
+</html>
