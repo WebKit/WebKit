@@ -101,6 +101,12 @@ public:
 
     ClassList* classList() const { return m_classList.get(); }
     void setClassList(PassOwnPtr<ClassList> classList) { m_classList = classList; }
+    void clearClassListValueForQuirksMode()
+    {
+        if (!m_classList)
+            return;
+        m_classList->clearValueForQuirksMode();
+    }
 
     DatasetDOMStringMap* dataset() const { return m_dataset.get(); }
     void setDataset(PassOwnPtr<DatasetDOMStringMap> dataset) { m_dataset = dataset; }

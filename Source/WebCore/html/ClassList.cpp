@@ -60,12 +60,6 @@ bool ClassList::containsInternal(const AtomicString& token) const
     return m_element->hasClass() && classNames().contains(token);
 }
 
-void ClassList::reset(const String& newClassName)
-{
-    if (m_element->document()->inQuirksMode())
-        m_classNamesForQuirksMode = adoptPtr(new SpaceSplitString(newClassName, false));
-}
-
 const SpaceSplitString& ClassList::classNames() const
 {
     ASSERT(m_element->hasClass());

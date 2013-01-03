@@ -56,7 +56,7 @@ public:
 
     virtual Element* element() OVERRIDE { return m_element; }
 
-    void reset(const String&);
+    void clearValueForQuirksMode() { m_classNamesForQuirksMode = nullptr; }
 
 private:
     ClassList(Element*);

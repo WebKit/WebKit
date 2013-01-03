@@ -385,7 +385,6 @@ public:
     bool webkitMatchesSelector(const String& selectors, ExceptionCode&);
 
     DOMTokenList* classList();
-    DOMTokenList* optionalClassList() const;
 
     DOMStringMap* dataset();
 

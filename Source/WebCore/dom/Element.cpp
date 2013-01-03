@@ -899,8 +899,8 @@ void Element::classAttributeChanged(const AtomicString& newClassString)
         attributeData->clearClass();
     }
 
-    if (DOMTokenList* classList = optionalClassList())
-        static_cast<ClassList*>(classList)->reset(newClassString);
+    if (hasRareData())
+        elementRareData()->clearClassListValueForQuirksMode();
 
     if (shouldInvalidateStyle)
         setNeedsStyleRecalc();
@@ -1100,6 +1100,9 @@ Node::InsertionNotificationRequest Element::insertedInto(ContainerNode* insertio
 
     if (!insertionPoint->isInTreeScope())
         return InsertionDone;
+
+    if (hasRareData())
+        elementRareData()->clearClassListValueForQuirksMode();
 
     TreeScope* scope = insertionPoint->treeScope();
     if (scope != treeScope())
@@ -2207,13 +2210,6 @@ DOMTokenList* Element::classList()
     if (!data->classList())
         data->setClassList(ClassList::create(this));
     return data->classList();
-}
-
-DOMTokenList* Element::optionalClassList() const
-{
-    if (!hasRareData())
-        return 0;
-    return elementRareData()->classList();
 }
 
 DOMStringMap* Element::dataset()
