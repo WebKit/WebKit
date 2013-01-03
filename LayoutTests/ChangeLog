@@ -1,3 +1,13 @@
+2013-01-03  Adam Klein  <adamk@chromium.org>
+
+        Clear failed image loads when an <img> is adopted into a different document
+        https://bugs.webkit.org/show_bug.cgi?id=104409
+
+        Reviewed by Nate Chapin.
+
+        * loader/image-loader-adoptNode-assert-expected.txt: Added.
+        * loader/image-loader-adoptNode-assert.html: Added.
+
 2013-01-03  Vincent Scheib  <scheib@chromium.org>
 
         Sandbox-blocked pointer lock should log to the console.

@@ -214,7 +214,7 @@ void ImageLoader::updateFromElement()
             m_hasPendingErrorEvent = true;
             errorEventSender().dispatchEventSoon(this);
         } else
-            m_failedLoadURL = AtomicString();
+            clearFailedLoadURL();
     } else if (!attr.isNull()) {
         // Fire an error event if the url is empty.
         // FIXME: Should we fire this event asynchronoulsy via errorEventSender()?
@@ -263,8 +263,7 @@ void ImageLoader::updateFromElement()
 
 void ImageLoader::updateFromElementIgnoringPreviousError()
 {
-    // Clear previous error.
-    m_failedLoadURL = AtomicString();
+    clearFailedLoadURL();
     updateFromElement();
 }
 
@@ -452,7 +451,13 @@ void ImageLoader::dispatchPendingErrorEvents()
 
 void ImageLoader::elementDidMoveToNewDocument()
 {
+    clearFailedLoadURL();
     setImage(0);
+}
+
+inline void ImageLoader::clearFailedLoadURL()
+{
+    m_failedLoadURL = AtomicString();
 }
 
 }

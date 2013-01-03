@@ -92,6 +92,7 @@ private:
     void updateRenderer();
 
     void setImageWithoutConsideringPendingLoadEvent(CachedImage*);
+    void clearFailedLoadURL();
 
     ImageLoaderClient* m_client;
     CachedResourceHandle<CachedImage> m_image;
