@@ -1,7 +1,7 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
 layer at (0,0) size 406x406
-  RenderSVGRoot {svg} at (45,33) size 361x373
+  RenderSVGRoot {svg} at (39,27) size 367x379
     RenderSVGContainer {g} at (303,303) size 100x100
       RenderSVGEllipse {circle} at (303,303) size 100x100 [fill={[type=SOLID] [color=#008000]}] [cx=350.00] [cy=350.00] [r=50.00]
     RenderSVGText {text} at (48,36) size 303x18 contains 1 chunk(s)
