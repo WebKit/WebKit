@@ -1,3 +1,15 @@
+2013-01-03  Beth Dakin  <bdakin@apple.com>
+
+        https://bugs.webkit.org/show_bug.cgi?id=105475
+        Nested fixed position elements incorrectly repositioned on scrolling
+
+        Reviewed by Simon Fraser.
+
+        Unfortunately, the children were not really accurate before, and they are not 
+        really accurate now. It seems like the state tree is not fully up-to-date when the 
+        test is printing it. 
+        * platform/mac/tiled-drawing/fixed/nested-fixed-expected.txt:
+
 2013-01-03  Adam Klein  <adamk@chromium.org>
 
         [HTMLTemplateElement] When adopting a template element, also adopt its content into the appropriate document

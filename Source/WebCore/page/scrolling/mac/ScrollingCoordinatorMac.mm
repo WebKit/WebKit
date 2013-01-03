@@ -223,8 +223,16 @@ ScrollingNodeID ScrollingCoordinatorMac::attachToStateTree(ScrollingNodeType nod
 {
     ASSERT(newNodeID);
 
-    if (stateNodeForID(newNodeID))
-        return newNodeID;
+    if (ScrollingStateNode* node = stateNodeForID(newNodeID)) {
+        ScrollingStateNode* parent = stateNodeForID(parentID);
+        if (!parent)
+            return newNodeID;
+        if (node->parent() == parent)
+            return newNodeID;
+
+        // The node is being re-parented. To do that, we'll remove it, and then re-create a new node.
+        removeNode(node);
+    }
 
     ScrollingStateNode* newNode;
     if (!parentID) {

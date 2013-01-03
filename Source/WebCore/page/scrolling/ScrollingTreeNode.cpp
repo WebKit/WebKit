@@ -58,7 +58,11 @@ void ScrollingTreeNode::removeChild(ScrollingTreeNode* node)
     if (!m_children)
         return;
 
-    if (size_t index = m_children->find(node)) {
+    size_t index = m_children->find(node);
+
+    // The index will be notFound if the node to remove is a deeper-than-1-level descendant or
+    // if node is the root state node.
+    if (index != notFound) {
         m_children->remove(index);
         return;
     }

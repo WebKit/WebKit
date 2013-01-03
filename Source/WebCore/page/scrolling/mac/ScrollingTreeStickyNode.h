@@ -48,7 +48,7 @@ private:
     ScrollingTreeStickyNode(ScrollingTree*);
 
     virtual void update(ScrollingStateNode*) OVERRIDE;
-    virtual void parentScrollPositionDidChange(const IntRect& viewportRect) OVERRIDE;
+    virtual void parentScrollPositionDidChange(const IntRect& viewportRect, const FloatSize& cumulativeDelta) OVERRIDE;
 
     StickyPositionViewportConstraints m_constraints;
     RetainPtr<CALayer> m_layer;

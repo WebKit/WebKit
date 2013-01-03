@@ -63,9 +63,14 @@ static inline CGPoint operator*(CGPoint& a, const CGSize& b)
     return CGPointMake(a.x * b.width, a.y * b.height);
 }
 
-void ScrollingTreeStickyNode::parentScrollPositionDidChange(const IntRect& viewportRect)
+void ScrollingTreeStickyNode::parentScrollPositionDidChange(const IntRect& viewportRect, const FloatSize& cumulativeDelta)
 {
     FloatPoint layerPosition = m_constraints.layerPositionForViewportRect(viewportRect);
+
+    // FIXME: Subtracting the cumulativeDelta is not totally sufficient to get the new position right for nested
+    // sticky objects. We probably need a way to modify the absoluteContainingBlockRect in the ViewportContraints
+    // to get this right in all cases.
+    layerPosition -= cumulativeDelta;
 
     CGRect layerBounds = [m_layer.get() bounds];
     CGPoint anchorPoint = [m_layer.get() anchorPoint];
@@ -75,9 +80,11 @@ void ScrollingTreeStickyNode::parentScrollPositionDidChange(const IntRect& viewp
     if (!m_children)
         return;
 
+    FloatSize newDelta = layerPosition - m_constraints.layerPositionAtLastLayout() + cumulativeDelta;
+
     size_t size = m_children->size();
     for (size_t i = 0; i < size; ++i)
-        m_children->at(i)->parentScrollPositionDidChange(viewportRect);
+        m_children->at(i)->parentScrollPositionDidChange(viewportRect, newDelta);
 }
 
 } // namespace WebCore

@@ -46,7 +46,7 @@ public:
 
     virtual void update(ScrollingStateNode*) = 0;
 
-    virtual void parentScrollPositionDidChange(const IntRect& viewportRect) = 0;
+    virtual void parentScrollPositionDidChange(const IntRect& viewportRect, const FloatSize& cumulativeDelta) = 0;
 
     ScrollingNodeID scrollingNodeID() const { return m_nodeID; }
     void setScrollingNodeID(ScrollingNodeID nodeID) { m_nodeID = nodeID; }

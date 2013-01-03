@@ -285,7 +285,7 @@ void ScrollingTreeScrollingNodeMac::setScrollLayerPosition(const IntPoint& posit
 
     size_t size = m_children->size();
     for (size_t i = 0; i < size; ++i)
-        m_children->at(i)->parentScrollPositionDidChange(viewportRect);
+        m_children->at(i)->parentScrollPositionDidChange(viewportRect, FloatSize());
 }
 
 IntPoint ScrollingTreeScrollingNodeMac::minimumScrollPosition() const

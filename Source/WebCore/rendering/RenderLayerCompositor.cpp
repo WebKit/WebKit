@@ -564,7 +564,7 @@ bool RenderLayerCompositor::updateBacking(RenderLayer* layer, CompositingChangeR
 
             // At this time, the ScrollingCooridnator only supports the top-level frame.
             if (layer->isRootLayer() && !m_renderView->document()->ownerElement()) {
-                layer->backing()->attachToScrollingCoordinator(0);
+                layer->backing()->attachToScrollingCoordinatorWithParent(0);
                 if (ScrollingCoordinator* scrollingCoordinator = this->scrollingCoordinator())
                     scrollingCoordinator->frameViewRootLayerDidChange(m_renderView->frameView());
             }
@@ -2740,13 +2740,13 @@ void RenderLayerCompositor::registerOrUpdateViewportConstrainedLayer(RenderLayer
         return;
 
     ScrollingNodeID nodeID = backing->scrollLayerID();
-    if (!nodeID) {
-        RenderLayerBacking* parent = nearestScrollingCoordinatorAncestor(layer);
-        if (!parent)
-            return;
-        backing->attachToScrollingCoordinator(parent);
-        nodeID = backing->scrollLayerID();
-    }
+    RenderLayerBacking* parent = nearestScrollingCoordinatorAncestor(layer);
+    if (!parent)
+        return;
+
+    // Always call this even if the backing is already attached because the parent may have changed.
+    backing->attachToScrollingCoordinatorWithParent(parent);
+    nodeID = backing->scrollLayerID();
 
     if (layer->renderer()->isStickyPositioned())
         scrollingCoordinator->updateViewportConstrainedNode(nodeID, computeStickyViewportConstraints(layer), backing->graphicsLayer());
