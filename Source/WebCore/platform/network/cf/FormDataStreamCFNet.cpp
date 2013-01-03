@@ -86,15 +86,11 @@ EXTERN CFReadStreamRef CFReadStreamCreate(CFAllocatorRef alloc, const void *call
 
 namespace WebCore {
 
-static Mutex& streamFieldsMapMutex()
-{
-    DEFINE_STATIC_LOCAL(Mutex, staticMutex, ());
-    return staticMutex;
-}
-
 static void formEventCallback(CFReadStreamRef stream, CFStreamEventType type, void* context);
 
-struct FormContext {
+static CFStringRef formDataPointerPropertyName = CFSTR("WebKitFormDataPointer");
+
+struct FormCreationContext {
     RefPtr<FormData> formData;
     unsigned long long streamLength;
 };
@@ -113,14 +109,7 @@ struct FormStreamFields {
     unsigned long long bytesSent;
 };
 
-typedef HashMap<CFReadStreamRef, FormStreamFields*> StreamFieldsMap;
-static StreamFieldsMap& streamFieldsMap()
-{
-    DEFINE_STATIC_LOCAL(StreamFieldsMap, streamFieldsMap, ());
-    return streamFieldsMap;
-}
-
-static void closeCurrentStream(FormStreamFields *form)
+static void closeCurrentStream(FormStreamFields* form)
 {
     if (form->currentStream) {
         CFReadStreamClose(form->currentStream);
@@ -205,7 +194,7 @@ static bool openNextStream(FormStreamFields* form)
 
 static void* formCreate(CFReadStreamRef stream, void* context)
 {
-    FormContext* formContext = static_cast<FormContext*>(context);
+    FormCreationContext* formContext = static_cast<FormCreationContext*>(context);
 
     FormStreamFields* newInfo = new FormStreamFields;
     newInfo->formData = formContext->formData.release();
@@ -224,10 +213,6 @@ static void* formCreate(CFReadStreamRef stream, void* context)
     for (size_t i = 0; i < size; ++i)
         newInfo->remainingElements.append(newInfo->formData->elements()[size - i - 1]);
 
-    MutexLocker locker(streamFieldsMapMutex());
-    ASSERT(!streamFieldsMap().contains(stream));
-    streamFieldsMap().add(stream, newInfo);
-
     return newInfo;
 }
 
@@ -241,17 +226,7 @@ static void formFinishFinalizationOnMainThread(void* context)
 static void formFinalize(CFReadStreamRef stream, void* context)
 {
     FormStreamFields* form = static_cast<FormStreamFields*>(context);
-
-    MutexLocker locker(streamFieldsMapMutex());
-
     ASSERT(form->formStream == stream);
-    ASSERT(streamFieldsMap().get(stream) == context);
-
-    // Do this right away because the CFReadStreamRef is being deallocated.
-    // We can't wait to remove this from the map until we finish finalizing
-    // on the main thread because in theory the freed memory could be reused
-    // for a new CFReadStream before that runs.
-    streamFieldsMap().remove(stream);
 
     callOnMainThread(formFinishFinalizationOnMainThread, form);
 }
@@ -325,6 +300,17 @@ static void formClose(CFReadStreamRef, void* context)
     FormStreamFields* form = static_cast<FormStreamFields*>(context);
 
     closeCurrentStream(form);
+}
+
+static CFTypeRef formCopyProperty(CFReadStreamRef, CFStringRef propertyName, void *context)
+{
+    FormStreamFields* form = static_cast<FormStreamFields*>(context);
+
+    if (kCFCompareEqualTo != CFStringCompare(propertyName, formDataPointerPropertyName, 0))
+        return 0;
+
+    long formDataAsNumber = static_cast<long>(reinterpret_cast<intptr_t>(form->formData.get()));
+    return CFNumberCreate(0, kCFNumberLongType, &formDataAsNumber);
 }
 
 static void formSchedule(CFReadStreamRef, CFRunLoopRef runLoop, CFStringRef runLoopMode, void* context)
@@ -426,9 +412,9 @@ void setHTTPBody(CFMutableURLRequestRef request, PassRefPtr<FormData> prpFormDat
     // Create and set the stream.
 
     // Pass the length along with the formData so it does not have to be recomputed.
-    FormContext formContext = { formData.release(), length };
+    FormCreationContext formContext = { formData.release(), length };
 
-    CFReadStreamCallBacksV1 callBacks = { 1, formCreate, formFinalize, 0, formOpen, 0, formRead, 0, formCanRead, formClose, 0, 0, 0, formSchedule, formUnschedule
+    CFReadStreamCallBacksV1 callBacks = { 1, formCreate, formFinalize, 0, formOpen, 0, formRead, 0, formCanRead, formClose, formCopyProperty, 0, 0, formSchedule, formUnschedule
     };
     RetainPtr<CFReadStreamRef> stream = adoptCF(CFReadStreamCreate(0, static_cast<const void*>(&callBacks), &formContext));
 
@@ -440,11 +426,20 @@ FormData* httpBodyFromStream(CFReadStreamRef stream)
     if (!stream)
         return 0;
 
-    MutexLocker locker(streamFieldsMapMutex());
-    FormStreamFields* formStream = streamFieldsMap().get(stream);
-    if (!formStream)
+    // Passing the pointer as property appears to be the only way to associate a stream with FormData.
+    // A new stream is always created in CFURLRequestCopyHTTPRequestBodyStream (or -[NSURLRequest HTTPBodyStream]),
+    // so a side HashMap wouldn't work.
+    // Even the stream's context pointer is different from the one we returned from formCreate().
+
+    RetainPtr<CFNumberRef> formDataPointerAsCFNumber = adoptCF(static_cast<CFNumberRef>(CFReadStreamCopyProperty(stream, formDataPointerPropertyName)));
+    if (!formDataPointerAsCFNumber)
         return 0;
-    return formStream->formData.get();
+
+    long formDataPointerAsNumber;
+    if (!CFNumberGetValue(formDataPointerAsCFNumber.get(), kCFNumberLongType, &formDataPointerAsNumber))
+        return 0;
+
+    return reinterpret_cast<FormData*>(static_cast<intptr_t>(formDataPointerAsNumber));
 }
 
 PassRefPtr<FormData> httpBodyFromRequest(CFURLRequestRef request)
