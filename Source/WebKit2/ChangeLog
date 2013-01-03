@@ -1,3 +1,15 @@
+2013-01-03  Rik Cabanier  <cabanier@adobe.com>
+
+        Canvas blending tests fail on Mac WK2
+        https://bugs.webkit.org/show_bug.cgi?id=105943
+
+        Reviewed by Simon Fraser.
+
+        CanvasUsesAcceleratedDrawing preference was not passed to the WebProcess.
+
+        * WebProcess/InjectedBundle/InjectedBundle.cpp: Adds support for CanvasUsesAcceleratedDrawing to WK2
+        (WebKit::InjectedBundle::overrideBoolPreferenceForTestRunner):
+
 2013-01-02  Caio Marcelo de Oliveira Filho  <caio.oliveira@openbossa.org>
 
         [Qt] Use WebPageProxy::postMessageToInjectedBundle when passing messages to a specific page in the builtin bundle

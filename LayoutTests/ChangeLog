@@ -1,3 +1,12 @@
+2013-01-03  Rik Cabanier  <cabanier@adobe.com>
+
+        Canvas blending tests fail on Mac WK2
+        https://bugs.webkit.org/show_bug.cgi?id=105943
+
+        Reviewed by Simon Fraser.
+
+        * platform/mac-wk2/TestExpectations: updated expectations as the test now passes
+
 2013-01-03  Adam Klein  <adamk@chromium.org>
 
         Clear failed image loads when an <img> is adopted into a different document

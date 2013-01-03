@@ -82,6 +82,7 @@ public:
         bool m_originalCompositingForFixedPositionEnabled;
         bool m_originalCompositingForScrollableFramesEnabled;
         bool m_originalAcceleratedDrawingEnabled;
+        bool m_originalCanvasUsesAcceleratedDrawing;
         bool m_originalMockScrollbarsEnabled;
         bool m_originalUsesOverlayScrollbars;
         bool m_langAttributeAwareFormControlUIEnabled;
