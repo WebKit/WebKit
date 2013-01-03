@@ -226,7 +226,7 @@ static void formFinishFinalizationOnMainThread(void* context)
 static void formFinalize(CFReadStreamRef stream, void* context)
 {
     FormStreamFields* form = static_cast<FormStreamFields*>(context);
-    ASSERT(form->formStream == stream);
+    ASSERT_UNUSED(stream, form->formStream == stream);
 
     callOnMainThread(formFinishFinalizationOnMainThread, form);
 }
