@@ -1083,8 +1083,14 @@ bool RenderThemeBlackBerry::paintMediaSliderThumb(RenderObject* object, const Pa
 
     return true;
 #else // GL renderer
+    static Image* disabledMediaSliderThumb = Image::loadPlatformResource("core_slider_handle_disabled").leakRef();
+    static Image* pressedMediaSliderThumb = Image::loadPlatformResource("core_slider_handle_pressed").leakRef();
     static Image* mediaSliderThumb = Image::loadPlatformResource("core_media_handle").leakRef();
 
+    if (!isEnabled(object))
+        return paintMediaButton(paintInfo.context, rect, disabledMediaSliderThumb);
+    if (isPressed(object) || isHovered(object) || isFocused(object))
+        return paintMediaButton(paintInfo.context, rect, pressedMediaSliderThumb);
     return paintMediaButton(paintInfo.context, rect, mediaSliderThumb);
 #endif // USE(SKIA)
 #else
@@ -1113,13 +1119,26 @@ bool RenderThemeBlackBerry::paintMediaVolumeSliderTrack(RenderObject* object, co
     IntRect rect2(x, y, w, h);
     IntRect volumeRect(x, y, ceil(w * volume), h);
 
+#if USE(SKIA)
     // This is to paint main volume slider bar.
     bool result = paintSliderTrackRect(object, paintInfo, rect2, Color(mediaSliderTrackOutline).rgb(), Color(mediaSliderTrackOutline).rgb(), rangeSliderRegularTop, rangeSliderRegularTop);
 
     if (volume > 0) {
         // This is to paint volume bar (left of volume slider thumb) using selection color.
-        paintSliderTrackRect(object, paintInfo, volumeRect, Color(mediaSliderTrackOutline).rgb(), Color(mediaSliderTrackOutline).rgb(), selection, selection);
+        result |= paintSliderTrackRect(object, paintInfo, volumeRect, Color(mediaSliderTrackOutline).rgb(), Color(mediaSliderTrackOutline).rgb(), selection, selection);
     }
+#else // GL renderer
+    static Image* volumeBackground = Image::loadPlatformResource("core_slider_video_bg").leakRef();
+    static Image* volumeBar = Image::loadPlatformResource("core_slider_played_bg").leakRef();
+
+    // This is to paint main volume slider bar.
+    bool result = paintSliderTrackRect(object, paintInfo, rect2, volumeBackground);
+
+    if (volume > 0) {
+        // This is to paint volume bar (left of volume slider thumb) using selection color.
+        result |= paintSliderTrackRect(object, paintInfo, volumeRect, volumeBar);
+    }
+#endif // USE(SKIA)
     return result;
 #else
     UNUSED_PARAM(object);

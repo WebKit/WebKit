@@ -28,7 +28,7 @@
  /* BlackBerry default media controls. */
 
 audio {
-    background-color: rgb(0, 0, 0);
+    background-color: rgba(38, 38, 38, 0.8);
     width: 300px;
     height: 32px;
 }
@@ -41,7 +41,7 @@ audio::-webkit-media-controls-embedded-panel, video::-webkit-media-controls-embe
     bottom: 0;
     width: 100%;
     height: auto;
-    background-color: rgb(0, 0, 0);
+    background-color: rgba(38, 38, 38, 0.8);
 }
 
 audio::-webkit-media-controls-panel, video::-webkit-media-controls-panel {
@@ -63,7 +63,6 @@ video::-webkit-media-controls-time-display-container, audio::-webkit-media-contr
     -webkit-box-align: center;
     -webkit-box-pack: justify;
     -webkit-box-flex: 1;
-    background-color: rgb(0, 0, 0);
 }
 
 video::-webkit-media-controls-fullscreen-play-button, audio::-webkit-media-controls-fullscreen-play-button {
@@ -88,7 +87,6 @@ video::-webkit-media-controls-timeline-container, audio::-webkit-media-controls-
     -webkit-box-flex: 1;
     height: auto;
     width: 100%;
-    background-color: rgb(0, 0, 0);
 }
 
 audio::-webkit-media-controls-fullscreen-current-time-display, video::-webkit-media-controls-fullscreen-current-time-display {
@@ -102,7 +100,6 @@ audio::-webkit-media-controls-current-time-display, video::-webkit-media-control
     -webkit-box-align: center;
     -webkit-box-pack: end;
     -webkit-box-flex: 0;
-    background-color: rgb(0, 0, 0);
     color: #fafafa;
 }
 
@@ -117,8 +114,7 @@ video::-webkit-media-controls-time-remaining-display, audio::-webkit-media-contr
     -webkit-box-align: center;
     -webkit-box-pack: end;
     -webkit-box-flex: 0;
-    background-color: rgb(0, 0, 0);
-    color: #fafafa;
+    color: rgb(125, 125, 125);
 }
 
 audio::-webkit-media-controls-fullscreen-timeline, video::-webkit-media-controls-fullscreen-timeline {
@@ -165,7 +161,7 @@ audio::-webkit-media-controls-volume-slider-container {
     position: absolute;
     left: 0px;
     right: 0px;
-    background-color: rgb(0,0,0);
+    background-color: rgba(38, 38, 38, 0.8);
 }
 
 video::-webkit-media-controls-volume-slider-container {
