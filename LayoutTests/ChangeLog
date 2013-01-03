@@ -1,3 +1,9 @@
+2013-01-03  Csaba Osztrogonác  <ossy@webkit.org>
+
+        [Qt] Unreviewed gardening, skip a new failing test.
+
+        * platform/qt/TestExpectations:
+
 2013-01-03  Mike West  <mkwst@chromium.org>
 
         The 'body' of seamless IFrames should default to 'margin: 0'

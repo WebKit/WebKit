@@ -2506,3 +2506,7 @@ webkit.org/b/85522 http/tests/security/sandboxed-iframe-form-top.html [ Skip ]
 # https://bugs.webkit.org/show_bug.cgi?id=106015
 fast/css-generated-content/pseudo-animation.html
 fast/css-generated-content/pseudo-transition.html
+
+# https://bugs.webkit.org/show_bug.cgi?id=106016
+# [Qt] New fast/workers/worker-document-leak.html fails
+fast/workers/worker-document-leak.html
