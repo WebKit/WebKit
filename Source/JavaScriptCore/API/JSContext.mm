@@ -37,13 +37,11 @@
 
 #if JS_OBJC_API_ENABLED
 
-typedef HashMap<JSValueRef, size_t> ProtectMap;
-
 @implementation JSContext {
     JSVirtualMachine *m_virtualMachine;
     JSGlobalContextRef m_context;
     JSWrapperMap *m_wrapperMap;
-    ProtectMap m_protectCounts;
+    HashCountedSet<JSValueRef> m_protectCounts;
 }
 
 @synthesize exception;
@@ -65,7 +63,7 @@ typedef HashMap<JSValueRef, size_t> ProtectMap;
     m_wrapperMap = [[JSWrapperMap alloc] initWithContext:self];
 
     self.exception = nil;
-    self.exceptionHandler = ^(JSContext* context, JSValue *exceptionValue) {
+    self.exceptionHandler = ^(JSContext *context, JSValue *exceptionValue) {
         context.exception = exceptionValue;
     };
 
@@ -126,7 +124,7 @@ typedef HashMap<JSValueRef, size_t> ProtectMap;
     return entry->currentArguments;
 }
 
-- (JSVirtualMachine*)virtualMachine
+- (JSVirtualMachine *)virtualMachine
 {
     return m_virtualMachine;
 }
@@ -149,7 +147,7 @@ typedef HashMap<JSValueRef, size_t> ProtectMap;
 
 @implementation JSContext(Internal)
 
-JSGlobalContextRef contextInternalContext(JSContext* context)
+JSGlobalContextRef contextInternalContext(JSContext *context)
 {
     return context->m_context;
 }
@@ -158,8 +156,8 @@ JSGlobalContextRef contextInternalContext(JSContext* context)
 {
     toJS(m_context)->lexicalGlobalObject()->m_apiData = 0;
 
-    ProtectMap::iterator iterator = m_protectCounts.begin();
-    ProtectMap::iterator end = m_protectCounts.end();
+    HashCountedSet<JSValueRef>::iterator iterator = m_protectCounts.begin();
+    HashCountedSet<JSValueRef>::iterator end = m_protectCounts.end();
     for (; iterator != end; ++iterator)
         JSValueUnprotect(m_context, iterator->key);
 
@@ -212,11 +210,8 @@ JSGlobalContextRef contextInternalContext(JSContext* context)
     // Lock access to m_protectCounts
     JSC::JSLockHolder lock(toJS(m_context));
 
-    ProtectMap::AddResult result = m_protectCounts.add(value, 1);
-    if (result.isNewEntry)
+    if (m_protectCounts.add(value).isNewEntry)
         JSValueProtect(m_context, value);
-    else
-        ++result.iterator->value;
 }
 
 - (void)unprotect:(JSValueRef)value
@@ -224,12 +219,8 @@ JSGlobalContextRef contextInternalContext(JSContext* context)
     // Lock access to m_protectCounts
     JSC::JSLockHolder lock(toJS(m_context));
 
-    ProtectMap::iterator iterator = m_protectCounts.find(value);
-    if (iterator->value == 1) {
-        m_protectCounts.remove(value);
+    if (m_protectCounts.remove(value))
         JSValueUnprotect(m_context, value);
-    } else
-        --iterator->value;
 }
 
 - (JSValue *)wrapperForObject:(id)object

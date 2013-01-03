@@ -55,7 +55,7 @@ void testObjectiveCAPI(void);
 + (NSString *)parentTest;
 - (NSString *)getString;
 JSExportAs(testArgumentTypes,
-- (NSString *)testArgumentTypesWithInt:(int)i double:(double)d boolean:(BOOL)b string:(NSString*)s number:(NSNumber*)n array:(NSArray*)a dictionary:(NSDictionary*)o
+- (NSString *)testArgumentTypesWithInt:(int)i double:(double)d boolean:(BOOL)b string:(NSString *)s number:(NSNumber *)n array:(NSArray *)a dictionary:(NSDictionary *)o
 );
 - (void)callback:(void(^)(int))block;
 @end
@@ -81,7 +81,7 @@ JSExportAs(testArgumentTypes,
 {
     return @"42";
 }
-- (NSString *)testArgumentTypesWithInt:(int)i double:(double)d boolean:(BOOL)b string:(NSString*)s number:(NSNumber*)n array:(NSArray*)a dictionary:(NSDictionary*)o
+- (NSString *)testArgumentTypesWithInt:(int)i double:(double)d boolean:(BOOL)b string:(NSString *)s number:(NSNumber *)n array:(NSArray *)a dictionary:(NSDictionary *)o
 {
     return [NSString stringWithFormat:@"%d,%g,%d,%@,%d,%@,%@", i, d, b==YES?true:false,s,[n intValue],a[1],o[@"x"]];
 }
@@ -160,7 +160,7 @@ void testObjectiveCAPI()
         checkResult(@"({ x:42 })", [result isObject] && [result[@"x"] isEqualToObject:@42]);
         id obj = [result toObject];
         checkResult(@"Check dictionary literal", [obj isKindOfClass:[NSDictionary class]]);
-        id num = (NSDictionary*)obj[@"x"];
+        id num = (NSDictionary *)obj[@"x"];
         checkResult(@"Check numeric literal", [num isKindOfClass:[NSNumber class]]);
     }
 

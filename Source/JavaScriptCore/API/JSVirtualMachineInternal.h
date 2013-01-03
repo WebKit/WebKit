@@ -30,7 +30,7 @@
 
 @interface JSVirtualMachine(Internal)
 
-JSContextGroupRef getGroupFromVirtualMachine(JSVirtualMachine*);
+JSContextGroupRef getGroupFromVirtualMachine(JSVirtualMachine *);
 
 @end
 

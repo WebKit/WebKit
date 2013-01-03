@@ -833,7 +833,7 @@ id valueToString(JSGlobalContextRef context, JSValueRef value, JSValueRef* excep
         return nil;
     }
 
-    NSString* stringNS = [(NSString *)JSStringCopyCFString(kCFAllocatorDefault, jsstring) autorelease];
+    NSString *stringNS = [(NSString *)JSStringCopyCFString(kCFAllocatorDefault, jsstring) autorelease];
     JSStringRelease(jsstring);
     return stringNS;
 }
@@ -934,50 +934,56 @@ ObjcContainerConvertor::Task ObjcContainerConvertor::take()
     return last;
 }
 
+inline bool isNSBoolean(id object)
+{
+    ASSERT([@YES class] == [@NO class]);
+    ASSERT([@YES class] != [NSNumber class]);
+    ASSERT([[@YES class] isSubclassOfClass:[NSNumber class]]);
+    return [object isKindOfClass:[@YES class]];
+}
+
 static ObjcContainerConvertor::Task objectToValueWithoutCopy(JSContext *context, id object)
 {
+    JSGlobalContextRef contextRef = contextInternalContext(context);
+
     if (!object)
-        return (ObjcContainerConvertor::Task){ object, JSValueMakeUndefined(contextInternalContext(context)), ContainerNone };
+        return (ObjcContainerConvertor::Task){ object, JSValueMakeUndefined(contextRef), ContainerNone };
 
     if (!class_conformsToProtocol(object_getClass(object), getJSExportProtocol())) {
         if ([object isKindOfClass:[NSArray class]])
-            return (ObjcContainerConvertor::Task){ object, JSObjectMakeArray(contextInternalContext(context), 0, NULL, 0), ContainerArray };
+            return (ObjcContainerConvertor::Task){ object, JSObjectMakeArray(contextRef, 0, NULL, 0), ContainerArray };
 
         if ([object isKindOfClass:[NSDictionary class]])
-            return (ObjcContainerConvertor::Task){ object, JSObjectMake(contextInternalContext(context), 0, 0), ContainerDictionary };
+            return (ObjcContainerConvertor::Task){ object, JSObjectMake(contextRef, 0, 0), ContainerDictionary };
 
         if ([object isKindOfClass:[NSNull class]])
-            return (ObjcContainerConvertor::Task){ object, JSValueMakeNull(contextInternalContext(context)), ContainerNone };
+            return (ObjcContainerConvertor::Task){ object, JSValueMakeNull(contextRef), ContainerNone };
 
         if ([object isKindOfClass:[JSValue class]])
             return (ObjcContainerConvertor::Task){ object, ((JSValue *)object)->m_value, ContainerNone };
 
         if ([object isKindOfClass:[NSArray class]])
-            return (ObjcContainerConvertor::Task){ object, JSObjectMakeArray(contextInternalContext(context), 0, NULL, 0), ContainerArray };
+            return (ObjcContainerConvertor::Task){ object, JSObjectMakeArray(contextRef, 0, NULL, 0), ContainerArray };
 
         if ([object isKindOfClass:[NSDictionary class]])
-            return (ObjcContainerConvertor::Task){ object, JSObjectMake(contextInternalContext(context), 0, 0), ContainerDictionary };
+            return (ObjcContainerConvertor::Task){ object, JSObjectMake(contextRef, 0, 0), ContainerDictionary };
 
         if ([object isKindOfClass:[NSString class]]) {
             JSStringRef string = JSStringCreateWithCFString((CFStringRef)object);
-            JSValueRef js = JSValueMakeString(contextInternalContext(context), string);
+            JSValueRef js = JSValueMakeString(contextRef, string);
             JSStringRelease(string);
             return (ObjcContainerConvertor::Task){ object, js, ContainerNone };
         }
 
         if ([object isKindOfClass:[NSNumber class]]) {
-            id literalTrue = @YES;
-            if (object == literalTrue)
-                return (ObjcContainerConvertor::Task){ object, JSValueMakeBoolean(contextInternalContext(context), true), ContainerNone };
-            id literalFalse = @NO;
-            if (object == literalFalse)
-                return (ObjcContainerConvertor::Task){ object, JSValueMakeBoolean(contextInternalContext(context), false), ContainerNone };
-            return (ObjcContainerConvertor::Task){ object, JSValueMakeNumber(contextInternalContext(context), [(NSNumber*)object doubleValue]), ContainerNone };
+            if (isNSBoolean(object))
+                return (ObjcContainerConvertor::Task){ object, JSValueMakeBoolean(contextRef, [object boolValue]), ContainerNone };
+            return (ObjcContainerConvertor::Task){ object, JSValueMakeNumber(contextRef, [object doubleValue]), ContainerNone };
         }
 
         if ([object isKindOfClass:[NSDate class]]) {
-            JSValueRef argument = JSValueMakeNumber(contextInternalContext(context), [(NSDate *)object timeIntervalSince1970]);
-            JSObjectRef result = JSObjectMakeDate(contextInternalContext(context), 1, &argument, 0);
+            JSValueRef argument = JSValueMakeNumber(contextRef, [object timeIntervalSince1970]);
+            JSObjectRef result = JSObjectMakeDate(contextRef, 1, &argument, 0);
             return (ObjcContainerConvertor::Task){ object, result, ContainerNone };
         }
     }
@@ -987,6 +993,8 @@ static ObjcContainerConvertor::Task objectToValueWithoutCopy(JSContext *context,
 
 JSValueRef objectToValue(JSContext *context, id object)
 {
+    JSGlobalContextRef contextRef = contextInternalContext(context);
+
     ObjcContainerConvertor::Task task = objectToValueWithoutCopy(context, object);
     if (task.type == ContainerNone)
         return task.js;
@@ -997,23 +1005,23 @@ JSValueRef objectToValue(JSContext *context, id object)
 
     do {
         ObjcContainerConvertor::Task current = convertor.take();
-        ASSERT(JSValueIsObject(contextInternalContext(context), current.js));
-        JSObjectRef js = JSValueToObject(contextInternalContext(context), current.js, 0);
+        ASSERT(JSValueIsObject(contextRef, current.js));
+        JSObjectRef js = JSValueToObject(contextRef, current.js, 0);
 
         if (current.type == ContainerArray) {
             ASSERT([current.objc isKindOfClass:[NSArray class]]);
             NSArray *array = (NSArray *)current.objc;
             NSUInteger count = [array count];
             for (NSUInteger index = 0; index < count; ++index)
-                JSObjectSetPropertyAtIndex(contextInternalContext(context), js, index, convertor.convert([array objectAtIndex:index]), 0);
+                JSObjectSetPropertyAtIndex(contextRef, js, index, convertor.convert([array objectAtIndex:index]), 0);
         } else {
             ASSERT(current.type == ContainerDictionary);
             ASSERT([current.objc isKindOfClass:[NSDictionary class]]);
-            NSDictionary* dictionary = (NSDictionary*)current.objc;
+            NSDictionary *dictionary = (NSDictionary *)current.objc;
             for (id key in [dictionary keyEnumerator]) {
                 if ([key isKindOfClass:[NSString class]]) {
                     JSStringRef propertyName = JSStringCreateWithCFString((CFStringRef)key);
-                    JSObjectSetProperty(contextInternalContext(context), js, propertyName, convertor.convert([dictionary objectForKey:key]), 0, 0);
+                    JSObjectSetProperty(contextRef, js, propertyName, convertor.convert([dictionary objectForKey:key]), 0, 0);
                     JSStringRelease(propertyName);
                 }
             }
@@ -1029,12 +1037,12 @@ JSValueRef valueInternalValue(JSValue * value)
     return value->m_value;
 }
 
-+ (JSValue *)valueWithValue:(JSValueRef)value inContext:(JSContext*)context
++ (JSValue *)valueWithValue:(JSValueRef)value inContext:(JSContext *)context
 {
     return [[[JSValue alloc] initWithValue:value inContext:context] autorelease];
 }
 
-- (JSValue *)initWithValue:(JSValueRef)value inContext:(JSContext*)context
+- (JSValue *)initWithValue:(JSValueRef)value inContext:(JSContext *)context
 {
     self = [super init];
     if (!self)
@@ -1051,93 +1059,97 @@ struct StructTagHandler {
     SEL typeToValueSEL;
     SEL valueToTypeSEL;
 };
+typedef HashMap<String, StructTagHandler> StructHandlers;
 
-static StructTagHandler* getStructTagHandler(const char* encodedType)
+static StructHandlers* createStructHandlerMap()
 {
-    static SpinLock getStructTagHandlerLock = SPINLOCK_INITIALIZER;
-    SpinLockHolder lockHolder(&getStructTagHandlerLock);
+    StructHandlers* structHandlers = new StructHandlers();
 
-    typedef HashMap<RefPtr<StringImpl>, StructTagHandler> StructHandlers;
-    static StructHandlers* structHandlers = 0;
+    size_t valueWithXinContextLength = strlen("valueWithX:inContext:");
+    size_t toXLength = strlen("toX");
 
-    if (!structHandlers) {
-        structHandlers = new StructHandlers();
-
-        // Step 1: find all valueWith<Foo>:inContext: class methods in JSValue.
-        size_t valueWithMinLength = strlen("valueWithX:inContext:");
-        forEachMethodInClass(object_getClass([JSValue class]), ^(Method method){
-            SEL selector = method_getName(method);
-            const char* name = sel_getName(selector);
-            size_t nameLength = strlen(name);
-            // Check for valueWith<Foo>:context:
-            if (nameLength < valueWithMinLength || strncmp(name, "valueWith", 9) || strncmp(name + nameLength - 11, ":inContext:", 11))
-                return;
-            // Check for [ id, SEL, <type>, <contextType> ]
-            if (method_getNumberOfArguments(method) != 4)
-                return;
-            char idType[3];
-            // Check 2nd argument type is "@"
-            char* secondType = method_copyArgumentType(method, 3);
-            if (strcmp(secondType, "@")) {
-                free(secondType);
-                return;
-            }
+    // Step 1: find all valueWith<Foo>:inContext: class methods in JSValue.
+    forEachMethodInClass(object_getClass([JSValue class]), ^(Method method){
+        SEL selector = method_getName(method);
+        const char* name = sel_getName(selector);
+        size_t nameLength = strlen(name);
+        // Check for valueWith<Foo>:context:
+        if (nameLength < valueWithXinContextLength || memcmp(name, "valueWith", 9) || memcmp(name + nameLength - 11, ":inContext:", 11))
+            return;
+        // Check for [ id, SEL, <type>, <contextType> ]
+        if (method_getNumberOfArguments(method) != 4)
+            return;
+        char idType[3];
+        // Check 2nd argument type is "@"
+        char* secondType = method_copyArgumentType(method, 3);
+        if (strcmp(secondType, "@") != 0) {
             free(secondType);
-            // Check result type is also "@"
-            method_getReturnType(method, idType, 3);
-            if (strcmp(idType, "@"))
-                return;
-            char* type = method_copyArgumentType(method, 2);
-            structHandlers->add(String(type).impl(), (StructTagHandler){ selector, 0 });
-            free(type);
-        });
-
-        // Step 2: find all to<Foo> instance methods in JSValue.
-        size_t minLenValue = strlen("toX");
-        forEachMethodInClass([JSValue class], ^(Method method){
-            SEL selector = method_getName(method);
-            const char* name = sel_getName(selector);
-            size_t nameLength = strlen(name);
-            // Check for to<Foo>
-            if (nameLength < minLenValue || strncmp(name, "to", 2))
-                return;
-            // Check for [ id, SEL ]
-            if (method_getNumberOfArguments(method) != 2)
-                return;
-            // Try to find a matching valueWith<Foo>:context: method.
-            char* type = method_copyReturnType(method);
-
-            StructHandlers::iterator iter = structHandlers->find(String(type).impl());
-            free(type);
-            if (iter == structHandlers->end())
-                return;
-            StructTagHandler& handler = iter->value;
-
-            // check that strlen(<foo>) == strlen(<Foo>)
-            const char* valueWithName = sel_getName(handler.typeToValueSEL);
-            size_t valueWithLen = strlen(valueWithName);
-            if (valueWithLen - valueWithMinLength != nameLength - minLenValue)
-                return;
-            // Check that <Foo> == <Foo>
-            if (strncmp(valueWithName + 9, name + 2, nameLength - minLenValue - 1))
-                return;
-            handler.valueToTypeSEL = selector;
-        });
-
-        // Step 3: clean up - remove entries where we found prospective valueWith<Foo>:inContext: conversions, but no matching to<Foo> methods.
-        typedef HashSet<RefPtr<StringImpl> > RemoveSet;
-        RemoveSet removeSet;
-        for (StructHandlers::iterator iter = structHandlers->begin(); iter != structHandlers->end(); ++iter) {
-            StructTagHandler& handler = iter->value;
-            if (!handler.valueToTypeSEL)
-                removeSet.add(iter->key);
+            return;
         }
+        free(secondType);
+        // Check result type is also "@"
+        method_getReturnType(method, idType, 3);
+        if (strcmp(idType, "@") != 0)
+            return;
+        char* type = method_copyArgumentType(method, 2);
+        structHandlers->add(StringImpl::create(type), (StructTagHandler){ selector, 0 });
+        free(type);
+    });
 
-        for (RemoveSet::iterator iter = removeSet.begin(); iter != removeSet.end(); ++iter)
-            structHandlers->remove(*iter);
+    // Step 2: find all to<Foo> instance methods in JSValue.
+    forEachMethodInClass([JSValue class], ^(Method method){
+        SEL selector = method_getName(method);
+        const char* name = sel_getName(selector);
+        size_t nameLength = strlen(name);
+        // Check for to<Foo>
+        if (nameLength < toXLength || memcmp(name, "to", 2))
+            return;
+        // Check for [ id, SEL ]
+        if (method_getNumberOfArguments(method) != 2)
+            return;
+        // Try to find a matching valueWith<Foo>:context: method.
+        char* type = method_copyReturnType(method);
+
+        StructHandlers::iterator iter = structHandlers->find(type);
+        free(type);
+        if (iter == structHandlers->end())
+            return;
+        StructTagHandler& handler = iter->value;
+
+        // check that strlen(<foo>) == strlen(<Foo>)
+        const char* valueWithName = sel_getName(handler.typeToValueSEL);
+        size_t valueWithLength = strlen(valueWithName);
+        if (valueWithLength - valueWithXinContextLength != nameLength - toXLength)
+            return;
+        // Check that <Foo> == <Foo>
+        if (memcmp(valueWithName + 9, name + 2, nameLength - toXLength - 1))
+            return;
+        handler.valueToTypeSEL = selector;
+    });
+
+    // Step 3: clean up - remove entries where we found prospective valueWith<Foo>:inContext: conversions, but no matching to<Foo> methods.
+    typedef HashSet<String> RemoveSet;
+    RemoveSet removeSet;
+    for (StructHandlers::iterator iter = structHandlers->begin(); iter != structHandlers->end(); ++iter) {
+        StructTagHandler& handler = iter->value;
+        if (!handler.valueToTypeSEL)
+            removeSet.add(iter->key);
     }
 
-    StructHandlers::iterator iter = structHandlers->find(String(encodedType).impl());
+    for (RemoveSet::iterator iter = removeSet.begin(); iter != removeSet.end(); ++iter)
+        structHandlers->remove(*iter);
+
+    return structHandlers;
+}
+
+static StructTagHandler* handerForStructTag(const char* encodedType)
+{
+    static SpinLock handerForStructTagLock = SPINLOCK_INITIALIZER;
+    SpinLockHolder lockHolder(&handerForStructTagLock);
+
+    static StructHandlers* structHandlers = createStructHandlerMap();
+
+    StructHandlers::iterator iter = structHandlers->find(encodedType);
     if (iter == structHandlers->end())
         return 0;
     return &iter->value;
@@ -1145,13 +1157,13 @@ static StructTagHandler* getStructTagHandler(const char* encodedType)
 
 + (SEL)selectorForStructToValue:(const char *)structTag
 {
-    StructTagHandler* handler = getStructTagHandler(structTag);
+    StructTagHandler* handler = handerForStructTag(structTag);
     return handler ? handler->typeToValueSEL : nil;
 }
 
 + (SEL)selectorForValueToStruct:(const char *)structTag
 {
-    StructTagHandler* handler = getStructTagHandler(structTag);
+    StructTagHandler* handler = handerForStructTag(structTag);
     return handler ? handler->valueToTypeSEL : nil;
 }
 
@@ -1175,26 +1187,26 @@ static StructTagHandler* getStructTagHandler(const char* encodedType)
     return [self toString];
 }
 
-NSInvocation* typeToValueInvocationFor(const char* encodedType)
+NSInvocation *typeToValueInvocationFor(const char* encodedType)
 {
     SEL selector = [JSValue selectorForStructToValue:encodedType];
     if (!selector)
         return 0;
 
     const char* methodTypes = method_getTypeEncoding(class_getClassMethod([JSValue class], selector));
-    NSInvocation* invocation = [NSInvocation invocationWithMethodSignature:[NSMethodSignature signatureWithObjCTypes:methodTypes]];
+    NSInvocation *invocation = [NSInvocation invocationWithMethodSignature:[NSMethodSignature signatureWithObjCTypes:methodTypes]];
     [invocation setSelector:selector];
     return invocation;
 }
 
-NSInvocation* valueToTypeInvocationFor(const char* encodedType)
+NSInvocation *valueToTypeInvocationFor(const char* encodedType)
 {
     SEL selector = [JSValue selectorForValueToStruct:encodedType];
     if (!selector)
         return 0;
 
     const char* methodTypes = method_getTypeEncoding(class_getInstanceMethod([JSValue class], selector));
-    NSInvocation* invocation = [NSInvocation invocationWithMethodSignature:[NSMethodSignature signatureWithObjCTypes:methodTypes]];
+    NSInvocation *invocation = [NSInvocation invocationWithMethodSignature:[NSMethodSignature signatureWithObjCTypes:methodTypes]];
     [invocation setSelector:selector];
     return invocation;
 }

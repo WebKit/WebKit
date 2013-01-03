@@ -1,3 +1,113 @@
+2013-01-02  Gavin Barraclough  <barraclough@apple.com>
+
+        Objective-C API for JavaScriptCore
+        https://bugs.webkit.org/show_bug.cgi?id=105889
+
+        Reviewed by Geoff Garen.
+
+        Fixes for more issues raised by Darin.
+
+        * API/JSBlockAdaptor.mm:
+        (BlockArgument):
+        (BlockArgumentStruct::BlockArgumentStruct):
+        (BlockArgumentTypeDelegate::typeStruct):
+        (BlockResult):
+        (BlockResultStruct::BlockResultStruct):
+        (buildBlockSignature):
+        (-[JSBlockAdaptor initWithBlockSignatureFromProtocol:]):
+        (-[JSBlockAdaptor blockFromValue:inContext:withException:]):
+            - fix * position for Objective-C types
+        * API/JSContext.h:
+            - fix * position for Objective-C types
+        * API/JSContext.mm:
+        (-[JSContext initWithVirtualMachine:]):
+        (-[JSContext virtualMachine]):
+        (contextInternalContext):
+            - fix * position for Objective-C types
+        (-[JSContext dealloc]):
+        (-[JSContext protect:]):
+        (-[JSContext unprotect:]):
+            - HashMap<JSValueRef, size_t> -> HashCountedSet<JSValueRef>
+        * API/JSContextInternal.h:
+        (WeakContextRef):
+            - fix * position for Objective-C types
+        * API/JSValue.mm:
+        (valueToString):
+            - fix * position for Objective-C types
+        (isNSBoolean):
+            - Added helper to check for booleans.
+        (objectToValueWithoutCopy):
+            - Added contextRef
+            - fix * position for Objective-C types
+            - Remove @YES, @NO literal usage, use isNSBoolean instead
+        (objectToValue):
+            - Added contextRef
+        (+[JSValue valueWithValue:inContext:]):
+        (-[JSValue initWithValue:inContext:]):
+            - fix * position for Objective-C types
+        (createStructHandlerMap):
+        (handerForStructTag):
+            - getStructTagHandler -> handerForStructTag
+            - Split out createStructHandlerMap
+            - strncmp -> memcmp
+            - String(type).impl() -> StringImpl::create(type)
+        (+[JSValue selectorForStructToValue:]):
+        (+[JSValue selectorForValueToStruct:]):
+            - getStructTagHandler -> handerForStructTag
+        (typeToValueInvocationFor):
+        (valueToTypeInvocationFor):
+            - fix * position for Objective-C types
+        * API/JSValueInternal.h:
+            - fix * position for Objective-C types
+        * API/JSVirtualMachineInternal.h:
+            - fix * position for Objective-C types
+        * API/JSWrapperMap.h:
+            - fix * position for Objective-C types
+        * API/JSWrapperMap.mm:
+        (selectorToPropertyName):
+        (createObjectWithCustomBrand):
+        (createRenameMap):
+        (putNonEnumerable):
+        (copyMethodsToObject):
+        (copyPrototypeProperties):
+        (-[JSObjCClassInfo initWithContext:forClass:superClassInfo:]):
+        (-[JSWrapperMap initWithContext:]):
+        (-[JSWrapperMap wrapperForObject:]):
+        (getJSExportProtocol):
+            - fix * position for Objective-C types
+        * API/ObjCCallbackFunction.h:
+            - fix * position for Objective-C types
+        * API/ObjCCallbackFunction.mm:
+        (CallbackArgument):
+        (CallbackArgumentStruct::CallbackArgumentStruct):
+            - fix * position for Objective-C types
+        (CallbackArgumentBlockCallback::createAdoptingJSBlockAdaptor):
+            - Added to make adopt explicit
+        (CallbackArgumentBlockCallback):
+        (CallbackArgumentBlockCallback::CallbackArgumentBlockCallback):
+        (ArgumentTypeDelegate::typeBlock):
+            - Call createAdoptingJSBlockAdaptor
+        (ArgumentTypeDelegate::typeStruct):
+        (CallbackResult):
+        (CallbackResultStruct::CallbackResultStruct):
+        (ResultTypeDelegate::typeStruct):
+        (ObjCCallbackFunction::ObjCCallbackFunction):
+        (ObjCCallbackFunction::context):
+        (objCCallbackFunctionForInvocation):
+        (objCCallbackFunctionForMethod):
+        (objCCallbackFunctionForBlock):
+            - fix * position for Objective-C types
+        * API/ObjcRuntimeExtras.h:
+        (protocolImplementsProtocol):
+        (forEachProtocolImplementingProtocol):
+        (forEachMethodInProtocol):
+        (forEachPropertyInProtocol):
+            - fix * position for Objective-C types
+        * API/tests/testapi.m:
+        (-[TestObject testArgumentTypesWithInt:double:boolean:string:number:array:dictionary:]):
+        (testObjectiveCAPI):
+            - fix * position for Objective-C types
+
 2013-01-02  Geoffrey Garen  <ggaren@apple.com>
 
         Some renaming in the CodeCache

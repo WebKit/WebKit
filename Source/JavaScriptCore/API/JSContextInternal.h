@@ -42,11 +42,11 @@ struct CallbackData {
 
 class WeakContextRef {
 public:
-    WeakContextRef(JSContext* = nil);
+    WeakContextRef(JSContext * = nil);
     ~WeakContextRef();
 
     JSContext * get();
-    void set(JSContext*);
+    void set(JSContext *);
 
 private:
     JSContext *m_weakContext;

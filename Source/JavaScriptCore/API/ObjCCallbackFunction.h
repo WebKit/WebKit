@@ -27,8 +27,8 @@
 
 #if JS_OBJC_API_ENABLED
 
-JSObjectRef objCCallbackFunctionForMethod(JSContext*, Class, Protocol*, BOOL isInstanceMethod, SEL, const char* types);
-JSObjectRef objCCallbackFunctionForBlock(JSContext*, id);
+JSObjectRef objCCallbackFunctionForMethod(JSContext *, Class, Protocol *, BOOL isInstanceMethod, SEL, const char* types);
+JSObjectRef objCCallbackFunctionForBlock(JSContext *, id);
 
 id tryUnwrapBlock(JSGlobalContextRef, JSObjectRef);
 

@@ -89,7 +89,7 @@ NS_CLASS_AVAILABLE(10_9, NA)
 // occuring within a callback from JavaScript to be rethrown upon return.
 // Setting this value to nil will result in all uncaught exceptions thrown from
 // the API being silently consumed.
-@property(copy) void(^exceptionHandler)(JSContext* context, JSValue *exception);
+@property(copy) void(^exceptionHandler)(JSContext *context, JSValue *exception);
 
 // All instances of JSContext are associated with a single JSVirtualMachine. The
 // virtual machine provides an "object space" or set of execution resources.

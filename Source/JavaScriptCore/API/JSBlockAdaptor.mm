@@ -46,7 +46,7 @@ id __NSMakeSpecialForwardingCaptureBlock(const char *signature, void (^handler)(
 class BlockArgument {
 public:
     virtual ~BlockArgument();
-    virtual JSValueRef get(NSInvocation*, NSInteger, JSContext*, JSValueRef*) = 0;
+    virtual JSValueRef get(NSInvocation *, NSInteger, JSContext *, JSValueRef*) = 0;
 
     OwnPtr<BlockArgument> m_next;
 };
@@ -56,7 +56,7 @@ BlockArgument::~BlockArgument()
 }
 
 class BlockArgumentBoolean : public BlockArgument {
-    virtual JSValueRef get(NSInvocation* invocation, NSInteger argumentNumber, JSContext* context, JSValueRef*) override
+    virtual JSValueRef get(NSInvocation *invocation, NSInteger argumentNumber, JSContext *context, JSValueRef*) override
     {
         bool value;
         [invocation getArgument:&value atIndex:argumentNumber];
@@ -66,7 +66,7 @@ class BlockArgumentBoolean : public BlockArgument {
 
 template<typename T>
 class BlockArgumentNumeric : public BlockArgument {
-    virtual JSValueRef get(NSInvocation* invocation, NSInteger argumentNumber, JSContext* context, JSValueRef*) override
+    virtual JSValueRef get(NSInvocation *invocation, NSInteger argumentNumber, JSContext *context, JSValueRef*) override
     {
         T value;
         [invocation getArgument:&value atIndex:argumentNumber];
@@ -75,7 +75,7 @@ class BlockArgumentNumeric : public BlockArgument {
 };
 
 class BlockArgumentId : public BlockArgument {
-    virtual JSValueRef get(NSInvocation* invocation, NSInteger argumentNumber, JSContext* context, JSValueRef*) override
+    virtual JSValueRef get(NSInvocation *invocation, NSInteger argumentNumber, JSContext *context, JSValueRef*) override
     {
         id value;
         [invocation getArgument:&value atIndex:argumentNumber];
@@ -85,14 +85,14 @@ class BlockArgumentId : public BlockArgument {
 
 class BlockArgumentStruct : public BlockArgument {
 public:
-    BlockArgumentStruct(NSInvocation* conversionInvocation, const char* encodedType)
+    BlockArgumentStruct(NSInvocation *conversionInvocation, const char* encodedType)
         : m_conversionInvocation(conversionInvocation)
         , m_buffer(encodedType)
     {
     }
     
 private:
-    virtual JSValueRef get(NSInvocation* invocation, NSInteger argumentNumber, JSContext* context, JSValueRef*) override
+    virtual JSValueRef get(NSInvocation *invocation, NSInteger argumentNumber, JSContext *context, JSValueRef*) override
     {
         [invocation getArgument:m_buffer atIndex:argumentNumber];
 
@@ -100,7 +100,7 @@ private:
         [m_conversionInvocation setArgument:&context atIndex:3];
         [m_conversionInvocation invokeWithTarget:[JSValue class]];
 
-        JSValue* value;
+        JSValue *value;
         [m_conversionInvocation getReturnValue:&value];
         return valueInternalValue(value);
     }
@@ -154,7 +154,7 @@ public:
     static ResultType typeStruct(const char* begin, const char* end)
     {
         StringRange copy(begin, end);
-        if (NSInvocation* invocation = valueToTypeInvocationFor(copy))
+        if (NSInvocation *invocation = valueToTypeInvocationFor(copy))
             return new BlockArgumentStruct(invocation, copy);
         return 0;
     }
@@ -166,18 +166,18 @@ public:
     {
     }
 
-    virtual void set(NSInvocation*, JSContext*, JSValueRef, JSValueRef*) = 0;
+    virtual void set(NSInvocation *, JSContext *, JSValueRef, JSValueRef*) = 0;
 };
 
 class BlockResultVoid : public BlockResult {
-    virtual void set(NSInvocation*, JSContext*, JSValueRef, JSValueRef*) override
+    virtual void set(NSInvocation *, JSContext *, JSValueRef, JSValueRef*) override
     {
     }
 };
 
 template<typename T>
 class BlockResultInteger : public BlockResult {
-    virtual void set(NSInvocation* invocation, JSContext* context, JSValueRef result, JSValueRef* exception) override
+    virtual void set(NSInvocation *invocation, JSContext *context, JSValueRef result, JSValueRef* exception) override
     {
         T value = (T)JSC::toInt32(JSValueToNumber(contextInternalContext(context), result, exception));
         [invocation setReturnValue:&value];
@@ -186,7 +186,7 @@ class BlockResultInteger : public BlockResult {
 
 template<typename T>
 class BlockResultDouble : public BlockResult {
-    virtual void set(NSInvocation* invocation, JSContext* context, JSValueRef result, JSValueRef* exception) override
+    virtual void set(NSInvocation *invocation, JSContext *context, JSValueRef result, JSValueRef* exception) override
     {
         T value = (T)JSValueToNumber(contextInternalContext(context), result, exception);
         [invocation setReturnValue:&value];
@@ -194,7 +194,7 @@ class BlockResultDouble : public BlockResult {
 };
 
 class BlockResultBoolean : public BlockResult {
-    virtual void set(NSInvocation* invocation, JSContext* context, JSValueRef result, JSValueRef*) override
+    virtual void set(NSInvocation *invocation, JSContext *context, JSValueRef result, JSValueRef*) override
     {
         bool value = JSValueToBoolean(contextInternalContext(context), result);
         [invocation setReturnValue:&value];
@@ -203,16 +203,16 @@ class BlockResultBoolean : public BlockResult {
 
 class BlockResultStruct : public BlockResult {
 public:
-    BlockResultStruct(NSInvocation* conversionInvocation, const char* encodedType)
+    BlockResultStruct(NSInvocation *conversionInvocation, const char* encodedType)
         : m_conversionInvocation(conversionInvocation)
         , m_buffer(encodedType)
     {
     }
     
 private:
-    virtual void set(NSInvocation* invocation, JSContext* context, JSValueRef result, JSValueRef*) override
+    virtual void set(NSInvocation *invocation, JSContext *context, JSValueRef result, JSValueRef*) override
     {
-        JSValue* value = [JSValue valueWithValue:result inContext:context];
+        JSValue *value = [JSValue valueWithValue:result inContext:context];
         [m_conversionInvocation invokeWithTarget:value];
         [m_conversionInvocation getReturnValue:m_buffer];
         [invocation setReturnValue:&value];
@@ -231,10 +231,10 @@ private:
 }
 
 // Helper function to add offset information back into a block signature.
-static NSString* buildBlockSignature(NSString* prefix, const char* begin, const char* end, unsigned long long& offset, NSString* postfix)
+static NSString *buildBlockSignature(NSString *prefix, const char* begin, const char* end, unsigned long long& offset, NSString *postfix)
 {
     StringRange copy(begin, end);
-    NSString* result = [NSString stringWithFormat:@"%@%s%@%@", prefix, copy.get(), @(offset), postfix];
+    NSString *result = [NSString stringWithFormat:@"%@%s%@%@", prefix, copy.get(), @(offset), postfix];
     NSUInteger size;
     NSGetSizeAndAlignment(copy, &size, 0);
     if (size < 4)
@@ -264,7 +264,7 @@ static NSString* buildBlockSignature(NSString* prefix, const char* begin, const 
     encodedType += 2;
 
     // The first argument to a block is the block itself.
-    NSString* signature = @"@?0";
+    NSString *signature = @"@?0";
     unsigned long long offset = sizeof(void*);
 
     OwnPtr<BlockArgument> arguments;
@@ -322,7 +322,7 @@ static NSString* buildBlockSignature(NSString* prefix, const char* begin, const 
     }
 }
 
-- (id)blockFromValue:(JSValueRef)argument inContext:(JSContext*)context withException:(JSValueRef*)exception
+- (id)blockFromValue:(JSValueRef)argument inContext:(JSContext *)context withException:(JSValueRef*)exception
 {
     JSGlobalContextRef contextRef = contextInternalContext(context);
 
@@ -352,8 +352,8 @@ static NSString* buildBlockSignature(NSString* prefix, const char* begin, const 
     }
 
     // Captured variables.
-    JSBlockAdaptor* adaptor = self;
-    JSValue* value = [JSValue valueWithValue:function inContext:context];
+    JSBlockAdaptor *adaptor = self;
+    JSValue *value = [JSValue valueWithValue:function inContext:context];
 
     // FIXME: https://bugs.webkit.org/show_bug.cgi?id=105895
     // Currently only supporting void functions.
@@ -363,7 +363,7 @@ static NSString* buildBlockSignature(NSString* prefix, const char* begin, const 
         // appropriate to use a new JSContext instance (creating one if necessary).
         // It would be nice if we could throw a JS exception here, but without a context we have
         // nothing to work with.
-        JSContext* context = value.context;
+        JSContext *context = value.context;
         if (!context)
             return;
         JSGlobalContextRef contextRef = contextInternalContext(context);

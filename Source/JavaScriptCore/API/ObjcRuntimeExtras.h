@@ -27,10 +27,10 @@
 #import <wtf/HashSet.h>
 #import <wtf/Vector.h>
 
-inline bool protocolImplementsProtocol(Protocol* candidate, Protocol* target)
+inline bool protocolImplementsProtocol(Protocol *candidate, Protocol *target)
 {
     unsigned protocolProtocolsCount;
-    Protocol** protocolProtocols = protocol_copyProtocolList(candidate, &protocolProtocolsCount);
+    Protocol ** protocolProtocols = protocol_copyProtocolList(candidate, &protocolProtocolsCount);
     for (unsigned i = 0; i < protocolProtocolsCount; ++i) {
         if (protocol_isEqual(protocolProtocols[i], target)) {
             free(protocolProtocols);
@@ -41,22 +41,22 @@ inline bool protocolImplementsProtocol(Protocol* candidate, Protocol* target)
     return false;
 }
 
-inline void forEachProtocolImplementingProtocol(Class cls, Protocol* target, void (^callback)(Protocol*))
+inline void forEachProtocolImplementingProtocol(Class cls, Protocol *target, void (^callback)(Protocol *))
 {
     ASSERT(cls);
     ASSERT(target);
 
-    Vector<Protocol*> worklist;
+    Vector<Protocol *> worklist;
     HashSet<void*> visited;
 
     // Initially fill the worklist with the Class's protocols.
     unsigned protocolsCount;
-    Protocol** protocols = class_copyProtocolList(cls, &protocolsCount);
+    Protocol ** protocols = class_copyProtocolList(cls, &protocolsCount);
     worklist.append(protocols, protocolsCount);
     free(protocols);
 
     while (!worklist.isEmpty()) {
-        Protocol* protocol = worklist.last();
+        Protocol *protocol = worklist.last();
         worklist.removeLast();
 
         // Are we encountering this Protocol for the first time?
@@ -83,7 +83,7 @@ inline void forEachMethodInClass(Class cls, void (^callback)(Method))
     free(methods);
 }
 
-inline void forEachMethodInProtocol(Protocol* protocol, BOOL isRequiredMethod, BOOL isInstanceMethod, void (^callback)(SEL, const char*))
+inline void forEachMethodInProtocol(Protocol *protocol, BOOL isRequiredMethod, BOOL isInstanceMethod, void (^callback)(SEL, const char*))
 {
     unsigned count;
     struct objc_method_description* methods = protocol_copyMethodDescriptionList(protocol, isRequiredMethod, isInstanceMethod, &count);
@@ -92,7 +92,7 @@ inline void forEachMethodInProtocol(Protocol* protocol, BOOL isRequiredMethod, B
     free(methods);
 }
 
-inline void forEachPropertyInProtocol(Protocol* protocol, void (^callback)(objc_property_t))
+inline void forEachPropertyInProtocol(Protocol *protocol, void (^callback)(objc_property_t))
 {
     unsigned count;
     objc_property_t* properties = protocol_copyPropertyList(protocol, &count);
@@ -222,6 +222,7 @@ typename DelegateType::ResultType parseObjCType(const char*& position)
 }
 
 extern "C" {
+    // Forward declare some Objective-C runtime internal methods that are not API.
     const char *_protocol_getMethodTypeEncoding(Protocol *, SEL, BOOL isRequiredMethod, BOOL isInstanceMethod);
     id objc_initWeak(id *, id);
     void objc_destroyWeak(id *);

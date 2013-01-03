@@ -39,7 +39,7 @@
 
 id tryUnwrapObjcObject(JSGlobalContextRef, JSValueRef);
 
-Protocol* getJSExportProtocol();
+Protocol *getJSExportProtocol();
 Class getNSBlockClass();
 
 #endif

@@ -61,7 +61,7 @@ static JSClassRef wrapperClass()
 
 // Default conversion of selectors to property names.
 // All semicolons are removed, lowercase letters following a semicolon are capitalized.
-static NSString* selectorToPropertyName(const char* start)
+static NSString *selectorToPropertyName(const char* start)
 {
     // Use 'index' to check for colons, if there are non, this is easy!
     const char* firstColon = index(start, ':');
@@ -98,7 +98,7 @@ static NSString* selectorToPropertyName(const char* start)
         // If we get here, we've consumed a ':' - wash, rinse, repeat.
     }
 done:
-    NSString* result = [NSString stringWithUTF8String:buffer];
+    NSString *result = [NSString stringWithUTF8String:buffer];
     free(buffer);
     return result;
 }
@@ -106,7 +106,7 @@ done:
 // Make an object that is in all ways are completely vanilla JavaScript object,
 // other than that it has a native brand set that will be displayed by the default
 // Object.prototype.toString comversion.
-static JSValue* createObjectWithCustomBrand(JSContext* context, NSString* brand, JSClassRef parentClass = 0, void* privateData = 0)
+static JSValue *createObjectWithCustomBrand(JSContext *context, NSString *brand, JSClassRef parentClass = 0, void* privateData = 0)
 {
     JSClassDefinition definition;
     definition = kJSClassDefinitionEmpty;
@@ -120,26 +120,26 @@ static JSValue* createObjectWithCustomBrand(JSContext* context, NSString* brand,
 
 // Look for @optional properties in the prototype containing a selector to property
 // name mapping, separated by a __JS_EXPORT_AS__ delimiter.
-static NSMutableDictionary* createRenameMap(Protocol* protocol, BOOL isInstanceMethod)
+static NSMutableDictionary *createRenameMap(Protocol *protocol, BOOL isInstanceMethod)
 {
-    NSMutableDictionary* renameMap = [[NSMutableDictionary alloc] init];
+    NSMutableDictionary *renameMap = [[NSMutableDictionary alloc] init];
 
     forEachMethodInProtocol(protocol, NO, isInstanceMethod, ^(SEL sel, const char*){
-        NSString* rename = @(sel_getName(sel));
+        NSString *rename = @(sel_getName(sel));
         NSRange range = [rename rangeOfString:@"__JS_EXPORT_AS__"];
         if (range.location == NSNotFound)
             return;
-        NSString* selector = [rename substringToIndex:range.location];
+        NSString *selector = [rename substringToIndex:range.location];
         NSUInteger begin = range.location + range.length;
         NSUInteger length = [rename length] - begin - 1;
-        NSString* name = [rename substringWithRange:(NSRange){ begin, length }];
+        NSString *name = [rename substringWithRange:(NSRange){ begin, length }];
         renameMap[selector] = name;
     });
 
     return renameMap;
 }
 
-inline void putNonEnumerable(JSValue* base, NSString* propertyName, JSValue* value)
+inline void putNonEnumerable(JSValue *base, NSString *propertyName, JSValue *value)
 {
     [base defineProperty:propertyName descriptor:@{
         JSPropertyDescriptorValueKey: value,
@@ -153,13 +153,13 @@ inline void putNonEnumerable(JSValue* base, NSString* propertyName, JSValue* val
 //  * Determine a property name (either via a renameMap or default conversion).
 //  * If an accessorMap is provided, and conatins a this name, store the method in the map.
 //  * Otherwise, if the object doesn't already conatin a property with name, create it.
-static void copyMethodsToObject(JSContext* context, Class objcClass, Protocol* protocol, BOOL isInstanceMethod, JSValue* object, NSMutableDictionary* accessorMethods = nil)
+static void copyMethodsToObject(JSContext *context, Class objcClass, Protocol *protocol, BOOL isInstanceMethod, JSValue *object, NSMutableDictionary *accessorMethods = nil)
 {
-    NSMutableDictionary* renameMap = createRenameMap(protocol, isInstanceMethod);
+    NSMutableDictionary *renameMap = createRenameMap(protocol, isInstanceMethod);
 
     forEachMethodInProtocol(protocol, YES, isInstanceMethod, ^(SEL sel, const char* types){
         const char* nameCStr = sel_getName(sel);
-        NSString* name = @(nameCStr);
+        NSString *name = @(nameCStr);
         if (accessorMethods && accessorMethods[name]) {
             JSObjectRef method = objCCallbackFunctionForMethod(context, objcClass, protocol, isInstanceMethod, sel, types);
             if (!method)
@@ -220,7 +220,7 @@ static char* makeSetterName(const char* name)
     return setterName;
 }
 
-static void copyPrototypeProperties(JSContext* context, Class objcClass, Protocol* protocol, JSValue* prototypeValue)
+static void copyPrototypeProperties(JSContext *context, Class objcClass, Protocol *protocol, JSValue *prototypeValue)
 {
     // First gather propreties into this list, then handle the methods (capturing the accessor methods).
     struct Property {
@@ -234,7 +234,7 @@ static void copyPrototypeProperties(JSContext* context, Class objcClass, Protoco
     NSMutableDictionary *accessorMethods = [NSMutableDictionary dictionary];
 
     // Useful value.
-    JSValue* undefined = [JSValue valueWithUndefinedInContext:context];
+    JSValue *undefined = [JSValue valueWithUndefinedInContext:context];
 
     forEachPropertyInProtocol(protocol, ^(objc_property_t property){
         char* getterName = 0;
@@ -263,11 +263,11 @@ static void copyPrototypeProperties(JSContext* context, Class objcClass, Protoco
     for (size_t i = 0; i < propertyList.size(); ++i) {
         Property& property = propertyList[i];
 
-        JSValue* getter = accessorMethods[@(property.getterName)];
+        JSValue *getter = accessorMethods[@(property.getterName)];
         free(property.getterName);
         ASSERT(![getter isUndefined]);
 
-        JSValue* setter = undefined;
+        JSValue *setter = undefined;
         if (property.setterName) {
             setter = accessorMethods[@(property.setterName)];
             free(property.setterName);
@@ -284,15 +284,15 @@ static void copyPrototypeProperties(JSContext* context, Class objcClass, Protoco
 }
 
 @interface JSObjCClassInfo : NSObject {
-    JSContext* m_context;
+    JSContext *m_context;
     Class m_class;
     bool m_block;
     JSClassRef m_classRef;
-    JSValue* m_prototype;
-    JSValue* m_constructor;
+    JSValue *m_prototype;
+    JSValue *m_constructor;
 }
 
-- (id)initWithContext:(JSContext*)context forClass:(Class)cls superClassInfo:(JSObjCClassInfo*)superClassInfo;
+- (id)initWithContext:(JSContext *)context forClass:(Class)cls superClassInfo:(JSObjCClassInfo*)superClassInfo;
 - (JSValue *)wrapperForObject:(id)object;
 - (JSValue *)constructor;
 
@@ -300,7 +300,7 @@ static void copyPrototypeProperties(JSContext* context, Class objcClass, Protoco
 
 @implementation JSObjCClassInfo
 
-- (id)initWithContext:(JSContext*)context forClass:(Class)cls superClassInfo:(JSObjCClassInfo*)superClassInfo
+- (id)initWithContext:(JSContext *)context forClass:(Class)cls superClassInfo:(JSObjCClassInfo*)superClassInfo
 {
     self = [super init];
     if (!self)
@@ -327,8 +327,8 @@ static void copyPrototypeProperties(JSContext* context, Class objcClass, Protoco
         putNonEnumerable(m_prototype, @"constructor", m_constructor);
         putNonEnumerable(m_constructor, @"prototype", m_prototype);
 
-        Protocol* exportProtocol = getJSExportProtocol();
-        forEachProtocolImplementingProtocol(cls, exportProtocol, ^(Protocol* protocol){
+        Protocol *exportProtocol = getJSExportProtocol();
+        forEachProtocolImplementingProtocol(cls, exportProtocol, ^(Protocol *protocol){
             copyPrototypeProperties(context, cls, protocol, m_prototype);
             copyMethodsToObject(context, cls, protocol, NO, m_constructor);
         });
@@ -375,10 +375,10 @@ static void copyPrototypeProperties(JSContext* context, Class objcClass, Protoco
 
 @implementation JSWrapperMap {
     JSContext *m_context;
-    NSMutableDictionary* m_classMap;
+    NSMutableDictionary *m_classMap;
 }
 
-- (id)initWithContext:(JSContext*)context
+- (id)initWithContext:(JSContext *)context
 {
     self = [super init];
     if (!self)
@@ -413,7 +413,7 @@ static void copyPrototypeProperties(JSContext* context, Class objcClass, Protoco
 
 - (JSValue *)wrapperForObject:(id)object
 {
-    JSValue* wrapper = objc_getAssociatedObject(object, m_context);
+    JSValue *wrapper = objc_getAssociatedObject(object, m_context);
     if (wrapper && wrapper.context)
         return wrapper;
 
@@ -449,9 +449,9 @@ id tryUnwrapObjcObject(JSGlobalContextRef context, JSValueRef value)
     return nil;
 }
 
-Protocol* getJSExportProtocol()
+Protocol *getJSExportProtocol()
 {
-    static Protocol* protocol = objc_getProtocol("JSExport");
+    static Protocol *protocol = objc_getProtocol("JSExport");
     return protocol;
 }
 

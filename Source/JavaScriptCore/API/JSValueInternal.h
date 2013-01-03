@@ -30,7 +30,7 @@
 
 @interface JSValue(Internal)
 
-JSValueRef valueInternalValue(JSValue*);
+JSValueRef valueInternalValue(JSValue *);
 
 + (JSValue *)valueWithValue:(JSValueRef)value inContext:(JSContext *)context;
 - (JSValue *)initWithValue:(JSValueRef)value inContext:(JSContext *)context;
@@ -48,7 +48,7 @@ id valueToDictionary(JSGlobalContextRef, JSValueRef, JSValueRef* exception);
 
 @end
 
-NSInvocation* typeToValueInvocationFor(const char* encodedType);
-NSInvocation* valueToTypeInvocationFor(const char* encodedType);
+NSInvocation *typeToValueInvocationFor(const char* encodedType);
+NSInvocation *valueToTypeInvocationFor(const char* encodedType);
 
 #endif
