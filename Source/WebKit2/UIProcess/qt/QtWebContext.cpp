@@ -21,7 +21,6 @@
 #include "config.h"
 #include "QtWebContext.h"
 
-#include "MutableArray.h"
 #include "QtDownloadManager.h"
 #include "QtWebIconDatabaseClient.h"
 #include "WKAPICast.h"
@@ -167,26 +166,6 @@ PassRefPtr<QtWebContext> QtWebContext::defaultContext()
 PassRefPtr<WebPageProxy> QtWebContext::createWebPage(PageClient* client, WebPageGroup* pageGroup)
 {
     return m_context->createWebPage(client, pageGroup);
-}
-
-void QtWebContext::setNavigatorQtObjectEnabled(WebPageProxy* webPageProxy, bool enabled)
-{
-    static String messageName("SetNavigatorQtObjectEnabled");
-    RefPtr<MutableArray> body = MutableArray::create();
-    body->append(webPageProxy);
-    RefPtr<WebBoolean> webEnabled = WebBoolean::create(enabled);
-    body->append(webEnabled.get());
-    m_context->postMessageToInjectedBundle(messageName, body.get());
-}
-
-void QtWebContext::postMessageToNavigatorQtObject(WebPageProxy* webPageProxy, const QString& message)
-{
-    static String messageName("MessageToNavigatorQtObject");
-    RefPtr<MutableArray> body = MutableArray::create();
-    body->append(webPageProxy);
-    RefPtr<WebString> contents = WebString::create(String(message));
-    body->append(contents.get());
-    m_context->postMessageToInjectedBundle(messageName, body.get());
 }
 
 QtDownloadManager* QtWebContext::downloadManager()

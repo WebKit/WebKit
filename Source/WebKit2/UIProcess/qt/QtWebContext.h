@@ -28,10 +28,6 @@
 #include <wtf/RefCounted.h>
 #include <wtf/RefPtr.h>
 
-QT_BEGIN_NAMESPACE
-class QString;
-QT_END_NAMESPACE
-
 namespace WebKit {
 
 class PageClient;
@@ -51,9 +47,6 @@ public:
     PassRefPtr<WebPageProxy> createWebPage(PageClient*, WebPageGroup*);
 
     WebContext* context() { return m_context.get(); }
-
-    void setNavigatorQtObjectEnabled(WebPageProxy*, bool);
-    void postMessageToNavigatorQtObject(WebPageProxy*, const QString&);
 
     static QtDownloadManager* downloadManager();
     static QtWebIconDatabaseClient* iconDatabase();

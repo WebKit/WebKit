@@ -48,15 +48,15 @@ public:
     // Bundle Client.
     static void didCreatePage(WKBundleRef, WKBundlePageRef, const void*);
     static void willDestroyPage(WKBundleRef, WKBundlePageRef, const void*);
-    static void didReceiveMessage(WKBundleRef, WKStringRef messageName, WKTypeRef messageBody, const void*);
+    static void didReceiveMessageToPage(WKBundleRef, WKBundlePageRef, WKStringRef messageName, WKTypeRef messageBody, const void*);
 
     void didCreatePage(WKBundlePageRef);
     void willDestroyPage(WKBundlePageRef);
-    void didReceiveMessage(WKStringRef messageName, WKTypeRef messageBody);
+    void didReceiveMessageToPage(WKBundlePageRef, WKStringRef messageName, WKTypeRef messageBody);
 
 private:
-    void handleMessageToNavigatorQtObject(WKTypeRef messageBody);
-    void handleSetNavigatorQtObjectEnabled(WKTypeRef messageBody);
+    void handleMessageToNavigatorQtObject(WKBundlePageRef, WKTypeRef messageBody);
+    void handleSetNavigatorQtObjectEnabled(WKBundlePageRef, WKTypeRef messageBody);
 
     HashMap<WKBundlePageRef, OwnPtr<QtBuiltinBundlePage> > m_pages;
     WKBundleRef m_bundle;

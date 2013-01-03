@@ -28,10 +28,8 @@
 #include "QtBuiltinBundle.h"
 
 #include "QtBuiltinBundlePage.h"
-#include "WKArray.h"
 #include "WKBundlePage.h"
 #include "WKNumber.h"
-#include "WKRetainPtr.h"
 #include "WKString.h"
 #include "WKStringQt.h"
 #include <wtf/PassOwnPtr.h>
@@ -52,15 +50,14 @@ QtBuiltinBundle& QtBuiltinBundle::shared()
 void QtBuiltinBundle::initialize(WKBundleRef bundle)
 {
     m_bundle = bundle;
-    WKBundleClient client = {
-        kWKBundleClientCurrentVersion,
-        this,
-        didCreatePage,
-        willDestroyPage,
-        0, // didInitializePageGroup
-        didReceiveMessage,
-        0 // didReceiveMessageToPage
-    };
+
+    WKBundleClient client;
+    memset(&client, 0, sizeof(WKBundleClient));
+    client.version = kWKBundleClientCurrentVersion;
+    client.clientInfo = this;
+    client.didCreatePage = QtBuiltinBundle::didCreatePage;
+    client.willDestroyPage = QtBuiltinBundle::willDestroyPage;
+    client.didReceiveMessageToPage = QtBuiltinBundle::didReceiveMessageToPage;
     WKBundleSetClient(m_bundle, &client);
 }
 
@@ -74,9 +71,9 @@ void QtBuiltinBundle::willDestroyPage(WKBundleRef, WKBundlePageRef page, const v
     static_cast<QtBuiltinBundle*>(const_cast<void*>(clientInfo))->willDestroyPage(page);
 }
 
-void QtBuiltinBundle::didReceiveMessage(WKBundleRef bundle, WKStringRef messageName, WKTypeRef messageBody, const void *clientInfo)
+void QtBuiltinBundle::didReceiveMessageToPage(WKBundleRef, WKBundlePageRef page, WKStringRef messageName, WKTypeRef messageBody, const void* clientInfo)
 {
-    static_cast<QtBuiltinBundle*>(const_cast<void*>(clientInfo))->didReceiveMessage(messageName, messageBody);
+    static_cast<QtBuiltinBundle*>(const_cast<void*>(clientInfo))->didReceiveMessageToPage(page, messageName, messageBody);
 }
 
 void QtBuiltinBundle::didCreatePage(WKBundlePageRef page)
@@ -89,26 +86,19 @@ void QtBuiltinBundle::willDestroyPage(WKBundlePageRef page)
     m_pages.remove(page);
 }
 
-void QtBuiltinBundle::didReceiveMessage(WKStringRef messageName, WKTypeRef messageBody)
+void QtBuiltinBundle::didReceiveMessageToPage(WKBundlePageRef page, WKStringRef messageName, WKTypeRef messageBody)
 {
     if (WKStringIsEqualToUTF8CString(messageName, "MessageToNavigatorQtObject"))
-        handleMessageToNavigatorQtObject(messageBody);
+        handleMessageToNavigatorQtObject(page, messageBody);
     else if (WKStringIsEqualToUTF8CString(messageName, "SetNavigatorQtObjectEnabled"))
-        handleSetNavigatorQtObjectEnabled(messageBody);
+        handleSetNavigatorQtObjectEnabled(page, messageBody);
 }
 
-void QtBuiltinBundle::handleMessageToNavigatorQtObject(WKTypeRef messageBody)
+void QtBuiltinBundle::handleMessageToNavigatorQtObject(WKBundlePageRef page, WKTypeRef messageBody)
 {
     ASSERT(messageBody);
-    ASSERT(WKGetTypeID(messageBody) == WKArrayGetTypeID());
-
-    WKArrayRef body = static_cast<WKArrayRef>(messageBody);
-    ASSERT(WKArrayGetSize(body) == 2);
-    ASSERT(WKGetTypeID(WKArrayGetItemAtIndex(body, 0)) == WKBundlePageGetTypeID());
-    ASSERT(WKGetTypeID(WKArrayGetItemAtIndex(body, 1)) == WKStringGetTypeID());
-
-    WKBundlePageRef page = static_cast<WKBundlePageRef>(WKArrayGetItemAtIndex(body, 0));
-    WKStringRef contents = static_cast<WKStringRef>(WKArrayGetItemAtIndex(body, 1));
+    ASSERT(WKGetTypeID(messageBody) == WKStringGetTypeID());
+    WKStringRef contents = static_cast<WKStringRef>(messageBody);
 
     QtBuiltinBundlePage* bundlePage = m_pages.get(page);
     if (!bundlePage)
@@ -116,18 +106,11 @@ void QtBuiltinBundle::handleMessageToNavigatorQtObject(WKTypeRef messageBody)
     bundlePage->didReceiveMessageToNavigatorQtObject(contents);
 }
 
-void QtBuiltinBundle::handleSetNavigatorQtObjectEnabled(WKTypeRef messageBody)
+void QtBuiltinBundle::handleSetNavigatorQtObjectEnabled(WKBundlePageRef page, WKTypeRef messageBody)
 {
     ASSERT(messageBody);
-    ASSERT(WKGetTypeID(messageBody) == WKArrayGetTypeID());
-
-    WKArrayRef body = static_cast<WKArrayRef>(messageBody);
-    ASSERT(WKArrayGetSize(body) == 2);
-    ASSERT(WKGetTypeID(WKArrayGetItemAtIndex(body, 0)) == WKBundlePageGetTypeID());
-    ASSERT(WKGetTypeID(WKArrayGetItemAtIndex(body, 1)) == WKBooleanGetTypeID());
-
-    WKBundlePageRef page = static_cast<WKBundlePageRef>(WKArrayGetItemAtIndex(body, 0));
-    WKBooleanRef enabled = static_cast<WKBooleanRef>(WKArrayGetItemAtIndex(body, 1));
+    ASSERT(WKGetTypeID(messageBody) == WKBooleanGetTypeID());
+    WKBooleanRef enabled = static_cast<WKBooleanRef>(messageBody);
 
     QtBuiltinBundlePage* bundlePage = m_pages.get(page);
     if (!bundlePage)

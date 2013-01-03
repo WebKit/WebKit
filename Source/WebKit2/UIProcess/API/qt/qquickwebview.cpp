@@ -727,7 +727,10 @@ void QQuickWebViewPrivate::setNavigatorQtObjectEnabled(bool enabled)
     ASSERT(enabled != m_navigatorQtObjectEnabled);
     // FIXME: Currently we have to keep this information in both processes and the setting is asynchronous.
     m_navigatorQtObjectEnabled = enabled;
-    context->setNavigatorQtObjectEnabled(webPageProxy.get(), enabled);
+
+    static String messageName("SetNavigatorQtObjectEnabled");
+    RefPtr<WebBoolean> webEnabled = WebBoolean::create(enabled);
+    webPageProxy->postMessageToInjectedBundle(messageName, webEnabled.get());
 }
 
 static QString readUserScript(const QUrl& url)
@@ -1004,7 +1007,9 @@ bool QQuickWebViewExperimental::flickableViewportEnabled()
 void QQuickWebViewExperimental::postMessage(const QString& message)
 {
     Q_D(QQuickWebView);
-    d->context->postMessageToNavigatorQtObject(d->webPageProxy.get(), message);
+    static String messageName("MessageToNavigatorQtObject");
+    RefPtr<WebString> contents = WebString::create(String(message));
+    d->webPageProxy->postMessageToInjectedBundle(messageName, contents.get());
 }
 
 QQmlComponent* QQuickWebViewExperimental::alertDialog() const
