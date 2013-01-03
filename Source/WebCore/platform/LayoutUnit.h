@@ -196,6 +196,10 @@ public:
 #endif
     {
 #if ENABLE(SUBPIXEL_LAYOUT)
+#if ENABLE(SATURATED_LAYOUT_ARITHMETIC)
+        if (UNLIKELY(m_value >= INT_MAX - kEffectiveFixedPointDenominator + 1))
+            return intMaxForLayoutUnit;
+#endif
         if (m_value >= 0)
             return (m_value + kEffectiveFixedPointDenominator - 1) / kEffectiveFixedPointDenominator;
         return toInt();
@@ -221,6 +225,10 @@ public:
     int floor() const
     {
 #if ENABLE(SUBPIXEL_LAYOUT)
+#if ENABLE(SATURATED_LAYOUT_ARITHMETIC)
+        if (UNLIKELY(m_value <= INT_MIN + kEffectiveFixedPointDenominator - 1))
+            return intMinForLayoutUnit;
+#endif
         if (m_value >= 0)
             return toInt();
         return (m_value - kEffectiveFixedPointDenominator + 1) / kEffectiveFixedPointDenominator;

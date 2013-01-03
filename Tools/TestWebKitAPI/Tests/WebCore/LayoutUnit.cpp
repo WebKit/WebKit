@@ -187,5 +187,47 @@ TEST(WebCoreLayoutUnit, LayoutUnitDivision)
     ASSERT_EQ((LayoutUnit(intMaxForLayoutUnit) / LayoutUnit(0.5)).toInt(), intMaxForLayoutUnit);
 }
 
+TEST(WebCoreLayoutUnit, LayoutUnitCeil)
+{
+    ASSERT_EQ(LayoutUnit(0).ceil(), 0);
+    ASSERT_EQ(LayoutUnit(0.1).ceil(), 1);
+    ASSERT_EQ(LayoutUnit(0.5).ceil(), 1);
+    ASSERT_EQ(LayoutUnit(0.9).ceil(), 1);
+    ASSERT_EQ(LayoutUnit(1.0).ceil(), 1);
+    ASSERT_EQ(LayoutUnit(1.1).ceil(), 2);
+    
+    ASSERT_EQ(LayoutUnit(-0.1).ceil(), 0);
+    ASSERT_EQ(LayoutUnit(-0.5).ceil(), 0);
+    ASSERT_EQ(LayoutUnit(-0.9).ceil(), 0);
+    ASSERT_EQ(LayoutUnit(-1.0).ceil(), -1);
+    
+    ASSERT_EQ(LayoutUnit(intMaxForLayoutUnit).ceil(), intMaxForLayoutUnit);
+    ASSERT_EQ((LayoutUnit(intMaxForLayoutUnit) - LayoutUnit(0.5)).ceil(), intMaxForLayoutUnit);
+    ASSERT_EQ((LayoutUnit(intMaxForLayoutUnit) - LayoutUnit(1)).ceil(), intMaxForLayoutUnit - 1);
+
+    ASSERT_EQ(LayoutUnit(intMinForLayoutUnit).ceil(), intMinForLayoutUnit);
+}
+
+TEST(WebCoreLayoutUnit, LayoutUnitFloor)
+{
+    ASSERT_EQ(LayoutUnit(0).floor(), 0);
+    ASSERT_EQ(LayoutUnit(0.1).floor(), 0);
+    ASSERT_EQ(LayoutUnit(0.5).floor(), 0);
+    ASSERT_EQ(LayoutUnit(0.9).floor(), 0);
+    ASSERT_EQ(LayoutUnit(1.0).floor(), 1);
+    ASSERT_EQ(LayoutUnit(1.1).floor(), 1);
+    
+    ASSERT_EQ(LayoutUnit(-0.1).floor(), -1);
+    ASSERT_EQ(LayoutUnit(-0.5).floor(), -1);
+    ASSERT_EQ(LayoutUnit(-0.9).floor(), -1);
+    ASSERT_EQ(LayoutUnit(-1.0).floor(), -1);
+    
+    ASSERT_EQ(LayoutUnit(intMaxForLayoutUnit).floor(), intMaxForLayoutUnit);
+
+    ASSERT_EQ(LayoutUnit(intMinForLayoutUnit).floor(), intMinForLayoutUnit);
+    ASSERT_EQ((LayoutUnit(intMinForLayoutUnit) + LayoutUnit(0.5)).floor(), intMinForLayoutUnit);
+    ASSERT_EQ((LayoutUnit(intMinForLayoutUnit) + LayoutUnit(1)).floor(), intMinForLayoutUnit + 1);
+}
+
 
 } // namespace TestWebKitAPI
