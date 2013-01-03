@@ -109,26 +109,28 @@ int PluginProcessMain(const CommandLine& commandLine)
     signal(SIGSEGV, _exit);
 #endif
 
-    // FIXME: It would be better to proxy set cursor calls over to the UI process instead of
-    // allowing plug-ins to change the mouse cursor at any time.
-    WKEnableSettingCursorWhenInBackground();
+    @autoreleasepool {
+        // FIXME: It would be better to proxy set cursor calls over to the UI process instead of
+        // allowing plug-ins to change the mouse cursor at any time.
+        WKEnableSettingCursorWhenInBackground();
 
-    JSC::initializeThreading();
-    WTF::initializeMainThread();
-    RunLoop::initializeMainRunLoop();
+        JSC::initializeThreading();
+        WTF::initializeMainThread();
+        RunLoop::initializeMainRunLoop();
 
 #if defined(__i386__)
-    // Initialize the shim for 32-bit only.
-    PluginProcess::shared().initializeShim();
+        // Initialize the shim for 32-bit only.
+        PluginProcess::shared().initializeShim();
 #endif
 
-    // Initialize Cocoa overrides. 
-    PluginProcess::shared().initializeCocoaOverrides();
+        // Initialize Cocoa overrides.
+        PluginProcess::shared().initializeCocoaOverrides();
 
-    // Initialize the plug-in process connection.
-    PluginProcess::shared().initialize(CoreIPC::Connection::Identifier(serverPort), RunLoop::main());
+        // Initialize the plug-in process connection.
+        PluginProcess::shared().initialize(CoreIPC::Connection::Identifier(serverPort), RunLoop::main());
 
-    [NSApplication sharedApplication];
+        [NSApplication sharedApplication];
+    }
 
     RunLoop::run();
     

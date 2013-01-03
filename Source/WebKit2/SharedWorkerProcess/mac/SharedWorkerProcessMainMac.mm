@@ -92,14 +92,16 @@ int SharedWorkerProcessMain(const CommandLine& commandLine)
     signal(SIGSEGV, _exit);
 #endif
 
-    JSC::initializeThreading();
-    WTF::initializeMainThread();
-    RunLoop::initializeMainRunLoop();
+    @autoreleasepool {
+        JSC::initializeThreading();
+        WTF::initializeMainThread();
+        RunLoop::initializeMainRunLoop();
 
-    // Initialize the shared worker process connection.
-    SharedWorkerProcess::shared().initialize(CoreIPC::Connection::Identifier(serverPort), RunLoop::main());
+        // Initialize the shared worker process connection.
+        SharedWorkerProcess::shared().initialize(CoreIPC::Connection::Identifier(serverPort), RunLoop::main());
 
-    [NSApplication sharedApplication];
+        [NSApplication sharedApplication];
+    }
 
     RunLoop::run();
     

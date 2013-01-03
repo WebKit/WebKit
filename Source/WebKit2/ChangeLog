@@ -1,3 +1,19 @@
+2013-01-03  Kiran Muppala  <cmuppala@apple.com>
+
+        Ensure autorelease pool exists when calling WKNSProcessInfoProcessAssertionWithTypes on Mac
+        https://bugs.webkit.org/show_bug.cgi?id=105674
+
+        Reviewed by Sam Weinig.
+
+        The function WKNSProcessInfoProcessAssertionWithTypes returns a autoreleased object and since,
+        it is called during process initialization prior to the runloop being started in PluginProcess
+        and SharedWorkerProcess, an autorelease pool must be explictly created.
+
+        * PluginProcess/mac/PluginProcessMainMac.mm:
+        (WebKit::PluginProcessMain): Enclose process initialization code in an @autoreleasepool block.
+        * SharedWorkerProcess/mac/SharedWorkerProcessMainMac.mm:
+        (WebKit::SharedWorkerProcessMain): Ditto.
+
 2013-01-03  Csaba Osztrogonác  <ossy@webkit.org>
 
         [Qt] Unreviewed debug buildfix after r138723.
