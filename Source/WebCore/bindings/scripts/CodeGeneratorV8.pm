@@ -2565,7 +2565,11 @@ END
         $hasEnumerator = 0;
     }
 
-    push(@implContent, "    desc->${setOn}Template()->SetNamedPropertyHandler(${v8InterfaceName}::namedPropertyGetter, ");
+    if ($interfaceName eq "HTMLPropertiesCollection") {
+        push(@implContent, "    desc->${setOn}Template()->SetNamedPropertyHandler(V8HTMLCollection::namedPropertyGetter, ");
+    } else {
+        push(@implContent, "    desc->${setOn}Template()->SetNamedPropertyHandler(${v8InterfaceName}::namedPropertyGetter, ");
+    }
     push(@implContent, $hasCustomNamedSetter ? "${v8InterfaceName}::namedPropertySetter, " : "0, ");
     # If there is a custom enumerator, there MUST be custom query to properly communicate property attributes.
     push(@implContent, $hasEnumerator ? "${v8InterfaceName}::namedPropertyQuery, " : "0, ");
