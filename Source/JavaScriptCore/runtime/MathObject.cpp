@@ -232,22 +232,6 @@ static ALWAYS_INLINE double mathPow(double x, double y)
 
 ALWAYS_INLINE double mathPow(double x, double y)
 {
-#if COMPILER(MINGW64)
-    // MinGW-w64 has a custom implementation for pow.
-    // This handles certain special cases that are different.
-    if ((x == 0.0 || isinf(x)) && isfinite(y)) {
-        double f;
-        if (modf(y, &f) != 0.0)
-            return ((x == 0.0) ^ (y > 0.0)) ? std::numeric_limits<double>::infinity() : 0.0;
-    }
-
-    if (x == 2.0) {
-        int yInt = static_cast<int>(y);
-        if (y == yInt)
-            return ldexp(1.0, yInt);
-    }
-#endif
-
     return pow(x, y);
 }
 

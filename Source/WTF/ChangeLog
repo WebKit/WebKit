@@ -1,3 +1,16 @@
+2013-01-02  Simon Hausmann  <simon.hausmann@digia.com>
+
+        [MinGW-w64] Centralize workaround for pow() implementation
+        https://bugs.webkit.org/show_bug.cgi?id=105925
+
+        Reviewed by Sam Weinig.
+
+        As suggested by Sam, move the MinGW-w64 workaround into MathExtras.h
+        away from the JSC usage.
+
+        * wtf/MathExtras.h:
+        (wtf_pow):
+
 2013-01-02  Adam Barth  <abarth@webkit.org>
 
         WTF.gypi lists Platform.h twice
