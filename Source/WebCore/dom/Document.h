@@ -1586,22 +1586,20 @@ inline const Document* Document::templateContentsOwnerDocument() const
 
 inline bool Node::isDocumentNode() const
 {
-    return this == m_document;
-}
-
-inline TreeScope* Node::treeScope() const
-{
-    return hasRareData() ? m_data.m_rareData->treeScope() : documentInternal();
+    return this == documentInternal();
 }
 
 inline Node::Node(Document* document, ConstructionType type)
     : m_nodeFlags(type)
-    , m_document(document)
+    , m_treeScope(document)
     , m_previous(0)
     , m_next(0)
 {
     if (document)
         document->guardRef();
+    else
+        m_treeScope = TreeScope::noDocumentInstance();
+
 #if !defined(NDEBUG) || (defined(DUMP_NODE_STATISTICS) && DUMP_NODE_STATISTICS)
     trackForDebugging();
 #endif

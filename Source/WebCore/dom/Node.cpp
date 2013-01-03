@@ -414,10 +414,12 @@ Node::~Node()
     if (hasRareData())
         clearRareData();
 
+    Document* doc = documentInternal();
+
     if (hasEventTargetData()) {
 #if ENABLE(TOUCH_EVENT_TRACKING)
-        if (m_document)
-            m_document->didRemoveEventTargetNode(this);
+        if (doc)
+            doc->didRemoveEventTargetNode(this);
 #endif
         clearEventTargetData();
     }
@@ -425,7 +427,6 @@ Node::~Node()
     if (renderer())
         detach();
 
-    Document* doc = m_document;
     if (AXObjectCache::accessibilityEnabled() && doc && doc->axObjectCacheExists() && !isContainerNode())
         doc->axObjectCache()->remove(this);
     
@@ -438,25 +439,6 @@ Node::~Node()
         doc->guardDeref();
 
     InspectorCounters::decrementCounter(InspectorCounters::NodeCounter);
-}
-
-void Node::setDocument(Document* document)
-{
-    ASSERT(!inDocument() || m_document == document);
-    if (inDocument() || m_document == document)
-        return;
-
-    m_document = document;
-}
-
-void Node::setTreeScope(TreeScope* scope)
-{
-    ASSERT(!isShadowRoot());
-
-    if (!hasRareData() && scope->rootNode()->isDocumentNode())
-        return;
-
-    ensureRareData()->setTreeScope(scope);
 }
 
 NodeRareData* Node::rareData() const
@@ -480,7 +462,7 @@ NodeRareData* Node::ensureRareData()
 
 PassOwnPtr<NodeRareData> Node::createRareData()
 {
-    return adoptPtr(new NodeRareData(documentInternal()));
+    return adoptPtr(new NodeRareData());
 }
 
 void Node::clearRareData()
@@ -1105,7 +1087,7 @@ void Node::attach()
     setAttached();
     clearNeedsStyleRecalc();
 
-    Document* doc = m_document;
+    Document* doc = documentInternal();
     if (AXObjectCache::accessibilityEnabled() && doc && doc->axObjectCacheExists())
         doc->axObjectCache()->updateCacheAfterNodeIsAttached(this);
 }
@@ -2606,7 +2588,7 @@ void Node::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
     MemoryClassInfo info(memoryObjectInfo, this, WebCoreMemoryTypes::DOM);
     TreeShared<Node, ContainerNode>::reportMemoryUsage(memoryObjectInfo);
     ScriptWrappable::reportMemoryUsage(memoryObjectInfo);
-    info.addMember(m_document);
+    info.addMember(m_treeScope);
     info.addMember(m_next);
     info.addMember(m_previous);
     info.addMember(this->renderer());

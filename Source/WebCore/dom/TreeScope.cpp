@@ -58,19 +58,38 @@ namespace WebCore {
 
 struct SameSizeAsTreeScope {
     virtual ~SameSizeAsTreeScope();
-    void* pointers[7];
+    void* pointers[8];
 };
 
 COMPILE_ASSERT(sizeof(TreeScope) == sizeof(SameSizeAsTreeScope), treescope_should_stay_small);
 
 using namespace HTMLNames;
 
-TreeScope::TreeScope(ContainerNode* rootNode)
+TreeScope::TreeScope(ContainerNode* rootNode, Document* document)
     : m_rootNode(rootNode)
-    , m_parentTreeScope(0)
+    , m_documentScope(document)
+    , m_parentTreeScope(document)
     , m_idTargetObserverRegistry(IdTargetObserverRegistry::create())
 {
     ASSERT(rootNode);
+    ASSERT(document);
+    ASSERT(rootNode != document);
+}
+
+TreeScope::TreeScope(Document* document)
+    : m_rootNode(document)
+    , m_documentScope(document)
+    , m_parentTreeScope(0)
+    , m_idTargetObserverRegistry(IdTargetObserverRegistry::create())
+{
+    ASSERT(document);
+}
+
+TreeScope::TreeScope()
+    : m_rootNode(0)
+    , m_documentScope(0)
+    , m_parentTreeScope(0)
+{
 }
 
 TreeScope::~TreeScope()
@@ -88,6 +107,12 @@ void TreeScope::destroyTreeScopeData()
     m_labelsByForAttribute.clear();
 }
 
+void TreeScope::clearDocumentScope()
+{
+    ASSERT(rootNode()->isDocumentNode());
+    m_documentScope = 0;
+}
+
 void TreeScope::setParentTreeScope(TreeScope* newParentScope)
 {
     // A document node cannot be re-parented.
@@ -96,6 +121,7 @@ void TreeScope::setParentTreeScope(TreeScope* newParentScope)
     ASSERT(newParentScope);
 
     m_parentTreeScope = newParentScope;
+    setDocumentScope(newParentScope->documentScope());
 }
 
 Element* TreeScope::getElementById(const AtomicString& elementId) const

@@ -48,6 +48,7 @@ class Node;
 // the destructor.
 class TreeScope {
     friend class Document;
+    friend class TreeScopeAdopter;
 
 public:
     TreeScope* parentTreeScope() const { return m_parentTreeScope; }
@@ -59,6 +60,8 @@ public:
     bool containsMultipleElementsWithId(const AtomicString& id) const;
     void addElementById(const AtomicString& elementId, Element*);
     void removeElementById(const AtomicString& elementId, Element*);
+
+    Document* documentScope() const { return m_documentScope; }
 
     Node* ancestorInThisScope(Node*) const;
 
@@ -95,14 +98,31 @@ public:
 
     virtual void reportMemoryUsage(MemoryObjectInfo*) const;
 
+    static TreeScope* noDocumentInstance()
+    {
+        DEFINE_STATIC_LOCAL(TreeScope, instance, ());
+        return &instance;
+    }
+
 protected:
-    explicit TreeScope(ContainerNode*);
+    TreeScope(ContainerNode*, Document*);
+    TreeScope(Document*);
     virtual ~TreeScope();
 
     void destroyTreeScopeData();
+    void clearDocumentScope();
+    void setDocumentScope(Document* document)
+    {
+        ASSERT(document);
+        ASSERT(this != noDocumentInstance());
+        m_documentScope = document;
+    }
 
 private:
+    TreeScope();
+
     ContainerNode* m_rootNode;
+    Document* m_documentScope;
     TreeScope* m_parentTreeScope;
 
     OwnPtr<DocumentOrderedMap> m_elementsById;
