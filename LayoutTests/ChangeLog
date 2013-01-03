@@ -1,5 +1,14 @@
 2013-01-02  Ryosuke Niwa  <rniwa@webkit.org>
 
+        Add failing test expectations for two canvas tests on Mac Lion
+        since they have been failing as far as we could tell on the flakiness dashboard.
+
+        The failure is tracked by the bug 105999.
+
+        * platform/mac/TestExpectations:
+
+2013-01-02  Ryosuke Niwa  <rniwa@webkit.org>
+
         Add a Mac test expectation for the bug 105998.
 
         * platform/mac-wk2/TestExpectations:

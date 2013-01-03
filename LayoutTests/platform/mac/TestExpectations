@@ -1285,3 +1285,6 @@ webkit.org/b/105932 [ MountainLion Debug ] http/tests/inspector/resource-har-pag
 
 webkit.org/b/105987 [ Debug ] svg/dynamic-updates/SVGFEMorphologyElement-dom-in-attr.html [ Pass Crash ]
 webkit.org/b/105987 [ Debug ] svg/dynamic-updates/SVGFEMorphologyElement-dom-radius-attr.html [ Pass Crash ]
+
+webkit.org/b/105999 [ Lion ] fast/canvas/canvas-composite-canvas.html [ Failure ]
+webkit.org/b/105999 [ Lion ] fast/canvas/canvas-composite-image.html [ Failure ]
