@@ -679,6 +679,7 @@ void CodeBlock::dumpValueProfiling(PrintStream& out, const Instruction*& it, boo
     out.print(description);
 #else
     UNUSED_PARAM(out);
+    UNUSED_PARAM(hasPrintedProfiling);
 #endif
 }
 
@@ -693,6 +694,7 @@ void CodeBlock::dumpArrayProfiling(PrintStream& out, const Instruction*& it, boo
     out.print(description);
 #else
     UNUSED_PARAM(out);
+    UNUSED_PARAM(hasPrintedProfiling);
 #endif
 }
 

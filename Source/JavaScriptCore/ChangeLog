@@ -1,5 +1,16 @@
 2013-01-03  Filip Pizlo  <fpizlo@apple.com>
 
+        Unreviewed, fix build for DFG JIT disabled.
+
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::dumpValueProfiling):
+        (JSC::CodeBlock::dumpArrayProfiling):
+        * runtime/Executable.cpp:
+        (JSC):
+        (JSC::ExecutableBase::intrinsic):
+
+2013-01-03  Filip Pizlo  <fpizlo@apple.com>
+
         CallLinkStatus should be aware of closure calls, and the DFG bytecode parser should use that as its sole internal notion of how to optimize calls
         https://bugs.webkit.org/show_bug.cgi?id=106027
 

@@ -67,6 +67,11 @@ Intrinsic ExecutableBase::intrinsic() const
         return nativeExecutable->intrinsic();
     return NoIntrinsic;
 }
+#else
+Intrinsic ExecutableBase::intrinsic() const
+{
+    return NoIntrinsic;
+}
 #endif
 
 const ClassInfo NativeExecutable::s_info = { "NativeExecutable", &ExecutableBase::s_info, 0, 0, CREATE_METHOD_TABLE(NativeExecutable) };
