@@ -54,7 +54,7 @@ class GardeningHTTPServer(SocketServer.ThreadingMixIn, BaseHTTPServer.HTTPServer
 class GardeningHTTPRequestHandler(ReflectionHandler):
     STATIC_FILE_NAMES = frozenset()
 
-    STATIC_FILE_EXTENSIONS = ('.js', '.css', '.html', '.gif', '.png')
+    STATIC_FILE_EXTENSIONS = ('.js', '.css', '.html', '.gif', '.png', '.ico')
 
     STATIC_FILE_DIRECTORY = os.path.join(
         os.path.dirname(__file__),
