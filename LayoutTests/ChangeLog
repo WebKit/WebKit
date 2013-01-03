@@ -1,3 +1,11 @@
+2013-01-02  Luke Macpherson   <macpherson@chromium.org>
+
+        Unreviewed Chromium gardening.
+
+        Rebaseline win-xp image for svg/dynamic-updates/SVGFEComponentTransferElement-dom-tableValues-attr-expected.html.
+
+        * platform/chromium-win-xp/svg/dynamic-updates/SVGFEComponentTransferElement-dom-tableValues-attr-expected.png: Added.
+
 2013-01-02  Bem Jones-Bey  <bjonesbe@adobe.com>
 
         When a block's height is determined by min-height/max-height, children with percentage heights are sized incorrectly
