@@ -77,7 +77,7 @@ namespace WebCore {
         static PassRefPtr<FocusInEventDispatchMediator> create(PassRefPtr<Event>, PassRefPtr<Node> oldFocusedNode);
     private:
         explicit FocusInEventDispatchMediator(PassRefPtr<Event>, PassRefPtr<Node> oldFocusedNode);
-        virtual bool dispatchEvent(EventDispatcher*) const;
+        virtual bool dispatchEvent(EventDispatcher*) const OVERRIDE;
         RefPtr<Node> m_oldFocusedNode;
     };
 
@@ -86,7 +86,7 @@ namespace WebCore {
         static PassRefPtr<FocusOutEventDispatchMediator> create(PassRefPtr<Event>, PassRefPtr<Node> newFocusedNode);
     private:
         explicit FocusOutEventDispatchMediator(PassRefPtr<Event>, PassRefPtr<Node> newFocusedNode);
-        virtual bool dispatchEvent(EventDispatcher*) const;
+        virtual bool dispatchEvent(EventDispatcher*) const OVERRIDE;
         RefPtr<Node> m_newFocusedNode;
     };
 

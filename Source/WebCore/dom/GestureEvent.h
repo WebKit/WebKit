@@ -72,7 +72,7 @@ private:
 
     GestureEvent* event() const;
 
-    virtual bool dispatchEvent(EventDispatcher*) const;
+    virtual bool dispatchEvent(EventDispatcher*) const OVERRIDE;
 };
 
 } // namespace WebCore

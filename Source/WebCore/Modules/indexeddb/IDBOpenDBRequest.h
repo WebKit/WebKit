@@ -47,7 +47,7 @@ public:
 
     // EventTarget
     virtual const AtomicString& interfaceName() const;
-    virtual bool dispatchEvent(PassRefPtr<Event>);
+    virtual bool dispatchEvent(PassRefPtr<Event>) OVERRIDE;
 
     DEFINE_ATTRIBUTE_EVENT_LISTENER(blocked);
     DEFINE_ATTRIBUTE_EVENT_LISTENER(upgradeneeded);

@@ -113,8 +113,9 @@ public:
     // EventTarget
     virtual const AtomicString& interfaceName() const;
     virtual ScriptExecutionContext* scriptExecutionContext() const;
-    virtual bool dispatchEvent(PassRefPtr<Event>);
-    bool dispatchEvent(PassRefPtr<Event> event, ExceptionCode& ec) { return EventTarget::dispatchEvent(event, ec); }
+
+    using EventTarget::dispatchEvent;
+    virtual bool dispatchEvent(PassRefPtr<Event>) OVERRIDE;
 
     // ActiveDOMObject
     virtual bool hasPendingActivity() const OVERRIDE;

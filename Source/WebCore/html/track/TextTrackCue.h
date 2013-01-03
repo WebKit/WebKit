@@ -128,8 +128,8 @@ public:
     PassRefPtr<DocumentFragment> getCueAsHTML();
     void markNodesAsWebVTTNodes(Node*);
 
-    virtual bool dispatchEvent(PassRefPtr<Event>);
-    bool dispatchEvent(PassRefPtr<Event>, ExceptionCode&);
+    using EventTarget::dispatchEvent;
+    virtual bool dispatchEvent(PassRefPtr<Event>) OVERRIDE;
 
     bool isActive();
     void setIsActive(bool);

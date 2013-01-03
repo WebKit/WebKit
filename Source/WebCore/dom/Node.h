@@ -616,7 +616,8 @@ public:
     virtual void postDispatchEventHandler(Event*, void* /*dataFromPreDispatch*/) { }
 
     using EventTarget::dispatchEvent;
-    bool dispatchEvent(PassRefPtr<Event>);
+    virtual bool dispatchEvent(PassRefPtr<Event>) OVERRIDE;
+
     void dispatchScopedEvent(PassRefPtr<Event>);
     void dispatchScopedEventDispatchMediator(PassRefPtr<EventDispatchMediator>);
 

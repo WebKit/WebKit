@@ -275,6 +275,7 @@ namespace WebCore {
 
         using EventTarget::dispatchEvent;
         bool dispatchEvent(PassRefPtr<Event> prpEvent, PassRefPtr<EventTarget> prpTarget);
+
         void dispatchLoadEvent();
 
         DEFINE_ATTRIBUTE_EVENT_LISTENER(abort);

@@ -55,8 +55,9 @@ public:
     virtual bool addEventListener(const AtomicString& eventType, PassRefPtr<EventListener>, bool useCapture);
     virtual bool removeEventListener(const AtomicString& eventType, EventListener*, bool useCapture);
     virtual void removeAllEventListeners();
+
     using EventTarget::dispatchEvent;
-    virtual bool dispatchEvent(PassRefPtr<Event>);
+    virtual bool dispatchEvent(PassRefPtr<Event>) OVERRIDE;
 
     SVGElement* correspondingElement() const { return m_element.get(); }
     SVGUseElement* correspondingUseElement() const { return m_correspondingUseElement; }

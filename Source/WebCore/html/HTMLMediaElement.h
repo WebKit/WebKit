@@ -331,7 +331,7 @@ public:
     MediaController* controller() const;
     void setController(PassRefPtr<MediaController>);
 
-    virtual bool dispatchEvent(PassRefPtr<Event>);
+    virtual bool dispatchEvent(PassRefPtr<Event>) OVERRIDE;
 
     virtual bool willRespondToMouseClickEvents() OVERRIDE;
 

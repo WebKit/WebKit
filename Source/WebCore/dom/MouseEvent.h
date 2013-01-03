@@ -122,7 +122,7 @@ private:
     explicit MouseEventDispatchMediator(PassRefPtr<MouseEvent>, MouseEventType);
     MouseEvent* event() const;
 
-    virtual bool dispatchEvent(EventDispatcher*) const;
+    virtual bool dispatchEvent(EventDispatcher*) const OVERRIDE;
     bool isSyntheticMouseEvent() const { return m_mouseEventType == SyntheticMouseEvent; }
     MouseEventType m_mouseEventType;
 };
