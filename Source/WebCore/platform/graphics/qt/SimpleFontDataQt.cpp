@@ -64,10 +64,9 @@ PassRefPtr<SimpleFontData> SimpleFontData::createScaledFontData(const FontDescri
     return SimpleFontData::create(FontPlatformData(m_platformData, scaledSize), isCustomFont(), false);
 }
 
-FloatRect SimpleFontData::platformBoundsForGlyph(Glyph) const
+FloatRect SimpleFontData::platformBoundsForGlyph(Glyph glyph) const
 {
-    notImplemented();
-    return FloatRect();
+    return m_platformData.rawFont().boundingRect(glyph);
 }
 
 void SimpleFontData::platformInit()
