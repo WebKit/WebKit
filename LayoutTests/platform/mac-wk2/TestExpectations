@@ -288,10 +288,11 @@ webkit.org/b/105958 platform/mac/fast/events/numpad-keycode-mapping.html [ Failu
 webkit.org/b/105960 plugins/navigator-plugins.html [ Failure ]
 
 webkit.org/b/105986 [ Debug ] transitions/hang-with-bad-transition-list.html [ Pass Crash ]
-webkit.org/b/105987 [ Debug ] svg/dynamic-updates/SVGFEMorphologyElement-dom-in-attr.html [ Pass Crash ]
 
 webkit.org/b/105988 [ Debug ] inspector/debugger/pause-in-internal-script.html [ Pass Crash ]
 webkit.org/b/105988 [ Debug ] inspector/debugger/watch-expressions-panel-switch.html [ Pass Crash ]
+webkit.org/b/105988 [ Debug ] inspector/debugger/properties-special.html [ Pass Crash ]
+webkit.org/b/105988 [ Debug ] inspector/debugger/reveal-execution-line.html [ Pass Crash ]
 
 ### END OF (1) Classified failures with bug reports
 ########################################

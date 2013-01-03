@@ -1282,3 +1282,6 @@ webkit.org/b/105777 platform/mac/editing/spelling/autocorrection-in-textarea.htm
 webkit.org/b/105778 platform/mac/accessibility/file-upload-button-subrole.html [ Failure ]
 
 webkit.org/b/105932 [ MountainLion Debug ] http/tests/inspector/resource-har-pages.html [ Crash ]
+
+webkit.org/b/105987 [ Debug ] svg/dynamic-updates/SVGFEMorphologyElement-dom-in-attr.html [ Pass Crash ]
+webkit.org/b/105987 [ Debug ] svg/dynamic-updates/SVGFEMorphologyElement-dom-radius-attr.html [ Pass Crash ]

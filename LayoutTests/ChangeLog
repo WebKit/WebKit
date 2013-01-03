@@ -1,5 +1,12 @@
 2013-01-02  Ryosuke Niwa  <rniwa@webkit.org>
 
+        More Mac test expectation updates per bugs 105988 and 105987.
+
+        * platform/mac-wk2/TestExpectations:
+        * platform/mac/TestExpectations:
+
+2013-01-02  Ryosuke Niwa  <rniwa@webkit.org>
+
         Add flaky crash expectations for multiple tests on Mac WebKit2.
 
         * platform/mac-wk2/TestExpectations:
