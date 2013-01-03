@@ -1,3 +1,10 @@
+2013-01-03  Roger Fong  <roger_fong@apple.com>
+
+        Unreviewed. Add Windows specific result for passing test.
+
+        * platform/win/loader: Added.
+        * platform/win/loader/image-loader-adoptNode-assert-expected.txt: Added.
+
 2013-01-03  Ryosuke Niwa  <rniwa@webkit.org>
 
         Remove failing or flaky test expectations from tests that have been passing on Mac.
