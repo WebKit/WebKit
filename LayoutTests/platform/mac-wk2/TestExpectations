@@ -294,6 +294,8 @@ webkit.org/b/105998 [ Lion Release ] fast/css/sticky/inline-sticky.html [ ImageO
 webkit.org/b/105998 [ MountainLion Debug ] fast/css/sticky/inline-sticky.html [ ImageOnlyFailure Pass ]
 webkit.org/b/105998 [ MountainLion Debug ] fast/css/sticky/sticky-both-sides.html [ ImageOnlyFailure Pass ]
 
+webkit.org/b/93552 inspector/device-orientation-success.html [ Failure ]
+
 ### END OF (1) Classified failures with bug reports
 ########################################
 

@@ -1082,11 +1082,6 @@ webkit.org/b/73766 css3/unicode-bidi-isolate-aharon-failing.html [ ImageOnlyFail
 webkit.org/b/34331 http/tests/media/video-referer.html [ Failure Pass ]
 webkit.org/b/97259 media/track/track-cue-rendering-inner-timestamps.html [ Skip ]
 
-# https://bugs.webkit.org/show_bug.cgi?id=81276
-# Allowed to regress to fix a crash.
-webkit.org/b/69210 fast/inline/continuation-outlines-with-layers.html [ Skip ]
-webkit.org/b/69210 fast/repaint/transform-absolute-in-positioned-container.html [ Failure ]
-
 # Failing ref tests
 webkit.org/b/84759 ietestcenter/css3/multicolumn/column-containing-block-001.htm [ ImageOnlyFailure ]
 webkit.org/b/84760 ietestcenter/css3/multicolumn/column-containing-block-002.htm [ ImageOnlyFailure ]
@@ -1131,15 +1126,8 @@ webkit.org/b/85918 compositing/backface-visibility/backface-visibility-3d.html [
 webkit.org/b/85918 compositing/backface-visibility/backface-visibility-hierarchical-transform.html [ ImageOnlyFailure ]
 webkit.org/b/85918 compositing/backface-visibility/backface-visibility-non3d.html [ ImageOnlyFailure ]
 
-# Accelerated compositing is disabled for elements in a RenderFlowThread
-webkit.org/b/84900 compositing/regions/webkit-flow-renderer-layer-compositing.html [ ImageOnlyFailure ]
-
-webkit.org/b/101897 fast/regions/region-style-inline-background-color.html [ ImageOnlyFailure ]
-
 # Disable webaudio codec tests, including proprietary codecs.
 webkit.org/b/88794 webaudio/codec-tests
-
-webkit.org/b/90007 http/tests/security/mixedContent/insecure-audio-video-in-main-frame.html [ Failure ]
 
 # Text Autosizing is not enabled.
 webkit.org/b/84186 fast/text-autosizing
@@ -1162,9 +1150,6 @@ webkit.org/b/98687 fast/css-generated-content/table-row-group-to-inline.html [ F
 webkit.org/b/104595 fast/css/empty-generated-content.html [ Failure ]
 
 webkit.org/b/93247 [ Debug ] fast/lists/list-marker-remove-crash.html [ Crash ]
-
-# (r124484) inspector/device-orientation-success.html failing on Mac ports
-webkit.org/b/93552 inspector/device-orientation-success.html [ Failure ]
 
 # (r125790): Newly added test inspector/timeline/timeline-decode-resize.html is failing on mac
 webkit.org/b/94374 inspector/timeline/timeline-decode-resize.html [ Failure ]
@@ -1248,9 +1233,6 @@ webkit.org/b/103663 [ MountainLion Lion SnowLeopard ] media/track/track-in-band.
 webkit.org/b/103663 [ MountainLion Lion SnowLeopard ] media/track/track-in-band-cues-added-once.html
 
 webkit.org/b/104104 fast/overflow/scrollbar-click-retains-focus.html [ Failure ]
-
-webkit.org/b/104942 compositing/background-color/background-color-change-to-text.html [ ImageOnlyFailure ]
-webkit.org/b/104942 compositing/background-color/background-color-text-change.html [ ImageOnlyFailure ]
 
 webkit.org/b/104949 fast/spatial-navigation/snav-unit-overflow-and-scroll-in-direction.html [ Failure ]
 

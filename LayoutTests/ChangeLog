@@ -1,3 +1,10 @@
+2013-01-03  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Remove failing or flaky test expectations from tests that have been passing on Mac.
+
+        * platform/mac-wk2/TestExpectations:
+        * platform/mac/TestExpectations:
+
 2013-01-03  Roger Fong  <roger_fong@apple.com>
 
         Unreviewed gardening of Apple Windows port.
