@@ -148,7 +148,7 @@ private:
 
     inline FloatRect layerRect() const
     {
-        return FloatRect(FloatPoint::zero(), m_size);
+        return FloatRect(FloatPoint::zero(), m_state.size);
     }
 
     GraphicsLayerTransform m_transform;
@@ -158,7 +158,6 @@ private:
     TextureMapperLayer* m_effectTarget;
     RefPtr<TextureMapperBackingStore> m_backingStore;
     TextureMapperPlatformLayer* m_contentsLayer;
-    FloatSize m_size;
     float m_opacity;
 #if ENABLE(CSS_FILTERS)
     FilterOperations m_filters;

@@ -71,7 +71,7 @@ void TextureMapperLayer::clearBackingStoresRecursive()
 
 void TextureMapperLayer::computeTransformsRecursive()
 {
-    if (m_size.isEmpty() && m_state.masksToBounds)
+    if (m_state.size.isEmpty() && m_state.masksToBounds)
         return;
 
     // Compute transforms recursively on the way down to leafs.
@@ -85,7 +85,7 @@ void TextureMapperLayer::computeTransformsRecursive()
     m_state.visible = m_state.backfaceVisibility || !m_transform.combined().isBackFaceVisible();
 
     if (m_parent && m_parent->m_state.preserves3D)
-        m_centerZ = m_transform.combined().mapPoint(FloatPoint3D(m_size.width() / 2, m_size.height() / 2, 0)).z();
+        m_centerZ = m_transform.combined().mapPoint(FloatPoint3D(m_state.size.width() / 2, m_state.size.height() / 2, 0)).z();
 
     if (m_state.maskLayer)
         m_state.maskLayer->computeTransformsRecursive();
@@ -136,7 +136,7 @@ void TextureMapperLayer::paintSelf(const TextureMapperPaintOptions& options)
     }
 
     if (m_backingStore) {
-        ASSERT(m_state.drawsContent && m_state.contentsVisible && !m_size.isEmpty());
+        ASSERT(m_state.drawsContent && m_state.contentsVisible && !m_state.size.isEmpty());
         ASSERT(!layerRect().isEmpty());
         m_backingStore->paintToTextureMapper(options.textureMapper, layerRect(), transform, opacity, mask.get());
     }
@@ -261,7 +261,7 @@ bool TextureMapperLayer::shouldPaintToIntermediateSurface() const
 
 bool TextureMapperLayer::isVisible() const
 {
-    if (m_size.isEmpty() && (m_state.masksToBounds || m_state.maskLayer || m_children.isEmpty()))
+    if (m_state.size.isEmpty() && (m_state.masksToBounds || m_state.maskLayer || m_children.isEmpty()))
         return false;
     if (!m_state.visible && m_children.isEmpty())
         return false;
@@ -390,8 +390,6 @@ void TextureMapperLayer::flushCompositingStateForThisLayerOnly(GraphicsLayerText
 
     if (changeMask & ChildrenChange)
         setChildren(graphicsLayer->children());
-
-    m_size = graphicsLayer->size();
 
     if (changeMask & MaskLayerChange) {
        if (TextureMapperLayer* layer = toTextureMapperLayer(graphicsLayer->maskLayer()))
