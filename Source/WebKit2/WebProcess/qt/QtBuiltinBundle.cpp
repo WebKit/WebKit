@@ -32,6 +32,7 @@
 #include "WKNumber.h"
 #include "WKString.h"
 #include "WKStringQt.h"
+#include "WKType.h"
 #include <wtf/PassOwnPtr.h>
 
 namespace WebKit {

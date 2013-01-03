@@ -1,3 +1,9 @@
+2013-01-03  Csaba Osztrogonác  <ossy@webkit.org>
+
+        [Qt] Unreviewed debug buildfix after r138723.
+
+        * WebProcess/qt/QtBuiltinBundle.cpp:
+
 2013-01-02  Jon Lee  <jonlee@apple.com>
 
         Revert auto-start plugins to snapshotted plugins after a period of inactivity
