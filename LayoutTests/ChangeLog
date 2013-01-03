@@ -1,3 +1,9 @@
+2013-01-03  Csaba Osztrogonác  <ossy@webkit.org>
+
+        [Qt][WK2] Unreviewed gardening, skip a new crashing test to paint the bots green.
+
+        * platform/qt-5.0-wk2/TestExpectations:
+
 2013-01-03  Terry Anderson  <tdanderson@chromium.org>
 
         Unreviewed gardening. Setting webaudio/automatic-pull-node.html to
