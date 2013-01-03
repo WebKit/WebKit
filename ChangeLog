@@ -1,3 +1,12 @@
+2013-01-02  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
+
+        [EFL][CMAKE] Remove duplicated conditionals
+        https://bugs.webkit.org/show_bug.cgi?id=105905
+
+        Reviewed by Laszlo Gombos.
+
+        * Source/cmake/OptionsEfl.cmake: Remove set(WTF_USE_GLX 1).
+
 2013-01-02  Tony Chang  <tony@chromium.org>
 
         Unreviewed, rolling out r138661.

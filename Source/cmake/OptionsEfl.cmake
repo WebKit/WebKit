@@ -199,7 +199,6 @@ if (ENABLE_WEBGL OR WTF_USE_TILED_BACKING_STORE)
             add_definitions(-DWTF_USE_OPENGL_ES_2=1)
         endif ()
      elseif (OPENGLX_FOUND)
-         set(WTF_USE_GLX 1)
          add_definitions(-DWTF_USE_GLX=1)
     endif ()
 

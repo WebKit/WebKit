@@ -15,11 +15,38 @@ list(APPEND WebCore_INCLUDE_DIRECTORIES
 )
 
 list(APPEND WebCore_SOURCES
+    accessibility/atk/AccessibilityObjectAtk.cpp
+    accessibility/atk/AXObjectCacheAtk.cpp
+    accessibility/atk/WebKitAccessibleHyperlink.cpp
+    accessibility/atk/WebKitAccessibleInterfaceAction.cpp
+    accessibility/atk/WebKitAccessibleInterfaceComponent.cpp
+    accessibility/atk/WebKitAccessibleInterfaceDocument.cpp
+    accessibility/atk/WebKitAccessibleInterfaceEditableText.cpp
+    accessibility/atk/WebKitAccessibleInterfaceHyperlinkImpl.cpp
+    accessibility/atk/WebKitAccessibleInterfaceHypertext.cpp
+    accessibility/atk/WebKitAccessibleInterfaceImage.cpp
+    accessibility/atk/WebKitAccessibleInterfaceSelection.cpp
+    accessibility/atk/WebKitAccessibleInterfaceTable.cpp
+    accessibility/atk/WebKitAccessibleInterfaceText.cpp
+    accessibility/atk/WebKitAccessibleInterfaceValue.cpp
+    accessibility/atk/WebKitAccessibleUtil.cpp
+    accessibility/atk/WebKitAccessibleWrapperAtk.cpp
+
     editing/SmartReplaceICU.cpp
+
     page/efl/DragControllerEfl.cpp
     page/efl/EventHandlerEfl.cpp
+
     platform/cairo/WidgetBackingStoreCairo.cpp
+
     platform/Cursor.cpp
+
+    platform/audio/efl/AudioBusEfl.cpp
+    platform/audio/gstreamer/AudioDestinationGStreamer.cpp
+    platform/audio/gstreamer/AudioFileReaderGStreamer.cpp
+    platform/audio/gstreamer/FFTFrameGStreamer.cpp
+    platform/audio/gstreamer/WebKitWebAudioSourceGStreamer.cpp
+
     platform/efl/AsyncFileSystemEfl.cpp
     platform/efl/BatteryProviderEfl.cpp
     platform/efl/ClipboardEfl.cpp
@@ -89,15 +116,32 @@ list(APPEND WebCore_SOURCES
     platform/graphics/freetype/GlyphPageTreeNodeFreeType.cpp
     platform/graphics/freetype/SimpleFontDataFreeType.cpp
 
+    platform/graphics/gstreamer/GRefPtrGStreamer.cpp
+    platform/graphics/gstreamer/GStreamerGWorld.cpp
+    platform/graphics/gstreamer/GStreamerUtilities.cpp
+    platform/graphics/gstreamer/GStreamerVersioning.cpp
+    platform/graphics/gstreamer/ImageGStreamerCairo.cpp
+    platform/graphics/gstreamer/MediaPlayerPrivateGStreamer.cpp
+    platform/graphics/gstreamer/PlatformVideoWindowEfl.cpp
+    platform/graphics/gstreamer/VideoSinkGStreamer.cpp
+    platform/graphics/gstreamer/WebKitWebSourceGStreamer.cpp
+
     platform/graphics/harfbuzz/HarfBuzzShaperBase.cpp
     platform/graphics/harfbuzz/ng/HarfBuzzNGFaceCairo.cpp
     platform/graphics/harfbuzz/ng/HarfBuzzNGFace.cpp
     platform/graphics/harfbuzz/ng/HarfBuzzShaper.cpp
 
+    platform/graphics/surfaces/glx/GLXContext.cpp
+    platform/graphics/surfaces/glx/GLXSurface.cpp
+
     platform/graphics/WOFFFileFormat.cpp
+
     platform/image-decoders/cairo/ImageDecoderCairo.cpp
+
     platform/linux/GamepadDeviceLinux.cpp
+
     platform/mediastream/gstreamer/MediaStreamCenterGStreamer.cpp
+
     platform/network/efl/NetworkStateNotifierEfl.cpp
 
     platform/network/soup/AuthenticationChallengeSoup.cpp
@@ -116,8 +160,10 @@ list(APPEND WebCore_SOURCES
     platform/network/soup/SoupURIUtils.cpp
 
     platform/PlatformStrategies.cpp
+
     platform/posix/FileSystemPOSIX.cpp
     platform/posix/SharedBufferPOSIX.cpp
+
     platform/text/efl/TextBreakIteratorInternalICUEfl.cpp
     platform/text/enchant/TextCheckerEnchant.cpp
     platform/text/TextBreakIteratorICU.cpp
@@ -222,11 +268,7 @@ if (ENABLE_VIDEO OR ENABLE_WEB_AUDIO)
         ${GSTREAMER_INTERFACES_INCLUDE_DIRS}
         ${GSTREAMER_PBUTILS_INCLUDE_DIRS}
     )
-    list(APPEND WebCore_SOURCES
-        platform/graphics/gstreamer/GRefPtrGStreamer.cpp
-        platform/graphics/gstreamer/GStreamerUtilities.cpp
-        platform/graphics/gstreamer/GStreamerVersioning.cpp
-    )
+
     list(APPEND WebCore_LIBRARIES
         ${GSTREAMER_LIBRARIES}
         ${GSTREAMER_BASE_LIBRARIES}
@@ -241,14 +283,6 @@ endif ()
 if (ENABLE_VIDEO)
     list(APPEND WebCore_INCLUDE_DIRECTORIES
         ${GSTREAMER_VIDEO_INCLUDE_DIRS}
-    )
-    list(APPEND WebCore_SOURCES
-        platform/graphics/gstreamer/GStreamerGWorld.cpp
-        platform/graphics/gstreamer/ImageGStreamerCairo.cpp
-        platform/graphics/gstreamer/MediaPlayerPrivateGStreamer.cpp
-        platform/graphics/gstreamer/PlatformVideoWindowEfl.cpp
-        platform/graphics/gstreamer/VideoSinkGStreamer.cpp
-        platform/graphics/gstreamer/WebKitWebSourceGStreamer.cpp
     )
     list(APPEND WebCore_LIBRARIES
         ${GSTREAMER_VIDEO_LIBRARIES}
@@ -296,13 +330,6 @@ if (WTF_USE_3D_GRAPHICS)
         )
     endif ()
 
-    if (WTF_USE_GLX)
-        list(APPEND WebCore_SOURCES
-            platform/graphics/surfaces/glx/GLXSurface.cpp
-            platform/graphics/surfaces/glx/GLXContext.cpp
-        )
-    endif ()
-
     if (WTF_USE_OPENGL_ES_2)
         list(APPEND WebCore_SOURCES
             platform/graphics/opengl/Extensions3DOpenGLES.cpp
@@ -337,13 +364,6 @@ if (ENABLE_WEB_AUDIO)
         ${GSTREAMER_AUDIO_INCLUDE_DIRS}
         ${GSTREAMER_FFT_INCLUDE_DIRS}
     )
-    list(APPEND WebCore_SOURCES
-        platform/audio/efl/AudioBusEfl.cpp
-        platform/audio/gstreamer/AudioDestinationGStreamer.cpp
-        platform/audio/gstreamer/AudioFileReaderGStreamer.cpp
-        platform/audio/gstreamer/FFTFrameGStreamer.cpp
-        platform/audio/gstreamer/WebKitWebAudioSourceGStreamer.cpp
-    )
     list(APPEND WebCore_LIBRARIES
         ${GSTREAMER_AUDIO_LIBRARIES}
         ${GSTREAMER_FFT_LIBRARIES}
@@ -364,24 +384,6 @@ if (ENABLE_SPELLCHECK)
 endif ()
 
 if (ENABLE_ACCESSIBILITY)
-    list(APPEND WebCore_SOURCES
-        accessibility/atk/AccessibilityObjectAtk.cpp
-        accessibility/atk/AXObjectCacheAtk.cpp
-        accessibility/atk/WebKitAccessibleHyperlink.cpp
-        accessibility/atk/WebKitAccessibleInterfaceAction.cpp
-        accessibility/atk/WebKitAccessibleInterfaceComponent.cpp
-        accessibility/atk/WebKitAccessibleInterfaceDocument.cpp
-        accessibility/atk/WebKitAccessibleInterfaceEditableText.cpp
-        accessibility/atk/WebKitAccessibleInterfaceHyperlinkImpl.cpp
-        accessibility/atk/WebKitAccessibleInterfaceHypertext.cpp
-        accessibility/atk/WebKitAccessibleInterfaceImage.cpp
-        accessibility/atk/WebKitAccessibleInterfaceSelection.cpp
-        accessibility/atk/WebKitAccessibleInterfaceTable.cpp
-        accessibility/atk/WebKitAccessibleInterfaceText.cpp
-        accessibility/atk/WebKitAccessibleInterfaceValue.cpp
-        accessibility/atk/WebKitAccessibleUtil.cpp
-        accessibility/atk/WebKitAccessibleWrapperAtk.cpp
-    )
     list(APPEND WebCore_INCLUDE_DIRECTORIES
         "${WEBCORE_DIR}/accessibility/atk"
         ${ATK_INCLUDE_DIRS}
