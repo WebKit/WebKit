@@ -43,7 +43,7 @@ CodeCache::~CodeCache()
 {
 }
 
-CodeCache::CodeBlockKey CodeCache::makeCodeBlockKey(const SourceCode& source, CodeCache::CodeType type, JSParserStrictness strictness)
+CodeCache::SourceCodeKey CodeCache::makeSourceCodeKey(const SourceCode& source, CodeCache::CodeType type, JSParserStrictness strictness)
 {
     return std::make_pair(source.toString(), (type << 1) | strictness);
 }
@@ -63,10 +63,10 @@ template <> struct CacheTypes<UnlinkedEvalCodeBlock> {
 template <class UnlinkedCodeBlockType, class ExecutableType>
 UnlinkedCodeBlockType* CodeCache::getCodeBlock(JSGlobalData& globalData, ExecutableType* executable, const SourceCode& source, JSParserStrictness strictness, DebuggerMode debuggerMode, ProfilerMode profilerMode, ParserError& error)
 {
-    CodeBlockKey key = makeCodeBlockKey(source, CacheTypes<UnlinkedCodeBlockType>::codeType, strictness);
+    SourceCodeKey key = makeSourceCodeKey(source, CacheTypes<UnlinkedCodeBlockType>::codeType, strictness);
     bool storeInCache = false;
     if (debuggerMode == DebuggerOff && profilerMode == ProfilerOff) {
-        const Strong<UnlinkedCodeBlock>* result = m_cachedCodeBlocks.find(key);
+        const Strong<UnlinkedCodeBlock>* result = m_sourceCode.find(key);
         if (result) {
             UnlinkedCodeBlockType* unlinkedCode = jsCast<UnlinkedCodeBlockType*>(result->get());
             unsigned firstLine = source.firstLine() + unlinkedCode->firstLine();
@@ -91,7 +91,7 @@ UnlinkedCodeBlockType* CodeCache::getCodeBlock(JSGlobalData& globalData, Executa
         return 0;
 
     if (storeInCache)
-        m_cachedCodeBlocks.add(key, Strong<UnlinkedCodeBlock>(globalData, unlinkedCode));
+        m_sourceCode.add(key, Strong<UnlinkedCodeBlock>(globalData, unlinkedCode));
 
     return unlinkedCode;
 }
@@ -126,7 +126,7 @@ UnlinkedFunctionCodeBlock* CodeCache::generateFunctionCodeBlock(JSGlobalData& gl
     body->destroyData();
     if (error.m_type != ParserError::ErrorNone)
         return 0;
-    m_recentlyUsedFunctionCode.add(result, Strong<UnlinkedFunctionCodeBlock>(globalData, result));
+    m_recentlyUsedFunctions.add(result, Strong<UnlinkedFunctionCodeBlock>(globalData, result));
     return result;
 }
 
@@ -135,15 +135,15 @@ UnlinkedFunctionCodeBlock* CodeCache::getFunctionCodeBlock(JSGlobalData& globalD
     return generateFunctionCodeBlock(globalData, executable, source, kind, debuggerMode, profilerMode, error);
 }
 
-CodeCache::GlobalFunctionKey CodeCache::makeGlobalFunctionKey(const SourceCode& source, const String& name)
+CodeCache::FunctionKey CodeCache::makeFunctionKey(const SourceCode& source, const String& name)
 {
-    return GlobalFunctionKey(source.toString(), name);
+    return FunctionKey(source.toString(), name);
 }
 
 UnlinkedFunctionExecutable* CodeCache::getFunctionExecutableFromGlobalCode(JSGlobalData& globalData, const Identifier& name, const SourceCode& source, ParserError& error)
 {
-    GlobalFunctionKey key = makeGlobalFunctionKey(source, name.string());
-    const Strong<UnlinkedFunctionExecutable>* result = m_cachedGlobalFunctions.find(key);
+    FunctionKey key = makeFunctionKey(source, name.string());
+    const Strong<UnlinkedFunctionExecutable>* result = m_globalFunctions.find(key);
     if (result)
         return result->get();
 
@@ -167,13 +167,13 @@ UnlinkedFunctionExecutable* CodeCache::getFunctionExecutableFromGlobalCode(JSGlo
     UnlinkedFunctionExecutable* functionExecutable = UnlinkedFunctionExecutable::create(&globalData, source, body);
     functionExecutable->m_nameValue.set(globalData, functionExecutable, jsString(&globalData, name.string()));
 
-    m_cachedGlobalFunctions.add(key, Strong<UnlinkedFunctionExecutable>(globalData, functionExecutable));
+    m_globalFunctions.add(key, Strong<UnlinkedFunctionExecutable>(globalData, functionExecutable));
     return functionExecutable;
 }
 
 void CodeCache::usedFunctionCode(JSGlobalData& globalData, UnlinkedFunctionCodeBlock* codeBlock)
 {
-    m_recentlyUsedFunctionCode.add(codeBlock, Strong<UnlinkedFunctionCodeBlock>(globalData, codeBlock));
+    m_recentlyUsedFunctions.add(codeBlock, Strong<UnlinkedFunctionCodeBlock>(globalData, codeBlock));
 }
 
 }

@@ -1,3 +1,42 @@
+2013-01-02  Geoffrey Garen  <ggaren@apple.com>
+
+        Some renaming in the CodeCache
+        https://bugs.webkit.org/show_bug.cgi?id=105966
+
+        Reviewed by Gavin Barraclough.
+
+        CodeBlockKey => SourceCodeKey because the key is not a CodeBlock.
+
+        m_recentlyUsedFunctionCode => m_recentlyUsedFunctions to match other names.
+
+        GlobalFunctionKey => FunctionKey because the key is not unique to globalness.
+
+        m_cachedGlobalFunctions => m_globalFunctions because "cached" is redundant
+        for data members in an object called "CodeCache".
+
+        kMaxRootCodeBlockEntries => kMaxRootEntries because there are no non-CodeBlock
+        entries in a CodeBlock cache.
+
+        kMaxFunctionCodeBlocks => kMaxChildFunctionEntries to clarify that this
+        number models a parent-child relationship.
+
+        Also removed the initial "k" from enum constants. That's an interesting
+        style for calling out constants, but it's not the WebKit style.
+
+        Finally, a behavior change: Use MaxRootEntries for the limit on global
+        functions, and not MaxChildFunctionEntries. Previously, there was an
+        unused constant that seemed to have been intended for this purpose.
+
+        * runtime/CodeCache.cpp:
+        (JSC::CodeCache::makeSourceCodeKey):
+        (JSC::CodeCache::getCodeBlock):
+        (JSC::CodeCache::generateFunctionCodeBlock):
+        (JSC::CodeCache::makeFunctionKey):
+        (JSC::CodeCache::getFunctionExecutableFromGlobalCode):
+        (JSC::CodeCache::usedFunctionCode):
+        * runtime/CodeCache.h:
+        (JSC::CodeCache::clear):
+
 2013-01-02  Filip Pizlo  <fpizlo@apple.com>
 
         DFG inlining machinery should be robust against the inline callee varying while the executable stays the same

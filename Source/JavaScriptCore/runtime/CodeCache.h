@@ -112,14 +112,14 @@ public:
 
     void clear()
     {
-        m_cachedCodeBlocks.clear();
-        m_cachedGlobalFunctions.clear();
-        m_recentlyUsedFunctionCode.clear();
+        m_sourceCode.clear();
+        m_globalFunctions.clear();
+        m_recentlyUsedFunctions.clear();
     }
 
     enum CodeType { EvalType, ProgramType, FunctionCallType, FunctionConstructType };
-    typedef std::pair<String, unsigned> CodeBlockKey;
-    typedef std::pair<String, String> GlobalFunctionKey;
+    typedef std::pair<String, unsigned> SourceCodeKey;
+    typedef std::pair<String, String> FunctionKey;
 
 private:
     CodeCache();
@@ -127,24 +127,17 @@ private:
     UnlinkedFunctionCodeBlock* generateFunctionCodeBlock(JSGlobalData&, UnlinkedFunctionExecutable*, const SourceCode&, CodeSpecializationKind, DebuggerMode, ProfilerMode, ParserError&);
 
     template <class UnlinkedCodeBlockType, class ExecutableType> inline UnlinkedCodeBlockType* getCodeBlock(JSGlobalData&, ExecutableType*, const SourceCode&, JSParserStrictness, DebuggerMode, ProfilerMode, ParserError&);
-    CodeBlockKey makeCodeBlockKey(const SourceCode&, CodeType, JSParserStrictness);
-    GlobalFunctionKey makeGlobalFunctionKey(const SourceCode&, const String&);
+    SourceCodeKey makeSourceCodeKey(const SourceCode&, CodeType, JSParserStrictness);
+    FunctionKey makeFunctionKey(const SourceCode&, const String&);
 
     enum {
-        kMaxRootCodeBlockEntries = 1024,
-        kMaxGlobalFunctionEntries = 1024,
-        // Sampling content on a number of sites indicates that
-        // on average there are 6-7 functions used per root codeblock.
-        // So we'll allow an average of 8 to give some leeway for increasing
-        // page complexity over time. Note that is simply a probabalistic
-        // measure and does not result in a hard limit of cache entries
-        // in each code block.
-        kMaxFunctionCodeBlocks = kMaxRootCodeBlockEntries * 8
+        MaxRootEntries = 1024, // Top-level code such as <script>, eval(), JSEvaluateScript(), etc.
+        MaxChildFunctionEntries = MaxRootEntries * 8 // Sampling shows that each root holds about 6 functions. 8 is enough to usually cache all the child functions for each top-level entry.
     };
 
-    CacheMap<CodeBlockKey, Strong<UnlinkedCodeBlock>, kMaxRootCodeBlockEntries> m_cachedCodeBlocks;
-    CacheMap<GlobalFunctionKey, Strong<UnlinkedFunctionExecutable>, kMaxFunctionCodeBlocks> m_cachedGlobalFunctions;
-    CacheMap<UnlinkedFunctionCodeBlock*, Strong<UnlinkedFunctionCodeBlock>, kMaxFunctionCodeBlocks> m_recentlyUsedFunctionCode;
+    CacheMap<SourceCodeKey, Strong<UnlinkedCodeBlock>, MaxRootEntries> m_sourceCode;
+    CacheMap<FunctionKey, Strong<UnlinkedFunctionExecutable>, MaxRootEntries> m_globalFunctions;
+    CacheMap<UnlinkedFunctionCodeBlock*, Strong<UnlinkedFunctionCodeBlock>, MaxChildFunctionEntries> m_recentlyUsedFunctions;
 };
 
 }
