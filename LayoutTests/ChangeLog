@@ -1,3 +1,10 @@
+2013-01-03  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Add crash test expectations for tests regressed by r138729
+        The failure is tracked by the bug 106042.
+
+        * platform/mac-wk2/TestExpectations:
+
 2013-01-03  Roger Fong  <roger_fong@apple.com>
 
         Unreviewed. Add Windows specific result for passing test.
