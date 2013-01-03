@@ -58,8 +58,6 @@ PassRefPtr<HTMLTemplateElement> HTMLTemplateElement::create(const QualifiedName&
     return adoptRef(new HTMLTemplateElement(tagName, document));
 }
 
-// FIXME: https://www.w3.org/Bugs/Public/show_bug.cgi?id=20127 (prevent DOM hierarchy cycles).
-// FIXME: https://www.w3.org/Bugs/Public/show_bug.cgi?id=20129 (extended adoptNode to consider template.content).
 DocumentFragment* HTMLTemplateElement::content() const
 {
     if (!m_content)
@@ -77,6 +75,14 @@ PassRefPtr<Node> HTMLTemplateElement::cloneNode(bool deep)
     if (m_content)
         content()->cloneChildNodes(toHTMLTemplateElement(clone.get())->content());
     return clone.release();
+}
+
+void HTMLTemplateElement::didMoveToNewDocument(Document* oldDocument)
+{
+    HTMLElement::didMoveToNewDocument(oldDocument);
+    if (!m_content)
+        return;
+    document()->ensureTemplateContentsOwnerDocument()->adoptIfNeeded(m_content.get());
 }
 
 #ifndef NDEBUG

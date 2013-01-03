@@ -47,6 +47,7 @@ public:
 
 private:
     virtual PassRefPtr<Node> cloneNode(bool deep) OVERRIDE;
+    virtual void didMoveToNewDocument(Document* oldDocument) OVERRIDE;
 
     HTMLTemplateElement(const QualifiedName&, Document*);
 

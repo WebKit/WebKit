@@ -1,3 +1,13 @@
+2013-01-03  Adam Klein  <adamk@chromium.org>
+
+        [HTMLTemplateElement] When adopting a template element, also adopt its content into the appropriate document
+        https://bugs.webkit.org/show_bug.cgi?id=106039
+
+        Reviewed by Eric Seidel.
+
+        * fast/dom/HTMLTemplateElement/ownerDocument-adoptNode-expected.txt: Added.
+        * fast/dom/HTMLTemplateElement/ownerDocument-adoptNode.html: Added.
+
 2013-01-03  Zoltan Horvath  <zoltan@webkit.org>
 
         [CSS Regions] Don't apply region flow to fullscreen video playing
