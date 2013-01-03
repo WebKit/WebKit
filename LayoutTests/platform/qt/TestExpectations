@@ -2501,3 +2501,8 @@ http/tests/xmlhttprequest/post-blob-content-type-sync.html
 
 # Leaking state into the next test.
 webkit.org/b/85522 http/tests/security/sandboxed-iframe-form-top.html [ Skip ]
+
+# [Qt] New tests introduced in r138632 fails
+# https://bugs.webkit.org/show_bug.cgi?id=106015
+fast/css-generated-content/pseudo-animation.html
+fast/css-generated-content/pseudo-transition.html

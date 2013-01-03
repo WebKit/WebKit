@@ -7,7 +7,7 @@ EDITING DELEGATE: webViewDidChange:WebViewDidChangeNotification
 EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
 EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
 EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
-EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 1 of #text > BODY > HTML > #document to 1 of #text > BODY > HTML > #document toDOMRange:range from 0 of DIV > BODY > HTML > #document to 0 of DIV > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 259 of #text > BODY > HTML > #document to 259 of #text > BODY > HTML > #document toDOMRange:range from 0 of DIV > BODY > HTML > #document to 0 of DIV > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
 EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
 EDITING DELEGATE: webViewDidChange:WebViewDidChangeNotification
 layer at (0,0) size 800x600
@@ -21,8 +21,7 @@ layer at (0,0) size 800x600
           text run at (678,0) width 60: "inserting a"
           text run at (738,0) width 4: " "
           text run at (0,19) width 777: "paragraph separator doesn't split the body (inserting a paragraph separator usually splits/clones the enclosing block flow element)."
-        RenderText {#text} at (777,19) size 4x19
-          text run at (777,19) width 4: " "
+        RenderText {#text} at (0,0) size 0x0
       RenderBlock {DIV} at (0,38) size 784x19
         RenderBR {BR} at (0,0) size 0x19
 caret: position 0 of child 0 {BR} of child 2 {DIV} of body

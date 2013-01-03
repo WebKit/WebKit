@@ -22,12 +22,6 @@ EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotificatio
 EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
 EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
 EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
-EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
-EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
-EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
-EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
-EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
-EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
 EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 2 of DIV > BODY > HTML > #document to 2 of DIV > BODY > HTML > #document toDOMRange:range from 1 of DIV > BODY > HTML > #document to 2 of DIV > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
 EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
 EDITING DELEGATE: webViewDidChange:WebViewDidChangeNotification
@@ -48,9 +42,8 @@ layer at (0,0) size 800x600
                   text run at (1,1) width 21: "baz"
             RenderTableRow {TR} at (0,25) size 76x21
               RenderTableCell {TD} at (2,25) size 27x21 [r=1 c=0 rs=1 cs=1]
-                RenderText {#text} at (1,1) size 25x19
+                RenderText {#text} at (1,1) size 20x19
                   text run at (1,1) width 20: "bar"
-                  text run at (21,1) width 5: "      "
               RenderTableCell {TD} at (31,25) size 43x21 [r=1 c=1 rs=1 cs=1]
                 RenderText {#text} at (1,1) size 41x19
                   text run at (1,1) width 41: "buffalo"

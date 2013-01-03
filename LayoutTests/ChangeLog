@@ -1,3 +1,13 @@
+2013-01-03  Csaba Osztrogonác  <ossy@webkit.org>
+
+        [Qt] Unreviewed gardening.
+
+        * platform/qt/TestExpectations: Skip new failing tests.
+        * platform/qt/editing/deleting/delete-to-select-table-expected.txt: Updated after r138654.
+        * platform/qt/editing/execCommand/print-expected.txt: Updated after r138654.
+        * platform/qt/editing/execCommand/selectAll-expected.txt: Updated after r138654.
+        * platform/qt/editing/inserting/editable-html-element-expected.txt: Updated after r138654.
+
 2013-01-03  Mike West  <mkwst@chromium.org>
 
         seamless iframes don't inherit styles when srcdoc is used
