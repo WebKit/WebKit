@@ -41,7 +41,6 @@
 namespace WebKit {
 class WebFileSystem;
 class WebURL;
-class WebWorkerBase;
 class WorkerFileSystemCallbacksBridge;
 }
 
@@ -50,6 +49,7 @@ namespace WebCore {
 class AsyncFileSystemCallbacks;
 class ScriptExecutionContext;
 class WorkerContext;
+class WorkerLoaderProxy;
 
 class WorkerAsyncFileSystemChromium : public AsyncFileSystemChromium {
 public:
@@ -82,7 +82,7 @@ private:
     PassRefPtr<WebKit::WorkerFileSystemCallbacksBridge> createWorkerFileSystemCallbacksBridge(PassOwnPtr<AsyncFileSystemCallbacks>);
 
     ScriptExecutionContext* m_scriptExecutionContext;
-    WebKit::WebWorkerBase* m_worker;
+    WorkerLoaderProxy* m_workerLoaderProxy;
     WorkerContext* m_workerContext;
     RefPtr<WebKit::WorkerFileSystemCallbacksBridge> m_bridgeForCurrentOperation;
     String m_modeForCurrentOperation;

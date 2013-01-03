@@ -40,7 +40,6 @@
 #include "NotImplemented.h"
 #include "WebFileSystemCallbacksImpl.h"
 #include "WebFileWriter.h"
-#include "WebWorkerBase.h"
 #include "WorkerAsyncFileWriterChromium.h"
 #include "WorkerContext.h"
 #include "WorkerFileSystemCallbacksBridge.h"
@@ -62,8 +61,7 @@ WorkerAsyncFileSystemChromium::WorkerAsyncFileSystemChromium(ScriptExecutionCont
 {
     ASSERT(m_scriptExecutionContext->isWorkerContext());
 
-    WorkerLoaderProxy* workerLoaderProxy = &m_workerContext->thread()->workerLoaderProxy();
-    m_worker = static_cast<WebWorkerBase*>(workerLoaderProxy);
+    m_workerLoaderProxy = &m_workerContext->thread()->workerLoaderProxy();
 }
 
 WorkerAsyncFileSystemChromium::~WorkerAsyncFileSystemChromium()
@@ -194,7 +192,7 @@ PassRefPtr<WorkerFileSystemCallbacksBridge> WorkerAsyncFileSystemChromium::creat
     m_modeForCurrentOperation = fileSystemOperationsMode;
     m_modeForCurrentOperation.append(String::number(m_workerContext->thread()->runLoop().createUniqueId()));
 
-    m_bridgeForCurrentOperation = WorkerFileSystemCallbacksBridge::create(m_worker, m_scriptExecutionContext, new WebKit::WebFileSystemCallbacksImpl(callbacks));
+    m_bridgeForCurrentOperation = WorkerFileSystemCallbacksBridge::create(m_workerLoaderProxy, m_scriptExecutionContext, new WebKit::WebFileSystemCallbacksImpl(callbacks));
     return m_bridgeForCurrentOperation;
 }
 

@@ -203,8 +203,7 @@ static void openFileSystemHelper(ScriptExecutionContext* context, FileSystemType
     } else {
 #if ENABLE(WORKERS)
         WorkerContext* workerContext = static_cast<WorkerContext*>(context);
-        WorkerLoaderProxy* workerLoaderProxy = &workerContext->thread()->workerLoaderProxy();
-        WebWorkerBase* webWorker = static_cast<WebWorkerBase*>(workerLoaderProxy);
+        WebWorkerBase* webWorker = static_cast<WebWorkerBase*>(workerContext->thread()->workerLoaderProxy().toWebWorkerBase());
         if (!allowFileSystemForWorker(webWorker->commonClient()))
             allowed = false;
         else

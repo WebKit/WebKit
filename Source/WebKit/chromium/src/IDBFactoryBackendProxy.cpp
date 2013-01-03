@@ -111,7 +111,7 @@ public:
     {
         MutexLocker locker(m_mutex);
         if (m_webWorkerBase)
-            m_webWorkerBase->postTaskForModeToWorkerContext(createCallbackTask(&didComplete, this, result), mode);
+            m_webWorkerBase->workerLoaderProxy()->postTaskForModeToWorkerContext(createCallbackTask(&didComplete, this, result), mode);
     }
 
 private:
@@ -172,7 +172,7 @@ bool IDBFactoryBackendProxy::allowIndexedDB(ScriptExecutionContext* context, con
         allowed = !webView->permissionClient() || webView->permissionClient()->allowIndexedDB(webFrame, name, origin);
     } else {
         WorkerContext* workerContext = static_cast<WorkerContext*>(context);
-        WebWorkerBase* webWorkerBase = static_cast<WebWorkerBase*>(&workerContext->thread()->workerLoaderProxy());
+        WebWorkerBase* webWorkerBase = static_cast<WebWorkerBase*>(workerContext->thread()->workerLoaderProxy().toWebWorkerBase());
         WorkerRunLoop& runLoop = workerContext->thread()->runLoop();
 
         String mode = allowIndexedDBMode;

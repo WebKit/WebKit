@@ -164,8 +164,7 @@ bool DatabaseObserver::canEstablishDatabase(ScriptExecutionContext* scriptExecut
     } else {
 #if ENABLE(WORKERS)
         WorkerContext* workerContext = static_cast<WorkerContext*>(scriptExecutionContext);
-        WorkerLoaderProxy* workerLoaderProxy = &workerContext->thread()->workerLoaderProxy();
-        WebWorkerBase* webWorker = static_cast<WebWorkerBase*>(workerLoaderProxy);
+        WebWorkerBase* webWorker = static_cast<WebWorkerBase*>(workerContext->thread()->workerLoaderProxy().toWebWorkerBase());
         WebView* view = webWorker->view();
         if (!view)
             return false;

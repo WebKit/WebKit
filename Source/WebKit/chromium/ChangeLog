@@ -1,3 +1,72 @@
+2013-01-02  Kenneth Russell  <kbr@google.com>
+
+        [chromium] Creation of dedicated workers (isolates) leaks reference to HTMLDocument
+        https://bugs.webkit.org/show_bug.cgi?id=105367
+
+        Reviewed by Dmitry Titov.
+
+        Made WebWorkerClientImpl a subclass of WorkerMessagingProxy rather than an object wrapping
+        WorkerMessagingProxy. WorkerMessagingProxy manages its own lifetime and it is impossible to
+        properly synchronize the lifetime of WebWorkerClientImpl separately.
+
+        This allowed most of WebWorkerClientImpl to be deleted, but forced a divergence in the class
+        hierarchies of WebWorkerClientImpl and WebSharedWorkerImpl. Conversion methods were added to
+        WorkerLoaderProxy and WebWorkerBase to bridge the hierarchies of in-process and
+        out-of-process workers.
+
+        * src/DatabaseObserver.cpp:
+        (WebCore::DatabaseObserver::canEstablishDatabase):
+            Adjusted how WebWorkerBase is obtained from WorkerLoaderProxy.
+        * src/IDBFactoryBackendProxy.cpp:
+        (WebKit::AllowIndexedDBMainThreadBridge::signalCompleted):
+            Adjusted how WorkerLoaderProxy's methods are called.
+        (WebKit::IDBFactoryBackendProxy::allowIndexedDB):
+            Adjusted how WebWorkerBase is obtained from WorkerLoaderProxy.
+        * src/LocalFileSystemChromium.cpp:
+        (WebCore::openFileSystemHelper):
+            Adjusted how WebWorkerBase is obtained from WorkerLoaderProxy.
+        * src/WebSharedWorkerImpl.cpp:
+        (WebKit::WebSharedWorkerImpl::toWebWorkerBase):
+            Implemented new conversion method.
+        * src/WebSharedWorkerImpl.h:
+        (WebSharedWorkerImpl):
+            Explicitly derive from WorkerLoaderProxy now that WebWorkerBase no longer does.
+        (WebKit::WebSharedWorkerImpl::workerLoaderProxy):
+            Added new conversion method.
+        * src/WebWorkerBase.h:
+        (WebWorkerBase):
+            Removed derivation from WorkerLoaderProxy. Added method to convert to WorkerLoaderProxy.
+        * src/WebWorkerClientImpl.cpp:
+        (WebKit):
+            Adjusted comment.
+        (WebKit::WebWorkerClientImpl::createWorkerContextProxy):
+            Adjusted whitespace.
+        (WebKit::WebWorkerClientImpl::terminateWorkerContext):
+            Eliminated delegation to separate object.
+        (WebKit::WebWorkerClientImpl::toWebWorkerBase):
+            Implemented new conversion method.
+        (WebKit::WebWorkerClientImpl::view):
+        (WebKit::WebWorkerClientImpl::allowDatabase):
+        (WebKit::WebWorkerClientImpl::allowFileSystem):
+        (WebKit::WebWorkerClientImpl::openFileSystem):
+        (WebKit::WebWorkerClientImpl::allowIndexedDB):
+            Eliminated delegation to separate object.
+        (WebKit::WebWorkerClientImpl::WebWorkerClientImpl):
+        * src/WebWorkerClientImpl.h:
+        (WebKit):
+            Changed to inherit from WorkerMessagingProxy directly.
+        (WebWorkerClientImpl):
+            Deleted most methods previously overridden from WorkerContextProxy, etc.
+        * src/WorkerAsyncFileSystemChromium.cpp:
+        (WebCore::WorkerAsyncFileSystemChromium::WorkerAsyncFileSystemChromium):
+        (WebCore::WorkerAsyncFileSystemChromium::createWorkerFileSystemCallbacksBridge):
+            Hold on to, and use, WorkerLoaderProxy rather than WebWorkerBase.
+        * src/WorkerAsyncFileSystemChromium.h:
+        (WebKit):
+        (WebCore):
+        (WorkerAsyncFileSystemChromium):
+            Hold on to WorkerLoaderProxy rather than WebWorkerBase.
+
 2013-01-02  James Robinson  <jamesr@chromium.org>
 
         [chromium] Remove unused transitional #defines from WebKit Client API

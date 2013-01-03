@@ -48,8 +48,9 @@ class WebView;
 // containing common interface for shared workers and dedicated in-proc workers implementation.
 //
 // FIXME: Rename this class into WebWorkerBase, merge existing WebWorkerBase and WebSharedWorker.
-class WebWorkerBase : public WebCore::WorkerLoaderProxy {
+class WebWorkerBase {
 public:
+    virtual WebCore::WorkerLoaderProxy* workerLoaderProxy() = 0;
     virtual WebCommonWorkerClient* commonClient() = 0;
     virtual WebView* view() const = 0;
 

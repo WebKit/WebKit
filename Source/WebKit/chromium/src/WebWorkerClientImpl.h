@@ -54,9 +54,13 @@ class WebFrameImpl;
 // for in-proc dedicated workers. It also acts as a bridge for workers to chromium implementation of file systems,
 // databases and other related functionality.
 //
-// In essence, this class wraps WorkerMessagingProxy.
-class WebWorkerClientImpl : public WebCore::WorkerContextProxy
-                          , public WebCore::WorkerObjectProxy
+// In essence, this class decorates WorkerMessagingProxy.
+//
+// It is imperative that this class inherit from WorkerMessagingProxy rather than delegate to an instance of
+// WorkerMessagingProxy, because that class tracks and reports its activity to outside callers, and manages
+// its own lifetime, via calls to workerObjectDestroyed, workerContextDestroyed, workerContextClosed, etc. It
+// is basically impossible to correctly manage the lifetime of this class separately from WorkerMessagingProxy.
+class WebWorkerClientImpl : public WebCore::WorkerMessagingProxy
                           , public WebWorkerBase
                           , public WebCommonWorkerClient {
 public:
@@ -66,57 +70,27 @@ public:
     // WebCore::WorkerContextProxy methods:
     // These are called on the thread that created the worker.  In the renderer
     // process, this will be the main WebKit thread.
-    virtual void startWorkerContext(const WebCore::KURL&,
-                                    const WTF::String&,
-                                    const WTF::String&,
-                                    WebCore::WorkerThreadStartMode) OVERRIDE;
     virtual void terminateWorkerContext() OVERRIDE;
-    virtual void postMessageToWorkerContext(
-        PassRefPtr<WebCore::SerializedScriptValue> message,
-        PassOwnPtr<WebCore::MessagePortChannelArray> channels) OVERRIDE;
-    virtual bool hasPendingActivity() const OVERRIDE;
-    virtual void workerObjectDestroyed() OVERRIDE;
 
-#if ENABLE(INSPECTOR)
-    virtual void connectToInspector(WebCore::WorkerContextProxy::PageInspector*) OVERRIDE;
-    virtual void disconnectFromInspector() OVERRIDE;
-    virtual void sendMessageToInspector(const String&) OVERRIDE;
-    virtual void postMessageToPageInspector(const String&) OVERRIDE;
-    virtual void updateInspectorStateCookie(const String&) OVERRIDE;
-#endif
-    // WebCore::WorkerLoaderProxy methods:
-    virtual void postTaskToLoader(PassOwnPtr<WebCore::ScriptExecutionContext::Task>) OVERRIDE;
-    virtual bool postTaskForModeToWorkerContext(PassOwnPtr<WebCore::ScriptExecutionContext::Task>, const String& mode) OVERRIDE;
+    // WebCore::WorkerLoaderProxy methods
+    virtual WebWorkerBase* toWebWorkerBase() OVERRIDE;
 
-    // WebCore::WorkerObjectProxy methods:
-    virtual void postMessageToWorkerObject(PassRefPtr<WebCore::SerializedScriptValue>, PassOwnPtr<WebCore::MessagePortChannelArray>) OVERRIDE;
-    virtual void postExceptionToWorkerObject(const String& errorMessage, int lineNumber, const String& sourceURL) OVERRIDE;
+    // WebWorkerBase methods:
+    virtual WebCore::WorkerLoaderProxy* workerLoaderProxy() OVERRIDE { return this; }
+    virtual WebCommonWorkerClient* commonClient() OVERRIDE { return this; }
+    virtual WebView* view() const OVERRIDE;
 
-    virtual void postConsoleMessageToWorkerObject(WebCore::MessageSource, WebCore::MessageLevel,
-                                                  const String& message, int lineNumber, const String& sourceURL) OVERRIDE;
-    virtual void confirmMessageFromWorkerObject(bool) OVERRIDE;
-    virtual void reportPendingActivity(bool) OVERRIDE;
-    virtual void workerContextClosed() OVERRIDE;
-    virtual void workerContextDestroyed() OVERRIDE;
-
-    // WebWorkerClientBase methods:
+    // WebCommonWorkerClient methods:
     virtual bool allowDatabase(WebFrame*, const WebString& name, const WebString& displayName, unsigned long estimatedSize) OVERRIDE;
     virtual bool allowFileSystem();
     virtual void openFileSystem(WebFileSystem::Type, long long size, bool create,
                                 WebFileSystemCallbacks*) OVERRIDE;
     virtual bool allowIndexedDB(const WebString& name) OVERRIDE;
 
-    // WebCommentWorkerBase methods:
-    virtual WebCommonWorkerClient* commonClient() OVERRIDE { return this; }
-    virtual WebView* view() const OVERRIDE;
-
 private:
     WebWorkerClientImpl(WebCore::Worker*, WebFrameImpl*);
     virtual ~WebWorkerClientImpl();
 
-    WebCore::WorkerMessagingProxy* m_proxy;
-    // Guard against context from being destroyed before a worker exits.
-    RefPtr<WebCore::ScriptExecutionContext> m_scriptExecutionContext;
     WebFrameImpl* m_webFrame;
 };
 

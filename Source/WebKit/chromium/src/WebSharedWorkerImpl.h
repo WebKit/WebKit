@@ -61,10 +61,12 @@ class WebSharedWorkerClient;
 // It can't use it directly since it uses WebKit types, so this class converts the data types.
 // When the WebCore::SharedWorker object wants to call WebCore::WorkerReportingProxy, this class will
 // convert to Chrome data types first and then call the supplied WebCommonWorkerClient.
-class WebSharedWorkerImpl : public WebCore::WorkerObjectProxy
-                          , public WebWorkerBase
-                          , public WebFrameClient
-                          , public WebSharedWorker {
+class WebSharedWorkerImpl
+    : public WebCore::WorkerObjectProxy
+    , public WebCore::WorkerLoaderProxy
+    , public WebWorkerBase
+    , public WebFrameClient
+    , public WebSharedWorker {
 public:
     explicit WebSharedWorkerImpl(WebSharedWorkerClient*);
 
@@ -88,6 +90,7 @@ public:
     virtual void postTaskToLoader(PassOwnPtr<WebCore::ScriptExecutionContext::Task>);
     virtual bool postTaskForModeToWorkerContext(
         PassOwnPtr<WebCore::ScriptExecutionContext::Task>, const WTF::String& mode);
+    virtual WebWorkerBase* toWebWorkerBase() OVERRIDE;
 
     // WebFrameClient methods to support resource loading thru the 'shadow page'.
     virtual void didCreateDataSource(WebFrame*, WebDataSource*);
@@ -111,7 +114,8 @@ public:
     virtual void dispatchDevToolsMessage(const WebString&);
 
 
-    // NewWebWorkerBase methods:
+    // WebWorkerBase methods:
+    WebCore::WorkerLoaderProxy* workerLoaderProxy() { return this; }
     WebCommonWorkerClient* commonClient() { return m_client; }
 
 private:

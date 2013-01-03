@@ -1,3 +1,15 @@
+2013-01-02  Kenneth Russell  <kbr@google.com>
+
+        [chromium] Creation of dedicated workers (isolates) leaks reference to HTMLDocument
+        https://bugs.webkit.org/show_bug.cgi?id=105367
+
+        Reviewed by Dmitry Titov.
+
+        * fast/workers/resources/empty-worker.js: Added.
+        * fast/workers/resources/worker-document-leak-iframe.html: Added.
+        * fast/workers/worker-document-leak-expected.txt: Added.
+        * fast/workers/worker-document-leak.html: Added.
+
 2013-01-02  Ryosuke Niwa  <rniwa@webkit.org>
 
         One more Mac rebaseline attempt for r138654. Also remove an entry for the bug 105514

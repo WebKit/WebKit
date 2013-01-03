@@ -89,14 +89,15 @@ namespace WebCore {
         // Only use this method on the worker object thread.
         bool askedToTerminate() const { return m_askedToTerminate; }
 
+    protected:
+        virtual ~WorkerMessagingProxy();
+
     private:
         friend class MessageWorkerTask;
         friend class PostMessageToPageInspectorTask;
         friend class WorkerContextDestroyedTask;
         friend class WorkerExceptionTask;
         friend class WorkerThreadActivityReportTask;
-
-        virtual ~WorkerMessagingProxy();
 
         void workerContextDestroyedInternal();
         static void workerObjectDestroyedInternal(ScriptExecutionContext*, WorkerMessagingProxy*);

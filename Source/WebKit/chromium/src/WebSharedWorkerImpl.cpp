@@ -324,6 +324,10 @@ bool WebSharedWorkerImpl::postTaskForModeToWorkerContext(
     return true;
 }
 
+WebWorkerBase* WebSharedWorkerImpl::toWebWorkerBase()
+{
+    return this;
+}
 
 
 bool WebSharedWorkerImpl::isStarted()
