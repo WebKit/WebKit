@@ -4112,7 +4112,7 @@ webkit.org/b/100475 compositing/tiling/tile-cache-zoomed.html [ Failure ]
 webkit.org/b/100475 platform/chromium/virtual/softwarecompositing/tiling/tile-cache-zoomed.html [ Failure ]
 
 webkit.org/b/100647 [ Win ] webaudio/audiobuffersource-loop-points.html [ Failure ]
-webkit.org/b/105937 [ XP ] webaudio/automatic-pull-node.html [ Pass Slow ]
+webkit.org/b/105937 [ XP ] webaudio/automatic-pull-node.html [ Pass Timeout ]
 
 webkit.org/b/100806 [ Win ] fast/css/font-face-implicit-local-font.html [ Failure ]
 webkit.org/b/100806 [ Win ] fast/css/font-face-unicode-range.html [ Failure ]

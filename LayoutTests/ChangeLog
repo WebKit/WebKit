@@ -1,5 +1,12 @@
 2013-01-03  Terry Anderson  <tdanderson@chromium.org>
 
+        Unreviewed gardening. Setting webaudio/automatic-pull-node.html to
+        [ Timeout Pass ] for XP.
+
+        * platform/chromium/TestExpectations:
+
+2013-01-03  Terry Anderson  <tdanderson@chromium.org>
+
         css3/filters/effect-invert.html is flaky/has incorrect image output on Win
 
         Unreviewed gardening. Marked this as [ Failure Pass ] for Win7 and
