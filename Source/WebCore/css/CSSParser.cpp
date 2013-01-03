@@ -2563,7 +2563,7 @@ bool CSSParser::parseValue(CSSPropertyID propId, bool important)
         if (id == CSSValueAuto)
             validPrimitive = true;
         else // Always parse this property in strict mode, since it would be ambiguous otherwise when used in the 'columns' shorthand property.
-            validPrimitive = validUnit(value, FLength, CSSStrictMode);
+            validPrimitive = validUnit(value, FLength | FNonNeg, CSSStrictMode) && value->fValue;
         break;
     // End of CSS3 properties
 

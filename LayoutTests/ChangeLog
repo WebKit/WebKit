@@ -1,3 +1,21 @@
+2013-01-03  Uday Kiran  <udaykiran@motorola.com>
+
+        webkit fails IETC column-width-negative-001.htm
+        https://bugs.webkit.org/show_bug.cgi?id=84778
+
+        Reviewed by Tony Chang.
+
+        New test for multicolumn 'column-width' property with zero value.
+        Enable IETC column-width-negative test.
+
+        * fast/multicol/column-width-zero-expected.txt: Added.
+        * fast/multicol/column-width-zero.html: Added.
+        * platform/chromium/TestExpectations:
+        * platform/efl/TestExpectations:
+        * platform/gtk/TestExpectations:
+        * platform/mac/TestExpectations:
+        * platform/qt/TestExpectations:
+
 2013-01-03  Ryosuke Niwa  <rniwa@webkit.org>
 
         Add crash test expectations for tests regressed by r138729
