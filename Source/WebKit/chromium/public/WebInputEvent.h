@@ -59,10 +59,13 @@ namespace WebKit {
 class WebInputEvent {
 public:
     WebInputEvent(unsigned sizeParam = sizeof(WebInputEvent))
-        : timeStampSeconds(0.0)
-        , size(sizeParam)
-        , type(Undefined)
-        , modifiers(0) { }
+    {
+        memset(this, 0, sizeParam);
+        timeStampSeconds = 0.0;
+        size = sizeParam;
+        type = Undefined;
+        modifiers = 0;
+    }
 
     // When we use an input method (or an input method editor), we receive
     // two events for a keypress. The former event is a keydown, which
