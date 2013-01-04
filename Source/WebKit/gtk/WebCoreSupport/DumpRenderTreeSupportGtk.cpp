@@ -761,9 +761,7 @@ JSValueRef DumpRenderTreeSupportGtk::computedStyleIncludingVisitedInfo(JSContext
 
 void DumpRenderTreeSupportGtk::deliverAllMutationsIfNecessary()
 {
-#if ENABLE(MUTATION_OBSERVERS)
     MutationObserver::deliverAllMutations();
-#endif
 }
 
 void DumpRenderTreeSupportGtk::setDomainRelaxationForbiddenForURLScheme(bool forbidden, const char* urlScheme)

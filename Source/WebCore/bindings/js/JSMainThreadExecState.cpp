@@ -43,9 +43,7 @@ void JSMainThreadExecState::didLeaveScriptContext()
     IDBPendingTransactionMonitor::deactivateNewTransactions();
 #endif
 
-#if ENABLE(MUTATION_OBSERVERS)
     MutationObserver::deliverAllMutations();
-#endif
 }
 
 } // namespace WebCore

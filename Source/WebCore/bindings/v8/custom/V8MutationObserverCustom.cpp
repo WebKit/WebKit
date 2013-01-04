@@ -30,8 +30,6 @@
 
 #include "config.h"
 
-#if ENABLE(MUTATION_OBSERVERS)
-
 #include "V8MutationObserver.h"
 
 #include "ExceptionCode.h"
@@ -63,5 +61,3 @@ v8::Handle<v8::Value> V8MutationObserver::constructorCallbackCustom(const v8::Ar
 }
 
 } // namespace WebCore
-
-#endif // ENABLE(MUTATION_OBSERVERS)

@@ -468,10 +468,7 @@ PassOwnPtr<NodeRareData> Node::createRareData()
 void Node::clearRareData()
 {
     ASSERT(hasRareData());
-
-#if ENABLE(MUTATION_OBSERVERS)
     ASSERT(!transientMutationObserverRegistry() || transientMutationObserverRegistry()->isEmpty());
-#endif
 
     RenderObject* renderer = m_data.m_rareData->renderer();
     delete m_data.m_rareData;
@@ -1713,9 +1710,7 @@ void Node::setTextContent(const String& text, ExceptionCode& ec)
         case ENTITY_REFERENCE_NODE:
         case DOCUMENT_FRAGMENT_NODE: {
             RefPtr<ContainerNode> container = toContainerNode(this);
-#if ENABLE(MUTATION_OBSERVERS)
             ChildListMutationScope mutation(this);
-#endif
             container->removeChildren();
             if (!text.isEmpty())
                 container->appendChild(document()->createTextNode(text), ec);
@@ -2116,7 +2111,6 @@ void Node::didMoveToNewDocument(Document* oldDocument)
         }
     }
 
-#if ENABLE(MUTATION_OBSERVERS)
     if (Vector<OwnPtr<MutationObserverRegistration> >* registry = mutationObserverRegistry()) {
         for (size_t i = 0; i < registry->size(); ++i) {
             document()->addMutationObserverTypes(registry->at(i)->mutationTypes());
@@ -2128,7 +2122,6 @@ void Node::didMoveToNewDocument(Document* oldDocument)
             document()->addMutationObserverTypes((*iter)->mutationTypes());
         }
     }
-#endif
 }
 
 static inline bool tryAddEventListener(Node* targetNode, const AtomicString& eventType, PassRefPtr<EventListener> listener, bool useCapture)
@@ -2202,7 +2195,6 @@ void Node::clearEventTargetData()
     eventTargetDataMap().remove(this);
 }
 
-#if ENABLE(MUTATION_OBSERVERS)
 Vector<OwnPtr<MutationObserverRegistration> >* Node::mutationObserverRegistry()
 {
     return hasRareData() ? rareData()->mutationObserverRegistry() : 0;
@@ -2308,7 +2300,6 @@ void Node::notifyMutationObserversNodeWillDetach()
         }
     }
 }
-#endif // ENABLE(MUTATION_OBSERVERS)
 
 void Node::handleLocalEvents(Event* event)
 {

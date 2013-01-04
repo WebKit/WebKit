@@ -30,8 +30,6 @@
 
 #include "config.h"
 
-#if ENABLE(MUTATION_OBSERVERS)
-
 #include "MutationObserverRegistration.h"
 
 #include "Document.h"
@@ -134,5 +132,3 @@ void MutationObserverRegistration::addRegistrationNodesToSet(HashSet<Node*>& nod
 }
 
 } // namespace WebCore
-
-#endif // ENABLE(MUTATION_OBSERVERS)

@@ -31,8 +31,6 @@
 #ifndef MutationCallback_h
 #define MutationCallback_h
 
-#if ENABLE(MUTATION_OBSERVERS)
-
 #include <wtf/RefCounted.h>
 #include <wtf/RefPtr.h>
 #include <wtf/Vector.h>
@@ -53,7 +51,5 @@ public:
 };
 
 }
-
-#endif // ENABLE(MUTATION_OBSERVERS)
 
 #endif // MutationCallback_h

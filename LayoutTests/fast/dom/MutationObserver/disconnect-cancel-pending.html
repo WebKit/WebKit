@@ -36,10 +36,6 @@ function finish() {
     finishJSTest();
 }
 
-if (!window.WebKitMutationObserver)
-    testFailed('This test requires ENABLE(MUTATION_OBSERVERS)');
-else
-    start();
-
+start();
 </script>
 <script src="../../js/resources/js-test-post.js"></script>

@@ -1,3 +1,12 @@
+2013-01-04  Adam Klein  <adamk@chromium.org>
+
+        Remove ENABLE_MUTATION_OBSERVERS #define
+        https://bugs.webkit.org/show_bug.cgi?id=105459
+
+        Reviewed by Ryosuke Niwa.
+
+        * WebCoreSupport/AboutDataEnableFeatures.in:
+
 2013-01-04  Anthony Scian  <ascian@rim.com>
 
         [Blackberry] Static code analysis warning fixes

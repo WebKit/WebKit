@@ -31,8 +31,6 @@
 #ifndef MutationObserverRegistration_h
 #define MutationObserverRegistration_h
 
-#if ENABLE(MUTATION_OBSERVERS)
-
 #include "MutationObserver.h"
 #include <wtf/HashSet.h>
 #include <wtf/text/AtomicString.h>
@@ -76,7 +74,5 @@ private:
 };
 
 } // namespace WebCore
-
-#endif // ENABLE(MUTATION_OBSERVERS)
 
 #endif // MutationObserverRegistration_h

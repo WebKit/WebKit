@@ -46,10 +46,8 @@ void V8RecursionScope::didLeaveScriptContext()
     IDBPendingTransactionMonitor::deactivateNewTransactions();
 #endif
 
-#if ENABLE(MUTATION_OBSERVERS)
     if (m_isDocumentContext)
         MutationObserver::deliverAllMutations();
-#endif
 }
 
 } // namespace WebCore

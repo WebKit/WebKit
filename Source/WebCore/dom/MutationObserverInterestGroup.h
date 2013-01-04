@@ -31,8 +31,6 @@
 #ifndef MutationObserverInterestGroup_h
 #define MutationObserverInterestGroup_h
 
-#if ENABLE(MUTATION_OBSERVERS)
-
 #include "Document.h"
 #include "MutationObserver.h"
 #include "Node.h"
@@ -83,7 +81,5 @@ private:
 };
 
 }
-
-#endif // ENABLE(MUTATION_OBSERVERS)
 
 #endif // MutationObserverInterestGroup_h

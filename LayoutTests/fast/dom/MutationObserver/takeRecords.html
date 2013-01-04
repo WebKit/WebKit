@@ -75,11 +75,7 @@ function runNextTest() {
 
 description('Testing WebKitMutationObserver.takeRecords');
 
-if (!window.WebKitMutationObserver)
-    testFailed('This test requires ENABLE(MUTATION_OBSERVERS)');
-else
-    runNextTest();
-
+runNextTest();
 </script>
 <script src="../../js/resources/js-test-post.js"></script>
 </body>

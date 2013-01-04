@@ -30,8 +30,6 @@
 
 #include "config.h"
 
-#if ENABLE(MUTATION_OBSERVERS)
-
 #include "MutationObserverInterestGroup.h"
 
 #include "MutationObserverRegistration.h"
@@ -89,5 +87,3 @@ void MutationObserverInterestGroup::enqueueMutationRecord(PassRefPtr<MutationRec
 }
 
 } // namespace WebCore
-
-#endif // ENABLE(MUTATION_OBSERVERS)

@@ -29,7 +29,6 @@
  */
 
 [
-    Conditional=MUTATION_OBSERVERS,
     CustomConstructor,
     ConstructorParameters=1,
     JSCustomIsReachable

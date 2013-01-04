@@ -340,9 +340,6 @@ my @features = (
     { option => "mouse-cursor-scale", desc => "Toggle Scaled mouse cursor support",
       define => "ENABLE_MOUSE_CURSOR_SCALE", default => 0, value => \$mouseCursorScaleSupport },
 
-    { option => "mutation-observers", desc => "Toggle Mutation Observers support",
-      define => "ENABLE_MUTATION_OBSERVERS", default => 1, value => \$mutationObserversSupport },
-
     { option => "navigator-content-utils", desc => "Toggle Navigator Content Utils support",
       define => "ENABLE_NAVIGATOR_CONTENT_UTILS", default => (isBlackBerry() || isEfl()), value => \$registerProtocolHandlerSupport },
 

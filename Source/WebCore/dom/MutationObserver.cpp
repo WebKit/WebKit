@@ -30,8 +30,6 @@
 
 #include "config.h"
 
-#if ENABLE(MUTATION_OBSERVERS)
-
 #include "MutationObserver.h"
 
 #include "Dictionary.h"
@@ -246,5 +244,3 @@ void MutationObserver::deliverAllMutations()
 }
 
 } // namespace WebCore
-
-#endif // ENABLE(MUTATION_OBSERVERS)

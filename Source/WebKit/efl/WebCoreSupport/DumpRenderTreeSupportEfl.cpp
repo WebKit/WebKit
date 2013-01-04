@@ -588,9 +588,7 @@ void DumpRenderTreeSupportEfl::setMockScrollbarsEnabled(bool enable)
 
 void DumpRenderTreeSupportEfl::deliverAllMutationsIfNecessary()
 {
-#if ENABLE(MUTATION_OBSERVERS)
     WebCore::MutationObserver::deliverAllMutations();
-#endif
 }
 
 String DumpRenderTreeSupportEfl::markerTextForListItem(JSContextRef context, JSValueRef nodeObject)

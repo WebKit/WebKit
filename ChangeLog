@@ -1,3 +1,13 @@
+2013-01-04  Adam Klein  <adamk@chromium.org>
+
+        Remove ENABLE_MUTATION_OBSERVERS #define
+        https://bugs.webkit.org/show_bug.cgi?id=105459
+
+        Reviewed by Ryosuke Niwa.
+
+        * Source/cmake/WebKitFeatures.cmake:
+        * Source/cmakeconfig.h.cmake:
+
 2013-01-04  Zan Dobersek  <zandobersek@gmail.com>
 
         REGRESSION (r138184): transitions/transitions-parsing.html is failing on GTK

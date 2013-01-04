@@ -56,8 +56,8 @@ function testFilesystem() {
 
 description('Test that Mutation Records are delivered following FileSystem callbacks.');
 
-if (!window.WebKitMutationObserver || !window.webkitRequestFileSystem) {
-    testFailed('This test requires ENABLE(MUTATION_OBSERVERS) and ENABLE(FILE_SYSTEM)');
+if (!window.webkitRequestFileSystem) {
+    testFailed('This test requires ENABLE(FILE_SYSTEM)');
     finishJSTest();
 } else
     testFilesystem();

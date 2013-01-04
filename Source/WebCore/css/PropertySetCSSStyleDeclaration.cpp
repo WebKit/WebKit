@@ -54,7 +54,6 @@ public:
         ASSERT(!s_currentDecl);
         s_currentDecl = decl;
 
-#if ENABLE(MUTATION_OBSERVERS)
         if (!s_currentDecl->parentElement())
             return;
 
@@ -72,7 +71,6 @@ public:
             AtomicString requestedOldValue = m_mutationRecipients->isOldValueRequested() ? oldValue : nullAtom;
             m_mutation = MutationRecord::createAttributes(s_currentDecl->parentElement(), HTMLNames::styleAttr, requestedOldValue);
         }
-#endif
     }
 
     ~StyleAttributeMutationScope()
@@ -81,12 +79,10 @@ public:
         if (s_scopeCount)
             return;
 
-#if ENABLE(MUTATION_OBSERVERS)
         if (m_mutation && s_shouldDeliver)
             m_mutationRecipients->enqueueMutationRecord(m_mutation);
 
         s_shouldDeliver = false;
-#endif
         if (!s_shouldNotifyInspector) {
             s_currentDecl = 0;
             return;
@@ -99,12 +95,10 @@ public:
             InspectorInstrumentation::didInvalidateStyleAttr(localCopyStyleDecl->parentElement()->document(), localCopyStyleDecl->parentElement());
     }
 
-#if ENABLE(MUTATION_OBSERVERS)
     void enqueueMutationRecord()
     {
         s_shouldDeliver = true;
     }
-#endif
 
     void didInvalidateStyleAttr()
     {
@@ -115,22 +109,16 @@ private:
     static unsigned s_scopeCount;
     static PropertySetCSSStyleDeclaration* s_currentDecl;
     static bool s_shouldNotifyInspector;
-#if ENABLE(MUTATION_OBSERVERS)
     static bool s_shouldDeliver;
-#endif
 
-#if ENABLE(MUTATION_OBSERVERS)
     OwnPtr<MutationObserverInterestGroup> m_mutationRecipients;
     RefPtr<MutationRecord> m_mutation;
-#endif
 };
 
 unsigned StyleAttributeMutationScope::s_scopeCount = 0;
 PropertySetCSSStyleDeclaration* StyleAttributeMutationScope::s_currentDecl = 0;
 bool StyleAttributeMutationScope::s_shouldNotifyInspector = false;
-#if ENABLE(MUTATION_OBSERVERS)
 bool StyleAttributeMutationScope::s_shouldDeliver = false;
-#endif
 
 } // namespace
 
@@ -170,9 +158,7 @@ String PropertySetCSSStyleDeclaration::cssText() const
     
 void PropertySetCSSStyleDeclaration::setCssText(const String& text, ExceptionCode& ec)
 {
-#if ENABLE(MUTATION_OBSERVERS)
     StyleAttributeMutationScope mutationScope(this);
-#endif
     willMutate();
 
     ec = 0;
@@ -181,9 +167,7 @@ void PropertySetCSSStyleDeclaration::setCssText(const String& text, ExceptionCod
 
     didMutate(PropertyChanged);
 
-#if ENABLE(MUTATION_OBSERVERS)
     mutationScope.enqueueMutationRecord();    
-#endif
 }
 
 PassRefPtr<CSSValue> PropertySetCSSStyleDeclaration::getPropertyCSSValue(const String& propertyName)
@@ -231,9 +215,7 @@ bool PropertySetCSSStyleDeclaration::isPropertyImplicit(const String& propertyNa
 
 void PropertySetCSSStyleDeclaration::setProperty(const String& propertyName, const String& value, const String& priority, ExceptionCode& ec)
 {
-#if ENABLE(MUTATION_OBSERVERS)
     StyleAttributeMutationScope mutationScope(this);
-#endif
     CSSPropertyID propertyID = cssPropertyID(propertyName);
     if (!propertyID)
         return;
@@ -250,17 +232,13 @@ void PropertySetCSSStyleDeclaration::setProperty(const String& propertyName, con
     if (changed) {
         // CSS DOM requires raising SYNTAX_ERR of parsing failed, but this is too dangerous for compatibility,
         // see <http://bugs.webkit.org/show_bug.cgi?id=7296>.
-#if ENABLE(MUTATION_OBSERVERS)
         mutationScope.enqueueMutationRecord();
-#endif
     }
 }
 
 String PropertySetCSSStyleDeclaration::removeProperty(const String& propertyName, ExceptionCode& ec)
 {
-#if ENABLE(MUTATION_OBSERVERS)
     StyleAttributeMutationScope mutationScope(this);
-#endif
     CSSPropertyID propertyID = cssPropertyID(propertyName);
     if (!propertyID)
         return String();
@@ -273,11 +251,8 @@ String PropertySetCSSStyleDeclaration::removeProperty(const String& propertyName
 
     didMutate(changed ? PropertyChanged : NoChanges);
 
-    if (changed) {
-#if ENABLE(MUTATION_OBSERVERS)
+    if (changed)
         mutationScope.enqueueMutationRecord();
-#endif
-    }
     return result;
 }
 
@@ -293,9 +268,7 @@ String PropertySetCSSStyleDeclaration::getPropertyValueInternal(CSSPropertyID pr
 
 void PropertySetCSSStyleDeclaration::setPropertyInternal(CSSPropertyID propertyID, const String& value, bool important, ExceptionCode& ec)
 { 
-#if ENABLE(MUTATION_OBSERVERS)
     StyleAttributeMutationScope mutationScope(this);
-#endif
     willMutate();
 
     ec = 0;
@@ -303,11 +276,8 @@ void PropertySetCSSStyleDeclaration::setPropertyInternal(CSSPropertyID propertyI
 
     didMutate(changed ? PropertyChanged : NoChanges);
 
-    if (changed) {
-#if ENABLE(MUTATION_OBSERVERS)
+    if (changed)
         mutationScope.enqueueMutationRecord();
-#endif
-    }
 }
 
 CSSValue* PropertySetCSSStyleDeclaration::cloneAndCacheForCSSOM(CSSValue* internalValue)

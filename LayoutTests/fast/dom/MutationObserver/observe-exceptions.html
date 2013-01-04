@@ -28,11 +28,7 @@ function runTest() {
 
 description('Test that WebKitMutationObserver.observe throws exceptions appropriately');
 
-if (!window.WebKitMutationObserver)
-    testFailed('This test requires ENABLE(MUTATION_OBSERVERS)');
-else
-    runTest();
-
+runTest();
 </script>
 <script src="../../js/resources/js-test-post.js"></script>
 </body>

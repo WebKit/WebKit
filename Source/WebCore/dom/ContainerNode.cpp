@@ -268,10 +268,7 @@ bool ContainerNode::insertBefore(PassRefPtr<Node> newChild, Node* refChild, Exce
 
     InspectorInstrumentation::willInsertDOMNode(document(), this);
 
-#if ENABLE(MUTATION_OBSERVERS)
     ChildListMutationScope mutation(this);
-#endif
-
     for (NodeVector::const_iterator it = targets.begin(); it != targets.end(); ++it) {
         Node* child = it->get();
 
@@ -366,9 +363,7 @@ bool ContainerNode::replaceChild(PassRefPtr<Node> newChild, Node* oldChild, Exce
         return false;
     }
 
-#if ENABLE(MUTATION_OBSERVERS)
     ChildListMutationScope mutation(this);
-#endif
 
     RefPtr<Node> next = oldChild->nextSibling();
 
@@ -429,12 +424,9 @@ bool ContainerNode::replaceChild(PassRefPtr<Node> newChild, Node* oldChild, Exce
 
 static void willRemoveChild(Node* child)
 {
-#if ENABLE(MUTATION_OBSERVERS)
     ASSERT(child->parentNode());
     ChildListMutationScope(child->parentNode()).willRemoveChild(child);
     child->notifyMutationObserversNodeWillDetach();
-#endif
-
     dispatchChildRemovalEvents(child);
     child->document()->nodeWillBeRemoved(child); // e.g. mutation event listener can create a new range.
     ChildFrameDisconnector(child).disconnect();
@@ -447,17 +439,11 @@ static void willRemoveChildren(ContainerNode* container)
 
     container->document()->nodeChildrenWillBeRemoved(container);
 
-#if ENABLE(MUTATION_OBSERVERS)
     ChildListMutationScope mutation(container);
-#endif
-
     for (NodeVector::const_iterator it = children.begin(); it != children.end(); it++) {
         Node* child = it->get();
-
-#if ENABLE(MUTATION_OBSERVERS)
         mutation.willRemoveChild(child);
         child->notifyMutationObserversNodeWillDetach();
-#endif
 
         // fire removed from document mutation events.
         dispatchChildRemovalEvents(child);
@@ -670,11 +656,8 @@ bool ContainerNode::appendChild(PassRefPtr<Node> newChild, ExceptionCode& ec, bo
 
     InspectorInstrumentation::willInsertDOMNode(document(), this);
 
-#if ENABLE(MUTATION_OBSERVERS)
-    ChildListMutationScope mutation(this);
-#endif
-
     // Now actually add the child(ren)
+    ChildListMutationScope mutation(this);
     for (NodeVector::const_iterator it = targets.begin(); it != targets.end(); ++it) {
         Node* child = it->get();
 
@@ -1105,9 +1088,7 @@ static void updateTreeAfterInsertion(ContainerNode* parent, Node* child, bool sh
     ASSERT(parent->refCount());
     ASSERT(child->refCount());
 
-#if ENABLE(MUTATION_OBSERVERS)
     ChildListMutationScope(parent).childAdded(child);
-#endif
 
     parent->childrenChanged(false, child->previousSibling(), child->nextSibling(), 1);
 

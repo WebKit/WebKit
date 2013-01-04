@@ -30,8 +30,6 @@
 
 #include "config.h"
 
-#if ENABLE(MUTATION_OBSERVERS)
-
 #include "V8MutationCallback.h"
 
 #include "ScriptExecutionContext.h"
@@ -87,5 +85,3 @@ bool V8MutationCallback::handleEvent(MutationRecordArray* mutations, MutationObs
 }
 
 } // namespace WebCore
-
-#endif // ENABLE(MUTATION_OBSERVERS)

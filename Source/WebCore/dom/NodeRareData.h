@@ -229,14 +229,12 @@ private:
 class NodeRareData : public NodeRareDataBase {
     WTF_MAKE_NONCOPYABLE(NodeRareData); WTF_MAKE_FAST_ALLOCATED;
 
-#if ENABLE(MUTATION_OBSERVERS)
     struct NodeMutationObserverData {
         Vector<OwnPtr<MutationObserverRegistration> > m_registry;
         HashSet<MutationObserverRegistration*> m_transientRegistry;
 
         static PassOwnPtr<NodeMutationObserverData> create() { return adoptPtr(new NodeMutationObserverData); }
     };
-#endif
 
 #if ENABLE(MICRODATA)
     struct NodeMicroDataTokenLists {
@@ -294,7 +292,6 @@ public:
     bool tabIndexSetExplicitly() const { return m_tabIndexWasSetExplicitly; }
     void clearTabIndexExplicitly() { m_tabIndex = 0; m_tabIndexWasSetExplicitly = false; }
 
-#if ENABLE(MUTATION_OBSERVERS)
     Vector<OwnPtr<MutationObserverRegistration> >* mutationObserverRegistry() { return m_mutationObserverData ? &m_mutationObserverData->m_registry : 0; }
     Vector<OwnPtr<MutationObserverRegistration> >* ensureMutationObserverRegistry()
     {
@@ -310,7 +307,6 @@ public:
             m_mutationObserverData = NodeMutationObserverData::create();
         return &m_mutationObserverData->m_transientRegistry;
     }
-#endif
 
 #if ENABLE(MICRODATA)
     NodeMicroDataTokenLists* ensureMicroDataTokenLists() const
@@ -406,10 +402,7 @@ protected:
 #endif
 private:
     OwnPtr<NodeListsNodeData> m_nodeLists;
-
-#if ENABLE(MUTATION_OBSERVERS)
     OwnPtr<NodeMutationObserverData> m_mutationObserverData;
-#endif
 
 #if ENABLE(MICRODATA)
     mutable OwnPtr<NodeMicroDataTokenLists> m_microDataTokenLists;

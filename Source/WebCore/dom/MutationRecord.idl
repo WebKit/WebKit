@@ -28,9 +28,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-[
-    Conditional=MUTATION_OBSERVERS
-] interface MutationRecord {
+interface MutationRecord {
     readonly attribute DOMString type;
     readonly attribute Node target;
 

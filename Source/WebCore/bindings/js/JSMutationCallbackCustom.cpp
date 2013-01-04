@@ -30,8 +30,6 @@
 
 #include "config.h"
 
-#if ENABLE(MUTATION_OBSERVERS)
-
 #include "JSMutationCallback.h"
 
 #include "JSDOMWindowBase.h"
@@ -71,5 +69,3 @@ bool JSMutationCallback::handleEvent(MutationRecordArray* mutations, MutationObs
 }
 
 } // namespace WebCore
-
-#endif // ENABLE(MUTATION_OBSERVERS)

@@ -30,8 +30,6 @@
 
 #include "config.h"
 
-#if ENABLE(MUTATION_OBSERVERS)
-
 #include "JSMutationObserver.h"
 
 #include "JSMutationCallback.h"
@@ -70,5 +68,3 @@ bool JSMutationObserverOwner::isReachableFromOpaqueRoots(JSC::Handle<JSC::Unknow
 }
 
 } // namespace WebCore
-
-#endif // ENABLE(MUTATION_OBSERVERS)

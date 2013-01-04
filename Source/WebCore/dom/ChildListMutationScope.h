@@ -31,8 +31,6 @@
 #ifndef ChildListMutationScope_h
 #define ChildListMutationScope_h
 
-#if ENABLE(MUTATION_OBSERVERS)
-
 #include "Document.h"
 #include "MutationObserver.h"
 #include "Node.h"
@@ -101,7 +99,5 @@ private:
 };
 
 } // namespace WebCore
-
-#endif // ENABLE(MUTATION_OBSERVERS)
 
 #endif // ChildListMutationScope_h

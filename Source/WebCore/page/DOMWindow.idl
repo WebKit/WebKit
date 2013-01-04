@@ -784,7 +784,7 @@
     [Conditional=BLOB] attribute DOMURLConstructor URL;
     [Conditional=BLOB] attribute DOMURLConstructor webkitURL; // FIXME: deprecate this.
 
-    [Conditional=MUTATION_OBSERVERS] attribute MutationObserverConstructor WebKitMutationObserver;
+    attribute MutationObserverConstructor WebKitMutationObserver;
 
     [Conditional=MEDIA_SOURCE, V8EnabledAtRuntime=mediaSource] attribute MediaSourceConstructor WebKitMediaSource;
     [Conditional=MEDIA_SOURCE, V8EnabledAtRuntime=mediaSource] attribute SourceBufferConstructor WebKitSourceBuffer;

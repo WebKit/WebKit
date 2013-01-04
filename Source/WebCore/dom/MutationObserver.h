@@ -31,8 +31,6 @@
 #ifndef MutationObserver_h
 #define MutationObserver_h
 
-#if ENABLE(MUTATION_OBSERVERS)
-
 #include <wtf/HashMap.h>
 #include <wtf/HashSet.h>
 #include <wtf/PassRefPtr.h>
@@ -105,7 +103,5 @@ private:
 };
 
 }
-
-#endif // ENABLE(MUTATION_OBSERVERS)
 
 #endif // MutationObserver_h

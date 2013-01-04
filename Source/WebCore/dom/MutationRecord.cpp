@@ -30,8 +30,6 @@
 
 #include "config.h"
 
-#if ENABLE(MUTATION_OBSERVERS)
-
 #include "MutationRecord.h"
 
 #include "Node.h"
@@ -194,5 +192,3 @@ MutationRecord::~MutationRecord()
 }
 
 } // namespace WebCore
-
-#endif // ENABLE(MUTATION_OBSERVERS)

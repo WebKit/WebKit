@@ -29,7 +29,6 @@
  */
 
 [
-    Conditional=MUTATION_OBSERVERS,
     Callback
 ] interface MutationCallback {
     [Custom] boolean handleEvent(in MutationRecordArray mutations, in MutationObserver observer);

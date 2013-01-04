@@ -30,8 +30,6 @@
 
 #include "config.h"
 
-#if ENABLE(MUTATION_OBSERVERS)
-
 #include "ChildListMutationScope.h"
 
 #include "DocumentFragment.h"
@@ -154,5 +152,3 @@ bool ChildListMutationAccumulator::isEmpty()
 }
 
 } // namespace WebCore
-
-#endif // ENABLE(MUTATION_OBSERVERS)

@@ -175,7 +175,6 @@ void JSDictionary::convertValue(ExecState*, JSValue value, RefPtr<TrackBase>& re
 }
 #endif
 
-#if ENABLE(MUTATION_OBSERVERS) || ENABLE(WEB_INTENTS)
 void JSDictionary::convertValue(ExecState* exec, JSValue value, HashSet<AtomicString>& result)
 {
     result.clear();
@@ -195,7 +194,6 @@ void JSDictionary::convertValue(ExecState* exec, JSValue value, HashSet<AtomicSt
         result.add(itemValue.toString(exec)->value(exec));
     }
 }
-#endif
 
 void JSDictionary::convertValue(ExecState* exec, JSValue value, ArrayValue& result)
 {

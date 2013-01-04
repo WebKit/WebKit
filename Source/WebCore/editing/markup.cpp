@@ -1103,9 +1103,7 @@ void replaceChildrenWithFragment(ContainerNode* container, PassRefPtr<DocumentFr
 {
     RefPtr<ContainerNode> containerNode(container);
 
-#if ENABLE(MUTATION_OBSERVERS)
     ChildListMutationScope mutation(containerNode.get());
-#endif
 
     if (!fragment->firstChild()) {
         containerNode->removeChildren();
@@ -1130,9 +1128,7 @@ void replaceChildrenWithText(ContainerNode* container, const String& text, Excep
 {
     RefPtr<ContainerNode> containerNode(container);
 
-#if ENABLE(MUTATION_OBSERVERS)
     ChildListMutationScope mutation(containerNode.get());
-#endif
 
     if (hasOneTextChild(containerNode.get())) {
         toText(containerNode->firstChild())->setData(text, ec);

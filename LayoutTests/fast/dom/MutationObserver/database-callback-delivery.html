@@ -41,10 +41,6 @@ function testDatabase() {
 
 description('Testing mutations are delivered following Database transaction callbacks.');
 
-if (!window.WebKitMutationObserver) {
-    testFailed('This test requires ENABLE(MUTATION_OBSERVERS)');
-    finishJSTest();
-} else
-    testDatabase();
+testDatabase();
 </script>
 <script src="../../js/resources/js-test-post.js"></script>

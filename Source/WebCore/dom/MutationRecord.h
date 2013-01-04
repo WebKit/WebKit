@@ -31,8 +31,6 @@
 #ifndef MutationRecord_h
 #define MutationRecord_h
 
-#if ENABLE(MUTATION_OBSERVERS)
-
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefCounted.h>
 #include <wtf/RefPtr.h>
@@ -69,7 +67,5 @@ public:
 };
 
 } // namespace WebCore
-
-#endif // ENABLE(MUTATION_OBSERVERS)
 
 #endif // MutationRecord_h

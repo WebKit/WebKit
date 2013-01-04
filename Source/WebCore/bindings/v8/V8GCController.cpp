@@ -181,14 +181,12 @@ public:
             MessagePort* port = static_cast<MessagePort*>(object);
             if (port->isEntangled() || port->hasPendingActivity())
                 m_grouper.keepAlive(wrapper);
-#if ENABLE(MUTATION_OBSERVERS)
         } else if (V8MutationObserver::info.equals(type)) {
             // FIXME: Allow opaqueRootForGC to operate on multiple roots and move this logic into V8MutationObserverCustom.
             MutationObserver* observer = static_cast<MutationObserver*>(object);
             HashSet<Node*> observedNodes = observer->getObservedNodes();
             for (HashSet<Node*>::iterator it = observedNodes.begin(); it != observedNodes.end(); ++it)
                 m_grouper.addToGroup(V8GCController::opaqueRootForGC(*it), wrapper);
-#endif // ENABLE(MUTATION_OBSERVERS)
         } else {
             ActiveDOMObject* activeDOMObject = type->toActiveDOMObject(wrapper);
             if (activeDOMObject && activeDOMObject->hasPendingActivity())
