@@ -121,7 +121,6 @@ public:
     virtual void setLayoutFallbackWidth(int) = 0;
     virtual void setLoadsImagesAutomatically(bool) = 0;
     virtual void setLocalStorageEnabled(bool) = 0;
-    virtual void setLowLatencyRenderingEnabled(bool) = 0;
     virtual void setMaxUntiledLayerSize(WebSize) = 0;
     virtual void setMediaPlaybackRequiresUserGesture(bool) = 0;
     virtual void setMemoryInfoEnabled(bool) = 0;
@@ -141,6 +140,7 @@ public:
     virtual void setPluginsEnabled(bool) = 0;
     virtual void setPrivilegedWebGLExtensionsEnabled(bool) = 0;
     virtual void setRenderVSyncEnabled(bool) = 0;
+    virtual void setRenderVSyncNotificationEnabled(bool) = 0;
     virtual void setSansSerifFontFamily(const WebString&, UScriptCode = USCRIPT_COMMON) = 0;
     virtual void setSerifFontFamily(const WebString&, UScriptCode = USCRIPT_COMMON) = 0;
     virtual void setShouldPrintBackgrounds(bool) = 0;

@@ -1,3 +1,15 @@
+2013-01-03  Sami Kyostila  <skyostil@chromium.org>
+
+        [chromium] Rename low latency rendering mode setting to vsync notification
+        https://bugs.webkit.org/show_bug.cgi?id=106020
+
+        Reviewed by James Robinson.
+
+        Rename low latency rendering mode setting to vsync notification because
+        the old name was ambiguous and bad. This setting is meant to control
+        whether the renderer uses a vsync signal provided by the browser to
+        schedule rendering.
+
 2013-01-03  Tommy Widenflycht  <tommyw@google.com>
 
         MediaStream API: Add a missing state to RTCPeerConnection

@@ -52,7 +52,7 @@ WebSettingsImpl::WebSettingsImpl(Settings* settings)
     , m_showPlatformLayerTree(false)
     , m_showPaintRects(false)
     , m_renderVSyncEnabled(true)
-    , m_lowLatencyRenderingEnabled(false)
+    , m_renderVSyncNotificationEnabled(false)
     , m_viewportEnabled(false)
     , m_applyDeviceScaleFactorInCompositor(false)
     , m_gestureTapHighlightEnabled(true)
@@ -402,9 +402,9 @@ void WebSettingsImpl::setRenderVSyncEnabled(bool enabled)
     m_renderVSyncEnabled = enabled;
 }
 
-void WebSettingsImpl::setLowLatencyRenderingEnabled(bool lowLatencyRenderingEnabled)
+void WebSettingsImpl::setRenderVSyncNotificationEnabled(bool enabled)
 {
-    m_lowLatencyRenderingEnabled = lowLatencyRenderingEnabled;
+    m_renderVSyncNotificationEnabled = enabled;
 }
 
 void WebSettingsImpl::setWebGLErrorsToConsoleEnabled(bool enabled)
