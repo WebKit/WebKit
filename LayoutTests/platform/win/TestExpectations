@@ -1493,7 +1493,8 @@ loader/navigation-while-deferring-loads.html
 http/tests/security/isolatedWorld/cross-origin-xhr.html
 
 # JSC also doesn't support setIsolatedWorldContentSecurityPolicy (webkit.org/b/100815)
-http/tests/security/isolatedWorld/bypass-main-world-csp.html
+webkit.org/b/100815 http/tests/security/isolatedWorld/bypass-main-world-csp.html [ Failure ]
+webkit.org/b/100815 http/tests/security/isolatedWorld/bypass-main-world-csp-for-xhr.html [ Failure ]
 
 # ENABLE(WEBGL) is disabled
 compositing/backface-visibility/backface-visibility-webgl.html

@@ -39,11 +39,13 @@
 #include "CloseEvent.h"
 #include "ContentSecurityPolicy.h"
 #include "DOMWindow.h"
+#include "Document.h"
 #include "Event.h"
 #include "EventException.h"
 #include "EventListener.h"
 #include "EventNames.h"
 #include "ExceptionCode.h"
+#include "Frame.h"
 #include "Logging.h"
 #include "MessageEvent.h"
 #include "ScriptCallStack.h"
@@ -238,7 +240,13 @@ void WebSocket::connect(const String& url, const Vector<String>& protocols, Exce
         return;
     }
 
-    if (!scriptExecutionContext()->contentSecurityPolicy()->allowConnectToSource(m_url)) {
+    // FIXME: Convert this to check the isolated world's Content Security Policy once webkit.org/b/104520 is solved.
+    bool shouldBypassMainWorldContentSecurityPolicy = false;
+    if (scriptExecutionContext()->isDocument()) {
+        Document* document = static_cast<Document*>(scriptExecutionContext());
+        shouldBypassMainWorldContentSecurityPolicy = document->frame()->script()->shouldBypassMainWorldContentSecurityPolicy();
+    }
+    if (!shouldBypassMainWorldContentSecurityPolicy && !scriptExecutionContext()->contentSecurityPolicy()->allowConnectToSource(m_url)) {
         m_state = CLOSED;
 
         // FIXME: Should this be throwing an exception?

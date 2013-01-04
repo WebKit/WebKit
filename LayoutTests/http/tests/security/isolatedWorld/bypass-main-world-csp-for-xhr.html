@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html>
+    <script src="../../js-test-resources/js-test-pre.js"></script>
+    <meta http-equiv="Content-Security-Policy" content="connect-src 'none'">
+<body>
+<p id="description"></p>
+<div id="console"></div>
+
+<script>
+description('Tests that isolated worlds can have XHRs that the page\'s CSP wouldn\'t allow.');
+
+jsTestIsAsync = true;
+
+var tests = [
+    function() {
+        debug('XHR from main world');
+        xhr(true);
+    },
+    function() {
+        debug('XHR from isolated world with unchanged CSP');
+        runTestInWorld(1, 'xhr', 'true');
+    },
+    function() {
+        debug('XHR from isolated world with same security origin as XHR target.');
+        testRunner.setIsolatedWorldSecurityOrigin(2, 'http://localhost:8000');
+        runTestInWorld(2, 'xhr', 'true');
+    },
+    function() {
+        debug('XHR from isolated world with same security origin as XHR target, and looser CSP.');
+        testRunner.setIsolatedWorldContentSecurityPolicy(3, 'connect-src *');
+        testRunner.setIsolatedWorldSecurityOrigin(3, 'http://localhost:8000');
+        runTestInWorld(3, 'xhr', 'false');
+    },
+    function() {
+        debug('XHR from main world is not affected by the isolated world origin or CSP');
+        xhr(true);
+    }
+];
+var currentTest = 0;
+
+// This test is meaningless without testRunner.
+if (window.testRunner) {
+    window.addEventListener(
+        'message',
+        function(event) {
+            var message = JSON.parse(event.data);
+            switch (message.type) {
+                case 'test-done':
+                    currentTest++;
+                    if (currentTest == tests.length) {
+                        testRunner.setIsolatedWorldSecurityOrigin(1, null);
+                        testRunner.setIsolatedWorldSecurityOrigin(2, null);
+                        testRunner.setIsolatedWorldSecurityOrigin(3, null);
+                        testRunner.setIsolatedWorldContentSecurityPolicy(1, '');
+                        testRunner.setIsolatedWorldContentSecurityPolicy(2, '');
+                        testRunner.setIsolatedWorldContentSecurityPolicy(3, '');
+                        finishJSTest();
+                    }
+                    else
+                        tests[currentTest]();
+                    break;
+                case 'debug':
+                    debug(message.message);
+                    break;
+                default:
+                    testFailed('Unknown message: ' + event.data);
+                    break;
+            }
+        },
+        false);
+
+    tests[0]();
+} else {
+    testFailed('Test depends on LayoutTestController and must be run by DRT');
+}
+
+function runTestInWorld(worldId, funcName, param)
+{
+    testRunner.evaluateScriptInIsolatedWorld(
+        worldId, String(eval(funcName)) + "\n" + funcName + "(" + param + ");");
+}
+
+function xhr(shouldBlock)
+{
+    function debug(message) {
+        window.postMessage(JSON.stringify({
+                'type': 'debug',
+                'message': message
+            }),
+            '*');
+    }
+
+    var xhr = new XMLHttpRequest();
+    try {
+        xhr.open('GET', 'http://localhost:8000/security/isolatedWorld/resources/cross-origin-xhr.txt', true);
+        if (shouldBlock)
+            debug('FAIL: XHR.open should have thrown an exception.');
+        else
+            debug('PASS: XHR.open did not throw an exception.');
+    } catch (e) {
+        if (shouldBlock)
+            debug('PASS: XHR.open threw an exception.');
+        else
+            debug('FAIL: XHR.open should not have thrown an exception.');
+    } finally {
+        window.postMessage(JSON.stringify({'type': 'test-done'}), '*');
+    }
+}
+
+</script>
+
+<script src="../../js-test-resources/js-test-post.js"></script>
+</body>
+</html>

@@ -1,0 +1,27 @@
+CONSOLE MESSAGE: Refused to connect to 'http://localhost:8000/security/isolatedWorld/resources/cross-origin-xhr.txt' because it violates the following Content Security Policy directive: "connect-src 'none'".
+
+CONSOLE MESSAGE: Refused to connect to 'http://localhost:8000/security/isolatedWorld/resources/cross-origin-xhr.txt' because it violates the following Content Security Policy directive: "connect-src 'none'".
+
+CONSOLE MESSAGE: Refused to connect to 'http://localhost:8000/security/isolatedWorld/resources/cross-origin-xhr.txt' because it violates the following Content Security Policy directive: "connect-src 'none'".
+
+CONSOLE MESSAGE: Refused to connect to 'http://localhost:8000/security/isolatedWorld/resources/cross-origin-xhr.txt' because it violates the following Content Security Policy directive: "connect-src 'none'".
+
+Tests that isolated worlds can have XHRs that the page's CSP wouldn't allow.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+XHR from main world
+PASS: XHR.open threw an exception.
+XHR from isolated world with unchanged CSP
+PASS: XHR.open threw an exception.
+XHR from isolated world with same security origin as XHR target.
+PASS: XHR.open threw an exception.
+XHR from isolated world with same security origin as XHR target, and looser CSP.
+PASS: XHR.open did not throw an exception.
+XHR from main world is not affected by the isolated world origin or CSP
+PASS: XHR.open threw an exception.
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

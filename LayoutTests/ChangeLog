@@ -1,3 +1,20 @@
+2013-01-04  Mike West  <mkwst@chromium.org>
+
+        CSP: XHR from an isolated world should bypass a page's policy.
+        https://bugs.webkit.org/show_bug.cgi?id=104480
+
+        Reviewed by Adam Barth.
+
+        * http/tests/security/isolatedWorld/bypass-main-world-csp-for-xhr-expected.txt: Added.
+        * http/tests/security/isolatedWorld/bypass-main-world-csp-for-xhr.html: Added.
+            A new test! How wonderful!
+        * platform/efl/TestExpectations:
+        * platform/mac/TestExpectations:
+        * platform/qt/TestExpectations:
+        * platform/win/TestExpectations:
+        * platform/wincairo/TestExpectations:
+            Skipping the new test on ports that don't support it.
+
 2013-01-04  Mike Lawther  <mikelawther@chromium.org>
 
         CSS3 calc: mixed percent/absolute for border-radius

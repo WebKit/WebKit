@@ -1129,6 +1129,7 @@ webkit.org/b/61540 inspector/extensions/extensions-eval-content-script.html [ Fa
 
 # JSC also doesn't support setIsolatedWorldContentSecurityPolicy
 webkit.org/b/100815 http/tests/security/isolatedWorld/bypass-main-world-csp.html [ Failure ]
+webkit.org/b/100815 http/tests/security/isolatedWorld/bypass-main-world-csp-for-xhr.html [ Failure ]
 
 #__worldID is undefined in isolated world
 Bug(EFL) http/tests/security/isolatedWorld/didClearWindowObject.html

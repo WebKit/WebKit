@@ -36,9 +36,11 @@
 #include "ContentSecurityPolicy.h"
 #include "DOMWindow.h"
 #include "Dictionary.h"
+#include "Document.h"
 #include "Event.h"
 #include "EventException.h"
 #include "ExceptionCode.h"
+#include "Frame.h"
 #include "MemoryCache.h"
 #include "MessageEvent.h"
 #include "ResourceError.h"
@@ -83,7 +85,13 @@ PassRefPtr<EventSource> EventSource::create(ScriptExecutionContext* context, con
         return 0;
     }
 
-    if (!context->contentSecurityPolicy()->allowConnectToSource(fullURL)) {
+    // FIXME: Convert this to check the isolated world's Content Security Policy once webkit.org/b/104520 is solved.
+    bool shouldBypassMainWorldContentSecurityPolicy = false;
+    if (context->isDocument()) {
+        Document* document = static_cast<Document*>(context);
+        shouldBypassMainWorldContentSecurityPolicy = document->frame()->script()->shouldBypassMainWorldContentSecurityPolicy();
+    }
+    if (!shouldBypassMainWorldContentSecurityPolicy && !context->contentSecurityPolicy()->allowConnectToSource(fullURL)) {
         // FIXME: Should this be throwing an exception?
         ec = SECURITY_ERR;
         return 0;

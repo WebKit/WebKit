@@ -439,7 +439,8 @@ html5lib/run-template.html
 http/tests/security/isolatedWorld/cross-origin-xhr.html
 
 # JSC also doesn't support setIsolatedWorldContentSecurityPolicy (webkit.org/b/100815)
-http/tests/security/isolatedWorld/bypass-main-world-csp.html
+webkit.org/b/100815 http/tests/security/isolatedWorld/bypass-main-world-csp.html [ Failure ]
+webkit.org/b/100815 http/tests/security/isolatedWorld/bypass-main-world-csp-for-xhr.html [ Failure ]
 
 # https://bugs.webkit.org/show_bug.cgi?id=63282 layerTreeAsText doesn't work for iframes
 compositing/rtl/rtl-iframe-absolute-overflow-scrolled.html
