@@ -1294,47 +1294,48 @@ sub GenerateEventTargetIface {
 
     my $interfaceName = $interface->name;
     my $decamelize = FixUpDecamelizedName(decamelize($interfaceName));
+    my $conditionalString = $codeGenerator->GenerateConditionalString($interface);
+    my @conditionalWarn = GenerateConditionalWarning($interface);
 
     $implIncludes{"GObjectEventListener.h"} = 1;
     $implIncludes{"WebKitDOMEventTarget.h"} = 1;
     $implIncludes{"WebKitDOMEventPrivate.h"} = 1;
 
-    my $impl = << "EOF";
-static void webkit_dom_${decamelize}_dispatch_event(WebKitDOMEventTarget* target, WebKitDOMEvent* event, GError** error)
-{
-    WebCore::Event* coreEvent = WebKit::core(event);
-    WebCore::${interfaceName}* coreTarget = static_cast<WebCore::${interfaceName}*>(WEBKIT_DOM_OBJECT(target)->coreObject);
+    push(@cBodyProperties, "static void webkit_dom_${decamelize}_dispatch_event(WebKitDOMEventTarget* target, WebKitDOMEvent* event, GError** error)\n{\n");
+    push(@cBodyProperties, "#if ${conditionalString}\n") if $conditionalString;
+    push(@cBodyProperties, "    WebCore::Event* coreEvent = WebKit::core(event);\n");
+    push(@cBodyProperties, "    WebCore::${interfaceName}* coreTarget = static_cast<WebCore::${interfaceName}*>(WEBKIT_DOM_OBJECT(target)->coreObject);\n\n");
+    push(@cBodyProperties, "    WebCore::ExceptionCode ec = 0;\n");
+    push(@cBodyProperties, "    coreTarget->dispatchEvent(coreEvent, ec);\n");
+    push(@cBodyProperties, "    if (ec) {\n        WebCore::ExceptionCodeDescription description(ec);\n");
+    push(@cBodyProperties, "        g_set_error_literal(error, g_quark_from_string(\"WEBKIT_DOM\"), description.code, description.name);\n    }\n");
+    push(@cBodyProperties, "#else\n") if $conditionalString;
+    push(@cBodyProperties, @conditionalWarn) if scalar(@conditionalWarn);
+    push(@cBodyProperties, "#endif // ${conditionalString}\n") if $conditionalString;
+    push(@cBodyProperties, "}\n\n");
 
-    WebCore::ExceptionCode ec = 0;
-    coreTarget->dispatchEvent(coreEvent, ec);
-    if (ec) {
-        WebCore::ExceptionCodeDescription description(ec);
-        g_set_error_literal(error, g_quark_from_string("WEBKIT_DOM"), description.code, description.name);
-    }
-}
+    push(@cBodyProperties, "static gboolean webkit_dom_${decamelize}_add_event_listener(WebKitDOMEventTarget* target, const char* eventName, GCallback handler, gboolean bubble, gpointer userData)\n{\n");
+    push(@cBodyProperties, "#if ${conditionalString}\n") if $conditionalString;
+    push(@cBodyProperties, "    WebCore::${interfaceName}* coreTarget = static_cast<WebCore::${interfaceName}*>(WEBKIT_DOM_OBJECT(target)->coreObject);\n");
+    push(@cBodyProperties, "    return WebCore::GObjectEventListener::addEventListener(G_OBJECT(target), coreTarget, eventName, handler, bubble, userData);\n");
+    push(@cBodyProperties, "#else\n") if $conditionalString;
+    push(@cBodyProperties, @conditionalWarn) if scalar(@conditionalWarn);
+    push(@cBodyProperties, "    return false;\n#endif // ${conditionalString}\n") if $conditionalString;
+    push(@cBodyProperties, "}\n\n");
 
-static gboolean webkit_dom_${decamelize}_add_event_listener(WebKitDOMEventTarget* target, const char* eventName, GCallback handler, gboolean bubble, gpointer userData)
-{
-    WebCore::${interfaceName}* coreTarget = static_cast<WebCore::${interfaceName}*>(WEBKIT_DOM_OBJECT(target)->coreObject);
-    return WebCore::GObjectEventListener::addEventListener(G_OBJECT(target), coreTarget, eventName, handler, bubble, userData);
-}
+    push(@cBodyProperties, "static gboolean webkit_dom_${decamelize}_remove_event_listener(WebKitDOMEventTarget* target, const char* eventName, GCallback handler, gboolean bubble)\n{\n");
+    push(@cBodyProperties, "#if ${conditionalString}\n") if $conditionalString;
+    push(@cBodyProperties, "    WebCore::${interfaceName}* coreTarget = static_cast<WebCore::${interfaceName}*>(WEBKIT_DOM_OBJECT(target)->coreObject);\n");
+    push(@cBodyProperties, "    return WebCore::GObjectEventListener::removeEventListener(G_OBJECT(target), coreTarget, eventName, handler, bubble);\n");
+    push(@cBodyProperties, "#else\n") if $conditionalString;
+    push(@cBodyProperties, @conditionalWarn) if scalar(@conditionalWarn);
+    push(@cBodyProperties, "    return false;\n#endif // ${conditionalString}\n") if $conditionalString;
+    push(@cBodyProperties, "}\n\n");
 
-static gboolean webkit_dom_${decamelize}_remove_event_listener(WebKitDOMEventTarget* target, const char* eventName, GCallback handler, gboolean bubble)
-{
-    WebCore::${interfaceName}* coreTarget = static_cast<WebCore::${interfaceName}*>(WEBKIT_DOM_OBJECT(target)->coreObject);
-    return WebCore::GObjectEventListener::removeEventListener(G_OBJECT(target), coreTarget, eventName, handler, bubble);
-}
-
-static void webkit_dom_event_target_init(WebKitDOMEventTargetIface* iface)
-{
-    iface->dispatch_event = webkit_dom_${decamelize}_dispatch_event;
-    iface->add_event_listener = webkit_dom_${decamelize}_add_event_listener;
-    iface->remove_event_listener = webkit_dom_${decamelize}_remove_event_listener;
-}
-
-EOF
-
-    push(@cBodyProperties, $impl);
+    push(@cBodyProperties, "static void webkit_dom_event_target_init(WebKitDOMEventTargetIface* iface)\n{\n");
+    push(@cBodyProperties, "    iface->dispatch_event = webkit_dom_${decamelize}_dispatch_event;\n");
+    push(@cBodyProperties, "    iface->add_event_listener = webkit_dom_${decamelize}_add_event_listener;\n");
+    push(@cBodyProperties, "    iface->remove_event_listener = webkit_dom_${decamelize}_remove_event_listener;\n}\n\n");
 
     $defineTypeMacro = "G_DEFINE_TYPE_WITH_CODE";
     $defineTypeInterfaceImplementation = ", G_IMPLEMENT_INTERFACE(WEBKIT_TYPE_DOM_EVENT_TARGET, webkit_dom_event_target_init))";
