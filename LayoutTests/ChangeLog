@@ -1,3 +1,10 @@
+2013-01-03  Terry Anderson  <tdanderson@chromium.org>
+
+        Unreviewed gardening. Adding cr-linux image baseline for
+        http://trac.webkit.org/changeset/138755
+
+        * platform/chromium-linux/fast/regions/full-screen-video-from-region-expected.png: Added.
+
 2013-01-03  Beth Dakin  <bdakin@apple.com>
 
         https://bugs.webkit.org/show_bug.cgi?id=105475
