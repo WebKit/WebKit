@@ -102,6 +102,8 @@ private:
                     set = node.structure();
                 else
                     set = node.structureSet();
+                if (!isCellSpeculation(value.m_type))
+                    break;
                 if (value.m_currentKnownStructure.isSubsetOf(set)) {
                     ASSERT(node.refCount() == 1);
                     node.setOpAndDefaultFlags(Phantom);
@@ -110,8 +112,7 @@ private:
                 }
                 StructureAbstractValue& structureValue = value.m_futurePossibleStructure;
                 if (structureValue.isSubsetOf(set)
-                    && structureValue.hasSingleton()
-                    && isCellSpeculation(value.m_type)) {
+                    && structureValue.hasSingleton()) {
                     node.convertToStructureTransitionWatchpoint(structureValue.singleton());
                     changed = true;
                 }

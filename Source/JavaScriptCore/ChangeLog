@@ -1,3 +1,54 @@
+2013-01-03  Filip Pizlo  <fpizlo@apple.com>
+
+        DFG should not elide CheckStructure if it's needed to perform a cell check
+        https://bugs.webkit.org/show_bug.cgi?id=106074
+
+        Reviewed by Ryosuke Niwa.
+        
+        The problem here was that the constant folding phase was misinterpreting the meaning of the sets
+        in DFG::AbstractValue.  AbstractValue describes a constraint on the values that a variable (i.e.
+        a DFG Node, or a virtual register, i.e. local or argument) may have. It does so by containing
+        four sets: the set of JSValues (either empty, the singleton set containing one JSValue, or the
+        set of all JSValues); the set of "current known" structures, i.e. the set of structures that you
+        already know that this value may have right now (also either empty, the singleton set, or the set
+        of all structures); the set of "future possible" structures, i.e. the set of structures that this
+        value could have in the future if none of the structure transition watchpoints for those
+        structures had fired (also empty, singleton, or all); and the set of types, which is a
+        SpeculatedType bitmask. The correct way to interpret the sets is to think of the AbstractValue as
+        the intersection of these three sets of values:
+        
+        - The set of JSValues that have a type that belongs to the m_type set.
+        - If m_value is not the empty value then: the set of all JSValues that are == m_value;
+                                            else: the set of all JSValues.
+          where '==' is as defined by JSValue::operator==.
+        - Union of { the set of all cells that have a structure that belongs to m_currentKnownStructure }
+               and { the set of all JSValues that are not cells }.
+        
+        You can then further intersect this set with the following set, if you guard the code with
+        watchpoints on all structures in the m_futurePossibleStructure:
+        
+        - Union of { the set of all cells that have a structure that belongs to m_futurePossibleStructure }
+               and { the set of all JSValues that are not cells }.
+        
+        One way to think of this is that m_currentKnownStructure is filtered by m_futurePossibleStructure
+        (i.e. is set to the intersection of m_currentKnownStructure and m_futurePossibleStructure), if the
+        code for which you're doing this is always preceded by watchpoints on all structures in
+        m_futurePossibleStructure, and is always before any side-effects that could change the structures
+        of objects.
+        
+        The incorrect optimization related to CheckStructure. CheckStructure checks that the value is a
+        cell, and that it has a particular structure. It was incorrectly assuming that you could eliminate
+        the CheckStructure, if m_currentKnownStructure contained the structure that CheckStructure was
+        checking. But this is not the case, since m_currentKnownStructure does not prove that the value is
+        a cell with a particular structure; it only proves that if the value was a cell then it would have
+        a particular structure. Hence, to eliminate CheckStructure, it is also necessary to check that
+        AbstractValue::m_type contains only cells (i.e. isCellSpeculation(m_type) == true).
+        
+        It wasn't doing that, and this changes makes sure that it does do that.
+
+        * dfg/DFGConstantFoldingPhase.cpp:
+        (JSC::DFG::ConstantFoldingPhase::foldConstants):
+
 2013-01-04  Adam Klein  <adamk@chromium.org>
 
         Remove ENABLE_MUTATION_OBSERVERS #define

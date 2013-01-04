@@ -1,3 +1,18 @@
+2013-01-04  Filip Pizlo  <fpizlo@apple.com>
+
+        DFG should not elide CheckStructure if it's needed to perform a cell check
+        https://bugs.webkit.org/show_bug.cgi?id=106074
+
+        Reviewed by Ryosuke Niwa.
+
+        * fast/js/dfg-check-structure-elimination-for-non-cell-expected.txt: Added.
+        * fast/js/dfg-check-structure-elimination-for-non-cell.html: Added.
+        * fast/js/jsc-test-list:
+        * fast/js/script-tests/dfg-check-structure-elimination-for-non-cell.js: Added.
+        (foo):
+        (bar):
+        (baz):
+
 2013-01-04  Terry Anderson  <tdanderson@chromium.org>
 
         Unreviewed gardening. Temporarily skipping three tests
