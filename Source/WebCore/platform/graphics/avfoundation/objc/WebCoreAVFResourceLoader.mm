@@ -122,8 +122,12 @@ void WebCoreAVFResourceLoader::dataReceived(CachedResource* resource, const char
 
 void WebCoreAVFResourceLoader::notifyFinished(CachedResource* resource)
 {
-    fulfillRequestWithResource(resource);
-    [m_avRequest.get() finishLoading];
+    if (resource->loadFailedOrCanceled())
+        [m_avRequest.get() finishLoadingWithError:0];
+    else {
+        fulfillRequestWithResource(resource);
+        [m_avRequest.get() finishLoading];
+    }
     stopLoading();
 }
 
@@ -134,7 +138,9 @@ void WebCoreAVFResourceLoader::fulfillRequestWithResource(CachedResource* resour
     if (!dataRequest)
         return;
 
-    SharedBuffer* data = resource->resourceBuffer()->sharedBuffer();
+    SharedBuffer* data = resource->resourceBuffer() ? resource->resourceBuffer()->sharedBuffer() : 0;
+    if (!data)
+        return;
 
     // Check for possible unsigned overflow.
     ASSERT([dataRequest currentOffset] >= [dataRequest requestedOffset]);
