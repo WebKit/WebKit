@@ -245,7 +245,7 @@ void RenderLayerBacking::createPrimaryGraphicsLayer()
 {
     String layerName;
 #ifndef NDEBUG
-    layerName = nameForLayer();
+    layerName = m_owningLayer->name();
 #endif
     
     // The call to createGraphicsLayer ends calling back into here as
@@ -990,7 +990,7 @@ bool RenderLayerBacking::updateForegroundLayer(bool needsForegroundLayer)
         if (!m_foregroundLayer) {
             String layerName;
 #ifndef NDEBUG
-            layerName = nameForLayer() + " (foreground)";
+            layerName = m_owningLayer->name() + " (foreground)";
 #endif
             m_foregroundLayer = createGraphicsLayer(layerName);
             m_foregroundLayer->setDrawsContent(true);
@@ -1981,39 +1981,6 @@ AnimatedPropertyID RenderLayerBacking::cssToGraphicsLayerProperty(CSSPropertyID 
             break;
     }
     return AnimatedPropertyInvalid;
-}
-
-String RenderLayerBacking::nameForLayer() const
-{
-    StringBuilder name;
-    name.append(renderer()->renderName());
-    if (Node* node = renderer()->node()) {
-        if (node->isElementNode()) {
-            name.append(' ');
-            name.append(static_cast<Element*>(node)->tagName());
-        }
-        if (node->hasID()) {
-            name.appendLiteral(" id=\'");
-            name.append(static_cast<Element*>(node)->getIdAttribute());
-            name.append('\'');
-        }
-
-        if (node->hasClass()) {
-            name.appendLiteral(" class=\'");
-            StyledElement* styledElement = static_cast<StyledElement*>(node);
-            for (size_t i = 0; i < styledElement->classNames().size(); ++i) {
-                if (i > 0)
-                    name.append(' ');
-                name.append(styledElement->classNames()[i]);
-            }
-            name.append('\'');
-        }
-    }
-
-    if (m_owningLayer->isReflection())
-        name.appendLiteral(" (reflection)");
-
-    return name.toString();
 }
 
 CompositingLayerType RenderLayerBacking::compositingLayerType() const

@@ -257,6 +257,39 @@ RenderLayer::~RenderLayer()
         m_resizer->destroy();
 }
 
+String RenderLayer::name() const
+{
+    StringBuilder name;
+    name.append(renderer()->renderName());
+    if (Node* node = renderer()->node()) {
+        if (node->isElementNode()) {
+            name.append(' ');
+            name.append(static_cast<Element*>(node)->tagName());
+        }
+        if (node->hasID()) {
+            name.appendLiteral(" id=\'");
+            name.append(static_cast<Element*>(node)->getIdAttribute());
+            name.append('\'');
+        }
+
+        if (node->hasClass()) {
+            name.appendLiteral(" class=\'");
+            StyledElement* styledElement = static_cast<StyledElement*>(node);
+            for (size_t i = 0; i < styledElement->classNames().size(); ++i) {
+                if (i > 0)
+                    name.append(' ');
+                name.append(styledElement->classNames()[i]);
+            }
+            name.append('\'');
+        }
+    }
+
+    if (isReflection())
+        name.appendLiteral(" (reflection)");
+
+    return name.toString();
+}
+
 #if USE(ACCELERATED_COMPOSITING)
 RenderLayerCompositor* RenderLayer::compositor() const
 {

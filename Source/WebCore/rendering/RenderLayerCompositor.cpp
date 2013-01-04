@@ -544,7 +544,7 @@ void RenderLayerCompositor::logLayerInfo(const RenderLayer* layer, int depth)
 
     LOG(Compositing, "%*p %dx%d %.2fKB (%s) %s\n", 12 + depth * 2, layer, backing->compositedBounds().width(), backing->compositedBounds().height(),
         backing->backingStoreMemoryEstimate() / 1024,
-        reasonForCompositing(layer), layer->backing()->nameForLayer().utf8().data());
+        reasonForCompositing(layer), layer->name().utf8().data());
 }
 #endif
 

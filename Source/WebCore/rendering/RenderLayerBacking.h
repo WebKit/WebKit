@@ -186,8 +186,6 @@ public:
     // Return an estimate of the backing store area (in pixels) allocated by this object's GraphicsLayers.
     double backingStoreMemoryEstimate() const;
 
-    String nameForLayer() const;
-    
 #if ENABLE(CSS_COMPOSITING)
     void setBlendMode(BlendMode);
 #endif

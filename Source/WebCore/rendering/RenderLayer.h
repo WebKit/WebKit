@@ -258,6 +258,8 @@ public:
     RenderLayer(RenderLayerModelObject*);
     ~RenderLayer();
 
+    String name() const;
+
     RenderLayerModelObject* renderer() const { return m_renderer; }
     RenderBox* renderBox() const { return m_renderer && m_renderer->isBox() ? toRenderBox(m_renderer) : 0; }
     RenderLayer* parent() const { return m_parent; }
