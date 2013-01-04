@@ -1,3 +1,10 @@
+2013-01-03  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Add a crashing test expectation for the test added by r138755 on Mac.
+        The test failure is tracked by the bug 138755.
+
+        * platform/mac/TestExpectations:
+
 2013-01-03  Roger Fong  <roger_fong@apple.com>
 
         Unreviewed. Gardening Apple Windows port.
