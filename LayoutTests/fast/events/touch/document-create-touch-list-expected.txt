@@ -9,7 +9,10 @@ PASS touchList.length is 0
 PASS touchList.item(0) is null
 PASS touchList.item(1) is null
 PASS touchList.item() threw exception TypeError: Not enough arguments.
+PASS ts instanceof TouchEvent is true
+PASS ts.touches instanceof TouchList is true
 PASS ts.touches.length is 2
+PASS ts.touches[0] instanceof Touch is true
 PASS ts.touches[0].identifier is 12341
 PASS ts.touches[0].clientX is 60
 PASS ts.touches[1].screenY is 120

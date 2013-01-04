@@ -218,10 +218,10 @@
     [NotEnumerable] attribute EventListener onreset;
     [NotEnumerable] attribute EventListener onsearch;
     [NotEnumerable] attribute EventListener onselectstart;
-    [NotEnumerable,Conditional=TOUCH_EVENTS,V8EnabledAtRuntime] attribute EventListener ontouchstart;
-    [NotEnumerable,Conditional=TOUCH_EVENTS,V8EnabledAtRuntime] attribute EventListener ontouchmove;
-    [NotEnumerable,Conditional=TOUCH_EVENTS,V8EnabledAtRuntime] attribute EventListener ontouchend;
-    [NotEnumerable,Conditional=TOUCH_EVENTS,V8EnabledAtRuntime] attribute EventListener ontouchcancel;
+    [NotEnumerable,Conditional=TOUCH_EVENTS,V8EnabledAtRuntime=touch] attribute EventListener ontouchstart;
+    [NotEnumerable,Conditional=TOUCH_EVENTS,V8EnabledAtRuntime=touch] attribute EventListener ontouchmove;
+    [NotEnumerable,Conditional=TOUCH_EVENTS,V8EnabledAtRuntime=touch] attribute EventListener ontouchend;
+    [NotEnumerable,Conditional=TOUCH_EVENTS,V8EnabledAtRuntime=touch] attribute EventListener ontouchcancel;
     [NotEnumerable, Conditional=FULLSCREEN_API] attribute EventListener onwebkitfullscreenchange;
     [NotEnumerable, Conditional=FULLSCREEN_API] attribute EventListener onwebkitfullscreenerror;
 #endif

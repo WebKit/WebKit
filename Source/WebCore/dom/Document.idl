@@ -329,10 +329,10 @@
     [NotEnumerable] attribute EventListener onsearch;
     [NotEnumerable] attribute EventListener onselectstart;
     [NotEnumerable] attribute EventListener onselectionchange;
-    [NotEnumerable,Conditional=TOUCH_EVENTS,V8EnabledAtRuntime] attribute EventListener ontouchstart;
-    [NotEnumerable,Conditional=TOUCH_EVENTS,V8EnabledAtRuntime] attribute EventListener ontouchmove;
-    [NotEnumerable,Conditional=TOUCH_EVENTS,V8EnabledAtRuntime] attribute EventListener ontouchend;
-    [NotEnumerable,Conditional=TOUCH_EVENTS,V8EnabledAtRuntime] attribute EventListener ontouchcancel;
+    [NotEnumerable,Conditional=TOUCH_EVENTS,V8EnabledAtRuntime=touch] attribute EventListener ontouchstart;
+    [NotEnumerable,Conditional=TOUCH_EVENTS,V8EnabledAtRuntime=touch] attribute EventListener ontouchmove;
+    [NotEnumerable,Conditional=TOUCH_EVENTS,V8EnabledAtRuntime=touch] attribute EventListener ontouchend;
+    [NotEnumerable,Conditional=TOUCH_EVENTS,V8EnabledAtRuntime=touch] attribute EventListener ontouchcancel;
     [NotEnumerable, Conditional=FULLSCREEN_API] attribute EventListener onwebkitfullscreenchange;
     [NotEnumerable, Conditional=FULLSCREEN_API] attribute EventListener onwebkitfullscreenerror;
     [NotEnumerable, Conditional=POINTER_LOCK] attribute EventListener onwebkitpointerlockchange;
@@ -340,7 +340,7 @@
 #endif
 
 #if defined(ENABLE_TOUCH_EVENTS) && ENABLE_TOUCH_EVENTS
-    [ReturnNewObject, V8EnabledAtRuntime] Touch createTouch(in [Optional=DefaultIsUndefined] DOMWindow window,
+    [ReturnNewObject, V8EnabledAtRuntime=touch] Touch createTouch(in [Optional=DefaultIsUndefined] DOMWindow window,
                                                      in [Optional=DefaultIsUndefined] EventTarget target,
                                                      in [Optional=DefaultIsUndefined] long identifier,
                                                      in [Optional=DefaultIsUndefined] long pageX,
@@ -352,7 +352,7 @@
                                                      in [Optional=DefaultIsUndefined] float webkitRotationAngle,
                                                      in [Optional=DefaultIsUndefined] float webkitForce)
         raises (DOMException);
-    [ReturnNewObject, V8EnabledAtRuntime, Custom] TouchList createTouchList()
+    [ReturnNewObject, V8EnabledAtRuntime=touch, Custom] TouchList createTouchList()
         raises (DOMException);
 #endif
 
