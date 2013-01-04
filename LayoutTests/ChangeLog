@@ -1,3 +1,35 @@
+2013-01-04  Ojan Vafai  <ojan@chromium.org>
+
+        Vertical writing mode can overflow fixed size grandparent container
+        https://bugs.webkit.org/show_bug.cgi?id=93655
+
+        Reviewed by David Hyatt.
+
+        * fast/writing-mode/auto-sizing-orthogonal-flows-expected.txt: Added.
+        * fast/writing-mode/auto-sizing-orthogonal-flows.html: Added.
+        * fast/writing-mode/percentage-height-orthogonal-writing-modes-expected.txt:
+        * fast/writing-mode/percentage-height-orthogonal-writing-modes-quirks-expected.txt:
+        * fast/writing-mode/percentage-height-orthogonal-writing-modes-quirks.html:
+        * fast/writing-mode/percentage-height-orthogonal-writing-modes.html:
+        * fast/writing-mode/table-percent-width-quirk-expected.png:
+        * fast/writing-mode/table-percent-width-quirk-expected.txt:
+        This test now correctly uses the containing blocks's availableHeight instead of the
+        initial containing block's height to size the perpendicular child.
+        * platform/chromium-linux/fast/ruby/base-shorter-than-text-expected.txt:
+        * platform/chromium-linux/fast/table/038-vertical-expected.png:
+        * platform/chromium-linux/fast/table/border-collapsing/004-vertical-expected.png:
+        The extra wrapping in this test is just because we subtract the body's margin when
+        computing the available height. If you force the table's container 16px smaller,
+        you get the same rendering at tip of tree WebKit.
+        * platform/chromium-win/fast/table/038-vertical-expected.txt:
+        * platform/chromium-win/fast/table/border-collapsing/004-vertical-expected.txt:
+        * platform/chromium/TestExpectations:
+        * platform/efl/TestExpectations:
+        * platform/gtk/TestExpectations:
+        * platform/mac/TestExpectations:
+        * platform/qt/TestExpectations:
+        Add tests that will need rebaseline once this patch lands.
+
 2013-01-04  Joshua Bell  <jsbell@chromium.org>
 
         Add tests for WebIDL type conversions

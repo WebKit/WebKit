@@ -3975,6 +3975,10 @@ webkit.org/b/101177 svg/repaint/inner-svg-change-viewBox.svg [ ImageOnlyFailure 
 webkit.org/b/98687 fast/css-generated-content/table-row-group-to-inline.html [ Failure ]
 webkit.org/b/104595 fast/css/empty-generated-content.html [ Failure ]
 
+Bug(ojan) [ Win Lion ] fast/ruby/base-shorter-than-text.html [ Failure ]
+Bug(ojan) [ Win Mac ] fast/table/038-vertical.html [ Failure ImageOnlyFailure ]
+Bug(ojan) [ Win Mac ] fast/table/border-collapsing/004-vertical.html [ Failure ImageOnlyFailure ]
+
 # These are real failues due to 95121.
 # This is spilling caused by LANCZOS3 scaling algorithm that samples outside the source rect.
 webkit.org/b/95121 [ Win Mac Android ] fast/images/pixel-crack-image-background-webkit-transform-scale.html [ ImageOnlyFailure ]

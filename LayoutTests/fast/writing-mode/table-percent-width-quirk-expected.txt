@@ -39,18 +39,18 @@ layer at (752,275) size 40x20
       RenderBlock {DIV} at (0,0) size 20x20
 layer at (692,350) size 100x50
   RenderBlock (positioned) {DIV} at (692,350) size 100x50 [bgcolor=#808080]
-layer at (-13,350) size 805x20 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600 outlineClip at (0,0) size 800x600
-  RenderBlock (positioned) {DIV} at (0,0) size 805x20 [bgcolor=#0000FF]
+layer at (672,350) size 120x20
+  RenderBlock (positioned) {DIV} at (0,0) size 120x20 [bgcolor=#0000FF]
     RenderBlock {DIV} at (0,0) size 20x20
-    RenderTable {TABLE} at (20,0) size 785x20 [bgcolor=#008000]
-      RenderTableSection {TBODY} at (0,0) size 785x20
-        RenderTableRow {TR} at (0,0) size 785x20
-          RenderTableCell {TD} at (0,0) size 785x20 [r=0 c=0 rs=1 cs=1]
+    RenderTable {TABLE} at (20,0) size 100x20 [bgcolor=#008000]
+      RenderTableSection {TBODY} at (0,0) size 100x20
+        RenderTableRow {TR} at (0,0) size 100x20
+          RenderTableCell {TD} at (0,0) size 100x20 [r=0 c=0 rs=1 cs=1]
             RenderBlock {DIV} at (0,0) size 20x20
 layer at (692,425) size 100x50
   RenderBlock (positioned) {DIV} at (692,425) size 100x50 [bgcolor=#808080]
-layer at (-13,425) size 805x20 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600 outlineClip at (0,0) size 800x600
-  RenderBlock (positioned) {DIV} at (0,0) size 805x20 [bgcolor=#0000FF]
+layer at (672,425) size 120x20
+  RenderBlock (positioned) {DIV} at (0,0) size 120x20 [bgcolor=#0000FF]
     RenderBlock {DIV} at (0,0) size 20x20
-    RenderBlock {DIV} at (20,0) size 785x20 [bgcolor=#008000]
+    RenderBlock {DIV} at (20,0) size 100x20 [bgcolor=#008000]
       RenderBlock {DIV} at (0,0) size 20x20

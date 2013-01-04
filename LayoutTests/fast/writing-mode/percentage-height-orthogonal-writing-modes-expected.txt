@@ -3,18 +3,6 @@ PASS
 PASS
 PASS
 PASS
-FAIL:
-Expected 100 for height, but got 600. 
-
-<div class="container">
-    <div style="width: 100%; height: 100%;" data-expected-height="100" data-expected-width="200">
-        <div class="item vertical-rl" style="width: 100%; height: 100%;" data-expected-height="100" data-expected-width="200"></div>
-    </div>
-</div>
 PASS
-FAIL:
-Expected 584 for height, but got 600. 
-
-<div class="container" style="width: auto; height: auto; float: left;">
-    <div class="item vertical-rl" style="width: 100%; height: 100%;" data-expected-height="584" data-expected-width="0"></div>
-</div>
+PASS
+PASS

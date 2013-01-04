@@ -2396,6 +2396,9 @@ webkit.org/b/90007 http/tests/security/mixedContent/insecure-audio-video-in-main
 # Skip tests in fast/text/shaping
 webkit.org/b/90951 fast/text/shaping
 
+Bug(ojan) fast/table/038-vertical.html [ Failure ImageOnlyFailure ]
+Bug(ojan) fast/table/border-collapsing/004-vertical.html [ Failure ImageOnlyFailure ]
+
 # Flaky tests
 webkit.org/b/91376 http/tests/security/sandboxed-iframe-modify-self.html [ Failure Pass ]
 webkit.org/b/91379 http/tests/security/contentSecurityPolicy/policy-does-not-affect-child.html [ Failure Pass ]
@@ -2460,6 +2463,9 @@ webkit.org/b/101539 editing/execCommand/switch-list-type-with-orphaned-li.html [
 
 webkit.org/b/100846 inspector-protocol/debugger-pause-dedicated-worker.html [ Skip ]
 webkit.org/b/100846 inspector-protocol/debugger-terminate-dedicated-worker-while-paused.html [ Skip ]
+
+Bug(ojan) fast/table/038-vertical.html [ Failure ImageOnlyFailure ]
+Bug(ojan) fast/table/border-collapsing/004-vertical.html [ Failure ImageOnlyFailure ]
 
 # QT still has the CC toggle button, not the menu of tracks.
 webkit.org/b/101670 media/video-controls-captions-trackmenu.html [ Skip ]

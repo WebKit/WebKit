@@ -1328,6 +1328,10 @@ webkit.org/b/91488 fast/dom/shadow/shadowdom-for-output-only-shadow.html [ Image
 webkit.org/b/91489 fast/dom/shadow/shadowdom-for-fieldset-complex-shadow.html [ ImageOnlyFailure ]
 webkit.org/b/91489 fast/dom/shadow/shadowdom-for-fieldset-only-shadow.html [ ImageOnlyFailure ]
 
+Bug(ojan) fast/ruby/base-shorter-than-text.html [ Failure ]
+Bug(ojan) fast/table/038-vertical.html [ Failure ImageOnlyFailure ]
+Bug(ojan) fast/table/border-collapsing/004-vertical.html [ Failure ImageOnlyFailure ]
+
 webkit.org/b/49142 fast/regions/style-scoped-in-flow-override-region-styling-multiple-regions.html [ ImageOnlyFailure ]
 
 # Missing support in DRT for Geolocation's Coordinate attributes.

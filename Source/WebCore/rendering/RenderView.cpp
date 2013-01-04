@@ -121,12 +121,12 @@ void RenderView::computePreferredLogicalWidths()
     RenderBlock::computePreferredLogicalWidths();
 }
 
-LayoutUnit RenderView::availableLogicalHeight() const
+LayoutUnit RenderView::availableLogicalHeight(AvailableLogicalHeightType heightType) const
 {
     // If we have columns, then the available logical height is reduced to the column height.
     if (hasColumns())
         return columnInfo()->columnHeight();
-    return RenderBlock::availableLogicalHeight();
+    return RenderBlock::availableLogicalHeight(heightType);
 }
 
 bool RenderView::isChildAllowed(RenderObject* child, RenderStyle*) const
