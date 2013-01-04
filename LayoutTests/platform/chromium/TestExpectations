@@ -2758,6 +2758,8 @@ webkit.org/b/59673 http/tests/history/cross-origin-replace-history-object-child.
 webkit.org/b/91673 [ Win Debug ] fast/filesystem/file-writer-truncate-extend.html [ Failure Pass ]
 webkit.org/b/70886 [ Debug ] fast/events/change-overflow-on-overflow-change.html [ Pass Timeout ]
 
+webkit.org/b/106065 [ XP Win7 ] fast/events/5056619.html [ Failure Pass ]
+
 webkit.org/b/60112 fast/css/epub-properties.html [ Failure ]
 
 webkit.org/b/60136 [ Win ] http/tests/xmlviewer/dumpAsText/xmlviewer.xml [ Failure Pass ]

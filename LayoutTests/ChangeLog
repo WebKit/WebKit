@@ -1,3 +1,10 @@
+2013-01-03  Terry Anderson  <tdanderson@chromium.org>
+
+        Unreviewed gardening. Marking fast/events/5056619.html as flaky
+        on XP and Win7.
+
+        * platform/chromium/TestExpectations:
+
 2013-01-03  Antoine Quint  <graouts@apple.com>
 
         onload callback for <track> element attached to <video> does not fire
