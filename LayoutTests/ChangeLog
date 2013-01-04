@@ -2,6 +2,15 @@
 
         Unreviewed EFL gardening.
 
+        Rebaseline editing/deleting/delete-to-select-table.html.
+
+        * platform/efl/editing/deleting/delete-to-select-table-expected.png:
+        * platform/efl/editing/deleting/delete-to-select-table-expected.txt: Added.
+
+2013-01-04  Sudarsana Nagineni  <sudarsana.nagineni@intel.com>
+
+        Unreviewed EFL gardening.
+
         Mark test webaudio/codec-tests/mp3/128kbps-44khz.html as Missing.
 
         * platform/efl/TestExpectations:
