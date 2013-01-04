@@ -1,0 +1,42 @@
+<!doctype html>
+
+<style>
+    h1{
+        font-size: 3em;
+        color: red;
+        -webkit-flow-into: article;
+        outline: 3px solid red;
+    }
+
+    #region1{
+        -webkit-flow-from: article;
+    }
+
+    @media screen and (min-width: 10px){
+
+        /* the outline should be green if media query is valid */
+        h1{
+            outline: 3px solid green;
+        }
+
+        /* the title color should be green if media query is valid */
+        @-webkit-region #region1{
+            h1{
+                color: green;
+            }
+        }
+    }
+</style>
+
+<body>
+
+<div id="container">
+    <div id="region1" class="region"></div>
+</div>
+
+<article>
+    <h1> The text color should be green and have a green outline.</h1>
+</article>
+
+</body>
+</html>

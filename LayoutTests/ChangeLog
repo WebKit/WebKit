@@ -1,3 +1,17 @@
+2013-01-04  Zoltan Horvath  <zoltan@webkit.org>
+
+        [CSS Regions] @region rules inside media queries are ignored
+        https://bugs.webkit.org/show_bug.cgi?id=102388
+
+        Reviewed by David Hyatt.
+
+        Using @region rules in media queries was ignored, but we should accept and apply it.
+
+        * fast/regions/region-rule-nested-region-rule-expected.html: Added.
+        * fast/regions/region-rule-nested-region-rule.html: Added.
+        * fast/regions/region-styling-mediaquery-expected.html: Added.
+        * fast/regions/region-styling-mediaquery.html: Added.
+
 2013-01-04  Abhishek Arya  <inferno@chromium.org>
 
         Crash in WebCore::RenderBlock::willBeDestroyed

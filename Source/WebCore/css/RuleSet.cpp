@@ -317,6 +317,11 @@ void RuleSet::addRulesFromSheet(StyleSheetContents* sheet, const MediaQueryEvalu
                         if (scope)
                             continue;
                         resolver->addKeyframeStyle(static_cast<StyleRuleKeyframes*>(childRule));
+                    } else if (childRule->isRegionRule() && resolver) {
+                        // FIXME (BUG 72472): We don't add @-webkit-region rules of scoped style sheets for the moment.
+                        if (scope)
+                            continue;
+                        addRegionRule(static_cast<StyleRuleRegion*>(childRule), hasDocumentSecurityOrigin);
                     }
 #if ENABLE(CSS_DEVICE_ADAPTATION)
                     else if (childRule->isViewportRule() && resolver && !resolver->affectedByViewportChange()) {
