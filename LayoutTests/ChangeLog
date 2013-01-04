@@ -1,3 +1,19 @@
+2013-01-04  Rick Byers  <rbyers@chromium.org>
+
+        Existence of window.Touch can break websites mobile device detection
+        https://bugs.webkit.org/show_bug.cgi?id=106071
+
+        Revert http://trac.webkit.org/changeset/135562 for now while I work
+        on a slightly safer version.
+
+        Reviewed by Ojan Vafai.
+
+        * fast/events/touch/document-create-touch-list-expected.txt:
+        * fast/events/touch/script-tests/document-create-touch-list.js:
+        * platform/efl/fast/js/global-constructors-expected.txt:
+        * platform/qt-5.0/fast/js/global-constructors-expected.txt:
+        * platform/qt/fast/js/global-constructors-expected.txt:
+
 2013-01-04  Csaba Osztrogonác  <ossy@webkit.org>
 
         [Qt][WK2] Unreviewed gardening, unskip a now passing test.

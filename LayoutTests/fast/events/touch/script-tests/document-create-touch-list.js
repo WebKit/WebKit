@@ -21,10 +21,7 @@ try {
 
     document.body.addEventListener("touchstart", function handleTouchStart(ev) {
         ts = ev;
-        shouldBeTrue("ts instanceof TouchEvent");
-        shouldBeTrue("ts.touches instanceof TouchList");
         shouldBe("ts.touches.length", "2");
-        shouldBeTrue("ts.touches[0] instanceof Touch");
         shouldBe("ts.touches[0].identifier", "12341");
         shouldBe("ts.touches[0].clientX", "60");
         shouldBe("ts.touches[1].screenY", "120");
