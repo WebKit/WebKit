@@ -2,6 +2,14 @@
 
         Unreviewed EFL gardening.
 
+        Mark test webaudio/codec-tests/mp3/128kbps-44khz.html as Missing.
+
+        * platform/efl/TestExpectations:
+
+2013-01-04  Sudarsana Nagineni  <sudarsana.nagineni@intel.com>
+
+        Unreviewed EFL gardening.
+
         Rebaseline 2 media/track test cases after r138784.
 
         * platform/efl/media/track/track-cue-rendering-horizontal-expected.png:
