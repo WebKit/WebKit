@@ -1,3 +1,10 @@
+2013-01-04  Xianzhu Wang  <wangxianzhu@chromium.org>
+
+        Unreviewd. Fix break caused by using old internals.settings.setEnableCompositingForFixedPosition
+        (has been renamed to setAcceleratedCompositingForFixedPositionEnabled).
+
+        * compositing/layer-creation/no-compositing-for-fixed-position-under-transform.html:
+
 2013-01-04  Zoltan Horvath  <zoltan@webkit.org>
 
         [CSS Regions] @region rules inside media queries are ignored
