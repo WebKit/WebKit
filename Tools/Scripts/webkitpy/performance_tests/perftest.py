@@ -211,6 +211,27 @@ class PerfTest(object):
 
         return results
 
+    @staticmethod
+    def compute_statistics(values):
+        sorted_values = sorted(values)
+
+        # Compute the mean and variance using Knuth's online algorithm (has good numerical stability).
+        squareSum = 0
+        mean = 0
+        for i, time in enumerate(sorted_values):
+            delta = time - mean
+            sweep = i + 1.0
+            mean += delta / sweep
+            squareSum += delta * (time - mean)
+
+        middle = int(len(sorted_values) / 2)
+        result = {'avg': sum(sorted_values) / len(values),
+            'min': sorted_values[0],
+            'max': sorted_values[-1],
+            'median': sorted_values[middle] if len(sorted_values) % 2 else (sorted_values[middle - 1] + sorted_values[middle]) / 2,
+            'stdev': math.sqrt(squareSum / (len(sorted_values) - 1))}
+        return result
+
     def output_statistics(self, test_name, results):
         unit = results['unit']
         _log.info('RESULT %s= %s %s' % (test_name.replace(':', ': ').replace('/', ': '), results['avg'], unit))
@@ -258,26 +279,6 @@ class PageLoadingPerfTest(PerfTest):
         super(PageLoadingPerfTest, self).run_single(driver, self.force_gc_test, time_out_ms, False)
         return super(PageLoadingPerfTest, self).run_single(driver, test_path, time_out_ms, should_run_pixel_test)
 
-    def calculate_statistics(self, values):
-        sorted_values = sorted(values)
-
-        # Compute the mean and variance using Knuth's online algorithm (has good numerical stability).
-        squareSum = 0
-        mean = 0
-        for i, time in enumerate(sorted_values):
-            delta = time - mean
-            sweep = i + 1.0
-            mean += delta / sweep
-            squareSum += delta * (time - mean)
-
-        middle = int(len(sorted_values) / 2)
-        result = {'avg': mean,
-            'min': sorted_values[0],
-            'max': sorted_values[-1],
-            'median': sorted_values[middle] if len(sorted_values) % 2 else (sorted_values[middle - 1] + sorted_values[middle]) / 2,
-            'stdev': math.sqrt(squareSum / (len(sorted_values) - 1))}
-        return result
-
     def _run_with_driver(self, driver, time_out_ms):
         results = {}
         results.setdefault(self.test_name(), {'unit': 'ms', 'values': []})
@@ -303,7 +304,7 @@ class PageLoadingPerfTest(PerfTest):
                     results[name]['unit'] = 'bytes'
 
         for result_class in results.keys():
-            results[result_class].update(self.calculate_statistics(results[result_class]['values']))
+            results[result_class].update(self.compute_statistics(results[result_class]['values']))
             self.output_statistics(result_class, results[result_class])
 
         return results

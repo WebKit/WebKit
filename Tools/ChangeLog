@@ -1,3 +1,45 @@
+2013-01-03  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Cleanup perftest* tests and add a test for computing statistics
+        https://bugs.webkit.org/show_bug.cgi?id=105685
+
+        Reviewed by Eric Seidel.
+
+        Add a test for PerfTest.compute_statistics (moved and renamed from PageLoadingPerfTest.calculate_statistics) and
+        extracted perftestsrunner_itegrationtests.py from perftestsrunner_unittests.py.
+
+        Also fixed a bug in compute_statistics that the mean ('avg') value can have a large rounding errors in some cases.
+
+        * Scripts/webkitpy/performance_tests/perftest.py:
+        (PerfTest.compute_statistics): Moved from PageLoadingPerfTest to prepare for the bug 97510. Also compute the mean
+        directly from sorted_values instead of using the one from Knuth's online algorithm. This approach gives more
+        accurate result for the mean.
+        (PageLoadingPerfTest.run_single):
+        * Scripts/webkitpy/performance_tests/perftest_unittest.py:
+        (MainTest.test_compute_statistics):
+        (MainTest.test_compute_statistics.compute_statistics): Added.
+        (TestPageLoadingPerfTest.test_run): floatify values.
+        (TestPageLoadingPerfTest.test_run_with_memory_output): Ditto. Also got rid of ".0" from mean values now that Python
+        correctly recognizes them as integers.
+
+        * Scripts/webkitpy/performance_tests/perftestsrunner_integrationtest.py: Copied from
+        Tools/Scripts/webkitpy/performance_tests/perftestsrunner_unittest.py.
+        (TestDriver): Moved out of MainTest.
+        (MainTest): Got rid of assertWritten and all unit tests.
+        (MainTest._normalize_output): Renamed from normalizeFinishedTime to match the PEP8 naming convention.
+        (MainTest.test_run_test_set_kills_drt_per_run.TestDriverWithStopCount):
+        (MainTest.test_run_test_set_for_parser_tests):
+        (MainTest.test_run_memory_test):
+        (MainTest._test_run_with_json_output):
+        (MainTest.test_run_generates_json_by_default):
+        (MainTest.test_run_merges_output_by_default):
+        (MainTest.test_run_respects_reset_results):
+        (MainTest.test_run_generates_and_show_results_page): Use runner.load_output_json() instead of manually loading and
+        parsing output JSON files. Just verify that the output path is correct instead.
+        * Scripts/webkitpy/performance_tests/perftestsrunner_unittest.py:
+        (MainTest): Removed all integration tests.
+        (MainTest.create_runner): Simplified.
+
 2013-01-03  Julie Parent  <jparent@chromium.org>
 
         Dashboard cleanup: remove usage of global g_defaultBuilderName
