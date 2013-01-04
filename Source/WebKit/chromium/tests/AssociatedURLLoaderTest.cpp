@@ -35,12 +35,12 @@
 #include "WebFrameClient.h"
 #include "WebURLLoaderOptions.h"
 #include "WebView.h"
-#include "platform/WebString.h"
-#include "platform/WebURL.h"
-#include "platform/WebURLLoader.h"
-#include "platform/WebURLLoaderClient.h"
-#include "platform/WebURLRequest.h"
-#include "platform/WebURLResponse.h"
+#include <public/WebString.h>
+#include <public/WebURL.h>
+#include <public/WebURLLoader.h>
+#include <public/WebURLLoaderClient.h>
+#include <public/WebURLRequest.h>
+#include <public/WebURLResponse.h>
 #include <wtf/text/WTFString.h>
 
 #include <gtest/gtest.h>

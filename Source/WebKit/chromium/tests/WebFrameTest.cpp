@@ -54,10 +54,10 @@
 #include "WebSettings.h"
 #include "WebViewClient.h"
 #include "WebViewImpl.h"
-#include "platform/WebFloatRect.h"
-#include "platform/WebURLResponse.h"
 #include "v8.h"
 #include <gtest/gtest.h>
+#include <public/WebFloatRect.h>
+#include <public/WebURLResponse.h>
 #include <webkit/support/webkit_support.h>
 
 using namespace WebKit;

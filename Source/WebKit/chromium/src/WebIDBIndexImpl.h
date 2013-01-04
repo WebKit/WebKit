@@ -28,8 +28,8 @@
 
 #if ENABLE(INDEXED_DATABASE)
 
-#include "platform/WebCommon.h"
 #include "WebIDBIndex.h"
+#include <public/WebCommon.h>
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefPtr.h>
 

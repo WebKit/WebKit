@@ -32,7 +32,7 @@
 #include "WebExceptionCode.h"
 #include "WebIDBDatabase.h"
 #include "WebIDBTransaction.h"
-#include "platform/WebCommon.h"
+#include <public/WebCommon.h>
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefPtr.h>
 

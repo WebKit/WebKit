@@ -38,10 +38,10 @@
 #include "FileMetadata.h"
 #include "SecurityOrigin.h"
 #include "ThreadableBlobRegistry.h"
-#include "WebFileInfo.h"
 #include "WebFileSystemCallbacksImpl.h"
 #include "WebFileWriter.h"
 #include <public/Platform.h>
+#include <public/WebFileInfo.h>
 #include <public/WebFileSystem.h>
 #include <wtf/text/CString.h>
 #include <wtf/text/StringBuilder.h>

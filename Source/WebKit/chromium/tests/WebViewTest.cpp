@@ -44,10 +44,10 @@
 #include "WebFrameClient.h"
 #include "WebFrameImpl.h"
 #include "WebInputEvent.h"
-#include "platform/WebSize.h"
 #include "WebViewClient.h"
 #include "WebViewImpl.h"
 #include <gtest/gtest.h>
+#include <public/WebSize.h>
 #include <webkit/support/webkit_support.h>
 
 using namespace WebKit;

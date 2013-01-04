@@ -30,7 +30,7 @@
 
 #include "config.h"
 
-#include "platform/WebURLResponse.h"
+#include <public/WebURLResponse.h>
 
 #include <gtest/gtest.h>
 

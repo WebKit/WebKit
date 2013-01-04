@@ -31,9 +31,9 @@
 #include "config.h"
 #include "URLTestHelpers.h"
 
-#include "platform/WebURLResponse.h"
 #include <public/WebString.h>
 #include <public/WebURL.h>
+#include <public/WebURLResponse.h>
 #include <webkit/support/webkit_support.h>
 
 namespace WebKit {

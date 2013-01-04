@@ -59,9 +59,9 @@
 #include "WebFileSystemCallbacks.h"
 #include "WebFrameClient.h"
 #include "WebFrameImpl.h"
-#include "WebMessagePortChannel.h"
 #include "WebPermissionClient.h"
 #include "WebViewImpl.h"
+#include <public/WebMessagePortChannel.h>
 #include <public/WebString.h>
 #include <public/WebURL.h>
 

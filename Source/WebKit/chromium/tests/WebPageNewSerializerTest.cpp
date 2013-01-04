@@ -36,11 +36,11 @@
 #include "WebPageSerializer.h"
 #include "WebScriptSource.h"
 #include "WebSettings.h"
-#include "platform/WebString.h"
-#include "platform/WebURL.h"
-#include "platform/WebURLRequest.h"
-#include "platform/WebURLResponse.h"
 #include "WebView.h"
+#include <public/WebString.h>
+#include <public/WebURL.h>
+#include <public/WebURLRequest.h>
+#include <public/WebURLResponse.h>
 
 #include <gtest/gtest.h>
 #include <webkit/support/webkit_support.h>

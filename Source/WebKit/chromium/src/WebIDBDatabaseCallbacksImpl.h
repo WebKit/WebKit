@@ -30,7 +30,7 @@
 
 #include "WebDOMStringList.h"
 #include "WebIDBDatabaseCallbacks.h"
-#include "platform/WebString.h"
+#include <public/WebString.h>
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefPtr.h>
 

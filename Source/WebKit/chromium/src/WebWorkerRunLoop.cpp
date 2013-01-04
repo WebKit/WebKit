@@ -23,7 +23,7 @@
  */
 
 #include "config.h"
-#include "WebWorkerRunLoop.h"
+#include <public/WebWorkerRunLoop.h>
 
 #if ENABLE(WORKERS)
 

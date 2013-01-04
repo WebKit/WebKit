@@ -42,8 +42,8 @@
 
 #include "WebFrameImpl.h"
 #include "WebPermissionClient.h"
-#include "WebStorageArea.h"
 #include "WebViewImpl.h"
+#include <public/WebStorageArea.h>
 #include <public/WebString.h>
 #include <public/WebURL.h>
 

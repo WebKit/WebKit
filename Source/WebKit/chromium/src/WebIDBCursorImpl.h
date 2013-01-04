@@ -28,9 +28,9 @@
 
 #if ENABLE(INDEXED_DATABASE)
 
-#include "platform/WebCommon.h"
 #include "WebExceptionCode.h"
 #include "WebIDBCursor.h"
+#include <public/WebCommon.h>
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefPtr.h>
 

@@ -36,11 +36,11 @@
 #include "WebFrame.h"
 #include "WebFrameClient.h"
 #include "WebSettings.h"
-#include "platform/WebString.h"
-#include "platform/WebURLRequest.h"
-#include "platform/WebURLResponse.h"
 #include "WebView.h"
 #include "WebViewClient.h"
+#include <public/WebString.h>
+#include <public/WebURLRequest.h>
+#include <public/WebURLResponse.h>
 #include <webkit/support/webkit_support.h>
 
 namespace WebKit {

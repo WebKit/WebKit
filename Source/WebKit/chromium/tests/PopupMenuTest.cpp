@@ -53,14 +53,14 @@
 #include "WebPopupMenuImpl.h"
 #include "WebScreenInfo.h"
 #include "WebSettings.h"
-#include "platform/WebString.h"
-#include "platform/WebURL.h"
-#include "platform/WebURLRequest.h"
-#include "platform/WebURLResponse.h"
 #include "WebView.h"
 #include "WebViewClient.h"
 #include "WebViewImpl.h"
 #include "v8.h"
+#include <public/WebString.h>
+#include <public/WebURL.h>
+#include <public/WebURLRequest.h>
+#include <public/WebURLResponse.h>
 
 using namespace WebCore;
 using namespace WebKit;

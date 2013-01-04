@@ -32,10 +32,10 @@
 #include "SecurityOrigin.h"
 #include "StorageAreaProxy.h"
 #include "WebKit.h"
-#include "WebStorageNamespace.h"
 #include "WebViewClient.h"
 #include "WebViewImpl.h"
 #include <public/Platform.h>
+#include <public/WebStorageNamespace.h>
 #include <public/WebString.h>
 
 namespace WebCore {

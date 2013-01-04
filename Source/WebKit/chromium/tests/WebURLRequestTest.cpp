@@ -30,7 +30,7 @@
 
 #include "config.h"
 
-#include "platform/WebURLRequest.h"
+#include <public/WebURLRequest.h>
 
 #include <gtest/gtest.h>
 

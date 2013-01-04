@@ -36,7 +36,6 @@
 #include "CrossThreadTask.h"
 #include "KURL.h"
 #include "WebCommonWorkerClient.h"
-#include "WebFileInfo.h"
 #include "WebFileSystemCallbacks.h"
 #include "WebFileSystemEntry.h"
 #include "WebWorkerBase.h"
@@ -44,6 +43,7 @@
 #include "WorkerLoaderProxy.h"
 #include "WorkerScriptController.h"
 #include "WorkerThread.h"
+#include <public/WebFileInfo.h>
 #include <public/WebString.h>
 #include <public/WebURL.h>
 #include <wtf/MainThread.h>

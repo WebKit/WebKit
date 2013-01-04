@@ -1,3 +1,42 @@
+2013-01-04  Mark Pilgrim  <pilgrim@chromium.org>
+
+        [Chromium] Update some #includes to use headers in the new Platform directory
+        https://bugs.webkit.org/show_bug.cgi?id=106092
+
+        Reviewed by Kentaro Hara.
+
+        Working towards getting rid of legacy header files in
+        WebKit/chromium/public/ and WebKit/chromium/public/platform/
+
+        * src/AsyncFileSystemChromium.cpp:
+        * src/StorageAreaProxy.cpp:
+        * src/StorageNamespaceProxy.cpp:
+        * src/WebFileSystemCallbacksImpl.cpp:
+        * src/WebGraphicsContext3D.cpp:
+        * src/WebIDBCursorImpl.h:
+        * src/WebIDBDatabaseCallbacksImpl.cpp:
+        * src/WebIDBDatabaseCallbacksImpl.h:
+        * src/WebIDBDatabaseError.cpp:
+        * src/WebIDBDatabaseImpl.h:
+        * src/WebIDBIndexImpl.h:
+        * src/WebIDBKeyPath.cpp:
+        * src/WebIDBMetadata.cpp:
+        * src/WebIDBObjectStoreImpl.h:
+        * src/WebWorkerClientImpl.cpp:
+        * src/WebWorkerRunLoop.cpp:
+        * src/WorkerFileSystemCallbacksBridge.cpp:
+        * tests/AssociatedURLLoaderTest.cpp:
+        * tests/FrameTestHelpers.cpp:
+        * tests/PopupMenuTest.cpp:
+        * tests/URLTestHelpers.cpp:
+        * tests/WebFrameTest.cpp:
+        * tests/WebPageNewSerializerTest.cpp:
+        * tests/WebPageSerializerTest.cpp:
+        * tests/WebURLRequestTest.cpp:
+        * tests/WebURLResponseTest.cpp:
+        * tests/WebUnitTests.h:
+        * tests/WebViewTest.cpp:
+
 2013-01-04  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed.  Rolled DEPS.
