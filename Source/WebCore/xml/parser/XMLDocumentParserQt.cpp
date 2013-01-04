@@ -204,6 +204,12 @@ void XMLDocumentParser::doEnd()
         document()->setTransformSource(adoptPtr(new TransformSource(m_originalSourceForTransform.toString())));
         document()->setParsing(false); // Make the doc think it's done, so it will apply xsl sheets.
         document()->styleResolverChanged(RecalcStyleImmediately);
+
+        // styleResolverChanged() call can detach the parser and null out its document.
+        // In that case, we just bail out.
+        if (isDetached())
+            return;
+
         document()->setParsing(true);
         DocumentParser::stopParsing();
     }

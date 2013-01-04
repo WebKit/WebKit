@@ -1338,8 +1338,13 @@ void XMLDocumentParser::doEnd()
 
         document()->setParsing(false); // Make the document think it's done, so it will apply XSL stylesheets.
         document()->styleResolverChanged(RecalcStyleImmediately);
-        document()->setParsing(true);
 
+        // styleResolverChanged() call can detach the parser and null out its document.
+        // In that case, we just bail out.
+        if (isDetached())
+            return;
+
+        document()->setParsing(true);
         DocumentParser::stopParsing();
     }
 #endif
