@@ -1,3 +1,22 @@
+2013-01-04  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK][Qt] Make compositing messages async again
+        https://bugs.webkit.org/show_bug.cgi?id=106082
+
+        Reviewed by Simon Hausmann.
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::setComposition):
+        (WebKit::WebPageProxy::confirmComposition):
+        (WebKit::WebPageProxy::cancelComposition):
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::confirmComposition):
+        (WebKit::WebPage::setComposition):
+        (WebKit::WebPage::cancelComposition):
+        * WebProcess/WebPage/WebPage.h:
+        (WebPage):
+        * WebProcess/WebPage/WebPage.messages.in:
+
 2013-01-04  Christophe Dumez  <christophe.dumez@intel.com>
 
         Regression(r138728): Causes crashes on the build bots

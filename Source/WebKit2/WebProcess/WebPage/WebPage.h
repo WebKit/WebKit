@@ -428,9 +428,9 @@ public:
 #endif
 
 #if PLATFORM(QT) || PLATFORM(GTK)
-    void setComposition(const String& text, Vector<WebCore::CompositionUnderline> underlines, uint64_t selectionStart, uint64_t selectionEnd, uint64_t replacementRangeStart, uint64_t replacementRangeEnd, EditorState&);
-    void confirmComposition(const String& text, int64_t selectionStart, int64_t selectionLength, EditorState&);
-    void cancelComposition(EditorState&);
+    void setComposition(const String& text, Vector<WebCore::CompositionUnderline> underlines, uint64_t selectionStart, uint64_t selectionEnd, uint64_t replacementRangeStart, uint64_t replacementRangeEnd);
+    void confirmComposition(const String& text, int64_t selectionStart, int64_t selectionLength);
+    void cancelComposition();
 #endif
 
 #if PLATFORM(MAC)

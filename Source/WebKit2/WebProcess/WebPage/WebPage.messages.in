@@ -251,9 +251,9 @@ messages -> WebPage {
 #endif
 
 #if PLATFORM(QT) || PLATFORM(GTK)
-    SetComposition(WTF::String text, WTF::Vector<WebCore::CompositionUnderline> underlines, uint64_t selectionStart, uint64_t selectionEnd, uint64_t replacementRangeStart, uint64_t replacementRangeEnd) -> (WebKit::EditorState newState)
-    ConfirmComposition(WTF::String text, int64_t selectionStart, int64_t selectionLength) -> (WebKit::EditorState newState)
-    CancelComposition() -> (WebKit::EditorState newState)
+    SetComposition(WTF::String text, WTF::Vector<WebCore::CompositionUnderline> underlines, uint64_t selectionStart, uint64_t selectionEnd, uint64_t replacementRangeStart, uint64_t replacementRangeEnd)
+    ConfirmComposition(WTF::String text, int64_t selectionStart, int64_t selectionLength)
+    CancelComposition()
 #endif
 
 #if PLATFORM(MAC)

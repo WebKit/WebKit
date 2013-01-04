@@ -4237,7 +4237,7 @@ void WebPageProxy::setComposition(const String& text, Vector<CompositionUnderlin
     if (!isValid())
         return;
 
-    process()->sendSync(Messages::WebPage::SetComposition(text, underlines, selectionStart, selectionEnd, replacementRangeStart, replacementRangeEnd), Messages::WebPage::SetComposition::Reply(m_editorState), m_pageID);
+    process()->send(Messages::WebPage::SetComposition(text, underlines, selectionStart, selectionEnd, replacementRangeStart, replacementRangeEnd), m_pageID);
 }
 
 void WebPageProxy::confirmComposition(const String& compositionString, int64_t selectionStart, int64_t selectionLength)
@@ -4245,7 +4245,7 @@ void WebPageProxy::confirmComposition(const String& compositionString, int64_t s
     if (!isValid())
         return;
 
-    process()->sendSync(Messages::WebPage::ConfirmComposition(compositionString, selectionStart, selectionLength), Messages::WebPage::ConfirmComposition::Reply(m_editorState), m_pageID);
+    process()->send(Messages::WebPage::ConfirmComposition(compositionString, selectionStart, selectionLength), m_pageID);
 }
 
 void WebPageProxy::cancelComposition()
@@ -4253,7 +4253,7 @@ void WebPageProxy::cancelComposition()
     if (!isValid())
         return;
 
-    process()->sendSync(Messages::WebPage::CancelComposition(), Messages::WebPage::CancelComposition::Reply(m_editorState), m_pageID);
+    process()->send(Messages::WebPage::CancelComposition(), m_pageID);
 }
 #endif // PLATFORM(QT) || PLATFORM(GTK)
 
