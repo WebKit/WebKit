@@ -4039,6 +4039,9 @@ bool WebPage::touchEvent(const Platform::TouchEvent& event)
     if (d->m_page->defersLoading())
         return false;
 
+    if (d->m_inputHandler)
+        d->m_inputHandler->setInputModeEnabled();
+
     PluginView* pluginView = d->m_fullScreenPluginView.get();
     if (pluginView)
         return d->dispatchTouchEventToFullScreenPlugin(pluginView, event);
