@@ -43,7 +43,7 @@
 
 namespace WebCore {
 
-struct ExclusionPolygonEdge;
+class ExclusionPolygonEdge;
 
 // This class is used by PODIntervalTree for debugging.
 #ifndef NDEBUG
@@ -84,43 +84,59 @@ private:
     bool m_empty;
 };
 
-// EdgeIntervalTree nodes store minY, maxY, and a ("UserData") pointer to an ExclusionPolygonEdge. Edge vertex
-// index1 is less than index2, except the last edge, where index2 is 0. When a polygon edge is defined by 3
-// or more colinear vertices, index2 can be the the index of the last colinear vertex.
-struct ExclusionPolygonEdge {
-    const FloatPoint& vertex1() const
-    {
-        ASSERT(polygon);
-        return polygon->vertexAt(vertexIndex1);
-    }
+class VertexPair {
+public:
+    virtual ~VertexPair() { }
 
-    const FloatPoint& vertex2() const
-    {
-        ASSERT(polygon);
-        return polygon->vertexAt(vertexIndex2);
-    }
-
-    const ExclusionPolygonEdge& previousEdge() const
-    {
-        ASSERT(polygon && polygon->numberOfEdges() > 1);
-        return polygon->edgeAt((edgeIndex + polygon->numberOfEdges() - 1) % polygon->numberOfEdges());
-    }
-
-    const ExclusionPolygonEdge& nextEdge() const
-    {
-        ASSERT(polygon && polygon->numberOfEdges() > 1);
-        return polygon->edgeAt((edgeIndex + 1) % polygon->numberOfEdges());
-    }
+    virtual const FloatPoint& vertex1() const = 0;
+    virtual const FloatPoint& vertex2() const = 0;
 
     float minX() const { return std::min(vertex1().x(), vertex2().x()); }
     float minY() const { return std::min(vertex1().y(), vertex2().y()); }
     float maxX() const { return std::max(vertex1().x(), vertex2().x()); }
     float maxY() const { return std::max(vertex1().y(), vertex2().y()); }
+};
 
-    const ExclusionPolygon* polygon;
-    unsigned vertexIndex1;
-    unsigned vertexIndex2;
-    unsigned edgeIndex;
+// EdgeIntervalTree nodes store minY, maxY, and a ("UserData") pointer to an ExclusionPolygonEdge. Edge vertex
+// index1 is less than index2, except the last edge, where index2 is 0. When a polygon edge is defined by 3
+// or more colinear vertices, index2 can be the the index of the last colinear vertex.
+class ExclusionPolygonEdge : public VertexPair {
+    friend class ExclusionPolygon;
+public:
+    virtual const FloatPoint& vertex1() const OVERRIDE
+    {
+        ASSERT(m_polygon);
+        return m_polygon->vertexAt(m_vertexIndex1);
+    }
+
+    virtual const FloatPoint& vertex2() const OVERRIDE
+    {
+        ASSERT(m_polygon);
+        return m_polygon->vertexAt(m_vertexIndex2);
+    }
+
+    const ExclusionPolygonEdge& previousEdge() const
+    {
+        ASSERT(m_polygon && m_polygon->numberOfEdges() > 1);
+        return m_polygon->edgeAt((m_edgeIndex + m_polygon->numberOfEdges() - 1) % m_polygon->numberOfEdges());
+    }
+
+    const ExclusionPolygonEdge& nextEdge() const
+    {
+        ASSERT(m_polygon && m_polygon->numberOfEdges() > 1);
+        return m_polygon->edgeAt((m_edgeIndex + 1) % m_polygon->numberOfEdges());
+    }
+
+    const ExclusionPolygon* polygon() const { return m_polygon; }
+    unsigned vertexIndex1() const { return m_vertexIndex1; }
+    unsigned vertexIndex2() const { return m_vertexIndex2; }
+    unsigned edgeIndex() const { return m_edgeIndex; }
+
+private:
+    const ExclusionPolygon* m_polygon;
+    unsigned m_vertexIndex1;
+    unsigned m_vertexIndex2;
+    unsigned m_edgeIndex;
 };
 
 // These structures are used by PODIntervalTree for debugging.1
