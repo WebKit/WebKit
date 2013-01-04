@@ -1,3 +1,16 @@
+2013-01-04  Martin Robinson  <mrobinson@igalia.com>
+
+        [GTK] [WebKit2] Clicking on a word that is selected in an editable area deletes it
+        https://bugs.webkit.org/show_bug.cgi?id=106045
+
+        Reviewed by Carlos Garcia Campos.
+
+        Update test results to confirm that compositions without preedits do not trigger
+        a composition confirmation.
+
+        * TestWebKitAPI/Tests/gtk/InputMethodFilter.cpp:
+        (TestWebKitAPI::verifyCanceledComposition):
+
 2013-01-04  Sailesh Agrawal  <sail@chromium.org>
 
         [Mac] [WK2] platform/mac/fast/events/numpad-keycode-mapping.html fails

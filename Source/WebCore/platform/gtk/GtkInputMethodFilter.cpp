@@ -206,8 +206,9 @@ void GtkInputMethodFilter::notifyMouseButtonPress()
     // Confirming the composition may trigger a selection change, which
     // might trigger further unwanted actions on the context, so we prevent
     // that by setting m_composingTextCurrently to false.
+    if (m_composingTextCurrently)
+        confirmCurrentComposition();
     m_composingTextCurrently = false;
-    confirmCurrentComposition();
     cancelContextComposition();
 }
 
@@ -248,8 +249,8 @@ void GtkInputMethodFilter::notifyFocusedOut()
     if (!m_enabled)
         return;
 
-    m_composingTextCurrently = false;
-    confirmCurrentComposition();
+    if (m_composingTextCurrently)
+        confirmCurrentComposition();
     cancelContextComposition();
     gtk_im_context_focus_out(m_context.get());
     m_enabled = false;
@@ -275,7 +276,8 @@ void GtkInputMethodFilter::sendCompositionAndPreeditWithFakeKeyEvents(ResultsToS
     sendKeyEventWithCompositionResults(&event->key, resultsToSend, EventFaked);
 
     m_confirmedComposition = String();
-    m_composingTextCurrently = false;
+    if (resultsToSend & Composition)
+        m_composingTextCurrently = false;
 
     event->type = GDK_KEY_RELEASE;
     sendSimpleKeyEvent(&event->key, String(), EventFaked);

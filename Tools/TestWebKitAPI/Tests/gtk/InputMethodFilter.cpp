@@ -260,11 +260,10 @@ static void temporaryResetOverride(GtkIMContext*)
 
 static void verifyCanceledComposition(const Vector<String>& events)
 {
-    ASSERT_EQ(4, events.size());
+    ASSERT_EQ(3, events.size());
     ASSERT_EQ(String("sendKeyEventWithCompositionResults type=press keycode=39"), events[0]);
     ASSERT_EQ(String("setPreedit text='' cursorOffset=0"), events[1]);
     ASSERT_EQ(String("sendSimpleKeyEvent type=release keycode=27"), events[2]);
-    ASSERT_EQ(String("confirmCurrentcomposition"), events[3]);
     ASSERT(gSawContextReset);
 }
 
