@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011 Apple Inc. All rights reserved.
+ * Copyright (C) 2011, 2012, 2013 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -80,6 +80,11 @@ using namespace std;
 @end
 
 namespace WebCore {
+    
+enum TileValidationPolicyFlag {
+    PruneSecondaryTiles = 1 << 0,
+    UnparentAllTiles = 1 << 1
+};
 
 static const int defaultTileCacheWidth = 512;
 static const int defaultTileCacheHeight = 512;
@@ -100,6 +105,7 @@ TileCache::TileCache(WebTileCacheLayer* tileCacheLayer)
     , m_tileCoverage(CoverageForVisibleArea)
     , m_isInWindow(false)
     , m_scrollingPerformanceLoggingEnabled(false)
+    , m_aggressivelyRetainsTiles(false)
     , m_acceleratesDrawing(false)
     , m_tilesAreOpaque(false)
     , m_tileDebugBorderWidth(0)
@@ -242,7 +248,7 @@ void TileCache::setScale(CGFloat scale)
     m_scale = scale;
     [m_tileContainerLayer.get() setTransform:CATransform3DMakeScale(1 / m_scale, 1 / m_scale, 1)];
 
-    revalidateTiles(PruneSecondaryTiles);
+    revalidateTiles(PruneSecondaryTiles, PruneSecondaryTiles);
 
     for (TileMap::const_iterator it = m_tiles.begin(), end = m_tiles.end(); it != end; ++it) {
         const TileInfo& tileInfo = it->value;
@@ -310,10 +316,8 @@ void TileCache::setIsInWindow(bool isInWindow)
 
     m_isInWindow = isInWindow;
 
-    if (!m_isInWindow) {
-        const double tileRevalidationTimeout = 4;
-        scheduleTileRevalidation(tileRevalidationTimeout);
-    }
+    const double tileRevalidationTimeout = 4;
+    scheduleTileRevalidation(m_isInWindow ? 0 : tileRevalidationTimeout);
 }
 
 void TileCache::setTileCoverage(TileCoverage coverage)
@@ -440,7 +444,10 @@ void TileCache::scheduleTileRevalidation(double interval)
 
 void TileCache::tileRevalidationTimerFired(Timer<TileCache>*)
 {
-    revalidateTiles(PruneSecondaryTiles);
+    TileValidationPolicyFlags foregroundValidationPolicy = m_aggressivelyRetainsTiles ? 0 : PruneSecondaryTiles;
+    TileValidationPolicyFlags backgroundValidationPolicy = foregroundValidationPolicy | UnparentAllTiles;
+
+    revalidateTiles(foregroundValidationPolicy, backgroundValidationPolicy);
 }
 
 unsigned TileCache::blankPixelCount() const
@@ -531,7 +538,7 @@ void TileCache::removeTilesInCohort(TileCohort cohort)
     }
 }
 
-void TileCache::revalidateTiles(TileValidationPolicy validationPolicy)
+void TileCache::revalidateTiles(TileValidationPolicyFlags foregroundValidationPolicy, TileValidationPolicyFlags backgroundValidationPolicy)
 {
     // If the underlying PlatformLayer has been destroyed, but the WebTileCacheLayer hasn't
     // platformLayer will be null here.
@@ -541,12 +548,8 @@ void TileCache::revalidateTiles(TileValidationPolicy validationPolicy)
 
     if (m_visibleRect.isEmpty() || bounds().isEmpty())
         return;
-
-    // If the visible rect size changed, drop secondary tiles to avoid lots of repainting.
-    // FIXME: when scaled, this changes due to rounding. We should use FloatRects or something.
-    // Also changes on rubber banding.
-    if (m_visibleRectAtLastRevalidate.size() != m_visibleRect.size())
-        validationPolicy = PruneSecondaryTiles;
+    
+    TileValidationPolicyFlags validationPolicy = m_isInWindow ? foregroundValidationPolicy : backgroundValidationPolicy;
     
     IntRect tileCoverageRect = computeTileCoverageRect(m_visibleRectAtLastRevalidate);
     FloatRect scaledRect(tileCoverageRect);
@@ -583,6 +586,7 @@ void TileCache::revalidateTiles(TileValidationPolicy validationPolicy)
                 if (tileInfo.cohort == VisibleTileCohort) {
                     tileInfo.cohort = currCohort;
                     ++tilesInCohort;
+                    [tileInfo.layer.get() removeFromSuperlayer];
                 }
             }
         }
@@ -590,7 +594,8 @@ void TileCache::revalidateTiles(TileValidationPolicy validationPolicy)
         if (tilesInCohort)
             startedNewCohort(currCohort);
 
-        scheduleCohortRemoval();
+        if (!m_aggressivelyRetainsTiles)
+            scheduleCohortRemoval();
     }
 
     TileIndex topLeft;
@@ -601,7 +606,7 @@ void TileCache::revalidateTiles(TileValidationPolicy validationPolicy)
     
     // Ensure primary tile coverage tiles.
     m_primaryTileCoverageRect = IntRect();
-    
+
     for (int y = topLeft.y(); y <= bottomRight.y(); ++y) {
         for (int x = topLeft.x(); x <= bottomRight.x(); ++x) {
             TileIndex tileIndex(x, y);
@@ -612,8 +617,12 @@ void TileCache::revalidateTiles(TileValidationPolicy validationPolicy)
             TileInfo& tileInfo = m_tiles.add(tileIndex, TileInfo()).iterator->value;
             if (!tileInfo.layer) {
                 tileInfo.layer = createTileLayer(tileRect);
-                [m_tileContainerLayer.get() addSublayer:tileInfo.layer.get()];
+                if (m_isInWindow)
+                    [m_tileContainerLayer.get() addSublayer:tileInfo.layer.get()];
             } else {
+                if (m_isInWindow && ![tileInfo.layer.get() superlayer])
+                    [m_tileContainerLayer.get() addSublayer:tileInfo.layer.get()];
+
                 // We already have a layer for this tile. Ensure that its size is correct.
                 FloatSize tileLayerSize([tileInfo.layer.get() frame].size);
                 if (tileLayerSize == FloatSize(tileRect.size()))
@@ -628,9 +637,14 @@ void TileCache::revalidateTiles(TileValidationPolicy validationPolicy)
         }
     }
 
-    if (validationPolicy == PruneSecondaryTiles) {
+    if (validationPolicy & PruneSecondaryTiles) {
         removeAllSecondaryTiles();
         m_cohortList.clear();
+    }
+
+    if (validationPolicy & UnparentAllTiles) {
+        for (TileMap::iterator it = m_tiles.begin(), end = m_tiles.end(); it != end; ++it)
+            [it->value.layer.get() removeFromSuperlayer];
     }
     
     if (m_tiledScrollingIndicatorLayer)
@@ -669,7 +683,7 @@ TileCache::TileCohort TileCache::oldestTileCohort() const
 void TileCache::scheduleCohortRemoval()
 {
     const double cohortRemovalTimerSeconds = 1;
-    
+
     // Start the timer, or reschedule the timer from now if it's already active.
     if (!m_cohortRemovalTimer.isActive())
         m_cohortRemovalTimer.startRepeating(cohortRemovalTimerSeconds);
@@ -684,7 +698,7 @@ void TileCache::cohortRemovalTimerFired(Timer<TileCache>*)
 
     double cohortLifeTimeSeconds = 2;
     double timeThreshold = monotonicallyIncreasingTime() - cohortLifeTimeSeconds;
-    
+
     while (!m_cohortList.isEmpty() && m_cohortList.first().creationTime < timeThreshold) {
         TileCohortInfo firstCohort = m_cohortList.takeFirst();
         removeTilesInCohort(firstCohort.cohort);
@@ -696,6 +710,9 @@ void TileCache::cohortRemovalTimerFired(Timer<TileCache>*)
 
 void TileCache::ensureTilesForRect(const IntRect& rect)
 {
+    if (!m_isInWindow)
+        return;
+
     PlatformCALayer* platformLayer = PlatformCALayer::platformCALayer(m_tileCacheLayer);
     if (!platformLayer)
         return;
@@ -725,6 +742,9 @@ void TileCache::ensureTilesForRect(const IntRect& rect)
                 tileInfo.layer = createTileLayer(tileRect);
                 [m_tileContainerLayer.get() addSublayer:tileInfo.layer.get()];
             } else {
+                if (![tileInfo.layer.get() superlayer])
+                    [m_tileContainerLayer.get() addSublayer:tileInfo.layer.get()];
+
                 // We already have a layer for this tile. Ensure that its size is correct.
                 CGSize tileLayerSize = [tileInfo.layer.get() frame].size;
                 if (tileLayerSize.width >= tileRect.width() && tileLayerSize.height >= tileRect.height())
@@ -933,18 +953,14 @@ void TileCache::drawTileMapContents(CGContextRef context, CGRect layerBounds)
     CGContextFillRect(context, layerBounds);
 
     CGFloat scaleFactor = layerBounds.size.width / bounds().width();
-    
-    CGContextSetRGBStrokeColor(context, 0, 0, 0, 1);
 
     CGFloat contextScale = scaleFactor / scale();
     CGContextScaleCTM(context, contextScale, contextScale);
-
-    CGContextSetLineWidth(context, 0.5 / contextScale);
     
     for (TileMap::const_iterator it = m_tiles.begin(), end = m_tiles.end(); it != end; ++it) {
         const TileInfo& tileInfo = it->value;
         WebTileLayer* tileLayer = tileInfo.layer.get();
-        
+
         CGFloat red = 1;
         CGFloat green = 1;
         CGFloat blue = 1;
@@ -953,15 +969,23 @@ void TileCache::drawTileMapContents(CGContextRef context, CGRect layerBounds)
             green = 0.125;
             blue = 0;
         }
-        
+
         TileCohort newestCohort = newestTileCohort();
         TileCohort oldestCohort = oldestTileCohort();
-        
-        if (tileInfo.cohort != VisibleTileCohort && newestCohort > oldestCohort) {
+
+        if (!m_aggressivelyRetainsTiles && tileInfo.cohort != VisibleTileCohort && newestCohort > oldestCohort) {
             float cohortProportion = static_cast<float>((newestCohort - tileInfo.cohort)) / (newestCohort - oldestCohort);
             CGContextSetRGBFillColor(context, red, green, blue, 1 - cohortProportion);
         } else
             CGContextSetRGBFillColor(context, red, green, blue, 1);
+
+        if ([tileLayer superlayer]) {
+            CGContextSetLineWidth(context, 0.5 / contextScale);
+            CGContextSetRGBStrokeColor(context, 0, 0, 0, 1);
+        } else {
+            CGContextSetLineWidth(context, 1 / contextScale);
+            CGContextSetRGBStrokeColor(context, 0.2, 0.1, 0.9, 1);
+        }
 
         CGRect frame = [tileLayer frame];
         CGContextFillRect(context, frame);

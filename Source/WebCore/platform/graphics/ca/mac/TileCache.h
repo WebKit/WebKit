@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011 Apple Inc. All rights reserved.
+ * Copyright (C) 2011, 2012, 2013 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -115,6 +115,8 @@ private:
     virtual IntRect tileGridExtent() const OVERRIDE;
     virtual void setScrollingPerformanceLoggingEnabled(bool flag) OVERRIDE { m_scrollingPerformanceLoggingEnabled = flag; }
     virtual bool scrollingPerformanceLoggingEnabled() const OVERRIDE { return m_scrollingPerformanceLoggingEnabled; }
+    virtual void setAggressivelyRetainsTiles(bool flag) OVERRIDE { m_aggressivelyRetainsTiles = flag; }
+    virtual bool aggressivelyRetainsTiles() const OVERRIDE { return m_aggressivelyRetainsTiles; }
     virtual IntRect tileCoverageRect() const OVERRIDE;
     virtual CALayer *tiledScrollingIndicatorLayer() OVERRIDE;
     virtual void setScrollingModeIndication(ScrollingModeIndication) OVERRIDE;
@@ -133,11 +135,9 @@ private:
     void scheduleCohortRemoval();
     void cohortRemovalTimerFired(Timer<TileCache>*);
     
-    enum TileValidationPolicy {
-        KeepSecondaryTiles,
-        PruneSecondaryTiles
-    };
-    void revalidateTiles(TileValidationPolicy = KeepSecondaryTiles);
+    typedef unsigned TileValidationPolicyFlags;
+
+    void revalidateTiles(TileValidationPolicyFlags foregroundValidationPolicy = 0, TileValidationPolicyFlags backgroundValidationPolicy = 0);
     void ensureTilesForRect(const IntRect&);
     void updateTileCoverageMap();
 
@@ -191,6 +191,7 @@ private:
     TileCoverage m_tileCoverage;
     bool m_isInWindow;
     bool m_scrollingPerformanceLoggingEnabled;
+    bool m_aggressivelyRetainsTiles;
     bool m_acceleratesDrawing;
     bool m_tilesAreOpaque;
 

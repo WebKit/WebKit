@@ -1,3 +1,24 @@
+2013-01-04  Tim Horton  <timothy_horton@apple.com>
+
+        [wk2] Remove non-visible tiles from the layer tree
+        https://bugs.webkit.org/show_bug.cgi?id=106061
+        <rdar://problem/12761821>
+
+        Reviewed by Simon Fraser.
+
+        Add a setting to enable aggressive retention of TileCache tiles. If enabled,
+        TileCache will generally try to keep around all tiles. This setting is off by default.
+
+        * Shared/WebPreferencesStore.h:
+        * UIProcess/API/C/WKPreferences.cpp:
+        (WKPreferencesSetAggressiveTileRetentionEnabled):
+        (WKPreferencesGetAggressiveTileRetentionEnabled):
+        * UIProcess/API/C/WKPreferencesPrivate.h:
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::updatePreferences):
+        * WebProcess/WebPage/mac/TiledCoreAnimationDrawingArea.mm:
+        (WebKit::TiledCoreAnimationDrawingArea::updatePreferences): Forward the setting to the TiledBacking.
+
 2013-01-04  Sam Weinig  <sam@webkit.org>
 
         Make process initialization more uniform by renaming initialization methods and removing extraneous parameters

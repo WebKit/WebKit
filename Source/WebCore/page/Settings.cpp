@@ -186,6 +186,7 @@ Settings::Settings(Page* page)
     , m_touchEventEmulationEnabled(false)
 #endif
     , m_scrollingPerformanceLoggingEnabled(false)
+    , m_aggressiveTileRetentionEnabled(false)
     , m_setImageLoadingSettingsTimer(this, &Settings::imageLoadingSettingsTimerFired)
 {
     // A Frame may not have been created yet, so we initialize the AtomicString
@@ -640,6 +641,11 @@ void Settings::setScrollingPerformanceLoggingEnabled(bool enabled)
 
     if (m_page->mainFrame() && m_page->mainFrame()->view())
         m_page->mainFrame()->view()->setScrollingPerformanceLoggingEnabled(enabled);
+}
+    
+void Settings::setAggressiveTileRetentionEnabled(bool enabled)
+{
+    m_aggressiveTileRetentionEnabled = enabled;
 }
 
 void Settings::setMockScrollbarsEnabled(bool flag)
