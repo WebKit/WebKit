@@ -1,3 +1,20 @@
+2013-01-04  Christophe Dumez  <christophe.dumez@intel.com>
+
+        Regression(r138728): Causes crashes on the build bots
+        https://bugs.webkit.org/show_bug.cgi?id=106083
+
+        Reviewed by Simon Hausmann.
+
+        Update encodeTimingFunction() to encode the x/y members only
+        if the bezierPreset is set to custom. This is needed because
+        decodeTimingFunction() only decodes x/y members if the
+        bezierPreset is set to custom.
+
+        This fixes assertion hits on the debug build bots.
+
+        * Shared/CoordinatedGraphics/CoordinatedGraphicsArgumentCoders.cpp:
+        (CoreIPC::encodeTimingFunction):
+
 2013-01-04  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [SOUP] Convert WebSoupRequestManagerProxy to be WebContextSupplement
