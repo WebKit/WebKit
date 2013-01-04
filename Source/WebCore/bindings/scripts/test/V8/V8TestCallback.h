@@ -55,6 +55,8 @@ public:
     virtual bool callbackWithBoolean(bool boolParam);
     virtual bool callbackRequiresThisToPass(Class8* class8Param, ThisClass* thisClassParam);
 
+    virtual ScriptExecutionContext* scriptExecutionContext() const { return ContextDestructionObserver::scriptExecutionContext(); }
+
 private:
     V8TestCallback(v8::Handle<v8::Object>, ScriptExecutionContext*, v8::Handle<v8::Object>);
 

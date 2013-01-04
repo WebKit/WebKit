@@ -3286,7 +3286,7 @@ END
     }
 
     push(@headerContent, <<END);
-  
+
     virtual ScriptExecutionContext* scriptExecutionContext() const { return ContextDestructionObserver::scriptExecutionContext(); }
 
 private:

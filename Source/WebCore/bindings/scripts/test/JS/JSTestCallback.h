@@ -37,6 +37,8 @@ public:
         return adoptRef(new JSTestCallback(callback, globalObject));
     }
 
+    virtual ScriptExecutionContext* scriptExecutionContext() const { return ContextDestructionObserver::scriptExecutionContext(); }
+
     virtual ~JSTestCallback();
 
     // Functions
