@@ -1,3 +1,13 @@
+2013-01-04  Terry Anderson  <tdanderson@chromium.org>
+
+        The following two tests are starting to fail while on the verge of
+        timing out. Adding Failure to their modifiers.
+
+        fast/canvas/webgl/context-creation-and-destruction.html
+        platform/chromium/virtual/gpu/fast/canvas/webgl/context-creation-and-destruction.html
+
+        * platform/chromium/TestExpectations:
+
 2013-01-04  Ryosuke Niwa  <rniwa@webkit.org>
 
         Add Mac baselines for subpixel tests added in r125794, r137945, and r138200.
