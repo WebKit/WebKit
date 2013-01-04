@@ -254,8 +254,6 @@ bool HTMLTrackElement::canLoadUrl(const KURL& url)
         return false;
 
     if (!document()->contentSecurityPolicy()->allowMediaFromSource(url)) {
-        DEFINE_STATIC_LOCAL(String, consoleMessage, (ASCIILiteral("Text track load denied by Content Security Policy.")));
-        document()->addConsoleMessage(JSMessageSource, ErrorMessageLevel, consoleMessage);
         LOG(Media, "HTMLTrackElement::canLoadUrl(%s) -> rejected by Content Security Policy", urlForLoggingTrack(url).utf8().data());
         return false;
     }
