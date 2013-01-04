@@ -1,3 +1,11 @@
+2013-01-04  Zan Dobersek  <zandobersek@gmail.com>
+
+        Unreviewed GTK gardening.
+
+        Again updating baseline for editing/deleting/delete-to-select-table.html.
+
+        * platform/gtk/editing/deleting/delete-to-select-table-expected.txt:
+
 2013-01-04  Dana Jansens  <danakj@chromium.org>
 
         [chromium] Remove lost-compositor-context layout tests
