@@ -112,7 +112,7 @@ class Rollout(IRCCommand):
 
     def _update_working_copy(self, tool):
         tool.scm().ensure_clean_working_directory(force_clean=True)
-        tool.executive.run_and_throw_if_fail(tool.port().update_webkit_command(), quiet=True, cwd=tool.scm().checkout_root)
+        tool.executive.run_and_throw_if_fail(tool.deprecated_port().update_webkit_command(), quiet=True, cwd=tool.scm().checkout_root)
 
     def execute(self, nick, args, tool, sheriff):
         svn_revision_list, rollout_reason = self._parse_args(args)

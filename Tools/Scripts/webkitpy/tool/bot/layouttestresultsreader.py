@@ -50,14 +50,14 @@ class LayoutTestResultsReader(object):
 
     # FIXME: This logic should move to the port object.
     def _create_layout_test_results(self):
-        results_path = self._tool.port().layout_tests_results_path()
+        results_path = self._tool.deprecated_port().layout_tests_results_path()
         results_html = self._read_file_contents(results_path)
         if not results_html:
             return None
         return LayoutTestResults.results_from_string(results_html)
 
     def _create_unit_test_results(self):
-        results_path = self._tool.port().unit_tests_results_path()
+        results_path = self._tool.deprecated_port().unit_tests_results_path()
         if not results_path:
             return None
         results_xml = self._read_file_contents(results_path)
@@ -79,7 +79,7 @@ class LayoutTestResultsReader(object):
         return layout_test_results
 
     def _results_directory(self):
-        results_path = self._tool.port().layout_tests_results_path()
+        results_path = self._tool.deprecated_port().layout_tests_results_path()
         # FIXME: This is wrong in two ways:
         # 1. It assumes that results.html is at the top level of the results tree.
         # 2. This uses the "old" ports.py infrastructure instead of the new layout_tests/port

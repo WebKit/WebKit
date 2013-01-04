@@ -393,7 +393,7 @@
         "WebSocket": [ "yutak@chromium.org" ],
         "XSS": [ "dbates@webkit.org", "ojan.autocc@gmail.com" ],
         "webkitperl": [ "dbates@webkit.org" ],
-        "webkitpy": [ "abarth@webkit.org", "dpranke@chromium.org" ],
+        "webkitpy": [ "abarth@webkit.org", "dpranke@chromium.org", "eric@webkit.org" ],
     },
     "MESSAGE_RULES": {
         "ChromiumPublicApi": [ "Please wait for approval from abarth@webkit.org, dglazkov@chromium.org, "

@@ -1,3 +1,53 @@
+2013-01-03  Eric Seidel  <eric@webkit.org>
+
+        Rename Tool.port to deprecated_port in preparation for removing more callers
+        https://bugs.webkit.org/show_bug.cgi?id=106076
+
+        Reviewed by Ryosuke Niwa.
+
+        This resolves a long-standing FIXME to rename this method. :)
+
+        * Scripts/webkitpy/tool/bot/botinfo.py:
+        (BotInfo.summary_text):
+        * Scripts/webkitpy/tool/bot/irc_command.py:
+        (Rollout._update_working_copy):
+        * Scripts/webkitpy/tool/bot/layouttestresultsreader.py:
+        (LayoutTestResultsReader._create_layout_test_results):
+        (LayoutTestResultsReader._create_unit_test_results):
+        (LayoutTestResultsReader._results_directory):
+        * Scripts/webkitpy/tool/bot/layouttestresultsreader_unittest.py:
+        (test_missing_unit_test_results_path):
+        * Scripts/webkitpy/tool/main.py:
+        (WebKitPatch.deprecated_port):
+        * Scripts/webkitpy/tool/mocktool.py:
+        (MockTool.deprecated_port):
+        * Scripts/webkitpy/tool/steps/build.py:
+        (Build.build):
+        * Scripts/webkitpy/tool/steps/checkstyle.py:
+        (CheckStyle.run):
+        * Scripts/webkitpy/tool/steps/commit.py:
+        (Commit._check_test_expectations):
+        * Scripts/webkitpy/tool/steps/preparechangelog.py:
+        (PrepareChangeLog.run):
+        * Scripts/webkitpy/tool/steps/preparechangelogfordepsroll.py:
+        (PrepareChangeLogForDEPSRoll.run):
+        * Scripts/webkitpy/tool/steps/preparechangelogforrevert.py:
+        (PrepareChangeLogForRevert.run):
+        * Scripts/webkitpy/tool/steps/runtests.py:
+        (RunTests.run):
+        * Scripts/webkitpy/tool/steps/steps_unittest.py:
+        (StepsTest.test_runtests_args):
+        * Scripts/webkitpy/tool/steps/update.py:
+        (Update._update_command):
+
+2013-01-03  Eric Seidel  <eric@webkit.org>
+
+        Add myself to the webkitpy watchlist.
+
+        Unreviewed.
+
+        * Scripts/webkitpy/common/config/watchlist:
+
 2013-01-03  Ryosuke Niwa  <rniwa@webkit.org>
 
         Cleanup perftest* tests and add a test for computing statistics

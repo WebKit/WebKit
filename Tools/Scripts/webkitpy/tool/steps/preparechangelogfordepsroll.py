@@ -32,7 +32,7 @@ from webkitpy.tool.steps.abstractstep import AbstractStep
 
 class PrepareChangeLogForDEPSRoll(AbstractStep):
     def run(self, state):
-        self._tool.executive.run_and_throw_if_fail(self._tool.port().prepare_changelog_command())
+        self._tool.executive.run_and_throw_if_fail(self._tool.deprecated_port().prepare_changelog_command())
         changelog_paths = self._tool.checkout().modified_changelogs(git_commit=None)
         for changelog_path in changelog_paths:
             ChangeLog(changelog_path).update_with_unreviewed_message("Unreviewed.  Rolled DEPS.\n\n")

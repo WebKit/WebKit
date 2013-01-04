@@ -99,10 +99,9 @@ class StepsTest(unittest.TestCase):
         mock_options = self._step_options()
         mock_options.non_interactive = False
         step = steps.RunTests(MockTool(log_executive=True), mock_options)
-        # FIXME: We shouldn't use a real port-object here, but there is too much to mock at the moment.
-        mock_port = DeprecatedPort()
         tool = MockTool(log_executive=True)
-        tool.port = lambda: mock_port
+        # FIXME: We shouldn't use a real port-object here, but there is too much to mock at the moment.
+        tool._deprecated_port = DeprecatedPort()
         step = steps.RunTests(tool, mock_options)
         expected_logs = """Running Python unit tests
 MOCK run_and_throw_if_fail: ['Tools/Scripts/test-webkitpy'], cwd=/mock-checkout

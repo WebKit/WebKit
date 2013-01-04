@@ -61,8 +61,7 @@ class WebKitPatch(MultiCommandTool, Host):
         self._irc = None
         self._deprecated_port = None
 
-    # FIXME: Rename this deprecated_port()
-    def port(self):
+    def deprecated_port(self):
         return self._deprecated_port
 
     def path(self):

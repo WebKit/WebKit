@@ -66,7 +66,7 @@ class LayoutTestResultsReaderTest(unittest.TestCase):
 
     def test_missing_unit_test_results_path(self):
         tool = MockTool()
-        tool.port().unit_tests_results_path = lambda: None
+        tool.deprecated_port().unit_tests_results_path = lambda: None
         reader = LayoutTestResultsReader(tool, "/var/logs")
         reader._create_layout_test_results = lambda: LayoutTestResults([])
         # layout_test_results shouldn't raise even if the unit tests xml file is missing.

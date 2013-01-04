@@ -57,7 +57,7 @@ class CheckStyle(AbstractStep):
             args.append(self._options.check_style_filter)
 
         try:
-            self._tool.executive.run_and_throw_if_fail(self._tool.port().check_webkit_style_command() + args, cwd=self._tool.scm().checkout_root)
+            self._tool.executive.run_and_throw_if_fail(self._tool.deprecated_port().check_webkit_style_command() + args, cwd=self._tool.scm().checkout_root)
         except ScriptError, e:
             if self._options.non_interactive:
                 # We need to re-raise the exception here to have the
