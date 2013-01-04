@@ -246,7 +246,37 @@ class AbstractPatchQueue(AbstractQueue):
         self._update_status(message, patch)
         self._release_work_item(patch)
 
-    # FIXME: This probably belongs at a layer below AbstractPatchQueue, but shared by CommitQueue and the EarlyWarningSystem.
+    def work_item_log_path(self, patch):
+        return os.path.join(self._log_directory(), "%s.log" % patch.bug_id())
+
+
+# Used to share code between the EWS and commit-queue.
+class PatchProcessingQueue(AbstractPatchQueue):
+    # Subclasses must override.
+    port_name = None
+
+    # FIXME: This is a hack to map between the old port names and the new port names.
+    def _new_port_name_from_old(self, port_name):
+        # The new port system has no concept of xvfb yet.
+        if port_name == 'chromium-xvfb':
+            return 'chromium'
+        # ApplePort.determine_full_port_name asserts if the name doesn't include version.
+        if port_name == 'mac':
+            return 'mac-future'
+        if port_name == 'win':
+            return 'win-future'
+        return port_name
+
+    def begin_work_queue(self):
+        AbstractPatchQueue.begin_work_queue(self)
+        if not self.port_name:
+            return
+        # FIXME: This is only used for self._deprecated_port.flag()
+        self._deprecated_port = DeprecatedPort.port(self.port_name)
+        # FIXME: This violates abstraction
+        self._tool._deprecated_port = self._deprecated_port
+        self._port = self._tool.port_factory.get(self._new_port_name_from_old(self.port_name))
+
     def _upload_results_archive_for_patch(self, patch, results_archive_zip):
         bot_id = self._tool.status_server.bot_id or "bot"
         description = "Archive of layout-test-results from %s" % bot_id
@@ -263,27 +293,18 @@ class AbstractPatchQueue(AbstractQueue):
         comment_text += BotInfo(self._tool).summary_text()
         self._tool.bugs.add_attachment_to_bug(patch.bug_id(), results_archive_file, description, filename="layout-test-results.zip", comment_text=comment_text)
 
-    def work_item_log_path(self, patch):
-        return os.path.join(self._log_directory(), "%s.log" % patch.bug_id())
 
-
-class CommitQueue(AbstractPatchQueue, StepSequenceErrorHandler, CommitQueueTaskDelegate):
+class CommitQueue(PatchProcessingQueue, StepSequenceErrorHandler, CommitQueueTaskDelegate):
     name = "commit-queue"
     port_name = "chromium-xvfb"
-
-    def __init__(self):
-        AbstractPatchQueue.__init__(self)
-        self.port = DeprecatedPort.port(self.port_name)
 
     # AbstractPatchQueue methods
 
     def begin_work_queue(self):
-        # FIXME: This violates abstraction
-        self._tool._deprecated_port = self.port
-        AbstractPatchQueue.begin_work_queue(self)
+        PatchProcessingQueue.begin_work_queue(self)
         self.committer_validator = CommitterValidator(self._tool)
         self._expected_failures = ExpectedFailures()
-        self._layout_test_results_reader = LayoutTestResultsReader(self._tool, self._log_directory())
+        self._layout_test_results_reader = LayoutTestResultsReader(self._tool, self._port.results_directory(), self._log_directory())
 
     def next_work_item(self):
         return self._next_patch()
@@ -324,7 +345,7 @@ class CommitQueue(AbstractPatchQueue, StepSequenceErrorHandler, CommitQueueTaskD
     # CommitQueueTaskDelegate methods
 
     def run_command(self, command):
-        self.run_webkit_patch(command + [self.port.flag()])
+        self.run_webkit_patch(command + [self._deprecated_port.flag()])
 
     def command_passed(self, message, patch):
         self._update_status(message, patch=patch)
@@ -381,10 +402,10 @@ class CommitQueue(AbstractPatchQueue, StepSequenceErrorHandler, CommitQueueTaskD
         raise TryAgain()
 
 
-class AbstractReviewQueue(AbstractPatchQueue, StepSequenceErrorHandler):
+class AbstractReviewQueue(PatchProcessingQueue, StepSequenceErrorHandler):
     """This is the base-class for the EWS queues and the style-queue."""
     def __init__(self, options=None):
-        AbstractPatchQueue.__init__(self, options)
+        PatchProcessingQueue.__init__(self, options)
 
     def review_patch(self, patch):
         raise NotImplementedError("subclasses must implement")
@@ -392,7 +413,7 @@ class AbstractReviewQueue(AbstractPatchQueue, StepSequenceErrorHandler):
     # AbstractPatchQueue methods
 
     def begin_work_queue(self):
-        AbstractPatchQueue.begin_work_queue(self)
+        PatchProcessingQueue.begin_work_queue(self)
 
     def next_work_item(self):
         return self._next_patch()

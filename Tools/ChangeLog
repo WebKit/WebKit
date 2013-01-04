@@ -1,3 +1,77 @@
+2013-01-04  Eric Seidel  <eric@webkit.org>
+
+        FlakyTestReporter should be re-enabled and taught how to post patches
+        https://bugs.webkit.org/show_bug.cgi?id=103839
+
+        Reviewed by Adam Barth.
+
+        This moves LayoutTestResultsReader off of the DeprecatedPort object.
+        It also adds a real Port object to the EWS and CommitQueue objects
+        using a new PatchProcessingQueue superclass.
+        PatchProcessingQueue doesn't seem to be the cleanest insertion point
+        but works for this purpose.
+        I also moved _upload_results_archive_for_patch into PatchProcessingQueue
+        to resolve a FIXME.
+
+        This required some hacks/shiming between the non-specific "old"
+        port names which the EWS system is currently using, and the new
+        port objects.  This shimming is done in PatchProcessingQueue._new_port_name_from_old.
+
+        Hopefully this will fix the flaky test reporter and results uploading.
+        Certainly it's another small step towards getting rid of the old ports.py
+        infrastructure and making the NRWT Port class common webkitpy infrastructure.
+
+        Now that DeprecatedPort is no longer used for the results directory
+        I removed all the explicit results-dir code which webkit-patch was using
+        in --non-interactive mode to tell NRWT to use a results-dir it understood. :)
+
+        * Scripts/webkitpy/common/config/ports.py:
+        (DeprecatedPort.run_perl_unittests_command):
+        * Scripts/webkitpy/common/config/ports_mock.py:
+        (MockPort.name):
+        * Scripts/webkitpy/common/system/outputcapture.py:
+        (OutputCapture.assert_outputs):
+        * Scripts/webkitpy/layout_tests/port/apple.py:
+        (ApplePort.determine_full_port_name):
+        * Scripts/webkitpy/tool/bot/layouttestresultsreader.py:
+        (LayoutTestResultsReader.__init__):
+        (LayoutTestResultsReader):
+        (LayoutTestResultsReader._read_file_contents):
+        (LayoutTestResultsReader._create_layout_test_results):
+        (LayoutTestResultsReader._create_unit_test_results):
+        (LayoutTestResultsReader.results):
+        (LayoutTestResultsReader.archive):
+        * Scripts/webkitpy/tool/bot/layouttestresultsreader_unittest.py:
+        (LayoutTestResultsReaderTest.test_missing_layout_test_results):
+        (LayoutTestResultsReaderTest.test_create_unit_test_results):
+        (test_missing_unit_test_results_path):
+        (test_layout_test_results):
+        (test_archive_last_layout_test_results):
+        * Scripts/webkitpy/tool/commands/earlywarningsystem.py:
+        (AbstractEarlyWarningSystem):
+        (AbstractEarlyWarningSystem.__init__):
+        (AbstractEarlyWarningSystem.begin_work_queue):
+        (AbstractEarlyWarningSystem.run_command):
+        * Scripts/webkitpy/tool/commands/queues.py:
+        (AbstractPatchQueue.work_item_log_path):
+        (PatchProcessingQueue):
+        (PatchProcessingQueue._new_port_name_from_old):
+        (PatchProcessingQueue.begin_work_queue):
+        (PatchProcessingQueue._upload_results_archive_for_patch):
+        (CommitQueue):
+        (CommitQueue.begin_work_queue):
+        (CommitQueue.run_command):
+        (AbstractReviewQueue):
+        (AbstractReviewQueue.__init__):
+        (AbstractReviewQueue.begin_work_queue):
+        * Scripts/webkitpy/tool/commands/queues_unittest.py:
+        (AbstractPatchQueueTest.test_next_patch):
+        (PatchProcessingQueueTest):
+        (PatchProcessingQueueTest.test_upload_results_archive_for_patch):
+        * Scripts/webkitpy/tool/steps/runtests.py:
+        (RunTests.run):
+        * Scripts/webkitpy/tool/steps/runtests_unittest.py:
+
 2013-01-04  Dana Jansens  <danakj@chromium.org>
 
         [chromium] Remove lost-compositor-context layout tests

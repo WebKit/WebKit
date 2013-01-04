@@ -62,7 +62,7 @@ class ApplePort(Port):
             # That convention means that we're supposed to use the version currently
             # being run, so this won't work if you're not on mac or win (respectively).
             # If you're not on the o/s in question, you must specify a full version or -future (cf. above).
-            assert host.platform.os_name in port_name
+            assert host.platform.os_name in port_name, "%s is not in %s!" % (host.platform.os_name, port_name)
             if port_name == cls.port_name and not getattr(options, 'webkit_test_runner', False):
                 port_name = cls.port_name + '-' + host.platform.os_version
             else:

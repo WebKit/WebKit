@@ -166,8 +166,10 @@ class AbstractPatchQueueTest(CommandsTest):
         self.assertEqual(queue._next_patch().id(), 10001)
         self.assertEqual(queue._next_patch(), None)    # When the queue is empty
 
+
+class PatchProcessingQueueTest(CommandsTest):
     def test_upload_results_archive_for_patch(self):
-        queue = AbstractPatchQueue()
+        queue = PatchProcessingQueue()
         queue.name = "mock-queue"
         tool = MockTool()
         queue.bind_to_tool(tool)

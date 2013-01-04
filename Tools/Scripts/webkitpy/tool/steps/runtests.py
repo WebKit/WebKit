@@ -72,8 +72,6 @@ class RunTests(AbstractStep):
         if webkit_unit_tests_command:
             _log.info("Running WebKit unit tests")
             args = webkit_unit_tests_command
-            if self._options.non_interactive:
-                args.append("--gtest_output=xml:%s/webkit_unit_tests_output.xml" % self._tool.deprecated_port().results_directory)
             try:
                 self._tool.executive.run_and_throw_if_fail(args, cwd=self._tool.scm().checkout_root)
             except ScriptError, e:
@@ -87,7 +85,6 @@ class RunTests(AbstractStep):
                 "--no-show-results",
                 "--skip-failing-tests",
                 "--exit-after-n-failures=%s" % self.NON_INTERACTIVE_FAILURE_LIMIT_COUNT,
-                "--results-directory=%s" % self._tool.deprecated_port().results_directory,
                 "--quiet",
             ])
 

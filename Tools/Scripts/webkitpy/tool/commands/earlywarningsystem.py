@@ -47,20 +47,14 @@ class AbstractEarlyWarningSystem(AbstractReviewQueue, EarlyWarningSystemTaskDele
     # FIXME: Switch _default_run_tests from opt-in to opt-out once more bots are ready to run tests.
     _default_run_tests = False
 
-    # Subclasses must override.
-    port_name = None
-
     def __init__(self):
         options = [make_option("--run-tests", action="store_true", dest="run_tests", default=self._default_run_tests, help="Run the Layout tests for each patch")]
         AbstractReviewQueue.__init__(self, options=options)
-        self.port = DeprecatedPort.port(self.port_name)
 
     def begin_work_queue(self):
-        # FIXME: This violates abstraction
-        self._tool._deprecated_port = self.port
         AbstractReviewQueue.begin_work_queue(self)
         self._expected_failures = ExpectedFailures()
-        self._layout_test_results_reader = LayoutTestResultsReader(self._tool, self._log_directory())
+        self._layout_test_results_reader = LayoutTestResultsReader(self._tool, self._port.results_directory(), self._log_directory())
 
     def _failing_tests_message(self, task, patch):
         results = task.results_from_patch_test_run(patch)
@@ -105,7 +99,7 @@ class AbstractEarlyWarningSystem(AbstractReviewQueue, EarlyWarningSystemTaskDele
         return self.name
 
     def run_command(self, command):
-        self.run_webkit_patch(command + [self.port.flag()])
+        self.run_webkit_patch(command + [self._deprecated_port.flag()])
 
     def command_passed(self, message, patch):
         pass

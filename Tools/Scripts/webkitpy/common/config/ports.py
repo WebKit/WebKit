@@ -116,12 +116,6 @@ class DeprecatedPort(object):
     def run_perl_unittests_command(self):
         return self.script_shell_command("test-webkitperl")
 
-    def layout_tests_results_path(self):
-        return os.path.join(self.results_directory, "full_results.json")
-
-    def unit_tests_results_path(self):
-        return os.path.join(self.results_directory, "webkit_unit_tests_output.xml")
-
 
 class MacPort(DeprecatedPort):
     port_flag_name = "mac"

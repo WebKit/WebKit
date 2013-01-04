@@ -39,8 +39,8 @@ class RunTestsTest(unittest.TestCase):
         tool._deprecated_port.run_perl_unittests_command = lambda: None
         step = RunTests(tool, MockOptions(test=True, non_interactive=True, quiet=False))
         expected_logs = """Running WebKit unit tests
-MOCK run_and_throw_if_fail: ['mock-run-webkit-unit-tests', '--gtest_output=xml:/mock-results/webkit_unit_tests_output.xml'], cwd=/mock-checkout
+MOCK run_and_throw_if_fail: ['mock-run-webkit-unit-tests'], cwd=/mock-checkout
 Running run-webkit-tests
-MOCK run_and_throw_if_fail: ['mock-run-webkit-tests', '--no-new-test-results', '--no-show-results', '--skip-failing-tests', '--exit-after-n-failures=30', '--results-directory=/mock-results', '--quiet'], cwd=/mock-checkout
+MOCK run_and_throw_if_fail: ['mock-run-webkit-tests', '--no-new-test-results', '--no-show-results', '--skip-failing-tests', '--exit-after-n-failures=30', '--quiet'], cwd=/mock-checkout
 """
         OutputCapture().assert_outputs(self, step.run, [{}], expected_logs=expected_logs)
