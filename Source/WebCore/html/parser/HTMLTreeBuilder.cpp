@@ -52,6 +52,7 @@
 #include "XLinkNames.h"
 #include "XMLNSNames.h"
 #include "XMLNames.h"
+#include <wtf/MainThread.h>
 #include <wtf/unicode/CharacterNames.h>
 
 namespace WebCore {
@@ -141,6 +142,7 @@ static bool isFormattingTag(const AtomicString& tagName)
 
 static HTMLFormElement* closestFormAncestor(Element* element)
 {
+    ASSERT(isMainThread());
     while (element) {
         if (element->hasTagName(formTag))
             return static_cast<HTMLFormElement*>(element);
@@ -295,6 +297,7 @@ HTMLTreeBuilder::HTMLTreeBuilder(HTMLDocumentParser* parser, DocumentFragment* f
     , m_scriptToProcessStartPosition(uninitializedPositionValue1())
     , m_usePreHTML5ParserQuirks(usePreHTML5ParserQuirks)
 {
+    ASSERT(isMainThread());
     // FIXME: This assertion will become invalid if <http://webkit.org/b/60316> is fixed.
     ASSERT(contextElement);
     if (contextElement) {
