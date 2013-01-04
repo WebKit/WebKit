@@ -69,7 +69,7 @@ var CODE_REVIEW_UNITTEST;
   var files = {};
   var original_file_contents = {};
   var patched_file_contents = {};
-  var WEBKIT_BASE_DIR = "http://svn.webkit.org/repository/webkit/trunk/";
+  var WEBKIT_BASE_DIR = "//svn.webkit.org/repository/webkit/trunk/";
   var SIDE_BY_SIDE_DIFFS_KEY = 'sidebysidediffs';
   var g_displayed_draft_comments = false;
   var g_next_line_id = 0;

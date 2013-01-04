@@ -1,3 +1,16 @@
+2013-01-03  James Robinson  <jamesr@chromium.org>
+
+        Avoid mixed content when expanding context in code review tool
+        https://bugs.webkit.org/show_bug.cgi?id=106060
+
+        Reviewed by Tony Chang.
+
+        Example failure: "The page at https://bugs.webkit.org/attachment.cgi?id=181222&action=review displayed insecure
+        content from http://svn.webkit.org/repository/webkit/trunk/Source/WebCore/page/EventHandler.cpp?p=138617." This
+        loads from "//svn.webkit.org/..." so the protocol matches.
+
+        * code-review.js:
+
 2013-01-02  Ojan Vafai  <ojan@chromium.org>
 
         REGRESSION: Review tool sometimes doesn't include some comments in preview & posts
