@@ -1,3 +1,49 @@
+2013-01-04  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Statistics used in perftest_unittest.py and perftest_integrationtest.py are bogus
+        https://bugs.webkit.org/show_bug.cgi?id=106078
+
+        Reviewed by Tony Chang.
+
+        This patch updates values for individual iterations in dummy performance tests used in
+        perftest_unittest.py and perftest_integrationtest.py so that they match up with
+        statistics such as stdev and median reported in those tests. This change is required
+        to resolve the bug 97510.
+
+        This patch also refactors integration tests by extracting *TestData classes that
+        centralizes the definitions of each dummy performance test's text (DRT output),
+        runner output, and parsed results (JSON) so that we may share more data between
+        python tests.
+
+        * Scripts/webkitpy/performance_tests/perftest_unittest.py:
+        (MainTest._assert_results_are_correct): Extracted from test_parse_output.
+        Use self.assertAlmostEqual when comparing the standard deviation.
+        (MainTest.test_parse_output):
+        (test_parse_output_with_failing_line):
+        (test_parse_output_with_description): Use _assert_results_are_correct.
+        (test_parse_output_with_subtests): Ditto.
+
+        * Scripts/webkitpy/performance_tests/perftestsrunner_integrationtest.py:
+        (InspectorPassTestData): Extracted from tests below.
+        (EventTargetWrapperTestData): Ditto.
+        (SomeParserTestData): Ditto.
+        (MemoryTestData): Ditto.
+        (TestDriver.run_test): Moved test definitions out of the method.
+        (MainTest._normalize_output): Truncate standard deviations at 5th decimal point.
+        (MainTest._load_output_json): Extracted from create_runner.
+        (MainTest.create_runner):
+        (MainTest.test_run_test_set_for_parser_tests):
+        (MainTest.test_run_memory_test):
+        (MainTest._test_run_with_json_output):
+        (MainTest.test_run_with_json_output):
+        (MainTest.test_run_with_description):
+        (MainTest.test_run_generates_json_by_default):
+        (MainTest.test_run_merges_output_by_default):
+        (MainTest.test_run_respects_reset_results):
+        (MainTest.test_run_generates_and_show_results_page):
+        (MainTest.test_run_with_slave_config_json):
+        (MainTest.test_run_with_multiple_repositories):
+
 2013-01-04  Martin Robinson  <mrobinson@igalia.com>
 
         [GTK] [WebKit2] Clicking on a word that is selected in an editable area deletes it

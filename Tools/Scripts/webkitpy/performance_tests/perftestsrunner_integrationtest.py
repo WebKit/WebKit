@@ -42,23 +42,17 @@ from webkitpy.performance_tests.perftest import PerfTest
 from webkitpy.performance_tests.perftestsrunner import PerfTestsRunner
 
 
-class TestDriver:
-    def run_test(self, driver_input, stop_when_done):
-        text = ''
-        timeout = False
-        crash = False
-        if driver_input.test_name.endswith('pass.html'):
-            text = 'RESULT group_name: test_name= 42 ms'
-        elif driver_input.test_name.endswith('timeout.html'):
-            timeout = True
-        elif driver_input.test_name.endswith('failed.html'):
-            text = None
-        elif driver_input.test_name.endswith('tonguey.html'):
-            text = 'we are not expecting an output from perf tests but RESULT blablabla'
-        elif driver_input.test_name.endswith('crash.html'):
-            crash = True
-        elif driver_input.test_name.endswith('event-target-wrapper.html'):
-            text = """Running 20 times
+class InspectorPassTestData:
+    text = 'RESULT group_name: test_name= 42 ms'
+    output = """Running inspector/pass.html (2 of 2)
+RESULT group_name: test_name= 42 ms
+Finished: 0.1 s
+
+"""
+
+
+class EventTargetWrapperTestData:
+    text = """Running 20 times
 Ignoring warm-up run (1502)
 1504
 1505
@@ -82,53 +76,115 @@ Ignoring warm-up run (1502)
 1471
 
 Time:
-values 1504, 1505, 1510, 1504, 1507, 1509, 1510, 1487, 1488, 1472, 1472, 1488, 1473, 1472, 1475, 1487, 1486, 1486, 1475, 1471 ms
-avg 1489.05 ms
-median 1487 ms
-stdev 14.46 ms
+values 1486, 1471, 1510, 1505, 1478, 1490 ms
+avg 1490 ms
+median 1488 ms
+stdev 15.13935 ms
 min 1471 ms
 max 1510 ms
 """
-        elif driver_input.test_name.endswith('some-parser.html'):
-            text = """Running 20 times
+
+    output = """Running Bindings/event-target-wrapper.html (1 of 2)
+RESULT Bindings: event-target-wrapper= 1490.0 ms
+median= 1488.0 ms, stdev= 15.13935 ms, min= 1471.0 ms, max= 1510.0 ms
+Finished: 0.1 s
+
+"""
+
+    results = {"max": 1510, "avg": 1490, "median": 1488, "min": 1471, "stdev": 15.13935, "unit": "ms",
+       "values": [1486, 1471, 1510, 1505, 1478, 1490]}
+
+
+class SomeParserTestData:
+    text = """Running 20 times
 Ignoring warm-up run (1115)
 
 Time:
-values 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19 ms
+values 1080, 1120, 1095, 1101, 1104 ms
 avg 1100 ms
 median 1101 ms
-stdev 11 ms
+stdev 14.50861 ms
 min 1080 ms
 max 1120 ms
 """
-        elif driver_input.test_name.endswith('memory-test.html'):
-            text = """Running 20 times
+
+    output = """Running Parser/some-parser.html (2 of 2)
+RESULT Parser: some-parser= 1100.0 ms
+median= 1101.0 ms, stdev= 14.50861 ms, min= 1080.0 ms, max= 1120.0 ms
+Finished: 0.1 s
+
+"""
+
+
+class MemoryTestData:
+    text = """Running 20 times
 Ignoring warm-up run (1115)
 
 Time:
-values 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19 ms
+values 1080, 1120, 1095, 1101, 1104 ms
 avg 1100 ms
 median 1101 ms
-stdev 11 ms
+stdev 14.50861 ms
 min 1080 ms
 max 1120 ms
 
 JS Heap:
-values 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19 bytes
-avg 832000 bytes
+values 825000, 811000, 848000, 837000, 829000 bytes
+avg 830000 bytes
 median 829000 bytes
-stdev 15000 bytes
+stdev 13784.04875 bytes
 min 811000 bytes
 max 848000 bytes
 
 Malloc:
-values 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19 bytes
-avg 532000 bytes
+values 529000, 511000, 548000, 536000, 521000 bytes
+avg 529000 bytes
 median 529000 bytes
-stdev 13000 bytes
+stdev 14124.44689 bytes
 min 511000 bytes
 max 548000 bytes
 """
+
+    output = """Running 1 tests
+Running Parser/memory-test.html (1 of 1)
+RESULT Parser: memory-test= 1100.0 ms
+median= 1101.0 ms, stdev= 14.50861 ms, min= 1080.0 ms, max= 1120.0 ms
+RESULT Parser: memory-test: JSHeap= 830000.0 bytes
+median= 829000.0 bytes, stdev= 13784.04875 bytes, min= 811000.0 bytes, max= 848000.0 bytes
+RESULT Parser: memory-test: Malloc= 529000.0 bytes
+median= 529000.0 bytes, stdev= 14124.44689 bytes, min= 511000.0 bytes, max= 548000.0 bytes
+Finished: 0.1 s
+"""
+
+    results = {'values': [1080, 1120, 1095, 1101, 1104], 'avg': 1100, 'min': 1080, 'max': 1120,
+        'stdev': 14.50861, 'median': 1101, 'unit': 'ms'}
+    js_heap_results = {'values': [825000, 811000, 848000, 837000, 829000], 'avg': 830000, 'min': 811000, 'max': 848000,
+        'stdev': 13784.04875, 'median': 829000, 'unit': 'bytes'}
+    malloc_results = {'values': [529000, 511000, 548000, 536000, 521000], 'avg': 529000, 'min': 511000, 'max': 548000,
+        'stdev': 14124.44689, 'median': 529000, 'unit': 'bytes'}
+
+
+class TestDriver:
+    def run_test(self, driver_input, stop_when_done):
+        text = ''
+        timeout = False
+        crash = False
+        if driver_input.test_name.endswith('pass.html'):
+            text = InspectorPassTestData.text
+        elif driver_input.test_name.endswith('timeout.html'):
+            timeout = True
+        elif driver_input.test_name.endswith('failed.html'):
+            text = None
+        elif driver_input.test_name.endswith('tonguey.html'):
+            text = 'we are not expecting an output from perf tests but RESULT blablabla'
+        elif driver_input.test_name.endswith('crash.html'):
+            crash = True
+        elif driver_input.test_name.endswith('event-target-wrapper.html'):
+            text = EventTargetWrapperTestData.text
+        elif driver_input.test_name.endswith('some-parser.html'):
+            text = SomeParserTestData.text
+        elif driver_input.test_name.endswith('memory-test.html'):
+            text = MemoryTestData.text
         return DriverOutput(text, '', '', '', crash=crash, timeout=timeout)
 
     def start(self):
@@ -140,7 +196,11 @@ max 548000 bytes
 
 class MainTest(unittest.TestCase):
     def _normalize_output(self, log):
-        return re.sub(r'Finished: [0-9\.]+ s', 'Finished: 0.1 s', log)
+        return re.sub(r'(stdev=\s+\d+\.\d{5})\d+', r'\1', re.sub(r'Finished: [0-9\.]+ s', 'Finished: 0.1 s', log))
+
+    def _load_output_json(self, runner):
+        json_content = runner._host.filesystem.read_text_file(runner._output_json_path())
+        return json.loads(re.sub(r'("stdev":\s*\d+\.\d{5})\d+', r'\1', json_content))
 
     def create_runner(self, args=[], driver_class=TestDriver):
         options, parsed_args = PerfTestsRunner._parse_args(args)
@@ -152,8 +212,6 @@ class MainTest(unittest.TestCase):
         runner._host.filesystem.maybe_make_directory(runner._base_path, 'Bindings')
         runner._host.filesystem.maybe_make_directory(runner._base_path, 'Parser')
 
-        filesystem = runner._host.filesystem
-        runner.load_output_json = lambda: json.loads(filesystem.read_text_file(runner._output_json_path()))
         return runner, test_port
 
     def run_test(self, test_name):
@@ -228,16 +286,7 @@ class MainTest(unittest.TestCase):
         finally:
             stdout, stderr, log = output.restore_output()
         self.assertEqual(unexpected_result_count, 0)
-        self.assertEqual(self._normalize_output(log), '\n'.join(['Running Bindings/event-target-wrapper.html (1 of 2)',
-        'RESULT Bindings: event-target-wrapper= 1489.05 ms',
-        'median= 1487.0 ms, stdev= 14.46 ms, min= 1471.0 ms, max= 1510.0 ms',
-        'Finished: 0.1 s',
-        '',
-        'Running Parser/some-parser.html (2 of 2)',
-        'RESULT Parser: some-parser= 1100.0 ms',
-        'median= 1101.0 ms, stdev= 11.0 ms, min= 1080.0 ms, max= 1120.0 ms',
-        'Finished: 0.1 s',
-        '', '']))
+        self.assertEqual(self._normalize_output(log), EventTargetWrapperTestData.output + SomeParserTestData.output)
 
     def test_run_memory_test(self):
         runner, port = self.create_runner_and_setup_results_template()
@@ -251,24 +300,12 @@ class MainTest(unittest.TestCase):
         finally:
             stdout, stderr, log = output.restore_output()
         self.assertEqual(unexpected_result_count, 0)
-        self.assertEqual(self._normalize_output(log), '\n'.join([
-            'Running 1 tests',
-            'Running Parser/memory-test.html (1 of 1)',
-            'RESULT Parser: memory-test= 1100.0 ms',
-            'median= 1101.0 ms, stdev= 11.0 ms, min= 1080.0 ms, max= 1120.0 ms',
-            'RESULT Parser: memory-test: JSHeap= 832000.0 bytes',
-            'median= 829000.0 bytes, stdev= 15000.0 bytes, min= 811000.0 bytes, max= 848000.0 bytes',
-            'RESULT Parser: memory-test: Malloc= 532000.0 bytes',
-            'median= 529000.0 bytes, stdev= 13000.0 bytes, min= 511000.0 bytes, max= 548000.0 bytes',
-            'Finished: 0.1 s',
-            '',
-            'MOCK: user.open_url: file://...',
-            '']))
-        results = runner.load_output_json()[0]['results']
+        self.assertEqual(self._normalize_output(log), MemoryTestData.output + '\nMOCK: user.open_url: file://...\n')
+        results = self._load_output_json(runner)[0]['results']
         values = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19]
-        self.assertEqual(results['Parser/memory-test'], {'min': 1080.0, 'max': 1120.0, 'median': 1101.0, 'stdev': 11.0, 'avg': 1100.0, 'unit': 'ms', 'values': values})
-        self.assertEqual(results['Parser/memory-test:JSHeap'], {'min': 811000.0, 'max': 848000.0, 'median': 829000.0, 'stdev': 15000.0, 'avg': 832000.0, 'unit': 'bytes', 'values': values})
-        self.assertEqual(results['Parser/memory-test:Malloc'], {'min': 511000.0, 'max': 548000.0, 'median': 529000.0, 'stdev': 13000.0, 'avg': 532000.0, 'unit': 'bytes', 'values': values})
+        self.assertEqual(results['Parser/memory-test'], MemoryTestData.results)
+        self.assertEqual(results['Parser/memory-test:JSHeap'], MemoryTestData.js_heap_results)
+        self.assertEqual(results['Parser/memory-test:Malloc'], MemoryTestData.malloc_results)
 
     def _test_run_with_json_output(self, runner, filesystem, upload_suceeds=False, results_shown=True, expected_exit_code=0):
         filesystem.write_text_file(runner._base_path + '/inspector/pass.html', 'some content')
@@ -292,16 +329,7 @@ class MainTest(unittest.TestCase):
             stdout, stderr, logs = output_capture.restore_output()
 
         if not expected_exit_code:
-            expected_logs = '\n'.join(['Running 2 tests',
-                                       'Running Bindings/event-target-wrapper.html (1 of 2)',
-                                       'RESULT Bindings: event-target-wrapper= 1489.05 ms',
-                                       'median= 1487.0 ms, stdev= 14.46 ms, min= 1471.0 ms, max= 1510.0 ms',
-                                       'Finished: 0.1 s',
-                                       '',
-                                       'Running inspector/pass.html (2 of 2)',
-                                       'RESULT group_name: test_name= 42 ms',
-                                       'Finished: 0.1 s',
-                                       '', ''])
+            expected_logs = 'Running 2 tests\n' + EventTargetWrapperTestData.output + InspectorPassTestData.output
             if results_shown:
                 expected_logs += 'MOCK: user.open_url: file://...\n'
             self.assertEqual(self._normalize_output(logs), expected_logs)
@@ -311,15 +339,14 @@ class MainTest(unittest.TestCase):
         return logs
 
     _event_target_wrapper_and_inspector_results = {
-        "Bindings/event-target-wrapper": {"max": 1510, "avg": 1489.05, "median": 1487, "min": 1471, "stdev": 14.46, "unit": "ms",
-           "values": [1504, 1505, 1510, 1504, 1507, 1509, 1510, 1487, 1488, 1472, 1472, 1488, 1473, 1472, 1475, 1487, 1486, 1486, 1475, 1471]},
+        "Bindings/event-target-wrapper": EventTargetWrapperTestData.results,
         "inspector/pass.html:group_name:test_name": 42}
 
     def test_run_with_json_output(self):
         runner, port = self.create_runner_and_setup_results_template(args=['--output-json-path=/mock-checkout/output.json',
             '--test-results-server=some.host'])
         self._test_run_with_json_output(runner, port.host.filesystem, upload_suceeds=True)
-        self.assertEqual(runner.load_output_json(), [{
+        self.assertEqual(self._load_output_json(runner), [{
             "timestamp": 123456789, "results": self._event_target_wrapper_and_inspector_results,
             "webkit-revision": "5678", "branch": "webkit-trunk"}])
 
@@ -331,7 +358,7 @@ class MainTest(unittest.TestCase):
         runner, port = self.create_runner_and_setup_results_template(args=['--output-json-path=/mock-checkout/output.json',
             '--test-results-server=some.host', '--description', 'some description'])
         self._test_run_with_json_output(runner, port.host.filesystem, upload_suceeds=True)
-        self.assertEqual(runner.load_output_json(), [{
+        self.assertEqual(self._load_output_json(runner), [{
             "timestamp": 123456789, "description": "some description",
             "results": self._event_target_wrapper_and_inspector_results,
             "webkit-revision": "5678", "branch": "webkit-trunk"}])
@@ -362,7 +389,7 @@ class MainTest(unittest.TestCase):
 
         self._test_run_with_json_output(runner, port.host.filesystem)
 
-        self.assertEqual(runner.load_output_json(), [{
+        self.assertEqual(self._load_output_json(runner), [{
             "timestamp": 123456789, "results": self._event_target_wrapper_and_inspector_results,
             "webkit-revision": "5678", "branch": "webkit-trunk"}])
 
@@ -378,7 +405,7 @@ class MainTest(unittest.TestCase):
 
         self._test_run_with_json_output(runner, port.host.filesystem)
 
-        self.assertEqual(runner.load_output_json(), [{"previous": "results"}, {
+        self.assertEqual(self._load_output_json(runner), [{"previous": "results"}, {
             "timestamp": 123456789, "results": self._event_target_wrapper_and_inspector_results,
             "webkit-revision": "5678", "branch": "webkit-trunk"}])
         self.assertTrue(filesystem.isfile(filesystem.splitext(output_json_path)[0] + '.html'))
@@ -392,7 +419,7 @@ class MainTest(unittest.TestCase):
 
         self._test_run_with_json_output(runner, port.host.filesystem)
 
-        self.assertEqual(runner.load_output_json(), [{
+        self.assertEqual(self._load_output_json(runner), [{
             "timestamp": 123456789, "results": self._event_target_wrapper_and_inspector_results,
             "webkit-revision": "5678", "branch": "webkit-trunk"}])
         self.assertTrue(filesystem.isfile(filesystem.splitext(output_json_path)[0] + '.html'))
@@ -410,7 +437,7 @@ class MainTest(unittest.TestCase):
 
         self.maxDiff = None
         self.assertEqual(runner._output_json_path(), '/mock-checkout/output.json')
-        self.assertEqual(runner.load_output_json(), [expected_entry])
+        self.assertEqual(self._load_output_json(runner), [expected_entry])
         self.assertEqual(filesystem.read_text_file('/mock-checkout/output.html'),
             'BEGIN<script src="/test.checkout/some.js"></script><script src="/test.checkout/other.js"></script>'
             '<script>%s</script>END' % port.host.filesystem.read_text_file(runner._output_json_path()))
@@ -418,7 +445,7 @@ class MainTest(unittest.TestCase):
 
         self._test_run_with_json_output(runner, filesystem, results_shown=False)
         self.assertEqual(runner._output_json_path(), '/mock-checkout/output.json')
-        self.assertEqual(runner.load_output_json(), [expected_entry, expected_entry])
+        self.assertEqual(self._load_output_json(runner), [expected_entry, expected_entry])
         self.assertEqual(filesystem.read_text_file('/mock-checkout/output.html'),
             'BEGIN<script src="/test.checkout/some.js"></script><script src="/test.checkout/other.js"></script>'
             '<script>%s</script>END' % port.host.filesystem.read_text_file(runner._output_json_path()))
@@ -451,7 +478,7 @@ class MainTest(unittest.TestCase):
             '--slave-config-json-path=/mock-checkout/slave-config.json', '--test-results-server=some.host'])
         port.host.filesystem.write_text_file('/mock-checkout/slave-config.json', '{"key": "value"}')
         self._test_run_with_json_output(runner, port.host.filesystem, upload_suceeds=True)
-        self.assertEqual(runner.load_output_json(), [{
+        self.assertEqual(self._load_output_json(runner), [{
             "timestamp": 123456789, "results": self._event_target_wrapper_and_inspector_results,
             "webkit-revision": "5678", "branch": "webkit-trunk", "key": "value"}])
 
@@ -470,7 +497,7 @@ class MainTest(unittest.TestCase):
             '--test-results-server=some.host'])
         port.repository_paths = lambda: [('webkit', '/mock-checkout'), ('some', '/mock-checkout/some')]
         self._test_run_with_json_output(runner, port.host.filesystem, upload_suceeds=True)
-        self.assertEqual(runner.load_output_json(), [{
+        self.assertEqual(self._load_output_json(runner), [{
             "timestamp": 123456789, "results": self._event_target_wrapper_and_inspector_results,
             "webkit-revision": "5678", "some-revision": "5678", "branch": "webkit-trunk"}])
 
