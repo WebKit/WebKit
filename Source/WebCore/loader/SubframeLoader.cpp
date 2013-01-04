@@ -363,9 +363,6 @@ Frame* SubframeLoader::loadSubframe(HTMLFrameOwnerElement* ownerElement, const K
         return 0;
     }
 
-    if (!ownerElement->document()->contentSecurityPolicy()->allowChildFrameFromSource(url))
-        return 0;
-
     String referrerToUse = SecurityPolicy::generateReferrerHeader(ownerElement->document()->referrerPolicy(), url, referrer);
     RefPtr<Frame> frame = m_frame->loader()->client()->createFrame(url, name, ownerElement, referrerToUse, allowsScrolling, marginWidth, marginHeight);
 

@@ -1,5 +1,15 @@
 2013-01-04  Mike West  <mkwst@chromium.org>
 
+        CSP: 'frame-src' should block redirects to invalid sources.
+        https://bugs.webkit.org/show_bug.cgi?id=106084
+
+        Reviewed by Adam Barth.
+
+        * http/tests/security/contentSecurityPolicy/frame-src-redirect-blocked-expected.txt: Added.
+        * http/tests/security/contentSecurityPolicy/frame-src-redirect-blocked.html: Added.
+
+2013-01-04  Mike West  <mkwst@chromium.org>
+
         CSP: XHR from an isolated world should bypass a page's policy.
         https://bugs.webkit.org/show_bug.cgi?id=104480
 
