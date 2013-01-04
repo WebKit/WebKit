@@ -40,6 +40,7 @@
 #include "RenderTheme.h"
 #endif
 #include "WebCoreMemoryInstrumentation.h"
+#include <wtf/MathExtras.h>
 #include <wtf/MemoryInstrumentationVector.h>
 #include <wtf/MemoryObjectInfo.h>
 #include <wtf/StdLibExtras.h>
@@ -1274,6 +1275,12 @@ void RenderStyle::setFontSize(float size)
     // size must be specifiedSize if Text Autosizing is enabled, but computedSize if text
     // zoom is enabled (if neither is enabled it's irrelevant as they're probably the same).
 
+    ASSERT(isfinite(size));
+    if (!isfinite(size) || size < 0)
+        size = 0;
+    else
+        size = min(maximumAllowedFontSize, size);
+
     FontSelector* currentFontSelector = font().fontSelector();
     FontDescription desc(fontDescription());
     desc.setSpecifiedSize(size);
@@ -1282,7 +1289,8 @@ void RenderStyle::setFontSize(float size)
 #if ENABLE(TEXT_AUTOSIZING)
     float multiplier = textAutosizingMultiplier();
     if (multiplier > 1) {
-        desc.setComputedSize(TextAutosizer::computeAutosizedFontSize(size, multiplier));
+        float autosizedFontSize = TextAutosizer::computeAutosizedFontSize(size, multiplier);
+        desc.setComputedSize(min(maximumAllowedFontSize, autosizedFontSize));
     }
 #endif
 

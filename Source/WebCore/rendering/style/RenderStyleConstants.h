@@ -491,6 +491,9 @@ enum RubyPosition { RubyPositionBefore, RubyPositionAfter };
 enum DraggableRegionMode { DraggableRegionNone, DraggableRegionDrag, DraggableRegionNoDrag };
 #endif
 
+// Reasonable maximum to prevent insane font sizes from causing crashes on some platforms (such as Windows).
+static const float maximumAllowedFontSize = 1000000.0f;
+
 } // namespace WebCore
 
 #endif // RenderStyleConstants_h
