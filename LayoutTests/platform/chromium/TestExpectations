@@ -1393,6 +1393,9 @@ webkit.org/b/83303 [ Win ] svg/custom/mouse-move-on-svg-container.xhtml [ ImageO
 webkit.org/b/83303 [ Win ] svg/custom/mouse-move-on-svg-root-standalone.svg [ ImageOnlyFailure Pass ]
 webkit.org/b/83303 [ Win ] svg/custom/mouse-move-on-svg-root.xhtml [ ImageOnlyFailure Pass ]
 
+webkit.org/b/106126 [ XP ] svg/custom/feComponentTransfer-Table.svg [ ImageOnlyFailure Pass ]
+webkit.org/b/106126 [ XP ] svg/custom/embedding-external-svgs.xhtml [ Failure Pass ]
+
 # This fails image 5-10% of the time. Probably a race condition on timers.
 webkit.org/b/83471 svg/as-image/animated-svg-as-image-same-image.html [ ImageOnlyFailure Pass ]
 

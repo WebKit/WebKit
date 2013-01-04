@@ -1,3 +1,11 @@
+2013-01-04  Terry Anderson  <tdanderson@chromium.org>
+
+        Unreviewed gardening. The following two tests are flaky on XP:
+        svg/custom/feComponentTransfer-Table.svg
+        svg/custom/embedding-external-svgs.xhtml
+
+        * platform/chromium/TestExpectations:
+
 2013-01-04  Rick Byers  <rbyers@chromium.org>
 
         window.Touch and TouchList should exist when touch events are enabled
