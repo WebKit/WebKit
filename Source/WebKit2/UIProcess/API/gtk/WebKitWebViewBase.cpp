@@ -459,12 +459,13 @@ static void resizeWebKitWebViewBaseFromAllocation(WebKitWebViewBase* webViewBase
     IntRect viewRect(allocation->x, allocation->y, allocation->width, allocation->height);
     WebKitWebViewBasePrivate* priv = webViewBase->priv;
     if (priv->inspectorView) {
+        int inspectorViewHeight = std::min(static_cast<int>(priv->inspectorViewHeight), allocation->height);
         GtkAllocation childAllocation = viewRect;
-        childAllocation.y = allocation->height - priv->inspectorViewHeight;
-        childAllocation.height = priv->inspectorViewHeight;
+        childAllocation.y = allocation->height - inspectorViewHeight;
+        childAllocation.height = inspectorViewHeight;
         gtk_widget_size_allocate(priv->inspectorView, &childAllocation);
 
-        viewRect.setHeight(allocation->height - priv->inspectorViewHeight);
+        viewRect.setHeight(std::max(allocation->height - inspectorViewHeight, 1));
     }
 
     // The authentication dialog is centered in the view rect, which means that it

@@ -1,5 +1,18 @@
 2013-01-04  Carlos Garcia Campos  <cgarcia@igalia.com>
 
+        [WK2] [Gtk] crash when web inspector is attached, and window height is reduced.
+        https://bugs.webkit.org/show_bug.cgi?id=106052
+
+        Reviewed by Martin Robinson.
+
+        Do not allocate more size for the inspector view than its parent
+        size. Also make sure that the view size is always at least 1.
+
+        * UIProcess/API/gtk/WebKitWebViewBase.cpp:
+        (resizeWebKitWebViewBaseFromAllocation):
+
+2013-01-04  Carlos Garcia Campos  <cgarcia@igalia.com>
+
         [GTK][Qt] Make compositing messages async again
         https://bugs.webkit.org/show_bug.cgi?id=106082
 
