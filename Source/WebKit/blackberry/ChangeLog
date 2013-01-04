@@ -1,3 +1,16 @@
+2013-01-04  Anthony Scian  <ascian@rim.com>
+
+        [Blackberry] Static code analysis warning fixes
+        https://bugs.webkit.org/show_bug.cgi?id=105679
+
+        Reviewed by Rob Buis.
+
+        Klocwork issue 959: check layer against NULL since it is used in both cases
+        of the subsequent if-stmt
+
+        * Api/InRegionScroller.cpp:
+        (BlackBerry::WebKit::InRegionScrollerPrivate::calculateInRegionScrollableAreasForPoint):
+
 2013-01-02  Jacky Jiang  <zhajiang@rim.com>
 
         [BlackBerry] file:/// pages don't get correct scales after several rotations and history navigations

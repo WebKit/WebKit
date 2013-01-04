@@ -167,17 +167,19 @@ static float determineFullScreenMultiplier(Element* element)
     float fullScreenMultiplier = 1.0;
 #if ENABLE(FULLSCREEN_API) && ENABLE(VIDEO)
     if (element && element->document()->webkitIsFullScreen() && element->document()->webkitCurrentFullScreenElement() == toParentMediaElement(element)) {
-        if (element->document()->page()->deviceScaleFactor() < scaleFactorThreshold)
-            fullScreenMultiplier = fullScreenEnlargementFactor;
+        if (Page* page = element->document()->page()) {
+            if (page->deviceScaleFactor() < scaleFactorThreshold)
+                fullScreenMultiplier = fullScreenEnlargementFactor;
 
-        // The way the BlackBerry port implements the FULLSCREEN_API for media elements
-        // might result in the controls being oversized, proportionally to the current page
-        // scale. That happens because the fullscreen element gets sized to be as big as the
-        // viewport size, and the viewport size might get outstretched to fit to the screen dimensions.
-        // To fix that, lets strips out the Page scale factor from the media controls multiplier.
-        float scaleFactor = element->document()->view()->hostWindow()->platformPageClient()->currentZoomFactor();
-        float scaleFactorFudge = 1 / element->document()->page()->deviceScaleFactor();
-        fullScreenMultiplier /= scaleFactor * scaleFactorFudge;
+            // The way the BlackBerry port implements the FULLSCREEN_API for media elements
+            // might result in the controls being oversized, proportionally to the current page
+            // scale. That happens because the fullscreen element gets sized to be as big as the
+            // viewport size, and the viewport size might get outstretched to fit to the screen dimensions.
+            // To fix that, lets strips out the Page scale factor from the media controls multiplier.
+            float scaleFactor = element->document()->view()->hostWindow()->platformPageClient()->currentZoomFactor();
+            float scaleFactorFudge = 1 / page->deviceScaleFactor();
+            fullScreenMultiplier /= scaleFactor * scaleFactorFudge;
+        }
     }
 #endif
     return fullScreenMultiplier;
