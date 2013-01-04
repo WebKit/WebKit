@@ -1,3 +1,10 @@
+2013-01-04  Terry Anderson  <tdanderson@chromium.org>
+
+        Unreviewed gardening. Adding Lion image baseline for
+        fast/regions/full-screen-video-from-region.html
+
+        * platform/chromium-mac-lion/fast/regions/full-screen-video-from-region-expected.png: Added.
+
 2013-01-04  Ryosuke Niwa  <rniwa@webkit.org>
 
         Add a crash test expectation for the crashing test on Mac WebKit1 after r138782,
