@@ -133,6 +133,7 @@ public:
         return m_x * a.x() + m_y * a.y();
     }
 
+    float slopeAngleRadians() const;
     float length() const;
     float lengthSquared() const
     {

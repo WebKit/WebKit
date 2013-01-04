@@ -56,6 +56,11 @@ void FloatPoint::normalize()
     }
 }
 
+float FloatPoint::slopeAngleRadians() const
+{
+    return atan2f(m_y, m_x);
+}
+
 float FloatPoint::length() const
 {
     return sqrtf(lengthSquared());

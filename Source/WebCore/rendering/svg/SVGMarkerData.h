@@ -82,11 +82,11 @@ public:
 private:
     float currentAngle(SVGMarkerType type) const
     {
-        FloatSize inslopeChange = m_inslopePoints[1] - m_inslopePoints[0];
-        FloatSize outslopeChange = m_outslopePoints[1] - m_outslopePoints[0];
+        FloatPoint inslopeChange(m_inslopePoints[1] - m_inslopePoints[0]);
+        FloatPoint outslopeChange(m_outslopePoints[1] - m_outslopePoints[0]);
 
-        double inslope = rad2deg(atan2(inslopeChange.height(), inslopeChange.width()));
-        double outslope = rad2deg(atan2(outslopeChange.height(), outslopeChange.width()));
+        double inslope = rad2deg(inslopeChange.slopeAngleRadians());
+        double outslope = rad2deg(outslopeChange.slopeAngleRadians());
 
         switch (type) {
         case StartMarker:

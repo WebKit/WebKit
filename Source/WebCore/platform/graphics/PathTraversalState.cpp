@@ -209,8 +209,7 @@ void PathTraversalState::processSegment()
         m_success = true;
         
     if ((m_action == TraversalPointAtLength || m_action == TraversalNormalAngleAtLength) && m_totalLength >= m_desiredLength) {
-        FloatSize change = m_current - m_previous;
-        float slope = atan2f(change.height(), change.width());
+        float slope = FloatPoint(m_current - m_previous).slopeAngleRadians();
         if (m_action == TraversalPointAtLength) {
             float offset = m_desiredLength - m_totalLength;
             m_current.move(offset * cosf(slope), offset * sinf(slope));
