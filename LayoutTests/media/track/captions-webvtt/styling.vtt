@@ -7,3 +7,7 @@ Lorum ipsum
 2
 00:01.000 --> 00:02.000
 <c.red>dolor sit </c><c.green>amet, consectetur </c><c.red2>adipiscing elit</c>
+
+3
+00:02.000 --> 00:05.000
+<00:02.000><c>Suspendisse accumsan, </c><00:03.000><c>mauris sed </c><00:04.000><c>euismod pharetra</c>

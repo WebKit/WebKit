@@ -1240,6 +1240,14 @@ bool StyleResolver::canShareStyleWithElement(StyledElement* element) const
     if (element->isLink() && m_elementLinkState != style->insideLink())
         return false;
 
+#if ENABLE(VIDEO_TRACK)
+    if (element->isWebVTTNode() && m_element->isWebVTTNode() && element->isWebVTTFutureNode() != m_element->isWebVTTFutureNode())
+        return false;
+    // Deny sharing styles between WebVTT nodes and non-WebVTT nodes.
+    if (element->isWebVTTNode() != m_element->isWebVTTNode())
+        return false;
+#endif
+
     return true;
 }
 

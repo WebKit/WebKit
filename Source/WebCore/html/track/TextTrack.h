@@ -110,6 +110,8 @@ public:
 
     enum TextTrackType { TrackElement, AddTrack, InBand };
     TextTrackType trackType() const { return m_trackType; }
+    
+    enum WebVTTNodeType {WebVTTNodeTypeNone, WebVTTNodeTypeFuture, WebVTTNodeTypePast};
 
     int trackIndex();
     void invalidateTrackIndex();

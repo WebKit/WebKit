@@ -1,8 +1,29 @@
-Test that cues are being matched properly by the class name
+1. Test that cues are being matched properly by the class name
 EVENT(canplaythrough)
 EVENT(seeked)
 EXPECTED (getComputedStyle(cueNode).color == 'rgb(255, 0, 0)') OK
 EXPECTED (getComputedStyle(cueNode).color == 'rgb(0, 128, 0)') OK
 EXPECTED (getComputedStyle(cueNode).color == 'rgb(255, 0, 0)') OK
+
+RUN(video.currentTime = 2.5)
+EVENT(seeked)
+
+
+2. Test that cues are being matched properly by the ':future' pseudo class.
+EXPECTED (getComputedStyle(cueNode).color == 'rgb(255, 255, 255)') OK
+EXPECTED (getComputedStyle(cueNode).color == 'rgb(128, 128, 128)') OK
+EXPECTED (getComputedStyle(cueNode).color == 'rgb(128, 128, 128)') OK
+
+RUN(video.currentTime = 3.5)
+EVENT(seeked)
+EXPECTED (getComputedStyle(cueNode).color == 'rgb(255, 255, 255)') OK
+EXPECTED (getComputedStyle(cueNode).color == 'rgb(255, 255, 255)') OK
+EXPECTED (getComputedStyle(cueNode).color == 'rgb(128, 128, 128)') OK
+
+RUN(video.currentTime = 4.5)
+EVENT(seeked)
+EXPECTED (getComputedStyle(cueNode).color == 'rgb(255, 255, 255)') OK
+EXPECTED (getComputedStyle(cueNode).color == 'rgb(255, 255, 255)') OK
+EXPECTED (getComputedStyle(cueNode).color == 'rgb(255, 255, 255)') OK
 END OF TEST
 

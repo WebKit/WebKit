@@ -939,6 +939,12 @@ bool SelectorChecker::checkOneSelector(const SelectorCheckingContext& context, c
                 return false;
             element->document()->setContainsValidityStyleRules();
             return element->isOutOfRange();
+#if ENABLE(VIDEO_TRACK)
+        case CSSSelector::PseudoFutureCue:
+            if (element->isWebVTTFutureNode())
+                return true;
+            return false;
+#endif
         case CSSSelector::PseudoUnknown:
         case CSSSelector::PseudoNotParsed:
         default:

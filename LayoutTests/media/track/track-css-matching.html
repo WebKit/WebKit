@@ -17,21 +17,51 @@
         <script>
 
         var cueNode;
-
+        var seekedCount = 0;
+        var info = [["rgb(255, 0, 0)", "rgb(0, 128, 0)", "rgb(255, 0, 0)"],
+                    ["rgb(255, 255, 255)", "rgb(128, 128, 128)", "rgb(128, 128, 128)"],
+                    ["rgb(255, 255, 255)", "rgb(255, 255, 255)", "rgb(128, 128, 128)"],
+                    ["rgb(255, 255, 255)", "rgb(255, 255, 255)", "rgb(255, 255, 255)"]];
+        
+        function skipNonElements(root)
+        {
+            nextElementSibling = root;
+            while (nextElementSibling.nodeType != 1) {
+                nextElementSibling = nextElementSibling.nextSibling;
+            }
+            return nextElementSibling;
+        }
+        
         function seeked()
         {
-            cueNode = textTrackDisplayElement(video, 'past-nodes').firstChild;
-            testExpected("getComputedStyle(cueNode).color", "rgb(255, 0, 0)");
-            cueNode = cueNode.nextSibling;
-            testExpected("getComputedStyle(cueNode).color", "rgb(0, 128, 0)");
-            cueNode = cueNode.nextSibling;
-            testExpected("getComputedStyle(cueNode).color", "rgb(255, 0, 0)");
-            endTest();
+            if (testEnded)
+                return;
+
+            if (seekedCount == 1) {
+                consoleWrite("");
+                consoleWrite("");
+                consoleWrite("2. Test that cues are being matched properly by the ':future' pseudo class.");
+            }
+
+            cueNode = skipNonElements(textTrackDisplayElement(video, 'all-nodes').firstChild);
+            skipNonElements(cueNode);
+            testExpected("getComputedStyle(cueNode).color", info[seekedCount][0]);
+            cueNode = skipNonElements(cueNode.nextSibling);
+            testExpected("getComputedStyle(cueNode).color", info[seekedCount][1]);
+            cueNode = skipNonElements(cueNode.nextSibling);
+            testExpected("getComputedStyle(cueNode).color", info[seekedCount][2]);
+
+            if (++seekedCount == info.length)
+                endTest();
+            else {
+                consoleWrite("");
+                run("video.currentTime = " + (video.currentTime + 1));
+            }
         }
 
         function loaded()
         {
-            consoleWrite("Test that cues are being matched properly by the class name");
+            consoleWrite("1. Test that cues are being matched properly by the class name");
             findMediaElement();
             video.src = findMediaFile('video', '../content/test');
             video.id = "testvideo";

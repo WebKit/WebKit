@@ -57,6 +57,8 @@ public:
 #if ENABLE(VIDEO_TRACK)
     using NodeRareData::isWebVTTNode;
     using NodeRareData::setIsWebVTTNode;
+    using NodeRareData::isWebVTTFutureNode;
+    using NodeRareData::setIsWebVTTFutureNode;
 #endif
 #if ENABLE(FULLSCREEN_API)
     bool containsFullScreenElement() { return m_containsFullScreenElement; }

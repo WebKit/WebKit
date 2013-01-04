@@ -238,25 +238,19 @@ video::-webkit-media-text-track-container {
     -webkit-box-flex: 1;
 }
 
-video::-webkit-media-text-track-past-nodes {
+video::-webkit-media-text-track-all-nodes {
     display: inline;
 
     background-color: rgba(0, 0, 0, 0.8);
     padding: 2px 2px;
 }
 
-video::-webkit-media-text-track-future-nodes {
-    visibility: hidden;
-    display: inline;
-
-    background-color: rgba(0, 0, 0, 0.8);
-
-    margin-left: -2px;
-    padding: 2px 2px 2px 0px;
-}
-
 video::-webkit-media-text-track-display {
     position: absolute;
     overflow: hidden;
     white-space: pre-wrap;
+}
+
+video::cue(:future) {
+    color: gray;
 }

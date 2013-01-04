@@ -364,7 +364,6 @@ void WebVTTParser::constructTreeFromToken(Document* document)
             child = HTMLElement::create(qTag, document);
 
         if (child) {
-            child->setIsWebVTTNode(true);
             if (m_token.classes().size() > 0)
                 child->setAttribute(classAttr, AtomicString(m_token.classes().data(), m_token.classes().size()));
             if (child->hasTagName(qTag))

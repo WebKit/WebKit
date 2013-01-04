@@ -1,3 +1,20 @@
+2013-01-04  Dima Gorbik  <dgorbik@apple.com>
+
+        Implement :future pseudo class for the WebVTT ::cue pseudo element
+        https://bugs.webkit.org/show_bug.cgi?id=105473
+
+        Reviewed by Antti Koivisto.
+
+        Modified the track css matching test to cover :future pseudo-class case.
+
+        * media/track/captions-webvtt/captions-inner-timestamps.vtt: Removed.
+        * media/track/captions-webvtt/styling.vtt:
+        * media/track/track-css-matching-expected.txt:
+        * media/track/track-css-matching.html:
+        * media/track/track-cue-rendering-inner-timestamps-expected.txt: Removed.
+        * media/track/track-cue-rendering-inner-timestamps.html: The test was removed because it was based on the old
+        future/past nodes rendering logic.
+
 2013-01-04  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         REGRESSION (r138222?): Assertion failure on appcache/main-resource-redirect.html

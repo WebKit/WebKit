@@ -433,7 +433,9 @@ public:
 
 #if ENABLE(VIDEO_TRACK)
     bool isWebVTTNode() const;
-    void setIsWebVTTNode(bool flag);
+    void setIsWebVTTNode();
+    bool isWebVTTFutureNode() const;
+    void setIsWebVTTFutureNode();
 #endif
     
 #if ENABLE(FULLSCREEN_API)

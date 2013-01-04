@@ -1218,7 +1218,7 @@ MediaControlTextTrackContainerElement::MediaControlTextTrackContainerElement(Doc
     , m_fontSize(0)
 {
 }
-    
+
 void MediaControlTextTrackContainerElement::createSubtrees(Document* document)
 {
     DEFINE_STATIC_LOCAL(const AtomicString, cue, ("cue", AtomicString::ConstructFromLiteral));

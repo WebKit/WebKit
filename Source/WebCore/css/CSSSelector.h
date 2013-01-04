@@ -158,6 +158,7 @@ namespace WebCore {
             PseudoWebKitCustomElement,
 #if ENABLE(VIDEO_TRACK)
             PseudoCue,
+            PseudoFutureCue,
 #endif
 #if ENABLE(IFRAME_SEAMLESS)
             PseudoSeamlessDocument

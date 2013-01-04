@@ -183,15 +183,9 @@ RenderObject* TextTrackCueBox::createRenderer(RenderArena* arena, RenderStyle*)
 
 // ----------------------------
 
-const AtomicString& TextTrackCue::pastNodesShadowPseudoId()
+const AtomicString& TextTrackCue::allNodesShadowPseudoId()
 {
-    DEFINE_STATIC_LOCAL(const AtomicString, subtitles, ("-webkit-media-text-track-past-nodes", AtomicString::ConstructFromLiteral));
-    return subtitles;
-}
-
-const AtomicString& TextTrackCue::futureNodesShadowPseudoId()
-{
-    DEFINE_STATIC_LOCAL(const AtomicString, subtitles, ("-webkit-media-text-track-future-nodes", AtomicString::ConstructFromLiteral));
+    DEFINE_STATIC_LOCAL(const AtomicString, subtitles, ("-webkit-media-text-track-all-nodes", AtomicString::ConstructFromLiteral));
     return subtitles;
 }
 
@@ -213,8 +207,7 @@ TextTrackCue::TextTrackCue(ScriptExecutionContext* context, double start, double
     , m_pauseOnExit(false)
     , m_snapToLines(true)
     , m_hasInnerTimestamps(false)
-    , m_pastDocumentNodes(HTMLDivElement::create(static_cast<Document*>(context)))
-    , m_futureDocumentNodes(HTMLDivElement::create(static_cast<Document*>(context)))
+    , m_allDocumentNodes(HTMLDivElement::create(static_cast<Document*>(context)))
     , m_displayTreeShouldChange(true)
     , m_displayTree(TextTrackCueBox::create(static_cast<Document*>(m_scriptExecutionContext), this))
 {
@@ -488,12 +481,6 @@ void TextTrackCue::invalidateCueIndex()
     m_cueIndex = invalidCueIndex;
 }
 
-void TextTrackCue::markNodesAsWebVTTNodes(Node* root)
-{
-    for (Element* child = ElementTraversal::firstWithin(root); child; child = ElementTraversal::next(child, root))
-        child->setIsWebVTTNode(true);
-}
-
 PassRefPtr<DocumentFragment> TextTrackCue::getCueAsHTML()
 {
     RefPtr<DocumentFragment> clonedFragment;
@@ -516,7 +503,6 @@ PassRefPtr<DocumentFragment> TextTrackCue::getCueAsHTML()
 
     clonedFragment = DocumentFragment::create(document);
     m_documentFragment->cloneChildNodes(clonedFragment.get());
-    markNodesAsWebVTTNodes(clonedFragment.get());
 
     return clonedFragment.release();
 }
@@ -671,50 +657,54 @@ void TextTrackCue::calculateDisplayParameters()
     // is defined in terms of the other aspects of the cue.
     m_computedLinePosition = calculateComputedLinePosition();
 }
+    
+void TextTrackCue::markFutureAndPastNodes(Element* root, double previousTimestamp, double movieTime)
+{
+    DEFINE_STATIC_LOCAL(const String, timestampTag, (ASCIILiteral("timestamp")));
+    
+    bool isPastNode = true;
+    double currentTimestamp = previousTimestamp;
+    if (currentTimestamp > movieTime)
+        isPastNode = false;
+    
+    for (Node* child = root->firstChild(); child; child = NodeTraversal::next(child, root)) {
+        if (child->nodeName() == timestampTag) {
+            unsigned position = 0;
+            String timestamp = child->nodeValue();
+            double currentTimestamp = WebVTTParser::create(0, m_scriptExecutionContext)->collectTimeStamp(timestamp, &position);
+            ASSERT(currentTimestamp != -1);
+            
+            if (currentTimestamp > movieTime)
+                isPastNode = false;
+        }
+        
+        if (child->isElementNode()) {
+            if (!isPastNode)
+                toElement(child)->setIsWebVTTFutureNode();
+            else
+                toElement(child)->setIsWebVTTNode();
+        }
+    }
+}
 
 void TextTrackCue::updateDisplayTree(float movieTime)
 {
     // The display tree may contain WebVTT timestamp objects representing
     // timestamps (processing instructions), along with displayable nodes.
-    DEFINE_STATIC_LOCAL(const String, timestampTag, (ASCIILiteral("timestamp")));
 
     if (!track()->isRendered())
       return;
 
-    bool isPastNode = true;
 
-    // Clear the contents of the two sets.
-    m_futureDocumentNodes->removeChildren();
-    m_futureDocumentNodes->setPseudo(futureNodesShadowPseudoId());
-
-    m_pastDocumentNodes->removeChildren();
-    m_pastDocumentNodes->setPseudo(pastNodesShadowPseudoId());
+    // Clear the contents of the set.
+    m_allDocumentNodes->removeChildren();
+    m_allDocumentNodes->setPseudo(allNodesShadowPseudoId());
 
     // Update the two sets containing past and future WebVTT objects.
     RefPtr<DocumentFragment> referenceTree = getCueAsHTML();
 
-    if (!m_hasInnerTimestamps) {
-        m_pastDocumentNodes->appendChild(referenceTree);
-        return;
-    }
-
-    for (Node *child = referenceTree->firstChild(); child; child = child->nextSibling()) {
-        if (child->nodeName() == timestampTag) {
-            unsigned int position = 0;
-            String timestamp = child->nodeValue();
-
-            double timestampTime = WebVTTParser::create(0, m_scriptExecutionContext)->collectTimeStamp(timestamp, &position);
-            ASSERT(timestampTime != -1);
-
-            if (timestampTime > movieTime)
-                isPastNode = false;
-        }
-
-        if (isPastNode)
-            m_pastDocumentNodes->appendChild(child->cloneNode(true), ASSERT_NO_EXCEPTION, false);
-        else
-            m_futureDocumentNodes->appendChild(child->cloneNode(true), ASSERT_NO_EXCEPTION, false);
-    }
+    m_allDocumentNodes->appendChild(referenceTree);
+    markFutureAndPastNodes(m_allDocumentNodes.get(), startTime(), movieTime);
 }
 
 PassRefPtr<TextTrackCueBox> TextTrackCue::getDisplayTree()
@@ -736,9 +726,8 @@ PassRefPtr<TextTrackCueBox> TextTrackCue::getDisplayTree()
     // 'display' property has the value 'inline'. This is the WebVTT cue
     // background box.
 
-    // Note: This is contained by default in m_pastDocumentNodes.
-    m_displayTree->appendChild(m_pastDocumentNodes, ASSERT_NO_EXCEPTION, true);
-    m_displayTree->appendChild(m_futureDocumentNodes, ASSERT_NO_EXCEPTION, true);
+    // Note: This is contained by default in m_allDocumentNodes.
+    m_displayTree->appendChild(m_allDocumentNodes, ASSERT_NO_EXCEPTION, true);
 
     // FIXME(BUG 79916): Runs of children of WebVTT Ruby Objects that are not
     // WebVTT Ruby Text Objects must be wrapped in anonymous boxes whose

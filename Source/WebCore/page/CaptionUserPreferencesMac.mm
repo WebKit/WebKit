@@ -253,13 +253,7 @@ String CaptionUserPreferencesMac::captionsStyleSheetOverride() const
     Color color = captionsBackgroundColor();
     if (color.isValid()) {
         captionsOverrideStyleSheet.append(" video::");
-        captionsOverrideStyleSheet.append(TextTrackCue::pastNodesShadowPseudoId());
-        captionsOverrideStyleSheet.append('{');
-        captionsOverrideStyleSheet.append(cssColorProperty(CSSPropertyBackgroundColor, color));
-        captionsOverrideStyleSheet.append('}');
-        
-        captionsOverrideStyleSheet.append(" video::");
-        captionsOverrideStyleSheet.append(TextTrackCue::futureNodesShadowPseudoId());
+        captionsOverrideStyleSheet.append(TextTrackCue::allNodesShadowPseudoId());
         captionsOverrideStyleSheet.append('{');
         captionsOverrideStyleSheet.append(cssColorProperty(CSSPropertyBackgroundColor, color));
         captionsOverrideStyleSheet.append('}');

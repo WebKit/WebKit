@@ -2284,9 +2284,19 @@ bool Element::isWebVTTNode() const
     return hasRareData() && elementRareData()->isWebVTTNode();
 }
 
-void Element::setIsWebVTTNode(bool flag)
+void Element::setIsWebVTTNode()
 {
-    ensureElementRareData()->setIsWebVTTNode(flag);
+    ensureElementRareData()->setIsWebVTTNode();
+}
+
+bool Element::isWebVTTFutureNode() const
+{
+    return hasRareData() && elementRareData()->isWebVTTFutureNode();
+}
+
+void Element::setIsWebVTTFutureNode()
+{
+    ensureElementRareData()->setIsWebVTTFutureNode();
 }
 #endif
 
