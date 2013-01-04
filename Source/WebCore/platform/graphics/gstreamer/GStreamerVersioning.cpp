@@ -25,6 +25,12 @@
 #include "IntSize.h"
 #include <wtf/UnusedParam.h>
 
+#ifdef GST_API_VERSION_1
+#include <gst/audio/audio.h>
+#else
+#include <gst/audio/multichannel.h>
+#endif
+
 void webkitGstObjectRefSink(GstObject* gstObject)
 {
 #ifdef GST_API_VERSION_1
@@ -141,4 +147,22 @@ void notifyGstTagsOnPad(GstElement* element, GstPad* pad, GstTagList* tags)
     gst_element_found_tags_for_pad(element, pad, tags);
 #endif
 }
+
+#if ENABLE(WEB_AUDIO)
+GstCaps* getGstAudioCaps(int channels, float sampleRate)
+{
+#ifdef GST_API_VERSION_1
+    return gst_caps_new_simple("audio/x-raw", "rate", G_TYPE_INT, static_cast<int>(sampleRate),
+        "channels", G_TYPE_INT, channels,
+        "format", G_TYPE_STRING, gst_audio_format_to_string(GST_AUDIO_FORMAT_F32),
+        "layout", G_TYPE_STRING, "interleaved", NULL);
+#else
+    return gst_caps_new_simple("audio/x-raw-float", "rate", G_TYPE_INT, static_cast<int>(sampleRate),
+        "channels", G_TYPE_INT, channels,
+        "endianness", G_TYPE_INT, G_BYTE_ORDER,
+        "width", G_TYPE_INT, 32, NULL);
+#endif
+}
+#endif
+
 #endif // USE(GSTREAMER)

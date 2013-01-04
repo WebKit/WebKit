@@ -39,5 +39,8 @@ GstBuffer* createGstBuffer(GstBuffer*);
 void setGstElementClassMetadata(GstElementClass*, const char* name, const char* longName, const char* description, const char* author);
 bool gstObjectIsFloating(GstObject*);
 void notifyGstTagsOnPad(GstElement*, GstPad*, GstTagList*);
+#if ENABLE(WEB_AUDIO)
+GstCaps* getGstAudioCaps(int channels, float sampleRate);
+#endif
 #endif // USE(GSTREAMER)
 #endif // GStreamerVersioning_h

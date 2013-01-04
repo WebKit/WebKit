@@ -279,8 +279,11 @@ void FFTFrame::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
 #endif // USE(WEBAUDIO_FFMPEG)
 
 #if USE(WEBAUDIO_GSTREAMER)
+#ifndef GST_API_VERSION_1
+    // The GstFFTF32 structure is exposed publicly in GStreamer 0.10 only.
     info.addMember(m_fft);
     info.addMember(m_inverseFft);
+#endif
     info.addMember(m_complexData);
     info.addMember(m_realData);
     info.addMember(m_imagData);
