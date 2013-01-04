@@ -1,3 +1,14 @@
+2013-01-04  Ryosuke Niwa  <rniwa@webkit.org>
+
+        REGRESSION(r138394): platform/mac/accessibility/file-upload-button-subrole.html is failing
+        https://bugs.webkit.org/show_bug.cgi?id=105778
+
+        Reviewed by Alexey Proskuryakov.
+
+        Removed the old test expectations.
+
+        * platform/mac/TestExpectations:
+
 2013-01-04  Rick Byers  <rbyers@chromium.org>
 
         URL duplication in mouse cursor tests mean minor typos can cause flakiness
