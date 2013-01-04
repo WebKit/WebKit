@@ -71,6 +71,10 @@
 - (DOMDocumentFragment *)_createDocumentFragmentWithText:(NSString *)text;
 @end
 
+@interface DOMHTMLTableCellElement (WebPrivate)
+- (DOMHTMLTableCellElement *)_cellAbove;
+@end
+
 // All the methods in this category are used by Safari forms autofill and should not be used for any other purpose.
 // Each one should eventually be replaced by public DOM API, and when that happens Safari will switch to implementations 
 // using that public API, and these will be deleted.

@@ -1,3 +1,20 @@
+2013-01-04  Dan Bernstein  <mitz@apple.com>
+
+        [mac] WebKit1 has no equivalent of WKBundleNodeHandleCopyHTMLTableCellElementCellAbove
+        https://bugs.webkit.org/show_bug.cgi?id=106121
+
+        Reviewed by Adele Peterson.
+
+        Added test for -[DOMTHMLTableCellElement _cellAbove].
+
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        * TestWebKitAPI/Tests/mac/DOMHTMLTableCellCellAbove.mm: Added.
+        (-[HTMLTableCellElementCellAboveTest webView:didFinishLoadForFrame:]):
+        (TestWebKitAPI):
+        (TestWebKitAPI::expectCellAboveCell):
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/Tests/mac/DOMHTMLTableCellElementCellAbove.html: Added.
+
 2013-01-04  Eric Seidel  <eric@webkit.org>
 
         FlakyTestReporter should be re-enabled and taught how to post patches

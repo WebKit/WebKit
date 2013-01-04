@@ -31,6 +31,7 @@
 
 #import "DOMElementInternal.h"
 #import "DOMHTMLCanvasElement.h"
+#import "DOMHTMLTableCellElementInternal.h"
 #import "DOMNodeInternal.h"
 #import "DOMPrivate.h"
 #import "DOMRangeInternal.h"
@@ -39,6 +40,7 @@
 #import "HTMLElement.h"
 #import "HTMLNames.h"
 #import "HTMLParserIdioms.h"
+#import "HTMLTableCellElement.h"
 #import "Image.h"
 #import "JSNode.h"
 #import "NodeFilter.h"
@@ -538,6 +540,15 @@ id <DOMEventTarget> kit(WebCore::EventTarget* eventTarget)
 
 @end
 
+
+@implementation DOMHTMLTableCellElement (WebPrivate)
+
+- (DOMHTMLTableCellElement *)_cellAbove
+{
+    return kit(core(self)->cellAbove());
+}
+
+@end
 
 //------------------------------------------------------------------------------------------
 // DOMNodeFilter

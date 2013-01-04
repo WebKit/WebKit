@@ -56,6 +56,8 @@
 		37A6895F148A9B50005100FA /* SubresourceErrorCrash.mm in Sources */ = {isa = PBXBuildFile; fileRef = 37A6895D148A9B50005100FA /* SubresourceErrorCrash.mm */; };
 		37DC678D140D7C5000ABCCDB /* DOMRangeOfString.mm in Sources */ = {isa = PBXBuildFile; fileRef = 37DC678B140D7C5000ABCCDB /* DOMRangeOfString.mm */; };
 		37DC6791140D7D7600ABCCDB /* DOMRangeOfString.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = 37DC678F140D7D3A00ABCCDB /* DOMRangeOfString.html */; };
+		37E1064C1697681800B78BD0 /* DOMHTMLTableCellElementCellAbove.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = 37E1064B169767F700B78BD0 /* DOMHTMLTableCellElementCellAbove.html */; };
+		37E1064D16976C8500B78BD0 /* DOMHTMLTableCellCellAbove.mm in Sources */ = {isa = PBXBuildFile; fileRef = 37E1064A1697676400B78BD0 /* DOMHTMLTableCellCellAbove.mm */; };
 		440A1D3914A0103A008A66F2 /* KURL.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 440A1D3814A0103A008A66F2 /* KURL.cpp */; };
 		4BB4160216815B2600824238 /* JSWrapperForNodeInWebFrame.mm in Sources */ = {isa = PBXBuildFile; fileRef = 4BB4160116815B2600824238 /* JSWrapperForNodeInWebFrame.mm */; };
 		4BB4160416815F9100824238 /* ElementAtPointInWebFrame.mm in Sources */ = {isa = PBXBuildFile; fileRef = 4BB4160316815F9100824238 /* ElementAtPointInWebFrame.mm */; };
@@ -225,6 +227,7 @@
 				76E182DF154767E600F1FADD /* auto-submitting-form.html in Copy Resources */,
 				26DF5A6315A2A27E003689C2 /* CancelLoadFromResourceLoadDelegate.html in Copy Resources */,
 				5142B2731517C8C800C32B19 /* ContextMenuCanCopyURL.html in Copy Resources */,
+				37E1064C1697681800B78BD0 /* DOMHTMLTableCellElementCellAbove.html in Copy Resources */,
 				9B4F8FA7159D52DD002D9F94 /* HTMLCollectionNamedItem.html in Copy Resources */,
 				9B26FCCA159D16DE00CC3765 /* HTMLFormCollectionNamedItem.html in Copy Resources */,
 				E1220DCA155B28AA0013E2FC /* MemoryCacheDisableWithinResourceLoadDelegate.html in Copy Resources */,
@@ -306,6 +309,8 @@
 		37A6895D148A9B50005100FA /* SubresourceErrorCrash.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = SubresourceErrorCrash.mm; sourceTree = "<group>"; };
 		37DC678B140D7C5000ABCCDB /* DOMRangeOfString.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = DOMRangeOfString.mm; sourceTree = "<group>"; };
 		37DC678F140D7D3A00ABCCDB /* DOMRangeOfString.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = DOMRangeOfString.html; sourceTree = "<group>"; };
+		37E1064A1697676400B78BD0 /* DOMHTMLTableCellCellAbove.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = DOMHTMLTableCellCellAbove.mm; sourceTree = "<group>"; };
+		37E1064B169767F700B78BD0 /* DOMHTMLTableCellElementCellAbove.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = DOMHTMLTableCellElementCellAbove.html; sourceTree = "<group>"; };
 		440A1D3814A0103A008A66F2 /* KURL.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = KURL.cpp; sourceTree = "<group>"; };
 		44A622C114A0E2B60048515B /* WTFStringUtilities.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WTFStringUtilities.h; sourceTree = "<group>"; };
 		4BB4160116815B2600824238 /* JSWrapperForNodeInWebFrame.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = JSWrapperForNodeInWebFrame.mm; sourceTree = "<group>"; };
@@ -759,6 +764,7 @@
 				B55F119F1516834F00915916 /* AttributedString.mm */,
 				26DF5A5D15A29BAA003689C2 /* CancelLoadFromResourceLoadDelegate.mm */,
 				5142B2701517C88B00C32B19 /* ContextMenuCanCopyURL.mm */,
+				37E1064A1697676400B78BD0 /* DOMHTMLTableCellCellAbove.mm */,
 				3751AF7A169518F800764319 /* DOMNodeFromJSObject.mm */,
 				37DC678B140D7C5000ABCCDB /* DOMRangeOfString.mm */,
 				C07E6CAE13FD67650038B22B /* DynamicDeviceScaleFactor.mm */,
@@ -794,6 +800,7 @@
 				379028B814FABE49007E6B43 /* acceptsFirstMouse.html */,
 				26DF5A6115A2A22B003689C2 /* CancelLoadFromResourceLoadDelegate.html */,
 				5142B2721517C89100C32B19 /* ContextMenuCanCopyURL.html */,
+				37E1064B169767F700B78BD0 /* DOMHTMLTableCellElementCellAbove.html */,
 				37DC678F140D7D3A00ABCCDB /* DOMRangeOfString.html */,
 				9B4F8FA6159D52CA002D9F94 /* HTMLCollectionNamedItem.html */,
 				9B26FCB4159D15E700CC3765 /* HTMLFormCollectionNamedItem.html */,
@@ -1046,6 +1053,7 @@
 				4BB4160216815B2600824238 /* JSWrapperForNodeInWebFrame.mm in Sources */,
 				4BB4160416815F9100824238 /* ElementAtPointInWebFrame.mm in Sources */,
 				3751AF7C169518F800764319 /* DOMNodeFromJSObject.mm in Sources */,
+				37E1064D16976C8500B78BD0 /* DOMHTMLTableCellCellAbove.mm in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
