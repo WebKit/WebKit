@@ -39,15 +39,11 @@
 
 namespace WebCore {
 
-V8TestCallback::V8TestCallback(v8::Handle<v8::Object> callback, ScriptExecutionContext* context, v8::Handle<v8::Object> owner)
+V8TestCallback::V8TestCallback(v8::Handle<v8::Object> callback, ScriptExecutionContext* context)
     : ActiveDOMCallback(context)
     , m_callback(callback)
     , m_worldContext(UseCurrentWorld)
 {
-    if (owner.IsEmpty())
-        return;
-    owner->SetHiddenValue(V8HiddenPropertyName::callback(), callback);
-    m_callback.get().MakeWeak(this, &V8TestCallback::weakCallback);
 }
 
 V8TestCallback::~V8TestCallback()

@@ -28,6 +28,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+// FIXME: This interface is only used to generate code for JSC.
+// It should be removed once http://webkit.org/b/93661 is fixed.
 [
     Callback
 ] interface MutationCallback {

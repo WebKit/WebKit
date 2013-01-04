@@ -3252,11 +3252,11 @@ sub GenerateCallbackHeader
 
     push(@headerContent, <<END);
 public:
-    static PassRefPtr<${v8InterfaceName}> create(v8::Handle<v8::Value> value, ScriptExecutionContext* context, v8::Handle<v8::Object> owner = v8::Handle<v8::Object>())
+    static PassRefPtr<${v8InterfaceName}> create(v8::Handle<v8::Value> value, ScriptExecutionContext* context)
     {
         ASSERT(value->IsObject());
         ASSERT(context);
-        return adoptRef(new ${v8InterfaceName}(v8::Handle<v8::Object>::Cast(value), context, owner));
+        return adoptRef(new ${v8InterfaceName}(v8::Handle<v8::Object>::Cast(value), context));
     }
 
     virtual ~${v8InterfaceName}();
@@ -3290,13 +3290,7 @@ END
     virtual ScriptExecutionContext* scriptExecutionContext() const { return ContextDestructionObserver::scriptExecutionContext(); }
 
 private:
-    ${v8InterfaceName}(v8::Handle<v8::Object>, ScriptExecutionContext*, v8::Handle<v8::Object>);
-
-    static void weakCallback(v8::Persistent<v8::Value> wrapper, void* parameter)
-    {
-        ${v8InterfaceName}* object = static_cast<${v8InterfaceName}*>(parameter);
-        object->m_callback.clear();
-    }
+    ${v8InterfaceName}(v8::Handle<v8::Object>, ScriptExecutionContext*);
 
     ScopedPersistent<v8::Object> m_callback;
     WorldContextHandle m_worldContext;
@@ -3328,15 +3322,11 @@ sub GenerateCallbackImplementation
     push(@implContent, "#include <wtf/Assertions.h>\n\n");
     push(@implContent, "namespace WebCore {\n\n");
     push(@implContent, <<END);
-${v8InterfaceName}::${v8InterfaceName}(v8::Handle<v8::Object> callback, ScriptExecutionContext* context, v8::Handle<v8::Object> owner)
+${v8InterfaceName}::${v8InterfaceName}(v8::Handle<v8::Object> callback, ScriptExecutionContext* context)
     : ActiveDOMCallback(context)
     , m_callback(callback)
     , m_worldContext(UseCurrentWorld)
 {
-    if (owner.IsEmpty())
-        return;
-    owner->SetHiddenValue(V8HiddenPropertyName::callback(), callback);
-    m_callback.get().MakeWeak(this, &${v8InterfaceName}::weakCallback);
 }
 
 ${v8InterfaceName}::~${v8InterfaceName}()
