@@ -1,3 +1,24 @@
+2013-01-04  Otto Derek Cheung  <otcheung@rim.com>
+
+        [BlackBerry]  FCC will show up as you type if you tap on the same input bar twice before typing
+        https://bugs.webkit.org/show_bug.cgi?id=106116
+
+        Reviewed by Yong Li.
+        Internal reviewed by Gen Mak.
+        PR 267177
+
+        FCC is being invoked because the fatfinger result is no longer a reliable source
+        to tell whether the caret change is caused by user touch input. Instead, we recognize all
+        notifyCaretChange calls with userTouchInput as true except when caretPositionChanged is invoked
+        by SelectionHandler:inputHandlerDidFinishProcessingChange.
+
+        * WebKitSupport/SelectionHandler.cpp:
+        (BlackBerry::WebKit::SelectionHandler::inputHandlerDidFinishProcessingChange):
+        (BlackBerry::WebKit::SelectionHandler::notifyCaretPositionChangedIfNeeded):
+        (BlackBerry::WebKit::SelectionHandler::caretPositionChanged):
+        * WebKitSupport/SelectionHandler.h:
+        (SelectionHandler):
+
 2013-01-04  Yong Li  <yoli@rim.com>
 
         [BlackBerry] Cached frame shouldn't access the page when being destroyed

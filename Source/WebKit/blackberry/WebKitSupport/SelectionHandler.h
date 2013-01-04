@@ -76,8 +76,8 @@ public:
     void inputHandlerDidFinishProcessingChange();
 
 private:
-    void notifyCaretPositionChangedIfNeeded();
-    void caretPositionChanged();
+    void notifyCaretPositionChangedIfNeeded(bool userTouchTriggered = true);
+    void caretPositionChanged(bool userTouchTriggered);
     void regionForTextQuads(WTF::Vector<WebCore::FloatQuad>&, BlackBerry::Platform::IntRectRegion&, bool shouldClipToVisibleContent = true) const;
     WebCore::IntRect clippingRectForVisibleContent() const;
     bool updateOrHandleInputSelection(WebCore::VisibleSelection& newSelection, const WebCore::IntPoint& relativeStart

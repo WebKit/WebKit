@@ -289,7 +289,7 @@ void SelectionHandler::setCaretPosition(const WebCore::IntPoint& position)
 void SelectionHandler::inputHandlerDidFinishProcessingChange()
 {
     if (m_didSuppressCaretPositionChangedNotification)
-        notifyCaretPositionChangedIfNeeded();
+        notifyCaretPositionChangedIfNeeded(false);
 }
 
 // This function makes sure we are not reducing the selection to a caret selection.
@@ -1001,17 +1001,17 @@ void SelectionHandler::selectionPositionChanged(bool forceUpdateWithoutChange)
 }
 
 
-void SelectionHandler::notifyCaretPositionChangedIfNeeded()
+void SelectionHandler::notifyCaretPositionChangedIfNeeded(bool userTouchTriggered)
 {
     m_didSuppressCaretPositionChangedNotification = false;
 
     if (m_caretActive || (m_webPage->m_inputHandler->isInputMode() && m_webPage->focusedOrMainFrame()->selection()->isCaret())) {
         // This may update the caret to no longer be active.
-        caretPositionChanged();
+        caretPositionChanged(userTouchTriggered);
     }
 }
 
-void SelectionHandler::caretPositionChanged()
+void SelectionHandler::caretPositionChanged(bool userTouchTriggered)
 {
     SelectionLog(Platform::LogLevelInfo, "SelectionHandler::caretPositionChanged");
 
@@ -1020,7 +1020,7 @@ void SelectionHandler::caretPositionChanged()
     if (!m_webPage->m_inputHandler->isInputMode() && m_caretActive) {
         m_caretActive = false;
         // Send an empty caret change to turn off the caret.
-        m_webPage->m_client->notifyCaretChanged(caretLocation, m_webPage->m_touchEventHandler->lastFatFingersResult().isTextInput() /* userTouchTriggered */);
+        m_webPage->m_client->notifyCaretChanged(caretLocation, userTouchTriggered);
         return;
     }
 
@@ -1061,8 +1061,7 @@ void SelectionHandler::caretPositionChanged()
         Platform::IntRect(nodeBoundingBox).toString().c_str(),
         m_webPage->m_inputHandler->elementText().isEmpty() ? ", empty text field" : "");
 
-    m_webPage->m_client->notifyCaretChanged(caretLocation, m_webPage->m_touchEventHandler->lastFatFingersResult().isTextInput() /* userTouchTriggered */,
-        isSingleLineInput, nodeBoundingBox, m_webPage->m_inputHandler->elementText().isEmpty());
+    m_webPage->m_client->notifyCaretChanged(caretLocation, userTouchTriggered, isSingleLineInput, nodeBoundingBox, m_webPage->m_inputHandler->elementText().isEmpty());
 }
 
 bool SelectionHandler::selectionContains(const WebCore::IntPoint& point)
