@@ -184,7 +184,7 @@ void RenderRubyAsInline::addChild(RenderObject* child, RenderObject* beforeChild
     RenderRubyRun* lastRun = lastRubyRun(this);
     if (!lastRun || lastRun->hasRubyText()) {
         lastRun = RenderRubyRun::staticCreateRubyRun(this);
-        RenderInline::addChild(lastRun);
+        RenderInline::addChild(lastRun, beforeChild);
     }
     lastRun->addChild(child);
 }
@@ -291,7 +291,7 @@ void RenderRubyAsBlock::addChild(RenderObject* child, RenderObject* beforeChild)
     RenderRubyRun* lastRun = lastRubyRun(this);
     if (!lastRun || lastRun->hasRubyText()) {
         lastRun = RenderRubyRun::staticCreateRubyRun(this);
-        RenderBlock::addChild(lastRun);
+        RenderBlock::addChild(lastRun, beforeChild);
     }
     lastRun->addChild(child);
 }

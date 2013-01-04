@@ -1,3 +1,13 @@
+2013-01-04  Abhishek Arya  <inferno@chromium.org>
+
+        Crash in WebCore::RenderBlock::willBeDestroyed
+        https://bugs.webkit.org/show_bug.cgi?id=103455
+
+        Reviewed by Eric Seidel.
+
+        * fast/multicol/continuation-crash-expected.txt: Added.
+        * fast/multicol/continuation-crash.html: Added.
+
 2013-01-04  Chris Rogers  <crogers@google.com>
 
         Implement WebIDL-style string constants in WebAudio (part 2)
