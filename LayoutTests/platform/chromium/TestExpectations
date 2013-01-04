@@ -3105,7 +3105,9 @@ webkit.org/b/78159 [ Debug ] platform/chromium/virtual/softwarecompositing/ifram
 fast/js/stack-trace.html [ WontFix ]
 
 webkit.org/b/69210 [ SnowLeopard ] fast/inline/continuation-outlines-with-layers-2.html [ Failure ]
-webkit.org/b/69210 [ Mac ] fast/inline/continuation-outlines-with-layers.html [ Failure ]
+
+webkit.org/b/106064 [ Mac ] fast/inline/continuation-outlines-with-layers.html [ Failure ]
+webkit.org/b/106064 [ Android Win ] fast/inline/continuation-outlines-with-layers.html [ ImageOnlyFailure ]
 
 webkit.org/b/79013 http/tests/workers/terminate-during-sync-operation.html [ Pass Timeout Crash ]
 
@@ -3159,8 +3161,6 @@ webkit.org/b/81145 [ Lion ] fast/writing-mode/japanese-rl-text-with-broken-font.
 webkit.org/b/81537 fast/events/touch/gesture/pad-gesture-fling.html [ Failure Pass ]
 
 webkit.org/b/81638 [ Mac Debug ] editing/selection/iframe.html [ ImageOnlyFailure Pass ]
-
-webkit.org/b/81276 [ Android Win ] fast/inline/continuation-outlines-with-layers.html [ ImageOnlyFailure ]
 
 webkit.org/b/81721 [ Win ] fullscreen/full-screen-restrictions.html [ Pass Timeout ]
 

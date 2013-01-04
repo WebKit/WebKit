@@ -1271,3 +1271,5 @@ webkit.org/b/105986 [ Debug ] transitions/interrupt-transform-transition.html [ 
 
 webkit.org/b/105999 [ Lion ] fast/canvas/canvas-composite-canvas.html [ Failure ]
 webkit.org/b/105999 [ Lion ] fast/canvas/canvas-composite-image.html [ Failure ]
+
+webkit.org/b/106064 fast/inline/continuation-outlines-with-layers.html [ Failure ]

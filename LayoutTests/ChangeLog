@@ -1,3 +1,14 @@
+2013-01-03  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Add a failing test expectation for fast/inline/continuation-outlines-with-layers.html on Mac
+        and associate it with the bug 106064.
+        
+        Also update Chromium test expectations to associate the failure with the bug 106064.
+        They were erroneously associated with resolved bugs.
+
+        * platform/chromium/TestExpectations:
+        * platform/mac/TestExpectations:
+
 2013-01-03  Terry Anderson  <tdanderson@chromium.org>
 
         Unreviewed gardening. Adding cr-linux image baseline for
