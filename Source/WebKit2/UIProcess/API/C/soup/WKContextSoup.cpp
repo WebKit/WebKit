@@ -29,10 +29,13 @@
 #include "WKAPICast.h"
 #include "WebContext.h"
 
+// Supplements
+#include "WebSoupRequestManagerProxy.h"
+
 using namespace WebKit;
 
 WKSoupRequestManagerRef WKContextGetSoupRequestManager(WKContextRef contextRef)
 {
-    return toAPI(toImpl(contextRef)->soupRequestManagerProxy());
+    return toAPI(toImpl(contextRef)->supplement<WebSoupRequestManagerProxy>());
 }
 

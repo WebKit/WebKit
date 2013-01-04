@@ -73,9 +73,6 @@ class WebBatteryManagerProxy;
 #if ENABLE(NETWORK_INFO)
 class WebNetworkInfoManagerProxy;
 #endif
-#if USE(SOUP)
-class WebSoupRequestManagerProxy;
-#endif
 #if ENABLE(NETWORK_PROCESS)
 struct NetworkProcessCreationParameters;
 #endif
@@ -215,9 +212,6 @@ public:
 #endif
 #if ENABLE(NETSCAPE_PLUGIN_API)
     WebPluginSiteDataManager* pluginSiteDataManager() const { return m_pluginSiteDataManager.get(); }
-#endif
-#if USE(SOUP)
-    WebSoupRequestManagerProxy* soupRequestManagerProxy() const { return m_soupRequestManagerProxy.get(); }
 #endif
 
     struct Statistics {
@@ -426,9 +420,6 @@ private:
 #endif
 #if ENABLE(NETSCAPE_PLUGIN_API)
     RefPtr<WebPluginSiteDataManager> m_pluginSiteDataManager;
-#endif
-#if USE(SOUP)
-    RefPtr<WebSoupRequestManagerProxy> m_soupRequestManagerProxy;
 #endif
 
     typedef HashMap<AtomicString, RefPtr<WebContextSupplement> > WebContextSupplementMap;

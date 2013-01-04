@@ -1,3 +1,42 @@
+2013-01-04  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [SOUP] Convert WebSoupRequestManagerProxy to be WebContextSupplement
+        https://bugs.webkit.org/show_bug.cgi?id=106012
+
+        Reviewed by Martin Robinson.
+
+        * UIProcess/API/C/soup/WKContextSoup.cpp:
+        (WKContextGetSoupRequestManager):
+        * UIProcess/API/gtk/WebKitWebContext.cpp:
+        (createDefaultWebContext):
+        * UIProcess/WebContext.cpp:
+        (WebKit::WebContext::WebContext):
+        (WebKit::WebContext::~WebContext):
+        (WebKit::WebContext::disconnectProcess):
+        * UIProcess/WebContext.h:
+        (WebKit):
+        (WebContext):
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::didReceiveURIRequest):
+        * UIProcess/efl/WebContextEfl.cpp:
+        (WebKit::WebContext::platformInitializeWebProcess):
+        * UIProcess/gtk/WebContextGtk.cpp:
+        (WebKit::WebContext::platformInitializeWebProcess):
+        * UIProcess/soup/WebSoupRequestManagerProxy.cpp:
+        (WebKit::WebSoupRequestManagerProxy::supplementName):
+        (WebKit):
+        (WebKit::WebSoupRequestManagerProxy::WebSoupRequestManagerProxy):
+        (WebKit::WebSoupRequestManagerProxy::initializeClient):
+        (WebKit::WebSoupRequestManagerProxy::contextDestroyed):
+        (WebKit::WebSoupRequestManagerProxy::processDidClose):
+        (WebKit::WebSoupRequestManagerProxy::refWebContextSupplement):
+        (WebKit::WebSoupRequestManagerProxy::derefWebContextSupplement):
+        (WebKit::WebSoupRequestManagerProxy::registerURIScheme):
+        (WebKit::WebSoupRequestManagerProxy::didHandleURIRequest):
+        (WebKit::WebSoupRequestManagerProxy::didReceiveURIRequestData):
+        * UIProcess/soup/WebSoupRequestManagerProxy.h:
+        (WebSoupRequestManagerProxy):
+
 2013-01-04  Mikhail Pozdnyakov  <mikhail.pozdnyakov@intel.com>
 
         [EFL][WK2] Remove unneeded EwkViewImpl::informLoadCommitted()

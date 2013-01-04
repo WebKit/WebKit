@@ -172,7 +172,7 @@ static gpointer createDefaultWebContext(gpointer)
     WebKitWebContextPrivate* priv = webContext->priv;
 
     priv->context = WebContext::create(String());
-    priv->requestManager = webContext->priv->context->soupRequestManagerProxy();
+    priv->requestManager = webContext->priv->context->supplement<WebSoupRequestManagerProxy>();
     priv->context->setCacheModel(CacheModelPrimaryWebBrowser);
     priv->tlsErrorsPolicy = WEBKIT_TLS_ERRORS_POLICY_IGNORE;
 
