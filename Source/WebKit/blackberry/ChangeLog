@@ -1,3 +1,21 @@
+2013-01-04  Nima Ghanavatian  <nghanavatian@rim.com>
+
+        [BlackBerry] Allow defaultTabEventHandler to trigger on tab
+        https://bugs.webkit.org/show_bug.cgi?id=106118
+
+        Reviewed by Yong Li.
+
+        In order to support tabbing through input elements, amongst
+        other things, we need to bipass the processing of the tab key as
+        '\t'. This will simply insert 4 spaces in the field. Remove tab
+        support from the key down map so that we don't translate it to
+        an editor command.
+
+        Internally reviewed by Mike Fenton.
+
+        * WebCoreSupport/EditorClientBlackBerry.cpp:
+        (WebCore):
+
 2013-01-04  Mike Fenton  <mifenton@rim.com>
 
         [BlackBerry] Enable Input Focus when handling touch events for JS
