@@ -1,3 +1,13 @@
+2013-01-03  Tim 'mithro' Ansell  <mithro@mithis.com>
+
+        Downloads can be flaky, so try downloading multiple times.
+        https://bugs.webkit.org/show_bug.cgi?id=105976
+
+        Reviewed by Eric Seidel.
+
+        * Scripts/webkitpy/common/system/autoinstall.py:
+        (AutoInstaller._download_to_stream):
+
 2013-01-03  Eric Seidel  <eric@webkit.org>
 
         Rename Tool.port to deprecated_port in preparation for removing more callers

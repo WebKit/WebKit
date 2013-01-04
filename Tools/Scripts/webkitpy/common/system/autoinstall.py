@@ -284,17 +284,27 @@ class AutoInstaller(object):
         return new_path
 
     def _download_to_stream(self, url, stream):
-        try:
-            netstream = urllib.urlopen(url)
-        except IOError, err:
-            # Append existing Error message to new Error.
-            message = ('Could not download Python modules from URL "%s".\n'
-                       " Make sure you are connected to the internet.\n"
-                       " You must be connected to the internet when "
-                       "downloading needed modules for the first time.\n"
-                       " --> Inner message: %s"
-                       % (url, err))
-            raise IOError(message)
+        failures = 0
+        while True:
+            try:
+                netstream = urllib.urlopen(url)
+                break
+            except IOError, err:
+                # Try multiple times
+                if failures < 5:
+                    _log.warning("Failed to download %s, %s retrying" % (
+                        url, err))
+                    failures += 1
+                    continue
+
+                # Append existing Error message to new Error.
+                message = ('Could not download Python modules from URL "%s".\n'
+                           " Make sure you are connected to the internet.\n"
+                           " You must be connected to the internet when "
+                           "downloading needed modules for the first time.\n"
+                           " --> Inner message: %s"
+                           % (url, err))
+                raise IOError(message)
         code = 200
         if hasattr(netstream, "getcode"):
             code = netstream.getcode()
