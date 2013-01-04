@@ -499,13 +499,6 @@ void EwkViewImpl::setImageData(void* imageData, const IntSize& size)
     evas_object_image_data_copy_set(sd->image, imageData);
 }
 
-#if USE(TILED_BACKING_STORE)
-void EwkViewImpl::informLoadCommitted()
-{
-    m_pageClient->didCommitLoad();
-}
-#endif
-
 IntSize EwkViewImpl::size() const
 {
     int width, height;

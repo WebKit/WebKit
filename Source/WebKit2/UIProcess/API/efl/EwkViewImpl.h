@@ -194,9 +194,6 @@ public:
         return EwkViewCallbacks::CallBack<callbackType>(m_view);
     }
 
-#if USE(TILED_BACKING_STORE)
-    void informLoadCommitted();
-#endif
     unsigned long long informDatabaseQuotaReached(const String& databaseName, const String& displayName, unsigned long long currentQuota, unsigned long long currentOriginUsage, unsigned long long currentDatabaseUsage, unsigned long long expectedUsage);
 
 #if USE(TILED_BACKING_STORE)

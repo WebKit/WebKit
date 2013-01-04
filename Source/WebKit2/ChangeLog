@@ -1,3 +1,19 @@
+2013-01-04  Mikhail Pozdnyakov  <mikhail.pozdnyakov@intel.com>
+
+        [EFL][WK2] Remove unneeded EwkViewImpl::informLoadCommitted()
+        https://bugs.webkit.org/show_bug.cgi?id=106010
+
+        Reviewed by Gyuyoung Kim.
+
+        Removed EwkViewImpl::informLoadCommitted() method to simplify the code.
+
+        * UIProcess/API/efl/EwkViewImpl.cpp:
+        * UIProcess/API/efl/EwkViewImpl.h:
+        * UIProcess/efl/PageClientBase.h:
+        (PageClientBase):
+        * UIProcess/efl/PageLoadClientEfl.cpp:
+        (WebKit::PageLoadClientEfl::didCommitLoadForFrame):
+
 2013-01-03  Jon Lee  <jonlee@apple.com>
 
         REGRESSION(r138729): crash and assertion failures in WebKit::WebProcess::plugInDidReceiveUserInteraction

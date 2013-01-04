@@ -27,6 +27,7 @@
 #include "PageLoadClientEfl.h"
 
 #include "EwkViewImpl.h"
+#include "PageClientBase.h"
 #include "WKAPICast.h"
 #include "WKFrame.h"
 #include "WKPage.h"
@@ -137,7 +138,7 @@ void PageLoadClientEfl::didCommitLoadForFrame(WKPageRef, WKFrameRef frame, WKTyp
         return;
 
     EwkViewImpl* viewImpl = toPageLoadClientEfl(clientInfo)->viewImpl();
-    viewImpl->informLoadCommitted();
+    viewImpl->pageClient()->didCommitLoad();
 }
 #endif
 
