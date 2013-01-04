@@ -51,7 +51,6 @@
             'chromium/public/WebCookie.h',
             'chromium/public/WebCookieJar.h',
             'chromium/public/WebData.h',
-            'chromium/public/WebDelegatedRendererLayer.h',
             'chromium/public/WebDragData.h',
             'chromium/public/WebExternalTextureLayer.h',
             'chromium/public/WebExternalTextureLayerClient.h',
