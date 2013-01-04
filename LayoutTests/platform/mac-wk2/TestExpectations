@@ -296,12 +296,6 @@ webkit.org/b/105998 [ MountainLion Debug ] fast/css/sticky/sticky-both-sides.htm
 
 webkit.org/b/93552 inspector/device-orientation-success.html [ Failure ]
 
-webkit.org/b/106042 fast/replaced/no-focus-ring-object.html [ Crash ]
-webkit.org/b/106042 fast/replaced/no-focus-ring-embed.html [ Crash ]
-webkit.org/b/106042 platform/mac-wk2/plugins/mouse-events-scaled-iframe.html [ Crash ]
-webkit.org/b/106042 plugins/change-widget-and-click-crash.html [ Crash ]
-webkit.org/b/106042 plugins/resize-from-plugin.html [ Crash ]
-
 ### END OF (1) Classified failures with bug reports
 ########################################
 

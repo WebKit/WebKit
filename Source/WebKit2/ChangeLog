@@ -1,3 +1,19 @@
+2013-01-03  Jon Lee  <jonlee@apple.com>
+
+        REGRESSION(r138729): crash and assertion failures in WebKit::WebProcess::plugInDidReceiveUserInteraction
+        https://bugs.webkit.org/show_bug.cgi?id=106042
+        <rdar://problem/12953469>
+
+        Reviewed by Brady Eidson.
+
+        The assertion is hit if plugin snapshotting is disabled, and the user interacts with a plug-in that
+        comes from an origin not found in the cached dictionary. The proper fix is to check for whether the
+        setting is enabled. Otherwise, that origin should be in the dictionary since the plugin is running.
+
+        * WebProcess/Plugins/PluginView.cpp:
+        (WebKit::PluginView::pluginDidReceiveUserInteraction): Check for the setting, and avoid the whole code
+        path if snapshotting is disabled.
+
 2013-01-03  Roger Fong  <roger_fong@apple.com>
 
         Remove all traces of Windows from WebKit2 folder.

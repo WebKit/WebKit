@@ -1609,6 +1609,9 @@ bool PluginView::shouldAlwaysAutoStart() const
 
 void PluginView::pluginDidReceiveUserInteraction()
 {
+    if (frame() && !frame()->settings()->plugInSnapshottingEnabled())
+        return;
+
     if (m_didReceiveUserInteraction)
         return;
 

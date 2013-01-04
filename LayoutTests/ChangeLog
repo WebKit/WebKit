@@ -1,3 +1,13 @@
+2013-01-03  Jon Lee  <jonlee@apple.com>
+
+        REGRESSION(r138729): crash and assertion failures in WebKit::WebProcess::plugInDidReceiveUserInteraction
+        https://bugs.webkit.org/show_bug.cgi?id=106042
+        <rdar://problem/12953469>
+
+        Reviewed by Brady Eidson.
+
+        * platform/mac-wk2/TestExpectations: Unskip the crashing tests.
+
 2013-01-03  Ryosuke Niwa  <rniwa@webkit.org>
 
         Add a failing test expectation for fast/inline/continuation-outlines-with-layers.html on Mac
