@@ -1,3 +1,12 @@
+2013-01-04  Terry Anderson  <tdanderson@chromium.org>
+
+        Unreviewed gardening. New image baselines for test
+        fast/regions/full-screen-video-from-region.html
+
+        * platform/chromium-mac-snowleopard/fast/regions/full-screen-video-from-region-expected.png: Added.
+        * platform/chromium-mac/fast/regions/full-screen-video-from-region-expected.png:
+        * platform/chromium-win-xp/fast/regions/full-screen-video-from-region-expected.png: Added.
+
 2013-01-04  Zan Dobersek  <zandobersek@gmail.com>
 
         Unreviewed GTK gardening.
