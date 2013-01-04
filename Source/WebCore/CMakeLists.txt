@@ -2760,6 +2760,7 @@ set(WebCoreTestSupport_IDL_FILES
     testing/Internals.idl
     testing/InternalSettings.idl
     testing/MallocStatistics.idl
+    testing/TypeConversions.idl
 )
 
 set(WebCoreTestSupport_SOURCES

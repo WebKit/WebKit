@@ -55,6 +55,7 @@ class ShadowRoot;
 class WebKitPoint;
 class MallocStatistics;
 class SerializedScriptValue;
+class TypeConversions;
 
 typedef int ExceptionCode;
 
@@ -256,6 +257,7 @@ public:
     void removeURLSchemeRegisteredAsBypassingContentSecurityPolicy(const String& scheme);
 
     PassRefPtr<MallocStatistics> mallocStatistics() const;
+    PassRefPtr<TypeConversions> typeConversions() const;
 
     PassRefPtr<DOMStringList> getReferencedFilePaths() const;
 

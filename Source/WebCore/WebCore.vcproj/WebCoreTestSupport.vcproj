@@ -696,6 +696,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\testing\TypeConversions.h"
+				>
+			</File>
+			<File
 				RelativePath="..\testing\Internals.cpp"
 				>
 				<FileConfiguration

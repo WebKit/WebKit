@@ -220,6 +220,7 @@
     void removeURLSchemeRegisteredAsBypassingContentSecurityPolicy(in DOMString scheme);
 
     MallocStatistics mallocStatistics();
+    TypeConversions typeConversions();
 
     DOMString[] getReferencedFilePaths();
 

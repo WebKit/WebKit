@@ -5063,6 +5063,7 @@
           'testing/Internals.idl',
           'testing/InternalSettings.idl',
           'testing/MallocStatistics.idl',
+          'testing/TypeConversions.idl',
           '<(SHARED_INTERMEDIATE_DIR)/webkit/InternalSettingsGenerated.idl',
         ],
         'webcore_test_support_files': [
@@ -5079,6 +5080,7 @@
             'testing/MallocStatistics.h',
             'testing/MockPagePopupDriver.cpp',
             'testing/MockPagePopupDriver.h',
+            'testing/TypeConversions.h',
             '<(SHARED_INTERMEDIATE_DIR)/webkit/InternalSettingsGenerated.cpp',
             '<(SHARED_INTERMEDIATE_DIR)/webkit/InternalSettingsGenerated.h',
         ],

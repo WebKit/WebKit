@@ -1,0 +1,279 @@
+Exercise WebIDL type conversions.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+converter = window.internals.typeConversions()
+
+PASS 'testLong' in converter is true
+PASS typeof converter.testLong === 'number' is true
+converter.testLong = 0
+PASS converter.testLong is 0
+converter.testLong = -1
+PASS converter.testLong is -1
+converter.testLong = 1
+PASS converter.testLong is 1
+converter.testLong = 0x7F
+PASS converter.testLong is 0x7F
+converter.testLong = 0x80
+PASS converter.testLong is 0x80
+converter.testLong = 0xFF
+PASS converter.testLong is 0xFF
+converter.testLong = -0x80
+PASS converter.testLong is -0x80
+converter.testLong = -0x81
+PASS converter.testLong is -0x81
+converter.testLong = 0x7FFF
+PASS converter.testLong is 0x7FFF
+converter.testLong = 0x8000
+PASS converter.testLong is 0x8000
+converter.testLong = 0xFFFF
+PASS converter.testLong is 0xFFFF
+converter.testLong = -0x8000
+PASS converter.testLong is -0x8000
+converter.testLong = -0x8001
+PASS converter.testLong is -0x8001
+converter.testLong = 0x7FFFFFFF
+PASS converter.testLong is 0x7FFFFFFF
+converter.testLong = 0x80000000
+PASS converter.testLong is -0x80000000
+converter.testLong = 0xFFFFFFFF
+PASS converter.testLong is -1
+converter.testLong = -0x80000000
+PASS converter.testLong is -0x80000000
+converter.testLong = -0x80000001
+PASS converter.testLong is 0x7FFFFFFF
+converter.testLong = 0xDCBA9876543210
+PASS converter.testLong is 0x76543210
+converter.testLong = Number.MAX_VALUE
+PASS converter.testLong is 0
+converter.testLong = Number.MIN_VALUE
+PASS converter.testLong is 0
+converter.testLong = -Number.MAX_VALUE
+PASS converter.testLong is 0
+converter.testLong = -Number.MIN_VALUE
+PASS converter.testLong is 0
+converter.testLong = 1.99
+PASS converter.testLong is 1
+converter.testLong = -1.99
+PASS converter.testLong is -1
+converter.testLong = Infinity
+PASS converter.testLong is 0
+converter.testLong = -Infinity
+PASS converter.testLong is 0
+converter.testLong = NaN
+PASS converter.testLong is 0
+converter.testLong = false
+PASS converter.testLong is 0
+converter.testLong = true
+PASS converter.testLong is 1
+converter.testLong = ''
+PASS converter.testLong is 0
+converter.testLong = 'abc'
+PASS converter.testLong is 0
+converter.testLong = null
+PASS converter.testLong is 0
+converter.testLong = undefined
+PASS converter.testLong is 0
+PASS converter.testLong = {valueOf:function(){throw new Error;}} threw exception Error.
+
+PASS 'testUnsignedLong' in converter is true
+PASS typeof converter.testUnsignedLong === 'number' is true
+converter.testUnsignedLong = 0
+PASS converter.testUnsignedLong is 0
+converter.testUnsignedLong = -1
+PASS converter.testUnsignedLong is 0xFFFFFFFF
+converter.testUnsignedLong = 1
+PASS converter.testUnsignedLong is 1
+converter.testUnsignedLong = 0x7F
+PASS converter.testUnsignedLong is 0x7F
+converter.testUnsignedLong = 0x80
+PASS converter.testUnsignedLong is 0x80
+converter.testUnsignedLong = 0xFF
+PASS converter.testUnsignedLong is 0xFF
+converter.testUnsignedLong = -0x80
+PASS converter.testUnsignedLong is 0xFFFFFF80
+converter.testUnsignedLong = -0x81
+PASS converter.testUnsignedLong is 0xFFFFFF7F
+converter.testUnsignedLong = 0x7FFF
+PASS converter.testUnsignedLong is 0x7FFF
+converter.testUnsignedLong = 0x8000
+PASS converter.testUnsignedLong is 0x8000
+converter.testUnsignedLong = 0xFFFF
+PASS converter.testUnsignedLong is 0xFFFF
+converter.testUnsignedLong = -0x8000
+PASS converter.testUnsignedLong is 0xFFFF8000
+converter.testUnsignedLong = -0x8001
+PASS converter.testUnsignedLong is 0xFFFF7FFF
+converter.testUnsignedLong = 0x7FFFFFFF
+PASS converter.testUnsignedLong is 0x7FFFFFFF
+converter.testUnsignedLong = 0x80000000
+PASS converter.testUnsignedLong is 0x80000000
+converter.testUnsignedLong = 0xFFFFFFFF
+PASS converter.testUnsignedLong is 0xFFFFFFFF
+converter.testUnsignedLong = -0x80000000
+PASS converter.testUnsignedLong is 0x80000000
+converter.testUnsignedLong = -0x80000001
+PASS converter.testUnsignedLong is 0x7FFFFFFF
+converter.testUnsignedLong = 0xDCBA9876543210
+PASS converter.testUnsignedLong is 0x76543210
+converter.testUnsignedLong = Number.MAX_VALUE
+PASS converter.testUnsignedLong is 0
+converter.testUnsignedLong = Number.MIN_VALUE
+PASS converter.testUnsignedLong is 0
+converter.testUnsignedLong = -Number.MAX_VALUE
+PASS converter.testUnsignedLong is 0
+converter.testUnsignedLong = -Number.MIN_VALUE
+PASS converter.testUnsignedLong is 0
+converter.testUnsignedLong = 1.99
+PASS converter.testUnsignedLong is 1
+converter.testUnsignedLong = -1.99
+PASS converter.testUnsignedLong is 0xFFFFFFFF
+converter.testUnsignedLong = Infinity
+PASS converter.testUnsignedLong is 0
+converter.testUnsignedLong = -Infinity
+PASS converter.testUnsignedLong is 0
+converter.testUnsignedLong = NaN
+PASS converter.testUnsignedLong is 0
+converter.testUnsignedLong = false
+PASS converter.testUnsignedLong is 0
+converter.testUnsignedLong = true
+PASS converter.testUnsignedLong is 1
+converter.testUnsignedLong = ''
+PASS converter.testUnsignedLong is 0
+converter.testUnsignedLong = 'abc'
+PASS converter.testUnsignedLong is 0
+converter.testUnsignedLong = null
+PASS converter.testUnsignedLong is 0
+converter.testUnsignedLong = undefined
+PASS converter.testUnsignedLong is 0
+PASS converter.testUnsignedLong = {valueOf:function(){throw new Error;}} threw exception Error.
+
+PASS 'testLongLong' in converter is true
+PASS typeof converter.testLongLong === 'number' is true
+converter.testLongLong = 0
+PASS converter.testLongLong is 0
+converter.testLongLong = -1
+PASS converter.testLongLong is -1
+converter.testLongLong = 1
+PASS converter.testLongLong is 1
+converter.testLongLong = 0x7F
+PASS converter.testLongLong is 0x7F
+converter.testLongLong = 0x80
+PASS converter.testLongLong is 0x80
+converter.testLongLong = 0xFF
+PASS converter.testLongLong is 0xFF
+converter.testLongLong = -0x80
+PASS converter.testLongLong is -0x80
+converter.testLongLong = -0x81
+PASS converter.testLongLong is -0x81
+converter.testLongLong = 0x7FFF
+PASS converter.testLongLong is 0x7FFF
+converter.testLongLong = 0x8000
+PASS converter.testLongLong is 0x8000
+converter.testLongLong = 0xFFFF
+PASS converter.testLongLong is 0xFFFF
+converter.testLongLong = -0x8000
+PASS converter.testLongLong is -0x8000
+converter.testLongLong = -0x8001
+PASS converter.testLongLong is -0x8001
+converter.testLongLong = 0x7FFFFFFF
+PASS converter.testLongLong is 0x7FFFFFFF
+converter.testLongLong = 0x80000000
+PASS converter.testLongLong is 0x80000000
+converter.testLongLong = 0xFFFFFFFF
+PASS converter.testLongLong is 0xFFFFFFFF
+converter.testLongLong = -0x80000000
+PASS converter.testLongLong is -0x80000000
+converter.testLongLong = -0x80000001
+PASS converter.testLongLong is -0x80000001
+converter.testLongLong = 0xDCBA9876543210
+PASS converter.testLongLong is 0xDCBA9876543210
+converter.testLongLong = Number.MIN_VALUE
+PASS converter.testLongLong is 0
+converter.testLongLong = -Number.MIN_VALUE
+PASS converter.testLongLong is 0
+converter.testLongLong = 1.99
+PASS converter.testLongLong is 1
+converter.testLongLong = -1.99
+PASS converter.testLongLong is -1
+converter.testLongLong = false
+PASS converter.testLongLong is 0
+converter.testLongLong = true
+PASS converter.testLongLong is 1
+converter.testLongLong = ''
+PASS converter.testLongLong is 0
+converter.testLongLong = 'abc'
+PASS converter.testLongLong is 0
+converter.testLongLong = null
+PASS converter.testLongLong is 0
+converter.testLongLong = undefined
+PASS converter.testLongLong is 0
+PASS converter.testLongLong = {valueOf:function(){throw new Error;}} threw exception Error.
+
+PASS 'testUnsignedLongLong' in converter is true
+PASS typeof converter.testUnsignedLongLong === 'number' is true
+converter.testUnsignedLongLong = 0
+PASS converter.testUnsignedLongLong is 0
+converter.testUnsignedLongLong = -1
+PASS converter.testUnsignedLongLong is 0xFFFFFFFFFFFFFFFF
+converter.testUnsignedLongLong = 1
+PASS converter.testUnsignedLongLong is 1
+converter.testUnsignedLongLong = 0x7F
+PASS converter.testUnsignedLongLong is 0x7F
+converter.testUnsignedLongLong = 0x80
+PASS converter.testUnsignedLongLong is 0x80
+converter.testUnsignedLongLong = 0xFF
+PASS converter.testUnsignedLongLong is 0xFF
+converter.testUnsignedLongLong = -0x80
+PASS converter.testUnsignedLongLong is 0xFFFFFFFFFFFFFF80
+converter.testUnsignedLongLong = -0x81
+PASS converter.testUnsignedLongLong is 0xFFFFFFFFFFFFFF7F
+converter.testUnsignedLongLong = 0x7FFF
+PASS converter.testUnsignedLongLong is 0x7FFF
+converter.testUnsignedLongLong = 0x8000
+PASS converter.testUnsignedLongLong is 0x8000
+converter.testUnsignedLongLong = 0xFFFF
+PASS converter.testUnsignedLongLong is 0xFFFF
+converter.testUnsignedLongLong = -0x8000
+PASS converter.testUnsignedLongLong is 0xFFFFFFFFFFFF8000
+converter.testUnsignedLongLong = -0x8001
+PASS converter.testUnsignedLongLong is 0xFFFFFFFFFFFF7FFF
+converter.testUnsignedLongLong = 0x7FFFFFFF
+PASS converter.testUnsignedLongLong is 0x7FFFFFFF
+converter.testUnsignedLongLong = 0x80000000
+PASS converter.testUnsignedLongLong is 0x80000000
+converter.testUnsignedLongLong = 0xFFFFFFFF
+PASS converter.testUnsignedLongLong is 0xFFFFFFFF
+converter.testUnsignedLongLong = -0x80000000
+PASS converter.testUnsignedLongLong is 0xFFFFFFFF80000000
+converter.testUnsignedLongLong = -0x80000001
+PASS converter.testUnsignedLongLong is 0xFFFFFFFF7FFFFFFF
+converter.testUnsignedLongLong = 0xDCBA9876543210
+PASS converter.testUnsignedLongLong is 0xDCBA9876543210
+converter.testUnsignedLongLong = Number.MIN_VALUE
+PASS converter.testUnsignedLongLong is 0
+converter.testUnsignedLongLong = -Number.MIN_VALUE
+PASS converter.testUnsignedLongLong is 0
+converter.testUnsignedLongLong = 1.99
+PASS converter.testUnsignedLongLong is 1
+converter.testUnsignedLongLong = -1.99
+PASS converter.testUnsignedLongLong is 0xFFFFFFFFFFFFFFFF
+converter.testUnsignedLongLong = false
+PASS converter.testUnsignedLongLong is 0
+converter.testUnsignedLongLong = true
+PASS converter.testUnsignedLongLong is 1
+converter.testUnsignedLongLong = ''
+PASS converter.testUnsignedLongLong is 0
+converter.testUnsignedLongLong = 'abc'
+PASS converter.testUnsignedLongLong is 0
+converter.testUnsignedLongLong = null
+PASS converter.testUnsignedLongLong is 0
+converter.testUnsignedLongLong = undefined
+PASS converter.testUnsignedLongLong is 0
+PASS converter.testUnsignedLongLong = {valueOf:function(){throw new Error;}} threw exception Error.
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

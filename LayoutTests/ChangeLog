@@ -1,3 +1,16 @@
+2013-01-04  Joshua Bell  <jsbell@chromium.org>
+
+        Add tests for WebIDL type conversions
+        https://bugs.webkit.org/show_bug.cgi?id=105927
+
+        Reviewed by Adam Barth.
+
+        This currently fails long long conversions of non-finites (which should map to 0). Patch
+        in progress at: http://wkbug.com/96798
+
+        * fast/js/webidl-type-mapping-expected.txt: Added.
+        * fast/js/webidl-type-mapping.html: Added.
+
 2013-01-04  Stephen White  <senorblanco@chromium.org>
 
         Invalidation of some SVG filter attributes on HTML content doesn't work 

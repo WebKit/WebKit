@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<script src="resources/js-test-pre.js"></script>
+<script>
+description("Exercise WebIDL type conversions.");
+
+quiet = true;
+evalAndLog("converter = window.internals.typeConversions()");
+debug("");
+
+function verifyAttribute(attribute)
+{
+    shouldBeTrue("'" + attribute + "' in converter", quiet);
+    shouldBeTrue("typeof converter." + attribute + " === 'number'", quiet);
+    evalAndLog("converter." + attribute + " = 123", quiet);
+    shouldBe("converter." + attribute, "123", quiet);
+    evalAndLog("converter." + attribute + " = 0", quiet);
+    shouldBe("converter." + attribute, "0", quiet);
+}
+
+function convert(attribute, value, expected)
+{
+    if (arguments.length < 3) {
+        expected = value;
+    }
+    evalAndLog("converter." + attribute + " = " + value);
+    shouldBe("converter." + attribute, expected);
+}
+
+function convertThrows(attribute, value)
+{
+    shouldThrow("converter." + attribute + " = " + value);
+}
+
+function testNonNumericToNumeric(attribute)
+{
+    convert(attribute, "false", "0");
+    convert(attribute, "true", "1");
+    convert(attribute, "''", "0");
+    convert(attribute, "'abc'", "0");
+    convert(attribute, "null", "0");
+    convert(attribute, "undefined", "0");
+}
+
+type = "testLong";
+verifyAttribute(type);
+convert(type, "0");
+convert(type, "-1");
+convert(type, "1");
+convert(type, "0x7F");
+convert(type, "0x80");
+convert(type, "0xFF");
+convert(type, "-0x80");
+convert(type, "-0x81");
+convert(type, "0x7FFF");
+convert(type, "0x8000");
+convert(type, "0xFFFF");
+convert(type, "-0x8000");
+convert(type, "-0x8001");
+convert(type, "0x7FFFFFFF");
+convert(type, "0x80000000", "-0x80000000");
+convert(type, "0xFFFFFFFF", "-1");
+convert(type, "-0x80000000");
+convert(type, "-0x80000001", "0x7FFFFFFF");
+convert(type, "0xDCBA9876543210", "0x76543210");
+convert(type, "Number.MAX_VALUE", "0");
+convert(type, "Number.MIN_VALUE", "0");
+convert(type, "-Number.MAX_VALUE", "0");
+convert(type, "-Number.MIN_VALUE", "0");
+convert(type, "1.99", "1");
+convert(type, "-1.99", "-1");
+convert(type, "Infinity", "0");
+convert(type, "-Infinity", "0");
+convert(type, "NaN", "0");
+testNonNumericToNumeric(type);
+convertThrows(type, "{valueOf:function(){throw new Error;}}");
+debug("");
+
+type = "testUnsignedLong";
+verifyAttribute(type);
+convert(type, "0");
+convert(type, "-1", "0xFFFFFFFF");
+convert(type, "1");
+convert(type, "0x7F");
+convert(type, "0x80");
+convert(type, "0xFF");
+convert(type, "-0x80", "0xFFFFFF80");
+convert(type, "-0x81", "0xFFFFFF7F");
+convert(type, "0x7FFF");
+convert(type, "0x8000");
+convert(type, "0xFFFF");
+convert(type, "-0x8000", "0xFFFF8000");
+convert(type, "-0x8001", "0xFFFF7FFF");
+convert(type, "0x7FFFFFFF");
+convert(type, "0x80000000");
+convert(type, "0xFFFFFFFF");
+convert(type, "-0x80000000", "0x80000000");
+convert(type, "-0x80000001", "0x7FFFFFFF");
+convert(type, "0xDCBA9876543210", "0x76543210");
+convert(type, "Number.MAX_VALUE", "0");
+convert(type, "Number.MIN_VALUE", "0");
+convert(type, "-Number.MAX_VALUE", "0");
+convert(type, "-Number.MIN_VALUE", "0");
+convert(type, "1.99", "1");
+convert(type, "-1.99", "0xFFFFFFFF");
+convert(type, "Infinity", "0");
+convert(type, "-Infinity", "0");
+convert(type, "NaN", "0");
+testNonNumericToNumeric(type);
+convertThrows(type, "{valueOf:function(){throw new Error;}}");
+debug("");
+
+type = "testLongLong";
+verifyAttribute(type);
+convert(type, "0");
+convert(type, "-1");
+convert(type, "1");
+convert(type, "0x7F");
+convert(type, "0x80");
+convert(type, "0xFF");
+convert(type, "-0x80");
+convert(type, "-0x81");
+convert(type, "0x7FFF");
+convert(type, "0x8000");
+convert(type, "0xFFFF");
+convert(type, "-0x8000");
+convert(type, "-0x8001");
+convert(type, "0x7FFFFFFF");
+convert(type, "0x80000000");
+convert(type, "0xFFFFFFFF");
+convert(type, "-0x80000000");
+convert(type, "-0x80000001");
+convert(type, "0xDCBA9876543210");
+convert(type, "Number.MIN_VALUE", "0");
+convert(type, "-Number.MIN_VALUE", "0");
+// FIXME: Inconsistent results between V8 and JSC.
+//convert(type, "Number.MAX_VALUE", "0");
+//convert(type, "-Number.MAX_VALUE", "0");
+convert(type, "1.99", "1");
+convert(type, "-1.99", "-1");
+// FIXME: Inconsistent results between V8 and JSC.
+//convert(type, "Infinity", "0");
+//convert(type, "-Infinity", "0");
+//convert(type, "NaN", "0");
+testNonNumericToNumeric(type);
+convertThrows(type, "{valueOf:function(){throw new Error;}}");
+debug("");
+
+type = "testUnsignedLongLong";
+verifyAttribute(type);
+convert(type, "0");
+convert(type, "-1", "0xFFFFFFFFFFFFFFFF");
+convert(type, "1");
+convert(type, "0x7F");
+convert(type, "0x80");
+convert(type, "0xFF");
+convert(type, "-0x80", "0xFFFFFFFFFFFFFF80");
+convert(type, "-0x81", "0xFFFFFFFFFFFFFF7F");
+convert(type, "0x7FFF");
+convert(type, "0x8000");
+convert(type, "0xFFFF");
+convert(type, "-0x8000", "0xFFFFFFFFFFFF8000");
+convert(type, "-0x8001", "0xFFFFFFFFFFFF7FFF");
+convert(type, "0x7FFFFFFF");
+convert(type, "0x80000000");
+convert(type, "0xFFFFFFFF");
+convert(type, "-0x80000000", "0xFFFFFFFF80000000");
+convert(type, "-0x80000001", "0xFFFFFFFF7FFFFFFF");
+convert(type, "0xDCBA9876543210");
+convert(type, "Number.MIN_VALUE", "0");
+convert(type, "-Number.MIN_VALUE", "0");
+// FIXME: Inconsistent results between V8 and JSC.
+//convert(type, "Number.MAX_VALUE", "0");
+//convert(type, "-Number.MAX_VALUE", "0");
+convert(type, "1.99", "1");
+convert(type, "-1.99", "0xFFFFFFFFFFFFFFFF");
+// FIXME: Inconsistent results between V8 and JSC.
+//convert(type, "Infinity", "0");
+//convert(type, "-Infinity", "0");
+//convert(type, "NaN", "0");
+testNonNumericToNumeric(type);
+convertThrows(type, "{valueOf:function(){throw new Error;}}");
+debug("");
+
+</script>
+<script src="resources/js-test-post.js"></script>

@@ -83,6 +83,7 @@
 #include "StyleSheetContents.h"
 #include "TextIterator.h"
 #include "TreeScope.h"
+#include "TypeConversions.h"
 #include "ViewportArguments.h"
 #include <wtf/text/StringBuffer.h>
 
@@ -1701,6 +1702,11 @@ void Internals::removeURLSchemeRegisteredAsBypassingContentSecurityPolicy(const 
 PassRefPtr<MallocStatistics> Internals::mallocStatistics() const
 {
     return MallocStatistics::create();
+}
+
+PassRefPtr<TypeConversions> Internals::typeConversions() const
+{
+    return TypeConversions::create();
 }
 
 PassRefPtr<DOMStringList> Internals::getReferencedFilePaths() const
