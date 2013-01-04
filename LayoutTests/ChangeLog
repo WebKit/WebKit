@@ -1,3 +1,20 @@
+2013-01-04  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Add Mac baselines for subpixel tests added in r125794, r137945, and r138200.
+        https://bugs.webkit.org/show_bug.cgi?id=106070
+
+        Reviewed by Emil A Eklund.
+
+        Added baselines.
+
+        * platform/mac/fast/sub-pixel: Added.
+        * platform/mac/fast/sub-pixel/sub-pixel-accumulates-to-layers-expected.png: Added.
+        * platform/mac/fast/sub-pixel/sub-pixel-accumulates-to-layers-expected.txt: Added.
+        * platform/mac/fast/sub-pixel/sub-pixel-iframe-copy-on-scroll-expected.png: Added.
+        * platform/mac/fast/sub-pixel/sub-pixel-iframe-copy-on-scroll-expected.txt: Added.
+        * platform/mac/fast/sub-pixel/transformed-iframe-copy-on-scroll-expected.png: Added.
+        * platform/mac/fast/sub-pixel/transformed-iframe-copy-on-scroll-expected.txt: Added.
+
 2013-01-04  Stephen White  <senorblanco@chromium.org>
 
         CSS url() filters with forward references don't work
