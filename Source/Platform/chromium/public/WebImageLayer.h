@@ -34,8 +34,6 @@ namespace WebKit {
 
 class WebImageLayer {
 public:
-    WEBKIT_EXPORT static WebImageLayer* create();
-
     virtual ~WebImageLayer() { }
 
     virtual WebLayer* layer() = 0;

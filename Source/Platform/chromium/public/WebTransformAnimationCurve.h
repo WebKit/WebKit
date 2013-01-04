@@ -36,8 +36,6 @@ namespace WebKit {
 // A keyframed transform animation curve.
 class WebTransformAnimationCurve : public WebAnimationCurve {
 public:
-    WEBKIT_EXPORT static WebTransformAnimationCurve* create();
-
     virtual ~WebTransformAnimationCurve() { }
 
     // Adds the keyframe with the default timing function (ease).

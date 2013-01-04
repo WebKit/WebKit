@@ -34,9 +34,6 @@ class WebContentLayerClient;
 
 class WebContentLayer {
 public:
-    // The client must outlive the WebContentLayer.
-    WEBKIT_EXPORT static WebContentLayer* create(WebContentLayerClient*);
-
     virtual ~WebContentLayer() { }
 
     // The WebContentLayer has ownership of this wrapper.

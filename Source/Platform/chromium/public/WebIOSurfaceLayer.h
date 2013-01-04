@@ -35,8 +35,6 @@ namespace WebKit {
 // This class represents a layer that renders an externally managed IOSurface.
 class WebIOSurfaceLayer {
 public:
-    WEBKIT_EXPORT static WebIOSurfaceLayer* create();
-
     virtual ~WebIOSurfaceLayer() { }
 
     virtual WebLayer* layer() = 0;

@@ -1,5 +1,25 @@
 2013-01-04  James Robinson  <jamesr@chromium.org>
 
+        [chromium] Remove static create functions from types WebCompositorSupport can construct
+        https://bugs.webkit.org/show_bug.cgi?id=99877
+
+        Reviewed by Adrienne Walker.
+
+        * chromium/public/WebAnimation.h:
+        * chromium/public/WebContentLayer.h:
+        * chromium/public/WebExternalTextureLayer.h:
+        * chromium/public/WebFloatAnimationCurve.h:
+        * chromium/public/WebIOSurfaceLayer.h:
+        * chromium/public/WebImageLayer.h:
+        * chromium/public/WebLayer.h:
+        * chromium/public/WebLayerTreeView.h:
+        * chromium/public/WebScrollbarLayer.h:
+        * chromium/public/WebSolidColorLayer.h:
+        * chromium/public/WebTransformAnimationCurve.h:
+        * chromium/public/WebVideoLayer.h:
+
+2013-01-04  James Robinson  <jamesr@chromium.org>
+
         [chromium] WebTransformationMatrix shouldn't alias memory for TransformationMatrix
         https://bugs.webkit.org/show_bug.cgi?id=106025
 

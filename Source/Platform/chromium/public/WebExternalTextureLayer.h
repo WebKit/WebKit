@@ -42,13 +42,6 @@ class WebExternalTextureLayerClient;
 // the WebLayerTreeView is destroyed.
 class WebExternalTextureLayer {
 public:
-    // The owner of this layer may optionally provide a client. This client will
-    // be called whenever the compositor wishes to produce a new frame and can
-    // provide a new front buffer texture ID. This is useful if the client wants to
-    // implement a double-buffering scheme that is synchronized with the compositor, for instance.
-    // The client must outlive the WebExternalTextureLayer.
-    WEBKIT_EXPORT static WebExternalTextureLayer* create(WebExternalTextureLayerClient* = 0);
-
     virtual ~WebExternalTextureLayer() { }
 
     virtual WebLayer* layer() = 0;

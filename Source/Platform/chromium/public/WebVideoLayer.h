@@ -35,8 +35,6 @@ class WebVideoFrameProvider;
 
 class WebVideoLayer {
 public:
-    WEBKIT_EXPORT static WebVideoLayer* create(WebVideoFrameProvider*);
-
     virtual ~WebVideoLayer() { }
 
     virtual WebLayer* layer() = 0;

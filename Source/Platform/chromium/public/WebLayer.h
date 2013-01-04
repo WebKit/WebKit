@@ -51,8 +51,6 @@ class WebLayerImpl;
 
 class WebLayer {
 public:
-    WEBKIT_EXPORT static WebLayer* create();
-
     virtual ~WebLayer() { }
 
     // Returns a positive ID that will be unique across all WebLayers allocated in this process.

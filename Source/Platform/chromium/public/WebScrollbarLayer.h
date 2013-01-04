@@ -38,9 +38,6 @@ namespace WebKit {
 
 class WebScrollbarLayer {
 public:
-    // This takes ownership of the provided WebScrollbar and WebScrollbarThemeGeometry.
-    WEBKIT_EXPORT static WebScrollbarLayer* create(WebScrollbar*, WebScrollbarThemePainter, WebScrollbarThemeGeometry*);
-
     virtual ~WebScrollbarLayer() { }
 
     virtual WebLayer* layer() = 0;

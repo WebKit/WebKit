@@ -49,11 +49,6 @@ public:
         TargetPropertyOpacity
     };
 
-    // The caller takes ownership of the returned value.
-    // Pass a non-zero value for animationId specify an id to use for this animation, otherwise one will
-    // be generated for you.
-    WEBKIT_EXPORT static WebAnimation* create(const WebAnimationCurve&, TargetProperty, int animationId = 0);
-
     virtual ~WebAnimation() { }
 
     // An id is effectively the animation's name, and it is not unique.

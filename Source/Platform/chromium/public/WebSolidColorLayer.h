@@ -34,8 +34,6 @@ class WebLayer;
 
 class WebSolidColorLayer {
 public:
-    WEBKIT_EXPORT static WebSolidColorLayer* create();
-
     virtual ~WebSolidColorLayer() { }
 
     virtual WebLayer* layer() = 0;

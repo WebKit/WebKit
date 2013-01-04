@@ -35,8 +35,6 @@ namespace WebKit {
 // A keyframed float animation curve.
 class WebFloatAnimationCurve : public WebAnimationCurve {
 public:
-    WEBKIT_EXPORT static WebFloatAnimationCurve* create();
-
     virtual ~WebFloatAnimationCurve() { }
 
     // Adds the keyframe with the default timing function (ease).
