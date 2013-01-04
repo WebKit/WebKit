@@ -355,6 +355,8 @@ void FontCache::releaseFontData(const SimpleFontData* fontData)
 
     FontDataCache::iterator it = gFontDataCache->find(fontData->platformData());
     ASSERT(it != gFontDataCache->end());
+    if (it == gFontDataCache->end())
+        return;
 
     ASSERT(it->value.second);
     if (!--it->value.second)
