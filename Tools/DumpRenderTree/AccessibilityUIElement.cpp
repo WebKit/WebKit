@@ -961,6 +961,8 @@ AccessibilityUIElement AccessibilityUIElement::uiElementAttributeValue(JSStringR
 #if !PLATFORM(WIN)
 bool AccessibilityUIElement::isEqual(AccessibilityUIElement* otherElement)
 {
+    if (!otherElement)
+        return false;
     return platformUIElement() == otherElement->platformUIElement();
 }
 #endif

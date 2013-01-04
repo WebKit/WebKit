@@ -87,6 +87,8 @@ AccessibilityUIElement::~AccessibilityUIElement()
 
 bool AccessibilityUIElement::isEqual(AccessibilityUIElement* otherElement)
 {
+    if (!otherElement)
+        return false;
     return platformUIElement() == otherElement->platformUIElement();
 }
     

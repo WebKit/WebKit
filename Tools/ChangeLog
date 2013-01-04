@@ -1,3 +1,21 @@
+2013-01-03  Chris Fleizach  <cfleizach@apple.com>
+
+        REGRESSION: [Mac] Intermittent crash in WTR::AccessibilityUIElement::isEqual
+        https://bugs.webkit.org/show_bug.cgi?id=106073
+
+        Reviewed by Ryosuke Niwa.
+
+        Check that the element being compared to is not nil. 
+        This crash is happening because one of the accessibility tests does an isEqual comparison within a callback function.
+        It looks like occasionally, one of the elements passed in to the isEqual is nil because the notification handler is on the accessibility
+        controller, and the notification is being delivered after the document objects are cleared. This shouldn't happen but I've seen it 
+        sometimes before on parallel WebKitTestRunner runs.
+
+        * DumpRenderTree/AccessibilityUIElement.cpp:
+        (AccessibilityUIElement::isEqual):
+        * WebKitTestRunner/InjectedBundle/mac/AccessibilityUIElementMac.mm:
+        (WTR::AccessibilityUIElement::isEqual):
+
 2013-01-03  Tim 'mithro' Ansell  <mithro@mithis.com>
 
         Downloads can be flaky, so try downloading multiple times.
