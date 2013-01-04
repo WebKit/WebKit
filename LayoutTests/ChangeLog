@@ -1,3 +1,13 @@
+2013-01-03  Tony Chang  <tony@chromium.org>
+
+        incorrect flexbox relayout with overflow, padding and absolute positioning
+        https://bugs.webkit.org/show_bug.cgi?id=106022
+
+        Reviewed by Ojan Vafai.
+
+        * css3/flexbox/stretch-simplified-layout-expected.txt: Added.
+        * css3/flexbox/stretch-simplified-layout.html: Added.
+
 2013-01-03  Terry Anderson  <tdanderson@chromium.org>
 
         Unreviewed gardening. Marking fast/events/5056619.html as flaky

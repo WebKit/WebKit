@@ -222,21 +222,27 @@ void RenderImage::imageDimensionsChanged(bool imageSizeChanged, const IntRect* r
     if (intrinsicSizeChanged) {
         if (!preferredLogicalWidthsDirty())
             setPreferredLogicalWidthsDirty(true);
-        LogicalExtentComputedValues computedValues;
-        computeLogicalWidthInRegion(computedValues);
-        LayoutUnit newWidth = computedValues.m_extent;
-        computeLogicalHeight(height(), 0, computedValues);
-        LayoutUnit newHeight = computedValues.m_extent;
+
+        bool hasOverrideSize = hasOverrideHeight() || hasOverrideWidth();
+        if (!hasOverrideSize && !imageSizeChanged) {
+            LogicalExtentComputedValues computedValues;
+            computeLogicalWidthInRegion(computedValues);
+            LayoutUnit newWidth = computedValues.m_extent;
+            computeLogicalHeight(height(), 0, computedValues);
+            LayoutUnit newHeight = computedValues.m_extent;
+
+            imageSizeChanged = width() != newWidth || height() != newHeight;
+        }
 
         // FIXME: We only need to recompute the containing block's preferred size
         // if the containing block's size depends on the image's size (i.e., the container uses shrink-to-fit sizing).
         // There's no easy way to detect that shrink-to-fit is needed, always force a layout.
         bool containingBlockNeedsToRecomputePreferredSize =
-            style()->logicalWidth().type() == Percent
-            || style()->logicalMaxWidth().type() == Percent
-            || style()->logicalMinWidth().type() == Percent;
+            style()->logicalWidth().isPercent()
+            || style()->logicalMaxWidth().isPercent()
+            || style()->logicalMinWidth().isPercent();
 
-        if (imageSizeChanged || width() != newWidth || height() != newHeight || containingBlockNeedsToRecomputePreferredSize) {
+        if (imageSizeChanged || hasOverrideSize || containingBlockNeedsToRecomputePreferredSize) {
             shouldRepaint = false;
             if (!selfNeedsLayout())
                 setNeedsLayout(true);
