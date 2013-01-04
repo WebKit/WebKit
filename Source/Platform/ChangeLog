@@ -1,3 +1,15 @@
+2013-01-04  Dana Jansens  <danakj@chromium.org>
+
+        [chromium] Remove lost-compositor-context layout tests
+        https://bugs.webkit.org/show_bug.cgi?id=106089
+
+        Reviewed by James Robinson.
+
+        Mark the loseCompositorContext() test function for removal.
+
+        * chromium/public/WebLayerTreeView.h:
+        (WebLayerTreeView):
+
 2013-01-03  Sami Kyostila  <skyostil@chromium.org>
 
         [chromium] Rename low latency rendering mode setting to vsync notification

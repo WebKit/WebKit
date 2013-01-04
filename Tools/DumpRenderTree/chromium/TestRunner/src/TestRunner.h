@@ -111,8 +111,6 @@ private:
 
     void startSpeechInput(const CppArgumentList&, CppVariant*);
 
-    void loseCompositorContext(const CppArgumentList& args, CppVariant* result);
-
     void markerTextForListItem(const CppArgumentList&, CppVariant*);
     void findString(const CppArgumentList&, CppVariant*);
 

@@ -103,7 +103,6 @@ TestRunner::TestRunner()
     bindMethod("addUserScript", &TestRunner::addUserScript);
     bindMethod("addUserStyleSheet", &TestRunner::addUserStyleSheet);
     bindMethod("startSpeechInput", &TestRunner::startSpeechInput);
-    bindMethod("loseCompositorContext", &TestRunner::loseCompositorContext);
     bindMethod("markerTextForListItem", &TestRunner::markerTextForListItem);
     bindMethod("findString", &TestRunner::findString);
     bindMethod("setAutofilled", &TestRunner::setAutofilled);
@@ -519,16 +518,6 @@ void TestRunner::startSpeechInput(const CppArgumentList& arguments, CppVariant* 
         return;
 
     input->startSpeechInput();
-}
-
-void TestRunner::loseCompositorContext(const CppArgumentList& args, CppVariant*)
-{
-    int numTimes;
-    if (args.size() == 1 || !args[0].isNumber())
-        numTimes = 1;
-    else
-        numTimes = args[0].toInt32();
-    m_webView->loseCompositorContext(numTimes);
 }
 
 void TestRunner::markerTextForListItem(const CppArgumentList& args, CppVariant* result)

@@ -1923,14 +1923,6 @@ bool WebViewImpl::isInputThrottled() const
     return false;
 }
 
-void WebViewImpl::loseCompositorContext(int numTimes)
-{
-#if USE(ACCELERATED_COMPOSITING)
-    if (m_layerTreeView)
-        m_layerTreeView->loseCompositorContext(numTimes);
-#endif
-}
-
 void WebViewImpl::enterFullScreenForElement(WebCore::Element* element)
 {
     // We are already transitioning to fullscreen for a different element.

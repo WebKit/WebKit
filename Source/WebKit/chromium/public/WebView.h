@@ -505,9 +505,6 @@ public:
 
     // Testing functionality for TestRunner ---------------------------------
 
-    // Simulates a compositor lost context.
-    virtual void loseCompositorContext(int numTimes) = 0;
-
 protected:
     ~WebView() {}
 };

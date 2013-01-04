@@ -187,7 +187,7 @@ public:
     // Toggles the paint rects in the HUD layer
     virtual void setShowPaintRects(bool) { }
 
-    // Simulates a lost context. For testing only.
+    // FIXME: Remove this.
     virtual void loseCompositorContext(int numTimes) { }
 };
 

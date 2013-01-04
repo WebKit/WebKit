@@ -1,3 +1,41 @@
+2013-01-04  Dana Jansens  <danakj@chromium.org>
+
+        [chromium] Remove lost-compositor-context layout tests
+        https://bugs.webkit.org/show_bug.cgi?id=106089
+
+        Reviewed by James Robinson.
+
+        Better test coverage for these issues is now provided by the unit tests
+        in the compositor's cc/layer_tree_host_unittest_context.cc file.
+
+        * platform/chromium-linux-x86/platform/chromium/compositing/webgl-loses-compositor-context-expected.png: Removed.
+        * platform/chromium-linux/platform/chromium/compositing/webgl-loses-compositor-context-expected.png: Removed.
+        * platform/chromium-mac-snowleopard/platform/chromium/compositing/lost-compositor-context-expected.png: Removed.
+        * platform/chromium-mac-snowleopard/platform/chromium/compositing/lost-compositor-context-permanently-expected.png: Removed.
+        * platform/chromium-mac-snowleopard/platform/chromium/compositing/lost-compositor-context-twice-expected.png: Removed.
+        * platform/chromium-mac-snowleopard/platform/chromium/compositing/lost-compositor-context-with-rendersurface-expected.png: Removed.
+        * platform/chromium-mac-snowleopard/platform/chromium/compositing/webgl-loses-compositor-context-expected.png: Removed.
+        * platform/chromium-mac/platform/chromium/compositing/lost-compositor-context-with-video-expected.png: Removed.
+        * platform/chromium-win-xp/platform/chromium/compositing/webgl-loses-compositor-context-expected.png: Removed.
+        * platform/chromium/compositing/lost-compositor-context-expected.png: Removed.
+        * platform/chromium/compositing/lost-compositor-context-expected.txt: Removed.
+        * platform/chromium/compositing/lost-compositor-context-permanently-expected.png: Removed.
+        * platform/chromium/compositing/lost-compositor-context-permanently-expected.txt: Removed.
+        * platform/chromium/compositing/lost-compositor-context-permanently.html: Removed.
+        * platform/chromium/compositing/lost-compositor-context-twice-expected.png: Removed.
+        * platform/chromium/compositing/lost-compositor-context-twice-expected.txt: Removed.
+        * platform/chromium/compositing/lost-compositor-context-twice.html: Removed.
+        * platform/chromium/compositing/lost-compositor-context-with-rendersurface-expected.png: Removed.
+        * platform/chromium/compositing/lost-compositor-context-with-rendersurface-expected.txt: Removed.
+        * platform/chromium/compositing/lost-compositor-context-with-rendersurface.html: Removed.
+        * platform/chromium/compositing/lost-compositor-context-with-video-expected.png: Removed.
+        * platform/chromium/compositing/lost-compositor-context-with-video-expected.txt: Removed.
+        * platform/chromium/compositing/lost-compositor-context-with-video.html: Removed.
+        * platform/chromium/compositing/lost-compositor-context.html: Removed.
+        * platform/chromium/compositing/webgl-loses-compositor-context-expected.png: Removed.
+        * platform/chromium/compositing/webgl-loses-compositor-context-expected.txt: Removed.
+        * platform/chromium/compositing/webgl-loses-compositor-context.html: Removed.
+
 2013-01-04  Terry Anderson  <tdanderson@chromium.org>
 
         Unreviewed gardening. fast/repaint/japanese-rl-selection-repaint-in-regions.html

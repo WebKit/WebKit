@@ -576,8 +576,6 @@ public:
 
     void shouldUseAnimateDoubleTapTimeZeroForTesting(bool);
 
-    void loseCompositorContext(int numTimes);
-
     void enterFullScreenForElement(WebCore::Element*);
     void exitFullScreenForElement(WebCore::Element*);
 
