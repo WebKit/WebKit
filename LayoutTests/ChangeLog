@@ -1,5 +1,19 @@
 2013-01-04  Zan Dobersek  <zandobersek@gmail.com>
 
+        Unreviewed GTK gardening.
+
+        Rebaselining an editing test after r138654.
+
+        Adding failure expectations for two tests added in r138632.
+        Add a temporary failure expectation for transitions/transitions-parsing.html,
+        the test is fixed but just requires a clean build. It shouldn't paint the bots
+        red until then.
+
+        * platform/gtk/TestExpectations:
+        * platform/gtk/editing/deleting/delete-to-select-table-expected.txt: Added.
+
+2013-01-04  Zan Dobersek  <zandobersek@gmail.com>
+
         REGRESSION (r138184): transitions/transitions-parsing.html is failing on GTK
         https://bugs.webkit.org/show_bug.cgi?id=105522
 

@@ -1397,6 +1397,12 @@ webkit.org/b/98146 accessibility/svg-bounds.html [ Failure ]
 # Leaking state into the next test.
 webkit.org/b/85522 http/tests/security/sandboxed-iframe-form-top.html [ Skip ]
 
+webkit.org/b/106015 fast/css-generated-content/pseudo-animation.html [ Failure ]
+webkit.org/b/106015 fast/css-generated-content/pseudo-transition.html [ Failure ]
+
+# Added only temporarily, until a clean build is performed on the builders.
+Bug(GTK) transitions/transitions-parsing.html [ Failure ]
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Tests failing
 #////////////////////////////////////////////////////////////////////////////////////////
