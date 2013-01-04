@@ -1,3 +1,18 @@
+2013-01-04  Yong Li  <yoli@rim.com>
+
+        [BlackBerry] Cached frame shouldn't access the page when being destroyed
+        https://bugs.webkit.org/show_bug.cgi?id=105942
+
+        Reviewed by George Staikos.
+
+        Fix regression of previous patch. dispatchDidHandleOnloadEvents() can be called
+        after Frame has been detached.
+
+        RIM PR# 271237.
+
+        * WebCoreSupport/FrameLoaderClientBlackBerry.cpp:
+        (WebCore::FrameLoaderClientBlackBerry::dispatchDidHandleOnloadEvents):
+
 2013-01-04  Nima Ghanavatian  <nghanavatian@rim.com>
 
         [BlackBerry] Allow defaultTabEventHandler to trigger on tab

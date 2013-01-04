@@ -590,6 +590,10 @@ void FrameLoaderClientBlackBerry::dispatchDidCommitLoad()
 
 void FrameLoaderClientBlackBerry::dispatchDidHandleOnloadEvents()
 {
+    // Onload event handler may have detached the frame from the page.
+    if (!m_frame->page())
+        return;
+
     m_webPagePrivate->m_client->notifyDocumentOnLoad(isMainFrame());
     if (m_webPagePrivate->m_dumpRenderTree)
         m_webPagePrivate->m_dumpRenderTree->didHandleOnloadEventsForFrame(m_frame);
