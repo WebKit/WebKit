@@ -1733,11 +1733,6 @@ void WebViewImpl::setCompositorSurfaceReady()
         m_layerTreeView->setSurfaceReady();
 }
 
-WebLayerTreeView* WebViewImpl::webLayerTreeView()
-{
-    return m_layerTreeView;
-}
-
 void WebViewImpl::animate(double)
 {
 #if ENABLE(REQUEST_ANIMATION_FRAME)

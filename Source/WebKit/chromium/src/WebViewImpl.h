@@ -142,7 +142,6 @@ public:
     virtual void willExitFullScreen();
     virtual void didExitFullScreen();
     virtual void setCompositorSurfaceReady();
-    virtual WebLayerTreeView* webLayerTreeView();
     virtual void animate(double);
     virtual void layout(); // Also implements WebLayerTreeViewClient::layout()
     virtual void enterForceCompositingMode(bool enable) OVERRIDE;

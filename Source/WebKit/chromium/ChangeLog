@@ -1,3 +1,18 @@
+2013-01-04  James Robinson  <jamesr@chromium.org>
+
+        [chromium] Remove WebWidget::layerTreeView(), ownership is the other way around
+        https://bugs.webkit.org/show_bug.cgi?id=106139
+
+        Reviewed by Adrienne Walker.
+
+        This was added with the thought that it would be useful for transitioning code for a world where the
+        WebLayerTreeView for a given widget was owned by the WebWidgetClient instead of the WebWidget, but as it turns
+        out we've transitioned without every adding any callers to this.
+
+        * public/WebWidget.h:
+        (WebWidget):
+        * src/WebViewImpl.cpp:
+
 2013-01-04  Dana Jansens  <danakj@chromium.org>
 
         [chromium] Remove lost-compositor-context layout tests

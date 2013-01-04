@@ -134,10 +134,6 @@ public:
     // ready to use.
     virtual void setCompositorSurfaceReady() = 0;
 
-    // Returns this widget's WebLayerTreeView if compositing is active, nil
-    // otherwise.
-    virtual WebLayerTreeView* layerTreeView() { return 0; }
-
     // Temporary method for the embedder to notify the WebWidget that the widget
     // has taken damage, e.g. due to a window expose. This method will be
     // removed when the WebWidget inversion patch lands --- http://crbug.com/112837
