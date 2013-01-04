@@ -1,3 +1,19 @@
+2013-01-04  Mike Lattanzio  <mlattanzio@rim.com>
+
+        [BlackBerry] Last text input caret left visible when WebView entirely loses focus.
+        https://bugs.webkit.org/show_bug.cgi?id=106124
+
+        Reviewed by George Staikos.
+
+        Internal PR 248834
+
+        There are numerous code paths that lead to repainting of the focus node
+        when the focus moves to another node, but none seem to cover the case
+        of focus leaving the document when there are no DocumentMarkers present.
+
+        * WebKitSupport/InputHandler.cpp:
+        (BlackBerry::WebKit::InputHandler::setElementUnfocused):
+
 2013-01-04  Otto Derek Cheung  <otcheung@rim.com>
 
         [BlackBerry]  FCC will show up as you type if you tap on the same input bar twice before typing

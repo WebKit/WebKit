@@ -845,6 +845,10 @@ void InputHandler::setElementUnfocused(bool refocusOccuring)
 
         m_webPage->m_client->inputFocusLost();
 
+        // Repaint the element absent of the caret.
+        if (m_currentFocusElement->renderer())
+            m_currentFocusElement->renderer()->repaint();
+
         // If the frame selection isn't focused, focus it.
         if (!m_currentFocusElement->document()->frame()->selection()->isFocused())
             m_currentFocusElement->document()->frame()->selection()->setFocused(true);
