@@ -2512,6 +2512,8 @@ webkit.org/b/85522 http/tests/security/sandboxed-iframe-form-top.html [ Skip ]
 fast/css-generated-content/pseudo-animation.html
 fast/css-generated-content/pseudo-transition.html
 
-# https://bugs.webkit.org/show_bug.cgi?id=106016
 # [Qt] New fast/workers/worker-document-leak.html fails
-fast/workers/worker-document-leak.html
+webkit.org/b/106016 fast/workers/worker-document-leak.html
+
+# [Qt] New fast/regions/full-screen-video-from-region.html times out
+webkit.org/b/106095 fast/regions/full-screen-video-from-region.html

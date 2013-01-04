@@ -1,3 +1,9 @@
+2013-01-04  Csaba Osztrogonác  <ossy@webkit.org>
+
+        [Qt] Unreviewed gardening, skip a new failing test.
+
+        * platform/qt/TestExpectations:
+
 2013-01-04  Terry Anderson  <tdanderson@chromium.org>
 
         Unreviewed gardening. New image baselines for test
