@@ -447,21 +447,17 @@ public:
             radiusWidth = Length(pair->first()->getDoubleValue(), Percent);
         else if (pair->first()->isViewportPercentageLength())
             radiusWidth = pair->first()->viewportPercentageLength();
-        else if (pair->first()->isCalculatedPercentageWithLength()) {
-            // FIXME calc(): http://webkit.org/b/16662
-            // handle this case
-            return;
-        } else
+        else if (pair->first()->isCalculatedPercentageWithLength())
+            radiusWidth = Length((pair->first()->cssCalcValue()->toCalcValue(styleResolver->style(), styleResolver->rootElementStyle(), styleResolver->style()->effectiveZoom())));
+        else
             radiusWidth = pair->first()->computeLength<Length>(styleResolver->style(), styleResolver->rootElementStyle(), styleResolver->style()->effectiveZoom());
         if (pair->second()->isPercentage())
             radiusHeight = Length(pair->second()->getDoubleValue(), Percent);
         else if (pair->second()->isViewportPercentageLength())
             radiusHeight = pair->second()->viewportPercentageLength();
-        else if (pair->second()->isCalculatedPercentageWithLength()) {
-            // FIXME calc(): http://webkit.org/b/16662
-            // handle this case
-            return;
-        } else
+        else if (pair->second()->isCalculatedPercentageWithLength())
+            radiusHeight = Length((pair->second()->cssCalcValue()->toCalcValue(styleResolver->style(), styleResolver->rootElementStyle(), styleResolver->style()->effectiveZoom())));
+        else
             radiusHeight = pair->second()->computeLength<Length>(styleResolver->style(), styleResolver->rootElementStyle(), styleResolver->style()->effectiveZoom());
         int width = radiusWidth.value();
         int height = radiusHeight.value();

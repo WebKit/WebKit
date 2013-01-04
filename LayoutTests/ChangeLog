@@ -1,3 +1,13 @@
+2013-01-04  Mike Lawther  <mikelawther@chromium.org>
+
+        CSS3 calc: mixed percent/absolute for border-radius
+        https://bugs.webkit.org/show_bug.cgi?id=106046
+
+        Reviewed by Ojan Vafai.
+
+        * css3/calc/border-radius-expected.html: Renamed from LayoutTests/css3/calc/border-radius-expected-mismatch.html.
+        * css3/calc/border-radius.html:
+
 2013-01-04  Zan Dobersek  <zandobersek@gmail.com>
 
         Unreviewed GTK gardening.
