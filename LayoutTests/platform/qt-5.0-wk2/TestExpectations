@@ -772,7 +772,3 @@ webkit.org/b/105182 compositing/repaint/resize-repaint.html
 svg/text/select-textLength-spacing-stretch-1.svg
 svg/text/select-x-list-with-tspans-1.svg
 svg/text/select-x-list-1.svg
-
-# [Qt][WK2]REGRESSION(r138729): It made plugins/change-widget-and-click-crash.html crash
-# https://bugs.webkit.org/show_bug.cgi?id=106049
-plugins/change-widget-and-click-crash.html
