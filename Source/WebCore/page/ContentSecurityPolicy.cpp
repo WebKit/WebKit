@@ -39,6 +39,8 @@
 #include "PingLoader.h"
 #include "RuntimeEnabledFeatures.h"
 #include "SchemeRegistry.h"
+#include "ScriptCallStack.h"
+#include "ScriptCallStackFactory.h"
 #include "ScriptState.h"
 #include "SecurityOrigin.h"
 #include "TextEncoding.h"
@@ -155,6 +157,15 @@ FeatureObserver::Feature getFeatureObserverType(ContentSecurityPolicy::HeaderTyp
     }
     ASSERT_NOT_REACHED();
     return FeatureObserver::NumberOfFeatures;
+}
+
+const ScriptCallFrame& getFirstNonNativeFrame(PassRefPtr<ScriptCallStack> stack)
+{
+    int frameNumber = 0;
+    if (!stack->at(0).lineNumber() && stack->size() > 1 && stack->at(1).lineNumber())
+        frameNumber = 1;
+
+    return stack->at(frameNumber);
 }
 
 } // namespace
@@ -1604,6 +1615,17 @@ void ContentSecurityPolicy::reportViolation(const String& directiveText, const S
         cspReport->setString("blocked-uri", document->securityOrigin()->canRequest(blockedURL) ? blockedURL.strippedForUseAsReferrer() : SecurityOrigin::create(blockedURL)->toString());
     else
         cspReport->setString("blocked-uri", String());
+
+    RefPtr<ScriptCallStack> stack = createScriptCallStack(2, false);
+    if (stack) {
+        const ScriptCallFrame& callFrame = getFirstNonNativeFrame(stack);
+
+        if (callFrame.lineNumber()) {
+            KURL source = KURL(KURL(), callFrame.sourceURL());
+            cspReport->setString("source-file", document->securityOrigin()->canRequest(source) ? source.strippedForUseAsReferrer() : SecurityOrigin::create(source)->toString());
+            cspReport->setNumber("line-number", callFrame.lineNumber());
+        }
+    }
 
     RefPtr<InspectorObject> reportObject = InspectorObject::create();
     reportObject->setObject("csp-report", cspReport.release());

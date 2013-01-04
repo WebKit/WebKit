@@ -1,3 +1,15 @@
+2013-01-04  Mike West  <mkwst@chromium.org>
+
+        CSP 1.1: Experiment with adding line numbers to violation reports.
+        https://bugs.webkit.org/show_bug.cgi?id=105374
+
+        Reviewed by Adam Barth.
+
+        * http/tests/security/contentSecurityPolicy/report-uri-from-inline-javascript-expected.txt: Added.
+        * http/tests/security/contentSecurityPolicy/report-uri-from-inline-javascript.html: Added.
+        * http/tests/security/contentSecurityPolicy/report-uri-from-javascript-expected.txt: Added.
+        * http/tests/security/contentSecurityPolicy/report-uri-from-javascript.html: Added.
+
 2013-01-04  Mike Lawther  <mikelawther@chromium.org>
 
         CSS3 calc: working with translate and scale transforms
