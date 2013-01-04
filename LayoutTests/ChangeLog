@@ -1,3 +1,16 @@
+2013-01-04  Elliott Sprehn  <esprehn@chromium.org>
+
+        PseudoElement should never dispatch events
+        https://bugs.webkit.org/show_bug.cgi?id=106048
+
+        Reviewed by Ojan Vafai.
+
+        Add a test that events don't get dispatched from pseudo elements. The
+        only way right now to cause this is with transitions or animations.
+
+        * fast/css-generated-content/pseudo-element-events-expected.txt: Added.
+        * fast/css-generated-content/pseudo-element-events.html: Added.
+
 2013-01-04  Terry Anderson  <tdanderson@chromium.org>
 
         Unreviewed gardening. Adding Lion image baseline for

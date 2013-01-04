@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+
+<script src="../js/resources/js-test-pre.js"></script>
+
+<style>
+div:before {
+  width: 100px;
+  content: "";
+  display: block;
+  -webkit-transition: width 1ms;
+}
+
+div {
+    padding: 10px;
+    -webkit-transition: padding 20ms;
+}
+
+.transition {
+    padding: 0px;
+}
+
+.transition:before {
+    width: 10px;
+}
+</style>
+
+<p>Pseudo elements should not dispatch events.</p>
+
+<div></div>
+
+<script>
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+}
+
+onload = function() {
+    var div = document.querySelector('div');
+    div.className = 'transition';
+    div.addEventListener('webkitTransitionEnd', function(event) {
+        window.event = event;
+        shouldBeEqualToString('event.target.tagName', 'DIV');
+        if (event.target == div) {
+            isSuccessfullyParsed();
+            testRunner.notifyDone();
+        }
+    });
+}
+</script>

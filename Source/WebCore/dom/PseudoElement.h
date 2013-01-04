@@ -28,6 +28,7 @@
 #define PseudoElement_h
 
 #include "Element.h"
+#include "Event.h"
 #include "RenderStyle.h"
 #include <wtf/Forward.h>
 
@@ -49,6 +50,9 @@ public:
 
 private:
     PseudoElement(Element*, PseudoId);
+
+    using EventTarget::dispatchEvent;
+    virtual bool dispatchEvent(PassRefPtr<Event>) OVERRIDE { return false; }
 
     virtual void didRecalcStyle(StyleChange) OVERRIDE;
     virtual PseudoId customPseudoId() const OVERRIDE { return m_pseudoId; }
