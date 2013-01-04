@@ -1,3 +1,13 @@
+2013-01-04  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Add a crash test expectation for the crashing test on Mac WebKit1 after r138782,
+        which attempted to fix the crash but appears to did so only on WebKit2.
+
+        The failure is tracked by the bug 106123.
+
+        * platform/mac-wk2/TestExpectations:
+        * platform/mac/TestExpectations:
+
 2013-01-04  Terry Anderson  <tdanderson@chromium.org>
 
         The following two tests are starting to fail while on the verge of
