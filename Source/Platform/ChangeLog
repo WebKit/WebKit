@@ -1,5 +1,17 @@
 2013-01-04  James Robinson  <jamesr@chromium.org>
 
+        [chromium] WebTransformationMatrix shouldn't alias memory for TransformationMatrix
+        https://bugs.webkit.org/show_bug.cgi?id=106025
+
+        Reviewed by Adrienne Walker.
+
+        * chromium/public/WebTransformationMatrix.h:
+        (WebCore):
+        (WebKit::WebTransformationMatrix::~WebTransformationMatrix):
+        (WebTransformationMatrix):
+
+2013-01-04  James Robinson  <jamesr@chromium.org>
+
         [chromium] Remove unneeded WebDelegatedRendererLayer and WebCompositorTransferableResourceList headers
         https://bugs.webkit.org/show_bug.cgi?id=105263
 

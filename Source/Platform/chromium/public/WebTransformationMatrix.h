@@ -32,16 +32,15 @@
 #define WebTransformationMatrix_h
 
 #if WEBKIT_IMPLEMENTATION
-#include "FloatPoint.h"
-#include "FloatPoint3D.h"
-#include "FloatQuad.h"
 #include "TransformationMatrix.h"
-#else
-#include <ui/gfx/transform.h>
 #endif
 
 #include "WebCommon.h"
 #include "WebPrivateOwnPtr.h"
+
+namespace WebCore {
+class TransformationMatrix;
+}
 
 namespace WebKit {
 
@@ -54,7 +53,9 @@ public:
                                           double m31, double m32, double m33, double m34,
                                           double m41, double m42, double m43, double m44);
     WEBKIT_EXPORT WebTransformationMatrix(const WebTransformationMatrix&);
-    ~WebTransformationMatrix() { }
+    ~WebTransformationMatrix() { reset(); }
+
+    WEBKIT_EXPORT void reset();
 
     // Operations that return a separate matrix and do not modify this one.
     WEBKIT_EXPORT WebTransformationMatrix inverse() const;
@@ -139,55 +140,12 @@ public:
     // Conversions between WebKit::WebTransformationMatrix and WebCore::TransformationMatrix
     explicit WebTransformationMatrix(const WebCore::TransformationMatrix&);
     WebCore::TransformationMatrix toWebCoreTransform() const;
-#else
-    // FIXME: Make this implicit once compositor is not using this class internally.
-    explicit WebTransformationMatrix(const gfx::Transform& transform)
-    {
-        for (int i = 0; i < 4; ++i)
-            for (int j = 0; j < 4; ++j)
-                m_matrix[i][j] = transform.matrix().getDouble(j, i);
-    }
-
-    WebTransformationMatrix& operator=(const gfx::Transform& transform)
-    {
-        for (int i = 0; i < 4; ++i)
-            for (int j = 0; j < 4; ++j)
-                m_matrix[i][j] = transform.matrix().getDouble(j, i);
-        return *this;
-    }
-
-    // FIXME: Make this an operator once compositor is not using this class internally.
-    gfx::Transform toTransform() const
-    {
-        gfx::Transform transform;
-        for (int i = 0; i < 4; ++i)
-            for (int j = 0; j < 4; ++j)
-                transform.matrix().setDouble(i, j, m_matrix[j][i]);
-        return transform;
-    }
 #endif
 
 protected:
 
-    // While migrating this code: Code that is external to WebKit should have no knowledge
-    // of WebCore::TransformationMatrix. But in those cases, this class still needs to
-    // be the same size so that the class can be passed back and forth between WebKit and
-    // non-WebKit code.
-    //
-    // The end goal is eventually for this class to only exist at the API boundary, as a
-    // conversion between WebCore TransformationMatrix and the compositor's internal
-    // implementation of matrix transforms.
-    //
-#if WEBKIT_IMPLEMENTATION
-    WebCore::TransformationMatrix m_private;
-#else
-    double m_matrix[4][4];
-#endif
+    WebPrivateOwnPtr<WebCore::TransformationMatrix> m_private;
 };
-
-#if WEBKIT_IMPLEMENTATION
-COMPILE_ASSERT(sizeof(WebCore::TransformationMatrix) == sizeof(double[4][4]), WebTransformationMatrix_has_unexpected_size);
-#endif
 
 } // namespace WebKit
 
