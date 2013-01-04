@@ -138,7 +138,13 @@ MediaPlayerPrivate::~MediaPlayerPrivate()
         static_cast<VideoLayerWebKitThread*>(m_platformLayer.get())->setMediaPlayer(0);
 #endif
 
-    deleteGuardedObject(m_platformPlayer);
+    if (m_platformPlayer) {
+        if (m_platformPlayer->dialogState() == PlatformPlayer::DialogShown) {
+            m_platformPlayer->setDialogState(PlatformPlayer::MediaPlayerPrivateDestroyed);
+            m_platformPlayer->stop();
+        } else
+            deleteGuardedObject(m_platformPlayer);
+    }
 }
 
 void MediaPlayerPrivate::load(const WTF::String& url)
@@ -692,9 +698,9 @@ void MediaPlayerPrivate::onWaitMetadataNotified(bool hasFinished, int timeWaited
 void MediaPlayerPrivate::waitMetadataTimerFired(Timer<MediaPlayerPrivate>*)
 {
     if (m_platformPlayer->isMetadataReady()) {
-        m_platformPlayer->playWithMetadataReady();
         conditionallyGoFullscreenAfterPlay();
         m_waitMetadataPopDialogCounter = 0;
+        m_platformPlayer->playWithMetadataReady();
         return;
     }
 
@@ -706,12 +712,10 @@ void MediaPlayerPrivate::waitMetadataTimerFired(Timer<MediaPlayerPrivate>*)
     }
     m_waitMetadataPopDialogCounter = 0;
 
-    // Need to prevent re-entrant play here
-    m_platformPlayer->setPreventReentrantPlay(true);
-    int wait = showErrorDialog(PlatformPlayer::MediaMetaDataTimeoutError);
-    m_platformPlayer->setPreventReentrantPlay(false);
-
-    if (!wait)
+    PlatformPlayer::DialogResult wait = m_platformPlayer->showErrorDialog(PlatformPlayer::MediaMetaDataTimeoutError);
+    if (wait == PlatformPlayer::DialogEmergencyExit)
+        return;
+    if (wait == PlatformPlayer::DialogResponse0)
         onPauseNotified();
     else {
         if (m_platformPlayer->isMetadataReady()) {
@@ -785,7 +789,7 @@ void MediaPlayerPrivate::onAuthenticationAccepted(const MMRAuthChallenge& authCh
         CredentialStorage::set(Credential(authChallenge.username().c_str(), authChallenge.password().c_str(), static_cast<CredentialPersistence>(authChallenge.persistence())), protectionSpace, url);
 }
 
-int MediaPlayerPrivate::showErrorDialog(PlatformPlayer::Error type)
+int MediaPlayerPrivate::onShowErrorDialog(PlatformPlayer::Error type)
 {
     using namespace BlackBerry::WebKit;
 

@@ -148,7 +148,7 @@ public:
     virtual bool isFullscreen() const;
     virtual bool isElementPaused() const;
     virtual bool isTabVisible() const;
-    virtual int showErrorDialog(BlackBerry::Platform::PlatformPlayer::Error);
+    virtual int onShowErrorDialog(BlackBerry::Platform::PlatformPlayer::Error);
     virtual BlackBerry::Platform::Graphics::Window* platformWindow();
     virtual BlackBerry::Platform::WebMediaStreamDescriptor lookupMediaStream(const BlackBerry::Platform::String& url);
 
