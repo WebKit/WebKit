@@ -57,6 +57,7 @@ protected:
 
     // Used from the invalidateClient/invalidateClients methods from classes, inheriting from us.
     void markAllClientsForInvalidation(InvalidationMode);
+    void markAllClientLayersForInvalidation();
     void markClientForInvalidation(RenderObject*, InvalidationMode);
 
 private:

@@ -361,6 +361,7 @@ void RenderSVGResourceFilter::primitiveAttributeChanged(RenderObject* object, co
         // Repaint the image on the screen.
         markClientForInvalidation(it->key, RepaintInvalidation);
     }
+    markAllClientLayersForInvalidation();
 }
 
 }

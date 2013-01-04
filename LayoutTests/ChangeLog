@@ -1,3 +1,15 @@
+2013-01-04  Stephen White  <senorblanco@chromium.org>
+
+        Invalidation of some SVG filter attributes on HTML content doesn't work 
+        https://bugs.webkit.org/show_bug.cgi?id=105635
+
+        Reviewed by Dirk Schulze.
+
+        New reftest to verify filter attribute change invalidations.
+
+        * css3/filters/reference-filter-update-on-attribute-change-expected.html: Added.
+        * css3/filters/reference-filter-update-on-attribute-change.html: Added.
+
 2013-01-04  Mike West  <mkwst@chromium.org>
 
         CSP 1.1: Experiment with adding line numbers to violation reports.
