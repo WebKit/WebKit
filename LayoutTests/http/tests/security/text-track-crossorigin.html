@@ -79,6 +79,7 @@
             function start()
             {
                 trackElement = document.querySelectorAll('track')[0];
+                trackElement.track.mode = "hidden";
                 log('Loading <b>without</b> Access-Control-Allow-Origin header, no "crossorigin" attribute on &lt;video&gt;');
                 var url = "http://localhost:8000/security/resources/captions-with-access-control-headers.php"
                 trackElement.setAttribute('src', url);

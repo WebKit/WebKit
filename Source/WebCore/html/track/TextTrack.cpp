@@ -201,6 +201,20 @@ TextTrackCueList* TextTrack::cues()
     return 0;
 }
 
+void TextTrack::removeAllCues()
+{
+    if (!m_cues)
+        return;
+
+    if (m_client)
+        m_client->textTrackRemoveCues(this, m_cues.get());
+    
+    for (size_t i = 0; i < m_cues->length(); ++i)
+        m_cues->item(i)->setTrack(0);
+    
+    m_cues = 0;
+}
+
 TextTrackCueList* TextTrack::activeCues() const
 {
     // 4.8.10.12.5 If the text track mode ... is not the text track disabled mode,
