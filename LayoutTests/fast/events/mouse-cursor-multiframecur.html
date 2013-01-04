@@ -2,6 +2,7 @@
 <html>
 <head>
 <script src="../js/resources/js-test-pre.js"></script>
+<script src="../js/resources/image-preload-helper.js"></script>
 <style type="text/css">
 </style>
 </head>
@@ -16,28 +17,7 @@
 <div id="console"></div>
 <script>
 var imagesLeftToLoad = 0;
-
-function onImageLoad(success, path, e) {
-
-    // This debug output order is non-deterministic - only show when not running in DRT
-    if (!window.testRunner)
-        debug( 'Event "' + e.type + '": ' + path);
-        
-    imagesLeftToLoad--;
-    
-    if (!success) {
-        // Note that on the Mac port, CUR files are loaded using CoreGraphics, and it doesn't
-        // appear to support multi-frame CUR files, so the load will fail in this case.
-        // We explicitly look for this behavior on Mac so that if it ever starts being supported,
-        // we can ensure the behavior is consistent with the other ports.
-        testFailed('Got unexpected \'' + e.type + '\' event for image: ' + path); 
-    }
-
-    if (imagesLeftToLoad == 0)
-        runTests();
-    if (imagesLeftToLoad < 0)
-        testFailed('Got more load/error callback than expected.');
-}
+var testContainer = document.getElementById('test-container');
 
 function runTests() {
     // Can't do anything useful here without eventSender
@@ -59,7 +39,7 @@ function runTests() {
             debug('');
         }
         // This text is redundant with the test output - hide it
-        document.getElementById('test-container').style.display = 'none';
+        testContainer.style.display = 'none';
     }
     
     finishJSTest();
@@ -79,17 +59,7 @@ if (window.testRunner) {
 
 // Now wait for each image to load or fail to load before starting tests.
 // Without this we can get null images in the cursors - eg. no known size.
-var imagesToLoad = [
-    { url: 'resources/greenbox-3frames.cur' } ];
-imagesLeftToLoad = imagesToLoad.length;
-for (var i = 0; i < imagesToLoad.length; i++) {
-    var img = new Image();
-    var expectError = imagesToLoad[i].error; 
-    var url = imagesToLoad[i].url;
-    img.addEventListener('load', onImageLoad.bind(undefined, !expectError, url));
-    img.addEventListener('error', onImageLoad.bind(undefined, expectError, url));
-    img.src = url;
-}
+preloadImagesFromStyle(testContainer, 1, runTests);
 
 </script>
 <script src="../../fast/js/resources/js-test-post.js"></script>

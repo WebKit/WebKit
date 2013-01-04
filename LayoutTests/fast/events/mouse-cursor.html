@@ -2,6 +2,7 @@
 <html>
 <head>
 <script src="../js/resources/js-test-pre.js"></script>
+<script src="../js/resources/image-preload-helper.js"></script>
 <style type="text/css">
 </style>
 </head>
@@ -22,8 +23,8 @@
   <div style='cursor: pointer'>Pointer</div>
   <div style='cursor: -webkit-grabbing'>-webkit-grabbing</div>
   <div style='cursor: url(resources/greenbox.png), hand'>Existing 25x25 image</div>
-  <div style='cursor: url(doesntexist.png), pointer'>Invalid URL with fallback to pointer</div>
-  <div style='cursor: url(doesntexist.png), url(resources/greenbox.png), pointer'>Invalid with fallback to 25x25 image</div>
+  <div style='cursor: url(doesntexist_FAIL.png), pointer'>Invalid URL with fallback to pointer</div>
+  <div style='cursor: url(doesntexist_FAIL.png), url(resources/greenbox.png), pointer'>Invalid with fallback to 25x25 image</div>
   <div style='cursor: url(resources/greenbox.png) 0 0, pointer'>Image with explicit hot spot at (0,0)</div>
   <div style='cursor: url(resources/greenbox.png) 20 10, pointer'>Image with explicit hot spot at (20,10)</div>
   <div style='cursor: url(resources/greenbox.png) -1 -1, pointer'>Image with explicit hot spot at (-1,-1)</div>
@@ -33,8 +34,8 @@
   <div style='cursor: url(resources/greenbox-hotspot35-4.cur), pointer'>Image with implicit hot spot outside image at (35,4)</div>
   <div style='cursor: url(resources/onload-image.png), pointer'>Over large image with fallback to pointer</div>
   <div style='cursor: url(#greenbox), pointer'>SVG cursor</div>
-  <div style='cursor: url(mouse-cursor.html), url(unknown-scheme:cursor.png), pointer'>Multiple invalid cursors with fallback to pointer</div>
-  <div style='cursor: url(#nonexistent), pointer'>Nonexistent SVG cursor with fallback to pointer</div>
+  <div style='cursor: url(mouse-cursor_FAIL.html), url(unknown-scheme:cursor_FAIL.png), pointer'>Multiple invalid cursors with fallback to pointer</div>
+  <div style='cursor: url(#nonexistent_FAIL), pointer'>Nonexistent SVG cursor with fallback to pointer</div>
   <div><a href='#'>A link with default cursor</a></div>
   <div style='cursor: wait'><a href='#'>Link with default cursor overriding wait</a></div>
   <div style='cursor: wait'><div style='cursor: doesntexist'>Wait cursor which should not be affected by unknown cursor rule</div></div>
@@ -42,25 +43,9 @@
 <br/>
 <div id="console"></div>
 <script>
-var imagesLeftToLoad = 0;
 
-function onImageLoad(success, e) {
-
-    // This debug output is non-deterministic and contains absolute URLs - only show when
-    // not running in DRT
-    if (!window.testRunner)
-        debug( 'Event "' + e.type + '": ' + e.target.src);
+var testContainer = document.getElementById('test-container');
     
-    if (!success)
-        testFailed('Got unexpected \'' + e.type + '\' event for image: ' + e.target.src); 
-        
-    imagesLeftToLoad--;
-    if (imagesLeftToLoad == 0)
-        runTests();
-    if (imagesLeftToLoad < 0)
-        testFailed('Got more load/error callback than expected.');
-}
-
 function runTests() {
     // Can't do anything useful here without eventSender
     if (window.eventSender) {
@@ -81,7 +66,7 @@ function runTests() {
             debug('');
         }
         // This text is redundant with the test output - hide it
-        document.getElementById('test-container').style.display = 'none';
+        testContainer.style.display = 'none';
     }
     
     finishJSTest();
@@ -101,24 +86,7 @@ if (window.testRunner) {
 
 // Now wait for each image to load or fail to load before starting tests.
 // Without this we can get null images in the cursors - eg. no known size.
-var imagesToLoad = [
-    { url: 'resources/greenbox.png' },
-    { url: 'resources/onload-image.png' },
-    { url: 'resources/greenbox-hotspot5-4.cur' },
-    { url: 'resources/greenbox-hotspot35-4.cur' },
-    { url: 'doesntexist.png', error: true },
-    { url: 'unknown-scheme:cursor.png', error: true },
-    { url: 'mouse-cursor.html', error: true },
-    { url: '#greenbox', error: true },
-    { url: '#nonexistent', error: true } ];
-imagesLeftToLoad = imagesToLoad.length;
-for (var i = 0; i < imagesToLoad.length; i++) {
-    var img = new Image();
-    var expectError = imagesToLoad[i].error; 
-    img.addEventListener('load', onImageLoad.bind(undefined, !expectError));
-    img.addEventListener('error', onImageLoad.bind(undefined, expectError));
-    img.src = imagesToLoad[i].url;
-}
+preloadImagesFromStyle(testContainer, 9, runTests, /(#greenbox|_FAIL)/);
 
 </script>
 <script src="../../fast/js/resources/js-test-post.js"></script>

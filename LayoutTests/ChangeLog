@@ -1,3 +1,22 @@
+2013-01-04  Rick Byers  <rbyers@chromium.org>
+
+        URL duplication in mouse cursor tests mean minor typos can cause flakiness
+        https://bugs.webkit.org/show_bug.cgi?id=104952
+
+        Reviewed by Eric Seidel.
+
+        Replace the explicit list of images to preload with code that extracts
+        URLs from style definitions.  Also move all this image preload code to
+        a common helper file so that it can easily be used by other tests.
+
+        * fast/events/mouse-cursor-image-set.html:
+        * fast/events/mouse-cursor-multiframecur.html:
+        * fast/events/mouse-cursor.html:
+        * fast/js/resources/image-preload-helper.js: Added.
+        (preloadImagesFromStyle):
+        (onComplete):
+        (imagesToLoad):
+
 2013-01-04  Xianzhu Wang  <wangxianzhu@chromium.org>
 
         Unreviewd. Fix break caused by using old internals.settings.setEnableCompositingForFixedPosition

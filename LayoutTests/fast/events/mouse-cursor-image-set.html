@@ -2,6 +2,7 @@
 <html>
 <head>
 <script src="../js/resources/js-test-pre.js"></script>
+<script src="../js/resources/image-preload-helper.js"></script>
 <style type="text/css">
 </style>
 </head>
@@ -25,25 +26,7 @@
 <div id="console"></div>
 <script>
 var imagesLeftToLoad = 0;
-
-function onImageLoad(success, ondone, e) {
-
-    // This debug output is non-deterministic and contains absolute URLs - only show when
-    // not running in DRT
-    if (!window.testRunner)
-        debug( 'Event "' + e.type + '": ' + e.target.src);
-
-    if (!success)
-        testFailed('Got unexpected \'' + e.type + '\' event for image: ' + e.target.src); 
-
-    imagesLeftToLoad--;
-    
-    if (imagesLeftToLoad < 0)
-        testFailed('Got more load/error callback than expected.');
-    
-    if (imagesLeftToLoad == 0)
-        ondone();
-}
+var testContainer = document.getElementById('test-container');
 
 function checkCursors() {
     debug('Checking cursors with device pixel ratio of ' + window.devicePixelRatio);  
@@ -72,26 +55,14 @@ function runTests() {
         // Repeat in high-dpi mode
         testRunner.setBackingScaleFactor(2, function() {
             // Failed images are apparently reset on scale factor change. 
-            ensureImagesLoaded([{ url: 'doesntexist.png', error: true }], function() {
+            loadImages([{ url: 'doesntexist.png', error: true }], function() {
                 checkCursors();
-                document.getElementById('test-container').style.display = 'none';
+                testContainer.style.display = 'none';
                 finishJSTest();
             });
     	});	
     } else {
         finishJSTest();
-    }
-}
-
-function ensureImagesLoaded(imagesToLoad, callback)
-{
-    imagesLeftToLoad = imagesToLoad.length;
-    for (var i = 0; i < imagesToLoad.length; i++) {
-        var img = new Image();
-        var expectError = imagesToLoad[i].error; 
-        img.addEventListener('load', onImageLoad.bind(undefined, !expectError, callback));
-        img.addEventListener('error', onImageLoad.bind(undefined, expectError, callback));
-        img.src = imagesToLoad[i].url;
     }
 }
 
@@ -109,14 +80,7 @@ if (window.testRunner) {
 
 // Now wait for each image to load or fail to load before starting tests.
 // Without this we can get null images in the cursors - eg. no known size.
-var imagesToLoad = [
- { url: 'resources/greenbox.png' },
- { url: 'resources/greenbox30.png' },
- { url: 'resources/greenbox200.png' },
- { url: 'resources/greenbox-hotspot5-4.cur' },
- { url: 'resources/greenbox30-hotspot28-3.cur' },
- { url: 'doesntexist.png', error: true } ];
-ensureImagesLoaded(imagesToLoad, runTests);
+preloadImagesFromStyle(testContainer, 6, runTests, /doesntexist/);
 
 </script>
 <script src="../../fast/js/resources/js-test-post.js"></script>
