@@ -4119,9 +4119,11 @@ webkit.org/b/97499 http/tests/security/script-no-crossorigin-onerror-should-be-s
 webkit.org/b/99749 [ MountainLion ] fast/text/midword-break-before-surrogate-pair.html [ Failure ImageOnlyFailure ]
 
 Bug(dpranke) [ Linux ] fast/text/zero-font-size-2.html [ ImageOnlyFailure ]
-Bug(dpranke) [ Win ] webaudio/codec-tests/vorbis/vbr-70kbps-44khz.html [ Failure ]
-Bug(dpranke) [ Win ] webaudio/codec-tests/vorbis/vbr-96kbps-44khz.html [ Failure ]
-Bug(dpranke) [ Win ] webaudio/codec-tests/vorbis/vbr-128kbps-44khz.html [ Failure ]
+
+# These tests need a special rebaseline from rtoy@, after which they can be un-skipped.
+crbug.com/168425 webaudio/codec-tests/vorbis/vbr-70kbps-44khz.html [ Skip ]
+crbug.com/168425 webaudio/codec-tests/vorbis/vbr-96kbps-44khz.html [ Skip ]
+crbug.com/168425 webaudio/codec-tests/vorbis/vbr-128kbps-44khz.html [ Skip ]
 
 webkit.org/b/100023 [ Mac ] fast/sub-pixel/file-upload-control-at-fractional-offset.html [ Failure ImageOnlyFailure ]
 

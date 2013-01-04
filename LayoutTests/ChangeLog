@@ -1,3 +1,11 @@
+2013-01-04  Terry Anderson  <tdanderson@chromium.org>
+
+        Unreviewed gardening. Temporarily skipping three tests
+        in webaudio/codec-tests/vorbis because they need a 
+        special rebaseline.
+
+        * platform/chromium/TestExpectations:
+
 2013-01-04  Ryosuke Niwa  <rniwa@webkit.org>
 
         REGRESSION(r138394): platform/mac/accessibility/file-upload-button-subrole.html is failing
