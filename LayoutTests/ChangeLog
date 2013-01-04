@@ -1,3 +1,9 @@
+2013-01-03  Roger Fong  <roger_fong@apple.com>
+
+        Unreviewed. Gardening Apple Windows port.
+
+        * platform/win/fast/css/image-set-value-not-removed-crash-expected.txt: Added.
+
 2013-01-03  Tony Chang  <tony@chromium.org>
 
         incorrect flexbox relayout with overflow, padding and absolute positioning
