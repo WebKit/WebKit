@@ -269,6 +269,8 @@ void MainResourceLoader::willSendRequest(ResourceRequest& newRequest, const Reso
         // We checked application cache for initial URL, now we need to check it for redirected one.
         ASSERT(!m_substituteData.isValid());
         documentLoader()->applicationCacheHost()->maybeLoadMainResourceForRedirect(newRequest, m_substituteData);
+        if (m_substituteData.isValid())
+            m_substituteDataLoadIdentifier = identifier();
     }
 
     // FIXME: Ideally we'd stop the I/O until we hear back from the navigation policy delegate

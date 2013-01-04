@@ -1,3 +1,15 @@
+2013-01-04  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        REGRESSION (r138222?): Assertion failure on appcache/main-resource-redirect.html
+        https://bugs.webkit.org/show_bug.cgi?id=105591
+
+        Reviewed by Brady Eidson.
+
+        Unskip http/tests/appcache/main-resource-redirect.html.
+
+        * platform/efl-wk2/TestExpectations:
+        * platform/mac/TestExpectations:
+
 2013-01-03  Ryosuke Niwa  <rniwa@webkit.org>
 
         Add one more Mac test expectation for the bug 105986.
