@@ -49,6 +49,13 @@ enum MouseButton {
     NoMouseButton = -1
 };
 
+struct KeyMappingEntry {
+    int macKeyCode;
+    int macNumpadKeyCode;
+    unichar character;
+    NSString* characterName;
+};
+
 static NSEventType eventTypeForMouseButtonAndAction(int button, MouseAction action)
 {
     switch (button) {
@@ -324,14 +331,6 @@ void EventSenderProxy::keyDown(WKStringRef key, WKEventModifiers modifiers, unsi
         keyCode = 0x4C;
     else if ([character isEqualToString:@"\x8"])
         keyCode = 0x33;
-    else if ([character isEqualToString:@"7"])
-        keyCode = 0x1A;
-    else if ([character isEqualToString:@"5"])
-        keyCode = 0x17;
-    else if ([character isEqualToString:@"9"])
-        keyCode = 0x19;
-    else if ([character isEqualToString:@"0"])
-        keyCode = 0x1D;
     else if ([character isEqualToString:@"a"])
         keyCode = 0x00;
     else if ([character isEqualToString:@"b"])
@@ -340,6 +339,38 @@ void EventSenderProxy::keyDown(WKStringRef key, WKEventModifiers modifiers, unsi
         keyCode = 0x02;
     else if ([character isEqualToString:@"e"])
         keyCode = 0x0E;
+
+    KeyMappingEntry table[] = {
+        {0x2F, 0x41, '.', nil},
+        {0,    0x43, '*', nil},
+        {0,    0x45, '+', nil},
+        {0,    0x47, NSClearLineFunctionKey, @"clear"},
+        {0x2C, 0x4B, '/', nil},
+        {0,    0x4C, 3, @"enter" },
+        {0x1B, 0x4E, '-', nil},
+        {0x18, 0x51, '=', nil},
+        {0x1D, 0x52, '0', nil},
+        {0x12, 0x53, '1', nil},
+        {0x13, 0x54, '2', nil},
+        {0x14, 0x55, '3', nil},
+        {0x15, 0x56, '4', nil},
+        {0x17, 0x57, '5', nil},
+        {0x16, 0x58, '6', nil},
+        {0x1A, 0x59, '7', nil},
+        {0x1C, 0x5B, '8', nil},
+        {0x19, 0x5C, '9', nil},
+    };
+    for (unsigned i = 0; i < WTF_ARRAY_LENGTH(table); ++i) {
+        NSString* currentCharacterString = [NSString stringWithCharacters:&table[i].character length:1];
+        if ([character isEqualToString:currentCharacterString] || [character isEqualToString:table[i].characterName]) {
+            if (keyLocation == 0x03 /*DOM_KEY_LOCATION_NUMPAD*/)
+                keyCode = table[i].macNumpadKeyCode;
+            else
+                keyCode = table[i].macKeyCode;
+            eventCharacter = currentCharacterString;
+            break;
+        }
+    }
 
     NSString *charactersIgnoringModifiers = eventCharacter;
 

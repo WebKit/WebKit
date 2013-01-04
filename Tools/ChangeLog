@@ -1,3 +1,17 @@
+2013-01-04  Sailesh Agrawal  <sail@chromium.org>
+
+        [Mac] [WK2] platform/mac/fast/events/numpad-keycode-mapping.html fails
+        https://bugs.webkit.org/show_bug.cgi?id=105958
+
+        Reviewed by Alexey Proskuryakov.
+
+        Ported code from DumpRenderTree to WebKitTestRunner to map all numpad keys.
+
+        * WebKitTestRunner/mac/EventSenderProxy.mm:
+        (KeyMappingEntry):
+        (WTR):
+        (WTR::EventSenderProxy::keyDown): Added all numpad keys.
+
 2013-01-03  Chris Fleizach  <cfleizach@apple.com>
 
         REGRESSION: [Mac] Intermittent crash in WTR::AccessibilityUIElement::isEqual

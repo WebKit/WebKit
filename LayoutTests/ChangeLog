@@ -1,3 +1,14 @@
+2013-01-04  Sailesh Agrawal  <sail@chromium.org>
+
+        [Mac] [WK2] platform/mac/fast/events/numpad-keycode-mapping.html fails
+        https://bugs.webkit.org/show_bug.cgi?id=105958
+
+        Reviewed by Alexey Proskuryakov.
+
+        Fixed numpad-keycode-mapping.html failure in WebKitTestRunner.
+
+        * platform/mac-wk2/TestExpectations:
+
 2013-01-04  Mihnea Ovidenie  <mihnea@adobe.com>
 
         [CSS Regions]Content overflowing last region displayed wrong

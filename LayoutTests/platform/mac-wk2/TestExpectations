@@ -279,8 +279,6 @@ webkit.org/b/105954 http/tests/navigation/reload-subframe-object.html [ Failure 
 
 webkit.org/b/105956 inspector/geolocation-watchPosition.html [ Pass Failure ]
 
-webkit.org/b/105958 platform/mac/fast/events/numpad-keycode-mapping.html [ Failure ]
-
 webkit.org/b/105960 plugins/navigator-plugins.html [ Failure ]
 
 webkit.org/b/105988 [ Debug ] inspector/debugger/pause-in-internal-script.html [ Pass Crash ]
