@@ -77,11 +77,11 @@ SharedWorkerProcess::~SharedWorkerProcess()
 {
 }
 
-void SharedWorkerProcess::initialize(CoreIPC::Connection::Identifier serverIdentifier, RunLoop* runLoop)
+void SharedWorkerProcess::initializeConnection(CoreIPC::Connection::Identifier serverIdentifier)
 {
     ASSERT(!m_connection);
 
-    m_connection = CoreIPC::Connection::createClientConnection(serverIdentifier, this, runLoop);
+    m_connection = CoreIPC::Connection::createClientConnection(serverIdentifier, this, RunLoop::main());
     m_connection->setDidCloseOnConnectionWorkQueueCallback(didCloseOnConnectionWorkQueue);
     m_connection->open();
 }

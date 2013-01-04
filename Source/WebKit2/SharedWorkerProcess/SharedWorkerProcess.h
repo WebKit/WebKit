@@ -46,7 +46,7 @@ class SharedWorkerProcess : ChildProcess {
 public:
     static SharedWorkerProcess& shared();
 
-    void initialize(CoreIPC::Connection::Identifier, WebCore::RunLoop*);
+    void initializeConnection(CoreIPC::Connection::Identifier);
     void removeWebProcessConnection(WebProcessConnection*);
 
 private:

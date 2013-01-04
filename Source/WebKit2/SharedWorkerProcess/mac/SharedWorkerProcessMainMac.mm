@@ -98,7 +98,7 @@ int SharedWorkerProcessMain(const CommandLine& commandLine)
         RunLoop::initializeMainRunLoop();
 
         // Initialize the shared worker process connection.
-        SharedWorkerProcess::shared().initialize(CoreIPC::Connection::Identifier(serverPort), RunLoop::main());
+        SharedWorkerProcess::shared().initializeConnection(CoreIPC::Connection::Identifier(serverPort));
 
         [NSApplication sharedApplication];
     }

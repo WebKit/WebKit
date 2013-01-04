@@ -127,7 +127,7 @@ int PluginProcessMain(const CommandLine& commandLine)
         PluginProcess::shared().initializeCocoaOverrides();
 
         // Initialize the plug-in process connection.
-        PluginProcess::shared().initialize(CoreIPC::Connection::Identifier(serverPort), RunLoop::main());
+        PluginProcess::shared().initializeConnection(CoreIPC::Connection::Identifier(serverPort));
 
         [NSApplication sharedApplication];
     }

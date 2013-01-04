@@ -65,7 +65,7 @@ public:
     }
 
     void initializeSandbox(const String& clientIdentifier);
-    void initialize(CoreIPC::Connection::Identifier, WebCore::RunLoop*);
+    void initializeConnection(CoreIPC::Connection::Identifier);
 
     void removeNetworkConnectionToWebProcess(NetworkConnectionToWebProcess*);
 

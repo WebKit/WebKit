@@ -53,7 +53,7 @@ void initializeNetworkProcess(const NetworkProcessInitializationParameters& para
 
         NetworkProcess& networkProcess = NetworkProcess::shared();
         networkProcess.initializeSandbox(parameters.clientIdentifier);
-        networkProcess.initialize(parameters.connectionIdentifier, RunLoop::main());
+        networkProcess.initializeConnection(parameters.connectionIdentifier);
     }
 }
 

@@ -106,7 +106,7 @@ WK_EXPORT int PluginProcessMainUnix(int argc, char* argv[])
 #endif
 
     int socket = atoi(argv[1]);
-    WebKit::PluginProcess::shared().initialize(socket, RunLoop::main());
+    WebKit::PluginProcess::shared().initializeConnection(socket);
     RunLoop::run();
 
     return 0;

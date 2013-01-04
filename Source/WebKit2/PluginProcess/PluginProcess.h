@@ -54,8 +54,9 @@ public:
 
     static PluginProcess& shared();
 
-    void initialize(CoreIPC::Connection::Identifier, WebCore::RunLoop*);
-    void removeWebProcessConnection(WebProcessConnection* webProcessConnection);
+    void initializeConnection(CoreIPC::Connection::Identifier);
+
+    void removeWebProcessConnection(WebProcessConnection*);
 
     NetscapePluginModule* netscapePluginModule();
 

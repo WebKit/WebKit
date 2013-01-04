@@ -72,11 +72,11 @@ DownloadManager& NetworkProcess::downloadManager()
     return downloadManager;
 }
 
-void NetworkProcess::initialize(CoreIPC::Connection::Identifier serverIdentifier, WebCore::RunLoop* runLoop)
+void NetworkProcess::initializeConnection(CoreIPC::Connection::Identifier serverIdentifier)
 {
     ASSERT(!m_uiConnection);
 
-    m_uiConnection = CoreIPC::Connection::createClientConnection(serverIdentifier, this, runLoop);
+    m_uiConnection = CoreIPC::Connection::createClientConnection(serverIdentifier, this, RunLoop::main());
     m_uiConnection->setDidCloseOnConnectionWorkQueueCallback(didCloseOnConnectionWorkQueue);
     m_uiConnection->open();
 }
