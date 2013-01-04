@@ -83,7 +83,6 @@ loader.Loader.prototype = {
     _loadBuildersList: function()
     {
         loadBuildersList(g_crossDashboardState.group, g_crossDashboardState.testType);
-        initBuilders();
         this._loadNext();
     },
     _loadResultsFiles: function()
@@ -170,19 +169,15 @@ loader.Loader.prototype = {
         delete currentBuilders()[builderName];
 
         // Change the default builder name if it has been deleted.
-        if (g_defaultBuilderName == builderName) {
-            g_defaultBuilderName = null;
-            for (var availableBuilderName in currentBuilders()) {
-                g_defaultBuilderName = availableBuilderName;
-                g_defaultDashboardSpecificStateValues.builder = availableBuilderName;
-                break;
-            }
-            if (!g_defaultBuilderName) {
+        if (g_defaultDashboardSpecificStateValues.builder == builderName) {
+            var defaultBuilderName = currentBuilderGroup().defaultBuilder();
+            g_defaultDashboardSpecificStateValues.builder = defaultBuilderName;
+            if (!defaultBuilderName) {
                 var error = 'No tests results found for ' + g_crossDashboardState.testType + '. Reload the page to try fetching it again.';
                 console.error(error);
                 addError(error);
             }
-        }
+       }
 
         // Proceed as if the resource had loaded.
         this._handleResourceLoad();

@@ -2489,7 +2489,7 @@ function updateDefaultBuilderState()
     if (isCrossBuilderView())
         delete g_defaultDashboardSpecificStateValues.builder;
     else
-        g_defaultDashboardSpecificStateValues.builder = g_defaultBuilderName;
+        g_defaultDashboardSpecificStateValues.builder = currentBuilderGroup().defaultBuilder();
 }
 
 // Sets the page state to regenerate the page.

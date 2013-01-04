@@ -328,8 +328,9 @@ function parseParameters()
     var dashboardSpecificDiffState = diffStates(oldDashboardSpecificState, g_currentState);
 
     fillMissingValues(g_currentState, g_defaultDashboardSpecificStateValues);
+
     if (!g_crossDashboardState.useTestData)
-        fillMissingValues(g_currentState, {'builder': g_defaultBuilderName});
+        fillMissingValues(g_currentState, {'builder': currentBuilderGroup().defaultBuilder()});
 
     // FIXME: dashboard_base shouldn't know anything about specific dashboard specific keys.
     if (dashboardSpecificDiffState.builder)
@@ -424,12 +425,6 @@ function currentBuilders()
 function isTipOfTreeWebKitBuilder()
 {
     return currentBuilderGroup().isToTWebKit;
-}
-
-var g_defaultBuilderName;
-function initBuilders()
-{
-    currentBuilderGroup().setup();
 }
 
 var g_resultsByBuilder = {};
