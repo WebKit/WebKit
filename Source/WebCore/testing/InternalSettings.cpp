@@ -90,10 +90,6 @@ InternalSettings::Backup::Backup(Settings* settings)
 #if ENABLE(DIALOG_ELEMENT)
     , m_originalDialogElementEnabled(RuntimeEnabledFeatures::dialogElementEnabled())
 #endif
-    , m_originalForceCompositingMode(settings->forceCompositingMode())
-    , m_originalCompositingForFixedPositionEnabled(settings->acceleratedCompositingForFixedPositionEnabled())
-    , m_originalCompositingForScrollableFramesEnabled(settings->acceleratedCompositingForScrollableFramesEnabled())
-    , m_originalAcceleratedDrawingEnabled(settings->acceleratedDrawingEnabled())
     , m_originalCanvasUsesAcceleratedDrawing(settings->canvasUsesAcceleratedDrawing())
     , m_originalMockScrollbarsEnabled(settings->mockScrollbarsEnabled())
     , m_langAttributeAwareFormControlUIEnabled(RuntimeEnabledFeatures::langAttributeAwareFormControlUIEnabled())
@@ -135,10 +131,6 @@ void InternalSettings::Backup::restoreTo(Settings* settings)
 #if ENABLE(DIALOG_ELEMENT)
     RuntimeEnabledFeatures::setDialogElementEnabled(m_originalDialogElementEnabled);
 #endif
-    settings->setForceCompositingMode(m_originalForceCompositingMode);
-    settings->setAcceleratedCompositingForFixedPositionEnabled(m_originalCompositingForFixedPositionEnabled);
-    settings->setAcceleratedCompositingForScrollableFramesEnabled(m_originalCompositingForScrollableFramesEnabled);
-    settings->setAcceleratedDrawingEnabled(m_originalAcceleratedDrawingEnabled);
     settings->setCanvasUsesAcceleratedDrawing(m_originalCanvasUsesAcceleratedDrawing);
     settings->setMockScrollbarsEnabled(m_originalMockScrollbarsEnabled);
     RuntimeEnabledFeatures::setLangAttributeAwareFormControlUIEnabled(m_langAttributeAwareFormControlUIEnabled);
@@ -202,42 +194,6 @@ Settings* InternalSettings::settings() const
     if (!page())
         return 0;
     return page()->settings();
-}
-
-void InternalSettings::setForceCompositingMode(bool enabled, ExceptionCode& ec)
-{
-    InternalSettingsGuardForSettings();
-    settings()->setForceCompositingMode(enabled);
-}
-
-void InternalSettings::setAcceleratedFiltersEnabled(bool enabled, ExceptionCode& ec)
-{
-    InternalSettingsGuardForSettings();
-    settings()->setAcceleratedFiltersEnabled(enabled);
-}
-
-void InternalSettings::setEnableCompositingForFixedPosition(bool enabled, ExceptionCode& ec)
-{
-    InternalSettingsGuardForSettings();
-    settings()->setAcceleratedCompositingForFixedPositionEnabled(enabled);
-}
-
-void InternalSettings::setEnableCompositingForScrollableFrames(bool enabled, ExceptionCode& ec)
-{
-    InternalSettingsGuardForSettings();
-    settings()->setAcceleratedCompositingForScrollableFramesEnabled(enabled);
-}
-
-void InternalSettings::setEnableCompositingForOverflowScroll(bool enabled, ExceptionCode& ec)
-{
-    InternalSettingsGuardForSettings();
-    settings()->setAcceleratedCompositingForOverflowScrollEnabled(enabled);
-}
-
-void InternalSettings::setAcceleratedDrawingEnabled(bool enabled, ExceptionCode& ec)
-{
-    InternalSettingsGuardForSettings();
-    settings()->setAcceleratedDrawingEnabled(enabled);
 }
 
 void InternalSettings::setMockScrollbarsEnabled(bool enabled, ExceptionCode& ec)

@@ -76,10 +76,6 @@ public:
 #if ENABLE(DIALOG_ELEMENT)
         bool m_originalDialogElementEnabled;
 #endif
-        bool m_originalForceCompositingMode;
-        bool m_originalCompositingForFixedPositionEnabled;
-        bool m_originalCompositingForScrollableFramesEnabled;
-        bool m_originalAcceleratedDrawingEnabled;
         bool m_originalCanvasUsesAcceleratedDrawing;
         bool m_originalMockScrollbarsEnabled;
         bool m_originalUsesOverlayScrollbars;
@@ -102,12 +98,6 @@ public:
     virtual ~InternalSettings();
     void resetToConsistentState();
 
-    void setForceCompositingMode(bool enabled, ExceptionCode&);
-    void setEnableCompositingForFixedPosition(bool enabled, ExceptionCode&);
-    void setEnableCompositingForScrollableFrames(bool enabled, ExceptionCode&);
-    void setEnableCompositingForOverflowScroll(bool enabled, ExceptionCode&);
-    void setAcceleratedDrawingEnabled(bool enabled, ExceptionCode&);
-    void setAcceleratedFiltersEnabled(bool enabled, ExceptionCode&);
     void setMockScrollbarsEnabled(bool enabled, ExceptionCode&);
     void setUsesOverlayScrollbars(bool enabled, ExceptionCode&);
     void setFixedElementsLayoutRelativeToFrame(bool, ExceptionCode&);

@@ -30,7 +30,7 @@
         testRunner.waitUntilDone();
         testRunner.dumpAsText();
         if (window.internals) {
-            window.internals.settings.setEnableCompositingForFixedPosition(true);
+            window.internals.settings.setAcceleratedCompositingForFixedPositionEnabled(true);
             window.internals.settings.setFixedPositionCreatesStackingContext(true);
         }
       }
