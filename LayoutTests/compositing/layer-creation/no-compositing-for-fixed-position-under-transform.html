@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <style>
+    .transform {
+      width: 100px;
+      height: 30px;
+      -webkit-transform: translateZ(0);
+    }
+    .fixed {
+      position: fixed;
+      left: 10px;
+      top: 10px;
+    }
+  </style>
+
+  <script type="text/javascript">
+    if (window.internals) {
+      window.internals.settings.setEnableCompositingForFixedPosition(true);
+      window.internals.settings.setFixedPositionCreatesStackingContext(true);
+    }
+
+    if (window.testRunner) {
+      testRunner.dumpAsText();
+
+      window.addEventListener("load", function() {
+        document.getElementById("layerTree").innerText = window.internals.layerTreeAsText(document);
+        document.getElementById("mainThreadScrollingReasons").innerText = window.internals.mainThreadScrollingReasons(document);
+      }, false);
+    }
+  </script>
+</head>
+
+<body>
+  <div class="transform">
+    <!-- This element should neither be composited nor force main thread scrolling. -->
+    <div class="fixed">TEST</div>
+  </div>
+
+  <pre id="layerTree"></pre>
+  <pre id="mainThreadScrollingReasons"></pre>
+</body>
+</html>
