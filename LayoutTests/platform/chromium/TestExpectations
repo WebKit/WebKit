@@ -2866,6 +2866,11 @@ webkit.org/b/65124 [ Win MountainLion ] fast/repaint/japanese-rl-selection-repai
 webkit.org/b/65124 [ Android Win MountainLion ] fast/repaint/japanese-rl-selection-repaint-in-regions.html [ Failure ]
 webkit.org/b/65124 [ Android ] fast/repaint/line-flow-with-floats-in-regions.html [ Failure ]
 
+webkit.org/b/106097 [ SnowLeopard Release ] fast/repaint/japanese-rl-selection-repaint-in-regions.html [ ImageOnlyFailure ]
+webkit.org/b/106097 [ SnowLeopard Debug ] fast/repaint/japanese-rl-selection-repaint-in-regions.html [ ImageOnlyFailure ]
+webkit.org/b/106097 [ Lion Release ] fast/repaint/japanese-rl-selection-repaint-in-regions.html [ ImageOnlyFailure ]
+webkit.org/b/106097 [ Lion Debug ] fast/repaint/japanese-rl-selection-repaint-in-regions.html [ ImageOnlyFailure ]
+
 webkit.org/b/65199 [ Android Linux SnowLeopard Win ] fast/writing-mode/broken-ideograph-small-caps.html [ Failure ]
 
 webkit.org/b/65453 [ Lion SnowLeopard ] fast/css/outline-auto-empty-rects.html [ ImageOnlyFailure ]
