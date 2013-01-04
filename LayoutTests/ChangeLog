@@ -2,6 +2,14 @@
 
         Unreviewed EFL gardening.
 
+        Skip new failing tests introduced in r138632 and r138756.
+
+        * platform/efl/TestExpectations:
+
+2013-01-04  Sudarsana Nagineni  <sudarsana.nagineni@intel.com>
+
+        Unreviewed EFL gardening.
+
         Rebaseline editing/deleting/delete-to-select-table.html.
 
         * platform/efl/editing/deleting/delete-to-select-table-expected.png:
