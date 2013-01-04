@@ -79,8 +79,9 @@ public:
     AudioListener* listener();
 
     // Panning model
-    unsigned short panningModel() const { return m_panningModel; }
-    void setPanningModel(unsigned short, ExceptionCode&);
+    String panningModel() const;
+    bool setPanningModel(unsigned); // Returns true on success.
+    void setPanningModel(const String&);
 
     // Position
     FloatPoint3D position() const { return m_position; }
@@ -95,8 +96,9 @@ public:
     void setVelocity(float x, float y, float z) { m_velocity = FloatPoint3D(x, y, z); }
 
     // Distance parameters
-    unsigned short distanceModel() { return m_distanceEffect.model(); }
-    void setDistanceModel(unsigned short, ExceptionCode&);
+    String distanceModel() const;
+    bool setDistanceModel(unsigned); // Returns true on success.
+    void setDistanceModel(const String&);
 
     float refDistance() { return static_cast<float>(m_distanceEffect.refDistance()); }
     void setRefDistance(float refDistance) { m_distanceEffect.setRefDistance(refDistance); }

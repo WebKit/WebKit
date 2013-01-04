@@ -46,8 +46,8 @@ function createGraph(context, nodeCount) {
         bufferSource[k].buffer = impulse;
 
         panner[k] = context.createPanner();
-        panner[k].panningModel = panner.EQUALPOWER;
-        panner[k].distanceModel = 0; // Linear distance model.
+        panner[k].panningModel = "equalpower";
+        panner[k].distanceModel = "linear";
 
         var angle = angleStep * k;
         position[k] = {angle : angle, x : Math.cos(angle), z : Math.sin(angle)};

@@ -76,6 +76,7 @@ list(APPEND WebCore_SOURCES
     bindings/v8/custom/V8ArrayBufferCustom.cpp
     bindings/v8/custom/V8ArrayBufferViewCustom.cpp
     bindings/v8/custom/V8AudioContextCustom.cpp
+    bindings/v8/custom/V8BiquadFilterNodeCustom.cpp
     bindings/v8/custom/V8CSSRuleCustom.cpp
     bindings/v8/custom/V8CSSStyleDeclarationCustom.cpp
     bindings/v8/custom/V8CSSValueCustom.cpp
@@ -139,6 +140,7 @@ list(APPEND WebCore_SOURCES
     bindings/v8/custom/V8NotificationCenterCustom.cpp
     bindings/v8/custom/V8OscillatorNodeCustom.cpp
     bindings/v8/custom/V8PerformanceEntryCustom.cpp
+    bindings/v8/custom/V8PannerNodeCustom.cpp
     bindings/v8/custom/V8PopStateEventCustom.cpp
     bindings/v8/custom/V8SQLResultSetRowListCustom.cpp
     bindings/v8/custom/V8SQLTransactionCustom.cpp

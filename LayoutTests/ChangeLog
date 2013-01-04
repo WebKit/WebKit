@@ -1,3 +1,26 @@
+2013-01-04  Chris Rogers  <crogers@google.com>
+
+        Implement WebIDL-style string constants in WebAudio (part 2)
+        https://bugs.webkit.org/show_bug.cgi?id=105977
+
+        Reviewed by Kentaro Hara.
+
+        * webaudio/audiopannernode-basic-expected.txt: Removed.
+        * webaudio/audiopannernode-basic.html: Removed.
+        * webaudio/biquad-getFrequencyResponse-expected.txt:
+        * webaudio/biquad-getFrequencyResponse.html:
+        * webaudio/biquadfilternode-basic-expected.txt:
+        * webaudio/biquadfilternode-basic.html:
+        * webaudio/pannernode-basic-expected.txt: Added.
+        * webaudio/pannernode-basic.html: Added.
+        * webaudio/resources/biquad-testing.js:
+        * webaudio/resources/distance-model-testing.js:
+        (createGraph):
+        (.return.renderedBuffer):
+        (checkDistanceResult):
+        * webaudio/resources/panner-model-testing.js:
+        (createGraph):
+
 2013-01-04  Terry Anderson  <tdanderson@chromium.org>
 
         Unreviewed gardening. The following two tests are flaky on XP:

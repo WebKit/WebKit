@@ -55,6 +55,7 @@ function exponentialDistance(panner, x, y, z) {
 // This array must be arranged in the numeric order of the distance
 // model values.
 var distanceModelFunction = [linearDistance, inverseDistance, exponentialDistance];
+var distanceModelIndex = {"linear": 0, "inverse": 1, "exponential": 2};
 
 function createGraph(context, distanceModel, nodeCount) {
     bufferSource = new Array(nodeCount);
@@ -83,7 +84,7 @@ function createGraph(context, distanceModel, nodeCount) {
         bufferSource[k].buffer = impulse;
 
         panner[k] = context.createPanner();
-        panner[k].panningModel = panner.EQUALPOWER;
+        panner[k].panningModel = "equalpower";
         panner[k].distanceModel = distanceModel;
 
         var distanceStep = (panner[k].maxDistance - panner[k].refDistance) / nodeCount;
@@ -150,7 +151,9 @@ function checkDistanceResult(model, expectedModel) {
         // distance.
         for (var k = 0; k < renderedData.length; ++k) {
             if (renderedData[k] != 0) {
-                var distanceFunction = distanceModelFunction[panner[impulseCount].distanceModel];
+                // Convert from string to index.
+                var modelIndex = distanceModelIndex[panner[impulseCount].distanceModel];
+                var distanceFunction = distanceModelFunction[modelIndex];
                 var expected = distanceFunction(panner[impulseCount], 0, 0, position[impulseCount]);
 
                 // Adjust for the center-panning of the EQUALPOWER panning

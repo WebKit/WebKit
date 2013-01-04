@@ -35,6 +35,7 @@
 #include "AudioNodeOutput.h"
 #include "ExceptionCode.h"
 #include "HRTFPanner.h"
+#include "ScriptExecutionContext.h"
 #include <wtf/MathExtras.h>
 
 using namespace std;
@@ -151,7 +152,34 @@ AudioListener* PannerNode::listener()
     return context()->listener();
 }
 
-void PannerNode::setPanningModel(unsigned short model, ExceptionCode& ec)
+String PannerNode::panningModel() const
+{
+    switch (m_panningModel) {
+    case EQUALPOWER:
+        return "equalpower";
+    case HRTF:
+        return "HRTF";
+    case SOUNDFIELD:
+        return "soundfield";
+    default:
+        ASSERT_NOT_REACHED();
+        return "HRTF";
+    }
+}
+
+void PannerNode::setPanningModel(const String& model)
+{
+    if (model == "equalpower")
+        setPanningModel(EQUALPOWER);
+    else if (model == "HRTF")
+        setPanningModel(HRTF);
+    else if (model == "soundfield")
+        setPanningModel(SOUNDFIELD);
+    else
+        ASSERT_NOT_REACHED();
+}
+
+bool PannerNode::setPanningModel(unsigned model)
 {
     switch (model) {
     case EQUALPOWER:
@@ -164,14 +192,43 @@ void PannerNode::setPanningModel(unsigned short model, ExceptionCode& ec)
         break;
     case SOUNDFIELD:
         // FIXME: Implement sound field model. See // https://bugs.webkit.org/show_bug.cgi?id=77367.
-        // For now, fall through to throw an exception.
-    default:
-        ec = NOT_SUPPORTED_ERR;
+        context()->scriptExecutionContext()->addConsoleMessage(JSMessageSource, WarningMessageLevel, "'soundfield' panning model not implemented.");
         break;
+    default:
+        return false;
+    }
+    
+    return true;
+}
+
+String PannerNode::distanceModel() const
+{
+    switch (const_cast<PannerNode*>(this)->m_distanceEffect.model()) {
+    case DistanceEffect::ModelLinear:
+        return "linear";
+    case DistanceEffect::ModelInverse:
+        return "inverse";
+    case DistanceEffect::ModelExponential:
+        return "exponential";
+    default:
+        ASSERT_NOT_REACHED();
+        return "inverse";
     }
 }
 
-void PannerNode::setDistanceModel(unsigned short model, ExceptionCode& ec)
+void PannerNode::setDistanceModel(const String& model)
+{
+    if (model == "linear")
+        setDistanceModel(DistanceEffect::ModelLinear);
+    else if (model == "inverse")
+        setDistanceModel(DistanceEffect::ModelInverse);
+    else if (model == "exponential")
+        setDistanceModel(DistanceEffect::ModelExponential);
+    else
+        ASSERT_NOT_REACHED();
+}
+
+bool PannerNode::setDistanceModel(unsigned model)
 {
     switch (model) {
     case DistanceEffect::ModelLinear:
@@ -180,9 +237,10 @@ void PannerNode::setDistanceModel(unsigned short model, ExceptionCode& ec)
         m_distanceEffect.setModel(static_cast<DistanceEffect::ModelType>(model), true);
         break;
     default:
-        ec = NOT_SUPPORTED_ERR;
-        break;
+        return false;
     }
+
+    return true;
 }
 
 void PannerNode::getAzimuthElevation(double* outAzimuth, double* outElevation)

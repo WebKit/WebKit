@@ -1,0 +1,30 @@
+Basic tests for PannerNode.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+PASS PannerNode has one input.
+PASS PannerNode has one output.
+PASS refDistance default value is 1.
+PASS maxDistance default value is 10000.
+PASS rolloffFactor default value is 1.
+PASS coneInnerAngle default value is 360.
+PASS coneOuterAngle default value is 360.
+PASS coneOuterGain default value is 0.
+PASS PannerNode defaults to 'HRTF' panningModel.
+PASS PannerNode defaults to 'inverse' distanceModel.
+PASS panningModel: 'equalpower' is settable.
+PASS panningModel: 'HRTF' is settable.
+PASS panningModel: 0 is settable using legacy integer value.
+PASS panningModel: 1 is settable using legacy integer value.
+PASS distanceModel: 'linear' is settable.
+PASS distanceModel: 'inverse' is settable.
+PASS distanceModel: 'exponential' is settable.
+PASS distanceModel: 0 is settable using legacy integer value.
+PASS distanceModel: 1 is settable using legacy integer value.
+PASS distanceModel: 2 is settable using legacy integer value.
+PASS Setting .type to illegal string value threw TypeError.
+PASS Setting .type to illegal type of Float32Array threw TypeError.
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

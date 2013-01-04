@@ -36,8 +36,7 @@
     const unsigned short NOTCH = 6;
     const unsigned short ALLPASS = 7;
 
-    attribute unsigned short type
-        setter raises(DOMException);
+    [CustomSetter] attribute DOMString type;
     
     readonly attribute AudioParam frequency; // in Hertz
     readonly attribute AudioParam detune; // in Cents

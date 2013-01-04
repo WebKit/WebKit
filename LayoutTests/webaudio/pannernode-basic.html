@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../fast/js/resources/js-test-pre.js"></script>
+<script src="resources/audio-testing.js"></script>
+</head>
+
+<body>
+<div id="description"></div>
+<div id="console"></div>
+
+<script>
+description("Basic tests for PannerNode.");
+
+var context = 0;
+
+function runTest() {
+    if (window.testRunner) {
+        testRunner.dumpAsText();
+        testRunner.waitUntilDone();
+    }
+    
+    window.jsTestIsAsync = true;
+
+    context = new webkitAudioContext();
+    var panner = context.createPanner();
+   
+    if (panner.numberOfInputs === 1) 
+        testPassed("PannerNode has one input.");
+    else
+        testFailed("PannerNode should have one input.");
+    
+    if (panner.numberOfOutputs === 1) 
+        testPassed("PannerNode has one output.");
+    else
+        testFailed("PannerNode should have one output.");
+
+    if (panner.refDistance === 1)
+        testPassed("refDistance default value is 1.");
+    else
+        testFailed("refDistance default value should be 1.");
+    
+    if (panner.maxDistance === 10000)
+        testPassed("maxDistance default value is 10000.");
+    else
+        testFailed("maxDistance default value should be 10000.");
+    
+    if (panner.rolloffFactor === 1)
+        testPassed("rolloffFactor default value is 1.");
+    else
+        testFailed("rolloffFactor default value should be 1.");
+    
+    if (panner.coneInnerAngle === 360)
+        testPassed("coneInnerAngle default value is 360.");
+    else
+        testFailed("coneInnerAngle default value should be 360.");
+    
+    if (panner.coneOuterAngle === 360)
+        testPassed("coneOuterAngle default value is 360.");
+    else
+        testFailed("coneOuterAngle default value should be 360.");
+    
+    if (panner.coneOuterGain === 0)
+        testPassed("coneOuterGain default value is 0.");
+    else
+        testFailed("coneOuterGain default value should be 0.");
+
+    if (panner.panningModel === "HRTF")
+        testPassed("PannerNode defaults to 'HRTF' panningModel.");
+    else
+        testFailed("PannerNode should default to 'HRTF' panningModel.");
+    
+    if (panner.distanceModel === "inverse")
+        testPassed("PannerNode defaults to 'inverse' distanceModel.");
+    else
+        testFailed("PannerNode should default to 'inverse' distanceModel.");
+
+    // Check that the .panningModel attribute can be set to all legal values.
+    var panningModels = [{value: "equalpower", integerValue: panner.EQUALPOWER},
+                         {value: "HRTF", integerValue: panner.HRTF},
+                         // FIXME: enable "soundfield" once feature is implemented: https://bugs.webkit.org/show_bug.cgi?id=77367
+                         // {value: "soundfield", integerValue: panner.SOUNDFIELD}
+                        ];
+
+    for (var i = 0; i < panningModels.length; ++i) {
+        try {
+            panner.panningModel = panningModels[i].value;
+            if (panner.panningModel === panningModels[i].value) {
+                var message = "panningModel: '" + panningModels[i].value + "' is settable.";
+                testPassed(message);
+            } else {
+                var message = "panningModel: '" + panningModels[i].value + "' was not correctly set.";
+                testFailed(message);
+            }
+        } catch(e) {
+            var message = "Setting panningModel to '" + panningModels[i].value + "' should not throw exception.";
+            testFailed(message);
+        }
+    }
+
+    // For legacy support, verify that we can set the .panningModel attribute as an integer value and
+    // verify that this translates correctly to the WebIDL enum value.
+    for (var i = 0; i < panningModels.length; ++i) {
+        try {
+            panner.panningModel = panningModels[i].integerValue;
+            if (panner.panningModel === panningModels[i].value && panningModels[i].integerValue === i) {
+                var message = "panningModel: " + panningModels[i].integerValue + " is settable using legacy integer value.";
+                testPassed(message);
+            } else {
+                var message = "panningModel: " + panningModels[i].integerValue + " was not correctly set using legacy integer value.";
+                testFailed(message);
+            }
+        } catch(e) {
+            var message = "Setting panningModel to " + panningModels[i].integerValue + " should not throw exception using legacy integer value.";
+            testFailed(message);
+        }
+    }
+
+    // Check that the .distanceModel attribute can be set to all legal values.
+    var distanceModels = [{value: "linear", integerValue: panner.LINEAR_DISTANCE},
+                          {value: "inverse", integerValue: panner.INVERSE_DISTANCE},
+                          {value: "exponential", integerValue: panner.EXPONENTIAL_DISTANCE}
+                        ];
+
+    for (var i = 0; i < distanceModels.length; ++i) {
+        try {
+            panner.distanceModel = distanceModels[i].value;
+            if (panner.distanceModel === distanceModels[i].value) {
+                var message = "distanceModel: '" + distanceModels[i].value + "' is settable.";
+                testPassed(message);
+            } else {
+                var message = "distanceModel: '" + distanceModels[i].value + "' was not correctly set.";
+                testFailed(message);
+            }
+        } catch(e) {
+            var message = "Setting distanceModel to '" + distanceModels[i].value + "' should not throw exception.";
+            testFailed(message);
+        }
+    }
+
+    // For legacy support, verify that we can set the .distanceModel attribute as an integer value and
+    // verify that this translates correctly to the WebIDL enum value.
+    for (var i = 0; i < distanceModels.length; ++i) {
+        try {
+            panner.distanceModel = distanceModels[i].integerValue;
+            if (panner.distanceModel === distanceModels[i].value && distanceModels[i].integerValue === i) {
+                var message = "distanceModel: " + distanceModels[i].integerValue + " is settable using legacy integer value.";
+                testPassed(message);
+            } else {
+                var message = "distanceModel: " + distanceModels[i].integerValue + " was not correctly set using legacy integer value.";
+                testFailed(message);
+            }
+        } catch(e) {
+            var message = "Setting distanceModel to " + distanceModels[i].integerValue + " should not throw exception using legacy integer value.";
+            testFailed(message);
+        }
+    }
+
+    // Check that we throw a TypeError for illegal .distanceModel values.
+    shouldThrowTypeError(function() { panner.distanceModel = "xyz12349jfksd"; }, "Setting .type to illegal string value");
+    shouldThrowTypeError(function() { panner.distanceModel = new Float32Array(1); }, "Setting .type to illegal type of Float32Array");
+
+    finishJSTest();
+}
+
+runTest();
+
+</script>
+
+<script src="../fast/js/resources/js-test-post.js"></script>
+</body>
+</html>

@@ -107,7 +107,7 @@ function frequencyResponseReference(filter, frequencies)
 {
     var sampleRate = filter.context.sampleRate;
     var normalizedFreq = normalizedFrequency(filter.frequency.value, sampleRate);
-    var filterCoefficients = createFilter(filter.type, normalizedFreq, filter.Q.value, filter.gain.value);
+    var filterCoefficients = createFilter(filterTypeIndex[filter.type], normalizedFreq, filter.Q.value, filter.gain.value);
 
     var magnitudes = [];
     var phases = [];
@@ -283,7 +283,7 @@ function runTest()
     filter = context.createBiquadFilter();
 
     // Arbitrarily test a peaking filter, but any kind of filter can be tested.
-    filter.type = filter.PEAKING;
+    filter.type = "peaking";
     filter.frequency.value = filterCutoff;
     filter.Q.value = filterQ;
     filter.gain.value = filterGain;
@@ -296,9 +296,9 @@ function runTest()
     var success = compareResponses(filter, frequencies, magResponse, phaseResponse);
 
     if (success) {
-        testPassed(filterTypeName[filter.type] + " frequency response was correct.");
+        testPassed("Frequency response was correct.");
     } else {
-        testFailed(filterTypeName[filter.type] + " frequency response was incorrect.");
+        testFailed("Frequency response was incorrect.");
     }
 
     finishJSTest();

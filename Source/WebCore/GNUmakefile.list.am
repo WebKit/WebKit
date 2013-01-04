@@ -2256,6 +2256,7 @@ webcore_sources += \
 	Source/WebCore/bindings/js/JSAttrCustom.cpp \
 	Source/WebCore/bindings/js/JSAudioBufferSourceNodeCustom.cpp \
 	Source/WebCore/bindings/js/JSAudioContextCustom.cpp \
+	Source/WebCore/bindings/js/JSBiquadFilterNodeCustom.cpp \
 	Source/WebCore/bindings/js/JSBlobCustom.cpp \
 	Source/WebCore/bindings/js/JSCDATASectionCustom.cpp \
 	Source/WebCore/bindings/js/JSCSSFontFaceRuleCustom.cpp \
@@ -2384,6 +2385,7 @@ webcore_sources += \
 	Source/WebCore/bindings/js/JSNodeIteratorCustom.cpp \
 	Source/WebCore/bindings/js/JSNodeListCustom.cpp \
 	Source/WebCore/bindings/js/JSOscillatorNodeCustom.cpp \
+	Source/WebCore/bindings/js/JSPannerNodeCustom.cpp \
 	Source/WebCore/bindings/js/JSPluginElementFunctions.cpp \
 	Source/WebCore/bindings/js/JSPluginElementFunctions.h \
 	Source/WebCore/bindings/js/JSPopStateEventCustom.cpp \

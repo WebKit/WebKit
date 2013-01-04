@@ -367,6 +367,15 @@ var filterTypeName = ["Lowpass filter",
                       "Notch filter",
                       "Allpass filter"];
 
+var filterTypeIndex = {"lowpass": 0,
+                       "highpass": 1,
+                       "bandpass": 2,
+                       "lowshelf": 3,
+                       "highshelf": 4,
+                       "peaking": 5,
+                       "notch": 6,
+                       "allpass": 7};
+
 function createFilter(filterType, freq, q, gain) {
     return filterCreatorFunction[filterType](freq, q, gain);
 }

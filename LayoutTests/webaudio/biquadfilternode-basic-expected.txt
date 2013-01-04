@@ -2,21 +2,31 @@ Basic tests for BiquadFilterNode.
 
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 
-PASS BiquadFilterNode has one iutput.
+PASS BiquadFilterNode has one input.
 PASS BiquadFilterNode has one output.
 PASS Biquad filter defaults to low-pass filter.
 PASS The default value of frequency is 350.
 PASS The default value of Q is 1.
 PASS The default value of gain is 0.
-PASS Biquad filter type 0 is settable.
-PASS Biquad filter type 1 is settable.
-PASS Biquad filter type 2 is settable.
-PASS Biquad filter type 3 is settable.
-PASS Biquad filter type 4 is settable.
-PASS Biquad filter type 5 is settable.
-PASS Biquad filter type 6 is settable.
-PASS Biquad filter type 7 is settable.
+PASS Biquad filter type 'lowpass' is settable.
+PASS Biquad filter type 'highpass' is settable.
+PASS Biquad filter type 'bandpass' is settable.
+PASS Biquad filter type 'lowshelf' is settable.
+PASS Biquad filter type 'highshelf' is settable.
+PASS Biquad filter type 'peaking' is settable.
+PASS Biquad filter type 'notch' is settable.
+PASS Biquad filter type 'allpass' is settable.
+PASS Biquad filter type 0 is settable using legacy integer value.
+PASS Biquad filter type 1 is settable using legacy integer value.
+PASS Biquad filter type 2 is settable using legacy integer value.
+PASS Biquad filter type 3 is settable using legacy integer value.
+PASS Biquad filter type 4 is settable using legacy integer value.
+PASS Biquad filter type 5 is settable using legacy integer value.
+PASS Biquad filter type 6 is settable using legacy integer value.
+PASS Biquad filter type 7 is settable using legacy integer value.
 PASS Illegal filter type correctly throws exception.
+PASS Setting .type to illegal string value threw TypeError.
+PASS Setting .type to illegal type of Float32Array threw TypeError.
 PASS successfullyParsed is true
 
 TEST COMPLETE

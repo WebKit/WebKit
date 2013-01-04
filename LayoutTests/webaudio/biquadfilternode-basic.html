@@ -26,16 +26,16 @@ function runTest() {
     var filter = context.createBiquadFilter();
    
     if (filter.numberOfInputs === 1) 
-        testPassed("BiquadFilterNode has one iutput.");
+        testPassed("BiquadFilterNode has one input.");
     else
-        testFailed("BiquadFilterNode should have one iutput.");
+        testFailed("BiquadFilterNode should have one input.");
     
     if (filter.numberOfOutputs === 1) 
         testPassed("BiquadFilterNode has one output.");
     else
         testFailed("BiquadFilterNode should have one output.");
     
-    if (filter.type === filter.LOWPASS)
+    if (filter.type === "lowpass")
         testPassed("Biquad filter defaults to low-pass filter.");
     else
         testFailed("Biquad filter should default to low-pass filter.");
@@ -56,27 +56,45 @@ function runTest() {
         testFailed("The default value of gain should be 0.");
 
     // Check that all legal filter types can be set.
-    var filterTypeArray = [filter.LOWPASS,
-                           filter.HIGHPASS,
-                           filter.BANDPASS,
-                           filter.LOWSHELF,
-                           filter.HIGHSHELF,
-                           filter.PEAKING,
-                           filter.NOTCH,
-                           filter.ALLPASS];
+    var filterTypeArray = [{type: "lowpass", integerType: filter.LOWPASS},
+                           {type: "highpass", integerType: filter.HIGHPASS},
+                           {type: "bandpass", integerType: filter.BANDPASS},
+                           {type: "lowshelf", integerType: filter.LOWSHELF},
+                           {type: "highshelf", integerType: filter.HIGHSHELF},
+                           {type: "peaking", integerType: filter.PEAKING},
+                           {type: "notch", integerType: filter.NOTCH},
+                           {type: "allpass", integerType: filter.ALLPASS}];
 
     for (var i = 0; i < filterTypeArray.length; ++i) {
         try {
-            filter.type = filterTypeArray[i];
-            if (filter.type === filterTypeArray[i] && filterTypeArray[i] === i) {
-                var message = "Biquad filter type " + i + " is settable.";
+            filter.type = filterTypeArray[i].type;
+            if (filter.type === filterTypeArray[i].type) {
+                var message = "Biquad filter type '" + filterTypeArray[i].type + "' is settable.";
                 testPassed(message);
             } else {
-                var message = "Biquad filter type " + i + " was not correctly set.";
+                var message = "Biquad filter type '" + filterTypeArray[i].type + "' was not correctly set.";
                 testFailed(message);
             }
         } catch(e) {
             var message = "Biquad filter type " + i + " should not throw exception.";
+            testFailed(message);
+        }
+    }
+
+    // For legacy support, verify that we can set the type attribute as an integer value and
+    // verify that this translates correctly to the WebIDL enum value.
+    for (var i = 0; i < filterTypeArray.length; ++i) {
+        try {
+            filter.type = filterTypeArray[i].integerType;
+            if (filter.type === filterTypeArray[i].type && filterTypeArray[i].integerType === i) {
+                var message = "Biquad filter type " + i + " is settable using legacy integer value.";
+                testPassed(message);
+            } else {
+                var message = "Biquad filter type " + i + " was not correctly set using legacy integer value.";
+                testFailed(message);
+            }
+        } catch(e) {
+            var message = "Biquad filter type " + i + " should not throw exception using legacy integer value.";
             testFailed(message);
         }
     }
@@ -88,6 +106,10 @@ function runTest() {
     } catch(e) {
         testPassed("Illegal filter type correctly throws exception.");
     }
+
+    // Check specifically that we throw a TypeError.
+    shouldThrowTypeError(function() { filter.type = "xyz12349jfksd"; }, "Setting .type to illegal string value");
+    shouldThrowTypeError(function() { filter.type = new Float32Array(1); }, "Setting .type to illegal type of Float32Array");
 
     finishJSTest();
 }

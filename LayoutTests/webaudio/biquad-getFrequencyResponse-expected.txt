@@ -4,7 +4,7 @@ On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE
 
 PASS Magnitude response within acceptable threshold.
 PASS Phase response within acceptable threshold.
-PASS Peaking filter frequency response was correct.
+PASS Frequency response was correct.
 PASS successfullyParsed is true
 
 TEST COMPLETE

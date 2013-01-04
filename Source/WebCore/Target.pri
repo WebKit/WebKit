@@ -3421,8 +3421,10 @@ enable?(WEB_AUDIO) {
     SOURCES += \
         bindings/js/JSAudioBufferSourceNodeCustom.cpp \
         bindings/js/JSAudioContextCustom.cpp \
+        bindings/js/JSBiquadFilterNodeCustom.cpp \
         bindings/js/JSDOMWindowWebAudioCustom.cpp \
         bindings/js/JSOscillatorNodeCustom.cpp \
+        bindings/js/JSPannerNodeCustom.cpp \
         bindings/js/JSScriptProcessorNodeCustom.cpp \
         Modules/webaudio/AsyncAudioDecoder.cpp \
         Modules/webaudio/AudioBasicInspectorNode.cpp \

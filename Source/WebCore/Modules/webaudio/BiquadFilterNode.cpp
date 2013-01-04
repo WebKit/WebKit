@@ -40,16 +40,61 @@ BiquadFilterNode::BiquadFilterNode(AudioContext* context, float sampleRate)
     setNodeType(NodeTypeBiquadFilter);
 }
 
-void BiquadFilterNode::setType(unsigned short type, ExceptionCode& ec)
+String BiquadFilterNode::type() const
 {
-    if (type > BiquadProcessor::Allpass) {
-        ec = NOT_SUPPORTED_ERR;
-        return;
+    switch (const_cast<BiquadFilterNode*>(this)->biquadProcessor()->type()) {
+    case BiquadProcessor::LowPass:
+        return "lowpass";
+    case BiquadProcessor::HighPass:
+        return "highpass";
+    case BiquadProcessor::BandPass:
+        return "bandpass";
+    case BiquadProcessor::LowShelf:
+        return "lowshelf";
+    case BiquadProcessor::HighShelf:
+        return "highshelf";
+    case BiquadProcessor::Peaking:
+        return "peaking";
+    case BiquadProcessor::Notch:
+        return "notch";
+    case BiquadProcessor::Allpass:
+        return "allpass";
+    default:
+        ASSERT_NOT_REACHED();
+        return "lowpass";
     }
-    
-    biquadProcessor()->setType(static_cast<BiquadProcessor::FilterType>(type));
 }
 
+void BiquadFilterNode::setType(const String& type)
+{
+    if (type == "lowpass")
+        setType(BiquadProcessor::LowPass);
+    else if (type == "highpass")
+        setType(BiquadProcessor::HighPass);
+    else if (type == "bandpass")
+        setType(BiquadProcessor::BandPass);
+    else if (type == "lowshelf")
+        setType(BiquadProcessor::LowShelf);
+    else if (type == "highshelf")
+        setType(BiquadProcessor::HighShelf);
+    else if (type == "peaking")
+        setType(BiquadProcessor::Peaking);
+    else if (type == "notch")
+        setType(BiquadProcessor::Notch);
+    else if (type == "allpass")
+        setType(BiquadProcessor::Allpass);
+    else
+        ASSERT_NOT_REACHED();
+}
+
+bool BiquadFilterNode::setType(unsigned type)
+{
+    if (type > BiquadProcessor::Allpass)
+        return false;
+    
+    biquadProcessor()->setType(static_cast<BiquadProcessor::FilterType>(type));
+    return true;
+}
 
 void BiquadFilterNode::getFrequencyResponse(const Float32Array* frequencyHz,
                                             Float32Array* magResponse,

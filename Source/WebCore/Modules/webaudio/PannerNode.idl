@@ -37,8 +37,7 @@
     const unsigned short EXPONENTIAL_DISTANCE = 2;
 
     // Default model for stereo is HRTF 
-    attribute unsigned short panningModel
-        setter raises(DOMException);
+    [CustomSetter] attribute DOMString panningModel;
 
     // Uses a 3D cartesian coordinate system 
     void setPosition(in float x, in float y, in float z);
@@ -46,8 +45,7 @@
     void setVelocity(in float x, in float y, in float z);
 
     // Distance model
-    attribute unsigned short distanceModel
-        setter raises(DOMException);
+    [CustomSetter] attribute DOMString distanceModel;
 
     attribute float refDistance;
     attribute float maxDistance;

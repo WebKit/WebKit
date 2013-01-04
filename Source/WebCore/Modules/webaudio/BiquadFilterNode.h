@@ -50,9 +50,10 @@ public:
     {
         return adoptRef(new BiquadFilterNode(context, sampleRate));      
     }
-    
-    unsigned short type() { return biquadProcessor()->type(); }
-    void setType(unsigned short type, ExceptionCode&);
+
+    String type() const;
+    bool setType(unsigned); // Returns true on success.
+    void setType(const String&);
 
     AudioParam* frequency() { return biquadProcessor()->parameter1(); }
     AudioParam* q() { return biquadProcessor()->parameter2(); }

@@ -6596,6 +6596,8 @@
 		FD7F299713D4C0CB00AD9535 /* WaveShaperProcessor.h in Headers */ = {isa = PBXBuildFile; fileRef = FD7F299013D4C0CB00AD9535 /* WaveShaperProcessor.h */; };
 		FD82D7F713D4C8BD004E4372 /* JSWaveShaperNode.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FD82D7F513D4C8BD004E4372 /* JSWaveShaperNode.cpp */; };
 		FD82D7F813D4C8BD004E4372 /* JSWaveShaperNode.h in Headers */ = {isa = PBXBuildFile; fileRef = FD82D7F613D4C8BD004E4372 /* JSWaveShaperNode.h */; };
+		FD8AA63C1695148E00D2EA68 /* JSBiquadFilterNodeCustom.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FD8AA63B1695148E00D2EA68 /* JSBiquadFilterNodeCustom.cpp */; };
+		FD8AA63E169514A700D2EA68 /* JSPannerNodeCustom.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FD8AA63D169514A700D2EA68 /* JSPannerNodeCustom.cpp */; };
 		FD8C46EB154608E700A5910C /* AudioScheduledSourceNode.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FD8C46E9154608E700A5910C /* AudioScheduledSourceNode.cpp */; };
 		FD8C46EC154608E700A5910C /* AudioScheduledSourceNode.h in Headers */ = {isa = PBXBuildFile; fileRef = FD8C46EA154608E700A5910C /* AudioScheduledSourceNode.h */; };
 		FDA15E9D12B03EE1003A583A /* JSAudioBuffer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FDA15E8112B03EE1003A583A /* JSAudioBuffer.cpp */; };
@@ -14181,6 +14183,8 @@
 		FD7F299013D4C0CB00AD9535 /* WaveShaperProcessor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WaveShaperProcessor.h; sourceTree = "<group>"; };
 		FD82D7F513D4C8BD004E4372 /* JSWaveShaperNode.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSWaveShaperNode.cpp; sourceTree = "<group>"; };
 		FD82D7F613D4C8BD004E4372 /* JSWaveShaperNode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSWaveShaperNode.h; sourceTree = "<group>"; };
+		FD8AA63B1695148E00D2EA68 /* JSBiquadFilterNodeCustom.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSBiquadFilterNodeCustom.cpp; sourceTree = "<group>"; };
+		FD8AA63D169514A700D2EA68 /* JSPannerNodeCustom.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSPannerNodeCustom.cpp; sourceTree = "<group>"; };
 		FD8C46E9154608E700A5910C /* AudioScheduledSourceNode.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = AudioScheduledSourceNode.cpp; sourceTree = "<group>"; };
 		FD8C46EA154608E700A5910C /* AudioScheduledSourceNode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AudioScheduledSourceNode.h; sourceTree = "<group>"; };
 		FDA15E8112B03EE1003A583A /* JSAudioBuffer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSAudioBuffer.cpp; sourceTree = "<group>"; };
@@ -20669,6 +20673,7 @@
 				BC2ED6BB0C6BD2F000920BFF /* JSAttrCustom.cpp */,
 				FDEAAAEF12B02EE400DCF33B /* JSAudioBufferSourceNodeCustom.cpp */,
 				FDEAAAF012B02EE400DCF33B /* JSAudioContextCustom.cpp */,
+				FD8AA63B1695148E00D2EA68 /* JSBiquadFilterNodeCustom.cpp */,
 				8931DE5A14C44C44000DC9D2 /* JSBlobCustom.cpp */,
 				49EED14B1051971900099FAB /* JSCanvasRenderingContext2DCustom.cpp */,
 				49EED14D1051971A00099FAB /* JSCanvasRenderingContextCustom.cpp */,
@@ -20760,6 +20765,7 @@
 				BCD9C2610C17AA67005C90A2 /* JSNodeListCustom.cpp */,
 				31FE6E6C1501A3BF0004EBC4 /* JSNotificationCustom.cpp */,
 				FDBD1DFB167FE27D0051A11E /* JSOscillatorNodeCustom.cpp */,
+				FD8AA63D169514A700D2EA68 /* JSPannerNodeCustom.cpp */,
 				A85F22081430377D007CC884 /* JSPopStateEventCustom.cpp */,
 				E1AD12D51295D0BD00ACA989 /* JSProcessingInstructionCustom.cpp */,
 				4998AED313FC417F0090B1AA /* JSRequestAnimationFrameCallbackCustom.cpp */,
@@ -29164,6 +29170,8 @@
 				419BC2DE1685329900D64D6D /* VisitedLinkState.cpp in Sources */,
 				5DA97ECE168E787B000E3676 /* SystemVersionMac.mm in Sources */,
 				FDBD1DFC167FE27D0051A11E /* JSOscillatorNodeCustom.cpp in Sources */,
+				FD8AA63C1695148E00D2EA68 /* JSBiquadFilterNodeCustom.cpp in Sources */,
+				FD8AA63E169514A700D2EA68 /* JSPannerNodeCustom.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
