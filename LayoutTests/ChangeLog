@@ -1,3 +1,14 @@
+2013-01-04  Sudarsana Nagineni  <sudarsana.nagineni@intel.com>
+
+        Unreviewed EFL gardening.
+
+        Rebaseline 2 media/track test cases after r138784.
+
+        * platform/efl/media/track/track-cue-rendering-horizontal-expected.png:
+        * platform/efl/media/track/track-cue-rendering-horizontal-expected.txt:
+        * platform/efl/media/track/track-cue-rendering-vertical-expected.png:
+        * platform/efl/media/track/track-cue-rendering-vertical-expected.txt:
+
 2013-01-04  Sailesh Agrawal  <sail@chromium.org>
 
         [Mac] [WK2] platform/mac/fast/events/numpad-keycode-mapping.html fails

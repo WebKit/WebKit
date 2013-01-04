@@ -30,37 +30,31 @@ layer at (8,8) size 320x14 scrollHeight 16
     RenderInline {DIV} at (0,0) size 280x18 [bgcolor=#000000CC]
       RenderText {#text} at (22,0) size 276x14
         text run at (22,0) width 276: "Cue 1: should be positioned at the top of the video."
-    RenderInline {DIV} at (0,0) size 3x18 [bgcolor=#000000CC]
 layer at (8,26) size 320x14 scrollHeight 16
   RenderBlock (positioned) {DIV} at (0,18) size 320x14
     RenderInline {DIV} at (0,0) size 308x18 [bgcolor=#000000CC]
       RenderText {#text} at (8,0) size 304x14
         text run at (8,0) width 304: "Cue 2: should be the second cue and not overlap cue 1."
-    RenderInline {DIV} at (0,0) size 3x18 [bgcolor=#000000CC]
 layer at (8,44) size 320x14 scrollHeight 16
   RenderBlock (positioned) {DIV} at (0,36) size 320x14
     RenderInline {DIV} at (0,0) size 300x18 [bgcolor=#000000CC]
       RenderText {#text} at (12,0) size 296x14
         text run at (12,0) width 296: "Cue 3: should become the third line from top to bottom."
-    RenderInline {DIV} at (0,0) size 2x18 [bgcolor=#000000CC]
 layer at (8,98) size 320x14 scrollHeight 16
   RenderBlock (positioned) {DIV} at (0,90) size 320x14
     RenderInline {DIV} at (0,0) size 292x18 [bgcolor=#000000CC]
       RenderText {#text} at (16,0) size 288x14
         text run at (16,0) width 288: "Cue 4: should be fixed positioned around the middle."
-    RenderInline {DIV} at (0,0) size 3x18 [bgcolor=#000000CC]
 layer at (8,210) size 320x14 scrollHeight 16
   RenderBlock (positioned) {DIV} at (0,202) size 320x14
     RenderInline {DIV} at (0,0) size 296x18 [bgcolor=#000000CC]
       RenderText {#text} at (14,0) size 292x14
         text run at (14,0) width 292: "Cue 5: should be displayed at the bottom of the video."
-    RenderInline {DIV} at (0,0) size 3x18 [bgcolor=#000000CC]
 layer at (8,192) size 320x14 scrollHeight 16
   RenderBlock (positioned) {DIV} at (0,184) size 320x14
     RenderInline {DIV} at (0,0) size 284x18 [bgcolor=#000000CC]
       RenderText {#text} at (20,0) size 280x14
         text run at (20,0) width 280: "Cue 6: should be on top of bottom positioned cue 5."
-    RenderInline {DIV} at (0,0) size 3x18 [bgcolor=#000000CC]
 layer at (8,228) size 320x20 scrollHeight 28
   RenderDeprecatedFlexibleBox (relative positioned) {DIV} at (0,220) size 320x20
     RenderButton {INPUT} at (0,0) size 20x20

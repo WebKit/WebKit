@@ -28,39 +28,33 @@ layer at (8,8) size 320x220
 layer at (12,8) size 14x220 scrollX 2 scrollWidth 16
   RenderBlock (positioned) {DIV} at (4,0) size 14x220
     RenderInline {DIV} at (0,0) size 18x116 [bgcolor=#000000CC]
-      RenderText {#text} at (0,52) size 14x112
-        text run at (0,52) width 111: "Cue 1: \x{79C1}\x{306F}\x{7ACB}\x{6D3E}\x{306A}\x{4EBA}"
-    RenderInline {DIV} at (0,0) size 16x5 [bgcolor=#000000CC]
+      RenderText {#text} at (0,54) size 14x112
+        text run at (0,54) width 111: "Cue 1: \x{79C1}\x{306F}\x{7ACB}\x{6D3E}\x{306A}\x{4EBA}"
 layer at (30,8) size 14x220 scrollX 2 scrollWidth 16
   RenderBlock (positioned) {DIV} at (22,0) size 14x220
     RenderInline {DIV} at (0,0) size 18x116 [bgcolor=#000000CC]
-      RenderText {#text} at (0,52) size 14x112
-        text run at (0,52) width 111: "Cue 2: \x{79C1}\x{306F}\x{7ACB}\x{6D3E}\x{306A}\x{4EBA}"
-    RenderInline {DIV} at (0,0) size 16x5 [bgcolor=#000000CC]
+      RenderText {#text} at (0,54) size 14x112
+        text run at (0,54) width 111: "Cue 2: \x{79C1}\x{306F}\x{7ACB}\x{6D3E}\x{306A}\x{4EBA}"
 layer at (260,8) size 14x220 scrollX 2 scrollWidth 16
   RenderBlock (positioned) {DIV} at (252,0) size 14x220
     RenderInline {DIV} at (0,0) size 18x116 [bgcolor=#000000CC]
-      RenderText {#text} at (0,52) size 14x112
-        text run at (0,52) width 111: "Cue 3: \x{79C1}\x{306F}\x{7ACB}\x{6D3E}\x{306A}\x{4EBA}"
-    RenderInline {DIV} at (0,0) size 16x5 [bgcolor=#000000CC]
+      RenderText {#text} at (0,54) size 14x112
+        text run at (0,54) width 111: "Cue 3: \x{79C1}\x{306F}\x{7ACB}\x{6D3E}\x{306A}\x{4EBA}"
 layer at (242,8) size 14x220 scrollX 2 scrollWidth 16
   RenderBlock (positioned) {DIV} at (234,0) size 14x220
     RenderInline {DIV} at (0,0) size 18x116 [bgcolor=#000000CC]
-      RenderText {#text} at (0,52) size 14x112
-        text run at (0,52) width 111: "Cue 4: \x{79C1}\x{306F}\x{7ACB}\x{6D3E}\x{306A}\x{4EBA}"
-    RenderInline {DIV} at (0,0) size 16x5 [bgcolor=#000000CC]
+      RenderText {#text} at (0,54) size 14x112
+        text run at (0,54) width 111: "Cue 4: \x{79C1}\x{306F}\x{7ACB}\x{6D3E}\x{306A}\x{4EBA}"
 layer at (310,8) size 14x220 scrollWidth 16
   RenderBlock (positioned) {DIV} at (302,0) size 14x220
     RenderInline {DIV} at (0,0) size 18x116 [bgcolor=#000000CC]
-      RenderText {#text} at (0,52) size 14x112
-        text run at (0,52) width 111: "Cue 5: \x{79C1}\x{306F}\x{7ACB}\x{6D3E}\x{306A}\x{4EBA}"
-    RenderInline {DIV} at (0,0) size 16x5 [bgcolor=#000000CC]
+      RenderText {#text} at (0,54) size 14x112
+        text run at (0,54) width 111: "Cue 5: \x{79C1}\x{306F}\x{7ACB}\x{6D3E}\x{306A}\x{4EBA}"
 layer at (292,8) size 14x220 scrollWidth 16
   RenderBlock (positioned) {DIV} at (284,0) size 14x220
     RenderInline {DIV} at (0,0) size 18x116 [bgcolor=#000000CC]
-      RenderText {#text} at (0,52) size 14x112
-        text run at (0,52) width 111: "Cue 6: \x{79C1}\x{306F}\x{7ACB}\x{6D3E}\x{306A}\x{4EBA}"
-    RenderInline {DIV} at (0,0) size 16x5 [bgcolor=#000000CC]
+      RenderText {#text} at (0,54) size 14x112
+        text run at (0,54) width 111: "Cue 6: \x{79C1}\x{306F}\x{7ACB}\x{6D3E}\x{306A}\x{4EBA}"
 layer at (8,228) size 320x20 scrollHeight 28
   RenderDeprecatedFlexibleBox (relative positioned) {DIV} at (0,220) size 320x20
     RenderButton {INPUT} at (0,0) size 20x20
