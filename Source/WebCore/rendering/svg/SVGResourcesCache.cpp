@@ -125,6 +125,12 @@ void SVGResourcesCache::clientLayoutChanged(RenderObject* object)
         resources->removeClientFromCache(object);
 }
 
+static inline bool rendererCanHaveResources(RenderObject* renderer)
+{
+    ASSERT(renderer);
+    return renderer->node() && renderer->node()->isSVGElement() && !renderer->isSVGInlineText();
+}
+
 void SVGResourcesCache::clientStyleChanged(RenderObject* renderer, StyleDifference diff, const RenderStyle* newStyle)
 {
     ASSERT(renderer);
@@ -138,18 +144,16 @@ void SVGResourcesCache::clientStyleChanged(RenderObject* renderer, StyleDifferen
     // Dynamic changes of CSS properties like 'clip-path' may require us to recompute the associated resources for a renderer.
     // FIXME: Avoid passing in a useless StyleDifference, but instead compare oldStyle/newStyle to see which resources changed
     // to be able to selectively rebuild individual resources, instead of all of them.
-    SVGResourcesCache* cache = resourcesCacheFromRenderObject(renderer);
-    cache->removeResourcesFromRenderObject(renderer);
-    cache->addResourcesFromRenderObject(renderer, newStyle);
+    if (rendererCanHaveResources(renderer)) {
+        SVGResourcesCache* cache = resourcesCacheFromRenderObject(renderer);
+        cache->removeResourcesFromRenderObject(renderer);
+        cache->addResourcesFromRenderObject(renderer, newStyle);
+    }
 
     RenderSVGResource::markForLayoutAndParentResourceInvalidation(renderer, false);
-}
 
-static inline bool rendererCanHaveResources(RenderObject* renderer)
-{
-    ASSERT(renderer);
-    ASSERT(renderer->parent());
-    return renderer->node() && !renderer->isSVGInlineText();
+    if (renderer->node() && !renderer->node()->isSVGElement())
+        renderer->node()->setNeedsStyleRecalc(SyntheticStyleChange);
 }
 
 void SVGResourcesCache::clientWasAddedToTree(RenderObject* renderer, const RenderStyle* newStyle)
@@ -202,7 +206,7 @@ void SVGResourcesCache::resourceDestroyed(RenderSVGResourceContainer* resource)
 
         // Mark users of destroyed resources as pending resolution based on the id of the old resource.
         Element* resourceElement = toElement(resource->node());
-        SVGStyledElement* clientElement = toSVGStyledElement(it->key->node());
+        Element* clientElement = toElement(it->key->node());
         SVGDocumentExtensions* extensions = clientElement->document()->accessSVGExtensions();
 
         extensions->addPendingResource(resourceElement->fastGetAttribute(HTMLNames::idAttr), clientElement);

@@ -1,3 +1,28 @@
+2013-01-04  Stephen White  <senorblanco@chromium.org>
+
+        CSS url() filters with forward references don't work
+        https://bugs.webkit.org/show_bug.cgi?id=90405
+
+        Based on a patch by Keyar Hood.
+
+        Reviewed by Dirk Schulze.
+
+        * css3/filters/effect-reference-after-expected.html: Added.
+        * css3/filters/effect-reference-after.html: Added.
+        * css3/filters/effect-reference-delete-crash.html: Added.
+        * css3/filters/effect-reference-delete-expected.html: Added.
+        * css3/filters/effect-reference-delete.html: Added.
+        * css3/filters/effect-reference-removed-while-pending-resources-expected.html: Added.
+        * css3/filters/effect-reference-removed-while-pending-resources.html: Added.
+        * css3/filters/effect-reference-rename-expected.html: Added.
+        * css3/filters/effect-reference-rename.html: Added.
+        * css3/filters/effect-reference-reset-style-delete-crash-expected.txt: Added.
+        * css3/filters/effect-reference-reset-style-delete-crash.html: Added.
+        * css3/filters/script-tests/effect-reference-delete-crash.js: Added.
+        * css3/filters/script-tests/effect-reference-reset-style-delete-crash.js: Added.
+        * svg/filters/filter-cycle-expected.html: Added.
+        * svg/filters/filter-cycle.html: Added.
+
 2013-01-04  Mike West  <mkwst@chromium.org>
 
         CSP: Blocked 'track' sources should only log once to the console.

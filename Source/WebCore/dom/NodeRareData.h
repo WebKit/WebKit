@@ -260,6 +260,9 @@ public:
 #if ENABLE(DIALOG_ELEMENT)
         , m_isInTopLayer(false)
 #endif
+#if ENABLE(SVG)
+        , m_hasPendingResources(false)
+#endif
         , m_childrenAffectedByHover(false)
         , m_childrenAffectedByActive(false)
         , m_childrenAffectedByDrag(false)
@@ -385,6 +388,9 @@ protected:
 #endif
 #if ENABLE(DIALOG_ELEMENT)
     bool m_isInTopLayer : 1;
+#endif
+#if ENABLE(SVG)
+    bool m_hasPendingResources : 1;
 #endif
     bool m_childrenAffectedByHover : 1;
     bool m_childrenAffectedByActive : 1;

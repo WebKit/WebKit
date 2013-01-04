@@ -40,11 +40,12 @@ class SVGFontFaceElement;
 class SVGResourcesCache;
 class SVGSMILElement;
 class SVGSVGElement;
+class Element;
 
 class SVGDocumentExtensions {
     WTF_MAKE_NONCOPYABLE(SVGDocumentExtensions); WTF_MAKE_FAST_ALLOCATED;
 public:
-    typedef HashSet<SVGElement*> SVGPendingElements;
+    typedef HashSet<Element*> SVGPendingElements;
     SVGDocumentExtensions(Document*);
     ~SVGDocumentExtensions();
     
@@ -92,17 +93,18 @@ private:
 public:
     // This HashMap contains a list of pending resources. Pending resources, are such
     // which are referenced by any object in the SVG document, but do NOT exist yet.
-    // For instance, dynamically built gradients / patterns / clippers...
-    void addPendingResource(const AtomicString& id, SVGElement*);
+    // For instance, dynamically build gradients / patterns / clippers...
+    void addPendingResource(const AtomicString& id, Element*);
     bool hasPendingResource(const AtomicString& id) const;
-    bool isElementPendingResources(SVGElement*) const;
-    bool isElementPendingResource(SVGElement*, const AtomicString& id) const;
-    void removeElementFromPendingResources(SVGElement*);
+    bool isElementPendingResources(Element*) const;
+    bool isElementPendingResource(Element*, const AtomicString& id) const;
+    void clearHasPendingResourcesIfPossible(Element*);
+    void removeElementFromPendingResources(Element*);
     PassOwnPtr<SVGPendingElements> removePendingResource(const AtomicString& id);
 
     // The following two functions are used for scheduling a pending resource to be removed.
     void markPendingResourcesForRemoval(const AtomicString&);
-    SVGElement* removeElementFromPendingResourcesForRemoval(const AtomicString&);
+    Element* removeElementFromPendingResourcesForRemoval(const AtomicString&);
 
 private:
     PassOwnPtr<SVGPendingElements> removePendingResourceForRemoval(const AtomicString&);

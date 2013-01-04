@@ -5748,7 +5748,7 @@ void RenderLayer::updateOrRemoveFilterEffectRenderer()
 
     // If the filter fails to build, remove it from the layer. It will still attempt to
     // go through regular processing (e.g. compositing), but never apply anything.
-    if (!filterInfo->renderer()->build(renderer()->document(), computeFilterOperations(renderer()->style())))
+    if (!filterInfo->renderer()->build(renderer(), computeFilterOperations(renderer()->style())))
         filterInfo->setRenderer(0);
 }
 

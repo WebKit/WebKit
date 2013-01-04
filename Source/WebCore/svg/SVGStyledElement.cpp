@@ -368,11 +368,11 @@ void SVGStyledElement::buildPendingResourcesIfNeeded()
     extensions->markPendingResourcesForRemoval(resourceId);
 
     // Rebuild pending resources for each client of a pending resource that is being removed.
-    while (SVGElement* clientElement = extensions->removeElementFromPendingResourcesForRemoval(resourceId)) {
+    while (Element* clientElement = extensions->removeElementFromPendingResourcesForRemoval(resourceId)) {
         ASSERT(clientElement->hasPendingResources());
         if (clientElement->hasPendingResources()) {
             clientElement->buildPendingResource();
-            clientElement->clearHasPendingResourcesIfPossible();
+            extensions->clearHasPendingResourcesIfPossible(clientElement);
         }
     }
 }

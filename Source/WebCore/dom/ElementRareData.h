@@ -119,6 +119,11 @@ public:
     IntSize savedLayerScrollOffset() const { return m_savedLayerScrollOffset; }
     void setSavedLayerScrollOffset(IntSize size) { m_savedLayerScrollOffset = size; }
 
+#if ENABLE(SVG)
+    bool hasPendingResources() const { return m_hasPendingResources; }
+    void setHasPendingResources(bool has) { m_hasPendingResources = has; }
+#endif
+
 private:
     // Many fields are in NodeRareData for better packing.
     LayoutSize m_minimumSizeForResizing;

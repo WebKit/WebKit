@@ -84,6 +84,7 @@
 #include <wtf/text/CString.h>
 
 #if ENABLE(SVG)
+#include "SVGDocumentExtensions.h"
 #include "SVGElement.h"
 #include "SVGNames.h"
 #endif
@@ -202,6 +203,13 @@ Element::~Element()
 
     if (hasSyntheticAttrChildNodes())
         detachAllAttrNodesFromElement();
+
+#if ENABLE(SVG)
+    if (hasPendingResources()) {
+        document()->accessSVGExtensions()->removeElementFromPendingResources(this);
+        ASSERT(!hasPendingResources());
+    }
+#endif
 }
 
 inline ElementRareData* Element::elementRareData() const
@@ -1126,6 +1134,10 @@ Node::InsertionNotificationRequest Element::insertedInto(ContainerNode* insertio
 
 void Element::removedFrom(ContainerNode* insertionPoint)
 {
+#if ENABLE(SVG)
+    bool wasInDocument = insertionPoint->document();
+#endif
+
 #if ENABLE(DIALOG_ELEMENT)
     setIsInTopLayer(false);
 #endif
@@ -1157,6 +1169,10 @@ void Element::removedFrom(ContainerNode* insertionPoint)
     }
 
     ContainerNode::removedFrom(insertionPoint);
+#if ENABLE(SVG)
+    if (wasInDocument && hasPendingResources())
+        document()->accessSVGExtensions()->removeElementFromPendingResources(this);
+#endif
 }
 
 void Element::createRendererIfNeeded()
@@ -2714,5 +2730,22 @@ void Element::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
     info.addMember(m_tagName);
     info.addMember(m_attributeData);
 }
+
+#if ENABLE(SVG)
+bool Element::hasPendingResources() const
+{
+    return hasRareData() && elementRareData()->hasPendingResources();
+}
+
+void Element::setHasPendingResources()
+{
+    ensureElementRareData()->setHasPendingResources(true);
+}
+
+void Element::clearHasPendingResources()
+{
+    ensureElementRareData()->setHasPendingResources(false);
+}
+#endif
 
 } // namespace WebCore
