@@ -1,0 +1,35 @@
+<!doctype html>
+<html style="-webkit-writing-mode: vertical-rl; font: 16px/1.25 monospace;">
+    <head>
+        <style>
+            .overflow { color: orange; margin: 0; }
+            div > p { margin: 0; }
+
+            #region1, #region2 { width: 100px; height: 100px; }
+            #region1 { position: absolute; right: 200px; top: 100px; border: 5px solid green;}
+            #region2 { position: absolute; right: 350px; top: 100px; border: 5px solid blue;}
+            #p1 { position: absolute; right: 475px; top: 105px; }
+            #p2 { position: absolute; right: 495px; top: 105px; }
+        </style>
+    </head>
+    <body>
+        <p>Test that overflow content for the last region in chain is correctly displayed in different writing modes.</p>
+        <p>On success, the orange lines of text should be visible above the blue border rectangle.</p>
+        <div id="region1">
+            <p>Linetext1</p>
+            <p>Linetext2</p>
+            <p>Linetext3</p>
+            <p>Linetext4</p>
+            <p>Linetext5</p>
+        </div>
+        <div id="region2">
+            <p>Linetext6</p>
+            <p>Linetext7</p>
+            <p>Linetext8</p>
+            <p>Linetext9</p>
+            <p>Linetext10</p>
+        </div>
+        <p id="p1" class="overflow">Overflow11</p>
+        <p id="p2" class="overflow">Overflow12</p>
+    </body>
+</html>

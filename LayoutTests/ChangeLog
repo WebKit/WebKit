@@ -1,3 +1,23 @@
+2013-01-04  Mihnea Ovidenie  <mihnea@adobe.com>
+
+        [CSS Regions]Content overflowing last region displayed wrong
+        https://bugs.webkit.org/show_bug.cgi?id=105893
+
+        Reviewed by David Hyatt.
+
+        Add tests for all writing modes with content overflowing the last region in chain.
+        Hit testing for content overflowing the last region is not yet supported, therefore tests
+        for that will be added in the future.
+
+        * fast/regions/overflow-last-region-expected.html: Added.
+        * fast/regions/overflow-last-region-horiz-bt-expected.html: Added.
+        * fast/regions/overflow-last-region-horiz-bt.html: Added.
+        * fast/regions/overflow-last-region-vert-lr-expected.html: Added.
+        * fast/regions/overflow-last-region-vert-lr.html: Added.
+        * fast/regions/overflow-last-region-vert-rl-expected.html: Added.
+        * fast/regions/overflow-last-region-vert-rl.html: Added.
+        * fast/regions/overflow-last-region.html: Added.
+
 2013-01-04  Dima Gorbik  <dgorbik@apple.com>
 
         Implement :future pseudo class for the WebVTT ::cue pseudo element
