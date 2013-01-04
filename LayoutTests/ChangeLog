@@ -1,3 +1,15 @@
+2013-01-04  Mike Lawther  <mikelawther@chromium.org>
+
+        CSS3 calc: working with translate and scale transforms
+        https://bugs.webkit.org/show_bug.cgi?id=105985
+
+        Reviewed by Ojan Vafai.
+
+        * css3/calc/transforms-scale-expected.html: Added.
+        * css3/calc/transforms-scale.html: Added.
+        * css3/calc/transforms-translate-expected.html: Added.
+        * css3/calc/transforms-translate.html: Added.
+
 2013-01-04  Elliott Sprehn  <esprehn@chromium.org>
 
         PseudoElement should never dispatch events
