@@ -1,5 +1,26 @@
 2013-01-03  Filip Pizlo  <fpizlo@apple.com>
 
+        DFG::ByteCodeCache serves little or no purpose ever since we decided to keep bytecode around permanently
+        https://bugs.webkit.org/show_bug.cgi?id=106058
+
+        Reviewed by Michael Saboff.
+        
+        All baseline code blocks now always have bytecode, so the bytecode cache's ability to minimize the
+        number of times that the DFG produces bytecode sequences for code blocks is superfluous.
+
+        * GNUmakefile.list.am:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * dfg/DFGByteCodeCache.h: Removed.
+        * dfg/DFGByteCodeParser.cpp:
+        (ByteCodeParser):
+        (JSC::DFG::ByteCodeParser::handleInlining):
+        * runtime/Executable.cpp:
+        (JSC):
+        * runtime/Executable.h:
+        (FunctionExecutable):
+
+2013-01-03  Filip Pizlo  <fpizlo@apple.com>
+
         Unreviewed, fix build for DFG JIT disabled.
 
         * bytecode/CodeBlock.cpp:

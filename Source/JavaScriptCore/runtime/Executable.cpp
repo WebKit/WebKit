@@ -487,11 +487,6 @@ bool FunctionExecutable::jitCompileForConstruct(ExecState* exec)
 }
 #endif
 
-FunctionCodeBlock* FunctionExecutable::codeBlockWithBytecodeFor(CodeSpecializationKind kind)
-{
-    return baselineCodeBlockFor(kind);
-}
-
 PassOwnPtr<FunctionCodeBlock> FunctionExecutable::produceCodeBlockFor(JSScope* scope, CodeSpecializationKind specializationKind, JSObject*& exception)
 {
     if (!!codeBlockFor(specializationKind))

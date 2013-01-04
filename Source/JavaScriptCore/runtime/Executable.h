@@ -597,8 +597,6 @@ namespace JSC {
             return *m_codeBlockForConstruct;
         }
         
-        FunctionCodeBlock* codeBlockWithBytecodeFor(CodeSpecializationKind);
-        
         PassOwnPtr<FunctionCodeBlock> produceCodeBlockFor(JSScope*, CodeSpecializationKind, JSObject*& exception);
 
         JSObject* compileForCall(ExecState* exec, JSScope* scope)
