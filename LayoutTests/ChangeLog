@@ -1,5 +1,11 @@
 2013-01-03  Ryosuke Niwa  <rniwa@webkit.org>
 
+        Add one more Mac test expectation for the bug 105986.
+
+        * platform/mac/TestExpectations:
+
+2013-01-03  Ryosuke Niwa  <rniwa@webkit.org>
+
         Add Mac test expectations for the bugs 105986 and 105988.
 
         * platform/mac-wk2/TestExpectations:

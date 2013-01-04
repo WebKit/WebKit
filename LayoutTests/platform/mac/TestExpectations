@@ -1273,6 +1273,7 @@ webkit.org/b/105986 [ Debug ] transitions/hang-with-bad-transition-list.html [ P
 webkit.org/b/105986 [ Debug ] svg/dynamic-updates/SVGFEMorphologyElement-dom-in-attr.html [ Pass Crash ]
 webkit.org/b/105986 [ Debug ] svg/dynamic-updates/SVGFEMorphologyElement-dom-radius-attr.html [ Pass Crash ]
 webkit.org/b/105986 [ Debug ] svg/dynamic-updates/SVGFEMorphologyElement-dom-operator-attr.html [ Pass Crash ]
+webkit.org/b/105986 [ Debug ] svg/dynamic-updates/SVGFEMergeNodeElement-dom-in-attr.html [ Pass Crash ]
 webkit.org/b/105986 [ Debug ] transitions/interrupt-transform-transition.html [ Pass Crash ]
 
 webkit.org/b/105999 [ Lion ] fast/canvas/canvas-composite-canvas.html [ Failure ]
