@@ -1,3 +1,16 @@
+2013-01-04  Zan Dobersek  <zandobersek@gmail.com>
+
+        REGRESSION (r138184): transitions/transitions-parsing.html is failing on GTK
+        https://bugs.webkit.org/show_bug.cgi?id=105522
+
+        Reviewed by Xan Lopez.
+
+        Remove the configuration flag covering unprefixed CSS transition property names.
+        It does not introduce any dependency. The unprefixed property names should be
+        available by default.
+
+        * configure.ac:
+
 2013-01-03  Tony Chang  <tony@chromium.org>
 
         Generate internal.settings from Settings.in

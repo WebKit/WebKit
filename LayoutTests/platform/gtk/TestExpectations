@@ -1392,8 +1392,6 @@ webkit.org/b/87734 svg/dom/viewspec-parser-7.html [ Failure ]
 
 webkit.org/b/105443 accessibility/aria-controls-with-tabs.html [ Failure ]
 
-webkit.org/b/105522 transitions/transitions-parsing.html [ Failure ]
-
 webkit.org/b/98146 accessibility/svg-bounds.html [ Failure ]
 
 # Leaking state into the next test.
