@@ -53,17 +53,8 @@ static CounterMaps& counterMaps()
     return staticCounterMaps;
 }
 
-static RenderObject* rendererOfAfterPseudoElement(RenderObject* renderer)
-{
-    RenderObject* lastContinuation = renderer;
-    while (RenderObject* continuation = lastContinuation->virtualContinuation())
-        lastContinuation = continuation;
-    return lastContinuation->afterPseudoElementRenderer();
-}
-
 // This function processes the renderer tree in the order of the DOM tree
 // including pseudo elements as defined in CSS 2.1.
-// Anonymous renderers are skipped except for those representing pseudo elements.
 static RenderObject* previousInPreOrder(const RenderObject* object)
 {
     Element* parent;
@@ -87,12 +78,12 @@ static RenderObject* previousInPreOrder(const RenderObject* object)
     }
     while (sibling) {
         if (RenderObject* renderer = sibling->renderer()) {
-            if (RenderObject* after = rendererOfAfterPseudoElement(renderer))
+            if (RenderObject* after = sibling->pseudoElementRenderer(AFTER))
                 return after;
             parent = sibling;
             sibling = sibling->lastElementChild();
             if (!sibling) {
-                if (RenderObject* before = renderer->beforePseudoElementRenderer())
+                if (RenderObject* before = toElement(renderer->node())->pseudoElementRenderer(BEFORE))
                     return before;
                 return renderer;
             }
@@ -101,15 +92,13 @@ static RenderObject* previousInPreOrder(const RenderObject* object)
     }
     if (!parent)
         return 0;
-    RenderObject* renderer = parent->renderer(); // Should never be null
-    if (RenderObject* before = renderer->beforePseudoElementRenderer())
+    if (RenderObject* before = parent->pseudoElementRenderer(BEFORE))
         return before;
-    return renderer;
+    return parent->renderer();
 }
 
 // This function processes the renderer tree in the order of the DOM tree
 // including pseudo elements as defined in CSS 2.1.
-// Anonymous renderers are skipped except for those representing pseudo elements.
 static RenderObject* previousSiblingOrParent(const RenderObject* object)
 {
     Element* parent;
@@ -136,13 +125,11 @@ static RenderObject* previousSiblingOrParent(const RenderObject* object)
             return renderer;
         sibling = sibling->previousElementSibling();
     }
-    if (parent) {
-        RenderObject* renderer = parent->renderer();
-        if (RenderObject* before = renderer->virtualChildren()->beforePseudoElementRenderer(renderer))
-            return before;
-        return renderer;
-    }
-    return 0;
+    if (!parent)
+        return 0;
+    if (RenderObject* before = parent->pseudoElementRenderer(BEFORE))
+        return before;
+    return parent->renderer();
 }
 
 static Element* parentElement(RenderObject* object)
@@ -167,21 +154,18 @@ static inline bool areRenderersElementsSiblings(RenderObject* first, RenderObjec
 
 // This function processes the renderer tree in the order of the DOM tree
 // including pseudo elements as defined in CSS 2.1.
-// Anonymous renderers are skipped except for those representing pseudo elements.
 static RenderObject* nextInPreOrder(const RenderObject* object, const Element* stayWithin, bool skipDescendants = false)
 {
     Element* self;
     Element* child;
-    RenderObject* result;
     self = toElement(object->generatingNode());
     if (skipDescendants)
         goto nextsibling;
     switch (object->style()->styleType()) {
     case NOPSEUDO:
         ASSERT(!object->isAnonymous());
-        result = object->beforePseudoElementRenderer();
-        if (result)
-            return result;
+        if (RenderObject* before = self->pseudoElementRenderer(BEFORE))
+            return before;
         break;
     case BEFORE:
         break;
@@ -194,14 +178,12 @@ static RenderObject* nextInPreOrder(const RenderObject* object, const Element* s
     child = ElementTraversal::firstWithin(self);
     while (true) {
         while (child) {
-            result = child->renderer();
-            if (result)
-                return result;
+            if (RenderObject* renderer = child->renderer())
+                return renderer;
             child = ElementTraversal::nextSkippingChildren(child, self);
         }
-        result = rendererOfAfterPseudoElement(self->renderer());
-        if (result)
-            return result;
+        if (RenderObject* after = self->pseudoElementRenderer(AFTER))
+            return after;
 nextsibling:
         if (self == stayWithin)
             return 0;

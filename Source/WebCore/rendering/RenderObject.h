@@ -185,22 +185,6 @@ public:
             return children->lastChild();
         return 0;
     }
-    RenderObject* beforePseudoElementRenderer() const
-    {
-        if (const RenderObjectChildList* children = virtualChildren())
-            return children->beforePseudoElementRenderer(this);
-        return 0;
-    }
-
-    // This function only returns the renderer of the "after" pseudoElement if it is a child of
-    // this renderer. If "continuations" exist, the function returns 0 even if the element that
-    // generated this renderer has an "after" pseudo-element.
-    RenderObject* afterPseudoElementRenderer() const
-    {
-        if (const RenderObjectChildList* children = virtualChildren())
-            return children->afterPseudoElementRenderer(this);
-        return 0;
-    }
 
     virtual RenderObjectChildList* virtualChildren() { return 0; }
     virtual const RenderObjectChildList* virtualChildren() const { return 0; }

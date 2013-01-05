@@ -55,9 +55,6 @@ public:
     void appendChildNode(RenderObject* owner, RenderObject*, bool notifyRenderer = true);
     void insertChildNode(RenderObject* owner, RenderObject* child, RenderObject* before, bool notifyRenderer = true);
 
-    RenderObject* beforePseudoElementRenderer(const RenderObject* owner) const;
-    RenderObject* afterPseudoElementRenderer(const RenderObject* owner) const;
-
 private:
     RenderObject* m_firstChild;
     RenderObject* m_lastChild;

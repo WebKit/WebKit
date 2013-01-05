@@ -1515,12 +1515,8 @@ PassRefPtr<CSSValue> CSSComputedStyleDeclaration::getPropertyCSSValue(CSSPropert
     if (!style)
         return 0;
 
-    if (renderer) {
-        if (m_pseudoElementSpecifier == AFTER)
-            renderer = renderer->afterPseudoElementRenderer();
-        else if (m_pseudoElementSpecifier == BEFORE)
-            renderer = renderer->beforePseudoElementRenderer();
-    }
+    if (node->isElementNode() && (m_pseudoElementSpecifier == BEFORE || m_pseudoElementSpecifier == AFTER))
+        renderer = toElement(node)->pseudoElementRenderer(m_pseudoElementSpecifier);
 
     propertyID = CSSProperty::resolveDirectionAwareProperty(propertyID, style->direction(), style->writingMode());
 

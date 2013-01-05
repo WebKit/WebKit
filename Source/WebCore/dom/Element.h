@@ -368,8 +368,7 @@ public:
 
     bool hasPseudoElements() const;
     PseudoElement* pseudoElement(PseudoId) const;
-    PseudoElement* beforePseudoElement() const { return pseudoElement(BEFORE); }
-    PseudoElement* afterPseudoElement() const { return pseudoElement(AFTER); }
+    RenderObject* pseudoElementRenderer(PseudoId) const;
     bool childNeedsShadowWalker() const;
     void didShadowTreeAwareChildrenChange();
 

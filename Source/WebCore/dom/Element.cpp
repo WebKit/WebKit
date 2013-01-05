@@ -2171,6 +2171,12 @@ void Element::setPseudoElement(PseudoId pseudoId, PassRefPtr<PseudoElement> elem
     resetNeedsShadowTreeWalker();
 }
 
+RenderObject* Element::pseudoElementRenderer(PseudoId pseudoId) const
+{
+    if (PseudoElement* element = pseudoElement(pseudoId))
+        return element->renderer();
+    return 0;
+}
 
 // ElementTraversal API
 Element* Element::firstElementChild() const
