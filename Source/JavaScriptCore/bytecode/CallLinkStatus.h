@@ -65,9 +65,39 @@ public:
     {
     }
     
-    CallLinkStatus& setIsProved(bool);
+    CallLinkStatus& setIsProved(bool isProved)
+    {
+        m_isProved = isProved;
+        return *this;
+    }
     
     static CallLinkStatus computeFor(CodeBlock*, unsigned bytecodeIndex);
+    
+    CallLinkStatus& setHasBadFunctionExitSite(bool didHaveExitSite)
+    {
+        ASSERT(!m_isProved);
+        if (didHaveExitSite) {
+            // Turn this into a closure call.
+            m_callTarget = JSValue();
+        }
+        return *this;
+    }
+    
+    CallLinkStatus& setHasBadCacheExitSite(bool didHaveExitSite)
+    {
+        ASSERT(!m_isProved);
+        if (didHaveExitSite)
+            *this = takesSlowPath();
+        return *this;
+    }
+    
+    CallLinkStatus& setHasBadExecutableExitSite(bool didHaveExitSite)
+    {
+        ASSERT(!m_isProved);
+        if (didHaveExitSite)
+            *this = takesSlowPath();
+        return *this;
+    }
     
     bool isSet() const { return m_callTarget || m_executable || m_couldTakeSlowPath; }
     

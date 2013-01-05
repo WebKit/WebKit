@@ -80,12 +80,6 @@ Intrinsic CallLinkStatus::intrinsicFor(CodeSpecializationKind kind) const
     return m_executable->intrinsicFor(kind);
 }
 
-CallLinkStatus& CallLinkStatus::setIsProved(bool isProved)
-{
-    m_isProved = isProved;
-    return *this;
-}
-
 CallLinkStatus CallLinkStatus::computeFromLLInt(CodeBlock* profiledBlock, unsigned bytecodeIndex)
 {
     UNUSED_PARAM(profiledBlock);

@@ -4137,7 +4137,7 @@ void SpeculativeJIT::compile(Node& node)
         
     case CheckFunction: {
         SpeculateCellOperand function(this, node.child1());
-        speculationCheck(BadCache, JSValueSource::unboxedCell(function.gpr()), node.child1(), m_jit.branchWeakPtr(JITCompiler::NotEqual, function.gpr(), node.function()));
+        speculationCheck(BadFunction, JSValueSource::unboxedCell(function.gpr()), node.child1(), m_jit.branchWeakPtr(JITCompiler::NotEqual, function.gpr(), node.function()));
         noResult(m_compileIndex);
         break;
     }

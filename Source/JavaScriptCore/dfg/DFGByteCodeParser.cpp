@@ -1284,8 +1284,12 @@ void ByteCodeParser::handleCall(Interpreter* interpreter, Instruction* currentIn
 
     if (m_graph.isConstant(callTarget))
         callLinkStatus = CallLinkStatus(m_graph.valueOfJSConstant(callTarget)).setIsProved(true);
-    else
+    else {
         callLinkStatus = CallLinkStatus::computeFor(m_inlineStackTop->m_profiledBlock, m_currentIndex);
+        callLinkStatus.setHasBadFunctionExitSite(m_inlineStackTop->m_exitProfile.hasExitSite(m_currentIndex, BadFunction));
+        callLinkStatus.setHasBadCacheExitSite(m_inlineStackTop->m_exitProfile.hasExitSite(m_currentIndex, BadCache));
+        callLinkStatus.setHasBadExecutableExitSite(m_inlineStackTop->m_exitProfile.hasExitSite(m_currentIndex, BadExecutable));
+    }
     
 #if DFG_ENABLE(DEBUG_VERBOSE)
     dataLog("For call at @", m_graph.size(), " bc#", m_currentIndex, ": ", callLinkStatus, "\n");

@@ -31,6 +31,8 @@ namespace JSC {
 enum ExitKind {
     ExitKindUnset,
     BadType, // We exited because a type prediction was wrong.
+    BadFunction, // We exited because we made an incorrect assumption about what function we would see.
+    BadExecutable, // We exited because we made an incorrect assumption about what executable we would see.
     BadCache, // We exited because an inline cache was wrong.
     BadWeakConstantCache, // We exited because a cache on a weak constant (usually a prototype) was wrong.
     BadIndexingType, // We exited because an indexing type was wrong.

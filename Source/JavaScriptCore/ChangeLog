@@ -1,3 +1,35 @@
+2013-01-04  Filip Pizlo  <fpizlo@apple.com>
+
+        Rationalize exit site profiling for calls
+        https://bugs.webkit.org/show_bug.cgi?id=106150
+
+        Reviewed by Sam Weinig.
+        
+        This adds two new exit kinds for calls: BadFunction and BadExecutable. The latter is not used
+        yet, but is already integrated with profiling. CheckFunction uses a BadFunction speculation
+        instead of BadCache, now. This allows CallLinkStatus to turn itself into a closure call status
+        if we had a BadFunction exit site but the CallLinkInfo told us to use a non-closure call. This
+        might happen if we had call unlinking that led to information loss along the way.
+        
+        No performance impact. This is meant as another step towards inlining closure calls.
+
+        * bytecode/CallLinkStatus.cpp:
+        * bytecode/CallLinkStatus.h:
+        (JSC::CallLinkStatus::setIsProved):
+        (JSC::CallLinkStatus::setHasBadFunctionExitSite):
+        (CallLinkStatus):
+        (JSC::CallLinkStatus::setHasBadCacheExitSite):
+        (JSC::CallLinkStatus::setHasBadExecutableExitSite):
+        * bytecode/ExitKind.cpp:
+        (JSC::exitKindToString):
+        * bytecode/ExitKind.h:
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::handleCall):
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+
 2013-01-03  Filip Pizlo  <fpizlo@apple.com>
 
         DFG should not elide CheckStructure if it's needed to perform a cell check
