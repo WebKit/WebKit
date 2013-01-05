@@ -1,5 +1,14 @@
 2013-01-05  Ryosuke Niwa  <rniwa@webkit.org>
 
+        Revert an erroneous change from r138874.
+
+        http/tests/misc/link-rel-icon-beforeload.html had been skipped prior to r138874
+        and it should continued to be.
+
+        * platform/mac-wk2/TestExpectations:
+
+2013-01-05  Ryosuke Niwa  <rniwa@webkit.org>
+
         Add a flaky test expectation for the bug 106185.
 
         * platform/mac/TestExpectations:
