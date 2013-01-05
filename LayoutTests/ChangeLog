@@ -1,3 +1,10 @@
+2013-01-04  Eric Carlson  <eric.carlson@apple.com>
+
+        Unreviewed cleanup. Remove media/track/ from Mac TestExpectations because 
+        https://bugs.webkit.org/show_bug.cgi?id=105606 was fixed.
+
+        * platform/mac/TestExpectations:
+
 2013-01-04  Filip Pizlo  <fpizlo@apple.com>
 
         DFG should not elide CheckStructure if it's needed to perform a cell check

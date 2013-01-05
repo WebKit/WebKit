@@ -1254,8 +1254,6 @@ webkit.org/b/105049 compositing/layer-creation/fixed-position-out-of-view-scaled
 webkit.org/b/105566 media/track/track-webvtt-tc006-cue-identifiers.html [ Crash Pass ]
 webkit.org/b/105580 media/track/track-prefer-captions.html [ Crash Pass ]
 
-webkit.org/b/105606 media/track [ Crash Pass ]
-
 webkit.org/b/105567 http/tests/security/data-url-inline.css.html [ Crash Pass ]
 
 webkit.org/b/104848 fast/frames/sandboxed-iframe-parsing-space-characters.html [ Failure Pass ]
