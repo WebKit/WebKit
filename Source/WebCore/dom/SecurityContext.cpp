@@ -36,7 +36,7 @@
 namespace WebCore {
 
 SecurityContext::SecurityContext()
-    : m_mayDisplaySeamlessWithParent(false)
+    : m_mayDisplaySeamlesslyWithParent(false)
     , m_haveInitializedSecurityOrigin(false)
     , m_sandboxFlags(SandboxNone)
 {

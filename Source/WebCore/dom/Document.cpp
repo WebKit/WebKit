@@ -4583,7 +4583,7 @@ void Document::initSecurityContext()
 
     // FIXME: What happens if we inherit the security origin? This check may need to be later.
     // <iframe seamless src="about:blank"> likely won't work as-is.
-    m_mayDisplaySeamlessWithParent = isEligibleForSeamless(parentDocument, this);
+    m_mayDisplaySeamlesslyWithParent = isEligibleForSeamless(parentDocument, this);
 
     if (!shouldInheritSecurityOriginFromOwner(m_url))
         return;
@@ -5661,7 +5661,7 @@ bool Document::shouldDisplaySeamlesslyWithParent() const
     HTMLFrameOwnerElement* ownerElement = this->ownerElement();
     if (!ownerElement)
         return false;
-    return m_mayDisplaySeamlessWithParent && ownerElement->hasTagName(iframeTag) && ownerElement->fastHasAttribute(seamlessAttr);
+    return m_mayDisplaySeamlesslyWithParent && ownerElement->hasTagName(iframeTag) && ownerElement->fastHasAttribute(seamlessAttr);
 #else
     return false;
 #endif
