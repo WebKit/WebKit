@@ -1,5 +1,13 @@
 2013-01-04  Ryosuke Niwa  <rniwa@webkit.org>
 
+        Add a Mac test expectation for the test that has been intermittently failing on Mac Lion WebKit1.
+        The failure is tracked by the bug 106151.
+
+        * platform/mac-wk2/TestExpectations:
+        * platform/mac/TestExpectations:
+
+2013-01-04  Ryosuke Niwa  <rniwa@webkit.org>
+
         Remove superfluous chromium test baselines for the test added by r138862 after r138869.
 
         * platform/chromium-linux-x86/fast/js/dfg-check-structure-elimination-for-non-cell-expected.txt: Removed.
