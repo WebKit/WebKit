@@ -347,7 +347,7 @@ using std::wtf_isnan;
 #endif
 #endif
 
-#if COMPILER(MINGW64)
+#if COMPILER(MINGW64) && (!defined(__MINGW64_VERSION_RC) || __MINGW64_VERSION_RC < 1)
 inline double wtf_pow(double x, double y)
 {
     // MinGW-w64 has a custom implementation for pow.
@@ -367,7 +367,7 @@ inline double wtf_pow(double x, double y)
     return pow(x, y);
 }
 #define pow(x, y) wtf_pow(x, y)
-#endif // COMPILER(MINGW64)
+#endif // COMPILER(MINGW64) && (!defined(__MINGW64_VERSION_RC) || __MINGW64_VERSION_RC < 1)
 
 
 // decompose 'number' to its sign, exponent, and mantissa components.
