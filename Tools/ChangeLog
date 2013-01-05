@@ -1,3 +1,12 @@
+2013-01-04  Michael Pruett  <michael@68k.org>
+
+        [GTK] Fix build error on GTK due to r138836
+        https://bugs.webkit.org/show_bug.cgi?id=106154
+
+        Reviewed by Kentaro Hara.
+
+        * GNUmakefile.am:
+
 2013-01-04  Dan Bernstein  <mitz@apple.com>
 
         [mac] WebKit1 has no equivalent of WKBundleNodeHandleCopyHTMLTableCellElementCellAbove

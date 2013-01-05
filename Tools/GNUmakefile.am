@@ -54,6 +54,7 @@ libWebCoreInternals_la_SOURCES = \
 	Source/WebCore/testing/InternalSettings.h \
 	Source/WebCore/testing/MockPagePopupDriver.cpp \
 	Source/WebCore/testing/MockPagePopupDriver.h \
+	Source/WebCore/testing/TypeConversions.h \
 	Source/WebCore/testing/js/WebCoreTestSupport.cpp \
 	Source/WebCore/testing/js/WebCoreTestSupport.h
 
@@ -67,7 +68,9 @@ libwebcoreinternals_built_sources += \
 	DerivedSources/WebCore/JSInternalSettings.cpp \
 	DerivedSources/WebCore/JSInternalSettings.h   \
 	DerivedSources/WebCore/JSInternalSettingsGenerated.cpp \
-	DerivedSources/WebCore/JSInternalSettingsGenerated.h
+	DerivedSources/WebCore/JSInternalSettingsGenerated.h \
+	DerivedSources/WebCore/JSTypeConversions.cpp \
+	DerivedSources/WebCore/JSTypeConversions.h
 
 nodist_libWebCoreInternals_la_SOURCES = $(libwebcoreinternals_built_sources)
 BUILT_SOURCES += $(libwebcoreinternals_built_sources)
