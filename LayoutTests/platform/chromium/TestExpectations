@@ -2675,6 +2675,9 @@ crbug.com/77574 [ Android Linux ] fast/writing-mode/fallback-orientation.html [ 
 # Regression in r82056.
 webkit.org/b/56519 [ SnowLeopard ] fast/ruby/base-shorter-than-text.html [ Failure ImageOnlyFailure ]
 
+webkit.org/b/106164 [ Lion ] fast/ruby/base-shorter-than-text.html [ Failure ]
+webkit.org/b/106164 [ MountainLion Release ] fast/ruby/base-shorter-than-text.html [ Failure ]
+
 # Chrome doesn't load favicons in DRT tests.
 webkit.org/b/57259 http/tests/misc/link-rel-icon-beforeload.html [ Failure ]
 

@@ -1,5 +1,12 @@
 2013-01-04  Terry Anderson  <tdanderson@chromium.org>
 
+        Unreviewed gardening. fast/ruby/base-shorter-than-text.html is failing on
+        Lion and MountainLion.
+
+        * platform/chromium/TestExpectations:
+
+2013-01-04  Terry Anderson  <tdanderson@chromium.org>
+
         Unreviewed gardening. Test is flaky on Linux and Mac.
 
         * platform/chromium/TestExpectations:
