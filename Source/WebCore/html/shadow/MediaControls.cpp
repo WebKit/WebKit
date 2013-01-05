@@ -151,6 +151,7 @@ void MediaControls::loadedMetadata()
 
 void MediaControls::show()
 {
+    makeOpaque();
     m_panel->setIsDisplayed(true);
     m_panel->show();
 }

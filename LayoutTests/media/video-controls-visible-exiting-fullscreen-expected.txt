@@ -1,0 +1,13 @@
+Tests that video controls are shwon after exiting fullscreen
+EVENT(canplaythrough)
+** Move mouse to the play button and start playing the video **
+
+** Test that controls are shown when controls attribute is present **
+EVENT(webkitfullscreenchange)
+
+RUN(video.webkitExitFullScreen())
+EVENT(webkitfullscreenchange)
+
+** The controls should be shown after exiting the fullscreen
+END OF TEST
+

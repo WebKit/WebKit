@@ -1,3 +1,15 @@
+2013-01-05  Min Qin  <qinmin@chromium.org>
+
+        MediaControls::show() should make controls opaque
+        https://bugs.webkit.org/show_bug.cgi?id=106034
+
+        Reviewed by Eric Carlson.
+
+        Add tests to check that video controls are shown when exiting from fullscreen.
+
+        * media/video-controls-visible-exiting-fullscreen-expected.txt: Added.
+        * media/video-controls-visible-exiting-fullscreen.html: Added.
+
 2013-01-05  Michael Pruett  <michael@68k.org>
 
         [WK2] Exclude IndexedDB tests which use eventSender.beginDragWithFiles()
