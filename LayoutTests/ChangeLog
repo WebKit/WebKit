@@ -1,3 +1,13 @@
+2013-01-05  Robert Hogan  <robert@webkit.org>
+
+        Max width of a floated container with floated children calculated incorrectly
+        https://bugs.webkit.org/show_bug.cgi?id=47975
+
+        Reviewed by Levi Weintraub.
+
+        * fast/block/float/max-width-clear-float-with-overflow-hidden-expected.html: Added.
+        * fast/block/float/max-width-clear-float-with-overflow-hidden.html: Added.
+
 2013-01-05  Takashi Sakamoto  <tasak@google.com>
 
         [Shadow DOM]: Some named elements in ShadowTree visible on nesting document level

@@ -6144,7 +6144,7 @@ void RenderBlock::computeBlockPreferredLogicalWidths()
         }
         
         if (child->isFloating()) {
-            if (styleToUse->floating() == LeftFloat)
+            if (childStyle->floating() == LeftFloat)
                 floatLeftWidth += w;
             else
                 floatRightWidth += w;
