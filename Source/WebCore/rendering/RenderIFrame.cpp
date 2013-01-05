@@ -63,7 +63,7 @@ LayoutUnit RenderIFrame::minPreferredLogicalWidth() const
     if (!childRoot)
         return 0;
 
-    return childRoot->minPreferredLogicalWidth();
+    return childRoot->minPreferredLogicalWidth() + borderAndPaddingLogicalWidth();
 }
 
 LayoutUnit RenderIFrame::maxPreferredLogicalWidth() const
@@ -75,7 +75,7 @@ LayoutUnit RenderIFrame::maxPreferredLogicalWidth() const
     if (!childRoot)
         return 0;
 
-    return childRoot->maxPreferredLogicalWidth();
+    return childRoot->maxPreferredLogicalWidth() + borderAndPaddingLogicalWidth();
 }
 
 bool RenderIFrame::isSeamless() const

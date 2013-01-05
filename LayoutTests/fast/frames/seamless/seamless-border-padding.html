@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <script src="../../js/resources/js-test-pre.js"></script>
+    <style>
+        iframe { display: inline-block; }
+        .border { border: 1px solid black; }
+        .padding { padding: 2px;
+    </style>
+    <script>
+        debug("Test that seamless IFrames correctly size themselves when a border is present.");
+        window.onload = function () {
+            window.nothing = document.getElementById("nothing");
+            shouldBe("nothing.getBoundingClientRect().width", "100");
+            shouldBe("nothing.getBoundingClientRect().height", "100");
+
+            window.hasborder = document.getElementById("hasborder");
+            shouldBe("hasborder.getBoundingClientRect().width", "102");
+            shouldBe("hasborder.getBoundingClientRect().height", "102");
+
+            window.haspadding = document.getElementById("haspadding");
+            shouldBe("haspadding.getBoundingClientRect().width", "104");
+            shouldBe("haspadding.getBoundingClientRect().height", "104");
+
+            window.hasboth = document.getElementById("hasboth");
+            shouldBe("hasboth.getBoundingClientRect().width", "106");
+            shouldBe("hasboth.getBoundingClientRect().height", "106");
+        };
+    </script>
+</head>
+<body>
+    <iframe id="nothing" seamless srcdoc="<style>body { overflow:hidden; }</style><div style='width:100px;height:100px;'>TEST</div>"></iframe>
+    <iframe id="hasborder" class="border" seamless srcdoc="<style>body { overflow:hidden; }</style><div style='width:100px;height:100px;'>TEST</div>"></iframe>
+    <iframe id="haspadding" class="padding" seamless srcdoc="<style>body { overflow:hidden; }</style><div style='width:100px;height:100px;'>TEST</div>"></iframe>
+    <iframe id="hasboth" class="border padding" seamless srcdoc="<style>body { overflow:hidden; }</style><div style='width:100px;height:100px;'>TEST</div>"></iframe>
+</body>

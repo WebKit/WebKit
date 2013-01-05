@@ -1,3 +1,17 @@
+2013-01-05  Mike West  <mkwst@chromium.org>
+
+        seamless iframes don't take border into account properly and make the iframe too small.
+        https://bugs.webkit.org/show_bug.cgi?id=90827
+
+        Reviewed by Ojan Vafai.
+
+        * fast/frames/seamless/seamless-border-padding-expected.txt: Added.
+        * fast/frames/seamless/seamless-border-padding.html: Added.
+            This test checks the IFrame's handling of borders and padding.
+            Things work correctly for width after this patch, but there are
+            still issues with padding and height, which will be fixed in
+            http://wkbug.com/106167
+
 2013-01-05  Min Qin  <qinmin@chromium.org>
 
         MediaControls::show() should make controls opaque
