@@ -4680,6 +4680,12 @@ HRESULT WebView::notifyPreferencesChanged(IWebNotification* notification)
     hr = preferences->privateBrowsingEnabled(&enabled);
     if (FAILED(hr))
         return hr;
+#if PLATFORM(WIN) || USE(CFNETWORK)
+    if (enabled)
+        WebFrameNetworkingContext::ensurePrivateBrowsingSession();
+    else
+        WebFrameNetworkingContext::destroyPrivateBrowsingSession();
+#endif
     settings->setPrivateBrowsingEnabled(!!enabled);
 
     hr = preferences->sansSerifFontFamily(&str);

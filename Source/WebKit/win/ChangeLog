@@ -1,3 +1,16 @@
+2013-01-04  Roger Fong  <roger_fong@apple.com>
+
+        Make private browsing work on Windows.
+        https://bugs.webkit.org/show_bug.cgi?id=106032.
+
+        Reviewed by Alexey Proskuryakov.
+
+        Code path never called ensurePrivateBrowsingSession which is what starts up the private browsing session.
+        This was causing many tests to involving private browsing to fail.
+
+        * WebView.cpp:
+        (WebView::notifyPreferencesChanged):
+
 2013-01-03  Roger Fong  <roger_fong@apple.com>
 
         Remove all traces of Windows from WebKit2 folder.
