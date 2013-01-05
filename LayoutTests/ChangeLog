@@ -1,3 +1,9 @@
+2013-01-04  Terry Anderson  <tdanderson@chromium.org>
+
+        Unreviewed gardening. Test is flaky on Linux and Mac.
+
+        * platform/chromium/TestExpectations:
+
 2013-01-04  Ryosuke Niwa  <rniwa@webkit.org>
 
         Add a Mac test expectation for the test that has been intermittently failing on Mac Lion WebKit1.
