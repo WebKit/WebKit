@@ -1,3 +1,15 @@
+2013-01-04  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Remove superfluous chromium test baselines for the test added by r138862 after r138869.
+
+        * platform/chromium-linux-x86/fast/js/dfg-check-structure-elimination-for-non-cell-expected.txt: Removed.
+        * platform/chromium-linux/fast/js/dfg-check-structure-elimination-for-non-cell-expected.txt: Removed.
+        * platform/chromium-mac-lion/fast/js: Removed.
+        * platform/chromium-mac-lion/fast/js/dfg-check-structure-elimination-for-non-cell-expected.txt: Removed.
+        * platform/chromium-mac-snowleopard/fast/js/dfg-check-structure-elimination-for-non-cell-expected.txt: Removed.
+        * platform/chromium-mac/fast/js/dfg-check-structure-elimination-for-non-cell-expected.txt: Removed.
+        * platform/chromium/fast/js/dfg-check-structure-elimination-for-non-cell-expected.txt: Copied from LayoutTests/platform/chromium-linux-x86/fast/js/dfg-check-structure-elimination-for-non-cell-expected.txt.
+
 2013-01-04  Terry Anderson  <tdanderson@chromium.org>
 
         Unreviewed gardening. Adding new baselines for chromium.
