@@ -1,5 +1,15 @@
 2013-01-04  Sam Weinig  <sam@webkit.org>
 
+        Fix failing API test.
+
+        * WebProcess/WebProcess.cpp:
+        (WebKit::WebProcess::initializeConnection):
+        (WebKit::WebProcess::initializeWebProcess):
+        The WebConnectionToUIProcess needs to be initialized before the injected bundle is,
+        so that if the user tries to use it, its there.
+
+2013-01-04  Sam Weinig  <sam@webkit.org>
+
         Consolidate all the one time initialization functions into a single InitializeWebKit2() super function
         https://bugs.webkit.org/show_bug.cgi?id=106161
 

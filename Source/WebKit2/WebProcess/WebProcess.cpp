@@ -202,6 +202,8 @@ void WebProcess::initializeConnection(CoreIPC::Connection* connection)
     connection->setShouldExitOnSyncMessageSendFailure(true);
     connection->addQueueClient(&m_eventDispatcher);
     connection->addQueueClient(this);
+
+    m_webConnection = WebConnectionToUIProcess::create(this);
 }
 
 void WebProcess::didCreateDownload()
@@ -246,8 +248,6 @@ void WebProcess::initializeWebProcess(const WebProcessCreationParameters& parame
             m_injectedBundle.clear();
         }
     }
-
-    m_webConnection = WebConnectionToUIProcess::create(this);
 
     WebProcessSupplementMap::const_iterator it = m_supplements.begin();
     WebProcessSupplementMap::const_iterator end = m_supplements.end();
