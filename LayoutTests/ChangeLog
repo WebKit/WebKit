@@ -1,3 +1,13 @@
+2013-01-05  Takashi Sakamoto  <tasak@google.com>
+
+        [Shadow DOM]: Some named elements in ShadowTree visible on nesting document level
+        https://bugs.webkit.org/show_bug.cgi?id=105617
+
+        Reviewed by Dimitri Glazkov.
+
+        * fast/dom/shadow/element-name-in-shadow-expected.txt: Added.
+        * fast/dom/shadow/element-name-in-shadow.html: Added.
+
 2013-01-05  Zan Dobersek  <zandobersek@gmail.com>
 
         Unreviewed GTK gardening

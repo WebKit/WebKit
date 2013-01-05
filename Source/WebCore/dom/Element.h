@@ -677,7 +677,7 @@ inline const ElementAttributeData* Element::ensureUpdatedAttributeData() const
 
 inline void Element::updateName(const AtomicString& oldName, const AtomicString& newName)
 {
-    if (!inDocument())
+    if (!inDocument() || isInShadowTree())
         return;
 
     if (oldName == newName)

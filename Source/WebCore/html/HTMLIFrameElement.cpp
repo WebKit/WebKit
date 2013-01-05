@@ -80,7 +80,7 @@ void HTMLIFrameElement::collectStyleForPresentationAttribute(const Attribute& at
 void HTMLIFrameElement::parseAttribute(const QualifiedName& name, const AtomicString& value)
 {
     if (name == nameAttr) {
-        if (inDocument() && document()->isHTMLDocument()) {
+        if (inDocument() && document()->isHTMLDocument() && !isInShadowTree()) {
             HTMLDocument* document = static_cast<HTMLDocument*>(this->document());
             document->removeExtraNamedItem(m_name);
             document->addExtraNamedItem(value);
@@ -112,7 +112,7 @@ RenderObject* HTMLIFrameElement::createRenderer(RenderArena* arena, RenderStyle*
 Node::InsertionNotificationRequest HTMLIFrameElement::insertedInto(ContainerNode* insertionPoint)
 {
     InsertionNotificationRequest result = HTMLFrameElementBase::insertedInto(insertionPoint);
-    if (insertionPoint->inDocument() && document()->isHTMLDocument())
+    if (insertionPoint->inDocument() && document()->isHTMLDocument() && !insertionPoint->isInShadowTree())
         static_cast<HTMLDocument*>(document())->addExtraNamedItem(m_name);
     return result;
 }
@@ -120,7 +120,7 @@ Node::InsertionNotificationRequest HTMLIFrameElement::insertedInto(ContainerNode
 void HTMLIFrameElement::removedFrom(ContainerNode* insertionPoint)
 {
     HTMLFrameElementBase::removedFrom(insertionPoint);
-    if (insertionPoint->inDocument() && document()->isHTMLDocument())
+    if (insertionPoint->inDocument() && document()->isHTMLDocument() && !insertionPoint->isInShadowTree())
         static_cast<HTMLDocument*>(document())->removeExtraNamedItem(m_name);
 }
 
