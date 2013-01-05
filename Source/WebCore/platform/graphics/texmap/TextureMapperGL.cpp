@@ -466,6 +466,7 @@ void TextureMapperGL::drawEdgeTriangles(TextureMapperShaderProgram* program)
     m_context3D->bindBuffer(GraphicsContext3D::ARRAY_BUFFER, vbo);
     m_context3D->vertexAttribPointer(program->vertexLocation(), 4, GraphicsContext3D::FLOAT, false, 0, 0);
     m_context3D->drawArrays(GraphicsContext3D::TRIANGLES, 0, 12);
+    m_context3D->bindBuffer(GraphicsContext3D::ARRAY_BUFFER, 0);
 }
 
 void TextureMapperGL::drawUnitRect(TextureMapperShaderProgram* program, GC3Denum drawingMode)
@@ -475,6 +476,7 @@ void TextureMapperGL::drawUnitRect(TextureMapperShaderProgram* program, GC3Denum
     m_context3D->bindBuffer(GraphicsContext3D::ARRAY_BUFFER, vbo);
     m_context3D->vertexAttribPointer(program->vertexLocation(), 2, GraphicsContext3D::FLOAT, false, 0, 0);
     m_context3D->drawArrays(drawingMode, 0, 4);
+    m_context3D->bindBuffer(GraphicsContext3D::ARRAY_BUFFER, 0);
 }
 
 void TextureMapperGL::draw(const FloatRect& rect, const TransformationMatrix& modelViewMatrix, TextureMapperShaderProgram* shaderProgram, GC3Denum drawingMode, Flags flags)
