@@ -29,6 +29,7 @@
 #include "Dictionary.h"
 #include "IDBCursor.h"
 #include "IDBIndex.h"
+#include "IDBIndexBackendInterface.h"
 #include "IDBKey.h"
 #include "IDBKeyRange.h"
 #include "IDBMetadata.h"
@@ -58,6 +59,7 @@ public:
     ~IDBObjectStore() { }
 
     // Implement the IDBObjectStore IDL
+    int64_t id() const { return m_metadata.id; }
     const String name() const { return m_metadata.name; }
     PassRefPtr<IDBAny> keyPathAny() const { return IDBAny::create(m_metadata.keyPath); }
     const IDBKeyPath keyPath() const { return m_metadata.keyPath; }
@@ -103,6 +105,8 @@ public:
 
     typedef Vector<RefPtr<IDBKey> > IndexKeys;
     typedef HashMap<String, IndexKeys> IndexKeyMap;
+
+    IDBDatabaseBackendInterface* backendDB() const;
 
 private:
     IDBObjectStore(const IDBObjectStoreMetadata&, PassRefPtr<IDBObjectStoreBackendInterface>, IDBTransaction*);

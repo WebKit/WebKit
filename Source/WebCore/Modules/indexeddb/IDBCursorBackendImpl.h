@@ -47,13 +47,13 @@ class IDBObjectStoreBackendImpl;
 
 class IDBCursorBackendImpl : public IDBCursorBackendInterface {
 public:
-    static PassRefPtr<IDBCursorBackendImpl> create(PassRefPtr<IDBBackingStore::Cursor> cursor, CursorType cursorType, IDBTransactionBackendImpl* transaction, IDBObjectStoreBackendImpl* objectStore)
+    static PassRefPtr<IDBCursorBackendImpl> create(PassRefPtr<IDBBackingStore::Cursor> cursor, CursorType cursorType, IDBTransactionBackendImpl* transaction, int64_t objectStoreId)
     {
-        return adoptRef(new IDBCursorBackendImpl(cursor, cursorType, IDBTransactionBackendInterface::NormalTask, transaction, objectStore));
+        return adoptRef(new IDBCursorBackendImpl(cursor, cursorType, IDBTransactionBackendInterface::NormalTask, transaction, objectStoreId));
     }
-    static PassRefPtr<IDBCursorBackendImpl> create(PassRefPtr<IDBBackingStore::Cursor> cursor, CursorType cursorType, IDBTransactionBackendInterface::TaskType taskType, IDBTransactionBackendImpl* transaction, IDBObjectStoreBackendImpl* objectStore)
+    static PassRefPtr<IDBCursorBackendImpl> create(PassRefPtr<IDBBackingStore::Cursor> cursor, CursorType cursorType, IDBTransactionBackendInterface::TaskType taskType, IDBTransactionBackendImpl* transaction, int64_t objectStoreId)
     {
-        return adoptRef(new IDBCursorBackendImpl(cursor, cursorType, taskType, transaction, objectStore));
+        return adoptRef(new IDBCursorBackendImpl(cursor, cursorType, taskType, transaction, objectStoreId));
     }
     virtual ~IDBCursorBackendImpl();
 
@@ -71,18 +71,20 @@ public:
     void close();
 
 private:
-    IDBCursorBackendImpl(PassRefPtr<IDBBackingStore::Cursor>, CursorType, IDBTransactionBackendInterface::TaskType, IDBTransactionBackendImpl*, IDBObjectStoreBackendImpl*);
+    IDBCursorBackendImpl(PassRefPtr<IDBBackingStore::Cursor>, CursorType, IDBTransactionBackendInterface::TaskType, IDBTransactionBackendImpl*, int64_t objectStoreId);
 
     class CursorIterationOperation;
     class CursorAdvanceOperation;
     class CursorPrefetchIterationOperation;
 
-    RefPtr<IDBBackingStore::Cursor> m_cursor;
-    RefPtr<IDBBackingStore::Cursor> m_savedCursor;
     IDBTransactionBackendInterface::TaskType m_taskType;
     CursorType m_cursorType;
-    RefPtr<IDBTransactionBackendImpl> m_transaction;
-    RefPtr<IDBObjectStoreBackendImpl> m_objectStore;
+    const RefPtr<IDBDatabaseBackendImpl> m_database;
+    const RefPtr<IDBTransactionBackendImpl> m_transaction;
+    const int64_t m_objectStoreId;
+
+    RefPtr<IDBBackingStore::Cursor> m_cursor; // Must be destroyed before m_transaction.
+    RefPtr<IDBBackingStore::Cursor> m_savedCursor; // Must be destroyed before m_transaction.
 
     bool m_closed;
 };

@@ -27,7 +27,7 @@
 #define IDBIndex_h
 
 #include "IDBCursor.h"
-#include "IDBIndexBackendInterface.h"
+#include "IDBDatabase.h"
 #include "IDBKeyPath.h"
 #include "IDBKeyRange.h"
 #include "IDBMetadata.h"
@@ -45,9 +45,9 @@ class IDBObjectStore;
 
 class IDBIndex : public ScriptWrappable, public RefCounted<IDBIndex> {
 public:
-    static PassRefPtr<IDBIndex> create(const IDBIndexMetadata& metadata, PassRefPtr<IDBIndexBackendInterface> backend, IDBObjectStore* objectStore, IDBTransaction* transaction)
+    static PassRefPtr<IDBIndex> create(const IDBIndexMetadata& metadata, IDBObjectStore* objectStore, IDBTransaction* transaction)
     {
-        return adoptRef(new IDBIndex(metadata, backend, objectStore, transaction));
+        return adoptRef(new IDBIndex(metadata, objectStore, transaction));
     }
     ~IDBIndex();
 
@@ -83,11 +83,12 @@ public:
 
     void markDeleted() { m_deleted = true; }
 
+    IDBDatabaseBackendInterface* backendDB() const;
+
 private:
-    IDBIndex(const IDBIndexMetadata&, PassRefPtr<IDBIndexBackendInterface>, IDBObjectStore*, IDBTransaction*);
+    IDBIndex(const IDBIndexMetadata&, IDBObjectStore*, IDBTransaction*);
 
     IDBIndexMetadata m_metadata;
-    RefPtr<IDBIndexBackendInterface> m_backend;
     RefPtr<IDBObjectStore> m_objectStore;
     RefPtr<IDBTransaction> m_transaction;
     bool m_deleted;

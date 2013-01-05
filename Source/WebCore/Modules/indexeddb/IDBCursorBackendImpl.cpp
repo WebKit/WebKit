@@ -101,12 +101,13 @@ private:
     RefPtr<IDBCallbacks> m_callbacks;
 };
 
-IDBCursorBackendImpl::IDBCursorBackendImpl(PassRefPtr<IDBBackingStore::Cursor> cursor, CursorType cursorType, IDBTransactionBackendInterface::TaskType taskType, IDBTransactionBackendImpl* transaction, IDBObjectStoreBackendImpl* objectStore)
-    : m_cursor(cursor)
-    , m_taskType(taskType)
+IDBCursorBackendImpl::IDBCursorBackendImpl(PassRefPtr<IDBBackingStore::Cursor> cursor, CursorType cursorType, IDBTransactionBackendInterface::TaskType taskType, IDBTransactionBackendImpl* transaction, int64_t objectStoreId)
+    : m_taskType(taskType)
     , m_cursorType(cursorType)
+    , m_database(transaction->database())
     , m_transaction(transaction)
-    , m_objectStore(objectStore)
+    , m_objectStoreId(objectStoreId)
+    , m_cursor(cursor)
     , m_closed(false)
 {
     m_transaction->registerOpenCursor(this);
@@ -115,11 +116,6 @@ IDBCursorBackendImpl::IDBCursorBackendImpl(PassRefPtr<IDBBackingStore::Cursor> c
 IDBCursorBackendImpl::~IDBCursorBackendImpl()
 {
     m_transaction->unregisterOpenCursor(this);
-    // Order is important, the cursors have to be destructed before the objectStore.
-    m_cursor.clear();
-    m_savedCursor.clear();
-
-    m_objectStore.clear();
 }
 
 
@@ -170,8 +166,7 @@ void IDBCursorBackendImpl::deleteFunction(PassRefPtr<IDBCallbacks> prpCallbacks,
     RefPtr<IDBKeyRange> keyRange = IDBKeyRange::only(m_cursor->primaryKey(), ec);
     ASSERT(!ec);
 
-    m_objectStore->deleteFunction(keyRange.release(), prpCallbacks, m_transaction.get(), ec);
-    ASSERT(!ec);
+    m_database->deleteRange(m_transaction->id(), m_objectStoreId, keyRange.release(), prpCallbacks);
 }
 
 void IDBCursorBackendImpl::prefetchContinue(int numberToFetch, PassRefPtr<IDBCallbacks> prpCallbacks, ExceptionCode&)

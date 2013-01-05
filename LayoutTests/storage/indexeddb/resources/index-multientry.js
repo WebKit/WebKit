@@ -45,7 +45,7 @@ function verifyIndexes(indexName, callback)
     debug("Verifying index: " + indexName);
     transaction = evalAndLog("transaction = db.transaction(['store'], 'readonly')");
     transaction.onabort = unexpectedAbortCallback;
-    transaction.oncomplete = callback;
+    transaction.oncomplete = function() { verifyCount(callback); };
 
     expected = [
         { key: 1, primaryKey: 'foo', y: 'a' },
@@ -102,6 +102,26 @@ function verifyUniqueConstraint()
             request.onerror = function() { debug("Request failed, as expected (" + request.error.name + ")"); };
         };
     };
+}
+
+function verifyCount(callback) {
+    evalAndLog("transaction = db.transaction(['store'])");
+
+    transaction.onabort = unexpectedAbortCallback;
+    transaction.oncomplete = callback;
+
+    index = evalAndLog("transaction.objectStore('store').index('index')");
+    request = evalAndLog("index.count()");
+    request.onsuccess = function(event) {
+
+        shouldBe("event.target.result", "9");
+
+        request = evalAndLog("index.count(7)");
+        request.onsuccess = function(event) {
+            shouldBe("event.target.result", "1");
+        };
+    };
+
 }
 
 function createIndexOnStoreWithData()

@@ -103,6 +103,8 @@ public:
         return findObjectStoreId(name) != IDBObjectStoreMetadata::InvalidId;
     }
 
+    IDBDatabaseBackendInterface* backend() const { return m_backend.get(); }
+
     static int64_t nextTransactionId();
 
     using RefCounted<IDBDatabase>::ref;

@@ -463,6 +463,11 @@ EventTargetData* IDBTransaction::ensureEventTargetData()
     return &m_eventTargetData;
 }
 
+IDBDatabaseBackendInterface* IDBTransaction::backendDB() const
+{
+    return db()->backend();
+}
+
 }
 
 #endif // ENABLE(INDEXED_DATABASE)

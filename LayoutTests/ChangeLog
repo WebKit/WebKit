@@ -1,3 +1,20 @@
+2013-01-05  Alec Flett  <alecflett@chromium.org>
+
+        IndexedDB: Migrate backend ObjectStore calls to use transaction id
+        https://bugs.webkit.org/show_bug.cgi?id=102741
+
+        Reviewed by Tony Chang.
+
+        Add additional count() tests for multi-entry indexes, not previously
+        covered.
+
+        * storage/indexeddb/index-multientry-expected.txt:
+        * storage/indexeddb/resources/index-multientry.js:
+        (.transaction.oncomplete):
+        (verifyCount.request.onsuccess.request.onsuccess):
+        (verifyCount.request.onsuccess):
+        (verifyCount):
+
 2013-01-05  Robert Hogan  <robert@webkit.org>
 
         Max width of a floated container with floated children calculated incorrectly

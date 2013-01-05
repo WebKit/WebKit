@@ -30,6 +30,7 @@
 
 #include "IDBCallbacksProxy.h"
 #include "IDBIndex.h"
+#include "IDBIndexBackendInterface.h"
 #include "IDBKeyRange.h"
 #include "WebIDBCallbacks.h"
 #include "WebIDBKey.h"

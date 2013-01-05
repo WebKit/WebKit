@@ -92,7 +92,7 @@ public:
     virtual void openCursor(long long transactionId, long long objectStoreId, long long indexId, const WebIDBKeyRange&, unsigned short direction, bool keyOnly, TaskType, WebIDBCallbacks*) { WEBKIT_ASSERT_NOT_REACHED(); }
     virtual void count(long long transactionId, long long objectStoreId, long long indexId, const WebIDBKeyRange&, WebIDBCallbacks*) { WEBKIT_ASSERT_NOT_REACHED(); }
     virtual void deleteRange(long long transactionId, long long objectStoreId, const WebIDBKeyRange&, WebIDBCallbacks*) { WEBKIT_ASSERT_NOT_REACHED(); }
-    virtual void clear(long long transactionId, long long objectStoreId, WebIDBCallbacks*)  { WEBKIT_ASSERT_NOT_REACHED(); }
+    virtual void clear(long long transactionId, long long objectStoreId, WebIDBCallbacks*) { WEBKIT_ASSERT_NOT_REACHED(); }
 
 protected:
     WebIDBDatabase() { }

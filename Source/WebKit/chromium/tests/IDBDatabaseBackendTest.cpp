@@ -62,7 +62,7 @@ TEST(IDBDatabaseBackendTest, BackingStoreRetention)
 
     const bool unique = false;
     const bool multiEntry = false;
-    RefPtr<IDBIndexBackendImpl> index = IDBIndexBackendImpl::create(db.get(), store.get(), IDBIndexMetadata("index", -1, IDBKeyPath("keyPath"), unique, multiEntry));
+    RefPtr<IDBIndexBackendImpl> index = IDBIndexBackendImpl::create(db.get(), IDBIndexMetadata("index", -1, IDBKeyPath("keyPath"), unique, multiEntry));
     EXPECT_GT(backingStore->refCount(), 1);
 
     db.clear();

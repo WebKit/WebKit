@@ -82,6 +82,12 @@ PASS cursor.value.y is "d"
 cursor.continue()
 cursor = event.target.result
 PASS expected.length is 0
+transaction = db.transaction(['store'])
+transaction.objectStore('store').index('index')
+index.count()
+PASS event.target.result is 9
+index.count(7)
+PASS event.target.result is 1
 
 Verifying unique constraint on multiEntry index
 transaction = db.transaction(['store-unique'], 'readwrite')
@@ -162,6 +168,12 @@ PASS cursor.value.y is "d"
 cursor.continue()
 cursor = event.target.result
 PASS expected.length is 0
+transaction = db.transaction(['store'])
+transaction.objectStore('store').index('index')
+index.count()
+PASS event.target.result is 9
+index.count(7)
+PASS event.target.result is 1
 PASS successfullyParsed is true
 
 TEST COMPLETE

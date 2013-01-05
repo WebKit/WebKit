@@ -47,6 +47,7 @@ class IDBDatabase;
 class IDBObjectStore;
 class IDBOpenDBRequest;
 class IDBTransactionBackendInterface;
+class IDBDatabaseBackendInterface;
 struct IDBObjectStoreMetadata;
 
 class IDBTransaction : public ScriptWrappable, public IDBTransactionCallbacks, public EventTarget, public ActiveDOMObject {
@@ -71,6 +72,8 @@ public:
     static const AtomicString& modeToString(Mode, ExceptionCode&);
 
     IDBTransactionBackendInterface* backend() const;
+    IDBDatabaseBackendInterface* backendDB() const;
+
     int64_t id() const { return m_id; }
     bool isActive() const { return m_state == Active; }
     bool isFinished() const { return m_state == Finished; }

@@ -87,14 +87,12 @@ PassRefPtr<IDBRequest> IDBObjectStore::get(ScriptExecutionContext* context, Pass
         return 0;
     }
     RefPtr<IDBRequest> request = IDBRequest::create(context, IDBAny::create(this), m_transaction.get());
-    m_backend->get(keyRange, request, m_transaction->backend(), ec);
-    ASSERT(!ec);
+    backendDB()->get(m_transaction->id(), id(), IDBIndexMetadata::InvalidId, keyRange, false, request);
     return request.release();
 }
 
 PassRefPtr<IDBRequest> IDBObjectStore::get(ScriptExecutionContext* context, PassRefPtr<IDBKey> key, ExceptionCode& ec)
 {
-    IDB_TRACE("IDBObjectStore::get");
     RefPtr<IDBKeyRange> keyRange = IDBKeyRange::only(key, ec);
     if (ec)
         return 0;
@@ -214,8 +212,8 @@ PassRefPtr<IDBRequest> IDBObjectStore::put(IDBObjectStoreBackendInterface::PutMo
     }
 
     RefPtr<IDBRequest> request = IDBRequest::create(context, source, m_transaction.get());
-    m_backend->put(serializedValue.release(), key.release(), putMode, request, m_transaction->backend(), indexIds, indexKeys);
-    ASSERT(!ec);
+    Vector<uint8_t> valueBytes = serializedValue->toWireBytes();
+    backendDB()->put(m_transaction->id(), id(), &valueBytes, key.release(), static_cast<IDBDatabaseBackendInterface::PutMode>(putMode), request, indexIds, indexKeys);
     return request.release();
 }
 
@@ -240,14 +238,12 @@ PassRefPtr<IDBRequest> IDBObjectStore::deleteFunction(ScriptExecutionContext* co
     }
 
     RefPtr<IDBRequest> request = IDBRequest::create(context, IDBAny::create(this), m_transaction.get());
-    m_backend->deleteFunction(keyRange, request, m_transaction->backend(), ec);
-    ASSERT(!ec);
+    backendDB()->deleteRange(m_transaction->id(), id(), keyRange, request);
     return request.release();
 }
 
 PassRefPtr<IDBRequest> IDBObjectStore::deleteFunction(ScriptExecutionContext* context, PassRefPtr<IDBKey> key, ExceptionCode& ec)
 {
-    IDB_TRACE("IDBObjectStore::delete");
     RefPtr<IDBKeyRange> keyRange = IDBKeyRange::only(key, ec);
     if (ec)
         return 0;
@@ -271,8 +267,7 @@ PassRefPtr<IDBRequest> IDBObjectStore::clear(ScriptExecutionContext* context, Ex
     }
 
     RefPtr<IDBRequest> request = IDBRequest::create(context, IDBAny::create(this), m_transaction.get());
-    m_backend->clear(request, m_transaction->backend(), ec);
-    ASSERT(!ec);
+    backendDB()->clear(m_transaction->id(), id(), request);
     return request.release();
 }
 
@@ -284,9 +279,9 @@ namespace {
 // cursor success handlers are kept alive.
 class IndexPopulator : public EventListener {
 public:
-    static PassRefPtr<IndexPopulator> create(PassRefPtr<IDBObjectStoreBackendInterface> backend, PassRefPtr<IDBTransactionBackendInterface> transaction, PassRefPtr<IDBRequest> request, const IDBIndexMetadata& indexMetadata)
+    static PassRefPtr<IndexPopulator> create(PassRefPtr<IDBDatabaseBackendInterface> backend, int64_t transactionId, int64_t objectStoreId, const IDBIndexMetadata& indexMetadata)
     {
-        return adoptRef(new IndexPopulator(backend, transaction, indexMetadata));
+        return adoptRef(new IndexPopulator(backend, transactionId, objectStoreId, indexMetadata));
     }
 
     virtual bool operator==(const EventListener& other)
@@ -295,12 +290,11 @@ public:
     }
 
 private:
-    IndexPopulator(PassRefPtr<IDBObjectStoreBackendInterface> backend,
-                   PassRefPtr<IDBTransactionBackendInterface> transaction,
-                   const IDBIndexMetadata& indexMetadata)
+    IndexPopulator(PassRefPtr<IDBDatabaseBackendInterface> backend, int64_t transactionId, int64_t objectStoreId, const IDBIndexMetadata& indexMetadata)
         : EventListener(CPPEventListenerType)
-        , m_objectStoreBackend(backend)
-        , m_transaction(transaction)
+        , m_databaseBackend(backend)
+        , m_transactionId(transactionId)
+        , m_objectStoreId(objectStoreId)
         , m_indexMetadata(indexMetadata)
     {
     }
@@ -333,21 +327,20 @@ private:
             Vector<IDBObjectStore::IndexKeys, 1> indexKeysList;
             indexKeysList.append(indexKeys);
 
-            m_objectStoreBackend->setIndexKeys(primaryKey, indexIds, indexKeysList, m_transaction.get());
-
+            m_databaseBackend->setIndexKeys(m_transactionId, m_objectStoreId, primaryKey, indexIds, indexKeysList);
         } else {
             // Now that we are done indexing, tell the backend to go
             // back to processing tasks of type NormalTask.
-            m_objectStoreBackend->setIndexesReady(indexIds, m_transaction.get());
-            m_objectStoreBackend.clear();
-            m_transaction.clear();
+            m_databaseBackend->setIndexesReady(m_transactionId, m_objectStoreId, indexIds);
+            m_databaseBackend.clear();
         }
 
     }
 
-    RefPtr<IDBObjectStoreBackendInterface> m_objectStoreBackend;
-    RefPtr<IDBTransactionBackendInterface> m_transaction;
-    IDBIndexMetadata m_indexMetadata;
+    RefPtr<IDBDatabaseBackendInterface> m_databaseBackend;
+    const int64_t m_transactionId;
+    const int64_t m_objectStoreId;
+    const IDBIndexMetadata m_indexMetadata;
 };
 }
 
@@ -392,15 +385,14 @@ PassRefPtr<IDBIndex> IDBObjectStore::createIndex(ScriptExecutionContext* context
     }
 
     int64_t indexId = m_metadata.maxIndexId + 1;
-    RefPtr<IDBIndexBackendInterface> indexBackend = m_backend->createIndex(indexId, name, keyPath, unique, multiEntry, m_transaction->backend(), ec);
-    ASSERT(!indexBackend != !ec); // If we didn't get an index, we should have gotten an exception code. And vice versa.
+    m_backend->createIndex(indexId, name, keyPath, unique, multiEntry, m_transaction->backend(), ec);
     if (ec)
         return 0;
 
     ++m_metadata.maxIndexId;
 
     IDBIndexMetadata metadata(name, indexId, keyPath, unique, multiEntry);
-    RefPtr<IDBIndex> index = IDBIndex::create(metadata, indexBackend.release(), this, m_transaction.get());
+    RefPtr<IDBIndex> index = IDBIndex::create(metadata, this, m_transaction.get());
     m_indexMap.set(name, index);
     m_metadata.indexes.set(indexId, metadata);
 
@@ -415,7 +407,7 @@ PassRefPtr<IDBIndex> IDBObjectStore::createIndex(ScriptExecutionContext* context
     indexRequest->preventPropagation();
 
     // This is kept alive by being the success handler of the request, which is in turn kept alive by the owning transaction.
-    RefPtr<IndexPopulator> indexPopulator = IndexPopulator::create(m_backend, m_transaction->backend(), indexRequest, metadata);
+    RefPtr<IndexPopulator> indexPopulator = IndexPopulator::create(backendDB(), m_transaction->id(), id(), metadata);
     indexRequest->setOnsuccess(indexPopulator);
 
     return index.release();
@@ -443,9 +435,6 @@ PassRefPtr<IDBIndex> IDBObjectStore::index(const String& name, ExceptionCode& ec
         return 0;
     }
 
-    RefPtr<IDBIndexBackendInterface> indexBackend = m_backend->index(indexId);
-    ASSERT(!ec && indexBackend);
-
     const IDBIndexMetadata* indexMetadata(0);
     for (IDBObjectStoreMetadata::IndexMap::const_iterator it = m_metadata.indexes.begin(); it != m_metadata.indexes.end(); ++it) {
         if (it->value.name == name) {
@@ -454,8 +443,9 @@ PassRefPtr<IDBIndex> IDBObjectStore::index(const String& name, ExceptionCode& ec
         }
     }
     ASSERT(indexMetadata);
+    ASSERT(indexMetadata->id != IDBIndexMetadata::InvalidId);
 
-    RefPtr<IDBIndex> index = IDBIndex::create(*indexMetadata, indexBackend.release(), this, m_transaction.get());
+    RefPtr<IDBIndex> index = IDBIndex::create(*indexMetadata, this, m_transaction.get());
     m_indexMap.set(name, index);
     return index.release();
 }
@@ -504,14 +494,13 @@ PassRefPtr<IDBRequest> IDBObjectStore::openCursor(ScriptExecutionContext* contex
 
     RefPtr<IDBRequest> request = IDBRequest::create(context, IDBAny::create(this), m_transaction.get());
     request->setCursorDetails(IDBCursorBackendInterface::KeyAndValue, direction);
-    m_backend->openCursor(range, direction, request, taskType, m_transaction->backend(), ec);
-    ASSERT(!ec);
+
+    backendDB()->openCursor(m_transaction->id(), id(), IDBIndexMetadata::InvalidId, range, direction, false, static_cast<IDBDatabaseBackendInterface::TaskType>(taskType), request);
     return request.release();
 }
 
 PassRefPtr<IDBRequest> IDBObjectStore::openCursor(ScriptExecutionContext* context, PassRefPtr<IDBKey> key, const String& direction, ExceptionCode& ec)
 {
-    IDB_TRACE("IDBObjectStore::openCursor");
     RefPtr<IDBKeyRange> keyRange = IDBKeyRange::only(key, ec);
     if (ec)
         return 0;
@@ -530,14 +519,12 @@ PassRefPtr<IDBRequest> IDBObjectStore::count(ScriptExecutionContext* context, Pa
         return 0;
     }
     RefPtr<IDBRequest> request = IDBRequest::create(context, IDBAny::create(this), m_transaction.get());
-    m_backend->count(range, request, m_transaction->backend(), ec);
-    ASSERT(!ec);
+    backendDB()->count(m_transaction->id(), id(), IDBIndexMetadata::InvalidId, range, request);
     return request.release();
 }
 
 PassRefPtr<IDBRequest> IDBObjectStore::count(ScriptExecutionContext* context, PassRefPtr<IDBKey> key, ExceptionCode& ec)
 {
-    IDB_TRACE("IDBObjectStore::count");
     RefPtr<IDBKeyRange> keyRange = IDBKeyRange::only(key, ec);
     if (ec)
         return 0;
@@ -561,6 +548,11 @@ int64_t IDBObjectStore::findIndexId(const String& name) const
         }
     }
     return IDBIndexMetadata::InvalidId;
+}
+
+IDBDatabaseBackendInterface* IDBObjectStore::backendDB() const
+{
+    return m_transaction->backendDB();
 }
 
 } // namespace WebCore

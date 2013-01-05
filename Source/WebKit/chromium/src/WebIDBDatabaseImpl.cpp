@@ -164,7 +164,7 @@ void WebIDBDatabaseImpl::put(long long transactionId, long long objectStoreId, W
         indexKeys[i] = indexKeyList;
     }
 
-    Vector<uint8_t> valueBuffer(value->size());
+    Vector<uint8_t> valueBuffer;
     valueBuffer.append(value->data(), value->size());
     m_databaseBackend->put(transactionId, objectStoreId, &valueBuffer, key, static_cast<IDBDatabaseBackendInterface::PutMode>(putMode), IDBCallbacksProxy::create(adoptPtr(callbacks)), indexIds, indexKeys);
 }

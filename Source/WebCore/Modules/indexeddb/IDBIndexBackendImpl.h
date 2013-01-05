@@ -42,9 +42,9 @@ class IDBObjectStoreBackendImpl;
 
 class IDBIndexBackendImpl : public IDBIndexBackendInterface {
 public:
-    static PassRefPtr<IDBIndexBackendImpl> create(const IDBDatabaseBackendImpl* database, IDBObjectStoreBackendImpl* objectStoreBackend, const IDBIndexMetadata& metadata)
+    static PassRefPtr<IDBIndexBackendImpl> create(const IDBDatabaseBackendImpl* database, const IDBIndexMetadata& metadata)
     {
-        return adoptRef(new IDBIndexBackendImpl(database, objectStoreBackend, metadata));
+        return adoptRef(new IDBIndexBackendImpl(database, metadata));
     }
     virtual ~IDBIndexBackendImpl();
 
@@ -55,11 +55,11 @@ public:
     }
 
     // IDBIndexBackendInterface
-    virtual void openCursor(PassRefPtr<IDBKeyRange>, unsigned short direction, PassRefPtr<IDBCallbacks>, IDBTransactionBackendInterface*, ExceptionCode&);
-    virtual void count(PassRefPtr<IDBKeyRange>, PassRefPtr<IDBCallbacks>, IDBTransactionBackendInterface*, ExceptionCode&);
-    virtual void openKeyCursor(PassRefPtr<IDBKeyRange>, unsigned short direction, PassRefPtr<IDBCallbacks>, IDBTransactionBackendInterface*, ExceptionCode&);
-    virtual void get(PassRefPtr<IDBKeyRange>, PassRefPtr<IDBCallbacks>, IDBTransactionBackendInterface*, ExceptionCode&);
-    virtual void getKey(PassRefPtr<IDBKeyRange>, PassRefPtr<IDBCallbacks>, IDBTransactionBackendInterface*, ExceptionCode&);
+    virtual void openCursor(PassRefPtr<IDBKeyRange>, unsigned short direction, PassRefPtr<IDBCallbacks>, IDBTransactionBackendInterface*, ExceptionCode&) { ASSERT_NOT_REACHED(); }
+    virtual void count(PassRefPtr<IDBKeyRange>, PassRefPtr<IDBCallbacks>, IDBTransactionBackendInterface*, ExceptionCode&) { ASSERT_NOT_REACHED(); }
+    virtual void openKeyCursor(PassRefPtr<IDBKeyRange>, unsigned short direction, PassRefPtr<IDBCallbacks>, IDBTransactionBackendInterface*, ExceptionCode&) { ASSERT_NOT_REACHED(); }
+    virtual void get(PassRefPtr<IDBKeyRange>, PassRefPtr<IDBCallbacks>, IDBTransactionBackendInterface*, ExceptionCode&) { ASSERT_NOT_REACHED(); }
+    virtual void getKey(PassRefPtr<IDBKeyRange>, PassRefPtr<IDBCallbacks>, IDBTransactionBackendInterface*, ExceptionCode&) { ASSERT_NOT_REACHED(); }
 
     IDBIndexMetadata metadata() const { return m_metadata; }
     const String& name() { return m_metadata.name; }
@@ -68,12 +68,7 @@ public:
     const bool& multiEntry() { return m_metadata.multiEntry; }
 
 private:
-    IDBIndexBackendImpl(const IDBDatabaseBackendImpl*, IDBObjectStoreBackendImpl*, const IDBIndexMetadata&);
-
-    class OpenIndexCursorOperation;
-    class IndexCountOperation;
-    class IndexReferencedValueRetrievalOperation;
-    class IndexValueRetrievalOperation;
+    IDBIndexBackendImpl(const IDBDatabaseBackendImpl*, const IDBIndexMetadata&);
 
     static const int64_t InvalidId = 0;
 
@@ -81,8 +76,6 @@ private:
     int64_t databaseId() const { return m_database->id(); }
 
     const IDBDatabaseBackendImpl* m_database;
-
-    IDBObjectStoreBackendImpl* m_objectStoreBackend;
 
     IDBIndexMetadata m_metadata;
 };
