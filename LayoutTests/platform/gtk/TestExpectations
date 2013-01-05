@@ -1146,7 +1146,7 @@ webkit.org/b/68855 editing/selection/select-bidi-run.html [ Failure ]
 # This test is out-dated since r95899.
 webkit.org/b/65709 canvas/philip/tests/2d.drawImage.outsidesource.html [ Failure ]
 
-Bug(GTK) http/tests/multipart/multipart-wait-before-boundary.html [ Failure Pass Slow ]
+webkit.org/b/105693 http/tests/multipart/multipart-wait-before-boundary.html [ Skip ]
 
 # Does not render the rectangle as it should, even though the multiple parts seem to work
 webkit.org/b/54251 http/tests/multipart/invalid-image-data.html [ Timeout ]

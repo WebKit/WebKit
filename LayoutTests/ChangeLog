@@ -1,3 +1,14 @@
+2013-01-05  Zan Dobersek  <zandobersek@gmail.com>
+
+        Unreviewed GTK gardening
+
+        Skipping http/tests/multipart/multipart-wait-before-boundary.html for now,
+        the test is intermittently timing out on release builders despite being assigned
+        a SLOW expectation, thus unnecessarily painting bots red. A bug identifier is also
+        added for this test.
+
+        * platform/gtk/TestExpectations:
+
 2013-01-05  Christophe Dumez  <christophe.dumez@intel.com>
 
         Unreviewed EFL gardening.
