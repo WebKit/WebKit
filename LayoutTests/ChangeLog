@@ -1,5 +1,28 @@
 2013-01-05  Mike West  <mkwst@chromium.org>
 
+        Deflaking http/tests/security/contentSecurityPolicy/report-uri-from-javascript.html
+        https://bugs.webkit.org/show_bug.cgi?id=106165
+
+        Reviewed by Adam Barth.
+
+        The original test chose its violation mechanism poorly. The existing injection file
+        injected two violations, which generated reports delivered in a random order. This
+        patch creates a new injection JavaScript file that injects a single image, generating
+        a single report. That should deflake the test.
+
+        * http/tests/security/contentSecurityPolicy/report-uri-from-javascript-expected.txt:
+        * http/tests/security/contentSecurityPolicy/report-uri-from-javascript.html:
+        * http/tests/security/contentSecurityPolicy/resources/inject-image.js:
+            Adjusting the test to be deterministic.
+        * platform/chromium/TestExpectations:
+        * platform/efl/TestExpectations:
+        * platform/mac/TestExpectations:
+        * platform/qt/TestExpectations:
+            Unskipping test.
+
+
+2013-01-05  Mike West  <mkwst@chromium.org>
+
         seamless iframes don't take border into account properly and make the iframe too small.
         https://bugs.webkit.org/show_bug.cgi?id=90827
 

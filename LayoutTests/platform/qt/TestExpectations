@@ -2524,5 +2524,3 @@ webkit.org/b/106016 fast/workers/worker-document-leak.html
 
 # [Qt] New fast/regions/full-screen-video-from-region.html times out
 webkit.org/b/106095 fast/regions/full-screen-video-from-region.html
-
-webkit.org/b/106165 http/tests/security/contentSecurityPolicy/report-uri-from-javascript.html [ Pass Failure ]

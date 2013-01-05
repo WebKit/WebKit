@@ -1283,5 +1283,3 @@ webkit.org/b/106075 [ Debug ] fast/regions/full-screen-video-from-region.html [ 
 webkit.org/b/106123 http/tests/appcache/main-resource-redirect.html [ Crash ]
 
 webkit.org/b/106151 [ Lion ] http/tests/misc/link-rel-icon-beforeload.html [ Pass Failure ]
-
-webkit.org/b/106165 http/tests/security/contentSecurityPolicy/report-uri-from-javascript.html [ Pass Failure ]
