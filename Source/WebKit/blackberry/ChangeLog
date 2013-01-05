@@ -1,3 +1,23 @@
+2013-01-05  Andy Chen  <andchen@rim.com>
+
+        [BlackBerry] SelectionHandler::selectAtPoint should use last fat finger result when it is a link
+        https://bugs.webkit.org/show_bug.cgi?id=106141
+
+        Reviewed by Rob Buis.
+
+        If last fat finger result is a link, select it directly when
+        SelectionHandler::selectAtPoint is called.
+        PR 263449
+        Internally reviewed by Mike Fenton and Yongxin Dai.
+
+        * WebKitSupport/SelectionHandler.cpp:
+        (BlackBerry::WebKit::SelectionHandler::selectNodeIfFatFingersResultIsLink):
+        (WebKit):
+        (BlackBerry::WebKit::SelectionHandler::selectAtPoint):
+        * WebKitSupport/SelectionHandler.h:
+        (WebKit):
+        (SelectionHandler):
+
 2013-01-04  Mike Lattanzio  <mlattanzio@rim.com>
 
         [BlackBerry] Last text input caret left visible when WebView entirely loses focus.

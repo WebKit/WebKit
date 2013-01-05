@@ -46,6 +46,7 @@ class String;
 
 namespace WebKit {
 
+class FatFingersResult;
 class WebPagePrivate;
 
 class SelectionHandler {
@@ -88,6 +89,8 @@ private:
     WebCore::IntPoint clipPointToVisibleContainer(const WebCore::IntPoint&) const;
 
     bool inputNodeOverridesTouch() const;
+
+    bool selectNodeIfFatFingersResultIsLink(FatFingersResult);
 
     WebPagePrivate* m_webPage;
 

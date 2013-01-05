@@ -584,6 +584,20 @@ static Node* enclosingLinkEventParentForNode(Node* node)
     return linkNode && linkNode->isLink() ? linkNode : 0;
 }
 
+bool SelectionHandler::selectNodeIfFatFingersResultIsLink(FatFingersResult fatFingersResult)
+{
+    if (!fatFingersResult.isValid())
+        return false;
+    Node* targetNode = fatFingersResult.node(FatFingersResult::ShadowContentNotAllowed);
+    ASSERT(targetNode);
+    // If the node at the point is a link, focus on the entire link, not a word.
+    if (Node* link = enclosingLinkEventParentForNode(targetNode)) {
+        selectObject(link);
+        return true;
+    }
+    return false;
+}
+
 void SelectionHandler::selectAtPoint(const WebCore::IntPoint& location)
 {
     // If point is invalid trigger selection based expansion.
@@ -592,10 +606,12 @@ void SelectionHandler::selectAtPoint(const WebCore::IntPoint& location)
         return;
     }
 
-    Node* targetNode;
     WebCore::IntPoint targetPosition;
     // FIXME: Factory this get right fat finger code into a helper.
     const FatFingersResult lastFatFingersResult = m_webPage->m_touchEventHandler->lastFatFingersResult();
+    if (selectNodeIfFatFingersResultIsLink(lastFatFingersResult))
+        return;
+
     if (lastFatFingersResult.resultMatches(location, FatFingers::Text) && lastFatFingersResult.positionWasAdjusted() && lastFatFingersResult.nodeAsElementIfApplicable()) {
         targetNode = lastFatFingersResult.node(FatFingersResult::ShadowContentNotAllowed);
         targetPosition = lastFatFingersResult.adjustedPosition();
@@ -604,16 +620,10 @@ void SelectionHandler::selectAtPoint(const WebCore::IntPoint& location)
         if (!newFatFingersResult.positionWasAdjusted())
             return;
 
+        if (selectNodeIfFatFingersResultIsLink(newFatFingersResult))
+            return;
+
         targetPosition = newFatFingersResult.adjustedPosition();
-        targetNode = newFatFingersResult.node(FatFingersResult::ShadowContentNotAllowed);
-    }
-
-    ASSERT(targetNode);
-
-    // If the node at the point is a link, focus on the entire link, not a word.
-    if (Node* link = enclosingLinkEventParentForNode(targetNode)) {
-        selectObject(link);
-        return;
     }
 
     // selectAtPoint API currently only supports WordGranularity but may be extended in the future.
