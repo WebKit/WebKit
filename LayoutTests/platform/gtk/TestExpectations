@@ -295,7 +295,7 @@ webkit.org/b/99027 fast/css/image-set-parsing.html [ Failure ]
 webkit.org/b/99027 fast/css/image-set-parsing-invalid.html [ Pass ]
 webkit.org/b/99027 fast/css/image-set-setting.html [ Failure ]
 webkit.org/b/99027 fast/css/cursor-parsing-image-set.html [ Failure ]
-webkit.org/b/99027 fast/events/mouse-cursor-image-set.html [ Failure ]
+webkit.org/b/99027 fast/events/mouse-cursor-image-set.html [ Timeout ]
 
 # For now, Web Audio API is disabled
 webkit.org/b/67187 webaudio [ Skip ]
@@ -1406,6 +1406,9 @@ webkit.org/b/106015 fast/css-generated-content/pseudo-transition.html [ Failure 
 
 # Added only temporarily, until a clean build is performed on the builders.
 Bug(GTK) transitions/transitions-parsing.html [ Failure ]
+
+webkit.org/b/106168 fast/regions/region-rule-nested-region-rule.html [ ImageOnlyFailure ]
+webkit.org/b/106168 fast/regions/region-styling-mediaquery.html [ ImageOnlyFailure ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Tests failing

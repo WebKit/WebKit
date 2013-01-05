@@ -1,3 +1,12 @@
+2013-01-04  Zan Dobersek  <zandobersek@gmail.com>
+
+        Unreviewed GTK gardening.
+
+        Adding failure expectations for two CSS Regions tests added in r138854.
+        Modifying a failure expectation for a CSS Image Set test that now times out after r138857.
+
+        * platform/gtk/TestExpectations:
+
 2013-01-04  Ryosuke Niwa  <rniwa@webkit.org>
 
         Remove a duplicate test expectation since the bug 106153 has been merged into the bug 106165.
