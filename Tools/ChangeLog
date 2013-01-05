@@ -1,3 +1,13 @@
+2013-01-05  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Add svn:executable to a bunch of scripts in BuildSlaveSupport.
+        Also removed the empty mac directory.
+
+        * BuildSlaveSupport/built-product-archive: Added property svn:executable.
+        * BuildSlaveSupport/download-built-product: Added property svn:executable.
+        * BuildSlaveSupport/mac: Removed.
+        * BuildSlaveSupport/test-result-archive: Added property svn:executable.
+
 2013-01-04  Ryosuke Niwa  <rniwa@webkit.org>
 
         Add a script to delete stale zero-byte build files
