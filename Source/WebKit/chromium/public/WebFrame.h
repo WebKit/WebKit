@@ -470,6 +470,8 @@ public:
 
     virtual void selectRange(const WebRange&) = 0;
 
+    virtual void moveCaretSelectionTowardsWindowPoint(const WebPoint&) = 0;
+
     // Printing ------------------------------------------------------------
 
     // Reformats the WebFrame for printing. WebPrintParams specifies the printable

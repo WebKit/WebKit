@@ -1388,6 +1388,16 @@ void WebFrameImpl::selectRange(const WebRange& webRange)
         frame()->selection()->setSelectedRange(range.get(), WebCore::VP_DEFAULT_AFFINITY, false);
 }
 
+void WebFrameImpl::moveCaretSelectionTowardsWindowPoint(const WebPoint& point)
+{
+    Element* editable = frame()->selection()->rootEditableElement();
+    IntPoint contentsPoint = frame()->view()->windowToContents(IntPoint(point));
+    LayoutPoint localPoint(editable->convertFromPage(contentsPoint));
+    VisiblePosition position = editable->renderer()->positionForPoint(localPoint);
+    if (frame()->selection()->shouldChangeSelection(position))
+        frame()->selection()->moveTo(position, UserTriggered);
+}
+
 VisiblePosition WebFrameImpl::visiblePositionForWindowPoint(const WebPoint& point)
 {
     HitTestRequest request = HitTestRequest::Move | HitTestRequest::ReadOnly | HitTestRequest::Active | HitTestRequest::IgnoreClipping;

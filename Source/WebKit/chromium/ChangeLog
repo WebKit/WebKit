@@ -1,3 +1,22 @@
+2013-01-05  Chris Hopman  <cjhopman@google.com>
+
+        Add function to move caret selection towards a point
+        https://bugs.webkit.org/show_bug.cgi?id=105189
+
+        Reviewed by Eric Seidel.
+
+        This function moves the selection to the corresponding point in the
+        rootEditableElement of the current selection. Used on Android for
+        the behavior of insertion handles (i.e. dragging the caret around).
+
+        * public/WebFrame.h:
+        (WebFrame):
+        * src/WebFrameImpl.cpp:
+        (WebKit::WebFrameImpl::moveCaretSelectionTowardsWindowPoint):
+        (WebKit):
+        * src/WebFrameImpl.h:
+        (WebFrameImpl):
+
 2013-01-04  James Robinson  <jamesr@chromium.org>
 
         [chromium] Remove WebWidget::layerTreeView(), ownership is the other way around
