@@ -1,3 +1,13 @@
+2013-01-04  Terry Anderson  <tdanderson@chromium.org>
+
+        Unreviewed gardening. Adding new baselines for chromium.
+
+        * platform/chromium-linux-x86/fast/js/dfg-check-structure-elimination-for-non-cell-expected.txt: Added.
+        * platform/chromium-linux/fast/js/dfg-check-structure-elimination-for-non-cell-expected.txt: Added.
+        * platform/chromium-mac-lion/fast/js/dfg-check-structure-elimination-for-non-cell-expected.txt: Added.
+        * platform/chromium-mac-snowleopard/fast/js/dfg-check-structure-elimination-for-non-cell-expected.txt: Added.
+        * platform/chromium-mac/fast/js/dfg-check-structure-elimination-for-non-cell-expected.txt: Added.
+
 2013-01-04  Eric Carlson  <eric.carlson@apple.com>
 
         Unreviewed cleanup. Remove media/track/ from Mac TestExpectations because 
