@@ -1,3 +1,17 @@
+2013-01-05  Jonathan Liu  <net147@gmail.com>
+
+        Fix compilation of MathExtras.h with MinGW-w64
+        https://bugs.webkit.org/show_bug.cgi?id=106105
+
+        Reviewed by Simon Hausmann.
+
+        The isfinite and isinf functions are required by wtf_pow but
+        not defined until after wtf_pow. Move wtf_pow to after
+        "using std::isfinite" and "using std::isinf" to fix compilation.
+
+        * wtf/MathExtras.h:
+        (wtf_pow):
+
 2013-01-03  Filip Pizlo  <fpizlo@apple.com>
 
         CallLinkStatus should be aware of closure calls, and the DFG bytecode parser should use that as its sole internal notion of how to optimize calls
