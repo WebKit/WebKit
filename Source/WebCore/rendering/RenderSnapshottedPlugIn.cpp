@@ -42,7 +42,7 @@ namespace WebCore {
 
 static const int autoStartPlugInSizeThresholdWidth = 1;
 static const int autoStartPlugInSizeThresholdHeight = 1;
-static const int startLabelPadding = 10;
+static const int startLabelPadding = 0;
 static const double hoverDelay = 1;
 
 RenderSnapshottedPlugIn::RenderSnapshottedPlugIn(HTMLPlugInImageElement* element)
