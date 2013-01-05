@@ -919,6 +919,8 @@ http/tests/local/formdata/send-form-data-with-sliced-file.html
 http/tests/local/formdata/send-form-data.html
 http/tests/local/formdata/upload-events.html
 http/tests/security/clipboard/clipboard-file-access.html
+storage/indexeddb/noblobs.html
+storage/indexeddb/structured-clone.html
 
 # WebKitTestRunner doesn't have eventSender.fireKeyboardEventsToElement
 platform/mac/fast/events/objc-keyboard-event-creation.html
