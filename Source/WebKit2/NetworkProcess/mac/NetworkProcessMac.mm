@@ -51,7 +51,7 @@ void NetworkProcess::initializeSandbox(const String&)
     // FIXME: Initialize the sandbox.
 }
 
-void NetworkProcess::platformInitialize(const NetworkProcessCreationParameters& parameters)
+void NetworkProcess::platformInitializeNetworkProcess(const NetworkProcessCreationParameters& parameters)
 {
     m_diskCacheDirectory = parameters.diskCacheDirectory;
 

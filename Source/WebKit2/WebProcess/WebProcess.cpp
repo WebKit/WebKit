@@ -204,18 +204,11 @@ WebProcess::WebProcess()
 #endif
 }
 
-void WebProcess::initializeConnection(CoreIPC::Connection::Identifier serverIdentifier)
+void WebProcess::initializeConnection(CoreIPC::Connection* connection)
 {
-    ASSERT(!m_connection);
-
-    m_connection = CoreIPC::Connection::createClientConnection(serverIdentifier, this, RunLoop::main());
-    m_connection->setDidCloseOnConnectionWorkQueueCallback(ChildProcess::didCloseOnConnectionWorkQueue);
-    m_connection->setShouldExitOnSyncMessageSendFailure(true);
-    m_connection->addQueueClient(&m_eventDispatcher);
-    m_connection->addQueueClient(this);
-    m_connection->open();
-
-    m_webConnection = WebConnectionToUIProcess::create(this);
+    connection->setShouldExitOnSyncMessageSendFailure(true);
+    connection->addQueueClient(&m_eventDispatcher);
+    connection->addQueueClient(this);
 }
 
 void WebProcess::didCreateDownload()
@@ -230,7 +223,7 @@ void WebProcess::didDestroyDownload()
 
 CoreIPC::Connection* WebProcess::downloadProxyConnection()
 {
-    return m_connection.get();
+    return connection();
 }
 
 AuthenticationManager& WebProcess::downloadsAuthenticationManager()
@@ -260,6 +253,8 @@ void WebProcess::initializeWebProcess(const WebProcessCreationParameters& parame
             m_injectedBundle.clear();
         }
     }
+
+    m_webConnection = WebConnectionToUIProcess::create(this);
 
     WebProcessSupplementMap::const_iterator it = m_supplements.begin();
     WebProcessSupplementMap::const_iterator end = m_supplements.end();
@@ -572,25 +567,22 @@ void WebProcess::terminate()
     memoryCache()->setDisabled(true);
 #endif
 
-    // Invalidate our connection.
-    m_connection->invalidate();
-    m_connection = nullptr;
-
     m_webConnection->invalidate();
     m_webConnection = nullptr;
 
     platformTerminate();
-    RunLoop::main()->stop();
+
+    ChildProcess::terminate();
 }
 
 void WebProcess::didReceiveSyncMessage(CoreIPC::Connection* connection, CoreIPC::MessageID messageID, CoreIPC::MessageDecoder& decoder, OwnPtr<CoreIPC::MessageEncoder>& replyEncoder)
 {
-    m_messageReceiverMap.dispatchSyncMessage(connection, messageID, decoder, replyEncoder);
+    messageReceiverMap().dispatchSyncMessage(connection, messageID, decoder, replyEncoder);
 }
 
 void WebProcess::didReceiveMessage(CoreIPC::Connection* connection, CoreIPC::MessageID messageID, CoreIPC::MessageDecoder& decoder)
 {
-    if (m_messageReceiverMap.dispatchMessage(connection, messageID, decoder))
+    if (messageReceiverMap().dispatchMessage(connection, messageID, decoder))
         return;
 
     if (messageID.is<CoreIPC::MessageClassWebProcess>()) {
@@ -662,10 +654,10 @@ void WebProcess::removeWebFrame(uint64_t frameID)
     // We can end up here after our connection has closed when WebCore's frame life-support timer
     // fires when the application is shutting down. There's no need (and no way) to update the UI
     // process in this case.
-    if (!m_connection)
+    if (!connection())
         return;
 
-    connection()->send(Messages::WebProcessProxy::DidDestroyFrame(frameID), 0);
+    send(Messages::WebProcessProxy::DidDestroyFrame(frameID));
 }
 
 WebPageGroupProxy* WebProcess::webPageGroup(uint64_t pageGroupID)
@@ -1077,4 +1069,13 @@ void WebProcess::didGetPlugins(CoreIPC::Connection*, uint64_t requestID, const V
 }
 #endif // ENABLE(PLUGIN_PROCESS)
 
+#if !PLATFORM(MAC)
+void WebProcess::initializeSandbox(const String& clientIdentifier)
+{
+}
+
+void WebProcess::platformInitialize()
+{
+}
+#endif
 } // namespace WebKit

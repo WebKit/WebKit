@@ -97,8 +97,11 @@ int SharedWorkerProcessMain(const CommandLine& commandLine)
         WTF::initializeMainThread();
         RunLoop::initializeMainRunLoop();
 
-        // Initialize the shared worker process connection.
-        SharedWorkerProcess::shared().initializeConnection(CoreIPC::Connection::Identifier(serverPort));
+        ChildProcessInitializationParameters parameters;
+        parameters.uiProcessName = commandLine["ui-process-name"];
+        parameters.clientIdentifier = commandLine["client-identifier"];
+        parameters.connectionIdentifier = CoreIPC::Connection::Identifier(serverPort);
+        SharedWorkerProcess::shared().initialize(parameters);
 
         [NSApplication sharedApplication];
     }

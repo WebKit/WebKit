@@ -41,12 +41,11 @@ class NetscapePluginModule;
 class WebProcessConnection;
 struct SharedWorkerProcessCreationParameters;
 
-class SharedWorkerProcess : ChildProcess {
+class SharedWorkerProcess : public ChildProcess {
     WTF_MAKE_NONCOPYABLE(SharedWorkerProcess);
 public:
     static SharedWorkerProcess& shared();
 
-    void initializeConnection(CoreIPC::Connection::Identifier);
     void removeWebProcessConnection(WebProcessConnection*);
 
 private:
@@ -54,9 +53,7 @@ private:
     ~SharedWorkerProcess();
 
     // ChildProcess
-    virtual bool shouldTerminate();
-    virtual CoreIPC::Connection* connection() const OVERRIDE { return m_connection.get(); }
-    virtual uint64_t destinationID() const OVERRIDE { return 0; }
+    virtual bool shouldTerminate() OVERRIDE;
 
     // CoreIPC::Connection::Client
     virtual void didReceiveMessage(CoreIPC::Connection*, CoreIPC::MessageID, CoreIPC::MessageDecoder&);
@@ -68,7 +65,7 @@ private:
     void initializeSharedWorkerProcess(const SharedWorkerProcessCreationParameters&);
     void createWebProcessConnection();
 
-    void platformInitialize(const SharedWorkerProcessCreationParameters&);
+    void platformInitializeSharedWorkerProcess(const SharedWorkerProcessCreationParameters&);
     
     void setMinimumLifetime(double);
     void minimumLifetimeTimerFired();

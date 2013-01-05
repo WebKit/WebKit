@@ -297,7 +297,7 @@ void WebProcess::platformInitializeWebProcess(const WebProcessCreationParameters
     method_setImplementation(methodToPatch, (IMP)NSApplicationAccessibilityFocusedUIElement);
 }
 
-void WebProcess::initializeShim()
+void WebProcess::platformInitialize()
 {
     initializeSecItemShim();
 }

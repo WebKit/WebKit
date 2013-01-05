@@ -47,7 +47,7 @@ class NetworkProcessSupplement;
 class PlatformCertificateInfo;
 struct NetworkProcessCreationParameters;
 
-class NetworkProcess : public ChildProcess, DownloadManager::Client {
+class NetworkProcess : public ChildProcess, private DownloadManager::Client {
     WTF_MAKE_NONCOPYABLE(NetworkProcess);
 public:
     static NetworkProcess& shared();
@@ -64,9 +64,6 @@ public:
         m_supplements.add(T::supplementName(), new T(this));
     }
 
-    void initializeSandbox(const String& clientIdentifier);
-    void initializeConnection(CoreIPC::Connection::Identifier);
-
     void removeNetworkConnectionToWebProcess(NetworkConnectionToWebProcess*);
 
     NetworkResourceLoadScheduler& networkResourceLoadScheduler() { return m_networkResourceLoadScheduler; }
@@ -77,12 +74,11 @@ private:
     NetworkProcess();
     ~NetworkProcess();
 
-    void platformInitialize(const NetworkProcessCreationParameters&);
+    void platformInitializeNetworkProcess(const NetworkProcessCreationParameters&);
 
     // ChildProcess
     virtual bool shouldTerminate() OVERRIDE;
-    virtual CoreIPC::Connection* connection() const OVERRIDE { return m_uiConnection.get(); }
-    virtual uint64_t destinationID() const OVERRIDE { return 0; }
+    virtual void initializeSandbox(const String& clientIdentifier) OVERRIDE;
 
     // CoreIPC::Connection::Client
     virtual void didReceiveMessage(CoreIPC::Connection*, CoreIPC::MessageID, CoreIPC::MessageDecoder&) OVERRIDE;
@@ -110,9 +106,6 @@ private:
 
     // Platform Helpers
     void platformSetCacheModel(CacheModel);
-
-    // The connection to the UI process.
-    RefPtr<CoreIPC::Connection> m_uiConnection;
 
     // Connections to WebProcesses.
     Vector<RefPtr<NetworkConnectionToWebProcess> > m_webProcessConnections;

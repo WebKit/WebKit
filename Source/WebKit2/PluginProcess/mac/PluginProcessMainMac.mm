@@ -118,16 +118,11 @@ int PluginProcessMain(const CommandLine& commandLine)
         WTF::initializeMainThread();
         RunLoop::initializeMainRunLoop();
 
-#if defined(__i386__)
-        // Initialize the shim for 32-bit only.
-        PluginProcess::shared().initializeShim();
-#endif
-
-        // Initialize Cocoa overrides.
-        PluginProcess::shared().initializeCocoaOverrides();
-
-        // Initialize the plug-in process connection.
-        PluginProcess::shared().initializeConnection(CoreIPC::Connection::Identifier(serverPort));
+        ChildProcessInitializationParameters parameters;
+        parameters.uiProcessName = commandLine["ui-process-name"];
+        parameters.clientIdentifier = commandLine["client-identifier"];
+        parameters.connectionIdentifier = CoreIPC::Connection::Identifier(serverPort);
+        PluginProcess::shared().initialize(parameters);
 
         [NSApplication sharedApplication];
     }

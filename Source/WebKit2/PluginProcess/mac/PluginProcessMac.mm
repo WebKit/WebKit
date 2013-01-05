@@ -44,8 +44,6 @@
 
 namespace WebKit {
 
-static pthread_once_t shouldCallRealDebuggerOnce = PTHREAD_ONCE_INIT;
-
 class FullscreenWindowTracker {
     WTF_MAKE_NONCOPYABLE(FullscreenWindowTracker);
 
@@ -127,6 +125,9 @@ static FullscreenWindowTracker& fullscreenWindowTracker()
     return fullscreenWindowTracker;
 }
 
+#if defined(__i386__)
+
+static pthread_once_t shouldCallRealDebuggerOnce = PTHREAD_ONCE_INIT;
 static bool isUserbreakSet = false;
 
 static void initShouldCallRealDebugger()
@@ -179,6 +180,8 @@ static void carbonWindowHidden(WindowRef window)
 #endif
 }
 
+#endif
+
 static void setModal(bool modalWindowIsShowing)
 {
     PluginProcess::shared().setModalWindowIsShowing(modalWindowIsShowing);
@@ -221,8 +224,10 @@ static NSInteger replacedRunModalForWindow(id self, SEL _cmd, NSWindow* window)
     return result;
 }
 
-void PluginProcess::initializeShim()
+#if defined(__i386__)
+static void initializeShim()
 {
+    // Initialize the shim for 32-bit only.
     const PluginProcessShimCallbacks callbacks = {
         shouldCallRealDebugger,
         isWindowActive,
@@ -237,8 +242,9 @@ void PluginProcess::initializeShim()
     PluginProcessShimInitializeFunc initFunc = reinterpret_cast<PluginProcessShimInitializeFunc>(dlsym(RTLD_DEFAULT, "WebKitPluginProcessShimInitialize"));
     initFunc(callbacks);
 }
+#endif
 
-void PluginProcess::initializeCocoaOverrides()
+static void initializeCocoaOverrides()
 {
     // Override -[NSApplication runModalForWindow:]
     Method runModalForWindowMethod = class_getInstanceMethod(objc_getClass("NSApplication"), @selector(runModalForWindow:));
@@ -260,6 +266,17 @@ void PluginProcess::initializeCocoaOverrides()
     // Leak the two observers so that they observe notifications for the lifetime of the process.
     CFRetain(orderOnScreenObserver);
     CFRetain(orderOffScreenObserver);
+}
+
+void PluginProcess::platformInitialize()
+{
+#if defined(__i386__)
+    // Initialize the shim.
+    initializeShim();
+#endif
+
+    // Initialize Cocoa overrides.
+    initializeCocoaOverrides();
 }
 
 void PluginProcess::setModalWindowIsShowing(bool modalWindowIsShowing)
@@ -309,7 +326,7 @@ static void muteAudio(void)
     ASSERT_UNUSED(result, result == noErr);
 }
 
-void PluginProcess::platformInitialize(const PluginProcessCreationParameters& parameters)
+void PluginProcess::platformInitializePluginProcess(const PluginProcessCreationParameters& parameters)
 {
     m_compositingRenderServerPort = parameters.acceleratedCompositingPort.port();
 
@@ -321,7 +338,7 @@ void PluginProcess::platformInitialize(const PluginProcessCreationParameters& pa
     
     WKSetVisibleApplicationName((CFStringRef)applicationName);
 
-    initializeSandbox(m_pluginPath, parameters.sandboxProfileDirectoryPath);
+    WebKit::initializeSandbox(m_pluginPath, parameters.sandboxProfileDirectoryPath);
 
     if (parameters.processType == TypeSnapshotProcess)
         muteAudio();

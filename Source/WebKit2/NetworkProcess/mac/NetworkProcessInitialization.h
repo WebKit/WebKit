@@ -26,19 +26,11 @@
 #ifndef NetworkProcessInitialization_h
 #define NetworkProcessInitialization_h
 
-#include "Connection.h"
-#include <wtf/text/WTFString.h>
+#include "ChildProcess.h"
 
 namespace WebKit {
 
-struct NetworkProcessInitializationParameters {
-    String uiProcessName;
-
-    String clientIdentifier;
-    CoreIPC::Connection::Identifier connectionIdentifier;
-};
-
-void initializeNetworkProcess(const NetworkProcessInitializationParameters&);
+void initializeNetworkProcess(const ChildProcessInitializationParameters&);
 
 } // namespace WebKit
 

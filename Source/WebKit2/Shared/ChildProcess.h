@@ -31,17 +31,22 @@
 #include "MessageSender.h"
 #include <WebCore/RunLoop.h>
 #include <wtf/RetainPtr.h>
-
-#if PLATFORM(MAC)
-OBJC_CLASS NSString;
-#endif
+#include <wtf/text/WTFString.h>
 
 namespace WebKit {
+
+struct ChildProcessInitializationParameters {
+    String uiProcessName;
+    String clientIdentifier;
+    CoreIPC::Connection::Identifier connectionIdentifier;
+};
 
 class ChildProcess : protected CoreIPC::Connection::Client, public CoreIPC::MessageSender<ChildProcess> {
     WTF_MAKE_NONCOPYABLE(ChildProcess);
 
 public:
+    void initialize(const ChildProcessInitializationParameters&);
+
     // disable and enable termination of the process. when disableTermination is called, the
     // process won't terminate unless a corresponding disableTermination call is made.
     void disableTermination();
@@ -73,11 +78,11 @@ public:
     void setApplicationIsOccluded(bool);
 #endif
 
-    static void didCloseOnConnectionWorkQueue(WorkQueue&, CoreIPC::Connection*);
-
     // Used by CoreIPC::MessageSender
-    virtual CoreIPC::Connection* connection() const = 0;
-    virtual uint64_t destinationID() const = 0;
+    CoreIPC::Connection* connection() const { return m_connection.get(); }
+    uint64_t destinationID() const { return 0; }
+
+    CoreIPC::MessageReceiverMap& messageReceiverMap() { return m_messageReceiverMap; }
 
 protected:
     explicit ChildProcess();
@@ -85,15 +90,15 @@ protected:
 
     void setTerminationTimeout(double seconds) { m_terminationTimeout = seconds; }
 
-    CoreIPC::MessageReceiverMap m_messageReceiverMap;
-
-private:
-    void terminationTimerFired();
+    virtual void initializeConnection(CoreIPC::Connection*);
+    virtual void initializeSandbox(const String& clientIdentifier);
+    virtual void platformInitialize();
 
     virtual bool shouldTerminate() = 0;
     virtual void terminate();
 
-    void platformInitialize();
+private:
+    void terminationTimerFired();
 
     // The timeout, in seconds, before this process will be terminated if termination
     // has been enabled. If the timeout is 0 seconds, the process will be terminated immediately.
@@ -104,6 +109,9 @@ private:
     unsigned m_terminationCounter;
 
     WebCore::RunLoop::Timer<ChildProcess> m_terminationTimer;
+
+    RefPtr<CoreIPC::Connection> m_connection;
+    CoreIPC::MessageReceiverMap m_messageReceiverMap;
 
 #if PLATFORM(MAC)
     RetainPtr<id> m_processVisibleAssertion;

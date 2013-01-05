@@ -78,21 +78,11 @@ PluginProcess::PluginProcess()
     , m_compositingRenderServerPort(MACH_PORT_NULL)
 #endif
 {
+    NetscapePlugin::setSetExceptionFunction(WebProcessConnection::setGlobalException);
 }
 
 PluginProcess::~PluginProcess()
 {
-}
-
-void PluginProcess::initializeConnection(CoreIPC::Connection::Identifier serverIdentifier)
-{
-    ASSERT(!m_connection);
-
-    m_connection = CoreIPC::Connection::createClientConnection(serverIdentifier, this, RunLoop::main());
-    m_connection->setDidCloseOnConnectionWorkQueueCallback(didCloseOnConnectionWorkQueue);
-    m_connection->open();
-
-    NetscapePlugin::setSetExceptionFunction(WebProcessConnection::setGlobalException);
 }
 
 void PluginProcess::removeWebProcessConnection(WebProcessConnection* webProcessConnection)
@@ -159,7 +149,7 @@ void PluginProcess::initializePluginProcess(const PluginProcessCreationParameter
     setMinimumLifetime(parameters.minimumLifetime);
     setTerminationTimeout(parameters.terminationTimeout);
 
-    platformInitialize(parameters);
+    platformInitializePluginProcess(parameters);
 }
 
 void PluginProcess::createWebProcessConnection()
@@ -176,7 +166,7 @@ void PluginProcess::createWebProcessConnection()
     m_webProcessConnections.append(connection.release());
 
     CoreIPC::Attachment clientPort(listeningPort, MACH_MSG_TYPE_MAKE_SEND);
-    m_connection->send(Messages::PluginProcessProxy::DidCreateWebProcessConnection(clientPort, m_supportsAsynchronousPluginInitialization), 0);
+    send(Messages::PluginProcessProxy::DidCreateWebProcessConnection(clientPort, m_supportsAsynchronousPluginInitialization));
 #elif USE(UNIX_DOMAIN_SOCKETS)
     int sockets[2];
     if (socketpair(AF_UNIX, SOCKET_TYPE, 0, sockets) == -1) {
@@ -208,7 +198,7 @@ void PluginProcess::createWebProcessConnection()
     m_webProcessConnections.append(connection.release());
 
     CoreIPC::Attachment clientSocket(sockets[0]);
-    m_connection->send(Messages::PluginProcessProxy::DidCreateWebProcessConnection(clientSocket, m_supportsAsynchronousPluginInitialization), 0);
+    send(Messages::PluginProcessProxy::DidCreateWebProcessConnection(clientSocket, m_supportsAsynchronousPluginInitialization));
 #else
     notImplemented();
 #endif
@@ -232,7 +222,7 @@ void PluginProcess::getSitesWithData(uint64_t callbackID)
     if (NetscapePluginModule* module = netscapePluginModule())
         sites = module->sitesWithData();
 
-    m_connection->send(Messages::PluginProcessProxy::DidGetSitesWithData(sites, callbackID), 0);
+    send(Messages::PluginProcessProxy::DidGetSitesWithData(sites, callbackID));
 }
 
 void PluginProcess::clearSiteData(const Vector<String>& sites, uint64_t flags, uint64_t maxAgeInSeconds, uint64_t callbackID)
@@ -249,7 +239,7 @@ void PluginProcess::clearSiteData(const Vector<String>& sites, uint64_t flags, u
         }
     }
 
-    m_connection->send(Messages::PluginProcessProxy::DidClearSiteData(callbackID), 0);
+    send(Messages::PluginProcessProxy::DidClearSiteData(callbackID));
 }
 
 void PluginProcess::setMinimumLifetime(double lifetime)

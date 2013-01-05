@@ -120,11 +120,6 @@ public:
         m_supplements.add(T::supplementName(), new T(this));
     }
 
-    void initializeConnection(CoreIPC::Connection::Identifier);
-
-    virtual CoreIPC::Connection* connection() const OVERRIDE { return m_connection.get(); }
-    virtual uint64_t destinationID() const OVERRIDE { return 0; }
-
     WebConnectionToUIProcess* webConnectionToUIProcess() const { return m_webConnection.get(); }
 
     WebPage* webPage(uint64_t pageID) const;
@@ -141,9 +136,6 @@ public:
     InjectedBundle* injectedBundle() const { return m_injectedBundle.get(); }
 
 #if PLATFORM(MAC)
-    void initializeShim();
-    void initializeSandbox(const String& clientIdentifier);
-
 #if USE(ACCELERATED_COMPOSITING)
     mach_port_t compositingRenderServerPort() const { return m_compositingRenderServerPort; }
 #endif
@@ -283,8 +275,11 @@ private:
 #endif
 
     // ChildProcess
-    virtual bool shouldTerminate();
-    virtual void terminate();
+    virtual void initializeConnection(CoreIPC::Connection*) OVERRIDE;
+    virtual void initializeSandbox(const String& clientIdentifier) OVERRIDE;
+    virtual void platformInitialize() OVERRIDE;
+    virtual bool shouldTerminate() OVERRIDE;
+    virtual void terminate() OVERRIDE;
 
     // CoreIPC::Connection::Client
     friend class WebConnectionToUIProcess;
@@ -307,7 +302,6 @@ private:
     void didGetPlugins(CoreIPC::Connection*, uint64_t requestID, const Vector<WebCore::PluginInfo>&);
 #endif
 
-    RefPtr<CoreIPC::Connection> m_connection;
     RefPtr<WebConnectionToUIProcess> m_webConnection;
 
     HashMap<uint64_t, RefPtr<WebPage> > m_pageMap;

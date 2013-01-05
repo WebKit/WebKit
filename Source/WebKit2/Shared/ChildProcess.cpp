@@ -39,13 +39,46 @@ ChildProcess::ChildProcess()
     , m_terminationCounter(0)
     , m_terminationTimer(RunLoop::main(), this, &ChildProcess::terminationTimerFired)
 {
-    // FIXME: The termination timer should not be scheduled on the main run loop.
-    // It won't work with the threaded mode, but it's not really useful anyway as is.
-    
-    platformInitialize();
 }
 
 ChildProcess::~ChildProcess()
+{
+}
+
+NO_RETURN static void watchdogCallback()
+{
+    // We use _exit here since the watchdog callback is called from another thread and we don't want 
+    // global destructors or atexit handlers to be called from this thread while the main thread is busy
+    // doing its thing.
+    _exit(EXIT_FAILURE);
+}
+
+static void didCloseOnConnectionWorkQueue(WorkQueue& workQueue, CoreIPC::Connection*)
+{
+    // If the connection has been closed and we haven't responded in the main thread for 10 seconds
+    // the process will exit forcibly.
+    const double watchdogDelay = 10;
+
+    workQueue.dispatchAfterDelay(bind(static_cast<void(*)()>(watchdogCallback)), watchdogDelay);
+}
+
+void ChildProcess::initialize(const ChildProcessInitializationParameters& parameters)
+{
+    platformInitialize();
+
+    initializeSandbox(parameters.clientIdentifier);
+    
+    m_connection = CoreIPC::Connection::createClientConnection(parameters.connectionIdentifier, this, RunLoop::main());
+    m_connection->setDidCloseOnConnectionWorkQueueCallback(didCloseOnConnectionWorkQueue);
+    initializeConnection(m_connection.get());
+    m_connection->open();
+}
+
+void ChildProcess::initializeConnection(CoreIPC::Connection*)
+{
+}
+
+void ChildProcess::initializeSandbox(const String& clientIdentifier)
 {
 }
 
@@ -96,24 +129,10 @@ void ChildProcess::terminationTimerFired()
 
 void ChildProcess::terminate()
 {
+    m_connection->invalidate();
+    m_connection = nullptr;
+
     RunLoop::main()->stop();
-}
-
-NO_RETURN static void watchdogCallback()
-{
-    // We use _exit here since the watchdog callback is called from another thread and we don't want 
-    // global destructors or atexit handlers to be called from this thread while the main thread is busy
-    // doing its thing.
-    _exit(EXIT_FAILURE);
-}
-
-void ChildProcess::didCloseOnConnectionWorkQueue(WorkQueue& workQueue, CoreIPC::Connection*)
-{
-    // If the connection has been closed and we haven't responded in the main thread for 10 seconds
-    // the process will exit forcibly.
-    static const double watchdogDelay = 10.0;
-
-    workQueue.dispatchAfterDelay(bind(static_cast<void(*)()>(watchdogCallback)), watchdogDelay);
 }
 
 #if !PLATFORM(MAC)

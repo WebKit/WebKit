@@ -77,15 +77,6 @@ SharedWorkerProcess::~SharedWorkerProcess()
 {
 }
 
-void SharedWorkerProcess::initializeConnection(CoreIPC::Connection::Identifier serverIdentifier)
-{
-    ASSERT(!m_connection);
-
-    m_connection = CoreIPC::Connection::createClientConnection(serverIdentifier, this, RunLoop::main());
-    m_connection->setDidCloseOnConnectionWorkQueueCallback(didCloseOnConnectionWorkQueue);
-    m_connection->open();
-}
-
 void SharedWorkerProcess::removeWebProcessConnection(WebProcessConnection* webProcessConnection)
 {
     size_t vectorIndex = m_webProcessConnections.find(webProcessConnection);
@@ -123,7 +114,7 @@ void SharedWorkerProcess::initializeSharedWorkerProcess(const SharedWorkerProces
     setMinimumLifetime(parameters.minimumLifetime);
     setTerminationTimeout(parameters.terminationTimeout);
 
-    platformInitialize(parameters);
+    platformInitializeSharedWorkerProcess(parameters);
 }
 
 void SharedWorkerProcess::createWebProcessConnection()

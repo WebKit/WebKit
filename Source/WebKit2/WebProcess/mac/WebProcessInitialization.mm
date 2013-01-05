@@ -38,7 +38,7 @@ using namespace WebCore;
 
 namespace WebKit {
 
-void initializeWebProcess(const WebProcessInitializationParameters& parameters)
+void initializeWebProcess(const ChildProcessInitializationParameters& parameters)
 {
     @autoreleasepool {
         InitWebCoreSystemInterface();
@@ -51,10 +51,7 @@ void initializeWebProcess(const WebProcessInitializationParameters& parameters)
             WKSetVisibleApplicationName((CFStringRef)applicationName);
         }
 
-        WebProcess& webProcess = WebProcess::shared();
-        webProcess.initializeShim();
-        webProcess.initializeSandbox(parameters.clientIdentifier);
-        webProcess.initializeConnection(parameters.connectionIdentifier);
+        WebProcess::shared().initialize(parameters);
         
         WKAXRegisterRemoteApp();
     }

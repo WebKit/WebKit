@@ -38,7 +38,7 @@ using namespace WebCore;
 
 namespace WebKit {
 
-void initializeNetworkProcess(const NetworkProcessInitializationParameters& parameters)
+void initializeNetworkProcess(const ChildProcessInitializationParameters& parameters)
 {
     @autoreleasepool {
         InitWebCoreSystemInterface();
@@ -51,9 +51,7 @@ void initializeNetworkProcess(const NetworkProcessInitializationParameters& para
             WKSetVisibleApplicationName((CFStringRef)applicationName);
         }
 
-        NetworkProcess& networkProcess = NetworkProcess::shared();
-        networkProcess.initializeSandbox(parameters.clientIdentifier);
-        networkProcess.initializeConnection(parameters.connectionIdentifier);
+        NetworkProcess::shared().initialize(parameters);
     }
 }
 

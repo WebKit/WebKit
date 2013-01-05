@@ -178,7 +178,7 @@ int WebProcessMain(const CommandLine& commandLine)
     [[NSApplication sharedApplication] _installAutoreleasePoolsOnCurrentThreadIfNecessary];
 #endif
 
-    WebProcessInitializationParameters parameters;
+    ChildProcessInitializationParameters parameters;
     parameters.uiProcessName = commandLine["ui-process-name"];
     parameters.clientIdentifier = clientIdentifier;
     parameters.connectionIdentifier = serverPort;

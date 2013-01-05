@@ -101,7 +101,11 @@ Q_DECL_EXPORT int PluginProcessMain(int argc, char** argv)
     int identifier = app.arguments().at(1).toInt(&isNumber, 10);
     if (!isNumber)
         return EXIT_FAILURE;
-    WebKit::PluginProcess::shared().initializeConnection(identifier);
+
+    WebKit::ChildProcessInitializationParameters parameters;
+    parameters.connectionIdentifier = identifier;
+
+    WebKit::PluginProcess::shared().initialize(parameters);
 
     RunLoop::run();
 

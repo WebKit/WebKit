@@ -58,7 +58,7 @@ static void initializeSandbox()
     }
 }
 
-void SharedWorkerProcess::platformInitialize(const SharedWorkerProcessCreationParameters& parameters)
+void SharedWorkerProcess::platformInitializeSharedWorkerProcess(const SharedWorkerProcessCreationParameters& parameters)
 {
     NSString *applicationName = [NSString stringWithFormat:WEB_UI_STRING("Shared Web Worker (%@ Internet plug-in)",
         "visible name of the plug-in host process. The argument is the application name."),
@@ -66,7 +66,7 @@ void SharedWorkerProcess::platformInitialize(const SharedWorkerProcessCreationPa
     
     WKSetVisibleApplicationName((CFStringRef)applicationName);
 
-    initializeSandbox();
+    WebKit::initializeSandbox();
 }
 
 } // namespace WebKit

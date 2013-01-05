@@ -80,7 +80,7 @@ int NetworkProcessMain(const CommandLine& commandLine)
     // on the outer most runloop being an AppKit runloop.
     [NSApplication sharedApplication];
 
-    NetworkProcessInitializationParameters parameters;
+    ChildProcessInitializationParameters parameters;
     parameters.uiProcessName = commandLine["ui-process-name"];
     parameters.clientIdentifier = commandLine["client-identifier"];
     parameters.connectionIdentifier = serverPort;

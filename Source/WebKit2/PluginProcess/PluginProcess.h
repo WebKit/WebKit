@@ -42,10 +42,9 @@ class NetscapePluginModule;
 class WebProcessConnection;
 struct PluginProcessCreationParameters;
         
-class PluginProcess : ChildProcess {
+class PluginProcess : public ChildProcess {
     WTF_MAKE_NONCOPYABLE(PluginProcess);
 public:
-
     enum Type {
         // Start with value one since default HashTraits<> disallows zero as key.
         TypeRegularProcess = 1,
@@ -54,8 +53,6 @@ public:
 
     static PluginProcess& shared();
 
-    void initializeConnection(CoreIPC::Connection::Identifier);
-
     void removeWebProcessConnection(WebProcessConnection*);
 
     NetscapePluginModule* netscapePluginModule();
@@ -63,9 +60,6 @@ public:
     const String& pluginPath() const { return m_pluginPath; }
 
 #if PLATFORM(MAC)
-    void initializeShim();
-    void initializeCocoaOverrides();
-
     void setModalWindowIsShowing(bool);
     void setFullscreenWindowIsShowing(bool);
 
@@ -79,9 +73,8 @@ private:
     ~PluginProcess();
 
     // ChildProcess
-    virtual bool shouldTerminate();
-    virtual CoreIPC::Connection* connection() const OVERRIDE { return m_connection.get(); }
-    virtual uint64_t destinationID() const OVERRIDE { return 0; }
+    virtual bool shouldTerminate() OVERRIDE;
+    virtual void platformInitialize() OVERRIDE;
 
     // CoreIPC::Connection::Client
     virtual void didReceiveMessage(CoreIPC::Connection*, CoreIPC::MessageID, CoreIPC::MessageDecoder&) OVERRIDE;
@@ -95,7 +88,7 @@ private:
     void getSitesWithData(uint64_t callbackID);
     void clearSiteData(const Vector<String>& sites, uint64_t flags, uint64_t maxAgeInSeconds, uint64_t callbackID);
 
-    void platformInitialize(const PluginProcessCreationParameters&);
+    void platformInitializePluginProcess(const PluginProcessCreationParameters&);
     
     void setMinimumLifetime(double);
     void minimumLifetimeTimerFired();
