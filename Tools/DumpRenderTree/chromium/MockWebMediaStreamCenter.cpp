@@ -89,6 +89,7 @@ void MockWebMediaStreamCenter::didStopLocalMediaStream(const WebMediaStreamDescr
 class MockWebAudioDestinationConsumer : public WebAudioDestinationConsumer {
 public:
     virtual ~MockWebAudioDestinationConsumer() { }
+    virtual void setFormat(size_t numberOfChannels, float sampleRate) OVERRIDE { }
     virtual void consumeAudio(const WebVector<const float*>&, size_t number_of_frames) OVERRIDE { }
 };
 

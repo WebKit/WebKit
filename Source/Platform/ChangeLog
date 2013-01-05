@@ -1,3 +1,13 @@
+2013-01-05  Chris Rogers  <crogers@google.com>
+
+        Implement MediaStreamSource::setAudioFormat()
+        https://bugs.webkit.org/show_bug.cgi?id=106053
+
+        Reviewed by Kenneth Russell.
+
+        * chromium/public/WebAudioDestinationConsumer.h:
+        (WebAudioDestinationConsumer):
+
 2013-01-04  James Robinson  <jamesr@chromium.org>
 
         [chromium] Remove static create functions from types WebCompositorSupport can construct

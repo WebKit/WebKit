@@ -80,6 +80,7 @@ public:
     PassRefPtr<ExtraData> extraData() const { return m_extraData; }
     void setExtraData(PassRefPtr<ExtraData> extraData) { m_extraData = extraData; }
 
+    void setAudioFormat(size_t numberOfChannels, float sampleRate);
     void consumeAudio(AudioBus*, size_t numberOfFrames);
 
     bool requiresAudioConsumer() const { return m_requiresConsumer; }

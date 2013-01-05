@@ -150,6 +150,7 @@ public:
         return adoptRef(new ConsumerWrapper(consumer));
     }
 
+    virtual void setFormat(size_t numberOfChannels, float sampleRate) OVERRIDE;
     virtual void consumeAudio(AudioBus*, size_t numberOfFrames) OVERRIDE;
 
     WebAudioDestinationConsumer* consumer() { return m_consumer; }
@@ -160,6 +161,11 @@ private:
     // m_consumer is not owned by this class.
     WebAudioDestinationConsumer* m_consumer;
 };
+
+void ConsumerWrapper::setFormat(size_t numberOfChannels, float sampleRate)
+{
+    m_consumer->setFormat(numberOfChannels, sampleRate);
+}
 
 void ConsumerWrapper::consumeAudio(AudioBus* bus, size_t numberOfFrames)
 {
