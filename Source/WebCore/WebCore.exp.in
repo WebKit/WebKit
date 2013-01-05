@@ -24,6 +24,7 @@
 .objc_class_name_DOMHTMLOptionElement
 .objc_class_name_DOMHTMLSelectElement
 .objc_class_name_DOMHTMLStyleElement
+.objc_class_name_DOMHTMLTableCellElement
 .objc_class_name_DOMHTMLTextAreaElement
 .objc_class_name_DOMKeyboardEvent
 .objc_class_name_DOMMouseEvent
@@ -1612,7 +1613,6 @@ _wkSignalCFReadStreamHasBytes
 .objc_class_name_DOMHTMLQuoteElement
 .objc_class_name_DOMHTMLScriptElement
 .objc_class_name_DOMHTMLTableCaptionElement
-.objc_class_name_DOMHTMLTableCellElement
 .objc_class_name_DOMHTMLTableColElement
 .objc_class_name_DOMHTMLTableElement
 .objc_class_name_DOMHTMLTableRowElement
