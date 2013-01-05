@@ -1,5 +1,34 @@
 2013-01-04  Filip Pizlo  <fpizlo@apple.com>
 
+        DFG should trust array profiling over value profiling
+        https://bugs.webkit.org/show_bug.cgi?id=106155
+
+        Reviewed by Gavin Barraclough.
+        
+        The real problem is that prediction propagation is not flow-sensitive. We had code
+        like:
+        
+        var a = (some load from memory); // returns either an array or false
+        if (a)
+            a[i] = v;
+        
+        Because 'a' could be 'false', we were emitting a fully generic unoptimized PutByVal.
+        This patch changes ArrayMode to ignore the type of the base of an array access, if
+        array profiling tells us that the array access can be optimized.
+        
+        In the future, we could probably make this work even better with some flow
+        sensitivity in the prediction propagator, but I also tend to think that this is a
+        more robust overall solution. If we ever did want to support array accesses on
+        array-or-false then we should change the array profiler to be able to tell us that
+        this is what is going on.
+        
+        3.7% speed-up on V8/earley.
+
+        * dfg/DFGArrayMode.cpp:
+        (JSC::DFG::ArrayMode::refine):
+
+2013-01-04  Filip Pizlo  <fpizlo@apple.com>
+
         Rationalize exit site profiling for calls
         https://bugs.webkit.org/show_bug.cgi?id=106150
 

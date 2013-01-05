@@ -132,8 +132,18 @@ ArrayMode ArrayMode::refine(SpeculatedType base, SpeculatedType index, Speculate
         return ArrayMode(Array::ForceExit);
     }
     
-    if (!isInt32Speculation(index) || !isCellSpeculation(base))
+    if (!isInt32Speculation(index))
         return ArrayMode(Array::Generic);
+    
+    // Note: our profiling currently doesn't give us good information in case we have
+    // an unlikely control flow path that sets the base to a non-cell value. Value
+    // profiling and prediction propagation will probably tell us that the value is
+    // either a cell or not, but that doesn't tell us which is more likely: that this
+    // is an array access on a cell (what we want and can optimize) or that the user is
+    // doing a crazy by-val access on a primitive (we can't easily optimize this and
+    // don't want to). So, for now, we assume that if the base is not a cell according
+    // to value profiling, but the array profile tells us something else, then we
+    // should just trust the array profile.
     
     switch (type()) {
     case Array::Unprofiled:
