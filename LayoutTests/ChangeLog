@@ -1,3 +1,13 @@
+2013-01-05  Robert Hogan  <robert@webkit.org>
+
+        Heap-use-after-free in WebCore::RenderBlock::insertIntoTrackedRendererMaps
+        https://bugs.webkit.org/show_bug.cgi?id=105654
+
+        Reviewed by Simon Fraser.
+
+        * fast/block/sticky-position-containing-block-crash-expected.txt: Added.
+        * fast/block/sticky-position-containing-block-crash.html: Added.
+
 2013-01-05  Mike West  <mkwst@chromium.org>
 
         Deflaking http/tests/security/contentSecurityPolicy/report-uri-from-javascript.html

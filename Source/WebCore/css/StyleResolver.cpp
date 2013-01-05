@@ -1976,12 +1976,12 @@ void StyleResolver::adjustRenderStyle(RenderStyle* style, RenderStyle* parentSty
         if (style->display() == INLINE && style->styleType() == NOPSEUDO && style->writingMode() != parentStyle->writingMode())
             style->setDisplay(INLINE_BLOCK);
 
-        // After performing the display mutation, check table rows. We do not honor position:relative on
-        // table rows or cells. This has been established in CSS2.1 (and caused a crash in containingBlock()
+        // After performing the display mutation, check table rows. We do not honor position:relative or position:sticky on
+        // table rows or cells. This has been established for position:relative in CSS2.1 (and caused a crash in containingBlock()
         // on some sites).
         if ((style->display() == TABLE_HEADER_GROUP || style->display() == TABLE_ROW_GROUP
-             || style->display() == TABLE_FOOTER_GROUP || style->display() == TABLE_ROW)
-             && style->position() == RelativePosition)
+            || style->display() == TABLE_FOOTER_GROUP || style->display() == TABLE_ROW)
+            && style->hasInFlowPosition())
             style->setPosition(StaticPosition);
 
         // writing-mode does not apply to table row groups, table column groups, table rows, and table columns.
