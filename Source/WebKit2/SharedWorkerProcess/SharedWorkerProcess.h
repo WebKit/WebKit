@@ -31,13 +31,8 @@
 #include "ChildProcess.h"
 #include <wtf/Forward.h>
 
-namespace WebCore {
-class RunLoop;
-}
-
 namespace WebKit {
 
-class NetscapePluginModule;
 class WebProcessConnection;
 struct SharedWorkerProcessCreationParameters;
 

@@ -122,7 +122,7 @@ void NetworkProcess::didDestroyDownload()
 
 CoreIPC::Connection* NetworkProcess::downloadProxyConnection()
 {
-    return connection();
+    return parentProcessConnection();
 }
 
 AuthenticationManager& NetworkProcess::downloadsAuthenticationManager()
@@ -166,7 +166,7 @@ void NetworkProcess::createNetworkConnectionToWebProcess()
     m_webProcessConnections.append(connection.release());
 
     CoreIPC::Attachment clientPort(listeningPort, MACH_MSG_TYPE_MAKE_SEND);
-    send(Messages::NetworkProcessProxy::DidCreateNetworkConnectionToWebProcess(clientPort));
+    parentProcessConnection()->send(Messages::NetworkProcessProxy::DidCreateNetworkConnectionToWebProcess(clientPort), 0);
 #else
     notImplemented();
 #endif

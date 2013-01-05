@@ -78,6 +78,8 @@ public:
     void setApplicationIsOccluded(bool);
 #endif
 
+    CoreIPC::Connection* parentProcessConnection() const { return m_connection.get(); }
+
     // Used by CoreIPC::MessageSender
     CoreIPC::Connection* connection() const { return m_connection.get(); }
     uint64_t destinationID() const { return 0; }

@@ -1,5 +1,30 @@
 2013-01-04  Sam Weinig  <sam@webkit.org>
 
+        Follow up to https://bugs.webkit.org/show_bug.cgi?id=106144, fixing some
+        of Alexey's review comments.
+
+        * NetworkProcess/NetworkProcess.cpp:
+        (WebKit::NetworkProcess::downloadProxyConnection):
+        (WebKit::NetworkProcess::createNetworkConnectionToWebProcess):
+        * PluginProcess/PluginProcess.cpp:
+        (WebKit::PluginProcess::createWebProcessConnection):
+        (WebKit::PluginProcess::getSitesWithData):
+        (WebKit::PluginProcess::clearSiteData):
+        * Shared/ChildProcess.h:
+        (WebKit::ChildProcess::parentProcessConnection):
+        * SharedWorkerProcess/SharedWorkerProcess.h:
+        * WebProcess/WebProcess.cpp:
+        (WebKit::WebProcess::downloadProxyConnection):
+        (WebKit::WebProcess::addVisitedLink):
+        (WebKit::WebProcess::removeWebFrame):
+        (WebKit::WebProcess::getSitesWithPluginData):
+        (WebKit::WebProcess::clearPluginSiteData):
+        (WebKit::WebProcess::addPlugInAutoStartOrigin):
+        (WebKit::WebProcess::plugInDidReceiveUserInteraction):
+        (WebKit::WebProcess::getWebCoreStatistics):
+
+2013-01-04  Sam Weinig  <sam@webkit.org>
+
         Consolidate process initialization in ChildProcess
         https://bugs.webkit.org/show_bug.cgi?id=106144
 

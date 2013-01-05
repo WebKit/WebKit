@@ -223,7 +223,7 @@ void WebProcess::didDestroyDownload()
 
 CoreIPC::Connection* WebProcess::downloadProxyConnection()
 {
-    return connection();
+    return parentProcessConnection();
 }
 
 AuthenticationManager& WebProcess::downloadsAuthenticationManager()
@@ -486,7 +486,7 @@ void WebProcess::addVisitedLink(WebCore::LinkHash linkHash)
 {
     if (isLinkVisited(linkHash) || !m_shouldTrackVisitedLinks)
         return;
-    connection()->send(Messages::WebContext::AddVisitedLinkHash(linkHash), 0);
+    parentProcessConnection()->send(Messages::WebContext::AddVisitedLinkHash(linkHash), 0);
 }
 
 void WebProcess::setCacheModel(uint32_t cm)
@@ -654,10 +654,10 @@ void WebProcess::removeWebFrame(uint64_t frameID)
     // We can end up here after our connection has closed when WebCore's frame life-support timer
     // fires when the application is shutting down. There's no need (and no way) to update the UI
     // process in this case.
-    if (!connection())
+    if (!parentProcessConnection())
         return;
 
-    send(Messages::WebProcessProxy::DidDestroyFrame(frameID));
+    parentProcessConnection()->send(Messages::WebProcessProxy::DidDestroyFrame(frameID), 0);
 }
 
 WebPageGroupProxy* WebProcess::webPageGroup(uint64_t pageGroupID)
@@ -742,7 +742,7 @@ void WebProcess::getSitesWithPluginData(const Vector<String>& pluginPaths, uint6
     Vector<String> sites;
     copyToVector(sitesSet, sites);
 
-    connection()->send(Messages::WebProcessProxy::DidGetSitesWithPluginData(sites, callbackID), 0);
+    parentProcessConnection()->send(Messages::WebProcessProxy::DidGetSitesWithPluginData(sites, callbackID), 0);
 }
 
 void WebProcess::clearPluginSiteData(const Vector<String>& pluginPaths, const Vector<String>& sites, uint64_t flags, uint64_t maxAgeInSeconds, uint64_t callbackID)
@@ -771,7 +771,7 @@ void WebProcess::clearPluginSiteData(const Vector<String>& pluginPaths, const Ve
     UNUSED_PARAM(maxAgeInSeconds);
 #endif
 
-    connection()->send(Messages::WebProcessProxy::DidClearPluginSiteData(callbackID), 0);
+    parentProcessConnection()->send(Messages::WebProcessProxy::DidClearPluginSiteData(callbackID), 0);
 }
 #endif
 
@@ -790,7 +790,7 @@ void WebProcess::addPlugInAutoStartOrigin(const String& pageOrigin, unsigned plu
         return;
     }
 
-    connection()->send(Messages::WebContext::AddPlugInAutoStartOriginHash(pageOrigin, plugInOriginHash), 0);
+    parentProcessConnection()->send(Messages::WebContext::AddPlugInAutoStartOriginHash(pageOrigin, plugInOriginHash), 0);
 }
 
 void WebProcess::didAddPlugInAutoStartOrigin(unsigned plugInOriginHash, double expirationTime)
@@ -816,7 +816,7 @@ void WebProcess::plugInDidReceiveUserInteraction(unsigned plugInOriginHash)
     if (it->value - currentTime() > plugInAutoStartExpirationTimeUpdateThreshold)
         return;
 
-    connection()->send(Messages::WebContext::PlugInDidReceiveUserInteraction(plugInOriginHash), 0);
+    parentProcessConnection()->send(Messages::WebContext::PlugInDidReceiveUserInteraction(plugInOriginHash), 0);
 }
 
 static void fromCountedSetToHashMap(TypeCountSet* countedSet, HashMap<String, uint64_t>& map)
@@ -922,7 +922,7 @@ void WebProcess::getWebCoreStatistics(uint64_t callbackID)
     // Get WebCore memory cache statistics
     getWebCoreMemoryCacheStatistics(data.webCoreCacheStatistics);
     
-    connection()->send(Messages::WebContext::DidGetWebCoreStatistics(data, callbackID), 0);
+    parentProcessConnection()->send(Messages::WebContext::DidGetWebCoreStatistics(data, callbackID), 0);
 }
 
 void WebProcess::garbageCollectJavaScriptObjects()
