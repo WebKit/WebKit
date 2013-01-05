@@ -4149,8 +4149,6 @@ webkit.org/b/100806 [ Win ] svg/custom/font-face-simple.svg [ Failure ]
 # This test is consistently leaking state into the next test (object-src-url-allowed.html) after r133069.
 webkit.org/b/100955 http/tests/security/contentSecurityPolicy/object-src-none-blocked.html [ Skip ]
 
-webkit.org/b/106153 [ Linux Mac ] http/tests/security/contentSecurityPolicy/report-uri-from-javascript.html [ Failure Pass ]
-
 webkit.org/b/101377 [ Linux MountainLion ] platform/chromium-linux/fast/text/international/complex-joining-using-gpos.html [ Failure ImageOnlyFailure Pass Crash ]
 
 webkit.org/b/101408 [ Mac ] platform/chromium/fast/forms/calendar-picker/calendar-picker-key-operations.html [ Failure ]

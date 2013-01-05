@@ -1,5 +1,11 @@
 2013-01-04  Ryosuke Niwa  <rniwa@webkit.org>
 
+        Remove a duplicate test expectation since the bug 106153 has been merged into the bug 106165.
+
+        * platform/chromium/TestExpectations:
+
+2013-01-04  Ryosuke Niwa  <rniwa@webkit.org>
+
         Add a flaky failure expectation to a test added by r138834.
         The failure is tracked by the bug 106165.
 
