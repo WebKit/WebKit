@@ -70,6 +70,9 @@ public:
     virtual void commit(int64_t transactionId);
     virtual void abort(int64_t transactionId);
 
+    virtual void createIndex(int64_t transactionId, int64_t objectStoreId, int64_t indexId, const String& name, const IDBKeyPath&, bool unique, bool multiEntry) { ASSERT_NOT_REACHED(); }
+    virtual void deleteIndex(int64_t transactionId, int64_t objectStoreId, int64_t indexId) { ASSERT_NOT_REACHED(); }
+
     PassRefPtr<IDBObjectStoreBackendImpl> objectStore(int64_t id);
     IDBTransactionCoordinator* transactionCoordinator() const { return m_transactionCoordinator.get(); }
     void transactionStarted(PassRefPtr<IDBTransactionBackendImpl>);

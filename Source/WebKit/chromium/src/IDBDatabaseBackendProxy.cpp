@@ -161,6 +161,18 @@ void IDBDatabaseBackendProxy::clear(int64_t transactionId, int64_t objectStoreId
         m_webIDBDatabase->clear(transactionId, objectStoreId, new WebIDBCallbacksImpl(callbacks));
 }
 
+void IDBDatabaseBackendProxy::createIndex(int64_t transactionId, int64_t objectStoreId, int64_t indexId, const String& name, const WebCore::IDBKeyPath& keyPath, bool unique, bool multiEntry)
+{
+    if (m_webIDBDatabase)
+        m_webIDBDatabase->createIndex(transactionId, objectStoreId, indexId, name, keyPath, unique, multiEntry);
+}
+
+void IDBDatabaseBackendProxy::deleteIndex(int64_t transactionId, int64_t objectStoreId, int64_t indexId)
+{
+    if (m_webIDBDatabase)
+        m_webIDBDatabase->deleteIndex(transactionId, objectStoreId, indexId);
+}
+
 void IDBDatabaseBackendProxy::close(PassRefPtr<IDBDatabaseCallbacks>)
 {
     m_webIDBDatabase->close();

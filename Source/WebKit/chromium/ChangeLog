@@ -1,3 +1,30 @@
+2013-01-05  Alec Flett  <alecflett@chromium.org>
+
+        IndexedDB: Stub out IDBDatabaseBackendInterface::createIndex/deleteIndex
+        https://bugs.webkit.org/show_bug.cgi?id=106117
+
+        Reviewed by Adam Barth.
+
+        Stubs for migration from WebIDBObjectStore.
+
+        * public/WebIDBDatabase.h:
+        (WebKit::WebIDBDatabase::createIndex):
+        (WebKit::WebIDBDatabase::deleteIndex):
+        (WebIDBDatabase):
+        * src/IDBDatabaseBackendProxy.cpp:
+        (WebKit::IDBDatabaseBackendProxy::createIndex):
+        (WebKit):
+        (WebKit::IDBDatabaseBackendProxy::deleteIndex):
+        * src/IDBDatabaseBackendProxy.h:
+        (IDBDatabaseBackendProxy):
+        * src/WebIDBDatabaseImpl.cpp:
+        (WebKit::WebIDBDatabaseImpl::createIndex):
+        (WebKit):
+        (WebKit::WebIDBDatabaseImpl::deleteIndex):
+        * src/WebIDBDatabaseImpl.h:
+        (WebIDBDatabaseImpl):
+        * tests/IDBDatabaseBackendTest.cpp:
+
 2013-01-05  Chris Hopman  <cjhopman@google.com>
 
         Add function to move caret selection towards a point

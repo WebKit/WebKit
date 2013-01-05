@@ -211,6 +211,18 @@ void WebIDBDatabaseImpl::clear(long long transactionId, long long objectStoreId,
         m_databaseBackend->clear(transactionId, objectStoreId, IDBCallbacksProxy::create(adoptPtr(callbacks)));
 }
 
+void WebIDBDatabaseImpl::createIndex(long long transactionId, long long objectStoreId, long long indexId, const WebString& name, const WebIDBKeyPath& keyPath, bool unique, bool multiEntry)
+{
+    if (m_databaseBackend)
+        m_databaseBackend->createIndex(transactionId, objectStoreId, indexId, name, keyPath, unique, multiEntry);
+}
+
+void WebIDBDatabaseImpl::deleteIndex(long long transactionId, long long objectStoreId, long long indexId)
+{
+    if (m_databaseBackend)
+        m_databaseBackend->deleteIndex(transactionId, objectStoreId, indexId);
+}
+
 } // namespace WebKit
 
 #endif // ENABLE(INDEXED_DATABASE)

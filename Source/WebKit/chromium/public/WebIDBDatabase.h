@@ -68,6 +68,9 @@ public:
     virtual void abort(long long transactionId) { WEBKIT_ASSERT_NOT_REACHED(); }
     virtual void commit(long long transactionId) { WEBKIT_ASSERT_NOT_REACHED(); }
 
+    virtual void createIndex(long long transactionId, long long objectStoreId, long long indexId, const WebString& name, const WebIDBKeyPath&, bool unique, bool multiEntry) { WEBKIT_ASSERT_NOT_REACHED(); }
+    virtual void deleteIndex(long long transactionId, long long objectStoreId, long long indexId) { WEBKIT_ASSERT_NOT_REACHED(); }
+
     enum TaskType {
         NormalTask = 0,
         PreemptiveTask
