@@ -45,12 +45,8 @@ struct SameSizeAsNodeRareData {
 #if ENABLE(MICRODATA)
     void* m_microData;
 #endif
-
-// Enum is integer type and is aligned in Windows when placed in the bitfield, so it takes more space. 
-#if PLATFORM(WIN)
-    TextTrack::WebVTTNodeType m_WebVTTNodeType;
-#endif
 };
+
 COMPILE_ASSERT(sizeof(NodeRareData) == sizeof(SameSizeAsNodeRareData), NodeRareDataShouldStaySmall);
 
 void NodeListsNodeData::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
