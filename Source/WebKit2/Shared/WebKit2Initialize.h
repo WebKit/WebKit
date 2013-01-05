@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012 Apple Inc. All rights reserved.
+ * Copyright (C) 2013 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,33 +23,13 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import "config.h"
-#import "WebProcessInitialization.h"
-
-#import "WebProcess.h"
-#import "WebKit2Initialize.h"
-
-#import <WebCore/LocalizedStrings.h>
-#import <WebKitSystemInterface.h>
-
-using namespace WebCore;
+#ifndef WebKit2Initialize_h
+#define WebKit2Initialize_h
 
 namespace WebKit {
 
-void initializeWebProcess(const ChildProcessInitializationParameters& parameters)
-{
-    @autoreleasepool {
-        InitializeWebKit2();
+void InitializeWebKit2();
 
-        if (!parameters.uiProcessName.isNull()) {
-            NSString *applicationName = [NSString stringWithFormat:WEB_UI_STRING("%@ Web Content", "Visible name of the web process. The argument is the application name."), (NSString *)parameters.uiProcessName];
-            WKSetVisibleApplicationName((CFStringRef)applicationName);
-        }
+};
 
-        WebProcess::shared().initialize(parameters);
-        
-        WKAXRegisterRemoteApp();
-    }
-}
-
-} // namespace WebKit
+#endif // WebKit2Initialize_h

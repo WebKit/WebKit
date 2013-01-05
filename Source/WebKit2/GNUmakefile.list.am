@@ -491,6 +491,7 @@ webkit2_sources += \
 	Source/WebKit2/Shared/WebIntentServiceInfo.cpp \
 	Source/WebKit2/Shared/WebIntentServiceInfo.h \
 	Source/WebKit2/Shared/WebKeyboardEvent.cpp \
+	Source/WebKit2/Shared/WebKit2Initialize.cpp \
 	Source/WebKit2/Shared/WebMouseEvent.cpp \
 	Source/WebKit2/Shared/WebNavigationDataStore.h \
 	Source/WebKit2/Shared/WebNetworkInfo.h \
@@ -1312,6 +1313,7 @@ webkit2_plugin_process_sources += \
 	Source/WebKit2/Shared/WebEvent.cpp \
 	Source/WebKit2/Shared/WebEvent.h \
 	Source/WebKit2/Shared/WebKeyboardEvent.cpp \
+	Source/WebKit2/Shared/WebKit2Initialize.cpp \
 	Source/WebKit2/Shared/WebMouseEvent.cpp \
 	Source/WebKit2/Shared/WebWheelEvent.cpp \
 	Source/WebKit2/Shared/gtk/NativeWebKeyboardEventGtk.cpp \

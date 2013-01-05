@@ -132,11 +132,6 @@ AuthenticationManager& NetworkProcess::downloadsAuthenticationManager()
 
 void NetworkProcess::initializeNetworkProcess(const NetworkProcessCreationParameters& parameters)
 {
-#if !LOG_DISABLED
-    WebCore::initializeLoggingChannelsIfNecessary();
-    WebKit::initializeLogChannelsIfNecessary();
-#endif // !LOG_DISABLED
-
     platformInitializeNetworkProcess(parameters);
 
     setCacheModel(static_cast<uint32_t>(parameters.cacheModel));

@@ -63,7 +63,6 @@
 #include <WebCore/GCController.h>
 #include <WebCore/GlyphPageTreeNode.h>
 #include <WebCore/IconDatabase.h>
-#include <WebCore/InitializeLogging.h>
 #include <WebCore/JSDOMWindow.h>
 #include <WebCore/Language.h>
 #include <WebCore/MemoryCache.h>
@@ -173,12 +172,6 @@ WebProcess::WebProcess()
     // Initialize our platform strategies.
     WebPlatformStrategies::initialize();
 #endif // USE(PLATFORM_STRATEGIES)
-
-#if !LOG_DISABLED
-    WebCore::initializeLoggingChannelsIfNecessary();
-    WebKit::initializeLogChannelsIfNecessary();
-#endif // !LOG_DISABLED
-
 
 
     // FIXME: This should moved to where WebProcess::initialize is called,

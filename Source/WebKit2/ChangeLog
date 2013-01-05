@@ -1,5 +1,35 @@
 2013-01-04  Sam Weinig  <sam@webkit.org>
 
+        Consolidate all the one time initialization functions into a single InitializeWebKit2() super function
+        https://bugs.webkit.org/show_bug.cgi?id=106161
+
+        Reviewed by Simon Fraser.
+
+        Adds InitializeWebKit2 and uses it.
+
+        * CMakeLists.txt:
+        * GNUmakefile.list.am:
+        * NetworkProcess/NetworkProcess.cpp:
+        (WebKit::NetworkProcess::initializeNetworkProcess):
+        * NetworkProcess/mac/NetworkProcessInitialization.mm:
+        (WebKit::initializeNetworkProcess):
+        * PluginProcess/mac/PluginProcessMainMac.mm:
+        (WebKit::PluginProcessMain):
+        * Shared/WebKit2Initialize.cpp: Copied from Source/WebKit2/NetworkProcess/mac/NetworkProcessInitialization.mm.
+        (WebKit::InitializeWebKit2):
+        * Shared/WebKit2Initialize.h: Copied from Source/WebKit2/NetworkProcess/mac/NetworkProcessInitialization.mm.
+        (WebKit):
+        * SharedWorkerProcess/mac/SharedWorkerProcessMainMac.mm:
+        (WebKit::SharedWorkerProcessMain):
+        * Target.pri:
+        * WebKit2.xcodeproj/project.pbxproj:
+        * WebProcess/WebProcess.cpp:
+        (WebKit::WebProcess::WebProcess):
+        * WebProcess/mac/WebProcessInitialization.mm:
+        (WebKit::initializeWebProcess):
+
+2013-01-04  Sam Weinig  <sam@webkit.org>
+
         Follow up to https://bugs.webkit.org/show_bug.cgi?id=106144, fixing some
         of Alexey's review comments.
 

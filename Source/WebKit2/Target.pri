@@ -494,6 +494,7 @@ SOURCES += \
     Shared/WebGraphicsContext.cpp \
     Shared/WebHitTestResult.cpp \
     Shared/WebKeyboardEvent.cpp \
+    Shared/WebKit2Initialize.cpp \
     Shared/WebImage.cpp \
     Shared/WebIntentServiceInfo.cpp \
     Shared/WebMouseEvent.cpp \

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012 Apple Inc. All rights reserved.
+ * Copyright (C) 2013 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,33 +23,35 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import "config.h"
-#import "WebProcessInitialization.h"
+#include "config.h"
+#include "WebKit2Initialize.h"
 
-#import "WebProcess.h"
-#import "WebKit2Initialize.h"
+#include "Logging.h"
+#include <WebCore/InitializeLogging.h>
+#include <WebCore/RunLoop.h>
+#include <runtime/InitializeThreading.h>
+#include <wtf/MainThread.h>
 
-#import <WebCore/LocalizedStrings.h>
-#import <WebKitSystemInterface.h>
-
-using namespace WebCore;
+#if PLATFORM(MAC)
+#include "WebSystemInterface.h"
+#endif
 
 namespace WebKit {
 
-void initializeWebProcess(const ChildProcessInitializationParameters& parameters)
+void InitializeWebKit2()
 {
-    @autoreleasepool {
-        InitializeWebKit2();
+#if PLATFORM(MAC)
+    InitWebCoreSystemInterface();
+#endif
 
-        if (!parameters.uiProcessName.isNull()) {
-            NSString *applicationName = [NSString stringWithFormat:WEB_UI_STRING("%@ Web Content", "Visible name of the web process. The argument is the application name."), (NSString *)parameters.uiProcessName];
-            WKSetVisibleApplicationName((CFStringRef)applicationName);
-        }
+    JSC::initializeThreading();
+    WTF::initializeMainThread();
+    WebCore::RunLoop::initializeMainRunLoop();
 
-        WebProcess::shared().initialize(parameters);
-        
-        WKAXRegisterRemoteApp();
-    }
+#if !LOG_DISABLED
+    WebCore::initializeLoggingChannelsIfNecessary();
+    WebKit::initializeLogChannelsIfNecessary();
+#endif // !LOG_DISABLED
 }
 
 } // namespace WebKit

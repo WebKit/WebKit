@@ -181,6 +181,7 @@ set(WebKit2_SOURCES
     Shared/WebImage.cpp
     Shared/WebIntentServiceInfo.cpp
     Shared/WebKeyboardEvent.cpp
+    Shared/WebKit2Initialize.cpp
     Shared/WebMemorySampler.cpp
     Shared/WebMouseEvent.cpp
     Shared/WebNetworkInfo.cpp
