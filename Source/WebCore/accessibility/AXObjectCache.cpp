@@ -94,6 +94,8 @@ AXObjectCache::AXObjectCache(const Document* doc)
 
 AXObjectCache::~AXObjectCache()
 {
+    m_notificationPostTimer.stop();
+
     HashMap<AXID, RefPtr<AccessibilityObject> >::iterator end = m_objects.end();
     for (HashMap<AXID, RefPtr<AccessibilityObject> >::iterator it = m_objects.begin(); it != end; ++it) {
         AccessibilityObject* obj = (*it).value.get();
@@ -592,6 +594,8 @@ void AXObjectCache::childrenChanged(AccessibilityObject* obj)
     
 void AXObjectCache::notificationPostTimerFired(Timer<AXObjectCache>*)
 {
+    RefPtr<Document> protectorForCacheOwner(m_document);
+
     m_notificationPostTimer.stop();
 
     unsigned i = 0, count = m_notificationsToPost.size();
