@@ -1,3 +1,13 @@
+2013-01-06  Abhishek Arya  <inferno@chromium.org>
+
+        Heap-use-after-free in WebCore::Document::implicitClose
+        https://bugs.webkit.org/show_bug.cgi?id=105655
+
+        Reviewed by Eric Seidel.
+
+        * fast/dom/window-load-crash-expected.txt: Added.
+        * fast/dom/window-load-crash.html: Added.
+
 2013-01-06  Mike West  <mkwst@chromium.org>
 
         Seamless: IFrame's padding isn't taken into account when calculating its height.

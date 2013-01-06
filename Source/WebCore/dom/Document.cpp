@@ -2360,6 +2360,9 @@ void Document::implicitClose()
     if (!doload)
         return;
 
+    // Call to dispatchWindowLoadEvent can blow us from underneath.
+    RefPtr<Document> protect(this);
+
     m_processingLoadEvent = true;
 
     ScriptableDocumentParser* parser = scriptableDocumentParser();
