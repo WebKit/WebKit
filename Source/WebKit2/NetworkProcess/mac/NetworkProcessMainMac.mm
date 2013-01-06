@@ -29,7 +29,8 @@
 #if ENABLE(NETWORK_PROCESS)
 
 #import "CommandLine.h"
-#import "NetworkProcessInitialization.h"
+#import "NetworkProcess.h"
+#import "WebKit2Initialize.h"
 #import <WebCore/RunLoop.h>
 #import <WebKitSystemInterface.h>
 #import <mach/mach_error.h>
@@ -76,15 +77,20 @@ int NetworkProcessMain(const CommandLine& commandLine)
     signal(SIGSEGV, _exit);
 #endif
 
-    // FIXME: The Network process should not need to use AppKit, but right now, WebCore::RunLoop depends
-    // on the outer most runloop being an AppKit runloop.
-    [NSApplication sharedApplication];
+    @autoreleasepool {
+        // FIXME: The Network process should not need to use AppKit, but right now, WebCore::RunLoop depends
+        // on the outer most runloop being an AppKit runloop.
+        [NSApplication sharedApplication];
 
-    ChildProcessInitializationParameters parameters;
-    parameters.uiProcessName = commandLine["ui-process-name"];
-    parameters.clientIdentifier = commandLine["client-identifier"];
-    parameters.connectionIdentifier = serverPort;
-    initializeNetworkProcess(parameters);
+        InitializeWebKit2();
+
+        ChildProcessInitializationParameters parameters;
+        parameters.uiProcessName = commandLine["ui-process-name"];
+        parameters.clientIdentifier = commandLine["client-identifier"];
+        parameters.connectionIdentifier = serverPort;
+
+        NetworkProcess::shared().initialize(parameters);
+    }
 
     RunLoop::run();
 

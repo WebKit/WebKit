@@ -183,7 +183,7 @@ static void appendReadwriteSandboxDirectory(Vector<const char*>& vector, const c
 
 #endif
 
-void WebProcess::initializeSandbox(const String& clientIdentifier)
+void WebProcess::initializeSandbox(const ChildProcessInitializationParameters& parameters)
 {
     [[NSFileManager defaultManager] changeCurrentDirectoryPath:[[NSBundle mainBundle] bundlePath]];
 
@@ -196,7 +196,7 @@ void WebProcess::initializeSandbox(const String& clientIdentifier)
 
 #if __MAC_OS_X_VERSION_MIN_REQUIRED >= 1080
     // Use private temporary and cache directories.
-    String systemDirectorySuffix = "com.apple.WebProcess+" + clientIdentifier;
+    String systemDirectorySuffix = "com.apple.WebProcess+" + parameters.clientIdentifier;
     setenv("DIRHELPER_USER_DIR_SUFFIX", fileSystemRepresentation(systemDirectorySuffix).data(), 0);
     char temporaryDirectory[PATH_MAX];
     if (!confstr(_CS_DARWIN_USER_TEMP_DIR, temporaryDirectory, sizeof(temporaryDirectory))) {
@@ -297,8 +297,17 @@ void WebProcess::platformInitializeWebProcess(const WebProcessCreationParameters
     method_setImplementation(methodToPatch, (IMP)NSApplicationAccessibilityFocusedUIElement);
 }
 
-void WebProcess::platformInitialize()
+void WebProcess::initializeProcessName(const ChildProcessInitializationParameters& parameters)
 {
+    if (!parameters.uiProcessName.isNull()) {
+        NSString *applicationName = [NSString stringWithFormat:WEB_UI_STRING("%@ Web Content", "Visible name of the web process. The argument is the application name."), (NSString *)parameters.uiProcessName];
+        WKSetVisibleApplicationName((CFStringRef)applicationName);
+    }
+}
+
+void WebProcess::platformInitializeProcess(const ChildProcessInitializationParameters&)
+{
+    WKAXRegisterRemoteApp();
     initializeSecItemShim();
 }
 

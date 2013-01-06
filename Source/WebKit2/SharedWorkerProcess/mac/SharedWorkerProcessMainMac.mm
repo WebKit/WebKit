@@ -98,6 +98,7 @@ int SharedWorkerProcessMain(const CommandLine& commandLine)
         parameters.uiProcessName = commandLine["ui-process-name"];
         parameters.clientIdentifier = commandLine["client-identifier"];
         parameters.connectionIdentifier = CoreIPC::Connection::Identifier(serverPort);
+
         SharedWorkerProcess::shared().initialize(parameters);
 
         [NSApplication sharedApplication];

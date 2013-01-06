@@ -73,8 +73,10 @@ private:
     ~PluginProcess();
 
     // ChildProcess
+    virtual void initializeProcess(const ChildProcessInitializationParameters&) OVERRIDE;
     virtual bool shouldTerminate() OVERRIDE;
-    virtual void platformInitialize() OVERRIDE;
+
+    void platformInitializeProcess(const ChildProcessInitializationParameters&);
 
     // CoreIPC::Connection::Client
     virtual void didReceiveMessage(CoreIPC::Connection*, CoreIPC::MessageID, CoreIPC::MessageDecoder&) OVERRIDE;

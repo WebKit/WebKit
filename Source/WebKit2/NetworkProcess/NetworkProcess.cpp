@@ -199,7 +199,11 @@ void NetworkProcess::setCacheModel(uint32_t cm)
 }
 
 #if !PLATFORM(MAC)
-void NetworkProcess::initializeSandbox(const String& clientIdentifier)
+void NetworkProcess::initializeProcessName(const ChildProcessInitializationParameters&)
+{
+}
+
+void NetworkProcess::initializeSandbox(const ChildProcessInitializationParameters&)
 {
 }
 #endif

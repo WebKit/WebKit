@@ -92,15 +92,18 @@ protected:
 
     void setTerminationTimeout(double seconds) { m_terminationTimeout = seconds; }
 
+    virtual void initializeProcess(const ChildProcessInitializationParameters&);
+    virtual void initializeProcessName(const ChildProcessInitializationParameters&);
+    virtual void initializeSandbox(const ChildProcessInitializationParameters&);
     virtual void initializeConnection(CoreIPC::Connection*);
-    virtual void initializeSandbox(const String& clientIdentifier);
-    virtual void platformInitialize();
 
     virtual bool shouldTerminate() = 0;
     virtual void terminate();
 
 private:
     void terminationTimerFired();
+
+    void platformInitialize();
 
     // The timeout, in seconds, before this process will be terminated if termination
     // has been enabled. If the timeout is 0 seconds, the process will be terminated immediately.

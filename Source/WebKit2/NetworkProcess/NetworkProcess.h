@@ -77,8 +77,9 @@ private:
     void platformInitializeNetworkProcess(const NetworkProcessCreationParameters&);
 
     // ChildProcess
+    virtual void initializeProcessName(const ChildProcessInitializationParameters&) OVERRIDE;
+    virtual void initializeSandbox(const ChildProcessInitializationParameters&) OVERRIDE;
     virtual bool shouldTerminate() OVERRIDE;
-    virtual void initializeSandbox(const String& clientIdentifier) OVERRIDE;
 
     // CoreIPC::Connection::Client
     virtual void didReceiveMessage(CoreIPC::Connection*, CoreIPC::MessageID, CoreIPC::MessageDecoder&) OVERRIDE;

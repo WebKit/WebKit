@@ -85,6 +85,11 @@ PluginProcess::~PluginProcess()
 {
 }
 
+void PluginProcess::initializeProcess(const ChildProcessInitializationParameters& parameters)
+{
+    platformInitializeProcess(parameters);
+}
+
 void PluginProcess::removeWebProcessConnection(WebProcessConnection* webProcessConnection)
 {
     size_t vectorIndex = m_webProcessConnections.find(webProcessConnection);

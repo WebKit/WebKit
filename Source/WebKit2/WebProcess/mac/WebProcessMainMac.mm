@@ -30,8 +30,8 @@
 #import "EnvironmentUtilities.h"
 #import "EnvironmentVariables.h"
 #import "StringUtilities.h"
+#import "WebKit2Initialize.h"
 #import "WebProcess.h"
-#import "WebProcessInitialization.h"
 #import <WebCore/RunLoop.h>
 #import <WebKitSystemInterface.h>
 #import <mach/mach_error.h>
@@ -178,11 +178,16 @@ int WebProcessMain(const CommandLine& commandLine)
     [[NSApplication sharedApplication] _installAutoreleasePoolsOnCurrentThreadIfNecessary];
 #endif
 
-    ChildProcessInitializationParameters parameters;
-    parameters.uiProcessName = commandLine["ui-process-name"];
-    parameters.clientIdentifier = clientIdentifier;
-    parameters.connectionIdentifier = serverPort;
-    initializeWebProcess(parameters);
+    @autoreleasepool {
+        InitializeWebKit2();
+
+        ChildProcessInitializationParameters parameters;
+        parameters.uiProcessName = commandLine["ui-process-name"];
+        parameters.clientIdentifier = clientIdentifier;
+        parameters.connectionIdentifier = serverPort;
+
+        WebProcess::shared().initialize(parameters);
+    }
 
     RunLoop::run();
 

@@ -1,5 +1,70 @@
 2013-01-04  Sam Weinig  <sam@webkit.org>
 
+        Remove WebProcessInitialization and NetworkProcessInitialization by putting the rest of initialization in ChildProcess derived classes
+        https://bugs.webkit.org/show_bug.cgi?id=106163
+
+        Reviewed by Darin Adler.
+
+        Adds ChildProcess::initializeProcessName() and the catchall ChildProcess::initializeProcess()
+        as the last pieces to have all the initialization from WebProcessInitialization and NetworkProcessInitialization
+        captured in ChildProcess and derived classes.
+
+        * NetworkProcess/NetworkProcess.cpp:
+        (WebKit::NetworkProcess::initializeProcessName):
+        (WebKit::NetworkProcess::initializeSandbox):
+        * NetworkProcess/NetworkProcess.h:
+        (NetworkProcess):
+        * NetworkProcess/mac/NetworkProcessInitialization.h: Removed.
+        * NetworkProcess/mac/NetworkProcessInitialization.mm: Removed.
+        * NetworkProcess/mac/NetworkProcessMac.mm:
+        (WebKit::NetworkProcess::initializeProcessName):
+        (WebKit::NetworkProcess::initializeSandbox):
+        * NetworkProcess/mac/NetworkProcessMainMac.mm:
+        (WebKit::NetworkProcessMain):
+        * PluginProcess/PluginProcess.cpp:
+        (WebKit::PluginProcess::initializeProcess):
+        * PluginProcess/PluginProcess.h:
+        (PluginProcess):
+        * PluginProcess/mac/PluginProcessMac.mm:
+        (WebKit::PluginProcess::platformInitializeProcess):
+        * PluginProcess/mac/PluginProcessMainMac.mm:
+        (WebKit::PluginProcessMain):
+        * PluginProcess/qt/PluginProcessQt.cpp:
+        (WebKit::PluginProcess::platformInitializeProcess):
+        (WebKit::PluginProcess::platformInitializePluginProcess):
+        * PluginProcess/unix/PluginProcessUnix.cpp:
+        (WebKit::PluginProcess::platformInitializeProcess):
+        * Shared/ChildProcess.cpp:
+        (WebKit::ChildProcess::initialize):
+        (WebKit::ChildProcess::initializeProcess):
+        (WebKit::ChildProcess::initializeProcessName):
+        (WebKit::ChildProcess::initializeSandbox):
+        (WebKit::ChildProcess::initializeConnection):
+        * Shared/ChildProcess.h:
+        (ChildProcess):
+        * SharedWorkerProcess/mac/SharedWorkerProcessMainMac.mm:
+        (WebKit::SharedWorkerProcessMain):
+        * WebKit2.xcodeproj/project.pbxproj:
+        * WebProcess/WebProcess.cpp:
+        (WebKit::WebProcess::initializeProcess):
+        (WebKit::WebProcess::initializeProcessName):
+        (WebKit::WebProcess::initializeSandbox):
+        * WebProcess/WebProcess.h:
+        (WebProcess):
+        * WebProcess/mac/WebProcessInitialization.h: Removed.
+        * WebProcess/mac/WebProcessInitialization.mm: Removed.
+        * WebProcess/mac/WebProcessMac.mm:
+        (WebKit::WebProcess::initializeSandbox):
+        (WebKit::WebProcess::initializeProcessName):
+        (WebKit::WebProcess::platformInitializeProcess):
+        * WebProcess/mac/WebProcessMainMac.mm:
+        (WebKit::WebProcessMain):
+        * WebProcess/mac/WebProcessServiceEntryPoints.mm:
+        (WebKit::WebProcessServiceEventHandler):
+        (initializeWebProcessForWebProcessServiceForWebKitDevelopment):
+
+2013-01-04  Sam Weinig  <sam@webkit.org>
+
         Fix failing API test.
 
         * WebProcess/WebProcess.cpp:

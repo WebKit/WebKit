@@ -197,6 +197,11 @@ WebProcess::WebProcess()
 #endif
 }
 
+void WebProcess::initializeProcess(const ChildProcessInitializationParameters& parameters)
+{
+    platformInitializeProcess(parameters);
+}
+
 void WebProcess::initializeConnection(CoreIPC::Connection* connection)
 {
     connection->setShouldExitOnSyncMessageSendFailure(true);
@@ -1063,12 +1068,17 @@ void WebProcess::didGetPlugins(CoreIPC::Connection*, uint64_t requestID, const V
 #endif // ENABLE(PLUGIN_PROCESS)
 
 #if !PLATFORM(MAC)
-void WebProcess::initializeSandbox(const String& clientIdentifier)
+void WebProcess::initializeProcessName(const ChildProcessInitializationParameters&)
 {
 }
 
-void WebProcess::platformInitialize()
+void WebProcess::initializeSandbox(const ChildProcessInitializationParameters&)
+{
+}
+
+void WebProcess::platformInitializeProcess(const ChildProcessInitializationParameters&)
 {
 }
 #endif
+
 } // namespace WebKit

@@ -46,7 +46,15 @@ using namespace WebCore;
 
 namespace WebKit {
 
-void NetworkProcess::initializeSandbox(const String&)
+void NetworkProcess::initializeProcessName(const ChildProcessInitializationParameters& parameters)
+{
+    if (!parameters.uiProcessName.isNull()) {
+        NSString *applicationName = [NSString stringWithFormat:WEB_UI_STRING("%@ Networking", "visible name of the network process. The argument is the application name."), (NSString *)parameters.uiProcessName];
+        WKSetVisibleApplicationName((CFStringRef)applicationName);
+    }
+}
+
+void NetworkProcess::initializeSandbox(const ChildProcessInitializationParameters&)
 {
     // FIXME: Initialize the sandbox.
 }

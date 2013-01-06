@@ -275,11 +275,15 @@ private:
 #endif
 
     // ChildProcess
+    virtual void initializeProcess(const ChildProcessInitializationParameters&) OVERRIDE;
+    virtual void initializeProcessName(const ChildProcessInitializationParameters&) OVERRIDE;
+    virtual void initializeSandbox(const ChildProcessInitializationParameters&) OVERRIDE;
     virtual void initializeConnection(CoreIPC::Connection*) OVERRIDE;
-    virtual void initializeSandbox(const String& clientIdentifier) OVERRIDE;
-    virtual void platformInitialize() OVERRIDE;
     virtual bool shouldTerminate() OVERRIDE;
     virtual void terminate() OVERRIDE;
+
+    void platformInitializeProcess(const ChildProcessInitializationParameters&);
+
 
     // CoreIPC::Connection::Client
     friend class WebConnectionToUIProcess;

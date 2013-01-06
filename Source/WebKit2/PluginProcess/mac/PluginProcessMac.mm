@@ -268,7 +268,7 @@ static void initializeCocoaOverrides()
     CFRetain(orderOffScreenObserver);
 }
 
-void PluginProcess::platformInitialize()
+void PluginProcess::platformInitializeProcess(const ChildProcessInitializationParameters&)
 {
 #if defined(__i386__)
     // Initialize the shim.
@@ -277,6 +277,10 @@ void PluginProcess::platformInitialize()
 
     // Initialize Cocoa overrides.
     initializeCocoaOverrides();
+
+    // FIXME: It would be better to proxy SetCursor calls over to the UI process instead of
+    // allowing plug-ins to change the mouse cursor at any time.
+    WKEnableSettingCursorWhenInBackground();
 }
 
 void PluginProcess::setModalWindowIsShowing(bool modalWindowIsShowing)

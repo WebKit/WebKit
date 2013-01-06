@@ -26,6 +26,8 @@
 #include "config.h"
 #include "ChildProcess.h"
 
+#include "WebKit2Initialize.h"
+
 #if !OS(WINDOWS)
 #include <unistd.h>
 #endif
@@ -64,9 +66,13 @@ static void didCloseOnConnectionWorkQueue(WorkQueue& workQueue, CoreIPC::Connect
 
 void ChildProcess::initialize(const ChildProcessInitializationParameters& parameters)
 {
+    InitializeWebKit2();
+
     platformInitialize();
 
-    initializeSandbox(parameters.clientIdentifier);
+    initializeProcess(parameters);
+    initializeProcessName(parameters);
+    initializeSandbox(parameters);
     
     m_connection = CoreIPC::Connection::createClientConnection(parameters.connectionIdentifier, this, RunLoop::main());
     m_connection->setDidCloseOnConnectionWorkQueueCallback(didCloseOnConnectionWorkQueue);
@@ -74,11 +80,19 @@ void ChildProcess::initialize(const ChildProcessInitializationParameters& parame
     m_connection->open();
 }
 
-void ChildProcess::initializeConnection(CoreIPC::Connection*)
+void ChildProcess::initializeProcess(const ChildProcessInitializationParameters&)
 {
 }
 
-void ChildProcess::initializeSandbox(const String& clientIdentifier)
+void ChildProcess::initializeProcessName(const ChildProcessInitializationParameters&)
+{
+}
+
+void ChildProcess::initializeSandbox(const ChildProcessInitializationParameters&)
+{
+}
+
+void ChildProcess::initializeConnection(CoreIPC::Connection*)
 {
 }
 

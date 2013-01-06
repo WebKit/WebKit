@@ -108,16 +108,13 @@ int PluginProcessMain(const CommandLine& commandLine)
 #endif
 
     @autoreleasepool {
-        // FIXME: It would be better to proxy set cursor calls over to the UI process instead of
-        // allowing plug-ins to change the mouse cursor at any time.
-        WKEnableSettingCursorWhenInBackground();
-
         InitializeWebKit2();
 
         ChildProcessInitializationParameters parameters;
         parameters.uiProcessName = commandLine["ui-process-name"];
         parameters.clientIdentifier = commandLine["client-identifier"];
         parameters.connectionIdentifier = CoreIPC::Connection::Identifier(serverPort);
+
         PluginProcess::shared().initialize(parameters);
 
         [NSApplication sharedApplication];
