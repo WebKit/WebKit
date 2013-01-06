@@ -215,7 +215,7 @@ public:
         return speculationFromValue(node.valueOfJSConstant(m_codeBlock));
     }
     
-    AddSpeculationMode addSpeculationMode(Node& add)
+    AddSpeculationMode addSpeculationMode(Node& add, bool leftShouldSpeculateInteger, bool rightShouldSpeculateInteger)
     {
         ASSERT(add.op() == ValueAdd || add.op() == ArithAdd || add.op() == ArithSub);
         
@@ -223,11 +223,29 @@ public:
         Node& right = at(add.child2());
         
         if (left.hasConstant())
-            return addImmediateShouldSpeculateInteger(add, right, left);
+            return addImmediateShouldSpeculateInteger(add, rightShouldSpeculateInteger, left);
         if (right.hasConstant())
-            return addImmediateShouldSpeculateInteger(add, left, right);
+            return addImmediateShouldSpeculateInteger(add, leftShouldSpeculateInteger, right);
         
-        return (Node::shouldSpeculateIntegerExpectingDefined(left, right) && add.canSpeculateInteger()) ? SpeculateInteger : DontSpeculateInteger;
+        return (leftShouldSpeculateInteger && rightShouldSpeculateInteger && add.canSpeculateInteger()) ? SpeculateInteger : DontSpeculateInteger;
+    }
+    
+    AddSpeculationMode valueAddSpeculationMode(Node& add)
+    {
+        return addSpeculationMode(add, at(add.child1()).shouldSpeculateIntegerExpectingDefined(), at(add.child2()).shouldSpeculateIntegerExpectingDefined());
+    }
+    
+    AddSpeculationMode arithAddSpeculationMode(Node& add)
+    {
+        return addSpeculationMode(add, at(add.child1()).shouldSpeculateIntegerForArithmetic(), at(add.child2()).shouldSpeculateIntegerForArithmetic());
+    }
+    
+    AddSpeculationMode addSpeculationMode(Node& add)
+    {
+        if (add.op() == ValueAdd)
+            return valueAddSpeculationMode(add);
+        
+        return arithAddSpeculationMode(add);
     }
     
     bool addShouldSpeculateInteger(Node& add)
@@ -707,7 +725,7 @@ private:
     
     void handleSuccessor(Vector<BlockIndex, 16>& worklist, BlockIndex blockIndex, BlockIndex successorIndex);
     
-    AddSpeculationMode addImmediateShouldSpeculateInteger(Node& add, Node& variable, Node& immediate)
+    AddSpeculationMode addImmediateShouldSpeculateInteger(Node& add, bool variableShouldSpeculateInteger, Node& immediate)
     {
         ASSERT(immediate.hasConstant());
         
@@ -715,7 +733,7 @@ private:
         if (!immediateValue.isNumber())
             return DontSpeculateInteger;
         
-        if (!variable.shouldSpeculateIntegerExpectingDefined())
+        if (!variableShouldSpeculateInteger)
             return DontSpeculateInteger;
         
         if (immediateValue.isInt32())

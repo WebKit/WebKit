@@ -1,3 +1,26 @@
+2013-01-05  Filip Pizlo  <fpizlo@apple.com>
+
+        Data flow paths that carry non-numbers, non-undefined, non-null values should not cause subtractions and arithmetic additions (i.e. ++) to speculate double
+        https://bugs.webkit.org/show_bug.cgi?id=106190
+
+        Reviewed by Sam Weinig.
+        
+        The problem is that the DFG logic for deciding when to speculate integer was
+        confusing the special case of ValueAdd (where non-numeric values should cause us
+        to not speculate integer, because we want to fall off into the generic case) with
+        the more normal case of ArithAdd and ArithSub (where we want to speculate integer
+        unless we have evidence that the operands are doubles, since the DFG doesn't have
+        generic handling of non-numeric arithmetic). Prior to this change doing a - b where
+        either a or b were possibly non-numeric would always force the subtraction to be
+        done using doubles.
+
+        * dfg/DFGGraph.h:
+        (JSC::DFG::Graph::addSpeculationMode):
+        (Graph):
+        (JSC::DFG::Graph::valueAddSpeculationMode):
+        (JSC::DFG::Graph::arithAddSpeculationMode):
+        (JSC::DFG::Graph::addImmediateShouldSpeculateInteger):
+
 2013-01-04  Filip Pizlo  <fpizlo@apple.com>
 
         DFG should trust array profiling over value profiling
