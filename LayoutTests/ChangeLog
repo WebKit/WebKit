@@ -1,5 +1,12 @@
 2013-01-05  Ryosuke Niwa  <rniwa@webkit.org>
 
+        Add failing test expectations to some tile drawing tests on Mac WebKit2.
+        The failures are tracked by the bug 106187.
+
+        * platform/mac-wk2/TestExpectations:
+
+2013-01-05  Ryosuke Niwa  <rniwa@webkit.org>
+
         Revert an erroneous change from r138874.
 
         http/tests/misc/link-rel-icon-beforeload.html had been skipped prior to r138874

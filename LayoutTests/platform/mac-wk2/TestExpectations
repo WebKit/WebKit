@@ -297,6 +297,12 @@ webkit.org/b/93552 inspector/device-orientation-success.html [ Failure ]
 
 webkit.org/b/106123 http/tests/appcache/main-resource-redirect.html [ Pass ]
 
+webkit.org/b/106187 platform/mac/tiled-drawing/fixed/absolute-inside-out-of-view-fixed.html [ Failure ]
+webkit.org/b/106187 platform/mac/tiled-drawing/fixed/four-bars-zoomed.html [ Failure ]
+webkit.org/b/106187 platform/mac/tiled-drawing/fixed/negative-scroll-offset.html [ Failure ]
+webkit.org/b/106187 platform/mac/tiled-drawing/sticky/sticky-horizontal.html [ Failure ]
+webkit.org/b/106187 platform/mac/tiled-drawing/sticky/sticky-vertical.html [ Failure ]
+
 ### END OF (1) Classified failures with bug reports
 ########################################
 
