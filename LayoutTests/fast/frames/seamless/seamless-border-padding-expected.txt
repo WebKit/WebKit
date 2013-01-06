@@ -4,7 +4,7 @@ PASS nothing.getBoundingClientRect().height is 100
 PASS hasborder.getBoundingClientRect().width is 102
 PASS hasborder.getBoundingClientRect().height is 102
 PASS haspadding.getBoundingClientRect().width is 104
-FAIL haspadding.getBoundingClientRect().height should be 104. Was 100.
+PASS haspadding.getBoundingClientRect().height is 104
 PASS hasboth.getBoundingClientRect().width is 106
-FAIL hasboth.getBoundingClientRect().height should be 106. Was 102.
+PASS hasboth.getBoundingClientRect().height is 106
       

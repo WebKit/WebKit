@@ -130,11 +130,11 @@ void RenderIFrame::layoutSeamlessly()
     updateWidgetPosition(); // Tell the Widget about our new width/height (it will also layout the child document).
 
     // Laying out our kids is normally responsible for adjusting our height, so we set it here.
-    // Replaced elements do not respect padding, so we just add border to the child's height.
-    // FIXME: It's possible that seamless iframes (since they act like divs) *should* respect padding.
+    // Replaced elements normally do not respect padding, but seamless elements should: we'll add
+    // both padding and border to the child's logical height here.
     FrameView* childFrameView = static_cast<FrameView*>(widget());
     if (childFrameView) // Widget should never be null during layout(), but just in case.
-        setLogicalHeight(childFrameView->contentsHeight() + borderTop() + borderBottom());
+        setLogicalHeight(childFrameView->contentsHeight() + borderTop() + borderBottom() + paddingTop() + paddingBottom());
     updateLogicalHeight();
 
     updateWidgetPosition(); // Notify the Widget of our final height.
