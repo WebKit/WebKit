@@ -1,3 +1,9 @@
+2013-01-07  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Add Mac Lion result after r138986.
+
+        * platform/mac-lion/platform/mac/fast/text/vertical-no-sideways-expected.txt: Added.
+
 2013-01-07  Chris Fleizach  <cfleizach@apple.com>
 
         AX: the text of render counters are not exposed to Accessibility
