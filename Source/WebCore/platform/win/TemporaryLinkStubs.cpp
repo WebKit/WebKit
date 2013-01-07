@@ -27,6 +27,9 @@
 
 #include "NotImplemented.h"
 #include "SSLKeyGenerator.h"
+#if !USE(CFNETWORK)
+#include "CookieStorage.h"
+#endif
 
 namespace WebCore {
 
