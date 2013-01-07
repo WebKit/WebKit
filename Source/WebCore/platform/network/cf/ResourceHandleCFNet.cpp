@@ -808,23 +808,6 @@ bool ResourceHandle::loadsBlocked()
     return false;
 }
 
-bool ResourceHandle::willLoadFromCache(ResourceRequest& request, Frame*)
-{
-    request.setCachePolicy(ReturnCacheDataDontLoad);
-    
-    CFURLResponseRef cfResponse = 0;
-    CFErrorRef cfError = 0;
-    RetainPtr<CFDataRef> data = adoptCF(CFURLConnectionSendSynchronousRequest(request.cfURLRequest(), &cfResponse, &cfError, request.timeoutInterval()));
-    bool cached = cfResponse && !cfError;
-
-    if (cfError)
-        CFRelease(cfError);
-    if (cfResponse)
-        CFRelease(cfResponse);
-
-    return cached;
-}
-
 #if PLATFORM(MAC)
 void ResourceHandle::schedule(SchedulePair* pair)
 {

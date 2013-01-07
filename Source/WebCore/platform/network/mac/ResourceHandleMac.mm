@@ -357,19 +357,6 @@ bool ResourceHandle::loadsBlocked()
     return false;
 }
 
-bool ResourceHandle::willLoadFromCache(ResourceRequest& request, Frame*)
-{
-    request.setCachePolicy(ReturnCacheDataDontLoad);
-    NSURLResponse *nsURLResponse = nil;
-    BEGIN_BLOCK_OBJC_EXCEPTIONS;
-
-    [NSURLConnection sendSynchronousRequest:request.nsURLRequest() returningResponse:&nsURLResponse error:nil];
-    
-    END_BLOCK_OBJC_EXCEPTIONS;
-    
-    return nsURLResponse;
-}
-
 CFStringRef ResourceHandle::synchronousLoadRunLoopMode()
 {
     return CFSTR("WebCoreSynchronousLoaderRunLoopMode");

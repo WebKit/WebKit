@@ -1173,14 +1173,6 @@ bool ResourceHandle::loadsBlocked()
     return false;
 }
 
-bool ResourceHandle::willLoadFromCache(ResourceRequest&, Frame*)
-{
-    // Not having this function means that we'll ask the user about re-posting a form
-    // even when we go back to a page that's still in the cache.
-    notImplemented();
-    return false;
-}
-
 void ResourceHandle::loadResourceSynchronously(NetworkingContext* context, const ResourceRequest& request, StoredCredentials /*storedCredentials*/, ResourceError& error, ResourceResponse& response, Vector<char>& data)
 {
 #if ENABLE(BLOB)

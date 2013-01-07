@@ -166,12 +166,6 @@ void ResourceHandle::platformSetDefersLoading(bool defers)
 #endif
 }
 
-bool ResourceHandle::willLoadFromCache(ResourceRequest&, Frame*)
-{
-    notImplemented();
-    return false;
-}
-
 bool ResourceHandle::loadsBlocked()
 {
     notImplemented();

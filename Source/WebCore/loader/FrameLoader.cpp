@@ -852,7 +852,7 @@ void FrameLoader::loadURLIntoChildFrame(const KURL& url, const String& referer, 
         && !m_frame->document()->loadEventFinished()) {
         HistoryItem* childItem = parentItem->childItemWithTarget(childFrame->tree()->uniqueName());
         if (childItem) {
-            childFrame->loader()->loadDifferentDocumentItem(childItem, loadType());
+            childFrame->loader()->loadDifferentDocumentItem(childItem, loadType(), MayAttemptCacheOnlyLoadForFormSubmissionItem);
             return;
         }
     }
@@ -1461,6 +1461,8 @@ void FrameLoader::reloadWithOverrideEncoding(const String& encoding)
     if (!unreachableURL.isEmpty())
         request.setURL(unreachableURL);
 
+    // FIXME: If the resource is a result of form submission and is not cached, the form will be silently resubmitted.
+    // We should ask the user for confirmation in this case.
     request.setCachePolicy(ReturnCacheDataElseLoad);
 
     RefPtr<DocumentLoader> loader = m_client->createDocumentLoader(request, defaultSubstituteDataForURL(request.url()));
@@ -2418,13 +2420,15 @@ void FrameLoader::addExtraFieldsToSubresourceRequest(ResourceRequest& request)
 
 void FrameLoader::addExtraFieldsToMainResourceRequest(ResourceRequest& request)
 {
+    // FIXME: Using m_loadType seems wrong for some callers.
+    // If we are only preparing to load the main resource, that is previous load's load type!
     addExtraFieldsToRequest(request, m_loadType, true);
 }
 
 void FrameLoader::addExtraFieldsToRequest(ResourceRequest& request, FrameLoadType loadType, bool mainResource)
 {
     // Don't set the cookie policy URL if it's already been set.
-    // But make sure to set it on all requests, as it has significance beyond the cookie policy for all protocols (<rdar://problem/6616664>).
+    // But make sure to set it on all requests regardless of protocol, as it has significance beyond the cookie policy (<rdar://problem/6616664>).
     if (request.firstPartyForCookies().isEmpty()) {
         if (mainResource && isLoadingMainFrame())
             request.setFirstPartyForCookies(request.url());
@@ -2437,26 +2441,31 @@ void FrameLoader::addExtraFieldsToRequest(ResourceRequest& request, FrameLoadTyp
         return;
 
     applyUserAgent(request);
-    
-    // If we inherit cache policy from a main resource, we use the DocumentLoader's 
-    // original request cache policy for two reasons:
-    // 1. For POST requests, we mutate the cache policy for the main resource,
-    //    but we do not want this to apply to subresources
-    // 2. Delegates that modify the cache policy using willSendRequest: should
-    //    not affect any other resources. Such changes need to be done
-    //    per request.
+
     if (!mainResource) {
         if (request.isConditional())
             request.setCachePolicy(ReloadIgnoringCacheData);
-        else if (documentLoader()->isLoadingInAPISense())
-            request.setCachePolicy(documentLoader()->originalRequest().cachePolicy());
-        else
+        else if (documentLoader()->isLoadingInAPISense()) {
+            // If we inherit cache policy from a main resource, we use the DocumentLoader's
+            // original request cache policy for two reasons:
+            // 1. For POST requests, we mutate the cache policy for the main resource,
+            //    but we do not want this to apply to subresources
+            // 2. Delegates that modify the cache policy using willSendRequest: should
+            //    not affect any other resources. Such changes need to be done
+            //    per request.
+            ResourceRequestCachePolicy mainDocumentOriginalCachePolicy = documentLoader()->originalRequest().cachePolicy();
+            // Back-forward navigations try to load main resource from cache only to avoid re-submitting form data, and start over (with a warning dialog) if that fails.
+            // This policy is set on initial request too, but should not be inherited.
+            ResourceRequestCachePolicy subresourceCachePolicy = (mainDocumentOriginalCachePolicy == ReturnCacheDataDontLoad) ? ReturnCacheDataElseLoad : mainDocumentOriginalCachePolicy;
+            request.setCachePolicy(subresourceCachePolicy);
+        } else
             request.setCachePolicy(UseProtocolCachePolicy);
+
+    // FIXME: Other FrameLoader functions have duplicated code for setting cache policy of main request when reloading.
+    // It seems better to manage it explicitly than to hide the logic inside addExtraFieldsToRequest().
     } else if (loadType == FrameLoadTypeReload || loadType == FrameLoadTypeReloadFromOrigin || request.isConditional())
         request.setCachePolicy(ReloadIgnoringCacheData);
-    else if (isBackForwardLoadType(loadType) && m_stateMachine.committedFirstRealDocumentLoad())
-        request.setCachePolicy(ReturnCacheDataElseLoad);
-        
+
     if (request.cachePolicy() == ReloadIgnoringCacheData) {
         if (loadType == FrameLoadTypeReload)
             request.setHTTPHeaderField("Cache-Control", "max-age=0");
@@ -3033,7 +3042,7 @@ void FrameLoader::loadSameDocumentItem(HistoryItem* item)
 // FIXME: This function should really be split into a couple pieces, some of
 // which should be methods of HistoryController and some of which should be
 // methods of FrameLoader.
-void FrameLoader::loadDifferentDocumentItem(HistoryItem* item, FrameLoadType loadType)
+void FrameLoader::loadDifferentDocumentItem(HistoryItem* item, FrameLoadType loadType, FormSubmissionCacheLoadPolicy cacheLoadPolicy)
 {
     // Remember this item so we can traverse any child items as child frames load
     history()->setProvisionalItem(item);
@@ -3068,7 +3077,7 @@ void FrameLoader::loadDifferentDocumentItem(HistoryItem* item, FrameLoadType loa
 
         // Make sure to add extra fields to the request after the Origin header is added for the FormData case.
         // See https://bugs.webkit.org/show_bug.cgi?id=22194 for more discussion.
-        addExtraFieldsToRequest(request, m_loadType, true);
+        addExtraFieldsToRequest(request, loadType, true);
         
         // FIXME: Slight hack to test if the NSURL cache contains the page we're going to.
         // We want to know this before talking to the policy delegate, since it affects whether 
@@ -3078,10 +3087,11 @@ void FrameLoader::loadDifferentDocumentItem(HistoryItem* item, FrameLoadType loa
         // have the item vanish when we try to use it in the ensuing nav.  This should be
         // extremely rare, but in that case the user will get an error on the navigation.
         
-        if (ResourceHandle::willLoadFromCache(request, m_frame))
+        if (cacheLoadPolicy == MayAttemptCacheOnlyLoadForFormSubmissionItem) {
+            request.setCachePolicy(ReturnCacheDataDontLoad);
             action = NavigationAction(request, loadType, false);
-        else {
-            request.setCachePolicy(ReloadIgnoringCacheData);
+        } else {
+            request.setCachePolicy(ReturnCacheDataElseLoad);
             action = NavigationAction(request, NavigationTypeFormResubmitted);
         }
     } else {
@@ -3095,7 +3105,7 @@ void FrameLoader::loadDifferentDocumentItem(HistoryItem* item, FrameLoadType loa
             case FrameLoadTypeIndexedBackForward:
                 // If the first load within a frame is a navigation within a back/forward list that was attached 
                 // without any of the items being loaded then we should use the default caching policy (<rdar://problem/8131355>).
-                if (m_stateMachine.committedFirstRealDocumentLoad() && !itemURL.protocolIs("https"))
+                if (m_stateMachine.committedFirstRealDocumentLoad())
                     request.setCachePolicy(ReturnCacheDataElseLoad);
                 break;
             case FrameLoadTypeStandard:
@@ -3106,7 +3116,7 @@ void FrameLoader::loadDifferentDocumentItem(HistoryItem* item, FrameLoadType loa
                 ASSERT_NOT_REACHED();
         }
 
-        addExtraFieldsToRequest(request, m_loadType, true);
+        addExtraFieldsToRequest(request, loadType, true);
 
         ResourceRequest requestForOriginalURL(request);
         requestForOriginalURL.setURL(itemOriginalURL);
@@ -3126,7 +3136,23 @@ void FrameLoader::loadItem(HistoryItem* item, FrameLoadType loadType)
     if (sameDocumentNavigation)
         loadSameDocumentItem(item);
     else
-        loadDifferentDocumentItem(item, loadType);
+        loadDifferentDocumentItem(item, loadType, MayAttemptCacheOnlyLoadForFormSubmissionItem);
+}
+
+void FrameLoader::retryAfterFailedCacheOnlyMainResourceLoad()
+{
+    ASSERT(m_state == FrameStateProvisional);
+    ASSERT(!m_loadingFromCachedPage);
+    // We only use cache-only loads to avoid resubmitting forms.
+    ASSERT(isBackForwardLoadType(m_loadType));
+    ASSERT(m_history.provisionalItem()->formData());
+    ASSERT(m_history.provisionalItem() == m_requestedHistoryItem.get());
+
+    FrameLoadType loadType = m_loadType;
+    HistoryItem* item = m_history.provisionalItem();
+
+    stopAllLoaders(ShouldNotClearProvisionalItem);
+    loadDifferentDocumentItem(item, loadType, MayNotAttemptCacheOnlyLoadForFormSubmissionItem);
 }
 
 ResourceError FrameLoader::cancelledError(const ResourceRequest& request) const

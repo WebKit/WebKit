@@ -126,12 +126,6 @@ void ResourceHandle::pauseLoad(bool pause)
         NetworkManager::instance()->pauseLoad(this, pause);
 }
 
-bool ResourceHandle::willLoadFromCache(ResourceRequest&, Frame*)
-{
-    notImplemented();
-    return false;
-}
-
 void ResourceHandle::cancel()
 {
     NetworkManager::instance()->stopJob(this);

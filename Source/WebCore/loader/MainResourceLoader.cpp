@@ -550,8 +550,14 @@ void MainResourceLoader::didFinishLoading(double finishTime)
 void MainResourceLoader::notifyFinished(CachedResource* resource)
 {
     ASSERT_UNUSED(resource, m_resource == resource);
-    if (!m_resource || (!m_resource->errorOccurred() && !m_resource->wasCanceled())) {
+    ASSERT(m_resource);
+    if (!m_resource->errorOccurred() && !m_resource->wasCanceled()) {
         didFinishLoading(m_resource->loadFinishTime());
+        return;
+    }
+
+    if (m_documentLoader->request().cachePolicy() == ReturnCacheDataDontLoad && !m_resource->wasCanceled()) {
+        frameLoader()->retryAfterFailedCacheOnlyMainResourceLoad();
         return;
     }
 

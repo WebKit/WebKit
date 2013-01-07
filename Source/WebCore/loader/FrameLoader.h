@@ -123,6 +123,8 @@ public:
     void loadItem(HistoryItem*, FrameLoadType);
     HistoryItem* requestedHistoryItem() const { return m_requestedHistoryItem.get(); }
 
+    void retryAfterFailedCacheOnlyMainResourceLoad();
+
     static void reportLocalLoadFailed(Frame*, const String& url);
 
     // FIXME: These are all functions which stop loads. We have too many.
@@ -282,12 +284,17 @@ public:
     void reportMemoryUsage(MemoryObjectInfo*) const;
 
 private:
+    enum FormSubmissionCacheLoadPolicy {
+        MayAttemptCacheOnlyLoadForFormSubmissionItem,
+        MayNotAttemptCacheOnlyLoadForFormSubmissionItem
+    };
+
     bool allChildrenAreComplete() const; // immediate children, not all descendants
 
     void checkTimerFired(Timer<FrameLoader>*);
     
     void loadSameDocumentItem(HistoryItem*);
-    void loadDifferentDocumentItem(HistoryItem*, FrameLoadType);
+    void loadDifferentDocumentItem(HistoryItem*, FrameLoadType, FormSubmissionCacheLoadPolicy);
     
     void loadProvisionalItemFromCachedPage();
 

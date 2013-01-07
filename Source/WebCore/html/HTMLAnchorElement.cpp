@@ -512,6 +512,7 @@ void HTMLAnchorElement::handleClick(Event* event)
     if (hasAttribute(downloadAttr)) {
         ResourceRequest request(kurl);
 
+        // FIXME: Why are we not calling addExtraFieldsToMainResourceRequest() if this check fails? It sets many important header fields.
         if (!hasRel(RelationNoReferrer)) {
             String referrer = SecurityPolicy::generateReferrerHeader(document()->referrerPolicy(), kurl, frame->loader()->outgoingReferrer());
             if (!referrer.isEmpty())

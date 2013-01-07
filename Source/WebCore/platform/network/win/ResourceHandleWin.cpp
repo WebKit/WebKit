@@ -431,12 +431,6 @@ void ResourceHandle::setSynchronousInternetHandle(HINTERNET internetHandle)
     d->m_loadSynchronously = true;
 }
 
-bool ResourceHandle::willLoadFromCache(ResourceRequest&, Frame*)
-{
-    notImplemented();
-    return false;
-}
-
 void prefetchDNS(const String&)
 {
     notImplemented();
