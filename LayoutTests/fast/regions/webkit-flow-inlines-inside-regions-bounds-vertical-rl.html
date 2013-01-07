@@ -1,56 +1,62 @@
 <!doctype html>
+<html>
+    <head>
+        <style>
+            html { -webkit-writing-mode: vertical-rl; }
 
- <style>
-    html { -webkit-writing-mode: vertical-rl }
- 
-    #content {
-        -webkit-flow-into: flow1;
-        text-align: justify;
-        padding: 5px;
-    }
-    
-    #first-box {
-        border: 1px solid blue;
-    }
-    
-    #second-box {
-        margin:10px;
-        border: 1px solid green;
-    }
-    
-    #region1, #region2, #region3 {
-        border: 1px solid black;
-        -webkit-flow-from: flow1;
-    }
+            #content {
+                -webkit-flow-into: flow1;
+                padding: 5px;
+                font: 12px/16px monospace;
+            }
 
-    #region1 {
-        width: 200px;
-        height: 100px;
-    }
-    
-    #region2 {
-        width: 300px;
-        height: 180px;
-    }
-    
-    #region3 {
-        width: 120px;
-        height: 120px;
-    }
-</style>
+            #first-box {
+                border: 1px solid blue;
+            }
 
-<div id="content">
-    <div id="first-box">
-        <div id="second-box">
-            <p>This line of text should not get out of the region. This line of text should not get out of the region. This line of text should not get out of the region. This line of text should not get out of the region.</p>
-            <p>This line of text should not get out of the region. This line of text should not get out of the region. This line of text should not get out of the region. This line of text should not get out of the region.</p>
-            <p>This line of text should not get out of the region.</p>
+            #second-box {
+                margin:10px;
+                border: 1px solid green;
+            }
+
+            #second-box > p { margin: 0; }
+
+            #region1, #region2, #region3 {
+                border: 1px solid black;
+                -webkit-flow-from: flow1;
+            }
+
+            #region1 {
+                width: 200px;
+                height: 100px;
+            }
+
+            #region2 {
+                width: 300px;
+                height: 180px;
+            }
+
+            #region3 {
+                width: 120px;
+                height: 120px;
+            }
+        </style>
+    </head>
+    <body>
+        <div id="content">
+            <div id="first-box">
+                <div id="second-box">
+                    <p>This line of text should not get out of the region. This line of text should not get out of the region. This line of text should not get out of the region. This line of text should not get out of the region.</p>
+                    <p>This line of text should not get out of the region. This line of text should not get out of the region. This line of text should not get out of the region. This line of text should not get out of the region.</p>
+                    <p>This line of text should not get out of the region.</p>
+                </div>
+            </div>
         </div>
-    </div>
-</div>
 
-<div id="container">
-    <div id="region1"></div>
-    <div id="region2"></div>
-    <div id="region3"></div>
-</div>
+        <div id="container">
+            <div id="region1"></div>
+            <div id="region2"></div>
+            <div id="region3"></div>
+        </div>
+    </body>
+</html>

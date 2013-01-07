@@ -1,3 +1,29 @@
+2013-01-07  Mihnea Ovidenie  <mihnea@adobe.com>
+
+        [CSS Regions] LayoutTests/fast/regions/webkit-flow-inlines-inside-regions-bounds-vertical-rl.html has repainting issues
+        https://bugs.webkit.org/show_bug.cgi?id=97208
+
+        Reviewed by Tony Chang.
+
+        Following the fix for https://bugs.webkit.org/show_bug.cgi?id=105893, i converted this to a ref test.
+        Used a defined monospace font for similar results on all platforms.
+
+        * fast/regions/webkit-flow-inlines-inside-regions-bounds-vertical-rl-expected.html: Added.
+        * fast/regions/webkit-flow-inlines-inside-regions-bounds-vertical-rl-expected.png: Removed.
+        * fast/regions/webkit-flow-inlines-inside-regions-bounds-vertical-rl.html:
+        * platform/chromium-linux/fast/regions/webkit-flow-inlines-inside-regions-bounds-vertical-rl-expected.png: Removed.
+        * platform/chromium-mac-lion/fast/regions/webkit-flow-inlines-inside-regions-bounds-vertical-rl-expected.png: Removed.
+        * platform/chromium-mac/fast/regions/webkit-flow-inlines-inside-regions-bounds-vertical-rl-expected.png: Removed.
+        * platform/chromium-win/fast/regions/webkit-flow-inlines-inside-regions-bounds-vertical-rl-expected.png: Removed.
+        * platform/chromium-win/fast/regions/webkit-flow-inlines-inside-regions-bounds-vertical-rl-expected.txt: Removed.
+        * platform/chromium/fast/regions/webkit-flow-inlines-inside-regions-bounds-vertical-rl-expected.txt: Removed.
+        * platform/efl/fast/regions/webkit-flow-inlines-inside-regions-bounds-vertical-rl-expected.txt: Removed.
+        * platform/gtk/fast/regions/webkit-flow-inlines-inside-regions-bounds-vertical-rl-expected.txt: Removed.
+        * platform/mac/fast/regions/webkit-flow-inlines-inside-regions-bounds-vertical-rl-expected.png: Removed.
+        * platform/mac/fast/regions/webkit-flow-inlines-inside-regions-bounds-vertical-rl-expected.txt: Removed.
+        * platform/qt/fast/regions/webkit-flow-inlines-inside-regions-bounds-vertical-rl-expected.png: Removed.
+        * platform/qt/fast/regions/webkit-flow-inlines-inside-regions-bounds-vertical-rl-expected.txt: Removed.
+
 2013-01-07  Dimitri Glazkov  <dglazkov@chromium.org>
 
         [Chromium] Marked WebAudio tests that are failing on Windows.
