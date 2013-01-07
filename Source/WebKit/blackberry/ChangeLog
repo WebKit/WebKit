@@ -1,3 +1,15 @@
+2013-01-07  Jacky Jiang  <zhajiang@rim.com>
+
+        [BlackBerry] Roll out r136173 as there are alternative approaches from the client sides now
+        https://bugs.webkit.org/show_bug.cgi?id=106236
+
+        Unreviewed, rolling out r136173.
+        This becomes unnecessary now as there are alternative approaches to
+        solve the issue from the client sides.
+
+        * WebCoreSupport/ChromeClientBlackBerry.cpp:
+        (WebCore::ChromeClientBlackBerry::createWindow):
+
 2013-01-07  Jakob Petsovits  <jpetsovits@rim.com>
 
         [BlackBerry] Never avoid blitting when one-shot drawing sync is involved.
@@ -2031,26 +2043,6 @@
 
         * Api/BlackBerryGlobal.cpp:
         (BlackBerry::WebKit::globalInitialize):
-
-2012-11-29  Jacky Jiang  <zhajiang@rim.com>
-
-        [BlackBerry] window.open can load url twice which can cause security and timing issues
-        https://bugs.webkit.org/show_bug.cgi?id=103670
-
-        Reviewed by Yong Li.
-
-        PR: 252234
-        When we call window.open() in JS, DOMWindow will create a window and
-        change the url to load the resources. However, during the window
-        creation, we dispatch an OpenWindow event with the url to browser side
-        and browser side loads the url thereafter as well.
-        DOMWindow::createWindow() is only required to create the window not to
-        load url as far as I can tell. This is unneccessary and can cause
-        unexpected issues. So just pass an empty url instead to avoid
-        the double-load issue.
-
-        * WebCoreSupport/ChromeClientBlackBerry.cpp:
-        (WebCore::ChromeClientBlackBerry::createWindow):
 
 2012-11-29  Otto Derek Cheung  <otcheung@rim.com>
 
