@@ -2355,16 +2355,18 @@ bool BackingStorePrivate::isActive() const
 
 void BackingStorePrivate::didRenderContent(const Platform::IntRectRegion& renderedRegion)
 {
-    if (isScrollingOrZooming())
-        return;
-
     if (!shouldDirectRenderingToWindow()) {
 #if USE(ACCELERATED_COMPOSITING)
         if (m_webPage->d->needsOneShotDrawingSynchronization())
             m_webPage->d->commitRootLayerIfNeeded();
         else
 #endif
+        {
+            if (isScrollingOrZooming())
+                return; // don't drag down framerates by double-blitting.
+
             blitVisibleContents();
+        }
     } else
         invalidateWindow();
 

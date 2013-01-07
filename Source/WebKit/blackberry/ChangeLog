@@ -1,3 +1,31 @@
+2013-01-07  Jakob Petsovits  <jpetsovits@rim.com>
+
+        [BlackBerry] Never avoid blitting when one-shot drawing sync is involved.
+        https://bugs.webkit.org/show_bug.cgi?id=106225
+        RIM PR 274948
+
+        Reviewed by George Staikos.
+        Based on a patch by Chris Guan.
+
+        didRenderContent() has a mechanism to avoid double blits;
+        when scrolling or zooming is enabled then we don't issue
+        blitContents() as the client would (continually) do that
+        already.
+
+        However, since r138024, didRenderContents() also deals
+        with one-shot drawing synchronization and commits.
+        When these are required, we can't just skip out or the
+        backingstore and overlaying composited layers are likely
+        to get out of sync. The condition also doesn't make much
+        sense for direct rendering as no blit calls are issued
+        at all when it is enabled.
+
+        Fix the issue by limiting the impact of the scroll/zoom
+        early return to only regular blit operations.
+
+        * Api/BackingStore.cpp:
+        (BlackBerry::WebKit::BackingStorePrivate::didRenderContent):
+
 2013-01-05  Andy Chen  <andchen@rim.com>
 
         [BlackBerry] SelectionHandler::selectAtPoint should use last fat finger result when it is a link
