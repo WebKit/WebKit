@@ -52,6 +52,7 @@ private Q_SLOTS:
     void reusePage();
     void microFocusCoordinates();
     void focusInputTypes();
+    void horizontalScrollbarTest();
 
     void crashTests();
 #if !(defined(WTF_USE_QT_MOBILE_THEME) && WTF_USE_QT_MOBILE_THEME)
@@ -302,6 +303,32 @@ void tst_QWebView::focusInputTypes()
     QVERIFY(webView.inputMethodHints() == Qt::ImhNone);
     QVERIFY(webView.testAttribute(Qt::WA_InputMethodEnabled));
 }
+
+void tst_QWebView::horizontalScrollbarTest()
+{
+    QWebView webView;
+    webView.resize(600, 600);
+    webView.show();
+    QTest::qWaitForWindowExposed(&webView);
+
+    QUrl url("qrc:///resources/scrolltest_page.html");
+    QWebFrame* const mainFrame = webView.page()->mainFrame();
+    mainFrame->load(url);
+    mainFrame->setFocus();
+
+    QVERIFY(waitForSignal(&webView, SIGNAL(loadFinished(bool))));
+
+    QVERIFY(webView.page()->mainFrame()->scrollPosition() == QPoint(0, 0));
+
+    // Note: The test below assumes that the layout direction is Qt::LeftToRight.
+    QTest::mouseClick(&webView, Qt::LeftButton, 0, QPoint(550, 595));
+    QVERIFY(webView.page()->mainFrame()->scrollPosition().x() > 0);
+
+    // Note: The test below assumes that the layout direction is Qt::LeftToRight.
+    QTest::mouseClick(&webView, Qt::LeftButton, 0, QPoint(20, 595));
+    QVERIFY(webView.page()->mainFrame()->scrollPosition() == QPoint(0, 0));
+}
+
 
 #if !(defined(WTF_USE_QT_MOBILE_THEME) && WTF_USE_QT_MOBILE_THEME)
 void tst_QWebView::setPalette_data()

@@ -42,6 +42,7 @@ private Q_SLOTS:
     void crashOnSetScaleBeforeSetUrl();
     void widgetsRenderingThroughCache();
     void windowResizeEvent();
+    void horizontalScrollbarTest();
 
 #if !(defined(WTF_USE_QT_MOBILE_THEME) && WTF_USE_QT_MOBILE_THEME)
     void setPalette_data();
@@ -678,6 +679,44 @@ void tst_QGraphicsWebView::windowResizeEvent()
 
     // This will be triggered without the fix on DOMWindow::innerHeight/Width
     QCOMPARE(resizeSpy.size(), QSize(60, 60));
+}
+
+void tst_QGraphicsWebView::horizontalScrollbarTest()
+{
+    QWebPage* page = new QWebPage;
+    GraphicsWebView* webView = new GraphicsWebView;
+    webView->setPage(page);
+    webView->setGeometry(QRect(0, 0, 600, 600));
+    QGraphicsView* view = new QGraphicsView;
+    QGraphicsScene* scene = new QGraphicsScene(view);
+    view->setScene(scene);
+    scene->addItem(webView);
+
+    // Turn off scrolling on the containing QGraphicsView, let the
+    // QGraphicsWebView handle the scrolling by itself.
+    view->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+    view->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+    view->show();
+    QCoreApplication::processEvents();
+
+    QUrl url("qrc:///resources/scrolltest_page.html");
+    page->mainFrame()->load(url);
+    page->mainFrame()->setFocus();
+
+    QVERIFY(waitForSignal(page, SIGNAL(loadFinished(bool))));
+
+    QVERIFY(webView->page()->mainFrame()->scrollPosition() == QPoint(0, 0));
+
+    // Note: The test below assumes that the layout direction is Qt::LeftToRight.
+    webView->fireMouseClick(QPointF(550.0, 590.0));
+    QVERIFY(page->mainFrame()->scrollPosition().x() > 0);
+
+    // Note: The test below assumes that the layout direction is Qt::LeftToRight.
+    webView->fireMouseClick(QPointF(20.0, 590.0));
+    QVERIFY(page->mainFrame()->scrollPosition() == QPoint(0, 0));
+
+    delete webView;
+    delete view;
 }
 
 QTEST_MAIN(tst_QGraphicsWebView)
