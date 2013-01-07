@@ -4301,4 +4301,5 @@ webkit.org/b/47975 [ MountainLion ] fast/block/float/max-width-clear-float-with-
 
 webkit.org/b/106238 [ Win ] svg/dynamic-updates/SVGUseElement-dom-href1-attr.html [ ImageOnlyFailure Pass ]
 webkit.org/b/106238 [ Win ] svg/dynamic-updates/SVGUseElement-svgdom-href1-prop.html [ ImageOnlyFailure Pass ]
+webkit.org/b/106249 [ Win ] fast/speech/scripted/navigate-away.html [ Failure Pass ]
 

@@ -1,5 +1,12 @@
 2013-01-07  Dimitri Glazkov  <dglazkov@chromium.org>
 
+        [Chromium] fast/speech/scripted/navigate-away.html is flaky.
+        https://bugs.webkit.org/show_bug.cgi?id=106249
+
+        * platform/chromium/TestExpectations: Marked as flaky.
+
+2013-01-07  Dimitri Glazkov  <dglazkov@chromium.org>
+
         [Chromium] Rebaseline webaudio/realtimeanalyser-fft-sizing.html.
 
         * platform/chromium-win/webaudio/realtimeanalyser-fft-sizing-expected.txt: Renamed from LayoutTests/platform/chromium-win-xp/webaudio/realtimeanalyser-fft-sizing-expected.txt.
