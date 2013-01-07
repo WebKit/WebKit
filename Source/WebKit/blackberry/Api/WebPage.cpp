@@ -3662,7 +3662,7 @@ void WebPagePrivate::setViewportSize(const IntSize& transformedActualVisibleSize
     IntSize viewportSizeAfter = actualVisibleSize();
 
     IntSize offset;
-    if (hasPendingOrientation) {
+    if (hasPendingOrientation && !m_fullscreenVideoNode) {
         offset = IntSize(roundf((viewportSizeBefore.width() - viewportSizeAfter.width()) / 2.0),
             roundf((viewportSizeBefore.height() - viewportSizeAfter.height()) / 2.0));
     }

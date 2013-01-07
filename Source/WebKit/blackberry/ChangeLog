@@ -1,3 +1,18 @@
+2013-01-07  Genevieve Mak  <gmak@rim.com>
+
+        [BlackBerry] Touch Events are falling through fullscreen video
+        https://bugs.webkit.org/show_bug.cgi?id=106112
+
+        Reviewed by Rob Buis.
+
+        Reviewed Internally by Jakob Petsovits.
+        PR #274326
+        Do not do viewport centering calculations if in fullscreen video.
+        The offset should be zero.
+
+        * Api/WebPage.cpp:
+        (BlackBerry::WebKit::WebPagePrivate::setViewportSize):
+
 2013-01-07  Jacky Jiang  <zhajiang@rim.com>
 
         [BlackBerry] Roll out r136173 as there are alternative approaches from the client sides now
