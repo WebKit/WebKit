@@ -1,3 +1,85 @@
+2013-01-05  Sam Weinig  <sam@webkit.org>
+
+        Merge child process main functions as much as possible
+        https://bugs.webkit.org/show_bug.cgi?id=106192
+
+        Reviewed by Anders Carlsson.
+
+        To reduce copied code, this merges the Mac main functions for the WebProcess,
+        NetworkProcess, PluginProcess, and SharedWorkerProcess. Since slight variations
+        are needed, it adds a delegate class for hooks into the main function that each
+        process can override if necessary.
+
+        * NetworkProcess/mac/NetworkProcessMainMac.mm:
+        (WebKit::NetworkProcessMain):
+        Remove almost everything with a call to ChildProcessMain with the default delegate.
+
+        * PluginProcess/mac/PluginProcessMac.mm:
+        (WebKit::PluginProcess::platformInitializeProcess):
+        Move defaults registration here from PluginProcessMainMac.
+
+        * PluginProcess/mac/PluginProcessMainMac.mm:
+        (PluginProcessMainDelegate):
+        Add a delegate for the new shared main function that does does PluginProcess
+        specific work.
+
+        (WebKit::PluginProcessMainDelegate::doPreInitializationWork):
+        Move DYLD_INSERT_LIBRARIES removal and createPluginMIMETypesPreferences special mode
+        to this pre-initialization hook.
+
+        (WebKit::PluginProcessMainDelegate::doPostRunWork):
+        Move private temporary and cache directories clean up to this post run hook.
+
+        (WebKit::PluginProcessMain):
+        Call the ChildProcessMain shared main function with the PluginProcess as the process
+        to initialize and PluginProcessMainDelegate as the main delegate.
+
+        * Shared/mac/ChildProcessMain.h: Added.
+        (ChildProcessMainDelegate):
+        ChildProcessMainDelegate is a helper class that process can subclass to hook into
+        the main function.
+
+        (WebKit::ChildProcessMain):
+        Add a single version of the "main" function that uses the ChildProcessMainDelegate to
+        allow processes to hook into it.
+
+        * Shared/mac/ChildProcessMain.mm:
+        (WebKit::ChildProcessMainDelegate::~ChildProcessMainDelegate):
+        (WebKit::ChildProcessMainDelegate::installSignalHandlers):
+        (WebKit::ChildProcessMainDelegate::doPreInitializationWork):
+        (WebKit::ChildProcessMainDelegate::getConnectionIdentifier):
+        (WebKit::ChildProcessMainDelegate::getClientIdentifier):
+        (WebKit::ChildProcessMainDelegate::getClientProcessName):
+        (WebKit::ChildProcessMainDelegate::doPostRunWork):
+        Add default implementations of the delegate hooks, most processes should be able to
+        use the defaults.
+
+        * SharedWorkerProcess/mac/SharedWorkerProcessMainMac.mm:
+        (WebKit::SharedWorkerProcessMain):
+        Remove almost everything with a call to ChildProcessMain with the default delegate.
+
+        * WebKit2.xcodeproj/project.pbxproj:
+        Add new files.
+
+        * WebProcess/mac/WebProcessMainMac.mm:
+        (WebProcessMainDelegate):
+        Add a delegate for the new shared main function that does does WebProcess
+        specific work.
+
+        (WebKit::WebProcessMainDelegate::doPreInitializationWork):
+        Move DYLD_INSERT_LIBRARIES removal to this this pre-initialization hook.
+
+        (WebKit::WebProcessMainDelegate::getConnectionIdentifier):
+        A custom getConnectionIdentifier is necessary for the WebProcess to keep support for having the WebProcess
+        be able to launch the UIProcess (for debugging purposes).
+
+        (WebKit::WebProcessMainDelegate::getClientIdentifier):
+        For the same reasons as about, a custom getClientIdentifier is needed.
+
+        (WebKit::WebProcessMain):
+        Call the ChildProcessMain shared main function with the WebProcess as the process
+        to initialize and WebProcessMainDelegate as the main delegate.
+
 2013-01-07  Simon Fraser  <simon.fraser@apple.com>
 
         Make WKViews work when layer-backed

@@ -146,4 +146,12 @@ const char* EnvironmentVariables::preexistingProcessTypeKey()
     return "WEBKIT_PREEXISTING_PROCESS_TYPE";
 }
 
+void EnvironmentVariables::dump()
+{
+    for (size_t i = 0; (*_NSGetEnviron())[i]; i++)
+        printf("%s\n", (*_NSGetEnviron())[i]);
+
+    printf("\n\n\n");
+}
+
 } // namespace WebKit

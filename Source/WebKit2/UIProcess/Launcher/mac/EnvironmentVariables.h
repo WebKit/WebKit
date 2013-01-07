@@ -49,6 +49,8 @@ public:
     static const char* preexistingProcessServiceNameKey();
     static const char* preexistingProcessTypeKey();
 
+    static void dump();
+
 private:
     const char* valueIfVariableHasName(const char* environmentVariable, const char* name) const;
     const char* createStringForVariable(const char* name, const char* value);

@@ -830,6 +830,8 @@
 		BC9B38A110F538BE00443A15 /* WebFrameProxy.h in Headers */ = {isa = PBXBuildFile; fileRef = BC9B389F10F538BE00443A15 /* WebFrameProxy.h */; };
 		BC9BA5041697C45300E44616 /* WebKit2Initialize.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC9BA5021697C45300E44616 /* WebKit2Initialize.cpp */; };
 		BC9BA5051697C45300E44616 /* WebKit2Initialize.h in Headers */ = {isa = PBXBuildFile; fileRef = BC9BA5031697C45300E44616 /* WebKit2Initialize.h */; };
+		BC9BA50816991C3C00E44616 /* ChildProcessMain.mm in Sources */ = {isa = PBXBuildFile; fileRef = BC9BA50616991C3C00E44616 /* ChildProcessMain.mm */; };
+		BC9BA50916991C3C00E44616 /* ChildProcessMain.h in Headers */ = {isa = PBXBuildFile; fileRef = BC9BA50716991C3C00E44616 /* ChildProcessMain.h */; };
 		BC9FA520160D3B430054DF9A /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BC3DE46815A91763008D26FC /* Foundation.framework */; };
 		BC9FA522160D4A0C0054DF9A /* com.apple.WebKit.PluginProcess.sb in Resources */ = {isa = PBXBuildFile; fileRef = E1967E35150AB5D500C73169 /* com.apple.WebKit.PluginProcess.sb */; };
 		BC9FA523160D4A0F0054DF9A /* com.apple.WebProcess.sb in Resources */ = {isa = PBXBuildFile; fileRef = E1967E37150AB5E200C73169 /* com.apple.WebProcess.sb */; };
@@ -2102,6 +2104,8 @@
 		BC9B389F10F538BE00443A15 /* WebFrameProxy.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebFrameProxy.h; sourceTree = "<group>"; };
 		BC9BA5021697C45300E44616 /* WebKit2Initialize.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebKit2Initialize.cpp; sourceTree = "<group>"; };
 		BC9BA5031697C45300E44616 /* WebKit2Initialize.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebKit2Initialize.h; sourceTree = "<group>"; };
+		BC9BA50616991C3C00E44616 /* ChildProcessMain.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = ChildProcessMain.mm; sourceTree = "<group>"; };
+		BC9BA50716991C3C00E44616 /* ChildProcessMain.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ChildProcessMain.h; sourceTree = "<group>"; };
 		BCA0EF7D12331E78007D3CFB /* WebUndoStep.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebUndoStep.h; sourceTree = "<group>"; };
 		BCA0EF7E12331E78007D3CFB /* WebUndoStep.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebUndoStep.cpp; sourceTree = "<group>"; };
 		BCA0EF9D12332642007D3CFB /* WebEditCommandProxy.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebEditCommandProxy.h; sourceTree = "<group>"; };
@@ -3837,6 +3841,8 @@
 				905620E512BC2476000799B6 /* WebMemorySampler.mac.mm */,
 				BCE231C0122C466E00D5C35A /* WebURLRequestMac.mm */,
 				BC90A1D5122DD66A00CC8C50 /* WebURLResponseMac.mm */,
+				BC9BA50616991C3C00E44616 /* ChildProcessMain.mm */,
+				BC9BA50716991C3C00E44616 /* ChildProcessMain.h */,
 			);
 			path = mac;
 			sourceTree = "<group>";
@@ -5032,6 +5038,7 @@
 				BCF4DE23168E4BD500C94AFC /* NetworkProcessSupplement.h in Headers */,
 				BCF4DE25168FA44800C94AFC /* WebContextSupplement.h in Headers */,
 				BC9BA5051697C45300E44616 /* WebKit2Initialize.h in Headers */,
+				BC9BA50916991C3C00E44616 /* ChildProcessMain.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -6006,6 +6013,7 @@
 				2989A411167D1834004F96D2 /* CustomProtocolManagerMac.mm in Sources */,
 				31A505F91680025500A930EB /* WebContextClient.cpp in Sources */,
 				BC9BA5041697C45300E44616 /* WebKit2Initialize.cpp in Sources */,
+				BC9BA50816991C3C00E44616 /* ChildProcessMain.mm in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
