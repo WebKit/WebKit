@@ -160,10 +160,12 @@ static unsigned typedArrayElementSize(ArrayBufferViewSubtag tag)
  * Version 2. added the ObjectReferenceTag and support for serialization of cyclic graphs.
  * Version 3. added the FalseObjectTag, TrueObjectTag, NumberObjectTag, StringObjectTag
  * and EmptyStringObjectTag for serialization of Boolean, Number and String objects.
+ * Version 4. added support for serializing non-index properties of arrays.
  */
-static const unsigned int CurrentVersion = 3;
-static const unsigned int TerminatorTag = 0xFFFFFFFF;
-static const unsigned int StringPoolTag = 0xFFFFFFFE;
+static const unsigned CurrentVersion = 4;
+static const unsigned TerminatorTag = 0xFFFFFFFF;
+static const unsigned StringPoolTag = 0xFFFFFFFE;
+static const unsigned NonIndexPropertiesTag = 0xFFFFFFFD;
 
 /*
  * Object serialization is performed according to the following grammar, all tags
@@ -838,8 +840,7 @@ SerializationReturnCode CloneSerializer::serialize(JSValue in)
     Vector<uint32_t, 16> indexStack;
     Vector<uint32_t, 16> lengthStack;
     Vector<PropertyNameArray, 16> propertyStack;
-    Vector<JSObject*, 16> inputObjectStack;
-    Vector<JSArray*, 16> inputArrayStack;
+    Vector<JSObject*, 32> inputObjectStack;
     Vector<WalkerState, 16> stateStack;
     WalkerState state = StateUnknown;
     JSValue inValue = in;
@@ -849,14 +850,14 @@ SerializationReturnCode CloneSerializer::serialize(JSValue in)
             arrayStartState:
             case ArrayStartState: {
                 ASSERT(isArray(inValue));
-                if (inputObjectStack.size() + inputArrayStack.size() > maximumFilterRecursion)
+                if (inputObjectStack.size() > maximumFilterRecursion)
                     return StackOverflowError;
 
                 JSArray* inArray = asArray(inValue);
                 unsigned length = inArray->length();
                 if (!startArray(inArray))
                     break;
-                inputArrayStack.append(inArray);
+                inputObjectStack.append(inArray);
                 indexStack.append(0);
                 lengthStack.append(length);
                 // fallthrough
@@ -869,13 +870,23 @@ SerializationReturnCode CloneSerializer::serialize(JSValue in)
                     tickCount = ticksUntilNextCheck();
                 }
 
-                JSArray* array = inputArrayStack.last();
+                JSObject* array = inputObjectStack.last();
                 uint32_t index = indexStack.last();
                 if (index == lengthStack.last()) {
-                    endObject();
-                    inputArrayStack.removeLast();
                     indexStack.removeLast();
                     lengthStack.removeLast();
+
+                    propertyStack.append(PropertyNameArray(m_exec));
+                    array->methodTable()->getOwnNonIndexPropertyNames(array, m_exec, propertyStack.last(), ExcludeDontEnumProperties);
+                    if (propertyStack.last().size()) {
+                        write(NonIndexPropertiesTag);
+                        indexStack.append(0);
+                        goto objectStartVisitMember;
+                    }
+                    propertyStack.removeLast();
+
+                    endObject();
+                    inputObjectStack.removeLast();
                     break;
                 }
                 inValue = array->getDirectIndex(m_exec, index);
@@ -902,7 +913,7 @@ SerializationReturnCode CloneSerializer::serialize(JSValue in)
             objectStartState:
             case ObjectStartState: {
                 ASSERT(inValue.isObject());
-                if (inputObjectStack.size() + inputArrayStack.size() > maximumFilterRecursion)
+                if (inputObjectStack.size() > maximumFilterRecursion)
                     return StackOverflowError;
                 JSObject* inObject = asObject(inValue);
                 if (!startObject(inObject))
@@ -1279,9 +1290,9 @@ private:
         return true;
     }
 
-    void putProperty(JSArray* array, unsigned index, JSValue value)
+    void putProperty(JSObject* object, unsigned index, JSValue value)
     {
-        array->putDirectIndex(m_exec, index, value);
+        object->putDirectIndex(m_exec, index, value);
     }
 
     void putProperty(JSObject* object, const Identifier& property, JSValue value)
@@ -1600,8 +1611,7 @@ DeserializationResult CloneDeserializer::deserialize()
 {
     Vector<uint32_t, 16> indexStack;
     Vector<Identifier, 16> propertyNameStack;
-    Vector<JSObject*, 16> outputObjectStack;
-    Vector<JSArray*, 16> outputArrayStack;
+    Vector<JSObject*, 32> outputObjectStack;
     Vector<WalkerState, 16> stateStack;
     WalkerState state = StateUnknown;
     JSValue outValue;
@@ -1618,7 +1628,7 @@ DeserializationResult CloneDeserializer::deserialize()
             }
             JSArray* outArray = constructEmptyArray(m_exec, 0, m_globalObject, length);
             m_gcBuffer.append(outArray);
-            outputArrayStack.append(outArray);
+            outputObjectStack.append(outArray);
             // fallthrough
         }
         arrayStartVisitMember:
@@ -1635,14 +1645,16 @@ DeserializationResult CloneDeserializer::deserialize()
                 goto error;
             }
             if (index == TerminatorTag) {
-                JSArray* outArray = outputArrayStack.last();
+                JSObject* outArray = outputObjectStack.last();
                 outValue = outArray;
-                outputArrayStack.removeLast();
+                outputObjectStack.removeLast();
                 break;
+            } else if (index == NonIndexPropertiesTag) {
+                goto objectStartVisitMember;
             }
 
             if (JSValue terminal = readTerminal()) {
-                putProperty(outputArrayStack.last(), index, terminal);
+                putProperty(outputObjectStack.last(), index, terminal);
                 goto arrayStartVisitMember;
             }
             if (m_failed)
@@ -1652,14 +1664,14 @@ DeserializationResult CloneDeserializer::deserialize()
             goto stateUnknown;
         }
         case ArrayEndVisitMember: {
-            JSArray* outArray = outputArrayStack.last();
+            JSObject* outArray = outputObjectStack.last();
             putProperty(outArray, indexStack.last(), outValue);
             indexStack.removeLast();
             goto arrayStartVisitMember;
         }
         objectStartState:
         case ObjectStartState: {
-            if (outputObjectStack.size() + outputArrayStack.size() > maximumFilterRecursion)
+            if (outputObjectStack.size() > maximumFilterRecursion)
                 return make_pair(JSValue(), StackOverflowError);
             JSObject* outObject = constructEmptyObject(m_exec, m_globalObject);
             m_gcBuffer.append(outObject);

@@ -1,3 +1,19 @@
+2013-01-07  Michael Pruett  <michael@68k.org>
+
+        [JSC] Copy non-index properties of arrays in SerializedScriptValue
+        https://bugs.webkit.org/show_bug.cgi?id=105575
+
+        Reviewed by Oliver Hunt.
+
+        The structured cloning algorithm requires copying all properties of
+        array objects, including non-index properties.
+
+        * fast/storage/resources/serialized-script-value.js:
+        * fast/storage/serialized-script-value-expected.txt:
+        * fast/storage/serialized-script-value.html:
+        * platform/chromium/fast/storage/serialized-script-value-expected.txt:
+        * platform/chromium/fast/storage/serialized-script-value.html:
+
 2013-01-07  Mihnea Ovidenie  <mihnea@adobe.com>
 
         [CSS Regions] LayoutTests/fast/regions/webkit-flow-inlines-inside-regions-bounds-vertical-rl.html has repainting issues

@@ -46,6 +46,16 @@ function makeBuffer(bytesPerElement, serializedValues) {
     return bufferView.buffer;
 }
 
+function areValuesIdentical(a, b) {
+    function sortObject(object) {
+        if (typeof object != "object" || object === null)
+            return object;
+        return Object.keys(object).sort().map(function(key) {
+            return { key: key, value: sortObject(object[key]) };
+        });
+    }
+    return JSON.stringify(sortObject(a)) === JSON.stringify(sortObject(b));
+}
 
 function _testSerialization(bytesPerElement, obj, values, oldFormat, serializeExceptionValue) {
     debug("");
@@ -55,10 +65,12 @@ function _testSerialization(bytesPerElement, obj, values, oldFormat, serializeEx
         debug("Deserialize to " + JSON.stringify(obj) + ":");
         self.newObj = internals.deserializeBuffer(makeBuffer(bytesPerElement, values));
         shouldBe("JSON.stringify(newObj)", "JSON.stringify(obj)");
+        shouldBeTrue("areValuesIdentical(newObj, obj)");
 
         if (oldFormat) {
             self.newObj = internals.deserializeBuffer(makeBuffer(bytesPerElement, oldFormat));
             shouldBe("JSON.stringify(newObj)", "JSON.stringify(obj)");
+            shouldBeTrue("areValuesIdentical(newObj, obj)");
         }
     }
 
