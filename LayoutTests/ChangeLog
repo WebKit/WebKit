@@ -1,3 +1,13 @@
+2013-01-07  Chris Fleizach  <cfleizach@apple.com>
+
+        AX: the text of render counters are not exposed to Accessibility
+        https://bugs.webkit.org/show_bug.cgi?id=103794
+
+        Reviewed by Ryosuke Niwa.
+
+        * accessibility/render-counter-text-expected.txt: Added.
+        * accessibility/render-counter-text.html: Added.
+
 2013-01-07  Ojan Vafai  <ojan@chromium.org>
 
         A couple more rebaselines for http://trac.webkit.org/changeset/138838.
