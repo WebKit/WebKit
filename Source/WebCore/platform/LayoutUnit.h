@@ -86,7 +86,7 @@ public:
         m_value = clampTo<int>(value * kEffectiveFixedPointDenominator);
 #else
         REPORT_OVERFLOW(isInBounds(static_cast<unsigned>(value)));
-        m_value = value * kEffectiveFixedPointDenominator;
+        m_value = static_cast<int>(value * kEffectiveFixedPointDenominator);
 #endif
     }
     LayoutUnit(float value)
