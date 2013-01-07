@@ -117,6 +117,8 @@ private:
     virtual bool scrollingPerformanceLoggingEnabled() const OVERRIDE { return m_scrollingPerformanceLoggingEnabled; }
     virtual void setAggressivelyRetainsTiles(bool flag) OVERRIDE { m_aggressivelyRetainsTiles = flag; }
     virtual bool aggressivelyRetainsTiles() const OVERRIDE { return m_aggressivelyRetainsTiles; }
+    virtual void setUnparentsOffscreenTiles(bool flag) OVERRIDE { m_unparentsOffscreenTiles = flag; }
+    virtual bool unparentsOffscreenTiles() const OVERRIDE { return m_unparentsOffscreenTiles; }
     virtual IntRect tileCoverageRect() const OVERRIDE;
     virtual CALayer *tiledScrollingIndicatorLayer() OVERRIDE;
     virtual void setScrollingModeIndication(ScrollingModeIndication) OVERRIDE;
@@ -192,6 +194,7 @@ private:
     bool m_isInWindow;
     bool m_scrollingPerformanceLoggingEnabled;
     bool m_aggressivelyRetainsTiles;
+    bool m_unparentsOffscreenTiles;
     bool m_acceleratesDrawing;
     bool m_tilesAreOpaque;
 

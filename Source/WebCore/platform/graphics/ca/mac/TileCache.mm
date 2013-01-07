@@ -106,6 +106,7 @@ TileCache::TileCache(WebTileCacheLayer* tileCacheLayer)
     , m_isInWindow(false)
     , m_scrollingPerformanceLoggingEnabled(false)
     , m_aggressivelyRetainsTiles(false)
+    , m_unparentsOffscreenTiles(false)
     , m_acceleratesDrawing(false)
     , m_tilesAreOpaque(false)
     , m_tileDebugBorderWidth(0)
@@ -586,7 +587,9 @@ void TileCache::revalidateTiles(TileValidationPolicyFlags foregroundValidationPo
                 if (tileInfo.cohort == VisibleTileCohort) {
                     tileInfo.cohort = currCohort;
                     ++tilesInCohort;
-                    [tileInfo.layer.get() removeFromSuperlayer];
+                    
+                    if (m_unparentsOffscreenTiles)
+                        [tileInfo.layer.get() removeFromSuperlayer];
                 }
             }
         }
@@ -617,10 +620,10 @@ void TileCache::revalidateTiles(TileValidationPolicyFlags foregroundValidationPo
             TileInfo& tileInfo = m_tiles.add(tileIndex, TileInfo()).iterator->value;
             if (!tileInfo.layer) {
                 tileInfo.layer = createTileLayer(tileRect);
-                if (m_isInWindow)
+                if (!m_unparentsOffscreenTiles || m_isInWindow)
                     [m_tileContainerLayer.get() addSublayer:tileInfo.layer.get()];
             } else {
-                if (m_isInWindow && ![tileInfo.layer.get() superlayer])
+                if ((!m_unparentsOffscreenTiles || m_isInWindow) && ![tileInfo.layer.get() superlayer])
                     [m_tileContainerLayer.get() addSublayer:tileInfo.layer.get()];
 
                 // We already have a layer for this tile. Ensure that its size is correct.
@@ -642,7 +645,7 @@ void TileCache::revalidateTiles(TileValidationPolicyFlags foregroundValidationPo
         m_cohortList.clear();
     }
 
-    if (validationPolicy & UnparentAllTiles) {
+    if (m_unparentsOffscreenTiles && (validationPolicy & UnparentAllTiles)) {
         for (TileMap::iterator it = m_tiles.begin(), end = m_tiles.end(); it != end; ++it)
             [it->value.layer.get() removeFromSuperlayer];
     }
@@ -710,7 +713,7 @@ void TileCache::cohortRemovalTimerFired(Timer<TileCache>*)
 
 void TileCache::ensureTilesForRect(const IntRect& rect)
 {
-    if (!m_isInWindow)
+    if (m_unparentsOffscreenTiles && !m_isInWindow)
         return;
 
     PlatformCALayer* platformLayer = PlatformCALayer::platformCALayer(m_tileCacheLayer);

@@ -130,6 +130,10 @@ RenderLayerBacking::RenderLayerBacking(RenderLayer* layer)
         if (Page* page = renderer()->frame()->page()) {
             Frame* frame = renderer()->frame();
             tiledBacking->setIsInWindow(page->isOnscreen());
+
+            if (m_isMainFrameRenderViewLayer)
+                tiledBacking->setUnparentsOffscreenTiles(true);
+
             tiledBacking->setScrollingPerformanceLoggingEnabled(frame->settings() && frame->settings()->scrollingPerformanceLoggingEnabled());
             adjustTileCacheCoverage();
         }
