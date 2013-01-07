@@ -103,7 +103,7 @@ void GeolocationController::positionChanged(GeolocationPosition* position)
 {
     position = InspectorInstrumentation::overrideGeolocationPosition(m_page, position);
     if (!position) {
-        errorOccurred(GeolocationError::create(GeolocationError::PositionUnavailable, "PositionUnavailable").get());
+        errorOccurred(GeolocationError::create(GeolocationError::PositionUnavailable, ASCIILiteral("PositionUnavailable")).get());
         return;
     }
     m_lastPosition = position;

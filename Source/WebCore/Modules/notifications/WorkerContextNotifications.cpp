@@ -47,7 +47,7 @@ WorkerContextNotifications::~WorkerContextNotifications()
 
 WorkerContextNotifications* WorkerContextNotifications::from(WorkerContext* context)
 {
-    AtomicString supplementName = "WorkerContextNotifications";
+    DEFINE_STATIC_LOCAL(AtomicString, supplementName, ("WorkerContextNotifications", AtomicString::ConstructFromLiteral));
     WorkerContextNotifications* supplement = static_cast<WorkerContextNotifications*>(Supplement<ScriptExecutionContext>::from(context, supplementName));
     if (!supplement) {
         supplement = new WorkerContextNotifications(context);
