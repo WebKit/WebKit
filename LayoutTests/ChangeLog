@@ -1,3 +1,19 @@
+2013-01-07  Mihnea Ovidenie  <mihnea@adobe.com>
+
+        [GTK][EFL][Qt] New tests fast/regions/region-rule-nested-region-rule.html, fast/regions/region-styling-mediaquery.html are failing
+        https://bugs.webkit.org/show_bug.cgi?id=106168
+
+        Reviewed by Csaba Osztrogonác.
+
+        Specify a margin-top: 0 both for the h1 element that is flowed into region and the h1 element in the ref test to ensure
+        the h1 element is displayed at the same position in the region and in the containing article element.
+        Also, cleaned up the tests a little.
+
+        * fast/regions/region-rule-nested-region-rule-expected.html:
+        * fast/regions/region-rule-nested-region-rule.html:
+        * fast/regions/region-styling-mediaquery-expected.html:
+        * fast/regions/region-styling-mediaquery.html:
+
 2013-01-07  Christophe Dumez  <christophe.dumez@intel.com>
 
         Regression(r138786): Causes webaudio tests to crash

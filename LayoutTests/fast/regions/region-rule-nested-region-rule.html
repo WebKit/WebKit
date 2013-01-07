@@ -1,37 +1,34 @@
 <!doctype html>
-
-<style>
-    h1{
-        font-size: 3em;
-        color: blue;
-        -webkit-flow-into: article;
-    }
-
-    #region1{
-        -webkit-flow-from: article;
-    }
-
-   @-webkit-region #region1 {
-        h1 {
-            color: green;
-        }
-        @-webkit-region #region1{
+<html>
+    <head>
+        <style>
             h1 {
-                color: red;
+                font-size: 3em;
+                color: blue;
+                -webkit-flow-into: article;
+                margin-top: 0;
             }
-        }
-    }
-</style>
 
-<body>
+            #region1 {
+                -webkit-flow-from: article;
+            }
 
-<div id="container">
-    <div id="region1" class="region"></div>
-</div>
-
-<article>
-    <h1> The text color should be green.</h1>
-</article>
-
-</body>
+            @-webkit-region #region1 {
+                h1 {
+                    color: green;
+                }
+                @-webkit-region #region1{
+                    h1 {
+                        color: red;
+                    }
+                }
+            }
+        </style>
+    </head>
+    <body>
+        <div id="region1"></div>
+        <article>
+            <h1>The text color should be green.</h1>
+        </article>
+    </body>
 </html>
