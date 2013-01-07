@@ -579,8 +579,8 @@ void TestShell::dump()
     bool dumpedAnything = false;
 
     if (shouldDumpAsAudio) {
-        const WebKit::WebArrayBufferView& webArrayBufferView = m_testRunner->audioData();
-        m_printer.handleAudio(webArrayBufferView.baseAddress(), webArrayBufferView.byteLength());
+        const WebKit::WebArrayBufferView* webArrayBufferView = m_testRunner->audioData();
+        m_printer.handleAudio(webArrayBufferView->baseAddress(), webArrayBufferView->byteLength());
         m_printer.handleAudioFooter();
         m_printer.handleTestFooter(true);
 

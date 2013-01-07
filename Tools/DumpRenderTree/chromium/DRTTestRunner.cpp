@@ -153,7 +153,6 @@ DRTTestRunner::DRTTestRunner(TestShell* shell)
     bindMethod("setCustomPolicyDelegate", &DRTTestRunner::setCustomPolicyDelegate);
     bindMethod("setDatabaseQuota", &DRTTestRunner::setDatabaseQuota);
     bindMethod("setDeferMainResourceDataLoad", &DRTTestRunner::setDeferMainResourceDataLoad);
-    bindMethod("setAudioData", &DRTTestRunner::setAudioData);
     bindMethod("setGeolocationPermission", &DRTTestRunner::setGeolocationPermission);
     bindMethod("setMockDeviceOrientation", &DRTTestRunner::setMockDeviceOrientation);
     bindMethod("setMockGeolocationPositionUnavailableError", &DRTTestRunner::setMockGeolocationPositionUnavailableError);
@@ -496,7 +495,6 @@ void DRTTestRunner::reset()
     TestRunner::reset();
     if (m_shell)
         m_shell->webViewHost()->setDeviceScaleFactor(1);
-    m_dumpAsAudio = false;
     m_dumpCreateView = false;
     m_dumpFrameLoadCallbacks = false;
     m_dumpProgressFinishedCallback = false;
@@ -1037,23 +1035,6 @@ void DRTTestRunner::setBackingScaleFactor(const CppArgumentList& arguments, CppV
     callbackArguments[0].set(arguments[1]);
     result->setNull();
     postTask(new InvokeCallbackTask(this, callbackArguments.release(), 1));
-}
-
-void DRTTestRunner::setAudioData(const CppArgumentList& arguments, CppVariant* result)
-{
-    result->setNull();
-
-    if (arguments.size() < 1 || !arguments[0].isObject())
-        return;
-
-    // Check that passed-in object is, in fact, an ArrayBufferView.
-    NPObject* npobject = NPVARIANT_TO_OBJECT(arguments[0]);
-    if (!npobject)
-        return;
-    if (!WebBindings::getArrayBufferView(npobject, &m_audioData))
-        return;
-
-    setShouldDumpAsAudio(true);
 }
 
 #if ENABLE(POINTER_LOCK)

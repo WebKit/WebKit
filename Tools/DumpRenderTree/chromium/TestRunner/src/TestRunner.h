@@ -35,6 +35,7 @@
 #include "CppBoundClass.h"
 #include "WebDeliveredIntentClient.h"
 #include "WebTestRunner.h"
+#include "platform/WebArrayBufferView.h"
 #include "platform/WebURL.h"
 
 namespace WebKit {
@@ -65,6 +66,8 @@ public:
     virtual void setShouldGeneratePixelResults(bool) OVERRIDE;
     virtual bool shouldDumpChildFrameScrollPositions() const OVERRIDE;
     virtual bool shouldDumpChildFramesAsText() const OVERRIDE;
+    virtual bool shouldDumpAsAudio() const OVERRIDE;
+    virtual const WebKit::WebArrayBufferView* audioData() const OVERRIDE;
 
 protected:
     // FIXME: make these private once the move from DRTTestRunner to TestRunner
@@ -204,6 +207,9 @@ private:
     // It takes no arguments, and ignores any that may be present.
     void dumpChildFramesAsText(const CppArgumentList&, CppVariant*);
 
+    // Deals with Web Audio WAV file data.
+    void setAudioData(const CppArgumentList&, CppVariant*);
+
     ///////////////////////////////////////////////////////////////////////////
     // Methods interacting with the WebTestProxy
 
@@ -264,6 +270,12 @@ private:
     // If true, the test_shell will print out the child frame scroll offsets as
     // well.
     bool m_dumpChildFrameScrollPositions;
+
+    // If true, the test_shell will output a base64 encoded WAVE file.
+    bool m_dumpAsAudio;
+
+    // WAV audio data is stored here.
+    WebKit::WebArrayBufferView m_audioData;
 
     WebTestDelegate* m_delegate;
     WebKit::WebView* m_webView;

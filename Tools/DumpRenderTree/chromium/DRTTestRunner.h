@@ -192,10 +192,6 @@ public:
 
     void setDeferMainResourceDataLoad(const CppArgumentList&, CppVariant*);
 
-    // Deals with Web Audio WAV file data.
-    void setAudioData(const CppArgumentList&, CppVariant*);
-    const WebKit::WebArrayBufferView& audioData() const { return m_audioData; } 
-
     void dumpTitleChanges(const CppArgumentList&, CppVariant*);
     void display(const CppArgumentList&, CppVariant*);
     void displayInvalidatedRegion(const CppArgumentList&, CppVariant*);
@@ -266,8 +262,6 @@ public:
     // The following methods are not exposed to JavaScript.
     void setWorkQueueFrozen(bool frozen) { m_workQueue.setFrozen(frozen); }
 
-    bool shouldDumpAsAudio() const { return m_dumpAsAudio; } 
-    void setShouldDumpAsAudio(bool dumpAsAudio) { m_dumpAsAudio = dumpAsAudio; } 
     bool shouldDumpFrameLoadCallbacks() { return m_dumpFrameLoadCallbacks; }
     void setShouldDumpFrameLoadCallbacks(bool value) { m_dumpFrameLoadCallbacks = value; }
     bool shouldDumpProgressFinishedCallback() { return m_dumpProgressFinishedCallback; }
@@ -376,9 +370,6 @@ private:
     // Non-owning pointer. The DRTTestRunner is owned by the host.
     TestShell* m_shell;
 
-    // If true, the test_shell will output a base64 encoded WAVE file.
-    bool m_dumpAsAudio;
-
     // If true, the test_shell will draw the bounds of the current selection rect
     // taking possible transforms of the selection rect into account.
     bool m_dumpSelectionRect;
@@ -468,9 +459,6 @@ private:
 
     // Bound variable to set whether postMessages should be intercepted or not
     CppVariant m_interceptPostMessage;
-
-    // WAV audio data is stored here.
-    WebKit::WebArrayBufferView m_audioData;
 
     bool m_shouldStayOnPageAfterHandlingBeforeUnload;
 };

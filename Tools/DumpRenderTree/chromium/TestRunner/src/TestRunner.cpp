@@ -136,6 +136,7 @@ TestRunner::TestRunner()
     bindMethod("dumpAsText", &TestRunner::dumpAsText);
     bindMethod("dumpChildFramesAsText", &TestRunner::dumpChildFramesAsText);
     bindMethod("dumpChildFrameScrollPositions", &TestRunner::dumpChildFrameScrollPositions);
+    bindMethod("setAudioData", &TestRunner::setAudioData);
 
     // The following methods interact with the WebTestProxy.
     bindMethod("sendWebIntentResponse", &TestRunner::sendWebIntentResponse);
@@ -205,6 +206,7 @@ void TestRunner::reset()
     m_generatePixelResults = true;
     m_dumpChildFrameScrollPositions = false;
     m_dumpChildFramesAsText = false;
+    m_dumpAsAudio = false;
 
     m_globalFlag.set(false);
     m_platformName.set("chromium");
@@ -245,6 +247,16 @@ bool TestRunner::shouldDumpChildFrameScrollPositions() const
 bool TestRunner::shouldDumpChildFramesAsText() const
 {
     return m_dumpChildFramesAsText;
+}
+
+bool TestRunner::shouldDumpAsAudio() const
+{
+    return m_dumpAsAudio;
+}
+
+const WebArrayBufferView* TestRunner::audioData() const
+{
+    return &m_audioData;
 }
 
 void TestRunner::setTabKeyCyclesThroughElements(const CppArgumentList& arguments, CppVariant* result)
@@ -969,6 +981,23 @@ void TestRunner::dumpChildFramesAsText(const CppArgumentList&, CppVariant* resul
 {
     m_dumpChildFramesAsText = true;
     result->setNull();
+}
+
+void TestRunner::setAudioData(const CppArgumentList& arguments, CppVariant* result)
+{
+    result->setNull();
+
+    if (arguments.size() < 1 || !arguments[0].isObject())
+        return;
+
+    // Check that passed-in object is, in fact, an ArrayBufferView.
+    NPObject* npobject = NPVARIANT_TO_OBJECT(arguments[0]);
+    if (!npobject)
+        return;
+    if (!WebBindings::getArrayBufferView(npobject, &m_audioData))
+        return;
+
+    m_dumpAsAudio = true;
 }
 
 void TestRunner::workerThreadCount(CppVariant* result)

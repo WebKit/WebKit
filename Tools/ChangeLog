@@ -1,3 +1,31 @@
+2013-01-07  Jochen Eisinger  <jochen@chromium.org>
+
+        [chromium] move web audio related methods to testrunner library
+        https://bugs.webkit.org/show_bug.cgi?id=106211
+
+        Reviewed by Adam Barth.
+
+        * DumpRenderTree/chromium/DRTTestRunner.cpp:
+        (DRTTestRunner::DRTTestRunner):
+        (DRTTestRunner::reset):
+        * DumpRenderTree/chromium/DRTTestRunner.h:
+        (DRTTestRunner):
+        * DumpRenderTree/chromium/TestRunner/public/WebTestRunner.h:
+        (WebKit):
+        (WebTestRunner::WebTestRunner::shouldDumpAsAudio):
+        (WebTestRunner::WebTestRunner::audioData):
+        * DumpRenderTree/chromium/TestRunner/src/TestRunner.cpp:
+        (WebTestRunner::TestRunner::TestRunner):
+        (WebTestRunner::TestRunner::reset):
+        (WebTestRunner::TestRunner::shouldDumpAsAudio):
+        (WebTestRunner):
+        (WebTestRunner::TestRunner::audioData):
+        (WebTestRunner::TestRunner::setAudioData):
+        * DumpRenderTree/chromium/TestRunner/src/TestRunner.h:
+        (TestRunner):
+        * DumpRenderTree/chromium/TestShell.cpp:
+        (TestShell::dump):
+
 2013-01-07  Mike West  <mkwst@chromium.org>
 
         Make the IFRAME_SEAMLESS flag runtime-enabled.
