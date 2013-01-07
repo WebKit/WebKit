@@ -679,6 +679,7 @@ static void resetDefaultsToConsistentValues()
     [preferences setUsePreHTML5ParserQuirks:NO];
     [preferences setAsynchronousSpellCheckingEnabled:NO];
     [preferences setMockScrollbarsEnabled:YES];
+    [preferences setSeamlessIFramesEnabled:YES];
 
 #if ENABLE(WEB_AUDIO)
     [preferences setWebAudioEnabled:YES];

@@ -74,7 +74,7 @@
 #include <wtf/OwnArrayPtr.h>
 #include <wtf/PassOwnArrayPtr.h>
 
-#if ENABLE(SHADOW_DOM) || ENABLE(CSS_REGIONS)
+#if ENABLE(SHADOW_DOM) || ENABLE(CSS_REGIONS) || ENABLE(IFRAME_SEAMLESS)
 #include <WebCore/RuntimeEnabledFeatures.h>
 #endif
 
@@ -674,6 +674,15 @@ void InjectedBundle::setCSSRegionsEnabled(bool enabled)
 {
 #if ENABLE(CSS_REGIONS)
     RuntimeEnabledFeatures::setCSSRegionsEnabled(enabled);
+#else
+    UNUSED_PARAM(enabled);
+#endif
+}
+
+void InjectedBundle::setSeamlessIFramesEnabled(bool enabled)
+{
+#if ENABLE(IFRAME_SEAMLESS)
+    RuntimeEnabledFeatures::setSeamlessIFramesEnabled(enabled);
 #else
     UNUSED_PARAM(enabled);
 #endif

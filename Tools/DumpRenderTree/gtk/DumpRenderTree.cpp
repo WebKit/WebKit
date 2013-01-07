@@ -518,6 +518,7 @@ static void resetDefaultsToConsistentValues()
     DumpRenderTreeSupportGtk::setCSSRegionsEnabled(webView, true);
     DumpRenderTreeSupportGtk::setCSSCustomFilterEnabled(webView, false);
     DumpRenderTreeSupportGtk::setExperimentalContentSecurityPolicyFeaturesEnabled(true);
+    DumpRenderTreeSupportGtk::setSeamlessIFramesEnabled(true);
     DumpRenderTreeSupportGtk::setShadowDOMEnabled(true);
     DumpRenderTreeSupportGtk::setStyleScopedEnabled(true);
 

@@ -183,6 +183,7 @@ public:
     void setSerialLoadingEnabled(bool);
     void setShadowDOMEnabled(bool);
     void setCSSRegionsEnabled(bool);
+    void setSeamlessIFramesEnabled(bool);
     void dispatchPendingLoadRequests();
 
 private:

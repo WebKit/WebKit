@@ -709,6 +709,13 @@ void DumpRenderTreeSupportGtk::setExperimentalContentSecurityPolicyFeaturesEnabl
 #endif
 }
 
+void DumpRenderTreeSupportGtk::setSeamlessIFramesEnabled(bool enabled)
+{
+#if ENABLE(IFRAME_SEAMLESS)
+    RuntimeEnabledFeatures::setSeamlessIFramesEnabled(enabled);
+#endif
+}
+
 void DumpRenderTreeSupportGtk::setShadowDOMEnabled(bool enabled)
 {
 #if ENABLE(SHADOW_DOM)

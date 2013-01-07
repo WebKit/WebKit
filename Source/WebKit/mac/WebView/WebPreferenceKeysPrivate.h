@@ -116,6 +116,7 @@
 #define WebKitMediaPlaybackRequiresUserGesturePreferenceKey @"WebKitMediaPlaybackRequiresUserGesture"
 #define WebKitMediaPlaybackAllowsInlinePreferenceKey @"WebKitMediaPlaybackAllowsInline"
 #define WebKitMockScrollbarsEnabledPreferenceKey @"WebKitMockScrollbarsEnabled"
+#define WebKitSeamlessIFramesEnabledPreferenceKey @"WebKitSeamlessIFramesEnabled"
 #define WebKitShouldDisplaySubtitlesPreferenceKey @"WebKitShouldDisplaySubtitles"
 #define WebKitShouldDisplayCaptionsPreferenceKey @"WebKitShouldDisplayCaptions"
 #define WebKitShouldDisplayTextDescriptionsPreferenceKey @"WebKitShouldDisplayTextDescriptions"

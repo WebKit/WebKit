@@ -203,6 +203,8 @@ void WebPage::resetSettings()
     QWebSettings::setMaximumPagesInCache(0); // reset to default
     settings()->setUserStyleSheetUrl(QUrl()); // reset to default
 
+    DumpRenderTreeSupportQt::setSeamlessIFramesEnabled(true);
+
     DumpRenderTreeSupportQt::setMinimumTimerInterval(handle(), DumpRenderTreeSupportQt::defaultMinimumTimerInterval());
 
     DumpRenderTreeSupportQt::resetInternalsObject(mainFrame()->handle());

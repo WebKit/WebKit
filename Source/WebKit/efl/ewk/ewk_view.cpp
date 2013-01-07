@@ -820,6 +820,7 @@ static Ewk_View_Private_Data* _ewk_view_priv_new(Ewk_View_Smart_Data* smartData)
     priv->pageSettings->setStandardFontFamily("sans");
     priv->pageSettings->setHyperlinkAuditingEnabled(false);
     WebCore::RuntimeEnabledFeatures::setCSSRegionsEnabled(true);
+    WebCore::RuntimeEnabledFeatures::setSeamlessIFramesEnabled(true);
     priv->pageSettings->setScriptEnabled(true);
     priv->pageSettings->setPluginsEnabled(true);
     priv->pageSettings->setLocalStorageEnabled(true);

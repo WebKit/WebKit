@@ -372,6 +372,11 @@ void DumpRenderTreeSupportEfl::setCSSRegionsEnabled(const Evas_Object* ewkView, 
     WebCore::RuntimeEnabledFeatures::setCSSRegionsEnabled(enabled);
 }
 
+void DumpRenderTreeSupportEfl::setSeamlessIFramesEnabled(bool enabled)
+{
+    WebCore::RuntimeEnabledFeatures::setSeamlessIFramesEnabled(enabled);
+}
+
 bool DumpRenderTreeSupportEfl::isCommandEnabled(const Evas_Object* ewkView, const char* name)
 {
     DRT_SUPPRT_PAGE_GET_OR_RETURN(ewkView, page, false);

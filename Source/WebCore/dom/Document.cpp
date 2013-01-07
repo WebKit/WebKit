@@ -5661,6 +5661,8 @@ HTMLIFrameElement* Document::seamlessParentIFrame() const
 bool Document::shouldDisplaySeamlesslyWithParent() const
 {
 #if ENABLE(IFRAME_SEAMLESS)
+    if (!RuntimeEnabledFeatures::seamlessIFramesEnabled())
+        return false;
     HTMLFrameOwnerElement* ownerElement = this->ownerElement();
     if (!ownerElement)
         return false;

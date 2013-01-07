@@ -236,6 +236,10 @@ extern NSString *WebPreferencesCacheModelChangedInternalNotification;
 - (BOOL)mockScrollbarsEnabled;
 - (void)setMockScrollbarsEnabled:(BOOL)flag;
 
+// This is a global setting.
+- (BOOL)seamlessIFramesEnabled;
+- (void)setSeamlessIFramesEnabled:(BOOL)enabled;
+
 // Other private methods
 - (void)_postPreferencesChangedNotification;
 - (void)_postPreferencesChangedAPINotification;

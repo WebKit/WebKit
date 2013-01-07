@@ -1515,6 +1515,9 @@ static bool needsSelfRetainWhileLoadingQuirk()
     settings->setCSSCustomFilterEnabled([preferences cssCustomFilterEnabled]);
 #endif
     RuntimeEnabledFeatures::setCSSRegionsEnabled([preferences cssRegionsEnabled]);
+#if ENABLE(IFRAME_SEAMLESS)
+    RuntimeEnabledFeatures::setSeamlessIFramesEnabled([preferences seamlessIFramesEnabled]);
+#endif
     settings->setCSSGridLayoutEnabled([preferences cssGridLayoutEnabled]);
 #if ENABLE(FULLSCREEN_API)
     settings->setFullScreenEnabled([preferences fullScreenEnabled]);

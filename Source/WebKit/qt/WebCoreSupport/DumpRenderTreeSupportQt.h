@@ -214,6 +214,8 @@ public:
     static bool trackRepaintRects(QWebFrameAdapter*);
     static void getTrackedRepaintRects(QWebFrameAdapter*, QVector<QRect>& result);
 
+    static void setSeamlessIFramesEnabled(bool);
+
     static QString frameRenderTreeDump(QWebFrameAdapter*);
 };
 

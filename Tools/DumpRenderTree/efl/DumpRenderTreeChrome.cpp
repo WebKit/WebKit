@@ -324,6 +324,7 @@ void DumpRenderTreeChrome::resetDefaultsToConsistentValues()
     DumpRenderTreeSupportEfl::setCSSRegionsEnabled(mainView(), true);
     DumpRenderTreeSupportEfl::setShouldTrackVisitedLinks(false);
     DumpRenderTreeSupportEfl::setTracksRepaints(mainFrame(), false);
+    DumpRenderTreeSupportEfl::setSeamlessIFramesEnabled(true);
 
     // Reset capacities for the memory cache for dead objects.
     static const unsigned cacheTotalCapacity =  8192 * 1024;

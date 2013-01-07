@@ -2714,3 +2714,7 @@ _wkCaptionAppearanceGetSettingsChangedNotification
 #if ENABLE(CSS_REGIONS)
 __ZN7WebCore22RuntimeEnabledFeatures19isCSSRegionsEnabledE
 #endif
+
+#if ENABLE(IFRAME_SEAMLESS)
+__ZN7WebCore22RuntimeEnabledFeatures25areSeamlessIFramesEnabledE
+#endif

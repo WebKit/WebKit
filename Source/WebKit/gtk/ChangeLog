@@ -1,3 +1,15 @@
+2013-01-07  Mike West  <mkwst@chromium.org>
+
+        Make the IFRAME_SEAMLESS flag runtime-enabled.
+        https://bugs.webkit.org/show_bug.cgi?id=106213
+
+        Reviewed by Ojan Vafai.
+
+        * WebCoreSupport/DumpRenderTreeSupportGtk.cpp:
+        * WebCoreSupport/DumpRenderTreeSupportGtk.h:
+        (DumpRenderTreeSupportGtk):
+            Add a toggle for seamless IFrames to GTK's DRTSuport.
+
 2013-01-04  Adam Klein  <adamk@chromium.org>
 
         Remove ENABLE_MUTATION_OBSERVERS #define

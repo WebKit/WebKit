@@ -233,6 +233,10 @@ bool RuntimeEnabledFeatures::isRequestAutocompleteEnabled = false;
 bool RuntimeEnabledFeatures::areExperimentalContentSecurityPolicyFeaturesEnabled = false;
 #endif
 
+#if ENABLE(IFRAME_SEAMLESS)
+bool RuntimeEnabledFeatures::areSeamlessIFramesEnabled = false;
+#endif
+
 #if ENABLE(WEB_INTENTS)
 bool RuntimeEnabledFeatures::isWebIntentsEnabled = true;
 #endif
