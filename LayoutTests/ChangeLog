@@ -1,3 +1,17 @@
+2013-01-07  Justin Novosad  <junov@google.com>
+
+        Fixing memory read after free in CanvasRenderingContext2D::accessFont
+        https://bugs.webkit.org/show_bug.cgi?id=106244
+
+        Reviewed by Abhishek Arya.
+
+        New test case to verify stability of 2D canvas method measureText.
+        Test case was causing a DumpRenderTree crash on builds with
+        AddressSantitizer instrumentation.
+
+        * fast/canvas/canvas-measureText-expected.txt: Added.
+        * fast/canvas/canvas-measureText.html: Added.
+
 2013-01-07  Abhishek Arya  <inferno@chromium.org>
 
         Heap-buffer-overflow in WebCore::RenderBlock::clone.

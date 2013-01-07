@@ -2373,8 +2373,13 @@ const Font& CanvasRenderingContext2D::accessFont()
 {
     canvas()->document()->updateStyleIfNeeded();
 
-    if (!state().m_realizedFont)
-        setFont(state().m_unparsedFont);
+    if (!state().m_realizedFont) {
+        // Create temporary string object to hold ref count in case
+        // state().m_unparsedFont in unreffed by call to realizeSaves in
+        // setFont.
+        String unparsedFont(state().m_unparsedFont);
+        setFont(unparsedFont);
+    }
     return state().m_font;
 }
 
