@@ -700,11 +700,6 @@ JITCode JIT::privateCompile(CodePtr* functionEntryArityCheck, JITCompilationEffo
 
     Label functionBody = label();
     
-#if ENABLE(VALUE_PROFILER)
-    if (canBeOptimized())
-        add32(TrustedImm32(1), AbsoluteAddress(&m_codeBlock->m_executionEntryCount));
-#endif
-
     privateCompileMainPass();
     privateCompileLinkPass();
     privateCompileSlowCases();

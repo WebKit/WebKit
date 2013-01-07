@@ -717,7 +717,7 @@ namespace JSC {
             if (!numberOfRareCaseProfiles())
                 return false;
             unsigned value = rareCaseProfileForBytecodeOffset(bytecodeOffset)->m_counter;
-            return value >= Options::likelyToTakeSlowCaseMinimumCount() && static_cast<double>(value) / m_executionEntryCount >= Options::likelyToTakeSlowCaseThreshold();
+            return value >= Options::likelyToTakeSlowCaseMinimumCount();
         }
         
         bool couldTakeSlowCase(int bytecodeOffset)
@@ -725,7 +725,7 @@ namespace JSC {
             if (!numberOfRareCaseProfiles())
                 return false;
             unsigned value = rareCaseProfileForBytecodeOffset(bytecodeOffset)->m_counter;
-            return value >= Options::couldTakeSlowCaseMinimumCount() && static_cast<double>(value) / m_executionEntryCount >= Options::couldTakeSlowCaseThreshold();
+            return value >= Options::couldTakeSlowCaseMinimumCount();
         }
         
         RareCaseProfile* addSpecialFastCaseProfile(int bytecodeOffset)
@@ -747,7 +747,7 @@ namespace JSC {
             if (!numberOfRareCaseProfiles())
                 return false;
             unsigned specialFastCaseCount = specialFastCaseProfileForBytecodeOffset(bytecodeOffset)->m_counter;
-            return specialFastCaseCount >= Options::likelyToTakeSlowCaseMinimumCount() && static_cast<double>(specialFastCaseCount) / m_executionEntryCount >= Options::likelyToTakeSlowCaseThreshold();
+            return specialFastCaseCount >= Options::likelyToTakeSlowCaseMinimumCount();
         }
         
         bool couldTakeSpecialFastCase(int bytecodeOffset)
@@ -755,7 +755,7 @@ namespace JSC {
             if (!numberOfRareCaseProfiles())
                 return false;
             unsigned specialFastCaseCount = specialFastCaseProfileForBytecodeOffset(bytecodeOffset)->m_counter;
-            return specialFastCaseCount >= Options::couldTakeSlowCaseMinimumCount() && static_cast<double>(specialFastCaseCount) / m_executionEntryCount >= Options::couldTakeSlowCaseThreshold();
+            return specialFastCaseCount >= Options::couldTakeSlowCaseMinimumCount();
         }
         
         bool likelyToTakeDeepestSlowCase(int bytecodeOffset)
@@ -765,7 +765,7 @@ namespace JSC {
             unsigned slowCaseCount = rareCaseProfileForBytecodeOffset(bytecodeOffset)->m_counter;
             unsigned specialFastCaseCount = specialFastCaseProfileForBytecodeOffset(bytecodeOffset)->m_counter;
             unsigned value = slowCaseCount - specialFastCaseCount;
-            return value >= Options::likelyToTakeSlowCaseMinimumCount() && static_cast<double>(value) / m_executionEntryCount >= Options::likelyToTakeSlowCaseThreshold();
+            return value >= Options::likelyToTakeSlowCaseMinimumCount();
         }
         
         bool likelyToTakeAnySlowCase(int bytecodeOffset)
@@ -775,11 +775,9 @@ namespace JSC {
             unsigned slowCaseCount = rareCaseProfileForBytecodeOffset(bytecodeOffset)->m_counter;
             unsigned specialFastCaseCount = specialFastCaseProfileForBytecodeOffset(bytecodeOffset)->m_counter;
             unsigned value = slowCaseCount + specialFastCaseCount;
-            return value >= Options::likelyToTakeSlowCaseMinimumCount() && static_cast<double>(value) / m_executionEntryCount >= Options::likelyToTakeSlowCaseThreshold();
+            return value >= Options::likelyToTakeSlowCaseMinimumCount();
         }
         
-        unsigned executionEntryCount() const { return m_executionEntryCount; }
-
         unsigned numberOfArrayProfiles() const { return m_arrayProfiles.size(); }
         const ArrayProfileVector& arrayProfiles() { return m_arrayProfiles; }
         ArrayProfile* addArrayProfile(unsigned bytecodeOffset)
@@ -1315,7 +1313,6 @@ namespace JSC {
         SegmentedVector<RareCaseProfile, 8> m_specialFastCaseProfiles;
         SegmentedVector<ArrayAllocationProfile, 8> m_arrayAllocationProfiles;
         ArrayProfileVector m_arrayProfiles;
-        unsigned m_executionEntryCount;
 #endif
 
         // Constant Pool

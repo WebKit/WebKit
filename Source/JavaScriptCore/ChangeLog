@@ -1,3 +1,29 @@
+2013-01-06  Filip Pizlo  <fpizlo@apple.com>
+
+        Simplify slow case profiling
+        https://bugs.webkit.org/show_bug.cgi?id=106208
+
+        Reviewed by Mark Rowe.
+        
+        Removing the minimum execution ratio portion of slow case profiling, which allows
+        the removal of a field from CodeBlock. This appears to be performance neutral,
+        implying that the complexity incurred by the previous heuristic was purely
+        harmful: it made the code more complicated, and it made CodeBlock larger, without
+        resulting in any measurable benefits.
+
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::CodeBlock):
+        * bytecode/CodeBlock.h:
+        (JSC::CodeBlock::likelyToTakeSlowCase):
+        (JSC::CodeBlock::couldTakeSlowCase):
+        (JSC::CodeBlock::likelyToTakeSpecialFastCase):
+        (JSC::CodeBlock::couldTakeSpecialFastCase):
+        (JSC::CodeBlock::likelyToTakeDeepestSlowCase):
+        (JSC::CodeBlock::likelyToTakeAnySlowCase):
+        * jit/JIT.cpp:
+        (JSC::JIT::privateCompile):
+        * runtime/Options.h:
+
 2013-01-05  Filip Pizlo  <fpizlo@apple.com>
 
         DFG should inline closure calls

@@ -101,8 +101,6 @@ namespace JSC {
     v(bool, randomizeExecutionCountsBetweenCheckpoints, false) \
     v(int32, maximumExecutionCountsBetweenCheckpoints, 1000) \
     \
-    v(double, likelyToTakeSlowCaseThreshold, 0.15) \
-    v(double, couldTakeSlowCaseThreshold, 0.05) \
     v(unsigned, likelyToTakeSlowCaseMinimumCount, 100) \
     v(unsigned, couldTakeSlowCaseMinimumCount, 10) \
     \
