@@ -586,7 +586,7 @@ HTMLImageElement* RenderImage::hostImageElement() const
         return toHTMLImageElement(node());
 
     if (node()->hasTagName(webkitInnerImageTag)) {
-        if (Node* ancestor = node()->shadowAncestorNode()) {
+        if (Node* ancestor = node()->shadowHost()) {
             if (ancestor->hasTagName(imgTag))
                 return toHTMLImageElement(ancestor);
         }
