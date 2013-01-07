@@ -252,7 +252,7 @@ void NetworkJob::notifyMultipartHeaderReceived(const char* key, const char* valu
         handleNotifyMultipartHeaderReceived(key, value);
 }
 
-void NetworkJob::notifyAuthReceived(BlackBerry::Platform::NetworkRequest::AuthType authType, const char* realm, bool success, bool requireCredentials)
+void NetworkJob::notifyAuthReceived(BlackBerry::Platform::NetworkRequest::AuthType authType, const char* realm, AuthResult result, bool requireCredentials)
 {
     using BlackBerry::Platform::NetworkRequest;
 
@@ -292,7 +292,12 @@ void NetworkJob::notifyAuthReceived(BlackBerry::Platform::NetworkRequest::AuthTy
         return;
     }
 
-    if (success) {
+    // On success, update stored credentials if necessary
+    // On failure, purge credentials and send new request
+    // On retry, update stored credentials if necessary and send new request
+    if (result == AuthResultFailure)
+        purgeCredentials();
+    else {
         // Update the credentials that will be stored to match the scheme that was actually used
         AuthenticationChallenge& challenge = m_handle->getInternal()->m_currentWebChallenge;
         if (!challenge.isNull()) {
@@ -307,11 +312,9 @@ void NetworkJob::notifyAuthReceived(BlackBerry::Platform::NetworkRequest::AuthTy
             }
         }
         storeCredentials();
-        return;
     }
-
-    purgeCredentials();
-    m_newJobWithCredentialsStarted = sendRequestWithCredentials(serverType, scheme, realm, requireCredentials);
+    if (result != AuthResultSuccess)
+        m_newJobWithCredentialsStarted = sendRequestWithCredentials(serverType, scheme, realm, requireCredentials);
 }
 
 void NetworkJob::notifyStringHeaderReceived(const String& key, const String& value)

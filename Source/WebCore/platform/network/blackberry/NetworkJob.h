@@ -73,7 +73,7 @@ public:
     void handleNotifyStatusReceived(int status, const String& message);
     virtual void notifyHeadersReceived(const BlackBerry::Platform::NetworkRequest::HeaderList& headers);
     virtual void notifyMultipartHeaderReceived(const char* key, const char* value);
-    virtual void notifyAuthReceived(BlackBerry::Platform::NetworkRequest::AuthType, const char* realm, bool success, bool requireCredentials);
+    virtual void notifyAuthReceived(BlackBerry::Platform::NetworkRequest::AuthType, const char* realm, AuthResult, bool requireCredentials);
     // notifyStringHeaderReceived exists only to resolve ambiguity between char* and String parameters
     void notifyStringHeaderReceived(const String& key, const String& value);
     void handleNotifyHeaderReceived(const String& key, const String& value);
