@@ -61,6 +61,7 @@ public:
     virtual void handleProxyAuthenticationRequiredRequest(const String& hostname, uint16_t port, const String& prefilledUsername, String& username, String& password);
 
     virtual void displayView();
+    virtual bool canScrollView() { return false; }
     virtual void scrollView(const WebCore::IntRect& scrollRect, const WebCore::IntSize& scrollOffset);
     virtual bool isViewWindowActive();
     virtual bool isViewInWindow();

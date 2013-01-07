@@ -1,3 +1,44 @@
+2013-01-07  Simon Fraser  <simon.fraser@apple.com>
+
+        Make WKViews work when layer-backed
+        https://bugs.webkit.org/show_bug.cgi?id=106166
+
+        Reviewed by Sam Weinig.
+        
+        When not in TileCache mode, WebKit2 views had redraw problems on scrolling,
+        if layer-backed.
+        
+        The issue is that the DrawingAreaProxy code tries to optimize scrolling by
+        calling -scrollRect:by: on the WKView (an NSView) to copy bits, rather than
+        repainting the entire view. However, -scrollRect:by: does nothing for NSViews
+        that have layers.
+        
+        Fix by plumbing through a canScrollView() function which PageClientImpl()
+        implements, returning true if the view does not have layer backing.
+        When canScrollView() is false, DrawingAreaProxyImpl::incorporateUpdate()
+        dirties the entire view.
+
+        * UIProcess/API/gtk/PageClientImpl.h:
+        (WebKit::PageClientImpl::canScrollView):
+        * UIProcess/API/mac/PageClientImpl.h:
+        (PageClientImpl):
+        * UIProcess/API/mac/PageClientImpl.mm:
+        (WebKit::PageClientImpl::canScrollView):
+        * UIProcess/API/qt/raw/qrawwebview_p_p.h:
+        (QRawWebViewPrivate::canScrollView):
+        * UIProcess/DrawingAreaProxyImpl.cpp:
+        (WebKit::DrawingAreaProxyImpl::incorporateUpdate):
+        * UIProcess/PageClient.h:
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::canScrollView):
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/efl/PageClientBase.h:
+        (WebKit::PageClientBase::canScrollView):
+        * UIProcess/qt/QtPageClient.h:
+        (WebKit::QtPageClient::canScrollView):
+        * UIProcess/win/WebView.h:
+        (WebKit::WebView::canScrollView):
+
 2013-01-04  Sam Weinig  <sam@webkit.org>
 
         Remove WebProcessInitialization and NetworkProcessInitialization by putting the rest of initialization in ChildProcess derived classes

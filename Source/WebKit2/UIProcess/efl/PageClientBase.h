@@ -51,6 +51,7 @@ protected:
     virtual PassOwnPtr<DrawingAreaProxy> createDrawingAreaProxy();
     virtual void setViewNeedsDisplay(const WebCore::IntRect&);
     virtual void displayView();
+    virtual bool canScrollView() { return false; }
     virtual void scrollView(const WebCore::IntRect&, const WebCore::IntSize&);
     virtual WebCore::IntSize viewSize();
     virtual bool isViewWindowActive();

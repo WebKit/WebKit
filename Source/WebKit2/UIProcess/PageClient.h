@@ -89,6 +89,8 @@ public:
     // Tell the view to immediately display its invalid rect.
     virtual void displayView() = 0;
 
+    // Return true if scrollView() can copy bits in the view.
+    virtual bool canScrollView() = 0;
     // Tell the view to scroll scrollRect by scrollOffset.
     virtual void scrollView(const WebCore::IntRect& scrollRect, const WebCore::IntSize& scrollOffset) = 0;
 

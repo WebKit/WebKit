@@ -853,6 +853,11 @@ void WebPageProxy::displayView()
     m_pageClient->displayView();
 }
 
+bool WebPageProxy::canScrollView()
+{
+    return m_pageClient->canScrollView();
+}
+
 void WebPageProxy::scrollView(const IntRect& scrollRect, const IntSize& scrollOffset)
 {
     m_pageClient->scrollView(scrollRect, scrollOffset);

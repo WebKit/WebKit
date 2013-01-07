@@ -153,6 +153,12 @@ void PageClientImpl::displayView()
     [m_wkView displayIfNeeded];
 }
 
+bool PageClientImpl::canScrollView()
+{
+    // -scrollRect:by: does nothing in layer-backed views <rdar://problem/12961719>.
+    return ![m_wkView layer];
+}
+
 void PageClientImpl::scrollView(const IntRect& scrollRect, const IntSize& scrollOffset)
 {
     NSRect clippedScrollRect = NSIntersectionRect(scrollRect, NSOffsetRect(scrollRect, -scrollOffset.width(), -scrollOffset.height()));

@@ -75,6 +75,7 @@ public:
     virtual void doneWithGestureEvent(const WebKit::WebGestureEvent& event, bool wasEventHandled);
 #endif
     virtual void displayView();
+    virtual bool canScrollView() { return false; }
     virtual void scrollView(const WebCore::IntRect& scrollRect, const WebCore::IntSize& scrollOffset);
 
     virtual void flashBackingStoreUpdates(const Vector<WebCore::IntRect>&);

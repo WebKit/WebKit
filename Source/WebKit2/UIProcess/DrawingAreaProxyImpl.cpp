@@ -280,10 +280,14 @@ void DrawingAreaProxyImpl::incorporateUpdate(const UpdateInfo& updateInfo)
 
     if (shouldScroll)
         m_webPageProxy->scrollView(updateInfo.scrollRect, updateInfo.scrollOffset);
-
-    for (size_t i = 0; i < updateInfo.updateRects.size(); ++i)
-        m_webPageProxy->setViewNeedsDisplay(updateInfo.updateRects[i]);
-
+    
+    if (shouldScroll && !m_webPageProxy->canScrollView())
+        m_webPageProxy->setViewNeedsDisplay(IntRect(IntPoint(), m_webPageProxy->viewSize()));
+    else {
+        for (size_t i = 0; i < updateInfo.updateRects.size(); ++i)
+            m_webPageProxy->setViewNeedsDisplay(updateInfo.updateRects[i]);
+    }
+    
     if (WebPageProxy::debugPaintFlags() & kWKDebugFlashBackingStoreUpdates)
         m_webPageProxy->flashBackingStoreUpdates(updateInfo.updateRects);
 
