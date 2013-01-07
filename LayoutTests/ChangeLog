@@ -1,5 +1,12 @@
 2013-01-07  Dimitri Glazkov  <dglazkov@chromium.org>
 
+        [Chromium] Marked WebAudio tests that are failing on Windows.
+        https://bugs.webkit.org/show_bug.cgi?id=106232
+
+        * platform/chromium/TestExpectations: Marked.
+
+2013-01-07  Dimitri Glazkov  <dglazkov@chromium.org>
+
         Mark fast/block/float/max-width-clear-float-with-overflow-hidden.html as failing.
         https://bugs.webkit.org/show_bug.cgi?id=47975
 
