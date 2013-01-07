@@ -77,7 +77,7 @@ static void initGenericStyleOption(QStyleOption* option, QWidget* widget, const 
 
     option->rect = facadeOption.rect;
     option->state = convertToQStyleState(facadeOption.state);
-    if (option->direction == Qt::LayoutDirectionAuto)
+    if (facadeOption.direction != Qt::LayoutDirectionAuto)
         option->direction = facadeOption.direction;
     option->palette = facadeOption.palette;
 }

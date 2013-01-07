@@ -1,5 +1,19 @@
 2013-01-07  Michael Brüning  <michael.bruning@digia.com>
 
+        [Qt] Apply correct patch for the scrolling issue from bug 105014
+        https://bugs.webkit.org/show_bug.cgi?id=106219
+
+        Correct the if condition when overwriting the layout direction option
+        with the values from the facade options to only overwrite if the facade
+        direction is not equal to LayoutDirectionAuto.
+
+        Reviewed by Allan Sandfeld Jensen.
+
+        * WidgetSupport/QStyleFacadeImp.cpp:
+        (WebKit::initGenericStyleOption):
+
+2013-01-07  Michael Brüning  <michael.bruning@digia.com>
+
         [Qt] Horizontal scrollbars events are offseted making them difficult to use
         https://bugs.webkit.org/show_bug.cgi?id=105014
 
