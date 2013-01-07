@@ -1,3 +1,22 @@
+2013-01-07  Allan Sandfeld Jensen  <allan.jensen@digia.com>
+
+        Unskip now passing ruby tests.
+
+        Unreviewed gardening.
+
+        Verified to match rendering in other ports.
+
+        * platform/qt/TestExpectations:
+        * platform/qt/fast/ruby/ruby-beforeafter-expected.txt: Added.
+        * platform/qt/fast/ruby/ruby-empty-rt-expected.txt: Added.
+        * platform/qt/fast/ruby/ruby-length-expected.txt: Added.
+        * platform/qt/fast/ruby/ruby-run-break-expected.txt: Added.
+        * platform/qt/fast/ruby/ruby-runs-expected.txt: Added.
+        * platform/qt/fast/ruby/ruby-runs-spans-expected.txt: Added.
+        * platform/qt/fast/ruby/ruby-simple-expected.txt: Added.
+        * platform/qt/fast/ruby/ruby-simple-rp-expected.txt: Added.
+        * platform/qt/fast/ruby/ruby-trailing-expected.txt: Added.
+
 2013-01-07  Christophe Dumez  <christophe.dumez@intel.com>
 
         Unreviewed EFL gardening.

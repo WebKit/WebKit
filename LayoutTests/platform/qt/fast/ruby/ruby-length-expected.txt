@@ -1,0 +1,32 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
+      RenderText {#text} at (0,0) size 766x38
+        text run at (0,0) width 766: "This is a initial test for simple ruby. There should be 2 ruby annotations on below line, one with a ruby text shorter than the base,"
+        text run at (0,19) width 277: "and one with a ruby text longer than the base. "
+      RenderBR {BR} at (277,34) size 0x0
+      RenderBR {BR} at (0,38) size 0x19
+      RenderText {#text} at (0,67) size 146x19
+        text run at (0,67) width 146: "<ruby> is defined in the "
+      RenderRuby (inline) {RUBY} at (0,0) size 175x19
+        RenderRubyRun (anonymous) at (146,67) size 175x19
+          RenderRubyText {RT} at (0,-10) size 175x10
+            RenderText {#text} at (74,0) size 27x10
+              text run at (74,0) width 27: "HTML5"
+          RenderRubyBase (anonymous) at (0,0) size 175x19
+            RenderText {#text} at (0,0) size 175x19
+              text run at (0,0) width 175: "Hypertext Markup Language"
+      RenderText {#text} at (321,67) size 30x19
+        text run at (321,67) width 30: " and "
+      RenderRuby (inline) {RUBY} at (0,0) size 68x19
+        RenderRubyRun (anonymous) at (347,67) size 76x19
+          RenderRubyText {RT} at (0,-10) size 76x10
+            RenderText {#text} at (0,0) size 76x10
+              text run at (0,0) width 76: "Cascading Style Sheets"
+          RenderRubyBase (anonymous) at (0,0) size 76x19
+            RenderText {#text} at (19,0) size 38x19
+              text run at (19,0) width 38: "CSS3"
+      RenderText {#text} at (419,67) size 42x19
+        text run at (419,67) width 42: " specs."
