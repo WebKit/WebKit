@@ -1,5 +1,18 @@
 2013-01-07  Mike West  <mkwst@chromium.org>
 
+        [qt] Fix ENABLE_IFRAME_SEAMLESS=0 builds.
+        https://bugs.webkit.org/show_bug.cgi?id=106252
+
+        Reviewed by Eric Seidel.
+
+        Wrap the call to setSeamlessIFramesEnabled in an ifdef in order
+        to ensure that it's only called when IFRAME_SEAMLESS is enabled.
+
+        * WebCoreSupport/DumpRenderTreeSupportQt.cpp:
+        (DumpRenderTreeSupportQt::setSeamlessIFramesEnabled):
+
+2013-01-07  Mike West  <mkwst@chromium.org>
+
         Make the IFRAME_SEAMLESS flag runtime-enabled.
         https://bugs.webkit.org/show_bug.cgi?id=106213
 

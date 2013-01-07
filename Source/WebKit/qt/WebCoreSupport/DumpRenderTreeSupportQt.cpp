@@ -1052,7 +1052,11 @@ void DumpRenderTreeSupportQt::getTrackedRepaintRects(QWebFrameAdapter* adapter, 
 
 void DumpRenderTreeSupportQt::setSeamlessIFramesEnabled(bool enabled)
 {
+#if ENABLE(IFRAME_SEAMLESS)
     WebCore::RuntimeEnabledFeatures::setSeamlessIFramesEnabled(enabled);
+#else
+    UNUSED_PARAM(enabled);
+#endif
 }
 
 QString DumpRenderTreeSupportQt::frameRenderTreeDump(QWebFrameAdapter* adapter)
