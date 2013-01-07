@@ -707,10 +707,12 @@ void CachedResource::switchClientsToRevalidatedResource()
             --count;
         }
     }
-    // Equivalent of calling removeClient() for all clients
-    m_clients.clear();
 
     unsigned moveCount = clientsToMove.size();
+    for (unsigned n = 0; n < moveCount; ++n)
+        removeClient(clientsToMove[n]);
+    ASSERT(m_clients.isEmpty());
+
     for (unsigned n = 0; n < moveCount; ++n)
         m_resourceToRevalidate->addClientToSet(clientsToMove[n]);
     for (unsigned n = 0; n < moveCount; ++n) {
