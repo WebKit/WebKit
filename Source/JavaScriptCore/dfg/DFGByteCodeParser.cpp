@@ -159,9 +159,9 @@ private:
     
     // Handle calls. This resolves issues surrounding inlining and intrinsics.
     void handleCall(Interpreter*, Instruction* currentInstruction, NodeType op, CodeSpecializationKind);
-    void emitFunctionCheck(JSFunction* expectedFunction, NodeIndex callTarget, int registerOffset, CodeSpecializationKind);
+    void emitFunctionChecks(const CallLinkStatus&, NodeIndex callTarget, int registerOffset, CodeSpecializationKind);
     // Handle inlining. Return true if it succeeded, false if we need to plant a call.
-    bool handleInlining(bool usesResult, NodeIndex callTargetNodeIndex, int resultOperand, bool certainAboutExpectedFunction, JSFunction*, int registerOffset, int argumentCountIncludingThis, unsigned nextOffset, CodeSpecializationKind);
+    bool handleInlining(bool usesResult, NodeIndex callTargetNodeIndex, int resultOperand, const CallLinkStatus&, int registerOffset, int argumentCountIncludingThis, unsigned nextOffset, CodeSpecializationKind);
     // Handle setting the result of an intrinsic.
     void setIntrinsicResult(bool usesResult, int resultOperand, NodeIndex);
     // Handle intrinsic functions. Return true if it succeeded, false if we need to plant a call.
@@ -1329,19 +1329,9 @@ void ByteCodeParser::handleCall(Interpreter* interpreter, Instruction* currentIn
         return;
     }
         
-    JSFunction* expectedFunction = callLinkStatus.function();
-    if (!expectedFunction) {
-        // For now we have no way of reasoning about what it means to not have a specific function. This will
-        // change soon, though.
-        
-        addCall(interpreter, currentInstruction, op);
-        return;
-    }
-        
     Intrinsic intrinsic = callLinkStatus.intrinsicFor(kind);
     if (intrinsic != NoIntrinsic) {
-        if (!callLinkStatus.isProved())
-            emitFunctionCheck(expectedFunction, callTarget, registerOffset, kind);
+        emitFunctionChecks(callLinkStatus, callTarget, registerOffset, kind);
             
         if (handleIntrinsic(usesResult, resultOperand, intrinsic, registerOffset, argumentCountIncludingThis, prediction)) {
             if (!callLinkStatus.isProved()) {
@@ -1350,34 +1340,48 @@ void ByteCodeParser::handleCall(Interpreter* interpreter, Instruction* currentIn
                 // smart enough to figure that out, since it doesn't understand CheckFunction.
                 addToGraph(Phantom, callTarget);
             }
-                
+            
             return;
         }
-    } else if (handleInlining(usesResult, callTarget, resultOperand, callLinkStatus.isProved(), expectedFunction, registerOffset, argumentCountIncludingThis, nextOffset, kind))
+    } else if (handleInlining(usesResult, callTarget, resultOperand, callLinkStatus, registerOffset, argumentCountIncludingThis, nextOffset, kind))
         return;
     
     addCall(interpreter, currentInstruction, op);
 }
 
-void ByteCodeParser::emitFunctionCheck(JSFunction* expectedFunction, NodeIndex callTarget, int registerOffset, CodeSpecializationKind kind)
+void ByteCodeParser::emitFunctionChecks(const CallLinkStatus& callLinkStatus, NodeIndex callTarget, int registerOffset, CodeSpecializationKind kind)
 {
+    if (callLinkStatus.isProved())
+        return;
+    
+    ASSERT(callLinkStatus.canOptimize());
+    
     NodeIndex thisArgument;
     if (kind == CodeForCall)
         thisArgument = get(registerOffset + argumentToOperand(0));
     else
         thisArgument = NoNode;
-    addToGraph(CheckFunction, OpInfo(expectedFunction), callTarget, thisArgument);
+
+    if (JSFunction* function = callLinkStatus.function())
+        addToGraph(CheckFunction, OpInfo(function), callTarget, thisArgument);
+    else {
+        ASSERT(callLinkStatus.structure());
+        ASSERT(callLinkStatus.executable());
+        
+        addToGraph(CheckStructure, OpInfo(m_graph.addStructureSet(callLinkStatus.structure())), callTarget);
+        addToGraph(CheckExecutable, OpInfo(callLinkStatus.executable()), callTarget, thisArgument);
+    }
 }
 
-bool ByteCodeParser::handleInlining(bool usesResult, NodeIndex callTargetNodeIndex, int resultOperand, bool certainAboutExpectedFunction, JSFunction* expectedFunction, int registerOffset, int argumentCountIncludingThis, unsigned nextOffset, CodeSpecializationKind kind)
+bool ByteCodeParser::handleInlining(bool usesResult, NodeIndex callTargetNodeIndex, int resultOperand, const CallLinkStatus& callLinkStatus, int registerOffset, int argumentCountIncludingThis, unsigned nextOffset, CodeSpecializationKind kind)
 {
     // First, the really simple checks: do we have an actual JS function?
-    if (!expectedFunction)
+    if (!callLinkStatus.executable())
         return false;
-    if (expectedFunction->isHostFunction())
+    if (callLinkStatus.executable()->isHostFunction())
         return false;
     
-    FunctionExecutable* executable = expectedFunction->jsExecutable();
+    FunctionExecutable* executable = jsCast<FunctionExecutable*>(callLinkStatus.executable());
     
     // Does the number of arguments we're passing match the arity of the target? We currently
     // inline only if the number of arguments passed is greater than or equal to the number
@@ -1406,7 +1410,7 @@ bool ByteCodeParser::handleInlining(bool usesResult, NodeIndex callTargetNodeInd
     CodeBlock* codeBlock = executable->baselineCodeBlockFor(kind);
     if (!codeBlock)
         return false;
-    if (!canInlineFunctionFor(codeBlock, kind))
+    if (!canInlineFunctionFor(codeBlock, kind, callLinkStatus.isClosureCall()))
         return false;
     
 #if DFG_ENABLE(DEBUG_VERBOSE)
@@ -1416,8 +1420,7 @@ bool ByteCodeParser::handleInlining(bool usesResult, NodeIndex callTargetNodeInd
     // Now we know without a doubt that we are committed to inlining. So begin the process
     // by checking the callee (if necessary) and making sure that arguments and the callee
     // are flushed.
-    if (!certainAboutExpectedFunction)
-        emitFunctionCheck(expectedFunction, callTargetNodeIndex, registerOffset, kind);
+    emitFunctionChecks(callLinkStatus, callTargetNodeIndex, registerOffset, kind);
     
     // FIXME: Don't flush constants!
     
@@ -1439,7 +1442,7 @@ bool ByteCodeParser::handleInlining(bool usesResult, NodeIndex callTargetNodeInd
 
     InlineStackEntry inlineStackEntry(
         this, codeBlock, codeBlock, m_graph.m_blocks.size() - 1,
-        expectedFunction, (VirtualRegister)m_inlineStackTop->remapOperand(
+        callLinkStatus.function(), (VirtualRegister)m_inlineStackTop->remapOperand(
             usesResult ? resultOperand : InvalidVirtualRegister),
         (VirtualRegister)inlineCallFrameStart, argumentCountIncludingThis, kind);
     
@@ -1450,6 +1453,10 @@ bool ByteCodeParser::handleInlining(bool usesResult, NodeIndex callTargetNodeInd
     m_currentProfilingIndex = 0;
 
     addToGraph(InlineStart, OpInfo(argumentPositionStart));
+    if (callLinkStatus.isClosureCall()) {
+        addToGraph(SetCallee, callTargetNodeIndex);
+        addToGraph(SetMyScope, addToGraph(GetScope, callTargetNodeIndex));
+    }
     
     parseCodeBlock();
     

@@ -55,6 +55,11 @@ bool mightInlineFunctionForCall(CodeBlock* codeBlock)
     return codeBlock->instructionCount() <= Options::maximumFunctionForCallInlineCandidateInstructionCount()
         && !codeBlock->ownerExecutable()->needsActivation();
 }
+bool mightInlineFunctionForClosureCall(CodeBlock* codeBlock)
+{
+    return codeBlock->instructionCount() <= Options::maximumFunctionForClosureCallInlineCandidateInstructionCount()
+        && !codeBlock->ownerExecutable()->needsActivation();
+}
 bool mightInlineFunctionForConstruct(CodeBlock* codeBlock)
 {
     return codeBlock->instructionCount() <= Options::maximumFunctionForConstructInlineCandidateInstructionCount()

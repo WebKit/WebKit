@@ -2933,6 +2933,13 @@ bool FunctionCodeBlock::jitCompileImpl(ExecState* exec)
 }
 #endif
 
+JSGlobalObject* CodeBlock::globalObjectFor(CodeOrigin codeOrigin)
+{
+    if (!codeOrigin.inlineCallFrame)
+        return globalObject();
+    return jsCast<FunctionExecutable*>(codeOrigin.inlineCallFrame->executable.get())->generatedBytecode().globalObject();
+}
+
 unsigned CodeBlock::reoptimizationRetryCounter() const
 {
     ASSERT(m_reoptimizationRetryCounter <= Options::reoptimizationRetryCounterMax());

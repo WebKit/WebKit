@@ -44,6 +44,7 @@ bool mightCompileProgram(CodeBlock*);
 bool mightCompileFunctionForCall(CodeBlock*);
 bool mightCompileFunctionForConstruct(CodeBlock*);
 bool mightInlineFunctionForCall(CodeBlock*);
+bool mightInlineFunctionForClosureCall(CodeBlock*);
 bool mightInlineFunctionForConstruct(CodeBlock*);
 
 // Opcode checking.
@@ -272,6 +273,7 @@ inline bool mightCompileProgram(CodeBlock*) { return false; }
 inline bool mightCompileFunctionForCall(CodeBlock*) { return false; }
 inline bool mightCompileFunctionForConstruct(CodeBlock*) { return false; }
 inline bool mightInlineFunctionForCall(CodeBlock*) { return false; }
+inline bool mightInlineFunctionForClosureCall(CodeBlock*) { return false; }
 inline bool mightInlineFunctionForConstruct(CodeBlock*) { return false; }
 
 inline CapabilityLevel canCompileOpcode(OpcodeID, CodeBlock*, Instruction*) { return CannotCompile; }
@@ -317,6 +319,11 @@ inline bool canInlineFunctionForCall(CodeBlock* codeBlock)
     return mightInlineFunctionForCall(codeBlock) && canInlineOpcodes(codeBlock);
 }
 
+inline bool canInlineFunctionForClosureCall(CodeBlock* codeBlock)
+{
+    return mightInlineFunctionForClosureCall(codeBlock) && canInlineOpcodes(codeBlock);
+}
+
 inline bool canInlineFunctionForConstruct(CodeBlock* codeBlock)
 {
     return mightInlineFunctionForConstruct(codeBlock) && canInlineOpcodes(codeBlock);
@@ -330,8 +337,12 @@ inline bool mightInlineFunctionFor(CodeBlock* codeBlock, CodeSpecializationKind 
     return mightInlineFunctionForConstruct(codeBlock);
 }
 
-inline bool canInlineFunctionFor(CodeBlock* codeBlock, CodeSpecializationKind kind)
+inline bool canInlineFunctionFor(CodeBlock* codeBlock, CodeSpecializationKind kind, bool isClosureCall)
 {
+    if (isClosureCall) {
+        ASSERT(kind == CodeForCall);
+        return canInlineFunctionForClosureCall(codeBlock);
+    }
     if (kind == CodeForCall)
         return canInlineFunctionForCall(codeBlock);
     ASSERT(kind == CodeForConstruct);

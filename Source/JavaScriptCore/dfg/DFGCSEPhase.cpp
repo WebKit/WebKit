@@ -89,9 +89,7 @@ private:
         return result;
     }
 
-    enum InlineCallFrameRequirement { RequireSameInlineCallFrame, DoNotCareAboutInlineCallFrame };
-    template<InlineCallFrameRequirement inlineCallFrameRequirement>
-    NodeIndex genericPureCSE(Node& node)
+    NodeIndex pureCSE(Node& node)
     {
         NodeIndex child1 = canonicalize(node.child1());
         NodeIndex child2 = canonicalize(node.child2());
@@ -110,10 +108,6 @@ private:
                 continue;
             
             if (node.arithNodeFlags() != otherNode.arithNodeFlags())
-                continue;
-            
-            if (inlineCallFrameRequirement == RequireSameInlineCallFrame
-                && node.codeOrigin.inlineCallFrame != otherNode.codeOrigin.inlineCallFrame)
                 continue;
             
             NodeIndex otherChild = canonicalize(otherNode.child1());
@@ -137,16 +131,6 @@ private:
             return index;
         }
         return NoNode;
-    }
-    
-    NodeIndex pureCSE(Node& node)
-    {
-        return genericPureCSE<DoNotCareAboutInlineCallFrame>(node);
-    }
-    
-    NodeIndex pureCSERequiringSameInlineCallFrame(Node& node)
-    {
-        return genericPureCSE<RequireSameInlineCallFrame>(node);
     }
     
     NodeIndex constantCSE(Node& node)
@@ -177,6 +161,27 @@ private:
                 continue;
             
             return index;
+        }
+        return NoNode;
+    }
+    
+    NodeIndex getCalleeLoadElimination(InlineCallFrame* inlineCallFrame)
+    {
+        for (unsigned i = m_indexInBlock; i--;) {
+            NodeIndex index = m_currentBlock->at(i);
+            Node& node = m_graph[index];
+            if (!node.shouldGenerate())
+                continue;
+            if (node.codeOrigin.inlineCallFrame != inlineCallFrame)
+                continue;
+            switch (node.op()) {
+            case GetCallee:
+                return index;
+            case SetCallee:
+                return node.child1().index();
+            default:
+                break;
+            }
         }
         return NoNode;
     }
@@ -412,6 +417,20 @@ private:
 
             Node& node = m_graph[index];
             if (node.op() == CheckFunction && node.child1() == child1 && node.function() == function)
+                return true;
+        }
+        return false;
+    }
+    
+    bool checkExecutableElimination(ExecutableBase* executable, NodeIndex child1)
+    {
+        for (unsigned i = endIndexForPureCSE(); i--;) {
+            NodeIndex index = m_currentBlock->at(i);
+            if (index == child1)
+                break;
+
+            Node& node = m_graph[index];
+            if (node.op() == CheckExecutable && node.child1() == child1 && node.executable() == executable)
                 return true;
         }
         return false;
@@ -830,6 +849,8 @@ private:
                 return NoNode;
             case GetMyScope:
                 return index;
+            case SetMyScope:
+                return node.child1().index();
             default:
                 break;
             }
@@ -1144,11 +1165,12 @@ private:
         case SkipTopScope:
         case SkipScope:
         case GetScopeRegisters:
+        case GetScope:
             setReplacement(pureCSE(node));
             break;
             
         case GetCallee:
-            setReplacement(pureCSERequiringSameInlineCallFrame(node));
+            setReplacement(getCalleeLoadElimination(node.codeOrigin.inlineCallFrame));
             break;
 
         case GetLocal: {
@@ -1348,6 +1370,11 @@ private:
 
         case CheckFunction:
             if (checkFunctionElimination(node.function(), node.child1().index()))
+                eliminate();
+            break;
+                
+        case CheckExecutable:
+            if (checkExecutableElimination(node.executable(), node.child1().index()))
                 eliminate();
             break;
                 

@@ -1,5 +1,117 @@
 2013-01-05  Filip Pizlo  <fpizlo@apple.com>
 
+        DFG should inline closure calls
+        https://bugs.webkit.org/show_bug.cgi?id=106067
+
+        Reviewed by Gavin Barraclough.
+        
+        This adds initial support for inlining closure calls to the DFG. A call is considered
+        to be a closure call when the JSFunction* varies, but always has the same executable.
+        We already have closure call inline caching in both JITs, which works by checking that
+        the callee has an expected structure (as a cheap way of detecting that it is in fact
+        a JSFunction) and an expected executable. Closure call inlining uses profiling data
+        aggregated by CallLinkStatus to decide when to specialize the call to the particular
+        structure/executable, and inline the call rather than emitting a call sequence. When
+        we choose to do a closure inline rather than an ordinary inline, a number of things
+        change about how inlining is performed:
+        
+        - The inline is guarded by a CheckStructure/CheckExecutable rather than a
+          CheckFunction.
+        
+        - Instead of propagating a constant value for the scope, we emit GetMyScope every time
+          that the scope is needed, which loads the scope from a local variable. We do similar
+          things for the callee.
+        
+        - The prologue of the inlined code includes SetMyScope and SetCallee nodes to eagerly
+          plant the scope and callee into the "true call frame", i.e. the place on the stack
+          where the call frame would have been if the call had been actually performed. This
+          allows GetMyScope/GetCallee to work as they would if the code wasn't inlined. It
+          also allows for trivial handling of scope and callee for call frame reconstruction
+          upon stack introspection and during OSR.
+        
+        - A new node called GetScope is introduced, which just gets the scope of a function.
+          This node has the expected CSE support. This allows for the
+          SetMyScope(GetScope(@function)) sequence to set up the scope in the true call frame.
+        
+        - GetMyScope/GetCallee CSE can match against SetMyScope/SetCallee, which means that
+          the GetMyScope/GetCallee nodes emitted during parsing are often removed during CSE,
+          if we can prove that it is safe to do so.
+        
+        - Inlining heuristics are adjusted to grok the cost of inlining a closure. We are
+          less likely to inline a closure call than we are to inline a normal call, since we
+          end up emitting more code for closures due to CheckStructure, CheckExecutable,
+          GetScope, SetMyScope, and SetCallee.
+        
+        Additionally, I've fixed the VariableEventStream to ensure that we don't attempt to
+        plant Undefined into the true call frames. This was previously a harmless oversight,
+        but it becomes quite bad if OSR is relying on the scope/callee already having been
+        set and not subsequently clobbered by the OSR itself.
+        
+        This is a ~60% speed-up on programs that frequently make calls to closures. It's
+        neutral on V8v7 and other major benchmark suites.
+        
+        The lack of a definite speed-up is likely due the fact that closure inlining currently
+        does not do any cardinality [1] optimizations. We don't observe when a closure was
+        constructed within its caller, and so used the scope from its caller; and furthermore
+        we have no facility to detect when the scope is single. All scoped variable accesses
+        are assumed to be multiple instead. A subsequent step will be to ensure that closure
+        call inlining will be single and loving it.
+        
+        [1] Single and loving it: Must-alias analysis for higher-order languages. Suresh
+            Jagannathan, Peter Thiemann, Stephen Weeks, and Andrew Wright. In POPL '98.
+
+        * bytecode/CallLinkStatus.cpp:
+        (JSC::CallLinkStatus::dump):
+        * bytecode/CallLinkStatus.h:
+        (JSC::CallLinkStatus::isClosureCall):
+        (CallLinkStatus):
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::globalObjectFor):
+        (JSC):
+        * bytecode/CodeBlock.h:
+        (CodeBlock):
+        * bytecode/CodeOrigin.cpp:
+        (JSC::InlineCallFrame::dump):
+        * dfg/DFGAbstractState.cpp:
+        (JSC::DFG::AbstractState::execute):
+        * dfg/DFGByteCodeParser.cpp:
+        (ByteCodeParser):
+        (JSC::DFG::ByteCodeParser::handleCall):
+        (JSC::DFG::ByteCodeParser::emitFunctionChecks):
+        (JSC::DFG::ByteCodeParser::handleInlining):
+        * dfg/DFGCSEPhase.cpp:
+        (JSC::DFG::CSEPhase::pureCSE):
+        (CSEPhase):
+        (JSC::DFG::CSEPhase::getCalleeLoadElimination):
+        (JSC::DFG::CSEPhase::checkExecutableElimination):
+        (JSC::DFG::CSEPhase::getMyScopeLoadElimination):
+        (JSC::DFG::CSEPhase::performNodeCSE):
+        * dfg/DFGCapabilities.cpp:
+        (JSC::DFG::mightInlineFunctionForClosureCall):
+        * dfg/DFGCapabilities.h:
+        (DFG):
+        (JSC::DFG::mightInlineFunctionForClosureCall):
+        (JSC::DFG::canInlineFunctionForClosureCall):
+        (JSC::DFG::canInlineFunctionFor):
+        * dfg/DFGNode.h:
+        (Node):
+        (JSC::DFG::Node::hasExecutable):
+        (JSC::DFG::Node::executable):
+        * dfg/DFGNodeType.h:
+        (DFG):
+        * dfg/DFGPredictionPropagationPhase.cpp:
+        (JSC::DFG::PredictionPropagationPhase::propagate):
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGVariableEventStream.cpp:
+        (JSC::DFG::VariableEventStream::reconstruct):
+        * runtime/Options.h:
+        (JSC):
+
+2013-01-05  Filip Pizlo  <fpizlo@apple.com>
+
         Data flow paths that carry non-numbers, non-undefined, non-null values should not cause subtractions and arithmetic additions (i.e. ++) to speculate double
         https://bugs.webkit.org/show_bug.cgi?id=106190
 

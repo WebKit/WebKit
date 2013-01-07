@@ -1382,7 +1382,13 @@ bool AbstractState::execute(unsigned indexInBlock)
         node.setCanExit(false);
         forNode(nodeIndex).set(SpecFunction);
         break;
+        
+    case SetCallee:
+    case SetMyScope:
+        node.setCanExit(false);
+        break;
             
+    case GetScope: // FIXME: We could get rid of these if we know that the JSFunction is a constant. https://bugs.webkit.org/show_bug.cgi?id=106202
     case GetMyScope:
     case SkipTopScope:
         node.setCanExit(false);
@@ -1455,6 +1461,16 @@ bool AbstractState::execute(unsigned indexInBlock)
         node.setCanExit(true); // Lies, but it's true for the common case of JSArray, so it's good enough.
         forNode(nodeIndex).set(SpecInt32);
         break;
+        
+    case CheckExecutable: {
+        // FIXME: We could track executables in AbstractValue, which would allow us to get rid of these checks
+        // more thoroughly. https://bugs.webkit.org/show_bug.cgi?id=106200
+        // FIXME: We could eliminate these entirely if we know the exact value that flows into this.
+        // https://bugs.webkit.org/show_bug.cgi?id=106201
+        forNode(node.child1()).filter(SpecCell);
+        node.setCanExit(true);
+        break;
+    }
 
     case CheckStructure:
     case ForwardCheckStructure: {

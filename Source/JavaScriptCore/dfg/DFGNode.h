@@ -702,6 +702,16 @@ struct Node {
         ASSERT(JSValue(result).isFunction());
         return result;
     }
+    
+    bool hasExecutable()
+    {
+        return op() == CheckExecutable;
+    }
+    
+    ExecutableBase* executable()
+    {
+        return jsCast<ExecutableBase*>(reinterpret_cast<JSCell*>(m_opInfo));
+    }
 
     bool hasStructureTransitionData()
     {

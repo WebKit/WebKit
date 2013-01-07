@@ -119,7 +119,7 @@ CallLinkStatus CallLinkStatus::computeFor(CodeBlock* profiledBlock, unsigned byt
 #endif
 }
 
-void CallLinkStatus::dump(PrintStream& out)
+void CallLinkStatus::dump(PrintStream& out) const
 {
     if (!isSet()) {
         out.print("Not Set");

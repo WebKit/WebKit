@@ -86,6 +86,7 @@ void InlineCallFrame::dump(PrintStream& out) const
         out.print(", known callee: ", JSValue(callee.get()));
     else
         out.print(", closure call");
+    out.print(", stack >= r", stackOffset);
     out.print(">");
 }
 

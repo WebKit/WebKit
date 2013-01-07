@@ -3921,12 +3921,34 @@ void SpeculativeJIT::compile(Node& node)
         break;
     }
         
+    case SetCallee: {
+        SpeculateCellOperand callee(this, node.child1());
+        m_jit.storePtr(callee.gpr(), JITCompiler::addressFor(static_cast<VirtualRegister>(node.codeOrigin.stackOffset() + static_cast<int>(JSStack::Callee))));
+        noResult(m_compileIndex);
+        break;
+    }
+        
+    case GetScope: {
+        SpeculateCellOperand function(this, node.child1());
+        GPRTemporary result(this, function);
+        m_jit.loadPtr(JITCompiler::Address(function.gpr(), JSFunction::offsetOfScopeChain()), result.gpr());
+        cellResult(result.gpr(), m_compileIndex);
+        break;
+    }
+        
     case GetMyScope: {
         GPRTemporary result(this);
         GPRReg resultGPR = result.gpr();
 
         m_jit.loadPtr(JITCompiler::addressFor(static_cast<VirtualRegister>(node.codeOrigin.stackOffset() + static_cast<int>(JSStack::ScopeChain))), resultGPR);
         cellResult(resultGPR, m_compileIndex);
+        break;
+    }
+        
+    case SetMyScope: {
+        SpeculateCellOperand callee(this, node.child1());
+        m_jit.storePtr(callee.gpr(), JITCompiler::addressFor(static_cast<VirtualRegister>(node.codeOrigin.stackOffset() + static_cast<int>(JSStack::ScopeChain))));
+        noResult(m_compileIndex);
         break;
     }
         
@@ -4080,6 +4102,14 @@ void SpeculativeJIT::compile(Node& node)
         noResult(m_compileIndex);
         break;
     }
+        
+    case CheckExecutable: {
+        SpeculateCellOperand function(this, node.child1());
+        speculationCheck(BadExecutable, JSValueRegs(function.gpr()), node.child1(), m_jit.branchWeakPtr(JITCompiler::NotEqual, JITCompiler::Address(function.gpr(), JSFunction::offsetOfExecutable()), node.executable()));
+        noResult(m_compileIndex);
+        break;
+    }
+        
     case CheckStructure:
     case ForwardCheckStructure: {
         AbstractValue& value = m_state.forNode(node.child1());

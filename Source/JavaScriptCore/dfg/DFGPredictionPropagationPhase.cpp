@@ -767,6 +767,16 @@ private:
         case Phi:
             break;
 
+        case SetCallee:
+        case SetMyScope:
+            changed |= m_graph[node.child1()].mergeFlags(NodeUsedAsValue);
+            break;
+            
+        case GetScope:
+            changed |= m_graph[node.child1()].mergeFlags(NodeUsedAsValue);
+            changed |= setPrediction(SpecCellOther);
+            break;
+
 #ifndef NDEBUG
         // These get ignored because they don't return anything.
         case DFG::Jump:
@@ -777,6 +787,7 @@ private:
         case ForceOSRExit:
         case SetArgument:
         case CheckStructure:
+        case CheckExecutable:
         case ForwardCheckStructure:
         case StructureTransitionWatchpoint:
         case ForwardStructureTransitionWatchpoint:
