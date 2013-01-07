@@ -43,7 +43,6 @@ public:
         Add,
         Update,
         Delete,
-        CopyContent,
     };
 
     SecItemRequestData();

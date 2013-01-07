@@ -39,6 +39,10 @@ static void handleSecItemRequest(CoreIPC::Connection* connection, uint64_t reque
     SecItemResponseData response;
 
     switch (request.type()) {
+        case SecItemRequestData::Invalid:
+            ASSERT_NOT_REACHED();
+            return;
+
         case SecItemRequestData::CopyMatching: {
             CFTypeRef resultObject = 0;
             OSStatus resultCode = SecItemCopyMatching(request.query(), &resultObject);
@@ -64,9 +68,6 @@ static void handleSecItemRequest(CoreIPC::Connection* connection, uint64_t reque
             response = SecItemResponseData(resultCode, 0);
             break;
         }
-
-        default:
-            return;
     }
 
     connection->send(Messages::WebProcess::SecItemResponse(requestID, response), 0);

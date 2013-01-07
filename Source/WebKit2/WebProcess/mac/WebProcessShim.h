@@ -36,16 +36,6 @@ struct WebProcessSecItemShimCallbacks {
 
 typedef void (*WebProcessSecItemShimInitializeFunc)(const WebProcessSecItemShimCallbacks& callbacks);
 
-struct WebProcessKeychainItemShimCallbacks {
-    OSStatus (*secKeychainItemCopyContent)(SecKeychainItemRef, SecItemClass*, SecKeychainAttributeList*, UInt32* length, void** outData);
-    OSStatus (*secKeychainItemCreateFromContent)(SecItemClass, SecKeychainAttributeList*, UInt32 length, const void* data, SecKeychainItemRef*);
-    OSStatus (*secKeychainItemModifyContent)(SecKeychainItemRef, const SecKeychainAttributeList*, UInt32 length, const void* data);
-    bool (*freeAttributeListContent)(SecKeychainAttributeList* attrList);
-    bool (*freeKeychainItemContentData)(void* data);
-};
-
-typedef void (*WebProcessKeychainItemShimInitializeFunc)(const WebProcessKeychainItemShimCallbacks& callbacks);
-
 } // namespace WebKit
 
 #endif // WebProcessShim_h
