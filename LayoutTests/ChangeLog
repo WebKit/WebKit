@@ -1,3 +1,9 @@
+2013-01-07  Ojan Vafai  <ojan@chromium.org>
+
+        A couple more rebaselines for http://trac.webkit.org/changeset/138838.
+        * platform/mac/fast/table/038-vertical-expected.txt:
+        * platform/mac/fast/table/border-collapsing/004-vertical-expected.txt:
+
 2013-01-07  Justin Novosad  <junov@google.com>
 
         Fixing memory read after free in CanvasRenderingContext2D::accessFont
