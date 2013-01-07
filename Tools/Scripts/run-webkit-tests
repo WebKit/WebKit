@@ -65,32 +65,12 @@ sub useNewRunWebKitTests()
     return 1;
 }
 
-sub platformIsReadyForParallelTesting()
-{
-    # NRWT is able to run the tests in parallel, ORWT was not.
-    # When we run the tests in parallel, tests which (incorrectly)
-    # interact with each other can start failing.
-    # To reduce the failure burden during the transition individual
-    # platforms can opt-in to parallel test execution by default.
-
-    # We believe all platforms are ready for default parallel testing except
-    # Qt, as Qt runs more than one build-slave per-server.
-    # Ossy has asked me to blacklist Qt for now.
-    return !isQt();
-}
-
 my $script = "perl";
 my $harnessName = "old-run-webkit-tests";
 
 if (useNewRunWebKitTests()) {
     $script = "python";
     $harnessName = "new-run-webkit-tests";
-
-    if (!grep(/--child-processes/, @ARGV) and !platformIsReadyForParallelTesting()) {
-        push(@ARGV, "--child-processes=1");
-        print "Running new-run-webkit-tests with one child process.\n";
-        print "For more parallelism, run new-run-webkit-tests directly.\n";
-    }
 
     if (runningOnBuildBot()) {
         push(@ARGV, "--debug-rwt-logging");

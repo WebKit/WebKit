@@ -186,3 +186,6 @@ class QtPort(Port):
             return False
         return result
 
+    # Qt port is not ready for parallel testing, see https://bugs.webkit.org/show_bug.cgi?id=77730 for details.
+    def default_child_processes(self):
+        return 1

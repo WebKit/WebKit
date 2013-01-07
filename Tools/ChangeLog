@@ -1,3 +1,16 @@
+2013-01-07  Csaba Osztrogonác  <ossy@webkit.org>
+
+        [Qt] run-webkit-tests cleanup for parallel NRWT
+        https://bugs.webkit.org/show_bug.cgi?id=106220
+
+        Reviewed by Dirk Pranke.
+
+        * Scripts/run-webkit-tests:
+        (useNewRunWebKitTests):
+        * Scripts/webkitpy/layout_tests/port/qt.py:
+        (QtPort):
+        (QtPort.default_child_processes):
+
 2013-01-07  Philippe Normand  <pnormand@igalia.com>
 
         Create a GStreamerAudio watchlist and add myself to it.
