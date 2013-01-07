@@ -38,8 +38,15 @@ namespace WebCore {
 
 bool PluginPackage::fetchInfo()
 {
-    if (!load())
-        return false;
+    if (!m_module) {
+        m_module = new QLibrary((QString)m_path);
+        m_module->setLoadHints(QLibrary::ResolveAllSymbolsHint);
+        if (!m_module->load()) {
+            LOG(Plugins, "%s not loaded (%s)", m_path.utf8().data(),
+                m_module->errorString().toLatin1().constData());
+            return false;
+        }
+    }
 
     NPP_GetValueProcPtr gv = (NPP_GetValueProcPtr)m_module->resolve("NP_GetValue");
     NP_GetMIMEDescriptionFuncPtr gm =
@@ -61,7 +68,6 @@ bool PluginPackage::fetchInfo()
     determineModuleVersionFromDescription();
 
     setMIMEDescription(String::fromUTF8(gm()));
-    m_infoIsFromCache = false;
 
     return true;
 }
@@ -155,12 +161,14 @@ bool PluginPackage::load()
     if (isPluginBlacklisted())
         return false;
 
-    m_module = new QLibrary((QString)m_path);
-    m_module->setLoadHints(QLibrary::ResolveAllSymbolsHint);
-    if (!m_module->load()) {
-        LOG(Plugins, "%s not loaded (%s)", m_path.utf8().data(),
+    if (!m_module) {
+        m_module = new QLibrary((QString)m_path);
+        m_module->setLoadHints(QLibrary::ResolveAllSymbolsHint);
+        if (!m_module->load()) {
+            LOG(Plugins, "%s not loaded (%s)", m_path.utf8().data(),
                 m_module->errorString().toLatin1().constData());
-        return false;
+            return false;
+        }
     }
 
     m_isLoaded = true;
