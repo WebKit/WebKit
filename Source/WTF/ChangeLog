@@ -1,3 +1,10 @@
+2013-01-07  Filip Pizlo  <fpizlo@apple.com>
+
+        Unreviewed, it should be possible to build JSC on ARM.
+
+        * wtf/FastMalloc.cpp:
+        (WTF::TCMalloc_PageHeap::IncrementalScavenge):
+
 2013-01-07  Balazs Kilvady  <kilvadyb@homejinni.com>
 
         MIPS LLInt implementation.

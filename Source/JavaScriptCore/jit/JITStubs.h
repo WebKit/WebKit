@@ -292,6 +292,8 @@ inline bool returnAddressIsInCtiTrampoline(ReturnAddressPtr returnAddress)
 }
 #endif
 
+void performPlatformSpecificJITAssertions(JSGlobalData*);
+
 extern "C" {
 EncodedJSValue JIT_STUB cti_op_add(STUB_ARGS_DECLARATION) WTF_INTERNAL;
 EncodedJSValue JIT_STUB cti_op_bitand(STUB_ARGS_DECLARATION) WTF_INTERNAL;

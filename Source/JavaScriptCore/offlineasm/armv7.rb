@@ -201,7 +201,7 @@ def emitArmV7Compact(opcode2, opcode3, operands)
     else
         raise unless operands.size == 2
         raise unless operands[1].register?
-        if operands[0].is_a? Immediate
+        if operands[0].immediate?
             $asm.puts "#{opcode3} #{operands[1].armV7Operand}, #{operands[1].armV7Operand}, #{operands[0].armV7Operand}"
         else
             $asm.puts "#{opcode2} #{armV7FlippedOperands(operands)}"
@@ -235,9 +235,9 @@ def emitArmV7Test(operands)
         raise "Expected 2 or 3 operands but got #{operands.size} at #{codeOriginString}"
     end
     
-    if mask.is_a? Immediate and mask.value == -1
+    if mask.immediate? and mask.value == -1
         $asm.puts "tst #{value.armV7Operand}, #{value.armV7Operand}"
-    elsif mask.is_a? Immediate
+    elsif mask.immediate?
         $asm.puts "tst.w #{value.armV7Operand}, #{mask.armV7Operand}"
     else
         $asm.puts "tst #{value.armV7Operand}, #{mask.armV7Operand}"
@@ -270,9 +270,9 @@ class Instruction
             else
                 suffix = ""
             end
-            if operands.size == 3 and operands[0].is_a? Immediate
-                raise unless operands[1].is_a? RegisterID
-                raise unless operands[2].is_a? RegisterID
+            if operands.size == 3 and operands[0].immediate?
+                raise unless operands[1].register?
+                raise unless operands[2].register?
                 if operands[0].value == 0 and suffix.empty?
                     unless operands[1] == operands[2]
                         $asm.puts "mov #{operands[2].armV7Operand}, #{operands[1].armV7Operand}"
@@ -280,12 +280,12 @@ class Instruction
                 else
                     $asm.puts "adds #{operands[2].armV7Operand}, #{operands[1].armV7Operand}, #{operands[0].armV7Operand}"
                 end
-            elsif operands.size == 3 and operands[0].is_a? RegisterID
-                raise unless operands[1].is_a? RegisterID
-                raise unless operands[2].is_a? RegisterID
+            elsif operands.size == 3 and operands[0].immediate?
+                raise unless operands[1].register?
+                raise unless operands[2].register?
                 $asm.puts "adds #{armV7FlippedOperands(operands)}"
             else
-                if operands[0].is_a? Immediate
+                if operands[0].immediate?
                     unless Immediate.new(nil, 0) == operands[0]
                         $asm.puts "adds #{armV7FlippedOperands(operands)}"
                     end
@@ -402,7 +402,7 @@ class Instruction
         when "push"
             $asm.puts "push #{operands[0].armV7Operand}"
         when "move"
-            if operands[0].is_a? Immediate
+            if operands[0].immediate?
                 armV7MoveImmediate(operands[0].value, operands[1])
             else
                 $asm.puts "mov #{armV7FlippedOperands(operands)}"

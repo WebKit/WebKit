@@ -2137,7 +2137,7 @@ void TCMalloc_PageHeap::IncrementalScavenge(Length n) {
     SpanList* slist = (index == kMaxPages) ? &large_ : &free_[index];
     if (!DLL_IsEmpty(&slist->normal)) {
       // Release the last span on the normal portion of this list
-      Span* s = slist->normal.prev;
+      Span* s = slist->normal.prev();
       DLL_Remove(s);
       TCMalloc_SystemRelease(reinterpret_cast<void*>(s->start << kPageShift),
                              static_cast<size_t>(s->length << kPageShift));

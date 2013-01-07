@@ -234,7 +234,8 @@ JSGlobalData::JSGlobalData(GlobalDataType globalDataType, HeapType heapType)
     wtfThreadData().setCurrentIdentifierTable(existingEntryIdentifierTable);
 
 #if ENABLE(JIT)
-    jitStubs = adoptPtr(new JITThunks(this));
+    jitStubs = adoptPtr(new JITThunks());
+    performPlatformSpecificJITAssertions(this);
 #endif
     
     interpreter->initialize(this->canUseJIT());

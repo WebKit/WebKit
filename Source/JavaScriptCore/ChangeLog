@@ -1,3 +1,21 @@
+2013-01-07  Filip Pizlo  <fpizlo@apple.com>
+
+        Unreviewed, it should be possible to build JSC on ARM.
+
+        * API/JSBase.h:
+        * jit/JITStubs.cpp:
+        (JSC::performPlatformSpecificJITAssertions):
+        (JSC):
+        * jit/JITStubs.h:
+        (JSC):
+        * jit/JITThunks.cpp:
+        (JSC::JITThunks::JITThunks):
+        * jit/JITThunks.h:
+        (JITThunks):
+        * offlineasm/armv7.rb:
+        * runtime/JSGlobalData.cpp:
+        (JSC::JSGlobalData::JSGlobalData):
+
 2013-01-07  Balazs Kilvady  <kilvadyb@homejinni.com>
 
         MIPS LLInt implementation.

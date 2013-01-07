@@ -46,7 +46,7 @@ class NativeExecutable;
 
 class JITThunks {
 public:
-    JITThunks(JSGlobalData*);
+    JITThunks();
     ~JITThunks();
 
     MacroAssemblerCodePtr ctiNativeCall(JSGlobalData*);
