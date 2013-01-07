@@ -1,3 +1,15 @@
+2013-01-07  Levi Weintraub  <leviw@chromium.org>
+
+        Unreviewed gardening. Updating test expectations following r138717.
+
+        * platform/chromium-linux/platform/chromium/fast/events/touch: Removed.
+        * platform/chromium-linux/platform/chromium/fast/events/touch/compositor-touch-hit-rects-expected.txt: Removed.
+        * platform/chromium-mac/platform/chromium/fast/events/touch/compositor-touch-hit-rects-expected.txt:
+        * platform/chromium-win-xp/platform/chromium/fast/events: Added.
+        * platform/chromium-win-xp/platform/chromium/fast/events/touch: Added.
+        * platform/chromium-win-xp/platform/chromium/fast/events/touch/compositor-touch-hit-rects-expected.txt: Added.
+        * platform/chromium/TestExpectations:
+
 2013-01-07  Dimitri Glazkov  <dglazkov@chromium.org>
 
         [Chromium] fast/speech/scripted/navigate-away.html is flaky.

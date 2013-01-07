@@ -4063,7 +4063,6 @@ webkit.org/b/101255 [ Mac Android ] fast/repaint/block-selection-gap-in-table-ce
 
 # Needs baselines
 Bug(thakis) [ Android Release ] fast/forms/zoomed-controls.html [ ImageOnlyFailure ]
-Bug(leviw) [ Android Win Mac Linux ] platform/chromium/fast/events/touch/compositor-touch-hit-rects.html [ Failure ]
 
 # Flaky on win7 since at least r162410
 webkit.org/b/99886 [ Win7 ] fast/dom/shadow/input-with-validation.html [ ImageOnlyFailure Pass ]
