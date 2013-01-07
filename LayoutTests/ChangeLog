@@ -1,5 +1,12 @@
 2013-01-07  Mihnea Ovidenie  <mihnea@adobe.com>
 
+        Unreviewed. Unskip tests fixed in http://trac.webkit.org/changeset/138937.
+
+        * platform/efl/TestExpectations:
+        * platform/gtk/TestExpectations:
+
+2013-01-07  Mihnea Ovidenie  <mihnea@adobe.com>
+
         [GTK][EFL][Qt] New tests fast/regions/region-rule-nested-region-rule.html, fast/regions/region-styling-mediaquery.html are failing
         https://bugs.webkit.org/show_bug.cgi?id=106168
 
