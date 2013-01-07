@@ -2892,16 +2892,27 @@ static NSString* roleValueToNSString(AccessibilityRole value)
 
 - (void)accessibilityShowContextMenu
 {    
-    FrameView* frameView = m_object->documentFrameView();
-    if (!frameView)
-        return;
-    Frame* frame = frameView->frame();
-    if (!frame)
-        return;
-    Page* page = frame->page();
+    Page* page = m_object->page();
     if (!page)
         return;
-    page->contextMenuController()->showContextMenuAt(frame, m_object->clickPoint());
+    
+    IntRect rect = pixelSnappedIntRect(m_object->elementRect());
+    FrameView* frameView = m_object->documentFrameView();
+
+    // On WK2, we need to account for the scroll position.
+    // On WK1, this isn't necessary, it's taken care of by the attachment views.
+    if (frameView && !frameView->platformWidget()) {
+        // Find the appropriate scroll view to use to convert the contents to the window.
+        for (AccessibilityObject* parent = m_object->parentObject(); parent; parent = parent->parentObject()) {
+            if (parent->isAccessibilityScrollView()) {
+                ScrollView* scrollView = toAccessibilityScrollView(parent)->scrollView();
+                rect = scrollView->contentsToRootView(rect);
+                break;
+            }
+        }
+    }
+    
+    page->contextMenuController()->showContextMenuAt(page->mainFrame(), rect.center());
 }
 
 - (void)accessibilityPerformAction:(NSString*)action
