@@ -1,3 +1,11 @@
+2013-01-07  Philippe Normand  <pnormand@igalia.com>
+
+        Create a GStreamerAudio watchlist and add myself to it.
+
+        Unreviewed.
+
+        * Scripts/webkitpy/common/config/watchlist:
+
 2013-01-05  Ryosuke Niwa  <rniwa@webkit.org>
 
         Add svn:executable to a bunch of scripts in BuildSlaveSupport.

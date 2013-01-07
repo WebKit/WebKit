@@ -34,6 +34,9 @@
         "GStreamerGraphics": {
             "filename": r"Source/WebCore/platform/graphics/gstreamer/",
         },
+        "GStreamerAudio": {
+            "filename": r"Source/WebCore/platform/audio/gstreamer/",
+        },
         "WebIDL": {
             "filename": r"Source/WebCore/(?!inspector)(?!testing).*\.idl"
         },
@@ -354,6 +357,7 @@
         "FrameLoader": [ "abarth@webkit.org", "japhet@chromium.org" ],
         "GraphicsLayer": [ "simon.fraser@apple.com" ],
         "GStreamerGraphics": [ "alexis@webkit.org", "pnormand@igalia.com", "gns@gnome.org", "mrobinson@webkit.org" ],
+        "GStreamerAudio": [ "pnormand@igalia.com" ],
         "GtkBuildSystem": [ "zandobersek@gmail.com" ],
         "GtkWebKit2PublicAPI": [ "cgarcia@igalia.com", "gns@gnome.org", "mrobinson@webkit.org" ],
         "Harfbuzz": [ "dominik.rottsches@intel.com" ],
