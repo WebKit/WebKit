@@ -24,6 +24,7 @@
 #include "Frame.h"
 #include "FrameLoader.h"
 #include "FrameLoaderClient.h"
+#include "FrameView.h"
 #include "HTMLImageLoader.h"
 #include "HTMLNames.h"
 #include "Image.h"
@@ -45,6 +46,8 @@ namespace WebCore {
 
 static const int autoStartPlugInSizeThresholdWidth = 1;
 static const int autoStartPlugInSizeThresholdHeight = 1;
+static const int autoShowLabelSizeThresholdWidth = 400;
+static const int autoShowLabelSizeThresholdHeight = 300;
 // This delay should not exceed the snapshot delay in PluginView.cpp
 static const double simulatedMouseClickTimerDelay = .75;
 
@@ -285,6 +288,25 @@ void HTMLPlugInImageElement::simulatedMouseClickTimerFired(DeferrableOneShotTime
     m_pendingClickEventFromSnapshot = nullptr;
 }
 
+static bool shouldPlugInShowLabelAutomatically(const IntSize& viewContentsSize, const Node* node)
+{
+    LayoutRect plugInClipRect = node->renderer()->absoluteClippedOverflowRect();
+    LayoutRect viewContentsRect(LayoutPoint::zero(), LayoutSize(viewContentsSize));
+    if (!viewContentsRect.contains(plugInClipRect)) {
+        LOG(Plugins, "%p Plug-in rect: (%d %d, %d %d) not contained in document of size %d %d", node, plugInClipRect.pixelSnappedX(), plugInClipRect.pixelSnappedY(), plugInClipRect.pixelSnappedWidth(), plugInClipRect.pixelSnappedHeight(), viewContentsSize.width(), viewContentsSize.height());
+        return false;
+    }
+
+    if (plugInClipRect.pixelSnappedWidth() < autoShowLabelSizeThresholdWidth
+        || plugInClipRect.pixelSnappedHeight() < autoShowLabelSizeThresholdHeight) {
+        LOG(Plugins, "%p Size: %d %d", node, plugInClipRect.pixelSnappedWidth(), plugInClipRect.pixelSnappedHeight());
+        return false;
+    }
+
+    LOG(Plugins, "%p Auto-show label", node);
+    return true;
+}
+
 void HTMLPlugInImageElement::subframeLoaderWillCreatePlugIn(const KURL& url)
 {
     if (!document()->page()
@@ -309,7 +331,7 @@ void HTMLPlugInImageElement::subframeLoaderWillCreatePlugIn(const KURL& url)
     int width = rect.width();
     int height = rect.height();
     if (!width || !height || (width <= autoStartPlugInSizeThresholdWidth && height <= autoStartPlugInSizeThresholdHeight)) {
-        LOG(Plugins, "%p Plugin is %dx%d, set to play", this, width, height);
+        LOG(Plugins, "%p Plug-in is %dx%d, set to play", this, width, height);
         return;
     }
 
@@ -318,16 +340,19 @@ void HTMLPlugInImageElement::subframeLoaderWillCreatePlugIn(const KURL& url)
         return;
     }
 
-    LOG(Plugins, "%p Plugin URL: %s", this, m_url.utf8().data());
-    LOG(Plugins, "   loaded URL: %s", url.string().utf8().data());
+    LOG(Plugins, "%p Plug-in URL: %s", this, m_url.utf8().data());
+    LOG(Plugins, "            loaded URL: %s", url.string().utf8().data());
 
     m_plugInOriginHash = PlugInOriginHash::hash(this, url);
     if (m_plugInOriginHash && document()->page()->plugInClient()->isAutoStartOrigin(m_plugInOriginHash)) {
-        LOG(Plugins, "%p Plugin hash %x is auto-start, set to play", this, m_plugInOriginHash);
+        LOG(Plugins, "%p Plug-in hash %x is auto-start, set to play", this, m_plugInOriginHash);
         return;
     }
 
-    LOG(Plugins, "%p Plugin hash %x is %dx%d, origin is not auto-start, set to wait for snapshot", this, m_plugInOriginHash, width, height);
+    if (shouldPlugInShowLabelAutomatically(document()->page()->mainFrame()->view()->contentsSize(), this))
+        toRenderSnapshottedPlugIn(renderer())->setShouldShowLabelAutomatically();
+
+    LOG(Plugins, "%p Plug-in hash %x is %dx%d, origin is not auto-start, set to wait for snapshot", this, m_plugInOriginHash, width, height);
     setDisplayState(WaitingForSnapshot);
 }
 
@@ -337,7 +362,7 @@ void HTMLPlugInImageElement::subframeLoaderDidCreatePlugIn(const Widget* widget)
         || !static_cast<const PluginViewBase*>(widget)->shouldAlwaysAutoStart())
         return;
 
-    LOG(Plugins, "%p Plugin should auto-start, set to play", this);
+    LOG(Plugins, "%p Plug-in should auto-start, set to play", this);
     setDisplayState(Playing);
 }
 
