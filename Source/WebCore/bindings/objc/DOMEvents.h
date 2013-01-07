@@ -37,5 +37,6 @@
 #import <WebCore/DOMMouseEvent.h>
 #import <WebCore/DOMMutationEvent.h>
 #import <WebCore/DOMOverflowEvent.h>
+#import <WebCore/DOMProgressEvent.h>
 #import <WebCore/DOMUIEvent.h>
 #import <WebCore/DOMWheelEvent.h>
