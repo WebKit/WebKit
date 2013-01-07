@@ -1,0 +1,10 @@
+Tests that adding a track and changing its mode through JS doesn't crash the browser.
+
+** Add a text track through JS to the video element **
+** Add cue to the text track **
+** Set the track mode to showing **
+
+No crash. PASS.
+
+END OF TEST
+

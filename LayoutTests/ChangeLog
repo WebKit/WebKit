@@ -1,3 +1,13 @@
+2013-01-07  Victor Carbune  <victor@rosedu.org>
+
+        [Track] Rendering crash
+        https://bugs.webkit.org/show_bug.cgi?id=106199
+
+        Reviewed by Eric Carlson.
+
+        * media/track/track-cue-inline-assertion-crash-expected.txt: Added.
+        * media/track/track-cue-inline-assertion-crash.html: Added.
+
 2013-01-07  Michael Pruett  <michael@68k.org>
 
         [JSC] Copy non-index properties of arrays in SerializedScriptValue

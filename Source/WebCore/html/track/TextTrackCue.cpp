@@ -695,10 +695,8 @@ void TextTrackCue::updateDisplayTree(float movieTime)
     if (!track()->isRendered())
       return;
 
-
     // Clear the contents of the set.
     m_allDocumentNodes->removeChildren();
-    m_allDocumentNodes->setPseudo(allNodesShadowPseudoId());
 
     // Update the two sets containing past and future WebVTT objects.
     RefPtr<DocumentFragment> referenceTree = getCueAsHTML();
@@ -709,7 +707,7 @@ void TextTrackCue::updateDisplayTree(float movieTime)
 
 PassRefPtr<TextTrackCueBox> TextTrackCue::getDisplayTree()
 {
-    if (!m_displayTreeShouldChange)
+    if (!m_displayTreeShouldChange || !track()->isRendered())
         return m_displayTree;
 
     // 10.1 - 10.10
@@ -727,6 +725,7 @@ PassRefPtr<TextTrackCueBox> TextTrackCue::getDisplayTree()
     // background box.
 
     // Note: This is contained by default in m_allDocumentNodes.
+    m_allDocumentNodes->setPseudo(allNodesShadowPseudoId());
     m_displayTree->appendChild(m_allDocumentNodes, ASSERT_NO_EXCEPTION, true);
 
     // FIXME(BUG 79916): Runs of children of WebVTT Ruby Objects that are not
