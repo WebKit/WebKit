@@ -1,3 +1,17 @@
+2012-12-12  Lucas Forschler  <lforschler@apple.com>
+
+        Merge r125813
+
+    2012-08-16  Ojan Vafai  <ojan@chromium.org>
+
+            Fix test added in r125635. The test failed on non-chromium ports due
+            to the column sizing 1px differently. I'm not really sure what was going on,
+            but this was a fix for a crash anyways. Just marking the test dumpAsText.
+
+            * fast/overflow/line-clamp-and-columns-expected.html: Removed.
+            * fast/overflow/line-clamp-and-columns-expected.txt: Added.
+            * fast/overflow/line-clamp-and-columns.html:
+
 2013-01-02  Lucas Forschler  <lforschler@apple.com>
 
         Rebaseline Chopin SVG results.
