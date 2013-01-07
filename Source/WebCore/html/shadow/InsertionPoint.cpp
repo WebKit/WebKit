@@ -99,8 +99,10 @@ bool InsertionPoint::isActive() const
 
 PassRefPtr<NodeList> InsertionPoint::getDistributedNodes() const
 {
-    if (treeScope()->rootNode()->isShadowRoot())
-        toShadowRoot(treeScope()->rootNode())->owner()->ensureDistributionFromDocument();
+    ContainerNode* rootNode = treeScope()->rootNode();
+    if (rootNode->isShadowRoot())
+        if (ElementShadow* rootOwner = toShadowRoot(rootNode)->owner())
+            rootOwner->ensureDistributionFromDocument();
 
     Vector<RefPtr<Node> > nodes;
 
@@ -119,7 +121,8 @@ void InsertionPoint::childrenChanged(bool changedByParser, Node* beforeChange, N
 {
     HTMLElement::childrenChanged(changedByParser, beforeChange, afterChange, childCountDelta);
     if (ShadowRoot* root = containingShadowRoot())
-        root->owner()->invalidateDistribution();
+        if (ElementShadow* rootOwner = root->owner())
+            rootOwner->invalidateDistribution();
 }
 
 Node::InsertionNotificationRequest InsertionPoint::insertedInto(ContainerNode* insertionPoint)
@@ -127,14 +130,15 @@ Node::InsertionNotificationRequest InsertionPoint::insertedInto(ContainerNode* i
     HTMLElement::insertedInto(insertionPoint);
 
     if (ShadowRoot* root = containingShadowRoot()) {
-        root->owner()->setValidityUndetermined();
-        root->owner()->invalidateDistribution();
-        if (isActive() && !m_registeredWithShadowRoot && insertionPoint->treeScope()->rootNode() == root) {
-            m_registeredWithShadowRoot = true;
-            root->registerInsertionPoint(this);
+        if (ElementShadow* rootOwner = root->owner()) {
+            rootOwner->setValidityUndetermined();
+            rootOwner->invalidateDistribution();
+            if (isActive() && !m_registeredWithShadowRoot && insertionPoint->treeScope()->rootNode() == root) {
+                m_registeredWithShadowRoot = true;
+                root->registerInsertionPoint(this);
+            }
         }
     }
-
 
     return InsertionDone;
 }
