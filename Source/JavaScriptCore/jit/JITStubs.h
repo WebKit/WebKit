@@ -218,6 +218,8 @@ struct JITStackFrame {
     void* preservedS0;
     void* preservedS1;
     void* preservedS2;
+    void* preservedS3;
+    void* preservedS4;
     void* preservedReturnAddress;
 
     ReturnAddressPtr thunkReturnAddress;

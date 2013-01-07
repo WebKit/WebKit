@@ -1322,7 +1322,8 @@ public:
 
     void jump(RegisterID target)
     {
-        m_assembler.jr(target);
+        move(target, MIPSRegisters::t9);
+        m_assembler.jr(MIPSRegisters::t9);
         m_assembler.nop();
     }
 

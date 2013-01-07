@@ -47,6 +47,18 @@
 
 #if ENABLE(JIT)
 
+#if CPU(MIPS)
+#if WTF_MIPS_PIC
+#define LOAD_FUNCTION_TO_T9(function) \
+        ".set noreorder" "\n" \
+        ".cpload $25" "\n" \
+        ".set reorder" "\n" \
+        "la $t9, " LOCAL_REFERENCE(function) "\n"
+#else
+#define LOAD_FUNCTION_TO_T9(function) "" "\n"
+#endif
+#endif
+
 #if ENABLE(DFG_JIT)
 
 #if COMPILER(GCC) && CPU(X86_64)
@@ -198,6 +210,52 @@
     INLINE_ARM_FUNCTION(function) \
     SYMBOL_STRING(function) ":" "\n" \
         INSTRUCTION_STORE_RETURN_ADDRESS_EJCI "\n" \
+        "b " LOCAL_REFERENCE(function) "WithReturnAddress" "\n" \
+    );
+
+#elif COMPILER(GCC) && CPU(MIPS)
+
+#define FUNCTION_WRAPPER_WITH_RETURN_ADDRESS_E(function) \
+    asm( \
+    ".text" "\n" \
+    ".globl " SYMBOL_STRING(function) "\n" \
+    HIDE_SYMBOL(function) "\n" \
+    SYMBOL_STRING(function) ":" "\n" \
+    LOAD_FUNCTION_TO_T9(function##WithReturnAddress) \
+        "move $a1, $ra" "\n" \
+        "b " LOCAL_REFERENCE(function) "WithReturnAddress" "\n" \
+    );
+
+#define FUNCTION_WRAPPER_WITH_RETURN_ADDRESS_ECI(function) \
+    asm( \
+    ".text" "\n" \
+    ".globl " SYMBOL_STRING(function) "\n" \
+    HIDE_SYMBOL(function) "\n" \
+    SYMBOL_STRING(function) ":" "\n" \
+    LOAD_FUNCTION_TO_T9(function##WithReturnAddress) \
+        "move $a3, $ra" "\n" \
+        "b " LOCAL_REFERENCE(function) "WithReturnAddress" "\n" \
+    );
+
+#define FUNCTION_WRAPPER_WITH_RETURN_ADDRESS_EJI(function) \
+    asm( \
+    ".text" "\n" \
+    ".globl " SYMBOL_STRING(function) "\n" \
+    HIDE_SYMBOL(function) "\n" \
+    SYMBOL_STRING(function) ":" "\n" \
+    LOAD_FUNCTION_TO_T9(function##WithReturnAddress) \
+        "sw $ra, 20($sp)" "\n" \
+        "b " LOCAL_REFERENCE(function) "WithReturnAddress" "\n" \
+    );
+
+#define FUNCTION_WRAPPER_WITH_RETURN_ADDRESS_EJCI(function) \
+    asm( \
+    ".text" "\n" \
+    ".globl " SYMBOL_STRING(function) "\n" \
+    HIDE_SYMBOL(function) "\n" \
+    SYMBOL_STRING(function) ":" "\n" \
+    LOAD_FUNCTION_TO_T9(function##WithReturnAddress) \
+        "sw $ra, 24($sp)" "\n" \
         "b " LOCAL_REFERENCE(function) "WithReturnAddress" "\n" \
     );
 
@@ -1636,6 +1694,17 @@ INLINE_ARM_FUNCTION(getHostCallReturnValue)
 SYMBOL_STRING(getHostCallReturnValue) ":" "\n"
     "ldr r5, [r5, #-40]" "\n"
     "mov r0, r5" "\n"
+    "b " LOCAL_REFERENCE(getHostCallReturnValueWithExecState) "\n"
+);
+#elif COMPILER(GCC) && CPU(MIPS)
+asm(
+".text" "\n"
+".globl " SYMBOL_STRING(getHostCallReturnValue) "\n"
+HIDE_SYMBOL(getHostCallReturnValue) "\n"
+SYMBOL_STRING(getHostCallReturnValue) ":" "\n"
+    LOAD_FUNCTION_TO_T9(getHostCallReturnValueWithExecState)
+    "lw $s0, -40($s0)" "\n"
+    "move $a0, $s0" "\n"
     "b " LOCAL_REFERENCE(getHostCallReturnValueWithExecState) "\n"
 );
 #endif

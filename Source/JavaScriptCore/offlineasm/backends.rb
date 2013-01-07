@@ -25,6 +25,7 @@ require "config"
 require "armv7"
 require "ast"
 require "x86"
+require "mips"
 require "cloop"
 
 BACKENDS =
@@ -32,6 +33,7 @@ BACKENDS =
      "X86",
      "X86_64",
      "ARMv7",
+     "MIPS",
      "C_LOOP"
     ]
 
@@ -45,6 +47,7 @@ WORKING_BACKENDS =
      "X86",
      "X86_64",
      "ARMv7",
+     "MIPS",
      "C_LOOP"
     ]
 

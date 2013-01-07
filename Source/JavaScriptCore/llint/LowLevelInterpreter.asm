@@ -182,10 +182,8 @@ macro assert(assertion)
 end
 
 macro preserveReturnAddressAfterCall(destinationRegister)
-    if C_LOOP
-        # In our case, we're only preserving the bytecode vPC. 
-        move lr, destinationRegister
-    elsif ARMv7
+    if C_LOOP or ARMv7 or MIPS
+        # In C_LOOP case, we're only preserving the bytecode vPC.
         move lr, destinationRegister
     elsif X86 or X86_64
         pop destinationRegister
@@ -195,10 +193,8 @@ macro preserveReturnAddressAfterCall(destinationRegister)
 end
 
 macro restoreReturnAddressBeforeReturn(sourceRegister)
-    if C_LOOP
-        # In our case, we're only restoring the bytecode vPC. 
-        move sourceRegister, lr
-    elsif ARMv7
+    if C_LOOP or ARMv7 or MIPS
+        # In C_LOOP case, we're only restoring the bytecode vPC.
         move sourceRegister, lr
     elsif X86 or X86_64
         push sourceRegister
