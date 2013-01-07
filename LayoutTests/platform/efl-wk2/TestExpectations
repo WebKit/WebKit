@@ -59,17 +59,6 @@ webkit.org/b/102651 [ Debug ] networkinformation/updates.html [ Crash ]
 webkit.org/b/102651 [ Debug ] networkinformation/add-listener-from-callback.html [ Crash ]
 webkit.org/b/102651 [ Debug ] networkinformation/basic-operation.html [ Crash ]
 
-# Regression after r138786.
-webkit.org/b/106182 webaudio/gain.html [ Crash ]
-webkit.org/b/106182 webaudio/convolution-mono-mono.html [ Crash ]
-webkit.org/b/106182 webaudio/audiochannelmerger-stereo.html [ Crash ]
-webkit.org/b/106182 webaudio/decode-audio-data-basic.html [ Crash ]
-webkit.org/b/106182 webaudio/mediastreamaudiodestinationnode.html [ Crash ]
-webkit.org/b/106182 webaudio/audiobuffersource-loop-comprehensive.html [ Crash ]
-webkit.org/b/106182 webaudio/biquad-highpass.html [ Crash ]
-webkit.org/b/106182 webaudio/realtimeanalyser-fft-sizing.html [ Crash ]
-webkit.org/b/106182 webaudio/audioparam-connect-audioratesignal.html [ Crash ]
-
 #////////////////////////////////////////////////////////////////////////////////////////
 # FLAKY TESTS
 #////////////////////////////////////////////////////////////////////////////////////////
