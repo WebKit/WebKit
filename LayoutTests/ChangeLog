@@ -1,5 +1,15 @@
 2013-01-06  Abhishek Arya  <inferno@chromium.org>
 
+        Heap-use-after-free in DocumentLoader::stopLoading
+        https://bugs.webkit.org/show_bug.cgi?id=103656
+
+        Reviewed by Eric Seidel.
+
+        * fast/dom/ready-state-change-crash-expected.txt: Added.
+        * fast/dom/ready-state-change-crash.html: Added.
+
+2013-01-06  Abhishek Arya  <inferno@chromium.org>
+
         Heap-use-after-free in WebCore::Document::implicitClose
         https://bugs.webkit.org/show_bug.cgi?id=105655
 

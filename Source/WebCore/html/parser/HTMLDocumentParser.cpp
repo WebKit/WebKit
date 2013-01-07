@@ -146,6 +146,11 @@ void HTMLDocumentParser::prepareToStopParsing()
     if (m_scriptRunner)
         document()->setReadyState(Document::Interactive);
 
+    // Setting the ready state above can fire mutation event and detach us
+    // from underneath. In that case, just bail out.
+    if (isDetached())
+        return;
+
     attemptToRunDeferredScriptsAndEnd();
 }
 
