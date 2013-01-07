@@ -2091,6 +2091,7 @@ fast/canvas/canvas-composite-canvas.html
 
 # track not functional yet.
 fast/events/constructors/track-event-constructor.html
+http/tests/security/contentSecurityPolicy/media-src-track-block.html
 http/tests/security/text-track-crossorigin.html
 
 # Linecaps wrong for zero length lines

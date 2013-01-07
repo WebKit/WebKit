@@ -1,3 +1,14 @@
+2013-01-07  János Badics  <jbadics@inf.u-szeged.hu>
+
+        [Qt] Gardening.
+        r138820: Skipped a test because track feature is not functional yet.
+        r138838: Added new baseline to fast/writing-mode/table-percent-width-quirk-expected.txt.
+
+        Reviewed by Csaba Osztrogonác.
+
+        * platform/qt/TestExpectations:
+        * platform/qt/fast/writing-mode/table-percent-width-quirk-expected.txt:
+
 2013-01-07  Allan Sandfeld Jensen  <allan.jensen@digia.com>
 
         Unskip now passing ruby tests.
