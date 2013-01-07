@@ -34,6 +34,86 @@ namespace WebCore {
 
 namespace SIMD {
 
+ALWAYS_INLINE void unpackOneRowOfRGBA16LittleToRGBA8(const uint16_t*& source, uint8_t*& destination, unsigned& pixelsPerRow)
+{
+    unsigned componentsPerRow = pixelsPerRow * 4;
+    unsigned tailComponents = componentsPerRow % 16;
+    unsigned componentsSize = componentsPerRow - tailComponents;
+    const uint8_t* src = reinterpret_cast<const uint8_t*>(source);
+
+    for (unsigned i = 0; i < componentsSize; i += 16) {
+        uint8x16x2_t components = vld2q_u8(src + i * 2);
+        vst1q_u8(destination + i, components.val[1]);
+    }
+
+    source += componentsSize;
+    destination += componentsSize;
+    pixelsPerRow = tailComponents / 4;
+}
+
+ALWAYS_INLINE void unpackOneRowOfRGB16LittleToRGBA8(const uint16_t*& source, uint8_t*& destination, unsigned& pixelsPerRow)
+{
+    unsigned componentsPerRow = pixelsPerRow * 3;
+    unsigned tailComponents = componentsPerRow % 24;
+    unsigned componentsSize = componentsPerRow - tailComponents;
+
+    uint8x8_t componentA = vdup_n_u8(0xFF);
+    for (unsigned i = 0; i < componentsSize; i += 24) {
+        uint16x8x3_t RGB16 = vld3q_u16(source + i);
+        uint8x8_t componentR = vqmovn_u16(vshrq_n_u16(RGB16.val[0], 8));
+        uint8x8_t componentG = vqmovn_u16(vshrq_n_u16(RGB16.val[1], 8));
+        uint8x8_t componentB = vqmovn_u16(vshrq_n_u16(RGB16.val[2], 8));
+        uint8x8x4_t RGBA8 = {{componentR, componentG, componentB, componentA}};
+        vst4_u8(destination, RGBA8);
+        destination += 32;
+    }
+
+    source += componentsSize;
+    pixelsPerRow = tailComponents / 3;
+}
+
+ALWAYS_INLINE void unpackOneRowOfARGB16LittleToRGBA8(const uint16_t*& source, uint8_t*& destination, unsigned& pixelsPerRow)
+{
+    unsigned componentsPerRow = pixelsPerRow * 4;
+    unsigned tailComponents = componentsPerRow % 32;
+    unsigned componentsSize = componentsPerRow - tailComponents;
+
+    for (unsigned i = 0; i < componentsSize; i += 32) {
+        uint16x8x4_t ARGB16 = vld4q_u16(source + i);
+        uint8x8_t componentA = vqmovn_u16(vshrq_n_u16(ARGB16.val[0], 8));
+        uint8x8_t componentR = vqmovn_u16(vshrq_n_u16(ARGB16.val[1], 8));
+        uint8x8_t componentG = vqmovn_u16(vshrq_n_u16(ARGB16.val[2], 8));
+        uint8x8_t componentB = vqmovn_u16(vshrq_n_u16(ARGB16.val[3], 8));
+        uint8x8x4_t RGBA8 = {{componentR, componentG, componentB, componentA}};
+        vst4_u8(destination + i, RGBA8);
+    }
+
+    source += componentsSize;
+    destination += componentsSize;
+    pixelsPerRow = tailComponents / 4;
+}
+
+ALWAYS_INLINE void unpackOneRowOfBGRA16LittleToRGBA8(const uint16_t*& source, uint8_t*& destination, unsigned& pixelsPerRow)
+{
+    unsigned componentsPerRow = pixelsPerRow * 4;
+    unsigned tailComponents = componentsPerRow % 32;
+    unsigned componentsSize = componentsPerRow - tailComponents;
+
+    for (unsigned i = 0; i < componentsSize; i += 32) {
+        uint16x8x4_t ARGB16 = vld4q_u16(source + i);
+        uint8x8_t componentB = vqmovn_u16(vshrq_n_u16(ARGB16.val[0], 8));
+        uint8x8_t componentG = vqmovn_u16(vshrq_n_u16(ARGB16.val[1], 8));
+        uint8x8_t componentR = vqmovn_u16(vshrq_n_u16(ARGB16.val[2], 8));
+        uint8x8_t componentA = vqmovn_u16(vshrq_n_u16(ARGB16.val[3], 8));
+        uint8x8x4_t RGBA8 = {{componentR, componentG, componentB, componentA}};
+        vst4_u8(destination + i, RGBA8);
+    }
+
+    source += componentsSize;
+    destination += componentsSize;
+    pixelsPerRow = tailComponents / 4;
+}
+
 ALWAYS_INLINE void unpackOneRowOfRGBA4444ToRGBA8(const uint16_t*& source, uint8_t*& destination, unsigned& pixelsPerRow)
 {
     unsigned tailPixels = pixelsPerRow % 8;

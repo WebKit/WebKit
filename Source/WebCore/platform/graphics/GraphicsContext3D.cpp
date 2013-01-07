@@ -392,6 +392,9 @@ namespace {
 
 void unpackOneRowOfRGBA16LittleToRGBA8(const uint16_t* source, uint8_t* destination, unsigned int pixelsPerRow)
 {
+#if HAVE(ARM_NEON_INTRINSICS)
+    SIMD::unpackOneRowOfRGBA16LittleToRGBA8(source, destination, pixelsPerRow);
+#endif
     for (unsigned int i = 0; i < pixelsPerRow; ++i) {
         destination[0] = convertColor16LittleTo8(source[0]);
         destination[1] = convertColor16LittleTo8(source[1]);
@@ -428,6 +431,9 @@ void unpackOneRowOfRGB8ToRGBA8(const uint8_t* source, uint8_t* destination, unsi
 
 void unpackOneRowOfRGB16LittleToRGBA8(const uint16_t* source, uint8_t* destination, unsigned int pixelsPerRow)
 {
+#if HAVE(ARM_NEON_INTRINSICS)
+    SIMD::unpackOneRowOfRGB16LittleToRGBA8(source, destination, pixelsPerRow);
+#endif
     for (unsigned int i = 0; i < pixelsPerRow; ++i) {
         destination[0] = convertColor16LittleTo8(source[0]);
         destination[1] = convertColor16LittleTo8(source[1]);
@@ -476,6 +482,9 @@ void unpackOneRowOfARGB8ToRGBA8(const uint8_t* source, uint8_t* destination, uns
 
 void unpackOneRowOfARGB16LittleToRGBA8(const uint16_t* source, uint8_t* destination, unsigned int pixelsPerRow)
 {
+#if HAVE(ARM_NEON_INTRINSICS)
+    SIMD::unpackOneRowOfARGB16LittleToRGBA8(source, destination, pixelsPerRow);
+#endif
     for (unsigned int i = 0; i < pixelsPerRow; ++i) {
         destination[0] = convertColor16LittleTo8(source[1]);
         destination[1] = convertColor16LittleTo8(source[2]);
@@ -530,6 +539,9 @@ void unpackOneRowOfBGRA8ToRGBA8(const uint8_t* source, uint8_t* destination, uns
 
 void unpackOneRowOfBGRA16LittleToRGBA8(const uint16_t* source, uint8_t* destination, unsigned int pixelsPerRow)
 {
+#if HAVE(ARM_NEON_INTRINSICS)
+    SIMD::unpackOneRowOfBGRA16LittleToRGBA8(source, destination, pixelsPerRow);
+#endif
     for (unsigned int i = 0; i < pixelsPerRow; ++i) {
         destination[0] = convertColor16LittleTo8(source[2]);
         destination[1] = convertColor16LittleTo8(source[1]);
