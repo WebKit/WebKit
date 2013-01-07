@@ -1,3 +1,27 @@
+2013-01-07  Alec Flett  <alecflett@chromium.org>
+
+        IndexedDB: Stub out async IDBDatabaseBackendInterface::createObjectStore
+        https://bugs.webkit.org/show_bug.cgi?id=106148
+
+        Reviewed by Adam Barth.
+
+        Stub out WebKit API for async createObjectStore.
+
+        * public/WebIDBDatabase.h:
+        (WebIDBDatabase):
+        * src/IDBDatabaseBackendProxy.cpp:
+        (WebKit::IDBDatabaseBackendProxy::createObjectStore):
+        (WebKit):
+        (WebKit::IDBDatabaseBackendProxy::deleteObjectStore):
+        * src/IDBDatabaseBackendProxy.h:
+        (IDBDatabaseBackendProxy):
+        * src/WebIDBDatabaseImpl.cpp:
+        (WebKit::WebIDBDatabaseImpl::createObjectStore):
+        (WebKit):
+        (WebKit::WebIDBDatabaseImpl::deleteObjectStore):
+        * src/WebIDBDatabaseImpl.h:
+        (WebIDBDatabaseImpl):
+
 2013-01-07  Stephen Chenney  <schenney@chromium.org>
 
         Add comment to WebKit skia gyp

@@ -72,10 +72,21 @@ WebIDBObjectStore* WebIDBDatabaseImpl::createObjectStore(long long id, const Web
     return new WebIDBObjectStoreImpl(objectStore);
 }
 
+void WebIDBDatabaseImpl::createObjectStore(long long transactionId, long long objectStoreId, const WebString& name, const WebIDBKeyPath& keyPath, bool autoIncrement)
+{
+    m_databaseBackend->createObjectStore(transactionId, objectStoreId, name, keyPath, autoIncrement);
+}
+
 void WebIDBDatabaseImpl::deleteObjectStore(long long objectStoreId, const WebIDBTransaction& transaction, WebExceptionCode& ec)
 {
     m_databaseBackend->deleteObjectStore(objectStoreId, transaction.getIDBTransactionBackendInterface(), ec);
 }
+
+void WebIDBDatabaseImpl::deleteObjectStore(long long transactionId, long long objectStoreId)
+{
+    m_databaseBackend->deleteObjectStore(transactionId, objectStoreId);
+}
+
 
 // FIXME: Remove this method in https://bugs.webkit.org/show_bug.cgi?id=103923.
 WebIDBTransaction* WebIDBDatabaseImpl::createTransaction(long long id, const WebVector<long long>& objectStoreIds, unsigned short mode)
