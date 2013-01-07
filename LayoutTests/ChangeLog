@@ -1,3 +1,12 @@
+2013-01-07  Christophe Dumez  <christophe.dumez@intel.com>
+
+        Unreviewed EFL gardening.
+
+        Mark several webaudio tests as crashing on WK2 EFL
+        due to a regression in r138786.
+
+        * platform/efl-wk2/TestExpectations:
+
 2013-01-06  Abhishek Arya  <inferno@chromium.org>
 
         Heap-use-after-free in DocumentLoader::stopLoading
