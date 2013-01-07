@@ -1,3 +1,87 @@
+2013-01-07  Anders Carlsson  <andersca@apple.com>
+
+        Remove Windows files from WebKit2
+        https://bugs.webkit.org/show_bug.cgi?id=106264
+
+        Reviewed by Sam Weinig.
+
+        * Platform/CoreIPC/win/BinarySemaphoreWin.cpp: Removed.
+        * Platform/CoreIPC/win/ConnectionWin.cpp: Removed.
+        * Platform/win/ModuleWin.cpp: Removed.
+        * Platform/win/SharedMemoryWin.cpp: Removed.
+        * Platform/win/WorkQueueWin.cpp: Removed.
+        * Shared/API/c/win/WKBaseWin.h: Removed.
+        * Shared/API/c/win/WKCertificateInfoWin.cpp: Removed.
+        * Shared/API/c/win/WKCertificateInfoWin.h: Removed.
+        * Shared/Plugins/Netscape/win/NetscapePluginModuleWin.cpp: Removed.
+        * Shared/cg/win/ShareableBitmapCGWin.cpp: Removed.
+        * Shared/win/CoalescedWindowGeometriesUpdater.cpp: Removed.
+        * Shared/win/CoalescedWindowGeometriesUpdater.h: Removed.
+        * Shared/win/CommandLineWin.cpp: Removed.
+        * Shared/win/LayerTreeContextWin.cpp: Removed.
+        * Shared/win/NativeWebKeyboardEventWin.cpp: Removed.
+        * Shared/win/NativeWebMouseEventWin.cpp: Removed.
+        * Shared/win/NativeWebWheelEventWin.cpp: Removed.
+        * Shared/win/PlatformCertificateInfo.cpp: Removed.
+        * Shared/win/PlatformCertificateInfo.h: Removed.
+        * Shared/win/ShareableBitmapWin.cpp: Removed.
+        * Shared/win/WebCoreArgumentCodersWin.cpp: Removed.
+        * Shared/win/WebEventFactory.cpp: Removed.
+        * Shared/win/WebEventFactory.h: Removed.
+        * Shared/win/WebKitBundle.cpp: Removed.
+        * Shared/win/WebKitBundle.h: Removed.
+        * Shared/win/WebURLRequestWin.cpp: Removed.
+        * Shared/win/WebURLResponseWin.cpp: Removed.
+        * Shared/win/WindowGeometry.cpp: Removed.
+        * Shared/win/WindowGeometry.h: Removed.
+        * UIProcess/API/C/win/WKAPICastWin.h: Removed.
+        * UIProcess/API/C/win/WKContextPrivateWin.h: Removed.
+        * UIProcess/API/C/win/WKContextWin.cpp: Removed.
+        * UIProcess/API/C/win/WKView.cpp: Removed.
+        * UIProcess/API/C/win/WKView.h: Removed.
+        * UIProcess/API/C/win/WKViewPrivate.cpp: Removed.
+        * UIProcess/API/C/win/WKViewPrivate.h: Removed.
+        * UIProcess/Launcher/win/ProcessLauncherWin.cpp: Removed.
+        * UIProcess/Plugins/win/PluginInfoStoreWin.cpp: Removed.
+        * UIProcess/win/BackingStoreWin.cpp: Removed.
+        * UIProcess/win/TextCheckerWin.cpp: Removed.
+        * UIProcess/win/WebContextMenuProxyWin.cpp: Removed.
+        * UIProcess/win/WebContextMenuProxyWin.h: Removed.
+        * UIProcess/win/WebContextWin.cpp: Removed.
+        * UIProcess/win/WebFullScreenManagerProxyWin.cpp: Removed.
+        * UIProcess/win/WebInspectorProxyWin.cpp: Removed.
+        * UIProcess/win/WebPageProxyWin.cpp: Removed.
+        * UIProcess/win/WebPopupMenuProxyWin.cpp: Removed.
+        * UIProcess/win/WebPopupMenuProxyWin.h: Removed.
+        * UIProcess/win/WebProcessProxyWin.cpp: Removed.
+        * UIProcess/win/WebUndoClient.cpp: Removed.
+        * UIProcess/win/WebUndoClient.h: Removed.
+        * UIProcess/win/WebView.cpp: Removed.
+        * UIProcess/win/WebView.h: Removed.
+        * WebProcess/Downloads/cf/win/DownloadCFWin.cpp: Removed.
+        * WebProcess/InjectedBundle/API/c/win/WKBundlePrivateWin.cpp: Removed.
+        * WebProcess/InjectedBundle/API/c/win/WKBundlePrivateWin.h: Removed.
+        * WebProcess/InjectedBundle/win/InjectedBundleWin.cpp: Removed.
+        * WebProcess/Plugins/Netscape/win/NetscapePluginWin.cpp: Removed.
+        * WebProcess/WebCoreSupport/win/WebContextMenuClientWin.cpp: Removed.
+        * WebProcess/WebCoreSupport/win/WebDragClientWin.cpp: Removed.
+        * WebProcess/WebCoreSupport/win/WebDragSource.cpp: Removed.
+        * WebProcess/WebCoreSupport/win/WebDragSource.h: Removed.
+        * WebProcess/WebCoreSupport/win/WebErrorsWin.cpp: Removed.
+        * WebProcess/WebCoreSupport/win/WebFrameNetworkingContext.cpp: Removed.
+        * WebProcess/WebCoreSupport/win/WebFrameNetworkingContext.h: Removed.
+        * WebProcess/WebCoreSupport/win/WebPopupMenuWin.cpp: Removed.
+        * WebProcess/WebPage/ca/win/LayerTreeHostCAWin.cpp: Removed.
+        * WebProcess/WebPage/ca/win/LayerTreeHostCAWin.h: Removed.
+        * WebProcess/WebPage/ca/win/WKCACFViewWindow.cpp: Removed.
+        * WebProcess/WebPage/ca/win/WKCACFViewWindow.h: Removed.
+        * WebProcess/WebPage/win/DrawingAreaImplWin.cpp: Removed.
+        * WebProcess/WebPage/win/LayerTreeHostWin.cpp: Removed.
+        * WebProcess/WebPage/win/WebInspectorWin.cpp: Removed.
+        * WebProcess/WebPage/win/WebPageWin.cpp: Removed.
+        * WebProcess/win/WebProcessMainWin.cpp: Removed.
+        * WebProcess/win/WebProcessWin.cpp: Removed.
+
 2013-01-07  Xianzhu Wang  <wangxianzhu@chromium.org>
 
         Add window.internals.nonFastScrollableRects for testing scrollable areas in fast/slow paths
