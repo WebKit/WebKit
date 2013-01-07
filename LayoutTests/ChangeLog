@@ -2,6 +2,15 @@
 
         Unreviewed EFL gardening.
 
+        Mark 2 fast/regions ref tests as failing for EFL
+        port. Those tests were introduced in r138854.
+
+        * platform/efl/TestExpectations:
+
+2013-01-07  Christophe Dumez  <christophe.dumez@intel.com>
+
+        Unreviewed EFL gardening.
+
         Mark several webaudio tests as crashing on WK2 EFL
         due to a regression in r138786.
 
