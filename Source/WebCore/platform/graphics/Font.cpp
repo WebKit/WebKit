@@ -569,15 +569,88 @@ bool Font::isCJKIdeographOrSymbol(UChar32 c)
     if ((c == 0x2C7) || (c == 0x2CA) || (c == 0x2CB) || (c == 0x2D9))
         return true;
 
+    if ((c == 0x2020) || (c == 0x2021) || (c == 0x2030) || (c == 0x203B) || (c == 0x203C)
+        || (c == 0x2042) || (c == 0x2047) || (c == 0x2048) || (c == 0x2049) || (c == 0x2051)
+        || (c == 0x20DD) || (c == 0x20DE) || (c == 0x2100) || (c == 0x2103) || (c == 0x2105)
+        || (c == 0x2109) || (c == 0x210A) || (c == 0x2113) || (c == 0x2116) || (c == 0x2121)
+        || (c == 0x212B) || (c == 0x213B) || (c == 0x2150) || (c == 0x2151) || (c == 0x2152))
+        return true;
+
+    if (c >= 0x2156 && c <= 0x215A)
+        return true;
+
+    if (c >= 0x2160 && c <= 0x216B)
+        return true;
+
+    if (c >= 0x2170 && c <= 0x217B)
+        return true;
+
+    if ((c == 0x217F) || (c == 0x2189) || (c == 0x2307) || (c == 0x2312) || (c == 0x23BE) || (c == 0x23BF))
+        return true;
+
+    if (c >= 0x23C0 && c <= 0x23CC)
+        return true;
+
+    if ((c == 0x23CE) || (c == 0x2423))
+        return true;
+
+    if (c >= 0x2460 && c <= 0x2492)
+        return true;
+
+    if (c >= 0x249C && c <= 0x24FF)
+        return true;
+
+    if ((c == 0x25A0) || (c == 0x25A1) || (c == 0x25A2) || (c == 0x25AA) || (c == 0x25AB))
+        return true;
+
+    if ((c == 0x25B1) || (c == 0x25B2) || (c == 0x25B3) || (c == 0x25B6) || (c == 0x25B7) || (c == 0x25BC) || (c == 0x25BD))
+        return true;
+    
+    if ((c == 0x25C0) || (c == 0x25C1) || (c == 0x25C6) || (c == 0x25C7) || (c == 0x25C9) || (c == 0x25CB) || (c == 0x25CC))
+        return true;
+
+    if (c >= 0x25CE && c <= 0x25D3)
+        return true;
+
+    if (c >= 0x25E2 && c <= 0x25E6)
+        return true;
+
+    if (c == 0x25EF)
+        return true;
+
+    if (c >= 0x2600 && c <= 0x2603)
+        return true;
+
+    if ((c == 0x2605) || (c == 0x2606) || (c == 0x260E) || (c == 0x2616) || (c == 0x2617) || (c == 0x2640) || (c == 0x2642))
+        return true;
+
+    if (c >= 0x2660 && c <= 0x266F)
+        return true;
+
+    if (c >= 0x2672 && c <= 0x267D)
+        return true;
+
+    if ((c == 0x26A0) || (c == 0x26BD) || (c == 0x26BE) || (c == 0x2713) || (c == 0x271A) || (c == 0x273F) || (c == 0x2740) || (c == 0x2756))
+        return true;
+
+    if (c >= 0x2776 && c <= 0x277F)
+        return true;
+
+    if (c == 0x2B1A)
+        return true;
+
     // Ideographic Description Characters.
     if (c >= 0x2FF0 && c <= 0x2FFF)
         return true;
     
-    // CJK Symbols and Punctuation.
-    if (c >= 0x3000 && c <= 0x303F)
+    // CJK Symbols and Punctuation, excluding 0x3030.
+    if (c >= 0x3000 && c < 0x3030)
         return true;
-   
-    // Hiragana 
+
+    if (c > 0x3030 && c <= 0x303F)
+        return true;
+
+    // Hiragana
     if (c >= 0x3040 && c <= 0x309F)
         return true;
 
@@ -588,7 +661,10 @@ bool Font::isCJKIdeographOrSymbol(UChar32 c)
     // Bopomofo
     if (c >= 0x3100 && c <= 0x312F)
         return true;
-    
+
+    if (c >= 0x3190 && c <= 0x319F)
+        return true;
+
     // Bopomofo Extended
     if (c >= 0x31A0 && c <= 0x31BF)
         return true;
@@ -600,10 +676,19 @@ bool Font::isCJKIdeographOrSymbol(UChar32 c)
     // CJK Compatibility.
     if (c >= 0x3300 && c <= 0x33FF)
         return true;
-    
+
+    if (c >= 0xF860 && c <= 0xF862)
+        return true;
+
     // CJK Compatibility Forms.
     if (c >= 0xFE30 && c <= 0xFE4F)
         return true;
+
+    if ((c == 0xFE10) || (c == 0xFE11) || (c == 0xFE12) || (c == 0xFE19))
+        return true;
+
+    if ((c == 0xFF0D) || (c == 0xFF1B) || (c == 0xFF1C) || (c == 0xFF1E))
+        return false;
 
     // Halfwidth and Fullwidth Forms
     // Usually only used in CJK
@@ -611,6 +696,21 @@ bool Font::isCJKIdeographOrSymbol(UChar32 c)
         return true;
 
     // Emoji.
+    if (c == 0x1F100)
+        return true;
+
+    if (c >= 0x1F110 && c <= 0x1F129)
+        return true;
+
+    if (c >= 0x1F130 && c <= 0x1F149)
+        return true;
+
+    if (c >= 0x1F150 && c <= 0x1F169)
+        return true;
+
+    if (c >= 0x1F170 && c <= 0x1F189)
+        return true;
+
     if (c >= 0x1F200 && c <= 0x1F6F)
         return true;
 

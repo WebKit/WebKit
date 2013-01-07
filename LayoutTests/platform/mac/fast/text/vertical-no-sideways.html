@@ -1,0 +1,21 @@
+<style>
+    div { font-family: 'hiragino mincho pro'; font-size: 48px; }
+</style>
+<p>
+The glyphs in these two boxes should look the same, meaning that the ones in the blue box should not be rotated :
+</p>
+<div style="border: solid red 1px">
+    &#x02018;&#x02019;&#x000A7;&#x000A9;&#x000AE;&#x000B6;&#x000BC;&#x000BD;&#x000BE;
+    &#x002E5;&#x002E6;&#x002E7;&#x002E8;&#x002E9;&#x02044;&#x0210F;&#x02122;&#x02126;
+    &#x02127;&#x0212E;&#x02135;&#x02153;&#x02154;&#x02155;&#x0215B;&#x0215C;&#x0215D;
+    &#x0215E;&#x02305;&#x02306;&#x02318;&#x025CA;
+</div>
+<div style="border: solid blue 1px; -webkit-writing-mode: vertical-lr;">
+    &#x02018;&#x02019;&#x000A7;&#x000A9;&#x000AE;&#x000B6;&#x000BC;&#x000BD;&#x000BE;</div>
+<div style="border: solid blue 1px; -webkit-writing-mode: vertical-lr;">
+    &#x002E5;&#x002E6;&#x002E7;&#x002E8;&#x002E9;&#x02044;&#x0210F;&#x02122;&#x02126;</div>
+<div style="border: solid blue 1px; -webkit-writing-mode: vertical-lr;">
+    &#x02127;&#x0212E;&#x02135;&#x02153;&#x02154;&#x02155;&#x0215B;&#x0215C;&#x0215D;</div>
+<div style="border: solid blue 1px; -webkit-writing-mode: vertical-lr;">
+    &#x0215E;&#x02305;&#x02306;&#x02318;&#x025CA;
+</div>

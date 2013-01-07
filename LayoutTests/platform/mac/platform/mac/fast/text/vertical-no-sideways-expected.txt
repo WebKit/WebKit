@@ -1,0 +1,26 @@
+layer at (0,0) size 785x1521
+  RenderView at (0,0) size 785x600
+layer at (0,0) size 785x1521
+  RenderBlock {HTML} at (0,0) size 785x1522
+    RenderBody {BODY} at (8,8) size 769x1506
+      RenderBlock {P} at (0,0) size 769x18
+        RenderText {#text} at (0,0) size 716x18
+          text run at (0,0) width 716: "The glyphs in these two boxes should look the same, meaning that the ones in the blue box should not be rotated :"
+      RenderBlock {DIV} at (0,34) size 769x146 [border: (1px solid #FF0000)]
+        RenderText {#text} at (1,13) size 564x120
+          text run at (1,13) width 306: "\x{2018}\x{2019}\x{A7}\x{A9}\x{AE}\x{B6}\x{BC}\x{BD}\x{BE} "
+          text run at (307,13) width 224: "\x{2E5}\x{2E6}\x{2E7}\x{2E8}\x{2E9}\x{2044}\x{210F}\x{2122}\x{2126}"
+          text run at (1,85) width 389: "\x{2127}\x{212E}\x{2135}\x{2153}\x{2154}\x{2155}\x{215B}\x{215C}\x{215D} "
+          text run at (390,85) width 175: "\x{215E}\x{2305}\x{2306}\x{2318}\x{25CA}"
+      RenderBlock {DIV} at (0,180) size 74x434 [border: (1px solid #0000FF)]
+        RenderText {#text} at (13,1) size 48x432
+          text run at (13,1) width 432: "\x{2018}\x{2019}\x{A7}\x{A9}\x{AE}\x{B6}\x{BC}\x{BD}\x{BE}"
+      RenderBlock {DIV} at (0,614) size 74x226 [border: (1px solid #0000FF)]
+        RenderText {#text} at (13,1) size 48x224
+          text run at (13,1) width 224: "\x{2E5}\x{2E6}\x{2E7}\x{2E8}\x{2E9}\x{2044}\x{210F}\x{2122}\x{2126}"
+      RenderBlock {DIV} at (0,840) size 74x434 [border: (1px solid #0000FF)]
+        RenderText {#text} at (13,1) size 48x432
+          text run at (13,1) width 432: "\x{2127}\x{212E}\x{2135}\x{2153}\x{2154}\x{2155}\x{215B}\x{215C}\x{215D}"
+      RenderBlock {DIV} at (0,1274) size 74x232 [border: (1px solid #0000FF)]
+        RenderText {#text} at (13,1) size 48x230
+          text run at (13,1) width 230: "\x{215E}\x{2305}\x{2306}\x{2318}\x{25CA}"
