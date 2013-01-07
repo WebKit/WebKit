@@ -1,3 +1,34 @@
+2013-01-07  Ojan Vafai  <ojan@chromium.org>
+
+        Rebaselines after http://trac.webkit.org/changeset/138838.
+
+        * platform/chromium-mac-lion/fast/ruby/base-shorter-than-text-expected.txt:
+        * platform/chromium-mac-lion/fast/table/038-vertical-expected.png:
+        * platform/chromium-mac-lion/fast/table/border-collapsing/004-vertical-expected.png:
+        * platform/chromium-mac-snowleopard/fast/table/038-vertical-expected.png:
+        * platform/chromium-mac-snowleopard/fast/table/border-collapsing/004-vertical-expected.png:
+        * platform/chromium-mac/fast/ruby/base-shorter-than-text-expected.txt:
+        * platform/chromium-mac/fast/table/038-vertical-expected.png:
+        * platform/chromium-mac/fast/table/038-vertical-expected.txt: Copied from LayoutTests/platform/chromium/fast/table/038-vertical-expected.txt.
+        * platform/chromium-mac/fast/table/border-collapsing/004-vertical-expected.png:
+        * platform/chromium-mac/fast/table/border-collapsing/004-vertical-expected.txt:
+        * platform/chromium-win-xp/fast/ruby/base-shorter-than-text-expected.txt:
+        * platform/chromium-win-xp/fast/table/038-vertical-expected.png: Added.
+        * platform/chromium-win-xp/fast/table/border-collapsing/004-vertical-expected.png: Added.
+        * platform/chromium/TestExpectations:
+        * platform/gtk/TestExpectations:
+        * platform/gtk/fast/ruby/base-shorter-than-text-expected.txt:
+        * platform/gtk/fast/table/038-vertical-expected.txt:
+        * platform/gtk/fast/table/border-collapsing/004-vertical-expected.txt:
+        * platform/mac-lion/fast/table/038-vertical-expected.txt: Copied from LayoutTests/platform/chromium/fast/table/038-vertical-expected.txt.
+        * platform/mac-lion/fast/table/border-collapsing/004-vertical-expected.txt: Added.
+        * platform/mac-wk2/fast/table/038-vertical-expected.txt: Renamed from LayoutTests/platform/chromium/fast/table/038-vertical-expected.txt.
+        * platform/mac-wk2/fast/table/border-collapsing/004-vertical-expected.txt: Added.
+        * platform/mac/TestExpectations:
+        * platform/qt/TestExpectations:
+        * platform/qt/fast/table/038-vertical-expected.txt:
+        * platform/qt/fast/table/border-collapsing/004-vertical-expected.txt:
+
 2013-01-07  Victor Carbune  <victor@rosedu.org>
 
         [Track] Rendering crash

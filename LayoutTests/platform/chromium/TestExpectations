@@ -2675,8 +2675,6 @@ crbug.com/77574 [ Android Linux ] fast/writing-mode/fallback-orientation.html [ 
 # Regression in r82056.
 webkit.org/b/56519 [ SnowLeopard ] fast/ruby/base-shorter-than-text.html [ Failure ImageOnlyFailure ]
 
-webkit.org/b/106164 [ Lion ] fast/ruby/base-shorter-than-text.html [ Failure ]
-webkit.org/b/106164 [ MountainLion Release ] fast/ruby/base-shorter-than-text.html [ Failure ]
 
 # Chrome doesn't load favicons in DRT tests.
 webkit.org/b/57259 http/tests/misc/link-rel-icon-beforeload.html [ Failure ]
@@ -3981,10 +3979,6 @@ webkit.org/b/101177 svg/repaint/inner-svg-change-viewBox.svg [ ImageOnlyFailure 
 webkit.org/b/98687 fast/css-generated-content/table-row-group-to-inline.html [ Failure ]
 webkit.org/b/104595 fast/css/empty-generated-content.html [ Failure ]
 
-Bug(ojan) [ Win Lion ] fast/ruby/base-shorter-than-text.html [ Failure ]
-Bug(ojan) [ Win Mac ] fast/table/038-vertical.html [ Failure ImageOnlyFailure ]
-Bug(ojan) [ Win Mac ] fast/table/border-collapsing/004-vertical.html [ Failure ImageOnlyFailure ]
-
 # These are real failues due to 95121.
 # This is spilling caused by LANCZOS3 scaling algorithm that samples outside the source rect.
 webkit.org/b/95121 [ Win Mac Android ] fast/images/pixel-crack-image-background-webkit-transform-scale.html [ ImageOnlyFailure ]
@@ -4004,7 +3998,6 @@ webkit.org/b/89167 media/track/track-cue-rendering-vertical.html [ Failure ]
 # [Chromium-Android] Subtitles (and video) do not work on Android (Disabled to make linter happy)
 #webkit.org/b/98766 [ Android ] media/track/track-cue-rendering-vertical.html [ Failure ]
 #webkit.org/b/98766 [ Android ] media/track/track-cue-rendering-horizontal.html [ Failure ]
-
 
 webkit.org/b/98686 editing/pasteboard/data-transfer-items.html [ Failure ]
 
