@@ -1,5 +1,13 @@
 2013-01-07  Stephen Chenney  <schenney@chromium.org>
 
+        Add comment to WebKit skia gyp
+
+        Unreviewed additon of a comment.
+
+        * skia_webkit.gyp: Some changes should not yet be committed. Commented to that effect.
+
+2013-01-07  Stephen Chenney  <schenney@chromium.org>
+
         Add Skia build flags to WebKit skia gyp
 
         Unreviewed change to enable easy layout test rebaselining.
