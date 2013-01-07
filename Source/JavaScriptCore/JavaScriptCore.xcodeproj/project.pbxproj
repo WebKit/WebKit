@@ -539,7 +539,7 @@
 		86CC85A30EE79B7400288682 /* JITCall.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 86CC85A20EE79B7400288682 /* JITCall.cpp */; };
 		86CC85C40EE7A89400288682 /* JITPropertyAccess.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 86CC85C30EE7A89400288682 /* JITPropertyAccess.cpp */; };
 		86CCEFDE0F413F8900FD7F9E /* JITCode.h in Headers */ = {isa = PBXBuildFile; fileRef = 86CCEFDD0F413F8900FD7F9E /* JITCode.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		86D2221A167EF9440024C804 /* testapi.m in Sources */ = {isa = PBXBuildFile; fileRef = 86D22219167EF9440024C804 /* testapi.m */; };
+		86D2221A167EF9440024C804 /* testapi.mm in Sources */ = {isa = PBXBuildFile; fileRef = 86D22219167EF9440024C804 /* testapi.mm */; };
 		86D3B2C310156BDE002865E7 /* ARMAssembler.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 86D3B2BF10156BDE002865E7 /* ARMAssembler.cpp */; };
 		86D3B2C410156BDE002865E7 /* ARMAssembler.h in Headers */ = {isa = PBXBuildFile; fileRef = 86D3B2C010156BDE002865E7 /* ARMAssembler.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		86D3B2C510156BDE002865E7 /* AssemblerBufferWithConstantPool.h in Headers */ = {isa = PBXBuildFile; fileRef = 86D3B2C110156BDE002865E7 /* AssemblerBufferWithConstantPool.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -1394,7 +1394,7 @@
 		86CC85A20EE79B7400288682 /* JITCall.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JITCall.cpp; sourceTree = "<group>"; };
 		86CC85C30EE7A89400288682 /* JITPropertyAccess.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JITPropertyAccess.cpp; sourceTree = "<group>"; };
 		86CCEFDD0F413F8900FD7F9E /* JITCode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JITCode.h; sourceTree = "<group>"; };
-		86D22219167EF9440024C804 /* testapi.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = testapi.m; path = API/tests/testapi.m; sourceTree = "<group>"; };
+		86D22219167EF9440024C804 /* testapi.mm */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; fileEncoding = 4; name = testapi.mm; path = API/tests/testapi.mm; sourceTree = "<group>"; };
 		86D3B2BF10156BDE002865E7 /* ARMAssembler.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ARMAssembler.cpp; sourceTree = "<group>"; };
 		86D3B2C010156BDE002865E7 /* ARMAssembler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ARMAssembler.h; sourceTree = "<group>"; };
 		86D3B2C110156BDE002865E7 /* AssemblerBufferWithConstantPool.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AssemblerBufferWithConstantPool.h; sourceTree = "<group>"; };
@@ -1912,7 +1912,7 @@
 				144005170A531CB50005F061 /* minidom */,
 				14BD5A2D0A3E91F600BAF59C /* testapi.c */,
 				14D857740A4696C80032146C /* testapi.js */,
-				86D22219167EF9440024C804 /* testapi.m */,
+				86D22219167EF9440024C804 /* testapi.mm */,
 				651122E5140469BA002B101D /* testRegExp.cpp */,
 			);
 			name = tests;
@@ -3589,7 +3589,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				1440F6100A4F85670005F061 /* testapi.c in Sources */,
-				86D2221A167EF9440024C804 /* testapi.m in Sources */,
+				86D2221A167EF9440024C804 /* testapi.mm in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

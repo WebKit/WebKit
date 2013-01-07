@@ -25,11 +25,11 @@
 
 #import "JavaScriptCore.h"
 
-bool _Block_has_signature(void *);
-const char * _Block_signature(void *);
+extern "C" bool _Block_has_signature(void *);
+extern "C" const char * _Block_signature(void *);
 
 extern int failed;
-void testObjectiveCAPI(void);
+extern "C" void testObjectiveCAPI(void);
 
 #if JS_OBJC_API_ENABLED
 
@@ -124,10 +124,10 @@ static void checkResult(NSString *description, bool passed)
 
 static bool blockSignatureContainsClass()
 {
-    static bool containsClass = (bool)^{
+    static bool containsClass = ^{
         id block = ^(NSString *string){ return string; };
         return _Block_has_signature(block) && strstr(_Block_signature(block), "NSString");
-    };
+    }();
     return containsClass;
 }
 

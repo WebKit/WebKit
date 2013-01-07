@@ -1,3 +1,19 @@
+2013-01-07  Mark Hahnenberg  <mhahnenberg@apple.com>
+
+        testapi is failing with a block-related error in the Objc API
+        https://bugs.webkit.org/show_bug.cgi?id=106055
+
+        Reviewed by Geoffrey Garen.
+
+        Casting a block to a bool will always return true, which isn't the behavior that is intended here.
+        Instead we need to call the block, but C semantics don't allow this, so we need to change 
+        testapi.m to be Objective-C++ and therefore testapi.mm.
+
+        * API/tests/testapi.m: Removed.
+        * API/tests/testapi.mm: Copied from Source/JavaScriptCore/API/tests/testapi.m.
+        (blockSignatureContainsClass):
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+
 2013-01-06  Filip Pizlo  <fpizlo@apple.com>
 
         Simplify slow case profiling
