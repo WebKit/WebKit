@@ -70,6 +70,7 @@
 #include <wtf/MemoryInstrumentationHashMap.h>
 #include <wtf/MemoryInstrumentationHashSet.h>
 #include <wtf/MemoryInstrumentationListHashSet.h>
+#include <wtf/TemporaryChange.h>
 
 using namespace std;
 using namespace WTF;
@@ -116,6 +117,8 @@ typedef WTF::HashMap<RenderBlock*, OwnPtr<ListHashSet<RenderInline*> > > Continu
 typedef WTF::HashSet<RenderBlock*> DelayedUpdateScrollInfoSet;
 static int gDelayUpdateScrollInfo = 0;
 static DelayedUpdateScrollInfoSet* gDelayedUpdateScrollInfoSet = 0;
+
+static bool gIsInColumnFlowSplit = false;
 
 bool RenderBlock::s_canPropagateFloatIntoSibling = false;
 
@@ -829,30 +832,33 @@ void RenderBlock::addChildIgnoringAnonymousColumnBlocks(RenderObject* newChild, 
         beforeChild = beforeChild->nextSibling();
 
     // Check for a spanning element in columns.
-    RenderBlock* columnsBlockAncestor = columnsBlockForSpanningElement(newChild);
-    if (columnsBlockAncestor) {
-        // We are placing a column-span element inside a block. 
-        RenderBlock* newBox = createAnonymousColumnSpanBlock();
+    if (!gIsInColumnFlowSplit) {
+        RenderBlock* columnsBlockAncestor = columnsBlockForSpanningElement(newChild);
+        if (columnsBlockAncestor) {
+            TemporaryChange<bool> isInColumnFlowSplit(gIsInColumnFlowSplit, true);
+            // We are placing a column-span element inside a block.
+            RenderBlock* newBox = createAnonymousColumnSpanBlock();
         
-        if (columnsBlockAncestor != this) {
-            // We are nested inside a multi-column element and are being split by the span.  We have to break up
-            // our block into continuations.
-            RenderBoxModelObject* oldContinuation = continuation();
+            if (columnsBlockAncestor != this) {
+                // We are nested inside a multi-column element and are being split by the span. We have to break up
+                // our block into continuations.
+                RenderBoxModelObject* oldContinuation = continuation();
 
-            // When we split an anonymous block, there's no need to do any continuation hookup,
-            // since we haven't actually split a real element.
-            if (!isAnonymousBlock())
-                setContinuation(newBox);
+                // When we split an anonymous block, there's no need to do any continuation hookup,
+                // since we haven't actually split a real element.
+                if (!isAnonymousBlock())
+                    setContinuation(newBox);
 
-            splitFlow(beforeChild, newBox, newChild, oldContinuation);
+                splitFlow(beforeChild, newBox, newChild, oldContinuation);
+                return;
+            }
+
+            // We have to perform a split of this block's children. This involves creating an anonymous block box to hold
+            // the column-spanning |newChild|. We take all of the children from before |newChild| and put them into
+            // one anonymous columns block, and all of the children after |newChild| go into another anonymous block.
+            makeChildrenAnonymousColumnBlocks(beforeChild, newBox, newChild);
             return;
         }
-
-        // We have to perform a split of this block's children.  This involves creating an anonymous block box to hold
-        // the column-spanning |newChild|.  We take all of the children from before |newChild| and put them into
-        // one anonymous columns block, and all of the children after |newChild| go into another anonymous block.
-        makeChildrenAnonymousColumnBlocks(beforeChild, newBox, newChild);
-        return;
     }
 
     bool madeBoxesNonInline = false;
