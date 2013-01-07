@@ -1,3 +1,13 @@
+2013-01-07  Julien Chaffraix  <jchaffraix@webkit.org>
+
+        Support size_t multiplication and division operators on LayoutUnit
+        https://bugs.webkit.org/show_bug.cgi?id=83848
+
+        Reviewed by Emil A Eklund.
+
+        * TestWebKitAPI/Tests/WebCore/LayoutUnit.cpp:
+        Added some simple tests for the new operators using size_t.
+
 2013-01-07  Csaba Osztrogonác  <ossy@webkit.org>
 
         [Qt] run-webkit-tests cleanup for parallel NRWT
