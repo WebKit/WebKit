@@ -160,10 +160,11 @@ public:
     static String mainThreadScrollingReasonsAsText(MainThreadScrollingReasons);
     String mainThreadScrollingReasonsAsText() const;
 
+    Region computeNonFastScrollableRegion(const Frame*, const IntPoint& frameLocation) const;
+
 protected:
     explicit ScrollingCoordinator(Page*);
 
-    Region computeNonFastScrollableRegion(Frame*, const IntPoint& frameLocation);
     unsigned computeCurrentWheelEventHandlerCount();
     GraphicsLayer* scrollLayerForFrameView(FrameView*);
 

@@ -215,8 +215,8 @@ public:
     String layerTreeAsText(Document*, ExceptionCode&) const;
     String repaintRectsAsText(Document*, ExceptionCode&) const;
     String scrollingStateTreeAsText(Document*, ExceptionCode&) const;
-
     String mainThreadScrollingReasons(Document*, ExceptionCode&) const;
+    PassRefPtr<ClientRectList> nonFastScrollableRects(Document*, ExceptionCode&) const;
 
     void garbageCollectDocumentResources(Document*, ExceptionCode&) const;
 

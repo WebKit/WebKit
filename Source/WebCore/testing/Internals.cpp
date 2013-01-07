@@ -1558,6 +1558,20 @@ String Internals::mainThreadScrollingReasons(Document* document, ExceptionCode& 
     return page->mainThreadScrollingReasonsAsText();
 }
 
+PassRefPtr<ClientRectList> Internals::nonFastScrollableRects(Document* document, ExceptionCode& ec) const
+{
+    if (!document || !document->frame()) {
+        ec = INVALID_ACCESS_ERR;
+        return 0;
+    }
+
+    Page* page = document->page();
+    if (!page)
+        return 0;
+
+    return page->nonFastScrollableRects(document->frame());
+}
+
 void Internals::garbageCollectDocumentResources(Document* document, ExceptionCode& ec) const
 {
     if (!document) {

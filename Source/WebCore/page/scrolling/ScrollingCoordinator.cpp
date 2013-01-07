@@ -136,7 +136,7 @@ bool ScrollingCoordinator::coordinatesScrollingForFrameView(FrameView* frameView
 #endif
 }
 
-Region ScrollingCoordinator::computeNonFastScrollableRegion(Frame* frame, const IntPoint& frameLocation)
+Region ScrollingCoordinator::computeNonFastScrollableRegion(const Frame* frame, const IntPoint& frameLocation) const
 {
     Region nonFastScrollableRegion;
     FrameView* frameView = frame->view();

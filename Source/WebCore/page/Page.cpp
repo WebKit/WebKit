@@ -25,6 +25,7 @@
 #include "BackForwardList.h"
 #include "Chrome.h"
 #include "ChromeClient.h"
+#include "ClientRectList.h"
 #include "ContextMenuClient.h"
 #include "ContextMenuController.h"
 #include "DOMWindow.h"
@@ -267,6 +268,21 @@ String Page::mainThreadScrollingReasonsAsText()
         return scrollingCoordinator->mainThreadScrollingReasonsAsText();
 
     return String();
+}
+
+PassRefPtr<ClientRectList> Page::nonFastScrollableRects(const Frame* frame)
+{
+    if (Document* document = m_mainFrame->document())
+        document->updateLayout();
+
+    Vector<IntRect> rects;
+    if (ScrollingCoordinator* scrollingCoordinator = this->scrollingCoordinator())
+        rects = scrollingCoordinator->computeNonFastScrollableRegion(frame, IntPoint()).rects();
+
+    Vector<FloatQuad> quads(rects.size());
+    for (size_t i = 0; i < rects.size(); ++i)
+        quads[i] = FloatRect(rects[i]);
+    return ClientRectList::create(quads);
 }
 
 struct ViewModeInfo {
