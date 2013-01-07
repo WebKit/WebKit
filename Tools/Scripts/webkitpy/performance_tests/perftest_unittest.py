@@ -39,6 +39,7 @@ from webkitpy.layout_tests.port.test import TestPort
 from webkitpy.performance_tests.perftest import ChromiumStylePerfTest
 from webkitpy.performance_tests.perftest import PageLoadingPerfTest
 from webkitpy.performance_tests.perftest import PerfTest
+from webkitpy.performance_tests.perftest import PerfTestMetric
 from webkitpy.performance_tests.perftest import PerfTestFactory
 from webkitpy.performance_tests.perftest import ReplayPerfTest
 
@@ -47,10 +48,44 @@ class MockPort(TestPort):
     def __init__(self, custom_run_test=None):
         super(MockPort, self).__init__(host=MockHost(), custom_run_test=custom_run_test)
 
-class MainTest(unittest.TestCase):
+
+class TestPerfTestMetric(unittest.TestCase):
+    def test_init_set_missing_unit(self):
+        self.assertEqual(PerfTestMetric('Time', iterations=[1, 2, 3, 4, 5]).to_dict()['unit'], 'ms')
+        self.assertEqual(PerfTestMetric('Malloc', iterations=[1, 2, 3, 4, 5]).to_dict()['unit'], 'bytes')
+        self.assertEqual(PerfTestMetric('JSHeap', iterations=[1, 2, 3, 4, 5]).to_dict()['unit'], 'bytes')
+
+    def test_legacy_chromium_bot_compatible_test_name(self):
+        self.assertEqual(PerfTestMetric('Time').legacy_chromium_bot_compatible_test_name('test'), 'test')
+        self.assertEqual(PerfTestMetric('Malloc').legacy_chromium_bot_compatible_test_name('test'), 'test:Malloc')
+        self.assertEqual(PerfTestMetric('JSHeap').legacy_chromium_bot_compatible_test_name('test'), 'test:JSHeap')
+        self.assertEqual(PerfTestMetric('FontSize', unit='em').legacy_chromium_bot_compatible_test_name('test'), 'test:FontSize')
+
+    def test_has_values(self):
+        self.assertFalse(PerfTestMetric('Time').has_values())
+        self.assertTrue(PerfTestMetric('Time', iterations=[1]).has_values())
+
+    def test_append(self):
+        metric = PerfTestMetric('Time')
+        metric2 = PerfTestMetric('Time')
+        self.assertFalse(metric.has_values())
+        self.assertFalse(metric2.has_values())
+
+        metric.append(1)
+        self.assertTrue(metric.has_values())
+        self.assertFalse(metric2.has_values())
+        self.assertEqual(metric.to_dict()['values'], [1])
+        metric.append(2)
+        self.assertEqual(metric.to_dict()['values'], [1, 2])
+
+        metric2.append(3)
+        self.assertTrue(metric2.has_values())
+        self.assertEqual(metric.to_dict()['values'], [1, 2])
+        self.assertEqual(metric2.to_dict()['values'], [3])
+
     def test_compute_statistics(self):
         def compute_statistics(values):
-            statistics = PerfTest.compute_statistics(map(lambda x: float(x), values))
+            statistics = PerfTestMetric.compute_statistics(map(lambda x: float(x), values))
             return json.loads(json.dumps(statistics))
 
         statistics = compute_statistics([10, 9, 8, 7, 6, 5, 4, 3, 2, 1, 20, 19, 18, 17, 16, 15, 14, 13, 12, 11])
@@ -62,17 +97,20 @@ class MainTest(unittest.TestCase):
         self.assertEqual(compute_statistics([8, 9, 10, 11, 12])['avg'], 10)
         self.assertEqual(compute_statistics([8, 9, 10, 11, 12] * 4)['avg'], 10)
         self.assertEqual(compute_statistics([1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19])['avg'], 10)
-        self.assertEqual(PerfTest.compute_statistics([1, 5, 2, 8, 7])['median'], 5)
-        self.assertEqual(PerfTest.compute_statistics([1, 6, 2, 8, 7, 2])['median'], 4)
+        self.assertEqual(compute_statistics([1, 5, 2, 8, 7])['median'], 5)
+        self.assertEqual(compute_statistics([1, 6, 2, 8, 7, 2])['median'], 4)
         self.assertAlmostEqual(statistics['stdev'], math.sqrt(35))
+        self.assertAlmostEqual(compute_statistics([1])['stdev'], 0)
         self.assertAlmostEqual(compute_statistics([1, 2, 3, 4, 5, 6])['stdev'], math.sqrt(3.5))
         self.assertAlmostEqual(compute_statistics([4, 2, 5, 8, 6])['stdev'], math.sqrt(5))
 
+
+class TestPerfTest(unittest.TestCase):
     def _assert_results_are_correct(self, test, output):
         test._filter_output(output)
         parsed_results = test.parse_output(output)
-        self.assertEqual(parsed_results.keys(), ['some-test'])
-        some_test_results = parsed_results['some-test']
+        self.assertEqual(len(parsed_results), 1)
+        some_test_results = parsed_results[0].to_dict()
         self.assertEqual(sorted(some_test_results.keys()), ['avg', 'max', 'median', 'min', 'stdev', 'unit', 'values'])
         self.assertEqual(some_test_results['values'], [1080, 1120, 1095, 1101, 1104])
         self.assertEqual(some_test_results['min'], 1080)
@@ -221,14 +259,18 @@ class TestPageLoadingPerfTest(unittest.TestCase):
         output_capture = OutputCapture()
         output_capture.capture_output()
         try:
-            self.assertEqual(test._run_with_driver(driver, None),
-                {'some-test': {'max': 20000, 'avg': 11000.0, 'median': 11000, 'stdev': 5627.314338711378, 'min': 2000, 'unit': 'ms',
-                    'values': [float(i * 1000) for i in range(2, 21)]}})
+            metrics = test._run_with_driver(driver, None)
         finally:
             actual_stdout, actual_stderr, actual_logs = output_capture.restore_output()
+
         self.assertEqual(actual_stdout, '')
         self.assertEqual(actual_stderr, '')
-        self.assertEqual(actual_logs, 'RESULT some-test= 11000 ms\nmedian= 11000 ms, stdev= 5627.31433871 ms, min= 2000 ms, max= 20000 ms\n')
+        self.assertEqual(actual_logs, '')
+
+        self.assertEqual(len(metrics), 1)
+        self.assertEqual(metrics[0].metric(), 'Time')
+        self.assertEqual(metrics[0].to_dict(), {'max': 20000, 'avg': 11000.0, 'median': 11000, 'stdev': 5627.314338711378, 'min': 2000, 'unit': 'ms',
+            'values': [float(i * 1000) for i in range(2, 21)]})
 
     def test_run_with_memory_output(self):
         port = MockPort()
@@ -239,20 +281,24 @@ class TestPageLoadingPerfTest(unittest.TestCase):
         output_capture = OutputCapture()
         output_capture.capture_output()
         try:
-            self.assertEqual(test._run_with_driver(driver, None),
-                {'some-test': {'max': 20000, 'avg': 11000.0, 'median': 11000, 'stdev': 5627.314338711378, 'min': 2000, 'unit': 'ms',
-                    'values': [float(i * 1000) for i in range(2, 21)]},
-                 'some-test:Malloc': {'max': 10, 'avg': 10.0, 'median': 10, 'min': 10, 'stdev': 0.0, 'unit': 'bytes',
-                    'values': [float(10)] * 19},
-                 'some-test:JSHeap': {'max': 5, 'avg': 5.0, 'median': 5, 'min': 5, 'stdev': 0.0, 'unit': 'bytes',
-                    'values': [float(5)] * 19}})
+            metrics = test._run_with_driver(driver, None)
         finally:
             actual_stdout, actual_stderr, actual_logs = output_capture.restore_output()
+
         self.assertEqual(actual_stdout, '')
         self.assertEqual(actual_stderr, '')
-        self.assertEqual(actual_logs, 'RESULT some-test= 11000 ms\nmedian= 11000 ms, stdev= 5627.31433871 ms, min= 2000 ms, max= 20000 ms\n'
-            + 'RESULT some-test: Malloc= 10 bytes\nmedian= 10 bytes, stdev= 0.0 bytes, min= 10 bytes, max= 10 bytes\n'
-            + 'RESULT some-test: JSHeap= 5 bytes\nmedian= 5 bytes, stdev= 0.0 bytes, min= 5 bytes, max= 5 bytes\n')
+        self.assertEqual(actual_logs, '')
+
+        self.assertEqual(len(metrics), 3)
+        self.assertEqual(metrics[0].metric(), 'Time')
+        self.assertEqual(metrics[0].to_dict(), {'max': 20000, 'avg': 11000.0, 'median': 11000, 'stdev': 5627.314338711378, 'min': 2000, 'unit': 'ms',
+            'values': [float(i * 1000) for i in range(2, 21)]})
+        self.assertEqual(metrics[1].metric(), 'Malloc')
+        self.assertEqual(metrics[1].to_dict(), {'max': 10, 'avg': 10.0, 'median': 10, 'min': 10, 'stdev': 0.0, 'unit': 'bytes',
+            'values': [float(10)] * 19})
+        self.assertEqual(metrics[2].metric(), 'JSHeap')
+        self.assertEqual(metrics[2].to_dict(), {'max': 5, 'avg': 5.0, 'median': 5, 'min': 5, 'stdev': 0.0, 'unit': 'bytes',
+            'values': [float(5)] * 19})
 
     def test_run_with_bad_output(self):
         output_capture = OutputCapture()

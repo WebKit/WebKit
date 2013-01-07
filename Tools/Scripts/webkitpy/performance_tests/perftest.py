@@ -52,6 +52,60 @@ from webkitpy.layout_tests.port.driver import DriverOutput
 _log = logging.getLogger(__name__)
 
 
+class PerfTestMetric(object):
+    def __init__(self, metric, unit=None, iterations=None):
+        self._metric = metric
+        self._iterations = iterations or []
+        self._unit = unit or self.metric_to_unit(metric)
+
+    def metric(self):
+        return self._metric
+
+    def has_values(self):
+        return bool(self._iterations)
+
+    # FIXME: We don't need to support this anymore. Make outputs more human friendly.
+    def legacy_chromium_bot_compatible_test_name(self, test_name_with_extension):
+        test_name = re.sub(r'\.\w+$', '', test_name_with_extension)
+        return test_name if self._metric == 'Time' else test_name + ':' + self._metric
+
+    def append(self, value):
+        self._iterations.append(value)
+
+    def to_dict(self):
+        assert self.has_values()
+        statistics = self.compute_statistics(self._iterations)
+        statistics['unit'] = self._unit
+        statistics['values'] = self._iterations
+        return statistics
+
+    @classmethod
+    def metric_to_unit(cls, metric):
+        assert metric in ('Time', 'Malloc', 'JSHeap')
+        return 'ms' if metric == 'Time' else 'bytes'
+
+    @staticmethod
+    def compute_statistics(values):
+        sorted_values = sorted(values)
+
+        # Compute the mean and variance using Knuth's online algorithm (has good numerical stability).
+        squareSum = 0
+        mean = 0
+        for i, time in enumerate(sorted_values):
+            delta = time - mean
+            sweep = i + 1.0
+            mean += delta / sweep
+            squareSum += delta * (time - mean)
+
+        middle = int(len(sorted_values) / 2)
+        result = {'avg': sum(sorted_values) / len(values),
+            'min': sorted_values[0],
+            'max': sorted_values[-1],
+            'median': sorted_values[middle] if len(sorted_values) % 2 else (sorted_values[middle - 1] + sorted_values[middle]) / 2,
+            'stdev': math.sqrt(squareSum / (len(sorted_values) - 1)) if len(sorted_values) > 1 else 0}
+        return result
+
+
 class PerfTest(object):
     def __init__(self, port, test_name, test_path):
         self._port = port
@@ -71,22 +125,23 @@ class PerfTest(object):
     def prepare(self, time_out_ms):
         return True
 
+    def _create_driver(self):
+        return self._port.create_driver(worker_number=0, no_timeout=True)
+
     def run(self, time_out_ms):
-        driver = self._port.create_driver(worker_number=0, no_timeout=True)
+        driver = self._create_driver()
         try:
-            return self._run_with_driver(driver, time_out_ms)
+            metrics = self._run_with_driver(driver, time_out_ms)
         finally:
             driver.stop()
 
-    def _run_with_driver(self, driver, time_out_ms):
-        output = self.run_single(driver, self.test_path(), time_out_ms)
-        self._filter_output(output)
-        if self.run_failed(output):
-            return None
+        if not metrics:
+            return metrics
 
-        results = self.parse_output(output)
-        if not results:
-            return None
+        results = {}
+        for metric in metrics:
+            legacy_test_name = metric.legacy_chromium_bot_compatible_test_name(self.test_name())
+            results[legacy_test_name] = metric.to_dict()
 
         if not self._port.get_option('profile'):
             if self._description:
@@ -95,6 +150,14 @@ class PerfTest(object):
                 self.output_statistics(result_name, results[result_name])
 
         return results
+
+    def _run_with_driver(self, driver, time_out_ms):
+        output = self.run_single(driver, self.test_path(), time_out_ms)
+        self._filter_output(output)
+        if self.run_failed(output):
+            return None
+
+        return self.parse_output(output)
 
     def run_single(self, driver, test_path, time_out_ms, should_run_pixel_test=False):
         return driver.run_test(DriverInput(test_path, time_out_ms, image_hash=None, should_run_pixel_test=should_run_pixel_test), stop_when_done=False)
@@ -159,78 +222,35 @@ class PerfTest(object):
             output.text = '\n'.join([line for line in re.split('\n', output.text) if not self._should_ignore_line_in_parser_test_result(line)])
 
     _description_regex = re.compile(r'^Description: (?P<description>.*)$', re.IGNORECASE)
-    _result_classes = ['Time', 'JS Heap', 'Malloc']
-    _result_class_regex = re.compile(r'^(?P<resultclass>' + r'|'.join(_result_classes) + '):')
+    _metrics_regex = re.compile(r'^(?P<metric>Time|Malloc|JS Heap):')
     _statistics_keys = ['avg', 'median', 'stdev', 'min', 'max', 'unit', 'values']
     _score_regex = re.compile(r'^(?P<key>' + r'|'.join(_statistics_keys) + r')\s+(?P<value>([0-9\.]+(,\s+)?)+)\s*(?P<unit>.*)')
 
     def parse_output(self, output):
-        test_failed = False
-        results = {}
-        test_name = re.sub(r'\.\w+$', '', self._test_name)
-        result_class = ""
+        current_metric = None
+        results = []
         for line in re.split('\n', output.text):
             if not line:
                 continue
 
             description_match = self._description_regex.match(line)
+            metric_match = self._metrics_regex.match(line)
+            score = self._score_regex.match(line)
+
             if description_match:
                 self._description = description_match.group('description')
-                continue
-
-            result_class_match = self._result_class_regex.match(line)
-            if result_class_match:
-                result_class = result_class_match.group('resultclass')
-                continue
-
-            score = self._score_regex.match(line)
-            if score:
+            elif metric_match:
+                current_metric = metric_match.group('metric').replace(' ', '')
+            elif score:
                 key = score.group('key')
-                if key == 'values':
-                    value = [float(number) for number in score.group('value').split(', ')]
-                else:
-                    value = float(score.group('value'))
-                unit = score.group('unit')
-                name = test_name
-                if result_class != 'Time':
-                    name += ':' + result_class.replace(' ', '')
-                results.setdefault(name, {})
-                results[name]['unit'] = unit
-                results[name][key] = value
-                continue
-
-            test_failed = True
-            _log.error('ERROR: ' + line)
-
-        if test_failed:
-            return None
-
-        if set(self._statistics_keys) != set(results[test_name].keys()):
-            _log.error("The test didn't report all statistics.")
-            return None
+                if key == 'values' and results != None:
+                    values = [float(number) for number in score.group('value').split(', ')]
+                    results.append(PerfTestMetric(current_metric, score.group('unit'), values))
+            else:
+                results = None
+                _log.error('ERROR: ' + line)
 
         return results
-
-    @staticmethod
-    def compute_statistics(values):
-        sorted_values = sorted(values)
-
-        # Compute the mean and variance using Knuth's online algorithm (has good numerical stability).
-        squareSum = 0
-        mean = 0
-        for i, time in enumerate(sorted_values):
-            delta = time - mean
-            sweep = i + 1.0
-            mean += delta / sweep
-            squareSum += delta * (time - mean)
-
-        middle = int(len(sorted_values) / 2)
-        result = {'avg': sum(sorted_values) / len(values),
-            'min': sorted_values[0],
-            'max': sorted_values[-1],
-            'median': sorted_values[middle] if len(sorted_values) % 2 else (sorted_values[middle - 1] + sorted_values[middle]) / 2,
-            'stdev': math.sqrt(squareSum / (len(sorted_values) - 1))}
-        return result
 
     def output_statistics(self, test_name, results):
         unit = results['unit']
@@ -244,8 +264,13 @@ class ChromiumStylePerfTest(PerfTest):
     def __init__(self, port, test_name, test_path):
         super(ChromiumStylePerfTest, self).__init__(port, test_name, test_path)
 
-    def _run_with_driver(self, driver, time_out_ms):
-        output = self.run_single(driver, self.test_path(), time_out_ms)
+    def run(self, time_out_ms):
+        driver = self._create_driver()
+        try:
+            output = self.run_single(driver, self.test_path(), time_out_ms)
+        finally:
+            driver.stop()
+
         self._filter_output(output)
         if self.run_failed(output):
             return None
@@ -280,8 +305,9 @@ class PageLoadingPerfTest(PerfTest):
         return super(PageLoadingPerfTest, self).run_single(driver, test_path, time_out_ms, should_run_pixel_test)
 
     def _run_with_driver(self, driver, time_out_ms):
-        results = {}
-        results.setdefault(self.test_name(), {'unit': 'ms', 'values': []})
+        times = PerfTestMetric('Time')
+        malloc = PerfTestMetric('Malloc')
+        js_heap = PerfTestMetric('JSHeap')
 
         for i in range(0, 20):
             output = self.run_single(driver, self.test_path(), time_out_ms)
@@ -290,24 +316,18 @@ class PageLoadingPerfTest(PerfTest):
             if i == 0:
                 continue
 
-            results[self.test_name()]['values'].append(output.test_time * 1000)
-
+            times.append(output.test_time * 1000)
             if not output.measurements:
                 continue
 
-            for result_class, result in output.measurements.items():
-                name = self.test_name() + ':' + result_class
-                if not name in results:
-                    results.setdefault(name, {'values': []})
-                results[name]['values'].append(result)
-                if result_class == 'Malloc' or result_class == 'JSHeap':
-                    results[name]['unit'] = 'bytes'
+            for metric, result in output.measurements.items():
+                assert metric == 'Malloc' or metric == 'JSHeap'
+                if metric == 'Malloc':
+                    malloc.append(result)
+                else:
+                    js_heap.append(result)
 
-        for result_class in results.keys():
-            results[result_class].update(self.compute_statistics(results[result_class]['values']))
-            self.output_statistics(result_class, results[result_class])
-
-        return results
+        return filter(lambda metric: metric.has_values(), [times, malloc, js_heap])
 
 
 class ReplayServer(object):
