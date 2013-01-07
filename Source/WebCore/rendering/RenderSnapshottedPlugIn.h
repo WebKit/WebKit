@@ -74,7 +74,7 @@ private:
         ShouldShowAutomatically
     };
 
-    void stopAndRestartDelayTimer(ShowReason);
+    void resetDelayTimer(ShowReason);
 
     OwnPtr<RenderImageResource> m_snapshotResource;
     bool m_shouldShowLabel;

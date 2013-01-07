@@ -78,7 +78,7 @@ void RenderSnapshottedPlugIn::updateSnapshot(PassRefPtr<Image> image)
     m_snapshotResource->setCachedImage(new CachedImage(image.get()));
     repaint();
     if (m_shouldShowLabelAutomatically)
-        stopAndRestartDelayTimer(ShouldShowAutomatically);
+        resetDelayTimer(ShouldShowAutomatically);
 }
 
 void RenderSnapshottedPlugIn::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffset)
@@ -237,7 +237,7 @@ void RenderSnapshottedPlugIn::handleEvent(Event* event)
         event->setDefaultHandled();
     } else if (event->type() == eventNames().mouseoverEvent) {
         if (!m_showedLabelOnce || m_showReason != ShouldShowAutomatically)
-            stopAndRestartDelayTimer(UserMousedOver);
+            resetDelayTimer(UserMousedOver);
         event->setDefaultHandled();
     } else if (event->type() == eventNames().mouseoutEvent) {
         if (m_showLabelDelayTimer.isActive())
@@ -248,7 +248,7 @@ void RenderSnapshottedPlugIn::handleEvent(Event* event)
                 repaintLabel();
             }
         } else if (m_shouldShowLabelAutomatically)
-            stopAndRestartDelayTimer(ShouldShowAutomatically);
+            resetDelayTimer(ShouldShowAutomatically);
         event->setDefaultHandled();
     }
 }
@@ -267,7 +267,7 @@ LayoutRect RenderSnapshottedPlugIn::tryToFitStartLabel(LabelSize size, const Lay
     return candidateRect;
 }
 
-void RenderSnapshottedPlugIn::stopAndRestartDelayTimer(ShowReason reason)
+void RenderSnapshottedPlugIn::resetDelayTimer(ShowReason reason)
 {
     m_showReason = reason;
     m_showLabelDelayTimer.startOneShot(reason == UserMousedOver ? showLabelAfterMouseOverDelay : showLabelAutomaticallyDelay);
