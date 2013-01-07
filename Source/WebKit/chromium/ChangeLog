@@ -1,3 +1,11 @@
+2013-01-07  Stephen Chenney  <schenney@chromium.org>
+
+        Add Skia build flags to WebKit skia gyp
+
+        Unreviewed change to enable easy layout test rebaselining.
+
+        * skia_webkit.gyp: Added SK_IGNORE_QUAD_STROKE_FIX and SK_IGNORE_TREAT_AS_SPRITE
+
 2013-01-05  Alec Flett  <alecflett@chromium.org>
 
         IndexedDB: Migrate backend ObjectStore calls to use transaction id

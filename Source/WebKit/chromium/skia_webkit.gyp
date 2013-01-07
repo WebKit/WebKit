@@ -44,7 +44,8 @@
           # AFTER the flag has been removed from skia.gyp in Chromium.
 
           'SK_DISABLE_DITHER_32BIT_GRADIENT',
-
+          'SK_IGNORE_QUAD_STROKE_FIX',
+          'SK_IGNORE_TREAT_AS_SPRITE',
           'SK_DISABLE_DASHING_OPTIMIZATION',
         ],
       },
