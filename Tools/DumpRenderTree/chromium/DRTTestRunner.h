@@ -75,11 +75,6 @@ public:
 
     virtual ~DRTTestRunner();
 
-    // This function sets a flag that tells the test_shell to dump pages as
-    // plain text, rather than as a text representation of the renderer's state.
-    // It takes an optional argument, whether to dump pixels results or not.
-    void dumpAsText(const CppArgumentList&, CppVariant*);
-
     // This function sets a flag that tells the test_shell to print a line of
     // descriptive text for each frame load callback. It takes no arguments, and
     // ignores any that may be present.
@@ -99,15 +94,6 @@ public:
     // representation of the back/forward list. It ignores all arguments.
     void dumpBackForwardList(const CppArgumentList&, CppVariant*);
 
-    // This function sets a flag that tells the test_shell to print out the
-    // scroll offsets of the child frames. It ignores all.
-    void dumpChildFrameScrollPositions(const CppArgumentList&, CppVariant*);
-
-    // This function sets a flag that tells the test_shell to recursively
-    // dump all frames as plain text if the dumpAsText flag is set.
-    // It takes no arguments, and ignores any that may be present.
-    void dumpChildFramesAsText(const CppArgumentList&, CppVariant*);
-    
     // This function sets a flag that tells the test_shell to dump a descriptive
     // line for each resource load callback. It takes no arguments, and ignores
     // any that may be present.
@@ -282,8 +268,6 @@ public:
 
     bool shouldDumpAsAudio() const { return m_dumpAsAudio; } 
     void setShouldDumpAsAudio(bool dumpAsAudio) { m_dumpAsAudio = dumpAsAudio; } 
-    bool shouldDumpAsText() { return m_dumpAsText; }
-    void setShouldDumpAsText(bool value) { m_dumpAsText = value; }
     bool shouldDumpFrameLoadCallbacks() { return m_dumpFrameLoadCallbacks; }
     void setShouldDumpFrameLoadCallbacks(bool value) { m_dumpFrameLoadCallbacks = value; }
     bool shouldDumpProgressFinishedCallback() { return m_dumpProgressFinishedCallback; }
@@ -300,10 +284,6 @@ public:
     bool shouldDumpBackForwardList() { return m_dumpBackForwardList; }
     bool shouldDumpTitleChanges() { return m_dumpTitleChanges; }
     bool shouldDumpPermissionClientCallbacks() { return m_dumpPermissionClientCallbacks; }
-    bool shouldDumpChildFrameScrollPositions() { return m_dumpChildFrameScrollPositions; }
-    bool shouldDumpChildFramesAsText() { return m_dumpChildFramesAsText; }
-    bool shouldGeneratePixelResults() { return m_generatePixelResults; }
-    void setShouldGeneratePixelResults(bool value) { m_generatePixelResults = value; }
     bool shouldDumpCreateView() { return m_dumpCreateView; }
     bool canOpenWindows() { return m_canOpenWindows; }
     bool stopProvisionalFrameLoads() { return m_stopProvisionalFrameLoads; }
@@ -396,10 +376,6 @@ private:
     // Non-owning pointer. The DRTTestRunner is owned by the host.
     TestShell* m_shell;
 
-    // If true, the test_shell will produce a plain text dump rather than a
-    // text representation of the renderer.
-    bool m_dumpAsText;
-
     // If true, the test_shell will output a base64 encoded WAVE file.
     bool m_dumpAsAudio;
 
@@ -435,14 +411,6 @@ private:
     // well.
     bool m_dumpBackForwardList;
 
-    // If true, the test_shell will print out the child frame scroll offsets as
-    // well.
-    bool m_dumpChildFrameScrollPositions;
-
-    // If true and if dump_as_text_ is true, the test_shell will recursively
-    // dump all frames as plain text.
-    bool m_dumpChildFramesAsText;
-
     // If true, the test_shell will dump all changes to window.status.
     bool m_dumpWindowStatusChanges;
 
@@ -452,9 +420,6 @@ private:
     // If true, output a descriptive line each time a permission client
     // callback is invoked. Currently only implemented for allowImage.
     bool m_dumpPermissionClientCallbacks;
-
-    // If true, the test_shell will generate pixel results in dumpAsText mode
-    bool m_generatePixelResults;
 
     // If true, output a descriptive line each time WebViewClient::createView
     // is invoked.

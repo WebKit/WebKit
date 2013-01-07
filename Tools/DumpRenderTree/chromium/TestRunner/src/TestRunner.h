@@ -59,6 +59,12 @@ public:
 
     // WebTestRunner implementation.
     virtual bool shouldDumpEditingCallbacks() const OVERRIDE;
+    virtual bool shouldDumpAsText() const OVERRIDE;
+    virtual void setShouldDumpAsText(bool) OVERRIDE;
+    virtual bool shouldGeneratePixelResults() const OVERRIDE;
+    virtual void setShouldGeneratePixelResults(bool) OVERRIDE;
+    virtual bool shouldDumpChildFrameScrollPositions() const OVERRIDE;
+    virtual bool shouldDumpChildFramesAsText() const OVERRIDE;
 
 protected:
     // FIXME: make these private once the move from DRTTestRunner to TestRunner
@@ -184,6 +190,20 @@ private:
     // ignores any that may be present.
     void dumpEditingCallbacks(const CppArgumentList&, CppVariant*);
 
+    // This function sets a flag that tells the test_shell to dump pages as
+    // plain text, rather than as a text representation of the renderer's state.
+    // It takes an optional argument, whether to dump pixels results or not.
+    void dumpAsText(const CppArgumentList&, CppVariant*);
+
+    // This function sets a flag that tells the test_shell to print out the
+    // scroll offsets of the child frames. It ignores all.
+    void dumpChildFrameScrollPositions(const CppArgumentList&, CppVariant*);
+
+    // This function sets a flag that tells the test_shell to recursively
+    // dump all frames as plain text if the dumpAsText flag is set.
+    // It takes no arguments, and ignores any that may be present.
+    void dumpChildFramesAsText(const CppArgumentList&, CppVariant*);
+
     ///////////////////////////////////////////////////////////////////////////
     // Methods interacting with the WebTestProxy
 
@@ -229,6 +249,21 @@ private:
     // If true, the test_shell will write a descriptive line for each editing
     // command.
     bool m_dumpEditingCallbacks;
+
+    // If true, the test_shell will generate pixel results in dumpAsText mode
+    bool m_generatePixelResults;
+
+    // If true, the test_shell will produce a plain text dump rather than a
+    // text representation of the renderer.
+    bool m_dumpAsText;
+
+    // If true and if dump_as_text_ is true, the test_shell will recursively
+    // dump all frames as plain text.
+    bool m_dumpChildFramesAsText;
+
+    // If true, the test_shell will print out the child frame scroll offsets as
+    // well.
+    bool m_dumpChildFrameScrollPositions;
 
     WebTestDelegate* m_delegate;
     WebKit::WebView* m_webView;

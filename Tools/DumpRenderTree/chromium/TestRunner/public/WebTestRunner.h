@@ -38,6 +38,12 @@ namespace WebTestRunner {
 class WebTestRunner {
 public:
     virtual bool shouldDumpEditingCallbacks() const { return false; }
+    virtual bool shouldDumpAsText() const { return false; }
+    virtual void setShouldDumpAsText(bool) { }
+    virtual bool shouldGeneratePixelResults() const { return false; }
+    virtual void setShouldGeneratePixelResults(bool) { }
+    virtual bool shouldDumpChildFrameScrollPositions() const { return false; }
+    virtual bool shouldDumpChildFramesAsText() const { return false; }
 };
 
 }
