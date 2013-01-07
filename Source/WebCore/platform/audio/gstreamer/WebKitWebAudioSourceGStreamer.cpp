@@ -34,6 +34,11 @@
 #endif
 #include <gst/pbutils/pbutils.h>
 
+// GStaticRecMutex is deprecated in Glib, but required in GStreamer 0.10
+#if (COMPILER(GCC) && GCC_VERSION_AT_LEAST(4, 6, 0) && !defined(GST_API_VERSION_1))
+#pragma GCC diagnostic ignored "-Wdeprecated-declarations"
+#endif
+
 using namespace WebCore;
 
 typedef struct _WebKitWebAudioSrcClass   WebKitWebAudioSrcClass;
