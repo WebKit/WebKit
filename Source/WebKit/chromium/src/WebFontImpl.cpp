@@ -98,9 +98,8 @@ void WebFontImpl::drawText(WebCanvas* canvas, const WebTextRun& run, const WebFl
     GraphicsContextBuilder builder(canvas);
     GraphicsContext& gc = builder.context();
 
-    gc.platformContext()->setDrawingToImageBuffer(!canvasIsOpaque);
-
     gc.save();
+    gc.setShouldSmoothFonts(canvasIsOpaque);
     gc.setFillColor(color, ColorSpaceDeviceRGB);
     gc.clip(WebCore::FloatRect(clip));
     m_font.drawText(&gc, run, leftBaseline, from, to);

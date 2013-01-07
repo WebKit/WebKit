@@ -87,7 +87,7 @@ void PageWidgetDelegate::paint(Page* page, PageOverlayList* overlays, WebCanvas*
         return;
     GraphicsContextBuilder builder(canvas);
     GraphicsContext& gc = builder.context();
-    gc.platformContext()->setDrawingToImageBuffer(background == Opaque ? false : true);
+    gc.setShouldSmoothFonts(background == Opaque);
     if (applyDeviceScale) {
         gc.applyDeviceScaleFactor(page->deviceScaleFactor());
         gc.platformContext()->setDeviceScaleFactor(page->deviceScaleFactor());

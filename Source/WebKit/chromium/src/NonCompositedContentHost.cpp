@@ -172,13 +172,6 @@ void NonCompositedContentHost::notifyFlushRequired(const WebCore::GraphicsLayer*
 
 void NonCompositedContentHost::paintContents(const WebCore::GraphicsLayer*, WebCore::GraphicsContext& context, WebCore::GraphicsLayerPaintingPhase, const WebCore::IntRect& clipRect)
 {
-    // FIXME: Remove LCD text setting after it is implemented in chromium.
-    // On non-android platforms, we want to render text with subpixel antialiasing on the root layer
-    // so long as the root is opaque. On android all text is grayscale.
-#if !OS(ANDROID)
-    if (m_graphicsLayer->contentsOpaque())
-        context.platformContext()->setDrawingToImageBuffer(false);
-#endif
     context.translate(-m_layerAdjust);
     WebCore::IntRect adjustedClipRect = clipRect;
     adjustedClipRect.move(m_layerAdjust);

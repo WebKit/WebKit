@@ -1,3 +1,21 @@
+2013-01-07  Alok Priyadarshi  <alokp@chromium.org>
+
+        [chromium] Fix PlatformContextSkia::setDrawingToImageBuffer abuse
+        https://bugs.webkit.org/show_bug.cgi?id=104956
+
+        Reviewed by James Robinson.
+
+        Replaced PlatformContextSkia::SetDrawingToImageBuffer with GraphicsContext::setShouldSmoothFonts.
+
+        * src/NonCompositedContentHost.cpp:
+        (WebKit::NonCompositedContentHost::paintContents):
+        (WebKit):
+        (WebKit::NonCompositedContentHost::setShowDebugBorders):
+        * src/PageWidgetDelegate.cpp:
+        (WebKit::PageWidgetDelegate::paint):
+        * src/WebFontImpl.cpp:
+        (WebKit::WebFontImpl::drawText):
+
 2013-01-07  Mike West  <mkwst@chromium.org>
 
         Make the IFRAME_SEAMLESS flag runtime-enabled.

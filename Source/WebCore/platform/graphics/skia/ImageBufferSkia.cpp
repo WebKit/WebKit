@@ -138,7 +138,7 @@ ImageBuffer::ImageBuffer(const IntSize& size, float resolutionScale, ColorSpace,
     m_data.m_canvas = adoptPtr(new SkCanvas(device));
     m_data.m_platformContext.setCanvas(m_data.m_canvas.get());
     m_context = adoptPtr(new GraphicsContext(&m_data.m_platformContext));
-    m_context->platformContext()->setDrawingToImageBuffer(true);
+    m_context->setShouldSmoothFonts(false);
     m_context->scale(FloatSize(m_resolutionScale, m_resolutionScale));
 
     success = true;
@@ -168,7 +168,7 @@ ImageBuffer::ImageBuffer(const IntSize& size, float resolutionScale, ColorSpace,
     m_data.m_canvas = canvas.release();
     m_data.m_platformContext.setCanvas(m_data.m_canvas.get());
     m_context = adoptPtr(new GraphicsContext(&m_data.m_platformContext));
-    m_context->platformContext()->setDrawingToImageBuffer(true);
+    m_context->setShouldSmoothFonts(false);
     m_context->scale(FloatSize(m_resolutionScale, m_resolutionScale));
 
     // Make the background transparent. It would be nice if this wasn't

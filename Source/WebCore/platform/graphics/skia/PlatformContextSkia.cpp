@@ -629,9 +629,7 @@ bool PlatformContextSkia::couldUseLCDRenderedText()
     if (isDrawingToLayer())
         return false;
 
-    // If this text is not in an image buffer and so won't be externally
-    // composited, then subpixel antialiasing is fine.
-    return !isDrawingToImageBuffer();
+    return m_gc->shouldSmoothFonts();
 }
 
 } // namespace WebCore

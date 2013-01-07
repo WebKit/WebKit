@@ -60,8 +60,8 @@ SkBitmap CompositorHUDFontAtlas::generateFontAtlas(WebRect asciiToRectTable[128]
     OwnPtr<SkCanvas> canvas = adoptPtr(skia::CreateBitmapCanvas(ATLAS_SIZE, ATLAS_SIZE, false /* opaque */));
 
     PlatformContextSkia platformContext(canvas.get());
-    platformContext.setDrawingToImageBuffer(true);
     GraphicsContext atlasContext(&platformContext);
+    atlasContext.setShouldSmoothFonts(false);
 
     // Clear the entire texture atlas to transparent before drawing fonts.
     atlasContext.setFillColor(Color(0, 0, 0, 0), ColorSpaceDeviceRGB);
