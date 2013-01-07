@@ -303,6 +303,14 @@ class MainTest(unittest.TestCase):
         self.assertEqual(self._normalize_output(log), MemoryTestData.output + '\nMOCK: user.open_url: file://...\n')
         results = self._load_output_json(runner)[0]['results']
         values = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19]
+
+        # Stdev for test doesn't match on some bots
+        self.assertEqual(sorted(results['Parser/memory-test'].keys()), sorted(MemoryTestData.results.keys()))
+        for key in MemoryTestData.results:
+            if key == 'stdev':
+                self.assertAlmostEqual(results['Parser/memory-test'][key], MemoryTestData.results[key], places=4)
+            else:
+                self.assertEqual(results['Parser/memory-test'][key], MemoryTestData.results[key])
         self.assertEqual(results['Parser/memory-test'], MemoryTestData.results)
         self.assertEqual(results['Parser/memory-test:JSHeap'], MemoryTestData.js_heap_results)
         self.assertEqual(results['Parser/memory-test:Malloc'], MemoryTestData.malloc_results)
