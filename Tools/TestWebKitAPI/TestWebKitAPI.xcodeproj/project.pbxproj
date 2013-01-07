@@ -58,6 +58,7 @@
 		37DC6791140D7D7600ABCCDB /* DOMRangeOfString.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = 37DC678F140D7D3A00ABCCDB /* DOMRangeOfString.html */; };
 		37E1064C1697681800B78BD0 /* DOMHTMLTableCellElementCellAbove.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = 37E1064B169767F700B78BD0 /* DOMHTMLTableCellElementCellAbove.html */; };
 		37E1064D16976C8500B78BD0 /* DOMHTMLTableCellCellAbove.mm in Sources */ = {isa = PBXBuildFile; fileRef = 37E1064A1697676400B78BD0 /* DOMHTMLTableCellCellAbove.mm */; };
+		37E38C34169B7D010084C28C /* WebViewDidRemoveFrameFromHierarchy.mm in Sources */ = {isa = PBXBuildFile; fileRef = 37E38C33169B7D010084C28C /* WebViewDidRemoveFrameFromHierarchy.mm */; };
 		440A1D3914A0103A008A66F2 /* KURL.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 440A1D3814A0103A008A66F2 /* KURL.cpp */; };
 		4BB4160216815B2600824238 /* JSWrapperForNodeInWebFrame.mm in Sources */ = {isa = PBXBuildFile; fileRef = 4BB4160116815B2600824238 /* JSWrapperForNodeInWebFrame.mm */; };
 		4BB4160416815F9100824238 /* ElementAtPointInWebFrame.mm in Sources */ = {isa = PBXBuildFile; fileRef = 4BB4160316815F9100824238 /* ElementAtPointInWebFrame.mm */; };
@@ -311,6 +312,7 @@
 		37DC678F140D7D3A00ABCCDB /* DOMRangeOfString.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = DOMRangeOfString.html; sourceTree = "<group>"; };
 		37E1064A1697676400B78BD0 /* DOMHTMLTableCellCellAbove.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = DOMHTMLTableCellCellAbove.mm; sourceTree = "<group>"; };
 		37E1064B169767F700B78BD0 /* DOMHTMLTableCellElementCellAbove.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = DOMHTMLTableCellElementCellAbove.html; sourceTree = "<group>"; };
+		37E38C33169B7D010084C28C /* WebViewDidRemoveFrameFromHierarchy.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebViewDidRemoveFrameFromHierarchy.mm; sourceTree = "<group>"; };
 		440A1D3814A0103A008A66F2 /* KURL.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = KURL.cpp; sourceTree = "<group>"; };
 		44A622C114A0E2B60048515B /* WTFStringUtilities.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WTFStringUtilities.h; sourceTree = "<group>"; };
 		4BB4160116815B2600824238 /* JSWrapperForNodeInWebFrame.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = JSWrapperForNodeInWebFrame.mm; sourceTree = "<group>"; };
@@ -785,6 +787,7 @@
 				37A6895D148A9B50005100FA /* SubresourceErrorCrash.mm */,
 				E490296714E2E3A4002BEDD1 /* TypingStyleCrash.mm */,
 				51FBBB4C1513D4E900822738 /* WebViewCanPasteURL.mm */,
+				37E38C33169B7D010084C28C /* WebViewDidRemoveFrameFromHierarchy.mm */,
 				A5E2027215B2181900C13E14 /* WindowlessWebViewWithMedia.mm */,
 				00CD9F6215BE312C002DA2CE /* BackForwardList.mm */,
 			);
@@ -1054,6 +1057,7 @@
 				4BB4160416815F9100824238 /* ElementAtPointInWebFrame.mm in Sources */,
 				3751AF7C169518F800764319 /* DOMNodeFromJSObject.mm in Sources */,
 				37E1064D16976C8500B78BD0 /* DOMHTMLTableCellCellAbove.mm in Sources */,
+				37E38C34169B7D010084C28C /* WebViewDidRemoveFrameFromHierarchy.mm in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

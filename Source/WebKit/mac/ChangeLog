@@ -1,3 +1,23 @@
+2013-01-07  Dan Bernstein  <mitz@apple.com>
+
+        [mac] WebKit1 clients can’t tell when a frame has been removed from the hierarchy
+        https://bugs.webkit.org/show_bug.cgi?id=106261
+
+        Reviewed by Simon Fraser.
+
+        Test: TestWebKitAPI/Tests/mac/WebViewDidRemoveFrameFromHierarchy.mm.
+
+        Added -[WebFrameLoadDelegate webView:didRemoveFrameFromHierarchy:].
+
+        * WebCoreSupport/WebFrameLoaderClient.mm:
+        (WebFrameLoaderClient::detachedFromParent2): Added a call to the new frame load delegate
+        method.
+        * WebView/WebDelegateImplementationCaching.h:
+        (WebFrameLoadDelegateImplementationCache): Added the new method to the cache.
+        * WebView/WebFrameLoadDelegatePrivate.h: Declared the new delegate method.
+        * WebView/WebView.mm:
+        (-[WebView _cacheFrameLoadDelegateImplementations]): Added the new method to the cache.
+
 2013-01-07  Mike West  <mkwst@chromium.org>
 
         Make the IFRAME_SEAMLESS flag runtime-enabled.

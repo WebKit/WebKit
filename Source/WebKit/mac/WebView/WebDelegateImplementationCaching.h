@@ -79,6 +79,7 @@ struct WebFrameLoadDelegateImplementationCache {
     IMP didDisplayInsecureContentFunc;
     IMP didRunInsecureContentFunc;
     IMP didDetectXSSFunc;
+    IMP didRemoveFrameFromHierarchyFunc;
 };
 
 struct WebScriptDebugDelegateImplementationCache {

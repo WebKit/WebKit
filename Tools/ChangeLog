@@ -1,3 +1,19 @@
+2013-01-07  Dan Bernstein  <mitz@apple.com>
+
+        [mac] WebKit1 clients can’t tell when a frame has been removed from the hierarchy
+        https://bugs.webkit.org/show_bug.cgi?id=106261
+
+        Reviewed by Simon Fraser.
+
+        Added a test for -[WebFrameLoadDelegate webView:didRemoveFrameFromHierarchy:].
+
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        * TestWebKitAPI/Tests/mac/WebViewDidRemoveFrameFromHierarchy.mm: Added.
+        (-[DidRemoveFrameFromHierarchyFrameLoadDelegate webView:didFinishLoadForFrame:]):
+        (-[DidRemoveFrameFromHierarchyFrameLoadDelegate webView:didRemoveFrameFromHierarchy:]):
+        (TestWebKitAPI):
+        (TestWebKitAPI::TEST):
+
 2013-01-07  Ojan Vafai  <ojan@chromium.org>
 
         Add the Apple MountainLion bots to garden-o-matic.
