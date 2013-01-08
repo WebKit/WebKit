@@ -222,8 +222,8 @@
 			dstPath = DumpRenderTree.resources;
 			dstSubfolderSpec = 7;
 			files = (
-				8CCDA82A151A72D10003F937 /* SampleFont.sfont in Copy Font Files */,
 				5DB9AC970F722C3600684641 /* AHEM____.TTF in Copy Font Files */,
+				8CCDA82A151A72D10003F937 /* SampleFont.sfont in Copy Font Files */,
 				5DB9AC980F722C3600684641 /* WebKitWeightWatcher100.ttf in Copy Font Files */,
 				5DB9AC990F722C3600684641 /* WebKitWeightWatcher200.ttf in Copy Font Files */,
 				5DB9AC9A0F722C3600684641 /* WebKitWeightWatcher300.ttf in Copy Font Files */,
@@ -396,8 +396,8 @@
 				141BF439096A455900E0753C /* Carbon.framework in Frameworks */,
 				141BF436096A455900E0753C /* Cocoa.framework in Frameworks */,
 				141BF438096A455900E0753C /* JavaScriptCore.framework in Frameworks */,
-				141BF435096A455900E0753C /* WebKit.framework in Frameworks */,
 				0F37A4AA11E6629100275F54 /* QuartzCore.framework in Frameworks */,
+				141BF435096A455900E0753C /* WebKit.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -415,10 +415,10 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				5DE8AE4413A2C15900D6A37D /* libWebCoreTestSupport.dylib in Frameworks */,
 				AE8259F308D22463000507AB /* Carbon.framework in Frameworks */,
 				A84F608A08B136DA00E9745F /* Cocoa.framework in Frameworks */,
 				A817090408B164D300CCB9FB /* JavaScriptCore.framework in Frameworks */,
+				5DE8AE4413A2C15900D6A37D /* libWebCoreTestSupport.dylib in Frameworks */,
 				23BCB8900EA57623003C6289 /* OpenGL.framework in Frameworks */,
 				9340995108540CAE007F3BC8 /* WebKit.framework in Frameworks */,
 			);
@@ -482,8 +482,8 @@
 				141BF448096A45C800E0753C /* Info.plist */,
 				1AC6C77F0D07589B00CD3161 /* main.cpp */,
 				1AC6C7800D07589B00CD3161 /* PluginObject.cpp */,
-				0F37A4A611E6628700275F54 /* PluginObjectMac.mm */,
 				141BF447096A45C800E0753C /* PluginObject.h */,
+				0F37A4A611E6628700275F54 /* PluginObjectMac.mm */,
 				1A215A7F11F2609C008AD0F5 /* PluginTest.cpp */,
 				1A215A8011F2609C008AD0F5 /* PluginTest.h */,
 				1AC6C7810D07589B00CD3161 /* TestObject.cpp */,
@@ -495,6 +495,8 @@
 		1422A2690AF6F45200E1A883 /* Controllers */ = {
 			isa = PBXGroup;
 			children = (
+				BC0E26140E2DA4C6001B6BC3 /* AccessibilityCommonMac.mm */,
+				BC0E26140E2DA4C6001B6BC3 /* AccessibilityCommonMac.mm */,
 				BCD08B390E1057EF00A7D0C1 /* AccessibilityController.cpp */,
 				BCD08A580E10496B00A7D0C1 /* AccessibilityController.h */,
 				BCD08B700E1059D200A7D0C1 /* AccessibilityControllerMac.mm */,
@@ -506,8 +508,6 @@
 				BC0E24DF0E2D9451001B6BC2 /* AccessibilityUIElement.cpp */,
 				BC0E24DE0E2D9451001B6BC2 /* AccessibilityUIElement.h */,
 				BC0E26140E2DA4C6001B6BC2 /* AccessibilityUIElementMac.mm */,
-				BC0E26140E2DA4C6001B6BC3 /* AccessibilityCommonMac.mm */,
-				BC0E26140E2DA4C6001B6BC3 /* AccessibilityCommonMac.mm */,
 				BCA18B360C9B021900114369 /* AppleScriptController.h */,
 				BCA18B370C9B021900114369 /* AppleScriptController.m */,
 				BCA18B6B0C9B08DB00114369 /* EventSendingController.h */,
@@ -515,9 +515,6 @@
 				BCF6C64F0C98E9C000AC063E /* GCController.cpp */,
 				14770FE00A22ADF7009342EE /* GCController.h */,
 				BCA18B210C9B014B00114369 /* GCControllerMac.mm */,
-				BC0131D80C9772010087317D /* TestRunner.cpp */,
-				BC0131D90C9772010087317D /* TestRunner.h */,
-				BCA18B220C9B014B00114369 /* TestRunnerMac.mm */,
 				E1B7808511AF1643007E1BC2 /* MockGeolocationProvider.h */,
 				E1B7808711AF1669007E1BC2 /* MockGeolocationProvider.mm */,
 				31117B3A15D9A56A00163BC8 /* MockWebNotificationProvider.h */,
@@ -526,6 +523,9 @@
 				BCA18B6E0C9B08DB00114369 /* NavigationController.m */,
 				BCA18B2F0C9B01B400114369 /* ObjCController.h */,
 				BCA18B300C9B01B400114369 /* ObjCController.m */,
+				BC0131D80C9772010087317D /* TestRunner.cpp */,
+				BC0131D90C9772010087317D /* TestRunner.h */,
+				BCA18B220C9B014B00114369 /* TestRunnerMac.mm */,
 				BCA18B3A0C9B024900114369 /* TextInputController.h */,
 				BCA18B480C9B02C400114369 /* TextInputController.m */,
 			);
@@ -546,10 +546,10 @@
 				BCA18B5C0C9B08C200114369 /* PolicyDelegate.mm */,
 				BCA18B5D0C9B08C200114369 /* ResourceLoadDelegate.h */,
 				BCA18B5E0C9B08C200114369 /* ResourceLoadDelegate.mm */,
-				BCA18B5F0C9B08C200114369 /* UIDelegate.h */,
-				BCA18B600C9B08C200114369 /* UIDelegate.mm */,
 				3A5626C0131C8B17002BE6D9 /* StorageTrackerDelegate.h */,
 				3A5626C1131C8B17002BE6D9 /* StorageTrackerDelegate.mm */,
+				BCA18B5F0C9B08C200114369 /* UIDelegate.h */,
+				BCA18B600C9B08C200114369 /* UIDelegate.mm */,
 			);
 			name = Delegates;
 			sourceTree = "<group>";
@@ -587,9 +587,9 @@
 		1A31EB3613466AC100017372 /* mac */ = {
 			isa = PBXGroup;
 			children = (
+				1A66C34F14576A920099A115 /* ContentsScaleFactor.cpp */,
 				1A31EB3713466AC100017372 /* ConvertPoint.cpp */,
 				1A14C8A31406DE0400B254F7 /* SupportsCarbonEventModel.cpp */,
-				1A66C34F14576A920099A115 /* ContentsScaleFactor.cpp */,
 			);
 			path = mac;
 			sourceTree = "<group>";
@@ -615,8 +615,8 @@
 			children = (
 				9340995408540CAF007F3BC8 /* DumpRenderTree */,
 				B5A7526708AF4A4A00138E45 /* ImageDiff */,
-				141BF233096A44CF00E0753C /* TestNetscapePlugIn.plugin */,
 				2D403F19150871F9005358D2 /* LayoutTestHelper */,
+				141BF233096A44CF00E0753C /* TestNetscapePlugIn.plugin */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -625,6 +625,7 @@
 			isa = PBXGroup;
 			children = (
 				AA7F10C20CB3C1030003BDC9 /* AHEM____.TTF */,
+				8CCDA81F151A56550003F937 /* SampleFont.sfont */,
 				375F09710DAC3CB600C8B4E5 /* WebKitWeightWatcher100.ttf */,
 				375F09720DAC3CB600C8B4E5 /* WebKitWeightWatcher200.ttf */,
 				375F09730DAC3CB600C8B4E5 /* WebKitWeightWatcher300.ttf */,
@@ -634,7 +635,6 @@
 				375F09770DAC3CB600C8B4E5 /* WebKitWeightWatcher700.ttf */,
 				375F09780DAC3CB600C8B4E5 /* WebKitWeightWatcher800.ttf */,
 				375F09790DAC3CB600C8B4E5 /* WebKitWeightWatcher900.ttf */,
-				8CCDA81F151A56550003F937 /* SampleFont.sfont */,
 			);
 			name = Resources;
 			sourceTree = "<group>";
@@ -642,11 +642,11 @@
 		A803FF6409CAACC1009B2A37 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
-				5DE8AE4313A2C15800D6A37D /* libWebCoreTestSupport.dylib */,
 				BCB284B20CFA82CB007E533E /* ApplicationServices.framework */,
 				AE8257EF08D22389000507AB /* Carbon.framework */,
 				A84F608908B136DA00E9745F /* Cocoa.framework */,
 				A817090308B164D300CCB9FB /* JavaScriptCore.framework */,
+				5DE8AE4313A2C15800D6A37D /* libWebCoreTestSupport.dylib */,
 				23BCB88F0EA57623003C6289 /* OpenGL.framework */,
 				B5A752A108AF5D1F00138E45 /* QuartzCore.framework */,
 				9335435F03D75502008635CE /* WebKit.framework */,
@@ -712,8 +712,8 @@
 			buildActionMask = 2147483647;
 			files = (
 				141BF453096A45EB00E0753C /* PluginObject.h in Headers */,
-				1A8F02E80BB9B4EC008CFA34 /* TestObject.h in Headers */,
 				1A215A8211F2609C008AD0F5 /* PluginTest.h in Headers */,
+				1A8F02E80BB9B4EC008CFA34 /* TestObject.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -721,6 +721,8 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				80045AED147718E7008290A8 /* AccessibilityNotificationHandler.h in Headers */,
+				29CFBA10122736E600BC30C0 /* AccessibilityTextMarker.h in Headers */,
 				BC0E24E00E2D9451001B6BC2 /* AccessibilityUIElement.h in Headers */,
 				BCA18B380C9B021900114369 /* AppleScriptController.h in Headers */,
 				A8B91BFF0CF522B4008F91FF /* CheckedMalloc.h in Headers */,
@@ -735,8 +737,10 @@
 				BCA18B6F0C9B08DB00114369 /* EventSendingController.h in Headers */,
 				BCA18B630C9B08C200114369 /* FrameLoadDelegate.h in Headers */,
 				14770FE20A22ADF7009342EE /* GCController.h in Headers */,
+				5185F6B310714E12007AA393 /* HistoryDelegate.h in Headers */,
 				BC47412A0D038A4C0072B006 /* JavaScriptThreading.h in Headers */,
-				BC0131DB0C9772010087317D /* TestRunner.h in Headers */,
+				E1B7816711AF31C3007E1BC2 /* MockGeolocationProvider.h in Headers */,
+				31117B3C15D9A56A00163BC8 /* MockWebNotificationProvider.h in Headers */,
 				BCA18B710C9B08DB00114369 /* NavigationController.h in Headers */,
 				BCA18B310C9B01B400114369 /* ObjCController.h in Headers */,
 				BCA18B7D0C9B08F100114369 /* ObjCPlugin.h in Headers */,
@@ -745,18 +749,14 @@
 				BCB284D00CFA83CC007E533E /* PixelDumpSupportCG.h in Headers */,
 				BCA18B650C9B08C200114369 /* PolicyDelegate.h in Headers */,
 				BCA18B670C9B08C200114369 /* ResourceLoadDelegate.h in Headers */,
+				3A5626CC131CA036002BE6D9 /* StorageTrackerDelegate.h in Headers */,
+				BC0131DB0C9772010087317D /* TestRunner.h in Headers */,
 				BCA18B3C0C9B024900114369 /* TextInputController.h in Headers */,
 				BCA18B690C9B08C200114369 /* UIDelegate.h in Headers */,
 				4437730F125CBC4D00AAE02C /* WebArchiveDumpSupport.h in Headers */,
+				417DAA1D137B3E24007C57FB /* WebCoreTestSupport.h in Headers */,
 				BC9D90250C97472E0099A4A3 /* WorkQueue.h in Headers */,
 				BC9D90260C97472E0099A4A3 /* WorkQueueItem.h in Headers */,
-				5185F6B310714E12007AA393 /* HistoryDelegate.h in Headers */,
-				E1B7816711AF31C3007E1BC2 /* MockGeolocationProvider.h in Headers */,
-				29CFBA10122736E600BC30C0 /* AccessibilityTextMarker.h in Headers */,
-				3A5626CC131CA036002BE6D9 /* StorageTrackerDelegate.h in Headers */,
-				417DAA1D137B3E24007C57FB /* WebCoreTestSupport.h in Headers */,
-				80045AED147718E7008290A8 /* AccessibilityNotificationHandler.h in Headers */,
-				31117B3C15D9A56A00163BC8 /* MockWebNotificationProvider.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -905,36 +905,36 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				1AC6C8490D07638600CD3161 /* main.cpp in Sources */,
-				1AC6C84A0D07638600CD3161 /* PluginObject.cpp in Sources */,
-				1AC6C84B0D07638600CD3161 /* TestObject.cpp in Sources */,
-				0F37A4A711E6628700275F54 /* PluginObjectMac.mm in Sources */,
-				1A215A8111F2609C008AD0F5 /* PluginTest.cpp in Sources */,
-				1A215BE711F27658008AD0F5 /* DocumentOpenInDestroyStream.cpp in Sources */,
-				1AD9D2FE12028409001A70D1 /* PluginScriptableNPObjectInvokeDefault.cpp in Sources */,
-				1AC77DCF120605B6005C19EF /* NPRuntimeRemoveProperty.cpp in Sources */,
-				1A24BAA9120734EE00FBB059 /* NPRuntimeObjectFromDestroyedPlugin.cpp in Sources */,
-				C06F9ABC1267A7060058E1F6 /* PassDifferentNPPStruct.cpp in Sources */,
-				C0EC3C9C12787F0500939164 /* NullNPPGetValuePointer.cpp in Sources */,
-				C0E720751281C828004EF533 /* EvaluateJSAfterRemovingPluginElement.cpp in Sources */,
-				1AD4CB2212A6D1350027A7AF /* GetUserAgentWithNullNPPFromNPPNew.cpp in Sources */,
-				1A3E28AA1311D73B00501349 /* GetURLWithJavaScriptURLDestroyingPlugin.cpp in Sources */,
-				1ACF898D132EF41C00E915D4 /* NPDeallocateCalledBeforeNPShutdown.cpp in Sources */,
-				1A31EB3813466AC100017372 /* ConvertPoint.cpp in Sources */,
-				C031182B134E4A2B00919757 /* NPPSetWindowCalledDuringDestruction.cpp in Sources */,
-				1A5CC1F5137DD2EC00A5D7E7 /* GetURLWithJavaScriptURL.cpp in Sources */,
-				1AFF66BC137DEFD200791696 /* GetURLNotifyWithURLThatFailsToLoad.cpp in Sources */,
-				4AD6A11413C8124000EA9737 /* FormValue.cpp in Sources */,
-				1A14C8A51406DE0400B254F7 /* SupportsCarbonEventModel.cpp in Sources */,
-				1A1E4298141141C400388758 /* PrivateBrowsing.cpp in Sources */,
 				1A66C35114576A920099A115 /* ContentsScaleFactor.cpp in Sources */,
-				515F429C15C07872007C8F90 /* PluginScriptableObjectOverridesAllProperties.cpp in Sources */,
-				5106803E15CC7B10001A8A23 /* SlowNPPNew.cpp in Sources */,
+				1A31EB3813466AC100017372 /* ConvertPoint.cpp in Sources */,
+				1A215BE711F27658008AD0F5 /* DocumentOpenInDestroyStream.cpp in Sources */,
+				C0E720751281C828004EF533 /* EvaluateJSAfterRemovingPluginElement.cpp in Sources */,
 				51CACBD815D96FD000EB53A2 /* EvaluateJSWithinNPP_New.cpp in Sources */,
-				515C0CD015EE785700F5A613 /* LogNPPSetWindow.cpp in Sources */,
-				5113DE6715F6CBE5005EC8B3 /* NPPNewFails.cpp in Sources */,
+				4AD6A11413C8124000EA9737 /* FormValue.cpp in Sources */,
+				1AFF66BC137DEFD200791696 /* GetURLNotifyWithURLThatFailsToLoad.cpp in Sources */,
+				1A5CC1F5137DD2EC00A5D7E7 /* GetURLWithJavaScriptURL.cpp in Sources */,
+				1A3E28AA1311D73B00501349 /* GetURLWithJavaScriptURLDestroyingPlugin.cpp in Sources */,
+				1AD4CB2212A6D1350027A7AF /* GetUserAgentWithNullNPPFromNPPNew.cpp in Sources */,
 				51134C9916014FDC001AA513 /* InvokeDestroysPluginWithinNPP_New.cpp in Sources */,
+				515C0CD015EE785700F5A613 /* LogNPPSetWindow.cpp in Sources */,
+				1AC6C8490D07638600CD3161 /* main.cpp in Sources */,
+				1ACF898D132EF41C00E915D4 /* NPDeallocateCalledBeforeNPShutdown.cpp in Sources */,
+				5113DE6715F6CBE5005EC8B3 /* NPPNewFails.cpp in Sources */,
+				C031182B134E4A2B00919757 /* NPPSetWindowCalledDuringDestruction.cpp in Sources */,
 				1AD8683F163B2FD000A28583 /* NPRuntimeCallsWithNullNPP.cpp in Sources */,
+				1A24BAA9120734EE00FBB059 /* NPRuntimeObjectFromDestroyedPlugin.cpp in Sources */,
+				1AC77DCF120605B6005C19EF /* NPRuntimeRemoveProperty.cpp in Sources */,
+				C0EC3C9C12787F0500939164 /* NullNPPGetValuePointer.cpp in Sources */,
+				C06F9ABC1267A7060058E1F6 /* PassDifferentNPPStruct.cpp in Sources */,
+				1AC6C84A0D07638600CD3161 /* PluginObject.cpp in Sources */,
+				0F37A4A711E6628700275F54 /* PluginObjectMac.mm in Sources */,
+				1AD9D2FE12028409001A70D1 /* PluginScriptableNPObjectInvokeDefault.cpp in Sources */,
+				515F429C15C07872007C8F90 /* PluginScriptableObjectOverridesAllProperties.cpp in Sources */,
+				1A215A8111F2609C008AD0F5 /* PluginTest.cpp in Sources */,
+				1A1E4298141141C400388758 /* PrivateBrowsing.cpp in Sources */,
+				5106803E15CC7B10001A8A23 /* SlowNPPNew.cpp in Sources */,
+				1A14C8A51406DE0400B254F7 /* SupportsCarbonEventModel.cpp in Sources */,
+				1AC6C84B0D07638600CD3161 /* TestObject.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -950,15 +950,19 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				BC0E26150E2DA4C6001B6BC3 /* AccessibilityCommonMac.mm in Sources */,
 				BCD08B3A0E1057EF00A7D0C1 /* AccessibilityController.cpp in Sources */,
 				BCD08B710E1059D200A7D0C1 /* AccessibilityControllerMac.mm in Sources */,
+				80045AEE147718E7008290A8 /* AccessibilityNotificationHandler.mm in Sources */,
+				29CFBA11122736E600BC30C0 /* AccessibilityTextMarker.cpp in Sources */,
+				29CFBA2E12273A1000BC30C0 /* AccessibilityTextMarkerMac.mm in Sources */,
 				BC0E24E10E2D9451001B6BC2 /* AccessibilityUIElement.cpp in Sources */,
 				BC0E26150E2DA4C6001B6BC2 /* AccessibilityUIElementMac.mm in Sources */,
-				BC0E26150E2DA4C6001B6BC3 /* AccessibilityCommonMac.mm in Sources */,
 				BCA18B390C9B021900114369 /* AppleScriptController.m in Sources */,
 				A8B91BFD0CF522B4008F91FF /* CheckedMalloc.cpp in Sources */,
 				53CBB832134E42F3001CE6A4 /* CyclicRedundancyCheck.cpp in Sources */,
 				BCA18C470C9B5B9400114369 /* DumpRenderTree.mm in Sources */,
+				9830F31F15C81181005AB206 /* DumpRenderTreeCommon.cpp in Sources */,
 				BCA18B7B0C9B08F100114369 /* DumpRenderTreeDraggingInfo.mm in Sources */,
 				A8D79CEB0FC28B2C004AC8FE /* DumpRenderTreeFileDraggingSource.m in Sources */,
 				A8B91ADA0CF3B32F008F91FF /* DumpRenderTreePasteboard.m in Sources */,
@@ -968,9 +972,10 @@
 				BCA18B640C9B08C200114369 /* FrameLoadDelegate.mm in Sources */,
 				BCF6C6500C98E9C000AC063E /* GCController.cpp in Sources */,
 				BCA18B230C9B014B00114369 /* GCControllerMac.mm in Sources */,
+				5185F6B210714E07007AA393 /* HistoryDelegate.mm in Sources */,
 				BC4741410D038A570072B006 /* JavaScriptThreadingPthreads.cpp in Sources */,
-				BC0131DA0C9772010087317D /* TestRunner.cpp in Sources */,
-				BCA18B240C9B014B00114369 /* TestRunnerMac.mm in Sources */,
+				E1B7816511AF31B7007E1BC2 /* MockGeolocationProvider.mm in Sources */,
+				31117B3D15D9A56A00163BC8 /* MockWebNotificationProvider.mm in Sources */,
 				BCA18B720C9B08DB00114369 /* NavigationController.m in Sources */,
 				BCA18B320C9B01B400114369 /* ObjCController.m in Sources */,
 				BCA18B7E0C9B08F100114369 /* ObjCPlugin.m in Sources */,
@@ -980,20 +985,15 @@
 				BCB284D60CFA83D1007E533E /* PixelDumpSupportMac.mm in Sources */,
 				BCA18B660C9B08C200114369 /* PolicyDelegate.mm in Sources */,
 				BCA18B680C9B08C200114369 /* ResourceLoadDelegate.mm in Sources */,
+				3A5626CB131CA02A002BE6D9 /* StorageTrackerDelegate.mm in Sources */,
+				BC0131DA0C9772010087317D /* TestRunner.cpp in Sources */,
+				BCA18B240C9B014B00114369 /* TestRunnerMac.mm in Sources */,
 				BCA18B490C9B02C400114369 /* TextInputController.m in Sources */,
 				BCA18B6A0C9B08C200114369 /* UIDelegate.mm in Sources */,
 				4437730E125CBC3600AAE02C /* WebArchiveDumpSupport.cpp in Sources */,
 				440590711268453800CFD48D /* WebArchiveDumpSupportMac.mm in Sources */,
 				BC9D90240C97472E0099A4A3 /* WorkQueue.cpp in Sources */,
 				BCA18B260C9B015C00114369 /* WorkQueueItemMac.mm in Sources */,
-				5185F6B210714E07007AA393 /* HistoryDelegate.mm in Sources */,
-				E1B7816511AF31B7007E1BC2 /* MockGeolocationProvider.mm in Sources */,
-				29CFBA11122736E600BC30C0 /* AccessibilityTextMarker.cpp in Sources */,
-				29CFBA2E12273A1000BC30C0 /* AccessibilityTextMarkerMac.mm in Sources */,
-				3A5626CB131CA02A002BE6D9 /* StorageTrackerDelegate.mm in Sources */,
-				80045AEE147718E7008290A8 /* AccessibilityNotificationHandler.mm in Sources */,
-				9830F31F15C81181005AB206 /* DumpRenderTreeCommon.cpp in Sources */,
-				31117B3D15D9A56A00163BC8 /* MockWebNotificationProvider.mm in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

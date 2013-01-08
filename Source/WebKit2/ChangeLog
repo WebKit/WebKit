@@ -1,3 +1,9 @@
+2013-01-07  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Sorted the xcodeproj file.
+
+        * WebKit2.xcodeproj/project.pbxproj:
+
 2013-01-07  Alexey Proskuryakov  <ap@apple.com>
 
         [WK2] Make SecItemShim messages work with any process

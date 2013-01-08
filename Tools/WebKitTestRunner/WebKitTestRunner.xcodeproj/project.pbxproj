@@ -221,9 +221,9 @@
 			buildActionMask = 2147483647;
 			files = (
 				BC7934A511906584005EA8E2 /* Cocoa.framework in Frameworks */,
-				BC7934AC1190658C005EA8E2 /* WebKit2.framework in Frameworks */,
 				BCDA2B9A1191051F00C3BC47 /* JavaScriptCore.framework in Frameworks */,
 				0F5169CB1445222D00E0A9D7 /* WebKit.framework in Frameworks */,
+				BC7934AC1190658C005EA8E2 /* WebKit2.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -232,10 +232,10 @@
 			buildActionMask = 2147483647;
 			files = (
 				BC25193E11D15D8B002EBC01 /* Cocoa.framework in Frameworks */,
-				BC25193F11D15D8B002EBC01 /* WebKit2.framework in Frameworks */,
 				BC25194011D15D8B002EBC01 /* JavaScriptCore.framework in Frameworks */,
 				A664BC7613A5F3A9009A7B25 /* libWebCoreTestSupport.dylib in Frameworks */,
 				0F5169CC1445222D00E0A9D7 /* WebKit.framework in Frameworks */,
+				BC25193F11D15D8B002EBC01 /* WebKit2.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -270,15 +270,15 @@
 				5322FB4413FDA0EA0041ABCC /* PixelDumpSupport.cpp */,
 				5322FB4513FDA0EA0041ABCC /* PixelDumpSupport.h */,
 				BC7934DD119066EC005EA8E2 /* PlatformWebView.h */,
-				BC79342F118F7F19005EA8E2 /* TestController.h */,
 				BC793430118F7F19005EA8E2 /* TestController.cpp */,
-				BCD7D2F611921278006DB7EE /* TestInvocation.h */,
+				BC79342F118F7F19005EA8E2 /* TestController.h */,
 				BCD7D2F711921278006DB7EE /* TestInvocation.cpp */,
+				BCD7D2F611921278006DB7EE /* TestInvocation.h */,
 				BC251A1711D16774002EBC01 /* WebKitTestRunnerPrefix.h */,
-				3110BE0F15BA011400D216AC /* WebNotificationProvider.h */,
 				3164C8EF15D1ADA100EF1FE0 /* WebNotificationProvider.cpp */,
-				4429FC611627089600F66D8B /* WorkQueueManager.h */,
+				3110BE0F15BA011400D216AC /* WebNotificationProvider.h */,
 				4429FC5E1627089600F66D8B /* WorkQueueManager.cpp */,
+				4429FC611627089600F66D8B /* WorkQueueManager.h */,
 			);
 			name = TestRunner;
 			sourceTree = "<group>";
@@ -287,11 +287,11 @@
 			isa = PBXGroup;
 			children = (
 				BC7934A411906584005EA8E2 /* Cocoa.framework */,
-				BC7934AB1190658C005EA8E2 /* WebKit2.framework */,
-				0F5169CA1445222D00E0A9D7 /* WebKit.framework */,
 				BCDA2B991191051F00C3BC47 /* JavaScriptCore.framework */,
-				4181731B138AD39D0057AAA4 /* WebCoreTestSupport.h */,
 				41230E16138C78BF00BCCFCA /* libWebCoreTestSupport.dylib */,
+				4181731B138AD39D0057AAA4 /* WebCoreTestSupport.h */,
+				0F5169CA1445222D00E0A9D7 /* WebKit.framework */,
+				BC7934AB1190658C005EA8E2 /* WebKit2.framework */,
 			);
 			name = "External Frameworks and Libraries";
 			sourceTree = "<group>";
@@ -308,21 +308,21 @@
 		29A8FCE0145F035D009045A6 /* Accessibility */ = {
 			isa = PBXGroup;
 			children = (
+				29210EAB144CACB200835BB6 /* AccessibilityCommonMac.mm */,
+				29210EA2144CAAA500835BB5 /* AccessibilityController.cpp */,
+				29210EA3144CAAA500835BB5 /* AccessibilityController.h */,
 				8034C6611487636400AC32E9 /* AccessibilityControllerMac.mm */,
 				8097338814874A5A008156D9 /* AccessibilityNotificationHandler.h */,
 				8097338914874A5A008156D9 /* AccessibilityNotificationHandler.mm */,
-				29210EA2144CAAA500835BB5 /* AccessibilityController.cpp */,
-				29210EA3144CAAA500835BB5 /* AccessibilityController.h */,
-				29210EA9144CACB200835BB5 /* AccessibilityUIElement.cpp */,
-				29210EAA144CACB200835BB5 /* AccessibilityUIElement.h */,
-				29210EAB144CACB200835BB5 /* AccessibilityUIElementMac.mm */,
-				29210EAB144CACB200835BB6 /* AccessibilityCommonMac.mm */,
 				29210EB1144CACD400835BB5 /* AccessibilityTextMarker.cpp */,
 				29210EB2144CACD400835BB5 /* AccessibilityTextMarker.h */,
 				29210EB3144CACD400835BB5 /* AccessibilityTextMarkerMac.mm */,
 				29A8FCE1145F037B009045A6 /* AccessibilityTextMarkerRange.cpp */,
 				29A8FCDF145F0358009045A6 /* AccessibilityTextMarkerRange.h */,
 				29A8FCE4145F0464009045A6 /* AccessibilityTextMarkerRangeMac.mm */,
+				29210EA9144CACB200835BB5 /* AccessibilityUIElement.cpp */,
+				29210EAA144CACB200835BB5 /* AccessibilityUIElement.h */,
+				29210EAB144CACB200835BB5 /* AccessibilityUIElementMac.mm */,
 			);
 			name = Accessibility;
 			sourceTree = "<group>";
@@ -357,9 +357,9 @@
 		BC25183511D1571D002EBC01 /* InjectedBundle */ = {
 			isa = PBXGroup;
 			children = (
-				BC952D3A11F3BF1F003398B4 /* Derived Sources */,
 				BC952C0A11F3B939003398B4 /* Bindings */,
 				BC14E4E0120E02F900826C0C /* Controllers */,
+				BC952D3A11F3BF1F003398B4 /* Derived Sources */,
 				65EB859E11EC67CC0034D300 /* mac */,
 				65EB859D11EC67CC0034D300 /* ActivateFonts.h */,
 				BCC997A011D3C8F60017BCA2 /* InjectedBundle.cpp */,
@@ -374,8 +374,9 @@
 		BC25194411D15DBE002EBC01 /* Resources */ = {
 			isa = PBXGroup;
 			children = (
-				BC25186311D15D54002EBC01 /* InjectedBundle-Info.plist */,
 				6510A77711EC643800410867 /* AHEM____.TTF */,
+				BC25186311D15D54002EBC01 /* InjectedBundle-Info.plist */,
+				8CCDA822151A570B0003F937 /* SampleFont.sfont */,
 				6510A77911EC643800410867 /* WebKitWeightWatcher100.ttf */,
 				6510A77A11EC643800410867 /* WebKitWeightWatcher200.ttf */,
 				6510A77B11EC643800410867 /* WebKitWeightWatcher300.ttf */,
@@ -385,7 +386,6 @@
 				6510A77F11EC643800410867 /* WebKitWeightWatcher700.ttf */,
 				6510A78011EC643800410867 /* WebKitWeightWatcher800.ttf */,
 				6510A78111EC643800410867 /* WebKitWeightWatcher900.ttf */,
-				8CCDA822151A570B0003F937 /* SampleFont.sfont */,
 			);
 			name = Resources;
 			sourceTree = "<group>";
@@ -423,16 +423,16 @@
 		BC952C0A11F3B939003398B4 /* Bindings */ = {
 			isa = PBXGroup;
 			children = (
-				BC952ED311F3C318003398B4 /* CodeGeneratorTestRunner.pm */,
-				BC952C0E11F3B97B003398B4 /* JSWrappable.h */,
-				BC952C0C11F3B965003398B4 /* JSWrapper.cpp */,
-				BC952C0B11F3B965003398B4 /* JSWrapper.h */,
 				29210EA8144CAB8800835BB5 /* AccessibilityController.idl */,
 				29A8FCC5145B93C6009045A6 /* AccessibilityTextMarker.idl */,
 				29A8FCD2145EF8F2009045A6 /* AccessibilityTextMarkerRange.idl */,
 				29210EDC144CD56E00835BB5 /* AccessibilityUIElement.idl */,
+				BC952ED311F3C318003398B4 /* CodeGeneratorTestRunner.pm */,
 				BC8FD8CB120E52B000F3E71A /* EventSendingController.idl */,
 				BC14E4E1120E032000826C0C /* GCController.idl */,
+				BC952C0E11F3B97B003398B4 /* JSWrappable.h */,
+				BC952C0C11F3B965003398B4 /* JSWrapper.cpp */,
+				BC952C0B11F3B965003398B4 /* JSWrapper.h */,
 				BC952ED211F3C29F003398B4 /* TestRunner.idl */,
 				5664A49614326377008881BE /* TextInputController.idl */,
 			);
@@ -542,6 +542,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				6510A78211EC643800410867 /* AHEM____.TTF in Resources */,
+				8CCDA823151A570B0003F937 /* SampleFont.sfont in Resources */,
 				6510A78411EC643800410867 /* WebKitWeightWatcher100.ttf in Resources */,
 				6510A78511EC643800410867 /* WebKitWeightWatcher200.ttf in Resources */,
 				6510A78611EC643800410867 /* WebKitWeightWatcher300.ttf in Resources */,
@@ -551,7 +552,6 @@
 				6510A78A11EC643800410867 /* WebKitWeightWatcher700.ttf in Resources */,
 				6510A78B11EC643800410867 /* WebKitWeightWatcher800.ttf in Resources */,
 				6510A78C11EC643800410867 /* WebKitWeightWatcher900.ttf in Resources */,
-				8CCDA823151A570B0003F937 /* SampleFont.sfont in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -579,16 +579,16 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				BC793400118F7C84005EA8E2 /* main.mm in Sources */,
 				5322FB4313FDA0CD0041ABCC /* CyclicRedundancyCheck.cpp in Sources */,
+				5670B8281386FCA5002EB355 /* EventSenderProxy.mm in Sources */,
 				26D758E7160BECDD00268472 /* GeolocationProviderMock.cpp in Sources */,
+				BC793400118F7C84005EA8E2 /* main.mm in Sources */,
 				5322FB4613FDA0EA0041ABCC /* PixelDumpSupport.cpp in Sources */,
 				BC7934E811906846005EA8E2 /* PlatformWebViewMac.mm in Sources */,
 				BC793431118F7F19005EA8E2 /* TestController.cpp in Sources */,
 				BC8C795C11D2785D004535A1 /* TestControllerMac.mm in Sources */,
 				BCD7D2F811921278006DB7EE /* TestInvocation.cpp in Sources */,
 				BC9192051333E4F8003011DC /* TestInvocationCG.cpp in Sources */,
-				5670B8281386FCA5002EB355 /* EventSenderProxy.mm in Sources */,
 				3164C8F015D1ADA100EF1FE0 /* WebNotificationProvider.cpp in Sources */,
 				4429FC5F1627089600F66D8B /* WorkQueueManager.cpp in Sources */,
 			);
@@ -598,36 +598,36 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				BC251A3E11D16831002EBC01 /* InjectedBundleMain.cpp in Sources */,
-				BCC997A411D3C8F60017BCA2 /* InjectedBundle.cpp in Sources */,
-				BCC997A511D3C8F60017BCA2 /* InjectedBundlePage.cpp in Sources */,
-				BCC9981811D3F51E0017BCA2 /* TestRunner.cpp in Sources */,
-				65EB85A011EC67CC0034D300 /* ActivateFonts.mm in Sources */,
-				BC952C0D11F3B965003398B4 /* JSWrapper.cpp in Sources */,
-				BC952F1F11F3C652003398B4 /* JSTestRunner.cpp in Sources */,
-				BC14E4DB120E02D000826C0C /* GCController.cpp in Sources */,
-				BC14E4EA120E03D800826C0C /* JSGCController.cpp in Sources */,
-				BC8DAD7B1316D91000EC96FC /* InjectedBundleMac.mm in Sources */,
-				BC8FD8CA120E527F00F3E71A /* EventSendingController.cpp in Sources */,
-				BC8FD8D2120E545B00F3E71A /* JSEventSendingController.cpp in Sources */,
-				C0CE720B1247C93300BC0EC4 /* TestRunnerMac.mm in Sources */,
-				5664A49A14326384008881BE /* TextInputController.cpp in Sources */,
-				5641E2D014335E95008307E5 /* JSTextInputController.cpp in Sources */,
-				29210EAE144CACB700835BB5 /* AccessibilityUIElement.cpp in Sources */,
+				29210EDA144CC3EA00835BB6 /* AccessibilityCommonMac.mm in Sources */,
 				29210EB0144CACBD00835BB5 /* AccessibilityController.cpp in Sources */,
+				8034C6621487636400AC32E9 /* AccessibilityControllerMac.mm in Sources */,
+				8097338A14874A5A008156D9 /* AccessibilityNotificationHandler.mm in Sources */,
 				29210EB4144CACD500835BB5 /* AccessibilityTextMarker.cpp in Sources */,
 				29210EB5144CACD500835BB5 /* AccessibilityTextMarkerMac.mm in Sources */,
-				29210EDA144CC3EA00835BB5 /* AccessibilityUIElementMac.mm in Sources */,
-				29210EDA144CC3EA00835BB6 /* AccessibilityCommonMac.mm in Sources */,
-				29210EDB144CD47900835BB5 /* JSAccessibilityController.cpp in Sources */,
-				29210EE1144CDB2600835BB5 /* JSAccessibilityUIElement.cpp in Sources */,
-				29A8FCCB145EF02E009045A6 /* JSAccessibilityTextMarker.cpp in Sources */,
-				29A8FCDD145F0337009045A6 /* JSAccessibilityTextMarkerRange.cpp in Sources */,
 				29A8FCE2145F037B009045A6 /* AccessibilityTextMarkerRange.cpp in Sources */,
 				29A8FCE5145F0464009045A6 /* AccessibilityTextMarkerRangeMac.mm in Sources */,
-				8097338A14874A5A008156D9 /* AccessibilityNotificationHandler.mm in Sources */,
-				8034C6621487636400AC32E9 /* AccessibilityControllerMac.mm in Sources */,
+				29210EAE144CACB700835BB5 /* AccessibilityUIElement.cpp in Sources */,
+				29210EDA144CC3EA00835BB5 /* AccessibilityUIElementMac.mm in Sources */,
+				65EB85A011EC67CC0034D300 /* ActivateFonts.mm in Sources */,
+				BC8FD8CA120E527F00F3E71A /* EventSendingController.cpp in Sources */,
+				BC14E4DB120E02D000826C0C /* GCController.cpp in Sources */,
+				BCC997A411D3C8F60017BCA2 /* InjectedBundle.cpp in Sources */,
+				BC8DAD7B1316D91000EC96FC /* InjectedBundleMac.mm in Sources */,
+				BC251A3E11D16831002EBC01 /* InjectedBundleMain.cpp in Sources */,
+				BCC997A511D3C8F60017BCA2 /* InjectedBundlePage.cpp in Sources */,
 				0FAF67EF160D6C100077CB2B /* InjectedBundlePageMac.mm in Sources */,
+				29210EDB144CD47900835BB5 /* JSAccessibilityController.cpp in Sources */,
+				29A8FCCB145EF02E009045A6 /* JSAccessibilityTextMarker.cpp in Sources */,
+				29A8FCDD145F0337009045A6 /* JSAccessibilityTextMarkerRange.cpp in Sources */,
+				29210EE1144CDB2600835BB5 /* JSAccessibilityUIElement.cpp in Sources */,
+				BC8FD8D2120E545B00F3E71A /* JSEventSendingController.cpp in Sources */,
+				BC14E4EA120E03D800826C0C /* JSGCController.cpp in Sources */,
+				BC952F1F11F3C652003398B4 /* JSTestRunner.cpp in Sources */,
+				5641E2D014335E95008307E5 /* JSTextInputController.cpp in Sources */,
+				BC952C0D11F3B965003398B4 /* JSWrapper.cpp in Sources */,
+				BCC9981811D3F51E0017BCA2 /* TestRunner.cpp in Sources */,
+				C0CE720B1247C93300BC0EC4 /* TestRunnerMac.mm in Sources */,
+				5664A49A14326384008881BE /* TextInputController.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -808,6 +808,7 @@
 				A8A472ED151A825B004123FF /* PassRefPtr.h */,
 				A8A472EE151A825B004123FF /* PassTraits.h */,
 				A8A472EF151A825B004123FF /* Platform.h */,
+				A876DBD7151816E500DADB95 /* Platform.h */,
 				A8A472F3151A825B004123FF /* PossiblyNull.h */,
 				0F9D335D165DBA73005AD387 /* PrintStream.cpp */,
 				0F9D335E165DBA73005AD387 /* PrintStream.h */,
@@ -877,7 +878,6 @@
 				A8A47372151A825B004123FF /* VMTags.h */,
 				A8A4737A151A825B004123FF /* WTFThreadData.cpp */,
 				A8A4737B151A825B004123FF /* WTFThreadData.h */,
-				A876DBD7151816E500DADB95 /* Platform.h */,
 			);
 			path = wtf;
 			sourceTree = "<group>";
@@ -1075,6 +1075,7 @@
 				A8A47394151A825B004123FF /* CheckedArithmetic.h in Headers */,
 				A8A47395151A825B004123FF /* CheckedBoolean.h in Headers */,
 				A8A4745F151A825B004123FF /* Collator.h in Headers */,
+				0FC4EDE61696149600F65041 /* CommaPrinter.h in Headers */,
 				A8A47398151A825B004123FF /* Compiler.h in Headers */,
 				A8A47399151A825B004123FF /* Complex.h in Headers */,
 				A8A4748C151A8264004123FF /* config.h in Headers */,
@@ -1099,6 +1100,7 @@
 				A8A473C2151A825B004123FF /* FastAllocBase.h in Headers */,
 				0FD81AC5154FB22E00983E72 /* FastBitVector.h in Headers */,
 				A8A473C4151A825B004123FF /* FastMalloc.h in Headers */,
+				0F9D3361165DBA73005AD387 /* FilePrintStream.h in Headers */,
 				A8A473B6151A825B004123FF /* fixed-dtoa.h in Headers */,
 				A8A473C5151A825B004123FF /* FixedArray.h in Headers */,
 				A8A473C6151A825B004123FF /* Float32Array.h in Headers */,
@@ -1169,9 +1171,11 @@
 				A876DBD8151816E500DADB95 /* Platform.h in Headers */,
 				A8A4740E151A825B004123FF /* Platform.h in Headers */,
 				A8A4740F151A825B004123FF /* PossiblyNull.h in Headers */,
+				0F9D3363165DBA73005AD387 /* PrintStream.h in Headers */,
 				143F61201565F0F900DB514A /* RAMSize.h in Headers */,
 				A8A47415151A825B004123FF /* RandomNumber.h in Headers */,
 				A8A47416151A825B004123FF /* RandomNumberSeed.h in Headers */,
+				0F87105A16643F190090B0AD /* RawPointer.h in Headers */,
 				A8A47472151A825B004123FF /* RawURLBuffer.h in Headers */,
 				A8A47417151A825B004123FF /* RedBlackTree.h in Headers */,
 				A8A47418151A825B004123FF /* RefCounted.h in Headers */,
@@ -1201,6 +1205,7 @@
 				A8A4742D151A825B004123FF /* StringHasher.h in Headers */,
 				A8A47441151A825B004123FF /* StringImpl.h in Headers */,
 				A8A47442151A825B004123FF /* StringOperators.h in Headers */,
+				0FDDBFA81666DFA300C55FEF /* StringPrintStream.h in Headers */,
 				A8A473B8151A825B004123FF /* strtod.h in Headers */,
 				A8A4742E151A825B004123FF /* TCPackedCache.h in Headers */,
 				A8A4742F151A825B004123FF /* TCPageMap.h in Headers */,
@@ -1247,11 +1252,6 @@
 				A8A47480151A825B004123FF /* VMTags.h in Headers */,
 				A8A47446151A825B004123FF /* WTFString.h in Headers */,
 				A8A47487151A825B004123FF /* WTFThreadData.h in Headers */,
-				0F9D3361165DBA73005AD387 /* FilePrintStream.h in Headers */,
-				0F9D3363165DBA73005AD387 /* PrintStream.h in Headers */,
-				0F87105A16643F190090B0AD /* RawPointer.h in Headers */,
-				0FDDBFA81666DFA300C55FEF /* StringPrintStream.h in Headers */,
-				0FC4EDE61696149600F65041 /* CommaPrinter.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1365,6 +1365,7 @@
 				A8A473BC151A825B004123FF /* DynamicAnnotations.cpp in Sources */,
 				A8A473B3151A825B004123FF /* fast-dtoa.cc in Sources */,
 				A8A473C3151A825B004123FF /* FastMalloc.cpp in Sources */,
+				0F9D3360165DBA73005AD387 /* FilePrintStream.cpp in Sources */,
 				A8A473B5151A825B004123FF /* fixed-dtoa.cc in Sources */,
 				2CCD892A15C0390200285083 /* GregorianDateTime.cpp in Sources */,
 				A8A473D8151A825B004123FF /* HashTable.cpp in Sources */,
@@ -1381,6 +1382,7 @@
 				A8A47400151A825B004123FF /* PageAllocationAligned.cpp in Sources */,
 				A8A47402151A825B004123FF /* PageBlock.cpp in Sources */,
 				A8A4746F151A825B004123FF /* ParsedURL.cpp in Sources */,
+				0F9D3362165DBA73005AD387 /* PrintStream.cpp in Sources */,
 				143F611F1565F0F900DB514A /* RAMSize.cpp in Sources */,
 				A8A47414151A825B004123FF /* RandomNumber.cpp in Sources */,
 				A8A4741A151A825B004123FF /* RefCountedLeakCounter.cpp in Sources */,
@@ -1391,6 +1393,7 @@
 				A8A4743C151A825B004123FF /* StringBuilder.cpp in Sources */,
 				A8A4742B151A825B004123FF /* StringExtras.cpp in Sources */,
 				A8A47440151A825B004123FF /* StringImpl.cpp in Sources */,
+				0FDDBFA71666DFA300C55FEF /* StringPrintStream.cpp in Sources */,
 				A8A47443151A825B004123FF /* StringStatics.cpp in Sources */,
 				A8A473B7151A825B004123FF /* strtod.cc in Sources */,
 				A8A47431151A825B004123FF /* TCSystemAlloc.cpp in Sources */,
@@ -1420,9 +1423,6 @@
 				A8A47469151A825B004123FF /* UTF8.cpp in Sources */,
 				A8A47445151A825B004123FF /* WTFString.cpp in Sources */,
 				A8A47486151A825B004123FF /* WTFThreadData.cpp in Sources */,
-				0F9D3360165DBA73005AD387 /* FilePrintStream.cpp in Sources */,
-				0F9D3362165DBA73005AD387 /* PrintStream.cpp in Sources */,
-				0FDDBFA71666DFA300C55FEF /* StringPrintStream.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -1,3 +1,10 @@
+2013-01-07  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Sorted xcodeprojs files.
+
+        * DumpRenderTree/DumpRenderTree.xcodeproj/project.pbxproj:
+        * WebKitTestRunner/WebKitTestRunner.xcodeproj/project.pbxproj:
+
 2013-01-07  Dan Bernstein  <mitz@apple.com>
 
         [mac] WebKit1 clients can’t tell when a frame has been removed from the hierarchy

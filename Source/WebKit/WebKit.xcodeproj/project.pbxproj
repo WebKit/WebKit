@@ -1194,6 +1194,9 @@
 				5158F6EE106D862A00AF457C /* WebHistoryDelegate.h */,
 				5185F62510712B80007AA393 /* WebNavigationData.h */,
 				5185F62710712B97007AA393 /* WebNavigationData.mm */,
+				312E2FE314E48182007CCA18 /* WebNotification.h */,
+				312E2FE414E48182007CCA18 /* WebNotification.mm */,
+				312E2FE814E48215007CCA18 /* WebNotificationInternal.h */,
 				51443F9A0429392B00CA2D3A /* WebPolicyDelegate.h */,
 				51443F9B0429392B00CA2D3A /* WebPolicyDelegate.mm */,
 				51443F9C0429392B00CA2D3A /* WebPolicyDelegatePrivate.h */,
@@ -1227,9 +1230,6 @@
 				F834AAD60E64B1C700E2737C /* WebTextIterator.mm */,
 				515E27CC0458C86500CA2D3A /* WebUIDelegate.h */,
 				65A7D44A0568AB2600E70EF6 /* WebUIDelegatePrivate.h */,
-				312E2FE314E48182007CCA18 /* WebNotification.h */,
-				312E2FE414E48182007CCA18 /* WebNotification.mm */,
-				312E2FE814E48215007CCA18 /* WebNotificationInternal.h */,
 				51A8B579042834F700CA2D3A /* WebView.h */,
 				51A8B57A042834F700CA2D3A /* WebView.mm */,
 				BC2E464B0FD8A96800A9D9DE /* WebViewData.h */,
@@ -1276,8 +1276,8 @@
 			children = (
 				B82958D1132707D0000D0E79 /* CorrectionPanel.h */,
 				B82958D2132707D0000D0E79 /* CorrectionPanel.mm */,
-				CEDA12D9152CBE6800D9E08D /* WebAlternativeTextClient.mm */,
 				CEDA12DA152CBE6800D9E08D /* WebAlternativeTextClient.h */,
+				CEDA12D9152CBE6800D9E08D /* WebAlternativeTextClient.mm */,
 				B68049710FFBCEC1009F7F62 /* WebApplicationCache.h */,
 				B68049720FFBCEC1009F7F62 /* WebApplicationCache.mm */,
 				A5DEFC1111D5344B00885273 /* WebApplicationCacheQuotaManager.h */,
@@ -1297,8 +1297,6 @@
 				931633EE0AEDFFAE0062B92D /* WebFrameLoaderClient.mm */,
 				9391F273121B38BD00EBF7E8 /* WebFrameNetworkingContext.h */,
 				9391F274121B38BD00EBF7E8 /* WebFrameNetworkingContext.mm */,
-				CD8BFCE515531224005AFB25 /* WebKitFullScreenListener.mm */,
-				CD8BFCE615531224005AFB25 /* WebKitFullScreenListener.h */,
 				BC7F884910C8775A00D6133D /* WebGeolocationClient.h */,
 				BC7F884A10C8775A00D6133D /* WebGeolocationClient.mm */,
 				51494CD40C7EBDE0004178C5 /* WebIconDatabaseClient.h */,
@@ -1310,6 +1308,8 @@
 				9345D4EB0365C5B2008635CE /* WebJavaScriptTextInputPanel.m */,
 				84723BE3056D719E0044BFEA /* WebKeyGenerator.h */,
 				84723BE4056D719E0044BFEA /* WebKeyGenerator.mm */,
+				CD8BFCE615531224005AFB25 /* WebKitFullScreenListener.h */,
+				CD8BFCE515531224005AFB25 /* WebKitFullScreenListener.mm */,
 				31C11A6C1476552E0049A4CC /* WebNotificationClient.h */,
 				31C11A6D1476552E0049A4CC /* WebNotificationClient.mm */,
 				A58A5797143E727000125F50 /* WebOpenPanelResultListener.h */,
@@ -1427,6 +1427,7 @@
 				1AAF5CEE0EDDE1FE008D883D /* NetscapePluginInstanceProxy.h in Headers */,
 				1A2DBE9F0F251E3A0036F8A6 /* ProxyInstance.h in Headers */,
 				E169836211346D1B00894115 /* ProxyRuntimeObject.h in Headers */,
+				CEDA12DC152CBE6800D9E08D /* WebAlternativeTextClient.h in Headers */,
 				B6CE5C25100BC5F500219936 /* WebApplicationCache.h in Headers */,
 				A5DEFC1311D5344B00885273 /* WebApplicationCacheQuotaManager.h in Headers */,
 				9398109A0824BF01008DF038 /* WebArchive.h in Headers */,
@@ -1523,6 +1524,7 @@
 				9398101B0824BF01008DF038 /* WebKit.h in Headers */,
 				9398101C0824BF01008DF038 /* WebKitErrors.h in Headers */,
 				9398106D0824BF01008DF038 /* WebKitErrorsPrivate.h in Headers */,
+				CD8BFCE815531224005AFB25 /* WebKitFullScreenListener.h in Headers */,
 				9398101D0824BF01008DF038 /* WebKitLogging.h in Headers */,
 				9398101E0824BF01008DF038 /* WebKitNSStringExtras.h in Headers */,
 				1AAF58940EDCCF15008D883D /* WebKitPluginAgent.defs in Headers */,
@@ -1550,7 +1552,9 @@
 				1C68F66F095B5FC100C2984E /* WebNodeHighlight.h in Headers */,
 				A5687BDA135B791A0074CBCB /* WebNodeHighlighter.h in Headers */,
 				1C68F671095B5FC100C2984E /* WebNodeHighlightView.h in Headers */,
+				312E2FE514E48182007CCA18 /* WebNotification.h in Headers */,
 				31C11A6E1476552E0049A4CC /* WebNotificationClient.h in Headers */,
+				312E2FE914E48215007CCA18 /* WebNotificationInternal.h in Headers */,
 				EDE983800BCDF5FE00FDAE28 /* WebNSArrayExtras.h in Headers */,
 				939810210824BF01008DF038 /* WebNSControlExtras.h in Headers */,
 				939810820824BF01008DF038 /* WebNSDataExtras.h in Headers */,
@@ -1625,10 +1629,6 @@
 				9398109B0824BF01008DF038 /* WebViewInternal.h in Headers */,
 				939810710824BF01008DF038 /* WebViewPrivate.h in Headers */,
 				41F4484F10338E8C0030E55E /* WebWorkersPrivate.h in Headers */,
-				312E2FE514E48182007CCA18 /* WebNotification.h in Headers */,
-				312E2FE914E48215007CCA18 /* WebNotificationInternal.h in Headers */,
-				CEDA12DC152CBE6800D9E08D /* WebAlternativeTextClient.h in Headers */,
-				CD8BFCE815531224005AFB25 /* WebKitFullScreenListener.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1699,13 +1699,13 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				1C9F5EFC1651CDF700C480F8 /* Dock.pdf in Resources */,
 				939810BA0824BF01008DF038 /* IDNScriptWhiteList.txt in Resources */,
 				A864B3F6123ED9FA00C2A612 /* MailQuirksUserScript.js in Resources */,
 				29AEF960134C76FB00FE5096 /* OutlookQuirksUserScript.js in Resources */,
 				939810B70824BF01008DF038 /* url_icon.tiff in Resources */,
 				939810B50824BF01008DF038 /* WebAuthenticationPanel.nib in Resources */,
 				5DE83A7A0D0F7F9400CAD12A /* WebJavaScriptTextInputPanel.nib in Resources */,
-				1C9F5EFC1651CDF700C480F8 /* Dock.pdf in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1872,6 +1872,7 @@
 				1CCFFD130B1F81F2002EE926 /* OldWebAssertions.c in Sources */,
 				1A2DBEA00F251E3A0036F8A6 /* ProxyInstance.mm in Sources */,
 				E169836C11346D5600894115 /* ProxyRuntimeObject.mm in Sources */,
+				CEDA12DB152CBE6800D9E08D /* WebAlternativeTextClient.mm in Sources */,
 				B6CE5C24100BC5CE00219936 /* WebApplicationCache.mm in Sources */,
 				A5DEFC1411D5344B00885273 /* WebApplicationCacheQuotaManager.mm in Sources */,
 				9398111D0824BF01008DF038 /* WebArchive.mm in Sources */,
@@ -1927,6 +1928,7 @@
 				37D1DCA91065928C0068F7EF /* WebJSPDFDoc.mm in Sources */,
 				939811170824BF01008DF038 /* WebKeyGenerator.mm in Sources */,
 				939811030824BF01008DF038 /* WebKitErrors.m in Sources */,
+				CD8BFCE715531224005AFB25 /* WebKitFullScreenListener.mm in Sources */,
 				939810C30824BF01008DF038 /* WebKitLogging.m in Sources */,
 				939810C40824BF01008DF038 /* WebKitNSStringExtras.mm in Sources */,
 				1AAF5D0F0EDDE7A7008D883D /* WebKitPluginAgent.defs in Sources */,
@@ -1949,6 +1951,7 @@
 				1C68F670095B5FC100C2984E /* WebNodeHighlight.mm in Sources */,
 				A5687BDB135B791A0074CBCB /* WebNodeHighlighter.mm in Sources */,
 				1C68F672095B5FC100C2984E /* WebNodeHighlightView.mm in Sources */,
+				312E2FE614E48182007CCA18 /* WebNotification.mm in Sources */,
 				31C11A6F1476552E0049A4CC /* WebNotificationClient.mm in Sources */,
 				EDE983810BCDF5FE00FDAE28 /* WebNSArrayExtras.m in Sources */,
 				939810C60824BF01008DF038 /* WebNSControlExtras.m in Sources */,
@@ -2000,9 +2003,6 @@
 				939811070824BF01008DF038 /* WebView.mm in Sources */,
 				BC2E464E0FD8A96800A9D9DE /* WebViewData.mm in Sources */,
 				41F4485010338E8C0030E55E /* WebWorkersPrivate.mm in Sources */,
-				312E2FE614E48182007CCA18 /* WebNotification.mm in Sources */,
-				CEDA12DB152CBE6800D9E08D /* WebAlternativeTextClient.mm in Sources */,
-				CD8BFCE715531224005AFB25 /* WebKitFullScreenListener.mm in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

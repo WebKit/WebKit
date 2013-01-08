@@ -1,3 +1,9 @@
+2013-01-07  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Sorted the xcodeproj file.
+
+        * WTF.xcodeproj/project.pbxproj:
+
 2013-01-07  Filip Pizlo  <fpizlo@apple.com>
 
         Unreviewed, it should be possible to build JSC on ARM.
