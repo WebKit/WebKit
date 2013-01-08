@@ -107,7 +107,7 @@ class GTKDoc(object):
 
         self.logger = logging.getLogger('gtkdoc')
 
-        for key, value in args.iteritems():
+        for key, value in iter(args.items()):
             setattr(self, key, value)
 
         def raise_error_if_not_specified(key):
@@ -185,7 +185,7 @@ class GTKDoc(object):
         process = subprocess.Popen(args, env=env, cwd=cwd,
                                    stdout=subprocess.PIPE,
                                    stderr=subprocess.PIPE)
-        stdout, stderr = process.communicate()
+        stdout, stderr = [b.decode("utf-8") for b in process.communicate()]
 
         if print_output:
             if stdout:

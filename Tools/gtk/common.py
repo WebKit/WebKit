@@ -75,7 +75,7 @@ def get_build_path():
     if is_valid_build_directory(build_dir):
         return build_dir
 
-    print 'Could not determine build directory.'
+    print('Could not determine build directory.')
     sys.exit(1)
 
 
@@ -86,7 +86,7 @@ def build_path(*args):
 def pkg_config_file_variable(package, variable):
     process = subprocess.Popen(['pkg-config', '--variable=%s' % variable, package],
                                stdout=subprocess.PIPE)
-    stdout = process.communicate()[0]
+    stdout = process.communicate()[0].decode("utf-8")
     if process.returncode:
         return None
     return stdout.strip()
@@ -99,7 +99,7 @@ def prefix_of_pkg_config_file(package):
 def gtk_version_of_pkg_config_file(pkg_config_path):
     process = subprocess.Popen(['pkg-config', pkg_config_path, '--print-requires'],
                                stdout=subprocess.PIPE)
-    stdout = process.communicate()[0]
+    stdout = process.communicate()[0].decode("utf-8")
 
     if 'gtk+-3.0' in stdout:
         return 3

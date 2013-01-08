@@ -143,9 +143,9 @@ def print_missing_api(generator):
     missing_api = generator.api_missing_documentation()
     if not missing_api:
         return
-    print "\nThe following API are missing documentation:"
+    print("\nThe following API are missing documentation:")
     for api in missing_api:
-        print "\t%s" % api
+        print("\t%s" % api)
 
 def generate_doc(generator):
     generator.generate(html='--skip-html' not in sys.argv)
@@ -178,27 +178,27 @@ if os.path.exists(pkg_config_path):
     options = get_webkit1_options(common.gtk_version_of_pkg_config_file(pkg_config_path))
     generator = gtkdoc.PkgConfigGTKDoc(pkg_config_path, options)
     if '--rebase' not in sys.argv:
-        print "Generating WebKit1 documentation..."
+        print("Generating WebKit1 documentation...")
         saw_webkit1_warnings = generate_doc(generator)
     else:
-        print "Rebasing WebKit1 documentation..."
+        print("Rebasing WebKit1 documentation...")
         try:
             generator.rebase_installed_docs()
-        except Exception,e:
-            print "Rebase did not happen, likely no documentation is present."
+        except Exception:
+            print("Rebase did not happen, likely no documentation is present.")
 
 # WebKit2 might not be enabled, so check for the pkg-config file before building documentation.
 pkg_config_path = common.build_path('Source', 'WebKit2', 'webkit2gtk-3.0.pc')
 if os.path.exists(pkg_config_path):
     generator = gtkdoc.PkgConfigGTKDoc(pkg_config_path, get_webkit2_options())
     if '--rebase' not in sys.argv:
-        print "\nGenerating WebKit2 documentation..."
+        print("\nGenerating WebKit2 documentation...")
         saw_webkit2_warnings = generate_doc(generator)
     else:
-        print "\nRebasing WebKit2 documentation..."
+        print("\nRebasing WebKit2 documentation...")
         try:
             generator.rebase_installed_docs()
-        except Exception,e:
-            print "Rebase did not happen, likely no documentation is present."
+        except Exception:
+            print("Rebase did not happen, likely no documentation is present.")
 
 sys.exit(saw_webkit1_warnings or saw_webkit2_warnings)
