@@ -30,6 +30,8 @@
 
 namespace WebCore {
 
+class GridTrack;
+
 class RenderGrid : public RenderBlock {
 public:
     RenderGrid(Node*);
@@ -46,9 +48,10 @@ public:
 private:
     virtual bool isRenderGrid() const OVERRIDE { return true; }
 
-    class GridTrack;
     enum TrackSizingDirection { ForColumns, ForRows };
     void computedUsedBreadthOfGridTracks(TrackSizingDirection, Vector<GridTrack>&);
+    LayoutUnit computeUsedBreadthOfLength(TrackSizingDirection, const Length&);
+    void distributeSpaceToTracks(TrackSizingDirection, Vector<GridTrack>&, LayoutUnit availableLogicalSpace);
     void layoutGridItems();
 
     LayoutPoint findChildLogicalPosition(RenderBox*, const Vector<GridTrack>& columnTracks, const Vector<GridTrack>& rowTracks);

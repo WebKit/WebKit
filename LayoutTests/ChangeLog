@@ -1,3 +1,15 @@
+2013-01-07  Julien Chaffraix  <jchaffraix@webkit.org>
+
+        [CSS Grid Layout] Implement grid items sizing for fixed minmax grid tracks
+        https://bugs.webkit.org/show_bug.cgi?id=104700
+
+        Reviewed by Tony Chang.
+
+        * fast/css-grid-layout/minmax-fixed-logical-height-only-expected.txt: Added.
+        * fast/css-grid-layout/minmax-fixed-logical-height-only.html: Added.
+        * fast/css-grid-layout/minmax-fixed-logical-width-only-expected.txt: Added.
+        * fast/css-grid-layout/minmax-fixed-logical-width-only.html: Added.
+
 2013-01-07  Xianzhu Wang  <wangxianzhu@chromium.org>
 
         Add a setting to enable composited scrolling for frames

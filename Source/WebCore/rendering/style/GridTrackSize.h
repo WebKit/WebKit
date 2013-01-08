@@ -66,14 +66,12 @@ public:
 
     const Length& minTrackBreadth() const
     {
-        ASSERT(m_type == MinMaxTrackSizing);
         ASSERT(!m_minTrackBreadth.isUndefined());
         return m_minTrackBreadth;
     }
 
     const Length& maxTrackBreadth() const
     {
-        ASSERT(m_type == MinMaxTrackSizing);
         ASSERT(!m_maxTrackBreadth.isUndefined());
         return m_maxTrackBreadth;
     }
