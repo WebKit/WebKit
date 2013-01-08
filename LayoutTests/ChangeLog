@@ -1,3 +1,10 @@
+2013-01-08  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Add a crashing test expectation to a test added in r139029.
+        The failure is tracked by the bug 106361.
+
+        * platform/mac/TestExpectations:
+
 2013-01-08  Ojan Vafai  <ojan@chromium.org>
 
         text controls are sized too small when a percentage height is set

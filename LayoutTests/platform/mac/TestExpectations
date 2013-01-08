@@ -1268,3 +1268,5 @@ webkit.org/b/106123 http/tests/appcache/main-resource-redirect.html [ Crash ]
 webkit.org/b/106151 [ Lion ] http/tests/misc/link-rel-icon-beforeload.html [ Pass Failure ]
 
 webkit.org/b/106185 fast/frames/flattening/iframe-flattening-fixed-height.html [ Pass Failure ]
+
+webkit.org/b/106361 [ Debug ] svg/custom/text-use-click-crash.xhtml [ Crash ]
