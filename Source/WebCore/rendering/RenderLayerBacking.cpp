@@ -624,7 +624,7 @@ void RenderLayerBacking::updateGraphicsLayerGeometry()
         RenderLayer::ClipRectsContext clipRectsContext(compAncestor, 0, TemporaryClipRects, IgnoreOverlayScrollbarSize, RenderLayer::IgnoreOverflowClip);
         IntRect parentClipRect = pixelSnappedIntRect(m_owningLayer->backgroundClipRect(clipRectsContext).rect()); // FIXME: Incorrect for CSS regions.
         ASSERT(parentClipRect != PaintInfo::infiniteRect());
-        m_ancestorClippingLayer->setPosition(FloatPoint() + (parentClipRect.location() - graphicsLayerParentLocation));
+        m_ancestorClippingLayer->setPosition(FloatPoint(parentClipRect.location() - graphicsLayerParentLocation));
         m_ancestorClippingLayer->setSize(parentClipRect.size());
 
         // backgroundRect is relative to compAncestor, so subtract deltaX/deltaY to get back to local coords.
@@ -634,7 +634,7 @@ void RenderLayerBacking::updateGraphicsLayerGeometry()
         graphicsLayerParentLocation = parentClipRect.location();
     }
 
-    m_graphicsLayer->setPosition(FloatPoint() + (relativeCompositingBounds.location() - graphicsLayerParentLocation));
+    m_graphicsLayer->setPosition(FloatPoint(relativeCompositingBounds.location() - graphicsLayerParentLocation));
     m_graphicsLayer->setOffsetFromRenderer(localCompositingBounds.location() - IntPoint());
     
     FloatSize oldSize = m_graphicsLayer->size();
@@ -652,7 +652,7 @@ void RenderLayerBacking::updateGraphicsLayerGeometry()
     IntRect clippingBox;
     if (GraphicsLayer* clipLayer = clippingLayer()) {
         clippingBox = clipBox(toRenderBox(renderer()));
-        clipLayer->setPosition(FloatPoint() + (clippingBox.location() - localCompositingBounds.location()));
+        clipLayer->setPosition(FloatPoint(clippingBox.location() - localCompositingBounds.location()));
         clipLayer->setSize(clippingBox.size());
         clipLayer->setOffsetFromRenderer(clippingBox.location() - IntPoint());
     }
@@ -728,7 +728,7 @@ void RenderLayerBacking::updateGraphicsLayerGeometry()
         // but the reflected layer is the bounds of this layer, so we need to position it appropriately.
         FloatRect layerBounds = compositedBounds();
         FloatRect reflectionLayerBounds = reflectionBacking->compositedBounds();
-        reflectionBacking->graphicsLayer()->setReplicatedLayerPosition(FloatPoint() + (layerBounds.location() - reflectionLayerBounds.location()));
+        reflectionBacking->graphicsLayer()->setReplicatedLayerPosition(FloatPoint(layerBounds.location() - reflectionLayerBounds.location()));
     }
 
     if (m_scrollingLayer) {
@@ -737,7 +737,7 @@ void RenderLayerBacking::updateGraphicsLayerGeometry()
         IntRect paddingBox(renderBox->borderLeft(), renderBox->borderTop(), renderBox->width() - renderBox->borderLeft() - renderBox->borderRight(), renderBox->height() - renderBox->borderTop() - renderBox->borderBottom());
         IntSize scrollOffset = m_owningLayer->scrolledContentOffset();
 
-        m_scrollingLayer->setPosition(FloatPoint() + (paddingBox.location() - localCompositingBounds.location()));
+        m_scrollingLayer->setPosition(FloatPoint(paddingBox.location() - localCompositingBounds.location()));
 
         m_scrollingLayer->setSize(paddingBox.size());
         m_scrollingContentsLayer->setPosition(FloatPoint(-scrollOffset.width(), -scrollOffset.height()));
