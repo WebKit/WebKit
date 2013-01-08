@@ -7,22 +7,14 @@
             if (window.internals) 
                 window.internals.settings.setMediaPlaybackRequiresUserGesture(true);
 
-            function cleanGestureRequirement()
-            {
-                if (window.internals) 
-                    window.internals.settings.setMediaPlaybackRequiresUserGesture(false);
-            }
-
             function testPlay()
             {
-                cleanGestureRequirement();
                 failTest("play event should not fire without user gesture.");
             }
 
             function testPaused()
             {
                 testExpected("video.paused", true);
-                cleanGestureRequirement(); 
                 endTest();
             }
 

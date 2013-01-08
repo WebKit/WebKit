@@ -28,12 +28,9 @@
     JSGenerateToJSObject
 ] interface InternalSettings : InternalSettingsGenerated {
     void setMockScrollbarsEnabled(in boolean enabled) raises(DOMException);
-    void setFixedElementsLayoutRelativeToFrame(in boolean enabled) raises(DOMException);
     void setUnifiedTextCheckingEnabled(in boolean enabled) raises (DOMException);
     boolean unifiedTextCheckingEnabled() raises (DOMException);
     void setTouchEventEmulationEnabled(in boolean enabled) raises(DOMException);
-    void setDeviceSupportsTouch(in boolean enabled) raises(DOMException);
-    void setDeviceSupportsMouse(in boolean enabled) raises(DOMException);
     void setShadowDOMEnabled(in boolean enabled) raises(DOMException);
     void setAuthorShadowDOMForAnyElementEnabled(in boolean isEnabled);
     void setStyleScopedEnabled(in boolean isEnabled);
@@ -55,17 +52,12 @@
     void setCSSVariablesEnabled(in boolean enabled) raises(DOMException);
     boolean cssVariablesEnabled() raises(DOMException);
     void setCanStartMedia(in boolean enabled) raises(DOMException);
-    void setMediaPlaybackRequiresUserGesture(in boolean enabled) raises(DOMException);
     void setEditingBehavior(in DOMString behavior) raises(DOMException);
-    void setFixedPositionCreatesStackingContext(in boolean creates) raises(DOMException);
-    void setSyncXHRInDocumentsEnabled(in boolean enabled) raises(DOMException);
-    void setWindowFocusRestricted(in boolean restricted) raises(DOMException);
     void setDialogElementEnabled(in boolean enabled) raises(DOMException);
     void setLangAttributeAwareFormControlUIEnabled(in boolean enabled);
 
     [Conditional=VIDEO_TRACK] void setShouldDisplayTrackKind(in DOMString kind, in boolean enabled) raises (DOMException);
     [Conditional=VIDEO_TRACK] boolean shouldDisplayTrackKind(in DOMString trackKind) raises (DOMException);
-    void setMemoryInfoEnabled(in boolean enabled) raises(DOMException);
     void setStorageBlockingPolicy(in DOMString policy) raises(DOMException);
     void setImagesEnabled(in boolean enabled) raises(DOMException);
 };

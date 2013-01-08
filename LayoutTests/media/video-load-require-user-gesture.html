@@ -11,9 +11,6 @@
 
             function finishTest(success)
             {
-                if (window.internals) 
-                    window.internals.settings.setMediaPlaybackRequiresUserGesture(false);
-
                 if (success)
                     endTest();
                 else
