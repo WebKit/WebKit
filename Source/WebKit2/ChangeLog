@@ -1,3 +1,9 @@
+2013-01-08  Sam Weinig  <sam@webkit.org>
+
+        Add OWNERS file.
+
+        * OWNERS: Added.
+
 2013-01-08  Mark Lam  <mark.lam@apple.com>
 
         Removed the need for the ProposedDatabase mechanism.
