@@ -688,7 +688,7 @@ void Document::removedLastRef()
         m_docType = 0;
         m_focusedNode = 0;
         m_hoverNode = 0;
-        m_activeNode = 0;
+        m_activeElement = 0;
         m_titleElement = 0;
         m_documentElement = 0;
         m_contextFeatures = ContextFeatures::defaultSwitch();
@@ -2091,7 +2091,7 @@ void Document::detach()
 
     m_hoverNode = 0;
     m_focusedNode = 0;
-    m_activeNode = 0;
+    m_activeElement = 0;
 
     ContainerNode::detach();
 
@@ -3220,7 +3220,12 @@ void Document::setHoverNode(PassRefPtr<Node> newHoverNode)
 
 void Document::setActiveNode(PassRefPtr<Node> newActiveNode)
 {
-    m_activeNode = newActiveNode;
+    if (!newActiveNode) {
+        m_activeElement.clear();
+        return;
+    }
+
+    m_activeElement = newActiveNode->isElementNode() ? toElement(newActiveNode.get()) : newActiveNode->parentElement();
 }
 
 void Document::focusedNodeRemoved()
@@ -3261,12 +3266,12 @@ void Document::hoveredNodeDetached(Node* node)
 
 void Document::activeChainNodeDetached(Node* node)
 {
-    if (!m_activeNode || (node != m_activeNode && (!m_activeNode->isTextNode() || node != m_activeNode->parentNode())))
+    if (!m_activeElement || (node != m_activeElement && (!m_activeElement->isTextNode() || node != m_activeElement->parentNode())))
         return;
 
-    m_activeNode = node->parentNode();
-    while (m_activeNode && !m_activeNode->renderer())
-        m_activeNode = m_activeNode->parentNode();
+    m_activeElement = node->parentElement();
+    while (m_activeElement && !m_activeElement->renderer())
+        m_activeElement = m_activeElement->parentElement();
 }
 
 #if ENABLE(DASHBOARD_SUPPORT) || ENABLE(DRAGGABLE_REGION)
@@ -5793,7 +5798,7 @@ void Document::updateHoverActiveState(const HitTestRequest& request, HitTestResu
     Node* innerNodeInDocument = result.innerNode();
     ASSERT(!innerNodeInDocument || innerNodeInDocument->document() == this);
 
-    Node* oldActiveNode = activeNode();
+    Node* oldActiveNode = activeElement();
     if (oldActiveNode && !request.active()) {
         // We are clearing the :active chain because the mouse has been released.
         for (RenderObject* curr = oldActiveNode->renderer(); curr; curr = curr->parent()) {
@@ -5812,12 +5817,13 @@ void Document::updateHoverActiveState(const HitTestRequest& request, HitTestResu
                 if (curr->node() && !curr->isText())
                     m_userActionElements.setInActiveChain(curr->node(), true);
             }
+
             setActiveNode(newActiveNode);
         }
     }
     // If the mouse has just been pressed, set :active on the chain. Those (and only those)
     // nodes should remain :active until the mouse is released.
-    bool allowActiveChanges = !oldActiveNode && activeNode();
+    bool allowActiveChanges = !oldActiveNode && activeElement();
 
     // If the mouse is down and if this is a mouse move event, we want to restrict changes in
     // :hover/:active to only apply to elements that are in the :active chain that we froze

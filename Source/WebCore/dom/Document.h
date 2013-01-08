@@ -701,7 +701,7 @@ public:
     Node* hoverNode() const { return m_hoverNode.get(); }
 
     void setActiveNode(PassRefPtr<Node>);
-    Node* activeNode() const { return m_activeNode.get(); }
+    Element* activeElement() const { return m_activeElement.get(); }
 
     void focusedNodeRemoved();
     void removeFocusedNodeOfSubtree(Node*, bool amongChildrenOnly = false);
@@ -1341,7 +1341,7 @@ private:
 
     RefPtr<Node> m_focusedNode;
     RefPtr<Node> m_hoverNode;
-    RefPtr<Node> m_activeNode;
+    RefPtr<Element> m_activeElement;
     RefPtr<Element> m_documentElement;
     UserActionElementSet m_userActionElements;
 
