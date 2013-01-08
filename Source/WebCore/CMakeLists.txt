@@ -1528,6 +1528,7 @@ set(WebCore_SOURCES
     html/parser/HTMLEntityParser.cpp
     html/parser/HTMLEntitySearch.cpp
     html/parser/HTMLParserIdioms.cpp
+    html/parser/HTMLParserOptions.cpp
     html/parser/HTMLParserScheduler.cpp
     html/parser/HTMLFormattingElementList.cpp
     html/parser/HTMLMetaCharsetParser.cpp

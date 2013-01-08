@@ -1,6 +1,5 @@
 /*
- * Copyright (C) 2008 Apple Inc. All Rights Reserved.
- * Copyright (C) 2010 Google Inc. All Rights Reserved.
+ * Copyright (C) 2013 Google, Inc. All Rights Reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -11,53 +10,38 @@
  *    notice, this list of conditions and the following disclaimer in the
  *    documentation and/or other materials provided with the distribution.
  *
- * THIS SOFTWARE IS PROVIDED BY APPLE INC. ``AS IS'' AND ANY
+ * THIS SOFTWARE IS PROVIDED BY GOOGLE INC. ``AS IS'' AND ANY
  * EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
  * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
- * PURPOSE ARE DISCLAIMED.  IN NO EVENT SHALL APPLE INC. OR
+ * PURPOSE ARE DISCLAIMED.  IN NO EVENT SHALL GOOGLE INC. OR
  * CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
  * EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
  * PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
  * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
  * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
- * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef HTMLPreloadScanner_h
-#define HTMLPreloadScanner_h
-
-#include "CSSPreloadScanner.h"
-#include "HTMLToken.h"
-#include "SegmentedString.h"
+#ifndef HTMLParserOptions_h
+#define HTMLParserOptions_h
 
 namespace WebCore {
 
 class Document;
-class HTMLParserOptions;
-class HTMLToken;
-class HTMLTokenizer;
-class SegmentedString;
 
-class HTMLPreloadScanner {
-    WTF_MAKE_NONCOPYABLE(HTMLPreloadScanner); WTF_MAKE_FAST_ALLOCATED;
+class HTMLParserOptions {
 public:
-    HTMLPreloadScanner(Document*, const HTMLParserOptions&);
+    bool usePreHTML5ParserQuirks;
+    unsigned maximumDOMTreeDepth;
 
-    void appendToEnd(const SegmentedString&);
-    void scan();
+    HTMLParserOptions()
+        : usePreHTML5ParserQuirks(false)
+        , maximumDOMTreeDepth(0)
+    {
+    }
 
-private:
-    void processToken();
-    void updatePredictedBaseElementURL(const KURL& baseElementURL);
-
-    Document* m_document;
-    SegmentedString m_source;
-    CSSPreloadScanner m_cssScanner;
-    OwnPtr<HTMLTokenizer> m_tokenizer;
-    HTMLToken m_token;
-    bool m_inStyle;
-    KURL m_predictedBaseElementURL;
+    explicit HTMLParserOptions(Document*);
 };
 
 }

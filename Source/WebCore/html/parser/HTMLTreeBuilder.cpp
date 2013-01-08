@@ -270,32 +270,32 @@ private:
 };
 
 
-HTMLTreeBuilder::HTMLTreeBuilder(HTMLDocumentParser* parser, HTMLDocument* document, bool, bool usePreHTML5ParserQuirks, unsigned maximumDOMTreeDepth)
+HTMLTreeBuilder::HTMLTreeBuilder(HTMLDocumentParser* parser, HTMLDocument* document, bool, const HTMLParserOptions& options)
     : m_framesetOk(true)
     , m_document(document)
-    , m_tree(document, maximumDOMTreeDepth)
+    , m_tree(document, options.maximumDOMTreeDepth)
     , m_insertionMode(InitialMode)
     , m_originalInsertionMode(InitialMode)
     , m_shouldSkipLeadingNewline(false)
     , m_parser(parser)
     , m_scriptToProcessStartPosition(uninitializedPositionValue1())
-    , m_usePreHTML5ParserQuirks(usePreHTML5ParserQuirks)
+    , m_options(options)
 {
 }
 
 // FIXME: Member variables should be grouped into self-initializing structs to
 // minimize code duplication between these constructors.
-HTMLTreeBuilder::HTMLTreeBuilder(HTMLDocumentParser* parser, DocumentFragment* fragment, Element* contextElement, FragmentScriptingPermission scriptingPermission, bool usePreHTML5ParserQuirks, unsigned maximumDOMTreeDepth)
+HTMLTreeBuilder::HTMLTreeBuilder(HTMLDocumentParser* parser, DocumentFragment* fragment, Element* contextElement, FragmentScriptingPermission scriptingPermission, const HTMLParserOptions& options)
     : m_framesetOk(true)
     , m_fragmentContext(fragment, contextElement, scriptingPermission)
     , m_document(fragment->document())
-    , m_tree(fragment, scriptingPermission, maximumDOMTreeDepth)
+    , m_tree(fragment, scriptingPermission, options.maximumDOMTreeDepth)
     , m_insertionMode(InitialMode)
     , m_originalInsertionMode(InitialMode)
     , m_shouldSkipLeadingNewline(false)
     , m_parser(parser)
     , m_scriptToProcessStartPosition(uninitializedPositionValue1())
-    , m_usePreHTML5ParserQuirks(usePreHTML5ParserQuirks)
+    , m_options(options)
 {
     ASSERT(isMainThread());
     // FIXME: This assertion will become invalid if <http://webkit.org/b/60316> is fixed.
@@ -2185,7 +2185,7 @@ void HTMLTreeBuilder::processEndTag(AtomicHTMLToken* token)
             // self-closing script tag was encountered and pre-HTML5 parser
             // quirks are enabled. We must set the tokenizer's state to
             // DataState explicitly if the tokenizer didn't have a chance to.
-            ASSERT(m_parser->tokenizer()->state() == HTMLTokenizerState::DataState || m_usePreHTML5ParserQuirks);
+            ASSERT(m_parser->tokenizer()->state() == HTMLTokenizerState::DataState || m_options.usePreHTML5ParserQuirks);
             m_parser->tokenizer()->setState(HTMLTokenizerState::DataState);
             return;
         }
@@ -2704,7 +2704,7 @@ bool HTMLTreeBuilder::processStartTagForInHead(AtomicHTMLToken* token)
     }
     if (token->name() == scriptTag) {
         processScriptStartTag(token);
-        if (m_usePreHTML5ParserQuirks && token->selfClosing())
+        if (m_options.usePreHTML5ParserQuirks && token->selfClosing())
             processFakeEndTag(scriptTag);
         return true;
     }

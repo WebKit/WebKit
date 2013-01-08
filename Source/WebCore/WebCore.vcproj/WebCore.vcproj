@@ -64433,6 +64433,14 @@
 					>
 				</File>
 				<File
+					RelativePath="..\html\parser\HTMLParserOptions.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\html\parser\HTMLParserOptions.h"
+					>
+				</File>
+				<File
 					RelativePath="..\html\parser\HTMLParserScheduler.cpp"
 					>
 				</File>

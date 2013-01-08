@@ -31,6 +31,7 @@
 #include "HTMLConstructionSite.h"
 #include "HTMLElementStack.h"
 #include "HTMLFormattingElementList.h"
+#include "HTMLParserOptions.h"
 #include "HTMLTokenizer.h"
 #include <wtf/Noncopyable.h>
 #include <wtf/OwnPtr.h>
@@ -57,13 +58,13 @@ class HTMLDocumentParser;
 class HTMLTreeBuilder {
     WTF_MAKE_NONCOPYABLE(HTMLTreeBuilder); WTF_MAKE_FAST_ALLOCATED;
 public:
-    static PassOwnPtr<HTMLTreeBuilder> create(HTMLDocumentParser* parser, HTMLDocument* document, bool reportErrors, bool usePreHTML5ParserQuirks, unsigned maximumDOMTreeDepth)
+    static PassOwnPtr<HTMLTreeBuilder> create(HTMLDocumentParser* parser, HTMLDocument* document, bool reportErrors, const HTMLParserOptions& options)
     {
-        return adoptPtr(new HTMLTreeBuilder(parser, document, reportErrors, usePreHTML5ParserQuirks, maximumDOMTreeDepth));
+        return adoptPtr(new HTMLTreeBuilder(parser, document, reportErrors, options));
     }
-    static PassOwnPtr<HTMLTreeBuilder> create(HTMLDocumentParser* parser, DocumentFragment* fragment, Element* contextElement, FragmentScriptingPermission scriptingPermission, bool usePreHTML5ParserQuirks, unsigned maximumDOMTreeDepth)
+    static PassOwnPtr<HTMLTreeBuilder> create(HTMLDocumentParser* parser, DocumentFragment* fragment, Element* contextElement, FragmentScriptingPermission scriptingPermission, const HTMLParserOptions& options)
     {
-        return adoptPtr(new HTMLTreeBuilder(parser, fragment, contextElement, scriptingPermission, usePreHTML5ParserQuirks, maximumDOMTreeDepth));
+        return adoptPtr(new HTMLTreeBuilder(parser, fragment, contextElement, scriptingPermission, options));
     }
     ~HTMLTreeBuilder();
 
@@ -123,8 +124,8 @@ private:
         AfterAfterFramesetMode,
     };
 
-    HTMLTreeBuilder(HTMLDocumentParser*, HTMLDocument*, bool reportErrors, bool usePreHTML5ParserQuirks, unsigned maximumDOMTreeDepth);
-    HTMLTreeBuilder(HTMLDocumentParser*, DocumentFragment*, Element* contextElement, FragmentScriptingPermission, bool usePreHTML5ParserQuirks, unsigned maximumDOMTreeDepth);
+    HTMLTreeBuilder(HTMLDocumentParser*, HTMLDocument*, bool reportErrors, const HTMLParserOptions&);
+    HTMLTreeBuilder(HTMLDocumentParser*, DocumentFragment*, Element* contextElement, FragmentScriptingPermission, const HTMLParserOptions&);
 
     void processToken(AtomicHTMLToken*);
 
@@ -249,7 +250,7 @@ private:
     RefPtr<Element> m_scriptToProcess; // <script> tag which needs processing before resuming the parser.
     TextPosition m_scriptToProcessStartPosition; // Starting line number of the script tag needing processing.
 
-    bool m_usePreHTML5ParserQuirks;
+    HTMLParserOptions m_options;
 };
 
 }

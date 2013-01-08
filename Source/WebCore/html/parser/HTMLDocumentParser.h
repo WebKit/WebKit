@@ -29,6 +29,7 @@
 #include "CachedResourceClient.h"
 #include "FragmentScriptingPermission.h"
 #include "HTMLInputStream.h"
+#include "HTMLParserOptions.h"
 #include "HTMLScriptRunnerHost.h"
 #include "HTMLSourceTracker.h"
 #include "HTMLToken.h"
@@ -66,9 +67,6 @@ public:
     void resumeParsingAfterYield();
 
     static void parseDocumentFragment(const String&, DocumentFragment*, Element* contextElement, FragmentScriptingPermission = AllowScriptingContent);
-    
-    static bool usePreHTML5ParserQuirks(Document*);
-    static unsigned maximumDOMTreeDepth(Document*);
 
     HTMLTokenizer* tokenizer() const { return m_tokenizer.get(); }
     String sourceForToken(const HTMLToken&);
@@ -137,6 +135,7 @@ private:
     bool inPumpSession() const { return m_pumpSessionNestingLevel > 0; }
     bool shouldDelayEnd() const { return inPumpSession() || isWaitingForScripts() || isScheduledForResume() || isExecutingScript(); }
 
+    HTMLParserOptions m_options;
     HTMLInputStream m_input;
 
     // We hold m_token here because it might be partially complete.

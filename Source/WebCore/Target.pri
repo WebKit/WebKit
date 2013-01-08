@@ -710,6 +710,7 @@ SOURCES += \
     html/parser/HTMLFormattingElementList.cpp \
     html/parser/HTMLMetaCharsetParser.cpp \
     html/parser/HTMLParserIdioms.cpp \
+    html/parser/HTMLParserOptions.cpp \
     html/parser/HTMLParserScheduler.cpp \
     html/parser/HTMLPreloadScanner.cpp \
     html/parser/HTMLScriptRunner.cpp \

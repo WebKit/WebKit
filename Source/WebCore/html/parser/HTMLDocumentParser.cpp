@@ -72,9 +72,10 @@ static HTMLTokenizerState::State tokenizerStateForContextElement(Element* contex
 
 HTMLDocumentParser::HTMLDocumentParser(HTMLDocument* document, bool reportErrors)
     : ScriptableDocumentParser(document)
-    , m_tokenizer(HTMLTokenizer::create(usePreHTML5ParserQuirks(document)))
+    , m_options(document)
+    , m_tokenizer(HTMLTokenizer::create(m_options.usePreHTML5ParserQuirks))
     , m_scriptRunner(HTMLScriptRunner::create(document, this))
-    , m_treeBuilder(HTMLTreeBuilder::create(this, document, reportErrors, usePreHTML5ParserQuirks(document), maximumDOMTreeDepth(document)))
+    , m_treeBuilder(HTMLTreeBuilder::create(this, document, reportErrors, m_options))
     , m_parserScheduler(HTMLParserScheduler::create(this))
     , m_xssAuditor(this)
     , m_endWasDelayed(false)
@@ -86,8 +87,9 @@ HTMLDocumentParser::HTMLDocumentParser(HTMLDocument* document, bool reportErrors
 // minimize code duplication between these constructors.
 HTMLDocumentParser::HTMLDocumentParser(DocumentFragment* fragment, Element* contextElement, FragmentScriptingPermission scriptingPermission)
     : ScriptableDocumentParser(fragment->document())
-    , m_tokenizer(HTMLTokenizer::create(usePreHTML5ParserQuirks(fragment->document())))
-    , m_treeBuilder(HTMLTreeBuilder::create(this, fragment, contextElement, scriptingPermission, usePreHTML5ParserQuirks(fragment->document()), maximumDOMTreeDepth(fragment->document())))
+    , m_options(fragment->document())
+    , m_tokenizer(HTMLTokenizer::create(m_options.usePreHTML5ParserQuirks))
+    , m_treeBuilder(HTMLTreeBuilder::create(this, fragment, contextElement, scriptingPermission, m_options))
     , m_xssAuditor(this)
     , m_endWasDelayed(false)
     , m_pumpSessionNestingLevel(0)
@@ -288,7 +290,7 @@ void HTMLDocumentParser::pumpTokenizer(SynchronousMode mode)
     if (isWaitingForScripts()) {
         ASSERT(m_tokenizer->state() == HTMLTokenizerState::DataState);
         if (!m_preloadScanner) {
-            m_preloadScanner = adoptPtr(new HTMLPreloadScanner(document()));
+            m_preloadScanner = adoptPtr(new HTMLPreloadScanner(document(), m_options));
             m_preloadScanner->appendToEnd(m_input.current());
         }
         m_preloadScanner->scan();
@@ -325,7 +327,7 @@ void HTMLDocumentParser::insert(const SegmentedString& source)
         // Check the document.write() output with a separate preload scanner as
         // the main scanner can't deal with insertions.
         if (!m_insertionPreloadScanner)
-            m_insertionPreloadScanner = adoptPtr(new HTMLPreloadScanner(document()));
+            m_insertionPreloadScanner = adoptPtr(new HTMLPreloadScanner(document(), m_options));
         m_insertionPreloadScanner->appendToEnd(source);
         m_insertionPreloadScanner->scan();
     }
@@ -549,18 +551,6 @@ void HTMLDocumentParser::parseDocumentFragment(const String& source, DocumentFra
     parser->detach(); // Allows ~DocumentParser to assert it was detached before destruction.
 }
     
-bool HTMLDocumentParser::usePreHTML5ParserQuirks(Document* document)
-{
-    ASSERT(document);
-    return document->settings() && document->settings()->usePreHTML5ParserQuirks();
-}
-
-unsigned HTMLDocumentParser::maximumDOMTreeDepth(Document* document)
-{
-    ASSERT(document);
-    return document->settings() ? document->settings()->maximumHTMLParserDOMTreeDepth() : Settings::defaultMaximumHTMLParserDOMTreeDepth;
-}
-
 void HTMLDocumentParser::suspendScheduledTasks()
 {
     if (m_parserScheduler)
