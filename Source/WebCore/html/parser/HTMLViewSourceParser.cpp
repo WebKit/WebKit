@@ -35,7 +35,7 @@ namespace WebCore {
 
 HTMLViewSourceParser::HTMLViewSourceParser(HTMLViewSourceDocument* document)
     : DecodedDataDocumentParser(document)
-    , m_tokenizer(HTMLTokenizer::create(HTMLParserOptions(document).usePreHTML5ParserQuirks))
+    , m_tokenizer(HTMLTokenizer::create(HTMLParserOptions(document)))
 {
 }
 
@@ -80,7 +80,7 @@ void HTMLViewSourceParser::updateTokenizerState()
         return;
 
     AtomicString tagName(m_token.name().data(), m_token.name().size());
-    m_tokenizer->updateStateFor(tagName, document()->frame());
+    m_tokenizer->updateStateFor(tagName);
 }
 
 void HTMLViewSourceParser::finish()

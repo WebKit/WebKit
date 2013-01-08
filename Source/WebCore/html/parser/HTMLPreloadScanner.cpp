@@ -165,7 +165,7 @@ private:
 HTMLPreloadScanner::HTMLPreloadScanner(Document* document, const HTMLParserOptions& options)
     : m_document(document)
     , m_cssScanner(document)
-    , m_tokenizer(HTMLTokenizer::create(options.usePreHTML5ParserQuirks))
+    , m_tokenizer(HTMLTokenizer::create(options))
     , m_inStyle(false)
 {
 }
@@ -203,7 +203,7 @@ void HTMLPreloadScanner::processToken()
         return;
 
     PreloadTask task(m_token);
-    m_tokenizer->updateStateFor(task.tagName(), m_document->frame());
+    m_tokenizer->updateStateFor(task.tagName());
 
     if (task.tagName() == styleTag)
         m_inStyle = true;

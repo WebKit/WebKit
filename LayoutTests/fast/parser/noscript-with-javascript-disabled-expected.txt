@@ -1,2 +1,6 @@
-This test case verifies that contents inside <noscript> are rendered when Javascript is disabled.
-Succeeded!
+The text inside the 'noscript' tag inside the iframe should render:  
+
+--------
+Frame: '<!--framePath //<!--frame0-->-->'
+--------
+PASS: This test case verifies that contents inside are rendered when Javascript is disabled.

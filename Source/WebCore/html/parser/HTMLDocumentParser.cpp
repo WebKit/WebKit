@@ -47,7 +47,7 @@ using namespace HTMLNames;
 
 // This is a direct transcription of step 4 from:
 // http://www.whatwg.org/specs/web-apps/current-work/multipage/the-end.html#fragment-case
-static HTMLTokenizerState::State tokenizerStateForContextElement(Element* contextElement, bool reportErrors)
+static HTMLTokenizerState::State tokenizerStateForContextElement(Element* contextElement, bool reportErrors, const HTMLParserOptions& options)
 {
     if (!contextElement)
         return HTMLTokenizerState::DataState;
@@ -59,8 +59,8 @@ static HTMLTokenizerState::State tokenizerStateForContextElement(Element* contex
     if (contextTag.matches(styleTag)
         || contextTag.matches(xmpTag)
         || contextTag.matches(iframeTag)
-        || (contextTag.matches(noembedTag) && HTMLTreeBuilder::pluginsEnabled(contextElement->document()->frame()))
-        || (contextTag.matches(noscriptTag) && HTMLTreeBuilder::scriptEnabled(contextElement->document()->frame()))
+        || (contextTag.matches(noembedTag) && options.pluginsEnabled)
+        || (contextTag.matches(noscriptTag) && options.scriptEnabled)
         || contextTag.matches(noframesTag))
         return reportErrors ? HTMLTokenizerState::RAWTEXTState : HTMLTokenizerState::PLAINTEXTState;
     if (contextTag.matches(scriptTag))
@@ -73,7 +73,7 @@ static HTMLTokenizerState::State tokenizerStateForContextElement(Element* contex
 HTMLDocumentParser::HTMLDocumentParser(HTMLDocument* document, bool reportErrors)
     : ScriptableDocumentParser(document)
     , m_options(document)
-    , m_tokenizer(HTMLTokenizer::create(m_options.usePreHTML5ParserQuirks))
+    , m_tokenizer(HTMLTokenizer::create(m_options))
     , m_scriptRunner(HTMLScriptRunner::create(document, this))
     , m_treeBuilder(HTMLTreeBuilder::create(this, document, reportErrors, m_options))
     , m_parserScheduler(HTMLParserScheduler::create(this))
@@ -88,14 +88,14 @@ HTMLDocumentParser::HTMLDocumentParser(HTMLDocument* document, bool reportErrors
 HTMLDocumentParser::HTMLDocumentParser(DocumentFragment* fragment, Element* contextElement, FragmentScriptingPermission scriptingPermission)
     : ScriptableDocumentParser(fragment->document())
     , m_options(fragment->document())
-    , m_tokenizer(HTMLTokenizer::create(m_options.usePreHTML5ParserQuirks))
+    , m_tokenizer(HTMLTokenizer::create(m_options))
     , m_treeBuilder(HTMLTreeBuilder::create(this, fragment, contextElement, scriptingPermission, m_options))
     , m_xssAuditor(this)
     , m_endWasDelayed(false)
     , m_pumpSessionNestingLevel(0)
 {
     bool reportErrors = false; // For now document fragment parsing never reports errors.
-    m_tokenizer->setState(tokenizerStateForContextElement(contextElement, reportErrors));
+    m_tokenizer->setState(tokenizerStateForContextElement(contextElement, reportErrors, m_options));
 }
 
 HTMLDocumentParser::~HTMLDocumentParser()

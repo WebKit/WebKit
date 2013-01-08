@@ -31,7 +31,6 @@
 #include "DOMWindow.h"
 #include "DocumentFragment.h"
 #include "DocumentType.h"
-#include "Frame.h"
 #include "HTMLDocument.h"
 #include "HTMLDocumentParser.h"
 #include "HTMLElementFactory.h"
@@ -894,11 +893,11 @@ void HTMLTreeBuilder::processStartTagForInBody(AtomicHTMLToken* token)
         processGenericRawTextStartTag(token);
         return;
     }
-    if (token->name() == noembedTag && pluginsEnabled(m_document->frame())) {
+    if (token->name() == noembedTag && m_options.pluginsEnabled) {
         processGenericRawTextStartTag(token);
         return;
     }
-    if (token->name() == noscriptTag && scriptEnabled(m_document->frame())) {
+    if (token->name() == noscriptTag && m_options.scriptEnabled) {
         processGenericRawTextStartTag(token);
         return;
     }
@@ -2690,7 +2689,7 @@ bool HTMLTreeBuilder::processStartTagForInHead(AtomicHTMLToken* token)
         return true;
     }
     if (token->name() == noscriptTag) {
-        if (scriptEnabled(m_document->frame())) {
+        if (m_options.scriptEnabled) {
             processGenericRawTextStartTag(token);
             return true;
         }
@@ -2911,20 +2910,6 @@ void HTMLTreeBuilder::finished()
 
 void HTMLTreeBuilder::parseError(AtomicHTMLToken*)
 {
-}
-
-bool HTMLTreeBuilder::scriptEnabled(Frame* frame)
-{
-    if (!frame)
-        return false;
-    return frame->script()->canExecuteScripts(NotAboutToExecuteScript);
-}
-
-bool HTMLTreeBuilder::pluginsEnabled(Frame* frame)
-{
-    if (!frame)
-        return false;
-    return frame->loader()->subframeLoader()->allowPlugins(NotAboutToInstantiatePlugin);
 }
 
 }

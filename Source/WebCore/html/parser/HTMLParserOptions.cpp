@@ -27,14 +27,18 @@
 #include "HTMLParserOptions.h"
 
 #include "Document.h"
+#include "Frame.h"
 #include "Settings.h"
 
 namespace WebCore {
 
 HTMLParserOptions::HTMLParserOptions(Document* document)
 {
-    ASSERT(document);
-    Settings* settings = document->settings();
+    Frame* frame = document ? document->frame() : 0;
+    scriptEnabled = frame && frame->script()->canExecuteScripts(NotAboutToExecuteScript);
+    pluginsEnabled = frame && frame->loader()->subframeLoader()->allowPlugins(NotAboutToInstantiatePlugin);
+
+    Settings* settings = document ? document->settings() : 0;
     usePreHTML5ParserQuirks = settings && settings->usePreHTML5ParserQuirks();
     maximumDOMTreeDepth = settings ? settings->maximumHTMLParserDOMTreeDepth() : Settings::defaultMaximumHTMLParserDOMTreeDepth;
 }

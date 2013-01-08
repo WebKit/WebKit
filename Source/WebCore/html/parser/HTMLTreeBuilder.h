@@ -91,9 +91,6 @@ public:
 
     void setShouldSkipLeadingNewline(bool shouldSkip) { m_shouldSkipLeadingNewline = shouldSkip; }
 
-    static bool scriptEnabled(Frame*);
-    static bool pluginsEnabled(Frame*);
-
 private:
     class ExternalCharacterTokenBuffer;
     // Represents HTML5 "insertion mode"

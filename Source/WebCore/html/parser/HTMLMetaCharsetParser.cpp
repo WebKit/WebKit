@@ -28,6 +28,7 @@
 
 #include "HTMLNames.h"
 #include "HTMLParserIdioms.h"
+#include "HTMLParserOptions.h"
 #include "HTMLTokenizer.h"
 #include "TextCodec.h"
 #include "TextEncodingRegistry.h"
@@ -40,7 +41,7 @@ namespace WebCore {
 using namespace HTMLNames;
 
 HTMLMetaCharsetParser::HTMLMetaCharsetParser()
-    : m_tokenizer(HTMLTokenizer::create(false)) // No pre-HTML5 parser quirks.
+    : m_tokenizer(HTMLTokenizer::create(HTMLParserOptions(0)))
     , m_assumedCodec(newTextCodec(Latin1Encoding()))
     , m_inHeadSection(true)
     , m_doneChecking(false)
@@ -179,7 +180,7 @@ bool HTMLMetaCharsetParser::checkForMetaCharset(const char* data, size_t length)
         if (end || m_token.type() == HTMLTokenTypes::StartTag) {
             AtomicString tagName(m_token.name().data(), m_token.name().size());
             if (!end) {
-                m_tokenizer->updateStateFor(tagName, 0);
+                m_tokenizer->updateStateFor(tagName);
                 if (tagName == metaTag && processMeta()) {
                     m_doneChecking = true;
                     return true;

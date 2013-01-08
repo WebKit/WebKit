@@ -1,17 +1,24 @@
 <html>
 
 <script>
-if (window.testRunner)
+if (window.testRunner) {
     testRunner.dumpAsText();
+    testRunner.dumpChildFramesAsText();
     testRunner.overridePreference("WebKitJavaScriptEnabled", false);
+}
 </script>
 
 <noscript> 
 <body>
-    This test case verifies that contents inside &lt;noscript&gt; are rendered when Javascript is disabled.
-
-    <p>Succeeded!</p>
+    FAIL: This content should not render because whether scripting is enabled
+    (for the purposes of the 'noscript' tag) is locked in when the parser starts.
 </noscript>
+
+The text inside the 'noscript' tag inside the iframe should render:
+
+<iframe
+    src="data:text/html,<noscript><body>PASS: This test case verifies that contents inside &lt;noscript&gt; are rendered when Javascript is disabled.</body></noscript>">
+</iframe>
 
 </body>
 </html>

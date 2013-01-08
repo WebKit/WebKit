@@ -27,13 +27,12 @@
 #ifndef HTMLTokenizer_h
 #define HTMLTokenizer_h
 
+#include "HTMLParserOptions.h"
 #include "HTMLToken.h"
 #include "MarkupTokenizerBase.h"
 #include "SegmentedString.h"
 
 namespace WebCore {
-
-class Frame;
 
 class HTMLTokenizerState {
 public:
@@ -120,7 +119,7 @@ class HTMLTokenizer : public MarkupTokenizerBase<HTMLToken, HTMLTokenizerState> 
     WTF_MAKE_NONCOPYABLE(HTMLTokenizer);
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    static PassOwnPtr<HTMLTokenizer> create(bool usePreHTML5ParserQuirks) { return adoptPtr(new HTMLTokenizer(usePreHTML5ParserQuirks)); }
+    static PassOwnPtr<HTMLTokenizer> create(const HTMLParserOptions& options) { return adoptPtr(new HTMLTokenizer(options)); }
     ~HTMLTokenizer();
 
     void reset();
@@ -157,7 +156,7 @@ public:
     //  * CDATA sections in foreign content will be tokenized as bogus comments
     //    instead of as character tokens.
     //
-    void updateStateFor(const AtomicString& tagName, Frame*);
+    void updateStateFor(const AtomicString& tagName);
 
     bool forceNullCharacterReplacement() const { return m_forceNullCharacterReplacement; }
     void setForceNullCharacterReplacement(bool value) { m_forceNullCharacterReplacement = value; }
@@ -166,7 +165,7 @@ public:
     void setShouldAllowCDATA(bool value) { m_shouldAllowCDATA = value; }
 
 private:
-    explicit HTMLTokenizer(bool usePreHTML5ParserQuirks);
+    explicit HTMLTokenizer(const HTMLParserOptions&);
 
     inline bool processEntity(SegmentedString&);
 
@@ -216,7 +215,7 @@ private:
     // token here so we remember it next time we re-enter the tokenizer.
     Vector<LChar, 32> m_bufferedEndTagName;
 
-    bool m_usePreHTML5ParserQuirks;
+    HTMLParserOptions m_options;
 };
 
 }
