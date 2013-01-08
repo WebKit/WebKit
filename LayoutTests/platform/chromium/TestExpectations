@@ -4306,3 +4306,4 @@ webkit.org/b/106249 [ Win ] fast/speech/scripted/navigate-away.html [ Failure Pa
 webkit.org/b/96597 fast/multicol/vertical-rl/float-multicol.html [ Failure ImageOnlyFailure ]
 # Needs rebaseline. Current expectation is wrong because margin of body don't collapse with margin of 1st child.
 webkit.org/b/96597 fast/text/emphasis-vertical.html [ ImageOnlyFailure ]
+webkit.org/b/106332 http/tests/misc/authentication-redirect-4/authentication-sent-to-redirect-same-origin-url.html [ Skip ]

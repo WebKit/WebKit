@@ -1,3 +1,11 @@
+2013-01-08  Dimitri Glazkov  <dglazkov@chromium.org>
+
+        [Chromium] Skip http/tests/misc/authentication-redirect-4/authentication-sent-to-redirect-same-origin-url.html, because
+        it's been timing out since it was added.
+        https://bugs.webkit.org/show_bug.cgi?id=106332
+
+        * platform/chromium/TestExpectations: Adjusted expectations.
+
 2013-01-08  Martin Robinson  <mrobinson@igalia.com>
 
         [GTK] Login & password shown in browsers' URL entry after successful HTTP authentication
