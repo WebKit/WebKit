@@ -1,3 +1,10 @@
+2013-01-08  Dimitri Glazkov  <dglazkov@chromium.org>
+
+        [Chromium] A bunch of fast/css-grid-layout tests started timing out after r139025.
+        https://bugs.webkit.org/show_bug.cgi?id=106378
+
+        * platform/chromium/TestExpectations: Marked expectations.
+
 2013-01-08  Tom Sepez  <tsepez@chromium.org>
 
         Copy-paste preserves <embed> tags containing active content.

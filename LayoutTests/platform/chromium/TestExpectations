@@ -4299,3 +4299,10 @@ webkit.org/b/96597 fast/multicol/vertical-rl/float-multicol.html [ Failure Image
 # Needs rebaseline. Current expectation is wrong because margin of body don't collapse with margin of 1st child.
 webkit.org/b/96597 fast/text/emphasis-vertical.html [ ImageOnlyFailure ]
 webkit.org/b/106332 http/tests/misc/authentication-redirect-4/authentication-sent-to-redirect-same-origin-url.html [ Skip ]
+webkit.org/b/106378 [ Win Debug ] fast/css-grid-layout/percent-resolution-grid-item.html [ Timeout ]
+webkit.org/b/106378 [ Win Debug ] fast/css-grid-layout/place-cell-by-index.html [ Timeout ]
+webkit.org/b/106378 [ Win Debug ] fast/css-grid-layout/calc-resolution-grid-item.html [ Timeout ]
+webkit.org/b/106378 [ Win Debug ] fast/css-grid-layout/percent-padding-margin-resolution-grid-item.html [ Timeout ]
+webkit.org/b/106378 [ Win Debug ] fast/css-grid-layout/breadth-size-resolution-grid.html [ Timeout ]
+webkit.org/b/106378 [ Win Debug ] fast/css-grid-layout/grid-columns-rows-get-set-multiple.html [ Timeout ]
+
