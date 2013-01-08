@@ -50,6 +50,9 @@ X11OffScreenWindow::~X11OffScreenWindow()
 void X11OffScreenWindow::reSizeWindow(const IntRect& newRect, const uint32_t windowId)
 {
     XResizeWindow(m_sharedResources->x11Display(), windowId, newRect.width(), newRect.height());
+
+    // Force resize of GL sureface after window resize.
+    glXSwapBuffers(m_sharedResources->x11Display(), windowId);
 }
 
 void X11OffScreenWindow::createOffscreenWindow(uint32_t* handleId)
