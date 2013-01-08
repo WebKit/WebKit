@@ -32,8 +32,6 @@
 
 #if PLATFORM(MAC)
 #include <wtf/RetainPtr.h>
-#elif PLATFORM(WIN) || PLATFORM(WIN_CAIRO)
-#include <wtf/OwnPtr.h>
 #endif
 
 #if PLATFORM(QT)
@@ -41,7 +39,7 @@
 #include <QtGui/QPixmap>
 #endif
 
-#if USE(CAIRO) && !PLATFORM(WIN_CAIRO)
+#if USE(CAIRO)
 #include <RefPtrCairo.h>
 #include <WebCore/WidgetBackingStore.h>
 #endif
@@ -64,8 +62,6 @@ public:
 
 #if PLATFORM(MAC)
     typedef CGContextRef PlatformGraphicsContext;
-#elif PLATFORM(WIN)
-    typedef HDC PlatformGraphicsContext;
 #elif PLATFORM(QT)
     typedef QPainter* PlatformGraphicsContext;
 #elif USE(CAIRO)
@@ -100,8 +96,6 @@ private:
     // Contents of m_scrolledRect are offset by this amount (and wrapped around) with respect to
     // their original location.
     WebCore::IntSize m_scrolledRectOffset;
-#elif PLATFORM(WIN) || PLATFORM(WIN_CAIRO)
-    OwnPtr<HBITMAP> m_bitmap;
 #elif PLATFORM(QT)
     QPixmap m_pixmap;
 #elif USE(CAIRO)

@@ -1029,11 +1029,7 @@ void WebPageProxy::performDragControllerAction(DragControllerAction action, Drag
 {
     if (!isValid())
         return;
-#if PLATFORM(WIN)
-    // FIXME: We should pass the drag data map only on DragEnter.
-    m_process->send(Messages::WebPage::PerformDragControllerAction(action, dragData->clientPosition(), dragData->globalPosition(),
-        dragData->draggingSourceOperationMask(), dragData->dragDataMap(), dragData->flags()), m_pageID);
-#elif PLATFORM(QT) || PLATFORM(GTK)
+#if PLATFORM(QT) || PLATFORM(GTK)
     m_process->send(Messages::WebPage::PerformDragControllerAction(action, *dragData), m_pageID);
 #else
     m_process->send(Messages::WebPage::PerformDragControllerAction(action, dragData->clientPosition(), dragData->globalPosition(), dragData->draggingSourceOperationMask(), dragStorageName, dragData->flags(), sandboxExtensionHandle, sandboxExtensionsForUpload), m_pageID);
@@ -3470,10 +3466,6 @@ void WebPageProxy::didReceiveEvent(uint32_t opaqueType, bool handled)
 
         if (m_uiClient.implementsDidNotHandleKeyEvent())
             m_uiClient.didNotHandleKeyEvent(this, event);
-#if PLATFORM(WIN)
-        else
-            ::TranslateMessage(event.nativeEvent());
-#endif
         break;
     }
 #if ENABLE(TOUCH_EVENTS)
@@ -3815,9 +3807,6 @@ WebPageCreationParameters WebPageProxy::creationParameters() const
     parameters.colorSpace = m_pageClient->colorSpace();
 #endif
 
-#if PLATFORM(WIN)
-    parameters.nativeWindow = m_pageClient->nativeWindow();
-#endif
     return parameters;
 }
 
@@ -4066,7 +4055,7 @@ void WebPageProxy::computePagesForPrinting(WebFrameProxy* frame, const PrintInfo
     m_process->send(Messages::WebPage::ComputePagesForPrinting(frame->frameID(), printInfo, callbackID), m_pageID, m_isPerformingDOMPrintOperation ? CoreIPC::DispatchMessageEvenWhenWaitingForSyncReply : 0);
 }
 
-#if PLATFORM(MAC) || PLATFORM(WIN)
+#if PLATFORM(MAC)
 void WebPageProxy::drawRectToImage(WebFrameProxy* frame, const PrintInfo& printInfo, const IntRect& rect, const WebCore::IntSize& imageSize, PassRefPtr<ImageCallback> prpCallback)
 {
     RefPtr<ImageCallback> callback = prpCallback;

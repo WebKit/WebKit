@@ -1352,18 +1352,6 @@ void PluginView::willSendEventToPlugin()
     m_webPage->send(Messages::WebPageProxy::StopResponsivenessTimer());
 }
 
-#if PLATFORM(WIN)
-HWND PluginView::nativeParentWindow()
-{
-    return m_webPage->nativeWindow();
-}
-
-void PluginView::scheduleWindowedPluginGeometryUpdate(const WindowGeometry& geometry)
-{
-    m_webPage->drawingArea()->scheduleChildWindowGeometryUpdate(geometry);
-}
-#endif
-
 #if PLATFORM(MAC)
 void PluginView::pluginFocusOrWindowFocusChanged(bool pluginHasFocusAndWindowHasFocus)
 {

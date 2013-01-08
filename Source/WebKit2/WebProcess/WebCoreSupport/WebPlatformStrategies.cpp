@@ -50,11 +50,6 @@
 #include "WebResourceLoadScheduler.h"
 #endif
 
-#if PLATFORM(WIN) && USE(CFNETWORK)
-#include "WebFrameNetworkingContext.h"
-#include <WebKitSystemInterface/WebKitSystemInterface.h>
-#endif
-
 using namespace WebCore;
 
 namespace WebKit {

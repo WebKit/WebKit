@@ -39,8 +39,6 @@ class CommandLine {
 public:
 #if PLATFORM(MAC)
     bool parse(int argc, char** argv);
-#elif PLATFORM(WIN)
-    bool parse(LPTSTR commandLineString);
 #endif
     String operator[](const String& key) const
     {

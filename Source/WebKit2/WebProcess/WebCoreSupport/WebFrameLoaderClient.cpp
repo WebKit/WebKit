@@ -1565,17 +1565,6 @@ NSCachedURLResponse* WebFrameLoaderClient::willCacheResponse(DocumentLoader*, un
 
 #endif // PLATFORM(MAC)
 
-#if PLATFORM(WIN) && USE(CFNETWORK)
-bool WebFrameLoaderClient::shouldCacheResponse(DocumentLoader*, unsigned long identifier, const ResourceResponse&, const unsigned char* data, unsigned long long length)
-{
-    WebPage* webPage = m_frame->page();
-    if (!webPage)
-        return true;
-
-    return webPage->injectedBundleResourceLoadClient().shouldCacheResponse(webPage, m_frame, identifier);
-}
-#endif // PLATFORM(WIN) && USE(CFNETWORK)
-
 #if ENABLE(WEB_INTENTS)
 void WebFrameLoaderClient::dispatchIntent(PassRefPtr<IntentRequest> request)
 {

@@ -54,8 +54,6 @@ public:
 
 #if PLATFORM(MAC)
     uint32_t contextID;
-#elif PLATFORM(WIN)
-    HWND window;
 #elif PLATFORM(QT)
     uint32_t coordinatedLayerID;
 #elif PLATFORM(GTK)

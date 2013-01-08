@@ -68,10 +68,6 @@ public:
     CFBundleRefNum bundleResourceMap();
 #endif
 
-#if PLATFORM(WIN)
-    void installIATHook(const char* importDLLName, const char* importFunctionName, const void* hookFunction);
-#endif
-
 private:
     void* platformFunctionPointer(const char* functionName) const;
 
@@ -81,8 +77,6 @@ private:
 #if !defined(__LP64__)
     CFBundleRefNum m_bundleResourceMap;
 #endif
-#elif PLATFORM(WIN)
-    HMODULE m_module;
 #elif PLATFORM(QT)
     QLibrary m_lib;
 #elif PLATFORM(GTK)

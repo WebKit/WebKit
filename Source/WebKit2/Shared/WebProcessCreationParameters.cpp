@@ -27,9 +27,6 @@
 #include "WebProcessCreationParameters.h"
 
 #include "ArgumentCoders.h"
-#if PLATFORM(WIN) && USE(CFNETWORK)
-#include "ArgumentCodersCF.h"
-#endif
 
 namespace WebKit {
 
@@ -43,8 +40,6 @@ WebProcessCreationParameters::WebProcessCreationParameters()
     , nsURLCacheDiskCapacity(0)
     , shouldForceScreenFontSubstitution(false)
     , shouldEnableKerningAndLigaturesByDefault(false)
-#elif PLATFORM(WIN)
-    , shouldPaintNativeControls(false)
 #endif
 #if ENABLE(NETWORK_PROCESS)
     , usesNetworkProcess(false)
@@ -105,17 +100,6 @@ void WebProcessCreationParameters::encode(CoreIPC::ArgumentEncoder& encoder) con
     encoder << uiProcessBundleResourcePathExtensionHandle;
     encoder << shouldForceScreenFontSubstitution;
     encoder << shouldEnableKerningAndLigaturesByDefault;
-#elif PLATFORM(WIN)
-    encoder << shouldPaintNativeControls;
-    encoder << cfURLCacheDiskCapacity;
-    encoder << cfURLCacheMemoryCapacity;
-    encoder << initialHTTPCookieAcceptPolicy;
-#if USE(CFNETWORK)
-    CFDataRef storageSession = serializedDefaultStorageSession.get();
-    encoder << static_cast<bool>(storageSession);
-    if (storageSession)
-        CoreIPC::encode(encoder, storageSession);
-#endif
 #endif
 
 #if ENABLE(NOTIFICATIONS) || ENABLE(LEGACY_NOTIFICATIONS)
@@ -227,22 +211,6 @@ bool WebProcessCreationParameters::decode(CoreIPC::ArgumentDecoder* decoder, Web
         return false;
     if (!decoder->decode(parameters.shouldEnableKerningAndLigaturesByDefault))
         return false;
-#elif PLATFORM(WIN)
-    if (!decoder->decode(parameters.shouldPaintNativeControls))
-        return false;
-    if (!decoder->decode(parameters.cfURLCacheDiskCapacity))
-        return false;
-    if (!decoder->decode(parameters.cfURLCacheMemoryCapacity))
-        return false;
-    if (!decoder->decode(parameters.initialHTTPCookieAcceptPolicy))
-        return false;
-#if PLATFORM(MAC) || USE(CFNETWORK)
-    bool hasStorageSession = false;
-    if (!decoder->decode(hasStorageSession))
-        return false;
-    if (hasStorageSession && !CoreIPC::decode(decoder, parameters.serializedDefaultStorageSession))
-        return false;
-#endif
 #endif
 
 #if ENABLE(NOTIFICATIONS) || ENABLE(LEGACY_NOTIFICATIONS)

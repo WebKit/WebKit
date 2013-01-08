@@ -74,7 +74,7 @@
 #include <WebCore/PlatformMessagePortChannel.h>
 #endif
 
-#if PLATFORM(MAC) || PLATFORM(WIN)
+#if PLATFORM(MAC)
 #include <WebCore/LegacyWebArchive.h>
 #endif
 
@@ -840,7 +840,7 @@ void WebFrame::setTextDirection(const String& direction)
         m_coreFrame->editor()->setBaseWritingDirection(RightToLeftWritingDirection);
 }
 
-#if PLATFORM(MAC) || PLATFORM(WIN)
+#if PLATFORM(MAC)
 
 class WebFrameFilter : public FrameFilter {
 public:

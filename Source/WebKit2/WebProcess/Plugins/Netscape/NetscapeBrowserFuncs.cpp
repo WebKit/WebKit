@@ -524,15 +524,6 @@ static NPError NPN_GetValue(NPP npp, NPNVariable variable, void *value)
             *(NPBool*)value = true;
             break;
 #endif
-#elif PLATFORM(WIN)
-       case NPNVnetscapeWindow: {
-           RefPtr<NetscapePlugin> plugin = NetscapePlugin::fromNPP(npp);
-           *reinterpret_cast<HWND*>(value) = plugin->containingWindow();
-           break;
-       }
-       case NPNVSupportsWindowless:
-           *(NPBool*)value = true;
-           break;
 #elif PLUGIN_ARCHITECTURE(X11)
        case NPNVxDisplay: {
            if (!npp)

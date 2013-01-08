@@ -33,9 +33,6 @@ enum FontSmoothingLevel {
     FontSmoothingLevelLight = 1,
     FontSmoothingLevelMedium = 2,
     FontSmoothingLevelStrong = 3,
-#if PLATFORM(WIN)
-    FontSmoothingLevelWindows = 4,
-#endif
 };
 
 } // namespace WebKit

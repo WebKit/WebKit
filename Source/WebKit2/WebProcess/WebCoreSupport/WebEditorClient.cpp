@@ -193,15 +193,7 @@ void WebEditorClient::respondToChangedSelection(Frame* frame)
 
     m_page->send(Messages::WebPageProxy::EditorStateChanged(state));
 
-#if PLATFORM(WIN)
-    // FIXME: This should also go into the selection state.
-    if (!frame->editor()->hasComposition() || frame->editor()->ignoreCompositionSelectionChange())
-        return;
-
-    unsigned start;
-    unsigned end;
-    m_page->send(Messages::WebPageProxy::DidChangeCompositionSelection(frame->editor()->getCompositionSelection(start, end)));
-#elif PLATFORM(GTK) || PLATFORM(QT)
+#if PLATFORM(GTK) || PLATFORM(QT)
     updateGlobalSelection(frame);
 #endif
 }

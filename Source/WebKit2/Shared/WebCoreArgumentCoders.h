@@ -148,7 +148,7 @@ template<> struct ArgumentCoder<WebCore::Cursor> {
 };
 
 template<> struct ArgumentCoder<WebCore::ResourceRequest> {
-#if PLATFORM(MAC) || PLATFORM(WIN)
+#if PLATFORM(MAC)
     static const bool kShouldSerializeWebCoreData = false;
 #else
     static const bool kShouldSerializeWebCoreData = true;
@@ -161,7 +161,7 @@ template<> struct ArgumentCoder<WebCore::ResourceRequest> {
 };
 
 template<> struct ArgumentCoder<WebCore::ResourceResponse> {
-#if PLATFORM(MAC) || PLATFORM(WIN)
+#if PLATFORM(MAC)
     static const bool kShouldSerializeWebCoreData = false;
 #else
     static const bool kShouldSerializeWebCoreData = true;

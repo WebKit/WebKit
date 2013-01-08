@@ -59,7 +59,7 @@
 #define ENABLE_SHARED_WORKER_PROCESS 1
 #endif
 
-#elif !PLATFORM(WIN)
+#else
 #define ENABLE_SHARED_WORKER_PROCESS 1
 #endif
 

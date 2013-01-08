@@ -210,10 +210,6 @@ inline FontSmoothingLevel toFontSmoothingLevel(WKFontSmoothingLevel wkLevel)
         return FontSmoothingLevelMedium;
     case kWKFontSmoothingLevelStrong:
         return FontSmoothingLevelStrong;
-#if PLATFORM(WIN)
-    case kWKFontSmoothingLevelWindows:
-        return FontSmoothingLevelWindows;
-#endif
     }
 
     ASSERT_NOT_REACHED();
@@ -232,10 +228,6 @@ inline WKFontSmoothingLevel toAPI(FontSmoothingLevel level)
         return kWKFontSmoothingLevelMedium;
     case FontSmoothingLevelStrong:
         return kWKFontSmoothingLevelStrong;
-#if PLATFORM(WIN)
-    case FontSmoothingLevelWindows:
-        return kWKFontSmoothingLevelWindows;
-#endif
     }
 
     ASSERT_NOT_REACHED();

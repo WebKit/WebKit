@@ -44,20 +44,12 @@ class IntRect;
 class IntSize;
 class GraphicsLayer;
 class GraphicsLayerFactory;
-
-#if PLATFORM(WIN) && USE(AVFOUNDATION)
-struct GraphicsDeviceAdapter;
-#endif
 }
 
 namespace WebKit {
 
 class UpdateInfo;
 class WebPage;
-
-#if PLATFORM(WIN)
-struct WindowGeometry;
-#endif
 
 class LayerTreeHost : public RefCounted<LayerTreeHost> {
 public:
@@ -99,16 +91,8 @@ public:
     virtual void didReceiveCoordinatedLayerTreeHostMessage(CoreIPC::Connection*, CoreIPC::MessageID, CoreIPC::MessageDecoder&) = 0;
 #endif
 
-#if PLATFORM(WIN)
-    virtual void scheduleChildWindowGeometryUpdate(const WindowGeometry&) = 0;
-#endif
-
 #if PLATFORM(MAC)
     virtual void setLayerHostingMode(LayerHostingMode) { }
-#endif
-
-#if PLATFORM(WIN) && USE(AVFOUNDATION)
-    virtual WebCore::GraphicsDeviceAdapter* graphicsDeviceAdapter() const { return 0; }
 #endif
 
 #if USE(COORDINATED_GRAPHICS) && ENABLE(REQUEST_ANIMATION_FRAME)
@@ -125,7 +109,7 @@ protected:
 #endif
 };
 
-#if !PLATFORM(WIN) && !USE(COORDINATED_GRAPHICS)
+#if !USE(COORDINATED_GRAPHICS)
 inline bool LayerTreeHost::supportsAcceleratedCompositing()
 {
     return true;

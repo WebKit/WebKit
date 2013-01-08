@@ -72,14 +72,12 @@ void ShareableBitmap::paint(WebCore::GraphicsContext& context, float scaleFactor
     paintImage(context.platformContext(), makeCGImageCopy().get(), scaleFactor, destination, source);
 }
 
-#if !PLATFORM(WIN)
 RetainPtr<CGImageRef> ShareableBitmap::makeCGImageCopy()
 {
     OwnPtr<GraphicsContext> graphicsContext = createGraphicsContext();
     RetainPtr<CGImageRef> image(AdoptCF, CGBitmapContextCreateImage(graphicsContext->platformContext()));
     return image;
 }
-#endif
 
 RetainPtr<CGImageRef> ShareableBitmap::makeCGImage()
 {

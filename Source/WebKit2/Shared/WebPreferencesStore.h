@@ -36,12 +36,6 @@ namespace WebKit {
 
 // macro(KeyUpper, KeyLower, TypeNameUpper, TypeName, DefaultValue) 
 
-#if PLATFORM(WIN)
-#define DEFAULT_WEBKIT_AVFOUNDATION_ENABLED false
-#else
-#define DEFAULT_WEBKIT_AVFOUNDATION_ENABLED true
-#endif
-
 #if PLATFORM(GTK)
 #define DEFAULT_WEBKIT_TABSTOLINKS_ENABLED true
 #else
@@ -108,7 +102,7 @@ namespace WebKit {
     macro(WebSecurityEnabled, webSecurityEnabled, Bool, bool, true) \
     macro(AllowUniversalAccessFromFileURLs, allowUniversalAccessFromFileURLs, Bool, bool, false) \
     macro(AllowFileAccessFromFileURLs, allowFileAccessFromFileURLs, Bool, bool, false) \
-    macro(AVFoundationEnabled, isAVFoundationEnabled, Bool, bool, DEFAULT_WEBKIT_AVFOUNDATION_ENABLED) \
+    macro(AVFoundationEnabled, isAVFoundationEnabled, Bool, bool, true) \
     macro(MediaPlaybackRequiresUserGesture, mediaPlaybackRequiresUserGesture, Bool, bool, false) \
     macro(MediaPlaybackAllowsInline, mediaPlaybackAllowsInline, Bool, bool, true) \
     macro(InspectorStartsAttached, inspectorStartsAttached, Bool, bool, true) \
@@ -152,14 +146,8 @@ namespace WebKit {
 #define FOR_EACH_WEBKIT_FLOAT_PREFERENCE(macro) \
     \
 
-#if PLATFORM(WIN)
-#define DEFAULT_WEBKIT_FONT_SMOOTHING_LEVEL FontSmoothingLevelWindows
-#else
-#define DEFAULT_WEBKIT_FONT_SMOOTHING_LEVEL FontSmoothingLevelMedium
-#endif
-
 #define FOR_EACH_WEBKIT_UINT32_PREFERENCE(macro) \
-    macro(FontSmoothingLevel, fontSmoothingLevel, UInt32, uint32_t, DEFAULT_WEBKIT_FONT_SMOOTHING_LEVEL) \
+    macro(FontSmoothingLevel, fontSmoothingLevel, UInt32, uint32_t, FontSmoothingLevelMedium) \
     macro(MinimumFontSize, minimumFontSize, UInt32, uint32_t, 0) \
     macro(MinimumLogicalFontSize, minimumLogicalFontSize, UInt32, uint32_t, 9) \
     macro(DefaultFontSize, defaultFontSize, UInt32, uint32_t, 16) \
@@ -172,19 +160,7 @@ namespace WebKit {
     macro(InspectorAttachedHeight, inspectorAttachedHeight, UInt32, uint32_t, 300) \
     \
 
-#if PLATFORM(WIN)
-
-#define FOR_EACH_WEBKIT_FONT_FAMILY_PREFERENCE(macro) \
-    macro(StandardFontFamily, standardFontFamily, String, String, "Times New Roman") \
-    macro(CursiveFontFamily, cursiveFontFamily, String, String, "Comic Sans MS") \
-    macro(FantasyFontFamily, fantasyFontFamily, String, String, "Comic Sans MS") \
-    macro(FixedFontFamily, fixedFontFamily, String, String, "Courier New") \
-    macro(SansSerifFontFamily, sansSerifFontFamily, String, String, "Arial") \
-    macro(SerifFontFamily, serifFontFamily, String, String, "Times New Roman") \
-    macro(PictographFontFamily, pictographFontFamily, String, String, "Times New Roman") \
-    \
-
-#elif PLATFORM(MAC)
+#if PLATFORM(MAC)
 
 #define FOR_EACH_WEBKIT_FONT_FAMILY_PREFERENCE(macro) \
     macro(StandardFontFamily, standardFontFamily, String, String, "Times") \

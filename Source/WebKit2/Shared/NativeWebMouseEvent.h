@@ -47,8 +47,6 @@ class NativeWebMouseEvent : public WebMouseEvent {
 public:
 #if USE(APPKIT)
     NativeWebMouseEvent(NSEvent *, NSView *);
-#elif PLATFORM(WIN)
-    NativeWebMouseEvent(HWND, UINT message, WPARAM, LPARAM, bool);
 #elif PLATFORM(QT)
     explicit NativeWebMouseEvent(QMouseEvent*, const QTransform& fromItemTransform, int eventClickCount);
 #elif PLATFORM(GTK)
@@ -62,8 +60,6 @@ public:
 
 #if USE(APPKIT)
     NSEvent* nativeEvent() const { return m_nativeEvent.get(); }
-#elif PLATFORM(WIN)
-    const MSG* nativeEvent() const { return &m_nativeEvent; }
 #elif PLATFORM(QT)
     const QMouseEvent* nativeEvent() const { return m_nativeEvent; }
 #elif PLATFORM(GTK)
@@ -75,8 +71,6 @@ public:
 private:
 #if USE(APPKIT)
     RetainPtr<NSEvent> m_nativeEvent;
-#elif PLATFORM(WIN)
-    MSG m_nativeEvent;
 #elif PLATFORM(QT)
     QMouseEvent* m_nativeEvent;
 #elif PLATFORM(GTK)

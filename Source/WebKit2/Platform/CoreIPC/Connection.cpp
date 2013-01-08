@@ -50,13 +50,6 @@ public:
         return m_waitForSyncReplySemaphore.wait(absoluteTime);
     }
 
-#if PLATFORM(WIN)
-    bool waitWhileDispatchingSentWin32Messages(double absoluteTime, const Vector<HWND>& windowsToReceiveMessages)
-    {
-        return Connection::dispatchSentMessagesUntil(windowsToReceiveMessages, m_waitForSyncReplySemaphore, absoluteTime);
-    }
-#endif
-
     // Returns true if this message will be handled on a client thread that is currently
     // waiting for a reply to a synchronous message.
     bool processIncomingMessage(Connection*, IncomingMessage&);
@@ -452,11 +445,7 @@ PassOwnPtr<MessageDecoder> Connection::waitForSyncReply(uint64_t syncRequestID, 
             return nullptr;
 
         // We didn't find a sync reply yet, keep waiting.
-#if PLATFORM(WIN)
-        timedOut = !m_syncMessageState->waitWhileDispatchingSentWin32Messages(absoluteTime, m_client->windowsToReceiveSentMessagesWhileWaitingForSyncReply());
-#else
-
-        // This allows the WebProcess to still serve clients while waiting for the message to return. 
+        // This allows the WebProcess to still serve clients while waiting for the message to return.
         // Notably, it can continue to process accessibility requests, which are on the main thread.
         if (syncSendFlags & SpinRunLoopWhileWaitingForReply) {
 #if PLATFORM(MAC)
@@ -467,7 +456,6 @@ PassOwnPtr<MessageDecoder> Connection::waitForSyncReply(uint64_t syncRequestID, 
 #endif
         } else
             timedOut = !m_syncMessageState->wait(absoluteTime);
-#endif
         
     }
 

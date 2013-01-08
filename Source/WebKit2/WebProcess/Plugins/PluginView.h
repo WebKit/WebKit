@@ -178,10 +178,6 @@ private:
     virtual bool isAcceleratedCompositingEnabled();
     virtual void pluginProcessCrashed();
     virtual void willSendEventToPlugin();
-#if PLATFORM(WIN)
-    virtual HWND nativeParentWindow();
-    virtual void scheduleWindowedPluginGeometryUpdate(const WindowGeometry&);
-#endif
 #if PLATFORM(MAC)
     virtual void pluginFocusOrWindowFocusChanged(bool pluginHasFocusAndWindowHasFocus);
     virtual void setComplexTextInputState(PluginComplexTextInputState);

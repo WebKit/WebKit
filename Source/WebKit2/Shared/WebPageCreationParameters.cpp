@@ -64,10 +64,6 @@ void WebPageCreationParameters::encode(CoreIPC::ArgumentEncoder& encoder) const
     encoder.encodeEnum(layerHostingMode);
     encoder << colorSpace;
 #endif
-
-#if PLATFORM(WIN)
-    encoder << reinterpret_cast<uint64_t>(nativeWindow);
-#endif
 }
 
 bool WebPageCreationParameters::decode(CoreIPC::ArgumentDecoder* decoder, WebPageCreationParameters& parameters)
@@ -130,13 +126,6 @@ bool WebPageCreationParameters::decode(CoreIPC::ArgumentDecoder* decoder, WebPag
         return false;
     if (!decoder->decode(parameters.colorSpace))
         return false;
-#endif
-
-#if PLATFORM(WIN)
-    uint64_t nativeWindow;
-    if (!decoder->decode(nativeWindow))
-        return false;
-    parameters.nativeWindow = reinterpret_cast<HWND>(nativeWindow);
 #endif
 
     return true;

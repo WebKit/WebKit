@@ -31,14 +31,7 @@
 namespace WebKit {
 
 PlatformPopupMenuData::PlatformPopupMenuData()
-#if PLATFORM(WIN)
-    : m_clientPaddingLeft(0)
-    , m_clientPaddingRight(0)
-    , m_clientInsetLeft(0)
-    , m_clientInsetRight(0)
-    , m_popupWidth(0)
-    , m_itemHeight(0)
-#elif PLATFORM(QT)
+#if PLATFORM(QT)
     : multipleSelections(false)
 #endif
 {
@@ -46,22 +39,7 @@ PlatformPopupMenuData::PlatformPopupMenuData()
 
 void PlatformPopupMenuData::encode(CoreIPC::ArgumentEncoder& encoder) const
 {
-#if PLATFORM(WIN)
-    encoder << m_clientPaddingLeft;
-    encoder << m_clientPaddingRight;
-    encoder << m_clientInsetLeft;
-    encoder << m_clientInsetRight;
-    encoder << m_popupWidth;
-    encoder << m_itemHeight;
-
-    ShareableBitmap::Handle notSelectedBackingStoreHandle;
-    m_notSelectedBackingStore->createHandle(notSelectedBackingStoreHandle);
-    encoder << notSelectedBackingStoreHandle;
-
-    ShareableBitmap::Handle selectedBackingStoreHandle;
-    m_selectedBackingStore->createHandle(selectedBackingStoreHandle);
-    encoder << selectedBackingStoreHandle;
-#elif PLATFORM(MAC)
+#if PLATFORM(MAC)
     encoder << fontInfo;
     encoder << shouldPopOver;
 #elif PLATFORM(QT)
@@ -73,30 +51,7 @@ void PlatformPopupMenuData::encode(CoreIPC::ArgumentEncoder& encoder) const
 
 bool PlatformPopupMenuData::decode(CoreIPC::ArgumentDecoder* decoder, PlatformPopupMenuData& data)
 {
-#if PLATFORM(WIN)
-    if (!decoder->decode(data.m_clientPaddingLeft))
-        return false;
-    if (!decoder->decode(data.m_clientPaddingRight))
-        return false;
-    if (!decoder->decode(data.m_clientInsetLeft))
-        return false;
-    if (!decoder->decode(data.m_clientInsetRight))
-        return false;
-    if (!decoder->decode(data.m_popupWidth))
-        return false;
-    if (!decoder->decode(data.m_itemHeight))
-        return false;
-
-    ShareableBitmap::Handle notSelectedBackingStoreHandle;
-    if (!decoder->decode(notSelectedBackingStoreHandle))
-        return false;
-    data.m_notSelectedBackingStore = ShareableBitmap::create(notSelectedBackingStoreHandle);
-
-    ShareableBitmap::Handle selectedBackingStoreHandle;
-    if (!decoder->decode(selectedBackingStoreHandle))
-        return false;
-    data.m_selectedBackingStore = ShareableBitmap::create(selectedBackingStoreHandle);
-#elif PLATFORM(MAC)
+#if PLATFORM(MAC)
     if (!decoder->decode(data.fontInfo))
         return false;
     if (!decoder->decode(data.shouldPopOver))

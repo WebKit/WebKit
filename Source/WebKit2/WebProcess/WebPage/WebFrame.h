@@ -155,7 +155,7 @@ public:
     void setLoadListener(LoadListener* loadListener) { m_loadListener = loadListener; }
     LoadListener* loadListener() const { return m_loadListener; }
     
-#if PLATFORM(MAC) || PLATFORM(WIN)
+#if PLATFORM(MAC)
     typedef bool (*FrameFilterFunction)(WKBundleFrameRef, WKBundleFrameRef subframe, void* context);
     RetainPtr<CFDataRef> webArchiveData(FrameFilterFunction, void* context);
 #endif

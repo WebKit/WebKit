@@ -92,10 +92,6 @@ public:
             m_modifierFlags |= WebEvent::AltKey;
         if (webEvent.metaKey())
             m_modifierFlags |= WebEvent::MetaKey;
-
-#if PLATFORM(WIN)
-        m_didActivateWebView = webEvent.didActivateWebView();
-#endif
     }
 };
 

@@ -82,8 +82,6 @@ public:
     static unsigned buttonState();
 #endif
 
-#elif PLATFORM(WIN)
-    HWND containingWindow();
 #endif
 
     PluginQuirks quirks() const { return m_pluginModule->pluginQuirks(); }

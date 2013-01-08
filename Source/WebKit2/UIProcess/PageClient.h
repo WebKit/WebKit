@@ -68,10 +68,6 @@ class WebPopupMenuProxy;
 class WebColorChooserProxy;
 #endif
 
-#if PLATFORM(WIN)
-struct WindowGeometry;
-#endif
-
 #if PLATFORM(MAC)
 struct ColorSpaceData;
 #endif
@@ -167,9 +163,6 @@ public:
     virtual void setPromisedData(const String& pasteboardName, PassRefPtr<WebCore::SharedBuffer> imageBuffer, const String& filename, const String& extension, const String& title,
                                  const String& url, const String& visibleUrl, PassRefPtr<WebCore::SharedBuffer> archiveBuffer) = 0;
 #endif
-#if PLATFORM(WIN)
-    virtual void compositionSelectionChanged(bool) = 0;
-#endif
 #if PLATFORM(GTK)
     virtual void getEditorCommandsForKeyEvent(const NativeWebKeyboardEvent&, const AtomicString&, Vector<WTF::String>&) = 0;
 #endif
@@ -194,20 +187,11 @@ public:
 #endif
 
     virtual void setFindIndicator(PassRefPtr<FindIndicator>, bool fadeOut, bool animate) = 0;
-#if PLATFORM(WIN)
-    virtual void didInstallOrUninstallPageOverlay(bool) = 0;
-#endif
 
 #if USE(ACCELERATED_COMPOSITING)
     virtual void enterAcceleratedCompositingMode(const LayerTreeContext&) = 0;
     virtual void exitAcceleratedCompositingMode() = 0;
     virtual void updateAcceleratedCompositingMode(const LayerTreeContext&) = 0;
-#endif
-
-#if PLATFORM(WIN)
-    virtual HWND nativeWindow() = 0;
-    virtual void setGestureReachedScrollingLimit(bool) = 0;
-    virtual void scheduleChildWindowGeometryUpdate(const WindowGeometry&) = 0;
 #endif
 
 #if PLATFORM(MAC)

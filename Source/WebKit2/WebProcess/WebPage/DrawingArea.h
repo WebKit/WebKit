@@ -52,10 +52,6 @@ class WebPage;
 struct WebPageCreationParameters;
 struct WebPreferencesStore;
 
-#if PLATFORM(WIN)
-struct WindowGeometry;
-#endif
-
 class DrawingArea {
     WTF_MAKE_NONCOPYABLE(DrawingArea);
 
@@ -96,10 +92,6 @@ public:
 
 #if USE(COORDINATED_GRAPHICS)
     virtual void didReceiveCoordinatedLayerTreeHostMessage(CoreIPC::Connection*, CoreIPC::MessageID, CoreIPC::MessageDecoder&) = 0;
-#endif
-
-#if PLATFORM(WIN)
-    virtual void scheduleChildWindowGeometryUpdate(const WindowGeometry&) = 0;
 #endif
 
     virtual void dispatchAfterEnsuringUpdatedScrollPosition(const Function<void ()>&);

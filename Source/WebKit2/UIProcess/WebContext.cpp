@@ -136,10 +136,6 @@ WebContext::WebContext(ProcessModel processModel, const String& injectedBundlePa
     , m_cacheModel(CacheModelDocumentViewer)
     , m_memorySamplerEnabled(false)
     , m_memorySamplerInterval(1400.0)
-#if PLATFORM(WIN)
-    , m_shouldPaintNativeControls(true)
-    , m_initialHTTPCookieAcceptPolicy(HTTPCookieAcceptPolicyAlways)
-#endif
 #if USE(SOUP)
     , m_initialHTTPCookieAcceptPolicy(HTTPCookieAcceptPolicyOnlyFromMainDocumentDomain)
 #endif

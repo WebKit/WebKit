@@ -32,8 +32,6 @@
 
 #if PLATFORM(MAC)
 typedef NSURLResponse* PlatformResponse;
-#elif PLATFORM(WIN)
-typedef CFURLResponseRef PlatformResponse;
 #else
 typedef void* PlatformResponse;
 #endif

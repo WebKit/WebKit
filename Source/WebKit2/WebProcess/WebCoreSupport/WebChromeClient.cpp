@@ -676,7 +676,7 @@ void WebChromeClient::formStateDidChange(const Node*)
 
 bool WebChromeClient::selectItemWritingDirectionIsNatural()
 {
-#if PLATFORM(WIN) || PLATFORM(EFL)
+#if PLATFORM(EFL)
     return true;
 #else
     return false;
@@ -685,11 +685,7 @@ bool WebChromeClient::selectItemWritingDirectionIsNatural()
 
 bool WebChromeClient::selectItemAlignmentFollowsMenuWritingDirection()
 {
-#if PLATFORM(WIN)
-    return false;
-#else
     return true;
-#endif
 }
 
 bool WebChromeClient::hasOpenedPopup() const
@@ -735,25 +731,10 @@ void WebChromeClient::scheduleCompositingLayerFlush()
 
 #endif
 
-#if PLATFORM(WIN) && USE(AVFOUNDATION)
-WebCore::GraphicsDeviceAdapter* WebChromeClient::graphicsDeviceAdapter() const
-{
-    if (!m_page->drawingArea())
-        return 0;
-    return m_page->drawingArea()->layerTreeHost()->graphicsDeviceAdapter();
-}
-#endif
-
 #if ENABLE(TOUCH_EVENTS)
 void WebChromeClient::needTouchEvents(bool needTouchEvents)
 {
     m_page->send(Messages::WebPageProxy::NeedTouchEvents(needTouchEvents));
-}
-#endif
-
-#if PLATFORM(WIN)
-void WebChromeClient::setLastSetCursorToCurrentCursor()
-{
 }
 #endif
 

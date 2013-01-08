@@ -1,3 +1,171 @@
+2013-01-07  Anders Carlsson  <andersca@apple.com>
+
+        Remove PLATFORM(WIN) #ifdefs
+        https://bugs.webkit.org/show_bug.cgi?id=106279
+
+        Reviewed by Sam Weinig.
+
+        * Platform/CoreIPC/BinarySemaphore.cpp:
+        * Platform/CoreIPC/Connection.cpp:
+        (CoreIPC::Connection::waitForSyncReply):
+        * Platform/CoreIPC/Connection.h:
+        (Client):
+        * Platform/Module.cpp:
+        (WebKit::Module::Module):
+        * Platform/Module.h:
+        (Module):
+        * Platform/PlatformProcessIdentifier.h:
+        (WebKit):
+        * Shared/CommandLine.h:
+        (CommandLine):
+        * Shared/FontSmoothingLevel.h:
+        * Shared/LayerTreeContext.h:
+        (LayerTreeContext):
+        * Shared/NativeWebKeyboardEvent.h:
+        (NativeWebKeyboardEvent):
+        * Shared/NativeWebMouseEvent.h:
+        (NativeWebMouseEvent):
+        * Shared/NativeWebWheelEvent.h:
+        (NativeWebWheelEvent):
+        * Shared/PlatformPopupMenuData.cpp:
+        (WebKit::PlatformPopupMenuData::PlatformPopupMenuData):
+        (WebKit::PlatformPopupMenuData::encode):
+        (WebKit::PlatformPopupMenuData::decode):
+        * Shared/PlatformPopupMenuData.h:
+        (PlatformPopupMenuData):
+        * Shared/Plugins/PluginModuleInfo.h:
+        (PluginModuleInfo):
+        (WebKit::PluginModuleInfo::isolatedCopy):
+        * Shared/ShareableBitmap.h:
+        (ShareableBitmap):
+        * Shared/WebCoreArgumentCoders.h:
+        * Shared/WebEvent.h:
+        (WebMouseEvent):
+        * Shared/WebEventConversion.cpp:
+        (WebKit::WebKit2PlatformMouseEvent::WebKit2PlatformMouseEvent):
+        * Shared/WebMouseEvent.cpp:
+        (WebKit::WebMouseEvent::WebMouseEvent):
+        (WebKit::WebMouseEvent::encode):
+        (WebKit::WebMouseEvent::decode):
+        * Shared/WebPageCreationParameters.cpp:
+        (WebKit::WebPageCreationParameters::encode):
+        (WebKit::WebPageCreationParameters::decode):
+        * Shared/WebPageCreationParameters.h:
+        (WebPageCreationParameters):
+        * Shared/WebPreferencesStore.h:
+        (WebKit):
+        * Shared/WebProcessCreationParameters.cpp:
+        (WebKit::WebProcessCreationParameters::WebProcessCreationParameters):
+        (WebKit::WebProcessCreationParameters::encode):
+        (WebKit::WebProcessCreationParameters::decode):
+        * Shared/WebProcessCreationParameters.h:
+        (WebProcessCreationParameters):
+        * Shared/WebURLRequest.h:
+        * Shared/WebURLResponse.h:
+        * Shared/cg/ShareableBitmapCG.cpp:
+        (WebKit::ShareableBitmap::makeCGImageCopy):
+        * UIProcess/API/C/WKAPICast.h:
+        (WebKit::toFontSmoothingLevel):
+        (WebKit::toAPI):
+        * UIProcess/API/C/WKPage.cpp:
+        * UIProcess/BackingStore.h:
+        (BackingStore):
+        * UIProcess/PageClient.h:
+        (WebKit):
+        (PageClient):
+        * UIProcess/WebContext.cpp:
+        (WebKit::WebContext::WebContext):
+        * UIProcess/WebContext.h:
+        (WebContext):
+        * UIProcess/WebFullScreenManagerProxy.h:
+        (WebKit):
+        * UIProcess/WebInspectorProxy.cpp:
+        (WebKit::WebInspectorProxy::WebInspectorProxy):
+        * UIProcess/WebInspectorProxy.h:
+        (WebInspectorProxy):
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::performDragControllerAction):
+        (WebKit::WebPageProxy::didReceiveEvent):
+        (WebKit::WebPageProxy::creationParameters):
+        (WebKit):
+        * UIProcess/WebPageProxy.h:
+        (WebKit):
+        (WebPageProxy):
+        * UIProcess/WebPageProxy.messages.in:
+        * UIProcess/WebProcessProxy.h:
+        (WebProcessProxy):
+        * WebKit2Prefix.h:
+        * WebProcess/InjectedBundle/API/c/WKBundleFrame.cpp:
+        (WKBundleFrameCopyWebArchiveFilteringSubframes):
+        * WebProcess/InjectedBundle/InjectedBundle.cpp:
+        (WebKit::InjectedBundle::setPrivateBrowsingEnabled):
+        (WebKit::InjectedBundle::switchNetworkLoaderToNewTestingSession):
+        * WebProcess/InjectedBundle/InjectedBundle.h:
+        (WebKit):
+        (InjectedBundle):
+        * WebProcess/Plugins/Netscape/NetscapeBrowserFuncs.cpp:
+        (WebKit::NPN_GetValue):
+        * WebProcess/Plugins/Netscape/NetscapePlugin.h:
+        (NetscapePlugin):
+        * WebProcess/Plugins/PluginController.h:
+        (PluginController):
+        * WebProcess/Plugins/PluginView.cpp:
+        * WebProcess/Plugins/PluginView.h:
+        (PluginView):
+        * WebProcess/ResourceCache/cf/WebResourceCacheManagerCFNet.cpp:
+        * WebProcess/WebCoreSupport/WebChromeClient.cpp:
+        (WebKit::WebChromeClient::selectItemWritingDirectionIsNatural):
+        (WebKit::WebChromeClient::selectItemAlignmentFollowsMenuWritingDirection):
+        (WebKit):
+        * WebProcess/WebCoreSupport/WebChromeClient.h:
+        (WebChromeClient):
+        * WebProcess/WebCoreSupport/WebDragClient.cpp:
+        (WebKit):
+        * WebProcess/WebCoreSupport/WebEditorClient.cpp:
+        (WebKit::WebEditorClient::respondToChangedSelection):
+        * WebProcess/WebCoreSupport/WebFrameLoaderClient.cpp:
+        (WebKit):
+        * WebProcess/WebCoreSupport/WebFrameLoaderClient.h:
+        (WebFrameLoaderClient):
+        * WebProcess/WebCoreSupport/WebPlatformStrategies.cpp:
+        * WebProcess/WebCoreSupport/WebPopupMenu.cpp:
+        (WebKit::WebPopupMenu::updateFromElement):
+        * WebProcess/WebKitMain.cpp:
+        * WebProcess/WebPage/DrawingArea.h:
+        (WebKit):
+        (DrawingArea):
+        * WebProcess/WebPage/DrawingAreaImpl.cpp:
+        (WebKit::DrawingAreaImpl::createGraphicsContext):
+        * WebProcess/WebPage/DrawingAreaImpl.h:
+        (DrawingAreaImpl):
+        * WebProcess/WebPage/LayerTreeHost.cpp:
+        (WebKit::LayerTreeHost::create):
+        * WebProcess/WebPage/LayerTreeHost.h:
+        (WebCore):
+        (WebKit):
+        (LayerTreeHost):
+        * WebProcess/WebPage/WebFrame.cpp:
+        (WebKit):
+        * WebProcess/WebPage/WebFrame.h:
+        (WebFrame):
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::WebPage):
+        (WebKit::WebPage::installPageOverlay):
+        (WebKit::WebPage::uninstallPageOverlay):
+        (WebKit::WebPage::getWebArchiveOfFrame):
+        (WebKit):
+        * WebProcess/WebPage/WebPage.h:
+        (WebPage):
+        * WebProcess/WebPage/WebPage.messages.in:
+        * WebProcess/WebProcess.cpp:
+        (WebKit::WebProcess::initializeWebProcess):
+        (WebKit::WebProcess::ensurePrivateBrowsingSession):
+        (WebKit::WebProcess::destroyPrivateBrowsingSession):
+        * WebProcess/WebProcess.h:
+        (WebProcess):
+        * WebProcess/WebProcess.messages.in:
+        * config.h:
+
 2013-01-07  Alexey Proskuryakov  <ap@apple.com>
 
         [WK2] Delete more obsolete Keychain code

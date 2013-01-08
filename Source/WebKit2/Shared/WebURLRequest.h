@@ -32,8 +32,6 @@
 
 #if PLATFORM(MAC)
 typedef NSURLRequest* PlatformRequest;
-#elif PLATFORM(WIN)
-typedef CFURLRequestRef PlatformRequest;
 #else
 typedef void* PlatformRequest;
 #endif

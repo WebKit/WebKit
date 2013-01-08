@@ -204,9 +204,6 @@ messages -> WebPageProxy {
 
     # Editor notifications
     EditorStateChanged(WebKit::EditorState editorState)
-#if PLATFORM(WIN)
-    DidChangeCompositionSelection(bool hasChanged)
-#endif
 #if PLATFORM(QT)
     WillSetInputMethodState()
 #endif
@@ -215,16 +212,10 @@ messages -> WebPageProxy {
     SetFindIndicator(WebCore::FloatRect selectionRect, Vector<WebCore::FloatRect> textRects, float contentImageScaleFactor, WebKit::ShareableBitmap::Handle contentImageHandle, bool fadeOut, bool animate)
     DidFindString(WTF::String string, uint32_t matchCount)
     DidFailToFindString(WTF::String string)
-#if PLATFORM(WIN)
-    DidInstallOrUninstallPageOverlay(bool didInstall)
-#endif
 
     # PopupMenu messages
     ShowPopupMenu(WebCore::IntRect rect, uint64_t textDirection, Vector<WebKit::WebPopupItem> items, int32_t selectedIndex, WebKit::PlatformPopupMenuData data)
     HidePopupMenu()
-#if PLATFORM(WIN)
-    SetPopupMenuSelectedIndex(int32_t selectedIndex)
-#endif
 
 #if ENABLE(CONTEXT_MENUS)
     # ContextMenu messages
@@ -265,9 +256,6 @@ messages -> WebPageProxy {
 #if PLATFORM(MAC) && ENABLE(DRAG_SUPPORT)
     SetDragImage(WebCore::IntPoint clientPosition, WebKit::ShareableBitmap::Handle dragImage, bool linkDrag)
     SetPromisedData(WTF::String pasteboardName, WebKit::SharedMemory::Handle imageHandle, uint64_t imageSize, WTF::String filename, WTF::String extension, WTF::String title, WTF::String url, WTF::String visibleURL, WebKit::SharedMemory::Handle archiveHandle, uint64_t archiveSize)
-#endif
-#if PLATFORM(WIN) && ENABLE(DRAG_SUPPORT)
-    StartDragDrop(WebCore::IntPoint imagePoint, WebCore::IntPoint dragPoint, uint64_t okEffect, HashMap<UINT,Vector<String> > dataMap, uint64_t fileSize, String pathname, WebKit::SharedMemory::Handle fileContentHandle, WebCore::IntSize dragImageSize, WebKit::SharedMemory::Handle dragImage, bool linkDrag)
 #endif
 #if (PLATFORM(QT) || PLATFORM(GTK)) && ENABLE(DRAG_SUPPORT)
     StartDrag(WebCore::DragData dragData, WebKit::ShareableBitmap::Handle dragImage)
@@ -315,14 +303,6 @@ messages -> WebPageProxy {
     DismissDictationAlternativeUI()
     RemoveDictationAlternatives(uint64_t dictationContext)
     DictationAlternatives(uint64_t dictationContext) -> (Vector<String> alternatives)
-#endif
-
-#if PLATFORM(WIN)
-    # Windows 7 Gesture Messages
-    SetGestureReachedScrollingLimit(bool limitReached)
-
-    # Miscellaneous Windows messages
-    ScheduleChildWindowGeometryUpdate(WebKit::WindowGeometry geometry)
 #endif
 
 #if PLUGIN_ARCHITECTURE(X11)

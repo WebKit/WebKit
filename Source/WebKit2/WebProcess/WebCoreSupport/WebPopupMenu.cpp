@@ -131,13 +131,6 @@ void WebPopupMenu::hide()
 
 void WebPopupMenu::updateFromElement()
 {
-#if PLATFORM(WIN)
-    if (!m_page || !m_popupClient)
-        return;
-
-    int selectedIndex = m_popupClient->selectedIndex();
-    WebProcess::shared().connection()->send(Messages::WebPageProxy::SetPopupMenuSelectedIndex(selectedIndex), m_page->pageID());
-#endif
 }
 
 } // namespace WebKit

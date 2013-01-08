@@ -54,9 +54,6 @@ namespace WebKit {
     
 #if PLATFORM(MAC)
 typedef WKView PlatformWebView;
-#elif PLATFORM(WIN)
-class WebView;
-typedef WebView PlatformWebView;
 #elif PLATFORM(QT)
 typedef QQuickWebView PlatformWebView;
 #elif PLATFORM(GTK)

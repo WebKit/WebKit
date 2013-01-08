@@ -51,9 +51,6 @@ messages -> WebProcess {
     SetShouldUseFontSmoothing(bool useFontSmoothing)
     UserPreferredLanguagesChanged(Vector<WTF::String> languages)
     FullKeyboardAccessModeChanged(bool fullKeyboardAccessEnabled)
-#if PLATFORM(WIN)
-    SetShouldPaintNativeControls(bool shouldPaintNativeControls)
-#endif
 #if USE(SOUP)
     SetIgnoreTLSErrors(bool ignoreTLSErrors)
 #endif

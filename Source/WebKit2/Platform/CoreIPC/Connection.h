@@ -43,8 +43,6 @@
 #if HAVE(XPC)
 #include <xpc/xpc.h>
 #endif
-#elif PLATFORM(WIN)
-#include <string>
 #elif PLATFORM(QT)
 QT_BEGIN_NAMESPACE
 class QSocketNotifier;
@@ -89,10 +87,6 @@ public:
     public:
         virtual void didClose(Connection*) = 0;
         virtual void didReceiveInvalidMessage(Connection*, StringReference messageReceiverName, StringReference messageName) = 0;
-
-#if PLATFORM(WIN)
-        virtual Vector<HWND> windowsToReceiveSentMessagesWhileWaitingForSyncReply() = 0;
-#endif
 
     protected:
         virtual ~Client() { }

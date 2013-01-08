@@ -42,9 +42,6 @@
 #if ENABLE(INSPECTOR_SERVER)
 #include "WebInspectorServer.h"
 #endif
-#if PLATFORM(WIN)
-#include "WebView.h"
-#endif
 
 using namespace WebCore;
 
@@ -86,9 +83,7 @@ WebInspectorProxy::WebInspectorProxy(WebPageProxy* page)
     , m_isDebuggingJavaScript(false)
     , m_isProfilingJavaScript(false)
     , m_isProfilingPage(false)
-#if PLATFORM(WIN)
-    , m_inspectorWindow(0)
-#elif PLATFORM(GTK) || PLATFORM(EFL)
+#if PLATFORM(GTK) || PLATFORM(EFL)
     , m_inspectorView(0)
     , m_inspectorWindow(0)
 #endif

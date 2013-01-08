@@ -160,10 +160,6 @@ struct PrintInfo;
 struct WebPageCreationParameters;
 struct WebPopupItem;
 
-#if PLATFORM(WIN)
-struct WindowGeometry;
-#endif
-
 #if ENABLE(GESTURE_EVENTS)
 class WebGestureEvent;
 #endif
@@ -417,28 +413,13 @@ public:
     void intrinsicContentSizeDidChange(const WebCore::IntSize& intrinsicContentSize);
 #endif
 #endif
-#if PLATFORM(WIN)
-    void didChangeCompositionSelection(bool);
-    void confirmComposition(const String&);
-    void setComposition(const String&, Vector<WebCore::CompositionUnderline>&, int);
-    WebCore::IntRect firstRectForCharacterInSelectedRange(int);
-    String getSelectedText();
-
-    bool gestureWillBegin(const WebCore::IntPoint&);
-    void gestureDidScroll(const WebCore::IntSize&);
-    void gestureDidEnd();
-
-    void setGestureReachedScrollingLimit(bool);
-
-    HWND nativeWindow() const;
-#endif
 #if PLATFORM(EFL)
     void handleInputMethodKeydown(bool& handled);
     void confirmComposition(const String&);
     void setComposition(const String&, Vector<WebCore::CompositionUnderline>&, int);
     void cancelComposition();
 #endif
-#if USE(CAIRO) && !PLATFORM(WIN_CAIRO)
+#if USE(CAIRO)
     PlatformWidget viewWidget();
 #endif
 #if USE(TILED_BACKING_STORE)
@@ -558,9 +539,6 @@ public:
     void setFindIndicator(const WebCore::FloatRect& selectionRectInWindowCoordinates, const Vector<WebCore::FloatRect>& textRectsInSelectionRectCoordinates, float contentImageScaleFactor, const ShareableBitmap::Handle& contentImageHandle, bool fadeOut, bool animate);
     void didFindString(const String&, uint32_t matchCount);
     void didFailToFindString(const String&);
-#if PLATFORM(WIN)
-    void didInstallOrUninstallPageOverlay(bool);
-#endif
 
     void getContentsAsString(PassRefPtr<StringCallback>);
 #if ENABLE(MHTML)
@@ -607,9 +585,6 @@ public:
     void setDragImage(const WebCore::IntPoint& clientPosition, const ShareableBitmap::Handle& dragImageHandle, bool isLinkDrag);
     void setPromisedData(const String& pasteboardName, const SharedMemory::Handle& imageHandle, uint64_t imageSize, const String& filename, const String& extension,
                          const String& title, const String& url, const String& visibleURL, const SharedMemory::Handle& archiveHandle, uint64_t archiveSize);
-#endif
-#if PLATFORM(WIN)
-    void startDragDrop(const WebCore::IntPoint& imagePoint, const WebCore::IntPoint& dragPoint, uint64_t okEffect, const HashMap<UINT, Vector<String> >& dataMap, uint64_t fileSize, const String& pathname, const SharedMemory::Handle& fileContentHandle, const WebCore::IntSize& dragImageSize, const SharedMemory::Handle& dragImageHandle, bool isLinkDrag);
 #endif
 #if PLATFORM(QT) || PLATFORM(GTK)
     void startDrag(const WebCore::DragData&, const ShareableBitmap::Handle& dragImage);
@@ -705,7 +680,7 @@ public:
     void beginPrinting(WebFrameProxy*, const PrintInfo&);
     void endPrinting();
     void computePagesForPrinting(WebFrameProxy*, const PrintInfo&, PassRefPtr<ComputedPagesCallback>);
-#if PLATFORM(MAC) || PLATFORM(WIN)
+#if PLATFORM(MAC)
     void drawRectToImage(WebFrameProxy*, const PrintInfo&, const WebCore::IntRect&, const WebCore::IntSize&, PassRefPtr<ImageCallback>);
     void drawPagesToPDF(WebFrameProxy*, const PrintInfo&, uint32_t first, uint32_t count, PassRefPtr<DataCallback>);
 #elif PLATFORM(GTK)
@@ -947,9 +922,6 @@ private:
     // Popup Menu.
     void showPopupMenu(const WebCore::IntRect& rect, uint64_t textDirection, const Vector<WebPopupItem>& items, int32_t selectedIndex, const PlatformPopupMenuData&);
     void hidePopupMenu();
-#if PLATFORM(WIN)
-    void setPopupMenuSelectedIndex(int32_t);
-#endif
 
 #if ENABLE(CONTEXT_MENUS)
     // Context Menu.
@@ -1050,10 +1022,6 @@ private:
     void performDragControllerAction(DragControllerAction, WebCore::DragData*, const String& dragStorageName, const SandboxExtension::Handle&, const SandboxExtension::HandleArray&);
 
     void updateBackingStoreDiscardableState();
-
-#if PLATFORM(WIN)
-    void scheduleChildWindowGeometryUpdate(const WindowGeometry&);
-#endif
 
     void setRenderTreeSize(uint64_t treeSize) { m_renderTreeSize = treeSize; }
 

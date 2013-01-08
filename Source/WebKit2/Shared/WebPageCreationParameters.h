@@ -92,10 +92,6 @@ struct WebPageCreationParameters {
     LayerHostingMode layerHostingMode;
     ColorSpaceData colorSpace;
 #endif
-
-#if PLATFORM(WIN)
-    HWND nativeWindow;
-#endif
 };
 
 } // namespace WebKit

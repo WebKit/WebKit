@@ -46,10 +46,6 @@ OBJC_CLASS WKWebInspectorProxyObjCAdapter;
 OBJC_CLASS WKWebInspectorWKView;
 #endif
 
-#if PLATFORM(WIN)
-#include <WebCore/WindowMessageListener.h>
-#endif
-
 #if PLATFORM(GTK)
 #include "WebInspectorClientGtk.h"
 #endif
@@ -66,15 +62,7 @@ class WebPageGroup;
 class WebPageProxy;
 struct WebPageCreationParameters;
 
-#if PLATFORM(WIN)
-class WebView;
-#endif
-
-class WebInspectorProxy : public APIObject
-#if PLATFORM(WIN)
-    , public WebCore::WindowMessageListener
-#endif
-{
+class WebInspectorProxy : public APIObject {
 public:
     static const Type APIType = TypeInspector;
 
@@ -182,20 +170,6 @@ private:
 
     static WebPageGroup* inspectorPageGroup();
 
-#if PLATFORM(WIN)
-    static bool registerInspectorViewWindowClass();
-    static LRESULT CALLBACK InspectorViewWndProc(HWND, UINT, WPARAM, LPARAM);
-    LRESULT wndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam);
-
-    LRESULT onSizeEvent(HWND hWnd, UINT message, WPARAM, LPARAM, bool& handled);
-    LRESULT onMinMaxInfoEvent(HWND hWnd, UINT message, WPARAM, LPARAM, bool& handled);
-    LRESULT onSetFocusEvent(HWND hWnd, UINT message, WPARAM, LPARAM, bool& handled);
-    LRESULT onCloseEvent(HWND hWnd, UINT message, WPARAM, LPARAM, bool& handled);
-
-    void onWebViewWindowPosChangingEvent(WPARAM, LPARAM);
-    virtual void windowReceivedMessage(HWND, UINT message, WPARAM, LPARAM);
-#endif
-
 #if PLATFORM(GTK) || PLATFORM(EFL)
     void createInspectorWindow();
 #endif
@@ -223,9 +197,6 @@ private:
     RetainPtr<NSButton> m_dockButton;
     RetainPtr<WKWebInspectorProxyObjCAdapter> m_inspectorProxyObjCAdapter;
     String m_urlString;
-#elif PLATFORM(WIN)
-    HWND m_inspectorWindow;
-    RefPtr<WebView> m_inspectorView;
 #elif PLATFORM(GTK)
     WebInspectorClientGtk m_client;
     GtkWidget* m_inspectorView;

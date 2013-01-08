@@ -74,10 +74,6 @@ private:
     virtual void scheduleCompositingLayerFlush() OVERRIDE;
 #endif
 
-#if PLATFORM(WIN)
-    virtual void scheduleChildWindowGeometryUpdate(const WindowGeometry&);
-#endif
-
 #if PLATFORM(MAC)
     virtual void setLayerHostingMode(uint32_t) OVERRIDE;
 #endif

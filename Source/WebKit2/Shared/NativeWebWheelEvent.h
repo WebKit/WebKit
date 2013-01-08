@@ -47,8 +47,6 @@ class NativeWebWheelEvent : public WebWheelEvent {
 public:
 #if USE(APPKIT)
     NativeWebWheelEvent(NSEvent *, NSView *);
-#elif PLATFORM(WIN)
-    NativeWebWheelEvent(HWND, UINT message, WPARAM, LPARAM);
 #elif PLATFORM(QT)
     explicit NativeWebWheelEvent(QWheelEvent*, const QTransform& fromItemTransform);
 #elif PLATFORM(GTK)
@@ -60,8 +58,6 @@ public:
 
 #if USE(APPKIT)
     NSEvent* nativeEvent() const { return m_nativeEvent.get(); }
-#elif PLATFORM(WIN)
-    const MSG* nativeEvent() const { return &m_nativeEvent; }
 #elif PLATFORM(QT)
     const QWheelEvent* nativeEvent() const { return m_nativeEvent; }
 #elif PLATFORM(GTK)
@@ -73,8 +69,6 @@ public:
 private:
 #if USE(APPKIT)
     RetainPtr<NSEvent> m_nativeEvent;
-#elif PLATFORM(WIN)
-    MSG m_nativeEvent;
 #elif PLATFORM(QT)
     QWheelEvent* m_nativeEvent;
 #elif PLATFORM(GTK)
