@@ -71,6 +71,7 @@ public:
     ContentDistributor& distributor();
     const ContentDistributor& distributor() const;
 
+    void didAffectSelector(AffectedSelectorMask);
     bool shouldCollectSelectFeatureSet() const { return m_shouldCollectSelectFeatureSet; }
     void setShouldCollectSelectFeatureSet();
     void ensureSelectFeatureSetCollected();
@@ -78,7 +79,6 @@ public:
     const SelectRuleFeatureSet& selectRuleFeatureSet() const;
 
     void reportMemoryUsage(MemoryObjectInfo*) const;
-
 private:
     void invalidateDistribution(Element* host);
 
@@ -89,8 +89,6 @@ private:
     SelectRuleFeatureSet m_selectFeatures;
     bool m_shouldCollectSelectFeatureSet : 1;
 };
-
-void invalidateParentDistributionIfNecessary(Element*, SelectRuleFeatureSet::SelectRuleFeatureMask updatedFeatures);
 
 inline ShadowRoot* ElementShadow::youngestShadowRoot() const
 {

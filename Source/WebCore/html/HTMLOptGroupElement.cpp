@@ -26,7 +26,6 @@
 #include "HTMLOptGroupElement.h"
 
 #include "Document.h"
-#include "ElementShadow.h"
 #include "HTMLNames.h"
 #include "HTMLSelectElement.h"
 #include "RenderMenuList.h"
@@ -85,7 +84,7 @@ void HTMLOptGroupElement::parseAttribute(const QualifiedName& name, const Atomic
     recalcSelectOptions();
 
     if (name == disabledAttr)
-        invalidateParentDistributionIfNecessary(this, SelectRuleFeatureSet::RuleFeatureDisabled | SelectRuleFeatureSet::RuleFeatureEnabled);
+        didAffectSelector(AffectedSelectorDisabled | AffectedSelectorEnabled);
 }
 
 void HTMLOptGroupElement::recalcSelectOptions()

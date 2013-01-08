@@ -3438,15 +3438,11 @@ void Document::getFocusableNodes(Vector<RefPtr<Node> >& nodes)
   
 void Document::setCSSTarget(Element* n)
 {
-    if (m_cssTarget) {
-        m_cssTarget->setNeedsStyleRecalc();
-        invalidateParentDistributionIfNecessary(m_cssTarget, SelectRuleFeatureSet::RuleFeatureTarget);
-    }
+    if (m_cssTarget)
+        m_cssTarget->didAffectSelector(AffectedSelectorTarget);
     m_cssTarget = n;
-    if (n) {
-        n->setNeedsStyleRecalc();
-        invalidateParentDistributionIfNecessary(n, SelectRuleFeatureSet::RuleFeatureTarget);
-    }
+    if (n)
+        n->didAffectSelector(AffectedSelectorTarget);
 }
 
 void Document::registerNodeList(LiveNodeListBase* list)

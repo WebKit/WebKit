@@ -150,8 +150,7 @@ void HTMLFormControlElement::parseAttribute(const QualifiedName& name, const Ato
 void HTMLFormControlElement::disabledAttributeChanged()
 {
     setNeedsWillValidateCheck();
-    setNeedsStyleRecalc();
-    invalidateParentDistributionIfNecessary(this, SelectRuleFeatureSet::RuleFeatureDisabled | SelectRuleFeatureSet::RuleFeatureEnabled);
+    didAffectSelector(AffectedSelectorDisabled | AffectedSelectorEnabled);
     if (renderer() && renderer()->style()->hasAppearance())
         renderer()->theme()->stateChanged(renderer(), EnabledState);
 }

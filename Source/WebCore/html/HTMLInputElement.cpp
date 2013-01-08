@@ -883,7 +883,7 @@ void HTMLInputElement::setChecked(bool nowChecked, TextFieldEventBehavior eventB
         dispatchFormControlChangeEvent();
     }
 
-    invalidateParentDistributionIfNecessary(this, SelectRuleFeatureSet::RuleFeatureChecked);
+    didAffectSelector(AffectedSelectorChecked);
 }
 
 void HTMLInputElement::setIndeterminate(bool newValue)
@@ -893,8 +893,7 @@ void HTMLInputElement::setIndeterminate(bool newValue)
 
     m_isIndeterminate = newValue;
 
-    setNeedsStyleRecalc();
-    invalidateParentDistributionIfNecessary(this, SelectRuleFeatureSet::RuleFeatureIndeterminate);
+    didAffectSelector(AffectedSelectorIndeterminate);
 
     if (renderer() && renderer()->style()->hasAppearance())
         renderer()->theme()->stateChanged(renderer(), CheckedState);

@@ -47,6 +47,17 @@ class PseudoElement;
 class RenderRegion;
 class ShadowRoot;
 
+enum AffectedSelectorType {
+    AffectedSelectorChecked = 1,
+    AffectedSelectorEnabled = 1 << 1,
+    AffectedSelectorDisabled = 1 << 2,
+    AffectedSelectorIndeterminate = 1 << 3,
+    AffectedSelectorLink = 1 << 4,
+    AffectedSelectorTarget = 1 << 5,
+    AffectedSelectorVisited = 1 << 6
+};
+typedef int AffectedSelectorMask;
+
 enum SpellcheckAttributeState {
     SpellcheckAttributeTrue,
     SpellcheckAttributeFalse,
@@ -272,6 +283,7 @@ public:
     virtual RenderObject* createRenderer(RenderArena*, RenderStyle*);
     virtual bool rendererIsNeeded(const NodeRenderingContext&);
     void recalcStyle(StyleChange = NoChange);
+    void didAffectSelector(AffectedSelectorMask);
 
     ElementShadow* shadow() const;
     ElementShadow* ensureShadow();

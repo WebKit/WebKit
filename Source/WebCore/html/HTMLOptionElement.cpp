@@ -29,7 +29,6 @@
 
 #include "Attribute.h"
 #include "Document.h"
-#include "ElementShadow.h"
 #include "ExceptionCode.h"
 #include "HTMLDataListElement.h"
 #include "HTMLNames.h"
@@ -204,8 +203,7 @@ void HTMLOptionElement::parseAttribute(const QualifiedName& name, const AtomicSt
         bool oldDisabled = m_disabled;
         m_disabled = !value.isNull();
         if (oldDisabled != m_disabled) {
-            setNeedsStyleRecalc();
-            invalidateParentDistributionIfNecessary(this, SelectRuleFeatureSet::RuleFeatureDisabled | SelectRuleFeatureSet::RuleFeatureEnabled);
+            didAffectSelector(AffectedSelectorDisabled | AffectedSelectorEnabled);
             if (renderer() && renderer()->style()->hasAppearance())
                 renderer()->theme()->stateChanged(renderer(), EnabledState);
         }
@@ -258,8 +256,7 @@ void HTMLOptionElement::setSelectedState(bool selected)
         return;
 
     m_isSelected = selected;
-    setNeedsStyleRecalc();
-    invalidateParentDistributionIfNecessary(this, SelectRuleFeatureSet::RuleFeatureChecked);    
+    didAffectSelector(AffectedSelectorChecked);
 
     if (HTMLSelectElement* select = ownerSelectElement())
         select->invalidateSelectedItems();

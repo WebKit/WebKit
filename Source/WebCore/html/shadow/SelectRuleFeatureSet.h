@@ -31,6 +31,7 @@
 #ifndef SelectRuleFeatureSet_h
 #define SelectRuleFeatureSet_h
 
+#include "Element.h"
 #include "RuleFeature.h"
 
 namespace WebCore {
@@ -47,29 +48,18 @@ public:
     bool hasSelectorForClass(const AtomicString&) const;
     bool hasSelectorForAttribute(const AtomicString&) const;
 
-    bool hasSelectorForChecked() const { return hasSelectorFor(RuleFeatureChecked); }
-    bool hasSelectorForEnabled() const { return hasSelectorFor(RuleFeatureEnabled); }
-    bool hasSelectorForDisabled() const { return hasSelectorFor(RuleFeatureDisabled); }
-    bool hasSelectorForIndeterminate() const { return hasSelectorFor(RuleFeatureIndeterminate); }
-    bool hasSelectorForLink() const { return hasSelectorFor(RuleFeatureLink); }
-    bool hasSelectorForTarget() const { return hasSelectorFor(RuleFeatureTarget); }
-    bool hasSelectorForVisited() const { return hasSelectorFor(RuleFeatureVisited); }
+    bool hasSelectorForChecked() const { return hasSelectorFor(AffectedSelectorChecked); }
+    bool hasSelectorForEnabled() const { return hasSelectorFor(AffectedSelectorEnabled); }
+    bool hasSelectorForDisabled() const { return hasSelectorFor(AffectedSelectorDisabled); }
+    bool hasSelectorForIndeterminate() const { return hasSelectorFor(AffectedSelectorIndeterminate); }
+    bool hasSelectorForLink() const { return hasSelectorFor(AffectedSelectorLink); }
+    bool hasSelectorForTarget() const { return hasSelectorFor(AffectedSelectorTarget); }
+    bool hasSelectorForVisited() const { return hasSelectorFor(AffectedSelectorVisited); }
 
-    enum SelectRuleFeature {
-        RuleFeatureChecked = 1,
-        RuleFeatureEnabled = 1 << 1,
-        RuleFeatureDisabled = 1 << 2,
-        RuleFeatureIndeterminate = 1 << 3,
-        RuleFeatureLink = 1 << 4,
-        RuleFeatureTarget = 1 << 5,
-        RuleFeatureVisited = 1 << 6
-    };
-    typedef int SelectRuleFeatureMask;
-
-    bool hasSelectorFor(SelectRuleFeatureMask features) const { return m_featureFlags & features; }
+    bool hasSelectorFor(AffectedSelectorMask features) const { return m_featureFlags & features; }
 
 private:
-    void setSelectRuleFeature(SelectRuleFeature feature) { m_featureFlags |= feature; }
+    void setSelectRuleFeature(AffectedSelectorType feature) { m_featureFlags |= feature; }
 
     RuleFeatureSet m_cssRuleFeatureSet;
     int m_featureFlags;

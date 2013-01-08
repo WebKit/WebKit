@@ -1409,6 +1409,13 @@ ElementShadow* Element::ensureShadow()
     return data->shadow();
 }
 
+void Element::didAffectSelector(AffectedSelectorMask mask)
+{
+    setNeedsStyleRecalc();
+    if (ElementShadow* elementShadow = shadowOfParentForDistribution(this))
+        elementShadow->didAffectSelector(mask);
+}
+
 PassRefPtr<ShadowRoot> Element::createShadowRoot(ExceptionCode& ec)
 {
     return ShadowRoot::create(this, ec);

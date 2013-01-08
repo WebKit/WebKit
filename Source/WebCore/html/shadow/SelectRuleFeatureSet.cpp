@@ -58,25 +58,25 @@ void SelectRuleFeatureSet::collectFeaturesFromSelector(const CSSSelector* select
 
     switch (selector->pseudoType()) {
     case CSSSelector::PseudoChecked:
-        setSelectRuleFeature(RuleFeatureChecked);
+        setSelectRuleFeature(AffectedSelectorChecked);
         break;
     case CSSSelector::PseudoEnabled:
-        setSelectRuleFeature(RuleFeatureEnabled);
+        setSelectRuleFeature(AffectedSelectorEnabled);
         break;
     case CSSSelector::PseudoDisabled:
-        setSelectRuleFeature(RuleFeatureDisabled);
+        setSelectRuleFeature(AffectedSelectorDisabled);
         break;
     case CSSSelector::PseudoIndeterminate:
-        setSelectRuleFeature(RuleFeatureIndeterminate);
+        setSelectRuleFeature(AffectedSelectorIndeterminate);
         break;
     case CSSSelector::PseudoLink:
-        setSelectRuleFeature(RuleFeatureLink);
+        setSelectRuleFeature(AffectedSelectorLink);
         break;
     case CSSSelector::PseudoTarget:
-        setSelectRuleFeature(RuleFeatureTarget);
+        setSelectRuleFeature(AffectedSelectorTarget);
         break;
     case CSSSelector::PseudoVisited:
-        setSelectRuleFeature(RuleFeatureVisited);
+        setSelectRuleFeature(AffectedSelectorVisited);
         break;
     default:
         break;
