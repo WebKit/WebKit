@@ -1,5 +1,19 @@
 2013-01-08  Zan Dobersek  <zandobersek@gmail.com>
 
+        Unreviwed gardening.
+
+        Removing failure expectations/skip entries for fast/dom/Window/window-postmessage-arrays.html.
+        The test was fixed by r138964.
+
+        Also further remove failure expectations for now-passing tests on the GTK builders.
+
+        * platform/efl/TestExpectations:
+        * platform/gtk/TestExpectations:
+        * platform/mac/TestExpectations:
+        * platform/qt/TestExpectations:
+
+2013-01-08  Zan Dobersek  <zandobersek@gmail.com>
+
         Unreviewed GTK gardening.
 
         Changing a timeout expectation for inspector/timeline/timeline-decode-resize.html

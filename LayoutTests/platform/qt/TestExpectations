@@ -412,10 +412,6 @@ fast/canvas/webgl
 # Pre-HMTL5 parser quirks only apply to the mac port for now.
 fast/parser/pre-html5-parser-quirks.html
 
-# fast/dom/Window/window-postmessage-arrays.html fails on JSC platforms
-# https://bugs.webkit.org/show_bug.cgi?id=72363
-fast/dom/Window/window-postmessage-arrays.html
-
 #Vibration API is not implemented.
 fast/dom/navigator-vibration.html
 

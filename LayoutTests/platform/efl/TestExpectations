@@ -1196,8 +1196,6 @@ webkit.org/b/84772 ietestcenter/css3/multicolumn/column-width-applies-to-010.htm
 webkit.org/b/84773 ietestcenter/css3/multicolumn/column-width-applies-to-012.htm [ ImageOnlyFailure ]
 webkit.org/b/84777 ietestcenter/css3/multicolumn/column-width-applies-to-015.htm [ ImageOnlyFailure ]
 
-webkit.org/b/72363 fast/dom/Window/window-postmessage-arrays.html [ Failure ]
-
 # Expando properties on attribute nodes disappear
 webkit.org/b/88045 fast/dom/gc-attribute-node.html [ Failure ]
 

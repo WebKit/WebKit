@@ -556,9 +556,6 @@ fast/forms/textarea-placeholder-set-attribute.html
 fast/forms/placeholder-set-attribute.html
 fast/forms/search-placeholder-value-changed.html
 
-# https://bugs.webkit.org/show_bug.cgi?id=72435
-fast/dom/Window/window-postmessage-arrays.html
-
 # Timeout.
 fast/dom/Window/open-window-min-size.html
 

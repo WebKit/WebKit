@@ -503,8 +503,6 @@ webkit.org/b/94458 [ Debug ] fast/events/message-port-context-destroyed.html [ C
 webkit.org/b/99020 [ Debug ] fast/css/style-scoped/style-scoped-apply-author-styles.html [ Crash Pass ]
 webkit.org/b/99020 [ Debug ] fast/css/style-scoped/style-scoped-attach.html [ Crash Pass ]
 
-webkit.org/b/99452 [ Debug ] platform/gtk/fonts/font-face-with-complex-text.html [ Crash ]
-
 webkit.org/b/98722 [ Debug ] fast/dom/gc-acid3.html [ Crash Pass ]
 webkit.org/b/98722 [ Debug ] http/tests/misc/acid3.html [ Crash Failure ]
 
@@ -519,13 +517,9 @@ webkit.org/b/104684 fast/xmlhttprequest/xmlhttprequest-recursive-sync-event.html
 
 webkit.org/b/105042 editing/execCommand/indent-paragraphs.html [ Crash ]
 
-webkit.org/b/105043 [ Debug ] fast/loader/javascript-url-iframe-remove-on-navigate.html [ Crash ]
-
 webkit.org/b/105580 media/track/track-prefer-captions.html [ Crash Pass ]
 
 webkit.org/b/105689 [ Debug ] plugins/npruntime/embed-property-iframe-equality.html [ Crash ]
-
-webkit.org/b/105691 [ Debug ] http/tests/appcache/main-resource-redirect.html [ Crash ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Crashing tests
@@ -959,7 +953,6 @@ webkit.org/b/85709 inspector/extensions/extensions-audits-content-script.html [ 
 
 # These inspector tests fell out of the radar after the transition to NRWT
 # Some time out and some are flaky or present different baselines.
-Bug(GTK) inspector/debugger/dynamic-scripts.html [ Failure ]
 Bug(GTK) inspector/debugger/linkifier.html [ Failure ]
 Bug(GTK) inspector/debugger/scripts-panel.html [ Failure Pass ]
 Bug(GTK) inspector/elements/edit-dom-actions.html [ Failure Timeout Pass ]
@@ -977,7 +970,6 @@ webkit.org/b/51380 http/tests/inspector/console-websocket-error.html [ Failure T
 webkit.org/b/53003 http/tests/inspector/compiler-source-mapping-debug.html [ Timeout ]
 
 # JSC doesn't support heap profiling
-webkit.org/b/50485 inspector/profiler/heap-snapshot.html [ Failure ]
 webkit.org/b/50485 inspector/profiler/heap-snapshot-comparison-dom-groups-change.html [ Failure ]
 webkit.org/b/50485 inspector/profiler/heap-snapshot-inspect-dom-wrapper.html [ Timeout ]
 webkit.org/b/50485 inspector/profiler/heap-snapshot-loader.html [ Failure ]
@@ -1156,8 +1148,6 @@ webkit.org/b/54251 http/tests/multipart/invalid-image-data.html [ Timeout ]
 Bug(GTK) http/tests/local/fileapi/send-sliced-dragged-file.html [ Failure ]
 
 webkit.org/b/72248 editing/spelling/spelling-unified-emulation.html [ Failure ]
-
-webkit.org/b/72363 fast/dom/Window/window-postmessage-arrays.html [ Failure ]
 
 webkit.org/b/62204 svg/custom/relative-sized-use-without-attributes-on-symbol.xhtml [ Failure ]
 webkit.org/b/62204 svg/custom/use-on-symbol-inside-pattern.svg [ Failure ]
@@ -1368,8 +1358,6 @@ webkit.org/b/102776 webkit.org/b/102993 media/media-document-audio-repaint.html 
 webkit.org/b/102776 media/track/track-cue-container-rendering-position.html [ Failure ]
 webkit.org/b/102776 media/track/track-cue-rendering-horizontal.html [ Failure ]
 webkit.org/b/102776 media/track/track-cue-rendering-vertical.html [ Failure ]
-
-webkit.org/b/103109 fast/dom/shadow/host-wrapper-reclaimed.html [ Failure ]
 
 webkit.org/b/103740 editing/selection/caret-alignment-for-vertical-text.html [ Failure ]
 
