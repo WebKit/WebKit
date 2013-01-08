@@ -747,8 +747,8 @@ void HTMLSelectElement::recalcListItems(bool updateSelectedStates) const
         // (http://www.w3.org/TR/html401/interact/forms.html#h-17.6)
         if (current->hasTagName(optgroupTag)) {
             m_listItems.append(current);
-            if (current->firstChild()) {
-                currentElement = ElementTraversal::firstWithin(current);
+            if (Element* nextElement = ElementTraversal::firstWithin(current)) {
+                currentElement = nextElement;
                 continue;
             }
         }

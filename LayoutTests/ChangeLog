@@ -1,3 +1,13 @@
+2013-01-07  Kent Tamura  <tkent@chromium.org>
+
+        REGRESSION(r137406): Text inside an empty optgroup prevents subsequent options from appearing
+        https://bugs.webkit.org/show_bug.cgi?id=106298
+
+        Reviewed by Ryosuke Niwa.
+
+        * fast/forms/select/select-empty-optgroup-expected.html: Added.
+        * fast/forms/select/select-empty-optgroup.html: Added.
+
 2013-01-07  Kunihiko Sakamoto  <ksakamoto@chromium.org>
 
         INPUT_MULTIPLE_FIELDS_UI: Step-up/-down of month/day field should respect min/max attributes
