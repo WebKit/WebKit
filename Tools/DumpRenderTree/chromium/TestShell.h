@@ -111,9 +111,7 @@ public:
     int navigationEntryCount() const;
 
     void setFocus(WebKit::WebWidget*, bool enable);
-    bool shouldDumpFrameLoadCallbacks() const { return (m_testIsPreparing || m_testIsPending) && testRunner()->shouldDumpFrameLoadCallbacks(); }
     bool shouldDumpResourceRequestCallbacks() const { return (m_testIsPreparing || m_testIsPending) && testRunner()->shouldDumpResourceRequestCallbacks(); }
-    bool shouldDumpUserGestureInFrameLoadCallbacks() const { return (m_testIsPreparing || m_testIsPending) && testRunner()->shouldDumpUserGestureInFrameLoadCallbacks(); }
     bool shouldDumpResourceLoadCallbacks() const  { return (m_testIsPreparing || m_testIsPending) && testRunner()->shouldDumpResourceLoadCallbacks(); }
     bool shouldDumpResourceResponseMIMETypes() const  { return (m_testIsPreparing || m_testIsPending) && testRunner()->shouldDumpResourceResponseMIMETypes(); }
     void setIsLoading(bool flag) { m_isLoading = flag; }

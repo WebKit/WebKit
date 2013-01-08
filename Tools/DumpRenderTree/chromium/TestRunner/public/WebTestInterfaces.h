@@ -52,7 +52,9 @@ public:
     void setDelegate(WebTestDelegate*);
     void bindTo(WebKit::WebFrame*);
     void resetAll();
+    void setTestIsRunning(bool);
 
+    WebKit::WebView* webView() const;
     WebAccessibilityController* accessibilityController();
     WebEventSender* eventSender();
     WebTestRunner* testRunner();

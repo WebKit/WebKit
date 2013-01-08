@@ -854,26 +854,6 @@ void WebViewHost::unableToImplementPolicyWithError(WebFrame* frame, const WebURL
             error.domain.utf8().data(), error.reason, frame->uniqueName().utf8().data());
 }
 
-void WebViewHost::willPerformClientRedirect(WebFrame* frame, const WebURL& from, const WebURL& to,
-                                            double interval, double fire_time)
-{
-    if (m_shell->shouldDumpFrameLoadCallbacks()) {
-        printFrameDescription(frame);
-        printf(" - willPerformClientRedirectToURL: %s \n", to.spec().data());
-    }
-
-    if (m_shell->shouldDumpUserGestureInFrameLoadCallbacks())
-        printFrameUserGestureStatus(frame, " - in willPerformClientRedirect\n");
-}
-
-void WebViewHost::didCancelClientRedirect(WebFrame* frame)
-{
-    if (!m_shell->shouldDumpFrameLoadCallbacks())
-        return;
-    printFrameDescription(frame);
-    fputs(" - didCancelClientRedirectForFrame\n", stdout);
-}
-
 void WebViewHost::didCreateDataSource(WebFrame*, WebDataSource* ds)
 {
     ds->setExtraData(m_pendingExtraData.leakPtr());
@@ -883,41 +863,19 @@ void WebViewHost::didCreateDataSource(WebFrame*, WebDataSource* ds)
 
 void WebViewHost::didStartProvisionalLoad(WebFrame* frame)
 {
-    if (m_shell->shouldDumpFrameLoadCallbacks()) {
-        printFrameDescription(frame);
-        fputs(" - didStartProvisionalLoadForFrame\n", stdout);
-    }
-
-    if (m_shell->shouldDumpUserGestureInFrameLoadCallbacks())
-        printFrameUserGestureStatus(frame, " - in didStartProvisionalLoadForFrame\n");
-
     if (!m_topLoadingFrame)
         m_topLoadingFrame = frame;
 
-    if (testRunner()->stopProvisionalFrameLoads()) {
-        printFrameDescription(frame);
-        fputs(" - stopping load in didStartProvisionalLoadForFrame callback\n", stdout);
-        frame->stopLoading();
-    }
     updateAddressBar(frame->view());
 }
 
 void WebViewHost::didReceiveServerRedirectForProvisionalLoad(WebFrame* frame)
 {
-    if (m_shell->shouldDumpFrameLoadCallbacks()) {
-        printFrameDescription(frame);
-        fputs(" - didReceiveServerRedirectForProvisionalLoadForFrame\n", stdout);
-    }
     updateAddressBar(frame->view());
 }
 
 void WebViewHost::didFailProvisionalLoad(WebFrame* frame, const WebURLError& error)
 {
-    if (m_shell->shouldDumpFrameLoadCallbacks()) {
-        printFrameDescription(frame);
-        fputs(" - didFailProvisionalLoadWithError\n", stdout);
-    }
-
     locationChangeDone(frame);
 
     // Don't display an error page if we're running layout tests, because
@@ -926,10 +884,6 @@ void WebViewHost::didFailProvisionalLoad(WebFrame* frame, const WebURLError& err
 
 void WebViewHost::didCommitProvisionalLoad(WebFrame* frame, bool isNewNavigation)
 {
-    if (m_shell->shouldDumpFrameLoadCallbacks()) {
-        printFrameDescription(frame);
-        fputs(" - didCommitLoadForFrame\n", stdout);
-    }
     updateForCommittedLoad(frame, isNewNavigation);
 }
 
@@ -940,57 +894,17 @@ void WebViewHost::didClearWindowObject(WebFrame* frame)
 
 void WebViewHost::didReceiveTitle(WebFrame* frame, const WebString& title, WebTextDirection direction)
 {
-    WebCString title8 = title.utf8();
-
-    if (m_shell->shouldDumpFrameLoadCallbacks()) {
-        printFrameDescription(frame);
-        printf(" - didReceiveTitle: %s\n", title8.data());
-    }
-
-    if (testRunner()->shouldDumpTitleChanges())
-        printf("TITLE CHANGED: '%s'\n", title8.data());
-
     setPageTitle(title);
     testRunner()->setTitleTextDirection(direction);
 }
 
-void WebViewHost::didFinishDocumentLoad(WebFrame* frame)
-{
-    if (m_shell->shouldDumpFrameLoadCallbacks()) {
-        printFrameDescription(frame);
-        fputs(" - didFinishDocumentLoadForFrame\n", stdout);
-    } else {
-        unsigned pendingUnloadEvents = frame->unloadListenerCount();
-        if (pendingUnloadEvents) {
-            printFrameDescription(frame);
-            printf(" - has %u onunload handler(s)\n", pendingUnloadEvents);
-        }
-    }
-}
-
-void WebViewHost::didHandleOnloadEvents(WebFrame* frame)
-{
-    if (m_shell->shouldDumpFrameLoadCallbacks()) {
-        printFrameDescription(frame);
-        fputs(" - didHandleOnloadEventsForFrame\n", stdout);
-    }
-}
-
 void WebViewHost::didFailLoad(WebFrame* frame, const WebURLError& error)
 {
-    if (m_shell->shouldDumpFrameLoadCallbacks()) {
-        printFrameDescription(frame);
-        fputs(" - didFailLoadWithError\n", stdout);
-    }
     locationChangeDone(frame);
 }
 
 void WebViewHost::didFinishLoad(WebFrame* frame)
 {
-    if (m_shell->shouldDumpFrameLoadCallbacks()) {
-        printFrameDescription(frame);
-        fputs(" - didFinishLoadForFrame\n", stdout);
-    }
     updateAddressBar(frame->view());
     locationChangeDone(frame);
 }
@@ -1000,14 +914,6 @@ void WebViewHost::didNavigateWithinPage(WebFrame* frame, bool isNewNavigation)
     frame->dataSource()->setExtraData(m_pendingExtraData.leakPtr());
 
     updateForCommittedLoad(frame, isNewNavigation);
-}
-
-void WebViewHost::didChangeLocationWithinPage(WebFrame* frame)
-{
-    if (m_shell->shouldDumpFrameLoadCallbacks()) {
-        printFrameDescription(frame);
-        fputs(" - didChangeLocationWithinPageForFrame\n", stdout);
-    }
 }
 
 void WebViewHost::assignIdentifierToRequest(WebFrame*, unsigned identifier, const WebURLRequest& request)
@@ -1141,24 +1047,6 @@ void WebViewHost::didFailResourceLoad(WebFrame*, unsigned identifier, const WebU
         fputs("\n", stdout);
     }
     removeIdentifierForRequest(identifier);
-}
-
-void WebViewHost::didDisplayInsecureContent(WebFrame*)
-{
-    if (m_shell->shouldDumpFrameLoadCallbacks())
-        fputs("didDisplayInsecureContent\n", stdout);
-}
-
-void WebViewHost::didRunInsecureContent(WebFrame*, const WebSecurityOrigin& origin, const WebURL& insecureURL)
-{
-    if (m_shell->shouldDumpFrameLoadCallbacks())
-        fputs("didRunInsecureContent\n", stdout);
-}
-
-void WebViewHost::didDetectXSS(WebFrame*, const WebURL&, bool)
-{
-    if (m_shell->shouldDumpFrameLoadCallbacks())
-        fputs("didDetectXSS\n", stdout);
 }
 
 void WebViewHost::openFileSystem(WebFrame* frame, WebFileSystem::Type type, long long size, bool create, WebFileSystemCallbacks* callbacks)
@@ -1587,12 +1475,6 @@ void WebViewHost::printFrameDescription(WebFrame* webframe)
         return;
     }
     printf("frame \"%s\"", name8.c_str());
-}
-
-void WebViewHost::printFrameUserGestureStatus(WebFrame* webframe, const char* msg)
-{
-    bool isUserGesture = webframe->isProcessingUserGesture();
-    printf("Frame with user gesture \"%s\"%s", isUserGesture ? "true" : "false", msg);
 }
 
 void WebViewHost::printResourceDescription(unsigned identifier)

@@ -36,6 +36,7 @@
 #include "WebAccessibilityObject.h"
 #include "WebElement.h"
 #include "WebEventSender.h"
+#include "WebFrame.h"
 #include "WebIntent.h"
 #include "WebIntentRequest.h"
 #include "WebIntentServiceInfo.h"
@@ -44,6 +45,7 @@
 #include "WebTestDelegate.h"
 #include "WebTestInterfaces.h"
 #include "WebTestRunner.h"
+#include "WebView.h"
 #include "platform/WebCString.h"
 #include <wtf/StringExtras.h>
 
@@ -112,6 +114,30 @@ string textAffinityDescription(WebTextAffinity affinity)
         return "NSSelectionAffinityDownstream";
     }
     return "(UNKNOWN AFFINITY)";
+}
+
+void printFrameDescription(WebTestDelegate* delegate, WebFrame* frame)
+{
+    string name8 = frame->uniqueName().utf8();
+    if (frame == frame->view()->mainFrame()) {
+        if (!name8.length()) {
+            delegate->printMessage("main frame");
+            return;
+        }
+        delegate->printMessage(string("main frame \"") + name8 + "\"");
+        return;
+    }
+    if (!name8.length()) {
+        delegate->printMessage("frame (anonymous)");
+        return;
+    }
+    delegate->printMessage(string("frame \"") + name8 + "\"");
+}
+
+void printFrameUserGestureStatus(WebTestDelegate* delegate, WebFrame* frame, const char* msg)
+{
+    bool isUserGesture = frame->isProcessingUserGesture();
+    delegate->printMessage(string("Frame with user gesture \"") + (isUserGesture ? "true" : "false") + "\"" + msg);
 }
 
 }
@@ -424,6 +450,146 @@ void WebTestProxyBase::dispatchIntent(WebFrame* source, const WebIntentRequest& 
     WebVector<WebURL> suggestions = request.intent().suggestions();
     for (size_t i = 0; i < suggestions.size(); ++i)
         m_delegate->printMessage(string("Have suggestion ") + suggestions[i].spec().data() + "\n");
+}
+
+void WebTestProxyBase::willPerformClientRedirect(WebFrame* frame, const WebURL&, const WebURL& to, double, double)
+{
+    if (m_testInterfaces->testRunner() && m_testInterfaces->testRunner()->shouldDumpFrameLoadCallbacks()) {
+        printFrameDescription(m_delegate, frame);
+        m_delegate->printMessage(string(" - willPerformClientRedirectToURL: ") + to.spec().data() + " \n");
+    }
+
+    if (m_testInterfaces->testRunner() && m_testInterfaces->testRunner()->shouldDumpUserGestureInFrameLoadCallbacks())
+        printFrameUserGestureStatus(m_delegate, frame, " - in willPerformClientRedirect\n");
+}
+
+void WebTestProxyBase::didCancelClientRedirect(WebFrame* frame)
+{
+    if (m_testInterfaces->testRunner() && m_testInterfaces->testRunner()->shouldDumpFrameLoadCallbacks()) {
+        printFrameDescription(m_delegate, frame);
+        m_delegate->printMessage(" - didCancelClientRedirectForFrame\n");
+    }
+}
+
+void WebTestProxyBase::didStartProvisionalLoad(WebFrame* frame)
+{
+    if (m_testInterfaces->testRunner() && m_testInterfaces->testRunner()->shouldDumpFrameLoadCallbacks()) {
+        printFrameDescription(m_delegate, frame);
+        m_delegate->printMessage(" - didStartProvisionalLoadForFrame\n");
+    }
+
+    if (m_testInterfaces->testRunner() && m_testInterfaces->testRunner()->shouldDumpUserGestureInFrameLoadCallbacks())
+        printFrameUserGestureStatus(m_delegate, frame, " - in didStartProvisionalLoadForFrame\n");
+
+    if (m_testInterfaces->testRunner() && m_testInterfaces->testRunner()->stopProvisionalFrameLoads()) {
+        printFrameDescription(m_delegate, frame);
+        m_delegate->printMessage(" - stopping load in didStartProvisionalLoadForFrame callback\n");
+        frame->stopLoading();
+    }
+}
+
+void WebTestProxyBase::didReceiveServerRedirectForProvisionalLoad(WebFrame* frame)
+{
+    if (m_testInterfaces->testRunner() && m_testInterfaces->testRunner()->shouldDumpFrameLoadCallbacks()) {
+        printFrameDescription(m_delegate, frame);
+        m_delegate->printMessage(" - didReceiveServerRedirectForProvisionalLoadForFrame\n");
+    }
+}
+
+void WebTestProxyBase::didFailProvisionalLoad(WebFrame* frame, const WebURLError&)
+{
+    if (m_testInterfaces->testRunner() && m_testInterfaces->testRunner()->shouldDumpFrameLoadCallbacks()) {
+        printFrameDescription(m_delegate, frame);
+        m_delegate->printMessage(" - didFailProvisionalLoadWithError\n");
+    }
+}
+
+void WebTestProxyBase::didCommitProvisionalLoad(WebFrame* frame, bool)
+{
+    if (m_testInterfaces->testRunner() && m_testInterfaces->testRunner()->shouldDumpFrameLoadCallbacks()) {
+        printFrameDescription(m_delegate, frame);
+        m_delegate->printMessage(" - didCommitLoadForFrame\n");
+    }
+}
+
+void WebTestProxyBase::didReceiveTitle(WebFrame* frame, const WebString& title, WebTextDirection)
+{
+    WebCString title8 = title.utf8();
+
+    if (m_testInterfaces->testRunner() && m_testInterfaces->testRunner()->shouldDumpFrameLoadCallbacks()) {
+        printFrameDescription(m_delegate, frame);
+        m_delegate->printMessage(string(" - didReceiveTitle: ") + title8.data() + "\n");
+    }
+
+    if (m_testInterfaces->testRunner() && m_testInterfaces->testRunner()->shouldDumpTitleChanges())
+        m_delegate->printMessage(string("TITLE CHANGED: '") + title8.data() + "'\n");
+
+}
+
+void WebTestProxyBase::didFinishDocumentLoad(WebFrame* frame)
+{
+    if (m_testInterfaces->testRunner() && m_testInterfaces->testRunner()->shouldDumpFrameLoadCallbacks()) {
+        printFrameDescription(m_delegate, frame);
+        m_delegate->printMessage(" - didFinishDocumentLoadForFrame\n");
+    } else {
+        unsigned pendingUnloadEvents = frame->unloadListenerCount();
+        if (pendingUnloadEvents) {
+            printFrameDescription(m_delegate, frame);
+            char buffer[100];
+            snprintf(buffer, sizeof(buffer), " - has %u onunload handler(s)\n", pendingUnloadEvents);
+            m_delegate->printMessage(buffer);
+        }
+    }
+}
+
+void WebTestProxyBase::didHandleOnloadEvents(WebFrame* frame)
+{
+    if (m_testInterfaces->testRunner() && m_testInterfaces->testRunner()->shouldDumpFrameLoadCallbacks()) {
+        printFrameDescription(m_delegate, frame);
+        m_delegate->printMessage(" - didHandleOnloadEventsForFrame\n");
+    }
+}
+
+void WebTestProxyBase::didFailLoad(WebFrame* frame, const WebURLError&)
+{
+    if (m_testInterfaces->testRunner() && m_testInterfaces->testRunner()->shouldDumpFrameLoadCallbacks()) {
+        printFrameDescription(m_delegate, frame);
+        m_delegate->printMessage(" - didFailLoadWithError\n");
+    }
+}
+
+void WebTestProxyBase::didFinishLoad(WebFrame* frame)
+{
+    if (m_testInterfaces->testRunner() && m_testInterfaces->testRunner()->shouldDumpFrameLoadCallbacks()) {
+        printFrameDescription(m_delegate, frame);
+        m_delegate->printMessage(" - didFinishLoadForFrame\n");
+    }
+}
+
+void WebTestProxyBase::didChangeLocationWithinPage(WebFrame* frame)
+{
+    if (m_testInterfaces->testRunner() && m_testInterfaces->testRunner()->shouldDumpFrameLoadCallbacks()) {
+        printFrameDescription(m_delegate, frame);
+        m_delegate->printMessage(" - didChangeLocationWithinPageForFrame\n");
+    }
+}
+
+void WebTestProxyBase::didDisplayInsecureContent(WebFrame*)
+{
+    if (m_testInterfaces->testRunner() && m_testInterfaces->testRunner()->shouldDumpFrameLoadCallbacks())
+        m_delegate->printMessage("didDisplayInsecureContent\n");
+}
+
+void WebTestProxyBase::didRunInsecureContent(WebFrame*, const WebSecurityOrigin&, const WebURL&)
+{
+    if (m_testInterfaces->testRunner() && m_testInterfaces->testRunner()->shouldDumpFrameLoadCallbacks())
+        m_delegate->printMessage("didRunInsecureContent\n");
+}
+
+void WebTestProxyBase::didDetectXSS(WebFrame*, const WebURL&, bool)
+{
+    if (m_testInterfaces->testRunner() && m_testInterfaces->testRunner()->shouldDumpFrameLoadCallbacks())
+        m_delegate->printMessage("didDetectXSS\n");
 }
 
 }

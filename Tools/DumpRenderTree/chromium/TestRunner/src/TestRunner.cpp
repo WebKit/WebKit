@@ -78,7 +78,8 @@ public:
 }
 
 TestRunner::TestRunner()
-    : m_delegate(0)
+    : m_testIsRunning(false)
+    , m_delegate(0)
     , m_webView(0)
     , m_intentClient(adoptPtr(new EmptyWebDeliveredIntentClient))
 {
@@ -137,6 +138,10 @@ TestRunner::TestRunner()
     bindMethod("dumpChildFramesAsText", &TestRunner::dumpChildFramesAsText);
     bindMethod("dumpChildFrameScrollPositions", &TestRunner::dumpChildFrameScrollPositions);
     bindMethod("setAudioData", &TestRunner::setAudioData);
+    bindMethod("dumpFrameLoadCallbacks", &TestRunner::dumpFrameLoadCallbacks);
+    bindMethod("dumpUserGestureInFrameLoadCallbacks", &TestRunner::dumpUserGestureInFrameLoadCallbacks);
+    bindMethod("setStopProvisionalFrameLoads", &TestRunner::setStopProvisionalFrameLoads);
+    bindMethod("dumpTitleChanges", &TestRunner::dumpTitleChanges);
 
     // The following methods interact with the WebTestProxy.
     bindMethod("sendWebIntentResponse", &TestRunner::sendWebIntentResponse);
@@ -207,11 +212,20 @@ void TestRunner::reset()
     m_dumpChildFrameScrollPositions = false;
     m_dumpChildFramesAsText = false;
     m_dumpAsAudio = false;
+    m_dumpFrameLoadCallbacks = false;
+    m_dumpUserGestureInFrameLoadCallbacks = false;
+    m_stopProvisionalFrameLoads = false;
+    m_dumpTitleChanges = false;
 
     m_globalFlag.set(false);
     m_platformName.set("chromium");
 
     m_userStyleSheetLocation = WebURL();
+}
+
+void TestRunner::setTestIsRunning(bool running)
+{
+    m_testIsRunning = running;
 }
 
 bool TestRunner::shouldDumpEditingCallbacks() const
@@ -257,6 +271,31 @@ bool TestRunner::shouldDumpAsAudio() const
 const WebArrayBufferView* TestRunner::audioData() const
 {
     return &m_audioData;
+}
+
+bool TestRunner::shouldDumpFrameLoadCallbacks() const
+{
+    return m_testIsRunning && m_dumpFrameLoadCallbacks;
+}
+
+void TestRunner::setShouldDumpFrameLoadCallbacks(bool value)
+{
+    m_dumpFrameLoadCallbacks = value;
+}
+
+bool TestRunner::shouldDumpUserGestureInFrameLoadCallbacks() const
+{
+    return m_testIsRunning && m_dumpUserGestureInFrameLoadCallbacks;
+}
+
+bool TestRunner::stopProvisionalFrameLoads() const
+{
+    return m_stopProvisionalFrameLoads;
+}
+
+bool TestRunner::shouldDumpTitleChanges() const
+{
+    return m_dumpTitleChanges;
 }
 
 void TestRunner::setTabKeyCyclesThroughElements(const CppArgumentList& arguments, CppVariant* result)
@@ -998,6 +1037,30 @@ void TestRunner::setAudioData(const CppArgumentList& arguments, CppVariant* resu
         return;
 
     m_dumpAsAudio = true;
+}
+
+void TestRunner::dumpFrameLoadCallbacks(const CppArgumentList&, CppVariant* result)
+{
+    m_dumpFrameLoadCallbacks = true;
+    result->setNull();
+}
+
+void TestRunner::dumpUserGestureInFrameLoadCallbacks(const CppArgumentList&, CppVariant* result)
+{
+    m_dumpUserGestureInFrameLoadCallbacks = true;
+    result->setNull();
+}
+
+void TestRunner::setStopProvisionalFrameLoads(const CppArgumentList&, CppVariant* result)
+{
+    result->setNull();
+    m_stopProvisionalFrameLoads = true;
+}
+
+void TestRunner::dumpTitleChanges(const CppArgumentList&, CppVariant* result)
+{
+    m_dumpTitleChanges = true;
+    result->setNull();
 }
 
 void TestRunner::workerThreadCount(CppVariant* result)

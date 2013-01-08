@@ -76,19 +76,9 @@ public:
     virtual ~DRTTestRunner();
 
     // This function sets a flag that tells the test_shell to print a line of
-    // descriptive text for each frame load callback. It takes no arguments, and
-    // ignores any that may be present.
-    void dumpFrameLoadCallbacks(const CppArgumentList&, CppVariant*);
-
-    // This function sets a flag that tells the test_shell to print a line of
     // descriptive text for the progress finished callback. It takes no
     // arguments, and ignores any that may be present.
     void dumpProgressFinishedCallback(const CppArgumentList&, CppVariant*);
-
-    // This function sets a flag that tells the test_shell to print a line of
-    // user gesture status text for some frame load callbacks. It takes no
-    // arguments, and ignores any that may be present.
-    void dumpUserGestureInFrameLoadCallbacks(const CppArgumentList&, CppVariant*);
 
     // This function sets a flag that tells the test_shell to print out a text
     // representation of the back/forward list. It ignores all arguments.
@@ -170,10 +160,6 @@ public:
     // Converts a URL starting with file:///tmp/ to the local mapping.
     void pathToLocalResource(const CppArgumentList&, CppVariant*);
 
-    // If true, causes provisional frame loads to be stopped for the remainder of
-    // the test.
-    void setStopProvisionalFrameLoads(const CppArgumentList&, CppVariant*);
-
     // Enable or disable smart insert/delete. This is enabled by default.
     void setSmartInsertDeleteEnabled(const CppArgumentList&, CppVariant*);
 
@@ -192,7 +178,6 @@ public:
 
     void setDeferMainResourceDataLoad(const CppArgumentList&, CppVariant*);
 
-    void dumpTitleChanges(const CppArgumentList&, CppVariant*);
     void display(const CppArgumentList&, CppVariant*);
     void displayInvalidatedRegion(const CppArgumentList&, CppVariant*);
     void testRepaint(const CppArgumentList&, CppVariant*);
@@ -262,12 +247,8 @@ public:
     // The following methods are not exposed to JavaScript.
     void setWorkQueueFrozen(bool frozen) { m_workQueue.setFrozen(frozen); }
 
-    bool shouldDumpFrameLoadCallbacks() { return m_dumpFrameLoadCallbacks; }
-    void setShouldDumpFrameLoadCallbacks(bool value) { m_dumpFrameLoadCallbacks = value; }
     bool shouldDumpProgressFinishedCallback() { return m_dumpProgressFinishedCallback; }
     void setShouldDumpProgressFinishedCallback(bool value) { m_dumpProgressFinishedCallback = value; }
-    bool shouldDumpUserGestureInFrameLoadCallbacks() { return m_dumpUserGestureInFrameLoadCallbacks; }
-    void setShouldDumpUserGestureInFrameLoadCallbacks(bool value) { m_dumpUserGestureInFrameLoadCallbacks = value; }
     bool shouldDumpResourceLoadCallbacks() {return m_dumpResourceLoadCallbacks; }
     void setShouldDumpResourceRequestCallbacks(bool value) { m_dumpResourceRequestCallbacks = value; }
     bool shouldDumpResourceRequestCallbacks() { return m_dumpResourceRequestCallbacks; }
@@ -276,11 +257,9 @@ public:
     bool shouldDumpStatusCallbacks() { return m_dumpWindowStatusChanges; }
     bool shouldDumpSelectionRect() { return m_dumpSelectionRect; }
     bool shouldDumpBackForwardList() { return m_dumpBackForwardList; }
-    bool shouldDumpTitleChanges() { return m_dumpTitleChanges; }
     bool shouldDumpPermissionClientCallbacks() { return m_dumpPermissionClientCallbacks; }
     bool shouldDumpCreateView() { return m_dumpCreateView; }
     bool canOpenWindows() { return m_canOpenWindows; }
-    bool stopProvisionalFrameLoads() { return m_stopProvisionalFrameLoads; }
     bool deferMainResourceDataLoad() { return m_deferMainResourceDataLoad; }
     void setShowDebugLayerTree(bool value) { m_showDebugLayerTree = value; }
     void setTitleTextDirection(WebKit::WebTextDirection dir)
@@ -374,17 +353,9 @@ private:
     // taking possible transforms of the selection rect into account.
     bool m_dumpSelectionRect;
 
-    // If true, the test_shell will output a descriptive line for each frame
-    // load callback.
-    bool m_dumpFrameLoadCallbacks;
-
     // If true, the test_shell will output a descriptive line for the progress
     // finished callback.
     bool m_dumpProgressFinishedCallback;
-
-    // If true, the test_shell will output a line of the user gesture status
-    // text for some frame load callbacks.
-    bool m_dumpUserGestureInFrameLoadCallbacks;
 
     // If true, the test_shell will output a descriptive line for each resource
     // load callback.
@@ -404,9 +375,6 @@ private:
 
     // If true, the test_shell will dump all changes to window.status.
     bool m_dumpWindowStatusChanges;
-
-    // If true, output a message when the page title is changed.
-    bool m_dumpTitleChanges;
 
     // If true, output a descriptive line each time a permission client
     // callback is invoked. Currently only implemented for allowImage.
@@ -432,10 +400,6 @@ private:
     // If true and test_repaint_ is true as well, pixel dump will be produced as
     // a series of 1px-wide, view-tall paints across the width of the view.
     bool m_sweepHorizontally;
-
-    // If true, stops provisional frame loads during the
-    // DidStartProvisionalLoadForFrame callback.
-    bool m_stopProvisionalFrameLoads;
 
     // If true, don't dump output until notifyDone is called.
     bool m_waitUntilDone;

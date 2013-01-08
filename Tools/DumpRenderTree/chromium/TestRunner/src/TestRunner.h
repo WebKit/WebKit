@@ -59,6 +59,7 @@ public:
     void reset();
 
     // WebTestRunner implementation.
+    virtual void setTestIsRunning(bool) OVERRIDE;
     virtual bool shouldDumpEditingCallbacks() const OVERRIDE;
     virtual bool shouldDumpAsText() const OVERRIDE;
     virtual void setShouldDumpAsText(bool) OVERRIDE;
@@ -68,6 +69,11 @@ public:
     virtual bool shouldDumpChildFramesAsText() const OVERRIDE;
     virtual bool shouldDumpAsAudio() const OVERRIDE;
     virtual const WebKit::WebArrayBufferView* audioData() const OVERRIDE;
+    virtual bool shouldDumpFrameLoadCallbacks() const OVERRIDE;
+    virtual void setShouldDumpFrameLoadCallbacks(bool) OVERRIDE;
+    virtual bool shouldDumpUserGestureInFrameLoadCallbacks() const OVERRIDE;
+    virtual bool stopProvisionalFrameLoads() const OVERRIDE;
+    virtual bool shouldDumpTitleChanges() const OVERRIDE;
 
 protected:
     // FIXME: make these private once the move from DRTTestRunner to TestRunner
@@ -210,6 +216,22 @@ private:
     // Deals with Web Audio WAV file data.
     void setAudioData(const CppArgumentList&, CppVariant*);
 
+    // This function sets a flag that tells the test_shell to print a line of
+    // descriptive text for each frame load callback. It takes no arguments, and
+    // ignores any that may be present.
+    void dumpFrameLoadCallbacks(const CppArgumentList&, CppVariant*);
+
+    // This function sets a flag that tells the test_shell to print a line of
+    // user gesture status text for some frame load callbacks. It takes no
+    // arguments, and ignores any that may be present.
+    void dumpUserGestureInFrameLoadCallbacks(const CppArgumentList&, CppVariant*);
+
+    // If true, causes provisional frame loads to be stopped for the remainder of
+    // the test.
+    void setStopProvisionalFrameLoads(const CppArgumentList&, CppVariant*);
+
+    void dumpTitleChanges(const CppArgumentList&, CppVariant*);
+
     ///////////////////////////////////////////////////////////////////////////
     // Methods interacting with the WebTestProxy
 
@@ -244,6 +266,8 @@ private:
     bool elementDoesAutoCompleteForElementWithId(const WebKit::WebString&);
     int numberOfActiveAnimations();
 
+    bool m_testIsRunning;
+
     WebKit::WebURL m_userStyleSheetLocation;
 
     // globalFlag is used by a number of layout tests in http/tests/security/dataURL.
@@ -273,6 +297,21 @@ private:
 
     // If true, the test_shell will output a base64 encoded WAVE file.
     bool m_dumpAsAudio;
+
+    // If true, the test_shell will output a descriptive line for each frame
+    // load callback.
+    bool m_dumpFrameLoadCallbacks;
+
+    // If true, the test_shell will output a line of the user gesture status
+    // text for some frame load callbacks.
+    bool m_dumpUserGestureInFrameLoadCallbacks;
+
+    // If true, stops provisional frame loads during the
+    // DidStartProvisionalLoadForFrame callback.
+    bool m_stopProvisionalFrameLoads;
+
+    // If true, output a message when the page title is changed.
+    bool m_dumpTitleChanges;
 
     // WAV audio data is stored here.
     WebKit::WebArrayBufferView m_audioData;

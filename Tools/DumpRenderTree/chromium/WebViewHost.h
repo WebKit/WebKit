@@ -244,10 +244,6 @@ class WebViewHost : public WebKit::WebViewClient, public WebKit::WebFrameClient,
     virtual WebKit::WebURLError cannotHandleRequestError(WebKit::WebFrame*, const WebKit::WebURLRequest&);
     virtual WebKit::WebURLError cancelledError(WebKit::WebFrame*, const WebKit::WebURLRequest&);
     virtual void unableToImplementPolicyWithError(WebKit::WebFrame*, const WebKit::WebURLError&);
-    virtual void willPerformClientRedirect(
-        WebKit::WebFrame*, const WebKit::WebURL& from, const WebKit::WebURL& to,
-        double interval, double fireTime);
-    virtual void didCancelClientRedirect(WebKit::WebFrame*);
     virtual void didCreateDataSource(WebKit::WebFrame*, WebKit::WebDataSource*);
     virtual void didStartProvisionalLoad(WebKit::WebFrame*);
     virtual void didReceiveServerRedirectForProvisionalLoad(WebKit::WebFrame*);
@@ -255,12 +251,9 @@ class WebViewHost : public WebKit::WebViewClient, public WebKit::WebFrameClient,
     virtual void didCommitProvisionalLoad(WebKit::WebFrame*, bool isNewNavigation);
     virtual void didClearWindowObject(WebKit::WebFrame*);
     virtual void didReceiveTitle(WebKit::WebFrame*, const WebKit::WebString&, WebKit::WebTextDirection);
-    virtual void didFinishDocumentLoad(WebKit::WebFrame*);
-    virtual void didHandleOnloadEvents(WebKit::WebFrame*);
     virtual void didFailLoad(WebKit::WebFrame*, const WebKit::WebURLError&);
     virtual void didFinishLoad(WebKit::WebFrame*);
     virtual void didNavigateWithinPage(WebKit::WebFrame*, bool isNewNavigation);
-    virtual void didChangeLocationWithinPage(WebKit::WebFrame*);
     virtual void assignIdentifierToRequest(WebKit::WebFrame*, unsigned identifier, const WebKit::WebURLRequest&);
     virtual void removeIdentifierForRequest(unsigned identifier);
     virtual void willRequestResource(WebKit::WebFrame*, const WebKit::WebCachedURLRequest&);
@@ -268,9 +261,6 @@ class WebViewHost : public WebKit::WebViewClient, public WebKit::WebFrameClient,
     virtual void didReceiveResponse(WebKit::WebFrame*, unsigned identifier, const WebKit::WebURLResponse&);
     virtual void didFinishResourceLoad(WebKit::WebFrame*, unsigned identifier);
     virtual void didFailResourceLoad(WebKit::WebFrame*, unsigned identifier, const WebKit::WebURLError&);
-    virtual void didDisplayInsecureContent(WebKit::WebFrame*);
-    virtual void didRunInsecureContent(WebKit::WebFrame*, const WebKit::WebSecurityOrigin&, const WebKit::WebURL&);
-    virtual void didDetectXSS(WebKit::WebFrame*, const WebKit::WebURL&, bool didBlockEntirePage);
     virtual void openFileSystem(WebKit::WebFrame*, WebKit::WebFileSystem::Type, long long size, bool create, WebKit::WebFileSystemCallbacks*);
     virtual void deleteFileSystem(WebKit::WebFrame*, WebKit::WebFileSystem::Type, WebKit::WebFileSystemCallbacks*);
     virtual bool willCheckAndDispatchMessageEvent(
@@ -333,9 +323,6 @@ private:
 
     // Dumping a frame to the console.
     void printFrameDescription(WebKit::WebFrame*);
-
-    // Dumping the user gesture status to the console.
-    void printFrameUserGestureStatus(WebKit::WebFrame*, const char*);
 
     bool hasWindow() const { return m_hasWindow; }
     void resetScrollRect();

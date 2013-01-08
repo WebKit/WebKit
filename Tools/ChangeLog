@@ -1,3 +1,130 @@
+2013-01-08  Jochen Eisinger  <jochen@chromium.org>
+
+        [chromium] move dumpFrameLoadCallbacks and friends to the TestRunner library
+        https://bugs.webkit.org/show_bug.cgi?id=106324
+
+        Reviewed by Adam Barth.
+
+        Since the frame load callbacks are part of the WebFrameClient, the
+        WebTestProxy is now intercepting both WebViewClient and WebFrameClient
+        methods.
+
+        * DumpRenderTree/chromium/DRTTestRunner.cpp:
+        (DRTTestRunner::DRTTestRunner):
+        (DRTTestRunner::reset):
+        * DumpRenderTree/chromium/DRTTestRunner.h:
+        (DRTTestRunner):
+        * DumpRenderTree/chromium/TestRunner/public/WebTestInterfaces.h:
+        (WebTestInterfaces):
+        * DumpRenderTree/chromium/TestRunner/public/WebTestProxy.h:
+        (WebKit):
+        (WebTestProxyBase):
+        (WebTestRunner):
+        (WebTestRunner::WebTestProxy::WebTestProxy):
+        (WebTestProxy):
+        (WebTestRunner::WebTestProxy::didInvalidateRect):
+        (WebTestRunner::WebTestProxy::didScrollRect):
+        (WebTestRunner::WebTestProxy::scheduleComposite):
+        (WebTestRunner::WebTestProxy::scheduleAnimation):
+        (WebTestRunner::WebTestProxy::setWindowRect):
+        (WebTestRunner::WebTestProxy::show):
+        (WebTestRunner::WebTestProxy::didAutoResize):
+        (WebTestRunner::WebTestProxy::postAccessibilityNotification):
+        (WebTestRunner::WebTestProxy::startDragging):
+        (WebTestRunner::WebTestProxy::shouldBeginEditing):
+        (WebTestRunner::WebTestProxy::shouldEndEditing):
+        (WebTestRunner::WebTestProxy::shouldInsertNode):
+        (WebTestRunner::WebTestProxy::shouldInsertText):
+        (WebTestRunner::WebTestProxy::shouldChangeSelectedRange):
+        (WebTestRunner::WebTestProxy::shouldDeleteRange):
+        (WebTestRunner::WebTestProxy::shouldApplyStyle):
+        (WebTestRunner::WebTestProxy::didBeginEditing):
+        (WebTestRunner::WebTestProxy::didChangeSelection):
+        (WebTestRunner::WebTestProxy::didChangeContents):
+        (WebTestRunner::WebTestProxy::didEndEditing):
+        (WebTestRunner::WebTestProxy::registerIntentService):
+        (WebTestRunner::WebTestProxy::dispatchIntent):
+        (WebTestRunner::WebTestProxy::willPerformClientRedirect):
+        (WebTestRunner::WebTestProxy::didCancelClientRedirect):
+        (WebTestRunner::WebTestProxy::didStartProvisionalLoad):
+        (WebTestRunner::WebTestProxy::didReceiveServerRedirectForProvisionalLoad):
+        (WebTestRunner::WebTestProxy::didFailProvisionalLoad):
+        (WebTestRunner::WebTestProxy::didCommitProvisionalLoad):
+        (WebTestRunner::WebTestProxy::didReceiveTitle):
+        (WebTestRunner::WebTestProxy::didFinishDocumentLoad):
+        (WebTestRunner::WebTestProxy::didHandleOnloadEvents):
+        (WebTestRunner::WebTestProxy::didFailLoad):
+        (WebTestRunner::WebTestProxy::didFinishLoad):
+        (WebTestRunner::WebTestProxy::didChangeLocationWithinPage):
+        (WebTestRunner::WebTestProxy::didDisplayInsecureContent):
+        (WebTestRunner::WebTestProxy::didRunInsecureContent):
+        (WebTestRunner::WebTestProxy::didDetectXSS):
+        * DumpRenderTree/chromium/TestRunner/public/WebTestRunner.h:
+        (WebTestRunner::WebTestRunner::setTestIsRunning):
+        (WebTestRunner::WebTestRunner::shouldDumpFrameLoadCallbacks):
+        (WebTestRunner::WebTestRunner::setShouldDumpFrameLoadCallbacks):
+        (WebTestRunner::WebTestRunner::shouldDumpUserGestureInFrameLoadCallbacks):
+        (WebTestRunner::WebTestRunner::stopProvisionalFrameLoads):
+        (WebTestRunner::WebTestRunner::shouldDumpTitleChanges):
+        * DumpRenderTree/chromium/TestRunner/src/TestRunner.cpp:
+        (WebTestRunner::TestRunner::TestRunner):
+        (WebTestRunner::TestRunner::reset):
+        (WebTestRunner::TestRunner::setTestIsRunning):
+        (WebTestRunner):
+        (WebTestRunner::TestRunner::shouldDumpFrameLoadCallbacks):
+        (WebTestRunner::TestRunner::setShouldDumpFrameLoadCallbacks):
+        (WebTestRunner::TestRunner::shouldDumpUserGestureInFrameLoadCallbacks):
+        (WebTestRunner::TestRunner::stopProvisionalFrameLoads):
+        (WebTestRunner::TestRunner::shouldDumpTitleChanges):
+        (WebTestRunner::TestRunner::dumpFrameLoadCallbacks):
+        (WebTestRunner::TestRunner::dumpUserGestureInFrameLoadCallbacks):
+        (WebTestRunner::TestRunner::setStopProvisionalFrameLoads):
+        (WebTestRunner::TestRunner::dumpTitleChanges):
+        * DumpRenderTree/chromium/TestRunner/src/TestRunner.h:
+        (TestRunner):
+        * DumpRenderTree/chromium/TestRunner/src/WebTestInterfaces.cpp:
+        (WebTestInterfaces::Internal):
+        (WebTestRunner::WebTestInterfaces::Internal::webView):
+        (WebTestRunner::WebTestInterfaces::Internal::Internal):
+        (WebTestRunner::WebTestInterfaces::Internal::setWebView):
+        (WebTestRunner):
+        (WebTestRunner::WebTestInterfaces::Internal::setTestIsRunning):
+        (WebTestRunner::WebTestInterfaces::setWebView):
+        (WebTestRunner::WebTestInterfaces::setTestIsRunning):
+        (WebTestRunner::WebTestInterfaces::webView):
+        * DumpRenderTree/chromium/TestRunner/src/WebTestProxy.cpp:
+        (WebTestRunner::WebTestProxyBase::willPerformClientRedirect):
+        (WebTestRunner):
+        (WebTestRunner::WebTestProxyBase::didCancelClientRedirect):
+        (WebTestRunner::WebTestProxyBase::didStartProvisionalLoad):
+        (WebTestRunner::WebTestProxyBase::didReceiveServerRedirectForProvisionalLoad):
+        (WebTestRunner::WebTestProxyBase::didFailProvisionalLoad):
+        (WebTestRunner::WebTestProxyBase::didCommitProvisionalLoad):
+        (WebTestRunner::WebTestProxyBase::didReceiveTitle):
+        (WebTestRunner::WebTestProxyBase::didFinishDocumentLoad):
+        (WebTestRunner::WebTestProxyBase::didHandleOnloadEvents):
+        (WebTestRunner::WebTestProxyBase::didFailLoad):
+        (WebTestRunner::WebTestProxyBase::didFinishLoad):
+        (WebTestRunner::WebTestProxyBase::didChangeLocationWithinPage):
+        (WebTestRunner::WebTestProxyBase::didDisplayInsecureContent):
+        (WebTestRunner::WebTestProxyBase::didRunInsecureContent):
+        (WebTestRunner::WebTestProxyBase::didDetectXSS):
+        * DumpRenderTree/chromium/TestShell.cpp:
+        (TestShell::runFileTest):
+        (TestShell::testFinished):
+        * DumpRenderTree/chromium/TestShell.h:
+        (TestShell):
+        * DumpRenderTree/chromium/WebViewHost.cpp:
+        (WebViewHost::didStartProvisionalLoad):
+        (WebViewHost::didReceiveServerRedirectForProvisionalLoad):
+        (WebViewHost::didFailProvisionalLoad):
+        (WebViewHost::didCommitProvisionalLoad):
+        (WebViewHost::didReceiveTitle):
+        (WebViewHost::didFailLoad):
+        (WebViewHost::didFinishLoad):
+        * DumpRenderTree/chromium/WebViewHost.h:
+        (WebViewHost):
+
 2013-01-08  Zan Dobersek  <zandobersek@gmail.com>
 
         [GTK] Lower the default timeout value for WebKitTestRunner

@@ -118,15 +118,12 @@ DRTTestRunner::DRTTestRunner(TestShell* shell)
     bindMethod("display", &DRTTestRunner::display);
     bindMethod("displayInvalidatedRegion", &DRTTestRunner::displayInvalidatedRegion);
     bindMethod("dumpBackForwardList", &DRTTestRunner::dumpBackForwardList);
-    bindMethod("dumpFrameLoadCallbacks", &DRTTestRunner::dumpFrameLoadCallbacks);
     bindMethod("dumpProgressFinishedCallback", &DRTTestRunner::dumpProgressFinishedCallback);
-    bindMethod("dumpUserGestureInFrameLoadCallbacks", &DRTTestRunner::dumpUserGestureInFrameLoadCallbacks);
     bindMethod("dumpResourceLoadCallbacks", &DRTTestRunner::dumpResourceLoadCallbacks);
     bindMethod("dumpResourceRequestCallbacks", &DRTTestRunner::dumpResourceRequestCallbacks);
     bindMethod("dumpResourceResponseMIMETypes", &DRTTestRunner::dumpResourceResponseMIMETypes);
     bindMethod("dumpSelectionRect", &DRTTestRunner::dumpSelectionRect);
     bindMethod("dumpStatusCallbacks", &DRTTestRunner::dumpWindowStatusChanges);
-    bindMethod("dumpTitleChanges", &DRTTestRunner::dumpTitleChanges);
     bindMethod("dumpPermissionClientCallbacks", &DRTTestRunner::dumpPermissionClientCallbacks);
     bindMethod("dumpCreateView", &DRTTestRunner::dumpCreateView);
     bindMethod("enableAutoResizeMode", &DRTTestRunner::enableAutoResizeMode);
@@ -166,7 +163,6 @@ DRTTestRunner::DRTTestRunner(TestShell* shell)
     bindMethod("setSelectTrailingWhitespaceEnabled", &DRTTestRunner::setSelectTrailingWhitespaceEnabled);
     bindMethod("setBackingScaleFactor", &DRTTestRunner::setBackingScaleFactor);
     bindMethod("setSmartInsertDeleteEnabled", &DRTTestRunner::setSmartInsertDeleteEnabled);
-    bindMethod("setStopProvisionalFrameLoads", &DRTTestRunner::setStopProvisionalFrameLoads);
     bindMethod("setWillSendRequestClearHeader", &DRTTestRunner::setWillSendRequestClearHeader);
     bindMethod("setWillSendRequestReturnsNull", &DRTTestRunner::setWillSendRequestReturnsNull);
     bindMethod("setWillSendRequestReturnsNullOnRedirect", &DRTTestRunner::setWillSendRequestReturnsNullOnRedirect);
@@ -251,21 +247,9 @@ void DRTTestRunner::dumpBackForwardList(const CppArgumentList&, CppVariant* resu
     result->setNull();
 }
 
-void DRTTestRunner::dumpFrameLoadCallbacks(const CppArgumentList&, CppVariant* result)
-{
-    m_dumpFrameLoadCallbacks = true;
-    result->setNull();
-}
-
 void DRTTestRunner::dumpProgressFinishedCallback(const CppArgumentList&, CppVariant* result)
 {
     m_dumpProgressFinishedCallback = true;
-    result->setNull();
-}
-
-void DRTTestRunner::dumpUserGestureInFrameLoadCallbacks(const CppArgumentList&, CppVariant* result)
-{
-    m_dumpUserGestureInFrameLoadCallbacks = true;
     result->setNull();
 }
 
@@ -290,12 +274,6 @@ void DRTTestRunner::dumpResourceResponseMIMETypes(const CppArgumentList&, CppVar
 void DRTTestRunner::dumpWindowStatusChanges(const CppArgumentList&, CppVariant* result)
 {
     m_dumpWindowStatusChanges = true;
-    result->setNull();
-}
-
-void DRTTestRunner::dumpTitleChanges(const CppArgumentList&, CppVariant* result)
-{
-    m_dumpTitleChanges = true;
     result->setNull();
 }
 
@@ -496,22 +474,18 @@ void DRTTestRunner::reset()
     if (m_shell)
         m_shell->webViewHost()->setDeviceScaleFactor(1);
     m_dumpCreateView = false;
-    m_dumpFrameLoadCallbacks = false;
     m_dumpProgressFinishedCallback = false;
-    m_dumpUserGestureInFrameLoadCallbacks = false;
     m_dumpResourceLoadCallbacks = false;
     m_dumpResourceRequestCallbacks = false;
     m_dumpResourceResponseMIMETypes = false;
     m_dumpBackForwardList = false;
     m_dumpWindowStatusChanges = false;
     m_dumpSelectionRect = false;
-    m_dumpTitleChanges = false;
     m_dumpPermissionClientCallbacks = false;
     m_waitUntilDone = false;
     m_canOpenWindows = false;
     m_testRepaint = false;
     m_sweepHorizontally = false;
-    m_stopProvisionalFrameLoads = false;
     m_deferMainResourceDataLoad = true;
     m_webHistoryItemCount.set(0);
     m_titleTextDirection.set("ltr");
@@ -703,12 +677,6 @@ void DRTTestRunner::pathToLocalResource(const CppArgumentList& arguments, CppVar
         lowerUrl = lowerUrl.substr(0, 8) + lowerUrl.substr(9);
     }
     result->set(webkit_support::RewriteLayoutTestsURL(url).spec());
-}
-
-void DRTTestRunner::setStopProvisionalFrameLoads(const CppArgumentList&, CppVariant* result)
-{
-    result->setNull();
-    m_stopProvisionalFrameLoads = true;
 }
 
 void DRTTestRunner::setSmartInsertDeleteEnabled(const CppArgumentList& arguments, CppVariant* result)

@@ -37,6 +37,7 @@
 #include "WebKit/chromium/public/WebEditingAction.h"
 #include "WebKit/chromium/public/WebNavigationPolicy.h"
 #include "WebKit/chromium/public/WebTextAffinity.h"
+#include "WebKit/chromium/public/WebTextDirection.h"
 
 namespace WebKit {
 class WebAccessibilityObject;
@@ -47,10 +48,13 @@ class WebIntentRequest;
 class WebIntentServiceInfo;
 class WebNode;
 class WebRange;
-class WebString;
-struct WebPoint;
+class WebSecurityOrigin;
 class WebSerializedScriptValue;
+class WebString;
+class WebURL;
+struct WebPoint;
 struct WebSize;
+struct WebURLError;
 }
 
 namespace WebTestRunner {
@@ -93,6 +97,21 @@ protected:
     void didEndEditing();
     void registerIntentService(WebKit::WebFrame*, const WebKit::WebIntentServiceInfo&);
     void dispatchIntent(WebKit::WebFrame* source, const WebKit::WebIntentRequest&);
+    void willPerformClientRedirect(WebKit::WebFrame*, const WebKit::WebURL& from, const WebKit::WebURL& to, double interval, double fire_time);
+    void didCancelClientRedirect(WebKit::WebFrame*);
+    void didStartProvisionalLoad(WebKit::WebFrame*);
+    void didReceiveServerRedirectForProvisionalLoad(WebKit::WebFrame*);
+    void didFailProvisionalLoad(WebKit::WebFrame*, const WebKit::WebURLError&);
+    void didCommitProvisionalLoad(WebKit::WebFrame*, bool isNewNavigation);
+    void didReceiveTitle(WebKit::WebFrame*, const WebKit::WebString& title, WebKit::WebTextDirection);
+    void didFinishDocumentLoad(WebKit::WebFrame*);
+    void didHandleOnloadEvents(WebKit::WebFrame*);
+    void didFailLoad(WebKit::WebFrame*, const WebKit::WebURLError&);
+    void didFinishLoad(WebKit::WebFrame*);
+    void didChangeLocationWithinPage(WebKit::WebFrame*);
+    void didDisplayInsecureContent(WebKit::WebFrame*);
+    void didRunInsecureContent(WebKit::WebFrame*, const WebKit::WebSecurityOrigin&, const WebKit::WebURL& insecureURL);
+    void didDetectXSS(WebKit::WebFrame*, const WebKit::WebURL& insecureURL, bool didBlockEntirePage);
 
 private:
     WebTestInterfaces* m_testInterfaces;
@@ -101,127 +120,205 @@ private:
     WebKit::WebRect m_paintRect;
 };
 
-// Use this template to inject methods into your WebViewClient implementation
-// required for the running layout tests.
-template<class WebViewClientImpl, typename T>
-class WebTestProxy : public WebViewClientImpl, public WebTestProxyBase {
+// Use this template to inject methods into your WebViewClient/WebFrameClient
+// implementation required for the running layout tests.
+template<class Base, typename T>
+class WebTestProxy : public Base, public WebTestProxyBase {
 public:
     explicit WebTestProxy(T t)
-        : WebViewClientImpl(t)
+        : Base(t)
     {
     }
 
     virtual ~WebTestProxy() { }
 
+    // WebViewClient implementation.
     virtual void didInvalidateRect(const WebKit::WebRect& rect)
     {
         WebTestProxyBase::didInvalidateRect(rect);
-        WebViewClientImpl::didInvalidateRect(rect);
+        Base::didInvalidateRect(rect);
     }
     virtual void didScrollRect(int dx, int dy, const WebKit::WebRect& clipRect)
     {
         WebTestProxyBase::didScrollRect(dx, dy, clipRect);
-        WebViewClientImpl::didScrollRect(dx, dy, clipRect);
+        Base::didScrollRect(dx, dy, clipRect);
     }
     virtual void scheduleComposite()
     {
         WebTestProxyBase::scheduleComposite();
-        WebViewClientImpl::scheduleComposite();
+        Base::scheduleComposite();
     }
     virtual void scheduleAnimation()
     {
         WebTestProxyBase::scheduleAnimation();
-        WebViewClientImpl::scheduleAnimation();
+        Base::scheduleAnimation();
     }
     virtual void setWindowRect(const WebKit::WebRect& rect)
     {
         WebTestProxyBase::setWindowRect(rect);
-        WebViewClientImpl::setWindowRect(rect);
+        Base::setWindowRect(rect);
     }
     virtual void show(WebKit::WebNavigationPolicy policy)
     {
         WebTestProxyBase::show(policy);
-        WebViewClientImpl::show(policy);
+        Base::show(policy);
     }
     virtual void didAutoResize(const WebKit::WebSize& newSize)
     {
         WebTestProxyBase::didAutoResize(newSize);
-        WebViewClientImpl::didAutoResize(newSize);
+        Base::didAutoResize(newSize);
     }
     virtual void postAccessibilityNotification(const WebKit::WebAccessibilityObject& object, WebKit::WebAccessibilityNotification notification)
     {
         WebTestProxyBase::postAccessibilityNotification(object, notification);
-        WebViewClientImpl::postAccessibilityNotification(object, notification);
+        Base::postAccessibilityNotification(object, notification);
     }
     virtual void startDragging(WebKit::WebFrame* frame, const WebKit::WebDragData& data, WebKit::WebDragOperationsMask mask, const WebKit::WebImage& image, const WebKit::WebPoint& point)
     {
         WebTestProxyBase::startDragging(frame, data, mask, image, point);
-        WebViewClientImpl::startDragging(frame, data, mask, image, point);
+        Base::startDragging(frame, data, mask, image, point);
     }
     virtual bool shouldBeginEditing(const WebKit::WebRange& range)
     {
         WebTestProxyBase::shouldBeginEditing(range);
-        return WebViewClientImpl::shouldBeginEditing(range);
+        return Base::shouldBeginEditing(range);
     }
     virtual bool shouldEndEditing(const WebKit::WebRange& range)
     {
         WebTestProxyBase::shouldEndEditing(range);
-        return WebViewClientImpl::shouldEndEditing(range);
+        return Base::shouldEndEditing(range);
     }
     virtual bool shouldInsertNode(const WebKit::WebNode& node, const WebKit::WebRange& range, WebKit::WebEditingAction action)
     {
         WebTestProxyBase::shouldInsertNode(node, range, action);
-        return WebViewClientImpl::shouldInsertNode(node, range, action);
+        return Base::shouldInsertNode(node, range, action);
     }
     virtual bool shouldInsertText(const WebKit::WebString& text, const WebKit::WebRange& range, WebKit::WebEditingAction action)
     {
         WebTestProxyBase::shouldInsertText(text, range, action);
-        return WebViewClientImpl::shouldInsertText(text, range, action);
+        return Base::shouldInsertText(text, range, action);
     }
     virtual bool shouldChangeSelectedRange(const WebKit::WebRange& fromRange, const WebKit::WebRange& toRange, WebKit::WebTextAffinity affinity, bool stillSelecting)
     {
         WebTestProxyBase::shouldChangeSelectedRange(fromRange, toRange, affinity, stillSelecting);
-        return WebViewClientImpl::shouldChangeSelectedRange(fromRange, toRange, affinity, stillSelecting);
+        return Base::shouldChangeSelectedRange(fromRange, toRange, affinity, stillSelecting);
     }
     virtual bool shouldDeleteRange(const WebKit::WebRange& range)
     {
         WebTestProxyBase::shouldDeleteRange(range);
-        return WebViewClientImpl::shouldDeleteRange(range);
+        return Base::shouldDeleteRange(range);
     }
     virtual bool shouldApplyStyle(const WebKit::WebString& style, const WebKit::WebRange& range)
     {
         WebTestProxyBase::shouldApplyStyle(style, range);
-        return WebViewClientImpl::shouldApplyStyle(style, range);
+        return Base::shouldApplyStyle(style, range);
     }
     virtual void didBeginEditing()
     {
         WebTestProxyBase::didBeginEditing();
-        WebViewClientImpl::didBeginEditing();
+        Base::didBeginEditing();
     }
     virtual void didChangeSelection(bool isEmptySelection)
     {
         WebTestProxyBase::didChangeSelection(isEmptySelection);
-        WebViewClientImpl::didChangeSelection(isEmptySelection);
+        Base::didChangeSelection(isEmptySelection);
     }
     virtual void didChangeContents()
     {
         WebTestProxyBase::didChangeContents();
-        WebViewClientImpl::didChangeContents();
+        Base::didChangeContents();
     }
     virtual void didEndEditing()
     {
         WebTestProxyBase::didEndEditing();
-        WebViewClientImpl::didEndEditing();
+        Base::didEndEditing();
     }
     virtual void registerIntentService(WebKit::WebFrame* frame, const WebKit::WebIntentServiceInfo& service)
     {
         WebTestProxyBase::registerIntentService(frame, service);
-        WebViewClientImpl::registerIntentService(frame, service);
+        Base::registerIntentService(frame, service);
     }
     virtual void dispatchIntent(WebKit::WebFrame* source, const WebKit::WebIntentRequest& request)
     {
         WebTestProxyBase::dispatchIntent(source, request);
-        WebViewClientImpl::dispatchIntent(source, request);
+        Base::dispatchIntent(source, request);
+    }
+
+    // WebFrameClient implementation.
+    virtual void willPerformClientRedirect(WebKit::WebFrame* frame, const WebKit::WebURL& from, const WebKit::WebURL& to, double interval, double fireTime)
+    {
+        WebTestProxyBase::willPerformClientRedirect(frame, from, to, interval, fireTime);
+        Base::willPerformClientRedirect(frame, from, to, interval, fireTime);
+    }
+    virtual void didCancelClientRedirect(WebKit::WebFrame* frame)
+    {
+        WebTestProxyBase::didCancelClientRedirect(frame);
+        Base::didCancelClientRedirect(frame);
+    }
+    virtual void didStartProvisionalLoad(WebKit::WebFrame* frame)
+    {
+        WebTestProxyBase::didStartProvisionalLoad(frame);
+        Base::didStartProvisionalLoad(frame);
+    }
+    virtual void didReceiveServerRedirectForProvisionalLoad(WebKit::WebFrame* frame)
+    {
+        WebTestProxyBase::didReceiveServerRedirectForProvisionalLoad(frame);
+        Base::didReceiveServerRedirectForProvisionalLoad(frame);
+    }
+    virtual void didFailProvisionalLoad(WebKit::WebFrame* frame, const WebKit::WebURLError& error)
+    {
+        WebTestProxyBase::didFailProvisionalLoad(frame, error);
+        Base::didFailProvisionalLoad(frame, error);
+    }
+    virtual void didCommitProvisionalLoad(WebKit::WebFrame* frame, bool isNewNavigation)
+    {
+        WebTestProxyBase::didCommitProvisionalLoad(frame, isNewNavigation);
+        Base::didCommitProvisionalLoad(frame, isNewNavigation);
+    }
+    virtual void didReceiveTitle(WebKit::WebFrame* frame, const WebKit::WebString& title, WebKit::WebTextDirection direction)
+    {
+        WebTestProxyBase::didReceiveTitle(frame, title, direction);
+        Base::didReceiveTitle(frame, title, direction);
+    }
+    virtual void didFinishDocumentLoad(WebKit::WebFrame* frame)
+    {
+        WebTestProxyBase::didFinishDocumentLoad(frame);
+        Base::didFinishDocumentLoad(frame);
+    }
+    virtual void didHandleOnloadEvents(WebKit::WebFrame* frame)
+    {
+        WebTestProxyBase::didHandleOnloadEvents(frame);
+        Base::didHandleOnloadEvents(frame);
+    }
+    virtual void didFailLoad(WebKit::WebFrame* frame, const WebKit::WebURLError& error)
+    {
+        WebTestProxyBase::didFailLoad(frame, error);
+        Base::didFailLoad(frame, error);
+    }
+    virtual void didFinishLoad(WebKit::WebFrame* frame)
+    {
+        WebTestProxyBase::didFinishLoad(frame);
+        Base::didFinishLoad(frame);
+    }
+    virtual void didChangeLocationWithinPage(WebKit::WebFrame* frame)
+    {
+        WebTestProxyBase::didChangeLocationWithinPage(frame);
+        Base::didChangeLocationWithinPage(frame);
+    }
+    virtual void didDisplayInsecureContent(WebKit::WebFrame* frame)
+    {
+        WebTestProxyBase::didDisplayInsecureContent(frame);
+        Base::didDisplayInsecureContent(frame);
+    }
+    virtual void didRunInsecureContent(WebKit::WebFrame* frame, const WebKit::WebSecurityOrigin& origin, const WebKit::WebURL& insecureURL)
+    {
+        WebTestProxyBase::didRunInsecureContent(frame, origin, insecureURL);
+        Base::didRunInsecureContent(frame, origin, insecureURL);
+    }
+    virtual void didDetectXSS(WebKit::WebFrame* frame, const WebKit::WebURL& insecureURL, bool didBlockEntirePage)
+    {
+        WebTestProxyBase::didDetectXSS(frame, insecureURL, didBlockEntirePage);
+        Base::didDetectXSS(frame, insecureURL, didBlockEntirePage);
     }
 };
 

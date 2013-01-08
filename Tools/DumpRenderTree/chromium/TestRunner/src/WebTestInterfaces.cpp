@@ -36,6 +36,7 @@
 #include "WebAccessibilityController.h"
 #include "WebEventSender.h"
 #include "WebTestDelegate.h"
+#include "WebTestRunner.h"
 
 using WebKit::WebContextMenuData;
 using WebKit::WebFrame;
@@ -53,6 +54,9 @@ public:
 
     TestInterfaces* testInterfaces() { return &m_interfaces; }
     void setDelegate(WebTestDelegate*);
+    void setWebView(WebView*);
+    void setTestIsRunning(bool);
+    WebView* webView() const { return m_webView; }
     WebAccessibilityController* accessibilityController() { return &m_accessibilityController; }
     WebEventSender* eventSender() { return &m_eventSender; }
     WebTestRunner* testRunner() { return m_testRunner; }
@@ -74,6 +78,8 @@ public:
 
 private:
     TestInterfaces m_interfaces;
+    bool m_testIsRunning;
+    WebView* m_webView;
     WebAccessibilityController m_accessibilityController;
     WebEventSender m_eventSender;
     WebTestRunner* m_testRunner;
@@ -81,7 +87,9 @@ private:
 };
 
 WebTestInterfaces::Internal::Internal()
-    : m_accessibilityController(m_interfaces.accessibilityController())
+    : m_testIsRunning(false)
+    , m_webView(0)
+    , m_accessibilityController(m_interfaces.accessibilityController())
     , m_eventSender(m_interfaces.eventSender())
     , m_testRunner(0)
     , m_delegate(0)
@@ -101,6 +109,18 @@ void WebTestInterfaces::Internal::setDelegate(WebTestDelegate* delegate)
         m_delegate = 0;
         m_interfaces.setDelegate(0);
     }
+}
+
+void WebTestInterfaces::Internal::setWebView(WebView* webView)
+{
+    m_webView = webView;
+    m_interfaces.setWebView(webView);
+}
+
+void WebTestInterfaces::Internal::setTestIsRunning(bool running)
+{
+    if (m_testRunner)
+        m_testRunner->setTestIsRunning(running);
 }
 
 void WebTestInterfaces::Internal::clearContextMenuData()
@@ -175,7 +195,7 @@ WebTestInterfaces::~WebTestInterfaces()
 
 void WebTestInterfaces::setWebView(WebView* webView)
 {
-    m_internal->testInterfaces()->setWebView(webView);
+    m_internal->setWebView(webView);
 }
 
 void WebTestInterfaces::setDelegate(WebTestDelegate* delegate)
@@ -191,6 +211,16 @@ void WebTestInterfaces::bindTo(WebFrame* frame)
 void WebTestInterfaces::resetAll()
 {
     m_internal->testInterfaces()->resetAll();
+}
+
+void WebTestInterfaces::setTestIsRunning(bool running)
+{
+    m_internal->setTestIsRunning(running);
+}
+
+WebView* WebTestInterfaces::webView() const
+{
+    return m_internal->webView();
 }
 
 WebAccessibilityController* WebTestInterfaces::accessibilityController()
