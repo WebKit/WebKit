@@ -3375,6 +3375,7 @@ enable?(WEB_AUDIO) {
         Modules/webaudio/MediaElementAudioSourceNode.h \
         Modules/webaudio/MediaStreamAudioSourceNode.h \
         Modules/webaudio/OfflineAudioCompletionEvent.h \
+        Modules/webaudio/OfflineAudioContext.h \
         Modules/webaudio/OfflineAudioDestinationNode.h \
         Modules/webaudio/OscillatorNode.h \
         Modules/webaudio/RealtimeAnalyser.h \
@@ -3466,6 +3467,7 @@ enable?(WEB_AUDIO) {
         Modules/webaudio/MediaElementAudioSourceNode.cpp \
         Modules/webaudio/MediaStreamAudioSourceNode.cpp \
         Modules/webaudio/OfflineAudioCompletionEvent.cpp \
+        Modules/webaudio/OfflineAudioContext.cpp \
         Modules/webaudio/OfflineAudioDestinationNode.cpp \
         Modules/webaudio/OscillatorNode.cpp \
         Modules/webaudio/RealtimeAnalyser.cpp \
