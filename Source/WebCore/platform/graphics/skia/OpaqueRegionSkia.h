@@ -91,6 +91,8 @@ private:
     void markRectAsNonOpaque(const SkRect&);
     void markAllAsNonOpaque();
 
+    SkRect& currentTrackingOpaqueRect();
+
     SkRect m_opaqueRect;
 
     Vector<CanvasLayerState, 3> m_canvasLayerStack;

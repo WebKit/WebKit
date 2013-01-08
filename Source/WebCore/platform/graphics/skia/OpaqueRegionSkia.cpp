@@ -164,14 +164,6 @@ static inline bool getDeviceClipAsRect(const PlatformContextSkia* context, SkRec
     return true;
 }
 
-static inline SkRect& currentTrackingOpaqueRect(SkRect& rootOpaqueRect, Vector<OpaqueRegionSkia::CanvasLayerState, 3>& canvasLayerStack)
-{
-    // If we are drawing into a canvas layer, then track the opaque rect in that layer.
-    if (!canvasLayerStack.isEmpty())
-        return canvasLayerStack.last().opaqueRect;
-    return rootOpaqueRect;
-}
-
 void OpaqueRegionSkia::pushCanvasLayer(const SkPaint* paint)
 {
     CanvasLayerState state;
@@ -333,7 +325,7 @@ void OpaqueRegionSkia::applyOpaqueRegionFromLayer(const PlatformContextSkia* con
 
     SkRect sourceOpaqueRect = layerOpaqueRect;
     // Save the opaque area in the destination, so we can preserve the parts of it under the source opaque area if possible.
-    SkRect destinationOpaqueRect = currentTrackingOpaqueRect(m_opaqueRect, m_canvasLayerStack);
+    SkRect destinationOpaqueRect = currentTrackingOpaqueRect();
 
     bool outsideSourceOpaqueRectPreservesOpaque = xfermodePreservesOpaque(paint, false);
     if (!outsideSourceOpaqueRectPreservesOpaque)
@@ -363,7 +355,7 @@ void OpaqueRegionSkia::markRectAsOpaque(const SkRect& rect)
     // rectangle then we do that, as that is the cheapest way to increase the area returned
     // without increasing the complexity.
 
-    SkRect& opaqueRect = currentTrackingOpaqueRect(m_opaqueRect, m_canvasLayerStack);
+    SkRect& opaqueRect = currentTrackingOpaqueRect();
 
     if (rect.isEmpty())
         return;
@@ -397,7 +389,7 @@ void OpaqueRegionSkia::markRectAsNonOpaque(const SkRect& rect)
     // We want to keep as much of the current opaque rectangle as we can, so find the one largest
     // rectangle inside m_opaqueRect that does not intersect with |rect|.
 
-    SkRect& opaqueRect = currentTrackingOpaqueRect(m_opaqueRect, m_canvasLayerStack);
+    SkRect& opaqueRect = currentTrackingOpaqueRect();
 
     if (!SkRect::Intersects(rect, opaqueRect))
         return;
@@ -432,8 +424,14 @@ void OpaqueRegionSkia::markRectAsNonOpaque(const SkRect& rect)
 
 void OpaqueRegionSkia::markAllAsNonOpaque()
 {
-    SkRect& opaqueRect = currentTrackingOpaqueRect(m_opaqueRect, m_canvasLayerStack);
+    SkRect& opaqueRect = currentTrackingOpaqueRect();
     opaqueRect.setEmpty();
+}
+
+SkRect& OpaqueRegionSkia::currentTrackingOpaqueRect()
+{
+    // If we are drawing into a canvas layer, then track the opaque rect in that layer.
+    return m_canvasLayerStack.isEmpty() ? m_opaqueRect : m_canvasLayerStack.last().opaqueRect;
 }
 
 } // namespace WebCore
