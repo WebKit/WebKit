@@ -1,3 +1,16 @@
+2013-01-08  Zan Dobersek  <zandobersek@gmail.com>
+
+        Make the override-feature-defines script compatible with Python v3
+        https://bugs.webkit.org/show_bug.cgi?id=105742
+
+        Reviewed by Martin Robinson.
+
+        Instead of printing output through a statement, use the print function and format
+        the output using the str.format method. This makes the script runnable with Python v3.
+
+        * gtk/override-feature-defines:
+        (adjust_feature_defines_makefile):
+
 2013-01-08  Heikki Paajanen  <heikki.paajanen@palm.com>
 
         [Qt] Fix libxml2 config test

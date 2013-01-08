@@ -30,7 +30,7 @@ def adjust_feature_defines_makefile(build_dir, feature_defines_overriding):
         f.write(feature_defines_makefile)
 
     if overriden_feature_defines:
-        print "The following feature defines were overriden:\n%s" % ', '.join(overriden_feature_defines)
+        print("The following feature defines were overriden:\n{0}".format(', '.join(overriden_feature_defines)))
 
 def override_feature_defines(build_dir):
     copy_feature_defines_makefile()
