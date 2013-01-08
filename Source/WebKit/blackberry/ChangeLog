@@ -1,3 +1,20 @@
+2013-01-08  Sean Wang  <Xuewen.Wang@torchmobile.com.cn>
+
+        [BlackBerry] Can't select text out of current focused input
+        https://bugs.webkit.org/show_bug.cgi?id=106322
+
+        Reviewed by Rob Buis.
+
+        PR270755
+        Internally reviewed by Mike Fenton
+
+        When selection changed, the selection handler clips new selection with
+        current focused node's boundary. So we clear focus before selectObject.
+        This patch clear focus when selectObject is at a point but not at a node.
+
+        * WebKitSupport/SelectionHandler.cpp:
+        (BlackBerry::WebKit::SelectionHandler::selectObject):
+
 2013-01-08  Steve Block  <steveblock@chromium.org>
 
         Rename 'IntSize toSize(const IntPoint&)' to 'toIntSize'
