@@ -79,6 +79,9 @@ public:
     void detach();
     void executeQueuedTasks();
 
+    void setDefaultCompatibilityMode();
+    void finishedParsing();
+
     void insertDoctype(AtomicHTMLToken*);
     void insertComment(AtomicHTMLToken*);
     void insertCommentOnDocument(AtomicHTMLToken*);
@@ -107,6 +110,8 @@ public:
 
     void generateImpliedEndTags();
     void generateImpliedEndTagsWithExclusion(const AtomicString& tagName);
+
+    bool inQuirksMode();
 
     bool isEmpty() const { return !m_openElements.stackDepth(); }
     HTMLElementStack::ElementRecord* currentElementRecord() const { return m_openElements.topRecord(); }

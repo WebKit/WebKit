@@ -225,6 +225,20 @@ void HTMLConstructionSite::insertHTMLBodyStartTagInBody(AtomicHTMLToken* token)
     mergeAttributesFromTokenIntoElement(token, m_openElements.bodyElement());
 }
 
+void HTMLConstructionSite::setDefaultCompatibilityMode()
+{
+    if (m_isParsingFragment)
+        return;
+    if (m_document->isSrcdocDocument())
+        return;
+    m_document->setCompatibilityMode(Document::QuirksMode);
+}
+
+void HTMLConstructionSite::finishedParsing()
+{
+    m_document->finishedParsing();
+}
+
 void HTMLConstructionSite::insertDoctype(AtomicHTMLToken* token)
 {
     ASSERT(token->type() == HTMLTokenTypes::DOCTYPE);
@@ -478,6 +492,12 @@ void HTMLConstructionSite::generateImpliedEndTags()
 {
     while (hasImpliedEndTag(currentStackItem()))
         m_openElements.pop();
+}
+
+bool HTMLConstructionSite::inQuirksMode()
+{
+    // When we move the parser onto a background thread, we'll need to keep track of this bit on the parser thread.
+    return m_document->inQuirksMode();
 }
 
 void HTMLConstructionSite::findFosterSite(HTMLConstructionSiteTask& task)

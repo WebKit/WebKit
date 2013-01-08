@@ -28,7 +28,6 @@
 #include "HTMLTreeBuilder.h"
 
 #include "Comment.h"
-#include "DOMWindow.h"
 #include "DocumentFragment.h"
 #include "DocumentType.h"
 #include "HTMLDocument.h"
@@ -271,7 +270,9 @@ private:
 
 HTMLTreeBuilder::HTMLTreeBuilder(HTMLDocumentParser* parser, HTMLDocument* document, bool, const HTMLParserOptions& options)
     : m_framesetOk(true)
-    , m_document(document)
+#ifndef NDEBUG
+    , m_isAttached(true)
+#endif
     , m_tree(document, options.maximumDOMTreeDepth)
     , m_insertionMode(InitialMode)
     , m_originalInsertionMode(InitialMode)
@@ -286,8 +287,10 @@ HTMLTreeBuilder::HTMLTreeBuilder(HTMLDocumentParser* parser, HTMLDocument* docum
 // minimize code duplication between these constructors.
 HTMLTreeBuilder::HTMLTreeBuilder(HTMLDocumentParser* parser, DocumentFragment* fragment, Element* contextElement, FragmentScriptingPermission scriptingPermission, const HTMLParserOptions& options)
     : m_framesetOk(true)
+#ifndef NDEBUG
+    , m_isAttached(true)
+#endif
     , m_fragmentContext(fragment, contextElement, scriptingPermission)
-    , m_document(fragment->document())
     , m_tree(fragment, scriptingPermission, options.maximumDOMTreeDepth)
     , m_insertionMode(InitialMode)
     , m_originalInsertionMode(InitialMode)
@@ -322,9 +325,11 @@ HTMLTreeBuilder::~HTMLTreeBuilder()
 
 void HTMLTreeBuilder::detach()
 {
+#ifndef NDEBUG
     // This call makes little sense in fragment mode, but for consistency
     // DocumentParser expects detach() to always be called before it's destroyed.
-    m_document = 0;
+    m_isAttached = false;
+#endif
     // HTMLConstructionSite might be on the callstack when detach() is called
     // otherwise we'd just call m_tree.clear() here instead.
     m_tree.detach();
@@ -824,7 +829,7 @@ void HTMLTreeBuilder::processStartTagForInBody(AtomicHTMLToken* token)
         return;
     }
     if (token->name() == tableTag) {
-        if (!m_document->inQuirksMode() && m_tree.openElements()->inButtonScope(pTag))
+        if (!m_tree.inQuirksMode() && m_tree.openElements()->inButtonScope(pTag))
             processFakeEndTag(pTag);
         m_tree.insertHTMLElement(token);
         m_framesetOk = false;
@@ -2612,8 +2617,7 @@ void HTMLTreeBuilder::processEndOfFile(AtomicHTMLToken* token)
 void HTMLTreeBuilder::defaultForInitial()
 {
     notImplemented();
-    if (!m_fragmentContext.fragment() && !m_document->isSrcdocDocument())
-        m_document->setCompatibilityMode(Document::QuirksMode);
+    m_tree.setDefaultCompatibilityMode();
     // FIXME: parse error
     setInsertionMode(BeforeHTMLMode);
 }
@@ -2903,9 +2907,9 @@ void HTMLTreeBuilder::finished()
     ASSERT(m_templateInsertionModes.isEmpty());
 #endif
 
-    ASSERT(m_document);
+    ASSERT(m_isAttached);
     // Warning, this may detach the parser. Do not do anything else after this.
-    m_document->finishedParsing();
+    m_tree.finishedParsing();
 }
 
 void HTMLTreeBuilder::parseError(AtomicHTMLToken*)

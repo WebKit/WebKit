@@ -187,8 +187,6 @@ private:
     template <bool shouldClose(const HTMLStackItem*)>
     void processCloseWhenNestedTag(AtomicHTMLToken*);
 
-    bool m_framesetOk;
-
     void parseError(AtomicHTMLToken*);
 
     InsertionMode insertionMode() const { return m_insertionMode; }
@@ -220,9 +218,11 @@ private:
         FragmentScriptingPermission m_scriptingPermission;
     };
 
+    bool m_framesetOk;
+#ifndef NDEBUG
+    bool m_isAttached;
+#endif
     FragmentParsingContext m_fragmentContext;
-
-    Document* m_document;
     HTMLConstructionSite m_tree;
 
     // http://www.whatwg.org/specs/web-apps/current-work/multipage/parsing.html#insertion-mode
