@@ -2,7 +2,7 @@
 
 if (!strlen($_SERVER["PHP_AUTH_USER"]) || !strlen($_SERVER["PHP_AUTH_PW"]))
 {
-    header("WWW-Authenticate: Basic realm=\"WebKit Bug Test\"");
+    header("WWW-Authenticate: Basic realm=\"WebKit Authentication Redirect 4\"");
     header("HTTP/1.0 401 Unauthorized");
     exit;
 }

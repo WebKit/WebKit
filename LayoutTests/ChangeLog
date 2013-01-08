@@ -1,3 +1,17 @@
+2013-01-08  Martin Robinson  <mrobinson@igalia.com>
+
+        Layout Test http/tests/misc/authentication-redirect-4/authentication-sent-to-redirect-same-origin-url.html is timing out
+        https://bugs.webkit.org/show_bug.cgi?id=106332
+
+        Reviewed by Ryosuke Niwa.
+
+        Fix this flaky test by adjusting the authentication realm
+        used in the HTTP headers.
+
+        * http/tests/misc/authentication-redirect-4/resources/auth-then-redirect.php: The authentication realm used
+        in the HTTP headers is shared with several other HTTP tests, so cached credentials can "leak" from one
+        test to another. Make the authentication realm unique for this test.
+
 2013-01-08  Alexis Menard  <alexis@webkit.org>
 
         WebKit does not reject some cubic-bezier form values for transition-timing-function.
