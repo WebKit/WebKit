@@ -1,5 +1,14 @@
 2013-01-08  Anders Carlsson  <andersca@apple.com>
 
+        Use correct capitalization in service name
+        https://bugs.webkit.org/show_bug.cgi?id=106368
+
+        Reviewed by Andreas Kling.
+
+        * WebProcess/com.apple.WebProcess.sb.in:
+
+2013-01-08  Anders Carlsson  <andersca@apple.com>
+
         Tweak sandbox profile
         https://bugs.webkit.org/show_bug.cgi?id=106362
         <rdar://problem/12884745>

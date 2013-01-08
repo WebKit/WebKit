@@ -157,7 +157,7 @@
        (global-name "com.apple.speech.recognitionserver")
 
 #if __MAC_OS_X_VERSION_MIN_REQUIRED >= 1090
-       (global-name "com.apple.CoreServices.launchservicesd")
+       (global-name "com.apple.coreservices.launchservicesd")
 #endif
 
        ;; FIXME: This should be removed when <rdar://problem/9276393> is fixed.
