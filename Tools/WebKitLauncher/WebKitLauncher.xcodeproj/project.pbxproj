@@ -150,10 +150,10 @@
 		29B97317FDCFA39411CA2CEA /* Resources */ = {
 			isa = PBXGroup;
 			children = (
+				5D41141B0A50A9DE00C84CF0 /* VERSION */,
 				8D1107310486CEB800E47090 /* Info.plist */,
 				5D18A1FE103FE255006CA7C7 /* nightly.webkit.org.public.pem */,
 				5D4DF981097F89FB0083D5E5 /* start.html */,
-				5D41141B0A50A9DE00C84CF0 /* VERSION */,
 				5DB70524097B94CD009875EC /* webkit.icns */,
 			);
 			name = Resources;
@@ -263,11 +263,11 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				5D18A1FF103FE255006CA7C7 /* nightly.webkit.org.public.pem in Resources */,
 				5D4DF982097F89FB0083D5E5 /* start.html in Resources */,
 				5D41141C0A50A9DE00C84CF0 /* VERSION in Resources */,
 				5DB70525097B94CD009875EC /* webkit.icns in Resources */,
 				5D650F3A09DB8B410075E9A8 /* WebKitNightlyEnabler.dylib in Resources */,
-				5D18A1FF103FE255006CA7C7 /* nightly.webkit.org.public.pem in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

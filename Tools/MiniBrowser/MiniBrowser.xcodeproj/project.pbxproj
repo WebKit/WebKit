@@ -86,8 +86,8 @@
 			buildActionMask = 2147483647;
 			files = (
 				8D11072F0486CEB800E47090 /* Cocoa.framework in Frameworks */,
-				BC8FB5A8116AA1FE0080D413 /* WebKit2.framework in Frameworks */,
 				0F7EB6E3134113C300F4D865 /* WebKit.framework in Frameworks */,
+				BC8FB5A8116AA1FE0080D413 /* WebKit2.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -95,8 +95,8 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				0F7EB879134113F200F4D865 /* WebKit.framework in Frameworks */,
 				BC20545E11C96C92008F3375 /* Cocoa.framework in Frameworks */,
+				0F7EB879134113F200F4D865 /* WebKit.framework in Frameworks */,
 				BCBD384411B08AAD00E01E54 /* WebKit2.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -107,18 +107,18 @@
 		080E96DDFE201D6D7F000001 /* MiniBrowser */ = {
 			isa = PBXGroup;
 			children = (
-				BC72B89A11E57E8A001EB4EA /* Info.plist */,
-				BC329486116A92E2008635D0 /* main.m */,
 				256AC3D80F4B6AC300CF3369 /* AppDelegate.h */,
 				256AC3D90F4B6AC300CF3369 /* AppDelegate.m */,
 				0FE6439F161FA8940059E3FF /* BrowserWindowController.h */,
 				0FE643A0161FA8940059E3FF /* BrowserWindowController.m */,
+				BC72B89A11E57E8A001EB4EA /* Info.plist */,
+				BC329486116A92E2008635D0 /* main.m */,
+				51E244F811EFCE07008228D1 /* MBToolbarItem.h */,
+				51E244F911EFCE07008228D1 /* MBToolbarItem.m */,
 				0FE643A2161FAC660059E3FF /* WK1BrowserWindowController.h */,
 				0FE643A3161FAC660059E3FF /* WK1BrowserWindowController.m */,
 				BC329496116A941B008635D0 /* WK2BrowserWindowController.h */,
 				BC329497116A941B008635D0 /* WK2BrowserWindowController.m */,
-				51E244F811EFCE07008228D1 /* MBToolbarItem.h */,
-				51E244F911EFCE07008228D1 /* MBToolbarItem.m */,
 			);
 			name = MiniBrowser;
 			sourceTree = "<group>";
@@ -274,8 +274,8 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				BC72B89511E57E07001EB4EA /* MainMenu.xib in Resources */,
 				BC72B89611E57E0F001EB4EA /* BrowserWindow.xib in Resources */,
+				BC72B89511E57E07001EB4EA /* MainMenu.xib in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -294,11 +294,11 @@
 			buildActionMask = 2147483647;
 			files = (
 				256AC3DA0F4B6AC300CF3369 /* AppDelegate.m in Sources */,
-				BC329487116A92E2008635D0 /* main.m in Sources */,
-				BC329498116A941B008635D0 /* WK2BrowserWindowController.m in Sources */,
-				51E244FA11EFCE07008228D1 /* MBToolbarItem.m in Sources */,
 				0FE643A1161FA8940059E3FF /* BrowserWindowController.m in Sources */,
+				BC329487116A92E2008635D0 /* main.m in Sources */,
+				51E244FA11EFCE07008228D1 /* MBToolbarItem.m in Sources */,
 				0FE643A4161FAC660059E3FF /* WK1BrowserWindowController.m in Sources */,
+				BC329498116A941B008635D0 /* WK2BrowserWindowController.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
