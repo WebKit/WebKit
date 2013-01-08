@@ -1,3 +1,13 @@
+2013-01-08  Chris Fleizach  <cfleizach@apple.com>
+
+        AX: PopUpButtons do not report that AXValueAttribute is supported
+        https://bugs.webkit.org/show_bug.cgi?id=106333
+
+        Reviewed by Ryosuke Niwa.
+
+        * platform/mac/accessibility/popup-button-exposes-axvalue-expected.txt: Added.
+        * platform/mac/accessibility/popup-button-exposes-axvalue.html: Added.
+
 2013-01-08  Dimitri Glazkov  <dglazkov@chromium.org>
 
         Update expectations for fast/text/justify-ideograph*.

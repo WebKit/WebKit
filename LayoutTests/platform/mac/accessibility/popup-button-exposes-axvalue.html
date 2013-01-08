@@ -1,0 +1,34 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../../../fast/js/resources/js-test-pre.js"></script>
+</head>
+<body id="body">
+
+<select id="popup"><option>1</option><option>2</option></select>
+<div id="aria-popup" role="button" aria-haspopup="true">popup</div>
+
+<p id="description"></p>
+<div id="console"></div>
+
+<script>
+
+    description("This tests that pop up buttons expose the AXValue attribute.");
+
+    if (window.accessibilityController) {
+
+          var popup = accessibilityController.accessibleElementById("popup");
+          shouldBeTrue("popup.isAttributeSupported('AXValue')");
+
+          var ariaPopup = accessibilityController.accessibleElementById("aria-popup");
+          shouldBeTrue("ariaPopup.isAttributeSupported('AXValue')");
+
+          document.getElementById("aria-popup").style.display = "none";
+          document.getElementById("popup").style.display = "none";
+    }
+
+</script>
+
+<script src="../../../fast/js/resources/js-test-post.js"></script>
+</body>
+</html>
