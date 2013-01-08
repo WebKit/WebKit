@@ -438,6 +438,7 @@ private:
     virtual IntRect scrollableAreaBoundingBox() const OVERRIDE;
     virtual bool scrollAnimatorEnabled() const OVERRIDE;
 #if USE(ACCELERATED_COMPOSITING)
+    virtual bool usesCompositedScrolling() const OVERRIDE;
     virtual GraphicsLayer* layerForHorizontalScrollbar() const OVERRIDE;
     virtual GraphicsLayer* layerForVerticalScrollbar() const OVERRIDE;
     virtual GraphicsLayer* layerForScrollCorner() const OVERRIDE;

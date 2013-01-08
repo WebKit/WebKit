@@ -1170,6 +1170,9 @@ void RenderLayerCompositor::frameViewDidScroll()
     if (ScrollingCoordinator* scrollingCoordinator = this->scrollingCoordinator()) {
         if (scrollingCoordinator->coordinatesScrollingForFrameView(frameView))
             return;
+        if (Settings* settings = m_renderView->document()->settings())
+            if (settings->compositedScrollingForFramesEnabled())
+                scrollingCoordinator->scrollableAreaScrollLayerDidChange(frameView, m_scrollLayer.get());
     }
 
     m_scrollLayer->setPosition(FloatPoint(-scrollPosition.x(), -scrollPosition.y()));

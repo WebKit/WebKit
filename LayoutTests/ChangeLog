@@ -1,3 +1,15 @@
+2013-01-07  Xianzhu Wang  <wangxianzhu@chromium.org>
+
+        Add a setting to enable composited scrolling for frames
+        https://bugs.webkit.org/show_bug.cgi?id=104950
+
+        Reviewed by James Robinson.
+
+        Test case to ensure iframes are not added into nonFastScrollableRegion when acceleratedCompositingForScrollableFramesEnabled and compositedScrollingForFramesEnabled.
+
+        * compositing/iframes/iframe-composited-scrolling-expected.txt: Added.
+        * compositing/iframes/iframe-composited-scrolling.html: Added.
+
 2013-01-07  Adam Barth  <abarth@webkit.org>
 
         HTMLTreeBuilder should not depend on Frame

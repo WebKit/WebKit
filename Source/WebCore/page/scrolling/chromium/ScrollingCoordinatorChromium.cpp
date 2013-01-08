@@ -111,8 +111,9 @@ void ScrollingCoordinatorChromium::frameViewLayoutUpdated(FrameView*)
     ASSERT(m_page);
 
     // Compute the region of the page that we can't do fast scrolling for. This currently includes
-    // all scrollable areas, such as subframes, overflow divs and list boxes. We need to do this even if the
-    // frame view whose layout was updated is not the main frame.
+    // all scrollable areas, such as subframes, overflow divs and list boxes, whose composited
+    // scrolling are not enabled. We need to do this even if the frame view whose layout was updated
+    // is not the main frame.
     Region nonFastScrollableRegion = computeNonFastScrollableRegion(m_page->mainFrame(), IntPoint());
     setNonFastScrollableRegion(nonFastScrollableRegion);
 #if ENABLE(TOUCH_EVENT_TRACKING)
