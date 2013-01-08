@@ -1,3 +1,14 @@
+2013-01-08  Zan Dobersek  <zandobersek@gmail.com>
+
+        Unreviewed GTK gardening.
+
+        Unifying accessibility layout test failure expectations in the WK2
+        TestExpectations file, with each expectation given an appropriate bug modifier.
+        Removing three failure expectations for transitions tests that are now passing
+        on WK2.
+
+        * platform/gtk-wk2/TestExpectations:
+
 2013-01-08  Chris Fleizach  <cfleizach@apple.com>
 
         AX: PopUpButtons do not report that AXValueAttribute is supported

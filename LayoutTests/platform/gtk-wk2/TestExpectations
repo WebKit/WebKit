@@ -157,10 +157,6 @@ Bug(GTK) editing/undo/undo-indent.html [ Failure ]
 Bug(GTK) editing/undo/undo-misspellings.html [ Failure ]
 Bug(GTK) fast/forms/plaintext-mode-1.html [ Failure ]
 
-# accessibility tests failing due to missing WKTR features
-Bug(GTK) accessibility/aria-describedby-on-input.html [ Failure ]
-Bug(GTK) accessibility/aria-help.html [ Failure ]
-
 # Implement layoutTestController.setViewModeMediaFeature support
 Bug(GTK) fast/media/media-query-list-02.html [ Failure ]
 Bug(GTK) fast/media/media-query-list-03.html [ Failure ]
@@ -325,6 +321,21 @@ Bug(GTK) svg/stroke/non-scaling-stroke-pattern.svg [ ImageOnlyFailure Pass ]
 # Tests failing
 #////////////////////////////////////////////////////////////////////////////////////////
 
+# accessibility/ failures
+webkit.org/b/106334 accessibility/accessibility-node-memory-management.html [ Failure ]
+webkit.org/b/106335 accessibility/accessibility-node-reparent.html [ Failure ]
+webkit.org/b/106336 accessibility/aria-describedby-on-input.html [ Failure ]
+webkit.org/b/106337 accessibility/aria-help.html [ Failure ]
+webkit.org/b/106338 accessibility/aria-hidden-updates-alldescendants.html [ Failure ]
+webkit.org/b/106339 accessibility/aria-hidden-with-elements.html [ Failure ]
+webkit.org/b/106340 accessibility/img-fallsback-to-title.html [ Failure ]
+webkit.org/b/106341 accessibility/label-for-control-hittest.html [ Failure ]
+webkit.org/b/106342 accessibility/language-attribute.html [ Failure ]
+webkit.org/b/106343 accessibility/loading-iframe-sends-notification.html [ Failure ]
+webkit.org/b/106344 accessibility/placeholder.html [ Failure ]
+webkit.org/b/106346 accessibility/svg-remote-element.html [ Timeout ]
+webkit.org/b/106345 platform/gtk/accessibility/input-slider.html [ Failure ]
+
 # Fullscreen tests failing. Some of them are really slow, mark them as SLOW once
 # we have lower values for normal and slow time out.
 # http://webkit.org/b/93973
@@ -346,10 +357,6 @@ webkit.org/b/93981 media/video-controls-rendering.html [ Failure ]
 webkit.org/b/93981 media/video-display-toggle.html [ Failure ]
 webkit.org/b/93981 media/video-no-audio.html [ Failure ]
 webkit.org/b/93981 media/video-volume-slider.html [ Failure ]
-
-# Tests showing weird float values instead of integer results
-# http://webkit.org/b/93984
-webkit.org/b/93984 transitions/change-values-during-transition.html [ Failure ]
 
 # Assertion failure in replaySavedEvents
 # http://webkit.org/b/21796
@@ -384,20 +391,6 @@ webkit.org/b/97655 fast/regions/style-scoped-in-flow-override-region-styling.htm
 webkit.org/b/97655 fast/regions/style-scoped-in-flow.html [ ImageOnlyFailure ]
 
 # Unexplained failures
-Bug(GTK) accessibility/accessibility-node-memory-management.html [ Failure ]
-Bug(GTK) accessibility/accessibility-node-reparent.html [ Failure ]
-Bug(GTK) accessibility/adjacent-continuations-cause-assertion-failure.html [ Failure ]
-Bug(GTK) accessibility/aria-hidden-updates-alldescendants.html [ Failure ]
-Bug(GTK) accessibility/aria-hidden-with-elements.html [ Failure ]
-Bug(GTK) accessibility/aria-invalid.html [ Failure ]
-Bug(GTK) accessibility/deleting-iframe-destroys-axcache.html [ Failure ]
-Bug(GTK) accessibility/div-within-anchors-causes-crash.html [ Failure ]
-Bug(GTK) accessibility/ignore-spacer-elements.html [ Failure ]
-Bug(GTK) accessibility/img-fallsback-to-title.html [ Failure ]
-Bug(GTK) accessibility/inline-continuations.html [ Failure ]
-Bug(GTK) accessibility/legend.html [ Failure ]
-Bug(GTK) accessibility/loading-iframe-sends-notification.html [ Failure ]
-Bug(GTK) accessibility/media-element.html [ Failure ]
 Bug(GTK) editing/deleting/delete-ligature-003.html [ Failure ]
 Bug(GTK) editing/deleting/paragraph-in-preserveNewline.html [ Failure ]
 Bug(GTK) editing/deleting/whitespace-pre-1.html [ Failure ]
@@ -471,9 +464,6 @@ Bug(GTK) media/track/track-cue-rendering-horizontal.html [ Failure ]
 Bug(GTK) media/track/track-cue-rendering-vertical.html [ Failure ]
 Bug(GTK) media/video-play-require-user-gesture.html [ Failure ]
 Bug(GTK) media/video-zoom-controls.html [ Failure ]
-Bug(GTK) platform/gtk/accessibility/entry-and-password.html [ Failure ]
-Bug(GTK) platform/gtk/accessibility/input-slider.html [ Failure ]
-Bug(GTK) platform/gtk/accessibility/replaced-objects-in-anonymous-blocks.html [ Failure ]
 Bug(GTK) platform/gtk/editing/pasteboard/middle-button-paste.html [ Failure ]
 Bug(GTK) platform/gtk/fast/events/event-sender-metakey.html [ Failure ]
 Bug(GTK) platform/gtk/fast/forms/menulist-typeahead-find.html [ Failure ]
@@ -495,8 +485,6 @@ Bug(GTK) svg/text/select-textLength-spacing-stretch-1.svg [ Failure ]
 Bug(GTK) svg/text/select-x-list-1.svg [ Failure ]
 Bug(GTK) svg/text/select-x-list-with-tspans-1.svg [ Failure ]
 Bug(GTK) touchadjustment/iframe.html [ Failure ]
-Bug(GTK) transitions/extra-transition.html [ Failure ]
-Bug(GTK) transitions/interrupted-accelerated-transition.html [ Failure ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Tests failing
