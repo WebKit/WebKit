@@ -1,3 +1,27 @@
+2013-01-08  Kihong Kwon  <kihong.kwon@samsung.com>
+
+        Add DeviceProximityController to support Device Proximity Events.
+        https://bugs.webkit.org/show_bug.cgi?id=97630
+
+        Reviewed by Hajime Morita.
+
+        Add initial WebDeviceProximityClient class which is inherited DeviceProximityClient.
+        But startUpdating and stopUpdating need to be implemented.
+
+        * CMakeLists.txt:
+        * WebProcess/WebCoreSupport/WebDeviceProximityClient.cpp: Added.
+        (WebKit):
+        (WebKit::WebDeviceProximityClient::WebDeviceProximityClient):
+        (WebKit::WebDeviceProximityClient::startUpdating):
+        (WebKit::WebDeviceProximityClient::stopUpdating):
+        (WebKit::WebDeviceProximityClient::hasLastData):
+        * WebProcess/WebCoreSupport/WebDeviceProximityClient.h: Added.
+        (WebKit):
+        (WebDeviceProximityClient):
+        (WebKit::WebDeviceProximityClient::~WebDeviceProximityClient):
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::WebPage):
+
 2013-01-03  Sergio Villar Senin  <svillar@igalia.com>
 
         [GTK] Add WebP image support

@@ -1,0 +1,40 @@
+<html>
+<head>
+<script src="../fast/js/resources/js-test-pre.js"></script>
+</head>
+<body>
+<script>
+description('Tests that the window.DeviceProximityEvent and window.onwebkitdeviceproximity properties are present.');
+
+function hasDeviceProximityEventProperty()
+{
+    for (var property in window) {
+        if (property == 'DeviceProximityEvent')
+            return true;
+    }
+    return false;
+}
+
+shouldBeTrue("typeof window.DeviceProximityEvent == 'object'");
+shouldBeFalse("typeof window.DeviceProximityEvent == 'function'");
+shouldBeTrue("hasDeviceProximityEventProperty()");
+shouldBeTrue("'DeviceProximityEvent' in window");
+shouldBeTrue("window.hasOwnProperty('DeviceProximityEvent')");
+
+function hasOnDeviceProximityProperty()
+{
+    for (var property in window) {
+        if (property == 'onwebkitdeviceproximity')
+            return true;
+    }
+    return false;
+}
+
+shouldBeTrue("typeof window.onwebkitdeviceproximity == 'object'");
+shouldBeTrue("hasOnDeviceProximityProperty()");
+shouldBeTrue("'onwebkitdeviceproximity' in window");
+shouldBeTrue("window.hasOwnProperty('onwebkitdeviceproximity')");
+</script>
+<script src="../fast/js/resources/js-test-post.js"></script>
+</body>
+</html>

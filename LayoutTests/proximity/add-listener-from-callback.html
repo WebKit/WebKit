@@ -1,0 +1,50 @@
+<html>
+<head>
+<script src="../fast/js/resources/js-test-pre.js"></script>
+</head>
+<body>
+<script>
+description('Tests that adding a new event listener from a callback works as expected.');
+
+var firedEvent = {value: 2.2, min: 1.1, max: 3.3};
+
+var deviceProximityEvent;
+function checkProximity(event) {
+    deviceProximityEvent = event;
+    shouldBe('deviceProximityEvent.value', 'firedEvent.value');
+    shouldBe('deviceProximityEvent.min', 'firedEvent.min');
+    shouldBe('deviceProximityEvent.max', 'firedEvent.max');
+}
+
+var firstListenerEvents = 0;
+function firstListener(event) {
+    checkProximity(event);
+    if (++firstListenerEvents == 1) {
+        window.addEventListener('webkitdeviceproximity', secondListener);
+        internals.setDeviceProximity(document, 'webkitdeviceproximity', firedEvent.value, firedEvent.min, firedEvent.max);
+    }
+    else if (firstListenerEvents > 2)
+        testFailed('Too many events for first listener.');
+    maybeFinishTest();
+}
+
+var secondListenerEvents = 0;
+function secondListener(event) {
+    checkProximity(event);
+    if (++secondListenerEvents > 1)
+        testFailed('Too many events for second listener.');
+    maybeFinishTest();
+}
+
+function maybeFinishTest() {
+    if (firstListenerEvents == 2 && secondListenerEvents == 1)
+        finishJSTest();
+}
+
+window.addEventListener('webkitdeviceproximity', firstListener);
+internals.setDeviceProximity(document, 'webkitdeviceproximity', firedEvent.value, firedEvent.min, firedEvent.max);
+window.jsTestIsAsync = true;
+</script>
+<script src="../fast/js/resources/js-test-post.js"></script>
+</body>
+</html>

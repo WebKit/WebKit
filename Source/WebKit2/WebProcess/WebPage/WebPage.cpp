@@ -157,6 +157,10 @@
 #include "WebVibrationClient.h"
 #endif
 
+#if ENABLE(PROXIMITY_EVENTS)
+#include "WebDeviceProximityClient.h"
+#endif
+
 #if PLATFORM(MAC)
 #include "SimplePDFPlugin.h"
 #if ENABLE(PDFKIT_PLUGIN)
@@ -321,6 +325,9 @@ WebPage::WebPage(uint64_t pageID, const WebPageCreationParameters& parameters)
 #endif
 #if ENABLE(VIBRATION)
     WebCore::provideVibrationTo(m_page.get(), new WebVibrationClient(this));
+#endif
+#if ENABLE(PROXIMITY_EVENTS)
+    WebCore::provideDeviceProximityTo(m_page.get(), new WebDeviceProximityClient(this));
 #endif
 
     m_page->setCanStartMedia(false);

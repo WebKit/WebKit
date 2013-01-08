@@ -20,6 +20,7 @@ webcore_cppflags += \
 	-I$(srcdir)/Source/WebCore/Modules/mediastream \
 	-I$(srcdir)/Source/WebCore/Modules/navigatorcontentutils \
 	-I$(srcdir)/Source/WebCore/Modules/notifications \
+	-I$(srcdir)/Source/WebCore/Modules/proximity \
 	-I$(srcdir)/Source/WebCore/Modules/quota \
 	-I$(srcdir)/Source/WebCore/Modules/webaudio \
 	-I$(srcdir)/Source/WebCore/Modules/webdatabase \
@@ -502,6 +503,7 @@ IDL_PATH := \
     $(WebCore)/Modules/mediasource \
     $(WebCore)/Modules/mediastream \
     $(WebCore)/Modules/notifications \
+    $(WebCore)/Modules/proximity \
     $(WebCore)/Modules/quota \
     $(WebCore)/Modules/webaudio \
     $(WebCore)/Modules/webdatabase \
@@ -737,6 +739,7 @@ EXTRA_DIST += \
 	$(wildcard $(srcdir)/Source/WebCore/Modules/mediastream/*.idl) \
 	$(wildcard $(srcdir)/Source/WebCore/Modules/navigatorcontentutils/*.idl) \
 	$(wildcard $(srcdir)/Source/WebCore/Modules/notifications/*.idl) \
+	$(wildcard $(srcdir)/Source/WebCore/Modules/proximity/*.idl) \
 	$(wildcard $(srcdir)/Source/WebCore/Modules/quota/*.idl) \
 	$(wildcard $(srcdir)/Source/WebCore/Modules/webaudio/*.idl) \
 	$(wildcard $(srcdir)/Source/WebCore/Modules/webdatabase/*.idl) \

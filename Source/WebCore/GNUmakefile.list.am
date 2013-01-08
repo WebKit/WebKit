@@ -1262,6 +1262,7 @@ dom_binding_idls += \
 	$(WebCore)/Modules/notifications/Notification.idl \
 	$(WebCore)/Modules/notifications/NotificationCenter.idl \
 	$(WebCore)/Modules/notifications/NotificationPermissionCallback.idl \
+	$(WebCore)/Modules/proximity/DeviceProximityEvent.idl \
 	$(WebCore)/Modules/quota/DOMWindowQuota.idl \
 	$(WebCore)/Modules/quota/StorageInfo.idl \
 	$(WebCore)/Modules/quota/StorageInfoErrorCallback.idl \
@@ -1991,6 +1992,11 @@ webcore_modules_sources += \
 	Source/WebCore/Modules/notifications/NotificationPermissionCallback.h \
 	Source/WebCore/Modules/notifications/WorkerContextNotifications.cpp \
 	Source/WebCore/Modules/notifications/WorkerContextNotifications.h \
+	Source/WebCore/Modules/proximity/DeviceProximity.h \
+	Source/WebCore/Modules/proximity/DeviceProximityController.cpp \
+	Source/WebCore/Modules/proximity/DeviceProximityController.h \
+	Source/WebCore/Modules/proximity/DeviceProximityEvent.cpp \
+	Source/WebCore/Modules/proximity/DeviceProximityEvent.h \
 	Source/WebCore/Modules/quota/DOMWindowQuota.cpp \
 	Source/WebCore/Modules/quota/DOMWindowQuota.h \
 	Source/WebCore/Modules/quota/StorageInfo.cpp \

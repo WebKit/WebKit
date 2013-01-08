@@ -193,6 +193,10 @@
     void setNetworkInformation(in Document document, in DOMString eventType, in double bandwidth, in boolean metered) raises (DOMException);
 #endif
 
+#if defined(ENABLE_PROXIMITY_EVENTS) && ENABLE_PROXIMITY_EVENTS
+    void setDeviceProximity(in Document document, in DOMString eventType, in double value, in double min, in double max) raises (DOMException);
+#endif
+
     [Conditional=INSPECTOR] unsigned long numberOfLiveNodes();
     [Conditional=INSPECTOR] unsigned long numberOfLiveDocuments();
     [Conditional=INSPECTOR] sequence<DOMString> consoleMessageArgumentCounts(in Document document);

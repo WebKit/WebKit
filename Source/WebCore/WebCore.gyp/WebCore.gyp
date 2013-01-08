@@ -62,6 +62,7 @@
       '../Modules/mediastream',
       '../Modules/navigatorcontentutils',
       '../Modules/notifications',
+      '../Modules/proximity',
       '../Modules/quota',
       '../Modules/speech',
       '../Modules/webaudio',

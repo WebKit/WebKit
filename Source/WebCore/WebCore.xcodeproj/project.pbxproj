@@ -13975,6 +13975,12 @@
 		F5C2869502846DCD018635CA /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = /System/Library/Frameworks/Cocoa.framework; sourceTree = "<absolute>"; };
 		F5E0C6591643C42C00D6CB69 /* BaseChooserOnlyDateAndTimeInputType.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = BaseChooserOnlyDateAndTimeInputType.cpp; sourceTree = "<group>"; };
 		F5E0C65A1643C42C00D6CB69 /* BaseChooserOnlyDateAndTimeInputType.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BaseChooserOnlyDateAndTimeInputType.h; sourceTree = "<group>"; };
+		F6098F7A1666D8A7003269D1 /* DeviceProximityClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DeviceProximityClient.h; path = Modules/proximity/DeviceProximityClient.h; sourceTree = "<group>"; };
+		F6098F7B1666D8A7003269D1 /* DeviceProximityController.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = DeviceProximityController.cpp; path = Modules/proximity/DeviceProximityController.cpp; sourceTree = "<group>"; };
+		F6098F7C1666D8A7003269D1 /* DeviceProximityController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DeviceProximityController.h; path = Modules/proximity/DeviceProximityController.h; sourceTree = "<group>"; };
+		F6098F7D1666D8A7003269D1 /* DeviceProximityEvent.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = DeviceProximityEvent.cpp; path = Modules/proximity/DeviceProximityEvent.cpp; sourceTree = "<group>"; };
+		F6098F7E1666D8A7003269D1 /* DeviceProximityEvent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DeviceProximityEvent.h; path = Modules/proximity/DeviceProximityEvent.h; sourceTree = "<group>"; };
+		F6098F7F1666D8A7003269D1 /* DeviceProximityEvent.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = DeviceProximityEvent.idl; path = Modules/proximity/DeviceProximityEvent.idl; sourceTree = "<group>"; };
 		F7A034C3126BF6BE007DC19E /* FontOrientation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FontOrientation.h; sourceTree = "<group>"; };
 		F8216299029F4FB501000131 /* JavaScriptCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = JavaScriptCore.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		F916C48B0DB510F80076CD83 /* JSXMLHttpRequestProgressEvent.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = JSXMLHttpRequestProgressEvent.cpp; sourceTree = "<group>"; };
@@ -18065,6 +18071,7 @@
 				9712A55315004E3C0048AF10 /* indexeddb */,
 				B1A942DD15B5CE2200D525D1 /* mediasource */,
 				333F703D0FB49C16008E12A6 /* notifications */,
+				F6098F781666D841003269D1 /* proximity */,
 				89F60B08157F68350075E157 /* quota */,
 				FD315FA212B025B100C1A359 /* webaudio */,
 				97BC69D51505F054001B74AC /* webdatabase */,
@@ -22367,6 +22374,19 @@
 			sourceTree = "<group>";
 			tabWidth = 4;
 			usesTabs = 0;
+		};
+		F6098F781666D841003269D1 /* proximity */ = {
+			isa = PBXGroup;
+			children = (
+				F6098F7A1666D8A7003269D1 /* DeviceProximityClient.h */,
+				F6098F7B1666D8A7003269D1 /* DeviceProximityController.cpp */,
+				F6098F7C1666D8A7003269D1 /* DeviceProximityController.h */,
+				F6098F7D1666D8A7003269D1 /* DeviceProximityEvent.cpp */,
+				F6098F7E1666D8A7003269D1 /* DeviceProximityEvent.h */,
+				F6098F7F1666D8A7003269D1 /* DeviceProximityEvent.idl */,
+			);
+			name = proximity;
+			sourceTree = "<group>";
 		};
 		FABE72EC1059C1EB00D999DD /* mathml */ = {
 			isa = PBXGroup;

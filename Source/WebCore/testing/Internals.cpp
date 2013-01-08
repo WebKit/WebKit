@@ -100,6 +100,10 @@
 #include "NetworkInfoController.h"
 #endif
 
+#if ENABLE(PROXIMITY_EVENTS)
+#include "DeviceProximityController.h"
+#endif
+
 #if ENABLE(PAGE_POPUP)
 #include "PagePopupController.h"
 #endif
@@ -1330,6 +1334,23 @@ void Internals::setNetworkInformation(Document* document, const String& eventTyp
     UNUSED_PARAM(eventType);
     UNUSED_PARAM(bandwidth);
     UNUSED_PARAM(metered);
+#endif
+}
+
+void Internals::setDeviceProximity(Document* document, const String& eventType, double value, double min, double max, ExceptionCode& ec)
+{
+    if (!document || !document->page()) {
+        ec = INVALID_ACCESS_ERR;
+        return;
+    }
+
+#if ENABLE(PROXIMITY_EVENTS)
+    DeviceProximityController::from(document->page())->didChangeDeviceProximity(value, min, max);
+#else
+    UNUSED_PARAM(eventType);
+    UNUSED_PARAM(value);
+    UNUSED_PARAM(min);
+    UNUSED_PARAM(max);
 #endif
 }
 

@@ -118,6 +118,7 @@ set(WebCore_IDL_INCLUDES
     Modules/mediastream
     Modules/networkinfo
     Modules/notifications
+    Modules/proximity
     Modules/quota
     Modules/speech
     Modules/vibration
@@ -890,6 +891,7 @@ set(WebCore_SOURCES
     Modules/notifications/Notification.cpp
     Modules/notifications/WorkerContextNotifications.cpp
 
+    Modules/proximity/DeviceProximityController.cpp
     Modules/proximity/DeviceProximityEvent.cpp
 
     Modules/quota/DOMWindowQuota.cpp

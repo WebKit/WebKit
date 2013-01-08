@@ -25078,6 +25078,30 @@
 				</File>
 			</Filter>
 			<Filter
+				Name="proximity"
+				>
+				<File
+					RelativePath="..\Modules\proximity\DeviceProximityClient.h"
+					>
+				</File>
+				<File
+					RelativePath="..\Modules\proximity\DeviceProximityController.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\Modules\proximity\DeviceProximityController.h"
+					>
+				</File>
+				<File
+					RelativePath="..\Modules\proximity\DeviceProximityEvent.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\Modules\proximity\DeviceProximityEvent.h"
+					>
+				</File>
+			</Filter>
+			<Filter
 				Name="quota"
 				>
 				<File

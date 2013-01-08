@@ -18,6 +18,7 @@ INCLUDEPATH += \
     $$SOURCE_DIR/Modules/indexeddb \
     $$SOURCE_DIR/Modules/navigatorcontentutils \
     $$SOURCE_DIR/Modules/notifications \
+    $$SOURCE_DIR/Modules/proximity \
     $$SOURCE_DIR/Modules/quota \
     $$SOURCE_DIR/Modules/webaudio \
     $$SOURCE_DIR/Modules/webdatabase \

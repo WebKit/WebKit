@@ -1,0 +1,17 @@
+<html>
+<head>
+<script src="../fast/js/resources/js-test-pre.js"></script>
+</head>
+<body>
+<script>
+description('Tests the optional properties of DeviceProximityEvent. Each property should be null if not set, or set to null or undefined.');
+
+var event;
+evalAndLog("event = document.createEvent('DeviceProximityEvent')");
+shouldBeTrue("event.value == Number.POSITIVE_INFINITY");
+shouldBeTrue("event.min == Number.NEGATIVE_INFINITY");
+shouldBeTrue("event.max == Number.POSITIVE_INFINITY");
+</script>
+<script src="../fast/js/resources/js-test-post.js"></script>
+</body>
+</html>

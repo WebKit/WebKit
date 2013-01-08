@@ -243,6 +243,8 @@ SOURCES += \
     Modules/notifications/NotificationCenter.cpp \
     Modules/notifications/NotificationController.cpp \
     Modules/notifications/WorkerContextNotifications.cpp \
+    Modules/proximity/DeviceProximityController.cpp \
+    Modules/proximity/DeviceProximityEvent.cpp \
     css/BasicShapeFunctions.cpp \
     css/CSSAspectRatioValue.cpp \
     css/CSSBasicShapes.cpp \
@@ -1419,6 +1421,10 @@ HEADERS += \
     Modules/notifications/NotificationClient.h \
     Modules/notifications/NotificationController.h \
     Modules/notifications/WorkerContextNotifications.h \
+    \
+    Modules/proximity/DeviceProximityClient.h \
+    Modules/proximity/DeviceProximityController.h \
+    Modules/proximity/DeviceProximityEvent.h \
     \
     Modules/webdatabase/AbstractDatabase.h \
     Modules/webdatabase/AbstractDatabaseServer.h \

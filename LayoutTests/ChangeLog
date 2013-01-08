@@ -1,3 +1,34 @@
+2013-01-08  Kihong Kwon  <kihong.kwon@samsung.com>
+
+        Add DeviceProximityController to support Device Proximity Events.
+        https://bugs.webkit.org/show_bug.cgi?id=97630
+
+        Reviewed by Hajime Morita.
+
+        Add layout test cases for the DeviceProximityController.
+
+        * proximity/add-listener-from-callback-expected.txt: Added.
+        * proximity/add-listener-from-callback.html: Added.
+        * proximity/basic-operation-expected.txt: Added.
+        * proximity/basic-operation.html: Added.
+        * proximity/create-event-expected.txt: Added.
+        * proximity/create-event.html: Added.
+        * proximity/event-after-navigation-expected.txt: Added.
+        * proximity/event-after-navigation.html: Added.
+        * proximity/multiple-frames-expected.txt: Added.
+        * proximity/multiple-frames.html: Added.
+        * proximity/no-page-cache-expected.txt: Added.
+        * proximity/no-page-cache.html: Added.
+        * proximity/optional-event-properties-expected.txt: Added.
+        * proximity/optional-event-properties.html: Added.
+        * proximity/resources/cached-page-1.html: Added.
+        * proximity/resources/cached-page-2.html: Added.
+        * proximity/resources/event-after-navigation-new.html: Added.
+        * proximity/updates-expected.txt: Added.
+        * proximity/updates.html: Added.
+        * proximity/window-property-expected.txt: Added.
+        * proximity/window-property.html: Added.
+
 2013-01-08  Zan Dobersek  <zandobersek@gmail.com>
 
         Unreviewed GTK gardening.
