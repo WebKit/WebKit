@@ -141,7 +141,6 @@ fast/repaint/fixed-to-relative-position-with-absolute-child.html
 fast/repaint/inline-overflow.html
 fast/repaint/inline-relative-positioned.html
 fast/repaint/overflow-flipped-writing-mode-block.html
-fast/repaint/overflow-flipped-writing-mode-table.html
 fast/repaint/text-in-relative-positioned-inline.html
 fast/repaint/trailing-floats-root-line-box-overflow.html
 fast/table/simple_paint.html
@@ -1616,7 +1615,6 @@ Bug(EFL) compositing/plugins/large-to-small-composited-plugin.html [ Failure ]
 Bug(EFL) animations/negative-delay.html [ Failure Pass ]
 Bug(EFL) compositing/bounds-in-flipped-writing-mode.html [ Failure ]
 Bug(EFL) compositing/iframes/leave-compositing-iframe.html [ Failure ]
-Bug(EFL) compositing/repaint/invalidations-on-composited-layers.html [ Failure ]
 Bug(EFL) compositing/visibility/visibility-composited.html [ Failure ]
 Bug(EFL) editing/selection/caret-rtl.html [ Failure Pass ]
 Bug(EFL) editing/selection/caret-at-bidi-boundary.html [ Crash Pass ]

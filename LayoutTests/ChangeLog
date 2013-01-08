@@ -1,3 +1,21 @@
+2013-01-07  Christophe Dumez  <christophe.dumez@intel.com>
+
+        [CoordinatedGraphics] Support invalidation tracking for CoordinatedGraphicsLayer
+        https://bugs.webkit.org/show_bug.cgi?id=106002
+
+        Reviewed by Noam Rosenthal.
+
+        Unskip several tests that require invalidation tracking for EFL WK2 now that
+        it is supported by Coordinated Graphics.
+
+        * platform/efl-wk2/TestExpectations:
+        * platform/efl/TestExpectations:
+        * platform/efl/compositing/repaint/invalidations-on-composited-layers-expected.txt: Added.
+        Use same expectation as mac port.
+        * platform/efl/fast/images/repaint-subrect-grid-expected.txt: Added. We are sometimes
+        1 pixel off compared to the global expectation likely due to lack for subpixel layout
+        support.
+
 2013-01-07  Hajime Morrita  <morrita@google.com>
 
         Document::m_activeNode should be always an Element.

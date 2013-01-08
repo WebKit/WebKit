@@ -317,9 +317,6 @@ webkit.org/b/93982 storage/domstorage/storage-close-database-on-idle.html [ Fail
 # The following test makes the fast/parser/document-write-ignores-later-network-bytes.html test crash
 webkit.org/b/98345 fast/parser/document-open-in-unload.html [ Skip ]
 
-# Requires TestRunner displayInvalidatedRegion() support.
-webkit.org/b/98523 fast/images/repaint-subrect-grid.html [ Failure ]
-
 # NPP_SetWindow is not called with proper size for the first time.
 webkit.org/b/98746 plugins/netscape-plugin-setwindow-size-2.html [ Failure ]
 

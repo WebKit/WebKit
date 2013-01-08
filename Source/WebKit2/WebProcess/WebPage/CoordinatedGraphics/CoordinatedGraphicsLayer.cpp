@@ -318,6 +318,8 @@ void CoordinatedGraphicsLayer::setContentsNeedsDisplay()
         m_canvasNeedsDisplay = true;
     if (client())
         client()->notifyFlushRequired(this);
+
+    addRepaintRect(contentsRect());
 }
 
 void CoordinatedGraphicsLayer::setContentsToCanvas(PlatformLayer* platformLayer)
@@ -429,14 +431,17 @@ void CoordinatedGraphicsLayer::setReplicatedByLayer(GraphicsLayer* layer)
 
 void CoordinatedGraphicsLayer::setNeedsDisplay()
 {
-    setNeedsDisplayInRect(IntRect(IntPoint::zero(), IntSize(size().width(), size().height())));
+    setNeedsDisplayInRect(FloatRect(FloatPoint(), size()));
 }
 
 void CoordinatedGraphicsLayer::setNeedsDisplayInRect(const FloatRect& rect)
 {
     if (m_mainBackingStore)
         m_mainBackingStore->invalidate(IntRect(rect));
+
     didChangeLayerState();
+
+    addRepaintRect(rect);
 }
 
 CoordinatedLayerID CoordinatedGraphicsLayer::id() const
