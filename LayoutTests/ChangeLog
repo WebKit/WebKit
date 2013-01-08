@@ -1,3 +1,10 @@
+2013-01-08  Dimitri Glazkov  <dglazkov@chromium.org>
+
+        [Chromium] context-creation-and-destruction.html is slow and flaky.
+        https://bugs.webkit.org/show_bug.cgi?id=92287
+
+        * platform/chromium/TestExpectations: Adjusted expectations.
+
 2013-01-08  Dan Winship  <danw@gnome.org>
 
         Updates for Apache 2.4
