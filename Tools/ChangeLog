@@ -1,3 +1,22 @@
+2013-01-08  Zan Dobersek  <zandobersek@gmail.com>
+
+        test-webkitpy shows failure output on my linux box
+        https://bugs.webkit.org/show_bug.cgi?id=101261
+
+        Reviewed by Eric Seidel.
+
+        Mock out the PulseAudioSanitizer methods when creating testing instances
+        of EflPort and GtkPort interfaces in unit tests. This stops throwing up
+        PulseAudio output when the sanitizer was trying to unload modules which
+        were already unloaded by another unit test that was being run in parallel.
+
+        * Scripts/webkitpy/layout_tests/port/efl_unittest.py:
+        (EflPortTest):
+        (EflPortTest.make_port):
+        * Scripts/webkitpy/layout_tests/port/gtk_unittest.py:
+        (GtkPortTest):
+        (GtkPortTest.make_port):
+
 2013-01-08  Julie Parent  <jparent@chromium.org>
 
         Dashboard Cleanup: Remove g_hasDoneInitialPageGeneration

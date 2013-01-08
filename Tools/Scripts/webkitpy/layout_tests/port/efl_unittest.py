@@ -36,6 +36,13 @@ class EflPortTest(port_testcase.PortTestCase):
     port_name = 'efl'
     port_maker = EflPort
 
+    # Additionally mocks out the PulseAudioSanitizer methods.
+    def make_port(self, host=None, port_name=None, options=None, os_name=None, os_version=None, **kwargs):
+        port = super(EflPortTest, self).make_port(host, port_name, options, os_name, os_version, **kwargs)
+        port._unload_pulseaudio_module = lambda: None
+        port._restore_pulseaudio_module = lambda: None
+        return port
+
     def test_show_results_html_file(self):
         port = self.make_port()
         port._executive = MockExecutive(should_log=True)

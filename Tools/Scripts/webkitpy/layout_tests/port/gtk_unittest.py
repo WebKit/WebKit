@@ -43,6 +43,13 @@ class GtkPortTest(port_testcase.PortTestCase):
     port_name = 'gtk'
     port_maker = GtkPort
 
+    # Additionally mocks out the PulseAudioSanitizer methods.
+    def make_port(self, host=None, port_name=None, options=None, os_name=None, os_version=None, **kwargs):
+        port = super(GtkPortTest, self).make_port(host, port_name, options, os_name, os_version, **kwargs)
+        port._unload_pulseaudio_module = lambda: None
+        port._restore_pulseaudio_module = lambda: None
+        return port
+
     def test_expectations_files(self):
         port = self.make_port()
         self.assertEquals(port.expectations_files(), ['/mock-checkout/LayoutTests/platform/gtk/TestExpectations', '/mock-checkout/LayoutTests/platform/gtk-wk1/TestExpectations'])
