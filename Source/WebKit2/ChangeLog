@@ -1,3 +1,47 @@
+2013-01-07  Alexey Proskuryakov  <ap@apple.com>
+
+        [WK2] NetworkProcess should have a Keychain shim
+        https://bugs.webkit.org/show_bug.cgi?id=106286
+
+        Reviewed by Sam Weinig.
+
+        Renamed WebProcessShim to SecItemShim. Use it with NetworkProcess, too.
+
+        * WebProcess/mac/SecItemShimLibrary.h: Copied from Source/WebKit2/WebProcess/mac/WebProcessShim.h.
+        * WebProcess/mac/SecItemShimLibrary.mm: Copied from Source/WebKit2/WebProcess/mac/WebProcessShim.mm.
+        This code lives in SecItemShim.dylib.
+        "Library" in the name is to avoid conflicting with SecItemShim class in WebKit2.
+
+        * Shared/mac/SecItemShim.cpp:
+        (WebKit::sendSecItemRequest):
+        (WebKit::SecItemShim::initialize):
+        * Shared/mac/SecItemShim.h:
+        Take a ChildProcess pointer at initialization instead of using using WebProcess::shared().
+
+        * UIProcess/Launcher/mac/ProcessLauncherMac.mm: (WebKit::addDYLDEnvironmentAdditions):
+        Use SecItemShim with NetworkProcess too.
+
+        * NetworkProcess/NetworkProcess.cpp:
+        (WebKit::NetworkProcess::initializeConnection):
+        * NetworkProcess/NetworkProcess.h:
+        * NetworkProcess/mac/NetworkProcessMac.mm:
+        (WebKit::NetworkProcess::platformInitializeNetworkProcess):
+        * UIProcess/Network/NetworkProcessProxy.cpp:
+        (WebKit::NetworkProcessProxy::didFinishLaunching):
+        * WebKit2.xcodeproj/project.pbxproj:
+        * WebProcess/WebProcess.cpp:
+        (WebKit::WebProcess::initializeConnection):
+        * WebProcess/mac/WebProcessMac.mm:
+        (WebKit::WebProcess::platformInitializeProcess):
+        * WebProcess/mac/WebProcessMainMac.mm:
+        (WebKit::WebProcessMainDelegate::doPreInitializationWork):
+        * WebProcess/mac/WebProcessServiceEntryPoints.mm:
+        (webProcessServiceMain):
+        (initializeWebProcessForWebProcessServiceForWebKitDevelopment):
+        * WebProcess/mac/WebProcessShim.h: Removed.
+        * WebProcess/mac/WebProcessShim.mm: Removed.
+        * WebProcessService/Info.plist:
+
 2013-01-08  Kihong Kwon  <kihong.kwon@samsung.com>
 
         Add DeviceProximityController to support Device Proximity Events.

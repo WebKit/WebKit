@@ -55,7 +55,7 @@ public:
     {
         // Remove the WebProcess shim from the DYLD_INSERT_LIBRARIES environment variable so any processes spawned by
         // the WebProcess don't try to insert the shim and crash.
-        EnvironmentUtilities::stripValuesEndingWithString("DYLD_INSERT_LIBRARIES", "/WebProcessShim.dylib");
+        EnvironmentUtilities::stripValuesEndingWithString("DYLD_INSERT_LIBRARIES", "/SecItemShim.dylib");
     }
 
     virtual bool getConnectionIdentifier(CoreIPC::Connection::Identifier& identifier)

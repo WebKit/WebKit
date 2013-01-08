@@ -22,20 +22,20 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
-#ifndef WebProcessShim_h
-#define WebProcessShim_h
+#ifndef SecItemShimLibrary_h
+#define SecItemShimLibrary_h
 
 namespace WebKit {
 
-struct WebProcessSecItemShimCallbacks {
+struct SecItemShimCallbacks {
     OSStatus (*secItemCopyMatching)(CFDictionaryRef query, CFTypeRef *result);
     OSStatus (*secItemAdd)(CFDictionaryRef attributes, CFTypeRef *result);
     OSStatus (*secItemUpdate)(CFDictionaryRef query, CFDictionaryRef attributesToUpdate);
     OSStatus (*secItemDelete)(CFDictionaryRef query);
 };
 
-typedef void (*WebProcessSecItemShimInitializeFunc)(const WebProcessSecItemShimCallbacks& callbacks);
+typedef void (*SecItemShimInitializeFunc)(const SecItemShimCallbacks& callbacks);
 
 } // namespace WebKit
 
-#endif // WebProcessShim_h
+#endif // SecItemShimLibrary_h

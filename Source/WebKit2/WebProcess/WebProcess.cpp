@@ -208,6 +208,8 @@ void WebProcess::initializeProcess(const ChildProcessInitializationParameters& p
 
 void WebProcess::initializeConnection(CoreIPC::Connection* connection)
 {
+    ChildProcess::initializeConnection(connection);
+
     connection->setShouldExitOnSyncMessageSendFailure(true);
     connection->addQueueClient(&m_eventDispatcher);
     connection->addQueueClient(this);

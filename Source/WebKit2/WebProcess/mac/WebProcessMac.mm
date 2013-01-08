@@ -313,7 +313,7 @@ void WebProcess::platformInitializeProcess(const ChildProcessInitializationParam
     WKAXRegisterRemoteApp();
 
 #if USE(SECURITY_FRAMEWORK)
-    SecItemShim::shared().install();
+    SecItemShim::shared().initialize(this);
 #endif
 }
 

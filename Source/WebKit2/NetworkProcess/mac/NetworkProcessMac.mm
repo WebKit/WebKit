@@ -38,6 +38,10 @@
 #import <mach/mach_error.h>
 #import <wtf/text/WTFString.h>
 
+#if USE(SECURITY_FRAMEWORK)
+#import "SecItemShim.h"
+#endif
+
 using namespace WebCore;
 
 @interface NSURLRequest (Details) 
@@ -71,6 +75,10 @@ void NetworkProcess::platformInitializeNetworkProcess(const NetworkProcessCreati
         RetainPtr<NSURLCache> parentProcessURLCache(AdoptNS, [[NSURLCache alloc] initWithMemoryCapacity:cacheMemoryCapacity diskCapacity:cacheDiskCapacity diskPath:parameters.diskCacheDirectory]);
         [NSURLCache setSharedURLCache:parentProcessURLCache.get()];
     }
+
+#if USE(SECURITY_FRAMEWORK)
+    SecItemShim::shared().initialize(this);
+#endif
 }
 
 static uint64_t memorySize()

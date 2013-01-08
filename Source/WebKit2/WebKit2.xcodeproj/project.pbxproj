@@ -396,8 +396,8 @@
 		511B24A7132E095700065A0C /* WebIconDatabaseProxy.h in Headers */ = {isa = PBXBuildFile; fileRef = 511B24A5132E095700065A0C /* WebIconDatabaseProxy.h */; };
 		511B24AA132E097200065A0C /* WebIconDatabase.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 511B24A8132E097200065A0C /* WebIconDatabase.cpp */; };
 		511B24AB132E097200065A0C /* WebIconDatabase.h in Headers */ = {isa = PBXBuildFile; fileRef = 511B24A9132E097200065A0C /* WebIconDatabase.h */; };
-		511F8A7B138B460900A95F44 /* WebProcessShim.h in Headers */ = {isa = PBXBuildFile; fileRef = 511F8A77138B460900A95F44 /* WebProcessShim.h */; };
-		511F8A81138B485D00A95F44 /* WebProcessShim.mm in Sources */ = {isa = PBXBuildFile; fileRef = 511F8A78138B460900A95F44 /* WebProcessShim.mm */; };
+		511F8A7B138B460900A95F44 /* SecItemShimLibrary.h in Headers */ = {isa = PBXBuildFile; fileRef = 511F8A77138B460900A95F44 /* SecItemShimLibrary.h */; };
+		511F8A81138B485D00A95F44 /* SecItemShimLibrary.mm in Sources */ = {isa = PBXBuildFile; fileRef = 511F8A78138B460900A95F44 /* SecItemShimLibrary.mm */; };
 		51217460164C20E30037A5C1 /* ShareableResource.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5121745E164C20E30037A5C1 /* ShareableResource.cpp */; };
 		51217461164C20E30037A5C1 /* ShareableResource.h in Headers */ = {isa = PBXBuildFile; fileRef = 5121745F164C20E30037A5C1 /* ShareableResource.h */; };
 		51217464164C21370037A5C1 /* WebResourceBuffer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 51217462164C21370037A5C1 /* WebResourceBuffer.cpp */; };
@@ -472,7 +472,7 @@
 		51829DA61637C70C000953D6 /* NetworkResourceLoadScheduler.h in Headers */ = {isa = PBXBuildFile; fileRef = 51829DA41637C70C000953D6 /* NetworkResourceLoadScheduler.h */; };
 		51834592134532E90092B696 /* WebIconDatabaseClient.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 51834590134532E80092B696 /* WebIconDatabaseClient.cpp */; };
 		51834593134532E90092B696 /* WebIconDatabaseClient.h in Headers */ = {isa = PBXBuildFile; fileRef = 51834591134532E80092B696 /* WebIconDatabaseClient.h */; };
-		5183B3921379F7B800E8754E /* WebProcessShim.dylib in Copy Web Process Shim */ = {isa = PBXBuildFile; fileRef = 510031F61379CACB00C8DFE4 /* WebProcessShim.dylib */; };
+		5183B3921379F7B800E8754E /* SecItemShim.dylib in Copy Sec Item Shim */ = {isa = PBXBuildFile; fileRef = 510031F61379CACB00C8DFE4 /* SecItemShim.dylib */; };
 		5183DDEC1630BDFC008BE5C7 /* NetworkProcessConnection.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5105B0D4162F7A7A00E27709 /* NetworkProcessConnection.cpp */; };
 		51871B5B127CB89D00F76232 /* WebContextMenu.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 51871B59127CB89D00F76232 /* WebContextMenu.cpp */; };
 		51871B5C127CB89D00F76232 /* WebContextMenu.h in Headers */ = {isa = PBXBuildFile; fileRef = 51871B5A127CB89D00F76232 /* WebContextMenu.h */; };
@@ -1030,6 +1030,7 @@
 		E179088F169BAA6A006904C7 /* SecItemShim.h in Headers */ = {isa = PBXBuildFile; fileRef = E18E6948169B77C8009B6670 /* SecItemShim.h */; };
 		E1790890169BAA7F006904C7 /* SecItemShimMessageReceiver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E18E6911169B667B009B6670 /* SecItemShimMessageReceiver.cpp */; };
 		E1790891169BAA82006904C7 /* SecItemShimMessages.h in Headers */ = {isa = PBXBuildFile; fileRef = E18E6912169B667B009B6670 /* SecItemShimMessages.h */; };
+		E1790901169BB4F9006904C7 /* SecItemShim.dylib in Copy Sec Item Shim */ = {isa = PBXBuildFile; fileRef = 510031F61379CACB00C8DFE4 /* SecItemShim.dylib */; };
 		E179FD9C134D38060015B883 /* ArgumentCodersMac.h in Headers */ = {isa = PBXBuildFile; fileRef = E179FD9B134D38060015B883 /* ArgumentCodersMac.h */; };
 		E179FD9F134D38250015B883 /* ArgumentCodersMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = E179FD9E134D38250015B883 /* ArgumentCodersMac.mm */; };
 		E17BF99614D0A73E00A5A069 /* NetscapeSandboxFunctions.h in Headers */ = {isa = PBXBuildFile; fileRef = E17BF99514D0A73E00A5A069 /* NetscapeSandboxFunctions.h */; };
@@ -1136,7 +1137,7 @@
 			containerPortal = 0867D690FE84028FC02AAC07 /* Project object */;
 			proxyType = 1;
 			remoteGlobalIDString = 510031EA1379CACB00C8DFE4;
-			remoteInfo = WebProcessShim;
+			remoteInfo = SecItemShim;
 		};
 		BCA8D46715BCE0D6009DC1F1 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -1202,15 +1203,15 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		5183B38F1379F56800E8754E /* Copy Web Process Shim */ = {
+		5183B38F1379F56800E8754E /* Copy Sec Item Shim */ = {
 			isa = PBXCopyFilesBuildPhase;
 			buildActionMask = 2147483647;
 			dstPath = WebProcess.app/Contents/MacOS;
 			dstSubfolderSpec = 16;
 			files = (
-				5183B3921379F7B800E8754E /* WebProcessShim.dylib in Copy Web Process Shim */,
+				5183B3921379F7B800E8754E /* SecItemShim.dylib in Copy Sec Item Shim */,
 			);
-			name = "Copy Web Process Shim";
+			name = "Copy Sec Item Shim";
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 		5D1A239015E75B100023E981 /* Copy Message Generation Scripts */ = {
@@ -1233,6 +1234,17 @@
 				BCDE093D13272496001259FB /* PluginProcessShim.dylib in Copy Plug-in Process Shim */,
 			);
 			name = "Copy Plug-in Process Shim";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		E1790900169BB4D3006904C7 /* Copy Sec Item Shim */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = NetworkProcess.app/Contents/MacOS;
+			dstSubfolderSpec = 16;
+			files = (
+				E1790901169BB4F9006904C7 /* SecItemShim.dylib in Copy Sec Item Shim */,
+			);
+			name = "Copy Sec Item Shim";
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXCopyFilesBuildPhase section */
@@ -1628,7 +1640,7 @@
 		3F87B9BB15893F630090FF62 /* WebColorChooser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebColorChooser.h; sourceTree = "<group>"; };
 		3F87B9BF158940D80090FF62 /* WebColorChooserProxy.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebColorChooserProxy.h; sourceTree = "<group>"; };
 		4F601430155C5A32001FBDE0 /* BlockingResponseMap.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BlockingResponseMap.h; sourceTree = "<group>"; };
-		510031F61379CACB00C8DFE4 /* WebProcessShim.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = WebProcessShim.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
+		510031F61379CACB00C8DFE4 /* SecItemShim.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = SecItemShim.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
 		51021E9B12B16788005C033C /* WebContextMenuClientMac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebContextMenuClientMac.mm; sourceTree = "<group>"; };
 		5105B0D4162F7A7A00E27709 /* NetworkProcessConnection.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = NetworkProcessConnection.cpp; path = Network/NetworkProcessConnection.cpp; sourceTree = "<group>"; };
 		5105B0D5162F7A7A00E27709 /* NetworkProcessConnection.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = NetworkProcessConnection.h; path = Network/NetworkProcessConnection.h; sourceTree = "<group>"; };
@@ -1653,8 +1665,8 @@
 		511B24A5132E095700065A0C /* WebIconDatabaseProxy.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = WebIconDatabaseProxy.h; path = IconDatabase/WebIconDatabaseProxy.h; sourceTree = "<group>"; };
 		511B24A8132E097200065A0C /* WebIconDatabase.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebIconDatabase.cpp; sourceTree = "<group>"; };
 		511B24A9132E097200065A0C /* WebIconDatabase.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebIconDatabase.h; sourceTree = "<group>"; };
-		511F8A77138B460900A95F44 /* WebProcessShim.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebProcessShim.h; sourceTree = "<group>"; };
-		511F8A78138B460900A95F44 /* WebProcessShim.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebProcessShim.mm; sourceTree = "<group>"; };
+		511F8A77138B460900A95F44 /* SecItemShimLibrary.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SecItemShimLibrary.h; path = ../../WebProcess/mac/SecItemShimLibrary.h; sourceTree = "<group>"; };
+		511F8A78138B460900A95F44 /* SecItemShimLibrary.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = SecItemShimLibrary.mm; path = ../../WebProcess/mac/SecItemShimLibrary.mm; sourceTree = "<group>"; };
 		5121745E164C20E30037A5C1 /* ShareableResource.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ShareableResource.cpp; sourceTree = "<group>"; };
 		5121745F164C20E30037A5C1 /* ShareableResource.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ShareableResource.h; sourceTree = "<group>"; };
 		51217462164C21370037A5C1 /* WebResourceBuffer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebResourceBuffer.cpp; sourceTree = "<group>"; };
@@ -2478,7 +2490,7 @@
 				E13A8A2C162879AC00392929 /* SharedWorkerProcess.app */,
 				8DC2EF5B0486A6940098B216 /* WebKit2.framework */,
 				1A50DB1E110A3BDC000D3FE5 /* WebProcess.app */,
-				510031F61379CACB00C8DFE4 /* WebProcessShim.dylib */,
+				510031F61379CACB00C8DFE4 /* SecItemShim.dylib */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -2670,8 +2682,6 @@
 				1A6FA01D11E1526300DB1371 /* WebProcessMainMac.mm */,
 				BCDC308A15FD6CD1006B6695 /* WebProcessServiceEntryPoints.h */,
 				BCDC308915FD6CD1006B6695 /* WebProcessServiceEntryPoints.mm */,
-				511F8A77138B460900A95F44 /* WebProcessShim.h */,
-				511F8A78138B460900A95F44 /* WebProcessShim.mm */,
 			);
 			path = mac;
 			sourceTree = "<group>";
@@ -3846,6 +3856,8 @@
 				E18E6947169B77C8009B6670 /* SecItemShim.cpp */,
 				E18E6948169B77C8009B6670 /* SecItemShim.h */,
 				E18E690F169B5928009B6670 /* SecItemShim.messages.in */,
+				511F8A77138B460900A95F44 /* SecItemShimLibrary.h */,
+				511F8A78138B460900A95F44 /* SecItemShimLibrary.mm */,
 				BCE23262122C6CF300D5C35A /* WebCoreArgumentCodersMac.mm */,
 				BC111B5B112F629800337BAB /* WebEventFactory.h */,
 				BC111B5C112F629800337BAB /* WebEventFactory.mm */,
@@ -4897,7 +4909,7 @@
 				BC032DD510F4389F0058C15A /* WebProcessProxy.h in Headers */,
 				BCEE7AD112817988009827DA /* WebProcessProxyMessages.h in Headers */,
 				BCDC308C15FD6CD1006B6695 /* WebProcessServiceEntryPoints.h in Headers */,
-				511F8A7B138B460900A95F44 /* WebProcessShim.h in Headers */,
+				511F8A7B138B460900A95F44 /* SecItemShimLibrary.h in Headers */,
 				BCE0E425168B7A280057E66A /* WebProcessSupplement.h in Headers */,
 				512F589D12A8838800629530 /* WebProtectionSpace.h in Headers */,
 				37948404150C350600E52CE9 /* WebRenderLayer.h in Headers */,
@@ -5069,7 +5081,7 @@
 			buildPhases = (
 				1A50DB1A110A3BDC000D3FE5 /* Resources */,
 				1A50DB1B110A3BDC000D3FE5 /* Sources */,
-				5183B38F1379F56800E8754E /* Copy Web Process Shim */,
+				5183B38F1379F56800E8754E /* Copy Sec Item Shim */,
 			);
 			buildRules = (
 			);
@@ -5099,9 +5111,9 @@
 			productReference = 1AC25FB012A48EA700BD2671 /* PluginProcessShim.dylib */;
 			productType = "com.apple.product-type.library.dynamic";
 		};
-		510031EA1379CACB00C8DFE4 /* WebProcessShim */ = {
+		510031EA1379CACB00C8DFE4 /* SecItemShim */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 510031F21379CACB00C8DFE4 /* Build configuration list for PBXNativeTarget "WebProcessShim" */;
+			buildConfigurationList = 510031F21379CACB00C8DFE4 /* Build configuration list for PBXNativeTarget "SecItemShim" */;
 			buildPhases = (
 				510031EB1379CACB00C8DFE4 /* Headers */,
 				510031EC1379CACB00C8DFE4 /* Sources */,
@@ -5111,9 +5123,9 @@
 			);
 			dependencies = (
 			);
-			name = WebProcessShim;
+			name = SecItemShim;
 			productName = PluginProcessShim;
-			productReference = 510031F61379CACB00C8DFE4 /* WebProcessShim.dylib */;
+			productReference = 510031F61379CACB00C8DFE4 /* SecItemShim.dylib */;
 			productType = "com.apple.product-type.library.dynamic";
 		};
 		510CC80D1613C79900D03ED3 /* NetworkProcess */ = {
@@ -5122,6 +5134,7 @@
 			buildPhases = (
 				510CC80A1613C79900D03ED3 /* Sources */,
 				510CC80C1613C79900D03ED3 /* Resources */,
+				E1790900169BB4D3006904C7 /* Copy Sec Item Shim */,
 			);
 			buildRules = (
 			);
@@ -5264,7 +5277,7 @@
 				E13A8A2B162879AC00392929 /* SharedWorkerProcess */,
 				C0CE72851247E66800BC0EC4 /* Derived Sources */,
 				1AC25FAF12A48EA700BD2671 /* PluginProcessShim */,
-				510031EA1379CACB00C8DFE4 /* WebProcessShim */,
+				510031EA1379CACB00C8DFE4 /* SecItemShim */,
 				BC3DE46515A91763008D26FC /* WebProcessService */,
 				BCAE9DE8160C097400A33217 /* WebProcessServiceForWebKitDevelopment */,
 			);
@@ -5507,7 +5520,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				511F8A81138B485D00A95F44 /* WebProcessShim.mm in Sources */,
+				511F8A81138B485D00A95F44 /* SecItemShimLibrary.mm in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -6099,7 +6112,7 @@
 		};
 		5183B38E1379F54600E8754E /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = 510031EA1379CACB00C8DFE4 /* WebProcessShim */;
+			target = 510031EA1379CACB00C8DFE4 /* SecItemShim */;
 			targetProxy = 5183B38D1379F54600E8754E /* PBXContainerItemProxy */;
 		};
 		BCA8D46815BCE0D6009DC1F1 /* PBXTargetDependency */ = {
@@ -6259,7 +6272,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 5183B3931379F85C00E8754E /* Shim.xcconfig */;
 			buildSettings = {
-				PRODUCT_NAME = WebProcessShim;
+				PRODUCT_NAME = SecItemShim;
 			};
 			name = Debug;
 		};
@@ -6267,7 +6280,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 5183B3931379F85C00E8754E /* Shim.xcconfig */;
 			buildSettings = {
-				PRODUCT_NAME = WebProcessShim;
+				PRODUCT_NAME = SecItemShim;
 			};
 			name = Release;
 		};
@@ -6275,7 +6288,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 5183B3931379F85C00E8754E /* Shim.xcconfig */;
 			buildSettings = {
-				PRODUCT_NAME = WebProcessShim;
+				PRODUCT_NAME = SecItemShim;
 			};
 			name = Production;
 		};
@@ -6498,7 +6511,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Production;
 		};
-		510031F21379CACB00C8DFE4 /* Build configuration list for PBXNativeTarget "WebProcessShim" */ = {
+		510031F21379CACB00C8DFE4 /* Build configuration list for PBXNativeTarget "SecItemShim" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				510031F31379CACB00C8DFE4 /* Debug */,

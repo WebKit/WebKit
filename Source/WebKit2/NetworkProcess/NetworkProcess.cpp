@@ -43,6 +43,10 @@
 #include <WebCore/RunLoop.h>
 #include <wtf/text/CString.h>
 
+#if USE(SECURITY_FRAMEWORK)
+#include "SecItemShim.h"
+#endif
+
 using namespace WebCore;
 
 namespace WebKit {
@@ -147,6 +151,15 @@ void NetworkProcess::initializeNetworkProcess(const NetworkProcessCreationParame
     NetworkProcessSupplementMap::const_iterator end = m_supplements.end();
     for (; it != end; ++it)
         it->value->initialize(parameters);
+}
+
+void NetworkProcess::initializeConnection(CoreIPC::Connection* connection)
+{
+    ChildProcess::initializeConnection(connection);
+
+#if USE(SECURITY_FRAMEWORK)
+    connection->addQueueClient(&SecItemShim::shared());
+#endif
 }
 
 void NetworkProcess::createNetworkConnectionToWebProcess()

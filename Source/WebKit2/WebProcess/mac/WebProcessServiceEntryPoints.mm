@@ -79,7 +79,7 @@ int webProcessServiceMain(int argc, char** argv)
 {
     // Remove the WebProcess shim from the DYLD_INSERT_LIBRARIES environment variable so any processes spawned by
     // the WebProcess don't try to insert the shim and crash.
-    WebKit::EnvironmentUtilities::stripValuesEndingWithString("DYLD_INSERT_LIBRARIES", "/WebProcessShim.dylib");
+    WebKit::EnvironmentUtilities::stripValuesEndingWithString("DYLD_INSERT_LIBRARIES", "/SecItemShim.dylib");
 
     xpc_main(WebKit::WebProcessServiceEventHandler);
     return 0;
@@ -89,7 +89,7 @@ void initializeWebProcessForWebProcessServiceForWebKitDevelopment(const char* cl
 {
     // Remove the WebProcess shim from the DYLD_INSERT_LIBRARIES environment variable so any processes spawned by
     // the WebProcess don't try to insert the shim and crash.
-    WebKit::EnvironmentUtilities::stripValuesEndingWithString("DYLD_INSERT_LIBRARIES", "/WebProcessShim.dylib");
+    WebKit::EnvironmentUtilities::stripValuesEndingWithString("DYLD_INSERT_LIBRARIES", "/SecItemShim.dylib");
 
     WebKit::InitializeWebKit2();
 

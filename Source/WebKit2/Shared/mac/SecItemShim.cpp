@@ -29,11 +29,11 @@
 #if USE(SECURITY_FRAMEWORK)
 
 #include "BlockingResponseMap.h"
+#include "ChildProcess.h"
 #include "SecItemRequestData.h"
 #include "SecItemResponseData.h"
-#include "WebProcess.h"
+#include "SecItemShimLibrary.h"
 #include "SecItemShimProxyMessages.h"
-#include "WebProcessShim.h"
 #include <Security/Security.h>
 #include <dlfcn.h>
 
@@ -44,6 +44,8 @@ static BlockingResponseMap<SecItemResponseData>& responseMap()
     AtomicallyInitializedStatic(BlockingResponseMap<SecItemResponseData>*, responseMap = new BlockingResponseMap<SecItemResponseData>);
     return *responseMap;
 }
+
+static ChildProcess* sharedProcess;
 
 SecItemShim& SecItemShim::shared()
 {
@@ -64,7 +66,7 @@ static uint64_t generateSecItemRequestID()
 static PassOwnPtr<SecItemResponseData> sendSecItemRequest(SecItemRequestData::Type requestType, CFDictionaryRef query, CFDictionaryRef attributesToMatch = 0)
 {
     uint64_t requestID = generateSecItemRequestID();
-    if (!WebProcess::shared().connection()->send(Messages::SecItemShimProxy::SecItemRequest(requestID, SecItemRequestData(requestType, query, attributesToMatch)), 0))
+    if (!sharedProcess->connection()->send(Messages::SecItemShimProxy::SecItemRequest(requestID, SecItemRequestData(requestType, query, attributesToMatch)), 0))
         return nullptr;
 
     return responseMap().waitForResponse(requestID);
@@ -114,16 +116,18 @@ void SecItemShim::secItemResponse(CoreIPC::Connection*, uint64_t requestID, cons
     responseMap().didReceiveResponse(requestID, adoptPtr(new SecItemResponseData(response)));
 }
 
-void SecItemShim::install()
+void SecItemShim::initialize(ChildProcess* process)
 {
-    const WebProcessSecItemShimCallbacks callbacks = {
+    sharedProcess = process;
+
+    const SecItemShimCallbacks callbacks = {
         webSecItemCopyMatching,
         webSecItemAdd,
         webSecItemUpdate,
         webSecItemDelete
     };
     
-    WebProcessSecItemShimInitializeFunc func = reinterpret_cast<WebProcessSecItemShimInitializeFunc>(dlsym(RTLD_DEFAULT, "WebKitWebProcessSecItemShimInitialize"));
+    SecItemShimInitializeFunc func = reinterpret_cast<SecItemShimInitializeFunc>(dlsym(RTLD_DEFAULT, "WebKitSecItemShimInitialize"));
     func(callbacks);
 }
 

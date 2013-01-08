@@ -26,6 +26,8 @@
 #include "config.h"
 #include "NetworkProcessProxy.h"
 
+#if ENABLE(NETWORK_PROCESS)
+
 #include "DownloadProxyMessages.h"
 #include "NetworkProcessCreationParameters.h"
 #include "NetworkProcessMessages.h"
@@ -33,7 +35,9 @@
 #include "WebProcessMessages.h"
 #include <WebCore/RunLoop.h>
 
-#if ENABLE(NETWORK_PROCESS)
+#if USE(SECURITY_FRAMEWORK)
+#include "SecItemShimProxy.h"
+#endif
 
 using namespace WebCore;
 
@@ -164,6 +168,10 @@ void NetworkProcessProxy::didCreateNetworkConnectionToWebProcess(const CoreIPC::
 void NetworkProcessProxy::didFinishLaunching(ProcessLauncher* launcher, CoreIPC::Connection::Identifier connectionIdentifier)
 {
     ChildProcessProxy::didFinishLaunching(launcher, connectionIdentifier);
+
+#if USE(SECURITY_FRAMEWORK)
+    connection()->addQueueClient(&SecItemShimProxy::shared());
+#endif
 
     if (CoreIPC::Connection::identifierIsNull(connectionIdentifier)) {
         // FIXME: Do better cleanup here.

@@ -22,7 +22,7 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
-#import "WebProcessShim.h"
+#import "SecItemShimLibrary.h"
 
 #import <Security/SecItem.h>
 #import <wtf/Platform.h>
@@ -33,9 +33,9 @@
 
 namespace WebKit {
 
-extern "C" void WebKitWebProcessSecItemShimInitialize(const WebProcessSecItemShimCallbacks&);
+extern "C" void WebKitSecItemShimInitialize(const SecItemShimCallbacks&);
 
-static WebProcessSecItemShimCallbacks secItemShimCallbacks;
+static SecItemShimCallbacks secItemShimCallbacks;
 
 static OSStatus shimSecItemCopyMatching(CFDictionaryRef query, CFTypeRef* result)
 {
@@ -63,7 +63,7 @@ DYLD_INTERPOSE(shimSecItemUpdate, SecItemUpdate)
 DYLD_INTERPOSE(shimSecItemDelete, SecItemDelete)
 
 __attribute__((visibility("default")))
-void WebKitWebProcessSecItemShimInitialize(const WebProcessSecItemShimCallbacks& callbacks)
+void WebKitSecItemShimInitialize(const SecItemShimCallbacks& callbacks)
 {
     secItemShimCallbacks = callbacks;
 }

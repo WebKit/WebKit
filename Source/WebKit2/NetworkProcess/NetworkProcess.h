@@ -79,6 +79,7 @@ private:
     // ChildProcess
     virtual void initializeProcessName(const ChildProcessInitializationParameters&) OVERRIDE;
     virtual void initializeSandbox(const ChildProcessInitializationParameters&) OVERRIDE;
+    virtual void initializeConnection(CoreIPC::Connection*) OVERRIDE;
     virtual bool shouldTerminate() OVERRIDE;
 
     // CoreIPC::Connection::Client
