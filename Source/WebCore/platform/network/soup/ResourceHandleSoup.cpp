@@ -426,6 +426,10 @@ static void restartedCallback(SoupMessage* message, gpointer data)
     GOwnPtr<SoupURI> newSoupURI(request.soupURI());
     soup_message_set_uri(message, newSoupURI.get());
 
+    // If we sent credentials with this request's URL, we don't want the response to carry them to
+    // the WebKit layer. They were only placed in the URL for the benefit of libsoup.
+    request.removeCredentials();
+
     if (d->client())
         d->client()->willSendRequest(handle, request, redirectResponse);
 

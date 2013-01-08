@@ -1,3 +1,20 @@
+2013-01-08  Martin Robinson  <mrobinson@igalia.com>
+
+        [GTK] Login & password shown in browsers' URL entry after successful HTTP authentication
+        https://bugs.webkit.org/show_bug.cgi?id=105190
+
+        Reviewed by Carlos Garcia Campos.
+
+        Add a new test that checks that the URL of a page that redirects and uses
+        authentication. This verifies correct behavior for ports that communicates
+        a request's credentials to the platform networking layer by setting them in the URL.
+        The credentials should not remain in the URL string itself.
+
+        * http/tests/misc/authentication-redirect-4/authentication-sent-to-redirect-same-origin-url-expected.txt: Added.
+        * http/tests/misc/authentication-redirect-4/authentication-sent-to-redirect-same-origin-url.html: Added.
+        * http/tests/misc/authentication-redirect-4/resources/auth-echo.php: Added.
+        * http/tests/misc/authentication-redirect-4/resources/auth-then-redirect.php: Added.
+
 2013-01-08  Zan Dobersek  <zandobersek@gmail.com>
 
         Unreviwed gardening.
