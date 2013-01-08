@@ -1896,7 +1896,8 @@ void RenderLayer::updateNeedsCompositedScrolling()
 {
     bool oldNeedsCompositedScrolling = m_needsCompositedScrolling;
 
-    if (!scrollsOverflow() || !allowsScrolling())
+    FrameView* frameView = renderer()->view()->frameView();
+    if (!frameView || !frameView->containsScrollableArea(this))
         m_needsCompositedScrolling = false;
     else {
         bool forceUseCompositedScrolling = acceleratedCompositingForOverflowScrollEnabled()
@@ -2729,11 +2730,6 @@ bool RenderLayer::scrollsOverflow() const
         return false;
 
     return toRenderBox(renderer())->scrollsOverflow();
-}
-
-bool RenderLayer::allowsScrolling() const
-{
-    return (m_hBar && m_hBar->enabled()) || (m_vBar && m_vBar->enabled());
 }
 
 void RenderLayer::setHasHorizontalScrollbar(bool hasScrollbar)
