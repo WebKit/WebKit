@@ -1,3 +1,10 @@
+2013-01-08  Dimitri Glazkov  <dglazkov@chromium.org>
+
+        Layout Tests svg/W3C-SVG-1.1/filters-comptran-01-b.svg and svg/W3C-SVG-1.1/animate-elem-80-t.svg are flaky.
+        https://bugs.webkit.org/show_bug.cgi?id=106387
+
+        * platform/chromium/TestExpectations: Marked new flakes.
+
 2013-01-08  Ryosuke Niwa  <rniwa@webkit.org>
 
         Skip the test added by r139062 on WebKit2 bots since it uses a testRunner method
