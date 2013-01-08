@@ -170,7 +170,7 @@ public:
 
     // Functions for querying the current scrolled position (both as a point, a size, or as individual X and Y values).
     virtual IntPoint scrollPosition() const OVERRIDE { return visibleContentRect().location(); }
-    IntSize scrollOffset() const { return visibleContentRect().location() - IntPoint(); } // Gets the scrolled position as an IntSize. Convenient for adding to other sizes.
+    IntSize scrollOffset() const { return toSize(visibleContentRect().location()); } // Gets the scrolled position as an IntSize. Convenient for adding to other sizes.
     virtual IntPoint maximumScrollPosition() const OVERRIDE; // The maximum position we can be scrolled to.
     virtual IntPoint minimumScrollPosition() const OVERRIDE; // The minimum position we can be scrolled to.
     // Adjust the passed in scroll position to keep it between the minimum and maximum positions.

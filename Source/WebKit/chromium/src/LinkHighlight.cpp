@@ -214,7 +214,7 @@ bool LinkHighlight::computeHighlightLayerPathAndPosition(RenderLayer* compositin
     }
 
     FloatRect boundingRect = newPath.boundingRect();
-    newPath.translate(FloatPoint() - boundingRect.location());
+    newPath.translate(-toFloatSize(boundingRect.location()));
 
     bool pathHasChanged = !m_path.platformPath() || !(*newPath.platformPath() == *m_path.platformPath());
     if (pathHasChanged) {

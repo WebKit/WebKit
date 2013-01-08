@@ -115,7 +115,7 @@ Path HTMLAreaElement::computePath(RenderObject* obj) const
         p.transform(zoomTransform);
     }
 
-    p.translate(absPos - FloatPoint());
+    p.translate(toFloatSize(absPos));
     return p;
 }
     

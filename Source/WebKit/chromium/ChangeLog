@@ -1,3 +1,16 @@
+2013-01-07  Steve Block  <steveblock@chromium.org>
+
+        Use toSize() to convert from Int/FloatPoint to Int/FloatSize
+        https://bugs.webkit.org/show_bug.cgi?id=105992
+
+        Reviewed by Kentaro Hara.
+
+        * src/LinkHighlight.cpp:
+        (WebKit::LinkHighlight::computeHighlightLayerPathAndPosition):
+        * src/WebFrameImpl.cpp:
+        (WebKit::WebFrameImpl::minimumScrollOffset):
+        (WebKit::WebFrameImpl::maximumScrollOffset):
+
 2013-01-07  Xianzhu Wang  <wangxianzhu@chromium.org>
 
         [Chromium] Expose compositedScrollingForFramesEnabled setting in WebKit API
