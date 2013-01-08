@@ -392,6 +392,16 @@ int RenderBox::pixelSnappedClientHeight() const
     return snapSizeToPixel(clientHeight(), y() + clientTop());
 }
 
+int RenderBox::pixelSnappedOffsetWidth() const
+{
+    return snapSizeToPixel(offsetWidth(), x() + clientLeft());
+}
+
+int RenderBox::pixelSnappedOffsetHeight() const
+{
+    return snapSizeToPixel(offsetHeight(), y() + clientTop());
+}
+
 int RenderBox::scrollWidth() const
 {
     if (hasOverflowClip())

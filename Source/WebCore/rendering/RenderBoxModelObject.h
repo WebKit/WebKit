@@ -80,8 +80,8 @@ public:
 
     int pixelSnappedOffsetLeft() const { return roundToInt(offsetLeft()); }
     int pixelSnappedOffsetTop() const { return roundToInt(offsetTop()); }
-    int pixelSnappedOffsetWidth() const;
-    int pixelSnappedOffsetHeight() const;
+    virtual int pixelSnappedOffsetWidth() const;
+    virtual int pixelSnappedOffsetHeight() const;
 
     virtual void updateFromStyle() OVERRIDE;
 
