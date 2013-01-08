@@ -267,11 +267,8 @@ void HTMLPlugInImageElement::updateSnapshot(PassRefPtr<Image> image)
 void HTMLPlugInImageElement::userDidClickSnapshot(PassRefPtr<MouseEvent> event)
 {
     m_pendingClickEventFromSnapshot = event;
-    
-    if (Page* page = document()->page()) {
-        if (!page->settings()->privateBrowsingEnabled())
-            page->plugInClient()->addAutoStartOrigin(document()->page()->mainFrame()->document()->baseURL().host(), m_plugInOriginHash);
-    }
+    if (document()->page())
+        document()->page()->plugInClient()->addAutoStartOrigin(document()->page()->mainFrame()->document()->baseURL().host(), m_plugInOriginHash);
 }
 
 void HTMLPlugInImageElement::dispatchPendingMouseClick()
