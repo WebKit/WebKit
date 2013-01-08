@@ -1,3 +1,15 @@
+2013-01-08  Otto Derek Cheung  <otcheung@rim.com>
+
+        [BlackBerry] Removing the totalusage variable in ChromeClientBB::exceededDatabaseQuota
+        https://bugs.webkit.org/show_bug.cgi?id=106370
+
+        Reviewed by Yong Li.
+
+        Removing totalUsage in ChromeClientBlackBerry as we no longer use that variable.
+
+        * WebCoreSupport/ChromeClientBlackBerry.cpp:
+        (WebCore::ChromeClientBlackBerry::exceededDatabaseQuota):
+
 2013-01-08  Jacky Jiang  <zhajiang@rim.com>
 
         [Blackberry][FullScreen] Create a helper method to adjust the fullscreen renderer dimensions

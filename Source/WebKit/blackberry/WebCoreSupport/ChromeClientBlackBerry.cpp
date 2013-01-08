@@ -498,7 +498,6 @@ void ChromeClientBlackBerry::exceededDatabaseQuota(Frame* frame, const String& n
 
     DatabaseManager& manager = DatabaseManager::manager();
 
-    unsigned long long totalUsage = tracker.totalDatabaseUsage();
     unsigned long long originUsage = tracker.usageForOrigin(origin);
     unsigned long long currentQuota = tracker.quotaForOrigin(origin);
 
