@@ -1,0 +1,101 @@
+<html>
+<head>
+<style type="text/css">
+#draggable {
+  padding: 5pt;
+  border: 3px solid #00cc00;
+  background: #00cccc;
+  width: 80px;
+  cursor: hand;
+}
+
+#scrollable {
+    height: 200px;
+    overflow: auto;
+    border: solid 3px #cc0000;
+}
+</style>
+<script>
+function $(id) { return document.getElementById(id); }
+
+function finishTest() {
+    eventSender.mouseUp();
+    $('container').innerHTML = '';
+    window.testRunner.notifyDone();
+}
+
+function testIt() {
+    var draggable = $('draggable');
+    var scrollable = $('scrollable');
+
+    if (!window.eventSender)
+        return;
+
+    eventSender.dragMode = false;
+
+    // Grab draggable
+    eventSender.mouseMoveTo(draggable.offsetLeft + 5, draggable.offsetTop + 5);
+    eventSender.mouseDown();
+
+    // Move mouse to autoscroll border belt.
+    eventSender.mouseMoveTo(scrollable.offsetLeft + 5, scrollable.offsetTop + scrollable.offsetHeight - 10);
+
+    var retryCount = 0;
+
+    function checkScrolled()
+    {
+        if (scrollable.scrollTop > 0) {
+            testPassed('scrollable.scrollTop > 0');
+            finishTest();
+            return;
+        }
+
+        ++retryCount;
+        if (retryCount > 10) {
+            testFailed('No autoscroll');
+            finishTest();
+            return;
+        }
+
+        // Autoscroll is occurred evey 0.05 sec.
+        window.setTimeout(checkScrolled, 50);
+    }
+
+    checkScrolled();
+}
+
+function setUpTest()
+{
+    var scrollable = $('scrollable');
+    for (var i = 0; i < 100; ++i) {
+      var line = document.createElement('div');
+      line.innerHTML = "line " + i;
+      scrollable.appendChild(line);
+    }
+
+    if (!window.eventSender) {
+        console.log('Please run within DumpRenderTree');
+        return;
+    }
+
+    window.jsTestIsAsync = true;
+    window.setTimeout(testIt, 0);
+}
+</script>
+</head>
+<body>
+For manual testing, drag and drop "Drop Me" to "Scrollable" area.
+<div id="container">
+<div id="draggable" draggable="true">Drop Me</div>
+Scrollable
+<div id="scrollable">
+</div>
+</div>
+<script src="../js/resources/js-test-pre.js"></script>
+<script>
+description('Check autoscroll by drag-and-drop');
+setUpTest();
+</script>
+<script src="../js/resources/js-test-post.js"></script>
+</body>
+</html>

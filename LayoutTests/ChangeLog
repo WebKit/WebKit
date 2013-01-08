@@ -1,3 +1,15 @@
+2013-01-08  Yoshifumi Inoue  <yosin@chromium.org>
+
+        Dragging over an element with scrollbars should scroll the element when dragging near edges
+        https://bugs.webkit.org/show_bug.cgi?id=39725
+
+        Reviewed by Hajime Morita.
+
+        This patch adds new test for autoscroll during drag-and-drop.
+
+        * fast/events/drag-and-drop-autoscroll-expected.txt: Added.
+        * fast/events/drag-and-drop-autoscroll.html: Added.
+
 2013-01-08  Yuki Sekiguchi  <yuki.sekiguchi@access-company.com>
 
         Float block's logical top margin is illegal in vertical writing mode.

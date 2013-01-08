@@ -1,3 +1,27 @@
+2013-01-08  Yoshifumi Inoue  <yosin@chromium.org>
+
+        Dragging over an element with scrollbars should scroll the element when dragging near edges
+        https://bugs.webkit.org/show_bug.cgi?id=39725
+
+        Reviewed by Hajime Morita.
+
+        This patch removes DragScrollTimer used for automatic scrolling of main
+        frame drag-and-drop which is now implemented in EventHandler.
+
+        Another patch will remove DragScrollTimer.{cpp,h} and update GYP files to
+        make patch size small.
+
+        No tests. Existing test covers this change.
+
+        * src/WebViewImpl.cpp:
+        (WebKit::WebViewImpl::WebViewImpl): Changed to remove m_dragScrollTimer.
+        (WebKit::WebViewImpl::dragSourceEndedAt): ditto
+        (WebKit::WebViewImpl::dragSourceMovedTo): ditto
+        (WebKit::WebViewImpl::dragTargetDrop): ditto
+        (WebKit::WebViewImpl::dragTargetDragEnterOrOver): ditto
+        * src/WebViewImpl.h:
+        (WebKit): Chagned to remove DragScrollTimer.
+
 2013-01-07  Steve Block  <steveblock@chromium.org>
 
         Use toSize() to convert from Int/FloatPoint to Int/FloatSize
