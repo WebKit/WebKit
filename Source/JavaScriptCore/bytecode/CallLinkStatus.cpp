@@ -112,6 +112,9 @@ CallLinkStatus CallLinkStatus::computeFor(CodeBlock* profiledBlock, unsigned byt
     JSFunction* target = callLinkInfo.lastSeenCallee.get();
     if (!target)
         return computeFromLLInt(profiledBlock, bytecodeIndex);
+    
+    if (callLinkInfo.hasSeenClosure)
+        return CallLinkStatus(target->executable(), target->structure());
 
     return CallLinkStatus(target);
 #else

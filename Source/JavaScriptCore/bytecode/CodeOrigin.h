@@ -110,11 +110,15 @@ struct InlineCallFrame {
     
     bool isClosureCall() const { return !callee; }
     
+    String inferredName() const;
     CodeBlockHash hash() const;
     
     CodeBlock* baselineCodeBlock() const;
     
+    void dumpBriefFunctionInformation(PrintStream&) const;
     void dump(PrintStream&) const;
+
+    MAKE_PRINT_METHOD(InlineCallFrame, dumpBriefFunctionInformation, briefFunctionInformation);
 };
 
 struct CodeOriginAtCallReturnOffset {

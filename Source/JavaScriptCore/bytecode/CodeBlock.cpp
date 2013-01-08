@@ -31,6 +31,7 @@
 #include "CodeBlock.h"
 
 #include "BytecodeGenerator.h"
+#include "CallLinkStatus.h"
 #include "DFGCapabilities.h"
 #include "DFGCommon.h"
 #include "DFGNode.h"
@@ -48,6 +49,7 @@
 #include "RepatchBuffer.h"
 #include "SlotVisitorInlines.h"
 #include <stdio.h>
+#include <wtf/CommaPrinter.h>
 #include <wtf/StringExtras.h>
 #include <wtf/StringPrintStream.h>
 #include <wtf/UnusedParam.h>
@@ -72,7 +74,7 @@ String CodeBlock::inferredName() const
     case EvalCode:
         return "<eval>";
     case FunctionCode:
-        return jsCast<FunctionExecutable*>(ownerExecutable())->unlinkedExecutable()->inferredName().string();
+        return jsCast<FunctionExecutable*>(ownerExecutable())->inferredName().string();
     default:
         CRASH();
         return String();
@@ -155,6 +157,15 @@ static CString idName(int id0, const Identifier& ident)
 
 void CodeBlock::dumpBytecodeCommentAndNewLine(PrintStream& out, int location)
 {
+#if ENABLE(DFG_JIT)
+    Vector<FrequentExitSite> exitSites = exitProfile().exitSitesFor(location);
+    if (!exitSites.isEmpty()) {
+        out.print(" !! frequent exits: ");
+        CommaPrinter comma;
+        for (unsigned i = 0; i < exitSites.size(); ++i)
+            out.print(comma, exitSites[i].kind());
+    }
+#endif // ENABLE(DFG_JIT)
 #if ENABLE(BYTECODE_COMMENTS)
     const char* comment = commentForBytecodeOffset(location);
     if (comment)
@@ -473,6 +484,7 @@ void CodeBlock::printCallOp(PrintStream& out, ExecState* exec, int location, con
                 out.printf(" jit(%p, exec %p)", target, target->executable());
         }
 #endif
+        out.print(" status(", CallLinkStatus::computeFor(this, location), ")");
     }
     it += 2;
 }

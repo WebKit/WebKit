@@ -258,8 +258,12 @@ void printInternal(PrintStream& out, const T& value)
             m_value.method(out);                 \
         }                                        \
     private:                                     \
-        Type m_value;                            \
+        const Type& m_value;                     \
     }
+
+#define MAKE_PRINT_METHOD(Type, dumpMethod, method) \
+    MAKE_PRINT_METHOD_ADAPTOR(DumperFor_##method, Type, dumpMethod);    \
+    DumperFor_##method method() const { return DumperFor_##method(*this); }
 
 // Use an adaptor-based dumper for characters to avoid situations where
 // you've "compressed" an integer to a character and it ends up printing

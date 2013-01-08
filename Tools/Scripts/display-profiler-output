@@ -460,7 +460,11 @@ def sourceOnOneLine(source, limit)
 end
 
 def screenWidth
-    HighLine::SystemExtensions.terminal_size[0]
+    if $stdin.tty?
+        HighLine::SystemExtensions.terminal_size[0]
+    else
+        200
+    end
 end
 
 def summary(mode)
@@ -763,7 +767,11 @@ def executeCommand(*commandArray)
         
         case args.length
         when 1
-            hash = args[0]
+            if args[0] == "*"
+                hash = nil
+            else
+                hash = args[0]
+            end
             engine = nil
         when 2
             if mayBeHash(args[0])
@@ -778,7 +786,7 @@ def executeCommand(*commandArray)
             return
         end
         
-        if hash =~ /-([0-9]+)-/
+        if hash and hash =~ /-([0-9]+)-/
             hash = $~.pre_match
             engine = $~.post_match
             compilationIndex = $1.to_i
@@ -807,7 +815,7 @@ def executeCommand(*commandArray)
         first = true
         $compilations.each {
             | compilation |
-            next unless compilation.bytecode.matches(hash)
+            next if hash and not compilation.bytecode.matches(hash)
             next if engine and compilation.engine != engine
             next if compilationIndex and compilation.compilationIndex != compilationIndex
             
@@ -899,7 +907,9 @@ def executeCommand(*commandArray)
     end
 end
 
-executeCommand("full")
+if $stdin.tty?
+    executeCommand("full")
+end
 
 while commandLine = Readline.readline("> ", true)
     executeCommand(*commandLine.split)

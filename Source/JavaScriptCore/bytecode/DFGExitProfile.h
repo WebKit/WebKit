@@ -129,6 +129,10 @@ public:
     // anyway.
     bool add(const FrequentExitSite&);
     
+    // Get the frequent exit sites for a bytecode index. This is O(n), and is
+    // meant to only be used from debugging/profiling code.
+    Vector<FrequentExitSite> exitSitesFor(unsigned bytecodeIndex);
+    
 private:
     friend class QueryableExitProfile;
     

@@ -2222,6 +2222,7 @@ DEFINE_STUB_FUNCTION(void*, vm_lazyLinkClosureCall)
     if (shouldLink) {
         ASSERT(codePtr);
         JIT::compileClosureCall(globalData, callLinkInfo, callerCodeBlock, calleeCodeBlock, structure, executable, codePtr);
+        callLinkInfo->hasSeenClosure = true;
     } else
         JIT::linkSlowCall(callerCodeBlock, callLinkInfo);
 

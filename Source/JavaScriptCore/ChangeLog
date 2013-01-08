@@ -1,3 +1,49 @@
+2013-01-07  Filip Pizlo  <fpizlo@apple.com>
+
+        Rationalize closure call heuristics and profiling
+        https://bugs.webkit.org/show_bug.cgi?id=106270
+
+        Reviewed by Oliver Hunt.
+        
+        Did a number of things:
+        
+        - CallLinkInfo now remembers if it was ever a closure call, and CallLinkStatus uses
+          this. Reduces the likelihood that we will inline a closure call as if it was a
+          normal call.
+        
+        - Made InlineCallFrame print inferred function names, and refactored
+          CodeBlock::inferredName() to better use FunctionExecutable's API.
+        
+        - Made bytecode dumping print frequent exit sites that led to recompilation.
+        
+        - Made bytecode dumping for op_call and op_construct print what the CallLinkStatus
+          saw.
+        
+        * bytecode/CallLinkInfo.h:
+        (JSC::CallLinkInfo::CallLinkInfo):
+        (CallLinkInfo):
+        * bytecode/CallLinkStatus.cpp:
+        (JSC::CallLinkStatus::computeFor):
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::inferredName):
+        (JSC::CodeBlock::dumpBytecodeCommentAndNewLine):
+        (JSC::CodeBlock::printCallOp):
+        * bytecode/CodeOrigin.cpp:
+        (JSC::CodeOrigin::dump):
+        (JSC::InlineCallFrame::inferredName):
+        (JSC):
+        (JSC::InlineCallFrame::dumpBriefFunctionInformation):
+        (JSC::InlineCallFrame::dump):
+        * bytecode/CodeOrigin.h:
+        (InlineCallFrame):
+        * bytecode/DFGExitProfile.cpp:
+        (JSC::DFG::ExitProfile::exitSitesFor):
+        (DFG):
+        * bytecode/DFGExitProfile.h:
+        (ExitProfile):
+        * jit/JITStubs.cpp:
+        (JSC::DEFINE_STUB_FUNCTION):
+
 2013-01-07  Ryosuke Niwa  <rniwa@webkit.org>
 
         Sorted the xcodeproj file.

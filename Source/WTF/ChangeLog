@@ -1,3 +1,16 @@
+2013-01-07  Filip Pizlo  <fpizlo@apple.com>
+
+        Rationalize closure call heuristics and profiling
+        https://bugs.webkit.org/show_bug.cgi?id=106270
+
+        Reviewed by Oliver Hunt.
+        
+        Add a macro to add a method to a class that returns a dumper. Allows you to have
+        secondary dump() methods for dumping either more or less information.
+
+        * wtf/PrintStream.h:
+        (WTF):
+
 2013-01-07  Ryosuke Niwa  <rniwa@webkit.org>
 
         Sorted the xcodeproj file.

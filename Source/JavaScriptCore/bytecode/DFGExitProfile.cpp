@@ -55,6 +55,21 @@ bool ExitProfile::add(const FrequentExitSite& site)
     return true;
 }
 
+Vector<FrequentExitSite> ExitProfile::exitSitesFor(unsigned bytecodeIndex)
+{
+    Vector<FrequentExitSite> result;
+    
+    if (!m_frequentExitSites)
+        return result;
+    
+    for (unsigned i = 0; i < m_frequentExitSites->size(); ++i) {
+        if (m_frequentExitSites->at(i).bytecodeOffset() == bytecodeIndex)
+            result.append(m_frequentExitSites->at(i));
+    }
+    
+    return result;
+}
+
 QueryableExitProfile::QueryableExitProfile(const ExitProfile& profile)
 {
     if (!profile.m_frequentExitSites)
