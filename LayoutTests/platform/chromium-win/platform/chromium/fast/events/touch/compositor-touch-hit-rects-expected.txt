@@ -9,7 +9,7 @@ overhangingContainer[0]: (8, 202, 784, 10)
 overhangingContainer[1]: (8, 202, 110, 80)
 transformedChildContainer[0]: (63, 240, 674, 34)
 transformedChildContainer[1]: (8, 252, 784, 10)
-continuation[0]: (108, 302, 100, 10)
+continuation[0]: (108, 302, 110, 10)
 inlineAbsoluteChildContainer[0]: (378, 300, 250, 10)
 inlineAbsoluteChildContainer[1]: (108, 352, 270, 10)
 

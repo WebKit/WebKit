@@ -1,5 +1,12 @@
 2013-01-08  Dimitri Glazkov  <dglazkov@chromium.org>
 
+        [Chromium] Update expectations for platform/chromium/fast/events/touch/compositor-touch-hit-rects.html.
+
+        * platform/chromium-win-xp/platform/chromium/fast/events/touch/compositor-touch-hit-rects-expected.txt: Removed.
+        * platform/chromium-win/platform/chromium/fast/events/touch/compositor-touch-hit-rects-expected.txt:
+
+2013-01-08  Dimitri Glazkov  <dglazkov@chromium.org>
+
         Update expectations for various tests.
 
         * platform/chromium-win-xp/fast/table/038-vertical-expected.png: Removed.
