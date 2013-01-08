@@ -729,4 +729,9 @@ void WebSettingsImpl::setAllowCustomScrollbarInMainFrame(bool enabled)
     m_settings->setAllowCustomScrollbarInMainFrame(enabled);
 }
 
+void WebSettingsImpl::setCompositedScrollingForFramesEnabled(bool enabled)
+{
+    m_settings->setCompositedScrollingForFramesEnabled(enabled);
+}
+
 } // namespace WebKit
