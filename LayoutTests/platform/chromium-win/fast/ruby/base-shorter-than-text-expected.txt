@@ -23,8 +23,8 @@ layer at (0,0) size 800x600
               RenderText {#text} at (8,1) size 145x55
                 text run at (8,1) width 145: "\x{6A5F}\x{52D5}\x{968A}"
         RenderText {#text} at (0,0) size 0x0
-      RenderBlock {DIV} at (0,198) size 214x300
-        RenderBlock {P} at (16,0) size 83x300
+      RenderBlock {DIV} at (0,198) size 214x292
+        RenderBlock {P} at (16,0) size 83x292
           RenderRuby (inline) {RUBY} at (0,0) size 55x139
             RenderRubyRun (anonymous) at (26,0) size 57x139
               RenderRubyText {RT} at (-26,0) size 28x139
@@ -34,7 +34,7 @@ layer at (0,0) size 800x600
                 RenderText {#text} at (1,21) size 55x96
                   text run at (1,21) width 96: "\x{653B}\x{6BBB}"
           RenderText {#text} at (0,0) size 0x0
-        RenderBlock {P} at (115,0) size 83x300
+        RenderBlock {P} at (115,0) size 83x292
           RenderRuby (inline) {RUBY} at (0,0) size 55x186
             RenderRubyRun (anonymous) at (26,0) size 57x186
               RenderRubyText {RT} at (-26,0) size 28x186

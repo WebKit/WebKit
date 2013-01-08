@@ -1,3 +1,13 @@
+2013-01-08  Dimitri Glazkov  <dglazkov@chromium.org>
+
+        Update expectations for various tests.
+
+        * platform/chromium-win-xp/fast/table/038-vertical-expected.png: Removed.
+        * platform/chromium-win-xp/fast/table/border-collapsing/004-vertical-expected.png: Removed.
+        * platform/chromium-win/fast/ruby/base-shorter-than-text-expected.txt:
+        * platform/chromium-win/fast/table/038-vertical-expected.png:
+        * platform/chromium-win/fast/table/border-collapsing/004-vertical-expected.png:
+
 2013-01-08  Andreas Kling  <akling@apple.com>
 
         Heap-use-after-free in bool WebCore::SelectorChecker::checkOneSelector.
