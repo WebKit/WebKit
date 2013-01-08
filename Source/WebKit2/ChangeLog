@@ -1,3 +1,13 @@
+2013-01-08  Csaba Osztrogonác  <ossy@webkit.org>
+
+        [Qt][Win] Unreviewed buildfix, partially revert
+        r139003, because Qt port still uses these files.
+
+        * Platform/CoreIPC/win/BinarySemaphoreWin.cpp: Added.
+        * Platform/CoreIPC/win/ConnectionWin.cpp: Added.
+        * Platform/win/SharedMemoryWin.cpp: Added.
+        * Platform/win/WorkQueueWin.cpp: Added.
+
 2013-01-07  Christophe Dumez  <christophe.dumez@intel.com>
 
         [CoordinatedGraphics] compositing/repaint/resize-repaint.html is failing
