@@ -7,6 +7,7 @@ WEBCORE_CSS_VALUE_KEYWORDS := $(WebCore)/css/CSSValueKeywords.in
 webcore_cppflags += \
 	-DWTF_USE_FREETYPE=1 \
 	-DWTF_USE_HARFBUZZ_NG=1 \
+	-DWTF_USE_WEBP=1 \
 	-I$(srcdir)/Source/ThirdParty/ANGLE/src \
 	-I$(srcdir)/Source/ThirdParty/ANGLE/include \
 	-I$(srcdir)/Source/ThirdParty/ANGLE/include/GLSLANG \
@@ -72,8 +73,8 @@ webcore_cppflags += \
 	-I$(srcdir)/Source/WebCore/platform/image-decoders/gif \
 	-I$(srcdir)/Source/WebCore/platform/image-decoders/ico \
 	-I$(srcdir)/Source/WebCore/platform/image-decoders/jpeg \
-	-I$(srcdir)/Source/WebCore/platform/image-decoders/webp \
 	-I$(srcdir)/Source/WebCore/platform/image-decoders/png \
+	-I$(srcdir)/Source/WebCore/platform/image-decoders/webp \
 	-I$(srcdir)/Source/WebCore/platform/leveldb \
 	-I$(srcdir)/Source/WebCore/platform/linux \
 	-I$(srcdir)/Source/WebCore/platform/mediastream \

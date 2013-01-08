@@ -233,9 +233,8 @@ webkit.org/b/58443 fast/forms/file/input-file-entries.html [ Skip ]
 
 # Requires WebP support.
 webkit.org/b/98939 fast/canvas/canvas-toDataURL-webp.html [ Skip ]
+# Requires WebP 0.2 support.
 webkit.org/b/98939 fast/images/webp-image-decoding.html [ Skip ]
-webkit.org/b/98939 http/tests/images/webp-partial-load.html [ Skip ]
-webkit.org/b/98939 http/tests/images/webp-progressive-load.html [ Skip ]
 
 # DataTransferItems is not yet implemented.
 webkit.org/b/98940 editing/pasteboard/data-transfer-items.html [ Skip ]

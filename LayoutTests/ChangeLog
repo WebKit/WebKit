@@ -1,3 +1,13 @@
+2013-01-04  Sergio Villar Senin  <svillar@igalia.com>
+
+        [GTK] Add WebP image support
+        https://bugs.webkit.org/show_bug.cgi?id=105915
+
+        Reviewed by Martin Robinson.
+
+        * platform/gtk/TestExpectations: unskipped two tests passing now
+        that we have WebP support.
+
 2013-01-08  Yoshifumi Inoue  <yosin@chromium.org>
 
         Dragging over an element with scrollbars should scroll the element when dragging near edges

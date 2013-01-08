@@ -1,3 +1,14 @@
+2013-01-03  Sergio Villar Senin  <svillar@igalia.com>
+
+        [GTK] Add WebP image support
+        https://bugs.webkit.org/show_bug.cgi?id=105915
+
+        Reviewed by Martin Robinson.
+
+        WebP is from now on a dependency for WebKitGtk+.
+
+        * configure.ac: added WebP library detection.
+
 2013-01-07  Xianzhu Wang  <wangxianzhu@chromium.org>
 
         Add window.internals.nonFastScrollableRects for testing scrollable areas in fast/slow paths

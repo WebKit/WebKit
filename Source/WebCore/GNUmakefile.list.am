@@ -5702,10 +5702,10 @@ webcore_platform_sources += \
 	Source/WebCore/platform/image-decoders/ImageDecoder.h \
 	Source/WebCore/platform/image-decoders/jpeg/JPEGImageDecoder.cpp \
 	Source/WebCore/platform/image-decoders/jpeg/JPEGImageDecoder.h \
-	Source/WebCore/platform/image-decoders/webp/WEBPImageDecoder.cpp \
-	Source/WebCore/platform/image-decoders/webp/WEBPImageDecoder.h \
 	Source/WebCore/platform/image-decoders/png/PNGImageDecoder.cpp \
 	Source/WebCore/platform/image-decoders/png/PNGImageDecoder.h \
+	Source/WebCore/platform/image-decoders/webp/WEBPImageDecoder.cpp \
+	Source/WebCore/platform/image-decoders/webp/WEBPImageDecoder.h \
 	Source/WebCore/platform/LayoutTestSupport.cpp \
 	Source/WebCore/platform/LayoutTestSupport.h \
 	Source/WebCore/platform/linux/GamepadDeviceLinux.cpp \

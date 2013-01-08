@@ -267,6 +267,9 @@ if test "$png_ok" != yes; then
 fi
 AC_SUBST([PNG_LIBS])
 
+# Check for WEBP Image support
+AC_CHECK_HEADERS([webp/decode.h], [WEBP_LIBS='-lwebp'], [AC_MSG_ERROR([WebP library (libwebp) not found])])
+AC_SUBST([WEBP_LIBS])
 
 if test "$os_win32" = "yes"; then
   WINMM_LIBS=-lwinmm
