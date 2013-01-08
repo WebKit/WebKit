@@ -1,3 +1,15 @@
+2013-01-08  Alexey Proskuryakov  <ap@apple.com>
+
+        <rdar://problem/12944813> Network process temporary and cache directories are not set correctly
+
+        Reviewed by Sam Weinig.
+
+        Set DIRHELPER_USER_DIR_SUFFIX, like we do for WebProcess. Also while in this function,
+        enabled sandbox-style file quarantine.
+
+        * NetworkProcess/mac/NetworkProcessMac.mm:
+        (WebKit::NetworkProcess::initializeSandbox):
+
 2013-01-08  Anders Carlsson  <andersca@apple.com>
 
         Use correct capitalization in service name

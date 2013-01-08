@@ -31,16 +31,21 @@
 #import "NetworkProcessCreationParameters.h"
 #import "PlatformCertificateInfo.h"
 #import "SandboxExtension.h"
+#import <WebCore/FileSystem.h>
 #import <WebCore/LocalizedStrings.h>
 #import <WebKitSystemInterface.h>
 #import <mach/host_info.h>
 #import <mach/mach.h>
 #import <mach/mach_error.h>
+#import <sysexits.h>
 #import <wtf/text/WTFString.h>
 
 #if USE(SECURITY_FRAMEWORK)
 #import "SecItemShim.h"
 #endif
+
+// Define this to 1 to bypass the sandbox for debugging purposes.
+#define DEBUG_BYPASS_SANDBOX 0
 
 using namespace WebCore;
 
@@ -58,9 +63,35 @@ void NetworkProcess::initializeProcessName(const ChildProcessInitializationParam
     }
 }
 
-void NetworkProcess::initializeSandbox(const ChildProcessInitializationParameters&)
+void NetworkProcess::initializeSandbox(const ChildProcessInitializationParameters& parameters)
 {
-    // FIXME: Initialize the sandbox.
+    [[NSFileManager defaultManager] changeCurrentDirectoryPath:[[NSBundle mainBundle] bundlePath]];
+
+#if DEBUG_BYPASS_SANDBOX
+    WTFLogAlways("Bypassing network process sandbox.\n");
+    return;
+#endif
+
+#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 1080
+    // Use private temporary and cache directories.
+    String systemDirectorySuffix = "com.apple.WebKit.NetworkProcess+" + parameters.clientIdentifier;
+    setenv("DIRHELPER_USER_DIR_SUFFIX", fileSystemRepresentation(systemDirectorySuffix).data(), 0);
+    char temporaryDirectory[PATH_MAX];
+    if (!confstr(_CS_DARWIN_USER_TEMP_DIR, temporaryDirectory, sizeof(temporaryDirectory))) {
+        WTFLogAlways("NetworkProcess: couldn't retrieve private temporary directory path: %d\n", errno);
+        exit(EX_NOPERM);
+    }
+    setenv("TMPDIR", temporaryDirectory, 1);
+#endif
+
+    // FIXME (NetworkProcess): <rdar://problem/12772605> Actually initialize the sandbox.
+
+    // This will override LSFileQuarantineEnabled from Info.plist unless sandbox quarantine is globally disabled.
+    OSStatus error = WKEnableSandboxStyleFileQuarantine();
+    if (error) {
+        WTFLogAlways("NetworkProcess: Couldn't enable sandbox style file quarantine: %ld\n", (long)error);
+        exit(EX_NOPERM);
+    }
 }
 
 void NetworkProcess::platformInitializeNetworkProcess(const NetworkProcessCreationParameters& parameters)
