@@ -1,5 +1,12 @@
 2013-01-08  Dimitri Glazkov  <dglazkov@chromium.org>
 
+        Organize some svg/gynamic-updates expectations.
+
+        * platform/chromium-win-xp/svg/dynamic-updates/SVGFEComponentTransferElement-dom-tableValues-attr-expected.png: Removed.
+        * platform/chromium-win-xp/svg/dynamic-updates/SVGFEComponentTransferElement-svgdom-tableValues-prop-expected.png: Removed.
+
+2013-01-08  Dimitri Glazkov  <dglazkov@chromium.org>
+
         [Chromium] Layout Tests svg/dynamic-updates/SVGFEComponentTransferElement-svgdom-tableValues* are flaky.
         https://bugs.webkit.org/show_bug.cgi?id=106390
 
