@@ -303,9 +303,9 @@ def self_test():
         "Network.requestWillBeSent: required parameter is missing: postData",
         "Network.requestWillBeSent: required parameter is missing: documentURL" ]
     for i in range(len(errors)):
-        if errors[i] != golden_errors[i]:
+        if errors[i] not in golden_errors:
             return False
-    return True
+    return len(errors) is len(golden_errors)
 
 def main():
     if not self_test():
