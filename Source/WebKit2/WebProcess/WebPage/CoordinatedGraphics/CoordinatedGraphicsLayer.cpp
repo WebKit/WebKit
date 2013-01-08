@@ -214,7 +214,7 @@ void CoordinatedGraphicsLayer::setSize(const FloatSize& size)
         return;
 
     GraphicsLayer::setSize(size);
-    setNeedsDisplay();
+
     if (maskLayer())
         maskLayer()->setSize(size);
     didChangeGeometry();

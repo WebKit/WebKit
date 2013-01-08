@@ -1,5 +1,18 @@
 2013-01-07  Christophe Dumez  <christophe.dumez@intel.com>
 
+        [CoordinatedGraphics] compositing/repaint/resize-repaint.html is failing
+        https://bugs.webkit.org/show_bug.cgi?id=104637
+
+        Reviewed by Noam Rosenthal.
+
+        Unskip compositing/repaint/resize-repaint.html now that Coordinated
+        Graphics is no longer repainting unconditionally compositing layers
+        when their size changes.
+
+        * platform/efl-wk2/TestExpectations:
+
+2013-01-07  Christophe Dumez  <christophe.dumez@intel.com>
+
         [CoordinatedGraphics] Support invalidation tracking for CoordinatedGraphicsLayer
         https://bugs.webkit.org/show_bug.cgi?id=106002
 

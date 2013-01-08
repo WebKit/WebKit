@@ -368,9 +368,6 @@ webkit.org/b/105766 compositing/text-on-scaled-surface.html [ ImageOnlyFailure ]
 Bug(EFL) svg/animations/animate-linear-discrete-additive-b.svg [ ImageOnlyFailure ]
 Bug(EFL) svg/transforms/transformed-text-fill-pattern.html [ ImageOnlyFailure ]
 
-# New compositing test introduced in r137215 that is failing on WK2 EFL.
-webkit.org/b/104637 compositing/repaint/resize-repaint.html [ Failure ]
-
 webkit.org/b/104656 compositing/repaint/clipped-layer-size-change.html [ ImageOnlyFailure Pass ]
 
 # New compositing test introduced in r137828 that is failing on WK2 EFL.

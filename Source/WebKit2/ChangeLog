@@ -1,5 +1,24 @@
 2013-01-07  Christophe Dumez  <christophe.dumez@intel.com>
 
+        [CoordinatedGraphics] compositing/repaint/resize-repaint.html is failing
+        https://bugs.webkit.org/show_bug.cgi?id=104637
+
+        Reviewed by Noam Rosenthal.
+
+        r137526 attempted to fix excessive repainting when compositing layers
+        change size. However, the fix did not suffice for ports using Coordinated
+        Graphics because CoordinatedGraphicsLayer::setSize() was calling
+        setNeedsDisplay() causing a full repaint.
+
+        This patch removes the call to setNeedsDisplay() in
+        CoordinatedGraphicsLayer::setSize() so that we don't unconditionally
+        repaint CoordinatedGraphics layers when their size changes.
+
+        * WebProcess/WebPage/CoordinatedGraphics/CoordinatedGraphicsLayer.cpp:
+        (WebCore::CoordinatedGraphicsLayer::setSize):
+
+2013-01-07  Christophe Dumez  <christophe.dumez@intel.com>
+
         [CoordinatedGraphics] Support invalidation tracking for CoordinatedGraphicsLayer
         https://bugs.webkit.org/show_bug.cgi?id=106002
 
