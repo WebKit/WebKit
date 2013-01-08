@@ -1,3 +1,25 @@
+2013-01-08  Antoine Quint  <graouts@apple.com>
+
+        <track> element's mode set to "disabled" after load although it was explicitly set to "hidden"
+        https://bugs.webkit.org/show_bug.cgi?id=105536
+
+        Reviewed by Eric Carlson.
+
+        * media/track/opera/interfaces/TextTrack/addCue-expected.txt:
+        * media/track/opera/interfaces/TextTrack/removeCue-expected.txt: Added.
+        * media/track/opera/interfaces/TextTrackCue/align-expected.txt: Added.
+        * media/track/opera/interfaces/TextTrackCue/endTime-expected.txt:
+        * media/track/opera/interfaces/TextTrackCue/id-expected.txt: Added.
+        * media/track/opera/interfaces/TextTrackCue/pauseOnExit-expected.txt: Added.
+        * media/track/opera/interfaces/TextTrackCue/startTime-expected.txt:
+        * media/track/opera/interfaces/TextTrackCue/track-expected.txt: Added.
+        * platform/chromium/TestExpectations: Skipping newly failing test on Chrome.
+        * platform/efl/TestExpectations:
+        * platform/gtk/TestExpectations:
+        * platform/mac/TestExpectations:
+        * platform/qt/TestExpectations:
+        * platform/win/TestExpectations:
+
 2013-01-08  Zan Dobersek  <zandobersek@gmail.com>
 
         Unreviewed GTK gardening.

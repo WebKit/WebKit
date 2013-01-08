@@ -106,7 +106,6 @@ TextTrack::TextTrack(ScriptExecutionContext* context, TextTrackClient* client, c
     , m_readinessState(NotLoaded)
     , m_trackIndex(invalidTrackIndex)
     , m_renderedTrackIndex(invalidTrackIndex)
-    , m_showingByDefault(false)
     , m_hasBeenConfigured(false)
 {
     setKind(kind);
@@ -172,21 +171,10 @@ void TextTrack::setMode(const AtomicString& mode)
         for (size_t i = 0; i < m_cues->length(); ++i)
             m_cues->item(i)->removeDisplayTree();
 
-    //  ... Note: If the mode had been showing by default, this will change it to showing, 
-    // even though the value of mode would appear not to change.
     m_mode = mode;
-    setShowingByDefault(false);
 
     if (m_client)
         m_client->textTrackModeChanged(this);
-}
-
-AtomicString TextTrack::mode() const
-{
-    // The text track "showing" and "showing by default" modes return the string "showing".
-    if (m_showingByDefault)
-        return showingKeyword();
-    return m_mode;
 }
 
 TextTrackCueList* TextTrack::cues()
@@ -327,7 +315,7 @@ bool TextTrack::isRendered()
     if (m_kind != captionsKeyword() && m_kind != subtitlesKeyword())
         return false;
 
-    if (m_mode != showingKeyword() && !m_showingByDefault)
+    if (m_mode != showingKeyword())
         return false;
 
     return true;

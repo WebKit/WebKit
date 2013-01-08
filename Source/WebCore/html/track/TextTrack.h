@@ -84,11 +84,8 @@ public:
     static const AtomicString& hiddenKeyword();
     static const AtomicString& showingKeyword();
 
-    virtual AtomicString mode() const;
+    AtomicString mode() const { return m_mode; }
     virtual void setMode(const AtomicString&);
-
-    bool showingByDefault() const { return m_showingByDefault; }
-    void setShowingByDefault(bool showing) { m_showingByDefault = showing; }
 
     enum ReadinessState { NotLoaded = 0, Loading = 1, Loaded = 2, FailedToLoad = 3 };
     ReadinessState readinessState() const { return m_readinessState; }
@@ -144,7 +141,6 @@ private:
     ReadinessState m_readinessState;
     int m_trackIndex;
     int m_renderedTrackIndex;
-    bool m_showingByDefault;
     bool m_hasBeenConfigured;
 };
 

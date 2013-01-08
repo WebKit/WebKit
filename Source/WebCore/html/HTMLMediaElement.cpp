@@ -3005,7 +3005,7 @@ void HTMLMediaElement::configureTextTrackGroup(const TrackGroup& group) const
             // * If the track element has a default attribute specified, and there is no other text track in the media
             // element's list of text tracks whose text track mode is showing or showing by default
             //    Let the text track mode be showing by default.
-            defaultTrack = textTrack.get();
+            defaultTrack = textTrack;
         }
     }
 
@@ -3017,31 +3017,8 @@ void HTMLMediaElement::configureTextTrackGroup(const TrackGroup& group) const
     if (!trackToEnable && fallbackTrack)
         trackToEnable = fallbackTrack;
 
-    for (size_t i = 0; i < group.tracks.size(); ++i) {
-        RefPtr<TextTrack> textTrack = group.tracks[i];
-        
-        if (trackToEnable == textTrack) {
-            textTrack->setMode(TextTrack::showingKeyword());
-            if (defaultTrack == textTrack)
-                textTrack->setShowingByDefault(true);
-        } else {
-            if (textTrack->showingByDefault()) {
-                // If there is a text track in the media element's list of text tracks whose text track
-                // mode is showing by default, the user agent must furthermore change that text track's
-                // text track mode to hidden.
-                textTrack->setShowingByDefault(false);
-                textTrack->setMode(TextTrack::hiddenKeyword());
-            } else
-                textTrack->setMode(TextTrack::disabledKeyword());
-        }
-    }
-
-    if (trackToEnable && group.defaultTrack && group.defaultTrack != trackToEnable) {
-        if (group.defaultTrack && group.defaultTrack->showingByDefault()) {
-            group.defaultTrack->setShowingByDefault(false);
-            group.defaultTrack->setMode(TextTrack::hiddenKeyword());
-        }
-    }
+    if (trackToEnable)
+        trackToEnable->setMode(TextTrack::showingKeyword());
 }
 
 void HTMLMediaElement::toggleTrackAtIndex(int index, bool exclusive)
@@ -3052,7 +3029,6 @@ void HTMLMediaElement::toggleTrackAtIndex(int index, bool exclusive)
 
     for (int i = 0, length = trackList->length(); i < length; ++i) {
         TextTrack* track = trackList->item(i);
-        track->setShowingByDefault(false);
         if (i == index)
             track->setMode(TextTrack::showingKeyword());
         else if (exclusive || index == HTMLMediaElement::textTracksOffIndex())

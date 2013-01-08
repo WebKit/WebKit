@@ -1,0 +1,4 @@
+ 
+PASS TextTrackCue.pauseOnExit, script-created cue 
+PASS TextTrackCue.pauseOnExit, parsed cue 
+
