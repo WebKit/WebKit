@@ -1,3 +1,15 @@
+2013-01-08  Heikki Paajanen  <heikki.paajanen@palm.com>
+
+        [Qt] Fix libxml2 config test
+        https://bugs.webkit.org/show_bug.cgi?id=106317
+
+        Reviewed by Simon Hausmann.
+
+        Don't assume standard include/libxml2, libxml-2.0.pc should know
+        where it's headers are.
+
+        * qmake/config.tests/libxml2/libxml2.cpp: Fix include
+
 2013-01-08  Zan Dobersek  <zandobersek@gmail.com>
 
         [GTK] Make Tools/gtk/generate-gtkdoc compatible with Python 3

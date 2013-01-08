@@ -23,7 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include <libxml2/libxml/xmlreader.h>
+#include <libxml/xmlreader.h>
 
 int main(int, char**)
 {
