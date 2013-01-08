@@ -2504,3 +2504,6 @@ webkit.org/b/106016 fast/workers/worker-document-leak.html
 
 # [Qt] New fast/regions/full-screen-video-from-region.html times out
 webkit.org/b/106095 fast/regions/full-screen-video-from-region.html
+
+# [Qt][EFL] New fast/events/drag-and-drop-autoscroll.html fails
+webkit.org/b/106318 fast/events/drag-and-drop-autoscroll.html

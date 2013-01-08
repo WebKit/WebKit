@@ -1,3 +1,9 @@
+2013-01-08  Csaba Osztrogonác  <ossy@webkit.org>
+
+        [Qt] Unreviewed gardening, skip a new failing test.
+
+        * platform/qt/TestExpectations:
+
 2013-01-08  Kihong Kwon  <kihong.kwon@samsung.com>
 
         Add DeviceProximityController to support Device Proximity Events.
