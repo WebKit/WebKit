@@ -747,7 +747,7 @@ inline void Element::setAttributeInternal(size_t index, const QualifiedName& nam
         // If there is an Attr node hooked to this attribute, the Attr::setValue() call below
         // will write into the ElementAttributeData.
         // FIXME: Refactor this so it makes some sense.
-        if (RefPtr<Attr> attrNode = attrIfExists(name))
+        if (RefPtr<Attr> attrNode = inSynchronizationOfLazyAttribute ? 0 : attrIfExists(name))
             attrNode->setValue(newValue);
         else
             mutableAttributeData()->attributeItem(index)->setValue(newValue);

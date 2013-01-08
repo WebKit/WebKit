@@ -1,3 +1,13 @@
+2013-01-08  Andreas Kling  <akling@apple.com>
+
+        Heap-use-after-free in bool WebCore::SelectorChecker::checkOneSelector.
+        <http://webkit.org/b/105834>
+
+        Reviewed by Antti Koivisto.
+
+        * fast/dom/mutation-event-listener-with-dirty-inline-style-crash-expected.txt: Added.
+        * fast/dom/mutation-event-listener-with-dirty-inline-style-crash.html: Added.
+
 2013-01-08  Filip Pizlo  <fpizlo@apple.com>
 
         DFG initrinsic handling should ensure that we backwards propagate the fact that all operands may escape
