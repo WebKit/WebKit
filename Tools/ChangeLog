@@ -1,3 +1,11 @@
+2013-01-08  Dominic Mazzoni  <dmazzoni@google.com>
+
+        Add aboxhall@chromium.org to accessibility watchlist.
+
+        Unreviewed.
+
+        * Scripts/webkitpy/common/config/watchlist:
+
 2013-01-08  Dan Winship  <danw@gnome.org>
 
         Add Apache 2.4 support for Fedora 18
