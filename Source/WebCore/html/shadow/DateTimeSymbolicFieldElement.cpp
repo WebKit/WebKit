@@ -119,7 +119,7 @@ void DateTimeSymbolicFieldElement::setValueAsInteger(int newSelectedIndex, Event
 void DateTimeSymbolicFieldElement::stepDown()
 {
     if (hasValue()) {
-        if (!isInRange(--m_selectedIndex))
+        if (!indexIsInRange(--m_selectedIndex))
             m_selectedIndex = m_maximumIndex;
     } else
         m_selectedIndex = m_maximumIndex;
@@ -129,7 +129,7 @@ void DateTimeSymbolicFieldElement::stepDown()
 void DateTimeSymbolicFieldElement::stepUp()
 {
     if (hasValue()) {
-        if (!isInRange(++m_selectedIndex))
+        if (!indexIsInRange(++m_selectedIndex))
             m_selectedIndex = m_minimumIndex;
     } else
         m_selectedIndex = m_minimumIndex;

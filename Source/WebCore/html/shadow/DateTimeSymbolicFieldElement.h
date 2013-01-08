@@ -49,7 +49,7 @@ private:
     static const int invalidIndex = -1;
 
     String visibleEmptyValue() const;
-    bool isInRange(int index) const { return index >= m_minimumIndex && index <= m_maximumIndex; }
+    bool indexIsInRange(int index) const { return index >= m_minimumIndex && index <= m_maximumIndex; }
 
     // DateTimeFieldElement functions.
     virtual void handleKeyboardEvent(KeyboardEvent*) OVERRIDE FINAL;
