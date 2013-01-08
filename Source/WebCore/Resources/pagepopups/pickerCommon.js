@@ -115,10 +115,7 @@ function adjustWindowRect(width, height, minWidth, minHeight) {
         return windowRect;
 
     var anchorRect = new Rectangle(global.params.anchorRectInScreen);
-    var rootViewRect = new Rectangle(global.params.rootViewRectInScreen);
     var availRect = new Rectangle(window.screen.availLeft, window.screen.availTop, window.screen.availWidth, window.screen.availHeight);
-    if (global.params.confineToRootView)
-        availRect = Rectangle.intersection(availRect, rootViewRect) || new Rectangle(0, 0, 0, 0);
 
     _adjustWindowRectVertically(windowRect, availRect, anchorRect, minHeight);
     _adjustWindowRectHorizontally(windowRect, availRect, anchorRect, minWidth);

@@ -27,7 +27,6 @@ function makeRect(x, y, width, height) {
 }
 
 function test() {
-    popupWindow.global.params.confineToRootView = false;
     popupWindow.screen = {
         width: 80,
         height: 60,
@@ -36,7 +35,6 @@ function test() {
         availWidth: 80,
         availHeight: 60,
     };
-    popupWindow.global.params.rootViewRectInScreen = makeRect(0, 0, 80, 60);
 
     debug("Move anchor element along the vertical axis.");
 
