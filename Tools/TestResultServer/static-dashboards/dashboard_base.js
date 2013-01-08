@@ -462,7 +462,6 @@ function isFlakinessDashboard()
     return endsWith(window.location.pathname, 'flakiness_dashboard.html');
 }
 
-var g_hasDoneInitialPageGeneration = false;
 // String of error messages to display to the user.
 var g_errorMessages = '';
 
@@ -502,9 +501,6 @@ function showErrors()
 
 function addBuilderLoadErrors()
 {
-    if (g_hasDoneInitialPageGeneration)
-        return;
-
     if (g_buildersThatFailedToLoad.length)
         addError('ERROR: Failed to get data from ' + g_buildersThatFailedToLoad.toString() + '.');
 
@@ -515,6 +511,7 @@ function addBuilderLoadErrors()
 function resourceLoadingComplete()
 {
     g_resourceLoader = null;
+    addBuilderLoadErrors();
     handleLocationChange();
 }
 
@@ -522,9 +519,6 @@ function handleLocationChange()
 {
     if (g_resourceLoader)
         return;
-
-    addBuilderLoadErrors();
-    g_hasDoneInitialPageGeneration = true;
 
     var params = parseParameters();
     var shouldGeneratePage = true;

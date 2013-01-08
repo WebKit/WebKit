@@ -599,7 +599,6 @@ test('diffStates', 5, function() {
 
 test('addBuilderLoadErrors', 1, function() {
     clearErrors();
-    g_hasDoneInitialPageGeneration = false;
     g_buildersThatFailedToLoad = ['builder1', 'builder2'];
     g_staleBuilders = ['staleBuilder1'];
     addBuilderLoadErrors();

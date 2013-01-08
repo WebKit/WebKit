@@ -1,3 +1,24 @@
+2013-01-08  Julie Parent  <jparent@chromium.org>
+
+        Dashboard Cleanup: Remove g_hasDoneInitialPageGeneration
+        https://bugs.webkit.org/show_bug.cgi?id=106254
+
+        Remove the global variable g_hasDoneInitialPageGeneration.  It was used
+        only to figure out if we should call addBuilderLoadErrors during
+        handleLocationChange, which was called when the loader completed and on
+        any hash change, but we only ever wanted to call addBuilderLoadErrors
+        on the initial loader load.  Moved the call of addBuilderLoadErrors to
+        resourceLoadingComplete rather than handleLocationChange, so now we
+        only call it when we want to, and the check can go away completely.
+
+        Reviewed by Dirk Pranke.
+
+        * TestResultServer/static-dashboards/dashboard_base.js:
+        (addBuilderLoadErrors):
+        (resourceLoadingComplete):
+        (handleLocationChange):
+        * TestResultServer/static-dashboards/flakiness_dashboard_unittests.js:
+
 2013-01-08  Dominic Mazzoni  <dmazzoni@google.com>
 
         Add aboxhall@chromium.org to accessibility watchlist.
