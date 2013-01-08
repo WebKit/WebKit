@@ -65,9 +65,6 @@ private:
     void setMinimumLifetime(double);
     void minimumLifetimeTimerFired();
 
-    // The connection to the UI process.
-    RefPtr<CoreIPC::Connection> m_connection;
-
     // Our web process connections.
     Vector<RefPtr<WebProcessConnection> > m_webProcessConnections;
 
