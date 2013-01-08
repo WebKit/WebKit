@@ -1,3 +1,13 @@
+2013-01-08  Filip Pizlo  <fpizlo@apple.com>
+
+        If array allocation profiling causes a new_array to allocate double arrays, then the holes should end up being correctly initialized
+        https://bugs.webkit.org/show_bug.cgi?id=106363
+
+        Reviewed by Mark Hahnenberg.
+
+        * runtime/JSArray.h:
+        (JSC::JSArray::tryCreateUninitialized):
+
 2013-01-07  Filip Pizlo  <fpizlo@apple.com>
 
         DFG should backwards-propagate NodeUsedAsValue for Phantom

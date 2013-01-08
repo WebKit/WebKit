@@ -1,3 +1,16 @@
+2013-01-08  Filip Pizlo  <fpizlo@apple.com>
+
+        If array allocation profiling causes a new_array to allocate double arrays, then the holes should end up being correctly initialized
+        https://bugs.webkit.org/show_bug.cgi?id=106363
+
+        Reviewed by Mark Hahnenberg.
+
+        * fast/js/jsc-test-list:
+        * fast/js/new-array-double-with-holes-expected.txt: Added.
+        * fast/js/new-array-double-with-holes.html: Added.
+        * fast/js/script-tests/new-array-double-with-holes.js: Added.
+        (foo):
+
 2013-01-08  Ryosuke Niwa  <rniwa@webkit.org>
 
         Add a crashing test expectation to a test added in r139029.

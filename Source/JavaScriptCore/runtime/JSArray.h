@@ -245,6 +245,10 @@ inline JSArray* JSArray::tryCreateUninitialized(JSGlobalData& globalData, Struct
         butterfly = Butterfly::fromBase(temp, 0, 0);
         butterfly->setVectorLength(vectorLength);
         butterfly->setPublicLength(initialLength);
+        if (hasDouble(structure->indexingType())) {
+            for (unsigned i = initialLength; i < vectorLength; ++i)
+                butterfly->contiguousDouble()[i] = QNaN;
+        }
     } else {
         void* temp;
         if (!globalData.heap.tryAllocateStorage(Butterfly::totalSize(0, 0, true, ArrayStorage::sizeFor(vectorLength)), &temp))

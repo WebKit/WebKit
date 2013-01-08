@@ -248,6 +248,7 @@ fast/js/modify-non-references
 fast/js/multiline-comment-newline
 fast/js/named-function-expression
 fast/js/nested-functions
+fast/js/new-array-double-with-holes
 fast/js/no-semi-insertion-at-end-of-script
 fast/js/number-cell-reuse
 fast/js/number-toExponential
