@@ -3415,9 +3415,9 @@ webkit.org/b/84724 [ SnowLeopard ] platform/chromium/media/video-frame-size-chan
 
 webkit.org/b/84735 [ Win ] http/tests/inspector/change-iframe-src.html [ Pass Timeout ]
 
-webkit.org/b/84802 [ Linux Win Debug ] fast/js/random-array-gc-stress.html [ Pass Slow ]
+webkit.org/b/84802 [ Linux Debug ] fast/js/random-array-gc-stress.html [ Pass Slow ]
 webkit.org/b/93631 [ Android ] fast/js/random-array-gc-stress.html [ Pass Slow ]
-webkit.org/b/84802 [ Mac Debug ] fast/js/random-array-gc-stress.html [ Pass Timeout ]
+webkit.org/b/84802 [ Mac Win Debug ] fast/js/random-array-gc-stress.html [ Pass Timeout ]
 
 webkit.org/b/84847 [ Win Release ] inspector/timeline/timeline-start-time.html [ Failure Pass ]
 

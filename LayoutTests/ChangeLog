@@ -1,5 +1,12 @@
 2013-01-08  Dimitri Glazkov  <dglazkov@chromium.org>
 
+        [Chromium] Tweak expectations for random-array-gc-stress.html to reflect reality.
+        https://bugs.webkit.org/show_bug.cgi?id=84802
+
+        * platform/chromium/TestExpectations: Tweaked expectations.
+
+2013-01-08  Dimitri Glazkov  <dglazkov@chromium.org>
+
         [Chromium] Skip http/tests/misc/authentication-redirect-4/authentication-sent-to-redirect-same-origin-url.html, because
         it's been timing out since it was added.
         https://bugs.webkit.org/show_bug.cgi?id=106332
