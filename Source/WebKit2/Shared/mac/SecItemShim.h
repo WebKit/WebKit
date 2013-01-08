@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011 Apple Inc. All rights reserved.
+ * Copyright (C) 2013 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -22,43 +22,39 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
- 
-#import "config.h"
-#import "WebProcessProxy.h"
 
-#import "WebProcessMessages.h"
-#import "WKFullKeyboardAccessWatcher.h"
+#ifndef SecItemShim_h
+#define SecItemShim_h
+
+#if USE(SECURITY_FRAMEWORK)
+
+#include "Connection.h"
 
 namespace WebKit {
 
-bool WebProcessProxy::fullKeyboardAccessEnabled()
-{
-    return [WKFullKeyboardAccessWatcher fullKeyboardAccessEnabled];
-}
+class SecItemResponseData;
 
-#if HAVE(XPC)
-static bool shouldUseXPC()
-{
-    if (id value = [[NSUserDefaults standardUserDefaults] objectForKey:@"WebKit2UseXPCServiceForWebProcess"])
-        return [value boolValue];
+class SecItemShim : public CoreIPC::Connection::QueueClient {
+WTF_MAKE_NONCOPYABLE(SecItemShim);
+public:
+    static SecItemShim& shared();
 
-#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 1090
-    return true;
-#else
-    return false;
-#endif
-}
-#endif
+    void install();
 
-void WebProcessProxy::platformGetLaunchOptions(ProcessLauncher::LaunchOptions& launchOptions)
-{
-    // We want the web process to match the architecture of the UI process.
-    launchOptions.architecture = ProcessLauncher::LaunchOptions::MatchCurrentArchitecture;
-    launchOptions.executableHeap = false;
+private:
+    SecItemShim();
 
-#if HAVE(XPC)
-    launchOptions.useXPC = shouldUseXPC();
-#endif
-}
+    // QueueClient
+    virtual void didReceiveMessageOnConnectionWorkQueue(CoreIPC::Connection*, CoreIPC::MessageID, CoreIPC::MessageDecoder&, bool& didHandleMessage);
+
+    // Implemented in generated SecItemShimMessageReceiver.cpp.
+    void didReceiveSecItemShimMessageOnConnectionWorkQueue(CoreIPC::Connection*, CoreIPC::MessageID, CoreIPC::MessageDecoder&, bool& didHandleMessage);
+
+    void secItemResponse(CoreIPC::Connection*, uint64_t requestID, const SecItemResponseData&);
+};
 
 } // namespace WebKit
+
+#endif // USE(SECURITY_FRAMEWORK)
+
+#endif // SecItemShim_h

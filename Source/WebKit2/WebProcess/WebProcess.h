@@ -92,10 +92,6 @@ struct WebProcessCreationParameters;
 class NetworkProcessConnection;
 #endif
 
-#if USE(SECURITY_FRAMEWORK)
-class SecItemResponseData;
-#endif
-
 #if ENABLE(NETWORK_PROCESS)
 class WebResourceLoadScheduler;
 #endif
@@ -269,10 +265,6 @@ private:
 #endif
 
     void postInjectedBundleMessage(const CoreIPC::DataReference& messageData);
-
-#if USE(SECURITY_FRAMEWORK)
-    void secItemResponse(CoreIPC::Connection*, uint64_t requestID, const SecItemResponseData&);
-#endif
 
     // ChildProcess
     virtual void initializeProcess(const ChildProcessInitializationParameters&) OVERRIDE;

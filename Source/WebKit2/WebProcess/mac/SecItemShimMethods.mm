@@ -30,7 +30,7 @@
 #import "SecItemRequestData.h"
 #import "SecItemResponseData.h"
 #import "WebProcess.h"
-#import "WebProcessProxyMessages.h"
+#import "SecItemShimProxyMessages.h"
 #import "WebProcessShim.h"
 #import <Security/SecItem.h>
 #import <dlfcn.h>
@@ -57,7 +57,7 @@ void didReceiveSecItemResponse(uint64_t requestID, const SecItemResponseData& re
 static PassOwnPtr<SecItemResponseData> sendSeqItemRequest(SecItemRequestData::Type requestType, CFDictionaryRef query, CFDictionaryRef attributesToMatch = 0)
 {
     uint64_t requestID = generateSecItemRequestID();
-    if (!WebProcess::shared().connection()->send(Messages::WebProcessProxy::SecItemRequest(requestID, SecItemRequestData(requestType, query, attributesToMatch)), 0))
+    if (!WebProcess::shared().connection()->send(Messages::SecItemShimProxy::SecItemRequest(requestID, SecItemRequestData(requestType, query, attributesToMatch)), 0))
         return nullptr;
 
     return responseMap().waitForResponse(requestID);

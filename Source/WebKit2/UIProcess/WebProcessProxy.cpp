@@ -53,6 +53,10 @@
 #endif
 #endif
 
+#if USE(SECURITY_FRAMEWORK)
+#include "SecItemShimProxy.h"
+#endif
+
 using namespace WebCore;
 using namespace std;
 
@@ -501,6 +505,10 @@ void WebProcessProxy::didBecomeResponsive(ResponsivenessTimer*)
 void WebProcessProxy::didFinishLaunching(ProcessLauncher* launcher, CoreIPC::Connection::Identifier connectionIdentifier)
 {
     ChildProcessProxy::didFinishLaunching(launcher, connectionIdentifier);
+
+#if USE(SECURITY_FRAMEWORK)
+    connection()->addQueueClient(&SecItemShimProxy::shared());
+#endif
 
     m_webConnection = WebConnectionToWebProcess::create(this);
 

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011 Apple Inc. All rights reserved.
+ * Copyright (C) 2013 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -22,43 +22,44 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
- 
-#import "config.h"
-#import "WebProcessProxy.h"
 
-#import "WebProcessMessages.h"
-#import "WKFullKeyboardAccessWatcher.h"
+#include "config.h"
+#include "SecItemShim.h"
+
+#if USE(SECURITY_FRAMEWORK)
+
+#include "SecItemShimMethods.h"
 
 namespace WebKit {
 
-bool WebProcessProxy::fullKeyboardAccessEnabled()
+SecItemShim& SecItemShim::shared()
 {
-    return [WKFullKeyboardAccessWatcher fullKeyboardAccessEnabled];
+    AtomicallyInitializedStatic(SecItemShim*, proxy = new SecItemShim);
+    return *proxy;
 }
 
-#if HAVE(XPC)
-static bool shouldUseXPC()
+SecItemShim::SecItemShim()
 {
-    if (id value = [[NSUserDefaults standardUserDefaults] objectForKey:@"WebKit2UseXPCServiceForWebProcess"])
-        return [value boolValue];
-
-#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 1090
-    return true;
-#else
-    return false;
-#endif
-}
-#endif
-
-void WebProcessProxy::platformGetLaunchOptions(ProcessLauncher::LaunchOptions& launchOptions)
-{
-    // We want the web process to match the architecture of the UI process.
-    launchOptions.architecture = ProcessLauncher::LaunchOptions::MatchCurrentArchitecture;
-    launchOptions.executableHeap = false;
-
-#if HAVE(XPC)
-    launchOptions.useXPC = shouldUseXPC();
-#endif
 }
 
-} // namespace WebKit
+void SecItemShim::secItemResponse(CoreIPC::Connection*, uint64_t requestID, const SecItemResponseData& response)
+{
+    didReceiveSecItemResponse(requestID, response);
+}
+
+void SecItemShim::install()
+{
+    initializeSecItemShim();
+}
+
+void SecItemShim::didReceiveMessageOnConnectionWorkQueue(CoreIPC::Connection* connection, CoreIPC::MessageID messageID, CoreIPC::MessageDecoder& decoder, bool& didHandleMessage)
+{
+    if (messageID.is<CoreIPC::MessageClassSecItemShim>()) {
+        didReceiveSecItemShimMessageOnConnectionWorkQueue(connection, messageID, decoder, didHandleMessage);
+        return;
+    }
+}
+
+}
+
+#endif

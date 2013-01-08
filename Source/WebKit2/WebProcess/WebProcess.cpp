@@ -120,6 +120,10 @@
 #include "PluginProcessConnectionManager.h"
 #endif
 
+#if USE(SECURITY_FRAMEWORK)
+#include "SecItemShim.h"
+#endif
+
 using namespace JSC;
 using namespace WebCore;
 
@@ -207,6 +211,10 @@ void WebProcess::initializeConnection(CoreIPC::Connection* connection)
     connection->setShouldExitOnSyncMessageSendFailure(true);
     connection->addQueueClient(&m_eventDispatcher);
     connection->addQueueClient(this);
+
+#if USE(SECURITY_FRAMEWORK)
+    connection->addQueueClient(&SecItemShim::shared());
+#endif
 
     m_webConnection = WebConnectionToUIProcess::create(this);
 }

@@ -28,7 +28,6 @@
 
 #import "CustomProtocolManager.h"
 #import "SandboxExtension.h"
-#import "SecItemShimMethods.h"
 #import "WKFullKeyboardAccessWatcher.h"
 #import "WebInspector.h"
 #import "WebPage.h"
@@ -47,6 +46,10 @@
 #import <mach/mach_error.h>
 #import <objc/runtime.h>
 #import <stdio.h>
+
+#if USE(SECURITY_FRAMEWORK)
+#import "SecItemShim.h"
+#endif
 
 #if ENABLE(WEB_PROCESS_SANDBOX)
 #import <pwd.h>
@@ -308,7 +311,10 @@ void WebProcess::initializeProcessName(const ChildProcessInitializationParameter
 void WebProcess::platformInitializeProcess(const ChildProcessInitializationParameters&)
 {
     WKAXRegisterRemoteApp();
-    initializeSecItemShim();
+
+#if USE(SECURITY_FRAMEWORK)
+    SecItemShim::shared().install();
+#endif
 }
 
 void WebProcess::platformTerminate()
@@ -318,11 +324,6 @@ void WebProcess::platformTerminate()
         dispatch_release(m_clearResourceCachesDispatchGroup);
         m_clearResourceCachesDispatchGroup = 0;
     }
-}
-
-void WebProcess::secItemResponse(CoreIPC::Connection*, uint64_t requestID, const SecItemResponseData& response)
-{
-    didReceiveSecItemResponse(requestID, response);
 }
 
 } // namespace WebKit

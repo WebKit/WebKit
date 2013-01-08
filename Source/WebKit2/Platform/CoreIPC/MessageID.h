@@ -136,6 +136,14 @@ enum MessageClass {
     // Messages sent by a web process (soon the network process) to the UI process.
     MessageClassCustomProtocolManagerProxy,
 #endif
+
+#if USE(SECURITY_FRAMEWORK)
+    // Messages sent by a web process or a network process to the UI process.
+    MessageClassSecItemShimProxy,
+
+    // Responses to SecItemShimProxy that are sent back.
+    MessageClassSecItemShim,
+#endif
 };
 
 template<typename> struct MessageKindTraits { };

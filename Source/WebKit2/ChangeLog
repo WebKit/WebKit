@@ -1,3 +1,48 @@
+2013-01-07  Alexey Proskuryakov  <ap@apple.com>
+
+        [WK2] Make SecItemShim messages work with any process
+        https://bugs.webkit.org/show_bug.cgi?id=106269
+
+        Reviewed by Sam Weinig.
+
+        Add SecItemShim and SecItemShimProxy classes to manage message sending, and moved
+        relevant code from WebProcess(Proxy).
+
+        * DerivedSources.make:
+        * Platform/CoreIPC/MessageID.h:
+        * UIProcess/WebProcessProxy.cpp:
+        (WebKit::WebProcessProxy::didFinishLaunching):
+        * UIProcess/WebProcessProxy.h:
+        (WebProcessProxy):
+        * UIProcess/WebProcessProxy.messages.in:
+        * Shared/mac/SecItemShim.cpp: Added.
+        (WebKit::SecItemShim::shared):
+        (WebKit::SecItemShim::SecItemShim):
+        (WebKit::SecItemShim::secItemResponse):
+        (WebKit::SecItemShim::install):
+        (WebKit::SecItemShim::didReceiveMessageOnConnectionWorkQueue):
+        * Shared/mac/SecItemShim.h: Added.
+        * Shared/mac/SecItemShim.messages.in: Added.
+        * UIProcess/mac/SecItemShimProxy.cpp: Added.
+        (WebKit::SecItemShimProxy::shared):
+        (WebKit::SecItemShimProxy::SecItemShimProxy):
+        (WebKit::handleSecItemRequest):
+        (WebKit::dispatchFunctionOnQueue):
+        (WebKit::SecItemShimProxy::secItemRequest):
+        (WebKit::SecItemShimProxy::didReceiveMessageOnConnectionWorkQueue):
+        * UIProcess/mac/SecItemShimProxy.h: Added.
+        * UIProcess/mac/SecItemShimProxy.messages.in: Added.
+        * UIProcess/mac/WebProcessProxyMac.mm:
+        * WebKit2.xcodeproj/project.pbxproj:
+        * WebProcess/WebProcess.cpp:
+        (WebKit::WebProcess::initializeConnection):
+        * WebProcess/WebProcess.h:
+        * WebProcess/WebProcess.messages.in:
+        * WebProcess/mac/SecItemShimMethods.mm:
+        (WebKit::sendSeqItemRequest):
+        * WebProcess/mac/WebProcessMac.mm:
+        (WebKit::WebProcess::platformInitializeProcess):
+
 2013-01-07  Anders Carlsson  <andersca@apple.com>
 
         Remove Windows files from WebKit2

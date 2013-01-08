@@ -52,8 +52,4 @@ messages -> WebProcessProxy {
     GetSharedWorkerProcessConnection(WTF::String url, WTF::String name) -> (CoreIPC::Attachment connectionHandle) Delayed
 #endif
 
-#if USE(SECURITY_FRAMEWORK)
-    SecItemRequest(uint64_t requestID, WebKit::SecItemRequestData request) DispatchOnConnectionQueue
-#endif
-
 }

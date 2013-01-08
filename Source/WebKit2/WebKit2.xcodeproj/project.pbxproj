@@ -1035,6 +1035,14 @@
 		E17BF99614D0A73E00A5A069 /* NetscapeSandboxFunctions.h in Headers */ = {isa = PBXBuildFile; fileRef = E17BF99514D0A73E00A5A069 /* NetscapeSandboxFunctions.h */; };
 		E17BF99814D0AA8300A5A069 /* NetscapeSandboxFunctions.mm in Sources */ = {isa = PBXBuildFile; fileRef = E17BF99714D0AA8300A5A069 /* NetscapeSandboxFunctions.mm */; };
 		E18C92F412DB9E7100CF2AEB /* PrintInfo.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E18C92F312DB9E7100CF2AEB /* PrintInfo.cpp */; };
+		E18E690B169B563F009B6670 /* SecItemShimProxy.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E18E6909169B563F009B6670 /* SecItemShimProxy.cpp */; };
+		E18E690C169B563F009B6670 /* SecItemShimProxy.h in Headers */ = {isa = PBXBuildFile; fileRef = E18E690A169B563F009B6670 /* SecItemShimProxy.h */; };
+		E18E6915169B667B009B6670 /* SecItemShimMessageReceiver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E18E6911169B667B009B6670 /* SecItemShimMessageReceiver.cpp */; };
+		E18E6916169B667B009B6670 /* SecItemShimMessages.h in Headers */ = {isa = PBXBuildFile; fileRef = E18E6912169B667B009B6670 /* SecItemShimMessages.h */; };
+		E18E6917169B667B009B6670 /* SecItemShimProxyMessageReceiver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E18E6913169B667B009B6670 /* SecItemShimProxyMessageReceiver.cpp */; };
+		E18E6918169B667B009B6670 /* SecItemShimProxyMessages.h in Headers */ = {isa = PBXBuildFile; fileRef = E18E6914169B667B009B6670 /* SecItemShimProxyMessages.h */; };
+		E18E6949169B77C8009B6670 /* SecItemShim.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E18E6947169B77C8009B6670 /* SecItemShim.cpp */; };
+		E18E694A169B77C8009B6670 /* SecItemShim.h in Headers */ = {isa = PBXBuildFile; fileRef = E18E6948169B77C8009B6670 /* SecItemShim.h */; };
 		E19582D3153CBFD700B60875 /* PDFKitImports.h in Headers */ = {isa = PBXBuildFile; fileRef = E19582D2153CBFD700B60875 /* PDFKitImports.h */; };
 		E19582D6153CC05400B60875 /* PDFKitImports.mm in Sources */ = {isa = PBXBuildFile; fileRef = E19582D4153CC05300B60875 /* PDFKitImports.mm */; };
 		E1967E36150AB5D500C73169 /* com.apple.WebKit.PluginProcess.sb in Resources */ = {isa = PBXBuildFile; fileRef = E1967E35150AB5D500C73169 /* com.apple.WebKit.PluginProcess.sb */; };
@@ -2339,6 +2347,16 @@
 		E17BF99714D0AA8300A5A069 /* NetscapeSandboxFunctions.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = NetscapeSandboxFunctions.mm; sourceTree = "<group>"; };
 		E17BF99914D0CBF100A5A069 /* com.apple.WebKit.PluginProcess.sb.in */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = com.apple.WebKit.PluginProcess.sb.in; sourceTree = "<group>"; };
 		E18C92F312DB9E7100CF2AEB /* PrintInfo.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PrintInfo.cpp; sourceTree = "<group>"; };
+		E18E6909169B563F009B6670 /* SecItemShimProxy.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SecItemShimProxy.cpp; sourceTree = "<group>"; };
+		E18E690A169B563F009B6670 /* SecItemShimProxy.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SecItemShimProxy.h; sourceTree = "<group>"; };
+		E18E690D169B57DF009B6670 /* SecItemShimProxy.messages.in */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = SecItemShimProxy.messages.in; sourceTree = "<group>"; };
+		E18E690F169B5928009B6670 /* SecItemShim.messages.in */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = SecItemShim.messages.in; sourceTree = "<group>"; };
+		E18E6911169B667B009B6670 /* SecItemShimMessageReceiver.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SecItemShimMessageReceiver.cpp; sourceTree = "<group>"; };
+		E18E6912169B667B009B6670 /* SecItemShimMessages.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SecItemShimMessages.h; sourceTree = "<group>"; };
+		E18E6913169B667B009B6670 /* SecItemShimProxyMessageReceiver.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SecItemShimProxyMessageReceiver.cpp; sourceTree = "<group>"; };
+		E18E6914169B667B009B6670 /* SecItemShimProxyMessages.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SecItemShimProxyMessages.h; sourceTree = "<group>"; };
+		E18E6947169B77C8009B6670 /* SecItemShim.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SecItemShim.cpp; sourceTree = "<group>"; };
+		E18E6948169B77C8009B6670 /* SecItemShim.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SecItemShim.h; sourceTree = "<group>"; };
 		E19582D2153CBFD700B60875 /* PDFKitImports.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PDFKitImports.h; sourceTree = "<group>"; };
 		E19582D4153CC05300B60875 /* PDFKitImports.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = PDFKitImports.mm; sourceTree = "<group>"; };
 		E1967E35150AB5D500C73169 /* com.apple.WebKit.PluginProcess.sb */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = com.apple.WebKit.PluginProcess.sb; sourceTree = "<group>"; };
@@ -3835,6 +3853,9 @@
 				51D130501382EAC000351EDD /* SecItemRequestData.h */,
 				51D130511382EAC000351EDD /* SecItemResponseData.cpp */,
 				51D130521382EAC000351EDD /* SecItemResponseData.h */,
+				E18E690F169B5928009B6670 /* SecItemShim.messages.in */,
+				E18E6947169B77C8009B6670 /* SecItemShim.cpp */,
+				E18E6948169B77C8009B6670 /* SecItemShim.h */,
 				BCE23262122C6CF300D5C35A /* WebCoreArgumentCodersMac.mm */,
 				BC111B5B112F629800337BAB /* WebEventFactory.h */,
 				BC111B5C112F629800337BAB /* WebEventFactory.mm */,
@@ -4139,6 +4160,9 @@
 				1AA3D75A1651B44F008713D0 /* RemoteLayerTreeHost.h */,
 				1AA3D75D1651B5C5008713D0 /* RemoteLayerTreeHost.messages.in */,
 				1AA3D7591651B44F008713D0 /* RemoteLayerTreeHost.mm */,
+				E18E690D169B57DF009B6670 /* SecItemShimProxy.messages.in */,
+				E18E6909169B563F009B6670 /* SecItemShimProxy.cpp */,
+				E18E690A169B563F009B6670 /* SecItemShimProxy.h */,
 				1AA417ED12C00D87002BE67B /* TextCheckerMac.mm */,
 				1AF05D8514688348008B1E81 /* TiledCoreAnimationDrawingAreaProxy.h */,
 				1AF05D8414688348008B1E81 /* TiledCoreAnimationDrawingAreaProxy.mm */,
@@ -4315,6 +4339,10 @@
 				1A8EFA6F1252B84100F7067F /* PluginProxyMessages.h */,
 				1AA3D75F1651B7D3008713D0 /* RemoteLayerTreeHostMessageReceiver.cpp */,
 				1AA3D7601651B7D3008713D0 /* RemoteLayerTreeHostMessages.h */,
+				E18E6911169B667B009B6670 /* SecItemShimMessageReceiver.cpp */,
+				E18E6912169B667B009B6670 /* SecItemShimMessages.h */,
+				E18E6913169B667B009B6670 /* SecItemShimProxyMessageReceiver.cpp */,
+				E18E6914169B667B009B6670 /* SecItemShimProxyMessages.h */,
 				E1EDFDB11628AD730039ECDA /* SharedWorkerProcessMessageReceiver.cpp */,
 				E1EDFDB21628AD730039ECDA /* SharedWorkerProcessMessages.h */,
 				E1EDFDB31628AD730039ECDA /* SharedWorkerProcessProxyMessageReceiver.cpp */,
@@ -5038,7 +5066,11 @@
 				BCF4DE23168E4BD500C94AFC /* NetworkProcessSupplement.h in Headers */,
 				BCF4DE25168FA44800C94AFC /* WebContextSupplement.h in Headers */,
 				BC9BA5051697C45300E44616 /* WebKit2Initialize.h in Headers */,
+				E18E690C169B563F009B6670 /* SecItemShimProxy.h in Headers */,
+				E18E6916169B667B009B6670 /* SecItemShimMessages.h in Headers */,
+				E18E6918169B667B009B6670 /* SecItemShimProxyMessages.h in Headers */,
 				BC9BA50916991C3C00E44616 /* ChildProcessMain.h in Headers */,
+				E18E694A169B77C8009B6670 /* SecItemShim.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -6013,7 +6045,11 @@
 				2989A411167D1834004F96D2 /* CustomProtocolManagerMac.mm in Sources */,
 				31A505F91680025500A930EB /* WebContextClient.cpp in Sources */,
 				BC9BA5041697C45300E44616 /* WebKit2Initialize.cpp in Sources */,
+				E18E690B169B563F009B6670 /* SecItemShimProxy.cpp in Sources */,
+				E18E6915169B667B009B6670 /* SecItemShimMessageReceiver.cpp in Sources */,
+				E18E6917169B667B009B6670 /* SecItemShimProxyMessageReceiver.cpp in Sources */,
 				BC9BA50816991C3C00E44616 /* ChildProcessMain.mm in Sources */,
+				E18E6949169B77C8009B6670 /* SecItemShim.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

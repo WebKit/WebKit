@@ -98,10 +98,6 @@ messages -> WebProcess {
 
     PostInjectedBundleMessage(CoreIPC::DataReference messageData);
 
-#if USE(SECURITY_FRAMEWORK)
-    SecItemResponse(uint64_t requestID, WebKit::SecItemResponseData response) DispatchOnConnectionQueue
-#endif
-
 #if PLATFORM(MAC)
     SetApplicationIsOccluded(bool flag);
 #endif

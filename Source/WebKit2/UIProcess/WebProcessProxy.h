@@ -51,11 +51,6 @@ namespace WebCore {
 
 namespace WebKit {
 
-#if USE(SECURITY_FRAMEWORK)
-class SecItemRequestData;
-class SecItemResponseData;
-#endif
-
 class DownloadProxyMap;
 class WebBackForwardListItem;
 class WebContext;
@@ -151,10 +146,6 @@ private:
 #endif
 #if ENABLE(SHARED_WORKER_PROCESS)
     void getSharedWorkerProcessConnection(const String& url, const String& name, PassRefPtr<Messages::WebProcessProxy::GetSharedWorkerProcessConnection::DelayedReply>);
-#endif
-
-#if USE(SECURITY_FRAMEWORK)
-    void secItemRequest(CoreIPC::Connection*, uint64_t requestID, const SecItemRequestData&);
 #endif
 
     // CoreIPC::Connection::Client
