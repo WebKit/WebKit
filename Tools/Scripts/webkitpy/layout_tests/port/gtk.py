@@ -48,10 +48,6 @@ class GtkPort(Port, PulseAudioSanitizer):
         return XvfbDriver
 
     def default_timeout_ms(self):
-        # For now, use the base Port's default timeout value in case of WebKitTestRunner.
-        if self.get_option('webkit_test_runner'):
-            return super(GtkPort, self).default_timeout_ms()
-
         if self.get_option('configuration') == 'Debug':
             return 12 * 1000
         return 6 * 1000

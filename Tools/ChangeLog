@@ -1,5 +1,24 @@
 2013-01-08  Zan Dobersek  <zandobersek@gmail.com>
 
+        [GTK] Lower the default timeout value for WebKitTestRunner
+        https://bugs.webkit.org/show_bug.cgi?id=106353
+
+        Reviewed by Dirk Pranke.
+
+        The default timeout value for WebKitTestRunner should be lowered.
+        The current value (80 seconds) is irrational and just leads to producing
+        text failures for layout tests that genuinely time out. This just leads
+        to more deviation from the GTK WK1 port in terms of test expectations.
+
+        The value used is the same as when running the DumpRenderTree, that's
+        6 seconds in release builds and 12 seconds in debug builds.
+
+        * Scripts/webkitpy/layout_tests/port/gtk.py:
+        * Scripts/webkitpy/layout_tests/port/gtk_unittest.py:
+        (GtkPortTest.test_default_timeout_ms):
+
+2013-01-08  Zan Dobersek  <zandobersek@gmail.com>
+
         test-webkitpy shows failure output on my linux box
         https://bugs.webkit.org/show_bug.cgi?id=101261
 

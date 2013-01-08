@@ -66,8 +66,6 @@ class GtkPortTest(port_testcase.PortTestCase):
     def test_default_timeout_ms(self):
         self.assertEqual(self.make_port(options=MockOptions(configuration='Release')).default_timeout_ms(), 6000)
         self.assertEqual(self.make_port(options=MockOptions(configuration='Debug')).default_timeout_ms(), 12000)
-        self.assertEqual(self.make_port(options=MockOptions(webkit_test_runner=True, configuration='Debug')).default_timeout_ms(), 80000)
-        self.assertEqual(self.make_port(options=MockOptions(webkit_test_runner=True, configuration='Release')).default_timeout_ms(), 80000)
 
     def assertLinesEqual(self, a, b):
         if hasattr(self, 'assertMultiLineEqual'):
