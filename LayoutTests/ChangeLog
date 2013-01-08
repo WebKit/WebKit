@@ -1,3 +1,16 @@
+2013-01-08  Yuki Sekiguchi  <yuki.sekiguchi@access-company.com>
+
+        Float block's logical top margin is illegal in vertical writing mode.
+        https://bugs.webkit.org/show_bug.cgi?id=96597
+
+        Reviewed by Hajime Morita.
+
+        Specify margin to float block in vertical writing mode.
+
+        * fast/writing-mode/vertical-float-margin-expected.html: Added.
+        * fast/writing-mode/vertical-float-margin.html: Added.
+        * platform/chromium/TestExpectations: Add need rebaseline.
+
 2013-01-07  Kent Tamura  <tkent@chromium.org>
 
         REGRESSION(r137406): Text inside an empty optgroup prevents subsequent options from appearing

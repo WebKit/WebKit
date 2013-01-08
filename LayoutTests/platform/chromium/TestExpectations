@@ -4302,3 +4302,7 @@ webkit.org/b/106238 [ Win ] svg/dynamic-updates/SVGUseElement-dom-href1-attr.htm
 webkit.org/b/106238 [ Win ] svg/dynamic-updates/SVGUseElement-svgdom-href1-prop.html [ ImageOnlyFailure Pass ]
 webkit.org/b/106249 [ Win ] fast/speech/scripted/navigate-away.html [ Failure Pass ]
 
+# Needs rebaseline. Reducing yellow box top margin is intentional. Looks good on Chromium Linux.
+webkit.org/b/96597 fast/multicol/vertical-rl/float-multicol.html [ Failure ImageOnlyFailure ]
+# Needs rebaseline. Current expectation is wrong because margin of body don't collapse with margin of 1st child.
+webkit.org/b/96597 fast/text/emphasis-vertical.html [ ImageOnlyFailure ]
