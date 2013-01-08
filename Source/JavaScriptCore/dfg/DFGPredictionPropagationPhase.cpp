@@ -800,11 +800,11 @@ private:
         case GlobalVarWatchpoint:
         case GarbageValue:
         case InheritorIDWatchpoint:
+        case Phantom:
             changed |= mergeDefaultFlags(node);
             break;
             
         // These gets ignored because it doesn't do anything.
-        case Phantom:
         case InlineStart:
         case Nop:
         case CountExecution:

@@ -1,5 +1,20 @@
 2013-01-07  Filip Pizlo  <fpizlo@apple.com>
 
+        DFG should backwards-propagate NodeUsedAsValue for Phantom
+        https://bugs.webkit.org/show_bug.cgi?id=106299
+
+        Reviewed by Mark Hahnenberg.
+        
+        This is currently benign because Phantom is only inserted by the bytecode parser for
+        things that already happen to be used in contexts that backwards propagate
+        NodeUsedAsValue. But that doesn't change the fact that the semantics of Phantom are
+        that the value can be arbitrarily used by the baseline JIT.
+
+        * dfg/DFGPredictionPropagationPhase.cpp:
+        (JSC::DFG::PredictionPropagationPhase::propagate):
+
+2013-01-07  Filip Pizlo  <fpizlo@apple.com>
+
         Rationalize closure call heuristics and profiling
         https://bugs.webkit.org/show_bug.cgi?id=106270
 
