@@ -1,3 +1,10 @@
+2013-01-08  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Skip the test added by r139062 on WebKit2 bots since it uses a testRunner method
+        that hasn't been implemented yet.
+
+        * platform/wk2/TestExpectations:
+
 2013-01-08  Dimitri Glazkov  <dglazkov@chromium.org>
 
         [Chromium] Tighten up some test expectations.
