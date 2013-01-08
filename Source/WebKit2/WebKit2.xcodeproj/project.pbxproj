@@ -397,8 +397,6 @@
 		511B24AA132E097200065A0C /* WebIconDatabase.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 511B24A8132E097200065A0C /* WebIconDatabase.cpp */; };
 		511B24AB132E097200065A0C /* WebIconDatabase.h in Headers */ = {isa = PBXBuildFile; fileRef = 511B24A9132E097200065A0C /* WebIconDatabase.h */; };
 		511F8A7B138B460900A95F44 /* WebProcessShim.h in Headers */ = {isa = PBXBuildFile; fileRef = 511F8A77138B460900A95F44 /* WebProcessShim.h */; };
-		511F8A7F138B46FE00A95F44 /* SecItemShimMethods.h in Headers */ = {isa = PBXBuildFile; fileRef = 511F8A7D138B46FE00A95F44 /* SecItemShimMethods.h */; };
-		511F8A80138B46FE00A95F44 /* SecItemShimMethods.mm in Sources */ = {isa = PBXBuildFile; fileRef = 511F8A7E138B46FE00A95F44 /* SecItemShimMethods.mm */; };
 		511F8A81138B485D00A95F44 /* WebProcessShim.mm in Sources */ = {isa = PBXBuildFile; fileRef = 511F8A78138B460900A95F44 /* WebProcessShim.mm */; };
 		51217460164C20E30037A5C1 /* ShareableResource.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5121745E164C20E30037A5C1 /* ShareableResource.cpp */; };
 		51217461164C20E30037A5C1 /* ShareableResource.h in Headers */ = {isa = PBXBuildFile; fileRef = 5121745F164C20E30037A5C1 /* ShareableResource.h */; };
@@ -1030,6 +1028,10 @@
 		E13A8A30162879AC00392929 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E13A8A2F162879AC00392929 /* Cocoa.framework */; };
 		E1513C66166EABB200149FCB /* ChildProcessProxy.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E1513C64166EABB200149FCB /* ChildProcessProxy.cpp */; };
 		E1513C67166EABB200149FCB /* ChildProcessProxy.h in Headers */ = {isa = PBXBuildFile; fileRef = E1513C65166EABB200149FCB /* ChildProcessProxy.h */; };
+		E179088D169BAA62006904C7 /* SecItemShim.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E18E6947169B77C8009B6670 /* SecItemShim.cpp */; };
+		E179088F169BAA6A006904C7 /* SecItemShim.h in Headers */ = {isa = PBXBuildFile; fileRef = E18E6948169B77C8009B6670 /* SecItemShim.h */; };
+		E1790890169BAA7F006904C7 /* SecItemShimMessageReceiver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E18E6911169B667B009B6670 /* SecItemShimMessageReceiver.cpp */; };
+		E1790891169BAA82006904C7 /* SecItemShimMessages.h in Headers */ = {isa = PBXBuildFile; fileRef = E18E6912169B667B009B6670 /* SecItemShimMessages.h */; };
 		E179FD9C134D38060015B883 /* ArgumentCodersMac.h in Headers */ = {isa = PBXBuildFile; fileRef = E179FD9B134D38060015B883 /* ArgumentCodersMac.h */; };
 		E179FD9F134D38250015B883 /* ArgumentCodersMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = E179FD9E134D38250015B883 /* ArgumentCodersMac.mm */; };
 		E17BF99614D0A73E00A5A069 /* NetscapeSandboxFunctions.h in Headers */ = {isa = PBXBuildFile; fileRef = E17BF99514D0A73E00A5A069 /* NetscapeSandboxFunctions.h */; };
@@ -1037,12 +1039,8 @@
 		E18C92F412DB9E7100CF2AEB /* PrintInfo.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E18C92F312DB9E7100CF2AEB /* PrintInfo.cpp */; };
 		E18E690B169B563F009B6670 /* SecItemShimProxy.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E18E6909169B563F009B6670 /* SecItemShimProxy.cpp */; };
 		E18E690C169B563F009B6670 /* SecItemShimProxy.h in Headers */ = {isa = PBXBuildFile; fileRef = E18E690A169B563F009B6670 /* SecItemShimProxy.h */; };
-		E18E6915169B667B009B6670 /* SecItemShimMessageReceiver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E18E6911169B667B009B6670 /* SecItemShimMessageReceiver.cpp */; };
-		E18E6916169B667B009B6670 /* SecItemShimMessages.h in Headers */ = {isa = PBXBuildFile; fileRef = E18E6912169B667B009B6670 /* SecItemShimMessages.h */; };
 		E18E6917169B667B009B6670 /* SecItemShimProxyMessageReceiver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E18E6913169B667B009B6670 /* SecItemShimProxyMessageReceiver.cpp */; };
 		E18E6918169B667B009B6670 /* SecItemShimProxyMessages.h in Headers */ = {isa = PBXBuildFile; fileRef = E18E6914169B667B009B6670 /* SecItemShimProxyMessages.h */; };
-		E18E6949169B77C8009B6670 /* SecItemShim.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E18E6947169B77C8009B6670 /* SecItemShim.cpp */; };
-		E18E694A169B77C8009B6670 /* SecItemShim.h in Headers */ = {isa = PBXBuildFile; fileRef = E18E6948169B77C8009B6670 /* SecItemShim.h */; };
 		E19582D3153CBFD700B60875 /* PDFKitImports.h in Headers */ = {isa = PBXBuildFile; fileRef = E19582D2153CBFD700B60875 /* PDFKitImports.h */; };
 		E19582D6153CC05400B60875 /* PDFKitImports.mm in Sources */ = {isa = PBXBuildFile; fileRef = E19582D4153CC05300B60875 /* PDFKitImports.mm */; };
 		E1967E36150AB5D500C73169 /* com.apple.WebKit.PluginProcess.sb in Resources */ = {isa = PBXBuildFile; fileRef = E1967E35150AB5D500C73169 /* com.apple.WebKit.PluginProcess.sb */; };
@@ -1661,8 +1659,6 @@
 		511B24A9132E097200065A0C /* WebIconDatabase.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebIconDatabase.h; sourceTree = "<group>"; };
 		511F8A77138B460900A95F44 /* WebProcessShim.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebProcessShim.h; sourceTree = "<group>"; };
 		511F8A78138B460900A95F44 /* WebProcessShim.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebProcessShim.mm; sourceTree = "<group>"; };
-		511F8A7D138B46FE00A95F44 /* SecItemShimMethods.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SecItemShimMethods.h; sourceTree = "<group>"; };
-		511F8A7E138B46FE00A95F44 /* SecItemShimMethods.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = SecItemShimMethods.mm; sourceTree = "<group>"; };
 		5121745E164C20E30037A5C1 /* ShareableResource.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ShareableResource.cpp; sourceTree = "<group>"; };
 		5121745F164C20E30037A5C1 /* ShareableResource.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ShareableResource.h; sourceTree = "<group>"; };
 		51217462164C21370037A5C1 /* WebResourceBuffer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebResourceBuffer.cpp; sourceTree = "<group>"; };
@@ -2674,8 +2670,6 @@
 		1A6FA01C11E1526300DB1371 /* mac */ = {
 			isa = PBXGroup;
 			children = (
-				511F8A7D138B46FE00A95F44 /* SecItemShimMethods.h */,
-				511F8A7E138B46FE00A95F44 /* SecItemShimMethods.mm */,
 				BC3065C312592F8900E71278 /* WebProcessMac.mm */,
 				1A6FA01D11E1526300DB1371 /* WebProcessMainMac.mm */,
 				BCDC308A15FD6CD1006B6695 /* WebProcessServiceEntryPoints.h */,
@@ -4746,9 +4740,6 @@
 				1AAB4A8D1296F0A20023952F /* SandboxExtension.h in Headers */,
 				51D130541382EAC000351EDD /* SecItemRequestData.h in Headers */,
 				51D130561382EAC000351EDD /* SecItemResponseData.h in Headers */,
-				E18E694A169B77C8009B6670 /* SecItemShim.h in Headers */,
-				E18E6916169B667B009B6670 /* SecItemShimMessages.h in Headers */,
-				511F8A7F138B46FE00A95F44 /* SecItemShimMethods.h in Headers */,
 				E18E690C169B563F009B6670 /* SecItemShimProxy.h in Headers */,
 				E18E6918169B667B009B6670 /* SecItemShimProxyMessages.h in Headers */,
 				33152976130D0CB200ED2483 /* SecurityOriginData.h in Headers */,
@@ -5071,6 +5062,8 @@
 				29501724162A4504004A9D71 /* WKWebProcessPlugInBrowserContextControllerPrivate.h in Headers */,
 				BC989D85161A9890000D46D3 /* WKWebProcessPlugInInternal.h in Headers */,
 				BC2E6E8E1141971500A63B1E /* WorkQueue.h in Headers */,
+				E179088F169BAA6A006904C7 /* SecItemShim.h in Headers */,
+				E1790891169BAA82006904C7 /* SecItemShimMessages.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -5735,9 +5728,6 @@
 				1AAB4AAA1296F1540023952F /* SandboxExtensionMac.mm in Sources */,
 				51D130531382EAC000351EDD /* SecItemRequestData.cpp in Sources */,
 				51D130551382EAC000351EDD /* SecItemResponseData.cpp in Sources */,
-				E18E6949169B77C8009B6670 /* SecItemShim.cpp in Sources */,
-				E18E6915169B667B009B6670 /* SecItemShimMessageReceiver.cpp in Sources */,
-				511F8A80138B46FE00A95F44 /* SecItemShimMethods.mm in Sources */,
 				E18E690B169B563F009B6670 /* SecItemShimProxy.cpp in Sources */,
 				E18E6917169B667B009B6670 /* SecItemShimProxyMessageReceiver.cpp in Sources */,
 				33152975130D0CB200ED2483 /* SecurityOriginData.cpp in Sources */,
@@ -6050,6 +6040,8 @@
 				BC8F2F2A16273A2C005FACB5 /* WKWebProcessPlugInBrowserContextController.mm in Sources */,
 				BC2E6E8D1141971500A63B1E /* WorkQueue.cpp in Sources */,
 				BC0092F8115837A300E0AE2A /* WorkQueueMac.cpp in Sources */,
+				E179088D169BAA62006904C7 /* SecItemShim.cpp in Sources */,
+				E1790890169BAA7F006904C7 /* SecItemShimMessageReceiver.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
