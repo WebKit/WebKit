@@ -1,3 +1,16 @@
+2012-12-20  Antonio Gomes  <a1.gomes@sisa.samsung.com>
+
+        Introduce a compositing trigger for scrollable frames
+        https://bugs.webkit.org/show_bug.cgi?id=105573
+
+        Reviewed by James Robinson.
+
+        Set the newly added scrollable-inner-frames bit to compositing-trigger
+        bitset in accordance to the respective setting value.
+
+        * src/ChromeClientImpl.cpp:
+        (WebKit::ChromeClientImpl::allowedCompositingTriggers):
+
 2013-01-08  Steve Block  <steveblock@chromium.org>
 
         Rename 'IntSize toSize(const IntPoint&)' to 'toIntSize'

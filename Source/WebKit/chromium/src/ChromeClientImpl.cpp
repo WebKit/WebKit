@@ -945,6 +945,8 @@ ChromeClient::CompositingTriggerFlags ChromeClientImpl::allowedCompositingTrigge
         flags |= AnimationTrigger;
     if (settings->acceleratedCompositingForCanvasEnabled())
         flags |= CanvasTrigger;
+    if (settings->acceleratedCompositingForScrollableFramesEnabled())
+        flags |= ScrollableInnerFrameTrigger;
 
     return flags;
 }
