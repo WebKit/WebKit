@@ -1,5 +1,49 @@
 2013-01-08  Filip Pizlo  <fpizlo@apple.com>
 
+        DFG initrinsic handling should ensure that we backwards propagate the fact that all operands may escape
+        https://bugs.webkit.org/show_bug.cgi?id=106365
+
+        Reviewed by Mark Hahnenberg.
+        
+        Add tests that cover the possible badness that could occur for all of those
+        intrinsics that don't intrinsically (pun sort of intended) cause escapeage
+        to happen. As in, if we did happen to know for sure that what we want is
+        ArithSqrt, then we would have a guarantee that ArithSqrt does not by itself
+        use its operands in a way that involves NodeUsedAsOther. But when ArithSqrt
+        is inserted because of intrinsic optimization (i.e. something like
+        Math.sqrt(blah)) then the intrinsic machinery needs to indicate that blah
+        could escape in the case that we didn't end up doing ArithSqrt because we
+        exited prior to it and called some other function.
+
+        * fast/js/dfg-abs-backwards-propagation-expected.txt: Added.
+        * fast/js/dfg-abs-backwards-propagation.html: Added.
+        * fast/js/dfg-max-backwards-propagation-expected.txt: Added.
+        * fast/js/dfg-max-backwards-propagation.html: Added.
+        * fast/js/dfg-min-backwards-propagation-expected.txt: Added.
+        * fast/js/dfg-min-backwards-propagation.html: Added.
+        * fast/js/dfg-proven-sqrt-backwards-propagation-expected.txt: Added.
+        * fast/js/dfg-proven-sqrt-backwards-propagation.html: Added.
+        * fast/js/dfg-sqrt-backwards-propagation-expected.txt: Added.
+        * fast/js/dfg-sqrt-backwards-propagation.html: Added.
+        * fast/js/jsc-test-list:
+        * fast/js/script-tests/dfg-abs-backwards-propagation.js: Added.
+        (foo):
+        (bar):
+        * fast/js/script-tests/dfg-max-backwards-propagation.js: Added.
+        (foo):
+        (bar):
+        * fast/js/script-tests/dfg-min-backwards-propagation.js: Added.
+        (foo):
+        (bar):
+        * fast/js/script-tests/dfg-proven-sqrt-backwards-propagation.js: Added.
+        (foo):
+        (bar):
+        * fast/js/script-tests/dfg-sqrt-backwards-propagation.js: Added.
+        (foo):
+        (bar):
+
+2013-01-08  Filip Pizlo  <fpizlo@apple.com>
+
         If array allocation profiling causes a new_array to allocate double arrays, then the holes should end up being correctly initialized
         https://bugs.webkit.org/show_bug.cgi?id=106363
 

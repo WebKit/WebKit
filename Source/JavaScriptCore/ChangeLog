@@ -1,5 +1,18 @@
 2013-01-08  Filip Pizlo  <fpizlo@apple.com>
 
+        DFG initrinsic handling should ensure that we backwards propagate the fact that all operands may escape
+        https://bugs.webkit.org/show_bug.cgi?id=106365
+
+        Reviewed by Mark Hahnenberg.
+        
+        Use the fact that Phantom means that things escaped, and just insert Phantoms for all
+        of the operands.
+
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::handleCall):
+
+2013-01-08  Filip Pizlo  <fpizlo@apple.com>
+
         If array allocation profiling causes a new_array to allocate double arrays, then the holes should end up being correctly initialized
         https://bugs.webkit.org/show_bug.cgi?id=106363
 

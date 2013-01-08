@@ -1334,12 +1334,13 @@ void ByteCodeParser::handleCall(Interpreter* interpreter, Instruction* currentIn
         emitFunctionChecks(callLinkStatus, callTarget, registerOffset, kind);
             
         if (handleIntrinsic(usesResult, resultOperand, intrinsic, registerOffset, argumentCountIncludingThis, prediction)) {
-            if (!callLinkStatus.isProved()) {
-                // Need to keep the call target alive for OSR. We could easily optimize this out if we wanted
-                // to, since at this point we know that the call target is a constant. It's just that OSR isn't
-                // smart enough to figure that out, since it doesn't understand CheckFunction.
-                addToGraph(Phantom, callTarget);
-            }
+            // Need to keep all inputs alive for OSR, and need to ensure that we get
+            // backwards propagation of NodeUsedAsValue. Note that inlining doesn't
+            // need to do this because it already Flushes the arguments, which has a
+            // similar effect.
+            addToGraph(Phantom, callTarget);
+            for (int i = 0; i < argumentCountIncludingThis; ++i)
+                addToGraph(Phantom, get(registerOffset + argumentToOperand(i)));
             
             return;
         }

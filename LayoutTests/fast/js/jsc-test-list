@@ -67,6 +67,7 @@ fast/js/debugger
 fast/js/declaration-in-block
 fast/js/delete-getters-setters
 fast/js/delete-then-put
+fast/js/dfg-abs-backwards-propagation
 fast/js/dfg-add-not-number
 fast/js/dfg-arguments-alias-escape
 fast/js/dfg-arguments-alias-one-block-osr-exit
@@ -148,6 +149,8 @@ fast/js/dfg-intrinsic-osr-exit
 fast/js/dfg-intrinsic-side-effect-assignment-osr-exit
 fast/js/dfg-intrinsic-unused-this-method-check
 fast/js/dfg-intrinsic-unused-this
+fast/js/dfg-max-backwards-propagation
+fast/js/dfg-min-backwards-propagation
 fast/js/dfg-min-max
 fast/js/dfg-multi-basic-block-structure-clobber
 fast/js/dfg-multiply
@@ -161,11 +164,13 @@ fast/js/dfg-osr-entry-hoisted-clobbered-structure-check
 fast/js/dfg-other-branch
 fast/js/dfg-poison-fuzz
 fast/js/dfg-proto-access-inline-osr-exit
+fast/js/dfg-proven-sqrt-backwards-propagation
 fast/js/dfg-put-by-id-prototype-check
 fast/js/dfg-put-scoped-var-backward-flow
 fast/js/dfg-putbyval-cfa-clobber
 fast/js/dfg-redundant-load-of-captured-variable-proven-constant
 fast/js/dfg-side-effect-assignment-osr-exit
+fast/js/dfg-sqrt-backwards-propagation
 fast/js/dfg-string-stricteq
 fast/js/dfg-tear-off-arguments-not-activation
 fast/js/dfg-uint16array
