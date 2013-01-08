@@ -395,7 +395,7 @@ void RenderLayer::updateLayerPositions(RenderGeometryMap* geometryMap, UpdateLay
             // as canUseConvertToLayerCoords may be true for an ancestor layer.
             convertToLayerCoords(root(), offsetFromRoot);
         }
-        positionOverflowControls(toSize(roundedIntPoint(offsetFromRoot)));
+        positionOverflowControls(toIntSize(roundedIntPoint(offsetFromRoot)));
     }
 
     updateDescendantDependentFlags();
@@ -790,7 +790,7 @@ void RenderLayer::positionNewlyCreatedOverflowControls()
         geometryMap.pushMappingsToAncestor(parent(), 0);
 
     LayoutPoint offsetFromRoot = LayoutPoint(geometryMap.absolutePoint(FloatPoint()));
-    positionOverflowControls(toSize(roundedIntPoint(offsetFromRoot)));
+    positionOverflowControls(toIntSize(roundedIntPoint(offsetFromRoot)));
 }
 #endif
 
@@ -3114,7 +3114,7 @@ void RenderLayer::paintOverflowControls(GraphicsContext* context, const IntPoint
     // Move the scrollbar widgets if necessary.  We normally move and resize widgets during layout, but sometimes
     // widgets can move without layout occurring (most notably when you scroll a document that
     // contains fixed positioned elements).
-    positionOverflowControls(toSize(adjustedPaintOffset));
+    positionOverflowControls(toIntSize(adjustedPaintOffset));
 
     // Now that we're sure the scrollbars are in the right place, paint them.
     if (m_hBar

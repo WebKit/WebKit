@@ -602,7 +602,7 @@ WebSize WebFrameImpl::minimumScrollOffset() const
     FrameView* view = frameView();
     if (!view)
         return WebSize();
-    return toSize(view->minimumScrollPosition());
+    return toIntSize(view->minimumScrollPosition());
 }
 
 WebSize WebFrameImpl::maximumScrollOffset() const
@@ -610,7 +610,7 @@ WebSize WebFrameImpl::maximumScrollOffset() const
     FrameView* view = frameView();
     if (!view)
         return WebSize();
-    return toSize(view->maximumScrollPosition());
+    return toIntSize(view->maximumScrollPosition());
 }
 
 void WebFrameImpl::setScrollOffset(const WebSize& offset)

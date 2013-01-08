@@ -121,7 +121,7 @@ void NonCompositedContentHost::setViewport(const WebCore::IntSize& viewportSize,
     // In RTL-style pages, the origin of the initial containing block for the
     // root layer may be positive; translate the layer to avoid negative
     // coordinates.
-    m_layerAdjust = -toSize(scrollOrigin);
+    m_layerAdjust = -toIntSize(scrollOrigin);
     if (m_graphicsLayer->transform().m41() != m_layerAdjust.width() || m_graphicsLayer->transform().m42() != m_layerAdjust.height()) {
         WebCore::TransformationMatrix transform = m_graphicsLayer->transform();
         transform.setM41(m_layerAdjust.width());

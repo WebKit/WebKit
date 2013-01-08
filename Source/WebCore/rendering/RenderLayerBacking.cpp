@@ -635,7 +635,7 @@ void RenderLayerBacking::updateGraphicsLayerGeometry()
     }
 
     m_graphicsLayer->setPosition(FloatPoint(relativeCompositingBounds.location() - graphicsLayerParentLocation));
-    m_graphicsLayer->setOffsetFromRenderer(toSize(localCompositingBounds.location()));
+    m_graphicsLayer->setOffsetFromRenderer(toIntSize(localCompositingBounds.location()));
     
     FloatSize oldSize = m_graphicsLayer->size();
     FloatSize newSize = relativeCompositingBounds.size();
@@ -654,7 +654,7 @@ void RenderLayerBacking::updateGraphicsLayerGeometry()
         clippingBox = clipBox(toRenderBox(renderer()));
         clipLayer->setPosition(FloatPoint(clippingBox.location() - localCompositingBounds.location()));
         clipLayer->setSize(clippingBox.size());
-        clipLayer->setOffsetFromRenderer(toSize(clippingBox.location()));
+        clipLayer->setOffsetFromRenderer(toIntSize(clippingBox.location()));
     }
     
     if (m_maskLayer) {
@@ -709,7 +709,7 @@ void RenderLayerBacking::updateGraphicsLayerGeometry()
             // If we have a clipping layer (which clips descendants), then the foreground layer is a child of it,
             // so that it gets correctly sorted with children. In that case, position relative to the clipping layer.
             foregroundSize = FloatSize(clippingBox.size());
-            foregroundOffset = toSize(clippingBox.location());
+            foregroundOffset = toIntSize(clippingBox.location());
         }
 
         m_foregroundLayer->setPosition(foregroundPosition);
@@ -743,7 +743,7 @@ void RenderLayerBacking::updateGraphicsLayerGeometry()
         m_scrollingContentsLayer->setPosition(FloatPoint(-scrollOffset.width(), -scrollOffset.height()));
 
         IntSize oldScrollingLayerOffset = m_scrollingLayer->offsetFromRenderer();
-        m_scrollingLayer->setOffsetFromRenderer(-toSize(paddingBox.location()));
+        m_scrollingLayer->setOffsetFromRenderer(-toIntSize(paddingBox.location()));
 
         bool paddingBoxOffsetChanged = oldScrollingLayerOffset != m_scrollingLayer->offsetFromRenderer();
 
@@ -751,7 +751,7 @@ void RenderLayerBacking::updateGraphicsLayerGeometry()
         if (scrollSize != m_scrollingContentsLayer->size() || paddingBoxOffsetChanged)
             m_scrollingContentsLayer->setNeedsDisplay();
 
-        IntSize scrollingContentsOffset = toSize(paddingBox.location() - scrollOffset);
+        IntSize scrollingContentsOffset = toIntSize(paddingBox.location() - scrollOffset);
         if (scrollingContentsOffset != m_scrollingContentsLayer->offsetFromRenderer() || scrollSize != m_scrollingContentsLayer->size())
             compositor()->scrollingLayerDidChange(m_owningLayer);
 
