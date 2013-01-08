@@ -1,3 +1,16 @@
+2013-01-08  Lucas Forschler  <lforschler@apple.com>
+
+        Merge r122305
+
+    2012-07-11  Csaba Osztrogonác  <ossy@webkit.org>
+
+            gc() doesn't exist in svg/animations/dynamic-modify-attributename-crash2.svg
+            https://bugs.webkit.org/show_bug.cgi?id=90945
+
+            Reviewed by Abhishek Arya.
+
+            * svg/animations/dynamic-modify-attributename-crash2.svg: Include fast/js/resources/js-test-pre.js to have gc().
+
 2012-12-12  Lucas Forschler  <lforschler@apple.com>
 
         Merge r125813
