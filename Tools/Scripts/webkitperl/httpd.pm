@@ -90,6 +90,14 @@ sub hasHTTPD
     return system(@command) == 0;
 }
 
+sub getApacheVersion
+{
+    my $httpdPath = getHTTPDPath();
+    my $version = `$httpdPath -v`;
+    $version =~ s/.*Server version: Apache\/(\d+\.\d+).*/\1/s;
+    return $version;
+}
+
 sub getDefaultConfigForTestDirectory
 {
     my ($testDirectory) = @_;
@@ -112,10 +120,13 @@ sub getDefaultConfigForTestDirectory
         "-c", "TypesConfig \"$typesConfig\"",
         # Apache wouldn't run CGIs with permissions==700 otherwise
         "-c", "User \"#$<\"",
-        "-c", "LockFile \"$httpdLockFile\"",
         "-c", "PidFile \"$httpdPidFile\"",
         "-c", "ScoreBoardFile \"$httpdScoreBoardFile\"",
     );
+
+    if (getApacheVersion() eq "2.2") {
+        push(@httpdArgs, "-c", "LockFile \"$httpdLockFile\"");
+    }
 
     # FIXME: Enable this on Windows once <rdar://problem/5345985> is fixed
     # The version of Apache we use with Cygwin does not support SSL
@@ -134,6 +145,7 @@ sub getHTTPDConfigPathForTestDirectory
     my $httpdConfig;
     my $httpdPath = getHTTPDPath();
     my $httpdConfDirectory = "$testDirectory/http/conf/";
+    my $apacheVersion = getApacheVersion();
 
     if (isCygwin()) {
         my $libPHP4DllPath = "/usr/lib/apache/libphp4.dll";
@@ -146,7 +158,7 @@ sub getHTTPDConfigPathForTestDirectory
     } elsif (isDebianBased()) {
         $httpdConfig = "apache2-debian-httpd.conf";
     } elsif (isFedoraBased()) {
-        $httpdConfig = "fedora-httpd.conf"; # This is an apache2 config, despite the name.
+        $httpdConfig = "fedora-httpd-$apacheVersion.conf";
     } else {
         # All other ports use apache2, so just use our default apache2 config.
         $httpdConfig = "apache2-httpd.conf";

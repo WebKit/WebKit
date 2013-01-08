@@ -9,7 +9,7 @@
     req = new XMLHttpRequest;
     req.open("GET", "resources/print-headers.cgi", false);
 
-    req.setRequestHeader("CUSTOM_HEADER", "");
+    req.setRequestHeader("CUSTOM-HEADER", "");
     try {
         req.send("");
         if (req.responseText.indexOf("HTTP_CUSTOM_HEADER") >= 0)

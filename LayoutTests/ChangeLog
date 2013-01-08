@@ -1,3 +1,27 @@
+2013-01-08  Dan Winship  <danw@gnome.org>
+
+        Updates for Apache 2.4
+        https://bugs.webkit.org/show_bug.cgi?id=104478
+
+        Reviewed by Martin Robinson.
+
+        Apache 2.4 requires a slightly different config from 2.2, so split
+        fedora-httpd.conf into separate 2.2 and 2.4 versions.
+
+        2.4 is also more picky about passing request headers to CGI
+        scripts, and will ignore headers that aren't valid according to
+        the HTTP grammar, so change underscores to hyphens to fix them.
+
+        * http/conf/fedora-httpd-2.2.conf: Renamed from
+        LayoutTests/http/conf/fedora-httpd.conf.
+        * http/conf/fedora-httpd-2.4.conf: Based on
+        LayoutTests/http/conf/fedora-httpd.conf and updated for 2.4.
+        * http/tests/cookies/resources/cookies-test-pre.js:
+        (setCookies):
+        (clearCookies):
+        * http/tests/navigation/ping-cookie.html:
+        * http/tests/xmlhttprequest/xmlhttprequest-setrequestheader-no-value.html:
+
 2013-01-08  Alexis Menard  <alexis@webkit.org>
 
         transition-delay and transition-duration return incorrect values when querying using the computed style.

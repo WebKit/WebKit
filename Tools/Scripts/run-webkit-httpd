@@ -89,7 +89,7 @@ my @args = (
     "-X",
     # Disable Keep-Alive support. Makes testing in multiple browsers easier (no need to wait
     # for another browser's connection to expire).
-    "-c", "KeepAlive 0"
+    "-c", "KeepAlive off"
 );
 
 my @defaultArgs = getDefaultConfigForTestDirectory($testDirectory);
