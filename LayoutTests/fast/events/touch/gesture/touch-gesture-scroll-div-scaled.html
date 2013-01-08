@@ -1,0 +1,131 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../../../js/resources/js-test-pre.js"></script>
+<script src="resources/gesture-helpers.js"></script>
+<style type="text/css">
+#touchtarget {
+  width: 100px;
+  height: 100px;
+  position: relative;
+  background: white;
+}
+
+::-webkit-scrollbar {
+    width: 0px;
+    height: 0px;
+}
+
+#movingbox {
+  width: 100%;
+  height: 100%;
+  position: absolute;
+  word-wrap: break-word;
+  overflow-y: scroll;
+  overflow-x: scroll;
+  display: block;
+}
+
+#greenbox {
+  width: 100px;
+  height: 100px;
+  background: green;
+  padding: 0px;
+  margin: 0px;
+}
+
+#redbox {
+  width: 100px;
+  height: 100px;
+  background: red;
+  padding: 0px;
+  margin: 0px;
+}
+
+td {
+  padding: 0px;
+}
+</style>
+</head>
+<body style="margin:0" onload="runTest();">
+<div id="touchtarget">
+  <div id="movingbox">
+    <table border="0" cellspacing="0px" id="tablefoo">
+      <tr>
+        <td><div id="redbox"></div></td>
+        <td><div id="greenbox"></div></td>
+      </tr>
+      <tr>
+        <td><div id="greenbox"></div></td>
+        <td><div id="greenbox"></div></td>
+      </tr>
+    </table>
+  </div>
+</div>
+
+<p id="description"></p>
+<div id="console"></div>
+<script type="text/javascript">
+
+var movingdiv;
+var expectedGesturesTotal = 2;
+var gesturesOccurred = 0;
+var scrollAmountX = ['45', '45'];
+var scrollAmountY = ['0', '48'];
+var wheelEventsOccurred = 0;
+var expectedWheelEventsOccurred = ['1', '1'];
+var scrollEventsOccurred = 0;
+var expectedScrollEventsOccurred = '1';
+var scrolledElement = 'movingdiv'
+
+function firstGestureScroll()
+{
+    debug("first gesture");
+    eventSender.gestureScrollBegin(95, 12);
+    eventSender.gestureScrollUpdate(-90, 0);
+    eventSender.gestureScrollEnd(0, 0);
+
+    // Wait for layout.
+    checkScrollOffset();
+}
+
+ function secondGestureScroll()
+ {
+     debug("second gesture");
+     eventSender.gestureScrollBegin(12, 97);
+     eventSender.gestureScrollUpdate(0, -95);
+     eventSender.gestureScrollEnd(0, 0);
+
+     // Wait for layout.
+     checkScrollOffset();
+ }
+
+if (window.testRunner)
+    testRunner.waitUntilDone();
+
+function runTest()
+{
+    var scaleFactor = 2.0;
+    var scaleOffset = 0;
+    if (window.internals) {
+       window.internals.setPageScaleFactor(scaleFactor, scaleOffset, scaleOffset);
+    }
+
+    movingdiv = document.getElementById('movingbox');
+    movingdiv.addEventListener("scroll", recordScroll);
+    window.addEventListener("mousewheel", recordWheel);
+
+    if (window.eventSender) {
+        description('This tests gesture event scrolling of an overflow div with page scale.');
+
+        if (checkTestDependencies())
+            firstGestureScroll();
+        else
+            exitIfNecessary();
+    } else {
+        debug("This test requires DumpRenderTree.  Touch scroll the red rect to log.");
+    }
+}
+</script>
+</body>
+</html>

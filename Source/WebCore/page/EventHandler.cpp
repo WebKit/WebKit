@@ -2599,10 +2599,13 @@ bool EventHandler::isScrollbarHandlingGestures() const
 bool EventHandler::handleGestureScrollCore(const PlatformGestureEvent& gestureEvent, PlatformWheelEventGranularity granularity, bool latchedWheel)
 {
     const float tickDivisor = (float)WheelEvent::tickMultiplier;
+    const float scaleFactor = m_frame->pageZoomFactor() * m_frame->frameScaleFactor();
+    float scaledDeltaX = gestureEvent.deltaX() / scaleFactor;
+    float scaledDeltaY = gestureEvent.deltaY() / scaleFactor;
     IntPoint point(gestureEvent.position().x(), gestureEvent.position().y());
     IntPoint globalPoint(gestureEvent.globalPosition().x(), gestureEvent.globalPosition().y());
     PlatformWheelEvent syntheticWheelEvent(point, globalPoint,
-        gestureEvent.deltaX(), gestureEvent.deltaY(), gestureEvent.deltaX() / tickDivisor, gestureEvent.deltaY() / tickDivisor,
+        scaledDeltaX, scaledDeltaY, scaledDeltaX / tickDivisor, scaledDeltaY / tickDivisor,
         granularity,
         gestureEvent.shiftKey(), gestureEvent.ctrlKey(), gestureEvent.altKey(), gestureEvent.metaKey());
     syntheticWheelEvent.setUseLatchedEventNode(latchedWheel);
