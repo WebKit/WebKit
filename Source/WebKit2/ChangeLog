@@ -1,5 +1,18 @@
 2013-01-07  Alexey Proskuryakov  <ap@apple.com>
 
+        [WK2] Delete more obsolete Keychain code
+        https://bugs.webkit.org/show_bug.cgi?id=106276
+
+        Reviewed by Sam Weinig.
+
+        Deleting dead code.
+
+        * Shared/mac/KeychainAttribute.cpp: Removed.
+        * Shared/mac/KeychainAttribute.h: Removed.
+        * WebKit2.xcodeproj/project.pbxproj:
+
+2013-01-07  Alexey Proskuryakov  <ap@apple.com>
+
         [WK2] Merge SecItemShimMethods files into SecItemShim
         https://bugs.webkit.org/show_bug.cgi?id=106278
 

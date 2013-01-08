@@ -411,8 +411,6 @@
 		512C06881638F67E00ABB911 /* HostRecord.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 512C06861638F67E00ABB911 /* HostRecord.cpp */; };
 		512C06891638F67E00ABB911 /* HostRecord.h in Headers */ = {isa = PBXBuildFile; fileRef = 512C06871638F67E00ABB911 /* HostRecord.h */; };
 		512C069016390E6900ABB911 /* NetworkResourceLoadSchedulerMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = 512C068F16390E6900ABB911 /* NetworkResourceLoadSchedulerMac.mm */; };
-		512DF70A138C26C700A22FC6 /* KeychainAttribute.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5112CB071385B97B0030867D /* KeychainAttribute.cpp */; };
-		512DF70B138C26C700A22FC6 /* KeychainAttribute.h in Headers */ = {isa = PBXBuildFile; fileRef = 5112CB051385B8D90030867D /* KeychainAttribute.h */; };
 		512E34E4130B4D0500ABD19A /* WKApplicationCacheManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 517A33B3130B308C00F80CB5 /* WKApplicationCacheManager.cpp */; };
 		512E34E5130B4D0500ABD19A /* WKApplicationCacheManager.h in Headers */ = {isa = PBXBuildFile; fileRef = 517A33B4130B308C00F80CB5 /* WKApplicationCacheManager.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		512E3524130B550600ABD19A /* WebApplicationCacheManagerProxy.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 512E3520130B550100ABD19A /* WebApplicationCacheManagerProxy.cpp */; };
@@ -1651,8 +1649,6 @@
 		510FBB991288C95E00AFFDF4 /* WebContextMenuItemData.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebContextMenuItemData.h; sourceTree = "<group>"; };
 		5110AE0A133C16CB0072717A /* WKIconDatabase.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WKIconDatabase.cpp; sourceTree = "<group>"; };
 		5110AE0B133C16CB0072717A /* WKIconDatabase.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKIconDatabase.h; sourceTree = "<group>"; };
-		5112CB051385B8D90030867D /* KeychainAttribute.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = KeychainAttribute.h; sourceTree = "<group>"; };
-		5112CB071385B97B0030867D /* KeychainAttribute.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = KeychainAttribute.cpp; sourceTree = "<group>"; };
 		511B24A4132E095700065A0C /* WebIconDatabaseProxy.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = WebIconDatabaseProxy.cpp; path = IconDatabase/WebIconDatabaseProxy.cpp; sourceTree = "<group>"; };
 		511B24A5132E095700065A0C /* WebIconDatabaseProxy.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = WebIconDatabaseProxy.h; path = IconDatabase/WebIconDatabaseProxy.h; sourceTree = "<group>"; };
 		511B24A8132E097200065A0C /* WebIconDatabase.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebIconDatabase.cpp; sourceTree = "<group>"; };
@@ -3825,8 +3821,6 @@
 				1A2A4AFE158693920090C9E9 /* ColorSpaceData.h */,
 				1A2A4AFD158693920090C9E9 /* ColorSpaceData.mm */,
 				1A6F9FB611E1408500DB1371 /* CommandLineMac.cpp */,
-				5112CB071385B97B0030867D /* KeychainAttribute.cpp */,
-				5112CB051385B8D90030867D /* KeychainAttribute.h */,
 				1A92DC1212F8BAB90017AF65 /* LayerTreeContextMac.mm */,
 				C02BFF1D1251502E009CCBEA /* NativeWebKeyboardEventMac.mm */,
 				31EA25D0134F78B2005B1452 /* NativeWebMouseEventMac.mm */,
@@ -4640,7 +4634,6 @@
 				BCB0B0DE12305A8C00B1341E /* InjectedBundleUserMessageCoders.h in Headers */,
 				1AE49A4911FFA8CE0048B464 /* JSNPMethod.h in Headers */,
 				1AE4987811FF7FAA0048B464 /* JSNPObject.h in Headers */,
-				512DF70B138C26C700A22FC6 /* KeychainAttribute.h in Headers */,
 				BCE0937814FB128C001138D9 /* LayerHostingContext.h in Headers */,
 				1A92DC1112F8BA460017AF65 /* LayerTreeContext.h in Headers */,
 				1A186EEA12EF7618008E5F37 /* LayerTreeHost.h in Headers */,
@@ -5617,7 +5610,6 @@
 				BC14DF78120B5B7900826C0C /* InjectedBundleScriptWorld.cpp in Sources */,
 				1AE49A4A11FFA8CE0048B464 /* JSNPMethod.cpp in Sources */,
 				1AE4987911FF7FAA0048B464 /* JSNPObject.cpp in Sources */,
-				512DF70A138C26C700A22FC6 /* KeychainAttribute.cpp in Sources */,
 				BCE0937714FB128C001138D9 /* LayerHostingContext.mm in Sources */,
 				1A92DC1312F8BAB90017AF65 /* LayerTreeContextMac.mm in Sources */,
 				1A186EEB12EF7618008E5F37 /* LayerTreeHost.cpp in Sources */,
