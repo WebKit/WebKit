@@ -1,3 +1,14 @@
+2013-01-08  Anders Carlsson  <andersca@apple.com>
+
+        Tweak sandbox profile
+        https://bugs.webkit.org/show_bug.cgi?id=106362
+        <rdar://problem/12884745>
+
+        Reviewed by Sam Weinig.
+
+        * WebProcess/com.apple.WebProcess.sb.in:
+        Allow access to com.apple.CoreServices.launchservicesd.
+
 2013-01-08  Sam Weinig  <sam@webkit.org>
 
         Add OWNERS file.
