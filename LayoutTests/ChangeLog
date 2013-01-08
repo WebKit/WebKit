@@ -1,3 +1,19 @@
+2013-01-07  Kunihiko Sakamoto  <ksakamoto@chromium.org>
+
+        INPUT_MULTIPLE_FIELDS_UI: Step-up/-down of month/day field should respect min/max attributes
+        https://bugs.webkit.org/show_bug.cgi?id=106212
+
+        Reviewed by Kent Tamura.
+
+        * fast/forms/date-multiple-fields/date-multiple-fields-readonly-subfield-expected.txt:
+        * fast/forms/date-multiple-fields/date-multiple-fields-readonly-subfield.html: Add tests for month and day fields.
+        * fast/forms/date-multiple-fields/date-multiple-fields-stepup-stepdown-from-renderer-expected.txt: Added.
+        * fast/forms/date-multiple-fields/date-multiple-fields-stepup-stepdown-from-renderer.html: Added.
+        * fast/forms/month-multiple-fields/month-multiple-fields-readonly-subfield-expected.txt: Added.
+        * fast/forms/month-multiple-fields/month-multiple-fields-readonly-subfield.html: Added.
+        * fast/forms/month-multiple-fields/month-multiple-fields-stepup-stepdown-from-renderer-expected.txt: Added.
+        * fast/forms/month-multiple-fields/month-multiple-fields-stepup-stepdown-from-renderer.html: Added.
+
 2013-01-07  Christophe Dumez  <christophe.dumez@intel.com>
 
         [CoordinatedGraphics] compositing/repaint/resize-repaint.html is failing

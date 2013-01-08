@@ -47,14 +47,19 @@ static AtomicString makeVisibleEmptyValue(const Vector<String>& symbols)
     return builder.toAtomicString();
 }
 
-DateTimeSymbolicFieldElement::DateTimeSymbolicFieldElement(Document* document, FieldOwner& fieldOwner, const Vector<String>& symbols)
+DateTimeSymbolicFieldElement::DateTimeSymbolicFieldElement(Document* document, FieldOwner& fieldOwner, const Vector<String>& symbols, int minimum, int maximum)
     : DateTimeFieldElement(document, fieldOwner)
     , m_symbols(symbols)
     , m_visibleEmptyValue(makeVisibleEmptyValue(symbols))
     , m_selectedIndex(-1)
     , m_typeAhead(this)
+    , m_minimumIndex(minimum)
+    , m_maximumIndex(maximum)
 {
     ASSERT(!symbols.isEmpty());
+    ASSERT(m_minimumIndex >= 0);
+    ASSERT(m_maximumIndex < static_cast<int>(m_symbols.size()));
+    ASSERT(m_minimumIndex <= m_maximumIndex);
 }
 
 float DateTimeSymbolicFieldElement::maximumWidth(const Font& font)
@@ -89,12 +94,12 @@ bool DateTimeSymbolicFieldElement::hasValue() const
 
 int DateTimeSymbolicFieldElement::maximum() const
 {
-    return static_cast<int>(m_symbols.size());
+    return m_maximumIndex + 1;
 }
 
 int DateTimeSymbolicFieldElement::minimum() const
 {
-    return 1;
+    return m_minimumIndex + 1;
 }
 
 void DateTimeSymbolicFieldElement::setEmptyValue(EventBehavior eventBehavior)
@@ -113,14 +118,21 @@ void DateTimeSymbolicFieldElement::setValueAsInteger(int newSelectedIndex, Event
 
 void DateTimeSymbolicFieldElement::stepDown()
 {
-    const int size = m_symbols.size();
-    m_selectedIndex = hasValue() ? (m_selectedIndex + size - 1) % size : size - 1;
+    if (hasValue()) {
+        if (!isInRange(--m_selectedIndex))
+            m_selectedIndex = m_maximumIndex;
+    } else
+        m_selectedIndex = m_maximumIndex;
     updateVisibleValue(DispatchEvent);
 }
 
 void DateTimeSymbolicFieldElement::stepUp()
 {
-    m_selectedIndex = hasValue() ? (m_selectedIndex + 1) % m_symbols.size() : 0;
+    if (hasValue()) {
+        if (!isInRange(++m_selectedIndex))
+            m_selectedIndex = m_minimumIndex;
+    } else
+        m_selectedIndex = m_minimumIndex;
     updateVisibleValue(DispatchEvent);
 }
 

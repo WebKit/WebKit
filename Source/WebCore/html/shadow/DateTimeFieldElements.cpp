@@ -36,7 +36,7 @@
 namespace WebCore {
 
 DateTimeAMPMFieldElement::DateTimeAMPMFieldElement(Document* document, FieldOwner& fieldOwner, const Vector<String>& ampmLabels)
-    : DateTimeSymbolicFieldElement(document, fieldOwner, ampmLabels)
+    : DateTimeSymbolicFieldElement(document, fieldOwner, ampmLabels, 0, 1)
 {
 }
 
@@ -71,15 +71,15 @@ void DateTimeAMPMFieldElement::setValueAsDateTimeFieldsState(const DateTimeField
 
 // ----------------------------
 
-DateTimeDayFieldElement::DateTimeDayFieldElement(Document* document, FieldOwner& fieldOwner, const String& placeholder)
-    : DateTimeNumericFieldElement(document, fieldOwner, 1, 31, placeholder)
+DateTimeDayFieldElement::DateTimeDayFieldElement(Document* document, FieldOwner& fieldOwner, const String& placeholder, int minimum, int maximum)
+    : DateTimeNumericFieldElement(document, fieldOwner, minimum, maximum, placeholder)
 {
 }
 
-PassRefPtr<DateTimeDayFieldElement> DateTimeDayFieldElement::create(Document* document, FieldOwner& fieldOwner, const String& placeholder)
+PassRefPtr<DateTimeDayFieldElement> DateTimeDayFieldElement::create(Document* document, FieldOwner& fieldOwner, const String& placeholder, int minimum, int maximum)
 {
     DEFINE_STATIC_LOCAL(AtomicString, dayPsuedoId, ("-webkit-datetime-edit-day-field", AtomicString::ConstructFromLiteral));
-    RefPtr<DateTimeDayFieldElement> field = adoptRef(new DateTimeDayFieldElement(document, fieldOwner, placeholder.isEmpty() ? ASCIILiteral("--") : placeholder));
+    RefPtr<DateTimeDayFieldElement> field = adoptRef(new DateTimeDayFieldElement(document, fieldOwner, placeholder.isEmpty() ? ASCIILiteral("--") : placeholder, minimum, maximum));
     field->initialize(dayPsuedoId, AXDayOfMonthFieldText());
     return field.release();
 }
@@ -108,6 +108,11 @@ void DateTimeDayFieldElement::setValueAsDateTimeFieldsState(const DateTimeFields
     }
 
     setEmptyValue();
+}
+
+int DateTimeDayFieldElement::clampValueForHardLimits(int value) const
+{
+    return Range(1, 31).clampValue(value);
 }
 
 // ----------------------------
@@ -299,15 +304,15 @@ void DateTimeMinuteFieldElement::setValueAsDateTimeFieldsState(const DateTimeFie
 
 // ----------------------------
 
-DateTimeMonthFieldElement::DateTimeMonthFieldElement(Document* document, FieldOwner& fieldOwner, const String& placeholder)
-    : DateTimeNumericFieldElement(document, fieldOwner, 1, 12, placeholder)
+DateTimeMonthFieldElement::DateTimeMonthFieldElement(Document* document, FieldOwner& fieldOwner, const String& placeholder, int minimum, int maximum)
+    : DateTimeNumericFieldElement(document, fieldOwner, minimum, maximum, placeholder)
 {
 }
 
-PassRefPtr<DateTimeMonthFieldElement> DateTimeMonthFieldElement::create(Document* document, FieldOwner& fieldOwner, const String& placeholder)
+PassRefPtr<DateTimeMonthFieldElement> DateTimeMonthFieldElement::create(Document* document, FieldOwner& fieldOwner, const String& placeholder, int minimum, int maximum)
 {
     DEFINE_STATIC_LOCAL(AtomicString, monthPsuedoId, ("-webkit-datetime-edit-month-field", AtomicString::ConstructFromLiteral));
-    RefPtr<DateTimeMonthFieldElement> field = adoptRef(new DateTimeMonthFieldElement(document, fieldOwner, placeholder.isEmpty() ? ASCIILiteral("--") : placeholder));
+    RefPtr<DateTimeMonthFieldElement> field = adoptRef(new DateTimeMonthFieldElement(document, fieldOwner, placeholder.isEmpty() ? ASCIILiteral("--") : placeholder, minimum, maximum));
     field->initialize(monthPsuedoId, AXMonthFieldText());
     return field.release();
 }
@@ -336,6 +341,11 @@ void DateTimeMonthFieldElement::setValueAsDateTimeFieldsState(const DateTimeFiel
     }
 
     setEmptyValue();
+}
+
+int DateTimeMonthFieldElement::clampValueForHardLimits(int value) const
+{
+    return Range(1, 12).clampValue(value);
 }
 
 // ----------------------------
@@ -381,15 +391,15 @@ void DateTimeSecondFieldElement::setValueAsDateTimeFieldsState(const DateTimeFie
 
 // ----------------------------
 
-DateTimeSymbolicMonthFieldElement::DateTimeSymbolicMonthFieldElement(Document* document, FieldOwner& fieldOwner, const Vector<String>& labels)
-    : DateTimeSymbolicFieldElement(document, fieldOwner, labels)
+DateTimeSymbolicMonthFieldElement::DateTimeSymbolicMonthFieldElement(Document* document, FieldOwner& fieldOwner, const Vector<String>& labels, int minimum, int maximum)
+    : DateTimeSymbolicFieldElement(document, fieldOwner, labels, minimum, maximum)
 {
 }
 
-PassRefPtr<DateTimeSymbolicMonthFieldElement> DateTimeSymbolicMonthFieldElement::create(Document* document, FieldOwner& fieldOwner, const Vector<String>& labels)
+PassRefPtr<DateTimeSymbolicMonthFieldElement> DateTimeSymbolicMonthFieldElement::create(Document* document, FieldOwner& fieldOwner, const Vector<String>& labels, int minimum, int maximum)
 {
     DEFINE_STATIC_LOCAL(AtomicString, monthPsuedoId, ("-webkit-datetime-edit-month-field", AtomicString::ConstructFromLiteral));
-    RefPtr<DateTimeSymbolicMonthFieldElement> field = adoptRef(new DateTimeSymbolicMonthFieldElement(document, fieldOwner, labels));
+    RefPtr<DateTimeSymbolicMonthFieldElement> field = adoptRef(new DateTimeSymbolicMonthFieldElement(document, fieldOwner, labels, minimum, maximum));
     field->initialize(monthPsuedoId, AXMonthFieldText());
     return field.release();
 }
