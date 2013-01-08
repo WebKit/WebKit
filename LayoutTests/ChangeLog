@@ -1,3 +1,13 @@
+2013-01-08  Mike West  <mkwst@chromium.org>
+
+        CSP: 'none' should take effect only if no other source expression is present.
+        https://bugs.webkit.org/show_bug.cgi?id=106314
+
+        Reviewed by Adam Barth.
+
+        * http/tests/security/contentSecurityPolicy/source-list-parsing-none-expected.txt: Added.
+        * http/tests/security/contentSecurityPolicy/source-list-parsing-none.html: Added.
+
 2013-01-08  Antoine Quint  <graouts@apple.com>
 
         <track> element's mode set to "disabled" after load although it was explicitly set to "hidden"

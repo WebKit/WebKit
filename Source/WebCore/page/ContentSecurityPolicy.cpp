@@ -202,6 +202,24 @@ static void skipWhile(const UChar*& position, const UChar* end)
         ++position;
 }
 
+static bool isSourceListNone(const String& value)
+{
+    const UChar* begin = value.characters();
+    const UChar* end = value.characters() + value.length();
+    skipWhile<isASCIISpace>(begin, end);
+
+    const UChar* position = begin;
+    skipWhile<isSourceCharacter>(position, end);
+    if (!equalIgnoringCase("'none'", begin, position - begin))
+        return false;
+
+    skipWhile<isASCIISpace>(position, end);
+    if (position != end)
+        return false;
+
+    return true;
+}
+
 class CSPSource {
 public:
     CSPSource(const String& scheme, const String& host, int port, const String& path, bool hostHasWildcard, bool portHasWildcard)
@@ -323,6 +341,9 @@ CSPSourceList::CSPSourceList(ContentSecurityPolicy* policy, const String& direct
 
 void CSPSourceList::parse(const String& value)
 {
+    // We represent 'none' as an empty m_list.
+    if (isSourceListNone(value))
+        return;
     parse(value.characters(), value.characters() + value.length());
 }
 
@@ -348,7 +369,6 @@ void CSPSourceList::parse(const UChar* begin, const UChar* end)
 {
     const UChar* position = begin;
 
-    bool isFirstSourceInList = true;
     while (position < end) {
         skipWhile<isASCIISpace>(position, end);
         if (position == end)
@@ -356,10 +376,6 @@ void CSPSourceList::parse(const UChar* begin, const UChar* end)
 
         const UChar* beginSource = position;
         skipWhile<isSourceCharacter>(position, end);
-
-        if (isFirstSourceInList && equalIgnoringCase("'none'", beginSource, position - beginSource))
-            return; // We represent 'none' as an empty m_list.
-        isFirstSourceInList = false;
 
         String scheme, host, path;
         int port = 0;
@@ -393,6 +409,9 @@ bool CSPSourceList::parseSource(const UChar* begin, const UChar* end,
                                 bool& hostHasWildcard, bool& portHasWildcard)
 {
     if (begin == end)
+        return false;
+
+    if (equalIgnoringCase("'none'", begin, end - begin))
         return false;
 
     if (end - begin == 1 && *begin == '*') {
@@ -1709,6 +1728,8 @@ void ContentSecurityPolicy::reportInvalidNonce(const String& nonce) const
 void ContentSecurityPolicy::reportInvalidSourceExpression(const String& directiveName, const String& source) const
 {
     String message = makeString("The source list for Content Security Policy directive '", directiveName, "' contains an invalid source: '", source, "'. It will be ignored.");
+    if (equalIgnoringCase(source, "'none'"))
+        message = makeString(message, " Note that 'none' has no effect unless it is the only expression in the source list.");
     logToConsole(message);
 }
 
