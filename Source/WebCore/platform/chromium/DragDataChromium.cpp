@@ -32,6 +32,7 @@
 
 #include "ChromiumDataObject.h"
 #include "ClipboardMimeTypes.h"
+#include "Document.h"
 #include "DocumentFragment.h"
 #include "FileSystem.h"
 #include "Frame.h"
@@ -153,8 +154,8 @@ PassRefPtr<DocumentFragment> DragData::asFragment(Frame* frame, PassRefPtr<Range
         String html;
         KURL baseURL;
         m_platformDragData->htmlAndBaseURL(html, baseURL);
-        RefPtr<DocumentFragment> fragment = createFragmentFromMarkup(frame->document(), html, baseURL, DisallowScriptingContent);
-        return fragment.release();
+        if (RefPtr<DocumentFragment> fragment = createFragmentFromMarkup(frame->document(), html, baseURL, DisallowScriptingAndPluginContentIfNeeded))
+            return fragment.release();
     }
 
     return 0;

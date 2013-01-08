@@ -346,7 +346,7 @@ void HTMLConstructionSite::insertScriptElement(AtomicHTMLToken* token)
     const bool parserInserted = m_fragmentScriptingPermission != AllowScriptingContentAndDoNotMarkAlreadyStarted;
     const bool alreadyStarted = m_isParsingFragment && parserInserted;
     RefPtr<HTMLScriptElement> element = HTMLScriptElement::create(scriptTag, ownerDocumentForCurrentNode(), parserInserted, alreadyStarted);
-    if (m_fragmentScriptingPermission != DisallowScriptingContent)
+    if (scriptingContentIsAllowed(m_fragmentScriptingPermission))
         element->parserSetAttributes(token->attributes(), m_fragmentScriptingPermission);
     attachLater(currentNode(), element);
     m_openElements.push(HTMLStackItem::create(element.release(), token));

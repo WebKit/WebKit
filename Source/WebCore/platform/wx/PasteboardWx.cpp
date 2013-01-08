@@ -99,7 +99,7 @@ PassRefPtr<DocumentFragment> Pasteboard::documentFragment(Frame* frame, PassRefP
             wxHTMLDataObject data;
             wxTheClipboard->GetData(data);
             chosePlainText = false;
-            fragment = createFragmentFromMarkup(frame->document(), data.GetHTML(), "", DisallowScriptingContent);
+            fragment = createFragmentFromMarkup(frame->document(), data.GetHTML(), "", DisallowScriptingAndPluginContentIfNeeded);
         } else
 #endif
         {

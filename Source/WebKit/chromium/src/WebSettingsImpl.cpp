@@ -293,6 +293,11 @@ void WebSettingsImpl::setXSSAuditorEnabled(bool enabled)
     m_settings->setXSSAuditorEnabled(enabled);
 }
 
+void WebSettingsImpl::setUnsafePluginPastingEnabled(bool enabled)
+{
+    m_settings->setUnsafePluginPastingEnabled(enabled);
+}
+
 void WebSettingsImpl::setDNSPrefetchingEnabled(bool enabled)
 {
     m_settings->setDNSPrefetchingEnabled(enabled);

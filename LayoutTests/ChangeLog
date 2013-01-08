@@ -1,3 +1,13 @@
+2013-01-08  Tom Sepez  <tsepez@chromium.org>
+
+        Copy-paste preserves <embed> tags containing active content.
+        https://bugs.webkit.org/show_bug.cgi?id=77625
+
+        Reviewed by Ryosuke Niwa.
+
+        * editing/pasteboard/paste-noplugin-expected.txt: Added.
+        * editing/pasteboard/paste-noplugin.html: Added.
+
 2013-01-08  Filip Pizlo  <fpizlo@apple.com>
 
         REGRESSION (r138921): Crash in JSC::Arguments::create

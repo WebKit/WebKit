@@ -82,6 +82,7 @@ cssGridLayoutEnabled initial=false
 downloadableBinaryFontsEnabled initial=true
 
 xssAuditorEnabled initial=false
+unsafePluginPastingEnabled initial=true
 acceleratedCompositingFor3DTransformsEnabled initial=true
 acceleratedCompositingForVideoEnabled initial=true
 acceleratedCompositingForPluginsEnabled initial=true

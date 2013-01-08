@@ -466,8 +466,8 @@ PassRefPtr<DocumentFragment> Pasteboard::documentFragment(Frame* frame, PassRefP
                     // FIXME: seems poor form to do this as a side effect of getting a document fragment
                     if (DocumentLoader* loader = frame->loader()->documentLoader())
                         loader->addAllArchiveResources(coreArchive.get());
-                    
-                    fragment = createFragmentFromMarkup(frame->document(), markupString, mainResource->url(), DisallowScriptingContent);
+
+                    fragment = createFragmentFromMarkup(frame->document(), markupString, mainResource->url(), DisallowScriptingAndPluginContentIfNeeded);
                     [markupString release];
                 } else if (MIMETypeRegistry::isSupportedImageMIMEType(MIMEType))
                    fragment = documentFragmentWithImageResource(frame, mainResource);                    
@@ -506,7 +506,7 @@ PassRefPtr<DocumentFragment> Pasteboard::documentFragment(Frame* frame, PassRefP
             }
         }
         if ([HTMLString length] != 0 &&
-            (fragment = createFragmentFromMarkup(frame->document(), HTMLString, "", DisallowScriptingContent)))
+            (fragment = createFragmentFromMarkup(frame->document(), HTMLString, "", DisallowScriptingAndPluginContentIfNeeded)))
             return fragment.release();
     }
 

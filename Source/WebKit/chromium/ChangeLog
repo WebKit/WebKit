@@ -1,3 +1,19 @@
+2013-01-08  Tom Sepez  <tsepez@chromium.org>
+
+        Copy-paste preserves <embed> tags containing active content.
+        https://bugs.webkit.org/show_bug.cgi?id=77625
+
+        Reviewed by Ryosuke Niwa.
+
+        Adds chromium API to new unsafePluginPastingEnabled setting.
+
+        * public/WebSettings.h:
+        * src/WebSettingsImpl.cpp:
+        (WebKit::WebSettingsImpl::setUnsafePluginPastingEnabled):
+        (WebKit):
+        * src/WebSettingsImpl.h:
+        (WebSettingsImpl):
+
 2013-01-08  Mark Lam  <mark.lam@apple.com>
 
         Removed the need for the ProposedDatabase mechanism.

@@ -852,7 +852,7 @@ void XMLDocumentParser::endElementNs()
     if (hackAroundLibXMLEntityParsingBug() && context()->depth <= depthTriggeringEntityExpansion())
         setDepthTriggeringEntityExpansion(-1);
 
-    if (m_scriptingPermission == DisallowScriptingContent && n->isElementNode() && toScriptElement(static_cast<Element*>(n.get()))) {
+    if (!scriptingContentIsAllowed(m_scriptingPermission) && n->isElementNode() && toScriptElement(static_cast<Element*>(n.get()))) {
         popCurrentNode();
         ExceptionCode ec;
         n->remove(ec);

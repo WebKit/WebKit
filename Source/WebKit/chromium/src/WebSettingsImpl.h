@@ -158,6 +158,7 @@ public:
     virtual void setTextDirectionSubmenuInclusionBehaviorNeverIncluded();
     virtual void setTouchDragDropEnabled(bool);
     virtual void setUnifiedTextCheckerEnabled(bool);
+    virtual void setUnsafePluginPastingEnabled(bool);
     virtual void setUserStyleSheetLocation(const WebURL&);
     virtual void setUsesEncodingDetector(bool);
     virtual void setUsesPageCache(bool);
