@@ -1,3 +1,15 @@
+2013-01-08  Alexis Menard  <alexis@webkit.org>
+
+        transition-delay and transition-duration return incorrect values when querying using the computed style.
+        https://bugs.webkit.org/show_bug.cgi?id=105432
+
+        Reviewed by Dean Jackson.
+
+        Uncomment existing tests to cover the bug.
+
+        * transitions/transitions-parsing-expected.txt:
+        * transitions/transitions-parsing.html:
+
 2013-01-08  Dimitri Glazkov  <dglazkov@chromium.org>
 
         [Chromium] Tweak expectations for random-array-gc-stress.html to reflect reality.

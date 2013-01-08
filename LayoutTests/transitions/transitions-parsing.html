@@ -135,31 +135,30 @@ shouldBe("computedStyle.transitionDuration", "'5s'");
 shouldBe("style.webkitTransitionDuration", "'5s'");
 shouldBe("computedStyle.webkitTransitionDuration", "'5s'");
 
-// Tracked by https://bugs.webkit.org/show_bug.cgi?id=105432.
-/*style.transitionDuration = "10ms";
+style.transitionDuration = "10ms";
 shouldBe("style.transitionDuration", "'10ms'");
 shouldBe("computedStyle.transitionDuration", "'0.01s'");
 shouldBe("style.webkitTransitionDuration", "'10ms'");
 shouldBe("computedStyle.webkitTransitionDuration", "'0.01s'");
 
-// Negative values should be treated as 0s.
-style.transitionDuration = "-10ms";
-shouldBe("style.transitionDuration", "'0s'");
-shouldBe("computedStyle.transitionDuration", "'0s'");
-shouldBe("style.webkitTransitionDuration", "'0s'");
-shouldBe("computedStyle.webkitTransitionDuration", "'0s'");
-
 style.transitionProperty = "opacity, width";
 
-style.transitionDuration = "-10ms, 20s";
-shouldBe("style.transitionDuration", "'0s, 20s'");
-shouldBe("computedStyle.transitionDuration", "'0s, 20s'");
-shouldBe("style.webkitTransitionDuration", "'0s, 20s'");
-shouldBe("computedStyle.webkitTransitionDuration", "'0s, 20s'");*/
+style.transitionDuration = "10ms, 20s";
+shouldBe("style.transitionDuration", "'10ms, 20s'");
+shouldBe("computedStyle.transitionDuration", "'0.01s, 20s'");
+shouldBe("style.webkitTransitionDuration", "'10ms, 20s'");
+shouldBe("computedStyle.webkitTransitionDuration", "'0.01s, 20s'");
 
 debug("Invalid transition-duration values.");
 style.transitionProperty = "opacity";
 style.transitionDuration = "";
+
+// Negative values are invalid.
+style.transitionDuration = "-10ms";
+shouldBe("style.transitionDuration", "''");
+shouldBe("computedStyle.transitionDuration", "'0s'");
+shouldBe("style.webkitTransitionDuration", "''");
+shouldBe("computedStyle.webkitTransitionDuration", "'0s'");
 
 style.transitionDuration = "'5ms'";
 shouldBe("style.transitionDuration", "''");
@@ -435,12 +434,11 @@ shouldBe("computedStyle.transitionDelay", "'5s'");
 shouldBe("style.webkitTransitionDelay", "'5s'");
 shouldBe("computedStyle.webkitTransitionDelay", "'5s'");
 
-// Tracked by https://bugs.webkit.org/show_bug.cgi?id=105432.
-/*style.transitionDelay = "10ms";
+style.transitionDelay = "10ms";
 shouldBe("style.transitionDelay", "'10ms'");
-shouldBe("computedStyle.transitionDelay", "'10ms'");
+shouldBe("computedStyle.transitionDelay", "'0.01s'");
 shouldBe("style.webkitTransitionDelay", "'10ms'");
-shouldBe("computedStyle.webkitTransitionDelay", "'10ms'");
+shouldBe("computedStyle.webkitTransitionDelay", "'0.01s'");
 
 style.transitionDelay = "-10ms";
 shouldBe("style.transitionDelay", "'-10ms'");
@@ -454,7 +452,7 @@ style.transitionDelay = "-10ms, 20s";
 shouldBe("style.transitionDelay", "'-10ms, 20s'");
 shouldBe("computedStyle.transitionDelay", "'-0.01s, 20s'");
 shouldBe("style.webkitTransitionDelay", "'-10ms, 20s'");
-shouldBe("computedStyle.webkitTransitionDelay", "'-0.01s, 20s'");*/
+shouldBe("computedStyle.webkitTransitionDelay", "'-0.01s, 20s'");
 
 debug("Invalid transition-duration values.");
 style.transitionProperty = "opacity";
