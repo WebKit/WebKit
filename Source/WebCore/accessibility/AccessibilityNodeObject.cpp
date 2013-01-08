@@ -1192,6 +1192,9 @@ void AccessibilityNodeObject::visibleText(Vector<AccessibilityText>& textOrder) 
     
     switch (roleValue()) {
     case PopUpButtonRole:
+        // Native popup buttons should not use their button children's text as a title. That value is retrieved through stringValue().
+        if (node->hasTagName(selectTag))
+            break;
     case ButtonRole:
     case ToggleButtonRole:
     case CheckBoxRole:
