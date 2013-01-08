@@ -1,3 +1,11 @@
+2013-01-08  Zan Dobersek  <zandobersek@gmail.com>
+
+        Unreviewed GTK gardening.
+
+        Adding failure expectation for an a11y test added in r139002.
+
+        * platform/gtk/TestExpectations:
+
 2013-01-08  Csaba Osztrogonác  <ossy@webkit.org>
 
         [Qt][WK2] Unreviewed gardening after r138932.

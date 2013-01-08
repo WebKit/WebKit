@@ -1402,6 +1402,8 @@ webkit.org/b/106015 fast/css-generated-content/pseudo-transition.html [ Failure 
 # Added only temporarily, until a clean build is performed on the builders.
 Bug(GTK) transitions/transitions-parsing.html [ Failure ]
 
+webkit.org/b/106316 accessibility/render-counter-text.html [ Failure ]
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Tests failing
 #////////////////////////////////////////////////////////////////////////////////////////
