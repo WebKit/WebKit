@@ -1,3 +1,13 @@
+2013-01-08  Ojan Vafai  <ojan@chromium.org>
+
+        text controls are sized too small when a percentage height is set
+        https://bugs.webkit.org/show_bug.cgi?id=106277
+
+        Reviewed by Tony Chang.
+
+        * fast/forms/percent-height-auto-width-form-controls-expected.txt: Added.
+        * fast/forms/percent-height-auto-width-form-controls.html: Added.
+
 2013-01-08  Mike West  <mkwst@chromium.org>
 
         CSP: 'none' should take effect only if no other source expression is present.
