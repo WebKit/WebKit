@@ -1,3 +1,11 @@
+2013-01-02  Steve Block  <steveblock@chromium.org>
+
+        Add chromium.org email address for Steve Block.
+
+        Unreviewed.
+
+        * Scripts/webkitpy/common/config/committers.py:
+
 2013-01-07  Filip Pizlo  <fpizlo@apple.com>
 
         Rationalize closure call heuristics and profiling

@@ -558,7 +558,7 @@ reviewers_list = [
     Reviewer("Simon Hausmann", ["hausmann@webkit.org", "hausmann@kde.org", "simon.hausmann@digia.com"], "tronical"),
     Reviewer("Stephanie Lewis", "slewis@apple.com", "sundiamonde"),
     Reviewer("Stephen White", "senorblanco@chromium.org", "senorblanco"),
-    Reviewer("Steve Block", "steveblock@google.com", "steveblock"),
+    Reviewer("Steve Block", ["steveblock@chromium.org", "steveblock@google.com"], "steveblock"),
     Reviewer("Steve Falkenburg", "sfalken@apple.com", "sfalken"),
     Reviewer("Tim Omernick", "timo@apple.com"),
     Reviewer("Timothy Hatcher", ["timothy@apple.com", "timothy@hatcher.name"], "xenon"),
