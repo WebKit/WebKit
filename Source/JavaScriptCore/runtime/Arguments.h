@@ -259,7 +259,7 @@ inline void Arguments::finishCreation(CallFrame* callFrame, InlineCallFrame* inl
     Base::finishCreation(callFrame->globalData());
     ASSERT(inherits(&s_info));
 
-    JSFunction* callee = inlineCallFrame->callee.get();
+    JSFunction* callee = inlineCallFrame->calleeForCallFrame(callFrame);
     m_numArguments = inlineCallFrame->arguments.size() - 1;
     m_registers = reinterpret_cast<WriteBarrierBase<Unknown>*>(callFrame->registers()) + inlineCallFrame->stackOffset;
     m_callee.set(callFrame->globalData(), this, callee);

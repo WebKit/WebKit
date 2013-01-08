@@ -1,3 +1,17 @@
+2013-01-08  Filip Pizlo  <fpizlo@apple.com>
+
+        REGRESSION (r138921): Crash in JSC::Arguments::create
+        https://bugs.webkit.org/show_bug.cgi?id=106329
+        <rdar://problem/12974196>
+
+        Reviewed by Mark Hahnenberg.
+
+        * fast/js/dfg-create-inlined-arguments-in-closure-inline-expected.txt: Added.
+        * fast/js/dfg-create-inlined-arguments-in-closure-inline.html: Added.
+        * fast/js/jsc-test-list:
+        * fast/js/script-tests/dfg-create-inlined-arguments-in-closure-inline.js: Added.
+        (foo):
+
 2013-01-08  Martin Robinson  <mrobinson@igalia.com>
 
         Layout Test http/tests/misc/authentication-redirect-4/authentication-sent-to-redirect-same-origin-url.html is timing out

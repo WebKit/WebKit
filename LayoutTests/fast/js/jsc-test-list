@@ -96,6 +96,7 @@ fast/js/dfg-check-two-structures
 fast/js/dfg-check-structure-elimination-for-non-cell
 fast/js/dfg-constant-fold-first-local-read-after-block-merge
 fast/js/dfg-convert-this-dom-window
+fast/js/dfg-create-inlined-arguments-in-closure-inline
 fast/js/dfg-cse-cfa-discrepancy
 fast/js/dfg-cse-dead-get-scoped-var
 fast/js/dfg-dead-min-one-arg

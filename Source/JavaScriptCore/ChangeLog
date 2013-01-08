@@ -1,5 +1,24 @@
 2013-01-08  Filip Pizlo  <fpizlo@apple.com>
 
+        REGRESSION (r138921): Crash in JSC::Arguments::create
+        https://bugs.webkit.org/show_bug.cgi?id=106329
+        <rdar://problem/12974196>
+
+        Reviewed by Mark Hahnenberg.
+        
+        Arguments::finishCreation() that takes an InlineCallFrame* needs to understand that the callee can
+        be unset, indicating that the callee needs to be loaded from the true call frame. This adds a
+        method to InlineCallFrame to do just that.
+
+        * bytecode/CodeOrigin.cpp:
+        (JSC::InlineCallFrame::calleeForCallFrame):
+        * bytecode/CodeOrigin.h:
+        (InlineCallFrame):
+        * runtime/Arguments.h:
+        (JSC::Arguments::finishCreation):
+
+2013-01-08  Filip Pizlo  <fpizlo@apple.com>
+
         DFG initrinsic handling should ensure that we backwards propagate the fact that all operands may escape
         https://bugs.webkit.org/show_bug.cgi?id=106365
 

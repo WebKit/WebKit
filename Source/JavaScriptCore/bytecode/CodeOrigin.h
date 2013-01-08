@@ -38,6 +38,7 @@
 namespace JSC {
 
 struct InlineCallFrame;
+class ExecState;
 class ExecutableBase;
 class JSFunction;
 
@@ -109,6 +110,9 @@ struct InlineCallFrame {
     CodeSpecializationKind specializationKind() const { return specializationFromIsCall(isCall); }
     
     bool isClosureCall() const { return !callee; }
+    
+    // Get the callee given a machine call frame to which this InlineCallFrame belongs.
+    JSFunction* calleeForCallFrame(ExecState*) const;
     
     String inferredName() const;
     CodeBlockHash hash() const;

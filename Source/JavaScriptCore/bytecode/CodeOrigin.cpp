@@ -26,6 +26,7 @@
 #include "config.h"
 #include "CodeOrigin.h"
 
+#include "CallFrame.h"
 #include "CodeBlock.h"
 #include "Executable.h"
 
@@ -70,6 +71,14 @@ void CodeOrigin::dump(PrintStream& out) const
         
         out.print("bc#", stack[i].bytecodeIndex);
     }
+}
+
+JSFunction* InlineCallFrame::calleeForCallFrame(ExecState* exec) const
+{
+    if (!isClosureCall())
+        return callee.get();
+    
+    return jsCast<JSFunction*>((exec + stackOffset)->callee());
 }
 
 CodeBlockHash InlineCallFrame::hash() const
