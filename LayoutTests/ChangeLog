@@ -1,3 +1,17 @@
+2013-01-08  Alexis Menard  <alexis@webkit.org>
+
+        WebKit does not reject some cubic-bezier form values for transition-timing-function.
+        https://bugs.webkit.org/show_bug.cgi?id=106369
+
+        Reviewed by Dean Jackson.
+
+        Extended existing tests to cover the bug. Updated an existing test
+        which was checking wrong values.
+
+        * fast/css/transition-timing-function.html: Change the tested values as
+        they are considered wrong by the spec.
+        * fast/css/transition-timing-function-expected.txt:
+
 2013-01-08  Dimitri Glazkov  <dglazkov@chromium.org>
 
         [Chromium] Tighten up the actual expectations around webaudio fails..
