@@ -288,6 +288,7 @@ class ChromiumPort(Port):
         }
 
     def setup_test_run(self):
+        super(ChromiumPort, self).setup_test_run()
         # Delete the disk cache if any to ensure a clean test run.
         dump_render_tree_binary_path = self._path_to_driver()
         cachedir = self._filesystem.dirname(dump_render_tree_binary_path)

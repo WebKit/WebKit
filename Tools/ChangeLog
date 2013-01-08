@@ -1,3 +1,24 @@
+2013-01-08  Zan Dobersek  <zandobersek@gmail.com>
+
+        [webkitpy] Call setup_test_run method of the parent Port interface when method is called on subclasses
+        https://bugs.webkit.org/show_bug.cgi?id=106364
+
+        Reviewed by Eric Seidel.
+
+        When the setup_test_run method is called on the subclasses of the base Port
+        interface, the parent method should also be called via super(), despite the
+        parent method not doing anything at the moment.
+
+        The according calls to super() are required in the ChromiumPort, EflPort
+        and GtkPort implementations.
+
+        * Scripts/webkitpy/layout_tests/port/chromium.py:
+        (ChromiumPort.setup_test_run):
+        * Scripts/webkitpy/layout_tests/port/efl.py:
+        (EflPort.setup_test_run):
+        * Scripts/webkitpy/layout_tests/port/gtk.py:
+        (GtkPort.setup_test_run):
+
 2013-01-08  Julie Parent  <jparent@chromium.org>
 
         Dashboard cleanup: Remove globals g_buildersThatFailedToLoad and g_staleBuilders

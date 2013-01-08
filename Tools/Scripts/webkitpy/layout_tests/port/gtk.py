@@ -57,6 +57,7 @@ class GtkPort(Port):
         return 6 * 1000
 
     def setup_test_run(self):
+        super(GtkPort, self).setup_test_run()
         self._pulseaudio_sanitizer.unload_pulseaudio_module()
 
     def clean_up_test_run(self):

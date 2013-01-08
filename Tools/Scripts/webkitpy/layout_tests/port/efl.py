@@ -52,6 +52,7 @@ class EflPort(Port):
         return "--efl"
 
     def setup_test_run(self):
+        super(EflPort, self).setup_test_run()
         self._pulseaudio_sanitizer.unload_pulseaudio_module()
 
     def setup_environ_for_server(self, server_name=None):
