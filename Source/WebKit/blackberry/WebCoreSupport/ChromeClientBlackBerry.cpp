@@ -765,14 +765,9 @@ void ChromeClientBlackBerry::exitFullScreenForElement(WebCore::Element*)
     m_fullScreenElement.clear();
 }
 
-void ChromeClientBlackBerry::fullScreenRendererChanged(RenderBox* fullScreenRenderer)
+void ChromeClientBlackBerry::fullScreenRendererChanged(RenderBox*)
 {
-    // Once we go fullscreen using the new FULLSCREEN_API code path, we have to take into account
-    // our port specific page scaling.
-    if (fullScreenRenderer) {
-        int width = m_webPagePrivate->m_mainFrame->view()->visibleContentRect().size().width();
-        fullScreenRenderer->style()->setWidth(Length(width, Fixed));
-    }
+    m_webPagePrivate->adjustFullScreenElementDimensionsIfNeeded();
 }
 #endif
 
