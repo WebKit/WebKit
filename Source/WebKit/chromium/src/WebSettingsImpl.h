@@ -66,6 +66,7 @@ public:
     virtual void setAllowRunningOfInsecureContent(bool);
     virtual void setAllowScriptsToCloseWindows(bool);
     virtual void setAllowUniversalAccessFromFileURLs(bool);
+    virtual void setAntialiased2dCanvasEnabled(bool);
     virtual void setApplyDeviceScaleFactorInCompositor(bool);
     virtual void setApplyPageScaleFactorInCompositor(bool);
     virtual void setAsynchronousSpellCheckingEnabled(bool);

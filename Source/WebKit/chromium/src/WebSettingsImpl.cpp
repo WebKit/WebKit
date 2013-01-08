@@ -504,6 +504,11 @@ void WebSettingsImpl::setAccelerated2dCanvasEnabled(bool enabled)
     m_settings->setAccelerated2dCanvasEnabled(enabled);
 }
 
+void WebSettingsImpl::setAntialiased2dCanvasEnabled(bool enabled)
+{
+    m_settings->setAntialiased2dCanvasEnabled(enabled);
+}
+
 void WebSettingsImpl::setDeferred2dCanvasEnabled(bool enabled)
 {
     m_settings->setDeferred2dCanvasEnabled(enabled);

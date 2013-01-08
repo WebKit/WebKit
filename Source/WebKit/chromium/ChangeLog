@@ -1,3 +1,15 @@
+2013-01-07  Stephen White  <senorblanco@chromium.org>
+
+        Add a flag to control canvas antialiasing.
+        https://bugs.webkit.org/show_bug.cgi?id=106255
+
+        Reviewed by Darin Fisher.
+
+        * public/WebSettings.h:
+        * src/WebSettingsImpl.cpp:
+        (WebKit::WebSettingsImpl::setAntialiased2dCanvasEnabled):
+        * src/WebSettingsImpl.h:
+
 2013-01-07  Yusuf Ozuysal  <yusufo@google.com>
 
         Don't use double tap zoom if minimum and maximum page scale is the same
