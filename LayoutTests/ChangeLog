@@ -1,5 +1,19 @@
 2013-01-08  Dimitri Glazkov  <dglazkov@chromium.org>
 
+        Update expectations for fast/text/justify-ideograph*.
+
+        * platform/chromium-linux-x86/fast/text/justify-ideograph-vertical-expected.txt: Added.
+        * platform/chromium-linux/fast/text/justify-ideograph-vertical-expected.png: Added.
+        * platform/chromium-linux/fast/text/justify-ideograph-vertical-expected.txt: Added.
+        * platform/chromium-mac-lion/fast/text/justify-ideograph-simple-expected.png:
+        * platform/chromium-mac-lion/fast/text/justify-ideograph-vertical-expected.png:
+        * platform/chromium-mac-snowleopard/fast/text/justify-ideograph-simple-expected.png:
+        * platform/chromium-mac-snowleopard/fast/text/justify-ideograph-vertical-expected.png:
+        * platform/chromium-mac/fast/text/justify-ideograph-simple-expected.png:
+        * platform/chromium-mac/fast/text/justify-ideograph-vertical-expected.png:
+
+2013-01-08  Dimitri Glazkov  <dglazkov@chromium.org>
+
         Update expectations for webaudio/realtimeanalyser-fft-sizing.html.
 
         * platform/chromium-linux/webaudio/realtimeanalyser-fft-sizing-expected.txt: Added.
