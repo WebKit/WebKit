@@ -3897,6 +3897,8 @@
 		A71878900B2D04AC00A16ECE /* DragControllerMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = A718788F0B2D04AC00A16ECE /* DragControllerMac.mm */; };
 		A723F77B1484CA4C008C6DBE /* PlatformExportMacros.h in Headers */ = {isa = PBXBuildFile; fileRef = A723F77A1484CA4C008C6DBE /* PlatformExportMacros.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		A72763BF16689BFB002FCACB /* UserActionElementSet.h in Headers */ = {isa = PBXBuildFile; fileRef = A72763BE16689BFB002FCACB /* UserActionElementSet.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		A72B66A7169AD88D0034130C /* DOMShadowRoot.h in Copy Generated Headers */ = {isa = PBXBuildFile; fileRef = A7F73ED9169AD7AA00CBAA4B /* DOMShadowRoot.h */; };
+		A72B66A8169AD88D0034130C /* DOMShadowRoot.mm in Copy Generated Headers */ = {isa = PBXBuildFile; fileRef = A7F73EDA169AD7AA00CBAA4B /* DOMShadowRoot.mm */; };
 		A72EA3BB1585CF55004FAA26 /* RefCountedSupplement.h in Headers */ = {isa = PBXBuildFile; fileRef = A72EA3BA1585CF55004FAA26 /* RefCountedSupplement.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		A73F95FE12C97BFE0031AAF9 /* RoundedRect.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A73F95FC12C97BFE0031AAF9 /* RoundedRect.cpp */; };
 		A73F95FF12C97BFE0031AAF9 /* RoundedRect.h in Headers */ = {isa = PBXBuildFile; fileRef = A73F95FD12C97BFE0031AAF9 /* RoundedRect.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -6879,6 +6881,7 @@
 				1CB4214D0AF2B2CA0085AD91 /* DOMRangeInternal.h in Copy Generated Headers */,
 				858C39BC0AA905EF00B187A4 /* DOMRect.h in Copy Generated Headers */,
 				855D358D0AD707CC0019AAC7 /* DOMRGBColor.h in Copy Generated Headers */,
+				A72B66A7169AD88D0034130C /* DOMShadowRoot.h in Copy Generated Headers */,
 				850657A00AAB4A8E002D15C0 /* DOMStyleSheet.h in Copy Generated Headers */,
 				850657A10AAB4A8E002D15C0 /* DOMStyleSheetList.h in Copy Generated Headers */,
 				A8F46B380CB20A9D003A9670 /* DOMSVG.h in Copy Generated Headers */,
@@ -11352,6 +11355,8 @@
 		A7DBF8DC1276919C006B6008 /* TextCheckingHelper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TextCheckingHelper.h; sourceTree = "<group>"; };
 		A7F5D94D1384F02D00A29A87 /* NodeRenderingContext.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = NodeRenderingContext.cpp; sourceTree = "<group>"; };
 		A7F5D94E1384F02D00A29A87 /* NodeRenderingContext.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NodeRenderingContext.h; sourceTree = "<group>"; };
+		A7F73ED9169AD7AA00CBAA4B /* DOMShadowRoot.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DOMShadowRoot.h; path = DOMShadowRoot.h; sourceTree = "<group>"; };
+		A7F73EDA169AD7AA00CBAA4B /* DOMShadowRoot.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = DOMShadowRoot.mm; path = DOMShadowRoot.mm; sourceTree = "<group>"; };
 		A80A38FD0E50CC8200A25EBC /* PatternCG.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PatternCG.cpp; sourceTree = "<group>"; };
 		A80A9422149F225E00989291 /* JSDOMWindowWebAudioCustom.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSDOMWindowWebAudioCustom.cpp; sourceTree = "<group>"; };
 		A80A9424149F227100989291 /* JSDOMWindowWebSocketCustom.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSDOMWindowWebSocketCustom.cpp; sourceTree = "<group>"; };
@@ -16358,6 +16363,8 @@
 				85CA96E90A9624E900690CCF /* DOMNotation.mm */,
 				85F56A780A98CE3700ADB60A /* DOMProcessingInstruction.h */,
 				85F56A790A98CE3700ADB60A /* DOMProcessingInstruction.mm */,
+				A7F73ED9169AD7AA00CBAA4B /* DOMShadowRoot.h */,
+				A7F73EDA169AD7AA00CBAA4B /* DOMShadowRoot.mm */,
 				85ACA99A0A9B575900671E90 /* DOMText.h */,
 				85ACA99B0A9B575900671E90 /* DOMText.mm */,
 				8A19592F147EA16E00D1EA61 /* DOMWebKitNamedFlow.h */,

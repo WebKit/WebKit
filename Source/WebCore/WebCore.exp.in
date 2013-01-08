@@ -2516,6 +2516,8 @@ __ZN7WebCore9FrameView25serviceScriptedAnimationsEd
 
 #if ENABLE(SHADOW_DOM)
 __ZN7WebCore22RuntimeEnabledFeatures18isShadowDOMEnabledE
+__ZN7WebCore22RuntimeEnabledFeatures37isAuthorShadowDOMForAnyElementEnabledE
+__ZN7WebCore4toJSEPN3JSC9ExecStateEPNS_17JSDOMGlobalObjectEPNS_10ShadowRootE
 #endif
 
 #if ENABLE(DIALOG_ELEMENT)

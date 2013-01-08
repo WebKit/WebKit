@@ -116,7 +116,7 @@
     readonly attribute unsigned long childElementCount;
 
     // ShadowAware API
-#if defined(ENABLE_SHADOW_DOM) && ENABLE_SHADOW_DOM
+#if defined(ENABLE_SHADOW_DOM) && ENABLE_SHADOW_DOM && defined(LANGUAGE_JAVASCRIPT) && LANGUAGE_JAVASCRIPT
     [Reflect=pseudo, V8EnabledAtRuntime=shadowDOM, ImplementedAs=pseudo] attribute DOMString webkitPseudo;
     [V8EnabledAtRuntime=shadowDOM, ImplementedAs=createShadowRoot] ShadowRoot webkitCreateShadowRoot() raises(DOMException);
     [V8EnabledAtRuntime=shadowDOM, ImplementedAs=shadowRoot] readonly attribute ShadowRoot webkitShadowRoot;
