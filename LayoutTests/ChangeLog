@@ -1,3 +1,26 @@
+2013-01-08  Csaba Osztrogonác  <ossy@webkit.org>
+
+        [Qt][WK2] Unreviewed gardening after r138932.
+
+        * platform/qt-5.0-wk2/fast/ruby/ruby-beforeafter-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/ruby/ruby-beforeafter-expected.txt: Added.
+        * platform/qt-5.0-wk2/fast/ruby/ruby-empty-rt-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/ruby/ruby-empty-rt-expected.txt: Added.
+        * platform/qt-5.0-wk2/fast/ruby/ruby-length-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/ruby/ruby-length-expected.txt: Added.
+        * platform/qt-5.0-wk2/fast/ruby/ruby-run-break-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/ruby/ruby-run-break-expected.txt: Added.
+        * platform/qt-5.0-wk2/fast/ruby/ruby-runs-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/ruby/ruby-runs-expected.txt: Added.
+        * platform/qt-5.0-wk2/fast/ruby/ruby-runs-spans-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/ruby/ruby-runs-spans-expected.txt: Added.
+        * platform/qt-5.0-wk2/fast/ruby/ruby-simple-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/ruby/ruby-simple-expected.txt: Added.
+        * platform/qt-5.0-wk2/fast/ruby/ruby-simple-rp-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/ruby/ruby-simple-rp-expected.txt: Added.
+        * platform/qt-5.0-wk2/fast/ruby/ruby-trailing-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/ruby/ruby-trailing-expected.txt: Added.
+
 2013-01-04  Sergio Villar Senin  <svillar@igalia.com>
 
         [GTK] Add WebP image support

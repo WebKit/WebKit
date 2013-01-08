@@ -1,0 +1,28 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x576
+      RenderBlock {P} at (0,0) size 784x19
+        RenderText {#text} at (0,0) size 554x19
+          text run at (0,0) width 554: "The following is a test for having a trailing base within a <ruby> with no associated ruby text."
+      RenderBlock (anonymous) at (0,35) size 784x38
+        RenderBR {BR} at (0,0) size 0x19
+        RenderBR {BR} at (0,19) size 0x19
+      RenderBlock {P} at (0,89) size 784x30
+        RenderText {#text} at (0,11) size 146x19
+          text run at (0,11) width 146: "<ruby> is defined in the "
+        RenderRuby (inline) {RUBY} at (0,0) size 117x19
+          RenderRubyRun (anonymous) at (142,11) size 113x19
+            RenderRubyText {RT} at (0,-11) size 113x11
+              RenderText {#text} at (0,0) size 113x11
+                text run at (0,0) width 113: "Hyper-text Markup Language"
+            RenderRubyBase (anonymous) at (0,0) size 113x19
+              RenderText {#text} at (35,0) size 43x19
+                text run at (35,0) width 43: "HTML"
+          RenderRubyRun (anonymous) at (255,11) size 8x19
+            RenderRubyBase (anonymous) at (0,0) size 8x19
+              RenderText {#text} at (0,0) size 8x19
+                text run at (0,0) width 8: "5"
+        RenderText {#text} at (263,11) size 4x19
+          text run at (263,11) width 4: "."
