@@ -237,7 +237,9 @@ struct GraphicsSurfacePrivate {
     void createPixmap(uint32_t winId)
     {
         XWindowAttributes attr;
-        XGetWindowAttributes(m_display, winId, &attr);
+        if (!XGetWindowAttributes(m_display, winId, &attr))
+            return;
+        m_size = IntSize(attr.width, attr.height);
 
         XRenderPictFormat* format = XRenderFindVisualFormat(m_display, attr.visual);
         m_hasAlpha = (format->type == PictTypeDirect && format->direct.alphaMask);
@@ -341,8 +343,8 @@ struct GraphicsSurfacePrivate {
     {
         if (m_size.isEmpty()) {
             XWindowAttributes attr;
-            XGetWindowAttributes(m_display, m_surface, &attr);
-            const_cast<GraphicsSurfacePrivate*>(this)->m_size = IntSize(attr.width, attr.height);
+            if (XGetWindowAttributes(m_display, m_surface, &attr))
+                const_cast<GraphicsSurfacePrivate*>(this)->m_size = IntSize(attr.width, attr.height);
         }
         return m_size;
     }
@@ -410,13 +412,17 @@ GraphicsSurfaceToken GraphicsSurface::platformExport()
 uint32_t GraphicsSurface::platformGetTextureID()
 {
     if (!m_texture) {
+        GLXPixmap pixmap = m_private->glxPixmap();
+        if (!pixmap)
+            return 0;
+
         glGenTextures(1, &m_texture);
         glBindTexture(GL_TEXTURE_2D, m_texture);
         glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
         glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-        pGlXBindTexImageEXT(m_private->display(), m_private->glxPixmap(), GLX_FRONT_EXT, 0);
+        pGlXBindTexImageEXT(m_private->display(), pixmap, GLX_FRONT_EXT, 0);
     }
 
     return m_texture;
@@ -436,11 +442,17 @@ void GraphicsSurface::platformCopyFromTexture(uint32_t texture, const IntRect& s
 void GraphicsSurface::platformPaintToTextureMapper(TextureMapper* textureMapper, const FloatRect& targetRect, const TransformationMatrix& transform, float opacity, BitmapTexture* mask)
 {
     TextureMapperGL* texMapGL = static_cast<TextureMapperGL*>(textureMapper);
+    IntSize size = m_private->size();
+    if (size.isEmpty())
+        return;
+    uint32_t texture = platformGetTextureID();
+    if (!texture)
+        return;
     TransformationMatrix adjustedTransform = transform;
-    adjustedTransform.multiply(TransformationMatrix::rectToRect(FloatRect(FloatPoint::zero(), m_private->size()), targetRect));
+    adjustedTransform.multiply(TransformationMatrix::rectToRect(FloatRect(FloatPoint::zero(), size), targetRect));
     TextureMapperGL::Flags flags = m_private->textureIsYInverted() ? TextureMapperGL::ShouldFlipTexture : 0;
     flags |= TextureMapperGL::ShouldBlend;
-    texMapGL->drawTexture(platformGetTextureID(), flags, m_private->size(), targetRect, adjustedTransform, opacity, mask);
+    texMapGL->drawTexture(texture, flags, size, targetRect, adjustedTransform, opacity, mask);
 }
 
 uint32_t GraphicsSurface::platformFrontBuffer() const
