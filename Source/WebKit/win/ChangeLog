@@ -1,3 +1,15 @@
+2013-01-08  Mark Lam  <mark.lam@apple.com>
+
+        Removed the need for the ProposedDatabase mechanism.
+        https://bugs.webkit.org/show_bug.cgi?id=106292.
+
+        Reviewed by Sam Weinig.
+
+        * WebCoreSupport/WebChromeClient.cpp:
+        (WebChromeClient::exceededDatabaseQuota):
+        * WebCoreSupport/WebChromeClient.h:
+        (WebChromeClient):
+
 2013-01-04  Roger Fong  <roger_fong@apple.com>
 
         Make private browsing work on Windows.

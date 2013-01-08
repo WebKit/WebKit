@@ -114,7 +114,7 @@ public:
     virtual void print(WebCore::Frame*);
 
 #if ENABLE(SQL_DATABASE)
-    virtual void exceededDatabaseQuota(WebCore::Frame*, const WTF::String&);
+    virtual void exceededDatabaseQuota(WebCore::Frame*, const WTF::String&, WebCore::DatabaseDetails);
 #endif
 
     virtual void reachedMaxAppCacheSize(int64_t spaceNeeded);

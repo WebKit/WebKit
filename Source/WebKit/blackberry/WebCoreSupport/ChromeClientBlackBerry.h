@@ -91,7 +91,7 @@ public:
     virtual bool shouldRubberBandInDirection(ScrollDirection) const { return true; }
     virtual void numWheelEventHandlersChanged(unsigned) { }
     virtual void print(Frame*);
-    virtual void exceededDatabaseQuota(Frame*, const String&);
+    virtual void exceededDatabaseQuota(Frame*, const String&, DatabaseDetails);
     virtual void runOpenPanel(Frame*, PassRefPtr<FileChooser>);
     virtual void loadIconForFiles(const Vector<String>&, FileIconLoader*);
     virtual void setCursor(const Cursor&);

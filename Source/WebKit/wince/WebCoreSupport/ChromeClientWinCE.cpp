@@ -299,7 +299,7 @@ void ChromeClientWinCE::print(Frame*)
 }
 
 #if ENABLE(SQL_DATABASE)
-void ChromeClientWinCE::exceededDatabaseQuota(Frame*, const String&)
+void ChromeClientWinCE::exceededDatabaseQuota(Frame*, const String&, DatabaseDetails)
 {
     notImplemented();
 }

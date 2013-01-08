@@ -480,7 +480,7 @@ void ChromeClientBlackBerry::print(Frame*)
     notImplemented();
 }
 
-void ChromeClientBlackBerry::exceededDatabaseQuota(Frame* frame, const String& name)
+void ChromeClientBlackBerry::exceededDatabaseQuota(Frame* frame, const String& name, DatabaseDetails details)
 {
 #if ENABLE(SQL_DATABASE)
     Document* document = frame->document();
@@ -502,7 +502,6 @@ void ChromeClientBlackBerry::exceededDatabaseQuota(Frame* frame, const String& n
     unsigned long long originUsage = tracker.usageForOrigin(origin);
     unsigned long long currentQuota = tracker.quotaForOrigin(origin);
 
-    DatabaseDetails details = manager.detailsForNameAndOrigin(name, origin);
     unsigned long long estimatedSize = details.expectedUsage();
     const String& nameStr = details.displayName();
 

@@ -133,7 +133,7 @@ private:
     virtual void print(WebCore::Frame*) OVERRIDE;
     
 #if ENABLE(SQL_DATABASE)
-    virtual void exceededDatabaseQuota(WebCore::Frame*, const String& databaseName) OVERRIDE;
+    virtual void exceededDatabaseQuota(WebCore::Frame*, const String& databaseName, WebCore::DatabaseDetails) OVERRIDE;
 #endif
 
     virtual void reachedMaxAppCacheSize(int64_t spaceNeeded) OVERRIDE;

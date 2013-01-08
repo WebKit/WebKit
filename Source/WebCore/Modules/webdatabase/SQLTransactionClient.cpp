@@ -56,7 +56,7 @@ bool SQLTransactionClient::didExceedQuota(AbstractDatabase* database)
 {
     ASSERT(database->scriptExecutionContext()->isContextThread());
     unsigned long long currentQuota = DatabaseManager::manager().quotaForOrigin(database->securityOrigin());
-    database->databaseContext()->databaseExceededQuota(database->stringIdentifier());
+    database->databaseContext()->databaseExceededQuota(database->stringIdentifier(), database->details());
     unsigned long long newQuota = DatabaseManager::manager().quotaForOrigin(database->securityOrigin());
     return (newQuota > currentQuota);
 }

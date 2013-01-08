@@ -661,7 +661,7 @@ void ChromeClientImpl::print(Frame* frame)
         m_webView->client()->printPage(WebFrameImpl::fromFrame(frame));
 }
 
-void ChromeClientImpl::exceededDatabaseQuota(Frame* frame, const String& databaseName)
+void ChromeClientImpl::exceededDatabaseQuota(Frame* frame, const String& databaseName, DatabaseDetails)
 {
     // Chromium users cannot currently change the default quota
 }

@@ -138,7 +138,7 @@ private:
     Mutex m_openDatabaseMapGuard;
     mutable OwnPtr<DatabaseOriginMap> m_openDatabaseMap;
 
-    // This lock protects m_database, m_quotaMap, m_proposedDatabases, m_databaseDirectoryPath, m_originsBeingDeleted, m_beingCreated, and m_beingDeleted.
+    // This lock protects m_database, m_quotaMap, m_databaseDirectoryPath, m_originsBeingDeleted, m_beingCreated, and m_beingDeleted.
     Mutex m_databaseGuard;
     SQLiteDatabase m_database;
 
@@ -148,9 +148,6 @@ private:
     String m_databaseDirectoryPath;
 
     DatabaseManagerClient* m_client;
-
-    typedef std::pair<RefPtr<SecurityOrigin>, DatabaseDetails> ProposedDatabase;
-    HashSet<ProposedDatabase*> m_proposedDatabases;
 
     typedef HashMap<String, long> NameCountMap;
     typedef HashMap<RefPtr<SecurityOrigin>, NameCountMap*, SecurityOriginHash> CreateSet;

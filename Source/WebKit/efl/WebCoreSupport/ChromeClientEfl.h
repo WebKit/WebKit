@@ -113,7 +113,7 @@ public:
     virtual void print(Frame*);
 
 #if ENABLE(SQL_DATABASE)
-    virtual void exceededDatabaseQuota(Frame*, const String&);
+    virtual void exceededDatabaseQuota(Frame*, const String&, DatabaseDetails);
 #endif
 
 #if ENABLE(NOTIFICATIONS) || ENABLE(LEGACY_NOTIFICATIONS)

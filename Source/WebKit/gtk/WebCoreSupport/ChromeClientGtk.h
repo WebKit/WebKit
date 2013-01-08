@@ -116,7 +116,7 @@ namespace WebKit {
 
         virtual void print(Frame*);
 #if ENABLE(SQL_DATABASE)
-        virtual void exceededDatabaseQuota(Frame*, const WTF::String&);
+        virtual void exceededDatabaseQuota(Frame*, const WTF::String&, DatabaseDetails);
 #endif
         virtual void reachedMaxAppCacheSize(int64_t spaceNeeded);
         virtual void reachedApplicationCacheOriginQuota(SecurityOrigin*, int64_t totalSpaceNeeded);

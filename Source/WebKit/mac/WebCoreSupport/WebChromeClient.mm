@@ -624,7 +624,7 @@ void WebChromeClient::print(Frame* frame)
 
 #if ENABLE(SQL_DATABASE)
 
-void WebChromeClient::exceededDatabaseQuota(Frame* frame, const String& databaseName)
+void WebChromeClient::exceededDatabaseQuota(Frame* frame, const String& databaseName, DatabaseDetails)
 {
     BEGIN_BLOCK_OBJC_EXCEPTIONS;
 

@@ -420,12 +420,11 @@ void ChromeClientEfl::needTouchEvents(bool needed)
 #endif
 
 #if ENABLE(SQL_DATABASE)
-void ChromeClientEfl::exceededDatabaseQuota(Frame* frame, const String& databaseName)
+void ChromeClientEfl::exceededDatabaseQuota(Frame* frame, const String& databaseName, DatabaseDetails details)
 {
     uint64_t quota;
     SecurityOrigin* origin = frame->document()->securityOrigin();
 
-    DatabaseDetails details = DatabaseManager::manager().detailsForNameAndOrigin(databaseName, origin);
     quota = ewk_view_exceeded_database_quota(m_view,
                                              kit(frame), databaseName.utf8().data(),
                                              details.currentUsage(), details.expectedUsage());

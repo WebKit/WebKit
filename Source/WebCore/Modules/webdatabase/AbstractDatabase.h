@@ -32,6 +32,7 @@
 #if ENABLE(SQL_DATABASE)
 
 #include "DatabaseBasicTypes.h"
+#include "DatabaseDetails.h"
 #include "SQLiteDatabase.h"
 #include <wtf/Forward.h>
 #include <wtf/ThreadSafeRefCounted.h>
@@ -64,6 +65,7 @@ public:
     virtual String displayName() const;
     virtual unsigned long estimatedSize() const;
     virtual String fileName() const;
+    virtual DatabaseDetails details() const;
     SQLiteDatabase& sqliteDatabase() { return m_sqliteDatabase; }
 
     unsigned long long maximumSize() const;

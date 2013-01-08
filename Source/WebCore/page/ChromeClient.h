@@ -42,6 +42,10 @@
 #include <wtf/UnusedParam.h>
 #include <wtf/Vector.h>
 
+#if ENABLE(SQL_DATABASE)
+#include "DatabaseDetails.h"
+#endif
+
 #ifndef __OBJC__
 class NSMenu;
 class NSResponder;
@@ -184,7 +188,7 @@ public:
     virtual bool shouldRubberBandInDirection(ScrollDirection) const = 0;
 
 #if ENABLE(SQL_DATABASE)
-    virtual void exceededDatabaseQuota(Frame*, const String& databaseName) = 0;
+    virtual void exceededDatabaseQuota(Frame*, const String& databaseName, DatabaseDetails) = 0;
 #endif
 
     // Callback invoked when the application cache fails to save a cache object

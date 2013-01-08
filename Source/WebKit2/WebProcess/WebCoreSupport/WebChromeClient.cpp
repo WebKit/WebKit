@@ -544,13 +544,12 @@ void WebChromeClient::print(Frame* frame)
 }
 
 #if ENABLE(SQL_DATABASE)
-void WebChromeClient::exceededDatabaseQuota(Frame* frame, const String& databaseName)
+void WebChromeClient::exceededDatabaseQuota(Frame* frame, const String& databaseName, DatabaseDetails details)
 {
     WebFrame* webFrame = static_cast<WebFrameLoaderClient*>(frame->loader()->client())->webFrame();
     SecurityOrigin* origin = frame->document()->securityOrigin();
 
     DatabaseManager& dbManager = DatabaseManager::manager();
-    DatabaseDetails details = dbManager.detailsForNameAndOrigin(databaseName, origin);
     uint64_t currentQuota = dbManager.quotaForOrigin(origin);
     uint64_t currentOriginUsage = dbManager.usageForOrigin(origin);
     uint64_t newQuota = 0;

@@ -137,8 +137,6 @@ void DatabaseTracker::openTrackerDatabase(bool createIfDoesNotExist)
 bool DatabaseTracker::canEstablishDatabase(ScriptExecutionContext* context, const String& name, const String& displayName, unsigned long estimatedSize)
 {
     SecurityOrigin* origin = context->securityOrigin();
-    ProposedDatabase details;
-
     unsigned long long requirement;
     {
         MutexLocker lockDatabase(m_databaseGuard);
@@ -165,19 +163,13 @@ bool DatabaseTracker::canEstablishDatabase(ScriptExecutionContext* context, cons
         }
         if (requirement <= quotaForOriginNoLock(origin))
             return true;
-
-        // Give the chrome client a chance to increase the quota.
-        // Temporarily make the details of the proposed database available, so the client can get at them.
-        // FIXME: We should really just pass the details into this call, rather than using m_proposedDatabases.
-        details = ProposedDatabase(origin->isolatedCopy(), DatabaseDetails(name.isolatedCopy(), displayName.isolatedCopy(), estimatedSize, 0));
-        m_proposedDatabases.add(&details);
     }
+
+    // Give the chrome client a chance to increase the quota.
     // Drop all locks before calling out; we don't know what they'll do.
-    DatabaseContext::from(context)->databaseExceededQuota(name);
+    DatabaseContext::from(context)->databaseExceededQuota(name, DatabaseDetails(name.isolatedCopy(), displayName.isolatedCopy(), estimatedSize, 0));
 
     MutexLocker lockDatabase(m_databaseGuard);
-
-    m_proposedDatabases.remove(&details);
 
     // If the database will fit now, allow its creation.
     if (requirement <= quotaForOriginNoLock(origin))
@@ -273,10 +265,6 @@ String DatabaseTracker::fullPathForDatabaseNoLock(SecurityOrigin* origin, const 
 {
     ASSERT(!m_databaseGuard.tryLock());
     ASSERT(!originQuotaManager().tryLock());
-
-    for (HashSet<ProposedDatabase*>::iterator iter = m_proposedDatabases.begin(); iter != m_proposedDatabases.end(); ++iter)
-        if ((*iter)->second.name() == name && (*iter)->first->equal(origin))
-            return String();
 
     String originIdentifier = origin->databaseIdentifier();
     String originPath = this->originPath(origin);
@@ -415,12 +403,6 @@ DatabaseDetails DatabaseTracker::detailsForNameAndOrigin(const String& name, Sec
 
     {
         MutexLocker lockDatabase(m_databaseGuard);
-
-        for (HashSet<ProposedDatabase*>::iterator iter = m_proposedDatabases.begin(); iter != m_proposedDatabases.end(); ++iter)
-            if ((*iter)->second.name() == name && (*iter)->first->equal(origin)) {
-                ASSERT((*iter)->second.thread() == currentThread());
-                return (*iter)->second;
-            }
 
         openTrackerDatabase(false);
         if (!m_database.isOpen())

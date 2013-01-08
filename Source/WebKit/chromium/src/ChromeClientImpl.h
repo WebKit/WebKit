@@ -136,7 +136,7 @@ public:
     virtual void dispatchViewportPropertiesDidChange(const WebCore::ViewportArguments&) const;
     virtual void print(WebCore::Frame*);
     virtual void exceededDatabaseQuota(
-        WebCore::Frame*, const WTF::String& databaseName);
+        WebCore::Frame*, const WTF::String& databaseName, WebCore::DatabaseDetails);
     virtual void reachedMaxAppCacheSize(int64_t spaceNeeded);
     virtual void reachedApplicationCacheOriginQuota(WebCore::SecurityOrigin*, int64_t totalSpaceNeeded);
 #if ENABLE(DRAGGABLE_REGION)

@@ -581,7 +581,7 @@ void WebChromeClient::print(Frame* frame)
 }
 
 #if ENABLE(SQL_DATABASE)
-void WebChromeClient::exceededDatabaseQuota(Frame* frame, const String& databaseIdentifier)
+void WebChromeClient::exceededDatabaseQuota(Frame* frame, const String& databaseIdentifier, DatabaseDetails)
 {
     COMPtr<WebSecurityOrigin> origin(AdoptCOM, WebSecurityOrigin::createInstance(frame->document()->securityOrigin()));
     COMPtr<IWebUIDelegate> uiDelegate;

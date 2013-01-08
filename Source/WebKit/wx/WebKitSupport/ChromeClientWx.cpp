@@ -420,7 +420,7 @@ void ChromeClientWx::print(Frame* frame)
 }
 
 #if ENABLE(SQL_DATABASE)
-void ChromeClientWx::exceededDatabaseQuota(Frame*, const String&)
+void ChromeClientWx::exceededDatabaseQuota(Frame*, const String&, DatabaseDetails)
 {
     unsigned long long quota = 5 * 1024 * 1024;
 

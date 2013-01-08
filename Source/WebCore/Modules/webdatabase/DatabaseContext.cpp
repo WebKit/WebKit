@@ -122,12 +122,12 @@ bool DatabaseContext::allowDatabaseAccess() const
     return true;
 }
 
-void DatabaseContext::databaseExceededQuota(const String& name)
+void DatabaseContext::databaseExceededQuota(const String& name, DatabaseDetails details)
 {
     if (m_scriptExecutionContext->isDocument()) {
         Document* document = static_cast<Document*>(m_scriptExecutionContext);
         if (Page* page = document->page())
-            page->chrome()->client()->exceededDatabaseQuota(document->frame(), name);
+            page->chrome()->client()->exceededDatabaseQuota(document->frame(), name, details);
         return;
     }
     ASSERT(m_scriptExecutionContext->isWorkerContext());

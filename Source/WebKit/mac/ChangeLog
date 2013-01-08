@@ -1,3 +1,14 @@
+2013-01-08  Mark Lam  <mark.lam@apple.com>
+
+        Removed the need for the ProposedDatabase mechanism.
+        https://bugs.webkit.org/show_bug.cgi?id=106292.
+
+        Reviewed by Sam Weinig.
+
+        * WebCoreSupport/WebChromeClient.h:
+        * WebCoreSupport/WebChromeClient.mm:
+        (WebChromeClient::exceededDatabaseQuota):
+
 2013-01-07  Dan Bernstein  <mitz@apple.com>
 
         [mac] WebKit1 clients can’t tell when a frame has been removed from the hierarchy

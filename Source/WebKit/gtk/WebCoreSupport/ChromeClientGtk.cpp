@@ -809,7 +809,7 @@ void ChromeClient::print(Frame* frame)
 }
 
 #if ENABLE(SQL_DATABASE)
-void ChromeClient::exceededDatabaseQuota(Frame* frame, const String& databaseName)
+void ChromeClient::exceededDatabaseQuota(Frame* frame, const String& databaseName, DatabaseDetails)
 {
     guint64 defaultQuota = webkit_get_default_web_database_quota();
     DatabaseManager::manager().setQuota(frame->document()->securityOrigin(), defaultQuota);

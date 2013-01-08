@@ -1,3 +1,14 @@
+2013-01-08  Mark Lam  <mark.lam@apple.com>
+
+        Removed the need for the ProposedDatabase mechanism.
+        https://bugs.webkit.org/show_bug.cgi?id=106292.
+
+        Reviewed by Sam Weinig.
+
+        * WebCoreSupport/ChromeClientQt.cpp:
+        * WebCoreSupport/ChromeClientQt.h:
+        (ChromeClientQt):
+
 2013-01-07  Mike West  <mkwst@chromium.org>
 
         [qt] Fix ENABLE_IFRAME_SEAMLESS=0 builds.

@@ -1,3 +1,15 @@
+2013-01-08  Mark Lam  <mark.lam@apple.com>
+
+        Removed the need for the ProposedDatabase mechanism.
+        https://bugs.webkit.org/show_bug.cgi?id=106292.
+
+        Reviewed by Sam Weinig.
+
+        * WebCoreSupport/ChromeClientGtk.cpp:
+        (WebKit::ChromeClient::exceededDatabaseQuota):
+        * WebCoreSupport/ChromeClientGtk.h:
+        (ChromeClient):
+
 2013-01-03  Sergio Villar Senin  <svillar@igalia.com>
 
         [GTK] Add WebP image support

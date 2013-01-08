@@ -30,6 +30,7 @@
 
 #if ENABLE(SQL_DATABASE)
 
+#include "DatabaseDetails.h"
 #include "Supplementable.h"
 
 namespace WebCore {
@@ -54,7 +55,7 @@ public:
     static void stopDatabases(ScriptExecutionContext*, DatabaseTaskSynchronizer*);
 
     bool allowDatabaseAccess() const;
-    void databaseExceededQuota(const String& name);
+    void databaseExceededQuota(const String& name, DatabaseDetails);
 
 private:
     explicit DatabaseContext(ScriptExecutionContext*);

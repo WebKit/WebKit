@@ -402,6 +402,11 @@ String AbstractDatabase::fileName() const
     return m_filename.isolatedCopy();
 }
 
+DatabaseDetails AbstractDatabase::details() const
+{
+    return DatabaseDetails(stringIdentifier(), displayName(), estimatedSize(), 0);
+}
+
 bool AbstractDatabase::getVersionFromDatabase(String& version, bool shouldCacheVersion)
 {
     String query(String("SELECT value FROM ") + infoTableName +  " WHERE key = '" + versionKey + "';");
