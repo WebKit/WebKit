@@ -1,3 +1,38 @@
+2013-01-08  Zan Dobersek  <zandobersek@gmail.com>
+
+        [EFL][GTK] Make the PulseAudioSanitizer an object on the EflPort, GtkPort
+        https://bugs.webkit.org/show_bug.cgi?id=106354
+
+        Reviewed by Eric Seidel.
+
+        Put the PulseAudioSanitizer object on the EflPort and GtkPort interfaces
+        instead of those two inheriting from it. Also add a mock object of the
+        sanitizer that's used in unit tests.
+
+        * Scripts/webkitpy/layout_tests/port/efl.py:
+        (EflPort):
+        (EflPort.__init__):
+        (EflPort.setup_test_run):
+        (EflPort.clean_up_test_run):
+        * Scripts/webkitpy/layout_tests/port/efl_unittest.py: Also correct the
+        importing order.
+        (EflPortTest.make_port): Put a mock PulseAudioSanitizer on the instance.
+        * Scripts/webkitpy/layout_tests/port/gtk.py:
+        (GtkPort):
+        (GtkPort.__init__):
+        (GtkPort.setup_test_run):
+        (GtkPort.clean_up_test_run):
+        * Scripts/webkitpy/layout_tests/port/gtk_unittest.py: Also correct the
+        importing order.
+        (GtkPortTest.make_port): Put a mock PulseAudioSanitizer on the instance.
+        * Scripts/webkitpy/layout_tests/port/pulseaudio_sanitizer.py:
+        (PulseAudioSanitizer.unload_pulseaudio_module): Stylize the method as public.
+        (PulseAudioSanitizer.restore_pulseaudio_module): Ditto.
+        * Scripts/webkitpy/layout_tests/port/pulseaudio_sanitizer_mock.py: Added.
+        (PulseAudioSanitizerMock): A simple mock interface for PulseAudioSanitizer.
+        (PulseAudioSanitizerMock.unload_pulseaudio_module):
+        (PulseAudioSanitizerMock.restore_pulseaudio_module):
+
 2013-01-08  Jochen Eisinger  <jochen@chromium.org>
 
         [chromium] move dumpFrameLoadCallbacks and friends to the TestRunner library

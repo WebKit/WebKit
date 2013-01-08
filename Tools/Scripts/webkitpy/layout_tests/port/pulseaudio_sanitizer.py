@@ -37,7 +37,7 @@ _log = logging.getLogger(__name__)
 
 # Shared by GTK and EFL for pulseaudio sanitizing before running tests.
 class PulseAudioSanitizer:
-    def _unload_pulseaudio_module(self):
+    def unload_pulseaudio_module(self):
         # Unload pulseaudio's module-stream-restore, since it remembers
         # volume settings from different runs, and could affect
         # multimedia tests results
@@ -71,7 +71,7 @@ class PulseAudioSanitizer:
                         _log.debug('Unable to parse module index. Please check if your pulseaudio-utils version is too old.')
                 return
 
-    def _restore_pulseaudio_module(self):
+    def restore_pulseaudio_module(self):
         # If pulseaudio's module-stream-restore was previously unloaded,
         # restore it back. We shouldn't need extra checks here, since an
         # index != -1 here means we successfully unloaded it previously.
