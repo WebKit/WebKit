@@ -597,13 +597,6 @@ test('diffStates', 5, function() {
     deepEqual(diffStates(oldState, newState), {a: 1, b: 2});
 });
 
-test('addBuilderLoadErrors', 1, function() {
-    clearErrors();
-    g_buildersThatFailedToLoad = ['builder1', 'builder2'];
-    g_staleBuilders = ['staleBuilder1'];
-    addBuilderLoadErrors();
-    equal(g_errorMessages, 'ERROR: Failed to get data from builder1,builder2.<br>ERROR: Data from staleBuilder1 is more than 1 day stale.<br>');
-});
 
 test('builderGroupIsToTWebKitAttribute', 2, function() {
     var dummyMaster = new builders.BuilderMaster('Chromium', 'dummyurl', {'layout-tests': {'builders': ['WebKit Linux', 'WebKit Linux (dbg)', 'WebKit Mac10.7', 'WebKit Win']}});

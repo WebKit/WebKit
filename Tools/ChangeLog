@@ -1,3 +1,27 @@
+2013-01-08  Julie Parent  <jparent@chromium.org>
+
+        Dashboard cleanup: Remove globals g_buildersThatFailedToLoad and g_staleBuilders
+        https://bugs.webkit.org/show_bug.cgi?id=106356
+
+        g_buildersThatFailedToLoad and g_staleBuilders were globals defined in
+        dashboard_base, assigned by Loader, and used only by dashboard_base to
+        create error messages.  Moved the variables to be privates on the Loader
+        object, moved error message creation to _getLoadingErrorMessages on the
+        Loader object, and now pass the errors back to dashboard base via the
+        resourceLoadingComplete callback.
+        
+        Also removed the now unused clearError function, it was only being used
+        by unit tests to clean up global state.
+        
+        Reviewed by Dirk Pranke.
+
+        * TestResultServer/static-dashboards/dashboard_base.js:
+        (resourceLoadingComplete):
+        * TestResultServer/static-dashboards/flakiness_dashboard_unittests.js:
+        * TestResultServer/static-dashboards/loader.js:
+        (.):
+        * TestResultServer/static-dashboards/loader_unittests.js:
+
 2013-01-08  Zan Dobersek  <zandobersek@gmail.com>
 
         [EFL][GTK] Make the PulseAudioSanitizer an object on the EflPort, GtkPort

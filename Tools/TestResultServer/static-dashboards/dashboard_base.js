@@ -429,8 +429,6 @@ function isTipOfTreeWebKitBuilder()
 
 var g_resultsByBuilder = {};
 var g_expectationsByPlatform = {};
-var g_staleBuilders = [];
-var g_buildersThatFailedToLoad = [];
 
 // TODO(aboxhall): figure out whether this is a performance bottleneck and
 // change calling code to understand the trie structure instead if necessary.
@@ -472,11 +470,6 @@ function addError(errorMsg)
     g_errorMessages += errorMsg + '<br>';
 }
 
-// Clear out error and warning messages.
-function clearErrors()
-{
-    g_errorMessages = '';
-}
 
 // If there are errors, show big and red UI for errors so as to be noticed.
 function showErrors()
@@ -499,19 +492,13 @@ function showErrors()
     errors.innerHTML = g_errorMessages;
 }
 
-function addBuilderLoadErrors()
-{
-    if (g_buildersThatFailedToLoad.length)
-        addError('ERROR: Failed to get data from ' + g_buildersThatFailedToLoad.toString() + '.');
-
-    if (g_staleBuilders.length)
-        addError('ERROR: Data from ' + g_staleBuilders.toString() + ' is more than 1 day stale.');
-}
-
-function resourceLoadingComplete()
+function resourceLoadingComplete(errorMsgs)
 {
     g_resourceLoader = null;
-    addBuilderLoadErrors();
+    
+    if (errorMsgs)
+        addError(errorMsgs)
+
     handleLocationChange();
 }
 

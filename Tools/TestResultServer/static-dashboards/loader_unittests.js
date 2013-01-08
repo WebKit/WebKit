@@ -113,9 +113,6 @@ test('results file failing to load', 2, function() {
     resetGlobals();
     loadBuildersList('@ToT - chromium.org', 'layout-tests');
     
-    // FIXME: loader shouldn't depend on state defined in dashboard_base.js.
-    g_buildersThatFailedToLoad = [];
-
     var resourceLoader = new loader.Loader();
     var resourceLoadCount = 0;
     resourceLoader._handleResourceLoad = function() {
@@ -130,7 +127,7 @@ test('results file failing to load', 2, function() {
     currentBuilders()[builder2] = true;
     resourceLoader._handleResultsFileLoadError(builder2);
 
-    deepEqual(g_buildersThatFailedToLoad, [builder1, builder2]);
+    deepEqual(resourceLoader._buildersThatFailedToLoad, [builder1, builder2]);
     equal(resourceLoadCount, 2);
 
 });
@@ -149,4 +146,11 @@ test('Default builder gets set.', 3, function() {
     var newDefaultBuilder = currentBuilderGroup().defaultBuilder();
     ok(newDefaultBuilder, "There should still be a default builder.");
     notEqual(newDefaultBuilder, defaultBuilder, "Default builder should not be the old default builder");
+});
+
+test('addBuilderLoadErrors', 1, function() {
+    var resourceLoader = new loader.Loader();
+    resourceLoader._buildersThatFailedToLoad = ['builder1', 'builder2'];
+    resourceLoader._staleBuilders = ['staleBuilder1'];
+    equal(resourceLoader._getLoadingErrorMessages(), 'ERROR: Failed to get data from builder1,builder2.<br>ERROR: Data from staleBuilder1 is more than 1 day stale.<br>');
 });
