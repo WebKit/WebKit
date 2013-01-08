@@ -398,6 +398,8 @@ webkit.org/b/99062 fast/dom/HTMLDialogElement [ Skip ]
 
 # Proximity Events is not supported.
 webkit.org/b/99060 proximity [ Failure ]
+webkit.org/b/99060 proximity/event-after-navigation.html [ Timeout ]
+webkit.org/b/99060 proximity/no-page-cache.html [ Timeout ]
 webkit.org/b/99060 fast/events/constructors/device-proximity-event-constructor.html [ Failure ]
 
 # HIDDEN_PAGE_DOM_TIMER_THROTTLING is not enabled
@@ -963,7 +965,7 @@ Bug(GTK) inspector/debugger/scripts-panel.html [ Failure Pass ]
 Bug(GTK) inspector/elements/edit-dom-actions.html [ Failure Timeout Pass ]
 Bug(GTK) inspector/timeline/timeline-paint.html [ Failure ]
 Bug(GTK) inspector/timeline/timeline-receive-response-event.html [ Failure ]
-Bug(GTK) inspector/timeline/timeline-decode-resize.html [ Timeout ]
+Bug(GTK) inspector/timeline/timeline-decode-resize.html [ Failure ]
 Bug(GTK) http/tests/inspector/resource-har-conversion.html [ Failure ]
 Bug(GTK) http/tests/inspector/resource-har-pages.html [ Failure ]
 Bug(GTK) http/tests/inspector/resource-parameters.html [ Timeout ]

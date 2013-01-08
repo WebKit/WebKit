@@ -1,3 +1,14 @@
+2013-01-08  Zan Dobersek  <zandobersek@gmail.com>
+
+        Unreviewed GTK gardening.
+
+        Changing a timeout expectation for inspector/timeline/timeline-decode-resize.html
+        to a failure expectation. The test doesn't time out anymore due to added WebP support.
+
+        Adding a timeout expectation for two proximity layout tests added in r139050.
+
+        * platform/gtk/TestExpectations:
+
 2013-01-08  Keishi Hattori  <keishi@webkit.org>
 
         [Chromium] Don't confine page popups to root view on Mac
