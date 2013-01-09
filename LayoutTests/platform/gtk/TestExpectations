@@ -506,8 +506,6 @@ webkit.org/b/104684 fast/xmlhttprequest/xmlhttprequest-recursive-sync-event.html
 
 webkit.org/b/105042 editing/execCommand/indent-paragraphs.html [ Crash ]
 
-webkit.org/b/105580 media/track/track-prefer-captions.html [ Crash Pass ]
-
 webkit.org/b/105689 [ Debug ] plugins/npruntime/embed-property-iframe-equality.html [ Crash ]
 
 #////////////////////////////////////////////////////////////////////////////////////////

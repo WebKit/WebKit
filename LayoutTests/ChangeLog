@@ -1,3 +1,10 @@
+2013-01-09  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Removed crash expectations from tests that have been passing per bugs 105566, 105567, and 105580.
+
+        * platform/gtk/TestExpectations:
+        * platform/mac/TestExpectations:
+
 2013-01-09  Noel Gordon  <noel.gordon@gmail.com>
 
         [chromium] fast/frames/frame-limit.html can be slow in release
