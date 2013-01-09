@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2011 Research In Motion Limited. All rights reserved.
+ * Copyright (C) 2013 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -31,9 +32,12 @@
 
 namespace WebCore {
 
+static const int timeToKeepCachedBitmapsAfterLastUseInSeconds = 30;
+
 SVGImageCache::SVGImageCache(SVGImage* svgImage)
     : m_svgImage(svgImage)
     , m_redrawTimer(this, &SVGImageCache::redrawTimerFired)
+    , m_cacheClearTimer(this, &SVGImageCache::cacheClearTimerFired, timeToKeepCachedBitmapsAfterLastUseInSeconds)
 {
     ASSERT(m_svgImage);
 }
@@ -41,7 +45,11 @@ SVGImageCache::SVGImageCache(SVGImage* svgImage)
 SVGImageCache::~SVGImageCache()
 {
     m_sizeAndScalesMap.clear();
+    clearBitmapCache();
+}
 
+void SVGImageCache::clearBitmapCache()
+{
     ImageDataMap::iterator end = m_imageDataMap.end();
     for (ImageDataMap::iterator it = m_imageDataMap.begin(); it != end; ++it) {
         // Checks if the client (it->key) is still valid. The client should remove itself from this
@@ -125,6 +133,11 @@ void SVGImageCache::redrawTimerFired(Timer<SVGImageCache>*)
        redraw();
 }
 
+void SVGImageCache::cacheClearTimerFired(DeferrableOneShotTimer<SVGImageCache>*)
+{
+    clearBitmapCache();
+}
+
 Image* SVGImageCache::lookupOrCreateBitmapImageForRenderer(const RenderObject* renderer)
 {
     if (!renderer)
@@ -147,6 +160,9 @@ Image* SVGImageCache::lookupOrCreateBitmapImageForRenderer(const RenderObject* r
         scale = page->deviceScaleFactor() * page->pageScaleFactor();
 
     ASSERT(!size.isEmpty());
+
+    // (Re)schedule the oneshot timer to throw out all the cached ImageBuffers if they remain unused for too long.
+    m_cacheClearTimer.restart();
 
     // Lookup image for client in cache and eventually update it.
     ImageDataMap::iterator it = m_imageDataMap.find(client);

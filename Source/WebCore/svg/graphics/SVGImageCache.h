@@ -84,6 +84,8 @@ private:
     SVGImageCache(SVGImage*);
     void redraw();
     void redrawTimerFired(Timer<SVGImageCache>*);
+    void cacheClearTimerFired(DeferrableOneShotTimer<SVGImageCache>*);
+    void clearBitmapCache();
 
     struct ImageData {
         ImageData()
@@ -114,6 +116,7 @@ private:
     SizeAndScalesMap m_sizeAndScalesMap;
     ImageDataMap m_imageDataMap;
     Timer<SVGImageCache> m_redrawTimer;
+    DeferrableOneShotTimer<SVGImageCache> m_cacheClearTimer;
 };
 
 } // namespace WebCore
