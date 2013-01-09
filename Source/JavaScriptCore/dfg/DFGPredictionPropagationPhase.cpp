@@ -518,7 +518,13 @@ private:
             changed |= mergeDefaultFlags(node);
             break;
         }
-            
+
+        case TypeOf: {
+            changed |= setPrediction(SpecString);
+            changed |= mergeDefaultFlags(node);
+            break;
+        }
+
         case GetById: {
             changed |= mergePrediction(node.getHeapPrediction());
             changed |= mergeDefaultFlags(node);

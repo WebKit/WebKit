@@ -597,6 +597,7 @@ private:
             case CreateThis:
             case AllocatePropertyStorage:
             case ReallocatePropertyStorage:
+            case TypeOf:
                 return NoNode;
                 
             case GetIndexedPropertyStorage:
@@ -1166,6 +1167,7 @@ private:
         case SkipScope:
         case GetScopeRegisters:
         case GetScope:
+        case TypeOf:
             setReplacement(pureCSE(node));
             break;
             

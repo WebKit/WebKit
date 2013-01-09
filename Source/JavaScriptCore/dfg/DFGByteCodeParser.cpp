@@ -3223,6 +3223,12 @@ bool ByteCodeParser::parseBlock(unsigned limit)
             NEXT_OPCODE(op_new_func_exp);
         }
 
+        case op_typeof: {
+            set(currentInstruction[1].u.operand,
+                addToGraph(TypeOf, get(currentInstruction[2].u.operand)));
+            NEXT_OPCODE(op_typeof);
+        }
+
         default:
             // Parse failed! This should not happen because the capabilities checker
             // should have caught it.

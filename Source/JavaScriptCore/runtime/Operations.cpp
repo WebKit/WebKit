@@ -56,28 +56,32 @@ NEVER_INLINE JSValue jsAddSlowCase(CallFrame* callFrame, JSValue v1, JSValue v2)
     return jsNumber(p1.toNumber(callFrame) + p2.toNumber(callFrame));
 }
 
-JSValue jsTypeStringForValue(CallFrame* callFrame, JSValue v)
+JSValue jsTypeStringForValue(JSGlobalData& globalData, JSGlobalObject* globalObject, JSValue v)
 {
-    JSGlobalData& globalData = callFrame->globalData();
     if (v.isUndefined())
-        return globalData.smallStrings.undefinedString(&globalData);
+        return globalData.smallStrings.undefinedString();
     if (v.isBoolean())
-        return globalData.smallStrings.booleanString(&globalData);
+        return globalData.smallStrings.booleanString();
     if (v.isNumber())
-        return globalData.smallStrings.numberString(&globalData);
+        return globalData.smallStrings.numberString();
     if (v.isString())
-        return globalData.smallStrings.stringString(&globalData);
+        return globalData.smallStrings.stringString();
     if (v.isObject()) {
         // Return "undefined" for objects that should be treated
         // as null when doing comparisons.
-        if (asObject(v)->structure()->masqueradesAsUndefined(callFrame->lexicalGlobalObject()))
-            return globalData.smallStrings.undefinedString(&globalData);
+        if (asObject(v)->structure()->masqueradesAsUndefined(globalObject))
+            return globalData.smallStrings.undefinedString();
         CallData callData;
         JSObject* object = asObject(v);
         if (object->methodTable()->getCallData(object, callData) != CallTypeNone)
-            return globalData.smallStrings.functionString(&globalData);
+            return globalData.smallStrings.functionString();
     }
-    return globalData.smallStrings.objectString(&globalData);
+    return globalData.smallStrings.objectString();
+}
+
+JSValue jsTypeStringForValue(CallFrame* callFrame, JSValue v)
+{
+    return jsTypeStringForValue(callFrame->globalData(), callFrame->lexicalGlobalObject(), v);
 }
 
 bool jsIsObjectType(CallFrame* callFrame, JSValue v)

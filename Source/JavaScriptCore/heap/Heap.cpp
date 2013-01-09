@@ -492,6 +492,8 @@ void Heap::markRoots(bool fullGC)
                 m_globalData->codeBlocksBeingCompiled[i]->visitAggregate(visitor);
         }
 
+        m_globalData->smallStrings.visitStrongReferences(visitor);
+
         {
             GCPHASE(VisitMachineRoots);
             MARK_LOG_ROOT(visitor, "C++ Stack");

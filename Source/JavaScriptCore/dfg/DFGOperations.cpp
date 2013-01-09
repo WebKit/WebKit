@@ -1428,6 +1428,11 @@ size_t DFG_OPERATION operationIsFunction(EncodedJSValue value)
     return jsIsFunctionType(JSValue::decode(value));
 }
 
+JSCell* DFG_OPERATION operationTypeOf(ExecState* exec, JSCell* value)
+{
+    return jsTypeStringForValue(exec, JSValue(value)).asCell();
+}
+
 void DFG_OPERATION operationReallocateStorageAndFinishPut(ExecState* exec, JSObject* base, Structure* structure, PropertyOffset offset, EncodedJSValue value)
 {
     JSGlobalData& globalData = exec->globalData();

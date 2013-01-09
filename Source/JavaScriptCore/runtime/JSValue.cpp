@@ -295,13 +295,13 @@ JSString* JSValue::toStringSlowCase(ExecState* exec) const
     if (isDouble())
         return jsString(&globalData, globalData.numericStrings.add(asDouble()));
     if (isTrue())
-        return globalData.smallStrings.trueString(&globalData);
+        return globalData.smallStrings.trueString();
     if (isFalse())
-        return globalData.smallStrings.falseString(&globalData);
+        return globalData.smallStrings.falseString();
     if (isNull())
-        return globalData.smallStrings.nullString(&globalData);
+        return globalData.smallStrings.nullString();
     if (isUndefined())
-        return globalData.smallStrings.undefinedString(&globalData);
+        return globalData.smallStrings.undefinedString();
 
     ASSERT(isCell());
     JSValue value = asCell()->toPrimitive(exec, PreferString);

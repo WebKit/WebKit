@@ -31,6 +31,7 @@
 #include "CodeBlock.h"
 #include "DFGBasicBlock.h"
 #include "GetByIdStatus.h"
+#include "Operations.h"
 #include "PutByIdStatus.h"
 
 namespace JSC { namespace DFG {
@@ -707,6 +708,11 @@ bool AbstractState::execute(unsigned indexInBlock)
             case IsString:
                 constantWasSet = trySetConstant(nodeIndex, jsBoolean(isJSString(child)));
                 break;
+            case IsObject:
+                if (child.isNull() || !child.isObject()) {
+                    constantWasSet = trySetConstant(nodeIndex, jsBoolean(child.isNull()));
+                    break;
+                }
             default:
                 constantWasSet = false;
                 break;
@@ -716,7 +722,62 @@ bool AbstractState::execute(unsigned indexInBlock)
                 break;
             }
         }
+
         forNode(nodeIndex).set(SpecBoolean);
+        break;
+    }
+
+    case TypeOf: {
+        JSGlobalData* globalData = m_codeBlock->globalData();
+        JSValue child = forNode(node.child1()).value();
+        AbstractValue& abstractChild = forNode(node.child1());
+        if (child) {
+            JSValue typeString = jsTypeStringForValue(*globalData, m_codeBlock->globalObjectFor(node.codeOrigin), child);
+            if (trySetConstant(nodeIndex, typeString)) {
+                m_foundConstants = true;
+                break;
+            }
+        } else if (isNumberSpeculation(abstractChild.m_type)) {
+            if (trySetConstant(nodeIndex, globalData->smallStrings.numberString())) {
+                forNode(node.child1()).filter(SpecNumber);
+                m_foundConstants = true;
+                break;
+            }
+        } else if (isStringSpeculation(abstractChild.m_type)) {
+            if (trySetConstant(nodeIndex, globalData->smallStrings.stringString())) {
+                forNode(node.child1()).filter(SpecString);
+                m_foundConstants = true;
+                break;
+            }
+        } else if (isFinalObjectSpeculation(abstractChild.m_type) || isArraySpeculation(abstractChild.m_type) || isArgumentsSpeculation(abstractChild.m_type)) {
+            if (trySetConstant(nodeIndex, globalData->smallStrings.objectString())) {
+                forNode(node.child1()).filter(SpecFinalObject | SpecArray | SpecArguments);
+                m_foundConstants = true;
+                break;
+            }
+        } else if (isFunctionSpeculation(abstractChild.m_type)) {
+            if (trySetConstant(nodeIndex, globalData->smallStrings.functionString())) {
+                forNode(node.child1()).filter(SpecFunction);
+                m_foundConstants = true;
+                break;
+            }
+        } else if (isBooleanSpeculation(abstractChild.m_type)) {
+            if (trySetConstant(nodeIndex, globalData->smallStrings.booleanString())) {
+                forNode(node.child1()).filter(SpecBoolean);
+                m_foundConstants = true;
+                break;
+            }
+        } else {
+            Node& childNode = m_graph[node.child1()];
+            if (isCellSpeculation(childNode.prediction())) {
+                if (isStringSpeculation(childNode.prediction()))
+                    forNode(node.child1()).filter(SpecString);
+                else
+                    forNode(node.child1()).filter(SpecCell);
+                node.setCanExit(true);
+            }
+        }
+        forNode(nodeIndex).set(SpecString);
         break;
     }
             
