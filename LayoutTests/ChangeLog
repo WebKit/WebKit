@@ -1,3 +1,18 @@
+2013-01-09  Ojan Vafai  <ojan@chromium.org>
+
+        fast/forms/min-content-form-controls.html fails on some platforms
+        https://bugs.webkit.org/show_bug.cgi?id=106482
+
+        Reviewed by Eric Seidel.
+
+        The text dump for some form controls (menulists?) has different whitespace
+        output on different platforms. Remove the form controls to avoid adding
+        platform-specific expectations for this test.
+
+        * fast/forms/min-content-form-controls-expected.txt:
+        * fast/forms/min-content-form-controls.html:
+        * platform/mac/TestExpectations:
+
 2013-01-09  Michael Pruett  <michael@68k.org>
 
         IndexedDB: Remove unnecessary tests from storage/indexeddb/key-type-array.html

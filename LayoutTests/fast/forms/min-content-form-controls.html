@@ -31,6 +31,19 @@
 var ids = ['text', 'file', 'range', 'select', 'multiple'];
 ids.forEach(function(id) {
     shouldBe('document.getElementById("' + id + '-a").offsetWidth', 'document.getElementById("' + id + '-b").offsetWidth');
-})
+});
+
+function remove(id) {
+    var node = document.getElementById(id);
+    node.parentNode.removeChild(node);
+}
+
+if (window.testRunner) {
+    // Remove these elements since some of the text dumps are different platforms.
+    ids.forEach(function(id) {
+        remove(id + '-a');
+        remove(id + '-b');
+    });
+}
 </script>
 <script src="../js/resources/js-test-post.js"></script>
