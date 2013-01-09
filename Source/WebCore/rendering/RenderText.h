@@ -96,6 +96,7 @@ public:
 
     virtual IntRect linesBoundingBox() const;
     LayoutRect linesVisualOverflowBoundingBox() const;
+    IntRect linesLogicalBoundingBox() const;
 
     FloatPoint firstRunOrigin() const;
     float firstRunX() const;

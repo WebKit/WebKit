@@ -1610,6 +1610,13 @@ IntRect RenderText::linesBoundingBox() const
     return result;
 }
 
+IntRect RenderText::linesLogicalBoundingBox() const
+{
+    IntRect rect = linesBoundingBox();
+
+    return style()->isHorizontalWritingMode() ? rect : IntRect(rect.x(), rect.y(), rect.height(), rect.width());
+}
+
 LayoutRect RenderText::linesVisualOverflowBoundingBox() const
 {
     if (!firstTextBox())

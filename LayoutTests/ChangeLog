@@ -1,3 +1,15 @@
+2013-01-08  Arpita Bahuguna  <arpitabahuguna@gmail.com>
+
+        Caret is incorrectly painted for a contenteditable <div> containing a <br> in vertical writing mode
+        https://bugs.webkit.org/show_bug.cgi?id=103621
+
+        Reviewed by Ryosuke Niwa.
+
+        * editing/selection/caret-in-div-containing-br-in-vertical-mode-expected.txt: Added.
+        * editing/selection/caret-in-div-containing-br-in-vertical-mode.html: Added.
+        Testcase added for verifying the caret display at the start of an editable
+        div containing only a <br> element in vertical writing mode.
+
 2013-01-08  Csaba Osztrogonác  <ossy@webkit.org>
 
         [Qt] Unreviewed gardening, skip new failing tests.
