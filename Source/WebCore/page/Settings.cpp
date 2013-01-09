@@ -126,6 +126,11 @@ static EditingBehaviorType editingBehaviorTypeForPlatform()
 }
 
 static const double defaultIncrementalRenderingSuppressionTimeoutInSeconds = 5;
+#if USE(UNIFIED_TEXT_CHECKING)
+static const double defaultUnifiedTextCheckerEnabled = true;
+#else
+static const double defaultUnifiedTextCheckerEnabled = false;
+#endif
 
 Settings::Settings(Page* page)
     : m_page(0)
@@ -174,11 +179,6 @@ Settings::Settings(Page* page)
     , m_showTiledScrollingIndicator(false)
     , m_tiledBackingStoreEnabled(false)
     , m_dnsPrefetchingEnabled(false)
-#if USE(UNIFIED_TEXT_CHECKING)
-    , m_unifiedTextCheckerEnabled(true)
-#else
-    , m_unifiedTextCheckerEnabled(false)
-#endif
 #if ENABLE(SMOOTH_SCROLLING)
     , m_scrollAnimatorEnabled(true)
 #endif

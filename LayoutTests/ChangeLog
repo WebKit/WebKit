@@ -1,3 +1,21 @@
+2013-01-09  Tony Chang  <tony@chromium.org>
+
+        Automatically generate Settings::unifiedTextCheckerEnabled
+        https://bugs.webkit.org/show_bug.cgi?id=106382
+
+        Reviewed by Adam Barth.
+
+        The InternalSettings.idl method didn't match the Settings' getter/setter. Now
+        that we're using the generated version, make the tests use the same name.
+
+        * editing/spelling/grammar-edit-word.html:
+        * editing/spelling/spellcheck-async-mutation.html:
+        * editing/spelling/spellcheck-async-remove-frame.html:
+        * editing/spelling/spellcheck-async.html:
+        * editing/spelling/spelling-marker-description.html:
+        * editing/spelling/spelling-unified-emulation.html:
+        * platform/chromium/editing/spelling/delete-misspelled-word.html:
+
 2013-01-09  Alexis Menard  <alexis@webkit.org>
 
         Implement CSS computed style value for transition shorthand

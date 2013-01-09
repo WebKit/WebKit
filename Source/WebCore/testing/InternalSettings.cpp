@@ -73,7 +73,6 @@ InternalSettings::Backup::Backup(Settings* settings)
     , m_originalStyleScoped(RuntimeEnabledFeatures::styleScopedEnabled())
 #endif
     , m_originalEditingBehavior(settings->editingBehaviorType())
-    , m_originalUnifiedSpellCheckerEnabled(settings->unifiedTextCheckerEnabled())
 #if ENABLE(TEXT_AUTOSIZING)
     , m_originalTextAutosizingEnabled(settings->textAutosizingEnabled())
     , m_originalTextAutosizingWindowSizeOverride(settings->textAutosizingWindowSizeOverride())
@@ -108,7 +107,6 @@ void InternalSettings::Backup::restoreTo(Settings* settings)
     RuntimeEnabledFeatures::setStyleScopedEnabled(m_originalStyleScoped);
 #endif
     settings->setEditingBehaviorType(m_originalEditingBehavior);
-    settings->setUnifiedTextCheckerEnabled(m_originalUnifiedSpellCheckerEnabled);
 #if ENABLE(TEXT_AUTOSIZING)
     settings->setTextAutosizingEnabled(m_originalTextAutosizingEnabled);
     settings->setTextAutosizingWindowSizeOverride(m_originalTextAutosizingWindowSizeOverride);
@@ -188,18 +186,6 @@ void InternalSettings::setMockScrollbarsEnabled(bool enabled, ExceptionCode& ec)
 {
     InternalSettingsGuardForSettings();
     settings()->setMockScrollbarsEnabled(enabled);
-}
-
-void InternalSettings::setUnifiedTextCheckingEnabled(bool enabled, ExceptionCode& ec)
-{
-    InternalSettingsGuardForSettings();
-    settings()->setUnifiedTextCheckerEnabled(enabled);
-}
-
-bool InternalSettings::unifiedTextCheckingEnabled(ExceptionCode& ec)
-{
-    InternalSettingsGuardForSettingsReturn(false);
-    return settings()->unifiedTextCheckerEnabled();
 }
 
 void InternalSettings::setShadowDOMEnabled(bool enabled, ExceptionCode& ec)

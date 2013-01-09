@@ -36,7 +36,7 @@ if (window.testRunner) {
 }
 
 if (window.internals)
-    internals.settings.setUnifiedTextCheckingEnabled(true);
+    internals.settings.setUnifiedTextCheckerEnabled(true);
 
 var sourceIds = ['source'];
 var destElems = ['textarea', 'input', 'contenteditable'];
@@ -77,7 +77,7 @@ function doTestIfAny() {
     removeAllChildren(document.getElementById('move-target'));
 
     if (window.internals)
-        internals.settings.setUnifiedTextCheckingEnabled(false);
+        internals.settings.setUnifiedTextCheckerEnabled(false);
 
     if (window.testRunner) {
         testRunner.setAsynchronousSpellCheckingEnabled(false);

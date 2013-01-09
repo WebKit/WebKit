@@ -94,8 +94,6 @@ public:
 
     void setMockScrollbarsEnabled(bool enabled, ExceptionCode&);
     void setUsesOverlayScrollbars(bool enabled, ExceptionCode&);
-    void setUnifiedTextCheckingEnabled(bool, ExceptionCode&);
-    bool unifiedTextCheckingEnabled(ExceptionCode&);
     void setTouchEventEmulationEnabled(bool enabled, ExceptionCode&);
     void setShadowDOMEnabled(bool enabled, ExceptionCode&);
     void setAuthorShadowDOMForAnyElementEnabled(bool);

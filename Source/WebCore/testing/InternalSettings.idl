@@ -28,8 +28,6 @@
     JSGenerateToJSObject
 ] interface InternalSettings : InternalSettingsGenerated {
     void setMockScrollbarsEnabled(in boolean enabled) raises(DOMException);
-    void setUnifiedTextCheckingEnabled(in boolean enabled) raises (DOMException);
-    boolean unifiedTextCheckingEnabled() raises (DOMException);
     void setTouchEventEmulationEnabled(in boolean enabled) raises(DOMException);
     void setShadowDOMEnabled(in boolean enabled) raises(DOMException);
     void setAuthorShadowDOMForAnyElementEnabled(in boolean isEnabled);

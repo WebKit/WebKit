@@ -27,7 +27,7 @@ if (window.testRunner) {
 }
 
 if (window.internals)
-    internals.settings.setUnifiedTextCheckingEnabled(true);
+    internals.settings.setUnifiedTextCheckerEnabled(true);
 
 var container = document.getElementById('container');
 function removeChildren(node) {
@@ -57,7 +57,7 @@ function doTestIfAny() {
     // No more tests.
     removeChildren(container);
     if (window.internals)
-        internals.settings.setUnifiedTextCheckingEnabled(false);
+        internals.settings.setUnifiedTextCheckerEnabled(false);
 
     if (window.testRunner) {
         testRunner.setAsynchronousSpellCheckingEnabled(false);

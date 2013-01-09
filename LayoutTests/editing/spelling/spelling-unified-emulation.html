@@ -31,7 +31,7 @@ if (window.testRunner) {
 }
 
 if (window.internals)
-    internals.settings.setUnifiedTextCheckingEnabled(true);
+    internals.settings.setUnifiedTextCheckerEnabled(true);
 
 var testData = [
     { text: 'zz', marked: ['zz'] },
@@ -85,7 +85,7 @@ for (var i = 0; i < testData.length; ++i) {
 }
 
 if (window.internals)
-    internals.settings.setUnifiedTextCheckingEnabled(false);
+    internals.settings.setUnifiedTextCheckerEnabled(false);
 
 var successfullyParsed = true;
 </script>

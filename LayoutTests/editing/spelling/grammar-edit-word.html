@@ -9,7 +9,7 @@
 <script language="javascript">
 description('Test if WebKit removes grammar markers when we edit a grammatically-incorrect word. To test manually, type a grammatically-incorrect sentence "You has the right." and type a backspace key to delete the last character of "has". This test succeeds when "ha" does not have grammar markers.');
 
-internals.settings.setUnifiedTextCheckingEnabled(true);
+internals.settings.setUnifiedTextCheckerEnabled(true);
 var target = document.getElementById('src');
 target.focus();
 
@@ -21,7 +21,7 @@ for (var i = 0; i < 12; ++i)
     evalAndLog('testRunner.execCommand("DeleteBackward")');
 shouldBeFalse('internals.hasGrammarMarker(document, 4, 2)');
 
-internals.settings.setUnifiedTextCheckingEnabled(false);
+internals.settings.setUnifiedTextCheckerEnabled(false);
 </script>
 <script src="../../fast/js/resources/js-test-post.js"></script>
 </body>

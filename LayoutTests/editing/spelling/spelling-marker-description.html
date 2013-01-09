@@ -13,7 +13,7 @@
 function done()
 {
     testRunner.setAsynchronousSpellCheckingEnabled(false);
-    internals.settings.setUnifiedTextCheckingEnabled(false);
+    internals.settings.setUnifiedTextCheckerEnabled(false);
     finishJSTest()
 }
 
@@ -47,7 +47,7 @@ function verify(nretry)
 function test()
 {
     jsTestIsAsync = true;
-    internals.settings.setUnifiedTextCheckingEnabled(true);
+    internals.settings.setUnifiedTextCheckerEnabled(true);
     testRunner.setAsynchronousSpellCheckingEnabled(true);
 
     var sel = window.getSelection();

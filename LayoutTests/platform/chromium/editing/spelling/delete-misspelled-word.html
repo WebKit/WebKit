@@ -22,7 +22,7 @@ shouldBeTrue('insertText("z"); insertText("z"); insertText(" "); internals.hasSp
 
 debug('Enable asynchronous spellchecking, delete two characters, and insert a space');
 testRunner.setAsynchronousSpellCheckingEnabled(true);
-internals.settings.setUnifiedTextCheckingEnabled(true);
+internals.settings.setUnifiedTextCheckerEnabled(true);
 
 testRunner.execCommand("DeleteBackward");
 testRunner.execCommand("DeleteBackward");
@@ -36,7 +36,7 @@ function verifyMarker() {
         return;
     }
     shouldBeFalse('internals.hasSpellingMarker(document, 0, 1)');
-    internals.settings.setUnifiedTextCheckingEnabled(false);
+    internals.settings.setUnifiedTextCheckerEnabled(false);
     testRunner.setAsynchronousSpellCheckingEnabled(false);
     finishJSTest();
 }

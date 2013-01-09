@@ -171,3 +171,5 @@ spatialNavigationEnabled initial=false
 # This setting adds a means to enable/disable touch initiated drag & drop. If
 # enabled, the user can initiate drag using long press.
 touchDragDropEnabled initial=false
+
+unifiedTextCheckerEnabled initial=defaultUnifiedTextCheckerEnabled

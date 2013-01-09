@@ -260,9 +260,6 @@ namespace WebCore {
         static bool isAVFoundationEnabled() { return gAVFoundationEnabled; }
 #endif
 
-        void setUnifiedTextCheckerEnabled(bool flag) { m_unifiedTextCheckerEnabled = flag; }
-        bool unifiedTextCheckerEnabled() const { return m_unifiedTextCheckerEnabled; }
-
         static const unsigned defaultMaximumHTMLParserDOMTreeDepth = 512;
 
 #if ENABLE(SMOOTH_SCROLLING)
@@ -360,7 +357,6 @@ namespace WebCore {
         bool m_showTiledScrollingIndicator : 1;
         bool m_tiledBackingStoreEnabled : 1;
         bool m_dnsPrefetchingEnabled : 1;
-        bool m_unifiedTextCheckerEnabled : 1;
 #if ENABLE(SMOOTH_SCROLLING)
         bool m_scrollAnimatorEnabled : 1;
 #endif
