@@ -33,7 +33,6 @@
 #include "LevelDBSlice.h"
 #include "LevelDBWriteBatch.h"
 #include "Logging.h"
-#include <env_idb.h>
 #include <helpers/memenv/memenv.h>
 #include <leveldb/comparator.h>
 #include <leveldb/db.h>
@@ -136,7 +135,7 @@ PassOwnPtr<LevelDBDatabase> LevelDBDatabase::open(const String& fileName, const 
     OwnPtr<ComparatorAdapter> comparatorAdapter = adoptPtr(new ComparatorAdapter(comparator));
 
     leveldb::DB* db;
-    const leveldb::Status s = openDB(comparatorAdapter.get(), leveldb::IDBEnv(), fileName, &db);
+    const leveldb::Status s = openDB(comparatorAdapter.get(), leveldb::Env::Default(), fileName, &db);
 
     if (!s.ok()) {
         LOG_ERROR("Failed to open LevelDB database from %s: %s", fileName.ascii().data(), s.ToString().c_str());
@@ -154,7 +153,7 @@ PassOwnPtr<LevelDBDatabase> LevelDBDatabase::open(const String& fileName, const 
 PassOwnPtr<LevelDBDatabase> LevelDBDatabase::openInMemory(const LevelDBComparator* comparator)
 {
     OwnPtr<ComparatorAdapter> comparatorAdapter = adoptPtr(new ComparatorAdapter(comparator));
-    OwnPtr<leveldb::Env> inMemoryEnv = adoptPtr(leveldb::NewMemEnv(leveldb::IDBEnv()));
+    OwnPtr<leveldb::Env> inMemoryEnv = adoptPtr(leveldb::NewMemEnv(leveldb::Env::Default()));
 
     leveldb::DB* db;
     const leveldb::Status s = openDB(comparatorAdapter.get(), inMemoryEnv.get(), String(), &db);
