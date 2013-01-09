@@ -46,10 +46,9 @@
           'SK_DISABLE_DITHER_32BIT_GRADIENT',
           'SK_IGNORE_QUAD_STROKE_FIX',
           'SK_DISABLE_DASHING_OPTIMIZATION',
-
-          # The following change is not ready to be enabled due to uncertainty about its effect.
-          # Consult with the Skia team before removing.
-          'SK_IGNORE_TREAT_AS_SPRITE',
+          'SK_IGNORE_FAST_SCALEMATRIX_INVERT',
+          'SK_IGNORE_TRANS_CLAMP_FIX',
+          'SK_SUPPORT_INT_SRCRECT_DRAWBITMAPRECT',
 
         ],
       },

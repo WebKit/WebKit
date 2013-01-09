@@ -1,3 +1,11 @@
+2013-01-09  Stephen Chenney  <schenney@chromium.org>
+
+        Adjust Skia build flags to WebKit skia gyp
+
+        Unreviewed change to enable easy layout test rebaselining.
+
+        * skia_webkit.gyp:
+
 2013-01-09  Mikhail Naganov  <mnaganov@chromium.org>
 
         [Chromium] Unreviewed: A trivial fix for WebFrameTest.DivAutoZoomParamsTest after r139177.
