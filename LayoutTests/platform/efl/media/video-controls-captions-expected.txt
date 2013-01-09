@@ -1,0 +1,25 @@
+Tests that the closed captions button, when toggled, updates the text track display area.
+
+Set the user language preference so that the track will be chosen when the CC button is clicked.
+RUN(internals.setUserPreferredLanguages(['en']))
+EVENT(canplaythrough)
+
+** Caption button should be visible and enabled because we have a captions track.
+EXPECTED (captionsButtonCoordinates[0] > '0') OK
+EXPECTED (captionsButtonCoordinates[1] > '0') OK
+EXPECTED (captionsButtonElement.disabled == 'false') OK
+
+** The captions track should be listed in textTracks, but not yet loaded. **
+EXPECTED (video.textTracks.length == '1') OK
+EXPECTED (video.textTracks[0].mode == 'disabled') OK
+Failed to find text track container element
+
+** Captions track should load and captions should become visible after button is clicked **
+*** Click the CC button.
+EXPECTED (textTrackDisplayElement(video, 'display').innerText == 'Lorem') OK
+
+** Captions should not be visible after button is clicked again **
+*** Click the CC button.
+EXPECTED (textTrackDisplayElement(video, 'display').innerText == 'Lorem') OK
+END OF TEST
+
