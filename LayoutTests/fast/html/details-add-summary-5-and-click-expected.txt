@@ -11,4 +11,4 @@ layer at (0,0) size 800x600
         RenderBlock {SUMMARY} at (0,18) size 800x18
           RenderText {#text} at (0,0) size 58x19
             text run at (0,0) width 58: "summary"
-caret: position 0 of child 0 {DIV} of {#shadow-root} of child 1 {SUMMARY} of child 1 {DETAILS} of body
+caret: position 0 of child 0 {DIV} of {#document-fragment} of child 1 {SUMMARY} of child 1 {DETAILS} of body

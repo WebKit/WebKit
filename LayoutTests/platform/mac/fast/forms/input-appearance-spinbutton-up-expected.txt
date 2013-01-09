@@ -18,4 +18,4 @@ layer at (0,0) size 800x600
         RenderText {#text} at (0,0) size 0x0
 layer at (184,46) size 19x23
   RenderBlock (relative positioned) {DIV} at (171,-1) size 19x23
-caret: position 1 of child 0 {#text} of child 0 {DIV} of child 0 {DIV} of child 0 {DIV} of {#shadow-root} of child 5 {INPUT} of body
+caret: position 1 of child 0 {#text} of child 0 {DIV} of child 0 {DIV} of child 0 {DIV} of {#document-fragment} of child 5 {INPUT} of body

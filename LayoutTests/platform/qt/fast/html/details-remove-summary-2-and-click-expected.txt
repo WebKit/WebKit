@@ -8,4 +8,4 @@ layer at (0,0) size 800x600
           RenderDetailsMarker {DIV} at (0,5) size 10x10: down
           RenderText {#text} at (16,0) size 66x19
             text run at (16,0) width 66: "summary 2"
-caret: position 0 of child 0 {DIV} of {#shadow-root} of child 2 {SUMMARY} of child 1 {DETAILS} of body
+caret: position 0 of child 0 {DIV} of {#document-fragment} of child 2 {SUMMARY} of child 1 {DETAILS} of body

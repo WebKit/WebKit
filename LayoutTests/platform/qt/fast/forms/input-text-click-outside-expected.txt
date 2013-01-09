@@ -10,4 +10,4 @@ layer at (0,0) size 800x600
         RenderText {#text} at (0,0) size 782x42
           text run at (0,0) width 782: "This test clicks outside an input element, and must not result in the element receiving focus. If the test succeeds"
           text run at (0,21) width 290: "the element should not have a focus ring."
-caret: position 0 of child 0 {DIV} of {#shadow-root} of child 0 {INPUT} of child 0 {DIV} of body
+caret: position 0 of child 0 {DIV} of {#document-fragment} of child 0 {INPUT} of child 0 {DIV} of body

@@ -12,4 +12,4 @@ layer at (12,30) size 230x23 scrollHeight 24
   RenderBlock {DIV} at (2,2) size 230x23
     RenderText {#text} at (1,0) size 32x24
       text run at (1,0) width 32: "abc"
-caret: position 3 of child 0 {#text} of child 0 {DIV} of {#shadow-root} of child 3 {INPUT} of body
+caret: position 3 of child 0 {#text} of child 0 {DIV} of {#document-fragment} of child 3 {INPUT} of body

@@ -16,4 +16,4 @@ layer at (10,44) size 201x42 clip at (11,45) size 199x40
         text run at (0,0) width 0: " "
       RenderText {#text} at (0,18) size 0x19
         text run at (0,18) width 0: " "
-caret: position 0 of child 1 {#text} of child 0 {DIV} of {#shadow-root} of child 2 {TEXTAREA} of body
+caret: position 0 of child 1 {#text} of child 0 {DIV} of {#document-fragment} of child 2 {TEXTAREA} of body

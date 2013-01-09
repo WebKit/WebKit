@@ -22,5 +22,5 @@ layer at (13,65) size 186x18 scrollHeight 19
   RenderBlock {DIV} at (3,3) size 186x18
     RenderText {#text} at (0,0) size 22x19
       text run at (0,0) width 22: "foo"
-selection start: position 0 of child 0 {#text} of child 0 {DIV} of {#shadow-root} of child 3 {INPUT} of body
-selection end:   position 3 of child 0 {#text} of child 0 {DIV} of {#shadow-root} of child 3 {INPUT} of body
+selection start: position 0 of child 0 {#text} of child 0 {DIV} of {#document-fragment} of child 3 {INPUT} of body
+selection end:   position 3 of child 0 {#text} of child 0 {DIV} of {#document-fragment} of child 3 {INPUT} of body

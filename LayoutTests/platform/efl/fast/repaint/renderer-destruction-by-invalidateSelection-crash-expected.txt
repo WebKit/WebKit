@@ -13,4 +13,4 @@ layer at (0,0) size 800x600
       RenderBlock {DIV} at (0,50) size 784x0
 layer at (14,16) size 186x18
   RenderBlock {DIV} at (4,6) size 186x18
-caret: position 0 of child 0 {DIV} of {#shadow-root} of child 1 {INPUT} of child 1 {DIV} of body
+caret: position 0 of child 0 {DIV} of {#document-fragment} of child 1 {INPUT} of child 1 {DIV} of body

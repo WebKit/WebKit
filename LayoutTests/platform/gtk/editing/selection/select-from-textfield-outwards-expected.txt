@@ -1,14 +1,14 @@
-EDITING DELEGATE: shouldChangeSelectedDOMRange:(null) toDOMRange:range from 11 of #text > DIV > #shadow-root to 11 of #text > DIV > #shadow-root affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+EDITING DELEGATE: shouldChangeSelectedDOMRange:(null) toDOMRange:range from 11 of #text > DIV > #document-fragment to 11 of #text > DIV > #document-fragment affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
 EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
-EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 11 of #text > DIV > #shadow-root to 11 of #text > DIV > #shadow-root toDOMRange:range from 11 of #text > DIV > #shadow-root to 12 of #text > DIV > #shadow-root affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 11 of #text > DIV > #document-fragment to 11 of #text > DIV > #document-fragment toDOMRange:range from 11 of #text > DIV > #document-fragment to 12 of #text > DIV > #document-fragment affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
 EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
-EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 11 of #text > DIV > #shadow-root to 12 of #text > DIV > #shadow-root toDOMRange:range from 0 of #text > DIV > #shadow-root to 12 of #text > DIV > #shadow-root affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 11 of #text > DIV > #document-fragment to 12 of #text > DIV > #document-fragment toDOMRange:range from 0 of #text > DIV > #document-fragment to 12 of #text > DIV > #document-fragment affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
 EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
-EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 0 of #text > DIV > #shadow-root to 12 of #text > DIV > #shadow-root toDOMRange:range from 11 of #text > DIV > #shadow-root to 17 of #text > DIV > #shadow-root affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 0 of #text > DIV > #document-fragment to 12 of #text > DIV > #document-fragment toDOMRange:range from 11 of #text > DIV > #document-fragment to 17 of #text > DIV > #document-fragment affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
 EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
-EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 11 of #text > DIV > #shadow-root to 17 of #text > DIV > #shadow-root toDOMRange:range from 0 of #text > DIV > #shadow-root to 12 of #text > DIV > #shadow-root affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 11 of #text > DIV > #document-fragment to 17 of #text > DIV > #document-fragment toDOMRange:range from 0 of #text > DIV > #document-fragment to 12 of #text > DIV > #document-fragment affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
 EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
-EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 0 of #text > DIV > #shadow-root to 12 of #text > DIV > #shadow-root toDOMRange:range from 11 of #text > DIV > #shadow-root to 17 of #text > DIV > #shadow-root affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 0 of #text > DIV > #document-fragment to 12 of #text > DIV > #document-fragment toDOMRange:range from 11 of #text > DIV > #document-fragment to 17 of #text > DIV > #document-fragment affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
 EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
@@ -46,5 +46,5 @@ layer at (40,180) size 269x28
   RenderBlock {DIV} at (12,12) size 269x28
     RenderText {#text} at (0,0) size 196x28
       text run at (0,0) width 196: "Lorem ipsum dolor"
-selection start: position 11 of child 0 {#text} of child 0 {DIV} of {#shadow-root} of child 7 {INPUT} of body
-selection end:   position 17 of child 0 {#text} of child 0 {DIV} of {#shadow-root} of child 7 {INPUT} of body
+selection start: position 11 of child 0 {#text} of child 0 {DIV} of {#document-fragment} of child 7 {INPUT} of body
+selection end:   position 17 of child 0 {#text} of child 0 {DIV} of {#document-fragment} of child 7 {INPUT} of body

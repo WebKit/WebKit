@@ -1,6 +1,6 @@
-EDITING DELEGATE: shouldInsertText:http://www.ibm.com/ replacingDOMRange:range from 0 of DIV > #shadow-root to 0 of DIV > #shadow-root givenAction:WebViewInsertActionDropped
+EDITING DELEGATE: shouldInsertText:http://www.ibm.com/ replacingDOMRange:range from 0 of DIV > #document-fragment to 0 of DIV > #document-fragment givenAction:WebViewInsertActionDropped
 EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
-EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 0 of DIV > #shadow-root to 0 of DIV > #shadow-root toDOMRange:range from 0 of #text > DIV > #shadow-root to 19 of #text > DIV > #shadow-root affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 0 of DIV > #document-fragment to 0 of DIV > #document-fragment toDOMRange:range from 0 of #text > DIV > #document-fragment to 19 of #text > DIV > #document-fragment affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
 EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
 EDITING DELEGATE: webViewDidChange:WebViewDidChangeNotification
 layer at (0,0) size 800x600
@@ -39,5 +39,5 @@ layer at (13,109) size 186x18 scrollHeight 19
   RenderBlock {DIV} at (3,3) size 186x18
     RenderText {#text} at (0,0) size 142x19
       text run at (0,0) width 142: "http://www.ibm.com/"
-selection start: position 0 of child 0 {#text} of child 0 {DIV} of {#shadow-root} of child 7 {INPUT} of body
-selection end:   position 19 of child 0 {#text} of child 0 {DIV} of {#shadow-root} of child 7 {INPUT} of body
+selection start: position 0 of child 0 {#text} of child 0 {DIV} of {#document-fragment} of child 7 {INPUT} of body
+selection end:   position 19 of child 0 {#text} of child 0 {DIV} of {#document-fragment} of child 7 {INPUT} of body

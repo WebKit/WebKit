@@ -94,4 +94,4 @@ layer at (10,276) size 15x23
   RenderBlock (relative positioned) {DIV} at (-2,-2) size 15x23
 layer at (10,319) size 15x23
   RenderBlock (relative positioned) {DIV} at (-2,-2) size 15x23
-caret: position 4 of child 0 {#text} of child 0 {DIV} of child 0 {DIV} of child 0 {DIV} of {#shadow-root} of child 0 {INPUT} of child 6 {P} of body
+caret: position 4 of child 0 {#text} of child 0 {DIV} of child 0 {DIV} of child 0 {DIV} of {#document-fragment} of child 0 {INPUT} of child 6 {P} of body

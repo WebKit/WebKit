@@ -56,4 +56,4 @@ layer at (10,28) size 161x97 clip at (11,29) size 144x95 scrollY 182 scrollHeigh
         text run at (0,247) width 14: "20"
         text run at (13,247) width 1: " "
       RenderBR {BR} at (0,260) size 0x13
-caret: position 49 of child 0 {#text} of child 0 {DIV} of {#shadow-root} of child 3 {TEXTAREA} of body
+caret: position 49 of child 0 {#text} of child 0 {DIV} of {#document-fragment} of child 3 {TEXTAREA} of body

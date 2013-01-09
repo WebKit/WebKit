@@ -1,14 +1,14 @@
 EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
 EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
-EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 0 of DIV > #shadow-root to 0 of DIV > #shadow-root toDOMRange:range from 1 of #text > DIV > #shadow-root to 1 of #text > DIV > #shadow-root affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 0 of DIV > #document-fragment to 0 of DIV > #document-fragment toDOMRange:range from 1 of #text > DIV > #document-fragment to 1 of #text > DIV > #document-fragment affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
 EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
 EDITING DELEGATE: webViewDidChange:WebViewDidChangeNotification
 EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
-EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 0 of DIV > #shadow-root to 0 of DIV > #shadow-root toDOMRange:range from 6 of #text > DIV > #shadow-root to 6 of #text > DIV > #shadow-root affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 0 of DIV > #document-fragment to 0 of DIV > #document-fragment toDOMRange:range from 6 of #text > DIV > #document-fragment to 6 of #text > DIV > #document-fragment affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
 EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
 EDITING DELEGATE: webViewDidChange:WebViewDidChangeNotification
 EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
-EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 7 of #text > DIV > #shadow-root to 7 of #text > DIV > #shadow-root toDOMRange:range from 1 of #text > DIV > #shadow-root to 1 of #text > DIV > #shadow-root affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 7 of #text > DIV > #document-fragment to 7 of #text > DIV > #document-fragment toDOMRange:range from 1 of #text > DIV > #document-fragment to 1 of #text > DIV > #document-fragment affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
 EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
 EDITING DELEGATE: webViewDidChange:WebViewDidChangeNotification
 layer at (0,0) size 800x600
@@ -37,4 +37,4 @@ layer at (10,132) size 581x136 clip at (11,133) size 579x134
         text run at (44,0) width 1: " "
       RenderText {#text} at (0,13) size 0x13
         text run at (0,13) width 0: " "
-caret: position 0 of child 2 {#text} of child 0 {DIV} of {#shadow-root} of child 5 {TEXTAREA} of body
+caret: position 0 of child 2 {#text} of child 0 {DIV} of {#document-fragment} of child 5 {TEXTAREA} of body

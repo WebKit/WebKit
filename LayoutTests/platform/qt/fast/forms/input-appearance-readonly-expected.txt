@@ -12,5 +12,5 @@ layer at (12,31) size 188x19
   RenderBlock {DIV} at (2,2) size 188x19
     RenderText {#text} at (0,0) size 73x19
       text run at (0,0) width 73: "Test Passed"
-selection start: position 0 of child 0 {#text} of child 0 {DIV} of {#shadow-root} of child 2 {INPUT} of body
-selection end:   position 11 of child 0 {#text} of child 0 {DIV} of {#shadow-root} of child 2 {INPUT} of body
+selection start: position 0 of child 0 {#text} of child 0 {DIV} of {#document-fragment} of child 2 {INPUT} of body
+selection end:   position 11 of child 0 {#text} of child 0 {DIV} of {#document-fragment} of child 2 {INPUT} of body

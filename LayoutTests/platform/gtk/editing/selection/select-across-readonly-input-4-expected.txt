@@ -30,5 +30,5 @@ layer at (119,117) size 57x18 scrollHeight 19
   RenderBlock {DIV} at (3,3) size 57x18
     RenderText {#text} at (0,0) size 52x19
       text run at (0,0) width 52: "WebKit"
-selection start: position 4 of child 0 {#text} of child 0 {DIV} of {#shadow-root} of child 1 {INPUT} of child 5 {DIV} of body
-selection end:   position 5 of child 0 {#text} of child 0 {DIV} of {#shadow-root} of child 1 {INPUT} of child 5 {DIV} of body
+selection start: position 4 of child 0 {#text} of child 0 {DIV} of {#document-fragment} of child 1 {INPUT} of child 5 {DIV} of body
+selection end:   position 5 of child 0 {#text} of child 0 {DIV} of {#document-fragment} of child 1 {INPUT} of child 5 {DIV} of body

@@ -11,4 +11,4 @@ layer at (0,0) size 800x600
           text run at (0,18) width 158: "should have a focus ring."
 layer at (38,38) size 117x13
   RenderBlock {DIV} at (3,3) size 117x13
-caret: position 0 of child 0 {DIV} of {#shadow-root} of child 0 {INPUT} of child 0 {DIV} of body
+caret: position 0 of child 0 {DIV} of {#document-fragment} of child 0 {INPUT} of child 0 {DIV} of body

@@ -32,4 +32,4 @@ layer at (0,0) size 800x600
             text run at (0,0) width 326: "Success: document.execCommand(\"Copy\") == true"
 layer at (11,13) size 594x19
   RenderBlock {DIV} at (3,3) size 594x19
-caret: position 0 of child 0 {DIV} of {#shadow-root} of child 0 {INPUT} of body
+caret: position 0 of child 0 {DIV} of {#document-fragment} of child 0 {INPUT} of body

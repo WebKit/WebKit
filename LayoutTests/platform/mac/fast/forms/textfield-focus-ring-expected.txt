@@ -12,4 +12,4 @@ layer at (0,0) size 800x600
         RenderText {#text} at (0,0) size 0x0
 layer at (13,65) size 117x13
   RenderBlock {DIV} at (3,3) size 117x13
-caret: position 0 of child 0 {DIV} of {#shadow-root} of child 3 {INPUT} of body
+caret: position 0 of child 0 {DIV} of {#document-fragment} of child 3 {INPUT} of body

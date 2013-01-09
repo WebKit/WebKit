@@ -59,4 +59,4 @@ layer at (35,70) size 132x13 scrollX 3 scrollWidth 135
       text run at (95,0) width 37 RTL: "\x{5D4}\x{5D5}\x{5D0} \x{5D6}\x{5D4} "
 layer at (35,93) size 82x13
   RenderBlock {DIV} at (0,0) size 82x13
-caret: position 0 of child 0 {DIV} of child 1 {DIV} of child 0 {DIV} of {#shadow-root} of child 9 {INPUT} of child 3 {P} of body
+caret: position 0 of child 0 {DIV} of child 1 {DIV} of child 0 {DIV} of {#document-fragment} of child 9 {INPUT} of child 3 {P} of body

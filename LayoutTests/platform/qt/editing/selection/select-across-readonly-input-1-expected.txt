@@ -22,5 +22,5 @@ layer at (10,101) size 47x19
   RenderBlock {DIV} at (2,2) size 47x19
     RenderText {#text} at (0,0) size 28x19
       text run at (0,0) width 28: "hello"
-selection start: position 4 of child 0 {#text} of child 0 {DIV} of {#shadow-root} of child 1 {INPUT} of child 5 {DIV} of body
-selection end:   position 5 of child 0 {#text} of child 0 {DIV} of {#shadow-root} of child 1 {INPUT} of child 5 {DIV} of body
+selection start: position 4 of child 0 {#text} of child 0 {DIV} of {#document-fragment} of child 1 {INPUT} of child 5 {DIV} of body
+selection end:   position 5 of child 0 {#text} of child 0 {DIV} of {#document-fragment} of child 1 {INPUT} of child 5 {DIV} of body

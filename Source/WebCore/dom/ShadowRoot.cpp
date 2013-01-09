@@ -154,11 +154,6 @@ PassRefPtr<ShadowRoot> ShadowRoot::create(Element* element, ShadowRootType type,
     return shadowRoot.release();
 }
 
-String ShadowRoot::nodeName() const
-{
-    return "#shadow-root";
-}
-
 PassRefPtr<Node> ShadowRoot::cloneNode(bool)
 {
     // ShadowRoot should not be arbitrarily cloned.

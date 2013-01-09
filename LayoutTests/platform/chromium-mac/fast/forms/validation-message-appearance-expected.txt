@@ -33,4 +33,4 @@ layer at (10,41) size 310x60
           text run at (0,13) width 270: "Should not be identical with the current password."
 layer at (42,29) size 18x18 backgroundClip at (10,29) size 310x13 clip at (10,29) size 310x13 outlineClip at (10,29) size 310x13
   RenderBlock (relative positioned) zI: 2147483645 {DIV} at (0,0) size 18x18 [bgcolor=#FFFFFF] [border: (1px solid #CCCCCC)]
-caret: position 0 of child 0 {DIV} of {#shadow-root} of child 1 {INPUT} of child 0 {FORM} of body
+caret: position 0 of child 0 {DIV} of {#document-fragment} of child 1 {INPUT} of child 0 {FORM} of body

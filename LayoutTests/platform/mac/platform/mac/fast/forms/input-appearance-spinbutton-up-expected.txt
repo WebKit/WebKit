@@ -19,4 +19,4 @@ layer at (13,47) size 168x21
       text run at (0,0) width 12: "1"
 layer at (182,46) size 19x23
   RenderBlock (relative positioned) {DIV} at (169,-1) size 19x23
-caret: position 1 of child 0 {#text} of child 0 {DIV} of child 0 {DIV} of child 0 {DIV} of {#shadow-root} of child 5 {INPUT} of body
+caret: position 1 of child 0 {#text} of child 0 {DIV} of child 0 {DIV} of child 0 {DIV} of {#document-fragment} of child 5 {INPUT} of body

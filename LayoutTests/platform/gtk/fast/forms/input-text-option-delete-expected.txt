@@ -13,4 +13,4 @@ layer at (13,13) size 186x18 scrollHeight 19
   RenderBlock {DIV} at (3,3) size 186x18
     RenderText {#text} at (0,0) size 39x19
       text run at (0,0) width 39: "word "
-caret: position 5 of child 0 {#text} of child 0 {DIV} of {#shadow-root} of child 0 {INPUT} of body
+caret: position 5 of child 0 {#text} of child 0 {DIV} of {#document-fragment} of child 0 {INPUT} of body

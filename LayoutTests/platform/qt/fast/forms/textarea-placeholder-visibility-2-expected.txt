@@ -15,4 +15,4 @@ layer at (10,45) size 199x42
       RenderText {#text} at (0,0) size 71x19
         text run at (0,0) width 71: "Placeholder"
     RenderBlock {DIV} at (2,2) size 195x19
-caret: position 0 of child 0 {DIV} of {#shadow-root} of child 1 {TEXTAREA} of child 3 {DIV} of body
+caret: position 0 of child 0 {DIV} of {#document-fragment} of child 1 {TEXTAREA} of child 3 {DIV} of body
