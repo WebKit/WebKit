@@ -6558,28 +6558,6 @@ static bool shouldCheckLines(RenderObject* obj)
             && (!obj->isDeprecatedFlexibleBox() || obj->style()->boxOrient() == VERTICAL);
 }
 
-static RootInlineBox* getLineAtIndex(RenderBlock* block, int i, int& count)
-{
-    if (block->style()->visibility() == VISIBLE) {
-        if (block->childrenInline()) {
-            for (RootInlineBox* box = block->firstRootBox(); box; box = box->nextRootBox()) {
-                if (count++ == i)
-                    return box;
-            }
-        }
-        else {
-            for (RenderObject* obj = block->firstChild(); obj; obj = obj->nextSibling()) {
-                if (shouldCheckLines(obj)) {
-                    RootInlineBox *box = getLineAtIndex(toRenderBlock(obj), i, count);
-                    if (box)
-                        return box;
-                }
-            }
-        }
-    }
-    return 0;
-}
-
 static int getHeightForLineCount(RenderBlock* block, int l, bool includeBottom, int& count)
 {
     if (block->style()->visibility() == VISIBLE) {
@@ -6607,13 +6585,30 @@ static int getHeightForLineCount(RenderBlock* block, int l, bool includeBottom, 
     return -1;
 }
 
-RootInlineBox* RenderBlock::lineAtIndex(int i)
+RootInlineBox* RenderBlock::lineAtIndex(int i) const
 {
-    int count = 0;
-    return getLineAtIndex(this, i, count);
+    ASSERT(i >= 0);
+
+    if (style()->visibility() != VISIBLE)
+        return 0;
+
+    if (childrenInline()) {
+        for (RootInlineBox* box = firstRootBox(); box; box = box->nextRootBox())
+            if (!i--)
+                return box;
+    } else {
+        for (RenderObject* child = firstChild(); child; child = child->nextSibling()) {
+            if (!shouldCheckLines(child))
+                continue;
+            if (RootInlineBox* box = toRenderBlock(child)->lineAtIndex(i))
+                return box;
+        }
+    }
+
+    return 0;
 }
 
-int RenderBlock::lineCount()
+int RenderBlock::lineCount() const
 {
     int count = 0;
     if (style()->visibility() == VISIBLE) {

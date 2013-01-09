@@ -238,10 +238,10 @@ public:
     RenderBlock* blockBeforeWithinSelectionRoot(LayoutSize& offset) const;
 
     LayoutRect logicalRectToPhysicalRect(const LayoutPoint& physicalPosition, const LayoutRect& logicalRect);
-        
+
     // Helper methods for computing line counts and heights for line counts.
-    RootInlineBox* lineAtIndex(int);
-    int lineCount();
+    RootInlineBox* lineAtIndex(int) const;
+    int lineCount() const;
     int heightForLineCount(int);
     void clearTruncation();
 
