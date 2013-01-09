@@ -1,5 +1,20 @@
 2013-01-09  Dimitri Glazkov  <dglazkov@chromium.org>
 
+        [Chromium] Rebaseline a few tests after r139201.
+
+        * platform/chromium-mac-lion/fast/forms/menulist-clip-expected.png:
+        * platform/chromium-mac-lion/fast/forms/menulist-option-wrap-expected.png:
+        * platform/chromium-mac-lion/fast/repaint/control-clip-expected.png:
+        * platform/chromium-mac-snowleopard/fast/forms/menulist-clip-expected.png:
+        * platform/chromium-mac-snowleopard/fast/forms/menulist-option-wrap-expected.png:
+        * platform/chromium-mac-snowleopard/fast/repaint/control-clip-expected.png:
+        * platform/chromium-mac/fast/forms/menulist-clip-expected.png:
+        * platform/chromium-mac/fast/forms/menulist-option-wrap-expected.png:
+        * platform/chromium-mac/fast/forms/select-empty-option-height-expected.png:
+        * platform/chromium-mac/fast/repaint/control-clip-expected.png:
+
+2013-01-09  Dimitri Glazkov  <dglazkov@chromium.org>
+
         [Chromium] fast/images/embed-does-not-propagate-dimensions-to-object-ancestor.html is a flaky crash.
         https://bugs.webkit.org/show_bug.cgi?id=106473
 
