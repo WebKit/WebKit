@@ -636,7 +636,6 @@ public:
 
     enum CompatibilityMode { QuirksMode, LimitedQuirksMode, NoQuirksMode };
 
-    virtual void setCompatibilityModeFromDoctype() { }
     void setCompatibilityMode(CompatibilityMode m);
     void lockCompatibilityMode() { m_compatibilityModeLocked = true; }
     CompatibilityMode compatibilityMode() const { return m_compatibilityMode; }

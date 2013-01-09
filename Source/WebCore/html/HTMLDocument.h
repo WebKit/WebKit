@@ -50,8 +50,6 @@ public:
     String designMode() const;
     void setDesignMode(const String&);
 
-    virtual void setCompatibilityModeFromDoctype();
-
     Element* activeElement();
     bool hasFocus();
 

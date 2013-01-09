@@ -144,7 +144,9 @@ HTMLConstructionSite::HTMLConstructionSite(Document* document, unsigned maximumD
     , m_isParsingFragment(false)
     , m_redirectAttachToFosterParent(false)
     , m_maximumDOMTreeDepth(maximumDOMTreeDepth)
+    , m_inQuirksMode(document->inQuirksMode())
 {
+    ASSERT(m_document->isHTMLDocument());
 }
 
 HTMLConstructionSite::HTMLConstructionSite(DocumentFragment* fragment, FragmentScriptingPermission scriptingPermission, unsigned maximumDOMTreeDepth)
@@ -154,7 +156,9 @@ HTMLConstructionSite::HTMLConstructionSite(DocumentFragment* fragment, FragmentS
     , m_isParsingFragment(true)
     , m_redirectAttachToFosterParent(false)
     , m_maximumDOMTreeDepth(maximumDOMTreeDepth)
+    , m_inQuirksMode(fragment->document()->inQuirksMode())
 {
+    ASSERT(m_document->isHTMLDocument());
 }
 
 HTMLConstructionSite::~HTMLConstructionSite()
@@ -231,7 +235,101 @@ void HTMLConstructionSite::setDefaultCompatibilityMode()
         return;
     if (m_document->isSrcdocDocument())
         return;
-    m_document->setCompatibilityMode(Document::QuirksMode);
+    setCompatibilityMode(Document::QuirksMode);
+}
+
+void HTMLConstructionSite::setCompatibilityMode(Document::CompatibilityMode mode)
+{
+    m_inQuirksMode = (mode == Document::QuirksMode);
+    m_document->setCompatibilityMode(mode);
+}
+
+void HTMLConstructionSite::setCompatibilityModeFromDoctype(const String& name, const String& publicId, const String& systemId)
+{
+    // There are three possible compatibility modes:
+    // Quirks - quirks mode emulates WinIE and NS4. CSS parsing is also relaxed in this mode, e.g., unit types can
+    // be omitted from numbers.
+    // Limited Quirks - This mode is identical to no-quirks mode except for its treatment of line-height in the inline box model.  
+    // No Quirks - no quirks apply. Web pages will obey the specifications to the letter.
+
+    // Check for Quirks Mode.
+    if (name != "html"
+        || publicId.startsWith("+//Silmaril//dtd html Pro v0r11 19970101//", false)
+        || publicId.startsWith("-//AdvaSoft Ltd//DTD HTML 3.0 asWedit + extensions//", false)
+        || publicId.startsWith("-//AS//DTD HTML 3.0 asWedit + extensions//", false)
+        || publicId.startsWith("-//IETF//DTD HTML 2.0 Level 1//", false)
+        || publicId.startsWith("-//IETF//DTD HTML 2.0 Level 2//", false)
+        || publicId.startsWith("-//IETF//DTD HTML 2.0 Strict Level 1//", false)
+        || publicId.startsWith("-//IETF//DTD HTML 2.0 Strict Level 2//", false)
+        || publicId.startsWith("-//IETF//DTD HTML 2.0 Strict//", false)
+        || publicId.startsWith("-//IETF//DTD HTML 2.0//", false)
+        || publicId.startsWith("-//IETF//DTD HTML 2.1E//", false)
+        || publicId.startsWith("-//IETF//DTD HTML 3.0//", false)
+        || publicId.startsWith("-//IETF//DTD HTML 3.2 Final//", false)
+        || publicId.startsWith("-//IETF//DTD HTML 3.2//", false)
+        || publicId.startsWith("-//IETF//DTD HTML 3//", false)
+        || publicId.startsWith("-//IETF//DTD HTML Level 0//", false)
+        || publicId.startsWith("-//IETF//DTD HTML Level 1//", false)
+        || publicId.startsWith("-//IETF//DTD HTML Level 2//", false)
+        || publicId.startsWith("-//IETF//DTD HTML Level 3//", false)
+        || publicId.startsWith("-//IETF//DTD HTML Strict Level 0//", false)
+        || publicId.startsWith("-//IETF//DTD HTML Strict Level 1//", false)
+        || publicId.startsWith("-//IETF//DTD HTML Strict Level 2//", false)
+        || publicId.startsWith("-//IETF//DTD HTML Strict Level 3//", false)
+        || publicId.startsWith("-//IETF//DTD HTML Strict//", false)
+        || publicId.startsWith("-//IETF//DTD HTML//", false)
+        || publicId.startsWith("-//Metrius//DTD Metrius Presentational//", false)
+        || publicId.startsWith("-//Microsoft//DTD Internet Explorer 2.0 HTML Strict//", false)
+        || publicId.startsWith("-//Microsoft//DTD Internet Explorer 2.0 HTML//", false)
+        || publicId.startsWith("-//Microsoft//DTD Internet Explorer 2.0 Tables//", false)
+        || publicId.startsWith("-//Microsoft//DTD Internet Explorer 3.0 HTML Strict//", false)
+        || publicId.startsWith("-//Microsoft//DTD Internet Explorer 3.0 HTML//", false)
+        || publicId.startsWith("-//Microsoft//DTD Internet Explorer 3.0 Tables//", false)
+        || publicId.startsWith("-//Netscape Comm. Corp.//DTD HTML//", false)
+        || publicId.startsWith("-//Netscape Comm. Corp.//DTD Strict HTML//", false)
+        || publicId.startsWith("-//O'Reilly and Associates//DTD HTML 2.0//", false)
+        || publicId.startsWith("-//O'Reilly and Associates//DTD HTML Extended 1.0//", false)
+        || publicId.startsWith("-//O'Reilly and Associates//DTD HTML Extended Relaxed 1.0//", false)
+        || publicId.startsWith("-//SoftQuad Software//DTD HoTMetaL PRO 6.0::19990601::extensions to HTML 4.0//", false)
+        || publicId.startsWith("-//SoftQuad//DTD HoTMetaL PRO 4.0::19971010::extensions to HTML 4.0//", false)
+        || publicId.startsWith("-//Spyglass//DTD HTML 2.0 Extended//", false)
+        || publicId.startsWith("-//SQ//DTD HTML 2.0 HoTMetaL + extensions//", false)
+        || publicId.startsWith("-//Sun Microsystems Corp.//DTD HotJava HTML//", false)
+        || publicId.startsWith("-//Sun Microsystems Corp.//DTD HotJava Strict HTML//", false)
+        || publicId.startsWith("-//W3C//DTD HTML 3 1995-03-24//", false)
+        || publicId.startsWith("-//W3C//DTD HTML 3.2 Draft//", false)
+        || publicId.startsWith("-//W3C//DTD HTML 3.2 Final//", false)
+        || publicId.startsWith("-//W3C//DTD HTML 3.2//", false)
+        || publicId.startsWith("-//W3C//DTD HTML 3.2S Draft//", false)
+        || publicId.startsWith("-//W3C//DTD HTML 4.0 Frameset//", false)
+        || publicId.startsWith("-//W3C//DTD HTML 4.0 Transitional//", false)
+        || publicId.startsWith("-//W3C//DTD HTML Experimental 19960712//", false)
+        || publicId.startsWith("-//W3C//DTD HTML Experimental 970421//", false)
+        || publicId.startsWith("-//W3C//DTD W3 HTML//", false)
+        || publicId.startsWith("-//W3O//DTD W3 HTML 3.0//", false)
+        || equalIgnoringCase(publicId, "-//W3O//DTD W3 HTML Strict 3.0//EN//")
+        || publicId.startsWith("-//WebTechs//DTD Mozilla HTML 2.0//", false)
+        || publicId.startsWith("-//WebTechs//DTD Mozilla HTML//", false)
+        || equalIgnoringCase(publicId, "-/W3C/DTD HTML 4.0 Transitional/EN")
+        || equalIgnoringCase(publicId, "HTML")
+        || equalIgnoringCase(systemId, "http://www.ibm.com/data/dtd/v11/ibmxhtml1-transitional.dtd")
+        || (systemId.isEmpty() && publicId.startsWith("-//W3C//DTD HTML 4.01 Frameset//", false))
+        || (systemId.isEmpty() && publicId.startsWith("-//W3C//DTD HTML 4.01 Transitional//", false))) {
+        setCompatibilityMode(Document::QuirksMode);
+        return;
+    }
+
+    // Check for Limited Quirks Mode.
+    if (publicId.startsWith("-//W3C//DTD XHTML 1.0 Frameset//", false)
+        || publicId.startsWith("-//W3C//DTD XHTML 1.0 Transitional//", false)
+        || (!systemId.isEmpty() && publicId.startsWith("-//W3C//DTD HTML 4.01 Frameset//", false))
+        || (!systemId.isEmpty() && publicId.startsWith("-//W3C//DTD HTML 4.01 Transitional//", false))) {
+        setCompatibilityMode(Document::LimitedQuirksMode);
+        return;
+    }
+
+    // Otherwise we are No Quirks Mode.
+    setCompatibilityMode(Document::NoQuirksMode);
 }
 
 void HTMLConstructionSite::finishedParsing()
@@ -243,7 +341,9 @@ void HTMLConstructionSite::insertDoctype(AtomicHTMLToken* token)
 {
     ASSERT(token->type() == HTMLTokenTypes::DOCTYPE);
 
-    RefPtr<DocumentType> doctype = DocumentType::create(m_document, token->name(), String::adopt(token->publicIdentifier()), String::adopt(token->systemIdentifier()));
+    const String& publicId = String::adopt(token->publicIdentifier());
+    const String& systemId = String::adopt(token->systemIdentifier());
+    RefPtr<DocumentType> doctype = DocumentType::create(m_document, token->name(), publicId, systemId);
     attachLater(m_attachmentRoot, doctype.release());
 
     // DOCTYPE nodes are only processed when parsing fragments w/o contextElements, which
@@ -256,11 +356,9 @@ void HTMLConstructionSite::insertDoctype(AtomicHTMLToken* token)
         return;
 
     if (token->forceQuirks())
-        m_document->setCompatibilityMode(Document::QuirksMode);
+        setCompatibilityMode(Document::QuirksMode);
     else {
-        // We need to actually add the Doctype node to the DOM.
-        executeQueuedTasks();
-        m_document->setCompatibilityModeFromDoctype();
+        setCompatibilityModeFromDoctype(token->name(), publicId, systemId);
     }
 }
 
@@ -496,8 +594,7 @@ void HTMLConstructionSite::generateImpliedEndTags()
 
 bool HTMLConstructionSite::inQuirksMode()
 {
-    // When we move the parser onto a background thread, we'll need to keep track of this bit on the parser thread.
-    return m_document->inQuirksMode();
+    return m_inQuirksMode;
 }
 
 void HTMLConstructionSite::findFosterSite(HTMLConstructionSiteTask& task)
