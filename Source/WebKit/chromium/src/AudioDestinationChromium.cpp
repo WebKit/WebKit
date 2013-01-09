@@ -145,27 +145,6 @@ void AudioDestinationChromium::render(const WebVector<float*>& sourceData, const
     m_fifo->consume(&m_renderBus, numberOfFrames);
 }
 
-// Pulls on our provider to get the rendered audio stream.
-// FIXME: remove this method when the chromium-side switches over to the synchronized I/O render() method (above).
-void AudioDestinationChromium::render(const WebVector<float*>& audioData, size_t numberOfFrames)
-{
-    bool isNumberOfChannelsGood = audioData.size() == numberOfChannels;
-    if (!isNumberOfChannelsGood) {
-        ASSERT_NOT_REACHED();
-        return;
-    }
-
-    bool isBufferSizeGood = numberOfFrames == m_callbackBufferSize;
-    if (!isBufferSizeGood) {
-        ASSERT_NOT_REACHED();
-        return;
-    }
-
-    m_renderBus.setChannelMemory(0, audioData[0], numberOfFrames);
-    m_renderBus.setChannelMemory(1, audioData[1], numberOfFrames);
-    m_fifo->consume(&m_renderBus, numberOfFrames);
-}
-
 void AudioDestinationChromium::provideInput(AudioBus* bus, size_t framesToProcess)
 {
     AudioBus* sourceBus = 0;

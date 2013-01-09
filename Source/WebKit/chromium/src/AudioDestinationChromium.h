@@ -58,7 +58,6 @@ public:
 
     // WebKit::WebAudioDevice::RenderCallback
     virtual void render(const WebKit::WebVector<float*>& sourceData, const WebKit::WebVector<float*>& audioData, size_t numberOfFrames);
-    virtual void render(const WebKit::WebVector<float*>& audioData, size_t numberOfFrames);
 
     // WebCore::AudioSourceProvider
     virtual void provideInput(AudioBus*, size_t framesToProcess);

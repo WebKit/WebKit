@@ -41,9 +41,6 @@ public:
     public:
         virtual void render(const WebVector<float*>& sourceData, const WebVector<float*>& destinationData, size_t numberOfFrames) { };
 
-        // FIXME: to be removed once we switch over to newer render() method handling both audio output and (optional) input.
-        virtual void render(const WebVector<float*>& audioData, size_t numberOfFrames) = 0;
-
     protected:
         virtual ~RenderCallback() { }
     };
