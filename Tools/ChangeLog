@@ -1,3 +1,12 @@
+2013-01-09  Gregg Tavares  <gman@google.com>
+
+        Add Gregg Tavares as a committer
+        https://bugs.webkit.org/show_bug.cgi?id=106492
+
+        Unreviewed.
+
+        * Scripts/webkitpy/common/config/committers.py:
+
 2013-01-09  Roger Fong  <roger_fong@apple.com>
 
         Enable seamless iFrames for Windows DRT.
