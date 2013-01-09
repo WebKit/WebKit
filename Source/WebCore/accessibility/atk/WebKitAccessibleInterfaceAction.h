@@ -22,9 +22,9 @@
 #ifndef WebKitAccessibleInterfaceAction_h
 #define WebKitAccessibleInterfaceAction_h
 
-#include <atk/atk.h>
-
 #if HAVE(ACCESSIBILITY)
+
+#include <atk/atk.h>
 
 void webkitAccessibleActionInterfaceInit(AtkActionIface*);
 

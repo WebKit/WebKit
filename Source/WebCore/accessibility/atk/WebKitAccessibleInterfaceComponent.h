@@ -22,8 +22,12 @@
 #ifndef WebKitAccessibleInterfaceComponent_h
 #define WebKitAccessibleInterfaceComponent_h
 
+#if HAVE(ACCESSIBILITY)
+
 #include <atk/atk.h>
 
 void webkitAccessibleComponentInterfaceInit(AtkComponentIface*);
+
+#endif
 
 #endif // WebKitAccessibleInterfaceComponent_h

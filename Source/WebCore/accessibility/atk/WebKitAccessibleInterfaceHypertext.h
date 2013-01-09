@@ -20,8 +20,12 @@
 #ifndef WebKitAccessibleInterfaceHypertext_h
 #define WebKitAccessibleInterfaceHypertext_h
 
+#if HAVE(ACCESSIBILITY)
+
 #include <atk/atk.h>
 
 void webkitAccessibleHypertextInterfaceInit(AtkHypertextIface*);
+
+#endif
 
 #endif // WebKitAccessibleInterfaceHypertext_h

@@ -20,9 +20,9 @@
 #ifndef WebKitAccessibleHyperlink_h
 #define WebKitAccessibleHyperlink_h
 
-#include <atk/atk.h>
-
 #if HAVE(ACCESSIBILITY)
+
+#include <atk/atk.h>
 
 namespace WebCore {
 class AccessibilityObject;
