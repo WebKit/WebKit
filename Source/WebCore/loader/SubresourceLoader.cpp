@@ -283,12 +283,13 @@ void SubresourceLoader::didFail(const ResourceError& error)
     if (m_state != Initialized)
         return;
     ASSERT(!reachedTerminalState());
-    ASSERT(!m_resource->resourceToRevalidate());
     LOG(ResourceLoading, "Failed to load '%s'.\n", m_resource->url().string().latin1().data());
 
     RefPtr<SubresourceLoader> protect(this);
     CachedResourceHandle<CachedResource> protectResource(m_resource);
     m_state = Finishing;
+    if (m_resource->resourceToRevalidate())
+        memoryCache()->revalidationFailed(m_resource);
     m_resource->setResourceError(error);
     m_resource->error(CachedResource::LoadError);
     if (!m_resource->isPreloaded())

@@ -1,3 +1,17 @@
+2013-01-09  Alexey Proskuryakov  <ap@apple.com>
+
+        Assertion failure in SubresourceLoader::didFail when reloading
+        https://bugs.webkit.org/show_bug.cgi?id=101416
+
+        Reviewed by Nate Chapin.
+
+        * http/tests/cache/network-error-during-revalidation-expected.txt: Added.
+        * http/tests/cache/network-error-during-revalidation.html: Added.
+        * http/tests/cache/resources/network-error-during-revalidation-frame.html: Added.
+
+        * http/tests/resources/network-simulator.php: Added a way to serve resources
+        without no-cache no-store directives.
+
 2013-01-09  Alexandru Chiculita  <achicu@adobe.com>
 
         Assertion Failure in WebCore::RenderLayerCompositor::updateCompositingLayers

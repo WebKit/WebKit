@@ -73,7 +73,8 @@ function generateResponse($path)
         if ($path[0] == '/')
             $path = '..' . $path;
 
-        generateNoCacheHTTPHeader();
+        if (!$_GET['allow-caching'])
+            generateNoCacheHTTPHeader();
 
         if (file_exists($path)) {
             header("Last-Modified: " . gmdate("D, d M Y H:i:s T", filemtime($path)));
