@@ -74,6 +74,8 @@ public:
     virtual bool shouldDumpUserGestureInFrameLoadCallbacks() const OVERRIDE;
     virtual bool stopProvisionalFrameLoads() const OVERRIDE;
     virtual bool shouldDumpTitleChanges() const OVERRIDE;
+    virtual bool shouldDumpCreateView() const OVERRIDE;
+    virtual bool canOpenWindows() const OVERRIDE;
 
 protected:
     // FIXME: make these private once the move from DRTTestRunner to TestRunner
@@ -232,6 +234,13 @@ private:
 
     void dumpTitleChanges(const CppArgumentList&, CppVariant*);
 
+    // This function sets a flag that tells the test_shell to dump all calls to
+    // WebViewClient::createView().
+    // It takes no arguments, and ignores any that may be present.
+    void dumpCreateView(const CppArgumentList&, CppVariant*);
+
+    void setCanOpenWindows(const CppArgumentList&, CppVariant*);
+
     ///////////////////////////////////////////////////////////////////////////
     // Methods interacting with the WebTestProxy
 
@@ -312,6 +321,15 @@ private:
 
     // If true, output a message when the page title is changed.
     bool m_dumpTitleChanges;
+
+    // If true, output a descriptive line each time WebViewClient::createView
+    // is invoked.
+    bool m_dumpCreateView;
+
+    // If true, new windows can be opened via javascript or by plugins. By
+    // default, set to false and can be toggled to true using
+    // setCanOpenWindows().
+    bool m_canOpenWindows;
 
     // WAV audio data is stored here.
     WebKit::WebArrayBufferView m_audioData;

@@ -125,7 +125,6 @@ DRTTestRunner::DRTTestRunner(TestShell* shell)
     bindMethod("dumpSelectionRect", &DRTTestRunner::dumpSelectionRect);
     bindMethod("dumpStatusCallbacks", &DRTTestRunner::dumpWindowStatusChanges);
     bindMethod("dumpPermissionClientCallbacks", &DRTTestRunner::dumpPermissionClientCallbacks);
-    bindMethod("dumpCreateView", &DRTTestRunner::dumpCreateView);
     bindMethod("enableAutoResizeMode", &DRTTestRunner::enableAutoResizeMode);
     bindMethod("evaluateInWebInspector", &DRTTestRunner::evaluateInWebInspector);
 #if ENABLE(NOTIFICATIONS)
@@ -145,7 +144,6 @@ DRTTestRunner::DRTTestRunner(TestShell* shell)
     bindMethod("setAllowDisplayOfInsecureContent", &DRTTestRunner::setAllowDisplayOfInsecureContent);
     bindMethod("setAllowRunningOfInsecureContent", &DRTTestRunner::setAllowRunningOfInsecureContent);
     bindMethod("setAlwaysAcceptCookies", &DRTTestRunner::setAlwaysAcceptCookies);
-    bindMethod("setCanOpenWindows", &DRTTestRunner::setCanOpenWindows);
     bindMethod("setCloseRemainingWindowsWhenComplete", &DRTTestRunner::setCloseRemainingWindowsWhenComplete);
     bindMethod("setCustomPolicyDelegate", &DRTTestRunner::setCustomPolicyDelegate);
     bindMethod("setDatabaseQuota", &DRTTestRunner::setDatabaseQuota);
@@ -280,12 +278,6 @@ void DRTTestRunner::dumpWindowStatusChanges(const CppArgumentList&, CppVariant* 
 void DRTTestRunner::dumpPermissionClientCallbacks(const CppArgumentList&, CppVariant* result)
 {
     m_dumpPermissionClientCallbacks = true;
-    result->setNull();
-}
-
-void DRTTestRunner::dumpCreateView(const CppArgumentList&, CppVariant* result)
-{
-    m_dumpCreateView = true;
     result->setNull();
 }
 
@@ -473,7 +465,6 @@ void DRTTestRunner::reset()
     TestRunner::reset();
     if (m_shell)
         m_shell->webViewHost()->setDeviceScaleFactor(1);
-    m_dumpCreateView = false;
     m_dumpProgressFinishedCallback = false;
     m_dumpResourceLoadCallbacks = false;
     m_dumpResourceRequestCallbacks = false;
@@ -483,7 +474,6 @@ void DRTTestRunner::reset()
     m_dumpSelectionRect = false;
     m_dumpPermissionClientCallbacks = false;
     m_waitUntilDone = false;
-    m_canOpenWindows = false;
     m_testRepaint = false;
     m_sweepHorizontally = false;
     m_deferMainResourceDataLoad = true;
@@ -524,12 +514,6 @@ void DRTTestRunner::policyDelegateDone()
     ASSERT(m_waitUntilDone);
     m_shell->testFinished();
     m_waitUntilDone = false;
-}
-
-void DRTTestRunner::setCanOpenWindows(const CppArgumentList&, CppVariant* result)
-{
-    m_canOpenWindows = true;
-    result->setNull();
 }
 
 void DRTTestRunner::windowCount(const CppArgumentList&, CppVariant* result)

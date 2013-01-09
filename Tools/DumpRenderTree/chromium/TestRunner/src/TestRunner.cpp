@@ -142,6 +142,8 @@ TestRunner::TestRunner()
     bindMethod("dumpUserGestureInFrameLoadCallbacks", &TestRunner::dumpUserGestureInFrameLoadCallbacks);
     bindMethod("setStopProvisionalFrameLoads", &TestRunner::setStopProvisionalFrameLoads);
     bindMethod("dumpTitleChanges", &TestRunner::dumpTitleChanges);
+    bindMethod("dumpCreateView", &TestRunner::dumpCreateView);
+    bindMethod("setCanOpenWindows", &TestRunner::setCanOpenWindows);
 
     // The following methods interact with the WebTestProxy.
     bindMethod("sendWebIntentResponse", &TestRunner::sendWebIntentResponse);
@@ -216,6 +218,8 @@ void TestRunner::reset()
     m_dumpUserGestureInFrameLoadCallbacks = false;
     m_stopProvisionalFrameLoads = false;
     m_dumpTitleChanges = false;
+    m_dumpCreateView = false;
+    m_canOpenWindows = false;
 
     m_globalFlag.set(false);
     m_platformName.set("chromium");
@@ -296,6 +300,16 @@ bool TestRunner::stopProvisionalFrameLoads() const
 bool TestRunner::shouldDumpTitleChanges() const
 {
     return m_dumpTitleChanges;
+}
+
+bool TestRunner::shouldDumpCreateView() const
+{
+    return m_dumpCreateView;
+}
+
+bool TestRunner::canOpenWindows() const
+{
+    return m_canOpenWindows;
 }
 
 void TestRunner::setTabKeyCyclesThroughElements(const CppArgumentList& arguments, CppVariant* result)
@@ -1060,6 +1074,18 @@ void TestRunner::setStopProvisionalFrameLoads(const CppArgumentList&, CppVariant
 void TestRunner::dumpTitleChanges(const CppArgumentList&, CppVariant* result)
 {
     m_dumpTitleChanges = true;
+    result->setNull();
+}
+
+void TestRunner::dumpCreateView(const CppArgumentList&, CppVariant* result)
+{
+    m_dumpCreateView = true;
+    result->setNull();
+}
+
+void TestRunner::setCanOpenWindows(const CppArgumentList&, CppVariant* result)
+{
+    m_canOpenWindows = true;
     result->setNull();
 }
 

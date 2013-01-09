@@ -47,6 +47,7 @@
 #include "WebTestRunner.h"
 #include "WebView.h"
 #include "platform/WebCString.h"
+#include "platform/WebURLRequest.h"
 #include <wtf/StringExtras.h>
 
 using namespace WebKit;
@@ -138,6 +139,13 @@ void printFrameUserGestureStatus(WebTestDelegate* delegate, WebFrame* frame, con
 {
     bool isUserGesture = frame->isProcessingUserGesture();
     delegate->printMessage(string("Frame with user gesture \"") + (isUserGesture ? "true" : "false") + "\"" + msg);
+}
+
+string URLDescription(const GURL& url)
+{
+    if (url.SchemeIs("file"))
+        return url.ExtractFileName();
+    return url.possibly_invalid_spec();
 }
 
 }
@@ -450,6 +458,15 @@ void WebTestProxyBase::dispatchIntent(WebFrame* source, const WebIntentRequest& 
     WebVector<WebURL> suggestions = request.intent().suggestions();
     for (size_t i = 0; i < suggestions.size(); ++i)
         m_delegate->printMessage(string("Have suggestion ") + suggestions[i].spec().data() + "\n");
+}
+
+WebView* WebTestProxyBase::createView(WebFrame*, const WebURLRequest& request, const WebWindowFeatures&, const WebString&, WebNavigationPolicy)
+{
+    if (!m_testInterfaces->testRunner() || !m_testInterfaces->testRunner()->canOpenWindows())
+        return 0;
+    if (m_testInterfaces->testRunner()->shouldDumpCreateView())
+        m_delegate->printMessage(string("createView(") + URLDescription(request.url()) + ")\n");
+    return 0;
 }
 
 void WebTestProxyBase::willPerformClientRedirect(WebFrame* frame, const WebURL&, const WebURL& to, double, double)

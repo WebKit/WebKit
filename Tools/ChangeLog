@@ -1,3 +1,26 @@
+2013-01-09  Dan Carney  <dcarney@google.com>
+
+        [chromium] move dumpcreateview methods to testrunner library
+        https://bugs.webkit.org/show_bug.cgi?id=106434
+
+        Reviewed by Adam Barth.
+
+        * DumpRenderTree/chromium/DRTTestRunner.cpp:
+        (DRTTestRunner::DRTTestRunner):
+        (DRTTestRunner::reset):
+        * DumpRenderTree/chromium/DRTTestRunner.h:
+        (DRTTestRunner):
+        * DumpRenderTree/chromium/TestRunner/public/WebTestRunner.h:
+        (WebTestRunner::WebTestRunner::shouldDumpCreateView):
+        * DumpRenderTree/chromium/TestRunner/src/TestRunner.cpp:
+        (WebTestRunner::TestRunner::TestRunner):
+        (WebTestRunner::TestRunner::reset):
+        (WebTestRunner::TestRunner::shouldDumpCreateView):
+        (WebTestRunner):
+        (WebTestRunner::TestRunner::dumpCreateView):
+        * DumpRenderTree/chromium/TestRunner/src/TestRunner.h:
+        (TestRunner):
+
 2013-01-09  Csaba Osztrogonác  <ossy@webkit.org>
 
         webkitpy cleanup: Merge additional_comment_text into comment_text

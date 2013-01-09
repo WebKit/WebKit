@@ -104,14 +104,8 @@ public:
     // It takes no arguments, and ignores any that may be present.
     void dumpWindowStatusChanges(const CppArgumentList&, CppVariant*);
 
-    // This function sets a flag that tells the test_shell to dump all calls to
-    // WebViewClient::createView().
-    // It takes no arguments, and ignores any that may be present.
-    void dumpCreateView(const CppArgumentList&, CppVariant*);
-
     // Functions for dealing with windows. By default we block all new windows.
     void windowCount(const CppArgumentList&, CppVariant*);
-    void setCanOpenWindows(const CppArgumentList&, CppVariant*);
     void setCloseRemainingWindowsWhenComplete(const CppArgumentList&, CppVariant*);
 
     // By default, tests end when page load is complete. These methods are used
@@ -258,8 +252,6 @@ public:
     bool shouldDumpSelectionRect() { return m_dumpSelectionRect; }
     bool shouldDumpBackForwardList() { return m_dumpBackForwardList; }
     bool shouldDumpPermissionClientCallbacks() { return m_dumpPermissionClientCallbacks; }
-    bool shouldDumpCreateView() { return m_dumpCreateView; }
-    bool canOpenWindows() { return m_canOpenWindows; }
     bool deferMainResourceDataLoad() { return m_deferMainResourceDataLoad; }
     void setShowDebugLayerTree(bool value) { m_showDebugLayerTree = value; }
     void setTitleTextDirection(WebKit::WebTextDirection dir)
@@ -379,15 +371,6 @@ private:
     // If true, output a descriptive line each time a permission client
     // callback is invoked. Currently only implemented for allowImage.
     bool m_dumpPermissionClientCallbacks;
-
-    // If true, output a descriptive line each time WebViewClient::createView
-    // is invoked.
-    bool m_dumpCreateView;
-
-    // If true, new windows can be opened via javascript or by plugins. By
-    // default, set to false and can be toggled to true using
-    // setCanOpenWindows().
-    bool m_canOpenWindows;
 
     // When reset is called, go through and close all but the main test shell
     // window. By default, set to true but toggled to false using

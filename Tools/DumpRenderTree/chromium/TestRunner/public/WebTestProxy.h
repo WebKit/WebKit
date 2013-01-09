@@ -52,9 +52,12 @@ class WebSecurityOrigin;
 class WebSerializedScriptValue;
 class WebString;
 class WebURL;
+class WebURLRequest;
+class WebView;
 struct WebPoint;
 struct WebSize;
 struct WebURLError;
+struct WebWindowFeatures;
 }
 
 namespace WebTestRunner {
@@ -97,6 +100,7 @@ protected:
     void didEndEditing();
     void registerIntentService(WebKit::WebFrame*, const WebKit::WebIntentServiceInfo&);
     void dispatchIntent(WebKit::WebFrame* source, const WebKit::WebIntentRequest&);
+    WebKit::WebView* createView(WebKit::WebFrame* creator, const WebKit::WebURLRequest&, const WebKit::WebWindowFeatures&, const WebKit::WebString& frameName, WebKit::WebNavigationPolicy);
     void willPerformClientRedirect(WebKit::WebFrame*, const WebKit::WebURL& from, const WebKit::WebURL& to, double interval, double fire_time);
     void didCancelClientRedirect(WebKit::WebFrame*);
     void didStartProvisionalLoad(WebKit::WebFrame*);
@@ -242,6 +246,11 @@ public:
     {
         WebTestProxyBase::dispatchIntent(source, request);
         Base::dispatchIntent(source, request);
+    }
+    virtual WebKit::WebView* createView(WebKit::WebFrame* creator, const WebKit::WebURLRequest& request, const WebKit::WebWindowFeatures& features, const WebKit::WebString& frameName, WebKit::WebNavigationPolicy policy)
+    {
+        WebTestProxyBase::createView(creator, request, features, frameName, policy);
+        return Base::createView(creator, request, features, frameName, policy);
     }
 
     // WebFrameClient implementation.
