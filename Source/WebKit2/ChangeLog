@@ -1,3 +1,9 @@
+2013-01-09  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Unreviewed. Fix make distcheck.
+
+        * GNUmakefile.list.am: Add missing headers.
+
 2013-01-08  Sam Weinig  <sam@webkit.org>
 
         Add Owners file.

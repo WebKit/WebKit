@@ -23,6 +23,7 @@ wtf_sources += \
     Source/WTF/wtf/ByteOrder.h \
     Source/WTF/wtf/CheckedArithmetic.h \
     Source/WTF/wtf/CheckedBoolean.h \
+    Source/WTF/wtf/CommaPrinter.h \
     Source/WTF/wtf/Compiler.h \
     Source/WTF/wtf/Complex.h \
     Source/WTF/wtf/CryptographicallyRandomNumber.cpp \

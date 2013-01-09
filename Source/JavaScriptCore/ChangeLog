@@ -1,3 +1,9 @@
+2013-01-09  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Unreviewed. Fix make distcheck.
+
+        * GNUmakefile.list.am: Add mips.rb to offlineasm_nosources.
+
 2013-01-08  Oliver Hunt  <oliver@apple.com>
 
         Support op_typeof in the DFG

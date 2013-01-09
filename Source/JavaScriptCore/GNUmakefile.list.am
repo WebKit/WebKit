@@ -785,6 +785,7 @@ offlineasm_nosources += \
 	Source/JavaScriptCore/offlineasm/config.rb \
 	Source/JavaScriptCore/offlineasm/generate_offset_extractor.rb \
 	Source/JavaScriptCore/offlineasm/instructions.rb \
+	Source/JavaScriptCore/offlineasm/mips.rb \
 	Source/JavaScriptCore/offlineasm/offsets.rb \
 	Source/JavaScriptCore/offlineasm/opt.rb \
 	Source/JavaScriptCore/offlineasm/parser.rb \

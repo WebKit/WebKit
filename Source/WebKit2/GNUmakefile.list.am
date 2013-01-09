@@ -492,6 +492,7 @@ webkit2_sources += \
 	Source/WebKit2/Shared/WebIntentServiceInfo.h \
 	Source/WebKit2/Shared/WebKeyboardEvent.cpp \
 	Source/WebKit2/Shared/WebKit2Initialize.cpp \
+	Source/WebKit2/Shared/WebKit2Initialize.h \
 	Source/WebKit2/Shared/WebMouseEvent.cpp \
 	Source/WebKit2/Shared/WebNavigationDataStore.h \
 	Source/WebKit2/Shared/WebNetworkInfo.h \
@@ -871,6 +872,7 @@ webkit2_sources += \
 	Source/WebKit2/UIProcess/WebContextMenuProxy.cpp \
 	Source/WebKit2/UIProcess/WebContextMenuProxy.h \
 	Source/WebKit2/UIProcess/WebContextUserMessageCoders.h \
+	Source/WebKit2/UIProcess/WebContextSupplement.h \
 	Source/WebKit2/UIProcess/WebCookieManagerProxy.h \
 	Source/WebKit2/UIProcess/WebCookieManagerProxy.cpp \
 	Source/WebKit2/UIProcess/WebCookieManagerProxyClient.cpp \

@@ -2102,6 +2102,7 @@ webcore_modules_sources += \
 	Source/WebCore/Modules/webdatabase/Database.h \
 	Source/WebCore/Modules/webdatabase/DatabaseAuthorizer.cpp \
 	Source/WebCore/Modules/webdatabase/DatabaseAuthorizer.h \
+	Source/WebCore/Modules/webdatabase/DatabaseBasicTypes.h \
 	Source/WebCore/Modules/webdatabase/DatabaseCallback.h \
 	Source/WebCore/Modules/webdatabase/DatabaseContext.cpp \
 	Source/WebCore/Modules/webdatabase/DatabaseContext.h \
@@ -5423,6 +5424,7 @@ webcore_platform_sources += \
 	Source/WebCore/platform/graphics/filters/CustomFilterParameterList.h \
 	Source/WebCore/platform/graphics/filters/CustomFilterProgram.cpp \
 	Source/WebCore/platform/graphics/filters/CustomFilterProgram.h \
+	Source/WebCore/platform/graphics/filters/CustomFilterProgramClient.h \
 	Source/WebCore/platform/graphics/filters/CustomFilterProgramInfo.cpp \
 	Source/WebCore/platform/graphics/filters/CustomFilterProgramInfo.h \
 	Source/WebCore/platform/graphics/filters/CustomFilterRenderer.cpp \
@@ -5785,6 +5787,7 @@ webcore_platform_sources += \
 	Source/WebCore/platform/network/ProxyServer.h \
 	Source/WebCore/platform/network/NetworkStateNotifier.cpp \
 	Source/WebCore/platform/network/NetworkStateNotifier.h \
+	Source/WebCore/platform/network/NetworkStorageSession.h \
 	Source/WebCore/platform/network/NetworkStorageSessionStub.cpp \
 	Source/WebCore/platform/network/ParsedContentType.cpp \
 	Source/WebCore/platform/network/ParsedContentType.h \
