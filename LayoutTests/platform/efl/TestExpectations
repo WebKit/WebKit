@@ -1783,3 +1783,9 @@ webkit.org/b/106415 fast/workers/worker-close-more.html [ Timeout Pass ]
 
 # Newly added test at r139002 is failing.
 webkit.org/b/106316 accessibility/render-counter-text.html [ Failure ]
+
+# Newly added test at r139111 is failing.
+webkit.org/b/106439 editing/pasteboard/paste-noplugin.html [ Failure ]
+
+# Failing after r139140.
+webkit.org/b/106441 http/tests/misc/authentication-redirect-3/authentication-sent-to-redirect-same-origin-with-location-credentials.html [ Failure ]

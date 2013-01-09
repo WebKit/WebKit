@@ -1,5 +1,13 @@
 2013-01-09  Mikhail Pozdnyakov  <mikhail.pozdnyakov@intel.com>
 
+        Unreviewed EFL gardening.
+
+        Skipping failing tests after r139111, r139140.
+
+        * platform/efl/TestExpectations:
+
+2013-01-09  Mikhail Pozdnyakov  <mikhail.pozdnyakov@intel.com>
+
         EFL port gardening after r139145, r139002.
 
         Unreviewed gardening.
