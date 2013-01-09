@@ -512,10 +512,6 @@ storage/domstorage/localstorage/storagetracker/storage-tracker-7-usage.html
 fast/forms/input-autofilled.html
 fast/forms/reset-autofilled.html
 
-# WebKitTestRunner needs a more-complete implementation of eventSender
-# https://bugs.webkit.org/show_bug.cgi?id=42194
-fast/dom/MutationObserver/inline-event-listener.html
-
 # WebKitTestRunner needs eventSender.contextClick()
 # https://bugs.webkit.org/show_bug.cgi?id=86881
 editing/selection/context-menu-text-selection.html

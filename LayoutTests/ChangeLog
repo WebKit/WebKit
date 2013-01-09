@@ -1,3 +1,18 @@
+2013-01-09  Christophe Dumez  <christophe.dumez@intel.com>
+
+        [WK2] Implement eventSender.scheduleAsynchronousKeyDown
+        https://bugs.webkit.org/show_bug.cgi?id=93979
+
+        Reviewed by Benjamin Poulain.
+
+        Update WK2 expectations for tests requiring
+        eventSender.scheduleAsynchronousKeyDown now that it is
+        implemented in WebKitTestRunner.
+
+        * platform/efl-wk2/TestExpectations:
+        * platform/gtk-wk2/TestExpectations:
+        * platform/wk2/TestExpectations:
+
 2013-01-09  Dan Winship  <danw@gnome.org>
 
         [Soup] Handle redirection inside WebKit

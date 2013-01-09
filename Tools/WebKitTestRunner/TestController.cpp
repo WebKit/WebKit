@@ -778,6 +778,26 @@ void TestController::didReceiveSynchronousMessageFromInjectedBundle(WKContextRef
     *returnData = static_cast<TestController*>(const_cast<void*>(clientInfo))->didReceiveSynchronousMessageFromInjectedBundle(messageName, messageBody).leakRef();
 }
 
+void TestController::didReceiveKeyDownMessageFromInjectedBundle(WKDictionaryRef messageBodyDictionary, bool synchronous)
+{
+    WKRetainPtr<WKStringRef> keyKey = adoptWK(WKStringCreateWithUTF8CString("Key"));
+    WKStringRef key = static_cast<WKStringRef>(WKDictionaryGetItemForKey(messageBodyDictionary, keyKey.get()));
+
+    WKRetainPtr<WKStringRef> modifiersKey = adoptWK(WKStringCreateWithUTF8CString("Modifiers"));
+    WKEventModifiers modifiers = static_cast<WKEventModifiers>(WKUInt64GetValue(static_cast<WKUInt64Ref>(WKDictionaryGetItemForKey(messageBodyDictionary, modifiersKey.get()))));
+
+    WKRetainPtr<WKStringRef> locationKey = adoptWK(WKStringCreateWithUTF8CString("Location"));
+    unsigned location = static_cast<unsigned>(WKUInt64GetValue(static_cast<WKUInt64Ref>(WKDictionaryGetItemForKey(messageBodyDictionary, locationKey.get()))));
+
+    if (synchronous)
+        WKPageSetShouldSendEventsSynchronously(mainWebView()->page(), true);
+
+    m_eventSenderProxy->keyDown(key, modifiers, location);
+
+    if (synchronous)
+        WKPageSetShouldSendEventsSynchronously(mainWebView()->page(), false);
+}
+
 void TestController::didReceiveMessageFromInjectedBundle(WKStringRef messageName, WKTypeRef messageBody)
 {
 #if PLATFORM(MAC) || PLATFORM(QT) || PLATFORM(GTK) || PLATFORM(EFL)
@@ -804,6 +824,13 @@ void TestController::didReceiveMessageFromInjectedBundle(WKStringRef messageName
 
             return;
         }
+
+        if (WKStringIsEqualToUTF8CString(subMessageName, "KeyDown")) {
+            didReceiveKeyDownMessageFromInjectedBundle(messageBodyDictionary, false);
+
+            return;
+        }
+
         ASSERT_NOT_REACHED();
     }
 #endif
@@ -825,19 +852,8 @@ WKRetainPtr<WKTypeRef> TestController::didReceiveSynchronousMessageFromInjectedB
         WKStringRef subMessageName = static_cast<WKStringRef>(WKDictionaryGetItemForKey(messageBodyDictionary, subMessageKey.get()));
 
         if (WKStringIsEqualToUTF8CString(subMessageName, "KeyDown")) {
-            WKRetainPtr<WKStringRef> keyKey = adoptWK(WKStringCreateWithUTF8CString("Key"));
-            WKStringRef key = static_cast<WKStringRef>(WKDictionaryGetItemForKey(messageBodyDictionary, keyKey.get()));
+            didReceiveKeyDownMessageFromInjectedBundle(messageBodyDictionary, true);
 
-            WKRetainPtr<WKStringRef> modifiersKey = adoptWK(WKStringCreateWithUTF8CString("Modifiers"));
-            WKEventModifiers modifiers = static_cast<WKEventModifiers>(WKUInt64GetValue(static_cast<WKUInt64Ref>(WKDictionaryGetItemForKey(messageBodyDictionary, modifiersKey.get()))));
-
-            WKRetainPtr<WKStringRef> locationKey = adoptWK(WKStringCreateWithUTF8CString("Location"));
-            unsigned location = static_cast<unsigned>(WKUInt64GetValue(static_cast<WKUInt64Ref>(WKDictionaryGetItemForKey(messageBodyDictionary, locationKey.get()))));
-
-            // Forward to WebProcess
-            WKPageSetShouldSendEventsSynchronously(mainWebView()->page(), true);
-            m_eventSenderProxy->keyDown(key, modifiers, location);
-            WKPageSetShouldSendEventsSynchronously(mainWebView()->page(), false);
             return 0;
         }
 

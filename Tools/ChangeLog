@@ -1,3 +1,27 @@
+2013-01-09  Christophe Dumez  <christophe.dumez@intel.com>
+
+        [WK2] Implement eventSender.scheduleAsynchronousKeyDown
+        https://bugs.webkit.org/show_bug.cgi?id=93979
+
+        Reviewed by Benjamin Poulain.
+
+        Implement eventSender.scheduleAsynchronousKeyDown() in
+        WebKitTestRunner.
+
+        * WebKitTestRunner/InjectedBundle/Bindings/EventSendingController.idl:
+        * WebKitTestRunner/InjectedBundle/EventSendingController.cpp:
+        (WTR::createKeyDownMessageBody):
+        (WTR::EventSendingController::keyDown):
+        (WTR::EventSendingController::scheduleAsynchronousKeyDown):
+        * WebKitTestRunner/InjectedBundle/EventSendingController.h:
+        (EventSendingController):
+        * WebKitTestRunner/TestController.cpp:
+        (WTR::TestController::didReceiveKeyDownMessageFromInjectedBundle):
+        (WTR::TestController::didReceiveMessageFromInjectedBundle):
+        (WTR::TestController::didReceiveSynchronousMessageFromInjectedBundle):
+        * WebKitTestRunner/TestController.h:
+        (TestController):
+
 2013-01-09  Jochen Eisinger  <jochen@chromium.org>
 
         [chromium] move resource load callback dumping to TestRunner library

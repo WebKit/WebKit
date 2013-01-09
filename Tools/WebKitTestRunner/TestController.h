@@ -113,6 +113,8 @@ private:
     void didReceiveMessageFromInjectedBundle(WKStringRef messageName, WKTypeRef messageBody);
     WKRetainPtr<WKTypeRef> didReceiveSynchronousMessageFromInjectedBundle(WKStringRef messageName, WKTypeRef messageBody);
 
+    void didReceiveKeyDownMessageFromInjectedBundle(WKDictionaryRef messageBodyDictionary, bool synchronous);
+
     // WKPageLoaderClient
     static void didCommitLoadForFrame(WKPageRef, WKFrameRef, WKTypeRef userData, const void*);
     void didCommitLoadForFrame(WKPageRef, WKFrameRef);

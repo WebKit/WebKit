@@ -175,9 +175,8 @@ webkit.org/b/81042 editing/spelling/spellcheck-paste-disabled.html [ Failure ]
 # http://webkit.org/b/93977
 webkit.org/b/93977 fast/dom/Geolocation/page-reload-cancel-permission-requests.html [ Failure ]
 
-# Implement eventSender.scheduleAsynchronousKeyDown
-# http://webkit.org/b/93979
-Bug(GTK) fast/dom/MutationObserver/end-of-task-delivery.html [ Failure Timeout ]
+# Fails because MutationObservers are not notified at end-of-task.
+webkit.org/b/78290 fast/dom/MutationObserver/end-of-task-delivery.html [ Failure Timeout ]
 
 # Implement testRunner.setUseDeferredFrameLoading
 # http://webkit.org/b/93980

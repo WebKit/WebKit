@@ -35,6 +35,7 @@ interface EventSendingController {
     void leapForward(in long milliseconds);
 
     void keyDown(in DOMString key, in object modifierArray, in long location);
+    void scheduleAsynchronousKeyDown(in DOMString key);
 
     // Zoom functions.
     void textZoomIn();

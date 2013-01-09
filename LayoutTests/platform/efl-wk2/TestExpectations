@@ -305,8 +305,8 @@ Bug(EFL) fast/events/touch/basic-single-touch-events.html [ Failure ]
 Bug(EFL) editing/spelling/grammar-edit-word.html [ Failure ]
 Bug(EFL) editing/spelling/markers.html [ Failure ]
 
-# WebKitTestRunner needs an implementation for eventSender.scheduleAsynchronousKeyDown
-webkit.org/b/93979 fast/dom/MutationObserver/end-of-task-delivery.html [ Failure ]
+# Fails because MutationObservers are not notified at end-of-task.
+webkit.org/b/78290 fast/dom/MutationObserver/end-of-task-delivery.html [ Failure ]
 
 # testRunner.setUseDeferredFrameLoading() is not implemented in WK2. Skipped so it does not generate PNG results.
 webkit.org/b/93980 http/tests/appcache/load-from-appcache-defer-resume-crash.html [ Skip ]

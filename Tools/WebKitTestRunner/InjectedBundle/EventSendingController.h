@@ -57,6 +57,7 @@ public:
     void scheduleAsynchronousClick();
 
     void keyDown(JSStringRef key, JSValueRef modifierArray, int location);
+    void scheduleAsynchronousKeyDown(JSStringRef key);
 
     // Zoom functions.
     void textZoomIn();

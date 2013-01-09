@@ -247,14 +247,8 @@ void EventSendingController::scheduleAsynchronousClick()
     WKBundlePostMessage(InjectedBundle::shared().bundle(), EventSenderMessageName.get(), mouseUpMessageBody.get());
 }
 
-void EventSendingController::keyDown(JSStringRef key, JSValueRef modifierArray, int location)
+static WKRetainPtr<WKMutableDictionaryRef> createKeyDownMessageBody(JSStringRef key, WKEventModifiers modifiers, int location)
 {
-    WKBundlePageRef page = InjectedBundle::shared().page()->page();
-    WKBundleFrameRef frame = WKBundlePageGetMainFrame(page);
-    JSContextRef context = WKBundleFrameGetJavaScriptContext(frame);
-    WKEventModifiers modifiers = parseModifierArray(context, modifierArray);
-
-    WKRetainPtr<WKStringRef> EventSenderMessageName(AdoptWK, WKStringCreateWithUTF8CString("EventSender"));
     WKRetainPtr<WKMutableDictionaryRef> EventSenderMessageBody(AdoptWK, WKMutableDictionaryCreate());
 
     WKRetainPtr<WKStringRef> subMessageKey(AdoptWK, WKStringCreateWithUTF8CString("SubMessage"));
@@ -272,7 +266,28 @@ void EventSendingController::keyDown(JSStringRef key, JSValueRef modifierArray, 
     WKRetainPtr<WKUInt64Ref> locationRef(AdoptWK, WKUInt64Create(location));
     WKDictionaryAddItem(EventSenderMessageBody.get(), locationKey.get(), locationRef.get());
 
-    WKBundlePostSynchronousMessage(InjectedBundle::shared().bundle(), EventSenderMessageName.get(), EventSenderMessageBody.get(), 0);
+    return EventSenderMessageBody;
+}
+
+void EventSendingController::keyDown(JSStringRef key, JSValueRef modifierArray, int location)
+{
+    WKBundlePageRef page = InjectedBundle::shared().page()->page();
+    WKBundleFrameRef frame = WKBundlePageGetMainFrame(page);
+    JSContextRef context = WKBundleFrameGetJavaScriptContext(frame);
+    WKEventModifiers modifiers = parseModifierArray(context, modifierArray);
+
+    WKRetainPtr<WKStringRef> EventSenderMessageName(AdoptWK, WKStringCreateWithUTF8CString("EventSender"));
+    WKRetainPtr<WKMutableDictionaryRef> keyDownMessageBody = createKeyDownMessageBody(key, modifiers, location);
+
+    WKBundlePostSynchronousMessage(InjectedBundle::shared().bundle(), EventSenderMessageName.get(), keyDownMessageBody.get(), 0);
+}
+
+void EventSendingController::scheduleAsynchronousKeyDown(JSStringRef key)
+{
+    WKRetainPtr<WKStringRef> EventSenderMessageName(AdoptWK, WKStringCreateWithUTF8CString("EventSender"));
+    WKRetainPtr<WKMutableDictionaryRef> keyDownMessageBody = createKeyDownMessageBody(key, 0 /* modifiers */, 0 /* location */);
+
+    WKBundlePostMessage(InjectedBundle::shared().bundle(), EventSenderMessageName.get(), keyDownMessageBody.get());
 }
 
 void EventSendingController::mouseScrollBy(int x, int y)
