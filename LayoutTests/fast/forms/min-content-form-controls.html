@@ -11,20 +11,20 @@
 </style>
 <p>The form controls of the same type below should be the same width.</p>
 
-<input id="text-a" class="min-content">
-<input id="text-b">
+<input id="text-a" class="min-content"><br>
+<input id="text-b"><br>
 
-<input id="file-a" type=file class="min-content">
-<input id="file-b" type=file>
+<input id="file-a" type=file class="min-content"><br>
+<input id="file-b" type=file><br>
 
-<input id="range-a" type=range class="min-content">
-<input id="range-b" type=range>
+<input id="range-a" type=range class="min-content"><br>
+<input id="range-b" type=range><br>
 
-<select id="select-a" class="min-content"><option>aaaaaaaaaaaaaaaaaaaaaaaaa</option></select>
-<select id="select-b"><option>aaaaaaaaaaaaaaaaaaaaaaaaa</option></select>
+<select id="select-a" class="min-content"><option>aaaaaaaaaaaaaaaaaaaaaaaaa</option></select><br>
+<select id="select-b"><option>aaaaaaaaaaaaaaaaaaaaaaaaa</option></select><br>
 
-<select id="multiple-a" multiple class="min-content"><option>aaaaaaaaaaaaaaaaaaaaaaaaa</option></select>
-<select id="multiple-b" multiple><option>aaaaaaaaaaaaaaaaaaaaaaaaa</option></select>
+<select id="multiple-a" multiple class="min-content"><option>aaaaaaaaaaaaaaaaaaaaaaaaa</option></select><br>
+<select id="multiple-b" multiple><option>aaaaaaaaaaaaaaaaaaaaaaaaa</option></select><br>
 
 <script src="../js/resources/js-test-pre.js"></script>
 <script>
@@ -32,18 +32,5 @@ var ids = ['text', 'file', 'range', 'select', 'multiple'];
 ids.forEach(function(id) {
     shouldBe('document.getElementById("' + id + '-a").offsetWidth', 'document.getElementById("' + id + '-b").offsetWidth');
 });
-
-function remove(id) {
-    var node = document.getElementById(id);
-    node.parentNode.removeChild(node);
-}
-
-if (window.testRunner) {
-    // Remove these elements since some of the text dumps are different platforms.
-    ids.forEach(function(id) {
-        remove(id + '-a');
-        remove(id + '-b');
-    });
-}
 </script>
 <script src="../js/resources/js-test-post.js"></script>

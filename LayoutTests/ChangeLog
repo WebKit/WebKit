@@ -1,3 +1,13 @@
+2013-01-09  Ojan Vafai  <ojan@chromium.org>
+
+        Proper version of http://trac.webkit.org/changeset/139221.
+        The problem was that there was line-wrapping due to form controls
+        being different sizes on different platforms, not that form
+        controls dump innerText differently.
+
+        * fast/forms/min-content-form-controls-expected.txt:
+        * fast/forms/min-content-form-controls.html:
+
 2013-01-09  Roger Fong  <roger_fong@apple.com>
 
         Unreviewed. Device Proximity is not enabled/implemented on Windows.
