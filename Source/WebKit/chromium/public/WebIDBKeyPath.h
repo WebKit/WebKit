@@ -26,10 +26,10 @@
 #ifndef WebIDBKeyPath_h
 #define WebIDBKeyPath_h
 
-#include "platform/WebCommon.h"
-#include "platform/WebPrivateOwnPtr.h"
-#include "platform/WebString.h"
-#include "platform/WebVector.h"
+#include <public/WebCommon.h>
+#include <public/WebPrivateOwnPtr.h>
+#include <public/WebString.h>
+#include <public/WebVector.h>
 
 namespace WebCore { class IDBKeyPath; }
 

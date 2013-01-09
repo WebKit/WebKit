@@ -32,7 +32,7 @@
 #define WebDatabase_h
 
 #include "WebSecurityOrigin.h"
-#include "platform/WebCommon.h"
+#include <public/WebCommon.h>
 
 namespace WebCore { class AbstractDatabase; }
 

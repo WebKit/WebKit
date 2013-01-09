@@ -31,9 +31,9 @@
 #ifndef WebImageDecoder_h
 #define WebImageDecoder_h
 
-#include "platform/WebCommon.h"
-#include "platform/WebImage.h"
-#include "platform/WebNonCopyable.h"
+#include <public/WebCommon.h>
+#include <public/WebImage.h>
+#include <public/WebNonCopyable.h>
 
 namespace WebCore { class ImageDecoder; }
 

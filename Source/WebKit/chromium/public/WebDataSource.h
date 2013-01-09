@@ -33,7 +33,7 @@
 
 #include "WebNavigationType.h"
 #include "WebTextDirection.h"
-#include "platform/WebCommon.h"
+#include <public/WebCommon.h>
 
 namespace WebKit {
 

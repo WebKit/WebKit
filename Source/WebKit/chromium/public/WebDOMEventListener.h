@@ -31,7 +31,7 @@
 #ifndef WebDOMEventListener_h
 #define WebDOMEventListener_h
 
-#include "platform/WebCommon.h"
+#include <public/WebCommon.h>
 
 #if WEBKIT_IMPLEMENTATION
 namespace WebCore { class EventTarget; }

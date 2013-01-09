@@ -31,8 +31,8 @@
 #ifndef WebFileWriter_h
 #define WebFileWriter_h
 
-#include "platform/WebCommon.h"
-#include "platform/WebString.h"
+#include <public/WebCommon.h>
+#include <public/WebString.h>
 
 namespace WebKit {
 

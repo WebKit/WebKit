@@ -33,8 +33,8 @@
 
 #include "WebTimeRange.h"
 #include "WebVideoFrame.h"
-#include "platform/WebCanvas.h"
-#include "platform/WebString.h"
+#include <public/WebCanvas.h>
+#include <public/WebString.h>
 
 namespace WebKit {
 

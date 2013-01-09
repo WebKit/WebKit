@@ -31,7 +31,7 @@
 #ifndef WebSecurityOrigin_h
 #define WebSecurityOrigin_h
 
-#include "platform/WebCommon.h"
+#include <public/WebCommon.h>
 
 #if WEBKIT_IMPLEMENTATION
 namespace WebCore { class SecurityOrigin; }

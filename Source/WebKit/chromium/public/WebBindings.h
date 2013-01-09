@@ -31,10 +31,10 @@
 #ifndef WebBindings_h
 #define WebBindings_h
 
-#include "platform/WebCommon.h"
-#include "platform/WebString.h"
-#include "platform/WebVector.h"
 #include <bindings/npruntime.h>
+#include <public/WebCommon.h>
+#include <public/WebString.h>
+#include <public/WebVector.h>
 
 #if WEBKIT_USING_V8
 namespace v8 {

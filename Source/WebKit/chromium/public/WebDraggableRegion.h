@@ -31,9 +31,9 @@
 #ifndef WebDraggableRegion_h
 #define WebDraggableRegion_h
 
-#include "platform/WebCommon.h"
-#include "platform/WebRect.h"
-#include "platform/WebString.h"
+#include <public/WebCommon.h>
+#include <public/WebRect.h>
+#include <public/WebString.h>
 
 namespace WebKit {
 

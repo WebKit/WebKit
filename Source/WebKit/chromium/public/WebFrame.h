@@ -35,10 +35,10 @@
 #include "WebMessagePortChannel.h"
 #include "WebNode.h"
 #include "WebURLLoaderOptions.h"
-#include "platform/WebCanvas.h"
-#include "platform/WebFileSystem.h"
-#include "platform/WebReferrerPolicy.h"
-#include "platform/WebURL.h"
+#include <public/WebCanvas.h>
+#include <public/WebFileSystem.h>
+#include <public/WebReferrerPolicy.h>
+#include <public/WebURL.h>
 
 struct NPObject;
 

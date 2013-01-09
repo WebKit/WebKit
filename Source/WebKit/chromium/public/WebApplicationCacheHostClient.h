@@ -32,7 +32,7 @@
 #define WebApplicationCacheHostClient_h
 
 #include "WebApplicationCacheHost.h"
-#include "platform/WebCommon.h"
+#include <public/WebCommon.h>
 
 namespace WebKit {
 

@@ -31,7 +31,7 @@
 #ifndef WebScriptController_h
 #define WebScriptController_h
 
-#include "platform/WebCommon.h"
+#include <public/WebCommon.h>
 
 namespace v8 {
 class Extension;

@@ -26,8 +26,8 @@
 #ifndef WebGeolocationPermissionRequestManager_h
 #define WebGeolocationPermissionRequestManager_h
 
-#include "platform/WebNonCopyable.h"
-#include "platform/WebPrivateOwnPtr.h"
+#include <public/WebNonCopyable.h>
+#include <public/WebPrivateOwnPtr.h>
 
 namespace WebKit {
 

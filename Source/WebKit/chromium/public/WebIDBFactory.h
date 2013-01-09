@@ -33,9 +33,9 @@
 #include "WebIDBCallbacks.h"
 #include "WebIDBMetadata.h"
 #include "WebSecurityOrigin.h"
-#include "platform/WebCommon.h"
-#include "platform/WebString.h"
-#include "platform/WebVector.h"
+#include <public/WebCommon.h>
+#include <public/WebString.h>
+#include <public/WebVector.h>
 
 namespace WebKit {
 

@@ -27,8 +27,8 @@
 
 #include "WebNode.h"
 #include "WebRange.h"
-#include "platform/WebPrivateOwnPtr.h"
-#include "platform/WebString.h"
+#include <public/WebPrivateOwnPtr.h>
+#include <public/WebString.h>
 
 namespace WebCore {
 class SurroundingText;

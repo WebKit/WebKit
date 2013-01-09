@@ -30,7 +30,7 @@
 #include "WebExceptionCode.h"
 #include "WebIDBMetadata.h"
 #include "WebIDBTransaction.h"
-#include "platform/WebCommon.h"
+#include <public/WebCommon.h>
 
 namespace WebKit {
 

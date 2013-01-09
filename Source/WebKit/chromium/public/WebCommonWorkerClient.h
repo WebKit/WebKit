@@ -31,8 +31,8 @@
 #ifndef WebCommonWorkerClient_h
 #define WebCommonWorkerClient_h
 
-#include "platform/WebCommon.h"
-#include "platform/WebFileSystem.h"
+#include <public/WebCommon.h>
+#include <public/WebFileSystem.h>
 
 namespace WebKit {
 

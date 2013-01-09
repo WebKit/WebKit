@@ -26,7 +26,7 @@
 #ifndef WebHitTestResult_h
 #define WebHitTestResult_h
 
-#include "platform/WebPrivateOwnPtr.h"
+#include <public/WebPrivateOwnPtr.h>
 
 namespace WebCore {
 class HitTestResult;

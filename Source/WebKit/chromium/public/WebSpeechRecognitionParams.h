@@ -28,8 +28,8 @@
 
 #include "WebSecurityOrigin.h"
 #include "WebSpeechGrammar.h"
-#include "platform/WebString.h"
-#include "platform/WebVector.h"
+#include <public/WebString.h>
+#include <public/WebVector.h>
 
 namespace WebKit {
 

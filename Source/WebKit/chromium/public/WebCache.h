@@ -31,7 +31,7 @@
 #ifndef WebCache_h
 #define WebCache_h
 
-#include "platform/WebCommon.h"
+#include <public/WebCommon.h>
 
 namespace WebKit {
 

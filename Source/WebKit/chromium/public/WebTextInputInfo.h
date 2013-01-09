@@ -27,7 +27,7 @@
 #define WebTextInputInfo_h
 
 #include "WebTextInputType.h"
-#include "platform/WebString.h"
+#include <public/WebString.h>
 
 namespace WebKit {
 

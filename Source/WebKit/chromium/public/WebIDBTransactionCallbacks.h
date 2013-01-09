@@ -26,7 +26,7 @@
 #ifndef WebIDBTransactionCallbacks_h
 #define WebIDBTransactionCallbacks_h
 
-#include "platform/WebCommon.h"
+#include <public/WebCommon.h>
 
 namespace WebKit {
 

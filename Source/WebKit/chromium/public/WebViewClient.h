@@ -42,9 +42,9 @@
 #include "WebTextAffinity.h"
 #include "WebTextDirection.h"
 #include "WebWidgetClient.h"
-#include "platform/WebColor.h"
-#include "platform/WebGraphicsContext3D.h"
-#include "platform/WebString.h"
+#include <public/WebColor.h>
+#include <public/WebGraphicsContext3D.h>
+#include <public/WebString.h>
 
 namespace WebKit {
 

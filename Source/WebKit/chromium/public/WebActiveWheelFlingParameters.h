@@ -27,11 +27,11 @@
 #define WebActiveWheelFlingParameters_h
 
 #include "WebInputEvent.h"
-#include "platform/WebCommon.h"
+#include <public/WebCommon.h>
 
-#include "platform/WebFloatPoint.h"
-#include "platform/WebPoint.h"
-#include "platform/WebSize.h"
+#include <public/WebFloatPoint.h>
+#include <public/WebPoint.h>
+#include <public/WebSize.h>
 
 namespace WebKit {
 

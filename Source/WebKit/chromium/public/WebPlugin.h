@@ -33,9 +33,9 @@
 
 #include "WebDragOperation.h"
 #include "WebDragStatus.h"
-#include "platform/WebCanvas.h"
-#include "platform/WebString.h"
-#include "platform/WebURL.h"
+#include <public/WebCanvas.h>
+#include <public/WebString.h>
+#include <public/WebURL.h>
 
 struct NPObject;
 

@@ -26,7 +26,7 @@
 #ifndef WebCompositorInputHandler_h
 #define WebCompositorInputHandler_h
 
-#include "platform/WebCommon.h"
+#include <public/WebCommon.h>
 
 namespace WebKit {
 

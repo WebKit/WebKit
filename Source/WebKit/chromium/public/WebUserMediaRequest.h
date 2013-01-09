@@ -32,8 +32,8 @@
 #define WebUserMediaRequest_h
 
 #include "WebSecurityOrigin.h"
-#include "platform/WebCommon.h"
-#include "platform/WebPrivatePtr.h"
+#include <public/WebCommon.h>
+#include <public/WebPrivatePtr.h>
 
 namespace WebCore {
 class UserMediaRequest;

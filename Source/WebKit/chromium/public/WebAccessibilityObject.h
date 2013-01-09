@@ -32,9 +32,9 @@
 #define WebAccessibilityObject_h
 
 #include "WebAccessibilityRole.h"
-#include "platform/WebCommon.h"
-#include "platform/WebPrivatePtr.h"
-#include "platform/WebVector.h"
+#include <public/WebCommon.h>
+#include <public/WebPrivatePtr.h>
+#include <public/WebVector.h>
 
 #if WEBKIT_IMPLEMENTATION
 namespace WTF { template <typename T> class PassRefPtr; }

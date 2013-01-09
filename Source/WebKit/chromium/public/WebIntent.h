@@ -32,11 +32,11 @@
 #define WebIntent_h
 
 #include "WebMessagePortChannel.h"
-#include "platform/WebCommon.h"
-#include "platform/WebPrivatePtr.h"
-#include "platform/WebString.h"
-#include "platform/WebURL.h"
-#include "platform/WebVector.h"
+#include <public/WebCommon.h>
+#include <public/WebPrivatePtr.h>
+#include <public/WebString.h>
+#include <public/WebURL.h>
+#include <public/WebVector.h>
 
 namespace WebCore { class Intent; }
 

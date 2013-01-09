@@ -29,7 +29,7 @@
 #include "WebExceptionCode.h"
 #include "WebIDBKeyPath.h"
 #include "WebIDBTransaction.h"
-#include "platform/WebString.h"
+#include <public/WebString.h>
 
 namespace WebKit {
 

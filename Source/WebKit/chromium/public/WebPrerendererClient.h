@@ -32,7 +32,7 @@
 #ifndef WebPrerendererClient_h
 #define WebPrerendererClient_h
 
-#include "platform/WebCommon.h"
+#include <public/WebCommon.h>
 
 namespace WebKit {
 

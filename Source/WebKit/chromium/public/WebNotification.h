@@ -32,7 +32,7 @@
 #define WebNotification_h
 
 #include "WebTextDirection.h"
-#include "platform/WebCommon.h"
+#include <public/WebCommon.h>
 
 #if WEBKIT_IMPLEMENTATION
 namespace WebCore { class Notification; }

@@ -33,7 +33,7 @@
 
 #include "WebNotificationPermissionCallback.h"
 #include "WebSecurityOrigin.h"
-#include "platform/WebString.h"
+#include <public/WebString.h>
 
 namespace WebKit {
 

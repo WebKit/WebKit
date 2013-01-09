@@ -32,9 +32,9 @@
 #define WebNode_h
 
 #include "WebExceptionCode.h"
-#include "platform/WebCommon.h"
-#include "platform/WebPrivatePtr.h"
-#include "platform/WebString.h"
+#include <public/WebCommon.h>
+#include <public/WebPrivatePtr.h>
+#include <public/WebString.h>
 
 namespace WebCore { class Node; }
 

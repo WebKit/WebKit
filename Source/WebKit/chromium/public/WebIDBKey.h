@@ -26,10 +26,10 @@
 #ifndef WebIDBKey_h
 #define WebIDBKey_h
 
-#include "platform/WebCommon.h"
-#include "platform/WebPrivatePtr.h"
-#include "platform/WebString.h"
-#include "platform/WebVector.h"
+#include <public/WebCommon.h>
+#include <public/WebPrivatePtr.h>
+#include <public/WebString.h>
+#include <public/WebVector.h>
 
 namespace WebCore { class IDBKey; }
 

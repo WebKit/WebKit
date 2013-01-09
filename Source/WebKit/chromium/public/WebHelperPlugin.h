@@ -32,7 +32,7 @@
 #define WebHelperPlugin_h
 
 #include "WebWidget.h"
-#include "platform/WebCommon.h"
+#include <public/WebCommon.h>
 
 namespace WebKit {
 

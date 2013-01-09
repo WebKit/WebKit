@@ -31,8 +31,8 @@
 #ifndef WebHistoryItem_h
 #define WebHistoryItem_h
 
-#include "platform/WebCommon.h"
-#include "platform/WebPrivatePtr.h"
+#include <public/WebCommon.h>
+#include <public/WebPrivatePtr.h>
 
 namespace WebCore { class HistoryItem; }
 

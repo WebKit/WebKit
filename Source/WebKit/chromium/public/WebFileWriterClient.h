@@ -32,7 +32,7 @@
 #define WebFileWriterClient_h
 
 #include "WebFileError.h"
-#include "platform/WebCommon.h"
+#include <public/WebCommon.h>
 
 namespace WebKit {
 
