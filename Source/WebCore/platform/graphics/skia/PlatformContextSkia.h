@@ -40,6 +40,7 @@
 #include "SkDrawLooper.h"
 #include "SkPaint.h"
 #include "SkPath.h"
+#include "SkRRect.h"
 
 #include <wtf/Noncopyable.h>
 #include <wtf/Vector.h>
@@ -241,6 +242,7 @@ public:
     void drawPoints(SkCanvas::PointMode, size_t count, const SkPoint pts[], const SkPaint&);
     void drawRect(const SkRect&, const SkPaint&);
     void drawIRect(const SkIRect&, const SkPaint&);
+    void drawRRect(const SkRRect&, const SkPaint&);
     void drawPosText(const void* text, size_t byteLength, const SkPoint pos[], const SkPaint&);
     void drawPosTextH(const void* text, size_t byteLength, const SkScalar xpos[], SkScalar constY,
         const SkPaint&);
@@ -471,6 +473,14 @@ inline void PlatformContextSkia::drawIRect(const SkIRect& rect, const SkPaint& p
         SkRect r = SkRect::MakeFromIRect(rect);
         m_opaqueRegion.didDrawRect(this, r, paint, 0);
     }
+}
+
+inline void PlatformContextSkia::drawRRect(const SkRRect& rect, const SkPaint& paint)
+{
+    m_canvas->drawRRect(rect, paint);
+
+    if (m_trackOpaqueRegion)
+        m_opaqueRegion.didDrawRect(this, rect.getBounds(), paint, 0);
 }
 
 inline void PlatformContextSkia::drawPosText(const void* text, size_t byteLength,

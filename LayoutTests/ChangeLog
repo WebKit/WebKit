@@ -1,3 +1,59 @@
+2013-01-09  Florin Malita  <fmalita@chromium.org>
+
+        [Skia] Implement GraphicsContext::fillRoundedRect() using SkCanvas::drawRRect()
+        https://bugs.webkit.org/show_bug.cgi?id=106366
+
+        Reviewed by Stephen White.
+
+        * platform/chromium-linux/compositing/video/video-controls-layer-creation-expected.png:
+        * platform/chromium-linux/fast/backgrounds/background-leakage-expected.png:
+        * platform/chromium-linux/fast/backgrounds/background-leakage-transforms-expected.png:
+        * platform/chromium-linux/fast/borders/border-radius-split-inline-expected.png:
+        * platform/chromium-linux/fast/borders/borderRadiusAllStylesAllCorners-expected.png:
+        * platform/chromium-linux/fast/borders/borderRadiusDouble03-expected.png:
+        * platform/chromium-linux/fast/borders/borderRadiusGroove02-expected.png:
+        * platform/chromium-linux/fast/borders/borderRadiusInset01-expected.png:
+        * platform/chromium-linux/fast/box-shadow/basic-shadows-expected.png:
+        * platform/chromium-linux/fast/box-shadow/box-shadow-clipped-slices-expected.png:
+        * platform/chromium-linux/fast/box-shadow/spread-expected.png:
+        * platform/chromium-linux/fast/css/box-shadow-and-border-radius-expected.png:
+        * platform/chromium-linux/fast/css/shadow-multiple-expected.png:
+        * platform/chromium-linux/fast/css/text-input-with-webkit-border-radius-expected.png:
+        * platform/chromium-linux/fast/hidpi/video-controls-in-hidpi-expected.png:
+        * platform/chromium-linux/fast/layers/video-layer-expected.png:
+        * platform/chromium-linux/fast/regions/full-screen-video-from-region-expected.png:
+        * platform/chromium-linux/fast/repaint/shadow-multiple-horizontal-expected.png:
+        * platform/chromium-linux/fast/repaint/shadow-multiple-strict-horizontal-expected.png:
+        * platform/chromium-linux/fast/repaint/shadow-multiple-strict-vertical-expected.png:
+        * platform/chromium-linux/fast/repaint/shadow-multiple-vertical-expected.png:
+        * platform/chromium-linux/fast/transforms/shadows-expected.png:
+        * platform/chromium-linux/fullscreen/full-screen-stacking-context-expected.png:
+        * platform/chromium-linux/http/tests/media/video-buffered-range-contains-currentTime-expected.png:
+        * platform/chromium-linux/ietestcenter/css3/bordersbackgrounds/background-color-applied-to-rounded-inline-element-expected.png:
+        * platform/chromium-linux/ietestcenter/css3/bordersbackgrounds/border-radius-clip-002-expected.png:
+        * platform/chromium-linux/ietestcenter/css3/bordersbackgrounds/border-radius-style-005-expected.png:
+        * platform/chromium-linux/media/audio-controls-rendering-expected.png:
+        * platform/chromium-linux/media/audio-repaint-expected.png:
+        * platform/chromium-linux/media/controls-after-reload-expected.png:
+        * platform/chromium-linux/media/controls-layout-direction-expected.png:
+        * platform/chromium-linux/media/controls-strict-expected.png:
+        * platform/chromium-linux/media/controls-styling-expected.png:
+        * platform/chromium-linux/media/controls-styling-strict-expected.png:
+        * platform/chromium-linux/media/controls-without-preload-expected.png:
+        * platform/chromium-linux/media/media-controls-clone-expected.png:
+        * platform/chromium-linux/media/media-document-audio-repaint-expected.png:
+        * platform/chromium-linux/media/video-controls-rendering-expected.png:
+        * platform/chromium-linux/media/video-display-toggle-expected.png:
+        * platform/chromium-linux/media/video-empty-source-expected.png:
+        * platform/chromium-linux/media/video-no-audio-expected.png:
+        * platform/chromium-linux/media/video-playing-and-pause-expected.png:
+        * platform/chromium-linux/media/video-zoom-controls-expected.png:
+        * platform/chromium-linux/platform/chromium/fast/forms/calendar-picker/calendar-picker-appearance-expected.png:
+        * platform/chromium-linux/platform/chromium/fast/forms/calendar-picker/calendar-picker-appearance-ru-expected.png:
+        * platform/chromium-linux/platform/chromium/virtual/gpu/fast/hidpi/video-controls-in-hidpi-expected.png:
+        * platform/chromium-linux/platform/chromium/virtual/softwarecompositing/video/video-controls-layer-creation-expected.png: Added.
+        * platform/chromium/TestExpectations:
+
 2013-01-09  Mikhail Pozdnyakov  <mikhail.pozdnyakov@intel.com>
 
         Unreviewed EFL gardening.

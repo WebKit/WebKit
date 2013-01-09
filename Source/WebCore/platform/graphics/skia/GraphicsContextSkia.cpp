@@ -49,6 +49,7 @@
 #include "SkCornerPathEffect.h"
 #include "SkData.h"
 #include "SkLayerDrawLooper.h"
+#include "SkRRect.h"
 #include "SkShader.h"
 #include "SkiaUtils.h"
 #include "skia/ext/platform_canvas.h"
@@ -806,17 +807,20 @@ void GraphicsContext::fillRoundedRect(const IntRect& rect,
         return;
     }
 
-    SkRect r = rect;
-    SkPath path;
-    addCornerArc(&path, r, topRight, 270);
-    addCornerArc(&path, r, bottomRight, 0);
-    addCornerArc(&path, r, bottomLeft, 90);
-    addCornerArc(&path, r, topLeft, 180);
+    SkVector radii[4];
+    radii[SkRRect::kUpperLeft_Corner].set(SkIntToScalar(topLeft.width()), SkIntToScalar(topLeft.height()));
+    radii[SkRRect::kUpperRight_Corner].set(SkIntToScalar(topRight.width()), SkIntToScalar(topRight.height()));
+    radii[SkRRect::kLowerRight_Corner].set(SkIntToScalar(bottomRight.width()), SkIntToScalar(bottomRight.height()));
+    radii[SkRRect::kLowerLeft_Corner].set(SkIntToScalar(bottomLeft.width()), SkIntToScalar(bottomLeft.height()));
+
+    SkRRect rr;
+    rr.setRectRadii(rect, radii);
 
     SkPaint paint;
     platformContext()->setupPaintForFilling(&paint);
     paint.setColor(color.rgb());
-    platformContext()->drawPath(path, paint);
+
+    platformContext()->drawRRect(rr, paint);
 }
 
 AffineTransform GraphicsContext::getCTM(IncludeDeviceScale) const
