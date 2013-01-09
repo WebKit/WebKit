@@ -1,3 +1,9 @@
+2013-01-08  Noel Gordon  <noel.gordon@gmail.com>
+
+        [chromium] Unreviewed gardening. Update fast/events/touch/compositor-touch-hit-rects on linux
+
+        * platform/chromium-linux/platform/chromium/fast/events/touch/compositor-touch-hit-rects-expected.txt: Added.
+
 2013-01-08  Arpita Bahuguna  <arpitabahuguna@gmail.com>
 
         Caret is incorrectly painted for a contenteditable <div> containing a <br> in vertical writing mode
