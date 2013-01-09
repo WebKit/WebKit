@@ -31,6 +31,14 @@
                         r"|Source/WebCore/html/shadow/(SliderThumbElement|TextControlInnerElements)\."
                         r"|Source/WebCore/rendering/Render(FileUploadControl|ListBox|MenuList|Slider|TextControl.*)\."
         },
+        "Geolocation": {
+            "filename": r"Source/WebCore/Modules/geolocation/"
+                        r"|Source/WebCore/page/GeolocationClient.h"
+                        r"|Source/WebCore/bindings/js/JSGeolocationCustom.cpp"
+                        r"|Source/WebCore/bindings/v8/custom/V8GeolocationCustom.cpp"
+                        r"|Source/WebCore/platform/mock/GeolocationClientMock.(h|cpp)"
+                        r"|Source/WebKit2/WebProcess/Geolocation/",
+        },
         "GStreamerGraphics": {
             "filename": r"Source/WebCore/platform/graphics/gstreamer/",
         },
@@ -355,6 +363,7 @@
         "Filters": [ "dino@apple.com" ],
         "Forms": [ "tkent@chromium.org", "mifenton@rim.com" ],
         "FrameLoader": [ "abarth@webkit.org", "japhet@chromium.org" ],
+        "Geolocation": [ "benjamin@webkit.org" ],
         "GraphicsLayer": [ "simon.fraser@apple.com" ],
         "GStreamerGraphics": [ "alexis@webkit.org", "pnormand@igalia.com", "gns@gnome.org", "mrobinson@webkit.org" ],
         "GStreamerAudio": [ "pnormand@igalia.com" ],

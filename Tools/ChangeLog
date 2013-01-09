@@ -1,3 +1,11 @@
+2013-01-08  Benjamin Poulain  <benjamin@webkit.org>
+
+        Add myself as a watcher for Web Geolocation
+
+        Unreviewed.
+
+        * Scripts/webkitpy/common/config/watchlist:
+
 2013-01-08  Zan Dobersek  <zandobersek@gmail.com>
 
         [webkitpy] Call setup_test_run method of the parent Port interface when method is called on subclasses
