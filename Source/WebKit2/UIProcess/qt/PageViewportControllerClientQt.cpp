@@ -228,7 +228,7 @@ void PageViewportControllerClientQt::zoomToAreaGestureEnded(const QPointF& touch
 
     const qreal minViewportScale = qreal(2.5);
     qreal targetScale = viewportRect.size().width() / endArea.size().width();
-    targetScale = m_controller->innerBoundedViewportScale(qMax(minViewportScale, targetScale));
+    targetScale = m_controller->innerBoundedViewportScale(qMin(minViewportScale, targetScale));
     qreal currentScale = m_pageItem->contentsScale();
 
     // We want to end up with the target area filling the whole width of the viewport (if possible),
