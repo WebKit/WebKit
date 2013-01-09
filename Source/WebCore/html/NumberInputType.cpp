@@ -106,6 +106,13 @@ const AtomicString& NumberInputType::formControlType() const
     return InputTypeNames::number();
 }
 
+void NumberInputType::setValue(const String& sanitizedValue, bool valueChanged, TextFieldEventBehavior eventBehavior)
+{
+    if (!valueChanged && sanitizedValue.isEmpty() && !element()->innerTextValue().isEmpty())
+        updateInnerTextValue();
+    TextFieldInputType::setValue(sanitizedValue, valueChanged, eventBehavior);
+}
+
 double NumberInputType::valueAsDouble() const
 {
     return parseToDoubleForNumberType(element()->value());

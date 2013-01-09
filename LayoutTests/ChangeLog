@@ -1,3 +1,14 @@
+2013-01-08  Kent Tamura  <tkent@chromium.org>
+
+        REGRESSION(r135836): Invalid user input for input[type=number] should be cleared by input.value=""
+        https://bugs.webkit.org/show_bug.cgi?id=106284
+
+        Reviewed by Hajime Morita.
+
+        * fast/forms/number/number-validity-badinput.html:
+        Add a test case.
+        * fast/forms/number/number-validity-badinput-expected.txt:
+
 2013-01-08  Nate Chapin  <japhet@chromium.org>
 
         REGRESSION(r138222?): [Mac WK1] http/tests/appcache/main-resource-redirect.html asserts in WebFrameLoaderClient::dispatchDidFinishLoading

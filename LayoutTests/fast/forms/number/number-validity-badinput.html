@@ -59,6 +59,11 @@ shouldBeEqualToString('number.value', '');
 debug("The element losts a renderer. The element state should not be changed.");
 shouldBeTrue('number.style.display = "none"; number.validity.badInput');
 
+number.style.display = 'inline-block';
+number.focus();
+debug('A bad input should be cleared by value="".');
+shouldBeEqualToString('number.value = ""; document.execCommand("SelectAll"); document.getSelection().toString()', '');
+
 document.getElementById('parent').innerHTML = '';
 </script>
 <script src="../../../fast/js/resources/js-test-post.js"></script>

@@ -26,6 +26,8 @@ PASS document.getSelection().toString() is "-1a"
 PASS number.value is ""
 The element losts a renderer. The element state should not be changed.
 PASS number.style.display = "none"; number.validity.badInput is true
+A bad input should be cleared by value="".
+PASS number.value = ""; document.execCommand("SelectAll"); document.getSelection().toString() is ""
 PASS successfullyParsed is true
 
 TEST COMPLETE

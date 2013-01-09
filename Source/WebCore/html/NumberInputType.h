@@ -42,6 +42,7 @@ public:
 private:
     NumberInputType(HTMLInputElement* element) : TextFieldInputType(element) { }
     virtual const AtomicString& formControlType() const OVERRIDE;
+    virtual void setValue(const String&, bool valueChanged, TextFieldEventBehavior) OVERRIDE;
     virtual double valueAsDouble() const OVERRIDE;
     virtual void setValueAsDouble(double, TextFieldEventBehavior, ExceptionCode&) const OVERRIDE;
     virtual void setValueAsDecimal(const Decimal&, TextFieldEventBehavior, ExceptionCode&) const OVERRIDE;
