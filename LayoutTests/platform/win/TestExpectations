@@ -2503,3 +2503,14 @@ media/video-controls-captions-trackmenu-localized.html
 media/video-controls-captions-trackmenu-sorted.html
 media/video-controls-captions-trackmenu.html
 media/video-controls-visible-exiting-fullscreen.html
+
+# Device Proximity is not enabled/implemented
+proximity/add-listener-from-callback.html
+proximity/basic-operation.html
+proximity/create-event.html
+proximity/event-after-navigation.html
+proximity/multiple-frames.html
+proximity/no-page-cache.html
+proximity/optional-event-properties.html
+proximity/updates.html
+proximity/window-property.html

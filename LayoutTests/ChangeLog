@@ -1,3 +1,20 @@
+2013-01-09  Roger Fong  <roger_fong@apple.com>
+
+        Unreviewed. Device Proximity is not enabled/implemented on Windows.
+        Skipping related tests:
+
+        proximity/add-listener-from-callback.html
+        proximity/basic-operation.html
+        proximity/create-event.html
+        proximity/event-after-navigation.html
+        proximity/multiple-frames.html
+        proximity/no-page-cache.html
+        proximity/optional-event-properties.html
+        proximity/updates.html
+        proximity/window-property.html
+
+        * platform/win/TestExpectations:
+
 2013-01-09  Christophe Dumez  <christophe.dumez@intel.com>
 
         [WK2] Implement eventSender.scheduleAsynchronousKeyDown
