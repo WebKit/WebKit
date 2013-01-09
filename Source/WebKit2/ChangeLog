@@ -1,5 +1,11 @@
 2013-01-08  Anders Carlsson  <andersca@apple.com>
 
+        Unbreak the world.
+
+        * WebProcess/com.apple.WebProcess.sb.in:
+
+2013-01-08  Anders Carlsson  <andersca@apple.com>
+
         Silence a sandbox violation
         https://bugs.webkit.org/show_bug.cgi?id=106386
         <rdar://problem/12976435>
