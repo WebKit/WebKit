@@ -1334,32 +1334,6 @@ void GraphicsContext::clipOut(const IntRect& rect)
     }
 }
 
-void GraphicsContext::addInnerRoundedRectClip(const IntRect& rect,
-                                              int thickness)
-{
-    if (paintingDisabled())
-        return;
-
-    clip(rect);
-    QPainterPath path;
-
-    // Add outer ellipse
-    path.addEllipse(QRectF(rect.x(), rect.y(), rect.width(), rect.height()));
-
-    // Add inner ellipse.
-    path.addEllipse(QRectF(rect.x() + thickness, rect.y() + thickness,
-                           rect.width() - (thickness * 2), rect.height() - (thickness * 2)));
-
-    path.setFillRule(Qt::OddEvenFill);
-
-    QPainter* p = m_data->p();
-
-    const bool antiAlias = p->testRenderHint(QPainter::Antialiasing);
-    p->setRenderHint(QPainter::Antialiasing, true);
-    p->setClipPath(path, Qt::IntersectClip);
-    p->setRenderHint(QPainter::Antialiasing, antiAlias);
-}
-
 void GraphicsContext::concatCTM(const AffineTransform& transform)
 {
     if (paintingDisabled())

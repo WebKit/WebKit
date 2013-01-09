@@ -1061,12 +1061,6 @@ void GraphicsContext::setURLForRect(const KURL& link, const IntRect& destRect)
     notImplemented();
 }
 
-void GraphicsContext::addInnerRoundedRectClip(const IntRect& rect, int thickness)
-{
-    // We can only clip rectangles on WINCE
-    clip(rect);
-}
-
 void GraphicsContext::clearRect(const FloatRect& rect)
 {
     if (paintingDisabled())

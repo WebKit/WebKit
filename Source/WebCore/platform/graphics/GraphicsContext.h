@@ -344,7 +344,6 @@ namespace WebCore {
         void clip(const IntRect&);
         void clip(const FloatRect&);
         void addRoundedRectClip(const RoundedRect&);
-        void addInnerRoundedRectClip(const IntRect&, int thickness);
         void clipOut(const IntRect&);
         void clipOutRoundedRect(const RoundedRect&);
         void clipPath(const Path&, WindRule);

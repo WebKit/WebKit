@@ -844,29 +844,6 @@ void GraphicsContext::setCTM(const AffineTransform& transform)
     m_data->setCTM(transform);
 }
 
-void GraphicsContext::addInnerRoundedRectClip(const IntRect& rect, int thickness)
-{
-    if (paintingDisabled())
-        return;
-
-    cairo_t* cr = platformContext()->cr();
-    clip(rect);
-
-    Path p;
-    FloatRect r(rect);
-    // Add outer ellipse
-    p.addEllipse(r);
-    // Add inner ellipse
-    r.inflate(-thickness);
-    p.addEllipse(r);
-    appendWebCorePathToCairoContext(cr, p);
-
-    cairo_fill_rule_t savedFillRule = cairo_get_fill_rule(cr);
-    cairo_set_fill_rule(cr, CAIRO_FILL_RULE_EVEN_ODD);
-    cairo_clip(cr);
-    cairo_set_fill_rule(cr, savedFillRule);
-}
-
 void GraphicsContext::setPlatformShadow(FloatSize const& size, float, Color const&, ColorSpace)
 {
     if (paintingDisabled())

@@ -444,19 +444,6 @@ void GraphicsContext::clipToImageBuffer(const FloatRect& rect, const ImageBuffer
     UNUSED_PARAM(imageBuffer);
 }
 
-void GraphicsContext::addInnerRoundedRectClip(const IntRect& rect, int thickness)
-{
-    if (paintingDisabled())
-        return;
-
-    Path path;
-    path.addEllipse(rect);
-    path.addEllipse(FloatRect(rect.x() + thickness, rect.y() + thickness,
-        rect.width() - (thickness * 2), rect.height() - (thickness * 2)));
-
-    m_data->clipPath(path, PainterOpenVG::IntersectClip, m_state.fillRule);
-}
-
 void GraphicsContext::concatCTM(const AffineTransform& transformation)
 {
     if (paintingDisabled())

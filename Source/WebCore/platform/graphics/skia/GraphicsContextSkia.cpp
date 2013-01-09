@@ -275,25 +275,6 @@ bool GraphicsContext::supportsTransparencyLayers()
 
 // Graphics primitives ---------------------------------------------------------
 
-void GraphicsContext::addInnerRoundedRectClip(const IntRect& rect, int thickness)
-{
-    if (paintingDisabled())
-        return;
-
-    SkRect r(rect);
-    SkPath path;
-    path.addOval(r, SkPath::kCW_Direction);
-    // only perform the inset if we won't invert r
-    if (2 * thickness < rect.width() && 2 * thickness < rect.height()) {
-        // Adding one to the thickness doesn't make the border too thick as
-        // it's painted over afterwards. But without this adjustment the
-        // border appears a little anemic after anti-aliasing.
-        r.inset(SkIntToScalar(thickness + 1), SkIntToScalar(thickness + 1));
-        path.addOval(r, SkPath::kCCW_Direction);
-    }
-    platformContext()->clipPath(path, PlatformContextSkia::AntiAliased);
-}
-
 void GraphicsContext::clearPlatformShadow()
 {
     if (paintingDisabled())

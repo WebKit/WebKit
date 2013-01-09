@@ -1097,23 +1097,6 @@ IntRect GraphicsContext::clipBounds() const
     return enclosingIntRect(CGContextGetClipBoundingBox(platformContext()));
 }
 
-void GraphicsContext::addInnerRoundedRectClip(const IntRect& rect, int thickness)
-{
-    if (paintingDisabled())
-        return;
-
-    clip(rect);
-    CGContextRef context = platformContext();
-
-    // Add outer ellipse
-    CGContextAddEllipseInRect(context, CGRectMake(rect.x(), rect.y(), rect.width(), rect.height()));
-    // Add inner ellipse.
-    CGContextAddEllipseInRect(context, CGRectMake(rect.x() + thickness, rect.y() + thickness,
-        rect.width() - (thickness * 2), rect.height() - (thickness * 2)));
-
-    CGContextEOClip(context);
-}
-
 void GraphicsContext::beginPlatformTransparencyLayer(float opacity)
 {
     if (paintingDisabled())
