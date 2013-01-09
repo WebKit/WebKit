@@ -1,3 +1,13 @@
+2013-01-09  Noel Gordon  <noel.gordon@gmail.com>
+
+        [chromium] fast/frames/frame-limit.html can be slow in release
+        https://bugs.webkit.org/show_bug.cgi?id=106126
+
+        Unreviewed gardening.
+
+        * platform/chromium/TestExpectations: Add Slow expectation for Win and Linux.
+        [ Win Linux Release ] fast/frames/frame-limit.html [ Pass Slow ]
+
 2013-01-09  Kunihiko Sakamoto  <ksakamoto@chromium.org>
 
         INPUT_MULTIPLE_FIELDS_UI: min/max attributes should not make all fields read-only

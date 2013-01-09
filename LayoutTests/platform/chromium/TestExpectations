@@ -2343,6 +2343,7 @@ webkit.org/b/45652 fast/viewport/viewport-128.html [ Timeout ]
 
 webkit.org/b/98900 [ Android Debug ] fast/frames/frame-limit.html [ Timeout Pass ]
 webkit.org/b/45737 [ Win Linux Mac Debug ] fast/frames/frame-limit.html [ Timeout ]
+webkit.org/b/45737 [ Win Linux Release ] fast/frames/frame-limit.html [ Pass Slow ]
 
 # Regressions from webkit roll r67178:t67358
 webkit.org/b/60092 [ Debug ] fast/forms/select-set-length-with-mutation-remove.html [ Crash Pass Timeout ]
