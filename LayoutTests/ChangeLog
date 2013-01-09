@@ -1,3 +1,9 @@
+2013-01-08  Csaba Osztrogonác  <ossy@webkit.org>
+
+        [Qt] Unreviewed gardening, skip new failing tests.
+
+        * platform/qt/TestExpectations:
+
 2013-01-08  Stephanie Lewis  <slewis@apple.com>
 
         A couple of fast/workers tests fail after http://trac.webkit.org/projects/webkit/changeset/139145.

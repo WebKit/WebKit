@@ -1080,6 +1080,7 @@ fast/autoresize
 # Needs layoutTestController.setBackingScaleFactor()
 editing/spelling/grammar-markers-hidpi.html
 editing/spelling/inline-spelling-markers-hidpi.html
+fast/backgrounds/gradient-background-leakage-hidpi.html
 fast/canvas/2d.backingStorePixelRatio.html
 fast/canvas/2d.imageDataHD.html
 fast/canvas/canvas-as-image-hidpi.html
@@ -1188,6 +1189,9 @@ http/tests/fullscreen/fullscreenelement-same-origin.html
 
 # Missing testRunner.setShouldPaintBrokenImage() implementation
 fast/images/support-broken-image-delegate.html
+
+# Missing testRunner.setHandlesAuthenticationChallenges() implementation
+http/tests/misc/authentication-redirect-4/authentication-sent-to-redirect-same-origin-url.html
 
 # ============================================================================= #
 # Failing SVG tests
