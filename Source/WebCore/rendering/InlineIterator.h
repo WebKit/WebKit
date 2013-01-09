@@ -85,6 +85,7 @@ public:
         return (m_obj && m_obj->isBR()) || atTextParagraphSeparator();
     }
 
+    UChar characterAt(unsigned) const;
     UChar current() const;
     UChar previousInSameNode() const;
     ALWAYS_INLINE WTF::Unicode::Direction direction() const;
@@ -352,25 +353,29 @@ inline bool InlineIterator::atEnd() const
     return !m_obj;
 }
 
-inline UChar InlineIterator::current() const
+inline UChar InlineIterator::characterAt(unsigned index) const
 {
     if (!m_obj || !m_obj->isText())
         return 0;
 
     RenderText* text = toRenderText(m_obj);
-    if (m_pos >= text->textLength())
+    if (index >= text->textLength())
         return 0;
 
-    return text->characterAt(m_pos);
+    return text->characterAt(index);
+}
+
+inline UChar InlineIterator::current() const
+{
+    return characterAt(m_pos);
 }
 
 inline UChar InlineIterator::previousInSameNode() const
 {
-    if (!m_obj || !m_obj->isText() || !m_pos)
+    if (!m_pos)
         return 0;
 
-    RenderText* text = toRenderText(m_obj);
-    return text->characterAt(m_pos - 1);
+    return characterAt(m_pos - 1);
 }
 
 ALWAYS_INLINE WTF::Unicode::Direction InlineIterator::direction() const
