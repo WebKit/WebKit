@@ -4059,7 +4059,7 @@ bool WebPage::touchEvent(const Platform::TouchEvent& event)
 
     bool handled = false;
 
-    if (!event.m_type != Platform::TouchEvent::TouchInjected)
+    if (event.m_type != Platform::TouchEvent::TouchInjected)
         handled = d->m_mainFrame->eventHandler()->handleTouchEvent(PlatformTouchEvent(&tEvent));
 
     if (d->m_preventDefaultOnTouchStart) {

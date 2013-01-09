@@ -1,3 +1,17 @@
+2013-01-09  Genevieve Mak  <gmak@rim.com>
+
+        [BlackBerry] Useless if statement check
+        https://bugs.webkit.org/show_bug.cgi?id=106113
+
+        Reviewed by Yong Li.
+
+        Remove stray ! in if statement which was mistakenly left in during
+        refactoring. Since Injected events are checked before they are sent to
+        webkit, it didn't have an effect on behaviour.
+
+        * Api/WebPage.cpp:
+        (BlackBerry::WebKit::WebPage::touchEvent):
+
 2013-01-08  Otto Derek Cheung  <otcheung@rim.com>
 
         [BlackBerry] Removing the totalusage variable in ChromeClientBB::exceededDatabaseQuota
