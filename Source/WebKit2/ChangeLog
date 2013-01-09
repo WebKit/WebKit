@@ -1,3 +1,53 @@
+2013-01-09  Andras Becsi  <andras.becsi@digia.com>
+
+        [Qt][EFL][WK2] Remove redundant device pixel ratio adjustment from PageViewportController
+        https://bugs.webkit.org/show_bug.cgi?id=106355
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Since r137597 Qt uses the device pixel ratio of the underlying
+        platform window as the device pixel ratio in WebCore.
+        The tiles are rendered with the effective scale (scale adjusted with
+        the device scale factor) and the projection matrix is also adjusted
+        with the device pixel ratio when painting.
+        As a result we can follow the same approach as QtQuick and all the
+        coordinates in PageViewportController need to be in device independent
+        pixels (UI pixels) thus we do no longer need to adjust with the device
+        pixel ratio when calculating the viewport attributes.
+        This simplifies the logic significantly and increases robustness,
+        but does not allow to set a custom device pixel ratio different from
+        the factor of the underlying platform (eg. for testing purposes).
+        This patch is conceptually a follow-up of r137597 and fixes layout
+        and canvas size on retina display.
+
+        * UIProcess/PageViewportController.cpp:
+        (WebKit::PageViewportController::PageViewportController):
+        (WebKit::PageViewportController::innerBoundedViewportScale):
+        (WebKit::PageViewportController::outerBoundedViewportScale):
+        (WebKit::PageViewportController::pixelAlignedFloatPoint):
+        (WebKit::PageViewportController::boundContentsPosition):
+        (WebKit::PageViewportController::didRenderFrame):
+        (WebKit::PageViewportController::pageTransitionViewportReady):
+        (WebKit::PageViewportController::didChangeContentsVisibility):
+        (WebKit::PageViewportController::syncVisibleContents):
+        (WebKit::PageViewportController::visibleContentsSize):
+        (WebKit::PageViewportController::applyScaleAfterRenderingContents):
+        (WebKit::PageViewportController::updateMinimumScaleToFit):
+        * UIProcess/PageViewportController.h:
+        (WebKit::PageViewportController::currentContentsScale):
+        (PageViewportController):
+        * UIProcess/efl/PageViewportControllerClientEfl.cpp:
+        (WebKit::PageViewportControllerClientEfl::updateViewportSize):
+        Adjust the viewport size with the device pixel ratio to keep previous
+        behaviour.
+        * UIProcess/qt/PageViewportControllerClientQt.cpp:
+        (WebKit::PageViewportControllerClientQt::focusEditableArea):
+        (WebKit::PageViewportControllerClientQt::zoomToAreaGestureEnded):
+        * UIProcess/qt/QtWebPageSGNode.cpp:
+        (WebKit::ContentsSGNode::clipRect):
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::sendViewportAttributesChanged):
+
 2013-01-09  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Unreviewed. Fix make distcheck.

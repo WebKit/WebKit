@@ -68,7 +68,7 @@ public:
     float devicePixelRatio() const;
     float minimumContentsScale() const { return m_minimumScaleToFit; }
     float maximumContentsScale() const { return m_rawAttributes.maximumScale; }
-    float currentContentsScale() const { return fromViewportScale(m_effectiveScale); }
+    float currentContentsScale() const { return m_contentsScale; }
 
     void setHadUserInteraction(bool didUserInteract) { m_hadUserInteraction = didUserInteract; }
 
@@ -85,8 +85,6 @@ public:
     void pageDidRequestScroll(const WebCore::IntPoint& cssPosition);
 
 private:
-    float fromViewportScale(float scale) const { return scale / devicePixelRatio(); }
-    float toViewportScale(float scale) const { return scale * devicePixelRatio(); }
     void syncVisibleContents(const WebCore::FloatPoint &trajectoryVector = WebCore::FloatPoint::zero());
     void applyScaleAfterRenderingContents(float scale);
     void applyPositionAfterRenderingContents(const WebCore::FloatPoint& pos);
@@ -108,7 +106,7 @@ private:
     WebCore::FloatSize m_contentsSize;
     WebCore::FloatSize m_viewportSize;
     WebCore::IntSize m_clientContentsSize;
-    float m_effectiveScale; // Should always be cssScale * devicePixelRatio.
+    float m_contentsScale;
 
     bool m_pendingPositionChange;
     bool m_pendingScaleChange;

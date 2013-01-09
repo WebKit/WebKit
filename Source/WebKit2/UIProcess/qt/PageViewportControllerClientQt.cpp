@@ -182,12 +182,12 @@ void PageViewportControllerClientQt::focusEditableArea(const QRectF& caretArea, 
     // This can only happen as a result of a user interaction.
     ASSERT(m_controller->hadUserInteraction());
 
-    const float editingFixedScale = 2 * m_controller->devicePixelRatio();
+    const float editingFixedScale = 2;
     float targetScale = m_controller->innerBoundedViewportScale(editingFixedScale);
     const QRectF viewportRect = m_viewportItem->boundingRect();
 
     qreal x;
-    const qreal borderOffset = 10 * m_controller->devicePixelRatio();
+    const qreal borderOffset = 10;
     if ((targetArea.width() + borderOffset) * targetScale <= viewportRect.width()) {
         // Center the input field in the middle of the view, if it is smaller than
         // the view at the scale target.
@@ -221,14 +221,14 @@ void PageViewportControllerClientQt::zoomToAreaGestureEnded(const QPointF& touch
     if (m_controller->hasSuspendedContent())
         return;
 
-    const float margin = 10 * m_controller->devicePixelRatio(); // We want at least a little bit of margin.
+    const float margin = 10; // We want at least a little bit of margin.
     QRectF endArea = targetArea.adjusted(-margin, -margin, margin, margin);
 
     const QRectF viewportRect = m_viewportItem->boundingRect();
 
-    qreal minViewportScale = qreal(2.5) * m_controller->devicePixelRatio();
+    const qreal minViewportScale = qreal(2.5);
     qreal targetScale = viewportRect.size().width() / endArea.size().width();
-    targetScale = m_controller->innerBoundedViewportScale(qMin(minViewportScale, targetScale));
+    targetScale = m_controller->innerBoundedViewportScale(qMax(minViewportScale, targetScale));
     qreal currentScale = m_pageItem->contentsScale();
 
     // We want to end up with the target area filling the whole width of the viewport (if possible),
@@ -268,7 +268,7 @@ void PageViewportControllerClientQt::zoomToAreaGestureEnded(const QPointF& touch
         break;
     case ZoomBack: {
         if (m_scaleStack.isEmpty()) {
-            targetScale = m_controller->minimumContentsScale() * m_controller->devicePixelRatio();
+            targetScale = m_controller->minimumContentsScale();
             endPosition.setY(hotspot.y() - viewportHotspot.y() / targetScale);
             endPosition.setX(0);
             m_zoomOutScale = 0;

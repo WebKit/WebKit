@@ -62,7 +62,10 @@ void PageViewportControllerClientEfl::setRendererActive(bool active)
 void PageViewportControllerClientEfl::updateViewportSize()
 {
     ASSERT(m_controller);
-    m_controller->didChangeViewportSize(m_viewImpl->size());
+    FloatSize size = m_viewImpl->size();
+    // The viewport controller expects sizes in UI units, and not raw device units.
+    size.scale(1 / m_controller->devicePixelRatio());
+    m_controller->didChangeViewportSize(size);
 }
 
 void PageViewportControllerClientEfl::didChangeContentsSize(const WebCore::IntSize& contentsSize)

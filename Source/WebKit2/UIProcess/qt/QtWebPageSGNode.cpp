@@ -87,9 +87,12 @@ private:
 
         for (const QSGClipNode* clip = clipList(); clip; clip = clip->clipList()) {
             QMatrix4x4 clipMatrix;
-            if (clip->matrix())
+            if (pageNode()->devicePixelRatio() != 1.0) {
+                clipMatrix.scale(pageNode()->devicePixelRatio());
+                if (clip->matrix())
+                    clipMatrix *= (*clip->matrix());
+            } else if (clip->matrix())
                 clipMatrix = *clip->matrix();
-            clipMatrix.scale(pageNode()->devicePixelRatio());
 
             QRectF currentClip;
 
