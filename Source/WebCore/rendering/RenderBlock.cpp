@@ -5583,7 +5583,7 @@ void RenderBlock::computePreferredLogicalWidths()
 
     RenderStyle* styleToUse = style();
     if (!isTableCell() && styleToUse->logicalWidth().isFixed() && styleToUse->logicalWidth().value() >= 0 
-       && style()->marqueeBehavior() != MALTERNATE && !(isDeprecatedFlexItem() && !styleToUse->logicalWidth().intValue()))
+        && !(isDeprecatedFlexItem() && !styleToUse->logicalWidth().intValue()))
         m_minPreferredLogicalWidth = m_maxPreferredLogicalWidth = adjustContentBoxLogicalWidthForBoxSizing(styleToUse->logicalWidth().value());
     else {
         m_minPreferredLogicalWidth = 0;
