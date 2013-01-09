@@ -1,3 +1,9 @@
+2013-01-08  Noel Gordon  <noel.gordon@gmail.com>
+
+        [chromium] Unreviewed gardening. jquery/event.html timeouts in release and debug.
+
+        * platform/chromium/TestExpectations: 
+
 2013-01-08  Kent Tamura  <tkent@chromium.org>
 
         REGRESSION(r135836): Invalid user input for input[type=number] should be cleared by input.value=""
