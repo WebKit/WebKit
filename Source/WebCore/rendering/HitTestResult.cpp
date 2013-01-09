@@ -794,4 +794,14 @@ Node* HitTestResult::targetNode() const
     return node;
 }
 
+Element* HitTestResult::innerElement() const
+{
+    for (Node* node = m_innerNode.get(); node; node = node->parentNode()) {
+        if (node->isElementNode())
+            return toElement(node);
+    }
+
+    return 0;
+}
+
 } // namespace WebCore

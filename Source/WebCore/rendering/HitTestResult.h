@@ -115,6 +115,7 @@ public:
     HitTestResult& operator=(const HitTestResult&);
 
     Node* innerNode() const { return m_innerNode.get(); }
+    Element* innerElement() const;
     Node* innerNonSharedNode() const { return m_innerNonSharedNode.get(); }
     Element* URLElement() const { return m_innerURLElement.get(); }
     Scrollbar* scrollbar() const { return m_scrollbar.get(); }

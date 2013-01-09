@@ -699,7 +699,7 @@ public:
     void setHoverNode(PassRefPtr<Node>);
     Node* hoverNode() const { return m_hoverNode.get(); }
 
-    void setActiveNode(PassRefPtr<Node>);
+    void setActiveElement(PassRefPtr<Element>);
     Element* activeElement() const { return m_activeElement.get(); }
 
     void focusedNodeRemoved();
