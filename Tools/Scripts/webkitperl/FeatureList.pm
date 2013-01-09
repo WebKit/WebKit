@@ -47,6 +47,7 @@ my (
     $animationAPISupport,
     $batteryStatusSupport,
     $blobSupport,
+    $canvasProxySupport,
     $channelMessagingSupport,
     $cspNextSupport,
     $css3BackgroundSupport,
@@ -165,6 +166,9 @@ my @features = (
 
     { option => "blob", desc => "Toggle Blob support",
       define => "ENABLE_BLOB", default => (isAppleMacWebKit() || isGtk() || isChromium() || isBlackBerry() || isEfl()), value => \$blobSupport },
+
+    { option => "canvas-proxy", desc => "Toggle CanvasProxy support",
+      define => "ENABLE_CANVAS_PROXY", default => 0, value => \$canvasProxySupport },
 
     { option => "channel-messaging", desc => "Toggle Channel Messaging support",
       define => "ENABLE_CHANNEL_MESSAGING", default => 1, value => \$channelMessagingSupport },
