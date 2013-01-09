@@ -1,3 +1,14 @@
+2013-01-08  Stephanie Lewis  <slewis@apple.com>
+
+        Assertion failure in WebCore::HTMLConstructionSite::HTMLConstructionSite.
+        https://bugs.webkit.org/show_bug.cgi?id=106412.
+
+        Unreviewed.  
+
+        Updating Expectations.
+
+        * platform/mac/TestExpectations:
+
 2013-01-08  Matt Falkenhagen  <falken@chromium.org>
 
         Make NodeRenderingContext::parentRenderer and nextRenderer top layer aware

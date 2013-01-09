@@ -1270,3 +1270,10 @@ webkit.org/b/106185 fast/frames/flattening/iframe-flattening-fixed-height.html [
 webkit.org/b/106361 [ Debug ] svg/custom/text-use-click-crash.xhtml [ Crash ]
 
 webkit.org/b/106318 fast/events/drag-and-drop-autoscroll.html [ Failure ]
+
+webkit.org/b/106412 [ Debug ] editing/style/justify-without-enclosing-block.xhtml [ Crash ]
+webkit.org/b/106412 [ Debug ] editing/execCommand/insert-list-xml.xhtml [ Crash ]
+webkit.org/b/106412 [ Debug ] editing/pasteboard/paste-noscript-xhtml.xhtml [ Crash ]
+webkit.org/b/106412 [ Debug ] editing/pasteboard/paste-xml.xhtml [ Crash ]
+
+
