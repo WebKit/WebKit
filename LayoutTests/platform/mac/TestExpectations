@@ -1280,3 +1280,7 @@ webkit.org/b/106415 fast/workers/worker-close-more.html [ Pass Failure ]
 webkit.org/b/106415 fast/workers/worker-document-leak.html [ Pass Failure ]
 webkit.org/b/106415 fast/workers/worker-lifecycle.html [ Pass Failure ]
 
+webkit.org/b/106419 [ Debug ] dom/html/level2/html/HTMLDocument11.html [ Crash Failure ]
+webkit.org/b/106419 [ Debug ] dom/html/level2/html/HTMLDocument01.html [ Crash Failure ]
+webkit.org/b/106419 [ Debug ] dom/html/level2/html/HTMLBodyElement09.html [ Crash Failure ]
+

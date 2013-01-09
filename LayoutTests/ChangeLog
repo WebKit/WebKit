@@ -1,3 +1,14 @@
+2013-01-08  Stephanie Lewis  <slewis@apple.com>
+
+        Assertion Failure in WebCore::RenderLayerCompositor::updateCompositingLayers.
+        https://bugs.webkit.org/show_bug.cgi?id=106419.
+
+        Unreviewed.
+
+        Updated Expectations.
+
+        * platform/mac/TestExpectations:
+
 2013-01-08  Noel Gordon  <noel.gordon@gmail.com>
 
         [chromium] Unreviewed gardening. Update fast/events/touch/compositor-touch-hit-rects on linux
