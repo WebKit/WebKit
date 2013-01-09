@@ -1,3 +1,17 @@
+2013-01-08  Yoshifumi Inoue  <yosin@chromium.org>
+
+        Remove WebKit/chromium/src/DragScrollTimer.{cpp,h}
+        https://bugs.webkit.org/show_bug.cgi?id=106403
+
+        This patch removes unused file DragScrollTimer.{cpp,h} obsoleted by
+        r139044.
+
+        Reviewed by Hajime Morita.
+
+        * WebKit.gyp: Changed to remove lines for DragScroll.{cpp.h}.
+        * src/DragScrollTimer.cpp: Removed.
+        * src/DragScrollTimer.h: Removed.
+
 2013-01-08  Keishi Hattori  <keishi@webkit.org>
 
         [Chromium] Hiding popups on mouse wheel should be handled by WebViewImpl
