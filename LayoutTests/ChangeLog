@@ -1,3 +1,11 @@
+2013-01-09  Mikhail Pozdnyakov  <mikhail.pozdnyakov@intel.com>
+
+        EFL port gardening after r139145, r139002.
+
+        Unreviewed gardening.
+
+        * platform/efl/TestExpectations:
+
 2013-01-09  Ryosuke Niwa  <rniwa@webkit.org>
 
         Removed crash expectations from tests that have been passing per bugs 105566, 105567, and 105580.

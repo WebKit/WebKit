@@ -1777,3 +1777,9 @@ webkit.org/b/106086 fast/dom/HTMLTemplateElement/ownerDocument-adoptNode.html [ 
 
 # [Qt][EFL] New fast/events/drag-and-drop-autoscroll.html fails
 webkit.org/b/106318 fast/events/drag-and-drop-autoscroll.html [ Failure ]
+
+# [GTK][EFL] after r139145.
+webkit.org/b/106415 fast/workers/worker-close-more.html [ Timeout Pass ]
+
+# Newly added test at r139002 is failing.
+webkit.org/b/106316 accessibility/render-counter-text.html [ Failure ]
