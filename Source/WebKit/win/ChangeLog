@@ -1,3 +1,13 @@
+2013-01-09  peavo@outlook.com  <peavo@outlook.com>
+
+        [WinCairo] Link fix after r138759
+        https://bugs.webkit.org/show_bug.cgi?id=106323
+
+        Reviewed by Kentaro Hara.
+
+        * WebKit.vcproj/WebKitLibDebugCairoCFLite.vsprops: Include WebKitCFLite.vsprops.
+        * WebKit.vcproj/WebKitLibReleaseCairoCFLite.vsprops: Include WebKitCFLite.vsprops.
+
 2013-01-08  Hajime Morrita  <morrita@google.com>
 
         [Shadow DOM] Distribution related code on ShadowRoot should be minimized.
