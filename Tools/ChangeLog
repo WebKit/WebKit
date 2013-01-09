@@ -1,3 +1,13 @@
+2013-01-09  Roger Fong  <roger_fong@apple.com>
+
+        Enable seamless iFrames for Windows DRT.
+        https://bugs.webkit.org/show_bug.cgi?id=106468.
+
+        Rubberstamped by Timothy Horton.
+
+        * DumpRenderTree/win/DumpRenderTree.cpp:
+        (resetDefaultsToConsistentValues):
+
 2013-01-09  Christophe Dumez  <christophe.dumez@intel.com>
 
         [WK2] Implement eventSender.scheduleAsynchronousKeyDown
