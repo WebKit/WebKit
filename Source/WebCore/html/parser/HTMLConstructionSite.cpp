@@ -146,7 +146,7 @@ HTMLConstructionSite::HTMLConstructionSite(Document* document, unsigned maximumD
     , m_maximumDOMTreeDepth(maximumDOMTreeDepth)
     , m_inQuirksMode(document->inQuirksMode())
 {
-    ASSERT(m_document->isHTMLDocument());
+    ASSERT(m_document->isHTMLDocument() || m_document->isXHTMLDocument());
 }
 
 HTMLConstructionSite::HTMLConstructionSite(DocumentFragment* fragment, FragmentScriptingPermission scriptingPermission, unsigned maximumDOMTreeDepth)
@@ -158,7 +158,7 @@ HTMLConstructionSite::HTMLConstructionSite(DocumentFragment* fragment, FragmentS
     , m_maximumDOMTreeDepth(maximumDOMTreeDepth)
     , m_inQuirksMode(fragment->document()->inQuirksMode())
 {
-    ASSERT(m_document->isHTMLDocument());
+    ASSERT(m_document->isHTMLDocument() || m_document->isXHTMLDocument());
 }
 
 HTMLConstructionSite::~HTMLConstructionSite()
