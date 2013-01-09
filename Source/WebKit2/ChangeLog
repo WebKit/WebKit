@@ -1,3 +1,19 @@
+2013-01-09  Alexey Proskuryakov  <ap@apple.com>
+
+        Local builds of NetworkProcess should have a process icon
+        https://bugs.webkit.org/show_bug.cgi?id=106489
+
+        Reviewed by Mark Rowe.
+
+        * Resources/WebKit.icns: Copied from Source/WebKit2/WebProcess/mac/WebKit.icns.
+        * WebProcess/mac/WebKit.icns: Removed.
+        Copied to a shared location. We don't have different icons, so just using WebKit one.
+
+        * Configurations/NetworkProcess.xcconfig:
+        * NetworkProcess/Info.plist:
+        * WebKit2.xcodeproj/project.pbxproj:
+        Same changes as for WebProcess.
+
 2013-01-09  Andras Becsi  <andras.becsi@digia.com>
 
         [Qt][WK2] Fix a typo in in the double-tap-to-zoom logic

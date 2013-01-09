@@ -26,5 +26,7 @@
 	<true/>
 	<key>NSPrincipalClass</key>
 	<string>NSApplication</string>
+	<key>CFBundleIconFile</key>
+	<string>${APP_ICON}</string>
 </dict>
 </plist>

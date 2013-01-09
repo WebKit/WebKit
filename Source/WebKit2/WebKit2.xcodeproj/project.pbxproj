@@ -1047,6 +1047,7 @@
 		E199875E142C045400BB2DE7 /* SimplePDFPlugin.mm in Sources */ = {isa = PBXBuildFile; fileRef = E199875C142BFC9700BB2DE7 /* SimplePDFPlugin.mm */; };
 		E1A31732134CEA6C007C9A4F /* AttributedString.h in Headers */ = {isa = PBXBuildFile; fileRef = E1A31731134CEA6C007C9A4F /* AttributedString.h */; };
 		E1A31735134CEA80007C9A4F /* AttributedString.mm in Sources */ = {isa = PBXBuildFile; fileRef = E1A31734134CEA80007C9A4F /* AttributedString.mm */; };
+		E1A9A852169E2025002D7176 /* WebKit.icns in Resources */ = {isa = PBXBuildFile; fileRef = E133FD891423DD7F00FC7BFB /* WebKit.icns */; };
 		E1AEA22F14687BDB00804569 /* WKFullKeyboardAccessWatcher.h in Headers */ = {isa = PBXBuildFile; fileRef = E1AEA22D14687BDB00804569 /* WKFullKeyboardAccessWatcher.h */; };
 		E1AEA23014687BDB00804569 /* WKFullKeyboardAccessWatcher.mm in Sources */ = {isa = PBXBuildFile; fileRef = E1AEA22E14687BDB00804569 /* WKFullKeyboardAccessWatcher.mm */; };
 		E1B78471163F24690007B692 /* RemoteNetworkingContext.h in Headers */ = {isa = PBXBuildFile; fileRef = E1B78470163F24690007B692 /* RemoteNetworkingContext.h */; };
@@ -2331,7 +2332,7 @@
 		D3B9484511FF4B6500032B39 /* WebSearchPopupMenu.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebSearchPopupMenu.h; sourceTree = "<group>"; };
 		DF58C6311371AC5800F9A37C /* NativeWebWheelEvent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NativeWebWheelEvent.h; sourceTree = "<group>"; };
 		DF58C6351371ACA000F9A37C /* NativeWebWheelEventMac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = NativeWebWheelEventMac.mm; sourceTree = "<group>"; };
-		E133FD891423DD7F00FC7BFB /* WebKit.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; name = WebKit.icns; path = WebProcess/mac/WebKit.icns; sourceTree = "<group>"; };
+		E133FD891423DD7F00FC7BFB /* WebKit.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; name = WebKit.icns; path = Resources/WebKit.icns; sourceTree = "<group>"; };
 		E134F01512EA5D11004EC58D /* WKPrintingView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKPrintingView.h; sourceTree = "<group>"; };
 		E134F01912EA5D99004EC58D /* WKPrintingView.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WKPrintingView.mm; sourceTree = "<group>"; };
 		E13A8A2C162879AC00392929 /* SharedWorkerProcess.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = SharedWorkerProcess.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -2546,6 +2547,7 @@
 				6D8A91A511F0EFD100DD01FE /* com.apple.WebProcess.sb.in */,
 				1CBC945D16515ED200D68AAE /* Dock.pdf */,
 				089C1666FE841158C02AAC07 /* InfoPlist.strings */,
+				E133FD891423DD7F00FC7BFB /* WebKit.icns */,
 			);
 			name = Resources;
 			sourceTree = "<group>";
@@ -4067,7 +4069,6 @@
 			isa = PBXGroup;
 			children = (
 				BC8A501011765AF700757573 /* Info.plist */,
-				E133FD891423DD7F00FC7BFB /* WebKit.icns */,
 			);
 			name = WebProcess;
 			sourceTree = "<group>";
@@ -5298,6 +5299,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				E1A9A852169E2025002D7176 /* WebKit.icns in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
