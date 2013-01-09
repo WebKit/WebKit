@@ -1,5 +1,19 @@
 2013-01-09  Dimitri Glazkov  <dglazkov@chromium.org>
 
+        [Chromium] Rebaseline a few tests after r139191.
+
+        * platform/chromium-mac-lion/platform/chromium/virtual/gpu/fast/hidpi/video-controls-in-hidpi-expected.png:
+        * platform/chromium-mac-lion/platform/chromium/virtual/softwarecompositing/video/video-controls-layer-creation-expected.png: Added.
+        * platform/chromium-mac-snowleopard/platform/chromium/virtual/softwarecompositing/video/video-controls-layer-creation-expected.png: Added.
+        * platform/chromium-mac/platform/chromium/virtual/gpu/fast/hidpi/video-controls-in-hidpi-expected.png:
+        * platform/chromium-mac/platform/chromium/virtual/softwarecompositing/video/video-controls-layer-creation-expected.png: Added.
+        * platform/chromium-win/fast/borders/border-radius-huge-assert-expected.png:
+        * platform/chromium-win/fast/box-shadow/inset-with-extraordinary-radii-and-border-expected.png:
+        * platform/chromium-win/platform/chromium/virtual/gpu/fast/hidpi/video-controls-in-hidpi-expected.png:
+        * platform/chromium-win/platform/chromium/virtual/softwarecompositing/video/video-controls-layer-creation-expected.png: Added.
+
+2013-01-09  Dimitri Glazkov  <dglazkov@chromium.org>
+
         [Chromium] Rebaseline a few tests after r139201.
 
         * platform/chromium-mac-lion/fast/forms/menulist-clip-expected.png:
