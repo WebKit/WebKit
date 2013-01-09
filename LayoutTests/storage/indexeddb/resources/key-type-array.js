@@ -105,20 +105,15 @@ function testInvalidArrayKeys()
 
     debug("array that contains itself: array = [ array ]");
     evalAndLog("cyclic_array = []; cyclic_array.push(cyclic_array)");
-    shouldThrow("JSON.stringify(cyclic_array)");
 
     debug("array that contains itself, one level down: array = [ [ array ] ]");
     evalAndLog("cyclic_array2 = []; cyclic_array2.push([cyclic_array2])");
-    shouldThrow("JSON.stringify(cyclic_array2)");
 
     debug("array that contains itself, not as first element: array = [1, 'b', [], array]");
     evalAndLog("cyclic_array3 = [1, 'b', []]; cyclic_array3.push(cyclic_array3)");
-    shouldThrow("JSON.stringify(cyclic_array3)");
-    debug("");
 
     debug("array that contains array that contains itself");
     evalAndLog("cyclic_array4 = [cyclic_array];");
-    shouldThrow("JSON.stringify(cyclic_array4)");
     debug("");
 
     var invalidKeys = [

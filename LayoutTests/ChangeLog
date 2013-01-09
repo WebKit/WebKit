@@ -1,3 +1,18 @@
+2013-01-09  Michael Pruett  <michael@68k.org>
+
+        IndexedDB: Remove unnecessary tests from storage/indexeddb/key-type-array.html
+        https://bugs.webkit.org/show_bug.cgi?id=106472
+
+        Reviewed by Tony Chang.
+
+        The tests which verify that JSON.stringify() throws an exception
+        for cyclic objects produce different error messages on JSC and
+        V8 and do nothing to test IndexedDB functionality. These tests
+        should be removed.
+
+        * storage/indexeddb/key-type-array-expected.txt:
+        * storage/indexeddb/resources/key-type-array.js:
+
 2013-01-08  Ojan Vafai  <ojan@chromium.org>
 
         min-content gets the wrong value if min-width is set on some form controls

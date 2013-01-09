@@ -158,17 +158,12 @@ store = trans.objectStore('store')
 
 array that contains itself: array = [ array ]
 cyclic_array = []; cyclic_array.push(cyclic_array)
-PASS JSON.stringify(cyclic_array) threw exception TypeError: Converting circular structure to JSON.
 array that contains itself, one level down: array = [ [ array ] ]
 cyclic_array2 = []; cyclic_array2.push([cyclic_array2])
-PASS JSON.stringify(cyclic_array2) threw exception TypeError: Converting circular structure to JSON.
 array that contains itself, not as first element: array = [1, 'b', [], array]
 cyclic_array3 = [1, 'b', []]; cyclic_array3.push(cyclic_array3)
-PASS JSON.stringify(cyclic_array3) threw exception TypeError: Converting circular structure to JSON.
-
 array that contains array that contains itself
 cyclic_array4 = [cyclic_array];
-PASS JSON.stringify(cyclic_array4) threw exception TypeError: Converting circular structure to JSON.
 
 testing invalid array key: [ void 0 ]
 Expecting exception from store.put('value', [ void 0 ]);
