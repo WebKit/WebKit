@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script>
+if (window.testRunner)
+     testRunner.dumpEditingCallbacks();
+</script>
+<style>
+body { width: 600px; }
+
+#footNote > * {
+    -webkit-flow-into: footNote;
+    display: block;
+}
+#footNoteRegion { -webkit-flow-from: footNote; }
+
+#content {
+    -webkit-flow-into: content;
+    border-bottom: 1px solid black;
+    padding-bottom: 5px;
+}
+
+#region { -webkit-flow-from: content; }
+
+#footNote::before {
+    counter-increment: footnote-reference;
+    content: counter(footnote-reference);
+}
+
+#footNote > * > *:first-child::before {
+    counter-increment: footnote;
+    content: counter(footnote);
+}
+
+#footNote > * > *::before, #footNote::before {
+    position: relative;
+    top: -0.5em;
+    font-size: 80%;
+}
+
+#footNote {
+    font-size: 12px;
+    line-height: 1em;
+    font-weight: bold;
+}
+</style>
+</head>
+<body>
+<div id="region"></div>
+<div id="footNoteRegion"></div>
+
+<div id="content">
+    <h1>Selecting text through different CSS-Region flows</h1>
+    <div contenteditable="true" id="contentText">
+        This text contains a footnote as a nested region what is diplayed below the article.<span id="footNote">
+        <span><span></span>This is a footnote. Footnotes can be quite long and go over several lines. This footnote
+        is nested inside the text above and displayed here with the help of css-regions.</span></span> If you start selecting
+        text from this article until somewhere in the footnote and then click somewhere, the selection should be cleared.
+    </div>
+</div>
+<script>
+if (window.testRunner) {
+    // We are positioning the mouse to the center of the contentText and start holding the mouse down
+    var start = document.getElementById("contentText");
+    var xStartPosition = start.offsetLeft + 10;
+    var yStartPosition = start.offsetTop + start.offsetHeight / 2;
+    eventSender.mouseMoveTo(xStartPosition, yStartPosition);
+    eventSender.mouseDown();
+
+    // We are posotioning the mouse to the center of the footNote (what is a different region flow) and release the button
+    var end = document.getElementById("footNoteRegion");
+    var xEndPosition = end.offsetLeft + end.offsetWidth / 2;
+    var yEndPosition = end.offsetTop + end.offsetHeight / 2;
+    eventSender.mouseMoveTo(xEndPosition, yEndPosition);
+    eventSender.mouseUp();
+
+    // We are moving the mouse somewhere else and click to clear the selection
+    eventSender.mouseMoveTo(1, 1);
+    eventSender.mouseDown();
+    eventSender.mouseUp();
+}
+</script>
+</body>
+</html>

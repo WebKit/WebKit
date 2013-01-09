@@ -1,3 +1,18 @@
+2013-01-09  Zoltan Horvath  <zoltan@webkit.org>
+
+        [CSS Regions] Selecting text through nested regions causes weird and unclearable selection  
+        https://bugs.webkit.org/show_bug.cgi?id=105641
+
+        Reviewed by David Hyatt.
+
+        If you have a region with a nested region inside what is rendered below the base region and you are trying select text
+        starting from the base region and ending it in the nested region, firstly you got a weird selection, secondly you can't
+        clear the selection. We could prevent this strange behavior by preventing the selection through different region flows.
+
+        * fast/regions/selecting-text-through-different-region-flows-expected.txt: Added.
+        * fast/regions/selecting-text-through-different-region-flows.html: Added.
+        * platform/chromium-mac/fast/regions/selecting-text-through-different-region-flows-expected.png: Added.
+
 2013-01-09  Florin Malita  <fmalita@chromium.org>
 
         [Skia] Implement GraphicsContext::fillRoundedRect() using SkCanvas::drawRRect()

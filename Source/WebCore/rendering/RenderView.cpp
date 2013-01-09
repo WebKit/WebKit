@@ -572,6 +572,9 @@ void RenderView::setSelection(RenderObject* start, int startPos, RenderObject* e
         m_selectionEnd == end && m_selectionEndPos == endPos)
         return;
 
+    if ((start && end) && (start->enclosingRenderFlowThread() != end->enclosingRenderFlowThread()))
+        return;
+
     // Record the old selected objects.  These will be used later
     // when we compare against the new selected objects.
     int oldStartPos = m_selectionStartPos;
