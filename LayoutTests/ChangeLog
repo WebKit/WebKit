@@ -1,3 +1,10 @@
+2013-01-09  Dimitri Glazkov  <dglazkov@chromium.org>
+
+        [Chromium] fast/images/embed-does-not-propagate-dimensions-to-object-ancestor.html is a flaky crash.
+        https://bugs.webkit.org/show_bug.cgi?id=106473
+
+        * platform/chromium/TestExpectations: Marked.
+
 2013-01-09  Justin Novosad  <junov@google.com>
 
         New chromium-win pixel baseline for gradient-background-leakage-hidpi.html
