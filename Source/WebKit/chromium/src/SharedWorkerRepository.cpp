@@ -49,7 +49,6 @@
 #include "WebKit.h"
 #include "WebSharedWorker.h"
 #include "WebSharedWorkerRepository.h"
-#include "platform/WebKitPlatformSupport.h"
 #include "WorkerScriptLoader.h"
 #include "WorkerScriptLoaderClient.h"
 

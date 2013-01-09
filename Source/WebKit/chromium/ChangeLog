@@ -1,5 +1,17 @@
 2013-01-09  Mark Pilgrim  <pilgrim@chromium.org>
 
+        [Chromium] Remove stray references to WebKitPlatformSupport.h
+        https://bugs.webkit.org/show_bug.cgi?id=106493
+
+        Reviewed by James Robinson.
+
+        Part of a refactoring series. See tracking bug 82948.
+
+        * src/SharedWorkerRepository.cpp:
+        * tests/RunAllTests.cpp:
+
+2013-01-09  Mark Pilgrim  <pilgrim@chromium.org>
+
         [Chromium] Update some #includes in WebKit/chromium/public/ for new Platform directory
         https://bugs.webkit.org/show_bug.cgi?id=106227
 
