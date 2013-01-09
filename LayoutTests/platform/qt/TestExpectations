@@ -2496,3 +2496,10 @@ webkit.org/b/106095 fast/regions/full-screen-video-from-region.html
 
 # [Qt][EFL] New fast/events/drag-and-drop-autoscroll.html fails
 webkit.org/b/106318 fast/events/drag-and-drop-autoscroll.html
+
+# REGRESSION(r139145): A couple of fast/workers tests fail
+# https://bugs.webkit.org/show_bug.cgi?id=106415
+fast/workers/worker-close-more.html
+fast/workers/worker-document-leak.html
+fast/workers/worker-lifecycle.html
+fast/workers/storage/interrupt-database.html

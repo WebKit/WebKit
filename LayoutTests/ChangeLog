@@ -1,3 +1,9 @@
+2013-01-08  Csaba Osztrogonác  <ossy@webkit.org>
+
+        [Qt] Unreviewed gardening, skip new failing tests.
+
+        * platform/qt/TestExpectations:
+
 2013-01-08  Noel Gordon  <noel.gordon@gmail.com>
 
         [chromium] Rebaseline and optimise fast/regions/full-screen-video-from-region on Win7 and Win XP
