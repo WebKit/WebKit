@@ -37,8 +37,6 @@
 #include "WebNonCopyable.h"
 #include "WebString.h"
 
-#define USE_WGC3D_TYPES
-
 struct GrGLInterface;
 
 namespace WebKit {
