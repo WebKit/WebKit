@@ -605,79 +605,79 @@ PASS removeBaseURL(subRule.cssText) is 'custom(none url(fragment.shader), t4 arr
 Legacy - Custom with mesh box sizes and content-box : custom(none url(fragment.shader), 1 1 content-box)
 PASS cssRule.type is 1
 PASS declaration.length is 1
-PASS removeBaseURL(declaration.getPropertyValue('-webkit-filter')) is 'custom(none url(fragment.shader), 1 1 content-box)'
+PASS removeBaseURL(declaration.getPropertyValue('-webkit-filter')) is 'custom(none url(fragment.shader), 1 1)'
 PASS jsWrapperClass(filterRule) is 'CSSValueList'
 FAIL jsWrapperClass(filterRule.__proto__) should be CSSValueListPrototype. Was Object.
 FAIL jsWrapperClass(filterRule.constructor) should be CSSValueListConstructor. Was Function.
 PASS filterRule.length is 1
 PASS subRule.operationType is WebKitCSSFilterValue.CSS_FILTER_CUSTOM
-PASS removeBaseURL(subRule.cssText) is 'custom(none url(fragment.shader), 1 1 content-box)'
+PASS removeBaseURL(subRule.cssText) is 'custom(none url(fragment.shader), 1 1)'
 
 Legacy - Custom with mesh box sizes and border-box : custom(none url(fragment.shader), 1 1 border-box)
 PASS cssRule.type is 1
 PASS declaration.length is 1
-PASS removeBaseURL(declaration.getPropertyValue('-webkit-filter')) is 'custom(none url(fragment.shader), 1 1 border-box)'
+PASS removeBaseURL(declaration.getPropertyValue('-webkit-filter')) is 'custom(none url(fragment.shader), 1 1)'
 PASS jsWrapperClass(filterRule) is 'CSSValueList'
 FAIL jsWrapperClass(filterRule.__proto__) should be CSSValueListPrototype. Was Object.
 FAIL jsWrapperClass(filterRule.constructor) should be CSSValueListConstructor. Was Function.
 PASS filterRule.length is 1
 PASS subRule.operationType is WebKitCSSFilterValue.CSS_FILTER_CUSTOM
-PASS removeBaseURL(subRule.cssText) is 'custom(none url(fragment.shader), 1 1 border-box)'
+PASS removeBaseURL(subRule.cssText) is 'custom(none url(fragment.shader), 1 1)'
 
 Legacy - Custom with mesh box sizes and padding-box : custom(none url(fragment.shader), 1 1 padding-box)
 PASS cssRule.type is 1
 PASS declaration.length is 1
-PASS removeBaseURL(declaration.getPropertyValue('-webkit-filter')) is 'custom(none url(fragment.shader), 1 1 padding-box)'
+PASS removeBaseURL(declaration.getPropertyValue('-webkit-filter')) is 'custom(none url(fragment.shader), 1 1)'
 PASS jsWrapperClass(filterRule) is 'CSSValueList'
 FAIL jsWrapperClass(filterRule.__proto__) should be CSSValueListPrototype. Was Object.
 FAIL jsWrapperClass(filterRule.constructor) should be CSSValueListConstructor. Was Function.
 PASS filterRule.length is 1
 PASS subRule.operationType is WebKitCSSFilterValue.CSS_FILTER_CUSTOM
-PASS removeBaseURL(subRule.cssText) is 'custom(none url(fragment.shader), 1 1 padding-box)'
+PASS removeBaseURL(subRule.cssText) is 'custom(none url(fragment.shader), 1 1)'
 
 Legacy - Custom with partial mesh box size and padding-box : custom(none url(fragment.shader), 10 padding-box)
 PASS cssRule.type is 1
 PASS declaration.length is 1
-PASS removeBaseURL(declaration.getPropertyValue('-webkit-filter')) is 'custom(none url(fragment.shader), 10 padding-box)'
+PASS removeBaseURL(declaration.getPropertyValue('-webkit-filter')) is 'custom(none url(fragment.shader), 10)'
 PASS jsWrapperClass(filterRule) is 'CSSValueList'
 FAIL jsWrapperClass(filterRule.__proto__) should be CSSValueListPrototype. Was Object.
 FAIL jsWrapperClass(filterRule.constructor) should be CSSValueListConstructor. Was Function.
 PASS filterRule.length is 1
 PASS subRule.operationType is WebKitCSSFilterValue.CSS_FILTER_CUSTOM
-PASS removeBaseURL(subRule.cssText) is 'custom(none url(fragment.shader), 10 padding-box)'
+PASS removeBaseURL(subRule.cssText) is 'custom(none url(fragment.shader), 10)'
 
 Legacy - Custom with padding-box and detached : custom(none url(fragment.shader), padding-box detached)
 PASS cssRule.type is 1
 PASS declaration.length is 1
-PASS removeBaseURL(declaration.getPropertyValue('-webkit-filter')) is 'custom(none url(fragment.shader), padding-box detached)'
+PASS removeBaseURL(declaration.getPropertyValue('-webkit-filter')) is 'custom(none url(fragment.shader), detached)'
 PASS jsWrapperClass(filterRule) is 'CSSValueList'
 FAIL jsWrapperClass(filterRule.__proto__) should be CSSValueListPrototype. Was Object.
 FAIL jsWrapperClass(filterRule.constructor) should be CSSValueListConstructor. Was Function.
 PASS filterRule.length is 1
 PASS subRule.operationType is WebKitCSSFilterValue.CSS_FILTER_CUSTOM
-PASS removeBaseURL(subRule.cssText) is 'custom(none url(fragment.shader), padding-box detached)'
+PASS removeBaseURL(subRule.cssText) is 'custom(none url(fragment.shader), detached)'
 
 Legacy - Custom with both mesh-sizes and padding-box : custom(none url(fragment.shader), 10 20 padding-box)
 PASS cssRule.type is 1
 PASS declaration.length is 1
-PASS removeBaseURL(declaration.getPropertyValue('-webkit-filter')) is 'custom(none url(fragment.shader), 10 20 padding-box)'
+PASS removeBaseURL(declaration.getPropertyValue('-webkit-filter')) is 'custom(none url(fragment.shader), 10 20)'
 PASS jsWrapperClass(filterRule) is 'CSSValueList'
 FAIL jsWrapperClass(filterRule.__proto__) should be CSSValueListPrototype. Was Object.
 FAIL jsWrapperClass(filterRule.constructor) should be CSSValueListConstructor. Was Function.
 PASS filterRule.length is 1
 PASS subRule.operationType is WebKitCSSFilterValue.CSS_FILTER_CUSTOM
-PASS removeBaseURL(subRule.cssText) is 'custom(none url(fragment.shader), 10 20 padding-box)'
+PASS removeBaseURL(subRule.cssText) is 'custom(none url(fragment.shader), 10 20)'
 
 Legacy - Custom with mesh-sizes, padding-box and detached : custom(none url(fragment.shader), 10 20 padding-box detached)
 PASS cssRule.type is 1
 PASS declaration.length is 1
-PASS removeBaseURL(declaration.getPropertyValue('-webkit-filter')) is 'custom(none url(fragment.shader), 10 20 padding-box detached)'
+PASS removeBaseURL(declaration.getPropertyValue('-webkit-filter')) is 'custom(none url(fragment.shader), 10 20 detached)'
 PASS jsWrapperClass(filterRule) is 'CSSValueList'
 FAIL jsWrapperClass(filterRule.__proto__) should be CSSValueListPrototype. Was Object.
 FAIL jsWrapperClass(filterRule.constructor) should be CSSValueListConstructor. Was Function.
 PASS filterRule.length is 1
 PASS subRule.operationType is WebKitCSSFilterValue.CSS_FILTER_CUSTOM
-PASS removeBaseURL(subRule.cssText) is 'custom(none url(fragment.shader), 10 20 padding-box detached)'
+PASS removeBaseURL(subRule.cssText) is 'custom(none url(fragment.shader), 10 20 detached)'
 PASS successfullyParsed is true
 
 TEST COMPLETE

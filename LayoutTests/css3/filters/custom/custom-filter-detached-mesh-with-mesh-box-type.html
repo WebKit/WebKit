@@ -1,0 +1,41 @@
+<!doctype html>
+<html>
+<head>
+    <title>Test that a detached identifier after the mesh box type is interpreted correctly.</title>
+    <!-- If the test passes, you should see a single green square. -->
+    <script>
+        if (window.testRunner) {
+            window.testRunner.overridePreference("WebKitCSSCustomFilterEnabled", "1");
+            window.testRunner.overridePreference("WebKitWebGLEnabled", "1");
+            window.testRunner.waitUntilDone();
+        }
+        
+        function runTest()
+        {
+            // We need to run the tests after the shaders download.
+            if (window.testRunner)
+                window.testRunner.notifyDone();
+        }
+    </script>
+    <style>
+        #filter-target {
+            width: 100px;
+            height: 100px;
+            background-color: red;
+            /* 
+                This custom filter's vertex shader defines a_triangleCoord, which is only available with detached meshes.
+                Thus, this custom filter will only execute if the mesh is detached.
+                If the custom filter executes, its fragment shader will turn this element green.
+             */
+            -webkit-filter: custom(url(../resources/a-triangle-coord-defined.vs) 
+                mix(url(../resources/mix-color.fs) normal source-atop),
+                1 1 border-box detached,
+                mix_color 0 1 0 1
+            );
+        }
+    </style>
+</head>
+<body onload="runTest()">
+    <div id="filter-target"></div>
+</body>
+</html>

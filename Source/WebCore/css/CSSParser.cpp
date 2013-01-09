@@ -8136,13 +8136,12 @@ PassRefPtr<WebKitCSSFilterValue> CSSParser::parseCustomFilter(CSSParserValue* va
     if (meshSizeList->length() > 2)
         return 0;
     
-    // TODO: This is legacy code and shall be removed.
-    // See https://bugs.webkit.org/show_bug.cgi?id=103778
+    // FIXME: For legacy content, we accept the mesh box types. We don't do anything else with them.
+    // Eventually, we'll remove them completely.
+    // https://bugs.webkit.org/show_bug.cgi?id=103778
     if ((arg = argsList->current()) && (arg->id == CSSValueBorderBox || arg->id == CSSValuePaddingBox
-        || arg->id == CSSValueContentBox || arg->id == CSSValueFilterBox)) {
-        meshSizeList->append(cssValuePool().createIdentifierValue(arg->id));
+        || arg->id == CSSValueContentBox || arg->id == CSSValueFilterBox))
         argsList->next();
-    }
     
     if ((arg = argsList->current()) && arg->id == CSSValueDetached) {
         meshSizeList->append(cssValuePool().createIdentifierValue(arg->id));

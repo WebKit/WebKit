@@ -1,3 +1,26 @@
+2013-01-09  Max Vujovic  <mvujovic@adobe.com>
+
+        [CSS Shaders] Detached identifier after mesh box type is not applied
+        https://bugs.webkit.org/show_bug.cgi?id=105321
+
+        Reviewed by Dean Jackson.
+
+        Add a test to verify that a "detached" identifier after a mesh box type identifier is
+        actually applied.
+
+        For example:
+        -webkit-filter: custom(url(...) mix(url(...) normal source-atop), 1 1 border-box detached);
+
+        Update parsing tests and expectations to expect that the mesh box type is not returned in
+        the cssText.
+
+        * css3/filters/custom/custom-filter-detached-mesh-with-mesh-box-type-expected.html: Added.
+        * css3/filters/custom/custom-filter-detached-mesh-with-mesh-box-type.html: Added.
+        * css3/filters/custom/custom-filter-property-parsing-expected.txt:
+        * css3/filters/script-tests/custom-filter-property-parsing.js:
+        * css3/filters/resources/a-triangle-coord-defined.vs: Added.
+        * platform/chromium/css3/filters/custom/custom-filter-property-parsing-expected.txt:
+
 2013-01-09  Ojan Vafai  <ojan@chromium.org>
 
         Proper version of http://trac.webkit.org/changeset/139221.
