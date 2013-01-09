@@ -1,3 +1,26 @@
+2013-01-08  Takashi Sakamoto  <tasak@google.com>
+
+        Use window.WebKitShadowRoot for checking whether a node is shadow root or not.
+        https://bugs.webkit.org/show_bug.cgi?id=88748
+
+        Reviewed by Hajime Morita.
+
+        * fast/dom/shadow/resources/shadow-dom.js:
+        (isShadowRoot):
+        Modified to use window.WebKitShadowRoot instead of node name.
+        * resources/dump-as-markup.js:
+        (Markup.get var):
+        Added shadowRootList which has information about whether the given node
+        is a shadow root or not.
+        (Markup):
+        (Markup._get):
+        If the given element is a document fragment and its address is in
+        shadowRootList, use "<shadow:root>".
+        (Markup._getShadowHostIfPossible):
+        Only this method uses internals.shadowRoot and obtains the youngest
+        shadow root from the given node. So update shadowRootList in this
+        method.
+
 2013-01-08  Stephanie Lewis  <slewis@apple.com>
 
         Assertion Failure in WebCore::RenderLayerCompositor::updateCompositingLayers.
