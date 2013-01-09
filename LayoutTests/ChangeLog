@@ -1,3 +1,9 @@
+2013-01-09  Dimitri Glazkov  <dglazkov@chromium.org>
+
+        [Chromium] Tweak webaduio test expectations once more.
+
+        * platform/chromium/TestExpectations: Tweaked.
+
 2013-01-09  Alexey Proskuryakov  <ap@apple.com>
 
         Assertion failure in SubresourceLoader::didFail when reloading

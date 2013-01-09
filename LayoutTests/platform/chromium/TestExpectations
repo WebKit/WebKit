@@ -4173,7 +4173,7 @@ webkit.org/b/100475 compositing/tiling/tile-cache-zoomed.html [ Failure ]
 webkit.org/b/100475 platform/chromium/virtual/softwarecompositing/tiling/tile-cache-zoomed.html [ Failure ]
 
 webkit.org/b/100647 [ Win ] webaudio/audiobuffersource-loop-points.html [ Failure ]
-webkit.org/b/105937 [ Win Debug ] webaudio/automatic-pull-node.html [ Crash ]
+webkit.org/b/105937 [ Win ] webaudio/automatic-pull-node.html [ Timeout ]
 webkit.org/b/106232 [ Win Debug ] webaudio/convolution-mono-mono.html [ Crash ]
 webkit.org/b/106232 [ Win Debug ] webaudio/oscillator-square.html [ Crash ]
 webkit.org/b/106232 [ Win Debug ] webaudio/oscillator-basic.html [ Crash ]
