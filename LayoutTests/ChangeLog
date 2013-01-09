@@ -1,3 +1,15 @@
+2013-01-08  Hayato Ito  <hayato@chromium.org>
+
+        [Shadow DOM] The MouseEvent offsetX and offsetY attributes must return the coordinates relative to the origin of the padding edge of the relative target after retargeting.
+        https://bugs.webkit.org/show_bug.cgi?id=104509
+
+        Reviewed by Dimitri Glazkov.
+
+        Adding a test for making sure that MouseEvent offsetX and offsetY arrributes are adjusted in retargeting.
+
+        * fast/dom/shadow/shadow-dom-mouse-event-adjust-offset-expected.txt: Added.
+        * fast/dom/shadow/shadow-dom-mouse-event-adjust-offset.html: Added.
+
 2013-01-08  Noel Gordon  <noel.gordon@gmail.com>
 
         [chromium] Unreviewed gardening. jquery/event.html timeouts in release and debug.
