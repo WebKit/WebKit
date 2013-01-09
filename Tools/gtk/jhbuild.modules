@@ -115,10 +115,10 @@
     <dependencies>
       <dep package="glib"/>
     </dependencies>
-    <branch module="/pub/GNOME/sources/gdk-pixbuf/2.26/gdk-pixbuf-2.26.0.tar.xz" version="2.26.0"
+    <branch module="/pub/GNOME/sources/gdk-pixbuf/2.26/gdk-pixbuf-2.26.5.tar.xz" version="2.26.5"
             repo="ftp.gnome.org"
-            hash="sha256:a5028d3a33710cbb6c6264bc561b6e252b37f067dff7b5b52473621e064f254d"
-            md5sum="1c186f9903a20e96587b9afb27944b40"/>
+            hash="sha256:77696fd163bca95a130a1883dbd78d0ae4d782de2fc85a9a38556d13681f5c84"
+            md5sum="339329e6d619ee3e1cb93979111b04c0"/>
   </autotools>
 
   <autotools id="librsvg" autogen-sh="configure"

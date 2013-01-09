@@ -1,3 +1,17 @@
+2013-01-09  Mario Sanchez Prada  <mario.prada@samsung.com>
+
+        [GTK] Raise version of gdk-pixbuf in jhbuild up to 2.26.5
+        https://bugs.webkit.org/show_bug.cgi?id=106464
+
+        Reviewed by Martin Robinson.
+
+        Current version in jhbuild.modules (2.26.0) is giving trouble to
+        when trying to build WebKitGTK from scratch, due to a segmentation
+        fault error in gdk-pixbuf-query-loader during the 'make'
+        phase. Raising the version to 2.26.5 fixes this issue.
+
+        * gtk/jhbuild.modules: Version raised, checksums updated.
+
 2013-01-09  János Badics  <jbadics@inf.u-szeged.hu>
 
         [Qt][NRWT] Pass --timeout to DRT/WTR if a test is marked as SLOW.
