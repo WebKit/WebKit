@@ -73,10 +73,37 @@ NodeRenderingContext::~NodeRenderingContext()
 {
 }
 
+static bool isRendererReparented(const RenderObject* renderer)
+{
+    if (!renderer->node()->isElementNode())
+        return false;
+    if (renderer->style() && !renderer->style()->flowThread().isEmpty())
+        return true;
+#if ENABLE(DIALOG_ELEMENT)
+    if (toElement(renderer->node())->isInTopLayer())
+        return true;
+#endif
+    return false;
+}
+
 RenderObject* NodeRenderingContext::nextRenderer() const
 {
     if (RenderObject* renderer = m_node->renderer())
         return renderer->nextSibling();
+
+#if ENABLE(DIALOG_ELEMENT)
+    Element* element = m_node->isElementNode() ? toElement(m_node) : 0;
+    if (element && element->isInTopLayer()) {
+        const Vector<RefPtr<Element> >& topLayerElements = element->document()->topLayerElements();
+        size_t position = topLayerElements.find(element);
+        ASSERT(position != notFound);
+        for (size_t i = position + 1; i < topLayerElements.size(); ++i) {
+            if (RenderObject* renderer = topLayerElements[i]->renderer())
+                return renderer;
+        }
+        return 0;
+    }
+#endif
 
     if (m_parentFlowRenderer)
         return m_parentFlowRenderer->nextRendererForNode(m_node);
@@ -87,12 +114,9 @@ RenderObject* NodeRenderingContext::nextRenderer() const
         return 0;
 
     for (Node* sibling = NodeRenderingTraversal::nextSibling(m_node); sibling; sibling = NodeRenderingTraversal::nextSibling(sibling)) {
-        if (RenderObject* renderer = sibling->renderer()) {
-            // Renderers for elements attached to a flow thread should be skipped because they are parented differently.
-            if (renderer->node()->isElementNode() && renderer->style() && !renderer->style()->flowThread().isEmpty())
-                continue;
+        RenderObject* renderer = sibling->renderer();
+        if (renderer && !isRendererReparented(renderer))
             return renderer;
-        }
     }
 
     return 0;
@@ -103,18 +127,22 @@ RenderObject* NodeRenderingContext::previousRenderer() const
     if (RenderObject* renderer = m_node->renderer())
         return renderer->previousSibling();
 
+#if ENABLE(DIALOG_ELEMENT)
+    // FIXME: This doesn't work correctly for things in the top layer that are
+    // display: none. We'd need to duplicate the logic in nextRenderer, but since
+    // nothing needs that yet just assert.
+    ASSERT(!m_node->isElementNode() || !toElement(m_node)->isInTopLayer());
+#endif
+
     if (m_parentFlowRenderer)
         return m_parentFlowRenderer->previousRendererForNode(m_node);
 
     // FIXME: We should have the same O(N^2) avoidance as nextRenderer does
     // however, when I tried adding it, several tests failed.
     for (Node* sibling = NodeRenderingTraversal::previousSibling(m_node); sibling; sibling = NodeRenderingTraversal::previousSibling(sibling)) {
-        if (RenderObject* renderer = sibling->renderer()) {
-            // Renderers for elements attached to a flow thread should be skipped because they are parented differently.
-            if (renderer->node()->isElementNode() && renderer->style() && !renderer->style()->flowThread().isEmpty())
-                continue;
+        RenderObject* renderer = sibling->renderer();
+        if (renderer && !isRendererReparented(renderer))
             return renderer;
-        }
     }
 
     return 0;
@@ -124,6 +152,21 @@ RenderObject* NodeRenderingContext::parentRenderer() const
 {
     if (RenderObject* renderer = m_node->renderer())
         return renderer->parent();
+
+#if ENABLE(DIALOG_ELEMENT)
+    if (m_node->isElementNode() && toElement(m_node)->isInTopLayer()) {
+        // The parent renderer of top layer elements is the RenderView, but only
+        // if the normal parent would have had a renderer.
+        // FIXME: This behavior isn't quite right as the spec for top layer
+        // only talks about display: none ancestors so putting a <dialog> inside
+        // an <optgroup> seems like it should still work even though this check
+        // will prevent it.
+        if (!m_renderingParent || !m_renderingParent->renderer())
+            return 0;
+        return m_node->document()->renderView();
+    }
+#endif
+
     if (m_parentFlowRenderer)
         return m_parentFlowRenderer;
 
@@ -195,26 +238,6 @@ bool NodeRenderingContext::isOnUpperEncapsulationBoundary() const
     return m_node->parentNode() && m_node->parentNode()->isShadowRoot();
 }
 
-#if ENABLE(DIALOG_ELEMENT)
-static void adjustInsertionPointForTopLayerElement(Element* element, RenderObject*& parentRenderer, RenderObject*& nextRenderer)
-{
-    parentRenderer = parentRenderer->view();
-    nextRenderer = 0;
-    const Vector<RefPtr<Element> >& topLayerElements = element->document()->topLayerElements();
-    size_t topLayerPosition = topLayerElements.find(element);
-    ASSERT(topLayerPosition != notFound);
-    // Find the next top layer renderer that's stacked above this element. Note that the immediate next element in the top layer
-    // stack might not have a renderer (due to display: none, or possibly it is not attached yet).
-    for (size_t i = topLayerPosition + 1; i < topLayerElements.size(); ++i) {
-        nextRenderer = topLayerElements[i]->renderer();
-        if (nextRenderer) {
-            ASSERT(nextRenderer->parent() == parentRenderer);
-            break;
-        }
-    }
-}
-#endif
-
 void NodeRenderingContext::createRendererForElementIfNeeded()
 {
     ASSERT(!m_node->renderer());
@@ -233,11 +256,6 @@ void NodeRenderingContext::createRendererForElementIfNeeded()
 
     RenderObject* parentRenderer = this->parentRenderer();
     RenderObject* nextRenderer = this->nextRenderer();
-    
-#if ENABLE(DIALOG_ELEMENT)
-    if (element->isInTopLayer())
-        adjustInsertionPointForTopLayerElement(element, parentRenderer, nextRenderer);
-#endif
 
     Document* document = element->document();
     RenderObject* newRenderer = element->createRenderer(document->renderArena(), m_style.get());
