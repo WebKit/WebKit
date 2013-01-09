@@ -1,3 +1,14 @@
+2013-01-08  Viatcheslav Ostapenko  <sl.ostapenko@samsung.com>
+
+        [EFL][WK2] WebGL test cases are sometimes crashing
+        https://bugs.webkit.org/show_bug.cgi?id=104506
+
+        Unreviewed gardening.
+
+        Enable webgl tests that are passing after recent changes.
+
+        * platform/efl/TestExpectations:
+
 2013-01-08  Hajime Morrita  <morrita@google.com>
 
         Unreviewed, marking drag-and-drop-autoscroll.html

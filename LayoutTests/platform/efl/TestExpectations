@@ -724,9 +724,6 @@ webkit.org/b/103443 fast/parser/parser-yield-timing.html [ Failure Pass ]
 webkit.org/b/103444 http/tests/css/shared-stylesheet-mutation.html [ Failure Pass ]
 webkit.org/b/103445 http/tests/css/shared-stylesheet-mutation-preconstruct.html [ Failure Pass ]
 
-# WebGL tests randomly crash since WebGL was enabled.
-webkit.org/b/104506 fast/canvas/webgl [ Crash Pass ]
-
 # Flaky inspector tests
 webkit.org/b/78869 http/tests/inspector/inspect-element.html [ Failure Pass ]
 webkit.org/b/91958 http/tests/inspector-enabled/injected-script-discard.html [ Failure Pass ]
@@ -1706,7 +1703,6 @@ webkit.org/b/104571 http/tests/xmlhttprequest/origin-exact-matching.html [ Failu
 
 # Rendering failure, also missing expected results:
 # Note webkit.org/b/104506, random crashes
-webkit.org/b/105093 compositing/webgl/webgl-repaint.html [ ImageOnlyFailure Crash ]
 webkit.org/b/105093 compositing/webgl/webgl-background-color.html [ Skip ]
 webkit.org/b/105093 compositing/webgl/webgl-no-alpha.html [ Skip ]
 webkit.org/b/105093 compositing/webgl/webgl-nonpremultiplied-blend.html [ Skip ]
@@ -1737,8 +1733,8 @@ webkit.org/b/105028 fast/canvas/webgl/tex-image-and-sub-image-2d-with-video-rgba
 
 # Rendering issues.
 # Note webkit.org/b/104506, random crashes
-webkit.org/b/105029 fast/canvas/webgl/webgl-composite-modes.html [ ImageOnlyFailure Crash ]
-webkit.org/b/105029 fast/canvas/webgl/webgl-composite-modes-repaint.html [ ImageOnlyFailure Crash ]
+webkit.org/b/105029 fast/canvas/webgl/webgl-composite-modes.html [ ImageOnlyFailure ]
+webkit.org/b/105029 fast/canvas/webgl/webgl-composite-modes-repaint.html [ ImageOnlyFailure ]
 
 # Failing touch events case
 webkit.org/b/105406 fast/events/touch/touch-input-element-change-documents.html [ Failure ]
