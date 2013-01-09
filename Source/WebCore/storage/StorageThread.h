@@ -50,6 +50,8 @@ namespace WebCore {
         // Background thread part of the terminate procedure.
         void performTerminate();
 
+        static void releaseFastMallocFreeMemoryInAllThreads();
+
     private:
         StorageThread();
 

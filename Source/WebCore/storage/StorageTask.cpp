@@ -105,6 +105,9 @@ void StorageTask::performTask()
         case DeleteEmptyDatabase:
             m_area->deleteEmptyDatabase();
             break;
+        case ReleaseFastMallocFreeMemory:
+            WTF::releaseFastMallocFreeMemory();
+            break;
         case TerminateThread:
             m_thread->performTerminate();
             break;

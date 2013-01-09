@@ -38,7 +38,7 @@ namespace WebCore {
     class StorageTask {
         WTF_MAKE_NONCOPYABLE(StorageTask); WTF_MAKE_FAST_ALLOCATED;
     public:
-        enum Type { AreaImport, AreaSync, DeleteEmptyDatabase, SetOriginDetails, ImportOrigins, DeleteAllOrigins, DeleteOrigin, TerminateThread };
+        enum Type { AreaImport, AreaSync, DeleteEmptyDatabase, SetOriginDetails, ImportOrigins, DeleteAllOrigins, DeleteOrigin, ReleaseFastMallocFreeMemory, TerminateThread };
 
         ~StorageTask();
 
@@ -49,6 +49,7 @@ namespace WebCore {
         static PassOwnPtr<StorageTask> createSetOriginDetails(const String& originIdentifier, const String& databaseFilename) { return adoptPtr(new StorageTask(SetOriginDetails, originIdentifier, databaseFilename)); }
         static PassOwnPtr<StorageTask> createDeleteOrigin(const String& originIdentifier) { return adoptPtr(new StorageTask(DeleteOrigin, originIdentifier)); }
         static PassOwnPtr<StorageTask> createDeleteAllOrigins() { return adoptPtr(new StorageTask(DeleteAllOrigins)); }
+        static PassOwnPtr<StorageTask> createReleaseFastMallocFreeMemory() { return adoptPtr(new StorageTask(ReleaseFastMallocFreeMemory)); }
         static PassOwnPtr<StorageTask> createTerminate(StorageThread* thread) { return adoptPtr(new StorageTask(TerminateThread, thread)); }
 
         void performTask();

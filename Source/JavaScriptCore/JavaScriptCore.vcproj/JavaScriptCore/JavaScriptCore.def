@@ -208,6 +208,7 @@ EXPORTS
     ?fastMallocMatchFailed@Internal@WTF@@YAXPAX@Z
     ?fastMallocSize@WTF@@YAIPBX@Z
     ?fastMallocStatistics@WTF@@YA?AUFastMallocStatistics@1@XZ
+    ?releaseFastMallocFreeMemory@WTF@@YAXXZ
     ?fastRealloc@WTF@@YAPAXPAXI@Z
     ?fastStrDup@WTF@@YAPADPBD@Z
     ?fastZeroedMalloc@WTF@@YAPAXI@Z

@@ -29,9 +29,17 @@
 #include "AutodrainedPool.h"
 #include "StorageTask.h"
 #include "StorageAreaSync.h"
+#include <wtf/HashSet.h>
 #include <wtf/MainThread.h>
 
 namespace WebCore {
+
+static HashSet<StorageThread*>& storageThreads()
+{
+    ASSERT(isMainThread());
+    DEFINE_STATIC_LOCAL(HashSet<StorageThread*>, threads, ());
+    return threads;
+}
 
 PassOwnPtr<StorageThread> StorageThread::create()
 {
@@ -41,12 +49,15 @@ PassOwnPtr<StorageThread> StorageThread::create()
 StorageThread::StorageThread()
     : m_threadID(0)
 {
+    ASSERT(isMainThread());
+    storageThreads().add(this);
 }
 
 StorageThread::~StorageThread()
 {
     ASSERT(isMainThread());
     ASSERT(!m_threadID);
+    storageThreads().remove(this);
 }
 
 bool StorageThread::start()
@@ -98,6 +109,14 @@ void StorageThread::performTerminate()
 {
     ASSERT(!isMainThread());
     m_queue.kill();
+}
+
+void StorageThread::releaseFastMallocFreeMemoryInAllThreads()
+{
+    HashSet<StorageThread*>& threads = storageThreads();
+    HashSet<StorageThread*>::iterator end = threads.end();
+    for (HashSet<StorageThread*>::iterator it = threads.begin(); it != end; ++it)
+        (*it)->scheduleTask(StorageTask::createReleaseFastMallocFreeMemory());
 }
 
 }

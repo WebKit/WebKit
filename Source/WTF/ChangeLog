@@ -1,3 +1,16 @@
+2013-01-09  Antti Koivisto  <antti@apple.com>
+
+        Release FastMalloc thread caches on memory warning
+        https://bugs.webkit.org/show_bug.cgi?id=106471
+        
+        Reviewed by Geoff Garen.
+
+        Use TCMalloc_ThreadCache::Cleanup() instead of calling Scavenge() twice. This releases all the memory
+        and looks nicer too.
+
+        * wtf/FastMalloc.cpp:
+        (WTF::releaseFastMallocFreeMemory):
+
 2013-01-09  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Unreviewed. Fix make distcheck.

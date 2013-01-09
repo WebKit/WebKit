@@ -63,6 +63,7 @@ namespace WebCore {
 
         // Number of active worker threads.
         static unsigned workerThreadCount();
+        static void releaseFastMallocFreeMemoryInAllThreads();
 
 #if ENABLE(NOTIFICATIONS) || ENABLE(LEGACY_NOTIFICATIONS)
         NotificationClient* getNotificationClient() { return m_notificationClient; }
@@ -98,9 +99,6 @@ namespace WebCore {
 #if ENABLE(NOTIFICATIONS) || ENABLE(LEGACY_NOTIFICATIONS)
         NotificationClient* m_notificationClient;
 #endif
-
-        // Track the number of WorkerThread instances for use in layout tests.
-        static unsigned m_threadCount;
     };
 
 } // namespace WebCore
