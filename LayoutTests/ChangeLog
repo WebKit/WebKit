@@ -1,3 +1,11 @@
+2013-01-08  Hajime Morrita  <morrita@google.com>
+
+        Unreviewed, marking drag-and-drop-autoscroll.html
+
+        * platform/efl/TestExpectations:
+        * platform/gtk/TestExpectations:
+        * platform/mac/TestExpectations:
+
 2013-01-08  Dimitri Glazkov  <dglazkov@chromium.org>
 
         Organize some svg/gynamic-updates expectations.

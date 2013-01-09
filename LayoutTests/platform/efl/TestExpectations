@@ -1774,3 +1774,6 @@ webkit.org/b/106015 fast/css-generated-content/pseudo-transition.html [ Failure 
 
 # New test introduced in r138756 is failing.
 webkit.org/b/106086 fast/dom/HTMLTemplateElement/ownerDocument-adoptNode.html [ Failure ]
+
+# [Qt][EFL] New fast/events/drag-and-drop-autoscroll.html fails
+webkit.org/b/106318 fast/events/drag-and-drop-autoscroll.html [ Failure ]
