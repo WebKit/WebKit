@@ -1515,6 +1515,9 @@ String AccessibilityNodeObject::title() const
 
     switch (roleValue()) {
     case PopUpButtonRole:
+        // Native popup buttons should not use their button children's text as a title. That value is retrieved through stringValue().
+        if (node->hasTagName(selectTag))
+            return String();
     case ButtonRole:
     case ToggleButtonRole:
     case CheckBoxRole:
