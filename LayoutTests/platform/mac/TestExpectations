@@ -1254,8 +1254,6 @@ webkit.org/b/105986 [ Debug ] transitions/interrupt-transform-transition.html [ 
 webkit.org/b/105999 [ Lion ] fast/canvas/canvas-composite-canvas.html [ Failure ]
 webkit.org/b/105999 [ Lion ] fast/canvas/canvas-composite-image.html [ Failure ]
 
-webkit.org/b/106064 fast/inline/continuation-outlines-with-layers.html [ Failure ]
-
 webkit.org/b/106075 [ Debug ] fast/regions/full-screen-video-from-region.html [ Crash ]
 
 webkit.org/b/106151 [ Lion ] http/tests/misc/link-rel-icon-beforeload.html [ Pass Failure ]
