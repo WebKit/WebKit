@@ -1,5 +1,16 @@
 2013-01-08  Stephanie Lewis  <slewis@apple.com>
 
+        A couple of fast/workers tests fail after http://trac.webkit.org/projects/webkit/changeset/139145.
+        https://bugs.webkit.org/show_bug.cgi?id=106415.
+
+        Unreviewed.
+
+        Updated Expectations.
+
+        * platform/mac/TestExpectations:
+
+2013-01-08  Stephanie Lewis  <slewis@apple.com>
+
         Assertion failure in WebCore::HTMLConstructionSite::HTMLConstructionSite.
         https://bugs.webkit.org/show_bug.cgi?id=106412.
 

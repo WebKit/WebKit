@@ -1276,4 +1276,7 @@ webkit.org/b/106412 [ Debug ] editing/execCommand/insert-list-xml.xhtml [ Crash 
 webkit.org/b/106412 [ Debug ] editing/pasteboard/paste-noscript-xhtml.xhtml [ Crash ]
 webkit.org/b/106412 [ Debug ] editing/pasteboard/paste-xml.xhtml [ Crash ]
 
+webkit.org/b/106415 fast/workers/worker-close-more.html [ Pass Failure ]
+webkit.org/b/106415 fast/workers/worker-document-leak.html [ Pass Failure ]
+webkit.org/b/106415 fast/workers/worker-lifecycle.html [ Pass Failure ]
 
