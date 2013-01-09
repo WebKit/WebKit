@@ -2497,3 +2497,9 @@ fast/events/overflow-scroll-fake-mouse-move.html
 media/track/track-cue-rendering-horizontal.html
 media/track/track-cue-rendering-snap-to-lines-not-set.html
 media/track/track-cue-rendering-vertical.html
+
+# https://bugs.webkit.org/show_bug.cgi?id=106477
+media/video-controls-captions-trackmenu-localized.html
+media/video-controls-captions-trackmenu-sorted.html
+media/video-controls-captions-trackmenu.html
+media/video-controls-visible-exiting-fullscreen.html

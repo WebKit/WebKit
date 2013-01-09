@@ -1,3 +1,16 @@
+2013-01-09  Roger Fong  <roger_fong@apple.com>
+
+        Unreviewed. Skipping 4 video controls tests on Windows.
+        https://bugs.webkit.org/show_bug.cgi?id=106477.
+
+        Skipped tests:
+        media/video-controls-captions-trackmenu-localized.html
+        media/video-controls-captions-trackmenu-sorted.html
+        media/video-controls-captions-trackmenu.html
+        media/video-controls-visible-exiting-fullscreen.html
+
+        * platform/win/TestExpectations:
+
 2013-01-09  Dimitri Glazkov  <dglazkov@chromium.org>
 
         [Chromium] Rebaseline a few tests after r139191.
