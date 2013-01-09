@@ -1,0 +1,10 @@
+Received focus event for object 'option 2'.
+Received selection event for object 'option 2'.
+Received value change event for object 'option 2', value 'option 2'.
+Received focus event for object 'option 1'.
+Received selection event for object 'option 1'.
+Received value change event for object 'option 1', value 'option 1'.
+
+This tests that changing selection in a non-multiple select element fires focus and selection events for the selected option element.
+
+This test should only be run inside of DumpRenderTree.

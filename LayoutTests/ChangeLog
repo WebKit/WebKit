@@ -1,3 +1,13 @@
+2013-01-09  Roger Fong  <roger_fong@apple.com>
+
+        Unreviewed. Rebaseline some accessibility test results on Win7 port.
+
+        * platform/win/accessibility/canvas-fallback-content-2-expected.txt:
+        * platform/win/platform/win/accessibility: Added.
+        * platform/win/platform/win/accessibility/option-element-selection-and-focus-events-expected.txt: Added.
+        * platform/win/platform/win/accessibility/select-element-valuechange-event-expected.txt: Added.
+        * proximity/basic-operation.html:
+
 2013-01-09  Robert Hogan  <robert@webkit.org>
 
         REGRESSION(r111439): Focus ring is rendered incorrectly in fast/inline/continuation-outlines-with-layers.html
