@@ -31,6 +31,8 @@
 #include "config.h"
 #include "WebKitAccessibleUtil.h"
 
+#if HAVE(ACCESSIBILITY)
+
 #include "AccessibilityObject.h"
 #include "FrameView.h"
 #include "IntRect.h"
@@ -167,3 +169,5 @@ bool selectionBelongsToObject(AccessibilityObject* coreObject, VisibleSelection&
         && (range->endContainer() != node || range->endOffset())
         && (range->startContainer() != lastDescendant || range->startOffset() != lastOffsetInNode(lastDescendant)));
 }
+
+#endif

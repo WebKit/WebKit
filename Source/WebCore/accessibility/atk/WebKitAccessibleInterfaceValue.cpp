@@ -20,6 +20,8 @@
 #include "config.h"
 #include "WebKitAccessibleInterfaceValue.h"
 
+#if HAVE(ACCESSIBILITY)
+
 #include "AccessibilityObject.h"
 #include "HTMLNames.h"
 #include "WebKitAccessibleWrapperAtk.h"
@@ -114,3 +116,5 @@ void webkitAccessibleValueInterfaceInit(AtkValueIface* iface)
     iface->set_current_value = webkitAccessibleValueSetCurrentValue;
     iface->get_minimum_increment = webkitAccessibleValueGetMinimumIncrement;
 }
+
+#endif

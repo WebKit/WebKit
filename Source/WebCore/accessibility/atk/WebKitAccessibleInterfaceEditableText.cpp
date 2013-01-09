@@ -31,6 +31,8 @@
 #include "config.h"
 #include "WebKitAccessibleInterfaceEditableText.h"
 
+#if HAVE(ACCESSIBILITY)
+
 #include "AccessibilityObject.h"
 #include "Document.h"
 #include "Frame.h"
@@ -121,3 +123,5 @@ void webkitAccessibleEditableTextInterfaceInit(AtkEditableTextIface* iface)
     iface->delete_text = webkitAccessibleEditableTextDeleteText;
     iface->paste_text = webkitAccessibleEditableTextPasteText;
 }
+
+#endif

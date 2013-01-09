@@ -22,8 +22,11 @@
 #ifndef WebKitAccessibleInterfaceDocument_h
 #define WebKitAccessibleInterfaceDocument_h
 
+#if HAVE(ACCESSIBILITY)
+
 #include <atk/atk.h>
 
 void webkitAccessibleDocumentInterfaceInit(AtkDocumentIface*);
 
+#endif
 #endif // WebKitAccessibleInterfaceDocument_h

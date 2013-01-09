@@ -27,6 +27,8 @@
 #include "config.h"
 #include "AccessibilityUIElement.h"
 
+#if HAVE(ACCESSIBILITY)
+
 #include "InjectedBundle.h"
 #include "InjectedBundlePage.h"
 #include <JavaScriptCore/JSStringRef.h>
@@ -1130,3 +1132,5 @@ PassRefPtr<AccessibilityTextMarker> AccessibilityUIElement::textMarkerForIndex(i
 
 
 } // namespace WTR
+
+#endif

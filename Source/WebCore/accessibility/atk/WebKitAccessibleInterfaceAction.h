@@ -24,6 +24,10 @@
 
 #include <atk/atk.h>
 
+#if HAVE(ACCESSIBILITY)
+
 void webkitAccessibleActionInterfaceInit(AtkActionIface*);
+
+#endif
 
 #endif // WebKitAccessibleInterfaceAction_h

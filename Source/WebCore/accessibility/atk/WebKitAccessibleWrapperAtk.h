@@ -22,6 +22,8 @@
 #ifndef WebKitAccessibleWrapperAtk_h
 #define WebKitAccessibleWrapperAtk_h
 
+#if HAVE(ACCESSIBILITY)
+
 #include <atk/atk.h>
 
 namespace WebCore {
@@ -63,4 +65,5 @@ WebCore::AccessibilityObject* objectFocusedAndCaretOffsetUnignored(WebCore::Acce
 
 G_END_DECLS
 
+#endif
 #endif // WebKitAccessibleWrapperAtk_h

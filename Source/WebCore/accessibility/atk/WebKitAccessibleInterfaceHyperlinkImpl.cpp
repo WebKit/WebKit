@@ -20,6 +20,8 @@
 #include "config.h"
 #include "WebKitAccessibleInterfaceHyperlinkImpl.h"
 
+#if HAVE(ACCESSIBILITY)
+
 #include "WebKitAccessibleHyperlink.h"
 
 using namespace WebCore;
@@ -41,3 +43,5 @@ void webkitAccessibleHyperlinkImplInterfaceInit(AtkHyperlinkImplIface* iface)
     iface->get_hyperlink = webkitAccessibleHyperlinkImplGetHyperlink;
     hyperlinkObjectQuark = g_quark_from_static_string("webkit-accessible-hyperlink-object");
 }
+
+#endif

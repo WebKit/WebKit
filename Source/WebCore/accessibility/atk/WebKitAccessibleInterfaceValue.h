@@ -20,8 +20,11 @@
 #ifndef WebKitAccessibleInterfaceValue_h
 #define WebKitAccessibleInterfaceValue_h
 
+#if HAVE(ACCESSIBILITY)
+
 #include <atk/atk.h>
 
 void webkitAccessibleValueInterfaceInit(AtkValueIface*);
 
+#endif
 #endif // WebKitAccessibleInterfaceValue_h

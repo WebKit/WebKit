@@ -31,6 +31,8 @@
 #include "config.h"
 #include "WebKitAccessibleInterfaceDocument.h"
 
+#if HAVE(ACCESSIBILITY)
+
 #include "AccessibilityObject.h"
 #include "Document.h"
 #include "DocumentType.h"
@@ -102,3 +104,5 @@ void webkitAccessibleDocumentInterfaceInit(AtkDocumentIface* iface)
     iface->get_document_attributes = webkitAccessibleDocumentGetAttributes;
     iface->get_document_locale = webkitAccessibleDocumentGetLocale;
 }
+
+#endif

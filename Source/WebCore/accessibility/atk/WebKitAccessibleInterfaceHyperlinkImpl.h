@@ -20,8 +20,11 @@
 #ifndef WebKitAccessibleInterfaceHyperlinkImpl_h
 #define WebKitAccessibleInterfaceHyperlinkImpl_h
 
+#if HAVE(ACCESSIBILITY)
+
 #include <atk/atk.h>
 
 void webkitAccessibleHyperlinkImplInterfaceInit(AtkHyperlinkImplIface*);
 
+#endif
 #endif // WebKitAccessibleInterfaceHyperlinkImpl_h

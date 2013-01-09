@@ -22,8 +22,11 @@
 #ifndef WebKitAccessibleInterfaceEditableText_h
 #define WebKitAccessibleInterfaceEditableText_h
 
+#if HAVE(ACCESSIBILITY)
+
 #include <atk/atk.h>
 
 void webkitAccessibleEditableTextInterfaceInit(AtkEditableTextIface*);
 
+#endif
 #endif // WebKitAccessibleInterfaceEditableText_h

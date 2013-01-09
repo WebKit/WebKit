@@ -20,6 +20,8 @@
 #include "config.h"
 #include "WebKitAccessibleInterfaceHypertext.h"
 
+#if HAVE(ACCESSIBILITY)
+
 #include "AccessibilityObject.h"
 #include "WebKitAccessibleWrapperAtk.h"
 
@@ -103,3 +105,5 @@ void webkitAccessibleHypertextInterfaceInit(AtkHypertextIface* iface)
     iface->get_n_links = webkitAccessibleHypertextGetNLinks;
     iface->get_link_index = webkitAccessibleHypertextGetLinkIndex;
 }
+
+#endif

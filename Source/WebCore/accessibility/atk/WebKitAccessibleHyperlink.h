@@ -22,6 +22,8 @@
 
 #include <atk/atk.h>
 
+#if HAVE(ACCESSIBILITY)
+
 namespace WebCore {
 class AccessibilityObject;
 }
@@ -59,3 +61,5 @@ WebCore::AccessibilityObject* webkitAccessibleHyperlinkGetAccessibilityObject(We
 G_END_DECLS
 
 #endif // WebKitAccessibleHyperlink_h
+
+#endif

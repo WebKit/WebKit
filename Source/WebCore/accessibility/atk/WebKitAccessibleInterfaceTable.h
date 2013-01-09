@@ -22,8 +22,11 @@
 #ifndef WebKitAccessibleInterfaceTable_h
 #define WebKitAccessibleInterfaceTable_h
 
+#if HAVE(ACCESSIBILITY)
+
 #include <atk/atk.h>
 
 void webkitAccessibleTableInterfaceInit(AtkTableIface*);
 
+#endif
 #endif // WebKitAccessibleInterfaceTable_h

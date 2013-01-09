@@ -31,6 +31,8 @@
 #include "config.h"
 #include "WebKitAccessibleInterfaceSelection.h"
 
+#if HAVE(ACCESSIBILITY)
+
 #include "AccessibilityListBox.h"
 #include "AccessibilityObject.h"
 #include "HTMLSelectElement.h"
@@ -248,3 +250,5 @@ void webkitAccessibleSelectionInterfaceInit(AtkSelectionIface* iface)
     iface->remove_selection = webkitAccessibleSelectionRemoveSelection;
     iface->select_all_selection = webkitAccessibleSelectionSelectAllSelection;
 }
+
+#endif

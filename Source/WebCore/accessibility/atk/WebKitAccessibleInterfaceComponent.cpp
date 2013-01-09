@@ -31,6 +31,8 @@
 #include "config.h"
 #include "WebKitAccessibleInterfaceComponent.h"
 
+#if HAVE(ACCESSIBILITY)
+
 #include "AccessibilityObject.h"
 #include "FrameView.h"
 #include "IntRect.h"
@@ -93,3 +95,5 @@ void webkitAccessibleComponentInterfaceInit(AtkComponentIface* iface)
     iface->get_extents = webkitAccessibleComponentGetExtents;
     iface->grab_focus = webkitAccessibleComponentGrabFocus;
 }
+
+#endif

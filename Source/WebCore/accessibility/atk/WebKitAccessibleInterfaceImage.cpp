@@ -31,6 +31,8 @@
 #include "config.h"
 #include "WebKitAccessibleInterfaceImage.h"
 
+#if HAVE(ACCESSIBILITY)
+
 #include "AccessibilityObject.h"
 #include "IntRect.h"
 #include "WebKitAccessibleUtil.h"
@@ -73,3 +75,5 @@ void webkitAccessibleImageInterfaceInit(AtkImageIface* iface)
     iface->get_image_description = webkitAccessibleImageGetImageDescription;
     iface->get_image_size = webkitAccessibleImageGetImageSize;
 }
+
+#endif

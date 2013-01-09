@@ -31,6 +31,8 @@
 #include "config.h"
 #include "WebKitAccessibleInterfaceTable.h"
 
+#if HAVE(ACCESSIBILITY)
+
 #include "AccessibilityListBox.h"
 #include "AccessibilityObject.h"
 #include "AccessibilityTable.h"
@@ -246,3 +248,5 @@ void webkitAccessibleTableInterfaceInit(AtkTableIface* iface)
     iface->get_column_description = webkitAccessibleTableGetColumnDescription;
     iface->get_row_description = webkitAccessibleTableGetRowDescription;
 }
+
+#endif

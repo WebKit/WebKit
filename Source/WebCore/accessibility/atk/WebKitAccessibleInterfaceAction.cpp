@@ -31,6 +31,8 @@
 #include "config.h"
 #include "WebKitAccessibleInterfaceAction.h"
 
+#if HAVE(ACCESSIBILITY)
+
 #include "AccessibilityObject.h"
 #include "NotImplemented.h"
 #include "WebKitAccessibleUtil.h"
@@ -85,3 +87,5 @@ void webkitAccessibleActionInterfaceInit(AtkActionIface* iface)
     iface->get_keybinding = webkitAccessibleActionGetKeybinding;
     iface->get_name = webkitAccessibleActionGetName;
 }
+
+#endif

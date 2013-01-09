@@ -22,8 +22,11 @@
 #ifndef WebKitAccessibleInterfaceSelection_h
 #define WebKitAccessibleInterfaceSelection_h
 
+#if HAVE(ACCESSIBILITY)
+
 #include <atk/atk.h>
 
 void webkitAccessibleSelectionInterfaceInit(AtkSelectionIface*);
 
+#endif
 #endif // WebKitAccessibleInterfaceSelection_h

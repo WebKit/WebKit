@@ -22,8 +22,11 @@
 #ifndef WebKitAccessibleInterfaceImage_h
 #define WebKitAccessibleInterfaceImage_h
 
+#if HAVE(ACCESSIBILITY)
+
 #include <atk/atk.h>
 
 void webkitAccessibleImageInterfaceInit(AtkImageIface*);
 
+#endif
 #endif // WebKitAccessibleInterfaceImage_h

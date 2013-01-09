@@ -31,6 +31,8 @@
 #include "config.h"
 #include "WebKitAccessibleInterfaceText.h"
 
+#if HAVE(ACCESSIBILITY)
+
 #include "AccessibilityObject.h"
 #include "Document.h"
 #include "Font.h"
@@ -863,3 +865,5 @@ void webkitAccessibleTextInterfaceInit(AtkTextIface* iface)
     iface->set_selection = webkitAccessibleTextSetSelection;
     iface->set_caret_offset = webkitAccessibleTextSetCaretOffset;
 }
+
+#endif
