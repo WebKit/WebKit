@@ -1,3 +1,11 @@
+2013-01-08  Martin Robinson  <mrobinson@igalia.com>
+
+        [Mac] Authentication tests fail even after r139140
+        https://bugs.webkit.org/show_bug.cgi?id=106405
+
+        * platform/mac-wk2/TestExpectations: Skip authentication tests that are still
+        failing in WebKit2 on Mac.
+
 2013-01-08  Julien Chaffraix  <jchaffraix@webkit.org>
 
         Layout Test fast/css-grid-layout/grid-columns-rows-get-set-multiple.html, grid-columns-rows-get-set.html is failing

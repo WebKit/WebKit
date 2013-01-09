@@ -303,6 +303,19 @@ webkit.org/b/106187 platform/mac/tiled-drawing/fixed/negative-scroll-offset.html
 webkit.org/b/106187 platform/mac/tiled-drawing/sticky/sticky-horizontal.html [ Failure ]
 webkit.org/b/106187 platform/mac/tiled-drawing/sticky/sticky-vertical.html [ Failure ]
 
+webkit.org/b/106405 http/tests/loading/authentication-after-redirect-stores-wrong-credentials/authentication-after-redirect-stores-wrong-credentials.html [ Failure ]
+webkit.org/b/106405 http/tests/loading/basic-auth-resend-wrong-credentials.html [ Failure ]
+webkit.org/b/106405 http/tests/loading/basic-credentials-sent-automatically.html [ Failure ]
+webkit.org/b/106405 http/tests/misc/401-alternative-content.php [ Failure ]
+webkit.org/b/106405 http/tests/misc/authentication-redirect-1/authentication-sent-to-redirect-cross-origin.html [ Failure ]
+webkit.org/b/106405 http/tests/misc/authentication-redirect-2/authentication-sent-to-redirect-same-origin.html [ Failure ]
+webkit.org/b/106405 http/tests/misc/authentication-redirect-3/authentication-sent-to-redirect-same-origin-with-location-credentials.html [ Failure ]
+webkit.org/b/106405 http/tests/misc/authentication-redirect-4/authentication-sent-to-redirect-same-origin-url.html [ Failure ]
+webkit.org/b/106405 http/tests/security/401-logout/401-logout.php [ Failure ]
+webkit.org/b/106405 http/tests/xmlhttprequest/basic-auth-nouser.html [ Failure ]
+webkit.org/b/106405 http/tests/xmlhttprequest/failed-auth.html [ Failure ]
+webkit.org/b/106405 http/tests/xmlhttprequest/remember-bad-password.html [ Failure ]
+
 ### END OF (1) Classified failures with bug reports
 ########################################
 
