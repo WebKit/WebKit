@@ -115,7 +115,7 @@ WebInspector.DockController.prototype = {
         else
             document.body.removeStyleClass("show-toolbar-icons");
 
-        if (this._isDockingUnavailable) {
+        if (this._isDockingUnavailable && this._dockSide === WebInspector.DockController.State.Undocked) {
             this._dockToggleButton.state = "undock";
             this._dockToggleButton.setEnabled(false);
             return;
