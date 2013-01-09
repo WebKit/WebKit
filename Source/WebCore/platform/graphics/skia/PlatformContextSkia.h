@@ -226,6 +226,8 @@ public:
         SkRegion::Op = SkRegion::kIntersect_Op);
     bool clipRect(const SkRect&, AntiAliasingMode = NotAntiAliased,
         SkRegion::Op = SkRegion::kIntersect_Op);
+    bool clipRRect(const SkRRect&, AntiAliasingMode = NotAntiAliased,
+        SkRegion::Op = SkRegion::kIntersect_Op);
     bool getClipBounds(SkRect*) const;
 
     void setMatrix(const SkMatrix&);
@@ -365,6 +367,13 @@ inline bool PlatformContextSkia::clipRect(const SkRect& rect, AntiAliasingMode a
     realizeSave(SkCanvas::kClip_SaveFlag);
 
     return m_canvas->clipRect(rect, op, aa == AntiAliased);
+}
+
+inline bool PlatformContextSkia::clipRRect(const SkRRect& rect, AntiAliasingMode aa, SkRegion::Op op)
+{
+    realizeSave(SkCanvas::kClip_SaveFlag);
+
+    return m_canvas->clipRRect(rect, op, aa == AntiAliased);
 }
 
 inline bool PlatformContextSkia::getClipBounds(SkRect* bounds) const

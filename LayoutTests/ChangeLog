@@ -1,3 +1,28 @@
+2013-01-09  Florin Malita  <fmalita@chromium.org>
+
+        [Skia] Implement GraphicsContext::addRoundedRectClip() using SkCanvas::clipRRect()
+        https://bugs.webkit.org/show_bug.cgi?id=106461
+
+        Reviewed by Stephen White.
+
+        * platform/chromium-linux/fast/backgrounds/border-radius-split-background-image-expected.png:
+        * platform/chromium-linux/fast/borders/border-radius-complex-inner-expected.png:
+        * platform/chromium-linux/fast/borders/border-radius-inset-outset-expected.png:
+        * platform/chromium-linux/fast/borders/border-radius-wide-border-05-expected.png:
+        * platform/chromium-linux/fast/borders/border-styles-split-expected.png:
+        * platform/chromium-linux/fast/borders/borderRadiusArcs01-expected.png:
+        * platform/chromium-linux/fast/borders/mixed-border-styles-radius-expected.png:
+        * platform/chromium-linux/fast/css/background-clip-radius-values-expected.png:
+        * platform/chromium-linux/fast/replaced/border-radius-clip-content-edge-expected.png:
+        * platform/chromium-linux/fast/writing-mode/border-styles-vertical-lr-expected.png:
+        * platform/chromium-linux/fast/writing-mode/border-styles-vertical-rl-expected.png:
+        * platform/chromium-linux/ietestcenter/css3/bordersbackgrounds/border-radius-sum-of-radii-001-expected.png:
+        * platform/chromium-linux/ietestcenter/css3/bordersbackgrounds/border-radius-sum-of-radii-002-expected.png:
+        * platform/chromium-linux/ietestcenter/css3/bordersbackgrounds/border-top-left-radius-values-004-expected.png:
+        * platform/chromium-linux/ietestcenter/css3/bordersbackgrounds/border-top-right-radius-values-004-expected.png:
+        * platform/chromium-linux/svg/custom/svg-fonts-in-html-expected.png:
+        * platform/chromium/TestExpectations:
+
 2013-01-09  Dimitri Glazkov  <dglazkov@chromium.org>
 
         [Chromium] Land expectations for r139197.

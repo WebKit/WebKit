@@ -604,6 +604,7 @@ void GraphicsContext::clip(const IntRect& rect)
 }
 #endif
 
+#if !USE(SKIA)
 void GraphicsContext::addRoundedRectClip(const RoundedRect& rect)
 {
     if (paintingDisabled())
@@ -613,6 +614,7 @@ void GraphicsContext::addRoundedRectClip(const RoundedRect& rect)
     path.addRoundedRect(rect);
     clip(path);
 }
+#endif
 
 void GraphicsContext::clipOutRoundedRect(const RoundedRect& rect)
 {

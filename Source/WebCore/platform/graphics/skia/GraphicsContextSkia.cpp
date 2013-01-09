@@ -68,6 +68,7 @@ using namespace std;
 namespace WebCore {
 
 namespace {
+// Local helper functions ------------------------------------------------------
 
 // Return value % max, but account for value possibly being negative.
 inline int fastMod(int value, int max)
@@ -83,10 +84,6 @@ inline int fastMod(int value, int max)
         value = -value;
     return value;
 }
-
-}  // namespace
-
-// Local helper functions ------------------------------------------------------
 
 void addCornerArc(SkPath* path, const SkRect& rect, const IntSize& size, int startAngle)
 {
@@ -200,6 +197,20 @@ void draw1xMarker(SkBitmap* bitmap, int index)
     }
 }
 
+inline void setRadii(SkVector* radii, IntSize topLeft, IntSize topRight, IntSize bottomRight, IntSize bottomLeft)
+{
+    radii[SkRRect::kUpperLeft_Corner].set(SkIntToScalar(topLeft.width()),
+        SkIntToScalar(topLeft.height()));
+    radii[SkRRect::kUpperRight_Corner].set(SkIntToScalar(topRight.width()),
+        SkIntToScalar(topRight.height()));
+    radii[SkRRect::kLowerRight_Corner].set(SkIntToScalar(bottomRight.width()),
+        SkIntToScalar(bottomRight.height()));
+    radii[SkRRect::kLowerLeft_Corner].set(SkIntToScalar(bottomLeft.width()),
+        SkIntToScalar(bottomLeft.height()));
+}
+
+} // namespace
+
 // -----------------------------------------------------------------------------
 
 // This may be called with a NULL pointer to create a graphics context that has
@@ -309,6 +320,21 @@ void GraphicsContext::clip(const Path& path)
         return;
 
     platformContext()->clipPath(*path.platformPath(), PlatformContextSkia::AntiAliased);
+}
+
+void GraphicsContext::addRoundedRectClip(const RoundedRect& rect)
+{
+    if (paintingDisabled())
+        return;
+
+    SkVector radii[4];
+    RoundedRect::Radii wkRadii = rect.radii();
+    setRadii(radii, wkRadii.topLeft(), wkRadii.topRight(), wkRadii.bottomRight(), wkRadii.bottomLeft());
+
+    SkRRect r;
+    r.setRectRadii(rect.rect(), radii);
+
+    platformContext()->clipRRect(r, PlatformContextSkia::AntiAliased);
 }
 
 void GraphicsContext::canvasClip(const Path& path)
@@ -808,10 +834,7 @@ void GraphicsContext::fillRoundedRect(const IntRect& rect,
     }
 
     SkVector radii[4];
-    radii[SkRRect::kUpperLeft_Corner].set(SkIntToScalar(topLeft.width()), SkIntToScalar(topLeft.height()));
-    radii[SkRRect::kUpperRight_Corner].set(SkIntToScalar(topRight.width()), SkIntToScalar(topRight.height()));
-    radii[SkRRect::kLowerRight_Corner].set(SkIntToScalar(bottomRight.width()), SkIntToScalar(bottomRight.height()));
-    radii[SkRRect::kLowerLeft_Corner].set(SkIntToScalar(bottomLeft.width()), SkIntToScalar(bottomLeft.height()));
+    setRadii(radii, topLeft, topRight, bottomRight, bottomLeft);
 
     SkRRect rr;
     rr.setRectRadii(rect, radii);
