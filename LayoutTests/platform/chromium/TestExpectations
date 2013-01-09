@@ -4235,10 +4235,6 @@ webkit.org/b/99800 fast/harness/perftests/runs-per-second-log.html [ Failure Ima
 webkit.org/b/104035 fast/text/orientation-sideways.html [ Missing ]
 webkit.org/b/104172 fast/text/decorations-with-text-combine.html [ Missing ]
 
-# Crash since r136588.
-webkit.org/b/104090 [ Mac Debug ] fast/css-grid-layout/grid-columns-rows-get-set-multiple.html [ Crash ]
-webkit.org/b/104090 [ Mac Debug ] fast/css-grid-layout/grid-columns-rows-get-set.html [ Crash ]
-
 webkit.org/b/104092 fast/frames/paint-iframe-background.html [ Failure Pass ]
 
 webkit.org/b/103487 [ Linux ] fast/forms/placeholder-position.html [ ImageOnlyFailure Pass ]

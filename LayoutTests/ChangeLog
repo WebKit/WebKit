@@ -1,3 +1,14 @@
+2013-01-08  Julien Chaffraix  <jchaffraix@webkit.org>
+
+        Layout Test fast/css-grid-layout/grid-columns-rows-get-set-multiple.html, grid-columns-rows-get-set.html is failing
+        https://bugs.webkit.org/show_bug.cgi?id=104090
+
+        Unreviewed gardening.
+
+        * platform/chromium/TestExpectations:
+        In r139025, the not-totally-OK call to GridTrackSize::length() was removed and thus the
+        tests don't trigger an ASSERT anymore. This change merrily re-enable them.
+
 2013-01-08  Alexandru Chiculita  <achicu@adobe.com>
 
         Assert in RenderGeometryMap::mapToContainer
