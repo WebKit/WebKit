@@ -1,5 +1,30 @@
 2013-01-08  Filip Pizlo  <fpizlo@apple.com>
 
+        DFG shouldn't treat the 'this' argument as being captured if a code block uses arguments
+        https://bugs.webkit.org/show_bug.cgi?id=106398
+        <rdar://problem/12439776>
+
+        Reviewed by Mark Hahnenberg.
+        
+        This is a possible optimization for inlined calls, and fixes crashes for inlined constructors, in the case
+        that the inlined code used arguments. The problem was that assuming that 'this' was captured implies the
+        assumption that it was initialized by the caller, which is wrong for constructors and this.
+        
+        Also added a pretty essential DFG IR validation rule: we shouldn't have any live locals at the top of the
+        root block. This helps to catch this bug: our assumption that 'this' was captured in an inlined constructor
+        that used arguments led to liveness for the temporary that would have held 'this' in the caller being
+        propagated all the way up to the entrypoint of the function.
+
+        * bytecode/CodeBlock.h:
+        (JSC::CodeBlock::isCaptured):
+        * dfg/DFGValidate.cpp:
+        (JSC::DFG::Validate::validate):
+        (JSC::DFG::Validate::reportValidationContext):
+        (Validate):
+        (JSC::DFG::Validate::dumpGraphIfAppropriate):
+
+2013-01-08  Filip Pizlo  <fpizlo@apple.com>
+
         REGRESSION (r138921): Crash in JSC::Arguments::create
         https://bugs.webkit.org/show_bug.cgi?id=106329
         <rdar://problem/12974196>

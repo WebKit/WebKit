@@ -131,6 +131,7 @@ fast/js/dfg-inline-arguments-use-from-all-the-places
 fast/js/dfg-inline-arguments-use-from-getter
 fast/js/dfg-inline-arguments-use-from-uninlined-code
 fast/js/dfg-inline-constant
+fast/js/dfg-inline-constructor-that-uses-arguments
 fast/js/dfg-inline-early-return
 fast/js/dfg-inline-function-dot-caller
 fast/js/dfg-inline-many-blocks

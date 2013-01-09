@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012 Apple Inc. All rights reserved.
+ * Copyright (C) 2012, 2013 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -28,6 +28,7 @@
 
 #if ENABLE(DFG_JIT)
 
+#include "CodeBlockWithJITType.h"
 #include <wtf/Assertions.h>
 #include <wtf/BitVector.h>
 
@@ -75,6 +76,11 @@ public:
     {
         // NB. This code is not written for performance, since it is not intended to run
         // in release builds.
+        
+        // Validate that all local variables at the head of the root block are dead.
+        BasicBlock* root = m_graph.m_blocks[0].get();
+        for (unsigned i = 0; i < root->variablesAtHead.numberOfLocals(); ++i)
+            V_EQUAL((static_cast<VirtualRegister>(i), 0), NoNode, root->variablesAtHead.local(i));
         
         // Validate ref counts and uses.
         Vector<unsigned> myRefCounts;
@@ -304,6 +310,11 @@ private:
         dataLogF("@%u -> %s@%u", nodeIndex, useKindToString(edge.useKind()), edge.index());
     }
     
+    void reportValidationContext(VirtualRegister local, BlockIndex blockIndex)
+    {
+        dataLogF("r%d in Block #%u", local, blockIndex);
+    }
+    
     void reportValidationContext(
         VirtualRegister local, BlockIndex sourceBlockIndex, BlockTag, BlockIndex destinationBlockIndex)
     {
@@ -343,7 +354,7 @@ private:
     {
         if (m_graphDumpMode == DontDumpGraph)
             return;
-        dataLogF("Graph at time of failure:\n");
+        dataLog("Graph of ", CodeBlockWithJITType(m_graph.m_codeBlock, JITCode::DFGJIT), " at time of failure:\n");
         m_graph.dump();
     }
 };

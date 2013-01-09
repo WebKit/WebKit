@@ -594,11 +594,11 @@ namespace JSC {
         
         bool isCaptured(int operand, InlineCallFrame* inlineCallFrame = 0) const
         {
-            if (inlineCallFrame && !operandIsArgument(operand))
-                return inlineCallFrame->capturedVars.get(operand);
-
             if (operandIsArgument(operand))
-                return usesArguments();
+                return operandToArgument(operand) && usesArguments();
+
+            if (inlineCallFrame)
+                return inlineCallFrame->capturedVars.get(operand);
 
             // The activation object isn't in the captured region, but it's "captured"
             // in the sense that stores to its location can be observed indirectly.

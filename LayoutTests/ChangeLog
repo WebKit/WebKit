@@ -1,3 +1,18 @@
+2013-01-08  Filip Pizlo  <fpizlo@apple.com>
+
+        DFG shouldn't treat the 'this' argument as being captured if a code block uses arguments
+        https://bugs.webkit.org/show_bug.cgi?id=106398
+        <rdar://problem/12439776>
+
+        Reviewed by Mark Hahnenberg.
+
+        * fast/js/dfg-inline-constructor-that-uses-arguments-expected.txt: Added.
+        * fast/js/dfg-inline-constructor-that-uses-arguments.html: Added.
+        * fast/js/jsc-test-list:
+        * fast/js/script-tests/dfg-inline-constructor-that-uses-arguments.js: Added.
+        (Foo):
+        (bar):
+
 2013-01-08  Viatcheslav Ostapenko  <sl.ostapenko@samsung.com>
 
         [EFL][WK2] WebGL test cases are sometimes crashing
