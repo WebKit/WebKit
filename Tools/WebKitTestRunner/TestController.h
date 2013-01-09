@@ -83,6 +83,10 @@ public:
 
     WorkQueueManager& workQueueManager() { return m_workQueueManager; }
 
+    void setHandlesAuthenticationChallenges(bool value) { m_handlesAuthenticationChallenges = value; }
+    void setAuthenticationUsername(String username) { m_authenticationUsername = username; }
+    void setAuthenticationPassword(String password) { m_authenticationPassword = password; }
+
 private:
     void initialize(int argc, const char* argv[]);
     void createWebViewWithOptions(WKDictionaryRef);
@@ -121,6 +125,9 @@ private:
     void decidePolicyForNotificationPermissionRequest(WKPageRef, WKSecurityOriginRef, WKNotificationPermissionRequestRef);
 
     static void unavailablePluginButtonClicked(WKPageRef, WKPluginUnavailabilityReason, WKStringRef, WKStringRef, WKStringRef, const void*);
+
+    static void didReceiveAuthenticationChallengeInFrame(WKPageRef, WKFrameRef, WKAuthenticationChallengeRef, const void *clientInfo);
+    void didReceiveAuthenticationChallengeInFrame(WKPageRef, WKFrameRef, WKAuthenticationChallengeRef);
 
     // WKPagePolicyClient
     static void decidePolicyForNavigationAction(WKPageRef, WKFrameRef, WKFrameNavigationType, WKEventModifiers, WKEventMouseButton, WKURLRequestRef, WKFramePolicyListenerRef, WKTypeRef, const void*);
@@ -180,6 +187,10 @@ private:
 
     bool m_policyDelegateEnabled;
     bool m_policyDelegatePermissive;
+
+    bool m_handlesAuthenticationChallenges;
+    String m_authenticationUsername;
+    String m_authenticationPassword;
 
 #if PLATFORM(MAC) || PLATFORM(QT) || PLATFORM(GTK) || PLATFORM(EFL)
     OwnPtr<EventSenderProxy> m_eventSenderProxy;

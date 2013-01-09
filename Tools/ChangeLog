@@ -1,3 +1,42 @@
+2013-01-08  Martin Robinson  <mrobinson@igalia.com>
+
+        WebKitTestRunner needs support for setHandlesAuthenticationChallenges
+        https://bugs.webkit.org/show_bug.cgi?id=103653
+
+        Reviewed by Anders Carlsson.
+
+        Implement setHandlesAuthenticationChallenges in the UIProcess by sending credentials
+        and the enabled boolean to the UIProcess and then implementing the didReceiveAuthenticationChallengeInFrame
+        client callback.
+
+        * WebKitTestRunner/InjectedBundle/Bindings/TestRunner.idl: Exposed the new TestRunner
+        methods to the JavaScript API.
+        * WebKitTestRunner/InjectedBundle/TestRunner.cpp:
+        (WTR::TestRunner::setHandlesAuthenticationChallenges): Added this callback for the JavaScript API.
+        (WTR::TestRunner::setAuthenticationUsername): Ditto.
+        (WTR::TestRunner::setAuthenticationPassword): Ditto.
+        * WebKitTestRunner/InjectedBundle/TestRunner.h:
+        (TestRunner): Added new declarations for the above.
+        * WebKitTestRunner/TestController.cpp:
+        (WTR::TestController::createWebViewWithOptions): Hook up the new didReceiveSynchronousMessageFromInjectedBundle
+        callback.
+        (WTR::TestController::resetStateToConsistentValues): Reset the credentials and enabled boolean between tests.
+        (WTR::TestController::didReceiveAuthenticationChallengeInFrame): Handle the callback by using
+        the authentication information passed from the InjectedBundle.
+        * WebKitTestRunner/TestController.h:
+        (WTR::TestController::setHandlesAuthenticationChallenges): Added setter to allow TestInvocation
+        to communicate with the TestController.
+        (WTR::TestController::setAuthenticationUsername): Ditto.
+        (WTR::TestController::setAuthenticationPassword): Ditto.
+        (TestController):
+        * WebKitTestRunner/TestInvocation.cpp:
+        (WTR::TestInvocation::didReceiveMessageFromInjectedBundle): Handle the messages sending authentication
+        information from the InjectedBundle.
+        (WTR::TestInvocation::outputText): Added this method so that the TestController can output
+        text to the TestInvocation text output.
+        * WebKitTestRunner/TestInvocation.h:
+        (TestInvocation): Added declaration for new method.
+
 2013-01-08  Benjamin Poulain  <benjamin@webkit.org>
 
         Add myself as a watcher for Web Geolocation

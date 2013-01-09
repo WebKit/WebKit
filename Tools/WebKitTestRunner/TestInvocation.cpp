@@ -590,6 +590,27 @@ void TestInvocation::didReceiveMessageFromInjectedBundle(WKStringRef messageName
         return;
     }
 
+    if (WKStringIsEqualToUTF8CString(messageName, "SetHandlesAuthenticationChallenge")) {
+        ASSERT(WKGetTypeID(messageBody) == WKBooleanGetTypeID());
+        WKBooleanRef value = static_cast<WKBooleanRef>(messageBody);
+        TestController::shared().setHandlesAuthenticationChallenges(WKBooleanGetValue(value));
+        return;
+    }
+
+    if (WKStringIsEqualToUTF8CString(messageName, "SetAuthenticationUsername")) {
+        ASSERT(WKGetTypeID(messageBody) == WKStringGetTypeID());
+        WKStringRef username = static_cast<WKStringRef>(messageBody);
+        TestController::shared().setAuthenticationUsername(toWTFString(username));
+        return;
+    }
+
+    if (WKStringIsEqualToUTF8CString(messageName, "SetAuthenticationPassword")) {
+        ASSERT(WKGetTypeID(messageBody) == WKStringGetTypeID());
+        WKStringRef password = static_cast<WKStringRef>(messageBody);
+        TestController::shared().setAuthenticationPassword(toWTFString(password));
+        return;
+    }
+
     ASSERT_NOT_REACHED();
 }
 
@@ -610,6 +631,11 @@ WKRetainPtr<WKTypeRef> TestInvocation::didReceiveSynchronousMessageFromInjectedB
 
     ASSERT_NOT_REACHED();
     return 0;
+}
+
+void TestInvocation::outputText(const WTF::String& text)
+{
+    m_textOutput.append(text);
 }
 
 } // namespace WTR

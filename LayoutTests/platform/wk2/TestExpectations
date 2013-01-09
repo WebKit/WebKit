@@ -388,21 +388,6 @@ http/tests/misc/link-rel-icon-beforeload.html
 # WebKitTestRunner should dump text/plain content as text
 http/tests/incremental/slow-utf8-text.pl
 
-# WebKitTestRunner needs layoutTestController.setHandlesAuthenticationChallenges
-http/tests/misc/authentication-redirect-1/authentication-sent-to-redirect-cross-origin.html
-http/tests/misc/authentication-redirect-2/authentication-sent-to-redirect-same-origin.html
-http/tests/misc/authentication-redirect-3/authentication-sent-to-redirect-same-origin-with-location-credentials.html
-http/tests/misc/authentication-redirect-4/authentication-sent-to-redirect-same-origin-url.html
-http/tests/loading/authentication-after-redirect-stores-wrong-credentials/authentication-after-redirect-stores-wrong-credentials.html
-http/tests/loading/basic-auth-resend-wrong-credentials.html
-http/tests/loading/basic-credentials-sent-automatically.html
-http/tests/security/401-logout/401-logout.php
-http/tests/xmlhttprequest/basic-auth-nopassword.html
-http/tests/xmlhttprequest/basic-auth-nouser.html
-http/tests/xmlhttprequest/remember-bad-password.html
-http/tests/xmlhttprequest/failed-auth.html
-http/tests/misc/401-alternative-content.php
-
 # WebKitTestRunner needs layoutTestController.setSmartInsertDeleteEnabled
 editing/deleting/smart-editing-disabled.html
 

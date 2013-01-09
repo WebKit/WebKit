@@ -29,7 +29,10 @@
 #include "PlatformWebView.h"
 #include "StringFunctions.h"
 #include "TestInvocation.h"
+#include <WebKit2/WKAuthenticationChallenge.h>
+#include <WebKit2/WKAuthenticationDecisionListener.h>
 #include <WebKit2/WKContextPrivate.h>
+#include <WebKit2/WKCredential.h>
 #include <WebKit2/WKNotification.h>
 #include <WebKit2/WKNotificationManager.h>
 #include <WebKit2/WKNotificationPermissionRequest.h>
@@ -44,6 +47,7 @@
 #include <stdlib.h>
 #include <string>
 #include <wtf/PassOwnPtr.h>
+#include <wtf/text/CString.h>
 
 #if PLATFORM(MAC)
 #include <WebKit2/WKPagePrivateMac.h>
@@ -436,7 +440,7 @@ void TestController::createWebViewWithOptions(WKDictionaryRef options)
         0, // didFailToInitializePlugin
         0, // didDisplayInsecureContentForFrame
         0, // canAuthenticateAgainstProtectionSpaceInFrame
-        0, // didReceiveAuthenticationChallengeInFrame
+        didReceiveAuthenticationChallengeInFrame, // didReceiveAuthenticationChallengeInFrame
         0, // didStartProgress
         0, // didChangeProgress
         0, // didFinishProgress
@@ -583,6 +587,10 @@ bool TestController::resetStateToConsistentValues()
     setCustomPolicyDelegate(false, false);
 
     m_workQueueManager.clearWorkQueue();
+
+    m_handlesAuthenticationChallenges = false;
+    m_authenticationUsername = String();
+    m_authenticationPassword = String();
 
     // Reset main page back to about:blank
     m_doneResetting = false;
@@ -1002,6 +1010,11 @@ void TestController::didFinishLoadForFrame(WKPageRef page, WKFrameRef frame, WKT
     static_cast<TestController*>(const_cast<void*>(clientInfo))->didFinishLoadForFrame(page, frame);
 }
 
+void TestController::didReceiveAuthenticationChallengeInFrame(WKPageRef page, WKFrameRef frame, WKAuthenticationChallengeRef authenticationChallenge, const void *clientInfo)
+{
+    static_cast<TestController*>(const_cast<void*>(clientInfo))->didReceiveAuthenticationChallengeInFrame(page, frame, authenticationChallenge);
+}
+
 void TestController::processDidCrash(WKPageRef page, const void* clientInfo)
 {
     static_cast<TestController*>(const_cast<void*>(clientInfo))->processDidCrash();
@@ -1029,6 +1042,26 @@ void TestController::didFinishLoadForFrame(WKPageRef page, WKFrameRef frame)
 
     m_doneResetting = true;
     shared().notifyDone();
+}
+
+void TestController::didReceiveAuthenticationChallengeInFrame(WKPageRef page, WKFrameRef frame, WKAuthenticationChallengeRef authenticationChallenge)
+{
+    String message;
+    if (!m_handlesAuthenticationChallenges)
+        message = "<unknown> - didReceiveAuthenticationChallenge - Simulating cancelled authentication sheet\n";
+    else
+        message = String::format("<unknown> - didReceiveAuthenticationChallenge - Responding with %s:%s\n", m_authenticationUsername.utf8().data(), m_authenticationPassword.utf8().data());
+    m_currentInvocation->outputText(message);
+
+    WKAuthenticationDecisionListenerRef decisionListener = WKAuthenticationChallengeGetDecisionListener(authenticationChallenge);
+    if (!m_handlesAuthenticationChallenges) {
+        WKAuthenticationDecisionListenerUseCredential(decisionListener, 0);
+        return;
+    }
+    WKRetainPtr<WKStringRef> username(AdoptWK, WKStringCreateWithUTF8CString(m_authenticationUsername.utf8().data()));
+    WKRetainPtr<WKStringRef> password(AdoptWK, WKStringCreateWithUTF8CString(m_authenticationPassword.utf8().data()));
+    WKRetainPtr<WKCredentialRef> credential(AdoptWK, WKCredentialCreate(username.get(), password.get(), kWKCredentialPersistenceForSession));
+    WKAuthenticationDecisionListenerUseCredential(decisionListener, credential.get());
 }
 
 void TestController::processDidCrash()

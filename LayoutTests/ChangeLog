@@ -1,3 +1,14 @@
+2013-01-08  Martin Robinson  <mrobinson@igalia.com>
+
+        WebKitTestRunner needs support for setHandlesAuthenticationChallenges
+        https://bugs.webkit.org/show_bug.cgi?id=103653
+
+        Reviewed by Anders Carlsson.
+
+        Unskip authentication tests which are now passing.
+
+        * platform/wk2/TestExpectations:
+
 2013-01-08  Justin Novosad  <junov@google.com>
 
         Color bleeding with rounded rectangles on high dpi displays

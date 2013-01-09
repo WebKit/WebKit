@@ -195,5 +195,10 @@ interface TestRunner {
     void queueReload();
     void queueLoadingScript(in DOMString script);
     void queueNonLoadingScript(in DOMString script);
+
+    // Authentication
+    void setHandlesAuthenticationChallenges(in boolean value);
+    void setAuthenticationUsername(in DOMString username);
+    void setAuthenticationPassword(in DOMString password);
 };
 

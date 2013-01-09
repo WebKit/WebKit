@@ -162,6 +162,11 @@ public:
     // Printing
     bool isPageBoxVisible(int pageIndex);
 
+    // Authentication
+    void setHandlesAuthenticationChallenges(bool);
+    void setAuthenticationUsername(JSStringRef);
+    void setAuthenticationPassword(JSStringRef);
+
     void setValueForUser(JSContextRef, JSValueRef element, JSStringRef value);
 
     // Audio testing.
