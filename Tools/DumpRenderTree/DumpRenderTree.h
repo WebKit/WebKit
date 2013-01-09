@@ -66,11 +66,12 @@ void dump();
 void displayWebView();
 
 struct TestCommand {
-    TestCommand() : shouldDumpPixels(false) { }
+    TestCommand() : shouldDumpPixels(false), timeout(30000) { }
 
     std::string pathOrURL;
     bool shouldDumpPixels;
     std::string expectedPixelHash;
+    int timeout; // in ms
 };
 
 TestCommand parseInputLine(const std::string&);

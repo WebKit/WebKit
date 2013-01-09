@@ -74,13 +74,18 @@ void TestRunner::invalidateWaitToDumpWatchdogTimer()
 
 void TestRunner::initializeWaitToDumpWatchdogTimerIfNeeded()
 {
+    int timerInterval;
     if (qgetenv("QT_WEBKIT2_DEBUG") == "1")
         return;
 
     if (m_waitToDumpWatchdogTimer.isActive())
         return;
+    if (m_timeout > 0)
+        timerInterval = m_timeout;
+    else
+        timerInterval = waitToDumpWatchdogTimerInterval * 1000;
 
-    m_waitToDumpWatchdogTimer.start(waitToDumpWatchdogTimerInterval * 1000);
+    m_waitToDumpWatchdogTimer.start(timerInterval);
 }
 
 JSRetainPtr<JSStringRef> TestRunner::pathToLocalResource(JSStringRef url)

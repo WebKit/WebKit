@@ -722,6 +722,8 @@ void DumpRenderTree::processLine(const QString &input)
         open(QUrl::fromLocalFile(fi.absoluteFilePath()));
     }
 
+    if (command.timeout > 0)
+        setTimeout(command.timeout);
     fflush(stdout);
 }
 

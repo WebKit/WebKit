@@ -154,6 +154,9 @@ class Port(object):
     def additional_drt_flag(self):
         return []
 
+    def supports_per_test_timeout(self):
+        return False
+
     def default_pixel_tests(self):
         # FIXME: Disable until they are run by default on build.webkit.org.
         return False

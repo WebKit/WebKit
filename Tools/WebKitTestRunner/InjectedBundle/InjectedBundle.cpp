@@ -55,6 +55,7 @@ InjectedBundle::InjectedBundle()
     , m_dumpPixels(false)
     , m_useWaitToDumpWatchdogTimer(true)
     , m_useWorkQueue(false)
+    , m_timeout(0)
 {
 }
 
@@ -152,6 +153,9 @@ void InjectedBundle::didReceiveMessage(WKStringRef messageName, WKTypeRef messag
 
         WKRetainPtr<WKStringRef> useWaitToDumpWatchdogTimerKey(AdoptWK, WKStringCreateWithUTF8CString("UseWaitToDumpWatchdogTimer"));
         m_useWaitToDumpWatchdogTimer = WKBooleanGetValue(static_cast<WKBooleanRef>(WKDictionaryGetItemForKey(messageBodyDictionary, useWaitToDumpWatchdogTimerKey.get())));
+
+        WKRetainPtr<WKStringRef> timeoutKey(AdoptWK, WKStringCreateWithUTF8CString("Timeout"));
+        m_timeout = (int)WKUInt64GetValue(static_cast<WKUInt64Ref>(WKDictionaryGetItemForKey(messageBodyDictionary, timeoutKey.get())));
 
         WKRetainPtr<WKStringRef> ackMessageName(AdoptWK, WKStringCreateWithUTF8CString("Ack"));
         WKRetainPtr<WKStringRef> ackMessageBody(AdoptWK, WKStringCreateWithUTF8CString("BeginTest"));
@@ -265,6 +269,8 @@ void InjectedBundle::beginTesting(WKDictionaryRef settings)
     m_testRunner->setCloseRemainingWindowsWhenComplete(false);
     m_testRunner->setAcceptsEditing(true);
     m_testRunner->setTabKeyCyclesThroughElements(true);
+
+    m_testRunner->setCustomTimeout(m_timeout);
 
     page()->prepare();
 

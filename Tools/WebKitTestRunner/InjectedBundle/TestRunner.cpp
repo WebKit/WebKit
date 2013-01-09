@@ -166,6 +166,11 @@ void TestRunner::notifyDone()
     m_waitToDump = false;
 }
 
+void TestRunner::setCustomTimeout(int timeout)
+{
+    m_timeout = timeout;
+}
+
 unsigned TestRunner::numberOfActiveAnimations() const
 {
     // FIXME: Is it OK this works only for the main frame?

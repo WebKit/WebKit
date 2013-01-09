@@ -103,6 +103,7 @@ TestInvocation::TestInvocation(const std::string& pathOrURL)
     : m_url(AdoptWK, createWKURL(pathOrURL.c_str()))
     , m_pathOrURL(pathOrURL)
     , m_dumpPixels(false)
+    , m_timeout(0)
     , m_gotInitialResponse(false)
     , m_gotFinalMessage(false)
     , m_gotRepaint(false)
@@ -119,6 +120,11 @@ void TestInvocation::setIsPixelTest(const std::string& expectedPixelHash)
 {
     m_dumpPixels = true;
     m_expectedPixelHash = expectedPixelHash;
+}
+
+void TestInvocation::setCustomTimeout(int timeout)
+{
+    m_timeout = timeout;
 }
 
 static const unsigned w3cSVGWidth = 480;
@@ -191,6 +197,7 @@ static void updateLayoutType(const char* pathOrURL)
 
 void TestInvocation::invoke()
 {
+    TestController::TimeoutDuration timeoutToUse = TestController::LongTimeout;
     sizeWebViewForCurrentTest(m_pathOrURL.c_str());
     updateLayoutType(m_pathOrURL.c_str());
     updateTiledDrawingForCurrentTest(m_pathOrURL.c_str());
@@ -212,6 +219,10 @@ void TestInvocation::invoke()
     WKRetainPtr<WKBooleanRef> useWaitToDumpWatchdogTimerValue = adoptWK(WKBooleanCreate(TestController::shared().useWaitToDumpWatchdogTimer()));
     WKDictionaryAddItem(beginTestMessageBody.get(), useWaitToDumpWatchdogTimerKey.get(), useWaitToDumpWatchdogTimerValue.get());
 
+    WKRetainPtr<WKStringRef> timeoutKey = adoptWK(WKStringCreateWithUTF8CString("Timeout"));
+    WKRetainPtr<WKUInt64Ref> timeoutValue = adoptWK(WKUInt64Create(m_timeout));
+    WKDictionaryAddItem(beginTestMessageBody.get(), timeoutKey.get(), timeoutValue.get());
+
     WKContextPostMessageToInjectedBundle(TestController::shared().context(), messageName.get(), beginTestMessageBody.get());
 
     TestController::shared().runUntil(m_gotInitialResponse, TestController::ShortTimeout);
@@ -230,7 +241,13 @@ void TestInvocation::invoke()
 
     WKPageLoadURL(TestController::shared().mainWebView()->page(), m_url.get());
 
-    TestController::shared().runUntil(m_gotFinalMessage, TestController::shared().useWaitToDumpWatchdogTimer() ? TestController::LongTimeout : TestController::NoTimeout);
+    if (TestController::shared().useWaitToDumpWatchdogTimer()) {
+        if (m_timeout > 0)
+            timeoutToUse = TestController::CustomTimeout;
+    } else
+        timeoutToUse = TestController::NoTimeout;
+    TestController::shared().runUntil(m_gotFinalMessage, timeoutToUse);
+
     if (!m_gotFinalMessage) {
         m_errorMessage = "Timed out waiting for final message from web process\n";
         m_webProcessIsUnresponsive = true;

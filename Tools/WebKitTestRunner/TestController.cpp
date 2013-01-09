@@ -97,6 +97,7 @@ TestController::TestController(int argc, const char* argv[])
     , m_noTimeout(defaultNoTimeout)
     , m_useWaitToDumpWatchdogTimer(true)
     , m_forceNoTimeout(false)
+    , m_timeout(0)
     , m_didPrintWebProcessCrashedMessage(false)
     , m_shouldExitWhenWebProcessCrashes(true)
     , m_beforeUnloadReturnValue(true)
@@ -172,6 +173,11 @@ static void unfocus(WKPageRef page, const void* clientInfo)
 static void decidePolicyForGeolocationPermissionRequest(WKPageRef, WKFrameRef, WKSecurityOriginRef, WKGeolocationPermissionRequestRef permissionRequest, const void* clientInfo)
 {
     TestController::shared().handleGeolocationPermissionRequest(permissionRequest);
+}
+
+int TestController::getCustomTimeout()
+{
+    return m_timeout;
 }
 
 WKPageRef TestController::createOtherPage(WKPageRef oldPage, WKURLRequestRef, WKDictionaryRef, WKEventModifiers, WKEventMouseButton, const void*)
@@ -601,11 +607,12 @@ bool TestController::resetStateToConsistentValues()
 }
 
 struct TestCommand {
-    TestCommand() : shouldDumpPixels(false) { }
+    TestCommand() : shouldDumpPixels(false), timeout(0) { }
 
     std::string pathOrURL;
     bool shouldDumpPixels;
     std::string expectedPixelHash;
+    int timeout;
 };
 
 class CommandTokenizer {
@@ -667,18 +674,20 @@ TestCommand parseInputLine(const std::string& inputLine)
     if (!tokenizer.hasNext())
         die(inputLine);
 
-    result.pathOrURL = tokenizer.next();
-    if (!tokenizer.hasNext())
-        return result;
-
     std::string arg = tokenizer.next();
-    if (arg != std::string("-p") && arg != std::string("--pixel-test"))
-        die(inputLine);
-    result.shouldDumpPixels = true;
-
-    if (tokenizer.hasNext())
-        result.expectedPixelHash = tokenizer.next();
-
+    result.pathOrURL = arg;
+    while (tokenizer.hasNext()) {
+        arg = tokenizer.next();
+        if (arg == std::string("--timeout")) {
+            std::string timeoutToken = tokenizer.next();
+            result.timeout = atoi(timeoutToken.c_str());
+        } else if (arg == std::string("-p") || arg == std::string("--pixel-test")) {
+            result.shouldDumpPixels = true;
+            if (tokenizer.hasNext())
+                result.expectedPixelHash = tokenizer.next();
+        } else
+            die(inputLine);
+    }
     return result;
 }
 
@@ -691,6 +700,8 @@ bool TestController::runTest(const char* inputLine)
     m_currentInvocation = adoptPtr(new TestInvocation(command.pathOrURL));
     if (command.shouldDumpPixels || m_shouldDumpPixelsForAllTests)
         m_currentInvocation->setIsPixelTest(command.expectedPixelHash);
+    if (command.timeout > 0)
+        m_currentInvocation->setCustomTimeout(command.timeout);
 
     m_currentInvocation->invoke();
     m_currentInvocation.clear();
@@ -741,6 +752,9 @@ void TestController::runUntil(bool& done, TimeoutDuration timeoutDuration)
             break;
         case LongTimeout:
             timeout = m_longTimeout;
+            break;
+        case CustomTimeout:
+            timeout = m_timeout;
             break;
         case NoTimeout:
         default:

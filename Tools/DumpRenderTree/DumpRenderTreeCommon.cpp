@@ -66,17 +66,20 @@ TestCommand parseInputLine(const std::string& inputLine)
     if (!tokenizer.hasNext())
         die(inputLine);
 
-    result.pathOrURL = tokenizer.next();
-    if (!tokenizer.hasNext())
-        return result;
-
     std::string arg = tokenizer.next();
-    if (arg != std::string("-p") && arg != std::string("--pixel-test"))
-        die(inputLine);
-    result.shouldDumpPixels = true;
-
-    if (tokenizer.hasNext())
-        result.expectedPixelHash = tokenizer.next();
+    result.pathOrURL = arg;
+    while (tokenizer.hasNext()) {
+        arg = tokenizer.next();
+        if (arg == std::string("--timeout")) {
+            std::string timeoutToken = tokenizer.next();
+            result.timeout = atoi(timeoutToken.c_str());
+        } else if (arg == std::string("-p") || arg == std::string("--pixel-test")) {
+            result.shouldDumpPixels = true;
+            if (tokenizer.hasNext())
+                result.expectedPixelHash = tokenizer.next();
+        } else
+            die(inputLine);
+    }
 
     return result;
 }

@@ -275,6 +275,8 @@ public:
 
     bool callShouldCloseOnWebView();
 
+    void setCustomTimeout(int duration);
+
     // Work queue.
     void queueBackNavigation(unsigned howFarBackward);
     void queueForwardNavigation(unsigned howFarForward);
@@ -326,6 +328,8 @@ private:
     
     bool m_globalFlag;
     bool m_customFullScreenBehavior;
+
+    int m_timeout;
 
     bool m_userStyleSheetEnabled;
     WKRetainPtr<WKStringRef> m_userStyleSheetLocation;

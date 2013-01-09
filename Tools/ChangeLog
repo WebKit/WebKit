@@ -1,3 +1,62 @@
+2013-01-09  János Badics  <jbadics@inf.u-szeged.hu>
+
+        [Qt][NRWT] Pass --timeout to DRT/WTR if a test is marked as SLOW.
+        https://bugs.webkit.org/show_bug.cgi?id=90968.
+
+        Reviewed by Csaba Osztrogonác.
+
+        Added functionality in DRT and WTR to use any timeout value while running
+        slow tests (eventually, any test). Now NRWT --time-out-ms determines the
+        timeout value for the test. Added a flag in NRWT (supports_per_test_timeout)
+        to indicate whether the current port supports setting timeout value
+        per test (it's False by default; I enabled it only on Qt).
+        Also corrected a typo in driver.py
+
+        * DumpRenderTree/DumpRenderTree.h:
+        (TestCommand::TestCommand):
+        (TestCommand):
+        * DumpRenderTree/DumpRenderTreeCommon.cpp:
+        (parseInputLine):
+        * DumpRenderTree/qt/DumpRenderTreeQt.cpp:
+        (WebCore::DumpRenderTree::processLine):
+        * Scripts/webkitpy/layout_tests/port/base.py:
+        (Port.supports_per_test_timeout):
+        * Scripts/webkitpy/layout_tests/port/driver.py:
+        (Driver.run_test):
+        (Driver._command_from_driver_input):
+        * Scripts/webkitpy/layout_tests/port/qt.py:
+        (QtPort.supports_per_test_timeout):
+        * WebKitTestRunner/InjectedBundle/InjectedBundle.cpp:
+        (WTR::InjectedBundle::InjectedBundle):
+        (WTR::InjectedBundle::didReceiveMessage):
+        (WTR::InjectedBundle::beginTesting):
+        * WebKitTestRunner/InjectedBundle/InjectedBundle.h:
+        * WebKitTestRunner/InjectedBundle/TestRunner.cpp:
+        (WTR::TestRunner::setCustomTimeout):
+        (WTR):
+        * WebKitTestRunner/InjectedBundle/TestRunner.h:
+        (TestRunner):
+        * WebKitTestRunner/InjectedBundle/qt/TestRunnerQt.cpp:
+        (WTR::TestRunner::initializeWaitToDumpWatchdogTimerIfNeeded):
+        * WebKitTestRunner/TestController.cpp:
+        (WTR::TestController::TestController):
+        (WTR::TestController::getCustomTimeout):
+        (WTR):
+        (WTR::TestCommand::TestCommand):
+        (TestCommand):
+        (WTR::parseInputLine):
+        (WTR::TestController::runTest):
+        (WTR::TestController::runUntil):
+        * WebKitTestRunner/TestController.h:
+        (TestController):
+        * WebKitTestRunner/TestInvocation.cpp:
+        (WTR::TestInvocation::TestInvocation):
+        (WTR::TestInvocation::setCustomTimeout):
+        (WTR):
+        (WTR::TestInvocation::invoke):
+        * WebKitTestRunner/TestInvocation.h:
+        (TestInvocation):
+
 2013-01-08  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
 
         Regression(r138681): Add HAVE(ACCESSIBILITY) guard to atk files
