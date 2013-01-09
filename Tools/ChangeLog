@@ -1,3 +1,59 @@
+2013-01-09  Jochen Eisinger  <jochen@chromium.org>
+
+        [chromium] move resource load callback dumping to TestRunner library
+        https://bugs.webkit.org/show_bug.cgi?id=106449
+
+        Reviewed by Adam Barth.
+
+        * DumpRenderTree/chromium/DRTTestRunner.cpp:
+        (DRTTestRunner::DRTTestRunner):
+        (DRTTestRunner::reset):
+        * DumpRenderTree/chromium/DRTTestRunner.h:
+        (DRTTestRunner):
+        * DumpRenderTree/chromium/TestRunner/public/WebTestDelegate.h:
+        (WebKit):
+        (WebTestRunner::WebTestDelegate::makeURLErrorDescription):
+        * DumpRenderTree/chromium/TestRunner/public/WebTestProxy.h:
+        (WebKit):
+        (WebTestProxyBase):
+        (WebTestRunner::WebTestProxy::assignIdentifierToRequest):
+        (WebTestRunner::WebTestProxy::willRequestResource):
+        (WebTestRunner::WebTestProxy::willSendRequest):
+        (WebTestRunner::WebTestProxy::didReceiveResponse):
+        (WebTestRunner::WebTestProxy::didFinishResourceLoad):
+        (WebTestRunner::WebTestProxy::didFailResourceLoad):
+        * DumpRenderTree/chromium/TestRunner/public/WebTestRunner.h:
+        (WebTestRunner::WebTestRunner::shouldDumpResourceLoadCallbacks):
+        (WebTestRunner::WebTestRunner::shouldDumpResourceRequestCallbacks):
+        (WebTestRunner::WebTestRunner::shouldDumpResourceResponseMIMETypes):
+        * DumpRenderTree/chromium/TestRunner/src/TestRunner.cpp:
+        (WebTestRunner::TestRunner::TestRunner):
+        (WebTestRunner::TestRunner::reset):
+        (WebTestRunner::TestRunner::shouldDumpResourceLoadCallbacks):
+        (WebTestRunner::TestRunner::shouldDumpResourceRequestCallbacks):
+        (WebTestRunner::TestRunner::shouldDumpResourceResponseMIMETypes):
+        (WebTestRunner):
+        (WebTestRunner::TestRunner::dumpResourceLoadCallbacks):
+        (WebTestRunner::TestRunner::dumpResourceRequestCallbacks):
+        (WebTestRunner::TestRunner::dumpResourceResponseMIMETypes):
+        * DumpRenderTree/chromium/TestRunner/src/TestRunner.h:
+        (TestRunner):
+        * DumpRenderTree/chromium/TestRunner/src/WebTestProxy.cpp:
+        (WebTestRunner::WebTestProxyBase::reset):
+        (WebTestRunner):
+        (WebTestRunner::WebTestProxyBase::assignIdentifierToRequest):
+        (WebTestRunner::WebTestProxyBase::willRequestResource):
+        (WebTestRunner::WebTestProxyBase::willSendRequest):
+        (WebTestRunner::WebTestProxyBase::didReceiveResponse):
+        (WebTestRunner::WebTestProxyBase::didFinishResourceLoad):
+        (WebTestRunner::WebTestProxyBase::didFailResourceLoad):
+        * DumpRenderTree/chromium/WebViewHost.cpp:
+        (WebViewHost::willSendRequest):
+        (WebViewHost::makeURLErrorDescription):
+        (WebViewHost::reset):
+        * DumpRenderTree/chromium/WebViewHost.h:
+        (WebViewHost):
+
 2013-01-09  Dan Carney  <dcarney@google.com>
 
         [chromium] move dumpcreateview methods to testrunner library

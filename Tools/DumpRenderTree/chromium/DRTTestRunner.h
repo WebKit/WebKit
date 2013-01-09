@@ -84,21 +84,6 @@ public:
     // representation of the back/forward list. It ignores all arguments.
     void dumpBackForwardList(const CppArgumentList&, CppVariant*);
 
-    // This function sets a flag that tells the test_shell to dump a descriptive
-    // line for each resource load callback. It takes no arguments, and ignores
-    // any that may be present.
-    void dumpResourceLoadCallbacks(const CppArgumentList&, CppVariant*);    
-
-    // This function sets a flag that tells the test_shell to print a line of
-    // descriptive text for each element that requested a resource. It takes no
-    // arguments, and ignores any that may be present.
-    void dumpResourceRequestCallbacks(const CppArgumentList&, CppVariant*);
-
-    // This function sets a flag that tells the test_shell to dump the MIME type
-    // for each resource that was loaded. It takes no arguments, and ignores any
-    // that may be present.
-    void dumpResourceResponseMIMETypes(const CppArgumentList&, CppVariant*);
-
     // This function sets a flag that tells the test_shell to dump all calls
     // to window.status().
     // It takes no arguments, and ignores any that may be present.
@@ -243,11 +228,6 @@ public:
 
     bool shouldDumpProgressFinishedCallback() { return m_dumpProgressFinishedCallback; }
     void setShouldDumpProgressFinishedCallback(bool value) { m_dumpProgressFinishedCallback = value; }
-    bool shouldDumpResourceLoadCallbacks() {return m_dumpResourceLoadCallbacks; }
-    void setShouldDumpResourceRequestCallbacks(bool value) { m_dumpResourceRequestCallbacks = value; }
-    bool shouldDumpResourceRequestCallbacks() { return m_dumpResourceRequestCallbacks; }
-    void setShouldDumpResourceResponseMIMETypes(bool value) { m_dumpResourceResponseMIMETypes = value; }
-    bool shouldDumpResourceResponseMIMETypes() {return m_dumpResourceResponseMIMETypes; }
     bool shouldDumpStatusCallbacks() { return m_dumpWindowStatusChanges; }
     bool shouldDumpSelectionRect() { return m_dumpSelectionRect; }
     bool shouldDumpBackForwardList() { return m_dumpBackForwardList; }
@@ -348,18 +328,6 @@ private:
     // If true, the test_shell will output a descriptive line for the progress
     // finished callback.
     bool m_dumpProgressFinishedCallback;
-
-    // If true, the test_shell will output a descriptive line for each resource
-    // load callback.
-    bool m_dumpResourceLoadCallbacks;
-
-    // If true, the test_shell will output a descriptive line for each resource
-    // request callback.
-    bool m_dumpResourceRequestCallbacks;
-
-    // If true, the test_shell will output the MIME type for each resource that 
-    // was loaded.
-    bool m_dumpResourceResponseMIMETypes;
 
     // If true, the test_shell will produce a dump of the back forward list as
     // well.

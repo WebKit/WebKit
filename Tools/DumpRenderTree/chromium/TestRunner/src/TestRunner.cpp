@@ -144,6 +144,9 @@ TestRunner::TestRunner()
     bindMethod("dumpTitleChanges", &TestRunner::dumpTitleChanges);
     bindMethod("dumpCreateView", &TestRunner::dumpCreateView);
     bindMethod("setCanOpenWindows", &TestRunner::setCanOpenWindows);
+    bindMethod("dumpResourceLoadCallbacks", &TestRunner::dumpResourceLoadCallbacks);
+    bindMethod("dumpResourceRequestCallbacks", &TestRunner::dumpResourceRequestCallbacks);
+    bindMethod("dumpResourceResponseMIMETypes", &TestRunner::dumpResourceResponseMIMETypes);
 
     // The following methods interact with the WebTestProxy.
     bindMethod("sendWebIntentResponse", &TestRunner::sendWebIntentResponse);
@@ -220,6 +223,9 @@ void TestRunner::reset()
     m_dumpTitleChanges = false;
     m_dumpCreateView = false;
     m_canOpenWindows = false;
+    m_dumpResourceLoadCallbacks = false;
+    m_dumpResourceRequestCallbacks = false;
+    m_dumpResourceResponseMIMETypes = false;
 
     m_globalFlag.set(false);
     m_platformName.set("chromium");
@@ -310,6 +316,21 @@ bool TestRunner::shouldDumpCreateView() const
 bool TestRunner::canOpenWindows() const
 {
     return m_canOpenWindows;
+}
+
+bool TestRunner::shouldDumpResourceLoadCallbacks() const
+{
+    return m_testIsRunning && m_dumpResourceLoadCallbacks;
+}
+
+bool TestRunner::shouldDumpResourceRequestCallbacks() const
+{
+    return m_testIsRunning && m_dumpResourceRequestCallbacks;
+}
+
+bool TestRunner::shouldDumpResourceResponseMIMETypes() const
+{
+    return m_testIsRunning && m_dumpResourceResponseMIMETypes;
 }
 
 void TestRunner::setTabKeyCyclesThroughElements(const CppArgumentList& arguments, CppVariant* result)
@@ -1086,6 +1107,24 @@ void TestRunner::dumpCreateView(const CppArgumentList&, CppVariant* result)
 void TestRunner::setCanOpenWindows(const CppArgumentList&, CppVariant* result)
 {
     m_canOpenWindows = true;
+    result->setNull();
+}
+
+void TestRunner::dumpResourceLoadCallbacks(const CppArgumentList&, CppVariant* result)
+{
+    m_dumpResourceLoadCallbacks = true;
+    result->setNull();
+}
+
+void TestRunner::dumpResourceRequestCallbacks(const CppArgumentList&, CppVariant* result)
+{
+    m_dumpResourceRequestCallbacks = true;
+    result->setNull();
+}
+
+void TestRunner::dumpResourceResponseMIMETypes(const CppArgumentList&, CppVariant* result)
+{
+    m_dumpResourceResponseMIMETypes = true;
     result->setNull();
 }
 

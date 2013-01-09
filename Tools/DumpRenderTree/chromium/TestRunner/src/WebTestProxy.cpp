@@ -34,6 +34,7 @@
 #include "WebAccessibilityController.h"
 #include "WebAccessibilityNotification.h"
 #include "WebAccessibilityObject.h"
+#include "WebCachedURLRequest.h"
 #include "WebElement.h"
 #include "WebEventSender.h"
 #include "WebFrame.h"
@@ -48,6 +49,7 @@
 #include "WebView.h"
 #include "platform/WebCString.h"
 #include "platform/WebURLRequest.h"
+#include "platform/WebURLResponse.h"
 #include <wtf/StringExtras.h>
 
 using namespace WebKit;
@@ -141,6 +143,36 @@ void printFrameUserGestureStatus(WebTestDelegate* delegate, WebFrame* frame, con
     delegate->printMessage(string("Frame with user gesture \"") + (isUserGesture ? "true" : "false") + "\"" + msg);
 }
 
+// Used to write a platform neutral file:/// URL by taking the
+// filename and its directory. (e.g., converts
+// "file:///tmp/foo/bar.txt" to just "bar.txt").
+string descriptionSuitableForTestResult(const string& url)
+{
+    if (url.empty() || string::npos == url.find("file://"))
+        return url;
+
+    size_t pos = url.rfind('/');
+    if (pos == string::npos || !pos)
+        return "ERROR:" + url;
+    pos = url.rfind('/', pos - 1);
+    if (pos == string::npos)
+        return "ERROR:" + url;
+
+    return url.substr(pos + 1);
+}
+
+void printResponseDescription(WebTestDelegate* delegate, const WebURLResponse& response)
+{
+    if (response.isNull()) {
+        delegate->printMessage("(null)");
+        return;
+    }
+    string url = response.url().spec();
+    char data[100];
+    snprintf(data, sizeof(data), "%d", response. httpStatusCode());
+    delegate->printMessage(string("<NSURLResponse ") + descriptionSuitableForTestResult(url) + ", http status code " + data + ">");
+}
+
 string URLDescription(const GURL& url)
 {
     if (url.SchemeIs("file"))
@@ -168,6 +200,12 @@ void WebTestProxyBase::setInterfaces(WebTestInterfaces* interfaces)
 void WebTestProxyBase::setDelegate(WebTestDelegate* delegate)
 {
     m_delegate = delegate;
+}
+
+void WebTestProxyBase::reset()
+{
+    m_paintRect = WebRect();
+    m_resourceIdentifierMap.clear();
 }
 
 void WebTestProxyBase::setPaintRect(const WebRect& rect)
@@ -607,6 +645,104 @@ void WebTestProxyBase::didDetectXSS(WebFrame*, const WebURL&, bool)
 {
     if (m_testInterfaces->testRunner() && m_testInterfaces->testRunner()->shouldDumpFrameLoadCallbacks())
         m_delegate->printMessage("didDetectXSS\n");
+}
+
+void WebTestProxyBase::assignIdentifierToRequest(WebFrame*, unsigned identifier, const WebKit::WebURLRequest& request)
+{
+    if (m_testInterfaces->testRunner() && m_testInterfaces->testRunner()->shouldDumpResourceLoadCallbacks()) {
+        ASSERT(m_resourceIdentifierMap.find(identifier) == m_resourceIdentifierMap.end());
+        m_resourceIdentifierMap[identifier] = descriptionSuitableForTestResult(request.url().spec());
+    }
+}
+
+void WebTestProxyBase::willRequestResource(WebFrame* frame, const WebKit::WebCachedURLRequest& request)
+{
+    if (m_testInterfaces->testRunner() && m_testInterfaces->testRunner()->shouldDumpResourceRequestCallbacks()) {
+        printFrameDescription(m_delegate, frame);
+        WebElement element = request.initiatorElement();
+        if (!element.isNull()) {
+            m_delegate->printMessage(" - element with ");
+            if (element.hasAttribute("id"))
+                m_delegate->printMessage(string("id '") + element.getAttribute("id").utf8().data() + "'");
+            else
+                m_delegate->printMessage("no id");
+        } else
+            m_delegate->printMessage(string(" - ") + request.initiatorName().utf8().data());
+        m_delegate->printMessage(string(" requested '") + URLDescription(request.urlRequest().url()).c_str() + "'\n");
+    }
+}
+
+void WebTestProxyBase::willSendRequest(WebFrame*, unsigned identifier, WebKit::WebURLRequest& request, const WebKit::WebURLResponse& redirectResponse)
+{
+    // Need to use GURL for host() and SchemeIs()
+    GURL url = request.url();
+    string requestURL = url.possibly_invalid_spec();
+
+    GURL mainDocumentURL = request.firstPartyForCookies();
+
+    if (m_testInterfaces->testRunner() && m_testInterfaces->testRunner()->shouldDumpResourceLoadCallbacks()) {
+        if (m_resourceIdentifierMap.find(identifier) == m_resourceIdentifierMap.end())
+            m_delegate->printMessage("<unknown>");
+        else
+            m_delegate->printMessage(m_resourceIdentifierMap[identifier]);
+        m_delegate->printMessage(" - willSendRequest <NSURLRequest URL ");
+        m_delegate->printMessage(descriptionSuitableForTestResult(requestURL).c_str());
+        m_delegate->printMessage(", main document URL ");
+        m_delegate->printMessage(URLDescription(mainDocumentURL).c_str());
+        m_delegate->printMessage(", http method ");
+        m_delegate->printMessage(request.httpMethod().utf8().data());
+        m_delegate->printMessage("> redirectResponse ");
+        printResponseDescription(m_delegate, redirectResponse);
+        m_delegate->printMessage("\n");
+    }
+}
+
+void WebTestProxyBase::didReceiveResponse(WebFrame*, unsigned identifier, const WebKit::WebURLResponse& response)
+{
+    if (m_testInterfaces->testRunner() && m_testInterfaces->testRunner()->shouldDumpResourceLoadCallbacks()) {
+        if (m_resourceIdentifierMap.find(identifier) == m_resourceIdentifierMap.end())
+            m_delegate->printMessage("<unknown>");
+        else
+            m_delegate->printMessage(m_resourceIdentifierMap[identifier]);
+        m_delegate->printMessage(" - didReceiveResponse ");
+        printResponseDescription(m_delegate, response);
+        m_delegate->printMessage("\n");
+    }
+    if (m_testInterfaces->testRunner() && m_testInterfaces->testRunner()->shouldDumpResourceResponseMIMETypes()) {
+        GURL url = response.url();
+        WebString mimeType = response.mimeType();
+        m_delegate->printMessage(url.ExtractFileName());
+        m_delegate->printMessage(" has MIME type ");
+        // Simulate NSURLResponse's mapping of empty/unknown MIME types to application/octet-stream
+        m_delegate->printMessage(mimeType.isEmpty() ? "application/octet-stream" : mimeType.utf8().data());
+        m_delegate->printMessage("\n");
+    }
+}
+
+void WebTestProxyBase::didFinishResourceLoad(WebFrame*, unsigned identifier)
+{
+    if (m_testInterfaces->testRunner() && m_testInterfaces->testRunner()->shouldDumpResourceLoadCallbacks()) {
+        if (m_resourceIdentifierMap.find(identifier) == m_resourceIdentifierMap.end())
+            m_delegate->printMessage("<unknown>");
+        else
+            m_delegate->printMessage(m_resourceIdentifierMap[identifier]);
+        m_delegate->printMessage(" - didFinishLoading\n");
+    }
+    m_resourceIdentifierMap.erase(identifier);
+}
+
+void WebTestProxyBase::didFailResourceLoad(WebFrame*, unsigned identifier, const WebKit::WebURLError& error)
+{
+    if (m_testInterfaces->testRunner() && m_testInterfaces->testRunner()->shouldDumpResourceLoadCallbacks()) {
+        if (m_resourceIdentifierMap.find(identifier) == m_resourceIdentifierMap.end())
+            m_delegate->printMessage("<unknown>");
+        else
+            m_delegate->printMessage(m_resourceIdentifierMap[identifier]);
+        m_delegate->printMessage(" - didFailLoadingWithError: ");
+        m_delegate->printMessage(m_delegate->makeURLErrorDescription(error));
+        m_delegate->printMessage("\n");
+    }
+    m_resourceIdentifierMap.erase(identifier);
 }
 
 }

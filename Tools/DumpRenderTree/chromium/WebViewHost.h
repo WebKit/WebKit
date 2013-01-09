@@ -148,6 +148,7 @@ class WebViewHost : public WebKit::WebViewClient, public WebKit::WebFrameClient,
     virtual void applyPreferences() OVERRIDE;
     virtual void setCurrentWebIntentRequest(const WebKit::WebIntentRequest&) OVERRIDE;
     virtual WebKit::WebIntentRequest* currentWebIntentRequest() OVERRIDE;
+    virtual std::string makeURLErrorDescription(const WebKit::WebURLError&) OVERRIDE;
 
     // NavigationHost
     virtual bool navigate(const TestNavigationEntry&, bool reload);
@@ -254,13 +255,7 @@ class WebViewHost : public WebKit::WebViewClient, public WebKit::WebFrameClient,
     virtual void didFailLoad(WebKit::WebFrame*, const WebKit::WebURLError&);
     virtual void didFinishLoad(WebKit::WebFrame*);
     virtual void didNavigateWithinPage(WebKit::WebFrame*, bool isNewNavigation);
-    virtual void assignIdentifierToRequest(WebKit::WebFrame*, unsigned identifier, const WebKit::WebURLRequest&);
-    virtual void removeIdentifierForRequest(unsigned identifier);
-    virtual void willRequestResource(WebKit::WebFrame*, const WebKit::WebCachedURLRequest&);
     virtual void willSendRequest(WebKit::WebFrame*, unsigned identifier, WebKit::WebURLRequest&, const WebKit::WebURLResponse&);
-    virtual void didReceiveResponse(WebKit::WebFrame*, unsigned identifier, const WebKit::WebURLResponse&);
-    virtual void didFinishResourceLoad(WebKit::WebFrame*, unsigned identifier);
-    virtual void didFailResourceLoad(WebKit::WebFrame*, unsigned identifier, const WebKit::WebURLError&);
     virtual void openFileSystem(WebKit::WebFrame*, WebKit::WebFileSystem::Type, long long size, bool create, WebKit::WebFileSystemCallbacks*);
     virtual void deleteFileSystem(WebKit::WebFrame*, WebKit::WebFileSystem::Type, WebKit::WebFileSystemCallbacks*);
     virtual bool willCheckAndDispatchMessageEvent(
@@ -362,11 +357,6 @@ private:
     int m_lastPageIdUpdated;
 
     OwnPtr<TestShellExtraData> m_pendingExtraData;
-
-    // Maps resource identifiers to a descriptive string.
-    typedef HashMap<unsigned, std::string> ResourceMap;
-    ResourceMap m_resourceIdentifierMap;
-    void printResourceDescription(unsigned identifier);
 
     WebKit::WebCursorInfo m_currentCursor;
 

@@ -58,6 +58,9 @@ public:
     virtual bool shouldDumpTitleChanges() const { return false; }
     virtual bool shouldDumpCreateView() const { return false; }
     virtual bool canOpenWindows() const { return false; }
+    virtual bool shouldDumpResourceLoadCallbacks() const { return false; }
+    virtual bool shouldDumpResourceRequestCallbacks() const { return false; }
+    virtual bool shouldDumpResourceResponseMIMETypes() const { return false; }
 };
 
 }

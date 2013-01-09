@@ -126,24 +126,6 @@ static string urlSuitableForTestResult(const string& url)
     return filename;
 }
 
-// Used to write a platform neutral file:/// URL by taking the
-// filename and its directory. (e.g., converts
-// "file:///tmp/foo/bar.txt" to just "bar.txt").
-static string descriptionSuitableForTestResult(const string& url)
-{
-    if (url.empty() || string::npos == url.find("file://"))
-        return url;
-
-    size_t pos = url.rfind('/');
-    if (pos == string::npos || !pos)
-        return "ERROR:" + url;
-    pos = url.rfind('/', pos - 1);
-    if (pos == string::npos)
-        return "ERROR:" + url;
-
-    return url.substr(pos + 1);
-}
-
 // Get a debugging string from a WebNavigationType.
 static const char* webNavigationTypeToString(WebNavigationType type)
 {
@@ -169,18 +151,6 @@ static string URLDescription(const GURL& url)
     if (url.SchemeIs("file"))
         return url.ExtractFileName();
     return url.possibly_invalid_spec();
-}
-
-static void printResponseDescription(const WebURLResponse& response)
-{
-    if (response.isNull()) {
-        fputs("(null)", stdout);
-        return;
-    }
-    string url = response.url().spec();
-    printf("<NSURLResponse %s, http status code %d>",
-           descriptionSuitableForTestResult(url).c_str(),
-           response.httpStatusCode());
 }
 
 static void printNodeDescription(const WebNode& node, int exception)
@@ -914,19 +884,6 @@ void WebViewHost::didNavigateWithinPage(WebFrame* frame, bool isNewNavigation)
     updateForCommittedLoad(frame, isNewNavigation);
 }
 
-void WebViewHost::assignIdentifierToRequest(WebFrame*, unsigned identifier, const WebURLRequest& request)
-{
-     if (!m_shell->shouldDumpResourceLoadCallbacks())
-        return;
-    ASSERT(!m_resourceIdentifierMap.contains(identifier));
-    m_resourceIdentifierMap.set(identifier, descriptionSuitableForTestResult(request.url().spec()));
-}
-
-void WebViewHost::removeIdentifierForRequest(unsigned identifier)
-{
-    m_resourceIdentifierMap.remove(identifier);
-}
-
 static void blockRequest(WebURLRequest& request)
 {
     request.setURL(WebURL());
@@ -942,23 +899,6 @@ static bool hostIsUsedBySomeTestsToGenerateError(const string& host)
     return host == "255.255.255.255";
 }
 
-void WebViewHost::willRequestResource(WebKit::WebFrame* frame, const WebKit::WebCachedURLRequest& request)
-{
-    if (m_shell->shouldDumpResourceRequestCallbacks()) {
-        printFrameDescription(frame);
-        WebElement element = request.initiatorElement();
-        if (!element.isNull()) {
-            printf(" - element with ");
-            if (element.hasAttribute("id"))
-                printf("id '%s'", element.getAttribute("id").utf8().data());
-            else
-                printf("no id");
-        } else
-            printf(" - %s", request.initiatorName().utf8().data());
-        printf(" requested '%s'\n", URLDescription(request.urlRequest().url()).c_str());
-    }
-}
-
 void WebViewHost::willSendRequest(WebFrame* frame, unsigned identifier, WebURLRequest& request, const WebURLResponse& redirectResponse)
 {
     // Need to use GURL for host() and SchemeIs()
@@ -966,16 +906,6 @@ void WebViewHost::willSendRequest(WebFrame* frame, unsigned identifier, WebURLRe
     string requestURL = url.possibly_invalid_spec();
 
     GURL mainDocumentURL = request.firstPartyForCookies();
-    if (testRunner()->shouldDumpResourceLoadCallbacks()) {
-        printResourceDescription(identifier);
-        printf(" - willSendRequest <NSURLRequest URL %s, main document URL %s,"
-               " http method %s> redirectResponse ",
-               descriptionSuitableForTestResult(requestURL).c_str(),
-               URLDescription(mainDocumentURL).c_str(),
-               request.httpMethod().utf8().data());
-        printResponseDescription(redirectResponse);
-        fputs("\n", stdout);
-    }
 
     request.setExtraData(webkit_support::CreateWebURLRequestExtraData(frame->document().referrerPolicy()));
 
@@ -1007,44 +937,6 @@ void WebViewHost::willSendRequest(WebFrame* frame, unsigned identifier, WebURLRe
 
     // Set the new substituted URL.
     request.setURL(webkit_support::RewriteLayoutTestsURL(request.url().spec()));
-}
-
-void WebViewHost::didReceiveResponse(WebFrame*, unsigned identifier, const WebURLResponse& response)
-{
-    if (m_shell->shouldDumpResourceLoadCallbacks()) {
-        printResourceDescription(identifier);
-        fputs(" - didReceiveResponse ", stdout);
-        printResponseDescription(response);
-        fputs("\n", stdout);
-    }
-    if (m_shell->shouldDumpResourceResponseMIMETypes()) {
-        GURL url = response.url();
-        WebString mimeType = response.mimeType();
-        printf("%s has MIME type %s\n",
-            url.ExtractFileName().c_str(),
-            // Simulate NSURLResponse's mapping of empty/unknown MIME types to application/octet-stream
-            mimeType.isEmpty() ? "application/octet-stream" : mimeType.utf8().data());
-    }
-}
-
-void WebViewHost::didFinishResourceLoad(WebFrame*, unsigned identifier)
-{
-    if (m_shell->shouldDumpResourceLoadCallbacks()) {
-        printResourceDescription(identifier);
-        fputs(" - didFinishLoading\n", stdout);
-    }
-    removeIdentifierForRequest(identifier);
-}
-
-void WebViewHost::didFailResourceLoad(WebFrame*, unsigned identifier, const WebURLError& error)
-{
-    if (m_shell->shouldDumpResourceLoadCallbacks()) {
-        printResourceDescription(identifier);
-        fputs(" - didFailLoadingWithError: ", stdout);
-        fputs(webkit_support::MakeURLErrorDescription(error).c_str(), stdout);
-        fputs("\n", stdout);
-    }
-    removeIdentifierForRequest(identifier);
 }
 
 void WebViewHost::openFileSystem(WebFrame* frame, WebFileSystem::Type type, long long size, bool create, WebFileSystemCallbacks* callbacks)
@@ -1161,6 +1053,11 @@ WebIntentRequest* WebViewHost::currentWebIntentRequest()
     return &m_currentRequest;
 }
 
+std::string WebViewHost::makeURLErrorDescription(const WebKit::WebURLError& error)
+{
+    return webkit_support::MakeURLErrorDescription(error);
+}
+
 // Public functions -----------------------------------------------------------
 
 WebViewHost::WebViewHost(TestShell* shell)
@@ -1255,7 +1152,6 @@ void WebViewHost::reset()
     m_navigationController = adoptPtr(new TestNavigationController(this));
 
     m_pendingExtraData.clear();
-    m_resourceIdentifierMap.clear();
     m_clearHeaders.clear();
     m_editCommandName.clear();
     m_editCommandValue.clear();
@@ -1272,7 +1168,7 @@ void WebViewHost::reset()
     m_windowRect = WebRect();
     // m_proxy is not set when reset() is invoked from the constructor.
     if (m_proxy)
-        proxy()->setPaintRect(WebRect());
+        proxy()->reset();
 
     if (m_webWidget) {
         webView()->mainFrame()->setName(WebString());
@@ -1473,12 +1369,6 @@ void WebViewHost::printFrameDescription(WebFrame* webframe)
         return;
     }
     printf("frame \"%s\"", name8.c_str());
-}
-
-void WebViewHost::printResourceDescription(unsigned identifier)
-{
-    ResourceMap::iterator it = m_resourceIdentifierMap.find(identifier);
-    printf("%s", it != m_resourceIdentifierMap.end() ? it->value.c_str() : "<unknown>");
 }
 
 void WebViewHost::setPendingExtraData(PassOwnPtr<TestShellExtraData> extraData)

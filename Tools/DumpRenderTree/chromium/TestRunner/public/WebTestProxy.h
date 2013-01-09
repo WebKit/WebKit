@@ -38,9 +38,12 @@
 #include "WebKit/chromium/public/WebNavigationPolicy.h"
 #include "WebKit/chromium/public/WebTextAffinity.h"
 #include "WebKit/chromium/public/WebTextDirection.h"
+#include <map>
+#include <string>
 
 namespace WebKit {
 class WebAccessibilityObject;
+class WebCachedURLRequest;
 class WebDragData;
 class WebFrame;
 class WebImage;
@@ -53,6 +56,7 @@ class WebSerializedScriptValue;
 class WebString;
 class WebURL;
 class WebURLRequest;
+class WebURLResponse;
 class WebView;
 struct WebPoint;
 struct WebSize;
@@ -70,6 +74,8 @@ class WebTestProxyBase {
 public:
     void setInterfaces(WebTestInterfaces*);
     void setDelegate(WebTestDelegate*);
+
+    void reset();
 
     void setPaintRect(const WebKit::WebRect&);
     WebKit::WebRect paintRect() const;
@@ -116,12 +122,19 @@ protected:
     void didDisplayInsecureContent(WebKit::WebFrame*);
     void didRunInsecureContent(WebKit::WebFrame*, const WebKit::WebSecurityOrigin&, const WebKit::WebURL& insecureURL);
     void didDetectXSS(WebKit::WebFrame*, const WebKit::WebURL& insecureURL, bool didBlockEntirePage);
+    void assignIdentifierToRequest(WebKit::WebFrame*, unsigned identifier, const WebKit::WebURLRequest&);
+    void willRequestResource(WebKit::WebFrame*, const WebKit::WebCachedURLRequest&);
+    void willSendRequest(WebKit::WebFrame*, unsigned identifier, WebKit::WebURLRequest&, const WebKit::WebURLResponse& redirectResponse);
+    void didReceiveResponse(WebKit::WebFrame*, unsigned identifier, const WebKit::WebURLResponse&);
+    void didFinishResourceLoad(WebKit::WebFrame*, unsigned identifier);
+    void didFailResourceLoad(WebKit::WebFrame*, unsigned identifier, const WebKit::WebURLError&);
 
 private:
     WebTestInterfaces* m_testInterfaces;
     WebTestDelegate* m_delegate;
 
     WebKit::WebRect m_paintRect;
+    std::map<unsigned, std::string> m_resourceIdentifierMap;
 };
 
 // Use this template to inject methods into your WebViewClient/WebFrameClient
@@ -328,6 +341,36 @@ public:
     {
         WebTestProxyBase::didDetectXSS(frame, insecureURL, didBlockEntirePage);
         Base::didDetectXSS(frame, insecureURL, didBlockEntirePage);
+    }
+    virtual void assignIdentifierToRequest(WebKit::WebFrame* frame, unsigned identifier, const WebKit::WebURLRequest& request)
+    {
+        WebTestProxyBase::assignIdentifierToRequest(frame, identifier, request);
+        Base::assignIdentifierToRequest(frame, identifier, request);
+    }
+    virtual void willRequestResource(WebKit::WebFrame* frame, const WebKit::WebCachedURLRequest& request)
+    {
+        WebTestProxyBase::willRequestResource(frame, request);
+        Base::willRequestResource(frame, request);
+    }
+    virtual void willSendRequest(WebKit::WebFrame* frame, unsigned identifier, WebKit::WebURLRequest& request, const WebKit::WebURLResponse& redirectResponse)
+    {
+        WebTestProxyBase::willSendRequest(frame, identifier, request, redirectResponse);
+        Base::willSendRequest(frame, identifier, request, redirectResponse);
+    }
+    virtual void didReceiveResponse(WebKit::WebFrame* frame, unsigned identifier, const WebKit::WebURLResponse& response)
+    {
+        WebTestProxyBase::didReceiveResponse(frame, identifier, response);
+        Base::didReceiveResponse(frame, identifier, response);
+    }
+    virtual void didFinishResourceLoad(WebKit::WebFrame* frame, unsigned identifier)
+    {
+        WebTestProxyBase::didFinishResourceLoad(frame, identifier);
+        Base::didFinishResourceLoad(frame, identifier);
+    }
+    virtual void didFailResourceLoad(WebKit::WebFrame* frame, unsigned identifier, const WebKit::WebURLError& error)
+    {
+        WebTestProxyBase::didFailResourceLoad(frame, identifier, error);
+        Base::didFailResourceLoad(frame, identifier, error);
     }
 };
 

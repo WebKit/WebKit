@@ -119,9 +119,6 @@ DRTTestRunner::DRTTestRunner(TestShell* shell)
     bindMethod("displayInvalidatedRegion", &DRTTestRunner::displayInvalidatedRegion);
     bindMethod("dumpBackForwardList", &DRTTestRunner::dumpBackForwardList);
     bindMethod("dumpProgressFinishedCallback", &DRTTestRunner::dumpProgressFinishedCallback);
-    bindMethod("dumpResourceLoadCallbacks", &DRTTestRunner::dumpResourceLoadCallbacks);
-    bindMethod("dumpResourceRequestCallbacks", &DRTTestRunner::dumpResourceRequestCallbacks);
-    bindMethod("dumpResourceResponseMIMETypes", &DRTTestRunner::dumpResourceResponseMIMETypes);
     bindMethod("dumpSelectionRect", &DRTTestRunner::dumpSelectionRect);
     bindMethod("dumpStatusCallbacks", &DRTTestRunner::dumpWindowStatusChanges);
     bindMethod("dumpPermissionClientCallbacks", &DRTTestRunner::dumpPermissionClientCallbacks);
@@ -248,24 +245,6 @@ void DRTTestRunner::dumpBackForwardList(const CppArgumentList&, CppVariant* resu
 void DRTTestRunner::dumpProgressFinishedCallback(const CppArgumentList&, CppVariant* result)
 {
     m_dumpProgressFinishedCallback = true;
-    result->setNull();
-}
-
-void DRTTestRunner::dumpResourceLoadCallbacks(const CppArgumentList&, CppVariant* result)
-{
-    m_dumpResourceLoadCallbacks = true;
-    result->setNull();
-}
-
-void DRTTestRunner::dumpResourceRequestCallbacks(const CppArgumentList&, CppVariant* result)
-{
-    m_dumpResourceRequestCallbacks = true;
-    result->setNull();
-}
-
-void DRTTestRunner::dumpResourceResponseMIMETypes(const CppArgumentList&, CppVariant* result)
-{
-    m_dumpResourceResponseMIMETypes = true;
     result->setNull();
 }
 
@@ -466,9 +445,6 @@ void DRTTestRunner::reset()
     if (m_shell)
         m_shell->webViewHost()->setDeviceScaleFactor(1);
     m_dumpProgressFinishedCallback = false;
-    m_dumpResourceLoadCallbacks = false;
-    m_dumpResourceRequestCallbacks = false;
-    m_dumpResourceResponseMIMETypes = false;
     m_dumpBackForwardList = false;
     m_dumpWindowStatusChanges = false;
     m_dumpSelectionRect = false;

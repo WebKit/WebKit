@@ -76,6 +76,9 @@ public:
     virtual bool shouldDumpTitleChanges() const OVERRIDE;
     virtual bool shouldDumpCreateView() const OVERRIDE;
     virtual bool canOpenWindows() const OVERRIDE;
+    virtual bool shouldDumpResourceLoadCallbacks() const OVERRIDE;
+    virtual bool shouldDumpResourceRequestCallbacks() const OVERRIDE;
+    virtual bool shouldDumpResourceResponseMIMETypes() const OVERRIDE;
 
 protected:
     // FIXME: make these private once the move from DRTTestRunner to TestRunner
@@ -241,6 +244,21 @@ private:
 
     void setCanOpenWindows(const CppArgumentList&, CppVariant*);
 
+    // This function sets a flag that tells the test_shell to dump a descriptive
+    // line for each resource load callback. It takes no arguments, and ignores
+    // any that may be present.
+    void dumpResourceLoadCallbacks(const CppArgumentList&, CppVariant*);
+
+    // This function sets a flag that tells the test_shell to print a line of
+    // descriptive text for each element that requested a resource. It takes no
+    // arguments, and ignores any that may be present.
+    void dumpResourceRequestCallbacks(const CppArgumentList&, CppVariant*);
+
+    // This function sets a flag that tells the test_shell to dump the MIME type
+    // for each resource that was loaded. It takes no arguments, and ignores any
+    // that may be present.
+    void dumpResourceResponseMIMETypes(const CppArgumentList&, CppVariant*);
+
     ///////////////////////////////////////////////////////////////////////////
     // Methods interacting with the WebTestProxy
 
@@ -330,6 +348,18 @@ private:
     // default, set to false and can be toggled to true using
     // setCanOpenWindows().
     bool m_canOpenWindows;
+
+    // If true, the test_shell will output a descriptive line for each resource
+    // load callback.
+    bool m_dumpResourceLoadCallbacks;
+
+    // If true, the test_shell will output a descriptive line for each resource
+    // request callback.
+    bool m_dumpResourceRequestCallbacks;
+
+    // If true, the test_shell will output the MIME type for each resource that 
+    // was loaded.
+    bool m_dumpResourceResponseMIMETypes;
 
     // WAV audio data is stored here.
     WebKit::WebArrayBufferView m_audioData;
