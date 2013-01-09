@@ -700,6 +700,10 @@ webkit.org/b/105879 editing/spelling/spelling-insert-html.html [ Pass Crash ]
 # Sometimes hit cur || !toRenderInline(prev)->continuation() assertion in WebCore::endOfContinuations().
 webkit.org/b/105880 fast/dom/Range/range-extract-contents.html [ Pass Crash ]
 
+# Tests started to crash after r139141.
+webkit.org/b/106412 editing/execCommand/insert-list-xml.xhtml [ Crash ]
+webkit.org/b/106412 editing/style/justify-without-enclosing-block.xhtml [ Crash ]
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # FLAKY TESTS
 #////////////////////////////////////////////////////////////////////////////////////////
@@ -1778,8 +1782,9 @@ webkit.org/b/106086 fast/dom/HTMLTemplateElement/ownerDocument-adoptNode.html [ 
 # [Qt][EFL] New fast/events/drag-and-drop-autoscroll.html fails
 webkit.org/b/106318 fast/events/drag-and-drop-autoscroll.html [ Failure ]
 
-# [GTK][EFL] after r139145.
-webkit.org/b/106415 fast/workers/worker-close-more.html [ Timeout Pass ]
+# Fail after r139145 on MAC, EFL, QT, GTK.
+webkit.org/b/106415 fast/workers/worker-close-more.html [ Pass Failure ]
+webkit.org/b/106415 fast/workers/worker-close-more.html [ Pass Failure ]
 
 # Newly added test at r139002 is failing.
 webkit.org/b/106316 accessibility/render-counter-text.html [ Failure ]

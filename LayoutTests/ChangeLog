@@ -2,6 +2,14 @@
 
         Unreviewed EFL gardening.
 
+        Skipping failing tests after r139141, r139145.
+
+        * platform/efl/TestExpectations:
+
+2013-01-09  Mikhail Pozdnyakov  <mikhail.pozdnyakov@intel.com>
+
+        Unreviewed EFL gardening.
+
         Rebaselining of media/video-controls-captions.html.
 
         * platform/efl/media/video-controls-captions-expected.txt: Added.
