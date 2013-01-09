@@ -1,3 +1,16 @@
+2013-01-09  Dan Winship  <danw@gnome.org>
+
+        [Soup] Handle redirection inside WebKit
+        https://bugs.webkit.org/show_bug.cgi?id=61122
+        https://bugs.webkit.org/show_bug.cgi?id=88961
+
+        Reviewed by Martin Robinson.
+
+        Unskip some tests.
+
+        * platform/efl/TestExpectations:
+        * platform/gtk/TestExpectations:
+
 2013-01-09  Florin Malita  <fmalita@chromium.org>
 
         [Skia] Implement GraphicsContext::addRoundedRectClip() using SkCanvas::clipRRect()

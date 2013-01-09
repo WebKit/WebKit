@@ -48,12 +48,19 @@ static String failingURI(SoupRequest* request)
     return failingURI(soup_request_get_uri(request));
 }
 
+ResourceError ResourceError::transportError(SoupRequest* request, int statusCode, const String& reasonPhrase)
+{
+    return ResourceError(g_quark_to_string(SOUP_HTTP_ERROR), statusCode,
+        failingURI(request), reasonPhrase);
+}
+
 ResourceError ResourceError::httpError(SoupMessage* message, GError* error, SoupRequest* request)
 {
-    if (!message || !SOUP_STATUS_IS_TRANSPORT_ERROR(message->status_code))
+    if (message && SOUP_STATUS_IS_TRANSPORT_ERROR(message->status_code))
+        return transportError(request, message->status_code,
+            String::fromUTF8(message->reason_phrase));
+    else
         return genericIOError(error, request);
-    return ResourceError(g_quark_to_string(SOUP_HTTP_ERROR), message->status_code,
-        failingURI(request), String::fromUTF8(message->reason_phrase));
 }
 
 ResourceError ResourceError::authenticationError(SoupMessage* message)

@@ -906,7 +906,6 @@ Bug(GTK) fast/loader/api-test-go-to-current-back-forward-item.html [ Failure ]
 
 # Needs to make sure the redirect-chain scenario in https://bugs.webkit.org/show_bug.cgi?id=31410 works
 webkit.org/b/35300 http/tests/loading/307-after-303-after-post.html [ Failure ]
-webkit.org/b/35300 http/tests/navigation/post-307-response.html [ Skip ]
 
 # Paged continuousMouseScrollBy() events are not supported in GTK.
 Bug(GTK) fast/events/platform-wheelevent-paging-x-in-non-scrolling-div.html [ Failure ]
@@ -1229,9 +1228,6 @@ webkit.org/b/86445 fast/multicol/split-in-top-margin.html [ ImageOnlyFailure ]
 
 # This test is affecting other tests and seems to be behaving incorrectly itself
 webkit.org/b/86771 fast/dom/gc-10.html [ Skip ]
-
-# Failing after r120145 on both GTK and EFL
-webkit.org/b/88961 http/tests/misc/redirect-to-about-blank.html [ Failure ]
 
 webkit.org/b/86971 svg/hittest/svg-shapes-non-scale-stroke.html [ Failure ]
 

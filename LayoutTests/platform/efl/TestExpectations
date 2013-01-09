@@ -96,10 +96,6 @@ http/tests/media/video-play-stall-seek.html
 http/tests/media/video-play-stall.html
 http/tests/security/feed-urls-from-remote.html
 
-# Test times out (via GTK+)
-# https://bugs.webkit.org/show_bug.cgi?id=61122
-http/tests/navigation/post-307-response.html
-
 # ------------------------------
 # Tests which need investigation
 # ------------------------------
@@ -1375,9 +1371,6 @@ webkit.org/b/91341 fast/text/descent-clip-in-scaled-page.html [ ImageOnlyFailure
 
 # Failing after r119268 on GTK and EFL
 webkit.org/b/88138 http/tests/media/video-buffered.html [ Failure ]
-
-# Failing after r120145 on both GTK and EFL
-webkit.org/b/88961 http/tests/misc/redirect-to-about-blank.html [ Failure ]
 
 # EFL port does not support hyphenation
 webkit.org/b/89830 fast/text/hyphen-min-preferred-width.html [ ImageOnlyFailure ]

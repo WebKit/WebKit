@@ -222,7 +222,8 @@ private:
     HashSet<String> m_certificates;
 };
 
-static void cleanupSoupRequestOperation(ResourceHandle*, bool isDestroying);
+static bool createSoupRequestAndMessageForHandle(ResourceHandle*, const ResourceRequest&, bool isHTTPFamilyRequest);
+static void cleanupSoupRequestOperation(ResourceHandle*, bool isDestroying = false);
 static void sendRequestCallback(GObject*, GAsyncResult*, gpointer);
 static void readCallback(GObject*, GAsyncResult*, gpointer);
 static void closeCallback(GObject*, GAsyncResult*, gpointer);
@@ -330,8 +331,7 @@ static void gotHeadersCallback(SoupMessage* message, gpointer data)
 #endif
 
     // The original response will be needed later to feed to willSendRequest in
-    // restartedCallback() in case we are redirected. For this reason, so we store it
-    // here.
+    // doRedirect() in case we are redirected. For this reason, we store it here.
     ResourceResponse response;
     response.updateFromSoupMessage(message);
     d->m_response = response;
@@ -374,7 +374,7 @@ static void applyAuthenticationToRequest(ResourceHandle* handle, ResourceRequest
 }
 
 // Called each time the message is going to be sent again except the first time.
-// It's used mostly to let webkit know about redirects.
+// This happens when libsoup handles HTTP authentication.
 static void restartedCallback(SoupMessage* message, gpointer data)
 {
     ResourceHandle* handle = static_cast<ResourceHandle*>(data);
@@ -384,64 +384,144 @@ static void restartedCallback(SoupMessage* message, gpointer data)
     if (d->m_cancelled)
         return;
 
-    ResourceResponse& redirectResponse = d->m_response;
 #if ENABLE(WEB_TIMING)
+    ResourceResponse& redirectResponse = d->m_response;
     redirectResponse.setResourceLoadTiming(ResourceLoadTiming::create());
     redirectResponse.resourceLoadTiming()->requestTime = monotonicallyIncreasingTime();
 #endif
+}
 
-    // WebCore only expects us to call willSendRequest when we are redirecting. soup
-    // fires this signal also when it's handling authentication challenges, so in that
-    // case we should not willSendRequest.
-    if (isAuthenticationFailureStatusCode(redirectResponse.httpStatusCode()))
-        return;
+static bool shouldRedirect(ResourceHandle* handle)
+{
+    ResourceHandleInternal* d = handle->getInternal();
+    SoupMessage* message = d->m_soupMessage.get();
 
-    ResourceRequest request = handle->firstRequest();
-    request.setURL(KURL(handle->firstRequest().url(), soupURIToKURL(soup_message_get_uri(message))));
-    request.setHTTPMethod(message->method);
+    // Some 3xx status codes aren't actually redirects.
+    if (message->status_code == 300 || message->status_code == 304 || message->status_code == 305 || message->status_code == 306)
+        return false;
 
-    // Should not set Referer after a redirect from a secure resource to non-secure one.
-    if (!request.url().protocolIs("https") && protocolIs(request.httpReferrer(), "https")) {
-        request.clearHTTPReferrer();
-        soup_message_headers_remove(message->request_headers, "Referer");
+    if (!soup_message_headers_get_one(message->response_headers, "Location"))
+        return false;
+
+    return true;
+}
+
+static bool shouldRedirectAsGET(SoupMessage* message, KURL& newURL, bool crossOrigin)
+{
+    if (message->method == SOUP_METHOD_GET)
+        return false;
+
+    if (!newURL.protocolIsInHTTPFamily())
+        return true;
+
+    switch (message->status_code) {
+    case SOUP_STATUS_SEE_OTHER:
+        return true;
+    case SOUP_STATUS_FOUND:
+    case SOUP_STATUS_MOVED_PERMANENTLY:
+        if (message->method == SOUP_METHOD_POST)
+            return true;
+        break;
     }
 
-    const KURL& url = request.url();
-    d->m_user = url.user();
-    d->m_pass = url.pass();
+    if (crossOrigin && message->method == SOUP_METHOD_DELETE)
+        return true;
+
+    return false;
+}
+
+static void doRedirect(ResourceHandle* handle)
+{
+    ResourceHandleInternal* d = handle->getInternal();
+    static const int maxRedirects = 20;
+
+    if (d->m_redirectCount++ > maxRedirects) {
+        d->client()->didFail(handle, ResourceError::transportError(d->m_soupRequest.get(), SOUP_STATUS_TOO_MANY_REDIRECTS, "Too many redirects"));
+        cleanupSoupRequestOperation(handle);
+        return;
+    }
+
+    ResourceRequest request = handle->firstRequest();
+    SoupMessage* message = d->m_soupMessage.get();
+    const char* location = soup_message_headers_get_one(message->response_headers, "Location");
+    KURL newURL = KURL(soupURIToKURL(soup_message_get_uri(message)), location);
+    bool crossOrigin = !protocolHostAndPortAreEqual(request.url(), newURL);
+    request.setURL(newURL);
+
+    if (shouldRedirectAsGET(message, newURL, crossOrigin)) {
+        request.setHTTPMethod("GET");
+        request.setHTTPBody(0);
+        request.clearHTTPContentType();
+    }
+
+    // Should not set Referer after a redirect from a secure resource to non-secure one.
+    if (!newURL.protocolIs("https") && protocolIs(request.httpReferrer(), "https"))
+        request.clearHTTPReferrer();
+
+    d->m_user = newURL.user();
+    d->m_pass = newURL.pass();
     request.removeCredentials();
 
-    if (!protocolHostAndPortAreEqual(request.url(), redirectResponse.url())) {
+    if (crossOrigin) {
         // If the network layer carries over authentication headers from the original request
         // in a cross-origin redirect, we want to clear those headers here. 
         request.clearHTTPAuthorization();
-        soup_message_headers_remove(message->request_headers, "Authorization");
 
         // TODO: We are losing any username and password specified in the redirect URL, as this is the 
         // same behavior as the CFNet port. We should investigate if this is really what we want.
     } else
         applyAuthenticationToRequest(handle, request, true);
 
-    // Per-request authentication is handled via the URI-embedded username/password.
-    GOwnPtr<SoupURI> newSoupURI(request.soupURI());
-    soup_message_set_uri(message, newSoupURI.get());
+    cleanupSoupRequestOperation(handle);
+    if (!createSoupRequestAndMessageForHandle(handle, request, true)) {
+        d->client()->cannotShowURL(handle);
+        return;
+    }
 
     // If we sent credentials with this request's URL, we don't want the response to carry them to
     // the WebKit layer. They were only placed in the URL for the benefit of libsoup.
     request.removeCredentials();
 
-    if (d->client())
-        d->client()->willSendRequest(handle, request, redirectResponse);
+    d->client()->willSendRequest(handle, request, d->m_response);
+    handle->sendPendingRequest();
+}
 
-    if (d->m_cancelled)
+static void redirectCloseCallback(GObject*, GAsyncResult* res, gpointer data)
+{
+    RefPtr<ResourceHandle> handle = static_cast<ResourceHandle*>(data);
+    ResourceHandleInternal* d = handle->getInternal();
+
+    g_input_stream_close_finish(d->m_inputStream.get(), res, 0);
+    doRedirect(handle.get());
+}
+
+static void redirectSkipCallback(GObject*, GAsyncResult* asyncResult, gpointer data)
+{
+    RefPtr<ResourceHandle> handle = static_cast<ResourceHandle*>(data);
+
+    ResourceHandleInternal* d = handle->getInternal();
+    ResourceHandleClient* client = handle->client();
+
+    if (d->m_cancelled || !client) {
+        cleanupSoupRequestOperation(handle.get());
         return;
-
-    // Update the first party in case the base URL changed with the redirect
-    String firstPartyString = request.firstPartyForCookies().string();
-    if (!firstPartyString.isEmpty()) {
-        GOwnPtr<SoupURI> firstParty(soup_uri_new(firstPartyString.utf8().data()));
-        soup_message_set_first_party(d->m_soupMessage.get(), firstParty.get());
     }
+
+    GOwnPtr<GError> error;
+    gssize bytesSkipped = g_input_stream_skip_finish(d->m_inputStream.get(), asyncResult, &error.outPtr());
+    if (error) {
+        client->didFail(handle.get(), ResourceError::genericIOError(error.get(), d->m_soupRequest.get()));
+        cleanupSoupRequestOperation(handle.get());
+        return;
+    }
+
+    if (bytesSkipped > 0) {
+        g_input_stream_skip_async(d->m_inputStream.get(), G_MAXSSIZE, G_PRIORITY_DEFAULT,
+            d->m_cancellable.get(), redirectSkipCallback, handle.get());
+        return;
+    }
+
+    g_input_stream_close_async(d->m_inputStream.get(), G_PRIORITY_DEFAULT, 0, redirectCloseCallback, handle.get());
 }
 
 static void wroteBodyDataCallback(SoupMessage*, SoupBuffer* buffer, gpointer data)
@@ -463,7 +543,7 @@ static void wroteBodyDataCallback(SoupMessage*, SoupBuffer* buffer, gpointer dat
     client->didSendData(handle.get(), internal->m_bodyDataSent, internal->m_bodySize);
 }
 
-static void cleanupSoupRequestOperation(ResourceHandle* handle, bool isDestroying = false)
+static void cleanupSoupRequestOperation(ResourceHandle* handle, bool isDestroying)
 {
     ResourceHandleInternal* d = handle->getInternal();
 
@@ -583,9 +663,14 @@ static void sendRequestCallback(GObject*, GAsyncResult* result, gpointer data)
         return;
     }
 
-    d->m_buffer = static_cast<char*>(g_slice_alloc(READ_BUFFER_SIZE));
-
     if (soupMessage) {
+        if (SOUP_STATUS_IS_REDIRECTION(soupMessage->status_code) && shouldRedirect(handle.get())) {
+            d->m_inputStream = inputStream;
+            g_input_stream_skip_async(d->m_inputStream.get(), G_MAXSSIZE, G_PRIORITY_DEFAULT,
+                d->m_cancellable.get(), redirectSkipCallback, handle.get());
+            return;
+        }
+
         if (handle->shouldContentSniff() && soupMessage->status_code != SOUP_STATUS_NOT_MODIFIED) {
             const char* sniffedType = soup_request_get_content_type(d->m_soupRequest.get());
             d->m_response.setSniffedContentType(sniffedType);
@@ -611,6 +696,8 @@ static void sendRequestCallback(GObject*, GAsyncResult* result, gpointer data)
         cleanupSoupRequestOperation(handle.get());
         return;
     }
+
+    d->m_buffer = static_cast<char*>(g_slice_alloc(READ_BUFFER_SIZE));
 
     if (soupMessage && d->m_response.isMultipart()) {
         d->m_multipartInputStream = adoptGRef(soup_multipart_input_stream_new(soupMessage, inputStream.get()));
@@ -879,6 +966,8 @@ static bool createSoupMessageForHandleAndRequest(ResourceHandle* handle, const R
     g_signal_connect(d->m_soupMessage.get(), "restarted", G_CALLBACK(restartedCallback), handle);
     g_signal_connect(d->m_soupMessage.get(), "wrote-body-data", G_CALLBACK(wroteBodyDataCallback), handle);
 
+    soup_message_set_flags(d->m_soupMessage.get(), static_cast<SoupMessageFlags>(soup_message_get_flags(d->m_soupMessage.get()) | SOUP_MESSAGE_NO_REDIRECT));
+
 #if ENABLE(WEB_TIMING)
     d->m_response.setResourceLoadTiming(ResourceLoadTiming::create());
     g_signal_connect(d->m_soupMessage.get(), "network-event", G_CALLBACK(networkEventCallback), handle);
@@ -888,13 +977,12 @@ static bool createSoupMessageForHandleAndRequest(ResourceHandle* handle, const R
     return true;
 }
 
-static bool createSoupRequestAndMessageForHandle(ResourceHandle* handle, bool isHTTPFamilyRequest)
+static bool createSoupRequestAndMessageForHandle(ResourceHandle* handle, const ResourceRequest& request, bool isHTTPFamilyRequest)
 {
     ResourceHandleInternal* d = handle->getInternal();
     SoupRequester* requester = SOUP_REQUESTER(soup_session_get_feature(d->soupSession(), SOUP_TYPE_REQUESTER));
 
     GOwnPtr<GError> error;
-    ResourceRequest& request = handle->firstRequest();
 
     GOwnPtr<SoupURI> soupURI(request.soupURI());
     d->m_soupRequest = adoptGRef(soup_requester_request_uri(requester, soupURI.get(), &error.outPtr()));
@@ -937,7 +1025,7 @@ bool ResourceHandle::start(NetworkingContext* context)
 
     applyAuthenticationToRequest(this, firstRequest(), false);
 
-    if (!createSoupRequestAndMessageForHandle(this, isHTTPFamilyRequest)) {
+    if (!createSoupRequestAndMessageForHandle(this, request, isHTTPFamilyRequest)) {
         this->scheduleFailure(InvalidURLFailure); // Error must not be reported immediately
         return true;
     }
