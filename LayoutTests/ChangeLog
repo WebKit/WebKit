@@ -6,7 +6,6 @@
         * platform/win/platform/win/accessibility: Added.
         * platform/win/platform/win/accessibility/option-element-selection-and-focus-events-expected.txt: Added.
         * platform/win/platform/win/accessibility/select-element-valuechange-event-expected.txt: Added.
-        * proximity/basic-operation.html:
 
 2013-01-09  Robert Hogan  <robert@webkit.org>
 
