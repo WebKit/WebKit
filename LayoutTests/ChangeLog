@@ -1,3 +1,14 @@
+2013-01-08  Brandon Jones  <bajones@chromium.org>
+
+        Make WebGLRenderingContext inherit from ActiveDOMObject
+        https://bugs.webkit.org/show_bug.cgi?id=104733
+
+        Reviewed by Adam Barth.
+
+        * fast/canvas/webgl/context-release-upon-reload-expected.txt: Added.
+        * fast/canvas/webgl/context-release-upon-reload.html: Added.
+        * fast/canvas/webgl/resources/context-release-upon-reload-child.html: Added.
+
 2013-01-08  Martin Robinson  <mrobinson@igalia.com>
 
         WebKitTestRunner needs support for setHandlesAuthenticationChallenges

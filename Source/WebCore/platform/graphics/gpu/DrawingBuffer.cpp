@@ -76,6 +76,11 @@ void DrawingBuffer::clear()
         return;
 
     m_context->makeContextCurrent();
+
+#if USE(ACCELERATED_COMPOSITING)
+    clearPlatformLayer();
+#endif
+
     if (!m_size.isEmpty()) {
         s_currentResourceUsePixels -= m_size.width() * m_size.height();
         m_size = IntSize();

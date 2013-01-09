@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>WebGL Context Release Test</title>
+<link rel="stylesheet" href="../../js/resources/js-test-style.css"/>
+<script src="../../js/resources/js-test-pre.js"></script>
+<script src="resources/webgl-test.js"></script>
+</head>
+<body>
+<iframe id="host" style="width: 256px; height: 256px; border: 0;"></iframe>
+<div id="description"></div>
+<div id="console"></div>
+<script>
+description("This test ensures that WebGL contexts are released properly upon page reload");
+
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+}
+
+var host = document.getElementById("host");
+var testIterations = 10;
+var currentIteration = 0;
+
+function refreshFrame() {
+  if(currentIteration < testIterations) {
+    currentIteration++;
+    debug("");
+    debug("Test " + currentIteration + " of " + testIterations);
+    host.src = "resources/context-release-upon-reload-child.html";
+  } else {
+    finishTest();
+  }
+}
+
+function testContext() {
+  var gl = host.contentWindow.glContext;
+  assertMsg(gl != null, "context was created properly");
+
+  glErrorShouldBe(gl, gl.NO_ERROR, "Should be no errors");
+
+  if(gl.canvas.width != gl.drawingBufferWidth ||
+    gl.canvas.height != gl.drawingBufferHeight) {
+    testFailed("Buffer was the wrong size: " +
+        gl.drawingBufferWidth + "x" + gl.drawingBufferHeight);
+  } else {
+    testPassed("Buffer was the correct size: " +
+        gl.drawingBufferWidth + "x" + gl.drawingBufferHeight);
+    refreshFrame();
+  }
+
+  gl = null;
+}
+
+window.addEventListener("message", function(event) {
+  if(event.data == "Ready") {
+    testContext();
+  }
+});
+
+refreshFrame();
+</script>
+
+</body>
+</html>

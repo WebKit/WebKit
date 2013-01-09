@@ -26,6 +26,7 @@
 #ifndef WebGLRenderingContext_h
 #define WebGLRenderingContext_h
 
+#include "ActiveDOMObject.h"
 #include "CanvasRenderingContext.h"
 #include "DrawingBuffer.h"
 #include "GraphicsContext3D.h"
@@ -75,7 +76,7 @@ class WebGLVertexArrayObjectOES;
 
 typedef int ExceptionCode;
 
-class WebGLRenderingContext : public CanvasRenderingContext {
+class WebGLRenderingContext : public CanvasRenderingContext, public ActiveDOMObject {
 public:
     static PassOwnPtr<WebGLRenderingContext> create(HTMLCanvasElement*, WebGLContextAttributes*);
     virtual ~WebGLRenderingContext();
@@ -317,6 +318,10 @@ public:
     
     unsigned getMaxVertexAttribs() const { return m_maxVertexAttribs; }
 
+    // ActiveDOMObject notifications
+    virtual bool hasPendingActivity() const;
+    virtual void stop();
+
   private:
     friend class WebGLFramebuffer;
     friend class WebGLObject;
@@ -334,6 +339,7 @@ public:
     void addContextObject(WebGLContextObject*);
     void detachAndRemoveAllObjects();
 
+    void destroyGraphicsContext3D();
     void markContextChanged();
     void cleanupAfterGraphicsCall(bool changed)
     {

@@ -113,6 +113,11 @@ unsigned DrawingBuffer::frontColorBuffer() const
 {
     return colorBuffer();
 }
+
+void DrawingBuffer::clearPlatformLayer()
+{
+    // Don't need to do anything on this platform.
+}
 #endif
 
 }

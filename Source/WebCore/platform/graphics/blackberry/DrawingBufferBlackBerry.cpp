@@ -122,6 +122,10 @@ unsigned DrawingBuffer::frontColorBuffer() const
 {
     return colorBuffer();
 }
+
+void DrawingBuffer::clearPlatformLayer()
+{
+}
 #endif
 
 } // namespace WebCore

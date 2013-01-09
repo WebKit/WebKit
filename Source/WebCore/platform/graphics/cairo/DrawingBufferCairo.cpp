@@ -101,6 +101,10 @@ unsigned DrawingBuffer::frontColorBuffer() const
 void DrawingBuffer::paintCompositedResultsToCanvas(ImageBuffer*)
 {
 }
+
+void DrawingBuffer::clearPlatformLayer()
+{
+}
 #endif
 
 }

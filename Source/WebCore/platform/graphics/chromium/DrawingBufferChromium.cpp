@@ -203,12 +203,22 @@ public:
         return GraphicsContext3DPrivate::extractWebGraphicsContext3D(m_drawingBuffer->graphicsContext3D());
     }
 
+    void clearTextureId()
+    {
+        m_layer->setTextureId(0);
+    }
+
     WebKit::WebLayer* layer() { return m_layer->layer(); }
 
 private:
     DrawingBuffer* m_drawingBuffer;
     OwnPtr<WebKit::WebExternalTextureLayer> m_layer;
 };
+
+Platform3DObject DrawingBuffer::framebuffer() const
+{
+    return m_fbo;
+}
 
 #if USE(ACCELERATED_COMPOSITING)
 PlatformLayer* DrawingBuffer::platformLayer()
@@ -218,14 +228,7 @@ PlatformLayer* DrawingBuffer::platformLayer()
 
     return m_private->layer();
 }
-#endif
 
-Platform3DObject DrawingBuffer::framebuffer() const
-{
-    return m_fbo;
-}
-
-#if USE(ACCELERATED_COMPOSITING)
 void DrawingBuffer::paintCompositedResultsToCanvas(ImageBuffer* imageBuffer)
 {
     if (!m_context->makeContextCurrent() || m_context->getExtensions()->getGraphicsResetStatusARB() != GraphicsContext3D::NO_ERROR)
@@ -248,6 +251,14 @@ void DrawingBuffer::paintCompositedResultsToCanvas(ImageBuffer* imageBuffer)
     m_context->deleteFramebuffer(framebuffer);
 
     m_context->bindFramebuffer(GraphicsContext3D::FRAMEBUFFER, previousFramebuffer);
+}
+
+void DrawingBuffer::clearPlatformLayer()
+{
+    if (m_private)
+        m_private->clearTextureId();
+
+    m_context->flush();
 }
 #endif
 
