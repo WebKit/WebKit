@@ -1,0 +1,63 @@
+EDITING DELEGATE: shouldBeginEditingInDOMRange:range from 0 of DIV > DIV > BODY > HTML > #document to 3 of DIV > DIV > BODY > HTML > #document
+EDITING DELEGATE: webViewDidBeginEditing:WebViewDidBeginEditingNotification
+EDITING DELEGATE: shouldChangeSelectedDOMRange:(null) toDOMRange:range from 14 of #text > DIV > DIV > BODY > HTML > #document to 14 of #text > DIV > DIV > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 14 of #text > DIV > DIV > BODY > HTML > #document to 14 of #text > DIV > DIV > BODY > HTML > #document toDOMRange:range from 177 of #text > SPAN > SPAN > DIV > DIV > BODY > HTML > #document to 14 of #text > DIV > DIV > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: shouldEndEditingInDOMRange:range from 0 of DIV > DIV > BODY > HTML > #document to 3 of DIV > DIV > BODY > HTML > #document
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidEndEditing:WebViewDidEndEditingNotification
+EDITING DELEGATE: shouldChangeSelectedDOMRange:(null) toDOMRange:range from 0 of H1 > DIV > BODY > HTML > #document to 0 of H1 > DIV > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x223
+  RenderBlock {HTML} at (0,0) size 800x223
+    RenderBody {BODY} at (8,8) size 600x207
+      RenderRegion {DIV} at (0,0) size 600x183
+      RenderRegion {DIV} at (0,182) size 600x25
+Flow Threads
+  Thread with flow-name 'content'
+    layer at (0,0) size 600x183
+      RenderNamedFlowThread at (0,0) size 600x183
+        RenderBlock {DIV} at (0,21) size 600x162 [border: none (1px solid #000000) none]
+          RenderBlock {H1} at (0,0) size 600x74
+            RenderText {#text} at (0,0) size 510x73
+              text run at (0,0) width 510: "Selecting text through different CSS-"
+              text run at (0,37) width 176: "Region flows"
+          RenderBlock {DIV} at (0,95) size 600x61
+            RenderText {#text} at (0,0) size 489x19
+              text run at (0,0) width 489: "This text contains a footnote as a nested region what is diplayed below the article."
+            RenderInline {SPAN} at (0,0) size 8x15
+              RenderText {#text} at (494,3) size 3x15
+                text run at (494,3) width 3: " "
+            RenderText {#text} at (497,0) size 566x59
+              text run at (497,0) width 65: "If you start"
+              text run at (562,0) width 4: " "
+              text run at (0,20) width 55: "selecting "
+              text run at (55,20) width 495: "text from this article until somewhere in the footnote and then click somewhere, the"
+              text run at (550,20) width 4: " "
+              text run at (0,40) width 166: "selection should be cleared."
+    layer at (0,112) size 5x12
+      RenderInline (relative positioned) at (0,0) size 5x12
+        RenderCounter at (489,5) size 5x12
+          text run at (489,5) width 5: "1"
+  Regions for flow 'content'
+    RenderRegion {DIV} #region hasAutoLogicalHeight
+  Thread with flow-name 'footNote'
+    layer at (0,0) size 600x24
+      RenderNamedFlowThread at (0,0) size 600x24
+        RenderBlock {SPAN} at (0,0) size 600x24
+          RenderInline {SPAN} at (0,0) size 5x15
+          RenderText {#text} at (5,-2) size 582x27
+            text run at (5,-2) width 450: "This is a footnote. Footnotes can be quite long and go over several lines. This footnote "
+            text run at (455,-2) width 124: "is nested inside the text"
+            text run at (579,-2) width 3: " "
+            text run at (0,10) width 279: "above and displayed here with the help of css-regions."
+    layer at (0,-5) size 5x12 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600 outlineClip at (0,0) size 800x600
+      RenderInline (relative positioned) at (0,0) size 5x12
+        RenderCounter at (0,0) size 5x12
+          text run at (0,0) width 5: "1"
+  Regions for flow 'footNote'
+    RenderRegion {DIV} #footNoteRegion hasAutoLogicalHeight
+caret: position 0 of child 0 {#text} of child 1 {H1} of child 5 {DIV} of body
