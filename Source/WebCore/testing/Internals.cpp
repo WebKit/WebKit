@@ -33,6 +33,7 @@
 #include "ClientRect.h"
 #include "ClientRectList.h"
 #include "ComposedShadowTreeWalker.h"
+#include "ContentDistributor.h"
 #include "Cursor.h"
 #include "DOMStringList.h"
 #include "DOMWindow.h"
@@ -438,7 +439,7 @@ bool Internals::pauseTransitionAtTimeOnPseudoElement(const String& property, dou
 bool Internals::hasShadowInsertionPoint(const Node* root, ExceptionCode& ec) const
 {
     if (root && root->isShadowRoot())
-        return toShadowRoot(root)->hasShadowInsertionPoint();
+        return ScopeContentDistribution::hasShadowElement(toShadowRoot(root));
 
     ec = INVALID_ACCESS_ERR;
     return 0;
@@ -447,7 +448,7 @@ bool Internals::hasShadowInsertionPoint(const Node* root, ExceptionCode& ec) con
 bool Internals::hasContentElement(const Node* root, ExceptionCode& ec) const
 {
     if (root && root->isShadowRoot())
-        return toShadowRoot(root)->hasContentElement();
+        return ScopeContentDistribution::hasContentElement(toShadowRoot(root));
 
     ec = INVALID_ACCESS_ERR;
     return 0;
@@ -460,7 +461,7 @@ size_t Internals::countElementShadow(const Node* root, ExceptionCode& ec) const
         return 0;
     }
 
-    return toShadowRoot(root)->countElementShadow();
+    return ScopeContentDistribution::countElementShadow(toShadowRoot(root));
 }
 
 bool Internals::attached(Node* node, ExceptionCode& ec)

@@ -196,9 +196,6 @@ EXPORTS
         ?getData16SlowCase@StringImpl@WTF@@ABEPB_WXZ
         ?getLocationAndLengthFromRange@TextIterator@WebCore@@SA_NPAVElement@2@PBVRange@2@AAI2@Z
         ?getReferencedFilePaths@FormController@WebCore@@SA?AV?$Vector@VString@WTF@@$0A@@WTF@@ABV34@@Z
-        ?countElementShadow@ShadowRoot@WebCore@@QBEIXZ
-        ?hasShadowInsertionPoint@ShadowRoot@WebCore@@QBE_NXZ
-        ?hasContentElement@ShadowRoot@WebCore@@QBE_NXZ
         ?inputTag@HTMLNames@WebCore@@3VQualifiedName@2@B
 #if ENABLE(INSPECTOR)
         ?getHighlight@InspectorController@WebCore@@QBEXPAUHighlight@2@@Z
@@ -588,9 +585,6 @@ EXPORTS
         ?getData16SlowCase@StringImpl@WTF@@ABEPB_WXZ
         ?getLocationAndLengthFromRange@TextIterator@WebCore@@SA_NPAVElement@2@PBVRange@2@AAI2@Z
         ?getReferencedFilePaths@FormController@WebCore@@SA?AV?$Vector@VString@WTF@@$0A@@WTF@@ABV34@@Z
-        ?countElementShadow@ShadowRoot@WebCore@@QBEIXZ
-        ?hasShadowInsertionPoint@ShadowRoot@WebCore@@QBE_NXZ
-        ?hasContentElement@ShadowRoot@WebCore@@QBE_NXZ
         ?inputTag@HTMLNames@WebCore@@3VQualifiedName@2@B
 #if ENABLE(INSPECTOR)
         ?getHighlight@InspectorController@WebCore@@QBEXPAUHighlight@2@@Z
@@ -980,9 +974,6 @@ EXPORTS
         ?getData16SlowCase@StringImpl@WTF@@ABEPB_WXZ
         ?getLocationAndLengthFromRange@TextIterator@WebCore@@SA_NPAVElement@2@PBVRange@2@AAI2@Z
         ?getReferencedFilePaths@FormController@WebCore@@SA?AV?$Vector@VString@WTF@@$0A@@WTF@@ABV34@@Z
-        ?countElementShadow@ShadowRoot@WebCore@@QBEIXZ
-        ?hasShadowInsertionPoint@ShadowRoot@WebCore@@QBE_NXZ
-        ?hasContentElement@ShadowRoot@WebCore@@QBE_NXZ
         ?inputTag@HTMLNames@WebCore@@3VQualifiedName@2@B
 #if ENABLE(INSPECTOR)
         ?getHighlight@InspectorController@WebCore@@QBEXPAUHighlight@2@@Z
@@ -1362,6 +1353,9 @@ EXPORTS
         ?equal@WTF@@YA_NPBVStringImpl@1@0@Z
         ?equalIgnoringCase@WTF@@YA_NPAVStringImpl@1@PBE@Z
         ?externalRepresentation@WebCore@@YA?AVString@WTF@@PAVElement@1@I@Z
+        ?hasShadowElement@ScopeContentDistribution@WebCore@@SA_NPBVShadowRoot@2@@Z
+        ?hasContentElement@ScopeContentDistribution@WebCore@@SA_NPBVShadowRoot@2@@Z
+        ?countElementShadow@ScopeContentDistribution@WebCore@@SAIPBVShadowRoot@2@@Z
         ?find@StringImpl@WTF@@QAEIPAV12@I@Z
         ?find@StringImpl@WTF@@QAEIPAV12@@Z
         ?absoluteCaretBounds@FrameSelection@WebCore@@QAE?AVIntRect@2@XZ
@@ -1372,9 +1366,6 @@ EXPORTS
         ?getData16SlowCase@StringImpl@WTF@@ABEPB_WXZ
         ?getLocationAndLengthFromRange@TextIterator@WebCore@@SA_NPAVElement@2@PBVRange@2@AAI2@Z
         ?getReferencedFilePaths@FormController@WebCore@@SA?AV?$Vector@VString@WTF@@$0A@@WTF@@ABV34@@Z
-        ?countElementShadow@ShadowRoot@WebCore@@QBEIXZ
-        ?hasShadowInsertionPoint@ShadowRoot@WebCore@@QBE_NXZ
-        ?hasContentElement@ShadowRoot@WebCore@@QBE_NXZ
         ?inputTag@HTMLNames@WebCore@@3VQualifiedName@2@B
 #if ENABLE(INSPECTOR)
         ?getHighlight@InspectorController@WebCore@@QBEXPAUHighlight@2@@Z

@@ -226,11 +226,6 @@ ElementShadow* ShadowRoot::owner() const
     return 0;
 }
 
-bool ShadowRoot::hasInsertionPoint() const
-{
-    return hasShadowInsertionPoint() || hasContentElement();
-}
-
 bool ShadowRoot::applyAuthorStyles() const
 {
     return m_applyAuthorStyles;
@@ -284,7 +279,7 @@ Node::InsertionNotificationRequest ShadowRoot::insertedInto(ContainerNode* inser
         return InsertionDone;
 
     if (ShadowRoot* root = host()->containingShadowRoot()) {
-        root->registerElementShadow();
+        root->ensureScopeDistribution()->registerElementShadow();
         m_registeredWithParentShadowRoot = true;
     }
 
@@ -298,26 +293,12 @@ void ShadowRoot::removedFrom(ContainerNode* insertionPoint)
         if (!root)
             root = insertionPoint->containingShadowRoot();
 
-        if (root)
-            root->unregisterElementShadow();
+        if (root && root->scopeDistribution())
+            root->scopeDistribution()->unregisterElementShadow();
         m_registeredWithParentShadowRoot = false;
     }
 
     DocumentFragment::removedFrom(insertionPoint);
-}
-
-InsertionPoint* ShadowRoot::assignedTo() const
-{
-    if (!distributionData())
-        return 0;
-
-    return distributionData()->insertionPointAssignedTo();
-}
-
-void ShadowRoot::setAssignedTo(InsertionPoint* insertionPoint)
-{
-    ASSERT(!assignedTo() || !insertionPoint);
-    ensureDistributionData()->setInsertionPointAssignedTo(insertionPoint);
 }
 
 void ShadowRoot::childrenChanged(bool changedByParser, Node* beforeChange, Node* afterChange, int childCountDelta)
@@ -326,14 +307,6 @@ void ShadowRoot::childrenChanged(bool changedByParser, Node* beforeChange, Node*
 
     ContainerNode::childrenChanged(changedByParser, beforeChange, afterChange, childCountDelta);
     owner()->invalidateDistribution();
-}
-
-const Vector<RefPtr<InsertionPoint> >& ShadowRoot::insertionPointList()
-{
-    typedef Vector<RefPtr<InsertionPoint> > InsertionPointVector;
-    DEFINE_STATIC_LOCAL(InsertionPointVector, emptyVector, ());
-
-    return distributionData() ? distributionData()->ensureInsertionPointList(this) : emptyVector;
 }
 
 void ShadowRoot::registerScopedHTMLStyleChild()
@@ -349,67 +322,14 @@ void ShadowRoot::unregisterScopedHTMLStyleChild()
     setHasScopedHTMLStyleChild(m_numberOfStyles > 0);
 }
 
-inline ShadowRootContentDistributionData* ShadowRoot::ensureDistributionData()
+ScopeContentDistribution* ShadowRoot::ensureScopeDistribution()
 {
-    if (m_distributionData)
-        return m_distributionData.get();
+    if (m_scopeDistribution)
+        return m_scopeDistribution.get();
 
-    m_distributionData = adoptPtr(new ShadowRootContentDistributionData);
-    return m_distributionData.get();
+    m_scopeDistribution = adoptPtr(new ScopeContentDistribution);
+    return m_scopeDistribution.get();
 }   
-
-void ShadowRoot::registerInsertionPoint(InsertionPoint* point)
-{
-    ensureDistributionData()->regiterInsertionPoint(this, point);
-}
-
-void ShadowRoot::unregisterInsertionPoint(InsertionPoint* point)
-{
-    ensureDistributionData()->unregisterInsertionPoint(this, point);
-}
-
-bool ShadowRoot::hasShadowInsertionPoint() const
-{
-    if (!distributionData())
-        return false;
-
-    return distributionData()->hasShadowElementChildren();
-}
-
-bool ShadowRoot::hasContentElement() const
-{
-    if (!distributionData())
-        return false;
-
-    return distributionData()->hasContentElementChildren();
-}
-
-void ShadowRoot::registerElementShadow()
-{
-    ensureDistributionData()->incrementNumberOfElementShadowChildren();
-}
-
-void ShadowRoot::unregisterElementShadow()
-{
-    ASSERT(hasElementShadow());
-    distributionData()->decrementNumberOfElementShadowChildren();
-}
-
-bool ShadowRoot::hasElementShadow() const
-{
-    if (!distributionData())
-        return false;
-
-    return distributionData()->hasElementShadowChildren();
-}
-
-unsigned ShadowRoot::countElementShadow() const 
-{
-    if (!distributionData())
-        return 0;
-
-    return distributionData()->numberOfElementShadowChildren();
-}
 
 void ShadowRoot::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
 {
@@ -418,7 +338,7 @@ void ShadowRoot::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
     TreeScope::reportMemoryUsage(memoryObjectInfo);
     info.addMember(m_prev);
     info.addMember(m_next);
-    info.addMember(m_distributionData);
+    info.addMember(m_scopeDistribution);
 }
 
 }

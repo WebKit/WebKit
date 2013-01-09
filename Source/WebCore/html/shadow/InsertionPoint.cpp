@@ -135,7 +135,7 @@ Node::InsertionNotificationRequest InsertionPoint::insertedInto(ContainerNode* i
             rootOwner->invalidateDistribution();
             if (isActive() && !m_registeredWithShadowRoot && insertionPoint->treeScope()->rootNode() == root) {
                 m_registeredWithShadowRoot = true;
-                root->registerInsertionPoint(this);
+                root->ensureScopeDistribution()->registerInsertionPoint(root, this);
             }
         }
     }
@@ -160,7 +160,7 @@ void InsertionPoint::removedFrom(ContainerNode* insertionPoint)
     if (m_registeredWithShadowRoot && insertionPoint->treeScope()->rootNode() == root) {
         ASSERT(root);
         m_registeredWithShadowRoot = false;
-        root->unregisterInsertionPoint(this);
+        root->ensureScopeDistribution()->unregisterInsertionPoint(root, this);
     }
 
     HTMLElement::removedFrom(insertionPoint);
@@ -184,6 +184,40 @@ bool InsertionPoint::resetStyleInheritance() const
 void InsertionPoint::setResetStyleInheritance(bool value)
 {
     setBooleanAttribute(reset_style_inheritanceAttr, value);
+}
+
+bool InsertionPoint::contains(const Node* node) const
+{
+    return m_distribution.contains(const_cast<Node*>(node)) || (node->isShadowRoot() && ScopeContentDistribution::assignedTo(toShadowRoot(node)) == this);
+}
+
+InsertionPoint* resolveReprojection(const Node* projectedNode)
+{
+    InsertionPoint* insertionPoint = 0;
+    const Node* current = projectedNode;
+
+    while (current) {
+        if (ElementShadow* shadow = shadowOfParentForDistribution(current)) {
+            shadow->ensureDistribution();
+            if (InsertionPoint* insertedTo = shadow->distributor().findInsertionPointFor(projectedNode)) {
+                current = insertedTo;
+                insertionPoint = insertedTo;
+                continue;
+            }
+        }
+
+        if (Node* parent = parentNodeForDistribution(current)) {
+            if (InsertionPoint* insertedTo = parent->isShadowRoot() ? ScopeContentDistribution::assignedTo(toShadowRoot(parent)) : 0) {
+                current = insertedTo;
+                insertionPoint = insertedTo;
+                continue;
+            }
+        }
+
+        break;
+    }
+
+    return insertionPoint;
 }
 
 } // namespace WebCore

@@ -233,7 +233,7 @@ void ElementShadow::ensureSelectFeatureSetCollected()
 
 void ElementShadow::collectSelectFeatureSetFrom(ShadowRoot* root)
 {
-    if (root->hasElementShadow()) {
+    if (ScopeContentDistribution::hasElementShadow(root)) {
         for (Element* element = ElementTraversal::firstWithin(root); element; element = ElementTraversal::next(element)) {
             if (ElementShadow* elementShadow = element->shadow()) {
                 elementShadow->ensureSelectFeatureSetCollected();
@@ -242,7 +242,7 @@ void ElementShadow::collectSelectFeatureSetFrom(ShadowRoot* root)
         }
     }
 
-    if (root->hasContentElement()) {
+    if (ScopeContentDistribution::hasContentElement(root)) {
         for (Element* element = ElementTraversal::firstWithin(root); element; element = ElementTraversal::next(element)) {
             if (isHTMLContentElement(element)) {
                 const CSSSelectorList& list = toHTMLContentElement(element)->selectorList();

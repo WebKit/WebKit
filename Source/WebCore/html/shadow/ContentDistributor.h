@@ -70,25 +70,34 @@ private:
     HashMap<const Node*, size_t> m_indices;
 };
 
-class ShadowRootContentDistributionData {
+class ScopeContentDistribution {
 public:
-    ShadowRootContentDistributionData();
+    ScopeContentDistribution();
 
     InsertionPoint* insertionPointAssignedTo() const { return m_insertionPointAssignedTo; }
     void setInsertionPointAssignedTo(InsertionPoint* insertionPoint) { m_insertionPointAssignedTo = insertionPoint; }
 
-    void regiterInsertionPoint(ShadowRoot*, InsertionPoint*);
+    void registerInsertionPoint(ShadowRoot*, InsertionPoint*);
     void unregisterInsertionPoint(ShadowRoot*, InsertionPoint*);
     bool hasShadowElementChildren() const { return m_numberOfShadowElementChildren > 0; }
     bool hasContentElementChildren() const { return m_numberOfContentElementChildren > 0; }
 
-    void incrementNumberOfElementShadowChildren() { ++m_numberOfElementShadowChildren; }
-    void decrementNumberOfElementShadowChildren() { ASSERT(m_numberOfElementShadowChildren > 0); --m_numberOfElementShadowChildren; }
+    void registerElementShadow() { ++m_numberOfElementShadowChildren; }
+    void unregisterElementShadow() { ASSERT(m_numberOfElementShadowChildren > 0); --m_numberOfElementShadowChildren; }
     unsigned numberOfElementShadowChildren() const { return m_numberOfElementShadowChildren; }
     bool hasElementShadowChildren() const { return m_numberOfElementShadowChildren > 0; }
 
     void invalidateInsertionPointList();
     const Vector<RefPtr<InsertionPoint> >& ensureInsertionPointList(ShadowRoot*);
+
+    bool isUsedForRendering() const;
+
+    static bool hasShadowElement(const ShadowRoot*);
+    static bool hasContentElement(const ShadowRoot*);
+    static bool hasInsertionPoint(const ShadowRoot*);
+    static bool hasElementShadow(const ShadowRoot* holder) { return countElementShadow(holder); }
+    static unsigned countElementShadow(const ShadowRoot*);
+    static InsertionPoint* assignedTo(const ShadowRoot*);
 
 private:
     InsertionPoint* m_insertionPointAssignedTo;

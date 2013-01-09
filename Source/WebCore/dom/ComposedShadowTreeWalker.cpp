@@ -63,7 +63,7 @@ static inline bool nodeCanBeDistributed(const Node* node)
         return false;
 
     if (ShadowRoot* shadowRoot = parent->isShadowRoot() ? toShadowRoot(parent) : 0)
-        return shadowRoot->assignedTo();
+        return ScopeContentDistribution::assignedTo(shadowRoot);
 
     if (parent->isElementNode() && toElement(parent)->shadow())
         return true;
@@ -198,7 +198,7 @@ Node* ComposedShadowTreeWalker::traverseBackToYoungerShadowRoot(const Node* node
     if (node->parentNode() && node->parentNode()->isShadowRoot()) {
         ShadowRoot* parentShadowRoot = toShadowRoot(node->parentNode());
         if (!parentShadowRoot->isYoungest()) {
-            InsertionPoint* assignedInsertionPoint = parentShadowRoot->assignedTo();
+            InsertionPoint* assignedInsertionPoint = ScopeContentDistribution::assignedTo(parentShadowRoot);
             ASSERT(assignedInsertionPoint);
             return traverseSiblingInCurrentTree(assignedInsertionPoint, direction);
         }
@@ -267,7 +267,7 @@ inline Node* ComposedShadowTreeWalker::traverseParentInCurrentTree(const Node* n
 Node* ComposedShadowTreeWalker::traverseParentBackToYoungerShadowRootOrHost(const ShadowRoot* shadowRoot, ParentTraversalDetails* details) const
 {
     ASSERT(shadowRoot);
-    ASSERT(!shadowRoot->assignedTo());
+    ASSERT(!ScopeContentDistribution::assignedTo(shadowRoot));
 
     if (shadowRoot->isYoungest()) {
         if (canCrossUpperBoundary()) {
@@ -343,14 +343,14 @@ void AncestorChainWalker::parent()
     }
     if (!m_node->isShadowRoot()) {
         m_node = m_node->parentNode();
-        if (!(m_node && m_node->isShadowRoot() && toShadowRoot(m_node)->assignedTo()))
+        if (!(m_node && m_node->isShadowRoot() && ScopeContentDistribution::assignedTo(toShadowRoot(m_node))))
             m_distributedNode = m_node;
         m_isCrossingInsertionPoint = false;
         return;
     }
 
     const ShadowRoot* shadowRoot = toShadowRoot(m_node);
-    if (InsertionPoint* insertionPoint = shadowRoot->assignedTo()) {
+    if (InsertionPoint* insertionPoint = ScopeContentDistribution::assignedTo(shadowRoot)) {
         m_node = insertionPoint;
         m_isCrossingInsertionPoint = true;
         return;

@@ -76,7 +76,7 @@ Node* ContentDistribution::previousTo(const Node* node) const
 }
 
 
-ShadowRootContentDistributionData::ShadowRootContentDistributionData()
+ScopeContentDistribution::ScopeContentDistribution()
     : m_insertionPointAssignedTo(0)
     , m_numberOfShadowElementChildren(0)
     , m_numberOfContentElementChildren(0)
@@ -85,13 +85,13 @@ ShadowRootContentDistributionData::ShadowRootContentDistributionData()
 {
 }
 
-void ShadowRootContentDistributionData::invalidateInsertionPointList()
+void ScopeContentDistribution::invalidateInsertionPointList()
 {
     m_insertionPointListIsValid = false;
     m_insertionPointList.clear();
 }
 
-const Vector<RefPtr<InsertionPoint> >& ShadowRootContentDistributionData::ensureInsertionPointList(ShadowRoot* shadowRoot)
+const Vector<RefPtr<InsertionPoint> >& ScopeContentDistribution::ensureInsertionPointList(ShadowRoot* shadowRoot)
 {
     if (m_insertionPointListIsValid)
         return m_insertionPointList;
@@ -99,7 +99,7 @@ const Vector<RefPtr<InsertionPoint> >& ShadowRootContentDistributionData::ensure
     m_insertionPointListIsValid = true;
     ASSERT(m_insertionPointList.isEmpty());
 
-    if (!shadowRoot->hasInsertionPoint())
+    if (!hasInsertionPoint(shadowRoot))
         return m_insertionPointList;
 
     for (Element* element = ElementTraversal::firstWithin(shadowRoot); element; element = ElementTraversal::next(element, shadowRoot)) {
@@ -110,7 +110,7 @@ const Vector<RefPtr<InsertionPoint> >& ShadowRootContentDistributionData::ensure
     return m_insertionPointList;
 }
 
-void ShadowRootContentDistributionData::regiterInsertionPoint(ShadowRoot* scope, InsertionPoint* point)
+void ScopeContentDistribution::registerInsertionPoint(ShadowRoot* scope, InsertionPoint* point)
 {
     switch (point->insertionPointType()) {
     case InsertionPoint::ShadowInsertionPoint:
@@ -125,7 +125,7 @@ void ShadowRootContentDistributionData::regiterInsertionPoint(ShadowRoot* scope,
     invalidateInsertionPointList();
 }
 
-void ShadowRootContentDistributionData::unregisterInsertionPoint(ShadowRoot* scope, InsertionPoint* point)
+void ScopeContentDistribution::unregisterInsertionPoint(ShadowRoot* scope, InsertionPoint* point)
 {
     switch (point->insertionPointType()) {
     case InsertionPoint::ShadowInsertionPoint:
@@ -143,6 +143,42 @@ void ShadowRootContentDistributionData::unregisterInsertionPoint(ShadowRoot* sco
     invalidateInsertionPointList();
 }
 
+bool ScopeContentDistribution::hasShadowElement(const ShadowRoot* holder)
+{
+    if (!holder->scopeDistribution())
+        return false;
+
+    return holder->scopeDistribution()->hasShadowElementChildren();
+}
+
+bool ScopeContentDistribution::hasContentElement(const ShadowRoot* holder)
+{
+    if (!holder->scopeDistribution())
+        return false;
+
+    return holder->scopeDistribution()->hasContentElementChildren();
+}
+
+unsigned ScopeContentDistribution::countElementShadow(const ShadowRoot* holder)
+{
+    if (!holder->scopeDistribution())
+        return 0;
+
+    return holder->scopeDistribution()->numberOfElementShadowChildren();
+}
+
+bool ScopeContentDistribution::hasInsertionPoint(const ShadowRoot* holder)
+{
+    return hasShadowElement(holder) || hasContentElement(holder);
+}
+
+InsertionPoint* ScopeContentDistribution::assignedTo(const ShadowRoot* holder)
+{
+    if (!holder->scopeDistribution())
+        return 0;
+
+    return holder->scopeDistribution()->insertionPointAssignedTo();
+}
 
 ContentDistributor::ContentDistributor()
     : m_validity(Undetermined)
@@ -193,19 +229,21 @@ void ContentDistributor::distribute(Element* host)
     for (ShadowRoot* root = host->youngestShadowRoot(); root; root = root->olderShadowRoot()) {
         HTMLShadowElement* firstActiveShadowInsertionPoint = 0;
 
-        const Vector<RefPtr<InsertionPoint> >& insertionPoints = root->insertionPointList();
-        for (size_t i = 0; i < insertionPoints.size(); ++i) {
-            InsertionPoint* point = insertionPoints[i].get();
-            if (!point->isActive())
-                continue;
+        if (ScopeContentDistribution* scope = root->scopeDistribution()) {
+            const Vector<RefPtr<InsertionPoint> >& insertionPoints = scope->ensureInsertionPointList(root);
+            for (size_t i = 0; i < insertionPoints.size(); ++i) {
+                InsertionPoint* point = insertionPoints[i].get();
+                if (!point->isActive())
+                    continue;
 
-            if (isHTMLShadowElement(point)) {
-                if (!firstActiveShadowInsertionPoint)
-                    firstActiveShadowInsertionPoint = toHTMLShadowElement(point);
-            } else {
-                distributeSelectionsTo(point, pool, distributed);
-                if (ElementShadow* shadow = point->parentNode()->isElementNode() ? toElement(point->parentNode())->shadow() : 0)
-                    shadow->invalidateDistribution();
+                if (isHTMLShadowElement(point)) {
+                    if (!firstActiveShadowInsertionPoint)
+                        firstActiveShadowInsertionPoint = toHTMLShadowElement(point);
+                } else {
+                    distributeSelectionsTo(point, pool, distributed);
+                    if (ElementShadow* shadow = point->parentNode()->isElementNode() ? toElement(point->parentNode())->shadow() : 0)
+                        shadow->invalidateDistribution();
+                }
             }
         }
 
@@ -219,7 +257,7 @@ void ContentDistributor::distribute(Element* host)
         ASSERT(root);
         if (root->olderShadowRoot()) {
             distributeNodeChildrenTo(shadowElement, root->olderShadowRoot());
-            root->olderShadowRoot()->setAssignedTo(shadowElement);
+            root->olderShadowRoot()->ensureScopeDistribution()->setInsertionPointAssignedTo(shadowElement);
         } else {
             distributeSelectionsTo(shadowElement, pool, distributed);
             if (ElementShadow* shadow = shadowElement->parentNode()->isElementNode() ? toElement(shadowElement->parentNode())->shadow() : 0)
@@ -234,11 +272,13 @@ bool ContentDistributor::invalidate(Element* host)
     bool needsReattach = (m_validity == Undetermined) || !m_nodeToInsertionPoint.isEmpty();
 
     for (ShadowRoot* root = host->youngestShadowRoot(); root; root = root->olderShadowRoot()) {
-        root->setAssignedTo(0);
-        const Vector<RefPtr<InsertionPoint> >& insertionPoints = root->insertionPointList();
-        for (size_t i = 0; i < insertionPoints.size(); ++i) {
-            needsReattach = needsReattach || true;
-            insertionPoints[i]->clearDistribution();
+        if (ScopeContentDistribution* scope = root->scopeDistribution()) {
+            scope->setInsertionPointAssignedTo(0);
+            const Vector<RefPtr<InsertionPoint> >& insertionPoints = scope->ensureInsertionPointList(root);
+            for (size_t i = 0; i < insertionPoints.size(); ++i) {
+                needsReattach = needsReattach || true;
+                insertionPoints[i]->clearDistribution();
+            }
         }
     }
 

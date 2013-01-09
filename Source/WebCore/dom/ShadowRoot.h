@@ -41,7 +41,7 @@ class Document;
 class DOMSelection;
 class ElementShadow;
 class InsertionPoint;
-class ShadowRootContentDistributionData;
+class ScopeContentDistribution;
 
 class ShadowRoot : public DocumentFragment, public TreeScope, public DoublyLinkedListNode<ShadowRoot> {
     friend class WTF::DoublyLinkedListNode<ShadowRoot>;
@@ -80,32 +80,17 @@ public:
     bool isYoungest() const { return !youngerShadowRoot(); }
     bool isOldest() const { return !olderShadowRoot(); }
 
-    bool hasInsertionPoint() const;
-
     virtual void attach();
 
     virtual InsertionNotificationRequest insertedInto(ContainerNode*) OVERRIDE;
     virtual void removedFrom(ContainerNode*) OVERRIDE;
 
-    bool isUsedForRendering() const;
-    InsertionPoint* assignedTo() const;
-    void setAssignedTo(InsertionPoint*);
-
-    bool hasShadowInsertionPoint() const;
-    bool hasContentElement() const;
-
-    void registerInsertionPoint(InsertionPoint*);
-    void unregisterInsertionPoint(InsertionPoint*);
-    
-    void registerElementShadow();
-    void unregisterElementShadow();
-    bool hasElementShadow() const;
-    unsigned countElementShadow() const;
-
-    const Vector<RefPtr<InsertionPoint> >& insertionPointList();
-
     virtual void registerScopedHTMLStyleChild() OVERRIDE;
     virtual void unregisterScopedHTMLStyleChild() OVERRIDE;
+
+    ScopeContentDistribution* scopeDistribution() { return m_scopeDistribution.get(); }
+    const ScopeContentDistribution* scopeDistribution() const { return m_scopeDistribution.get(); }
+    ScopeContentDistribution* ensureScopeDistribution();
 
     ShadowRootType type() const { return m_isAuthorShadowRoot ? AuthorShadowRoot : UserAgentShadowRoot; }
     bool isAccessible() const { return type() == AuthorShadowRoot; }
@@ -124,13 +109,9 @@ private:
 
     void setType(ShadowRootType type) { m_isAuthorShadowRoot = type == AuthorShadowRoot; }
 
-    ShadowRootContentDistributionData* distributionData() { return m_distributionData.get(); }
-    const ShadowRootContentDistributionData* distributionData() const { return m_distributionData.get(); }
-    ShadowRootContentDistributionData* ensureDistributionData();
-
     ShadowRoot* m_prev;
     ShadowRoot* m_next;
-    OwnPtr<ShadowRootContentDistributionData> m_distributionData;
+    OwnPtr<ScopeContentDistribution> m_scopeDistribution;
     unsigned m_numberOfStyles : 28;
     unsigned m_applyAuthorStyles : 1;
     unsigned m_resetStyleInheritance : 1;
@@ -146,11 +127,6 @@ inline Element* ShadowRoot::host() const
 inline void ShadowRoot::setHost(Element* host)
 {
     setParentOrHostNode(host);
-}
-
-inline bool ShadowRoot::isUsedForRendering() const
-{
-    return isYoungest() || assignedTo();
 }
 
 inline Element* ShadowRoot::activeElement() const

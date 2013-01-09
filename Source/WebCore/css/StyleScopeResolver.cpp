@@ -31,6 +31,7 @@
 
 #include "CSSStyleRule.h"
 #include "CSSStyleSheet.h"
+#include "ContentDistributor.h"
 #include "ContextFeatures.h"
 #include "ElementShadow.h"
 #include "HTMLNames.h"
@@ -210,7 +211,7 @@ bool StyleScopeResolver::styleSharingCandidateMatchesHostRules(const Element* el
         if (atHostRuleSetFor(shadowRoot))
             return true;
 
-        if (!shadowRoot->hasShadowInsertionPoint())
+        if (!ScopeContentDistribution::hasShadowElement(shadowRoot))
             break;
     }
     return false;
@@ -232,7 +233,7 @@ void StyleScopeResolver::matchHostRules(const Element* element, Vector<RuleSet*>
     for (ShadowRoot* shadowRoot = shadow->youngestShadowRoot(); shadowRoot; shadowRoot = shadowRoot->olderShadowRoot()) { 
         if (RuleSet* ruleSet = atHostRuleSetFor(shadowRoot))
             matchedRules.append(ruleSet);
-        if (!shadowRoot->hasShadowInsertionPoint())
+        if (!ScopeContentDistribution::hasShadowElement(shadowRoot))
             break;
     }
 }

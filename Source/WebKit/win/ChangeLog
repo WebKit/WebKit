@@ -1,3 +1,12 @@
+2013-01-08  Hajime Morrita  <morrita@google.com>
+
+        [Shadow DOM] Distribution related code on ShadowRoot should be minimized.
+        https://bugs.webkit.org/show_bug.cgi?id=106282
+
+        Reviewed by Dimitri Glazkov.
+
+        * WebKit.vcproj/WebKit.def.in:
+
 2013-01-08  Mark Lam  <mark.lam@apple.com>
 
         Removed the need for the ProposedDatabase mechanism.
