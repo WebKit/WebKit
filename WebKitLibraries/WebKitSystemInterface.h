@@ -541,6 +541,8 @@ id WKNSProcessInfoProcessAssertionWithTypes(WKProcessAssertionTypes);
 bool WKIsJavaPlugInActive(void);
 void WKActivateJavaPlugIn(void);
 
+void WKCFNetworkSetOverrideSystemProxySettings(CFDictionaryRef);
+
 #ifdef __cplusplus
 }
 #endif

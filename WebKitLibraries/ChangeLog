@@ -1,3 +1,23 @@
+2013-01-08  Kiran Muppala  <cmuppala@apple.com>
+
+        Add WebKitSystemInterface needed for overriding system proxies on Mac
+        https://bugs.webkit.org/show_bug.cgi?id=106410
+
+        Reviewed by Stephanie Lewis.
+
+        This patch is in anticipation of the fix for https://bugs.webkit.org/show_bug.cgi?id=104197,
+        Add user defaults to override system proxy settings for NetworkProcess on Mac, which
+        is awaiting the approval of a WebKit2 committer.  Commiting the WKSI portion separately,
+        so that the internal repository commit for generating the WKSI libraries does not have to
+        be rolled back every time the rest of the patch changes.
+
+        Add WKCFNetworkSetOverrideSystemProxySettings(), needed by NetworkProcess to set
+        custom proxies during initialization.
+
+        * WebKitSystemInterface.h:
+        * libWebKitSystemInterfaceLion.a:
+        * libWebKitSystemInterfaceMountainLion.a:
+
 2013-01-04  Adam Klein  <adamk@chromium.org>
 
         Remove ENABLE_MUTATION_OBSERVERS #define
