@@ -414,10 +414,9 @@ void ImageLoader::dispatchPendingLoadEvent()
         return;
     if (!m_image)
         return;
-    if (!document()->attached())
-        return;
     m_hasPendingLoadEvent = false;
-    dispatchLoadEvent();
+    if (document()->attached())
+        dispatchLoadEvent();
 
     // Only consider updating the protection ref-count of the Element immediately before returning
     // from this function as doing so might result in the destruction of this ImageLoader.
@@ -428,10 +427,13 @@ void ImageLoader::dispatchPendingErrorEvent()
 {
     if (!m_hasPendingErrorEvent)
         return;
-    if (!document()->attached())
-        return;
     m_hasPendingErrorEvent = false;
-    client()->imageElement()->dispatchEvent(Event::create(eventNames().errorEvent, false, false));
+    if (document()->attached())
+        client()->imageElement()->dispatchEvent(Event::create(eventNames().errorEvent, false, false));
+
+    // Only consider updating the protection ref-count of the Element immediately before returning
+    // from this function as doing so might result in the destruction of this ImageLoader.
+    updatedHasPendingEvent();
 }
 
 void ImageLoader::dispatchPendingBeforeLoadEvents()
