@@ -50,10 +50,7 @@ static uint32_t createTexture(IOSurfaceRef handle)
         return 0;
 
     GLint prevTexture;
-    GLboolean wasEnabled = glIsEnabled(GL_TEXTURE_RECTANGLE_ARB);
     glGetIntegerv(GL_TEXTURE_RECTANGLE_ARB, &prevTexture);
-    if (!wasEnabled)
-        glEnable(GL_TEXTURE_RECTANGLE_ARB);
 
     glGenTextures(1, &texture);
     glBindTexture(GL_TEXTURE_RECTANGLE_ARB, texture);
@@ -64,8 +61,6 @@ static uint32_t createTexture(IOSurfaceRef handle)
     }
 
     glBindTexture(GL_TEXTURE_RECTANGLE_ARB, prevTexture);
-    if (!wasEnabled)
-        glDisable(GL_TEXTURE_RECTANGLE_ARB);
 
     return texture;
 }
@@ -216,7 +211,6 @@ public:
         glFlush(); // Make sure the texture has actually been completely written in the original context.
 
         makeCurrent();
-        glEnable(GL_TEXTURE_RECTANGLE_ARB);
 
         int x = sourceRect.x();
         int y = sourceRect.y();
@@ -319,8 +313,6 @@ void GraphicsSurface::platformCopyToGLTexture(uint32_t target, uint32_t id, cons
     if (!m_fbo)
         glGenFramebuffers(1, &m_fbo);
     glBindTexture(GL_TEXTURE_RECTANGLE_ARB, 0);
-    glEnable(GL_TEXTURE_RECTANGLE_ARB);
-    glEnable(target);
     glBindTexture(target, id);
     glBindFramebuffer(GL_READ_FRAMEBUFFER, m_fbo);
     glFramebufferTexture2D(GL_READ_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_RECTANGLE_ARB, m_private->frontBufferTextureID(), 0);
