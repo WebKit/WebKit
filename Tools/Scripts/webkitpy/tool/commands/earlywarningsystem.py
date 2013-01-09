@@ -66,11 +66,13 @@ class AbstractEarlyWarningSystem(AbstractReviewQueue, EarlyWarningSystemTaskDele
     def _post_reject_message_on_bug(self, tool, patch, status_id, extra_message_text=None):
         results_link = tool.status_server.results_url_for_status(status_id)
         message = "Attachment %s did not pass %s (%s):\nOutput: %s" % (patch.id(), self.name, self.port_name, results_link)
+        if extra_message_text:
+            message += "\n\n%s" % extra_message_text
         # FIXME: We might want to add some text about rejecting from the commit-queue in
         # the case where patch.commit_queue() isn't already set to '-'.
         if self.watchers:
             tool.bugs.add_cc_to_bug(patch.bug_id(), self.watchers)
-        tool.bugs.set_flag_on_attachment(patch.id(), "commit-queue", "-", message, extra_message_text)
+        tool.bugs.set_flag_on_attachment(patch.id(), "commit-queue", "-", message)
 
     def review_patch(self, patch):
         task = EarlyWarningSystemTask(self, patch, self._options.run_tests)

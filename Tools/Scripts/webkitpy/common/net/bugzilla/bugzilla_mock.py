@@ -385,10 +385,9 @@ class MockBugzilla(object):
                                attachment_id,
                                flag_name,
                                flag_value,
-                               comment_text=None,
-                               additional_comment_text=None):
-        _log.info("MOCK setting flag '%s' to '%s' on attachment '%s' with comment '%s' and additional comment '%s'" % (
-                  flag_name, flag_value, attachment_id, comment_text, additional_comment_text))
+                               comment_text=None):
+        _log.info("MOCK setting flag '%s' to '%s' on attachment '%s' with comment '%s'" % (
+                  flag_name, flag_value, attachment_id, comment_text))
 
     def post_comment_to_bug(self, bug_id, comment_text, cc=None):
         _log.info("MOCK bug comment: bug_id=%s, cc=%s\n--- Begin comment ---\n%s\n--- End comment ---\n" % (

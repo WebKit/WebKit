@@ -729,18 +729,12 @@ class Bugzilla(object):
                                attachment_id,
                                flag_name,
                                flag_value,
-                               comment_text=None,
-                               additional_comment_text=None):
+                               comment_text=None):
         # FIXME: We need a way to test this function on a live bugzilla
         # instance.
 
         self.authenticate()
-
-        # FIXME: additional_comment_text seems useless and should be merged into comment-text.
-        if additional_comment_text:
-            comment_text += "\n\n%s" % additional_comment_text
         _log.info(comment_text)
-
         self.browser.open(self.attachment_url_for_id(attachment_id, 'edit'))
         self.browser.select_form(nr=1)
 

@@ -134,7 +134,7 @@ class FeederQueueTest(QueuesTest):
             "begin_work_queue": self._default_begin_work_queue_logs("feeder-queue"),
             "process_work_item": """Warning, attachment 10001 on bug 50000 has invalid committer (non-committer@example.com)
 Warning, attachment 10001 on bug 50000 has invalid committer (non-committer@example.com)
-MOCK setting flag 'commit-queue' to '-' on attachment '10001' with comment 'Rejecting attachment 10001 from commit-queue.' and additional comment 'non-committer@example.com does not have committer permissions according to http://trac.webkit.org/browser/trunk/Tools/Scripts/webkitpy/common/config/committers.py.
+MOCK setting flag 'commit-queue' to '-' on attachment '10001' with comment 'Rejecting attachment 10001 from commit-queue.\n\nnon-committer@example.com does not have committer permissions according to http://trac.webkit.org/browser/trunk/Tools/Scripts/webkitpy/common/config/committers.py.
 
 - If you do not have committer rights please read http://webkit.org/coding/contributing.html for instructions on how to use bugzilla flags.
 
@@ -256,7 +256,7 @@ MOCK: update_status: commit-queue Pass
 MOCK: release_work_item: commit-queue 10000
 """,
             "handle_script_error": "ScriptError error message\n\nMOCK output\n",
-            "handle_unexpected_error": "MOCK setting flag 'commit-queue' to '-' on attachment '10000' with comment 'Rejecting attachment 10000 from commit-queue.' and additional comment 'Mock error message'\n",
+            "handle_unexpected_error": "MOCK setting flag 'commit-queue' to '-' on attachment '10000' with comment 'Rejecting attachment 10000 from commit-queue.\n\nMock error message'\n",
         }
         self.assert_queue_outputs(CommitQueue(), tool=tool, expected_logs=expected_logs)
 
@@ -266,13 +266,13 @@ MOCK: release_work_item: commit-queue 10000
             "process_work_item": """MOCK: update_status: commit-queue Cleaned working directory
 MOCK: update_status: commit-queue Updated working directory
 MOCK: update_status: commit-queue Patch does not apply
-MOCK setting flag 'commit-queue' to '-' on attachment '10000' with comment 'Rejecting attachment 10000 from commit-queue.' and additional comment 'MOCK script error
+MOCK setting flag 'commit-queue' to '-' on attachment '10000' with comment 'Rejecting attachment 10000 from commit-queue.\n\nMOCK script error
 Full output: http://dummy_url'
 MOCK: update_status: commit-queue Fail
 MOCK: release_work_item: commit-queue 10000
 """,
             "handle_script_error": "ScriptError error message\n\nMOCK output\n",
-            "handle_unexpected_error": "MOCK setting flag 'commit-queue' to '-' on attachment '10000' with comment 'Rejecting attachment 10000 from commit-queue.' and additional comment 'Mock error message'\n",
+            "handle_unexpected_error": "MOCK setting flag 'commit-queue' to '-' on attachment '10000' with comment 'Rejecting attachment 10000 from commit-queue.\n\nMock error message'\n",
         }
         queue = CommitQueue()
 
@@ -292,7 +292,7 @@ MOCK: release_work_item: commit-queue 10000
             "process_work_item": """MOCK: update_status: commit-queue Cleaned working directory
 MOCK: update_status: commit-queue Updated working directory
 MOCK: update_status: commit-queue Patch does not apply
-MOCK setting flag 'commit-queue' to '-' on attachment '10000' with comment 'Rejecting attachment 10000 from commit-queue.' and additional comment 'New failing tests:
+MOCK setting flag 'commit-queue' to '-' on attachment '10000' with comment 'Rejecting attachment 10000 from commit-queue.\n\nNew failing tests:
 mock_test_name.html
 another_test_name.html
 Full output: http://dummy_url'
@@ -300,7 +300,7 @@ MOCK: update_status: commit-queue Fail
 MOCK: release_work_item: commit-queue 10000
 """,
             "handle_script_error": "ScriptError error message\n\nMOCK output\n",
-            "handle_unexpected_error": "MOCK setting flag 'commit-queue' to '-' on attachment '10000' with comment 'Rejecting attachment 10000 from commit-queue.' and additional comment 'Mock error message'\n",
+            "handle_unexpected_error": "MOCK setting flag 'commit-queue' to '-' on attachment '10000' with comment 'Rejecting attachment 10000 from commit-queue.\n\nMock error message'\n",
         }
         queue = CommitQueue()
 
@@ -340,7 +340,7 @@ MOCK: update_status: commit-queue Pass
 MOCK: release_work_item: commit-queue 10000
 """ % {"port": CommitQueue.port_name},
             "handle_script_error": "ScriptError error message\n\nMOCK output\n",
-            "handle_unexpected_error": "MOCK setting flag 'commit-queue' to '-' on attachment '10000' with comment 'Rejecting attachment 10000 from commit-queue.' and additional comment 'Mock error message'\n",
+            "handle_unexpected_error": "MOCK setting flag 'commit-queue' to '-' on attachment '10000' with comment 'Rejecting attachment 10000 from commit-queue.\n\nMock error message'\n",
         }
         self.assert_queue_outputs(CommitQueue(), tool=tool, expected_logs=expected_logs)
 
@@ -365,7 +365,7 @@ MOCK: update_status: commit-queue Pass
 MOCK: release_work_item: commit-queue 10005
 """ % {"port": CommitQueue.port_name},
             "handle_script_error": "ScriptError error message\n\nMOCK output\n",
-            "handle_unexpected_error": "MOCK setting flag 'commit-queue' to '-' on attachment '10005' with comment 'Rejecting attachment 10005 from commit-queue.' and additional comment 'Mock error message'\n",
+            "handle_unexpected_error": "MOCK setting flag 'commit-queue' to '-' on attachment '10005' with comment 'Rejecting attachment 10005 from commit-queue.\n\nMock error message'\n",
         }
         self.assert_queue_outputs(CommitQueue(), tool=tool, work_item=rollout_patch, expected_logs=expected_logs)
 

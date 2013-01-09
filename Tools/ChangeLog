@@ -1,3 +1,22 @@
+2013-01-09  Csaba Osztrogonác  <ossy@webkit.org>
+
+        webkitpy cleanup: Merge additional_comment_text into comment_text
+        https://bugs.webkit.org/show_bug.cgi?id=106421
+
+        Reviewed by Adam Barth.
+
+        * Scripts/webkitpy/common/config/committervalidator.py:
+        (CommitterValidator.reject_patch_from_commit_queue):
+        (CommitterValidator.reject_patch_from_review_queue):
+        * Scripts/webkitpy/common/net/bugzilla/bugzilla.py:
+        (Bugzilla.set_flag_on_attachment):
+        * Scripts/webkitpy/common/net/bugzilla/bugzilla_mock.py:
+        (MockBugzilla.set_flag_on_attachment):
+        * Scripts/webkitpy/tool/bot/feeders_unittest.py:
+        * Scripts/webkitpy/tool/commands/earlywarningsystem.py:
+        (AbstractEarlyWarningSystem._post_reject_message_on_bug):
+        * Scripts/webkitpy/tool/commands/queues_unittest.py:
+
 2013-01-09  Mario Sanchez Prada  <mario.prada@samsung.com>
 
         [GTK] Raise version of gdk-pixbuf in jhbuild up to 2.26.5

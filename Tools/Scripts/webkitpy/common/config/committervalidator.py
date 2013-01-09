@@ -78,18 +78,20 @@ class CommitterValidator(object):
                                        attachment_id,
                                        additional_comment_text=None):
         comment_text = "Rejecting attachment %s from commit-queue." % attachment_id
+        if additional_comment_text:
+            comment_text += "\n\n%s" % additional_comment_text
         self.host.bugs.set_flag_on_attachment(attachment_id,
                                               "commit-queue",
                                               "-",
-                                              comment_text,
-                                              additional_comment_text)
+                                              comment_text)
 
     def reject_patch_from_review_queue(self,
                                        attachment_id,
                                        additional_comment_text=None):
         comment_text = "Rejecting attachment %s from review queue." % attachment_id
+        if additional_comment_text:
+            comment_text += "\n\n%s" % additional_comment_text
         self.host.bugs.set_flag_on_attachment(attachment_id,
                                               'review',
                                               '-',
-                                              comment_text,
-                                              additional_comment_text)
+                                              comment_text)
