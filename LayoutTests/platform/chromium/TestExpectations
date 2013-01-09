@@ -1227,7 +1227,7 @@ crbug.com/62433 [ Win ] fast/images/gif-loop-count.html [ ImageOnlyFailure ]
 # Reporting translation of -0.00.
 webkit.org/b/106126 [ Win ] svg/overflow/overflow-on-inner-svg-element.svg [ Failure Pass ]
 webkit.org/b/106126 [ Win ] svg/dom/css-transforms.xhtml [ Failure Pass ]
-webkit.org/b/106126 [ Win ] svg/custom/feComponentTransfer-Table.svg [ Failure Pass ]
+webkit.org/b/106126 [ Win ] svg/custom/feComponentTransfer-Table.svg [ ImageOnlyFailure Pass ]
 webkit.org/b/106126 [ Win ] svg/custom/embedding-external-svgs.xhtml [ Failure Pass ]
 
 #

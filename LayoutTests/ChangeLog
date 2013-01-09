@@ -1,3 +1,16 @@
+2013-01-09  Noel Gordon  <noel.gordon@gmail.com>
+
+        [chromium] Tighten svg/custom/feComponentTransfer-Table.svg on windows
+        https://bugs.webkit.org/show_bug.cgi?id=106126
+
+        Unreviewed gardening. Bot reports:
+
+        Regressions: Unexpected image-only failures (1)
+            svg/custom/feComponentTransfer-Table.svg [ ImageOnlyFailure ]
+
+        * platform/chromium/TestExpectations: So change Failure -> ImageOnlyFailure
+        to silence the bot. 
+
 2013-01-09  Zan Dobersek  <zandobersek@gmail.com>
 
         Unreviewed GTK gardening.
