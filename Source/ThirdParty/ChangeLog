@@ -1,3 +1,12 @@
+2013-01-09  David Farler  <dfarler@apple.com>
+
+        Change ARCHS to generic setting to work with multiple platforms.
+        https://bugs.webkit.org/show_bug.cgi?id=106478
+
+        Reviewed by Anders Carlsson.
+
+        * gtest/xcode/Config/General.xcconfig: ARCHS = $(ARCHS_STANDARD_32_64_BIT);
+
 2012-10-28  Mark Rowe  <mrowe@apple.com>
 
         Simplify Xcode configuration settings that used to vary between OS versions.
