@@ -27,9 +27,7 @@
 #include "config.h"
 #include "HTMLTreeBuilder.h"
 
-#include "Comment.h"
 #include "DocumentFragment.h"
-#include "DocumentType.h"
 #include "HTMLDocument.h"
 #include "HTMLDocumentParser.h"
 #include "HTMLElementFactory.h"
@@ -46,7 +44,6 @@
 #include "MathMLNames.h"
 #include "NotImplemented.h"
 #include "SVGNames.h"
-#include "Text.h"
 #include "XLinkNames.h"
 #include "XMLNSNames.h"
 #include "XMLNames.h"
