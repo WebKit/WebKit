@@ -1190,8 +1190,10 @@ public:
 #endif
 
 #if ENABLE(TEMPLATE_ELEMENT)
-    const Document* templateContentsOwnerDocument() const;
-    Document* ensureTemplateContentsOwnerDocument();
+    const Document* templateDocument() const;
+    Document* ensureTemplateDocument();
+    void setTemplateDocumentHost(Document* templateDocumentHost) { m_templateDocumentHost = templateDocumentHost; }
+    Document* templateDocumentHost() { return m_templateDocumentHost; }
 #endif
 
     virtual void addConsoleMessage(MessageSource, MessageLevel, const String& message, unsigned long requestIdentifier = 0);
@@ -1556,7 +1558,8 @@ private:
     LocaleIdentifierToLocaleMap m_localeCache;
 
 #if ENABLE(TEMPLATE_ELEMENT)
-    RefPtr<Document> m_templateContentsOwnerDocument;
+    RefPtr<Document> m_templateDocument;
+    Document* m_templateDocumentHost; // Manually managed weakref (backpointer from m_templateDocument).
 #endif
 };
 
@@ -1567,13 +1570,13 @@ inline void Document::notifyRemovePendingSheetIfNeeded()
 }
 
 #if ENABLE(TEMPLATE_ELEMENT)
-inline const Document* Document::templateContentsOwnerDocument() const
+inline const Document* Document::templateDocument() const
 {
     // If DOCUMENT does not have a browsing context, Let TEMPLATE CONTENTS OWNER be DOCUMENT and abort these steps.
     if (!m_frame)
         return this;
 
-    return m_templateContentsOwnerDocument.get();
+    return m_templateDocument.get();
 }
 #endif
 

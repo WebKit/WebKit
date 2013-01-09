@@ -1001,7 +1001,7 @@ PassRefPtr<DocumentFragment> createFragmentForInnerOuterHTML(const String& marku
     Document* document = contextElement->document();
 #if ENABLE(TEMPLATE_ELEMENT)
     if (contextElement->hasTagName(templateTag))
-        document = document->ensureTemplateContentsOwnerDocument();
+        document = document->ensureTemplateDocument();
 #endif
     RefPtr<DocumentFragment> fragment = DocumentFragment::create(document);
 

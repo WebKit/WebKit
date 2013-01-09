@@ -75,6 +75,9 @@ WebInspector.DOMNode = function(domAgent, doc, isInShadowTree, payload) {
         }
     }
 
+    if (payload.templateContent)
+        this._templateContent = new WebInspector.DOMNode(this._domAgent, this.ownerDocument, true, payload.templateContent);
+
     if (payload.children)
         this._setChildrenPayload(payload.children);
 
@@ -132,7 +135,7 @@ WebInspector.DOMNode.prototype = {
      */
     hasChildNodes: function()
     {
-        return this._childNodeCount > 0 || !!this._shadowRoots.length;
+        return this._childNodeCount > 0 || !!this._shadowRoots.length || this._templateContent;
     },
 
     /**
@@ -453,7 +456,11 @@ WebInspector.DOMNode.prototype = {
         if (!prev) {
             if (!this.children) {
                 // First node
-                this.children = this._shadowRoots.concat([ node ]);
+                this.children = this._shadowRoots.slice();
+                if (this._templateContent)
+                    this.children.push(this._templateContent);
+
+                this.children.push(node);
             } else
                 this.children.unshift(node);
         } else
@@ -483,6 +490,9 @@ WebInspector.DOMNode.prototype = {
             return;
 
         this.children = this._shadowRoots.slice();
+        if (this._templateContent)
+            this.children.push(this._templateContent);
+
         for (var i = 0; i < payloads.length; ++i) {
             var payload = payloads[i];
             var node = new WebInspector.DOMNode(this._domAgent, this.ownerDocument, this._isInShadowTree, payload);

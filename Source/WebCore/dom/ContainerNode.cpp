@@ -142,7 +142,7 @@ static inline bool isInTemplateContent(const Node* node)
 {
 #if ENABLE(TEMPLATE_ELEMENT)
     Document* document = node->document();
-    return document && document == document->templateContentsOwnerDocument();
+    return document && document == document->templateDocument();
 #else
     UNUSED_PARAM(node);
     return false;

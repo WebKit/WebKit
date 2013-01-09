@@ -63,6 +63,8 @@
 #include "FrameTree.h"
 #include "HTMLElement.h"
 #include "HTMLFrameOwnerElement.h"
+#include "HTMLNames.h"
+#include "HTMLTemplateElement.h"
 #include "HitTestResult.h"
 #include "IdentifiersFactory.h"
 #include "InjectedScriptManager.h"
@@ -1294,6 +1296,12 @@ PassRefPtr<TypeBuilder::DOM::Node> InspectorDOMAgent::buildObjectForNode(Node* n
                 shadowRoots->addItem(buildObjectForNode(root, 0, nodesMap));
             value->setShadowRoots(shadowRoots);
         }
+
+#if ENABLE(TEMPLATE_ELEMENT)
+        if (element->hasTagName(HTMLNames::templateTag))
+            value->setTemplateContent(buildObjectForNode(static_cast<HTMLTemplateElement*>(element)->content(), 0, nodesMap));
+#endif
+
     } else if (node->isDocumentNode()) {
         Document* document = static_cast<Document*>(node);
         value->setDocumentURL(documentURLString(document));

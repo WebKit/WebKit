@@ -504,6 +504,9 @@ Document::Document(Frame* frame, const KURL& url, bool isXHTML, bool isHTML)
 #ifndef NDEBUG
     , m_didDispatchViewportPropertiesChanged(false)
 #endif
+#if ENABLE(TEMPLATE_ELEMENT)
+    , m_templateDocumentHost(0)
+#endif
 {
     setTreeScope(this);
 
@@ -607,6 +610,11 @@ Document::~Document()
     ASSERT(!m_styleRecalcTimer.isActive());
     ASSERT(!m_parentTreeScope);
     ASSERT(!m_guardRefCount);
+
+#if ENABLE(TEMPLATE_ELEMENT)
+    if (m_templateDocument)
+        m_templateDocument->setTemplateDocumentHost(0); // balanced in templateDocument().
+#endif
 
 #if ENABLE(TOUCH_EVENT_TRACKING)
     if (Document* ownerDocument = this->ownerDocument())
@@ -5951,17 +5959,19 @@ Locale& Document::getCachedLocale(const AtomicString& locale)
 }
 
 #if ENABLE(TEMPLATE_ELEMENT)
-Document* Document::ensureTemplateContentsOwnerDocument()
+Document* Document::ensureTemplateDocument()
 {
-    if (const Document* document = templateContentsOwnerDocument())
+    if (const Document* document = templateDocument())
         return const_cast<Document*>(document);
 
     if (isHTMLDocument())
-        m_templateContentsOwnerDocument = HTMLDocument::create(0, blankURL());
+        m_templateDocument = HTMLDocument::create(0, blankURL());
     else
-        m_templateContentsOwnerDocument = Document::create(0, blankURL());
+        m_templateDocument = Document::create(0, blankURL());
 
-    return m_templateContentsOwnerDocument.get();
+    m_templateDocument->setTemplateDocumentHost(this); // balanced in dtor.
+
+    return m_templateDocument.get();
 }
 #endif
 
