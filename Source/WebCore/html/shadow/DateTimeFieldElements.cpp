@@ -435,15 +435,15 @@ void DateTimeSymbolicMonthFieldElement::setValueAsDateTimeFieldsState(const Date
 
 // ----------------------------
 
-DateTimeWeekFieldElement::DateTimeWeekFieldElement(Document* document, FieldOwner& fieldOwner)
-    : DateTimeNumericFieldElement(document, fieldOwner, DateComponents::minimumWeekNumber, DateComponents::maximumWeekNumber, "--")
+DateTimeWeekFieldElement::DateTimeWeekFieldElement(Document* document, FieldOwner& fieldOwner, int minimum, int maximum)
+    : DateTimeNumericFieldElement(document, fieldOwner, minimum, maximum, "--")
 {
 }
 
-PassRefPtr<DateTimeWeekFieldElement> DateTimeWeekFieldElement::create(Document* document, FieldOwner& fieldOwner)
+PassRefPtr<DateTimeWeekFieldElement> DateTimeWeekFieldElement::create(Document* document, FieldOwner& fieldOwner, int minimum, int maximum)
 {
     DEFINE_STATIC_LOCAL(AtomicString, weekPsuedoId, ("-webkit-datetime-edit-week-field", AtomicString::ConstructFromLiteral));
-    RefPtr<DateTimeWeekFieldElement> field = adoptRef(new DateTimeWeekFieldElement(document, fieldOwner));
+    RefPtr<DateTimeWeekFieldElement> field = adoptRef(new DateTimeWeekFieldElement(document, fieldOwner, minimum, maximum));
     field->initialize(weekPsuedoId, AXWeekOfYearFieldText());
     return field.release();
 }
@@ -472,6 +472,11 @@ void DateTimeWeekFieldElement::setValueAsDateTimeFieldsState(const DateTimeField
     }
 
     setEmptyValue();
+}
+
+int DateTimeWeekFieldElement::clampValueForHardLimits(int value) const
+{
+    return Range(DateComponents::minimumWeekNumber, DateComponents::maximumWeekNumber).clampValue(value);
 }
 
 // ----------------------------

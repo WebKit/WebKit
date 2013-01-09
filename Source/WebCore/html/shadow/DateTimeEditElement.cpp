@@ -247,9 +247,19 @@ void DateTimeEditBuilder::visitField(DateTimeFormat::FieldType fieldType, int co
         return;
     }
 
-    case DateTimeFormat::FieldTypeWeekOfYear:
-        m_editElement.addField(DateTimeWeekFieldElement::create(document, m_editElement));
+    case DateTimeFormat::FieldTypeWeekOfYear: {
+        int minWeek = DateComponents::minimumWeekNumber;
+        int maxWeek = DateComponents::maximumWeekNumber;
+        if (m_parameters.minimum.type() != DateComponents::Invalid
+            && m_parameters.maximum.type() != DateComponents::Invalid
+            && m_parameters.minimum.fullYear() == m_parameters.maximum.fullYear()
+            && m_parameters.minimum.week() <= m_parameters.maximum.week()) {
+            minWeek = m_parameters.minimum.week();
+            maxWeek = m_parameters.maximum.week();
+        }
+        m_editElement.addField(DateTimeWeekFieldElement::create(document, m_editElement, minWeek, maxWeek));
         return;
+    }
 
     case DateTimeFormat::FieldTypeYear: {
         DateTimeYearFieldElement::Parameters yearParams;

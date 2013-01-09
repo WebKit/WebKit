@@ -172,15 +172,18 @@ class DateTimeWeekFieldElement : public DateTimeNumericFieldElement {
     WTF_MAKE_NONCOPYABLE(DateTimeWeekFieldElement);
 
 public:
-    static PassRefPtr<DateTimeWeekFieldElement> create(Document*, FieldOwner&);
+    static PassRefPtr<DateTimeWeekFieldElement> create(Document*, FieldOwner&, int minimum, int maximum);
 
 private:
-    DateTimeWeekFieldElement(Document*, FieldOwner&);
+    DateTimeWeekFieldElement(Document*, FieldOwner&, int minimum, int maximum);
 
     // DateTimeFieldElement functions.
     virtual void populateDateTimeFieldsState(DateTimeFieldsState&) OVERRIDE FINAL;
     virtual void setValueAsDate(const DateComponents&) OVERRIDE FINAL;
     virtual void setValueAsDateTimeFieldsState(const DateTimeFieldsState&) OVERRIDE FINAL;
+
+    // DateTimeNumericFieldElement function.
+    virtual int clampValueForHardLimits(int) const OVERRIDE FINAL;
 };
 
 class DateTimeYearFieldElement : public DateTimeNumericFieldElement {

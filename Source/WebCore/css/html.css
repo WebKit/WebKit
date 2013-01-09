@@ -581,6 +581,7 @@ input::-webkit-datetime-edit-year-field:focus {
 
 input::-webkit-datetime-edit-year-field[readonly],
 input::-webkit-datetime-edit-month-field[readonly],
+input::-webkit-datetime-edit-week-field[readonly],
 input::-webkit-datetime-edit-day-field[readonly],
 input::-webkit-datetime-edit-ampm-field[readonly],
 input::-webkit-datetime-edit-hour-field[readonly],
