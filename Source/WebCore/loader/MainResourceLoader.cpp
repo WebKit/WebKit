@@ -181,7 +181,20 @@ void MainResourceLoader::continueAfterNavigationPolicy(const ResourceRequest& re
     else if (m_substituteData.isValid()) {
         // A redirect resulted in loading substitute data.
         ASSERT(documentLoader()->timing()->redirectCount());
+
+        // We need to remove our reference to the CachedResource in favor of a SubstituteData load.
+        // This will probably trigger the cancellation of the CachedResource's underlying ResourceLoader, though there is a
+        // small chance that the resource is being loaded by a different Frame, preventing the ResourceLoader from being cancelled.
+        // If the ResourceLoader is indeed cancelled, it would normally send resource load callbacks.
+        // However, from an API perspective, this isn't a cancellation. Therefore, sever our relationship with the network load via clearResource(),
+        // but prevent the ResourceLoader from sending ResourceLoadNotifier callbacks.
+        RefPtr<ResourceLoader> resourceLoader = loader();
+        ASSERT(!resourceLoader || resourceLoader->shouldSendResourceLoadCallbacks());
+        if (resourceLoader)
+            resourceLoader->setSendCallbackPolicy(DoNotSendCallbacks);
         clearResource();
+        if (resourceLoader)
+            resourceLoader->setSendCallbackPolicy(SendCallbacks);
         handleSubstituteDataLoadSoon(request);
     }
 

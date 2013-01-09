@@ -140,6 +140,7 @@ public:
     const KURL& url() const { return m_request.url(); } 
     ResourceHandle* handle() const { return m_handle.get(); }
     bool shouldSendResourceLoadCallbacks() const { return m_options.sendLoadCallbacks == SendCallbacks; }
+    void setSendCallbackPolicy(SendCallbackPolicy sendLoadCallbacks) { m_options.sendLoadCallbacks = sendLoadCallbacks; }
     bool shouldSniffContent() const { return m_options.sniffContent == SniffContent; }
 
     bool reachedTerminalState() const { return m_reachedTerminalState; }

@@ -1263,8 +1263,6 @@ webkit.org/b/106064 fast/inline/continuation-outlines-with-layers.html [ Failure
 
 webkit.org/b/106075 [ Debug ] fast/regions/full-screen-video-from-region.html [ Crash ]
 
-webkit.org/b/106123 http/tests/appcache/main-resource-redirect.html [ Crash ]
-
 webkit.org/b/106151 [ Lion ] http/tests/misc/link-rel-icon-beforeload.html [ Pass Failure ]
 
 webkit.org/b/106185 fast/frames/flattening/iframe-flattening-fixed-height.html [ Pass Failure ]

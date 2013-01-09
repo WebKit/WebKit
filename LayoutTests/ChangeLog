@@ -1,3 +1,13 @@
+2013-01-08  Nate Chapin  <japhet@chromium.org>
+
+        REGRESSION(r138222?): [Mac WK1] http/tests/appcache/main-resource-redirect.html asserts in WebFrameLoaderClient::dispatchDidFinishLoading
+        https://bugs.webkit.org/show_bug.cgi?id=106123
+
+        Reviewed by Alexey Proskuryakov.
+
+        * platform/mac-wk2/TestExpectations:
+        * platform/mac/TestExpectations: main-resource-redirect.html is no longer crashing.
+
 2013-01-08  Martin Robinson  <mrobinson@igalia.com>
 
         [EFL] [WK2] Some authentication tests fail in WebKit2
