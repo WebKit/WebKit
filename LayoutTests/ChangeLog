@@ -1,3 +1,14 @@
+2013-01-09  Alexandru Chiculita  <achicu@adobe.com>
+
+        Assertion Failure in WebCore::RenderLayerCompositor::updateCompositingLayers
+        https://bugs.webkit.org/show_bug.cgi?id=106419
+
+        Reviewed by Simon Fraser.
+
+        Re-added skipped tests as this patch resolves the flakiness.
+
+        * platform/mac/TestExpectations:
+
 2013-01-09  Roger Fong  <roger_fong@apple.com>
 
         Unreviewed. Rebaseline some accessibility test results on Win7 port.

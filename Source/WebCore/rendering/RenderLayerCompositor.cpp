@@ -402,13 +402,15 @@ void RenderLayerCompositor::updateCompositingLayers(CompositingUpdateType update
     if (!m_renderView->document()->visualUpdatesAllowed())
         return;
 
+    // Avoid updating the layers with old values. Compositing layers will be updated after the layout is finished.
+    if (m_renderView->needsLayout())
+        return;
+
     if (m_forceCompositingMode && !m_compositing)
         enableCompositingMode(true);
 
     if (!m_reevaluateCompositingAfterLayout && !m_compositing)
         return;
-
-    ASSERT(!m_renderView->needsLayout());
 
     AnimationUpdateBlock animationUpdateBlock(m_renderView->frameView()->frame()->animation());
 
