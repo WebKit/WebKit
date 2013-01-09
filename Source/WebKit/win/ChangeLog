@@ -1,3 +1,20 @@
+2013-01-09  Roger Fong  <roger_fong@apple.com>
+
+        Add WebPreferences for Seamless IFrames on Windows port.
+        https://bugs.webkit.org/show_bug.cgi?id=106468.
+
+        Rubberstamped by Eric Seidel.
+
+        * Interfaces/IWebPreferences.idl:
+        * WebPreferenceKeysPrivate.h:
+        * WebPreferences.cpp:
+        (WebPreferences::areSeamlessIFramesEnabled):
+        (WebPreferences::setSeamlessIFramesEnabled):
+        * WebPreferences.h:
+        (WebPreferences):
+        * WebView.cpp:
+        (WebView::notifyPreferencesChanged):
+
 2013-01-09  peavo@outlook.com  <peavo@outlook.com>
 
         [WinCairo] Link fix after r138759

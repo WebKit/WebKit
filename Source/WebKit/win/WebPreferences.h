@@ -169,6 +169,12 @@ public:
     virtual HRESULT STDMETHODCALLTYPE setCSSRegionsEnabled(
         /* [in] */ BOOL);
     
+    virtual HRESULT STDMETHODCALLTYPE areSeamlessIFramesEnabled(
+        /* [retval][out] */ BOOL* enabled);
+    
+    virtual HRESULT STDMETHODCALLTYPE setSeamlessIFramesEnabled(
+        /* [in] */ BOOL);
+    
     virtual HRESULT STDMETHODCALLTYPE allowsAnimatedImages( 
         /* [retval][out] */ BOOL* enabled);
     

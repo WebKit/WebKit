@@ -1307,6 +1307,18 @@ HRESULT WebPreferences::setAllowContinuousSpellChecking(BOOL enabled)
     return S_OK;
 }
 
+HRESULT WebPreferences::areSeamlessIFramesEnabled(BOOL* enabled)
+{
+    *enabled = boolValueForKey(CFSTR(SeamlessIFramesPreferenceKey));
+    return S_OK;
+}
+
+HRESULT WebPreferences::setSeamlessIFramesEnabled(BOOL enabled)
+{
+    setBoolValue(CFSTR(SeamlessIFramesPreferenceKey), enabled);
+    return S_OK;
+}
+
 HRESULT WebPreferences::isDOMPasteAllowed(BOOL* enabled)
 {
     *enabled = boolValueForKey(CFSTR(WebKitDOMPasteAllowedPreferenceKey));
