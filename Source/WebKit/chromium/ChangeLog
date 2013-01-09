@@ -1,3 +1,9 @@
+2013-01-09  Mikhail Naganov  <mnaganov@chromium.org>
+
+        [Chromium] Unreviewed: A trivial fix for WebFrameTest.DivAutoZoomParamsTest after r139177.
+
+        * tests/WebFrameTest.cpp:
+
 2013-01-08  Mikhail Naganov  <mnaganov@chromium.org>
 
         [Chromium] When viewport is disabled, use display width in DIP pixels for the fallback width

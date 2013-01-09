@@ -341,10 +341,10 @@ TEST_F(WebFrameTest, DivAutoZoomParamsTest)
     int viewportWidth = 640;
     int viewportHeight = 480;
     WebKit::WebView* webView = FrameTestHelpers::createWebViewAndLoad(m_baseURL + "get_scale_for_auto_zoom_into_div_test.html");
-    webView->enableFixedLayoutMode(true);
     webView->setDeviceScaleFactor(2.0f);
     webView->resize(WebSize(viewportWidth, viewportHeight));
     webView->setPageScaleFactorLimits(0.01f, 4);
+    webView->enableFixedLayoutMode(true);
     webView->layout();
 
     WebRect wideDiv(200, 100, 400, 150);
