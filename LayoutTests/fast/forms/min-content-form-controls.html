@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<style>
+.min-content {
+    min-width: 10px;
+    width: -webkit-min-content;
+    width: -moz-min-content;
+    width: -ie-min-content;
+    width: -o-min-content;
+    width: min-content;
+}
+</style>
+<p>The form controls of the same type below should be the same width.</p>
+
+<input id="text-a" class="min-content">
+<input id="text-b">
+
+<input id="file-a" type=file class="min-content">
+<input id="file-b" type=file>
+
+<input id="range-a" type=range class="min-content">
+<input id="range-b" type=range>
+
+<select id="select-a" class="min-content"><option>aaaaaaaaaaaaaaaaaaaaaaaaa</option></select>
+<select id="select-b"><option>aaaaaaaaaaaaaaaaaaaaaaaaa</option></select>
+
+<select id="multiple-a" multiple class="min-content"><option>aaaaaaaaaaaaaaaaaaaaaaaaa</option></select>
+<select id="multiple-b" multiple><option>aaaaaaaaaaaaaaaaaaaaaaaaa</option></select>
+
+<script src="../js/resources/js-test-pre.js"></script>
+<script>
+var ids = ['text', 'file', 'range', 'select', 'multiple'];
+ids.forEach(function(id) {
+    shouldBe('document.getElementById("' + id + '-a").offsetWidth', 'document.getElementById("' + id + '-b").offsetWidth');
+})
+</script>
+<script src="../js/resources/js-test-post.js"></script>

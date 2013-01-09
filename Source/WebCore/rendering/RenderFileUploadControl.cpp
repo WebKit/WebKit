@@ -190,15 +190,15 @@ void RenderFileUploadControl::computePreferredLogicalWidths()
             if (RenderObject* buttonRenderer = button->renderer())
                 defaultLabelWidth += buttonRenderer->maxPreferredLogicalWidth() + afterButtonSpacing;
         m_maxPreferredLogicalWidth = static_cast<int>(ceilf(max(minDefaultLabelWidth, defaultLabelWidth)));
+
+        if (!style->width().isPercent())
+            m_minPreferredLogicalWidth = m_maxPreferredLogicalWidth;
     }
 
     if (style->minWidth().isFixed() && style->minWidth().value() > 0) {
         m_maxPreferredLogicalWidth = max(m_maxPreferredLogicalWidth, adjustContentBoxLogicalWidthForBoxSizing(style->minWidth().value()));
         m_minPreferredLogicalWidth = max(m_minPreferredLogicalWidth, adjustContentBoxLogicalWidthForBoxSizing(style->minWidth().value()));
-    } else if (style->width().isPercent())
-        m_minPreferredLogicalWidth = 0;
-    else
-        m_minPreferredLogicalWidth = m_maxPreferredLogicalWidth;
+    }
 
     if (style->maxWidth().isFixed()) {
         m_maxPreferredLogicalWidth = min(m_maxPreferredLogicalWidth, adjustContentBoxLogicalWidthForBoxSizing(style->maxWidth().value()));

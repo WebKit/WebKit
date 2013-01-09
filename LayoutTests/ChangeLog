@@ -1,3 +1,13 @@
+2013-01-08  Ojan Vafai  <ojan@chromium.org>
+
+        min-content gets the wrong value if min-width is set on some form controls
+        https://bugs.webkit.org/show_bug.cgi?id=106389
+
+        Reviewed by Tony Chang.
+
+        * fast/forms/min-content-form-controls-expected.txt: Added.
+        * fast/forms/min-content-form-controls.html: Added.
+
 2013-01-09  Roger Fong  <roger_fong@apple.com>
 
         Unreviewed. Skipping 4 video controls tests on Windows.
