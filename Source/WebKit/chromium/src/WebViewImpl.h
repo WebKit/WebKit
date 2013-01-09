@@ -673,6 +673,7 @@ private:
     virtual void handleMouseLeave(WebCore::Frame&, const WebMouseEvent&) OVERRIDE;
     virtual void handleMouseDown(WebCore::Frame&, const WebMouseEvent&) OVERRIDE;
     virtual void handleMouseUp(WebCore::Frame&, const WebMouseEvent&) OVERRIDE;
+    virtual bool handleMouseWheel(WebCore::Frame&, const WebMouseWheelEvent&) OVERRIDE;
     virtual bool handleGestureEvent(const WebGestureEvent&) OVERRIDE;
     virtual bool handleKeyEvent(const WebKeyboardEvent&) OVERRIDE;
     virtual bool handleCharEvent(const WebKeyboardEvent&) OVERRIDE;

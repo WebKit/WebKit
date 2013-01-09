@@ -647,6 +647,12 @@ void WebViewImpl::handleMouseUp(Frame& mainFrame, const WebMouseEvent& event)
 #endif
 }
 
+bool WebViewImpl::handleMouseWheel(Frame& mainFrame, const WebMouseWheelEvent& event)
+{
+    hidePopups();
+    return PageWidgetEventHandler::handleMouseWheel(mainFrame, event);
+}
+
 void WebViewImpl::scrollBy(const WebPoint& delta)
 {
     WebMouseWheelEvent syntheticWheel;
