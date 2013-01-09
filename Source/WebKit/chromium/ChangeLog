@@ -1,3 +1,25 @@
+2013-01-08  Mikhail Naganov  <mnaganov@chromium.org>
+
+        [Chromium] When viewport is disabled, use display width in DIP pixels for the fallback width
+        https://bugs.webkit.org/show_bug.cgi?id=106021
+
+        This is to emulate 'UseWideViewport' setting of Android WebView properly.
+        'UseWideViewport' now corresponds to the 'viewportEnabled' setting.
+        When the value is false, "meta viewport" tag is ignored, and when calculating
+        layout width, display width in DIP pixels is used.
+
+        Reviewed by Adam Barth.
+
+        * src/ChromeClientImpl.cpp:
+        (WebKit::ChromeClientImpl::dispatchViewportPropertiesDidChange):
+        * src/WebViewImpl.cpp:
+        (WebKit::WebViewImpl::resize):
+        (WebKit::WebViewImpl::dipSize):
+        (WebKit):
+        * src/WebViewImpl.h:
+        (WebCore):
+        (WebViewImpl):
+
 2013-01-08  Chris Rogers  <crogers@google.com>
 
         Remove unused/deprecated render() method in chromium WebKit API

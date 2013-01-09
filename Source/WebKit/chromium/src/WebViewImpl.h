@@ -35,6 +35,7 @@
 #include "ContextMenuClientImpl.h"
 #include "DragClientImpl.h"
 #include "EditorClientImpl.h"
+#include "FloatSize.h"
 #include "GraphicsContext3D.h"
 #include "GraphicsLayer.h"
 #include "InspectorClientImpl.h"
@@ -64,6 +65,7 @@ namespace WebCore {
 class ChromiumDataObject;
 class Color;
 class DocumentLoader;
+class FloatSize;
 class Frame;
 class GraphicsContext3D;
 class HistoryItem;
@@ -238,6 +240,7 @@ public:
     virtual void enableFixedLayoutMode(bool enable);
     virtual WebSize fixedLayoutSize() const;
     virtual void setFixedLayoutSize(const WebSize&);
+    virtual WebCore::FloatSize dipSize() const;
     virtual void enableAutoResizeMode(
         const WebSize& minSize,
         const WebSize& maxSize);

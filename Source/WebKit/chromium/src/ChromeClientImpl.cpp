@@ -620,7 +620,7 @@ void ChromeClientImpl::setToolTip(const String& tooltipText, TextDirection dir)
 void ChromeClientImpl::dispatchViewportPropertiesDidChange(const ViewportArguments& arguments) const
 {
 #if ENABLE(VIEWPORT)
-    if (!m_webView->settings()->viewportEnabled() || !m_webView->isFixedLayoutModeEnabled() || !m_webView->client() || !m_webView->page())
+    if (!m_webView->isFixedLayoutModeEnabled() || !m_webView->client() || !m_webView->page())
         return;
 
     WebViewClient* client = m_webView->client();
@@ -629,11 +629,23 @@ void ChromeClientImpl::dispatchViewportPropertiesDidChange(const ViewportArgumen
     if (!deviceSize.width || !deviceSize.height)
         return;
 
-    Settings* settings = m_webView->page()->settings();
+    int viewportWidthInDIPs = m_webView->dipSize().width();
+    ViewportArguments effectiveViewportArguments;
+    int effectiveFallbackWidth;
+    if (m_webView->settings()->viewportEnabled()) {
+        effectiveViewportArguments = arguments;
+        effectiveFallbackWidth = std::max(m_webView->page()->settings()->layoutFallbackWidth(), viewportWidthInDIPs);
+    } else {
+        // This is for Android WebView to use layout width in device-independent pixels.
+        // Once WebViewImpl on Android will start using DIP pixels size,
+        // dispatchViewportPropertiesDidChange can bail out when viewport is disabled.
+        effectiveViewportArguments = ViewportArguments();
+        effectiveFallbackWidth = viewportWidthInDIPs;
+    }
     float devicePixelRatio = client->screenInfo().deviceScaleFactor;
     // Call the common viewport computing logic in ViewportArguments.cpp.
     ViewportAttributes computed = computeViewportAttributes(
-        arguments, settings->layoutFallbackWidth(), deviceSize.width, deviceSize.height,
+        effectiveViewportArguments, effectiveFallbackWidth, deviceSize.width, deviceSize.height,
         devicePixelRatio, IntSize(deviceSize.width, deviceSize.height));
 
     restrictScaleFactorToInitialScaleIfNotUserScalable(computed);
