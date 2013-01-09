@@ -1,5 +1,12 @@
 2013-01-09  Dimitri Glazkov  <dglazkov@chromium.org>
 
+        [Chromium] inspector/geolocation-error.html is flaky in Win.
+        https://bugs.webkit.org/show_bug.cgi?id=106487
+
+        * platform/chromium/TestExpectations: Marked as flaky.
+
+2013-01-09  Dimitri Glazkov  <dglazkov@chromium.org>
+
         [Chromium] Tweak webaduio test expectations once more.
 
         * platform/chromium/TestExpectations: Tweaked.
