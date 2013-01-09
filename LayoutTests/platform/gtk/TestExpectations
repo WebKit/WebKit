@@ -616,6 +616,8 @@ webkit.org/b/104809 media/video-source-type-params.html [ Crash Timeout Pass ]
 webkit.org/b/104809 media/video-src-set.html [ Crash Timeout Pass ]
 webkit.org/b/104809 media/W3C/video/events/event_loadstart_manual.html [ Crash Pass ]
 
+webkit.org/b/106415 fast/workers/worker-close-more.html [ Timeout Pass ]
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Flaky tests
 #////////////////////////////////////////////////////////////////////////////////////////

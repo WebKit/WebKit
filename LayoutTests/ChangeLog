@@ -1,3 +1,12 @@
+2013-01-09  Zan Dobersek  <zandobersek@gmail.com>
+
+        Unreviewed GTK gardening.
+
+        Adding a flaky timeout expectation for fast/workers/worker-close-more.html
+        that regressed with r139145.
+
+        * platform/gtk/TestExpectations:
+
 2013-01-08  Takashi Sakamoto  <tasak@google.com>
 
         Use window.WebKitShadowRoot for checking whether a node is shadow root or not.
