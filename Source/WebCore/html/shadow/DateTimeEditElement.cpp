@@ -117,7 +117,7 @@ void DateTimeEditBuilder::visitField(DateTimeFormat::FieldType fieldType, int co
         }
         RefPtr<DateTimeFieldElement> field = DateTimeDayFieldElement::create(document, m_editElement, m_parameters.placeholderForDay, minDay, maxDay);
         m_editElement.addField(field);
-        if (minDay == maxDay && minDay == m_dateValue.monthDay()) {
+        if (minDay == maxDay && minDay == m_dateValue.monthDay() && m_dateValue.type() != DateComponents::Date) {
             field->setValueAsDate(m_dateValue);
             field->setReadOnly();
         }
@@ -203,7 +203,7 @@ void DateTimeEditBuilder::visitField(DateTimeFormat::FieldType fieldType, int co
             break;
         }
         m_editElement.addField(field);
-        if (minMonth == maxMonth && minMonth == m_dateValue.month()) {
+        if (minMonth == maxMonth && minMonth == m_dateValue.month() && m_dateValue.type() != DateComponents::Month) {
             field->setValueAsDate(m_dateValue);
             field->setReadOnly();
         }

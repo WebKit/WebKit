@@ -39,14 +39,15 @@ shouldBeTrue('isReadOnlyField(createMonthInput("2012-01", "2012-12", "2012-05"),
 shouldBeFalse('isReadOnlyField(createMonthInput("2012-01", "2012-12", "2013-01"), pseudoYear)');
 
 debug('Month field:');
+debug('We should not make all the fields readonly by min/max, so day field is always editable.');
 shouldBeFalse('isReadOnlyField(createMonthInput("", "", ""), pseudoMonth)');
 shouldBeFalse('isReadOnlyField(createMonthInput("2012-12", "", ""), pseudoMonth)');
 shouldBeFalse('isReadOnlyField(createMonthInput("", "2012-12", ""), pseudoMonth)');
 shouldBeFalse('isReadOnlyField(createMonthInput("", "", "2012-12"), pseudoMonth)');
-shouldBeTrue('isReadOnlyField(createMonthInput("2012-12", "2012-12", ""), pseudoMonth)');
+shouldBeFalse('isReadOnlyField(createMonthInput("2012-12", "2012-12", ""), pseudoMonth)');
 shouldBeFalse('isReadOnlyField(createMonthInput("2012-11", "2013-12", ""), pseudoMonth)');
 shouldBeFalse('isReadOnlyField(createMonthInput("2012-12", "2013-12", ""), pseudoMonth)');
-shouldBeTrue('isReadOnlyField(createMonthInput("2012-12", "2012-12", "2012-12"), pseudoMonth)');
+shouldBeFalse('isReadOnlyField(createMonthInput("2012-12", "2012-12", "2012-12"), pseudoMonth)');
 shouldBeFalse('isReadOnlyField(createMonthInput("2012-12", "2012-12", "2012-11"), pseudoMonth)');
 
 </script>
