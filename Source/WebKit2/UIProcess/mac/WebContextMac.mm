@@ -57,6 +57,9 @@ static NSString *WebKitApplicationDidChangeAccessibilityEnhancedUserInterfaceNot
 // FIXME: <rdar://problem/9138817> - After this "backwards compatibility" radar is removed, this code should be removed to only return an empty String.
 NSString *WebIconDatabaseDirectoryDefaultsKey = @"WebIconDatabaseDirectoryDefaultsKey";
 
+static NSString * const WebKit2HTTPProxyDefaultsKey = @"WebKit2HTTPProxy";
+static NSString * const WebKit2HTTPSProxyDefaultsKey = @"WebKit2HTTPSProxy";
+
 namespace WebKit {
 
 NSString *SchemeForCustomProtocolRegisteredNotificationName = @"WebKitSchemeForCustomProtocolRegisteredNotification";
@@ -155,6 +158,9 @@ void WebContext::platformInitializeNetworkProcess(NetworkProcessCreationParamete
 
     for (NSString *scheme in [WKBrowsingContextController customSchemes])
         parameters.urlSchemesRegisteredForCustomProtocols.append(scheme);
+
+    parameters.httpProxy = [[NSUserDefaults standardUserDefaults] stringForKey:WebKit2HTTPProxyDefaultsKey];
+    parameters.httpsProxy = [[NSUserDefaults standardUserDefaults] stringForKey:WebKit2HTTPSProxyDefaultsKey];
 }
 #endif
 

@@ -50,6 +50,8 @@ void NetworkProcessCreationParameters::encode(CoreIPC::ArgumentEncoder& encoder)
 #if ENABLE(CUSTOM_PROTOCOLS)
     encoder << urlSchemesRegisteredForCustomProtocols;
 #endif
+    encoder << httpProxy;
+    encoder << httpsProxy;
 #endif
 }
 
@@ -76,6 +78,10 @@ bool NetworkProcessCreationParameters::decode(CoreIPC::ArgumentDecoder* decoder,
     if (!decoder->decode(result.urlSchemesRegisteredForCustomProtocols))
         return false;
 #endif
+    if (!decoder->decode(result.httpProxy))
+        return false;
+    if (!decoder->decode(result.httpsProxy))
+        return false;
 #endif
 
     return true;

@@ -31,6 +31,7 @@
 #import "NetworkProcessCreationParameters.h"
 #import "PlatformCertificateInfo.h"
 #import "SandboxExtension.h"
+#import "StringUtilities.h"
 #import <WebCore/FileSystem.h>
 #import <WebCore/LocalizedStrings.h>
 #import <WebKitSystemInterface.h>
@@ -94,6 +95,41 @@ void NetworkProcess::initializeSandbox(const ChildProcessInitializationParameter
     }
 }
 
+#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 1070
+static void overrideSystemProxies(const String& httpProxy, const String& httpsProxy)
+{
+    NSMutableDictionary *proxySettings = [NSMutableDictionary dictionary];
+
+    if (!httpProxy.isNull()) {
+        KURL httpProxyURL(KURL(), httpProxy);
+        if (httpProxyURL.isValid()) {
+            [proxySettings setObject:nsStringFromWebCoreString(httpProxyURL.host()) forKey:(NSString *)kCFNetworkProxiesHTTPProxy];
+            if (httpProxyURL.hasPort()) {
+                NSNumber *port = [NSNumber numberWithInt:httpProxyURL.port()];
+                [proxySettings setObject:port forKey:(NSString *)kCFNetworkProxiesHTTPPort];
+            }
+        }
+        else
+            NSLog(@"Malformed HTTP Proxy URL '%s'.  Expected 'http://<hostname>[:<port>]'\n", httpProxy.utf8().data());
+    }
+
+    if (!httpsProxy.isNull()) {
+        KURL httpsProxyURL(KURL(), httpsProxy);
+        if (httpsProxyURL.isValid()) {
+            [proxySettings setObject:nsStringFromWebCoreString(httpsProxyURL.host()) forKey:(NSString *)kCFNetworkProxiesHTTPSProxy];
+            if (httpsProxyURL.hasPort()) {
+                NSNumber *port = [NSNumber numberWithInt:httpsProxyURL.port()];
+                [proxySettings setObject:port forKey:(NSString *)kCFNetworkProxiesHTTPSPort];
+            }
+        } else
+            NSLog(@"Malformed HTTPS Proxy URL '%s'.  Expected 'https://<hostname>[:<port>]'\n", httpsProxy.utf8().data());
+    }
+
+    if ([proxySettings count] > 0)
+        WKCFNetworkSetOverrideSystemProxySettings((CFDictionaryRef)proxySettings);
+}
+#endif // __MAC_OS_X_VERSION_MIN_REQUIRED >= 1070
+
 void NetworkProcess::platformInitializeNetworkProcess(const NetworkProcessCreationParameters& parameters)
 {
     m_diskCacheDirectory = parameters.diskCacheDirectory;
@@ -109,6 +145,11 @@ void NetworkProcess::platformInitializeNetworkProcess(const NetworkProcessCreati
 
 #if USE(SECURITY_FRAMEWORK)
     SecItemShim::shared().initialize(this);
+#endif
+
+#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 1070
+    if (!parameters.httpProxy.isNull() || !parameters.httpsProxy.isNull())
+        overrideSystemProxies(parameters.httpProxy, parameters.httpsProxy);
 #endif
 }
 

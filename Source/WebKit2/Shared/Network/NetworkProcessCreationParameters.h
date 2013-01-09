@@ -61,6 +61,9 @@ struct NetworkProcessCreationParameters {
 #if ENABLE(CUSTOM_PROTOCOLS)
     Vector<String> urlSchemesRegisteredForCustomProtocols;
 #endif
+
+    String httpProxy;
+    String httpsProxy;
 #endif
 };
 

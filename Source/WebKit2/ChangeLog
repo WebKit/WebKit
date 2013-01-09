@@ -1,3 +1,26 @@
+2013-01-09  Kiran Muppala  <cmuppala@apple.com>
+
+        Add user defaults to override system proxy settings for NetworkProcess on Mac
+        https://bugs.webkit.org/show_bug.cgi?id=104197
+
+        Reviewed by Brady Eidson.
+
+        For internal testing and debugging, it is useful to have a defaults write to set the HTTP and HTTPS proxy specific to a
+        WebKit2 client application and not affect the system proxy settings on Mac.
+
+        * NetworkProcess/mac/NetworkProcessMac.mm:
+        (WebKit::overrideSystemProxies): Add helper method to parse proxy URLs and populate settings dictionary passed
+        to WKCFNetworkSetOverrideSystemProxySettings.
+        (WebKit::NetworkProcess::platformInitializeNetworkProcess): Call overrideSystemProxies if process creation parameters for
+        http proxy or https proxy is set.
+        * Shared/Network/NetworkProcessCreationParameters.cpp: Add httpProxy and httpsProxy process creation parameters on Mac.
+        (WebKit::NetworkProcessCreationParameters::encode):
+        (WebKit::NetworkProcessCreationParameters::decode):
+        * Shared/Network/NetworkProcessCreationParameters.h:
+        * UIProcess/mac/WebContextMac.mm:
+        (WebKit::WebContext::platformInitializeNetworkProcess): Initialize httpProxy and httpsProxy process creation parameters
+        based on the value of WebKit2HTTPProxyDefaultsKey and WebKit2HTTPSProxyDefaultsKey user default respectively.
+
 2013-01-09  Alexey Proskuryakov  <ap@apple.com>
 
         Local builds of NetworkProcess should have a process icon
