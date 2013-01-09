@@ -1,3 +1,14 @@
+2013-01-09  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r139134.
+        http://trac.webkit.org/changeset/139134
+        https://bugs.webkit.org/show_bug.cgi?id=106424
+
+         WebGL tests still crash on EFL (Requested by MPozdnyakov on
+        #webkit).
+
+        * platform/efl/TestExpectations:
+
 2013-01-09  Kunihiko Sakamoto  <ksakamoto@chromium.org>
 
         INPUT_MULTIPLE_FIELDS_UI: Step-up/-down of week field should respect min/max attributes
