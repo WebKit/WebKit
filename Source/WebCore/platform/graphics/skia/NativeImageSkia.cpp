@@ -181,6 +181,7 @@ void NativeImageSkia::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) cons
     MemoryClassInfo info(memoryObjectInfo, this);
     info.addMember(m_image);
     info.addMember(m_resizedImage);
+    info.addMember(m_cachedImageInfo);
 }
 
 void reportMemoryUsage(const NativeImageSkia* image, MemoryObjectInfo* memoryObjectInfo)

@@ -46,6 +46,8 @@ void ElementRareData::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) cons
     info.addMember(m_classList);
     info.addMember(m_shadow);
     info.addMember(m_attributeMap);
+    info.addMember(m_generatedBefore);
+    info.addMember(m_generatedAfter);
 }
 
 } // namespace WebCore

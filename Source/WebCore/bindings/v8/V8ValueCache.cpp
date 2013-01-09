@@ -27,6 +27,16 @@
 #include "V8ValueCache.h"
 
 #include "V8Binding.h"
+#include "WebCoreMemoryInstrumentation.h"
+#include <wtf/MemoryInstrumentationHashMap.h>
+
+namespace WTF {
+
+template<> struct SequenceMemoryInstrumentationTraits<v8::String*> {
+    template <typename I> static void reportMemoryUsage(I, I, MemoryClassInfo&) { }
+};
+
+}
 
 namespace WebCore {
 
@@ -98,6 +108,14 @@ v8::Local<v8::String> StringCache::v8ExternalStringSlow(StringImpl* stringImpl, 
     m_lastV8String = wrapper;
 
     return newString;
+}
+
+void StringCache::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
+{
+    MemoryClassInfo info(memoryObjectInfo, this, WebCoreMemoryTypes::Binding);
+    info.addMember(m_stringCache);
+    info.ignoreMember(m_lastV8String);
+    info.addMember(m_lastStringImpl);
 }
 
 IntegerCache::IntegerCache()

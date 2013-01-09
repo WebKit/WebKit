@@ -47,6 +47,8 @@ public:
     FormDataElement(const KURL& url, long long start, long long length, double expectedFileModificationTime) : m_type(encodedURL), m_url(url), m_fileStart(start), m_fileLength(length), m_expectedFileModificationTime(expectedFileModificationTime), m_shouldGenerateFile(false) { }
 #endif
 
+    void reportMemoryUsage(MemoryObjectInfo*) const;
+
     enum Type {
         data,
         encodedFile

@@ -1356,7 +1356,6 @@ void Page::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
     info.addMember(m_mainFrame);
     info.addMember(m_pluginData);
     info.addMember(m_theme);
-    info.addWeakPointer(m_editorClient);
     info.addMember(m_featureObserver);
     info.addMember(m_groupName);
     info.addMember(m_pagination);
@@ -1364,13 +1363,17 @@ void Page::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
     info.addMember(m_userStyleSheet);
     info.addMember(m_singlePageGroup);
     info.addMember(m_group);
-    info.addWeakPointer(m_debugger);
     info.addMember(m_sessionStorage);
     info.addMember(m_relevantUnpaintedRenderObjects);
     info.addMember(m_relevantPaintedRegion);
     info.addMember(m_relevantUnpaintedRegion);
-    info.addWeakPointer(m_alternativeTextClient);
     info.addMember(m_seenPlugins);
+    info.addMember(m_seenMediaEngines);
+
+    info.ignoreMember(m_debugger);
+    info.ignoreMember(m_alternativeTextClient);
+    info.ignoreMember(m_editorClient);
+    info.ignoreMember(m_validationMessageClient);
 }
 
 Page::PageClients::PageClients()

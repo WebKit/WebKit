@@ -510,6 +510,7 @@ void DocumentStyleSheetCollection::reportMemoryUsage(MemoryObjectInfo* memoryObj
     info.addMember(m_styleSheetCandidateNodes);
     info.addMember(m_preferredStylesheetSetName);
     info.addMember(m_selectedStylesheetSetName);
+    info.addMember(m_document);
 }
 
 }

@@ -1030,6 +1030,7 @@ void RenderView::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
     info.addMember(m_flowThreadController);
     info.addMember(m_intervalArena);
     info.addWeakPointer(m_renderQuoteHead);
+    info.addMember(m_legacyPrinting);
 }
 
 } // namespace WebCore

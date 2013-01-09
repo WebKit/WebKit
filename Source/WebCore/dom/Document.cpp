@@ -176,6 +176,7 @@
 #include <wtf/CurrentTime.h>
 #include <wtf/HashFunctions.h>
 #include <wtf/MainThread.h>
+#include <wtf/MemoryInstrumentationHashCountedSet.h>
 #include <wtf/MemoryInstrumentationHashMap.h>
 #include <wtf/MemoryInstrumentationHashSet.h>
 #include <wtf/MemoryInstrumentationVector.h>
@@ -5948,6 +5949,76 @@ void Document::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
     info.addMember(m_prerenderer);
 #endif
     info.addMember(m_listsInvalidatedAtDocument);
+    info.addMember(m_styleResolverThrowawayTimer);
+    info.addMember(m_domWindow);
+    info.addMember(m_parser);
+    info.addMember(m_contextFeatures);
+    info.addMember(m_focusedNode);
+    info.addMember(m_hoverNode);
+    info.addMember(m_documentElement);
+    info.addMember(m_visitedLinkState);
+    info.addMember(m_styleRecalcTimer);
+    info.addMember(m_titleElement);
+    info.ignoreMember(m_renderArena);
+    info.addMember(m_axObjectCache);
+    info.addMember(m_markers);
+    info.addMember(m_cssTarget);
+    info.addMember(m_updateFocusAppearanceTimer);
+    info.addMember(m_pendingStateObject);
+    info.addMember(m_scriptRunner);
+#if ENABLE(XSLT)
+    info.addMember(m_transformSource);
+    info.addMember(m_transformSourceDocument);
+#endif
+    info.addMember(m_savedRenderer);
+    info.addMember(m_decoder);
+    info.addMember(m_xpathEvaluator);
+#if ENABLE(SVG)
+    info.addMember(m_svgExtensions);
+#endif
+    info.addMember(m_selectorQueryCache);
+    info.addMember(m_renderer);
+    info.addMember(m_weakReference);
+    info.addMember(m_idAttributeName);
+#if ENABLE(FULLSCREEN_API)
+    info.addMember(m_fullScreenElement);
+    info.addMember(m_fullScreenElementStack);
+    info.addMember(m_fullScreenRenderer);
+    info.addMember(m_fullScreenChangeDelayTimer);
+    info.addMember(m_fullScreenChangeEventTargetQueue);
+    info.addMember(m_fullScreenErrorEventTargetQueue);
+    info.addMember(m_savedPlaceholderRenderStyle);
+#endif
+#if ENABLE(DIALOG_ELEMENT)
+    info.addMember(m_topLayerElements);
+#endif
+    info.addMember(m_loadEventDelayTimer);
+    info.addMember(m_viewportArguments);
+    info.addMember(m_documentTiming);
+    info.addMember(m_mediaQueryMatcher);
+#if ENABLE(TOUCH_EVENTS)
+    info.addMember(m_touchEventTargets);
+#endif
+#if ENABLE(REQUEST_ANIMATION_FRAME)
+    info.addMember(m_scriptedAnimationController);
+#endif
+    info.addMember(m_pendingTasksTimer);
+#if ENABLE(TEXT_AUTOSIZING)
+    info.addMember(m_textAutosizer);
+#endif
+    info.addMember(m_visualUpdatesSuppressionTimer);
+    info.addMember(m_namedFlows);
+#if ENABLE(CSP_NEXT)
+    info.addMember(m_domSecurityPolicy);
+#endif
+    info.addMember(m_sharedObjectPoolClearTimer);
+    info.addMember(m_sharedObjectPool);
+    info.addMember(m_localeCache);
+#if ENABLE(TEMPLATE_ELEMENT)
+    info.addMember(m_templateDocument);
+    info.addMember(m_templateDocumentHost);
+#endif
+    info.addMember(m_activeElement);
 }
 
 bool Document::haveStylesheetsLoaded() const

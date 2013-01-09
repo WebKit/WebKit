@@ -422,6 +422,18 @@ void FormData::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
 {
     MemoryClassInfo info(memoryObjectInfo, this, PlatformMemoryTypes::Loader);
     info.addMember(m_boundary);
+    info.addMember(m_elements);
+}
+
+void FormDataElement::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
+{
+    MemoryClassInfo info(memoryObjectInfo, this, PlatformMemoryTypes::Loader);
+    info.addMember(m_data);
+    info.addMember(m_filename);
+#if ENABLE(BLOB)
+    info.addMember(m_url);
+#endif
+    info.addMember(m_generatedFilename);
 }
 
 static void encodeElement(Encoder& encoder, const FormDataElement& element)
