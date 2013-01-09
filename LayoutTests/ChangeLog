@@ -1,3 +1,15 @@
+2013-01-09  Alexis Menard  <alexis@webkit.org>
+
+        Implement CSS computed style value for transition shorthand
+        https://bugs.webkit.org/show_bug.cgi?id=105035
+
+        Reviewed by Dean Jackson.
+
+        Uncomment existing tests to cover the new feature.
+
+        * transitions/transitions-parsing-expected.txt:
+        * transitions/transitions-parsing.html:
+
 2013-01-09  Shinya Kawanaka  <shinyak@chromium.org>
 
         [Shadow DOM]: ShadowRoot wrong nodeName attribute
