@@ -1223,14 +1223,12 @@ int64_t ObjectStoreMetaDataKey::objectStoreId() const
 }
 unsigned char ObjectStoreMetaDataKey::metaDataType() const
 {
-    ASSERT(m_metaDataType >= 0);
     return m_metaDataType;
 }
 
 int ObjectStoreMetaDataKey::compare(const ObjectStoreMetaDataKey& other)
 {
     ASSERT(m_objectStoreId >= 0);
-    ASSERT(m_metaDataType >= 0);
     if (int x = compareInts(m_objectStoreId, other.m_objectStoreId))
         return x;
     int64_t result = m_metaDataType - other.m_metaDataType;
