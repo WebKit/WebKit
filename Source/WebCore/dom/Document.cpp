@@ -1260,6 +1260,14 @@ void Document::setVisualUpdatesAllowed(bool visualUpdatesAllowed)
     if (!visualUpdatesAllowed)
         return;
 
+    FrameView* frameView = view();
+    bool needsLayout = frameView && renderer() && (frameView->layoutPending() || renderer()->needsLayout());
+    if (needsLayout) {
+        // There might be a layout pending, so make sure we don't update the screen with bogus data.
+        // The layout will actually update the compositing layers and repaint if needed.
+        return;
+    }
+
 #if USE(ACCELERATED_COMPOSITING)
     if (view())
         view()->updateCompositingLayersAfterLayout();

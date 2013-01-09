@@ -50,6 +50,7 @@
 #include "HTMLMarqueeElement.h"
 #include "HTMLNames.h"
 #include "RenderLayer.h"
+#include "RenderView.h"
 
 using namespace std;
 
@@ -254,7 +255,7 @@ void RenderMarquee::updateMarqueeStyle()
 
 void RenderMarquee::timerFired(Timer<RenderMarquee>*)
 {
-    if (m_layer->renderer()->needsLayout())
+    if (m_layer->renderer()->view()->needsLayout())
         return;
     
     if (m_reset) {
