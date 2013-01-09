@@ -400,3 +400,8 @@ webkit.org/b/98410 media/context-menu-actions.html [ Failure ]
 
 webkit.org/b/102201 fast/dom/Window/open-window-min-size.html [ Failure ]
 
+# Likely failing because of an old version of libsoup in the jhbuild.
+webkit.org/b/106407 http/tests/loading/basic-auth-resend-wrong-credentials.html [ Failure ]
+webkit.org/b/106407 http/tests/security/401-logout/401-logout.php [ Failure ]
+webkit.org/b/106407 http/tests/xmlhttprequest/failed-auth.html [ Failure ]
+webkit.org/b/106407 http/tests/xmlhttprequest/remember-bad-password.html [ Failure ]

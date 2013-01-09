@@ -1,5 +1,13 @@
 2013-01-08  Martin Robinson  <mrobinson@igalia.com>
 
+        [EFL] [WK2] Some authentication tests fail in WebKit2
+        https://bugs.webkit.org/show_bug.cgi?id=106407
+
+        * platform/efl-wk2/TestExpectations: Skip some tests failing for EFL
+        on WebKit2.
+
+2013-01-08  Martin Robinson  <mrobinson@igalia.com>
+
         [Mac] Authentication tests fail even after r139140
         https://bugs.webkit.org/show_bug.cgi?id=106405
 
