@@ -1,3 +1,17 @@
+2013-01-08  Justin Novosad  <junov@google.com>
+
+        Color bleeding with rounded rectangles on high dpi displays
+        https://bugs.webkit.org/show_bug.cgi?id=106373
+
+        Reviewed by Simon Fraser.
+
+        New layout test to verify that rounded rectangle corners do not
+        produce color bleeding on high dpi devices.
+
+        * fast/backgrounds/gradient-background-leakage-hidpi-expected.txt: Added.
+        * fast/backgrounds/gradient-background-leakage-hidpi.html: Added.
+        * platform/chromium-linux/fast/backgrounds/gradient-background-leakage-hidpi-expected.png: Added.
+
 2013-01-08  Filip Pizlo  <fpizlo@apple.com>
 
         DFG shouldn't treat the 'this' argument as being captured if a code block uses arguments

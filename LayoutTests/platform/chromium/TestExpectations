@@ -2771,6 +2771,9 @@ webkit.org/b/60136 [ Win ] http/tests/xmlviewer/dumpAsText/xmlviewer.xml [ Failu
 # New test added in r85454. Actual failure.
 webkit.org/b/91676 fast/js/mozilla/strict/assign-to-callee-name.html [ Failure ]
 
+# Test needing new baselines with fix for bug 106373
+webkit.org/b/106373 fast/backgrounds/gradient-background-leakage-hidpi.html [ Pass ImageOnlyFailure ]
+
 # Failure introduced by Chromium r83848.
 crbug.com/137938 [ Mac Android ] fast/url/ipv6.html [ Failure ]
 
