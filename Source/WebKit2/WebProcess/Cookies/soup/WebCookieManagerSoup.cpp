@@ -84,8 +84,6 @@ HTTPCookieAcceptPolicy WebCookieManager::platformGetHTTPCookieAcceptPolicy()
 
 void WebCookieManager::setCookiePersistentStorage(const String& storagePath, uint32_t storageType)
 {
-    ChildProcess::LocalTerminationDisabler terminationDisabler(*m_process);
-
     GRefPtr<SoupCookieJar> jar;
     switch (storageType) {
     case SoupCookiePersistentStorageText:
