@@ -115,9 +115,7 @@ WebInspector.DataGrid = function(columns, editCallback, deleteCallback)
 
     columnGroup.span = this._columnCount;
 
-    var cell = document.createElement("th");
-    cell.className = "corner";
-    headerRow.appendChild(cell);
+    headerRow.createChild("th", "corner");
 
     this._headerTableColumnGroup = columnGroup;
     this._headerTable.appendChild(this._headerTableColumnGroup);
@@ -126,12 +124,9 @@ WebInspector.DataGrid = function(columns, editCallback, deleteCallback)
     var fillerRow = document.createElement("tr");
     fillerRow.className = "filler";
 
-    for (var columnIdentifier in columns) {
-        var column = columns[columnIdentifier];
-        var td = document.createElement("td");
-        td.className = columnIdentifier + "-column";
-        fillerRow.appendChild(td);
-    }
+    for (var columnIdentifier in columns)
+        fillerRow.createChild("td", columnIdentifier + "-column");
+    fillerRow.createChild("td", "corner");
 
     this._dataTableColumnGroup = columnGroup.cloneNode(true);
     this._dataTable.appendChild(this._dataTableColumnGroup);
@@ -1069,6 +1064,8 @@ WebInspector.DataGridNode.prototype = {
             this._element.addStyleClass("revealed");
 
         this.createCells();
+        this._element.createChild("td", "corner");
+
         return this._element;
     },
 
