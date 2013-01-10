@@ -55,6 +55,9 @@ void WebKeyValueStorageManager::initialize(const WebProcessCreationParameters& p
 {
     StorageTracker::initializeTracker(parameters.localStorageDirectory, this);
     m_localStorageDirectory = parameters.localStorageDirectory;
+#if ENABLE(INDEXED_DATABASE)
+    m_indexedDBDatabaseDirectory = parameters.databaseDirectory;
+#endif
 }
 
 void WebKeyValueStorageManager::didReceiveMessage(CoreIPC::Connection* connection, CoreIPC::MessageID messageID, CoreIPC::MessageDecoder& decoder)

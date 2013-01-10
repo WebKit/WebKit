@@ -46,6 +46,9 @@ public:
     static const AtomicString& supplementName();
 
     const String& localStorageDirectory() const { return m_localStorageDirectory; }
+#if ENABLE(INDEXED_DATABASE)
+    const String& indexedDBDatabaseDirectory() const { return m_indexedDBDatabaseDirectory; }
+#endif
 
 private:
     // WebProcessSupplement
@@ -67,6 +70,9 @@ private:
 
     Vector<uint64_t> m_originsRequestCallbackIDs;
     String m_localStorageDirectory;
+#if ENABLE(INDEXED_DATABASE)
+    String m_indexedDBDatabaseDirectory;
+#endif
     WebProcess* m_process;
 };
 
