@@ -31,7 +31,7 @@
 #ifndef WebPluginContainer_h
 #define WebPluginContainer_h
 
-#include <public/WebCommon.h>
+#include "platform/WebCommon.h"
 
 struct NPObject;
 

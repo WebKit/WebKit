@@ -31,7 +31,7 @@
 #ifndef WebSharedWorkerRepository_h
 #define WebSharedWorkerRepository_h
 
-#include <public/WebCommon.h>
+#include "platform/WebCommon.h"
 
 namespace WebKit {
 

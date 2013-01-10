@@ -31,7 +31,7 @@
 #ifndef WebRuntimeFeatures_h
 #define WebRuntimeFeatures_h
 
-#include <public/WebCommon.h>
+#include "platform/WebCommon.h"
 
 namespace WebKit {
 

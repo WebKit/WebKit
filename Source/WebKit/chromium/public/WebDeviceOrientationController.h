@@ -26,7 +26,7 @@
 #ifndef WebDeviceOrientationController_h
 #define WebDeviceOrientationController_h
 
-#include <public/WebCommon.h>
+#include "platform/WebCommon.h"
 
 namespace WebCore { class DeviceOrientationController; }
 

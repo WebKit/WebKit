@@ -25,7 +25,7 @@
 #ifndef WebAudioSourceProvider_h
 #define WebAudioSourceProvider_h
 
-#include <public/WebVector.h>
+#include "platform/WebVector.h"
 
 namespace WebKit {
     

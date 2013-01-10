@@ -38,9 +38,9 @@
 #include "WebSecurityOrigin.h"
 #include "WebStorageQuotaType.h"
 #include "WebTextDirection.h"
-#include <public/WebCommon.h>
-#include <public/WebFileSystem.h>
-#include <public/WebURLError.h>
+#include "platform/WebCommon.h"
+#include "platform/WebFileSystem.h"
+#include "platform/WebURLError.h"
 
 #if WEBKIT_USING_V8
 #include <v8.h>

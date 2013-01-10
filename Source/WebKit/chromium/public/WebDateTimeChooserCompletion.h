@@ -26,7 +26,7 @@
 #ifndef WebDateTimeChooserCompletion_h
 #define WebDateTimeChooserCompletion_h
 
-#include <public/WebString.h>
+#include "platform/WebString.h"
 
 namespace WebKit {
 

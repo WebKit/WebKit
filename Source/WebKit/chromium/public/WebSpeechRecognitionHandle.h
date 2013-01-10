@@ -26,8 +26,8 @@
 #ifndef WebSpeechRecognitionHandle_h
 #define WebSpeechRecognitionHandle_h
 
-#include <public/WebCommon.h>
-#include <public/WebPrivatePtr.h>
+#include "platform/WebCommon.h"
+#include "platform/WebPrivatePtr.h"
 
 namespace WebCore {
 class SpeechRecognition;

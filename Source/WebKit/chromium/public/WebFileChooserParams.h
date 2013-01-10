@@ -32,8 +32,8 @@
 #define WebFileChooserParams_h
 
 #include "WebFileChooserCompletion.h"
-#include <public/WebString.h>
-#include <public/WebVector.h>
+#include "platform/WebString.h"
+#include "platform/WebVector.h"
 
 namespace WebKit {
 

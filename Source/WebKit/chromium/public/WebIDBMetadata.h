@@ -27,9 +27,9 @@
 #define WebIDBMetadata_h
 
 #include "WebIDBKeyPath.h"
-#include <public/WebCommon.h>
-#include <public/WebString.h>
-#include <public/WebVector.h>
+#include "platform/WebCommon.h"
+#include "platform/WebString.h"
+#include "platform/WebVector.h"
 
 namespace WebCore {
 struct IDBDatabaseMetadata;

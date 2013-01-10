@@ -31,7 +31,7 @@
 #ifndef WebFileSystemEntry_h
 #define WebFileSystemEntry_h
 
-#include <public/WebString.h>
+#include "platform/WebString.h"
 
 namespace WebKit {
 

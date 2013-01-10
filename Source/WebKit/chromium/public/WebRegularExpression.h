@@ -32,8 +32,8 @@
 #define WebRegularExpression_h
 
 #include "WebTextCaseSensitivity.h"
-#include <public/WebCommon.h>
-#include <public/WebNonCopyable.h>
+#include "platform/WebCommon.h"
+#include "platform/WebNonCopyable.h"
 
 namespace WebKit {
 

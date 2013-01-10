@@ -26,7 +26,7 @@
 #ifndef WebTestingSupport_h
 #define WebTestingSupport_h
 
-#include <public/WebCommon.h>
+#include "platform/WebCommon.h"
 
 namespace WebKit {
 

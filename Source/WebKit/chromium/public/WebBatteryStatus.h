@@ -26,7 +26,7 @@
 #ifndef WebBatteryStatus_h
 #define WebBatteryStatus_h
 
-#include <public/WebCommon.h>
+#include "platform/WebCommon.h"
 
 namespace WebKit {
 

@@ -33,7 +33,7 @@
 
 #include "WebElement.h"
 #include "WebFormElement.h"
-#include <public/WebString.h>
+#include "platform/WebString.h"
 
 #if WEBKIT_IMPLEMENTATION
 namespace WebCore { class HTMLFormControlElement; }

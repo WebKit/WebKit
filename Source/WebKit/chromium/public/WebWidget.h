@@ -34,10 +34,10 @@
 #include "WebCompositionUnderline.h"
 #include "WebTextDirection.h"
 #include "WebTextInputInfo.h"
-#include <public/WebCanvas.h>
-#include <public/WebCommon.h>
-#include <public/WebRect.h>
-#include <public/WebSize.h>
+#include "platform/WebCanvas.h"
+#include "platform/WebCommon.h"
+#include "platform/WebRect.h"
+#include "platform/WebSize.h"
 
 namespace WebKit {
 

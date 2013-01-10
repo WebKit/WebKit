@@ -31,8 +31,8 @@
 #ifndef WebSettings_h
 #define WebSettings_h
 
-#include <public/WebCommon.h>
-#include <public/WebSize.h>
+#include "platform/WebCommon.h"
+#include "platform/WebSize.h"
 #include <unicode/uscript.h>
 
 namespace WebKit {

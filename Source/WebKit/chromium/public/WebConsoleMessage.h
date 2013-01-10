@@ -31,7 +31,7 @@
 #ifndef WebConsoleMessage_h
 #define WebConsoleMessage_h
 
-#include <public/WebString.h>
+#include "platform/WebString.h"
 
 namespace WebKit {
 

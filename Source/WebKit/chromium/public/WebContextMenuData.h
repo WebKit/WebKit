@@ -34,11 +34,11 @@
 #include "WebHistoryItem.h"
 #include "WebMenuItemInfo.h"
 #include "WebNode.h"
-#include <public/WebPoint.h>
-#include <public/WebReferrerPolicy.h>
-#include <public/WebString.h>
-#include <public/WebURL.h>
-#include <public/WebVector.h>
+#include "platform/WebPoint.h"
+#include "platform/WebReferrerPolicy.h"
+#include "platform/WebString.h"
+#include "platform/WebURL.h"
+#include "platform/WebVector.h"
 
 #define WEBCONTEXT_MEDIATYPEFILE_DEFINED
 

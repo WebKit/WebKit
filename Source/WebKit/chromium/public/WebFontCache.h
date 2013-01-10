@@ -31,7 +31,7 @@
 #ifndef WebFontCache_h
 #define WebFontCache_h
 
-#include <public/WebCommon.h>
+#include "platform/WebCommon.h"
 
 namespace WebKit {
 

@@ -33,7 +33,7 @@
 
 #include "WebFileError.h"
 #include "WebFileSystemEntry.h"
-#include <public/WebVector.h>
+#include "platform/WebVector.h"
 
 namespace WebKit {
 

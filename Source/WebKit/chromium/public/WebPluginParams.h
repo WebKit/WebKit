@@ -31,9 +31,9 @@
 #ifndef WebPluginParams_h
 #define WebPluginParams_h
 
-#include <public/WebString.h>
-#include <public/WebURL.h>
-#include <public/WebVector.h>
+#include "platform/WebString.h"
+#include "platform/WebURL.h"
+#include "platform/WebVector.h"
 
 namespace WebKit {
 

@@ -31,7 +31,7 @@
 #ifndef WebNetworkStateNotifier_h
 #define WebNetworkStateNotifier_h
 
-#include <public/WebCommon.h>
+#include "platform/WebCommon.h"
 
 namespace WebKit {
 

@@ -32,7 +32,7 @@
 #define WebFormElement_h
 
 #include "WebElement.h"
-#include <public/WebVector.h>
+#include "platform/WebVector.h"
 
 #if WEBKIT_IMPLEMENTATION
 namespace WebCore { class HTMLFormElement; }

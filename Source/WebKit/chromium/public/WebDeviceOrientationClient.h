@@ -27,7 +27,7 @@
 #define WebDeviceOrientationClient_h
 
 #include "WebDeviceOrientation.h"
-#include <public/WebCommon.h>
+#include "platform/WebCommon.h"
 
 namespace WebKit {
 

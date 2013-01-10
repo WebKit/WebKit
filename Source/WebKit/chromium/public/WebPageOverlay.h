@@ -29,8 +29,8 @@
 #ifndef WebPageOverlay_h
 #define WebPageOverlay_h
 
-#include <public/WebCanvas.h>
-#include <public/WebRect.h>
+#include "platform/WebCanvas.h"
+#include "platform/WebRect.h"
 
 namespace WebKit {
 

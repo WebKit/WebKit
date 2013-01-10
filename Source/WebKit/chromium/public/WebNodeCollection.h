@@ -31,7 +31,7 @@
 #ifndef WebNodeCollection_h
 #define WebNodeCollection_h
 
-#include <public/WebCommon.h>
+#include "platform/WebCommon.h"
 
 namespace WebCore { class HTMLCollection; }
 #if WEBKIT_IMPLEMENTATION

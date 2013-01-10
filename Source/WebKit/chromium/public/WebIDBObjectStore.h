@@ -32,8 +32,8 @@
 #include "WebIDBCursor.h"
 #include "WebIDBKeyPath.h"
 #include "WebIDBTransaction.h"
-#include <public/WebCommon.h>
-#include <public/WebString.h>
+#include "platform/WebCommon.h"
+#include "platform/WebString.h"
 
 namespace WebKit {
 

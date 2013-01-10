@@ -26,8 +26,8 @@
 #ifndef WebColorChooserClient_h
 #define WebColorChooserClient_h
 
-#include <public/WebColor.h>
-#include <public/WebCommon.h>
+#include "platform/WebColor.h"
+#include "platform/WebCommon.h"
 
 namespace WebKit {
 

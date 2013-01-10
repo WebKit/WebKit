@@ -31,8 +31,8 @@
 #ifndef WebSecurityPolicy_h
 #define WebSecurityPolicy_h
 
-#include <public/WebCommon.h>
-#include <public/WebReferrerPolicy.h>
+#include "platform/WebCommon.h"
+#include "platform/WebReferrerPolicy.h"
 
 namespace WebKit {
 

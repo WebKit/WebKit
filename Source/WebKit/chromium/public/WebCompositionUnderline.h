@@ -31,7 +31,7 @@
 #ifndef WebCompositionUnderline_h
 #define WebCompositionUnderline_h
 
-#include <public/WebColor.h>
+#include "platform/WebColor.h"
 
 namespace WebKit {
 

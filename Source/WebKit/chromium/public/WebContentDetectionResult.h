@@ -27,8 +27,8 @@
 #define WebContentDetectionResult_h
 
 #include "WebRange.h"
-#include <public/WebString.h>
-#include <public/WebURL.h>
+#include "platform/WebString.h"
+#include "platform/WebURL.h"
 
 namespace WebKit {
 

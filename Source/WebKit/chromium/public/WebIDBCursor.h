@@ -29,9 +29,9 @@
 #include "WebExceptionCode.h"
 #include "WebIDBCallbacks.h"
 #include "WebIDBKey.h"
+#include "platform/WebCommon.h"
 #include "platform/WebSerializedScriptValue.h"
-#include <public/WebCommon.h>
-#include <public/WebString.h>
+#include "platform/WebString.h"
 
 namespace WebKit {
 

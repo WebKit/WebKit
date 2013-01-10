@@ -31,7 +31,7 @@
 #ifndef WebAccessibilityRole_h
 #define WebAccessibilityRole_h
 
-#include <public/WebCommon.h>
+#include "platform/WebCommon.h"
 
 namespace WebKit {
 

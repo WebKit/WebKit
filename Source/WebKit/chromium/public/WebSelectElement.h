@@ -33,7 +33,7 @@
 
 #include "WebFormControlElement.h"
 #include "WebOptionElement.h"
-#include <public/WebVector.h>
+#include "platform/WebVector.h"
 
 #if WEBKIT_IMPLEMENTATION
 namespace WebCore { class HTMLSelectElement; }

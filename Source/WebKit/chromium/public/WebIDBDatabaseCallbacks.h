@@ -27,8 +27,8 @@
 #define WebIDBDatabaseCallbacks_h
 
 #include "WebIDBDatabaseError.h"
-#include <public/WebCommon.h>
-#include <public/WebString.h>
+#include "platform/WebCommon.h"
+#include "platform/WebString.h"
 
 namespace WebKit {
 

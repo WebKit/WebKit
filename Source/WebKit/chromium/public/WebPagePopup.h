@@ -32,7 +32,7 @@
 #define WebPagePopup_h
 
 #include "WebWidget.h"
-#include <public/WebCommon.h>
+#include "platform/WebCommon.h"
 
 namespace WebKit {
 

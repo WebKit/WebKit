@@ -33,9 +33,9 @@
 
 #include "WebNavigationPolicy.h"
 #include "WebScreenInfo.h"
-#include <public/WebCommon.h>
+#include "platform/WebCommon.h"
+#include "platform/WebRect.h"
 #include <public/WebLayerTreeView.h>
-#include <public/WebRect.h>
 
 namespace WebKit {
 

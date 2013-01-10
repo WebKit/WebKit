@@ -27,7 +27,7 @@
 #define WebSpeechRecognizer_h
 
 #include "WebSpeechRecognitionHandle.h"
-#include <public/WebCommon.h>
+#include "platform/WebCommon.h"
 
 namespace WebKit {
 

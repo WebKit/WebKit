@@ -34,8 +34,8 @@
 #include "WebDraggableRegion.h"
 #include "WebNode.h"
 #include "WebSecurityOrigin.h"
-#include <public/WebReferrerPolicy.h>
-#include <public/WebVector.h>
+#include "platform/WebReferrerPolicy.h"
+#include "platform/WebVector.h"
 
 #if WEBKIT_IMPLEMENTATION
 namespace WebCore {

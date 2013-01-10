@@ -31,7 +31,7 @@
 #ifndef WebStorageEventDispatcher_h
 #define WebStorageEventDispatcher_h
 
-#include <public/WebString.h>
+#include "platform/WebString.h"
 
 namespace WebKit {
 

@@ -31,9 +31,9 @@
 #ifndef WebFont_h
 #define WebFont_h
 
-#include <public/WebCanvas.h>
-#include <public/WebColor.h>
-#include <public/WebCommon.h>
+#include "platform/WebCanvas.h"
+#include "platform/WebColor.h"
+#include "platform/WebCommon.h"
 
 namespace WebKit {
 

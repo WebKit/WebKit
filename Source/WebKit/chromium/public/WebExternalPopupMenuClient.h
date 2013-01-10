@@ -31,7 +31,7 @@
 #ifndef WebExternalPopupMenuClient_h
 #define WebExternalPopupMenuClient_h
 
-#include <public/WebVector.h>
+#include "platform/WebVector.h"
 
 namespace WebKit {
 

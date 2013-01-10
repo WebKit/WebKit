@@ -31,7 +31,7 @@
 #ifndef WebDeliveredIntentClient_h
 #define WebDeliveredIntentClient_h
 
-#include <public/WebCommon.h>
+#include "platform/WebCommon.h"
 
 namespace WebKit {
 

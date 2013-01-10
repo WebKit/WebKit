@@ -32,9 +32,9 @@
 #define WebCachedURLRequest_h
 
 #include "WebElement.h"
-#include <public/WebCommon.h>
-#include <public/WebPrivateOwnPtr.h>
-#include <public/WebString.h>
+#include "platform/WebCommon.h"
+#include "platform/WebPrivateOwnPtr.h"
+#include "platform/WebString.h"
 
 namespace WebCore { class CachedResourceRequest; }
 
