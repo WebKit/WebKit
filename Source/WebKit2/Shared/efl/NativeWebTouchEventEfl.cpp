@@ -24,11 +24,11 @@
  */
 
 #include "config.h"
+
+#if ENABLE(TOUCH_EVENTS)
 #include "NativeWebTouchEvent.h"
 
 #include "WebEventFactory.h"
-
-#if ENABLE(TOUCH_EVENTS)
 
 namespace WebKit {
 
