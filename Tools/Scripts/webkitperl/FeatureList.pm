@@ -44,7 +44,6 @@ BEGIN {
 my (
     $threeDRenderingSupport,
     $accelerated2DCanvasSupport,
-    $animationAPISupport,
     $batteryStatusSupport,
     $blobSupport,
     $canvasProxySupport,
@@ -157,9 +156,6 @@ my @features = (
 
     { option => "accelerated-2d-canvas", desc => "Toggle Accelerated 2D Canvas support",
       define => "ENABLE_ACCELERATED_2D_CANVAS", default => 0, value => \$accelerated2DCanvasSupport },
-
-    { option => "animation-api", desc => "Toggle Animation API support",
-      define => "ENABLE_ANIMATION_API", default => (isBlackBerry() || isEfl()), value => \$animationAPISupport },
 
     { option => "battery-status", desc => "Toggle Battery Status support",
       define => "ENABLE_BATTERY_STATUS", default => (isEfl() || isBlackBerry()), value => \$batteryStatusSupport },

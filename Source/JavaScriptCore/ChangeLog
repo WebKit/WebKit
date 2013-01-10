@@ -1,3 +1,16 @@
+2013-01-10  Zan Dobersek  <zandobersek@gmail.com>
+
+        Remove the ENABLE_ANIMATION_API feature define occurences
+        https://bugs.webkit.org/show_bug.cgi?id=106544
+
+        Reviewed by Simon Fraser.
+
+        The Animation API code was removed in r137243. The ENABLE_ANIMATION_API
+        feature define handling still lingers in various build systems and configurations
+        but is of no use, so it should be removed.
+
+        * Configurations/FeatureDefines.xcconfig:
+
 2013-01-09  Roger Fong  <roger_fong@apple.com>
 
         Unreviewed. Just move the JavaScriptCore exports file around in the vcproj to make things clearer.
