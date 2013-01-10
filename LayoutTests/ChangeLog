@@ -1,3 +1,11 @@
+2013-01-10  Dominik Röttsches  <dominik.rottsches@intel.com>
+
+        [EFL] Unreviewed gardening.
+
+        Marking three media tests as flaky crashers.
+
+        * platform/efl/TestExpectations:
+
 2013-01-10  Csaba Osztrogonác  <ossy@webkit.org>
 
         Unreviewed gardening, paint the bots green.

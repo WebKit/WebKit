@@ -820,6 +820,10 @@ webkit.org/b/105280 http/tests/xmlhttprequest/access-control-preflight-async-not
 
 webkit.org/b/105296 webaudio/delaynode-maxdelay.html [ Failure Pass ]
 
+webkit.org/b/106551 media/video-src-source.html [ Crash Pass ]
+webkit.org/b/106551 media/video-source-moved.html [ Crash Pass ]
+webkit.org/b/106551 media/video-source.html [ Crash Pass ]
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # FAILING TESTS
 #////////////////////////////////////////////////////////////////////////////////////////
@@ -1795,3 +1799,4 @@ webkit.org/b/106441 http/tests/misc/authentication-redirect-3/authentication-sen
 
 # Mark as missing image result, same as other ports. Test should be updated to text-based repaint test.
 webkit.org/b/103955 fast/repaint/caret-with-transformation.html [ Missing ]
+
