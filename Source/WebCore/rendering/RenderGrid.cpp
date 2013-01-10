@@ -136,6 +136,8 @@ void RenderGrid::computePreferredLogicalWidths()
 
         m_minPreferredLogicalWidth += minTrackBreadth;
         m_maxPreferredLogicalWidth += maxTrackBreadth;
+
+        // FIXME: This should add in the scrollbarWidth (e.g. see RenderFlexibleBox).
     }
 
     // FIXME: We should account for min / max logical width.

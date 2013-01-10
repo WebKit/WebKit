@@ -194,21 +194,12 @@ void RenderFlexibleBox::computePreferredLogicalWidths()
         }
 
         m_maxPreferredLogicalWidth = std::max(m_minPreferredLogicalWidth, m_maxPreferredLogicalWidth);
+
+        LayoutUnit scrollbarWidth = instrinsicScrollbarLogicalWidth();
+        m_maxPreferredLogicalWidth += scrollbarWidth;
+        m_minPreferredLogicalWidth += scrollbarWidth;
     }
 
-    LayoutUnit scrollbarWidth = 0;
-    if (hasOverflowClip()) {
-        if (isHorizontalWritingMode() && styleToUse->overflowY() == OSCROLL) {
-            ASSERT(layer()->hasVerticalScrollbar());
-            scrollbarWidth = verticalScrollbarWidth();
-        } else if (!isHorizontalWritingMode() && styleToUse->overflowX() == OSCROLL) {
-            ASSERT(layer()->hasHorizontalScrollbar());
-            scrollbarWidth = horizontalScrollbarHeight();
-        }
-    }
-
-    m_maxPreferredLogicalWidth += scrollbarWidth;
-    m_minPreferredLogicalWidth += scrollbarWidth;
 
     // FIXME: This should probably be checking for isSpecified since you should be able to use percentage, calc or viewport relative values for min-width.
     if (styleToUse->logicalMinWidth().isFixed() && styleToUse->logicalMinWidth().value() > 0) {

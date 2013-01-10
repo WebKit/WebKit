@@ -14,8 +14,10 @@ div {
 
 <body>
 Test that scrollbar width is added to the intrinsic width of different display types.
-<div style="top: 100px" data-expected-width=100 data-expected-height=100><span class="box"></span></div>
-<div style="display: -webkit-box; top:100px; left: 150px;" data-expected-width=100 data-expected-height=100><span class="box"></span></div>
+<div style="top: 100px"><span class="box"></span></div>
+<div style="top: 100px; left: 150px; display: -webkit-box;"><span class="box"></span></div>
+<div style="top: 100px; left: 300px; -webkit-writing-mode: vertical-rl; overflow-x: hidden" data-no-horizontal-scrollbar><span class="box"></span></div>
+<div style="top: 100px; left: 450px; overflow-y: hidden" data-no-vertical-scrollbar><span class="box"></span></div>
 
 <script src="../../resources/check-layout.js"></script>
 <script>
@@ -26,8 +28,14 @@ var scrollbarWidth = dummy.offsetWidth - dummy.clientWidth;
 document.body.removeChild(dummy);
 
 Array.prototype.forEach.call(document.querySelectorAll('div'), function(node) {
-    node.setAttribute('data-expected-width', 100 + scrollbarWidth);
-    node.setAttribute('data-expected-height', 100 + scrollbarWidth);
+    var width = 100;
+    if (!node.hasAttribute('data-no-vertical-scrollbar'))
+        width += scrollbarWidth;
+    node.setAttribute('data-expected-width', width);
+    var height = 100;
+    if (!node.hasAttribute('data-no-horizontal-scrollbar'))
+        height += scrollbarWidth;
+    node.setAttribute('data-expected-height', height);
 });
 checkLayout('body');
 </script>

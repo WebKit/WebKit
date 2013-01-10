@@ -622,6 +622,24 @@ int RenderBox::horizontalScrollbarHeight() const
     return includeHorizontalScrollbarSize() ? layer()->horizontalScrollbarHeight() : 0;
 }
 
+int RenderBox::instrinsicScrollbarLogicalWidth() const
+{
+    if (!hasOverflowClip())
+        return 0;
+
+    if (isHorizontalWritingMode() && style()->overflowY() == OSCROLL) {
+        ASSERT(layer()->hasVerticalScrollbar());
+        return verticalScrollbarWidth();
+    }
+
+    if (!isHorizontalWritingMode() && style()->overflowX() == OSCROLL) {
+        ASSERT(layer()->hasHorizontalScrollbar());
+        return horizontalScrollbarHeight();
+    }
+
+    return 0;
+}
+
 bool RenderBox::scroll(ScrollDirection direction, ScrollGranularity granularity, float multiplier, Node** stopNode)
 {
     RenderLayer* l = layer();

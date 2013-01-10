@@ -1,3 +1,14 @@
+2013-01-10  Ojan Vafai  <ojan@chromium.org>
+
+        Flexboxes incorrectly add the scrollbar width to the intrinsic width of fixed-width items
+        https://bugs.webkit.org/show_bug.cgi?id=106591
+
+        Reviewed by Levi Weintraub.
+
+        * fast/css/fixed-width-intrinsic-width-excludes-scrollbars-expected.txt: Added.
+        * fast/css/fixed-width-intrinsic-width-excludes-scrollbars.html: Added.
+        * fast/css/positioned-overflow-scroll.html:
+
 2013-01-10  Zan Dobersek  <zandobersek@gmail.com>
 
         Unreviewed GTK gardening.

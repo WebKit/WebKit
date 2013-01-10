@@ -216,11 +216,8 @@ void RenderDeprecatedFlexibleBox::computePreferredLogicalWidths()
             calcHorizontalPrefWidths();
 
         m_maxPreferredLogicalWidth = max(m_minPreferredLogicalWidth, m_maxPreferredLogicalWidth);
-    }
 
-    if (hasOverflowClip() && style()->overflowY() == OSCROLL) {
-        layer()->setHasVerticalScrollbar(true);
-        LayoutUnit scrollbarWidth = verticalScrollbarWidth();
+        LayoutUnit scrollbarWidth = instrinsicScrollbarLogicalWidth();
         m_maxPreferredLogicalWidth += scrollbarWidth;
         m_minPreferredLogicalWidth += scrollbarWidth;
     }

@@ -5604,14 +5604,8 @@ void RenderBlock::computePreferredLogicalWidths()
                 m_minPreferredLogicalWidth = 0;
         }
 
-        int scrollbarWidth = 0;
-        // FIXME: This should only be done for horizontal writing mode.
-        // For vertical writing mode, this should check overflowX and use the horizontalScrollbarHeight.
-        if (hasOverflowClip() && styleToUse->overflowY() == OSCROLL) {
-            layer()->setHasVerticalScrollbar(true);
-            scrollbarWidth = verticalScrollbarWidth();
-            m_maxPreferredLogicalWidth += scrollbarWidth;
-        }
+        int scrollbarWidth = instrinsicScrollbarLogicalWidth();
+        m_maxPreferredLogicalWidth += scrollbarWidth;
 
         if (isTableCell()) {
             Length w = toRenderTableCell(this)->styleOrColLogicalWidth();
