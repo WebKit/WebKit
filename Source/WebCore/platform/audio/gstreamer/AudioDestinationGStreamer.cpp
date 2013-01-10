@@ -26,6 +26,7 @@
 #include "AudioSourceProvider.h"
 #include <wtf/gobject/GOwnPtr.h>
 #include "GRefPtrGStreamer.h"
+#include "Logging.h"
 #include "WebKitWebAudioSourceGStreamer.h"
 #include <gst/gst.h>
 #include <gst/pbutils/pbutils.h>
