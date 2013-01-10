@@ -1,3 +1,17 @@
+2013-01-10  Christophe Dumez  <christophe.dumez@intel.com>
+
+        [EFL][jhbuild] Use tarballs for gstreamer instead of git
+        https://bugs.webkit.org/show_bug.cgi?id=106552
+
+        Reviewed by Laszlo Gombos.
+
+        Use tarballs for gstreamer instead of git in EFL's jhbuild
+        to work around intermittent network issues on our build
+        bots. Tarballs are fully cached and require no network
+        operation if their checksum matches.
+
+        * efl/jhbuild.modules:
+
 2013-01-10  Ryosuke Niwa  <rniwa@webkit.org>
 
         Add Mac WK2 EWS bots

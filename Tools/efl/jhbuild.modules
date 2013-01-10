@@ -49,8 +49,8 @@
       href="ftp://xmlsoft.org"/> 
   <repository type="tarball" name="download.enlightenment.org"
       href="http://download.enlightenment.org"/>
-  <repository type="git" name="gstreamer"
-      href="git://anongit.freedesktop.org/git/gstreamer/"/>
+  <repository type="tarball" name="gstreamer"
+      href="http://gstreamer.freedesktop.org/src/"/>
 
   <autotools id="cairo" autogen-sh="configure">
     <dependencies>
@@ -305,14 +305,18 @@
   </autotools>
 
   <autotools id="gstreamer">
-    <branch repo="gstreamer" module="gstreamer" checkoutdir="gstreamer" tag="1.0.5"/>
+    <branch repo="gstreamer"
+            module="gstreamer/gstreamer-1.0.5.tar.xz" version="1.0.5"
+            hash="sha256:26c2827567f09a46d0a3bc1e7f8696b2ae72b047306539178079abae487c5b77"/>
   </autotools>
 
   <autotools id="gst-plugins-base" autogenargs="--disable-examples --enable-theora --enable-vorbis">
     <dependencies>
       <dep package="gstreamer"/>
     </dependencies>
-    <branch repo="gstreamer" module="gst-plugins-base" checkoutdir="gst-plugins-base" tag="1.0.5"/>
+    <branch repo="gstreamer"
+            module="gst-plugins-base/gst-plugins-base-1.0.5.tar.xz" version="1.0.5"
+            hash="sha256:37ce6e09b99ef3879111c861ee5090582b4fd4c764e81ab6eb2b2b4dd77d7173"/>
   </autotools>
 
   <autotools id="gst-plugins-good" autogenargs="--disable-examples --enable-pulse">
@@ -320,21 +324,27 @@
       <dep package="cairo"/>
       <dep package="gst-plugins-base"/>
     </dependencies>
-    <branch repo="gstreamer" module="gst-plugins-good" checkoutdir="gst-plugins-good" tag="1.0.5"/>
+    <branch repo="gstreamer"
+            module="gst-plugins-good/gst-plugins-good-1.0.5.tar.xz" version="1.0.5"
+            hash="sha256:53bd0b848e7896f1b22548ca4e8be56cf425e5100e121c472dff8272d5140bc5"/>
   </autotools>
 
   <autotools id="gst-plugins-bad" autogenargs="--disable-examples --enable-faad">
     <dependencies>
       <dep package="gst-plugins-base"/>
     </dependencies>
-    <branch repo="gstreamer" module="gst-plugins-bad" checkoutdir="gst-plugins-bad" tag="1.0.5"/>
+    <branch repo="gstreamer"
+            module="gst-plugins-bad/gst-plugins-bad-1.0.5.tar.xz" version="1.0.5"
+            hash="sha256:2e8f5b9a2fd274142d0a916b6425b9466028978b85858dc835dc80de744b276a"/>
   </autotools>
 
   <autotools id="gst-libav" autogenargs="--with-libav-extra-configure='--disable-yasm'">
     <dependencies>
       <dep package="gst-plugins-base"/>
     </dependencies>
-    <branch repo="gstreamer" module="gst-libav" checkoutdir="gst-libav" tag="1.0.5"/>
+    <branch repo="gstreamer"
+            module="gst-libav/gst-libav-1.0.5.tar.xz" version="1.0.5"
+            hash="sha256:aef8be665096b3a4e64424fb39d7c5da57faaaf95e9fea6c1bb44295d4fb32d5"/>
   </autotools> 
 
 </moduleset>
