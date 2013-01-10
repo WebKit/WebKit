@@ -1,5 +1,15 @@
 2013-01-09  Noel Gordon  <noel.gordon@gmail.com>
 
+        Update expectations for fast/forms/button-generated-content.html
+
+        Unreviewed gardening.
+
+        * fast/forms/button-generated-content-expected.txt: Renamed from LayoutTests/platform/chromium-mac/fast/forms/button-generated-content-expected.txt.
+        * platform/chromium-win-xp/fast/forms/button-generated-content-expected.png: Added.
+        * platform/mac/fast/forms/button-generated-content-expected.txt: Removed.
+
+2013-01-09  Noel Gordon  <noel.gordon@gmail.com>
+
         Update expectations for fast/forms/button-inner-block-reuse.html
 
         Unreviewed gardening.
