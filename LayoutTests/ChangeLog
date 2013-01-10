@@ -1,3 +1,10 @@
+2013-01-10  Dimitri Glazkov  <dglazkov@chromium.org>
+
+        [Chromium] Layout Test svg/dom/SVGScriptElement/script-onerror-bubbling.svg is a flaky timeout on all platforms.
+        https://bugs.webkit.org/show_bug.cgi?id=106598
+
+        * platform/chromium/TestExpectations: Expectatized.
+
 2013-01-10  Zan Dobersek  <zandobersek@gmail.com>
 
         Unreviewed GTK gardening.
