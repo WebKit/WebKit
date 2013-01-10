@@ -729,8 +729,6 @@ void WebProcess::clearApplicationCache()
 #if ENABLE(NETSCAPE_PLUGIN_API) && !ENABLE(PLUGIN_PROCESS)
 void WebProcess::getSitesWithPluginData(const Vector<String>& pluginPaths, uint64_t callbackID)
 {
-    LocalTerminationDisabler terminationDisabler(*this);
-
     HashSet<String> sitesSet;
 
 #if ENABLE(NETSCAPE_PLUGIN_API)
@@ -755,8 +753,6 @@ void WebProcess::getSitesWithPluginData(const Vector<String>& pluginPaths, uint6
 
 void WebProcess::clearPluginSiteData(const Vector<String>& pluginPaths, const Vector<String>& sites, uint64_t flags, uint64_t maxAgeInSeconds, uint64_t callbackID)
 {
-    LocalTerminationDisabler terminationDisabler(*this);
-
 #if ENABLE(NETSCAPE_PLUGIN_API)
     for (size_t i = 0; i < pluginPaths.size(); ++i) {
         RefPtr<NetscapePluginModule> netscapePluginModule = NetscapePluginModule::getOrCreate(pluginPaths[i]);

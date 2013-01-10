@@ -221,8 +221,6 @@ void PluginProcess::createWebProcessConnection()
 
 void PluginProcess::getSitesWithData(uint64_t callbackID)
 {
-    LocalTerminationDisabler terminationDisabler(*this);
-
     Vector<String> sites;
     if (NetscapePluginModule* module = netscapePluginModule())
         sites = module->sitesWithData();
@@ -232,8 +230,6 @@ void PluginProcess::getSitesWithData(uint64_t callbackID)
 
 void PluginProcess::clearSiteData(const Vector<String>& sites, uint64_t flags, uint64_t maxAgeInSeconds, uint64_t callbackID)
 {
-    LocalTerminationDisabler terminationDisabler(*this);
-
     if (NetscapePluginModule* module = netscapePluginModule()) {
         if (sites.isEmpty()) {
             // Clear everything.

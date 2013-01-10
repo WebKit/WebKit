@@ -59,8 +59,6 @@ void WebApplicationCacheManager::didReceiveMessage(CoreIPC::Connection* connecti
 
 void WebApplicationCacheManager::getApplicationCacheOrigins(uint64_t callbackID)
 {
-    ChildProcess::LocalTerminationDisabler terminationDisabler(*m_childProcess);
-
     HashSet<RefPtr<SecurityOrigin>, SecurityOriginHash> origins;
 
     cacheStorage().getOriginsWithCache(origins);
@@ -86,8 +84,6 @@ void WebApplicationCacheManager::getApplicationCacheOrigins(uint64_t callbackID)
 
 void WebApplicationCacheManager::deleteEntriesForOrigin(const SecurityOriginData& originData)
 {
-    ChildProcess::LocalTerminationDisabler terminationDisabler(*m_childProcess);
-
     RefPtr<SecurityOrigin> origin = SecurityOrigin::create(originData.protocol, originData.host, originData.port);
     if (!origin)
         return;
@@ -97,15 +93,11 @@ void WebApplicationCacheManager::deleteEntriesForOrigin(const SecurityOriginData
 
 void WebApplicationCacheManager::deleteAllEntries()
 {
-    ChildProcess::LocalTerminationDisabler terminationDisabler(*m_childProcess);
-
     cacheStorage().deleteAllEntries();
 }
 
 void WebApplicationCacheManager::setAppCacheMaximumSize(uint64_t size)
 {
-    ChildProcess::LocalTerminationDisabler terminationDisabler(*m_childProcess);
-
     cacheStorage().setMaximumSize(size);
 }
 

@@ -54,8 +54,6 @@ void WebMediaCacheManager::didReceiveMessage(CoreIPC::Connection* connection, Co
 
 void WebMediaCacheManager::getHostnamesWithMediaCache(uint64_t callbackID)
 {
-    ChildProcess::LocalTerminationDisabler terminationDisabler(*m_process);
-
     Vector<String> mediaCacheHostnames;
 
 #if ENABLE(VIDEO)
@@ -67,8 +65,6 @@ void WebMediaCacheManager::getHostnamesWithMediaCache(uint64_t callbackID)
 
 void WebMediaCacheManager::clearCacheForHostname(const String& hostname)
 {
-    ChildProcess::LocalTerminationDisabler terminationDisabler(*m_process);
-
 #if ENABLE(VIDEO)
     HTMLMediaElement::clearMediaCacheForSite(hostname);
 #endif
@@ -76,8 +72,6 @@ void WebMediaCacheManager::clearCacheForHostname(const String& hostname)
 
 void WebMediaCacheManager::clearCacheForAllHostnames()
 {
-    ChildProcess::LocalTerminationDisabler terminationDisabler(*m_process);
-
 #if ENABLE(VIDEO)
     HTMLMediaElement::clearMediaCache();
 #endif

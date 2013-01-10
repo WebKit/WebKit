@@ -1,3 +1,45 @@
+2013-01-09  Alexey Proskuryakov  <ap@apple.com>
+
+        [WK2] Get rid of LocalTerminationDisabler
+        https://bugs.webkit.org/show_bug.cgi?id=106501
+
+        Reviewed by Anders Carlsson.
+
+        LocalTerminationDisabler is no-op - termination timer can't fire inside its scope
+        even if not stopped.
+
+        * PluginProcess/PluginProcess.cpp:
+        (WebKit::PluginProcess::getSitesWithData):
+        (WebKit::PluginProcess::clearSiteData):
+        * Shared/ChildProcess.h:
+        * WebProcess/ApplicationCache/WebApplicationCacheManager.cpp:
+        (WebKit::WebApplicationCacheManager::getApplicationCacheOrigins):
+        (WebKit::WebApplicationCacheManager::deleteEntriesForOrigin):
+        (WebKit::WebApplicationCacheManager::deleteAllEntries):
+        (WebKit::WebApplicationCacheManager::setAppCacheMaximumSize):
+        * WebProcess/KeyValueStorage/WebKeyValueStorageManager.cpp:
+        (WebKit::WebKeyValueStorageManager::getKeyValueStorageOrigins):
+        (WebKit::WebKeyValueStorageManager::deleteEntriesForOrigin):
+        (WebKit::WebKeyValueStorageManager::deleteAllEntries):
+        * WebProcess/MediaCache/WebMediaCacheManager.cpp:
+        (WebKit::WebMediaCacheManager::getHostnamesWithMediaCache):
+        (WebKit::WebMediaCacheManager::clearCacheForHostname):
+        (WebKit::WebMediaCacheManager::clearCacheForAllHostnames):
+        * WebProcess/ResourceCache/WebResourceCacheManager.cpp:
+        (WebKit::WebResourceCacheManager::getCacheOrigins):
+        (WebKit::WebResourceCacheManager::clearCacheForOrigin):
+        (WebKit::WebResourceCacheManager::clearCacheForAllOrigins):
+        * WebProcess/WebCoreSupport/WebDatabaseManager.cpp:
+        (WebKit::WebDatabaseManager::getDatabasesByOrigin):
+        (WebKit::WebDatabaseManager::getDatabaseOrigins):
+        (WebKit::WebDatabaseManager::deleteDatabaseWithNameForOrigin):
+        (WebKit::WebDatabaseManager::deleteDatabasesForOrigin):
+        (WebKit::WebDatabaseManager::deleteAllDatabases):
+        (WebKit::WebDatabaseManager::setQuotaForOrigin):
+        * WebProcess/WebProcess.cpp:
+        (WebKit::WebProcess::getSitesWithPluginData):
+        (WebKit::WebProcess::clearPluginSiteData):
+
 2013-01-09  Kiran Muppala  <cmuppala@apple.com>
 
         Add user defaults to override system proxy settings for NetworkProcess on Mac

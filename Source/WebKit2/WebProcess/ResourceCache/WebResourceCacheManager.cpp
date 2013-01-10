@@ -59,8 +59,6 @@ void WebResourceCacheManager::didReceiveMessage(CoreIPC::Connection* connection,
 
 void WebResourceCacheManager::getCacheOrigins(uint64_t callbackID) const
 {
-    ChildProcess::LocalTerminationDisabler terminationDisabler(*m_process);
-
     MemoryCache::SecurityOriginSet origins;
     memoryCache()->getOriginsWithCache(origins);
 
@@ -96,8 +94,6 @@ void WebResourceCacheManager::getCacheOrigins(uint64_t callbackID) const
 
 void WebResourceCacheManager::clearCacheForOrigin(SecurityOriginData originData, uint32_t cachesToClear) const
 {
-    ChildProcess::LocalTerminationDisabler terminationDisabler(*m_process);
-
 #if USE(CFURLCACHE)
     ResourceCachesToClear resourceCachesToClear = static_cast<ResourceCachesToClear>(cachesToClear);
 #else
@@ -122,8 +118,6 @@ void WebResourceCacheManager::clearCacheForOrigin(SecurityOriginData originData,
 
 void WebResourceCacheManager::clearCacheForAllOrigins(uint32_t cachesToClear) const
 {
-    ChildProcess::LocalTerminationDisabler terminationDisabler(*m_process);
-
     ResourceCachesToClear resourceCachesToClear = static_cast<ResourceCachesToClear>(cachesToClear);
     m_process->clearResourceCaches(resourceCachesToClear);
 }

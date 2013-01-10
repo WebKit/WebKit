@@ -52,23 +52,6 @@ public:
     void disableTermination();
     void enableTermination();
 
-    class LocalTerminationDisabler {
-    public:
-        explicit LocalTerminationDisabler(ChildProcess& childProcess)
-            : m_childProcess(childProcess)
-        {
-            m_childProcess.disableTermination();
-        }
-
-        ~LocalTerminationDisabler()
-        {
-            m_childProcess.enableTermination();
-        }
-
-    private:
-        ChildProcess& m_childProcess;
-    };
-
     void addMessageReceiver(CoreIPC::StringReference messageReceiverName, CoreIPC::MessageReceiver*);
     void addMessageReceiver(CoreIPC::StringReference messageReceiverName, uint64_t destinationID, CoreIPC::MessageReceiver*);
     void removeMessageReceiver(CoreIPC::StringReference messageReceiverName, uint64_t destinationID);

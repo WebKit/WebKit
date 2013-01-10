@@ -91,8 +91,6 @@ void WebKeyValueStorageManager::dispatchDidGetKeyValueStorageOrigins(const Vecto
 
 void WebKeyValueStorageManager::getKeyValueStorageOrigins(uint64_t callbackID)
 {
-    ChildProcess::LocalTerminationDisabler terminationDisabler(*m_process);
-
     if (!StorageTracker::tracker().originsLoaded()) {
         m_originsRequestCallbackIDs.append(callbackID);
         return;
@@ -123,8 +121,6 @@ void WebKeyValueStorageManager::dispatchDidModifyOrigin(const String&)
 
 void WebKeyValueStorageManager::deleteEntriesForOrigin(const SecurityOriginData& originData)
 {
-    ChildProcess::LocalTerminationDisabler terminationDisabler(*m_process);
-
     RefPtr<SecurityOrigin> origin = SecurityOrigin::create(originData.protocol, originData.host, originData.port);
     if (!origin)
         return;
@@ -134,7 +130,6 @@ void WebKeyValueStorageManager::deleteEntriesForOrigin(const SecurityOriginData&
 
 void WebKeyValueStorageManager::deleteAllEntries()
 {
-    ChildProcess::LocalTerminationDisabler terminationDisabler(*m_process);
     StorageTracker::tracker().deleteAllOrigins();
 }
 
