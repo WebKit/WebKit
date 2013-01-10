@@ -945,6 +945,19 @@ bool SelectorChecker::checkOneSelector(const SelectorCheckingContext& context, c
                 return true;
             return false;
 #endif
+
+        case CSSSelector::PseudoHorizontal:
+        case CSSSelector::PseudoVertical:
+        case CSSSelector::PseudoDecrement:
+        case CSSSelector::PseudoIncrement:
+        case CSSSelector::PseudoStart:
+        case CSSSelector::PseudoEnd:
+        case CSSSelector::PseudoDoubleButton:
+        case CSSSelector::PseudoSingleButton:
+        case CSSSelector::PseudoNoButton:
+        case CSSSelector::PseudoCornerPresent:
+            return false;
+
         case CSSSelector::PseudoUnknown:
         case CSSSelector::PseudoNotParsed:
         default:

@@ -1,3 +1,13 @@
+2013-01-09  Shinya Kawanaka  <shinyak@chromium.org>
+
+        Assert triggered in SelectorChecker::checkOneSelector when scrollbar (e.g. :horizontal) selector is specified.
+        https://bugs.webkit.org/show_bug.cgi?id=106414
+
+        Reviewed by Dimitri Glazkov.
+
+        * fast/css/scrollbar-crash-expected.txt: Added.
+        * fast/css/scrollbar-crash.html: Added.
+
 2013-01-09  Takashi Sakamoto  <tasak@google.com>
 
         border-radius with box-shadow is not rendered correctly
