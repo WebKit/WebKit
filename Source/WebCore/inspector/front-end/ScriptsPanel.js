@@ -310,7 +310,10 @@ WebInspector.ScriptsPanel.prototype = {
                 this.sidebarPanes.jsBreakpoints.highlightBreakpoint(breakpoint);
                 this.sidebarPanes.callstack.setStatus(WebInspector.UIString("Paused on a JavaScript breakpoint."));
             }
-            details.callFrames[0].createLiveLocation(didGetUILocation.bind(this));
+            if (details.callFrames.length) 
+                details.callFrames[0].createLiveLocation(didGetUILocation.bind(this));
+            else
+                console.warn("ScriptsPanel paused, but callFrames.length is zero."); // TODO remove this once we understand this case better
         }
 
         this._showDebuggerSidebar();
