@@ -271,10 +271,9 @@ ViewportAttributes computeViewportAttributes(ViewportArguments args, int desktop
     return args.resolve(initialViewportSize, deviceSize, desktopWidth);
 }
 
-float computeMinimumScaleFactorForContentContained(const ViewportAttributes& result, const IntSize& visibleViewport, const IntSize& contentsSize, float devicePixelRatio)
+float computeMinimumScaleFactorForContentContained(const ViewportAttributes& result, const IntSize& visibleViewport, const IntSize& contentsSize)
 {
-    FloatSize viewportSize = convertToUserSpace(visibleViewport, devicePixelRatio);
-
+    FloatSize viewportSize(visibleViewport);
     return max<float>(result.minimumScale, max(viewportSize.width() / contentsSize.width(), viewportSize.height() / contentsSize.height()));
 }
 

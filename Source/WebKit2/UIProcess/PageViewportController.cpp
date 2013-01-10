@@ -343,7 +343,7 @@ bool PageViewportController::updateMinimumScaleToFit(bool userInitiatedUpdate)
 
     bool currentlyScaledToFit = fuzzyCompare(m_pageScaleFactor, m_minimumScaleToFit, 0.0001);
 
-    float minimumScale = WebCore::computeMinimumScaleFactorForContentContained(m_rawAttributes, WebCore::roundedIntSize(m_viewportSize), WebCore::roundedIntSize(m_contentsSize), 1);
+    float minimumScale = WebCore::computeMinimumScaleFactorForContentContained(m_rawAttributes, WebCore::roundedIntSize(m_viewportSize), WebCore::roundedIntSize(m_contentsSize));
 
     if (minimumScale <= 0)
         return false;
