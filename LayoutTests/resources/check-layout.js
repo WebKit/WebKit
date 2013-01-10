@@ -5,6 +5,11 @@ if (window.testRunner)
 
 function insertAfter(nodeToAdd, referenceNode)
 {
+    if (referenceNode == document.body) {
+        document.body.appendChild(nodeToAdd);
+        return;
+    }
+
     if (referenceNode.nextSibling)
         referenceNode.parentNode.insertBefore(nodeToAdd, referenceNode.nextSibling);
     else

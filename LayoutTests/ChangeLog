@@ -1,3 +1,32 @@
+2013-01-10  Ojan Vafai  <ojan@chromium.org>
+
+        Convert fast/css/positioned-overflow-scroll.html to a check-layout.js test
+        https://bugs.webkit.org/show_bug.cgi?id=106585
+
+        Reviewed by Tony Chang.
+
+        This is in preparation for adding more cases to this test.
+
+        * fast/css/positioned-overflow-scroll-expected.txt: Added.
+        * fast/css/positioned-overflow-scroll.html:
+        * platform/chromium-android/fast/css/positioned-overflow-scroll-expected.png: Removed.
+        * platform/chromium-android/fast/css/positioned-overflow-scroll-expected.txt: Removed.
+        * platform/chromium-linux/fast/css/positioned-overflow-scroll-expected.png: Removed.
+        * platform/chromium-mac-lion/fast/css/positioned-overflow-scroll-expected.png: Removed.
+        * platform/chromium-mac-snowleopard/fast/css/positioned-overflow-scroll-expected.png: Removed.
+        * platform/chromium-mac/fast/css/positioned-overflow-scroll-expected.png: Removed.
+        * platform/chromium-win/fast/css/positioned-overflow-scroll-expected.png: Removed.
+        * platform/chromium/fast/css/positioned-overflow-scroll-expected.txt: Removed.
+        * platform/efl/fast/css/positioned-overflow-scroll-expected.png: Removed.
+        * platform/efl/fast/css/positioned-overflow-scroll-expected.txt: Removed.
+        * platform/gtk/fast/css/positioned-overflow-scroll-expected.png: Removed.
+        * platform/gtk/fast/css/positioned-overflow-scroll-expected.txt: Removed.
+        * platform/mac/fast/css/positioned-overflow-scroll-expected.png: Removed.
+        * platform/mac/fast/css/positioned-overflow-scroll-expected.txt: Removed.
+        * platform/qt/fast/css/positioned-overflow-scroll-expected.png: Removed.
+        * platform/qt/fast/css/positioned-overflow-scroll-expected.txt: Removed.
+        * resources/check-layout.js:
+
 2013-01-10  Robert Kroeger  <rjkroege@chromium.org>
 
         Manually revert http://trac.webkit.org/changeset/136012
