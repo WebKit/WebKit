@@ -1,3 +1,13 @@
+2013-01-09  Noel Gordon  <noel.gordon@gmail.com>
+
+        [Chromium] Add win mac expectations for r139256
+        https://bugs.webkit.org/show_bug.cgi?id=106404
+
+        Unreviewed gardening.
+
+        * platform/chromium-mac/fast/borders/border-radius-with-box-shadow-expected.png: Added.
+        * platform/chromium-win/fast/borders/border-radius-with-box-shadow-expected.png: Added.
+
 2013-01-09  Ryosuke Niwa  <rniwa@webkit.org>
 
         [JSC] REGRESSION(r135093): A form control with name=length overrides length property on form.elements
