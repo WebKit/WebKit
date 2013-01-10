@@ -154,6 +154,8 @@ fixedPositionCreatesStackingContext initial=false
 syncXHRInDocumentsEnabled initial=true
 cookieEnabled initial=true
 
+threadedHTMLParser initial=false, conditional=THREADED_HTML_PARSER
+
 # When enabled, window.blur() does not change focus, and
 # window.focus() only changes focus when invoked from the context that
 # created the window.

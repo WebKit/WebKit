@@ -1,3 +1,15 @@
+2013-01-10  Adam Barth  <abarth@webkit.org>
+
+        Add an ENABLE macro and a WebCore::Setting for the threaded parser
+        https://bugs.webkit.org/show_bug.cgi?id=106595
+
+        Reviewed by Benjamin Poulain.
+
+        Explicitly disable THREADED_HTML_PARSER for Chromium so that we can
+        more easily enable it locally.
+
+        * features.gypi:
+
 2013-01-10  John Mellor  <johnme@chromium.org>
 
         Fix scale of screen.width, window.outerWidth and @media device-width when page scale not applied in compositor.
