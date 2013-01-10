@@ -1,3 +1,12 @@
+2013-01-10  Zan Dobersek  <zandobersek@gmail.com>
+
+        Unreviewed GTK gardening.
+
+        Expanding the timeout expectation for fast/css/user-drag-none.html, the test
+        times out on both debug and release builds.
+
+        * platform/gtk/TestExpectations:
+
 2013-01-10  Ojan Vafai  <ojan@chromium.org>
 
         Flexboxes incorrectly add the scrollbar width to the intrinsic width of fixed-width items

@@ -686,7 +686,7 @@ Bug(GTK) http/tests/xmlhttprequest/timeout/xmlhttprequest-timeout-worker-twice.h
 
 webkit.org/b/46644 fast/text/large-text-composed-char-dos.html [ Timeout ]
 
-Bug(GTK) [ Debug ] fast/css/user-drag-none.html [ Timeout ]
+Bug(GTK) fast/css/user-drag-none.html [ Timeout ]
 
 webkit.org/b/61118 fullscreen/full-screen-keyboard-enabled.html [ Timeout ]
 
