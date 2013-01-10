@@ -1,3 +1,13 @@
+2013-01-10  Dan Beam  <dbeam@chromium.org>
+
+        Implement AutocompleteErrorEvent#reason
+        https://bugs.webkit.org/show_bug.cgi?id=105568
+
+        Reviewed by Adam Barth.
+
+        * public/WebFormElement.h: Added matching enum values for public chromium WebKit API.
+        * src/AssertMatchingEnums.cpp: Updated compile assert that WebKit and WebCore enums match.
+
 2013-01-10  Adam Barth  <abarth@webkit.org>
 
         Add an ENABLE macro and a WebCore::Setting for the threaded parser

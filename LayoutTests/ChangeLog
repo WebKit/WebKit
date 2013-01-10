@@ -1,3 +1,27 @@
+2013-01-10  Dan Beam  <dbeam@chromium.org>
+
+        Implement AutocompleteErrorEvent#reason
+        https://bugs.webkit.org/show_bug.cgi?id=105568
+
+        Added tests to verify event creation and global event constructor existence of AutocompleteErrorEvent
+        and updated the existing tests to make sure errors received are of the right type and have the right reason.
+
+        Reviewed by Adam Barth.
+
+        * fast/events/constructors/autocomplete-error-event-constructor-expected.txt: Added.
+        * fast/events/constructors/autocomplete-error-event-constructor.html: Added.
+        * fast/events/event-creation.html: Added new AutocompleteErrorEvent() test case.
+        * fast/forms/form-request-autocomplete.html: Updated 'autocompleteerror' listeners to check event.reason.
+        * fast/js/constructor-length.html: Added AutocompleteErrorEvent to list.
+        * fast/js/script-tests/global-constructors.js: Added AutocompleteErrorEvent to list.
+        * platform/blackberry/fast/js/constructor-length-expected.txt: Added expected ReferenceError.
+        * platform/chromium/fast/events/constructors/autocomplete-error-event-constructor-expected.txt: Added.
+        * platform/chromium/fast/forms/form-request-autocomplete-expected.txt: Updated passing expectations.
+        * platform/chromium/fast/js/constructor-length-expected.txt: Added expected 0 length result.
+        * platform/gtk/fast/js/constructor-length-expected.txt: Added expected ReferenceError.
+        * platform/mac/fast/js/constructor-length-expected.txt: Added expected ReferenceError.
+        * platform/qt/fast/js/constructor-length-expected.txt: Added expected ReferenceError.
+
 2013-01-10  Roger Fong  <roger_fong@apple.com>
 
         Unreviewed rebaselines. Apple Windows port.

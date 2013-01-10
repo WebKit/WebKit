@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../js/resources/js-test-pre.js"></script>
+</head>
+<body>
+<script>
+
+description("This tests the constructor for the AutocompleteErrorEvent DOM class.");
+
+if (!window.AutocompleteErrorEvent) {
+    testFailed('no AutocompleteErrorEvent');
+    finishJSTest();
+} else {
+    // No initializer is passed.
+    shouldBe("new AutocompleteErrorEvent('eventType').bubbles", "false");
+    shouldBe("new AutocompleteErrorEvent('eventType').cancelable", "false");
+    shouldBeEqualToString("new AutocompleteErrorEvent('eventType').reason", "");
+
+    // bubbles is passed.
+    shouldBe("new AutocompleteErrorEvent('eventType', { bubbles: false }).bubbles", "false");
+    shouldBe("new AutocompleteErrorEvent('eventType', { bubbles: true }).bubbles", "true");
+
+    // cancelable is passed.
+    shouldBe("new AutocompleteErrorEvent('eventType', { cancelable: false }).cancelable", "false");
+    shouldBe("new AutocompleteErrorEvent('eventType', { cancelable: true }).cancelable", "true");
+
+    // reason is passed.
+    shouldBeEqualToString("new AutocompleteErrorEvent('eventType', { reason: 'doremi' }).reason", "doremi");
+    shouldBeEqualToString("new AutocompleteErrorEvent('eventType', { reason: '' }).reason", "");
+    shouldBeEqualToString("new AutocompleteErrorEvent('eventType', { reason: undefined }).reason", "undefined");
+    shouldBeEqualToString("new AutocompleteErrorEvent('eventType', { reason: null }).reason", "null");
+    shouldBeEqualToString("new AutocompleteErrorEvent('eventType', { reason: false }).reason", "false");
+    shouldBeEqualToString("new AutocompleteErrorEvent('eventType', { reason: true }).reason", "true");
+    shouldBeEqualToString("new AutocompleteErrorEvent('eventType', { reason: 12345 }).reason", "12345");
+    shouldBeEqualToString("new AutocompleteErrorEvent('eventType', { reason: 18446744073709551615 }).reason", "18446744073709552000");
+    shouldBeEqualToString("new AutocompleteErrorEvent('eventType', { reason: NaN }).reason", "NaN");
+    shouldBeEqualToString("new AutocompleteErrorEvent('eventType', { reason: [] }).reason", "");
+    shouldBeEqualToString("new AutocompleteErrorEvent('eventType', { reason: [1, 2, 3] }).reason", "1,2,3");
+    shouldBeEqualToString("new AutocompleteErrorEvent('eventType', { reason: {doremi: 12345} }).reason", "[object Object]");
+    shouldBeEqualToString("new AutocompleteErrorEvent('eventType', { reason: {valueOf: function () { return 'doremi'; } } }).reason", "[object Object]");
+
+    // All initializers are passed.
+    shouldBe("new AutocompleteErrorEvent('eventType', { bubbles: true, cancelable: true, reason: 'doremi' }).bubbles", "true");
+    shouldBe("new AutocompleteErrorEvent('eventType', { bubbles: true, cancelable: true, reason: 'doremi' }).cancelable", "true");
+    shouldBeEqualToString("new AutocompleteErrorEvent('eventType', { bubbles: true, cancelable: true, reason: 'doremi' }).reason", "doremi");
+}
+
+</script>
+<script src="../../js/resources/js-test-post.js"></script>
+</body>
+</html>

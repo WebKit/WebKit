@@ -69,7 +69,13 @@ namespace WebKit {
         WEBKIT_EXPORT void getNamedElements(const WebString&, WebVector<WebNode>&);
         WEBKIT_EXPORT void getFormControlElements(WebVector<WebFormControlElement>&) const;
 
-        enum AutocompleteResult { AutocompleteResultSuccess, AutocompleteResultError };
+        enum AutocompleteResult {
+            AutocompleteResultSuccess,
+            AutocompleteResultError, // FIXME: Remove when not used any more.
+            AutocompleteResultErrorDisabled,
+            AutocompleteResultErrorCancel,
+            AutocompleteResultErrorInvalid,
+        };
         WEBKIT_EXPORT void finishRequestAutocomplete(WebFormElement::AutocompleteResult);
 
 #if WEBKIT_IMPLEMENTATION

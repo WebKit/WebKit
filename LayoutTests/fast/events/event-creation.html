@@ -223,6 +223,12 @@
     // shouldBeTrue("document.createEvent('OrientationEvent') instanceof window.Event");
     // shouldBeTrue("document.createEvent('OrientationEvent').constructor === window.Event");
 
+    // #if ENABLE(REQUEST_AUTOCOMPLETE)
+    // AutocompleteErrorEvent
+    // shouldBeTrue("document.createEvent('AutocompleteErrorEvent') instanceof window.AutocompleteErrorEvent");
+    // shouldBeTrue("document.createEvent('AutocompleteErrorEvent') instanceof window.Event");
+    // shouldBeTrue("document.createEvent('AutocompleteErrorEvent').constructor === window.AutocompleteErrorEvent");
+
 
     // We test both a hard coded set and the automated set below (using enumeration) to ensure that a constructor being removed
     // from the window is caught a regression.

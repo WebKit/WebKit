@@ -26,6 +26,7 @@
 #include "HTMLFormElement.h"
 
 #include "Attribute.h"
+#include "AutocompleteErrorEvent.h"
 #include "DOMFormData.h"
 #include "DOMWindow.h"
 #include "Document.h"
@@ -399,7 +400,7 @@ void HTMLFormElement::requestAutocomplete()
         return;
 
     if (!shouldAutocomplete() || !ScriptController::processingUserGesture()) {
-        finishRequestAutocomplete(AutocompleteResultError);
+        finishRequestAutocomplete(AutocompleteResultErrorDisabled);
         return;
     }
 
@@ -411,7 +412,18 @@ void HTMLFormElement::requestAutocomplete()
 
 void HTMLFormElement::finishRequestAutocomplete(AutocompleteResult result)
 {
-    RefPtr<Event> event(Event::create(result == AutocompleteResultSuccess ? eventNames().autocompleteEvent : eventNames().autocompleteerrorEvent, false, false));
+    RefPtr<Event> event;
+    if (result == AutocompleteResultSuccess)
+        event = Event::create(eventNames().autocompleteEvent, false, false);
+    else if (result == AutocompleteResultError) // FIXME: Remove when no longer used.
+        event = Event::create(eventNames().autocompleteerrorEvent, false, false);
+    else if (result == AutocompleteResultErrorDisabled)
+        event = AutocompleteErrorEvent::create("disabled");
+    else if (result == AutocompleteResultErrorCancel)
+        event = AutocompleteErrorEvent::create("cancel");
+    else if (result == AutocompleteResultErrorInvalid)
+        event = AutocompleteErrorEvent::create("invalid");
+
     event->setTarget(this);
     m_pendingAutocompleteEvents.append(event.release());
 

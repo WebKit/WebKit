@@ -5,6 +5,7 @@ On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE
 
 FAIL ArrayBuffer.length should be 1. Was 0.
 FAIL AudioContext.length should be 0. Threw exception ReferenceError: AudioContext is not defined
+FAIL AutocompleteErrorEvent.length should be 2. Was 0.
 FAIL BeforeLoadEvent.length should be 2. Was 0.
 FAIL Blob.length should be 2. Was 0.
 FAIL CloseEvent.length should be 2. Was 0.

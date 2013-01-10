@@ -5,6 +5,7 @@ On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE
 
 PASS ArrayBuffer.length is 1
 FAIL AudioContext.length should be 0. Threw exception ReferenceError: Can't find variable: AudioContext
+FAIL AutocompleteErrorEvent.length should be 2. Threw exception ReferenceError: Can't find variable: AutocompleteErrorEvent
 PASS BeforeLoadEvent.length is 2
 PASS Blob.length is 2
 PASS CloseEvent.length is 2

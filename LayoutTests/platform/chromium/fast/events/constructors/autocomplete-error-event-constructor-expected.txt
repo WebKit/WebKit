@@ -1,0 +1,32 @@
+This tests the constructor for the AutocompleteErrorEvent DOM class.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS new AutocompleteErrorEvent('eventType').bubbles is false
+PASS new AutocompleteErrorEvent('eventType').cancelable is false
+PASS new AutocompleteErrorEvent('eventType').reason is ""
+PASS new AutocompleteErrorEvent('eventType', { bubbles: false }).bubbles is false
+PASS new AutocompleteErrorEvent('eventType', { bubbles: true }).bubbles is true
+PASS new AutocompleteErrorEvent('eventType', { cancelable: false }).cancelable is false
+PASS new AutocompleteErrorEvent('eventType', { cancelable: true }).cancelable is true
+PASS new AutocompleteErrorEvent('eventType', { reason: 'doremi' }).reason is "doremi"
+PASS new AutocompleteErrorEvent('eventType', { reason: '' }).reason is ""
+PASS new AutocompleteErrorEvent('eventType', { reason: undefined }).reason is "undefined"
+PASS new AutocompleteErrorEvent('eventType', { reason: null }).reason is "null"
+PASS new AutocompleteErrorEvent('eventType', { reason: false }).reason is "false"
+PASS new AutocompleteErrorEvent('eventType', { reason: true }).reason is "true"
+PASS new AutocompleteErrorEvent('eventType', { reason: 12345 }).reason is "12345"
+PASS new AutocompleteErrorEvent('eventType', { reason: 18446744073709551615 }).reason is "18446744073709552000"
+PASS new AutocompleteErrorEvent('eventType', { reason: NaN }).reason is "NaN"
+PASS new AutocompleteErrorEvent('eventType', { reason: [] }).reason is ""
+PASS new AutocompleteErrorEvent('eventType', { reason: [1, 2, 3] }).reason is "1,2,3"
+PASS new AutocompleteErrorEvent('eventType', { reason: {doremi: 12345} }).reason is "[object Object]"
+PASS new AutocompleteErrorEvent('eventType', { reason: {valueOf: function () { return 'doremi'; } } }).reason is "[object Object]"
+PASS new AutocompleteErrorEvent('eventType', { bubbles: true, cancelable: true, reason: 'doremi' }).bubbles is true
+PASS new AutocompleteErrorEvent('eventType', { bubbles: true, cancelable: true, reason: 'doremi' }).cancelable is true
+PASS new AutocompleteErrorEvent('eventType', { bubbles: true, cancelable: true, reason: 'doremi' }).reason is "doremi"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

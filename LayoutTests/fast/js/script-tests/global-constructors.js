@@ -39,7 +39,8 @@ for (var x in constructorNames) {
         name == "Float32Array" ||
         name == "Float64Array" ||
         name == "FileError" ||
-        name == "FileReader")
+        name == "FileReader" ||
+        name == "AutocompleteErrorEvent")
         continue;
 
     if (name == "XMLDocument")

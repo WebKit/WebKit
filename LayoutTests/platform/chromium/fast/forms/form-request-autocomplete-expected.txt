@@ -4,7 +4,14 @@ For this test to pass, you should see all PASSED below.
 
 PASS no enumerable properties on HTMLFormElement
 PASS no enumerable properties on HTMLFormElement
-PASS got expected number of error events (2)
+PASS no enumerable properties on HTMLFormElement
+PASS event is an AutocompleteErrorEvent
+PASS got expected reason: disabled
+PASS event is an AutocompleteErrorEvent
+PASS got expected reason: disabled
+PASS event is an AutocompleteErrorEvent
+PASS got expected reason: disabled
+PASS got expected number of error events (3)
 PASS successfullyParsed is true
 
 TEST COMPLETE

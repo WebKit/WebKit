@@ -18,6 +18,7 @@ function runTests()
 
     checkDynamicAttributes();
     checkParsedAttributes();
+    checkNonUserGesture();
 }
 
 function checkForEnumerableProperties(form)
@@ -40,6 +41,9 @@ function checkParsedAttributes()
 
     var form = document.forms[0];
     checkForEnumerableProperties(form);
+
+    // Currently Chrome just immediately dispatches an error.
+    form.onautocompleteerror = errorWithReason('disabled');
     form.requestAutocomplete();
 }
 
@@ -51,7 +55,7 @@ function checkDynamicAttributes()
     checkForEnumerableProperties(form);
 
     form.autocomplete = 'off';
-    form.onautocompleteerror = onError;
+    form.onautocompleteerror = errorWithReason('disabled');
     form.requestAutocomplete();
 }
 
@@ -61,12 +65,29 @@ function checkNonUserGesture()
 
     var form = document.createElement('form');
     checkForEnumerableProperties(form);
-    form.onautocompleteerror = onError;
+    form.onautocompleteerror = errorWithReason('disabled');
 
     setTimeout(function()
     {
         form.requestAutocomplete();
     }, 0);
+}
+
+function errorWithReason(reason)
+{
+    return function(event) {
+        if (event instanceof AutocompleteErrorEvent)
+            testPassed('event is an AutocompleteErrorEvent');
+        else
+            testFailed('expected an AutocompleteErrorEvent');
+
+        if (event.reason == reason)
+            testPassed('got expected reason: ' + reason);
+        else
+            testFailed('wrong reason, expected: ' + reason + ', got: ' + event.reason);
+
+        onError();
+    };
 }
 
 function onError()
