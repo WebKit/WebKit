@@ -1,3 +1,17 @@
+2013-01-09  Ryosuke Niwa  <rniwa@webkit.org>
+
+        [JSC] REGRESSION(r135093): A form control with name=length overrides length property on form.elements
+        https://bugs.webkit.org/show_bug.cgi?id=105775
+
+        Reviewed by Sam Weinig.
+
+        Added a regression tests for all known HTMLCollection sublcasses except HTMLNameCollection,
+        which is used only to implement named getters on window and document objects and HTMLPropertiesCollection
+        since it's not enabled on all ports yet.
+
+        * fast/dom/collection-length-should-not-be-overridden-expected.txt: Added.
+        * fast/dom/collection-length-should-not-be-overridden.html: Added.
+
 2013-01-09  Shinya Kawanaka  <shinyak@chromium.org>
 
         Assert triggered in SelectorChecker::checkOneSelector when scrollbar (e.g. :horizontal) selector is specified.

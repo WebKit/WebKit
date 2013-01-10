@@ -402,7 +402,7 @@ sub GenerateGetOwnPropertySlotBody
     my $manualLookupGetterGeneration = sub {
         my $requiresManualLookup = $interface->extendedAttributes->{"IndexedGetter"} || $interface->extendedAttributes->{"NamedGetter"};
         if ($requiresManualLookup) {
-            push(@getOwnPropertySlotImpl, "    const ${namespaceMaybe}HashEntry* entry = ${className}Table.entry(exec, propertyName);\n");
+            push(@getOwnPropertySlotImpl, "    const ${namespaceMaybe}HashEntry* entry = getStaticValueSlotEntryWithoutCaching<$className>(exec, propertyName);\n");
             push(@getOwnPropertySlotImpl, "    if (entry) {\n");
             push(@getOwnPropertySlotImpl, "        slot.setCustom(thisObject, entry->propertyGetter());\n");
             push(@getOwnPropertySlotImpl, "        return true;\n");
