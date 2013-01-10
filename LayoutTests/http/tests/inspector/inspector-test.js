@@ -12,6 +12,23 @@ console.log = consoleOutputHook.bind(InspectorTest, "log");
 console.error = consoleOutputHook.bind(InspectorTest, "error");
 console.info = consoleOutputHook.bind(InspectorTest, "info");
 
+InspectorTest.Output = {   // override in window.initialize_yourName
+    testComplete: function() 
+    {
+        RuntimeAgent.evaluate("didEvaluateForTestInFrontend(" + InspectorTest.completeTestCallId + ", \"\")", "test");
+    },
+
+    addResult: function(text) 
+    {
+        InspectorTest.evaluateInPage("output(unescape('" + escape(text) + "'))");
+    },
+    
+    clearResults: function() 
+    {
+        InspectorTest.evaluateInPage("clearOutput()");
+    }
+};
+
 InspectorTest.completeTest = function()
 {
     function testDispatchQueueIsEmpty() {
@@ -20,7 +37,7 @@ InspectorTest.completeTest = function()
             setTimeout(testDispatchQueueIsEmpty, 10);
             return;
         }
-        RuntimeAgent.evaluate("didEvaluateForTestInFrontend(" + InspectorTest.completeTestCallId + ", \"\")", "test");
+        InspectorTest.Output.testComplete();
     }
     testDispatchQueueIsEmpty();
 }
@@ -73,22 +90,12 @@ InspectorTest.addResult = function(text)
 {
     results.push(text);
     if (resultsSynchronized)
-        addResultToPage(text);
+        InspectorTest.Output.addResult(text);
     else {
-        clearResults();
+        InspectorTest.Output.clearResults();
         for (var i = 0; i < results.length; ++i)
-            addResultToPage(results[i]);
+            InspectorTest.Output.addResult(results[i]);
         resultsSynchronized = true;
-    }
-
-    function clearResults()
-    {
-        InspectorTest.evaluateInPage("clearOutput()");
-    }
-
-    function addResultToPage(text)
-    {
-        InspectorTest.evaluateInPage("output(unescape('" + escape(text) + "'))");
     }
 }
 

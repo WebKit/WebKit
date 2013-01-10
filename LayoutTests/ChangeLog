@@ -1,3 +1,21 @@
+2013-01-10  John J. Barton  <johnjbarton@chromium.org>
+
+        Web Inspector: Refactor InspectorTest to create output interface
+        https://bugs.webkit.org/show_bug.cgi?id=106231
+
+        Reviewed by Pavel Feldman.
+
+        Refactor InspectorTest to extract InspectorTest.Output, the API 
+        used between InspectorTest and the test output reciever (the 
+        test-script page by default).
+
+        * http/tests/inspector/inspector-test.js:
+        (initialize_InspectorTest.InspectorTest.Output.testComplete):
+        (initialize_InspectorTest.InspectorTest.Output.addResult):
+        (initialize_InspectorTest.InspectorTest.Output.clearResults):
+        (initialize_InspectorTest.InspectorTest.completeTest):
+        (initialize_InspectorTest.InspectorTest.addResult):
+
 2013-01-10  Max Vujovic  <mvujovic@adobe.com>
 
         [CSS Filters] RenderLayerCompositor::addToOverlapMap should take into account the filters outsets (ie. blur and drop-shadow)
