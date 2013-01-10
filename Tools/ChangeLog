@@ -1,3 +1,24 @@
+2013-01-10  Julie Parent  <jparent@chromium.org>
+
+        Dashboard Cleanup: Do not generate the page if we are about to reload.
+        https://bugs.webkit.org/show_bug.cgi?id=106584
+
+        Reviewed by Dirk Pranke.
+
+        Move the logic to determine if we should generate the page into
+        parseParameters() since that is where we have the knowledge to
+        determine it, and return that value to handleLocationChange, 
+        rather than passing the changed parameters back to handleLocationChange
+        and having it make the decision.
+        
+        This is logically equivalent, save one case: when we are about to do
+        a reload, we know that there is no reason to generate the page.  Old
+        code was causing an extra page generation in this case.
+        
+        * TestResultServer/static-dashboards/dashboard_base.js:
+        (parseParameters):
+        (handleLocationChange):
+
 2013-01-10  Raphael Kubo da Costa  <raphael.kubo.da.costa@intel.com>
 
         [jhbuild] Use the "configure" script to build glib
