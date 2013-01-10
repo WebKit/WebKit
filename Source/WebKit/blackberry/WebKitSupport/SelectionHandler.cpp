@@ -855,10 +855,9 @@ static WebCore::IntPoint referencePoint(const VisiblePosition& position, const W
     // entire region (which is already in frame coordinates so doesn't need
     // adjusting).
     WebCore::IntRect startCaretBounds(position.absoluteCaretBounds());
-    if (startCaretBounds.isEmpty())
+    startCaretBounds.move(framePosition.x(), framePosition.y());
+    if (startCaretBounds.isEmpty() || !boundingRect.contains(startCaretBounds))
         startCaretBounds = boundingRect;
-    else
-        startCaretBounds.move(framePosition.x(), framePosition.y());
 
     return caretComparisonPointForRect(startCaretBounds, isStartCaret, isRTL);
 }

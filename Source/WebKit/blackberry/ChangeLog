@@ -1,3 +1,22 @@
+2013-01-10  Yongxin Dai  <yodai@rim.com>
+
+        [BlackBerry] Handle the case that start/end position is out of unclipped selection region
+        https://bugs.webkit.org/show_bug.cgi?id=106486
+
+        Reviewed by Rob Buis.
+
+        PR #270624
+        Unclipped selection region should cover start/end position of the selection.
+        Since we exclude hidden text when calculating unclipped selection region, the
+        start/end position can be out of unclipped selection region if it is for hidden
+        text. If that is the case, start/end handle will be invisible. To avoid invisible
+        handle, we take unclipped selection region as reference rectangle in the case.
+
+        Internally reviewed by Genevieve Mak, Mike Fenton
+
+        * WebKitSupport/SelectionHandler.cpp:
+        (BlackBerry::WebKit::referencePoint):
+
 2013-01-09  Genevieve Mak  <gmak@rim.com>
 
         [BlackBerry] Useless if statement check
