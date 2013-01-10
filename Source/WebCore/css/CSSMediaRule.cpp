@@ -181,6 +181,7 @@ void CSSMediaRule::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
 {
     MemoryClassInfo info(memoryObjectInfo, this, WebCoreMemoryTypes::CSS);
     CSSRule::reportMemoryUsage(memoryObjectInfo);
+    info.addMember(m_mediaRule);
     info.addMember(m_mediaCSSOMWrapper);
     info.addMember(m_childRuleCSSOMWrappers);
     info.addMember(m_ruleListCSSOMWrapper);

@@ -197,6 +197,7 @@ void HeapGraphSerializer::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) 
     info.addMember(m_baseToRealAddress);
     info.addMember(m_nodes);
     info.addMember(m_edges);
+    info.addMember(m_roots);
 }
 
 int HeapGraphSerializer::addString(const String& string)

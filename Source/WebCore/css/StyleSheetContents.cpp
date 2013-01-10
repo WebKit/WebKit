@@ -512,11 +512,13 @@ void StyleSheetContents::shrinkToFit()
 void StyleSheetContents::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
 {
     MemoryClassInfo info(memoryObjectInfo, this, WebCoreMemoryTypes::CSS);
+    info.addMember(m_ownerRule);
     info.addMember(m_originalURL);
     info.addMember(m_encodingFromCharsetRule);
     info.addMember(m_importRules);
     info.addMember(m_childRules);
     info.addMember(m_namespaces);
+    info.addMember(m_parserContext);
     info.addMember(m_clients);
 }
 

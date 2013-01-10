@@ -360,7 +360,9 @@ void DocumentLoader::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
 {
     MemoryClassInfo info(memoryObjectInfo, this, WebCoreMemoryTypes::Loader);
     info.addMember(m_frame);
+    info.addMember(m_cachedResourceLoader);
     info.addMember(m_mainResourceLoader);
+    info.addMember(m_mainResourceData);
     info.addMember(m_subresourceLoaders);
     info.addMember(m_multipartSubresourceLoaders);
     info.addMember(m_plugInStreamLoaders);
@@ -375,10 +377,18 @@ void DocumentLoader::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
     info.addMember(m_lastCheckedRequest);
     info.addMember(m_responses);
     info.addMember(m_pendingSubstituteResources);
+    info.addMember(m_substituteResourceDeliveryTimer);
+    info.addMember(m_archiveResourceCollection);
+#if ENABLE(WEB_ARCHIVE) || ENABLE(MHTML)
+    info.addMember(m_archive);
+    info.addMember(m_parsedArchiveData);
+#endif
     info.addMember(m_resourcesClientKnowsAbout);
     info.addMember(m_resourcesLoadedFromMemoryCacheForClientNotification);
     info.addMember(m_clientRedirectSourceForHistory);
-    info.addMember(m_mainResourceData);
+    info.addMember(m_iconLoadDecisionCallback);
+    info.addMember(m_iconDataCallback);
+    info.addMember(m_applicationCacheHost);
 }
 
 void DocumentLoader::receivedData(const char* data, int length)
