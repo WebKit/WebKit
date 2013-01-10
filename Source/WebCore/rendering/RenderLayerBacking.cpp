@@ -201,7 +201,9 @@ void RenderLayerBacking::adjustTileCacheCoverage()
             tileCoverage |= TiledBacking::CoverageForVerticalScrolling;
 
         if (ScrollingCoordinator* scrollingCoordinator = frame->page()->scrollingCoordinator()) {
-            if (scrollingCoordinator->shouldUpdateScrollLayerPositionOnMainThread())
+            // Ask our TiledBacking for large tiles unless the only reason we're main-thread-scrolling
+            // is a page overlay (find-in-page, the Web Inspector highlight mechanism, etc.).
+            if (scrollingCoordinator->mainThreadScrollingReasons() & ~ScrollingCoordinator::ForcedOnMainThread)
                 tileCoverage |= TiledBacking::CoverageForSlowScrolling;
         }
     }
