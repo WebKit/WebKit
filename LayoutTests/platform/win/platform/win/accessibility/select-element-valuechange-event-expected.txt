@@ -1,6 +1,0 @@
-Received value change event for object 'Option 2', value 'Option 2'.
-Received value change event for object 'Option 3', value 'Option 3'.
-This tests that we broadcast value change events when the selected item changes.
-
-
-

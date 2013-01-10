@@ -189,7 +189,7 @@ combobox2
 PASS document.activeElement == element2 is true
 PASS axElement2.role is axElement1.role
 PASS axElement2.roleDescription is axElement1.roleDescription
-FAIL axElement2.title should be 2. Was .
+PASS axElement2.title is axElement1.title
 PASS axElement2.description is axElement1.description
 PASS axElement2.helpText is axElement1.helpText
 PASS axElement2.stringValue is axElement1.stringValue
