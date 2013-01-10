@@ -2791,11 +2791,7 @@
 			>
 		</File>
 		<File
-			RelativePath=".\JavaScriptCore.def"
-			>
-		</File>
-		<File
-			RelativePath=".\JavaScriptCore_debug.def"
+			RelativePath=".\JavaScriptCoreExports.def"
 			>
 		</File>
 	</Files>
