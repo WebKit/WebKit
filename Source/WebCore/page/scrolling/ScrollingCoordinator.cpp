@@ -185,9 +185,16 @@ static void accumulateRendererTouchEventTargetRects(Vector<IntRect>& rects, cons
     if (parentRect.isEmpty() || renderer->isFloating() || renderer->isPositioned() || renderer->hasTransform()) {
         // FIXME: This method is O(N^2) as it walks the tree to the root for every renderer. RenderGeometryMap would fix this.
         IntRect r = enclosingIntRect(renderer->clippedOverflowRectForRepaint(0));
-        if (!r.isEmpty() && !parentRect.contains(r)) {
-            rects.append(r);
-            adjustedParentRect = r;
+        if (!r.isEmpty()) {
+            // Convert to the top-level view's coordinates.
+            ASSERT(renderer->document()->view());
+            for (ScrollView* view = renderer->document()->view(); view && view->parent(); view = view->parent())
+                r = view->convertToContainingView(r);
+
+            if (!parentRect.contains(r)) {
+                rects.append(r);
+                adjustedParentRect = r;
+            }
         }
     }
 

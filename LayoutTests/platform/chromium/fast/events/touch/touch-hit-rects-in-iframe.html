@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+#iframe1 {
+	position: absolute;
+	top: 100px;
+	left: 50px;
+	width: 200px;
+	height: 200px;
+}
+#iframe2 {
+	position: absolute;
+	top: 100px;
+	left: 400px;
+	width: 200px;
+	height: 200px;
+}
+</style>
+<body onload="runTest();">
+<div>This test validates that touch hit tests rects are created in the coordinates of the outermost view, not their containing view.
+This test only works in DumpRenderTree.</div>
+<div id="console"></div>
+<iframe id="iframe1" src="resources/frame-with-touch-handler.html"></iframe>
+<iframe id="iframe2"></iframe>
+<script>
+
+var iframeDocument = document.getElementById("iframe2").contentWindow.document;
+iframeDocument.open('text/html', 'replace');
+iframeDocument.write("<!DOCTYPE html>\n<html><body><iframe src=\"resources/frame-with-touch-handler.html\" style=\"position: relative; top: 50px;\"></iframe></body>");
+iframeDocument.close();
+
+function log(msg) {
+	var span = document.createElement("span");
+	document.getElementById("console").appendChild(span);
+    span.innerHTML = msg + '<br />';
+}
+
+function sortRects(a, b) {
+	return a.top - b.top;
+}
+
+function runTest() {
+	if (!window.testRunner)
+		return;
+	window.testRunner.dumpAsText();
+
+	rects = window.internals.touchEventTargetClientRects(document);
+	var sortedRects = new Array();
+	for (var i = 0; i < rects.length; ++i)
+		sortedRects[i] = rects[i];
+	sortedRects.sort(sortRects);
+	for (var i = 0; i < rects.length; ++i)
+		log("[" + i + "]: (" + sortedRects[i].left + ", " + sortedRects[i].top + ", " + sortedRects[i].width + ", " + sortedRects[i].height + ")");
+}
+</script>
+</body>
