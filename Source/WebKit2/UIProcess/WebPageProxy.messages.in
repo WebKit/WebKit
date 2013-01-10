@@ -175,6 +175,7 @@ messages -> WebPageProxy {
 #endif
 
     PageScaleFactorDidChange(double scaleFactor)
+    PageZoomFactorDidChange(double zoomFactor)
 
 #if PLATFORM(GTK)
     # Support for GTK+ platform keybindings

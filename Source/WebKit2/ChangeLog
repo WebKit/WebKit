@@ -1,5 +1,44 @@
 2013-01-10  Tim Horton  <timothy_horton@apple.com>
 
+        PDFPlugin: Cmd-/+ should affect PDF page scale
+        https://bugs.webkit.org/show_bug.cgi?id=103285
+        <rdar://problem/12710469>
+
+        Reviewed by Darin Adler.
+
+        Plugins which support handling page scale themselves should also handle
+        page zoom, as it is a very similar concept.
+
+        This patch disables text zoom in the case of a main-frame plugin which supports
+        page scale factor changes, as it is not needed in the PDFPlugin case
+        (we can't do text-only scale for PDF), but it could be added later if needed.
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::pageZoomFactorDidChange):
+        * UIProcess/WebPageProxy.h:
+        (WebPageProxy):
+        * UIProcess/WebPageProxy.messages.in:
+        Add WebPageProxy::pageZoomFactorDidChange, to notify WebPageProxy of
+        out-of-band page zoom factor changes (in this case, from PluginView).
+
+        * WebProcess/Plugins/PluginView.cpp:
+        (WebKit::PluginView::setPageScaleFactor):
+        Update WebPageProxy's notion of the current page zoom whenever PluginView
+        is notified of a page scale factor change.
+
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::setTextZoomFactor): We don't support text zoom in plugins, but
+        we also don't want it to silently act on the Frame if we have a plugin that
+        purports to handle page scale itself. Return early if this is the case.
+        (WebKit::WebPage::pageZoomFactor): For plugins that support page scale factor,
+        we equate page scale and page zoom. Return the PluginView's page scale factor
+        in place of the Frame's page zoom factor.
+        (WebKit::WebPage::setPageZoomFactor): Make page zoom changes in the aforementioned
+        case affect the PluginView's page scale.
+        (WebKit::WebPage::setPageAndTextZoomFactors): Ditto.
+
+2013-01-10  Tim Horton  <timothy_horton@apple.com>
+
         PDFPlugin: Header cleanup
         https://bugs.webkit.org/show_bug.cgi?id=106540
 

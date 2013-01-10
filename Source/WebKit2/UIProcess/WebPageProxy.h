@@ -528,6 +528,7 @@ public:
 #endif
 
     void pageScaleFactorDidChange(double);
+    void pageZoomFactorDidChange(double);
 
     void setMemoryCacheClientCallsEnabled(bool);
 

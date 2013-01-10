@@ -1136,6 +1136,10 @@ double WebPage::textZoomFactor() const
 
 void WebPage::setTextZoomFactor(double zoomFactor)
 {
+    PluginView* pluginView = pluginViewForFrame(m_page->mainFrame());
+    if (pluginView && pluginView->handlesPageScaleFactor())
+        return;
+
     Frame* frame = m_mainFrame->coreFrame();
     if (!frame)
         return;
@@ -1144,6 +1148,10 @@ void WebPage::setTextZoomFactor(double zoomFactor)
 
 double WebPage::pageZoomFactor() const
 {
+    PluginView* pluginView = pluginViewForFrame(m_page->mainFrame());
+    if (pluginView && pluginView->handlesPageScaleFactor())
+        return pluginView->pageScaleFactor();
+
     Frame* frame = m_mainFrame->coreFrame();
     if (!frame)
         return 1;
@@ -1152,6 +1160,12 @@ double WebPage::pageZoomFactor() const
 
 void WebPage::setPageZoomFactor(double zoomFactor)
 {
+    PluginView* pluginView = pluginViewForFrame(m_page->mainFrame());
+    if (pluginView && pluginView->handlesPageScaleFactor()) {
+        pluginView->setPageScaleFactor(zoomFactor, IntPoint());
+        return;
+    }
+
     Frame* frame = m_mainFrame->coreFrame();
     if (!frame)
         return;
@@ -1160,6 +1174,12 @@ void WebPage::setPageZoomFactor(double zoomFactor)
 
 void WebPage::setPageAndTextZoomFactors(double pageZoomFactor, double textZoomFactor)
 {
+    PluginView* pluginView = pluginViewForFrame(m_page->mainFrame());
+    if (pluginView && pluginView->handlesPageScaleFactor()) {
+        pluginView->setPageScaleFactor(pageZoomFactor, IntPoint());
+        return;
+    }
+
     Frame* frame = m_mainFrame->coreFrame();
     if (!frame)
         return;

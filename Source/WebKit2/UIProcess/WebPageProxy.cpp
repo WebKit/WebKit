@@ -1665,6 +1665,11 @@ void WebPageProxy::pageScaleFactorDidChange(double scaleFactor)
     m_pageScaleFactor = scaleFactor;
 }
 
+void WebPageProxy::pageZoomFactorDidChange(double zoomFactor)
+{
+    m_pageZoomFactor = zoomFactor;
+}
+
 void WebPageProxy::setMemoryCacheClientCallsEnabled(bool memoryCacheClientCallsEnabled)
 {
     if (!isValid())
