@@ -112,6 +112,12 @@ public:
 
     virtual double audioHardwareSampleRate() { return 0; }
     virtual size_t audioHardwareBufferSize() { return 0; }
+
+    // Creates a device for audio I/O.
+    // Pass in (numberOfInputChannels > 0) if live/local audio input is desired.
+    virtual WebAudioDevice* createAudioDevice(size_t bufferSize, unsigned numberOfInputChannels, unsigned numberOfChannels, double sampleRate, WebAudioDevice::RenderCallback*) { return 0; }
+
+    // FIXME: remove deprecated API once chromium switches over to new method.
     virtual WebAudioDevice* createAudioDevice(size_t bufferSize, unsigned numberOfChannels, double sampleRate, WebAudioDevice::RenderCallback*) { return 0; }
 
 

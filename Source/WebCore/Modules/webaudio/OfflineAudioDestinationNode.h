@@ -46,12 +46,15 @@ public:
     virtual ~OfflineAudioDestinationNode();
     
     // AudioNode   
-    virtual void initialize();
-    virtual void uninitialize();
-    virtual float sampleRate() const { return m_renderTarget->sampleRate(); }
+    virtual void initialize() OVERRIDE;
+    virtual void uninitialize() OVERRIDE;
 
-    void startRendering();
-    
+    // AudioDestinationNode
+    virtual void enableInput() OVERRIDE { };
+    virtual void startRendering() OVERRIDE;
+
+    virtual float sampleRate()  const { return m_renderTarget->sampleRate(); }
+
 private:
     OfflineAudioDestinationNode(AudioContext*, AudioBuffer* renderTarget);
 

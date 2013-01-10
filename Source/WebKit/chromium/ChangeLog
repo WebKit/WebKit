@@ -1,3 +1,18 @@
+2013-01-09  Chris Rogers  <crogers@google.com>
+
+        Allow live/local audio input to be enabled only when needed
+        https://bugs.webkit.org/show_bug.cgi?id=106490
+
+        Reviewed by Kenneth Russell.
+
+        * src/AudioDestinationChromium.cpp:
+        (WebCore):
+        (WebCore::AudioDestination::create):
+        (WebCore::AudioDestinationChromium::AudioDestinationChromium):
+        (WebCore::AudioDestinationChromium::render):
+        * src/AudioDestinationChromium.h:
+        (AudioDestinationChromium):
+
 2013-01-09  Yue Zhang  <zysxqn@google.com>
 
         [Chromium] Always enable autocomplete for password fields

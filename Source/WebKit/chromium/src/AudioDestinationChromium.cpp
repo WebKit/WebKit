@@ -44,19 +44,17 @@ const unsigned renderBufferSize = 128;
 // Size of the FIFO
 const size_t fifoSize = 8192;
 
-// FIXME: add support for multi-channel.
-const unsigned numberOfChannels = 2;
-
 // Factory method: Chromium-implementation
-PassOwnPtr<AudioDestination> AudioDestination::create(AudioIOCallback& callback, float sampleRate)
+PassOwnPtr<AudioDestination> AudioDestination::create(AudioIOCallback& callback, unsigned numberOfInputChannels, unsigned numberOfOutputChannels, float sampleRate)
 {
-    return adoptPtr(new AudioDestinationChromium(callback, sampleRate));
+    return adoptPtr(new AudioDestinationChromium(callback, numberOfInputChannels, numberOfOutputChannels, sampleRate));
 }
 
-AudioDestinationChromium::AudioDestinationChromium(AudioIOCallback& callback, float sampleRate)
+AudioDestinationChromium::AudioDestinationChromium(AudioIOCallback& callback, unsigned numberOfInputChannels, unsigned numberOfOutputChannels, float sampleRate)
     : m_callback(callback)
-    , m_inputBus(numberOfChannels, renderBufferSize)
-    , m_renderBus(numberOfChannels, renderBufferSize, false)
+    , m_numberOfOutputChannels(numberOfOutputChannels)
+    , m_inputBus(numberOfInputChannels, renderBufferSize)
+    , m_renderBus(numberOfOutputChannels, renderBufferSize, false)
     , m_sampleRate(sampleRate)
     , m_isPlaying(false)
 {
@@ -68,7 +66,8 @@ AudioDestinationChromium::AudioDestinationChromium(AudioIOCallback& callback, fl
     if (m_callbackBufferSize + renderBufferSize > fifoSize)
         return;
 
-    m_audioDevice = adoptPtr(WebKit::Platform::current()->createAudioDevice(m_callbackBufferSize, numberOfChannels, sampleRate, this));
+    // FIXME: switch to new API (with input channels) once chromium supports it.
+    m_audioDevice = adoptPtr(WebKit::Platform::current()->createAudioDevice(m_callbackBufferSize, numberOfOutputChannels, sampleRate, this));
     ASSERT(m_audioDevice);
 
     // Create a FIFO to handle the possibility of the callback size
@@ -76,10 +75,10 @@ AudioDestinationChromium::AudioDestinationChromium(AudioIOCallback& callback, fl
     // contains enough data, the data will be provided directly.
     // Otherwise, the FIFO will call the provider enough times to
     // satisfy the request for data.
-    m_fifo = adoptPtr(new AudioPullFIFO(*this, numberOfChannels, fifoSize, renderBufferSize));
+    m_fifo = adoptPtr(new AudioPullFIFO(*this, numberOfOutputChannels, fifoSize, renderBufferSize));
 
     // Input buffering.
-    m_inputFifo = adoptPtr(new AudioFIFO(numberOfChannels, fifoSize));
+    m_inputFifo = adoptPtr(new AudioFIFO(numberOfInputChannels, fifoSize));
 
     // If the callback size does not match the render size, then we need to buffer some
     // extra silence for the input. Otherwise, we can over-consume the input FIFO.
@@ -118,7 +117,7 @@ float AudioDestination::hardwareSampleRate()
 
 void AudioDestinationChromium::render(const WebVector<float*>& sourceData, const WebVector<float*>& audioData, size_t numberOfFrames)
 {
-    bool isNumberOfChannelsGood = audioData.size() == numberOfChannels;
+    bool isNumberOfChannelsGood = audioData.size() == m_numberOfOutputChannels;
     if (!isNumberOfChannelsGood) {
         ASSERT_NOT_REACHED();
         return;

@@ -42,7 +42,8 @@ class AudioIOCallback;
 
 class AudioDestination {
 public:
-    static PassOwnPtr<AudioDestination> create(AudioIOCallback&, float sampleRate);
+    // Pass in (numberOfInputChannels > 0) if live/local audio input is desired.
+    static PassOwnPtr<AudioDestination> create(AudioIOCallback&, unsigned numberOfInputChannels, unsigned numberOfOutputChannels, float sampleRate);
 
     virtual ~AudioDestination() { }
 

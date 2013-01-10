@@ -30,10 +30,13 @@
 
 #include "Logging.h"
 
+const unsigned EnabledInputChannels = 2;
+
 namespace WebCore {
     
 DefaultAudioDestinationNode::DefaultAudioDestinationNode(AudioContext* context)
     : AudioDestinationNode(context, AudioDestination::hardwareSampleRate())
+    , m_numberOfInputChannels(0)
 {
 }
 
@@ -44,25 +47,46 @@ DefaultAudioDestinationNode::~DefaultAudioDestinationNode()
 
 void DefaultAudioDestinationNode::initialize()
 {
+    ASSERT(isMainThread()); 
     if (isInitialized())
         return;
 
-    float hardwareSampleRate = AudioDestination::hardwareSampleRate();
-    LOG(WebAudio, ">>>> hardwareSampleRate = %f\n", hardwareSampleRate);
-    
-    m_destination = AudioDestination::create(*this, hardwareSampleRate);
-    
+    createDestination();
     AudioNode::initialize();
 }
 
 void DefaultAudioDestinationNode::uninitialize()
 {
+    ASSERT(isMainThread()); 
     if (!isInitialized())
         return;
 
     m_destination->stop();
+    m_numberOfInputChannels = 0;
 
     AudioNode::uninitialize();
+}
+
+void DefaultAudioDestinationNode::createDestination()
+{
+    float hardwareSampleRate = AudioDestination::hardwareSampleRate();
+    LOG(WebAudio, ">>>> hardwareSampleRate = %f\n", hardwareSampleRate);
+    
+    m_destination = AudioDestination::create(*this, m_numberOfInputChannels, numberOfChannels(), hardwareSampleRate);
+}
+
+void DefaultAudioDestinationNode::enableInput()
+{
+    ASSERT(isMainThread()); 
+    if (m_numberOfInputChannels != EnabledInputChannels) {
+        m_numberOfInputChannels = EnabledInputChannels;
+
+        if (isInitialized()) {
+            m_destination->stop();
+            createDestination();
+            m_destination->start();
+        }
+    }
 }
 
 void DefaultAudioDestinationNode::startRendering()
