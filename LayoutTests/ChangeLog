@@ -1,3 +1,13 @@
+2013-01-10  Alexander Pavlov  <apavlov@chromium.org>
+
+        CSSParser does not allow the absence of whitespace between "and" and "expression"
+        https://bugs.webkit.org/show_bug.cgi?id=106458
+
+        Reviewed by Antti Koivisto.
+
+        * fast/css/media-rule-no-whitespace-expected.txt: Added.
+        * fast/css/media-rule-no-whitespace.html: Added.
+
 2013-01-10  Florin Malita  <fmalita@chromium.org>
 
         [Chromium] Unreviewed gardening.

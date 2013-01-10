@@ -445,7 +445,7 @@ private:
     template <typename CharacterType>
     bool parseNthChildExtra();
     template <typename CharacterType>
-    inline void detectFunctionTypeToken(int);
+    inline bool detectFunctionTypeToken(int);
     template <typename CharacterType>
     inline void detectMediaQueryToken(int);
     template <typename CharacterType>

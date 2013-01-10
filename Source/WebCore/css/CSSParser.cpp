@@ -9479,43 +9479,59 @@ bool CSSParser::parseNthChildExtra()
 }
 
 template <typename CharacterType>
-inline void CSSParser::detectFunctionTypeToken(int length)
+inline bool CSSParser::detectFunctionTypeToken(int length)
 {
     ASSERT(length > 0);
     CharacterType* name = tokenStart<CharacterType>();
 
     switch (length) {
     case 3:
-        if (isASCIIAlphaCaselessEqual(name[0], 'n') && isASCIIAlphaCaselessEqual(name[1], 'o') && isASCIIAlphaCaselessEqual(name[2], 't'))
+        if (isASCIIAlphaCaselessEqual(name[0], 'n') && isASCIIAlphaCaselessEqual(name[1], 'o') && isASCIIAlphaCaselessEqual(name[2], 't')) {
             m_token = NOTFUNCTION;
-        else if (isASCIIAlphaCaselessEqual(name[0], 'u') && isASCIIAlphaCaselessEqual(name[1], 'r') && isASCIIAlphaCaselessEqual(name[2], 'l'))
+            return true;
+        }
+        if (isASCIIAlphaCaselessEqual(name[0], 'u') && isASCIIAlphaCaselessEqual(name[1], 'r') && isASCIIAlphaCaselessEqual(name[2], 'l')) {
             m_token = URI;
+            return true;
+        }
 #if ENABLE(VIDEO_TRACK)
-        else if (isASCIIAlphaCaselessEqual(name[0], 'c') && isASCIIAlphaCaselessEqual(name[1], 'u') && isASCIIAlphaCaselessEqual(name[2], 'e'))
+        if (isASCIIAlphaCaselessEqual(name[0], 'c') && isASCIIAlphaCaselessEqual(name[1], 'u') && isASCIIAlphaCaselessEqual(name[2], 'e')) {
             m_token = CUEFUNCTION;
+            return true;
+        }
 #endif
-        return;
+        return false;
 
     case 9:
-        if (isEqualToCSSIdentifier(name, "nth-child"))
+        if (isEqualToCSSIdentifier(name, "nth-child")) {
             m_parsingMode = NthChildMode;
-        return;
+            return true;
+        }
+        return false;
 
     case 11:
-        if (isEqualToCSSIdentifier(name, "nth-of-type"))
+        if (isEqualToCSSIdentifier(name, "nth-of-type")) {
             m_parsingMode = NthChildMode;
-        return;
+            return true;
+        }
+        return false;
 
     case 14:
-        if (isEqualToCSSIdentifier(name, "nth-last-child"))
+        if (isEqualToCSSIdentifier(name, "nth-last-child")) {
             m_parsingMode = NthChildMode;
-        return;
+            return true;
+        }
+        return false;
 
     case 16:
-        if (isEqualToCSSIdentifier(name, "nth-last-of-type"))
+        if (isEqualToCSSIdentifier(name, "nth-last-of-type")) {
             m_parsingMode = NthChildMode;
-        return;
+            return true;
+        }
+        return false;
     }
+
+    return false;
 }
 
 template <typename CharacterType>
@@ -9950,13 +9966,23 @@ restartAfterComment:
                     break;
             }
 #endif
-
             m_token = FUNCTION;
-            if (!hasEscape)
-                detectFunctionTypeToken<SrcCharacterType>(result - tokenStart<SrcCharacterType>());
-            ++currentCharacter<SrcCharacterType>();
-            ++result;
-            ++yylval->string.m_length;
+            bool shouldSkipParenthesis = true;
+            if (!hasEscape) {
+                bool detected = detectFunctionTypeToken<SrcCharacterType>(result - tokenStart<SrcCharacterType>());
+                if (!detected && m_parsingMode == MediaQueryMode) {
+                    // ... and(max-width: 480px) ... looks like a function, but in fact it is not,
+                    // so run more detection code in the MediaQueryMode.
+                    detectMediaQueryToken<SrcCharacterType>(result - tokenStart<SrcCharacterType>());
+                    shouldSkipParenthesis = false;
+                }
+            }
+
+            if (LIKELY(shouldSkipParenthesis)) {
+                ++currentCharacter<SrcCharacterType>();
+                ++result;
+                ++yylval->string.m_length;
+            }
 
             if (token() == URI) {
                 m_token = FUNCTION;
