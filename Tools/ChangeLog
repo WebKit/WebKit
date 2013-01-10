@@ -1,5 +1,20 @@
 2013-01-09  Julie Parent  <jparent@chromium.org>
 
+        Dashboard cleanup: Remove code for currentState and window.location.hash getting out of state
+        https://bugs.webkit.org/show_bug.cgi?id=106514
+
+        This is old code, as these can no longer get out of sync.
+        permmaLinkURLHash is generated from currentState, which is set only
+        from the location.  The commment about how these can get out of sync
+        refers to a function that no longer exists.
+        
+        Reviewed by Dirk Pranke.
+
+        * TestResultServer/static-dashboards/dashboard_base.js:
+        (handleLocationChange):
+
+2013-01-09  Julie Parent  <jparent@chromium.org>
+
         Dashboard Cleanup: Reload the page as soon as we know we need to.
         https://bugs.webkit.org/show_bug.cgi?id=106515
 

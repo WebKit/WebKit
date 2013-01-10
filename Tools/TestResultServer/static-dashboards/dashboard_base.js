@@ -514,15 +514,7 @@ function handleLocationChange()
     if (Object.keys(params).length)
         shouldGeneratePage = handleQueryParameterChange(params);
 
-    var newHash = permaLinkURLHash();
-    var winHash = window.location.hash || "#";
-    // Make sure the location is the same as the state we are using internally.
-    // These get out of sync if processQueryParamChange changed state.
-    if (newHash != winHash) {
-        // This will cause another hashchange, and when we loop
-        // back through here next time, we'll go through generatePage.
-        window.location.hash = newHash;
-    } else if (shouldGeneratePage)
+    if (shouldGeneratePage)
         generatePage();
 }
 
