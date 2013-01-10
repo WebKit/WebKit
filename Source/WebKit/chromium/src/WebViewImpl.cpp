@@ -2514,6 +2514,12 @@ bool WebViewImpl::isAcceleratedCompositingActive() const
 #endif
 }
 
+void WebViewImpl::willCloseLayerTreeView()
+{
+    setIsAcceleratedCompositingActive(false);
+    m_layerTreeView = 0;
+}
+
 void WebViewImpl::didAcquirePointerLock()
 {
 #if ENABLE(POINTER_LOCK)

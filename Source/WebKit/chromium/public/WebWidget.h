@@ -220,6 +220,10 @@ public:
     // to render its contents.
     virtual bool isAcceleratedCompositingActive() const { return false; }
 
+    // The WebLayerTreeView initialized on this WebWidgetClient will be going away and
+    // is no longer safe to access.
+    virtual void willCloseLayerTreeView() { }
+
     // Calling WebWidgetClient::requestPointerLock() will result in one
     // return call to didAcquirePointerLock() or didNotAcquirePointerLock().
     virtual void didAcquirePointerLock() { }

@@ -176,6 +176,7 @@ public:
     virtual bool caretOrSelectionRange(size_t* location, size_t* length);
     virtual void setTextDirection(WebTextDirection direction);
     virtual bool isAcceleratedCompositingActive() const;
+    virtual void willCloseLayerTreeView();
     virtual void didAcquirePointerLock();
     virtual void didNotAcquirePointerLock();
     virtual void didLosePointerLock();

@@ -1,3 +1,27 @@
+2013-01-09  James Robinson  <jamesr@chromium.org>
+
+        [chromium] Add a notification when a WebWidget's WebLayerTreeView is about to go away
+        https://bugs.webkit.org/show_bug.cgi?id=106495
+
+        Reviewed by Adrienne Walker.
+
+        The WebWidget / WebLayerTreeView ownership is in a slightly awkward place. I'm moving the ownership
+        of the WebLayerTreeView to the WebWidgetClient, but to stage things sanely the WebLayerTreeView's
+        client is sill owned by the WebWidget implementation. Thus to shut down cleanly we need an explicit
+        notification to the WebWidget that the WebLayerTreeView is going to go away.
+
+        This API can go away once the WebWidget implementation does not provide the WebLayerTreeViewClient,
+        which will take a bit more refactoring.
+
+        * public/WebWidget.h:
+        (WebWidget):
+        (WebKit::WebWidget::willCloseLayerTreeView):
+        * src/WebViewImpl.cpp:
+        (WebKit::WebViewImpl::willCloseLayerTreeView):
+        (WebKit):
+        * src/WebViewImpl.h:
+        (WebViewImpl):
+
 2013-01-09  Mark Pilgrim  <pilgrim@chromium.org>
 
         [Chromium] Remove stray references to WebKitPlatformSupport.h
