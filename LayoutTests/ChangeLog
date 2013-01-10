@@ -1,5 +1,12 @@
 2013-01-10  Dimitri Glazkov  <dglazkov@chromium.org>
 
+        Layout Test fast/dom/HTMLTemplateElement/ownerDocument-adoptNode.html is flaky.
+        https://bugs.webkit.org/show_bug.cgi?id=106612
+
+        * platform/chromium/TestExpectations: Marked as flake.
+
+2013-01-10  Dimitri Glazkov  <dglazkov@chromium.org>
+
         [Chromium] Layout Test animations/fill-mode-iteration-count-non-integer.html is failing.
         https://bugs.webkit.org/show_bug.cgi?id=106609
 
