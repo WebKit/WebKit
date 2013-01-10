@@ -1,10 +1,17 @@
+2013-01-10  Roger Fong  <roger_fong@apple.com>
+
+        Unreviewed rebaselines. Apple Windows port.
+
+        * platform/win/TestExpectations:
+        * platform/win/fast/dom/window-load-crash-expected.txt: Added.
+
 2013-01-10  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r139226.
         http://trac.webkit.org/changeset/139226
         https://bugs.webkit.org/show_bug.cgi?id=106602
 
-        rebaselines were premature (Requested by rfong on #webkit).
+        rebaselines were premature (Requested by rfong on #webkit).
 
         * platform/win/accessibility/canvas-fallback-content-2-expected.txt:
         * platform/win/platform/win/accessibility/option-element-selection-and-focus-events-expected.txt: Removed.

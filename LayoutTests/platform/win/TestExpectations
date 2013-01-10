@@ -170,6 +170,7 @@ fast/events/drop-with-file-paths.html
 fast/events/dropzone-004.html
 fast/events/only-valid-drop-targets-receive-file-drop.html
 fast/events/standalone-image-drag-to-editable.html
+fast/events/drag-and-drop-autoscroll.html
 http/tests/security/clipboard/clipboard-file-access.html
 http/tests/security/drag-drop-same-unique-origin.html
 
