@@ -41,6 +41,7 @@
 #include "WebInputElement.h"
 #include "WebIntent.h"
 #include "WebIntentRequest.h"
+#include "WebPermissions.h"
 #include "WebPreferences.h"
 #include "WebScriptSource.h"
 #include "WebSecurityPolicy.h"
@@ -82,6 +83,7 @@ TestRunner::TestRunner()
     , m_delegate(0)
     , m_webView(0)
     , m_intentClient(adoptPtr(new EmptyWebDeliveredIntentClient))
+    , m_webPermissions(adoptPtr(new WebPermissions))
 {
     // Methods implemented in terms of chromium's public WebKit API.
     bindMethod("setTabKeyCyclesThroughElements", &TestRunner::setTabKeyCyclesThroughElements);
@@ -147,6 +149,13 @@ TestRunner::TestRunner()
     bindMethod("dumpResourceLoadCallbacks", &TestRunner::dumpResourceLoadCallbacks);
     bindMethod("dumpResourceRequestCallbacks", &TestRunner::dumpResourceRequestCallbacks);
     bindMethod("dumpResourceResponseMIMETypes", &TestRunner::dumpResourceResponseMIMETypes);
+    bindMethod("dumpPermissionClientCallbacks", &TestRunner::dumpPermissionClientCallbacks);
+    bindMethod("setImagesAllowed", &TestRunner::setImagesAllowed);
+    bindMethod("setScriptsAllowed", &TestRunner::setScriptsAllowed);
+    bindMethod("setStorageAllowed", &TestRunner::setStorageAllowed);
+    bindMethod("setPluginsAllowed", &TestRunner::setPluginsAllowed);
+    bindMethod("setAllowDisplayOfInsecureContent", &TestRunner::setAllowDisplayOfInsecureContent);
+    bindMethod("setAllowRunningOfInsecureContent", &TestRunner::setAllowRunningOfInsecureContent);
 
     // The following methods interact with the WebTestProxy.
     bindMethod("sendWebIntentResponse", &TestRunner::sendWebIntentResponse);
@@ -193,6 +202,12 @@ TestRunner::~TestRunner()
 {
 }
 
+void TestRunner::setDelegate(WebTestDelegate* delegate)
+{
+    m_delegate = delegate;
+    m_webPermissions->setDelegate(delegate);
+}
+
 void TestRunner::reset()
 {
     if (m_webView) {
@@ -231,6 +246,8 @@ void TestRunner::reset()
     m_platformName.set("chromium");
 
     m_userStyleSheetLocation = WebURL();
+
+    m_webPermissions->reset();
 }
 
 void TestRunner::setTestIsRunning(bool running)
@@ -331,6 +348,61 @@ bool TestRunner::shouldDumpResourceRequestCallbacks() const
 bool TestRunner::shouldDumpResourceResponseMIMETypes() const
 {
     return m_testIsRunning && m_dumpResourceResponseMIMETypes;
+}
+
+WebPermissionClient* TestRunner::webPermissions() const
+{
+    return m_webPermissions.get();
+}
+
+void TestRunner::dumpPermissionClientCallbacks(const CppArgumentList&, CppVariant* result)
+{
+    m_webPermissions->setDumpCallbacks(true);
+    result->setNull();
+}
+
+void TestRunner::setImagesAllowed(const CppArgumentList& arguments, CppVariant* result)
+{
+    if (arguments.size() > 0 && arguments[0].isBool())
+        m_webPermissions->setImagesAllowed(arguments[0].toBoolean());
+    result->setNull();
+}
+
+void TestRunner::setScriptsAllowed(const CppArgumentList& arguments, CppVariant* result)
+{
+    if (arguments.size() > 0 && arguments[0].isBool())
+        m_webPermissions->setScriptsAllowed(arguments[0].toBoolean());
+    result->setNull();
+}
+
+void TestRunner::setStorageAllowed(const CppArgumentList& arguments, CppVariant* result)
+{
+    if (arguments.size() > 0 && arguments[0].isBool())
+        m_webPermissions->setStorageAllowed(arguments[0].toBoolean());
+    result->setNull();
+}
+
+void TestRunner::setPluginsAllowed(const CppArgumentList& arguments, CppVariant* result)
+{
+    if (arguments.size() > 0 && arguments[0].isBool())
+        m_webPermissions->setPluginsAllowed(arguments[0].toBoolean());
+    result->setNull();
+}
+
+void TestRunner::setAllowDisplayOfInsecureContent(const CppArgumentList& arguments, CppVariant* result)
+{
+    if (arguments.size() > 0 && arguments[0].isBool())
+        m_webPermissions->setDisplayingInsecureContentAllowed(arguments[0].toBoolean());
+
+    result->setNull();
+}
+
+void TestRunner::setAllowRunningOfInsecureContent(const CppArgumentList& arguments, CppVariant* result)
+{
+    if (arguments.size() > 0 && arguments[0].isBool())
+        m_webPermissions->setRunningInsecureContentAllowed(arguments[0].value.boolValue);
+
+    result->setNull();
 }
 
 void TestRunner::setTabKeyCyclesThroughElements(const CppArgumentList& arguments, CppVariant* result)

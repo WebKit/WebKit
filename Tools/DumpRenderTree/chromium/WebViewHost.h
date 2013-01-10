@@ -149,6 +149,7 @@ class WebViewHost : public WebKit::WebViewClient, public WebKit::WebFrameClient,
     virtual void setCurrentWebIntentRequest(const WebKit::WebIntentRequest&) OVERRIDE;
     virtual WebKit::WebIntentRequest* currentWebIntentRequest() OVERRIDE;
     virtual std::string makeURLErrorDescription(const WebKit::WebURLError&) OVERRIDE;
+    virtual std::string normalizeLayoutTestURL(const std::string&) OVERRIDE;
 
     // NavigationHost
     virtual bool navigate(const TestNavigationEntry&, bool reload);

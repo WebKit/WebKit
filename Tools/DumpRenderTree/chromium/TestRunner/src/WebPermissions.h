@@ -33,12 +33,13 @@
 
 #include "WebPermissionClient.h"
 
-class DRTTestRunner;
-class TestShell;
+namespace WebTestRunner {
+
+class WebTestDelegate;
 
 class WebPermissions : public WebKit::WebPermissionClient {
 public:
-    WebPermissions(TestShell*);
+    WebPermissions();
     virtual ~WebPermissions();
 
     // Override WebPermissionClient methods.
@@ -46,10 +47,8 @@ public:
     virtual bool allowScriptFromSource(WebKit::WebFrame*, bool enabledPerSettings, const WebKit::WebURL& scriptURL);
     virtual bool allowStorage(WebKit::WebFrame*, bool local);
     virtual bool allowPlugins(WebKit::WebFrame*, bool enabledPerSettings);
-    virtual bool allowDisplayingInsecureContent(WebKit::WebFrame*, bool enabledPerSettings,
-                                                const WebKit::WebSecurityOrigin&, const WebKit::WebURL&);
-    virtual bool allowRunningInsecureContent(WebKit::WebFrame*, bool enabledPerSettings,
-                                             const WebKit::WebSecurityOrigin&, const WebKit::WebURL&);
+    virtual bool allowDisplayingInsecureContent(WebKit::WebFrame*, bool enabledPerSettings, const WebKit::WebSecurityOrigin&, const WebKit::WebURL&);
+    virtual bool allowRunningInsecureContent(WebKit::WebFrame*, bool enabledPerSettings, const WebKit::WebSecurityOrigin&, const WebKit::WebURL&);
 
     // Hooks to set the different policies.
     void setImagesAllowed(bool);
@@ -62,11 +61,12 @@ public:
     // Resets the policy to allow everything, except for running insecure content.
     void reset();
 
-private:
-    DRTTestRunner* testRunner() const;
+    void setDelegate(WebTestDelegate*);
+    void setDumpCallbacks(bool);
 
-    // Non-owning pointer. The WebPermissions instance is owned by this TestShell instance.
-    TestShell* m_shell;
+private:
+    WebTestDelegate* m_delegate;
+    bool m_dumpCallbacks;
 
     bool m_imagesAllowed;
     bool m_scriptsAllowed;
@@ -75,5 +75,7 @@ private:
     bool m_displayingInsecureContentAllowed;
     bool m_runningInsecureContentAllowed;
 };
+
+}
 
 #endif

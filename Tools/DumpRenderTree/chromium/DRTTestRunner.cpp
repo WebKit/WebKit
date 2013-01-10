@@ -52,7 +52,6 @@
 #include "WebInputElement.h"
 #include "WebKit.h"
 #include "WebNotificationPresenter.h"
-#include "WebPermissions.h"
 #include "WebPrintParams.h"
 #include "WebScriptSource.h"
 #include "WebSecurityPolicy.h"
@@ -121,7 +120,6 @@ DRTTestRunner::DRTTestRunner(TestShell* shell)
     bindMethod("dumpProgressFinishedCallback", &DRTTestRunner::dumpProgressFinishedCallback);
     bindMethod("dumpSelectionRect", &DRTTestRunner::dumpSelectionRect);
     bindMethod("dumpStatusCallbacks", &DRTTestRunner::dumpWindowStatusChanges);
-    bindMethod("dumpPermissionClientCallbacks", &DRTTestRunner::dumpPermissionClientCallbacks);
     bindMethod("enableAutoResizeMode", &DRTTestRunner::enableAutoResizeMode);
     bindMethod("evaluateInWebInspector", &DRTTestRunner::evaluateInWebInspector);
 #if ENABLE(NOTIFICATIONS)
@@ -138,8 +136,6 @@ DRTTestRunner::DRTTestRunner(TestShell* shell)
     bindMethod("queueNonLoadingScript", &DRTTestRunner::queueNonLoadingScript);
     bindMethod("queueReload", &DRTTestRunner::queueReload);
     bindMethod("repaintSweepHorizontally", &DRTTestRunner::repaintSweepHorizontally);
-    bindMethod("setAllowDisplayOfInsecureContent", &DRTTestRunner::setAllowDisplayOfInsecureContent);
-    bindMethod("setAllowRunningOfInsecureContent", &DRTTestRunner::setAllowRunningOfInsecureContent);
     bindMethod("setAlwaysAcceptCookies", &DRTTestRunner::setAlwaysAcceptCookies);
     bindMethod("setCloseRemainingWindowsWhenComplete", &DRTTestRunner::setCloseRemainingWindowsWhenComplete);
     bindMethod("setCustomPolicyDelegate", &DRTTestRunner::setCustomPolicyDelegate);
@@ -170,10 +166,6 @@ DRTTestRunner::DRTTestRunner(TestShell* shell)
     bindMethod("waitForPolicyDelegate", &DRTTestRunner::waitForPolicyDelegate);
     bindMethod("waitUntilDone", &DRTTestRunner::waitUntilDone);
     bindMethod("windowCount", &DRTTestRunner::windowCount);
-    bindMethod("setImagesAllowed", &DRTTestRunner::setImagesAllowed);
-    bindMethod("setScriptsAllowed", &DRTTestRunner::setScriptsAllowed);
-    bindMethod("setStorageAllowed", &DRTTestRunner::setStorageAllowed);
-    bindMethod("setPluginsAllowed", &DRTTestRunner::setPluginsAllowed);
 
     bindMethod("setShouldStayOnPageAfterHandlingBeforeUnload", &DRTTestRunner::setShouldStayOnPageAfterHandlingBeforeUnload);
 
@@ -251,12 +243,6 @@ void DRTTestRunner::dumpProgressFinishedCallback(const CppArgumentList&, CppVari
 void DRTTestRunner::dumpWindowStatusChanges(const CppArgumentList&, CppVariant* result)
 {
     m_dumpWindowStatusChanges = true;
-    result->setNull();
-}
-
-void DRTTestRunner::dumpPermissionClientCallbacks(const CppArgumentList&, CppVariant* result)
-{
-    m_dumpPermissionClientCallbacks = true;
     result->setNull();
 }
 
@@ -448,7 +434,6 @@ void DRTTestRunner::reset()
     m_dumpBackForwardList = false;
     m_dumpWindowStatusChanges = false;
     m_dumpSelectionRect = false;
-    m_dumpPermissionClientCallbacks = false;
     m_waitUntilDone = false;
     m_testRepaint = false;
     m_sweepHorizontally = false;
@@ -527,34 +512,6 @@ void DRTTestRunner::setWindowIsKey(const CppArgumentList& arguments, CppVariant*
 {
     if (arguments.size() > 0 && arguments[0].isBool())
         m_shell->setFocus(m_shell->webView(), arguments[0].value.boolValue);
-    result->setNull();
-}
-
-void DRTTestRunner::setImagesAllowed(const CppArgumentList& arguments, CppVariant* result)
-{
-    if (arguments.size() > 0 && arguments[0].isBool())
-        m_shell->webPermissions()->setImagesAllowed(arguments[0].toBoolean());
-    result->setNull();
-}
-
-void DRTTestRunner::setScriptsAllowed(const CppArgumentList& arguments, CppVariant* result)
-{
-    if (arguments.size() > 0 && arguments[0].isBool())
-        m_shell->webPermissions()->setScriptsAllowed(arguments[0].toBoolean());
-    result->setNull();
-}
-
-void DRTTestRunner::setStorageAllowed(const CppArgumentList& arguments, CppVariant* result)
-{
-    if (arguments.size() > 0 && arguments[0].isBool())
-        m_shell->webPermissions()->setStorageAllowed(arguments[0].toBoolean());
-    result->setNull();
-}
-
-void DRTTestRunner::setPluginsAllowed(const CppArgumentList& arguments, CppVariant* result)
-{
-    if (arguments.size() > 0 && arguments[0].isBool())
-        m_shell->webPermissions()->setPluginsAllowed(arguments[0].toBoolean());
     result->setNull();
 }
 
@@ -755,22 +712,6 @@ void DRTTestRunner::testRepaint(const CppArgumentList&, CppVariant* result)
 void DRTTestRunner::repaintSweepHorizontally(const CppArgumentList&, CppVariant* result)
 {
     m_sweepHorizontally = true;
-    result->setNull();
-}
-
-void DRTTestRunner::setAllowDisplayOfInsecureContent(const CppArgumentList& arguments, CppVariant* result)
-{
-    if (arguments.size() > 0 && arguments[0].isBool())
-        m_shell->webPermissions()->setDisplayingInsecureContentAllowed(arguments[0].toBoolean());
-
-    result->setNull();
-}
-
-void DRTTestRunner::setAllowRunningOfInsecureContent(const CppArgumentList& arguments, CppVariant* result)
-{
-    if (arguments.size() > 0 && arguments[0].isBool())
-        m_shell->webPermissions()->setRunningInsecureContentAllowed(arguments[0].value.boolValue);
-
     result->setNull();
 }
 

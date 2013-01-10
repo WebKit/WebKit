@@ -44,6 +44,7 @@ class WebView;
 
 namespace WebTestRunner {
 
+class WebPermissions;
 class WebTestDelegate;
 
 class TestRunner : public CppBoundClass, public WebTestRunner {
@@ -53,7 +54,7 @@ public:
 
     // FIXME: once DRTTestRunner is moved entirely to this class, change this
     // method to take a TestDelegate* instead.
-    void setDelegate(WebTestDelegate* delegate) { m_delegate = delegate; }
+    void setDelegate(WebTestDelegate*);
     void setWebView(WebKit::WebView* webView) { m_webView = webView; }
 
     void reset();
@@ -79,6 +80,7 @@ public:
     virtual bool shouldDumpResourceLoadCallbacks() const OVERRIDE;
     virtual bool shouldDumpResourceRequestCallbacks() const OVERRIDE;
     virtual bool shouldDumpResourceResponseMIMETypes() const OVERRIDE;
+    virtual WebKit::WebPermissionClient* webPermissions() const OVERRIDE;
 
 protected:
     // FIXME: make these private once the move from DRTTestRunner to TestRunner
@@ -259,6 +261,15 @@ private:
     // that may be present.
     void dumpResourceResponseMIMETypes(const CppArgumentList&, CppVariant*);
 
+    // WebPermissionClient related.
+    void setImagesAllowed(const CppArgumentList&, CppVariant*);
+    void setScriptsAllowed(const CppArgumentList&, CppVariant*);
+    void setStorageAllowed(const CppArgumentList&, CppVariant*);
+    void setPluginsAllowed(const CppArgumentList&, CppVariant*);
+    void setAllowDisplayOfInsecureContent(const CppArgumentList&, CppVariant*);
+    void setAllowRunningOfInsecureContent(const CppArgumentList&, CppVariant*);
+    void dumpPermissionClientCallbacks(const CppArgumentList&, CppVariant*);
+
     ///////////////////////////////////////////////////////////////////////////
     // Methods interacting with the WebTestProxy
 
@@ -369,6 +380,9 @@ private:
 
     // Mock object for testing delivering web intents.
     OwnPtr<WebKit::WebDeliveredIntentClient> m_intentClient;
+
+    // WebPermissionClient mock object.
+    OwnPtr<WebPermissions> m_webPermissions;
 };
 
 }

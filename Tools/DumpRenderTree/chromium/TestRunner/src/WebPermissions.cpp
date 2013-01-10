@@ -31,13 +31,14 @@
 #include "config.h"
 #include "WebPermissions.h"
 
-#include "DRTTestRunner.h"
-#include "TestShell.h"
+#include "WebTestDelegate.h"
 #include "platform/WebCString.h"
 #include "platform/WebURL.h"
 
-WebPermissions::WebPermissions(TestShell* shell)
-    : m_shell(shell)
+namespace WebTestRunner {
+
+WebPermissions::WebPermissions()
+    : m_delegate(0)
 {
     reset();
 }
@@ -49,16 +50,16 @@ WebPermissions::~WebPermissions()
 bool WebPermissions::allowImage(WebKit::WebFrame*, bool enabledPerSettings, const WebKit::WebURL& imageURL)
 {
     bool allowed = enabledPerSettings && m_imagesAllowed;
-    if (testRunner()->shouldDumpPermissionClientCallbacks())
-        fprintf(stdout, "PERMISSION CLIENT: allowImage(%s): %s\n", m_shell->normalizeLayoutTestURL(imageURL.spec()).c_str(), allowed ? "true" : "false");
+    if (m_dumpCallbacks && m_delegate)
+        m_delegate->printMessage(std::string("PERMISSION CLIENT: allowImage(") + m_delegate->normalizeLayoutTestURL(imageURL.spec()) + "): " + (allowed ? "true" : "false") + "\n");
     return allowed;
 }
 
 bool WebPermissions::allowScriptFromSource(WebKit::WebFrame*, bool enabledPerSettings, const WebKit::WebURL& scriptURL)
 {
     bool allowed = enabledPerSettings && m_scriptsAllowed;
-    if (testRunner()->shouldDumpPermissionClientCallbacks())
-        fprintf(stdout, "PERMISSION CLIENT: allowScriptFromSource(%s): %s\n", m_shell->normalizeLayoutTestURL(scriptURL.spec()).c_str(), allowed ? "true" : "false");
+    if (m_dumpCallbacks && m_delegate)
+        m_delegate->printMessage(std::string("PERMISSION CLIENT: allowScriptFromSource(") + m_delegate->normalizeLayoutTestURL(scriptURL.spec()) + "): " + (allowed ? "true" : "false") + "\n");
     return allowed;
 }
 
@@ -72,14 +73,12 @@ bool WebPermissions::allowPlugins(WebKit::WebFrame*, bool enabledPerSettings)
     return enabledPerSettings && m_pluginsAllowed;
 }
 
-bool WebPermissions::allowDisplayingInsecureContent(WebKit::WebFrame*, bool enabledPerSettings,
-                                                    const WebKit::WebSecurityOrigin&, const WebKit::WebURL&)
+bool WebPermissions::allowDisplayingInsecureContent(WebKit::WebFrame*, bool enabledPerSettings, const WebKit::WebSecurityOrigin&, const WebKit::WebURL&)
 {
     return enabledPerSettings || m_displayingInsecureContentAllowed;
 }
 
-bool WebPermissions::allowRunningInsecureContent(WebKit::WebFrame*, bool enabledPerSettings,
-                                                 const WebKit::WebSecurityOrigin&, const WebKit::WebURL&)
+bool WebPermissions::allowRunningInsecureContent(WebKit::WebFrame*, bool enabledPerSettings, const WebKit::WebSecurityOrigin&, const WebKit::WebURL&)
 {
     return enabledPerSettings || m_runningInsecureContentAllowed;
 }
@@ -114,8 +113,19 @@ void WebPermissions::setRunningInsecureContentAllowed(bool allowed)
     m_runningInsecureContentAllowed = allowed;
 }
 
+void WebPermissions::setDelegate(WebTestDelegate* delegate)
+{
+    m_delegate = delegate;
+}
+
+void WebPermissions::setDumpCallbacks(bool dumpCallbacks)
+{
+    m_dumpCallbacks = dumpCallbacks;
+}
+
 void WebPermissions::reset()
 {
+    m_dumpCallbacks = false;
     m_imagesAllowed = true;
     m_scriptsAllowed = true;
     m_storageAllowed = true;
@@ -124,9 +134,4 @@ void WebPermissions::reset()
     m_runningInsecureContentAllowed = false;
 }
 
-// Private functions ----------------------------------------------------------
-
-DRTTestRunner* WebPermissions::testRunner() const
-{
-    return m_shell->testRunner();
 }

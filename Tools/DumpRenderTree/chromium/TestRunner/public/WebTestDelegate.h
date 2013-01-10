@@ -77,6 +77,7 @@ public:
     virtual void setCurrentWebIntentRequest(const WebKit::WebIntentRequest&) { };
     virtual WebKit::WebIntentRequest* currentWebIntentRequest() { return 0; }
     virtual std::string makeURLErrorDescription(const WebKit::WebURLError&) { return std::string(); }
+    virtual std::string normalizeLayoutTestURL(const std::string&) { return std::string(); }
 };
 
 }

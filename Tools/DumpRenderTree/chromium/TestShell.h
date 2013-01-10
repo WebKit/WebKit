@@ -57,7 +57,6 @@ class DRTDevToolsAgent;
 class DRTDevToolsCallArgs;
 class DRTDevToolsClient;
 class MockWebPrerenderingSupport;
-class WebPermissions;
 
 struct TestParams {
     bool dumpTree;
@@ -95,8 +94,6 @@ public:
 
     WebTestRunner::WebPreferences* preferences() { return &m_prefs; }
     void applyPreferences() { m_prefs.applyTo(m_webView); }
-
-    WebPermissions* webPermissions() { return m_webPermissions.get(); }
 
     void bindJSObjectsToWindow(WebKit::WebFrame*);
     void runFileTest(const TestParams&, bool shouldDumpPixelTests);
@@ -210,7 +207,6 @@ private:
 
     // Be careful of the destruction order of the following objects.
     TestEventPrinter m_printer;
-    OwnPtr<WebPermissions> m_webPermissions;
     OwnPtr<DRTDevToolsAgent> m_drtDevToolsAgent;
     OwnPtr<DRTDevToolsClient> m_drtDevToolsClient;
     OwnPtr<WebTestRunner::WebTestInterfaces> m_testInterfaces;

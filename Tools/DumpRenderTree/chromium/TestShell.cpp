@@ -43,7 +43,6 @@
 #include "WebHistoryItem.h"
 #include "WebIDBFactory.h"
 #include "WebTestingSupport.h"
-#include "WebPermissions.h"
 #include "WebRuntimeFeatures.h"
 #include "WebScriptController.h"
 #include "WebSettings.h"
@@ -161,7 +160,6 @@ TestShell::TestShell()
 
 void TestShell::initialize()
 {
-    m_webPermissions = adoptPtr(new WebPermissions(this));
     m_testInterfaces = adoptPtr(new WebTestInterfaces());
     m_testRunner = adoptPtr(new DRTTestRunner(this));
     m_testInterfaces->setTestRunner(m_testRunner.get());
@@ -318,7 +316,6 @@ void TestShell::resizeWindowForTest(WebViewHost* window, const WebURL& url)
 void TestShell::resetTestController()
 {
     resetWebSettings(*webView());
-    m_webPermissions->reset();
     m_testInterfaces->resetAll();
     m_testRunner->reset();
     m_webViewHost->reset();
@@ -763,7 +760,7 @@ WebViewHost* TestShell::createNewWindow(const WebKit::WebURL& url, DRTDevToolsAg
         host->setDelegate(host);
     host->setProxy(host);
     WebView* view = WebView::create(host);
-    view->setPermissionClient(webPermissions());
+    view->setPermissionClient(m_testInterfaces->testRunner()->webPermissions());
     view->setDevToolsAgentClient(devToolsAgent);
     host->setWebWidget(view);
     m_prefs.applyTo(view);

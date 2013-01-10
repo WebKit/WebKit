@@ -1058,6 +1058,11 @@ std::string WebViewHost::makeURLErrorDescription(const WebKit::WebURLError& erro
     return webkit_support::MakeURLErrorDescription(error);
 }
 
+std::string WebViewHost::normalizeLayoutTestURL(const std::string& url)
+{
+    return m_shell->normalizeLayoutTestURL(url);
+}
+
 // Public functions -----------------------------------------------------------
 
 WebViewHost::WebViewHost(TestShell* shell)

@@ -1,3 +1,70 @@
+2013-01-10  Dan Carney  <dcarney@google.com>
+
+        [chromium] move webpermissionclient related methods to TestRunner library
+        https://bugs.webkit.org/show_bug.cgi?id=106548
+
+        Reviewed by Jochen Eisinger.
+
+        * DumpRenderTree/DumpRenderTree.gypi:
+        * DumpRenderTree/chromium/DRTTestRunner.cpp:
+        (DRTTestRunner::DRTTestRunner):
+        (DRTTestRunner::reset):
+        * DumpRenderTree/chromium/DRTTestRunner.h:
+        (DRTTestRunner):
+        * DumpRenderTree/chromium/TestRunner/public/WebTestDelegate.h:
+        (WebTestRunner::WebTestDelegate::normalizeLayoutTestURL):
+        * DumpRenderTree/chromium/TestRunner/public/WebTestRunner.h:
+        (WebKit):
+        (WebTestRunner::WebTestRunner::webPermissions):
+        * DumpRenderTree/chromium/TestRunner/src/TestRunner.cpp:
+        (WebTestRunner::TestRunner::TestRunner):
+        (WebTestRunner::TestRunner::setDelegate):
+        (WebTestRunner):
+        (WebTestRunner::TestRunner::reset):
+        (WebTestRunner::TestRunner::webPermissions):
+        (WebTestRunner::TestRunner::dumpPermissionClientCallbacks):
+        (WebTestRunner::TestRunner::setImagesAllowed):
+        (WebTestRunner::TestRunner::setScriptsAllowed):
+        (WebTestRunner::TestRunner::setStorageAllowed):
+        (WebTestRunner::TestRunner::setPluginsAllowed):
+        (WebTestRunner::TestRunner::setAllowDisplayOfInsecureContent):
+        (WebTestRunner::TestRunner::setAllowRunningOfInsecureContent):
+        * DumpRenderTree/chromium/TestRunner/src/TestRunner.h:
+        (WebTestRunner):
+        (TestRunner):
+        * DumpRenderTree/chromium/TestRunner/src/WebPermissions.cpp: Renamed from Tools/DumpRenderTree/chromium/WebPermissions.cpp.
+        (WebTestRunner):
+        (WebTestRunner::WebPermissions::WebPermissions):
+        (WebTestRunner::WebPermissions::~WebPermissions):
+        (WebTestRunner::WebPermissions::allowImage):
+        (WebTestRunner::WebPermissions::allowScriptFromSource):
+        (WebTestRunner::WebPermissions::allowStorage):
+        (WebTestRunner::WebPermissions::allowPlugins):
+        (WebTestRunner::WebPermissions::allowDisplayingInsecureContent):
+        (WebTestRunner::WebPermissions::allowRunningInsecureContent):
+        (WebTestRunner::WebPermissions::setImagesAllowed):
+        (WebTestRunner::WebPermissions::setScriptsAllowed):
+        (WebTestRunner::WebPermissions::setStorageAllowed):
+        (WebTestRunner::WebPermissions::setPluginsAllowed):
+        (WebTestRunner::WebPermissions::setDisplayingInsecureContentAllowed):
+        (WebTestRunner::WebPermissions::setRunningInsecureContentAllowed):
+        (WebTestRunner::WebPermissions::setDelegate):
+        (WebTestRunner::WebPermissions::setDumpCallbacks):
+        (WebTestRunner::WebPermissions::reset):
+        * DumpRenderTree/chromium/TestRunner/src/WebPermissions.h: Renamed from Tools/DumpRenderTree/chromium/WebPermissions.h.
+        (WebTestRunner):
+        (WebPermissions):
+        * DumpRenderTree/chromium/TestShell.cpp:
+        (TestShell::initialize):
+        (TestShell::resetTestController):
+        (TestShell::createNewWindow):
+        * DumpRenderTree/chromium/TestShell.h:
+        (TestShell):
+        * DumpRenderTree/chromium/WebViewHost.cpp:
+        (WebViewHost::normalizeLayoutTestURL):
+        * DumpRenderTree/chromium/WebViewHost.h:
+        (WebViewHost):
+
 2013-01-10  Alan Cutter  <alancutter@chromium.org>
 
         Split EWS tool cold-boot.sh into modular components

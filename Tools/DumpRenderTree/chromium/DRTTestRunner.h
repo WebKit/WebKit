@@ -162,9 +162,6 @@ public:
     void testRepaint(const CppArgumentList&, CppVariant*);
     void repaintSweepHorizontally(const CppArgumentList&, CppVariant*);
 
-    void setAllowDisplayOfInsecureContent(const CppArgumentList&, CppVariant*);
-    void setAllowRunningOfInsecureContent(const CppArgumentList&, CppVariant*);
-
     // Clears all databases.
     void clearAllDatabases(const CppArgumentList&, CppVariant*);
     // Sets the default quota for all origins
@@ -202,13 +199,6 @@ public:
     void wasMockSpeechRecognitionAborted(const CppArgumentList&, CppVariant*);
 #endif
 
-    // WebPermissionClient related.
-    void setImagesAllowed(const CppArgumentList&, CppVariant*);
-    void setScriptsAllowed(const CppArgumentList&, CppVariant*);
-    void setStorageAllowed(const CppArgumentList&, CppVariant*);
-    void setPluginsAllowed(const CppArgumentList&, CppVariant*);
-    void dumpPermissionClientCallbacks(const CppArgumentList&, CppVariant*);
-
     void setShouldStayOnPageAfterHandlingBeforeUnload(const CppArgumentList&, CppVariant*);
 
 #if ENABLE(POINTER_LOCK)
@@ -231,7 +221,6 @@ public:
     bool shouldDumpStatusCallbacks() { return m_dumpWindowStatusChanges; }
     bool shouldDumpSelectionRect() { return m_dumpSelectionRect; }
     bool shouldDumpBackForwardList() { return m_dumpBackForwardList; }
-    bool shouldDumpPermissionClientCallbacks() { return m_dumpPermissionClientCallbacks; }
     bool deferMainResourceDataLoad() { return m_deferMainResourceDataLoad; }
     void setShowDebugLayerTree(bool value) { m_showDebugLayerTree = value; }
     void setTitleTextDirection(WebKit::WebTextDirection dir)
@@ -335,10 +324,6 @@ private:
 
     // If true, the test_shell will dump all changes to window.status.
     bool m_dumpWindowStatusChanges;
-
-    // If true, output a descriptive line each time a permission client
-    // callback is invoked. Currently only implemented for allowImage.
-    bool m_dumpPermissionClientCallbacks;
 
     // When reset is called, go through and close all but the main test shell
     // window. By default, set to true but toggled to false using
