@@ -1,3 +1,13 @@
+2013-01-10  Tim 'mithro' Ansell  <mithro@mithis.com>
+
+        Changing tests to be consistent and use self.scm rather then recreating the scm object.
+        (Missed a couple)
+        https://bugs.webkit.org/show_bug.cgi?id=106536
+
+        Reviewed by Eric Seidel.
+
+        * Scripts/webkitpy/common/checkout/scm/scm_unittest.py:
+
 2013-01-10  Tony Chang  <tony@chromium.org>
 
         Speed up supplemental dependency computation

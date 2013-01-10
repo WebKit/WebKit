@@ -661,9 +661,8 @@ class SVNTest(SCMTest):
         self.assertEqual("%s\n" % os.path.realpath(scm.checkout_root), patch_contents) # Add a \n because echo adds a \n.
 
     def test_detection(self):
-        scm = detect_scm_system(self.svn_checkout_path)
-        self.assertEqual(scm.display_name(), "svn")
-        self.assertEqual(scm.supports_local_commits(), False)
+        self.assertEqual(self.scm.display_name(), "svn")
+        self.assertEqual(self.scm.supports_local_commits(), False)
 
     def test_apply_small_binary_patch(self):
         patch_contents = """Index: test_file.swf
@@ -687,10 +686,9 @@ Q1dTBx0AAAB42itg4GlgYJjGwMDDyODMxMDw34GBgQEAJPQDJA==
         self.assertEqual(actual_contents, expected_contents)
 
     def test_apply_svn_patch(self):
-        scm = detect_scm_system(self.svn_checkout_path)
         patch = self._create_patch(_svn_diff("-r5:4"))
-        self._setup_webkittools_scripts_symlink(scm)
-        Checkout(scm).apply_patch(patch)
+        self._setup_webkittools_scripts_symlink(self.scm)
+        Checkout(self.scm).apply_patch(patch)
 
     def test_commit_logs(self):
         # Commits have dates and usernames in them, so we can't just direct compare.
@@ -756,13 +754,12 @@ END
         self.assertTrue(self._test_has_authorization_for_realm_using_credentials(SVN.svn_server_realm, credentials))
 
     def _test_has_authorization_for_realm_using_credentials(self, realm, credentials):
-        scm = detect_scm_system(self.svn_checkout_path)
         fake_home_dir = tempfile.mkdtemp(suffix="fake_home_dir")
         svn_config_dir_path = os.path.join(fake_home_dir, ".subversion")
         os.mkdir(svn_config_dir_path)
         fake_webkit_auth_file = os.path.join(svn_config_dir_path, "fake_webkit_auth_file")
         write_into_file_at_path(fake_webkit_auth_file, credentials)
-        result = scm.has_authorization_for_realm(realm, home_directory=fake_home_dir)
+        result = self.scm.has_authorization_for_realm(realm, home_directory=fake_home_dir)
         os.remove(fake_webkit_auth_file)
         os.rmdir(svn_config_dir_path)
         os.rmdir(fake_home_dir)
@@ -783,11 +780,10 @@ END
         self.assertFalse(self._test_has_authorization_for_realm_using_credentials(SVN.svn_server_realm, credentials))
 
     def test_not_have_authorization_for_realm_when_missing_credentials_file(self):
-        scm = detect_scm_system(self.svn_checkout_path)
         fake_home_dir = tempfile.mkdtemp(suffix="fake_home_dir")
         svn_config_dir_path = os.path.join(fake_home_dir, ".subversion")
         os.mkdir(svn_config_dir_path)
-        self.assertFalse(scm.has_authorization_for_realm(SVN.svn_server_realm, home_directory=fake_home_dir))
+        self.assertFalse(self.scm.has_authorization_for_realm(SVN.svn_server_realm, home_directory=fake_home_dir))
         os.rmdir(svn_config_dir_path)
         os.rmdir(fake_home_dir)
 
@@ -1050,7 +1046,6 @@ class GitSVNTest(SCMTest):
         self._tear_down_git_checkout()
 
     def test_detection(self):
-        self.scm = detect_scm_system(self.git_checkout_path)
         self.assertEqual(self.scm.display_name(), "git")
         self.assertEqual(self.scm.supports_local_commits(), True)
 
@@ -1423,7 +1418,6 @@ class GitSVNTest(SCMTest):
 
     def test_changed_files_working_copy_only(self):
         self._one_local_commit_plus_working_copy_changes()
-        scm = detect_scm_system(self.git_checkout_path)
         files = self.scm.changed_files(git_commit="HEAD....")
         self.assertNotIn('test_file_commit1', files)
         self.assertIn('test_file_commit2', files)
@@ -1545,8 +1539,7 @@ class GitSVNTest(SCMTest):
         self.assertIn("-more test content", cached_diff)
 
     def test_exists(self):
-        scm = detect_scm_system(self.git_checkout_path)
-        self._shared_test_exists(scm, scm.commit_locally_with_message)
+        self._shared_test_exists(self.scm, self.scm.commit_locally_with_message)
 
 
 # We need to split off more of these SCM tests to use mocks instead of the filesystem.
