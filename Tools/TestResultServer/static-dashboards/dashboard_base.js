@@ -324,7 +324,6 @@ function parseParameters()
     parseDashboardSpecificParameters();
     parseParameter(queryHashAsMap(), 'builder');
 
-    var crossDashboardDiffState = diffStates(oldCrossDashboardState, g_crossDashboardState);
     var dashboardSpecificDiffState = diffStates(oldDashboardSpecificState, g_currentState);
 
     fillMissingValues(g_currentState, g_defaultDashboardSpecificStateValues);
