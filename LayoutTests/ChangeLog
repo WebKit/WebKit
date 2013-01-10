@@ -1,3 +1,11 @@
+2013-01-10  Csaba Osztrogonác  <ossy@webkit.org>
+
+        Unreviewed gardening, paint the bots green.
+
+        * platform/qt/TestExpectations: Skip http/tests/security/isolatedWorld/* tests instead of marking them as failures. (r138817)
+        * platform/qt/fast/regions/selecting-text-through-different-region-flows-expected.png: Added after r139197.
+        * platform/qt/fast/regions/selecting-text-through-different-region-flows-expected.txt: Added after r139197.
+
 2013-01-10  Noel Gordon  <noel.gordon@gmail.com>
 
         [chromium] Fix ietestcenter/css3/bordersbackgrounds/border-radius-clip-002.htm expectation lines
