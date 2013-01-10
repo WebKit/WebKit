@@ -67,10 +67,11 @@ void PluginPackage::freeLibrarySoon()
 void PluginPackage::freeLibraryTimerFired(Timer<PluginPackage>*)
 {
     ASSERT(m_module);
-    ASSERT(!m_loadCount);
-
-    unloadModule(m_module);
-    m_module = 0;
+    // Do nothing if the module got loaded again meanwhile
+    if (!m_loadCount) {
+        unloadModule(m_module);
+        m_module = 0;
+    }
 }
 
 
