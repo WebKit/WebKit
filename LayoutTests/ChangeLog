@@ -1,5 +1,14 @@
 2013-01-10  Noel Gordon  <noel.gordon@gmail.com>
 
+        [chromium] Fix ietestcenter/css3/bordersbackgrounds/border-radius-clip-002.htm expectation lines
+
+        Unreviewed gardening.
+
+        * platform/chromium/TestExpectations: Two bugs and expectation lines refer to this test, and one
+        expectation line overrides the other: assign to the earlier bug and ditch the redundant line.
+
+2013-01-10  Noel Gordon  <noel.gordon@gmail.com>
+
         [chromium] Remove lost-compositor-context layout tests
         https://bugs.webkit.org/show_bug.cgi?id=106089
 
