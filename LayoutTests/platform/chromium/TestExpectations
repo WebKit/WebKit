@@ -4375,3 +4375,5 @@ webkit.org/b/106390 [ Win ] svg/dynamic-updates/SVGFEComponentTransferElement-sv
 webkit.org/b/106390 [ Win ] svg/dynamic-updates/SVGFEComponentTransferElement-dom-tableValues-attr.html [ ImageOnlyFailure Pass ]
 webkit.org/b/106473 [ Linux ] fast/images/embed-does-not-propagate-dimensions-to-object-ancestor.html [ Crash Pass ]
 webkit.org/b/106487 [ Win ] inspector/geolocation-error.html [ Failure Pass ]
+crbug.com/166932 [ Debug ] plugins/embed-attributes-setting.html [ Crash Pass ]
+

@@ -1,3 +1,9 @@
+2013-01-09  Dimitri Glazkov  <dglazkov@chromium.org>
+
+        [Chromium] Ascribe a bug to a crash..
+
+        * platform/chromium/TestExpectations: Ascribed.
+
 2013-01-09  Joanmarie Diggs  <jdiggs@igalia.com>
 
         [GTK] accessibility/aria-labelledby-overrides-label.html requires a proper baseline
