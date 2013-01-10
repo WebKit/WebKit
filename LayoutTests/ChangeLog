@@ -1,5 +1,11 @@
 2013-01-10  Dimitri Glazkov  <dglazkov@chromium.org>
 
+        [Chromium] Update expectations for fast/regions/selecting-text-through-different-region-flows.html.
+
+        * platform/chromium-mac-lion/fast/regions/selecting-text-through-different-region-flows-expected.png: Added.
+
+2013-01-10  Dimitri Glazkov  <dglazkov@chromium.org>
+
         [Chromium] Mark more inspector/geolocation* tests as flaky on Win.
         https://bugs.webkit.org/show_bug.cgi?id=106426
 
