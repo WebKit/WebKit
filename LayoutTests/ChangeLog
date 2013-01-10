@@ -1,3 +1,14 @@
+2013-01-09  Stephanie Lewis  <slewis@apple.com>
+
+        Rebaseline fast/inline/continuation-outlines-with-layers.html
+        https://bugs.webkit.org/show_bug.cgi?id=106064.
+
+        Unreviewed.
+
+        Rebaseline after http://trac.webkit.org/changeset/139223. 
+
+        * platform/mac/fast/inline/continuation-outlines-with-layers-expected.txt:
+
 2013-01-09  Dimitri Glazkov  <dglazkov@chromium.org>
 
         [Chromium] Ascribe a bug to a crash..
