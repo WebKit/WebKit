@@ -29,6 +29,7 @@
 #include "DefaultAudioDestinationNode.h"
 
 #include "Logging.h"
+#include <wtf/MainThread.h>
 
 const unsigned EnabledInputChannels = 2;
 
