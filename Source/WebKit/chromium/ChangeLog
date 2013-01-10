@@ -1,3 +1,29 @@
+2013-01-10  John Mellor  <johnme@chromium.org>
+
+        Fix scale of screen.width, window.outerWidth and @media device-width when page scale not applied in compositor.
+        https://bugs.webkit.org/show_bug.cgi?id=106460
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        1. Exposes the existing applyDeviceScaleFactorInCompositor from
+        WebSettings on Settings (and stores the value there instead), so it can
+        be accessed from WebCore.
+
+        2. Changes ChromeClientImpl::windowRect to return values in density
+        independent (UI) pixels pixels instead of physical screen pixels (see
+        explanation in Source/WebCore/ChangeLog).
+
+        * src/ChromeClientImpl.cpp:
+        (WebKit::ChromeClientImpl::windowRect):
+            Normalizes window rect scale.
+        * src/WebSettingsImpl.cpp:
+        (WebKit::WebSettingsImpl::WebSettingsImpl):
+        (WebKit::WebSettingsImpl::setApplyDeviceScaleFactorInCompositor):
+        (WebKit::WebSettingsImpl::applyDeviceScaleFactorInCompositor):
+        (WebKit):
+        * src/WebSettingsImpl.h:
+        (WebSettingsImpl):
+
 2013-01-10  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed.  Rolled DEPS.

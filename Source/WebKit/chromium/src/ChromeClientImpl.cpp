@@ -170,17 +170,19 @@ void ChromeClientImpl::setWindowRect(const FloatRect& r)
 
 FloatRect ChromeClientImpl::windowRect()
 {
-    WebRect rect;
-    if (m_webView->client())
-        rect = m_webView->client()->rootWindowRect();
-    else {
-        // These numbers will be fairly wrong. The window's x/y coordinates will
-        // be the top left corner of the screen and the size will be the content
-        // size instead of the window size.
-        rect.width = m_webView->size().width;
-        rect.height = m_webView->size().height;
+    if (m_webView->client()) {
+        // On Chrome for Android, rootWindowRect is in physical screen pixels
+        // instead of density independent (UI) pixels, and must be scaled down.
+        FloatRect rect = FloatRect(m_webView->client()->rootWindowRect());
+        if (!m_webView->page()->settings()->applyDeviceScaleFactorInCompositor())
+            rect.scale(1 / m_webView->client()->screenInfo().deviceScaleFactor);
+        return rect;
     }
-    return FloatRect(rect);
+
+    // These numbers will be fairly wrong. The window's x/y coordinates will
+    // be the top left corner of the screen and the size will be the content
+    // size instead of the window size.
+    return FloatRect(0, 0, m_webView->size().width, m_webView->size().height);
 }
 
 FloatRect ChromeClientImpl::pageRect()

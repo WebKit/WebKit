@@ -160,6 +160,7 @@ cookieEnabled initial=true
 windowFocusRestricted initial=true
 
 diagnosticLoggingEnabled initial=false
+applyDeviceScaleFactorInCompositor initial=true
 applyPageScaleFactorInCompositor initial=false
 plugInSnapshottingEnabled initial=false
 frameFlatteningEnabled initial=false

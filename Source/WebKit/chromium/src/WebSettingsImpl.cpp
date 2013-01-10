@@ -54,7 +54,6 @@ WebSettingsImpl::WebSettingsImpl(Settings* settings)
     , m_renderVSyncEnabled(true)
     , m_renderVSyncNotificationEnabled(false)
     , m_viewportEnabled(false)
-    , m_applyDeviceScaleFactorInCompositor(false)
     , m_gestureTapHighlightEnabled(true)
     , m_autoZoomFocusedNodeToLegibleScale(false)
     , m_deferredImageDecodingEnabled(false)
@@ -142,7 +141,7 @@ bool WebSettingsImpl::deviceSupportsTouch()
 
 void WebSettingsImpl::setApplyDeviceScaleFactorInCompositor(bool applyDeviceScaleFactorInCompositor)
 {
-    m_applyDeviceScaleFactorInCompositor = applyDeviceScaleFactorInCompositor;
+    m_settings->setApplyDeviceScaleFactorInCompositor(applyDeviceScaleFactorInCompositor);
 }
 
 void WebSettingsImpl::setApplyPageScaleFactorInCompositor(bool applyPageScaleFactorInCompositor)
@@ -722,6 +721,11 @@ void WebSettingsImpl::setCookieEnabled(bool enabled)
 void WebSettingsImpl::setGestureTapHighlightEnabled(bool enableHighlight)
 {
     m_gestureTapHighlightEnabled = enableHighlight;
+}
+
+bool WebSettingsImpl::applyDeviceScaleFactorInCompositor() const
+{
+    return m_settings->applyDeviceScaleFactorInCompositor();
 }
 
 bool WebSettingsImpl::applyPageScaleFactorInCompositor() const

@@ -175,7 +175,7 @@ public:
     bool showPaintRects() const { return m_showPaintRects; }
     bool renderVSyncEnabled() const { return m_renderVSyncEnabled; }
     bool renderVSyncNotificationEnabled() const { return m_renderVSyncNotificationEnabled; }
-    bool applyDeviceScaleFactorInCompositor() const { return m_applyDeviceScaleFactorInCompositor; }
+    bool applyDeviceScaleFactorInCompositor() const;
     bool applyPageScaleFactorInCompositor() const;
     bool autoZoomFocusedNodeToLegibleScale() const { return m_autoZoomFocusedNodeToLegibleScale; }
     bool gestureTapHighlightEnabled() const { return m_gestureTapHighlightEnabled; }
@@ -193,7 +193,6 @@ private:
     bool m_renderVSyncEnabled;
     bool m_renderVSyncNotificationEnabled;
     bool m_viewportEnabled;
-    bool m_applyDeviceScaleFactorInCompositor;
     bool m_gestureTapHighlightEnabled;
     bool m_autoZoomFocusedNodeToLegibleScale;
     bool m_deferredImageDecodingEnabled;
