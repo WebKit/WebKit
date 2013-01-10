@@ -228,14 +228,15 @@ void PageViewportController::pageDidRequestScroll(const IntPoint& cssPosition)
     if (m_hasSuspendedContent)
         return;
 
-    FloatPoint position = pixelAlignedFloatPoint(FloatPoint(cssPosition));
-    FloatPoint boundPosition = boundContentsPosition(position);
-    FloatRect endVisibleContentRect(boundPosition, visibleContentsSize());
+    FloatPoint boundPosition = boundContentsPosition(FloatPoint(cssPosition));
+    FloatPoint alignedPosition = pixelAlignedFloatPoint(boundPosition);
+    FloatRect endVisibleContentRect(alignedPosition, visibleContentsSize());
 
     if (m_lastFrameCoveredRect.intersects(endVisibleContentRect))
-        m_client->setViewportPosition(boundPosition);
+        m_client->setViewportPosition(alignedPosition);
     else {
         // Keep the unbound position in case the contents size is changed later on.
+        FloatPoint position = pixelAlignedFloatPoint(FloatPoint(cssPosition));
         applyPositionAfterRenderingContents(position);
     }
 }

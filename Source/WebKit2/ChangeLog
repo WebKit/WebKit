@@ -1,3 +1,16 @@
+2013-01-10  Mikhail Pozdnyakov  <mikhail.pozdnyakov@intel.com>
+
+        [EFL][WK2] Contents gets blurry when page is scrolled down
+        https://bugs.webkit.org/show_bug.cgi?id=106545
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        The bound values for scrolling also should be pixel aligned, otherwise
+        it leads to page contents blurriness when the page is scrolled down.
+
+        * UIProcess/PageViewportController.cpp:
+        (WebKit::PageViewportController::pageDidRequestScroll):
+
 2013-01-10  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] Add support for loading web process extensions
