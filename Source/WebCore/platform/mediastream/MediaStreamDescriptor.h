@@ -56,15 +56,15 @@ public:
         virtual ~ExtraData() { }
     };
 
-    static PassRefPtr<MediaStreamDescriptor> create(const String& label, const MediaStreamSourceVector& audioSources, const MediaStreamSourceVector& videoSources)
+    static PassRefPtr<MediaStreamDescriptor> create(const String& id, const MediaStreamSourceVector& audioSources, const MediaStreamSourceVector& videoSources)
     {
-        return adoptRef(new MediaStreamDescriptor(label, audioSources, videoSources));
+        return adoptRef(new MediaStreamDescriptor(id, audioSources, videoSources));
     }
 
     MediaStreamDescriptorClient* client() const { return m_client; }
     void setClient(MediaStreamDescriptorClient* client) { m_client = client; }
 
-    String label() const { return m_label; }
+    String id() const { return m_id; }
 
     unsigned numberOfAudioComponents() const { return m_audioComponents.size(); }
     MediaStreamComponent* audioComponent(unsigned index) const { return m_audioComponents[index].get(); }
@@ -79,9 +79,9 @@ public:
     void setExtraData(PassRefPtr<ExtraData> extraData) { m_extraData = extraData; }
 
 private:
-    MediaStreamDescriptor(const String& label, const MediaStreamSourceVector& audioSources, const MediaStreamSourceVector& videoSources)
+    MediaStreamDescriptor(const String& id, const MediaStreamSourceVector& audioSources, const MediaStreamSourceVector& videoSources)
         : m_client(0)
-        , m_label(label)
+        , m_id(id)
         , m_ended(false)
     {
         for (size_t i = 0; i < audioSources.size(); i++)
@@ -92,7 +92,7 @@ private:
     }
 
     MediaStreamDescriptorClient* m_client;
-    String m_label;
+    String m_id;
     Vector<RefPtr<MediaStreamComponent> > m_audioComponents;
     Vector<RefPtr<MediaStreamComponent> > m_videoComponents;
     bool m_ended;

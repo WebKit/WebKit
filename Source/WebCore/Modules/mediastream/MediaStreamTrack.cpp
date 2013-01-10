@@ -71,6 +71,11 @@ String MediaStreamTrack::kind() const
     return audioKind;
 }
 
+String MediaStreamTrack::id() const
+{
+    return m_component->id();
+}
+
 String MediaStreamTrack::label() const
 {
     return m_component->source()->name();

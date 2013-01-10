@@ -34,6 +34,7 @@
 #if ENABLE(MEDIA_STREAM)
 
 #include "MediaStreamSource.h"
+#include "UUID.h"
 
 namespace WebCore {
 
@@ -46,17 +47,20 @@ public:
 
     MediaStreamSource* source() const { return m_source.get(); }
 
+    String id() const { return m_id; }
     bool enabled() const { return m_enabled; }
     void setEnabled(bool enabled) { m_enabled = enabled; }
 
 private:
     MediaStreamComponent(PassRefPtr<MediaStreamSource> source)
         : m_source(source)
+        , m_id(createCanonicalUUIDString())
         , m_enabled(true)
     {
     }
 
     RefPtr<MediaStreamSource> m_source;
+    String m_id;
     bool m_enabled;
 };
 

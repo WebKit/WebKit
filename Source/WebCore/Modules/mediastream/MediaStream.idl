@@ -30,12 +30,14 @@
     Constructor(in MediaStreamTrack[] tracks),
     ConstructorParameters=0,
     CallWith=ScriptExecutionContext,
-   ] interface MediaStream {
+] interface MediaStream {
+    // DEPRECATED
     readonly attribute DOMString label;
+
+    readonly attribute DOMString id;
+
     readonly attribute MediaStreamTrackList audioTracks;
     readonly attribute MediaStreamTrackList videoTracks;
-
-    // FIXME: implement the record method when MediaStreamRecorder is available.
 
     const unsigned short LIVE = 1;
     const unsigned short ENDED = 2;

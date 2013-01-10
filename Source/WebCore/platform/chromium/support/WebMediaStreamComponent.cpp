@@ -54,6 +54,11 @@ WebMediaStreamComponent& WebMediaStreamComponent::operator=(WebCore::MediaStream
     return *this;
 }
 
+void WebMediaStreamComponent::initialize(const WebMediaStreamSource& source)
+{
+    m_private = MediaStreamComponent::create(source);
+}
+
 void WebMediaStreamComponent::reset()
 {
     m_private.reset();
@@ -72,13 +77,19 @@ WebMediaStreamComponent::operator MediaStreamComponent*() const
 bool WebMediaStreamComponent::isEnabled() const
 {
     ASSERT(!m_private.isNull());
-    return m_private.get()->enabled();
+    return m_private->enabled();
+}
+
+WebString WebMediaStreamComponent::id() const
+{
+    ASSERT(!m_private.isNull());
+    return m_private->id();
 }
 
 WebMediaStreamSource WebMediaStreamComponent::source() const
 {
     ASSERT(!m_private.isNull());
-    return WebMediaStreamSource(m_private.get()->source());
+    return WebMediaStreamSource(m_private->source());
 }
 
 void WebMediaStreamComponent::assign(const WebMediaStreamComponent& other)

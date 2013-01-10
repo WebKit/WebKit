@@ -53,6 +53,7 @@ public:
     virtual ~MediaStreamTrack();
 
     String kind() const;
+    String id() const;
     String label() const;
 
     bool enabled() const;

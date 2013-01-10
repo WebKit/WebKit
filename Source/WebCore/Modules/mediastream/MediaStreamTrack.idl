@@ -28,6 +28,7 @@
     ActiveDOMObject
 ] interface MediaStreamTrack {
     readonly attribute DOMString kind;
+    readonly attribute DOMString id;
     readonly attribute DOMString label;
              attribute boolean enabled;
 

@@ -63,7 +63,10 @@ public:
     WEBKIT_EXPORT void reset();
     bool isNull() const { return m_private.isNull(); }
 
+    // DEPRECATED
     WEBKIT_EXPORT WebString label() const;
+
+    WEBKIT_EXPORT WebString id() const;
 
     WEBKIT_EXPORT void audioSources(WebVector<WebMediaStreamComponent>&) const;
     WEBKIT_EXPORT void videoSources(WebVector<WebMediaStreamComponent>&) const;

@@ -1,3 +1,19 @@
+2013-01-10  Tommy Widenflycht  <tommyw@google.com>
+
+        MediaStream API: Adding the new id attribute to MediaStream and MediaStreamTrack
+        https://bugs.webkit.org/show_bug.cgi?id=106564
+
+        Reviewed by Adam Barth.
+
+        Specification: http://dev.w3.org/2011/webrtc/editor/getusermedia.html
+        MediaStream looses its label attribute and instead gets an id attribute.
+        MediaStreamTrack gets an id attribute.
+
+        * chromium/public/WebMediaStreamComponent.h:
+        (WebMediaStreamComponent):
+        * chromium/public/WebMediaStreamDescriptor.h:
+        (WebMediaStreamDescriptor):
+
 2013-01-09  Chris Rogers  <crogers@google.com>
 
         Allow live/local audio input to be enabled only when needed

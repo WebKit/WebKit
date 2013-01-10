@@ -56,8 +56,11 @@ public:
         return *this;
     }
     WEBKIT_EXPORT void assign(const WebMediaStreamComponent&);
+    WEBKIT_EXPORT void initialize(const WebMediaStreamSource&);
     WEBKIT_EXPORT void reset();
     bool isNull() const { return m_private.isNull(); }
+
+    WEBKIT_EXPORT WebString id() const;
 
     WEBKIT_EXPORT WebMediaStreamSource source() const;
     WEBKIT_EXPORT bool isEnabled() const;

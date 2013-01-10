@@ -65,7 +65,12 @@ void WebMediaStreamDescriptor::reset()
 
 WebString WebMediaStreamDescriptor::label() const
 {
-    return m_private->label();
+    return m_private->id();
+}
+
+WebString WebMediaStreamDescriptor::id() const
+{
+    return m_private->id();
 }
 
 class ExtraDataContainer : public WebCore::MediaStreamDescriptor::ExtraData {

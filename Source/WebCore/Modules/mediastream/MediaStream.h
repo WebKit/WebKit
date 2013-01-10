@@ -53,7 +53,11 @@ public:
     DEFINE_ATTRIBUTE_EVENT_LISTENER(ended);
 
     ReadyState readyState() const;
-    String label() const { return m_descriptor->label(); }
+
+    // DEPRECATED
+    String label() const { return m_descriptor->id(); }
+
+    String id() const { return m_descriptor->id(); }
 
     MediaStreamTrackList* audioTracks() { return m_audioTracks.get(); }
     MediaStreamTrackList* videoTracks() { return m_videoTracks.get(); }
