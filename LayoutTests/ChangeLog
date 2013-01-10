@@ -1,5 +1,15 @@
 2013-01-10  Alexander Pavlov  <apavlov@chromium.org>
 
+        The "outline-offset" property is not found in the computed style property list
+        https://bugs.webkit.org/show_bug.cgi?id=106561
+
+        Reviewed by Alexis Menard.
+
+        * fast/css/getComputedStyle/getComputedStyle-outline-offset-expected.txt: Added.
+        * fast/css/getComputedStyle/getComputedStyle-outline-offset.html: Added.
+
+2013-01-10  Alexander Pavlov  <apavlov@chromium.org>
+
         CSSParser does not allow the absence of whitespace between "and" and "expression"
         https://bugs.webkit.org/show_bug.cgi?id=106458
 

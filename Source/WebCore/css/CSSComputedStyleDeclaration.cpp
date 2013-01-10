@@ -164,6 +164,7 @@ static const CSSPropertyID computedProperties[] = {
     CSSPropertyOpacity,
     CSSPropertyOrphans,
     CSSPropertyOutlineColor,
+    CSSPropertyOutlineOffset,
     CSSPropertyOutlineStyle,
     CSSPropertyOutlineWidth,
     CSSPropertyOverflowWrap,
