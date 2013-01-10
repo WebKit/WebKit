@@ -1,3 +1,20 @@
+2013-01-10  Arnaud Renevier  <a.renevier@sisa.samsung.com>
+
+        [WK2] [Gtk] web inspector is not visible.
+        https://bugs.webkit.org/show_bug.cgi?id=106050
+
+        Reviewed by Carlos Garcia Campos.
+
+        Use webkitWebViewBaseAddWebInspector when adding web inspector to
+        webview in order to make webview aware of its existence.
+
+        Use gtk_container_add when adding web inspector wiew to its own window
+        because m_inspectorWindow is not a WebKitWebViewBase.
+
+        * UIProcess/gtk/WebInspectorProxyGtk.cpp:
+        (WebKit::WebInspectorProxy::createInspectorWindow):
+        (WebKit::WebInspectorProxy::platformAttach):
+
 2013-01-09  Seokju Kwon  <seokju.kwon@gmail.com>
 
         [WK2][EFL] Add guard around NativeWebTouchEvent
