@@ -52,7 +52,7 @@ public:
     virtual ~IDBTransactionBackendImpl();
 
     // IDBTransactionBackendInterface
-    virtual PassRefPtr<IDBObjectStoreBackendInterface> objectStore(int64_t, ExceptionCode&);
+    virtual PassRefPtr<IDBObjectStoreBackendInterface> objectStore(int64_t, ExceptionCode&) { ASSERT_NOT_REACHED(); return 0; }
     virtual void abort();
     void commit();
     virtual void setCallbacks(IDBTransactionCallbacks* callbacks) { m_callbacks = callbacks; }

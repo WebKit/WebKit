@@ -605,12 +605,14 @@ static bool checkObjectStoreAndMetaDataType(const LevelDBIterator* it, const Vec
     return true;
 }
 
-Vector<IDBObjectStoreMetadata> IDBBackingStore::getObjectStores(int64_t databaseId)
+// FIXME: This should do some error handling rather than plowing ahead when bad data is encountered.
+void IDBBackingStore::getObjectStores(int64_t databaseId, IDBDatabaseMetadata::ObjectStoreMap* objectStores)
 {
     IDB_TRACE("IDBBackingStore::getObjectStores");
-    Vector<IDBObjectStoreMetadata> objectStores;
     const Vector<char> startKey = ObjectStoreMetaDataKey::encode(databaseId, 1, 0);
     const Vector<char> stopKey = ObjectStoreMetaDataKey::encodeMaxKey(databaseId);
+
+    ASSERT(objectStores->isEmpty());
 
     OwnPtr<LevelDBIterator> it = m_db->createIterator();
     it->seek(startKey);
@@ -691,9 +693,10 @@ Vector<IDBObjectStoreMetadata> IDBBackingStore::getObjectStores(int64_t database
             it->next();
         }
 
-        objectStores.append(IDBObjectStoreMetadata(objectStoreName, objectStoreId, keyPath, autoIncrement, maxIndexId));
+        IDBObjectStoreMetadata metadata(objectStoreName, objectStoreId, keyPath, autoIncrement, maxIndexId);
+        getIndexes(databaseId, objectStoreId, &metadata.indexes);
+        objectStores->set(objectStoreId, metadata);
     }
-    return objectStores;
 }
 
 WARN_UNUSED_RETURN static bool setMaxObjectStoreId(LevelDBTransaction* transaction, int64_t databaseId, int64_t objectStoreId)
@@ -979,14 +982,14 @@ static bool checkIndexAndMetaDataKey(const LevelDBIterator* it, const Vector<cha
 }
 
 
-Vector<IDBIndexMetadata> IDBBackingStore::getIndexes(int64_t databaseId, int64_t objectStoreId)
+// FIXME: This should do some error handling rather than plowing ahead when bad data is encountered.
+void IDBBackingStore::getIndexes(int64_t databaseId, int64_t objectStoreId, IDBObjectStoreMetadata::IndexMap* indexes)
 {
     IDB_TRACE("IDBBackingStore::getIndexes");
-    Vector<IDBIndexMetadata> indexes;
     const Vector<char> startKey = IndexMetaDataKey::encode(databaseId, objectStoreId, 0, 0);
     const Vector<char> stopKey = IndexMetaDataKey::encode(databaseId, objectStoreId + 1, 0, 0);
 
-    ASSERT(indexes.isEmpty());
+    ASSERT(indexes->isEmpty());
 
     OwnPtr<LevelDBIterator> it = m_db->createIterator();
     it->seek(startKey);
@@ -1029,9 +1032,8 @@ Vector<IDBIndexMetadata> IDBBackingStore::getIndexes(int64_t databaseId, int64_t
             it->next();
         }
 
-        indexes.append(IDBIndexMetadata(indexName, indexId, keyPath, indexUnique, indexMultiEntry));
+        indexes->set(indexId, IDBIndexMetadata(indexName, indexId, keyPath, indexUnique, indexMultiEntry));
     }
-    return indexes;
 }
 
 WARN_UNUSED_RETURN static bool setMaxIndexId(LevelDBTransaction* transaction, int64_t databaseId, int64_t objectStoreId, int64_t indexId)

@@ -3044,7 +3044,6 @@ enable?(INDEXED_DATABASE) {
         Modules/indexeddb/IDBFactoryBackendImpl.h \
         Modules/indexeddb/IDBIndex.h \
         Modules/indexeddb/IDBIndexBackendInterface.h \
-        Modules/indexeddb/IDBIndexBackendImpl.h \
         Modules/indexeddb/IDBKey.h \
         Modules/indexeddb/IDBKeyRange.h \
         Modules/indexeddb/IDBObjectStore.h \
@@ -3072,7 +3071,6 @@ enable?(INDEXED_DATABASE) {
         Modules/indexeddb/IDBFactoryBackendInterface.cpp \
         Modules/indexeddb/IDBFactoryBackendImpl.cpp \
         Modules/indexeddb/IDBIndex.cpp \
-        Modules/indexeddb/IDBIndexBackendImpl.cpp \
         Modules/indexeddb/IDBKey.cpp \
         Modules/indexeddb/IDBKeyRange.cpp \
         Modules/indexeddb/IDBObjectStore.cpp \

@@ -30,10 +30,10 @@
 
 #include "IDBBackingStore.h"
 #include "IDBCallbacks.h"
+#include "IDBDatabaseBackendImpl.h"
 #include "IDBDatabaseError.h"
 #include "IDBDatabaseException.h"
 #include "IDBKeyRange.h"
-#include "IDBObjectStoreBackendImpl.h"
 #include "IDBRequest.h"
 #include "IDBTracing.h"
 #include "IDBTransactionBackendImpl.h"

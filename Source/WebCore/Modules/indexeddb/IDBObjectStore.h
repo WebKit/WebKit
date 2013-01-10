@@ -29,7 +29,6 @@
 #include "Dictionary.h"
 #include "IDBCursor.h"
 #include "IDBIndex.h"
-#include "IDBIndexBackendInterface.h"
 #include "IDBKey.h"
 #include "IDBKeyRange.h"
 #include "IDBMetadata.h"
@@ -52,9 +51,9 @@ class IDBAny;
 
 class IDBObjectStore : public ScriptWrappable, public RefCounted<IDBObjectStore> {
 public:
-    static PassRefPtr<IDBObjectStore> create(const IDBObjectStoreMetadata& metadata, PassRefPtr<IDBObjectStoreBackendInterface> backend, IDBTransaction* transaction)
+    static PassRefPtr<IDBObjectStore> create(const IDBObjectStoreMetadata& metadata, IDBTransaction* transaction)
     {
-        return adoptRef(new IDBObjectStore(metadata, backend, transaction));
+        return adoptRef(new IDBObjectStore(metadata, transaction));
     }
     ~IDBObjectStore() { }
 
@@ -109,7 +108,7 @@ public:
     IDBDatabaseBackendInterface* backendDB() const;
 
 private:
-    IDBObjectStore(const IDBObjectStoreMetadata&, PassRefPtr<IDBObjectStoreBackendInterface>, IDBTransaction*);
+    IDBObjectStore(const IDBObjectStoreMetadata&, IDBTransaction*);
 
     int64_t findIndexId(const String& name) const;
     bool containsIndex(const String& name) const
@@ -118,7 +117,6 @@ private:
     }
 
     IDBObjectStoreMetadata m_metadata;
-    RefPtr<IDBObjectStoreBackendInterface> m_backend;
     RefPtr<IDBTransaction> m_transaction;
     bool m_deleted;
 

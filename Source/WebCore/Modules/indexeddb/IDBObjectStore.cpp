@@ -49,13 +49,11 @@ namespace WebCore {
 
 static const unsigned short defaultDirection = IDBCursor::NEXT;
 
-IDBObjectStore::IDBObjectStore(const IDBObjectStoreMetadata& metadata, PassRefPtr<IDBObjectStoreBackendInterface> idbObjectStore, IDBTransaction* transaction)
+IDBObjectStore::IDBObjectStore(const IDBObjectStoreMetadata& metadata, IDBTransaction* transaction)
     : m_metadata(metadata)
-    , m_backend(idbObjectStore)
     , m_transaction(transaction)
     , m_deleted(false)
 {
-    ASSERT(m_backend);
     ASSERT(m_transaction);
     // We pass a reference to this object before it can be adopted.
     relaxAdoptionRequirement();
@@ -385,9 +383,7 @@ PassRefPtr<IDBIndex> IDBObjectStore::createIndex(ScriptExecutionContext* context
     }
 
     int64_t indexId = m_metadata.maxIndexId + 1;
-    m_backend->createIndex(indexId, name, keyPath, unique, multiEntry, m_transaction->backend(), ec);
-    if (ec)
-        return 0;
+    backendDB()->createIndex(m_transaction->id(), id(), indexId, name, keyPath, unique, multiEntry);
 
     ++m_metadata.maxIndexId;
 
@@ -466,14 +462,13 @@ void IDBObjectStore::deleteIndex(const String& name, ExceptionCode& ec)
         return;
     }
 
-    m_backend->deleteIndex(indexId, m_transaction->backend(), ec);
-    if (!ec) {
-        IDBIndexMap::iterator it = m_indexMap.find(name);
-        if (it != m_indexMap.end()) {
-            m_metadata.indexes.remove(it->value->id());
-            it->value->markDeleted();
-            m_indexMap.remove(name);
-        }
+    backendDB()->deleteIndex(m_transaction->id(), id(), indexId);
+
+    IDBIndexMap::iterator it = m_indexMap.find(name);
+    if (it != m_indexMap.end()) {
+        m_metadata.indexes.remove(it->value->id());
+        it->value->markDeleted();
+        m_indexMap.remove(name);
     }
 }
 

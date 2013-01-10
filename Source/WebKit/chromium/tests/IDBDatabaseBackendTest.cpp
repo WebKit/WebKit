@@ -30,8 +30,7 @@
 #include "IDBDatabaseCallbacksProxy.h"
 #include "IDBFactoryBackendImpl.h"
 #include "IDBFakeBackingStore.h"
-#include "IDBIndexBackendImpl.h"
-#include "IDBObjectStoreBackendImpl.h"
+#include "IDBTransactionBackendImpl.h"
 #include "WebIDBDatabaseCallbacksImpl.h"
 #include "WebIDBDatabaseImpl.h"
 
@@ -56,20 +55,7 @@ TEST(IDBDatabaseBackendTest, BackingStoreRetention)
     RefPtr<IDBDatabaseBackendImpl> db = IDBDatabaseBackendImpl::create("db", backingStore.get(), factory, "uniqueid");
     EXPECT_GT(backingStore->refCount(), 1);
 
-    const bool autoIncrement = false;
-    RefPtr<IDBObjectStoreBackendImpl> store = IDBObjectStoreBackendImpl::create(db.get(), IDBObjectStoreMetadata("store", 1, IDBKeyPath("keyPath"), autoIncrement, 0));
-    EXPECT_GT(backingStore->refCount(), 1);
-
-    const bool unique = false;
-    const bool multiEntry = false;
-    RefPtr<IDBIndexBackendImpl> index = IDBIndexBackendImpl::create(db.get(), IDBIndexMetadata("index", -1, IDBKeyPath("keyPath"), unique, multiEntry));
-    EXPECT_GT(backingStore->refCount(), 1);
-
     db.clear();
-    EXPECT_TRUE(backingStore->hasOneRef());
-    store.clear();
-    EXPECT_TRUE(backingStore->hasOneRef());
-    index.clear();
     EXPECT_TRUE(backingStore->hasOneRef());
 }
 

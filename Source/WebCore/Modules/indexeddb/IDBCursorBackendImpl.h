@@ -41,9 +41,7 @@
 namespace WebCore {
 
 class IDBDatabaseBackendImpl;
-class IDBIndexBackendImpl;
 class IDBKeyRange;
-class IDBObjectStoreBackendImpl;
 
 class IDBCursorBackendImpl : public IDBCursorBackendInterface {
 public:

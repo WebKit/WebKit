@@ -34,7 +34,6 @@
 #include "IDBCursorBackendImpl.h"
 #include "IDBDatabaseBackendImpl.h"
 #include "IDBDatabaseException.h"
-#include "IDBIndexBackendImpl.h"
 #include "IDBKey.h"
 #include "IDBKeyPath.h"
 #include "IDBKeyRange.h"
@@ -43,98 +42,6 @@
 #include <wtf/MathExtras.h>
 
 namespace WebCore {
-
-class IDBObjectStoreBackendImpl::CreateIndexOperation : public IDBTransactionBackendImpl::Operation {
-public:
-    static PassOwnPtr<IDBTransactionBackendImpl::Operation> create(PassRefPtr<IDBObjectStoreBackendImpl> objectStore, PassRefPtr<IDBIndexBackendImpl> index)
-    {
-        return adoptPtr(new CreateIndexOperation(objectStore, index));
-    }
-    virtual void perform(IDBTransactionBackendImpl*);
-private:
-    CreateIndexOperation(PassRefPtr<IDBObjectStoreBackendImpl> objectStore, PassRefPtr<IDBIndexBackendImpl> index)
-        : m_objectStore(objectStore)
-        , m_index(index)
-    {
-    }
-
-    RefPtr<IDBObjectStoreBackendImpl> m_objectStore;
-    RefPtr<IDBIndexBackendImpl> m_index;
-};
-
-class IDBObjectStoreBackendImpl::DeleteIndexOperation : public IDBTransactionBackendImpl::Operation {
-public:
-    static PassOwnPtr<IDBTransactionBackendImpl::Operation> create(PassRefPtr<IDBObjectStoreBackendImpl> objectStore, PassRefPtr<IDBIndexBackendImpl> index)
-    {
-        return adoptPtr(new DeleteIndexOperation(objectStore, index));
-    }
-    virtual void perform(IDBTransactionBackendImpl*);
-private:
-    DeleteIndexOperation(PassRefPtr<IDBObjectStoreBackendImpl> objectStore, PassRefPtr<IDBIndexBackendImpl> index)
-        : m_objectStore(objectStore)
-        , m_index(index)
-    {
-    }
-
-    RefPtr<IDBObjectStoreBackendImpl> m_objectStore;
-    RefPtr<IDBIndexBackendImpl> m_index;
-};
-
-class IDBObjectStoreBackendImpl::CreateIndexAbortOperation : public IDBTransactionBackendImpl::Operation {
-public:
-    static PassOwnPtr<IDBTransactionBackendImpl::Operation> create(PassRefPtr<IDBObjectStoreBackendImpl> objectStore, PassRefPtr<IDBIndexBackendImpl> index)
-    {
-        return adoptPtr(new CreateIndexAbortOperation(objectStore, index));
-    }
-    virtual void perform(IDBTransactionBackendImpl*);
-private:
-    CreateIndexAbortOperation(PassRefPtr<IDBObjectStoreBackendImpl> objectStore, PassRefPtr<IDBIndexBackendImpl> index)
-        : m_objectStore(objectStore)
-        , m_index(index)
-    {
-    }
-
-    RefPtr<IDBObjectStoreBackendImpl> m_objectStore;
-    RefPtr<IDBIndexBackendImpl> m_index;
-};
-
-class IDBObjectStoreBackendImpl::DeleteIndexAbortOperation : public IDBTransactionBackendImpl::Operation {
-public:
-    static PassOwnPtr<IDBTransactionBackendImpl::Operation> create(PassRefPtr<IDBObjectStoreBackendImpl> objectStore, PassRefPtr<IDBIndexBackendImpl> index)
-    {
-        return adoptPtr(new DeleteIndexAbortOperation(objectStore, index));
-    }
-    virtual void perform(IDBTransactionBackendImpl*);
-private:
-    DeleteIndexAbortOperation(PassRefPtr<IDBObjectStoreBackendImpl> objectStore, PassRefPtr<IDBIndexBackendImpl> index)
-        : m_objectStore(objectStore)
-        , m_index(index)
-    {
-    }
-
-    RefPtr<IDBObjectStoreBackendImpl> m_objectStore;
-    RefPtr<IDBIndexBackendImpl> m_index;
-};
-
-
-IDBObjectStoreBackendImpl::~IDBObjectStoreBackendImpl()
-{
-}
-
-IDBObjectStoreBackendImpl::IDBObjectStoreBackendImpl(const IDBDatabaseBackendImpl* database, const IDBObjectStoreMetadata& metadata)
-    : m_database(database)
-    , m_metadata(metadata)
-{
-    loadIndexes();
-}
-
-IDBObjectStoreMetadata IDBObjectStoreBackendImpl::metadata() const
-{
-    IDBObjectStoreMetadata metadata(m_metadata);
-    for (IndexMap::const_iterator it = m_indexes.begin(); it != m_indexes.end(); ++it)
-        metadata.indexes.set(it->key, it->value->metadata());
-    return metadata;
-}
 
 bool IDBObjectStoreBackendImpl::IndexWriter::verifyIndexKeys(IDBBackingStore& backingStore, IDBBackingStore::Transaction* transaction, int64_t databaseId, int64_t objectStoreId, int64_t indexId, bool& canAddKeys, const IDBKey* primaryKey, String* errorMessage) const
 {
@@ -210,86 +117,6 @@ bool IDBObjectStoreBackendImpl::makeIndexWriters(PassRefPtr<IDBTransactionBacken
 
     completed = true;
     return true;
-}
-
-PassRefPtr<IDBIndexBackendInterface> IDBObjectStoreBackendImpl::createIndex(int64_t id, const String& name, const IDBKeyPath& keyPath, bool unique, bool multiEntry, IDBTransactionBackendInterface* transactionPtr, ExceptionCode& ec)
-{
-    ASSERT_WITH_MESSAGE(!m_indexes.contains(id), "Indexes already contain '%s'", name.utf8().data());
-
-    RefPtr<IDBIndexBackendImpl> index = IDBIndexBackendImpl::create(m_database, IDBIndexMetadata(name, id, keyPath, unique, multiEntry));
-    ASSERT(index->name() == name);
-
-    RefPtr<IDBTransactionBackendImpl> transaction = IDBTransactionBackendImpl::from(transactionPtr);
-    ASSERT(transaction->mode() == IDBTransaction::VERSION_CHANGE);
-    ASSERT(id > m_metadata.maxIndexId);
-    m_metadata.maxIndexId = id;
-
-    if (!transaction->scheduleTask(CreateIndexOperation::create(this, index), CreateIndexAbortOperation::create(this, index))) {
-        ec = IDBDatabaseException::TransactionInactiveError;
-        return 0;
-    }
-
-    m_indexes.set(id, index);
-    return index.release();
-}
-
-void IDBObjectStoreBackendImpl::CreateIndexOperation::perform(IDBTransactionBackendImpl* transaction)
-{
-    IDB_TRACE("CreateIndexOperation");
-    if (!m_objectStore->backingStore()->createIndex(transaction->backingStoreTransaction(), m_objectStore->databaseId(), m_objectStore->id(), m_index->id(), m_index->name(), m_index->keyPath(), m_index->unique(), m_index->multiEntry())) {
-        transaction->abort(IDBDatabaseError::create(IDBDatabaseException::UnknownError, String::format("Internal error when trying to create index '%s'.", m_index->name().utf8().data())));
-        return;
-    }
-}
-
-PassRefPtr<IDBIndexBackendInterface> IDBObjectStoreBackendImpl::index(int64_t indexId)
-{
-    RefPtr<IDBIndexBackendInterface> index = m_indexes.get(indexId);
-    ASSERT(index);
-    return index.release();
-}
-
-void IDBObjectStoreBackendImpl::deleteIndex(int64_t indexId, IDBTransactionBackendInterface* transactionPtr, ExceptionCode& ec)
-{
-    ASSERT(m_indexes.contains(indexId));
-
-    RefPtr<IDBIndexBackendImpl> index = m_indexes.get(indexId);
-    RefPtr<IDBTransactionBackendImpl> transaction = IDBTransactionBackendImpl::from(transactionPtr);
-    ASSERT(transaction->mode() == IDBTransaction::VERSION_CHANGE);
-
-    if (!transaction->scheduleTask(DeleteIndexOperation::create(this, index), DeleteIndexAbortOperation::create(this, index))) {
-        ec = IDBDatabaseException::TransactionInactiveError;
-        return;
-    }
-    m_indexes.remove(indexId);
-}
-
-void IDBObjectStoreBackendImpl::DeleteIndexOperation::perform(IDBTransactionBackendImpl* transaction)
-{
-    IDB_TRACE("DeleteIndexOperation");
-    m_objectStore->backingStore()->deleteIndex(transaction->backingStoreTransaction(), m_objectStore->databaseId(), m_objectStore->id(), m_index->id());
-}
-
-void IDBObjectStoreBackendImpl::loadIndexes()
-{
-    Vector<IDBIndexMetadata> indexes = backingStore()->getIndexes(databaseId(), m_metadata.id);
-
-    for (size_t i = 0; i < indexes.size(); ++i)
-        m_indexes.set(indexes[i].id, IDBIndexBackendImpl::create(m_database, indexes[i]));
-}
-
-void IDBObjectStoreBackendImpl::CreateIndexAbortOperation::perform(IDBTransactionBackendImpl* transaction)
-{
-    ASSERT(!transaction);
-    ASSERT(m_objectStore->m_indexes.contains(m_index->id()));
-    m_objectStore->m_indexes.remove(m_index->id());
-}
-
-void IDBObjectStoreBackendImpl::DeleteIndexAbortOperation::perform(IDBTransactionBackendImpl* transaction)
-{
-    ASSERT(!transaction);
-    ASSERT(!m_objectStore->m_indexes.contains(m_index->id()));
-    m_objectStore->m_indexes.set(m_index->id(), m_index);
 }
 
 PassRefPtr<IDBKey> IDBObjectStoreBackendImpl::generateKey(PassRefPtr<IDBBackingStore> backingStore, PassRefPtr<IDBTransactionBackendImpl> transaction, int64_t databaseId, int64_t objectStoreId)

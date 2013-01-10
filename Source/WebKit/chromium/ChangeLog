@@ -1,3 +1,15 @@
+2013-01-09  Alec Flett  <alecflett@chromium.org>
+
+        IndexedDB: Allow createIndex/createObjectStore to be asynchronous
+        https://bugs.webkit.org/show_bug.cgi?id=106377
+
+        Reviewed by Tony Chang.
+
+        Remove this test as it makes no sense once the objectstore/index
+        hierarchy is gone.
+
+        * tests/IDBDatabaseBackendTest.cpp:
+
 2013-01-09  Chris Rogers  <crogers@google.com>
 
         Allow live/local audio input to be enabled only when needed

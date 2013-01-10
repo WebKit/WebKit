@@ -122,11 +122,6 @@ IDBTransaction::~IDBTransaction()
     ASSERT(m_state == Finished);
 }
 
-IDBTransactionBackendInterface* IDBTransaction::backend() const
-{
-    return m_backend.get();
-}
-
 const String& IDBTransaction::mode() const
 {
     ExceptionCode ec = 0;
@@ -176,12 +171,9 @@ PassRefPtr<IDBObjectStore> IDBTransaction::objectStore(const String& name, Excep
         return 0;
     }
 
-    RefPtr<IDBObjectStoreBackendInterface> objectStoreBackend = m_backend->objectStore(objectStoreId, ec);
-    ASSERT(!ec && objectStoreBackend);
-
     const IDBDatabaseMetadata& metadata = m_database->metadata();
 
-    RefPtr<IDBObjectStore> objectStore = IDBObjectStore::create(metadata.objectStores.get(objectStoreId), objectStoreBackend, this);
+    RefPtr<IDBObjectStore> objectStore = IDBObjectStore::create(metadata.objectStores.get(objectStoreId), this);
     objectStoreCreated(name, objectStore);
     return objectStore.release();
 }

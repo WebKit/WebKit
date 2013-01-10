@@ -71,7 +71,6 @@ public:
     static Mode stringToMode(const String&, ScriptExecutionContext*, ExceptionCode&);
     static const AtomicString& modeToString(Mode, ExceptionCode&);
 
-    IDBTransactionBackendInterface* backend() const;
     IDBDatabaseBackendInterface* backendDB() const;
 
     int64_t id() const { return m_id; }

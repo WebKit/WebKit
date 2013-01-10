@@ -32,7 +32,6 @@
 #include "IDBCursorBackendImpl.h"
 #include "IDBDatabaseBackendImpl.h"
 #include "IDBDatabaseException.h"
-#include "IDBObjectStoreBackendImpl.h"
 #include "IDBTracing.h"
 #include "IDBTransactionCoordinator.h"
 
@@ -68,18 +67,6 @@ IDBTransactionBackendImpl::~IDBTransactionBackendImpl()
 {
     // It shouldn't be possible for this object to get deleted until it's either complete or aborted.
     ASSERT(m_state == Finished);
-}
-
-PassRefPtr<IDBObjectStoreBackendInterface> IDBTransactionBackendImpl::objectStore(int64_t id, ExceptionCode& ec)
-{
-    if (m_state == Finished) {
-        ec = IDBDatabaseException::InvalidStateError;
-        return 0;
-    }
-
-    RefPtr<IDBObjectStoreBackendImpl> objectStore = m_database->objectStore(id);
-    ASSERT(objectStore);
-    return objectStore.release();
 }
 
 bool IDBTransactionBackendImpl::scheduleTask(TaskType type, PassOwnPtr<Operation> task, PassOwnPtr<Operation> abortTask)

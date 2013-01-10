@@ -58,7 +58,7 @@ public:
     virtual bool updateIDBDatabaseIntVersion(IDBBackingStore::Transaction*, int64_t rowId, int64_t intVersion);
     virtual bool deleteDatabase(const String& name);
 
-    virtual Vector<IDBObjectStoreMetadata> getObjectStores(int64_t databaseId);
+    void getObjectStores(int64_t databaseId, IDBDatabaseMetadata::ObjectStoreMap*);
     virtual bool createObjectStore(IDBBackingStore::Transaction*, int64_t databaseId, int64_t objectStoreId, const String& name, const IDBKeyPath&, bool autoIncrement);
     virtual bool deleteObjectStore(IDBBackingStore::Transaction*, int64_t databaseId, int64_t objectStoreId) WARN_UNUSED_RETURN;
 
@@ -85,7 +85,6 @@ public:
     virtual bool maybeUpdateKeyGeneratorCurrentNumber(IDBBackingStore::Transaction*, int64_t databaseId, int64_t objectStoreId, int64_t newState, bool checkCurrent) WARN_UNUSED_RETURN;
     virtual bool keyExistsInObjectStore(IDBBackingStore::Transaction*, int64_t databaseId, int64_t objectStoreId, const IDBKey&, RecordIdentifier* foundRecordIdentifier, bool& found) WARN_UNUSED_RETURN;
 
-    virtual Vector<IDBIndexMetadata> getIndexes(int64_t databaseId, int64_t objectStoreId);
     virtual bool createIndex(IDBBackingStore::Transaction*, int64_t databaseId, int64_t objectStoreId, int64_t indexId, const String& name, const IDBKeyPath&, bool isUnique, bool isMultiEntry);
     virtual void deleteIndex(IDBBackingStore::Transaction*, int64_t databaseId, int64_t objectStoreId, int64_t indexId);
     virtual void putIndexDataForRecord(IDBBackingStore::Transaction*, int64_t databaseId, int64_t objectStoreId, int64_t indexId, const IDBKey&, const RecordIdentifier&);
@@ -169,6 +168,7 @@ protected:
 
 private:
     bool findKeyInIndex(IDBBackingStore::Transaction*, int64_t databaseId, int64_t objectStoreId, int64_t indexId, const IDBKey&, Vector<char>& foundEncodedPrimaryKey, bool& found);
+    void getIndexes(int64_t databaseId, int64_t objectStoreId, IDBObjectStoreMetadata::IndexMap*);
 
     String m_identifier;
     RefPtr<IDBFactoryBackendImpl> m_factory;

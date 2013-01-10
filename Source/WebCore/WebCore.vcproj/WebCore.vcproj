@@ -24985,14 +24985,6 @@
 					>
 				</File>
 				<File
-					RelativePath="..\Modules\indexeddb\IDBIndexBackendImpl.cpp"
-					>
-				</File>
-				<File
-					RelativePath="..\Modules\indexeddb\IDBIndexBackendImpl.h"
-					>
-				</File>
-				<File
 					RelativePath="..\Modules\indexeddb\IDBIndexBackendInterface.h"
 					>
 				</File>

@@ -39,7 +39,6 @@ public:
     virtual bool updateIDBDatabaseIntVersion(Transaction*, int64_t rowId, int64_t version) OVERRIDE { return false; }
     virtual bool deleteDatabase(const String& name) OVERRIDE { return false; }
 
-    virtual Vector<IDBObjectStoreMetadata> getObjectStores(int64_t databaseId) OVERRIDE { return Vector<IDBObjectStoreMetadata>(); }
     virtual bool createObjectStore(Transaction*, int64_t databaseId, int64_t objectStoreId, const String& name, const IDBKeyPath&, bool autoIncrement) OVERRIDE { return false; };
 
     virtual void clearObjectStore(Transaction*, int64_t databaseId, int64_t objectStoreId) OVERRIDE { }
@@ -48,7 +47,6 @@ public:
     virtual bool maybeUpdateKeyGeneratorCurrentNumber(Transaction*, int64_t databaseId, int64_t objectStoreId, int64_t newNumber, bool checkCurrent) OVERRIDE { return true; }
     virtual bool keyExistsInObjectStore(Transaction*, int64_t databaseId, int64_t objectStoreId, const IDBKey&, RecordIdentifier* foundRecordIdentifier, bool& found) OVERRIDE { return true; }
 
-    virtual Vector<IDBIndexMetadata> getIndexes(int64_t databaseId, int64_t objectStoreId) OVERRIDE { return Vector<IDBIndexMetadata>(); }
     virtual bool createIndex(Transaction*, int64_t databaseId, int64_t objectStoreId, int64_t indexId, const String& name, const IDBKeyPath&, bool isUnique, bool isMultiEntry) OVERRIDE { return false; };
     virtual void deleteIndex(Transaction*, int64_t databaseId, int64_t objectStoreId, int64_t indexId) OVERRIDE { }
     virtual void putIndexDataForRecord(Transaction*, int64_t databaseId, int64_t objectStoreId, int64_t indexId, const IDBKey&, const RecordIdentifier&) OVERRIDE { }

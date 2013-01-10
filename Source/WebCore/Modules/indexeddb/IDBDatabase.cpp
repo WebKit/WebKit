@@ -184,14 +184,10 @@ PassRefPtr<IDBObjectStore> IDBDatabase::createObjectStore(const String& name, co
     }
 
     int64_t objectStoreId = m_metadata.maxObjectStoreId + 1;
-    RefPtr<IDBObjectStoreBackendInterface> objectStoreBackend = m_backend->createObjectStore(objectStoreId, name, keyPath, autoIncrement, m_versionChangeTransaction->backend(), ec);
-    if (!objectStoreBackend) {
-        ASSERT(ec);
-        return 0;
-    }
+    m_backend->createObjectStore(m_versionChangeTransaction->id(), objectStoreId, name, keyPath, autoIncrement);
 
     IDBObjectStoreMetadata metadata(name, objectStoreId, keyPath, autoIncrement, IDBObjectStoreBackendInterface::MinimumIndexId);
-    RefPtr<IDBObjectStore> objectStore = IDBObjectStore::create(metadata, objectStoreBackend.release(), m_versionChangeTransaction.get());
+    RefPtr<IDBObjectStore> objectStore = IDBObjectStore::create(metadata, m_versionChangeTransaction.get());
     m_metadata.objectStores.set(metadata.id, metadata);
     ++m_metadata.maxObjectStoreId;
 
@@ -216,11 +212,9 @@ void IDBDatabase::deleteObjectStore(const String& name, ExceptionCode& ec)
         return;
     }
 
-    m_backend->deleteObjectStore(objectStoreId, m_versionChangeTransaction->backend(), ec);
-    if (!ec) {
-        m_versionChangeTransaction->objectStoreDeleted(name);
-        m_metadata.objectStores.remove(objectStoreId);
-    }
+    m_backend->deleteObjectStore(m_versionChangeTransaction->id(), objectStoreId);
+    m_versionChangeTransaction->objectStoreDeleted(name);
+    m_metadata.objectStores.remove(objectStoreId);
 }
 
 PassRefPtr<IDBTransaction> IDBDatabase::transaction(ScriptExecutionContext* context, const Vector<String>& scope, const String& modeString, ExceptionCode& ec)
