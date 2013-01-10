@@ -4136,6 +4136,7 @@ void HTMLMediaElement::setClosedCaptionsVisible(bool closedCaptionVisible)
         m_disableCaptions = !m_closedCaptionsVisible;
 
         markCaptionAndSubtitleTracksAsUnconfigured();
+        mediaControls()->updateTextTrackDisplay();
     }
 #else
     if (hasMediaControls())

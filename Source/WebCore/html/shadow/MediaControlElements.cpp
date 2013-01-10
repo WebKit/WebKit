@@ -1247,12 +1247,16 @@ const AtomicString& MediaControlTextTrackContainerElement::shadowPseudoId() cons
 
 void MediaControlTextTrackContainerElement::updateDisplay()
 {
-    HTMLMediaElement* mediaElement = toParentMediaElement(this);
+    if (!mediaController()->closedCaptionsVisible()) {
+        m_cueContainer->removeChildren();
+        return;
+    }
 
+    HTMLMediaElement* mediaElement = toParentMediaElement(this);
     // 1. If the media element is an audio element, or is another playback
     // mechanism with no rendering area, abort these steps. There is nothing to
     // render.
-    if (!mediaElement->isVideo())
+    if (!mediaElement || !mediaElement->isVideo())
         return;
 
     // 2. Let video be the media element or other playback mechanism.

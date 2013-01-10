@@ -1,3 +1,12 @@
+2013-01-10  Victor Carbune  <victor@rosedu.org>
+
+        media/video-controls-captions.html fails after fixing https://bugs.webkit.org/show_bug.cgi?id=105536
+        https://bugs.webkit.org/show_bug.cgi?id=106230
+
+        Reviewed by Eric Carlson.
+
+        * platform/chromium/TestExpectations: Reactivated test.
+
 2013-01-10  Alexander Pavlov  <apavlov@chromium.org>
 
         The "outline-offset" property is not found in the computed style property list
