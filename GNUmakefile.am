@@ -98,6 +98,7 @@ webkit2_sources :=
 webkit2_built_sources :=
 webkit2gtk_h_api :=
 webkit2gtk_built_sources :=
+webkit2_web_extension_h_api :=
 webkit2_plugin_process_sources :=
 webkit2_plugin_process_built_sources :=
 webkittestrunner_built_sources :=

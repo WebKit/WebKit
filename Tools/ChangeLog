@@ -1,3 +1,22 @@
+2013-01-10  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] Add support for loading web process extensions
+        https://bugs.webkit.org/show_bug.cgi?id=105631
+
+        Reviewed by Gustavo Noronha Silva.
+
+        * MiniBrowser/gtk/GNUmakefile.am:
+        * MiniBrowser/gtk/main.c:
+        (main): Set WEBKIT_INJECTED_BUNDLE env var to use the injected
+        bundle lib from build dir.
+        * Scripts/webkitpy/style/checker.py: Add exceptions for GTK+ API
+        located in WebProcess/InjectedBundle/API/gtk.
+        * gtk/generate-gtkdoc:
+        (get_webkit2_options): Scan also files in
+        WebProcess/InjectedBundle/API/gtk to generate API docs.
+        (get_webkit2_options.injected_bundle_src_path): Helper function to
+        build paths in WebProcess/InjectedBundle/API/gtk.
+
 2013-01-10  Mikhail Pozdnyakov  <mikhail.pozdnyakov@intel.com>
 
         [EFL][WK2] Writing immediately to created windows (open) fails

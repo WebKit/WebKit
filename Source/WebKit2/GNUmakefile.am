@@ -23,7 +23,8 @@ nodist_libwebkit2gtkinclude_HEADERS = \
 	DerivedSources/WebKit2/webkit2gtk/webkit2/WebKitVersion.h
 
 libwebkit2gtkinclude_HEADERS = \
-	$(webkit2gtk_h_api)
+	$(webkit2gtk_h_api) \
+	$(webkit2_web_extension_h_api)
 
 nodist_libwebkit2gtk_@WEBKITGTK_API_MAJOR_VERSION@_@WEBKITGTK_API_MINOR_VERSION@_la_SOURCES = \
 	$(webkit2_built_sources) \
@@ -87,6 +88,7 @@ libwebkit2gtk_@WEBKITGTK_API_MAJOR_VERSION@_@WEBKITGTK_API_MINOR_VERSION@_la_CPP
 	-I$(srcdir)/Source/WebKit2/WebProcess/InjectedBundle \
 	-I$(srcdir)/Source/WebKit2/WebProcess/InjectedBundle/API \
 	-I$(srcdir)/Source/WebKit2/WebProcess/InjectedBundle/API/c \
+	-I$(srcdir)/Source/WebKit2/WebProcess/InjectedBundle/API/gtk \
 	-I$(srcdir)/Source/WebKit2/WebProcess/InjectedBundle/DOM \
 	-I$(srcdir)/Source/WebKit2/WebProcess/InjectedBundle/gtk \
 	-I$(srcdir)/Source/WebKit2/WebProcess/KeyValueStorage \
@@ -103,17 +105,21 @@ libwebkit2gtk_@WEBKITGTK_API_MAJOR_VERSION@_@WEBKITGTK_API_MINOR_VERSION@_la_CPP
 	-I$(srcdir)/Source/WebKit2/WebProcess/WebCoreSupport/gtk \
 	-I$(srcdir)/Source/WebKit2/WebProcess/WebCoreSupport/soup \
 	-I$(srcdir)/Source/WebKit2/WebProcess/WebPage \
-    -I$(srcdir)/Source/WebKit2/WebProcess/WebPage/atk \
+	-I$(srcdir)/Source/WebKit2/WebProcess/WebPage/atk \
 	-I$(srcdir)/Source/WebKit2/WebProcess/WebPage/gtk \
 	-I$(top_builddir)/DerivedSources/WebKit2 \
 	-I$(top_builddir)/DerivedSources/WebKit2/include \
 	-I$(top_builddir)/DerivedSources/WebKit2/webkit2gtk \
 	-I$(top_builddir)/DerivedSources/WebKit2/webkit2gtk/include \
 	-I$(top_builddir)/DerivedSources/WebKit2/webkit2gtk/webkit2 \
+	-I$(top_builddir)/DerivedSources/WebKit2/webkit2extension/include \
 	-I$(top_builddir)/DerivedSources/WebKit2/include/JavaScriptCore \
 	-I$(top_builddir)/DerivedSources/WebKit2/include/WebCore \
 	-I$(top_builddir)/DerivedSources/WebKit2/include/WebKit2 \
+	-I$(top_builddir)/DerivedSources/webkitdom \
 	-DLIBEXECDIR=\""$(libexecdir)"\" \
+	-DLIBDIR=\""$(libdir)"\" \
+	-DBUILDING_WEBKIT \
 	-DWEBKIT2_COMPILATION \
 	-DENABLE_PLUGIN_PROCESS=1 \
 	$(webcore_cppflags) \
@@ -177,6 +183,7 @@ endif
 
 libwebkit2gtk_@WEBKITGTK_API_MAJOR_VERSION@_@WEBKITGTK_API_MINOR_VERSION@_la_LIBADD += \
 	libjavascriptcoregtk-@WEBKITGTK_API_MAJOR_VERSION@.@WEBKITGTK_API_MINOR_VERSION@.la \
+	libWebCoreDOM.la \
 	libWebCoreGtk.la \
 	$(CAIRO_LIBS) \
 	$(CLUTTER_LIBS) \
@@ -282,7 +289,13 @@ $(GENSOURCES_WEBKIT2)/webkit2gtk/include/webkit2: $(libwebkit2gtkinclude_HEADERS
 	$(AM_V_GEN)mkdir -p $(GENSOURCES_WEBKIT2)/webkit2gtk/include \
 	&& ln -n -s -f ${shell pwd}/$(WebKit2)/UIProcess/API/gtk $@
 
-BUILT_SOURCES += $(GENSOURCES_WEBKIT2)/webkit2gtk/include/webkit2
+$(GENSOURCES_WEBKIT2)/webkit2extension/include/webkit2: $(libwebkit2gtkinclude_HEADERS)
+	$(AM_V_GEN)mkdir -p $(GENSOURCES_WEBKIT2)/webkit2extension/include \
+	&& ln -n -s -f ${shell pwd}/$(WebKit2)/WebProcess/InjectedBundle/API/gtk $@
+
+BUILT_SOURCES += \
+	$(GENSOURCES_WEBKIT2)/webkit2extension/include/webkit2 \
+	$(GENSOURCES_WEBKIT2)/webkit2gtk/include/webkit2
 
 vpath %.messages.in = \
 	$(WebKit2)/PluginProcess \
@@ -477,6 +490,32 @@ libWebCoreGtk2_la_CPPFLAGS = \
 	$(UNICODE_CFLAGS) \
 	$(XRENDER_CFLAGS) \
 	$(XT_CFLAGS)
+
+# Injected Bundle
+injectedbundledir = $(libdir)/webkit2gtk-3.0/injected-bundle
+injectedbundle_LTLIBRARIES = libwebkit2gtkinjectedbundle.la
+
+libwebkit2gtkinjectedbundle_la_SOURCES = \
+	Source/WebKit2/WebProcess/gtk/WebGtkInjectedBundleMain.cpp
+
+libwebkit2gtkinjectedbundle_la_LDFLAGS = \
+	$(no_undefined) \
+	-module \
+	-avoid-version
+
+libwebkit2gtkinjectedbundle_la_CPPFLAGS = \
+	-fno-strict-aliasing \
+	-I$(srcdir)/Source/WebKit2/Platform \
+	-I$(srcdir)/Source/WebKit2/Shared \
+	-I$(srcdir)/Source/WebKit2/Shared/API/c \
+	-I$(srcdir)/Source/WebKit2/UIProcess/API/C \
+	-I$(srcdir)/Source/WebKit2/WebProcess/InjectedBundle \
+	-I$(srcdir)/Source/WebKit2/WebProcess/InjectedBundle/API/c \
+	-I$(top_builddir)/DerivedSources/InjectedBundle \
+	-I$(top_builddir)/DerivedSources/WebKit2/include \
+	$(global_cppflags) \
+	$(javascriptcore_cppflags) \
+	$(GLIB_CFLAGS)
 
 # Serialize linking of the plugin process with both webkit libraries.
 plugin_process_for_dep = Programs/WebKitPluginProcess

@@ -1,3 +1,88 @@
+2013-01-10  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] Add support for loading web process extensions
+        https://bugs.webkit.org/show_bug.cgi?id=105631
+
+        Reviewed by Gustavo Noronha Silva.
+
+        * GNUmakefile.am: Link to libWebCoreDOM.la and build injected
+        bundle lib.
+        * GNUmakefile.list.am: Add new files to compilation.
+        * UIProcess/API/gtk/WebKitWebContext.cpp:
+        (injectedBundleDirectory): Helper funtion to get the injected
+        bundle directory.
+        (injectedBundleFilename): Helper funtion to get the injected undle
+        library full path.
+        (createDefaultWebContext): Create the WebContext with an injected
+        bundle path.
+        * UIProcess/API/gtk/WebKitWebView.cpp:
+        (webkit_web_view_get_page_id): Return the identifier of the web
+        page associated to the web view.
+        * UIProcess/API/gtk/WebKitWebView.h:
+        * UIProcess/API/gtk/docs/webkit2gtk-docs.sgml: Add new chapter for
+        web extensions.
+        * UIProcess/API/gtk/docs/webkit2gtk-sections.txt: Add new symbols.
+        * UIProcess/API/gtk/docs/webkit2gtk.types: Add new types.
+        * UIProcess/API/gtk/tests/GNUmakefile.am: Add new files to compilation.
+        * UIProcess/API/gtk/tests/TestMain.cpp:
+        (main):
+        * UIProcess/API/gtk/tests/TestWebExtensions.cpp: Added.
+        (testWebExtension):
+        (beforeAll):
+        (afterAll):
+        * UIProcess/API/gtk/tests/WebExtensionTest.cpp: Added.
+        (methodCallCallback):
+        (webkit_web_extension_initialize):
+        * UIProcess/API/gtk/tests/WebKitTestBus.cpp: Added.
+        (WebKitTestBus::WebKitTestBus):
+        (WebKitTestBus::run):
+        (WebKitTestBus::~WebKitTestBus):
+        (WebKitTestBus::connection):
+        (onNameAppeared):
+        (WebKitTestBus::createProxy):
+        * UIProcess/API/gtk/tests/WebKitTestBus.h: Added.
+        (WebKitTestBus):
+        * WebProcess/InjectedBundle/API/gtk/WebKitWebExtension.cpp: Added.
+        (_WebKitWebExtensionPrivate):
+        (webkitWebExtensionPageCreated): Create a WebKitWebPage for the
+        newly crated page and emit WebKitWebExtension::page-created
+        signals.
+        (webkitWebExtensionPageDestroy): Remove the page from the map.
+        (didCreatePage): Call webkitWebExtensionPageCreated().
+        (willDestroyPage): Call webkitWebExtensionPageDestroy().
+        (webkitWebExtensionCreate): Create a new WebKitWebExtension and
+        initialize the injected bundle client.
+        (webkit_web_extension_get_page): Return the WebKitWebPage for the
+        given page identifier.
+        * WebProcess/InjectedBundle/API/gtk/WebKitWebExtension.h: Added.
+        (_WebKitWebExtension):
+        (_WebKitWebExtensionClass):
+        * WebProcess/InjectedBundle/API/gtk/WebKitWebExtensionDefines.h: Added.
+        * WebProcess/InjectedBundle/API/gtk/WebKitWebExtensionPrivate.h: Added.
+        * WebProcess/InjectedBundle/API/gtk/WebKitWebPage.cpp: Added.
+        (_WebKitWebPagePrivate):
+        (webkit_web_page_class_init):
+        (webkitWebPageCreate): Create a new WebKitWebPage.
+        (webkit_web_page_get_dom_document): Return the WebKitDOMDocument
+        loaded in the WebKitWebPage.
+        * WebProcess/InjectedBundle/API/gtk/WebKitWebPage.h: Added.
+        (_WebKitWebPage):
+        (_WebKitWebPageClass):
+        * WebProcess/InjectedBundle/API/gtk/WebKitWebPagePrivate.h: Added.
+        * WebProcess/InjectedBundle/API/gtk/webkit-web-extension.h: Added.
+        * WebProcess/gtk/WebGtkExtensionManager.cpp: Added.
+        (WebKit::WebGtkExtensionManager::shared): Return the global shared
+        instance.
+        (WebKit::WebGtkExtensionManager::WebGtkExtensionManager):
+        (WebKit::WebGtkExtensionManager::appendModuleDirectories): Add
+        directories to scan for modules.
+        (WebKit::WebGtkExtensionManager::scanModules): Scan for modules.
+        (WebKit::WebGtkExtensionManager::initialize): Load and initialize
+        the modules found.
+        * WebProcess/gtk/WebGtkExtensionManager.h: Added.
+        * WebProcess/gtk/WebGtkInjectedBundleMain.cpp: Added.
+        (WKBundleInitialize): Initialize WebGtkExtensionManager.
+
 2013-01-10  Huang Dongsung  <luxtella@company100.net>
 
         REGRESSION(r139189): pixel alignment must be performed in device units.

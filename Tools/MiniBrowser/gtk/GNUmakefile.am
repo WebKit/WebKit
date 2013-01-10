@@ -9,6 +9,7 @@ Programs_MiniBrowser_CPPFLAGS = \
 	-I$(top_builddir)/DerivedSources/WebKit2/webkit2gtk \
 	-I$(top_builddir)/DerivedSources/WebKit2/webkit2gtk/include \
 	-DWEBKIT_EXEC_PATH=\"${shell pwd}/$(top_builddir)/Programs/\" \
+	-DWEBKIT_INJECTED_BUNDLE_PATH=\"${shell pwd}/$(top_builddir)/.libs\" \
 	$(global_cppflags) \
 	$(javascriptcore_cppflags) \
 	$(GLIB_CFLAGS) \

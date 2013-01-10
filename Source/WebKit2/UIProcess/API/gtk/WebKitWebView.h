@@ -261,6 +261,9 @@ webkit_web_view_stop_loading                         (WebKitWebView             
 WEBKIT_API gboolean
 webkit_web_view_is_loading                           (WebKitWebView             *web_view);
 
+WEBKIT_API guint64
+webkit_web_view_get_page_id                          (WebKitWebView             *web_view);
+
 WEBKIT_API const gchar *
 webkit_web_view_get_title                            (WebKitWebView             *web_view);
 

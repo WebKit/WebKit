@@ -180,7 +180,8 @@ _PATH_RULES_SPECIFIER = [
 
     ([# The GTK+ API use upper case, underscore separated, words in
       # certain types of enums (e.g. signals, properties).
-      "Source/WebKit2/UIProcess/API/gtk"],
+      "Source/WebKit2/UIProcess/API/gtk",
+      "Source/WebKit2/WebProcess/InjectedBundle/API/gtk"],
      ["-readability/enum_casing"]),
 
     ([# Header files in ForwardingHeaders have no header guards or
@@ -329,7 +330,9 @@ _SKIPPED_FILES_WITH_WARNING = [
     # except those ending in ...Private.h are GTK+ API headers,
     # which differ greatly from WebKit coding style.
     re.compile(r'Source/WebKit2/UIProcess/API/gtk/WebKit(?!.*Private\.h).*\.h$'),
-    'Source/WebKit2/UIProcess/API/gtk/webkit2.h']
+    re.compile(r'Source/WebKit2/WebProcess/InjectedBundle/API/gtk/WebKit(?!.*Private\.h).*\.h$'),
+    'Source/WebKit2/UIProcess/API/gtk/webkit2.h',
+    'Source/WebKit2/WebProcess/InjectedBundle/API/gtk/webkit-web-extension.h']
 
 # Files to skip that are more common or obvious.
 #

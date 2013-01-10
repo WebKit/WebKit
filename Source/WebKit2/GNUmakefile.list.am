@@ -132,6 +132,12 @@ webkit2gtk_h_api += \
 	$(WebKit2)/UIProcess/API/gtk/WebKitWindowProperties.h \
 	$(WebKit2)/UIProcess/API/gtk/webkit2.h
 
+webkit2_web_extension_h_api += \
+	$(WebKit2)/WebProcess/InjectedBundle/API/gtk/WebKitWebExtension.h \
+	$(WebKit2)/WebProcess/InjectedBundle/API/gtk/WebKitWebExtensionDefines.h \
+	$(WebKit2)/WebProcess/InjectedBundle/API/gtk/WebKitWebPage.h \
+	$(WebKit2)/WebProcess/InjectedBundle/API/gtk/webkit-web-extension.h
+
 webkit2_built_sources += \
 	DerivedSources/WebKit2/AuthenticationManagerMessageReceiver.cpp \
 	DerivedSources/WebKit2/AuthenticationManagerMessages.h \
@@ -991,6 +997,8 @@ webkit2_sources += \
 	Source/WebKit2/WebProcess/Geolocation/GeolocationPermissionRequestManager.h \
 	Source/WebKit2/WebProcess/Geolocation/WebGeolocationManager.cpp \
 	Source/WebKit2/WebProcess/Geolocation/WebGeolocationManager.h \
+	Source/WebKit2/WebProcess/gtk/WebGtkExtensionManager.cpp \
+	Source/WebKit2/WebProcess/gtk/WebGtkExtensionManager.h \
 	Source/WebKit2/WebProcess/gtk/WebProcessMainGtk.cpp \
 	Source/WebKit2/WebProcess/gtk/WebProcessMainGtk.h \
 	Source/WebKit2/WebProcess/IconDatabase/WebIconDatabaseProxy.cpp \
@@ -1033,6 +1041,14 @@ webkit2_sources += \
 	Source/WebKit2/WebProcess/InjectedBundle/API/c/WKBundleRangeHandle.h \
 	Source/WebKit2/WebProcess/InjectedBundle/API/c/WKBundleScriptWorld.cpp \
 	Source/WebKit2/WebProcess/InjectedBundle/API/c/WKBundleScriptWorld.h \
+	Source/WebKit2/WebProcess/InjectedBundle/API/gtk/WebKitWebExtension.cpp \
+	Source/WebKit2/WebProcess/InjectedBundle/API/gtk/WebKitWebExtension.h \
+	Source/WebKit2/WebProcess/InjectedBundle/API/gtk/WebKitWebExtensionPrivate.h \
+	Source/WebKit2/WebProcess/InjectedBundle/API/gtk/WebKitWebExtensionDefines.h \
+	Source/WebKit2/WebProcess/InjectedBundle/API/gtk/WebKitWebPage.cpp \
+	Source/WebKit2/WebProcess/InjectedBundle/API/gtk/WebKitWebPage.h \
+	Source/WebKit2/WebProcess/InjectedBundle/API/gtk/WebKitWebPagePrivate.h \
+	Source/WebKit2/WebProcess/InjectedBundle/API/gtk/webkit-web-extension.h \
 	Source/WebKit2/WebProcess/InjectedBundle/DOM/InjectedBundleNodeHandle.cpp \
 	Source/WebKit2/WebProcess/InjectedBundle/DOM/InjectedBundleNodeHandle.h \
 	Source/WebKit2/WebProcess/InjectedBundle/DOM/InjectedBundleRangeHandle.cpp \
@@ -1185,8 +1201,8 @@ webkit2_sources += \
 	Source/WebKit2/WebProcess/WebPage/FindController.h \
 	Source/WebKit2/WebProcess/WebPage/TapHighlightController.cpp \
 	Source/WebKit2/WebProcess/WebPage/TapHighlightController.h \
-    Source/WebKit2/WebProcess/WebPage/atk/WebPageAccessibilityObject.h \
-    Source/WebKit2/WebProcess/WebPage/atk/WebPageAccessibilityObjectAtk.cpp \
+	Source/WebKit2/WebProcess/WebPage/atk/WebPageAccessibilityObject.h \
+	Source/WebKit2/WebProcess/WebPage/atk/WebPageAccessibilityObjectAtk.cpp \
 	Source/WebKit2/WebProcess/WebPage/gtk/WebInspectorGtk.cpp \
 	Source/WebKit2/WebProcess/WebPage/gtk/WebPageGtk.cpp \
 	Source/WebKit2/WebProcess/WebPage/gtk/WebPrintOperationGtk.cpp \

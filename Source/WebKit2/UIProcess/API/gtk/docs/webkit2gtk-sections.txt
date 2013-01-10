@@ -96,6 +96,7 @@ webkit_web_view_go_back
 webkit_web_view_can_go_forward
 webkit_web_view_go_forward
 webkit_web_view_get_title
+webkit_web_view_get_page_id
 webkit_web_view_reload
 webkit_web_view_reload_bypass_cache
 webkit_web_view_stop_loading
@@ -926,4 +927,43 @@ WEBKIT_SECURITY_MANAGER_GET_CLASS
 <SUBSECTION Private>
 WebKitSecurityManagerPrivate
 webkit_security_manager_get_type
+</SECTION>
+
+<SECTION>
+<FILE>WebKitWebExtension</FILE>
+WebKitWebExtension
+WebKitWebExtensionInitializeFunction
+webkit_web_extension_get_page
+
+<SUBSECTION Standard>
+WebKitWebExtensionClass
+WEBKIT_TYPE_WEB_EXTENSION
+WEBKIT_WEB_EXTENSION
+WEBKIT_IS_WEB_EXTENSION
+WEBKIT_WEB_EXTENSION_CLASS
+WEBKIT_IS_WEB_EXTENSION_CLASS
+WEBKIT_WEB_EXTENSION_GET_CLASS
+
+<SUBSECTION Private>
+WebKitWebExtensionPrivate
+webkit_web_extension_get_type
+</SECTION>
+
+<SECTION>
+<FILE>WebKitWebPage</FILE>
+WebKitWebPage
+webkit_web_page_get_dom_document
+
+<SUBSECTION Standard>
+WebKitWebPageClass
+WEBKIT_TYPE_WEB_PAGE
+WEBKIT_WEB_PAGE
+WEBKIT_IS_WEB_PAGE
+WEBKIT_WEB_PAGE_CLASS
+WEBKIT_IS_WEB_PAGE_CLASS
+WEBKIT_WEB_PAGE_GET_CLASS
+
+<SUBSECTION Private>
+WebKitWebPagePrivate
+webkit_web_page_get_type
 </SECTION>

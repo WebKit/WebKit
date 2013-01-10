@@ -1848,6 +1848,22 @@ void webkit_web_view_load_request(WebKitWebView* webView, WebKitURIRequest* requ
 }
 
 /**
+ * webkit_web_view_get_page_id:
+ * @web_view: a #WebKitWebView
+ *
+ * Get the identifier of the #WebKitWebPage corresponding to
+ * the #WebKitWebView
+ *
+ * Returns: the page ID of @web_view.
+ */
+guint64 webkit_web_view_get_page_id(WebKitWebView* webView)
+{
+    g_return_val_if_fail(WEBKIT_IS_WEB_VIEW(webView), 0);
+
+    return getPage(webView)->pageID();
+}
+
+/**
  * webkit_web_view_get_title:
  * @web_view: a #WebKitWebView
  *

@@ -43,6 +43,12 @@
     <xi:include href="xml/WebKitSecurityManager.xml"/>
   </chapter>
 
+  <chapter>
+    <title>Web Extensions</title>
+    <xi:include href="xml/WebKitWebExtension.xml"/>
+    <xi:include href="xml/WebKitWebPage.xml"/>
+  </chapter>
+
   <index id="index-all">
     <title>Index</title>
   </index>

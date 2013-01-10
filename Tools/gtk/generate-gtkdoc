@@ -77,6 +77,8 @@ def get_webkit2_options():
         return common.build_path(*(('DerivedSources', 'WebKit2') + args))
     def src_path(*args):
         return common.top_level_path(*(('Source', 'WebKit2', 'UIProcess', 'API', 'gtk') + args))
+    def injected_bundle_src_path(*args):
+        return common.top_level_path(*(('Source', 'WebKit2', 'WebProcess', 'InjectedBundle', 'API', 'gtk') + args))
 
     xref_deps = get_common_xref_deps().copy()
     xref_deps.update({
@@ -88,7 +90,7 @@ def get_webkit2_options():
         'module_name' : 'webkit2gtk',
         'doc_dir' : src_path('docs'),
         'output_dir' : common.build_path('Documentation', 'webkit2gtk'),
-        'source_dirs' : [src_path(), derived_sources_path('webkit2gtk', 'webkit2')],
+        'source_dirs' : [src_path(), derived_sources_path('webkit2gtk', 'webkit2'), injected_bundle_src_path()],
         'cflags' : ' -I' + derived_sources_path('webkit2gtk', 'include') + \
                    ' -I' + derived_sources_path('webkit2gtk') + \
                    ' -I' + derived_sources_path('include') + \
@@ -96,6 +98,7 @@ def get_webkit2_options():
                    ' -I' + src_path(),
         'cross_reference_deps' : get_gtkdoc_module_paths(xref_deps),
         'ignored_files': glob.glob(src_path('*Private.h')) + \
+                         glob.glob(injected_bundle_src_path('*Private.h')) + \
                          glob.glob(src_path('*Client*')) + \
                          glob.glob(src_path('WebKit2GtkAuthenticationDialog.*')) + \
                          glob.glob(src_path('WebKitGeolocationProvider.*')) + \
