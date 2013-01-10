@@ -378,8 +378,6 @@ void TreeScope::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
     info.addMember(m_labelsByForAttribute);
     info.addMember(m_idTargetObserverRegistry);
     info.addMember(m_selection);
-    info.addMember(m_documentScope);
-
 }
 
 static void listTreeScopes(Node* node, Vector<TreeScope*, 5>& treeScopes)

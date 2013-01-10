@@ -126,7 +126,6 @@ void MemoryInstrumentationClientImpl::reportMemoryUsage(MemoryObjectInfo* memory
     info.addMember(m_visitedObjects);
     info.addMember(m_allocatedObjects);
     info.addMember(m_countedObjects);
-    info.addMember(m_graphSerializer);
 }
 
 void MemoryInstrumentationImpl::processDeferredObjects()

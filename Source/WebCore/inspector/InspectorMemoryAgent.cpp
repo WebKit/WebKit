@@ -388,7 +388,6 @@ public:
         m_memoryClassInfo = &info;
         ScriptProfiler::visitExternalStrings(const_cast<ExternalStringsRoot*>(this));
         m_memoryClassInfo = 0;
-        info.ignoreMember(m_memoryClassInfo);
     }
 
 private:
@@ -410,7 +409,6 @@ public:
         m_memoryClassInfo = &info;
         ScriptProfiler::visitExternalArrays(const_cast<ExternalArraysRoot*>(this));
         m_memoryClassInfo = 0;
-        info.ignoreMember(m_memoryClassInfo);
     }
 
 private:

@@ -300,8 +300,6 @@ void MediaList::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
 {
     MemoryClassInfo info(memoryObjectInfo, this, WebCoreMemoryTypes::CSS);
     info.addMember(m_mediaQueries);
-    info.addMember(m_parentStyleSheet);
-    info.addMember(m_parentRule);
 }
 
 #if ENABLE(RESOLUTION_MEDIA_QUERY)

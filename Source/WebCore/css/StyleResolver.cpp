@@ -5305,9 +5305,6 @@ void StyleResolver::MatchedPropertiesCacheItem::reportMemoryUsage(MemoryObjectIn
 {
     MemoryClassInfo info(memoryObjectInfo, this, WebCoreMemoryTypes::CSS);
     info.addMember(matchedProperties);
-    info.addMember(ranges);
-    info.addMember(renderStyle);
-    info.addMember(parentRenderStyle);
 }
 
 void MediaQueryResult::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
@@ -5322,29 +5319,16 @@ void StyleResolver::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
     info.addMember(m_style);
     info.addMember(m_authorStyle);
     info.addMember(m_userStyle);
-    info.addMember(m_features);
     info.addMember(m_siblingRuleSet);
     info.addMember(m_uncommonAttributeRuleSet);
     info.addMember(m_keyframesRuleMap);
     info.addMember(m_matchedPropertiesCache);
-    info.addMember(m_matchedPropertiesCacheSweepTimer);
     info.addMember(m_matchedRules);
 
     info.addMember(m_ruleList);
     info.addMember(m_pendingImageProperties);
-    info.addMember(m_medium);
-    info.addMember(m_rootDefaultStyle);
-    info.addMember(m_document);
-    info.addMember(m_parentStyle);
-    info.addMember(m_rootElementStyle);
-    info.addMember(m_element);
-    info.addMember(m_styledElement);
-    info.addMember(m_regionForStyling);
-    info.addMember(m_parentNode);
     info.addMember(m_lineHeightValue);
-    info.addMember(m_fontSelector);
     info.addMember(m_viewportDependentMediaQueryResults);
-    info.ignoreMember(m_styleBuilder);
     info.addMember(m_styleRuleToCSSOMWrapperMap);
     info.addMember(m_styleSheetCSSOMWrapperSet);
 #if ENABLE(CSS_FILTERS) && ENABLE(SVG)

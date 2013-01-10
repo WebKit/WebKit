@@ -129,7 +129,6 @@ RuleData::RuleData(StyleRule* rule, unsigned selectorIndex, unsigned position, A
 void RuleData::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
 {
     MemoryClassInfo info(memoryObjectInfo, this, WebCoreMemoryTypes::CSS);
-    info.addMember(m_rule);
 }
 
 static void reportAtomRuleMap(MemoryClassInfo* info, const RuleSet::AtomRuleMap& atomicRuleMap)
@@ -154,14 +153,12 @@ void RuleSet::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
     info.addMember(m_universalRules);
     info.addMember(m_pageRules);
     info.addMember(m_regionSelectorsAndRuleSets);
-    info.addMember(m_features);
 }
 
 void RuleSet::RuleSetSelectorPair::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
 {
     MemoryClassInfo info(memoryObjectInfo, this, WebCoreMemoryTypes::CSS);
     info.addMember(ruleSet);
-    info.addMember(selector);
 }
 
 static void collectFeaturesFromRuleData(RuleFeatureSet& features, const RuleData& ruleData)

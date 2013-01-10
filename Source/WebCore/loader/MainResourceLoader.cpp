@@ -597,11 +597,9 @@ void MainResourceLoader::notifyFinished(CachedResource* resource)
 void MainResourceLoader::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
 {
     MemoryClassInfo info(memoryObjectInfo, this, WebCoreMemoryTypes::Loader);
-    info.addMember(m_resource);
     info.addMember(m_initialRequest);
     info.addMember(m_substituteData);
     info.addMember(m_dataLoadTimer);
-    info.addMember(m_documentLoader);
 }
 
 void MainResourceLoader::handleSubstituteDataLoadNow(MainResourceLoaderTimer*)

@@ -701,7 +701,6 @@ void CSSProperty::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
 {
     MemoryClassInfo info(memoryObjectInfo, this, WebCoreMemoryTypes::CSS);
     info.addMember(m_value);
-    info.ignoreMember(m_metadata);
 }
 
 } // namespace WebCore

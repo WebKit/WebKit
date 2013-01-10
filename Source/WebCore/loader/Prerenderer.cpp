@@ -148,7 +148,6 @@ void Prerenderer::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
 {
     MemoryClassInfo info(memoryObjectInfo, this, WebCoreMemoryTypes::DOM);
     ActiveDOMObject::reportMemoryUsage(memoryObjectInfo);
-    info.ignoreMember(m_client);
     info.addMember(m_activeHandles);
     info.addMember(m_suspendedHandles);
 }
