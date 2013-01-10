@@ -75,6 +75,8 @@ void GLXTransportSurface::setGeometry(const IntRect& newRect)
 {
     GLPlatformSurface::setGeometry(newRect);
     m_nativeResource->reSizeWindow(newRect, m_drawable);
+    // Force resize of GL surface after window resize.
+    glXSwapBuffers(sharedDisplay(), m_drawable);
 }
 
 void GLXTransportSurface::swapBuffers()
