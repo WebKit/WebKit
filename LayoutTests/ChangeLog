@@ -1,3 +1,13 @@
+2013-01-10  Robert Hogan  <robert@webkit.org>
+
+        REGRESSION(r136967): margin-top + overflow:hidden causes incorrect layout for internal floated elements
+        https://bugs.webkit.org/show_bug.cgi?id=106374
+
+        Reviewed by David Hyatt.
+
+        * fast/block/margin-collapse/self-collapsing-block-with-overflow-hidden-and-float-child-expected.txt: Added.
+        * fast/block/margin-collapse/self-collapsing-block-with-overflow-hidden-and-float-child.html: Added.
+
 2013-01-10  Dimitri Glazkov  <dglazkov@chromium.org>
 
         [Chromium] Update expectations for fast/regions/selecting-text-through-different-region-flows.html.
