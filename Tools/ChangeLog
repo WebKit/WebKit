@@ -1,3 +1,20 @@
+2013-01-10  Raphael Kubo da Costa  <raphael.kubo.da.costa@intel.com>
+
+        [jhbuild] Use the "configure" script to build glib
+        https://bugs.webkit.org/show_bug.cgi?id=106569
+
+        Reviewed by Martin Robinson.
+
+        So far both EFL and GTK have been using autogen.sh to build glib.
+        While that does work most of the time, it's not really needed since
+        we are downloading and building stable releases from tarballs.
+        Additionally, autogen.sh fails to work with automake 1.13 due to the
+        usage of some macros that have been removed (this has already been
+        fixed in glib master).
+
+        * efl/jhbuild.modules:
+        * gtk/jhbuild.modules:
+
 2013-01-10  Tim 'mithro' Ansell  <mithro@mithis.com>
 
         Changing tests to be consistent and use self.scm rather then recreating the scm object.

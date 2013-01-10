@@ -120,6 +120,7 @@
   </autotools>
 
   <autotools id="glib"
+             autogen-sh="configure"
              autogenargs="--disable-dtrace">
     <dependencies>
       <dep package="libffi"/>
