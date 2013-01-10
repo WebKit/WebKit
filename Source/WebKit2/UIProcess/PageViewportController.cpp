@@ -47,7 +47,7 @@ PageViewportController::PageViewportController(WebKit::WebPageProxy* proxy, Page
     , m_initiallyFitToViewport(true)
     , m_hasSuspendedContent(false)
     , m_hadUserInteraction(false)
-    , m_contentsScale(1)
+    , m_pageScaleFactor(1)
     , m_pendingPositionChange(false)
     , m_pendingScaleChange(false)
 {
@@ -82,7 +82,7 @@ float PageViewportController::outerBoundedViewportScale(float viewportScale) con
     return innerBoundedViewportScale(viewportScale);
 }
 
-float PageViewportController::devicePixelRatio() const
+float PageViewportController::deviceScaleFactor() const
 {
     return m_webPageProxy->deviceScaleFactor();
 }
@@ -95,18 +95,18 @@ static inline bool isIntegral(float value)
 FloatPoint PageViewportController::pixelAlignedFloatPoint(const FloatPoint& framePosition)
 {
 #if PLATFORM(EFL)
-    if (!isIntegral(m_contentsScale)) {
+    if (!isIntegral(m_pageScaleFactor)) {
         // To avoid blurryness, modify the position so that it maps into a discrete device position.
         FloatPoint scaledPos(framePosition);
 
         // Scale by the effective scale factor to compute the screen-relative position.
-        scaledPos.scale(m_contentsScale, m_contentsScale);
+        scaledPos.scale(m_pageScaleFactor, m_pageScaleFactor);
 
         // Round to integer boundaries.
         FloatPoint alignedPos = roundedIntPoint(scaledPos);
 
         // Convert back to CSS coordinates.
-        alignedPos.scale(1 / m_contentsScale, 1 / m_contentsScale);
+        alignedPos.scale(1 / m_pageScaleFactor, 1 / m_pageScaleFactor);
 
         return alignedPos;
     }
@@ -133,7 +133,7 @@ FloatPoint PageViewportController::boundContentsPositionAtScale(const WebCore::F
 
 FloatPoint PageViewportController::boundContentsPosition(const WebCore::FloatPoint& framePosition)
 {
-    return boundContentsPositionAtScale(framePosition, m_contentsScale);
+    return boundContentsPositionAtScale(framePosition, m_pageScaleFactor);
 }
 
 void PageViewportController::didCommitLoad()
@@ -189,7 +189,7 @@ void PageViewportController::didRenderFrame(const IntSize& contentsSize, const I
 
     if (m_pendingScaleChange) {
         m_pendingScaleChange = false;
-        m_client->setContentsScale(m_contentsScale);
+        m_client->setContentsScale(m_pageScaleFactor);
 
         // The scale changed, we have to re-pixel align.
         m_pendingPositionChange = true;
@@ -256,7 +256,7 @@ void PageViewportController::didChangeContentsVisibility(const FloatPoint& posit
     if (!m_pendingPositionChange)
         m_contentsPosition = position;
     if (!m_pendingScaleChange)
-        m_contentsScale = scale;
+        m_pageScaleFactor = scale;
 
     syncVisibleContents(trajectoryVector);
 }
@@ -269,7 +269,7 @@ void PageViewportController::syncVisibleContents(const FloatPoint& trajectoryVec
 
     FloatRect visibleContentsRect(boundContentsPosition(m_contentsPosition), visibleContentsSize());
     visibleContentsRect.intersect(FloatRect(FloatPoint::zero(), m_contentsSize));
-    drawingArea->setVisibleContentsRect(visibleContentsRect, m_contentsScale, trajectoryVector);
+    drawingArea->setVisibleContentsRect(visibleContentsRect, m_pageScaleFactor, trajectoryVector);
 
     m_client->didChangeVisibleContents();
 }
@@ -299,7 +299,7 @@ void PageViewportController::didChangeViewportAttributes(const WebCore::Viewport
 
 FloatSize PageViewportController::visibleContentsSize() const
 {
-    return FloatSize(m_viewportSize.width() / m_contentsScale, m_viewportSize.height() / m_contentsScale);
+    return FloatSize(m_viewportSize.width() / m_pageScaleFactor, m_viewportSize.height() / m_pageScaleFactor);
 }
 
 void PageViewportController::suspendContent()
@@ -324,7 +324,7 @@ void PageViewportController::resumeContent()
 
 void PageViewportController::applyScaleAfterRenderingContents(float scale)
 {
-    m_contentsScale = scale;
+    m_pageScaleFactor = scale;
     m_pendingScaleChange = true;
     syncVisibleContents();
 }
@@ -341,7 +341,7 @@ bool PageViewportController::updateMinimumScaleToFit(bool userInitiatedUpdate)
     if (m_viewportSize.isEmpty() || m_contentsSize.isEmpty())
         return false;
 
-    bool currentlyScaledToFit = fuzzyCompare(m_contentsScale, m_minimumScaleToFit, 0.0001);
+    bool currentlyScaledToFit = fuzzyCompare(m_pageScaleFactor, m_minimumScaleToFit, 0.0001);
 
     float minimumScale = WebCore::computeMinimumScaleFactorForContentContained(m_rawAttributes, WebCore::roundedIntSize(m_viewportSize), WebCore::roundedIntSize(m_contentsSize), 1);
 
@@ -356,8 +356,8 @@ bool PageViewportController::updateMinimumScaleToFit(bool userInitiatedUpdate)
                 applyScaleAfterRenderingContents(m_minimumScaleToFit);
             else {
                 // Ensure the effective scale stays within bounds.
-                float boundedScale = innerBoundedViewportScale(m_contentsScale);
-                if (!fuzzyCompare(boundedScale, m_contentsScale, 0.0001))
+                float boundedScale = innerBoundedViewportScale(m_pageScaleFactor);
+                if (!fuzzyCompare(boundedScale, m_pageScaleFactor, 0.0001))
                     applyScaleAfterRenderingContents(boundedScale);
             }
         }

@@ -64,7 +64,7 @@ void PageViewportControllerClientEfl::updateViewportSize()
     ASSERT(m_controller);
     FloatSize size = m_viewImpl->size();
     // The viewport controller expects sizes in UI units, and not raw device units.
-    size.scale(1 / m_controller->devicePixelRatio());
+    size.scale(1 / m_controller->deviceScaleFactor());
     m_controller->didChangeViewportSize(size);
 }
 

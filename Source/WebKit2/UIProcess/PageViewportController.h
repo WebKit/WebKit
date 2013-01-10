@@ -65,10 +65,10 @@ public:
     bool allowsUserScaling() const { return m_allowsUserScaling; }
 
     WebCore::FloatSize contentsLayoutSize() const { return m_rawAttributes.layoutSize; }
-    float devicePixelRatio() const;
+    float deviceScaleFactor() const;
     float minimumContentsScale() const { return m_minimumScaleToFit; }
     float maximumContentsScale() const { return m_rawAttributes.maximumScale; }
-    float currentContentsScale() const { return m_contentsScale; }
+    float currentContentsScale() const { return m_pageScaleFactor; }
 
     void setHadUserInteraction(bool didUserInteract) { m_hadUserInteraction = didUserInteract; }
 
@@ -106,7 +106,7 @@ private:
     WebCore::FloatSize m_contentsSize;
     WebCore::FloatSize m_viewportSize;
     WebCore::IntSize m_clientContentsSize;
-    float m_contentsScale;
+    float m_pageScaleFactor;
 
     bool m_pendingPositionChange;
     bool m_pendingScaleChange;
