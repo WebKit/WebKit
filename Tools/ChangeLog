@@ -1,5 +1,14 @@
 2013-01-10  Tim 'mithro' Ansell  <mithro@mithis.com>
 
+        Changing tests to be consistent and use self.scm rather then recreating the scm object.
+        https://bugs.webkit.org/show_bug.cgi?id=106536
+
+        Reviewed by Eric Seidel.
+
+        * Scripts/webkitpy/common/checkout/scm/scm_unittest.py:
+
+2013-01-10  Tim 'mithro' Ansell  <mithro@mithis.com>
+
         Converting to unittest2 so we can use assertItemsEqual, making tests
         not dependent on order of items.
         https://bugs.webkit.org/show_bug.cgi?id=106532

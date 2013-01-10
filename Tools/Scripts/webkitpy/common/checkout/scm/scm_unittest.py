@@ -1050,9 +1050,9 @@ class GitSVNTest(SCMTest):
         self._tear_down_git_checkout()
 
     def test_detection(self):
-        scm = detect_scm_system(self.git_checkout_path)
-        self.assertEqual(scm.display_name(), "git")
-        self.assertEqual(scm.supports_local_commits(), True)
+        self.scm = detect_scm_system(self.git_checkout_path)
+        self.assertEqual(self.scm.display_name(), "git")
+        self.assertEqual(self.scm.supports_local_commits(), True)
 
     def test_read_git_config(self):
         key = 'test.git-config'
@@ -1111,45 +1111,39 @@ class GitSVNTest(SCMTest):
         # --quiet doesn't make git svn silent, so use run_silent to redirect output
         self.assertRaises(ScriptError, run_silent, ['git', 'svn', '--quiet', 'rebase']) # Will fail due to a conflict leaving us mid-rebase.
 
-        scm = detect_scm_system(self.git_checkout_path)
-        self.assertTrue(scm.rebase_in_progress())
+        self.assertTrue(self.scm.rebase_in_progress())
 
         # Make sure our cleanup works.
-        scm.clean_working_directory()
-        self.assertFalse(scm.rebase_in_progress())
+        self.scm.clean_working_directory()
+        self.assertFalse(self.scm.rebase_in_progress())
 
         # Make sure cleanup doesn't throw when no rebase is in progress.
-        scm.clean_working_directory()
+        self.scm.clean_working_directory()
 
     def test_commitish_parsing(self):
-        scm = detect_scm_system(self.git_checkout_path)
-
         # Multiple revisions are cherry-picked.
-        self.assertEqual(len(scm.commit_ids_from_commitish_arguments(['HEAD~2'])), 1)
-        self.assertEqual(len(scm.commit_ids_from_commitish_arguments(['HEAD', 'HEAD~2'])), 2)
+        self.assertEqual(len(self.scm.commit_ids_from_commitish_arguments(['HEAD~2'])), 1)
+        self.assertEqual(len(self.scm.commit_ids_from_commitish_arguments(['HEAD', 'HEAD~2'])), 2)
 
         # ... is an invalid range specifier
-        self.assertRaises(ScriptError, scm.commit_ids_from_commitish_arguments, ['trunk...HEAD'])
+        self.assertRaises(ScriptError, self.scm.commit_ids_from_commitish_arguments, ['trunk...HEAD'])
 
     def test_commitish_order(self):
-        scm = detect_scm_system(self.git_checkout_path)
-
         commit_range = 'HEAD~3..HEAD'
 
-        actual_commits = scm.commit_ids_from_commitish_arguments([commit_range])
+        actual_commits = self.scm.commit_ids_from_commitish_arguments([commit_range])
         expected_commits = []
         expected_commits += reversed(run_command(['git', 'rev-list', commit_range]).splitlines())
 
         self.assertEqual(actual_commits, expected_commits)
 
     def test_apply_git_patch(self):
-        scm = detect_scm_system(self.git_checkout_path)
         # We carefullly pick a diff which does not have a directory addition
         # as currently svn-apply will error out when trying to remove directories
         # in Git: https://bugs.webkit.org/show_bug.cgi?id=34871
         patch = self._create_patch(_git_diff('HEAD..HEAD^'))
-        self._setup_webkittools_scripts_symlink(scm)
-        Checkout(scm).apply_patch(patch)
+        self._setup_webkittools_scripts_symlink(self.scm)
+        Checkout(self.scm).apply_patch(patch)
 
     def test_commit_text_parsing(self):
         write_into_file_at_path('test_file', 'more test content')
@@ -1159,10 +1153,9 @@ class GitSVNTest(SCMTest):
     def test_commit_with_message_working_copy_only(self):
         write_into_file_at_path('test_file_commit1', 'more test content')
         run_command(['git', 'add', 'test_file_commit1'])
-        scm = detect_scm_system(self.git_checkout_path)
-        commit_text = scm.commit_with_message("yet another test commit")
+        commit_text = self.scm.commit_with_message("yet another test commit")
 
-        self.assertEqual(scm.svn_revision_from_commit_text(commit_text), '6')
+        self.assertEqual(self.scm.svn_revision_from_commit_text(commit_text), '6')
         svn_log = run_command(['git', 'svn', 'log', '--limit=1', '--verbose'])
         self.assertRegexpMatches(svn_log, r'test_file_commit1')
 
@@ -1196,11 +1189,10 @@ class GitSVNTest(SCMTest):
 
     def test_commit_with_message(self):
         self._one_local_commit_plus_working_copy_changes()
-        scm = detect_scm_system(self.git_checkout_path)
-        self.assertRaises(AmbiguousCommitError, scm.commit_with_message, "yet another test commit")
-        commit_text = scm.commit_with_message("yet another test commit", force_squash=True)
+        self.assertRaises(AmbiguousCommitError, self.scm.commit_with_message, "yet another test commit")
+        commit_text = self.scm.commit_with_message("yet another test commit", force_squash=True)
 
-        self.assertEqual(scm.svn_revision_from_commit_text(commit_text), '6')
+        self.assertEqual(self.scm.svn_revision_from_commit_text(commit_text), '6')
         svn_log = run_command(['git', 'svn', 'log', '--limit=1', '--verbose'])
         self.assertRegexpMatches(svn_log, r'test_file_commit2')
         self.assertRegexpMatches(svn_log, r'test_file_commit1')
@@ -1208,9 +1200,8 @@ class GitSVNTest(SCMTest):
     def test_commit_with_message_git_commit(self):
         self._two_local_commits()
 
-        scm = detect_scm_system(self.git_checkout_path)
-        commit_text = scm.commit_with_message("another test commit", git_commit="HEAD^")
-        self.assertEqual(scm.svn_revision_from_commit_text(commit_text), '6')
+        commit_text = self.scm.commit_with_message("another test commit", git_commit="HEAD^")
+        self.assertEqual(self.scm.svn_revision_from_commit_text(commit_text), '6')
 
         svn_log = run_command(['git', 'svn', 'log', '--limit=1', '--verbose'])
         self.assertRegexpMatches(svn_log, r'test_file_commit1')
@@ -1219,9 +1210,8 @@ class GitSVNTest(SCMTest):
     def test_commit_with_message_git_commit_range(self):
         self._three_local_commits()
 
-        scm = detect_scm_system(self.git_checkout_path)
-        commit_text = scm.commit_with_message("another test commit", git_commit="HEAD~2..HEAD")
-        self.assertEqual(scm.svn_revision_from_commit_text(commit_text), '6')
+        commit_text = self.scm.commit_with_message("another test commit", git_commit="HEAD~2..HEAD")
+        self.assertEqual(self.scm.svn_revision_from_commit_text(commit_text), '6')
 
         svn_log = run_command(['git', 'svn', 'log', '--limit=1', '--verbose'])
         self.assertNotRegexpMatches(svn_log, r'test_file_commit0')
@@ -1230,20 +1220,18 @@ class GitSVNTest(SCMTest):
 
     def test_commit_with_message_only_local_commit(self):
         self._one_local_commit()
-        scm = detect_scm_system(self.git_checkout_path)
-        commit_text = scm.commit_with_message("another test commit")
+        commit_text = self.scm.commit_with_message("another test commit")
         svn_log = run_command(['git', 'svn', 'log', '--limit=1', '--verbose'])
         self.assertRegexpMatches(svn_log, r'test_file_commit1')
 
     def test_commit_with_message_multiple_local_commits_and_working_copy(self):
         self._two_local_commits()
         write_into_file_at_path('test_file_commit1', 'working copy change')
-        scm = detect_scm_system(self.git_checkout_path)
 
-        self.assertRaises(AmbiguousCommitError, scm.commit_with_message, "another test commit")
-        commit_text = scm.commit_with_message("another test commit", force_squash=True)
+        self.assertRaises(AmbiguousCommitError, self.scm.commit_with_message, "another test commit")
+        commit_text = self.scm.commit_with_message("another test commit", force_squash=True)
 
-        self.assertEqual(scm.svn_revision_from_commit_text(commit_text), '6')
+        self.assertEqual(self.scm.svn_revision_from_commit_text(commit_text), '6')
         svn_log = run_command(['git', 'svn', 'log', '--limit=1', '--verbose'])
         self.assertRegexpMatches(svn_log, r'test_file_commit2')
         self.assertRegexpMatches(svn_log, r'test_file_commit1')
@@ -1251,15 +1239,13 @@ class GitSVNTest(SCMTest):
     def test_commit_with_message_git_commit_and_working_copy(self):
         self._two_local_commits()
         write_into_file_at_path('test_file_commit1', 'working copy change')
-        scm = detect_scm_system(self.git_checkout_path)
-        self.assertRaises(ScriptError, scm.commit_with_message, "another test commit", git_commit="HEAD^")
+        self.assertRaises(ScriptError, self.scm.commit_with_message, "another test commit", git_commit="HEAD^")
 
     def test_commit_with_message_multiple_local_commits_always_squash(self):
         self._two_local_commits()
-        scm = detect_scm_system(self.git_checkout_path)
-        scm._assert_can_squash = lambda working_directory_is_clean: True
-        commit_text = scm.commit_with_message("yet another test commit")
-        self.assertEqual(scm.svn_revision_from_commit_text(commit_text), '6')
+        self.scm._assert_can_squash = lambda working_directory_is_clean: True
+        commit_text = self.scm.commit_with_message("yet another test commit")
+        self.assertEqual(self.scm.svn_revision_from_commit_text(commit_text), '6')
 
         svn_log = run_command(['git', 'svn', 'log', '--limit=1', '--verbose'])
         self.assertRegexpMatches(svn_log, r'test_file_commit2')
@@ -1267,11 +1253,10 @@ class GitSVNTest(SCMTest):
 
     def test_commit_with_message_multiple_local_commits(self):
         self._two_local_commits()
-        scm = detect_scm_system(self.git_checkout_path)
-        self.assertRaises(AmbiguousCommitError, scm.commit_with_message, "yet another test commit")
-        commit_text = scm.commit_with_message("yet another test commit", force_squash=True)
+        self.assertRaises(AmbiguousCommitError, self.scm.commit_with_message, "yet another test commit")
+        commit_text = self.scm.commit_with_message("yet another test commit", force_squash=True)
 
-        self.assertEqual(scm.svn_revision_from_commit_text(commit_text), '6')
+        self.assertEqual(self.scm.svn_revision_from_commit_text(commit_text), '6')
 
         svn_log = run_command(['git', 'svn', 'log', '--limit=1', '--verbose'])
         self.assertRegexpMatches(svn_log, r'test_file_commit2')
@@ -1280,11 +1265,10 @@ class GitSVNTest(SCMTest):
     def test_commit_with_message_not_synced(self):
         run_command(['git', 'checkout', '-b', 'my-branch', 'trunk~3'])
         self._two_local_commits()
-        scm = detect_scm_system(self.git_checkout_path)
-        self.assertRaises(AmbiguousCommitError, scm.commit_with_message, "another test commit")
-        commit_text = scm.commit_with_message("another test commit", force_squash=True)
+        self.assertRaises(AmbiguousCommitError, self.scm.commit_with_message, "another test commit")
+        commit_text = self.scm.commit_with_message("another test commit", force_squash=True)
 
-        self.assertEqual(scm.svn_revision_from_commit_text(commit_text), '6')
+        self.assertEqual(self.scm.svn_revision_from_commit_text(commit_text), '6')
 
         svn_log = run_command(['git', 'svn', 'log', '--limit=1', '--verbose'])
         self.assertNotRegexpMatches(svn_log, r'test_file2')
@@ -1295,9 +1279,8 @@ class GitSVNTest(SCMTest):
         run_command(['git', 'checkout', '-b', 'my-branch', 'trunk~3'])
         self._local_commit('test_file2', 'asdf', 'asdf commit')
 
-        scm = detect_scm_system(self.git_checkout_path)
         # There's a conflict between trunk and the test_file2 modification.
-        self.assertRaises(ScriptError, scm.commit_with_message, "another test commit", force_squash=True)
+        self.assertRaises(ScriptError, self.scm.commit_with_message, "another test commit", force_squash=True)
 
     def test_upstream_branch(self):
         run_command(['git', 'checkout', '-t', '-b', 'my-branch'])
@@ -1318,15 +1301,13 @@ class GitSVNTest(SCMTest):
 
     def test_create_patch_local_plus_working_copy(self):
         self._one_local_commit_plus_working_copy_changes()
-        scm = detect_scm_system(self.git_checkout_path)
-        patch = scm.create_patch()
+        patch = self.scm.create_patch()
         self.assertRegexpMatches(patch, r'test_file_commit1')
         self.assertRegexpMatches(patch, r'test_file_commit2')
 
     def test_create_patch(self):
         self._one_local_commit_plus_working_copy_changes()
-        scm = detect_scm_system(self.git_checkout_path)
-        patch = scm.create_patch()
+        patch = self.scm.create_patch()
         self.assertRegexpMatches(patch, r'test_file_commit2')
         self.assertRegexpMatches(patch, r'test_file_commit1')
         self.assertRegexpMatches(patch, r'Subversion Revision: 5')
@@ -1336,78 +1317,69 @@ class GitSVNTest(SCMTest):
         self._one_local_commit()
         run_command(['git', 'merge', 'trunk'])
 
-        scm = detect_scm_system(self.git_checkout_path)
-        patch = scm.create_patch()
+        patch = self.scm.create_patch()
         self.assertRegexpMatches(patch, r'test_file_commit1')
         self.assertRegexpMatches(patch, r'Subversion Revision: 5')
 
     def test_create_patch_with_changed_files(self):
         self._one_local_commit_plus_working_copy_changes()
-        scm = detect_scm_system(self.git_checkout_path)
-        patch = scm.create_patch(changed_files=['test_file_commit2'])
+        patch = self.scm.create_patch(changed_files=['test_file_commit2'])
         self.assertRegexpMatches(patch, r'test_file_commit2')
 
     def test_create_patch_with_rm_and_changed_files(self):
         self._one_local_commit_plus_working_copy_changes()
-        scm = detect_scm_system(self.git_checkout_path)
         os.remove('test_file_commit1')
-        patch = scm.create_patch()
-        patch_with_changed_files = scm.create_patch(changed_files=['test_file_commit1', 'test_file_commit2'])
+        patch = self.scm.create_patch()
+        patch_with_changed_files = self.scm.create_patch(changed_files=['test_file_commit1', 'test_file_commit2'])
         self.assertEqual(patch, patch_with_changed_files)
 
     def test_create_patch_git_commit(self):
         self._two_local_commits()
-        scm = detect_scm_system(self.git_checkout_path)
-        patch = scm.create_patch(git_commit="HEAD^")
+        patch = self.scm.create_patch(git_commit="HEAD^")
         self.assertRegexpMatches(patch, r'test_file_commit1')
         self.assertNotRegexpMatches(patch, r'test_file_commit2')
 
     def test_create_patch_git_commit_range(self):
         self._three_local_commits()
-        scm = detect_scm_system(self.git_checkout_path)
-        patch = scm.create_patch(git_commit="HEAD~2..HEAD")
+        patch = self.scm.create_patch(git_commit="HEAD~2..HEAD")
         self.assertNotRegexpMatches(patch, r'test_file_commit0')
         self.assertRegexpMatches(patch, r'test_file_commit2')
         self.assertRegexpMatches(patch, r'test_file_commit1')
 
     def test_create_patch_working_copy_only(self):
         self._one_local_commit_plus_working_copy_changes()
-        scm = detect_scm_system(self.git_checkout_path)
-        patch = scm.create_patch(git_commit="HEAD....")
+        patch = self.scm.create_patch(git_commit="HEAD....")
         self.assertNotRegexpMatches(patch, r'test_file_commit1')
         self.assertRegexpMatches(patch, r'test_file_commit2')
 
     def test_create_patch_multiple_local_commits(self):
         self._two_local_commits()
-        scm = detect_scm_system(self.git_checkout_path)
-        patch = scm.create_patch()
+        patch = self.scm.create_patch()
         self.assertRegexpMatches(patch, r'test_file_commit2')
         self.assertRegexpMatches(patch, r'test_file_commit1')
 
     def test_create_patch_not_synced(self):
         run_command(['git', 'checkout', '-b', 'my-branch', 'trunk~3'])
         self._two_local_commits()
-        scm = detect_scm_system(self.git_checkout_path)
-        patch = scm.create_patch()
+        patch = self.scm.create_patch()
         self.assertNotRegexpMatches(patch, r'test_file2')
         self.assertRegexpMatches(patch, r'test_file_commit2')
         self.assertRegexpMatches(patch, r'test_file_commit1')
 
     def test_create_binary_patch(self):
         # Create a git binary patch and check the contents.
-        scm = detect_scm_system(self.git_checkout_path)
         test_file_name = 'binary_file'
         test_file_path = os.path.join(self.git_checkout_path, test_file_name)
         file_contents = ''.join(map(chr, range(256)))
         write_into_file_at_path(test_file_path, file_contents, encoding=None)
         run_command(['git', 'add', test_file_name])
-        patch = scm.create_patch()
+        patch = self.scm.create_patch()
         self.assertRegexpMatches(patch, r'\nliteral 0\n')
         self.assertRegexpMatches(patch, r'\nliteral 256\n')
 
         # Check if we can apply the created patch.
         run_command(['git', 'rm', '-f', test_file_name])
-        self._setup_webkittools_scripts_symlink(scm)
+        self._setup_webkittools_scripts_symlink(self.scm)
         self.checkout.apply_patch(self._create_patch(patch))
         self.assertEqual(file_contents, read_from_path(test_file_path, encoding=None))
 
@@ -1415,38 +1387,36 @@ class GitSVNTest(SCMTest):
         write_into_file_at_path(test_file_path, file_contents, encoding=None)
         run_command(['git', 'add', test_file_name])
         run_command(['git', 'commit', '-m', 'binary diff'])
-        patch_from_local_commit = scm.create_patch('HEAD')
+
+        patch_from_local_commit = self.scm.create_patch('HEAD')
         self.assertRegexpMatches(patch_from_local_commit, r'\nliteral 0\n')
         self.assertRegexpMatches(patch_from_local_commit, r'\nliteral 256\n')
 
     def test_changed_files_local_plus_working_copy(self):
         self._one_local_commit_plus_working_copy_changes()
-        scm = detect_scm_system(self.git_checkout_path)
-        files = scm.changed_files()
+        files = self.scm.changed_files()
         self.assertIn('test_file_commit1', files)
         self.assertIn('test_file_commit2', files)
 
         # working copy should *not* be in the list.
-        files = scm.changed_files('trunk..')
+        files = self.scm.changed_files('trunk..')
         self.assertIn('test_file_commit1', files)
         self.assertNotIn('test_file_commit2', files)
 
         # working copy *should* be in the list.
-        files = scm.changed_files('trunk....')
+        files = self.scm.changed_files('trunk....')
         self.assertIn('test_file_commit1', files)
         self.assertIn('test_file_commit2', files)
 
     def test_changed_files_git_commit(self):
         self._two_local_commits()
-        scm = detect_scm_system(self.git_checkout_path)
-        files = scm.changed_files(git_commit="HEAD^")
+        files = self.scm.changed_files(git_commit="HEAD^")
         self.assertIn('test_file_commit1', files)
         self.assertNotIn('test_file_commit2', files)
 
     def test_changed_files_git_commit_range(self):
         self._three_local_commits()
-        scm = detect_scm_system(self.git_checkout_path)
-        files = scm.changed_files(git_commit="HEAD~2..HEAD")
+        files = self.scm.changed_files(git_commit="HEAD~2..HEAD")
         self.assertNotIn('test_file_commit0', files)
         self.assertIn('test_file_commit1', files)
         self.assertIn('test_file_commit2', files)
@@ -1454,22 +1424,20 @@ class GitSVNTest(SCMTest):
     def test_changed_files_working_copy_only(self):
         self._one_local_commit_plus_working_copy_changes()
         scm = detect_scm_system(self.git_checkout_path)
-        files = scm.changed_files(git_commit="HEAD....")
+        files = self.scm.changed_files(git_commit="HEAD....")
         self.assertNotIn('test_file_commit1', files)
         self.assertIn('test_file_commit2', files)
 
     def test_changed_files_multiple_local_commits(self):
         self._two_local_commits()
-        scm = detect_scm_system(self.git_checkout_path)
-        files = scm.changed_files()
+        files = self.scm.changed_files()
         self.assertIn('test_file_commit2', files)
         self.assertIn('test_file_commit1', files)
 
     def test_changed_files_not_synced(self):
         run_command(['git', 'checkout', '-b', 'my-branch', 'trunk~3'])
         self._two_local_commits()
-        scm = detect_scm_system(self.git_checkout_path)
-        files = scm.changed_files()
+        files = self.scm.changed_files()
         self.assertNotIn('test_file2', files)
         self.assertIn('test_file_commit2', files)
         self.assertIn('test_file_commit1', files)
@@ -1477,8 +1445,7 @@ class GitSVNTest(SCMTest):
     def test_changed_files_not_synced(self):
         run_command(['git', 'checkout', '-b', 'my-branch', 'trunk~3'])
         self._two_local_commits()
-        scm = detect_scm_system(self.git_checkout_path)
-        files = scm.changed_files()
+        files = self.scm.changed_files()
         self.assertNotIn('test_file2', files)
         self.assertIn('test_file_commit2', files)
         self.assertIn('test_file_commit1', files)
