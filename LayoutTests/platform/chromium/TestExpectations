@@ -4289,3 +4289,5 @@ webkit.org/b/103955 fast/repaint/japanese-rl-selection-repaint.html [ ImageOnlyF
 webkit.org/b/103955 fast/repaint/repaint-across-writing-mode-boundary.html [ ImageOnlyFailure ]
 webkit.org/b/103955 fast/repaint/selection-rl.html [ ImageOnlyFailure ]
 webkit.org/b/103955 fast/repaint/caret-with-transformation.html [ Missing ]
+webkit.org/b/106606 fast/canvas/webgl/context-release-upon-reload.html [ Timeout Pass ]
+webkit.org/b/106606 platform/chromium/virtual/gpu/fast/canvas/webgl/context-release-upon-reload.html [ Timeout Pass ]

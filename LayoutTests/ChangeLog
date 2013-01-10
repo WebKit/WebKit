@@ -1,3 +1,10 @@
+2013-01-10  Dimitri Glazkov  <dglazkov@chromium.org>
+
+        [Chromium] Layout Test fast/canvas/webgl/context-release-upon-reload.html is a flaky timeout.
+        https://bugs.webkit.org/show_bug.cgi?id=106606
+
+        * platform/chromium/TestExpectations: Added.
+
 2013-01-10  Dan Beam  <dbeam@chromium.org>
 
         Implement AutocompleteErrorEvent#reason
