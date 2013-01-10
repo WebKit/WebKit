@@ -268,7 +268,7 @@ void PageViewportControllerClientQt::zoomToAreaGestureEnded(const QPointF& touch
         break;
     case ZoomBack: {
         if (m_scaleStack.isEmpty()) {
-            targetScale = m_controller->minimumContentsScale();
+            targetScale = m_controller->minimumScale();
             endPosition.setY(hotspot.y() - viewportHotspot.y() / targetScale);
             endPosition.setX(0);
             m_zoomOutScale = 0;

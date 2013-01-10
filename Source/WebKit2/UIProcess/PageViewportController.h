@@ -66,9 +66,9 @@ public:
 
     WebCore::FloatSize contentsLayoutSize() const { return m_rawAttributes.layoutSize; }
     float deviceScaleFactor() const;
-    float minimumContentsScale() const { return m_minimumScaleToFit; }
-    float maximumContentsScale() const { return m_rawAttributes.maximumScale; }
-    float currentContentsScale() const { return m_pageScaleFactor; }
+    float minimumScale() const { return m_minimumScaleToFit; }
+    float maximumScale() const { return m_rawAttributes.maximumScale; }
+    float currentScale() const { return m_pageScaleFactor; }
 
     void setHadUserInteraction(bool didUserInteract) { m_hadUserInteraction = didUserInteract; }
 

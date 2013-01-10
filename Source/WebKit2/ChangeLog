@@ -1,3 +1,22 @@
+2013-01-10  Huang Dongsung  <luxtella@company100.net>
+
+        [Qt][EFL] Rename from xxxContentsScale() to xxxScale() in PageViewportController.
+        https://bugs.webkit.org/show_bug.cgi?id=106537
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Rename 3 methods to match the terms of ViewportAttributes.
+
+        * UIProcess/API/qt/qwebkittest.cpp:
+        (QWebKitTest::viewport):
+        (QWebKitTest::contentsScale):
+        * UIProcess/PageViewportController.h:
+        (WebKit::PageViewportController::minimumScale):
+        (WebKit::PageViewportController::maximumScale):
+        (WebKit::PageViewportController::currentScale):
+        * UIProcess/qt/PageViewportControllerClientQt.cpp:
+        (WebKit::PageViewportControllerClientQt::zoomToAreaGestureEnded):
+
 2013-01-10  Michael Pruett  <michael@68k.org>
 
         [WK2] Set IndexedDB database path in WK2
