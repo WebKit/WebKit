@@ -3867,7 +3867,8 @@ void HTMLMediaElement::resume()
         // m_error is only left at MEDIA_ERR_ABORTED when the document becomes inactive (it is set to
         //  MEDIA_ERR_ABORTED while the abortEvent is being sent, but cleared immediately afterwards).
         // This behavior is not specified but it seems like a sensible thing to do.
-        load();
+        // As it is not safe to immedately start loading now, let's schedule a load.
+        scheduleLoad(MediaResource);
     }
 
     if (renderer())
