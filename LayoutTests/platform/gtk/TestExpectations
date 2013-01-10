@@ -467,16 +467,10 @@ webkit.org/b/103771 media/track/track-in-band-cues-added-once.html [ Timeout ]
 # Crashing tests
 #////////////////////////////////////////////////////////////////////////////////////////
 
-webkit.org/b/74297 [ Debug ] http/tests/security/cross-origin-xsl-redirect-BLOCKED.html [ Crash Pass ]
-
 webkit.org/b/86443 plugins/npruntime/delete-plugin-within-getProperty.html [ Crash ]
 webkit.org/b/86443 [ Debug ] plugins/npruntime/delete-plugin-within-invoke.html [ Crash ]
 
 webkit.org/b/86176 [ Debug ] ietestcenter/css3/valuesandunits/units-000.htm [ Crash ]
-
-webkit.org/b/89188 [ Release ] storage/websql/quota-tracking.html [ Crash Pass ]
-
-webkit.org/b/90589 [ Release ] fast/css/user-drag-none.html [ Crash Timeout ]
 
 webkit.org/b/93502 [ Debug ] fast/history/nested-visited-test.html [ Crash Pass ]
 webkit.org/b/93502 [ Debug ] fast/history/sibling-visited-test.html [ Crash Pass ]
@@ -616,6 +610,8 @@ webkit.org/b/104809 media/video-src-set.html [ Crash Timeout Pass ]
 webkit.org/b/104809 media/W3C/video/events/event_loadstart_manual.html [ Crash Pass ]
 
 webkit.org/b/106415 fast/workers/worker-close-more.html [ Timeout Pass ]
+
+webkit.org/b/106592 fast/regions/firstletter-inside-flowthread.html [ ImageOnlyFailure Pass ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Flaky tests

@@ -1,3 +1,13 @@
+2013-01-10  Zan Dobersek  <zandobersek@gmail.com>
+
+        Unreviewed GTK gardening.
+
+        Removing a few crash expectations for tests that haven't crashed
+        for a long time. Hopefully the crash causes have been fixed.
+        Adding a flaky failure expectation for a CSS Regions reftest.
+
+        * platform/gtk/TestExpectations:
+
 2013-01-10  Levi Weintraub  <leviw@chromium.org>
 
         ScrollingCoordinator touch event hit rects aren't converted to proper coordinates when in nested views
