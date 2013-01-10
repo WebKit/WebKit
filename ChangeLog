@@ -1,3 +1,12 @@
+2013-01-09  Hajime Morrita  <morrita@google.com>
+
+        [Shadow DOM] Distribution related code on ElementShadow should be minimized.
+        https://bugs.webkit.org/show_bug.cgi?id=106294
+
+        Reviewed by Dimitri Glazkov.
+
+        * Source/autotools/symbols.filter:
+
 2013-01-08  Zan Dobersek  <zandobersek@gmail.com>
 
         Add an Autoconf macro that checks whether a given feature is enabled

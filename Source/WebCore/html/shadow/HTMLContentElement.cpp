@@ -99,10 +99,8 @@ void HTMLContentElement::ensureSelectParsed()
 void HTMLContentElement::parseAttribute(const QualifiedName& name, const AtomicString& value)
 {
     if (name == selectAttr) {
-        if (ShadowRoot* root = containingShadowRoot()) {
-            root->owner()->setShouldCollectSelectFeatureSet();
-            root->owner()->invalidateDistribution();
-        }
+        if (ShadowRoot* root = containingShadowRoot())
+            root->owner()->willAffectSelector();
         m_shouldParseSelectorList = true;
     } else
         InsertionPoint::parseAttribute(name, value);

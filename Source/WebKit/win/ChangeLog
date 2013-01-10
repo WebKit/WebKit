@@ -1,3 +1,12 @@
+2013-01-09  Hajime Morrita  <morrita@google.com>
+
+        [Shadow DOM] Distribution related code on ElementShadow should be minimized.
+        https://bugs.webkit.org/show_bug.cgi?id=106294
+
+        Reviewed by Dimitri Glazkov.
+
+        * WebKit.vcproj/WebKit.def.in:
+
 2013-01-09  Roger Fong  <roger_fong@apple.com>
 
         Rename export files to make them more easily findable.

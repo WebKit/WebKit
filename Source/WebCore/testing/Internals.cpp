@@ -340,8 +340,7 @@ bool Internals::hasSelectorForIdInShadow(Element* host, const String& idValue, E
         return 0;
     }
 
-    host->shadow()->ensureSelectFeatureSetCollected();
-    return host->shadow()->selectRuleFeatureSet().hasSelectorForId(idValue);
+    return host->shadow()->distributor().ensureSelectFeatureSet(host->shadow()).hasSelectorForId(idValue);
 }
 
 bool Internals::hasSelectorForClassInShadow(Element* host, const String& className, ExceptionCode& ec)
@@ -351,8 +350,7 @@ bool Internals::hasSelectorForClassInShadow(Element* host, const String& classNa
         return 0;
     }
 
-    host->shadow()->ensureSelectFeatureSetCollected();
-    return host->shadow()->selectRuleFeatureSet().hasSelectorForClass(className);
+    return host->shadow()->distributor().ensureSelectFeatureSet(host->shadow()).hasSelectorForClass(className);
 }
 
 bool Internals::hasSelectorForAttributeInShadow(Element* host, const String& attributeName, ExceptionCode& ec)
@@ -362,8 +360,7 @@ bool Internals::hasSelectorForAttributeInShadow(Element* host, const String& att
         return 0;
     }
 
-    host->shadow()->ensureSelectFeatureSetCollected();
-    return host->shadow()->selectRuleFeatureSet().hasSelectorForAttribute(attributeName);
+    return host->shadow()->distributor().ensureSelectFeatureSet(host->shadow()).hasSelectorForAttribute(attributeName);
 }
 
 bool Internals::hasSelectorForPseudoClassInShadow(Element* host, const String& pseudoClass, ExceptionCode& ec)
@@ -373,8 +370,7 @@ bool Internals::hasSelectorForPseudoClassInShadow(Element* host, const String& p
         return 0;
     }
 
-    host->shadow()->ensureSelectFeatureSetCollected();
-    const SelectRuleFeatureSet& featureSet = host->shadow()->selectRuleFeatureSet();
+    const SelectRuleFeatureSet& featureSet = host->shadow()->distributor().ensureSelectFeatureSet(host->shadow());
     if (pseudoClass == "checked")
         return featureSet.hasSelectorForChecked();
     if (pseudoClass == "enabled")

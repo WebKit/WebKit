@@ -181,7 +181,6 @@ EXPORTS
         ?createWrapper@WebCore@@YA?AVJSValue@JSC@@PAVExecState@3@PAVJSDOMGlobalObject@1@PAVNode@1@@Z
         ?deserialize@SerializedScriptValue@WebCore@@QAE?AVJSValue@JSC@@PAVExecState@4@PAVJSGlobalObject@4@PAV?$Vector@V?$RefPtr@VMessagePort@WebCore@@@WTF@@$00@WTF@@W4SerializationErrorMode@2@@Z
         ?documentState@HistoryItem@WebCore@@QBEABV?$Vector@VString@WTF@@$0A@@WTF@@XZ
-        ?ensureSelectFeatureSetCollected@ElementShadow@WebCore@@QAEXXZ
         ?equal@WTF@@YA_NPBVStringImpl@1@PBE@Z
         ?equal@WTF@@YA_NPBVStringImpl@1@0@Z
         ?equalIgnoringCase@WTF@@YA_NPAVStringImpl@1@PBE@Z
@@ -570,7 +569,6 @@ EXPORTS
         ?createWrapper@WebCore@@YA?AVJSValue@JSC@@PAVExecState@3@PAVJSDOMGlobalObject@1@PAVNode@1@@Z
         ?deserialize@SerializedScriptValue@WebCore@@QAE?AVJSValue@JSC@@PAVExecState@4@PAVJSGlobalObject@4@PAV?$Vector@V?$RefPtr@VMessagePort@WebCore@@@WTF@@$00@WTF@@W4SerializationErrorMode@2@@Z
         ?documentState@HistoryItem@WebCore@@QBEABV?$Vector@VString@WTF@@$0A@@WTF@@XZ
-        ?ensureSelectFeatureSetCollected@ElementShadow@WebCore@@QAEXXZ
         ?equal@WTF@@YA_NPBVStringImpl@1@PBE@Z
         ?equal@WTF@@YA_NPBVStringImpl@1@0@Z
         ?equalIgnoringCase@WTF@@YA_NPAVStringImpl@1@PBE@Z
@@ -959,7 +957,6 @@ EXPORTS
         ?createWrapper@WebCore@@YA?AVJSValue@JSC@@PAVExecState@3@PAVJSDOMGlobalObject@1@PAVNode@1@@Z
         ?deserialize@SerializedScriptValue@WebCore@@QAE?AVJSValue@JSC@@PAVExecState@4@PAVJSGlobalObject@4@PAV?$Vector@V?$RefPtr@VMessagePort@WebCore@@@WTF@@$00@WTF@@W4SerializationErrorMode@2@@Z
         ?documentState@HistoryItem@WebCore@@QBEABV?$Vector@VString@WTF@@$0A@@WTF@@XZ
-        ?ensureSelectFeatureSetCollected@ElementShadow@WebCore@@QAEXXZ
         ?equal@WTF@@YA_NPBVStringImpl@1@PBE@Z
         ?equal@WTF@@YA_NPBVStringImpl@1@0@Z
         ?equalIgnoringCase@WTF@@YA_NPAVStringImpl@1@PBE@Z
@@ -1348,11 +1345,11 @@ EXPORTS
         ?createWrapper@WebCore@@YA?AVJSValue@JSC@@PAVExecState@3@PAVJSDOMGlobalObject@1@PAVNode@1@@Z
         ?deserialize@SerializedScriptValue@WebCore@@QAE?AVJSValue@JSC@@PAVExecState@4@PAVJSGlobalObject@4@PAV?$Vector@V?$RefPtr@VMessagePort@WebCore@@@WTF@@$00@WTF@@W4SerializationErrorMode@2@@Z
         ?documentState@HistoryItem@WebCore@@QBEABV?$Vector@VString@WTF@@$0A@@WTF@@XZ
-        ?ensureSelectFeatureSetCollected@ElementShadow@WebCore@@QAEXXZ
         ?equal@WTF@@YA_NPBVStringImpl@1@PBE@Z
         ?equal@WTF@@YA_NPBVStringImpl@1@0@Z
         ?equalIgnoringCase@WTF@@YA_NPAVStringImpl@1@PBE@Z
         ?externalRepresentation@WebCore@@YA?AVString@WTF@@PAVElement@1@I@Z
+        ?ensureSelectFeatureSet@ContentDistributor@WebCore@@QAEABVSelectRuleFeatureSet@2@PAVElementShadow@2@@Z
         ?hasShadowElement@ScopeContentDistribution@WebCore@@SA_NPBVShadowRoot@2@@Z
         ?hasContentElement@ScopeContentDistribution@WebCore@@SA_NPBVShadowRoot@2@@Z
         ?countElementShadow@ScopeContentDistribution@WebCore@@SAIPBVShadowRoot@2@@Z

@@ -917,15 +917,15 @@ void Element::classAttributeChanged(const AtomicString& newClassString)
 bool Element::shouldInvalidateDistributionWhenAttributeChanged(ElementShadow* elementShadow, const QualifiedName& name, const AtomicString& newValue)
 {
     ASSERT(elementShadow);
-    elementShadow->ensureSelectFeatureSetCollected();
+    const SelectRuleFeatureSet& featureSet = elementShadow->distributor().ensureSelectFeatureSet(elementShadow);
 
     if (isIdAttributeName(name)) {
         AtomicString oldId = attributeData()->idForStyleResolution();
         AtomicString newId = makeIdForStyleResolution(newValue, document()->inQuirksMode());
         if (newId != oldId) {
-            if (!oldId.isEmpty() && elementShadow->selectRuleFeatureSet().hasSelectorForId(oldId))
+            if (!oldId.isEmpty() && featureSet.hasSelectorForId(oldId))
                 return true;
-            if (!newId.isEmpty() && elementShadow->selectRuleFeatureSet().hasSelectorForId(newId))
+            if (!newId.isEmpty() && featureSet.hasSelectorForId(newId))
                 return true;
         }
     }
@@ -937,16 +937,16 @@ bool Element::shouldInvalidateDistributionWhenAttributeChanged(ElementShadow* el
             const bool shouldFoldCase = document()->inQuirksMode();
             const SpaceSplitString& oldClasses = attributeData->classNames();
             const SpaceSplitString newClasses(newClassString, shouldFoldCase);
-            if (checkSelectorForClassChange(oldClasses, newClasses, elementShadow->selectRuleFeatureSet()))
+            if (checkSelectorForClassChange(oldClasses, newClasses, featureSet))
                 return true;
         } else if (const ElementAttributeData* attributeData = this->attributeData()) {
             const SpaceSplitString& oldClasses = attributeData->classNames();
-            if (checkSelectorForClassChange(oldClasses, elementShadow->selectRuleFeatureSet()))
+            if (checkSelectorForClassChange(oldClasses, featureSet))
                 return true;
         }
     }
 
-    return elementShadow->selectRuleFeatureSet().hasSelectorForAttribute(name.localName());
+    return featureSet.hasSelectorForAttribute(name.localName());
 }
 
 // Returns true is the given attribute is an event handler.

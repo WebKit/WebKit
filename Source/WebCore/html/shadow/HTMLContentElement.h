@@ -50,6 +50,7 @@ public:
     virtual bool isSelectValid();
     virtual const CSSSelectorList& selectorList();
     virtual Type insertionPointType() const OVERRIDE { return ContentInsertionPoint; }
+    virtual bool canAffectSelector() const OVERRIDE { return true; }
 
 protected:
     HTMLContentElement(const QualifiedName&, Document*);

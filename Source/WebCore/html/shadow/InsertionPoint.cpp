@@ -99,10 +99,7 @@ bool InsertionPoint::isActive() const
 
 PassRefPtr<NodeList> InsertionPoint::getDistributedNodes() const
 {
-    ContainerNode* rootNode = treeScope()->rootNode();
-    if (rootNode->isShadowRoot())
-        if (ElementShadow* rootOwner = toShadowRoot(rootNode)->owner())
-            rootOwner->ensureDistributionFromDocument();
+    ContentDistributor::ensureDistributionFromDocument(const_cast<InsertionPoint*>(this));
 
     Vector<RefPtr<Node> > nodes;
 
@@ -131,11 +128,12 @@ Node::InsertionNotificationRequest InsertionPoint::insertedInto(ContainerNode* i
 
     if (ShadowRoot* root = containingShadowRoot()) {
         if (ElementShadow* rootOwner = root->owner()) {
-            rootOwner->setValidityUndetermined();
-            rootOwner->invalidateDistribution();
+            rootOwner->distributor().didShadowBoundaryChange(root->host());
             if (isActive() && !m_registeredWithShadowRoot && insertionPoint->treeScope()->rootNode() == root) {
                 m_registeredWithShadowRoot = true;
-                root->ensureScopeDistribution()->registerInsertionPoint(root, this);
+                root->ensureScopeDistribution()->registerInsertionPoint(this);
+                if (canAffectSelector())
+                    rootOwner->willAffectSelector();
             }
         }
     }
@@ -160,7 +158,9 @@ void InsertionPoint::removedFrom(ContainerNode* insertionPoint)
     if (m_registeredWithShadowRoot && insertionPoint->treeScope()->rootNode() == root) {
         ASSERT(root);
         m_registeredWithShadowRoot = false;
-        root->ensureScopeDistribution()->unregisterInsertionPoint(root, this);
+        root->ensureScopeDistribution()->unregisterInsertionPoint(this);
+        if (rootOwner && canAffectSelector())
+            rootOwner->willAffectSelector();
     }
 
     HTMLElement::removedFrom(insertionPoint);

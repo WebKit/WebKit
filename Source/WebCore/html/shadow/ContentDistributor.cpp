@@ -110,7 +110,7 @@ const Vector<RefPtr<InsertionPoint> >& ScopeContentDistribution::ensureInsertion
     return m_insertionPointList;
 }
 
-void ScopeContentDistribution::registerInsertionPoint(ShadowRoot* scope, InsertionPoint* point)
+void ScopeContentDistribution::registerInsertionPoint(InsertionPoint* point)
 {
     switch (point->insertionPointType()) {
     case InsertionPoint::ShadowInsertionPoint:
@@ -118,14 +118,13 @@ void ScopeContentDistribution::registerInsertionPoint(ShadowRoot* scope, Inserti
         break;
     case InsertionPoint::ContentInsertionPoint:
         ++m_numberOfContentElementChildren;
-        scope->owner()->setShouldCollectSelectFeatureSet();
         break;
     }
 
     invalidateInsertionPointList();
 }
 
-void ScopeContentDistribution::unregisterInsertionPoint(ShadowRoot* scope, InsertionPoint* point)
+void ScopeContentDistribution::unregisterInsertionPoint(InsertionPoint* point)
 {
     switch (point->insertionPointType()) {
     case InsertionPoint::ShadowInsertionPoint:
@@ -135,8 +134,6 @@ void ScopeContentDistribution::unregisterInsertionPoint(ShadowRoot* scope, Inser
     case InsertionPoint::ContentInsertionPoint:
         ASSERT(m_numberOfContentElementChildren > 0);
         --m_numberOfContentElementChildren;
-        if (scope->owner())
-            scope->owner()->setShouldCollectSelectFeatureSet();
         break;
     }
 
@@ -181,7 +178,8 @@ InsertionPoint* ScopeContentDistribution::assignedTo(const ShadowRoot* holder)
 }
 
 ContentDistributor::ContentDistributor()
-    : m_validity(Undetermined)
+    : m_needsSelectFeatureSet(false)
+    , m_validity(Undetermined)
 {
 }
 
@@ -287,12 +285,6 @@ bool ContentDistributor::invalidate(Element* host)
     return needsReattach;
 }
 
-void ContentDistributor::finishInivalidation()
-{
-    ASSERT(m_validity == Invalidating);
-    m_validity = Invalidated;
-}
-
 void ContentDistributor::distributeSelectionsTo(InsertionPoint* insertionPoint, const ContentDistribution& pool, Vector<bool>& distributed)
 {
     ContentDistribution distribution;
@@ -342,11 +334,98 @@ void ContentDistributor::distributeNodeChildrenTo(InsertionPoint* insertionPoint
     insertionPoint->setDistribution(distribution);
 }
 
-void ContentDistributor::invalidateDistributionIn(ContentDistribution* list)
+void ContentDistributor::ensureDistribution(Element* host)
 {
-    for (size_t i = 0; i < list->size(); ++i)
-        m_nodeToInsertionPoint.remove(list->at(i).get());
-    list->clear();
+    if (!needsDistribution())
+        return;
+    distribute(host);
+}
+
+void ContentDistributor::ensureDistributionFromDocument(Element* source)
+{
+    ContainerNode* mayShadow = source->treeScope()->rootNode();
+    if (!mayShadow->isShadowRoot())
+        return;
+
+    Vector<Element*, 8> hosts;
+    for (Element* current = toShadowRoot(mayShadow)->host(); current; current = current->shadowHost())
+        hosts.append(current);
+
+    for (size_t i = hosts.size(); i > 0; --i)
+        hosts[i - 1]->shadow()->ensureDistribution();
+}
+
+
+void ContentDistributor::invalidateDistribution(Element* host)
+{
+    bool didNeedInvalidation = needsInvalidation();
+    bool needsReattach = didNeedInvalidation ? invalidate(host) : false;
+
+    if (needsReattach && host->attached()) {
+        for (Node* n = host->firstChild(); n; n = n->nextSibling())
+            n->lazyReattach();
+        host->setNeedsStyleRecalc();
+    }
+
+    if (didNeedInvalidation) {
+        ASSERT(m_validity == Invalidating);
+        m_validity = Invalidated;
+    }
+}
+
+const SelectRuleFeatureSet& ContentDistributor::ensureSelectFeatureSet(ElementShadow* shadow)
+{
+    if (!m_needsSelectFeatureSet)
+        return m_selectFeatures;
+
+    m_selectFeatures.clear();
+    for (ShadowRoot* root = shadow->oldestShadowRoot(); root; root = root->youngerShadowRoot())
+        collectSelectFeatureSetFrom(root);
+    m_needsSelectFeatureSet = false;
+    return m_selectFeatures;
+}
+
+void ContentDistributor::collectSelectFeatureSetFrom(ShadowRoot* root)
+{
+    if (ScopeContentDistribution::hasElementShadow(root)) {
+        for (Element* element = ElementTraversal::firstWithin(root); element; element = ElementTraversal::next(element)) {
+            if (ElementShadow* elementShadow = element->shadow())
+                m_selectFeatures.add(elementShadow->distributor().ensureSelectFeatureSet(elementShadow));
+        }
+    }
+
+    if (ScopeContentDistribution::hasContentElement(root)) {
+        for (Element* element = ElementTraversal::firstWithin(root); element; element = ElementTraversal::next(element)) {
+            if (isHTMLContentElement(element)) {
+                const CSSSelectorList& list = toHTMLContentElement(element)->selectorList();
+                for (CSSSelector* selector = list.first(); selector; selector = list.next(selector))
+                    m_selectFeatures.collectFeaturesFromSelector(selector);
+            }
+        }
+    }
+}
+
+void ContentDistributor::didAffectSelector(Element* host, AffectedSelectorMask mask)
+{
+    if (ensureSelectFeatureSet(host->shadow()).hasSelectorFor(mask))
+        invalidateDistribution(host);
+}
+
+void ContentDistributor::willAffectSelector(Element* host)
+{
+    for (ElementShadow* shadow = host->shadow(); shadow; shadow = shadow->containingShadow()) {
+        if (shadow->distributor().needsSelectFeatureSet())
+            break;
+        shadow->distributor().setNeedsSelectFeatureSet();
+    }
+
+    invalidateDistribution(host);
+}
+
+void ContentDistributor::didShadowBoundaryChange(Element* host)
+{
+    setValidity(Undetermined);
+    invalidateDistribution(host);
 }
 
 }

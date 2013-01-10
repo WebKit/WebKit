@@ -31,6 +31,7 @@
 #ifndef ContentDistributor_h
 #define ContentDistributor_h
 
+#include "SelectRuleFeatureSet.h"
 #include <wtf/Forward.h>
 #include <wtf/HashMap.h>
 #include <wtf/RefCounted.h>
@@ -77,8 +78,8 @@ public:
     InsertionPoint* insertionPointAssignedTo() const { return m_insertionPointAssignedTo; }
     void setInsertionPointAssignedTo(InsertionPoint* insertionPoint) { m_insertionPointAssignedTo = insertionPoint; }
 
-    void registerInsertionPoint(ShadowRoot*, InsertionPoint*);
-    void unregisterInsertionPoint(ShadowRoot*, InsertionPoint*);
+    void registerInsertionPoint(InsertionPoint*);
+    void unregisterInsertionPoint(InsertionPoint*);
     bool hasShadowElementChildren() const { return m_numberOfShadowElementChildren > 0; }
     bool hasContentElementChildren() const { return m_numberOfContentElementChildren > 0; }
 
@@ -122,23 +123,35 @@ public:
     ~ContentDistributor();
 
     InsertionPoint* findInsertionPointFor(const Node* key) const;
-
-    void setValidity(Validity validity) { m_validity = validity; }
-
-    void distribute(Element* host);
-    bool invalidate(Element* host);
-    void finishInivalidation();
-    bool needsDistribution() const;
-    bool needsInvalidation() const { return m_validity != Invalidated; }
+    const SelectRuleFeatureSet& ensureSelectFeatureSet(ElementShadow*);
 
     void distributeSelectionsTo(InsertionPoint*, const ContentDistribution& pool, Vector<bool>& distributed);
     void distributeNodeChildrenTo(InsertionPoint*, ContainerNode*);
-    void invalidateDistributionIn(ContentDistribution*);
+
+    void ensureDistribution(Element* host);
+    void invalidateDistribution(Element* host);
+    void didShadowBoundaryChange(Element* host);
+    void didAffectSelector(Element* host, AffectedSelectorMask);
+    void willAffectSelector(Element* host);
+
+    static void ensureDistributionFromDocument(Element* source);
 
 private:
+    void distribute(Element* host);
+    bool invalidate(Element* host);
     void populate(Node*, ContentDistribution&);
 
+    void collectSelectFeatureSetFrom(ShadowRoot*);
+    bool needsSelectFeatureSet() const { return m_needsSelectFeatureSet; }
+    void setNeedsSelectFeatureSet() { m_needsSelectFeatureSet = true; }
+
+    void setValidity(Validity validity) { m_validity = validity; }
+    bool needsDistribution() const;
+    bool needsInvalidation() const { return m_validity != Invalidated; }
+
     HashMap<const Node*, RefPtr<InsertionPoint> > m_nodeToInsertionPoint;
+    SelectRuleFeatureSet m_selectFeatures;
+    bool m_needsSelectFeatureSet : 1;
     unsigned m_validity : 2;
 };
 

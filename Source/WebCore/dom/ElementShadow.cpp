@@ -42,7 +42,6 @@
 namespace WebCore {
 
 ElementShadow::ElementShadow()
-    : m_shouldCollectSelectFeatureSet(false)
 {
 }
 
@@ -83,8 +82,7 @@ void ElementShadow::addShadowRoot(Element* shadowHost, PassRefPtr<ShadowRoot> sh
     shadowRoot->setHost(shadowHost);
     shadowRoot->setParentTreeScope(shadowHost->treeScope());
     m_shadowRoots.push(shadowRoot.get());
-    setValidityUndetermined();
-    invalidateDistribution(shadowHost);
+    m_distributor.didShadowBoundaryChange(shadowHost);
     ChildNodeInsertionNotifier(shadowHost).notify(shadowRoot.get());
 
     // Existence of shadow roots requires the host and its children to do traversal using ComposedShadowTreeWalker.
@@ -119,7 +117,7 @@ void ElementShadow::removeAllShadowRoots()
         ChildNodeRemovalNotifier(shadowHost).notify(oldRoot.get());
     }
 
-    invalidateDistribution(shadowHost);
+    m_distributor.invalidateDistribution(shadowHost);
 }
 
 void ElementShadow::attach()
@@ -165,94 +163,6 @@ void ElementShadow::recalcStyle(Node::StyleChange change)
         root->recalcStyle(change);
 }
 
-void ElementShadow::ensureDistribution()
-{
-    if (!m_distributor.needsDistribution())
-        return;
-    m_distributor.distribute(host());
-}
-
-void ElementShadow::ensureDistributionFromDocument()
-{
-    Vector<Element*, 8> hosts;
-    for (Element* current = host(); current; current = current->shadowHost())
-        hosts.append(current);
-
-    for (size_t i = hosts.size(); i > 0; --i)
-        hosts[i - 1]->shadow()->ensureDistribution();
-}
-
-void ElementShadow::setValidityUndetermined()
-{
-    m_distributor.setValidity(ContentDistributor::Undetermined);
-}
-
-void ElementShadow::invalidateDistribution()
-{
-    invalidateDistribution(host());
-}
-
-void ElementShadow::invalidateDistribution(Element* host)
-{
-    bool needsInvalidation = m_distributor.needsInvalidation();
-    bool needsReattach = needsInvalidation ? m_distributor.invalidate(host) : false;
-
-    if (needsReattach && host->attached()) {
-        for (Node* n = host->firstChild(); n; n = n->nextSibling())
-            n->lazyReattach();
-        host->setNeedsStyleRecalc();
-    }
-
-    if (needsInvalidation)
-        m_distributor.finishInivalidation();
-}
-
-void ElementShadow::setShouldCollectSelectFeatureSet()
-{
-    if (shouldCollectSelectFeatureSet())
-        return;
-
-    m_shouldCollectSelectFeatureSet = true;
-
-    if (ShadowRoot* parentShadowRoot = host()->containingShadowRoot()) {
-        if (ElementShadow* parentElementShadow = parentShadowRoot->owner())
-            parentElementShadow->setShouldCollectSelectFeatureSet();
-    }
-}
-
-void ElementShadow::ensureSelectFeatureSetCollected()
-{
-    if (!m_shouldCollectSelectFeatureSet)
-        return;
-
-    m_selectFeatures.clear();
-    for (ShadowRoot* root = oldestShadowRoot(); root; root = root->youngerShadowRoot())
-        collectSelectFeatureSetFrom(root);
-    m_shouldCollectSelectFeatureSet = false;
-}
-
-void ElementShadow::collectSelectFeatureSetFrom(ShadowRoot* root)
-{
-    if (ScopeContentDistribution::hasElementShadow(root)) {
-        for (Element* element = ElementTraversal::firstWithin(root); element; element = ElementTraversal::next(element)) {
-            if (ElementShadow* elementShadow = element->shadow()) {
-                elementShadow->ensureSelectFeatureSetCollected();
-                m_selectFeatures.add(elementShadow->m_selectFeatures);
-            }
-        }
-    }
-
-    if (ScopeContentDistribution::hasContentElement(root)) {
-        for (Element* element = ElementTraversal::firstWithin(root); element; element = ElementTraversal::next(element)) {
-            if (isHTMLContentElement(element)) {
-                const CSSSelectorList& list = toHTMLContentElement(element)->selectorList();
-                for (CSSSelector* selector = list.first(); selector; selector = list.next(selector))
-                    m_selectFeatures.collectFeaturesFromSelector(selector);                    
-            }
-        }
-    }
-}
-
 void ElementShadow::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
 {
     MemoryClassInfo info(memoryObjectInfo, this, WebCoreMemoryTypes::DOM);
@@ -263,13 +173,6 @@ void ElementShadow::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
         shadowRoot = shadowRoot->next();
     }
     info.addMember(m_distributor);
-}
-
-void ElementShadow::didAffectSelector(AffectedSelectorMask mask)
-{
-    ensureSelectFeatureSetCollected();
-    if (selectRuleFeatureSet().hasSelectorFor(mask))
-        invalidateDistribution();
 }
 
 } // namespace
