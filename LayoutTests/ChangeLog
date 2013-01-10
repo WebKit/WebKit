@@ -1,5 +1,14 @@
 2013-01-09  Noel Gordon  <noel.gordon@gmail.com>
 
+        New chromium-mac pixel baseline for gradient-background-leakage-hidpi.html
+        https://bugs.webkit.org/show_bug.cgi?id=106373
+
+        Unreviewed gardening.
+
+        * platform/chromium-mac/fast/backgrounds/gradient-background-leakage-hidpi-expected.png: Added.
+
+2013-01-09  Noel Gordon  <noel.gordon@gmail.com>
+
         Update expectations for fast/forms/button-generated-content.html
 
         Unreviewed gardening.
