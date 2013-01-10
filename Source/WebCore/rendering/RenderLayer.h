@@ -604,6 +604,17 @@ public:
     // Pixel snapped bounding box relative to the root.
     IntRect absoluteBoundingBox() const;
 
+    // Bounds used for layer overlap testing in RenderLayerCompositor.
+    LayoutRect overlapBounds() const { return overlapBoundsIncludeChildren() ? calculateLayerBounds(this) : localBoundingBox(); }
+
+#if ENABLE(CSS_FILTERS)
+    // If true, this layer's children are included in its bounds for overlap testing.
+    // We can't rely on the children's positions if this layer has a filter that could have moved the children's pixels around.
+    bool overlapBoundsIncludeChildren() const { return hasFilter() && renderer()->style()->filter().hasFilterThatMovesPixels(); }
+#else
+    bool overlapBoundsIncludeChildren() const { return false; }
+#endif
+
     // Can pass offsetFromRoot if known.
     IntRect calculateLayerBounds(const RenderLayer* ancestorLayer, const LayoutPoint* offsetFromRoot = 0, CalculateLayerBoundsFlags = DefaultCalculateLayerBoundsFlags) const;
     

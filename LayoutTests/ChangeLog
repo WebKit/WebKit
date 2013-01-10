@@ -1,3 +1,24 @@
+2013-01-10  Max Vujovic  <mvujovic@adobe.com>
+
+        [CSS Filters] RenderLayerCompositor::addToOverlapMap should take into account the filters outsets (ie. blur and drop-shadow)
+        https://bugs.webkit.org/show_bug.cgi?id=94022
+
+        Reviewed by Simon Fraser.
+
+        Add tests to check several combinations of software layer and composited layer overlap when
+        filter outsets are involved.
+
+        * compositing/filters/sw-layer-overlaps-hw-shadow-expected.txt: Added.
+        * compositing/filters/sw-layer-overlaps-hw-shadow.html: Added.
+        * compositing/filters/sw-nested-shadow-overlaps-hw-nested-shadow-expected.txt: Added.
+        * compositing/filters/sw-nested-shadow-overlaps-hw-nested-shadow.html: Added.
+        * compositing/filters/sw-shadow-overlaps-hw-layer-expected.txt: Added.
+        * compositing/filters/sw-shadow-overlaps-hw-layer.html: Added.
+        * compositing/filters/sw-shadow-overlaps-hw-shadow-expected.txt: Added.
+        * compositing/filters/sw-shadow-overlaps-hw-shadow.html: Added.
+        * platform/chromium/compositing/filters/sw-layer-overlaps-hw-shadow-expected.txt: Added.
+        * platform/chromium/compositing/filters/sw-shadow-overlaps-hw-layer-expected.txt: Added.
+
 2013-01-09  Ojan Vafai  <ojan@chromium.org>
 
         intrinsic min-widths don't override width for file upload controls
