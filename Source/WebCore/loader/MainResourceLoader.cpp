@@ -194,12 +194,10 @@ void MainResourceLoader::continueAfterNavigationPolicy(const ResourceRequest& re
         // However, from an API perspective, this isn't a cancellation. Therefore, sever our relationship with the network load via clearResource(),
         // but prevent the ResourceLoader from sending ResourceLoadNotifier callbacks.
         RefPtr<ResourceLoader> resourceLoader = loader();
-        ASSERT(!resourceLoader || resourceLoader->shouldSendResourceLoadCallbacks());
-        if (resourceLoader)
-            resourceLoader->setSendCallbackPolicy(DoNotSendCallbacks);
+        ASSERT(resourceLoader->shouldSendResourceLoadCallbacks());
+        resourceLoader->setSendCallbackPolicy(DoNotSendCallbacks);
         clearResource();
-        if (resourceLoader)
-            resourceLoader->setSendCallbackPolicy(SendCallbacks);
+        resourceLoader->setSendCallbackPolicy(SendCallbacks);
         handleSubstituteDataLoadSoon(request);
     }
 
