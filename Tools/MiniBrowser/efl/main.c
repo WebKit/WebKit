@@ -1222,7 +1222,7 @@ static Browser_Window *window_create(Evas_Object *opener, const char *url, int w
     elm_box_pack_end(vertical_layout, window->ewk_view);
     evas_object_show(window->ewk_view);
 
-    if (url)
+    if (url && strcmp(url, "about:blank")) // Do not reset 'about:blank' as it would erase all previous document modifications.
         ewk_view_url_set(window->ewk_view, url);
 
     evas_object_resize(window->elm_window, width ? width : window_width, height ? height : window_height);

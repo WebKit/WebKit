@@ -1,3 +1,15 @@
+2013-01-10  Mikhail Pozdnyakov  <mikhail.pozdnyakov@intel.com>
+
+        [EFL][WK2] Writing immediately to created windows (open) fails
+        https://bugs.webkit.org/show_bug.cgi?id=105276
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Do not reset 'about:blank' url for the new pages in mini browser.
+
+        * MiniBrowser/efl/main.c:
+        (window_create):
+
 2013-01-10  Tim 'mithro' Ansell  <mithro@mithis.com>
 
         Changing tests to be consistent and use self.scm rather then recreating the scm object.
