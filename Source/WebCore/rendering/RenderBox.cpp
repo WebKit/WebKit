@@ -791,6 +791,28 @@ void RenderBox::applyCachedClipAndScrollOffsetForRepaint(LayoutRect& paintRect) 
     paintRect = intersection(paintRect, clipRect);
 }
 
+LayoutUnit RenderBox::minIntrinsicLogicalWidth() const
+{
+    LayoutUnit minLogicalWidth = 0;
+    LayoutUnit maxLogicalWidth = 0;
+    computeIntrinsicLogicalWidths(minLogicalWidth, maxLogicalWidth);
+    return minLogicalWidth + borderAndPaddingLogicalWidth();
+}
+
+LayoutUnit RenderBox::maxIntrinsicLogicalWidth() const
+{
+    LayoutUnit minLogicalWidth = 0;
+    LayoutUnit maxLogicalWidth = 0;
+    computeIntrinsicLogicalWidths(minLogicalWidth, maxLogicalWidth);
+    return maxLogicalWidth + borderAndPaddingLogicalWidth();
+}
+
+void RenderBox::computeIntrinsicLogicalWidths(LayoutUnit& minLogicalWidth, LayoutUnit& maxLogicalWidth) const
+{
+    minLogicalWidth = minPreferredLogicalWidth() - borderAndPaddingLogicalWidth();
+    maxLogicalWidth = maxPreferredLogicalWidth() - borderAndPaddingLogicalWidth();
+}
+
 LayoutUnit RenderBox::minPreferredLogicalWidth() const
 {
     if (preferredLogicalWidthsDirty())
@@ -1995,9 +2017,9 @@ LayoutUnit RenderBox::computeLogicalWidthInRegionUsing(SizeType widthType, Layou
     }
 
     if (logicalWidth.type() == MinContent)
-        return minPreferredLogicalWidth();
+        return minIntrinsicLogicalWidth();
     if (logicalWidth.type() == MaxContent)
-        return maxPreferredLogicalWidth();
+        return maxIntrinsicLogicalWidth();
 
     RenderView* renderView = view();
     LayoutUnit marginStart = minimumValueForLength(styleToUse->marginStart(), availableLogicalWidth, renderView);

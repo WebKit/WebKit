@@ -164,6 +164,28 @@ void RenderFileUploadControl::paintObject(PaintInfo& paintInfo, const LayoutPoin
     RenderBlock::paintObject(paintInfo, paintOffset);
 }
 
+void RenderFileUploadControl::computeIntrinsicLogicalWidths(LayoutUnit& minLogicalWidth, LayoutUnit& maxLogicalWidth) const
+{
+    // Figure out how big the filename space needs to be for a given number of characters
+    // (using "0" as the nominal character).
+    const UChar character = '0';
+    const String characterAsString = String(&character, 1);
+    const Font& font = style()->font();
+    // FIXME: Remove the need for this const_cast by making constructTextRun take a const RenderObject*.
+    RenderFileUploadControl* renderer = const_cast<RenderFileUploadControl*>(this);
+    float minDefaultLabelWidth = defaultWidthNumChars * font.width(constructTextRun(renderer, font, characterAsString, style(), TextRun::AllowTrailingExpansion));
+
+    const String label = theme()->fileListDefaultLabel(node()->toInputElement()->multiple());
+    float defaultLabelWidth = font.width(constructTextRun(renderer, font, label, style(), TextRun::AllowTrailingExpansion));
+    if (HTMLInputElement* button = uploadButton())
+        if (RenderObject* buttonRenderer = button->renderer())
+            defaultLabelWidth += buttonRenderer->maxPreferredLogicalWidth() + afterButtonSpacing;
+    maxLogicalWidth = static_cast<int>(ceilf(max(minDefaultLabelWidth, defaultLabelWidth)));
+
+    if (!style()->width().isPercent())
+        minLogicalWidth = maxLogicalWidth;
+}
+
 void RenderFileUploadControl::computePreferredLogicalWidths()
 {
     ASSERT(preferredLogicalWidthsDirty());
@@ -171,38 +193,19 @@ void RenderFileUploadControl::computePreferredLogicalWidths()
     m_minPreferredLogicalWidth = 0;
     m_maxPreferredLogicalWidth = 0;
 
-    RenderStyle* style = this->style();
-    ASSERT(style);
+    if (style()->width().isFixed() && style()->width().value() > 0)
+        m_minPreferredLogicalWidth = m_maxPreferredLogicalWidth = adjustContentBoxLogicalWidthForBoxSizing(style()->width().value());
+    else
+        computeIntrinsicLogicalWidths(m_minPreferredLogicalWidth, m_maxPreferredLogicalWidth);
 
-    const Font& font = style->font();
-    if (style->width().isFixed() && style->width().value() > 0)
-        m_minPreferredLogicalWidth = m_maxPreferredLogicalWidth = adjustContentBoxLogicalWidthForBoxSizing(style->width().value());
-    else {
-        // Figure out how big the filename space needs to be for a given number of characters
-        // (using "0" as the nominal character).
-        const UChar character = '0';
-        const String characterAsString = String(&character, 1);
-        float minDefaultLabelWidth = defaultWidthNumChars * font.width(constructTextRun(this, font, characterAsString, style, TextRun::AllowTrailingExpansion));
-
-        const String label = theme()->fileListDefaultLabel(node()->toInputElement()->multiple());
-        float defaultLabelWidth = font.width(constructTextRun(this, font, label, style, TextRun::AllowTrailingExpansion));
-        if (HTMLInputElement* button = uploadButton())
-            if (RenderObject* buttonRenderer = button->renderer())
-                defaultLabelWidth += buttonRenderer->maxPreferredLogicalWidth() + afterButtonSpacing;
-        m_maxPreferredLogicalWidth = static_cast<int>(ceilf(max(minDefaultLabelWidth, defaultLabelWidth)));
-
-        if (!style->width().isPercent())
-            m_minPreferredLogicalWidth = m_maxPreferredLogicalWidth;
+    if (style()->minWidth().isFixed() && style()->minWidth().value() > 0) {
+        m_maxPreferredLogicalWidth = max(m_maxPreferredLogicalWidth, adjustContentBoxLogicalWidthForBoxSizing(style()->minWidth().value()));
+        m_minPreferredLogicalWidth = max(m_minPreferredLogicalWidth, adjustContentBoxLogicalWidthForBoxSizing(style()->minWidth().value()));
     }
 
-    if (style->minWidth().isFixed() && style->minWidth().value() > 0) {
-        m_maxPreferredLogicalWidth = max(m_maxPreferredLogicalWidth, adjustContentBoxLogicalWidthForBoxSizing(style->minWidth().value()));
-        m_minPreferredLogicalWidth = max(m_minPreferredLogicalWidth, adjustContentBoxLogicalWidthForBoxSizing(style->minWidth().value()));
-    }
-
-    if (style->maxWidth().isFixed()) {
-        m_maxPreferredLogicalWidth = min(m_maxPreferredLogicalWidth, adjustContentBoxLogicalWidthForBoxSizing(style->maxWidth().value()));
-        m_minPreferredLogicalWidth = min(m_minPreferredLogicalWidth, adjustContentBoxLogicalWidthForBoxSizing(style->maxWidth().value()));
+    if (style()->maxWidth().isFixed()) {
+        m_maxPreferredLogicalWidth = min(m_maxPreferredLogicalWidth, adjustContentBoxLogicalWidthForBoxSizing(style()->maxWidth().value()));
+        m_minPreferredLogicalWidth = min(m_minPreferredLogicalWidth, adjustContentBoxLogicalWidthForBoxSizing(style()->maxWidth().value()));
     }
 
     int toAdd = borderAndPaddingWidth();

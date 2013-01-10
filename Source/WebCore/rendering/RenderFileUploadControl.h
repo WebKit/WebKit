@@ -46,6 +46,7 @@ private:
 
     virtual bool canBeReplacedWithInlineRunIn() const OVERRIDE;
     virtual void updateFromElement();
+    virtual void computeIntrinsicLogicalWidths(LayoutUnit& minLogicalWidth, LayoutUnit& maxLogicalWidth) const OVERRIDE;
     virtual void computePreferredLogicalWidths();
     virtual void paintObject(PaintInfo&, const LayoutPoint&);
 

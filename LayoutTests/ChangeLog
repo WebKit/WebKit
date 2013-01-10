@@ -1,3 +1,13 @@
+2013-01-09  Ojan Vafai  <ojan@chromium.org>
+
+        intrinsic min-widths don't override width for file upload controls
+        https://bugs.webkit.org/show_bug.cgi?id=106517
+
+        Reviewed by Tony Chang.
+
+        * fast/forms/file/intrinsic-min-width-overrides-width-expected.html: Added.
+        * fast/forms/file/intrinsic-min-width-overrides-width.html: Added.
+
 2013-01-10  Florin Malita  <fmalita@chromium.org>
 
         [Chromium] Unreviewed gardening.
