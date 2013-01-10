@@ -1,3 +1,38 @@
+2013-01-09  Eric Seidel  <eric@webkit.org>
+
+        run-perf-tests --chromium-android --profile should show symbols for the kernel
+        https://bugs.webkit.org/show_bug.cgi?id=106498
+
+        Reviewed by Adam Barth.
+
+        Turns out this was easy, once I finally read the output from "perf report".
+        It appears there may be a bug in "perf record" on android, as it complains
+        about not being able to read from /proc/kallsyms even when
+        /proc/sys/kernel/kptr_restrict is 0.  For now I've not bothered
+        to keep /proc/sys/kernel/kptr_restrict as 0 during the actual record
+        but rather just flip it to 0 long enough to grab the /proc/kallsyms
+        and then flip it back to whatever the device had.
+
+        /proc/sys/kernel/kptr_restrict controls what /proc/kallsyms returns
+        on Linux.  /proc/kallsyms contains a mapping of kernel addresses
+        to symbol names.  Its world-readable, but will return all 0s if you
+        don't have permission to see the kernel symbols.  kptr_restrict
+        supports values 0, 1, 2.  Where 0 means "everyone can see the real symbols"
+        1 is only a specific group, and 2 is "no one, not even root".
+        By default kptr_restrict is 2 on Android it seems.
+        More kptr_restrict docs: http://lwn.net/Articles/420403/
+
+        I also took this opportunity to clean up how the perf record command
+        was built for use/display in AndroidPerf.profile_after_exit and
+        change to always using long-form names for the arguments (to hopefully help readability).
+
+        * Scripts/webkitpy/layout_tests/port/chromium_android.py:
+        (AndroidPerf.__init__):
+        (profile_after_exit):
+        (ChromiumAndroidDriver.__init__):
+        (ChromiumAndroidDriver._update_kallsyms_cache):
+        * Scripts/webkitpy/layout_tests/port/chromium_android_unittest.py:
+
 2013-01-09  Julie Parent  <jparent@chromium.org>
 
         Dashboard cleanup: remove dead code.

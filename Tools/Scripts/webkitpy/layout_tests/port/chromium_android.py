@@ -64,6 +64,7 @@ DRT_APP_CACHE_DIR = DEVICE_DRT_DIR + 'cache/'
 DRT_LIBRARY_NAME = 'libDumpRenderTree.so'
 
 SCALING_GOVERNORS_PATTERN = "/sys/devices/system/cpu/cpu*/cpufreq/scaling_governor"
+KPTR_RESTRICT_PATH = "/proc/sys/kernel/kptr_restrict"
 
 # All the test cases are still served to DumpRenderTree through file protocol,
 # but we use a file-to-http feature to bridge the file request to host's http
@@ -363,12 +364,13 @@ class AndroidPerf(SingleFileOutputProfiler):
     _cached_perf_host_path = None
     _have_searched_for_perf_host = False
 
-    def __init__(self, host, executable_path, output_dir, adb_path, device_serial, symfs_path, identifier=None):
+    def __init__(self, host, executable_path, output_dir, adb_path, device_serial, symfs_path, kallsyms_path, identifier=None):
         super(AndroidPerf, self).__init__(host, executable_path, output_dir, "data", identifier)
         self._device_serial = device_serial
         self._adb_command = [adb_path, '-s', self._device_serial]
         self._perf_process = None
         self._symfs_path = symfs_path
+        self._kallsyms_path = kallsyms_path
 
     def check_configuration(self):
         # Check that perf is installed
@@ -451,8 +453,14 @@ http://goto.google.com/cr-android-perf-howto
         self._run_adb_command(['pull', '/data/perf.data', self._output_path])
 
         perfhost_path = self._perfhost_path()
+        perfhost_report_command = [
+            'report',
+            '--input', self._output_path,
+            '--symfs', self._symfs_path,
+            '--kallsyms', self._kallsyms_path,
+        ]
         if perfhost_path:
-            perfhost_args = [perfhost_path, 'report', '-g', 'none', '-i', self._output_path, '--symfs', self._symfs_path]
+            perfhost_args = [perfhost_path] + perfhost_report_command + ['--call-graph', 'none']
             perf_output = self._host.executive.run_command(perfhost_args)
             # We could save off the full -g report to a file if users found that useful.
             print self._first_ten_lines_of_profile(perf_output)
@@ -473,7 +481,7 @@ http://crbug.com/165250 discusses making these pre-built binaries externally ava
 
         perfhost_display_patch = perfhost_path if perfhost_path else 'perfhost_linux'
         print "To view the full profile, run:"
-        print ' '.join([perfhost_display_patch, 'report', '-i', self._output_path, '--symfs', self._symfs_path])
+        print ' '.join([perfhost_display_patch] + perfhost_report_command)
 
 
 class ChromiumAndroidDriver(driver.Driver):
@@ -488,16 +496,19 @@ class ChromiumAndroidDriver(driver.Driver):
         self._forwarder_process = None
         self._has_setup = False
         self._original_governors = {}
+        self._original_kptr_restrict = None
         self._device_serial = port._get_device_serial(worker_number)
         self._adb_command_base = None
 
         # FIXME: If we taught ProfileFactory about "target" devices we could
         # just use the logic in Driver instead of duplicating it here.
         if self._port.get_option("profile"):
+            # FIXME: This should be done once, instead of per-driver!
             symfs_path = self._find_or_create_symfs()
+            kallsyms_path = self._update_kallsyms_cache(symfs_path)
             # FIXME: We should pass this some sort of "Bridge" object abstraction around ADB instead of a path/device pair.
             self._profiler = AndroidPerf(self._port.host, self._port._path_to_driver(), self._port.results_directory(),
-                self._port.path_to_adb(), self._device_serial, symfs_path)\
+                self._port.path_to_adb(), self._device_serial, symfs_path, kallsyms_path)
             # FIXME: This is a layering violation and should be moved to Port.check_sys_deps
             # once we have an abstraction around an adb_path/device_serial pair to make it
             # easy to make these class methods on AndroidPerf.
@@ -510,6 +521,22 @@ class ChromiumAndroidDriver(driver.Driver):
     def __del__(self):
         self._teardown_performance()
         super(ChromiumAndroidDriver, self).__del__()
+
+    def _update_kallsyms_cache(self, output_dir):
+        kallsyms_name = "%s-kallsyms" % self._device_serial
+        kallsyms_cache_path = self._port.host.filesystem.join(output_dir, kallsyms_name)
+
+        self._restart_adb_as_root()
+
+        saved_kptr_restrict = self._run_adb_command(['shell', 'cat', KPTR_RESTRICT_PATH]).strip()
+        self._run_adb_command(['shell', 'echo', '0', '>', KPTR_RESTRICT_PATH])
+
+        print "Updating kallsyms file (%s) from device" % kallsyms_cache_path
+        self._pull_from_device("/proc/kallsyms", kallsyms_cache_path)
+
+        self._run_adb_command(['shell', 'echo', saved_kptr_restrict, '>', KPTR_RESTRICT_PATH])
+
+        return kallsyms_cache_path
 
     def _find_or_create_symfs(self):
         environment = self._port.host.copy_current_environment()

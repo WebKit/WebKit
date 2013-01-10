@@ -309,7 +309,7 @@ Samples in kernel modules can't be resolved as well.
      2.73%   DumpRenderTree  DumpRenderTree               [.] WebCore::DocumentV8Internal::getElementsByTagNameCallback(v8::Arguments const&)
 """
         host = MockSystemHost()
-        profiler = chromium_android.AndroidPerf(host, '/bin/executable', '/tmp/output', 'adb-path', 'device-serial', 'foo')
+        profiler = chromium_android.AndroidPerf(host, '/bin/executable', '/tmp/output', 'adb-path', 'device-serial', '/tmp/symfs', '/tmp/kallsyms', 'foo')
         self.assertEqual(profiler._first_ten_lines_of_profile(perf_output), expected_first_ten_lines)
 
 
