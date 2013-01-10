@@ -1109,6 +1109,7 @@ set(WebCore_SOURCES
     css/WebKitCSSViewportRule.cpp
 
     dom/ActiveDOMObject.cpp
+    dom/AncestorChainWalker.cpp
     dom/Attr.cpp
     dom/BeforeTextInsertedEvent.cpp
     dom/BeforeUnloadEvent.cpp

@@ -40,7 +40,6 @@
 #include "CSSStyleSheet.h"
 #include "ChildNodeList.h"
 #include "ClassNodeList.h"
-#include "ComposedShadowTreeWalker.h"
 #include "ContainerNodeAlgorithms.h"
 #include "ContextMenuController.h"
 #include "DOMImplementation.h"

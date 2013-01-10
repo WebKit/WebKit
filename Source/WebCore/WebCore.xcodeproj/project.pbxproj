@@ -3932,6 +3932,8 @@
 		A77E1FF014AACB6E005B7CB6 /* TreeScopeAdopter.h in Headers */ = {isa = PBXBuildFile; fileRef = A77E1FEE14AACB6E005B7CB6 /* TreeScopeAdopter.h */; };
 		A781C6A713828B5D0012A62A /* DocumentMarker.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A781C6A613828B5D0012A62A /* DocumentMarker.cpp */; };
 		A784941B0B5FE507001E237A /* Clipboard.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A784941A0B5FE507001E237A /* Clipboard.cpp */; };
+		A78CDD2E169E91A1009136F3 /* AncestorChainWalker.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A75CBE43169E913D0003A60F /* AncestorChainWalker.cpp */; };
+		A78CDD30169E91A4009136F3 /* AncestorChainWalker.h in Headers */ = {isa = PBXBuildFile; fileRef = A75CBE44169E913D0003A60F /* AncestorChainWalker.h */; };
 		A78E526F1346BD1700AD9C31 /* MeterShadowElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A78E526D1346BD1700AD9C31 /* MeterShadowElement.cpp */; };
 		A78E52701346BD1700AD9C31 /* MeterShadowElement.h in Headers */ = {isa = PBXBuildFile; fileRef = A78E526E1346BD1700AD9C31 /* MeterShadowElement.h */; };
 		A78FE13B12366B1000ACE8D0 /* SpellChecker.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A78FE13912366B1000ACE8D0 /* SpellChecker.cpp */; };
@@ -11283,6 +11285,8 @@
 		A73F95FC12C97BFE0031AAF9 /* RoundedRect.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RoundedRect.cpp; sourceTree = "<group>"; };
 		A73F95FD12C97BFE0031AAF9 /* RoundedRect.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RoundedRect.h; sourceTree = "<group>"; };
 		A74BB76A13BDA86300FF7BF0 /* ExceptionCodePlaceholder.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ExceptionCodePlaceholder.h; sourceTree = "<group>"; };
+		A75CBE43169E913D0003A60F /* AncestorChainWalker.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = AncestorChainWalker.cpp; sourceTree = "<group>"; };
+		A75CBE44169E913D0003A60F /* AncestorChainWalker.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AncestorChainWalker.h; sourceTree = "<group>"; };
 		A75E497410752ACB00C9B896 /* SerializedScriptValue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SerializedScriptValue.h; sourceTree = "<group>"; };
 		A75E497510752ACB00C9B896 /* SerializedScriptValue.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SerializedScriptValue.cpp; sourceTree = "<group>"; };
 		A75E8B800E1DE2D6007F2481 /* FEBlend.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = FEBlend.cpp; path = filters/FEBlend.cpp; sourceTree = "<group>"; };
@@ -21990,6 +21994,8 @@
 			children = (
 				E1C4DE6D0EA75C650023CCD6 /* ActiveDOMObject.cpp */,
 				E1C4DE680EA75C1E0023CCD6 /* ActiveDOMObject.h */,
+				A75CBE43169E913D0003A60F /* AncestorChainWalker.cpp */,
+				A75CBE44169E913D0003A60F /* AncestorChainWalker.h */,
 				A8C4A7FC09D563270003AC8D /* Attr.cpp */,
 				A8C4A7FB09D563270003AC8D /* Attr.h */,
 				93EEC1E509C2877700C515D1 /* Attr.idl */,
@@ -22763,6 +22769,7 @@
 				CE08C3D2152B599A0021B8C2 /* AlternativeTextController.h in Headers */,
 				CE7B2DB31586ABAD0098B3FA /* AlternativeTextUIController.h in Headers */,
 				FD31603E12B0267600C1A359 /* AnalyserNode.h in Headers */,
+				A78CDD30169E91A4009136F3 /* AncestorChainWalker.h in Headers */,
 				490707E71219C04300D90E51 /* ANGLEWebKitBridge.h in Headers */,
 				49E912AB0EFAC906009D0CAF /* Animation.h in Headers */,
 				316FE1120E6E1DA700BF6088 /* AnimationBase.h in Headers */,
@@ -26444,6 +26451,7 @@
 				CE08C3D1152B599A0021B8C2 /* AlternativeTextController.cpp in Sources */,
 				CE7B2DB41586ABAD0098B3FA /* AlternativeTextUIController.mm in Sources */,
 				FD31603D12B0267600C1A359 /* AnalyserNode.cpp in Sources */,
+				A78CDD2E169E91A1009136F3 /* AncestorChainWalker.cpp in Sources */,
 				490707E61219C04300D90E51 /* ANGLEWebKitBridge.cpp in Sources */,
 				49E912AA0EFAC906009D0CAF /* Animation.cpp in Sources */,
 				316FE1110E6E1DA700BF6088 /* AnimationBase.cpp in Sources */,

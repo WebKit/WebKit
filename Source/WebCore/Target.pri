@@ -335,6 +335,7 @@ SOURCES += \
     css/WebKitCSSTransformValue.cpp \
     css/WebKitCSSViewportRule.cpp \
     dom/ActiveDOMObject.cpp \
+    dom/AncestorChainWalker.cpp \
     dom/Attr.cpp \
     dom/BeforeTextInsertedEvent.cpp \
     dom/BeforeUnloadEvent.cpp \
@@ -1542,6 +1543,7 @@ HEADERS += \
     css/WebKitCSSTransformValue.h \
     css/WebKitCSSViewportRule.h \
     dom/ActiveDOMObject.h \
+    dom/AncestorChainWalker.h \
     dom/Attr.h \
     dom/Attribute.h \
     dom/BeforeTextInsertedEvent.h \

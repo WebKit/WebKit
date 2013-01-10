@@ -2696,6 +2696,8 @@ webcore_sources += \
 	Source/WebCore/css/WebKitCSSViewportRule.h \
 	Source/WebCore/dom/ActiveDOMObject.cpp \
 	Source/WebCore/dom/ActiveDOMObject.h \
+	Source/WebCore/dom/AncestorChainWalker.cpp \
+	Source/WebCore/dom/AncestorChainWalker.h \
 	Source/WebCore/dom/Attr.cpp \
 	Source/WebCore/dom/Attr.h \
 	Source/WebCore/dom/Attribute.h \

@@ -130,6 +130,17 @@ public:
     }
 };
 
+inline ElementShadow* shadowOfParent(const Node* node)
+{
+    if (!node)
+        return 0;
+    if (Node* parent = node->parentNode())
+        if (parent->isElementNode())
+            return toElement(parent)->shadow();
+    return 0;
+}
+
+
 } // namespace
 
 #endif

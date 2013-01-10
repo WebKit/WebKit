@@ -141,19 +141,6 @@ inline ComposedShadowTreeWalker::ComposedShadowTreeWalker(const Node* node, Poli
 #endif
 }
 
-class AncestorChainWalker {
-public:
-    explicit AncestorChainWalker(const Node*);
-    void parent();
-    Node* get() const { return const_cast<Node*>(m_node); }
-    bool crossingInsertionPoint() { return m_isCrossingInsertionPoint; }
-
-private:
-    const Node* m_node;
-    const Node* m_distributedNode;
-    bool m_isCrossingInsertionPoint;
-};
-
 } // namespace
 
 #endif

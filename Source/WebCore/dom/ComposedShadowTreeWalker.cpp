@@ -45,16 +45,6 @@ static inline ElementShadow* shadowFor(const Node* node)
     return 0;
 }
 
-static inline ElementShadow* shadowOfParent(const Node* node)
-{
-    if (!node)
-        return 0;
-    if (Node* parent = node->parentNode())
-        if (parent->isElementNode())
-            return toElement(parent)->shadow();
-    return 0;
-}
-
 static inline bool nodeCanBeDistributed(const Node* node)
 {
     ASSERT(node);
@@ -320,44 +310,6 @@ void ComposedShadowTreeWalker::previous()
     } else
         parent();
     assertPostcondition();
-}
-
-AncestorChainWalker::AncestorChainWalker(const Node* node)
-    : m_node(node)
-    , m_distributedNode(node)
-    , m_isCrossingInsertionPoint(false)
-{
-    ASSERT(node);
-}
-
-void AncestorChainWalker::parent()
-{
-    ASSERT(m_node);
-    ASSERT(m_distributedNode);
-    if (ElementShadow* shadow = shadowOfParent(m_node)) {
-        if (InsertionPoint* insertionPoint = shadow->distributor().findInsertionPointFor(m_distributedNode)) {
-            m_node = insertionPoint;
-            m_isCrossingInsertionPoint = true;
-            return;
-        }
-    }
-    if (!m_node->isShadowRoot()) {
-        m_node = m_node->parentNode();
-        if (!(m_node && m_node->isShadowRoot() && ScopeContentDistribution::assignedTo(toShadowRoot(m_node))))
-            m_distributedNode = m_node;
-        m_isCrossingInsertionPoint = false;
-        return;
-    }
-
-    const ShadowRoot* shadowRoot = toShadowRoot(m_node);
-    if (InsertionPoint* insertionPoint = ScopeContentDistribution::assignedTo(shadowRoot)) {
-        m_node = insertionPoint;
-        m_isCrossingInsertionPoint = true;
-        return;
-    }
-    m_node = shadowRoot->host();
-    m_distributedNode = m_node;
-    m_isCrossingInsertionPoint = false;
 }
 
 } // namespace

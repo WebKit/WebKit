@@ -27,7 +27,7 @@
 #include "config.h"
 #include "TreeScope.h"
 
-#include "ComposedShadowTreeWalker.h"
+#include "AncestorChainWalker.h"
 #include "ContainerNode.h"
 #include "DOMSelection.h"
 #include "DOMWindow.h"

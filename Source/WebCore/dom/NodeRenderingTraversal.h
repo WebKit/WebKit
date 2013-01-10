@@ -71,6 +71,10 @@ Node* nextSiblingSlow(const Node*);
 Node* previousSibling(const Node*);
 Node* previousSiblingSlow(const Node*);
 
+Node* nextInScope(const Node*);
+Node* previousInScope(const Node*);
+Node* parentInScope(const Node*);
+Node* lastChildInScope(const Node*);
 
 inline ContainerNode* parent(const Node* node, ParentDetails* details)
 {

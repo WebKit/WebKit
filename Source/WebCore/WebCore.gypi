@@ -2704,6 +2704,8 @@
         ],
         'webcore_dom_files': [
             'dom/ActiveDOMObject.cpp',
+            'dom/AncestorChainWalker.cpp',
+            'dom/AncestorChainWalker.h',
             'dom/Attr.cpp',
             'dom/BeforeLoadEvent.h',
             'dom/BeforeTextInsertedEvent.cpp',

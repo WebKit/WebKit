@@ -26,7 +26,7 @@
 #include "config.h"
 #include "EventDispatcher.h"
 
-#include "ComposedShadowTreeWalker.h"
+#include "AncestorChainWalker.h"
 #include "ContainerNode.h"
 #include "ElementShadow.h"
 #include "EventContext.h"

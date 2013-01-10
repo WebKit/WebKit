@@ -29,11 +29,11 @@
 #include "EventHandler.h"
 
 #include "AXObjectCache.h"
+#include "AncestorChainWalker.h"
 #include "AutoscrollController.h"
 #include "CachedImage.h"
 #include "Chrome.h"
 #include "ChromeClient.h"
-#include "ComposedShadowTreeWalker.h"
 #include "Cursor.h"
 #include "CursorList.h"
 #include "Document.h"

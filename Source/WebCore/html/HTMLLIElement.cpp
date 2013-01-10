@@ -23,10 +23,10 @@
 #include "config.h"
 #include "HTMLLIElement.h"
 
+#include "AncestorChainWalker.h"
 #include "Attribute.h"
 #include "CSSPropertyNames.h"
 #include "CSSValueKeywords.h"
-#include "ComposedShadowTreeWalker.h"
 #include "HTMLNames.h"
 #include "RenderListItem.h"
 
@@ -96,7 +96,7 @@ void HTMLLIElement::attach()
 
         // Find the enclosing list node.
         Node* listNode = 0;
-        ComposedShadowTreeWalker walker(this);
+        AncestorChainWalker walker(this);
         while (!listNode) {
             walker.parent();
             if (!walker.get())
