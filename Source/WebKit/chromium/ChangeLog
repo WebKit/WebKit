@@ -1,3 +1,18 @@
+2013-01-09  Yue Zhang  <zysxqn@google.com>
+
+        [Chromium] Always enable autocomplete for password fields
+        https://bugs.webkit.org/show_bug.cgi?id=104600
+
+        Reviewed by Darin Fisher.
+
+        Don't check autocomplete in webkit code. Rather, we check it in chrome code in the following way: if the password field is chrome generated password, we ignore autocomplete=off and always fill the password; otherwise, we respect the autocomplete set. Since this is a chrome only feature, we make it configurable (default to false but enable this in chrome code).
+
+        * src/WebPasswordFormUtils.cpp:
+        (WebKit::findPasswordFormFields):
+        * src/WebPasswordFormUtils.h:
+        (WebKit):
+        (WebKit::findPasswordFormFields):
+
 2013-01-09  James Robinson  <jamesr@chromium.org>
 
         [chromium] Add a notification when a WebWidget's WebLayerTreeView is about to go away

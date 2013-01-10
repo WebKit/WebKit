@@ -81,8 +81,7 @@ void findPasswordFormFields(HTMLFormElement* form, PasswordFormFields* fields)
             continue;
 
         if ((fields->passwords.size() < maxPasswords)
-            && inputElement->isPasswordField()
-            && inputElement->shouldAutocomplete()) {
+            && inputElement->isPasswordField()) {
             if (fields->passwords.isEmpty())
                 firstPasswordIndex = i;
             fields->passwords.append(inputElement);
@@ -103,8 +102,7 @@ void findPasswordFormFields(HTMLFormElement* form, PasswordFormFields* fields)
                 continue;
 
             // Various input types such as text, url, email can be a username field.
-            if ((inputElement->isTextField() && !inputElement->isPasswordField())
-                && (inputElement->shouldAutocomplete())) {
+            if ((inputElement->isTextField() && !inputElement->isPasswordField())) {
                 fields->userName = inputElement;
                 break;
             }

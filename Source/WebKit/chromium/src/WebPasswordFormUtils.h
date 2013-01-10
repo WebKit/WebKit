@@ -42,6 +42,10 @@ class HTMLFormElement;
 namespace WebKit {
 
 // Helper structure to locate username, passwords and submit fields.
+//
+// Note that we don't check autocomplete property here. The applications using
+// password forms can use WebPasswordFormData.passwordShouldAutocomplete to
+// implement their own heuristics related autocomplete.
 struct PasswordFormFields {
     WebCore::HTMLInputElement* userName;
     Vector<WebCore::HTMLInputElement*> passwords;
