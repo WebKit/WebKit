@@ -99,6 +99,11 @@ void MainResourceLoader::receivedError(const ResourceError& error)
     RefPtr<MainResourceLoader> protect(this);
     RefPtr<Frame> protectFrame(m_documentLoader->frame());
 
+    if (m_substituteDataLoadIdentifier) {
+        ASSERT(!loader());
+        frameLoader()->client()->dispatchDidFailLoading(documentLoader(), m_substituteDataLoadIdentifier, error);
+    }
+
     // It is important that we call DocumentLoader::mainReceivedError before calling 
     // ResourceLoadNotifier::didFailToLoad because mainReceivedError clears out the relevant
     // document loaders. Also, mainReceivedError ends up calling a FrameLoadDelegate method
@@ -535,8 +540,10 @@ void MainResourceLoader::didFinishLoading(double finishTime)
     RefPtr<MainResourceLoader> protect(this);
     RefPtr<DocumentLoader> dl = documentLoader();
 
-    if (!loader())
+    if (!loader()) {
         frameLoader()->notifier()->dispatchDidFinishLoading(documentLoader(), identifier(), finishTime);
+        m_substituteDataLoadIdentifier = 0;
+    }
 
 #if PLATFORM(MAC) && !PLATFORM(IOS) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 1080
     if (m_filter) {
