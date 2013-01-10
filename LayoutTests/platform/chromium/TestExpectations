@@ -4274,7 +4274,9 @@ webkit.org/b/106387 [ Win ] svg/W3C-SVG-1.1/filters-comptran-01-b.svg [ ImageOnl
 webkit.org/b/106390 [ Win ] svg/dynamic-updates/SVGFEComponentTransferElement-svgdom-tableValues-prop.html [ ImageOnlyFailure Pass ]
 webkit.org/b/106390 [ Win ] svg/dynamic-updates/SVGFEComponentTransferElement-dom-tableValues-attr.html [ ImageOnlyFailure Pass ]
 webkit.org/b/106473 [ Linux ] fast/images/embed-does-not-propagate-dimensions-to-object-ancestor.html [ Crash Pass ]
-webkit.org/b/106487 [ Win ] inspector/geolocation-error.html [ Failure Pass ]
+webkit.org/b/106426 [ Win ] inspector/geolocation-error.html [ Failure Pass ]
+webkit.org/b/106426 [ Win ] inspector/geolocation-success.html [ Failure Pass ]
+webkit.org/b/106426 [ Win ] inspector/geolocation-watchPosition.html [ Failure Pass ]
 crbug.com/166932 [ Debug ] plugins/embed-attributes-setting.html [ Crash Pass ]
 
 # Transient. Needs rebaseline.
