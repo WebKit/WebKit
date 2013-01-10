@@ -2,6 +2,15 @@
 
         Unreviewed GTK gardening.
 
+        Removing a few failure expectations that are no longer needed.
+        The tests the expectations were covering now pass.
+
+        * platform/gtk/TestExpectations:
+
+2013-01-10  Zan Dobersek  <zandobersek@gmail.com>
+
+        Unreviewed GTK gardening.
+
         Adding a platform-specific baseline for a CSS Regions test.
         Adding a missing expectation for the fast/repaint/caret-with-transformation.html layout test.
 
