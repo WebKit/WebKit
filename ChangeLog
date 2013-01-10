@@ -1,5 +1,21 @@
 2013-01-10  Zan Dobersek  <zandobersek@gmail.com>
 
+        [Autotools] Add the AM_WEBKIT_FEATURE_CONDITIONAL macro
+        https://bugs.webkit.org/show_bug.cgi?id=106576
+
+        Reviewed by Martin Robinson.
+
+        Replace the AC_CHECK_WEBKIT_FEATURE_ENABLED with the new macro.
+        The former was executing actions based on the passed-in feature being
+        enabled in the (possibly overridden) GNUmakefile.features.am, the actions
+        usually affecting the Automake conditional value that was set up afterwards.
+        The new macro does this directly, setting up an Automake conditional of the
+        same name as the feature that was checked.
+
+        * Source/autotools/webkitfeature.m4:
+
+2013-01-10  Zan Dobersek  <zandobersek@gmail.com>
+
         Remove the ENABLE_ANIMATION_API feature define occurences
         https://bugs.webkit.org/show_bug.cgi?id=106544
 
