@@ -1,3 +1,11 @@
+2013-01-10  Dominik Röttsches  <dominik.rottsches@intel.com>
+
+        [EFL] Unreviewed gardening.
+
+        Marking a missing expectation for fast/repaint/caret-with-transformation.html
+
+        * platform/efl/TestExpectations:
+
 2013-01-10  Zan Dobersek  <zandobersek@gmail.com>
 
         Unreviewed GTK gardening.
