@@ -193,6 +193,14 @@
 
         [EFL] Unreviewed gardening.
 
+        video-src-blob.html is flaky, not always crashing.
+
+        * platform/efl/TestExpectations:
+
+2013-01-10  Dominik Röttsches  <dominik.rottsches@intel.com>
+
+        [EFL] Unreviewed gardening.
+
         Marking one more flaky crasher due to gstreamer.
 
         * platform/efl/TestExpectations:
