@@ -1,3 +1,13 @@
+2013-01-09  Noel Gordon  <noel.gordon@gmail.com>
+
+        Update expectations for fast/forms/button-inner-block-reuse.html
+
+        Unreviewed gardening.
+
+        * fast/forms/button-inner-block-reuse-expected.txt: Renamed from LayoutTests/platform/chromium/fast/forms/button-inner-block-reuse-expected.txt.
+        * platform/chromium-win-xp/fast/forms/button-inner-block-reuse-expected.png: Added.
+        * platform/mac/fast/forms/button-inner-block-reuse-expected.txt: Removed.
+
 2013-01-09  Tien-Ren Chen  <trchen@chromium.org>
 
         Make caret repainting container-aware
