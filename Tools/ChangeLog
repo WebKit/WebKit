@@ -1,3 +1,14 @@
+2013-01-09  Alan Cutter  <alancutter@chromium.org>
+
+        Updated parameters in GCE build scripts so they now work.
+        https://bugs.webkit.org/show_bug.cgi?id=106523
+
+        Reviewed by Adam Barth.
+
+        * EWSTools/GoogleComputeEngine/build-chromium-ews.sh:
+        * EWSTools/GoogleComputeEngine/build-commit-queue.sh:
+        * EWSTools/cold-boot.sh:
+
 2013-01-09  Mark Pilgrim  <pilgrim@chromium.org>
 
         [Chromium] Remove some stray references to WebKitPlatformSupport.h in DumpRenderTree

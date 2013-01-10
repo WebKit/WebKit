@@ -60,6 +60,8 @@ sudo chown $USER git
 sudo chgrp $USER git
 cd git
 
+echo "Cloning WebKit git repository, process takes ~30m."
+echo "Note: No status output will be shown via remote pipe."
 git clone http://git.chromium.org/external/Webkit.git
 mv Webkit webkit-$1
 cd webkit-$1

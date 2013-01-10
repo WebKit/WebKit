@@ -37,13 +37,16 @@ BOT_ID=gce-cr-linux-$1
 BUGZILLA_USERNAME=webkit.review.bot@gmail.com
 read -s -p "Bugzilla Password: " BUGZILLA_PASSWORD && echo
 
+PROJECT=google.com:webkit
 # FIXME: We should use gcutil to find a zone that's actually up.
-ZONE=us-east-b
+ZONE=us-east1-a
 IMAGE=projects/google/images/ubuntu-10-04-v20120621
+MACHINE_TYPE=n1-standard-4-d
 
-gcutil addinstance $BOT_ID --machine_type=standard-4-cpu-ephemeral-disk --image=$IMAGE --zone=$ZONE --wait_until_running
+gcutil --project=$PROJECT addinstance $BOT_ID --machine_type=$MACHINE_TYPE --image=$IMAGE --zone=$ZONE --wait_until_running
 
 echo "Sleeping for 30s to let the server spin up ssh..."
 sleep 30
 
-gcutil ssh $BOT_ID "sudo apt-get install subversion -y && svn checkout http://svn.webkit.org/repository/webkit/trunk/Tools/EWSTools tools && cd tools && bash cold-boot.sh $QUEUE_TYPE $BOT_ID $BUGZILLA_USERNAME $BUGZILLA_PASSWORD"
+gcutil --project=$PROJECT ssh $BOT_ID "sudo apt-get install subversion -y && svn checkout http://svn.webkit.org/repository/webkit/trunk/Tools/EWSTools tools && cd tools && bash cold-boot.sh $QUEUE_TYPE $BOT_ID $BUGZILLA_USERNAME $BUGZILLA_PASSWORD"
+
