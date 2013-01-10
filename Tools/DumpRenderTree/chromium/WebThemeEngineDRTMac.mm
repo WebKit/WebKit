@@ -31,8 +31,8 @@
 #include "WebThemeEngineDRTMac.h"
 
 #include "skia/ext/skia_utils_mac.h"
-#include "third_party/WebKit/Source/WebKit/chromium/public/platform/WebCanvas.h"
-#include "third_party/WebKit/Source/WebKit/chromium/public/platform/WebRect.h"
+#include "third_party/WebKit/Source/Platform/chromium/public/WebCanvas.h"
+#include "third_party/WebKit/Source/Platform/chromium/public/WebRect.h"
 #import <AppKit/NSAffineTransform.h>
 #import <AppKit/NSGraphicsContext.h>
 #import <AppKit/NSScroller.h>

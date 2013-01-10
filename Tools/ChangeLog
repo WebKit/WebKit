@@ -1,3 +1,15 @@
+2013-01-09  Mark Pilgrim  <pilgrim@chromium.org>
+
+        [Chromium] Remove some stray references to WebKitPlatformSupport.h in DumpRenderTree
+        https://bugs.webkit.org/show_bug.cgi?id=106520
+
+        Reviewed by James Robinson.
+
+        Part of a larger refactoring series. See tracking bug 82948.
+
+        * DumpRenderTree/chromium/WebThemeEngineDRTMac.h:
+        * DumpRenderTree/chromium/WebThemeEngineDRTMac.mm:
+
 2013-01-09  Julie Parent  <jparent@chromium.org>
 
         Dashboard cleanup: Remove code for currentState and window.location.hash getting out of state
