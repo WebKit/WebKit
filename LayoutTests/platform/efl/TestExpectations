@@ -823,6 +823,7 @@ webkit.org/b/105296 webaudio/delaynode-maxdelay.html [ Failure Pass ]
 webkit.org/b/106551 media/video-src-source.html [ Crash Pass ]
 webkit.org/b/106551 media/video-source-moved.html [ Crash Pass ]
 webkit.org/b/106551 media/video-source.html [ Crash Pass ]
+webkit.org/b/106551 fast/dom/beforeload/remove-video-poster-in-beforeload-listener.html [ Crash Pass ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # FAILING TESTS

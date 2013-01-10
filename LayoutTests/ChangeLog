@@ -2,6 +2,14 @@
 
         [EFL] Unreviewed gardening.
 
+        Marking one more flaky crasher due to gstreamer.
+
+        * platform/efl/TestExpectations:
+
+2013-01-10  Dominik Röttsches  <dominik.rottsches@intel.com>
+
+        [EFL] Unreviewed gardening.
+
         Marking three media tests as flaky crashers.
 
         * platform/efl/TestExpectations:
