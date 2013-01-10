@@ -1,3 +1,9 @@
+2013-01-10  Dimitri Glazkov  <dglazkov@chromium.org>
+
+        Adjust ref-test expectation to actual work.
+
+        * platform/chromium/TestExpectations: Adjusted.
+
 2013-01-10  Roger Fong  <roger_fong@apple.com>
 
         Unreviewed rebaseline. Apple Windows port.

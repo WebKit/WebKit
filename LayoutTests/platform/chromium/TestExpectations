@@ -4253,7 +4253,7 @@ webkit.org/b/105471 [ Win ] platform/chromium/virtual/gpu/compositedscrolling/ov
 webkit.org/b/105471 [ Win ] platform/chromium/virtual/gpu/compositedscrolling/overflow/updating-scrolling-content.html
 
 webkit.org/b/105595 [ Mac ] svg/text/alt-glyph-for-surrogate-pair.svg [ ImageOnlyFailure ]
-webkit.org/b/47975 [ MountainLion ] fast/block/float/max-width-clear-float-with-overflow-hidden.html [ Failure ]
+webkit.org/b/47975 [ MountainLion ] fast/block/float/max-width-clear-float-with-overflow-hidden.html [ ImageOnlyFailure ]
 
 webkit.org/b/106238 [ Win ] svg/dynamic-updates/SVGUseElement-dom-href1-attr.html [ ImageOnlyFailure Pass ]
 webkit.org/b/106238 [ Win ] svg/dynamic-updates/SVGUseElement-svgdom-href1-prop.html [ ImageOnlyFailure Pass ]
