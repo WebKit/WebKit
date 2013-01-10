@@ -545,6 +545,31 @@ IntRect RenderView::selectionBounds(bool clipToVisibleContent) const
     return pixelSnappedIntRect(selRect);
 }
 
+void RenderView::repaintSelection() const
+{
+    document()->updateStyleIfNeeded();
+
+    HashSet<RenderBlock*> processedBlocks;
+
+    RenderObject* end = rendererAfterPosition(m_selectionEnd, m_selectionEndPos);
+    for (RenderObject* o = m_selectionStart; o && o != end; o = o->nextInPreOrder()) {
+        if (!o->canBeSelectionLeaf() && o != m_selectionStart && o != m_selectionEnd)
+            continue;
+        if (o->selectionState() == SelectionNone)
+            continue;
+
+        RenderSelectionInfo(o, true).repaint();
+
+        // Blocks are responsible for painting line gaps and margin gaps. They must be examined as well.
+        for (RenderBlock* block = o->containingBlock(); block && !block->isRenderView(); block = block->containingBlock()) {
+            if (processedBlocks.contains(block))
+                break;
+            processedBlocks.add(block);
+            RenderSelectionInfo(block, true).repaint();
+        }
+    }
+}
+
 #if USE(ACCELERATED_COMPOSITING)
 // Compositing layer dimensions take outline size into account, so we have to recompute layer
 // bounds when it changes.

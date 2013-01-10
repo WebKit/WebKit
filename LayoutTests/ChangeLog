@@ -1,3 +1,17 @@
+2013-01-09  Tien-Ren Chen  <trchen@chromium.org>
+
+        Make caret repainting container-aware
+        https://bugs.webkit.org/show_bug.cgi?id=103955
+
+        Reviewed by Simon Fraser.
+
+        The caret repaint padding has been removed. Needs rebaseline.
+        Added test that carets should be repainted correctly on a transformed element.
+
+        * fast/repaint/caret-with-transformation.html: Added.
+        * platform/chromium/TestExpectations:
+        * platform/mac/TestExpectations:
+
 2013-01-09  Noel Gordon  <noel.gordon@gmail.com>
 
         [Chromium] Add win mac expectations for r139256

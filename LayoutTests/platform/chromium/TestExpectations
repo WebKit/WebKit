@@ -4377,3 +4377,12 @@ webkit.org/b/106473 [ Linux ] fast/images/embed-does-not-propagate-dimensions-to
 webkit.org/b/106487 [ Win ] inspector/geolocation-error.html [ Failure Pass ]
 crbug.com/166932 [ Debug ] plugins/embed-attributes-setting.html [ Crash Pass ]
 
+# Transient. Needs rebaseline.
+webkit.org/b/103955 fast/repaint/4774354.html [ ImageOnlyFailure ]
+webkit.org/b/103955 fast/repaint/4776765.html [ ImageOnlyFailure ]
+webkit.org/b/103955 fast/repaint/caret-outside-block.html [ ImageOnlyFailure ]
+webkit.org/b/103955 fast/repaint/japanese-rl-selection-repaint-in-regions.html [ ImageOnlyFailure ]
+webkit.org/b/103955 fast/repaint/japanese-rl-selection-repaint.html [ ImageOnlyFailure ]
+webkit.org/b/103955 fast/repaint/repaint-across-writing-mode-boundary.html [ ImageOnlyFailure ]
+webkit.org/b/103955 fast/repaint/selection-rl.html [ ImageOnlyFailure ]
+webkit.org/b/103955 fast/repaint/caret-with-transformation.html [ Missing ]

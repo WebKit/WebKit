@@ -95,6 +95,7 @@ public:
     RenderObject* selectionEnd() const { return m_selectionEnd; }
     IntRect selectionBounds(bool clipToVisibleContent = true) const;
     void selectionStartEnd(int& startPos, int& endPos) const;
+    void repaintSelection() const;
 
     bool printing() const;
 
