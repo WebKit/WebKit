@@ -1,3 +1,14 @@
+2013-01-10  Roger Fong  <roger_fong@apple.com>
+
+        Update WebkitSystemInterface lib for Windows port.
+        This hasn't been done in a while and the current one is out of date.
+        In addition I believe it will fix:
+        <rdar://problem/12990844>
+
+        Rubberstamped by Timothy Horton.
+
+        * win/lib/WebKitSystemInterface.lib:
+
 2013-01-08  Kiran Muppala  <cmuppala@apple.com>
 
         Add WebKitSystemInterface needed for overriding system proxies on Mac
