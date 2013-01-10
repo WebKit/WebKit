@@ -50,7 +50,7 @@
             titleUIElement = focusedElement.titleUIElement();
             shouldBe("focusedElement.description", "'AXDescription: radio3'");
             shouldBe("focusedElement.title", "'AXTitle: '");
-            shouldBe("titleUIElement.title", "'AXTitle: '");
+            shouldBeTrue("!titleUIElement || titleUIElement.title == 'AXTitle: '");
 
         }
     </script>

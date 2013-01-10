@@ -2347,6 +2347,11 @@ AccessibilityObject* AccessibilityRenderObject::correspondingLabelForControlElem
     if (!m_renderer)
         return 0;
 
+    // ARIA: section 2A, bullet #3 says if aria-labeledby or aria-label appears, it should
+    // override the "label" element association.
+    if (hasTextAlternative())
+        return 0;
+
     Node* node = m_renderer->node();
     if (node && node->isHTMLElement()) {
         HTMLLabelElement* label = labelForElement(static_cast<Element*>(node));

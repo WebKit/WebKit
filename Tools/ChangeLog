@@ -1,3 +1,40 @@
+2013-01-09  Joanmarie Diggs  <jdiggs@igalia.com>
+
+        [GTK] accessibility/aria-labelledby-overrides-label.html requires a proper baseline
+        https://bugs.webkit.org/show_bug.cgi?id=105638
+
+        Reviewed by Martin Robinson.
+
+        The test was failing for two reasons:
+        - AccessibilityRenderObject::correspondingLabelForControlElement() was
+          not ignoring the ARIA labelled-by property
+        - AccessibilityController::accessibleElementById() was not implemented
+
+        Because getting an element by ID cannot be done in the UIProcess, the
+        decision was made to expose the element's ID as an accessible attribute
+        of the object.
+
+        In addition, fixing the bug in AccessibilityRenderObject made it possible
+        to eliminate the Gtk platform-specific expectations for another test.
+
+        * DumpRenderTree/gtk/AccessibilityControllerGtk.cpp:
+        (childElementById): Added. Walks the tree looking for the AtkObject
+        Attribute which exposes the HTML element's ID.
+        (AccessibilityController::accessibleElementById): Implemented.
+        * DumpRenderTree/gtk/AccessibilityUIElementGtk.cpp:
+        (AccessibilityUIElement::title): Modified to print out "AXTitle: " even
+        when there is no title, as is done with the Mac port.
+        * WebKitTestRunner/InjectedBundle/AccessibilityController.cpp:
+        (WTR):
+        * WebKitTestRunner/InjectedBundle/atk/AccessibilityControllerAtk.cpp:
+        (WTR::childElementById): Added. Walks the tree looking for the AtkObject
+        Attribute which exposes the HTML element's ID.
+        (WTR):
+        (WTR::AccessibilityController::accessibleElementById): Implemented.
+        * WebKitTestRunner/InjectedBundle/atk/AccessibilityUIElementAtk.cpp:
+        (WTR::AccessibilityUIElement::title): Modified to print out "AXTitle: "
+        even when there is no title, as is done with the Mac port.
+
 2013-01-09  Gregg Tavares  <gman@google.com>
 
         Add Gregg Tavares as a committer

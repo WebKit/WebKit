@@ -388,11 +388,7 @@ JSStringRef AccessibilityUIElement::roleDescription()
 JSStringRef AccessibilityUIElement::title()
 {
     const gchar* name = atk_object_get_name(ATK_OBJECT(m_element));
-
-    if (!name)
-        return JSStringCreateWithCharacters(0, 0);
-
-    GOwnPtr<gchar> axTitle(g_strdup_printf("AXTitle: %s", name));
+    GOwnPtr<gchar> axTitle(g_strdup_printf("AXTitle: %s", name ? name : ""));
 
     return JSStringCreateWithUTF8CString(axTitle.get());
 }

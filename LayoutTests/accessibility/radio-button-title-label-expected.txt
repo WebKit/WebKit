@@ -10,7 +10,7 @@ PASS focusedElement.title is 'AXTitle: '
 PASS !titleUIElement || titleUIElement.title == 'AXTitle: ' is true
 PASS focusedElement.description is 'AXDescription: radio3'
 PASS focusedElement.title is 'AXTitle: '
-PASS titleUIElement.title is 'AXTitle: '
+PASS !titleUIElement || titleUIElement.title == 'AXTitle: ' is true
 PASS successfullyParsed is true
 
 TEST COMPLETE

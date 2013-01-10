@@ -447,6 +447,16 @@ static AtkAttributeSet* webkitAccessibleGetAttributes(AtkObject* object)
     if (!coreObject)
         return attributeSet;
 
+    // Hack needed for WebKit2 tests because obtaining an element by its ID
+    // cannot be done from the UIProcess. Assistive technologies have no need
+    // for this information.
+    Node* node = coreObject->node();
+    if (node && node->isElementNode()) {
+        String id = toElement(node)->getIdAttribute().string();
+        if (!id.isEmpty())
+            attributeSet = addToAtkAttributeSet(attributeSet, "html-id", id.utf8().data());
+    }
+
     int headingLevel = coreObject->headingLevel();
     if (headingLevel) {
         String value = String::number(headingLevel);

@@ -1,3 +1,30 @@
+2013-01-09  Joanmarie Diggs  <jdiggs@igalia.com>
+
+        [GTK] accessibility/aria-labelledby-overrides-label.html requires a proper baseline
+        https://bugs.webkit.org/show_bug.cgi?id=105638
+
+        Reviewed by Martin Robinson.
+
+        The test was failing for two reasons:
+        - AccessibilityRenderObject::correspondingLabelForControlElement() was
+          not ignoring the ARIA labelled-by property
+        - AccessibilityController::accessibleElementById() was not implemented
+
+        Because getting an element by ID cannot be done in the UIProcess, the
+        decision was made to expose the element's ID as an accessible attribute
+        of the object.
+
+        In addition, fixing the bug in AccessibilityRenderObject made it possible
+        to eliminate the Gtk platform-specific expectations for another test.
+
+        * accessibility/aria-labelledby-overrides-label-expected.txt: Added.
+        * accessibility/radio-button-title-label-expected.txt: Modified based on
+        null check which was added and which gets included in the test output.
+        * accessibility/radio-button-title-label.html: Check to see that we have
+        a titleUIElement before attempting to get its title.
+        * platform/gtk/TestExpectations: Unskipped the previously failing test.
+        * platform/gtk/accessibility/radio-button-title-label-expected.txt: Removed.
+
 2013-01-09  Max Vujovic  <mvujovic@adobe.com>
 
         [CSS Shaders] Detached identifier after mesh box type is not applied
