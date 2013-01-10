@@ -1242,13 +1242,8 @@ Node* Node::shadowAncestorNode() const
 
 ShadowRoot* Node::containingShadowRoot() const
 {
-    Node* root = const_cast<Node*>(this);
-    while (root) {
-        if (root->isShadowRoot())
-            return toShadowRoot(root);
-        root = root->parentNodeGuaranteedHostFree();
-    }
-    return 0;
+    Node* root = treeScope()->rootNode();
+    return root && root->isShadowRoot() ? toShadowRoot(root) : 0;
 }
 
 Node* Node::nonBoundaryShadowTreeRootNode()
