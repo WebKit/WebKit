@@ -24,21 +24,15 @@ use File::Basename;
 use Getopt::Long;
 use Cwd;
 
-use IDLParser;
-
 my $defines;
 my $preprocessor;
-my $verbose;
 my $idlFilesList;
-my $idlAttributesFile;
 my $supplementalDependencyFile;
 my $supplementalMakefileDeps;
 
 GetOptions('defines=s' => \$defines,
            'preprocessor=s' => \$preprocessor,
-           'verbose' => \$verbose,
            'idlFilesList=s' => \$idlFilesList,
-           'idlAttributesFile=s' => \$idlAttributesFile,
            'supplementalDependencyFile=s' => \$supplementalDependencyFile,
            'supplementalMakefileDeps=s' => \$supplementalMakefileDeps);
 
@@ -46,48 +40,34 @@ die('Must specify #define macros using --defines.') unless defined($defines);
 die('Must specify an output file using --supplementalDependencyFile.') unless defined($supplementalDependencyFile);
 die('Must specify the file listing all IDLs using --idlFilesList.') unless defined($idlFilesList);
 
-if ($verbose) {
-    print "Resolving [Supplemental=XXX] dependencies in all IDL files.\n";
-}
-
 open FH, "< $idlFilesList" or die "Cannot open $idlFilesList\n";
 my @idlFiles = <FH>;
 chomp(@idlFiles);
 close FH;
 
 # Parse all IDL files.
-my %documents;
 my %interfaceNameToIdlFile;
 my %idlFileToInterfaceName;
+my %supplementalDependencies;
+my %supplementals;
 foreach my $idlFile (@idlFiles) {
     my $fullPath = Cwd::realpath($idlFile);
-    my $parser = IDLParser->new(!$verbose);
-    $documents{$fullPath} = $parser->Parse($idlFile, $defines, $preprocessor);
+    my $supplemental = getSupplementalFromIDLFile($fullPath);
+    if ($supplemental) {
+        $supplementalDependencies{$fullPath} = $supplemental;
+    }
     my $interfaceName = fileparse(basename($idlFile), ".idl");
     $interfaceNameToIdlFile{$interfaceName} = $fullPath;
     $idlFileToInterfaceName{$fullPath} = $interfaceName;
-}
-
-# Runs the IDL attribute checker.
-my $idlAttributes = loadIDLAttributes($idlAttributesFile);
-foreach my $idlFile (keys %documents) {
-    checkIDLAttributes($idlAttributes, $documents{$idlFile}, basename($idlFile));
+    $supplementals{$fullPath} = [];
 }
 
 # Resolves [Supplemental=XXX] dependencies.
-my %supplementals;
-foreach my $idlFile (keys %documents) {
-    $supplementals{$idlFile} = [];
-}
-foreach my $idlFile (keys %documents) {
-    foreach my $interface (@{$documents{$idlFile}->interfaces}) {
-        if ($interface->extendedAttributes->{"Supplemental"}) {
-            my $targetIdlFile = $interfaceNameToIdlFile{$interface->extendedAttributes->{"Supplemental"}};
-            push(@{$supplementals{$targetIdlFile}}, $idlFile);
-            # Treats as if this IDL file does not exist.
-            delete $supplementals{$idlFile};
-        }
-    }
+foreach my $idlFile (keys %supplementalDependencies) {
+    my $baseFile = $supplementalDependencies{$idlFile};
+    my $targetIdlFile = $interfaceNameToIdlFile{$baseFile};
+    push(@{$supplementals{$targetIdlFile}}, $idlFile);
+    delete $supplementals{$idlFile};
 }
 
 # Outputs the dependency.
@@ -130,85 +110,21 @@ if ($supplementalMakefileDeps) {
 }
 
 
-sub loadIDLAttributes
+sub getSupplementalFromIDLFile
 {
-    my $idlAttributesFile = shift;
-
-    my %idlAttributes;
-    open FH, "<", $idlAttributesFile or die "Couldn't open $idlAttributesFile: $!";
-    while (my $line = <FH>) {
-        chomp $line;
-        next if $line =~ /^\s*#/;
-        next if $line =~ /^\s*$/;
-
-        if ($line =~ /^\s*([^=\s]*)\s*=?\s*(.*)/) {
-            my $name = $1;
-            $idlAttributes{$name} = {};
-            if ($2) {
-                foreach my $rightValue (split /\|/, $2) {
-                    $rightValue =~ s/^\s*|\s*$//g;
-                    $rightValue = "VALUE_IS_MISSING" unless $rightValue;
-                    $idlAttributes{$name}{$rightValue} = 1;
-                }
-            } else {
-                $idlAttributes{$name}{"VALUE_IS_MISSING"} = 1;
-            }
-        } else {
-            die "The format of " . basename($idlAttributesFile) . " is wrong: line $.\n";
-        }
-    }
-    close FH;
-
-    return \%idlAttributes;
-}
-
-sub checkIDLAttributes
-{
-    my $idlAttributes = shift;
-    my $document = shift;
     my $idlFile = shift;
 
-    foreach my $interface (@{$document->interfaces}) {
-        checkIfIDLAttributesExists($idlAttributes, $interface->extendedAttributes, $idlFile);
+    open FILE, "<", $idlFile;
+    my @lines = <FILE>;
+    close FILE;
 
-        foreach my $attribute (@{$interface->attributes}) {
-            checkIfIDLAttributesExists($idlAttributes, $attribute->signature->extendedAttributes, $idlFile);
-        }
-
-        foreach my $function (@{$interface->functions}) {
-            checkIfIDLAttributesExists($idlAttributes, $function->signature->extendedAttributes, $idlFile);
-            foreach my $parameter (@{$function->parameters}) {
-                checkIfIDLAttributesExists($idlAttributes, $parameter->extendedAttributes, $idlFile);
+    my $fileContents = join('', @lines);
+    while ($fileContents =~ /\[(.*?)\] interface (\w+)/gs) {
+        my @attributes = split(',', $1);
+        foreach (@attributes) {
+            if (/Supplemental=(\w+)/) {
+                return $1;
             }
         }
-    }
-}
-
-sub checkIfIDLAttributesExists
-{
-    my $idlAttributes = shift;
-    my $extendedAttributes = shift;
-    my $idlFile = shift;
-
-    my $error;
-    OUTER: for my $name (keys %$extendedAttributes) {
-        if (!exists $idlAttributes->{$name}) {
-            $error = "Unknown IDL attribute [$name] is found at $idlFile.";
-            last OUTER;
-        }
-        if ($idlAttributes->{$name}{"*"}) {
-            next;
-        }
-        for my $rightValue (split /\s*\|\s*/, $extendedAttributes->{$name}) {
-            if (!exists $idlAttributes->{$name}{$rightValue}) {
-                $error = "Unknown IDL attribute [$name=" . $extendedAttributes->{$name} . "] is found at $idlFile.";
-                last OUTER;
-            }
-        }
-    }
-    if ($error) {
-        die "IDL ATTRIBUTE CHECKER ERROR: $error
-If you want to add a new IDL attribute, you need to add it to WebCore/bindings/scripts/IDLAttributes.txt and add explanations to the WebKit IDL document (https://trac.webkit.org/wiki/WebKitIDL).
-";
     }
 }

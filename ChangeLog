@@ -1,3 +1,12 @@
+2013-01-10  Tony Chang  <tony@chromium.org>
+
+        Speed up supplemental dependency computation
+        https://bugs.webkit.org/show_bug.cgi?id=106503
+
+        Reviewed by Adam Barth.
+
+        * Source/cmake/WebKitMacros.cmake: Add --idlAttributesFile to the binding generation step in cmake.
+
 2013-01-10  Zan Dobersek  <zandobersek@gmail.com>
 
         [Autotools] Add the AM_WEBKIT_FEATURE_CONDITIONAL macro

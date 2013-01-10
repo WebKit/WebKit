@@ -51,6 +51,7 @@ my $writeDependencies;
 my $verbose;
 my $supplementalDependencyFile;
 my $additionalIdlFiles;
+my $idlAttributesFile;
 
 GetOptions('include=s@' => \@idlDirectories,
            'outputDir=s' => \$outputDirectory,
@@ -63,7 +64,8 @@ GetOptions('include=s@' => \@idlDirectories,
            'verbose' => \$verbose,
            'write-dependencies' => \$writeDependencies,
            'supplementalDependencyFile=s' => \$supplementalDependencyFile,
-           'additionalIdlFiles=s' => \$additionalIdlFiles);
+           'additionalIdlFiles=s' => \$additionalIdlFiles,
+           'idlAttributesFile=s' => \$idlAttributesFile);
 
 my $targetIdlFile = $ARGV[0];
 
@@ -124,6 +126,11 @@ if ($supplementalDependencyFile) {
 my $targetParser = IDLParser->new(!$verbose);
 my $targetDocument = $targetParser->Parse($targetIdlFile, $defines, $preprocessor);
 
+if ($idlAttributesFile) {
+    my $idlAttributes = loadIDLAttributes($idlAttributesFile);
+    checkIDLAttributes($idlAttributes, $targetDocument, basename($targetIdlFile));
+}
+
 foreach my $idlFile (@supplementedIdlFiles) {
     next if $idlFile eq $targetIdlFile;
 
@@ -180,6 +187,8 @@ foreach my $idlFile (@supplementedIdlFiles) {
                 }
                 push(@{$targetDataNode->constants}, $constant);
             }
+        } else {
+            die "$idlFile is not a supplemental dependency of $targetIdlFile. There maybe a bug in the the supplemental dependency generator (preprocess-idls.pl).\n";
         }
     }
 }
@@ -208,4 +217,87 @@ sub generateEmptyHeaderAndCpp
     open FH, "> ${outputDirectory}/${cppName}" or die "Cannot open $cppName\n";
     print FH $contents;
     close FH;
+}
+
+sub loadIDLAttributes
+{
+    my $idlAttributesFile = shift;
+
+    my %idlAttributes;
+    open FH, "<", $idlAttributesFile or die "Couldn't open $idlAttributesFile: $!";
+    while (my $line = <FH>) {
+        chomp $line;
+        next if $line =~ /^\s*#/;
+        next if $line =~ /^\s*$/;
+
+        if ($line =~ /^\s*([^=\s]*)\s*=?\s*(.*)/) {
+            my $name = $1;
+            $idlAttributes{$name} = {};
+            if ($2) {
+                foreach my $rightValue (split /\|/, $2) {
+                    $rightValue =~ s/^\s*|\s*$//g;
+                    $rightValue = "VALUE_IS_MISSING" unless $rightValue;
+                    $idlAttributes{$name}{$rightValue} = 1;
+                }
+            } else {
+                $idlAttributes{$name}{"VALUE_IS_MISSING"} = 1;
+            }
+        } else {
+            die "The format of " . basename($idlAttributesFile) . " is wrong: line $.\n";
+        }
+    }
+    close FH;
+
+    return \%idlAttributes;
+}
+
+sub checkIDLAttributes
+{
+    my $idlAttributes = shift;
+    my $document = shift;
+    my $idlFile = shift;
+
+    foreach my $interface (@{$document->interfaces}) {
+        checkIfIDLAttributesExists($idlAttributes, $interface->extendedAttributes, $idlFile);
+
+        foreach my $attribute (@{$interface->attributes}) {
+            checkIfIDLAttributesExists($idlAttributes, $attribute->signature->extendedAttributes, $idlFile);
+        }
+
+        foreach my $function (@{$interface->functions}) {
+            checkIfIDLAttributesExists($idlAttributes, $function->signature->extendedAttributes, $idlFile);
+            foreach my $parameter (@{$function->parameters}) {
+                checkIfIDLAttributesExists($idlAttributes, $parameter->extendedAttributes, $idlFile);
+            }
+        }
+    }
+}
+
+sub checkIfIDLAttributesExists
+{
+    my $idlAttributes = shift;
+    my $extendedAttributes = shift;
+    my $idlFile = shift;
+
+    my $error;
+    OUTER: for my $name (keys %$extendedAttributes) {
+        if (!exists $idlAttributes->{$name}) {
+            $error = "Unknown IDL attribute [$name] is found at $idlFile.";
+            last OUTER;
+        }
+        if ($idlAttributes->{$name}{"*"}) {
+            next;
+        }
+        for my $rightValue (split /\s*\|\s*/, $extendedAttributes->{$name}) {
+            if (!exists $idlAttributes->{$name}{$rightValue}) {
+                $error = "Unknown IDL attribute [$name=" . $extendedAttributes->{$name} . "] is found at $idlFile.";
+                last OUTER;
+            }
+        }
+    }
+    if ($error) {
+        die "IDL ATTRIBUTE CHECKER ERROR: $error
+If you want to add a new IDL attribute, you need to add it to WebCore/bindings/scripts/IDLAttributes.txt and add explanations to the WebKit IDL document (https://trac.webkit.org/wiki/WebKitIDL).
+";
+    }
 }

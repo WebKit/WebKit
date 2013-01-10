@@ -1,3 +1,14 @@
+2013-01-10  Tony Chang  <tony@chromium.org>
+
+        Speed up supplemental dependency computation
+        https://bugs.webkit.org/show_bug.cgi?id=106503
+
+        Reviewed by Adam Barth.
+
+        Pass the IDL attributes file for generating the bindings in WebKitTestRunner.
+
+        * WebKitTestRunner/CMakeLists.txt:
+
 2013-01-10  Zan Dobersek  <zandobersek@gmail.com>
 
         Remove the ENABLE_ANIMATION_API feature define occurences

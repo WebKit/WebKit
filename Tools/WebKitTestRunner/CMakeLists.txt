@@ -82,7 +82,7 @@ GENERATE_BINDINGS(WebKitTestRunnerInjectedBundle_SOURCES
     "--include=${WEBKIT_TESTRUNNER_INJECTEDBUNDLE_DIR}/Bindings"
     "${FEATURE_DEFINES_WITH_SPACE_SEPARATOR}"
     ${DERIVED_SOURCES_DIR}/InjectedBundle JS TestRunner
-    )
+    ${WEBCORE_DIR}/bindings/scripts/IDLAttributes.txt)
 
 INCLUDE_IF_EXISTS(${WEBKIT_TESTRUNNER_DIR}/Platform${PORT}.cmake)
 
