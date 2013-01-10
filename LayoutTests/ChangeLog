@@ -1,3 +1,9 @@
+2013-01-10  Roger Fong  <roger_fong@apple.com>
+
+        Unreviewed rebaseline. Apple Windows port.
+
+        * platform/win/fast/ruby/base-shorter-than-text-expected.txt:
+
 2013-01-10  Dimitri Glazkov  <dglazkov@chromium.org>
 
         [Chromium] Layout Test fast/canvas/webgl/context-release-upon-reload.html is a flaky timeout.
