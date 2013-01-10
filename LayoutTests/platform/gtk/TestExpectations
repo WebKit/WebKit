@@ -50,6 +50,8 @@ webkit.org/b/70606 accessibility/notification-listeners.html [ Missing ]
 
 webkit.org/b/105639 fast/inline/justify-emphasis-inline-box.html [ Missing ]
 
+webkit.org/b/103955 fast/repaint/caret-with-transformation.html [ Missing ]
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # Expected failures
 #////////////////////////////////////////////////////////////////////////////////////////

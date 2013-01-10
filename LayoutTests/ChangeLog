@@ -1,3 +1,13 @@
+2013-01-10  Zan Dobersek  <zandobersek@gmail.com>
+
+        Unreviewed GTK gardening.
+
+        Adding a platform-specific baseline for a CSS Regions test.
+        Adding a missing expectation for the fast/repaint/caret-with-transformation.html layout test.
+
+        * platform/gtk/TestExpectations:
+        * platform/gtk/fast/regions/selecting-text-through-different-region-flows-expected.txt: Added.
+
 2013-01-10  Christophe Dumez  <christophe.dumez@intel.com>
 
         Unreviewed EFL gardening.
