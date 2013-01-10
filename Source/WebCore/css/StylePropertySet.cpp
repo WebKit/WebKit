@@ -225,15 +225,15 @@ String StylePropertySet::borderSpacingValue(const StylePropertyShorthand& shorth
     return horizontalValueCSSText + ' ' + verticalValueCSSText;
 }
 
-bool StylePropertySet::appendFontLonghandValueIfExplicit(CSSPropertyID propertyID, StringBuilder& result, String& commonValue) const
+void StylePropertySet::appendFontLonghandValueIfExplicit(CSSPropertyID propertyID, StringBuilder& result, String& commonValue) const
 {
     int foundPropertyIndex = findPropertyIndex(propertyID);
     if (foundPropertyIndex == -1)
-        return false; // All longhands must have at least implicit values if "font" is specified.
+        return; // All longhands must have at least implicit values if "font" is specified.
 
     if (propertyAt(foundPropertyIndex).isImplicit()) {
         commonValue = String();
-        return true;
+        return;
     }
 
     char prefix = '\0';
@@ -258,37 +258,32 @@ bool StylePropertySet::appendFontLonghandValueIfExplicit(CSSPropertyID propertyI
     result.append(value);
     if (!commonValue.isNull() && commonValue != value)
         commonValue = String();
-
-    return true;
 }
 
 String StylePropertySet::fontValue() const
 {
-    int foundPropertyIndex = findPropertyIndex(CSSPropertyFontSize);
-    if (foundPropertyIndex == -1)
+    int fontSizePropertyIndex = findPropertyIndex(CSSPropertyFontSize);
+    int fontFamilyPropertyIndex = findPropertyIndex(CSSPropertyFontFamily);
+    if (fontSizePropertyIndex == -1 || fontFamilyPropertyIndex == -1)
         return emptyString();
 
-    PropertyReference fontSizeProperty = propertyAt(foundPropertyIndex);
-    if (fontSizeProperty.isImplicit())
+    PropertyReference fontSizeProperty = propertyAt(fontSizePropertyIndex);
+    PropertyReference fontFamilyProperty = propertyAt(fontFamilyPropertyIndex);
+    if (fontSizeProperty.isImplicit() || fontFamilyProperty.isImplicit())
         return emptyString();
 
     String commonValue = fontSizeProperty.value()->cssText();
     StringBuilder result;
-    bool success = true;
-    success &= appendFontLonghandValueIfExplicit(CSSPropertyFontStyle, result, commonValue);
-    success &= appendFontLonghandValueIfExplicit(CSSPropertyFontVariant, result, commonValue);
-    success &= appendFontLonghandValueIfExplicit(CSSPropertyFontWeight, result, commonValue);
+    appendFontLonghandValueIfExplicit(CSSPropertyFontStyle, result, commonValue);
+    appendFontLonghandValueIfExplicit(CSSPropertyFontVariant, result, commonValue);
+    appendFontLonghandValueIfExplicit(CSSPropertyFontWeight, result, commonValue);
     if (!result.isEmpty())
         result.append(' ');
     result.append(fontSizeProperty.value()->cssText());
-    success &= appendFontLonghandValueIfExplicit(CSSPropertyLineHeight, result, commonValue);
-    success &= appendFontLonghandValueIfExplicit(CSSPropertyFontFamily, result, commonValue);
-    if (!success) {
-        // An invalid "font" value has been built (should never happen, as at least implicit values
-        // for mandatory longhands are always found in the style), report empty value instead.
-        ASSERT_NOT_REACHED();
-        return emptyString();
-    }
+    appendFontLonghandValueIfExplicit(CSSPropertyLineHeight, result, commonValue);
+    if (!result.isEmpty())
+        result.append(' ');
+    result.append(fontFamilyProperty.value()->cssText());
     if (isInitialOrInherit(commonValue))
         return commonValue;
     return result.toString();

@@ -1,3 +1,15 @@
+2013-01-10  Alexis Menard  <alexis@webkit.org>
+
+        ASSERT_NOT_REACHED in StylePropertySet::fontValue when accessing font style property through JS after setting style font size.
+        https://bugs.webkit.org/show_bug.cgi?id=88866
+
+        Reviewed by Alexander Pavlov.
+
+        Add tests to cover the bug.
+
+        * fast/css/font-shorthand-from-longhands-expected.txt: Added.
+        * fast/css/font-shorthand-from-longhands.html: Added.
+
 2013-01-10  Dominik Röttsches  <dominik.rottsches@intel.com>
 
         [EFL] Unreviewed gardening.

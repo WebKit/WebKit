@@ -197,7 +197,7 @@ private:
     String get4Values(const StylePropertyShorthand&) const;
     String borderSpacingValue(const StylePropertyShorthand&) const;
     String fontValue() const;
-    bool appendFontLonghandValueIfExplicit(CSSPropertyID, StringBuilder& result, String& value) const;
+    void appendFontLonghandValueIfExplicit(CSSPropertyID, StringBuilder& result, String& value) const;
 
     bool removeShorthandProperty(CSSPropertyID);
     bool propertyMatches(const PropertyReference&) const;
