@@ -95,18 +95,19 @@ static inline bool isIntegral(float value)
 FloatPoint PageViewportController::pixelAlignedFloatPoint(const FloatPoint& framePosition)
 {
 #if PLATFORM(EFL)
-    if (!isIntegral(m_pageScaleFactor)) {
+    float effectiveScale = m_pageScaleFactor * deviceScaleFactor();
+    if (!isIntegral(effectiveScale)) {
         // To avoid blurryness, modify the position so that it maps into a discrete device position.
         FloatPoint scaledPos(framePosition);
 
         // Scale by the effective scale factor to compute the screen-relative position.
-        scaledPos.scale(m_pageScaleFactor, m_pageScaleFactor);
+        scaledPos.scale(effectiveScale, effectiveScale);
 
         // Round to integer boundaries.
         FloatPoint alignedPos = roundedIntPoint(scaledPos);
 
         // Convert back to CSS coordinates.
-        alignedPos.scale(1 / m_pageScaleFactor, 1 / m_pageScaleFactor);
+        alignedPos.scale(1 / effectiveScale, 1 / effectiveScale);
 
         return alignedPos;
     }
