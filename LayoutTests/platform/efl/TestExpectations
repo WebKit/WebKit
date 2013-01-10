@@ -700,6 +700,12 @@ webkit.org/b/105880 fast/dom/Range/range-extract-contents.html [ Pass Crash ]
 webkit.org/b/106412 editing/execCommand/insert-list-xml.xhtml [ Crash ]
 webkit.org/b/106412 editing/style/justify-without-enclosing-block.xhtml [ Crash ]
 
+# Media regressions after updating to gstreamer 1.0.
+webkit.org/b/104809 media/adopt-node-crash.html [ Crash ]
+webkit.org/b/104809 media/video-src-blob.html [ Crash ]
+webkit.org/b/104809 media/remove-from-document.html [ Crash Pass ]
+webkit.org/b/104809 media/video-timeupdate-during-playback.html [ Crash Pass ]
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # FLAKY TESTS
 #////////////////////////////////////////////////////////////////////////////////////////
@@ -891,7 +897,6 @@ webkit.org/b/84333 http/tests/local/fileapi/send-dragged-file.html [ Failure ]
 webkit.org/b/84333 http/tests/local/fileapi/send-sliced-dragged-file.html [ Failure ]
 webkit.org/b/84333 http/tests/local/formdata [ Failure ]
 webkit.org/b/84333 http/tests/security/clipboard/clipboard-file-access.html [ Failure ]
-webkit.org/b/84333 media/video-src-blob.html [ Failure ]
 
 # EFL port needs Pasteboard implementation.
 webkit.org/b/84338 editing/deleting/paste-with-transparent-background-color.html [ Failure ]

@@ -1,3 +1,15 @@
+2013-01-10  Christophe Dumez  <christophe.dumez@intel.com>
+
+        [EFL] Add gstreamer 1.0.5 to jhbuild
+        https://bugs.webkit.org/show_bug.cgi?id=106178
+
+        Reviewed by Laszlo Gombos.
+
+        Skip several media tests that are crashing with gstreamer 1.0.
+
+        * platform/efl/TestExpectations:
+        * platform/efl/media/sources-fallback-codecs-expected.txt: Removed.
+
 2013-01-09  Noel Gordon  <noel.gordon@gmail.com>
 
         New chromium-mac pixel baseline for gradient-background-leakage-hidpi.html

@@ -21,7 +21,7 @@
 #ifndef FullscreenVideoControllerEfl_h
 #define FullscreenVideoControllerEfl_h
 
-#if ENABLE(VIDEO)
+#if ENABLE(VIDEO) && !defined(GST_API_VERSION_1)
 
 #include "GStreamerGWorld.h"
 #include "HTMLMediaElement.h"

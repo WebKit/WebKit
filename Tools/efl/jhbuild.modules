@@ -19,6 +19,11 @@
       <dep package="efreet"/>
       <dep package="elementary"/>
       <dep package="libxml2"/>
+      <dep package="gstreamer"/>
+      <dep package="gst-plugins-base"/>
+      <dep package="gst-plugins-good"/>
+      <dep package="gst-plugins-bad"/>
+      <dep package="gst-libav"/>
     </dependencies>
   </metamodule>
 
@@ -44,6 +49,8 @@
       href="ftp://xmlsoft.org"/> 
   <repository type="tarball" name="download.enlightenment.org"
       href="http://download.enlightenment.org"/>
+  <repository type="git" name="gstreamer"
+      href="git://anongit.freedesktop.org/git/gstreamer/"/>
 
   <autotools id="cairo" autogen-sh="configure">
     <dependencies>
@@ -294,6 +301,39 @@
             repo="xmlsoft.org"
             hash="sha256:f2e2d0e322685193d1affec83b21dc05d599e17a7306d7b90de95bb5b9ac622a"
             md5sum="c62106f02ee00b6437f0fb9d370c1093"/>
+  </autotools>
+
+  <autotools id="gstreamer">
+    <branch repo="gstreamer" module="gstreamer" checkoutdir="gstreamer" tag="1.0.5"/>
+  </autotools>
+
+  <autotools id="gst-plugins-base" autogenargs="--disable-examples --enable-theora --enable-vorbis">
+    <dependencies>
+      <dep package="gstreamer"/>
+    </dependencies>
+    <branch repo="gstreamer" module="gst-plugins-base" checkoutdir="gst-plugins-base" tag="1.0.5"/>
+  </autotools>
+
+  <autotools id="gst-plugins-good" autogenargs="--disable-examples --enable-pulse">
+    <dependencies>
+      <dep package="cairo"/>
+      <dep package="gst-plugins-base"/>
+    </dependencies>
+    <branch repo="gstreamer" module="gst-plugins-good" checkoutdir="gst-plugins-good" tag="1.0.5"/>
+  </autotools>
+
+  <autotools id="gst-plugins-bad" autogenargs="--disable-examples --enable-faad">
+    <dependencies>
+      <dep package="gst-plugins-base"/>
+    </dependencies>
+    <branch repo="gstreamer" module="gst-plugins-bad" checkoutdir="gst-plugins-bad" tag="1.0.5"/>
+  </autotools>
+
+  <autotools id="gst-libav" autogenargs="--with-libav-extra-configure='--disable-yasm'">
+    <dependencies>
+      <dep package="gst-plugins-base"/>
+    </dependencies>
+    <branch repo="gstreamer" module="gst-libav" checkoutdir="gst-libav" tag="1.0.5"/>
   </autotools> 
 
 </moduleset>

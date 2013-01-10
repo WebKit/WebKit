@@ -1,3 +1,14 @@
+2013-01-10  Christophe Dumez  <christophe.dumez@intel.com>
+
+        [EFL] Add gstreamer 1.0.5 to jhbuild
+        https://bugs.webkit.org/show_bug.cgi?id=106178
+
+        Reviewed by Laszlo Gombos.
+
+        Add gstreamer 1.0.5 to EFL's jhbuild configuration.
+
+        * efl/jhbuild.modules:
+
 2013-01-09  Alan Cutter  <alancutter@chromium.org>
 
         Updated parameters in GCE build scripts so they now work.

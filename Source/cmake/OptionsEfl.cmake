@@ -155,9 +155,9 @@ if (ENABLE_BATTERY_STATUS)
 endif ()
 
 if (ENABLE_VIDEO OR ENABLE_WEB_AUDIO)
-    set(GSTREAMER_COMPONENTS app interfaces pbutils)
+    set(GSTREAMER_COMPONENTS app pbutils)
     set(WTF_USE_GSTREAMER 1)
-    add_definitions(-DWTF_USE_GSTREAMER=1)
+    add_definitions(-DWTF_USE_GSTREAMER=1 -DGST_API_VERSION_1=1)
 
     if (ENABLE_VIDEO)
         list(APPEND GSTREAMER_COMPONENTS video)
