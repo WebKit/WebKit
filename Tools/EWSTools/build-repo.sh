@@ -1,5 +1,5 @@
 #!/bin/sh
-# Copyright (c) 2012 Google Inc. All rights reserved.
+# Copyright (c) 2013 Google Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions are
@@ -28,48 +28,23 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 if [[ $# -ne 4 ]];then
-echo "Usage: cold-boot.sh QUEUE_TYPE BOT_ID BUGZILLA_USERNAME BUGZILLA_PASSWORD"
+echo "Usage: build-repo.sh QUEUE_TYPE BUGZILLA_USERNAME BUGZILLA_PASSWORD"
 exit 1
 fi
 
-# Format the disk
-cat <<EOF | sudo fdisk /dev/vdb
-n
-p
-1
-8
+CWD=$(pwd)
 
-w
-EOF
-
-sudo mkfs.ext4 /dev/vdb1
-sudo mount /dev/vdb1 /mnt
-
-echo ttf-mscorefonts-installer msttcorefonts/accepted-mscorefonts-eula select true | sudo debconf-set-selections
-
-curl http://src.chromium.org/svn/trunk/src/build/install-build-deps.sh > install-build-deps.sh
-bash install-build-deps.sh --no-prompt
-sudo apt-get install xvfb screen git-svn zip -y
-
-# install-build-deps.sh will install flashplugin-installer, which causes some plug-in tests to crash.
-sudo apt-get remove flashplugin-installer -y
-
-cd /mnt
-sudo mkdir -p git
-sudo chown $USER git
-sudo chgrp $USER git
-cd git
+cd /mnt/git
 
 echo "Cloning WebKit git repository, process takes ~30m."
 echo "Note: No status output will be shown via remote pipe."
-git clone http://git.chromium.org/external/Webkit.git
-mv Webkit webkit-$1
+git clone http://git.webkit.org/WebKit.git webkit-$1
 cd webkit-$1
 
 cat >> .git/config <<EOF
 [bugzilla]
-	username = $3
-	password = $4
+	username = $2
+	password = $3
 EOF
 
 if [[ $1 == "commit-queue" ]];then
@@ -83,6 +58,4 @@ cat >> .git/config <<EOF
 EOF
 fi
 
-cd ~/tools
-echo "screen -t kr ./start-queue.sh" $1 $2 > screen-config
-bash boot.sh
+cd $CWD

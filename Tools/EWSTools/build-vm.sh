@@ -1,5 +1,5 @@
 #!/bin/sh
-# Copyright (c) 2012 Google Inc. All rights reserved.
+# Copyright (c) 2013 Google Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions are
@@ -27,33 +27,38 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-if [[ $# -ne 1 ]];then
-echo "Usage: build-cr-linux-ews.sh BOT_NUMBER"
+if [[ $# -ne 0 ]];then
+echo "Usage: build-vm.sh"
 exit 1
 fi
 
-QUEUE_TYPE=chromium-ews
-BOT_ID=gce-cr-linux-$1
-BUGZILLA_USERNAME=webkit.review.bot@gmail.com
-read -s -p "Bugzilla Password: " BUGZILLA_PASSWORD && echo
+CWD=$(pwd)
 
-PROJECT=google.com:webkit
-# FIXME: We should use gcutil to find a zone that's actually up.
-ZONE=us-east1-a
-IMAGE=projects/google/images/ubuntu-10-04-v20120621
-MACHINE_TYPE=n1-standard-4-d
+# Format the disk
+cat <<EOF | sudo fdisk /dev/vdb
+n
+p
+1
+8
 
-gcutil --project=$PROJECT addinstance $BOT_ID --machine_type=$MACHINE_TYPE --image=$IMAGE --zone=$ZONE --wait_until_running
+w
+EOF
 
-echo "Sleeping for 30s to let the server spin up ssh..."
-sleep 30
+sudo mkfs.ext4 /dev/vdb1
+sudo mount /dev/vdb1 /mnt
 
-gcutil --project=$PROJECT ssh $BOT_ID "
-    sudo apt-get install subversion -y &&
-    svn checkout http://svn.webkit.org/repository/webkit/trunk/Tools/EWSTools tools &&
-    cd tools &&
-    bash build-vm.sh &&
-    bash build-repo.sh $QUEUE_TYPE $BUGZILLA_USERNAME $BUGZILLA_PASSWORD &&
-    bash build-boot-cmd.sh \"screen -t kr ./start-queue.sh $QUEUE_TYPE $BOT_ID\" &&
-    bash boot.sh
-"
+echo ttf-mscorefonts-installer msttcorefonts/accepted-mscorefonts-eula select true | sudo debconf-set-selections
+
+curl http://src.chromium.org/svn/trunk/src/build/install-build-deps.sh > install-build-deps.sh
+bash install-build-deps.sh --no-prompt
+sudo apt-get install xvfb screen git-svn zip -y
+
+# install-build-deps.sh will install flashplugin-installer, which causes some plug-in tests to crash.
+sudo apt-get remove flashplugin-installer -y
+
+cd /mnt
+sudo mkdir -p git
+sudo chown $USER git
+sudo chgrp $USER git
+
+cd $CWD

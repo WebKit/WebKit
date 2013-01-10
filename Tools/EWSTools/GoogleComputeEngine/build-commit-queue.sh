@@ -51,4 +51,13 @@ gcutil --project=$PROJECT addinstance $BOT_ID --machine_type=$MACHINE_TYPE --ima
 echo "Sleeping for 30s to let the server spin up ssh..."
 sleep 30
 
-gcutil --project=$PROJECT ssh $BOT_ID "sudo apt-get install subversion -y && svn checkout http://svn.webkit.org/repository/webkit/trunk/Tools/EWSTools tools && cd tools && bash configure-svn-auth.sh $SVN_USERNAME $SVN_PASSWORD && bash cold-boot.sh $QUEUE_TYPE $BOT_ID $BUGZILLA_USERNAME $BUGZILLA_PASSWORD"
+gcutil --project=$PROJECT ssh $BOT_ID "
+    sudo apt-get install subversion -y &&
+    svn checkout http://svn.webkit.org/repository/webkit/trunk/Tools/EWSTools tools &&
+    cd tools &&
+    bash configure-svn-auth.sh $SVN_USERNAME $SVN_PASSWORD &&
+    bash build-vm.sh &&
+    bash build-repo.sh $QUEUE_TYPE $BUGZILLA_USERNAME $BUGZILLA_PASSWORD &&
+    bash build-boot-cmd.sh \"screen -t kr ./start-queue.sh $QUEUE_TYPE $BOT_ID\" &&
+    bash boot.sh
+"

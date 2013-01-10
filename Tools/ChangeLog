@@ -1,3 +1,20 @@
+2013-01-10  Alan Cutter  <alancutter@chromium.org>
+
+        Split EWS tool cold-boot.sh into modular components
+        https://bugs.webkit.org/show_bug.cgi?id=106527
+
+        Reviewed by Adam Barth.
+
+        Split cold-boot.sh script up into build-vm.sh, build-repo.sh and build-boot-cmd.sh.
+        Updated GCE bot build scripts to match.
+        Unable to test scripts directly as they depend on being in the repository to work!
+
+        * EWSTools/GoogleComputeEngine/build-chromium-ews.sh:
+        * EWSTools/GoogleComputeEngine/build-commit-queue.sh:
+        * EWSTools/build-boot-cmd.sh: Copied from Tools/EWSTools/GoogleComputeEngine/build-chromium-ews.sh.
+        * EWSTools/build-repo.sh: Copied from Tools/EWSTools/cold-boot.sh.
+        * EWSTools/build-vm.sh: Renamed from Tools/EWSTools/cold-boot.sh.
+
 2013-01-10  Julie Parent  <jparent@chromium.org>
 
         Dashboard Cleanup: Do not generate the page if we are about to reload.
