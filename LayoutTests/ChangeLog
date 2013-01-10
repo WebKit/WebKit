@@ -1,6 +1,15 @@
 2013-01-10  Noel Gordon  <noel.gordon@gmail.com>
 
-        [chromium] Optimize expectaions for fast/forms/button-generated-content.html
+        [chromium] Optimize expectations for fast/forms/button-inner-block-reuse.html
+
+        Unreviewed gardening.
+
+        * platform/chromium-win-xp/fast/forms/button-inner-block-reuse-expected.png: Removed.
+        * platform/chromium-win/fast/forms/button-inner-block-reuse-expected.png:
+
+2013-01-10  Noel Gordon  <noel.gordon@gmail.com>
+
+        [chromium] Optimize expectations for fast/forms/button-generated-content.html
 
         Unreviewed gardening.
 
