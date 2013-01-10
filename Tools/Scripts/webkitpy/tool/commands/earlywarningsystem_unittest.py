@@ -85,6 +85,7 @@ MOCK: release_work_item: %(name)s 10000
 
     def _test_ewses(self):
         self._test_ews(MacEWS())
+        self._test_ews(MacWK2EWS())
         self._test_ews(ChromiumLinuxEWS())
         self._test_ews(ChromiumWindowsEWS())
         self._test_ews(ChromiumAndroidEWS())
