@@ -1,3 +1,13 @@
+2013-01-10  Levi Weintraub  <leviw@chromium.org>
+
+        Regression(r137939): Heap-use-after-free in WebCore::accumulateDocumentEventTargetRects
+        https://bugs.webkit.org/show_bug.cgi?id=106454
+
+        Reviewed by James Robinson.
+
+        * fast/events/touch/nested-document-with-touch-handler-detached-crash.html: Added.
+        * fast/events/touch/nested-document-with-touch-handler-detached-crash-expected.txt: Added.
+
 2013-01-10  Ojan Vafai  <ojan@chromium.org>
 
         Convert fast/css/positioned-overflow-scroll.html to a check-layout.js test

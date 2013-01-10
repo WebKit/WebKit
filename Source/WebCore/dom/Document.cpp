@@ -2117,6 +2117,11 @@ void Document::detach()
     if (render)
         render->destroy();
 
+#if ENABLE(TOUCH_EVENTS)
+    if (m_touchEventTargets && m_touchEventTargets->size() && parentDocument())
+        parentDocument()->didRemoveEventTargetNode(this);
+#endif
+
     // This is required, as our Frame might delete itself as soon as it detaches
     // us. However, this violates Node::detach() semantics, as it's never
     // possible to re-attach. Eventually Document::detach() should be renamed,
@@ -5659,11 +5664,11 @@ void Document::didRemoveTouchEventHandler(Node* handler)
 #if ENABLE(TOUCH_EVENTS)
 void Document::didRemoveEventTargetNode(Node* handler)
 {
-    if (m_touchEventTargets.get())
+    if (m_touchEventTargets) {
         m_touchEventTargets->removeAll(handler);
-    if (handler == this)
-        if (Document* parentDocument = this->parentDocument())
-            parentDocument->didRemoveEventTargetNode(this);
+        if ((handler == this || m_touchEventTargets->isEmpty()) && parentDocument())
+            parentDocument()->didRemoveEventTargetNode(this);
+    }
 }
 #endif
 
