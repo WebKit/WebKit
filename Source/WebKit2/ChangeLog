@@ -1,3 +1,12 @@
+2013-01-10  Tim Horton  <timothy_horton@apple.com>
+
+        PDFPlugin: Header cleanup
+        https://bugs.webkit.org/show_bug.cgi?id=106540
+
+        Reviewed by Andreas Kling.
+
+        * WebProcess/Plugins/PDF/PDFPlugin.mm: Remove some unneeded headers.
+
 2013-01-10  Zan Dobersek  <zandobersek@gmail.com>
 
         Remove the ENABLE_ANIMATION_API feature define occurences
