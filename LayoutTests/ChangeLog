@@ -1,5 +1,14 @@
 2013-01-10  Christophe Dumez  <christophe.dumez@intel.com>
 
+        Unreviewed EFL gardening.
+
+        Add platform expectation for new test added in r139197.
+
+        * platform/efl/fast/regions/selecting-text-through-different-region-flows-expected.png: Added.
+        * platform/efl/fast/regions/selecting-text-through-different-region-flows-expected.txt: Added.
+
+2013-01-10  Christophe Dumez  <christophe.dumez@intel.com>
+
         [EFL] Add gstreamer 1.0.5 to jhbuild
         https://bugs.webkit.org/show_bug.cgi?id=106178
 
