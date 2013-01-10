@@ -1,3 +1,12 @@
+2013-01-10  Noel Gordon  <noel.gordon@gmail.com>
+
+        [chromium] Optimize expectaions for fast/forms/button-generated-content.html
+
+        Unreviewed gardening.
+
+        * platform/chromium-win-xp/fast/forms/button-generated-content-expected.png: Removed.
+        * platform/chromium-win/fast/forms/button-generated-content-expected.png:
+
 2013-01-10  Dominik Röttsches  <dominik.rottsches@intel.com>
 
         [EFL] Unreviewed gardening.
