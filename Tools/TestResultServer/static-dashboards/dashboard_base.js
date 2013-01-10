@@ -321,6 +321,17 @@ function parseParameters()
     var oldDashboardSpecificState = g_currentState;
 
     parseCrossDashboardParameters();
+    
+    // Some parameters require loading different JSON files when the value changes. Do a reload.
+    if (Object.keys(oldCrossDashboardState).length) {
+        for (var key in g_crossDashboardState) {
+            if (oldCrossDashboardState[key] != g_crossDashboardState[key] && RELOAD_REQUIRING_PARAMETERS.indexOf(key) != -1) {
+                window.location.reload();
+                return {};
+            }
+        }
+    }
+
     parseDashboardSpecificParameters();
     parseParameter(queryHashAsMap(), 'builder');
 
@@ -336,14 +347,6 @@ function parseParameters()
         delete g_currentState.tests;
     if (g_currentState.tests)
         delete g_currentState.builder;
-
-    // Some parameters require loading different JSON files when the value changes. Do a reload.
-    if (Object.keys(oldCrossDashboardState).length) {
-        for (var key in g_crossDashboardState) {
-            if (oldCrossDashboardState[key] != g_crossDashboardState[key] && RELOAD_REQUIRING_PARAMETERS.indexOf(key) != -1)
-                window.location.reload();
-        }
-    }
 
     return dashboardSpecificDiffState;
 }

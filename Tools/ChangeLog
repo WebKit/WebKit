@@ -1,3 +1,16 @@
+2013-01-09  Julie Parent  <jparent@chromium.org>
+
+        Dashboard Cleanup: Reload the page as soon as we know we need to.
+        https://bugs.webkit.org/show_bug.cgi?id=106515
+
+        No need to continue parsing all of the data once we know that
+        we need to do a reload.
+        
+        Reviewed by Dirk Pranke.
+
+        * TestResultServer/static-dashboards/dashboard_base.js:
+        (parseParameters):
+
 2013-01-09  Eric Seidel  <eric@webkit.org>
 
         run-perf-tests --chromium-android --profile should show symbols for the kernel
