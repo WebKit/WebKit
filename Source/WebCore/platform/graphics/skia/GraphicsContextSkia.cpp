@@ -322,7 +322,7 @@ void GraphicsContext::clip(const Path& path)
     platformContext()->clipPath(*path.platformPath(), PlatformContextSkia::AntiAliased);
 }
 
-void GraphicsContext::addRoundedRectClip(const RoundedRect& rect)
+void GraphicsContext::clipRoundedRect(const RoundedRect& rect)
 {
     if (paintingDisabled())
         return;

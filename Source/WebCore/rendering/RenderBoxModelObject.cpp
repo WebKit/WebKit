@@ -670,31 +670,31 @@ RoundedRect RenderBoxModelObject::getBackgroundRoundedRect(const LayoutRect& bor
 void RenderBoxModelObject::clipRoundedInnerRect(GraphicsContext * context, const LayoutRect& rect, const RoundedRect& clipRect)
 {
     if (clipRect.isRenderable())
-        context->addRoundedRectClip(clipRect);
+        context->clipRoundedRect(clipRect);
     else {
         // We create a rounded rect for each of the corners and clip it, while making sure we clip opposing corners together.
         if (!clipRect.radii().topLeft().isEmpty() || !clipRect.radii().bottomRight().isEmpty()) {
             IntRect topCorner(clipRect.rect().x(), clipRect.rect().y(), rect.maxX() - clipRect.rect().x(), rect.maxY() - clipRect.rect().y());
             RoundedRect::Radii topCornerRadii;
             topCornerRadii.setTopLeft(clipRect.radii().topLeft());
-            context->addRoundedRectClip(RoundedRect(topCorner, topCornerRadii));
+            context->clipRoundedRect(RoundedRect(topCorner, topCornerRadii));
 
             IntRect bottomCorner(rect.x(), rect.y(), clipRect.rect().maxX() - rect.x(), clipRect.rect().maxY() - rect.y());
             RoundedRect::Radii bottomCornerRadii;
             bottomCornerRadii.setBottomRight(clipRect.radii().bottomRight());
-            context->addRoundedRectClip(RoundedRect(bottomCorner, bottomCornerRadii));
+            context->clipRoundedRect(RoundedRect(bottomCorner, bottomCornerRadii));
         } 
 
         if (!clipRect.radii().topRight().isEmpty() || !clipRect.radii().bottomLeft().isEmpty()) {
             IntRect topCorner(rect.x(), clipRect.rect().y(), clipRect.rect().maxX() - rect.x(), rect.maxY() - clipRect.rect().y());
             RoundedRect::Radii topCornerRadii;
             topCornerRadii.setTopRight(clipRect.radii().topRight());
-            context->addRoundedRectClip(RoundedRect(topCorner, topCornerRadii));
+            context->clipRoundedRect(RoundedRect(topCorner, topCornerRadii));
 
             IntRect bottomCorner(clipRect.rect().x(), rect.y(), rect.maxX() - clipRect.rect().x(), clipRect.rect().maxY() - rect.y());
             RoundedRect::Radii bottomCornerRadii;
             bottomCornerRadii.setBottomLeft(clipRect.radii().bottomLeft());
-            context->addRoundedRectClip(RoundedRect(bottomCorner, bottomCornerRadii));
+            context->clipRoundedRect(RoundedRect(bottomCorner, bottomCornerRadii));
         }
     }
 }
@@ -1992,7 +1992,7 @@ void RenderBoxModelObject::paintBorder(const PaintInfo& info, const LayoutRect& 
     if (clipToOuterBorder) {
         // Clip to the inner and outer radii rects.
         if (bleedAvoidance != BackgroundBleedUseTransparencyLayer)
-            graphicsContext->addRoundedRectClip(outerBorder);
+            graphicsContext->clipRoundedRect(outerBorder);
         // isRenderable() check avoids issue described in https://bugs.webkit.org/show_bug.cgi?id=38787
         // The inside will be clipped out later (in clipBorderSideForComplexInnerPath)
         if (innerBorder.isRenderable())
@@ -2089,7 +2089,7 @@ void RenderBoxModelObject::drawBoxSideFromPath(GraphicsContext* graphicsContext,
                 innerBorderTopWidth, innerBorderBottomWidth, innerBorderLeftWidth, innerBorderRightWidth,
                 includeLogicalLeftEdge, includeLogicalRightEdge);
             
-            graphicsContext->addRoundedRectClip(innerClip);
+            graphicsContext->clipRoundedRect(innerClip);
             drawBoxSideFromPath(graphicsContext, borderRect, borderPath, edges, thickness, drawThickness, side, style, color, SOLID, bleedAvoidance, includeLogicalLeftEdge, includeLogicalRightEdge);
         }
 
@@ -2140,7 +2140,7 @@ void RenderBoxModelObject::drawBoxSideFromPath(GraphicsContext* graphicsContext,
             topWidth, bottomWidth, leftWidth, rightWidth,
             includeLogicalLeftEdge, includeLogicalRightEdge);
 
-        graphicsContext->addRoundedRectClip(clipRect);
+        graphicsContext->clipRoundedRect(clipRect);
         drawBoxSideFromPath(graphicsContext, borderRect, borderPath, edges, thickness, drawThickness, side, style, color, s2, bleedAvoidance, includeLogicalLeftEdge, includeLogicalRightEdge);
         return;
     }

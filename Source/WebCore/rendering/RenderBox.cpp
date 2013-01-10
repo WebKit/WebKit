@@ -1084,7 +1084,7 @@ void RenderBox::paintBoxDecorations(PaintInfo& paintInfo, const LayoutPoint& pai
         // beginning the layer).
         RoundedRect border = style()->getRoundedBorderFor(paintRect, view());
         stateSaver.save();
-        paintInfo.context->addRoundedRectClip(border);
+        paintInfo.context->clipRoundedRect(border);
         paintInfo.context->beginTransparencyLayer(1);
     }
 
@@ -1377,7 +1377,7 @@ bool RenderBox::pushContentsClip(PaintInfo& paintInfo, const LayoutPoint& accumu
     IntRect clipRect = pixelSnappedIntRect(isControlClip ? controlClipRect(accumulatedOffset) : overflowClipRect(accumulatedOffset, paintInfo.renderRegion));
     paintInfo.context->save();
     if (style()->hasBorderRadius())
-        paintInfo.context->addRoundedRectClip(style()->getRoundedInnerBorderFor(LayoutRect(accumulatedOffset, size())));
+        paintInfo.context->clipRoundedRect(style()->getRoundedInnerBorderFor(LayoutRect(accumulatedOffset, size())));
     paintInfo.context->clip(clipRect);
     return true;
 }

@@ -777,27 +777,27 @@ void RenderThemeSafari::paintMenuListButtonGradients(RenderObject* o, const Pain
     RetainPtr<CGShadingRef> rightShading(AdoptCF, CGShadingCreateAxial(cspace, CGPointMake(r.maxX(),  r.y()), CGPointMake(r.maxX() - radius, r.y()), mainFunction.get(), false, false));
     paintInfo.context->save();
     CGContextClipToRect(context, bound.rect());
-    paintInfo.context->addRoundedRectClip(bound);
+    paintInfo.context->clipRoundedRect(bound);
     CGContextDrawShading(context, mainShading.get());
     paintInfo.context->restore();
 
     paintInfo.context->save();
     CGContextClipToRect(context, topGradient);
-    paintInfo.context->addRoundedRectClip(RoundedRect(enclosingIntRect(topGradient), bound.radii().topLeft(), bound.radii().topRight(), IntSize(), IntSize()));
+    paintInfo.context->clipRoundedRect(RoundedRect(enclosingIntRect(topGradient), bound.radii().topLeft(), bound.radii().topRight(), IntSize(), IntSize()));
     CGContextDrawShading(context, topShading.get());
     paintInfo.context->restore();
 
     if (!bottomGradient.isEmpty()) {
         paintInfo.context->save();
         CGContextClipToRect(context, bottomGradient);
-        paintInfo.context->addRoundedRectClip(RoundedRect(enclosingIntRect(bottomGradient), IntSize(), IntSize(), bound.radii().bottomLeft(), bound.radii().bottomRight()));
+        paintInfo.context->clipRoundedRect(RoundedRect(enclosingIntRect(bottomGradient), IntSize(), IntSize(), bound.radii().bottomLeft(), bound.radii().bottomRight()));
         CGContextDrawShading(context, bottomShading.get());
         paintInfo.context->restore();
     }
 
     paintInfo.context->save();
     CGContextClipToRect(context, bound.rect());
-    paintInfo.context->addRoundedRectClip(bound);
+    paintInfo.context->clipRoundedRect(bound);
     CGContextDrawShading(context, leftShading.get());
     CGContextDrawShading(context, rightShading.get());
     paintInfo.context->restore();
@@ -981,7 +981,7 @@ bool RenderThemeSafari::paintSliderTrack(RenderObject* o, const PaintInfo& paint
     else
         mainShading.adoptCF(CGShadingCreateAxial(cspace, CGPointMake(bounds.rect().x(),  bounds.rect().y()), CGPointMake(bounds.rect().x(), bounds.rect().maxY()), mainFunction.get(), false, false));
 
-    paintInfo.context->addRoundedRectClip(bounds);
+    paintInfo.context->clipRoundedRect(bounds);
     CGContextDrawShading(context, mainShading.get());
     paintInfo.context->restore();
     

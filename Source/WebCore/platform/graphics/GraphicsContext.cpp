@@ -605,7 +605,7 @@ void GraphicsContext::clip(const IntRect& rect)
 #endif
 
 #if !USE(SKIA)
-void GraphicsContext::addRoundedRectClip(const RoundedRect& rect)
+void GraphicsContext::clipRoundedRect(const RoundedRect& rect)
 {
     if (paintingDisabled())
         return;

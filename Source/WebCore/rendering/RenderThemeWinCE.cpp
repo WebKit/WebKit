@@ -379,7 +379,7 @@ bool RenderThemeWinCE::paintSearchFieldCancelButton(RenderObject* o, const Paint
     int y = r.y() + (r.height() - cancelSize.height()) / 2 + 1;
     IntRect cancelBounds(IntPoint(x, y), cancelSize);
     paintInfo.context->save();
-    paintInfo.context->addRoundedRectClip(RoundedRect(cancelBounds, cancelRadius, cancelRadius, cancelRadius, cancelRadius));
+    paintInfo.context->clipRoundedRect(RoundedRect(cancelBounds, cancelRadius, cancelRadius, cancelRadius, cancelRadius));
     paintInfo.context->fillRect(cancelBounds, buttonColor, ColorSpaceDeviceRGB);
 
     // Draw the 'x'

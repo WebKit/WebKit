@@ -3355,7 +3355,7 @@ void RenderLayer::clipToRect(RenderLayer* rootLayer, GraphicsContext* context, c
         if (layer->renderer()->hasOverflowClip() && layer->renderer()->style()->hasBorderRadius() && inContainingBlockChain(this, layer)) {
                 LayoutPoint delta;
                 layer->convertToLayerCoords(rootLayer, delta);
-                context->addRoundedRectClip(layer->renderer()->style()->getRoundedInnerBorderFor(LayoutRect(delta, layer->size())));
+                context->clipRoundedRect(layer->renderer()->style()->getRoundedInnerBorderFor(LayoutRect(delta, layer->size())));
         }
 
         if (layer == rootLayer)

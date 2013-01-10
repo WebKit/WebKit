@@ -1117,7 +1117,7 @@ void RenderThemeMacShared::paintMenuListButtonGradients(RenderObject* o, const P
     {
         GraphicsContextStateSaver stateSaver(*paintInfo.context);
         CGContextClipToRect(context, r);
-        paintInfo.context->addRoundedRectClip(border);
+        paintInfo.context->clipRoundedRect(border);
         context = cgContextContainer.context();
         CGContextDrawShading(context, mainShading.get());
     }
@@ -1125,7 +1125,7 @@ void RenderThemeMacShared::paintMenuListButtonGradients(RenderObject* o, const P
     {
         GraphicsContextStateSaver stateSaver(*paintInfo.context);
         CGContextClipToRect(context, topGradient);
-        paintInfo.context->addRoundedRectClip(RoundedRect(enclosingIntRect(topGradient), border.radii().topLeft(), border.radii().topRight(), IntSize(), IntSize()));
+        paintInfo.context->clipRoundedRect(RoundedRect(enclosingIntRect(topGradient), border.radii().topLeft(), border.radii().topRight(), IntSize(), IntSize()));
         context = cgContextContainer.context();
         CGContextDrawShading(context, topShading.get());
     }
@@ -1133,7 +1133,7 @@ void RenderThemeMacShared::paintMenuListButtonGradients(RenderObject* o, const P
     if (!bottomGradient.isEmpty()) {
         GraphicsContextStateSaver stateSaver(*paintInfo.context);
         CGContextClipToRect(context, bottomGradient);
-        paintInfo.context->addRoundedRectClip(RoundedRect(enclosingIntRect(bottomGradient), IntSize(), IntSize(), border.radii().bottomLeft(), border.radii().bottomRight()));
+        paintInfo.context->clipRoundedRect(RoundedRect(enclosingIntRect(bottomGradient), IntSize(), IntSize(), border.radii().bottomLeft(), border.radii().bottomRight()));
         context = cgContextContainer.context();
         CGContextDrawShading(context, bottomShading.get());
     }
@@ -1141,7 +1141,7 @@ void RenderThemeMacShared::paintMenuListButtonGradients(RenderObject* o, const P
     {
         GraphicsContextStateSaver stateSaver(*paintInfo.context);
         CGContextClipToRect(context, r);
-        paintInfo.context->addRoundedRectClip(border);
+        paintInfo.context->clipRoundedRect(border);
         context = cgContextContainer.context();
         CGContextDrawShading(context, leftShading.get());
         CGContextDrawShading(context, rightShading.get());
@@ -1365,7 +1365,7 @@ bool RenderThemeMacShared::paintSliderTrack(RenderObject* o, const PaintInfo& pa
         mainShading.adoptCF(CGShadingCreateAxial(cspace, CGPointMake(bounds.x(),  bounds.y()), CGPointMake(bounds.x(), bounds.maxY()), mainFunction.get(), false, false));
 
     IntSize radius(trackRadius, trackRadius);
-    paintInfo.context->addRoundedRectClip(RoundedRect(bounds, radius, radius, radius, radius));
+    paintInfo.context->clipRoundedRect(RoundedRect(bounds, radius, radius, radius, radius));
     context = localContext.cgContext();
     CGContextDrawShading(context, mainShading.get());
 
