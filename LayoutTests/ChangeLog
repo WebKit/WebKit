@@ -1,3 +1,9 @@
+2013-01-09  Anders Carlsson  <andersca@apple.com>
+
+        Update a test result.
+
+        * platform/mac/fast/inline/continuation-outlines-with-layers-expected.txt:
+
 2013-01-09  Stephanie Lewis  <slewis@apple.com>
 
         Rebaseline fast/inline/continuation-outlines-with-layers.html
