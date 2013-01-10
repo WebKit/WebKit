@@ -111,7 +111,6 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				ModuleDefinitionFile="$(ConfigurationBuildDir)\obj\WebKitExportGenerator\WebKit.def"
 			/>
 			<Tool
 				Name="VCALinkTool"

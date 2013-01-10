@@ -7,7 +7,7 @@ mkdir "%GeneratorDirectory%" 2>NUL
 mkdir "%GeneratorDirectory%\DerivedSources" 2>NUL
 
 echo Clearing old definition file...
-del /F /Q "%GeneratorDirectory%\WebKit.def"
+del /F /Q "%GeneratorDirectory%\WebKitExports.def"
 del /F /Q "%GeneratorDirectory%\DerivedSources\WebKitExportGenerator.cpp"
 del /F /Q "%OUTDIR%\WebKitExportGenerator.exe"
 

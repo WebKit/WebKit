@@ -386,7 +386,7 @@
 	</References>
 	<Files>
 		<File
-			RelativePath=".\WebKit.def.in"
+			RelativePath=".\WebKitExports.def.in"
 			>
 			<FileConfiguration
 				Name="Debug|Win32"
