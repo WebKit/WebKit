@@ -1,5 +1,15 @@
 2013-01-10  Noel Gordon  <noel.gordon@gmail.com>
 
+        [chromium] Remove lost-compositor-context layout tests
+        https://bugs.webkit.org/show_bug.cgi?id=106089
+
+        Unreviewed gardening.
+
+        * platform/chromium/TestExpectations: Remove all references to the
+        lost-compositor-context test expectations after r138814.
+        
+2013-01-10  Noel Gordon  <noel.gordon@gmail.com>
+
         [chromium] Optimize expectations for fast/forms/button-inner-block-reuse.html
 
         Unreviewed gardening.

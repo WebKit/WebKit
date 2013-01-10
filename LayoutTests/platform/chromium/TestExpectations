@@ -1751,9 +1751,6 @@ webkit.org/b/98647 [ Android ] css3/filters/filter-change-repaint.html [ ImageOn
 webkit.org/b/98647 [ Android ] css3/filters/filtered-compositing-descendant.html [ ImageOnlyFailure ]
 
 # [Chromium-Android] Some compositor tests have half a pixel offset
-webkit.org/b/98762 [ Android ] platform/chromium/compositing/lost-compositor-context.html [ ImageOnlyFailure ]
-webkit.org/b/98762 [ Android ] platform/chromium/compositing/lost-compositor-context-twice.html [ ImageOnlyFailure ]
-webkit.org/b/98762 [ Android ] platform/chromium/compositing/lost-compositor-context-permanently.html [ ImageOnlyFailure ]
 webkit.org/b/98762 [ Android ] fast/layers/no-clipping-overflow-hidden-added-after-transition.html [ ImageOnlyFailure ]
 webkit.org/b/98762 [ Android ] compositing/absolute-position-changed-with-composited-parent-layer.html [ ImageOnlyFailure ]
 webkit.org/b/98762 [ Android ] compositing/animation/state-at-end-event-transform-layer.html [ ImageOnlyFailure ]
@@ -1845,7 +1842,6 @@ webkit.org/b/98765 [ Android ] compositing/video/video-controls-layer-creation.h
 
 # Crashes related to "[Chromium-Android] Video does not yet work on Android"
 # Many of these are flaky, so I'm marking them as both crashing as passing.
-webkit.org/b/98765 [ Android ] platform/chromium/compositing/lost-compositor-context-with-video.html [ Crash Pass ]
 webkit.org/b/98765 [ Android ] compositing/geometry/video-fixed-scrolling.html [ Crash Pass ]
 webkit.org/b/98765 [ Android ] compositing/geometry/video-opacity-overlay.html [ Crash Pass ]
 webkit.org/b/98765 [ Android ] compositing/layers-inside-overflow-scroll.html [ Crash Pass ]
@@ -3108,8 +3104,6 @@ webkit.org/b/66953 [ Debug ] animations/suspend-resume-animation.html [ Failure 
 webkit.org/b/66953 [ Mac Debug ] animations/animation-direction-reverse.html [ Failure Pass ]
 
 webkit.org/b/72761 accessibility/anonymous-render-block-in-continuation-causes-crash.html [ Pass Timeout ]
-
-webkit.org/b/73514 [ Win ] platform/chromium/compositing/lost-compositor-context-permanently.html [ Pass Timeout ]
 
 webkit.org/b/73766 css3/unicode-bidi-isolate-aharon-failing.html [ ImageOnlyFailure ]
 
