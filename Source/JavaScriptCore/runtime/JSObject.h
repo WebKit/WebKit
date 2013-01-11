@@ -515,13 +515,6 @@ public:
         return isValidOffset(offset) ? locationForOffset(offset) : 0;
     }
 
-    WriteBarrierBase<Unknown>* getDirectLocation(JSGlobalData& globalData, PropertyName propertyName, unsigned& attributes)
-    {
-        JSCell* specificFunction;
-        PropertyOffset offset = structure()->get(globalData, propertyName, attributes, specificFunction);
-        return isValidOffset(offset) ? locationForOffset(offset) : 0;
-    }
-
     bool hasInlineStorage() const { return structure()->hasInlineStorage(); }
     ConstPropertyStorage inlineStorageUnsafe() const
     {

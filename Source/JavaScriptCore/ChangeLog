@@ -1,3 +1,16 @@
+2013-01-11  Geoffrey Garen  <ggaren@apple.com>
+
+        Removed an unused version of getDirectLocation
+        https://bugs.webkit.org/show_bug.cgi?id=106691
+
+        Reviewed by Gavin Barraclough.
+
+        getDirectLocation is a weird operation. Removing the unused version is
+        the easy part.
+
+        * runtime/JSObject.h:
+        (JSObject):
+
 2013-01-11  Mark Hahnenberg  <mhahnenberg@apple.com>
 
         Objective-C objects that are passed to JavaScript leak (until the JSContext is destroyed)
