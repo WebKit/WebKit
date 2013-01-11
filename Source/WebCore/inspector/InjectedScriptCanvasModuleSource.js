@@ -745,6 +745,7 @@ Resource.prototype = {
         this._id = data.id;
         this._resourceManager = null;
         this._calls = [];
+        this._boundResources = Object.create(null);
         this._wrappedObject = null;
         cache.put(data.id, this); // Put into the cache early to avoid loops.
         this._doReplayCalls(data, cache);
