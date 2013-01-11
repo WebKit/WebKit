@@ -1,3 +1,15 @@
+2013-01-11  Raphael Kubo da Costa  <raphael.kubo.da.costa@intel.com>
+
+        Another unreviewed fix after r139431.
+
+        In a way, this is also a generic bug fix, since previously isEfl()
+        would fail when called from run-efl-tests and we thus did not use
+        jhbuild to run our tests. This now resulted in us calling
+        "jhbuild-wrapper run" without specifying a platform.
+
+        * Scripts/run-efl-tests: Pass "--efl" to ARGV manually for isEfl()
+        to work.
+
 2013-01-11  Allan Sandfeld Jensen  <allan.jensen@digia.com>
 
         [Qt][WK1] Web Audio support
