@@ -20,33 +20,48 @@ if (window.testRunner) {
 }
 
 var host = document.getElementById("host");
-var testIterations = 10;
+var testIterations = 8;
 var currentIteration = 0;
 
 function refreshFrame() {
   if(currentIteration < testIterations) {
     currentIteration++;
-    debug("");
-    debug("Test " + currentIteration + " of " + testIterations);
     host.src = "resources/context-release-upon-reload-child.html";
   } else {
+    testPassed("All drawing buffers were allocated at the correct size");
     finishTest();
   }
 }
 
 function testContext() {
+  var bail = false;
   var gl = host.contentWindow.glContext;
-  assertMsg(gl != null, "context was created properly");
+  if (gl == null) {
+    bail = true;
+    testFailed("context was not created properly");
+  }
 
-  glErrorShouldBe(gl, gl.NO_ERROR, "Should be no errors");
+  if (gl) {
+    var err = gl.getError();
+    if (err != gl.NO_ERROR) {
+      bail = true;
+      testFailed("Should be no GL error; got " + getGLErrorAsString(gl, err));
+    }
+  }
 
-  if(gl.canvas.width != gl.drawingBufferWidth ||
-    gl.canvas.height != gl.drawingBufferHeight) {
-    testFailed("Buffer was the wrong size: " +
+  if (bail) {
+    finishTest();
+    return;
+  }
+
+  if (gl.canvas.width != gl.drawingBufferWidth ||
+      gl.canvas.height != gl.drawingBufferHeight) {
+    testFailed("At iteration " + currentIteration + " of " + testIterations +
+        ": Buffer was the wrong size: " +
         gl.drawingBufferWidth + "x" + gl.drawingBufferHeight);
+    finishTest();
+    return;
   } else {
-    testPassed("Buffer was the correct size: " +
-        gl.drawingBufferWidth + "x" + gl.drawingBufferHeight);
     refreshFrame();
   }
 

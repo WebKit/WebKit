@@ -3,56 +3,7 @@ This test ensures that WebGL contexts are released properly upon page reload
 
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 
-
-Test 1 of 10
-PASS context was created properly
-PASS getError was expected value: NO_ERROR : Should be no errors
-PASS Buffer was the correct size: 1680x1050
-
-Test 2 of 10
-PASS context was created properly
-PASS getError was expected value: NO_ERROR : Should be no errors
-PASS Buffer was the correct size: 1680x1050
-
-Test 3 of 10
-PASS context was created properly
-PASS getError was expected value: NO_ERROR : Should be no errors
-PASS Buffer was the correct size: 1680x1050
-
-Test 4 of 10
-PASS context was created properly
-PASS getError was expected value: NO_ERROR : Should be no errors
-PASS Buffer was the correct size: 1680x1050
-
-Test 5 of 10
-PASS context was created properly
-PASS getError was expected value: NO_ERROR : Should be no errors
-PASS Buffer was the correct size: 1680x1050
-
-Test 6 of 10
-PASS context was created properly
-PASS getError was expected value: NO_ERROR : Should be no errors
-PASS Buffer was the correct size: 1680x1050
-
-Test 7 of 10
-PASS context was created properly
-PASS getError was expected value: NO_ERROR : Should be no errors
-PASS Buffer was the correct size: 1680x1050
-
-Test 8 of 10
-PASS context was created properly
-PASS getError was expected value: NO_ERROR : Should be no errors
-PASS Buffer was the correct size: 1680x1050
-
-Test 9 of 10
-PASS context was created properly
-PASS getError was expected value: NO_ERROR : Should be no errors
-PASS Buffer was the correct size: 1680x1050
-
-Test 10 of 10
-PASS context was created properly
-PASS getError was expected value: NO_ERROR : Should be no errors
-PASS Buffer was the correct size: 1680x1050
+PASS All drawing buffers were allocated at the correct size
 PASS successfullyParsed is true
 
 TEST COMPLETE

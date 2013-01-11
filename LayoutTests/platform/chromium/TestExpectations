@@ -94,6 +94,8 @@ webkit.org/b/103744 svg/dom/viewspec-parser-6.html [ Pass Timeout ]
 crbug.com/24182 [ Debug ] platform/chromium/inspector/styles/device-metrics-fit-window.html [ Pass Slow ]
 webkit.org/b/105785 [ Release ] http/tests/inspector/indexeddb [ Pass Slow ]
 crbug.com/24182 [ Debug ] platform/chromium/virtual/gpu/fast/hidpi/image-set-background-dynamic.html [ Pass Slow ]
+webkit.org/b/106606 fast/canvas/webgl/context-release-upon-reload.html [ Pass Slow ]
+webkit.org/b/106606 platform/chromium/virtual/gpu/fast/canvas/webgl/context-release-upon-reload.html [ Pass Slow ]
 
 # These tests started being slow when we switched to DRT.
 webkit.org/b/90488 [ Debug ] inspector [ Pass Slow ]
@@ -4283,8 +4285,6 @@ webkit.org/b/103955 [ Linux Lion SnowLeopard ] fast/repaint/japanese-rl-selectio
 webkit.org/b/103955 fast/repaint/repaint-across-writing-mode-boundary.html [ ImageOnlyFailure ]
 webkit.org/b/103955 fast/repaint/selection-rl.html [ ImageOnlyFailure ]
 webkit.org/b/103955 fast/repaint/caret-with-transformation.html [ Missing ]
-webkit.org/b/106606 fast/canvas/webgl/context-release-upon-reload.html [ Timeout Pass ]
-webkit.org/b/106606 platform/chromium/virtual/gpu/fast/canvas/webgl/context-release-upon-reload.html [ Timeout Pass ]
 webkit.org/b/106609 [ Win ] animations/fill-mode-iteration-count-non-integer.html [ Failure ]
 webkit.org/b/106612 [ Win ] fast/dom/HTMLTemplateElement/ownerDocument-adoptNode.html [ Failure Pass ]
 
