@@ -29,7 +29,7 @@ extern "C" __declspec(dllexport)
 #else
 extern "C"
 #endif
-void WKBundleInitialize(WKBundleRef bundle, WKTypeRef)
+void WKBundleInitialize(WKBundleRef bundle, WKTypeRef userData)
 {
-    WebGtkExtensionManager::shared().initialize(bundle);
+    WebGtkExtensionManager::shared().initialize(bundle, userData);
 }

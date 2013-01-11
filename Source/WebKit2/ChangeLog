@@ -1,3 +1,32 @@
+2013-01-10  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] Add API to set the web extensions directory to WebKit2 GTK+
+        https://bugs.webkit.org/show_bug.cgi?id=106462
+
+        Reviewed by Xan Lopez.
+
+        * UIProcess/API/gtk/WebKitWebContext.cpp:
+        (webkit_web_context_set_web_extensions_directory): Set
+        the given directory as injected bundle initialization user data.
+        * UIProcess/API/gtk/WebKitWebContext.h:
+        * UIProcess/API/gtk/docs/webkit2gtk-sections.txt: Add new symbol.
+        * UIProcess/API/gtk/tests/TestWebExtensions.cpp:
+        (beforeAll): Update the test to use
+        webkit_web_context_set_web_extensions_directory()
+        instead of setting the WEBKIT_WEB_EXTENSIONS_PATH env var.
+        * WebProcess/gtk/WebGtkExtensionManager.cpp:
+        (WebKit::WebGtkExtensionManager::scanModules): Append the given
+        additional web extensions directory to the list of directories to
+        scan for modules.
+        (WebKit::WebGtkExtensionManager::initialize): Get the additional
+        web extensions directory from initialization user data and pass it
+        to scanModules().
+        * WebProcess/gtk/WebGtkExtensionManager.h:
+        (WebGtkExtensionManager): Add userData parameter.
+        * WebProcess/gtk/WebGtkInjectedBundleMain.cpp:
+        (WKBundleInitialize): Pass initialization user data to
+        WebGtkExtensionManager.
+
 2013-01-10  Huang Dongsung  <luxtella@company100.net>
 
         [Qt][EFL] Rename from xxxContentsScale() to xxxScale() in PageViewportController.

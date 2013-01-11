@@ -45,6 +45,7 @@ webkit_web_context_set_spell_checking_languages
 webkit_web_context_set_preferred_languages
 webkit_web_context_set_tls_errors_policy
 webkit_web_context_get_tls_errors_policy
+webkit_web_context_set_web_extensions_directory
 
 <SUBSECTION URI Scheme>
 WebKitURISchemeRequestCallback

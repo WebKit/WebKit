@@ -748,6 +748,24 @@ WebKitTLSErrorsPolicy webkit_web_context_get_tls_errors_policy(WebKitWebContext*
     return context->priv->tlsErrorsPolicy;
 }
 
+/**
+ * webkit_web_context_set_web_extensions_directory:
+ * @context: a #WebKitWebContext
+ * @directory: the directory to add
+ *
+ * Set the directory where WebKit will look for Web Extensions.
+ * This method must be called before loading anything in this context, otherwise
+ * it will not have any effect.
+ */
+void webkit_web_context_set_web_extensions_directory(WebKitWebContext* context, const char* directory)
+{
+    g_return_if_fail(WEBKIT_IS_WEB_CONTEXT(context));
+    g_return_if_fail(directory);
+
+    // We pass the additional web extensions directory to the injected bundle as initialization user data.
+    context->priv->context->setInjectedBundleInitializationUserData(WebString::create(WebCore::filenameToString(directory)));
+}
+
 WebKitDownload* webkitWebContextGetOrCreateDownload(DownloadProxy* downloadProxy)
 {
     GRefPtr<WebKitDownload> download = downloadsMap().get(downloadProxy);

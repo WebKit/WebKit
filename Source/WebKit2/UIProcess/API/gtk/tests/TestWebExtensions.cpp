@@ -47,7 +47,7 @@ static void testWebExtension(WebViewTest* test, gconstpointer)
 
 void beforeAll()
 {
-    g_setenv("WEBKIT_WEB_EXTENSIONS_PATH", WEBKIT_TEST_WEB_EXTENSIONS_DIR, FALSE);
+    webkit_web_context_set_web_extensions_directory(webkit_web_context_get_default(), WEBKIT_TEST_WEB_EXTENSIONS_DIR);
     bus = new WebKitTestBus();
     if (!bus->run())
         return;

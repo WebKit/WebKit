@@ -40,13 +40,13 @@ class WebGtkExtensionManager {
 public:
     static WebGtkExtensionManager& shared();
 
-    void initialize(WKBundleRef);
+    void initialize(WKBundleRef, WKTypeRef);
 
 private:
     WebGtkExtensionManager();
 
     void appendModuleDirectories(Vector<String>&);
-    void scanModules(Vector<String>&);
+    void scanModules(const String&, Vector<String>&);
 
     Vector<Module*> m_extensionModules;
     GRefPtr<WebKitWebExtension> m_extension;
