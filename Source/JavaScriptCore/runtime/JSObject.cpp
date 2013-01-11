@@ -379,7 +379,7 @@ void JSObject::put(JSCell* cell, ExecState* exec, PropertyName propertyName, JSV
                 return;
             }
 
-            JSValue gs = obj->getDirectOffset(offset);
+            JSValue gs = obj->getDirect(offset);
             if (gs.isGetterSetter()) {
                 ASSERT(attributes & Accessor);
                 ASSERT(thisObject->structure()->prototypeChainMayInterceptStoreTo(exec->globalData(), propertyName) || obj == thisObject);
@@ -1193,13 +1193,12 @@ void JSObject::resetInheritorID(JSGlobalData& globalData)
     if (!isValidOffset(offset))
         return;
     
-    putDirectOffset(globalData, offset, jsUndefined());
+    putDirect(globalData, offset, jsUndefined());
 }
 
 Structure* JSObject::inheritorID(JSGlobalData& globalData)
 {
-    if (WriteBarrierBase<Unknown>* location = getDirectLocation(globalData, globalData.m_inheritorIDKey)) {
-        JSValue value = location->get();
+    if (JSValue value = getDirect(globalData, globalData.m_inheritorIDKey)) {
         if (value.isCell()) {
             Structure* inheritorID = jsCast<Structure*>(value);
             ASSERT(inheritorID->isEmpty());
@@ -1642,20 +1641,20 @@ bool JSObject::removeDirect(JSGlobalData& globalData, PropertyName propertyName)
         offset = structure()->removePropertyWithoutTransition(globalData, propertyName);
         if (offset == invalidOffset)
             return false;
-        putUndefinedAtDirectOffset(offset);
+        putDirectUndefined(offset);
         return true;
     }
 
     setStructure(globalData, Structure::removePropertyTransition(globalData, structure(), propertyName, offset));
     if (offset == invalidOffset)
         return false;
-    putUndefinedAtDirectOffset(offset);
+    putDirectUndefined(offset);
     return true;
 }
 
 NEVER_INLINE void JSObject::fillGetterPropertySlot(PropertySlot& slot, PropertyOffset offset)
 {
-    if (JSObject* getterFunction = asGetterSetter(getDirectOffset(offset))->getter()) {
+    if (JSObject* getterFunction = asGetterSetter(getDirect(offset))->getter()) {
         if (!structure()->isDictionary())
             slot.setCacheableGetterSlot(this, getterFunction, offset);
         else
@@ -2428,7 +2427,7 @@ bool JSObject::getOwnPropertyDescriptor(JSObject* object, ExecState* exec, Prope
     JSCell* cell = 0;
     PropertyOffset offset = object->structure()->get(exec->globalData(), propertyName, attributes, cell);
     if (isValidOffset(offset)) {
-        descriptor.setDescriptor(object->getDirectOffset(offset), attributes);
+        descriptor.setDescriptor(object->getDirect(offset), attributes);
         return true;
     }
     

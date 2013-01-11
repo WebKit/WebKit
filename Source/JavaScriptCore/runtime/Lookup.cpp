@@ -68,9 +68,9 @@ bool setUpStaticFunctionSlot(ExecState* exec, const HashEntry* entry, JSObject* 
 {
     ASSERT(thisObj->globalObject());
     ASSERT(entry->attributes() & Function);
-    WriteBarrierBase<Unknown>* location = thisObj->getDirectLocation(exec->globalData(), propertyName);
+    PropertyOffset offset = thisObj->getDirectOffset(exec->globalData(), propertyName);
 
-    if (!location) {
+    if (!isValidOffset(offset)) {
         // If a property is ever deleted from an object with a static table, then we reify
         // all static functions at that time - after this we shouldn't be re-adding anything.
         if (thisObj->staticFunctionsReified())
@@ -81,10 +81,11 @@ bool setUpStaticFunctionSlot(ExecState* exec, const HashEntry* entry, JSObject* 
         
         JSFunction* function = JSFunction::create(exec, thisObj->globalObject(), entry->functionLength(), name, entry->function(), entry->intrinsic());
         thisObj->putDirect(exec->globalData(), propertyName, function, entry->attributes());
-        location = thisObj->getDirectLocation(exec->globalData(), propertyName);
+        offset = thisObj->getDirectOffset(exec->globalData(), propertyName);
+        ASSERT(isValidOffset(offset));
     }
 
-    slot.setValue(thisObj, location->get(), thisObj->offsetForLocation(location));
+    slot.setValue(thisObj, thisObj->getDirect(offset), offset);
     return true;
 }
 

@@ -144,7 +144,7 @@ void JSValue::putToPrimitive(ExecState* exec, PropertyName propertyName, JSValue
                 return;
             }
 
-            JSValue gs = obj->getDirectOffset(offset);
+            JSValue gs = obj->getDirect(offset);
             if (gs.isGetterSetter()) {
                 JSObject* setterFunc = asGetterSetter(gs)->setter();        
                 if (!setterFunc) {

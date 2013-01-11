@@ -1441,7 +1441,7 @@ void DFG_OPERATION operationReallocateStorageAndFinishPut(ExecState* exec, JSObj
     ASSERT(structure->outOfLineCapacity() > base->structure()->outOfLineCapacity());
     ASSERT(!globalData.heap.storageAllocator().fastPathShouldSucceed(structure->outOfLineCapacity() * sizeof(JSValue)));
     base->setStructureAndReallocateStorageIfNecessary(globalData, structure);
-    base->putDirectOffset(globalData, offset, JSValue::decode(value));
+    base->putDirect(globalData, offset, JSValue::decode(value));
 }
 
 char* DFG_OPERATION operationAllocatePropertyStorageWithInitialCapacity(ExecState* exec)

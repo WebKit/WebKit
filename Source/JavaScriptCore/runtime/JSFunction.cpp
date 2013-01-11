@@ -218,16 +218,16 @@ bool JSFunction::getOwnPropertySlot(JSCell* cell, ExecState* exec, PropertyName 
         return Base::getOwnPropertySlot(thisObject, exec, propertyName, slot);
 
     if (propertyName == exec->propertyNames().prototype) {
-        WriteBarrierBase<Unknown>* location = thisObject->getDirectLocation(exec->globalData(), propertyName);
-
-        if (!location) {
+        PropertyOffset offset = thisObject->getDirectOffset(exec->globalData(), propertyName);
+        if (!isValidOffset(offset)) {
             JSObject* prototype = constructEmptyObject(exec, thisObject->globalObject()->emptyObjectStructure());
             prototype->putDirect(exec->globalData(), exec->propertyNames().constructor, thisObject, DontEnum);
             thisObject->putDirect(exec->globalData(), exec->propertyNames().prototype, prototype, DontDelete | DontEnum);
-            location = thisObject->getDirectLocation(exec->globalData(), exec->propertyNames().prototype);
+            offset = thisObject->getDirectOffset(exec->globalData(), exec->propertyNames().prototype);
+            ASSERT(isValidOffset(offset));
         }
 
-        slot.setValue(thisObject, location->get(), thisObject->offsetForLocation(location));
+        slot.setValue(thisObject, thisObject->getDirect(offset), offset);
     }
 
     if (propertyName == exec->propertyNames().arguments) {

@@ -1,5 +1,65 @@
 2013-01-11  Geoffrey Garen  <ggaren@apple.com>
 
+        Removed getDirectLocation and offsetForLocation and all their uses
+        https://bugs.webkit.org/show_bug.cgi?id=106692
+
+        Reviewed by Filip Pizlo.
+
+        getDirectLocation() and its associated offsetForLocation() relied on
+        detailed knowledge of the rules of PropertyOffset, JSObject, and
+        Structure, which is a hard thing to reverse-engineer reliably. Luckily,
+        it wasn't needed, and all clients either wanted a true value or a
+        PropertyOffset. So, I refactored accordingly.
+
+        * dfg/DFGOperations.cpp: Renamed putDirectOffset to putDirect, to clarify
+        that we are not putting an offset.
+
+        * runtime/JSActivation.cpp:
+        (JSC::JSActivation::getOwnPropertySlot): Get a value instead of a value
+        pointer, since we never wanted a pointer to begin with.
+
+        * runtime/JSFunction.cpp:
+        (JSC::JSFunction::getOwnPropertySlot): Use a PropertyOffset instead of a pointer,
+        so we don't have to reverse-engineer the offset from the pointer.
+
+        * runtime/JSObject.cpp:
+        (JSC::JSObject::put):
+        (JSC::JSObject::resetInheritorID):
+        (JSC::JSObject::inheritorID):
+        (JSC::JSObject::removeDirect):
+        (JSC::JSObject::fillGetterPropertySlot):
+        (JSC::JSObject::getOwnPropertyDescriptor): Renamed getDirectOffset and
+        putDirectOffset, as explaind above. We want to use the name "getDirectOffset"
+        for when the thing you're getting is the offset.
+
+        * runtime/JSObject.h:
+        (JSC::JSObject::getDirect):
+        (JSC::JSObject::getDirectOffset): Changed getDirectLocation to getDirectOffset,
+        since clients really wants PropertyOffsets and not locations.
+
+        (JSObject::offsetForLocation): Removed this function because it was hard
+        to get right.
+
+        (JSC::JSObject::putDirect):
+        (JSC::JSObject::putDirectUndefined):
+        (JSC::JSObject::inlineGetOwnPropertySlot):
+        (JSC::JSObject::putDirectInternal):
+        (JSC::JSObject::putDirectWithoutTransition):
+        * runtime/JSScope.cpp:
+        (JSC::executeResolveOperations):
+        (JSC::JSScope::resolvePut):
+        * runtime/JSValue.cpp:
+        (JSC::JSValue::putToPrimitive): Updated for renames.
+
+        * runtime/Lookup.cpp:
+        (JSC::setUpStaticFunctionSlot): Use a PropertyOffset instead of a pointer,
+        so we don't have to reverse-engineer the offset from the pointer.
+
+        * runtime/Structure.cpp:
+        (JSC::Structure::flattenDictionaryStructure): Updated for renames.
+
+2013-01-11  Geoffrey Garen  <ggaren@apple.com>
+
         Removed an unused version of getDirectLocation
         https://bugs.webkit.org/show_bug.cgi?id=106691
 

@@ -156,8 +156,8 @@ bool JSActivation::getOwnPropertySlot(JSCell* cell, ExecState* exec, PropertyNam
     if (thisObject->symbolTableGet(propertyName, slot))
         return true;
 
-    if (WriteBarrierBase<Unknown>* location = thisObject->getDirectLocation(exec->globalData(), propertyName)) {
-        slot.setValue(location->get());
+    if (JSValue value = thisObject->getDirect(exec->globalData(), propertyName)) {
+        slot.setValue(value);
         return true;
     }
 

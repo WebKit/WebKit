@@ -166,7 +166,7 @@ static bool executeResolveOperations(CallFrame* callFrame, JSScope* scope, const
         case ResolveOperation::GetAndReturnGlobalProperty: {
             JSGlobalObject* globalObject = scope->globalObject();
             if (globalObject->structure() == pc->m_structure.get()) {
-                result.setValue(globalObject->getDirectOffset(pc->m_offset));
+                result.setValue(globalObject->getDirect(pc->m_offset));
                 return true;
             }
 
@@ -581,7 +581,7 @@ void JSScope::resolvePut(CallFrame* callFrame, JSValue base, const Identifier& p
         JSObject* object = jsCast<JSObject*>(base);
         if (operation->m_structure.get() != object->structure())
             break;
-        object->putDirectOffset(callFrame->globalData(), operation->m_offset, value);
+        object->putDirect(callFrame->globalData(), operation->m_offset, value);
         return;
     }
 
