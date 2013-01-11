@@ -36,7 +36,6 @@ namespace WebCore {
         WTF_MAKE_FAST_ALLOCATED;
     public:
         CSSSelector();
-        CSSSelector(const QualifiedName&);
         CSSSelector(const CSSSelector&);
 
         ~CSSSelector();
@@ -369,19 +368,6 @@ inline CSSSelector::CSSSelector()
     , m_hasRareData(false)
     , m_isForPage(false)
     , m_tag(anyQName())
-{
-}
-
-inline CSSSelector::CSSSelector(const QualifiedName& qName)
-    : m_relation(Descendant)
-    , m_match(None)
-    , m_pseudoType(PseudoNotParsed)
-    , m_parsedNth(false)
-    , m_isLastInSelectorList(false)
-    , m_isLastInTagHistory(true)
-    , m_hasRareData(false)
-    , m_isForPage(false)
-    , m_tag(qName)
 {
 }
 
