@@ -111,6 +111,11 @@ void TransformState::applyTransform(const TransformationMatrix& transformFromCon
     if (wasClamped)
         *wasClamped = false;
 
+    if (transformFromContainer.isIntegerTranslation()) {
+        move(LayoutSize(transformFromContainer.e(), transformFromContainer.f()), accumulate);
+        return;
+    }
+
     applyAccumulatedOffset();
 
     // If we have an accumulated transform from last time, multiply in this transform

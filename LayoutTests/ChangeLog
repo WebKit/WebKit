@@ -1,3 +1,13 @@
+2013-01-11  Levi Weintraub  <leviw@chromium.org>
+
+        RenderGeometryMap and TransformState disagree with sub-pixel layout and translations
+        https://bugs.webkit.org/show_bug.cgi?id=106047
+
+        Reviewed by Simon Fraser.
+
+        * fast/layers/geometry-map-transform-state-translation-mismatch-expected.txt: Added.
+        * fast/layers/geometry-map-transform-state-translation-mismatch.html: Added.
+
 2013-01-11  Stephen Chenney  <schenney@chromium.org>
 
         [Chromium] Mac editing test rebaseline

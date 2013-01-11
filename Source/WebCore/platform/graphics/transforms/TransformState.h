@@ -73,7 +73,14 @@ public:
 
     TransformState& operator=(const TransformState&);
     
-    void setQuad(const FloatQuad& quad) { m_lastPlanarQuad = quad; }
+    void setQuad(const FloatQuad& quad)
+    {
+        // FIXME: this assumes that the quad being added is in the coordinate system of the current state.
+        // This breaks if we're simultaneously mapping a point. https://bugs.webkit.org/show_bug.cgi?id=106680
+        ASSERT(!m_mapPoint);
+        m_accumulatedOffset = LayoutSize();
+        m_lastPlanarQuad = quad;
+    }
 
     void move(LayoutUnit x, LayoutUnit y, TransformAccumulation accumulate = FlattenTransform)
     {

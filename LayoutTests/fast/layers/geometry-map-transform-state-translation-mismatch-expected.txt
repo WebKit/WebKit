@@ -1,0 +1,2 @@
+This tests that RenderGeometryMap and TransformState both avoid pixel snapping prior to applying translation-only transforms. The test passes if it doesn't assert on Debug.
+
