@@ -588,71 +588,48 @@ WebInspector.DataGrid.prototype = {
         this.dispatchEventToListeners("width changed");
     },
 
-    columnWidthsMap: function()
+    applyColumnWeights: function()
     {
-        var result = {};
-        for (var i = 0; i < this._columnsArray.length; ++i) {
-            var width = this._headerTableColumnGroup.children[i].style.width;
-            result[this._columnsArray[i].columnIdentifier] = parseFloat(width);
+        var sumOfWeights = 0.0;
+        for (var columnIdentifier in this.columns) {
+            if (this.isColumnVisible(columnIdentifier))
+                sumOfWeights += this.columns[columnIdentifier].weight;
         }
-        return result;
-    },
+        var factor = 100 / sumOfWeights;
 
-    applyColumnWidthsMap: function(columnWidthsMap)
-    {
         for (var columnIdentifier in this.columns) {
             var column = this.columns[columnIdentifier];
-            var width = (columnWidthsMap[columnIdentifier] || 0) + "%";
+            var width = this.isColumnVisible(columnIdentifier) ? ((factor * column.weight) + "%"): "0%";
             this._headerTableColumnGroup.children[column.ordinal].style.width = width;
             this._dataTableColumnGroup.children[column.ordinal].style.width = width;
         }
 
-        // Normalize widths
-        delete this._columnWidthsInitialized;
-        this.updateWidths();
+        this._positionResizers();
+        this.dispatchEventToListeners("width changed");
     },
 
+    /**
+     * @param {string} columnIdentifier
+     */
     isColumnVisible: function(columnIdentifier)
     {
-        var column = this.columns[columnIdentifier];
-        var columnElement = column.element;
-        return !columnElement.hidden;
+        return !this.columns[columnIdentifier].hidden;
     },
 
-    showColumn: function(columnIdentifier)
+    /**
+     * @param {string} columnIdentifier
+     * @param {boolean} visible
+     */
+    setColumnVisible: function(columnIdentifier, visible)
     {
-        var column = this.columns[columnIdentifier];
-        var columnElement = column.element;
-        if (!columnElement.hidden)
+        if (visible === !this.columns[columnIdentifier].hidden)
             return;
 
-        columnElement.hidden = false;
-        columnElement.removeStyleClass("hidden");
-
-        var columnBodyElement = column.bodyElement;
-        columnBodyElement.hidden = false;
-        columnBodyElement.removeStyleClass("hidden");
-    },
-
-    hideColumn: function(columnIdentifier)
-    {
-        var column = this.columns[columnIdentifier];
-        var columnElement = column.element;
-        if (columnElement.hidden)
-            return;
-
-        var oldWidth = parseFloat(columnElement.style.width);
-
-        columnElement.hidden = true;
-        columnElement.addStyleClass("hidden");
-        columnElement.style.width = 0;
-
-        var columnBodyElement = column.bodyElement;
-        columnBodyElement.hidden = true;
-        columnBodyElement.addStyleClass("hidden");
-        columnBodyElement.style.width = 0;
-
-        this._columnWidthsInitialized = false;
+        this.columns[columnIdentifier].hidden = !visible;
+        if (visible)
+            this.element.removeStyleClass("hide-" + columnIdentifier + "-column");
+        else
+            this.element.addStyleClass("hide-" + columnIdentifier + "-column");
     },
 
     get scrollContainer()
@@ -697,8 +674,7 @@ WebInspector.DataGrid.prototype = {
             // it is not possible to query a column for its width.
             left += this.headerTableBody.rows[0].cells[i].offsetWidth;
 
-            var columnIsVisible = !this._headerTableColumnGroup.children[i].hidden;
-            if (columnIsVisible) {
+            if (!this._columnsArray[i].hidden) {
                 resizer.style.removeProperty("display");
                 resizer.style.left = left + "px";
                 resizer.leftNeighboringColumnIndex = i;
@@ -1027,6 +1003,15 @@ WebInspector.DataGrid.prototype = {
         var percentRightColumn = (((rightEdgeOfNextColumn - dragPoint) / this._dataTable.offsetWidth) * 100) + "%";
         this._headerTableColumnGroup.children[rightCellIndex].style.width =  percentRightColumn;
         this._dataTableColumnGroup.children[rightCellIndex].style.width = percentRightColumn;
+
+        var leftColumn = this._columnsArray[leftCellIndex];
+        var rightColumn = this._columnsArray[rightCellIndex];
+        if (leftColumn.weight || rightColumn.weight) {
+            var sumOfWeights = leftColumn.weight + rightColumn.weight;
+            var delta = rightEdgeOfNextColumn - leftEdgeOfPreviousColumn;
+            leftColumn.weight = (dragPoint - leftEdgeOfPreviousColumn) * sumOfWeights / delta;
+            rightColumn.weight = (rightEdgeOfNextColumn - dragPoint) * sumOfWeights / delta;
+        }
 
         this._positionResizers();
         event.preventDefault();
