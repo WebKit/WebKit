@@ -3,8 +3,11 @@
 }
 
 body.dock-to-bottom #toolbar {
-    border-top-color: white;
     cursor: default; /* overriden */
+}
+
+body.dock-to-bottom.platform-mac #toolbar {
+    border-top-color: white;
 }
 
 /* Chrome theme overrides */
