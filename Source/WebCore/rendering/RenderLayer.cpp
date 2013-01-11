@@ -2293,7 +2293,7 @@ LayoutRect RenderLayer::getRectToExpose(const LayoutRect &visibleRect, const Lay
     return LayoutRect(LayoutPoint(x, y), visibleRect.size());
 }
 
-void RenderLayer::autoscroll(const IntPoint& position)
+void RenderLayer::autoscroll()
 {
     Frame* frame = renderer()->frame();
     if (!frame)
@@ -2303,7 +2303,11 @@ void RenderLayer::autoscroll(const IntPoint& position)
     if (!frameView)
         return;
 
-    IntPoint currentDocumentPosition = frameView->windowToContents(position);
+#if ENABLE(DRAG_SUPPORT)
+    frame->eventHandler()->updateSelectionForMouseDrag();
+#endif
+
+    IntPoint currentDocumentPosition = frameView->windowToContents(frame->eventHandler()->lastKnownMousePosition());
     scrollRectToVisible(LayoutRect(currentDocumentPosition, LayoutSize(1, 1)), ScrollAlignment::alignToEdgeIfNeeded, ScrollAlignment::alignToEdgeIfNeeded);
 }
 

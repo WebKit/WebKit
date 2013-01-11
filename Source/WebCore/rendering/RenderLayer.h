@@ -373,7 +373,7 @@ public:
     void updateScrollInfoAfterLayout();
 
     bool scroll(ScrollDirection, ScrollGranularity, float multiplier = 1);
-    void autoscroll(const IntPoint&);
+    void autoscroll();
 
     void resize(const PlatformMouseEvent&, const LayoutSize&);
     bool inResizeMode() const { return m_inResizeMode; }

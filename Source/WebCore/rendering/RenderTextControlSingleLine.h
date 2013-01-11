@@ -58,7 +58,7 @@ private:
 
     virtual bool nodeAtPoint(const HitTestRequest&, HitTestResult&, const HitTestLocation& locationInContainer, const LayoutPoint& accumulatedOffset, HitTestAction) OVERRIDE;
 
-    virtual void autoscroll(const IntPoint&);
+    virtual void autoscroll();
 
     // Subclassed to forward to our inner div.
     virtual int scrollLeft() const;
