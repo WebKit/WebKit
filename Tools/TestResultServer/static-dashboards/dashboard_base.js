@@ -500,8 +500,6 @@ function showErrors()
 
 function resourceLoadingComplete(errorMsgs)
 {
-    g_resourceLoader = null;
-    
     if (errorMsgs)
         addError(errorMsgs)
 
@@ -510,7 +508,7 @@ function resourceLoadingComplete(errorMsgs)
 
 function handleLocationChange()
 {
-    if (g_resourceLoader)
+    if (!g_resourceLoader.isLoadingComplete())
         return;
 
     if (parseParameters())

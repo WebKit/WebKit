@@ -67,6 +67,7 @@ loader.Loader = function()
 
     this._buildersThatFailedToLoad = [];
     this._staleBuilders = [];
+    this._loadingComplete = false;
 }
 
 loader.Loader.prototype = {
@@ -74,10 +75,18 @@ loader.Loader.prototype = {
     {
         this._loadNext();
     },
+    isLoadingComplete: function()
+    {
+        return this._loadingComplete;
+    },
     _loadNext: function()
     {
         var loadingStep = this._loadingSteps.shift();
         if (!loadingStep) {
+            this._loadingComplete = true;
+            // FIXME(jparent): Loader should not know about global
+            // functions, should use a callback or dispatch load
+            // event instead.
             resourceLoadingComplete(this._getLoadingErrorMessages());
             return;
         }

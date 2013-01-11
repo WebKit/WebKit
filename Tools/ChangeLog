@@ -1,3 +1,24 @@
+2013-01-11  Julie Parent  <jparent@chromium.org>
+
+        Dashboard Cleanup: Add isLoadingComplete to the loader.Loader object.
+        https://bugs.webkit.org/show_bug.cgi?id=106247
+
+        Old code nulled out the loader instance when it completed loading and
+        then later used the fact that it was null to determine if it had loaded
+        or not.  This is not only unintuitive, but it also prevents using the
+        loader object later on.
+        
+        Added new method, used it, added unit test for it.
+        
+        Reviewed by Dirk Pranke.
+
+        * TestResultServer/static-dashboards/dashboard_base.js:
+        (resourceLoadingComplete):
+        (handleLocationChange):
+        * TestResultServer/static-dashboards/loader.js:
+        (.):
+        * TestResultServer/static-dashboards/loader_unittests.js:
+
 2013-01-11  Ryosuke Niwa  <rniwa@webkit.org>
 
         Try CRLF to LF change in r139407 again.
