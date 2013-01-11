@@ -1,3 +1,15 @@
+2013-01-11  Stephen Chenney  <schenney@chromium.org>
+
+        Objects can be re-added to the AXObjectCache during removal
+        https://bugs.webkit.org/show_bug.cgi?id=104171
+
+        Reviewed by Simon Fraser.
+
+        New test which asserts with !m_hasAXObject in RenderObject::~RenderObject without the patch. Requires Shadow DOM enabled.
+
+        * accessibility/corresponding-control-deleted-crash-expected.txt: Added.
+        * accessibility/corresponding-control-deleted-crash.html: Added.
+
 2013-01-11  Sudarsana Nagineni  <sudarsana.nagineni@intel.com>
 
         Unreviewed EFL gardening.

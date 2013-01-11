@@ -2370,13 +2370,19 @@ void RenderObject::willBeDestroyed()
     if (frame() && frame()->eventHandler()->autoscrollRenderer() == this)
         frame()->eventHandler()->stopAutoscrollTimer(true);
 
-    if (AXObjectCache::accessibilityEnabled()) {
-        document()->axObjectCache()->childrenChanged(this->parent());
-        document()->axObjectCache()->remove(this);
-    }
     animation()->cancelAnimations(this);
 
+    // For accessibility management, notify the parent of the imminent change to its child set.
+    // We do it now, before remove(), while the parent pointer is still available.
+    if (AXObjectCache::accessibilityEnabled())
+        document()->axObjectCache()->childrenChanged(this->parent());
+
     remove();
+
+    // The remove() call above may invoke axObjectCache()->childrenChanged() on the parent, which may require the AX render
+    // object for this renderer. So we remove the AX render object now, after the renderer is removed.
+    if (AXObjectCache::accessibilityEnabled())
+        document()->axObjectCache()->remove(this);
 
     // Continuation and first-letter can generate several renderers associated with a single node.
     // We only want to clear the node's renderer if we are the associated renderer.
