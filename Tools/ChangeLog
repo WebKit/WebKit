@@ -1,3 +1,10 @@
+2013-01-11  Raphael Kubo da Costa  <raphael.kubo.da.costa@intel.com>
+
+        Yet another unreviewed fix after r139431.
+
+        * Scripts/run-launcher: Pass the arguments to `jhbuild-wrapper' in
+        the correct order.
+
 2013-01-11  Dan Carney  <dcarney@google.com>
 
         [chromium] move some whitespace and resize related methods to TestRunner library

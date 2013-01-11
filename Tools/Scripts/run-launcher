@@ -70,10 +70,9 @@ if (isQt()) {
             unshift(@ARGV, catdir($launcherPath, "Programs", "GtkLauncher"));
         }
         $launcherPath = catdir(sourceDir(), "Tools", "jhbuild", "jhbuild-wrapper");
-        unshift(@ARGV, '--gtk');
-        unshift(@ARGV, 'run');
+        unshift(@ARGV, ("--gtk", "run"));
     }
-    
+
     if (isEfl()) {
         if (isWK2()) {
             unshift(@ARGV, catdir($launcherPath, "bin", "MiniBrowser"));
@@ -81,10 +80,9 @@ if (isQt()) {
             unshift(@ARGV, catdir($launcherPath, "bin", "EWebLauncher"));
         }
         $launcherPath = catdir(sourceDir(), "Tools", "jhbuild", "jhbuild-wrapper");
-        unshift(@ARGV, '--efl');
-        unshift(@ARGV, 'run');
+        unshift(@ARGV, ("--efl", "run"));
     }
-    
+
     if (isWx()) {
         if (isDarwin()) {
             $launcherPath = catdir($launcherPath, 'wxBrowser.app', 'Contents', 'MacOS', 'wxBrowser');
