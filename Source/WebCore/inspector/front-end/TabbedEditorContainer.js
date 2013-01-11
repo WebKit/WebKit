@@ -223,6 +223,7 @@ WebInspector.TabbedEditorContainer.prototype = {
         var tabIds = [];
         for (var i = 0; i < uiSourceCodes.length; ++i) {
             var uiSourceCode = uiSourceCodes[i];
+            delete this._loadedURIs[uiSourceCode.uri()];
             var tabId = this._tabIds.get(uiSourceCode);
             if (tabId)
                 tabIds.push(tabId);
@@ -391,12 +392,7 @@ WebInspector.TabbedEditorContainer.prototype = {
 
     reset: function()
     {
-        this._tabbedPane.closeAllTabs();
-        this._tabIds = new Map();
-        this._files = {};
-        delete this._currentFile;
         delete this._userSelectedFiles;
-        this._loadedURIs = {};
     },
 
     /**

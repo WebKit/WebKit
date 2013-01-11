@@ -32,7 +32,7 @@
  * @constructor
  * @implements {WebInspector.ScriptSourceMapping}
  * @param {WebInspector.Workspace} workspace
- * @param {WebInspector.NetworkWorkspaceProvider} networkWorkspaceProvider
+ * @param {WebInspector.SimpleWorkspaceProvider} networkWorkspaceProvider
  */
 WebInspector.CompilerScriptMapping = function(workspace, networkWorkspaceProvider)
 {
@@ -45,7 +45,7 @@ WebInspector.CompilerScriptMapping = function(workspace, networkWorkspaceProvide
     this._scriptForSourceMap = new Map();
     /** @type {Object.<string, WebInspector.PositionBasedSourceMap>} */
     this._sourceMapForURL = {};
-    this._workspace.addEventListener(WebInspector.Workspace.Events.ProjectWillReset, this._reset, this);
+    WebInspector.debuggerModel.addEventListener(WebInspector.DebuggerModel.Events.GlobalObjectCleared, this._debuggerReset, this);
 }
 
 WebInspector.CompilerScriptMapping.prototype = {
@@ -104,8 +104,7 @@ WebInspector.CompilerScriptMapping.prototype = {
                 contentProvider = new WebInspector.StaticContentProvider(WebInspector.resourceTypes.Script, sourceContent);
             else
                 contentProvider = new WebInspector.CompilerSourceMappingContentProvider(sourceURL);
-            this._networkWorkspaceProvider.addNetworkFile(sourceURL, contentProvider, true);
-            var uiSourceCode = this._workspace.uiSourceCodeForURL(sourceURL);
+            var uiSourceCode = this._networkWorkspaceProvider.addFileForURL(sourceURL, contentProvider, true);
             uiSourceCode.setSourceMapping(this);
             uiSourceCode.isContentScript = script.isContentScript;
         }
@@ -141,7 +140,7 @@ WebInspector.CompilerScriptMapping.prototype = {
         return sourceMap;
     },
 
-    _reset: function()
+    _debuggerReset: function()
     {
         this._sourceMapForSourceMapURL = {};
         this._sourceMapForScriptId = {};

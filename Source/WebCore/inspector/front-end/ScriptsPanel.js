@@ -190,8 +190,8 @@ WebInspector.ScriptsPanel = function(workspaceForTest)
 
     this._workspace.addEventListener(WebInspector.UISourceCodeProvider.Events.UISourceCodeAdded, this._uiSourceCodeAdded, this);
     this._workspace.addEventListener(WebInspector.UISourceCodeProvider.Events.UISourceCodeRemoved, this._uiSourceCodeRemoved, this);
-    this._workspace.addEventListener(WebInspector.UISourceCodeProvider.Events.TemporaryUISourceCodeRemoved, this._uiSourceCodeRemoved, this);
-    this._workspace.addEventListener(WebInspector.Workspace.Events.ProjectWillReset, this._reset.bind(this), this);
+    this._workspace.addEventListener(WebInspector.Workspace.Events.ProjectWillReset, this._projectWillReset.bind(this), this);
+    WebInspector.debuggerModel.addEventListener(WebInspector.DebuggerModel.Events.GlobalObjectCleared, this._debuggerReset, this);
 
     WebInspector.advancedSearchController.registerSearchScope(new WebInspector.ScriptsSearchScope(this._workspace));
 }
@@ -243,12 +243,14 @@ WebInspector.ScriptsPanel.prototype = {
     {
         if (this._toggleFormatSourceButton.toggled)
             uiSourceCode.setFormatted(true);
-
+        var projectName = uiSourceCode.project().name();
+        if (uiSourceCode.project().isServiceProject())
+            return;
         this._editorContainer.addUISourceCode(uiSourceCode);
         this._navigator.addUISourceCode(uiSourceCode);
         // Replace debugger script-based uiSourceCode with a network-based one.
-        if (this._currentUISourceCode && this._currentUISourceCode.isTemporary && this._currentUISourceCode !== uiSourceCode && this._currentUISourceCode.url === uiSourceCode.url) {
-            var currentUISourceCode = this._currentUISourceCode;
+        var currentUISourceCode = this._currentUISourceCode;
+        if (currentUISourceCode && currentUISourceCode.project().isServiceProject() && currentUISourceCode !== uiSourceCode && currentUISourceCode.url === uiSourceCode.url) {
             this._showFile(uiSourceCode);
             this._editorContainer.removeUISourceCode(currentUISourceCode);
         }
@@ -257,9 +259,19 @@ WebInspector.ScriptsPanel.prototype = {
     _uiSourceCodeRemoved: function(event)
     {
         var uiSourceCode = /** @type {WebInspector.UISourceCode} */ (event.data);
-        this._editorContainer.removeUISourceCode(uiSourceCode);
-        this._navigator.removeUISourceCode(uiSourceCode);
-        this._removeSourceFrame(uiSourceCode);
+        this._removeUISourceCodes([uiSourceCode]);
+    },
+
+    /**
+     * @param {Array.<WebInspector.UISourceCode>} uiSourceCodes
+     */
+    _removeUISourceCodes: function(uiSourceCodes)
+    {
+        for (var i = 0; i < uiSourceCodes.length; ++i) {
+            this._navigator.removeUISourceCode(uiSourceCodes[i]);
+            this._removeSourceFrame(uiSourceCodes[i]);
+        }
+        this._editorContainer.removeUISourceCodes(uiSourceCodes);
     },
 
     _consoleCommandEvaluatedInSelectedCallFrame: function(event)
@@ -339,26 +351,22 @@ WebInspector.ScriptsPanel.prototype = {
 
     _debuggerWasDisabled: function()
     {
-        this._reset();
+        this._debuggerReset();
     },
 
-    _reset: function()
+    _debuggerReset: function()
     {
-        delete this.currentQuery;
-        this.searchCanceled();
-
         this._debuggerResumed();
-
-        delete this._currentUISourceCode;
-        this._navigator.reset();
-        this._editorContainer.reset();
-        this._updateScriptViewStatusBarItems();
-        this.sidebarPanes.jsBreakpoints.reset();
         this.sidebarPanes.watchExpressions.reset();
+    },
 
-        var uiSourceCodes = this._workspace.uiSourceCodes();
-        for (var i = 0; i < uiSourceCodes.length; ++i)
-            this._removeSourceFrame(uiSourceCodes[i]);
+    _projectWillReset: function(event)
+    {
+        var project = event.data;
+        var uiSourceCodes = project.uiSourceCodes();
+        this._removeUISourceCodes(uiSourceCodes);
+        if (project.name() === WebInspector.projectNames.Network)
+            this._editorContainer.reset();
     },
 
     get visibleView()
@@ -382,7 +390,7 @@ WebInspector.ScriptsPanel.prototype = {
     {
         if (WebInspector.debuggerModel.debuggerEnabled() && anchor.uiSourceCode)
             return true;
-        var uiSourceCodes = this._workspace.uiSourceCodes();
+        var uiSourceCodes = this._workspace.project(WebInspector.projectNames.Network).uiSourceCodes();
         for (var i = 0; i < uiSourceCodes.length; ++i) {
             if (uiSourceCodes[i].url === anchor.href) {
                 anchor.uiSourceCode = uiSourceCodes[i];
@@ -522,13 +530,10 @@ WebInspector.ScriptsPanel.prototype = {
     {
         var uiSourceCode = uiLocation.uiSourceCode;
         // Some scripts (anonymous and snippets evaluations) are not added to files select by default.
-        if (uiSourceCode.isTemporary) {
-            if (this._currentUISourceCode && this._currentUISourceCode.scriptFile() && this._currentUISourceCode.scriptFile().isDivergingFromVM())
-                return;
-            this._editorContainer.addUISourceCode(uiSourceCode);
-            if (uiSourceCode.formatted() !== this._toggleFormatSourceButton.toggled)
-                uiSourceCode.setFormatted(this._toggleFormatSourceButton.toggled);
-        }
+        if (this._currentUISourceCode && this._currentUISourceCode.scriptFile() && this._currentUISourceCode.scriptFile().isDivergingFromVM())
+            return;
+        if (this._toggleFormatSourceButton.toggled && !uiSourceCode.formatted())
+            uiSourceCode.setFormatted(true);
         var sourceFrame = this._showFile(uiSourceCode);
         sourceFrame.revealLine(uiLocation.lineNumber);
         sourceFrame.focus();
@@ -1160,7 +1165,7 @@ WebInspector.ScriptsPanel.prototype = {
 
     showGoToSourceDialog: function()
     {
-        WebInspector.OpenResourceDialog.show(this, this._workspace, this.editorView.mainElement);
+        WebInspector.OpenResourceDialog.show(this, this.editorView.mainElement);
     },
 
     __proto__: WebInspector.Panel.prototype

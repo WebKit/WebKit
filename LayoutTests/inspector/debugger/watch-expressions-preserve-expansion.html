@@ -20,14 +20,18 @@ var test = function()
 
     // We need to initialize scripts panel so that watch expressions section is created.
     WebInspector.showPanel("scripts");
+    InspectorTest.startDebuggerTest(step1);
 
-    watchExpressionsSection = WebInspector.panels.scripts.sidebarPanes.watchExpressions.section;
-    watchExpressionsSection.watchExpressions = [];
-    watchExpressionsSection.watchExpressions.push("globalObject");
-    watchExpressionsSection.watchExpressions.push("windowAlias");
+    function step1()
+    {
+        watchExpressionsSection = WebInspector.panels.scripts.sidebarPanes.watchExpressions.section;
+        watchExpressionsSection.watchExpressions = [];
+        watchExpressionsSection.watchExpressions.push("globalObject");
+        watchExpressionsSection.watchExpressions.push("windowAlias");
 
-    InspectorTest.addSniffer(WebInspector.WatchExpressionsSection.prototype, "updateProperties", step1);
-    watchExpressionsSection.update();
+        InspectorTest.addSniffer(WebInspector.WatchExpressionsSection.prototype, "updateProperties", step2);
+        watchExpressionsSection.update();
+    }
 
     function expandProperty(parent, path, callback)
     {
@@ -56,20 +60,20 @@ var test = function()
             dumpObjectPropertiesTreeElement(treeElement.children[i], "  " + indent);
     }
 
-    function step1()
-    {
-        InspectorTest.addResult("Watch expressions added.");
-        expandProperty(watchExpressionsSection.propertiesTreeOutline, ["globalObject", "foo", "bar"], step2);
-    }
-
     function step2()
     {
-        InspectorTest.addResult("Watch expressions expanded.");
-        dumpObjectPropertiesTreeElement(watchExpressionsSection.propertiesTreeOutline, "");
-        InspectorTest.reloadPage(step3);
+        InspectorTest.addResult("Watch expressions added.");
+        expandProperty(watchExpressionsSection.propertiesTreeOutline, ["globalObject", "foo", "bar"], step3);
     }
 
     function step3()
+    {
+        InspectorTest.addResult("Watch expressions expanded.");
+        dumpObjectPropertiesTreeElement(watchExpressionsSection.propertiesTreeOutline, "");
+        InspectorTest.reloadPage(step4);
+    }
+
+    function step4()
     {
         InspectorTest.addResult("Watch expressions after page reload:");
         dumpObjectPropertiesTreeElement(watchExpressionsSection.propertiesTreeOutline, "");
@@ -77,7 +81,7 @@ var test = function()
         // Clear watch expressions after execution.
         watchExpressionsSection.watchExpressions = [];
         watchExpressionsSection.update();
-        InspectorTest.completeTest();
+        InspectorTest.completeDebuggerTest();
     }
 }
 

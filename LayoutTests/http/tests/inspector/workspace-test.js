@@ -3,14 +3,11 @@ var initialize_WorkspaceTest = function() {
 InspectorTest.testWorkspace;
 InspectorTest.createWorkspace = function()
 {
-    InspectorTest.testNetworkWorkspaceProvider = new WebInspector.NetworkWorkspaceProvider();
     InspectorTest.testWorkspace = new WebInspector.Workspace();
-    InspectorTest.testDebuggerWorkspaceProvider = new WebInspector.DebuggerWorkspaceProvider(InspectorTest.testWorkspace);
-    InspectorTest.testWorkspace.addProject("network", InspectorTest.testNetworkWorkspaceProvider);
+    InspectorTest.testNetworkWorkspaceProvider = new WebInspector.SimpleWorkspaceProvider(InspectorTest.testWorkspace);
+    InspectorTest.testWorkspace.addProject(WebInspector.projectNames.Network, InspectorTest.testNetworkWorkspaceProvider);
     InspectorTest.testWorkspace.addEventListener(WebInspector.UISourceCodeProvider.Events.UISourceCodeAdded, InspectorTest._defaultUISourceCodeProviderEventHandler);
     InspectorTest.testWorkspace.addEventListener(WebInspector.UISourceCodeProvider.Events.UISourceCodeRemoved, InspectorTest._defaultUISourceCodeProviderEventHandler);
-    InspectorTest.testWorkspace.addEventListener(WebInspector.UISourceCodeProvider.Events.TemporaryUISourceCodeAdded, InspectorTest._defaultUISourceCodeProviderEventHandler);
-    InspectorTest.testWorkspace.addEventListener(WebInspector.UISourceCodeProvider.Events.TemporaryUISourceCodeRemoved, InspectorTest._defaultUISourceCodeProviderEventHandler);
 }
 
 InspectorTest.waitForWorkspaceUISourceCodeAddedEvent = function(callback)
@@ -26,37 +23,11 @@ InspectorTest.waitForWorkspaceUISourceCodeAddedEvent = function(callback)
     }
 }
 
-InspectorTest.waitForWorkspaceTemporaryUISourceCodeAddedEvent = function(callback)
-{
-    InspectorTest.testWorkspace.removeEventListener(WebInspector.UISourceCodeProvider.Events.TemporaryUISourceCodeAdded, InspectorTest._defaultUISourceCodeProviderEventHandler);
-    InspectorTest.testWorkspace.addEventListener(WebInspector.UISourceCodeProvider.Events.TemporaryUISourceCodeAdded, temporaryUISourceCodeAdded);
-
-    function temporaryUISourceCodeAdded(event)
-    {
-        InspectorTest.testWorkspace.removeEventListener(WebInspector.UISourceCodeProvider.Events.TemporaryUISourceCodeAdded, temporaryUISourceCodeAdded);
-        InspectorTest.testWorkspace.addEventListener(WebInspector.UISourceCodeProvider.Events.TemporaryUISourceCodeAdded, InspectorTest._defaultUISourceCodeProviderEventHandler);
-        callback(event.data);
-    }
-}
-
-InspectorTest.waitForWorkspaceTemporaryUISourceCodeRemovedEvent = function(callback)
-{
-    InspectorTest.testWorkspace.removeEventListener(WebInspector.UISourceCodeProvider.Events.TemporaryUISourceCodeRemoved, InspectorTest._defaultUISourceCodeProviderEventHandler);
-    InspectorTest.testWorkspace.addEventListener(WebInspector.UISourceCodeProvider.Events.TemporaryUISourceCodeRemoved, temporaryUISourceCodeRemoved);
-
-    function temporaryUISourceCodeRemoved(event)
-    {
-        InspectorTest.testWorkspace.removeEventListener(WebInspector.UISourceCodeProvider.Events.TemporaryUISourceCodeRemoved, temporaryUISourceCodeRemoved);
-        InspectorTest.testWorkspace.addEventListener(WebInspector.UISourceCodeProvider.Events.TemporaryUISourceCodeRemoved, InspectorTest._defaultUISourceCodeProviderEventHandler);
-        callback(event.data);
-    }
-}
-
 InspectorTest.addMockUISourceCodeToWorkspace = function(url, type, content)
 {
     var isDocument = type === WebInspector.resourceTypes.Document;
     var mockContentProvider = new WebInspector.StaticContentProvider(type, content);
-    InspectorTest.testNetworkWorkspaceProvider.addNetworkFile(url, mockContentProvider, !isDocument);
+    InspectorTest.testNetworkWorkspaceProvider.addFileForURL(url, mockContentProvider, !isDocument);
 }
 
 InspectorTest._defaultUISourceCodeProviderEventHandler = function(event)

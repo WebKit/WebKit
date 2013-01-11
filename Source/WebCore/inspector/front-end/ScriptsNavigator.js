@@ -170,13 +170,6 @@ WebInspector.ScriptsNavigator.prototype = {
         this.dispatchEventToListeners(WebInspector.ScriptsNavigator.Events.SnippetCreationRequested, event.data);
     },
 
-    reset: function()
-    {
-        this._scriptsView.reset();
-        this._contentScriptsView.reset();
-        this._snippetsView.reset();
-    },
-
     __proto__: WebInspector.Object.prototype
 }
 

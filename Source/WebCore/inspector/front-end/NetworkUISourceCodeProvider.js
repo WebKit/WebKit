@@ -38,8 +38,7 @@ WebInspector.NetworkUISourceCodeProvider = function(workspace, networkWorkspaceP
     this._workspace = workspace;
     this._networkWorkspaceProvider = networkWorkspaceProvider;
     WebInspector.resourceTreeModel.addEventListener(WebInspector.ResourceTreeModel.EventTypes.ResourceAdded, this._resourceAdded, this);
-    this._workspace.addEventListener(WebInspector.Workspace.Events.ProjectWillReset, this._projectWillReset, this);
-    this._workspace.addEventListener(WebInspector.Workspace.Events.ProjectDidReset, this._projectDidReset, this);
+    WebInspector.resourceTreeModel.addEventListener(WebInspector.ResourceTreeModel.EventTypes.MainFrameNavigated, this._mainFrameNavigated, this);
     WebInspector.debuggerModel.addEventListener(WebInspector.DebuggerModel.Events.ParsedScriptSource, this._parsedScriptSource, this);
 
     this._processedURLs = {};
@@ -101,6 +100,14 @@ WebInspector.NetworkUISourceCodeProvider.prototype = {
     },
 
     /**
+     * @param {WebInspector.Event} event
+     */
+    _mainFrameNavigated: function(event)
+    {
+        this._reset();
+    },
+
+    /**
      * @param {string} url
      * @param {WebInspector.ContentProvider} contentProvider
      * @param {boolean=} isContentScript
@@ -114,48 +121,19 @@ WebInspector.NetworkUISourceCodeProvider.prototype = {
             return;
         this._processedURLs[url] = true;
         var isEditable = type !== WebInspector.resourceTypes.Document;
-        this._networkWorkspaceProvider.addNetworkFile(url, contentProvider, isEditable, isContentScript);
+        this._networkWorkspaceProvider.addFileForURL(url, contentProvider, isEditable, isContentScript);
     },
 
-    _projectWillReset: function()
+    _reset: function()
     {
         this._processedURLs = {};
         this._lastDynamicAnonymousScriptIndexForURL = {};
-    },
-
-    _projectDidReset: function()
-    {
+        this._networkWorkspaceProvider.reset();
         this._populate();
     }
 }
 
 /**
- * @constructor
- * @extends {WebInspector.SimpleWorkspaceProvider}
- */
-WebInspector.NetworkWorkspaceProvider = function()
-{
-    WebInspector.SimpleWorkspaceProvider.call(this);
-}
-
-WebInspector.NetworkWorkspaceProvider.prototype = {
-    /**
-     * @param {string} url
-     * @param {WebInspector.ContentProvider} contentProvider
-     * @param {boolean} isEditable
-     * @param {boolean=} isContentScript
-     * @param {boolean=} isSnippet
-     */
-    addNetworkFile: function(url, contentProvider, isEditable, isContentScript, isSnippet)
-    {
-        var uri = WebInspector.SimpleWorkspaceProvider.uriForURL(url);
-        this.addFile(uri, url, contentProvider, isEditable, isContentScript, isSnippet);
-    },
-
-    __proto__: WebInspector.SimpleWorkspaceProvider.prototype
-}
-
-/**
- * @type {?WebInspector.NetworkWorkspaceProvider}
+ * @type {?WebInspector.SimpleWorkspaceProvider}
  */
 WebInspector.networkWorkspaceProvider = null;

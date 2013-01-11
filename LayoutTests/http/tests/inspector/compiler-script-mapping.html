@@ -147,7 +147,7 @@ function test()
 
             function step1()
             {
-                InspectorTest.waitForWorkspaceTemporaryUISourceCodeAddedEvent(originalUISourceCodeAdded);
+                InspectorTest.waitForWorkspaceUISourceCodeAddedEvent(originalUISourceCodeAdded);
                 script = InspectorTest.createScriptMock("compiled.js", 0, 0, true, "");
                 script.sourceMapURL = "http://localhost:8000/inspector/resources/source-map.json";
                 defaultScriptMapping.addScript(script);
@@ -215,7 +215,7 @@ function test()
 
             function step1()
             {
-                InspectorTest.waitForWorkspaceTemporaryUISourceCodeAddedEvent(function() { });
+                InspectorTest.waitForWorkspaceUISourceCodeAddedEvent(function() { });
                 script = InspectorTest.createScriptMock("compiled.js", 0, 0, true, "");
                 script.sourceMapURL = "http://localhost:8000/inspector/resources/source-map.json";
                 defaultScriptMapping.addScript(script);
@@ -278,7 +278,7 @@ function test()
                 "sourcesContent":["<source content>"]
             };
             script.sourceMapURL = "data:application/json;base64," + btoa(JSON.stringify(sourceMap));
-            InspectorTest.waitForWorkspaceTemporaryUISourceCodeAddedEvent(originalUISourceCodeAdded);
+            InspectorTest.waitForWorkspaceUISourceCodeAddedEvent(originalUISourceCodeAdded);
 
             function originalUISourceCodeAdded(uiSourceCode)
             {
@@ -309,10 +309,9 @@ function test()
         {
             WebInspector.settings.sourceMapsEnabled.set(true);
             WebInspector.debuggerModel._reset();
-            var networkWorkspaceProvider = new WebInspector.NetworkWorkspaceProvider();
             var workspace = new WebInspector.Workspace();
-            var debuggerWorkspaceProvider = new WebInspector.DebuggerWorkspaceProvider(workspace);
-            workspace.addProject("network", networkWorkspaceProvider);
+            var networkWorkspaceProvider = new WebInspector.SimpleWorkspaceProvider(workspace);
+            workspace.addProject(WebInspector.projectNames.Network, networkWorkspaceProvider);
             var debuggerScriptMapping = new WebInspector.DebuggerScriptMapping(workspace, networkWorkspaceProvider);
 
             var script = InspectorTest.createScriptMock("compiled.js", 0, 0, true, "");

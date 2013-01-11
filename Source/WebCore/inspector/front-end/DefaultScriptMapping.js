@@ -36,9 +36,10 @@
 WebInspector.DefaultScriptMapping = function(workspace)
 {
     this._workspace = workspace;
-    this._workspaceProvider = new WebInspector.DebuggerWorkspaceProvider(workspace);
-    this._workspace.addEventListener(WebInspector.Workspace.Events.ProjectWillReset, this._reset, this);
-    this._reset();
+    this._workspaceProvider = new WebInspector.SimpleWorkspaceProvider(this._workspace);
+    workspace.addProject(WebInspector.projectNames.Debugger, this._workspaceProvider);
+    WebInspector.debuggerModel.addEventListener(WebInspector.DebuggerModel.Events.GlobalObjectCleared, this._debuggerReset, this);
+    this._debuggerReset();
 }
 
 WebInspector.DefaultScriptMapping.prototype = {
@@ -75,7 +76,10 @@ WebInspector.DefaultScriptMapping.prototype = {
     addScript: function(script)
     {
         var contentProvider = script.isInlineScript() ? new WebInspector.ConcatenatedScriptsContentProvider([script]) : script;
-        var uiSourceCode = this._workspaceProvider.addDebuggerFile(script.sourceURL, contentProvider, false);
+        var uri = "debugger:" + WebInspector.SimpleWorkspaceProvider.uriForURL(script.sourceURL);
+        var uniqueURI = this._workspaceProvider.uniqueURI(uri);
+        var uiSourceCode = this._workspaceProvider.addFile(uniqueURI, script.sourceURL, contentProvider, false, script.isContentScript);
+
         this._uiSourceCodeForScriptId[script.scriptId] = uiSourceCode;
         this._scriptIdForUISourceCode.put(uiSourceCode, script.scriptId);
         uiSourceCode.setSourceMapping(this);
@@ -94,45 +98,11 @@ WebInspector.DefaultScriptMapping.prototype = {
         this._uiSourceCodeForScriptId[scriptId].addRevision(content);
     },
 
-    _reset: function()
+    _debuggerReset: function()
     {
         /** @type {Object.<string, WebInspector.UISourceCode>} */
         this._uiSourceCodeForScriptId = {};
         this._scriptIdForUISourceCode = new Map();
-    },
+        this._workspaceProvider.reset();
+    }
 }
-
-/**
- * @constructor
- * @extends {WebInspector.SimpleWorkspaceProvider}
- */
-WebInspector.DebuggerWorkspaceProvider = function(workspace)
-{
-    WebInspector.SimpleWorkspaceProvider.call(this);
-    this._workspace = workspace;
-}
-
-WebInspector.DebuggerWorkspaceProvider.prototype = {
-    /**
-     * @param {string} url
-     * @param {WebInspector.ContentProvider} contentProvider
-     * @param {boolean} isEditable
-     * @return {WebInspector.UISourceCode}
-     */
-    addDebuggerFile: function(url, contentProvider, isEditable)
-    {
-        var uri = "debugger:" + WebInspector.SimpleWorkspaceProvider.uriForURL(url);
-        var uniqueURI = this.uniqueURI(uri);
-        var uiSourceCode = this._workspace.addTemporaryUISourceCode(uniqueURI, url, contentProvider, isEditable);
-        // FIXME: this is a temporary hack to be removed once DefaultScriptMapping uiSourceCode become part of the workspace.
-        this._contentProviders[uniqueURI] = uiSourceCode;
-        return uiSourceCode;
-    },
-
-    __proto__: WebInspector.SimpleWorkspaceProvider.prototype
-}
-
-/**
- * @type {?WebInspector.DebuggerWorkspaceProvider}
- */
-WebInspector.debuggerWorkspaceProvider = null;

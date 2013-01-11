@@ -48,7 +48,7 @@ function test()
     function step3()
     {
         var panel = WebInspector.showPanel("scripts");
-        var uiSourceCodes = WebInspector.workspace.uiSourceCodes();
+        var uiSourceCodes = WebInspector.workspace.project(WebInspector.projectNames.Network).uiSourceCodes();
         var urls = uiSourceCodes.map(function(uiSourceCode) { return uiSourceCode.parsedURL.lastPathComponent; });
         urls.sort();
 

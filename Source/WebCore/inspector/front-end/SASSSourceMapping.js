@@ -32,7 +32,7 @@
  * @constructor
  * @implements {WebInspector.SourceMapping}
  * @param {WebInspector.Workspace} workspace
- * @param {WebInspector.NetworkWorkspaceProvider} networkWorkspaceProvider
+ * @param {WebInspector.SimpleWorkspaceProvider} networkWorkspaceProvider
  */
 WebInspector.SASSSourceMapping = function(workspace, networkWorkspaceProvider)
 {
@@ -157,8 +157,7 @@ WebInspector.SASSSourceMapping.prototype = {
         if (!uiSourceCode) {
             var content = InspectorFrontendHost.loadResourceSynchronously(url);
             var contentProvider = new WebInspector.StaticContentProvider(WebInspector.resourceTypes.Stylesheet, content, "text/x-scss");
-            this._networkWorkspaceProvider.addNetworkFile(url, contentProvider, true);
-            uiSourceCode = this._workspace.uiSourceCodeForURL(url);
+            uiSourceCode = this._networkWorkspaceProvider.addFileForURL(url, contentProvider, true);
             WebInspector.cssModel.setSourceMapping(rawURL, this);
         }
         var rawLocationString = rawURL + ":" + (rawLine + 1);  // Next line after mapping metainfo

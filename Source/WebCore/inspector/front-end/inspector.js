@@ -431,13 +431,13 @@ WebInspector._doLoadedDoneWithCapabilities = function()
     this.openAnchorLocationRegistry.registerHandler(autoselectPanel, function() { return false; });
 
     this.workspace = new WebInspector.Workspace();
-    this.networkWorkspaceProvider = new WebInspector.NetworkWorkspaceProvider();
-    this.workspace.addProject("network", this.networkWorkspaceProvider);
+    this.networkWorkspaceProvider = new WebInspector.SimpleWorkspaceProvider(this.workspace);
+    this.workspace.addProject(WebInspector.projectNames.Network, this.networkWorkspaceProvider);
     this.workspaceController = new WebInspector.WorkspaceController(this.workspace);
 
     this.breakpointManager = new WebInspector.BreakpointManager(WebInspector.settings.breakpoints, this.debuggerModel, this.workspace);
 
-    this.scriptSnippetModel = new WebInspector.ScriptSnippetModel(this.workspace, this.networkWorkspaceProvider);
+    this.scriptSnippetModel = new WebInspector.ScriptSnippetModel(this.workspace);
     new WebInspector.DebuggerScriptMapping(this.workspace, this.networkWorkspaceProvider);
     this.liveEditSupport = new WebInspector.LiveEditSupport(this.workspace);
     this.styleContentBinding = new WebInspector.StyleContentBinding(this.cssModel);

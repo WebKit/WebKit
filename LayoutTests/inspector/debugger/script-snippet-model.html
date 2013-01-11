@@ -14,34 +14,25 @@ function test()
     // FIXME: Remove once snippets are taken out of experiments.
     WebInspector.experimentsSettings.snippetsSupport = {};
     WebInspector.experimentsSettings.snippetsSupport.isEnabled = function() { return true; };
-    var networkWorkspaceProvider = new WebInspector.NetworkWorkspaceProvider();
     var workspace = new WebInspector.Workspace();
-    workspace.addProject("network", networkWorkspaceProvider);
+    var snippetWorkspaceProvider = new WebInspector.SimpleWorkspaceProvider(workspace);
+    workspace.addProject(WebInspector.projectNames.Snippets, snippetWorkspaceProvider);
     var workspaceController = new WebInspector.WorkspaceController(workspace);
-    WebInspector.scriptSnippetModel = new WebInspector.ScriptSnippetModel(workspace, networkWorkspaceProvider);
-    
+    WebInspector.scriptSnippetModel = new WebInspector.ScriptSnippetModel(workspace, snippetWorkspaceProvider);
     InspectorTest.runDebuggerTestSuite([
-        function testWorkspaceReset(next)
+        function testCreateAndRename(next)
         {
             resetSnippetsSettings();
             var uiSourceCode = WebInspector.scriptSnippetModel.createScriptSnippet();
             var snippetName = "TestSnippet" + Math.random();
             InspectorTest.addResult("Snippet created.");
             WebInspector.scriptSnippetModel.renameScriptSnippet(uiSourceCode, snippetName);
-            workspace.addEventListener(WebInspector.UISourceCodeProvider.Events.UISourceCodeAdded, uiSourceCodeAdded);
-            InspectorTest.addResult("Resetting snippet script mapping.");
-            workspaceController._mainFrameNavigated();
-
-            function uiSourceCodeAdded(event)
-            {
-                InspectorTest.assertEquals(1, workspace.uiSourceCodes().length, "Only one snippet uiSourceCode should be present after project navigation.");
-                var uiSourceCode = event.data;
-                if (uiSourceCode.url.indexOf(snippetName) === -1)
-                    return;
-                InspectorTest.addResult("Snippet uiSourceCode was recreated.");
-                workspace.removeEventListener(WebInspector.UISourceCodeProvider.Events.UISourceCodeAdded, uiSourceCodeAdded);
-                next();
-            }
+            InspectorTest.assertEquals(1, workspace.uiSourceCodes().length, "Only one snippet uiSourceCode should be present.");
+            var uiSourceCode = workspace.uiSourceCodes()[0];
+            if (uiSourceCode.url.indexOf(snippetName) === -1)
+                return;
+            InspectorTest.addResult("Snippet uiSourceCode url is correct.");
+            next();
         },
 
         function testEvaluate(next)

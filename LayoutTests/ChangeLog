@@ -1,3 +1,32 @@
+2013-01-11  Vsevolod Vlasov  <vsevik@chromium.org>
+
+        Web Inspector: Workspace should support several projects and should not have temporary UISourceCodes.
+        https://bugs.webkit.org/show_bug.cgi?id=105856
+
+        Reviewed by Pavel Feldman.
+
+        * http/tests/inspector-enabled/dynamic-scripts.html:
+        * http/tests/inspector/compiler-script-mapping.html:
+        * http/tests/inspector/network/network-request-revision-content.html:
+        * http/tests/inspector/workspace-test.js:
+        (initialize_WorkspaceTest.InspectorTest.createWorkspace):
+        (initialize_WorkspaceTest.InspectorTest.addMockUISourceCodeToWorkspace):
+        * inspector/debugger/breakpoint-manager.html:
+        * inspector/debugger/dynamic-scripts.html:
+        * inspector/debugger/live-edit-breakpoints-expected.txt:
+        * inspector/debugger/live-edit-breakpoints.html:
+        * inspector/debugger/resource-script-mapping-expected.txt:
+        * inspector/debugger/resource-script-mapping.html:
+        * inspector/debugger/resources/edit-me-breakpoints.js: Added.
+        (f):
+        * inspector/debugger/script-snippet-model-expected.txt:
+        * inspector/debugger/script-snippet-model.html:
+        * inspector/debugger/scripts-panel-expected.txt:
+        * inspector/debugger/scripts-panel.html:
+        * inspector/debugger/watch-expressions-preserve-expansion-expected.txt:
+        * inspector/debugger/watch-expressions-preserve-expansion.html:
+        * inspector/uisourcecode-revisions.html:
+
 2013-01-11  Sudarsana Nagineni  <sudarsana.nagineni@intel.com>
 
         Unreviewed EFL gardening.

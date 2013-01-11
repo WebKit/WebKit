@@ -1,6 +1,7 @@
 Test that watch expressions expansion state is restored after update.
 
 Bug 99304
+Debugger was enabled.
 Watch expressions added.
 expanded globalObject [object Object]
 expanded foo [object Object]
@@ -26,4 +27,5 @@ Watch expressions after page reload:
       __proto__: Object
     __proto__: Object
   windowAlias: Window
+Debugger was disabled.
 

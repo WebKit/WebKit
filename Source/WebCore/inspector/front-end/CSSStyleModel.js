@@ -41,6 +41,7 @@ WebInspector.CSSStyleModel = function()
     WebInspector.domAgent.addEventListener(WebInspector.DOMAgent.Events.UndoRedoRequested, this._undoRedoRequested, this);
     WebInspector.domAgent.addEventListener(WebInspector.DOMAgent.Events.UndoRedoCompleted, this._undoRedoCompleted, this);
     this._resourceBinding = new WebInspector.CSSStyleModelResourceBinding();
+    WebInspector.resourceTreeModel.addEventListener(WebInspector.ResourceTreeModel.EventTypes.InspectedURLChanged, this._inspectedURLChanged, this);
     this._namedFlowCollections = {};
     WebInspector.domAgent.addEventListener(WebInspector.DOMAgent.Events.DocumentUpdated, this._resetNamedFlowCollections, this);
     InspectorBackend.registerCSSDispatcher(new WebInspector.CSSDispatcher(this));
@@ -479,6 +480,15 @@ WebInspector.CSSStyleModel.prototype = {
     },
 
     /**
+     * @param {WebInspector.Event} event
+     */
+    _inspectedURLChanged: function(event)
+    {
+        this._resetSourceMappings();
+        this._resourceBinding._reset();
+    },
+
+    /**
      * @param {string} url
      * @param {WebInspector.SourceMapping} sourceMapping
      */
@@ -488,7 +498,7 @@ WebInspector.CSSStyleModel.prototype = {
         this._updateLocations();
     },
 
-    resetSourceMappings: function()
+    _resetSourceMappings: function()
     {
         this._sourceMappings = {};
     },
@@ -1173,9 +1183,7 @@ WebInspector.CSSStyleSheet.prototype = {
  */
 WebInspector.CSSStyleModelResourceBinding = function()
 {
-    this._frameAndURLToStyleSheetId = {};
-    this._styleSheetIdToHeader = {};
-    WebInspector.resourceTreeModel.addEventListener(WebInspector.ResourceTreeModel.EventTypes.InspectedURLChanged, this._inspectedURLChanged, this);
+    this._reset();
 }
 
 WebInspector.CSSStyleModelResourceBinding.prototype = {
@@ -1233,16 +1241,6 @@ WebInspector.CSSStyleModelResourceBinding.prototype = {
     _styleSheetIdForResource: function(resource)
     {
         return this._frameAndURLToStyleSheetId[resource.frameId + ":" + resource.url];
-    },
-
-    /**
-     * @param {WebInspector.Event} event
-     */
-    _inspectedURLChanged: function(event)
-    {
-        // Main frame navigation - clear history.
-        this._frameAndURLToStyleSheetId = {};
-        this._styleSheetIdToHeader = {};
     },
 
     /**
@@ -1348,6 +1346,13 @@ WebInspector.CSSStyleModelResourceBinding.prototype = {
             fakeURL += "/";
         fakeURL += "inspector-stylesheet";
         return fakeURL;
+    },
+
+    _reset: function()
+    {
+        // Main frame navigation - clear history.
+        this._frameAndURLToStyleSheetId = {};
+        this._styleSheetIdToHeader = {};
     }
 }
 

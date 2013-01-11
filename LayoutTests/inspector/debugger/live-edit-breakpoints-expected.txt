@@ -7,26 +7,26 @@ Running: testEditUndo
 Setting breakpoint:
     TextEditor.addBreakpoint(lineNumber = 2, disabled = false)
     Dumping breakpoint storage
-        edit-me.js:2, enabled:true
+        edit-me-breakpoints.js:2, enabled:true
     Dumping breakpoint locations
-        url: edit-me.js, lineNumber: 2, isTemporary: false
+        url: edit-me-breakpoints.js, lineNumber: 2, project name: network
 Editing source:
     TextEditor.removeBreakpoint(lineNumber = 2)
     TextEditor.addBreakpoint(lineNumber = 2, disabled = true)
     OriginalTextEditor.addBreakpoint(lineNumber = 2, disabled = false)
     Dumping breakpoint storage
-        edit-me.js:2, enabled:true
+        edit-me-breakpoints.js:2, enabled:true
     Dumping breakpoint locations
-        url: edit-me.js, lineNumber: 2, isTemporary: true
+        url: edit-me-breakpoints.js, lineNumber: 2, project name: debugger
 Undoing source editing:
     OriginalTextEditor.removeBreakpoint(lineNumber = 2)
     TextEditor.removeBreakpoint(lineNumber = 2)
     TextEditor.removeBreakpoint(lineNumber = 2)
     TextEditor.addBreakpoint(lineNumber = 2, disabled = false)
     Dumping breakpoint storage
-        edit-me.js:2, enabled:true
+        edit-me-breakpoints.js:2, enabled:true
     Dumping breakpoint locations
-        url: edit-me.js, lineNumber: 2, isTemporary: false
+        url: edit-me-breakpoints.js, lineNumber: 2, project name: network
 Finally removing breakpoint:
     TextEditor.removeBreakpoint(lineNumber = 2)
     Dumping breakpoint storage
@@ -36,26 +36,26 @@ Running: testEditCommit
 Setting breakpoint:
     TextEditor.addBreakpoint(lineNumber = 2, disabled = false)
     Dumping breakpoint storage
-        edit-me.js:2, enabled:true
+        edit-me-breakpoints.js:2, enabled:true
     Dumping breakpoint locations
-        url: edit-me.js, lineNumber: 2, isTemporary: false
+        url: edit-me-breakpoints.js, lineNumber: 2, project name: network
 Editing source:
     OriginalTextEditor.addBreakpoint(lineNumber = 2, disabled = false)
     TextEditor.removeBreakpoint(lineNumber = 2)
     TextEditor.addBreakpoint(lineNumber = 2, disabled = true)
     Dumping breakpoint storage
-        edit-me.js:2, enabled:true
+        edit-me-breakpoints.js:2, enabled:true
     Dumping breakpoint locations
-        url: edit-me.js, lineNumber: 2, isTemporary: true
+        url: edit-me-breakpoints.js, lineNumber: 2, project name: debugger
 Committing edited source:
     OriginalTextEditor.removeBreakpoint(lineNumber = 2)
     TextEditor.removeBreakpoint(lineNumber = 2)
     TextEditor.removeBreakpoint(lineNumber = 2)
     TextEditor.addBreakpoint(lineNumber = 2, disabled = false)
     Dumping breakpoint storage
-        edit-me.js:2, enabled:true
+        edit-me-breakpoints.js:2, enabled:true
     Dumping breakpoint locations
-        url: edit-me.js, lineNumber: 2, isTemporary: false
+        url: edit-me-breakpoints.js, lineNumber: 2, project name: network
 Finally removing breakpoint:
     TextEditor.removeBreakpoint(lineNumber = 2)
     Dumping breakpoint storage
@@ -65,36 +65,36 @@ Running: testEditCommitFailEditCommit
 Setting breakpoint:
     TextEditor.addBreakpoint(lineNumber = 2, disabled = false)
     Dumping breakpoint storage
-        edit-me.js:2, enabled:true
+        edit-me-breakpoints.js:2, enabled:true
     Dumping breakpoint locations
-        url: edit-me.js, lineNumber: 2, isTemporary: false
+        url: edit-me-breakpoints.js, lineNumber: 2, project name: network
 Editing source:
     OriginalTextEditor.addBreakpoint(lineNumber = 2, disabled = false)
     TextEditor.removeBreakpoint(lineNumber = 2)
     TextEditor.addBreakpoint(lineNumber = 2, disabled = true)
     Dumping breakpoint storage
-        edit-me.js:2, enabled:true
+        edit-me-breakpoints.js:2, enabled:true
     Dumping breakpoint locations
-        url: edit-me.js, lineNumber: 2, isTemporary: true
+        url: edit-me-breakpoints.js, lineNumber: 2, project name: debugger
 Committing edited source:
     Dumping breakpoint storage
-        edit-me.js:2, enabled:true
+        edit-me-breakpoints.js:2, enabled:true
     Dumping breakpoint locations
-        url: edit-me.js, lineNumber: 2, isTemporary: true
+        url: edit-me-breakpoints.js, lineNumber: 2, project name: debugger
 Editing source again so that live edit could succeed:
     Dumping breakpoint storage
-        edit-me.js:2, enabled:true
+        edit-me-breakpoints.js:2, enabled:true
     Dumping breakpoint locations
-        url: edit-me.js, lineNumber: 2, isTemporary: true
+        url: edit-me-breakpoints.js, lineNumber: 2, project name: debugger
 Committing edited source again:
     OriginalTextEditor.removeBreakpoint(lineNumber = 2)
     TextEditor.removeBreakpoint(lineNumber = 2)
     TextEditor.removeBreakpoint(lineNumber = 2)
     TextEditor.addBreakpoint(lineNumber = 2, disabled = false)
     Dumping breakpoint storage
-        edit-me.js:2, enabled:true
+        edit-me-breakpoints.js:2, enabled:true
     Dumping breakpoint locations
-        url: edit-me.js, lineNumber: 2, isTemporary: false
+        url: edit-me-breakpoints.js, lineNumber: 2, project name: network
 Finally removing breakpoint:
     TextEditor.removeBreakpoint(lineNumber = 2)
     Dumping breakpoint storage
@@ -104,36 +104,36 @@ Running: testEditCommitFailUndoCommit
 Setting breakpoint:
     TextEditor.addBreakpoint(lineNumber = 2, disabled = false)
     Dumping breakpoint storage
-        edit-me.js:2, enabled:true
+        edit-me-breakpoints.js:2, enabled:true
     Dumping breakpoint locations
-        url: edit-me.js, lineNumber: 2, isTemporary: false
+        url: edit-me-breakpoints.js, lineNumber: 2, project name: network
 Editing source:
     OriginalTextEditor.addBreakpoint(lineNumber = 2, disabled = false)
     TextEditor.removeBreakpoint(lineNumber = 2)
     TextEditor.addBreakpoint(lineNumber = 2, disabled = true)
     Dumping breakpoint storage
-        edit-me.js:2, enabled:true
+        edit-me-breakpoints.js:2, enabled:true
     Dumping breakpoint locations
-        url: edit-me.js, lineNumber: 2, isTemporary: true
+        url: edit-me-breakpoints.js, lineNumber: 2, project name: debugger
 Committing edited source:
     Dumping breakpoint storage
-        edit-me.js:2, enabled:true
+        edit-me-breakpoints.js:2, enabled:true
     Dumping breakpoint locations
-        url: edit-me.js, lineNumber: 2, isTemporary: true
+        url: edit-me-breakpoints.js, lineNumber: 2, project name: debugger
 Undoing source editing:
     Dumping breakpoint storage
-        edit-me.js:2, enabled:true
+        edit-me-breakpoints.js:2, enabled:true
     Dumping breakpoint locations
-        url: edit-me.js, lineNumber: 2, isTemporary: true
+        url: edit-me-breakpoints.js, lineNumber: 2, project name: debugger
 Committing edited source again:
     OriginalTextEditor.removeBreakpoint(lineNumber = 2)
     TextEditor.removeBreakpoint(lineNumber = 2)
     TextEditor.removeBreakpoint(lineNumber = 2)
     TextEditor.addBreakpoint(lineNumber = 2, disabled = false)
     Dumping breakpoint storage
-        edit-me.js:2, enabled:true
+        edit-me-breakpoints.js:2, enabled:true
     Dumping breakpoint locations
-        url: edit-me.js, lineNumber: 2, isTemporary: false
+        url: edit-me-breakpoints.js, lineNumber: 2, project name: network
 Finally removing breakpoint:
     TextEditor.removeBreakpoint(lineNumber = 2)
     Dumping breakpoint storage
@@ -148,15 +148,15 @@ Setting breakpoint:
     TextEditor.addBreakpoint(lineNumber = 2, disabled = false)
     Dumping breakpoint storage
     Dumping breakpoint locations
-        url: , lineNumber: 2, isTemporary: true
+        url: , lineNumber: 2, project name: debugger
 Editing source:
     Dumping breakpoint storage
     Dumping breakpoint locations
-        url: , lineNumber: 2, isTemporary: true
+        url: , lineNumber: 2, project name: debugger
 Undoing source editing:
     Dumping breakpoint storage
     Dumping breakpoint locations
-        url: , lineNumber: 2, isTemporary: true
+        url: , lineNumber: 2, project name: debugger
 Finally removing breakpoint:
     TextEditor.removeBreakpoint(lineNumber = 2)
     Dumping breakpoint storage
@@ -171,15 +171,15 @@ Setting breakpoint:
     TextEditor.addBreakpoint(lineNumber = 2, disabled = false)
     Dumping breakpoint storage
     Dumping breakpoint locations
-        url: , lineNumber: 2, isTemporary: true
+        url: , lineNumber: 2, project name: debugger
 Editing source:
     Dumping breakpoint storage
     Dumping breakpoint locations
-        url: , lineNumber: 2, isTemporary: true
+        url: , lineNumber: 2, project name: debugger
 Undoing source editing:
     Dumping breakpoint storage
     Dumping breakpoint locations
-        url: , lineNumber: 2, isTemporary: true
+        url: , lineNumber: 2, project name: debugger
 Finally removing breakpoint:
     TextEditor.removeBreakpoint(lineNumber = 2)
     Dumping breakpoint storage

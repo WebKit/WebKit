@@ -128,7 +128,6 @@ function test()
         _addTemporaryUISourceCode: function(url)
         {
             var uiSourceCode = new WebInspector.UISourceCode(this, "temporary:" + url, url, WebInspector.resourceTypes.Script, false);
-            uiSourceCode.isTemporary = true;
             uiSourceCode.setSourceMapping(defaultMapping);
             uiSourceCodes[url] = uiSourceCode;
             temporaryUISourceCodes[url] = uiSourceCode;
@@ -151,7 +150,13 @@ function test()
         reset: function()
         {
             InspectorTest.addResult("  Resetting workspace.");
-            this.dispatchEventToListeners(WebInspector.Workspace.Events.ProjectWillReset);
+            var self = this;
+            var mockProject = {};
+            mockProject.uiSourceCodes = function()
+            {
+                return self.uiSourceCodes();
+            }
+            this.dispatchEventToListeners(WebInspector.Workspace.Events.ProjectWillReset, mockProject);
         }
     }
     WorkspaceMock.prototype.__proto__ = WebInspector.Object.prototype;

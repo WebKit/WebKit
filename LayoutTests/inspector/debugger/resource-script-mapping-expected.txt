@@ -5,7 +5,7 @@ Running: testScriptWithPendingResource
 Adding script for pending request.
 UISourceCode: foo.js
 UISourceCode is editable: false
-UISourceCode is content script: false
+UISourceCode is content script: true
 Mime type: text/javascript
 UISourceCode content: <content script source>
 Adding uiSourceCode for finished resource.

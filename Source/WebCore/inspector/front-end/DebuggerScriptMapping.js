@@ -31,7 +31,7 @@
 /**
  * @constructor
  * @param {WebInspector.Workspace} workspace
- * @param {WebInspector.NetworkWorkspaceProvider} networkWorkspaceProvider
+ * @param {WebInspector.SimpleWorkspaceProvider} networkWorkspaceProvider
  */
 WebInspector.DebuggerScriptMapping = function(workspace, networkWorkspaceProvider)
 {

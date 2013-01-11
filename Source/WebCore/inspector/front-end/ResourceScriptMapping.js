@@ -36,10 +36,10 @@
 WebInspector.ResourceScriptMapping = function(workspace)
 {
     this._workspace = workspace;
-    this._workspace.addEventListener(WebInspector.Workspace.Events.ProjectWillReset, this._reset, this);
     this._workspace.addEventListener(WebInspector.UISourceCodeProvider.Events.UISourceCodeAdded, this._uiSourceCodeAddedToWorkspace, this);
 
-    this._reset();
+    WebInspector.debuggerModel.addEventListener(WebInspector.DebuggerModel.Events.GlobalObjectCleared, this._debuggerReset, this);
+    this._debuggerReset();
 }
 
 WebInspector.ResourceScriptMapping.prototype = {
@@ -93,7 +93,8 @@ WebInspector.ResourceScriptMapping.prototype = {
     _uiSourceCodeAddedToWorkspace: function(event)
     {
         var uiSourceCode = /** @type {WebInspector.UISourceCode} */ (event.data);
-        console.assert(!!uiSourceCode.url);
+        if (!uiSourceCode.url)
+            return;
 
         var scripts = this._scriptsForUISourceCode(uiSourceCode);
         if (!scripts.length)
@@ -175,7 +176,7 @@ WebInspector.ResourceScriptMapping.prototype = {
         uiSourceCode.setSourceMapping(this);
     },
 
-    _reset: function()
+    _debuggerReset: function()
     {
         /** @type {!Object.<string, !Array.<!WebInspector.UISourceCode>>} */
         this._inlineScriptsForSourceURL = {};

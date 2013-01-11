@@ -19,6 +19,9 @@ function test()
     var resource;
     function step2(event)
     {
+        var eventUISourceCode = event.data;
+        if (eventUISourceCode.url.indexOf("style.css") == -1)
+            return;
         var request = WebInspector.panel("network").requests[WebInspector.panel("network").requests.length - 1];
         uiSourceCode = WebInspector.workspace.uiSourceCodeForURL(request.url);
         if (!uiSourceCode)

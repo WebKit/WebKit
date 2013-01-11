@@ -33,8 +33,9 @@
  * @implements {WebInspector.WorkspaceProvider}
  * @extends {WebInspector.Object}
  */
-WebInspector.SimpleWorkspaceProvider = function()
+WebInspector.SimpleWorkspaceProvider = function(workspace)
 {
+    this._workspace = workspace;
     /** @type {Object.<string, WebInspector.ContentProvider>} */
     this._contentProviders = {};
 }
@@ -96,6 +97,20 @@ WebInspector.SimpleWorkspaceProvider.prototype = {
         var fileDescriptor = new WebInspector.FileDescriptor(uri, url, contentProvider.contentType(), isEditable, isContentScript, isSnippet);
         this._contentProviders[uri] = contentProvider;
         this.dispatchEventToListeners(WebInspector.WorkspaceProvider.Events.FileAdded, fileDescriptor);
+        return this._workspace.uiSourceCodeForURI(uri);
+    },
+
+    /**
+     * @param {string} url
+     * @param {WebInspector.ContentProvider} contentProvider
+     * @param {boolean} isEditable
+     * @param {boolean=} isContentScript
+     * @param {boolean=} isSnippet
+     */
+    addFileForURL: function(url, contentProvider, isEditable, isContentScript, isSnippet)
+    {
+        var uri = WebInspector.SimpleWorkspaceProvider.uriForURL(url);
+        return this.addFile(uri, url, contentProvider, isEditable, isContentScript, isSnippet);
     },
 
     /**
@@ -122,6 +137,7 @@ WebInspector.SimpleWorkspaceProvider.prototype = {
     reset: function()
     {
         this._contentProviders = {};
+        this.dispatchEventToListeners(WebInspector.WorkspaceProvider.Events.Reset, null);
     },
     
     __proto__: WebInspector.Object.prototype

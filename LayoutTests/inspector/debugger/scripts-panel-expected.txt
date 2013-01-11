@@ -21,7 +21,7 @@ Dumping ScriptsNavigator 'Scripts' tab:
   bar.js
 Dumping ScriptsNavigator 'Content scripts' tab:
 
-Running: testTemporaryUISourceCodeAddedAndRemoved
+Running: testDebuggerUISourceCodeAddedAndRemoved
 Dumping ScriptsNavigator 'Scripts' tab:
   foo.js
 Dumping ScriptsNavigator 'Content scripts' tab:

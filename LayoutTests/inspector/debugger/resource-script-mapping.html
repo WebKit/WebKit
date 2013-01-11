@@ -29,7 +29,7 @@ function test()
             {
                 InspectorTest.addResult("Adding script for pending request.");
                 script = InspectorTest.createScriptMock(url, 0, 0, true, "<content script source>");
-                InspectorTest.waitForWorkspaceTemporaryUISourceCodeAddedEvent(originalUISourceCodeAdded);
+                InspectorTest.waitForWorkspaceUISourceCodeAddedEvent(originalUISourceCodeAdded);
                 defaultScriptMapping.addScript(script);
                 resourceScriptMapping.addScript(script);
                 
@@ -49,7 +49,6 @@ function test()
             function step2()
             {
                 InspectorTest.addResult("Adding uiSourceCode for finished resource.");
-                InspectorTest.waitForWorkspaceTemporaryUISourceCodeRemovedEvent(function() { });
                 InspectorTest.waitForWorkspaceUISourceCodeAddedEvent(uiSourceCodeAdded);
                 InspectorTest.addMockUISourceCodeToWorkspace(url, WebInspector.resourceTypes.Script, "<content script resource content>");
 
@@ -110,7 +109,7 @@ function test()
             {
                 InspectorTest.addResult("Adding first script for pending request.");
                 script1 = InspectorTest.createScriptMock(url, 0, 10, false, "<script source 1>");
-                InspectorTest.waitForWorkspaceTemporaryUISourceCodeAddedEvent(originalUISourceCodeAdded);
+                InspectorTest.waitForWorkspaceUISourceCodeAddedEvent(originalUISourceCodeAdded);
                 defaultScriptMapping.addScript(script1);
                 resourceScriptMapping.addScript(script1);
                 
@@ -130,7 +129,7 @@ function test()
             {
                 InspectorTest.addResult("Adding second script for pending request.");
                 script2 = InspectorTest.createScriptMock(url, 0, 45, false, "<script source 2>");
-                InspectorTest.waitForWorkspaceTemporaryUISourceCodeAddedEvent(originalUISourceCodeAdded);
+                InspectorTest.waitForWorkspaceUISourceCodeAddedEvent(originalUISourceCodeAdded);
                 defaultScriptMapping.addScript(script2);
                 resourceScriptMapping.addScript(script2);
 

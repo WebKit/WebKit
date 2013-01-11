@@ -686,6 +686,7 @@ Map._lastObjectIdentifier = 0;
 Map.prototype = {
     /**
      * @param {Object} key
+     * @param {*=} value
      */
     put: function(key, value)
     {

@@ -36,7 +36,7 @@
 WebInspector.StylesSourceMapping = function(workspace)
 {
     this._workspace = workspace;
-    this._workspace.addEventListener(WebInspector.Workspace.Events.ProjectWillReset, this._reset, this);
+    this._workspace.addEventListener(WebInspector.Workspace.Events.ProjectWillReset, this._projectWillReset, this);
     this._workspace.addEventListener(WebInspector.UISourceCodeProvider.Events.UISourceCodeAdded, this._uiSourceCodeAddedToWorkspace, this);
 
     this._uiSourceCodeForURL = {};
@@ -90,10 +90,12 @@ WebInspector.StylesSourceMapping.prototype = {
         WebInspector.cssModel.setSourceMapping(uiSourceCode.url, this);
     },
 
-    _reset: function()
+    _projectWillReset: function(event)
     {
-        this._uiSourceCodeForURL = {};
-        WebInspector.cssModel.resetSourceMappings();
+        var project = event.data;
+        var uiSourceCodes = project.uiSourceCodes();
+        for (var i = 0; i < uiSourceCodes; ++i)
+            delete this._uiSourceCodeForURL[uiSourceCodes[i].url];
     }
 }
 

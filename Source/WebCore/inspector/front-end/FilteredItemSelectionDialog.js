@@ -609,14 +609,19 @@ WebInspector.JavaScriptOutlineDialog.prototype = {
  * @constructor
  * @implements {WebInspector.SelectionDialogContentProvider}
  * @param {WebInspector.ScriptsPanel} panel
- * @param {WebInspector.UISourceCodeProvider} uiSourceCodeProvider
  */
-WebInspector.OpenResourceDialog = function(panel, uiSourceCodeProvider)
+WebInspector.OpenResourceDialog = function(panel)
 {
     WebInspector.SelectionDialogContentProvider.call(this);
     this._panel = panel;
 
-    this._uiSourceCodes = uiSourceCodeProvider.uiSourceCodes();
+    var projects = WebInspector.workspace.projects();
+    this._uiSourceCodes = [];
+    for (var i = 0; i < projects.length; ++i) {
+        if (projects[i].isServiceProject())
+            continue;
+        this._uiSourceCodes = this._uiSourceCodes.concat(projects[i].uiSourceCodes());
+    }
 
     function filterOutEmptyURLs(uiSourceCode)
     {
@@ -714,14 +719,13 @@ WebInspector.OpenResourceDialog.prototype = {
 
 /**
  * @param {WebInspector.ScriptsPanel} panel
- * @param {WebInspector.UISourceCodeProvider} uiSourceCodeProvider
  * @param {Element} relativeToElement
  */
-WebInspector.OpenResourceDialog.show = function(panel, uiSourceCodeProvider, relativeToElement)
+WebInspector.OpenResourceDialog.show = function(panel, relativeToElement)
 {
     if (WebInspector.Dialog.currentInstance())
         return;
 
-    var filteredItemSelectionDialog = new WebInspector.FilteredItemSelectionDialog(new WebInspector.OpenResourceDialog(panel, uiSourceCodeProvider));
+    var filteredItemSelectionDialog = new WebInspector.FilteredItemSelectionDialog(new WebInspector.OpenResourceDialog(panel));
     WebInspector.Dialog.show(relativeToElement, filteredItemSelectionDialog);
 }

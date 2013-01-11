@@ -164,6 +164,14 @@ WebInspector.UISourceCode.prototype = {
     },
 
     /**
+     * @return {WebInspector.Project}
+     */
+    project: function()
+    {
+        return this._workspace.projectForUISourceCode(this);
+    },
+
+    /**
      * @param {function(?string,boolean,string)} callback
      */
     requestContent: function(callback)
@@ -606,8 +614,6 @@ WebInspector.UISourceCodeProvider = function()
 
 WebInspector.UISourceCodeProvider.Events = {
     UISourceCodeAdded: "UISourceCodeAdded",
-    TemporaryUISourceCodeAdded: "TemporaryUISourceCodeAdded",
-    TemporaryUISourceCodeRemoved: "TemporaryUISourceCodeRemoved",
     UISourceCodeRemoved: "UISourceCodeRemoved"
 }
 
