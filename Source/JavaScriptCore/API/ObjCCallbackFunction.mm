@@ -549,7 +549,7 @@ static bool blockSignatureContainsClass()
     static bool containsClass = ^{
         id block = ^(NSString *string){ return string; };
         return _Block_has_signature(block) && strstr(_Block_signature(block), "NSString");
-    };
+    }();
     return containsClass;
 }
 

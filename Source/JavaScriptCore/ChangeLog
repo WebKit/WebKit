@@ -1,3 +1,15 @@
+2013-01-11  Mark Hahnenberg  <mhahnenberg@apple.com>
+
+        testapi is failing with a block-related error in the Objc API
+        https://bugs.webkit.org/show_bug.cgi?id=106055
+
+        Reviewed by Filip Pizlo.
+
+        Same bug as in testapi.mm. We need to actually call the static block, rather than casting the block to a bool.
+
+        * API/ObjCCallbackFunction.mm:
+        (blockSignatureContainsClass):
+
 2013-01-11  Filip Pizlo  <fpizlo@apple.com>
 
         Add a run-time option to print bytecode at DFG compile time
