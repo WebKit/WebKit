@@ -42,7 +42,8 @@ namespace WebCore {
 
 static const int autoStartPlugInSizeThresholdWidth = 1;
 static const int autoStartPlugInSizeThresholdHeight = 1;
-static const int startLabelPadding = 0;
+static const int startLabelPadding = 10; // Label should be 10px from edge of box.
+static const int startLabelInset = 20; // But the label is inset from its box also. FIXME: This will be removed when we go to a ShadowDOM approach.
 static const double showLabelAfterMouseOverDelay = 1;
 static const double showLabelAutomaticallyDelay = 3;
 
@@ -178,7 +179,11 @@ void RenderSnapshottedPlugIn::paintLabel(PaintInfo& paintInfo, const LayoutPoint
     if (!labelImage)
         return;
 
-    paintInfo.context->drawImage(labelImage, ColorSpaceDeviceRGB, roundedIntPoint(paintOffset + labelRect.location()), labelImage->rect());
+    // Remember that the labelRect includes the label inset, so we need to adjust for it.
+    paintInfo.context->drawImage(labelImage, ColorSpaceDeviceRGB,
+                                 IntRect(roundedIntPoint(paintOffset + labelRect.location() - IntSize(startLabelInset, startLabelInset)),
+                                         roundedIntSize(labelRect.size() + IntSize(2 * startLabelInset, 2 * startLabelInset))),
+                                 labelImage->rect());
 }
 
 void RenderSnapshottedPlugIn::repaintLabel()
@@ -259,7 +264,14 @@ LayoutRect RenderSnapshottedPlugIn::tryToFitStartLabel(LabelSize size, const Lay
     if (!labelImage)
         return LayoutRect();
 
-    LayoutSize labelSize = labelImage->size();
+    // Assume that the labelImage has been provided to match our device scale.
+    float scaleFactor = 1;
+    if (document()->page())
+        scaleFactor = document()->page()->deviceScaleFactor();
+    IntSize labelImageSize = labelImage->size();
+    labelImageSize.scale(1 / (scaleFactor ? scaleFactor : 1));
+
+    LayoutSize labelSize = labelImageSize - LayoutSize(2 * startLabelInset, 2 * startLabelInset);
     LayoutRect candidateRect(contentBox.maxXMinYCorner() + LayoutSize(-startLabelPadding, startLabelPadding) + LayoutSize(-labelSize.width(), 0), labelSize);
     // The minimum allowed content box size is the label image placed in the center of the box, surrounded by startLabelPadding.
     if (candidateRect.x() < startLabelPadding || candidateRect.maxY() > contentBox.height() - startLabelPadding)
