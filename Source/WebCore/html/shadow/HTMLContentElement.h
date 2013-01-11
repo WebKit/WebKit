@@ -46,11 +46,13 @@ public:
     virtual ~HTMLContentElement();
 
     void setSelect(const AtomicString&);
-    virtual const AtomicString& select() const;
-    virtual bool isSelectValid();
-    virtual const CSSSelectorList& selectorList();
+    const AtomicString& select() const;
+
+    virtual MatchType matchTypeFor(Node*) OVERRIDE;
+    virtual const CSSSelectorList& selectorList() OVERRIDE;
     virtual Type insertionPointType() const OVERRIDE { return ContentInsertionPoint; }
     virtual bool canAffectSelector() const OVERRIDE { return true; }
+    virtual bool isSelectValid();
 
 protected:
     HTMLContentElement(const QualifiedName&, Document*);
@@ -80,7 +82,7 @@ inline const CSSSelectorList& HTMLContentElement::selectorList()
 inline bool isHTMLContentElement(const Node* node)
 {
     ASSERT(node);
-    return node->hasTagName(HTMLContentElement::contentTagName(node->document()));
+    return node->isInsertionPoint() && toInsertionPoint(node)->insertionPointType() == InsertionPoint::ContentInsertionPoint;
 }
 
 inline HTMLContentElement* toHTMLContentElement(Node* node)

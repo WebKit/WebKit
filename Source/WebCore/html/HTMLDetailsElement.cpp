@@ -71,8 +71,13 @@ public:
 private:
     DetailsSummaryElement(Document* document)
         : HTMLContentElement(HTMLNames::webkitShadowContentTag, document)
+    { }
+
+    virtual MatchType matchTypeFor(Node* node) OVERRIDE
     {
-        setSelect(summaryQuerySelector());
+        if (node->isElementNode() && node == node->parentNode()->querySelector(summaryQuerySelector(), ASSERT_NO_EXCEPTION))
+            return AlwaysMatches;
+        return NeverMatches;
     }
 };
 

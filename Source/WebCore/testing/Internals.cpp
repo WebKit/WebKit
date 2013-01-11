@@ -310,7 +310,7 @@ bool Internals::isValidContentSelect(Element* insertionPoint, ExceptionCode& ec)
         return false;
     }
 
-    return toInsertionPoint(insertionPoint)->isSelectValid();
+    return isHTMLContentElement(insertionPoint) && toHTMLContentElement(insertionPoint)->isSelectValid();
 }
 
 Node* Internals::treeScopeRootNode(Node* node, ExceptionCode& ec)

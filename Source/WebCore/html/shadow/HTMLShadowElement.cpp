@@ -54,17 +54,6 @@ HTMLShadowElement::~HTMLShadowElement()
 {
 }
 
-const AtomicString& HTMLShadowElement::select() const
-{
-     return nullAtom;
-}
-
-const CSSSelectorList& HTMLShadowElement::emptySelectorList()
-{
-    DEFINE_STATIC_LOCAL(CSSSelectorList, selectorList, (CSSSelectorList()));
-    return selectorList;
-}
-
 ShadowRoot* HTMLShadowElement::olderShadowRoot()
 {
     if (!treeScope()->rootNode()->isShadowRoot())

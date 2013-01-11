@@ -191,6 +191,12 @@ bool InsertionPoint::contains(const Node* node) const
     return m_distribution.contains(const_cast<Node*>(node)) || (node->isShadowRoot() && ScopeContentDistribution::assignedTo(toShadowRoot(node)) == this);
 }
 
+const CSSSelectorList& InsertionPoint::emptySelectorList()
+{
+    DEFINE_STATIC_LOCAL(CSSSelectorList, selectorList, (CSSSelectorList()));
+    return selectorList;
+}
+
 InsertionPoint* resolveReprojection(const Node* projectedNode)
 {
     InsertionPoint* insertionPoint = 0;

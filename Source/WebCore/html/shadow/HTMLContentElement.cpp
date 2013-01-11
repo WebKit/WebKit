@@ -72,6 +72,15 @@ HTMLContentElement::~HTMLContentElement()
 {
 }
 
+InsertionPoint::MatchType HTMLContentElement::matchTypeFor(Node*)
+{
+    if (select().isNull() || select().isEmpty())
+        return AlwaysMatches;
+    if (!isSelectValid())
+        return NeverMatches;
+    return HasToMatchSelector;
+}
+
 const AtomicString& HTMLContentElement::select() const
 {
     return getAttribute(selectAttr);

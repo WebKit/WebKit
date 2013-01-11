@@ -48,6 +48,12 @@ public:
         ContentInsertionPoint
     };
 
+    enum MatchType {
+        AlwaysMatches,
+        NeverMatches,
+        HasToMatchSelector
+    };
+
     virtual ~InsertionPoint();
 
     bool hasDistribution() const { return !m_distribution.isEmpty(); }
@@ -58,9 +64,8 @@ public:
 
     PassRefPtr<NodeList> getDistributedNodes() const;
 
-    virtual const AtomicString& select() const = 0;
-    virtual bool isSelectValid() = 0;
-    virtual const CSSSelectorList& selectorList() = 0;
+    virtual MatchType matchTypeFor(Node*) { return AlwaysMatches; }
+    virtual const CSSSelectorList& selectorList() { return emptySelectorList(); }
     virtual Type insertionPointType() const = 0;
     virtual bool canAffectSelector() const { return false; }
 
@@ -80,6 +85,8 @@ public:
     Node* last() const { return m_distribution.isEmpty() ? 0 : m_distribution.last().get(); }
     Node* nextTo(const Node* node) const { return m_distribution.nextTo(node); }
     Node* previousTo(const Node* node) const { return m_distribution.previousTo(node); }
+
+    static const CSSSelectorList& emptySelectorList();
 
 protected:
     InsertionPoint(const QualifiedName&, Document*);
