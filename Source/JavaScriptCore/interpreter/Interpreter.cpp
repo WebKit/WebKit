@@ -952,7 +952,7 @@ failedJSONP:
     // object.
 
     // Compile source to bytecode if necessary:
-    if (JSObject* error = program->initalizeGlobalProperties(globalData, callFrame, scope))
+    if (JSObject* error = program->initializeGlobalProperties(globalData, callFrame, scope))
         return checkedReturn(throwError(callFrame, error));
 
     if (JSObject* error = program->compile(callFrame, scope))

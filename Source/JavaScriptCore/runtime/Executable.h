@@ -500,7 +500,7 @@ namespace JSC {
         }
 
 
-        JSObject* initalizeGlobalProperties(JSGlobalData&, CallFrame*, JSScope*);
+        JSObject* initializeGlobalProperties(JSGlobalData&, CallFrame*, JSScope*);
 
         static void destroy(JSCell*);
 

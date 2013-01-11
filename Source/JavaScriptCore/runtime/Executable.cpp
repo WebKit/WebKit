@@ -372,7 +372,7 @@ int ProgramExecutable::addGlobalVar(JSGlobalObject* globalObject, const Identifi
     return index;
 }
 
-JSObject* ProgramExecutable::initalizeGlobalProperties(JSGlobalData& globalData, CallFrame* callFrame, JSScope* scope)
+JSObject* ProgramExecutable::initializeGlobalProperties(JSGlobalData& globalData, CallFrame* callFrame, JSScope* scope)
 {
     ASSERT(scope);
     JSGlobalObject* globalObject = scope->globalObject();

@@ -1,3 +1,16 @@
+2013-01-11  Pratik Solanki  <psolanki@apple.com>
+
+        Fix function name typo ProgramExecutable::initalizeGlobalProperties()
+        https://bugs.webkit.org/show_bug.cgi?id=106701
+
+        Reviewed by Geoffrey Garen.
+
+        * interpreter/Interpreter.cpp:
+        (JSC::Interpreter::execute):
+        * runtime/Executable.cpp:
+        (JSC::ProgramExecutable::initializeGlobalProperties):
+        * runtime/Executable.h:
+
 2013-01-11  Mark Hahnenberg  <mhahnenberg@apple.com>
 
         testapi is failing with a block-related error in the Objc API
