@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+  <style>
+    .fixed {
+      position: fixed;
+      width: 10px;
+      height: 10px;
+      top: -100px;
+    }
+  </style>
+
+  <script type="text/javascript">
+    if (window.testRunner && window.internals) {
+      testRunner.dumpAsText();
+      internals.settings.setAcceleratedCompositingForFixedPositionEnabled(true);
+      internals.settings.setFixedPositionCreatesStackingContext(true);
+
+      addEventListener("load", function() {
+        var fixed = document.createElement("div");
+        document.body.appendChild(fixed);
+        document.body.offsetHeight;
+        fixed.className = "fixed";
+        var mainThreadScrollingReasons = internals.mainThreadScrollingReasons(document);
+        document.getElementById("result").innerText = !mainThreadScrollingReasons ? "PASS" : "FAIL: " + mainThreadScrollingReasons;
+        testRunner.notifyDone();
+      }, false);
+    }
+  </script>
+</head>
+
+<body>
+  <pre id="result"></pre>
+</body>
+</html>
+

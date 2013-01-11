@@ -137,7 +137,7 @@ public:
         ForcedOnMainThread = 1 << 0,
         HasSlowRepaintObjects = 1 << 1,
         HasViewportConstrainedObjectsWithoutSupportingFixedLayers = 1 << 2,
-        HasNonLayerFixedObjects = 1 << 3,
+        HasNonLayerViewportConstrainedObjects = 1 << 3,
         IsImageDocument = 1 << 4
     };
 
@@ -174,7 +174,7 @@ private:
     virtual void recomputeWheelEventHandlerCountForFrameView(FrameView*) { }
     virtual void setShouldUpdateScrollLayerPositionOnMainThread(MainThreadScrollingReasons) { }
 
-    virtual bool hasVisibleSlowRepaintFixedObjects(FrameView*) const;
+    virtual bool hasVisibleSlowRepaintViewportConstrainedObjects(FrameView*) const;
     void updateShouldUpdateScrollLayerPositionOnMainThread();
     
     void updateMainFrameScrollPositionTimerFired(Timer<ScrollingCoordinator>*);

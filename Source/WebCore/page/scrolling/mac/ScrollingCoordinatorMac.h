@@ -89,7 +89,7 @@ private:
     virtual void recomputeWheelEventHandlerCountForFrameView(FrameView*);
     virtual void setShouldUpdateScrollLayerPositionOnMainThread(MainThreadScrollingReasons);
 
-    virtual bool hasVisibleSlowRepaintFixedObjects(FrameView*) const { return false; }
+    virtual bool hasVisibleSlowRepaintViewportConstrainedObjects(FrameView*) const { return false; }
 
     void ensureRootStateNodeForFrameView(FrameView*);
     ScrollingStateNode* stateNodeForID(ScrollingNodeID);

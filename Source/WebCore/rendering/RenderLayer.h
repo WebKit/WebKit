@@ -738,6 +738,17 @@ public:
 
     virtual void reportMemoryUsage(MemoryObjectInfo*) const OVERRIDE;
 
+#if USE(ACCELERATED_COMPOSITING)
+    enum ViewportConstrainedNotCompositedReason {
+        NoNotCompositedReason,
+        NotCompositedForBoundsOutOfView,
+        NotCompositedForNonViewContainer,
+    };
+
+    void setViewportConstrainedNotCompositedReason(ViewportConstrainedNotCompositedReason reason) { m_viewportConstrainedNotCompositedReason = reason; }
+    ViewportConstrainedNotCompositedReason viewportConstrainedNotCompositedReason() const { return static_cast<ViewportConstrainedNotCompositedReason>(m_viewportConstrainedNotCompositedReason); }
+#endif
+
 private:
     void updateZOrderLists();
     void rebuildZOrderLists();
@@ -1047,6 +1058,7 @@ protected:
 #if USE(ACCELERATED_COMPOSITING)
     bool m_hasCompositingDescendant : 1; // In the z-order tree.
     unsigned m_indirectCompositingReason : 3;
+    unsigned m_viewportConstrainedNotCompositedReason : 2;
 #endif
 
     bool m_containsDirtyOverlayScrollbars : 1;

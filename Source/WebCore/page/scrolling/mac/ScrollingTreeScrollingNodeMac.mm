@@ -365,7 +365,7 @@ static void logThreadedScrollingMode(unsigned mainThreadScrollingReasons)
             reasonsDescription.append("slow-repaint objects,");
         if (mainThreadScrollingReasons & ScrollingCoordinator::HasViewportConstrainedObjectsWithoutSupportingFixedLayers)
             reasonsDescription.append("viewport-constrained objects,");
-        if (mainThreadScrollingReasons & ScrollingCoordinator::HasNonLayerFixedObjects)
+        if (mainThreadScrollingReasons & ScrollingCoordinator::HasNonLayerViewportConstrainedObjects)
             reasonsDescription.append("non-layer viewport-constrained objects,");
         if (mainThreadScrollingReasons & ScrollingCoordinator::IsImageDocument)
             reasonsDescription.append("image document,");

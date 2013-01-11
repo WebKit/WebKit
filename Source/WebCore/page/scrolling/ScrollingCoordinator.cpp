@@ -395,7 +395,7 @@ void ScrollingCoordinator::handleWheelEventPhase(PlatformWheelEventPhase phase)
 }
 #endif
 
-bool ScrollingCoordinator::hasVisibleSlowRepaintFixedObjects(FrameView* frameView) const
+bool ScrollingCoordinator::hasVisibleSlowRepaintViewportConstrainedObjects(FrameView* frameView) const
 {
     const FrameView::ViewportConstrainedObjectSet* viewportConstrainedObjects = frameView->viewportConstrainedObjects();
     if (!viewportConstrainedObjects)
@@ -408,7 +408,7 @@ bool ScrollingCoordinator::hasVisibleSlowRepaintFixedObjects(FrameView* frameVie
             return true;
         RenderLayer* layer = toRenderBoxModelObject(viewportConstrainedObject)->layer();
         // Any explicit reason that a fixed position element is not composited shouldn't cause slow scrolling.
-        if (!layer->isComposited() && layer->compositor()->fixedPositionLayerNotCompositedReason(layer) == RenderLayerCompositor::NoReason)
+        if (!layer->isComposited() && layer->viewportConstrainedNotCompositedReason() == RenderLayer::NoNotCompositedReason)
             return true;
     }
     return false;
@@ -429,8 +429,8 @@ MainThreadScrollingReasons ScrollingCoordinator::mainThreadScrollingReasons() co
         mainThreadScrollingReasons |= HasSlowRepaintObjects;
     if (!supportsFixedPositionLayers() && frameView->hasViewportConstrainedObjects())
         mainThreadScrollingReasons |= HasViewportConstrainedObjectsWithoutSupportingFixedLayers;
-    if (supportsFixedPositionLayers() && hasVisibleSlowRepaintFixedObjects(frameView))
-        mainThreadScrollingReasons |= HasNonLayerFixedObjects;
+    if (supportsFixedPositionLayers() && hasVisibleSlowRepaintViewportConstrainedObjects(frameView))
+        mainThreadScrollingReasons |= HasNonLayerViewportConstrainedObjects;
     if (m_page->mainFrame()->document()->isImageDocument())
         mainThreadScrollingReasons |= IsImageDocument;
 
@@ -472,8 +472,8 @@ String ScrollingCoordinator::mainThreadScrollingReasonsAsText(MainThreadScrollin
         stringBuilder.append("Has slow repaint objects, ");
     if (reasons & ScrollingCoordinator::HasViewportConstrainedObjectsWithoutSupportingFixedLayers)
         stringBuilder.append("Has viewport constrained objects without supporting fixed layers, ");
-    if (reasons & ScrollingCoordinator::HasNonLayerFixedObjects)
-        stringBuilder.append("Has non-layer fixed objects, ");
+    if (reasons & ScrollingCoordinator::HasNonLayerViewportConstrainedObjects)
+        stringBuilder.append("Has non-layer viewport-constrained objects, ");
     if (reasons & ScrollingCoordinator::IsImageDocument)
         stringBuilder.append("Is image document, ");
 

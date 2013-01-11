@@ -459,7 +459,6 @@ void RenderLayerCompositor::updateCompositingLayers(CompositingUpdateType update
         CompositingState compState(updateRoot, m_compositingConsultsOverlap);
         bool layersChanged = false;
         bool saw3DTransform = false;
-        m_fixedPositionLayerNotCompositedReasonMap.clear();
         if (m_compositingConsultsOverlap) {
             OverlapMap overlapTestRequestMap;
             computeCompositingRequirements(0, updateRoot, &overlapTestRequestMap, compState, layersChanged, saw3DTransform);
@@ -555,8 +554,9 @@ void RenderLayerCompositor::logLayerInfo(const RenderLayer* layer, int depth)
 bool RenderLayerCompositor::updateBacking(RenderLayer* layer, CompositingChangeRepaint shouldRepaint)
 {
     bool layerChanged = false;
+    RenderLayer::ViewportConstrainedNotCompositedReason viewportConstrainedNotCompositedReason = RenderLayer::NoNotCompositedReason;
 
-    if (needsToBeComposited(layer)) {
+    if (needsToBeComposited(layer, &viewportConstrainedNotCompositedReason)) {
         enableCompositingMode();
         
         if (!layer->backing()) {
@@ -628,10 +628,17 @@ bool RenderLayerCompositor::updateBacking(RenderLayer* layer, CompositingChangeR
     if (layerChanged)
         layer->clearClipRectsIncludingDescendants(PaintingClipRects);
 
-    // If a fixed position layer gained/lost a backing, the scrolling coordinator needs to recalculate whether it can do fast scrolling.
-    if (layerChanged && layer->renderer()->style()->position() == FixedPosition) {
-        if (ScrollingCoordinator* scrollingCoordinator = this->scrollingCoordinator())
-            scrollingCoordinator->frameViewFixedObjectsDidChange(m_renderView->frameView());
+    // If a fixed position layer gained/lost a backing or the reason not compositing it changed,
+    // the scrolling coordinator needs to recalculate whether it can do fast scrolling.
+    if (layer->renderer()->style()->position() == FixedPosition) {
+        if (layer->viewportConstrainedNotCompositedReason() != viewportConstrainedNotCompositedReason) {
+            layer->setViewportConstrainedNotCompositedReason(viewportConstrainedNotCompositedReason);
+            layerChanged = true;
+        }
+        if (layerChanged) {
+            if (ScrollingCoordinator* scrollingCoordinator = this->scrollingCoordinator())
+                scrollingCoordinator->frameViewFixedObjectsDidChange(m_renderView->frameView());
+        }
     }
     
     if (layer->backing())
@@ -852,8 +859,7 @@ void RenderLayerCompositor::computeCompositingRequirements(RenderLayer* ancestor
     CompositingState childState(compositingState);
     childState.m_subtreeIsCompositing = false;
 
-    FixedPositionLayerNotCompositedReason fixedPositionLayerNotCompositedReason = NoReason;
-    bool willBeComposited = needsToBeComposited(layer, &fixedPositionLayerNotCompositedReason);
+    bool willBeComposited = needsToBeComposited(layer);
     if (willBeComposited) {
         // Tell the parent it has compositing descendants.
         compositingState.m_subtreeIsCompositing = true;
@@ -862,8 +868,7 @@ void RenderLayerCompositor::computeCompositingRequirements(RenderLayer* ancestor
 
         if (overlapMap)
             overlapMap->pushCompositingContainer();
-    } else if (fixedPositionLayerNotCompositedReason != NoReason)
-        m_fixedPositionLayerNotCompositedReasonMap.set(layer, fixedPositionLayerNotCompositedReason);
+    }
 
 #if !ASSERT_DISABLED
     LayerListMutationDetector mutationChecker(layer);
@@ -1571,18 +1576,18 @@ bool RenderLayerCompositor::shouldPropagateCompositingToEnclosingFrame() const
     return false;
 }
 
-bool RenderLayerCompositor::needsToBeComposited(const RenderLayer* layer, FixedPositionLayerNotCompositedReason* fixedPositionLayerNotCompositedReason) const
+bool RenderLayerCompositor::needsToBeComposited(const RenderLayer* layer, RenderLayer::ViewportConstrainedNotCompositedReason* viewportConstrainedNotCompositedReason) const
 {
     if (!canBeComposited(layer))
         return false;
 
-    return requiresCompositingLayer(layer, fixedPositionLayerNotCompositedReason) || layer->mustCompositeForIndirectReasons() || (inCompositingMode() && layer->isRootLayer());
+    return requiresCompositingLayer(layer, viewportConstrainedNotCompositedReason) || layer->mustCompositeForIndirectReasons() || (inCompositingMode() && layer->isRootLayer());
 }
 
 // Note: this specifies whether the RL needs a compositing layer for intrinsic reasons.
 // Use needsToBeComposited() to determine if a RL actually needs a compositing layer.
 // static
-bool RenderLayerCompositor::requiresCompositingLayer(const RenderLayer* layer, FixedPositionLayerNotCompositedReason* fixedPositionLayerNotCompositedReason) const
+bool RenderLayerCompositor::requiresCompositingLayer(const RenderLayer* layer, RenderLayer::ViewportConstrainedNotCompositedReason* viewportConstrainedNotCompositedReason) const
 {
     RenderObject* renderer = layer->renderer();
     // The compositing state of a reflection should match that of its reflected layer.
@@ -1600,7 +1605,7 @@ bool RenderLayerCompositor::requiresCompositingLayer(const RenderLayer* layer, F
         || clipsCompositingDescendants(layer)
         || requiresCompositingForAnimation(renderer)
         || requiresCompositingForFilters(renderer)
-        || requiresCompositingForPosition(renderer, layer, fixedPositionLayerNotCompositedReason)
+        || requiresCompositingForPosition(renderer, layer, viewportConstrainedNotCompositedReason)
         || requiresCompositingForOverflowScrolling(layer)
         || requiresCompositingForBlending(renderer);
 }
@@ -1688,7 +1693,7 @@ const char* RenderLayerCompositor::reasonForCompositing(const RenderLayer* layer
         return "filters";
 
     if (requiresCompositingForPosition(renderer, layer))
-        return "position: fixed";
+        return renderer->style()->position() == FixedPosition ? "position: fixed" : "position: sticky";
 
     if (requiresCompositingForOverflowScrolling(layer))
         return "-webkit-overflow-scrolling: touch";
@@ -1984,7 +1989,7 @@ bool RenderLayerCompositor::requiresCompositingForBlending(RenderObject* rendere
 #endif
 }
 
-bool RenderLayerCompositor::requiresCompositingForPosition(RenderObject* renderer, const RenderLayer* layer, FixedPositionLayerNotCompositedReason* fixedPositionLayerNotCompositedReason) const
+bool RenderLayerCompositor::requiresCompositingForPosition(RenderObject* renderer, const RenderLayer* layer, RenderLayer::ViewportConstrainedNotCompositedReason* viewportConstrainedNotCompositedReason) const
 {
     // position:fixed elements that create their own stacking context (e.g. have an explicit z-index,
     // opacity, transform) can get their own composited layer. A stacking context is required otherwise
@@ -2016,11 +2021,11 @@ bool RenderLayerCompositor::requiresCompositingForPosition(RenderObject* rendere
         return false;
     }
 
-    // Don't promote fixed position elements that are descendants of transformed elements.
-    // They will stay fixed wrt the transformed element rather than the enclosing frame.
+    // Don't promote fixed position elements that are descendants of a non-view container, e.g. transformed elements.
+    // They will stay fixed wrt the container rather than the enclosing frame.
     if (container != m_renderView) {
-        if (fixedPositionLayerNotCompositedReason)
-            *fixedPositionLayerNotCompositedReason = DescendantOfTransformedElement;
+        if (viewportConstrainedNotCompositedReason)
+            *viewportConstrainedNotCompositedReason = RenderLayer::NotCompositedForNonViewContainer;
         return false;
     }
 
@@ -2031,8 +2036,8 @@ bool RenderLayerCompositor::requiresCompositingForPosition(RenderObject* rendere
             | RenderLayer::ExcludeHiddenDescendants | RenderLayer::DontConstrainForMask | RenderLayer::IncludeCompositedDescendants);
         layerBounds.scale(frameView->frame()->frameScaleFactor());
         if (!viewBounds.intersects(enclosingIntRect(layerBounds))) {
-            if (fixedPositionLayerNotCompositedReason)
-                *fixedPositionLayerNotCompositedReason = LayerBoundsOutOfView;
+            if (viewportConstrainedNotCompositedReason)
+                *viewportConstrainedNotCompositedReason = RenderLayer::NotCompositedForBoundsOutOfView;
             return false;
         }
     }
@@ -2826,7 +2831,6 @@ void RenderLayerCompositor::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo
     info.addMember(m_contentShadowLayer);
 #endif
     info.addMember(m_layerUpdater);
-    info.addMember(m_fixedPositionLayerNotCompositedReasonMap);
 }
 
 } // namespace WebCore

@@ -1,3 +1,17 @@
+2013-01-11  Xianzhu Wang  <wangxianzhu@chromium.org>
+
+        RenderLayerCompositor should let ScrollingCoordinator update main thread scrolling reasons after change of layers
+        https://bugs.webkit.org/show_bug.cgi?id=105652
+
+        Reviewed by Simon Fraser.
+
+        Tests to ensure mainThreadScrollingReasons are correctly updated after a fixed element is dynamically inserted into the DOM tree.
+
+        * compositing/layer-creation/fixed-position-in-view-dynamic-expected.txt: Added.
+        * compositing/layer-creation/fixed-position-in-view-dynamic.html: Added.
+        * compositing/layer-creation/fixed-position-out-of-view-dynamic-expected.txt: Added.
+        * compositing/layer-creation/fixed-position-out-of-view-dynamic.html: Added.
+
 2013-01-11  Kenneth Russell  <kbr@google.com>
 
         [Chromium] WebGL typed array constructor crashes on exception

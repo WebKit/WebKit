@@ -166,6 +166,7 @@ RenderLayer::RenderLayer(RenderLayerModelObject* renderer)
 #if USE(ACCELERATED_COMPOSITING)
     , m_hasCompositingDescendant(false)
     , m_indirectCompositingReason(NoIndirectCompositingReason)
+    , m_viewportConstrainedNotCompositedReason(NoNotCompositedReason)
 #endif
     , m_containsDirtyOverlayScrollbars(false)
     , m_updatingMarqueePosition(false)
@@ -3425,8 +3426,8 @@ void RenderLayer::paintLayer(GraphicsContext* context, const LayerPaintingInfo& 
             // If this RenderLayer should paint into its backing, that will be done via RenderLayerBacking::paintIntoLayer().
             return;
         }
-    } else if (compositor()->fixedPositionLayerNotCompositedReason(this) == RenderLayerCompositor::LayerBoundsOutOfView) {
-        // Don't paint out-of-view fixed position layers (when doing prepainting) because they will never be visible
+    } else if (viewportConstrainedNotCompositedReason() == NotCompositedForBoundsOutOfView) {
+        // Don't paint out-of-view viewport constrained layers (when doing prepainting) because they will never be visible
         // unless their position or viewport size is changed.
         return;
     }

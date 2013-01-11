@@ -229,14 +229,6 @@ public:
     void reportMemoryUsage(MemoryObjectInfo*) const;
     void setShouldReevaluateCompositingAfterLayout() { m_reevaluateCompositingAfterLayout = true; }
 
-    enum FixedPositionLayerNotCompositedReason {
-        NoReason,
-        LayerBoundsOutOfView,
-        DescendantOfTransformedElement,
-    };
-
-    FixedPositionLayerNotCompositedReason fixedPositionLayerNotCompositedReason(const RenderLayer* layer) const { return m_fixedPositionLayerNotCompositedReasonMap.get(layer); }
-
 private:
     class OverlapMap;
 
@@ -251,9 +243,9 @@ private:
     virtual void flushLayers(GraphicsLayerUpdater*) OVERRIDE;
     
     // Whether the given RL needs a compositing layer.
-    bool needsToBeComposited(const RenderLayer*, FixedPositionLayerNotCompositedReason* = 0) const;
+    bool needsToBeComposited(const RenderLayer*, RenderLayer::ViewportConstrainedNotCompositedReason* = 0) const;
     // Whether the layer has an intrinsic need for compositing layer.
-    bool requiresCompositingLayer(const RenderLayer*, FixedPositionLayerNotCompositedReason* = 0) const;
+    bool requiresCompositingLayer(const RenderLayer*, RenderLayer::ViewportConstrainedNotCompositedReason* = 0) const;
     // Whether the layer could ever be composited.
     bool canBeComposited(const RenderLayer*) const;
 
@@ -318,7 +310,7 @@ private:
     bool requiresCompositingForFilters(RenderObject*) const;
     bool requiresCompositingForBlending(RenderObject* renderer) const;
     bool requiresCompositingForScrollableFrame() const;
-    bool requiresCompositingForPosition(RenderObject*, const RenderLayer*, FixedPositionLayerNotCompositedReason* = 0) const;
+    bool requiresCompositingForPosition(RenderObject*, const RenderLayer*, RenderLayer::ViewportConstrainedNotCompositedReason* = 0) const;
     bool requiresCompositingForOverflowScrolling(const RenderLayer*) const;
     bool requiresCompositingForIndirectReason(RenderObject*, bool hasCompositedDescendants, bool has3DTransformedDescendants, RenderLayer::IndirectCompositingReason&) const;
 
@@ -399,9 +391,6 @@ private:
     double m_obligatoryBackingStoreBytes;
     double m_secondaryBackingStoreBytes;
 #endif
-
-    typedef HashMap<const RenderLayer*, FixedPositionLayerNotCompositedReason> FixedPositionLayerNotCompositedReasonMap;
-    FixedPositionLayerNotCompositedReasonMap m_fixedPositionLayerNotCompositedReasonMap;
 };
 
 
