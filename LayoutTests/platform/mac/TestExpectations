@@ -430,6 +430,7 @@ fast/regions/style-scoped-in-flow.html
 fast/dom/shadow
 editing/shadow
 inspector/elements/update-shadowdom.html
+accessibility/corresponding-control-deleted-crash.html
 
 # ENABLE(TEMPLATE_ELEMENT) is disabled.
 fast/dom/HTMLTemplateElement
