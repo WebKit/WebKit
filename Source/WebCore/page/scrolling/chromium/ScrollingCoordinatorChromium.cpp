@@ -106,7 +106,7 @@ ScrollingCoordinatorChromium::~ScrollingCoordinatorChromium()
     delete m_private;
 }
 
-void ScrollingCoordinatorChromium::frameViewLayoutUpdated(FrameView*)
+void ScrollingCoordinatorChromium::frameViewLayoutUpdated(FrameView* frameView)
 {
     ASSERT(m_page);
 
@@ -121,6 +121,8 @@ void ScrollingCoordinatorChromium::frameViewLayoutUpdated(FrameView*)
     computeAbsoluteTouchEventTargetRects(m_page->mainFrame()->document(), touchEventTargetRects);
     setTouchEventTargetRects(touchEventTargetRects);
 #endif
+    if (m_private->scrollLayer())
+        m_private->scrollLayer()->setBounds(frameView->contentsSize());
 }
 
 void ScrollingCoordinatorChromium::touchEventTargetRectsDidChange(const Document* document)
