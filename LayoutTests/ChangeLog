@@ -1,3 +1,18 @@
+2013-01-10  Matt Falkenhagen  <falken@chromium.org>
+
+        Elements must be reattached when inserted/removed from top layer
+        https://bugs.webkit.org/show_bug.cgi?id=105489
+
+        Reviewed by Julien Chaffraix.
+
+        * fast/dom/HTMLDialogElement/removed-element-is-removed-from-top-layer-expected.html: Added.
+        * fast/dom/HTMLDialogElement/removed-element-is-removed-from-top-layer.html: Added.
+        This tests that a top layer element removed from the document does not reappear in the top layer if readded.
+        This test actually would pass before this patch, but just by good fortune (see bug).
+        * fast/dom/HTMLDialogElement/top-layer-stacking-correct-order-remove-readd-expected.html: Added.
+        * fast/dom/HTMLDialogElement/top-layer-stacking-correct-order-remove-readd.html: Added.
+        This tests that top layer ordering is correct after removing and readding an element to the top layer.
+
 2013-01-10  Shinya Kawanaka  <shinyak@chromium.org>
 
         When a selected node in nested ShadowDOM is deleted, selection have wrong range.
