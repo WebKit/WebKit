@@ -1899,16 +1899,24 @@ void Document::updateStyleForAllDocuments()
 void Document::updateLayout()
 {
     ASSERT(isMainThread());
+
+    FrameView* frameView = view();
+    if (frameView && frameView->isInLayout()) {
+        // View layout should not be re-entrant.
+        ASSERT_NOT_REACHED();
+        return;
+    }
+
     if (Element* oe = ownerElement())
         oe->document()->updateLayout();
 
     updateStyleIfNeeded();
 
     StackStats::LayoutCheckPoint layoutCheckPoint;
+
     // Only do a layout if changes have occurred that make it necessary.      
-    FrameView* v = view();
-    if (v && renderer() && (v->layoutPending() || renderer()->needsLayout()))
-        v->layout();
+    if (frameView && renderer() && (frameView->layoutPending() || renderer()->needsLayout()))
+        frameView->layout();
 }
 
 // FIXME: This is a bad idea and needs to be removed eventually.
