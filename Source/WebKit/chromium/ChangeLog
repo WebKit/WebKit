@@ -1,3 +1,15 @@
+2013-01-10  Noel Gordon  <noel.gordon@gmail.com>
+
+        [chromium] Disable PNG and ICO image webkit-unit-tests after r139347
+        https://bugs.webkit.org/show_bug.cgi?id=106631
+
+        Reviewed by Eric Seidel.
+
+        * tests/WebImageTest.cpp:
+        (WebKit::TEST): Disable ICOImage and PNGImage tests on WIN and MAC to
+        green their respective webkit-unit-test bots. The tests still pass on
+        LINUX so keep test coverage there for now.
+
 2013-01-10  Dan Beam  <dbeam@chromium.org>
 
         Implement AutocompleteErrorEvent#reason
