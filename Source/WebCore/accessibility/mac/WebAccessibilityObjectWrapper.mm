@@ -2481,8 +2481,13 @@ static NSString* roleValueToNSString(AccessibilityRole value)
         }
     }
 
-    if ([attributeName isEqualToString:NSAccessibilityDisclosureLevelAttribute])
-        return [NSNumber numberWithInt:m_object->hierarchicalLevel()];
+    if ([attributeName isEqualToString:NSAccessibilityDisclosureLevelAttribute]) {
+        // Convert from 1-based level (from aria-level spec) to 0-based level (Mac)
+        int level = m_object->hierarchicalLevel();
+        if (level > 0)
+            level -= 1;
+        return [NSNumber numberWithInt:level];
+    }
     if ([attributeName isEqualToString:NSAccessibilityDisclosingAttribute])
         return [NSNumber numberWithBool:m_object->isExpanded()];
     

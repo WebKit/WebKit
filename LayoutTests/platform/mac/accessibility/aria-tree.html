@@ -26,6 +26,18 @@
             </ul>
         </span>
     </li>
+
+    <li id="treeitem4" role="treeitem" aria-expanded="true">
+        <span>
+            <span class="expander"></span>
+            Vegetables
+            </span>
+            <ul role="group">
+                <div id="treeitem5" role="treeitem"><span>Carrots</span></div>
+                <div id="treeitem6" role="treeitem"><span>Broccoli</span></div>
+            </ul>
+        </span>
+    </li>
 </ul>
 
 <p id="description"></p>
@@ -45,14 +57,14 @@
           shouldBe("tree.role", "'AXRole: AXOutline'");
           var canSetRows = tree.isAttributeSettable('AXSelectedRows');
           shouldBe("canSetRows", "true");
-          shouldBe("tree.childrenCount", "5");
+          shouldBe("tree.childrenCount", "8");
       
           // Test tree item attributes.
           var treeitem1 = tree.childAtIndex(0);
           shouldBe("treeitem1.role", "'AXRole: AXRow'");
           shouldBe("treeitem1.subrole", "'AXSubrole: AXOutlineRow'");
           shouldBe("treeitem1.isExpanded", "true");
-          shouldBe("treeitem1.hierarchicalLevel", "1");
+          shouldBe("treeitem1.hierarchicalLevel", "0");
           var canSetDisclosing = treeitem1.isAttributeSettable('AXDisclosing');
           shouldBe("canSetDisclosing", "true");
           
@@ -61,7 +73,7 @@
           shouldBe("treeitem2.role", "'AXRole: AXRow'");
           shouldBe("treeitem2.subrole", "'AXSubrole: AXOutlineRow'");
           shouldBe("treeitem2.isExpanded", "false");
-          shouldBe("treeitem2.hierarchicalLevel", "2");
+          shouldBe("treeitem2.hierarchicalLevel", "1");
           shouldBe("treeitem2.disclosedByRow().isEqual(treeitem1)", "true");
           canSetDisclosing = treeitem2.isAttributeSettable('AXDisclosing');
           shouldBe("canSetDisclosing", "false");
@@ -85,6 +97,17 @@
           // Test that the tree reports the right selected row (treeitem3)
           var selectedRow = tree.selectedRowAtIndex(0);
           shouldBe("selectedRow.isEqual(treeitem3)", "true");          
+
+          // Test that hierarchicalLevel can be computed automatically, also,
+          // and that it's consistent with the ARIA level.
+          var treeitem4 = accessibilityController.accessibleElementById("treeitem4");
+          shouldBe("treeitem4.hierarchicalLevel", "0");
+
+          var treeitem5 = accessibilityController.accessibleElementById("treeitem5");
+          shouldBe("treeitem5.hierarchicalLevel", "1");
+
+          var treeitem6 = accessibilityController.accessibleElementById("treeitem6");
+          shouldBe("treeitem6.hierarchicalLevel", "1");
     }
 
 </script>

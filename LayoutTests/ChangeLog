@@ -1,3 +1,19 @@
+2013-01-11  Dominic Mazzoni  <dmazzoni@google.com>
+
+        AX: Computed hierarchical level is not consistent with aria-level
+        https://bugs.webkit.org/show_bug.cgi?id=106638
+
+        Reviewed by Chris Fleizach.
+
+        Extend aria-tree.html to check the hierarchicalLevel automatically
+        computed when aria-level is not provided. Make sure they're consistent.
+        Now, the mac disclosureLevel will be one less than the web aria-level.
+
+        * platform/mac/accessibility/aria-tree-expected.txt:
+        * platform/mac/accessibility/aria-tree.html:
+        * platform/mac/accessibility/aria-treegrid-expected.txt:
+        * platform/mac/accessibility/aria-treegrid.html:
+
 2013-01-11  Stephen Chenney  <schenney@chromium.org>
 
         [Chromium] Test Expectations update after Skia flag changes.

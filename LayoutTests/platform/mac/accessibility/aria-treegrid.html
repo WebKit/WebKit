@@ -39,15 +39,15 @@
           shouldBe("treegrid.isAttributeSupported('AXSelectedRows')", "true");
           shouldBe("treegrid.selectedRowAtIndex(0).isEqual(selectedRow)", "true");
           shouldBe("selectedRow.isExpanded", "false");
-          shouldBe("selectedRow.hierarchicalLevel", "1");
+          shouldBe("selectedRow.hierarchicalLevel", "0");
 
           var secondRow = treegrid.childAtIndex(1);
           shouldBe("secondRow.isExpanded", "true");
-          shouldBe("secondRow.hierarchicalLevel", "1");
+          shouldBe("secondRow.hierarchicalLevel", "0");
 
           var thirdRow = treegrid.childAtIndex(2);
           shouldBe("thirdRow.isExpanded", "true");
-          shouldBe("thirdRow.hierarchicalLevel", "2");
+          shouldBe("thirdRow.hierarchicalLevel", "1");
 
           // Make sure that the row disclosure works correctly.
           shouldBe("thirdRow.disclosedByRow().isEqual(secondRow)", "true");

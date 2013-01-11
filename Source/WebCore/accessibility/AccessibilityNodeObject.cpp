@@ -1418,9 +1418,9 @@ unsigned AccessibilityNodeObject::hierarchicalLevel() const
     if (roleValue() != TreeItemRole)
         return 0;
     
-    // Hierarchy leveling starts at 0.
+    // Hierarchy leveling starts at 1, to match the aria-level spec.
     // We measure tree hierarchy by the number of groups that the item is within.
-    unsigned level = 0;
+    unsigned level = 1;
     for (AccessibilityObject* parent = parentObject(); parent; parent = parent->parentObject()) {
         AccessibilityRole parentRole = parent->roleValue();
         if (parentRole == GroupRole)

@@ -596,6 +596,7 @@ public:
     virtual FrameView* topDocumentFrameView() const { return 0; }
     virtual FrameView* documentFrameView() const;
     String language() const;
+    // 1-based, to match the aria-level spec.
     virtual unsigned hierarchicalLevel() const { return 0; }
     
     virtual void setFocused(bool) { }

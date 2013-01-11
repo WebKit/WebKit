@@ -3,6 +3,9 @@ Birds
 Cats
 Siamese
 Tabby
+Vegetables
+Carrots
+Broccoli
 This tests that aria trees and tree items are converted into AXOutlines and AXRows, with all the right attributes.
 
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
@@ -10,16 +13,16 @@ On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE
 
 PASS tree.role is 'AXRole: AXOutline'
 PASS canSetRows is true
-PASS tree.childrenCount is 5
+PASS tree.childrenCount is 8
 PASS treeitem1.role is 'AXRole: AXRow'
 PASS treeitem1.subrole is 'AXSubrole: AXOutlineRow'
 PASS treeitem1.isExpanded is true
-PASS treeitem1.hierarchicalLevel is 1
+PASS treeitem1.hierarchicalLevel is 0
 PASS canSetDisclosing is true
 PASS treeitem2.role is 'AXRole: AXRow'
 PASS treeitem2.subrole is 'AXSubrole: AXOutlineRow'
 PASS treeitem2.isExpanded is false
-PASS treeitem2.hierarchicalLevel is 2
+PASS treeitem2.hierarchicalLevel is 1
 PASS treeitem2.disclosedByRow().isEqual(treeitem1) is true
 PASS canSetDisclosing is false
 PASS treeitem3.stringValue is 'AXValue: Birds'
@@ -30,6 +33,9 @@ PASS treeitem3.isExpanded is true
 PASS treeitem3.isSelected is false
 PASS treeitem3.isSelected is true
 PASS selectedRow.isEqual(treeitem3) is true
+PASS treeitem4.hierarchicalLevel is 0
+PASS treeitem5.hierarchicalLevel is 1
+PASS treeitem6.hierarchicalLevel is 1
 PASS successfullyParsed is true
 
 TEST COMPLETE
