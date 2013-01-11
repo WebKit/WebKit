@@ -490,8 +490,12 @@ void InputType::destroyShadowSubtree()
     // been created by TextFieldDecorationElement, and we don't allow adding
     // AuthorShadowRoot to HTMLInputElement.
     while ((root = root->youngerShadowRoot())) {
+#if ENABLE(SHADOW_DOM)
         root->removeAllChildren();
         root->appendChild(HTMLShadowElement::create(shadowTag, element()->document()));
+#else
+        ASSERT_NOT_REACHED();
+#endif
     }
 }
 

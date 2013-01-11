@@ -249,6 +249,7 @@ void ContentDistributor::distribute(Element* host)
             activeShadowInsertionPoints.append(firstActiveShadowInsertionPoint);
     }
 
+#if ENABLE(SHADOW_DOM)
     for (size_t i = activeShadowInsertionPoints.size(); i > 0; --i) {
         HTMLShadowElement* shadowElement = activeShadowInsertionPoints[i - 1];
         ShadowRoot* root = shadowElement->containingShadowRoot();
@@ -262,6 +263,9 @@ void ContentDistributor::distribute(Element* host)
                 shadow->invalidateDistribution();
         }
     }
+#else
+    ASSERT(!activeShadowInsertionPoints.size());
+#endif
 }
 
 bool ContentDistributor::invalidate(Element* host)

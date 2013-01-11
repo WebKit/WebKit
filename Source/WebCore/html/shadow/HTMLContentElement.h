@@ -37,6 +37,8 @@
 
 namespace WebCore {
 
+#if ENABLE(SHADOW_DOM)
+
 class HTMLContentElement : public InsertionPoint {
 public:
     static const QualifiedName& contentTagName(Document*);
@@ -78,6 +80,23 @@ inline const CSSSelectorList& HTMLContentElement::selectorList()
     ensureSelectParsed();
     return m_selectorList;
 }
+
+#else
+
+// FIXME: shouldn't inherit from InsertionPoint: https://bugs.webkit.org/show_bug.cgi?id=103339
+class HTMLContentElement : public InsertionPoint {
+public:
+    static const QualifiedName& contentTagName(Document*);
+    static PassRefPtr<HTMLContentElement> create(Document*);
+
+    virtual Type insertionPointType() const OVERRIDE { return ContentInsertionPoint; }
+
+protected:
+    HTMLContentElement(const QualifiedName&, Document*);
+
+};
+
+#endif // if ENABLE(SHADOW_DOM)
 
 inline bool isHTMLContentElement(const Node* node)
 {

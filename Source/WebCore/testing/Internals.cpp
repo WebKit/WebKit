@@ -300,7 +300,11 @@ PassRefPtr<Element> Internals::createContentElement(Document* document, Exceptio
         return 0;
     }
 
+#if ENABLE(SHADOW_DOM)
     return HTMLContentElement::create(document);
+#else
+    return 0;
+#endif
 }
 
 bool Internals::isValidContentSelect(Element* insertionPoint, ExceptionCode& ec)
@@ -310,7 +314,11 @@ bool Internals::isValidContentSelect(Element* insertionPoint, ExceptionCode& ec)
         return false;
     }
 
+#if ENABLE(SHADOW_DOM)
     return isHTMLContentElement(insertionPoint) && toHTMLContentElement(insertionPoint)->isSelectValid();
+#else
+    return false;
+#endif
 }
 
 Node* Internals::treeScopeRootNode(Node* node, ExceptionCode& ec)
