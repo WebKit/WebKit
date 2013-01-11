@@ -53,7 +53,7 @@ NSString * const JSPropertyDescriptorSetKey = @"set";
 
 @implementation JSValue {
     JSValueRef m_value;
-    JSContext *m_weakContext;
+    JSContext *m_context;
 }
 
 + (JSValue *)valueWithObject:(id)value inContext:(JSContext *)context
@@ -521,7 +521,7 @@ NSString * const JSPropertyDescriptorSetKey = @"set";
 
 - (JSContext *)context
 {
-    return objc_loadWeak(&m_weakContext);
+    return m_context;
 }
 
 @end
@@ -1049,7 +1049,7 @@ JSValueRef valueInternalValue(JSValue * value)
         return nil;
 
     ASSERT(value);
-    objc_initWeak(&m_weakContext, context);
+    m_context = [context retain];
     [context protect:value];
     m_value = value;
     return self;
@@ -1172,7 +1172,8 @@ static StructTagHandler* handerForStructTag(const char* encodedType)
     JSContext *context = [self context];
     if (context)
         [context unprotect:m_value];
-    objc_destroyWeak(&m_weakContext);
+    [m_context release];
+    m_context = nil;
     [super dealloc];
 }
 

@@ -1,3 +1,24 @@
+2013-01-11  Mark Hahnenberg  <mhahnenberg@apple.com>
+
+        Objective-C objects that are passed to JavaScript leak (until the JSContext is destroyed)
+        https://bugs.webkit.org/show_bug.cgi?id=106056
+
+        Reviewed by Darin Adler.
+
+        * API/APIJSValue.h:
+        * API/JSValue.mm: Make the reference to the JSContext strong.
+        (-[JSValue context]):
+        (-[JSValue initWithValue:inContext:]):
+        (-[JSValue dealloc]):
+        * API/JSWrapperMap.mm: Make the reference back from wrappers to Obj-C objects weak instead of strong.
+        Also add an explicit WeakGCMap in the JSWrapperMap rather than using Obj-C associated object API which 
+        was causing memory leaks.
+        (wrapperClass):
+        (-[JSObjCClassInfo wrapperForObject:]):
+        (-[JSWrapperMap initWithContext:]):
+        (-[JSWrapperMap dealloc]):
+        (-[JSWrapperMap wrapperForObject:]):
+
 2013-01-11  Geoffrey Garen  <ggaren@apple.com>
 
         Fixed some bogus PropertyOffset ASSERTs

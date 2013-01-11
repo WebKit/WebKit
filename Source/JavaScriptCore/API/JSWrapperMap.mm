@@ -28,10 +28,12 @@
 
 #if JS_OBJC_API_ENABLED
 
+#import "APICast.h"
 #import "JSContextInternal.h"
 #import "JSWrapperMap.h"
 #import "ObjCCallbackFunction.h"
 #import "ObjcRuntimeExtras.h"
+#import "WeakGCMap.h"
 #import <wtf/TCSpinLock.h>
 #import "wtf/Vector.h"
 
@@ -376,6 +378,7 @@ static void copyPrototypeProperties(JSContext *context, Class objcClass, Protoco
 @implementation JSWrapperMap {
     JSContext *m_context;
     NSMutableDictionary *m_classMap;
+    JSC::WeakGCMap<id, JSC::JSObject> m_cachedWrappers;
 }
 
 - (id)initWithContext:(JSContext *)context
@@ -413,10 +416,11 @@ static void copyPrototypeProperties(JSContext *context, Class objcClass, Protoco
 
 - (JSValue *)wrapperForObject:(id)object
 {
-    JSValue *wrapper = objc_getAssociatedObject(object, m_context);
-    if (wrapper && wrapper.context)
-        return wrapper;
+    JSC::JSObject* jsWrapper = m_cachedWrappers.get(object);
+    if (jsWrapper)
+        return [JSValue valueWithValue:toRef(jsWrapper) inContext:m_context];
 
+    JSValue *wrapper;
     if (class_isMetaClass(object_getClass(object)))
         wrapper = [[self classInfoForClass:(Class)object] constructor];
     else {
@@ -429,7 +433,9 @@ static void copyPrototypeProperties(JSContext *context, Class objcClass, Protoco
     // (1) For immortal objects JSValues will effectively leak and this results in error output being logged - we should avoid adding associated objects to immortal objects.
     // (2) A long lived object may rack up many JSValues. When the contexts are released these will unproctect the associated JavaScript objects,
     //     but still, would probably nicer if we made it so that only one associated object was required, broadcasting object dealloc.
-    objc_setAssociatedObject(object, m_context, wrapper, OBJC_ASSOCIATION_RETAIN);
+    JSC::ExecState* exec = toJS(contextInternalContext(m_context));
+    jsWrapper = toJS(exec, valueInternalValue(wrapper)).toObject(exec);
+    m_cachedWrappers.set(exec->globalData(), object, jsWrapper);
     return wrapper;
 }
 

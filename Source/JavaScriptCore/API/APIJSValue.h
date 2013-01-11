@@ -29,7 +29,7 @@
 
 // A JSValue is a reference to a value within the JavaScript object space of a
 // JSVirtualMachine. All instances of JSValue originate from a JSContext, and
-// hold a weak reference to this JSContext. Where an instance method is invoked
+// hold a strong reference to this JSContext. Where an instance method is invoked
 // upon a JSValue, and this returns another JSValue, the returned JSValue will
 // originate from the same JSContext as the JSValue on which the method was
 // invoked.
