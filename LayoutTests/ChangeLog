@@ -1,3 +1,22 @@
+2013-01-11  Anton Vayvod  <avayvod@chromium.org>
+
+        Text Autosizing - elements much narrower than its parent autosizing clusters should be autosized separately.
+        https://bugs.webkit.org/show_bug.cgi?id=105188
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Checked that a narrow autosizing container becomes an autosizing cluster.
+        Fixed other tests that used narrow descendant blocks.
+
+        * fast/text-autosizing/cluster-narrow-in-wide-expected.html:
+        * fast/text-autosizing/cluster-narrow-in-wide-ohidden-expected.html:
+        * fast/text-autosizing/cluster-narrow-in-wide-ohidden.html:
+        * fast/text-autosizing/cluster-narrow-in-wide.html:
+        * fast/text-autosizing/cluster-with-wide-lca-expected.html:
+        * fast/text-autosizing/cluster-with-wide-lca.html:
+        * fast/text-autosizing/narrow-child-expected.html:
+        * fast/text-autosizing/narrow-child.html:
+
 2013-01-11  Antoine Quint  <graouts@apple.com>
 
         Web Inspector: Option+Click on Node Expander Doesn't Work the First Time

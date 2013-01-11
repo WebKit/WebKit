@@ -11,12 +11,18 @@ body { width: 800px; margin: 0; overflow-y: hidden; }
 </head>
 <body>
 
-<div style="width: 400px; float: left; font-size: 1.25rem">
-    This text should be autosized to just 20px computed font size (16 * 400/320), since the float:left causes this to be a new cluster, and it is only 400px wide.
+<div style="width: 600px; float: left; font-size: 1.875rem">
+    This text should be autosized to just 30px computed font size (16 * 600/320), since the float:left causes this to be a new cluster, and it is only 600px wide.
 </div>
 
-<div style="width: 320px; font-size: 2.5rem">
-    This text should be autosized to 40px computed font-size (16 * 800/320), since despite its width:320px it is part of the 800px wide root cluster.
+<div style="width: 320px">
+    This text should not be autosized, since because of its width:320px it becomes a separate cluster.<br>
+    Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.    
+</div>
+
+<div style="width: 600px; font-size: 2.5rem">
+    This text should be autosized to 40px computed font size (16 * 800/320), since it's a part of the root cluster.<br>
+    Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.    
 </div>
 
 <div style="font-size: 2.5rem">

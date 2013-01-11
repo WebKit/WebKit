@@ -238,10 +238,21 @@ bool TextAutosizer::isAutosizingCluster(const RenderBlock* renderer, const Rende
     // from the box's parent (we want to avoid having significantly different
     // width blocks within a cluster, since the narrower blocks would end up
     // larger than would otherwise be necessary).
-    // Additionally, any containers that are wider than the |blockContainingAllText|
-    // of their enclosing cluster also become clusters, since they need special
-    // treatment due to their width.
+    // Additionally, any containers that are wider or at least 200px narrower than
+    // the |blockContainingAllText| of their enclosing cluster also become clusters,
+    // since they need special treatment due to their width.
     ASSERT(isAutosizingContainer(renderer));
+
+    // Upper limit on the difference between the width of the parent block containing all
+    // text and that of a narrow child before the child becomes a cluster.
+    const float maxWidthDifference = 200;
+
+    if (parentBlockContainingAllText) {
+        float contentWidth = renderer->contentLogicalWidth();
+        float clusterTextWidth = parentBlockContainingAllText->contentLogicalWidth();
+        if (contentWidth > clusterTextWidth || (clusterTextWidth - contentWidth) > maxWidthDifference)
+            return true;
+    }
 
     return renderer->isRenderView()
         || renderer->isFloating()
@@ -251,9 +262,7 @@ bool TextAutosizer::isAutosizingCluster(const RenderBlock* renderer, const Rende
         || renderer->isFlexibleBoxIncludingDeprecated()
         || renderer->hasColumns()
         || renderer->containingBlock()->isHorizontalWritingMode() != renderer->isHorizontalWritingMode()
-        || renderer->style()->isDisplayReplacedType()
-        || (parentBlockContainingAllText
-            && renderer->contentLogicalWidth() > parentBlockContainingAllText->contentLogicalWidth());
+        || renderer->style()->isDisplayReplacedType();
     // FIXME: Tables need special handling to multiply all their columns by
     // the same amount even if they're different widths; so do hasColumns()
     // containers, and probably flexboxes...
