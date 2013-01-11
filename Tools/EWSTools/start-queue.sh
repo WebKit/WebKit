@@ -27,31 +27,38 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
+if [[ $# -lt 3 ]] || [[ $# -gt 4 ]]; then
+    echo "Usage: start-queue-loop.sh QUEUE_NAME BOT_ID RESET_AFTER_ITERATION [QUEUE_PARAMS]"
+    exit 1
+fi
+
 QUEUE_NAME=$1
 BOT_ID=$2
+RESET_AFTER_ITERATION=$3
+QUEUE_PARAMS=$4
 
 cd /mnt/git/webkit-$QUEUE_NAME
 while :
 do
-  # This somewhat quirky sequence of steps seems to clear up all the broken
-  # git situations we've gotten ourself into in the past.
-  git clean -f # Remove any left-over layout test results, added files, etc.
-  git rebase --abort # If we got killed during a git rebase, we need to clean up.
-  git fetch origin # Avoid updating the working copy to a stale revision.
-  git checkout origin/master -f
-  git branch -D master
-  git checkout origin/master -b master
+    # This somewhat quirky sequence of steps seems to clear up all the broken
+    # git situations we've gotten ourself into in the past.
+    git clean -f # Remove any left-over layout test results, added files, etc.
+    git rebase --abort # If we got killed during a git rebase, we need to clean up.
+    git fetch origin # Avoid updating the working copy to a stale revision.
+    git checkout origin/master -f
+    git branch -D master
+    git checkout origin/master -b master
 
-  # Most queues auto-update as part of their normal operation, but updating
-  # here makes sure that we get the latest version of the master process.
-  ./Tools/Scripts/update-webkit
+    # Most queues auto-update as part of their normal operation, but updating
+    # here makes sure that we get the latest version of the master process.
+    ./Tools/Scripts/update-webkit
 
-  # test-webkitpy has code to remove orphaned .pyc files, so we
-  # run it before running webkit-patch to avoid stale .pyc files
-  # preventing webkit-patch from launching.
-  ./Tools/Scripts/test-webkitpy
+    # test-webkitpy has code to remove orphaned .pyc files, so we
+    # run it before running webkit-patch to avoid stale .pyc files
+    # preventing webkit-patch from launching.
+    ./Tools/Scripts/test-webkitpy
 
-  # We use --exit-after-iteration to pick up any changes to webkit-patch, including
-  # changes to the committers.py file.
-  ./Tools/Scripts/webkit-patch $QUEUE_NAME --bot-id=$BOT_ID --no-confirm --exit-after-iteration 10
+    # We use --exit-after-iteration to pick up any changes to webkit-patch, including
+    # changes to the committers.py file.
+    ./Tools/Scripts/webkit-patch $QUEUE_NAME --bot-id=$BOT_ID --no-confirm --exit-after-iteration $RESET_AFTER_ITERATION $QUEUE_PARAMS
 done

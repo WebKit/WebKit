@@ -1,3 +1,17 @@
+2013-01-11  Alan Cutter  <alancutter@chromium.org>
+
+        Allow arbitrary queue launch parameters in EWSTools/start-queue.sh
+        https://bugs.webkit.org/show_bug.cgi?id=106636
+
+        Reviewed by Adam Barth.
+
+        This parameter will allow the bot boot script to use start-queue.sh and provide an IRC password for sheriffbot.
+
+        * EWSTools/GoogleComputeEngine/build-chromium-ews.sh:
+        * EWSTools/GoogleComputeEngine/build-commit-queue.sh:
+        * EWSTools/screen-config:
+        * EWSTools/start-queue.sh:
+
 2013-01-10  Ryosuke Niwa  <rniwa@webkit.org>
 
         kill-old-processes and delete-stale-build-files use CRLF linebreaks

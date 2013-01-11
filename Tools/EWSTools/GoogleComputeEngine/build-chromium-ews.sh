@@ -54,6 +54,6 @@ gcutil --project=$PROJECT ssh $BOT_ID "
     cd tools &&
     bash build-vm.sh &&
     bash build-repo.sh $QUEUE_TYPE $BUGZILLA_USERNAME $BUGZILLA_PASSWORD &&
-    bash build-boot-cmd.sh \"screen -t kr ./start-queue.sh $QUEUE_TYPE $BOT_ID\" &&
+    bash build-boot-cmd.sh \"screen -t kr ./start-queue.sh $QUEUE_TYPE $BOT_ID 10\" &&
     bash boot.sh
 "
