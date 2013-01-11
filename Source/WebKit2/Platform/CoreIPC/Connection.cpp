@@ -30,6 +30,7 @@
 #include "CoreIPCMessageKinds.h"
 #include <WebCore/RunLoop.h>
 #include <wtf/CurrentTime.h>
+#include <wtf/HashSet.h>
 
 using namespace WebCore;
 
@@ -54,7 +55,9 @@ public:
     // waiting for a reply to a synchronous message.
     bool processIncomingMessage(Connection*, IncomingMessage&);
 
-    void dispatchMessages();
+    // Dispatch pending sync messages. if allowedConnection is not null, will only dispatch messages
+    // from that connection and put the other messages back in the queue.
+    void dispatchMessages(Connection* allowedConnection);
 
 private:
     explicit SyncMessageState(RunLoop*);
@@ -72,15 +75,16 @@ private:
         return syncMessageStateMapMutex;
     }
 
-    void dispatchMessageAndResetDidScheduleDispatchMessagesWork();
+    void dispatchMessageAndResetDidScheduleDispatchMessagesForConnection(Connection*);
 
     RunLoop* m_runLoop;
     BinarySemaphore m_waitForSyncReplySemaphore;
 
-    // Protects m_didScheduleDispatchMessagesWork and m_messagesToDispatchWhileWaitingForSyncReply.
+    // Protects m_didScheduleDispatchMessagesWorkSet and m_messagesToDispatchWhileWaitingForSyncReply.
     Mutex m_mutex;
 
-    bool m_didScheduleDispatchMessagesWork;
+    // The set of connections for which we've scheduled a call to dispatchMessageAndResetDidScheduleDispatchMessagesForConnection.
+    HashSet<RefPtr<Connection> > m_didScheduleDispatchMessagesWorkSet;
 
     struct ConnectionAndIncomingMessage {
         RefPtr<Connection> connection;
@@ -107,7 +111,6 @@ PassRefPtr<Connection::SyncMessageState> Connection::SyncMessageState::getOrCrea
 
 Connection::SyncMessageState::SyncMessageState(RunLoop* runLoop)
     : m_runLoop(runLoop)
-    , m_didScheduleDispatchMessagesWork(false)
 {
 }
 
@@ -132,10 +135,8 @@ bool Connection::SyncMessageState::processIncomingMessage(Connection* connection
     {
         MutexLocker locker(m_mutex);
         
-        if (!m_didScheduleDispatchMessagesWork) {
-            m_runLoop->dispatch(WTF::bind(&SyncMessageState::dispatchMessageAndResetDidScheduleDispatchMessagesWork, this));
-            m_didScheduleDispatchMessagesWork = true;
-        }
+        if (m_didScheduleDispatchMessagesWorkSet.add(connection).isNewEntry)
+            m_runLoop->dispatch(bind(&SyncMessageState::dispatchMessageAndResetDidScheduleDispatchMessagesForConnection, this, RefPtr<Connection>(connection)));
 
         m_messagesToDispatchWhileWaitingForSyncReply.append(connectionAndIncomingMessage);
     }
@@ -145,7 +146,7 @@ bool Connection::SyncMessageState::processIncomingMessage(Connection* connection
     return true;
 }
 
-void Connection::SyncMessageState::dispatchMessages()
+void Connection::SyncMessageState::dispatchMessages(Connection* allowedConnection)
 {
     ASSERT(m_runLoop == RunLoop::current());
 
@@ -156,21 +157,36 @@ void Connection::SyncMessageState::dispatchMessages()
         m_messagesToDispatchWhileWaitingForSyncReply.swap(messagesToDispatchWhileWaitingForSyncReply);
     }
 
+    Vector<ConnectionAndIncomingMessage> messagesToPutBack;
+
     for (size_t i = 0; i < messagesToDispatchWhileWaitingForSyncReply.size(); ++i) {
         ConnectionAndIncomingMessage& connectionAndIncomingMessage = messagesToDispatchWhileWaitingForSyncReply[i];
+
+        if (allowedConnection && allowedConnection != connectionAndIncomingMessage.connection) {
+            // This incoming message belongs to another connection and we don't want to dispatch it now
+            // so mark it to be put back in the message queue.
+            messagesToPutBack.append(connectionAndIncomingMessage);
+            continue;
+        }
+
         connectionAndIncomingMessage.connection->dispatchMessage(connectionAndIncomingMessage.incomingMessage);
+    }
+
+    if (!messagesToPutBack.isEmpty()) {
+        MutexLocker locker(m_mutex);
+        m_messagesToDispatchWhileWaitingForSyncReply.append(messagesToPutBack);
     }
 }
 
-void Connection::SyncMessageState::dispatchMessageAndResetDidScheduleDispatchMessagesWork()
+void Connection::SyncMessageState::dispatchMessageAndResetDidScheduleDispatchMessagesForConnection(Connection* connection)
 {
     {
         MutexLocker locker(m_mutex);
-        ASSERT(m_didScheduleDispatchMessagesWork);
-        m_didScheduleDispatchMessagesWork = false;
+        ASSERT(m_didScheduleDispatchMessagesWorkSet.contains(connection));
+        m_didScheduleDispatchMessagesWorkSet.remove(connection);
     }
 
-    dispatchMessages();
+    dispatchMessages(connection);
 }
 
 PassRefPtr<Connection> Connection::createServerConnection(Identifier identifier, Client* client, RunLoop* clientRunLoop)
@@ -421,7 +437,7 @@ PassOwnPtr<MessageDecoder> Connection::waitForSyncReply(uint64_t syncRequestID, 
     bool timedOut = false;
     while (!timedOut) {
         // First, check if we have any messages that we need to process.
-        m_syncMessageState->dispatchMessages();
+        m_syncMessageState->dispatchMessages(0);
         
         {
             MutexLocker locker(m_syncReplyStateMutex);

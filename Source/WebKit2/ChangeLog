@@ -1,3 +1,25 @@
+2013-01-11  Anders Carlsson  <andersca@apple.com>
+
+        Incoming synchronous messages can sometimes arrive out of order
+        https://bugs.webkit.org/show_bug.cgi?id=106677
+        <rdar://problem/12889499>
+
+        Reviewed by Andreas Kling.
+
+        In cases where synchronous messages come in more than one connection at the same time, we can sometimes deliver
+        the synchronous messages before any pending asynchronous messages on that connection. This breaks FIFO ordering.
+
+        Fix this by separating the "dispatch all incoming synchronous messages" phase out into multiple phases, so we'll
+        schedule one call per connection instead of one call for all connections.
+
+        * Platform/CoreIPC/Connection.cpp:
+        (Connection::SyncMessageState):
+        (CoreIPC::Connection::SyncMessageState::SyncMessageState):
+        (CoreIPC::Connection::SyncMessageState::processIncomingMessage):
+        (CoreIPC::Connection::SyncMessageState::dispatchMessages):
+        (CoreIPC::Connection::SyncMessageState::dispatchMessageAndResetDidScheduleDispatchMessagesForConnection):
+        (CoreIPC::Connection::waitForSyncReply):
+
 2013-01-11  Zan Dobersek  <zandobersek@gmail.com>
 
         Unreviewed. Build fix for the GTK debug builds of WebKit2 after r139415.
