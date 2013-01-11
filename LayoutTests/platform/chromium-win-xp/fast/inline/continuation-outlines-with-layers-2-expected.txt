@@ -1,0 +1,50 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x320
+  RenderBlock {HTML} at (0,0) size 800x320
+    RenderBody {BODY} at (8,16) size 784x288
+      RenderBlock {P} at (0,0) size 784x20
+        RenderText {#text} at (0,0) size 305x19
+          text run at (0,0) width 305: "This should be an unobscured fuzzy green polygon:"
+      RenderBlock {DIV} at (0,36) size 784x100
+        RenderBlock (anonymous) at (0,0) size 784x50
+        RenderBlock (anonymous) at (0,50) size 784x50
+          RenderText {#text} at (0,0) size 0x0
+      RenderBlock {P} at (0,152) size 784x20
+        RenderText {#text} at (0,0) size 147x19
+          text run at (0,0) width 147: "This is just for reference:"
+      RenderBlock {DIV} at (0,188) size 784x100
+        RenderBlock (anonymous) at (0,0) size 784x50
+          RenderInline {SPAN} at (0,0) size 160x50 [bgcolor=#FFFFFF]
+            RenderText {#text} at (0,0) size 50x50
+              text run at (0,0) width 50: " "
+            RenderInline {SPAN} at (0,0) size 110x50
+              RenderText {#text} at (60,0) size 100x50
+                text run at (60,0) width 50: " "
+                text run at (110,0) width 50: " "
+        RenderBlock (anonymous) at (0,50) size 784x0
+          RenderBlock {DIV} at (0,0) size 784x0
+        RenderBlock (anonymous) at (0,50) size 784x50
+          RenderInline {SPAN} at (0,0) size 60x50 [bgcolor=#FFFFFF]
+            RenderInline {SPAN} at (0,0) size 60x50
+              RenderText {#text} at (0,0) size 50x50
+                text run at (0,0) width 50: " "
+            RenderText {#text} at (0,0) size 0x0
+          RenderText {#text} at (0,0) size 0x0
+layer at (8,52) size 160x50
+  RenderInline (relative positioned) {SPAN} at (0,0) size 160x50 [bgcolor=#FFFFFF]
+    RenderText {#text} at (0,0) size 50x50
+      text run at (0,0) width 50: " "
+    RenderInline {SPAN} at (0,0) size 110x50
+      RenderText {#text} at (60,0) size 100x50
+        text run at (60,0) width 50: " "
+        text run at (110,0) width 50: " "
+layer at (8,102) size 784x0
+  RenderBlock (anonymous) at (0,50) size 784x0
+    RenderBlock {DIV} at (0,0) size 784x0
+layer at (8,102) size 60x50
+  RenderInline (relative positioned) {SPAN} at (0,0) size 60x50 [bgcolor=#FFFFFF]
+    RenderInline {SPAN} at (0,0) size 60x50
+      RenderText {#text} at (0,0) size 50x50
+        text run at (0,0) width 50: " "
+    RenderText {#text} at (0,0) size 0x0

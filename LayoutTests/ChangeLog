@@ -11,6 +11,202 @@
 
         Unreviewed test expectations update.
 
+        Mostly files that were broken only on Mac or Win.
+
+        * platform/chromium-linux-x86/fast/forms/input-appearance-height-expected.png: Added.
+        * platform/chromium-linux-x86/fast/forms/input-button-sizes-expected.png: Added.
+        * platform/chromium-linux-x86/fast/forms/input-value-expected.png: Added.
+        * platform/chromium-linux-x86/fast/forms/menulist-deselect-update-expected.png: Added.
+        * platform/chromium-linux-x86/fast/forms/menulist-no-overflow-expected.png: Added.
+        * platform/chromium-linux-x86/fast/forms/menulist-restrict-line-height-expected.png: Added.
+        * platform/chromium-linux-x86/fast/forms/menulist-separator-painting-expected.png: Added.
+        * platform/chromium-linux-x86/fast/forms/menulist-style-color-expected.png: Added.
+        * platform/chromium-linux-x86/fast/forms/menulist-width-change-expected.png: Added.
+        * platform/chromium-linux-x86/fast/forms/option-script-expected.png: Added.
+        * platform/chromium-linux-x86/fast/forms/option-strip-whitespace-expected.png: Added.
+        * platform/chromium-linux-x86/fast/forms/option-text-clip-expected.png: Added.
+        * platform/chromium-linux-x86/fast/forms/select-align-expected.png: Added.
+        * platform/chromium-linux-x86/fast/forms/select-baseline-expected.png: Added.
+        * platform/chromium-linux-x86/fast/forms/select-change-listbox-to-popup-expected.png: Added.
+        * platform/chromium-linux-x86/fast/forms/select-dirty-parent-pref-widths-expected.png: Added.
+        * platform/chromium-linux-x86/fast/forms/select-disabled-appearance-expected.png: Added.
+        * platform/chromium-linux-x86/fast/forms/select-initial-position-expected.png: Added.
+        * platform/chromium-linux-x86/fast/forms/select-selected-expected.png: Added.
+        * platform/chromium-linux-x86/fast/forms/targeted-frame-submission-expected.png: Added.
+        * platform/chromium-linux-x86/fast/forms/zoomed-controls-expected.png: Added.
+        * platform/chromium-linux-x86/fast/inline/positionedLifetime-expected.png: Added.
+        * platform/chromium-linux-x86/fast/overflow/scroll-nested-positioned-layer-in-overflow-expected.png: Added.
+        * platform/chromium-linux-x86/fast/overflow/scrollRevealButton-expected.png: Added.
+        * platform/chromium-linux-x86/fast/repaint/control-clip-expected.png: Added.
+        * platform/chromium-linux-x86/fast/repaint/gradients-em-stops-repaint-expected.png: Added.
+        * platform/chromium-linux-x86/fast/writing-mode/border-image-horizontal-bt-expected.png: Added.
+        * platform/chromium-linux-x86/fast/writing-mode/border-image-horizontal-bt-expected.txt: Added.
+        * platform/chromium-linux-x86/fast/writing-mode/border-image-vertical-lr-expected.png: Added.
+        * platform/chromium-linux-x86/fast/writing-mode/border-image-vertical-lr-expected.txt: Added.
+        * platform/chromium-linux-x86/fast/writing-mode/border-image-vertical-rl-expected.png: Added.
+        * platform/chromium-linux-x86/fast/writing-mode/border-image-vertical-rl-expected.txt: Added.
+        * platform/chromium-linux-x86/svg/carto.net/colourpicker-expected.png: Added.
+        * platform/chromium-linux-x86/svg/transforms/text-with-mask-with-svg-transform-expected.png:
+        * platform/chromium-linux-x86/svg/transforms/text-with-pattern-with-svg-transform-expected.png: Added.
+        * platform/chromium-linux/fast/forms/input-appearance-height-expected.png:
+        * platform/chromium-linux/fast/forms/input-button-sizes-expected.png:
+        * platform/chromium-linux/fast/forms/input-value-expected.png:
+        * platform/chromium-linux/fast/forms/menulist-deselect-update-expected.png:
+        * platform/chromium-linux/fast/forms/menulist-no-overflow-expected.png:
+        * platform/chromium-linux/fast/forms/menulist-restrict-line-height-expected.png:
+        * platform/chromium-linux/fast/forms/menulist-separator-painting-expected.png:
+        * platform/chromium-linux/fast/forms/menulist-style-color-expected.png:
+        * platform/chromium-linux/fast/forms/menulist-width-change-expected.png:
+        * platform/chromium-linux/fast/forms/option-script-expected.png:
+        * platform/chromium-linux/fast/forms/option-strip-whitespace-expected.png:
+        * platform/chromium-linux/fast/forms/option-text-clip-expected.png:
+        * platform/chromium-linux/fast/forms/select-align-expected.png:
+        * platform/chromium-linux/fast/forms/select-baseline-expected.png:
+        * platform/chromium-linux/fast/forms/select-change-listbox-to-popup-expected.png:
+        * platform/chromium-linux/fast/forms/select-dirty-parent-pref-widths-expected.png:
+        * platform/chromium-linux/fast/forms/select-disabled-appearance-expected.png:
+        * platform/chromium-linux/fast/forms/select-initial-position-expected.png:
+        * platform/chromium-linux/fast/forms/select-selected-expected.png:
+        * platform/chromium-linux/fast/forms/targeted-frame-submission-expected.png:
+        * platform/chromium-linux/fast/forms/zoomed-controls-expected.png:
+        * platform/chromium-linux/fast/inline/positionedLifetime-expected.png:
+        * platform/chromium-linux/fast/overflow/scroll-nested-positioned-layer-in-overflow-expected.png:
+        * platform/chromium-linux/fast/overflow/scrollRevealButton-expected.png:
+        * platform/chromium-linux/fast/repaint/control-clip-expected.png:
+        * platform/chromium-linux/fast/repaint/gradients-em-stops-repaint-expected.png: Added.
+        * platform/chromium-linux/fast/writing-mode/border-image-horizontal-bt-expected.png: Added.
+        * platform/chromium-linux/fast/writing-mode/border-image-horizontal-bt-expected.txt: Added.
+        * platform/chromium-linux/fast/writing-mode/border-image-vertical-lr-expected.png: Added.
+        * platform/chromium-linux/fast/writing-mode/border-image-vertical-lr-expected.txt: Added.
+        * platform/chromium-linux/fast/writing-mode/border-image-vertical-rl-expected.png: Added.
+        * platform/chromium-linux/fast/writing-mode/border-image-vertical-rl-expected.txt: Added.
+        * platform/chromium-linux/svg/carto.net/colourpicker-expected.png:
+        * platform/chromium-linux/svg/transforms/text-with-mask-with-svg-transform-expected.png:
+        * platform/chromium-linux/svg/transforms/text-with-pattern-with-svg-transform-expected.png:
+        * platform/chromium-mac-lion/fast/inline/continuation-outlines-with-layers-expected.png: Added.
+        * platform/chromium-mac-lion/fast/inline/continuation-outlines-with-layers-expected.txt: Added.
+        * platform/chromium-mac-lion/fast/repaint/gradients-em-stops-repaint-expected.png: Added.
+        * platform/chromium-mac-lion/fonts/monospace-expected.png:
+        * platform/chromium-mac-lion/svg/carto.net/colourpicker-expected.png:
+        * platform/chromium-mac-lion/svg/transforms/text-with-mask-with-svg-transform-expected.png:
+        * platform/chromium-mac-lion/svg/transforms/text-with-pattern-with-svg-transform-expected.png:
+        * platform/chromium-mac-snowleopard/fast/inline/continuation-outlines-with-layers-2-expected.png:
+        * platform/chromium-mac-snowleopard/fast/inline/continuation-outlines-with-layers-2-expected.txt:
+        * platform/chromium-mac-snowleopard/fast/inline/continuation-outlines-with-layers-expected.png:
+        * platform/chromium-mac-snowleopard/fast/inline/continuation-outlines-with-layers-expected.txt: Added.
+        * platform/chromium-mac-snowleopard/fast/repaint/gradients-em-stops-repaint-expected.png: Added.
+        * platform/chromium-mac-snowleopard/fonts/monospace-expected.png:
+        * platform/chromium-mac-snowleopard/svg/carto.net/colourpicker-expected.png:
+        * platform/chromium-mac-snowleopard/svg/transforms/text-with-mask-with-svg-transform-expected.png: Added.
+        * platform/chromium-mac-snowleopard/svg/transforms/text-with-pattern-with-svg-transform-expected.png: Added.
+        * platform/chromium-mac/fast/borders/border-image-scaled-expected.png:
+        * platform/chromium-mac/fast/css/focus-ring-detached-expected.png:
+        * platform/chromium-mac/fast/css/focus-ring-multiline-expected.png:
+        * platform/chromium-mac/fast/css/focus-ring-multiline-writingmode-vertical-expected.png:
+        * platform/chromium-mac/fast/css/focus-ring-outline-color-expected.png:
+        * platform/chromium-mac/fast/css/focus-ring-outline-offset-expected.png:
+        * platform/chromium-mac/fast/css/focus-ring-outline-width-expected.png:
+        * platform/chromium-mac/fast/css/font-face-multiple-faces-expected.png:
+        * platform/chromium-mac/fast/css/outline-auto-location-expected.png:
+        * platform/chromium-mac/fast/dom/52776-expected.png:
+        * platform/chromium-mac/fast/dom/focus-contenteditable-expected.png:
+        * platform/chromium-mac/fast/events/autoscroll-expected.png:
+        * platform/chromium-mac/fast/events/context-no-deselect-expected.png:
+        * platform/chromium-mac/fast/events/reveal-link-when-focused-expected.png:
+        * platform/chromium-mac/fast/forms/date/date-appearance-basic-expected.png:
+        * platform/chromium-mac/fast/forms/datetimelocal/datetimelocal-appearance-basic-expected.png:
+        * platform/chromium-mac/fast/forms/input-appearance-focus-expected.png:
+        * platform/chromium-mac/fast/forms/input-appearance-selection-expected.png:
+        * platform/chromium-mac/fast/forms/input-double-click-selection-gap-bug-expected.png:
+        * platform/chromium-mac/fast/forms/input-placeholder-paint-order-expected.png:
+        * platform/chromium-mac/fast/forms/input-placeholder-visibility-1-expected.png:
+        * platform/chromium-mac/fast/forms/input-placeholder-visibility-3-expected.png:
+        * platform/chromium-mac/fast/forms/input-text-click-inside-expected.png:
+        * platform/chromium-mac/fast/forms/input-text-double-click-expected.png:
+        * platform/chromium-mac/fast/forms/input-text-drag-down-expected.png:
+        * platform/chromium-mac/fast/forms/input-text-option-delete-expected.png:
+        * platform/chromium-mac/fast/forms/input-text-scroll-left-on-blur-expected.png:
+        * platform/chromium-mac/fast/forms/input-text-self-emptying-click-expected.png:
+        * platform/chromium-mac/fast/forms/listbox-hit-test-zoomed-expected.png:
+        * platform/chromium-mac/fast/forms/plaintext-mode-2-expected.png:
+        * platform/chromium-mac/fast/forms/select-listbox-multiple-no-focusring-expected.png:
+        * platform/chromium-mac/fast/forms/tabbing-input-iframe-expected.png:
+        * platform/chromium-mac/fast/forms/textarea-placeholder-visibility-1-expected.png:
+        * platform/chromium-mac/fast/forms/textarea-placeholder-visibility-2-expected.png:
+        * platform/chromium-mac/fast/forms/textarea-scrollbar-expected.png:
+        * platform/chromium-mac/fast/forms/textarea-scrolled-type-expected.png:
+        * platform/chromium-mac/fast/forms/textfield-focus-ring-expected.png:
+        * platform/chromium-mac/fast/forms/textfield-outline-expected.png:
+        * platform/chromium-mac/fast/forms/textfield-overflow-expected.png:
+        * platform/chromium-mac/fast/frames/take-focus-from-iframe-expected.png:
+        * platform/chromium-mac/fast/inline/25277-2-expected.png:
+        * platform/chromium-mac/fast/inline/25277-expected.png:
+        * platform/chromium-mac/fast/inline/continuation-outlines-expected.png:
+        * platform/chromium-mac/fast/inline/continuation-outlines-with-layers-2-expected.png:
+        * platform/chromium-mac/fast/inline/continuation-outlines-with-layers-expected.png: Added.
+        * platform/chromium-mac/fast/inline/continuation-outlines-with-layers-expected.txt: Added.
+        * platform/chromium-mac/fast/inline/inline-focus-ring-expected.png:
+        * platform/chromium-mac/fast/overflow/overflow-focus-ring-expected.png:
+        * platform/chromium-mac/fast/repaint/continuation-after-outline-expected.png:
+        * platform/chromium-mac/fast/repaint/delete-into-nested-block-expected.png:
+        * platform/chromium-mac/fast/repaint/focus-layers-expected.png:
+        * platform/chromium-mac/fast/repaint/focus-ring-expected.png:
+        * platform/chromium-mac/fast/repaint/gradients-em-stops-repaint-expected.png:
+        * platform/chromium-mac/fast/repaint/renderer-destruction-by-invalidateSelection-crash-expected.png:
+        * platform/chromium-mac/fast/sub-pixel/selection/selection-gaps-at-fractional-offsets-expected.png:
+        * platform/chromium-mac/fast/table/table-row-focus-ring-paint-expected.png:
+        * platform/chromium-mac/fast/text/atsui-multiple-renderers-expected.png:
+        * platform/chromium-mac/fast/text/complex-synthetic-bold-space-width-expected.png:
+        * platform/chromium-mac/fast/text/delete-hard-break-character-expected.png:
+        * platform/chromium-mac/fast/text/international/rtl-caret-expected.png:
+        * platform/chromium-mac/fast/transforms/transformed-caret-expected.png:
+        * platform/chromium-mac/fast/transforms/transformed-focused-text-input-expected.png:
+        * platform/chromium-mac/fast/writing-mode/border-image-horizontal-bt-expected.png:
+        * platform/chromium-mac/fast/writing-mode/border-image-vertical-lr-expected.png:
+        * platform/chromium-mac/fast/writing-mode/border-image-vertical-rl-expected.png:
+        * platform/chromium-mac/fonts/monospace-expected.png:
+        * platform/chromium-mac/platform/chromium/virtual/softwarecompositing/visibility/visibility-image-layers-expected.png:
+        * platform/chromium-mac/svg/W3C-SVG-1.1/interact-cursor-01-f-expected.png:
+        * platform/chromium-mac/svg/W3C-SVG-1.1/metadata-example-01-b-expected.png:
+        * platform/chromium-mac/svg/carto.net/colourpicker-expected.png:
+        * platform/chromium-mac/svg/transforms/text-with-mask-with-svg-transform-expected.png:
+        * platform/chromium-mac/svg/transforms/text-with-pattern-with-svg-transform-expected.png:
+        * platform/chromium-win-xp/fast/inline/continuation-outlines-with-layers-2-expected.png: Added.
+        * platform/chromium-win-xp/fast/inline/continuation-outlines-with-layers-2-expected.txt: Added.
+        * platform/chromium-win-xp/fast/inline/continuation-outlines-with-layers-expected.png: Added.
+        * platform/chromium-win-xp/fast/repaint/gradients-em-stops-repaint-expected.png: Added.
+        * platform/chromium-win-xp/fast/writing-mode/border-image-horizontal-bt-expected.png: Added.
+        * platform/chromium-win-xp/fast/writing-mode/border-image-horizontal-bt-expected.txt: Added.
+        * platform/chromium-win-xp/fast/writing-mode/border-image-vertical-lr-expected.png: Added.
+        * platform/chromium-win-xp/fast/writing-mode/border-image-vertical-lr-expected.txt: Added.
+        * platform/chromium-win-xp/fast/writing-mode/border-image-vertical-rl-expected.png: Added.
+        * platform/chromium-win-xp/fast/writing-mode/border-image-vertical-rl-expected.txt: Added.
+        * platform/chromium-win-xp/svg/carto.net: Added.
+        * platform/chromium-win-xp/svg/carto.net/colourpicker-expected.png: Added.
+        * platform/chromium-win-xp/svg/transforms: Added.
+        * platform/chromium-win-xp/svg/transforms/text-with-mask-with-svg-transform-expected.png: Added.
+        * platform/chromium-win-xp/svg/transforms/text-with-pattern-with-svg-transform-expected.png: Added.
+        * platform/chromium-win/fast/inline/continuation-outlines-with-layers-2-expected.png:
+        * platform/chromium-win/fast/inline/continuation-outlines-with-layers-2-expected.txt: Added.
+        * platform/chromium-win/fast/inline/continuation-outlines-with-layers-expected.png:
+        * platform/chromium-win/fast/repaint/gradients-em-stops-repaint-expected.png: Added.
+        * platform/chromium-win/fast/writing-mode/border-image-horizontal-bt-expected.png: Added.
+        * platform/chromium-win/fast/writing-mode/border-image-horizontal-bt-expected.txt: Added.
+        * platform/chromium-win/fast/writing-mode/border-image-vertical-lr-expected.png: Added.
+        * platform/chromium-win/fast/writing-mode/border-image-vertical-lr-expected.txt: Added.
+        * platform/chromium-win/fast/writing-mode/border-image-vertical-rl-expected.png: Added.
+        * platform/chromium-win/fast/writing-mode/border-image-vertical-rl-expected.txt: Added.
+        * platform/chromium-win/svg/carto.net/colourpicker-expected.png:
+        * platform/chromium-win/svg/transforms/text-with-mask-with-svg-transform-expected.png:
+        * platform/chromium-win/svg/transforms/text-with-pattern-with-svg-transform-expected.png:
+        * platform/chromium/TestExpectations:
+
+2013-01-11  Stephen Chenney  <schenney@chromium.org>
+
+        [Chromium] More test expectations for Skia changes
+
+        Unreviewed test expectations update.
+
         These are a few files that had some platforms already failing, hence
         requiring special care and attention.
 
