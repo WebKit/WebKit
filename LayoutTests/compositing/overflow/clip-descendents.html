@@ -39,7 +39,11 @@
       
     function doTest() {
       if (window.testRunner) {
-        document.getElementById('layers').innerText = window.internals.layerTreeAsText(document);
+        var layersElement = document.getElementById('layers');
+        // Do not include any text in the layers output, otherwise we need expected results for each platform.
+        layersElement.style.display = "none";
+        layersElement.innerText = window.internals.layerTreeAsText(document);
+        layersElement.style.display = "block";
         testRunner.notifyDone();
       }
     }
@@ -48,7 +52,7 @@
 </head>
 <body>
 
-<p>Test overflow clipping of composited elements in various configurations.</p>
+<!-- Test overflow clipping of composited elements in various configurations. -->
 <div class="container">
   <div class="intermediate">
     <div class="box">

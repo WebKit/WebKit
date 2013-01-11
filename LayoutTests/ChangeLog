@@ -1,3 +1,35 @@
+2013-01-11  Alexandru Chiculita  <achicu@adobe.com>
+
+        Element is displayed behind a composited layer when clipping is used on a previous element
+        https://bugs.webkit.org/show_bug.cgi?id=104981
+
+        Reviewed by Simon Fraser.
+
+        Updated existing test results and added two new tests to check that animations respect the correct paint order,
+        even though they are painted with composited layers.
+
+        Note that there are side effects of this patch that will be corrected in a following bug. 3D layers are treated like animations, so they
+        disable the overlapping optimizations. Because of that, some of the test results were updated to include the layers that, previously,
+        were not created as a result of being in front of a "clipping container".
+
+        * compositing/geometry/foreground-layer-expected.txt:
+        * compositing/layer-creation/overlap-animation-clipping-expected.txt: Added.
+        * compositing/layer-creation/overlap-animation-clipping.html: Added. Checking that the animation inside a clipping container is not 
+        affecting how we compute the animations outside the clipping container. 
+        * compositing/layer-creation/overlap-animation-container-expected.txt: Added. 
+        * compositing/layer-creation/overlap-animation-container.html: Added. Checking that we don't create unnecessary composited layers for layers inside
+        composited containers that draw in front of animated layers.
+        * compositing/overflow/clip-descendents-expected.txt:
+        * compositing/overflow/clip-descendents.html: Removed the text from the output, so that platforms can share the same expected result.
+        * platform/chromium-win/compositing/overflow/clip-descendents-expected.txt: Removed. Not needed anymore, all Chromium platforms can share the same results now.
+        * platform/chromium/compositing/geometry/foreground-layer-expected.txt:
+        * platform/chromium/compositing/layer-creation/overlap-animation-clipping-expected.txt: Added.
+        * platform/chromium/compositing/layer-creation/overlap-animation-container-expected.txt: Added.
+        * platform/chromium/compositing/layer-creation/overlap-transformed-3d-expected.txt: Added.
+        * platform/chromium/compositing/layer-creation/overlap-transforms-expected.txt:
+        * platform/chromium/compositing/overflow/clip-descendents-expected.txt: Renamed from LayoutTests/platform/chromium-mac/compositing/overflow/clip-descendents-expected.txt.
+        * platform/qt/compositing/overflow/clip-descendents-expected.txt:
+
 2013-01-11  Stephen Chenney  <schenney@chromium.org>
 
         [Chromium] More test expectations for Skia changes
