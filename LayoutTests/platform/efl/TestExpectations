@@ -369,6 +369,7 @@ webkit.org/b/83898 fast/exclusions
 
 # CSS Filters support not yet enabled (needs ENABLE_CSS_FILTERS).
 webkit.org/b/85465 css3/filters [ Skip ]
+webkit.org/b/85465 compositing/filters [ Skip ]
 
 # CSS image-resolution is not yet enabled.
 webkit.org/b/85262 fast/css/image-resolution

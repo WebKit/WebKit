@@ -1,3 +1,12 @@
+2013-01-11  Sudarsana Nagineni  <sudarsana.nagineni@intel.com>
+
+        Unreviewed EFL gardening.
+
+        Skip new failing tests introduced in r139330 since
+        ENABLE_CSS_FILTERS flag is not enabled on EFL port.
+
+        * platform/efl/TestExpectations:
+
 2013-01-11  Anton Vayvod  <avayvod@chromium.org>
 
         Text Autosizing - elements much narrower than its parent autosizing clusters should be autosized separately.
