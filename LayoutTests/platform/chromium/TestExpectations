@@ -93,6 +93,7 @@ webkit.org/b/103744 svg/dom/viewspec-parser-7.html [ Pass Timeout ]
 webkit.org/b/103744 svg/dom/viewspec-parser-6.html [ Pass Timeout ]
 crbug.com/24182 [ Debug ] platform/chromium/inspector/styles/device-metrics-fit-window.html [ Pass Slow ]
 webkit.org/b/105785 [ Release ] http/tests/inspector/indexeddb [ Pass Slow ]
+crbug.com/24182 [ Debug ] platform/chromium/virtual/gpu/fast/hidpi/image-set-background-dynamic.html [ Pass Slow ]
 
 # These tests started being slow when we switched to DRT.
 webkit.org/b/90488 [ Debug ] inspector [ Pass Slow ]
