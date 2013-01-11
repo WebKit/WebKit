@@ -1290,22 +1290,6 @@ webkit.org/b/78422 [ Android Linux Win ] svg/animations/animate-text-nested-tran
 
 webkit.org/b/78830 [ Debug ] svg/custom/mask-invalidation.svg [ ImageOnlyFailure Pass ]
 
-# Need rebaseline after https://bugs.webkit.org/show_bug.cgi?id=106461
-webkit.org/b/106461 fast/backgrounds/border-radius-split-background-image.html [ ImageOnlyFailure Pass ]
-webkit.org/b/106461 fast/borders/border-radius-complex-inner.html [ ImageOnlyFailure Pass ]
-webkit.org/b/106461 fast/borders/border-radius-inset-outset.html [ ImageOnlyFailure Pass ]
-webkit.org/b/106461 fast/borders/border-radius-wide-border-05.html [ ImageOnlyFailure Pass ]
-webkit.org/b/106461 fast/borders/border-styles-split.html [ ImageOnlyFailure Pass ]
-webkit.org/b/106461 fast/borders/borderRadiusArcs01.html [ ImageOnlyFailure Pass ]
-webkit.org/b/106461 fast/borders/mixed-border-styles-radius.html [ ImageOnlyFailure Pass ]
-webkit.org/b/106461 fast/writing-mode/border-styles-vertical-lr.html [ ImageOnlyFailure Pass ]
-webkit.org/b/106461 fast/writing-mode/border-styles-vertical-rl.html [ ImageOnlyFailure Pass ]
-webkit.org/b/106461 ietestcenter/css3/bordersbackgrounds/border-radius-sum-of-radii-001.htm [ ImageOnlyFailure Pass ]
-webkit.org/b/106461 ietestcenter/css3/bordersbackgrounds/border-radius-sum-of-radii-002.htm [ ImageOnlyFailure Pass ]
-webkit.org/b/106461 ietestcenter/css3/bordersbackgrounds/border-top-left-radius-values-004.htm [ ImageOnlyFailure Pass ]
-webkit.org/b/106461 ietestcenter/css3/bordersbackgrounds/border-top-right-radius-values-004.htm [ ImageOnlyFailure Pass ]
-webkit.org/b/106461 svg/custom/svg-fonts-in-html.html [ ImageOnlyFailure Pass ]
-
 # Failing since added by r108699
 webkit.org/b/79454 [ Android Linux Mac ] svg/text/text-rescale.html [ ImageOnlyFailure Pass ]
 webkit.org/b/79454 [ Android Linux Mac ] svg/text/text-viewbox-rescale.html [ ImageOnlyFailure Pass ]

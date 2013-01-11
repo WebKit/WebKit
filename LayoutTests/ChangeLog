@@ -1,3 +1,50 @@
+2013-01-11  Florin Malita  <fmalita@chromium.org>
+
+        [Chromium] Unreviewed gardening.
+
+        Rebaselining results after http://trac.webkit.org/changeset/139238.
+
+        * platform/chromium-linux/fast/borders/mixed-border-styles-radius-expected.png:
+        * platform/chromium-mac-lion/ietestcenter/css3/bordersbackgrounds/border-radius-sum-of-radii-001-expected.png:
+        * platform/chromium-mac-lion/ietestcenter/css3/bordersbackgrounds/border-radius-sum-of-radii-002-expected.png:
+        * platform/chromium-mac-lion/ietestcenter/css3/bordersbackgrounds/border-top-left-radius-values-004-expected.png:
+        * platform/chromium-mac-lion/ietestcenter/css3/bordersbackgrounds/border-top-right-radius-values-004-expected.png:
+        * platform/chromium-mac-lion/svg/custom/svg-fonts-in-html-expected.png:
+        * platform/chromium-mac-snowleopard/ietestcenter/css3/bordersbackgrounds/border-radius-sum-of-radii-001-expected.png:
+        * platform/chromium-mac-snowleopard/ietestcenter/css3/bordersbackgrounds/border-radius-sum-of-radii-002-expected.png:
+        * platform/chromium-mac-snowleopard/ietestcenter/css3/bordersbackgrounds/border-top-left-radius-values-004-expected.png:
+        * platform/chromium-mac-snowleopard/ietestcenter/css3/bordersbackgrounds/border-top-right-radius-values-004-expected.png:
+        * platform/chromium-mac-snowleopard/svg/custom/svg-fonts-in-html-expected.png:
+        * platform/chromium-mac/fast/backgrounds/border-radius-split-background-image-expected.png:
+        * platform/chromium-mac/fast/borders/border-radius-complex-inner-expected.png:
+        * platform/chromium-mac/fast/borders/border-radius-inset-outset-expected.png:
+        * platform/chromium-mac/fast/borders/border-radius-wide-border-05-expected.png:
+        * platform/chromium-mac/fast/borders/border-styles-split-expected.png:
+        * platform/chromium-mac/fast/borders/borderRadiusArcs01-expected.png:
+        * platform/chromium-mac/fast/borders/mixed-border-styles-radius-expected.png:
+        * platform/chromium-mac/fast/writing-mode/border-styles-vertical-lr-expected.png:
+        * platform/chromium-mac/fast/writing-mode/border-styles-vertical-rl-expected.png:
+        * platform/chromium-mac/ietestcenter/css3/bordersbackgrounds/border-radius-sum-of-radii-001-expected.png:
+        * platform/chromium-mac/ietestcenter/css3/bordersbackgrounds/border-radius-sum-of-radii-002-expected.png:
+        * platform/chromium-mac/ietestcenter/css3/bordersbackgrounds/border-top-left-radius-values-004-expected.png:
+        * platform/chromium-mac/ietestcenter/css3/bordersbackgrounds/border-top-right-radius-values-004-expected.png:
+        * platform/chromium-mac/svg/custom/svg-fonts-in-html-expected.png:
+        * platform/chromium-win/fast/backgrounds/border-radius-split-background-image-expected.png:
+        * platform/chromium-win/fast/borders/border-radius-complex-inner-expected.png:
+        * platform/chromium-win/fast/borders/border-radius-inset-outset-expected.png:
+        * platform/chromium-win/fast/borders/border-radius-wide-border-05-expected.png:
+        * platform/chromium-win/fast/borders/border-styles-split-expected.png:
+        * platform/chromium-win/fast/borders/borderRadiusArcs01-expected.png:
+        * platform/chromium-win/fast/borders/mixed-border-styles-radius-expected.png:
+        * platform/chromium-win/fast/writing-mode/border-styles-vertical-lr-expected.png:
+        * platform/chromium-win/fast/writing-mode/border-styles-vertical-rl-expected.png:
+        * platform/chromium-win/ietestcenter/css3/bordersbackgrounds/border-radius-sum-of-radii-001-expected.png:
+        * platform/chromium-win/ietestcenter/css3/bordersbackgrounds/border-radius-sum-of-radii-002-expected.png:
+        * platform/chromium-win/ietestcenter/css3/bordersbackgrounds/border-top-left-radius-values-004-expected.png:
+        * platform/chromium-win/ietestcenter/css3/bordersbackgrounds/border-top-right-radius-values-004-expected.png:
+        * platform/chromium-win/svg/custom/svg-fonts-in-html-expected.png:
+        * platform/chromium/TestExpectations:
+
 2013-01-11  Stephen Chenney  <schenney@chromium.org>
 
         [Chromium] Test Expectations update after Skia flag changes.
