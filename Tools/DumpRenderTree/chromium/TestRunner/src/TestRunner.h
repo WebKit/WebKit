@@ -169,6 +169,14 @@ private:
     // length to retrieve.
     void textSurroundingNode(const CppArgumentList&, CppVariant*);
 
+    // Enable or disable smart insert/delete. This is enabled by default.
+    void setSmartInsertDeleteEnabled(const CppArgumentList&, CppVariant*);
+
+    // Enable or disable trailing whitespace selection on double click.
+    void setSelectTrailingWhitespaceEnabled(const CppArgumentList&, CppVariant*);
+    void enableAutoResizeMode(const CppArgumentList&, CppVariant*);
+    void disableAutoResizeMode(const CppArgumentList&, CppVariant*);
+
     ///////////////////////////////////////////////////////////////////////////
     // Methods modifying WebPreferences.
 

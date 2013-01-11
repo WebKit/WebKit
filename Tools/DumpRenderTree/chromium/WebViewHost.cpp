@@ -1197,6 +1197,11 @@ void WebViewHost::setSmartInsertDeleteEnabled(bool enabled)
     // allows both.
 }
 
+void WebViewHost::setClientWindowRect(const WebKit::WebRect& rect)
+{
+    setWindowRect(rect);
+}
+
 void WebViewHost::setLogConsoleOutput(bool enabled)
 {
     m_logConsoleOutput = enabled;

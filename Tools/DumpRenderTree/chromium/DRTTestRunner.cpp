@@ -113,14 +113,12 @@ DRTTestRunner::DRTTestRunner(TestShell* shell)
     bindMethod("didLosePointerLock", &DRTTestRunner::didLosePointerLock);
     bindMethod("didNotAcquirePointerLock", &DRTTestRunner::didNotAcquirePointerLock);
 #endif
-    bindMethod("disableAutoResizeMode", &DRTTestRunner::disableAutoResizeMode);
     bindMethod("display", &DRTTestRunner::display);
     bindMethod("displayInvalidatedRegion", &DRTTestRunner::displayInvalidatedRegion);
     bindMethod("dumpBackForwardList", &DRTTestRunner::dumpBackForwardList);
     bindMethod("dumpProgressFinishedCallback", &DRTTestRunner::dumpProgressFinishedCallback);
     bindMethod("dumpSelectionRect", &DRTTestRunner::dumpSelectionRect);
     bindMethod("dumpStatusCallbacks", &DRTTestRunner::dumpWindowStatusChanges);
-    bindMethod("enableAutoResizeMode", &DRTTestRunner::enableAutoResizeMode);
     bindMethod("evaluateInWebInspector", &DRTTestRunner::evaluateInWebInspector);
 #if ENABLE(NOTIFICATIONS)
     bindMethod("grantWebNotificationPermission", &DRTTestRunner::grantWebNotificationPermission);
@@ -151,9 +149,7 @@ DRTTestRunner::DRTTestRunner(TestShell* shell)
 #endif
     bindMethod("setPOSIXLocale", &DRTTestRunner::setPOSIXLocale);
     bindMethod("setPrinting", &DRTTestRunner::setPrinting);
-    bindMethod("setSelectTrailingWhitespaceEnabled", &DRTTestRunner::setSelectTrailingWhitespaceEnabled);
     bindMethod("setBackingScaleFactor", &DRTTestRunner::setBackingScaleFactor);
-    bindMethod("setSmartInsertDeleteEnabled", &DRTTestRunner::setSmartInsertDeleteEnabled);
     bindMethod("setWillSendRequestClearHeader", &DRTTestRunner::setWillSendRequestClearHeader);
     bindMethod("setWillSendRequestReturnsNull", &DRTTestRunner::setWillSendRequestReturnsNull);
     bindMethod("setWillSendRequestReturnsNullOnRedirect", &DRTTestRunner::setWillSendRequestReturnsNullOnRedirect);
@@ -596,53 +592,6 @@ void DRTTestRunner::pathToLocalResource(const CppArgumentList& arguments, CppVar
     result->set(webkit_support::RewriteLayoutTestsURL(url).spec());
 }
 
-void DRTTestRunner::setSmartInsertDeleteEnabled(const CppArgumentList& arguments, CppVariant* result)
-{
-    if (arguments.size() > 0 && arguments[0].isBool())
-        m_shell->webViewHost()->setSmartInsertDeleteEnabled(arguments[0].value.boolValue);
-    result->setNull();
-}
-
-void DRTTestRunner::setSelectTrailingWhitespaceEnabled(const CppArgumentList& arguments, CppVariant* result)
-{
-    if (arguments.size() > 0 && arguments[0].isBool())
-        m_shell->webViewHost()->setSelectTrailingWhitespaceEnabled(arguments[0].value.boolValue);
-    result->setNull();
-}
-
-void DRTTestRunner::enableAutoResizeMode(const CppArgumentList& arguments, CppVariant* result)
-{
-    if (arguments.size() != 4) {
-        result->set(false);
-        return;
-    }
-    int minWidth = cppVariantToInt32(arguments[0]);
-    int minHeight = cppVariantToInt32(arguments[1]);
-    WebKit::WebSize minSize(minWidth, minHeight);
-
-    int maxWidth = cppVariantToInt32(arguments[2]);
-    int maxHeight = cppVariantToInt32(arguments[3]);
-    WebKit::WebSize maxSize(maxWidth, maxHeight);
-
-    m_shell->webView()->enableAutoResizeMode(minSize, maxSize);
-    result->set(true);
-}
-
-void DRTTestRunner::disableAutoResizeMode(const CppArgumentList& arguments, CppVariant* result)
-{
-    if (arguments.size() !=2) {
-        result->set(false);
-        return;
-    }
-    int newWidth = cppVariantToInt32(arguments[0]);
-    int newHeight = cppVariantToInt32(arguments[1]);
-    WebKit::WebSize newSize(newWidth, newHeight);
-
-    m_shell->webViewHost()->setWindowRect(WebRect(0, 0, newSize.width, newSize.height));
-    m_shell->webView()->disableAutoResizeMode();
-    m_shell->webView()->resize(newSize);
-    result->set(true);
-}
 
 #if ENABLE(NOTIFICATIONS)
 void DRTTestRunner::grantWebNotificationPermission(const CppArgumentList& arguments, CppVariant* result)

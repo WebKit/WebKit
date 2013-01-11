@@ -40,6 +40,7 @@ namespace WebKit {
 class WebGamepads;
 class WebIntentRequest;
 struct WebContextMenuData;
+struct WebRect;
 struct WebURLError;
 }
 
@@ -78,6 +79,9 @@ public:
     virtual WebKit::WebIntentRequest* currentWebIntentRequest() { return 0; }
     virtual std::string makeURLErrorDescription(const WebKit::WebURLError&) { return std::string(); }
     virtual std::string normalizeLayoutTestURL(const std::string&) { return std::string(); }
+    virtual void setClientWindowRect(const WebKit::WebRect&) { }
+    virtual void setSelectTrailingWhitespaceEnabled(bool) { }
+    virtual void setSmartInsertDeleteEnabled(bool) { }
 };
 
 }

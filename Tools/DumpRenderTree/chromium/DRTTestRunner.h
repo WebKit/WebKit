@@ -139,13 +139,6 @@ public:
     // Converts a URL starting with file:///tmp/ to the local mapping.
     void pathToLocalResource(const CppArgumentList&, CppVariant*);
 
-    // Enable or disable smart insert/delete. This is enabled by default.
-    void setSmartInsertDeleteEnabled(const CppArgumentList&, CppVariant*);
-
-    // Enable or disable trailing whitespace selection on double click.
-    void setSelectTrailingWhitespaceEnabled(const CppArgumentList&, CppVariant*);
-    void enableAutoResizeMode(const CppArgumentList&, CppVariant*);
-    void disableAutoResizeMode(const CppArgumentList&, CppVariant*);
     void dumpSelectionRect(const CppArgumentList&, CppVariant*);
 
 #if ENABLE(NOTIFICATIONS)

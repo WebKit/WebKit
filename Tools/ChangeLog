@@ -1,3 +1,33 @@
+2013-01-11  Dan Carney  <dcarney@google.com>
+
+        [chromium] move some whitespace and resize related methods to TestRunner library
+        https://bugs.webkit.org/show_bug.cgi?id=106655
+
+        Reviewed by Jochen Eisinger.
+
+        * DumpRenderTree/chromium/DRTTestRunner.cpp:
+        (DRTTestRunner::DRTTestRunner):
+        * DumpRenderTree/chromium/DRTTestRunner.h:
+        (DRTTestRunner):
+        * DumpRenderTree/chromium/TestRunner/public/WebTestDelegate.h:
+        (WebKit):
+        (WebTestRunner::WebTestDelegate::setClientWindowRect):
+        (WebTestRunner::WebTestDelegate::setSelectTrailingWhitespaceEnabled):
+        (WebTestRunner::WebTestDelegate::setSmartInsertDeleteEnabled):
+        * DumpRenderTree/chromium/TestRunner/src/TestRunner.cpp:
+        (WebTestRunner::TestRunner::TestRunner):
+        (WebTestRunner::TestRunner::setSmartInsertDeleteEnabled):
+        (WebTestRunner):
+        (WebTestRunner::TestRunner::setSelectTrailingWhitespaceEnabled):
+        (WebTestRunner::TestRunner::enableAutoResizeMode):
+        (WebTestRunner::TestRunner::disableAutoResizeMode):
+        * DumpRenderTree/chromium/TestRunner/src/TestRunner.h:
+        (TestRunner):
+        * DumpRenderTree/chromium/WebViewHost.cpp:
+        (WebViewHost::setClientWindowRect):
+        * DumpRenderTree/chromium/WebViewHost.h:
+        (WebViewHost):
+
 2013-01-11  Mario Sanchez Prada  <mario.prada@samsung.com>
 
         Unreviewed. Update my e-mail addresses.
