@@ -11,8 +11,9 @@ function test()
 {
     var cookieName = "cookieName";
     var cookieDomain = "127.0.0.1";
+    var cookieURL = "http://" + cookieDomain + "/";
     // Ensure cookie is deleted before testing.
-    PageAgent.deleteCookie(cookieName, cookieDomain, step1);
+    PageAgent.deleteCookie(cookieName, cookieURL, step1);
 
     function step1()
     {
@@ -33,7 +34,7 @@ function test()
             }
         }
         // Ensure cookie is deleted after testing.
-        PageAgent.deleteCookie(cookieName, cookieDomain, step4);
+        PageAgent.deleteCookie(cookieName, cookieURL, step4);
     }
 
     function step4()

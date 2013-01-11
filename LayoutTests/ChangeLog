@@ -1,3 +1,14 @@
+2013-01-11  Eugene Klyuchnikov  <eustas@chromium.org>
+
+        Web Inspector: [Resources] "Delete" cookie deletes all cookies with matching name.
+        https://bugs.webkit.org/show_bug.cgi?id=105633
+
+        Reviewed by Pavel Feldman.
+
+        Adopt new signatures.
+
+        * http/tests/inspector/resource-main-cookies.php:
+
 2013-01-11  Pavel Feldman  <pfeldman@chromium.org>
 
         Web Inspector [chromium]: Debugger.globalObjectCleared is not dispatched on reload after renderer swap

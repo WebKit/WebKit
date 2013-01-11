@@ -259,9 +259,9 @@
                 "name": "deleteCookie",
                 "parameters": [
                     { "name": "cookieName", "type": "string", "description": "Name of the cookie to remove." },
-                    { "name": "domain", "type": "string", "description": "Domain of the cookie to remove." }
+                    { "name": "url", "type": "string", "description": "URL to match cooke domain and path." }
                 ],
-                "description": "Deletes browser cookie with given name for the given domain.",
+                "description": "Deletes browser cookie with given name, domain and path.",
                 "hidden": true
             },
             {

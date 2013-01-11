@@ -567,17 +567,11 @@ void InspectorPageAgent::getCookies(ErrorString*, RefPtr<TypeBuilder::Array<Type
     }
 }
 
-void InspectorPageAgent::deleteCookie(ErrorString*, const String& cookieName, const String& domain)
+void InspectorPageAgent::deleteCookie(ErrorString*, const String& cookieName, const String& url)
 {
-    for (Frame* frame = m_page->mainFrame(); frame; frame = frame->tree()->traverseNext(m_page->mainFrame())) {
-        Document* document = frame->document();
-        if (document->url().host() != domain)
-            continue;
-
-        Vector<KURL> allURLs = allResourcesURLsForFrame(frame);
-        for (Vector<KURL>::const_iterator it = allURLs.begin(); it != allURLs.end(); ++it)
-            WebCore::deleteCookie(document, KURL(ParsedURLString, *it), cookieName);
-    }
+    KURL parsedURL(ParsedURLString, url);
+    for (Frame* frame = m_page->mainFrame(); frame; frame = frame->tree()->traverseNext(m_page->mainFrame()))
+        WebCore::deleteCookie(frame->document(), parsedURL, cookieName);
 }
 
 void InspectorPageAgent::getResourceTree(ErrorString*, RefPtr<TypeBuilder::Page::FrameResourceTree>& object)
