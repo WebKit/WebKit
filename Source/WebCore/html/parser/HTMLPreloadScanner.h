@@ -58,6 +58,10 @@ private:
     HTMLToken m_token;
     bool m_inStyle;
     KURL m_predictedBaseElementURL;
+
+#if ENABLE(TEMPLATE_ELEMENT)
+    size_t m_templateCount;
+#endif
 };
 
 }
