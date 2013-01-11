@@ -1,3 +1,26 @@
+2013-01-11  Tony Chang  <tony@chromium.org>
+
+        Unreviewed, revert r139157 to fix the chromium build.
+        These files were deleted in a follow up and since r139044 was reverted, we need to
+        add back these files.
+
+        * WebKit.gyp:
+        * src/DragScrollTimer.cpp: Added.
+        (WebKit):
+        (WebKit::distanceToRect):
+        (WebKit::DragScrollTimer::DragScrollTimer):
+        (WebKit::DragScrollTimer::~DragScrollTimer):
+        (WebKit::DragScrollTimer::stop):
+        (WebKit::DragScrollTimer::scroll):
+        (WebKit::DragScrollTimer::update):
+        (WebKit::DragScrollTimer::triggerScroll):
+        (WebKit::DragScrollTimer::scrollDistanceFor):
+        * src/DragScrollTimer.h: Added.
+        (WebKit):
+        (DragScrollTimer):
+        (WebKit::DragScrollTimer::fired):
+        (WebKit::DragScrollTimer::shouldScroll):
+
 2013-01-11  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r139044.
