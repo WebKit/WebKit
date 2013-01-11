@@ -1,3 +1,13 @@
+2013-01-11  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Try CRLF to LF change in r139407 again.
+
+        * BuildSlaveSupport/delete-stale-build-files:
+        (main):
+        (webkitBuildDirectory):
+        * BuildSlaveSupport/kill-old-processes:
+        (main):
+
 2013-01-11  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] Disable the unit tests timeout when running from make check
