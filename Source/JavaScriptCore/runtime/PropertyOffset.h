@@ -45,9 +45,9 @@ static const PropertyOffset firstOutOfLineOffset = 100;
 
 // Declare all of the functions because they tend to do forward calls.
 inline void checkOffset(PropertyOffset);
-inline void checkOffset(PropertyOffset, PropertyOffset inlineCapacity);
+inline void checkOffset(PropertyOffset, int inlineCapacity);
 inline void validateOffset(PropertyOffset);
-inline void validateOffset(PropertyOffset, PropertyOffset inlineCapacity);
+inline void validateOffset(PropertyOffset, int inlineCapacity);
 inline bool isValidOffset(PropertyOffset);
 inline bool isInlineOffset(PropertyOffset);
 inline bool isOutOfLineOffset(PropertyOffset);
@@ -55,7 +55,7 @@ inline size_t offsetInInlineStorage(PropertyOffset);
 inline size_t offsetInOutOfLineStorage(PropertyOffset);
 inline size_t offsetInRespectiveStorage(PropertyOffset);
 inline size_t numberOfOutOfLineSlotsForLastOffset(PropertyOffset);
-inline size_t numberOfSlotsForLastOffset(PropertyOffset, PropertyOffset inlineCapacity);
+inline size_t numberOfSlotsForLastOffset(PropertyOffset, int inlineCapacity);
 
 inline void checkOffset(PropertyOffset offset)
 {
@@ -63,7 +63,7 @@ inline void checkOffset(PropertyOffset offset)
     ASSERT(offset >= invalidOffset);
 }
 
-inline void checkOffset(PropertyOffset offset, PropertyOffset inlineCapacity)
+inline void checkOffset(PropertyOffset offset, int inlineCapacity)
 {
     UNUSED_PARAM(offset);
     UNUSED_PARAM(inlineCapacity);
@@ -79,7 +79,7 @@ inline void validateOffset(PropertyOffset offset)
     ASSERT(isValidOffset(offset));
 }
 
-inline void validateOffset(PropertyOffset offset, PropertyOffset inlineCapacity)
+inline void validateOffset(PropertyOffset offset, int inlineCapacity)
 {
     checkOffset(offset, inlineCapacity);
     ASSERT(isValidOffset(offset));
@@ -132,7 +132,7 @@ inline size_t numberOfOutOfLineSlotsForLastOffset(PropertyOffset offset)
     return offset - firstOutOfLineOffset + 1;
 }
 
-inline size_t numberOfSlotsForLastOffset(PropertyOffset offset, PropertyOffset inlineCapacity)
+inline size_t numberOfSlotsForLastOffset(PropertyOffset offset, int inlineCapacity)
 {
     checkOffset(offset, inlineCapacity);
     if (offset < inlineCapacity)
@@ -140,7 +140,7 @@ inline size_t numberOfSlotsForLastOffset(PropertyOffset offset, PropertyOffset i
     return inlineCapacity + numberOfOutOfLineSlotsForLastOffset(offset);
 }
 
-inline PropertyOffset propertyOffsetFor(PropertyOffset propertyNumber, PropertyOffset inlineCapacity)
+inline PropertyOffset offsetForPropertyNumber(int propertyNumber, int inlineCapacity)
 {
     PropertyOffset offset = propertyNumber;
     if (offset >= inlineCapacity) {

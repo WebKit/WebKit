@@ -635,12 +635,12 @@ Structure* Structure::flattenDictionaryStructure(JSGlobalData& globalData, JSObj
         PropertyTable::iterator end = m_propertyTable->end();
         for (PropertyTable::iterator iter = m_propertyTable->begin(); iter != end; ++iter, ++i) {
             values[i] = object->getDirectOffset(iter->offset);
-            iter->offset = propertyOffsetFor(i, m_inlineCapacity);
+            iter->offset = offsetForPropertyNumber(i, m_inlineCapacity);
         }
         
         // Copies in our values to their compacted locations.
         for (unsigned i = 0; i < propertyCount; i++)
-            object->putDirectOffset(globalData, propertyOffsetFor(i, m_inlineCapacity), values[i]);
+            object->putDirectOffset(globalData, offsetForPropertyNumber(i, m_inlineCapacity), values[i]);
 
         m_propertyTable->clearDeletedOffsets();
     }

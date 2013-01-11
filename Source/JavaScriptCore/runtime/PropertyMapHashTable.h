@@ -491,7 +491,7 @@ inline PropertyOffset PropertyTable::nextOffset(PropertyOffset inlineCapacity)
     if (hasDeletedOffset())
         return getDeletedOffset();
 
-    return propertyOffsetFor(size(), inlineCapacity);
+    return offsetForPropertyNumber(size(), inlineCapacity);
 }
 
 inline PassOwnPtr<PropertyTable> PropertyTable::copy(JSGlobalData& globalData, JSCell* owner, unsigned newCapacity)

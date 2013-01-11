@@ -238,7 +238,7 @@ namespace JSC {
         PropertyOffset lastValidOffset() const
         {
             if (m_propertyTable)
-                return propertyOffsetFor(m_propertyTable->propertyStorageSize() - 1, m_inlineCapacity);
+                return offsetForPropertyNumber(m_propertyTable->propertyStorageSize() - 1, m_inlineCapacity);
             return m_offset;
         }
         bool isValidOffset(PropertyOffset offset) const

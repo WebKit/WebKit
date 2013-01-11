@@ -1,3 +1,24 @@
+2013-01-11  Geoffrey Garen  <ggaren@apple.com>
+
+        Rename propertyOffsetFor => offsetForPropertyNumber
+        https://bugs.webkit.org/show_bug.cgi?id=106685
+
+        Reviewed by Gavin Barraclough.
+
+        Since the argument is just a typedef and not an object, I wanted to clarify the meaning.
+
+        * runtime/PropertyMapHashTable.h:
+        (JSC::PropertyTable::nextOffset): Updated for rename.
+
+        * runtime/PropertyOffset.h:
+        (JSC::offsetForPropertyNumber): Renamed. Also changed some PropertyOffset variables
+        to plain ints, because they're not actually on the PropertyOffsets number line.
+
+        * runtime/Structure.cpp:
+        (JSC::Structure::flattenDictionaryStructure):
+        * runtime/Structure.h:
+        (JSC::Structure::lastValidOffset): Updated for rename.
+
 2013-01-10  Zan Dobersek  <zandobersek@gmail.com>
 
         Remove the ENABLE_ANIMATION_API feature define occurences
