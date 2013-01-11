@@ -10,6 +10,176 @@
 
 2013-01-11  Stephen Chenney  <schenney@chromium.org>
 
+        [Chromium] Rebaselines after Skia changes.
+
+        Unreviewed test expectations update.
+
+        These are the last of the Mac/Win failures that do not also occur on Linux.
+        There is also an attempt to fix the TestExpectations so that Linux
+        goes green. Apparently it will be red if you have "Failure" when it's
+        actually an "ImageOnlyFailure", but not reliably.
+
+        * platform/chromium-mac-lion/fast/borders/border-image-scaled-expected.png:
+        * platform/chromium-mac-lion/fast/css/focus-ring-detached-expected.png:
+        * platform/chromium-mac-lion/fast/css/focus-ring-multiline-expected.png:
+        * platform/chromium-mac-lion/fast/css/focus-ring-multiline-writingmode-vertical-expected.png:
+        * platform/chromium-mac-lion/fast/css/focus-ring-outline-color-expected.png:
+        * platform/chromium-mac-lion/fast/css/focus-ring-outline-offset-expected.png:
+        * platform/chromium-mac-lion/fast/css/focus-ring-outline-width-expected.png:
+        * platform/chromium-mac-lion/fast/css/font-face-multiple-faces-expected.png:
+        * platform/chromium-mac-lion/fast/css/outline-auto-location-expected.png:
+        * platform/chromium-mac-lion/fast/dom/52776-expected.png:
+        * platform/chromium-mac-lion/fast/dom/focus-contenteditable-expected.png:
+        * platform/chromium-mac-lion/fast/events/autoscroll-expected.png:
+        * platform/chromium-mac-lion/fast/events/context-no-deselect-expected.png:
+        * platform/chromium-mac-lion/fast/events/reveal-link-when-focused-expected.png:
+        * platform/chromium-mac-lion/fast/forms/date/date-appearance-basic-expected.png:
+        * platform/chromium-mac-lion/fast/forms/datetimelocal/datetimelocal-appearance-basic-expected.png:
+        * platform/chromium-mac-lion/fast/forms/input-appearance-focus-expected.png:
+        * platform/chromium-mac-lion/fast/forms/input-appearance-selection-expected.png:
+        * platform/chromium-mac-lion/fast/forms/input-double-click-selection-gap-bug-expected.png:
+        * platform/chromium-mac-lion/fast/forms/input-placeholder-paint-order-expected.png:
+        * platform/chromium-mac-lion/fast/forms/input-placeholder-visibility-1-expected.png:
+        * platform/chromium-mac-lion/fast/forms/input-placeholder-visibility-3-expected.png:
+        * platform/chromium-mac-lion/fast/forms/input-text-click-inside-expected.png:
+        * platform/chromium-mac-lion/fast/forms/input-text-double-click-expected.png:
+        * platform/chromium-mac-lion/fast/forms/input-text-drag-down-expected.png:
+        * platform/chromium-mac-lion/fast/forms/input-text-option-delete-expected.png:
+        * platform/chromium-mac-lion/fast/forms/input-text-scroll-left-on-blur-expected.png:
+        * platform/chromium-mac-lion/fast/forms/input-text-self-emptying-click-expected.png:
+        * platform/chromium-mac-lion/fast/forms/listbox-hit-test-zoomed-expected.png:
+        * platform/chromium-mac-lion/fast/forms/month/month-appearance-basic-expected.png:
+        * platform/chromium-mac-lion/fast/forms/number/number-appearance-rtl-expected.png:
+        * platform/chromium-mac-lion/fast/forms/plaintext-mode-2-expected.png:
+        * platform/chromium-mac-lion/fast/forms/select-listbox-multiple-no-focusring-expected.png:
+        * platform/chromium-mac-lion/fast/forms/tabbing-input-iframe-expected.png:
+        * platform/chromium-mac-lion/fast/forms/textarea-placeholder-visibility-1-expected.png:
+        * platform/chromium-mac-lion/fast/forms/textarea-placeholder-visibility-2-expected.png:
+        * platform/chromium-mac-lion/fast/forms/textarea-scrollbar-expected.png:
+        * platform/chromium-mac-lion/fast/forms/textarea-scrolled-type-expected.png:
+        * platform/chromium-mac-lion/fast/forms/textarea/textarea-placeholder-paint-order-expected.png:
+        * platform/chromium-mac-lion/fast/forms/textfield-focus-ring-expected.png:
+        * platform/chromium-mac-lion/fast/forms/textfield-outline-expected.png:
+        * platform/chromium-mac-lion/fast/forms/textfield-overflow-expected.png:
+        * platform/chromium-mac-lion/fast/forms/time/time-appearance-basic-expected.png:
+        * platform/chromium-mac-lion/fast/forms/week/week-appearance-basic-expected.png:
+        * platform/chromium-mac-lion/fast/frames/take-focus-from-iframe-expected.png:
+        * platform/chromium-mac-lion/fast/inline/25277-2-expected.png:
+        * platform/chromium-mac-lion/fast/inline/25277-expected.png:
+        * platform/chromium-mac-lion/fast/inline/continuation-outlines-expected.png:
+        * platform/chromium-mac-lion/fast/inline/continuation-outlines-with-layers-2-expected.png:
+        * platform/chromium-mac-lion/fast/inline/inline-focus-ring-expected.png:
+        * platform/chromium-mac-lion/fast/overflow/overflow-focus-ring-expected.png:
+        * platform/chromium-mac-lion/fast/repaint/continuation-after-outline-expected.png:
+        * platform/chromium-mac-lion/fast/repaint/delete-into-nested-block-expected.png:
+        * platform/chromium-mac-lion/fast/repaint/focus-layers-expected.png:
+        * platform/chromium-mac-lion/fast/repaint/focus-ring-expected.png: Added.
+        * platform/chromium-mac-lion/fast/repaint/renderer-destruction-by-invalidateSelection-crash-expected.png:
+        * platform/chromium-mac-lion/fast/sub-pixel/selection/selection-gaps-at-fractional-offsets-expected.png: Added.
+        * platform/chromium-mac-lion/fast/table/table-row-focus-ring-paint-expected.png: Added.
+        * platform/chromium-mac-lion/fast/text/atsui-multiple-renderers-expected.png:
+        * platform/chromium-mac-lion/fast/text/complex-synthetic-bold-space-width-expected.png:
+        * platform/chromium-mac-lion/fast/text/delete-hard-break-character-expected.png:
+        * platform/chromium-mac-lion/fast/text/international/rtl-caret-expected.png:
+        * platform/chromium-mac-lion/fast/transforms/transformed-caret-expected.png:
+        * platform/chromium-mac-lion/fast/writing-mode/border-image-horizontal-bt-expected.png: Added.
+        * platform/chromium-mac-lion/fast/writing-mode/border-image-vertical-lr-expected.png: Added.
+        * platform/chromium-mac-lion/fast/writing-mode/border-image-vertical-rl-expected.png: Added.
+        * platform/chromium-mac-lion/platform/chromium/virtual/softwarecompositing/visibility: Added.
+        * platform/chromium-mac-lion/platform/chromium/virtual/softwarecompositing/visibility/visibility-image-layers-expected.png: Added.
+        * platform/chromium-mac-lion/svg/W3C-SVG-1.1/interact-cursor-01-f-expected.png:
+        * platform/chromium-mac-lion/svg/W3C-SVG-1.1/metadata-example-01-b-expected.png:
+        * platform/chromium-mac-snowleopard/fast/borders/border-image-scaled-expected.png:
+        * platform/chromium-mac-snowleopard/fast/css/focus-ring-detached-expected.png:
+        * platform/chromium-mac-snowleopard/fast/css/focus-ring-multiline-expected.png:
+        * platform/chromium-mac-snowleopard/fast/css/focus-ring-multiline-writingmode-vertical-expected.png: Added.
+        * platform/chromium-mac-snowleopard/fast/css/focus-ring-outline-color-expected.png:
+        * platform/chromium-mac-snowleopard/fast/css/focus-ring-outline-offset-expected.png:
+        * platform/chromium-mac-snowleopard/fast/css/focus-ring-outline-width-expected.png:
+        * platform/chromium-mac-snowleopard/fast/css/font-face-multiple-faces-expected.png:
+        * platform/chromium-mac-snowleopard/fast/css/outline-auto-location-expected.png:
+        * platform/chromium-mac-snowleopard/fast/dom/52776-expected.png:
+        * platform/chromium-mac-snowleopard/fast/dom/focus-contenteditable-expected.png:
+        * platform/chromium-mac-snowleopard/fast/events/autoscroll-expected.png:
+        * platform/chromium-mac-snowleopard/fast/events/context-no-deselect-expected.png:
+        * platform/chromium-mac-snowleopard/fast/events/reveal-link-when-focused-expected.png:
+        * platform/chromium-mac-snowleopard/fast/forms/date/date-appearance-basic-expected.png:
+        * platform/chromium-mac-snowleopard/fast/forms/datetimelocal/datetimelocal-appearance-basic-expected.png:
+        * platform/chromium-mac-snowleopard/fast/forms/input-appearance-focus-expected.png:
+        * platform/chromium-mac-snowleopard/fast/forms/input-appearance-selection-expected.png:
+        * platform/chromium-mac-snowleopard/fast/forms/input-double-click-selection-gap-bug-expected.png:
+        * platform/chromium-mac-snowleopard/fast/forms/input-placeholder-paint-order-expected.png:
+        * platform/chromium-mac-snowleopard/fast/forms/input-placeholder-visibility-1-expected.png:
+        * platform/chromium-mac-snowleopard/fast/forms/input-placeholder-visibility-3-expected.png:
+        * platform/chromium-mac-snowleopard/fast/forms/input-text-click-inside-expected.png:
+        * platform/chromium-mac-snowleopard/fast/forms/input-text-double-click-expected.png:
+        * platform/chromium-mac-snowleopard/fast/forms/input-text-drag-down-expected.png:
+        * platform/chromium-mac-snowleopard/fast/forms/input-text-option-delete-expected.png:
+        * platform/chromium-mac-snowleopard/fast/forms/input-text-scroll-left-on-blur-expected.png:
+        * platform/chromium-mac-snowleopard/fast/forms/input-text-self-emptying-click-expected.png:
+        * platform/chromium-mac-snowleopard/fast/forms/listbox-hit-test-zoomed-expected.png:
+        * platform/chromium-mac-snowleopard/fast/forms/month/month-appearance-basic-expected.png:
+        * platform/chromium-mac-snowleopard/fast/forms/number/number-appearance-rtl-expected.png:
+        * platform/chromium-mac-snowleopard/fast/forms/plaintext-mode-2-expected.png:
+        * platform/chromium-mac-snowleopard/fast/forms/select-listbox-multiple-no-focusring-expected.png:
+        * platform/chromium-mac-snowleopard/fast/forms/tabbing-input-iframe-expected.png:
+        * platform/chromium-mac-snowleopard/fast/forms/textarea-placeholder-visibility-1-expected.png:
+        * platform/chromium-mac-snowleopard/fast/forms/textarea-placeholder-visibility-2-expected.png:
+        * platform/chromium-mac-snowleopard/fast/forms/textarea-scrollbar-expected.png:
+        * platform/chromium-mac-snowleopard/fast/forms/textarea-scrolled-type-expected.png:
+        * platform/chromium-mac-snowleopard/fast/forms/textarea/textarea-placeholder-paint-order-expected.png:
+        * platform/chromium-mac-snowleopard/fast/forms/textfield-focus-ring-expected.png:
+        * platform/chromium-mac-snowleopard/fast/forms/textfield-outline-expected.png:
+        * platform/chromium-mac-snowleopard/fast/forms/textfield-overflow-expected.png:
+        * platform/chromium-mac-snowleopard/fast/forms/time/time-appearance-basic-expected.png:
+        * platform/chromium-mac-snowleopard/fast/forms/week/week-appearance-basic-expected.png:
+        * platform/chromium-mac-snowleopard/fast/frames/take-focus-from-iframe-expected.png:
+        * platform/chromium-mac-snowleopard/fast/inline/25277-2-expected.png:
+        * platform/chromium-mac-snowleopard/fast/inline/25277-expected.png:
+        * platform/chromium-mac-snowleopard/fast/inline/continuation-outlines-expected.png:
+        * platform/chromium-mac-snowleopard/fast/inline/inline-focus-ring-expected.png:
+        * platform/chromium-mac-snowleopard/fast/overflow/overflow-focus-ring-expected.png:
+        * platform/chromium-mac-snowleopard/fast/repaint/continuation-after-outline-expected.png:
+        * platform/chromium-mac-snowleopard/fast/repaint/delete-into-nested-block-expected.png:
+        * platform/chromium-mac-snowleopard/fast/repaint/focus-layers-expected.png:
+        * platform/chromium-mac-snowleopard/fast/repaint/focus-ring-expected.png: Added.
+        * platform/chromium-mac-snowleopard/fast/repaint/renderer-destruction-by-invalidateSelection-crash-expected.png:
+        * platform/chromium-mac-snowleopard/fast/sub-pixel/selection/selection-gaps-at-fractional-offsets-expected.png: Added.
+        * platform/chromium-mac-snowleopard/fast/table/table-row-focus-ring-paint-expected.png: Added.
+        * platform/chromium-mac-snowleopard/fast/text/atsui-multiple-renderers-expected.png:
+        * platform/chromium-mac-snowleopard/fast/text/complex-synthetic-bold-space-width-expected.png:
+        * platform/chromium-mac-snowleopard/fast/text/delete-hard-break-character-expected.png:
+        * platform/chromium-mac-snowleopard/fast/text/international/rtl-caret-expected.png:
+        * platform/chromium-mac-snowleopard/fast/transforms/transformed-caret-expected.png:
+        * platform/chromium-mac-snowleopard/fast/writing-mode/border-image-horizontal-bt-expected.png: Added.
+        * platform/chromium-mac-snowleopard/fast/writing-mode/border-image-vertical-lr-expected.png: Added.
+        * platform/chromium-mac-snowleopard/fast/writing-mode/border-image-vertical-rl-expected.png: Added.
+        * platform/chromium-mac-snowleopard/platform/chromium/virtual/softwarecompositing/visibility: Added.
+        * platform/chromium-mac-snowleopard/platform/chromium/virtual/softwarecompositing/visibility/visibility-image-layers-expected.png: Added.
+        * platform/chromium-mac-snowleopard/svg/W3C-SVG-1.1/interact-cursor-01-f-expected.png: Added.
+        * platform/chromium-mac-snowleopard/svg/W3C-SVG-1.1/metadata-example-01-b-expected.png: Added.
+        * platform/chromium-win-xp/fast/borders/border-image-01-expected.png: Added.
+        * platform/chromium-win-xp/fast/borders/border-image-border-radius-expected.png: Added.
+        * platform/chromium-win-xp/fast/borders/border-image-longhand-expected.png: Added.
+        * platform/chromium-win-xp/fast/borders/border-image-omit-right-slice-expected.png: Added.
+        * platform/chromium-win-xp/fast/borders/border-image-repeat-expected.png: Added.
+        * platform/chromium-win-xp/fast/borders/border-image-scrambled-expected.png: Added.
+        * platform/chromium-win-xp/fast/borders/border-image-slices-expected.png: Added.
+        * platform/chromium-win-xp/fast/borders/border-image-source-expected.png: Added.
+        * platform/chromium-win-xp/fast/images/paint-subrect-grid-expected.png: Added.
+        * platform/chromium-win/fast/borders/border-image-01-expected.png:
+        * platform/chromium-win/fast/borders/border-image-border-radius-expected.png:
+        * platform/chromium-win/fast/borders/border-image-longhand-expected.png:
+        * platform/chromium-win/fast/borders/border-image-omit-right-slice-expected.png:
+        * platform/chromium-win/fast/borders/border-image-repeat-expected.png:
+        * platform/chromium-win/fast/borders/border-image-scrambled-expected.png:
+        * platform/chromium-win/fast/borders/border-image-slices-expected.png:
+        * platform/chromium-win/fast/borders/border-image-source-expected.png:
+        * platform/chromium-win/fast/images/paint-subrect-grid-expected.png:
+        * platform/chromium/TestExpectations:
+
+2013-01-11  Stephen Chenney  <schenney@chromium.org>
+
         [Chromium] Mac editing test rebaseline
 
         Unreviewed expectations update.
