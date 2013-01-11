@@ -1,3 +1,12 @@
+2013-01-11  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] Disable the unit tests timeout when running from make check
+        https://bugs.webkit.org/show_bug.cgi?id=106670
+
+        Reviewed by Philippe Normand.
+
+        * GNUmakefile.am: Pass --timeout=-1 to run-gtk-test.
+
 2013-01-11  Raphael Kubo da Costa  <raphael.kubo.da.costa@intel.com>
 
         Yet another unreviewed fix after r139431.

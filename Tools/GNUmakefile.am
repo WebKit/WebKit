@@ -290,7 +290,7 @@ CLEANFILES += TestNetscapePlugin/libtestnetscapeplugin.la
 endif
 
 check-local:
-	$(top_srcdir)/Tools/Scripts/run-gtk-tests
+	$(top_srcdir)/Tools/Scripts/run-gtk-tests --timeout=-1
 
 EXTRA_DIST += \
 	Tools/gtk/common.py \
