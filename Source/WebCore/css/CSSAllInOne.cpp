@@ -41,6 +41,7 @@
 #include "CSSFontSelector.cpp"
 #include "CSSFunctionValue.cpp"
 #include "CSSGradientValue.cpp"
+#include "CSSGroupingRule.cpp"
 #include "CSSImageGeneratorValue.cpp"
 #include "CSSImageValue.cpp"
 #include "CSSImportRule.cpp"

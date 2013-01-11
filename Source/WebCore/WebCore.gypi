@@ -1470,6 +1470,8 @@
             'css/CSSFunctionValue.h',
             'css/CSSGradientValue.cpp',
             'css/CSSGradientValue.h',
+            'css/CSSGroupingRule.cpp',
+            'css/CSSGroupingRule.h',
             'css/CSSImageGeneratorValue.cpp',
             'css/CSSImageSetValue.cpp',
             'css/CSSImageValue.cpp',

@@ -23,15 +23,14 @@
 #ifndef CSSMediaRule_h
 #define CSSMediaRule_h
 
-#include "CSSRule.h"
+#include "CSSGroupingRule.h"
 #include "MediaList.h"
 
 namespace WebCore {
 
-class CSSRuleList;
 class StyleRuleMedia;
 
-class CSSMediaRule : public CSSRule {
+class CSSMediaRule : public CSSGroupingRule {
 public:
     static PassRefPtr<CSSMediaRule> create(StyleRuleMedia* rule, CSSStyleSheet* sheet) { return adoptRef(new CSSMediaRule(rule, sheet)); }
 
@@ -43,22 +42,13 @@ public:
     virtual String cssText() const OVERRIDE;
 
     MediaList* media() const;
-    CSSRuleList* cssRules() const;
-
-    unsigned insertRule(const String& rule, unsigned index, ExceptionCode&);
-    void deleteRule(unsigned index, ExceptionCode&);
-        
-    // For CSSRuleList
-    unsigned length() const;
-    CSSRule* item(unsigned index) const;
 
 private:
     CSSMediaRule(StyleRuleMedia*, CSSStyleSheet*);
+
+    MediaQuerySet* mediaQueries() const;
     
-    RefPtr<StyleRuleMedia> m_mediaRule;
     mutable RefPtr<MediaList> m_mediaCSSOMWrapper;
-    mutable Vector<RefPtr<CSSRule> > m_childRuleCSSOMWrappers;
-    mutable OwnPtr<CSSRuleList> m_ruleListCSSOMWrapper;
 };
 
 } // namespace WebCore

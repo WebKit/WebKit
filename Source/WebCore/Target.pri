@@ -263,6 +263,7 @@ SOURCES += \
     css/CSSFontFaceSource.cpp \
     css/CSSFunctionValue.cpp \
     css/CSSGradientValue.cpp \
+    css/CSSGroupingRule.cpp \
     css/CSSImageValue.cpp \
     css/CSSImageGeneratorValue.cpp \
     css/CSSImageSetValue.cpp \
@@ -1473,6 +1474,7 @@ HEADERS += \
     css/CSSFontSelector.h \
     css/CSSFunctionValue.h \
     css/CSSGradientValue.h \
+    css/CSSGroupingRule.h \
     css/CSSHelper.h \
     css/CSSImageGeneratorValue.h \
     css/CSSImageValue.h \

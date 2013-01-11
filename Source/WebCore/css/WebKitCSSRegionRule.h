@@ -31,41 +31,23 @@
 #ifndef WebKitCSSRegionRule_h
 #define WebKitCSSRegionRule_h
 
-#include "CSSRule.h"
-#include <wtf/Vector.h>
+#include "CSSGroupingRule.h"
 
 #if ENABLE(CSS_REGIONS)
 
 namespace WebCore {
 
-class CSSRuleList;
 class StyleRuleRegion;
 
-class WebKitCSSRegionRule : public CSSRule {
+class WebKitCSSRegionRule : public CSSGroupingRule {
 public:
     static PassRefPtr<WebKitCSSRegionRule> create(StyleRuleRegion* rule, CSSStyleSheet* sheet) { return adoptRef(new WebKitCSSRegionRule(rule, sheet)); }
 
-    virtual ~WebKitCSSRegionRule();
-
     virtual CSSRule::Type type() const OVERRIDE { return WEBKIT_REGION_RULE; }
     virtual String cssText() const OVERRIDE;
-    virtual void reattach(StyleRuleBase*) OVERRIDE;
-    virtual void reportMemoryUsage(MemoryObjectInfo*) const OVERRIDE;
-
-    CSSRuleList* cssRules() const;
-    
-    // For CSSRuleList
-    unsigned length() const;
-    CSSRule* item(unsigned index) const;
 
 private:
     WebKitCSSRegionRule(StyleRuleRegion*, CSSStyleSheet* parent);
-
-    RefPtr<StyleRuleRegion> m_regionRule;
-    mutable Vector<RefPtr<CSSRule> > m_childRuleCSSOMWrappers;
-    mutable OwnPtr<CSSRuleList> m_ruleListCSSOMWrapper;
-    
-    friend class StyleRuleBlock;
 };
 
 }

@@ -275,6 +275,18 @@ private:
 };
 #endif // ENABLE(CSS_DEVICE_ADAPTATION)
 
+inline const StyleRuleMedia* toStyleRuleMedia(const StyleRuleBlock* rule)
+{
+    ASSERT(!rule || rule->isMediaRule());
+    return static_cast<const StyleRuleMedia*>(rule);
+}
+
+inline const StyleRuleRegion* toStyleRuleRegion(const StyleRuleBlock* rule)
+{
+    ASSERT(!rule || rule->isRegionRule());
+    return static_cast<const StyleRuleRegion*>(rule);
+}
+
 } // namespace WebCore
 
 #endif // StyleRule_h
