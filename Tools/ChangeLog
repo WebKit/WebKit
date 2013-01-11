@@ -1,3 +1,9 @@
+2013-01-11  Mario Sanchez Prada  <mario.prada@samsung.com>
+
+        Unreviewed. Update my e-mail addresses.
+
+        * Scripts/webkitpy/common/config/committers.py:
+
 2013-01-11  Raphael Kubo da Costa  <raphael.kubo.da.costa@intel.com>
 
         Another unreviewed fix after r139431.
