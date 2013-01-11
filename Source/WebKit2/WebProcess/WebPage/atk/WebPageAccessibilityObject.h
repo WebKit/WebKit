@@ -26,6 +26,8 @@
 #ifndef WebPageAccessibilityObject_h
 #define WebPageAccessibilityObject_h
 
+#if HAVE(ACCESSIBILITY)
+
 #include <atk/atk.h>
 
 namespace WebKit {
@@ -61,4 +63,5 @@ void webPageAccessibilityObjectRefresh(WebPageAccessibilityObject*);
 
 G_END_DECLS
 
+#endif
 #endif // WebPageAccessibilityObject_h

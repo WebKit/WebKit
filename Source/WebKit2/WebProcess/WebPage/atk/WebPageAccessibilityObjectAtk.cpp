@@ -26,6 +26,8 @@
 #include "config.h"
 #include "WebPageAccessibilityObject.h"
 
+#if HAVE(ACCESSIBILITY)
+
 #include "WebPage.h"
 #include <WebCore/AXObjectCache.h>
 #include <WebCore/Frame.h>
@@ -138,3 +140,5 @@ void webPageAccessibilityObjectRefresh(WebPageAccessibilityObject* accessible)
         return;
     atk_object_set_parent(rootObject, ATK_OBJECT(accessible));
 }
+
+#endif
