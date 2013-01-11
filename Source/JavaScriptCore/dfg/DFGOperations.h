@@ -259,9 +259,7 @@ double DFG_OPERATION dfgConvertJSValueToNumber(ExecState*, EncodedJSValue) WTF_I
 size_t DFG_OPERATION dfgConvertJSValueToInt32(ExecState*, EncodedJSValue) WTF_INTERNAL;
 size_t DFG_OPERATION dfgConvertJSValueToBoolean(ExecState*, EncodedJSValue) WTF_INTERNAL;
 
-#if DFG_ENABLE(VERBOSE_SPECULATION_FAILURE)
-void DFG_OPERATION debugOperationPrintSpeculationFailure(ExecState*, void*) WTF_INTERNAL;
-#endif
+void DFG_OPERATION debugOperationPrintSpeculationFailure(ExecState*, void*, void*) WTF_INTERNAL;
 
 void DFG_OPERATION triggerReoptimizationNow(CodeBlock*) WTF_INTERNAL;
 

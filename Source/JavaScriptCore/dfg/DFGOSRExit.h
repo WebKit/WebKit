@@ -122,12 +122,10 @@ private:
     bool considerAddingAsFrequentExitSiteSlow(CodeBlock* dfgCodeBlock, CodeBlock* profiledCodeBlock);
 };
 
-#if DFG_ENABLE(VERBOSE_SPECULATION_FAILURE)
 struct SpeculationFailureDebugInfo {
     CodeBlock* codeBlock;
     NodeIndex nodeIndex;
 };
-#endif
 
 } } // namespace JSC::DFG
 

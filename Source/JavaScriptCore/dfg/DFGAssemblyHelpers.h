@@ -39,7 +39,7 @@
 
 namespace JSC { namespace DFG {
 
-typedef void (*V_DFGDebugOperation_EP)(ExecState*, void*);
+typedef void (*V_DFGDebugOperation_EPP)(ExecState*, void*, void*);
 
 class AssemblyHelpers : public MacroAssembler {
 public:
@@ -170,7 +170,7 @@ public:
     }
 
     // Add a debug call. This call has no effect on JIT code execution state.
-    void debugCall(V_DFGDebugOperation_EP function, void* argument)
+    void debugCall(V_DFGDebugOperation_EPP function, void* argument)
     {
         size_t scratchSize = sizeof(EncodedJSValue) * (GPRInfo::numberOfRegisters + FPRInfo::numberOfRegisters);
         ScratchBuffer* scratchBuffer = m_globalData->scratchBufferForSize(scratchSize);
@@ -194,12 +194,14 @@ public:
         storePtr(TrustedImmPtr(scratchSize), GPRInfo::regT0);
 
 #if CPU(X86_64) || CPU(ARM)
+        move(TrustedImmPtr(buffer), GPRInfo::argumentGPR2);
         move(TrustedImmPtr(argument), GPRInfo::argumentGPR1);
         move(GPRInfo::callFrameRegister, GPRInfo::argumentGPR0);
         GPRReg scratch = selectScratchGPR(GPRInfo::argumentGPR0, GPRInfo::argumentGPR1);
 #elif CPU(X86)
         poke(GPRInfo::callFrameRegister, 0);
         poke(TrustedImmPtr(argument), 1);
+        poke(TrustedImmPtr(buffer), 2);
         GPRReg scratch = GPRInfo::regT0;
 #else
 #error "DFG JIT not supported on this platform."

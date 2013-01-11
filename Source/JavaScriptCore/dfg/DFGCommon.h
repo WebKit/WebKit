@@ -70,8 +70,6 @@
 #define DFG_ENABLE_XOR_DEBUG_AID 0
 // Emit a breakpoint into the speculation failure code.
 #define DFG_ENABLE_JIT_BREAK_ON_SPECULATION_FAILURE 0
-// Log every speculation failure.
-#define DFG_ENABLE_VERBOSE_SPECULATION_FAILURE 0
 // Disable the DFG JIT without having to touch Platform.h
 #define DFG_DEBUG_LOCAL_DISBALE 0
 // Enable OSR entry from baseline JIT.

@@ -47,13 +47,14 @@ void OSRExitCompiler::compileExit(const OSRExit& exit, const Operands<ValueRecov
     dataLogF(")  ");
     dumpOperands(operands, WTF::dataFile());
 #endif
-#if DFG_ENABLE(VERBOSE_SPECULATION_FAILURE)
-    SpeculationFailureDebugInfo* debugInfo = new SpeculationFailureDebugInfo;
-    debugInfo->codeBlock = m_jit.codeBlock();
-    debugInfo->nodeIndex = exit.m_nodeIndex;
-    
-    m_jit.debugCall(debugOperationPrintSpeculationFailure, debugInfo);
-#endif
+
+    if (Options::printEachOSRExit()) {
+        SpeculationFailureDebugInfo* debugInfo = new SpeculationFailureDebugInfo;
+        debugInfo->codeBlock = m_jit.codeBlock();
+        debugInfo->nodeIndex = exit.m_nodeIndex;
+        
+        m_jit.debugCall(debugOperationPrintSpeculationFailure, debugInfo);
+    }
     
 #if DFG_ENABLE(JIT_BREAK_ON_SPECULATION_FAILURE)
     m_jit.breakpoint();
@@ -136,10 +137,6 @@ void OSRExitCompiler::compileExit(const OSRExit& exit, const Operands<ValueRecov
         
         if (!!exit.m_valueProfile) {
             EncodedJSValue* bucket = exit.m_valueProfile.getSpecFailBucket(0);
-            
-#if DFG_ENABLE(VERBOSE_SPECULATION_FAILURE)
-            dataLogF("  (have exit profile, bucket %p)  ", bucket);
-#endif
             
             if (exit.m_jsValueSource.isAddress()) {
                 // We can't be sure that we have a spare register. So use the tagTypeNumberRegister,

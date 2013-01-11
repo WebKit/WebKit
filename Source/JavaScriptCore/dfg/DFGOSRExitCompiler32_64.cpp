@@ -47,13 +47,14 @@ void OSRExitCompiler::compileExit(const OSRExit& exit, const Operands<ValueRecov
     dataLogF(") at JIT offset 0x%x  ", m_jit.debugOffset());
     dumpOperands(operands, WTF::dataFile());
 #endif
-#if DFG_ENABLE(VERBOSE_SPECULATION_FAILURE)
-    SpeculationFailureDebugInfo* debugInfo = new SpeculationFailureDebugInfo;
-    debugInfo->codeBlock = m_jit.codeBlock();
-    debugInfo->nodeIndex = exit.m_nodeIndex;
     
-    m_jit.debugCall(debugOperationPrintSpeculationFailure, debugInfo);
-#endif
+    if (Options::printEachOSRExit()) {
+        SpeculationFailureDebugInfo* debugInfo = new SpeculationFailureDebugInfo;
+        debugInfo->codeBlock = m_jit.codeBlock();
+        debugInfo->nodeIndex = exit.m_nodeIndex;
+        
+        m_jit.debugCall(debugOperationPrintSpeculationFailure, debugInfo);
+    }
     
 #if DFG_ENABLE(JIT_BREAK_ON_SPECULATION_FAILURE)
     m_jit.breakpoint();

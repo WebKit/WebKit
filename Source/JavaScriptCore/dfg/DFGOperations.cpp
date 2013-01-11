@@ -1607,8 +1607,7 @@ size_t DFG_OPERATION dfgConvertJSValueToBoolean(ExecState* exec, EncodedJSValue 
     return JSValue::decode(encodedOp).toBoolean(exec);
 }
 
-#if DFG_ENABLE(VERBOSE_SPECULATION_FAILURE)
-void DFG_OPERATION debugOperationPrintSpeculationFailure(ExecState* exec, void* debugInfoRaw)
+void DFG_OPERATION debugOperationPrintSpeculationFailure(ExecState* exec, void* debugInfoRaw, void* scratch)
 {
     JSGlobalData* globalData = &exec->globalData();
     NativeCallFrameTracer tracer(globalData, exec);
@@ -1627,8 +1626,25 @@ void DFG_OPERATION debugOperationPrintSpeculationFailure(ExecState* exec, void* 
     } else
         dataLog("no alternative code block (i.e. we've been jettisoned)");
     dataLog(", osrExitCounter = ", codeBlock->osrExitCounter(), "\n");
+    dataLog("    GPRs at time of exit:");
+    char* scratchPointer = static_cast<char*>(scratch);
+    for (unsigned i = 0; i < GPRInfo::numberOfRegisters; ++i) {
+        GPRReg gpr = GPRInfo::toRegister(i);
+        dataLog(" ", GPRInfo::debugName(gpr), ":", RawPointer(*reinterpret_cast<void**>(scratchPointer)));
+        scratchPointer += sizeof(EncodedJSValue);
+    }
+    dataLog("\n");
+    dataLog("    FPRs at time of exit:");
+    for (unsigned i = 0; i < FPRInfo::numberOfRegisters; ++i) {
+        FPRReg fpr = FPRInfo::toRegister(i);
+        dataLog(" ", FPRInfo::debugName(fpr), ":");
+        uint64_t bits = *reinterpret_cast<uint64_t*>(scratchPointer);
+        double value = *reinterpret_cast<double*>(scratchPointer);
+        dataLogF("%llx:%lf", bits, value);
+        scratchPointer += sizeof(EncodedJSValue);
+    }
+    dataLog("\n");
 }
-#endif
 
 extern "C" void DFG_OPERATION triggerReoptimizationNow(CodeBlock* codeBlock)
 {
