@@ -1,3 +1,111 @@
+2013-01-11  Stephen Chenney  <schenney@chromium.org>
+
+        [Chromium] More test expectations for Skia changes
+
+        Unreviewed test expectations update.
+
+        Mozilla test cases for linux. Also re-adding hixie/perf/006.xml, which is failing
+
+        * platform/chromium-linux-x86/tables/mozilla/bugs/bug1188-expected.png: Added.
+        * platform/chromium-linux-x86/tables/mozilla/bugs/bug1318-expected.png: Added.
+        * platform/chromium-linux-x86/tables/mozilla/bugs/bug137388-2-expected.png: Added.
+        * platform/chromium-linux-x86/tables/mozilla/bugs/bug138725-expected.png: Added.
+        * platform/chromium-linux-x86/tables/mozilla/bugs/bug18359-expected.png: Added.
+        * platform/chromium-linux-x86/tables/mozilla/bugs/bug23235-expected.png: Added.
+        * platform/chromium-linux-x86/tables/mozilla/bugs/bug2479-2-expected.png: Added.
+        * platform/chromium-linux-x86/tables/mozilla/bugs/bug2479-3-expected.png: Added.
+        * platform/chromium-linux-x86/tables/mozilla/bugs/bug26178-expected.png: Added.
+        * platform/chromium-linux-x86/tables/mozilla/bugs/bug28928-expected.png: Added.
+        * platform/chromium-linux-x86/tables/mozilla/bugs/bug29326-expected.png: Added.
+        * platform/chromium-linux-x86/tables/mozilla/bugs/bug33855-expected.png: Added.
+        * platform/chromium-linux-x86/tables/mozilla/bugs/bug39209-expected.png: Added.
+        * platform/chromium-linux-x86/tables/mozilla/bugs/bug4093-expected.png: Added.
+        * platform/chromium-linux-x86/tables/mozilla/bugs/bug4382-expected.png: Added.
+        * platform/chromium-linux-x86/tables/mozilla/bugs/bug4429-expected.png: Added.
+        * platform/chromium-linux-x86/tables/mozilla/bugs/bug44505-expected.png: Added.
+        * platform/chromium-linux-x86/tables/mozilla/bugs/bug4527-expected.png: Added.
+        * platform/chromium-linux-x86/tables/mozilla/bugs/bug46368-1-expected.png: Added.
+        * platform/chromium-linux-x86/tables/mozilla/bugs/bug46368-2-expected.png: Added.
+        * platform/chromium-linux-x86/tables/mozilla/bugs/bug51037-expected.png: Added.
+        * platform/chromium-linux-x86/tables/mozilla/bugs/bug51727-expected.png: Added.
+        * platform/chromium-linux-x86/tables/mozilla/bugs/bug52505-expected.png: Added.
+        * platform/chromium-linux-x86/tables/mozilla/bugs/bug52506-expected.png: Added.
+        * platform/chromium-linux-x86/tables/mozilla/bugs/bug60749-expected.png: Added.
+        * platform/chromium-linux-x86/tables/mozilla/bugs/bug68912-expected.png: Added.
+        * platform/chromium-linux-x86/tables/mozilla/bugs/bug7342-expected.png: Added.
+        * platform/chromium-linux-x86/tables/mozilla/bugs/bug92647-2-expected.png: Added.
+        * platform/chromium-linux-x86/tables/mozilla/bugs/bug96334-expected.png: Added.
+        * platform/chromium-linux-x86/tables/mozilla/collapsing_borders: Added.
+        * platform/chromium-linux-x86/tables/mozilla/collapsing_borders/bug41262-4-expected.png: Added.
+        * platform/chromium-linux-x86/tables/mozilla/core: Added.
+        * platform/chromium-linux-x86/tables/mozilla/core/margins-expected.png: Added.
+        * platform/chromium-linux-x86/tables/mozilla/dom: Added.
+        * platform/chromium-linux-x86/tables/mozilla/dom/tableDom-expected.png: Added.
+        * platform/chromium-linux-x86/tables/mozilla/other: Added.
+        * platform/chromium-linux-x86/tables/mozilla/other/move_row-expected.png: Added.
+        * platform/chromium-linux-x86/tables/mozilla_expected_failures/bugs/bug1725-expected.png: Added.
+        * platform/chromium-linux-x86/tables/mozilla_expected_failures/bugs/bug58402-2-expected.png: Added.
+        * platform/chromium-linux-x86/tables/mozilla_expected_failures/collapsing_borders: Added.
+        * platform/chromium-linux-x86/tables/mozilla_expected_failures/collapsing_borders/bug41262-5-expected.png: Added.
+        * platform/chromium-linux-x86/tables/mozilla_expected_failures/collapsing_borders/bug41262-6-expected.png: Added.
+        * platform/chromium-linux-x86/tables/mozilla_expected_failures/core: Added.
+        * platform/chromium-linux-x86/tables/mozilla_expected_failures/core/captions1-expected.png: Added.
+        * platform/chromium-linux-x86/tables/mozilla_expected_failures/core/captions2-expected.png: Added.
+        * platform/chromium-linux-x86/transforms/2d/zoom-menulist-expected.png: Added.
+        * platform/chromium-linux/tables/mozilla/bugs/bug1188-expected.png:
+        * platform/chromium-linux/tables/mozilla/bugs/bug1318-expected.png:
+        * platform/chromium-linux/tables/mozilla/bugs/bug137388-2-expected.png:
+        * platform/chromium-linux/tables/mozilla/bugs/bug138725-expected.png:
+        * platform/chromium-linux/tables/mozilla/bugs/bug18359-expected.png:
+        * platform/chromium-linux/tables/mozilla/bugs/bug23235-expected.png:
+        * platform/chromium-linux/tables/mozilla/bugs/bug2479-2-expected.png:
+        * platform/chromium-linux/tables/mozilla/bugs/bug2479-3-expected.png:
+        * platform/chromium-linux/tables/mozilla/bugs/bug26178-expected.png:
+        * platform/chromium-linux/tables/mozilla/bugs/bug28928-expected.png:
+        * platform/chromium-linux/tables/mozilla/bugs/bug29326-expected.png:
+        * platform/chromium-linux/tables/mozilla/bugs/bug33855-expected.png:
+        * platform/chromium-linux/tables/mozilla/bugs/bug39209-expected.png:
+        * platform/chromium-linux/tables/mozilla/bugs/bug4093-expected.png:
+        * platform/chromium-linux/tables/mozilla/bugs/bug4382-expected.png:
+        * platform/chromium-linux/tables/mozilla/bugs/bug4429-expected.png:
+        * platform/chromium-linux/tables/mozilla/bugs/bug44505-expected.png:
+        * platform/chromium-linux/tables/mozilla/bugs/bug4527-expected.png:
+        * platform/chromium-linux/tables/mozilla/bugs/bug46368-1-expected.png:
+        * platform/chromium-linux/tables/mozilla/bugs/bug46368-2-expected.png:
+        * platform/chromium-linux/tables/mozilla/bugs/bug51037-expected.png:
+        * platform/chromium-linux/tables/mozilla/bugs/bug51727-expected.png:
+        * platform/chromium-linux/tables/mozilla/bugs/bug52505-expected.png:
+        * platform/chromium-linux/tables/mozilla/bugs/bug52506-expected.png:
+        * platform/chromium-linux/tables/mozilla/bugs/bug60749-expected.png:
+        * platform/chromium-linux/tables/mozilla/bugs/bug68912-expected.png:
+        * platform/chromium-linux/tables/mozilla/bugs/bug7342-expected.png:
+        * platform/chromium-linux/tables/mozilla/bugs/bug92647-2-expected.png:
+        * platform/chromium-linux/tables/mozilla/bugs/bug96334-expected.png:
+        * platform/chromium-linux/tables/mozilla/collapsing_borders/bug41262-4-expected.png:
+        * platform/chromium-linux/tables/mozilla/core/margins-expected.png:
+        * platform/chromium-linux/tables/mozilla/dom/tableDom-expected.png:
+        * platform/chromium-linux/tables/mozilla/other/move_row-expected.png:
+        * platform/chromium-linux/tables/mozilla_expected_failures/bugs/bug1725-expected.png:
+        * platform/chromium-linux/tables/mozilla_expected_failures/bugs/bug58402-2-expected.png:
+        * platform/chromium-linux/tables/mozilla_expected_failures/collapsing_borders/bug41262-5-expected.png:
+        * platform/chromium-linux/tables/mozilla_expected_failures/collapsing_borders/bug41262-6-expected.png:
+        * platform/chromium-linux/tables/mozilla_expected_failures/core/captions1-expected.png:
+        * platform/chromium-linux/tables/mozilla_expected_failures/core/captions2-expected.png:
+        * platform/chromium-linux/transforms/2d/zoom-menulist-expected.png:
+        * platform/chromium-mac-lion/tables/mozilla/bugs/bug137388-2-expected.png:
+        * platform/chromium-mac-lion/tables/mozilla/bugs/bug4093-expected.png:
+        * platform/chromium-mac-snowleopard/tables/mozilla/bugs/bug137388-2-expected.png:
+        * platform/chromium-mac-snowleopard/tables/mozilla/bugs/bug4093-expected.png:
+        * platform/chromium-mac/tables/mozilla/bugs/bug137388-2-expected.png:
+        * platform/chromium-mac/tables/mozilla/bugs/bug4093-expected.png:
+        * platform/chromium-win-xp/tables/mozilla/bugs/bug137388-2-expected.png: Added.
+        * platform/chromium-win-xp/tables/mozilla/bugs/bug23235-expected.png: Added.
+        * platform/chromium-win-xp/tables/mozilla/bugs/bug4093-expected.png: Added.
+        * platform/chromium-win/tables/mozilla/bugs/bug137388-2-expected.png:
+        * platform/chromium-win/tables/mozilla/bugs/bug23235-expected.png:
+        * platform/chromium-win/tables/mozilla/bugs/bug4093-expected.png:
+        * platform/chromium/TestExpectations:
+
 2013-01-11  Levi Weintraub  <leviw@chromium.org>
 
         Unreviewed gardening. r139445 triggered assertions in Skia on debug Chromium bots.
