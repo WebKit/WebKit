@@ -1993,7 +1993,7 @@ webcore_modules_sources += \
 	Source/WebCore/Modules/notifications/NotificationPermissionCallback.h \
 	Source/WebCore/Modules/notifications/WorkerContextNotifications.cpp \
 	Source/WebCore/Modules/notifications/WorkerContextNotifications.h \
-	Source/WebCore/Modules/proximity/DeviceProximity.h \
+	Source/WebCore/Modules/proximity/DeviceProximityClient.h \
 	Source/WebCore/Modules/proximity/DeviceProximityController.cpp \
 	Source/WebCore/Modules/proximity/DeviceProximityController.h \
 	Source/WebCore/Modules/proximity/DeviceProximityEvent.cpp \
@@ -2703,6 +2703,7 @@ webcore_sources += \
 	Source/WebCore/dom/Attr.cpp \
 	Source/WebCore/dom/Attr.h \
 	Source/WebCore/dom/Attribute.h \
+	Source/WebCore/dom/AutocompleteErrorEvent.h \
 	Source/WebCore/dom/BeforeLoadEvent.h \
 	Source/WebCore/dom/BeforeTextInsertedEvent.cpp \
 	Source/WebCore/dom/BeforeTextInsertedEvent.h \
