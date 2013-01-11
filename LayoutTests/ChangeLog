@@ -1,3 +1,11 @@
+2013-01-11  Sudarsana Nagineni  <sudarsana.nagineni@intel.com>
+
+        Unreviewed EFL gardening.
+
+        Remove unnecessary platform expectations for now-passing test.
+
+        * platform/efl/media/video-controls-captions-expected.txt: Removed.
+
 2013-01-11  Florin Malita  <fmalita@chromium.org>
 
         [Chromium] Unreviewed gardening.
