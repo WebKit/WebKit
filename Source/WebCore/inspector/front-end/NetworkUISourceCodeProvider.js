@@ -31,7 +31,7 @@
 /**
  * @constructor
  * @param {WebInspector.Workspace} workspace
- * @param {WebInspector.NetworkWorkspaceProvider} networkWorkspaceProvider
+ * @param {WebInspector.SimpleWorkspaceProvider} networkWorkspaceProvider
  */
 WebInspector.NetworkUISourceCodeProvider = function(workspace, networkWorkspaceProvider)
 {
@@ -128,3 +128,34 @@ WebInspector.NetworkUISourceCodeProvider.prototype = {
         this._populate();
     }
 }
+
+/**
+ * @constructor
+ * @extends {WebInspector.SimpleWorkspaceProvider}
+ */
+WebInspector.NetworkWorkspaceProvider = function()
+{
+    WebInspector.SimpleWorkspaceProvider.call(this);
+}
+
+WebInspector.NetworkWorkspaceProvider.prototype = {
+    /**
+     * @param {string} url
+     * @param {WebInspector.ContentProvider} contentProvider
+     * @param {boolean} isEditable
+     * @param {boolean=} isContentScript
+     * @param {boolean=} isSnippet
+     */
+    addNetworkFile: function(url, contentProvider, isEditable, isContentScript, isSnippet)
+    {
+        var uri = WebInspector.SimpleWorkspaceProvider.uriForURL(url);
+        this.addFile(uri, url, contentProvider, isEditable, isContentScript, isSnippet);
+    },
+
+    __proto__: WebInspector.SimpleWorkspaceProvider.prototype
+}
+
+/**
+ * @type {?WebInspector.NetworkWorkspaceProvider}
+ */
+WebInspector.networkWorkspaceProvider = null;

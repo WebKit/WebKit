@@ -11,7 +11,7 @@ function test()
     function createResourceScriptMapping()
     {
         InspectorTest.createWorkspace();
-        defaultScriptMapping = new WebInspector.DefaultScriptMapping(InspectorTest.testWorkspace, InspectorTest.testDebuggerWorkspaceProvider);
+        defaultScriptMapping = new WebInspector.DefaultScriptMapping(InspectorTest.testWorkspace);
         var resourceScriptMapping = new WebInspector.ResourceScriptMapping(InspectorTest.testWorkspace);
         return resourceScriptMapping;
     }

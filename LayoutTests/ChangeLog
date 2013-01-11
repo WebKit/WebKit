@@ -1,3 +1,14 @@
+2013-01-11  Vsevolod Vlasov  <vsevik@chromium.org>
+
+        Web Inspector: Refactoring, move NetworkWorkspaceProvider to NetworkUISourceCodeProvider.js and rename its parent to SimpleWorkspaceProvider.
+        https://bugs.webkit.org/show_bug.cgi?id=106635
+
+        Reviewed by Pavel Feldman.
+
+        * http/tests/inspector/compiler-script-mapping.html:
+        * inspector/debugger/resource-script-mapping.html:
+        * inspector/debugger/scripts-panel.html:
+
 2013-01-10  Grzegorz Czajkowski  <g.czajkowski@samsung.com>
 
         On Linux, should be able to get spelling suggestions without selecting the misspelled word

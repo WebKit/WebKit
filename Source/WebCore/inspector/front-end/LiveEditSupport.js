@@ -35,7 +35,7 @@
 WebInspector.LiveEditSupport = function(workspace)
 {
     this._workspace = workspace;
-    this._liveEditWorkspaceProvider = new WebInspector.LiveEditWorkspaceProvider(workspace);
+    this._workspaceProvider = new WebInspector.LiveEditWorkspaceProvider(workspace);
     this._workspace.addEventListener(WebInspector.Workspace.Events.ProjectWillReset, this._reset, this);
     this._reset();
 }
@@ -59,8 +59,7 @@ WebInspector.LiveEditSupport.prototype = {
             return this._uiSourceCodeForScriptId[script.scriptId];
         
         console.assert(!script.isInlineScript());
-        var uri = uiSourceCode.uri();
-        var liveEditUISourceCode = this._liveEditWorkspaceProvider.addLiveEditFile(uiSourceCode.url, script, true);
+        var liveEditUISourceCode = this._workspaceProvider.addLiveEditFile(uiSourceCode.url, script, true);
         liveEditUISourceCode.setScriptFile(new WebInspector.LiveEditScriptFile(uiSourceCode, liveEditUISourceCode, script.scriptId));
         this._uiSourceCodeForScriptId[script.scriptId] = liveEditUISourceCode;
         this._scriptIdForUISourceCode.put(liveEditUISourceCode, script.scriptId);
@@ -134,11 +133,11 @@ WebInspector.liveEditSupport = null;
 
 /**
  * @constructor
- * @extends {WebInspector.ContentProviderWorkspaceProvider}
+ * @extends {WebInspector.SimpleWorkspaceProvider}
  */
 WebInspector.LiveEditWorkspaceProvider = function(workspace)
 {
-    WebInspector.ContentProviderWorkspaceProvider.call(this);
+    WebInspector.SimpleWorkspaceProvider.call(this);
     this._workspace = workspace;
 }
 
@@ -151,12 +150,12 @@ WebInspector.LiveEditWorkspaceProvider.prototype = {
      */
     addLiveEditFile: function(url, contentProvider, isEditable)
     {
-        var uri = "liveedit:" + WebInspector.ContentProviderWorkspaceProvider.uriForURL(url);
+        var uri = "liveedit:" + WebInspector.SimpleWorkspaceProvider.uriForURL(url);
         var uniqueURI = this.uniqueURI(uri);
         // FIXME: this is a temporary hack to be removed once LiveEdit uiSourceCode become part of the workspace.
         this._contentProviders[uniqueURI] = null;
         return this._workspace.addTemporaryUISourceCode(uniqueURI, url, contentProvider, isEditable);
     },
 
-    __proto__: WebInspector.ContentProviderWorkspaceProvider.prototype
+    __proto__: WebInspector.SimpleWorkspaceProvider.prototype
 }

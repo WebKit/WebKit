@@ -16,7 +16,7 @@ function test()
         InspectorTest.createWorkspace();
         var compilerScriptMapping = new WebInspector.CompilerScriptMapping(InspectorTest.testWorkspace, InspectorTest.testNetworkWorkspaceProvider);
         resourceScriptMapping = new WebInspector.ResourceScriptMapping(InspectorTest.testWorkspace);
-        defaultScriptMapping = new WebInspector.DefaultScriptMapping(InspectorTest.testWorkspace, InspectorTest.testDebuggerWorkspaceProvider);
+        defaultScriptMapping = new WebInspector.DefaultScriptMapping(InspectorTest.testWorkspace);
         return compilerScriptMapping;
     }
 
@@ -313,7 +313,7 @@ function test()
             var workspace = new WebInspector.Workspace();
             var debuggerWorkspaceProvider = new WebInspector.DebuggerWorkspaceProvider(workspace);
             workspace.addProject("network", networkWorkspaceProvider);
-            var debuggerScriptMapping = new WebInspector.DebuggerScriptMapping(workspace, debuggerWorkspaceProvider, networkWorkspaceProvider);
+            var debuggerScriptMapping = new WebInspector.DebuggerScriptMapping(workspace, networkWorkspaceProvider);
 
             var script = InspectorTest.createScriptMock("compiled.js", 0, 0, true, "");
             script.sourceMapURL = "http://localhost:8000/inspector/resources/source-map.json_";

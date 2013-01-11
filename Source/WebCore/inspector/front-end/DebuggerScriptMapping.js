@@ -31,12 +31,11 @@
 /**
  * @constructor
  * @param {WebInspector.Workspace} workspace
- * @param {WebInspector.DebuggerWorkspaceProvider} debuggerWorkspaceProvider
  * @param {WebInspector.NetworkWorkspaceProvider} networkWorkspaceProvider
  */
-WebInspector.DebuggerScriptMapping = function(workspace, debuggerWorkspaceProvider, networkWorkspaceProvider)
+WebInspector.DebuggerScriptMapping = function(workspace, networkWorkspaceProvider)
 {
-    this._defaultMapping = new WebInspector.DefaultScriptMapping(workspace, debuggerWorkspaceProvider);
+    this._defaultMapping = new WebInspector.DefaultScriptMapping(workspace);
     this._resourceMapping = new WebInspector.ResourceScriptMapping(workspace);
     this._compilerMapping = new WebInspector.CompilerScriptMapping(workspace, networkWorkspaceProvider);
     this._snippetMapping = WebInspector.scriptSnippetModel.scriptMapping;

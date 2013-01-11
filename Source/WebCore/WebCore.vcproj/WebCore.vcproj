@@ -76961,10 +76961,6 @@
 					>
 				</File>
 				<File
-					RelativePath="..\inspector\front-end\NetworkWorkspaceProvider.js"
-					>
-				</File>
-				<File
 					RelativePath="..\inspector\front-end\Object.js"
 					>
 				</File>
@@ -77218,6 +77214,10 @@
 				</File>
 				<File
 					RelativePath="..\inspector\front-end\SidebarView.js"
+					>
+				</File>
+				<File
+					RelativePath="..\inspector\front-end\SimpleWorkspaceProvider.js"
 					>
 				</File>
 				<File

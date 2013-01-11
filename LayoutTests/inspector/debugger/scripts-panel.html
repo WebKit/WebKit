@@ -19,10 +19,10 @@ function test()
 
     function createMockWorkspace()
     {
-        var networkWorkspaceProvider = new WebInspector.NetworkWorkspaceProvider();
         var workspace = new WebInspector.Workspace();
-        workspace.debuggerWorkspaceProvider = new WebInspector.DebuggerWorkspaceProvider(workspace);
+        var networkWorkspaceProvider = new WebInspector.NetworkWorkspaceProvider();
         workspace.addProject("network", networkWorkspaceProvider);
+        workspace.debuggerWorkspaceProvider = new WebInspector.DebuggerWorkspaceProvider(workspace);
         workspace.requestFileContent = function(uiSourceCode, callback)
         {
             InspectorTest.addResult("Source requested for " + uiSourceCode.url);
