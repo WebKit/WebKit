@@ -1,4 +1,4 @@
-CONSOLE MESSAGE: line 73: Error: This should *NOT* be caught!
+CONSOLE MESSAGE: line 73: Uncaught Error: This should *NOT* be caught!
 Test IDBTransaction.error cases.
 
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
