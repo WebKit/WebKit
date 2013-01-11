@@ -140,10 +140,14 @@ chdir "tests/mozilla" or die "Failed to switch directory to 'tests/mozilla'\n";
 printf "Running: jsDriver.pl -e squirrelfish -s %s -f actual.html %s\n", jscPath($productDir), join(" ", @jsArgs);
 my @jsDriverCmd = ("perl", "jsDriver.pl", "-e", "squirrelfish", "-s", jscPath($productDir), "-f", "actual.html", @jsArgs);
 if (isGtk() || isEfl()) {
-    my $jhbuildPrefix = sourceDir() . "/Tools/";
-    $jhbuildPrefix .= isEfl() ? "efl" : "";
-    $jhbuildPrefix .= isGtk() ? "gtk" : "";
-    $jhbuildPrefix .= "/run-with-jhbuild";
+    my @jhbuildPrefix = sourceDir() . "/Tools/jhbuild/jhbuild-wrapper";
+
+    if (isEfl())
+        push(@jhbuildPrefix, '--efl');
+    elsif (isGtk())
+        push(@jhbuildPrefix, '--gtk');
+    push(@jhbuildPrefix, 'run');
+
     unshift(@jsDriverCmd, $jhbuildPrefix);
 }
 my $result = system(@jsDriverCmd);

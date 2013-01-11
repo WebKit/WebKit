@@ -1,3 +1,35 @@
+2013-01-11  Raphael Kubo da Costa  <raphael.kubo.da.costa@intel.com>
+
+        [jhbuild] Remove the "run-with-jhbuild" scripts.
+        https://bugs.webkit.org/show_bug.cgi?id=106572
+
+        Reviewed by Martin Robinson.
+
+        Both ports which use jhbuild were mostly duplicating the
+        `run-with-jhbuild' script in their own directories for no clear reason.
+
+        The script itself was just a thin wrapper around the `jhbuild-wrapper',
+        so just start using that directly and get rid of a useless middle man.
+
+        Adjust scripts which called run-with-jhbuild to call jhbuild-wrapper
+        instead.
+
+        * Scripts/run-javascriptcore-tests:
+        * Scripts/run-launcher:
+        * Scripts/webkitdirs.pm:
+        (runAutogenForAutotoolsProjectIfNecessary):
+        (buildAutotoolsProject):
+        (jhbuildWrapperPrefixIfNeeded):
+        (generateBuildSystemFromCMakeProject):
+        (buildCMakeGeneratedProject):
+        * Scripts/webkitpy/common/multiprocessing_bootstrap.py:
+        (run):
+        * Scripts/webkitpy/layout_tests/port/efl.py:
+        (EflPort.__init__):
+        (EflPort._image_diff_command):
+        * efl/run-with-jhbuild: Removed.
+        * gtk/run-with-jhbuild: Removed.
+
 2013-01-11  Alan Cutter  <alancutter@chromium.org>
 
         Allow arbitrary queue launch parameters in EWSTools/start-queue.sh

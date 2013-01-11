@@ -41,7 +41,7 @@ class EflPort(Port):
     def __init__(self, *args, **kwargs):
         super(EflPort, self).__init__(*args, **kwargs)
 
-        self._jhbuild_wrapper_path = self.path_from_webkit_base('Tools', 'efl', 'run-with-jhbuild')
+        self._jhbuild_wrapper_path = [self.path_from_webkit_base('Tools', 'jhbuild', 'jhbuild-wrapper'), '--efl', 'run']
 
         self.set_option_default('wrapper', self._jhbuild_wrapper_path)
         self.webprocess_cmd_prefix = self.get_option('webprocess_cmd_prefix')
@@ -92,7 +92,7 @@ class EflPort(Port):
         return self._build_path('bin', 'ImageDiff')
 
     def _image_diff_command(self, *args, **kwargs):
-        return [self._jhbuild_wrapper_path] + super(EflPort, self)._image_diff_command(*args, **kwargs)
+        return self._jhbuild_wrapper_path + super(EflPort, self)._image_diff_command(*args, **kwargs)
 
     def _path_to_webcore_library(self):
         static_path = self._build_path('lib', 'libwebcore_efl.a')

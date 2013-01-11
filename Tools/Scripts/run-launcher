@@ -69,7 +69,9 @@ if (isQt()) {
         } else {
             unshift(@ARGV, catdir($launcherPath, "Programs", "GtkLauncher"));
         }
-        $launcherPath = catdir(sourceDir(), "Tools", "gtk", "run-with-jhbuild");
+        $launcherPath = catdir(sourceDir(), "Tools", "jhbuild", "jhbuild-wrapper");
+        unshift(@ARGV, '--gtk');
+        unshift(@ARGV, 'run');
     }
     
     if (isEfl()) {
@@ -78,7 +80,9 @@ if (isQt()) {
         } else {
             unshift(@ARGV, catdir($launcherPath, "bin", "EWebLauncher"));
         }
-        $launcherPath = catdir(sourceDir(), "Tools", "efl", "run-with-jhbuild");
+        $launcherPath = catdir(sourceDir(), "Tools", "jhbuild", "jhbuild-wrapper");
+        unshift(@ARGV, '--efl');
+        unshift(@ARGV, 'run');
     }
     
     if (isWx()) {
