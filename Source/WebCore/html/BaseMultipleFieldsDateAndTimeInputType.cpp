@@ -181,11 +181,6 @@ void BaseMultipleFieldsDateAndTimeInputType::blur()
         m_dateTimeEditElement->blurByOwner();
 }
 
-RenderObject* BaseMultipleFieldsDateAndTimeInputType::createRenderer(RenderArena* arena, RenderStyle* style) const
-{
-    return InputType::createRenderer(arena, style);
-}
-
 void BaseMultipleFieldsDateAndTimeInputType::createShadowSubtree()
 {
     DEFINE_STATIC_LOCAL(AtomicString, dateAndTimeInputContainerPseudoId, ("-webkit-date-and-time-container", AtomicString::ConstructFromLiteral));
@@ -310,11 +305,6 @@ void BaseMultipleFieldsDateAndTimeInputType::readonlyAttributeChanged()
     m_spinButtonElement->releaseCapture();
     if (m_dateTimeEditElement)
         m_dateTimeEditElement->readOnlyStateChanged();
-}
-
-bool BaseMultipleFieldsDateAndTimeInputType::isTextField() const
-{
-    return false;
 }
 
 void BaseMultipleFieldsDateAndTimeInputType::restoreFormControlState(const FormControlState& state)

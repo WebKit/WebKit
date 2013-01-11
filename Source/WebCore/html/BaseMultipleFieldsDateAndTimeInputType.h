@@ -42,7 +42,11 @@ namespace WebCore {
 
 struct DateTimeChooserParameters;
 
-class BaseMultipleFieldsDateAndTimeInputType : public BaseDateAndTimeInputType, protected DateTimeEditElement::EditControlOwner, protected PickerIndicatorElement::PickerIndicatorOwner {
+class BaseMultipleFieldsDateAndTimeInputType
+    : public BaseDateAndTimeInputType
+    , protected DateTimeEditElement::EditControlOwner
+    , protected PickerIndicatorElement::PickerIndicatorOwner
+    , protected SpinButtonElement::SpinButtonOwner {
 protected:
     BaseMultipleFieldsDateAndTimeInputType(HTMLInputElement*);
     virtual ~BaseMultipleFieldsDateAndTimeInputType();
@@ -74,7 +78,6 @@ private:
     // InputType functions
     virtual String badInputText() const OVERRIDE;
     virtual void blur() OVERRIDE FINAL;
-    virtual RenderObject* createRenderer(RenderArena*, RenderStyle*) const OVERRIDE FINAL;
     virtual void createShadowSubtree() OVERRIDE FINAL;
     virtual void destroyShadowSubtree() OVERRIDE FINAL;
     virtual void disabledAttributeChanged() OVERRIDE FINAL;
@@ -85,7 +88,6 @@ private:
     virtual bool hasCustomFocusLogic() const OVERRIDE FINAL;
     virtual bool isKeyboardFocusable(KeyboardEvent*) const OVERRIDE FINAL;
     virtual bool isMouseFocusable() const OVERRIDE FINAL;
-    virtual bool isTextField() const OVERRIDE FINAL;
     virtual void minOrMaxAttributeChanged() OVERRIDE FINAL;
     virtual void readonlyAttributeChanged() OVERRIDE FINAL;
     virtual void restoreFormControlState(const FormControlState&) OVERRIDE FINAL;

@@ -33,17 +33,15 @@
 
 #if ENABLE(DATE_AND_TIME_INPUT_TYPES)
 #include "DateComponents.h"
-#include "TextFieldInputType.h"
+#include "InputType.h"
 #include <wtf/unicode/Unicode.h>
 
 namespace WebCore {
 
 // A super class of date, datetime, datetime-local, month, time, and week types.
-// FIXME: Don't inherit TextFieldInputType. webkit.org/b/100935
-class BaseDateAndTimeInputType : public TextFieldInputType {
+class BaseDateAndTimeInputType : public InputType {
 protected:
-    BaseDateAndTimeInputType(HTMLInputElement* element) : TextFieldInputType(element) { }
-    virtual void handleKeydownEvent(KeyboardEvent*) OVERRIDE;
+    BaseDateAndTimeInputType(HTMLInputElement* element) : InputType(element) { }
     virtual Decimal parseToNumber(const String&, const Decimal&) const OVERRIDE;
     virtual bool parseToDateComponents(const String&, DateComponents*) const OVERRIDE;
     virtual String sanitizeValue(const String&) const OVERRIDE;
@@ -61,12 +59,13 @@ private:
     virtual void setValueAsDecimal(const Decimal&, TextFieldEventBehavior, ExceptionCode&) const OVERRIDE;
     virtual bool typeMismatchFor(const String&) const OVERRIDE;
     virtual bool typeMismatch() const OVERRIDE;
+    virtual bool valueMissing(const String&) const OVERRIDE;
     virtual Decimal defaultValueForStepUp() const OVERRIDE;
     virtual bool isSteppable() const OVERRIDE;
     virtual String serializeWithMilliseconds(double) const;
     virtual String localizeValue(const String&) const OVERRIDE;
-    virtual String convertFromVisibleValue(const String&) const OVERRIDE;
     virtual bool supportsReadOnly() const OVERRIDE;
+    virtual bool shouldRespectListAttribute() OVERRIDE;
 };
 
 } // namespace WebCore
