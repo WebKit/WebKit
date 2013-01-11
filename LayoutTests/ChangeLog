@@ -1,3 +1,90 @@
+2013-01-11  Stephen Chenney  <schenney@chromium.org>
+
+        [Chromium] More test expectations for Skia changes
+
+        Unreviewed test expectations update.
+
+        These are a few files that had some platforms already failing, hence
+        requiring special care and attention.
+
+        * platform/chromium-linux-x86/fast/dom/HTMLMeterElement: Added.
+        * platform/chromium-linux-x86/fast/dom/HTMLMeterElement/meter-optimums-expected.png: Added.
+        * platform/chromium-linux-x86/fast/forms/validation-message-appearance-expected.png: Added.
+        * platform/chromium-linux-x86/fast/gradients/css3-linear-angle-gradients-expected.png: Added.
+        * platform/chromium-linux-x86/fast/gradients/css3-linear-right-angle-gradients-expected.png: Added.
+        * platform/chromium-linux-x86/fast/speech: Added.
+        * platform/chromium-linux-x86/fast/speech/input-appearance-searchandspeech-expected.png: Added.
+        * platform/chromium-linux-x86/fast/transforms: Added.
+        * platform/chromium-linux-x86/fast/transforms/transformed-focused-text-input-expected.png: Added.
+        * platform/chromium-linux-x86/svg/W3C-SVG-1.1/pservers-grad-01-b-expected.png: Added.
+        * platform/chromium-linux-x86/svg/batik/filters: Added.
+        * platform/chromium-linux-x86/svg/batik/filters/feTile-expected.png: Added.
+        * platform/chromium-linux-x86/svg/custom/js-late-gradient-creation-expected.png: Added.
+        * platform/chromium-linux-x86/svg/custom/js-late-pattern-and-object-creation-expected.png: Added.
+        * platform/chromium-linux/fast/dom/HTMLMeterElement/meter-optimums-expected.png:
+        * platform/chromium-linux/fast/forms/validation-message-appearance-expected.png:
+        * platform/chromium-linux/fast/gradients/css3-linear-angle-gradients-expected.png:
+        * platform/chromium-linux/fast/gradients/css3-linear-right-angle-gradients-expected.png:
+        * platform/chromium-linux/fast/speech/input-appearance-searchandspeech-expected.png:
+        * platform/chromium-linux/fast/transforms/transformed-focused-text-input-expected.png:
+        * platform/chromium-linux/svg/W3C-SVG-1.1/pservers-grad-01-b-expected.png:
+        * platform/chromium-linux/svg/batik/filters/feTile-expected.png:
+        * platform/chromium-linux/svg/custom/js-late-gradient-creation-expected.png:
+        * platform/chromium-linux/svg/custom/js-late-pattern-and-object-creation-expected.png:
+        * platform/chromium-mac-lion/fast/dom/HTMLMeterElement/meter-optimums-expected.png: Added.
+        * platform/chromium-mac-lion/fast/dom/HTMLMeterElement/meter-optimums-expected.txt: Added.
+        * platform/chromium-mac-lion/fast/forms/validation-message-appearance-expected.png:
+        * platform/chromium-mac-lion/fast/gradients/css3-linear-angle-gradients-expected.png: Added.
+        * platform/chromium-mac-lion/fast/gradients/css3-linear-right-angle-gradients-expected.png:
+        * platform/chromium-mac-lion/fast/speech/input-appearance-searchandspeech-expected.png:
+        * platform/chromium-mac-lion/fast/transforms/transformed-focused-text-input-expected.png:
+        * platform/chromium-mac-lion/svg/W3C-SVG-1.1/pservers-grad-01-b-expected.png:
+        * platform/chromium-mac-lion/svg/batik/filters/feTile-expected.png: Added.
+        * platform/chromium-mac-lion/svg/custom/js-late-gradient-creation-expected.png:
+        * platform/chromium-mac-lion/svg/custom/js-late-pattern-and-object-creation-expected.png: Added.
+        * platform/chromium-mac-snowleopard/fast/dom/HTMLMeterElement/meter-optimums-expected.png:
+        * platform/chromium-mac-snowleopard/fast/dom/HTMLMeterElement/meter-optimums-expected.txt: Added.
+        * platform/chromium-mac-snowleopard/fast/forms/validation-message-appearance-expected.png:
+        * platform/chromium-mac-snowleopard/fast/gradients/css3-linear-angle-gradients-expected.png: Added.
+        * platform/chromium-mac-snowleopard/fast/gradients/css3-linear-right-angle-gradients-expected.png: Added.
+        * platform/chromium-mac-snowleopard/fast/speech/input-appearance-searchandspeech-expected.png:
+        * platform/chromium-mac-snowleopard/fast/transforms/transformed-focused-text-input-expected.png:
+        * platform/chromium-mac-snowleopard/svg/W3C-SVG-1.1/pservers-grad-01-b-expected.png: Added.
+        * platform/chromium-mac-snowleopard/svg/batik/filters/feTile-expected.png:
+        * platform/chromium-mac-snowleopard/svg/custom/js-late-gradient-creation-expected.png: Added.
+        * platform/chromium-mac-snowleopard/svg/custom/js-late-pattern-and-object-creation-expected.png: Added.
+        * platform/chromium-mac/editing/selection/extend-selection-bidi-expected.png:
+        * platform/chromium-mac/fast/dom/HTMLMeterElement/meter-optimums-expected.png:
+        * platform/chromium-mac/fast/dom/HTMLMeterElement/meter-optimums-expected.txt:
+        * platform/chromium-mac/fast/forms/validation-message-appearance-expected.png:
+        * platform/chromium-mac/fast/gradients/css3-linear-angle-gradients-expected.png:
+        * platform/chromium-mac/fast/gradients/css3-linear-right-angle-gradients-expected.png:
+        * platform/chromium-mac/fast/speech/input-appearance-searchandspeech-expected.png:
+        * platform/chromium-mac/fast/transforms/transformed-focused-text-input-expected.png:
+        * platform/chromium-mac/svg/W3C-SVG-1.1/pservers-grad-01-b-expected.png:
+        * platform/chromium-mac/svg/batik/filters/feTile-expected.png:
+        * platform/chromium-mac/svg/custom/js-late-gradient-creation-expected.png:
+        * platform/chromium-mac/svg/custom/js-late-pattern-and-object-creation-expected.png:
+        * platform/chromium-win-xp/fast/dom/HTMLMeterElement/meter-optimums-expected.png: Added.
+        * platform/chromium-win-xp/fast/gradients: Added.
+        * platform/chromium-win-xp/fast/gradients/css3-linear-angle-gradients-expected.png: Added.
+        * platform/chromium-win-xp/fast/gradients/css3-linear-right-angle-gradients-expected.png: Added.
+        * platform/chromium-win-xp/fast/speech: Added.
+        * platform/chromium-win-xp/fast/speech/input-appearance-searchandspeech-expected.png: Added.
+        * platform/chromium-win-xp/svg/batik/filters: Added.
+        * platform/chromium-win-xp/svg/batik/filters/feTile-expected.png: Added.
+        * platform/chromium-win-xp/svg/custom/js-late-gradient-creation-expected.png: Added.
+        * platform/chromium-win-xp/svg/custom/js-late-pattern-and-object-creation-expected.png: Added.
+        * platform/chromium-win/fast/dom/HTMLMeterElement/meter-optimums-expected.png:
+        * platform/chromium-win/fast/forms/validation-message-appearance-expected.png:
+        * platform/chromium-win/fast/gradients/css3-linear-angle-gradients-expected.png:
+        * platform/chromium-win/fast/gradients/css3-linear-right-angle-gradients-expected.png:
+        * platform/chromium-win/fast/speech/input-appearance-searchandspeech-expected.png:
+        * platform/chromium-win/svg/batik/filters/feTile-expected.png:
+        * platform/chromium-win/svg/custom/js-late-gradient-creation-expected.png:
+        * platform/chromium-win/svg/custom/js-late-pattern-and-object-creation-expected.png:
+        * platform/chromium/TestExpectations:
+
 2013-01-11  Levi Weintraub  <leviw@chromium.org>
 
         RenderGeometryMap and TransformState disagree with sub-pixel layout and translations
