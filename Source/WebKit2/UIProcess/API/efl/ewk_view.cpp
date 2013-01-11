@@ -39,6 +39,7 @@
 #include "WKRetainPtr.h"
 #include "WKString.h"
 #include "WebContext.h"
+#include "WebData.h"
 #include "WebFullScreenManagerProxy.h"
 #include "WebPageGroup.h"
 #include "WebPreferences.h"
@@ -144,6 +145,17 @@ static const char EWK_VIEW_TYPE_STR[] = "EWK2_View";
             return __VA_ARGS__;                                                \
         }                                                                      \
     } while (0)
+
+/// Creates a type name for Ewk_Page_Contents_Context.
+typedef struct Ewk_Page_Contents_Context Ewk_Page_Contents_Context;
+
+/*
+ * @brief Structure containing page contents context used for ewk_view_page_contents_get() API.
+ */
+struct Ewk_Page_Contents_Context {
+    Ewk_Page_Contents_Type type;
+    Ewk_Page_Contents_Cb callback;
+};
 
 static void _ewk_view_smart_changed(Ewk_View_Smart_Data* smartData)
 {
@@ -937,4 +949,37 @@ void ewk_view_draws_page_background_set(Evas_Object *ewkView, Eina_Bool enabled)
     EWK_VIEW_IMPL_GET_OR_RETURN(ewkView, impl);
 
     impl->setDrawsBackground(enabled);
+}
+
+/**
+ * @internal
+ * Callback function used for ewk_view_page_contents_get().
+ */
+static void ewkViewPageContentsCallback(WKDataRef wkData, WKErrorRef, void* context)
+{
+    EINA_SAFETY_ON_NULL_RETURN(context);
+
+    RefPtr<WebData> webData = toImpl(wkData);
+    Ewk_Page_Contents_Context* contentsContext= static_cast<Ewk_Page_Contents_Context*>(context);
+    contentsContext->callback(contentsContext->type, reinterpret_cast<const char*>(webData->bytes()));
+
+    delete contentsContext;
+}
+
+Eina_Bool ewk_view_page_contents_get(const Evas_Object* ewkView, Ewk_Page_Contents_Type type, Ewk_Page_Contents_Cb callback)
+{
+    EINA_SAFETY_ON_NULL_RETURN_VAL(callback, false);
+    EWK_VIEW_IMPL_GET_OR_RETURN(ewkView, impl, false);
+
+    // We only support MHTML at the moment.
+    if (type != EWK_PAGE_CONTENTS_TYPE_MHTML)
+        return false;
+
+    Ewk_Page_Contents_Context* context = new Ewk_Page_Contents_Context;
+    context->type = type;
+    context->callback = callback;
+
+    impl->page()->getContentsAsMHTMLData(DataCallback::create(context, ewkViewPageContentsCallback), false);
+
+    return true;
 }

@@ -107,6 +107,11 @@ typedef enum {
     EWK_TEXT_DIRECTION_LEFT_TO_RIGHT
 } Ewk_Text_Direction;
 
+/// Enum values containing page contents type values.
+typedef enum {
+    EWK_PAGE_CONTENTS_TYPE_MHTML
+} Ewk_Page_Contents_Type;
+
 typedef struct Ewk_View_Smart_Data Ewk_View_Smart_Data;
 typedef struct Ewk_View_Smart_Class Ewk_View_Smart_Class;
 
@@ -313,6 +318,14 @@ typedef enum {
     EWK_PAGINATION_MODE_TOP_TO_BOTTOM, /**< go to the next page with scrolling top to bottom vertically. */
     EWK_PAGINATION_MODE_BOTTOM_TO_TOP /**< go to the next page with scrolling bottom to top vertically. */
 } Ewk_Pagination_Mode;
+
+/**
+ * Creates a type name for the callback function used to get the page contents.
+ *
+ * @param type type of the contents
+ * @param data string buffer of the contents
+ */
+typedef void (*Ewk_Page_Contents_Cb)(Ewk_Page_Contents_Type type, const char *data);
 
 /**
  * Sets the smart class APIs, enabling view to be inherited.
@@ -845,6 +858,17 @@ EAPI Eina_Bool ewk_view_fullscreen_exit(Evas_Object *o);
  * @return @c EINA_TRUE on success or @c EINA_FALSE on failure
  */
 EAPI void ewk_view_draws_page_background_set(Evas_Object *o, Eina_Bool enabled);
+
+/**
+ * Get contents of the current web page.
+ *
+ * @param o view object to get the page contents
+ * @param type type of the page contents
+ * @param callback callback function to be called when the operation is finished
+ *
+ * @return @c EINA_TRUE on success or @c EINA_FALSE otherwise
+ */
+EAPI Eina_Bool ewk_view_page_contents_get(const Evas_Object *o, Ewk_Page_Contents_Type type, Ewk_Page_Contents_Cb callback);
 
 #ifdef __cplusplus
 }

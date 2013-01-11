@@ -1,3 +1,22 @@
+2013-01-11  KwangYong Choi  <ky0.choi@samsung.com>
+
+        [EFL][WK2] Add ewk_view_page_contents_get() API
+        https://bugs.webkit.org/show_bug.cgi?id=106440
+
+        Reviewed by Gyuyoung Kim.
+
+        Add ewk_view_page_contents_get() API for getting contents of the current page.
+        Currently, it supports only MHTML type.
+
+        * UIProcess/API/efl/ewk_view.cpp:
+        (Ewk_Page_Contents_Context):
+        (ewkViewPageContentsCallback):
+        (ewk_view_page_contents_get):
+        * UIProcess/API/efl/ewk_view.h:
+        * UIProcess/API/efl/tests/test_ewk2_view.cpp:
+        (PageContentsCallback):
+        (TEST_F):
+
 2013-01-11  Krzysztof Czech  <k.czech@samsung.com>
 
         [WK2] Missing HAVE(ACCESSIBILITY) guards to some atk/ accessibility files.
