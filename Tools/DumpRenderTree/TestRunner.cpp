@@ -2143,7 +2143,6 @@ void TestRunner::makeWindowObject(JSContextRef context, JSObjectRef windowObject
 {
     JSRetainPtr<JSStringRef> testRunnerStr(Adopt, JSStringCreateWithUTF8CString("testRunner"));
     ref();
-    ref();
 
     JSClassRef classRef = getJSClass();
     JSValueRef layoutTestContollerObject = JSObjectMake(context, classRef, this);

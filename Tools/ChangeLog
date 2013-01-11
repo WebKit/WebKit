@@ -1,3 +1,17 @@
+2013-01-11  Pratik Solanki  <psolanki@apple.com>
+
+        TestRunner leaks when running tests
+        https://bugs.webkit.org/show_bug.cgi?id=106683
+
+        Reviewed by Simon Fraser.
+
+        Remove extra ref() that we missed out on deleting when refactoring window.layoutTestController
+        to window.testRunner in r124705. This caused the TestRunner object to be leaked when running
+        tests.
+
+        * DumpRenderTree/TestRunner.cpp:
+        (TestRunner::makeWindowObject):
+
 2013-01-11  Julie Parent  <jparent@chromium.org>
 
         Dashboard Cleanup: Add isLoadingComplete to the loader.Loader object.
