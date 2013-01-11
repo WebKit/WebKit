@@ -31,6 +31,7 @@
 #include "ArrayConstructor.h"
 #include "CallLinkStatus.h"
 #include "CodeBlock.h"
+#include "CodeBlockWithJITType.h"
 #include "DFGArrayMode.h"
 #include "DFGCapabilities.h"
 #include "GetByIdStatus.h"
@@ -3641,15 +3642,24 @@ void ByteCodeParser::parseCodeBlock()
             *m_globalData->m_perBytecodeProfiler, m_inlineStackTop->m_profiledBlock);
     }
     
+    bool shouldDumpBytecode = Options::dumpBytecodeAtDFGTime();
 #if DFG_ENABLE(DEBUG_VERBOSE)
-    dataLog(
-        "Parsing ", *codeBlock,
-        ": captureCount = ", codeBlock->symbolTable() ? codeBlock->symbolTable()->captureCount() : 0,
-        ", needsFullScopeChain = ", codeBlock->needsFullScopeChain(),
-        ", needsActivation = ", codeBlock->ownerExecutable()->needsActivation(),
-        ", isStrictMode = ", codeBlock->ownerExecutable()->isStrictMode(), "\n");
-    codeBlock->baselineVersion()->dumpBytecode();
+    shouldDumpBytecode |= true;
 #endif
+    if (shouldDumpBytecode) {
+        dataLog("Parsing ", *codeBlock);
+        if (m_inlineStackTop->m_inlineCallFrame) {
+            dataLog(
+                " for inlining at ", CodeBlockWithJITType(m_codeBlock, JITCode::DFGJIT),
+                " ", m_inlineStackTop->m_inlineCallFrame->caller);
+        }
+        dataLog(
+            ": captureCount = ", codeBlock->symbolTable() ? codeBlock->symbolTable()->captureCount() : 0,
+            ", needsFullScopeChain = ", codeBlock->needsFullScopeChain(),
+            ", needsActivation = ", codeBlock->ownerExecutable()->needsActivation(),
+            ", isStrictMode = ", codeBlock->ownerExecutable()->isStrictMode(), "\n");
+        codeBlock->baselineVersion()->dumpBytecode();
+    }
     
     for (unsigned jumpTargetIndex = 0; jumpTargetIndex <= codeBlock->numberOfJumpTargets(); ++jumpTargetIndex) {
         // The maximum bytecode offset to go into the current basicblock is either the next jump target, or the end of the instructions.

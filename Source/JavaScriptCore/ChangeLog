@@ -1,5 +1,17 @@
 2013-01-11  Filip Pizlo  <fpizlo@apple.com>
 
+        Add a run-time option to print bytecode at DFG compile time
+        https://bugs.webkit.org/show_bug.cgi?id=106704
+
+        Reviewed by Mark Hahnenberg.
+
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::parseCodeBlock):
+        * runtime/Options.h:
+        (JSC):
+
+2013-01-11  Filip Pizlo  <fpizlo@apple.com>
+
         It should be possible to enable verbose printing of each OSR exit at run-time (rather than compile-time) and it should print register state
         https://bugs.webkit.org/show_bug.cgi?id=106700
 
