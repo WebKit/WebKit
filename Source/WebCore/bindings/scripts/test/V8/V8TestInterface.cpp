@@ -59,7 +59,7 @@ static v8::Handle<v8::Value> supplementalStaticReadOnlyAttrAttrGetter(v8::Local<
 
 static v8::Handle<v8::Value> supplementalStaticAttrAttrGetter(v8::Local<v8::String> name, const v8::AccessorInfo& info)
 {
-    return v8String(TestSupplemental::supplementalStaticAttr(), info.GetIsolate());
+    return v8String(TestSupplemental::supplementalStaticAttr(), info.GetIsolate(), ReturnPersistentHandle);
 }
 
 #endif // ENABLE(Condition11) || ENABLE(Condition12)
@@ -80,7 +80,7 @@ static void supplementalStaticAttrAttrSetter(v8::Local<v8::String> name, v8::Loc
 static v8::Handle<v8::Value> supplementalStr1AttrGetter(v8::Local<v8::String> name, const v8::AccessorInfo& info)
 {
     TestInterface* imp = V8TestInterface::toNative(info.Holder());
-    return v8String(TestSupplemental::supplementalStr1(imp), info.GetIsolate());
+    return v8String(TestSupplemental::supplementalStr1(imp), info.GetIsolate(), ReturnPersistentHandle);
 }
 
 #endif // ENABLE(Condition11) || ENABLE(Condition12)
@@ -90,7 +90,7 @@ static v8::Handle<v8::Value> supplementalStr1AttrGetter(v8::Local<v8::String> na
 static v8::Handle<v8::Value> supplementalStr2AttrGetter(v8::Local<v8::String> name, const v8::AccessorInfo& info)
 {
     TestInterface* imp = V8TestInterface::toNative(info.Holder());
-    return v8String(TestSupplemental::supplementalStr2(imp), info.GetIsolate());
+    return v8String(TestSupplemental::supplementalStr2(imp), info.GetIsolate(), ReturnPersistentHandle);
 }
 
 #endif // ENABLE(Condition11) || ENABLE(Condition12)

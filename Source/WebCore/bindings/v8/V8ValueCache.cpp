@@ -76,7 +76,7 @@ void StringCache::remove(StringImpl* stringImpl)
     clearOnGC();
 }
 
-v8::Local<v8::String> StringCache::v8ExternalStringSlow(StringImpl* stringImpl, v8::Isolate* isolate)
+v8::Handle<v8::String> StringCache::v8ExternalStringSlow(StringImpl* stringImpl, ReturnHandleType handleType, v8::Isolate* isolate)
 {
     if (!stringImpl->length())
         return v8::String::Empty(isolate);
@@ -87,6 +87,8 @@ v8::Local<v8::String> StringCache::v8ExternalStringSlow(StringImpl* stringImpl, 
         if (handle.IsWeak()) {
             m_lastStringImpl = stringImpl;
             m_lastV8String = handle;
+            if (handleType == ReturnUnsafeHandle)
+                return handle;
             return v8::Local<v8::String>::New(handle);
         }
     }

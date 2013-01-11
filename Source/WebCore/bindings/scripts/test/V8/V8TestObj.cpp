@@ -90,7 +90,7 @@ static v8::Handle<v8::Value> readOnlyLongAttrAttrGetter(v8::Local<v8::String> na
 static v8::Handle<v8::Value> readOnlyStringAttrAttrGetter(v8::Local<v8::String> name, const v8::AccessorInfo& info)
 {
     TestObj* imp = V8TestObj::toNative(info.Holder());
-    return v8String(imp->readOnlyStringAttr(), info.GetIsolate());
+    return v8String(imp->readOnlyStringAttr(), info.GetIsolate(), ReturnPersistentHandle);
 }
 
 static v8::Handle<v8::Value> readOnlyTestObjAttrAttrGetter(v8::Local<v8::String> name, const v8::AccessorInfo& info)
@@ -113,7 +113,7 @@ static v8::Handle<v8::Value> staticReadOnlyLongAttrAttrGetter(v8::Local<v8::Stri
 
 static v8::Handle<v8::Value> staticStringAttrAttrGetter(v8::Local<v8::String> name, const v8::AccessorInfo& info)
 {
-    return v8String(TestObj::staticStringAttr(), info.GetIsolate());
+    return v8String(TestObj::staticStringAttr(), info.GetIsolate(), ReturnPersistentHandle);
 }
 
 static void staticStringAttrAttrSetter(v8::Local<v8::String> name, v8::Local<v8::Value> value, const v8::AccessorInfo& info)
@@ -196,7 +196,7 @@ static void unsignedLongLongAttrAttrSetter(v8::Local<v8::String> name, v8::Local
 static v8::Handle<v8::Value> stringAttrAttrGetter(v8::Local<v8::String> name, const v8::AccessorInfo& info)
 {
     TestObj* imp = V8TestObj::toNative(info.Holder());
-    return v8String(imp->stringAttr(), info.GetIsolate());
+    return v8String(imp->stringAttr(), info.GetIsolate(), ReturnPersistentHandle);
 }
 
 static void stringAttrAttrSetter(v8::Local<v8::String> name, v8::Local<v8::Value> value, const v8::AccessorInfo& info)
@@ -254,7 +254,7 @@ static void createAttrSetter(v8::Local<v8::String> name, v8::Local<v8::Value> va
 static v8::Handle<v8::Value> reflectedStringAttrAttrGetter(v8::Local<v8::String> name, const v8::AccessorInfo& info)
 {
     TestObj* imp = V8TestObj::toNative(info.Holder());
-    return v8String(imp->fastGetAttribute(WebCore::HTMLNames::reflectedstringattrAttr), info.GetIsolate());
+    return v8String(imp->fastGetAttribute(WebCore::HTMLNames::reflectedstringattrAttr), info.GetIsolate(), ReturnPersistentHandle);
 }
 
 static void reflectedStringAttrAttrSetter(v8::Local<v8::String> name, v8::Local<v8::Value> value, const v8::AccessorInfo& info)
@@ -310,7 +310,7 @@ static void reflectedBooleanAttrAttrSetter(v8::Local<v8::String> name, v8::Local
 static v8::Handle<v8::Value> reflectedURLAttrAttrGetter(v8::Local<v8::String> name, const v8::AccessorInfo& info)
 {
     TestObj* imp = V8TestObj::toNative(info.Holder());
-    return v8String(imp->getURLAttribute(WebCore::HTMLNames::reflectedurlattrAttr), info.GetIsolate());
+    return v8String(imp->getURLAttribute(WebCore::HTMLNames::reflectedurlattrAttr), info.GetIsolate(), ReturnPersistentHandle);
 }
 
 static void reflectedURLAttrAttrSetter(v8::Local<v8::String> name, v8::Local<v8::Value> value, const v8::AccessorInfo& info)
@@ -324,7 +324,7 @@ static void reflectedURLAttrAttrSetter(v8::Local<v8::String> name, v8::Local<v8:
 static v8::Handle<v8::Value> reflectedStringAttrAttrGetter(v8::Local<v8::String> name, const v8::AccessorInfo& info)
 {
     TestObj* imp = V8TestObj::toNative(info.Holder());
-    return v8String(imp->fastGetAttribute(WebCore::HTMLNames::customContentStringAttrAttr), info.GetIsolate());
+    return v8String(imp->fastGetAttribute(WebCore::HTMLNames::customContentStringAttrAttr), info.GetIsolate(), ReturnPersistentHandle);
 }
 
 static void reflectedStringAttrAttrSetter(v8::Local<v8::String> name, v8::Local<v8::Value> value, const v8::AccessorInfo& info)
@@ -366,7 +366,7 @@ static void reflectedCustomBooleanAttrAttrSetter(v8::Local<v8::String> name, v8:
 static v8::Handle<v8::Value> reflectedCustomURLAttrAttrGetter(v8::Local<v8::String> name, const v8::AccessorInfo& info)
 {
     TestObj* imp = V8TestObj::toNative(info.Holder());
-    return v8String(imp->getURLAttribute(WebCore::HTMLNames::customContentURLAttrAttr), info.GetIsolate());
+    return v8String(imp->getURLAttribute(WebCore::HTMLNames::customContentURLAttrAttr), info.GetIsolate(), ReturnPersistentHandle);
 }
 
 static void reflectedCustomURLAttrAttrSetter(v8::Local<v8::String> name, v8::Local<v8::Value> value, const v8::AccessorInfo& info)
@@ -433,7 +433,7 @@ static v8::Handle<v8::Value> stringAttrWithGetterExceptionAttrGetter(v8::Local<v
     String v = imp->stringAttrWithGetterException(ec);
     if (UNLIKELY(ec))
         return setDOMException(ec, info.GetIsolate());
-    return v8String(v, info.GetIsolate());
+    return v8String(v, info.GetIsolate(), ReturnPersistentHandle);
 }
 
 static void stringAttrWithGetterExceptionAttrSetter(v8::Local<v8::String> name, v8::Local<v8::Value> value, const v8::AccessorInfo& info)
@@ -447,7 +447,7 @@ static void stringAttrWithGetterExceptionAttrSetter(v8::Local<v8::String> name, 
 static v8::Handle<v8::Value> stringAttrWithSetterExceptionAttrGetter(v8::Local<v8::String> name, const v8::AccessorInfo& info)
 {
     TestObj* imp = V8TestObj::toNative(info.Holder());
-    return v8String(imp->stringAttrWithSetterException(), info.GetIsolate());
+    return v8String(imp->stringAttrWithSetterException(), info.GetIsolate(), ReturnPersistentHandle);
 }
 
 static void stringAttrWithSetterExceptionAttrSetter(v8::Local<v8::String> name, v8::Local<v8::Value> value, const v8::AccessorInfo& info)
@@ -913,7 +913,7 @@ static void idAttrSetter(v8::Local<v8::String> name, v8::Local<v8::Value> value,
 static v8::Handle<v8::Value> hashAttrGetter(v8::Local<v8::String> name, const v8::AccessorInfo& info)
 {
     TestObj* imp = V8TestObj::toNative(info.Holder());
-    return v8String(imp->hash(), info.GetIsolate());
+    return v8String(imp->hash(), info.GetIsolate(), ReturnPersistentHandle);
 }
 
 static v8::Handle<v8::Value> replaceableAttributeAttrGetter(v8::Local<v8::String> name, const v8::AccessorInfo& info)
@@ -1371,7 +1371,7 @@ static v8::Handle<v8::Value> methodWithCallbackAndOptionalArgCallback(const v8::
 static v8::Handle<v8::Value> conditionalMethod1Callback(const v8::Arguments& args)
 {
     TestObj* imp = V8TestObj::toNative(args.Holder());
-    return v8String(imp->conditionalMethod1(), args.GetIsolate());
+    return v8String(imp->conditionalMethod1(), args.GetIsolate(), ReturnPersistentHandle);
 }
 
 #endif // ENABLE(Condition1)

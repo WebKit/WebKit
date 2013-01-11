@@ -929,7 +929,7 @@ END
             # Generate super-compact call for regular attribute getter:
             my ($functionName, @arguments) = $codeGenerator->GetterExpression(\%implIncludes, $interfaceName, $attribute);
             push(@implContentDecls, "    Element* imp = V8Element::toNative(info.Holder());\n");
-            push(@implContentDecls, "    return v8String(imp->${functionName}(" . join(", ", @arguments) . "), info.GetIsolate());\n");
+            push(@implContentDecls, "    return v8String(imp->${functionName}(" . join(", ", @arguments) . "), info.GetIsolate(), ReturnUnsafeHandle);\n");
             push(@implContentDecls, "}\n\n");
             push(@implContentDecls, "#endif // ${conditionalString}\n\n") if $conditionalString;
             return;
@@ -1114,7 +1114,7 @@ END
     return value;
 END
     } else {
-        push(@implContentDecls, "    return " . NativeToJSValue($attribute->signature, $result, "info.Holder()", "info.GetIsolate()", "info", "imp").";\n");
+        push(@implContentDecls, "    return " . NativeToJSValue($attribute->signature, $result, "info.Holder()", "info.GetIsolate()", "info", "imp", "ReturnUnsafeHandle").";\n");
     }
 
     push(@implContentDecls, "}\n\n");  # end of getter
@@ -3618,9 +3618,9 @@ sub GenerateFunctionCallString()
     my $nativeValue;
     # FIXME: Update for all ScriptWrappables.
     if (IsDOMNodeType($interfaceName)) {
-        $nativeValue = NativeToJSValue($function->signature, $return, "args.Holder()", "args.GetIsolate()", "args", "imp");
+        $nativeValue = NativeToJSValue($function->signature, $return, "args.Holder()", "args.GetIsolate()", "args", "imp", "ReturnUnsafeHandle");
     } else {
-        $nativeValue = NativeToJSValue($function->signature, $return, "args.Holder()", "args.GetIsolate()");
+        $nativeValue = NativeToJSValue($function->signature, $return, "args.Holder()", "args.GetIsolate()", 0, 0, "ReturnUnsafeHandle");
     }
 
     $result .= $indent . "return " . $nativeValue . ";\n";
@@ -4030,6 +4030,8 @@ sub NativeToJSValue
     my $getHolderContainerArg = $getHolderContainer ? ", $getHolderContainer" : "";
     my $getScriptWrappable = shift;
     my $getScriptWrappableArg = $getScriptWrappable ? ", $getScriptWrappable" : "";
+    my $returnHandleType = shift;
+
     my $type = $signature->type;
 
     return ($getIsolate ? "v8Boolean($value, $getIsolate)" : "v8Boolean($value)") if $type eq "boolean";
@@ -4058,12 +4060,12 @@ sub NativeToJSValue
     if ($codeGenerator->IsStringType($type)) {
         my $conv = $signature->extendedAttributes->{"TreatReturnedNullStringAs"};
         if (defined $conv) {
-            return "v8StringOrNull($value$getIsolateArg)" if $conv eq "Null";
-            return "v8StringOrUndefined($value$getIsolateArg)" if $conv eq "Undefined";
+            return "v8StringOrNull($value$getIsolateArg, $returnHandleType)" if $conv eq "Null";
+            return "v8StringOrUndefined($value$getIsolateArg, $returnHandleType)" if $conv eq "Undefined";
 
             die "Unknown value for TreatReturnedNullStringAs extended attribute";
         }
-        return $getIsolate ? "v8String($value, $getIsolate)" : "deprecatedV8String($value)";
+        return $getIsolate ? "v8String($value$getIsolateArg, $returnHandleType)" : "deprecatedV8String($value)";
     }
 
     my $arrayType = $codeGenerator->GetArrayType($type);

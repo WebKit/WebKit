@@ -35,16 +35,28 @@
 
 namespace WebCore {
 
+// ReturnUnsafeHandle can be used only when it is guaranteed
+// that no V8 object allocation is conducted before the handle
+// is returned to V8. For safety, ReturnUnsafeHandle should be
+// used by auto-generated code.
+enum ReturnHandleType {
+    ReturnLocalHandle,
+    ReturnUnsafeHandle
+};
+
 class StringCache {
 public:
     StringCache() { }
 
-    v8::Local<v8::String> v8ExternalString(StringImpl* stringImpl, v8::Isolate* isolate)
+    v8::Handle<v8::String> v8ExternalString(StringImpl* stringImpl, ReturnHandleType handleType, v8::Isolate* isolate)
     {
-        if (m_lastStringImpl.get() == stringImpl && m_lastV8String.IsWeak(isolate))
+        if (m_lastStringImpl.get() == stringImpl && m_lastV8String.IsWeak(isolate)) {
+            if (handleType == ReturnUnsafeHandle)
+                return m_lastV8String;
             return v8::Local<v8::String>::New(isolate, m_lastV8String);
+        }
 
-        return v8ExternalStringSlow(stringImpl, isolate);
+        return v8ExternalStringSlow(stringImpl, handleType, isolate);
     }
 
     void clearOnGC() 
@@ -57,7 +69,7 @@ public:
     void reportMemoryUsage(MemoryObjectInfo*) const;
 
 private:
-    v8::Local<v8::String> v8ExternalStringSlow(StringImpl*, v8::Isolate*);
+    v8::Handle<v8::String> v8ExternalStringSlow(StringImpl*, ReturnHandleType, v8::Isolate*);
 
     HashMap<StringImpl*, v8::String*> m_stringCache;
     v8::Persistent<v8::String> m_lastV8String;

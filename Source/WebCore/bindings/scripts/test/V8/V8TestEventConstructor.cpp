@@ -41,13 +41,13 @@ template <typename T> void V8_USE(T) { }
 static v8::Handle<v8::Value> attr1AttrGetter(v8::Local<v8::String> name, const v8::AccessorInfo& info)
 {
     TestEventConstructor* imp = V8TestEventConstructor::toNative(info.Holder());
-    return v8String(imp->attr1(), info.GetIsolate());
+    return v8String(imp->attr1(), info.GetIsolate(), ReturnPersistentHandle);
 }
 
 static v8::Handle<v8::Value> attr2AttrGetter(v8::Local<v8::String> name, const v8::AccessorInfo& info)
 {
     TestEventConstructor* imp = V8TestEventConstructor::toNative(info.Holder());
-    return v8String(imp->attr2(), info.GetIsolate());
+    return v8String(imp->attr2(), info.GetIsolate(), ReturnPersistentHandle);
 }
 
 } // namespace TestEventConstructorV8Internal
