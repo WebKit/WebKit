@@ -125,7 +125,7 @@ def _git_diff(*args):
 
 
 # Exists to share svn repository creation code between the git and svn tests
-class SVNTestRepository:
+class SVNTestRepository(object):
     @classmethod
     def _svn_add(cls, path):
         run_command(["svn", "add", path])
@@ -626,6 +626,7 @@ class SVNTest(SCMTest):
         SVNTestRepository.setup(self)
         os.chdir(self.svn_checkout_path)
         self.scm = detect_scm_system(self.svn_checkout_path)
+        self.scm.svn_server_realm = None
         # For historical reasons, we test some checkout code here too.
         self.checkout = Checkout(self.scm)
 
@@ -714,7 +715,7 @@ Q1dTBx0AAAB42itg4GlgYJjGwMDDyODMxMDw34GBgQEAJPQDJA==
         self._shared_test_commit_with_message("dbates@webkit.org")
 
     def test_commit_without_authorization(self):
-        self.scm.has_authorization_for_realm = lambda realm: False
+        self.scm.svn_server_realm = SVN.svn_server_realm
         self.assertRaises(AuthenticationError, self._shared_test_commit_with_message)
 
     def test_has_authorization_for_realm_using_credentials_with_passtype(self):
@@ -1004,7 +1005,7 @@ class GitTest(SCMTest):
 
     def test_head_svn_revision(self):
         scm = detect_scm_system(self.untracking_checkout_path)
-        # If we cloned a git repo tracking an SVG repo, this would give the same result as
+        # If we cloned a git repo tracking an SVN repo, this would give the same result as
         # self._shared_test_head_svn_revision().
         self.assertEqual(scm.head_svn_revision(), '')
 
@@ -1038,6 +1039,7 @@ class GitSVNTest(SCMTest):
         SVNTestRepository.setup(self)
         self._setup_git_checkout()
         self.scm = detect_scm_system(self.git_checkout_path)
+        self.scm.svn_server_realm = None
         # For historical reasons, we test some checkout code here too.
         self.checkout = Checkout(self.scm)
 

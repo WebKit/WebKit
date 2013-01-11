@@ -43,8 +43,15 @@ _log = logging.getLogger(__name__)
 
 
 # A mixin class that represents common functionality for SVN and Git-SVN.
-class SVNRepository:
+class SVNRepository(object):
+    # FIXME: These belong in common.config.urls
+    svn_server_host = "svn.webkit.org"
+    svn_server_realm = "<http://svn.webkit.org:80> Mac OS Forge"
+
     def has_authorization_for_realm(self, realm, home_directory=os.getenv("HOME")):
+        # If we are working on a file:// repository realm will be None
+        if realm is None:
+            return True
         # ignore false positives for methods implemented in the mixee class. pylint: disable-msg=E1101
         # Assumes find and grep are installed.
         if not os.path.isdir(os.path.join(home_directory, ".subversion")):
@@ -63,9 +70,6 @@ class SVNRepository:
 
 
 class SVN(SCM, SVNRepository):
-    # FIXME: These belong in common.config.urls
-    svn_server_host = "svn.webkit.org"
-    svn_server_realm = "<http://svn.webkit.org:80> Mac OS Forge"
 
     executable_name = "svn"
 

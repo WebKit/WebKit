@@ -452,8 +452,8 @@ class Git(SCM, SVNRepository):
 
     def push_local_commits_to_server(self, username=None, password=None):
         dcommit_command = ['svn', 'dcommit']
-        if (not username or not password) and not self.has_authorization_for_realm(SVN.svn_server_realm):
-            raise AuthenticationError(SVN.svn_server_host, prompt_for_password=True)
+        if (not username or not password) and not self.has_authorization_for_realm(self.svn_server_realm):
+            raise AuthenticationError(self.svn_server_host, prompt_for_password=True)
         if username:
             dcommit_command.extend(["--username", username])
         output = self._run_git(dcommit_command, error_handler=commit_error_handler, input=password)

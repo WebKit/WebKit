@@ -1,3 +1,17 @@
+2013-01-10  Tim 'mithro' Ansell  <mithro@mithis.com>
+
+        Fixing AuthenticationError when running test-webkitpy as a non-committer.
+        https://bugs.webkit.org/show_bug.cgi?id=106420
+
+        Reviewed by Eric Seidel.
+
+        * Scripts/webkitpy/common/checkout/scm/git.py:
+        (Git.push_local_commits_to_server):
+        * Scripts/webkitpy/common/checkout/scm/scm_unittest.py:
+        * Scripts/webkitpy/common/checkout/scm/svn.py:
+        (SVNRepository):
+        (SVNRepository.has_authorization_for_realm):
+
 2013-01-10  Christophe Dumez  <christophe.dumez@intel.com>
 
         [EFL][jhbuild] Use tarballs for gstreamer instead of git
