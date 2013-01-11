@@ -1,6 +1,0 @@
-This tests that when an element is removed from the DOM while a notification referencing it is pending, it will not crash.
-
-On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
-
-
-
