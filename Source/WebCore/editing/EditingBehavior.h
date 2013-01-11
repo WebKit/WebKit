@@ -59,6 +59,17 @@ public:
 
     // On Mac, when processing a contextual click, the object being clicked upon should be selected.
     bool shouldSelectOnContextualMenuClick() const { return m_type == EditingMacBehavior; }
+
+    // On Linux, should be able to get and insert spelling suggestions without selecting the misspelled word.
+    // Skip this policy for Chromium, they require selection for the misspelled word.
+    bool shouldAllowSpellingSuggestionsWithoutSelection() const
+    {
+#if !PLATFORM(CHROMIUM)
+        return m_type == EditingUnixBehavior;
+#else
+        return false;
+#endif
+    }
     
     // On Mac and Windows, pressing backspace (when it isn't handled otherwise) should navigate back.
     bool shouldNavigateBackOnBackspace() const { return m_type != EditingUnixBehavior; }

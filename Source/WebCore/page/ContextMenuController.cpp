@@ -340,15 +340,28 @@ void ContextMenuController::contextMenuItemSelected(ContextMenuItem* item)
         frame->editor()->command("SelectAll").execute();
         break;
 #endif
-    case ContextMenuItemTagSpellingGuess:
-        ASSERT(frame->editor()->selectedText().length());
-        if (frame->editor()->shouldInsertText(item->title(), frame->selection()->toNormalizedRange().get(), EditorInsertActionPasted)) {
+    case ContextMenuItemTagSpellingGuess: {
+        FrameSelection* frameSelection = frame->selection();
+        if (frame->editor()->shouldInsertText(item->title(), frameSelection->toNormalizedRange().get(), EditorInsertActionPasted)) {
             Document* document = frame->document();
-            RefPtr<ReplaceSelectionCommand> command = ReplaceSelectionCommand::create(document, createFragmentFromMarkup(document, item->title(), ""), ReplaceSelectionCommand::SelectReplacement | ReplaceSelectionCommand::MatchStyle | ReplaceSelectionCommand::PreventNesting);
+            ReplaceSelectionCommand::CommandOptions replaceOptions = ReplaceSelectionCommand::MatchStyle | ReplaceSelectionCommand::PreventNesting;
+
+            if (frame->editor()->behavior().shouldAllowSpellingSuggestionsWithoutSelection()) {
+                ASSERT(frameSelection->isCaretOrRange());
+                VisibleSelection wordSelection(frameSelection->base());
+                wordSelection.expandUsingGranularity(WordGranularity);
+                frameSelection->setSelection(wordSelection);
+            } else {
+                ASSERT(frame->editor()->selectedText().length());
+                replaceOptions |= ReplaceSelectionCommand::SelectReplacement;
+            }
+
+            RefPtr<ReplaceSelectionCommand> command = ReplaceSelectionCommand::create(document, createFragmentFromMarkup(document, item->title(), ""), replaceOptions);
             applyCommand(command);
-            frame->selection()->revealSelection(ScrollAlignment::alignToEdgeIfNeeded);
+            frameSelection->revealSelection(ScrollAlignment::alignToEdgeIfNeeded);
         }
         break;
+    }
     case ContextMenuItemTagIgnoreSpelling:
         frame->editor()->ignoreSpelling();
         break;
@@ -914,7 +927,7 @@ void ContextMenuController::populate()
                 // is never considered a misspelling and bad grammar at the same time)
                 bool misspelling;
                 bool badGrammar;
-                Vector<String> guesses = frame->editor()->guessesForMisspelledOrUngrammaticalSelection(misspelling, badGrammar);
+                Vector<String> guesses = frame->editor()->guessesForMisspelledOrUngrammatical(misspelling, badGrammar);
                 if (misspelling || badGrammar) {
                     size_t size = guesses.size();
                     if (!size) {

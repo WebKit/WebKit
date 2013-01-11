@@ -968,7 +968,7 @@ webkit.org/b/73936 inspector/profiler/canvas2d/canvas-has-uninstrumented-canvase
 webkit.org/b/37613 webkit.org/b/20011 printing [ Skip ]
 webkit.org/b/37613 editing/execCommand/print.html [ Skip ]
 
-# Need to dump context menu items on eventSender.contextClick(true).
+# DRT doesn't dispatch an event for the second call eventSender.contextClick().
 webkit.org/b/39102 editing/spelling/context-menu-suggestions.html [ Failure ]
 
 # Some input type=range tests fail because of the size

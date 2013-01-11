@@ -213,7 +213,7 @@ public:
     bool insertParagraphSeparatorInQuotedContent();
 #endif
     
-    bool isContinuousSpellCheckingEnabled();
+    bool isContinuousSpellCheckingEnabled() const;
     void toggleContinuousSpellChecking();
     bool isGrammarCheckingEnabled();
     void toggleGrammarChecking();
@@ -221,10 +221,11 @@ public:
     void learnSpelling();
     int spellCheckerDocumentTag();
     bool isSelectionUngrammatical();
-    bool isSelectionMisspelled();
-    Vector<String> guessesForMisspelledSelection();
+    String misspelledSelectionString() const;
+    String misspelledWordAtCaretOrRange(Node* clickedNode) const;
+    Vector<String> guessesForMisspelledWord(const String&) const;
     Vector<String> guessesForUngrammaticalSelection();
-    Vector<String> guessesForMisspelledOrUngrammaticalSelection(bool& misspelled, bool& ungrammatical);
+    Vector<String> guessesForMisspelledOrUngrammatical(bool& misspelled, bool& ungrammatical);
     bool isSpellCheckingEnabledInFocusedNode() const;
     bool isSpellCheckingEnabledFor(Node*) const;
     void markMisspellingsAfterTypingToWord(const VisiblePosition &wordStart, const VisibleSelection& selectionAfterTyping, bool doReplacement);
