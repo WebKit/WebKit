@@ -82,7 +82,6 @@
 #include "StyleCachedImage.h"
 #include "TextEvent.h"
 #include "TextIterator.h"
-#include "UserGestureIndicator.h"
 #include "UserTypingGestureIndicator.h"
 #include "WheelEvent.h"
 #include "WindowsKeyboardCodes.h"
@@ -383,6 +382,7 @@ void EventHandler::clear()
     m_mousePositionIsUnknown = true;
     m_lastKnownMousePosition = IntPoint();
     m_lastKnownMouseGlobalPosition = IntPoint();
+    m_lastMouseDownUserGestureToken.clear();
     m_mousePressNode = 0;
     m_mousePressed = false;
     m_capturesDragging = false;
@@ -1422,6 +1422,7 @@ bool EventHandler::handleMousePressEvent(const PlatformMouseEvent& mouseEvent)
 #endif
 
     UserGestureIndicator gestureIndicator(DefinitelyProcessingUserGesture);
+    m_lastMouseDownUserGestureToken = gestureIndicator.currentToken();
 
     // FIXME (bug 68185): this call should be made at another abstraction layer
     m_frame->loader()->resetMultipleFormSubmissionProtection();
@@ -1766,7 +1767,12 @@ bool EventHandler::handleMouseReleaseEvent(const PlatformMouseEvent& mouseEvent)
         return true;
 #endif
 
-    UserGestureIndicator gestureIndicator(DefinitelyProcessingUserGesture);
+    OwnPtr<UserGestureIndicator> gestureIndicator;
+
+    if (m_lastMouseDownUserGestureToken)
+        gestureIndicator = adoptPtr(new UserGestureIndicator(m_lastMouseDownUserGestureToken.release()));
+    else
+        gestureIndicator = adoptPtr(new UserGestureIndicator(DefinitelyProcessingUserGesture));
 
 #if ENABLE(PAN_SCROLLING)
     m_autoscrollController->handleMouseReleaseEvent(mouseEvent);

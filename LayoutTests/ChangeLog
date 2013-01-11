@@ -1,3 +1,13 @@
+2013-01-11  Jochen Eisinger  <jochen@chromium.org>
+
+        Connect UserGestureIndicator for mousedown and mouseup events
+        https://bugs.webkit.org/show_bug.cgi?id=105138
+
+        Reviewed by Adam Barth.
+
+        * platform/chromium/fast/events/popup-allowed-from-gesture-only-once-two-events-expected.txt: Added.
+        * platform/chromium/fast/events/popup-allowed-from-gesture-only-once-two-events.html: Added.
+
 2013-01-11  Eugene Klyuchnikov  <eustas@chromium.org>
 
         Web Inspector: [Resources] "Delete" cookie deletes all cookies with matching name.
