@@ -168,5 +168,8 @@ defineTest(santizeFeatures) {
     # WK2's plugin process code requires NPAPI
     !enable?(netscape_plugin_api): WEBKIT_CONFIG -= plugin_process
 
+    # Web Audio requires GStreamer.
+    !use?(gstreamer): WEBKIT_CONFIG -= web_audio
+
     export(WEBKIT_CONFIG)
 }

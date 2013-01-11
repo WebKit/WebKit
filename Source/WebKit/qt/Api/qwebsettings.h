@@ -84,7 +84,8 @@ public:
         CSSGridLayoutEnabled,
         ScrollAnimatorEnabled,
         CaretBrowsingEnabled,
-        NotificationsEnabled
+        NotificationsEnabled,
+        WebAudioEnabled
     };
     enum WebGraphic {
         MissingImageGraphic,

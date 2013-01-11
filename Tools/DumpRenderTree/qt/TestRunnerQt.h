@@ -63,6 +63,7 @@ public:
 
     bool shouldDisallowIncreaseForApplicationCacheQuota() const { return m_disallowIncreaseForApplicationCacheQuota; }
     bool shouldDumpAsText() const { return m_textDump; }
+    bool shouldDumpAsAudio() const { return m_audioDump; }
     bool shouldDumpPixels() const { return m_shouldDumpPixels; }
     bool shouldDumpBackForwardList() const { return m_dumpBackForwardList; }
     bool shouldDumpChildrenAsText() const { return m_dumpChildrenAsText; }
@@ -77,6 +78,8 @@ public:
     bool waitForPolicy() const { return m_waitForPolicy; }
     bool ignoreReqestForPermission() const { return m_ignoreDesktopNotification; }
     bool isPrinting() { return m_isPrinting; }
+
+    const QByteArray& audioData() const { return m_audioData; }
 
     void reset();
 
@@ -275,6 +278,8 @@ public Q_SLOTS:
     void setAlwaysAcceptCookies(bool);
     void setAlwaysBlockCookies(bool);
 
+    void setAudioData(const QByteArray&);
+
 private Q_SLOTS:
     void processWork();
 
@@ -284,6 +289,7 @@ private:
 private:
     bool m_hasDumped;
     bool m_textDump;
+    bool m_audioDump;
     bool m_shouldDumpPixels;
     bool m_disallowIncreaseForApplicationCacheQuota;
     bool m_dumpBackForwardList;
@@ -311,6 +317,8 @@ private:
     QWebHistory* m_webHistory;
     QStringList m_desktopNotificationAllowedOrigins;
     bool m_ignoreDesktopNotification;
+
+    QByteArray m_audioData;
 
     bool m_shouldTimeout;
     int m_timeout;

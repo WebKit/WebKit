@@ -164,6 +164,10 @@ void QWebSettingsPrivate::apply()
         settings->setAcceleratedCompositingForCanvasEnabled(value);
 #endif
 #endif
+#if ENABLE(WEB_AUDIO)
+        value = attributes.value(QWebSettings::WebAudioEnabled, global->attributes.value(QWebSettings::WebAudioEnabled));
+        settings->setWebAudioEnabled(value);
+#endif
 
         value = attributes.value(QWebSettings::CSSRegionsEnabled,
                                  global->attributes.value(QWebSettings::CSSRegionsEnabled));
@@ -534,6 +538,7 @@ QWebSettings::QWebSettings()
     d->attributes.insert(QWebSettings::LocalContentCanAccessFileUrls, true);
     d->attributes.insert(QWebSettings::AcceleratedCompositingEnabled, true);
     d->attributes.insert(QWebSettings::WebGLEnabled, true);
+    d->attributes.insert(QWebSettings::WebAudioEnabled, false);
     d->attributes.insert(QWebSettings::CSSRegionsEnabled, true);
     d->attributes.insert(QWebSettings::CSSGridLayoutEnabled, false);
     d->attributes.insert(QWebSettings::HyperlinkAuditingEnabled, false);

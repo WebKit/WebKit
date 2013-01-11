@@ -68,6 +68,7 @@ public:
         , useCompositing(true)
         , useTiledBackingStore(false)
         , useWebGL(false)
+        , useWebAudio(false)
         , useFrameFlattening(false)
         , cacheWebView(false)
         , showFrameRate(false)
@@ -92,6 +93,7 @@ public:
     bool useCompositing;
     bool useTiledBackingStore;
     bool useWebGL;
+    bool useWebAudio;
     bool useFrameFlattening;
     bool cacheWebView;
     bool showFrameRate;
@@ -152,6 +154,7 @@ protected Q_SLOTS:
     void toggleTiledBackingStore(bool toggle);
     void toggleResizesToContents(bool toggle);
     void toggleWebGL(bool toggle);
+    void toggleWebAudio(bool toggle);
     void toggleSpatialNavigation(bool b);
     void toggleFullScreenMode(bool enable);
     void toggleFrameFlattening(bool toggle);

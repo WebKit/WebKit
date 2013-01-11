@@ -53,6 +53,7 @@ void TestRunner::reset()
     m_hasDumped = false;
     m_loadFinished = false;
     m_textDump = false;
+    m_audioDump = false;
     m_shouldDumpPixels = true;
     m_dumpBackForwardList = false;
     m_dumpChildrenAsText = false;
@@ -76,6 +77,7 @@ void TestRunner::reset()
     m_isGeolocationPermissionSet = false;
     m_isPrinting = false;
     m_geolocationPermission = false;
+    m_audioData.clear();
 
     DumpRenderTreeSupportQt::dumpEditingCallbacks(false);
     DumpRenderTreeSupportQt::dumpFrameLoader(false);
@@ -677,6 +679,8 @@ void TestRunner::overridePreference(const QString& name, const QVariant& value)
         settings->setAttribute(QWebSettings::AcceleratedCompositingEnabled, value.toBool());
     else if (name == "WebKitDisplayImagesKey")
         settings->setAttribute(QWebSettings::AutoLoadImages, value.toBool());
+    else if (name == "WebKitWebAudioEnabled")
+        settings->setAttribute(QWebSettings::WebAudioEnabled, value.toBool());
     else
         printf("ERROR: TestRunner::overridePreference() does not support the '%s' preference\n",
             name.toLatin1().data());
@@ -966,6 +970,12 @@ void TestRunner::setAlwaysBlockCookies(bool block)
         globalSettings->setThirdPartyCookiePolicy(QWebSettings::AlwaysBlockThirdPartyCookies);
     else
         globalSettings->setThirdPartyCookiePolicy(QWebSettings::AlwaysAllowThirdPartyCookies);
+}
+
+void TestRunner::setAudioData(const QByteArray& audioData)
+{
+    m_audioData = audioData;
+    m_audioDump = true;
 }
 
 const unsigned TestRunner::maxViewWidth = 800;

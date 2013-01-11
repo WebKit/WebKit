@@ -1,3 +1,38 @@
+2013-01-11  Allan Sandfeld Jensen  <allan.jensen@digia.com>
+
+        [Qt][WK1] Web Audio support
+        https://bugs.webkit.org/show_bug.cgi?id=106651
+
+        Reviewed by Jocelyn Turcotte.
+
+        Implements support for dumping audio data in DumpRenderTree.
+
+        Adds WebAudio to toggleable features in QtTestBrowser.
+
+        Enables LEGACY_WEB_AUDIO. This feature is required for 2/3 of the web audio regression tests. It is enabled by default
+        because it has no effect when WEB_AUDIO is not enabled. This combination matches the settings in FeatureList.pm.
+
+        * DumpRenderTree/qt/DumpRenderTreeQt.cpp:
+        (WebCore::DumpRenderTree::dump):
+        * DumpRenderTree/qt/TestRunnerQt.cpp:
+        (TestRunner::reset):
+        (TestRunner::overridePreference):
+        (TestRunner::setAudioData):
+        * DumpRenderTree/qt/TestRunnerQt.h:
+        (TestRunner::shouldDumpAsAudio):
+        (TestRunner::audioData):
+        (TestRunner):
+        * QtTestBrowser/launcherwindow.cpp:
+        (LauncherWindow::applyPrefs):
+        (LauncherWindow::createChrome):
+        (LauncherWindow::toggleWebAudio):
+        * QtTestBrowser/launcherwindow.h:
+        (WindowOptions::WindowOptions):
+        (WindowOptions):
+        (LauncherWindow):
+        * qmake/mkspecs/features/features.prf:
+        * qmake/mkspecs/features/features.pri:
+
 2013-01-11  Raphael Kubo da Costa  <raphael.kubo.da.costa@intel.com>
 
         Unreviewed jhbuild-related fix after r139431.
