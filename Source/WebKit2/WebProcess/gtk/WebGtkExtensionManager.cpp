@@ -22,6 +22,8 @@
 
 #include "InjectedBundle.h"
 #include "WKBundleAPICast.h"
+#include "WKString.h"
+#include "WKType.h"
 #include "WebKitWebExtensionPrivate.h"
 #include <WebCore/FileSystem.h>
 #include <wtf/OwnPtr.h>

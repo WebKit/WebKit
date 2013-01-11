@@ -1,3 +1,9 @@
+2013-01-11  Zan Dobersek  <zandobersek@gmail.com>
+
+        Unreviewed. Build fix for the GTK debug builds of WebKit2 after r139415.
+
+        * WebProcess/gtk/WebGtkExtensionManager.cpp:
+
 2013-01-11  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] Remove support for global extensions in WebKit2 GTK+
