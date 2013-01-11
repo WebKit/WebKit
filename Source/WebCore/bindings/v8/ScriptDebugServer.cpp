@@ -100,6 +100,7 @@ public:
 
         String wrappedScript = makeString("(", preprocessorScript, ")");
         v8::Handle<v8::String> preprocessor = v8::String::New(wrappedScript.utf8().data(), wrappedScript.utf8().length());
+
         v8::Handle<v8::Script> script = v8::Script::Compile(preprocessor);
 
         if (tryCatch.HasCaught())
@@ -113,7 +114,7 @@ public:
         m_preprocessorFunction.set(v8::Handle<v8::Function>::Cast(preprocessorFunction));
     }
 
-    String preprocessSourceCode(const String& sourceCode)
+    String preprocessSourceCode(const String& sourceCode, const String& sourceName)
     {
         v8::HandleScope scope;
 
@@ -124,11 +125,14 @@ public:
         v8::Context::Scope contextScope(context);
 
         v8::Handle<v8::String> sourceCodeString = v8::String::New(sourceCode.utf8().data(), sourceCode.utf8().length());
-        v8::Handle<v8::Value> argv[] = { sourceCodeString };
+
+        v8::Handle<v8::String> sourceNameString = v8::String::New(sourceName.utf8().data(), sourceName.utf8().length());
+        v8::Handle<v8::Value> argv[] = { sourceCodeString, sourceNameString };
 
         v8::TryCatch tryCatch;
         RecursionScopeSuppression suppressionScope;
-        v8::Handle<v8::Value> resultValue = m_preprocessorFunction->Call(context->Global(), 1, argv);
+        v8::Handle<v8::Value> resultValue = m_preprocessorFunction->Call(context->Global(), 2, argv);
+
         if (tryCatch.HasCaught())
             return sourceCode;
 
@@ -455,6 +459,7 @@ void ScriptDebugServer::handleV8DebugEvent(const v8::Debug::EventDetails& eventD
     if (listener) {
         v8::HandleScope scope;
         if (event == v8::BeforeCompile) {
+
             if (!m_scriptPreprocessor)
                 return;
 
@@ -464,8 +469,13 @@ void ScriptDebugServer::handleV8DebugEvent(const v8::Debug::EventDetails& eventD
             v8::Handle<v8::Value> argv[] = { eventDetails.GetEventData() };
             v8::Handle<v8::Value> script = getScriptSourceFunction->Call(m_debuggerScript.get(), 1, argv);
 
+            v8::Handle<v8::Function> getScriptNameFunction = v8::Local<v8::Function>::Cast(m_debuggerScript.get()->Get(v8::String::New("getScriptName")));
+            v8::Handle<v8::Value> argv1[] = { eventDetails.GetEventData() };
+            v8::Handle<v8::Value> scriptName = getScriptNameFunction->Call(m_debuggerScript.get(), 1, argv1);
+
             v8::Handle<v8::Function> setScriptSourceFunction = v8::Local<v8::Function>::Cast(m_debuggerScript.get()->Get(v8::String::New("setScriptSource")));
-            String patchedScript = preprocessor->preprocessSourceCode(toWebCoreStringWithUndefinedOrNullCheck(script));
+            String patchedScript = preprocessor->preprocessSourceCode(toWebCoreStringWithUndefinedOrNullCheck(script), toWebCoreStringWithUndefinedOrNullCheck(scriptName));
+
             v8::Handle<v8::Value> argv2[] = { eventDetails.GetEventData(), v8String(patchedScript) };
             setScriptSourceFunction->Call(m_debuggerScript.get(), 2, argv2);
             m_scriptPreprocessor = preprocessor.release();

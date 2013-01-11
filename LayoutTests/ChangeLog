@@ -1,3 +1,17 @@
+2013-01-10  John J. Barton  <johnjbarton@chromium.org>
+
+        Web Inspector: Pass the script url to the script-preprocessor script
+        https://bugs.webkit.org/show_bug.cgi?id=104384
+
+        Reviewed by Pavel Feldman.
+
+        Tests for Bug 80922 by Pavel Feldman <pfeldman@chromium.org> that did not land somehow, 
+        with additional test for Bug 104384 
+
+        * inspector/debugger/debugger-script-preprocessor-expected.txt: Added.
+        * inspector/debugger/debugger-script-preprocessor.html: Added.
+        * platform/chromium/inspector/debugger/debugger-script-preprocessor-expected.txt: Added.
+
 2013-01-10  Eugene Klyuchnikov  <eustas@chromium.org>
 
         Web Inspector: DataGrid refactoring: make cell editing more generic.

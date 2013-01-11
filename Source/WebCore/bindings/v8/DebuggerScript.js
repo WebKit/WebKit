@@ -249,6 +249,11 @@ DebuggerScript.setScriptSource = function(eventData, source)
     eventData.script().setSource(source);
 }
 
+DebuggerScript.getScriptName = function(eventData)
+{
+    return eventData.script().script_.nameOrSourceURL();
+}
+
 DebuggerScript._frameMirrorToJSCallFrame = function(frameMirror, callerFrame)
 {
     // Get function name.

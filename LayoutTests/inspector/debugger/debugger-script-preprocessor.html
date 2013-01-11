@@ -1,0 +1,63 @@
+<html>
+<head>
+<script src="../../http/tests/inspector/inspector-test.js"></script>
+<script src="../../http/tests/inspector/debugger-test.js"></script>
+<script>
+
+function load()
+{
+    eval("function dynamic" + "Script1() {}"); 
+    eval("function dynamic" + "Script2() {}"); 
+    runTest();
+}
+
+function test()
+{
+    function preprocessor(script, name)
+    {
+        if (script.indexOf("dynamic" + "Script1") !== -1)
+            return script + "//@ sourceURL=dynamicScript1";
+        if (script.indexOf("dynamic" + "Script2") !== -1) {
+            try {
+                var w = eval("window");
+                return script + "//@ sourceURL=FAIL_window_should_not_be_there";
+            } catch (e) {
+                return script + "//@ sourceURL=dynamicScript2";
+            }
+        }
+        // Verify that the |name| argument is correct. Note: if name is not passed in
+        // the results will be a script with a sourceURL equal to the original file name.
+        return script + "//@ sourceURL=" + name + ".js"; 
+    }
+
+    InspectorTest.startDebuggerTest(step1);
+
+    function step1()
+    {         
+        InspectorTest.reloadPage(step2, undefined, "(" + preprocessor + ")");
+    }
+
+    function step2()
+    {
+        function accept(script)
+        {
+            return true;
+        }
+        var scripts = InspectorTest.queryScripts(accept);
+        for (var i = 0; i < scripts.length; ++i)
+            InspectorTest.addResult(WebInspector.displayNameForURL(scripts[i].sourceURL));
+
+        InspectorTest.reloadPage(InspectorTest.completeDebuggerTest.bind(InspectorTest));
+    }
+}
+
+</script>
+</head>
+
+<body onload="load()">
+<p>
+Tests script preprocessor (ability to preprocess all scripts upon reload).
+</p>
+
+</body>
+</html>
