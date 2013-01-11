@@ -59,7 +59,7 @@ def main():
         "cc1plus",
         "cc1objplus",
         "clang",
-        "clang\+\+",
+        r"clang\+\+",
         "gcc-4.2",
         "httpd",
         "i686-apple-darwin10-gcc-4.2.1",
