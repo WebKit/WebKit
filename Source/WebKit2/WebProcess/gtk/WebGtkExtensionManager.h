@@ -45,7 +45,6 @@ public:
 private:
     WebGtkExtensionManager();
 
-    void appendModuleDirectories(Vector<String>&);
     void scanModules(const String&, Vector<String>&);
 
     Vector<Module*> m_extensionModules;
