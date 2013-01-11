@@ -4095,7 +4095,7 @@ webkit.org/b/106232 [ Win Debug ] webaudio/oscillator-basic.html [ Crash ]
 webkit.org/b/106232 [ Win Debug ] webaudio/oscillator-sawtooth.html [ Crash ]
 
 webkit.org/b/100806 [ Win ] fast/css/font-face-implicit-local-font.html [ Failure ]
-webkit.org/b/100806 [ Win ] fast/css/font-face-unicode-range.html [ Failure ]
+webkit.org/b/100806 [ Win ] fast/css/font-face-unicode-range.html [ Failure ImageOnlyFailure ]
 webkit.org/b/100806 [ Win ] fast/css/font-face-descending-unicode-range.html [ Pass Failure ]
 webkit.org/b/100806 [ Win ] fast/css/font-face-download-error.html [ Failure ]
 # Seems to have the wrong font in the SVG part of the test (CSS is ok).
