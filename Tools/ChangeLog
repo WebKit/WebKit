@@ -1,3 +1,10 @@
+2013-01-10  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Build fix after r139357. It was missing a comma.
+
+        * QueueStatusServer/model/queues.py:
+        (Queue):
+
 2013-01-10  Tim 'mithro' Ansell  <mithro@mithis.com>
 
         Fixing AuthenticationError when running test-webkitpy as a non-committer.

@@ -45,7 +45,7 @@ class Queue(object):
         "qt-wk2-ews",
         "gtk-ews",
         "mac-ews",
-        "mac-wk2-ews"
+        "mac-wk2-ews",
         "win-ews",
         "efl-ews",
     ]
