@@ -79,24 +79,22 @@ WebInspector.DOMStorageItemsView.prototype = {
 
     _dataGridForDOMStorageEntries: function(entries)
     {
-        var columns = {};
-        columns[0] = {};
-        columns[1] = {};
-        columns[0].title = WebInspector.UIString("Key");
-        columns[1].title = WebInspector.UIString("Value");
+        var columns = {key: {}, value: {}};
+
+        columns.key.title = WebInspector.UIString("Key");
+        columns.key.editable = true;
+
+        columns.value.title = WebInspector.UIString("Value");
+        columns.value.editable = true;
 
         var nodes = [];
 
         var keys = [];
         var length = entries.length;
         for (var i = 0; i < entries.length; i++) {
-            var data = {};
-
             var key = entries[i][0];
-            data[0] = key;
             var value = entries[i][1];
-            data[1] = value;
-            var node = new WebInspector.DataGridNode(data, false);
+            var node = new WebInspector.DataGridNode({key: key, value: value}, false);
             node.selectable = true;
             nodes.push(node);
             keys.push(key);
@@ -128,13 +126,13 @@ WebInspector.DOMStorageItemsView.prototype = {
     _editingCallback: function(editingNode, columnIdentifier, oldText, newText)
     {
         var domStorage = this.domStorage;
-        if (columnIdentifier === 0) {
+        if ("key" === columnIdentifier) {
             if (oldText)
                 domStorage.removeItem(oldText);
 
-            domStorage.setItem(newText, editingNode.data[1]);
+            domStorage.setItem(newText, editingNode.data.value);
         } else {
-            domStorage.setItem(editingNode.data[0], newText);
+            domStorage.setItem(editingNode.data.key, newText);
         }
 
         this.update();
@@ -146,7 +144,7 @@ WebInspector.DOMStorageItemsView.prototype = {
             return;
 
         if (this.domStorage)
-            this.domStorage.removeItem(node.data[0]);
+            this.domStorage.removeItem(node.data.key);
 
         this.update();
     },

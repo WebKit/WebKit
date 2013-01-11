@@ -535,7 +535,7 @@ WebInspector.NetworkLogView.prototype = {
             return;
         var timelineColumn = this._dataGrid.columns.timeline;
         for (var i = 0; i < this._dataGrid.resizers.length; ++i) {
-            if (timelineColumn.ordinal === this._dataGrid.resizers[i].rightNeighboringColumnID) {
+            if (timelineColumn.ordinal === this._dataGrid.resizers[i].rightNeighboringColumnIndex) {
                 // Position timline grid location.
                 this._timelineGrid.element.style.left = this._dataGrid.resizers[i].style.left;
                 this._timelineGrid.element.style.right = "18px";

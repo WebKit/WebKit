@@ -1,3 +1,13 @@
+2013-01-10  Eugene Klyuchnikov  <eustas@chromium.org>
+
+        Web Inspector: DataGrid refactoring: make cell editing more generic.
+        https://bugs.webkit.org/show_bug.cgi?id=105849
+
+        Reviewed by Pavel Feldman.
+
+        * inspector/storage-panel-dom-storage-update.html: Fix column names.
+        * inspector/storage-panel-dom-storage.html: Ditto.
+
 2013-01-10  Matt Falkenhagen  <falken@chromium.org>
 
         Elements must be reattached when inserted/removed from top layer

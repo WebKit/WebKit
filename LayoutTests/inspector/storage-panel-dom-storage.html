@@ -33,7 +33,7 @@ function test()
         var rows = [];
         for (var i = 0; i < nodes.length; ++i) {
             var node = nodes[i];
-            rows.push(node._data[0] + node._data[1]);
+            rows.push(node._data.key + node._data.value);
         }
         rows.sort();
         InspectorTest.addResult("KeyValue pairs: " + rows.join(''));
