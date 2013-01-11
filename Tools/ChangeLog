@@ -1,3 +1,11 @@
+2013-01-11  Raphael Kubo da Costa  <raphael.kubo.da.costa@intel.com>
+
+        Unreviewed jhbuild-related fix after r139431.
+
+        * Scripts/webkitpy/layout_tests/port/efl.py:
+        (EflPort.__init__): Pass a string to set_option_default(), since
+        shlex.split() will be called on it later.
+
 2013-01-11  Csaba Osztrogonác  <ossy@webkit.org>
 
         Unreviewed typo fixes after r139431.

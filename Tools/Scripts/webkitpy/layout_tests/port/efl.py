@@ -43,7 +43,7 @@ class EflPort(Port):
 
         self._jhbuild_wrapper_path = [self.path_from_webkit_base('Tools', 'jhbuild', 'jhbuild-wrapper'), '--efl', 'run']
 
-        self.set_option_default('wrapper', self._jhbuild_wrapper_path)
+        self.set_option_default('wrapper', ' '.join(self._jhbuild_wrapper_path))
         self.webprocess_cmd_prefix = self.get_option('webprocess_cmd_prefix')
 
         self._pulseaudio_sanitizer = PulseAudioSanitizer()
