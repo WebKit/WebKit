@@ -1,3 +1,698 @@
+2013-01-11  Stephen Chenney  <schenney@chromium.org>
+
+        [Chromium] Mac editing test rebaseline
+
+        Unreviewed expectations update.
+
+        For whatever reason Mac 10.6 and 10.7 use Skia for drawing edit boxes.
+        They all needed rebaselining.
+
+        * platform/chromium-mac-lion/editing/deleting/delete-tab-004-expected.png:
+        * platform/chromium-mac-lion/editing/deleting/delete-to-select-table-expected.png:
+        * platform/chromium-mac-lion/editing/deleting/delete-trailing-ws-001-expected.png:
+        * platform/chromium-mac-lion/editing/deleting/delete-trailing-ws-002-expected.png:
+        * platform/chromium-mac-lion/editing/deleting/delete-ws-fixup-001-expected.png:
+        * platform/chromium-mac-lion/editing/deleting/delete-ws-fixup-002-expected.png:
+        * platform/chromium-mac-lion/editing/deleting/delete-ws-fixup-003-expected.png:
+        * platform/chromium-mac-lion/editing/deleting/delete-ws-fixup-004-expected.png:
+        * platform/chromium-mac-lion/editing/deleting/list-item-1-expected.png:
+        * platform/chromium-mac-lion/editing/deleting/merge-different-styles-expected.png:
+        * platform/chromium-mac-lion/editing/deleting/merge-endOfParagraph-expected.png:
+        * platform/chromium-mac-lion/editing/deleting/merge-no-br-expected.png:
+        * platform/chromium-mac-lion/editing/deleting/merge-unrendered-space-expected.png:
+        * platform/chromium-mac-lion/editing/deleting/merge-whitespace-pre-expected.png:
+        * platform/chromium-mac-lion/editing/deleting/non-smart-delete-expected.png:
+        * platform/chromium-mac-lion/editing/deleting/pruning-after-merge-2-expected.png:
+        * platform/chromium-mac-lion/editing/deleting/smart-delete-001-expected.png:
+        * platform/chromium-mac-lion/editing/deleting/smart-delete-002-expected.png:
+        * platform/chromium-mac-lion/editing/deleting/smart-delete-003-expected.png:
+        * platform/chromium-mac-lion/editing/deleting/smart-delete-004-expected.png:
+        * platform/chromium-mac-lion/editing/deleting/table-cells-expected.png:
+        * platform/chromium-mac-lion/editing/deleting/type-delete-after-quote-expected.png:
+        * platform/chromium-mac-lion/editing/execCommand/4580583-1-expected.png:
+        * platform/chromium-mac-lion/editing/execCommand/4580583-2-expected.png:
+        * platform/chromium-mac-lion/editing/execCommand/4641880-1-expected.png:
+        * platform/chromium-mac-lion/editing/execCommand/4641880-2-expected.png:
+        * platform/chromium-mac-lion/editing/execCommand/4747450-expected.png:
+        * platform/chromium-mac-lion/editing/execCommand/4916402-expected.png:
+        * platform/chromium-mac-lion/editing/execCommand/4916541-expected.png:
+        * platform/chromium-mac-lion/editing/execCommand/4924441-expected.png:
+        * platform/chromium-mac-lion/editing/execCommand/5080333-1-expected.png:
+        * platform/chromium-mac-lion/editing/execCommand/5080333-2-expected.png:
+        * platform/chromium-mac-lion/editing/execCommand/5136770-expected.png:
+        * platform/chromium-mac-lion/editing/execCommand/5138441-expected.png:
+        * platform/chromium-mac-lion/editing/execCommand/5142012-1-expected.png:
+        * platform/chromium-mac-lion/editing/execCommand/5481523-expected.png:
+        * platform/chromium-mac-lion/editing/execCommand/5569741-expected.png:
+        * platform/chromium-mac-lion/editing/execCommand/create-list-with-hr-expected.png:
+        * platform/chromium-mac-lion/editing/execCommand/format-block-with-trailing-br-expected.png:
+        * platform/chromium-mac-lion/editing/execCommand/indent-empty-root-expected.png:
+        * platform/chromium-mac-lion/editing/execCommand/indent-list-item-expected.png:
+        * platform/chromium-mac-lion/editing/execCommand/indent-selection-expected.png:
+        * platform/chromium-mac-lion/editing/execCommand/insert-list-and-stitch-expected.png:
+        * platform/chromium-mac-lion/editing/execCommand/insertHorizontalRule-expected.png:
+        * platform/chromium-mac-lion/editing/execCommand/insertImage-expected.png:
+        * platform/chromium-mac-lion/editing/execCommand/nsresponder-indent-expected.png:
+        * platform/chromium-mac-lion/editing/execCommand/nsresponder-outdent-expected.png:
+        * platform/chromium-mac-lion/editing/execCommand/print-expected.png:
+        * platform/chromium-mac-lion/editing/execCommand/remove-list-from-range-selection-expected.png:
+        * platform/chromium-mac-lion/editing/execCommand/remove-list-item-1-expected.png:
+        * platform/chromium-mac-lion/editing/execCommand/selectAll-expected.png:
+        * platform/chromium-mac-lion/editing/input/caret-at-the-edge-of-contenteditable-expected.png:
+        * platform/chromium-mac-lion/editing/input/caret-at-the-edge-of-input-expected.png:
+        * platform/chromium-mac-lion/editing/input/reveal-caret-of-multiline-contenteditable-expected.png:
+        * platform/chromium-mac-lion/editing/input/reveal-caret-of-multiline-input-expected.png:
+        * platform/chromium-mac-lion/editing/inserting/12882-expected.png:
+        * platform/chromium-mac-lion/editing/inserting/4278698-expected.png:
+        * platform/chromium-mac-lion/editing/inserting/4840662-expected.png:
+        * platform/chromium-mac-lion/editing/inserting/4875189-1-expected.png:
+        * platform/chromium-mac-lion/editing/inserting/4875189-2-expected.png:
+        * platform/chromium-mac-lion/editing/inserting/4959067-expected.png:
+        * platform/chromium-mac-lion/editing/inserting/4960120-1-expected.png:
+        * platform/chromium-mac-lion/editing/inserting/4960120-2-expected.png:
+        * platform/chromium-mac-lion/editing/inserting/5002441-expected.png:
+        * platform/chromium-mac-lion/editing/inserting/5058163-1-expected.png:
+        * platform/chromium-mac-lion/editing/inserting/5058163-2-expected.png:
+        * platform/chromium-mac-lion/editing/inserting/5156401-2-expected.png:
+        * platform/chromium-mac-lion/editing/inserting/5418891-expected.png:
+        * platform/chromium-mac-lion/editing/inserting/5510537-expected.png:
+        * platform/chromium-mac-lion/editing/inserting/5549929-2-expected.png:
+        * platform/chromium-mac-lion/editing/inserting/5549929-3-expected.png:
+        * platform/chromium-mac-lion/editing/inserting/6703873-expected.png:
+        * platform/chromium-mac-lion/editing/inserting/before-after-input-element-expected.png:
+        * platform/chromium-mac-lion/editing/inserting/break-blockquote-after-delete-expected.png:
+        * platform/chromium-mac-lion/editing/inserting/editable-inline-element-expected.png:
+        * platform/chromium-mac-lion/editing/inserting/edited-whitespace-1-expected.png:
+        * platform/chromium-mac-lion/editing/inserting/editing-empty-divs-expected.png:
+        * platform/chromium-mac-lion/editing/inserting/insert-3775316-fix-expected.png:
+        * platform/chromium-mac-lion/editing/inserting/insert-3778059-fix-expected.png:
+        * platform/chromium-mac-lion/editing/inserting/insert-3800346-fix-expected.png:
+        * platform/chromium-mac-lion/editing/inserting/insert-after-delete-001-expected.png:
+        * platform/chromium-mac-lion/editing/inserting/insert-at-end-01-expected.png:
+        * platform/chromium-mac-lion/editing/inserting/insert-at-end-02-expected.png:
+        * platform/chromium-mac-lion/editing/inserting/insert-br-001-expected.png:
+        * platform/chromium-mac-lion/editing/inserting/insert-br-002-expected.png:
+        * platform/chromium-mac-lion/editing/inserting/insert-br-003-expected.png:
+        * platform/chromium-mac-lion/editing/inserting/insert-br-004-expected.png:
+        * platform/chromium-mac-lion/editing/inserting/insert-br-005-expected.png:
+        * platform/chromium-mac-lion/editing/inserting/insert-br-006-expected.png:
+        * platform/chromium-mac-lion/editing/inserting/insert-br-007-expected.png:
+        * platform/chromium-mac-lion/editing/inserting/insert-br-008-expected.png:
+        * platform/chromium-mac-lion/editing/inserting/insert-br-009-expected.png:
+        * platform/chromium-mac-lion/editing/inserting/insert-br-at-tabspan-001-expected.png:
+        * platform/chromium-mac-lion/editing/inserting/insert-br-at-tabspan-002-expected.png:
+        * platform/chromium-mac-lion/editing/inserting/insert-br-at-tabspan-003-expected.png:
+        * platform/chromium-mac-lion/editing/inserting/insert-br-quoted-001-expected.png:
+        * platform/chromium-mac-lion/editing/inserting/insert-br-quoted-002-expected.png:
+        * platform/chromium-mac-lion/editing/inserting/insert-br-quoted-003-expected.png:
+        * platform/chromium-mac-lion/editing/inserting/insert-br-quoted-004-expected.png:
+        * platform/chromium-mac-lion/editing/inserting/insert-br-quoted-005-expected.png:
+        * platform/chromium-mac-lion/editing/inserting/insert-br-quoted-006-expected.png:
+        * platform/chromium-mac-lion/editing/inserting/insert-div-025-expected.png:
+        * platform/chromium-mac-lion/editing/inserting/insert-div-026-expected.png:
+        * platform/chromium-mac-lion/editing/inserting/insert-paragraph-01-expected.png:
+        * platform/chromium-mac-lion/editing/inserting/insert-paragraph-02-expected.png:
+        * platform/chromium-mac-lion/editing/inserting/insert-paragraph-03-expected.png:
+        * platform/chromium-mac-lion/editing/inserting/insert-paragraph-04-expected.png:
+        * platform/chromium-mac-lion/editing/inserting/insert-paragraph-05-expected.png:
+        * platform/chromium-mac-lion/editing/inserting/insert-space-in-empty-doc-expected.png:
+        * platform/chromium-mac-lion/editing/inserting/insert-tab-001-expected.png:
+        * platform/chromium-mac-lion/editing/inserting/insert-tab-002-expected.png:
+        * platform/chromium-mac-lion/editing/inserting/insert-tab-003-expected.png:
+        * platform/chromium-mac-lion/editing/inserting/insert-tab-004-expected.png:
+        * platform/chromium-mac-lion/editing/inserting/insert-text-at-tabspan-001-expected.png:
+        * platform/chromium-mac-lion/editing/inserting/insert-text-at-tabspan-002-expected.png:
+        * platform/chromium-mac-lion/editing/inserting/insert-text-at-tabspan-003-expected.png:
+        * platform/chromium-mac-lion/editing/inserting/insert-text-with-newlines-expected.png:
+        * platform/chromium-mac-lion/editing/inserting/line-break-expected.png:
+        * platform/chromium-mac-lion/editing/inserting/multiple-lines-selected-expected.png:
+        * platform/chromium-mac-lion/editing/inserting/paragraph-separator-01-expected.png:
+        * platform/chromium-mac-lion/editing/inserting/paragraph-separator-02-expected.png:
+        * platform/chromium-mac-lion/editing/inserting/paragraph-separator-03-expected.png:
+        * platform/chromium-mac-lion/editing/inserting/paragraph-separator-in-table-1-expected.png:
+        * platform/chromium-mac-lion/editing/inserting/paragraph-separator-in-table-2-expected.png:
+        * platform/chromium-mac-lion/editing/inserting/redo-expected.png:
+        * platform/chromium-mac-lion/editing/inserting/return-key-with-selection-001-expected.png:
+        * platform/chromium-mac-lion/editing/inserting/return-key-with-selection-002-expected.png:
+        * platform/chromium-mac-lion/editing/inserting/return-key-with-selection-003-expected.png:
+        * platform/chromium-mac-lion/editing/inserting/typing-001-expected.png:
+        * platform/chromium-mac-lion/editing/inserting/typing-002-expected.png:
+        * platform/chromium-mac-lion/editing/inserting/typing-003-expected.png:
+        * platform/chromium-mac-lion/editing/inserting/typing-around-br-001-expected.png:
+        * platform/chromium-mac-lion/editing/inserting/typing-around-image-001-expected.png:
+        * platform/chromium-mac-lion/editing/pasteboard/3976872-expected.png:
+        * platform/chromium-mac-lion/editing/pasteboard/4076267-2-expected.png:
+        * platform/chromium-mac-lion/editing/pasteboard/4076267-3-expected.png:
+        * platform/chromium-mac-lion/editing/pasteboard/4076267-expected.png:
+        * platform/chromium-mac-lion/editing/pasteboard/4242293-expected.png:
+        * platform/chromium-mac-lion/editing/pasteboard/4631972-expected.png:
+        * platform/chromium-mac-lion/editing/pasteboard/4806874-expected.png:
+        * platform/chromium-mac-lion/editing/pasteboard/4947130-expected.png:
+        * platform/chromium-mac-lion/editing/pasteboard/5006779-expected.png:
+        * platform/chromium-mac-lion/editing/pasteboard/5032095-expected.png:
+        * platform/chromium-mac-lion/editing/pasteboard/5071074-2-expected.png:
+        * platform/chromium-mac-lion/editing/pasteboard/5071074-expected.png:
+        * platform/chromium-mac-lion/editing/pasteboard/5075944-expected.png:
+        * platform/chromium-mac-lion/editing/pasteboard/5134759-expected.png:
+        * platform/chromium-mac-lion/editing/pasteboard/5156401-1-expected.png:
+        * platform/chromium-mac-lion/editing/pasteboard/5247341-expected.png:
+        * platform/chromium-mac-lion/editing/pasteboard/5387578-expected.png:
+        * platform/chromium-mac-lion/editing/pasteboard/5478250-expected.png:
+        * platform/chromium-mac-lion/editing/pasteboard/5601583-1-expected.png:
+        * platform/chromium-mac-lion/editing/pasteboard/8145-1-expected.png:
+        * platform/chromium-mac-lion/editing/pasteboard/8145-2-expected.png:
+        * platform/chromium-mac-lion/editing/pasteboard/8145-3-expected.png:
+        * platform/chromium-mac-lion/editing/pasteboard/bad-placeholder-expected.png:
+        * platform/chromium-mac-lion/editing/pasteboard/copy-standalone-image-expected.png:
+        * platform/chromium-mac-lion/editing/pasteboard/cut-text-001-expected.png:
+        * platform/chromium-mac-lion/editing/pasteboard/displaced-generic-placeholder-expected.png:
+        * platform/chromium-mac-lion/editing/pasteboard/displaced-placeholder-expected.png:
+        * platform/chromium-mac-lion/editing/pasteboard/drag-drop-modifies-page-expected.png:
+        * platform/chromium-mac-lion/editing/pasteboard/drag-selected-image-to-contenteditable-expected.png:
+        * platform/chromium-mac-lion/editing/pasteboard/drop-text-without-selection-expected.png:
+        * platform/chromium-mac-lion/editing/pasteboard/input-field-1-expected.png:
+        * platform/chromium-mac-lion/editing/pasteboard/merge-after-delete-1-expected.png:
+        * platform/chromium-mac-lion/editing/pasteboard/merge-after-delete-2-expected.png:
+        * platform/chromium-mac-lion/editing/pasteboard/merge-after-delete-expected.png:
+        * platform/chromium-mac-lion/editing/pasteboard/merge-end-blockquote-expected.png:
+        * platform/chromium-mac-lion/editing/pasteboard/merge-end-borders-expected.png:
+        * platform/chromium-mac-lion/editing/pasteboard/merge-start-blockquote-expected.png:
+        * platform/chromium-mac-lion/editing/pasteboard/merge-start-list-expected.png:
+        * platform/chromium-mac-lion/editing/pasteboard/paste-4035648-fix-expected.png:
+        * platform/chromium-mac-lion/editing/pasteboard/paste-4038267-fix-expected.png:
+        * platform/chromium-mac-lion/editing/pasteboard/paste-blockquote-after-blockquote-expected.png:
+        * platform/chromium-mac-lion/editing/pasteboard/paste-blockquote-into-blockquote-4-expected.png:
+        * platform/chromium-mac-lion/editing/pasteboard/paste-line-endings-001-expected.png:
+        * platform/chromium-mac-lion/editing/pasteboard/paste-line-endings-002-expected.png:
+        * platform/chromium-mac-lion/editing/pasteboard/paste-line-endings-003-expected.png:
+        * platform/chromium-mac-lion/editing/pasteboard/paste-line-endings-004-expected.png:
+        * platform/chromium-mac-lion/editing/pasteboard/paste-line-endings-005-expected.png:
+        * platform/chromium-mac-lion/editing/pasteboard/paste-line-endings-006-expected.png:
+        * platform/chromium-mac-lion/editing/pasteboard/paste-line-endings-007-expected.png:
+        * platform/chromium-mac-lion/editing/pasteboard/paste-line-endings-008-expected.png:
+        * platform/chromium-mac-lion/editing/pasteboard/paste-line-endings-009-expected.png:
+        * platform/chromium-mac-lion/editing/pasteboard/paste-line-endings-010-expected.png:
+        * platform/chromium-mac-lion/editing/pasteboard/paste-match-style-001-expected.png:
+        * platform/chromium-mac-lion/editing/pasteboard/paste-match-style-002-expected.png:
+        * platform/chromium-mac-lion/editing/pasteboard/paste-text-019-expected.png:
+        * platform/chromium-mac-lion/editing/pasteboard/paste-text-at-tabspan-003-expected.png:
+        * platform/chromium-mac-lion/editing/pasteboard/pasting-object-expected.png:
+        * platform/chromium-mac-lion/editing/pasteboard/pasting-tabs-expected.png:
+        * platform/chromium-mac-lion/editing/pasteboard/quirks-mode-br-1-expected.png:
+        * platform/chromium-mac-lion/editing/pasteboard/smart-drag-drop-expected.png:
+        * platform/chromium-mac-lion/editing/pasteboard/smart-paste-007-expected.png:
+        * platform/chromium-mac-lion/editing/pasteboard/smart-paste-008-expected.png:
+        * platform/chromium-mac-lion/editing/pasteboard/styled-element-markup-expected.png:
+        * platform/chromium-mac-lion/editing/pasteboard/undoable-fragment-removes-expected.png:
+        * platform/chromium-mac-lion/editing/pasteboard/unrendered-br-expected.png:
+        * platform/chromium-mac-lion/editing/selection/13804-expected.png:
+        * platform/chromium-mac-lion/editing/selection/4818145-expected.png:
+        * platform/chromium-mac-lion/editing/selection/4866671-expected.png:
+        * platform/chromium-mac-lion/editing/selection/4889598-expected.png:
+        * platform/chromium-mac-lion/editing/selection/4895428-2-expected.png:
+        * platform/chromium-mac-lion/editing/selection/4895428-3-expected.png:
+        * platform/chromium-mac-lion/editing/selection/4932260-1-expected.png:
+        * platform/chromium-mac-lion/editing/selection/4932260-2-expected.png:
+        * platform/chromium-mac-lion/editing/selection/4932260-3-expected.png:
+        * platform/chromium-mac-lion/editing/selection/4947387-expected.png:
+        * platform/chromium-mac-lion/editing/selection/5007143-2-expected.png:
+        * platform/chromium-mac-lion/editing/selection/5007143-expected.png:
+        * platform/chromium-mac-lion/editing/selection/5057506-2-expected.png:
+        * platform/chromium-mac-lion/editing/selection/5057506-expected.png:
+        * platform/chromium-mac-lion/editing/selection/5076323-1-expected.png:
+        * platform/chromium-mac-lion/editing/selection/5076323-2-expected.png:
+        * platform/chromium-mac-lion/editing/selection/5076323-3-expected.png:
+        * platform/chromium-mac-lion/editing/selection/5099303-expected.png:
+        * platform/chromium-mac-lion/editing/selection/5131716-1-expected.png:
+        * platform/chromium-mac-lion/editing/selection/5131716-2-expected.png:
+        * platform/chromium-mac-lion/editing/selection/5131716-3-expected.png:
+        * platform/chromium-mac-lion/editing/selection/5131716-4-expected.png:
+        * platform/chromium-mac-lion/editing/selection/5195166-2-expected.png:
+        * platform/chromium-mac-lion/editing/selection/5234383-1-expected.png:
+        * platform/chromium-mac-lion/editing/selection/5234383-2-expected.png:
+        * platform/chromium-mac-lion/editing/selection/6476-expected.png:
+        * platform/chromium-mac-lion/editing/selection/after-line-wrap-expected.png:
+        * platform/chromium-mac-lion/editing/selection/caret-ltr-2-expected.png:
+        * platform/chromium-mac-lion/editing/selection/caret-ltr-2-left-expected.png:
+        * platform/chromium-mac-lion/editing/selection/caret-ltr-expected.png:
+        * platform/chromium-mac-lion/editing/selection/caret-ltr-right-expected.png:
+        * platform/chromium-mac-lion/editing/selection/caret-rtl-2-expected.png:
+        * platform/chromium-mac-lion/editing/selection/caret-rtl-2-left-expected.png:
+        * platform/chromium-mac-lion/editing/selection/caret-rtl-expected.png:
+        * platform/chromium-mac-lion/editing/selection/caret-rtl-right-expected.png:
+        * platform/chromium-mac-lion/editing/selection/click-start-of-line-expected.png:
+        * platform/chromium-mac-lion/editing/selection/contains-boundaries-expected.png:
+        * platform/chromium-mac-lion/editing/selection/contenteditable-click-inside-expected.png:
+        * platform/chromium-mac-lion/editing/selection/drag-select-1-expected.png:
+        * platform/chromium-mac-lion/editing/selection/editable-non-editable-crash-expected.png:
+        * platform/chromium-mac-lion/editing/selection/end-of-document-expected.png:
+        * platform/chromium-mac-lion/editing/selection/expanding-selections-expected.png:
+        * platform/chromium-mac-lion/editing/selection/expanding-selections2-expected.png:
+        * platform/chromium-mac-lion/editing/selection/extend-by-character-001-expected.png:
+        * platform/chromium-mac-lion/editing/selection/extend-by-character-002-expected.png:
+        * platform/chromium-mac-lion/editing/selection/extend-by-character-003-expected.png:
+        * platform/chromium-mac-lion/editing/selection/extend-by-character-004-expected.png:
+        * platform/chromium-mac-lion/editing/selection/extend-by-character-005-expected.png:
+        * platform/chromium-mac-lion/editing/selection/extend-by-character-006-expected.png:
+        * platform/chromium-mac-lion/editing/selection/extend-by-sentence-001-expected.png:
+        * platform/chromium-mac-lion/editing/selection/extend-by-word-001-expected.png:
+        * platform/chromium-mac-lion/editing/selection/extend-by-word-002-expected.png:
+        * platform/chromium-mac-lion/editing/selection/extend-selection-bidi-expected.png:
+        * platform/chromium-mac-lion/editing/selection/image-before-linebreak-expected.png:
+        * platform/chromium-mac-lion/editing/selection/inline-table-expected.png:
+        * platform/chromium-mac-lion/editing/selection/leave-requested-block-expected.png:
+        * platform/chromium-mac-lion/editing/selection/mixed-editability-3-expected.png:
+        * platform/chromium-mac-lion/editing/selection/mixed-editability-4-expected.png:
+        * platform/chromium-mac-lion/editing/selection/mixed-editability-5-expected.png:
+        * platform/chromium-mac-lion/editing/selection/mixed-editability-6-expected.png:
+        * platform/chromium-mac-lion/editing/selection/mixed-editability-7-expected.png:
+        * platform/chromium-mac-lion/editing/selection/mixed-editability-8-expected.png:
+        * platform/chromium-mac-lion/editing/selection/mixed-editability-9-expected.png:
+        * platform/chromium-mac-lion/editing/selection/move-backwords-by-word-001-expected.png:
+        * platform/chromium-mac-lion/editing/selection/move-between-blocks-no-001-expected.png:
+        * platform/chromium-mac-lion/editing/selection/move-by-character-001-expected.png:
+        * platform/chromium-mac-lion/editing/selection/move-by-character-002-expected.png:
+        * platform/chromium-mac-lion/editing/selection/move-by-character-003-expected.png:
+        * platform/chromium-mac-lion/editing/selection/move-by-character-004-expected.png:
+        * platform/chromium-mac-lion/editing/selection/move-by-character-005-expected.png:
+        * platform/chromium-mac-lion/editing/selection/move-by-character-6-expected.png:
+        * platform/chromium-mac-lion/editing/selection/move-by-line-001-expected.png:
+        * platform/chromium-mac-lion/editing/selection/move-by-line-002-expected.png:
+        * platform/chromium-mac-lion/editing/selection/move-by-sentence-001-expected.png:
+        * platform/chromium-mac-lion/editing/selection/move-by-sentence-linebreak-expected.png:
+        * platform/chromium-mac-lion/editing/selection/move-by-word-001-expected.png:
+        * platform/chromium-mac-lion/editing/selection/move-past-trailing-space-expected.png:
+        * platform/chromium-mac-lion/editing/selection/previous-line-position-expected.png:
+        * platform/chromium-mac-lion/editing/selection/replace-selection-1-expected.png:
+        * platform/chromium-mac-lion/editing/selection/replaced-boundaries-1-expected.png:
+        * platform/chromium-mac-lion/editing/selection/replaced-boundaries-2-expected.png:
+        * platform/chromium-mac-lion/editing/selection/select-all-001-expected.png:
+        * platform/chromium-mac-lion/editing/selection/select-all-002-expected.png:
+        * platform/chromium-mac-lion/editing/selection/select-from-textfield-outwards-expected.png:
+        * platform/chromium-mac-lion/editing/selection/select-missing-image-expected.png:
+        * platform/chromium-mac-lion/editing/selection/selection-3748164-fix-expected.png:
+        * platform/chromium-mac-lion/editing/selection/table-caret-1-expected.png:
+        * platform/chromium-mac-lion/editing/selection/table-caret-2-expected.png:
+        * platform/chromium-mac-lion/editing/selection/table-caret-3-expected.png:
+        * platform/chromium-mac-lion/editing/selection/triple-click-in-pre-expected.png:
+        * platform/chromium-mac-lion/editing/selection/unrendered-001-expected.png:
+        * platform/chromium-mac-lion/editing/selection/unrendered-002-expected.png:
+        * platform/chromium-mac-lion/editing/selection/unrendered-003-expected.png:
+        * platform/chromium-mac-lion/editing/selection/unrendered-004-expected.png:
+        * platform/chromium-mac-lion/editing/selection/unrendered-005-expected.png:
+        * platform/chromium-mac-lion/editing/selection/unrendered-space-expected.png:
+        * platform/chromium-mac-lion/editing/selection/wrapped-line-caret-1-expected.png:
+        * platform/chromium-mac-lion/editing/selection/wrapped-line-caret-2-expected.png:
+        * platform/chromium-mac-lion/editing/spelling/grammar-markers-expected.png:
+        * platform/chromium-mac-lion/editing/spelling/spelling-expected.png:
+        * platform/chromium-mac-lion/editing/style/4916887-expected.png:
+        * platform/chromium-mac-lion/editing/style/5017613-1-expected.png:
+        * platform/chromium-mac-lion/editing/style/5017613-2-expected.png:
+        * platform/chromium-mac-lion/editing/style/5046875-1-expected.png:
+        * platform/chromium-mac-lion/editing/style/5046875-2-expected.png:
+        * platform/chromium-mac-lion/editing/style/5065910-expected.png:
+        * platform/chromium-mac-lion/editing/style/5084241-expected.png:
+        * platform/chromium-mac-lion/editing/style/5228141-expected.png:
+        * platform/chromium-mac-lion/editing/style/5279521-expected.png:
+        * platform/chromium-mac-lion/editing/style/block-styles-007-expected.png:
+        * platform/chromium-mac-lion/editing/style/highlight-expected.png:
+        * platform/chromium-mac-lion/editing/style/smoosh-styles-001-expected.png:
+        * platform/chromium-mac-lion/editing/style/smoosh-styles-003-expected.png:
+        * platform/chromium-mac-lion/editing/style/style-3681552-fix-001-expected.png:
+        * platform/chromium-mac-lion/editing/style/style-3681552-fix-002-expected.png:
+        * platform/chromium-mac-lion/editing/style/style-3998892-fix-expected.png:
+        * platform/chromium-mac-lion/editing/style/style-boundary-001-expected.png:
+        * platform/chromium-mac-lion/editing/style/style-boundary-002-expected.png:
+        * platform/chromium-mac-lion/editing/style/style-boundary-003-expected.png:
+        * platform/chromium-mac-lion/editing/style/style-boundary-004-expected.png:
+        * platform/chromium-mac-lion/editing/style/style-boundary-005-expected.png:
+        * platform/chromium-mac-lion/editing/style/typing-style-001-expected.png:
+        * platform/chromium-mac-lion/editing/style/typing-style-002-expected.png:
+        * platform/chromium-mac-lion/editing/style/unbold-in-bold-expected.png:
+        * platform/chromium-mac-lion/editing/undo/4063751-expected.png:
+        * platform/chromium-mac-lion/editing/undo/5378473-expected.png: Added.
+        * platform/chromium-mac-lion/editing/undo/redo-typing-001-expected.png:
+        * platform/chromium-mac-lion/editing/undo/undo-combined-delete-boundary-expected.png:
+        * platform/chromium-mac-lion/editing/undo/undo-combined-delete-expected.png:
+        * platform/chromium-mac-lion/editing/undo/undo-delete-boundary-expected.png:
+        * platform/chromium-mac-lion/editing/undo/undo-delete-expected.png:
+        * platform/chromium-mac-lion/editing/undo/undo-forward-delete-boundary-expected.png:
+        * platform/chromium-mac-lion/editing/undo/undo-forward-delete-expected.png:
+        * platform/chromium-mac-lion/editing/undo/undo-misspellings-expected.png: Added.
+        * platform/chromium-mac-lion/editing/undo/undo-typing-001-expected.png:
+        * platform/chromium-mac-lion/editing/unsupported-content/list-delete-001-expected.png:
+        * platform/chromium-mac-lion/editing/unsupported-content/list-delete-003-expected.png:
+        * platform/chromium-mac-lion/editing/unsupported-content/list-type-after-expected.png:
+        * platform/chromium-mac-lion/editing/unsupported-content/list-type-before-expected.png:
+        * platform/chromium-mac-lion/editing/unsupported-content/table-delete-001-expected.png:
+        * platform/chromium-mac-lion/editing/unsupported-content/table-delete-002-expected.png:
+        * platform/chromium-mac-lion/editing/unsupported-content/table-delete-003-expected.png:
+        * platform/chromium-mac-lion/editing/unsupported-content/table-type-after-expected.png:
+        * platform/chromium-mac-lion/editing/unsupported-content/table-type-before-expected.png:
+        * platform/chromium-mac-snowleopard/editing/deleting/delete-tab-004-expected.png: Added.
+        * platform/chromium-mac-snowleopard/editing/deleting/delete-to-select-table-expected.png:
+        * platform/chromium-mac-snowleopard/editing/deleting/delete-trailing-ws-001-expected.png: Added.
+        * platform/chromium-mac-snowleopard/editing/deleting/delete-trailing-ws-002-expected.png: Added.
+        * platform/chromium-mac-snowleopard/editing/deleting/delete-ws-fixup-001-expected.png: Added.
+        * platform/chromium-mac-snowleopard/editing/deleting/delete-ws-fixup-002-expected.png:
+        * platform/chromium-mac-snowleopard/editing/deleting/delete-ws-fixup-003-expected.png: Added.
+        * platform/chromium-mac-snowleopard/editing/deleting/delete-ws-fixup-004-expected.png: Added.
+        * platform/chromium-mac-snowleopard/editing/deleting/list-item-1-expected.png:
+        * platform/chromium-mac-snowleopard/editing/deleting/merge-different-styles-expected.png:
+        * platform/chromium-mac-snowleopard/editing/deleting/merge-endOfParagraph-expected.png:
+        * platform/chromium-mac-snowleopard/editing/deleting/merge-no-br-expected.png:
+        * platform/chromium-mac-snowleopard/editing/deleting/merge-unrendered-space-expected.png:
+        * platform/chromium-mac-snowleopard/editing/deleting/merge-whitespace-pre-expected.png:
+        * platform/chromium-mac-snowleopard/editing/deleting/non-smart-delete-expected.png: Added.
+        * platform/chromium-mac-snowleopard/editing/deleting/pruning-after-merge-2-expected.png:
+        * platform/chromium-mac-snowleopard/editing/deleting/smart-delete-001-expected.png: Added.
+        * platform/chromium-mac-snowleopard/editing/deleting/smart-delete-002-expected.png: Added.
+        * platform/chromium-mac-snowleopard/editing/deleting/smart-delete-003-expected.png:
+        * platform/chromium-mac-snowleopard/editing/deleting/smart-delete-004-expected.png:
+        * platform/chromium-mac-snowleopard/editing/deleting/table-cells-expected.png:
+        * platform/chromium-mac-snowleopard/editing/deleting/type-delete-after-quote-expected.png:
+        * platform/chromium-mac-snowleopard/editing/execCommand/4580583-1-expected.png:
+        * platform/chromium-mac-snowleopard/editing/execCommand/4580583-2-expected.png:
+        * platform/chromium-mac-snowleopard/editing/execCommand/4641880-1-expected.png:
+        * platform/chromium-mac-snowleopard/editing/execCommand/4641880-2-expected.png:
+        * platform/chromium-mac-snowleopard/editing/execCommand/4747450-expected.png:
+        * platform/chromium-mac-snowleopard/editing/execCommand/4916402-expected.png:
+        * platform/chromium-mac-snowleopard/editing/execCommand/4916541-expected.png:
+        * platform/chromium-mac-snowleopard/editing/execCommand/4924441-expected.png:
+        * platform/chromium-mac-snowleopard/editing/execCommand/5080333-1-expected.png:
+        * platform/chromium-mac-snowleopard/editing/execCommand/5080333-2-expected.png:
+        * platform/chromium-mac-snowleopard/editing/execCommand/5136770-expected.png:
+        * platform/chromium-mac-snowleopard/editing/execCommand/5138441-expected.png:
+        * platform/chromium-mac-snowleopard/editing/execCommand/5142012-1-expected.png:
+        * platform/chromium-mac-snowleopard/editing/execCommand/5481523-expected.png:
+        * platform/chromium-mac-snowleopard/editing/execCommand/5569741-expected.png:
+        * platform/chromium-mac-snowleopard/editing/execCommand/create-list-with-hr-expected.png:
+        * platform/chromium-mac-snowleopard/editing/execCommand/format-block-with-trailing-br-expected.png:
+        * platform/chromium-mac-snowleopard/editing/execCommand/indent-empty-root-expected.png:
+        * platform/chromium-mac-snowleopard/editing/execCommand/indent-list-item-expected.png:
+        * platform/chromium-mac-snowleopard/editing/execCommand/indent-selection-expected.png:
+        * platform/chromium-mac-snowleopard/editing/execCommand/insert-list-and-stitch-expected.png:
+        * platform/chromium-mac-snowleopard/editing/execCommand/insertHorizontalRule-expected.png:
+        * platform/chromium-mac-snowleopard/editing/execCommand/insertImage-expected.png:
+        * platform/chromium-mac-snowleopard/editing/execCommand/nsresponder-indent-expected.png:
+        * platform/chromium-mac-snowleopard/editing/execCommand/nsresponder-outdent-expected.png:
+        * platform/chromium-mac-snowleopard/editing/execCommand/print-expected.png: Added.
+        * platform/chromium-mac-snowleopard/editing/execCommand/remove-list-from-range-selection-expected.png:
+        * platform/chromium-mac-snowleopard/editing/execCommand/remove-list-item-1-expected.png:
+        * platform/chromium-mac-snowleopard/editing/execCommand/selectAll-expected.png: Added.
+        * platform/chromium-mac-snowleopard/editing/input/caret-at-the-edge-of-contenteditable-expected.png:
+        * platform/chromium-mac-snowleopard/editing/input/caret-at-the-edge-of-input-expected.png:
+        * platform/chromium-mac-snowleopard/editing/input/reveal-caret-of-multiline-contenteditable-expected.png:
+        * platform/chromium-mac-snowleopard/editing/input/reveal-caret-of-multiline-input-expected.png:
+        * platform/chromium-mac-snowleopard/editing/inserting/12882-expected.png:
+        * platform/chromium-mac-snowleopard/editing/inserting/4278698-expected.png:
+        * platform/chromium-mac-snowleopard/editing/inserting/4840662-expected.png:
+        * platform/chromium-mac-snowleopard/editing/inserting/4875189-1-expected.png:
+        * platform/chromium-mac-snowleopard/editing/inserting/4875189-2-expected.png:
+        * platform/chromium-mac-snowleopard/editing/inserting/4959067-expected.png:
+        * platform/chromium-mac-snowleopard/editing/inserting/4960120-1-expected.png:
+        * platform/chromium-mac-snowleopard/editing/inserting/4960120-2-expected.png:
+        * platform/chromium-mac-snowleopard/editing/inserting/5002441-expected.png:
+        * platform/chromium-mac-snowleopard/editing/inserting/5058163-1-expected.png:
+        * platform/chromium-mac-snowleopard/editing/inserting/5058163-2-expected.png:
+        * platform/chromium-mac-snowleopard/editing/inserting/5156401-2-expected.png:
+        * platform/chromium-mac-snowleopard/editing/inserting/5418891-expected.png:
+        * platform/chromium-mac-snowleopard/editing/inserting/5510537-expected.png:
+        * platform/chromium-mac-snowleopard/editing/inserting/5549929-2-expected.png:
+        * platform/chromium-mac-snowleopard/editing/inserting/5549929-3-expected.png:
+        * platform/chromium-mac-snowleopard/editing/inserting/6703873-expected.png:
+        * platform/chromium-mac-snowleopard/editing/inserting/before-after-input-element-expected.png:
+        * platform/chromium-mac-snowleopard/editing/inserting/break-blockquote-after-delete-expected.png:
+        * platform/chromium-mac-snowleopard/editing/inserting/editable-inline-element-expected.png:
+        * platform/chromium-mac-snowleopard/editing/inserting/edited-whitespace-1-expected.png:
+        * platform/chromium-mac-snowleopard/editing/inserting/editing-empty-divs-expected.png:
+        * platform/chromium-mac-snowleopard/editing/inserting/insert-3775316-fix-expected.png: Added.
+        * platform/chromium-mac-snowleopard/editing/inserting/insert-3778059-fix-expected.png: Added.
+        * platform/chromium-mac-snowleopard/editing/inserting/insert-3800346-fix-expected.png: Added.
+        * platform/chromium-mac-snowleopard/editing/inserting/insert-after-delete-001-expected.png: Added.
+        * platform/chromium-mac-snowleopard/editing/inserting/insert-at-end-01-expected.png:
+        * platform/chromium-mac-snowleopard/editing/inserting/insert-at-end-02-expected.png:
+        * platform/chromium-mac-snowleopard/editing/inserting/insert-br-001-expected.png: Added.
+        * platform/chromium-mac-snowleopard/editing/inserting/insert-br-002-expected.png: Added.
+        * platform/chromium-mac-snowleopard/editing/inserting/insert-br-003-expected.png: Added.
+        * platform/chromium-mac-snowleopard/editing/inserting/insert-br-004-expected.png: Added.
+        * platform/chromium-mac-snowleopard/editing/inserting/insert-br-005-expected.png: Added.
+        * platform/chromium-mac-snowleopard/editing/inserting/insert-br-006-expected.png: Added.
+        * platform/chromium-mac-snowleopard/editing/inserting/insert-br-007-expected.png: Added.
+        * platform/chromium-mac-snowleopard/editing/inserting/insert-br-008-expected.png: Added.
+        * platform/chromium-mac-snowleopard/editing/inserting/insert-br-009-expected.png:
+        * platform/chromium-mac-snowleopard/editing/inserting/insert-br-at-tabspan-001-expected.png: Added.
+        * platform/chromium-mac-snowleopard/editing/inserting/insert-br-at-tabspan-002-expected.png: Added.
+        * platform/chromium-mac-snowleopard/editing/inserting/insert-br-at-tabspan-003-expected.png: Added.
+        * platform/chromium-mac-snowleopard/editing/inserting/insert-br-quoted-001-expected.png:
+        * platform/chromium-mac-snowleopard/editing/inserting/insert-br-quoted-002-expected.png:
+        * platform/chromium-mac-snowleopard/editing/inserting/insert-br-quoted-003-expected.png:
+        * platform/chromium-mac-snowleopard/editing/inserting/insert-br-quoted-004-expected.png:
+        * platform/chromium-mac-snowleopard/editing/inserting/insert-br-quoted-005-expected.png:
+        * platform/chromium-mac-snowleopard/editing/inserting/insert-br-quoted-006-expected.png:
+        * platform/chromium-mac-snowleopard/editing/inserting/insert-div-025-expected.png: Added.
+        * platform/chromium-mac-snowleopard/editing/inserting/insert-div-026-expected.png: Added.
+        * platform/chromium-mac-snowleopard/editing/inserting/insert-paragraph-01-expected.png:
+        * platform/chromium-mac-snowleopard/editing/inserting/insert-paragraph-02-expected.png:
+        * platform/chromium-mac-snowleopard/editing/inserting/insert-paragraph-03-expected.png:
+        * platform/chromium-mac-snowleopard/editing/inserting/insert-paragraph-04-expected.png:
+        * platform/chromium-mac-snowleopard/editing/inserting/insert-paragraph-05-expected.png:
+        * platform/chromium-mac-snowleopard/editing/inserting/insert-space-in-empty-doc-expected.png: Added.
+        * platform/chromium-mac-snowleopard/editing/inserting/insert-tab-001-expected.png: Added.
+        * platform/chromium-mac-snowleopard/editing/inserting/insert-tab-002-expected.png: Added.
+        * platform/chromium-mac-snowleopard/editing/inserting/insert-tab-003-expected.png: Added.
+        * platform/chromium-mac-snowleopard/editing/inserting/insert-tab-004-expected.png: Added.
+        * platform/chromium-mac-snowleopard/editing/inserting/insert-text-at-tabspan-001-expected.png: Added.
+        * platform/chromium-mac-snowleopard/editing/inserting/insert-text-at-tabspan-002-expected.png: Added.
+        * platform/chromium-mac-snowleopard/editing/inserting/insert-text-at-tabspan-003-expected.png: Added.
+        * platform/chromium-mac-snowleopard/editing/inserting/insert-text-with-newlines-expected.png: Added.
+        * platform/chromium-mac-snowleopard/editing/inserting/line-break-expected.png:
+        * platform/chromium-mac-snowleopard/editing/inserting/multiple-lines-selected-expected.png:
+        * platform/chromium-mac-snowleopard/editing/inserting/paragraph-separator-01-expected.png:
+        * platform/chromium-mac-snowleopard/editing/inserting/paragraph-separator-02-expected.png:
+        * platform/chromium-mac-snowleopard/editing/inserting/paragraph-separator-03-expected.png:
+        * platform/chromium-mac-snowleopard/editing/inserting/paragraph-separator-in-table-1-expected.png:
+        * platform/chromium-mac-snowleopard/editing/inserting/paragraph-separator-in-table-2-expected.png:
+        * platform/chromium-mac-snowleopard/editing/inserting/redo-expected.png:
+        * platform/chromium-mac-snowleopard/editing/inserting/return-key-with-selection-001-expected.png: Added.
+        * platform/chromium-mac-snowleopard/editing/inserting/return-key-with-selection-002-expected.png: Added.
+        * platform/chromium-mac-snowleopard/editing/inserting/return-key-with-selection-003-expected.png: Added.
+        * platform/chromium-mac-snowleopard/editing/inserting/typing-001-expected.png: Added.
+        * platform/chromium-mac-snowleopard/editing/inserting/typing-002-expected.png: Added.
+        * platform/chromium-mac-snowleopard/editing/inserting/typing-003-expected.png: Added.
+        * platform/chromium-mac-snowleopard/editing/inserting/typing-around-br-001-expected.png: Added.
+        * platform/chromium-mac-snowleopard/editing/inserting/typing-around-image-001-expected.png: Added.
+        * platform/chromium-mac-snowleopard/editing/pasteboard/3976872-expected.png:
+        * platform/chromium-mac-snowleopard/editing/pasteboard/4076267-2-expected.png:
+        * platform/chromium-mac-snowleopard/editing/pasteboard/4076267-3-expected.png:
+        * platform/chromium-mac-snowleopard/editing/pasteboard/4076267-expected.png:
+        * platform/chromium-mac-snowleopard/editing/pasteboard/4242293-expected.png:
+        * platform/chromium-mac-snowleopard/editing/pasteboard/4631972-expected.png:
+        * platform/chromium-mac-snowleopard/editing/pasteboard/4806874-expected.png:
+        * platform/chromium-mac-snowleopard/editing/pasteboard/4947130-expected.png:
+        * platform/chromium-mac-snowleopard/editing/pasteboard/5006779-expected.png:
+        * platform/chromium-mac-snowleopard/editing/pasteboard/5032095-expected.png:
+        * platform/chromium-mac-snowleopard/editing/pasteboard/5071074-2-expected.png:
+        * platform/chromium-mac-snowleopard/editing/pasteboard/5071074-expected.png:
+        * platform/chromium-mac-snowleopard/editing/pasteboard/5075944-expected.png:
+        * platform/chromium-mac-snowleopard/editing/pasteboard/5134759-expected.png:
+        * platform/chromium-mac-snowleopard/editing/pasteboard/5156401-1-expected.png:
+        * platform/chromium-mac-snowleopard/editing/pasteboard/5247341-expected.png:
+        * platform/chromium-mac-snowleopard/editing/pasteboard/5387578-expected.png:
+        * platform/chromium-mac-snowleopard/editing/pasteboard/5478250-expected.png:
+        * platform/chromium-mac-snowleopard/editing/pasteboard/5601583-1-expected.png:
+        * platform/chromium-mac-snowleopard/editing/pasteboard/8145-1-expected.png:
+        * platform/chromium-mac-snowleopard/editing/pasteboard/8145-2-expected.png:
+        * platform/chromium-mac-snowleopard/editing/pasteboard/8145-3-expected.png:
+        * platform/chromium-mac-snowleopard/editing/pasteboard/bad-placeholder-expected.png:
+        * platform/chromium-mac-snowleopard/editing/pasteboard/copy-standalone-image-expected.png:
+        * platform/chromium-mac-snowleopard/editing/pasteboard/cut-text-001-expected.png: Added.
+        * platform/chromium-mac-snowleopard/editing/pasteboard/displaced-generic-placeholder-expected.png:
+        * platform/chromium-mac-snowleopard/editing/pasteboard/displaced-placeholder-expected.png:
+        * platform/chromium-mac-snowleopard/editing/pasteboard/drag-drop-modifies-page-expected.png:
+        * platform/chromium-mac-snowleopard/editing/pasteboard/drag-selected-image-to-contenteditable-expected.png:
+        * platform/chromium-mac-snowleopard/editing/pasteboard/drop-text-without-selection-expected.png:
+        * platform/chromium-mac-snowleopard/editing/pasteboard/input-field-1-expected.png:
+        * platform/chromium-mac-snowleopard/editing/pasteboard/merge-after-delete-1-expected.png:
+        * platform/chromium-mac-snowleopard/editing/pasteboard/merge-after-delete-2-expected.png:
+        * platform/chromium-mac-snowleopard/editing/pasteboard/merge-after-delete-expected.png:
+        * platform/chromium-mac-snowleopard/editing/pasteboard/merge-end-blockquote-expected.png:
+        * platform/chromium-mac-snowleopard/editing/pasteboard/merge-end-borders-expected.png:
+        * platform/chromium-mac-snowleopard/editing/pasteboard/merge-start-blockquote-expected.png:
+        * platform/chromium-mac-snowleopard/editing/pasteboard/merge-start-list-expected.png:
+        * platform/chromium-mac-snowleopard/editing/pasteboard/paste-4035648-fix-expected.png: Added.
+        * platform/chromium-mac-snowleopard/editing/pasteboard/paste-4038267-fix-expected.png: Added.
+        * platform/chromium-mac-snowleopard/editing/pasteboard/paste-blockquote-after-blockquote-expected.png:
+        * platform/chromium-mac-snowleopard/editing/pasteboard/paste-blockquote-into-blockquote-4-expected.png:
+        * platform/chromium-mac-snowleopard/editing/pasteboard/paste-line-endings-001-expected.png: Added.
+        * platform/chromium-mac-snowleopard/editing/pasteboard/paste-line-endings-002-expected.png: Added.
+        * platform/chromium-mac-snowleopard/editing/pasteboard/paste-line-endings-003-expected.png: Added.
+        * platform/chromium-mac-snowleopard/editing/pasteboard/paste-line-endings-004-expected.png: Added.
+        * platform/chromium-mac-snowleopard/editing/pasteboard/paste-line-endings-005-expected.png: Added.
+        * platform/chromium-mac-snowleopard/editing/pasteboard/paste-line-endings-006-expected.png: Added.
+        * platform/chromium-mac-snowleopard/editing/pasteboard/paste-line-endings-007-expected.png: Added.
+        * platform/chromium-mac-snowleopard/editing/pasteboard/paste-line-endings-008-expected.png: Added.
+        * platform/chromium-mac-snowleopard/editing/pasteboard/paste-line-endings-009-expected.png: Added.
+        * platform/chromium-mac-snowleopard/editing/pasteboard/paste-line-endings-010-expected.png: Added.
+        * platform/chromium-mac-snowleopard/editing/pasteboard/paste-match-style-001-expected.png: Added.
+        * platform/chromium-mac-snowleopard/editing/pasteboard/paste-match-style-002-expected.png: Added.
+        * platform/chromium-mac-snowleopard/editing/pasteboard/paste-text-019-expected.png: Added.
+        * platform/chromium-mac-snowleopard/editing/pasteboard/paste-text-at-tabspan-003-expected.png: Added.
+        * platform/chromium-mac-snowleopard/editing/pasteboard/pasting-object-expected.png:
+        * platform/chromium-mac-snowleopard/editing/pasteboard/pasting-tabs-expected.png:
+        * platform/chromium-mac-snowleopard/editing/pasteboard/quirks-mode-br-1-expected.png:
+        * platform/chromium-mac-snowleopard/editing/pasteboard/smart-drag-drop-expected.png:
+        * platform/chromium-mac-snowleopard/editing/pasteboard/smart-paste-007-expected.png: Added.
+        * platform/chromium-mac-snowleopard/editing/pasteboard/smart-paste-008-expected.png:
+        * platform/chromium-mac-snowleopard/editing/pasteboard/styled-element-markup-expected.png:
+        * platform/chromium-mac-snowleopard/editing/pasteboard/undoable-fragment-removes-expected.png:
+        * platform/chromium-mac-snowleopard/editing/pasteboard/unrendered-br-expected.png:
+        * platform/chromium-mac-snowleopard/editing/selection/13804-expected.png:
+        * platform/chromium-mac-snowleopard/editing/selection/4818145-expected.png:
+        * platform/chromium-mac-snowleopard/editing/selection/4866671-expected.png:
+        * platform/chromium-mac-snowleopard/editing/selection/4889598-expected.png:
+        * platform/chromium-mac-snowleopard/editing/selection/4895428-2-expected.png:
+        * platform/chromium-mac-snowleopard/editing/selection/4895428-3-expected.png:
+        * platform/chromium-mac-snowleopard/editing/selection/4932260-1-expected.png:
+        * platform/chromium-mac-snowleopard/editing/selection/4932260-2-expected.png:
+        * platform/chromium-mac-snowleopard/editing/selection/4932260-3-expected.png:
+        * platform/chromium-mac-snowleopard/editing/selection/4947387-expected.png:
+        * platform/chromium-mac-snowleopard/editing/selection/5007143-2-expected.png:
+        * platform/chromium-mac-snowleopard/editing/selection/5007143-expected.png:
+        * platform/chromium-mac-snowleopard/editing/selection/5057506-2-expected.png:
+        * platform/chromium-mac-snowleopard/editing/selection/5057506-expected.png:
+        * platform/chromium-mac-snowleopard/editing/selection/5076323-1-expected.png:
+        * platform/chromium-mac-snowleopard/editing/selection/5076323-2-expected.png:
+        * platform/chromium-mac-snowleopard/editing/selection/5076323-3-expected.png:
+        * platform/chromium-mac-snowleopard/editing/selection/5099303-expected.png:
+        * platform/chromium-mac-snowleopard/editing/selection/5131716-1-expected.png:
+        * platform/chromium-mac-snowleopard/editing/selection/5131716-2-expected.png:
+        * platform/chromium-mac-snowleopard/editing/selection/5131716-3-expected.png:
+        * platform/chromium-mac-snowleopard/editing/selection/5131716-4-expected.png:
+        * platform/chromium-mac-snowleopard/editing/selection/5195166-2-expected.png:
+        * platform/chromium-mac-snowleopard/editing/selection/5234383-1-expected.png:
+        * platform/chromium-mac-snowleopard/editing/selection/5234383-2-expected.png:
+        * platform/chromium-mac-snowleopard/editing/selection/6476-expected.png:
+        * platform/chromium-mac-snowleopard/editing/selection/after-line-wrap-expected.png:
+        * platform/chromium-mac-snowleopard/editing/selection/caret-ltr-2-expected.png:
+        * platform/chromium-mac-snowleopard/editing/selection/caret-ltr-2-left-expected.png:
+        * platform/chromium-mac-snowleopard/editing/selection/caret-ltr-expected.png:
+        * platform/chromium-mac-snowleopard/editing/selection/caret-ltr-right-expected.png:
+        * platform/chromium-mac-snowleopard/editing/selection/caret-rtl-2-expected.png:
+        * platform/chromium-mac-snowleopard/editing/selection/caret-rtl-2-left-expected.png:
+        * platform/chromium-mac-snowleopard/editing/selection/caret-rtl-expected.png:
+        * platform/chromium-mac-snowleopard/editing/selection/caret-rtl-right-expected.png:
+        * platform/chromium-mac-snowleopard/editing/selection/click-start-of-line-expected.png:
+        * platform/chromium-mac-snowleopard/editing/selection/contains-boundaries-expected.png:
+        * platform/chromium-mac-snowleopard/editing/selection/contenteditable-click-inside-expected.png:
+        * platform/chromium-mac-snowleopard/editing/selection/drag-select-1-expected.png:
+        * platform/chromium-mac-snowleopard/editing/selection/editable-non-editable-crash-expected.png:
+        * platform/chromium-mac-snowleopard/editing/selection/end-of-document-expected.png:
+        * platform/chromium-mac-snowleopard/editing/selection/expanding-selections-expected.png:
+        * platform/chromium-mac-snowleopard/editing/selection/expanding-selections2-expected.png:
+        * platform/chromium-mac-snowleopard/editing/selection/extend-by-character-001-expected.png: Added.
+        * platform/chromium-mac-snowleopard/editing/selection/extend-by-character-002-expected.png: Added.
+        * platform/chromium-mac-snowleopard/editing/selection/extend-by-character-003-expected.png: Added.
+        * platform/chromium-mac-snowleopard/editing/selection/extend-by-character-004-expected.png: Added.
+        * platform/chromium-mac-snowleopard/editing/selection/extend-by-character-005-expected.png: Added.
+        * platform/chromium-mac-snowleopard/editing/selection/extend-by-character-006-expected.png: Added.
+        * platform/chromium-mac-snowleopard/editing/selection/extend-by-sentence-001-expected.png: Added.
+        * platform/chromium-mac-snowleopard/editing/selection/extend-by-word-001-expected.png: Added.
+        * platform/chromium-mac-snowleopard/editing/selection/extend-by-word-002-expected.png:
+        * platform/chromium-mac-snowleopard/editing/selection/extend-selection-bidi-expected.png:
+        * platform/chromium-mac-snowleopard/editing/selection/image-before-linebreak-expected.png:
+        * platform/chromium-mac-snowleopard/editing/selection/inline-table-expected.png:
+        * platform/chromium-mac-snowleopard/editing/selection/leave-requested-block-expected.png:
+        * platform/chromium-mac-snowleopard/editing/selection/mixed-editability-3-expected.png:
+        * platform/chromium-mac-snowleopard/editing/selection/mixed-editability-4-expected.png:
+        * platform/chromium-mac-snowleopard/editing/selection/mixed-editability-5-expected.png:
+        * platform/chromium-mac-snowleopard/editing/selection/mixed-editability-6-expected.png:
+        * platform/chromium-mac-snowleopard/editing/selection/mixed-editability-7-expected.png:
+        * platform/chromium-mac-snowleopard/editing/selection/mixed-editability-8-expected.png:
+        * platform/chromium-mac-snowleopard/editing/selection/mixed-editability-9-expected.png:
+        * platform/chromium-mac-snowleopard/editing/selection/move-backwords-by-word-001-expected.png: Added.
+        * platform/chromium-mac-snowleopard/editing/selection/move-between-blocks-no-001-expected.png: Added.
+        * platform/chromium-mac-snowleopard/editing/selection/move-by-character-001-expected.png: Added.
+        * platform/chromium-mac-snowleopard/editing/selection/move-by-character-002-expected.png: Added.
+        * platform/chromium-mac-snowleopard/editing/selection/move-by-character-003-expected.png: Added.
+        * platform/chromium-mac-snowleopard/editing/selection/move-by-character-004-expected.png: Added.
+        * platform/chromium-mac-snowleopard/editing/selection/move-by-character-005-expected.png: Added.
+        * platform/chromium-mac-snowleopard/editing/selection/move-by-character-6-expected.png: Added.
+        * platform/chromium-mac-snowleopard/editing/selection/move-by-line-001-expected.png: Added.
+        * platform/chromium-mac-snowleopard/editing/selection/move-by-line-002-expected.png: Added.
+        * platform/chromium-mac-snowleopard/editing/selection/move-by-sentence-001-expected.png: Added.
+        * platform/chromium-mac-snowleopard/editing/selection/move-by-sentence-linebreak-expected.png:
+        * platform/chromium-mac-snowleopard/editing/selection/move-by-word-001-expected.png: Added.
+        * platform/chromium-mac-snowleopard/editing/selection/move-past-trailing-space-expected.png: Added.
+        * platform/chromium-mac-snowleopard/editing/selection/previous-line-position-expected.png:
+        * platform/chromium-mac-snowleopard/editing/selection/replace-selection-1-expected.png:
+        * platform/chromium-mac-snowleopard/editing/selection/replaced-boundaries-1-expected.png:
+        * platform/chromium-mac-snowleopard/editing/selection/replaced-boundaries-2-expected.png:
+        * platform/chromium-mac-snowleopard/editing/selection/select-all-001-expected.png:
+        * platform/chromium-mac-snowleopard/editing/selection/select-all-002-expected.png:
+        * platform/chromium-mac-snowleopard/editing/selection/select-from-textfield-outwards-expected.png:
+        * platform/chromium-mac-snowleopard/editing/selection/select-missing-image-expected.png: Added.
+        * platform/chromium-mac-snowleopard/editing/selection/selection-3748164-fix-expected.png: Added.
+        * platform/chromium-mac-snowleopard/editing/selection/table-caret-1-expected.png:
+        * platform/chromium-mac-snowleopard/editing/selection/table-caret-2-expected.png:
+        * platform/chromium-mac-snowleopard/editing/selection/table-caret-3-expected.png:
+        * platform/chromium-mac-snowleopard/editing/selection/triple-click-in-pre-expected.png:
+        * platform/chromium-mac-snowleopard/editing/selection/unrendered-001-expected.png:
+        * platform/chromium-mac-snowleopard/editing/selection/unrendered-002-expected.png:
+        * platform/chromium-mac-snowleopard/editing/selection/unrendered-003-expected.png:
+        * platform/chromium-mac-snowleopard/editing/selection/unrendered-004-expected.png:
+        * platform/chromium-mac-snowleopard/editing/selection/unrendered-005-expected.png:
+        * platform/chromium-mac-snowleopard/editing/selection/unrendered-space-expected.png:
+        * platform/chromium-mac-snowleopard/editing/selection/wrapped-line-caret-1-expected.png:
+        * platform/chromium-mac-snowleopard/editing/selection/wrapped-line-caret-2-expected.png:
+        * platform/chromium-mac-snowleopard/editing/spelling/grammar-markers-expected.png:
+        * platform/chromium-mac-snowleopard/editing/spelling/spelling-expected.png:
+        * platform/chromium-mac-snowleopard/editing/style/4916887-expected.png:
+        * platform/chromium-mac-snowleopard/editing/style/5017613-1-expected.png:
+        * platform/chromium-mac-snowleopard/editing/style/5017613-2-expected.png:
+        * platform/chromium-mac-snowleopard/editing/style/5046875-1-expected.png:
+        * platform/chromium-mac-snowleopard/editing/style/5046875-2-expected.png:
+        * platform/chromium-mac-snowleopard/editing/style/5065910-expected.png:
+        * platform/chromium-mac-snowleopard/editing/style/5084241-expected.png:
+        * platform/chromium-mac-snowleopard/editing/style/5228141-expected.png:
+        * platform/chromium-mac-snowleopard/editing/style/5279521-expected.png:
+        * platform/chromium-mac-snowleopard/editing/style/block-styles-007-expected.png: Added.
+        * platform/chromium-mac-snowleopard/editing/style/highlight-expected.png:
+        * platform/chromium-mac-snowleopard/editing/style/smoosh-styles-001-expected.png: Added.
+        * platform/chromium-mac-snowleopard/editing/style/smoosh-styles-003-expected.png: Added.
+        * platform/chromium-mac-snowleopard/editing/style/style-3681552-fix-001-expected.png: Added.
+        * platform/chromium-mac-snowleopard/editing/style/style-3681552-fix-002-expected.png: Added.
+        * platform/chromium-mac-snowleopard/editing/style/style-3998892-fix-expected.png: Added.
+        * platform/chromium-mac-snowleopard/editing/style/style-boundary-001-expected.png: Added.
+        * platform/chromium-mac-snowleopard/editing/style/style-boundary-002-expected.png: Added.
+        * platform/chromium-mac-snowleopard/editing/style/style-boundary-003-expected.png: Added.
+        * platform/chromium-mac-snowleopard/editing/style/style-boundary-004-expected.png: Added.
+        * platform/chromium-mac-snowleopard/editing/style/style-boundary-005-expected.png:
+        * platform/chromium-mac-snowleopard/editing/style/typing-style-001-expected.png: Added.
+        * platform/chromium-mac-snowleopard/editing/style/typing-style-002-expected.png: Added.
+        * platform/chromium-mac-snowleopard/editing/style/unbold-in-bold-expected.png: Added.
+        * platform/chromium-mac-snowleopard/editing/undo/4063751-expected.png:
+        * platform/chromium-mac-snowleopard/editing/undo/5378473-expected.png: Added.
+        * platform/chromium-mac-snowleopard/editing/undo/redo-typing-001-expected.png: Added.
+        * platform/chromium-mac-snowleopard/editing/undo/undo-combined-delete-boundary-expected.png: Added.
+        * platform/chromium-mac-snowleopard/editing/undo/undo-combined-delete-expected.png: Added.
+        * platform/chromium-mac-snowleopard/editing/undo/undo-delete-boundary-expected.png: Added.
+        * platform/chromium-mac-snowleopard/editing/undo/undo-delete-expected.png: Added.
+        * platform/chromium-mac-snowleopard/editing/undo/undo-forward-delete-boundary-expected.png: Added.
+        * platform/chromium-mac-snowleopard/editing/undo/undo-forward-delete-expected.png: Added.
+        * platform/chromium-mac-snowleopard/editing/undo/undo-misspellings-expected.png: Added.
+        * platform/chromium-mac-snowleopard/editing/undo/undo-typing-001-expected.png: Added.
+        * platform/chromium-mac-snowleopard/editing/unsupported-content/list-delete-001-expected.png:
+        * platform/chromium-mac-snowleopard/editing/unsupported-content/list-delete-003-expected.png:
+        * platform/chromium-mac-snowleopard/editing/unsupported-content/list-type-after-expected.png:
+        * platform/chromium-mac-snowleopard/editing/unsupported-content/list-type-before-expected.png:
+        * platform/chromium-mac-snowleopard/editing/unsupported-content/table-delete-001-expected.png:
+        * platform/chromium-mac-snowleopard/editing/unsupported-content/table-delete-002-expected.png:
+        * platform/chromium-mac-snowleopard/editing/unsupported-content/table-delete-003-expected.png:
+        * platform/chromium-mac-snowleopard/editing/unsupported-content/table-type-after-expected.png:
+        * platform/chromium-mac-snowleopard/editing/unsupported-content/table-type-before-expected.png:
+        * platform/chromium/TestExpectations:
+
 2013-01-11  Levi Weintraub  <leviw@chromium.org>
 
         Unreviewed gardening. Marking platform/chromium/virtual/gpu/fast/hidpi/image-set-background-dynamic.html

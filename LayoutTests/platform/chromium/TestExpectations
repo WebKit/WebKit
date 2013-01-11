@@ -4617,7 +4617,7 @@ Bug(schenney) editing/selection/extend-by-character-006.html [ ImageOnlyFailure 
 Bug(schenney) editing/selection/extend-by-sentence-001.html [ ImageOnlyFailure ]
 Bug(schenney) editing/selection/extend-by-word-001.html [ ImageOnlyFailure ]
 Bug(schenney) editing/selection/extend-by-word-002.html [ ImageOnlyFailure ]
-Bug(schenney) [ Mac Release ] editing/selection/extend-selection-bidi.html [ ImageOnlyFailure ]
+Bug(schenney) [ MountainLion Release ] editing/selection/extend-selection-bidi.html [ ImageOnlyFailure ]
 Bug(schenney) [ Win Linux ] editing/selection/extend-selection-bidi.html [ ImageOnlyFailure ]
 Bug(schenney) editing/selection/iframe.html [ ImageOnlyFailure ]
 Bug(schenney) editing/selection/image-before-linebreak.html [ ImageOnlyFailure ]
