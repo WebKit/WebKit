@@ -64,15 +64,18 @@ public:
     template<typename T, typename HolderContainer, typename Wrappable>
     static v8::Handle<v8::Object> getWrapperFast(T* object, const HolderContainer& container, Wrappable* holder)
     {
-        // What we'd really like to check here is whether we're in the main world or
-        // in an isolated world. The fastest way we know how to do that is to check
-        // whether the wrappable's wrapper is the same as the holder
-        if (holderContainsWrapper(container, holder)) {
+        // What we'd really like to check here is whether we're in the
+        // main world or in an isolated world. The fastest way to do that
+        // is to check that there is no isolated world and the 'object'
+        // is an object that can exist in the main world. The second fastest
+        // way is to check whether the wrappable's wrapper is the same as
+        // the holder.
+        if ((!DOMWrapperWorld::isolatedWorldsExist() && isMainWorldObject(object)) || holderContainsWrapper(container, holder)) {
             if (mainWorldWrapperIsStoredInObject(object))
                 return getWrapperFromObject(object);
             return mainWorldStore()->m_wrapperMap.get(object);
         }
-        return getWrapper(object, container.GetIsolate());
+        return current(container.GetIsolate())->get(object);
     }
 
     template<typename T>
