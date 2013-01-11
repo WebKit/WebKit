@@ -1,3 +1,9 @@
+2013-01-11  Csaba Osztrogonác  <ossy@webkit.org>
+
+        Unreviewed typo fixes after r139431.
+
+        * Scripts/run-javascriptcore-tests:
+
 2013-01-11  Raphael Kubo da Costa  <raphael.kubo.da.costa@intel.com>
 
         [jhbuild] Remove the "run-with-jhbuild" scripts.

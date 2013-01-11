@@ -142,13 +142,14 @@ my @jsDriverCmd = ("perl", "jsDriver.pl", "-e", "squirrelfish", "-s", jscPath($p
 if (isGtk() || isEfl()) {
     my @jhbuildPrefix = sourceDir() . "/Tools/jhbuild/jhbuild-wrapper";
 
-    if (isEfl())
+    if (isEfl()) {
         push(@jhbuildPrefix, '--efl');
-    elsif (isGtk())
+    } elsif (isGtk()) {
         push(@jhbuildPrefix, '--gtk');
+    }
     push(@jhbuildPrefix, 'run');
 
-    unshift(@jsDriverCmd, $jhbuildPrefix);
+    unshift(@jsDriverCmd, @jhbuildPrefix);
 }
 my $result = system(@jsDriverCmd);
 exit exitStatus($result)  if $result;
