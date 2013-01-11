@@ -89,6 +89,9 @@ WebInspector.ProfileLauncherView.prototype = {
         optionElement.addEventListener("change", this._profileTypeChanged.bind(this, profileType), false);
         var descriptionElement = labelElement.createChild("p");
         descriptionElement.textContent = profileType.description;
+        var decorationElement = profileType.decorationElement();
+        if (decorationElement)
+            labelElement.appendChild(decorationElement);
     },
 
     _controlButtonClicked: function()

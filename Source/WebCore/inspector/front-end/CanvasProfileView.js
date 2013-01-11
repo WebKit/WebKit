@@ -199,8 +199,19 @@ WebInspector.CanvasProfileType = function()
 {
     WebInspector.ProfileType.call(this, WebInspector.CanvasProfileType.TypeId, WebInspector.UIString("Capture Canvas Frame"));
     this._nextProfileUid = 1;
+
+    this._decorationElement = document.createElement("div");
+    this._decorationElement.addStyleClass("profile-canvas-decoration");
+    this._decorationElement.addStyleClass("hidden");
+    this._decorationElement.textContent = WebInspector.UIString("There is an uninstrumented canvas on the page. Reload the page to instrument it.");
+    var reloadPageButton = this._decorationElement.createChild("button");
+    reloadPageButton.type = "button";
+    reloadPageButton.textContent = WebInspector.UIString("Reload");
+    reloadPageButton.addEventListener("click", this._onReloadPageButtonClick.bind(this), false);
+
     // FIXME: enable/disable by a UI action?
-    CanvasAgent.enable();
+    CanvasAgent.enable(this._updateDecorationElement.bind(this));
+    WebInspector.resourceTreeModel.addEventListener(WebInspector.ResourceTreeModel.EventTypes.MainFrameNavigated, this._updateDecorationElement, this);
 }
 
 WebInspector.CanvasProfileType.TypeId = "CANVAS_PROFILE";
@@ -243,6 +254,15 @@ WebInspector.CanvasProfileType.prototype = {
 
     /**
      * @override
+     * @return {Element}
+     */
+    decorationElement: function()
+    {
+        return this._decorationElement;
+    },
+
+    /**
+     * @override
      */
     reset: function()
     {
@@ -268,6 +288,27 @@ WebInspector.CanvasProfileType.prototype = {
     createProfile: function(profile)
     {
         return new WebInspector.CanvasProfileHeader(this, profile.title, -1);
+    },
+
+    _updateDecorationElement: function()
+    {
+        function callback(error, result)
+        {
+            var showWarning = (!error && result);
+            if (showWarning)
+                this._decorationElement.removeStyleClass("hidden");
+            else
+                this._decorationElement.addStyleClass("hidden");
+        }
+        CanvasAgent.hasUninstrumentedCanvases(callback.bind(this));
+    },
+
+    /**
+     * @param {MouseEvent} event
+     */
+    _onReloadPageButtonClick: function(event)
+    {
+        PageAgent.reload(event.shiftKey);
     },
 
     __proto__: WebInspector.ProfileType.prototype

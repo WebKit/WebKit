@@ -199,3 +199,14 @@ body.inactive .profile-launcher-view-content button.running:not(.status-bar-item
     from {background-color: rgba(255, 255, 120, 1); }
     to { background-color: rgba(255, 255, 120, 0); }
 }
+
+.profile-canvas-decoration {
+    color: red;
+    margin: -14px 0 13px 22px;
+    padding-left: 14px;
+    background: 0 7px url(Images/warningIcon.png) no-repeat;
+}
+
+.profile-canvas-decoration button {
+    margin: 0 0 0 10px !important;
+}

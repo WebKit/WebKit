@@ -79,6 +79,14 @@ WebInspector.ProfileType.prototype = {
         return "";
     },
 
+    /**
+     * @return {Element}
+     */
+    decorationElement: function()
+    {
+        return null;
+    },
+
     // Must be implemented by subclasses.
     /**
      * @param {string=} title
