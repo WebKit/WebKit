@@ -1,3 +1,15 @@
+2013-01-11  Pavel Feldman  <pfeldman@chromium.org>
+
+        Web Inspector [chromium]: Debugger.globalObjectCleared is not dispatched on reload after renderer swap
+        https://bugs.webkit.org/show_bug.cgi?id=106555
+
+        Reviewed by Vsevolod Vlasov.
+
+        * http/tests/inspector/debugger-test.js:
+        (initialize_DebuggerTest):
+        * inspector/debugger/debugger-scripts-reload-expected.txt: Added.
+        * inspector/debugger/debugger-scripts-reload.html: Added.
+
 2013-01-11  Vsevolod Vlasov  <vsevik@chromium.org>
 
         Web Inspector: Refactoring, move NetworkWorkspaceProvider to NetworkUISourceCodeProvider.js and rename its parent to SimpleWorkspaceProvider.

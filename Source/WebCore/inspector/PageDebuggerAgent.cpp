@@ -59,15 +59,15 @@ PageDebuggerAgent::~PageDebuggerAgent()
 {
 }
 
-void PageDebuggerAgent::enable(ErrorString* errorString)
+void PageDebuggerAgent::enable()
 {
-    InspectorDebuggerAgent::enable(errorString);
+    InspectorDebuggerAgent::enable();
     m_instrumentingAgents->setPageDebuggerAgent(this);
 }
 
-void PageDebuggerAgent::disable(ErrorString* errorString)
+void PageDebuggerAgent::disable()
 {
-    InspectorDebuggerAgent::disable(errorString);
+    InspectorDebuggerAgent::disable();
     m_instrumentingAgents->setPageDebuggerAgent(0);
 }
 

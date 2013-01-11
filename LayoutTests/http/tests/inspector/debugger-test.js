@@ -284,7 +284,7 @@ InspectorTest.queryScripts = function(filter)
     var scripts = [];
     for (var scriptId in WebInspector.debuggerModel._scripts) {
         var script = WebInspector.debuggerModel._scripts[scriptId];
-        if (filter(script))
+        if (!filter || filter(script))
             scripts.push(script);
     }
     return scripts;
