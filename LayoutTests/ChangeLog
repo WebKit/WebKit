@@ -1,5 +1,16 @@
 2013-01-11  Stephen Chenney  <schenney@chromium.org>
 
+        [Chromium] Test Expectations update after Skia flag changes.
+
+        Unreviewed test expectations update.
+
+        Apparently, we use Skia to draw some forms on Mac and Win, causing
+        failures not seen on Linux.
+
+        * platform/chromium/TestExpectations:
+
+2013-01-11  Stephen Chenney  <schenney@chromium.org>
+
         Unreviewed test expectations update.
 
         All of the tests will be rebaselined by end of day.
