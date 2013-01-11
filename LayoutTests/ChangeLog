@@ -1,3 +1,13 @@
+2013-01-11  Florin Malita  <fmalita@chromium.org>
+
+        [SVG] Suppress resource rebuilding for unattached and shadow elements
+        https://bugs.webkit.org/show_bug.cgi?id=106664
+
+        Reviewed by Dirk Schulze.
+
+        * svg/custom/use-rebuild-resources-crash-expected.txt: Added.
+        * svg/custom/use-rebuild-resources-crash.svg: Added.
+
 2013-01-11  Dominic Mazzoni  <dmazzoni@google.com>
 
         AX: Computed hierarchical level is not consistent with aria-level
