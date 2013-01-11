@@ -523,6 +523,9 @@ WebInspector.ElementsPanel.prototype = {
         if (treeElement) {
             treeElement.highlightSearchResults(this._searchQuery);
             treeElement.reveal();
+            var matches = treeElement.listItemElement.getElementsByClassName("webkit-search-result");
+            if (matches.length)
+                matches[0].scrollIntoViewIfNeeded();
         }
     },
 
