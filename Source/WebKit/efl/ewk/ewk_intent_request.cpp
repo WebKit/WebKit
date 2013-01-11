@@ -53,6 +53,8 @@ void ewk_intent_request_ref(Ewk_Intent_Request* request)
 #if ENABLE(WEB_INTENTS)
     EINA_SAFETY_ON_NULL_RETURN(request);
     ++request->__ref;
+#else
+    UNUSED_PARAM(request);
 #endif
 }
 
@@ -66,6 +68,8 @@ void ewk_intent_request_unref(Ewk_Intent_Request* request)
 
     ewk_intent_free(request->intent);
     delete request;
+#else
+    UNUSED_PARAM(request);
 #endif
 }
 
@@ -76,6 +80,7 @@ Ewk_Intent* ewk_intent_request_intent_get(const Ewk_Intent_Request* request)
 
     return request->intent;
 #else
+    UNUSED_PARAM(request);
     return 0;
 #endif
 }

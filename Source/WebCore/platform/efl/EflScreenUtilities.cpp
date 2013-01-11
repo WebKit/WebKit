@@ -146,6 +146,7 @@ bool isUsingEcoreX(const Evas* evas)
         || !strcmp(engine, "software_16_x11")
         || !strncmp(engine, "xrender", sizeof("xrender") - 1);
 #else
+    UNUSED_PARAM(evas);
     return false;
 #endif
 }

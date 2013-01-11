@@ -670,6 +670,7 @@ WebCore::MessagePortChannelArray* DumpRenderTreeSupportEfl::intentMessagePorts(c
     const WebCore::Intent* coreIntent = EWKPrivate::coreIntent(intent);
     return coreIntent ? coreIntent->messagePorts() : 0;
 #else
+    UNUSED_PARAM(intent);
     return 0;
 #endif
 }

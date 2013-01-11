@@ -63,6 +63,7 @@ const char* ewk_intent_action_get(const Ewk_Intent* intent)
                              core->action().utf8().data());
     return ewkIntent->action;
 #else
+    UNUSED_PARAM(intent);
     return 0;
 #endif
 }
@@ -78,6 +79,7 @@ const char* ewk_intent_type_get(const Ewk_Intent* intent)
                              core->type().utf8().data());
     return ewkIntent->type;
 #else
+    UNUSED_PARAM(intent);
     return 0;
 #endif
 }
@@ -93,6 +95,7 @@ const char* ewk_intent_service_get(const Ewk_Intent* intent)
                              core->service().string().utf8().data());
     return ewkIntent->service;
 #else
+    UNUSED_PARAM(intent);
     return 0;
 #endif
 }
@@ -108,6 +111,7 @@ Eina_List* ewk_intent_suggestions_get(const Ewk_Intent* intent)
         listOfSuggestions = eina_list_append(listOfSuggestions, eina_stringshare_add(it->string().utf8().data()));
     return listOfSuggestions;
 #else
+    UNUSED_PARAM(intent);
     return 0;
 #endif
 }
@@ -121,6 +125,8 @@ const char* ewk_intent_extra_get(const Ewk_Intent* intent, const char* key)
         return 0;
     return eina_stringshare_add(val->value.utf8().data());
 #else
+    UNUSED_PARAM(intent);
+    UNUSED_PARAM(key);
     return 0;
 #endif
 }
@@ -135,6 +141,7 @@ Eina_List* ewk_intent_extra_names_get(const Ewk_Intent* intent)
         listOfNames = eina_list_append(listOfNames, eina_stringshare_add(it->utf8().data()));
     return listOfNames;
 #else
+    UNUSED_PARAM(intent);
     return 0;
 #endif
 }

@@ -1,3 +1,27 @@
+2013-01-11  KwangYong Choi  <ky0.choi@samsung.com>
+
+        [EFL] Fix unused parameter build error
+        https://bugs.webkit.org/show_bug.cgi?id=106639
+
+        Reviewed by Kentaro Hara.
+
+        Use UNUSED_PARAM macro to fix build error.
+
+        * UIProcess/API/efl/ewk_color_picker.cpp:
+        (ewk_color_picker_color_set):
+        (ewk_color_picker_color_get):
+        * UIProcess/API/efl/ewk_context.cpp:
+        (ewk_context_additional_plugin_path_set):
+        * UIProcess/API/efl/ewk_settings.cpp:
+        (ewk_settings_fullscreen_enabled_set):
+        (ewk_settings_fullscreen_enabled_get):
+        * UIProcess/API/efl/ewk_view.cpp:
+        (ewk_view_intent_deliver):
+        (ewk_view_feed_touch_event):
+        (ewk_view_touch_events_enabled_set):
+        (ewk_view_touch_events_enabled_get):
+        (ewk_view_fullscreen_exit):
+
 2013-01-10  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] Add API to set the web extensions directory to WebKit2 GTK+

@@ -995,6 +995,10 @@ Eina_Bool ewk_frame_feed_touch_event(Evas_Object* ewkFrame, Ewk_Touch_Event_Type
 
     return smartData->frame->eventHandler()->handleTouchEvent(EWKPrivate::platformTouchEvent(x, y, points, action, modifiers));
 #else
+    UNUSED_PARAM(ewkFrame);
+    UNUSED_PARAM(action);
+    UNUSED_PARAM(points);
+    UNUSED_PARAM(modifiers);
     return false;
 #endif
 }

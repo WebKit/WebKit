@@ -326,13 +326,15 @@ Ewk_Cache_Model ewk_context_cache_model_get(const Ewk_Context* ewkContext)
 
 Eina_Bool ewk_context_additional_plugin_path_set(Ewk_Context* ewkContext, const char* path)
 {
+#if ENABLE(NETSCAPE_PLUGIN_API)
     EWK_OBJ_GET_IMPL_OR_RETURN(EwkContext, ewkContext, impl, false);
     EINA_SAFETY_ON_NULL_RETURN_VAL(path, false);
 
-#if ENABLE(NETSCAPE_PLUGIN_API)
     impl->setAdditionalPluginPath(String::fromUTF8(path));
     return true;
 #else
+    UNUSED_PARAM(ewkContext);
+    UNUSED_PARAM(path);
     return false;
 #endif
 }

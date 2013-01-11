@@ -89,6 +89,8 @@ Eina_Bool ewk_settings_fullscreen_enabled_set(Ewk_Settings* settings, Eina_Bool 
     settings->preferences()->setFullScreenEnabled(enable);
     return true;
 #else
+    UNUSED_PARAM(settings);
+    UNUSED_PARAM(enable);
     return false;
 #endif
 }
@@ -99,6 +101,7 @@ Eina_Bool ewk_settings_fullscreen_enabled_get(const Ewk_Settings* settings)
     EINA_SAFETY_ON_NULL_RETURN_VAL(settings, false);
     return settings->preferences()->fullScreenEnabled();
 #else
+    UNUSED_PARAM(settings);
     return false;
 #endif
 }

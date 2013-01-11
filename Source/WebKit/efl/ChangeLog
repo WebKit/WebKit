@@ -1,3 +1,46 @@
+2013-01-11  KwangYong Choi  <ky0.choi@samsung.com>
+
+        [EFL] Fix unused parameter build error
+        https://bugs.webkit.org/show_bug.cgi?id=106639
+
+        Reviewed by Kentaro Hara.
+
+        Use UNUSED_PARAM macro to fix build error.
+
+        * WebCoreSupport/DumpRenderTreeSupportEfl.cpp:
+        (DumpRenderTreeSupportEfl::intentMessagePorts):
+        * ewk/ewk_contextmenu.cpp:
+        (ewk_context_menu_destroy):
+        (ewk_context_menu_item_select):
+        * ewk/ewk_file_chooser.cpp:
+        (ewk_file_chooser_capture_get):
+        * ewk/ewk_frame.cpp:
+        (ewk_frame_feed_touch_event):
+        * ewk/ewk_intent.cpp:
+        (ewk_intent_action_get):
+        (ewk_intent_type_get):
+        (ewk_intent_service_get):
+        (ewk_intent_suggestions_get):
+        (ewk_intent_extra_get):
+        (ewk_intent_extra_names_get):
+        * ewk/ewk_intent_request.cpp:
+        (ewk_intent_request_ref):
+        (ewk_intent_request_unref):
+        (ewk_intent_request_intent_get):
+        * ewk/ewk_security_origin.cpp:
+        (ewk_security_origin_web_database_usage_get):
+        (ewk_security_origin_web_database_quota_get):
+        * ewk/ewk_settings.cpp:
+        (ewk_settings_shadow_dom_enable_set):
+        * ewk/ewk_view.cpp:
+        (ewk_view_context_menu_forward_event):
+        (ewk_view_setting_should_display_subtitles_get):
+        (ewk_view_setting_should_display_captions_get):
+        (ewk_view_setting_should_display_captions_set):
+        (ewk_view_setting_should_display_subtitles_set):
+        (ewk_view_setting_should_display_text_descriptions_get):
+        (ewk_view_setting_should_display_text_descriptions_set):
+
 2013-01-10  Christophe Dumez  <christophe.dumez@intel.com>
 
         [EFL] Add gstreamer 1.0.5 to jhbuild

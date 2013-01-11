@@ -64,22 +64,24 @@ uint32_t ewk_security_origin_port_get(const Ewk_Security_Origin* origin)
 
 uint64_t ewk_security_origin_web_database_usage_get(const Ewk_Security_Origin* origin)
 {
+#if ENABLE(SQL_DATABASE)
     EINA_SAFETY_ON_NULL_RETURN_VAL(origin, 0);
 
-#if ENABLE(SQL_DATABASE)
     return WebCore::DatabaseManager::manager().usageForOrigin(origin->securityOrigin.get());
 #else
+    UNUSED_PARAM(origin);
     return 0;
 #endif
 }
 
 uint64_t ewk_security_origin_web_database_quota_get(const Ewk_Security_Origin* origin)
 {
+#if ENABLE(SQL_DATABASE)
     EINA_SAFETY_ON_NULL_RETURN_VAL(origin, 0);
 
-#if ENABLE(SQL_DATABASE)
     return WebCore::DatabaseManager::manager().quotaForOrigin(origin->securityOrigin.get());
 #else
+    UNUSED_PARAM(origin)
     return 0;
 #endif
 }

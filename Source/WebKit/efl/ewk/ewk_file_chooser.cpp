@@ -99,6 +99,7 @@ Ewk_File_Chooser_Capture_Type ewk_file_chooser_capture_get(const Ewk_File_Choose
 
     return EWK_FILE_CHOOSER_CAPTURE_TYPE_FILESYSTEM;
 #else
+    UNUSED_PARAM(chooser);
     return EWK_FILE_CHOOSER_CAPTURE_TYPE_INVALID;
 #endif
 }

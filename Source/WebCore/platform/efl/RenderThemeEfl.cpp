@@ -757,6 +757,7 @@ bool RenderThemeEfl::supportsDataListUI(const AtomicString& type) const
     // FIXME: We need to support other types.
     return type == InputTypeNames::range();
 #else
+    UNUSED_PARAM(type);
     return false;
 #endif
 }

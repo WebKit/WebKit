@@ -264,6 +264,7 @@ Eina_Bool ewk_settings_shadow_dom_enable_set(Eina_Bool enable)
     WebCore::RuntimeEnabledFeatures::setShadowDOMEnabled(enable);
     return true;
 #else
+    UNUSED_PARAM(enable);
     return false;
 #endif
 }

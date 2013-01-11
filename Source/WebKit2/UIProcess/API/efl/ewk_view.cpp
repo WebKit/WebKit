@@ -704,6 +704,8 @@ Eina_Bool ewk_view_intent_deliver(Evas_Object* ewkView, Ewk_Intent* intent)
 
     return true;
 #else
+    UNUSED_PARAM(ewkView);
+    UNUSED_PARAM(intent);
     return false;
 #endif
 }
@@ -826,6 +828,10 @@ Eina_Bool ewk_view_feed_touch_event(Evas_Object* ewkView, Ewk_Touch_Event_Type t
 
     return true;
 #else
+    UNUSED_PARAM(ewkView);
+    UNUSED_PARAM(type);
+    UNUSED_PARAM(points);
+    UNUSED_PARAM(modifiers);
     return false;
 #endif
 }
@@ -839,6 +845,8 @@ Eina_Bool ewk_view_touch_events_enabled_set(Evas_Object* ewkView, Eina_Bool enab
 
     return true;
 #else
+    UNUSED_PARAM(ewkView);
+    UNUSED_PARAM(enabled);
     return false;
 #endif
 }
@@ -850,6 +858,7 @@ Eina_Bool ewk_view_touch_events_enabled_get(const Evas_Object* ewkView)
 
     return impl->touchEventsEnabled();
 #else
+    UNUSED_PARAM(ewkView);
     return false;
 #endif
 }
@@ -918,6 +927,7 @@ Eina_Bool ewk_view_fullscreen_exit(Evas_Object* ewkView)
 
     return true;
 #else
+    UNUSED_PARAM(ewkView);
     return false;
 #endif
 }

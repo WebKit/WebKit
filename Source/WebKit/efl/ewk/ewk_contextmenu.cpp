@@ -88,6 +88,7 @@ Eina_Bool ewk_context_menu_destroy(Ewk_Context_Menu* menu)
     ewk_context_menu_free(menu);
     return true;
 #else
+    UNUSED_PARAM(menu);
     return false;
 #endif
 }
@@ -127,6 +128,8 @@ Eina_Bool ewk_context_menu_item_select(Ewk_Context_Menu* menu, Ewk_Context_Menu_
     menu->controller->contextMenuItemSelected(&core);
     return true;
 #else
+    UNUSED_PARAM(menu);
+    UNUSED_PARAM(item);
     return false;
 #endif
 }
