@@ -1,3 +1,14 @@
+2013-01-11  Filip Pizlo  <fpizlo@apple.com>
+
+        Add WTF_EXPORT_PRIVATE to printInternal() methods of PrintStream.h
+
+        Rubber stamped by Mark Hahnenberg.
+        
+        This will make it easier to use dataLog() from WebCore.
+
+        * wtf/PrintStream.h:
+        (WTF):
+
 2013-01-09  Antti Koivisto  <antti@apple.com>
 
         Release FastMalloc thread caches on memory warning
