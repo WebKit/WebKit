@@ -61,9 +61,8 @@ protected:
     public:
         InputStreamPreprocessor(MarkupTokenizerBase<Token, State>* tokenizer)
             : m_tokenizer(tokenizer)
-            , m_nextInputCharacter('\0')
-            , m_skipNextNewLine(false)
         {
+            reset();
         }
 
         ALWAYS_INLINE UChar nextInputCharacter() const { return m_nextInputCharacter; }
@@ -122,6 +121,14 @@ protected:
             if (source.isEmpty())
                 return false;
             return peek(source);
+        }
+
+        bool skipNextNewLine() const { return m_skipNextNewLine; }
+
+        void reset(bool skipNextNewLine = false)
+        {
+            m_nextInputCharacter = '\0';
+            m_skipNextNewLine = skipNextNewLine;
         }
 
         static const UChar endOfFileMarker = 0;
