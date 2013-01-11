@@ -1,5 +1,13 @@
 2013-01-11  Stephen Chenney  <schenney@chromium.org>
 
+        Unreviewed test expectations update.
+
+        All of the tests will be rebaselined by end of day.
+
+        * platform/chromium/TestExpectations: Mark tests affected by Skia flag changes as expected to fail.
+
+2013-01-11  Stephen Chenney  <schenney@chromium.org>
+
         Objects can be re-added to the AXObjectCache during removal
         https://bugs.webkit.org/show_bug.cgi?id=104171
 

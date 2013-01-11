@@ -1,3 +1,14 @@
+2013-01-11  Stephen Chenney  <schenney@chromium.org>
+
+        Removing Skia flags that have been disabling oprtimizations and other improvements.
+
+        Unreviewed build fix.
+
+        These changes have been extensively tested by the Skia team, and
+        WebKit test result changes will be monitored.
+
+        * skia_webkit.gyp:
+
 2013-01-11  Pavel Feldman  <pfeldman@chromium.org>
 
         Web Inspector [chromium]: toolbar border is missing on non-Mac in docked-to-bottom mode
