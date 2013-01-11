@@ -14,9 +14,13 @@
         <iframe src="blank_page_green.htm" width="100px" height="100px"></iframe>
         <script src="empty_script.js"></script>
         <script>
-            var xhr = new XMLHttpRequest;
-            xhr.open("GET", "blank_page_yellow.htm", false);
-            xhr.send();
+            var async_xhr = new XMLHttpRequest;
+            async_xhr.open("GET", "generate_resource.php?type=image&id=async_xhr", true);
+            async_xhr.onreadystatechange = function() {
+                if (async_xhr.readyState == 4 && async_xhr.status == 200 && parent.hasOwnProperty('on_async_xhr_done'))
+                    parent.on_async_xhr_done();
+            }
+            async_xhr.send();
         </script>
         <style>
             @font-face {

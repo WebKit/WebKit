@@ -64,6 +64,9 @@ namespace WebCore {
         PreflightPolicy preflightPolicy; // If AccessControl is used, how to determine if a preflight is needed.
         CrossOriginRequestPolicy crossOriginRequestPolicy;
         RefPtr<SecurityOrigin> securityOrigin;
+#if ENABLE(RESOURCE_TIMING)
+        AtomicString initiator;
+#endif
     };
 
     // Useful for doing loader operations from any thread (not threadsafe, 

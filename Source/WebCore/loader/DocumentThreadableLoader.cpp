@@ -375,6 +375,9 @@ void DocumentThreadableLoader::loadRequest(const ResourceRequest& request, Secur
         }
 
         CachedResourceRequest newRequest(request, options);
+#if ENABLE(RESOURCE_TIMING)
+        newRequest.setInitiator(m_options.initiator);
+#endif
 #if ENABLE(INSPECTOR)
         if (m_actualRequest) {
             // Because willSendRequest only gets called during redirects, we initialize the identifier and the first willSendRequest here.

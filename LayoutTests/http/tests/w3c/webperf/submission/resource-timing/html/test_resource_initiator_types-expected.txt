@@ -7,17 +7,18 @@ This test validates that all of the initiator types are represented.
 PASS /w3c/webperf/resources/Ahem.ttf is expected to have initiatorType css 
 PASS /w3c/webperf/resources/blank_image.png is expected to have initiatorType img 
 PASS /w3c/webperf/resources/blank_page_green.htm is expected to have initiatorType iframe 
-PASS /w3c/webperf/resources/blank_page_yellow.htm is expected to have initiatorType xmlhttprequest 
 PASS /w3c/webperf/resources/empty_script.js is expected to have initiatorType script 
 PASS /w3c/webperf/resources/generate_resource.php?type=css&id=embed is expected to have initiatorType embed 
 PASS /w3c/webperf/resources/generate_resource.php?type=css&id=n1 is expected to have initiatorType css 
 PASS /w3c/webperf/resources/generate_resource.php?type=font&id=n1 is expected to have initiatorType css 
 PASS /w3c/webperf/resources/generate_resource.php?type=image&id=1 is expected to have initiatorType css 
 PASS /w3c/webperf/resources/generate_resource.php?type=image&id=2 is expected to have initiatorType css 
+PASS /w3c/webperf/resources/generate_resource.php?type=image&id=async_xhr is expected to have initiatorType xmlhttprequest 
 PASS /w3c/webperf/resources/generate_resource.php?type=image&id=body is expected to have initiatorType body 
 PASS /w3c/webperf/resources/generate_resource.php?type=image&id=input is expected to have initiatorType input 
 PASS /w3c/webperf/resources/generate_resource.php?type=image&id=n1 is expected to have initiatorType css 
 PASS /w3c/webperf/resources/generate_resource.php?type=image&id=object is expected to have initiatorType object 
 PASS /w3c/webperf/resources/generate_resource.php?type=image&id=poster is expected to have initiatorType video 
+PASS /w3c/webperf/resources/generate_resource.php?type=image&id=sync_xhr is expected to have initiatorType xmlhttprequest 
 PASS /w3c/webperf/resources/nested.css is expected to have initiatorType link 
 

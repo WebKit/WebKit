@@ -15,6 +15,7 @@ var background_loaded = false;
 var page_loaded = false;
 var ol_font_loaded = false;
 var ul_font_loaded = false;
+var xhr_loaded = false;
 
 function check_finished() {
     if (!ul_font_loaded) {
@@ -23,7 +24,7 @@ function check_finished() {
     if (!ol_font_loaded) {
         ol_font_loaded = check_font_loaded('ol');
     }
-    if (page_loaded && ol_font_loaded && ul_font_loaded && background_loaded) {
+    if (page_loaded && ol_font_loaded && ul_font_loaded && background_loaded && xhr_loaded) {
         perform_test();
     }
 }
@@ -63,22 +64,22 @@ function perform_test() {
     var entries = document.getElementById('frameContext').contentWindow.performance.webkitGetEntries();
 
     var expected_entries = {
-        '/w3c/webperf/resources/generate_resource.php?type=image&id=body': 'body',
-        '/w3c/webperf/resources/nested.css': 'link',
+        '/w3c/webperf/resources/Ahem.ttf': 'css',
         '/w3c/webperf/resources/blank_image.png': 'img',
         '/w3c/webperf/resources/blank_page_green.htm': 'iframe',
         '/w3c/webperf/resources/empty_script.js': 'script',
-        '/w3c/webperf/resources/blank_page_yellow.htm': 'xmlhttprequest',
-        '/w3c/webperf/resources/generate_resource.php?type=image&id=1': 'css',
-        '/w3c/webperf/resources/generate_resource.php?type=image&id=2': 'css',
-        '/w3c/webperf/resources/Ahem.ttf': 'css',
+        '/w3c/webperf/resources/generate_resource.php?type=css&id=embed': 'embed',
         '/w3c/webperf/resources/generate_resource.php?type=css&id=n1': 'css',
         '/w3c/webperf/resources/generate_resource.php?type=font&id=n1': 'css',
-        '/w3c/webperf/resources/generate_resource.php?type=image&id=n1': 'css',
-        '/w3c/webperf/resources/generate_resource.php?type=css&id=embed': 'embed',
+        '/w3c/webperf/resources/generate_resource.php?type=image&id=1': 'css',
+        '/w3c/webperf/resources/generate_resource.php?type=image&id=2': 'css',
+        '/w3c/webperf/resources/generate_resource.php?type=image&id=async_xhr': 'xmlhttprequest',
+        '/w3c/webperf/resources/generate_resource.php?type=image&id=body': 'body',
         '/w3c/webperf/resources/generate_resource.php?type=image&id=input': 'input',
+        '/w3c/webperf/resources/generate_resource.php?type=image&id=n1': 'css',
         '/w3c/webperf/resources/generate_resource.php?type=image&id=object': 'object',
         '/w3c/webperf/resources/generate_resource.php?type=image&id=poster': 'video',
+        '/w3c/webperf/resources/nested.css': 'link',
     };
 
     test_resource_entries(entries, expected_entries);
@@ -86,6 +87,10 @@ function perform_test() {
 }
 
 window.on_test_body_created = check_finished;
+window.on_async_xhr_done = function() {
+    xhr_loaded = true;
+    check_finished();
+}
 </script>
 </head>
 <body>
