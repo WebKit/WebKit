@@ -1,3 +1,19 @@
+2013-01-11  Antoine Quint  <graouts@apple.com>
+
+        Web Inspector: Option+Click on Node Expander Doesn't Work the First Time
+        https://bugs.webkit.org/show_bug.cgi?id=66868
+
+        Adding a new protocol test that covers the new `depth` parameter for the
+        requestChildNodes method and a new front-end method that tests correct
+        behavior of the expandRecursively() method.
+
+        Reviewed by Pavel Feldman.
+
+        * inspector-protocol/dom-request-child-nodes-depth-expected.txt: Added.
+        * inspector-protocol/dom-request-child-nodes-depth.html: Added.
+        * inspector/elements/expand-recursively-expected.txt: Added.
+        * inspector/elements/expand-recursively.html: Added.
+
 2013-01-11  Noel Gordon  <noel.gordon@gmail.com>
 
         [chromium] Add ImageOnlyFailure for fast/css/font-face-unicode-range.html on win

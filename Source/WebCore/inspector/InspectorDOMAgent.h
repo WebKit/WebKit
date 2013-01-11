@@ -122,7 +122,7 @@ public:
     virtual void querySelector(ErrorString*, int nodeId, const String& selectors, int* elementId);
     virtual void querySelectorAll(ErrorString*, int nodeId, const String& selectors, RefPtr<TypeBuilder::Array<int> >& result);
     virtual void getDocument(ErrorString*, RefPtr<TypeBuilder::DOM::Node>& root);
-    virtual void requestChildNodes(ErrorString*, int nodeId);
+    virtual void requestChildNodes(ErrorString*, int nodeId, const int* depth);
     virtual void setAttributeValue(ErrorString*, int elementId, const String& name, const String& value);
     virtual void setAttributesAsText(ErrorString*, int elementId, const String& text, const String* name);
     virtual void removeAttribute(ErrorString*, int elementId, const String& name);
@@ -218,7 +218,7 @@ private:
     Element* assertEditableElement(ErrorString*, int nodeId);
 
     int pushNodePathToFrontend(Node*);
-    void pushChildNodesToFrontend(int nodeId);
+    void pushChildNodesToFrontend(int nodeId, int depth = 1);
 
     bool hasBreakpoint(Node*, int type);
     void updateSubtreeBreakpoints(Node* root, uint32_t rootMask, bool value);

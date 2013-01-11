@@ -1707,9 +1707,10 @@
             {
                 "name": "requestChildNodes",
                 "parameters": [
-                    { "name": "nodeId", "$ref": "NodeId", "description": "Id of the node to get children for." }
+                    { "name": "nodeId", "$ref": "NodeId", "description": "Id of the node to get children for." },
+                    { "name": "depth", "type": "integer", "optional": true, "description": "The maximum depth at which children should be retrieved, defaults to 1. Use -1 for the entire subtree or provide an integer larger than 0." }
                 ],
-                "description": "Requests that children of the node with given id are returned to the caller in form of <code>setChildNodes</code> events."
+                "description": "Requests that children of the node with given id are returned to the caller in form of <code>setChildNodes</code> events where not only immediate children are retrieved, but all children down to the specified depth."
             },
             {
                 "name": "querySelector",

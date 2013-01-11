@@ -433,7 +433,7 @@ void InspectorDOMAgent::getDocument(ErrorString* errorString, RefPtr<TypeBuilder
     root = buildObjectForNode(m_document.get(), 2, &m_documentNodeToIdMap);
 }
 
-void InspectorDOMAgent::pushChildNodesToFrontend(int nodeId)
+void InspectorDOMAgent::pushChildNodesToFrontend(int nodeId, int depth)
 {
     Node* node = nodeForId(nodeId);
     if (!node || (node->nodeType() != Node::ELEMENT_NODE && node->nodeType() != Node::DOCUMENT_NODE && node->nodeType() != Node::DOCUMENT_FRAGMENT_NODE))
@@ -442,7 +442,7 @@ void InspectorDOMAgent::pushChildNodesToFrontend(int nodeId)
         return;
 
     NodeToIdMap* nodeMap = m_idToNodesMap.get(nodeId);
-    RefPtr<TypeBuilder::Array<TypeBuilder::DOM::Node> > children = buildArrayForContainerChildren(node, 1, nodeMap);
+    RefPtr<TypeBuilder::Array<TypeBuilder::DOM::Node> > children = buildArrayForContainerChildren(node, depth, nodeMap);
     m_frontend->setChildNodes(nodeId, children.release());
 }
 
@@ -478,9 +478,22 @@ Node* InspectorDOMAgent::nodeForId(int id)
     return 0;
 }
 
-void InspectorDOMAgent::requestChildNodes(ErrorString*, int nodeId)
+void InspectorDOMAgent::requestChildNodes(ErrorString* errorString, int nodeId, const int* depth)
 {
-    pushChildNodesToFrontend(nodeId);
+    int sanitizedDepth;
+
+    if (!depth)
+        sanitizedDepth = 1;
+    else if (*depth == -1)
+        sanitizedDepth = INT_MAX;
+    else if (*depth > 0)
+        sanitizedDepth = *depth;
+    else {
+        *errorString = "Please provide a positive integer as a depth or -1 for entire subtree";
+        return;
+    }
+
+    pushChildNodesToFrontend(nodeId, sanitizedDepth);
 }
 
 void InspectorDOMAgent::querySelector(ErrorString* errorString, int nodeId, const String& selectors, int* elementId)

@@ -1,0 +1,140 @@
+<html>
+<head>
+<script type="text/javascript" src="../http/tests/inspector-protocol/resources/protocol-test.js"></script>
+<script type="text/javascript">
+
+function test()
+{
+
+    var eventsCount = 0;
+
+    getDocument();
+
+    InspectorTest.eventHandler["DOM.setChildNodes"] = function setChildNodes(messageObject)
+    {
+        eventsCount++;
+
+        if (eventsCount === 1)
+            gotImmediateChildren(messageObject);
+        else if (eventsCount === 2)
+            gotAllChildren(messageObject);
+    };
+    
+    function getDocument()
+    {
+        // We must first get the document so that later on we may get sensible nodeIds.
+        step({
+            name: "Get the Document",
+            command: "DOM.getDocument",
+            parameters: {},
+            callback: getImmediateChildren
+        });
+    };
+
+    function getImmediateChildren(result)
+    {
+        var bodyId = result.root.children[0].children[1].nodeId;
+        step({
+            name: "Get immediate children of the body",
+            command: "DOM.requestChildNodes",
+            parameters: {"nodeId": bodyId}
+        });
+    };
+
+    function gotImmediateChildren(messageObject)
+    {
+        var firstChild = messageObject.params.nodes[0];
+        assert("First child is a div", firstChild.localName, "div");
+        assert("First child is div#depth-1", firstChild.attributes[1], "depth-1");
+        assert("First child has one child", firstChild.childNodeCount, 1);
+        assert("First child has no .children property", firstChild.children, undefined);
+
+        step({
+            name: "Get all children of div#depth-1",
+            command: "DOM.requestChildNodes",
+            parameters: {"nodeId": firstChild.nodeId, "depth": -1}
+        });
+    };
+
+    function gotAllChildren(messageObject)
+    {
+        var depth = 1;
+        var firstChild = messageObject.params.nodes[0];
+        var node = firstChild;
+        while (node && node.children) {
+            depth++;
+            node = node.children[0];
+        }
+
+        assert("div#depth-1 has nodes 9 levels deep", depth, 9);
+
+        step({
+            name: "Pass an invalid depth",
+            command: "DOM.requestChildNodes",
+            parameters: {"nodeId": firstChild.nodeId, "depth": 0},
+            callback: finishTest
+        });
+    };
+    
+    function finishTest()
+    {
+        assert("Expected number of setChildNodes events", eventsCount, 2);
+        
+        InspectorTest.completeTest();
+    };
+
+    function step(test)
+    {
+        InspectorTest.log("\n=== " + test.name + " ===\n");
+        InspectorTest.sendCommand(test.command, test.parameters, function(messageObject) {
+            if (messageObject.hasOwnProperty("error"))
+                InspectorTest.log("Backend error: " + messageObject.error.message + " (" + messageObject.error.code + ")\n");
+
+            if (test.callback)
+                test.callback(messageObject.result);
+        });
+    };
+
+    function assert(message, actual, expected)
+    {
+        if (actual === expected)
+            InspectorTest.log("PASS: " + message);
+        else {
+            InspectorTest.log("FAIL: " + message + ", expected \"" + expected + "\" but got \"" + actual + "\"");
+            InspectorTest.completeTest();
+        }
+    };
+
+};
+
+window.addEventListener("DOMContentLoaded", function () {
+    runTest();
+}, false);
+
+</script>
+</head>
+<body>
+
+<div id="depth-1">
+    <div id="depth-2">
+        <div id="depth-3">
+            <div id="depth-4">
+                <div id="depth-5">
+                    <div id="depth-6">
+                        <div id="depth-7">
+                            <div id="depth-8">
+                                <div id="depth-9">
+                                    <div id="depth-10">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+</body>
+</html>

@@ -1048,6 +1048,16 @@ WebInspector.ElementsTreeElement.prototype = {
         this.expandedChildrenLimit = Math.max(this.representedObject._childNodeCount, this.expandedChildrenLimit + WebInspector.ElementsTreeElement.InitialChildrenLimit);
     },
 
+    expandRecursively: function()
+    {
+        function callback()
+        {
+            TreeElement.prototype.expandRecursively.call(this, Number.MAX_VALUE);
+        }
+        
+        this.representedObject.getSubtree(-1, callback.bind(this));
+    },
+
     onexpand: function()
     {
         if (this._elementCloseTag)

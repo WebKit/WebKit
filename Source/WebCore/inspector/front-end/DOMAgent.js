@@ -301,6 +301,25 @@ WebInspector.DOMNode.prototype = {
     },
 
     /**
+     * @param {number} depth
+     * @param {function(Array.<WebInspector.DOMNode>)=} callback
+     */
+    getSubtree: function(depth, callback)
+    {
+        /**
+         * @this {WebInspector.DOMNode}
+         * @param {?Protocol.Error} error
+         */
+        function mycallback(error)
+        {
+            if (callback)
+                callback(error ? null : this.children);                
+        }
+
+        DOMAgent.requestChildNodes(this.id, depth, mycallback.bind(this));
+    },
+
+    /**
      * @param {function(?Protocol.Error)=} callback
      */
     getOuterHTML: function(callback)
