@@ -114,6 +114,7 @@ void ScriptedAnimationController::serviceScriptedAnimations(double monotonicTime
         return;
 
     double highResNowMs = 1000.0 * m_document->loader()->timing()->monotonicTimeToZeroBasedDocumentTime(monotonicTimeNow);
+    double legacyHighResNowMs = 1000.0 * m_document->loader()->timing()->monotonicTimeToPseudoWallTime(monotonicTimeNow);
 
     // First, generate a list of callbacks to consider.  Callbacks registered from this point
     // on are considered only for the "next" frame, not this one.
@@ -128,7 +129,10 @@ void ScriptedAnimationController::serviceScriptedAnimations(double monotonicTime
         if (!callback->m_firedOrCancelled) {
             callback->m_firedOrCancelled = true;
             InspectorInstrumentationCookie cookie = InspectorInstrumentation::willFireAnimationFrame(m_document, callback->m_id);
-            callback->handleEvent(highResNowMs);
+            if (callback->m_useLegacyTimeBase)
+                callback->handleEvent(legacyHighResNowMs);
+            else
+                callback->handleEvent(highResNowMs);
             InspectorInstrumentation::didFireAnimationFrame(cookie);
         }
     }

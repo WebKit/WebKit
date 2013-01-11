@@ -208,7 +208,7 @@
 #if defined(ENABLE_REQUEST_ANIMATION_FRAME) && ENABLE_REQUEST_ANIMATION_FRAME
     [V8MeasureAs=UnprefixedRequestAnimationFrame] long requestAnimationFrame(in [Callback] RequestAnimationFrameCallback callback);
     void cancelAnimationFrame(in long id);
-    [ImplementedAs=requestAnimationFrame, V8MeasureAs=PrefixedRequestAnimationFrame] long webkitRequestAnimationFrame(in [Callback] RequestAnimationFrameCallback callback);
+    [V8MeasureAs=PrefixedRequestAnimationFrame] long webkitRequestAnimationFrame(in [Callback] RequestAnimationFrameCallback callback);
     [ImplementedAs=cancelAnimationFrame] void webkitCancelAnimationFrame(in long id);
     [ImplementedAs=cancelAnimationFrame] void webkitCancelRequestAnimationFrame(in long id); // This is a deprecated alias for webkitCancelAnimationFrame(). Remove this when removing vendor prefix.
 #endif

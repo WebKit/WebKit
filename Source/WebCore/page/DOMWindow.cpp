@@ -1550,6 +1550,15 @@ void DOMWindow::clearInterval(int timeoutId)
 #if ENABLE(REQUEST_ANIMATION_FRAME)
 int DOMWindow::requestAnimationFrame(PassRefPtr<RequestAnimationFrameCallback> callback)
 {
+    callback->m_useLegacyTimeBase = false;
+    if (Document* d = document())
+        return d->requestAnimationFrame(callback);
+    return 0;
+}
+
+int DOMWindow::webkitRequestAnimationFrame(PassRefPtr<RequestAnimationFrameCallback> callback)
+{
+    callback->m_useLegacyTimeBase = true;
     if (Document* d = document())
         return d->requestAnimationFrame(callback);
     return 0;
