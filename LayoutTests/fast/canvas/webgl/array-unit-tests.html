@@ -544,6 +544,16 @@ function testConstructionWithNullBuffer(type, name) {
     }
 }
 
+function testConstructionWithExceptionThrowingObject(type, name) {
+    var o = {};
+    Object.defineProperty(o, "length", { get: function() { throw "bail;" }});
+    try {
+        var array = new type(o);
+    } catch (e) {
+    }
+    testPassed("Construction of " + name + " with exception-throwing array-like object didn't crash unexpectedly");
+}
+
 function shouldThrowIndexSizeErr(func, text) {
     var errorText = text + " should throw an exception";
     try {
@@ -1063,6 +1073,7 @@ function runTests() {
                                        testCase.testValues,
                                        testCase.expectedValues);
     testConstructionWithNullBuffer(type, name);
+    testConstructionWithExceptionThrowingObject(type, name);
     testConstructionWithOutOfRangeValues(type, name);
     testConstructionWithNegativeOutOfRangeValues(type, name);
     testConstructionWithUnalignedOffset(type, name, testCase.elementSizeInBytes);

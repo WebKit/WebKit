@@ -171,7 +171,12 @@ v8::Handle<v8::Value> constructWebGLArray(const v8::Arguments& args, WrapperType
         srcArray = args[0]->ToObject();
         if (srcArray.IsEmpty())
             return throwTypeError("Could not convert argument 0 to an array", args.GetIsolate());
-        len = toUInt32(srcArray->Get(v8::String::NewSymbol("length")));
+        v8::Local<v8::Value> val = srcArray->Get(v8::String::NewSymbol("length"));
+        if (val.IsEmpty()) {
+            // Exception thrown during fetch of length property.
+            return v8Undefined();
+        }
+        len = toUInt32(val);
         doInstantiation = true;
     } else {
         bool ok = false;
@@ -208,8 +213,14 @@ v8::Handle<v8::Value> constructWebGLArray(const v8::Arguments& args, WrapperType
     if (!srcArray.IsEmpty()) {
         bool copied = copyElements(args.Holder(), srcArray, len, 0, args.GetIsolate());
         if (!copied) {
-            for (unsigned i = 0; i < len; i++)
-                array->set(i, srcArray->Get(i)->NumberValue());
+            for (unsigned i = 0; i < len; i++) {
+                v8::Local<v8::Value> val = srcArray->Get(i);
+                if (val.IsEmpty()) {
+                    // Exception thrown during fetch.
+                    return v8Undefined();
+                }
+                array->set(i, val->NumberValue());
+            }
         }
     }
 

@@ -37,6 +37,7 @@ PASS test Float32Array ConstructionBoundaryConditions
 PASS Construction of Float32Array with null buffer threw exception
 PASS Construction of Float32Array with (null buffer, 0) threw exception
 PASS Construction of Float32Array with (null buffer, 0, 0) threw exception
+PASS Construction of Float32Array with exception-throwing array-like object didn't crash unexpectedly
 PASS Construction of Float32Array with out-of-range number of elements threw an exception
 PASS Construction of Float32Array with out-of-range offset threw an exception
 PASS Construction of ArrayBuffer with negative size threw exception
@@ -92,6 +93,7 @@ PASS test Float64Array ConstructionBoundaryConditions
 PASS Construction of Float64Array with null buffer threw exception
 PASS Construction of Float64Array with (null buffer, 0) threw exception
 PASS Construction of Float64Array with (null buffer, 0, 0) threw exception
+PASS Construction of Float64Array with exception-throwing array-like object didn't crash unexpectedly
 PASS Construction of Float64Array with out-of-range number of elements threw an exception
 PASS Construction of Float64Array with out-of-range offset threw an exception
 PASS Construction of ArrayBuffer with negative size threw exception
@@ -148,6 +150,7 @@ PASS test Int8Array ConstructionBoundaryConditions
 PASS Construction of Int8Array with null buffer threw exception
 PASS Construction of Int8Array with (null buffer, 0) threw exception
 PASS Construction of Int8Array with (null buffer, 0, 0) threw exception
+PASS Construction of Int8Array with exception-throwing array-like object didn't crash unexpectedly
 PASS Construction of Int8Array with out-of-range number of elements threw an exception
 PASS Construction of Int8Array with out-of-range offset threw an exception
 PASS Construction of ArrayBuffer with negative size threw exception
@@ -199,6 +202,7 @@ PASS test Int16Array ConstructionBoundaryConditions
 PASS Construction of Int16Array with null buffer threw exception
 PASS Construction of Int16Array with (null buffer, 0) threw exception
 PASS Construction of Int16Array with (null buffer, 0, 0) threw exception
+PASS Construction of Int16Array with exception-throwing array-like object didn't crash unexpectedly
 PASS Construction of Int16Array with out-of-range number of elements threw an exception
 PASS Construction of Int16Array with out-of-range offset threw an exception
 PASS Construction of ArrayBuffer with negative size threw exception
@@ -255,6 +259,7 @@ PASS test Int32Array ConstructionBoundaryConditions
 PASS Construction of Int32Array with null buffer threw exception
 PASS Construction of Int32Array with (null buffer, 0) threw exception
 PASS Construction of Int32Array with (null buffer, 0, 0) threw exception
+PASS Construction of Int32Array with exception-throwing array-like object didn't crash unexpectedly
 PASS Construction of Int32Array with out-of-range number of elements threw an exception
 PASS Construction of Int32Array with out-of-range offset threw an exception
 PASS Construction of ArrayBuffer with negative size threw exception
@@ -311,6 +316,7 @@ PASS test Uint8Array ConstructionBoundaryConditions
 PASS Construction of Uint8Array with null buffer threw exception
 PASS Construction of Uint8Array with (null buffer, 0) threw exception
 PASS Construction of Uint8Array with (null buffer, 0, 0) threw exception
+PASS Construction of Uint8Array with exception-throwing array-like object didn't crash unexpectedly
 PASS Construction of Uint8Array with out-of-range number of elements threw an exception
 PASS Construction of Uint8Array with out-of-range offset threw an exception
 PASS Construction of ArrayBuffer with negative size threw exception
@@ -362,6 +368,7 @@ PASS test Uint8ClampedArray ConstructionBoundaryConditions
 PASS Construction of Uint8ClampedArray with null buffer threw exception
 PASS Construction of Uint8ClampedArray with (null buffer, 0) threw exception
 PASS Construction of Uint8ClampedArray with (null buffer, 0, 0) threw exception
+PASS Construction of Uint8ClampedArray with exception-throwing array-like object didn't crash unexpectedly
 PASS Construction of Uint8ClampedArray with out-of-range number of elements threw an exception
 PASS Construction of Uint8ClampedArray with out-of-range offset threw an exception
 PASS Construction of ArrayBuffer with negative size threw exception
@@ -413,6 +420,7 @@ PASS test Uint16Array ConstructionBoundaryConditions
 PASS Construction of Uint16Array with null buffer threw exception
 PASS Construction of Uint16Array with (null buffer, 0) threw exception
 PASS Construction of Uint16Array with (null buffer, 0, 0) threw exception
+PASS Construction of Uint16Array with exception-throwing array-like object didn't crash unexpectedly
 PASS Construction of Uint16Array with out-of-range number of elements threw an exception
 PASS Construction of Uint16Array with out-of-range offset threw an exception
 PASS Construction of ArrayBuffer with negative size threw exception
@@ -469,6 +477,7 @@ PASS test Uint32Array ConstructionBoundaryConditions
 PASS Construction of Uint32Array with null buffer threw exception
 PASS Construction of Uint32Array with (null buffer, 0) threw exception
 PASS Construction of Uint32Array with (null buffer, 0, 0) threw exception
+PASS Construction of Uint32Array with exception-throwing array-like object didn't crash unexpectedly
 PASS Construction of Uint32Array with out-of-range number of elements threw an exception
 PASS Construction of Uint32Array with out-of-range offset threw an exception
 PASS Construction of ArrayBuffer with negative size threw exception
