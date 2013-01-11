@@ -1165,8 +1165,7 @@
             '../bindings/scripts/IDLParser.pm',
             '../bindings/scripts/IDLAttributes.txt',
             '../bindings/scripts/preprocessor.pm',
-            '<(SHARED_INTERMEDIATE_DIR)/supplemental_dependency.tmp',
-            '<@(webcore_test_support_idl_files)',
+            '<!@pymod_do_main(supplemental_idl_files <@(bindings_idl_files))',
           ],
           'outputs': [
             # FIXME:  The .cpp file should be in webkit/bindings once

@@ -42,8 +42,10 @@ chrome_src = os.path.abspath(script_dir)
 sys.path.insert(0, os.path.join(chrome_src, 'tools', 'gyp', 'pylib'))
 import gyp
 
-# Add tools/grit so that pymod_do_main(grit_info ...) can find grit_info.py.
+# Add paths so that pymod_do_main(...) can import files.
 sys.path.insert(1, os.path.join(chrome_src, 'tools', 'grit'))
+sys.path.insert(1, os.path.join(chrome_src, '..', '..', 'WebCore',
+  'WebCore.gyp', 'scripts'))
 
 def additional_include_files(args=[]):
   """
