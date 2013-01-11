@@ -338,7 +338,7 @@ static bool removingNodeRemovesPosition(Node* node, const Position& position)
         return false;
 
     Element* element = static_cast<Element*>(node);
-    return element->contains(position.anchorNode()) || element->contains(position.anchorNode()->shadowAncestorNode());
+    return element->containsIncludingShadowDOM(position.anchorNode());
 }
 
 static void clearRenderViewSelection(const Position& position)

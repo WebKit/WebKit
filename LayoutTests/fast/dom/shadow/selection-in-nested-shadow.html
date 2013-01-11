@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../js/resources/js-test-pre.js"></script>
+<script src="polyfill.js"></script>
+</head>
+<body>
+
+<div id="container">
+    <div id="container1"><div id="host1"></div></div>
+    <div id="container2"><div id="host2"></div></div>
+</div>
+<pre id="console"></pre>
+
+<script>
+var shadowRoot1 = host1.webkitCreateShadowRoot();
+shadowRoot1.innerHTML = '<div id="target1">Element in Shadow DOM</div>';
+
+var shadowRoot2 = host2.webkitCreateShadowRoot();
+var host3 = document.createElement('div');
+var shadowRoot3 = host3.webkitCreateShadowRoot();
+shadowRoot2.appendChild(host3);
+shadowRoot3.innerHTML = '<div id="target2">Element in nested Shadow DOM</div>';
+
+var target1 = shadowRoot1.getElementById('target1');
+var target2 = shadowRoot3.getElementById('target2');
+
+// non-nested ShadowDOM case.
+debug('Select text in non-nested ShadowDOM and remove an element containing shadow host.');
+debug('Then the anchor node of the selection should become be the parent element of the removed element (container).');
+eventSender.mouseMoveTo(target1.offsetLeft + 2, target1.offsetTop + target1.offsetHeight / 2);
+eventSender.mouseDown();
+eventSender.mouseMoveTo(target1.offsetLeft + target1.offsetWidth - 2, target1.offsetTop + target1.offsetHeight / 2);
+eventSender.mouseUp();
+container.removeChild(container1);
+shouldBe('window.getSelection().anchorNode', 'container');
+debug('');
+
+// nested ShadowDOM case.
+debug('Select text in nested ShadowDOM and remove an element containing shadow host.');
+debug('In this case, the anchor node of the selection should also become be the parent element of the removed element (container).');
+eventSender.mouseMoveTo(target2.offsetLeft + 2, target2.offsetTop + target2.offsetHeight / 2);
+eventSender.mouseDown();
+eventSender.mouseMoveTo(target2.offsetLeft + target2.offsetWidth - 2, target2.offsetTop + target2.offsetHeight / 2);
+eventSender.mouseUp();
+container.removeChild(container2);
+shouldBe('window.getSelection().anchorNode', 'container');
+debug('');
+</script>
+
+<script src="../../js/resources/js-test-post.js"></script>
+</body>
+
+</html>

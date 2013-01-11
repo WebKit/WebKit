@@ -1,3 +1,13 @@
+2013-01-10  Shinya Kawanaka  <shinyak@chromium.org>
+
+        When a selected node in nested ShadowDOM is deleted, selection have wrong range.
+        https://bugs.webkit.org/show_bug.cgi?id=106526
+
+        Reviewed by Ryosuke Niwa.
+
+        * fast/dom/shadow/selection-in-nested-shadow-expected.txt: Added.
+        * fast/dom/shadow/selection-in-nested-shadow.html: Added.
+
 2013-01-10  James Robinson  <jamesr@chromium.org>
 
         [chromium] Store scrollable layer's contents size for coordinated scrollable layers
