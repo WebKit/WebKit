@@ -504,14 +504,14 @@ public:
     JSValue getDirect(JSGlobalData& globalData, PropertyName propertyName) const
     {
         PropertyOffset offset = structure()->get(globalData, propertyName);
-        checkOffset(offset, structure()->typeInfo().type());
+        checkOffset(offset, structure()->inlineCapacity());
         return offset != invalidOffset ? getDirectOffset(offset) : JSValue();
     }
 
     WriteBarrierBase<Unknown>* getDirectLocation(JSGlobalData& globalData, PropertyName propertyName)
     {
         PropertyOffset offset = structure()->get(globalData, propertyName);
-        checkOffset(offset, structure()->typeInfo().type());
+        checkOffset(offset, structure()->inlineCapacity());
         return isValidOffset(offset) ? locationForOffset(offset) : 0;
     }
 
@@ -570,7 +570,7 @@ public:
             result = offsetInInlineStorage;
         else
             result = outOfLineStorage() - location + (firstOutOfLineOffset - 1);
-        validateOffset(result, structure()->typeInfo().type());
+        validateOffset(result, structure()->inlineCapacity());
         return result;
     }
 

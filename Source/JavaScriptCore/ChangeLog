@@ -1,5 +1,25 @@
 2013-01-11  Geoffrey Garen  <ggaren@apple.com>
 
+        Fixed some bogus PropertyOffset ASSERTs
+        https://bugs.webkit.org/show_bug.cgi?id=106686
+
+        Reviewed by Gavin Barraclough.
+
+        The ASSERTs were passing a JSType instead of an inlineCapacity, due to
+        an incomplete refactoring.
+
+        The compiler didn't catch this because both types are int underneath.
+
+        * runtime/JSObject.h:
+        (JSC::JSObject::getDirect):
+        (JSC::JSObject::getDirectLocation):
+        (JSC::JSObject::offsetForLocation):
+        * runtime/Structure.cpp:
+        (JSC::Structure::addPropertyTransitionToExistingStructure): Validate against
+        our inline capacity, as we intended.
+
+2013-01-11  Geoffrey Garen  <ggaren@apple.com>
+
         Rename propertyOffsetFor => offsetForPropertyNumber
         https://bugs.webkit.org/show_bug.cgi?id=106685
 

@@ -304,7 +304,7 @@ Structure* Structure::addPropertyTransitionToExistingStructure(Structure* struct
         JSCell* specificValueInPrevious = existingTransition->m_specificValueInPrevious.get();
         if (specificValueInPrevious && specificValueInPrevious != specificValue)
             return 0;
-        validateOffset(existingTransition->m_offset, structure->m_typeInfo.type());
+        validateOffset(existingTransition->m_offset, existingTransition->inlineCapacity());
         offset = existingTransition->m_offset;
         return existingTransition;
     }
