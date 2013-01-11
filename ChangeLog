@@ -1,3 +1,9 @@
+2013-01-11  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Unreviewed. Update NEWS and configure.ac for 1.11.4 release
+
+        * configure.ac: Bump version numbers.
+
 2013-01-10  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] Add API to set the web extensions directory to WebKit2 GTK+

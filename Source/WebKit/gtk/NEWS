@@ -1,4 +1,36 @@
 =================
+WebKitGTK+ 1.11.4
+=================
+
+What's new in WebKitGTK+ 1.11.4?
+
+  - Add support for loading web process extensions to WebKit2 GTK+.
+  - Embed the HTTP authentication dialog into the WebView in WebKit2.
+  - Add support for IME Composition to WebKit2.
+  - Add API to notify about display/execution of insecure content to
+    WebKit2 GTK+ API.
+  - Add GTK+ API to set a WebKitWebView in view source mode to WebKit2.
+  - Add API to set a TLS errors policy to WebKit2 GTK+ API.
+  - Add WEBKIT_HIT_TEST_RESULT_CONTEXT_SCROLLBAR to WebKit2 GTK+ API.
+  - Add support for remote Web Inspector to WebKit2.
+  - Complete the documentation od sections in WebKit2 GTK+ API.
+  - Fix cookies and custom URI requests when the web process is
+    re-launched after a crash.
+  - Fix a crash in WebKit2 when running inside Xvfb.
+  - Fix a crash in WebKit2 when the WebView is resized with the
+    inspector attached.
+  - Use Harfbuzz instead of Pango in GTK+ port.
+  - Add support for WebP image.
+  - Port WebAudio backend to GStreamer 1.0 API.
+  - Fix the buffering ranges reported with GStreamer 1.0.
+  - Implement multipart/x-mixed-replace in the soup network backend.
+  - Fix invalid entries for plugins in navigator.plugins.
+  - Add implementation for AccessibilityUIElementGtk::isSelectable()
+    and AccessibilityUIElementGtk::isMultiSelectable().
+  - Expose ARIA roles for tab, tabpanel and tablist.
+  - Fixed several memory leaks.
+
+=================
 WebKitGTK+ 1.11.2
 =================
 

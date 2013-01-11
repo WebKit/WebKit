@@ -1,3 +1,9 @@
+2013-01-11  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Unreviewed. Update NEWS and configure.ac for 1.11.4 release
+
+        * NEWS: Added release notes for 1.11.4.
+
 2013-01-08  Mark Lam  <mark.lam@apple.com>
 
         Removed the need for the ProposedDatabase mechanism.
