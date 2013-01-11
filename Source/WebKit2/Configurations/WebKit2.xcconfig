@@ -1,4 +1,4 @@
-// Copyright (C) 2010 Apple Inc. All rights reserved.
+// Copyright (C) 2010, 2013 Apple Inc. All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
 // modification, are permitted provided that the following conditions
@@ -33,3 +33,7 @@ FRAMEWORK_AND_LIBRARY_LDFLAGS = -framework ApplicationServices -framework Carbon
 
 OTHER_LDFLAGS = $(OTHER_LDFLAGS_$(PLATFORM_NAME)) $(OTHER_LDFLAGS);
 OTHER_LDFLAGS_macosx = $(FRAMEWORK_AND_LIBRARY_LDFLAGS);
+
+EXCLUDED_SOURCE_FILE_NAMES = $(EXCLUDED_SOURCE_FILE_NAMES_$(PLATFORM_NAME));
+EXCLUDED_SOURCE_FILE_NAMES_iphoneos = *.pdf;
+EXCLUDED_SOURCE_FILE_NAMES_iphonesimulator = $(EXCLUDED_SOURCE_FILE_NAMES_iphoneos);

@@ -1,3 +1,11 @@
+2013-01-11  Dan Bernstein  <mitz@apple.com>
+
+        Exclude unused resources.
+
+        Reviewed by Darin Adler.
+
+        * Configurations/WebKit2.xcconfig: Defined EXCLUDED_SOURCE_FILE_NAMES.
+
 2013-01-11  Anders Carlsson  <andersca@apple.com>
 
         Incoming synchronous messages can sometimes arrive out of order
