@@ -1,3 +1,168 @@
+2013-01-11  Stephen Chenney  <schenney@chromium.org>
+
+        [ Chromium ] New Mac rebaselines (some)
+
+        Unreviewed expectatiosn update after skia changes.
+
+        These are some of the Mac fixes, but mostly it addresses the issues
+        with TestExpectations, so hopefully we'll get green builds.
+
+        * platform/chromium-mac-lion/editing/deleting/4922367-expected.png:
+        * platform/chromium-mac-lion/editing/deleting/5099303-expected.png:
+        * platform/chromium-mac-lion/editing/deleting/5126166-expected.png:
+        * platform/chromium-mac-lion/editing/deleting/5144139-2-expected.png:
+        * platform/chromium-mac-lion/editing/deleting/5206311-1-expected.png:
+        * platform/chromium-mac-lion/editing/deleting/5272440-expected.png:
+        * platform/chromium-mac-lion/editing/deleting/5369009-expected.png:
+        * platform/chromium-mac-lion/editing/deleting/5433862-2-expected.png:
+        * platform/chromium-mac-lion/editing/deleting/5483370-expected.png:
+        * platform/chromium-mac-lion/editing/deleting/collapse-whitespace-3587601-fix-expected.png: Added.
+        * platform/chromium-mac-lion/editing/deleting/delete-3608445-fix-expected.png:
+        * platform/chromium-mac-lion/editing/deleting/delete-3608462-fix-expected.png:
+        * platform/chromium-mac-lion/editing/deleting/delete-4083333-fix-expected.png:
+        * platform/chromium-mac-lion/editing/deleting/delete-after-span-ws-001-expected.png:
+        * platform/chromium-mac-lion/editing/deleting/delete-after-span-ws-002-expected.png:
+        * platform/chromium-mac-lion/editing/deleting/delete-after-span-ws-003-expected.png:
+        * platform/chromium-mac-lion/editing/deleting/delete-and-undo-expected.png:
+        * platform/chromium-mac-lion/editing/deleting/delete-at-paragraph-boundaries-002-expected.png:
+        * platform/chromium-mac-lion/editing/deleting/delete-at-paragraph-boundaries-003-expected.png:
+        * platform/chromium-mac-lion/editing/deleting/delete-at-paragraph-boundaries-004-expected.png:
+        * platform/chromium-mac-lion/editing/deleting/delete-at-paragraph-boundaries-005-expected.png:
+        * platform/chromium-mac-lion/editing/deleting/delete-at-paragraph-boundaries-006-expected.png:
+        * platform/chromium-mac-lion/editing/deleting/delete-at-paragraph-boundaries-007-expected.png:
+        * platform/chromium-mac-lion/editing/deleting/delete-at-paragraph-boundaries-008-expected.png:
+        * platform/chromium-mac-lion/editing/deleting/delete-at-paragraph-boundaries-009-expected.png:
+        * platform/chromium-mac-lion/editing/deleting/delete-at-paragraph-boundaries-010-expected.png:
+        * platform/chromium-mac-lion/editing/deleting/delete-at-paragraph-boundaries-011-expected.png:
+        * platform/chromium-mac-lion/editing/deleting/delete-at-start-or-end-expected.png: Added.
+        * platform/chromium-mac-lion/editing/deleting/delete-block-contents-001-expected.png: Added.
+        * platform/chromium-mac-lion/editing/deleting/delete-block-contents-002-expected.png: Added.
+        * platform/chromium-mac-lion/editing/deleting/delete-block-contents-003-expected.png:
+        * platform/chromium-mac-lion/editing/deleting/delete-block-merge-contents-001-expected.png:
+        * platform/chromium-mac-lion/editing/deleting/delete-block-merge-contents-002-expected.png:
+        * platform/chromium-mac-lion/editing/deleting/delete-block-merge-contents-003-expected.png:
+        * platform/chromium-mac-lion/editing/deleting/delete-block-merge-contents-004-expected.png:
+        * platform/chromium-mac-lion/editing/deleting/delete-block-merge-contents-005-expected.png:
+        * platform/chromium-mac-lion/editing/deleting/delete-block-merge-contents-006-expected.png:
+        * platform/chromium-mac-lion/editing/deleting/delete-block-merge-contents-007-expected.png:
+        * platform/chromium-mac-lion/editing/deleting/delete-block-merge-contents-008-expected.png:
+        * platform/chromium-mac-lion/editing/deleting/delete-block-merge-contents-009-expected.png:
+        * platform/chromium-mac-lion/editing/deleting/delete-block-merge-contents-010-expected.png:
+        * platform/chromium-mac-lion/editing/deleting/delete-block-merge-contents-011-expected.png:
+        * platform/chromium-mac-lion/editing/deleting/delete-block-merge-contents-012-expected.png:
+        * platform/chromium-mac-lion/editing/deleting/delete-block-merge-contents-013-expected.png:
+        * platform/chromium-mac-lion/editing/deleting/delete-block-merge-contents-014-expected.png:
+        * platform/chromium-mac-lion/editing/deleting/delete-block-merge-contents-015-expected.png:
+        * platform/chromium-mac-lion/editing/deleting/delete-block-merge-contents-016-expected.png:
+        * platform/chromium-mac-lion/editing/deleting/delete-block-merge-contents-017-expected.png:
+        * platform/chromium-mac-lion/editing/deleting/delete-br-001-expected.png:
+        * platform/chromium-mac-lion/editing/deleting/delete-br-002-expected.png:
+        * platform/chromium-mac-lion/editing/deleting/delete-br-003-expected.png:
+        * platform/chromium-mac-lion/editing/deleting/delete-br-004-expected.png:
+        * platform/chromium-mac-lion/editing/deleting/delete-br-005-expected.png:
+        * platform/chromium-mac-lion/editing/deleting/delete-br-006-expected.png:
+        * platform/chromium-mac-lion/editing/deleting/delete-br-007-expected.png:
+        * platform/chromium-mac-lion/editing/deleting/delete-br-013-expected.png:
+        * platform/chromium-mac-lion/editing/deleting/delete-character-001-expected.png:
+        * platform/chromium-mac-lion/editing/deleting/delete-contiguous-ws-001-expected.png:
+        * platform/chromium-mac-lion/editing/deleting/delete-first-list-item-expected.png:
+        * platform/chromium-mac-lion/editing/deleting/delete-hr-expected.png:
+        * platform/chromium-mac-lion/editing/deleting/delete-image-001-expected.png:
+        * platform/chromium-mac-lion/editing/deleting/delete-image-002-expected.png:
+        * platform/chromium-mac-lion/editing/deleting/delete-image-003-expected.png:
+        * platform/chromium-mac-lion/editing/deleting/delete-image-004-expected.png: Added.
+        * platform/chromium-mac-lion/editing/deleting/delete-leading-ws-001-expected.png:
+        * platform/chromium-mac-lion/editing/deleting/delete-line-015-expected.png:
+        * platform/chromium-mac-lion/editing/deleting/delete-line-016-expected.png:
+        * platform/chromium-mac-lion/editing/deleting/delete-line-017-expected.png:
+        * platform/chromium-mac-lion/editing/deleting/delete-line-end-ws-001-expected.png:
+        * platform/chromium-mac-lion/editing/deleting/delete-line-end-ws-002-expected.png:
+        * platform/chromium-mac-lion/editing/deleting/delete-listitem-001-expected.png:
+        * platform/chromium-mac-lion/editing/deleting/delete-listitem-002-expected.png:
+        * platform/chromium-mac-lion/editing/deleting/delete-selection-001-expected.png:
+        * platform/chromium-mac-lion/editing/deleting/delete-tab-001-expected.png:
+        * platform/chromium-mac-lion/editing/deleting/delete-tab-002-expected.png:
+        * platform/chromium-mac-lion/editing/deleting/delete-tab-003-expected.png:
+        * platform/chromium-mac-snowleopard/editing/deleting/4922367-expected.png:
+        * platform/chromium-mac-snowleopard/editing/deleting/5099303-expected.png:
+        * platform/chromium-mac-snowleopard/editing/deleting/5126166-expected.png:
+        * platform/chromium-mac-snowleopard/editing/deleting/5144139-2-expected.png:
+        * platform/chromium-mac-snowleopard/editing/deleting/5206311-1-expected.png:
+        * platform/chromium-mac-snowleopard/editing/deleting/5272440-expected.png:
+        * platform/chromium-mac-snowleopard/editing/deleting/5369009-expected.png:
+        * platform/chromium-mac-snowleopard/editing/deleting/5433862-2-expected.png:
+        * platform/chromium-mac-snowleopard/editing/deleting/5483370-expected.png:
+        * platform/chromium-mac-snowleopard/editing/deleting/collapse-whitespace-3587601-fix-expected.png: Added.
+        * platform/chromium-mac-snowleopard/editing/deleting/delete-3608445-fix-expected.png: Added.
+        * platform/chromium-mac-snowleopard/editing/deleting/delete-3608462-fix-expected.png: Added.
+        * platform/chromium-mac-snowleopard/editing/deleting/delete-4083333-fix-expected.png: Added.
+        * platform/chromium-mac-snowleopard/editing/deleting/delete-after-span-ws-001-expected.png:
+        * platform/chromium-mac-snowleopard/editing/deleting/delete-after-span-ws-002-expected.png:
+        * platform/chromium-mac-snowleopard/editing/deleting/delete-after-span-ws-003-expected.png:
+        * platform/chromium-mac-snowleopard/editing/deleting/delete-and-undo-expected.png: Added.
+        * platform/chromium-mac-snowleopard/editing/deleting/delete-at-paragraph-boundaries-002-expected.png: Added.
+        * platform/chromium-mac-snowleopard/editing/deleting/delete-at-paragraph-boundaries-003-expected.png: Added.
+        * platform/chromium-mac-snowleopard/editing/deleting/delete-at-paragraph-boundaries-004-expected.png: Added.
+        * platform/chromium-mac-snowleopard/editing/deleting/delete-at-paragraph-boundaries-005-expected.png: Added.
+        * platform/chromium-mac-snowleopard/editing/deleting/delete-at-paragraph-boundaries-006-expected.png: Added.
+        * platform/chromium-mac-snowleopard/editing/deleting/delete-at-paragraph-boundaries-007-expected.png: Added.
+        * platform/chromium-mac-snowleopard/editing/deleting/delete-at-paragraph-boundaries-008-expected.png: Added.
+        * platform/chromium-mac-snowleopard/editing/deleting/delete-at-paragraph-boundaries-009-expected.png: Added.
+        * platform/chromium-mac-snowleopard/editing/deleting/delete-at-paragraph-boundaries-010-expected.png: Added.
+        * platform/chromium-mac-snowleopard/editing/deleting/delete-at-paragraph-boundaries-011-expected.png: Added.
+        * platform/chromium-mac-snowleopard/editing/deleting/delete-at-start-or-end-expected.png: Added.
+        * platform/chromium-mac-snowleopard/editing/deleting/delete-block-contents-001-expected.png: Added.
+        * platform/chromium-mac-snowleopard/editing/deleting/delete-block-contents-002-expected.png: Added.
+        * platform/chromium-mac-snowleopard/editing/deleting/delete-block-contents-003-expected.png: Added.
+        * platform/chromium-mac-snowleopard/editing/deleting/delete-block-merge-contents-001-expected.png: Added.
+        * platform/chromium-mac-snowleopard/editing/deleting/delete-block-merge-contents-002-expected.png: Added.
+        * platform/chromium-mac-snowleopard/editing/deleting/delete-block-merge-contents-003-expected.png: Added.
+        * platform/chromium-mac-snowleopard/editing/deleting/delete-block-merge-contents-004-expected.png: Added.
+        * platform/chromium-mac-snowleopard/editing/deleting/delete-block-merge-contents-005-expected.png: Added.
+        * platform/chromium-mac-snowleopard/editing/deleting/delete-block-merge-contents-006-expected.png: Added.
+        * platform/chromium-mac-snowleopard/editing/deleting/delete-block-merge-contents-007-expected.png: Added.
+        * platform/chromium-mac-snowleopard/editing/deleting/delete-block-merge-contents-008-expected.png: Added.
+        * platform/chromium-mac-snowleopard/editing/deleting/delete-block-merge-contents-009-expected.png: Added.
+        * platform/chromium-mac-snowleopard/editing/deleting/delete-block-merge-contents-010-expected.png: Added.
+        * platform/chromium-mac-snowleopard/editing/deleting/delete-block-merge-contents-011-expected.png: Added.
+        * platform/chromium-mac-snowleopard/editing/deleting/delete-block-merge-contents-012-expected.png: Added.
+        * platform/chromium-mac-snowleopard/editing/deleting/delete-block-merge-contents-013-expected.png: Added.
+        * platform/chromium-mac-snowleopard/editing/deleting/delete-block-merge-contents-014-expected.png: Added.
+        * platform/chromium-mac-snowleopard/editing/deleting/delete-block-merge-contents-015-expected.png: Added.
+        * platform/chromium-mac-snowleopard/editing/deleting/delete-block-merge-contents-016-expected.png: Added.
+        * platform/chromium-mac-snowleopard/editing/deleting/delete-block-merge-contents-017-expected.png: Added.
+        * platform/chromium-mac-snowleopard/editing/deleting/delete-br-001-expected.png: Added.
+        * platform/chromium-mac-snowleopard/editing/deleting/delete-br-002-expected.png: Added.
+        * platform/chromium-mac-snowleopard/editing/deleting/delete-br-003-expected.png: Added.
+        * platform/chromium-mac-snowleopard/editing/deleting/delete-br-004-expected.png: Added.
+        * platform/chromium-mac-snowleopard/editing/deleting/delete-br-005-expected.png: Added.
+        * platform/chromium-mac-snowleopard/editing/deleting/delete-br-006-expected.png: Added.
+        * platform/chromium-mac-snowleopard/editing/deleting/delete-br-007-expected.png: Added.
+        * platform/chromium-mac-snowleopard/editing/deleting/delete-br-013-expected.png:
+        * platform/chromium-mac-snowleopard/editing/deleting/delete-character-001-expected.png: Added.
+        * platform/chromium-mac-snowleopard/editing/deleting/delete-contiguous-ws-001-expected.png: Added.
+        * platform/chromium-mac-snowleopard/editing/deleting/delete-first-list-item-expected.png:
+        * platform/chromium-mac-snowleopard/editing/deleting/delete-hr-expected.png:
+        * platform/chromium-mac-snowleopard/editing/deleting/delete-image-001-expected.png: Added.
+        * platform/chromium-mac-snowleopard/editing/deleting/delete-image-002-expected.png: Added.
+        * platform/chromium-mac-snowleopard/editing/deleting/delete-image-003-expected.png: Added.
+        * platform/chromium-mac-snowleopard/editing/deleting/delete-image-004-expected.png: Added.
+        * platform/chromium-mac-snowleopard/editing/deleting/delete-leading-ws-001-expected.png: Added.
+        * platform/chromium-mac-snowleopard/editing/deleting/delete-line-015-expected.png:
+        * platform/chromium-mac-snowleopard/editing/deleting/delete-line-016-expected.png:
+        * platform/chromium-mac-snowleopard/editing/deleting/delete-line-017-expected.png:
+        * platform/chromium-mac-snowleopard/editing/deleting/delete-line-end-ws-001-expected.png:
+        * platform/chromium-mac-snowleopard/editing/deleting/delete-line-end-ws-002-expected.png:
+        * platform/chromium-mac-snowleopard/editing/deleting/delete-listitem-001-expected.png: Added.
+        * platform/chromium-mac-snowleopard/editing/deleting/delete-listitem-002-expected.png: Added.
+        * platform/chromium-mac-snowleopard/editing/deleting/delete-selection-001-expected.png: Added.
+        * platform/chromium-mac-snowleopard/editing/deleting/delete-tab-001-expected.png: Added.
+        * platform/chromium-mac-snowleopard/editing/deleting/delete-tab-002-expected.png: Added.
+        * platform/chromium-mac-snowleopard/editing/deleting/delete-tab-003-expected.png: Added.
+        * platform/chromium-win-xp/css2.1/20110323/replaced-min-max-001-expected.png: Added.
+        * platform/chromium-win/css2.1/20110323/replaced-min-max-001-expected.png:
+        * platform/chromium/TestExpectations:
+
 2013-01-11  Levi Weintraub  <leviw@chromium.org>
 
         Unreviewed gardening. Skipping accessibility/corresponding-control-deleted-crash.html on Mac since
