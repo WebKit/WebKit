@@ -1,3 +1,10 @@
+2013-01-11  Levi Weintraub  <leviw@chromium.org>
+
+        Unreviewed gardening. r139445 triggered assertions in Skia on debug Chromium bots.
+        Marking them as crashing in TestExpectations.
+
+        * platform/chromium/TestExpectations:
+
 2013-01-11  Stephen Chenney  <schenney@chromium.org>
 
         [Chromium] More test expectations for Skia changes
