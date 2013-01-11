@@ -1,3 +1,14 @@
+2013-01-11  Stephen Chenney  <schenney@chromium.org>
+
+        [Chromium] Test Expectations update after Skia flag changes.
+
+        Unreviewed test expectations update.
+
+        These are still failing, not sure why as some of them are already in expectations.
+        Test lint passes.
+
+        * platform/chromium/TestExpectations:
+
 2013-01-11  Vsevolod Vlasov  <vsevik@chromium.org>
 
         Web Inspector: Workspace should support several projects and should not have temporary UISourceCodes.
