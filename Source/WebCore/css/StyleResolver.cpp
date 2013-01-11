@@ -857,7 +857,7 @@ void StyleResolver::collectMatchingRulesForList(const Vector<RuleData>* rules, i
 
         StyleRule* rule = ruleData.rule();
         InspectorInstrumentationCookie cookie = InspectorInstrumentation::willMatchRule(document(), rule, this);
-        if (checkSelector(ruleData, options.scope)) {
+        if (ruleMatches(ruleData, options.scope)) {
             // If the rule has no properties to apply, then ignore it in the non-debug mode.
             const StylePropertySet* properties = rule->properties();
             if (!properties || (properties->isEmpty() && !options.includeEmptyRules)) {
@@ -2238,7 +2238,7 @@ PassRefPtr<CSSRuleList> StyleResolver::pseudoStyleRulesForElement(Element* e, Ps
     return m_ruleList.release();
 }
 
-inline bool StyleResolver::checkSelector(const RuleData& ruleData, const ContainerNode* scope)
+inline bool StyleResolver::ruleMatches(const RuleData& ruleData, const ContainerNode* scope)
 {
     m_dynamicPseudo = NOPSEUDO;
 
@@ -2255,7 +2255,7 @@ inline bool StyleResolver::checkSelector(const RuleData& ruleData, const Contain
             return false;
         if (!SelectorChecker::fastCheckRightmostAttributeSelector(m_element, ruleData.selector()))
             return false;
-        return m_selectorChecker.fastCheckSelector(ruleData.selector(), m_element);
+        return m_selectorChecker.fastCheck(ruleData.selector(), m_element);
     }
 
     // Slow path.
@@ -2264,7 +2264,7 @@ inline bool StyleResolver::checkSelector(const RuleData& ruleData, const Contain
     context.elementParentStyle = m_parentNode ? m_parentNode->renderStyle() : 0;
     context.scope = scope;
     context.pseudoStyle = m_pseudoStyle;
-    SelectorChecker::SelectorMatch match = m_selectorChecker.checkSelector(context, m_dynamicPseudo);
+    SelectorChecker::Match match = m_selectorChecker.match(context, m_dynamicPseudo);
     if (match != SelectorChecker::SelectorMatches)
         return false;
     if (m_pseudoStyle != NOPSEUDO && m_pseudoStyle != m_dynamicPseudo)
@@ -2280,7 +2280,7 @@ bool StyleResolver::checkRegionSelector(CSSSelector* regionSelector, Element* re
     m_pseudoStyle = NOPSEUDO;
 
     for (CSSSelector* s = regionSelector; s; s = CSSSelectorList::next(s))
-        if (m_selectorChecker.checkSelector(s, regionElement))
+        if (m_selectorChecker.matches(s, regionElement))
             return true;
 
     return false;

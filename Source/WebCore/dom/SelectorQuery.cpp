@@ -54,7 +54,7 @@ bool SelectorDataList::matches(const SelectorChecker& selectorChecker, Element* 
 
     unsigned selectorCount = m_selectors.size();
     for (unsigned i = 0; i < selectorCount; ++i) {
-        if (selectorChecker.checkSelector(m_selectors[i].selector, targetElement, m_selectors[i].isFastCheckable))
+        if (selectorChecker.matches(m_selectors[i].selector, targetElement, m_selectors[i].isFastCheckable))
             return true;
     }
 
@@ -111,7 +111,7 @@ void SelectorDataList::execute(const SelectorChecker& selectorChecker, Node* roo
         Element* element = rootNode->treeScope()->getElementById(selector->value());
         if (!element || !(isTreeScopeRoot(rootNode) || element->isDescendantOf(rootNode)))
             return;
-        if (selectorChecker.checkSelector(m_selectors[0].selector, element, m_selectors[0].isFastCheckable))
+        if (selectorChecker.matches(m_selectors[0].selector, element, m_selectors[0].isFastCheckable))
             matchedElements.append(element);
         return;
     }
@@ -123,7 +123,7 @@ void SelectorDataList::execute(const SelectorChecker& selectorChecker, Node* roo
         if (n->isElementNode()) {
             Element* element = static_cast<Element*>(n);
             for (unsigned i = 0; i < selectorCount; ++i) {
-                if (selectorChecker.checkSelector(m_selectors[i].selector, element, m_selectors[i].isFastCheckable)) {
+                if (selectorChecker.matches(m_selectors[i].selector, element, m_selectors[i].isFastCheckable)) {
                     matchedElements.append(element);
                     if (firstMatchOnly)
                         return;

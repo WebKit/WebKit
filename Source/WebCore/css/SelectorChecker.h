@@ -46,7 +46,7 @@ class SelectorChecker {
 public:
     explicit SelectorChecker(Document*);
 
-    enum SelectorMatch { SelectorMatches, SelectorFailsLocally, SelectorFailsAllSiblings, SelectorFailsCompletely };
+    enum Match { SelectorMatches, SelectorFailsLocally, SelectorFailsAllSiblings, SelectorFailsCompletely };
     enum VisitedMatchType { VisitedMatchDisabled, VisitedMatchEnabled };
     enum Mode { ResolvingStyle = 0, CollectingRules, QueryingRules, SharingRules };
 
@@ -77,13 +77,13 @@ public:
         bool hasSelectionPseudo;
     };
 
-    bool checkSelector(CSSSelector*, Element*, bool isFastCheckableSelector = false) const;
-    SelectorMatch checkSelector(const SelectorCheckingContext&, PseudoId&) const;
+    bool matches(CSSSelector*, Element*, bool isFastCheckableSelector = false) const;
+    Match match(const SelectorCheckingContext&, PseudoId&) const;
     template<typename SiblingTraversalStrategy>
-    bool checkOneSelector(const SelectorCheckingContext&, const SiblingTraversalStrategy&) const;
+    bool checkOne(const SelectorCheckingContext&, const SiblingTraversalStrategy&) const;
 
     static bool isFastCheckableSelector(const CSSSelector*);
-    bool fastCheckSelector(const CSSSelector*, const Element*) const;
+    bool fastCheck(const CSSSelector*, const Element*) const;
 
     bool strictParsing() const { return m_strictParsing; }
 

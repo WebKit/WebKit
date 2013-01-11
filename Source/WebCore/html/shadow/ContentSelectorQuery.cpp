@@ -45,7 +45,7 @@ bool ContentSelectorChecker::checkContentSelector(CSSSelector* selector, const V
 {
     SelectorChecker::SelectorCheckingContext context(selector, toElement(siblings[nth].get()), SelectorChecker::VisitedMatchEnabled);
     ShadowDOMSiblingTraversalStrategy strategy(siblings, nth);
-    return m_selectorChecker.checkOneSelector(context, strategy);
+    return m_selectorChecker.checkOne(context, strategy);
 }
 
 void ContentSelectorDataList::initialize(const CSSSelectorList& selectors)
