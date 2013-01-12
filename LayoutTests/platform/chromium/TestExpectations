@@ -4498,5 +4498,12 @@ Bug(schenney) svg/zoom/page/zoom-background-image-tiled.html [ ImageOnlyFailure 
 Bug(schenney) svg/zoom/page/zoom-background-images.html [ ImageOnlyFailure ]
 Bug(schenney) svg/zoom/page/zoom-mask-with-percentages.svg [ ImageOnlyFailure ]
 Bug(schenney) svg/zoom/page/zoom-svg-through-object-with-override-size.html [ ImageOnlyFailure ]
-
+Bug(schenney) fast/borders/border-image-01.html [ ImageOnlyFailure ]
+Bug(schenney) fast/borders/border-image-longhand.html [ ImageOnlyFailure ]
+Bug(schenney) fast/borders/border-image-repeat.html [ ImageOnlyFailure ]
+Bug(schenney) fast/borders/border-image-scrambled.html [ ImageOnlyFailure ]
+Bug(schenney) fast/borders/border-image-slices.html [ ImageOnlyFailure ]
+Bug(schenney) fast/borders/border-image-source.html [ ImageOnlyFailure ]
+Bug(schenney) fast/css/continuationCrash.html [ ImageOnlyFailure ]
+Bug(schenney) fast/text/international/hindi-spacing.html [ ImageOnlyFailure Pass ]
 
