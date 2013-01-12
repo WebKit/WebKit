@@ -101,7 +101,6 @@ public:
 #if ENABLE(REQUEST_AUTOCOMPLETE)
     enum AutocompleteResult {
         AutocompleteResultSuccess,
-        AutocompleteResultError, // FIXME: Remove when no longer used.
         AutocompleteResultErrorDisabled,
         AutocompleteResultErrorCancel,
         AutocompleteResultErrorInvalid,

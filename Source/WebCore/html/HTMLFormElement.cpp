@@ -415,8 +415,6 @@ void HTMLFormElement::finishRequestAutocomplete(AutocompleteResult result)
     RefPtr<Event> event;
     if (result == AutocompleteResultSuccess)
         event = Event::create(eventNames().autocompleteEvent, false, false);
-    else if (result == AutocompleteResultError) // FIXME: Remove when no longer used.
-        event = Event::create(eventNames().autocompleteerrorEvent, false, false);
     else if (result == AutocompleteResultErrorDisabled)
         event = AutocompleteErrorEvent::create("disabled");
     else if (result == AutocompleteResultErrorCancel)

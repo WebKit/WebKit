@@ -1,3 +1,13 @@
+2013-01-11  Dan Beam  <dbeam@chromium.org>
+
+        [clean up] Remove HTMLFormElement::AutocompleteResultError in favor of more specific Error reasons
+        https://bugs.webkit.org/show_bug.cgi?id=106610
+
+        Reviewed by Darin Fisher.
+
+        * public/WebFormElement.h: Removed WebFormElement::AutocompleteResultError in favor of more specific error reasons.
+        * src/AssertMatchingEnums.cpp: Removed enum value from compile-time asserts.
+
 2013-01-11  Tien-Ren Chen  <trchen@chromium.org>
 
         WebWidgetClient::didHandleGestureEvent needs to distinguish the case if the event is processed or swallowed

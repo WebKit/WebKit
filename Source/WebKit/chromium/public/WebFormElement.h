@@ -71,7 +71,6 @@ namespace WebKit {
 
         enum AutocompleteResult {
             AutocompleteResultSuccess,
-            AutocompleteResultError, // FIXME: Remove when not used any more.
             AutocompleteResultErrorDisabled,
             AutocompleteResultErrorCancel,
             AutocompleteResultErrorInvalid,
