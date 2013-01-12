@@ -174,53 +174,47 @@ void RenderDeprecatedFlexibleBox::styleWillChange(StyleDifference diff, const Re
     RenderBlock::styleWillChange(diff, newStyle);
 }
 
-void RenderDeprecatedFlexibleBox::calcHorizontalPrefWidths()
+void RenderDeprecatedFlexibleBox::computeIntrinsicLogicalWidths(LayoutUnit& minLogicalWidth, LayoutUnit& maxLogicalWidth) const
 {
-    for (RenderBox* child = firstChildBox(); child; child = child->nextSiblingBox()) {
-        if (childDoesNotAffectWidthOrFlexing(child))
-            continue;
+    if (hasMultipleLines() || isVertical()) {
+        for (RenderBox* child = firstChildBox(); child; child = child->nextSiblingBox()) {
+            if (childDoesNotAffectWidthOrFlexing(child))
+                continue;
 
-        LayoutUnit margin = marginWidthForChild(child);
-        m_minPreferredLogicalWidth += child->minPreferredLogicalWidth() + margin;
-        m_maxPreferredLogicalWidth += child->maxPreferredLogicalWidth() + margin;
+            LayoutUnit margin = marginWidthForChild(child);
+            LayoutUnit width = child->minPreferredLogicalWidth() + margin;
+            minLogicalWidth = max(width, minLogicalWidth);
+
+            width = child->maxPreferredLogicalWidth() + margin;
+            maxLogicalWidth = max(width, maxLogicalWidth);
+        }
+    } else {
+        for (RenderBox* child = firstChildBox(); child; child = child->nextSiblingBox()) {
+            if (childDoesNotAffectWidthOrFlexing(child))
+                continue;
+
+            LayoutUnit margin = marginWidthForChild(child);
+            minLogicalWidth += child->minPreferredLogicalWidth() + margin;
+            maxLogicalWidth += child->maxPreferredLogicalWidth() + margin;
+        }
     }
-}
 
-void RenderDeprecatedFlexibleBox::calcVerticalPrefWidths()
-{
-    for (RenderBox* child = firstChildBox(); child; child = child->nextSiblingBox()) {
-        if (childDoesNotAffectWidthOrFlexing(child))
-            continue;
+    maxLogicalWidth = max(minLogicalWidth, maxLogicalWidth);
 
-        LayoutUnit margin = marginWidthForChild(child);
-        LayoutUnit width = child->minPreferredLogicalWidth() + margin;
-        m_minPreferredLogicalWidth = max(width, m_minPreferredLogicalWidth);
-
-        width = child->maxPreferredLogicalWidth() + margin;
-        m_maxPreferredLogicalWidth = max(width, m_maxPreferredLogicalWidth);
-    }
+    LayoutUnit scrollbarWidth = instrinsicScrollbarLogicalWidth();
+    maxLogicalWidth += scrollbarWidth;
+    minLogicalWidth += scrollbarWidth;
 }
 
 void RenderDeprecatedFlexibleBox::computePreferredLogicalWidths()
 {
     ASSERT(preferredLogicalWidthsDirty());
 
+    m_minPreferredLogicalWidth = m_maxPreferredLogicalWidth = 0;
     if (style()->width().isFixed() && style()->width().value() > 0)
         m_minPreferredLogicalWidth = m_maxPreferredLogicalWidth = adjustContentBoxLogicalWidthForBoxSizing(style()->width().value());
-    else {
-        m_minPreferredLogicalWidth = m_maxPreferredLogicalWidth = 0;
-
-        if (hasMultipleLines() || isVertical())
-            calcVerticalPrefWidths();
-        else
-            calcHorizontalPrefWidths();
-
-        m_maxPreferredLogicalWidth = max(m_minPreferredLogicalWidth, m_maxPreferredLogicalWidth);
-
-        LayoutUnit scrollbarWidth = instrinsicScrollbarLogicalWidth();
-        m_maxPreferredLogicalWidth += scrollbarWidth;
-        m_minPreferredLogicalWidth += scrollbarWidth;
-    }
+    else
+        computeIntrinsicLogicalWidths(m_minPreferredLogicalWidth, m_maxPreferredLogicalWidth);
 
     if (style()->minWidth().isFixed() && style()->minWidth().value() > 0) {
         m_maxPreferredLogicalWidth = max(m_maxPreferredLogicalWidth, adjustContentBoxLogicalWidthForBoxSizing(style()->minWidth().value()));

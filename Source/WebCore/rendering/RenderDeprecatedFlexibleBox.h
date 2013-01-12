@@ -36,10 +36,6 @@ public:
 
     virtual const char* renderName() const;
 
-    virtual void computePreferredLogicalWidths();
-    void calcHorizontalPrefWidths();
-    void calcVerticalPrefWidths();
-
     virtual void styleWillChange(StyleDifference, const RenderStyle* newStyle) OVERRIDE;
 
     virtual void layoutBlock(bool relayoutChildren, LayoutUnit pageHeight = 0);
@@ -54,6 +50,9 @@ public:
     void placeChild(RenderBox* child, const LayoutPoint& location);
 
 protected:
+    virtual void computeIntrinsicLogicalWidths(LayoutUnit& minLogicalWidth, LayoutUnit& maxLogicalWidth) const OVERRIDE;
+    virtual void computePreferredLogicalWidths() OVERRIDE;
+
     LayoutUnit allowedChildFlex(RenderBox* child, bool expanding, unsigned group);
 
     bool hasMultipleLines() const { return style()->boxLines() == MULTIPLE; }

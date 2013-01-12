@@ -44,7 +44,8 @@ private:
     virtual bool canBeReplacedWithInlineRunIn() const OVERRIDE;
 
     virtual int baselinePosition(FontBaseline, bool firstLine, LineDirectionMode, LinePositionMode = PositionOnContainingLine) const;
-    virtual void computePreferredLogicalWidths();
+    virtual void computeIntrinsicLogicalWidths(LayoutUnit& minLogicalWidth, LayoutUnit& maxLogicalWidth) const OVERRIDE;
+    virtual void computePreferredLogicalWidths() OVERRIDE;
     virtual bool requiresForcedStyleRecalcPropagation() const { return true; }
     virtual void layout();
 };

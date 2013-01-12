@@ -155,51 +155,54 @@ static LayoutUnit marginLogicalWidthForChild(RenderBox* child, RenderStyle* pare
     return margin;
 }
 
+void RenderFlexibleBox::computeIntrinsicLogicalWidths(LayoutUnit& minLogicalWidth, LayoutUnit& maxLogicalWidth) const
+{
+    for (RenderBox* child = firstChildBox(); child; child = child->nextSiblingBox()) {
+        if (child->isOutOfFlowPositioned())
+            continue;
+
+        LayoutUnit margin = marginLogicalWidthForChild(child, style());
+        bool hasOrthogonalWritingMode = child->isHorizontalWritingMode() != isHorizontalWritingMode();
+        LayoutUnit minPreferredLogicalWidth = hasOrthogonalWritingMode ? child->logicalHeight() : child->minPreferredLogicalWidth();
+        LayoutUnit maxPreferredLogicalWidth = hasOrthogonalWritingMode ? child->logicalHeight() : child->maxPreferredLogicalWidth();
+        minPreferredLogicalWidth += margin;
+        maxPreferredLogicalWidth += margin;
+        if (!isColumnFlow()) {
+            maxLogicalWidth += maxPreferredLogicalWidth;
+            if (isMultiline()) {
+                // For multiline, the min preferred width is if you put a break between each item.
+                minLogicalWidth = std::max(m_minPreferredLogicalWidth, minPreferredLogicalWidth);
+            } else
+                minLogicalWidth += minPreferredLogicalWidth;
+        } else {
+            minLogicalWidth = std::max(minPreferredLogicalWidth, minLogicalWidth);
+            if (isMultiline()) {
+                // For multiline, the max preferred width is if you put a break between each item.
+                maxLogicalWidth += maxPreferredLogicalWidth;
+            } else
+                maxLogicalWidth = std::max(maxPreferredLogicalWidth, maxLogicalWidth);
+        }
+    }
+
+    maxLogicalWidth = std::max(minLogicalWidth, maxLogicalWidth);
+
+    LayoutUnit scrollbarWidth = instrinsicScrollbarLogicalWidth();
+    maxLogicalWidth += scrollbarWidth;
+    minLogicalWidth += scrollbarWidth;
+}
+
 void RenderFlexibleBox::computePreferredLogicalWidths()
 {
     ASSERT(preferredLogicalWidthsDirty());
+
+    m_minPreferredLogicalWidth = m_maxPreferredLogicalWidth = 0;
 
     RenderStyle* styleToUse = style();
     // FIXME: This should probably be checking for isSpecified since you should be able to use percentage, calc or viewport relative values for width.
     if (styleToUse->logicalWidth().isFixed() && styleToUse->logicalWidth().value() > 0)
         m_minPreferredLogicalWidth = m_maxPreferredLogicalWidth = adjustContentBoxLogicalWidthForBoxSizing(styleToUse->logicalWidth().value());
-    else {
-        m_minPreferredLogicalWidth = m_maxPreferredLogicalWidth = 0;
-
-        for (RenderBox* child = firstChildBox(); child; child = child->nextSiblingBox()) {
-            if (child->isOutOfFlowPositioned())
-                continue;
-
-            LayoutUnit margin = marginLogicalWidthForChild(child, style());
-            bool hasOrthogonalWritingMode = child->isHorizontalWritingMode() != isHorizontalWritingMode();
-            LayoutUnit minPreferredLogicalWidth = hasOrthogonalWritingMode ? child->logicalHeight() : child->minPreferredLogicalWidth();
-            LayoutUnit maxPreferredLogicalWidth = hasOrthogonalWritingMode ? child->logicalHeight() : child->maxPreferredLogicalWidth();
-            minPreferredLogicalWidth += margin;
-            maxPreferredLogicalWidth += margin;
-            if (!isColumnFlow()) {
-                m_maxPreferredLogicalWidth += maxPreferredLogicalWidth;
-                if (isMultiline()) {
-                    // For multiline, the min preferred width is if you put a break between each item.
-                    m_minPreferredLogicalWidth = std::max(m_minPreferredLogicalWidth, minPreferredLogicalWidth);
-                } else
-                    m_minPreferredLogicalWidth += minPreferredLogicalWidth;
-            } else {
-                m_minPreferredLogicalWidth = std::max(minPreferredLogicalWidth, m_minPreferredLogicalWidth);
-                if (isMultiline()) {
-                    // For multiline, the max preferred width is if you put a break between each item.
-                    m_maxPreferredLogicalWidth += maxPreferredLogicalWidth;
-                } else
-                    m_maxPreferredLogicalWidth = std::max(maxPreferredLogicalWidth, m_maxPreferredLogicalWidth);
-            }
-        }
-
-        m_maxPreferredLogicalWidth = std::max(m_minPreferredLogicalWidth, m_maxPreferredLogicalWidth);
-
-        LayoutUnit scrollbarWidth = instrinsicScrollbarLogicalWidth();
-        m_maxPreferredLogicalWidth += scrollbarWidth;
-        m_minPreferredLogicalWidth += scrollbarWidth;
-    }
-
+    else
+        computeIntrinsicLogicalWidths(m_minPreferredLogicalWidth, m_maxPreferredLogicalWidth);
 
     // FIXME: This should probably be checking for isSpecified since you should be able to use percentage, calc or viewport relative values for min-width.
     if (styleToUse->logicalMinWidth().isFixed() && styleToUse->logicalMinWidth().value() > 0) {

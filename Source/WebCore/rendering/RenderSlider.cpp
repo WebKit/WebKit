@@ -70,6 +70,13 @@ int RenderSlider::baselinePosition(FontBaseline, bool /*firstLine*/, LineDirecti
     return height() + marginTop();
 }
 
+void RenderSlider::computeIntrinsicLogicalWidths(LayoutUnit& minLogicalWidth, LayoutUnit& maxLogicalWidth) const
+{
+    maxLogicalWidth = defaultTrackLength * style()->effectiveZoom();
+    if (!style()->width().isPercent())
+        minLogicalWidth = maxLogicalWidth;
+}
+
 void RenderSlider::computePreferredLogicalWidths()
 {
     m_minPreferredLogicalWidth = 0;
@@ -77,12 +84,8 @@ void RenderSlider::computePreferredLogicalWidths()
 
     if (style()->width().isFixed() && style()->width().value() > 0)
         m_minPreferredLogicalWidth = m_maxPreferredLogicalWidth = adjustContentBoxLogicalWidthForBoxSizing(style()->width().value());
-    else {
-        m_maxPreferredLogicalWidth = defaultTrackLength * style()->effectiveZoom();
-
-        if (!style()->width().isPercent())
-            m_minPreferredLogicalWidth = m_maxPreferredLogicalWidth;
-    }
+    else
+        computeIntrinsicLogicalWidths(m_minPreferredLogicalWidth, m_maxPreferredLogicalWidth);
 
     if (style()->minWidth().isFixed() && style()->minWidth().value() > 0) {
         m_maxPreferredLogicalWidth = max(m_maxPreferredLogicalWidth, adjustContentBoxLogicalWidthForBoxSizing(style()->minWidth().value()));
