@@ -93,6 +93,18 @@ private:
     Vector<ConnectionAndIncomingMessage> m_messagesToDispatchWhileWaitingForSyncReply;
 };
 
+class Connection::SecondaryThreadPendingSyncReply {
+WTF_MAKE_NONCOPYABLE(SecondaryThreadPendingSyncReply);
+public:
+    SecondaryThreadPendingSyncReply() : replyDecoder(0) { }
+
+    // The reply decoder, will be null if there was an error processing the sync message on the other side.
+    MessageDecoder* replyDecoder;
+
+    BinarySemaphore semaphore;
+};
+
+
 PassRefPtr<Connection::SyncMessageState> Connection::SyncMessageState::getOrCreate(RunLoop* runLoop)
 {
     MutexLocker locker(syncMessageStateMapMutex());
@@ -297,7 +309,8 @@ PassOwnPtr<MessageEncoder> Connection::createSyncMessageEncoder(StringReference 
     OwnPtr<MessageEncoder> encoder = MessageEncoder::create(messageReceiverName, messageName, destinationID);
 
     // Encode the sync request ID.
-    syncRequestID = ++m_syncRequestID;
+    COMPILE_ASSERT(sizeof(m_syncRequestID) == sizeof(int64_t), CanUseAtomicIncrement);
+    syncRequestID = atomicIncrement(reinterpret_cast<int64_t volatile*>(&m_syncRequestID));
     encoder->encode(syncRequestID);
 
     return encoder.release();
@@ -386,8 +399,11 @@ PassOwnPtr<MessageDecoder> Connection::waitForMessage(StringReference messageRec
 
 PassOwnPtr<MessageDecoder> Connection::sendSyncMessage(MessageID messageID, uint64_t syncRequestID, PassOwnPtr<MessageEncoder> encoder, double timeout, unsigned syncSendFlags)
 {
-    // We only allow sending sync messages from the client run loop.
-    ASSERT(RunLoop::current() == m_clientRunLoop);
+    if (RunLoop::current() != m_clientRunLoop) {
+        // No flags are supported for synchronous messages sent from secondary threads.
+        ASSERT(!syncSendFlags);
+        return sendSyncMessageFromSecondaryThread(messageID, syncRequestID, encoder, timeout);
+    }
 
     if (!isValid()) {
         didFailToSendSyncMessage();
@@ -420,10 +436,53 @@ PassOwnPtr<MessageDecoder> Connection::sendSyncMessage(MessageID messageID, uint
         m_pendingSyncReplies.removeLast();
     }
 
-    if (!reply)
-        didFailToSendSyncMessage();
+    // FIXME: Should we call didFailToSendSyncMessage()? It may be unexpected to get in on a background thread.
 
     return reply.release();
+}
+
+PassOwnPtr<MessageDecoder> Connection::sendSyncMessageFromSecondaryThread(MessageID messageID, uint64_t syncRequestID, PassOwnPtr<MessageEncoder> encoder, double timeout)
+{
+    ASSERT(RunLoop::current() != m_clientRunLoop);
+
+    if (!isValid()) {
+        didFailToSendSyncMessage();
+        return nullptr;
+    }
+
+    SecondaryThreadPendingSyncReply pendingReply;
+
+    // Push the pending sync reply information on our stack.
+    {
+        MutexLocker locker(m_syncReplyStateMutex);
+        if (!m_shouldWaitForSyncReplies) {
+            didFailToSendSyncMessage();
+            return nullptr;
+        }
+
+        ASSERT(!m_secondaryThreadPendingSyncReplyMap.contains(syncRequestID));
+        m_secondaryThreadPendingSyncReplyMap.add(syncRequestID, &pendingReply);
+    }
+
+    sendMessage(messageID.messageIDWithAddedFlags(MessageID::SyncMessage), encoder, 0);
+
+    // Use a really long timeout.
+    if (timeout == NoTimeout)
+        timeout = 1e10;
+
+    pendingReply.semaphore.wait(timeout);
+
+    // Finally, pop the pending sync reply information.
+    {
+        MutexLocker locker(m_syncReplyStateMutex);
+        ASSERT(m_secondaryThreadPendingSyncReplyMap.contains(syncRequestID));
+        m_secondaryThreadPendingSyncReplyMap.remove(syncRequestID);
+    }
+
+    if (!pendingReply.replyDecoder)
+        didFailToSendSyncMessage();
+
+    return adoptPtr(pendingReply.replyDecoder);
 }
 
 PassOwnPtr<MessageDecoder> Connection::waitForSyncReply(uint64_t syncRequestID, double timeout, unsigned syncSendFlags)
@@ -502,7 +561,16 @@ void Connection::processIncomingSyncReply(PassOwnPtr<MessageDecoder> decoder)
         return;
     }
 
-    // If we get here, it means we got a reply for a message that wasn't in the sync request stack.
+    // If it's not a reply to any primary thread message, check if it is a reply to a secondary thread one.
+    SecondaryThreadPendingSyncReplyMap::iterator secondaryThreadReplyMapItem = m_secondaryThreadPendingSyncReplyMap.find(decoder->destinationID());
+    if (secondaryThreadReplyMapItem != m_secondaryThreadPendingSyncReplyMap.end()) {
+        SecondaryThreadPendingSyncReply* reply = secondaryThreadReplyMapItem->value;
+        ASSERT(!reply->replyDecoder);
+        reply->replyDecoder = decoder.leakPtr();
+        reply->semaphore.signal();
+    }
+
+    // If we get here, it means we got a reply for a message that wasn't in the sync request stack or map.
     // This can happen if the send timed out, so it's fine to ignore.
 }
 
@@ -570,6 +638,9 @@ void Connection::connectionDidClose()
 
         if (!m_pendingSyncReplies.isEmpty())
             m_syncMessageState->wakeUpClientRunLoop();
+
+        for (SecondaryThreadPendingSyncReplyMap::iterator iter = m_secondaryThreadPendingSyncReplyMap.begin(); iter != m_secondaryThreadPendingSyncReplyMap.end(); ++iter)
+            iter->value->semaphore.signal();
     }
 
     if (m_didCloseOnConnectionWorkQueueCallback)

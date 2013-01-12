@@ -182,6 +182,7 @@ public:
     PassOwnPtr<MessageEncoder> createSyncMessageEncoder(StringReference messageReceiverName, StringReference messageName, uint64_t destinationID, uint64_t& syncRequestID);
     bool sendMessage(MessageID, PassOwnPtr<MessageEncoder>, unsigned messageSendFlags = 0);
     PassOwnPtr<MessageDecoder> sendSyncMessage(MessageID, uint64_t syncRequestID, PassOwnPtr<MessageEncoder>, double timeout, unsigned syncSendFlags = 0);
+    PassOwnPtr<MessageDecoder> sendSyncMessageFromSecondaryThread(MessageID, uint64_t syncRequestID, PassOwnPtr<MessageEncoder>, double timeout);
     bool sendSyncReply(PassOwnPtr<MessageEncoder>);
 
     void wakeUpRunLoop();
@@ -305,7 +306,7 @@ private:
         // message on the other side.
         MessageDecoder* replyDecoder;
 
-        // Will be set to true once a reply has been received or an error occurred.
+        // Will be set to true once a reply has been received.
         bool didReceiveReply;
     
         PendingSyncReply()
@@ -330,7 +331,7 @@ private:
             return reply.release();
         }
     };
-    
+
     class SyncMessageState;
     friend class SyncMessageState;
     RefPtr<SyncMessageState> m_syncMessageState;
@@ -338,6 +339,10 @@ private:
     Mutex m_syncReplyStateMutex;
     bool m_shouldWaitForSyncReplies;
     Vector<PendingSyncReply> m_pendingSyncReplies;
+
+    class SecondaryThreadPendingSyncReply;
+    typedef HashMap<uint64_t, SecondaryThreadPendingSyncReply*> SecondaryThreadPendingSyncReplyMap;
+    SecondaryThreadPendingSyncReplyMap m_secondaryThreadPendingSyncReplyMap;
 
 #if OS(DARWIN)
     // Called on the connection queue.
