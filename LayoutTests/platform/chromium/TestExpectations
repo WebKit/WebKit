@@ -95,6 +95,7 @@ webkit.org/b/105785 [ Release ] http/tests/inspector/indexeddb [ Pass Slow ]
 crbug.com/24182 [ Debug ] platform/chromium/virtual/gpu/fast/hidpi/image-set-background-dynamic.html [ Pass Slow ]
 webkit.org/b/106606 fast/canvas/webgl/context-release-upon-reload.html [ Pass Slow ]
 webkit.org/b/106606 platform/chromium/virtual/gpu/fast/canvas/webgl/context-release-upon-reload.html [ Pass Slow ]
+crbug.com/24182 [ Debug ] fast/images/zoomed-offset-size.html [ Pass Slow ]
 
 # These tests started being slow when we switched to DRT.
 webkit.org/b/90488 [ Debug ] inspector [ Pass Slow ]
