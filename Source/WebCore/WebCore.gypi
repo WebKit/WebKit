@@ -3367,6 +3367,7 @@
             'html/parser/HTMLSourceTracker.h',
             'html/parser/HTMLStackItem.h',
             'html/parser/HTMLToken.h',
+            'html/parser/HTMLTokenTypes.h',
             'html/parser/HTMLTokenizer.cpp',
             'html/parser/HTMLTokenizer.h',
             'html/parser/HTMLTreeBuilder.cpp',

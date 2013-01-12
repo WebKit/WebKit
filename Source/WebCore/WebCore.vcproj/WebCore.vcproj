@@ -64557,6 +64557,10 @@
 					>
 				</File>
 				<File
+					RelativePath="..\html\parser\HTMLTokenTypes.h"
+					>
+				</File>
+				<File
 					RelativePath="..\html\parser\HTMLTokenizer.cpp"
 					>
 				</File>

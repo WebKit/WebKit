@@ -26,35 +26,12 @@
 #ifndef HTMLToken_h
 #define HTMLToken_h
 
+#include "HTMLTokenTypes.h"
 #include "MarkupTokenBase.h"
 #include <wtf/RefCounted.h>
 #include <wtf/RefPtr.h>
 
 namespace WebCore {
-
-class HTMLTokenTypes {
-public:
-    enum Type {
-        Uninitialized,
-        DOCTYPE,
-        StartTag,
-        EndTag,
-        Comment,
-        Character,
-        EndOfFile,
-    };
-
-    class DoctypeData : public DoctypeDataBase {
-        WTF_MAKE_NONCOPYABLE(DoctypeData);
-    public:
-        DoctypeData()
-            : m_forceQuirks(false)
-        {
-        }
-
-        bool m_forceQuirks;
-    };
-};
 
 class HTMLToken : public MarkupTokenBase<HTMLTokenTypes, HTMLTokenTypes::DoctypeData> {
 public:
@@ -102,7 +79,7 @@ public:
         return m_doctypeData->m_forceQuirks;
     }
 private:
-    AtomicHTMLToken(HTMLToken& token)
+    explicit AtomicHTMLToken(HTMLToken& token)
         : AtomicMarkupTokenBase<HTMLToken>(&token)
     {
     }
