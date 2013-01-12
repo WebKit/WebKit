@@ -27,4 +27,9 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-screen -d -m -c ~/tools/screen-config
+CWD=$(pwd)
+
+cd ~/tools
+screen -d -m -c ./screen-config
+
+cd $CWD

@@ -1,3 +1,17 @@
+2013-01-12  Alan Cutter  <alancutter@chromium.org>
+
+        Migrate the remaining bots in EC2 to Google Compute Engine
+        https://bugs.webkit.org/show_bug.cgi?id=106005
+
+        Reviewed by Eric Seidel.
+
+        Updated bot scripts for launching feeder-queue, style-queue and sheriffbot on GCE.
+
+        * EWSTools/GoogleComputeEngine/build-feeder-style-sheriffbot.sh: Copied from Tools/EWSTools/build-repo.sh.
+        * EWSTools/boot.sh:
+        * EWSTools/build-repo.sh:
+        * EWSTools/start-queue.sh:
+
 2013-01-12  Jochen Eisinger  <jochen@chromium.org>
 
         [chromium] move inspector related methods to TestRunner library

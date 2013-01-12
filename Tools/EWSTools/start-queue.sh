@@ -27,7 +27,8 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-if [[ $# -lt 3 ]] || [[ $# -gt 4 ]]; then
+# The GCE VM image we're using only has bash v4.1.5
+if test $# -lt 3 -o $# -gt 4; then
     echo "Usage: start-queue-loop.sh QUEUE_NAME BOT_ID RESET_AFTER_ITERATION [QUEUE_PARAMS]"
     exit 1
 fi
