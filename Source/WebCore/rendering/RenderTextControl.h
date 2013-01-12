@@ -68,7 +68,8 @@ protected:
 private:
     virtual const char* renderName() const { return "RenderTextControl"; }
     virtual bool isTextControl() const { return true; }
-    virtual void computePreferredLogicalWidths();
+    virtual void computeIntrinsicLogicalWidths(LayoutUnit& minLogicalWidth, LayoutUnit& maxLogicalWidth) const OVERRIDE;
+    virtual void computePreferredLogicalWidths() OVERRIDE;
     virtual void removeLeftoverAnonymousBlock(RenderBlock*) { }
     virtual bool avoidsFloats() const { return true; }
     virtual bool canHaveGeneratedChildren() const OVERRIDE { return false; }

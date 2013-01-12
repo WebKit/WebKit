@@ -203,6 +203,15 @@ void RenderListBox::scrollToRevealSelection()
         scrollToRevealElementAtListIndex(firstIndex);
 }
 
+void RenderListBox::computeIntrinsicLogicalWidths(LayoutUnit& minLogicalWidth, LayoutUnit& maxLogicalWidth) const
+{
+    maxLogicalWidth = m_optionsWidth + 2 * optionsSpacingHorizontal;
+    if (m_vBar)
+        maxLogicalWidth += m_vBar->width();
+    if (!style()->width().isPercent())
+        minLogicalWidth = maxLogicalWidth;
+}
+
 void RenderListBox::computePreferredLogicalWidths()
 {
     ASSERT(!m_optionsChanged);
@@ -212,14 +221,8 @@ void RenderListBox::computePreferredLogicalWidths()
 
     if (style()->width().isFixed() && style()->width().value() > 0)
         m_minPreferredLogicalWidth = m_maxPreferredLogicalWidth = adjustContentBoxLogicalWidthForBoxSizing(style()->width().value());
-    else {
-        m_maxPreferredLogicalWidth = m_optionsWidth + 2 * optionsSpacingHorizontal;
-        if (m_vBar)
-            m_maxPreferredLogicalWidth += m_vBar->width();
-
-        if (!style()->width().isPercent())
-            m_minPreferredLogicalWidth = m_maxPreferredLogicalWidth;
-    }
+    else
+        computeIntrinsicLogicalWidths(m_minPreferredLogicalWidth, m_maxPreferredLogicalWidth);
 
     if (style()->minWidth().isFixed() && style()->minWidth().value() > 0) {
         m_maxPreferredLogicalWidth = max(m_maxPreferredLogicalWidth, adjustContentBoxLogicalWidthForBoxSizing(style()->minWidth().value()));
