@@ -39,6 +39,7 @@
 
 namespace WebKit {
 
+class WebGestureEvent;
 class WebString;
 class WebWidget;
 struct WebCursorInfo;
@@ -162,6 +163,15 @@ public:
 
     // Returns true iff the pointer is locked to this widget.
     virtual bool isPointerLocked() { return false; }
+
+    // Called when a gesture event is handled.
+    enum EventStatus {
+        EventStatusUnprocessed,
+        EventStatusProcessed,
+        EventStatusCancelled
+    };
+    virtual void didHandleGestureEvent(const WebGestureEvent& event, EventStatus) { }
+    virtual void didHandleGestureEvent(const WebGestureEvent& event, bool eventSwallowed) { } // deprecated
 
 protected:
     ~WebWidgetClient() { }

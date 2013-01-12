@@ -123,7 +123,7 @@ private:
 class TapHandlingWebViewClient : public WebViewClient {
 public:
     // WebViewClient methods
-    virtual void didHandleGestureEvent(const WebGestureEvent& event, bool handled)
+    virtual void didHandleGestureEvent(const WebGestureEvent& event, EventStatus eventStatus)
     {
         if (event.type == WebInputEvent::GestureTap) {
             m_tapX = event.x;

@@ -1,3 +1,23 @@
+2013-01-11  Tien-Ren Chen  <trchen@chromium.org>
+
+        WebWidgetClient::didHandleGestureEvent needs to distinguish the case if the event is processed or swallowed
+        https://bugs.webkit.org/show_bug.cgi?id=104427
+
+        Reviewed by Adam Barth.
+
+        When a gesture needs to be disambiguated, WebKit doesn't update cursor focus.
+        We added an extra status for didHandleGestureEvent(), so we can distinguish
+        the case whether the event is actually delivered to the web page or cancelled.
+
+        * public/WebViewClient.h:
+        * public/WebWidgetClient.h:
+        (WebKit):
+        (WebWidgetClient):
+        (WebKit::WebWidgetClient::didHandleGestureEvent):
+        * src/WebViewImpl.cpp:
+        (WebKit::WebViewImpl::handleGestureEvent):
+        * tests/WebViewTest.cpp:
+
 2013-01-11  Eberhard Graether  <egraether@google.com>
 
         [chromium] Add ContinuousPainter to call setNeedsDisplay on all layers recursively in continuous painting mode
