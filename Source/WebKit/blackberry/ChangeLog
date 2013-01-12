@@ -1,3 +1,19 @@
+2013-01-11  Andrew Lo  <anlo@rim.com>
+
+        [BlackBerry] Focus zoom animation doesn't occur on devices with physical keyboard
+        https://bugs.webkit.org/show_bug.cgi?id=106719
+
+        Reviewed by Yong Li.
+        Internally reviewed by Mike Fenton.
+
+        Internal PR 278687
+
+        Always ensureFocusTextElementVisible if an element is focused when
+        the device has a physical keyboard.
+
+        * WebKitSupport/InputHandler.cpp:
+        (BlackBerry::WebKit::InputHandler::setElementFocused):
+
 2013-01-11  Otto Derek Cheung  <otcheung@rim.com>
 
         [BlackBerry] Modifying the databaseQuota call to WebPageClient
