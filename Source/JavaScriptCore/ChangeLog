@@ -1,3 +1,9 @@
+2013-01-11  Filip Pizlo  <fpizlo@apple.com>
+
+        Unreviewed, speculative build fix.
+
+        * API/JSWrapperMap.mm:
+
 2013-01-10  Filip Pizlo  <fpizlo@apple.com>
 
         JITThunks should not compile only because of luck
