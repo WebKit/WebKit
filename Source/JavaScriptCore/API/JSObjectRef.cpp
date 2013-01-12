@@ -49,6 +49,7 @@
 #include "JSString.h"
 #include "JSValueRef.h"
 #include "ObjectPrototype.h"
+#include "Operations.h"
 #include "PropertyNameArray.h"
 #include "RegExpConstructor.h"
 

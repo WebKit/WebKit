@@ -29,6 +29,7 @@
 
 #include "Bridge.h"
 #include <runtime/JSString.h>
+#include <runtime/Operations.h>
 #include <wtf/HashMap.h>
 #include <wtf/RefCounted.h>
 #include <wtf/Vector.h>

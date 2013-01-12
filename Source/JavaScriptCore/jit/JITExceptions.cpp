@@ -31,6 +31,7 @@
 #include "Interpreter.h"
 #include "JSGlobalData.h"
 #include "JSValue.h"
+#include "Operations.h"
 
 #if ENABLE(JIT) || ENABLE(LLINT)
 

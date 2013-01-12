@@ -26,6 +26,8 @@
 #include "config.h"
 #include "ArrayAllocationProfile.h"
 
+#include "Operations.h"
+
 namespace JSC {
 
 void ArrayAllocationProfile::updateIndexingType()

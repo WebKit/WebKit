@@ -191,11 +191,6 @@ namespace JSC {
         InlineWatchpointSet m_inheritorIDWatchpoint;
     };
 
-    inline bool JSValue::isFunction() const
-    {
-        return isCell() && (asCell()->inherits(&JSFunction::s_info) || asCell()->inherits(&InternalFunction::s_info));
-    }
-
 } // namespace JSC
 
 #endif // JSFunction_h

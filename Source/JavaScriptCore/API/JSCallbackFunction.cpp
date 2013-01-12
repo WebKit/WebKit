@@ -30,10 +30,11 @@
 #include "APICast.h"
 #include "CodeBlock.h"
 #include "ExceptionHelpers.h"
-#include "JSFunction.h"
 #include "FunctionPrototype.h"
-#include <runtime/JSGlobalObject.h>
-#include <runtime/JSLock.h>
+#include "JSFunction.h"
+#include "JSGlobalObject.h"
+#include "JSLock.h"
+#include "Operations.h"
 #include <wtf/Vector.h>
 
 namespace JSC {

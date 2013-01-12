@@ -35,6 +35,7 @@
 #include <runtime/Error.h>
 #include <runtime/JSObject.h>
 #include <runtime/JSValue.h>
+#include <runtime/Operations.h>
 #include <wtf/ArrayBufferView.h>
 #include <wtf/TypedArrayBase.h>
 

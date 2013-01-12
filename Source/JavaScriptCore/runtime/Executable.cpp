@@ -33,6 +33,7 @@
 #include "ExecutionHarness.h"
 #include "JIT.h"
 #include "JITDriver.h"
+#include "Operations.h"
 #include "Parser.h"
 #include <wtf/Vector.h>
 #include <wtf/text/StringBuilder.h>

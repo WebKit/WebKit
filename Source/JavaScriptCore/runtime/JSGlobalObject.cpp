@@ -57,6 +57,7 @@
 #include "JSLock.h"
 #include "JSNameScope.h"
 #include "JSONObject.h"
+#include "JSValueInlines.h"
 #include "JSWithScope.h"
 #include "LegacyProfiler.h"
 #include "Lookup.h"

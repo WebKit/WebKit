@@ -29,6 +29,7 @@
 #include "HeapRootVisitor.h"
 #include "JSGlobalObject.h"
 #include "JSString.h"
+#include "Operations.h"
 #include <wtf/Noncopyable.h>
 #include <wtf/PassOwnPtr.h>
 #include <wtf/text/StringImpl.h>

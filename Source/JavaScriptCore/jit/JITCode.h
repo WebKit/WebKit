@@ -28,8 +28,9 @@
 
 #if ENABLE(JIT) || ENABLE(LLINT)
 #include "CallFrame.h"
-#include "JSValue.h"
 #include "Disassembler.h"
+#include "JITStubs.h"
+#include "JSValue.h"
 #include "LegacyProfiler.h"
 #include "MacroAssemblerCodeRef.h"
 #endif

@@ -32,6 +32,7 @@
 #include "JSGlobalData.h"
 #include "JSScriptRefPrivate.h"
 #include "OpaqueJSString.h"
+#include "Operations.h"
 #include "Parser.h"
 #include "SourceCode.h"
 #include "SourceProvider.h"

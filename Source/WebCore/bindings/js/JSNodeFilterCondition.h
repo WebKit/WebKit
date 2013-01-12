@@ -23,6 +23,7 @@
 #include "NodeFilterCondition.h"
 #include <heap/Weak.h>
 #include <runtime/JSValue.h>
+#include <runtime/Operations.h>
 #include <wtf/PassRefPtr.h>
 
 namespace WebCore {

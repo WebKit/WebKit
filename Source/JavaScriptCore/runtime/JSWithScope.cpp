@@ -26,6 +26,8 @@
 #include "config.h"
 #include "JSWithScope.h"
 
+#include "Operations.h"
+
 namespace JSC {
 
 const ClassInfo JSWithScope::s_info = { "WithScope", &Base::s_info, 0, 0, CREATE_METHOD_TABLE(JSWithScope) };

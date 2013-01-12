@@ -73,6 +73,7 @@
 #include "JSDOMWindow.h"
 #include <heap/Strong.h>
 #include <runtime/JSLock.h>
+#include <runtime/Operations.h>
 #endif
 
 namespace WebCore {

@@ -36,6 +36,7 @@
 #include "JSFunction.h"
 #include "JSGlobalObject.h"
 #include "Nodes.h"
+#include "Operations.h"
 #include "Profile.h"
 #include "ProfileGenerator.h"
 #include "ProfileNode.h"

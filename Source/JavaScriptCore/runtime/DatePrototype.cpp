@@ -31,6 +31,7 @@
 #include "JSGlobalObject.h"
 #include "JSString.h"
 #include "JSStringBuilder.h"
+#include "JSValueInlines.h"
 #include "Lookup.h"
 #include "ObjectPrototype.h"
 

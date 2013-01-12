@@ -34,6 +34,7 @@
 #include "JITExceptions.h"
 #include "LLIntCommon.h"
 #include "LowLevelInterpreter.h"
+#include "Operations.h"
 
 namespace JSC { namespace LLInt {
 

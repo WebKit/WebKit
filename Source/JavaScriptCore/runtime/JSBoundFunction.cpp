@@ -28,6 +28,7 @@
 
 #include "GetterSetter.h"
 #include "JSGlobalObject.h"
+#include "Operations.h"
 
 namespace JSC {
 

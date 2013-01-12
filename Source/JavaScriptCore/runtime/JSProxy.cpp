@@ -27,6 +27,7 @@
 #include "JSProxy.h"
 
 #include "JSGlobalObject.h"
+#include "Operations.h"
 
 namespace JSC {
 

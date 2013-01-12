@@ -28,10 +28,11 @@
 
 #include "APIShims.h"
 #include "APICast.h"
-#include <runtime/Error.h>
-#include <runtime/JSGlobalObject.h>
-#include <runtime/JSLock.h>
-#include <runtime/ObjectPrototype.h>
+#include "Error.h"
+#include "JSGlobalObject.h"
+#include "JSLock.h"
+#include "ObjectPrototype.h"
+#include "Operations.h"
 #include <wtf/Vector.h>
 
 namespace JSC {

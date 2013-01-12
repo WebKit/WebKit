@@ -29,14 +29,15 @@
 
 #include "APICast.h"
 #include "APIShims.h"
+#include "CallFrame.h"
+#include "Completion.h"
+#include "InitializeThreading.h"
+#include "JSGlobalObject.h"
+#include "JSLock.h"
+#include "JSObject.h"
 #include "OpaqueJSString.h"
+#include "Operations.h"
 #include "SourceCode.h"
-#include <interpreter/CallFrame.h>
-#include <runtime/InitializeThreading.h>
-#include <runtime/Completion.h>
-#include <runtime/JSGlobalObject.h>
-#include <runtime/JSLock.h>
-#include <runtime/JSObject.h>
 #include <wtf/text/StringHash.h>
 
 using namespace JSC;

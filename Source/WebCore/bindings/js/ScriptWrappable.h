@@ -34,6 +34,7 @@
 #include "JSDOMWrapper.h"
 #include "WebCoreMemoryInstrumentation.h"
 #include <heap/Weak.h>
+#include <runtime/Operations.h>
 
 namespace WebCore {
 

@@ -30,6 +30,7 @@
 
 #include "CodeBlock.h"
 #include "DFGValueSource.h"
+#include "Operations.h"
 #include <wtf/DataLog.h>
 
 namespace JSC { namespace DFG {

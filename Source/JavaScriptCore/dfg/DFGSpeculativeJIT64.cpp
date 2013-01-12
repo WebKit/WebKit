@@ -32,6 +32,7 @@
 #include "ArrayPrototype.h"
 #include "DFGCallArrayAllocatorSlowPathGenerator.h"
 #include "DFGSlowPathGenerator.h"
+#include "JSValueInlines.h"
 #include "ObjectPrototype.h"
 
 namespace JSC { namespace DFG {

@@ -29,7 +29,7 @@
 #include "IncrementalSweeper.h"
 #include "JSCell.h"
 #include "JSDestructibleObject.h"
-
+#include "Operations.h"
 
 namespace JSC {
 

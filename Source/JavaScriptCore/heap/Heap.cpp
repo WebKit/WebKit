@@ -35,6 +35,7 @@
 #include "JSGlobalObject.h"
 #include "JSLock.h"
 #include "JSONObject.h"
+#include "Operations.h"
 #include "Tracing.h"
 #include "UnlinkedCodeBlock.h"
 #include "WeakSetInlines.h"

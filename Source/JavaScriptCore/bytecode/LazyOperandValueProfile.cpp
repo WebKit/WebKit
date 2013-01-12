@@ -28,6 +28,8 @@
 
 #if ENABLE(VALUE_PROFILER)
 
+#include "Operations.h"
+
 namespace JSC {
 
 CompressedLazyOperandValueProfileHolder::CompressedLazyOperandValueProfileHolder() { }

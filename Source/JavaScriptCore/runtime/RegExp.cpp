@@ -24,15 +24,15 @@
 #include "RegExp.h"
 
 #include "Lexer.h"
+#include "Operations.h"
 #include "RegExpCache.h"
-#include "yarr/Yarr.h"
-#include "yarr/YarrJIT.h"
+#include "Yarr.h"
+#include "YarrJIT.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <wtf/Assertions.h>
 #include <wtf/OwnArrayPtr.h>
-
 
 #define REGEXP_FUNC_TEST_DATA_GEN 0
 

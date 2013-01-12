@@ -31,6 +31,7 @@
 #include "JSGlobalObject.h"
 #include "JSFunction.h"
 #include "JSNotAnObject.h"
+#include "JSValueInlines.h"
 #include "NumberObject.h"
 #include <wtf/MathExtras.h>
 #include <wtf/StringExtras.h>

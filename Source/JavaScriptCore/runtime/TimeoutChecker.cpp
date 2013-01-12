@@ -32,6 +32,7 @@
 
 #include "CallFrame.h"
 #include "JSGlobalObject.h"
+#include "Operations.h"
 
 #if OS(DARWIN)
 #include <mach/mach.h>

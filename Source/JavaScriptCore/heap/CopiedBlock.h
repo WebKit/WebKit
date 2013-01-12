@@ -30,7 +30,6 @@
 #include "CopyWorkList.h"
 #include "HeapBlock.h"
 #include "JSValue.h"
-#include "JSValueInlines.h"
 #include "Options.h"
 #include <wtf/Atomics.h>
 #include <wtf/OwnPtr.h>

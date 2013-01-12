@@ -37,6 +37,7 @@
 #include "ewk_settings.h"
 #include "ewk_settings_private.h"
 #include "runtime/InitializeThreading.h"
+#include "runtime/Operations.h"
 #include <Ecore.h>
 #include <Ecore_Evas.h>
 #include <Edje.h>

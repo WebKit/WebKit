@@ -28,6 +28,7 @@
 
 #include "JSGlobalObject.h"
 #include "NamePrototype.h"
+#include "Operations.h"
 
 namespace JSC {
 

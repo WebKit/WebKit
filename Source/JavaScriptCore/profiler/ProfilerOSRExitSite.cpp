@@ -29,6 +29,7 @@
 #include "JSGlobalObject.h"
 #include "JSScope.h"
 #include "JSString.h"
+#include "Operations.h"
 #include <wtf/StringPrintStream.h>
 
 namespace JSC { namespace Profiler {

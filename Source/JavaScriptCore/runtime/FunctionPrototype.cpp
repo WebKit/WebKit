@@ -29,6 +29,7 @@
 #include "JSStringBuilder.h"
 #include "Interpreter.h"
 #include "Lexer.h"
+#include "Operations.h"
 
 namespace JSC {
 

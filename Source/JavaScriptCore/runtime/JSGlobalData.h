@@ -34,7 +34,7 @@
 #include "ExecutableAllocator.h"
 #include "Heap.h"
 #include "Intrinsic.h"
-#include "JITStubs.h"
+#include "JITThunks.h"
 #include "JITThunks.h"
 #include "JSLock.h"
 #include "JSValue.h"
@@ -45,6 +45,7 @@
 #include "SmallStrings.h"
 #include "Strong.h"
 #include "Terminator.h"
+#include "ThunkGenerators.h"
 #include "TimeoutChecker.h"
 #include "TypedArrayDescriptor.h"
 #include "WeakRandom.h"
@@ -67,6 +68,7 @@ namespace JSC {
     class CodeBlock;
     class CodeCache;
     class CommonIdentifiers;
+    class ExecState;
     class HandleStack;
     class IdentifierTable;
     class Interpreter;
@@ -189,7 +191,7 @@ namespace JSC {
 
         GlobalDataType globalDataType;
         ClientData* clientData;
-        CallFrame* topCallFrame;
+        ExecState* topCallFrame;
 
         const HashTable* arrayConstructorTable;
         const HashTable* arrayPrototypeTable;
@@ -309,7 +311,7 @@ namespace JSC {
 
         ReturnAddressPtr exceptionLocation;
         JSValue hostCallReturnValue;
-        CallFrame* callFrameForThrow;
+        ExecState* callFrameForThrow;
         void* targetMachinePCForThrow;
         Instruction* targetInterpreterPCForThrow;
 #if ENABLE(DFG_JIT)

@@ -28,6 +28,7 @@
 
 #include "CodeBlock.h"
 #include "Interpreter.h"
+#include "Operations.h"
 
 namespace JSC {
 

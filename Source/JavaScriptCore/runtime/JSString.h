@@ -491,13 +491,6 @@ namespace JSC {
 
     inline bool isJSString(JSValue v) { return v.isCell() && v.asCell()->classInfo() == &JSString::s_info; }
 
-    inline bool JSCell::toBoolean(ExecState* exec) const
-    {
-        if (isString()) 
-            return static_cast<const JSString*>(this)->toBoolean();
-        return !structure()->masqueradesAsUndefined(exec->lexicalGlobalObject());
-    }
-
     // --- JSValue inlines ----------------------------
     
     inline bool JSValue::toBoolean(ExecState* exec) const

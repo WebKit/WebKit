@@ -30,6 +30,7 @@
 #include <heap/Strong.h>
 #include <heap/StrongInlines.h>
 #include <runtime/JSValue.h>
+#include <runtime/Operations.h>
 #include <wtf/Forward.h>
 #include <wtf/RefPtr.h>
 

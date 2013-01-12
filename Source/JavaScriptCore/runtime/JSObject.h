@@ -1152,27 +1152,6 @@ inline JSValue JSObject::prototype() const
     return structure()->storedPrototype();
 }
 
-inline const MethodTable* JSCell::methodTable() const
-{
-    return &classInfo()->methodTable;
-}
-
-inline bool JSCell::inherits(const ClassInfo* info) const
-{
-    return classInfo()->isSubClassOf(info);
-}
-
-// this method is here to be after the inline declaration of JSCell::inherits
-inline bool JSValue::inherits(const ClassInfo* classInfo) const
-{
-    return isCell() && asCell()->inherits(classInfo);
-}
-
-inline JSObject* JSValue::toThisObject(ExecState* exec) const
-{
-    return isCell() ? asCell()->methodTable()->toThisObject(asCell(), exec) : toThisObjectSlowCase(exec);
-}
-
 ALWAYS_INLINE bool JSObject::inlineGetOwnPropertySlot(ExecState* exec, PropertyName propertyName, PropertySlot& slot)
 {
     PropertyOffset offset = structure()->get(exec->globalData(), propertyName);
@@ -1194,29 +1173,6 @@ ALWAYS_INLINE bool JSObject::inlineGetOwnPropertySlot(ExecState* exec, PropertyN
 ALWAYS_INLINE bool JSObject::getOwnPropertySlot(JSCell* cell, ExecState* exec, PropertyName propertyName, PropertySlot& slot)
 {
     return jsCast<JSObject*>(cell)->inlineGetOwnPropertySlot(exec, propertyName, slot);
-}
-
-ALWAYS_INLINE bool JSCell::fastGetOwnPropertySlot(ExecState* exec, PropertyName propertyName, PropertySlot& slot)
-{
-    if (!structure()->typeInfo().overridesGetOwnPropertySlot())
-        return asObject(this)->inlineGetOwnPropertySlot(exec, propertyName, slot);
-    return methodTable()->getOwnPropertySlot(this, exec, propertyName, slot);
-}
-
-// Fast call to get a property where we may not yet have converted the string to an
-// identifier. The first time we perform a property access with a given string, try
-// performing the property map lookup without forming an identifier. We detect this
-// case by checking whether the hash has yet been set for this string.
-ALWAYS_INLINE JSValue JSCell::fastGetOwnProperty(ExecState* exec, const String& name)
-{
-    if (!structure()->typeInfo().overridesGetOwnPropertySlot() && !structure()->hasGetterSetterProperties()) {
-        PropertyOffset offset = name.impl()->hasHash()
-            ? structure()->get(exec->globalData(), Identifier(exec, name))
-            : structure()->get(exec->globalData(), name);
-        if (offset != invalidOffset)
-            return asObject(this)->locationForOffset(offset)->get();
-    }
-    return JSValue();
 }
 
 // It may seem crazy to inline a function this large but it makes a big difference
@@ -1442,74 +1398,6 @@ inline void JSObject::putDirectWithoutTransition(JSGlobalData& globalData, Prope
 inline JSValue JSObject::toPrimitive(ExecState* exec, PreferredPrimitiveType preferredType) const
 {
     return methodTable()->defaultValue(this, exec, preferredType);
-}
-
-inline JSValue JSValue::get(ExecState* exec, PropertyName propertyName) const
-{
-    PropertySlot slot(asValue());
-    return get(exec, propertyName, slot);
-}
-
-inline JSValue JSValue::get(ExecState* exec, PropertyName propertyName, PropertySlot& slot) const
-{
-    if (UNLIKELY(!isCell())) {
-        JSObject* prototype = synthesizePrototype(exec);
-        if (!prototype->getPropertySlot(exec, propertyName, slot))
-            return jsUndefined();
-        return slot.getValue(exec, propertyName);
-    }
-    JSCell* cell = asCell();
-    while (true) {
-        if (cell->fastGetOwnPropertySlot(exec, propertyName, slot))
-            return slot.getValue(exec, propertyName);
-        JSValue prototype = asObject(cell)->prototype();
-        if (!prototype.isObject())
-            return jsUndefined();
-        cell = asObject(prototype);
-    }
-}
-
-inline JSValue JSValue::get(ExecState* exec, unsigned propertyName) const
-{
-    PropertySlot slot(asValue());
-    return get(exec, propertyName, slot);
-}
-
-inline JSValue JSValue::get(ExecState* exec, unsigned propertyName, PropertySlot& slot) const
-{
-    if (UNLIKELY(!isCell())) {
-        JSObject* prototype = synthesizePrototype(exec);
-        if (!prototype->getPropertySlot(exec, propertyName, slot))
-            return jsUndefined();
-        return slot.getValue(exec, propertyName);
-    }
-    JSCell* cell = const_cast<JSCell*>(asCell());
-    while (true) {
-        if (cell->methodTable()->getOwnPropertySlotByIndex(cell, exec, propertyName, slot))
-            return slot.getValue(exec, propertyName);
-        JSValue prototype = asObject(cell)->prototype();
-        if (!prototype.isObject())
-            return jsUndefined();
-        cell = prototype.asCell();
-    }
-}
-
-inline void JSValue::put(ExecState* exec, PropertyName propertyName, JSValue value, PutPropertySlot& slot)
-{
-    if (UNLIKELY(!isCell())) {
-        putToPrimitive(exec, propertyName, value, slot);
-        return;
-    }
-    asCell()->methodTable()->put(asCell(), exec, propertyName, value, slot);
-}
-
-inline void JSValue::putByIndex(ExecState* exec, unsigned propertyName, JSValue value, bool shouldThrow)
-{
-    if (UNLIKELY(!isCell())) {
-        putToPrimitiveByIndex(exec, propertyName, value, shouldThrow);
-        return;
-    }
-    asCell()->methodTable()->putByIndex(asCell(), exec, propertyName, value, shouldThrow);
 }
 
 ALWAYS_INLINE JSObject* Register::function() const

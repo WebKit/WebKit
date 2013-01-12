@@ -28,6 +28,7 @@
 #include "JSActivation.h"
 #include "JSFunction.h"
 #include "JSGlobalObject.h"
+#include "Operations.h"
 
 using namespace std;
 

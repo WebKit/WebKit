@@ -25,11 +25,12 @@
 
 #include "CallFrame.h"
 #include "CodeProfiling.h"
+#include "Debugger.h"
+#include "Interpreter.h"
 #include "JSGlobalObject.h"
 #include "JSLock.h"
-#include "Interpreter.h"
+#include "Operations.h"
 #include "Parser.h"
-#include "Debugger.h"
 #include <wtf/WTFThreadData.h>
 #include <stdio.h>
 

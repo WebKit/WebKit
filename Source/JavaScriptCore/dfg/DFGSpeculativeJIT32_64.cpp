@@ -34,6 +34,7 @@
 #include "DFGSlowPathGenerator.h"
 #include "JSActivation.h"
 #include "ObjectPrototype.h"
+#include "Operations.h"
 
 namespace JSC { namespace DFG {
 

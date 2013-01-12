@@ -30,6 +30,7 @@
 #include "JSString.h"
 #include "Lexer.h"
 #include "Lookup.h"
+#include "Operations.h"
 #include "RegExpConstructor.h"
 #include "RegExpMatchesArray.h"
 #include "RegExpPrototype.h"

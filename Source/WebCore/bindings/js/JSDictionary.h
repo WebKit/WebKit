@@ -30,6 +30,7 @@
 #include <heap/Strong.h>
 #include <heap/StrongInlines.h>
 #include <interpreter/CallFrame.h>
+#include <runtime/Operations.h>
 #include <wtf/Forward.h>
 
 namespace WebCore {

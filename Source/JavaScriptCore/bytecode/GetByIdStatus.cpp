@@ -30,6 +30,7 @@
 #include "JSScope.h"
 #include "LLIntData.h"
 #include "LowLevelInterpreter.h"
+#include "Operations.h"
 
 namespace JSC {
 

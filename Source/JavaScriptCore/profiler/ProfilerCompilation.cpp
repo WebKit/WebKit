@@ -27,6 +27,7 @@
 #include "ProfilerCompilation.h"
 
 #include "JSGlobalObject.h"
+#include "Operations.h"
 #include "ProfilerDatabase.h"
 #include <wtf/StringPrintStream.h>
 

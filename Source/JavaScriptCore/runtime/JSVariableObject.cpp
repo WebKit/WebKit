@@ -29,6 +29,8 @@
 #include "config.h"
 #include "JSVariableObject.h"
 
+#include "Operations.h"
+
 namespace JSC {
 
 const ClassInfo JSVariableObject::s_info = { "VariableObject", &Base::s_info, 0, 0, CREATE_METHOD_TABLE(JSVariableObject) };

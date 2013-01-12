@@ -32,6 +32,7 @@
 #define BindingState_h
 
 #include <runtime/JSObject.h>
+#include <runtime/Operations.h>
 
 namespace WebCore {
 

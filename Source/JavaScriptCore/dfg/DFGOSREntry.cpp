@@ -32,6 +32,7 @@
 #include "CodeBlock.h"
 #include "DFGNode.h"
 #include "JIT.h"
+#include "Operations.h"
 
 namespace JSC { namespace DFG {
 

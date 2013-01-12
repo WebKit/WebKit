@@ -1,5 +1,5 @@
 /*
- *  Copyright (C) 2011 Apple Inc. All rights reserved.
+ *  Copyright (C) 2011, 2012 Apple Inc. All rights reserved.
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Lesser General Public
@@ -22,6 +22,7 @@
 
 #include "Error.h"
 #include "ExceptionHelpers.h"
+#include "Operations.h"
 
 namespace JSC {
 

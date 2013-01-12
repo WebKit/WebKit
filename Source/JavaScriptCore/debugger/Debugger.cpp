@@ -26,6 +26,7 @@
 #include "Interpreter.h"
 #include "JSFunction.h"
 #include "JSGlobalObject.h"
+#include "Operations.h"
 #include "Parser.h"
 #include "Protect.h"
 

@@ -29,6 +29,7 @@
 #include "CallFrame.h"
 #include "CodeBlock.h"
 #include "Executable.h"
+#include "Operations.h"
 
 namespace JSC {
 

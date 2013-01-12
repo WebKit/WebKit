@@ -22,6 +22,7 @@
 #include "ErrorInstance.h"
 
 #include "JSScope.h"
+#include "Operations.h"
 
 namespace JSC {
 

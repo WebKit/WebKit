@@ -30,6 +30,7 @@
 #include "JSGlobalObject.h"
 #include "JSString.h"
 #include "JSStringBuilder.h"
+#include "JSValueInlines.h"
 #include "ObjectPrototype.h"
 #include <math.h>
 #include <time.h>

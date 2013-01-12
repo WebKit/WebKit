@@ -27,6 +27,7 @@
 #include "JSString.h"
 #include "JSObject.h"
 #include "NumberObject.h"
+#include "Operations.h"
 #include <wtf/MathExtras.h>
 
 namespace JSC {

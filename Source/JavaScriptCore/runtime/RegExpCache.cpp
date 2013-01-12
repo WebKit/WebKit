@@ -1,6 +1,7 @@
 /*
  * Copyright (C) 2010 University of Szeged
  * Copyright (C) 2010 Renata Hodovan (hodovan@inf.u-szeged.hu)
+ * Copyright (C) 2012 Apple Inc. All rights reserved.
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -26,8 +27,9 @@
  */
 
 #include "config.h"
-
 #include "RegExpCache.h"
+
+#include "Operations.h"
 #include "RegExpObject.h"
 #include "StrongInlines.h"
 

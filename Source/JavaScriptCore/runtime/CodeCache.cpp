@@ -29,6 +29,7 @@
 
 #include "BytecodeGenerator.h"
 #include "CodeSpecializationKind.h"
+#include "Operations.h"
 #include "Parser.h"
 #include "StrongInlines.h"
 #include "UnlinkedCodeBlock.h"

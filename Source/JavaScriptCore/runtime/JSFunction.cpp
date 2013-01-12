@@ -36,6 +36,7 @@
 #include "JSNotAnObject.h"
 #include "Interpreter.h"
 #include "ObjectPrototype.h"
+#include "Operations.h"
 #include "Parser.h"
 #include "PropertyNameArray.h"
 

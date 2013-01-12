@@ -28,6 +28,7 @@
 
 #include "CodeBlock.h"
 #include "JSONObject.h"
+#include "Operations.h"
 
 namespace JSC { namespace Profiler {
 

@@ -35,6 +35,7 @@
 #include "Local.h"
 #include "LocalScope.h"
 #include "Lookup.h"
+#include "Operations.h"
 #include "PropertyNameArray.h"
 #include <wtf/MathExtras.h>
 #include <wtf/text/StringBuilder.h>

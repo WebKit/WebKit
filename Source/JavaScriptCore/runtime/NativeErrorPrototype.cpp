@@ -24,6 +24,7 @@
 #include "JSGlobalObject.h"
 #include "JSString.h"
 #include "NativeErrorConstructor.h"
+#include "Operations.h"
 
 namespace JSC {
 

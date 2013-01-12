@@ -24,7 +24,7 @@
 
 #include "JSDateMath.h"
 #include "JSGlobalObject.h"
-
+#include "JSValueInlines.h"
 #include <math.h>
 #include <wtf/MathExtras.h>
 

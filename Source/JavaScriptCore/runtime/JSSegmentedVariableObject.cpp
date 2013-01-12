@@ -29,6 +29,8 @@
 #include "config.h"
 #include "JSSegmentedVariableObject.h"
 
+#include "Operations.h"
+
 namespace JSC {
 
 int JSSegmentedVariableObject::findRegisterIndex(void* registerAddress)

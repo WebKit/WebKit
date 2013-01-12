@@ -28,6 +28,7 @@
 
 #include "JSDestructibleObject.h"
 #include "ObjectPrototype.h"
+#include "Operations.h"
 #include <wtf/Float32Array.h>
 #include <wtf/Float64Array.h>
 #include <wtf/Forward.h>

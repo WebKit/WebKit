@@ -32,6 +32,7 @@
 #include "JSActivation.h"
 #include "JSGlobalObject.h"
 #include "JSNameScope.h"
+#include "Operations.h"
 #include "PropertyNameArray.h"
 
 namespace JSC {

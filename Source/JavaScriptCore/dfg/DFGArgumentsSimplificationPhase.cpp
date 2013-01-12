@@ -35,6 +35,7 @@
 #include "DFGPhase.h"
 #include "DFGValidate.h"
 #include "DFGVariableAccessDataDump.h"
+#include "Operations.h"
 #include <wtf/HashSet.h>
 #include <wtf/HashMap.h>
 

@@ -27,6 +27,7 @@
 #include "JSGlobalData.h"
 #include "JSStack.h"
 #include "MacroAssemblerCodeRef.h"
+#include "Register.h"
 
 namespace JSC  {
 

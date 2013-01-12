@@ -45,6 +45,7 @@
 #include "JSNameScope.h"
 #include "JSValue.h"
 #include "LowLevelInterpreter.h"
+#include "Operations.h"
 #include "ReduceWhitespace.h"
 #include "RepatchBuffer.h"
 #include "SlotVisitorInlines.h"

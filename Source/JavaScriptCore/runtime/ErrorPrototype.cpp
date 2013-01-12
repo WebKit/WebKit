@@ -26,6 +26,7 @@
 #include "JSString.h"
 #include "JSStringBuilder.h"
 #include "ObjectPrototype.h"
+#include "Operations.h"
 #include "StringRecursionChecker.h"
 
 namespace JSC {

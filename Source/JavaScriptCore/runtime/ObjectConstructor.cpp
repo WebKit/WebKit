@@ -30,6 +30,7 @@
 #include "JSGlobalObject.h"
 #include "Lookup.h"
 #include "ObjectPrototype.h"
+#include "Operations.h"
 #include "PropertyDescriptor.h"
 #include "PropertyNameArray.h"
 

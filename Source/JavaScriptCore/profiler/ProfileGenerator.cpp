@@ -33,6 +33,7 @@
 #include "JSFunction.h"
 #include "Interpreter.h"
 #include "LegacyProfiler.h"
+#include "Operations.h"
 #include "Profile.h"
 #include "Tracing.h"
 

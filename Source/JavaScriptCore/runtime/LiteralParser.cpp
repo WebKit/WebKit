@@ -32,6 +32,7 @@
 #include "JSArray.h"
 #include "JSString.h"
 #include "Lexer.h"
+#include "Operations.h"
 #include "StrongInlines.h"
 #include <wtf/ASCIICType.h>
 #include <wtf/dtoa.h>

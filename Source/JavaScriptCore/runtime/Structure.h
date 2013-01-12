@@ -506,48 +506,6 @@ namespace JSC {
         return typeInfo().masqueradesAsUndefined() && globalObject() == lexicalGlobalObject;
     }
 
-    inline JSValue JSValue::structureOrUndefined() const
-    {
-        if (isCell())
-            return JSValue(asCell()->structure());
-        return jsUndefined();
-    }
-
-    inline bool JSCell::isObject() const
-    {
-        return m_structure->isObject();
-    }
-
-    inline bool JSCell::isString() const
-    {
-        return m_structure->typeInfo().type() == StringType;
-    }
-
-    inline bool JSCell::isGetterSetter() const
-    {
-        return m_structure->typeInfo().type() == GetterSetterType;
-    }
-
-    inline bool JSCell::isProxy() const
-    {
-        return structure()->typeInfo().type() == ProxyType;
-    }
-
-    inline bool JSCell::isAPIValueWrapper() const
-    {
-        return m_structure->typeInfo().type() == APIValueWrapperType;
-    }
-
-    inline void JSCell::setStructure(JSGlobalData& globalData, Structure* structure)
-    {
-        ASSERT(structure->typeInfo().overridesVisitChildren() == this->structure()->typeInfo().overridesVisitChildren());
-        ASSERT(structure->classInfo() == m_structure->classInfo());
-        ASSERT(!m_structure
-               || m_structure->transitionWatchpointSetHasBeenInvalidated()
-               || m_structure.get() == structure);
-        m_structure.set(globalData, this, structure);
-    }
-
     ALWAYS_INLINE void SlotVisitor::internalAppend(JSCell* cell)
     {
         ASSERT(!m_isCheckingForDefaultMarkViolation);
@@ -584,23 +542,6 @@ namespace JSC {
                 return true;
         }
         return false;
-    }
-
-    inline JSCell::JSCell(JSGlobalData& globalData, Structure* structure)
-        : m_structure(globalData, this, structure)
-    {
-    }
-
-    inline void JSCell::finishCreation(JSGlobalData& globalData, Structure* structure, CreatingEarlyCellTag)
-    {
-#if ENABLE(GC_VALIDATION)
-        ASSERT(globalData.isInitializingObject());
-        globalData.setInitializingObjectClass(0);
-        if (structure)
-#endif
-            m_structure.setEarlyValue(globalData, this, structure);
-        // Very first set of allocations won't have a real structure.
-        ASSERT(m_structure || !globalData.structureStructure);
     }
 
 } // namespace JSC

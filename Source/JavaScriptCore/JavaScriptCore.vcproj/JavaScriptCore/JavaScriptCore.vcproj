@@ -2197,7 +2197,6 @@
 				RelativePath="..\..\jit\JITStubs.h"
 				>
 			</File>
-			<File
 				RelativePath="..\..\jit\JITThunks.cpp"
 				>
 			</File>

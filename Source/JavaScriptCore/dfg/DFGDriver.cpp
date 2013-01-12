@@ -44,6 +44,7 @@
 #include "DFGStructureCheckHoistingPhase.h"
 #include "DFGValidate.h"
 #include "DFGVirtualRegisterAllocationPhase.h"
+#include "Operations.h"
 #include "Options.h"
 
 namespace JSC { namespace DFG {

@@ -28,6 +28,7 @@
 #include "JSCallbackObject.h"
 
 #include "Heap.h"
+#include "Operations.h"
 #include <wtf/text/StringHash.h>
 
 namespace JSC {

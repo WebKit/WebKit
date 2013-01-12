@@ -39,6 +39,7 @@
 #include <WebKit2/WebProcess.h>
 #include <libsoup/soup-cache.h>
 #include <runtime/InitializeThreading.h>
+#include <runtime/Operations.h>
 #include <unistd.h>
 #include <wtf/MainThread.h>
 #include <wtf/text/CString.h>

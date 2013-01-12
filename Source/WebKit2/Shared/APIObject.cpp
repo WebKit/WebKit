@@ -32,6 +32,7 @@
 #include "APIObject.h"
 
 #include <runtime/InitializeThreading.h>
+#include <runtime/Operations.h>
 #include <wtf/MainThread.h>
 
 namespace WebKit {

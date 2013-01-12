@@ -38,6 +38,7 @@
 #include "JSFunction.h"
 #include "JSNameScope.h"
 #include "LowLevelInterpreter.h"
+#include "Operations.h"
 #include "Options.h"
 #include "StrongInlines.h"
 #include <wtf/text/WTFString.h>

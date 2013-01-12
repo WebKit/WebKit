@@ -23,6 +23,7 @@
 
 #include "Error.h"
 #include "JSGlobalObject.h"
+#include "Operations.h"
 #include "PropertyNameArray.h"
 
 namespace JSC {

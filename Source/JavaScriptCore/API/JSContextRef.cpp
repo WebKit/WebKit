@@ -35,6 +35,7 @@
 #include "JSClassRef.h"
 #include "JSGlobalObject.h"
 #include "JSObject.h"
+#include "Operations.h"
 #include <wtf/text/StringBuilder.h>
 #include <wtf/text/StringHash.h>
 

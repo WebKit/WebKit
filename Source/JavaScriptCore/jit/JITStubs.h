@@ -36,8 +36,6 @@
 #include "MacroAssemblerCodeRef.h"
 #include "Register.h"
 #include "ResolveOperation.h"
-#include "ThunkGenerators.h"
-#include <wtf/HashMap.h>
 
 namespace JSC {
 

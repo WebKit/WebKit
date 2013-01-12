@@ -30,6 +30,7 @@
 #include "JSStringBuilder.h"
 #include "JSValue.h"
 #include "ObjectPrototype.h"
+#include "Operations.h"
 #include "RegExpObject.h"
 #include "RegExp.h"
 #include "RegExpCache.h"

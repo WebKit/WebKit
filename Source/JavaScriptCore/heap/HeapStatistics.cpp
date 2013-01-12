@@ -28,6 +28,7 @@
 
 #include "Heap.h"
 #include "JSObject.h"
+#include "Operations.h"
 #include "Options.h"
 #include <stdlib.h>
 #if OS(UNIX)

@@ -27,6 +27,7 @@
 #include "StructureChain.h"
 
 #include "JSObject.h"
+#include "Operations.h"
 #include "Structure.h"
 #include <wtf/RefPtr.h>
 

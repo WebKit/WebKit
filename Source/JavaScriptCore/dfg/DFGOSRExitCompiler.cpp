@@ -31,6 +31,7 @@
 #include "CallFrame.h"
 #include "DFGCommon.h"
 #include "LinkBuffer.h"
+#include "Operations.h"
 #include "RepatchBuffer.h"
 #include <wtf/StringPrintStream.h>
 

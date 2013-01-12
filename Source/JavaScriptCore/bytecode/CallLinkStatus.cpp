@@ -28,6 +28,7 @@
 
 #include "CodeBlock.h"
 #include "LLIntCallLinkInfo.h"
+#include "Operations.h"
 #include <wtf/CommaPrinter.h>
 
 namespace JSC {

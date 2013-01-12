@@ -23,6 +23,7 @@
 #include "RegExpConstructor.h"
 
 #include "Error.h"
+#include "Operations.h"
 #include "RegExpMatchesArray.h"
 #include "RegExpPrototype.h"
 

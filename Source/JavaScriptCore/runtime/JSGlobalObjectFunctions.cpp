@@ -34,6 +34,7 @@
 #include "Lexer.h"
 #include "LiteralParser.h"
 #include "Nodes.h"
+#include "Operations.h"
 #include "Parser.h"
 #include <wtf/dtoa.h>
 #include <stdio.h>

@@ -37,6 +37,7 @@
 #include "JSNotAnObject.h"
 #include "Interpreter.h"
 #include "Nodes.h"
+#include "Operations.h"
 
 namespace JSC {
 

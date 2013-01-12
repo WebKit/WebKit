@@ -1,3 +1,276 @@
+2013-01-10  Filip Pizlo  <fpizlo@apple.com>
+
+        The JITThunks class should be in its own file, and doing so should not break the build
+        https://bugs.webkit.org/show_bug.cgi?id=105696
+
+        Rubber stamped by Sam Weinig and Geoffrey Garen.
+        
+        This patch was supposed to just move JITThunks into its own file. But then I
+        realized that there is a horrible circular dependency chain between JSCell,
+        JSGlobalData, CallFrame, and Weak, which only works because of magical include
+        order in JITStubs.h, and the fact that JSGlobalData.h includes JITStubs.h
+        before it includes JSCell or JSValue.
+        
+        I first tried to just get JITThunks.h to just magically do the same pointless
+        includes that JITStubs.h had, but then I decided to actually fix the underflying
+        problem, which was that JSCell needed CallFrame, CallFrame needed JSGlobalData,
+        JSGlobalData needed JITThunks, JITThunks needed Weak, and Weak needed JSCell.
+        Now, all of JSCell's outgoing dependencies are placed in JSCellInlines.h. This
+        also gave me an opportunity to move JSValue inline methods from JSCell.h into
+        JSValueInlines.h. But to make this really work, I needed to remove includes of
+        *Inlines.h from other headers (CodeBlock.h for example included JSValueInlines.h,
+        which defeats the whole entire purpose of having an Inlines.h file), and I needed
+        to add includes of *Inlines.h into a bunch of .cpp files. I did this mostly by
+        having .cpp files include Operations.h. In future, if you're adding a .cpp file
+        to JSC, you'll almost certainly have to include Operations.h unless you enjoy
+        link errors.
+
+        * API/JSBase.cpp:
+        * API/JSCallbackConstructor.cpp:
+        * API/JSCallbackFunction.cpp:
+        * API/JSCallbackObject.cpp:
+        * API/JSClassRef.cpp:
+        * API/JSContextRef.cpp:
+        * API/JSObjectRef.cpp:
+        * API/JSScriptRef.cpp:
+        * API/JSWeakObjectMapRefPrivate.cpp:
+        * JSCTypedArrayStubs.h:
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore.vcproj:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * bytecode/ArrayAllocationProfile.cpp:
+        * bytecode/CodeBlock.cpp:
+        * bytecode/GetByIdStatus.cpp:
+        * bytecode/LazyOperandValueProfile.cpp:
+        * bytecode/ResolveGlobalStatus.cpp:
+        * bytecode/SpeculatedType.cpp:
+        * bytecode/UnlinkedCodeBlock.cpp:
+        * bytecompiler/BytecodeGenerator.cpp:
+        * debugger/Debugger.cpp:
+        * debugger/DebuggerActivation.cpp:
+        * debugger/DebuggerCallFrame.cpp:
+        * dfg/DFGArgumentsSimplificationPhase.cpp:
+        * dfg/DFGArrayMode.cpp:
+        * dfg/DFGByteCodeParser.cpp:
+        * dfg/DFGConstantFoldingPhase.cpp:
+        * dfg/DFGDriver.cpp:
+        * dfg/DFGFixupPhase.cpp:
+        * dfg/DFGGraph.cpp:
+        * dfg/DFGJITCompiler.cpp:
+        * dfg/DFGOSREntry.cpp:
+        * dfg/DFGOSRExitCompiler.cpp:
+        * dfg/DFGOSRExitCompiler32_64.cpp:
+        * dfg/DFGOSRExitCompiler64.cpp:
+        * dfg/DFGPredictionPropagationPhase.cpp:
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::silentSavePlanForGPR):
+        (DFG):
+        (JSC::DFG::SpeculativeJIT::silentSavePlanForFPR):
+        (JSC::DFG::SpeculativeJIT::silentSpill):
+        (JSC::DFG::SpeculativeJIT::silentFill):
+        * dfg/DFGSpeculativeJIT.h:
+        (SpeculativeJIT):
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        * dfg/DFGSpeculativeJIT64.cpp:
+        * dfg/DFGStructureCheckHoistingPhase.cpp:
+        * dfg/DFGVariableEventStream.cpp:
+        * heap/CopiedBlock.h:
+        * heap/CopiedSpace.cpp:
+        * heap/HandleSet.cpp:
+        * heap/Heap.cpp:
+        * heap/HeapStatistics.cpp:
+        * heap/SlotVisitor.cpp:
+        * heap/WeakBlock.cpp:
+        * interpreter/CallFrame.cpp:
+        * interpreter/CallFrame.h:
+        * jit/ClosureCallStubRoutine.cpp:
+        * jit/GCAwareJITStubRoutine.cpp:
+        * jit/JIT.cpp:
+        * jit/JITArithmetic.cpp:
+        * jit/JITArithmetic32_64.cpp:
+        * jit/JITCall.cpp:
+        * jit/JITCall32_64.cpp:
+        * jit/JITCode.h:
+        * jit/JITExceptions.cpp:
+        * jit/JITStubs.h:
+        * jit/JITThunks.h:
+        * jsc.cpp:
+        * llint/LLIntExceptions.cpp:
+        * profiler/LegacyProfiler.cpp:
+        * profiler/ProfileGenerator.cpp:
+        * profiler/ProfilerBytecode.cpp:
+        * profiler/ProfilerBytecodeSequence.cpp:
+        * profiler/ProfilerBytecodes.cpp:
+        * profiler/ProfilerCompilation.cpp:
+        * profiler/ProfilerCompiledBytecode.cpp:
+        * profiler/ProfilerDatabase.cpp:
+        * profiler/ProfilerOSRExit.cpp:
+        * profiler/ProfilerOSRExitSite.cpp:
+        * profiler/ProfilerOrigin.cpp:
+        * profiler/ProfilerOriginStack.cpp:
+        * profiler/ProfilerProfiledBytecodes.cpp:
+        * runtime/ArgList.cpp:
+        * runtime/Arguments.cpp:
+        * runtime/ArrayConstructor.cpp:
+        * runtime/BooleanConstructor.cpp:
+        * runtime/BooleanObject.cpp:
+        * runtime/BooleanPrototype.cpp:
+        * runtime/CallData.cpp:
+        * runtime/CodeCache.cpp:
+        * runtime/Completion.cpp:
+        * runtime/ConstructData.cpp:
+        * runtime/DateConstructor.cpp:
+        * runtime/DateInstance.cpp:
+        * runtime/DatePrototype.cpp:
+        * runtime/Error.cpp:
+        * runtime/ErrorConstructor.cpp:
+        * runtime/ErrorInstance.cpp:
+        * runtime/ErrorPrototype.cpp:
+        * runtime/ExceptionHelpers.cpp:
+        * runtime/Executable.cpp:
+        * runtime/FunctionConstructor.cpp:
+        * runtime/FunctionPrototype.cpp:
+        * runtime/GetterSetter.cpp:
+        * runtime/Identifier.cpp:
+        * runtime/InternalFunction.cpp:
+        * runtime/JSActivation.cpp:
+        * runtime/JSBoundFunction.cpp:
+        * runtime/JSCell.cpp:
+        * runtime/JSCell.h:
+        (JSC):
+        * runtime/JSCellInlines.h: Added.
+        (JSC):
+        (JSC::JSCell::JSCell):
+        (JSC::JSCell::finishCreation):
+        (JSC::JSCell::structure):
+        (JSC::JSCell::visitChildren):
+        (JSC::allocateCell):
+        (JSC::isZapped):
+        (JSC::JSCell::isObject):
+        (JSC::JSCell::isString):
+        (JSC::JSCell::isGetterSetter):
+        (JSC::JSCell::isProxy):
+        (JSC::JSCell::isAPIValueWrapper):
+        (JSC::JSCell::setStructure):
+        (JSC::JSCell::methodTable):
+        (JSC::JSCell::inherits):
+        (JSC::JSCell::fastGetOwnPropertySlot):
+        (JSC::JSCell::fastGetOwnProperty):
+        (JSC::JSCell::toBoolean):
+        * runtime/JSDateMath.cpp:
+        * runtime/JSFunction.cpp:
+        * runtime/JSFunction.h:
+        (JSC):
+        * runtime/JSGlobalData.h:
+        (JSC):
+        (JSGlobalData):
+        * runtime/JSGlobalObject.cpp:
+        * runtime/JSGlobalObjectFunctions.cpp:
+        * runtime/JSLock.cpp:
+        * runtime/JSNameScope.cpp:
+        * runtime/JSNotAnObject.cpp:
+        * runtime/JSONObject.cpp:
+        * runtime/JSObject.h:
+        (JSC):
+        * runtime/JSProxy.cpp:
+        * runtime/JSScope.cpp:
+        * runtime/JSSegmentedVariableObject.cpp:
+        * runtime/JSString.h:
+        (JSC):
+        * runtime/JSStringJoiner.cpp:
+        * runtime/JSSymbolTableObject.cpp:
+        * runtime/JSValue.cpp:
+        * runtime/JSValueInlines.h:
+        (JSC::JSValue::toInt32):
+        (JSC::JSValue::toUInt32):
+        (JSC):
+        (JSC::JSValue::isUInt32):
+        (JSC::JSValue::asUInt32):
+        (JSC::JSValue::asNumber):
+        (JSC::jsNaN):
+        (JSC::JSValue::JSValue):
+        (JSC::JSValue::encode):
+        (JSC::JSValue::decode):
+        (JSC::JSValue::operator bool):
+        (JSC::JSValue::operator==):
+        (JSC::JSValue::operator!=):
+        (JSC::JSValue::isEmpty):
+        (JSC::JSValue::isUndefined):
+        (JSC::JSValue::isNull):
+        (JSC::JSValue::isUndefinedOrNull):
+        (JSC::JSValue::isCell):
+        (JSC::JSValue::isInt32):
+        (JSC::JSValue::isDouble):
+        (JSC::JSValue::isTrue):
+        (JSC::JSValue::isFalse):
+        (JSC::JSValue::tag):
+        (JSC::JSValue::payload):
+        (JSC::JSValue::asInt32):
+        (JSC::JSValue::asDouble):
+        (JSC::JSValue::asCell):
+        (JSC::JSValue::isNumber):
+        (JSC::JSValue::isBoolean):
+        (JSC::JSValue::asBoolean):
+        (JSC::reinterpretDoubleToInt64):
+        (JSC::reinterpretInt64ToDouble):
+        (JSC::JSValue::isString):
+        (JSC::JSValue::isPrimitive):
+        (JSC::JSValue::isGetterSetter):
+        (JSC::JSValue::isObject):
+        (JSC::JSValue::getString):
+        (JSC::::getString):
+        (JSC::JSValue::getObject):
+        (JSC::JSValue::getUInt32):
+        (JSC::JSValue::toPrimitive):
+        (JSC::JSValue::getPrimitiveNumber):
+        (JSC::JSValue::toNumber):
+        (JSC::JSValue::toObject):
+        (JSC::JSValue::isFunction):
+        (JSC::JSValue::inherits):
+        (JSC::JSValue::toThisObject):
+        (JSC::JSValue::get):
+        (JSC::JSValue::put):
+        (JSC::JSValue::putByIndex):
+        (JSC::JSValue::structureOrUndefined):
+        (JSC::JSValue::equal):
+        (JSC::JSValue::equalSlowCaseInline):
+        (JSC::JSValue::strictEqualSlowCaseInline):
+        (JSC::JSValue::strictEqual):
+        * runtime/JSVariableObject.cpp:
+        * runtime/JSWithScope.cpp:
+        * runtime/JSWrapperObject.cpp:
+        * runtime/LiteralParser.cpp:
+        * runtime/Lookup.cpp:
+        * runtime/NameConstructor.cpp:
+        * runtime/NameInstance.cpp:
+        * runtime/NamePrototype.cpp:
+        * runtime/NativeErrorConstructor.cpp:
+        * runtime/NativeErrorPrototype.cpp:
+        * runtime/NumberConstructor.cpp:
+        * runtime/NumberObject.cpp:
+        * runtime/ObjectConstructor.cpp:
+        * runtime/ObjectPrototype.cpp:
+        * runtime/Operations.h:
+        (JSC):
+        * runtime/PropertySlot.cpp:
+        * runtime/RegExp.cpp:
+        * runtime/RegExpCache.cpp:
+        * runtime/RegExpCachedResult.cpp:
+        * runtime/RegExpConstructor.cpp:
+        * runtime/RegExpMatchesArray.cpp:
+        * runtime/RegExpObject.cpp:
+        * runtime/RegExpPrototype.cpp:
+        * runtime/SmallStrings.cpp:
+        * runtime/SparseArrayValueMap.cpp:
+        * runtime/StrictEvalActivation.cpp:
+        * runtime/StringConstructor.cpp:
+        * runtime/StringObject.cpp:
+        * runtime/StringRecursionChecker.cpp:
+        * runtime/Structure.h:
+        (JSC):
+        * runtime/StructureChain.cpp:
+        * runtime/TimeoutChecker.cpp:
+        * testRegExp.cpp:
+
 2013-01-11  Filip Pizlo  <fpizlo@apple.com>
 
         If you use Phantom to force something to be live across an OSR exit, you should put it after the OSR exit

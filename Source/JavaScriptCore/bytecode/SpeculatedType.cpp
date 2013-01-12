@@ -32,6 +32,7 @@
 #include "Arguments.h"
 #include "JSArray.h"
 #include "JSFunction.h"
+#include "Operations.h"
 #include "ValueProfile.h"
 #include <wtf/BoundsCheckedPointer.h>
 #include <wtf/StringPrintStream.h>

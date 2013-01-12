@@ -25,6 +25,7 @@
 #include "JSObject.h"
 #include "JSScope.h"
 #include "NumericStrings.h"
+#include "Operations.h"
 #include <new>
 #include <string.h>
 #include <wtf/Assertions.h>

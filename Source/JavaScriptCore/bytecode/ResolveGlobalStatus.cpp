@@ -28,6 +28,7 @@
 
 #include "CodeBlock.h"
 #include "JSValue.h"
+#include "Operations.h"
 #include "Structure.h"
 
 namespace JSC {

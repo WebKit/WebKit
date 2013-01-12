@@ -30,6 +30,7 @@
 #include "JSGlobalObject.h"
 #include "JSNameScope.h"
 #include "JSWithScope.h"
+#include "Operations.h"
 
 namespace JSC {
 

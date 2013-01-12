@@ -29,6 +29,7 @@
 #include "ClassInfo.h"
 #include "GetterSetter.h"
 #include "JSObject.h"
+#include "Operations.h"
 #include "PropertySlot.h"
 #include "Reject.h"
 #include "SlotVisitor.h"

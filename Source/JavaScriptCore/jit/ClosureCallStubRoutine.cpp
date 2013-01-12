@@ -31,6 +31,7 @@
 #include "Executable.h"
 #include "Heap.h"
 #include "JSGlobalData.h"
+#include "Operations.h"
 #include "SlotVisitor.h"
 #include "Structure.h"
 

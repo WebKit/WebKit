@@ -41,6 +41,7 @@
 #include "PluginPackage.h"
 #include "npruntime_impl.h"
 #include "runtime/JSLock.h"
+#include "runtime/Operations.h"
 #include <Ecore_Evas.h>
 #include <Ecore_X.h>
 #include <Evas.h>

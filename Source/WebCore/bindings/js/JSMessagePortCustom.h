@@ -33,6 +33,7 @@
 
 #include "MessagePort.h"
 #include <runtime/JSValue.h>
+#include <runtime/Operations.h>
 #include <wtf/Forward.h>
 
 namespace WebCore {

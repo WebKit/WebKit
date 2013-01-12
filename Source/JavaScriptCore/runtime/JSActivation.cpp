@@ -32,6 +32,7 @@
 #include "Arguments.h"
 #include "Interpreter.h"
 #include "JSFunction.h"
+#include "Operations.h"
 
 using namespace std;
 

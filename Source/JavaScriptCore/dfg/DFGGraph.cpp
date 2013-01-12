@@ -28,6 +28,7 @@
 
 #include "CodeBlock.h"
 #include "DFGVariableAccessDataDump.h"
+#include "Operations.h"
 
 #if ENABLE(DFG_JIT)
 

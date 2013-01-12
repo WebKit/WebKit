@@ -32,6 +32,7 @@
 #include "CodeCache.h"
 #include "Executable.h"
 #include "JSString.h"
+#include "Operations.h"
 #include "SourceProvider.h"
 #include "Structure.h"
 #include "SymbolTable.h"

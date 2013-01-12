@@ -29,6 +29,7 @@
 #if ENABLE(DFG_JIT) && USE(JSVALUE32_64)
 
 #include "DFGOperations.h"
+#include "Operations.h"
 #include <wtf/DataLog.h>
 
 namespace JSC { namespace DFG {
