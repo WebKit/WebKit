@@ -1640,7 +1640,7 @@ void DFG_OPERATION debugOperationPrintSpeculationFailure(ExecState* exec, void* 
         dataLog(" ", FPRInfo::debugName(fpr), ":");
         uint64_t bits = *reinterpret_cast<uint64_t*>(scratchPointer);
         double value = *reinterpret_cast<double*>(scratchPointer);
-        dataLogF("%llx:%lf", bits, value);
+        dataLogF("%llx:%lf", static_cast<long long>(bits), value);
         scratchPointer += sizeof(EncodedJSValue);
     }
     dataLog("\n");

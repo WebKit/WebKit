@@ -1,3 +1,9 @@
+2013-01-12  Csaba Osztrogonác  <ossy@webkit.org>
+
+        Unreviewed 64 bit buildfix after r139496.
+
+        * dfg/DFGOperations.cpp:
+
 2013-01-11  Filip Pizlo  <fpizlo@apple.com>
 
         Unreviewed, speculative build fix.
