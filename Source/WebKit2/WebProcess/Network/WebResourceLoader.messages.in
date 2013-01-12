@@ -23,13 +23,13 @@
 messages -> WebResourceLoader {
 
     // FIXME (NetworkProcess): We'll need much more granularity for response messages.
-    WillSendRequest(uint64_t requestID, WebCore::ResourceRequest request, WebCore::ResourceResponse redirectResponse)
+    WillSendRequest(WebCore::ResourceRequest request, WebCore::ResourceResponse redirectResponse) -> (WebCore::ResourceRequest newRequest)
     DidReceiveResponseWithCertificateInfo(WebCore::ResourceResponse response, WebKit::PlatformCertificateInfo certificateInfo)
     DidReceiveData(CoreIPC::DataReference data, int64_t encodedDataLength, bool allAtOnce)
     DidFinishResourceLoad(double finishTime)
     DidFailResourceLoad(WebCore::ResourceError error)
     
-    CanAuthenticateAgainstProtectionSpace(uint64_t requestID, WebCore::ProtectionSpace protectionSpace)
+    CanAuthenticateAgainstProtectionSpace(WebCore::ProtectionSpace protectionSpace) -> (bool response)
     DidReceiveAuthenticationChallenge(WebCore::AuthenticationChallenge challenge)
     DidCancelAuthenticationChallenge(WebCore::AuthenticationChallenge challenge)
 

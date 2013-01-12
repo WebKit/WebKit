@@ -1,5 +1,45 @@
 2013-01-11  Alexey Proskuryakov  <ap@apple.com>
 
+        [WK2] Network process unblocks all waiting threads when any sync reply arrives
+        https://bugs.webkit.org/show_bug.cgi?id=106713
+
+        Reviewed by Brady Eidson.
+
+        Switch to sending sync CoreIPC messages, which is now possible.
+
+        * NetworkProcess/NetworkConnectionToWebProcess.h:
+        * NetworkProcess/NetworkConnectionToWebProcess.cpp: (WebKit::NetworkConnectionToWebProcess::didClose):
+        We no longer have response maps.
+
+        * NetworkProcess/NetworkResourceLoader.cpp:
+        (WebKit::NetworkResourceLoader::willSendRequest): Just send a sync message.
+        (WebKit::NetworkResourceLoader::canAuthenticateAgainstProtectionSpace): Ditto.
+        (WebKit::NetworkResourceLoader::didReceiveDataArray): Added an unrelated assertion.
+
+        * NetworkProcess/NetworkResourceLoader.h:
+        * NetworkProcess/NetworkResourceLoader.messages.in:
+        Removed no longer used reply messages and their handlers.
+
+        * Shared/BlockingResponseMap.h: Removed a bool version, which was not perfectly
+        safe, and only used in NetworkProcess.
+        (BlockingResponseMap::didReceiveResponse): Updated a still valid FIXME to not refer
+        to network process.
+        (BlockingResponseMap::cancel): Ditto.
+
+        * WebProcess/Network/NetworkProcessConnection.h:
+        * WebProcess/Network/NetworkProcessConnection.cpp:
+        (WebKit::NetworkProcessConnection::didReceiveSyncMessage):
+        Plumbing to handle sync messages.
+
+        * WebProcess/Network/WebResourceLoader.cpp:
+        (WebKit::WebResourceLoader::willSendRequest):
+        (WebKit::WebResourceLoader::canAuthenticateAgainstProtectionSpace):
+        * WebProcess/Network/WebResourceLoader.h:
+        * WebProcess/Network/WebResourceLoader.messages.in:
+        Updated (simplified) sync messages and their handlers.
+
+2013-01-11  Alexey Proskuryakov  <ap@apple.com>
+
         [WK2] Make it possible to send sync messages from secondary threads
         https://bugs.webkit.org/show_bug.cgi?id=106708
 

@@ -68,14 +68,12 @@ uint64_t WebResourceLoader::destinationID() const
     return m_coreLoader->identifier();
 }
 
-void WebResourceLoader::willSendRequest(uint64_t requestID, const ResourceRequest& proposedRequest, const ResourceResponse& redirectResponse)
+void WebResourceLoader::willSendRequest(const ResourceRequest& proposedRequest, const ResourceResponse& redirectResponse, ResourceRequest& newRequest)
 {
     LOG(Network, "(WebProcess) WebResourceLoader::willSendRequest to '%s'", proposedRequest.url().string().utf8().data());
     
-    ResourceRequest newRequest = proposedRequest;
+    newRequest = proposedRequest;
     m_coreLoader->willSendRequest(newRequest, redirectResponse);
-
-    send(Messages::NetworkResourceLoader::WillSendRequestHandled(requestID, newRequest));
 }
 
 void WebResourceLoader::didReceiveResponseWithCertificateInfo(const ResourceResponse& response, const PlatformCertificateInfo& certificateInfo)
@@ -122,9 +120,9 @@ void WebResourceLoader::didReceiveResource(const ShareableResource::Handle& hand
     m_coreLoader->didFinishLoading(finishTime);
 }
 
-void WebResourceLoader::canAuthenticateAgainstProtectionSpace(uint64_t requestID, const ProtectionSpace& protectionSpace)
+void WebResourceLoader::canAuthenticateAgainstProtectionSpace(const ProtectionSpace& protectionSpace, bool& result)
 {
-    send(Messages::NetworkResourceLoader::CanAuthenticateAgainstProtectionSpaceHandled(requestID, m_coreLoader->canAuthenticateAgainstProtectionSpace(protectionSpace)));
+    result = m_coreLoader->canAuthenticateAgainstProtectionSpace(protectionSpace);
 }
 
 void WebResourceLoader::didReceiveAuthenticationChallenge(const AuthenticationChallenge& challenge)

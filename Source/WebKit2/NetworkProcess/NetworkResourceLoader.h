@@ -110,8 +110,6 @@ public:
 private:
     NetworkResourceLoader(const NetworkResourceLoadParameters&, ResourceLoadIdentifier, NetworkConnectionToWebProcess*);
 
-    void willSendRequestHandled(uint64_t requestID, const WebCore::ResourceRequest&);
-    void canAuthenticateAgainstProtectionSpaceHandled(uint64_t requestID, bool canAuthenticate);
     void receivedAuthenticationCredential(const WebCore::AuthenticationChallenge&, const WebCore::Credential&);
     void receivedRequestToContinueWithoutAuthenticationCredential(const WebCore::AuthenticationChallenge&);
     void receivedAuthenticationCancellation(const WebCore::AuthenticationChallenge&);

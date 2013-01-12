@@ -66,6 +66,7 @@ public:
     uint64_t destinationID() const;
 
     void didReceiveWebResourceLoaderMessage(CoreIPC::Connection*, CoreIPC::MessageID, CoreIPC::MessageDecoder&);
+    void didReceiveSyncWebResourceLoaderMessage(CoreIPC::Connection*, CoreIPC::MessageID, CoreIPC::MessageDecoder&, OwnPtr<CoreIPC::MessageEncoder>&);
 
     using RefCounted<WebResourceLoader>::ref;
     using RefCounted<WebResourceLoader>::deref;
@@ -79,14 +80,14 @@ public:
 private:
     WebResourceLoader(PassRefPtr<WebCore::ResourceLoader>);
 
-    void willSendRequest(uint64_t requestID, const WebCore::ResourceRequest&, const WebCore::ResourceResponse& redirectResponse);
+    void willSendRequest(const WebCore::ResourceRequest&, const WebCore::ResourceResponse& redirectResponse, WebCore::ResourceRequest& newRequest);
     void didReceiveResponseWithCertificateInfo(const WebCore::ResourceResponse&, const PlatformCertificateInfo&);
     void didReceiveData(const CoreIPC::DataReference&, int64_t encodedDataLength, bool allAtOnce);
     void didFinishResourceLoad(double finishTime);
     void didFailResourceLoad(const WebCore::ResourceError&);
     void didReceiveResource(const ShareableResource::Handle&, double finishTime);
 
-    void canAuthenticateAgainstProtectionSpace(uint64_t requestID, const WebCore::ProtectionSpace&);
+    void canAuthenticateAgainstProtectionSpace(const WebCore::ProtectionSpace&, bool& result);
     void didReceiveAuthenticationChallenge(const WebCore::AuthenticationChallenge&);
     void didCancelAuthenticationChallenge(const WebCore::AuthenticationChallenge&);
 

@@ -103,10 +103,6 @@ void NetworkConnectionToWebProcess::didClose(CoreIPC::Connection*)
     
     NetworkProcess::shared().removeNetworkConnectionToWebProcess(this);
 
-    // Unblock waiting threads.
-    m_willSendRequestResponseMap.cancel();
-    m_canAuthenticateAgainstProtectionSpaceResponseMap.cancel();
-
     Vector<NetworkConnectionToWebProcessObserver*> observers;
     copyToVector(m_observers, observers);
     for (size_t i = 0; i < observers.size(); ++i)

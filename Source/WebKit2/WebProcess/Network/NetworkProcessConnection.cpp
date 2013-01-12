@@ -62,6 +62,18 @@ void NetworkProcessConnection::didReceiveMessage(CoreIPC::Connection* connection
     ASSERT_NOT_REACHED();
 }
 
+void NetworkProcessConnection::didReceiveSyncMessage(CoreIPC::Connection* connection, CoreIPC::MessageID messageID, CoreIPC::MessageDecoder& decoder, OwnPtr<CoreIPC::MessageEncoder>& replyEncoder)
+{
+    if (messageID.is<CoreIPC::MessageClassWebResourceLoader>()) {
+        if (WebResourceLoader* webResourceLoader = WebProcess::shared().webResourceLoadScheduler().webResourceLoaderForIdentifier(decoder.destinationID()))
+            webResourceLoader->didReceiveSyncWebResourceLoaderMessage(connection, messageID, decoder, replyEncoder);
+        
+        return;
+    }
+
+    ASSERT_NOT_REACHED();
+}
+
 void NetworkProcessConnection::didClose(CoreIPC::Connection*)
 {
     // The NetworkProcess probably crashed.

@@ -23,9 +23,6 @@
 #if ENABLE(NETWORK_PROCESS)
 
 messages -> NetworkResourceLoader {
-    WillSendRequestHandled(uint64_t requestID, WebCore::ResourceRequest newRequest)
-    CanAuthenticateAgainstProtectionSpaceHandled(uint64_t requestID, bool canAuthenticate)
-    
     ReceivedAuthenticationCredential(WebCore::AuthenticationChallenge challenge, WebCore::Credential credential)
     ReceivedRequestToContinueWithoutAuthenticationCredential(WebCore::AuthenticationChallenge challenge)
     ReceivedAuthenticationCancellation(WebCore::AuthenticationChallenge challenge)

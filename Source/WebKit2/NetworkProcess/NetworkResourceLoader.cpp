@@ -182,33 +182,14 @@ void NetworkResourceLoader::didFail(ResourceHandle*, const ResourceError& error)
     scheduleStopOnMainThread();
 }
 
-static uint64_t generateWillSendRequestID()
-{
-    static int64_t uniqueWillSendRequestID;
-    return atomicIncrement(&uniqueWillSendRequestID);
-}
-
 void NetworkResourceLoader::willSendRequest(ResourceHandle*, ResourceRequest& request, const ResourceResponse& redirectResponse)
 {
     // We only expect to get the willSendRequest callback from ResourceHandle as the result of a redirect.
     ASSERT(!redirectResponse.isNull());
+    ASSERT(!isMainThread());
 
-    uint64_t requestID = generateWillSendRequestID();
-
-    if (!send(Messages::WebResourceLoader::WillSendRequest(requestID, request, redirectResponse))) {
+    if (!sendSync(Messages::WebResourceLoader::WillSendRequest(request, redirectResponse), Messages::WebResourceLoader::WillSendRequest::Reply(request)))
         request = ResourceRequest();
-        return;
-    }
-
-    OwnPtr<ResourceRequest> newRequest = m_connection->willSendRequestResponseMap().waitForResponse(requestID);
-    request = newRequest ? *newRequest : ResourceRequest();
-
-    RunLoop::main()->dispatch(WTF::bind(&NetworkResourceLoadScheduler::receivedRedirect, &NetworkProcess::shared().networkResourceLoadScheduler(), m_identifier, request.url()));
-}
-
-void NetworkResourceLoader::willSendRequestHandled(uint64_t requestID, const WebCore::ResourceRequest& newRequest)
-{
-    m_connection->willSendRequestResponseMap().didReceiveResponse(requestID, adoptPtr(new ResourceRequest(newRequest)));
 }
 
 // FIXME (NetworkProcess): Many of the following ResourceHandleClient methods definitely need implementations. A few will not.
@@ -302,25 +283,15 @@ void NetworkResourceLoader::receivedAuthenticationCancellation(const Authenticat
 }
 
 #if USE(PROTECTION_SPACE_AUTH_CALLBACK)
-static uint64_t generateCanAuthenticateAgainstProtectionSpaceID()
-{
-    static int64_t uniqueCanAuthenticateAgainstProtectionSpaceID;
-    return atomicIncrement(&uniqueCanAuthenticateAgainstProtectionSpaceID);
-}
-
 bool NetworkResourceLoader::canAuthenticateAgainstProtectionSpace(ResourceHandle*, const ProtectionSpace& protectionSpace)
 {
-    uint64_t requestID = generateCanAuthenticateAgainstProtectionSpaceID();
+    ASSERT(!isMainThread());
 
-    if (!send(Messages::WebResourceLoader::CanAuthenticateAgainstProtectionSpace(requestID, protectionSpace)))
+    bool result;
+    if (!sendSync(Messages::WebResourceLoader::CanAuthenticateAgainstProtectionSpace(protectionSpace), Messages::WebResourceLoader::CanAuthenticateAgainstProtectionSpace::Reply(result)))
         return false;
 
-    return m_connection->canAuthenticateAgainstProtectionSpaceResponseMap().waitForResponse(requestID);
-}
-
-void NetworkResourceLoader::canAuthenticateAgainstProtectionSpaceHandled(uint64_t requestID, bool canAuthenticate)
-{
-    m_connection->canAuthenticateAgainstProtectionSpaceResponseMap().didReceiveResponse(requestID, canAuthenticate);
+    return result;
 }
 #endif
 
@@ -333,6 +304,7 @@ bool NetworkResourceLoader::supportsDataArray()
 
 void NetworkResourceLoader::didReceiveDataArray(WebCore::ResourceHandle*, CFArrayRef)
 {
+    ASSERT_NOT_REACHED();
     notImplemented();
 }
 #endif

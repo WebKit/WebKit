@@ -61,7 +61,7 @@ public:
         ASSERT(!m_responses.contains(requestID));
 
         m_responses.set(requestID, response);
-        // FIXME (NetworkProcess): <rdar://problem/12886430>: Waking up all threads is quite inefficient.
+        // FIXME: Waking up all threads is quite inefficient.
         m_condition.broadcast();
     }
 
@@ -69,7 +69,7 @@ public:
     {
         m_canceled = true;
 
-        // FIXME (NetworkProcess): <rdar://problem/12886430>: Waking up all threads is quite inefficient.
+        // FIXME: Waking up all threads is quite inefficient.
         m_condition.broadcast();
     }
 
@@ -78,60 +78,6 @@ private:
     ThreadCondition m_condition;
 
     HashMap<uint64_t, OwnPtr<T> > m_responses;
-    bool m_canceled;
-};
-
-class BlockingBoolResponseMap {
-WTF_MAKE_NONCOPYABLE(BlockingBoolResponseMap);
-public:
-    BlockingBoolResponseMap() : m_canceled(false) { }
-    ~BlockingBoolResponseMap() { ASSERT(m_responses.isEmpty()); }
-
-    bool waitForResponse(uint64_t requestID)
-    {
-        while (true) {
-            MutexLocker locker(m_mutex);
-
-            // FIXME: Differentiate between canceled wait and a negative response.
-            if (m_canceled)
-                return false;
-
-            HashMap<uint64_t, bool>::iterator iter = m_responses.find(requestID);
-            if (iter != m_responses.end()) {
-                bool result = iter->value;
-                m_responses.remove(iter);
-                return result;
-            }
-
-            m_condition.wait(m_mutex);
-        }
-
-        return false;
-    }
-
-    void didReceiveResponse(uint64_t requestID, bool response)
-    {
-        MutexLocker locker(m_mutex);
-        ASSERT(!m_responses.contains(requestID));
-
-        m_responses.set(requestID, response);
-        // FIXME (NetworkProcess): <rdar://problem/12886430>: Waking up all threads is quite inefficient.
-        m_condition.broadcast();
-    }
-
-    void cancel()
-    {
-        m_canceled = true;
-
-        // FIXME (NetworkProcess): <rdar://problem/12886430>: Waking up all threads is quite inefficient.
-        m_condition.broadcast();
-    }
-
-private:
-    Mutex m_mutex;
-    ThreadCondition m_condition;
-
-    HashMap<uint64_t, bool> m_responses;
     bool m_canceled;
 };
 
