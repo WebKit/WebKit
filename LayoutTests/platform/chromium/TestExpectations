@@ -1434,6 +1434,7 @@ crbug.com/10322 accessibility/visible-elements.html [ Skip ]
 webkit.org/b/96529 accessibility/hidden-legend.html [ Skip ]
 webkit.org/b/73912 accessibility/aria-checkbox-text.html [ Skip ]
 webkit.org/b/99665 accessibility/loading-iframe-sends-notification.html [ Skip ]
+webkit.org/b/106682 accessibility/heading-level.html [ Skip ]
 
 webkit.org/b/73912 accessibility/aria-checkbox-sends-notification.html [ Failure Pass ]
 #webkit.org/b/98787 accessibility/aria-hidden-negates-no-visibility.html [ Skip ]
