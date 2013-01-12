@@ -1,6 +1,6 @@
 2013-01-10  Filip Pizlo  <fpizlo@apple.com>
 
-        The JITThunks class should be in its own file, and doing so should not break the build
+        JITThunks should not compile only because of luck
         https://bugs.webkit.org/show_bug.cgi?id=105696
 
         Rubber stamped by Sam Weinig and Geoffrey Garen.
