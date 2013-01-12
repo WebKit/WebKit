@@ -2833,7 +2833,7 @@ webkit.org/b/106097 [ Lion Debug ] fast/repaint/japanese-rl-selection-repaint-in
 
 webkit.org/b/65199 [ Android Linux SnowLeopard Win ] fast/writing-mode/broken-ideograph-small-caps.html [ Failure ]
 
-webkit.org/b/65453 [ Lion SnowLeopard ] fast/css/outline-auto-empty-rects.html [ ImageOnlyFailure ]
+webkit.org/b/65453 [ Mac ] fast/css/outline-auto-empty-rects.html [ ImageOnlyFailure ]
 
 webkit.org/b/93546 compositing/plugins/no-backing-store.html [ Failure Pass ]
 webkit.org/b/93546 platform/chromium/virtual/softwarecompositing/plugins/no-backing-store.html [ Failure Pass ]
