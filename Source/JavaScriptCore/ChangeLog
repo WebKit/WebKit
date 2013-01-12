@@ -1,5 +1,18 @@
 2013-01-11  Filip Pizlo  <fpizlo@apple.com>
 
+        If you use Phantom to force something to be live across an OSR exit, you should put it after the OSR exit
+        https://bugs.webkit.org/show_bug.cgi?id=106724
+
+        Reviewed by Oliver Hunt.
+        
+        In cases where we were getting it wrong, I think it was benign because we would either already have an
+        OSR exit prior to there, or the operand would be a constant.  But still, it's good to get this right.
+
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::parseBlock):
+
+2013-01-11  Filip Pizlo  <fpizlo@apple.com>
+
         Phantom(GetLocal) should be treated as relevant to OSR
         https://bugs.webkit.org/show_bug.cgi?id=106715
 

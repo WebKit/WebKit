@@ -3013,15 +3013,14 @@ bool ByteCodeParser::parseBlock(unsigned limit)
             PutToBaseOperation* putToBase = m_codeBlock->putToBaseOperation(operation);
 
             if (putToBase->m_isDynamic) {
-                addToGraph(Phantom, get(base));
                 addToGraph(PutById, OpInfo(identifier), get(base), get(value));
                 NEXT_OPCODE(op_put_to_base);
             }
 
             switch (putToBase->m_kind) {
             case PutToBaseOperation::Uninitialised:
-                addToGraph(Phantom, get(base));
                 addToGraph(ForceOSRExit);
+                addToGraph(Phantom, get(base));
                 break;
 
             case PutToBaseOperation::GlobalVariablePutChecked: {
@@ -3049,8 +3048,8 @@ bool ByteCodeParser::parseBlock(unsigned limit)
             }
             case PutToBaseOperation::GlobalPropertyPut: {
                 if (!putToBase->m_structure) {
-                    addToGraph(Phantom, get(base));
                     addToGraph(ForceOSRExit);
+                    addToGraph(Phantom, get(base));
                     NEXT_OPCODE(op_put_to_base);
                 }
                 NodeIndex baseNode = get(base);
@@ -3070,7 +3069,6 @@ bool ByteCodeParser::parseBlock(unsigned limit)
             }
             case PutToBaseOperation::Readonly:
             case PutToBaseOperation::Generic:
-                addToGraph(Phantom, get(base));
                 addToGraph(PutById, OpInfo(identifier), get(base), get(value));
             }
             NEXT_OPCODE(op_put_to_base);
