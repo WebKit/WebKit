@@ -111,10 +111,6 @@ public:
     // Changes the cookie policy from the default to allow all cookies.
     void setAlwaysAcceptCookies(const CppArgumentList&, CppVariant*);
 
-    // Shows DevTools window.
-    void showWebInspector(const CppArgumentList&, CppVariant*);
-    void closeWebInspector(const CppArgumentList&, CppVariant*);
-
     // Gives focus to the window.
     void setWindowIsKey(const CppArgumentList&, CppVariant*);
 
@@ -169,9 +165,6 @@ public:
 
     // Gets the number of geolocation permissions requests pending.
     void numberOfPendingGeolocationPermissionRequests(const CppArgumentList&, CppVariant*);
-
-    // Allows layout tests to exec scripts at WebInspector side.
-    void evaluateInWebInspector(const CppArgumentList&, CppVariant*);
 
     // DeviceOrientation related functions
     void setMockDeviceOrientation(const CppArgumentList&, CppVariant*);

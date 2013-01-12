@@ -165,6 +165,11 @@ TestRunner::TestRunner()
     bindMethod("sendWebIntentResponse", &TestRunner::sendWebIntentResponse);
     bindMethod("deliverWebIntent", &TestRunner::deliverWebIntent);
 
+    // The following methods interact with the WebTestDelegate.
+    bindMethod("showWebInspector", &TestRunner::showWebInspector);
+    bindMethod("closeWebInspector", &TestRunner::closeWebInspector);
+    bindMethod("evaluateInWebInspector", &TestRunner::evaluateInWebInspector);
+
     // Properties.
     bindProperty("workerThreadCount", &TestRunner::workerThreadCount);
     bindProperty("globalFlag", &m_globalFlag);
@@ -1149,6 +1154,26 @@ void TestRunner::deliverWebIntent(const CppArgumentList& arguments, CppVariant* 
     WebIntent intent = WebIntent::create(action, type, serializedData.toString(), WebVector<WebString>(), WebVector<WebString>());
 
     m_webView->mainFrame()->deliverIntent(intent, 0, m_intentClient.get());
+}
+
+void TestRunner::showWebInspector(const CppArgumentList&, CppVariant* result)
+{
+    m_delegate->showDevTools();
+    result->setNull();
+}
+
+void TestRunner::closeWebInspector(const CppArgumentList& args, CppVariant* result)
+{
+    m_delegate->closeDevTools();
+    result->setNull();
+}
+
+void TestRunner::evaluateInWebInspector(const CppArgumentList& arguments, CppVariant* result)
+{
+    result->setNull();
+    if (arguments.size() < 2 || !arguments[0].isNumber() || !arguments[1].isString())
+        return;
+    m_delegate->evaluateInWebInspector(arguments[0].toInt32(), arguments[1].toString());
 }
 
 void TestRunner::dumpEditingCallbacks(const CppArgumentList&, CppVariant* result)

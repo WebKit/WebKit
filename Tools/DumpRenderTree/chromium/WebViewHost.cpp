@@ -31,6 +31,7 @@
 #include "config.h"
 #include "WebViewHost.h"
 
+#include "DRTDevToolsAgent.h"
 #include "DRTTestRunner.h"
 #include "MockGrammarCheck.h"
 #include "MockWebSpeechInputController.h"
@@ -1061,6 +1062,21 @@ std::string WebViewHost::makeURLErrorDescription(const WebKit::WebURLError& erro
 std::string WebViewHost::normalizeLayoutTestURL(const std::string& url)
 {
     return m_shell->normalizeLayoutTestURL(url);
+}
+
+void WebViewHost::showDevTools()
+{
+    m_shell->showDevTools();
+}
+
+void WebViewHost::closeDevTools()
+{
+    m_shell->closeDevTools();
+}
+
+void WebViewHost::evaluateInWebInspector(long callID, const std::string& script)
+{
+    m_shell->drtDevToolsAgent()->evaluateInWebInspector(callID, script);
 }
 
 // Public functions -----------------------------------------------------------

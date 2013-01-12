@@ -82,6 +82,9 @@ public:
     virtual void setClientWindowRect(const WebKit::WebRect&) { }
     virtual void setSelectTrailingWhitespaceEnabled(bool) { }
     virtual void setSmartInsertDeleteEnabled(bool) { }
+    virtual void showDevTools() { }
+    virtual void closeDevTools() { }
+    virtual void evaluateInWebInspector(long, const std::string&) { }
 };
 
 }

@@ -289,6 +289,16 @@ private:
     void deliverWebIntent(const CppArgumentList&, CppVariant*);
 
     ///////////////////////////////////////////////////////////////////////////
+    // Methods forwarding to the WebTestDelegate
+
+    // Shows DevTools window.
+    void showWebInspector(const CppArgumentList&, CppVariant*);
+    void closeWebInspector(const CppArgumentList&, CppVariant*);
+
+    // Allows layout tests to exec scripts at WebInspector side.
+    void evaluateInWebInspector(const CppArgumentList&, CppVariant*);
+
+    ///////////////////////////////////////////////////////////////////////////
     // Properties
     void workerThreadCount(CppVariant*);
 

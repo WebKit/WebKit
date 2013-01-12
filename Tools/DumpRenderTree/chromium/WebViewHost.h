@@ -151,6 +151,9 @@ class WebViewHost : public WebKit::WebViewClient, public WebKit::WebFrameClient,
     virtual void setSelectTrailingWhitespaceEnabled(bool) OVERRIDE;
     virtual void setSmartInsertDeleteEnabled(bool) OVERRIDE;
     virtual void setClientWindowRect(const WebKit::WebRect&) OVERRIDE;
+    virtual void showDevTools() OVERRIDE;
+    virtual void closeDevTools() OVERRIDE;
+    virtual void evaluateInWebInspector(long, const std::string&) OVERRIDE;
 
     // NavigationHost
     virtual bool navigate(const TestNavigationEntry&, bool reload);

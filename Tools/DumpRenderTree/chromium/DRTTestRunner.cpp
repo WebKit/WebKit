@@ -107,7 +107,6 @@ DRTTestRunner::DRTTestRunner(TestShell* shell)
     bindMethod("wasMockSpeechRecognitionAborted", &DRTTestRunner::wasMockSpeechRecognitionAborted);
 #endif
     bindMethod("clearAllDatabases", &DRTTestRunner::clearAllDatabases);
-    bindMethod("closeWebInspector", &DRTTestRunner::closeWebInspector);
 #if ENABLE(POINTER_LOCK)
     bindMethod("didAcquirePointerLock", &DRTTestRunner::didAcquirePointerLock);
     bindMethod("didLosePointerLock", &DRTTestRunner::didLosePointerLock);
@@ -119,7 +118,6 @@ DRTTestRunner::DRTTestRunner(TestShell* shell)
     bindMethod("dumpProgressFinishedCallback", &DRTTestRunner::dumpProgressFinishedCallback);
     bindMethod("dumpSelectionRect", &DRTTestRunner::dumpSelectionRect);
     bindMethod("dumpStatusCallbacks", &DRTTestRunner::dumpWindowStatusChanges);
-    bindMethod("evaluateInWebInspector", &DRTTestRunner::evaluateInWebInspector);
 #if ENABLE(NOTIFICATIONS)
     bindMethod("grantWebNotificationPermission", &DRTTestRunner::grantWebNotificationPermission);
 #endif
@@ -154,7 +152,6 @@ DRTTestRunner::DRTTestRunner(TestShell* shell)
     bindMethod("setWillSendRequestReturnsNull", &DRTTestRunner::setWillSendRequestReturnsNull);
     bindMethod("setWillSendRequestReturnsNullOnRedirect", &DRTTestRunner::setWillSendRequestReturnsNullOnRedirect);
     bindMethod("setWindowIsKey", &DRTTestRunner::setWindowIsKey);
-    bindMethod("showWebInspector", &DRTTestRunner::showWebInspector);
 #if ENABLE(NOTIFICATIONS)
     bindMethod("simulateLegacyWebNotificationClick", &DRTTestRunner::simulateLegacyWebNotificationClick);
 #endif
@@ -492,18 +489,6 @@ void DRTTestRunner::setAlwaysAcceptCookies(const CppArgumentList& arguments, Cpp
     result->setNull();
 }
 
-void DRTTestRunner::showWebInspector(const CppArgumentList&, CppVariant* result)
-{
-    m_shell->showDevTools();
-    result->setNull();
-}
-
-void DRTTestRunner::closeWebInspector(const CppArgumentList& args, CppVariant* result)
-{
-    m_shell->closeDevTools();
-    result->setNull();
-}
-
 void DRTTestRunner::setWindowIsKey(const CppArgumentList& arguments, CppVariant* result)
 {
     if (arguments.size() > 0 && arguments[0].isBool())
@@ -698,14 +683,6 @@ void DRTTestRunner::numberOfPendingGeolocationPermissionRequests(const CppArgume
     for (size_t i = 0; i < windowList.size(); i++)
         numberOfRequests += windowList[i]->geolocationClientMock()->numberOfPendingPermissionRequests();
     result->set(numberOfRequests);
-}
-
-void DRTTestRunner::evaluateInWebInspector(const CppArgumentList& arguments, CppVariant* result)
-{
-    result->setNull();
-    if (arguments.size() < 2 || !arguments[0].isNumber() || !arguments[1].isString())
-        return;
-    m_shell->drtDevToolsAgent()->evaluateInWebInspector(arguments[0].toInt32(), arguments[1].toString());
 }
 
 void DRTTestRunner::setMockDeviceOrientation(const CppArgumentList& arguments, CppVariant* result)
