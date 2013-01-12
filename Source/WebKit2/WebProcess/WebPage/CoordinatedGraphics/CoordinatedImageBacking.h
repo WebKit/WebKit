@@ -31,7 +31,6 @@
 #include "CoordinatedLayerInfo.h"
 #include "CoordinatedSurface.h"
 #include "Image.h"
-#include "WebCoordinatedSurface.h"
 #include <WebCore/Timer.h>
 #include <wtf/RefCounted.h>
 #include <wtf/Vector.h>
@@ -43,7 +42,7 @@ public:
     class Coordinator {
     public:
         virtual void createImageBacking(CoordinatedImageBackingID) = 0;
-        virtual void updateImageBacking(CoordinatedImageBackingID, const WebCoordinatedSurface::Handle&) = 0;
+        virtual bool updateImageBacking(CoordinatedImageBackingID, PassRefPtr<CoordinatedSurface>) = 0;
         virtual void clearImageBackingContents(CoordinatedImageBackingID) = 0;
         virtual void removeImageBacking(CoordinatedImageBackingID) = 0;
     };
@@ -82,7 +81,6 @@ private:
     Vector<Host*> m_hosts;
 
     RefPtr<CoordinatedSurface> m_surface;
-    OwnPtr<WebCoordinatedSurface::Handle> m_handle;
 
     WebCore::Timer<CoordinatedImageBacking> m_clearContentsTimer;
 

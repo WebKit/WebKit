@@ -37,6 +37,7 @@
 #include "GraphicsContext.h"
 #include "MessageID.h"
 #include "SurfaceUpdateInfo.h"
+#include "WebCoordinatedSurface.h"
 #include "WebCoreArgumentCoders.h"
 #include "WebPage.h"
 #include "WebPageProxyMessages.h"
@@ -613,10 +614,15 @@ void CoordinatedLayerTreeHost::createImageBacking(CoordinatedImageBackingID imag
     m_webPage->send(Messages::CoordinatedLayerTreeHostProxy::CreateImageBacking(imageID));
 }
 
-void CoordinatedLayerTreeHost::updateImageBacking(CoordinatedImageBackingID imageID, const WebCoordinatedSurface::Handle& handle)
+bool CoordinatedLayerTreeHost::updateImageBacking(CoordinatedImageBackingID imageID, PassRefPtr<CoordinatedSurface> coordinatedSurface)
 {
     m_shouldSyncFrame = true;
+    WebCoordinatedSurface* webCoordinatedSurface = static_cast<WebCoordinatedSurface*>(coordinatedSurface.get());
+    WebCoordinatedSurface::Handle handle;
+    if (!webCoordinatedSurface->createHandle(handle))
+        return false;
     m_webPage->send(Messages::CoordinatedLayerTreeHostProxy::UpdateImageBacking(imageID, handle));
+    return true;
 }
 
 void CoordinatedLayerTreeHost::clearImageBackingContents(CoordinatedImageBackingID imageID)
@@ -704,9 +710,14 @@ void CoordinatedLayerTreeHost::removeTile(CoordinatedLayerID layerID, uint32_t t
     m_webPage->send(Messages::CoordinatedLayerTreeHostProxy::RemoveTileForLayer(layerID, tileID));
 }
 
-void CoordinatedLayerTreeHost::createUpdateAtlas(uint32_t atlasID, const WebCoordinatedSurface::Handle& handle)
+bool CoordinatedLayerTreeHost::createUpdateAtlas(uint32_t atlasID, PassRefPtr<CoordinatedSurface> coordinatedSurface)
 {
+    WebCoordinatedSurface* webCoordinatedSurface = static_cast<WebCoordinatedSurface*>(coordinatedSurface.get());
+    WebCoordinatedSurface::Handle handle;
+    if (!webCoordinatedSurface->createHandle(handle))
+        return false;
     m_webPage->send(Messages::CoordinatedLayerTreeHostProxy::CreateUpdateAtlas(atlasID, handle));
+    return true;
 }
 
 void CoordinatedLayerTreeHost::removeUpdateAtlas(uint32_t atlasID)

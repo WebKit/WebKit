@@ -22,8 +22,8 @@
 #define UpdateAtlas_h
 
 #include "AreaAllocator.h"
+#include "CoordinatedSurface.h"
 #include "IntSize.h"
-#include "WebCoordinatedSurface.h"
 
 #if USE(COORDINATED_GRAPHICS)
 namespace WebCore {
@@ -35,7 +35,7 @@ namespace WebKit {
 
 class UpdateAtlasClient {
 public:
-    virtual void createUpdateAtlas(uint32_t atlasID, const WebCoordinatedSurface::Handle&) = 0;
+    virtual bool createUpdateAtlas(uint32_t atlasID, PassRefPtr<CoordinatedSurface>) = 0;
     virtual void removeUpdateAtlas(uint32_t atlasID) = 0;
 };
 
@@ -70,12 +70,9 @@ private:
 private:
     UpdateAtlasClient* m_client;
     OwnPtr<GeneralAreaAllocator> m_areaAllocator;
-    ShareableBitmap::Flags m_flags;
     RefPtr<CoordinatedSurface> m_surface;
-    WebCoordinatedSurface::Handle m_handle;
     double m_inactivityInSeconds;
     uint32_t m_ID;
-    bool m_isValid;
 };
 
 }

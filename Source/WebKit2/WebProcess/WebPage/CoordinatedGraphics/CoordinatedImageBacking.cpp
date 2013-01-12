@@ -104,10 +104,7 @@ void CoordinatedImageBacking::update()
     }
 
     m_surface = CoordinatedSurface::create(m_image->size(), m_image->currentFrameHasAlpha() ? CoordinatedSurface::SupportsAlpha : CoordinatedSurface::NoFlags);
-    m_handle = adoptPtr(new WebCoordinatedSurface::Handle());
-
-    if (!static_cast<WebCoordinatedSurface*>(m_surface.get())->createHandle(*m_handle)) {
-        releaseSurfaceIfNeeded();
+    if (!m_surface) {
         m_isDirty = false;
         return;
     }
@@ -118,15 +115,15 @@ void CoordinatedImageBacking::update()
 
     m_nativeImagePtr = m_image->nativeImageForCurrentFrame();
 
-    m_coordinator->updateImageBacking(id(), *m_handle);
-    m_isDirty = false;
+    // If sending the message fails, try again in the next update.
+    bool success = m_coordinator->updateImageBacking(id(), m_surface);
+    m_isDirty = !success;
 }
 
 void CoordinatedImageBacking::releaseSurfaceIfNeeded()
 {
     // We must keep m_surface until UI Process reads m_surface.
     // If m_surface exists, it was created in the previous update.
-    m_handle.clear();
     m_surface.clear();
 }
 

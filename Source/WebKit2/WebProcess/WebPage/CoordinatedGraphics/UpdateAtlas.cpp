@@ -33,25 +33,21 @@ namespace WebKit {
 
 UpdateAtlas::UpdateAtlas(UpdateAtlasClient* client, int dimension, CoordinatedSurface::Flags flags)
     : m_client(client)
-    , m_flags(flags)
     , m_inactivityInSeconds(0)
-    , m_isValid(true)
 {
     static uint32_t nextID = 0;
     m_ID = ++nextID;
     IntSize size = nextPowerOfTwo(IntSize(dimension, dimension));
     m_surface = CoordinatedSurface::create(size, flags);
 
-    if (!static_cast<WebCoordinatedSurface*>(m_surface.get())->createHandle(m_handle)) {
-        m_isValid = false;
-        return;
-    }
-    m_client->createUpdateAtlas(m_ID, m_handle);
+    // FIXME: Currently, if sending the message fails, UpdateAtlas gives up drawing anything implicitly.
+    if (!m_client->createUpdateAtlas(m_ID, m_surface))
+        m_surface.clear();
 }
 
 UpdateAtlas::~UpdateAtlas()
 {
-    if (m_isValid)
+    if (m_surface)
         m_client->removeUpdateAtlas(m_ID);
 }
 
@@ -78,7 +74,7 @@ PassOwnPtr<GraphicsContext> UpdateAtlas::beginPaintingOnAvailableBuffer(uint32_t
     if (rect.isEmpty())
         return PassOwnPtr<GraphicsContext>();
 
-    if (!m_isValid)
+    if (!m_surface)
         return PassOwnPtr<GraphicsContext>();
 
     atlasID = m_ID;
