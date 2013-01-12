@@ -21,5 +21,18 @@ EXPECTED (textTrackDisplayElement(video, 'display').innerText == 'Lorem') OK
 ** Captions should not be visible after button is clicked again **
 *** Click the CC button.
 No text track cue with display id '-webkit-media-text-track-display' is currently visible
+
+** Remove DOM node representing the track element **
+
+** Caption button should not be visible as there are no caption tracks.
+EXPECTED (captionsButtonCoordinates[0] <= '0') OK
+EXPECTED (captionsButtonCoordinates[1] <= '0') OK
+
+** Add a text track through JS to the video element **
+
+** Caption button should be visible and enabled because we have a captions track.
+EXPECTED (captionsButtonCoordinates[0] > '0') OK
+EXPECTED (captionsButtonCoordinates[1] > '0') OK
+EXPECTED (captionsButtonElement.disabled == 'false') OK
 END OF TEST
 

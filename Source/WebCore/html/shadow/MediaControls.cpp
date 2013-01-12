@@ -252,6 +252,17 @@ void MediaControls::changedClosedCaptionsVisibility()
         m_toggleClosedCaptionsButton->updateDisplayType();
 }
 
+void MediaControls::closedCaptionTracksChanged()
+{
+    if (!m_toggleClosedCaptionsButton)
+        return;
+
+    if (m_mediaController->hasClosedCaptions())
+        m_toggleClosedCaptionsButton->show();
+    else
+        m_toggleClosedCaptionsButton->hide();
+}
+
 void MediaControls::enteredFullscreen()
 {
     m_isFullscreen = true;
