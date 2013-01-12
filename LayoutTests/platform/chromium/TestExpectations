@@ -4275,7 +4275,6 @@ crbug.com/169550 [ Release ] fast/borders/outline-alpha-block.html [ ImageOnlyFa
 crbug.com/169550 [ Release ] fast/borders/outline-alpha-inline.html [ ImageOnlyFailure ]
 
 # Transient. Needs rebaseline.
-webkit.org/b/103955 fast/repaint/4774354.html [ ImageOnlyFailure ]
 webkit.org/b/103955 fast/repaint/4776765.html [ ImageOnlyFailure ]
 webkit.org/b/103955 fast/repaint/caret-outside-block.html [ ImageOnlyFailure ]
 webkit.org/b/103955 [ Lion Release ] fast/repaint/japanese-rl-selection-repaint-in-regions.html [ ImageOnlyFailure ]
