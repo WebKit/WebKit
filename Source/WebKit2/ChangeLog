@@ -3,6 +3,16 @@
         [WK2] Make it possible to send sync messages from secondary threads
         https://bugs.webkit.org/show_bug.cgi?id=106708
 
+        Apply another review comment (overlooked a "ditto").
+
+        * Platform/CoreIPC/Connection.cpp:
+        (CoreIPC::Connection::sendSyncMessage):
+
+2013-01-11  Alexey Proskuryakov  <ap@apple.com>
+
+        [WK2] Make it possible to send sync messages from secondary threads
+        https://bugs.webkit.org/show_bug.cgi?id=106708
+
         Reviewed by Anders Carlsson.
 
         It is hugely beneficial to implement sync messages at Connection level, because

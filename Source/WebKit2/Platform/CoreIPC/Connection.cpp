@@ -405,10 +405,8 @@ PassOwnPtr<MessageDecoder> Connection::sendSyncMessage(MessageID messageID, uint
         return sendSyncMessageFromSecondaryThread(messageID, syncRequestID, encoder, timeout);
     }
 
-    if (!isValid()) {
-        didFailToSendSyncMessage();
+    if (!isValid())
         return nullptr;
-    }
 
     // Push the pending sync reply information on our stack.
     {
@@ -435,8 +433,6 @@ PassOwnPtr<MessageDecoder> Connection::sendSyncMessage(MessageID messageID, uint
         ASSERT(m_pendingSyncReplies.last().syncRequestID == syncRequestID);
         m_pendingSyncReplies.removeLast();
     }
-
-    // FIXME: Should we call didFailToSendSyncMessage()? It may be unexpected to get in on a background thread.
 
     return reply.release();
 }
