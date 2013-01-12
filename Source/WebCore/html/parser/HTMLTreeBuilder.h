@@ -78,9 +78,7 @@ public:
 
     void detach();
 
-    // The token really should be passed as a const& since it's never modified.
-    void constructTreeFromToken(HTMLToken&);
-    void constructTreeFromAtomicToken(AtomicHTMLToken*);
+    void constructTree(AtomicHTMLToken*);
 
     bool hasParserBlockingScript() const { return !!m_scriptToProcess; }
     // Must be called to take the parser-blocking script before calling the parser again.

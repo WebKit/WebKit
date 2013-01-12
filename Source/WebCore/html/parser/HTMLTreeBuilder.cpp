@@ -359,38 +359,7 @@ PassRefPtr<Element> HTMLTreeBuilder::takeScriptToProcess(TextPosition& scriptSta
     return m_scriptToProcess.release();
 }
 
-void HTMLTreeBuilder::constructTreeFromToken(HTMLToken& rawToken)
-{
-    RefPtr<AtomicHTMLToken> token = AtomicHTMLToken::create(rawToken);
-
-    // We clear the rawToken in case constructTreeFromAtomicToken
-    // synchronously re-enters the parser. We don't clear the token immedately
-    // for Character tokens because the AtomicHTMLToken avoids copying the
-    // characters by keeping a pointer to the underlying buffer in the
-    // HTMLToken. Fortunately, Character tokens can't cause use to re-enter
-    // the parser.
-    //
-    // FIXME: Stop clearing the rawToken once we start running the parser off
-    // the main thread or once we stop allowing synchronous JavaScript
-    // execution from parseAttribute.
-    if (rawToken.type() != HTMLTokenTypes::Character)
-        rawToken.clear();
-
-    constructTreeFromAtomicToken(token.get());
-
-    // AtomicHTMLToken keeps a pointer to the HTMLToken's buffer instead
-    // of copying the characters for performance.
-    // Clear the external characters pointer before the raw token is cleared
-    // to make sure that we won't have a dangling pointer.
-    token->clearExternalCharacters();
-
-    if (!rawToken.isUninitialized()) {
-        ASSERT(rawToken.type() == HTMLTokenTypes::Character);
-        rawToken.clear();
-    }
-}
-
-void HTMLTreeBuilder::constructTreeFromAtomicToken(AtomicHTMLToken* token)
+void HTMLTreeBuilder::constructTree(AtomicHTMLToken* token)
 {
     if (shouldProcessTokenInForeignContent(token))
         processTokenInForeignContent(token);

@@ -121,6 +121,7 @@ private:
     bool canTakeNextToken(SynchronousMode, PumpSession&);
     void pumpTokenizer(SynchronousMode);
     void pumpTokenizerIfPossible(SynchronousMode);
+    void constructTreeFromHTMLToken(HTMLToken&);
 
     void runScriptsForPausedTreeBuilder();
     void resumeParsingAfterScriptExecution();

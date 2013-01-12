@@ -273,7 +273,7 @@ void HTMLDocumentParser::pumpTokenizer(SynchronousMode mode)
             m_xssAuditor.filterToken(m_token);
         }
 
-        m_treeBuilder->constructTreeFromToken(m_token);
+        constructTreeFromHTMLToken(m_token);
         ASSERT(m_token.isUninitialized());
     }
 
@@ -297,6 +297,37 @@ void HTMLDocumentParser::pumpTokenizer(SynchronousMode mode)
     }
 
     InspectorInstrumentation::didWriteHTML(cookie, m_input.current().currentLine().zeroBasedInt());
+}
+
+void HTMLDocumentParser::constructTreeFromHTMLToken(HTMLToken& rawToken)
+{
+    RefPtr<AtomicHTMLToken> token = AtomicHTMLToken::create(rawToken);
+
+    // We clear the rawToken in case constructTreeFromAtomicToken
+    // synchronously re-enters the parser. We don't clear the token immedately
+    // for Character tokens because the AtomicHTMLToken avoids copying the
+    // characters by keeping a pointer to the underlying buffer in the
+    // HTMLToken. Fortunately, Character tokens can't cause us to re-enter
+    // the parser.
+    //
+    // FIXME: Stop clearing the rawToken once we start running the parser off
+    // the main thread or once we stop allowing synchronous JavaScript
+    // execution from parseAttribute.
+    if (rawToken.type() != HTMLTokenTypes::Character)
+        rawToken.clear();
+
+    m_treeBuilder->constructTree(token.get());
+
+    // AtomicHTMLToken keeps a pointer to the HTMLToken's buffer instead
+    // of copying the characters for performance.
+    // Clear the external characters pointer before the raw token is cleared
+    // to make sure that we won't have a dangling pointer.
+    token->clearExternalCharacters();
+
+    if (!rawToken.isUninitialized()) {
+        ASSERT(rawToken.type() == HTMLTokenTypes::Character);
+        rawToken.clear();
+    }
 }
 
 bool HTMLDocumentParser::hasInsertionPoint()
