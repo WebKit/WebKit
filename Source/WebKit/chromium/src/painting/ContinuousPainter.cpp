@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011 Google Inc. All rights reserved.
+ * Copyright (C) 2013 Google Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
@@ -26,53 +26,33 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef PageOverlayList_h
-#define PageOverlayList_h
+#include "config.h"
+#include "ContinuousPainter.h"
 
-#include <wtf/OwnPtr.h>
-#include <wtf/PassOwnPtr.h>
-#include <wtf/Vector.h>
+#include "GraphicsLayer.h"
+#include "PageOverlayList.h"
 
-namespace WebCore {
-class GraphicsContext;
-class GraphicsLayer;
-}
+using namespace WebCore;
 
 namespace WebKit {
-class PageOverlay;
-class WebPageOverlay;
-class WebViewImpl;
 
-class PageOverlayList {
-public:
-    static PassOwnPtr<PageOverlayList> create(WebViewImpl*);
+void ContinuousPainter::setNeedsDisplayRecursive(GraphicsLayer* layer, PageOverlayList* pageOverlays)
+{
+    if (!layer)
+        return;
 
-    ~PageOverlayList();
+    if (pageOverlays && pageOverlays->findGraphicsLayer(layer) != WTF::notFound)
+        return;
 
-    bool empty() const { return !m_pageOverlays.size(); }
+    layer->setNeedsDisplay();
 
-    // Adds/removes a PageOverlay for given client.
-    // Returns true if a PageOverlay is added/removed.
-    bool add(WebPageOverlay*, int /* zOrder */);
-    bool remove(WebPageOverlay*);
+    setNeedsDisplayRecursive(layer->maskLayer(), pageOverlays);
+    setNeedsDisplayRecursive(layer->replicaLayer(), pageOverlays);
 
-    void update();
-    void paintWebFrame(WebCore::GraphicsContext&);
-
-    size_t findGraphicsLayer(WebCore::GraphicsLayer*);
-
-private:
-    typedef Vector<OwnPtr<PageOverlay>, 2> PageOverlays;
-
-    explicit PageOverlayList(WebViewImpl*);
-
-    // Returns the index of the client found. Otherwise, returns WTF::notFound.
-    size_t find(WebPageOverlay*);
-
-    WebViewImpl* m_viewImpl;
-    PageOverlays m_pageOverlays;
-};
+    const Vector<GraphicsLayer*>& children = layer->children();
+    Vector<GraphicsLayer*>::const_iterator it;
+    for (it = children.begin(); it != children.end(); ++it)
+        setNeedsDisplayRecursive(*it, pageOverlays);
+}
 
 } // namespace WebKit
-
-#endif // PageOverlayList_h

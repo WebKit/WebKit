@@ -59,6 +59,8 @@ public:
     void update();
     void paintWebFrame(WebCore::GraphicsContext&);
 
+    WebCore::GraphicsLayer* graphicsLayer() const { return m_layer.get(); }
+
 private:
     PageOverlay(WebViewImpl*, WebPageOverlay*);
     void invalidateWebFrame();

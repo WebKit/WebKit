@@ -1,3 +1,37 @@
+2013-01-11  Eberhard Graether  <egraether@google.com>
+
+        [chromium] Add ContinuousPainter to call setNeedsDisplay on all layers recursively in continuous painting mode
+        https://bugs.webkit.org/show_bug.cgi?id=105458
+
+        Reviewed by James Robinson.
+
+        In continuous painting mode all layers are constantly repainted to allow for life measurements of page paint time,
+        while changing HTML and CSS using the WebInspector. This change adds the ContinuousPainter helper object, which
+        calls setNeedsDisplay() on all GraphicsLayers recursively in order to force all layers to repaint. PageOverlay
+        layers get excluded from being repainted, because their extra paint time is altering the page paint time metric.
+
+        * WebKit.gyp:
+        * src/PageOverlay.h:
+        (WebKit::PageOverlay::graphicsLayer):
+        (PageOverlay):
+        * src/PageOverlayList.cpp:
+        (WebKit::PageOverlayList::findGraphicsLayer):
+        (WebKit):
+        * src/PageOverlayList.h:
+        (WebCore):
+        (PageOverlayList):
+        * src/WebViewImpl.cpp:
+        (WebKit::WebViewImpl::WebViewImpl):
+        (WebKit::WebViewImpl::didBeginFrame):
+        * src/WebViewImpl.h:
+        * src/painting/ContinuousPainter.cpp: Copied from Source/WebKit/chromium/src/PageOverlay.h.
+        (WebKit):
+        (WebKit::ContinuousPainter::setNeedsDisplayRecursive):
+        * src/painting/ContinuousPainter.h: Copied from Source/WebKit/chromium/src/PageOverlay.h.
+        (WebCore):
+        (WebKit):
+        (ContinuousPainter):
+
 2013-01-11  Tony Chang  <tony@chromium.org>
 
         Unreviewed, revert r139157 to fix the chromium build.

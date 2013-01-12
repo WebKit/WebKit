@@ -888,6 +888,7 @@ private:
 
     bool m_showFPSCounter;
     bool m_showPaintRects;
+    bool m_continuousPaintingEnabled;
 };
 
 } // namespace WebKit

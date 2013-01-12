@@ -127,4 +127,13 @@ size_t PageOverlayList::find(WebPageOverlay* overlay)
     return WTF::notFound;
 }
 
+size_t PageOverlayList::findGraphicsLayer(WebCore::GraphicsLayer* layer)
+{
+    for (size_t i = 0; i < m_pageOverlays.size(); ++i) {
+        if (m_pageOverlays[i]->graphicsLayer() == layer)
+            return i;
+    }
+    return WTF::notFound;
+}
+
 } // namespace WebKit

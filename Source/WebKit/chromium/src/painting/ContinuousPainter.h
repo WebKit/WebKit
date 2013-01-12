@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011 Google Inc. All rights reserved.
+ * Copyright (C) 2013 Google Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
@@ -26,53 +26,26 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef PageOverlayList_h
-#define PageOverlayList_h
-
-#include <wtf/OwnPtr.h>
-#include <wtf/PassOwnPtr.h>
-#include <wtf/Vector.h>
+#ifndef ContinuousPainter_h
+#define ContinuousPainter_h
 
 namespace WebCore {
-class GraphicsContext;
 class GraphicsLayer;
 }
 
 namespace WebKit {
-class PageOverlay;
-class WebPageOverlay;
-class WebViewImpl;
+class PageOverlayList;
 
-class PageOverlayList {
+// This class is responsible for calling setNeedsDisplay on all
+// GraphicsLayers in continuous painting mode.
+class ContinuousPainter {
 public:
-    static PassOwnPtr<PageOverlayList> create(WebViewImpl*);
-
-    ~PageOverlayList();
-
-    bool empty() const { return !m_pageOverlays.size(); }
-
-    // Adds/removes a PageOverlay for given client.
-    // Returns true if a PageOverlay is added/removed.
-    bool add(WebPageOverlay*, int /* zOrder */);
-    bool remove(WebPageOverlay*);
-
-    void update();
-    void paintWebFrame(WebCore::GraphicsContext&);
-
-    size_t findGraphicsLayer(WebCore::GraphicsLayer*);
-
-private:
-    typedef Vector<OwnPtr<PageOverlay>, 2> PageOverlays;
-
-    explicit PageOverlayList(WebViewImpl*);
-
-    // Returns the index of the client found. Otherwise, returns WTF::notFound.
-    size_t find(WebPageOverlay*);
-
-    WebViewImpl* m_viewImpl;
-    PageOverlays m_pageOverlays;
+    // Calls setNeedsDisplay on the layer, then recursively calls
+    // on mask layers, replica layers and all child layers.
+    // Overlays are excluded, because they impact the page paint time metric.
+    static void setNeedsDisplayRecursive(WebCore::GraphicsLayer*, PageOverlayList*);
 };
 
 } // namespace WebKit
 
-#endif // PageOverlayList_h
+#endif

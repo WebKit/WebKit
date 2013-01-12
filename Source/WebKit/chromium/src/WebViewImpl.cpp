@@ -143,6 +143,7 @@
 #include "WebTextInputInfo.h"
 #include "WebViewClient.h"
 #include "WheelEvent.h"
+#include "painting/ContinuousPainter.h"
 #include "painting/GraphicsContextBuilder.h"
 #include "src/WebActiveGestureAnimation.h"
 #include <public/Platform.h>
@@ -453,6 +454,7 @@ WebViewImpl::WebViewImpl(WebViewClient* client)
     , m_suppressInvalidations(false)
     , m_showFPSCounter(false)
     , m_showPaintRects(false)
+    , m_continuousPaintingEnabled(false)
 {
     // WebKit/win/WebView.cpp does the same thing, except they call the
     // KJS specific wrapper around this method. We need to have threading
@@ -1754,6 +1756,9 @@ void WebViewImpl::willBeginFrame()
 void WebViewImpl::didBeginFrame()
 {
     InspectorInstrumentation::didComposite(m_page.get());
+
+    if (m_continuousPaintingEnabled)
+        ContinuousPainter::setNeedsDisplayRecursive(m_rootGraphicsLayer, m_pageOverlays.get());
 }
 
 void WebViewImpl::updateAnimations(double monotonicFrameBeginTime)
