@@ -178,7 +178,7 @@ public:
     virtual void scheduleCloseWindow() = 0;
 
     // Database interface.
-    virtual unsigned long long databaseQuota(const unsigned short* origin, unsigned originLength, const unsigned short* databaseName, unsigned databaseNameLength, unsigned long long originUsage, unsigned long long currentQuota, unsigned long long estimatedSize) = 0;
+    virtual unsigned long long databaseQuota(const BlackBerry::Platform::String& origin, const BlackBerry::Platform::String& databaseName, unsigned long long originUsage, unsigned long long currentQuota, unsigned long long estimatedSize) = 0;
 
     virtual void setIconForUrl(const BlackBerry::Platform::String& originalPageUrl, const BlackBerry::Platform::String& finalPageUrl, const BlackBerry::Platform::String& iconUrl) = 0;
     virtual void setFavicon(const BlackBerry::Platform::String& dataInBase64, const BlackBerry::Platform::String& url) = 0;
