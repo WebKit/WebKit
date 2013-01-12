@@ -164,6 +164,7 @@ fast/js/dfg-negative-array-index
 fast/js/dfg-obvious-constant-cfa
 fast/js/dfg-osr-entry-hoisted-clobbered-structure-check
 fast/js/dfg-other-branch
+fast/js/dfg-phantom-get-local
 fast/js/dfg-poison-fuzz
 fast/js/dfg-proto-access-inline-osr-exit
 fast/js/dfg-proven-sqrt-backwards-propagation

@@ -1436,12 +1436,13 @@ private:
         for (unsigned i = 0; i < block->phis.size(); ++i)
             m_relevantToOSR.set(block->phis[i]);
         
-        // Make all of my SetLocal nodes relevant to OSR.
+        // Make all of my SetLocal and GetLocal nodes relevant to OSR.
         for (unsigned i = 0; i < block->size(); ++i) {
             NodeIndex nodeIndex = block->at(i);
             Node& node = m_graph[nodeIndex];
             switch (node.op()) {
             case SetLocal:
+            case GetLocal: // FIXME: The GetLocal case is only necessary until we do https://bugs.webkit.org/show_bug.cgi?id=106707.
                 m_relevantToOSR.set(nodeIndex);
                 break;
             default:

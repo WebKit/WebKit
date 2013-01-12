@@ -1,3 +1,13 @@
+2013-01-11  Filip Pizlo  <fpizlo@apple.com>
+
+        Phantom(GetLocal) should be treated as relevant to OSR
+        https://bugs.webkit.org/show_bug.cgi?id=106715
+
+        Reviewed by Mark Hahnenberg.
+
+        * dfg/DFGCSEPhase.cpp:
+        (JSC::DFG::CSEPhase::performBlockCSE):
+
 2013-01-11  Pratik Solanki  <psolanki@apple.com>
 
         Fix function name typo ProgramExecutable::initalizeGlobalProperties()
