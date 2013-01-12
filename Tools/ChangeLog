@@ -1,3 +1,28 @@
+2013-01-11  Julie Parent  <jparent@chromium.org>
+
+        Builder should not be a valid parameter for stats dashboard
+        https://bugs.webkit.org/show_bug.cgi?id=106698
+
+        Reviewed by Dirk Pranke.
+        
+        Since builder is a dashboard specific parameter, dashboard_base
+        should not be handling it in handleValidHashParameterWrapper, rather,
+        each specific dashboard should in its handleValidHashParameter function.
+    
+        Note that the FIXME in dashboard_base about this was actually wrong -
+        we don't want to move it to g_crossDashboardState, because it isn't
+        actually cross dashboard state.
+        
+        In fact, flakiness and treemap have the code in 
+        handleValidHashParameter, but it is currently dead code because 
+        dashboard_base gets to it first.
+        
+        Added the proper handling to timeline_explorer, since builder is
+        valid there.
+
+        * TestResultServer/static-dashboards/dashboard_base.js:
+        * TestResultServer/static-dashboards/timeline_explorer.html:
+
 2013-01-11  Ryosuke Niwa  <rniwa@webkit.org>
 
         REGRESSION: buildbot mangles error messages with timestamps run-webkit-tests outputs

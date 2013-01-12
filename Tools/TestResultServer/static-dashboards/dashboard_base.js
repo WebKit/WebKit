@@ -185,12 +185,6 @@ function handleValidHashParameterWrapper(key, value)
             });
         return true;
 
-    // FIXME: This should probably be stored on g_crossDashboardState like everything else in this function.
-    case 'builder':
-        validateParameter(g_currentState, key, value,
-            function() { return value in currentBuilders(); });
-        return true;
-
     case 'useTestData':
     case 'showAllRuns':
         g_crossDashboardState[key] = value == 'true';

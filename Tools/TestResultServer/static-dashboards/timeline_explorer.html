@@ -152,6 +152,10 @@ function initCurrentBuilderTestResults()
 function handleValidHashParameter(key, value)
 {
     switch(key) {
+    case 'builder':
+        validateParameter(g_currentState, key, value,
+            function() { return value in currentBuilders(); });
+        return true;
     case 'buildTimestamp':
         g_currentState.buildTimestamp = parseInt(value, 10);
         return true;
