@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <style>
+            #test_wrap {
+                width: 250px;
+                height: 166px;
+                overflow: hidden;
+            }
+
+            #test_img {
+                width: 100%;
+                height: 100%;     
+            }
+        </style>
+        <script src="../js/resources/js-test-pre.js"></script>
+    </head>
+    <body>
+        <div id="test_wrap">
+            <img id="test_img" src="resources/green-256x256.jpg">
+        </div>
+        <p>
+            Image should return a size of 250x166 regardless of zoom level.
+        </p>
+        <script>
+            var imageElement = document.getElementById('test_img');
+            var wrapElement = document.getElementById('test_wrap');
+            
+            function getSize(zoomLevel)
+            {
+                document.body.zoom = zoomLevel;
+                return {
+                    imageWidth: imageElement.offsetWidth,
+                    imageHeight: imageElement.offsetHeight,
+                    wrapWidth: wrapElement.offsetWidth,
+                    wrapHeight: wrapElement.offsetHeight
+                };
+            }
+            
+            for (var i = 1; i <= 300; i++) {
+                shouldBe('getSize(' + (i / 100) + ').imageWidth', '250');
+                shouldBe('getSize(' + (i / 100) + ').imageHeight', '166');
+                shouldBe('getSize(' + (i / 100) + ').wrapWidth', '250');
+                shouldBe('getSize(' + (i / 100) + ').wrapHeight', '166');
+            }
+            document.body.zoom = 1.0;
+        </script>
+    </body>
+</html>

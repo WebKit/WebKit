@@ -1273,6 +1273,11 @@ inline int adjustForAbsoluteZoom(int value, RenderObject* renderer)
     return adjustForAbsoluteZoom(value, renderer->style());
 }
 
+inline LayoutUnit adjustLayoutUnitForAbsoluteZoom(LayoutUnit value, RenderObject* renderer)
+{
+    return adjustLayoutUnitForAbsoluteZoom(value, renderer->style());
+}
+
 inline void adjustFloatQuadForAbsoluteZoom(FloatQuad& quad, RenderObject* renderer)
 {
     float zoom = renderer->style()->effectiveZoom();
