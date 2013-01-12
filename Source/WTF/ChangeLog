@@ -1,3 +1,18 @@
+2013-01-12  Csaba Osztrogonác  <ossy@webkit.org>
+
+        Use __sync_add_and_fetch instead of __gnu_cxx::__exchange_and_add
+        https://bugs.webkit.org/show_bug.cgi?id=106729
+
+        After r139514 we need atomicIncrement(int64_t volatile*) for all platform. Now the
+        GCC implementation of atomicIncrement() is based on __gnu_cxx::__exchange_and_add,
+        which doesn't support int64_t type, but __sync_add_and_fetch does.
+
+        Reviewed by Benjamin Poulain.
+
+        * wtf/Atomics.h:
+        (WTF::atomicIncrement):
+        (WTF::atomicDecrement):
+
 2013-01-11  Filip Pizlo  <fpizlo@apple.com>
 
         Add WTF_EXPORT_PRIVATE to printInternal() methods of PrintStream.h
