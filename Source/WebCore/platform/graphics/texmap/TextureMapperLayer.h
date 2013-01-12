@@ -78,7 +78,7 @@ public:
         : m_parent(0)
         , m_effectTarget(0)
         , m_contentsLayer(0)
-        , m_opacity(1)
+        , m_currentOpacity(1)
         , m_centerZ(0)
         , m_textureMapper(0)
     { }
@@ -87,11 +87,6 @@ public:
 
     TextureMapper* textureMapper() const;
     void flushCompositingStateForThisLayerOnly(GraphicsLayerTextureMapper*);
-    void setTransform(const TransformationMatrix&);
-    void setOpacity(float value) { m_opacity = value; }
-#if ENABLE(CSS_FILTERS)
-    void setFilters(const FilterOperations& filters) { m_filters = filters; }
-#endif
     void setTextureMapper(TextureMapper* texmap) { m_textureMapper = texmap; }
     bool descendantsOrSelfHaveRunningAnimations() const;
 
@@ -129,10 +124,10 @@ private:
     void paintSelfAndChildrenWithReplica(const TextureMapperPaintOptions&);
 
     // GraphicsLayerAnimation::Client
-    void setAnimatedTransform(const TransformationMatrix& matrix) { setTransform(matrix); }
-    void setAnimatedOpacity(float opacity) { setOpacity(opacity); }
+    virtual void setAnimatedTransform(const TransformationMatrix& matrix) OVERRIDE { m_currentTransform.setLocalTransform(matrix); }
+    virtual void setAnimatedOpacity(float opacity) OVERRIDE { m_currentOpacity = opacity; }
 #if ENABLE(CSS_FILTERS)
-    virtual void setAnimatedFilters(const FilterOperations& filters) { setFilters(filters); }
+    virtual void setAnimatedFilters(const FilterOperations& filters) OVERRIDE { m_currentFilters = filters; }
 #endif
 
     void syncAnimations();
@@ -151,16 +146,15 @@ private:
         return FloatRect(FloatPoint::zero(), m_state.size);
     }
 
-    GraphicsLayerTransform m_transform;
-
     Vector<TextureMapperLayer*> m_children;
     TextureMapperLayer* m_parent;
     TextureMapperLayer* m_effectTarget;
     RefPtr<TextureMapperBackingStore> m_backingStore;
     TextureMapperPlatformLayer* m_contentsLayer;
-    float m_opacity;
+    GraphicsLayerTransform m_currentTransform;
+    float m_currentOpacity;
 #if ENABLE(CSS_FILTERS)
-    FilterOperations m_filters;
+    FilterOperations m_currentFilters;
 #endif
     float m_centerZ;
 
@@ -188,7 +182,7 @@ private:
         bool visible : 1;
 
         State()
-            : opacity(1.f)
+            : opacity(1)
             , maskLayer(0)
             , replicaLayer(0)
             , preserves3D(false)
