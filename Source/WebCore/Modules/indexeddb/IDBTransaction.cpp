@@ -120,6 +120,7 @@ IDBTransaction::IDBTransaction(ScriptExecutionContext* context, int64_t id, Pass
 IDBTransaction::~IDBTransaction()
 {
     ASSERT(m_state == Finished);
+    ASSERT(m_requestList.isEmpty());
 }
 
 const String& IDBTransaction::mode() const
@@ -223,7 +224,7 @@ void IDBTransaction::abort(ExceptionCode& ec)
     m_state = Finishing;
 
     while (!m_requestList.isEmpty()) {
-        IDBRequest* request = *m_requestList.begin();
+        RefPtr<IDBRequest> request = *m_requestList.begin();
         m_requestList.remove(request);
         request->abort();
     }
@@ -300,7 +301,7 @@ void IDBTransaction::onAbort(PassRefPtr<IDBDatabaseError> prpError)
         // Abort was not triggered by front-end, so outstanding requests must
         // be aborted now.
         while (!m_requestList.isEmpty()) {
-            IDBRequest* request = *m_requestList.begin();
+            RefPtr<IDBRequest> request = *m_requestList.begin();
             m_requestList.remove(request);
             request->abort();
         }

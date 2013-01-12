@@ -162,7 +162,7 @@ private:
     RefPtr<DOMError> m_error;
     String m_errorMessage;
 
-    ListHashSet<IDBRequest*> m_requestList;
+    ListHashSet<RefPtr<IDBRequest> > m_requestList;
 
     typedef HashMap<String, RefPtr<IDBObjectStore> > IDBObjectStoreMap;
     IDBObjectStoreMap m_objectStoreMap;

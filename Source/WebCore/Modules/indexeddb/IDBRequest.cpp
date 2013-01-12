@@ -49,6 +49,9 @@ PassRefPtr<IDBRequest> IDBRequest::create(ScriptExecutionContext* context, PassR
 {
     RefPtr<IDBRequest> request(adoptRef(new IDBRequest(context, source, IDBTransactionBackendInterface::NormalTask, transaction)));
     request->suspendIfNeeded();
+    // Requests associated with IDBFactory (open/deleteDatabase/getDatabaseNames) are not associated with transactions.
+    if (transaction)
+        transaction->registerRequest(request.get());
     return request.release();
 }
 
@@ -56,6 +59,9 @@ PassRefPtr<IDBRequest> IDBRequest::create(ScriptExecutionContext* context, PassR
 {
     RefPtr<IDBRequest> request(adoptRef(new IDBRequest(context, source, taskType, transaction)));
     request->suspendIfNeeded();
+    // Requests associated with IDBFactory (open/deleteDatabase/getDatabaseNames) are not associated with transactions.
+    if (transaction)
+        transaction->registerRequest(request.get());
     return request.release();
 }
 
@@ -78,10 +84,6 @@ IDBRequest::IDBRequest(ScriptExecutionContext* context, PassRefPtr<IDBAny> sourc
     , m_preventPropagation(false)
     , m_requestState(context)
 {
-    // Requests associated with IDBFactory (open/deleteDatabase/getDatabaseNames) are not
-    // associated with transactions.
-    if (m_transaction)
-        m_transaction->registerRequest(this);
 }
 
 IDBRequest::~IDBRequest()
