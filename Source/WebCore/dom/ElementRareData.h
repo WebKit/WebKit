@@ -150,8 +150,6 @@ inline IntSize defaultMinimumSizeForResizing()
 
 inline ElementRareData::ElementRareData()
     : m_minimumSizeForResizing(defaultMinimumSizeForResizing())
-    , m_generatedBefore(0)
-    , m_generatedAfter(0)
 {
 }
 
