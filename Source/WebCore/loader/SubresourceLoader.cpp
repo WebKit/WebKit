@@ -214,6 +214,8 @@ void SubresourceLoader::didReceiveResponse(const ResourceResponse& response)
 
 void SubresourceLoader::didReceiveData(const char* data, int length, long long encodedDataLength, bool allAtOnce)
 {
+    if (m_resource->response().httpStatusCode() >= 400 && !m_resource->shouldIgnoreHTTPStatusCodeErrors())
+        return;
     ASSERT(!m_resource->resourceToRevalidate());
     ASSERT(!m_resource->errorOccurred());
     ASSERT(m_state == Initialized);
@@ -232,8 +234,8 @@ bool SubresourceLoader::checkForHTTPStatusCodeError()
     if (m_resource->response().httpStatusCode() < 400 || m_resource->shouldIgnoreHTTPStatusCodeErrors())
         return false;
 
-    m_resource->error(CachedResource::LoadError);
     m_state = Finishing;
+    m_resource->error(CachedResource::LoadError);
     cancel();
     return true;
 }
