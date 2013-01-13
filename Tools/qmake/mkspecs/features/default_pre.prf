@@ -85,6 +85,9 @@ contains(QT_CONFIG, private_tests): CONFIG += qt_developer_build
 # Set some defaults for specific platforms
 CONFIG += include_webinspector
 
+# Make sure we process the PKGCONFIG variable if applicable
+!mac: CONFIG += link_pkgconfig
+
 # By default we enable "production build", and build-webkit, which is
 # used by bots and developers, will disable it, to enable warnings etc.
 CONFIG += production_build

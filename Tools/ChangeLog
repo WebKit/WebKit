@@ -1,3 +1,21 @@
+2013-01-13  Jonathan Liu  <net147@gmail.com>
+
+        Fix CONFIG missing link_pkgconfig on Windows
+        https://bugs.webkit.org/show_bug.cgi?id=106647
+
+        Some libraries (e.g. libxslt, libxml2 and sqlite3) fail to link
+        properly on Windows because they are added to PKGCONFIG but
+        CONFIG does not contain link_pkgconfig.
+
+        This is because link_pkgconfig is added in unix/default_pre.prf
+        which is only used for UNIX platforms. To fix this, move it to
+        the general default_pre.prf.
+
+        Reviewed by Simon Hausmann.
+
+        * qmake/mkspecs/features/default_pre.prf:
+        * qmake/mkspecs/features/unix/default_pre.prf:
+
 2013-01-12  Nico Weber  <thakis@chromium.org>
 
         nrwt/chromium: Don't prefer chromium over webkit build directories
