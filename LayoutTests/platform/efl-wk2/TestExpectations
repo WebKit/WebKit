@@ -293,6 +293,7 @@ accessibility/table-with-rules.html [ Skip ]
 accessibility/aria-controls-with-tabs.html [ Skip ]
 accessibility/image-map-update-parent-crash.html [ Skip ]
 accessibility/anonymous-render-block-in-continuation-causes-crash.html [ Skip ]
+Bug(EFL) accessibility/heading-level.html [ Failure ]
 
 # WebKitTestRunner needs an implementation for testRunner.titleTextDirection
 webkit.org/b/93470 fast/dom/title-directionality-removeChild.html [ Failure ]
