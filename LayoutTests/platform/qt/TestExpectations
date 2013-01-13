@@ -2160,6 +2160,7 @@ svg/text/alt-glyph-for-surrogate-pair.svg
 svg/transforms/transformed-text-fill-gradient.html
 fast/regions/floats-basic-in-variable-width-regions.html
 fast/regions/region-style-rule-position.html
+fast/forms/select/intrinsic-min-width-applies-with-fixed-width.html
 
 # Failing fast/css/sticky/ tests with minor pixel differences
 # https://bugs.webkit.org/show_bug.cgi?id=92080
@@ -2503,3 +2504,8 @@ fast/workers/worker-close-more.html
 fast/workers/worker-document-leak.html
 fast/workers/worker-lifecycle.html
 fast/workers/storage/interrupt-database.html
+
+# REGRESSION(r139537): It made 2 tests fail on GTK/EFL/Qt
+# https://bugs.webkit.org/show_bug.cgi?id=106741
+css3/calc/simple-calcs.html
+fast/css/zoom-in-length-round-trip.html
