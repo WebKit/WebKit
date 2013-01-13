@@ -47,7 +47,7 @@ my $quiet = '';
 my $showHelp;
 my $useGYP = 0;
 my $useMake = 0;
-my $useNinja = $^O eq "linux";
+my $useNinja = -1; # -1: Let update-webkit-chromium pick the default.
 
 determineIsChromium();
 determineIsChromiumAndroid();
@@ -82,9 +82,6 @@ __END__
 if ($useMake) {
     $ENV{"GYP_GENERATORS"} = "make";
 }
-if ($useNinja) {
-    $ENV{"GYP_GENERATORS"} = "ninja";
-}
 
 my @svnOptions = ();
 push @svnOptions, '-q' if $quiet;
@@ -105,6 +102,8 @@ if (-d "../Internal") {
     my @chromiumUpdateArgs = ("perl", "Tools/Scripts/update-webkit-chromium");
     push @chromiumUpdateArgs, "--chromium-android" if isChromiumAndroid();
     push @chromiumUpdateArgs, "--force" if forceChromiumUpdate();
+    push @chromiumUpdateArgs, "--ninja" if $useNinja == 1;
+    push @chromiumUpdateArgs, "--no-ninja" if $useNinja == 0;
     system(@chromiumUpdateArgs) == 0 or die $!;
 } elsif (isAppleWinWebKit()) {
     system("perl", "Tools/Scripts/update-webkit-auxiliary-libs") == 0 or die;

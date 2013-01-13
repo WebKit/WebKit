@@ -66,9 +66,16 @@ if (isChromiumAndroid()) {
 }
 
 my $force = 0;
+my $useNinja = $^O eq "linux";
+
 GetOptions(
   'force' => \$force,
+  'ninja!' => \$useNinja,
 );
+
+if ($useNinja) {
+    $ENV{"GYP_GENERATORS"} = "ninja";
+}
 
 # Execute gclient sync.
 print "Updating chromium port dependencies using gclient...\n";

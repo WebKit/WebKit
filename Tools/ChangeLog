@@ -1,5 +1,26 @@
 2013-01-12  Nico Weber  <thakis@chromium.org>
 
+        Use ninja by default on Linux for build-webkit --chromium, bot edition
+        https://bugs.webkit.org/show_bug.cgi?id=104434
+
+        Reviewed by Eric Seidel.
+
+        r139557 changed update-webkit to pick ninja by default on linux, but
+        the bots run update-webkit-chromium directly so they didn't see this.
+        Move the default for ninja into update-webkit-chromium so that it's
+        picked up by the bots, and let update-webkit forward non-default
+        options to there.
+
+        This way, the default is in one place only and both developers (who
+        usually use update-webkit which then shells out to
+        updat-webkit-chromium) and bots (which use update-webkit-chromium
+        directly) see the same behavior.
+
+        * Scripts/update-webkit:
+        * Scripts/update-webkit-chromium:
+
+2013-01-12  Nico Weber  <thakis@chromium.org>
+
         Make ninja the default build system on Linux for build-webkit --chromium
         https://bugs.webkit.org/show_bug.cgi?id=104434
 
