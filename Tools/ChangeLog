@@ -1,5 +1,24 @@
 2013-01-12  Nico Weber  <thakis@chromium.org>
 
+        nrwt/chromium: Don't prefer chromium over webkit build directories
+        https://bugs.webkit.org/show_bug.cgi?id=105597
+
+        Reviewed by Dirk Pranke.
+
+        Rely on the new timestamp logic instead. Requested by dpranke in
+        https://bugs.webkit.org/show_bug.cgi?id=105498
+
+        * Scripts/webkitpy/layout_tests/port/chromium.py:
+        (ChromiumPort._static_build_path):
+        * Scripts/webkitpy/layout_tests/port/chromium_linux_unittest.py:
+        (ChromiumLinuxPortTest.test_build_path):
+        * Scripts/webkitpy/layout_tests/port/chromium_mac_unittest.py:
+        (ChromiumMacPortTest.test_build_path):
+        * Scripts/webkitpy/layout_tests/port/chromium_win_unittest.py:
+        (ChromiumWinTest.test_build_path):
+
+2013-01-12  Nico Weber  <thakis@chromium.org>
+
         Use ninja by default on Linux for build-webkit --chromium, bot edition
         https://bugs.webkit.org/show_bug.cgi?id=104434
 

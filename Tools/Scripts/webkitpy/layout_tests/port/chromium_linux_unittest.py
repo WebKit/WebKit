@@ -99,10 +99,6 @@ class ChromiumLinuxPortTest(chromium_port_testcase.ChromiumPortTestCase):
         options = MockOptions(configuration='Release', build_directory='foo')
         self.assert_build_path(options, ['/mock-checkout/Source/WebKit/chromium/out/Release'], 'foo/Release')
 
-        # Test that we look in a chromium directory before the webkit directory.
-        options = MockOptions(configuration='Release', build_directory=None)
-        self.assert_build_path(options, ['/mock-checkout/Source/WebKit/chromium/out/Release', '/mock-checkout/out/Release'], '/mock-checkout/Source/WebKit/chromium/out/Release')
-
         # Test that we prefer the legacy dir over the new dir.
         options = MockOptions(configuration='Release', build_directory=None)
         self.assert_build_path(options, ['/mock-checkout/Source/WebKit/chromium/sconsbuild/Release', '/mock-checkout/Source/WebKit/chromium/out/Release'], '/mock-checkout/Source/WebKit/chromium/sconsbuild/Release')
