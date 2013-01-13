@@ -746,6 +746,9 @@ Bug(EFL) inspector/timeline/timeline-enum-stability.html [ Failure Pass ]
 webkit.org/b/95066 inspector/styles/media-queries.html [ Failure Pass ]
 webkit.org/b/98777 inspector/styles/styles-history.html [ Failure Pass ]
 
+# New test added in r139405 that gives different output every run.
+webkit.org/b/104384 inspector/debugger/debugger-script-preprocessor.html [ Failure Pass ]
+
 # Sometimes asserts in MessagePort::contextDestroyed
 webkit.org/b/94458 http/tests/security/XFrameOptions/x-frame-options-deny-meta-tag-in-body.html [ Crash Failure Pass ]
 
