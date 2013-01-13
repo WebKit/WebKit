@@ -37,6 +37,7 @@
 #import "JSValue.h"
 #import "JSValueInternal.h"
 #import "ObjcRuntimeExtras.h"
+#import "Operations.h"
 #import "wtf/OwnPtr.h"
 
 extern "C" {

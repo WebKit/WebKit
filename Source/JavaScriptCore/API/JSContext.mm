@@ -33,6 +33,7 @@
 #import "JSWrapperMap.h"
 #import "JavaScriptCore.h"
 #import "ObjcRuntimeExtras.h"
+#import "Operations.h"
 #import <wtf/HashSet.h>
 
 #if JS_OBJC_API_ENABLED
