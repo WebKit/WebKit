@@ -1782,11 +1782,6 @@ inline float adjustFloatForAbsoluteZoom(float value, const RenderStyle* style)
     return value / style->effectiveZoom();
 }
 
-inline LayoutUnit adjustLayoutUnitForAbsoluteZoom(LayoutUnit value, const RenderStyle* style)
-{
-    return value / style->effectiveZoom();
-}
-
 inline bool RenderStyle::setZoom(float f)
 {
     if (compareEqual(visual->m_zoom, f))

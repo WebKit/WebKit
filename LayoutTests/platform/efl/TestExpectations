@@ -1805,7 +1805,3 @@ webkit.org/b/103955 fast/repaint/caret-with-transformation.html [ Missing ]
 # Started failing due to new checks added in r139547.
 webkit.org/b/106743 media/video-controls-captions.html [ Failure ]
 
-# Regression(r139537) Fails on EFL, GTK and Qt.
-webkit.org/b/106741 css3/calc/simple-calcs.html [ Failure ]
-webkit.org/b/106741 fast/css/zoom-in-length-round-trip.html [ Failure ]
-

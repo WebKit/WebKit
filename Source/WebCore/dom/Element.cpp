@@ -453,7 +453,7 @@ int Element::offsetWidth()
 {
     document()->updateLayoutIgnorePendingStylesheets();
     if (RenderBoxModelObject* renderer = renderBoxModelObject())
-        return adjustLayoutUnitForAbsoluteZoom(renderer->pixelSnappedOffsetWidth(), renderer).round();
+        return adjustForAbsoluteZoom(renderer->pixelSnappedOffsetWidth(), renderer);
     return 0;
 }
 
@@ -461,7 +461,7 @@ int Element::offsetHeight()
 {
     document()->updateLayoutIgnorePendingStylesheets();
     if (RenderBoxModelObject* renderer = renderBoxModelObject())
-        return adjustLayoutUnitForAbsoluteZoom(renderer->pixelSnappedOffsetHeight(), renderer).round();
+        return adjustForAbsoluteZoom(renderer->pixelSnappedOffsetHeight(), renderer);
     return 0;
 }
 
@@ -508,7 +508,7 @@ int Element::clientWidth()
     }
     
     if (RenderBox* renderer = renderBox())
-        return adjustLayoutUnitForAbsoluteZoom(renderer->pixelSnappedClientWidth(), renderer).round();
+        return adjustForAbsoluteZoom(renderer->pixelSnappedClientWidth(), renderer);
     return 0;
 }
 
@@ -529,7 +529,7 @@ int Element::clientHeight()
     }
     
     if (RenderBox* renderer = renderBox())
-        return adjustLayoutUnitForAbsoluteZoom(renderer->pixelSnappedClientHeight(), renderer).round();
+        return adjustForAbsoluteZoom(renderer->pixelSnappedClientHeight(), renderer);
     return 0;
 }
 

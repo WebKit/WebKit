@@ -2504,8 +2504,3 @@ fast/workers/worker-close-more.html
 fast/workers/worker-document-leak.html
 fast/workers/worker-lifecycle.html
 fast/workers/storage/interrupt-database.html
-
-# REGRESSION(r139537): It made 2 tests fail on GTK/EFL/Qt
-# https://bugs.webkit.org/show_bug.cgi?id=106741
-css3/calc/simple-calcs.html
-fast/css/zoom-in-length-round-trip.html
