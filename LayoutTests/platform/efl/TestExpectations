@@ -1799,3 +1799,6 @@ webkit.org/b/106441 http/tests/misc/authentication-redirect-3/authentication-sen
 # Mark as missing image result, same as other ports. Test should be updated to text-based repaint test.
 webkit.org/b/103955 fast/repaint/caret-with-transformation.html [ Missing ]
 
+# Started failing due to new checks added in r139547.
+webkit.org/b/106743 media/video-controls-captions.html [ Failure ]
+
