@@ -1,0 +1,146 @@
+Test that the cue is styled properly throughout its lifetime.
+EVENT(canplaythrough)
+EVENT(seeked)
+EXPECTED (getComputedStyle(cueNode).color == 'rgb(255, 0, 0)') OK
+EXPECTED (getComputedStyle(cueNode).color == 'rgb(0, 128, 0)') OK
+EXPECTED (getComputedStyle(cueNode).color == 'rgb(255, 0, 0)') OK
+1
+RUN(video.currentTime = 0.7)
+EVENT(seeked)
+EXPECTED (getComputedStyle(cueNode).color == 'rgb(255, 0, 0)') OK
+EXPECTED (getComputedStyle(cueNode).color == 'rgb(0, 128, 0)') OK
+EXPECTED (getComputedStyle(cueNode).color == 'rgb(255, 0, 0)') OK
+2
+RUN(video.currentTime = 0.8)
+EVENT(seeked)
+EXPECTED (getComputedStyle(cueNode).color == 'rgb(255, 0, 0)') OK
+EXPECTED (getComputedStyle(cueNode).color == 'rgb(0, 128, 0)') OK
+EXPECTED (getComputedStyle(cueNode).color == 'rgb(255, 0, 0)') OK
+3
+RUN(video.currentTime = 0.9)
+EVENT(seeked)
+EXPECTED (getComputedStyle(cueNode).color == 'rgb(255, 0, 0)') OK
+EXPECTED (getComputedStyle(cueNode).color == 'rgb(0, 128, 0)') OK
+EXPECTED (getComputedStyle(cueNode).color == 'rgb(255, 0, 0)') OK
+4
+RUN(video.currentTime = 1)
+EVENT(seeked)
+EXPECTED (getComputedStyle(cueNode).color == 'rgb(255, 0, 0)') OK
+EXPECTED (getComputedStyle(cueNode).color == 'rgb(0, 128, 0)') OK
+EXPECTED (getComputedStyle(cueNode).color == 'rgb(255, 0, 0)') OK
+5
+RUN(video.currentTime = 1.1)
+EVENT(seeked)
+EXPECTED (getComputedStyle(cueNode).color == 'rgb(255, 0, 0)') OK
+EXPECTED (getComputedStyle(cueNode).color == 'rgb(0, 128, 0)') OK
+EXPECTED (getComputedStyle(cueNode).color == 'rgb(255, 0, 0)') OK
+6
+RUN(video.currentTime = 1.2000000000000002)
+EVENT(seeked)
+EXPECTED (getComputedStyle(cueNode).color == 'rgb(255, 0, 0)') OK
+EXPECTED (getComputedStyle(cueNode).color == 'rgb(0, 128, 0)') OK
+EXPECTED (getComputedStyle(cueNode).color == 'rgb(255, 0, 0)') OK
+7
+RUN(video.currentTime = 1.3)
+EVENT(seeked)
+EXPECTED (getComputedStyle(cueNode).color == 'rgb(255, 0, 0)') OK
+EXPECTED (getComputedStyle(cueNode).color == 'rgb(0, 128, 0)') OK
+EXPECTED (getComputedStyle(cueNode).color == 'rgb(255, 0, 0)') OK
+8
+RUN(video.currentTime = 1.4)
+EVENT(seeked)
+EXPECTED (getComputedStyle(cueNode).color == 'rgb(255, 0, 0)') OK
+EXPECTED (getComputedStyle(cueNode).color == 'rgb(0, 128, 0)') OK
+EXPECTED (getComputedStyle(cueNode).color == 'rgb(255, 0, 0)') OK
+9
+RUN(video.currentTime = 1.5)
+EVENT(seeked)
+EXPECTED (getComputedStyle(cueNode).color == 'rgb(255, 0, 0)') OK
+EXPECTED (getComputedStyle(cueNode).color == 'rgb(0, 128, 0)') OK
+EXPECTED (getComputedStyle(cueNode).color == 'rgb(255, 0, 0)') OK
+10
+RUN(video.currentTime = 1.6)
+EVENT(seeked)
+EXPECTED (getComputedStyle(cueNode).color == 'rgb(255, 0, 0)') OK
+EXPECTED (getComputedStyle(cueNode).color == 'rgb(0, 128, 0)') OK
+EXPECTED (getComputedStyle(cueNode).color == 'rgb(255, 0, 0)') OK
+11
+RUN(video.currentTime = 1.7000000000000002)
+EVENT(seeked)
+EXPECTED (getComputedStyle(cueNode).color == 'rgb(255, 0, 0)') OK
+EXPECTED (getComputedStyle(cueNode).color == 'rgb(0, 128, 0)') OK
+EXPECTED (getComputedStyle(cueNode).color == 'rgb(255, 0, 0)') OK
+12
+RUN(video.currentTime = 1.8000000000000003)
+EVENT(seeked)
+EXPECTED (getComputedStyle(cueNode).color == 'rgb(255, 0, 0)') OK
+EXPECTED (getComputedStyle(cueNode).color == 'rgb(0, 128, 0)') OK
+EXPECTED (getComputedStyle(cueNode).color == 'rgb(255, 0, 0)') OK
+13
+RUN(video.currentTime = 1.9)
+EVENT(seeked)
+EXPECTED (getComputedStyle(cueNode).color == 'rgb(255, 0, 0)') OK
+EXPECTED (getComputedStyle(cueNode).color == 'rgb(0, 128, 0)') OK
+EXPECTED (getComputedStyle(cueNode).color == 'rgb(255, 0, 0)') OK
+14
+RUN(video.currentTime = 2)
+EVENT(seeked)
+EXPECTED (getComputedStyle(cueNode).color == 'rgb(255, 0, 0)') OK
+EXPECTED (getComputedStyle(cueNode).color == 'rgb(0, 128, 0)') OK
+EXPECTED (getComputedStyle(cueNode).color == 'rgb(255, 0, 0)') OK
+15
+RUN(video.currentTime = 2.1)
+EVENT(seeked)
+EXPECTED (getComputedStyle(cueNode).color == 'rgb(255, 0, 0)') OK
+EXPECTED (getComputedStyle(cueNode).color == 'rgb(0, 128, 0)') OK
+EXPECTED (getComputedStyle(cueNode).color == 'rgb(255, 0, 0)') OK
+16
+RUN(video.currentTime = 2.2)
+EVENT(seeked)
+EXPECTED (getComputedStyle(cueNode).color == 'rgb(255, 0, 0)') OK
+EXPECTED (getComputedStyle(cueNode).color == 'rgb(0, 128, 0)') OK
+EXPECTED (getComputedStyle(cueNode).color == 'rgb(255, 0, 0)') OK
+17
+RUN(video.currentTime = 2.3000000000000003)
+EVENT(seeked)
+EXPECTED (getComputedStyle(cueNode).color == 'rgb(255, 0, 0)') OK
+EXPECTED (getComputedStyle(cueNode).color == 'rgb(0, 128, 0)') OK
+EXPECTED (getComputedStyle(cueNode).color == 'rgb(255, 0, 0)') OK
+18
+RUN(video.currentTime = 2.4)
+EVENT(seeked)
+EXPECTED (getComputedStyle(cueNode).color == 'rgb(255, 0, 0)') OK
+EXPECTED (getComputedStyle(cueNode).color == 'rgb(0, 128, 0)') OK
+EXPECTED (getComputedStyle(cueNode).color == 'rgb(255, 0, 0)') OK
+19
+RUN(video.currentTime = 2.5)
+EVENT(seeked)
+EXPECTED (getComputedStyle(cueNode).color == 'rgb(255, 0, 0)') OK
+EXPECTED (getComputedStyle(cueNode).color == 'rgb(0, 128, 0)') OK
+EXPECTED (getComputedStyle(cueNode).color == 'rgb(255, 0, 0)') OK
+20
+RUN(video.currentTime = 2.6)
+EVENT(seeked)
+EXPECTED (getComputedStyle(cueNode).color == 'rgb(255, 0, 0)') OK
+EXPECTED (getComputedStyle(cueNode).color == 'rgb(0, 128, 0)') OK
+EXPECTED (getComputedStyle(cueNode).color == 'rgb(255, 0, 0)') OK
+21
+RUN(video.currentTime = 2.7)
+EVENT(seeked)
+EXPECTED (getComputedStyle(cueNode).color == 'rgb(255, 0, 0)') OK
+EXPECTED (getComputedStyle(cueNode).color == 'rgb(0, 128, 0)') OK
+EXPECTED (getComputedStyle(cueNode).color == 'rgb(255, 0, 0)') OK
+22
+RUN(video.currentTime = 2.8000000000000003)
+EVENT(seeked)
+EXPECTED (getComputedStyle(cueNode).color == 'rgb(255, 0, 0)') OK
+EXPECTED (getComputedStyle(cueNode).color == 'rgb(0, 128, 0)') OK
+EXPECTED (getComputedStyle(cueNode).color == 'rgb(255, 0, 0)') OK
+23
+RUN(video.currentTime = 2.9000000000000004)
+EVENT(seeked)
+EXPECTED (getComputedStyle(cueNode).color == 'rgb(255, 0, 0)') OK
+EXPECTED (getComputedStyle(cueNode).color == 'rgb(0, 128, 0)') OK
+EXPECTED (getComputedStyle(cueNode).color == 'rgb(255, 0, 0)') OK
+END OF TEST
+

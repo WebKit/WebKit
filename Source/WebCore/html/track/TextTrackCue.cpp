@@ -658,7 +658,7 @@ void TextTrackCue::calculateDisplayParameters()
     m_computedLinePosition = calculateComputedLinePosition();
 }
     
-void TextTrackCue::markFutureAndPastNodes(Element* root, double previousTimestamp, double movieTime)
+void TextTrackCue::markFutureAndPastNodes(Node* root, double previousTimestamp, double movieTime)
 {
     DEFINE_STATIC_LOCAL(const String, timestampTag, (ASCIILiteral("timestamp")));
     
@@ -700,9 +700,8 @@ void TextTrackCue::updateDisplayTree(float movieTime)
 
     // Update the two sets containing past and future WebVTT objects.
     RefPtr<DocumentFragment> referenceTree = getCueAsHTML();
-
+    markFutureAndPastNodes(referenceTree.get(), startTime(), movieTime);
     m_allDocumentNodes->appendChild(referenceTree);
-    markFutureAndPastNodes(m_allDocumentNodes.get(), startTime(), movieTime);
 }
 
 PassRefPtr<TextTrackCueBox> TextTrackCue::getDisplayTree()

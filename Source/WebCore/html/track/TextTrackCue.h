@@ -135,7 +135,7 @@ public:
     PassRefPtr<TextTrackCueBox> getDisplayTree();
     void updateDisplayTree(float);
     void removeDisplayTree();
-    void markFutureAndPastNodes(Element*, double, double);
+    void markFutureAndPastNodes(Node*, double, double);
 
     int calculateComputedLinePosition();
 

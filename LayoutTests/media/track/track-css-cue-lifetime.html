@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+
+        <script src=../media-file.js></script>
+        <script src=../video-test.js></script>
+        <script src=../media-controls.js></script>
+
+        <style>
+        video::cue(.red, .red2) { color:red }
+        video::cue(.green) { color:green }
+        </style>
+
+        <script>
+
+        var cueNode;
+        var seekedCount = 0;
+        var step = 0.1;
+        var initialTime = 0.6;
+        var endTime = 3.0
+
+        function skipNonElements(root)
+        {
+            nextElementSibling = root;
+            while (nextElementSibling.nodeType != 1) {
+                nextElementSibling = nextElementSibling.nextSibling;
+            }
+            return nextElementSibling;
+        }
+
+        function seeked()
+        {
+            if (testEnded)
+                return;
+
+            cueNode = skipNonElements(textTrackDisplayElement(video, 'all-nodes').firstChild);
+            skipNonElements(cueNode);
+            testExpected("getComputedStyle(cueNode).color", "rgb(255, 0, 0)");
+            cueNode = skipNonElements(cueNode.nextSibling);
+            testExpected("getComputedStyle(cueNode).color", "rgb(0, 128, 0)");
+            cueNode = skipNonElements(cueNode.nextSibling);
+            testExpected("getComputedStyle(cueNode).color", "rgb(255, 0, 0)");
+
+            if (++seekedCount * step + initialTime > endTime)
+                endTest();
+            else {
+                consoleWrite("" + seekedCount);
+                run("video.currentTime = " + (initialTime + seekedCount * step));
+            }
+        }
+
+        function loaded()
+        {
+            consoleWrite("Test that the cue is styled properly throughout its lifetime.");
+            findMediaElement();
+            video.src = findMediaFile('video', '../content/test');
+            video.id = "testvideo";
+            waitForEvent('seeked', seeked);
+            waitForEvent('canplaythrough', function() { video.currentTime = initialTime; });
+        }
+
+        </script>
+    </head>
+    <body onload="loaded()">
+        <video controls >
+            <track src="captions-webvtt/styling-lifetime.vtt" kind="captions" default>
+        </video>
+    </body>
+</html>
