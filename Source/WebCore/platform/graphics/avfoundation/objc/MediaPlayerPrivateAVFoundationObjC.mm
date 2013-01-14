@@ -888,7 +888,7 @@ void MediaPlayerPrivateAVFoundationObjC::tracksChanged()
 
 #if HAVE(AVFOUNDATION_TEXT_TRACK_SUPPORT)
     if (m_avPlayerItem && !m_legibleOutput) {
-        m_legibleOutput = adoptNS([[AVPlayerItemLegibleOutput alloc] initWithMediaSubtypesForNativeRepresentation:nil]);
+        m_legibleOutput = adoptNS([[AVPlayerItemLegibleOutput alloc] initWithMediaSubtypesForNativeRepresentation:[NSArray array]]);
         [m_legibleOutput.get() setSuppressesPlayerRendering:YES];
 
         // We enabled automatic media selection because we want alternate audio tracks to be enabled/disabled automatically,
