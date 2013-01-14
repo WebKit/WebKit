@@ -1699,7 +1699,7 @@ double WebPagePrivate::zoomToFitScale() const
 
 bool WebPagePrivate::respectViewport() const
 {
-    return m_forceRespectViewportArguments || contentsSize().width() <= m_virtualViewportSize.width();
+    return m_forceRespectViewportArguments || contentsSize().width() <= m_virtualViewportSize.width() + 1;
 }
 
 double WebPagePrivate::initialScale() const

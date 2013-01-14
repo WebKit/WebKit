@@ -1,3 +1,24 @@
+2013-01-14  Jacky Jiang  <zhajiang@rim.com>
+
+        [BlackBerry] Zoom is still possible when user-scalable=no
+        https://bugs.webkit.org/show_bug.cgi?id=106809
+
+        Reviewed by George Staikos.
+
+        PR: 274566
+        On wordpress.com, the contents were rendered at the width 343 which was
+        1 css pixel larger than the expected device-width 342 so that we didn't
+        respect the viewport.
+        There was a RenderBlock on the page which contained "\n" and an
+        inline-block. "\n" took 0.78 width and the inline-block took 342 width
+        and they were unfortunately placed in the same InlineBox which caused
+        the contents width 1 css pixels larger than the device-width.
+        Allow the contents width to be 1 css pixel larger and still respect the
+        viewport in such a special case.
+
+        * Api/WebPage.cpp:
+        (BlackBerry::WebKit::WebPagePrivate::respectViewport):
+
 2013-01-13  Xiaobo Wang  <xbwang@torchmobile.com.cn>
 
         [BlackBerry] Add a public function WebPage::isLoading()
