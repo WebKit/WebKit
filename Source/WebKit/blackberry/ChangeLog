@@ -1,3 +1,19 @@
+2013-01-13  Xiaobo Wang  <xbwang@torchmobile.com.cn>
+
+        [BlackBerry] Add a public function WebPage::isLoading()
+        https://bugs.webkit.org/show_bug.cgi?id=106751
+
+        PR 274392
+
+        Reviewed by George Staikos.
+
+        Need to get the load state in WebPageClient when resolving PR 274392.
+
+        * Api/WebPage.cpp:
+        (BlackBerry::WebKit::WebPage::isLoading):
+        (WebKit):
+        * Api/WebPage.h:
+
 2013-01-11  Andrew Lo  <anlo@rim.com>
 
         [BlackBerry] Focus zoom animation doesn't occur on devices with physical keyboard

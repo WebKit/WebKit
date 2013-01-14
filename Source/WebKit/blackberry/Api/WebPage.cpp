@@ -3159,6 +3159,11 @@ WebCookieJar* WebPage::cookieJar() const
     return d->m_cookieJar;
 }
 
+bool WebPage::isLoading() const
+{
+    return d->isLoading();
+}
+
 bool WebPage::isVisible() const
 {
     return d->m_visible;

@@ -131,6 +131,8 @@ public:
 
     WebCookieJar* cookieJar() const;
 
+    bool isLoading() const;
+
     void setVisible(bool);
     bool isVisible() const;
 
