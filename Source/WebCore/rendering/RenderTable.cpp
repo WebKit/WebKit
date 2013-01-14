@@ -758,7 +758,6 @@ void RenderTable::splitColumn(unsigned position, unsigned firstSpan)
     }
 
     m_columnPos.grow(numEffCols() + 1);
-    setNeedsLayoutAndPrefWidthsRecalc();
 }
 
 void RenderTable::appendColumn(unsigned span)
@@ -780,7 +779,6 @@ void RenderTable::appendColumn(unsigned span)
     }
 
     m_columnPos.grow(numEffCols() + 1);
-    setNeedsLayoutAndPrefWidthsRecalc();
 }
 
 RenderTableCol* RenderTable::firstColumn() const
