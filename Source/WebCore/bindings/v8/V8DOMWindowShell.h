@@ -53,7 +53,7 @@ class HTMLDocument;
 // persist between navigations.
 class V8DOMWindowShell {
 public:
-    static PassOwnPtr<V8DOMWindowShell> create(Frame*, PassRefPtr<DOMWrapperWorld>);
+    static PassOwnPtr<V8DOMWindowShell> create(Frame*, PassRefPtr<DOMWrapperWorld>, v8::Isolate*);
 
     v8::Persistent<v8::Context> context() const { return m_context.get(); }
 
@@ -81,7 +81,7 @@ public:
     void destroyIsolatedShell();
 
 private:
-    V8DOMWindowShell(Frame*, PassRefPtr<DOMWrapperWorld>);
+    V8DOMWindowShell(Frame*, PassRefPtr<DOMWrapperWorld>, v8::Isolate*);
 
     void disposeContext();
 
@@ -101,6 +101,7 @@ private:
 
     Frame* m_frame;
     RefPtr<DOMWrapperWorld> m_world;
+    v8::Isolate* m_isolate;
 
     OwnPtr<V8PerContextData> m_perContextData;
 

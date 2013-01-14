@@ -199,6 +199,7 @@ private:
 
     Frame* m_frame;
     const String* m_sourceURL;
+    v8::Isolate* m_isolate;
 
     OwnPtr<V8DOMWindowShell> m_windowShell;
     IsolatedWorldMap m_isolatedWorlds;

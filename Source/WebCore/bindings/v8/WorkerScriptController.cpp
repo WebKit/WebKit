@@ -66,7 +66,7 @@ WorkerScriptController::WorkerScriptController(WorkerContext* workerContext)
     m_domDataStore = adoptPtr(new DOMDataStore(DOMDataStore::Worker));
     data->setDOMDataStore(m_domDataStore.get());
 
-    V8Initializer::initializeWorker();
+    V8Initializer::initializeWorker(m_isolate);
 }
 
 WorkerScriptController::~WorkerScriptController()
@@ -127,7 +127,7 @@ bool WorkerScriptController::initializeContextIfNeeded()
         return false;
     }
 
-    V8DOMWrapper::associateObjectWithWrapper(PassRefPtr<WorkerContext>(m_workerContext), contextType, jsWorkerContext);
+    V8DOMWrapper::associateObjectWithWrapper(PassRefPtr<WorkerContext>(m_workerContext), contextType, jsWorkerContext, m_isolate);
 
     // Insert the object instance as the prototype of the shadow object.
     v8::Handle<v8::Object> globalObject = v8::Handle<v8::Object>::Cast(m_context->Global()->GetPrototype());

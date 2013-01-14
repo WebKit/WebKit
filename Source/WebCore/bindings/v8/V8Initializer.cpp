@@ -40,7 +40,6 @@
 #include "V8History.h"
 #include "V8Location.h"
 #include "V8PerContextData.h"
-#include <v8.h>
 #include <wtf/RefPtr.h>
 #include <wtf/text/WTFString.h>
 
@@ -104,7 +103,7 @@ static void failedAccessCheckCallbackInMainThread(v8::Local<v8::Object> host, v8
     targetWindow->printErrorMessage(targetWindow->crossDomainAccessErrorMessage(activeDOMWindow(BindingState::instance())));
 }
 
-void V8Initializer::initializeMainThreadIfNeeded()
+void V8Initializer::initializeMainThreadIfNeeded(v8::Isolate* isolate)
 {
     ASSERT(isMainThread());
 
@@ -122,7 +121,7 @@ void V8Initializer::initializeMainThreadIfNeeded()
 #if ENABLE(JAVASCRIPT_DEBUGGER)
     ScriptProfiler::initialize();
 #endif
-    V8PerIsolateData::ensureInitialized(v8::Isolate::GetCurrent());
+    V8PerIsolateData::ensureInitialized(isolate);
 
     // FIXME: Remove the following 2 lines when V8 default has changed.
     const char es5ReadonlyFlag[] = "--es5_readonly";
@@ -157,7 +156,7 @@ static void messageHandlerInWorker(v8::Handle<v8::Message> message, v8::Handle<v
 
 static const int kWorkerMaxStackSize = 500 * 1024;
 
-void V8Initializer::initializeWorker()
+void V8Initializer::initializeWorker(v8::Isolate* isolate)
 {
     v8::V8::AddMessageListener(messageHandlerInWorker);
     v8::V8::IgnoreOutOfMemoryException();
@@ -175,7 +174,7 @@ void V8Initializer::initializeWorker()
     resourceConstraints.set_stack_limit(&here - kWorkerMaxStackSize / sizeof(uint32_t*));
     v8::SetResourceConstraints(&resourceConstraints);
 
-    V8PerIsolateData::ensureInitialized(v8::Isolate::GetCurrent());
+    V8PerIsolateData::ensureInitialized(isolate);
 }
 
 } // namespace WebCore

@@ -102,7 +102,8 @@ bool ScriptController::canAccessFromCurrentOrigin(Frame *frame)
 ScriptController::ScriptController(Frame* frame)
     : m_frame(frame)
     , m_sourceURL(0)
-    , m_windowShell(V8DOMWindowShell::create(frame, mainThreadNormalWorld()))
+    , m_isolate(v8::Isolate::GetCurrent())
+    , m_windowShell(V8DOMWindowShell::create(frame, mainThreadNormalWorld(), m_isolate))
     , m_paused(false)
 #if ENABLE(NETSCAPE_PLUGIN_API)
     , m_wrappedWindowScriptNPObject(0)
@@ -357,7 +358,7 @@ V8DOMWindowShell* ScriptController::windowShell(DOMWrapperWorld* world)
         if (iter != m_isolatedWorlds.end())
             shell = iter->value.get();
         else {
-            OwnPtr<V8DOMWindowShell> isolatedWorldShell = V8DOMWindowShell::create(m_frame, world);
+            OwnPtr<V8DOMWindowShell> isolatedWorldShell = V8DOMWindowShell::create(m_frame, world, m_isolate);
             shell = isolatedWorldShell.get();
             m_isolatedWorlds.set(world->worldId(), isolatedWorldShell.release());
         }

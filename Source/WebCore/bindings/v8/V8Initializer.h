@@ -26,12 +26,14 @@
 #ifndef V8Initializer_h
 #define V8Initializer_h
 
+#include <v8.h>
+
 namespace WebCore {
 
 class V8Initializer {
 public:
-    static void initializeMainThreadIfNeeded();
-    static void initializeWorker();
+    static void initializeMainThreadIfNeeded(v8::Isolate*);
+    static void initializeWorker(v8::Isolate*);
 };
     
 } // namespace WebCore

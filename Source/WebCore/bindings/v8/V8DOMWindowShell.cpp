@@ -81,14 +81,15 @@ static void setInjectedScriptContextDebugId(v8::Handle<v8::Context> targetContex
     targetContext->SetEmbedderData(0, v8::String::NewSymbol(buffer));
 }
 
-PassOwnPtr<V8DOMWindowShell> V8DOMWindowShell::create(Frame* frame, PassRefPtr<DOMWrapperWorld> world)
+PassOwnPtr<V8DOMWindowShell> V8DOMWindowShell::create(Frame* frame, PassRefPtr<DOMWrapperWorld> world, v8::Isolate* isolate)
 {
-    return adoptPtr(new V8DOMWindowShell(frame, world));
+    return adoptPtr(new V8DOMWindowShell(frame, world, isolate));
 }
 
-V8DOMWindowShell::V8DOMWindowShell(Frame* frame, PassRefPtr<DOMWrapperWorld> world)
+V8DOMWindowShell::V8DOMWindowShell(Frame* frame, PassRefPtr<DOMWrapperWorld> world, v8::Isolate* isolate)
     : m_frame(frame)
     , m_world(world)
+    , m_isolate(isolate)
 {
 }
 
@@ -201,7 +202,7 @@ bool V8DOMWindowShell::initializeIfNeeded()
 
     v8::HandleScope handleScope;
 
-    V8Initializer::initializeMainThreadIfNeeded();
+    V8Initializer::initializeMainThreadIfNeeded(m_isolate);
 
     createContext();
     if (m_context.isEmpty())
@@ -334,7 +335,7 @@ bool V8DOMWindowShell::installDOMWindow()
     v8::Handle<v8::Object> innerGlobalObject = toInnerGlobalObject(m_context.get());
     V8DOMWrapper::setNativeInfo(innerGlobalObject, &V8DOMWindow::info, window);
     innerGlobalObject->SetPrototype(windowWrapper);
-    V8DOMWrapper::associateObjectWithWrapper(PassRefPtr<DOMWindow>(window), &V8DOMWindow::info, windowWrapper);
+    V8DOMWrapper::associateObjectWithWrapper(PassRefPtr<DOMWindow>(window), &V8DOMWindow::info, windowWrapper, m_isolate);
     return true;
 }
 
