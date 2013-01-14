@@ -79,9 +79,11 @@ class MacPort(ApplePort):
         else:
             fallback_names = self.VERSION_FALLBACK_ORDER[self.VERSION_FALLBACK_ORDER.index(name):-1] + [self.port_name]
         if self.get_option('webkit_test_runner'):
-            fallback_names.insert(0, self._wk2_port_name())
-            # Note we do not add 'wk2' here, even though it's included in _skipped_search_paths().
+            fallback_names = [self._wk2_port_name(), 'wk2'] + fallback_names
         return map(self._webkit_baseline_path, fallback_names)
+
+    def expectations_files(self):
+        return reversed([self._filesystem.join(self._webkit_baseline_path(d), 'TestExpectations') for d in self.baseline_search_path()])
 
     def setup_environ_for_server(self, server_name=None):
         env = super(MacPort, self).setup_environ_for_server(server_name)

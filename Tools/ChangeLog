@@ -1,3 +1,32 @@
+2013-01-14  Dirk Pranke  <dpranke@chromium.org>
+
+        nrwt: use the same search path for baselines and TestExpectations on apple mac
+        https://bugs.webkit.org/show_bug.cgi?id=105599
+
+        Reviewed by Ryosuke Niwa.
+
+        Bug 105583 revealed some confusion due to the fact that the Apple
+        Mac port used a different list of directories to search for baselines
+        and TestExpectations files (actually, pretty much every port does).
+
+        It seems like a good idea to use the same list for both by default, but
+        making this happen will affect every port in slightly different ways, so
+        we'll try this on the Apple Mac port first.
+
+        Note that the effective changes for this are that:
+        1) The apple mac port will look in platform/wk2 for baselines where
+        it didn't before (it will look after looking in mac-wk2 but before
+        the non-wk2 dirs)
+        2) The apple mac-snowleopard port will use the expectations in
+        mac-lion as well as the expectations in mac-snowleopard, although
+        I'm not even sure if mac-snowleopard is still supported ...
+
+        * Scripts/webkitpy/layout_tests/port/mac.py:
+        (MacPort.default_baseline_search_path):
+        (MacPort.expectations_files):
+        * Scripts/webkitpy/layout_tests/port/mac_unittest.py:
+        (test_baseline_search_path):
+
 2013-01-14  Dominic Mazzoni  <dmazzoni@google.com>
 
         AX: Need to implement ColorWellRole
