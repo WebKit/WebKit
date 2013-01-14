@@ -4500,5 +4500,4 @@ Bug(schenney) fast/borders/border-image-source.html [ ImageOnlyFailure ]
 Bug(schenney) fast/css/continuationCrash.html [ ImageOnlyFailure ]
 Bug(schenney) fast/text/international/hindi-spacing.html [ ImageOnlyFailure Pass ]
 
-webkit.org/b/106806 [ Win Debug ] editing/spelling/spellcheck-sequencenum.html [ Pass Failure ]
 webkit.org/b/106810 [ Debug ] fast/dom/HTMLTemplateElement/inertContents.html [ Pass Failure ]
