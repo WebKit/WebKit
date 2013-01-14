@@ -1373,6 +1373,7 @@ void Page::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
     info.ignoreMember(m_debugger);
     info.ignoreMember(m_alternativeTextClient);
     info.ignoreMember(m_editorClient);
+    info.ignoreMember(m_plugInClient);
     info.ignoreMember(m_validationMessageClient);
 }
 

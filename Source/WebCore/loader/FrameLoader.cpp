@@ -3291,11 +3291,21 @@ NetworkingContext* FrameLoader::networkingContext() const
 void FrameLoader::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
 {
     MemoryClassInfo info(memoryObjectInfo, this, WebCoreMemoryTypes::Loader);
+    info.addMember(m_frame);
+    info.ignoreMember(m_client);
+    info.addMember(m_progressTracker);
     info.addMember(m_documentLoader);
     info.addMember(m_provisionalDocumentLoader);
     info.addMember(m_policyDocumentLoader);
-    info.addMember(m_outgoingReferrer);
+    info.addMember(m_pendingStateObject);
+    info.addMember(m_submittedFormURL);
+    info.addMember(m_checkTimer);
+    info.addMember(m_opener);
     info.addMember(m_openedFrames);
+    info.addMember(m_outgoingReferrer);
+    info.addMember(m_networkingContext);
+    info.addMember(m_previousUrl);
+    info.addMember(m_requestedHistoryItem);
 }
 
 bool FrameLoaderClient::hasHTMLView() const

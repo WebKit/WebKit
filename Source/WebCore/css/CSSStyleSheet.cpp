@@ -189,6 +189,7 @@ void CSSStyleSheet::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
     info.addMember(m_ownerRule);
     info.addMember(m_mediaCSSOMWrapper);
     info.addMember(m_childRuleCSSOMWrappers);
+    info.addMember(m_ruleListCSSOMWrapper);
 }
 
 void CSSStyleSheet::setDisabled(bool disabled)

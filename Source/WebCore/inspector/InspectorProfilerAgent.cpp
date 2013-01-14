@@ -499,6 +499,7 @@ void InspectorProfilerAgent::reportMemoryUsage(MemoryObjectInfo* memoryObjectInf
     info.addWeakPointer(m_frontend);
     info.addMember(m_profiles);
     info.addMember(m_snapshots);
+    info.addMember(m_profileNameIdleTimeMap);
 }
 
 void InspectorProfilerAgent::willProcessTask()

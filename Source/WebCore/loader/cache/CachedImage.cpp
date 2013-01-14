@@ -39,6 +39,7 @@
 #include "Settings.h"
 #include "SubresourceLoader.h"
 #include <wtf/CurrentTime.h>
+#include <wtf/MemoryInstrumentationHashMap.h>
 #include <wtf/MemoryObjectInfo.h>
 #include <wtf/StdLibExtras.h>
 #include <wtf/Vector.h>
@@ -489,6 +490,7 @@ void CachedImage::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
     MemoryClassInfo info(memoryObjectInfo, this, WebCoreMemoryTypes::CachedResourceImage);
     memoryObjectInfo->setClassName("CachedImage");
     CachedResource::reportMemoryUsage(memoryObjectInfo);
+    info.addMember(m_pendingContainerSizeRequests);
     info.addMember(m_image, "m_image");
 #if ENABLE(SVG)
     info.addMember(m_svgImageCache);

@@ -106,9 +106,19 @@ void V8PerIsolateData::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) con
     info.addMember(m_rawTemplates);
     info.addMember(m_templates);
     info.addMember(m_stringCache);
+    info.addMember(m_integerCache);
     info.addMember(m_domDataList);
+    info.addMember(m_domDataStore);
+    info.addMember(m_hiddenPropertyName);
+    info.addMember(m_gcEventData);
 
     info.addPrivateBuffer(ScriptProfiler::profilerSnapshotsSize(), WebCoreMemoryTypes::InspectorProfilerAgent);
+
+    info.ignoreMember(m_toStringTemplate);
+    info.ignoreMember(m_lazyEventListenerToStringTemplate);
+    info.ignoreMember(m_v8Null);
+    info.ignoreMember(m_liveRoot);
+    info.ignoreMember(m_auxiliaryContext);
 }
 
 #if ENABLE(INSPECTOR)
