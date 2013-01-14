@@ -424,6 +424,14 @@ WebInspector.NetworkRequest.prototype = {
     },
 
     /**
+     * @return {string}
+     */
+    get domain()
+    {
+        return this._parsedURL.host;
+    },
+
+    /**
      * @return {WebInspector.Resource|undefined}
      */
     get redirectSource()

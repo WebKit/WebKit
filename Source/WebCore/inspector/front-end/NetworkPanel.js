@@ -95,7 +95,7 @@ WebInspector.NetworkLogView = function(coulmnsVisibilitySetting)
     WebInspector.networkLog.requests.forEach(this._appendRequest.bind(this));
 }
 
-WebInspector.NetworkLogView._defaultColumnsVisivility = {method: true, status: true, type: true, initiator: true, size: true, time: true};
+WebInspector.NetworkLogView._defaultColumnsVisivility = {method: true, status: true, domain: false, type: true, initiator: true, size: true, time: true};
 
 WebInspector.NetworkLogView.prototype = {
     _initializeView: function()
@@ -157,7 +157,7 @@ WebInspector.NetworkLogView.prototype = {
 
     _createTable: function()
     {
-        var columns = {name: {}, method: {}, status: {}, type: {}, initiator: {}, size: {}, time: {}, timeline: {}};
+        var columns = {name: {}, method: {}, status: {}, domain: {}, type: {}, initiator: {}, size: {}, time: {}, timeline: {}};
 
         columns.name.titleDOMFragment = this._makeHeaderFragment(WebInspector.UIString("Name"), WebInspector.UIString("Path"));
         columns.name.name = WebInspector.UIString("Name");
@@ -173,6 +173,10 @@ WebInspector.NetworkLogView.prototype = {
         columns.status.name = WebInspector.UIString("Status");
         columns.status.sortable = true;
         columns.status.weight = 6;
+
+        columns.domain.title = WebInspector.UIString("Domain");
+        columns.domain.sortable = true;
+        columns.domain.weight = 6;
 
         columns.type.title = WebInspector.UIString("Type");
         columns.type.sortable = true;
@@ -273,6 +277,7 @@ WebInspector.NetworkLogView.prototype = {
         this._sortingFunctions.name = WebInspector.NetworkDataGridNode.NameComparator;
         this._sortingFunctions.method = WebInspector.NetworkDataGridNode.RequestPropertyComparator.bind(null, "method", false);
         this._sortingFunctions.status = WebInspector.NetworkDataGridNode.RequestPropertyComparator.bind(null, "statusCode", false);
+        this._sortingFunctions.domain = WebInspector.NetworkDataGridNode.RequestPropertyComparator.bind(null, "domain", false);
         this._sortingFunctions.type = WebInspector.NetworkDataGridNode.RequestPropertyComparator.bind(null, "mimeType", false);
         this._sortingFunctions.initiator = WebInspector.NetworkDataGridNode.InitiatorComparator;
         this._sortingFunctions.size = WebInspector.NetworkDataGridNode.SizeComparator;
@@ -1879,6 +1884,7 @@ WebInspector.NetworkDataGridNode.prototype = {
         this._nameCell = this._createDivInTD("name");
         this._methodCell = this._createDivInTD("method");
         this._statusCell = this._createDivInTD("status");
+        this._domainCell = this._createDivInTD("domain");
         this._typeCell = this._createDivInTD("type");
         this._initiatorCell = this._createDivInTD("initiator");
         this._sizeCell = this._createDivInTD("size");
@@ -1986,6 +1992,7 @@ WebInspector.NetworkDataGridNode.prototype = {
         this._methodCell.setTextAndTitle(this._request.requestMethod);
 
         this._refreshStatusCell();
+        this._refreshDomainCell();
         this._refreshTypeCell();
         this._refreshInitiatorCell();
         this._refreshSizeCell();
@@ -2061,6 +2068,13 @@ WebInspector.NetworkDataGridNode.prototype = {
                 this._statusCell.setTextAndTitle(WebInspector.UIString("(pending)"));
             this._statusCell.addStyleClass("network-dim-cell");
         }
+    },
+
+    _refreshDomainCell: function()
+    {
+        this._domainCell.removeChildren();
+        this._domainCell.appendChild(document.createTextNode(this._request.domain));
+        this._domainCell.title = this._request.parsedURL.host;
     },
 
     _refreshTypeCell: function()
