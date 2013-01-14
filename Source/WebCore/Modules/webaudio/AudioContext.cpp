@@ -395,7 +395,7 @@ PassRefPtr<MediaStreamAudioSourceNode> AudioContext::createMediaStreamSource(Med
 
     AudioSourceProvider* provider = 0;
 
-    if (mediaStream->isLocal() && mediaStream->audioTracks()->length()) {
+    if (mediaStream->isLocal() && mediaStream->getAudioTracks().size()) {
         provider = destination()->localAudioInputProvider();
         destination()->enableInput();
     } else {

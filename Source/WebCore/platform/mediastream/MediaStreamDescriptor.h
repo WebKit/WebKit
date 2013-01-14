@@ -68,9 +68,23 @@ public:
 
     unsigned numberOfAudioComponents() const { return m_audioComponents.size(); }
     MediaStreamComponent* audioComponent(unsigned index) const { return m_audioComponents[index].get(); }
+    void addAudioComponent(PassRefPtr<MediaStreamComponent> component) { m_audioComponents.append(component); }
+    void removeAudioComponent(MediaStreamComponent* component)
+    {
+        size_t pos = m_audioComponents.find(component);
+        if (pos != notFound)
+            m_audioComponents.remove(pos);
+    }
 
     unsigned numberOfVideoComponents() const { return m_videoComponents.size(); }
     MediaStreamComponent* videoComponent(unsigned index) const { return m_videoComponents[index].get(); }
+    void addVideoComponent(PassRefPtr<MediaStreamComponent> component) { m_videoComponents.append(component); }
+    void removeVideoComponent(MediaStreamComponent* component)
+    {
+        size_t pos = m_audioComponents.find(component);
+        if (pos != notFound)
+            m_audioComponents.remove(pos);
+    }
 
     bool ended() const { return m_ended; }
     void setEnded() { m_ended = true; }

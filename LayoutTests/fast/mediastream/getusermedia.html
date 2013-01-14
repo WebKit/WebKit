@@ -25,8 +25,8 @@ function gotStreamInError(s) {
 function gotStream5(s) {
     stream = s;
     testPassed('Stream generated.');
-    shouldBe('stream.audioTracks.length', '1');
-    shouldBe('stream.videoTracks.length', '1');
+    shouldBe('stream.getAudioTracks().length', '1');
+    shouldBe('stream.getVideoTracks().length', '1');
     finishJSTest();
 }
 
@@ -39,8 +39,8 @@ function error1() {
 function gotStream4(s) {
     stream = s;
     testPassed('Stream generated.');
-    shouldBe('stream.audioTracks.length', '1');
-    shouldBe('stream.videoTracks.length', '1');
+    shouldBe('stream.getAudioTracks().length', '1');
+    shouldBe('stream.getVideoTracks().length', '1');
 
     shouldNotThrow("navigator.webkitGetUserMedia({audio:{mandatory:{'valid_but_unsupported_1':0}, optional:[]}, video:true}, gotStreamInError, error1);");
 }
@@ -48,8 +48,8 @@ function gotStream4(s) {
 function gotStream3(s) {
     stream = s;
     testPassed('Stream generated.');
-    shouldBe('stream.audioTracks.length', '1');
-    shouldBe('stream.videoTracks.length', '1');
+    shouldBe('stream.getAudioTracks().length', '1');
+    shouldBe('stream.getVideoTracks().length', '1');
 
     shouldNotThrow("navigator.webkitGetUserMedia({audio:{mandatory:{}, optional:[]}, video:true}, gotStream4, error);");
 }
@@ -57,8 +57,8 @@ function gotStream3(s) {
 function gotStream2(s) {
     stream = s;
     testPassed('Stream generated.');
-    shouldBe('stream.audioTracks.length', '0');
-    shouldBe('stream.videoTracks.length', '1');
+    shouldBe('stream.getAudioTracks().length', '0');
+    shouldBe('stream.getVideoTracks().length', '1');
 
     shouldNotThrow("navigator.webkitGetUserMedia({audio:true, video:true}, gotStream3, error);");
 }
@@ -66,8 +66,8 @@ function gotStream2(s) {
 function gotStream1(s) {
     stream = s;
     testPassed('Stream generated.');
-    shouldBe('stream.audioTracks.length', '1');
-    shouldBe('stream.videoTracks.length', '0');
+    shouldBe('stream.getAudioTracks().length', '1');
+    shouldBe('stream.getVideoTracks().length', '0');
 
     shouldNotThrow("navigator.webkitGetUserMedia({video:true}, gotStream2, error);")
 }

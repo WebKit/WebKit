@@ -32,18 +32,19 @@ function onRemoveTrack(e) {
 
     // Now test that add failes when the parent stream has been stopped.
     stream1.stop();
-    shouldThrow('stream1.videoTracks.add(stream2.videoTracks[0])');
-    shouldThrow('stream1.videoTracks.remove(stream2.videoTracks[0])');
+    shouldThrow('stream1.addTrack(stream2.getVideoTracks()[0])');
+    shouldThrow('stream1.removeTrack(stream2.getVideoTracks()[0])');
 
     finishJSTest();
 }
 
 function onAddTrack(e) {
     testPassed('Add track callback succeeded.');
+    event = e;
 
-    stream1.videoTracks.onremovetrack = onRemoveTrack;
+    stream1.onremovetrack = onRemoveTrack;
     try {
-        stream1.videoTracks.remove(e.track);
+        stream1.removeTrack(event.track);
     } catch (exception) {
         testFailed("remove threw an exception.");
         finishJSTest();
@@ -52,11 +53,14 @@ function onAddTrack(e) {
 
 function gotStream2(s) {
     stream2 = s;
+    stream1.onaddtrack = onAddTrack;
 
-    stream1.videoTracks.onaddtrack = onAddTrack;
+    track = stream1.getVideoTracks()[0];
+    shouldBe('stream1.getTrackById(track.id).id', 'track.id');
+    shouldBeNull('stream2.getTrackById(track.id)');
 
     try {
-        stream1.videoTracks.add(stream2.videoTracks[0]);
+        stream1.addTrack(stream2.getVideoTracks()[0]);
     } catch (exception) {
         testFailed("add threw an exception.");
         finishJSTest();
@@ -65,6 +69,7 @@ function gotStream2(s) {
 
 function gotStream1(s) {
     stream1 = s;
+
     getUserMedia({audio:true, video:true}, gotStream2);
 }
 

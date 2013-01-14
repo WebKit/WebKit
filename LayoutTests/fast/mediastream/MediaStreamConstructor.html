@@ -33,8 +33,8 @@ function getUserMedia(dictionary, callback) {
 function gotStream(s) {
     localStream = s;
     testPassed('Got local stream.');
-    shouldBe('localStream.audioTracks.length', '1');
-    shouldBe('localStream.videoTracks.length', '1');
+    shouldBe('localStream.getAudioTracks().length', '1');
+    shouldBe('localStream.getVideoTracks().length', '1');
 
     shouldBeTrue("typeof webkitMediaStream === 'function'");
 
@@ -47,7 +47,7 @@ function testConstructor(s) {
     stream = s;
     shouldThrow('new webkitMediaStream(document)');
     shouldThrow('new webkitMediaStream([document])');
-    shouldThrow('new webkitMediaStream([stream.audioTracks[0], document])');
+    shouldThrow('new webkitMediaStream([stream.getAudioTracks()[0], document])');
     shouldThrow('new webkitMediaStream([null])');
     shouldThrow('new webkitMediaStream([undefined])');
     shouldThrow('new webkitMediaStream(null)');
@@ -56,12 +56,12 @@ function testConstructor(s) {
     verifyStream(new webkitMediaStream(), 0, 0);
     verifyStream(new webkitMediaStream([]), 0, 0);
 
-    verifyStream(new webkitMediaStream(s), s.audioTracks.length, s.videoTracks.length);
+    verifyStream(new webkitMediaStream(s), s.getAudioTracks().length, s.getVideoTracks().length);
 
-    verifyStream(new webkitMediaStream([s.audioTracks[0]]), 1, 0);
-    verifyStream(new webkitMediaStream([s.videoTracks[0]]), 0, 1);
-    verifyStream(new webkitMediaStream([s.audioTracks[0], s.videoTracks[0]]), 1, 1);
-    verifyStream(new webkitMediaStream([s.videoTracks[0], s.audioTracks[0], s.videoTracks[0]]), 1, 1);
+    verifyStream(new webkitMediaStream([s.getAudioTracks()[0]]), 1, 0);
+    verifyStream(new webkitMediaStream([s.getVideoTracks()[0]]), 0, 1);
+    verifyStream(new webkitMediaStream([s.getAudioTracks()[0], s.getVideoTracks()[0]]), 1, 1);
+    verifyStream(new webkitMediaStream([s.getVideoTracks()[0], s.getAudioTracks()[0], s.getVideoTracks()[0]]), 1, 1);
 }
 
 function verifyStream(s, numAudioTracks, numVideoTracks) {
@@ -73,8 +73,8 @@ function verifyStream(s, numAudioTracks, numVideoTracks) {
     shouldBeNonNull(newStream);
     shouldBeDefined(newStream);
     shouldBe("newStream.constructor.name", "'MediaStream'");
-    shouldBe('newStream.audioTracks.length', 'nAudio');
-    shouldBe('newStream.videoTracks.length', 'nVideo');
+    shouldBe('newStream.getAudioTracks().length', 'nAudio');
+    shouldBe('newStream.getVideoTracks().length', 'nVideo');
 }
 
 getUserMedia({video:true, audio:true}, gotStream);

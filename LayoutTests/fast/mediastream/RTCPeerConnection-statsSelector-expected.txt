@@ -6,7 +6,7 @@ On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE
 PASS pc = new webkitRTCPeerConnection(null) did not throw exception.
 PASS getUserMedia({audio:true, video:true}, gotStream) did not throw exception.
 PASS Got a stream.
-PASS pc.getStats(statsHandler2, pc.localStreams[0].videoTracks[0]) did not throw exception.
+PASS pc.getStats(statsHandler2, pc.localStreams[0].getVideoTracks()[0]) did not throw exception.
 PASS statsHandler2 was called
 PASS result.length is >= 1
 PASS timestamp is >= startTime

@@ -19,7 +19,6 @@ MediaController conditional=VIDEO
 MediaSource conditional=MEDIA_SOURCE
 MediaStream conditional=MEDIA_STREAM
 MediaStreamTrack conditional=MEDIA_STREAM
-MediaStreamTrackList conditional=MEDIA_STREAM
 MessagePort
 NetworkInfoConnection conditional=NETWORK_INFO
 Node

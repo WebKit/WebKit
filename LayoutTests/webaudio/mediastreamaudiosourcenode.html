@@ -32,8 +32,8 @@ function getUserMedia(dictionary, callback) {
 function gotStream(stream) {
     s = stream;
     testPassed('{audio:true} generated stream');
-    shouldBe('s.audioTracks.length', '1');
-    shouldBe('s.videoTracks.length', '0');
+    shouldBe('s.getAudioTracks().length', '1');
+    shouldBe('s.getVideoTracks().length', '0');
 
     context = new webkitAudioContext();
 

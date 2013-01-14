@@ -31,7 +31,7 @@ function gotStream(s) {
     stream = s;
 
     pc.addStream(stream);
-    shouldNotThrow('pc.getStats(statsHandler2, pc.localStreams[0].videoTracks[0])');
+    shouldNotThrow('pc.getStats(statsHandler2, pc.localStreams[0].getVideoTracks()[0])');
 }
 
 function statsHandler2(status)

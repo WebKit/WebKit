@@ -53,7 +53,7 @@ function gotStream(s) {
     testPassed('getUserMedia succeeded.');
 
     stream = s;
-    track = stream.videoTracks[0];
+    track = stream.getVideoTracks()[0];
 
     track.onunmute = onTrackUnmute;
     track.onmute = onTrackMute;

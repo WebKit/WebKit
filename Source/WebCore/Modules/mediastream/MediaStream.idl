@@ -36,12 +36,20 @@
 
     readonly attribute DOMString id;
 
-    readonly attribute MediaStreamTrackList audioTracks;
-    readonly attribute MediaStreamTrackList videoTracks;
+    sequence<MediaStreamTrack> getAudioTracks();
+    sequence<MediaStreamTrack> getVideoTracks();
+
+    void addTrack(MediaStreamTrack track)
+        raises(DOMException);
+    void removeTrack(MediaStreamTrack track)
+        raises(DOMException);
+    MediaStreamTrack getTrackById(DOMString trackId);
 
     readonly attribute boolean ended;
 
     attribute EventListener onended;
+    attribute EventListener onaddtrack;
+    attribute EventListener onremovetrack;
 
     // EventTarget interface
     void addEventListener(in DOMString type,

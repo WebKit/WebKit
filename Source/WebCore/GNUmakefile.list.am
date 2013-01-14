@@ -521,8 +521,6 @@ webcore_built_sources += \
 	DerivedSources/WebCore/JSMediaStreamTrack.h \
 	DerivedSources/WebCore/JSMediaStreamTrackEvent.cpp \
 	DerivedSources/WebCore/JSMediaStreamTrackEvent.h \
-	DerivedSources/WebCore/JSMediaStreamTrackList.cpp \
-	DerivedSources/WebCore/JSMediaStreamTrackList.h \
 	DerivedSources/WebCore/JSMediaQueryList.cpp \
 	DerivedSources/WebCore/JSMediaQueryList.h \
 	DerivedSources/WebCore/JSMemoryInfo.cpp \
@@ -1243,7 +1241,6 @@ dom_binding_idls += \
 	$(WebCore)/Modules/mediastream/MediaStreamList.idl \
 	$(WebCore)/Modules/mediastream/MediaStreamTrack.idl \
 	$(WebCore)/Modules/mediastream/MediaStreamTrackEvent.idl \
-	$(WebCore)/Modules/mediastream/MediaStreamTrackList.idl \
 	$(WebCore)/Modules/mediastream/NavigatorMediaStream.idl \
 	$(WebCore)/Modules/mediastream/NavigatorUserMediaError.idl \
 	$(WebCore)/Modules/mediastream/NavigatorUserMediaErrorCallback.idl \
@@ -1939,8 +1936,6 @@ webcore_modules_sources += \
 	Source/WebCore/Modules/mediastream/MediaStreamTrack.h \
 	Source/WebCore/Modules/mediastream/MediaStreamTrackEvent.cpp \
 	Source/WebCore/Modules/mediastream/MediaStreamTrackEvent.h \
-	Source/WebCore/Modules/mediastream/MediaStreamTrackList.cpp \
-	Source/WebCore/Modules/mediastream/MediaStreamTrackList.h \
 	Source/WebCore/Modules/mediastream/NavigatorMediaStream.cpp \
 	Source/WebCore/Modules/mediastream/NavigatorMediaStream.h \
 	Source/WebCore/Modules/mediastream/NavigatorUserMediaError.h \

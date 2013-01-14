@@ -30,8 +30,10 @@
 
 #include "ContextDestructionObserver.h"
 #include "EventTarget.h"
+#include "ExceptionBase.h"
 #include "MediaStreamDescriptor.h"
-#include "MediaStreamTrackList.h"
+#include "MediaStreamTrack.h"
+#include "Timer.h"
 #include <wtf/RefCounted.h>
 #include <wtf/RefPtr.h>
 
@@ -50,12 +52,18 @@ public:
 
     String id() const { return m_descriptor->id(); }
 
-    MediaStreamTrackList* audioTracks() { return m_audioTracks.get(); }
-    MediaStreamTrackList* videoTracks() { return m_videoTracks.get(); }
+    void addTrack(PassRefPtr<MediaStreamTrack>, ExceptionCode&);
+    void removeTrack(PassRefPtr<MediaStreamTrack>, ExceptionCode&);
+    MediaStreamTrack* getTrackById(String);
+
+    MediaStreamTrackVector getAudioTracks() const { return m_audioTracks; }
+    MediaStreamTrackVector getVideoTracks() const { return m_videoTracks; }
 
     bool ended() const;
 
     DEFINE_ATTRIBUTE_EVENT_LISTENER(ended);
+    DEFINE_ATTRIBUTE_EVENT_LISTENER(addtrack);
+    DEFINE_ATTRIBUTE_EVENT_LISTENER(removetrack);
 
     // MediaStreamDescriptorClient
     virtual void streamEnded() OVERRIDE;
@@ -78,6 +86,9 @@ protected:
     virtual EventTargetData* eventTargetData() OVERRIDE;
     virtual EventTargetData* ensureEventTargetData() OVERRIDE;
 
+    // ContextDestructionObserver
+    virtual void contextDestroyed();
+
 private:
     // EventTarget
     virtual void refEventTarget() OVERRIDE { ref(); }
@@ -87,11 +98,19 @@ private:
     virtual void addTrack(MediaStreamComponent*) OVERRIDE;
     virtual void removeTrack(MediaStreamComponent*) OVERRIDE;
 
+    void scheduleDispatchEvent(PassRefPtr<Event>);
+    void scheduledEventTimerFired(Timer<MediaStream>*);
+
+    bool m_stopped;
+
     EventTargetData m_eventTargetData;
 
-    RefPtr<MediaStreamTrackList> m_audioTracks;
-    RefPtr<MediaStreamTrackList> m_videoTracks;
+    MediaStreamTrackVector m_audioTracks;
+    MediaStreamTrackVector m_videoTracks;
     RefPtr<MediaStreamDescriptor> m_descriptor;
+
+    Timer<MediaStream> m_scheduledEventTimer;
+    Vector<RefPtr<Event> > m_scheduledEvents;
 };
 
 } // namespace WebCore
