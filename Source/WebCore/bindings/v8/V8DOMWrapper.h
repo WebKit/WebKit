@@ -61,7 +61,7 @@ namespace WebCore {
         static v8::Local<v8::Object> createWrapper(v8::Handle<v8::Object> creationContext, WrapperTypeInfo*, void*);
 
         template<typename T>
-        static inline v8::Persistent<v8::Object> associateObjectWithWrapper(PassRefPtr<T>, WrapperTypeInfo*, v8::Handle<v8::Object>, v8::Isolate* = 0);
+        static inline v8::Persistent<v8::Object> associateObjectWithWrapper(PassRefPtr<T>, WrapperTypeInfo*, v8::Handle<v8::Object>, v8::Isolate*);
         static inline void setNativeInfo(v8::Handle<v8::Object>, WrapperTypeInfo*, void*);
         static inline void clearNativeInfo(v8::Handle<v8::Object>, WrapperTypeInfo*);
 
