@@ -2461,6 +2461,12 @@ AccessibilityRole AccessibilityRenderObject::determineAccessibilityRole()
             return RadioButtonRole;
         if (input->isTextButton())
             return buttonRoleType();
+
+#if ENABLE(INPUT_TYPE_COLOR)
+        const AtomicString& type = input->getAttribute(typeAttr);
+        if (equalIgnoringCase(type, "color"))
+            return ColorWellRole;
+#endif
     }
 
     if (isFileUploadButton())

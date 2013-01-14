@@ -429,6 +429,7 @@ public:
     bool isPopUpButton() const { return roleValue() == PopUpButtonRole; }
     bool isBlockquote() const;
     bool isLandmark() const;
+    bool isColorWell() const { return roleValue() == ColorWellRole; }
     
     virtual bool isChecked() const { return false; }
     virtual bool isEnabled() const { return false; }
@@ -559,6 +560,9 @@ public:
     virtual String ariaLabeledByAttribute() const { return String(); }
     virtual String ariaDescribedByAttribute() const { return String(); }
     const AtomicString& placeholderValue() const;
+
+    // Only if isColorWell()
+    virtual void colorValue(int& r, int& g, int& b) const { r = 0; g = 0; b = 0; }
 
     void setRoleValue(AccessibilityRole role) { m_role = role; }
     virtual AccessibilityRole roleValue() const { return m_role; }

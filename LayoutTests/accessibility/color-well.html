@@ -1,0 +1,38 @@
+<html>
+<html>
+<head>
+<script src="../fast/js/resources/js-test-pre.js"></script>
+</head>
+<body id="body">
+
+    <input id="empty_colorwell" type="color">
+    <input id="good_colorwell" type="color" value="#ff0000">
+    <input id="bad_colorwell" type="color" value="purple">
+    
+    <p id="description"></p>
+    <div id="console"></div>
+     
+    <script>
+        if (window.accessibilityController) {
+            description("This test checks the role of ColorWellRolean input with type=color");
+
+            var colorwell = document.getElementById("empty_colorwell").focus();
+            var axColorwell = accessibilityController.focusedElement;
+            debug("Role of input type=color is: " + axColorwell.role);
+
+            debug("Value of empty color well: " + axColorwell.stringValue);
+
+            colorwell = document.getElementById("good_colorwell").focus();
+            axColorwell = accessibilityController.focusedElement;
+            debug("Value of good color well: " + axColorwell.stringValue);
+
+            colorwell = document.getElementById("bad_colorwell").focus();
+            axColorwell = accessibilityController.focusedElement;
+            debug("Value of bad color well: " + axColorwell.stringValue);
+        }
+    </script>
+
+<script src="../fast/js/resources/js-test-post.js"></script>
+
+</body> 
+</html>

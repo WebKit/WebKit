@@ -97,6 +97,10 @@ public:
     bool isCheckbox() const;
     bool isRangeControl() const;
 
+#if ENABLE(INPUT_TYPE_COLOR)
+    bool isColorControl() const;
+#endif
+
     // FIXME: It's highly likely that any call site calling this function should instead
     // be using a different one. Many input elements behave like text fields, and in addition
     // any unknown input type is treated as text. Consider, for example, isTextField or

@@ -1630,6 +1630,13 @@ bool HTMLInputElement::isRangeControl() const
     return m_inputType->isRangeControl();
 }
 
+#if ENABLE(INPUT_TYPE_COLOR)
+bool HTMLInputElement::isColorControl() const
+{
+    return m_inputType->isColorControl();
+}
+#endif
+
 bool HTMLInputElement::isText() const
 {
     return m_inputType->isTextType();

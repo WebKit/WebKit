@@ -1,3 +1,19 @@
+2013-01-14  Dominic Mazzoni  <dmazzoni@google.com>
+
+        AX: Need to implement ColorWellRole
+        https://bugs.webkit.org/show_bug.cgi?id=106756
+
+        Reviewed by Chris Fleizach.
+
+        Adds an accessibility interface to access the value of a
+        color control.
+
+        * public/WebAccessibilityObject.h:
+        (WebAccessibilityObject):
+        * src/WebAccessibilityObject.cpp:
+        (WebKit::WebAccessibilityObject::colorValue):
+        (WebKit):
+
 2013-01-14  Mark Pilgrim  <pilgrim@chromium.org>
 
         [Chromium] Move AudioDestinationChromium into WebCore

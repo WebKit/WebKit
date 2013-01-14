@@ -1,5 +1,18 @@
 2013-01-14  Dominic Mazzoni  <dmazzoni@google.com>
 
+        AX: Need to implement ColorWellRole
+        https://bugs.webkit.org/show_bug.cgi?id=106756
+
+        Reviewed by Chris Fleizach.
+
+        Returns a string representation of the value of a color
+        when the role is Color Well, to make it easy to write layout
+        tests for color controls.
+
+        * DumpRenderTree/chromium/TestRunner/src/AccessibilityUIElementChromium.cpp:
+
+2013-01-14  Dominic Mazzoni  <dmazzoni@google.com>
+
         Chromium: Error in AccessibilityUIElement::intValueGetterCallback
         https://bugs.webkit.org/show_bug.cgi?id=106682
 

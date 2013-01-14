@@ -2243,6 +2243,12 @@ static NSString* roleValueToNSString(AccessibilityRole value)
         
         if (m_object->isTabItem())
             return [NSNumber numberWithInt:m_object->isSelected()];
+
+        if (m_object->isColorWell()) {
+            int r, g, b;
+            m_object->colorValue(r, g, b);
+            return [NSString stringWithFormat:@"rgb %7.5f %7.5f %7.5f 1", r / 255., g / 255., b / 255.];
+        }
         
         return m_object->stringValue();
     }

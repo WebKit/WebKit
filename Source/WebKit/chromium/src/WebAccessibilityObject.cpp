@@ -498,6 +498,14 @@ WebPoint WebAccessibilityObject::clickPoint() const
     return WebPoint(m_private->clickPoint());
 }
 
+void WebAccessibilityObject::colorValue(int& r, int& g, int& b) const
+{
+    if (isDetached())
+        return;
+
+    m_private->colorValue(r, g, b);
+}
+
 double WebAccessibilityObject::estimatedLoadingProgress() const
 {
     if (isDetached())

@@ -285,7 +285,15 @@ string getHelpText(const WebAccessibilityObject& object)
 
 string getStringValue(const WebAccessibilityObject& object)
 {
-    string value = object.stringValue().utf8();
+    string value;
+    if (object.roleValue() == WebAccessibilityRoleColorWell) {
+        int r, g, b;
+        char buffer[100];
+        object.colorValue(r, g, b);
+        snprintf(buffer, sizeof(buffer), "rgb %7.5f %7.5f %7.5f 1", r / 255., g / 255., b / 255.);
+        value = buffer;
+    } else
+        value = object.stringValue().utf8();
     return value.insert(0, "AXValue: ");
 }
 
