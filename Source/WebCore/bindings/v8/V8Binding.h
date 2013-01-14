@@ -431,8 +431,9 @@ namespace WebCore {
         return (object->IsDate() || object->IsNumber()) ? object->NumberValue() : std::numeric_limits<double>::quiet_NaN();
     }
 
-    inline v8::Handle<v8::Value> v8DateOrNull(double value, v8::Isolate* isolate = 0)
+    inline v8::Handle<v8::Value> v8DateOrNull(double value, v8::Isolate* isolate)
     {
+        ASSERT(isolate);
         return isfinite(value) ? v8::Date::New(value) : v8NullWithCheck(isolate);
     }
 
