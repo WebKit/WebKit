@@ -561,7 +561,7 @@ void IDBDatabaseBackendImpl::createObjectStore(int64_t transactionId, int64_t ob
     ASSERT(m_transactions.contains(transactionId));
     IDBTransactionBackendImpl* transaction = m_transactions.get(transactionId);
 
-    IDBObjectStoreMetadata objectStoreMetadata(name, objectStoreId, keyPath, autoIncrement, IDBObjectStoreBackendInterface::MinimumIndexId);
+    IDBObjectStoreMetadata objectStoreMetadata(name, objectStoreId, keyPath, autoIncrement, IDBDatabaseBackendInterface::MinimumIndexId);
 
     transaction->scheduleTask(CreateObjectStoreOperation::create(m_backingStore, objectStoreMetadata), CreateObjectStoreAbortOperation::create(this, objectStoreId));
 

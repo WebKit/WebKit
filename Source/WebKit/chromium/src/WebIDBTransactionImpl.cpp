@@ -28,10 +28,9 @@
 
 #if ENABLE(INDEXED_DATABASE)
 
-#include "IDBObjectStoreBackendInterface.h"
 #include "IDBTransaction.h"
+#include "IDBTransactionBackendInterface.h"
 #include "IDBTransactionCallbacksProxy.h"
-#include "WebIDBObjectStoreImpl.h"
 #include "WebIDBTransactionCallbacks.h"
 
 using namespace WebCore;
@@ -45,14 +44,6 @@ WebIDBTransactionImpl::WebIDBTransactionImpl(PassRefPtr<IDBTransactionBackendInt
 
 WebIDBTransactionImpl::~WebIDBTransactionImpl()
 {
-}
-
-WebIDBObjectStore* WebIDBTransactionImpl::objectStore(long long indexId, ExceptionCode& ec)
-{
-    RefPtr<IDBObjectStoreBackendInterface> objectStore = m_backend->objectStore(indexId, ec);
-    if (!objectStore)
-        return 0;
-    return new WebIDBObjectStoreImpl(objectStore);
 }
 
 void WebIDBTransactionImpl::commit()

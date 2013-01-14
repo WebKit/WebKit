@@ -32,7 +32,6 @@
 #include "IDBKey.h"
 #include "IDBKeyRange.h"
 #include "IDBMetadata.h"
-#include "IDBObjectStoreBackendInterface.h"
 #include "IDBRequest.h"
 #include "IDBTransaction.h"
 #include "ScriptWrappable.h"
@@ -95,7 +94,7 @@ public:
     PassRefPtr<IDBRequest> count(ScriptExecutionContext*, PassRefPtr<IDBKeyRange>, ExceptionCode&);
     PassRefPtr<IDBRequest> count(ScriptExecutionContext*, PassRefPtr<IDBKey>, ExceptionCode&);
 
-    PassRefPtr<IDBRequest> put(IDBObjectStoreBackendInterface::PutMode, PassRefPtr<IDBAny> source, ScriptState*, ScriptValue&, PassRefPtr<IDBKey>, ExceptionCode&);
+    PassRefPtr<IDBRequest> put(IDBDatabaseBackendInterface::PutMode, PassRefPtr<IDBAny> source, ScriptState*, ScriptValue&, PassRefPtr<IDBKey>, ExceptionCode&);
     void markDeleted() { m_deleted = true; }
     void transactionFinished();
 

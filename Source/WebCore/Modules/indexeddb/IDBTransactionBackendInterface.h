@@ -36,7 +36,6 @@
 namespace WebCore {
 
 class IDBCursorBackendImpl;
-class IDBObjectStoreBackendInterface;
 class IDBTransactionCallbacks;
 
 typedef int ExceptionCode;
@@ -53,7 +52,6 @@ public:
         PreemptiveTask
     };
 
-    virtual PassRefPtr<IDBObjectStoreBackendInterface> objectStore(int64_t, ExceptionCode&) = 0;
     virtual void commit() = 0;
     virtual void abort() = 0;
     virtual void setCallbacks(IDBTransactionCallbacks*) = 0;

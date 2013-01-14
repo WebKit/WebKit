@@ -214,20 +214,6 @@ void IDBFactoryBackendProxy::getDatabaseNames(PassRefPtr<IDBCallbacks> prpCallba
     m_webIDBFactory->getDatabaseNames(new WebIDBCallbacksImpl(callbacks), origin, webFrame, dataDir);
 }
 
-
-// FIXME: Remove this method in https://bugs.webkit.org/show_bug.cgi?id=103923.
-void IDBFactoryBackendProxy::open(const String& name, int64_t version, PassRefPtr<IDBCallbacks> prpCallbacks, PassRefPtr<IDBDatabaseCallbacks> prpDatabaseCallbacks, PassRefPtr<SecurityOrigin> securityOrigin, ScriptExecutionContext* context, const String& dataDir)
-{
-    RefPtr<IDBCallbacks> callbacks(prpCallbacks);
-    RefPtr<IDBDatabaseCallbacks> databaseCallbacks(prpDatabaseCallbacks);
-    WebSecurityOrigin origin(securityOrigin);
-    if (!allowIndexedDB(context, name, origin, callbacks))
-        return;
-
-    WebFrameImpl* webFrame = getWebFrame(context);
-    m_webIDBFactory->open(name, version, new WebIDBCallbacksImpl(callbacks), new WebIDBDatabaseCallbacksImpl(databaseCallbacks), origin, webFrame, dataDir);
-}
-
 void IDBFactoryBackendProxy::open(const String& name, int64_t version, int64_t transactionId, PassRefPtr<IDBCallbacks> prpCallbacks, PassRefPtr<IDBDatabaseCallbacks> prpDatabaseCallbacks, PassRefPtr<SecurityOrigin> securityOrigin, ScriptExecutionContext* context, const String& dataDir)
 {
     RefPtr<IDBCallbacks> callbacks(prpCallbacks);

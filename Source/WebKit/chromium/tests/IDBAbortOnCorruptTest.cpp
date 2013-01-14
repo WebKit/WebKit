@@ -126,7 +126,7 @@ TEST(IDBAbortTest, TheTest)
     RefPtr<FakeIDBDatabaseCallbacks> databaseCallbacks = FakeIDBDatabaseCallbacks::create();
     RefPtr<SecurityOrigin> origin = SecurityOrigin::create("http", "localhost", 81);
     const int64_t DummyVersion = 2;
-    factory->open(name, DummyVersion, callbacks.get(), databaseCallbacks, origin, 0 /*Frame*/, String() /*path*/);
+    factory->open(name, DummyVersion, 1, callbacks.get(), databaseCallbacks, origin, 0 /*Frame*/, String() /*path*/);
 }
 
 } // namespace

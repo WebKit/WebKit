@@ -40,7 +40,6 @@ class IDBDatabaseCallbacks;
 class IDBKey;
 class IDBKeyPath;
 class IDBKeyRange;
-class IDBObjectStoreBackendInterface;
 class IDBTransactionBackendInterface;
 struct IDBDatabaseMetadata;
 
@@ -55,11 +54,8 @@ public:
 
     virtual IDBDatabaseMetadata metadata() const = 0;
 
-    virtual PassRefPtr<IDBObjectStoreBackendInterface> createObjectStore(int64_t, const String& name, const IDBKeyPath&, bool autoIncrement, IDBTransactionBackendInterface*, ExceptionCode&) = 0;
     virtual void createObjectStore(int64_t transactionId, int64_t objectStoreId, const String& name, const IDBKeyPath&, bool autoIncrement) = 0;
-    virtual void deleteObjectStore(int64_t, IDBTransactionBackendInterface*, ExceptionCode&) = 0;
     virtual void deleteObjectStore(int64_t transactionId, int64_t objectStoreId) = 0;
-    // FIXME: Remove this method in https://bugs.webkit.org/show_bug.cgi?id=103923.
     virtual PassRefPtr<IDBTransactionBackendInterface> createTransaction(int64_t transactionId, const Vector<int64_t>& objectStoreIds, IDBTransaction::Mode) = 0;
     virtual void createTransaction(int64_t transactionId, PassRefPtr<IDBDatabaseCallbacks>, const Vector<int64_t>& objectStoreIds, unsigned short mode) = 0;
     virtual void close(PassRefPtr<IDBDatabaseCallbacks>) = 0;
@@ -81,6 +77,8 @@ public:
         AddOnly,
         CursorUpdate
     };
+
+    static const int64_t MinimumIndexId = 30;
 
     typedef Vector<RefPtr<IDBKey> > IndexKeys;
 

@@ -28,10 +28,8 @@
 
 #if ENABLE(INDEXED_DATABASE)
 
-#include "IDBObjectStoreBackendProxy.h"
 #include "IDBTransactionCallbacks.h"
 #include "WebIDBDatabaseError.h"
-#include "WebIDBObjectStore.h"
 #include "WebIDBTransaction.h"
 #include "WebIDBTransactionCallbacksImpl.h"
 
@@ -52,14 +50,6 @@ IDBTransactionBackendProxy::IDBTransactionBackendProxy(PassOwnPtr<WebIDBTransact
 
 IDBTransactionBackendProxy::~IDBTransactionBackendProxy()
 {
-}
-
-PassRefPtr<WebCore::IDBObjectStoreBackendInterface> IDBTransactionBackendProxy::objectStore(int64_t indexId, ExceptionCode& ec)
-{
-    OwnPtr<WebIDBObjectStore> objectStore = adoptPtr(m_webIDBTransaction->objectStore(indexId, ec));
-    if (!objectStore)
-        return 0;
-    return IDBObjectStoreBackendProxy::create(objectStore.release());
 }
 
 void IDBTransactionBackendProxy::commit()

@@ -40,7 +40,6 @@ class WebIDBDatabaseCallbacks;
 class WebIDBKey;
 class WebIDBKeyPath;
 class WebIDBKeyRange;
-class WebIDBObjectStore;
 class WebIDBTransaction;
 
 // See comment in WebIDBFactory for a high level overview of these classes.
@@ -53,13 +52,7 @@ public:
         WEBKIT_ASSERT_NOT_REACHED();
         return WebIDBMetadata();
     }
-    virtual WebIDBObjectStore* createObjectStore(long long, const WebString&, const WebIDBKeyPath&, bool, const WebIDBTransaction&, WebExceptionCode&)
-    {
-        WEBKIT_ASSERT_NOT_REACHED();
-        return 0;
-    }
     virtual void createObjectStore(long long transactionId, long long objectStoreId, const WebString& name, const WebIDBKeyPath&, bool autoIncrement) { WEBKIT_ASSERT_NOT_REACHED(); }
-    virtual void deleteObjectStore(long long objectStoreId, const WebIDBTransaction& transaction, WebExceptionCode& ec) { WEBKIT_ASSERT_NOT_REACHED(); }
     virtual void deleteObjectStore(long long transactionId, long long objectStoreId) { WEBKIT_ASSERT_NOT_REACHED(); }
     // FIXME: Remove this method in https://bugs.webkit.org/show_bug.cgi?id=103923.
     virtual WebIDBTransaction* createTransaction(long long id, const WebVector<long long>&, unsigned short mode) { WEBKIT_ASSERT_NOT_REACHED(); return 0; }

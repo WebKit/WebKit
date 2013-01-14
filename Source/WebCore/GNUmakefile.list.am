@@ -1870,7 +1870,6 @@ webcore_modules_sources += \
 	Source/WebCore/Modules/indexeddb/IDBFactoryBackendInterface.h \
 	Source/WebCore/Modules/indexeddb/IDBFactory.cpp \
 	Source/WebCore/Modules/indexeddb/IDBFactory.h \
-	Source/WebCore/Modules/indexeddb/IDBIndexBackendInterface.h \
 	Source/WebCore/Modules/indexeddb/IDBIndex.cpp \
 	Source/WebCore/Modules/indexeddb/IDBIndex.h \
 	Source/WebCore/Modules/indexeddb/IDBKey.cpp \
@@ -1884,7 +1883,6 @@ webcore_modules_sources += \
 	Source/WebCore/Modules/indexeddb/IDBMetadata.h \
 	Source/WebCore/Modules/indexeddb/IDBObjectStoreBackendImpl.cpp \
 	Source/WebCore/Modules/indexeddb/IDBObjectStoreBackendImpl.h \
-	Source/WebCore/Modules/indexeddb/IDBObjectStoreBackendInterface.h \
 	Source/WebCore/Modules/indexeddb/IDBObjectStore.cpp \
 	Source/WebCore/Modules/indexeddb/IDBObjectStore.h \
 	Source/WebCore/Modules/indexeddb/IDBOpenDBRequest.cpp \

@@ -86,12 +86,12 @@ bool IDBObjectStoreBackendImpl::IndexWriter::addingKeyAllowed(IDBBackingStore& b
     return true;
 }
 
-bool IDBObjectStoreBackendImpl::makeIndexWriters(PassRefPtr<IDBTransactionBackendImpl> transaction, IDBBackingStore* backingStore, int64_t databaseId, const IDBObjectStoreMetadata& objectStore, PassRefPtr<IDBKey> primaryKey, bool keyWasGenerated, const Vector<int64_t>& indexIds, const Vector<IDBObjectStoreBackendInterface::IndexKeys>& indexKeys, Vector<OwnPtr<IndexWriter> >* indexWriters, String* errorMessage, bool& completed)
+bool IDBObjectStoreBackendImpl::makeIndexWriters(PassRefPtr<IDBTransactionBackendImpl> transaction, IDBBackingStore* backingStore, int64_t databaseId, const IDBObjectStoreMetadata& objectStore, PassRefPtr<IDBKey> primaryKey, bool keyWasGenerated, const Vector<int64_t>& indexIds, const Vector<IDBDatabaseBackendInterface::IndexKeys>& indexKeys, Vector<OwnPtr<IndexWriter> >* indexWriters, String* errorMessage, bool& completed)
 {
     ASSERT(indexIds.size() == indexKeys.size());
     completed = false;
 
-    HashMap<int64_t, IDBObjectStoreBackendInterface::IndexKeys> indexKeyMap;
+    HashMap<int64_t, IDBDatabaseBackendInterface::IndexKeys> indexKeyMap;
     for (size_t i = 0; i < indexIds.size(); ++i)
         indexKeyMap.add(indexIds[i], indexKeys[i]);
 
@@ -99,7 +99,7 @@ bool IDBObjectStoreBackendImpl::makeIndexWriters(PassRefPtr<IDBTransactionBacken
 
         const IDBIndexMetadata& index = it->value;
 
-        IDBObjectStoreBackendInterface::IndexKeys keys = indexKeyMap.get(it->key);
+        IDBDatabaseBackendInterface::IndexKeys keys = indexKeyMap.get(it->key);
         // If the objectStore is using autoIncrement, then any indexes with an identical keyPath need to also use the primary (generated) key as a key.
         if (keyWasGenerated && (index.keyPath == objectStore.keyPath))
             keys.append(primaryKey);

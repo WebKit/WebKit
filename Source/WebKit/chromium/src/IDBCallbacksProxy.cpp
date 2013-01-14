@@ -37,7 +37,6 @@
 #include "IDBDatabaseBackendProxy.h"
 #include "IDBDatabaseCallbacksProxy.h"
 #include "IDBDatabaseError.h"
-#include "IDBObjectStoreBackendInterface.h"
 #include "IDBTransactionBackendInterface.h"
 #include "WebIDBCallbacks.h"
 #include "WebIDBCursorImpl.h"

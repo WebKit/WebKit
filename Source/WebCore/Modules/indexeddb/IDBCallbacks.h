@@ -42,7 +42,6 @@
 namespace WebCore {
 class DOMStringList;
 class IDBCursorBackendInterface;
-class IDBObjectStoreBackendInterface;
 
 class IDBCallbacks : public RefCounted<IDBCallbacks> {
 public:

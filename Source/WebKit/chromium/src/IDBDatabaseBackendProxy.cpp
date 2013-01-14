@@ -33,16 +33,15 @@
 #include "IDBDatabaseCallbacks.h"
 #include "IDBKeyRange.h"
 #include "IDBMetadata.h"
-#include "IDBObjectStoreBackendProxy.h"
 #include "IDBTransactionBackendProxy.h"
 #include "WebDOMStringList.h"
 #include "WebFrameImpl.h"
 #include "WebIDBCallbacksImpl.h"
+#include "WebIDBCursor.h"
 #include "WebIDBDatabase.h"
 #include "WebIDBDatabaseCallbacksImpl.h"
 #include "WebIDBDatabaseError.h"
 #include "WebIDBKeyRange.h"
-#include "WebIDBObjectStore.h"
 #include "WebIDBTransaction.h"
 
 using namespace WebCore;
@@ -68,29 +67,10 @@ IDBDatabaseMetadata IDBDatabaseBackendProxy::metadata() const
     return m_webIDBDatabase->metadata();
 }
 
-PassRefPtr<IDBObjectStoreBackendInterface> IDBDatabaseBackendProxy::createObjectStore(int64_t id, const String& name, const IDBKeyPath& keyPath, bool autoIncrement, IDBTransactionBackendInterface* transaction, ExceptionCode& ec)
-{
-    // The transaction pointer is guaranteed to be a pointer to a proxy object as, in the renderer,
-    // all implementations of IDB interfaces are proxy objects.
-    IDBTransactionBackendProxy* transactionProxy = static_cast<IDBTransactionBackendProxy*>(transaction);
-    OwnPtr<WebIDBObjectStore> objectStore = adoptPtr(m_webIDBDatabase->createObjectStore(id, name, keyPath, autoIncrement, *transactionProxy->getWebIDBTransaction(), ec));
-    if (!objectStore)
-        return 0;
-    return IDBObjectStoreBackendProxy::create(objectStore.release());
-}
-
 void IDBDatabaseBackendProxy::createObjectStore(int64_t transactionId, int64_t objectStoreId, const String& name, const IDBKeyPath& keyPath, bool autoIncrement)
 {
     if (m_webIDBDatabase)
         m_webIDBDatabase->createObjectStore(transactionId, objectStoreId, name, keyPath, autoIncrement);
-}
-
-void IDBDatabaseBackendProxy::deleteObjectStore(int64_t objectStoreId, IDBTransactionBackendInterface* transaction, ExceptionCode& ec)
-{
-    // The transaction pointer is guaranteed to be a pointer to a proxy object as, in the renderer,
-    // all implementations of IDB interfaces are proxy objects.
-    IDBTransactionBackendProxy* transactionProxy = static_cast<IDBTransactionBackendProxy*>(transaction);
-    m_webIDBDatabase->deleteObjectStore(objectStoreId, *transactionProxy->getWebIDBTransaction(), ec);
 }
 
 void IDBDatabaseBackendProxy::deleteObjectStore(int64_t transactionId, int64_t objectStoreId)

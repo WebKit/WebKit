@@ -35,7 +35,6 @@
 #include "IDBEventDispatcher.h"
 #include "IDBIndex.h"
 #include "IDBObjectStore.h"
-#include "IDBObjectStoreBackendInterface.h"
 #include "IDBOpenDBRequest.h"
 #include "IDBPendingTransactionMonitor.h"
 #include "IDBTracing.h"

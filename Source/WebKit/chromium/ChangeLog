@@ -1,3 +1,58 @@
+2013-01-14  Alec Flett  <alecflett@chromium.org>
+
+        IndexedDB: Remove IDBObjectStore/IndexBackendImpl and support functions
+        https://bugs.webkit.org/show_bug.cgi?id=106605
+
+        Remove all references to IDBObjectStoreBackend* and IDBIndexBackend*
+        as they no longer exist in WebCore.
+
+        Reviewed by Darin Fisher.
+
+        * WebKit.gyp:
+        * public/WebIDBCallbacks.h:
+        (WebKit):
+        * public/WebIDBDatabase.h:
+        (WebKit):
+        (WebKit::WebIDBDatabase::metadata):
+        * public/WebIDBFactory.h:
+        (WebIDBFactory):
+        * public/WebIDBIndex.h: Removed.
+        * public/WebIDBObjectStore.h: Removed.
+        * public/WebIDBTransaction.h:
+        * src/IDBCallbacksProxy.cpp:
+        * src/IDBDatabaseBackendProxy.cpp:
+        * src/IDBDatabaseBackendProxy.h:
+        (IDBDatabaseBackendProxy):
+        * src/IDBFactoryBackendProxy.cpp:
+        * src/IDBFactoryBackendProxy.h:
+        (IDBFactoryBackendProxy):
+        * src/IDBIndexBackendProxy.cpp: Removed.
+        * src/IDBIndexBackendProxy.h: Removed.
+        * src/IDBObjectStoreBackendProxy.cpp: Removed.
+        * src/IDBObjectStoreBackendProxy.h: Removed.
+        * src/IDBTransactionBackendProxy.cpp:
+        * src/IDBTransactionBackendProxy.h:
+        (IDBTransactionBackendProxy):
+        * src/WebIDBDatabaseImpl.cpp:
+        (WebKit::WebIDBDatabaseImpl::put):
+        (WebKit::WebIDBDatabaseImpl::setIndexKeys):
+        * src/WebIDBDatabaseImpl.h:
+        (WebKit):
+        (WebIDBDatabaseImpl):
+        * src/WebIDBFactoryImpl.cpp:
+        (WebKit::WebIDBFactoryImpl::getDatabaseNames):
+        * src/WebIDBFactoryImpl.h:
+        (WebIDBFactoryImpl):
+        * src/WebIDBIndexImpl.cpp: Removed.
+        * src/WebIDBIndexImpl.h: Removed.
+        * src/WebIDBObjectStoreImpl.cpp: Removed.
+        * src/WebIDBObjectStoreImpl.h: Removed.
+        * src/WebIDBTransactionImpl.cpp:
+        * src/WebIDBTransactionImpl.h:
+        * tests/IDBAbortOnCorruptTest.cpp:
+        (WebCore::TEST):
+        * tests/IDBDatabaseBackendTest.cpp:
+
 2013-01-14  Dominic Mazzoni  <dmazzoni@google.com>
 
         AX: Need to implement ColorWellRole

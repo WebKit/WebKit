@@ -123,16 +123,16 @@ static void generateIndexKeysForValue(DOMRequestState* requestState, const IDBIn
 PassRefPtr<IDBRequest> IDBObjectStore::add(ScriptState* state, ScriptValue& value, PassRefPtr<IDBKey> key, ExceptionCode& ec)
 {
     IDB_TRACE("IDBObjectStore::add");
-    return put(IDBObjectStoreBackendInterface::AddOnly, IDBAny::create(this), state, value, key, ec);
+    return put(IDBDatabaseBackendInterface::AddOnly, IDBAny::create(this), state, value, key, ec);
 }
 
 PassRefPtr<IDBRequest> IDBObjectStore::put(ScriptState* state, ScriptValue& value, PassRefPtr<IDBKey> key, ExceptionCode& ec)
 {
     IDB_TRACE("IDBObjectStore::put");
-    return put(IDBObjectStoreBackendInterface::AddOrUpdate, IDBAny::create(this), state, value, key, ec);
+    return put(IDBDatabaseBackendInterface::AddOrUpdate, IDBAny::create(this), state, value, key, ec);
 }
 
-PassRefPtr<IDBRequest> IDBObjectStore::put(IDBObjectStoreBackendInterface::PutMode putMode, PassRefPtr<IDBAny> source, ScriptState* state, ScriptValue& value, PassRefPtr<IDBKey> prpKey, ExceptionCode& ec)
+PassRefPtr<IDBRequest> IDBObjectStore::put(IDBDatabaseBackendInterface::PutMode putMode, PassRefPtr<IDBAny> source, ScriptState* state, ScriptValue& value, PassRefPtr<IDBKey> prpKey, ExceptionCode& ec)
 {
     IDB_TRACE("IDBObjectStore::put");
     RefPtr<IDBKey> key = prpKey;
@@ -168,7 +168,7 @@ PassRefPtr<IDBRequest> IDBObjectStore::put(IDBObjectStoreBackendInterface::PutMo
     ScriptExecutionContext* context = scriptExecutionContextFromScriptState(state);
     DOMRequestState requestState(context);
 
-    if (putMode != IDBObjectStoreBackendInterface::CursorUpdate && usesInLineKeys && key) {
+    if (putMode != IDBDatabaseBackendInterface::CursorUpdate && usesInLineKeys && key) {
         ec = IDBDatabaseException::DataError;
         return 0;
     }

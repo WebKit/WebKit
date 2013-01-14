@@ -30,7 +30,6 @@
 #include "IDBDatabaseBackendImpl.h"
 #include "IDBKeyPath.h"
 #include "IDBMetadata.h"
-#include "IDBObjectStoreBackendInterface.h"
 #include <wtf/HashMap.h>
 #include <wtf/text/StringHash.h>
 
@@ -52,7 +51,7 @@ namespace IDBObjectStoreBackendImpl {
             : m_indexMetadata(indexMetadata)
         { }
 
-        IndexWriter(const IDBIndexMetadata& indexMetadata, const IDBObjectStoreBackendInterface::IndexKeys& indexKeys)
+        IndexWriter(const IDBIndexMetadata& indexMetadata, const IDBDatabaseBackendInterface::IndexKeys& indexKeys)
             : m_indexMetadata(indexMetadata)
             , m_indexKeys(indexKeys)
         { }
@@ -65,10 +64,10 @@ namespace IDBObjectStoreBackendImpl {
         bool addingKeyAllowed(IDBBackingStore&, IDBBackingStore::Transaction*, int64_t databaseId, int64_t objectStoreId, int64_t indexId, const IDBKey* indexKey, const IDBKey* primaryKey, bool& allowed) const WARN_UNUSED_RETURN;
 
         const IDBIndexMetadata m_indexMetadata;
-        IDBObjectStoreBackendInterface::IndexKeys m_indexKeys;
+        IDBDatabaseBackendInterface::IndexKeys m_indexKeys;
     };
 
-    bool makeIndexWriters(PassRefPtr<IDBTransactionBackendImpl>, IDBBackingStore*, int64_t databaseId, const IDBObjectStoreMetadata&, PassRefPtr<IDBKey> primaryKey, bool keyWasGenerated, const Vector<int64_t>& indexIds, const Vector<IDBObjectStoreBackendInterface::IndexKeys>&, Vector<OwnPtr<IndexWriter> >* indexWriters, String* errorMessage, bool& completed) WARN_UNUSED_RETURN;
+    bool makeIndexWriters(PassRefPtr<IDBTransactionBackendImpl>, IDBBackingStore*, int64_t databaseId, const IDBObjectStoreMetadata&, PassRefPtr<IDBKey> primaryKey, bool keyWasGenerated, const Vector<int64_t>& indexIds, const Vector<IDBDatabaseBackendInterface::IndexKeys>&, Vector<OwnPtr<IndexWriter> >* indexWriters, String* errorMessage, bool& completed) WARN_UNUSED_RETURN;
 
     PassRefPtr<IDBKey> generateKey(PassRefPtr<IDBBackingStore>, PassRefPtr<IDBTransactionBackendImpl>, int64_t databaseId, int64_t objectStoreId);
     bool updateKeyGenerator(PassRefPtr<IDBBackingStore>, PassRefPtr<IDBTransactionBackendImpl>, int64_t databaseId, int64_t objectStoreId, const IDBKey*, bool checkCurrent);

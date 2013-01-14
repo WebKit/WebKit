@@ -30,7 +30,6 @@
 
 #include "IDBCursorBackendInterface.h"
 #include "IDBDatabaseException.h"
-#include "IDBIndexBackendInterface.h"
 #include "IDBKey.h"
 #include "IDBKeyRange.h"
 #include "IDBObjectStore.h"

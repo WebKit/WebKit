@@ -363,7 +363,7 @@ SOURCES += \
     dom/DeviceMotionData.cpp \
     dom/DeviceMotionEvent.cpp \
     dom/DeviceOrientationController.cpp \
-    dom/DeviceOrientationData.cpp \    
+    dom/DeviceOrientationData.cpp \
     dom/DeviceOrientationEvent.cpp \
     dom/Document.cpp \
     dom/DocumentEventQueue.cpp \
@@ -3048,12 +3048,10 @@ enable?(INDEXED_DATABASE) {
         Modules/indexeddb/IDBFactoryBackendInterface.h \
         Modules/indexeddb/IDBFactoryBackendImpl.h \
         Modules/indexeddb/IDBIndex.h \
-        Modules/indexeddb/IDBIndexBackendInterface.h \
         Modules/indexeddb/IDBKey.h \
         Modules/indexeddb/IDBKeyRange.h \
         Modules/indexeddb/IDBObjectStore.h \
         Modules/indexeddb/IDBObjectStoreBackendImpl.h \
-        Modules/indexeddb/IDBObjectStoreBackendInterface.h \
         Modules/indexeddb/IDBRequest.h \
         Modules/indexeddb/IDBTransaction.h \
         Modules/indexeddb/IDBTransactionBackendInterface.h

@@ -41,7 +41,6 @@ public:
     WebIDBTransactionImpl(WTF::PassRefPtr<WebCore::IDBTransactionBackendInterface>);
     virtual ~WebIDBTransactionImpl();
 
-    virtual WebIDBObjectStore* objectStore(long long indexId, WebExceptionCode&);
     virtual void commit();
     virtual void abort();
     virtual void setCallbacks(WebIDBTransactionCallbacks*);

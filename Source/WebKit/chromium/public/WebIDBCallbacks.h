@@ -38,7 +38,6 @@ class WebIDBDatabaseError;
 class WebIDBKey;
 class WebIDBKeyPath;
 class WebIDBIndex;
-class WebIDBObjectStore;
 class WebIDBTransaction;
 class WebSerializedScriptValue;
 
