@@ -1,3 +1,17 @@
+2013-01-14  Raphael Kubo da Costa  <raphael.kubo.da.costa@intel.com>
+
+        [EFL][jhbuild] Build the GStreamer-related dependencies with the "configure" script
+        https://bugs.webkit.org/show_bug.cgi?id=106573
+
+        Reviewed by Philippe Normand.
+
+        Similarly to what's been described in bug 106569, we're building
+        from release tarballs, so there's no reason to regenerate the
+        autoconf-related stuff with autogen.sh, especially since we might
+        run into trouble with automake 1.13 and deprecated macros.
+
+        * efl/jhbuild.modules:
+
 2013-01-14  Jocelyn Turcotte  <jocelyn.turcotte@digia.com>
 
         [Qt] The Qt's configuration isn't honoured regarding the use of the system libpng and libjpeg

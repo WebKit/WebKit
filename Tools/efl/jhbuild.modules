@@ -295,13 +295,15 @@
             md5sum="c62106f02ee00b6437f0fb9d370c1093"/>
   </autotools>
 
-  <autotools id="gstreamer">
+  <autotools id="gstreamer" autogen-sh="configure">
     <branch repo="gstreamer"
             module="gstreamer/gstreamer-1.0.5.tar.xz" version="1.0.5"
             hash="sha256:26c2827567f09a46d0a3bc1e7f8696b2ae72b047306539178079abae487c5b77"/>
   </autotools>
 
-  <autotools id="gst-plugins-base" autogenargs="--disable-examples --enable-theora --enable-vorbis">
+  <autotools id="gst-plugins-base"
+             autogen-sh="configure"
+             autogenargs="--disable-examples --enable-theora --enable-vorbis">
     <dependencies>
       <dep package="gstreamer"/>
     </dependencies>
@@ -310,7 +312,9 @@
             hash="sha256:37ce6e09b99ef3879111c861ee5090582b4fd4c764e81ab6eb2b2b4dd77d7173"/>
   </autotools>
 
-  <autotools id="gst-plugins-good" autogenargs="--disable-examples --enable-pulse">
+  <autotools id="gst-plugins-good"
+             autogen-sh="configure"
+             autogenargs="--disable-examples --enable-pulse">
     <dependencies>
       <dep package="cairo"/>
       <dep package="gst-plugins-base"/>
@@ -320,7 +324,9 @@
             hash="sha256:53bd0b848e7896f1b22548ca4e8be56cf425e5100e121c472dff8272d5140bc5"/>
   </autotools>
 
-  <autotools id="gst-plugins-bad" autogenargs="--disable-examples --enable-faad">
+  <autotools id="gst-plugins-bad"
+             autogen-sh="configure"
+             autogenargs="--disable-examples --enable-faad">
     <dependencies>
       <dep package="gst-plugins-base"/>
     </dependencies>
@@ -329,7 +335,9 @@
             hash="sha256:2e8f5b9a2fd274142d0a916b6425b9466028978b85858dc835dc80de744b276a"/>
   </autotools>
 
-  <autotools id="gst-libav" autogenargs="--with-libav-extra-configure='--disable-yasm'">
+  <autotools id="gst-libav"
+             autogen-sh="configure"
+             autogenargs="--with-libav-extra-configure='--disable-yasm'">
     <dependencies>
       <dep package="gst-plugins-base"/>
     </dependencies>
