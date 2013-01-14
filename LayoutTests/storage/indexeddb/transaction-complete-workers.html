@@ -14,7 +14,7 @@ var worker = startWorker('resources/transaction-complete-workers.js');
 
 var orig_onerror = worker.onerror;
 worker.onerror = function (event) {
-    if (event.message === "Uncaught Error: ignore this") {
+    if (event.message === "Uncaught Error: ignore this" || event.message === "Error: ignore this") {
         debug("Got expected error from worker, ignoring");
         evalAndLog("event.preventDefault()");
     } else if (orig_onerror) {
