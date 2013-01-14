@@ -39,20 +39,11 @@ namespace WebCore {
 
 class MediaStream : public RefCounted<MediaStream>, public MediaStreamDescriptorClient, public EventTarget, public ContextDestructionObserver {
 public:
-    enum ReadyState {
-        LIVE = 1,
-        ENDED = 2
-    };
-
     static PassRefPtr<MediaStream> create(ScriptExecutionContext*);
     static PassRefPtr<MediaStream> create(ScriptExecutionContext*, PassRefPtr<MediaStream>);
     static PassRefPtr<MediaStream> create(ScriptExecutionContext*, const MediaStreamTrackVector&);
     static PassRefPtr<MediaStream> create(ScriptExecutionContext*, PassRefPtr<MediaStreamDescriptor>);
     virtual ~MediaStream();
-
-    DEFINE_ATTRIBUTE_EVENT_LISTENER(ended);
-
-    ReadyState readyState() const;
 
     // DEPRECATED
     String label() const { return m_descriptor->id(); }
@@ -62,10 +53,14 @@ public:
     MediaStreamTrackList* audioTracks() { return m_audioTracks.get(); }
     MediaStreamTrackList* videoTracks() { return m_videoTracks.get(); }
 
-    virtual bool isLocal() const { return false; }
+    bool ended() const;
+
+    DEFINE_ATTRIBUTE_EVENT_LISTENER(ended);
 
     // MediaStreamDescriptorClient
     virtual void streamEnded() OVERRIDE;
+
+    virtual bool isLocal() const { return false; }
 
     MediaStreamDescriptor* descriptor() const { return m_descriptor.get(); }
 

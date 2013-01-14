@@ -24,13 +24,17 @@ function getUserMedia(dictionary, callback) {
     }
 }
 
+var stream;
+
 function streamEnded() {
     testPassed('streamEnded was called.');
+    shouldBeTrue('stream.ended');
     finishJSTest();
 }
 
 function gotStream(s) {
     stream = s;
+    shouldBeFalse('stream.ended');
     try {
         stream.onended = streamEnded;
         stream.stop();

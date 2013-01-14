@@ -73,7 +73,7 @@ MediaStreamTrack* MediaStreamTrackList::item(unsigned index) const
 
 void MediaStreamTrackList::add(PassRefPtr<MediaStreamTrack> prpTrack, ExceptionCode& ec)
 {
-    if (!m_owner || m_owner->readyState() == MediaStream::ENDED) {
+    if (!m_owner || m_owner->ended()) {
         ec = INVALID_STATE_ERR;
         return;
     }
@@ -98,7 +98,7 @@ void MediaStreamTrackList::add(PassRefPtr<MediaStreamTrack> prpTrack, ExceptionC
 
 void MediaStreamTrackList::remove(PassRefPtr<MediaStreamTrack> prpTrack, ExceptionCode& ec)
 {
-    if (!m_owner || m_owner->readyState() == MediaStream::ENDED) {
+    if (!m_owner || m_owner->ended()) {
         ec = INVALID_STATE_ERR;
         return;
     }
@@ -124,7 +124,7 @@ void MediaStreamTrackList::remove(PassRefPtr<MediaStreamTrack> prpTrack, Excepti
 
 void MediaStreamTrackList::remove(MediaStreamComponent* component)
 {
-    if (!m_owner || m_owner->readyState() == MediaStream::ENDED)
+    if (!m_owner || m_owner->ended())
         return;
 
     size_t index = notFound;

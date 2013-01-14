@@ -131,14 +131,14 @@ MediaStream::~MediaStream()
     m_videoTracks->detachOwner();
 }
 
-MediaStream::ReadyState MediaStream::readyState() const
+bool MediaStream::ended() const
 {
-    return m_descriptor->ended() ? ENDED : LIVE;
+    return m_descriptor->ended();
 }
 
 void MediaStream::streamEnded()
 {
-    if (readyState() == ENDED)
+    if (ended())
         return;
 
     m_descriptor->setEnded();

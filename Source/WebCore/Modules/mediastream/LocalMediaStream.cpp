@@ -50,7 +50,7 @@ LocalMediaStream::LocalMediaStream(ScriptExecutionContext* context, PassRefPtr<M
 
 void LocalMediaStream::stop()
 {
-    if (readyState() == ENDED)
+    if (ended())
         return;
 
     MediaStreamCenter::instance().didStopLocalMediaStream(descriptor());

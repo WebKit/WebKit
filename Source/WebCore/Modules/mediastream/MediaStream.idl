@@ -39,10 +39,9 @@
     readonly attribute MediaStreamTrackList audioTracks;
     readonly attribute MediaStreamTrackList videoTracks;
 
-    const unsigned short LIVE = 1;
-    const unsigned short ENDED = 2;
-    readonly attribute unsigned short readyState;
-             attribute EventListener onended;
+    readonly attribute boolean ended;
+
+    attribute EventListener onended;
 
     // EventTarget interface
     void addEventListener(in DOMString type,
