@@ -462,6 +462,7 @@ block_valid_rule:
     ruleset
   | page
   | font_face
+  | media
   | keyframes
 #if ENABLE_CSS_DEVICE_ADAPTATION
   | viewport
@@ -474,7 +475,6 @@ block_rule:
   | invalid_at
   | namespace
   | import
-  | media
   | region
 #if ENABLE_CSS3_CONDITIONAL_RULES
   | supports

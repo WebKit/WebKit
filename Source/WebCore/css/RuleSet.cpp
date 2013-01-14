@@ -258,6 +258,7 @@ void RuleSet::addRegionRule(StyleRuleRegion* regionRule, bool hasDocumentSecurit
     regionRuleSet->m_ruleCount = m_ruleCount;
 
     // Collect the region rules into a rule set
+    // FIXME: Should this add other types of rules? (i.e. use addChildRules() directly?)
     const Vector<RefPtr<StyleRuleBase> >& childRules = regionRule->childRules();
     AddRuleFlags addRuleFlags = hasDocumentSecurityOrigin ? RuleHasDocumentSecurityOrigin : RuleHasNoSpecialState;
     addRuleFlags = static_cast<AddRuleFlags>(addRuleFlags | RuleCanUseFastCheckSelector | RuleIsInRegionRule);
@@ -272,70 +273,19 @@ void RuleSet::addRegionRule(StyleRuleRegion* regionRule, bool hasDocumentSecurit
     m_regionSelectorsAndRuleSets.append(RuleSetSelectorPair(regionRule->selectorList().first(), regionRuleSet.release()));
 }
 
-void RuleSet::addRulesFromSheet(StyleSheetContents* sheet, const MediaQueryEvaluator& medium, StyleResolver* resolver, const ContainerNode* scope)
+void RuleSet::addChildRules(const Vector<RefPtr<StyleRuleBase> >& rules, const MediaQueryEvaluator& medium, StyleResolver* resolver, const ContainerNode* scope, bool hasDocumentSecurityOrigin, AddRuleFlags addRuleFlags)
 {
-    ASSERT(sheet);
-    
-    const Vector<RefPtr<StyleRuleImport> >& importRules = sheet->importRules();
-    for (unsigned i = 0; i < importRules.size(); ++i) {
-        StyleRuleImport* importRule = importRules[i].get();
-        if (importRule->styleSheet() && (!importRule->mediaQueries() || medium.eval(importRule->mediaQueries(), resolver)))
-            addRulesFromSheet(importRule->styleSheet(), medium, resolver, scope);
-    }
-    bool hasDocumentSecurityOrigin = resolver && resolver->document()->securityOrigin()->canRequest(sheet->baseURL());
-    AddRuleFlags addRuleFlags = static_cast<AddRuleFlags>((hasDocumentSecurityOrigin ? RuleHasDocumentSecurityOrigin : 0) | (!scope ? RuleCanUseFastCheckSelector : 0));
-
-    const Vector<RefPtr<StyleRuleBase> >& rules = sheet->childRules();
     for (unsigned i = 0; i < rules.size(); ++i) {
         StyleRuleBase* rule = rules[i].get();
 
-        ASSERT(!rule->isImportRule());
         if (rule->isStyleRule())
             addStyleRule(static_cast<StyleRule*>(rule), addRuleFlags);
         else if (rule->isPageRule())
             addPageRule(static_cast<StyleRulePage*>(rule));
         else if (rule->isMediaRule()) {
             StyleRuleMedia* mediaRule = static_cast<StyleRuleMedia*>(rule);
-
-            if ((!mediaRule->mediaQueries() || medium.eval(mediaRule->mediaQueries(), resolver))) {
-                // Traverse child elements of the @media rule.
-                const Vector<RefPtr<StyleRuleBase> >& childRules = mediaRule->childRules();
-                for (unsigned j = 0; j < childRules.size(); ++j) {
-                    StyleRuleBase* childRule = childRules[j].get();
-                    if (childRule->isStyleRule())
-                        addStyleRule(static_cast<StyleRule*>(childRule), addRuleFlags);
-                    else if (childRule->isPageRule())
-                        addPageRule(static_cast<StyleRulePage*>(childRule));
-                    else if (childRule->isFontFaceRule() && resolver) {
-                        // Add this font face to our set.
-                        // FIXME(BUG 72461): We don't add @font-face rules of scoped style sheets for the moment.
-                        if (scope)
-                            continue;
-                        const StyleRuleFontFace* fontFaceRule = static_cast<StyleRuleFontFace*>(childRule);
-                        resolver->fontSelector()->addFontFaceRule(fontFaceRule);
-                        resolver->invalidateMatchedPropertiesCache();
-                    } else if (childRule->isKeyframesRule() && resolver) {
-                        // Add this keyframe rule to our set.
-                        // FIXME(BUG 72462): We don't add @keyframe rules of scoped style sheets for the moment.
-                        if (scope)
-                            continue;
-                        resolver->addKeyframeStyle(static_cast<StyleRuleKeyframes*>(childRule));
-                    } else if (childRule->isRegionRule() && resolver) {
-                        // FIXME (BUG 72472): We don't add @-webkit-region rules of scoped style sheets for the moment.
-                        if (scope)
-                            continue;
-                        addRegionRule(static_cast<StyleRuleRegion*>(childRule), hasDocumentSecurityOrigin);
-                    }
-#if ENABLE(CSS_DEVICE_ADAPTATION)
-                    else if (childRule->isViewportRule() && resolver && !resolver->affectedByViewportChange()) {
-                        // @viewport should not be scoped.
-                        if (scope)
-                            continue;
-                        resolver->viewportStyleResolver()->addViewportRule(static_cast<StyleRuleViewport*>(childRule));
-                    }
-#endif
-                } // for rules
-            } // if rules
+            if ((!mediaRule->mediaQueries() || medium.eval(mediaRule->mediaQueries(), resolver)))
+                addChildRules(mediaRule->childRules(), medium, resolver, scope, hasDocumentSecurityOrigin, addRuleFlags);
         } else if (rule->isFontFaceRule() && resolver) {
             // Add this font face to our set.
             // FIXME(BUG 72461): We don't add @font-face rules of scoped style sheets for the moment.
@@ -371,6 +321,24 @@ void RuleSet::addRulesFromSheet(StyleSheetContents* sheet, const MediaQueryEvalu
         }
 #endif
     }
+}
+
+void RuleSet::addRulesFromSheet(StyleSheetContents* sheet, const MediaQueryEvaluator& medium, StyleResolver* resolver, const ContainerNode* scope)
+{
+    ASSERT(sheet);
+
+    const Vector<RefPtr<StyleRuleImport> >& importRules = sheet->importRules();
+    for (unsigned i = 0; i < importRules.size(); ++i) {
+        StyleRuleImport* importRule = importRules[i].get();
+        if (importRule->styleSheet() && (!importRule->mediaQueries() || medium.eval(importRule->mediaQueries(), resolver)))
+            addRulesFromSheet(importRule->styleSheet(), medium, resolver, scope);
+    }
+
+    bool hasDocumentSecurityOrigin = resolver && resolver->document()->securityOrigin()->canRequest(sheet->baseURL());
+    AddRuleFlags addRuleFlags = static_cast<AddRuleFlags>((hasDocumentSecurityOrigin ? RuleHasDocumentSecurityOrigin : 0) | (!scope ? RuleCanUseFastCheckSelector : 0));
+
+    addChildRules(sheet->childRules(), medium, resolver, scope, hasDocumentSecurityOrigin, addRuleFlags);
+
     if (m_autoShrinkToFitEnabled)
         shrinkToFit();
 }

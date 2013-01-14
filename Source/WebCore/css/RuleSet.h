@@ -129,6 +129,9 @@ public:
 
     void reportMemoryUsage(MemoryObjectInfo*) const;
 
+private:
+    void addChildRules(const Vector<RefPtr<StyleRuleBase> >&, const MediaQueryEvaluator& medium, StyleResolver*, const ContainerNode* scope, bool hasDocumentSecurityOrigin, AddRuleFlags);
+
 public:
     RuleSet();
 
