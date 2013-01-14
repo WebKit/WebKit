@@ -1,3 +1,26 @@
+2013-01-14  Jocelyn Turcotte  <jocelyn.turcotte@digia.com>
+
+        [Qt] The Qt's configuration isn't honoured regarding the use of the system libpng and libjpeg
+        https://bugs.webkit.org/show_bug.cgi?id=104909
+
+        Reviewed by Simon Hausmann.
+
+        To be able to build redistribuable binary packages, Qt's configure switches
+        -qt-libpng and -qt-libjpeg are used to avoid having the binaries trying to
+        dynamically link to optional system libraries.
+        QtWebKit is doing its own configure checks for those libraries, thus adding a
+        runtime dependency that might not be fulfilled if the packager's machine had
+        those libraries while the user's machine won't.
+
+        Since in most cases where WebKit will want to use those system libraries, Qt will
+        also be using them, remove these configure tests from WebKit.
+
+        * qmake/config.tests/libjpeg/libjpeg.cpp: Removed.
+        * qmake/config.tests/libjpeg/libjpeg.pro: Removed.
+        * qmake/config.tests/libpng/libpng.cpp: Removed.
+        * qmake/config.tests/libpng/libpng.pro: Removed.
+        * qmake/mkspecs/features/features.prf:
+
 2013-01-09  Raphael Kubo da Costa  <raphael.kubo.da.costa@intel.com>
 
         [EFL][jhbuild] Bump the EFL dependencies in jhbuild to 1.7.5.

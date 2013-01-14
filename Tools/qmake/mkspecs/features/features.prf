@@ -42,10 +42,12 @@ defineTest(detectFeatures) {
     config_libzlib: WEBKIT_CONFIG += use_zlib
     config_libwebp: WEBKIT_CONFIG += use_webp
 
-    config_libjpeg: WEBKIT_CONFIG += use_libjpeg
+    # We can't use Qt's 3rdparty sources for libjpeg and libpng outside of qtbase, but if Qt
+    # is using the system libraries, use them to take advantage of the WebCore image decoders as well.
+    contains(QT_CONFIG, system-jpeg): WEBKIT_CONFIG += use_libjpeg
     else: CONFIGURE_WARNINGS += "JPEG library not found, QImageDecoder will decode JPEG images"
 
-    config_libpng: WEBKIT_CONFIG += use_libpng
+    contains(QT_CONFIG, system-png): WEBKIT_CONFIG += use_libpng
     else: CONFIGURE_WARNINGS += "PNG library not found, QImageDecoder will decode PNG images"
 
     linux-* {
