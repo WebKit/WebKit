@@ -2504,3 +2504,6 @@ fast/workers/worker-close-more.html
 fast/workers/worker-document-leak.html
 fast/workers/worker-lifecycle.html
 fast/workers/storage/interrupt-database.html
+
+# [Qt] New fast/js/dfg-create-inlined-arguments-in-closure-inline.html asserts on 32 bit
+webkit.org/b/106459 [ Debug ] fast/js/dfg-create-inlined-arguments-in-closure-inline.html
