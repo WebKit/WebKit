@@ -131,7 +131,7 @@ EwkViewImpl::EwkViewImpl(Evas_Object* view, PassRefPtr<EwkContext> context, Pass
 #endif
     , m_backForwardList(EwkBackForwardList::create(toAPI(m_pageProxy->backForwardList())))
 #if USE(TILED_BACKING_STORE)
-    , m_scaleFactor(1)
+    , m_pageScaleFactor(1)
 #endif
     , m_settings(EwkSettings::create(this))
     , m_cursorIdentifier(0)
@@ -297,13 +297,19 @@ void EwkViewImpl::setDeviceScaleFactor(float scale)
     page()->setIntrinsicDeviceScaleFactor(scale);
 }
 
+float EwkViewImpl::deviceScaleFactor() const
+{
+    return m_pageProxy->deviceScaleFactor();
+}
+
 AffineTransform EwkViewImpl::transformFromScene() const
 {
     AffineTransform transform;
 
 #if USE(TILED_BACKING_STORE)
-    // Note that the scale factor incl page and device scale for now.
-    transform.scale(1 / m_scaleFactor);
+    // Note that we apply both page and device scale factors.
+    transform.scale(1 / pageScaleFactor());
+    transform.scale(1 / deviceScaleFactor());
     transform.translate(pagePosition().x(), pagePosition().y());
 #endif
 
@@ -404,7 +410,8 @@ void EwkViewImpl::displayTimerFired(Timer<EwkViewImpl>*)
 
         RefPtr<cairo_t> graphicsContext = adoptRef(cairo_create(surface.get()));
         cairo_translate(graphicsContext.get(), - pagePosition().x(), - pagePosition().y());
-        cairo_scale(graphicsContext.get(), m_scaleFactor, m_scaleFactor);
+        cairo_scale(graphicsContext.get(), pageScaleFactor(), pageScaleFactor());
+        cairo_scale(graphicsContext.get(), deviceScaleFactor(), deviceScaleFactor());
         renderer->paintToGraphicsContext(graphicsContext.get());
         evas_object_image_data_update_add(sd->image, 0, 0, viewport.width(), viewport.height());
     }

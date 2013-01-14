@@ -122,6 +122,7 @@ public:
     bool isVisible() const;
 
     void setDeviceScaleFactor(float scale);
+    float deviceScaleFactor() const;
 
     WebCore::AffineTransform transformToScene() const;
     WebCore::AffineTransform transformFromScene() const;
@@ -199,8 +200,8 @@ public:
 #if USE(TILED_BACKING_STORE)
     WebKit::PageClientBase* pageClient() { return m_pageClient.get(); }
 
-    void setScaleFactor(float scaleFactor) { m_scaleFactor = scaleFactor; }
-    float scaleFactor() const { return m_scaleFactor; }
+    void setPageScaleFactor(float scaleFactor) { m_pageScaleFactor = scaleFactor; }
+    float pageScaleFactor() const { return m_pageScaleFactor; }
 
     void setPagePosition(const WebCore::FloatPoint& position) { m_pagePosition = position; }
     const WebCore::FloatPoint pagePosition() const { return m_pagePosition; }
@@ -263,7 +264,7 @@ private:
 #endif
     OwnPtr<EwkBackForwardList> m_backForwardList;
 #if USE(TILED_BACKING_STORE)
-    float m_scaleFactor;
+    float m_pageScaleFactor;
     WebCore::FloatPoint m_pagePosition;
 #endif
     OwnPtr<EwkSettings> m_settings;

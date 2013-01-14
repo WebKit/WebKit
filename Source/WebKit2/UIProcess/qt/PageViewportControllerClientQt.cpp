@@ -322,7 +322,7 @@ void PageViewportControllerClientQt::setViewportPosition(const FloatPoint& conte
     updateViewportController();
 }
 
-void PageViewportControllerClientQt::setContentsScale(float localScale)
+void PageViewportControllerClientQt::setPageScaleFactor(float localScale)
 {
     scaleContent(localScale);
 }

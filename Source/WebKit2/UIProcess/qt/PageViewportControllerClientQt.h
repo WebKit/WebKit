@@ -48,7 +48,7 @@ public:
     ~PageViewportControllerClientQt();
 
     virtual void setViewportPosition(const WebCore::FloatPoint& contentsPoint);
-    virtual void setContentsScale(float);
+    virtual void setPageScaleFactor(float);
 
     virtual void didResumeContent();
     virtual void didChangeContentsSize(const WebCore::IntSize&);

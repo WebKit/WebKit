@@ -190,7 +190,7 @@ void PageViewportController::didRenderFrame(const IntSize& contentsSize, const I
 
     if (m_pendingScaleChange) {
         m_pendingScaleChange = false;
-        m_client->setContentsScale(m_pageScaleFactor);
+        m_client->setPageScaleFactor(m_pageScaleFactor);
 
         // The scale changed, we have to re-pixel align.
         m_pendingPositionChange = true;
