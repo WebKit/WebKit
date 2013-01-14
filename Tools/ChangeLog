@@ -1,3 +1,21 @@
+2013-01-14  Dominic Mazzoni  <dmazzoni@google.com>
+
+        Chromium: Error in AccessibilityUIElement::intValueGetterCallback
+        https://bugs.webkit.org/show_bug.cgi?id=106682
+
+        Reviewed by Chris Fleizach.
+
+        Modify Chromium's DRT implementation of intValue to return a
+        different value depending on the role.
+
+        There are actually platform-specific differences in what should
+        be returned in the "value" of an object, so Chromium normally keeps
+        these separate (i.e. valueForRange, headingLevel, hierarchicalLevel, etc.)
+        but this is a fine simplification to make cross-platform tests easier.
+
+        * DumpRenderTree/chromium/TestRunner/src/AccessibilityUIElementChromium.cpp:
+        (WebTestRunner::AccessibilityUIElement::intValueGetterCallback):
+
 2013-01-14  Jochen Eisinger  <jochen@chromium.org>
 
         [chromium] move remaining methods to dump WebViewClient callbacks to TestRunner library

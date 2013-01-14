@@ -518,7 +518,12 @@ void AccessibilityUIElement::heightGetterCallback(CppVariant* result)
 
 void AccessibilityUIElement::intValueGetterCallback(CppVariant* result)
 {
-    result->set(accessibilityObject().valueForRange());
+    if (accessibilityObject().supportsRangeValue())
+        result->set(accessibilityObject().valueForRange());
+    else if (accessibilityObject().roleValue() == WebAccessibilityRoleHeading)
+        result->set(accessibilityObject().headingLevel());
+    else
+        result->set(atoi(accessibilityObject().stringValue().utf8().data()));
 }
 
 void AccessibilityUIElement::minValueGetterCallback(CppVariant* result)
