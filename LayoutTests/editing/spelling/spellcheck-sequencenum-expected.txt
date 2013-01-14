@@ -3,10 +3,10 @@ For Bug 73511: Internals should have a method to return the max sequence number 
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 
 
+PASS SpellCheck sequence seems working correctly.
+PASS SpellCheck sequence seems working correctly.
+PASS SpellCheck sequence seems working correctly.
 PASS successfullyParsed is true
 
 TEST COMPLETE
-PASS SpellCheck sequence seems working correctly.
-PASS SpellCheck sequence seems working correctly.
-PASS SpellCheck sequence seems working correctly.
 

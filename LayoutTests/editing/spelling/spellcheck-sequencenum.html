@@ -11,7 +11,7 @@
 description('For Bug 73511: Internals should have a method to return the max sequence number of spellcheck request.');
 
 if (window.testRunner) {
-    testRunner.waitUntilDone();
+    window.jsTestIsAsync = true;
     testRunner.setAsynchronousSpellCheckingEnabled(true);
 }
 
@@ -79,7 +79,7 @@ function verifyIfAny()
     testRoot.style.display = "none";
     if (window.testRunner) {
         testRunner.setAsynchronousSpellCheckingEnabled(false);
-        testRunner.notifyDone();
+        finishJSTest();
     }
 }
 
