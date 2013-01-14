@@ -1,3 +1,12 @@
+2013-01-13  Alan Cutter  <alancutter@chromium.org>
+
+        Add Alan Cutter as contributor
+        https://bugs.webkit.org/show_bug.cgi?id=106747
+
+        Reviewed by Eric Seidel.
+
+        * Scripts/webkitpy/common/config/committers.py:
+
 2013-01-13  Jonathan Liu  <net147@gmail.com>
 
         Fix CONFIG missing link_pkgconfig on Windows
