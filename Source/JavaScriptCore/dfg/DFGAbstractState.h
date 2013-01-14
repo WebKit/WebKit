@@ -99,7 +99,7 @@ public:
     
     AbstractValue& forNode(NodeIndex nodeIndex)
     {
-        return m_nodes[nodeIndex];
+        return m_graph[nodeIndex].value;
     }
     
     AbstractValue& forNode(Edge nodeUse)
@@ -262,7 +262,6 @@ private:
     CodeBlock* m_codeBlock;
     Graph& m_graph;
     
-    Vector<AbstractValue, 64> m_nodes;
     Operands<AbstractValue> m_variables;
     BasicBlock* m_block;
     bool m_haveStructures;

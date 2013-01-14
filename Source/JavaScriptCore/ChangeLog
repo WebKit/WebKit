@@ -1,3 +1,26 @@
+2013-01-13  Filip Pizlo  <fpizlo@apple.com>
+
+        DFG phases that store per-node information should store it in Node itself rather than using a secondary vector
+        https://bugs.webkit.org/show_bug.cgi?id=106753
+
+        Reviewed by Geoffrey Garen.
+
+        * dfg/DFGAbstractState.cpp:
+        (JSC::DFG::AbstractState::AbstractState):
+        (JSC::DFG::AbstractState::beginBasicBlock):
+        (JSC::DFG::AbstractState::dump):
+        * dfg/DFGAbstractState.h:
+        (JSC::DFG::AbstractState::forNode):
+        (AbstractState):
+        * dfg/DFGCFGSimplificationPhase.cpp:
+        * dfg/DFGCSEPhase.cpp:
+        (JSC::DFG::CSEPhase::CSEPhase):
+        (JSC::DFG::CSEPhase::performSubstitution):
+        (JSC::DFG::CSEPhase::setReplacement):
+        (CSEPhase):
+        * dfg/DFGNode.h:
+        (Node):
+
 2013-01-12  Tim Horton  <timothy_horton@apple.com>
 
         Unreviewed build fix.

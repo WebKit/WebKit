@@ -39,11 +39,8 @@ public:
     CSEPhase(Graph& graph)
         : Phase(graph, "common subexpression elimination")
     {
-        // Replacements are used to implement local common subexpression elimination.
-        m_replacements.resize(m_graph.size());
-        
         for (unsigned i = 0; i < m_graph.size(); ++i)
-            m_replacements[i] = NoNode;
+            m_graph[i].replacement = NoNode;
         
         m_relevantToOSR.resize(m_graph.size());
     }
@@ -1005,7 +1002,7 @@ private:
             return;
         
         // Check if there is any replacement.
-        NodeIndex replacement = m_replacements[child.index()];
+        NodeIndex replacement = m_graph[child.index()].replacement;
         if (replacement == NoNode)
             return;
         
@@ -1013,7 +1010,7 @@ private:
         
         // There is definitely a replacement. Assert that the replacement does not
         // have a replacement.
-        ASSERT(m_replacements[child.index()] == NoNode);
+        ASSERT(m_graph[child.index()].replacement == NoNode);
         
         if (addRef)
             m_graph.ref(child);
@@ -1060,7 +1057,7 @@ private:
         eliminateIrrelevantPhantomChildren(node);
         
         // At this point we will eliminate all references to this node.
-        m_replacements[m_compileIndex] = replacement;
+        m_graph[m_compileIndex].replacement = replacement;
         
         m_changed = true;
         
@@ -1459,7 +1456,6 @@ private:
     BasicBlock* m_currentBlock;
     NodeIndex m_compileIndex;
     unsigned m_indexInBlock;
-    Vector<NodeIndex, 16> m_replacements;
     FixedArray<unsigned, LastNodeType> m_lastSeen;
     FastBitVector m_relevantToOSR;
     bool m_changed; // Only tracks changes that have a substantive effect on other optimizations.

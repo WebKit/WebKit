@@ -42,7 +42,6 @@ AbstractState::AbstractState(Graph& graph)
     , m_variables(m_codeBlock->numParameters(), graph.m_localVars)
     , m_block(0)
 {
-    m_nodes.resize(graph.size());
 }
 
 AbstractState::~AbstractState() { }
@@ -55,12 +54,8 @@ void AbstractState::beginBasicBlock(BasicBlock* basicBlock)
     ASSERT(basicBlock->variablesAtTail.numberOfLocals() == basicBlock->valuesAtTail.numberOfLocals());
     ASSERT(basicBlock->variablesAtHead.numberOfLocals() == basicBlock->variablesAtTail.numberOfLocals());
     
-    // This is usually a no-op, but it is possible that the graph has grown since the
-    // abstract state was last used.
-    m_nodes.resize(m_graph.size());
-    
     for (size_t i = 0; i < basicBlock->size(); i++)
-        m_nodes[basicBlock->at(i)].clear();
+        forNode(basicBlock->at(i)).clear();
 
     m_variables = basicBlock->valuesAtHead;
     m_haveStructures = false;
@@ -2031,7 +2026,7 @@ void AbstractState::dump(PrintStream& out)
     bool first = true;
     for (size_t i = 0; i < m_block->size(); ++i) {
         NodeIndex index = m_block->at(i);
-        AbstractValue& value = m_nodes[index];
+        AbstractValue& value = forNode(index);
         if (value.isClear())
             continue;
         if (first)
