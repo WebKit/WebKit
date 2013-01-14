@@ -171,8 +171,11 @@ WebInspector.WorkerManager.prototype = {
             url += "&workerPaused=true";
         url = url.replace("docked=true&", "");
         url += hash;
+        var width = WebInspector.settings.workerInspectorWidth.get();
+        var height = WebInspector.settings.workerInspectorHeight.get();
         // Set location=0 just to make sure the front-end will be opened in a separate window, not in new tab.
-        var workerInspectorWindow = window.open(url, undefined, "location=0");
+        var workerInspectorWindow = window.open(url, undefined, "location=0,width=" + width + ",height=" + height);
+        workerInspectorWindow.addEventListener("resize", this._onWorkerInspectorResize.bind(this, workerInspectorWindow), false);
         this._workerIdToWindow[workerId] = workerInspectorWindow;
         workerInspectorWindow.addEventListener("beforeunload", this._workerInspectorClosing.bind(this, workerId), true);
 
@@ -202,6 +205,13 @@ WebInspector.WorkerManager.prototype = {
             this._workerIdToWindow[workerId].close();
             WorkerAgent.disconnectFromWorker(parseInt(workerId, 10));
         }
+    },
+
+    _onWorkerInspectorResize: function(workerInspectorWindow)
+    {
+        var doc = workerInspectorWindow.document;
+        WebInspector.settings.workerInspectorWidth.set(doc.width);
+        WebInspector.settings.workerInspectorHeight.set(doc.height);
     },
 
     _workerInspectorClosing: function(workerId, event)
