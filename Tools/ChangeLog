@@ -1,3 +1,24 @@
+2013-01-14  Andrey Lushnikov  <lushnikov@chromium.org>
+
+        Web Inspector: fix DRT to deliver simulated events to devtools front-end
+        https://bugs.webkit.org/show_bug.cgi?id=106650
+
+        Reviewed by Pavel Feldman.
+
+        Add separated m_devToolsTestInterfaces object to testShell which is
+        bind to devTools webview.
+
+        * DumpRenderTree/chromium/TestShell.cpp:
+        (TestShell::initialize):
+        (TestShell::createMainWindow):
+        (TestShell::~TestShell):
+        (TestShell::showDevTools):
+        (TestShell::resetTestController):
+        (TestShell::bindJSObjectsToWindow):
+        (TestShell::createNewWindow):
+        * DumpRenderTree/chromium/TestShell.h:
+        (TestShell):
+
 2013-01-14  Alan Cutter  <alancutter@chromium.org>
 
         Sheriffbot command aliases need test cases

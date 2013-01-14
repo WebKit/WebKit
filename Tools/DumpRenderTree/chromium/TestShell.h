@@ -189,7 +189,7 @@ public:
     std::string normalizeLayoutTestURL(const std::string&);
 
 private:
-    WebViewHost* createNewWindow(const WebKit::WebURL&, DRTDevToolsAgent*);
+    WebViewHost* createNewWindow(const WebKit::WebURL&, DRTDevToolsAgent*, WebTestRunner::WebTestInterfaces*);
     void createMainWindow();
     void createDRTDevToolsClient(DRTDevToolsAgent*);
 
@@ -210,6 +210,7 @@ private:
     OwnPtr<DRTDevToolsAgent> m_drtDevToolsAgent;
     OwnPtr<DRTDevToolsClient> m_drtDevToolsClient;
     OwnPtr<WebTestRunner::WebTestInterfaces> m_testInterfaces;
+    OwnPtr<WebTestRunner::WebTestInterfaces> m_devToolsTestInterfaces;
     OwnPtr<DRTTestRunner> m_testRunner;
 #if ENABLE(NOTIFICATIONS) || ENABLE(LEGACY_NOTIFICATIONS)
     OwnPtr<NotificationPresenter> m_notificationPresenter;
