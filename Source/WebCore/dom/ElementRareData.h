@@ -44,6 +44,11 @@ public:
 
     void resetComputedStyle();
     void resetDynamicRestyleObservations();
+    
+    short tabIndex() const { return m_tabIndex; }
+    void setTabIndexExplicitly(short index) { m_tabIndex = index; m_tabIndexWasSetExplicitly = true; }
+    bool tabIndexSetExplicitly() const { return m_tabIndexWasSetExplicitly; }
+    void clearTabIndexExplicitly() { m_tabIndex = 0; m_tabIndexWasSetExplicitly = false; }
 
     bool needsFocusAppearanceUpdateSoonAfterAttach() const { return m_needsFocusAppearanceUpdateSoonAfterAttach; }
     void setNeedsFocusAppearanceUpdateSoonAfterAttach(bool needs) { m_needsFocusAppearanceUpdateSoonAfterAttach = needs; }
@@ -124,7 +129,36 @@ public:
 #endif
 
 private:
-    // Many fields are in NodeRareData for better packing.
+    short m_tabIndex;
+    unsigned short m_childIndex;
+    unsigned m_tabIndexWasSetExplicitly : 1;
+    unsigned m_needsFocusAppearanceUpdateSoonAfterAttach : 1;
+    unsigned m_styleAffectedByEmpty : 1;
+    unsigned m_isInCanvasSubtree : 1;
+#if ENABLE(FULLSCREEN_API)
+    unsigned m_containsFullScreenElement : 1;
+#endif
+#if ENABLE(DIALOG_ELEMENT)
+    unsigned m_isInTopLayer : 1;
+#endif
+#if ENABLE(SVG)
+    unsigned m_hasPendingResources : 1;
+#endif
+    unsigned m_childrenAffectedByHover : 1;
+    unsigned m_childrenAffectedByActive : 1;
+    unsigned m_childrenAffectedByDrag : 1;
+    // Bits for dynamic child matching.
+    // We optimize for :first-child and :last-child. The other positional child selectors like nth-child or
+    // *-child-of-type, we will just give up and re-evaluate whenever children change at all.
+    unsigned m_childrenAffectedByFirstChildRules : 1;
+    unsigned m_childrenAffectedByLastChildRules : 1;
+    unsigned m_childrenAffectedByDirectAdjacentRules : 1;
+    unsigned m_childrenAffectedByForwardPositionalRules : 1;
+    unsigned m_childrenAffectedByBackwardPositionalRules : 1;
+#if ENABLE(VIDEO_TRACK)
+    unsigned m_webVTTNodeType : 2; // WebVTTNodeType
+#endif
+
     LayoutSize m_minimumSizeForResizing;
     RefPtr<RenderStyle> m_computedStyle;
 
@@ -148,7 +182,33 @@ inline IntSize defaultMinimumSizeForResizing()
 }
 
 inline ElementRareData::ElementRareData()
-    : m_minimumSizeForResizing(defaultMinimumSizeForResizing())
+    : m_tabIndex(0)
+    , m_childIndex(0)
+    , m_tabIndexWasSetExplicitly(false)
+    , m_needsFocusAppearanceUpdateSoonAfterAttach(false)
+    , m_styleAffectedByEmpty(false)
+    , m_isInCanvasSubtree(false)
+#if ENABLE(FULLSCREEN_API)
+    , m_containsFullScreenElement(false)
+#endif
+#if ENABLE(DIALOG_ELEMENT)
+    , m_isInTopLayer(false)
+#endif
+#if ENABLE(SVG)
+    , m_hasPendingResources(false)
+#endif
+    , m_childrenAffectedByHover(false)
+    , m_childrenAffectedByActive(false)
+    , m_childrenAffectedByDrag(false)
+    , m_childrenAffectedByFirstChildRules(false)
+    , m_childrenAffectedByLastChildRules(false)
+    , m_childrenAffectedByDirectAdjacentRules(false)
+    , m_childrenAffectedByForwardPositionalRules(false)
+    , m_childrenAffectedByBackwardPositionalRules(false)
+#if ENABLE(VIDEO_TRACK)
+    , m_webVTTNodeType(WebVTTNodeTypeNone)
+#endif
+    , m_minimumSizeForResizing(defaultMinimumSizeForResizing())
 {
 }
 

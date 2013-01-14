@@ -226,60 +226,62 @@ private:
     TagNodeListCacheNS m_tagNodeListCacheNS;
 };
 
-class NodeRareData : public NodeRareDataBase {
-    WTF_MAKE_NONCOPYABLE(NodeRareData); WTF_MAKE_FAST_ALLOCATED;
+class NodeMutationObserverData {
+    WTF_MAKE_NONCOPYABLE(NodeMutationObserverData); WTF_MAKE_FAST_ALLOCATED;
+public:
+    Vector<OwnPtr<MutationObserverRegistration> > registry;
+    HashSet<MutationObserverRegistration*> transientRegistry;
 
-    struct NodeMutationObserverData {
-        Vector<OwnPtr<MutationObserverRegistration> > m_registry;
-        HashSet<MutationObserverRegistration*> m_transientRegistry;
+    static PassOwnPtr<NodeMutationObserverData> create() { return adoptPtr(new NodeMutationObserverData); }
 
-        static PassOwnPtr<NodeMutationObserverData> create() { return adoptPtr(new NodeMutationObserverData); }
-    };
+private:
+    NodeMutationObserverData() { }
+};
 
 #if ENABLE(MICRODATA)
-    struct NodeMicroDataTokenLists {
-        RefPtr<DOMSettableTokenList> m_itemProp;
-        RefPtr<DOMSettableTokenList> m_itemRef;
-        RefPtr<DOMSettableTokenList> m_itemType;
+class NodeMicroDataTokenLists {
+    WTF_MAKE_NONCOPYABLE(NodeMicroDataTokenLists); WTF_MAKE_FAST_ALLOCATED;
+public:
+    static PassOwnPtr<NodeMicroDataTokenLists> create() { return adoptPtr(new NodeMicroDataTokenLists); }
 
-        static PassOwnPtr<NodeMicroDataTokenLists> create() { return adoptPtr(new NodeMicroDataTokenLists); }
-    };
+    DOMSettableTokenList* itemProp() const
+    {
+        if (!m_itemProp)
+            m_itemProp = DOMSettableTokenList::create();
+        return m_itemProp.get();
+    }
+
+    DOMSettableTokenList* itemRef() const
+    {
+        if (!m_itemRef)
+            m_itemRef = DOMSettableTokenList::create();
+        return m_itemRef.get();
+    }
+
+    DOMSettableTokenList* itemType() const
+    {
+        if (!m_itemType)
+            m_itemType = DOMSettableTokenList::create();
+        return m_itemType.get();
+    }
+
+private:
+    DOMSettableTokenList() { }
+
+    mutable RefPtr<DOMSettableTokenList> m_itemProp;
+    mutable RefPtr<DOMSettableTokenList> m_itemRef;
+    mutable RefPtr<DOMSettableTokenList> m_itemType;
+};
 #endif
 
+class NodeRareData : public NodeRareDataBase {
+    WTF_MAKE_NONCOPYABLE(NodeRareData); WTF_MAKE_FAST_ALLOCATED;
 public:    
     NodeRareData()
-        : m_tabIndex(0)
-        , m_childIndex(0)
-        , m_tabIndexWasSetExplicitly(false)
-        , m_needsFocusAppearanceUpdateSoonAfterAttach(false)
-        , m_styleAffectedByEmpty(false)
-        , m_isInCanvasSubtree(false)
-#if ENABLE(FULLSCREEN_API)
-        , m_containsFullScreenElement(false)
-#endif
-#if ENABLE(DIALOG_ELEMENT)
-        , m_isInTopLayer(false)
-#endif
-#if ENABLE(SVG)
-        , m_hasPendingResources(false)
-#endif
-        , m_childrenAffectedByHover(false)
-        , m_childrenAffectedByActive(false)
-        , m_childrenAffectedByDrag(false)
-        , m_childrenAffectedByFirstChildRules(false)
-        , m_childrenAffectedByLastChildRules(false)
-        , m_childrenAffectedByDirectAdjacentRules(false)
-        , m_childrenAffectedByForwardPositionalRules(false)
-        , m_childrenAffectedByBackwardPositionalRules(false)
-#if ENABLE(VIDEO_TRACK)
-        , m_webVTTNodeType(WebVTTNodeTypeNone)
-#endif
-    {
-    }
+    { }
 
     virtual ~NodeRareData()
-    {
-    }
+    { }
 
     void clearNodeLists() { m_nodeLists.clear(); }
     NodeListsNodeData* nodeLists() const { return m_nodeLists.get(); }
@@ -290,25 +292,12 @@ public:
         return m_nodeLists.get();
     }
 
-    short tabIndex() const { return m_tabIndex; }
-    void setTabIndexExplicitly(short index) { m_tabIndex = index; m_tabIndexWasSetExplicitly = true; }
-    bool tabIndexSetExplicitly() const { return m_tabIndexWasSetExplicitly; }
-    void clearTabIndexExplicitly() { m_tabIndex = 0; m_tabIndexWasSetExplicitly = false; }
-
-    Vector<OwnPtr<MutationObserverRegistration> >* mutationObserverRegistry() { return m_mutationObserverData ? &m_mutationObserverData->m_registry : 0; }
-    Vector<OwnPtr<MutationObserverRegistration> >* ensureMutationObserverRegistry()
+    NodeMutationObserverData* mutationObserverData() { return m_mutationObserverData.get(); }
+    NodeMutationObserverData* ensureMutationObserverData()
     {
         if (!m_mutationObserverData)
             m_mutationObserverData = NodeMutationObserverData::create();
-        return &m_mutationObserverData->m_registry;
-    }
-
-    HashSet<MutationObserverRegistration*>* transientMutationObserverRegistry() { return m_mutationObserverData ? &m_mutationObserverData->m_transientRegistry : 0; }
-    HashSet<MutationObserverRegistration*>* ensureTransientMutationObserverRegistry()
-    {
-        if (!m_mutationObserverData)
-            m_mutationObserverData = NodeMutationObserverData::create();
-        return &m_mutationObserverData->m_transientRegistry;
+        return m_mutationObserverData.get();
     }
 
 #if ENABLE(MICRODATA)
@@ -318,88 +307,9 @@ public:
             m_microDataTokenLists = NodeMicroDataTokenLists::create();
         return m_microDataTokenLists.get();
     }
-
-    DOMSettableTokenList* itemProp() const
-    {
-        if (!ensureMicroDataTokenLists()->m_itemProp)
-            m_microDataTokenLists->m_itemProp = DOMSettableTokenList::create();
-
-        return m_microDataTokenLists->m_itemProp.get();
-    }
-
-    void setItemProp(const String& value)
-    {
-        if (!ensureMicroDataTokenLists()->m_itemProp)
-            m_microDataTokenLists->m_itemProp = DOMSettableTokenList::create();
-
-        m_microDataTokenLists->m_itemProp->setValue(value);
-    }
-
-    DOMSettableTokenList* itemRef() const
-    {
-        if (!ensureMicroDataTokenLists()->m_itemRef)
-            m_microDataTokenLists->m_itemRef = DOMSettableTokenList::create();
-
-        return m_microDataTokenLists->m_itemRef.get();
-    }
-
-    void setItemRef(const String& value)
-    {
-        if (!ensureMicroDataTokenLists()->m_itemRef)
-            m_microDataTokenLists->m_itemRef = DOMSettableTokenList::create();
-
-        m_microDataTokenLists->m_itemRef->setValue(value);
-    }
-
-    DOMSettableTokenList* itemType() const
-    {
-        if (!ensureMicroDataTokenLists()->m_itemType)
-            m_microDataTokenLists->m_itemType = DOMSettableTokenList::create();
-
-        return m_microDataTokenLists->m_itemType.get();
-    }
-
-    void setItemType(const String& value)
-    {
-        if (!ensureMicroDataTokenLists()->m_itemType)
-            m_microDataTokenLists->m_itemType = DOMSettableTokenList::create();
-
-        m_microDataTokenLists->m_itemType->setValue(value);
-    }
 #endif
 
     virtual void reportMemoryUsage(MemoryObjectInfo*) const;
-
-protected:
-    short m_tabIndex;
-    unsigned short m_childIndex;
-    unsigned m_tabIndexWasSetExplicitly : 1;
-    unsigned m_needsFocusAppearanceUpdateSoonAfterAttach : 1;
-    unsigned m_styleAffectedByEmpty : 1;
-    unsigned m_isInCanvasSubtree : 1;
-#if ENABLE(FULLSCREEN_API)
-    unsigned m_containsFullScreenElement : 1;
-#endif
-#if ENABLE(DIALOG_ELEMENT)
-    unsigned m_isInTopLayer : 1;
-#endif
-#if ENABLE(SVG)
-    unsigned m_hasPendingResources : 1;
-#endif
-    unsigned m_childrenAffectedByHover : 1;
-    unsigned m_childrenAffectedByActive : 1;
-    unsigned m_childrenAffectedByDrag : 1;
-    // Bits for dynamic child matching.
-    // We optimize for :first-child and :last-child. The other positional child selectors like nth-child or
-    // *-child-of-type, we will just give up and re-evaluate whenever children change at all.
-    unsigned m_childrenAffectedByFirstChildRules : 1;
-    unsigned m_childrenAffectedByLastChildRules : 1;
-    unsigned m_childrenAffectedByDirectAdjacentRules : 1;
-    unsigned m_childrenAffectedByForwardPositionalRules : 1;
-    unsigned m_childrenAffectedByBackwardPositionalRules : 1;
-#if ENABLE(VIDEO_TRACK)
-    unsigned m_webVTTNodeType : 2; // WebVTTNodeType
-#endif
 
 private:
     OwnPtr<NodeListsNodeData> m_nodeLists;

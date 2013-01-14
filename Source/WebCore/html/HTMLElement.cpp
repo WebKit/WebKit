@@ -223,7 +223,7 @@ void HTMLElement::parseAttribute(const QualifiedName& name, const AtomicString& 
     else if (name == tabindexAttr) {
         int tabindex = 0;
         if (value.isEmpty())
-            clearTabIndexExplicitly();
+            clearTabIndexExplicitlyIfNeeded();
         else if (parseHTMLInteger(value, tabindex)) {
             // Clamp tabindex to the range of 'short' to match Firefox's behavior.
             setTabIndexExplicitly(max(static_cast<int>(std::numeric_limits<short>::min()), min(tabindex, static_cast<int>(std::numeric_limits<short>::max()))));

@@ -492,17 +492,7 @@ HTMLInputElement* Node::toInputElement()
 
 short Node::tabIndex() const
 {
-    return hasRareData() ? rareData()->tabIndex() : 0;
-}
-    
-void Node::setTabIndexExplicitly(short i)
-{
-    ensureRareData()->setTabIndexExplicitly(i);
-}
-
-void Node::clearTabIndexExplicitly()
-{
-    ensureRareData()->clearTabIndexExplicitly();
+    return 0;
 }
 
 String Node::nodeValue() const
@@ -863,7 +853,7 @@ void Node::lazyAttach(ShouldSetAttached shouldSetAttached)
 
 bool Node::supportsFocus() const
 {
-    return hasRareData() && rareData()->tabIndexSetExplicitly();
+    return false;
 }
     
 bool Node::isFocusable() const
@@ -2192,12 +2182,22 @@ void Node::clearEventTargetData()
 
 Vector<OwnPtr<MutationObserverRegistration> >* Node::mutationObserverRegistry()
 {
-    return hasRareData() ? rareData()->mutationObserverRegistry() : 0;
+    if (!hasRareData())
+        return 0;
+    NodeMutationObserverData* data = rareData()->mutationObserverData();
+    if (!data)
+        return 0;
+    return &data->registry;
 }
 
 HashSet<MutationObserverRegistration*>* Node::transientMutationObserverRegistry()
 {
-    return hasRareData() ? rareData()->transientMutationObserverRegistry() : 0;
+    if (!hasRareData())
+        return 0;
+    NodeMutationObserverData* data = rareData()->mutationObserverData();
+    if (!data)
+        return 0;
+    return &data->transientRegistry;
 }
 
 template<typename Registry>
@@ -2230,17 +2230,17 @@ void Node::getRegisteredMutationObserversOfType(HashMap<MutationObserver*, Mutat
 void Node::registerMutationObserver(MutationObserver* observer, MutationObserverOptions options, const HashSet<AtomicString>& attributeFilter)
 {
     MutationObserverRegistration* registration = 0;
-    Vector<OwnPtr<MutationObserverRegistration> >* registry = ensureRareData()->ensureMutationObserverRegistry();
-    for (size_t i = 0; i < registry->size(); ++i) {
-        if (registry->at(i)->observer() == observer) {
-            registration = registry->at(i).get();
+    Vector<OwnPtr<MutationObserverRegistration> >& registry = ensureRareData()->ensureMutationObserverData()->registry;
+    for (size_t i = 0; i < registry.size(); ++i) {
+        if (registry[i]->observer() == observer) {
+            registration = registry[i].get();
             registration->resetObservation(options, attributeFilter);
         }
     }
 
     if (!registration) {
-        registry->append(MutationObserverRegistration::create(observer, this, options, attributeFilter));
-        registration = registry->last().get();
+        registry.append(MutationObserverRegistration::create(observer, this, options, attributeFilter));
+        registration = registry.last().get();
     }
 
     document()->addMutationObserverTypes(registration->mutationTypes());
@@ -2263,7 +2263,7 @@ void Node::unregisterMutationObserver(MutationObserverRegistration* registration
 
 void Node::registerTransientMutationObserver(MutationObserverRegistration* registration)
 {
-    ensureRareData()->ensureTransientMutationObserverRegistry()->add(registration);
+    ensureRareData()->ensureMutationObserverData()->transientRegistry.add(registration);
 }
 
 void Node::unregisterTransientMutationObserver(MutationObserverRegistration* registration)
@@ -2518,32 +2518,32 @@ bool Node::willRespondToTouchEvents()
 #if ENABLE(MICRODATA)
 DOMSettableTokenList* Node::itemProp()
 {
-    return ensureRareData()->itemProp();
+    return ensureRareData()->ensureMicroDataTokenLists()->itemProp();
 }
 
 void Node::setItemProp(const String& value)
 {
-    ensureRareData()->setItemProp(value);
+    ensureRareData()->ensureMicroDataTokenLists()->itemProp()->setValue(value);
 }
 
 DOMSettableTokenList* Node::itemRef()
 {
-    return ensureRareData()->itemRef();
+    return ensureRareData()->ensureMicroDataTokenLists()->itemRef();
 }
 
 void Node::setItemRef(const String& value)
 {
-    ensureRareData()->setItemRef(value);
+    ensureRareData()->ensureMicroDataTokenLists()->itemRef()->setValue(value);
 }
 
 DOMSettableTokenList* Node::itemType()
 {
-    return ensureRareData()->itemType();
+    return ensureRareData()->ensureMicroDataTokenLists()->itemType();
 }
 
 void Node::setItemType(const String& value)
 {
-    ensureRareData()->setItemType(value);
+    ensureRareData()->ensureMicroDataTokenLists()->itemType()->setValue(value);
 }
 
 PassRefPtr<PropertyNodeList> Node::propertyNodeList(const String& name)

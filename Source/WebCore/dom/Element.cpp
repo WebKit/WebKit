@@ -228,6 +228,27 @@ PassOwnPtr<NodeRareData> Element::createRareData()
     return adoptPtr(new ElementRareData());
 }
 
+void Element::clearTabIndexExplicitlyIfNeeded()
+{
+    if (hasRareData())
+        elementRareData()->clearTabIndexExplicitly();
+}
+
+void Element::setTabIndexExplicitly(short tabIndex)
+{
+    ensureElementRareData()->setTabIndexExplicitly(tabIndex);
+}
+
+bool Element::supportsFocus() const
+{
+    return hasRareData() && elementRareData()->tabIndexSetExplicitly();
+}
+
+short Element::tabIndex() const
+{
+    return hasRareData() ? elementRareData()->tabIndex() : 0;
+}
+
 DEFINE_VIRTUAL_ATTRIBUTE_EVENT_LISTENER(Element, blur);
 DEFINE_VIRTUAL_ATTRIBUTE_EVENT_LISTENER(Element, error);
 DEFINE_VIRTUAL_ATTRIBUTE_EVENT_LISTENER(Element, focus);

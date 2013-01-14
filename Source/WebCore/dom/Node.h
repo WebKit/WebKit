@@ -748,9 +748,7 @@ protected:
     virtual void didMoveToNewDocument(Document* oldDocument);
     
     virtual void addSubresourceAttributeURLs(ListHashSet<KURL>&) const { }
-    void setTabIndexExplicitly(short);
-    void clearTabIndexExplicitly();
-    
+
     bool hasRareData() const { return getFlag(HasRareDataFlag); }
 
     NodeRareData* rareData() const;

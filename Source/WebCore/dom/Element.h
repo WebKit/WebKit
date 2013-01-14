@@ -515,6 +515,11 @@ protected:
     virtual bool shouldRegisterAsNamedItem() const { return false; }
     virtual bool shouldRegisterAsExtraNamedItem() const { return false; }
 
+    void clearTabIndexExplicitlyIfNeeded();    
+    void setTabIndexExplicitly(short);
+    virtual bool supportsFocus() const OVERRIDE;
+    virtual short tabIndex() const OVERRIDE;
+
     PassRefPtr<HTMLCollection> ensureCachedHTMLCollection(CollectionType);
     HTMLCollection* cachedHTMLCollection(CollectionType);
 
