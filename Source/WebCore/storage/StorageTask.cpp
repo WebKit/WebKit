@@ -55,7 +55,7 @@ StorageTask::StorageTask(Type type)
     , m_area(0)
     , m_thread(0)
 {
-    ASSERT(m_type == ImportOrigins || m_type == DeleteAllOrigins);
+    ASSERT(m_type == ImportOrigins || m_type == DeleteAllOrigins || m_type == ReleaseFastMallocFreeMemory);
 }
 
 StorageTask::StorageTask(Type type, const String& originIdentifier)
