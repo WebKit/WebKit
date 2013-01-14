@@ -26,8 +26,30 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-from webkitpy.tool.commands.queuestest import QueuesTest
+from webkitpy.tool.commands.queuestest import QueuesTest, MockQueueEngine
+from webkitpy.tool.commands import SheriffBot
+from webkitpy.tool.mocktool import MockTool, MockOptions
+from webkitpy.tool.bot.irc_command import Rollout, Sheriffs
 
 
 class SheriffBotTest(QueuesTest):
-    pass  # No unittests as the moment.
+    def test_command_aliases(self):
+        tool = MockTool()
+        options = MockOptions()
+        options.ensure_value("confirm", False)
+        sheriffbot = SheriffBot()
+        sheriffbot.execute(options, [], tool, MockQueueEngine)
+        sheriffbot.begin_work_queue()
+        irc_bot = sheriffbot._irc_bot
+        # Test Rollout command aliases
+        revert_command, args = irc_bot._parse_command_and_args("revert")
+        self.assertEqual(revert_command, Rollout)
+        # Test Sheriffs command aliases
+        gardeners_command, args = irc_bot._parse_command_and_args("gardeners")
+        self.assertEqual(gardeners_command, Sheriffs)
+        sherifs_command, args = irc_bot._parse_command_and_args("sherifs")
+        self.assertEqual(sherifs_command, Sheriffs)
+        sherrifs_command, args = irc_bot._parse_command_and_args("sherrifs")
+        self.assertEqual(sherrifs_command, Sheriffs)
+        sherriffs_command, args = irc_bot._parse_command_and_args("sherriffs")
+        self.assertEqual(sherriffs_command, Sheriffs)

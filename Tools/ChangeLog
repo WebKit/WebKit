@@ -1,3 +1,13 @@
+2013-01-14  Alan Cutter  <alancutter@chromium.org>
+
+        Sheriffbot command aliases need test cases
+        https://bugs.webkit.org/show_bug.cgi?id=106754
+
+        Reviewed by Eric Seidel.
+
+        * Scripts/webkitpy/tool/commands/sheriffbot_unittest.py:
+        (SheriffBotTest.test_command_aliases):
+
 2013-01-13  Alan Cutter  <alancutter@chromium.org>
 
         Allow users to misspell the "sheriffs" command in sheriffbot
