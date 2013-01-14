@@ -99,6 +99,8 @@ class IRCCommandTest(unittest.TestCase):
         roll = RollChromiumDEPS()
         self.assertEqual(None, roll._parse_args([]))
         self.assertEqual("1234", roll._parse_args(["1234"]))
+        self.assertEqual('"Alan Cutter" <alancutter@chromium.org>', roll._expand_irc_nickname("alancutter"))
+        self.assertEqual("unknown_irc_nickname", roll._expand_irc_nickname("unknown_irc_nickname"))
 
     def test_rollout_updates_working_copy(self):
         rollout = Rollout()

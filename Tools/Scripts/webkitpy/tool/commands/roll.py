@@ -31,6 +31,8 @@ from webkitpy.tool.commands.abstractsequencedcommand import AbstractSequencedCom
 from webkitpy.tool import steps
 
 
+default_changelog_message = "Unreviewed.  Rolled DEPS.\n\n"
+
 class RollChromiumDEPS(AbstractSequencedCommand):
     name = "roll-chromium-deps"
     help_text = "Updates Chromium DEPS (defaults to the last-known good revision of Chromium)"
@@ -45,13 +47,14 @@ class RollChromiumDEPS(AbstractSequencedCommand):
     def _prepare_state(self, options, args, tool):
         return {
             "chromium_revision": (args and args[0]),
+            "changelog_message": default_changelog_message,
         }
 
 
 class PostChromiumDEPSRoll(AbstractSequencedCommand):
     name = "post-chromium-deps-roll"
     help_text = "Posts a patch to update Chromium DEPS (revision defaults to the last-known good revision of Chromium)"
-    argument_names = "CHROMIUM_REVISION CHROMIUM_REVISION_NAME"
+    argument_names = "CHROMIUM_REVISION CHROMIUM_REVISION_NAME [CHANGELOG_MESSAGE]"
     steps = [
         steps.CleanWorkingDirectory,
         steps.Update,
@@ -67,8 +70,10 @@ class PostChromiumDEPSRoll(AbstractSequencedCommand):
 
         chromium_revision = args[0]
         chromium_revision_name = args[1]
+        changelog_message = args[2] if len(args) >= 3 else default_changelog_message
         return {
             "chromium_revision": chromium_revision,
+            "changelog_message": changelog_message,
             "bug_title": "Roll Chromium DEPS to %s" % chromium_revision_name,
             "bug_description": "A DEPS roll a day keeps the build break away.",
         }

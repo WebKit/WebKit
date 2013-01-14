@@ -1,5 +1,30 @@
 2013-01-13  Alan Cutter  <alancutter@chromium.org>
 
+        State who told sheriffbot to roll the Chromium deps and to what revision
+        https://bugs.webkit.org/show_bug.cgi?id=106626
+
+        Reviewed by Eric Seidel.
+
+        Added optional argument to post-chromium-deps-roll so Sheriffbot can specify ChangeLog message.
+
+        * Scripts/webkitpy/tool/bot/irc_command.py:
+        (RollChromiumDEPS._expand_irc_nickname):
+        (RollChromiumDEPS.execute):
+        * Scripts/webkitpy/tool/bot/irc_command_unittest.py:
+        (IRCCommandTest.test_roll_chromium_deps):
+        * Scripts/webkitpy/tool/bot/sheriff.py:
+        (Sheriff.post_chromium_deps_roll):
+        * Scripts/webkitpy/tool/commands/roll.py:
+        (RollChromiumDEPS._prepare_state):
+        (PostChromiumDEPSRoll):
+        (PostChromiumDEPSRoll._prepare_state):
+        * Scripts/webkitpy/tool/commands/roll_unittest.py:
+        (PostRollCommandsTest.test_prepare_state):
+        * Scripts/webkitpy/tool/steps/preparechangelogfordepsroll.py:
+        (PrepareChangeLogForDEPSRoll.run):
+
+2013-01-13  Alan Cutter  <alancutter@chromium.org>
+
         Add Alan Cutter as contributor
         https://bugs.webkit.org/show_bug.cgi?id=106747
 

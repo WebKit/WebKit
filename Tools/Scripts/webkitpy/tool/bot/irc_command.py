@@ -185,14 +185,21 @@ class RollChromiumDEPS(IRCCommand):
             return
         return revision
 
+    def _expand_irc_nickname(self, nick):
+        contributor = CommitterList().contributor_by_irc_nickname(nick)
+        if contributor:
+            return str(contributor)
+        return nick
+
     def execute(self, nick, args, tool, sheriff):
         revision = self._parse_args(args)
 
         roll_target = "r%s" % revision if revision else "last-known good revision"
         tool.irc().post("%s: Rolling Chromium DEPS to %s" % (nick, roll_target))
+        changelog_message = "Unreviewed.  Rolled Chromium DEPS to %s.  Requested by %s via sheriffbot.\n\n" % (roll_target, self._expand_irc_nickname(nick))
 
         try:
-            bug_id = sheriff.post_chromium_deps_roll(revision, roll_target)
+            bug_id = sheriff.post_chromium_deps_roll(revision, roll_target, changelog_message)
             bug_url = tool.bugs.bug_url_for_bug_id(bug_id)
             tool.irc().post("%s: Created DEPS roll: %s" % (nick, bug_url))
         except ScriptError, e:
