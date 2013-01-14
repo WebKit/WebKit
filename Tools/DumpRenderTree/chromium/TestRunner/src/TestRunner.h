@@ -81,6 +81,8 @@ public:
     virtual bool shouldDumpResourceRequestCallbacks() const OVERRIDE;
     virtual bool shouldDumpResourceResponseMIMETypes() const OVERRIDE;
     virtual WebKit::WebPermissionClient* webPermissions() const OVERRIDE;
+    virtual bool shouldDumpStatusCallbacks() const OVERRIDE;
+    virtual bool shouldDumpProgressFinishedCallback() const OVERRIDE;
 
 protected:
     // FIXME: make these private once the move from DRTTestRunner to TestRunner
@@ -278,6 +280,16 @@ private:
     void setAllowRunningOfInsecureContent(const CppArgumentList&, CppVariant*);
     void dumpPermissionClientCallbacks(const CppArgumentList&, CppVariant*);
 
+    // This function sets a flag that tells the test_shell to dump all calls
+    // to window.status().
+    // It takes no arguments, and ignores any that may be present.
+    void dumpWindowStatusChanges(const CppArgumentList&, CppVariant*);
+
+    // This function sets a flag that tells the test_shell to print a line of
+    // descriptive text for the progress finished callback. It takes no
+    // arguments, and ignores any that may be present.
+    void dumpProgressFinishedCallback(const CppArgumentList&, CppVariant*);
+
     ///////////////////////////////////////////////////////////////////////////
     // Methods interacting with the WebTestProxy
 
@@ -389,6 +401,13 @@ private:
     // If true, the test_shell will output the MIME type for each resource that 
     // was loaded.
     bool m_dumpResourceResponseMIMETypes;
+
+    // If true, the test_shell will dump all changes to window.status.
+    bool m_dumpWindowStatusChanges;
+
+    // If true, the test_shell will output a descriptive line for the progress
+    // finished callback.
+    bool m_dumpProgressFinishedCallback;
 
     // WAV audio data is stored here.
     WebKit::WebArrayBufferView m_audioData;

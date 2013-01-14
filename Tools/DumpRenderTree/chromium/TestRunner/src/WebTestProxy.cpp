@@ -507,6 +507,19 @@ WebView* WebTestProxyBase::createView(WebFrame*, const WebURLRequest& request, c
     return 0;
 }
 
+void WebTestProxyBase::setStatusText(const WebString& text)
+{
+    if (!m_testInterfaces->testRunner() || !m_testInterfaces->testRunner()->shouldDumpStatusCallbacks())
+        return;
+    m_delegate->printMessage(string("UI DELEGATE STATUS CALLBACK: setStatusText:") + text.utf8().data() + "\n");
+}
+
+void WebTestProxyBase::didStopLoading()
+{
+    if (m_testInterfaces->testRunner() && m_testInterfaces->testRunner()->shouldDumpProgressFinishedCallback())
+        m_delegate->printMessage("postProgressFinishedNotification\n");
+}
+
 void WebTestProxyBase::willPerformClientRedirect(WebFrame* frame, const WebURL&, const WebURL& to, double, double)
 {
     if (m_testInterfaces->testRunner() && m_testInterfaces->testRunner()->shouldDumpFrameLoadCallbacks()) {

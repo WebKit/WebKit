@@ -191,7 +191,6 @@ class WebViewHost : public WebKit::WebViewClient, public WebKit::WebFrameClient,
     virtual bool runModalPromptDialog(WebKit::WebFrame*, const WebKit::WebString& message, const WebKit::WebString& defaultValue, WebKit::WebString* actualValue);
     virtual bool runModalBeforeUnloadDialog(WebKit::WebFrame*, const WebKit::WebString&);
     virtual void showContextMenu(WebKit::WebFrame*, const WebKit::WebContextMenuData&);
-    virtual void setStatusText(const WebKit::WebString&);
     virtual void didUpdateLayout();
     virtual void navigateBackForwardSoon(int offset);
     virtual int historyBackListCount();

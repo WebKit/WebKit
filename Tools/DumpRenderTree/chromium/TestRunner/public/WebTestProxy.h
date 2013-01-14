@@ -107,6 +107,9 @@ protected:
     void registerIntentService(WebKit::WebFrame*, const WebKit::WebIntentServiceInfo&);
     void dispatchIntent(WebKit::WebFrame* source, const WebKit::WebIntentRequest&);
     WebKit::WebView* createView(WebKit::WebFrame* creator, const WebKit::WebURLRequest&, const WebKit::WebWindowFeatures&, const WebKit::WebString& frameName, WebKit::WebNavigationPolicy);
+    void setStatusText(const WebKit::WebString&);
+    void didStopLoading();
+
     void willPerformClientRedirect(WebKit::WebFrame*, const WebKit::WebURL& from, const WebKit::WebURL& to, double interval, double fire_time);
     void didCancelClientRedirect(WebKit::WebFrame*);
     void didStartProvisionalLoad(WebKit::WebFrame*);
@@ -264,6 +267,16 @@ public:
     {
         WebTestProxyBase::createView(creator, request, features, frameName, policy);
         return Base::createView(creator, request, features, frameName, policy);
+    }
+    virtual void setStatusText(const WebKit::WebString& text)
+    {
+        WebTestProxyBase::setStatusText(text);
+        Base::setStatusText(text);
+    }
+    virtual void didStopLoading()
+    {
+        WebTestProxyBase::didStopLoading();
+        Base::didStopLoading();
     }
 
     // WebFrameClient implementation.

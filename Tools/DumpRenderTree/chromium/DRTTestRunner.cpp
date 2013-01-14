@@ -115,9 +115,7 @@ DRTTestRunner::DRTTestRunner(TestShell* shell)
     bindMethod("display", &DRTTestRunner::display);
     bindMethod("displayInvalidatedRegion", &DRTTestRunner::displayInvalidatedRegion);
     bindMethod("dumpBackForwardList", &DRTTestRunner::dumpBackForwardList);
-    bindMethod("dumpProgressFinishedCallback", &DRTTestRunner::dumpProgressFinishedCallback);
     bindMethod("dumpSelectionRect", &DRTTestRunner::dumpSelectionRect);
-    bindMethod("dumpStatusCallbacks", &DRTTestRunner::dumpWindowStatusChanges);
 #if ENABLE(NOTIFICATIONS)
     bindMethod("grantWebNotificationPermission", &DRTTestRunner::grantWebNotificationPermission);
 #endif
@@ -224,18 +222,6 @@ void DRTTestRunner::WorkQueue::addWork(WorkItem* work)
 void DRTTestRunner::dumpBackForwardList(const CppArgumentList&, CppVariant* result)
 {
     m_dumpBackForwardList = true;
-    result->setNull();
-}
-
-void DRTTestRunner::dumpProgressFinishedCallback(const CppArgumentList&, CppVariant* result)
-{
-    m_dumpProgressFinishedCallback = true;
-    result->setNull();
-}
-
-void DRTTestRunner::dumpWindowStatusChanges(const CppArgumentList&, CppVariant* result)
-{
-    m_dumpWindowStatusChanges = true;
     result->setNull();
 }
 
@@ -423,9 +409,7 @@ void DRTTestRunner::reset()
     TestRunner::reset();
     if (m_shell)
         m_shell->webViewHost()->setDeviceScaleFactor(1);
-    m_dumpProgressFinishedCallback = false;
     m_dumpBackForwardList = false;
-    m_dumpWindowStatusChanges = false;
     m_dumpSelectionRect = false;
     m_waitUntilDone = false;
     m_testRepaint = false;

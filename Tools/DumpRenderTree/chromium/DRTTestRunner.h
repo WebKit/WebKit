@@ -75,19 +75,9 @@ public:
 
     virtual ~DRTTestRunner();
 
-    // This function sets a flag that tells the test_shell to print a line of
-    // descriptive text for the progress finished callback. It takes no
-    // arguments, and ignores any that may be present.
-    void dumpProgressFinishedCallback(const CppArgumentList&, CppVariant*);
-
     // This function sets a flag that tells the test_shell to print out a text
     // representation of the back/forward list. It ignores all arguments.
     void dumpBackForwardList(const CppArgumentList&, CppVariant*);
-
-    // This function sets a flag that tells the test_shell to dump all calls
-    // to window.status().
-    // It takes no arguments, and ignores any that may be present.
-    void dumpWindowStatusChanges(const CppArgumentList&, CppVariant*);
 
     // Functions for dealing with windows. By default we block all new windows.
     void windowCount(const CppArgumentList&, CppVariant*);
@@ -202,9 +192,6 @@ public:
     // The following methods are not exposed to JavaScript.
     void setWorkQueueFrozen(bool frozen) { m_workQueue.setFrozen(frozen); }
 
-    bool shouldDumpProgressFinishedCallback() { return m_dumpProgressFinishedCallback; }
-    void setShouldDumpProgressFinishedCallback(bool value) { m_dumpProgressFinishedCallback = value; }
-    bool shouldDumpStatusCallbacks() { return m_dumpWindowStatusChanges; }
     bool shouldDumpSelectionRect() { return m_dumpSelectionRect; }
     bool shouldDumpBackForwardList() { return m_dumpBackForwardList; }
     bool deferMainResourceDataLoad() { return m_deferMainResourceDataLoad; }
@@ -300,16 +287,9 @@ private:
     // taking possible transforms of the selection rect into account.
     bool m_dumpSelectionRect;
 
-    // If true, the test_shell will output a descriptive line for the progress
-    // finished callback.
-    bool m_dumpProgressFinishedCallback;
-
     // If true, the test_shell will produce a dump of the back forward list as
     // well.
     bool m_dumpBackForwardList;
-
-    // If true, the test_shell will dump all changes to window.status.
-    bool m_dumpWindowStatusChanges;
 
     // When reset is called, go through and close all but the main test shell
     // window. By default, set to true but toggled to false using

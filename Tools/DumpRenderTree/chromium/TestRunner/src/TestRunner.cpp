@@ -160,6 +160,8 @@ TestRunner::TestRunner()
     bindMethod("setPluginsAllowed", &TestRunner::setPluginsAllowed);
     bindMethod("setAllowDisplayOfInsecureContent", &TestRunner::setAllowDisplayOfInsecureContent);
     bindMethod("setAllowRunningOfInsecureContent", &TestRunner::setAllowRunningOfInsecureContent);
+    bindMethod("dumpStatusCallbacks", &TestRunner::dumpWindowStatusChanges);
+    bindMethod("dumpProgressFinishedCallback", &TestRunner::dumpProgressFinishedCallback);
 
     // The following methods interact with the WebTestProxy.
     bindMethod("sendWebIntentResponse", &TestRunner::sendWebIntentResponse);
@@ -250,6 +252,8 @@ void TestRunner::reset()
     m_dumpResourceLoadCallbacks = false;
     m_dumpResourceRequestCallbacks = false;
     m_dumpResourceResponseMIMETypes = false;
+    m_dumpWindowStatusChanges = false;
+    m_dumpProgressFinishedCallback = false;
 
     m_globalFlag.set(false);
     m_platformName.set("chromium");
@@ -364,6 +368,16 @@ WebPermissionClient* TestRunner::webPermissions() const
     return m_webPermissions.get();
 }
 
+bool TestRunner::shouldDumpStatusCallbacks() const
+{
+    return m_dumpWindowStatusChanges;
+}
+
+bool TestRunner::shouldDumpProgressFinishedCallback() const
+{
+    return m_dumpProgressFinishedCallback;
+}
+
 void TestRunner::dumpPermissionClientCallbacks(const CppArgumentList&, CppVariant* result)
 {
     m_webPermissions->setDumpCallbacks(true);
@@ -411,6 +425,18 @@ void TestRunner::setAllowRunningOfInsecureContent(const CppArgumentList& argumen
     if (arguments.size() > 0 && arguments[0].isBool())
         m_webPermissions->setRunningInsecureContentAllowed(arguments[0].value.boolValue);
 
+    result->setNull();
+}
+
+void TestRunner::dumpWindowStatusChanges(const CppArgumentList&, CppVariant* result)
+{
+    m_dumpWindowStatusChanges = true;
+    result->setNull();
+}
+
+void TestRunner::dumpProgressFinishedCallback(const CppArgumentList&, CppVariant* result)
+{
+    m_dumpProgressFinishedCallback = true;
     result->setNull();
 }
 

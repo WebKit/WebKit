@@ -1,3 +1,41 @@
+2013-01-14  Jochen Eisinger  <jochen@chromium.org>
+
+        [chromium] move remaining methods to dump WebViewClient callbacks to TestRunner library
+        https://bugs.webkit.org/show_bug.cgi?id=106785
+
+        Reviewed by Adam Barth.
+
+        * DumpRenderTree/chromium/DRTTestRunner.cpp:
+        (DRTTestRunner::DRTTestRunner):
+        (DRTTestRunner::reset):
+        * DumpRenderTree/chromium/DRTTestRunner.h:
+        (DRTTestRunner):
+        * DumpRenderTree/chromium/TestRunner/public/WebTestProxy.h:
+        (WebTestProxyBase):
+        (WebTestRunner::WebTestProxy::setStatusText):
+        (WebTestRunner::WebTestProxy::didStopLoading):
+        * DumpRenderTree/chromium/TestRunner/public/WebTestRunner.h:
+        (WebTestRunner::WebTestRunner::shouldDumpStatusCallbacks):
+        (WebTestRunner::WebTestRunner::shouldDumpProgressFinishedCallback):
+        * DumpRenderTree/chromium/TestRunner/src/TestRunner.cpp:
+        (WebTestRunner::TestRunner::TestRunner):
+        (WebTestRunner::TestRunner::reset):
+        (WebTestRunner::TestRunner::shouldDumpStatusCallbacks):
+        (WebTestRunner):
+        (WebTestRunner::TestRunner::shouldDumpProgressFinishedCallback):
+        (WebTestRunner::TestRunner::dumpWindowStatusChanges):
+        (WebTestRunner::TestRunner::dumpProgressFinishedCallback):
+        * DumpRenderTree/chromium/TestRunner/src/TestRunner.h:
+        (TestRunner):
+        * DumpRenderTree/chromium/TestRunner/src/WebTestProxy.cpp:
+        (WebTestRunner::WebTestProxyBase::setStatusText):
+        (WebTestRunner):
+        (WebTestRunner::WebTestProxyBase::didStopLoading):
+        * DumpRenderTree/chromium/WebViewHost.cpp:
+        (WebViewHost::didStopLoading):
+        * DumpRenderTree/chromium/WebViewHost.h:
+        (WebViewHost):
+
 2013-01-14  Andrey Lushnikov  <lushnikov@chromium.org>
 
         Web Inspector: devtools front-end doesn't have focus in TestShell

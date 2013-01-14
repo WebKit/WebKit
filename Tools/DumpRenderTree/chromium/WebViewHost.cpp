@@ -248,8 +248,6 @@ void WebViewHost::didStartLoading()
 
 void WebViewHost::didStopLoading()
 {
-    if (testRunner()->shouldDumpProgressFinishedCallback())
-        fputs("postProgressFinishedNotification\n", stdout);
     m_shell->setIsLoading(false);
 }
 
@@ -425,14 +423,6 @@ bool WebViewHost::runModalBeforeUnloadDialog(WebFrame*, const WebString& message
 void WebViewHost::showContextMenu(WebFrame*, const WebContextMenuData& contextMenuData)
 {
     m_lastContextMenuData = adoptPtr(new WebContextMenuData(contextMenuData));
-}
-
-void WebViewHost::setStatusText(const WebString& text)
-{
-    if (!testRunner()->shouldDumpStatusCallbacks())
-        return;
-    // When running tests, write to stdout.
-    printf("UI DELEGATE STATUS CALLBACK: setStatusText:%s\n", text.utf8().data());
 }
 
 void WebViewHost::didUpdateLayout()

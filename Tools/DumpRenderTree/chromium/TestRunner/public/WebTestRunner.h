@@ -63,6 +63,8 @@ public:
     virtual bool shouldDumpResourceRequestCallbacks() const { return false; }
     virtual bool shouldDumpResourceResponseMIMETypes() const { return false; }
     virtual WebKit::WebPermissionClient* webPermissions() const { return 0; }
+    virtual bool shouldDumpStatusCallbacks() const { return false; }
+    virtual bool shouldDumpProgressFinishedCallback() const { return false; }
 };
 
 }
