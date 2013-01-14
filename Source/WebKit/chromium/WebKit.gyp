@@ -350,8 +350,6 @@
                 'src/AsyncFileSystemChromium.h',
                 'src/AsyncFileWriterChromium.cpp',
                 'src/AsyncFileWriterChromium.h',
-                'src/AudioDestinationChromium.cpp',
-                'src/AudioDestinationChromium.h',
                 'src/AutofillPopupMenuClient.cpp',
                 'src/AutofillPopupMenuClient.h',
                 'src/BackForwardListChromium.cpp',

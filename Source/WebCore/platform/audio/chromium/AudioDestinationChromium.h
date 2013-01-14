@@ -36,8 +36,6 @@
 #include <public/WebAudioDevice.h>
 #include <public/WebVector.h>
 
-namespace WebKit { class WebAudioDevice; }
-
 namespace WebCore { 
 
 class AudioFIFO;

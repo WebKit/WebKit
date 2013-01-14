@@ -29,12 +29,12 @@
 #include "config.h"
 
 #if ENABLE(WEB_AUDIO)
+
 #include "AudioDestinationChromium.h"
+
 #include "AudioFIFO.h"
 #include "AudioPullFIFO.h"
 #include <public/Platform.h>
-
-using namespace WebKit;
 
 namespace WebCore {
 
@@ -115,7 +115,7 @@ float AudioDestination::hardwareSampleRate()
     return static_cast<float>(WebKit::Platform::current()->audioHardwareSampleRate());
 }
 
-void AudioDestinationChromium::render(const WebVector<float*>& sourceData, const WebVector<float*>& audioData, size_t numberOfFrames)
+void AudioDestinationChromium::render(const WebKit::WebVector<float*>& sourceData, const WebKit::WebVector<float*>& audioData, size_t numberOfFrames)
 {
     bool isNumberOfChannelsGood = audioData.size() == m_numberOfOutputChannels;
     if (!isNumberOfChannelsGood) {

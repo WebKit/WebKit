@@ -3616,6 +3616,8 @@
             'platform/audio/ZeroPole.cpp',
             'platform/audio/ZeroPole.h',
             'platform/audio/chromium/AudioBusChromium.cpp',
+            'platform/audio/chromium/AudioDestinationChromium.cpp',
+            'platform/audio/chromium/AudioDestinationChromium.h',
             'platform/audio/mac/AudioBusMac.mm',
             'platform/audio/mac/AudioDestinationMac.cpp',
             'platform/audio/mac/AudioDestinationMac.h',

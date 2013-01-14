@@ -1,3 +1,17 @@
+2013-01-14  Mark Pilgrim  <pilgrim@chromium.org>
+
+        [Chromium] Move AudioDestinationChromium into WebCore
+        https://bugs.webkit.org/show_bug.cgi?id=106803
+
+        Reviewed by Adam Barth.
+
+        This doesn't really belong in WebKit/chromium/src since it defines
+        things directly in the WebCore namespace.
+
+        * WebKit.gyp:
+        * src/AudioDestinationChromium.cpp: Removed.
+        * src/AudioDestinationChromium.h: Removed.
+
 2013-01-14  Stephen Chenney  <schenney@chromium.org>
 
         Re-enabling the SK_DISABLE_DASHING_OPTIMIZATION flag for Skia
