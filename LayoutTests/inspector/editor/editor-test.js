@@ -1,19 +1,23 @@
 function initialize_EditorTests()
 {
 
-InspectorTest.createTestEditor = function(lineCount, clientHeight, chunkSize)
+InspectorTest.createTestEditor = function(clientHeight, chunkSize)
 {
     WebInspector.debugDefaultTextEditor = true;
     var textEditor = new WebInspector.DefaultTextEditor("", new WebInspector.TextEditorDelegate());
     textEditor.overrideViewportForTest(0, clientHeight || 100, chunkSize || 10);
     textEditor.show(WebInspector.inspectorView.element);
+    return textEditor;
+};
+
+InspectorTest.fillEditorWithText = function(textEditor, lineCount)
+{
     var textModel = textEditor._textModel;
     var lines = [];
     for (var i = 0; i < lineCount; ++i)
         lines.push(i);
     textModel.setText(lines.join("\n"));
-    return textEditor;
-};
+}
 
 InspectorTest.dumpEditorChunks = function(textEditor)
 {

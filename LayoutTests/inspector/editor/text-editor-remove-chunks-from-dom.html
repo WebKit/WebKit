@@ -9,7 +9,8 @@ function test()
     InspectorTest.runTestSuite([
         function testDamageLastChunk(next)
         {
-            var textEditor = InspectorTest.createTestEditor(5);
+            var textEditor = InspectorTest.createTestEditor();
+            InspectorTest.fillEditorWithText(textEditor, 5);
             textEditor.setText(textEditor.text() + "\n");
             InspectorTest.addResult("\nBefore editing");
             InspectorTest.dumpEditorModel(textEditor);

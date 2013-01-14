@@ -6,7 +6,8 @@
 
 function test()
 {
-    var textEditor = InspectorTest.createTestEditor(10);
+    var textEditor = InspectorTest.createTestEditor();
+    InspectorTest.fillEditorWithText(textEditor, 10);
     var textModel = textEditor._textModel;
 
     InspectorTest.dumpEditorChunks(textEditor);

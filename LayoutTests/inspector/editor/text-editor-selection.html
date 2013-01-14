@@ -6,7 +6,8 @@
 
 function test()
 {
-    var textEditor = InspectorTest.createTestEditor(34);
+    var textEditor = InspectorTest.createTestEditor();
+    InspectorTest.fillEditorWithText(textEditor, 34);
     InspectorTest.dumpEditorChunks(textEditor);
 
     InspectorTest.runTestSuite([
