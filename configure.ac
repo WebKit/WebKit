@@ -281,6 +281,12 @@ AC_SUBST([SHLWAPI_LIBS])
 AC_SUBST([OLE32_LIBS])
 
 
+# check whether dlopen() is in the core libc like on FreeBSD, or in a separate
+# libdl like on GNU/Linux (in which case we want to link to libdl)
+AC_CHECK_FUNC([dlopen], [], [AC_CHECK_LIB([dl], [dlopen], [DLOPEN_LIBS="-ldl"])])
+AC_SUBST([DLOPEN_LIBS])
+
+
 # determine the GTK+ version to use
 AC_MSG_CHECKING([the GTK+ version to use])
 AC_ARG_WITH([gtk],
@@ -1028,7 +1034,7 @@ if test "$with_acceleration_backend" = "opengl"; then
    if test "$enable_glx" = "yes"; then
     acceleration_backend_description+=", glx"
    fi
-   OPENGL_LIBS+=" -ldl"
+   OPENGL_LIBS+=" $DLOPEN_LIBS"
    acceleration_backend_description+=")"
 fi
 AC_SUBST([OPENGL_LIBS])
