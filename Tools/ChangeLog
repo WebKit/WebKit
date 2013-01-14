@@ -1,3 +1,19 @@
+2013-01-09  Raphael Kubo da Costa  <raphael.kubo.da.costa@intel.com>
+
+        [EFL][jhbuild] Bump the EFL dependencies in jhbuild to 1.7.5.
+        https://bugs.webkit.org/show_bug.cgi?id=106574
+
+        Reviewed by Laszlo Gombos.
+
+        Rely on a more recent stable release, which includes support for
+        Lua 5.2 in Edje and other assorted minor fixes.
+
+        While here, also use the "configure" script to build the libraries
+        instead of relying on autogen.sh, which is not really needed with
+        a release tarball and may have problems with automake 1.13.
+
+        * efl/jhbuild.modules:
+
 2013-01-14  Andrey Lushnikov  <lushnikov@chromium.org>
 
         Web Inspector: fix DRT to deliver simulated events to devtools front-end

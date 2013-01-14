@@ -170,42 +170,38 @@
    </branch>
  </autotools>
 
-  <autotools id="eina">
-    <branch module="releases/eina-1.7.1.tar.bz2" version="1.7.1"
-            checkoutdir="eina-1.7.1"
+  <autotools id="eina" autogen-sh="configure">
+    <branch module="releases/eina-1.7.5.tar.bz2" version="1.7.5"
             repo="download.enlightenment.org"
-            hash="sha256:af0b316734ba72d92fa7716005efd380f28677c76f0e0b6a3c5a9b524575a6ce"
-            md5sum="552c5e9042d9cb3dbdebbc0e211ef30b">
+            hash="sha256:fc08c8aa3a225e3a42793afbf109788ab003de7595a542607a6a65694d08a44d"
+            md5sum="ea505aa52729de68ed6c00e1e45c3c50">
     </branch>
   </autotools>
 
-  <autotools id="embryo">
-    <branch module="releases/embryo-1.7.1.tar.bz2" version="1.7.1"
-            checkoutdir="embryo-1.7.1"
+  <autotools id="embryo" autogen-sh="configure">
+    <branch module="releases/embryo-1.7.5.tar.bz2" version="1.7.5"
             repo="download.enlightenment.org"
-            hash="sha256:043563b8c1a66de117cfaaf76a4d9736e111007ce5c0cdcf2b1d83dd8b4df575"
-            md5sum="d66a0e91dfc37eeb4c362b2c46bd91ab">
+            hash="sha256:a946d6b4e6aa94b39537aa6746f4653d9235d8b9ca3a0dc0734df07482d28e80"
+            md5sum="a52682ebfd04a0e787028732ee8f11f9">
     </branch>
     <dependencies>
       <dep package="eina"/>
     </dependencies>
   </autotools>
 
-  <autotools id="evas">
-    <branch module="releases/evas-1.7.1.tar.bz2" version="1.7.1"
-            checkoutdir="evas-1.7.1"
+  <autotools id="evas" autogen-sh="configure">
+    <branch module="releases/evas-1.7.5.tar.bz2" version="1.7.5"
             repo="download.enlightenment.org"
-            hash="sha256:57966a16fdb20e94deefe83ec0f990607413f7952f9755ed23ce81aea49b670c"
-            md5sum="e33c1d270b16e45c2337424aa2faaaa0">
+            hash="sha256:70b350a970b2086787622845896f3e54de278fe698b8069796fd752e70427374"
+            md5sum="2c965b836128a839292161d4ca89380d">
     </branch>
   </autotools>
 
-  <autotools id="ecore">
-    <branch module="releases/ecore-1.7.1.tar.bz2" version="1.7.1"
-            checkoutdir="ecore-1.7.1"
+  <autotools id="ecore" autogen-sh="configure">
+    <branch module="releases/ecore-1.7.5.tar.bz2" version="1.7.5"
             repo="download.enlightenment.org"
-            hash="sha256:fb5f547a0a6556b5f0e274b65cfbe42f4eb8371f20d00005cd4f5a78a6b6a5d8"
-            md5sum="94fd264e478323a1100b3cfff833d28d">
+            hash="sha256:4bbaba2153db0c356d13c45adfbcc90c7118abd112d0817581417e708d6a9222"
+            md5sum="9ea98367ec40f7121ea61948bb395553">
     </branch>
     <dependencies>
       <dep package="eina"/>
@@ -213,12 +209,11 @@
     </dependencies>
   </autotools>
 
-  <autotools id="eet">
-    <branch module="releases/eet-1.7.1.tar.bz2" version="1.7.1"
-            checkoutdir="eet-1.7.1"
+  <autotools id="eet" autogen-sh="configure">
+    <branch module="releases/eet-1.7.5.tar.bz2" version="1.7.5"
             repo="download.enlightenment.org"
-            hash="sha256:3e5679c06792f0a1c4b5b158468afbcec3b510c60345055d5964fdbe2abba3eb"
-            md5sum="2974f892e2be5e2fa08296714e97c407">
+            hash="sha256:c79cc6e5d3304ae5761307c266835c4d8337cc0418ea43ace8c915b2d329427b"
+            md5sum="ec3fffbeff0be2699aeed1ed4377ee9d">
     </branch>
     <dependencies>
       <dep package="libgcrypt"/>
@@ -226,12 +221,11 @@
     </dependencies>
   </autotools>
 
-  <autotools id="edje">
-    <branch module="releases/edje-1.7.1.tar.bz2" version="1.7.1"
-            checkoutdir="edje-1.7.1"
+  <autotools id="edje" autogen-sh="configure">
+    <branch module="releases/edje-1.7.5.tar.bz2" version="1.7.5"
             repo="download.enlightenment.org"
-            hash="sha256:d924d7ade92055a5c83d3c43171982b7f006db9f5c923fb39e0523405ec4534c"
-            md5sum="766747bc1b8a1755952e275b6058cf30">
+            hash="sha256:c7b329ac6548378c1c74e9cdf60a34c33f4fdc2d8224577d6a9ea4b90c915ec3"
+            md5sum="56d7ba080088627773bc6369e9a924fe">
     </branch>
     <dependencies>
       <dep package="eet"/>
@@ -241,12 +235,11 @@
     </dependencies>
   </autotools>
 
-  <autotools id="e_dbus">
-    <branch module="releases/e_dbus-1.7.1.tar.bz2" version="1.7.1"
-            checkoutdir="e_dbus-1.7.1"
+  <autotools id="e_dbus" autogen-sh="configure">
+    <branch module="releases/e_dbus-1.7.5.tar.bz2" version="1.7.5"
             repo="download.enlightenment.org"
-            hash="sha256:d3a3e0b81f6bb69d2fc3886c9885dad27ebf14b60c4a0bbd5a2a510b5a5ff2d1"
-            md5sum="3fa25de2880c2ff9d78d070d4792f570">
+            hash="sha256:d88886c13b470f9aee84f1a95a68eca5501506417362ee8066a117feffcd9399"
+            md5sum="a197ae1c8e93debf20728e3e7693b868">
     </branch>
     <dependencies>
       <dep package="ecore"/>
@@ -254,12 +247,11 @@
     </dependencies>
   </autotools>
 
-  <autotools id="eeze">
-    <branch module="releases/eeze-1.7.1.tar.bz2" version="1.7.1"
-            checkoutdir="eeze-1.7.1"
+  <autotools id="eeze" autogen-sh="configure">
+    <branch module="releases/eeze-1.7.5.tar.bz2" version="1.7.5"
             repo="download.enlightenment.org"
-            hash="sha256:6a696e2fe1ad14983ca7555eed2c50dd39f9a084e04475f0d25fd31d32e3cd58"
-            md5sum="0e9d008a9ae17de2aea82a34ee62691e">
+            hash="sha256:b9cf6843d703c63930d5ff33be3dc640c28f58ce2e7def812086bfce8876e408"
+            md5sum="0891f831e2d25bd48a5c26e8793b1714">
     </branch>
     <dependencies>
       <dep package="ecore"/>
@@ -267,12 +259,11 @@
     </dependencies>
   </autotools>
 
-  <autotools id="efreet">
-    <branch module="releases/efreet-1.7.1.tar.bz2" version="1.7.1"
-            checkoutdir="efreet-1.7.1"
+  <autotools id="efreet" autogen-sh="configure">
+    <branch module="releases/efreet-1.7.5.tar.bz2" version="1.7.5"
             repo="download.enlightenment.org"
-            hash="sha256:c844ed545f1c9438c73af4e4d037401a653babaab0a4e4b69377a2de49431eea"
-            md5sum="0fc2b3bf93dc3a9f293c348339163ba3">
+            hash="sha256:8f5a043a76d8905f87600da5e0dddfcdf3b44f517724b376f8da32dc9ac487fb"
+            md5sum="d21e59631022d6fbdfa0e19b6b2ff93a">
     </branch>
     <dependencies>
         <deb package="ecore"/>
@@ -282,12 +273,12 @@
   </autotools>
 
   <autotools id="elementary"
+             autogen-sh="configure"
              autogenargs="--disable-emap --disable-ethumb --disable-eweather --disable-web">
-    <branch module="releases/elementary-1.7.1.tar.bz2" version="1.7.1"
-            checkoutdir="elementary-1.7.1"
+    <branch module="releases/elementary-1.7.5.tar.bz2" version="1.7.5"
             repo="download.enlightenment.org"
-            hash="sha256:54dd82ca156f024de91e375ae9f7ad9579cb0d8fb0bcbf9b16e5b4165d5ac483"
-            md5sum="9f43658594d8e837773c8b6573b654dd">
+            hash="sha256:898a4a7f8135c65359d4271ccab593b8a0b10d85fb6fd2d0cabea76152278b21"
+            md5sum="7f2cbea027fba8b58c41aaacfe68c155">
     </branch>
     <dependencies>
         <deb package="edje"/>
