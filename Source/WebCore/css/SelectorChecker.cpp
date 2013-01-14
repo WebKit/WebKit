@@ -941,9 +941,7 @@ bool SelectorChecker::checkOne(const SelectorCheckingContext& context, const Sib
             return element->isOutOfRange();
 #if ENABLE(VIDEO_TRACK)
         case CSSSelector::PseudoFutureCue:
-            if (element->isWebVTTFutureNode())
-                return true;
-            return false;
+            return element->webVTTNodeType() == WebVTTNodeTypeFuture;
 #endif
 
         case CSSSelector::PseudoHorizontal:

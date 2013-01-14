@@ -31,6 +31,9 @@
 #include "FragmentScriptingPermission.h"
 #include "HTMLNames.h"
 #include "ScrollTypes.h"
+#if ENABLE(VIDEO_TRACK)
+#include "TextTrack.h"
+#endif
 
 namespace WebCore {
 
@@ -447,12 +450,10 @@ public:
 #endif
 
 #if ENABLE(VIDEO_TRACK)
-    bool isWebVTTNode() const;
-    void setIsWebVTTNode();
-    bool isWebVTTFutureNode() const;
-    void setIsWebVTTFutureNode();
+    WebVTTNodeType webVTTNodeType() const;
+    void setWebVTTNodeType(WebVTTNodeType);
 #endif
-    
+
 #if ENABLE(FULLSCREEN_API)
     enum {
         ALLOW_KEYBOARD_INPUT = 1 << 0,

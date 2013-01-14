@@ -272,7 +272,7 @@ public:
         , m_childrenAffectedByForwardPositionalRules(false)
         , m_childrenAffectedByBackwardPositionalRules(false)
 #if ENABLE(VIDEO_TRACK)
-        , m_WebVTTNodeType(TextTrack::WebVTTNodeTypeNone)
+        , m_webVTTNodeType(WebVTTNodeTypeNone)
 #endif
     {
     }
@@ -371,12 +371,6 @@ public:
     virtual void reportMemoryUsage(MemoryObjectInfo*) const;
 
 protected:
-#if ENABLE(VIDEO_TRACK)
-    bool isWebVTTNode() { return static_cast<TextTrack::WebVTTNodeType>(m_WebVTTNodeType) != TextTrack::WebVTTNodeTypeNone; }
-    void setIsWebVTTNode() { m_WebVTTNodeType = TextTrack::WebVTTNodeTypePast; }
-    bool isWebVTTFutureNode() { return static_cast<TextTrack::WebVTTNodeType>(m_WebVTTNodeType) == TextTrack::WebVTTNodeTypeFuture; }
-    void setIsWebVTTFutureNode() { m_WebVTTNodeType = TextTrack::WebVTTNodeTypeFuture; }
-#endif
     short m_tabIndex;
     unsigned short m_childIndex;
     unsigned m_tabIndexWasSetExplicitly : 1;
@@ -404,7 +398,7 @@ protected:
     unsigned m_childrenAffectedByForwardPositionalRules : 1;
     unsigned m_childrenAffectedByBackwardPositionalRules : 1;
 #if ENABLE(VIDEO_TRACK)
-    unsigned m_WebVTTNodeType : 2;
+    unsigned m_webVTTNodeType : 2; // WebVTTNodeType
 #endif
 
 private:

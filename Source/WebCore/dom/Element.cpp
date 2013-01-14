@@ -2308,24 +2308,14 @@ bool Element::childShouldCreateRenderer(const NodeRenderingContext& childContext
 #endif
 
 #if ENABLE(VIDEO_TRACK)
-bool Element::isWebVTTNode() const
+WebVTTNodeType Element::webVTTNodeType() const
 {
-    return hasRareData() && elementRareData()->isWebVTTNode();
+    return hasRareData() ? elementRareData()->webVTTNodeType() : WebVTTNodeTypeNone;
 }
 
-void Element::setIsWebVTTNode()
+void Element::setWebVTTNodeType(WebVTTNodeType type)
 {
-    ensureElementRareData()->setIsWebVTTNode();
-}
-
-bool Element::isWebVTTFutureNode() const
-{
-    return hasRareData() && elementRareData()->isWebVTTFutureNode();
-}
-
-void Element::setIsWebVTTFutureNode()
-{
-    ensureElementRareData()->setIsWebVTTFutureNode();
+    ensureElementRareData()->setWebVTTNodeType(type);
 }
 #endif
 

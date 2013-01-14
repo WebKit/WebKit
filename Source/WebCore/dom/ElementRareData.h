@@ -55,11 +55,10 @@ public:
     void setIsInCanvasSubtree(bool value) { m_isInCanvasSubtree = value; }
 
 #if ENABLE(VIDEO_TRACK)
-    using NodeRareData::isWebVTTNode;
-    using NodeRareData::setIsWebVTTNode;
-    using NodeRareData::isWebVTTFutureNode;
-    using NodeRareData::setIsWebVTTFutureNode;
+    void setWebVTTNodeType(WebVTTNodeType type) { m_webVTTNodeType = type; }
+    WebVTTNodeType webVTTNodeType() const { return static_cast<WebVTTNodeType>(m_webVTTNodeType); }
 #endif
+
 #if ENABLE(FULLSCREEN_API)
     bool containsFullScreenElement() { return m_containsFullScreenElement; }
     void setContainsFullScreenElement(bool value) { m_containsFullScreenElement = value; }
