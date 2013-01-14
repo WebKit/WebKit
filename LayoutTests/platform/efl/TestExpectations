@@ -695,6 +695,7 @@ webkit.org/b/105879 editing/pasteboard/4806874.html [ Pass Crash ]
 webkit.org/b/105879 editing/spelling/spelling-insert-html.html [ Pass Crash ]
 
 # Sometimes hit cur || !toRenderInline(prev)->continuation() assertion in WebCore::endOfContinuations().
+webkit.org/b/105880 accessibility/render-counter-text.html [ Pass Crash ]
 webkit.org/b/105880 fast/dom/Range/range-extract-contents.html [ Pass Crash ]
 
 # Tests started to crash after r139141.
