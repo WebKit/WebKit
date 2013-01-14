@@ -19,6 +19,21 @@ InspectorTest.fillEditorWithText = function(textEditor, lineCount)
     textModel.setText(lines.join("\n"));
 }
 
+InspectorTest.insertTextLine = function(line)
+{
+    function enter()
+    {
+        eventSender.keyDown("\n");
+    }
+
+    function innerInsertTextLine()
+    {
+        textInputController.insertText(line);
+    }
+    setTimeout(innerInsertTextLine);
+    setTimeout(enter);
+}
+
 InspectorTest.dumpEditorChunks = function(textEditor)
 {
     InspectorTest.addResult("Chunk model");
