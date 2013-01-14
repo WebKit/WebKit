@@ -43,6 +43,20 @@ WebInspector.CanvasProfileView = function(profile)
     this._linkifier = new WebInspector.Linkifier();
     this._splitView = new WebInspector.SplitView(false, "canvasProfileViewSplitLocation", 300);
 
+    var replayImageContainer = this._splitView.firstElement();
+    replayImageContainer.id = "canvas-replay-image-container";
+    this._replayImageElement = replayImageContainer.createChild("image", "canvas-replay-image");
+    this._debugInfoElement = replayImageContainer.createChild("div");
+
+    var replayInfoContainer = this._splitView.secondElement();
+    var controlsContainer = replayInfoContainer.createChild("div", "canvas-replay-controls");
+    var logGridContainer = replayInfoContainer.createChild("div", "canvas-replay-log");
+
+    this._createControlButton(controlsContainer, "canvas-replay-first-step", WebInspector.UIString("First call."), this._onReplayFirstStepClick.bind(this));
+    this._createControlButton(controlsContainer, "canvas-replay-prev-step", WebInspector.UIString("Previous call."), this._onReplayStepClick.bind(this, false));
+    this._createControlButton(controlsContainer, "canvas-replay-next-step", WebInspector.UIString("Next call."), this._onReplayStepClick.bind(this, true));
+    this._createControlButton(controlsContainer, "canvas-replay-last-step", WebInspector.UIString("Last call."), this._onReplayLastStepClick.bind(this));
+
     var columns = { 0: {}, 1: {}, 2: {} };
     columns[0].title = "#";
     columns[0].sortable = true;
@@ -56,18 +70,8 @@ WebInspector.CanvasProfileView = function(profile)
 
     this._logGrid = new WebInspector.DataGrid(columns);
     this._logGrid.element.addStyleClass("fill");
-    this._logGrid.show(this._splitView.secondElement());
+    this._logGrid.show(logGridContainer);
     this._logGrid.addEventListener(WebInspector.DataGrid.Events.SelectedNode, this._replayTraceLog.bind(this));
-
-    var replayImageContainer = this._splitView.firstElement();
-    replayImageContainer.id = "canvas-replay-image-container";
-
-    this._replayImageElement = document.createElement("image");
-    this._replayImageElement.id = "canvas-replay-image";
-
-    replayImageContainer.appendChild(this._replayImageElement);
-    this._debugInfoElement = document.createElement("div");
-    replayImageContainer.appendChild(this._debugInfoElement);
 
     this._splitView.show(this.element);
 
@@ -102,13 +106,61 @@ WebInspector.CanvasProfileView.prototype = {
     },
 
     /**
+     * @param {Element} parent
+     * @param {string} className
+     * @param {string} title
+     * @param {function(this:WebInspector.CanvasProfileView)} clickCallback
+     */
+    _createControlButton: function(parent, className, title, clickCallback)
+    {
+        var button = parent.createChild("button", "canvas-control-button");
+        button.addStyleClass(className);
+        button.title = title;
+        button.createChild("img");
+        button.addEventListener("click", clickCallback, false);
+    },
+
+    /**
+     * @param {boolean} forward
+     */
+    _onReplayStepClick: function(forward)
+    {
+        var selectedNode = this._logGrid.selectedNode;
+        if (!selectedNode)
+            return;
+        var nextNode = forward ? selectedNode.traverseNextNode(false) : selectedNode.traversePreviousNode(false);
+        if (nextNode)
+            nextNode.revealAndSelect();
+        else
+            selectedNode.reveal();
+    },
+
+    _onReplayFirstStepClick: function()
+    {
+        var rootNode = this._logGrid.rootNode();
+        var children = rootNode && rootNode.children;
+        var firstNode = children && children[0];
+        if (firstNode)
+            firstNode.revealAndSelect();
+    },
+
+    _onReplayLastStepClick: function()
+    {
+        var rootNode = this._logGrid.rootNode();
+        var children = rootNode && rootNode.children;
+        var lastNode = children && children[children.length - 1];
+        if (lastNode)
+            lastNode.revealAndSelect();
+    },
+
+    /**
      * @param {boolean} enable
      */
     _enableWaitIcon: function(enable)
     {
         function showWaitIcon()
         {
-            this._replayImageElement.className = "wait";
+            this._replayImageElement.addStyleClass("wait");
             this._debugInfoElement.textContent = "";
             delete this._showWaitIconTimer;
         }
@@ -120,7 +172,7 @@ WebInspector.CanvasProfileView.prototype = {
                 clearTimeout(this._showWaitIconTimer);
                 delete this._showWaitIconTimer;
             }
-            this._replayImageElement.className = enable ? "wait" : "";
+            this._replayImageElement.enableStyleClass("wait", enable);
             this._debugInfoElement.textContent = "";
         }
     },
@@ -133,6 +185,8 @@ WebInspector.CanvasProfileView.prototype = {
         var time = Date.now();
         function didReplayTraceLog(error, dataURL)
         {
+            if (callNode !== this._logGrid.selectedNode)
+                return;
             this._enableWaitIcon(false);
             if (error)
                 return;
@@ -153,12 +207,14 @@ WebInspector.CanvasProfileView.prototype = {
         for (var i = 0, n = calls.length; i < n; ++i)
             this._logGrid.rootNode().appendChild(this._createCallNode(i, calls[i]));
         var lastNode = this._logGrid.rootNode().children[calls.length - 1];
-        if (lastNode) {
-            lastNode.reveal();
-            lastNode.select();
-        }
+        if (lastNode)
+            lastNode.revealAndSelect();
     },
 
+    /**
+     * @param {number} index
+     * @param {Object} call
+     */
     _createCallNode: function(index, call)
     {
         var traceLogItem = document.createElement("div");
@@ -294,11 +350,8 @@ WebInspector.CanvasProfileType.prototype = {
     {
         function callback(error, result)
         {
-            var showWarning = (!error && result);
-            if (showWarning)
-                this._decorationElement.removeStyleClass("hidden");
-            else
-                this._decorationElement.addStyleClass("hidden");
+            var hideWarning = (error || !result);
+            this._decorationElement.enableStyleClass("hidden", hideWarning);
         }
         CanvasAgent.hasUninstrumentedCanvases(callback.bind(this));
     },

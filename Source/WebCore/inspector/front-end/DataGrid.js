@@ -233,6 +233,9 @@ WebInspector.DataGrid.createSortableDataGrid = function(columnNames, values)
 }
 
 WebInspector.DataGrid.prototype = {
+    /**
+     * @param {!WebInspector.DataGridNode} rootNode
+     */
     setRootNode: function(rootNode)
     {
         if (this._rootNode) {
@@ -240,6 +243,7 @@ WebInspector.DataGrid.prototype = {
             this._rootNode.dataGrid = null;
             this._rootNode._isRoot = false;
         }
+        /** @type {!WebInspector.DataGridNode} */
         this._rootNode = rootNode;
         rootNode._isRoot = true;
         rootNode.hasChildren = false;
@@ -248,6 +252,9 @@ WebInspector.DataGrid.prototype = {
         rootNode.dataGrid = this;
     },
 
+    /**
+     * @return {!WebInspector.DataGridNode}
+     */
     rootNode: function()
     {
         return this._rootNode;
@@ -281,6 +288,7 @@ WebInspector.DataGrid.prototype = {
     _startEditingColumnOfDataGridNode: function(node, columnOrdinal)
     {
         this._editing = true;
+        /** @type {WebInspector.DataGridNode} */
         this._editingNode = node;
         this._editingNode.select();
 
@@ -358,7 +366,7 @@ WebInspector.DataGrid.prototype = {
                     return this._startEditingColumnOfDataGridNode(currentEditingNode, prevEditableColumn);
 
                 var lastEditableColumn = this._nextEditableColumn(this._columnsArray.length, true);
-                var nextDataGridNode = currentEditingNode.traversePreviousNode(true, null, true);
+                var nextDataGridNode = currentEditingNode.traversePreviousNode(true, true);
                 if (nextDataGridNode)
                     return this._startEditingColumnOfDataGridNode(nextDataGridNode, lastEditableColumn);
                 return;
@@ -1050,17 +1058,22 @@ WebInspector.DataGridNode = function(data, hasChildren)
     this._shouldRefreshChildren = true;
     this._data = data || {};
     this.hasChildren = hasChildren || false;
+    /** @type {!Array.<WebInspector.DataGridNode>} */
     this.children = [];
     this.dataGrid = null;
     this.parent = null;
+    /** @type {WebInspector.DataGridNode} */
     this.previousSibling = null;
+    /** @type {WebInspector.DataGridNode} */
     this.nextSibling = null;
     this.disclosureToggleWidth = 10;
 }
 
 WebInspector.DataGridNode.prototype = {
+    /** @type {boolean} */
     selectable: true,
 
+    /** @type {boolean} */
     _isRoot: false,
 
     get element()
@@ -1539,6 +1552,13 @@ WebInspector.DataGridNode.prototype = {
         }
     },
 
+    /**
+     * @param {boolean} skipHidden
+     * @param {WebInspector.DataGridNode=} stayWithin
+     * @param {boolean=} dontPopulate
+     * @param {Object=} info
+     * @return {WebInspector.DataGridNode}
+     */
     traverseNextNode: function(skipHidden, stayWithin, dontPopulate, info)
     {
         if (!dontPopulate && this.hasChildren)
@@ -1574,6 +1594,11 @@ WebInspector.DataGridNode.prototype = {
         return (!skipHidden || node.revealed) ? node.nextSibling : null;
     },
 
+    /**
+     * @param {boolean} skipHidden
+     * @param {boolean=} dontPopulate
+     * @return {WebInspector.DataGridNode}
+     */
     traversePreviousNode: function(skipHidden, dontPopulate)
     {
         var node = (!skipHidden || this.revealed) ? this.previousSibling : null;

@@ -144,6 +144,9 @@ Node.prototype.rangeBoundaryForOffset = function(offset)
     return { container: node, offset: offset };
 }
 
+/**
+ * @param {string} className
+ */
 Element.prototype.removeStyleClass = function(className)
 {
     this.classList.remove(className);
@@ -156,14 +159,33 @@ Element.prototype.removeMatchingStyleClasses = function(classNameRegex)
         this.className = this.className.replace(regex, " ");
 }
 
+/**
+ * @param {string} className
+ */
 Element.prototype.addStyleClass = function(className)
 {
     this.classList.add(className);
 }
 
+/**
+ * @param {string} className
+ * @return {boolean}
+ */
 Element.prototype.hasStyleClass = function(className)
 {
     return this.classList.contains(className);
+}
+
+/**
+ * @param {string} className
+ * @param {*} enable
+ */
+Element.prototype.enableStyleClass = function(className, enable)
+{
+    if (enable)
+        this.addStyleClass(className);
+    else
+        this.removeStyleClass(className);
 }
 
 /**
