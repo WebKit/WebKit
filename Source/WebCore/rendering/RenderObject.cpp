@@ -2528,8 +2528,10 @@ void RenderObject::destroyAndCleanupAnonymousWrappers()
     if (destroyRoot->everHadLayout()) {
         if (destroyRoot->isBody())
             destroyRoot->view()->repaint();
-        else
+        else {
             destroyRoot->repaint();
+            destroyRoot->repaintOverhangingFloats(true);
+        }
     }
 
     destroyRoot->destroy();

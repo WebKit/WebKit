@@ -1,0 +1,4 @@
+Bug 105861: REGRESSION (r132591): Underpainting @ uofmchildrenshospital.org
+This test checks that overhanging floats are properly repainted when a renderer is detached.
+This test has PASSED if there is no RED below.
+
