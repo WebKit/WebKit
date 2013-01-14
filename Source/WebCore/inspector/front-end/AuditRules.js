@@ -1058,6 +1058,8 @@ WebInspector.AuditRules.CSSRuleBase.prototype = {
             if (error)
                 return callback(null);
 
+            if (!headers.length)
+                return callback(null);
             for (var i = 0; i < headers.length; ++i) {
                 var header = headers[i];
                 if (header.disabled)

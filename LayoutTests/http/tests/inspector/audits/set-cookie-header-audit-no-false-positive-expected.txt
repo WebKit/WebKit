@@ -1,0 +1,4 @@
+Tests there is no false positive Set-Cookie audit error. 
+Page reloaded.
+Success, no Set-Cookie headers found.
+

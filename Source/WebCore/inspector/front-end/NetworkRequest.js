@@ -714,6 +714,8 @@ WebInspector.NetworkRequest.prototype = {
             if (headers[i].name.toLowerCase() === headerName)
                 values.push(headers[i].value);
         }
+        if (!values.length)
+            return undefined;
         // Set-Cookie values should be separated by '\n', not comma, otherwise cookies could not be parsed.
         if (headerName === "set-cookie")
             return values.join("\n");
