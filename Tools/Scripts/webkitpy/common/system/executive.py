@@ -406,7 +406,6 @@ class Executive(object):
         """Popen wrapper for convenience and to work around python bugs."""
         assert(isinstance(args, list) or isinstance(args, tuple))
         start_time = time.time()
-        args = self._stringify_args(args)
 
         stdin, string_to_communicate = self._compute_stdin(input)
         stderr = self.STDOUT if return_stderr else None

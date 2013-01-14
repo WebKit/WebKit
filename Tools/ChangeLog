@@ -1,3 +1,18 @@
+2013-01-13  Dirk Pranke  <dpranke@chromium.org>
+
+        [chromium] webkitpy-test: executive.py stringify_args error on the release test bot
+        https://bugs.webkit.org/show_bug.cgi?id=105380
+
+        Reviewed by Eric Seidel.
+
+        Fix a regression introduced in r137692 where we were double-encoding
+        the arguments to popen(); this was only an issue on windows, where
+        we would try to encode something to mbcs, then try to encode it
+        to unicode as if the input as ascii.
+
+        * Scripts/webkitpy/common/system/executive.py:
+        (Executive.run_command):
+
 2013-01-13  Alan Cutter  <alancutter@chromium.org>
 
         State who told sheriffbot to roll the Chromium deps and to what revision
