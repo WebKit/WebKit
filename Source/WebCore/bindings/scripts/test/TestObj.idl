@@ -219,6 +219,7 @@
 #endif
 #if defined(TESTING_V8) || defined(TESTING_JS)
     DOMString[] stringArrayFunction(in DOMString[] values) raises(DOMException);
+    DOMStringList domStringListFunction(in DOMStringList values) raises(DOMException);
 #endif
 
     [CheckSecurityForNode] readonly attribute Document contentDocument;

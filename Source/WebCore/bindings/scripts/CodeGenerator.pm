@@ -322,14 +322,6 @@ sub SkipIncludeHeader
     return 0;
 }
 
-sub IsArrayType
-{
-    my $object = shift;
-    my $type = shift;
-    # FIXME: Add proper support for T[], T[]?, sequence<T>.
-    return $type =~ m/\[\]$/;
-}
-
 sub IsConstructorTemplate
 {
     my $object = shift;
@@ -402,6 +394,8 @@ sub IsRefPtrType
     my $type = shift;
 
     return 0 if $object->IsPrimitiveType($type);
+    return 0 if $object->GetArrayType($type);
+    return 0 if $object->GetSequenceType($type);
     return 0 if $type eq "DOMString";
 
     return 1;

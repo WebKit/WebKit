@@ -81,7 +81,7 @@
     void selectColorInColorChooser(in Element element, in DOMString colorValue);
 #endif
     DOMString[] formControlStateOfPreviousHistoryItem() raises(DOMException);
-    void setFormControlStateOfPreviousHistoryItem(in DOMString[] values) raises(DOMException);
+    void setFormControlStateOfPreviousHistoryItem(in sequence<DOMString> values) raises(DOMException);
     void setEnableMockPagePopup(in boolean enabled) raises(DOMException);
 #if defined(ENABLE_PAGE_POPUP) && ENABLE_PAGE_POPUP
     readonly attribute PagePopupController pagePopupController;

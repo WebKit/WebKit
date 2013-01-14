@@ -120,8 +120,8 @@ public:
 #if ENABLE(INPUT_TYPE_COLOR)
     void selectColorInColorChooser(Element*, const String& colorValue);
 #endif
-    PassRefPtr<DOMStringList> formControlStateOfPreviousHistoryItem(ExceptionCode&);
-    void setFormControlStateOfPreviousHistoryItem(PassRefPtr<DOMStringList>, ExceptionCode&);
+    Vector<String> formControlStateOfPreviousHistoryItem(ExceptionCode&);
+    void setFormControlStateOfPreviousHistoryItem(const Vector<String>&, ExceptionCode&);
     void setEnableMockPagePopup(bool, ExceptionCode&);
 #if ENABLE(PAGE_POPUP)
     PassRefPtr<PagePopupController> pagePopupController();
@@ -240,7 +240,7 @@ public:
     String counterValue(Element*);
 
     int pageNumber(Element*, float pageWidth = 800, float pageHeight = 600);
-    PassRefPtr<DOMStringList> iconURLs(Document*) const;
+    Vector<String> iconURLs(Document*) const;
 
     int numberOfPages(float pageWidthInPixels = 800, float pageHeightInPixels = 600);
     String pageProperty(String, int, ExceptionCode& = ASSERT_NO_EXCEPTION) const;
@@ -261,7 +261,7 @@ public:
     PassRefPtr<MallocStatistics> mallocStatistics() const;
     PassRefPtr<TypeConversions> typeConversions() const;
 
-    PassRefPtr<DOMStringList> getReferencedFilePaths() const;
+    Vector<String> getReferencedFilePaths() const;
 
     void startTrackingRepaints(Document*, ExceptionCode&);
     void stopTrackingRepaints(Document*, ExceptionCode&);

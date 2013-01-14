@@ -1401,7 +1401,7 @@ sub GenerateParametersCheckExpression
         } elsif ($parameter->extendedAttributes->{"Callback"}) {
             # For Callbacks only checks if the value is null or object.
             push(@andExpression, "(${value}->IsNull() || ${value}->IsFunction())");
-        } elsif ($codeGenerator->IsArrayType($type) || $codeGenerator->GetSequenceType($type)) {
+        } elsif ($codeGenerator->GetArrayType($type) || $codeGenerator->GetSequenceType($type)) {
             if ($parameter->isNullable) {
                 push(@andExpression, "(${value}->IsNull() || ${value}->IsArray())");
             } else {
@@ -3694,9 +3694,7 @@ sub GetNativeType
     return "ScriptValue" if $type eq "DOMObject" or $type eq "any";
     return "Dictionary" if $type eq "Dictionary";
 
-    # FIXME: Consider replacing DOMStringList with DOMString[] or sequence<DOMString>.
-    return "RefPtr<DOMStringList>" if $type eq "DOMString[]" or $type eq "DOMStringList";
-
+    return "RefPtr<DOMStringList>" if $type eq "DOMStringList";
     return "RefPtr<IDBKey>" if $type eq "IDBKey";
     return "RefPtr<MediaQueryListListener>" if $type eq "MediaQueryListListener";
     return "RefPtr<NodeFilter>" if $type eq "NodeFilter";
@@ -3766,8 +3764,6 @@ sub JSValueToNative
     return "static_cast<Range::CompareHow>($value->Int32Value())" if $type eq "CompareHow";
     return "toWebCoreDate($value)" if $type eq "Date";
     return "toDOMStringList($value, $getIsolate)" if $type eq "DOMStringList";
-    # FIXME: Consider replacing DOMStringList with DOMString[] or sequence<DOMString>.
-    return "toDOMStringList($value, $getIsolate)" if $type eq "DOMString[]";
 
     if ($type eq "DOMString") {
         return $value;
@@ -3842,7 +3838,6 @@ sub GetV8HeaderName
     return "EventListener.h" if $type eq "EventListener";
     return "SerializedScriptValue.h" if $type eq "SerializedScriptValue";
     return "ScriptValue.h" if $type eq "DOMObject" or $type eq "any";
-    return "V8DOMStringList.h" if $type eq "DOMString[]";
     return "V8${type}.h";
 }
 
@@ -3935,7 +3930,6 @@ my %non_wrapper_types = (
     'CompareHow' => 1,
     'DOMObject' => 1,
     'DOMString' => 1,
-    'DOMString[]' => 1,
     'DOMTimeStamp' => 1,
     'Date' => 1,
     'Dictionary' => 1,
@@ -3966,6 +3960,7 @@ my %non_wrapper_types = (
 sub IsWrapperType
 {
     my $type = shift;
+    # FIXME: Should this return false for Sequence and Array types?
     return !($non_wrapper_types{$type});
 }
 

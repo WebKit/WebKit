@@ -185,7 +185,7 @@ sub IndexGetterReturnsStrings
 {
     my $type = shift;
 
-    return 1 if $type eq "CSSStyleDeclaration" or $type eq "MediaList" or $type eq "DOMStringList" or $type eq "DOMString[]"  or $type eq "DOMTokenList" or $type eq "DOMSettableTokenList";
+    return 1 if $type eq "CSSStyleDeclaration" or $type eq "MediaList" or $type eq "DOMStringList" or $type eq "DOMTokenList" or $type eq "DOMSettableTokenList";
     return 0;
 }
 
@@ -241,9 +241,6 @@ sub AddIncludesForType
     } elsif ($type eq "XPathNSResolver") {
         $includesRef->{"JSXPathNSResolver.h"} = 1;
         $includesRef->{"JSCustomXPathNSResolver.h"} = 1;
-    } elsif ($type eq "DOMString[]") {
-        # FIXME: Consider replacing DOMStringList with DOMString[] or sequence<DOMString>.
-        $includesRef->{"JSDOMStringList.h"} = 1;
     } elsif ($type eq "SerializedScriptValue") {
         $includesRef->{"SerializedScriptValue.h"} = 1;
     } elsif ($isCallback) {
@@ -251,6 +248,7 @@ sub AddIncludesForType
     } elsif ($codeGenerator->IsTypedArrayType($type)) {
         $includesRef->{"<wtf/${type}.h>"} = 1;
     } elsif ($codeGenerator->GetSequenceType($type)) {
+    } elsif ($codeGenerator->GetArrayType($type)) {
     } else {
         # default, include the same named file
         $includesRef->{"${type}.h"} = 1;
@@ -1301,7 +1299,7 @@ sub GenerateParametersCheckExpression
             # For Callbacks only checks if the value is null or object.
             push(@andExpression, "(${value}.isNull() || ${value}.isFunction())");
             $usedArguments{$parameterIndex} = 1;
-        } elsif ($codeGenerator->IsArrayType($type) || $codeGenerator->GetSequenceType($type)) {
+        } elsif ($codeGenerator->GetArrayType($type) || $codeGenerator->GetSequenceType($type)) {
             # FIXME: Add proper support for T[], T[]?, sequence<T>
             if ($parameter->isNullable) {
                 push(@andExpression, "(${value}.isNull() || (${value}.isObject() && isJSArray(${value})))");
@@ -3045,8 +3043,6 @@ sub GetNativeTypeFromSignature
 my %nativeType = (
     "CompareHow" => "Range::CompareHow",
     "DOMString" => "const String&",
-    # FIXME: Consider replacing DOMStringList with DOMString[] or sequence<DOMString>.
-    "DOMString[]" => "RefPtr<DOMStringList>",
     "DOMObject" => "ScriptValue",
     "NodeFilter" => "RefPtr<NodeFilter>",
     "SerializedScriptValue" => "RefPtr<SerializedScriptValue>",
@@ -3072,7 +3068,7 @@ sub GetNativeType
 
     my $svgNativeType = $codeGenerator->GetSVGTypeNeedingTearOff($type);
     return "${svgNativeType}*" if $svgNativeType;
-    return "RefPtr<DOMStringList>" if $type eq "DOMStringList" or $type eq "DOMString[]";
+    return "RefPtr<DOMStringList>" if $type eq "DOMStringList";
     return $nativeType{$type} if exists $nativeType{$type};
 
     my $arrayType = $codeGenerator->GetArrayType($type);
@@ -3098,7 +3094,7 @@ sub GetNativeTypeForCallbacks
 {
     my $type = shift;
     return "SerializedScriptValue*" if $type eq "SerializedScriptValue";
-    return "PassRefPtr<DOMStringList>" if $type eq "DOMStringList" or $type eq "DOMString[]";
+    return "PassRefPtr<DOMStringList>" if $type eq "DOMStringList";
 
     return GetNativeType($type);
 }
@@ -3210,7 +3206,7 @@ sub JSValueToNative
         return "exec, $value";
     }
 
-    if ($type eq "DOMString[]" or $type eq "DOMStringList" ) {
+    if ($type eq "DOMStringList" ) {
         AddToImplIncludes("JSDOMStringList.h", $conditional);
         return "toDOMStringList(exec, $value)";
     }
