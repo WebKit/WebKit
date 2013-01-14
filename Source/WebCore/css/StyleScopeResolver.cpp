@@ -244,6 +244,7 @@ void StyleScopeResolver::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) c
     info.addMember(m_authorStyles);
     info.addMember(m_stack);
     info.addMember(m_atHostRules);
+    info.addMember(m_stackParent);
 }
 
 }

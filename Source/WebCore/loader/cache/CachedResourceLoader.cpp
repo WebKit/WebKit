@@ -946,9 +946,17 @@ void CachedResourceLoader::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo)
 {
     MemoryClassInfo info(memoryObjectInfo, this, WebCoreMemoryTypes::Loader);
     info.addMember(m_documentResources);
+    info.addMember(m_document);
+    info.addMember(m_documentLoader);
     info.addMember(m_validatedURLs);
     info.addMember(m_preloads);
     info.addMember(m_pendingPreloads);
+    info.addMember(m_garbageCollectDocumentResourcesTimer);
+#if ENABLE(RESOURCE_TIMING)
+    // FIXME: m_initiatorMap has pointers to already deleted CachedResources
+    info.ignoreMember(m_initiatorMap);
+#endif
+
 }
 
 const ResourceLoaderOptions& CachedResourceLoader::defaultCachedResourceOptions()
