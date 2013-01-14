@@ -1,3 +1,16 @@
+2013-01-14  Alexey Proskuryakov  <ap@apple.com>
+
+        NetworkProcess scheduler never resumes resource loads that were postponed
+        due to connection limit
+        https://bugs.webkit.org/show_bug.cgi?id=106821
+
+        Reviewed by Brady Eidson.
+
+        * NetworkProcess/NetworkResourceLoadScheduler.cpp:
+        (WebKit::NetworkResourceLoadScheduler::servePendingRequests):
+        * NetworkProcess/NetworkResourceLoadScheduler.h:
+        Remove an uninitialized variable that could prevent loading.
+
 2013-01-11  Balazs Kelemen  <kbalazs@webkit.org>
 
         [Qt][WK2] plugin tests assert in debug

@@ -146,9 +146,6 @@ void NetworkResourceLoadScheduler::receivedRedirect(ResourceLoadIdentifier ident
 
 void NetworkResourceLoadScheduler::servePendingRequests(ResourceLoadPriority minimumPriority)
 {
-    if (m_suspendPendingRequestsCount)
-        return;
-
     LOG(NetworkScheduling, "(NetworkProcess) NetworkResourceLoadScheduler::servePendingRequests Serving requests for up to %i hosts", m_hosts.size());
 
     m_requestTimer.stop();

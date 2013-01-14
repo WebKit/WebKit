@@ -92,7 +92,6 @@ private:
 
     HostRecord* m_nonHTTPProtocolHost;
 
-    unsigned m_suspendPendingRequestsCount;
     bool m_isSerialLoadingEnabled;
 
     WebCore::Timer<NetworkResourceLoadScheduler> m_requestTimer;
