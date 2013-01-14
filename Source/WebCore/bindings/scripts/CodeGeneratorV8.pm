@@ -3379,7 +3379,7 @@ END
             @args = ();
             foreach my $param (@params) {
                 my $paramName = $param->name;
-                push(@implContent, "    v8::Handle<v8::Value> ${paramName}Handle = " . NativeToJSValue($param, $paramName) . ";\n");
+                push(@implContent, "    v8::Handle<v8::Value> ${paramName}Handle = " . NativeToJSValue($param, $paramName, "v8::Handle<v8::Object>()", "v8::Isolate::GetCurrent()") . ";\n");
                 push(@implContent, "    if (${paramName}Handle.IsEmpty()) {\n");
                 push(@implContent, "        if (!isScriptControllerTerminating())\n");
                 push(@implContent, "            CRASH();\n");
@@ -4023,14 +4023,13 @@ sub NativeToJSValue
     my $signature = shift;
     my $value = shift;
     my $getCreationContext = shift;
-    my $getCreationContextArg = $getCreationContext ? ", $getCreationContext" : "";
     my $getIsolate = shift;
-    my $getIsolateArg = $getIsolate ? ", $getIsolate" : "";
     my $getHolderContainer = shift;
     my $getHolderContainerArg = $getHolderContainer ? ", $getHolderContainer" : "";
     my $getScriptWrappable = shift;
     my $getScriptWrappableArg = $getScriptWrappable ? ", $getScriptWrappable" : "";
     my $returnHandleType = shift;
+    my $returnHandleTypeArg = $returnHandleType ? ", $returnHandleType" : "";
 
     my $type = $signature->type;
 
@@ -4042,16 +4041,16 @@ sub NativeToJSValue
     # should be returned instead.
     if ($signature->extendedAttributes->{"Reflect"} and ($type eq "unsigned long" or $type eq "unsigned short")) {
         $value =~ s/getUnsignedIntegralAttribute/getIntegralAttribute/g;
-        return "v8UnsignedInteger(std::max(0, " . $value . ")$getIsolateArg)";
+        return "v8UnsignedInteger(std::max(0, " . $value . "), $getIsolate)";
     }
 
     # For all the types where we use 'int' as the representation type,
     # we use v8Integer() which has a fast small integer conversion check.
     my $nativeType = GetNativeType($type);
-    return "v8Integer($value$getIsolateArg)" if $nativeType eq "int";
-    return "v8UnsignedInteger($value$getIsolateArg)" if $nativeType eq "unsigned";
+    return "v8Integer($value, $getIsolate)" if $nativeType eq "int";
+    return "v8UnsignedInteger($value, $getIsolate)" if $nativeType eq "unsigned";
 
-    return "v8DateOrNull($value$getIsolateArg)" if $type eq "Date";
+    return "v8DateOrNull($value, $getIsolate)" if $type eq "Date";
     # long long and unsigned long long are not representable in ECMAScript.
     return "v8::Number::New(static_cast<double>($value))" if $type eq "long long" or $type eq "unsigned long long" or $type eq "DOMTimeStamp";
     return "v8::Number::New($value)" if $codeGenerator->IsPrimitiveType($type);
@@ -4060,12 +4059,12 @@ sub NativeToJSValue
     if ($codeGenerator->IsStringType($type)) {
         my $conv = $signature->extendedAttributes->{"TreatReturnedNullStringAs"};
         if (defined $conv) {
-            return "v8StringOrNull($value$getIsolateArg, $returnHandleType)" if $conv eq "Null";
-            return "v8StringOrUndefined($value$getIsolateArg, $returnHandleType)" if $conv eq "Undefined";
+            return "v8StringOrNull($value, $getIsolate$returnHandleTypeArg)" if $conv eq "Null";
+            return "v8StringOrUndefined($value, $getIsolate$returnHandleTypeArg)" if $conv eq "Undefined";
 
             die "Unknown value for TreatReturnedNullStringAs extended attribute";
         }
-        return $getIsolate ? "v8String($value$getIsolateArg, $returnHandleType)" : "deprecatedV8String($value)";
+        return $getIsolate ? "v8String($value, $getIsolate$returnHandleTypeArg)" : "deprecatedV8String($value)";
     }
 
     my $arrayType = $codeGenerator->GetArrayType($type);
@@ -4081,7 +4080,7 @@ sub NativeToJSValue
             AddToImplIncludes(GetV8HeaderName($arrayOrSequenceType));
             AddToImplIncludes("${arrayOrSequenceType}.h");
         }
-        return "v8Array(${value}${getIsolateArg})";
+        return "v8Array($value, $getIsolate)";
     }
 
     AddIncludesForType($type);
@@ -4090,7 +4089,7 @@ sub NativeToJSValue
       if ($getScriptWrappable) {
           return "toV8Fast($value$getHolderContainerArg$getScriptWrappableArg)";
       }
-      return "toV8($value$getCreationContextArg$getIsolateArg)";
+      return "toV8($value, $getCreationContext, $getIsolate)";
     }
 
     if ($type eq "EventListener") {
@@ -4110,7 +4109,7 @@ sub NativeToJSValue
     if ($getScriptWrappable) {
           return "toV8Fast($value$getHolderContainerArg$getScriptWrappableArg)";
     }
-    return "toV8($value$getCreationContextArg$getIsolateArg)";
+    return "toV8($value, $getCreationContext, $getIsolate)";
 }
 
 sub WriteData
