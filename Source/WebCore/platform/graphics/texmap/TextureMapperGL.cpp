@@ -302,7 +302,7 @@ void TextureMapperGL::drawBorder(const Color& color, float width, const FloatRec
     m_context3D->useProgram(program->programID());
 
     float r, g, b, a;
-    color.getRGBA(r, g, b, a);
+    Color(premultipliedARGBFromColor(color)).getRGBA(r, g, b, a);
     m_context3D->uniform4f(program->colorLocation(), r, g, b, a);
     m_context3D->lineWidth(width);
 
@@ -431,7 +431,7 @@ void TextureMapperGL::drawSolidColor(const FloatRect& rect, const Transformation
     m_context3D->useProgram(program->programID());
 
     float r, g, b, a;
-    color.getRGBA(r, g, b, a);
+    Color(premultipliedARGBFromColor(color)).getRGBA(r, g, b, a);
     m_context3D->uniform4f(program->colorLocation(), r, g, b, a);
     if (a < 1)
         flags |= ShouldBlend;
@@ -824,7 +824,7 @@ static void prepareFilterProgram(TextureMapperShaderProgram* program, const Filt
         case 1:
             // Second pass: we need the shadow color and the content texture for compositing.
             float r, g, b, a;
-            shadow.color().getRGBA(r, g, b, a);
+            Color(premultipliedARGBFromColor(shadow.color())).getRGBA(r, g, b, a);
             context->uniform4f(program->colorLocation(), r, g, b, a);
             context->uniform2f(program->blurRadiusLocation(), 0, shadow.stdDeviation() / float(size.height()));
             context->uniform2f(program->shadowOffsetLocation(), 0, 0);

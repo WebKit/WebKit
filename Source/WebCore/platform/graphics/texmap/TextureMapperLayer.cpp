@@ -104,6 +104,15 @@ void TextureMapperLayer::paint()
     paintRecursive(options);
 }
 
+static Color blendWithOpacity(const Color& color, float opacity)
+{
+    RGBA32 rgba = color.rgb();
+    // See Color::getRGBA() to know how to extract alpha from color.
+    float alpha = alphaChannel(rgba) / 255.;
+    float effectiveAlpha = alpha * opacity;
+    return Color(colorWithOverrideAlpha(rgba, effectiveAlpha));
+}
+
 void TextureMapperLayer::paintSelf(const TextureMapperPaintOptions& options)
 {
     if (!m_state.visible || !m_state.contentsVisible)
@@ -119,14 +128,7 @@ void TextureMapperLayer::paintSelf(const TextureMapperPaintOptions& options)
     RefPtr<BitmapTexture> mask = options.mask;
 
     if (m_state.solidColor.isValid() && !m_state.contentsRect.isEmpty()) {
-        if (!m_state.solidColor.alpha())
-            return;
-
-        Color color = m_state.solidColor;
-        float r, g, b, a;
-        color.getRGBA(r, g, b, a);
-        color = Color(r * opacity, g * opacity, b * opacity, a * opacity);
-        options.textureMapper->drawSolidColor(m_state.contentsRect, transform, color);
+        options.textureMapper->drawSolidColor(m_state.contentsRect, transform, blendWithOpacity(m_state.solidColor, opacity));
         return;
     }
 
