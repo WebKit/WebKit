@@ -85,7 +85,7 @@ public:
 
     SkDevice* createCompatibleDevice(const IntSize&, bool hasAlpha);
 
-    // If false we're rendering to a GraphicsContext for a web page, if false
+    // If false we're rendering to a GraphicsContext for a web page, if true
     // we're not (as is the case when rendering to a canvas object).
     // If this is true the contents have not been marked up with the magic
     // color and all text drawing needs to go to a layer so that the alpha is
