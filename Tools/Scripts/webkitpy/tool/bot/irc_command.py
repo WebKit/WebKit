@@ -292,3 +292,4 @@ visible_commands = {
 # people to use and it seems silly to have them hunt around for "rollout" instead.
 commands = visible_commands.copy()
 commands["revert"] = Rollout
+commands["gardeners"] = Sheriffs

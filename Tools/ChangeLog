@@ -1,3 +1,12 @@
+2013-01-13  Alan Cutter  <alancutter@chromium.org>
+
+        Make "gardeners" an alias for "sheriffs" in sherrifbot
+        https://bugs.webkit.org/show_bug.cgi?id=106627
+
+        Reviewed by Eric Seidel.
+
+        * Scripts/webkitpy/tool/bot/irc_command.py:
+
 2013-01-13  Dirk Pranke  <dpranke@chromium.org>
 
         [chromium] webkitpy-test: executive.py stringify_args error on the release test bot
