@@ -293,3 +293,7 @@ visible_commands = {
 commands = visible_commands.copy()
 commands["revert"] = Rollout
 commands["gardeners"] = Sheriffs
+# Enough people misspell "sheriffs" that they've requested aliases for the command.
+commands["sherriffs"] = Sheriffs
+commands["sherifs"] = Sheriffs
+commands["sherrifs"] = Sheriffs

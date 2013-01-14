@@ -1,5 +1,14 @@
 2013-01-13  Alan Cutter  <alancutter@chromium.org>
 
+        Allow users to misspell the "sheriffs" command in sheriffbot
+        https://bugs.webkit.org/show_bug.cgi?id=106628
+
+        Reviewed by Steve Block.
+
+        * Scripts/webkitpy/tool/bot/irc_command.py:
+
+2013-01-13  Alan Cutter  <alancutter@chromium.org>
+
         Make "gardeners" an alias for "sheriffs" in sherrifbot
         https://bugs.webkit.org/show_bug.cgi?id=106627
 
