@@ -77,23 +77,25 @@ static void getBuiltInVariableInfo(const TType& type,
 static void getUserDefinedVariableInfo(const TType& type,
                                        const TString& name,
                                        const TString& mappedName,
-                                       TVariableInfoList& infoList);
+                                       TVariableInfoList& infoList,
+                                       ShHashFunction64 hashFunction);
 
 // Returns info for an attribute or uniform.
 static void getVariableInfo(const TType& type,
                             const TString& name,
                             const TString& mappedName,
-                            TVariableInfoList& infoList)
+                            TVariableInfoList& infoList,
+                            ShHashFunction64 hashFunction)
 {
     if (type.getBasicType() == EbtStruct) {
         if (type.isArray()) {
             for (int i = 0; i < type.getArraySize(); ++i) {
                 TString lname = name + arrayBrackets(i);
                 TString lmappedName = mappedName + arrayBrackets(i);
-                getUserDefinedVariableInfo(type, lname, lmappedName, infoList);
+                getUserDefinedVariableInfo(type, lname, lmappedName, infoList, hashFunction);
             }
         } else {
-            getUserDefinedVariableInfo(type, name, mappedName, infoList);
+            getUserDefinedVariableInfo(type, name, mappedName, infoList, hashFunction);
         }
     } else {
         getBuiltInVariableInfo(type, name, mappedName, infoList);
@@ -124,7 +126,8 @@ void getBuiltInVariableInfo(const TType& type,
 void getUserDefinedVariableInfo(const TType& type,
                                 const TString& name,
                                 const TString& mappedName,
-                                TVariableInfoList& infoList)
+                                TVariableInfoList& infoList,
+                                ShHashFunction64 hashFunction)
 {
     ASSERT(type.getBasicType() == EbtStruct);
 
@@ -133,15 +136,28 @@ void getUserDefinedVariableInfo(const TType& type,
         const TType* fieldType = (*structure)[i].type;
         getVariableInfo(*fieldType,
                         name + "." + fieldType->getFieldName(),
-                        mappedName + "." + fieldType->getFieldName(),
-                        infoList);
+                        mappedName + "." + TIntermTraverser::hash(fieldType->getFieldName(), hashFunction),
+                        infoList,
+                        hashFunction);
     }
 }
 
+TVariableInfo::TVariableInfo()
+{
+}
+
+TVariableInfo::TVariableInfo(ShDataType type, int size)
+    : type(type),
+      size(size)
+{
+}
+
 CollectAttribsUniforms::CollectAttribsUniforms(TVariableInfoList& attribs,
-                                               TVariableInfoList& uniforms)
+                                               TVariableInfoList& uniforms,
+                                               ShHashFunction64 hashFunction)
     : mAttribs(attribs),
-      mUniforms(uniforms)
+      mUniforms(uniforms),
+      mHashFunction(hashFunction)
 {
 }
 
@@ -196,10 +212,16 @@ bool CollectAttribsUniforms::visitAggregate(Visit, TIntermAggregate* node)
                 // cannot be initialized in a shader, we must have only
                 // TIntermSymbol nodes in the sequence.
                 ASSERT(variable != NULL);
+                TString processedSymbol;
+                if (mHashFunction == NULL)
+                    processedSymbol = variable->getSymbol();
+                else
+                    processedSymbol = TIntermTraverser::hash(variable->getOriginalSymbol(), mHashFunction);
                 getVariableInfo(variable->getType(),
                                 variable->getOriginalSymbol(),
-                                variable->getSymbol(),
-                                infoList);
+                                processedSymbol,
+                                infoList,
+                                mHashFunction);
             }
         }
         break;

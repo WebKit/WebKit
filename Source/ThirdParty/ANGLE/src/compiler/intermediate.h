@@ -16,6 +16,8 @@
 #ifndef __INTERMEDIATE_H
 #define __INTERMEDIATE_H
 
+#include "GLSLANG/ShaderLang.h"
+
 #include "compiler/Common.h"
 #include "compiler/Types.h"
 #include "compiler/ConstantUnion.h"
@@ -550,6 +552,10 @@ public:
 
     void incrementDepth() {depth++;}
     void decrementDepth() {depth--;}
+
+    // Return the original name if hash function pointer is NULL;
+    // otherwise return the hashed name.
+    static TString hash(const TString& name, ShHashFunction64 hashFunction);
 
     const bool preVisit;
     const bool inVisit;

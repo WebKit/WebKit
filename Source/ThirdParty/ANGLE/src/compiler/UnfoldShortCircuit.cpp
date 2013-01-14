@@ -95,9 +95,9 @@ bool UnfoldShortCircuit::visitBinary(Visit visit, TIntermBinary *node)
             mTemporaryIndex = i + 1;
         }
         return false;
+      default:
+        return true;
     }
-
-    return true;
 }
 
 bool UnfoldShortCircuit::visitSelection(Visit visit, TIntermSelection *node)

@@ -1,3 +1,479 @@
+2013-01-14  Max Vujovic  <mvujovic@adobe.com>
+
+        [ANGLE] Update ANGLE in WebKit
+        https://bugs.webkit.org/show_bug.cgi?id=106274
+
+        Reviewed by Dean Jackson.
+
+        Update ANGLE to r1641.
+
+        ANGLE parsers were generated with Bison 2.3.
+
+        Additionally, perform the following changes to WebKit's ANGLE build system. Note that these
+        changes only apply to WebKit's copy of ANGLE, and do not need to be upstreamed to ANGLE.
+        (a) Remove all files in the libEGL and libGLESv2 directories because nobody is using them. 
+            Add a README in each directory to explain why their contents are not copied over from
+            ANGLE. This simplifies updating ANGLE in the future.
+        (b) Remove the build_angle.xcodeproj file that no-one is using. It appears it was copied
+            over from a gyp build of ANGLE. The Mac build uses ANGLE.xcodeproj.
+        (c) Remove duplicate file entries in ANGLE.xcodeproj. Change its Xcode group structure to
+            match ANGLE's directory structure.
+        (d) Add a Copy Files task to ANGLE.xcodeproj to put the khrplatform.h header in the right
+            place so ShaderLang.h can find it. ShaderLang.h is copied to
+            <BuildDir>/usr/local/include/ANGLE/ShaderLang.h during the Copy Headers task, and it
+            includes "KHR/khrplatform.h". Thus, we need to copy khrplatform.h to
+            <BuildDir>/usr/local/include/ANGLE/KHR/khrplatform.h.
+
+        Additionally, make one build fix in ANGLE source that should be upstreamed to ANGLE:
+        (1) Before this patch in ExpressionParser.y, we toggled the "-Wpragmas" flag so compilers
+            could ignore the pragmas that they didn't understand instead of generating an error.
+            However, clang does not understand "-Wpragmas" itself. Instead, tt understands
+            "-Wunknown-pragmas". Now, instead of trying to temporarily ignore pragmas, we apply the
+            right flags to the right compiler versions. The new code in ExpressionParser.y looks
+            like:
+
+        """
+        // Turn off uninitialized variable warnings triggered by the auto-generated pplval variable.
+        // On gcc 4.7+, The flag is called "-Wmaybe-uninitialized".
+        // On clang and gcc < 4.7, the flag is called "-Wuninitialized".
+        #if !defined(__clang__) && ((__GNUC__ == 4 && __GNU_C_MINOR__ >= 7) || __GNUC__ >= 5)
+        #pragma GCC diagnostic ignored "-Wmaybe-uninitialized"
+        #else
+        #pragma GCC diagnostic ignored "-Wuninitialized"
+        #endif
+        """
+
+        * ANGLE.plist:
+        * ANGLE.pri:
+        * ANGLE.xcodeproj/project.pbxproj:
+        * DerivedSources.pri:
+        * Target.pri:
+        * include/GLSLANG/ShaderLang.h:
+        * src/build_angle.xcodeproj/project.pbxproj: Removed.
+        * src/common/angleutils.h:
+        * src/common/debug.cpp:
+        (gl::ScopedPerfEventHelper::ScopedPerfEventHelper):
+        * src/common/debug.h:
+        * src/common/version.h:
+        * src/compiler/Compiler.cpp:
+        (TCompiler::Init):
+        (TCompiler::compile):
+        (TCompiler::clearResults):
+        (TCompiler::collectAttribsUniforms):
+        (TCompiler::enforcePackingRestrictions):
+        * src/compiler/Diagnostics.cpp:
+        (TDiagnostics::TDiagnostics):
+        (TDiagnostics::writeInfo):
+        (TDiagnostics::print):
+        * src/compiler/Diagnostics.h:
+        (TDiagnostics::numErrors):
+        (TDiagnostics::numWarnings):
+        (TDiagnostics):
+        * src/compiler/DirectiveHandler.h:
+        * src/compiler/HashNames.h: Added.
+        * src/compiler/Intermediate.cpp:
+        (TIntermTraverser::hash):
+        * src/compiler/OutputESSL.cpp:
+        (TOutputESSL::TOutputESSL):
+        * src/compiler/OutputESSL.h:
+        (TOutputESSL):
+        * src/compiler/OutputGLSL.cpp:
+        (TOutputGLSL::TOutputGLSL):
+        * src/compiler/OutputGLSL.h:
+        (TOutputGLSL):
+        * src/compiler/OutputGLSLBase.cpp:
+        (TOutputGLSLBase::TOutputGLSLBase):
+        (TOutputGLSLBase::writeVariableType):
+        (TOutputGLSLBase::writeFunctionParameters):
+        (TOutputGLSLBase::writeConstantUnion):
+        (TOutputGLSLBase::visitSymbol):
+        (TOutputGLSLBase::visitBinary):
+        (TOutputGLSLBase::visitAggregate):
+        (TOutputGLSLBase::getTypeName):
+        (TOutputGLSLBase::hashName):
+        (TOutputGLSLBase::hashVariableName):
+        (TOutputGLSLBase::hashFunctionName):
+        * src/compiler/OutputGLSLBase.h:
+        (TOutputGLSLBase):
+        * src/compiler/OutputHLSL.cpp:
+        (sh::OutputHLSL::OutputHLSL):
+        (sh::OutputHLSL::header):
+        (sh::OutputHLSL::visitAggregate):
+        (sh::OutputHLSL::visitBranch):
+        (sh::OutputHLSL::handleExcessiveLoop):
+        * src/compiler/OutputHLSL.h:
+        (OutputHLSL):
+        * src/compiler/ParseHelper.cpp:
+        (TParseContext::error):
+        (TParseContext::nonInitConstErrorCheck):
+        (PaParseStrings):
+        * src/compiler/ParseHelper.h:
+        (TParseContext::TParseContext):
+        (TParseContext):
+        (TParseContext::numErrors):
+        * src/compiler/RenameFunction.h:
+        (RenameFunction::visitAggregate):
+        * src/compiler/ShHandle.h:
+        (TCompiler::getHashFunction):
+        (TCompiler::getNameMap):
+        (TCompiler::getSymbolTable):
+        (TCompiler):
+        * src/compiler/ShaderLang.cpp:
+        (ShInitBuiltInResources):
+        (ShGetInfo):
+        (ShGetNameHashingEntry):
+        * src/compiler/SymbolTable.cpp:
+        (TType::TType):
+        (TType::isStructureContainingArrays):
+        * src/compiler/SymbolTable.h:
+        (TSymbolTable::findBuiltIn):
+        (TSymbolTable):
+        * src/compiler/TranslatorESSL.cpp:
+        (TranslatorESSL::translate):
+        * src/compiler/TranslatorGLSL.cpp:
+        (TranslatorGLSL::translate):
+        * src/compiler/Types.h:
+        (TType):
+        (TPublicType):
+        (TPublicType::setBasic):
+        (TPublicType::setAggregate):
+        (TPublicType::setArray):
+        (TPublicType::isStructureContainingArrays):
+        * src/compiler/UnfoldShortCircuit.cpp:
+        (sh::UnfoldShortCircuit::visitBinary):
+        * src/compiler/VariableInfo.cpp:
+        (getVariableInfo):
+        (getUserDefinedVariableInfo):
+        (TVariableInfo::TVariableInfo):
+        (CollectAttribsUniforms::CollectAttribsUniforms):
+        (CollectAttribsUniforms::visitAggregate):
+        * src/compiler/VariableInfo.h:
+        (TVariableInfo):
+        (CollectAttribsUniforms):
+        * src/compiler/VariablePacker.cpp: Added.
+        (VariablePacker::GetNumComponentsPerRow):
+        (VariablePacker::GetNumRows):
+        (TVariableInfoComparer::operator()):
+        (VariablePacker::makeColumnFlags):
+        (VariablePacker::fillColumns):
+        (VariablePacker::searchColumn):
+        (VariablePacker::CheckVariablesWithinPackingLimits):
+        * src/compiler/VariablePacker.h: Added.
+        (VariablePacker):
+        * src/compiler/VersionGLSL.cpp:
+        (TVersionGLSL::visitAggregate):
+        * src/compiler/VersionGLSL.h:
+        (TVersionGLSL):
+        * src/compiler/glslang.l:
+        * src/compiler/glslang.y:
+        * src/compiler/glslang_lex.cpp:
+        (string_input):
+        (glslang_finalize):
+        (glslang_scan):
+        * src/compiler/glslang_tab.cpp:
+        * src/compiler/intermediate.h:
+        (TIntermTraverser):
+        * src/compiler/osinclude.h:
+        (OS_GetTLSValue):
+        * src/compiler/ossource_nspr.cpp:
+        * src/compiler/preprocessor/DiagnosticsBase.cpp: Added.
+        (pp):
+        (pp::Diagnostics::~Diagnostics):
+        (pp::Diagnostics::report):
+        (pp::Diagnostics::severity):
+        (pp::Diagnostics::message):
+        * src/compiler/preprocessor/DiagnosticsBase.h: Renamed from Source/ThirdParty/ANGLE/src/compiler/preprocessor/new/Diagnostics.h.
+        (pp):
+        (Diagnostics):
+        * src/compiler/preprocessor/DirectiveHandlerBase.cpp: Renamed from Source/ThirdParty/ANGLE/src/compiler/preprocessor/new/DirectiveHandlerBase.cpp.
+        (pp):
+        (pp::DirectiveHandler::~DirectiveHandler):
+        * src/compiler/preprocessor/DirectiveHandlerBase.h: Renamed from Source/ThirdParty/ANGLE/src/compiler/preprocessor/new/DirectiveHandler.h.
+        (pp):
+        (DirectiveHandler):
+        * src/compiler/preprocessor/DirectiveParser.cpp: Renamed from Source/ThirdParty/ANGLE/src/compiler/preprocessor/new/DirectiveParser.cpp.
+        (getDirective):
+        (isConditionalDirective):
+        (isEOD):
+        (skipUntilEOD):
+        (isMacroNameReserved):
+        (isMacroPredefined):
+        (pp):
+        (DefinedParser):
+        (pp::DefinedParser::DefinedParser):
+        (pp::DefinedParser::lex):
+        (pp::DirectiveParser::DirectiveParser):
+        (pp::DirectiveParser::lex):
+        (pp::DirectiveParser::parseDirective):
+        (pp::DirectiveParser::parseDefine):
+        (pp::DirectiveParser::parseUndef):
+        (pp::DirectiveParser::parseIf):
+        (pp::DirectiveParser::parseIfdef):
+        (pp::DirectiveParser::parseIfndef):
+        (pp::DirectiveParser::parseElse):
+        (pp::DirectiveParser::parseElif):
+        (pp::DirectiveParser::parseEndif):
+        (pp::DirectiveParser::parseError):
+        (pp::DirectiveParser::parsePragma):
+        (pp::DirectiveParser::parseExtension):
+        (pp::DirectiveParser::parseVersion):
+        (pp::DirectiveParser::parseLine):
+        (pp::DirectiveParser::skipping):
+        (pp::DirectiveParser::parseConditionalIf):
+        (pp::DirectiveParser::parseExpressionIf):
+        (pp::DirectiveParser::parseExpressionIfdef):
+        * src/compiler/preprocessor/DirectiveParser.h: Renamed from Source/ThirdParty/ANGLE/src/compiler/preprocessor/new/DirectiveParser.h.
+        (pp):
+        (DirectiveParser):
+        (ConditionalBlock):
+        (pp::DirectiveParser::ConditionalBlock::ConditionalBlock):
+        * src/compiler/preprocessor/ExpressionParser.cpp: Renamed from Source/ThirdParty/ANGLE/src/compiler/preprocessor/new/ExpressionParser.cpp.
+        (yysyntax_error):
+        (yylex):
+        (yyerror):
+        (pp):
+        (pp::ExpressionParser::ExpressionParser):
+        (pp::ExpressionParser::parse):
+        * src/compiler/preprocessor/ExpressionParser.h: Renamed from Source/ThirdParty/ANGLE/src/compiler/preprocessor/new/ExpressionParser.h.
+        (pp):
+        (ExpressionParser):
+        * src/compiler/preprocessor/ExpressionParser.y: Renamed from Source/ThirdParty/ANGLE/src/compiler/preprocessor/new/ExpressionParser.y.
+        * src/compiler/preprocessor/Input.cpp: Renamed from Source/ThirdParty/ANGLE/src/compiler/preprocessor/new/Input.cpp.
+        (pp):
+        (pp::Input::Input):
+        (pp::Input::read):
+        * src/compiler/preprocessor/Input.h: Renamed from Source/ThirdParty/ANGLE/src/compiler/preprocessor/new/Input.h.
+        (pp):
+        (Input):
+        (pp::Input::count):
+        (pp::Input::string):
+        (pp::Input::length):
+        (Location):
+        (pp::Input::Location::Location):
+        (pp::Input::readLoc):
+        * src/compiler/preprocessor/Lexer.cpp: Renamed from Source/ThirdParty/ANGLE/src/compiler/preprocessor/new/Lexer.cpp.
+        (pp):
+        (pp::Lexer::~Lexer):
+        * src/compiler/preprocessor/Lexer.h: Renamed from Source/ThirdParty/ANGLE/src/compiler/preprocessor/new/Lexer.h.
+        (pp):
+        (Lexer):
+        * src/compiler/preprocessor/Macro.cpp: Renamed from Source/ThirdParty/ANGLE/src/compiler/preprocessor/new/Macro.cpp.
+        (pp):
+        (pp::Macro::equals):
+        * src/compiler/preprocessor/Macro.h: Renamed from Source/ThirdParty/ANGLE/src/compiler/preprocessor/new/Macro.h.
+        (pp):
+        (pp::Macro::Macro):
+        (Macro):
+        * src/compiler/preprocessor/MacroExpander.cpp: Renamed from Source/ThirdParty/ANGLE/src/compiler/preprocessor/new/MacroExpander.cpp.
+        (pp):
+        (TokenLexer):
+        (pp::TokenLexer::TokenLexer):
+        (pp::TokenLexer::lex):
+        (pp::MacroExpander::MacroExpander):
+        (pp::MacroExpander::~MacroExpander):
+        (pp::MacroExpander::lex):
+        (pp::MacroExpander::getToken):
+        (pp::MacroExpander::ungetToken):
+        (pp::MacroExpander::isNextTokenLeftParen):
+        (pp::MacroExpander::pushMacro):
+        (pp::MacroExpander::popMacro):
+        (pp::MacroExpander::expandMacro):
+        (pp::MacroExpander::collectMacroArgs):
+        (pp::MacroExpander::replaceMacroParams):
+        * src/compiler/preprocessor/MacroExpander.h: Renamed from Source/ThirdParty/ANGLE/src/compiler/preprocessor/new/MacroExpander.h.
+        (pp):
+        (MacroExpander):
+        (MacroContext):
+        (pp::MacroExpander::MacroContext::MacroContext):
+        (pp::MacroExpander::MacroContext::empty):
+        (pp::MacroExpander::MacroContext::get):
+        (pp::MacroExpander::MacroContext::unget):
+        * src/compiler/preprocessor/Preprocessor.cpp: Renamed from Source/ThirdParty/ANGLE/src/compiler/preprocessor/new/Preprocessor.cpp.
+        (pp):
+        (PreprocessorImpl):
+        (pp::PreprocessorImpl::PreprocessorImpl):
+        (pp::Preprocessor::Preprocessor):
+        (pp::Preprocessor::~Preprocessor):
+        (pp::Preprocessor::init):
+        (pp::Preprocessor::predefineMacro):
+        (pp::Preprocessor::lex):
+        * src/compiler/preprocessor/Preprocessor.h: Renamed from Source/ThirdParty/ANGLE/src/compiler/preprocessor/new/Preprocessor.h.
+        (pp):
+        (Preprocessor):
+        * src/compiler/preprocessor/SourceLocation.h: Renamed from Source/ThirdParty/ANGLE/src/compiler/preprocessor/new/SourceLocation.h.
+        (pp):
+        (pp::SourceLocation::SourceLocation):
+        (SourceLocation):
+        (pp::SourceLocation::equals):
+        (pp::operator==):
+        (pp::operator!=):
+        * src/compiler/preprocessor/Token.cpp: Renamed from Source/ThirdParty/ANGLE/src/compiler/preprocessor/new/Token.cpp.
+        (pp):
+        (pp::Token::reset):
+        (pp::Token::equals):
+        (pp::Token::setAtStartOfLine):
+        (pp::Token::setHasLeadingSpace):
+        (pp::Token::setExpansionDisabled):
+        (pp::Token::iValue):
+        (pp::Token::uValue):
+        (pp::Token::fValue):
+        (pp::operator<<):
+        * src/compiler/preprocessor/Token.h: Renamed from Source/ThirdParty/ANGLE/src/compiler/preprocessor/new/Token.h.
+        (pp):
+        (pp::Token::Token):
+        (Token):
+        (pp::Token::atStartOfLine):
+        (pp::Token::hasLeadingSpace):
+        (pp::Token::expansionDisabled):
+        (pp::operator==):
+        (pp::operator!=):
+        * src/compiler/preprocessor/Tokenizer.cpp: Renamed from Source/ThirdParty/ANGLE/src/compiler/preprocessor/new/Tokenizer.cpp.
+        (yy_buffer_state):
+        (yy_trans_info):
+        (yyguts_t):
+        (yy_get_previous_state):
+        (yy_try_NUL_trans):
+        (input):
+        (pprestart):
+        (pp_switch_to_buffer):
+        (pp_load_buffer_state):
+        (pp_create_buffer):
+        (pp_delete_buffer):
+        (pp_init_buffer):
+        (pp_flush_buffer):
+        (pppush_buffer_state):
+        (pppop_buffer_state):
+        (ppensure_buffer_stack):
+        (pp_scan_buffer):
+        (pp_scan_string):
+        (pp_scan_bytes):
+        (yy_fatal_error):
+        (ppget_extra):
+        (ppget_lineno):
+        (ppget_column):
+        (ppget_in):
+        (ppget_out):
+        (ppget_leng):
+        (ppget_text):
+        (ppset_extra):
+        (ppset_lineno):
+        (ppset_column):
+        (ppset_in):
+        (ppset_out):
+        (ppget_debug):
+        (ppset_debug):
+        (ppget_lval):
+        (ppset_lval):
+        (ppget_lloc):
+        (ppset_lloc):
+        (pplex_init):
+        (pplex_init_extra):
+        (yy_init_globals):
+        (pplex_destroy):
+        (yy_flex_strncpy):
+        (yy_flex_strlen):
+        (ppalloc):
+        (pprealloc):
+        (ppfree):
+        (pp):
+        (pp::Tokenizer::Tokenizer):
+        (pp::Tokenizer::~Tokenizer):
+        (pp::Tokenizer::init):
+        (pp::Tokenizer::setFileNumber):
+        (pp::Tokenizer::setLineNumber):
+        (pp::Tokenizer::lex):
+        (pp::Tokenizer::initScanner):
+        (pp::Tokenizer::destroyScanner):
+        * src/compiler/preprocessor/Tokenizer.h: Renamed from Source/ThirdParty/ANGLE/src/compiler/preprocessor/new/Tokenizer.h.
+        (pp):
+        (Tokenizer):
+        (Context):
+        * src/compiler/preprocessor/Tokenizer.l: Renamed from Source/ThirdParty/ANGLE/src/compiler/preprocessor/new/Tokenizer.l.
+        * src/compiler/preprocessor/atom.c: Removed.
+        * src/compiler/preprocessor/atom.h: Removed.
+        * src/compiler/preprocessor/compile.h: Removed.
+        * src/compiler/preprocessor/cpp.c: Removed.
+        * src/compiler/preprocessor/cpp.h: Removed.
+        * src/compiler/preprocessor/cppstruct.c: Removed.
+        * src/compiler/preprocessor/generate_parser.sh: Renamed from Source/ThirdParty/ANGLE/src/compiler/preprocessor/new/generate_parser.sh.
+        * src/compiler/preprocessor/memory.c: Removed.
+        * src/compiler/preprocessor/memory.h: Removed.
+        * src/compiler/preprocessor/new/DiagnosticsBase.cpp: Removed.
+        * src/compiler/preprocessor/new/new_file.cpp: Removed.
+        * src/compiler/preprocessor/new/new_file2.cpp: Removed.
+        * src/compiler/preprocessor/new/preprocessor.vcproj: Removed.
+        * src/compiler/preprocessor/numeric_lex.h: Added.
+        (pp):
+        (pp::numeric_base_int):
+        (pp::numeric_lex_int):
+        (pp::numeric_lex_float):
+        * src/compiler/preprocessor/parser.h: Removed.
+        * src/compiler/preprocessor/pp_utils.h: Renamed from Source/ThirdParty/ANGLE/src/compiler/preprocessor/new/pp_utils.h.
+        * src/compiler/preprocessor/preprocess.h: Removed.
+        * src/compiler/preprocessor/scanner.c: Removed.
+        * src/compiler/preprocessor/scanner.h: Removed.
+        * src/compiler/preprocessor/slglobals.h: Removed.
+        * src/compiler/preprocessor/symbols.c: Removed.
+        * src/compiler/preprocessor/symbols.h: Removed.
+        * src/compiler/preprocessor/tokens.c: Removed.
+        * src/compiler/preprocessor/tokens.h: Removed.
+        * src/libEGL/Config.cpp: Removed.
+        * src/libEGL/Config.h: Removed.
+        * src/libEGL/Display.cpp: Removed.
+        * src/libEGL/Display.h: Removed.
+        * src/libEGL/README: Added.
+        * src/libEGL/Surface.cpp: Removed.
+        * src/libEGL/Surface.h: Removed.
+        * src/libEGL/libEGL.cpp: Removed.
+        * src/libEGL/libEGL.def: Removed.
+        * src/libEGL/libEGL.rc: Removed.
+        * src/libEGL/libEGL.vcproj: Removed.
+        * src/libEGL/main.cpp: Removed.
+        * src/libEGL/main.h: Removed.
+        * src/libEGL/resource.h: Removed.
+        * src/libGLESv2/Blit.cpp: Removed.
+        * src/libGLESv2/Blit.h: Removed.
+        * src/libGLESv2/Buffer.cpp: Removed.
+        * src/libGLESv2/Buffer.h: Removed.
+        * src/libGLESv2/Context.cpp: Removed.
+        * src/libGLESv2/Context.h: Removed.
+        * src/libGLESv2/Fence.cpp: Removed.
+        * src/libGLESv2/Fence.h: Removed.
+        * src/libGLESv2/Framebuffer.cpp: Removed.
+        * src/libGLESv2/Framebuffer.h: Removed.
+        * src/libGLESv2/HandleAllocator.cpp: Removed.
+        * src/libGLESv2/HandleAllocator.h: Removed.
+        * src/libGLESv2/IndexDataManager.cpp: Removed.
+        * src/libGLESv2/IndexDataManager.h: Removed.
+        * src/libGLESv2/Program.cpp: Removed.
+        * src/libGLESv2/Program.h: Removed.
+        * src/libGLESv2/ProgramBinary.cpp: Removed.
+        * src/libGLESv2/ProgramBinary.h: Removed.
+        * src/libGLESv2/Query.cpp: Removed.
+        * src/libGLESv2/Query.h: Removed.
+        * src/libGLESv2/README: Added.
+        * src/libGLESv2/Renderbuffer.cpp: Removed.
+        * src/libGLESv2/Renderbuffer.h: Removed.
+        * src/libGLESv2/ResourceManager.cpp: Removed.
+        * src/libGLESv2/ResourceManager.h: Removed.
+        * src/libGLESv2/Shader.cpp: Removed.
+        * src/libGLESv2/Shader.h: Removed.
+        * src/libGLESv2/Texture.cpp: Removed.
+        * src/libGLESv2/Texture.h: Removed.
+        * src/libGLESv2/VertexDataManager.cpp: Removed.
+        * src/libGLESv2/VertexDataManager.h: Removed.
+        * src/libGLESv2/libGLESv2.cpp: Removed.
+        * src/libGLESv2/libGLESv2.def: Removed.
+        * src/libGLESv2/libGLESv2.rc: Removed.
+        * src/libGLESv2/libGLESv2.vcproj: Removed.
+        * src/libGLESv2/main.cpp: Removed.
+        * src/libGLESv2/main.h: Removed.
+        * src/libGLESv2/mathutil.h: Removed.
+        * src/libGLESv2/resource.h: Removed.
+        * src/libGLESv2/utilities.cpp: Removed.
+        * src/libGLESv2/utilities.h: Removed.
+        * src/libGLESv2/vertexconversion.h: Removed.
+
 2012-12-18  Max Vujovic  <mvujovic@adobe.com>
 
         [ANGLE] Use of uninitialized memory in ArrayBoundsClamper

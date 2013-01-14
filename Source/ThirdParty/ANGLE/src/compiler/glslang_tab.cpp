@@ -752,26 +752,26 @@ static const yytype_int16 yyrhs[] =
 static const yytype_uint16 yyrline[] =
 {
        0,   168,   168,   203,   206,   219,   224,   229,   235,   238,
-     317,   320,   429,   439,   452,   460,   560,   563,   571,   575,
-     582,   586,   593,   599,   608,   616,   671,   678,   688,   691,
-     701,   711,   732,   733,   734,   739,   740,   749,   761,   762,
-     770,   781,   785,   786,   796,   806,   816,   829,   830,   840,
-     853,   857,   861,   865,   866,   879,   880,   893,   894,   907,
-     908,   925,   926,   939,   940,   941,   942,   943,   947,   950,
-     961,   969,   996,  1001,  1008,  1046,  1049,  1056,  1064,  1085,
-    1106,  1117,  1146,  1151,  1161,  1166,  1176,  1179,  1182,  1185,
-    1191,  1198,  1201,  1223,  1241,  1265,  1288,  1292,  1310,  1318,
-    1350,  1370,  1459,  1468,  1491,  1494,  1500,  1508,  1516,  1524,
-    1534,  1541,  1544,  1547,  1553,  1556,  1571,  1575,  1579,  1583,
-    1592,  1597,  1602,  1607,  1612,  1617,  1622,  1627,  1632,  1637,
-    1643,  1649,  1655,  1660,  1665,  1674,  1683,  1688,  1701,  1701,
-    1715,  1715,  1724,  1727,  1742,  1778,  1782,  1788,  1796,  1812,
-    1816,  1820,  1821,  1827,  1828,  1829,  1830,  1831,  1835,  1836,
-    1836,  1836,  1846,  1847,  1851,  1851,  1852,  1852,  1857,  1860,
-    1870,  1873,  1879,  1880,  1884,  1892,  1896,  1906,  1911,  1928,
-    1928,  1933,  1933,  1940,  1940,  1948,  1951,  1957,  1960,  1966,
-    1970,  1977,  1984,  1991,  1998,  2009,  2018,  2022,  2029,  2032,
-    2038,  2038
+     317,   320,   421,   431,   444,   452,   552,   555,   563,   567,
+     574,   578,   585,   591,   600,   608,   663,   670,   680,   683,
+     693,   703,   724,   725,   726,   731,   732,   741,   753,   754,
+     762,   773,   777,   778,   788,   798,   808,   821,   822,   832,
+     845,   849,   853,   857,   858,   871,   872,   885,   886,   899,
+     900,   917,   918,   931,   932,   933,   934,   935,   939,   942,
+     953,   961,   988,   993,  1000,  1038,  1041,  1048,  1056,  1077,
+    1098,  1109,  1138,  1143,  1153,  1158,  1168,  1171,  1174,  1177,
+    1183,  1190,  1193,  1215,  1233,  1257,  1280,  1284,  1302,  1310,
+    1342,  1362,  1451,  1460,  1483,  1486,  1492,  1500,  1508,  1516,
+    1526,  1533,  1536,  1539,  1545,  1548,  1563,  1567,  1571,  1575,
+    1584,  1589,  1594,  1599,  1604,  1609,  1614,  1619,  1624,  1629,
+    1635,  1641,  1647,  1652,  1657,  1666,  1675,  1680,  1693,  1693,
+    1707,  1707,  1716,  1719,  1734,  1770,  1774,  1780,  1788,  1804,
+    1808,  1812,  1813,  1819,  1820,  1821,  1822,  1823,  1827,  1828,
+    1828,  1828,  1838,  1839,  1843,  1843,  1844,  1844,  1849,  1852,
+    1862,  1865,  1871,  1872,  1876,  1884,  1888,  1898,  1903,  1920,
+    1920,  1925,  1925,  1932,  1932,  1940,  1943,  1949,  1952,  1958,
+    1962,  1969,  1976,  1983,  1990,  2001,  2010,  2014,  2021,  2024,
+    2030,  2030
 };
 #endif
 
@@ -2360,18 +2360,10 @@ yyreduce:
                 else
                     (yyval.interm.intermTypedNode)->setType(TType((yyvsp[(1) - (3)].interm.intermTypedNode)->getBasicType(), (yyvsp[(1) - (3)].interm.intermTypedNode)->getPrecision(), EvqConst, (int) (*(yyvsp[(3) - (3)].lex).string).size()));
             } else {
-                if (fields.num == 1) {
-                    ConstantUnion *unionArray = new ConstantUnion[1];
-                    unionArray->setIConst(fields.offsets[0]);
-                    TIntermTyped* index = context->intermediate.addConstantUnion(unionArray, TType(EbtInt, EbpUndefined, EvqConst), (yyvsp[(3) - (3)].lex).line);
-                    (yyval.interm.intermTypedNode) = context->intermediate.addIndex(EOpIndexDirect, (yyvsp[(1) - (3)].interm.intermTypedNode), index, (yyvsp[(2) - (3)].lex).line);
-                    (yyval.interm.intermTypedNode)->setType(TType((yyvsp[(1) - (3)].interm.intermTypedNode)->getBasicType(), (yyvsp[(1) - (3)].interm.intermTypedNode)->getPrecision()));
-                } else {
-                    TString vectorString = *(yyvsp[(3) - (3)].lex).string;
-                    TIntermTyped* index = context->intermediate.addSwizzle(fields, (yyvsp[(3) - (3)].lex).line);
-                    (yyval.interm.intermTypedNode) = context->intermediate.addIndex(EOpVectorSwizzle, (yyvsp[(1) - (3)].interm.intermTypedNode), index, (yyvsp[(2) - (3)].lex).line);
-                    (yyval.interm.intermTypedNode)->setType(TType((yyvsp[(1) - (3)].interm.intermTypedNode)->getBasicType(), (yyvsp[(1) - (3)].interm.intermTypedNode)->getPrecision(), EvqTemporary, (int) vectorString.size()));
-                }
+                TString vectorString = *(yyvsp[(3) - (3)].lex).string;
+                TIntermTyped* index = context->intermediate.addSwizzle(fields, (yyvsp[(3) - (3)].lex).line);
+                (yyval.interm.intermTypedNode) = context->intermediate.addIndex(EOpVectorSwizzle, (yyvsp[(1) - (3)].interm.intermTypedNode), index, (yyvsp[(2) - (3)].lex).line);
+                (yyval.interm.intermTypedNode)->setType(TType((yyvsp[(1) - (3)].interm.intermTypedNode)->getBasicType(), (yyvsp[(1) - (3)].interm.intermTypedNode)->getPrecision(), EvqTemporary, (int) vectorString.size()));
             }
         } else if ((yyvsp[(1) - (3)].interm.intermTypedNode)->isMatrix()) {
             TMatrixFields fields;
@@ -3430,7 +3422,7 @@ yyreduce:
         if (context->structQualifierErrorCheck((yyvsp[(3) - (3)].lex).line, (yyval.interm).type))
             context->recover();
 
-        if (context->nonInitConstErrorCheck((yyvsp[(3) - (3)].lex).line, *(yyvsp[(3) - (3)].lex).string, (yyval.interm).type))
+        if (context->nonInitConstErrorCheck((yyvsp[(3) - (3)].lex).line, *(yyvsp[(3) - (3)].lex).string, (yyval.interm).type, false))
             context->recover();
 
         TVariable* variable = 0;
@@ -3447,7 +3439,7 @@ yyreduce:
         if (context->structQualifierErrorCheck((yyvsp[(3) - (5)].lex).line, (yyvsp[(1) - (5)].interm).type))
             context->recover();
 
-        if (context->nonInitConstErrorCheck((yyvsp[(3) - (5)].lex).line, *(yyvsp[(3) - (5)].lex).string, (yyvsp[(1) - (5)].interm).type))
+        if (context->nonInitConstErrorCheck((yyvsp[(3) - (5)].lex).line, *(yyvsp[(3) - (5)].lex).string, (yyvsp[(1) - (5)].interm).type, true))
             context->recover();
 
         (yyval.interm) = (yyvsp[(1) - (5)].interm);
@@ -3469,7 +3461,7 @@ yyreduce:
         if (context->structQualifierErrorCheck((yyvsp[(3) - (6)].lex).line, (yyvsp[(1) - (6)].interm).type))
             context->recover();
 
-        if (context->nonInitConstErrorCheck((yyvsp[(3) - (6)].lex).line, *(yyvsp[(3) - (6)].lex).string, (yyvsp[(1) - (6)].interm).type))
+        if (context->nonInitConstErrorCheck((yyvsp[(3) - (6)].lex).line, *(yyvsp[(3) - (6)].lex).string, (yyvsp[(1) - (6)].interm).type, true))
             context->recover();
 
         (yyval.interm) = (yyvsp[(1) - (6)].interm);
@@ -3532,7 +3524,7 @@ yyreduce:
         if (context->structQualifierErrorCheck((yyvsp[(2) - (2)].lex).line, (yyval.interm).type))
             context->recover();
 
-        if (context->nonInitConstErrorCheck((yyvsp[(2) - (2)].lex).line, *(yyvsp[(2) - (2)].lex).string, (yyval.interm).type))
+        if (context->nonInitConstErrorCheck((yyvsp[(2) - (2)].lex).line, *(yyvsp[(2) - (2)].lex).string, (yyval.interm).type, false))
             context->recover();
             
             (yyval.interm).type = (yyvsp[(1) - (2)].interm.type);
@@ -3571,7 +3563,7 @@ yyreduce:
         if (context->structQualifierErrorCheck((yyvsp[(2) - (5)].lex).line, (yyvsp[(1) - (5)].interm.type)))
             context->recover();
 
-        if (context->nonInitConstErrorCheck((yyvsp[(2) - (5)].lex).line, *(yyvsp[(2) - (5)].lex).string, (yyvsp[(1) - (5)].interm.type)))
+        if (context->nonInitConstErrorCheck((yyvsp[(2) - (5)].lex).line, *(yyvsp[(2) - (5)].lex).string, (yyvsp[(1) - (5)].interm.type), true))
             context->recover();
 
         (yyval.interm).type = (yyvsp[(1) - (5)].interm.type);
@@ -4517,6 +4509,15 @@ yyreduce:
 
     {
         TFunction* function = (yyvsp[(1) - (1)].interm).function;
+        
+        const TSymbol *builtIn = context->symbolTable.findBuiltIn(function->getMangledName());
+        
+        if (builtIn)
+        {
+            context->error((yyvsp[(1) - (1)].interm).line, "built-in functions cannot be redefined", function->getName().c_str());
+            context->recover();
+        }
+        
         TFunction* prevDec = static_cast<TFunction*>(context->symbolTable.find(function->getMangledName()));
         //
         // Note:  'prevDec' could be 'function' if this is the first time we've seen function

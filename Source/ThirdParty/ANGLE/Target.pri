@@ -13,7 +13,7 @@ CONFIG += staticlib
 
 INCLUDEPATH += \
     $$SOURCE_DIR/src \
-    $$SOURCE_DIR/src/compiler/preprocessor/new \
+    $$SOURCE_DIR/src/compiler/preprocessor \
     $$SOURCE_DIR/include
 
 HEADERS += \
@@ -33,6 +33,7 @@ HEADERS += \
     src/compiler/ExtensionBehavior.h \
     src/compiler/ForLoopUnroll.h \
     src/compiler/glslang.h \
+    src/compiler/HashNames.h \
     src/compiler/InfoSink.h \
     src/compiler/InitializeDll.h \
     src/compiler/InitializeGlobals.h \
@@ -44,28 +45,19 @@ HEADERS += \
     src/compiler/MapLongVariableNames.h \
     src/compiler/osinclude.h \
     src/compiler/Pragma.h \
-    src/compiler/preprocessor/atom.h \
-    src/compiler/preprocessor/compile.h \
-    src/compiler/preprocessor/cpp.h \
+    src/compiler/preprocessor/DiagnosticsBase.h \
+    src/compiler/preprocessor/DirectiveHandlerBase.h \
+    src/compiler/preprocessor/DirectiveParser.h \
+    src/compiler/preprocessor/Input.h \
     src/compiler/preprocessor/length_limits.h \
-    src/compiler/preprocessor/memory.h \
-    src/compiler/preprocessor/new/Diagnostics.h \
-    src/compiler/preprocessor/new/DirectiveHandler.h \
-    src/compiler/preprocessor/new/DirectiveParser.h \
-    src/compiler/preprocessor/new/Input.h \
-    src/compiler/preprocessor/new/Lexer.h \
-    src/compiler/preprocessor/new/Macro.h \
-    src/compiler/preprocessor/new/MacroExpander.h \
-    src/compiler/preprocessor/new/Preprocessor.h \
-    src/compiler/preprocessor/new/SourceLocation.h \
-    src/compiler/preprocessor/new/Token.h \
-    src/compiler/preprocessor/new/Tokenizer.h \
-    src/compiler/preprocessor/parser.h \
-    src/compiler/preprocessor/preprocess.h \
-    src/compiler/preprocessor/scanner.h \
-    src/compiler/preprocessor/slglobals.h \
-    src/compiler/preprocessor/symbols.h \
-    src/compiler/preprocessor/tokens.h \
+    src/compiler/preprocessor/Lexer.h \
+    src/compiler/preprocessor/Macro.h \
+    src/compiler/preprocessor/MacroExpander.h \
+    src/compiler/preprocessor/numeric_lex.h \
+    src/compiler/preprocessor/Preprocessor.h \
+    src/compiler/preprocessor/SourceLocation.h \
+    src/compiler/preprocessor/Token.h \
+    src/compiler/preprocessor/Tokenizer.h \
     src/compiler/OutputESSL.h \
     src/compiler/OutputGLSL.h \
     src/compiler/OutputGLSLBase.h \
@@ -88,6 +80,7 @@ HEADERS += \
     src/compiler/util.h \
     src/compiler/ValidateLimitations.h \
     src/compiler/VariableInfo.h \
+    src/compiler/VariablePacker.h \
     src/compiler/VersionGLSL.h
 
 SOURCES += \
@@ -134,23 +127,17 @@ SOURCES += \
     src/compiler/util.cpp \
     src/compiler/ValidateLimitations.cpp \
     src/compiler/VariableInfo.cpp \
+    src/compiler/VariablePacker.cpp \
     src/compiler/VersionGLSL.cpp \
-    src/compiler/preprocessor/atom.c \
-    src/compiler/preprocessor/cpp.c \
-    src/compiler/preprocessor/cppstruct.c \
-    src/compiler/preprocessor/memory.c \
-    src/compiler/preprocessor/new/DiagnosticsBase.cpp \
-    src/compiler/preprocessor/new/DirectiveHandlerBase.cpp \
-    src/compiler/preprocessor/new/DirectiveParser.cpp \
-    src/compiler/preprocessor/new/Input.cpp \
-    src/compiler/preprocessor/new/Lexer.cpp \
-    src/compiler/preprocessor/new/Macro.cpp \
-    src/compiler/preprocessor/new/MacroExpander.cpp \
-    src/compiler/preprocessor/new/Preprocessor.cpp \
-    src/compiler/preprocessor/new/Token.cpp \
-    src/compiler/preprocessor/scanner.c \
-    src/compiler/preprocessor/symbols.c \
-    src/compiler/preprocessor/tokens.c
+    src/compiler/preprocessor/DiagnosticsBase.cpp \
+    src/compiler/preprocessor/DirectiveHandlerBase.cpp \
+    src/compiler/preprocessor/DirectiveParser.cpp \
+    src/compiler/preprocessor/Input.cpp \
+    src/compiler/preprocessor/Lexer.cpp \
+    src/compiler/preprocessor/Macro.cpp \
+    src/compiler/preprocessor/MacroExpander.cpp \
+    src/compiler/preprocessor/Preprocessor.cpp \
+    src/compiler/preprocessor/Token.cpp \
 
 win32: SOURCES += src/compiler/ossource_win.cpp
 else: SOURCES += src/compiler/ossource_posix.cpp

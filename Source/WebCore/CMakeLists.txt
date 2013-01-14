@@ -2710,24 +2710,17 @@ if (WTF_USE_3D_GRAPHICS)
         ${THIRDPARTY_DIR}/ANGLE/src/compiler/parseConst.cpp
         ${THIRDPARTY_DIR}/ANGLE/src/compiler/ParseHelper.cpp
         ${THIRDPARTY_DIR}/ANGLE/src/compiler/PoolAlloc.cpp
-        ${THIRDPARTY_DIR}/ANGLE/src/compiler/preprocessor/atom.c
-        ${THIRDPARTY_DIR}/ANGLE/src/compiler/preprocessor/cpp.c
-        ${THIRDPARTY_DIR}/ANGLE/src/compiler/preprocessor/cppstruct.c
-        ${THIRDPARTY_DIR}/ANGLE/src/compiler/preprocessor/memory.c
-        ${THIRDPARTY_DIR}/ANGLE/src/compiler/preprocessor/new/DiagnosticsBase.cpp
-        ${THIRDPARTY_DIR}/ANGLE/src/compiler/preprocessor/new/DirectiveHandlerBase.cpp
-        ${THIRDPARTY_DIR}/ANGLE/src/compiler/preprocessor/new/DirectiveParser.cpp
-        ${THIRDPARTY_DIR}/ANGLE/src/compiler/preprocessor/new/ExpressionParser.cpp
-        ${THIRDPARTY_DIR}/ANGLE/src/compiler/preprocessor/new/Input.cpp
-        ${THIRDPARTY_DIR}/ANGLE/src/compiler/preprocessor/new/Lexer.cpp
-        ${THIRDPARTY_DIR}/ANGLE/src/compiler/preprocessor/new/Macro.cpp
-        ${THIRDPARTY_DIR}/ANGLE/src/compiler/preprocessor/new/MacroExpander.cpp
-        ${THIRDPARTY_DIR}/ANGLE/src/compiler/preprocessor/new/Preprocessor.cpp
-        ${THIRDPARTY_DIR}/ANGLE/src/compiler/preprocessor/new/Token.cpp
-        ${THIRDPARTY_DIR}/ANGLE/src/compiler/preprocessor/new/Tokenizer.cpp
-        ${THIRDPARTY_DIR}/ANGLE/src/compiler/preprocessor/scanner.c
-        ${THIRDPARTY_DIR}/ANGLE/src/compiler/preprocessor/symbols.c
-        ${THIRDPARTY_DIR}/ANGLE/src/compiler/preprocessor/tokens.c
+        ${THIRDPARTY_DIR}/ANGLE/src/compiler/preprocessor/DiagnosticsBase.cpp
+        ${THIRDPARTY_DIR}/ANGLE/src/compiler/preprocessor/DirectiveHandlerBase.cpp
+        ${THIRDPARTY_DIR}/ANGLE/src/compiler/preprocessor/DirectiveParser.cpp
+        ${THIRDPARTY_DIR}/ANGLE/src/compiler/preprocessor/ExpressionParser.cpp
+        ${THIRDPARTY_DIR}/ANGLE/src/compiler/preprocessor/Input.cpp
+        ${THIRDPARTY_DIR}/ANGLE/src/compiler/preprocessor/Lexer.cpp
+        ${THIRDPARTY_DIR}/ANGLE/src/compiler/preprocessor/Macro.cpp
+        ${THIRDPARTY_DIR}/ANGLE/src/compiler/preprocessor/MacroExpander.cpp
+        ${THIRDPARTY_DIR}/ANGLE/src/compiler/preprocessor/Preprocessor.cpp
+        ${THIRDPARTY_DIR}/ANGLE/src/compiler/preprocessor/Token.cpp
+        ${THIRDPARTY_DIR}/ANGLE/src/compiler/preprocessor/Tokenizer.cpp
         ${THIRDPARTY_DIR}/ANGLE/src/compiler/QualifierAlive.cpp
         ${THIRDPARTY_DIR}/ANGLE/src/compiler/RemoveTree.cpp
         ${THIRDPARTY_DIR}/ANGLE/src/compiler/SearchSymbol.cpp
@@ -2742,6 +2735,7 @@ if (WTF_USE_3D_GRAPHICS)
         ${THIRDPARTY_DIR}/ANGLE/src/compiler/util.cpp
         ${THIRDPARTY_DIR}/ANGLE/src/compiler/ValidateLimitations.cpp
         ${THIRDPARTY_DIR}/ANGLE/src/compiler/VariableInfo.cpp
+        ${THIRDPARTY_DIR}/ANGLE/src/compiler/VariablePacker.cpp
         ${THIRDPARTY_DIR}/ANGLE/src/compiler/VersionGLSL.cpp
     )
 

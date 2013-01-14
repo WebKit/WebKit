@@ -13,7 +13,7 @@ equals(sanitizedFile, $$toSanitizedPath($$_PRO_FILE_)):TEMPLATE = derived
 
 ANGLE_FLEX_SOURCES = \
     $$PWD/src/compiler/glslang.l \
-    $$PWD/src/compiler/preprocessor/new/Tokenizer.l
+    $$PWD/src/compiler/preprocessor/Tokenizer.l
 
 angleflex.output = ${QMAKE_FILE_BASE}_lex.cpp
 angleflex.input = ANGLE_FLEX_SOURCES
@@ -22,7 +22,7 @@ GENERATORS += angleflex
 
 ANGLE_BISON_SOURCES = \
     $$PWD/src/compiler/glslang.y \
-    $$PWD/src/compiler/preprocessor/new/ExpressionParser.y
+    $$PWD/src/compiler/preprocessor/ExpressionParser.y
 
 anglebison_decl.output = ${QMAKE_FILE_BASE}_tab.h
 anglebison_decl.input = ANGLE_BISON_SOURCES

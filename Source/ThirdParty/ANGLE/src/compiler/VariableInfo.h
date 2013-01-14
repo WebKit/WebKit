@@ -13,6 +13,9 @@
 // Provides information about a variable.
 // It is currently being used to store info about active attribs and uniforms.
 struct TVariableInfo {
+    TVariableInfo(ShDataType type, int size);
+    TVariableInfo();
+
     TPersistString name;
     TPersistString mappedName;
     ShDataType type;
@@ -24,7 +27,8 @@ typedef std::vector<TVariableInfo> TVariableInfoList;
 class CollectAttribsUniforms : public TIntermTraverser {
 public:
     CollectAttribsUniforms(TVariableInfoList& attribs,
-                           TVariableInfoList& uniforms);
+                           TVariableInfoList& uniforms,
+                           ShHashFunction64 hashFunction);
 
     virtual void visitSymbol(TIntermSymbol*);
     virtual void visitConstantUnion(TIntermConstantUnion*);
@@ -38,6 +42,8 @@ public:
 private:
     TVariableInfoList& mAttribs;
     TVariableInfoList& mUniforms;
+
+    ShHashFunction64 mHashFunction;
 };
 
 #endif  // COMPILER_VARIABLE_INFO_H_

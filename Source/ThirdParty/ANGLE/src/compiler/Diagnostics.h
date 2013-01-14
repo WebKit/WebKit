@@ -7,7 +7,7 @@
 #ifndef COMPILER_DIAGNOSTICS_H_
 #define COMPILER_DIAGNOSTICS_H_
 
-#include "compiler/preprocessor/new/Diagnostics.h"
+#include "compiler/preprocessor/DiagnosticsBase.h"
 
 class TInfoSink;
 
@@ -18,6 +18,9 @@ class TDiagnostics : public pp::Diagnostics
     virtual ~TDiagnostics();
 
     TInfoSink& infoSink() { return mInfoSink; }
+
+    int numErrors() const { return mNumErrors; }
+    int numWarnings() const { return mNumWarnings; }
 
     void writeInfo(Severity severity,
                    const pp::SourceLocation& loc,
@@ -34,6 +37,8 @@ class TDiagnostics : public pp::Diagnostics
 
   private:
     TInfoSink& mInfoSink;
+    int mNumErrors;
+    int mNumWarnings;
 };
 
 #endif  // COMPILER_DIAGNOSTICS_H_

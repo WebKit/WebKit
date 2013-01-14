@@ -298,6 +298,11 @@ public:
         return symbol;
     }
 
+    TSymbol *findBuiltIn(const TString &name)
+    {
+        return table[0]->find(name);
+    }
+
     TSymbolTableLevel* getGlobalLevel() {
         assert(table.size() >= 2);
         return table[1];

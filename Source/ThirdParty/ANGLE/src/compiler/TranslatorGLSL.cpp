@@ -39,6 +39,6 @@ void TranslatorGLSL::translate(TIntermNode* root) {
     getArrayBoundsClamper().OutputClampingFunctionDefinition(sink);
 
     // Write translated shader.
-    TOutputGLSL outputGLSL(sink);
+    TOutputGLSL outputGLSL(sink, getHashFunction(), getNameMap(), getSymbolTable());
     root->traverse(&outputGLSL);
 }

@@ -22,14 +22,18 @@
 //   - c++ style name hiding rules.
 //   - built-in variable gl_PointCoord for fragment shaders.
 //   - matrix constructors taking matrix as argument.
+//   - array as "out" function parameters
 //
 class TVersionGLSL : public TIntermTraverser {
 public:
     TVersionGLSL(ShShaderType type);
 
-    // Returns 120 if "invariant" keyword, "gl_PointCoord", or
-    // matrix/matrix constructors are used in the shader. Else 110 is
-    // returned.
+    // Returns 120 if the following is used the shader:
+    // - "invariant",
+    // - "gl_PointCoord",
+    // - matrix/matrix constructors
+    // - array "out" parameters
+    // Else 110 is returned.
     int getVersion() { return mVersion; }
 
     virtual void visitSymbol(TIntermSymbol*);

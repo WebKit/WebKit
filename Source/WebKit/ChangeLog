@@ -1,3 +1,15 @@
+2013-01-14  Max Vujovic  <mvujovic@adobe.com>
+
+        [ANGLE] Update ANGLE in WebKit
+        https://bugs.webkit.org/show_bug.cgi?id=106274
+
+        Reviewed by Dean Jackson.
+
+        Update ANGLE to r1641.
+
+        * PlatformEfl.cmake: Add ANGLE/include to the include directories list because ShaderLang.h
+        now includes "KHR/khrplatform.h", which is located in ANGLE/include/KHR/khrplatform.h.
+
 2013-01-10  Christophe Dumez  <christophe.dumez@intel.com>
 
         [EFL] Add gstreamer 1.0.5 to jhbuild

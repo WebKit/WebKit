@@ -19,6 +19,7 @@
 #include "compiler/ArrayBoundsClamper.h"
 #include "compiler/BuiltInFunctionEmulator.h"
 #include "compiler/ExtensionBehavior.h"
+#include "compiler/HashNames.h"
 #include "compiler/InfoSink.h"
 #include "compiler/SymbolTable.h"
 #include "compiler/VariableInfo.h"
@@ -69,6 +70,10 @@ public:
     const TVariableInfoList& getUniforms() const { return uniforms; }
     int getMappedNameMaxLength() const;
 
+    ShHashFunction64 getHashFunction() const { return hashFunction; }
+    NameMap& getNameMap() { return nameMap; }
+    TSymbolTable& getSymbolTable() { return symbolTable; }
+
 protected:
     ShShaderType getShaderType() const { return shaderType; }
     ShShaderSpec getShaderSpec() const { return shaderSpec; }
@@ -89,6 +94,9 @@ protected:
     void mapLongVariableNames(TIntermNode* root);
     // Translate to object code.
     virtual void translate(TIntermNode* root) = 0;
+    // Returns true if, after applying the packing rules in the GLSL 1.017 spec
+    // Appendix A, section 7, the shader does not use too many uniforms.
+    bool enforcePackingRestrictions();
     // Returns true if the shader passes the restrictions that aim to prevent timing attacks.
     bool enforceTimingRestrictions(TIntermNode* root, bool outputGraph);
     // Returns true if the shader does not use samplers.
@@ -106,6 +114,8 @@ private:
     ShShaderType shaderType;
     ShShaderSpec shaderSpec;
 
+    int maxUniformVectors;
+
     // Built-in symbol table for the given language, spec, and resources.
     // It is preserved from compile-to-compile.
     TSymbolTable symbolTable;
@@ -122,6 +132,10 @@ private:
 
     // Cached copy of the ref-counted singleton.
     LongNameMap* longNameMap;
+
+    // name hashing.
+    ShHashFunction64 hashFunction;
+    NameMap nameMap;
 };
 
 //

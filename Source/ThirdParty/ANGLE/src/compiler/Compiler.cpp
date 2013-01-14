@@ -15,6 +15,7 @@
 #include "compiler/RenameFunction.h"
 #include "compiler/ShHandle.h"
 #include "compiler/ValidateLimitations.h"
+#include "compiler/VariablePacker.h"
 #include "compiler/depgraph/DependencyGraph.h"
 #include "compiler/depgraph/DependencyGraphOutput.h"
 #include "compiler/timing/RestrictFragmentShaderTiming.h"
@@ -114,12 +115,17 @@ TCompiler::~TCompiler()
 
 bool TCompiler::Init(const ShBuiltInResources& resources)
 {
+    maxUniformVectors = (shaderType == SH_VERTEX_SHADER) ?
+        resources.MaxVertexUniformVectors :
+        resources.MaxFragmentUniformVectors;
     TScopedPoolAllocator scopedAlloc(&allocator, false);
 
     // Generate built-in symbol table.
     if (!InitBuiltInSymbolTable(resources))
         return false;
     InitExtensionBehavior(resources, extensionBehavior);
+
+    hashFunction = resources.HashFunction;
 
     return true;
 }
@@ -194,11 +200,19 @@ bool TCompiler::compile(const char* const shaderStrings[],
         // Call mapLongVariableNames() before collectAttribsUniforms() so in
         // collectAttribsUniforms() we already have the mapped symbol names and
         // we could composite mapped and original variable names.
-        if (success && (compileOptions & SH_MAP_LONG_VARIABLE_NAMES))
+        // Also, if we hash all the names, then no need to do this for long names.
+        if (success && (compileOptions & SH_MAP_LONG_VARIABLE_NAMES) && hashFunction == NULL)
             mapLongVariableNames(root);
 
-        if (success && (compileOptions & SH_ATTRIBUTES_UNIFORMS))
+        if (success && (compileOptions & SH_ATTRIBUTES_UNIFORMS)) {
             collectAttribsUniforms(root);
+            if (compileOptions & SH_ENFORCE_PACKING_RESTRICTIONS) {
+                success = enforcePackingRestrictions();
+                if (!success) {
+                    infoSink.info.message(EPrefixError, "too many uniforms");
+                }
+            }
+        }
 
         if (success && (compileOptions & SH_INTERMEDIATE_TREE))
             intermediate.outputTree(root);
@@ -228,6 +242,7 @@ bool TCompiler::InitBuiltInSymbolTable(const ShBuiltInResources& resources)
 
 void TCompiler::clearResults()
 {
+    arrayBoundsClamper.Cleanup();
     infoSink.info.erase();
     infoSink.obj.erase();
     infoSink.debug.erase();
@@ -236,7 +251,8 @@ void TCompiler::clearResults()
     uniforms.clear();
 
     builtInFunctionEmulator.Cleanup();
-    arrayBoundsClamper.Cleanup();
+
+    nameMap.clear();
 }
 
 bool TCompiler::detectRecursion(TIntermNode* root)
@@ -312,8 +328,14 @@ bool TCompiler::enforceVertexShaderTimingRestrictions(TIntermNode* root)
 
 void TCompiler::collectAttribsUniforms(TIntermNode* root)
 {
-    CollectAttribsUniforms collect(attribs, uniforms);
+    CollectAttribsUniforms collect(attribs, uniforms, hashFunction);
     root->traverse(&collect);
+}
+
+bool TCompiler::enforcePackingRestrictions()
+{
+    VariablePacker packer;
+    return packer.CheckVariablesWithinPackingLimits(maxUniformVectors, uniforms);
 }
 
 void TCompiler::mapLongVariableNames(TIntermNode* root)

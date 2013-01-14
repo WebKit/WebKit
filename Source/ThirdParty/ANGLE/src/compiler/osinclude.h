@@ -24,9 +24,7 @@
 #error Unsupported platform.
 #endif
 
-#if defined(ANGLE_USE_NSPR)
-#include "prthread.h"
-#elif defined(ANGLE_OS_WIN)
+#if defined(ANGLE_OS_WIN)
 #define STRICT
 #define VC_EXTRALEAN 1
 #include <windows.h>
@@ -34,7 +32,7 @@
 #include <pthread.h>
 #include <semaphore.h>
 #include <errno.h>
-#endif  // ANGLE_USE_NSPR
+#endif  // ANGLE_OS_WIN
 
 
 #include "compiler/debug.h"
@@ -42,16 +40,13 @@
 //
 // Thread Local Storage Operations
 //
-#if defined(ANGLE_USE_NSPR)
-typedef PRUintn OS_TLSIndex;
-#define OS_INVALID_TLS_INDEX 0xFFFFFFFF
-#elif defined(ANGLE_OS_WIN)
+#if defined(ANGLE_OS_WIN)
 typedef DWORD OS_TLSIndex;
 #define OS_INVALID_TLS_INDEX (TLS_OUT_OF_INDEXES)
 #elif defined(ANGLE_OS_POSIX)
 typedef unsigned int OS_TLSIndex;
 #define OS_INVALID_TLS_INDEX 0xFFFFFFFF
-#endif  // ANGLE_USE_NSPR
+#endif  // ANGLE_OS_WIN
 
 OS_TLSIndex OS_AllocTLSIndex();
 bool OS_SetTLSValue(OS_TLSIndex nIndex, void *lpvValue);
@@ -60,9 +55,7 @@ bool OS_FreeTLSIndex(OS_TLSIndex nIndex);
 inline void* OS_GetTLSValue(OS_TLSIndex nIndex)
 {
     ASSERT(nIndex != OS_INVALID_TLS_INDEX);
-#if defined(ANGLE_USE_NSPR)
-    return PR_GetThreadPrivate(nIndex);
-#elif defined(ANGLE_OS_WIN)
+#if defined(ANGLE_OS_WIN)
     return TlsGetValue(nIndex);
 #elif defined(ANGLE_OS_POSIX)
     return pthread_getspecific(nIndex);

@@ -6,10 +6,14 @@
 
 #include "compiler/Diagnostics.h"
 
+#include "compiler/debug.h"
 #include "compiler/InfoSink.h"
-#include "compiler/preprocessor/new/SourceLocation.h"
+#include "compiler/preprocessor/SourceLocation.h"
 
-TDiagnostics::TDiagnostics(TInfoSink& infoSink) : mInfoSink(infoSink)
+TDiagnostics::TDiagnostics(TInfoSink& infoSink) :
+    mInfoSink(infoSink),
+    mNumErrors(0),
+    mNumWarnings(0)
 {
 }
 
@@ -23,9 +27,23 @@ void TDiagnostics::writeInfo(Severity severity,
                              const std::string& token,
                              const std::string& extra)
 {
-    TInfoSinkBase& sink = mInfoSink.info;
-    TPrefixType prefix = severity == ERROR ? EPrefixError : EPrefixWarning;
+    TPrefixType prefix = EPrefixNone;
+    switch (severity)
+    {
+      case ERROR:
+        ++mNumErrors;
+        prefix = EPrefixError;
+        break;
+      case WARNING:
+        ++mNumWarnings;
+        prefix = EPrefixWarning;
+        break;
+      default:
+        UNREACHABLE();
+        break;
+    }
 
+    TInfoSinkBase& sink = mInfoSink.info;
     /* VC++ format: file(linenum) : error #: 'token' : extrainfo */
     sink.prefix(prefix);
     sink.location(EncodeSourceLoc(loc.file, loc.line));
@@ -41,4 +59,5 @@ void TDiagnostics::print(ID id,
                          const pp::SourceLocation& loc,
                          const std::string& text)
 {
+    writeInfo(severity(id), loc, message(id), text, "");
 }

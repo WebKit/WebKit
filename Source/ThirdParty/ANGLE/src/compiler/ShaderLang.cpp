@@ -125,6 +125,9 @@ void ShInitBuiltInResources(ShBuiltInResources* resources)
     resources->OES_standard_derivatives = 0;
     resources->OES_EGL_image_external = 0;
     resources->ARB_texture_rectangle = 0;
+
+    // Disable name hashing by default.
+    resources->HashFunction = NULL;
 }
 
 //
@@ -224,6 +227,22 @@ void ShGetInfo(const ShHandle handle, ShShaderInfo pname, int* params)
         // handle array and struct dereferences.
         *params = 1 + MAX_SYMBOL_NAME_LEN;
         break;
+    case SH_NAME_MAX_LENGTH:
+        *params = 1 + MAX_SYMBOL_NAME_LEN;
+        break;
+    case SH_HASHED_NAME_MAX_LENGTH:
+        if (compiler->getHashFunction() == NULL) {
+            *params = 0;
+        } else {
+            // 64 bits hashing output requires 16 bytes for hex 
+            // representation.
+            const char HashedNamePrefix[] = HASHED_NAME_PREFIX;
+            *params = 16 + sizeof(HashedNamePrefix);
+        }
+        break;
+    case SH_HASHED_NAMES_COUNT:
+        *params = compiler->getNameMap().size();
+        break;
     default: UNREACHABLE();
     }
 }
@@ -282,4 +301,47 @@ void ShGetActiveUniform(const ShHandle handle,
 {
     getVariableInfo(SH_ACTIVE_UNIFORMS,
                     handle, index, length, size, type, name, mappedName);
+}
+
+void ShGetNameHashingEntry(const ShHandle handle,
+                           int index,
+                           char* name,
+                           char* hashedName)
+{
+    if (!handle || !name || !hashedName || index < 0)
+        return;
+
+    TShHandleBase* base = static_cast<TShHandleBase*>(handle);
+    TCompiler* compiler = base->getAsCompiler();
+    if (!compiler) return;
+
+    const NameMap& nameMap = compiler->getNameMap();
+    if (index >= static_cast<int>(nameMap.size()))
+        return;
+
+    NameMap::const_iterator it = nameMap.begin();
+    for (int i = 0; i < index; ++i)
+        ++it;
+
+    size_t len = it->first.length() + 1;
+    int max_len = 0;
+    ShGetInfo(handle, SH_NAME_MAX_LENGTH, &max_len);
+    if (static_cast<int>(len) > max_len) {
+        ASSERT(false);
+        len = max_len;
+    }
+    strncpy(name, it->first.c_str(), len);
+    // To be on the safe side in case the source is longer than expected.
+    name[len] = '\0';
+
+    len = it->second.length() + 1;
+    max_len = 0;
+    ShGetInfo(handle, SH_HASHED_NAME_MAX_LENGTH, &max_len);
+    if (static_cast<int>(len) > max_len) {
+        ASSERT(false);
+        len = max_len;
+    }
+    strncpy(hashedName, it->second.c_str(), len);
+    // To be on the safe side in case the source is longer than expected.
+    hashedName[len] = '\0';
 }
