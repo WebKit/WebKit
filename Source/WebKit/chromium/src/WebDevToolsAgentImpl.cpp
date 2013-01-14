@@ -733,7 +733,7 @@ void WebDevToolsAgent::interruptAndDispatch(MessageDescriptor* rawDescriptor)
     // rawDescriptor can't be a PassOwnPtr because interruptAndDispatch is a WebKit API function.
     OwnPtr<MessageDescriptor> descriptor = adoptPtr(rawDescriptor);
     OwnPtr<DebuggerTask> task = adoptPtr(new DebuggerTask(descriptor.release()));
-    PageScriptDebugServer::interruptAndRun(task.release());
+    PageScriptDebugServer::interruptAndRun(task.release(), v8::Isolate::GetCurrent());
 }
 
 bool WebDevToolsAgent::shouldInterruptForMessage(const WebString& message)

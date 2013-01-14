@@ -1,3 +1,17 @@
+2013-01-14  Kentaro Hara  <haraken@chromium.org>
+
+        [V8] Make an Isolate parameter mandatory in ScriptDebugServer::interruptAndRun()
+        https://bugs.webkit.org/show_bug.cgi?id=106779
+
+        Reviewed by Adam Barth.
+
+        This is one of steps to make an Isolate parameter mandatory.
+
+        No tests. No change in behavior.
+
+        * src/WebDevToolsAgentImpl.cpp:
+        (WebKit::WebDevToolsAgent::interruptAndDispatch):
+
 2013-01-13  Vsevolod Vlasov  <vsevik@chromium.org>
 
         Web Inspector: [Chromium] DevToolsSanityTest.TestNoScriptDuplicatesOnPanelSwitch fails
