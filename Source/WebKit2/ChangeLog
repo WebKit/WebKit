@@ -1,3 +1,22 @@
+2013-01-11  Balazs Kelemen  <kbalazs@webkit.org>
+
+        [Qt][WK2] plugin tests assert in debug
+        https://bugs.webkit.org/show_bug.cgi?id=106659
+
+        Reviewed by Benjamin Poulain.
+
+        Fixed the misuse of String::split.
+
+        * Shared/Plugins/Netscape/x11/NetscapePluginModuleX11.cpp:
+        (WebKit::truncateToSingleLine):
+        Add an assert to make sure this function works well. I just walked there
+        while debugging the bug, and although it was innocent, adding this assertion
+        is logical.
+        * UIProcess/Plugins/qt/PluginProcessProxyQt.cpp:
+        (WebKit::PluginProcessProxy::scanPlugin):
+        The ASSERT was wrong. We have three lines, each ends in a newline, so split
+        with allowEmptyEntries=true will devide it to 4 substrings.
+
 2013-01-11  Filip Pizlo  <fpizlo@apple.com>
 
         JITThunks should not compile only because of luck

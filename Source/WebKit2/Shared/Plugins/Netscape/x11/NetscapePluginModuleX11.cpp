@@ -172,9 +172,9 @@ static String truncateToSingleLine(const String& string)
     }
     buffer[newLength++] = UChar('\n');
 
-    if (newLength == oldLength + 1)
-        return stringBuffer;
-    return String(stringBuffer.characters16(), newLength);
+    String result = (newLength == oldLength + 1) ? stringBuffer : String(stringBuffer.characters16(), newLength);
+    ASSERT(result.endsWith(UChar('\n')));
+    return result;
 }
 
 bool NetscapePluginModule::scanPlugin(const String& pluginPath)
