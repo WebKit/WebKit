@@ -1081,12 +1081,17 @@ void RenderBlock::removeLeftoverAnonymousBlock(RenderBlock* child)
         if (child->nextSibling())
             child->nextSibling()->setPreviousSibling(child->previousSibling());
     }
+
+    child->children()->setFirstChild(0);
+    child->m_next = 0;
+
+    // Remove all the information in the flow thread associated with the leftover anonymous block.
+    if (child->inRenderFlowThread())
+        child->removeFromRenderFlowThread();
+
     child->setParent(0);
     child->setPreviousSibling(0);
     child->setNextSibling(0);
-    
-    child->children()->setFirstChild(0);
-    child->m_next = 0;
 
     child->destroy();
 }

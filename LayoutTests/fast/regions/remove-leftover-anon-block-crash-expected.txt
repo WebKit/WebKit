@@ -1,0 +1,7 @@
+Test for WebKit Bug 106191 Crash when an anonymous block in a flow thread is deleted because it has only block children.
+
+The test passes if it does not crash or assert.
+
+PASS
+
+
