@@ -54,7 +54,7 @@ private:
 };
 
 
-inline v8::Handle<v8::Object> wrap(TestActiveDOMObject* impl, v8::Handle<v8::Object> creationContext, v8::Isolate* isolate = 0)
+inline v8::Handle<v8::Object> wrap(TestActiveDOMObject* impl, v8::Handle<v8::Object> creationContext, v8::Isolate* isolate)
 {
     ASSERT(impl);
     ASSERT(DOMDataStore::getWrapper(impl, isolate).IsEmpty());
