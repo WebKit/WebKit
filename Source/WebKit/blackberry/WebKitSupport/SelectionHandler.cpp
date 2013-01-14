@@ -1028,12 +1028,14 @@ void SelectionHandler::caretPositionChanged(bool userTouchTriggered)
 {
     SelectionLog(Platform::LogLevelInfo, "SelectionHandler::caretPositionChanged");
 
+    bool isFatFingerOnTextField = userTouchTriggered && m_webPage->m_touchEventHandler->lastFatFingersResult().isTextInput();
+
     WebCore::IntRect caretLocation;
     // If the input field is not active, we must be turning off the caret.
     if (!m_webPage->m_inputHandler->isInputMode() && m_caretActive) {
         m_caretActive = false;
         // Send an empty caret change to turn off the caret.
-        m_webPage->m_client->notifyCaretChanged(caretLocation, userTouchTriggered);
+        m_webPage->m_client->notifyCaretChanged(caretLocation, isFatFingerOnTextField);
         return;
     }
 
@@ -1074,7 +1076,7 @@ void SelectionHandler::caretPositionChanged(bool userTouchTriggered)
         Platform::IntRect(nodeBoundingBox).toString().c_str(),
         m_webPage->m_inputHandler->elementText().isEmpty() ? ", empty text field" : "");
 
-    m_webPage->m_client->notifyCaretChanged(caretLocation, userTouchTriggered, isSingleLineInput, nodeBoundingBox, m_webPage->m_inputHandler->elementText().isEmpty());
+    m_webPage->m_client->notifyCaretChanged(caretLocation, isFatFingerOnTextField, isSingleLineInput, nodeBoundingBox, m_webPage->m_inputHandler->elementText().isEmpty());
 }
 
 bool SelectionHandler::selectionContains(const WebCore::IntPoint& point)

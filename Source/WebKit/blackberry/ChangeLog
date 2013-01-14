@@ -1,3 +1,27 @@
+2013-01-14  Otto Derek Cheung  <otcheung@rim.com>
+
+        [BlackBerry] FCC appears when switching search engine providers
+        https://bugs.webkit.org/show_bug.cgi?id=106824
+
+        Magnifying glass appears when switching search engine providers
+
+        PR 279178
+
+        Reviewed by Rob Buis.
+        Internal Reviewed by Mike Fenton.
+
+        We need to make sure fatfinger is touching a textfield when we tell notifyCaretChanged
+        to show the FCC.
+
+        This behaviour is accidentally regressed in the fix in PR 267177, causing the FCC to show
+        when the user touches an element that is not a textfield and changes the caret in the inputbar..
+
+        Tested that the behaviour in 267177 isn't reproducible and the FCC isn't invoked when we switch
+        search engine providers.
+
+        * WebKitSupport/SelectionHandler.cpp:
+        (BlackBerry::WebKit::SelectionHandler::caretPositionChanged):
+
 2013-01-14  Jacky Jiang  <zhajiang@rim.com>
 
         [BlackBerry] Zoom is still possible when user-scalable=no
