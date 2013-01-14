@@ -48,7 +48,7 @@ static bool containsSource(MediaStreamSourceVector& sourceVector, MediaStreamSou
 
 static void processTrack(MediaStreamTrack* track, MediaStreamSourceVector& sourceVector)
 {
-    if (track->readyState() == MediaStreamTrack::ENDED)
+    if (track->ended())
         return;
 
     MediaStreamSource* source = track->component()->source();
