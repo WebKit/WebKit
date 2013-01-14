@@ -297,6 +297,9 @@ void TestShell::runFileTest(const TestParams& params, bool shouldDumpPixels)
         m_printer.handleTestHeader(testUrl.c_str());
     loadURL(m_params.testUrl);
 
+    if (m_devTools)
+        this->setFocus(m_devTools->webView(), true);
+
     m_testIsPreparing = false;
     waitTestFinished();
 }
