@@ -4267,14 +4267,8 @@ webkit.org/b/106426 [ Win ] inspector/geolocation-watchPosition.html [ Failure P
 crbug.com/166932 [ Debug ] plugins/embed-attributes-setting.html [ Crash Pass ]
 
 # Broken by Skia flag changes in r139445
-crbug.com/169550 [ Debug ] fast/borders/border-mixed-alpha.html [ Crash ]
-crbug.com/169550 [ Debug ] fast/borders/outline-alpha-block.html [ Crash ]
-crbug.com/169550 [ Debug ] fast/borders/outline-alpha-inline.html [ Crash ]
 crbug.com/169550 [ Debug ] fast/lists/big-list-marker.html [ Crash ]
 crbug.com/169550 [ Debug ] platform/chromium/virtual/deferred/fast/images/icon-decoding.html [ Crash ]
-crbug.com/169550 [ Release ] fast/borders/border-mixed-alpha.html [ ImageOnlyFailure ]
-crbug.com/169550 [ Release ] fast/borders/outline-alpha-block.html [ ImageOnlyFailure ]
-crbug.com/169550 [ Release ] fast/borders/outline-alpha-inline.html [ ImageOnlyFailure ]
 
 # Transient. Needs rebaseline.
 webkit.org/b/103955 fast/repaint/caret-outside-block.html [ ImageOnlyFailure ]

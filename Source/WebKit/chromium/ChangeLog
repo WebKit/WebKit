@@ -1,3 +1,13 @@
+2013-01-14  Stephen Chenney  <schenney@chromium.org>
+
+        Re-enabling the SK_DISABLE_DASHING_OPTIMIZATION flag for Skia
+
+        Unreviewed build fix.
+
+        It turns out that the change behind this flag causes crashes and image errors.
+
+        * skia_webkit.gyp:
+
 2013-01-14  Kentaro Hara  <haraken@chromium.org>
 
         [V8] Make an Isolate parameter mandatory in ScriptDebugServer::interruptAndRun()

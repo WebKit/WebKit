@@ -43,6 +43,12 @@
           # DO NOT remove the define until you are ready to rebaseline, and
           # AFTER the flag has been removed from skia.gyp in Chromium.
 
+          # This flag causes asserts and image errors in border-drawing code
+          # where the borders have alpha. Do not remove this suppression until
+          # those issues have been addressed and the associated tests verified.
+          # See crbug.com/169550
+          'SK_DISABLE_DASHING_OPTIMIZATION',
+
         ],
       },
     },
