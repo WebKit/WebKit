@@ -1,3 +1,14 @@
+2013-01-13  Vsevolod Vlasov  <vsevik@chromium.org>
+
+        Web Inspector: [Chromium] DevToolsSanityTest.TestNoScriptDuplicatesOnPanelSwitch fails
+        https://bugs.webkit.org/show_bug.cgi?id=106755
+
+        Reviewed by Alexander Pavlov.
+
+        * src/js/Tests.js:
+        (.TestSuite.prototype.nonAnonymousUISourceCodes_.filterOutService):
+        (.TestSuite.prototype.nonAnonymousUISourceCodes_):
+
 2013-01-12  David Grogan  <dgrogan@chromium.org>
 
         Unreviewed.  Roll chromium DEPS to 176595.

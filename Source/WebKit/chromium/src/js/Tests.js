@@ -733,7 +733,13 @@ TestSuite.prototype.nonAnonymousUISourceCodes_ = function()
         return !!uiSourceCode.url;
     }
 
+    function filterOutService(uiSourceCode)
+    {
+        return !uiSourceCode.project().isServiceProject();
+    }
+
     var uiSourceCodes = WebInspector.workspace.uiSourceCodes();
+    uiSourceCodes = uiSourceCodes.filter(filterOutService);
     return uiSourceCodes.filter(filterOutAnonymous);
 };
 
