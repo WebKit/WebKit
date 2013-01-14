@@ -55,7 +55,7 @@ v8::Handle<v8::Value> wrapArrayBufferView(const v8::Arguments& args, WrapperType
     if (hasIndexer)
         args.Holder()->SetIndexedPropertiesToExternalArrayData(array.get()->baseAddress(), arrayType, array.get()->length());
     v8::Handle<v8::Object> wrapper = args.Holder();
-    v8::Persistent<v8::Object> wrapperHandle = V8DOMWrapper::associateObjectWithWrapper(array.release(), type, wrapper);
+    v8::Persistent<v8::Object> wrapperHandle = V8DOMWrapper::associateObjectWithWrapper(array.release(), type, wrapper, args.GetIsolate());
     wrapperHandle.MarkIndependent();
     return wrapper;
 }
@@ -225,7 +225,7 @@ v8::Handle<v8::Value> constructWebGLArray(const v8::Arguments& args, WrapperType
     }
 
     v8::Handle<v8::Object> wrapper = args.Holder();
-    v8::Persistent<v8::Object> wrapperHandle = V8DOMWrapper::associateObjectWithWrapper(array.release(), type, wrapper);
+    v8::Persistent<v8::Object> wrapperHandle = V8DOMWrapper::associateObjectWithWrapper(array.release(), type, wrapper, args.GetIsolate());
     wrapperHandle.MarkIndependent();
     return wrapper;
 }

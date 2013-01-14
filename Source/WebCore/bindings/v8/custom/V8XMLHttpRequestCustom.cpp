@@ -61,7 +61,7 @@ v8::Handle<v8::Value> V8XMLHttpRequest::constructorCallbackCustom(const v8::Argu
     RefPtr<XMLHttpRequest> xmlHttpRequest = XMLHttpRequest::create(context, securityOrigin);
 
     v8::Handle<v8::Object> wrapper = args.Holder();
-    V8DOMWrapper::associateObjectWithWrapper(xmlHttpRequest.release(), &info, wrapper);
+    V8DOMWrapper::associateObjectWithWrapper(xmlHttpRequest.release(), &info, wrapper, args.GetIsolate());
     return wrapper;
 }
 
