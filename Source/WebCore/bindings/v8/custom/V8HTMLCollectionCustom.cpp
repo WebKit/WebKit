@@ -54,10 +54,10 @@ v8::Handle<v8::Value> V8HTMLCollection::namedPropertyGetter(v8::Local<v8::String
     HTMLCollection* imp = V8HTMLCollection::toNative(info.Holder());
 #if ENABLE(MICRODATA)
     if (imp->type() == ItemProperties) {
-        PropertyNodeList* item = static_cast<HTMLPropertiesCollection*>(imp)->propertyNodeList(toWebCoreAtomicString(name)).get();
+        RefPtr<PropertyNodeList> item = static_cast<HTMLPropertiesCollection*>(imp)->propertyNodeList(toWebCoreAtomicString(name));
         if (!item)
             return v8Undefined();
-        return toV8(item, info.Holder(), info.GetIsolate());
+        return toV8(item.release(), info.Holder(), info.GetIsolate());
     }
 #endif
     Node* item = imp->namedItem(toWebCoreAtomicString(name));

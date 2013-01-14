@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../js/resources/js-test-pre.js"></script>
+</head>
+<body>
+<div id="testDiv" itemscope><div itemprop="bar"> </div></div>
+<script>
+description("This test is successful if it does not crash.");
+var testDiv = document.getElementById("testDiv");
+
+shouldBeTrue("testDiv.properties['bar'] == '[object PropertyNodeList]'");
+shouldBe("testDiv.properties['bar'].length", "1");
+</script>
+<script src="../../js/resources/js-test-post.js"></script>
+</body>
+</html>
+
