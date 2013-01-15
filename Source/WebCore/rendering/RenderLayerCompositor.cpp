@@ -965,10 +965,10 @@ void RenderLayerCompositor::computeCompositingRequirements(RenderLayer* ancestor
     // so test that again.
     bool isCompositedClippingLayer = canBeComposited(layer) && clipsCompositingDescendants(layer);
 
-    // Turn overlap testing off for later layers if it's already off, or if we have a 3D transform or an animating transform.
+    // Turn overlap testing off for later layers if it's already off, or if we have an animating transform.
     // Note that if the layer clips its descendants, there's no reason to propagate the child animation to the parent layers. That's because
     // we know for sure the animation is contained inside the clipping rectangle, which is already added to the overlap map.
-    if ((!childState.m_testingOverlap && !isCompositedClippingLayer) || layer->has3DTransform() || isRunningAcceleratedTransformAnimation(layer->renderer()))
+    if ((!childState.m_testingOverlap && !isCompositedClippingLayer) || isRunningAcceleratedTransformAnimation(layer->renderer()))
         compositingState.m_testingOverlap = false;
     
     if (isCompositedClippingLayer) {

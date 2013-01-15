@@ -17,15 +17,11 @@
             (GraphicsLayer
               (position 1.00 1.00)
               (bounds 120.00 460.00)
-              (children 4
+              (children 3
                 (GraphicsLayer
                   (position 10.00 10.00)
                   (bounds 100.00 100.00)
                   (transform [1.00 0.00 0.00 0.00] [0.00 1.00 0.00 0.00] [0.00 0.00 1.00 0.00] [0.00 0.00 1.00 1.00])
-                )
-                (GraphicsLayer
-                  (position 10.00 120.00)
-                  (bounds 100.00 100.00)
                 )
                 (GraphicsLayer
                   (position 10.00 230.00)

@@ -3,18 +3,12 @@
   (children 1
     (GraphicsLayer
       (bounds 800.00 600.00)
-      (children 2
+      (children 1
         (GraphicsLayer
           (position 6.00 6.00)
           (bounds 104.00 104.00)
           (drawsContent 1)
           (transform [1.00 0.00 0.00 0.00] [0.00 1.00 0.00 0.00] [0.00 0.00 1.00 0.00] [0.00 0.00 1.00 1.00])
-        )
-        (GraphicsLayer
-          (position 6.00 119.00)
-          (bounds 788.00 19.00)
-          (opacity 0.00)
-          (drawsContent 1)
         )
       )
     )
