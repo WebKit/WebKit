@@ -515,18 +515,20 @@ void GraphicsSurface::platformCopyFromTexture(uint32_t texture, const IntRect& s
 
 void GraphicsSurface::platformPaintToTextureMapper(TextureMapper* textureMapper, const FloatRect& targetRect, const TransformationMatrix& transform, float opacity, BitmapTexture* mask)
 {
-    TextureMapperGL* texMapGL = static_cast<TextureMapperGL*>(textureMapper);
     IntSize size = m_private->size();
     if (size.isEmpty())
         return;
     uint32_t texture = platformGetTextureID();
     if (!texture)
         return;
-    TransformationMatrix adjustedTransform = transform;
-    adjustedTransform.multiply(TransformationMatrix::rectToRect(FloatRect(FloatPoint::zero(), size), targetRect));
+
     TextureMapperGL::Flags flags = m_private->textureIsYInverted() ? TextureMapperGL::ShouldFlipTexture : 0;
     flags |= TextureMapperGL::ShouldBlend;
-    texMapGL->drawTexture(texture, flags, size, targetRect, adjustedTransform, opacity, mask);
+
+    FloatRect rectOnContents(FloatPoint::zero(), size);
+    TransformationMatrix adjustedTransform = transform;
+    adjustedTransform.multiply(TransformationMatrix::rectToRect(rectOnContents, targetRect));
+    static_cast<TextureMapperGL*>(textureMapper)->drawTexture(texture, flags, size, rectOnContents, adjustedTransform, opacity, mask);
 }
 
 uint32_t GraphicsSurface::platformFrontBuffer() const
