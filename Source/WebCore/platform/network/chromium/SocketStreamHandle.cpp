@@ -42,8 +42,6 @@
 #include <public/WebSocketStreamHandle.h>
 #include <wtf/PassOwnPtr.h>
 
-using namespace WebKit;
-
 namespace WebCore {
 
 SocketStreamHandleInternal::SocketStreamHandleInternal(SocketStreamHandle* handle)
@@ -84,7 +82,7 @@ int SocketStreamHandleInternal::send(const char* data, int len)
 
     if (len <= 0)
         return len;
-    WebData webdata(data, len);
+    WebKit::WebData webdata(data, len);
     if (m_socket->send(webdata)) {
         m_pendingAmountSent += len;
         LOG(Network, "sent");
@@ -101,7 +99,7 @@ void SocketStreamHandleInternal::close()
         m_socket->close();
 }
     
-void SocketStreamHandleInternal::didOpenStream(WebSocketStreamHandle* socketHandle, int maxPendingSendAllowed)
+void SocketStreamHandleInternal::didOpenStream(WebKit::WebSocketStreamHandle* socketHandle, int maxPendingSendAllowed)
 {
     LOG(Network, "SocketStreamHandleInternal::didOpen %d",
         maxPendingSendAllowed);
@@ -118,7 +116,7 @@ void SocketStreamHandleInternal::didOpenStream(WebSocketStreamHandle* socketHand
     LOG(Network, "no m_handle or m_socket?");
 }
 
-void SocketStreamHandleInternal::didSendData(WebSocketStreamHandle* socketHandle, int amountSent)
+void SocketStreamHandleInternal::didSendData(WebKit::WebSocketStreamHandle* socketHandle, int amountSent)
 {
     LOG(Network, "SocketStreamHandleInternal::didSendData %d", amountSent);
     ASSERT(amountSent > 0);
@@ -130,7 +128,7 @@ void SocketStreamHandleInternal::didSendData(WebSocketStreamHandle* socketHandle
     }
 }
 
-void SocketStreamHandleInternal::didReceiveData(WebSocketStreamHandle* socketHandle, const WebData& data)
+void SocketStreamHandleInternal::didReceiveData(WebKit::WebSocketStreamHandle* socketHandle, const WebKit::WebData& data)
 {
     LOG(Network, "didReceiveData");
     if (m_handle && m_socket) {
@@ -140,7 +138,7 @@ void SocketStreamHandleInternal::didReceiveData(WebSocketStreamHandle* socketHan
     }
 }
 
-void SocketStreamHandleInternal::didClose(WebSocketStreamHandle* socketHandle)
+void SocketStreamHandleInternal::didClose(WebKit::WebSocketStreamHandle* socketHandle)
 {
     LOG(Network, "didClose");
     if (m_handle && m_socket) {
@@ -153,7 +151,7 @@ void SocketStreamHandleInternal::didClose(WebSocketStreamHandle* socketHandle)
     }
 }
 
-void SocketStreamHandleInternal::didFail(WebSocketStreamHandle* socketHandle, const WebSocketStreamError& err)
+void SocketStreamHandleInternal::didFail(WebKit::WebSocketStreamHandle* socketHandle, const WebKit::WebSocketStreamError& err)
 {
     LOG(Network, "didFail");
     if (m_handle && m_socket) {

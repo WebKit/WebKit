@@ -1,3 +1,16 @@
+2013-01-15  Mark Pilgrim  <pilgrim@chromium.org>
+
+        [Chromium] Move SocketStreamHandle and SocketStreamHandleInternal to WebCore/platform
+        https://bugs.webkit.org/show_bug.cgi?id=106899
+
+        Reviewed by Adam Barth.
+
+        Part of a larger refactoring series; see tracking bug 106829.
+
+        * WebKit.gyp:
+        * src/SocketStreamHandle.cpp: Removed.
+        * src/SocketStreamHandleInternal.h: Removed.
+
 2013-01-15  Florin Malita  <fmalita@chromium.org>
 
         [Chromium] Incorrect opaque region tracking for PlatformContextSkia::drawRRect

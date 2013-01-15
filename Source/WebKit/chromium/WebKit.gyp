@@ -454,8 +454,6 @@
                 'src/ScrollbarGroup.cpp',
                 'src/ScrollbarGroup.h',
                 'src/SharedWorkerRepository.cpp',
-                'src/SocketStreamHandle.cpp',
-                'src/SocketStreamHandleInternal.h',
                 'src/SpeechInputClientImpl.cpp',
                 'src/SpeechInputClientImpl.h',
                 'src/SpeechRecognitionClientProxy.cpp',
