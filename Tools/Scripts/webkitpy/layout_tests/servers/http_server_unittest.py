@@ -97,4 +97,4 @@ class TestHttpServer(unittest.TestCase):
         server._wait_for_action = wait_for_action
 
         server.stop()
-        self.assertEquals(['taskkill.exe', '/f', '/t', 42], host.executive.calls[1])
+        self.assertEquals(['taskkill.exe', '/f', '/t', '/pid', 42], host.executive.calls[1])

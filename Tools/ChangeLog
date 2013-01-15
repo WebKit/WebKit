@@ -1,3 +1,12 @@
+2013-01-15  Tony Chang  <tony@chromium.org>
+
+        [chromium] Unreviewed, fix a bug where we don't properly shutdown lighttpd.
+
+        * Scripts/webkitpy/layout_tests/servers/http_server.py:
+        (Lighttpd._check_and_kill): Pass /pid so taskkill.exe doesn't error out on us.
+        * Scripts/webkitpy/layout_tests/servers/http_server_unittest.py:
+        (TestHttpServer.test_win32_start_and_stop):
+
 2013-01-15  Joshua Bell  <jsbell@chromium.org>
 
         Unreviewed. Adding Michael Pruett as contributor.
