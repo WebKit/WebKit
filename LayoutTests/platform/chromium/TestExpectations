@@ -4366,5 +4366,4 @@ Bug(schenney) svg/W3C-SVG-1.2-Tiny/struct-use-recursion-03-t.svg [ ImageOnlyFail
 
 webkit.org/b/106833 fast/borders/outline-alpha-inline.html [ Pass ImageOnlyFailure ]
 webkit.org/b/106858 [ SnowLeopard Debug ] scrollingcoordinator/non-fast-scrollable-region-transformed-iframe.html [ ImageOnlyFailure ]
-webkit.org/b/106869 [ Lion Debug ] fast/mediastream/RTCPeerConnection-events.html [ Crash ]
 webkit.org/b/106875 [ XP ] svg/dynamic-updates/SVGFESpecularLightingElement-remove-lightSource.html [ ImageOnlyFailure ]

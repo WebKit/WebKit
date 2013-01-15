@@ -231,6 +231,7 @@ void MediaStream::streamEnded()
 
 void MediaStream::contextDestroyed()
 {
+    ContextDestructionObserver::contextDestroyed();
     m_stopped = true;
 }
 
