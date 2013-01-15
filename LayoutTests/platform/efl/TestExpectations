@@ -1806,3 +1806,7 @@ webkit.org/b/103955 fast/repaint/caret-with-transformation.html [ Missing ]
 # Started failing due to new checks added in r139547.
 webkit.org/b/106743 media/video-controls-captions.html [ Failure ]
 
+# New inspector/editor/text-editor-formatter.html introduced in r139617 fails on EFL, Mac, QT
+# https://bugs.webkit.org/show_bug.cgi?id=106883
+inspector/editor/text-editor-formatter.html
+
