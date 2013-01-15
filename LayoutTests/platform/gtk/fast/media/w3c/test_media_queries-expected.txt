@@ -281,13 +281,13 @@ FAIL find_resolution assert_false: expected false got true
 PASS (resolution: dpi) should not apply 
 PASS (resolution: dpi + 1) should not apply 
 FAIL (min-resolution: dpi - 1 ) should apply assert_true: expected true got false
-PASS not all and (min-resolution: dpi - 1 ) should not apply 
-FAIL not all and (min-resolution: dpi + 1 ) should apply assert_true: expected true got false
+FAIL not all and (min-resolution: dpi - 1 ) should not apply assert_false: expected false got true
+PASS not all and (min-resolution: dpi + 1 ) should apply 
 PASS all and (min-resolution: dpi + 1 ) should not apply 
 FAIL (min-resolution: dpcm (dpi - 1) ) should apply assert_true: expected true got false
 FAIL (max-resolution: dpcm  (dpi + 1) ) should apply assert_true: expected true got false
 PASS (max-resolution: dpcm  (dpi - 1) ) should not apply 
-FAIL not all and (min-resolution: dpcm  (dpi + 1) ) should apply assert_true: expected true got false
+PASS not all and (min-resolution: dpcm  (dpi + 1) ) should apply 
 PASS expression grid should be parseable 
 PASS expression grid: 0 should be parseable 
 PASS expression grid: 1 should be parseable 
