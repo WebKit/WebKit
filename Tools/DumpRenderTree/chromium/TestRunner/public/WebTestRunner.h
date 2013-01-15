@@ -31,6 +31,8 @@
 #ifndef WebTestRunner_h
 #define WebTestRunner_h
 
+#include "WebTextDirection.h"
+
 namespace WebKit {
 class WebArrayBufferView;
 class WebPermissionClient;
@@ -72,6 +74,7 @@ public:
     virtual bool sweepHorizontally() const { return false; }
     virtual bool isPrinting() const { return false; }
     virtual bool shouldStayOnPageAfterHandlingBeforeUnload() const { return false; } 
+    virtual void setTitleTextDirection(WebKit::WebTextDirection) { }
 };
 
 }
