@@ -137,7 +137,6 @@ public:
 
     void checkConsistency() const;
 
-    virtual void computePreferredLogicalWidths(float leadWidth);
     bool isAllCollapsibleWhitespace();
 
     bool canUseSimpleFontCodePath() const { return m_canUseSimpleFontCodePath; }
@@ -148,6 +147,7 @@ public:
     virtual void reportMemoryUsage(MemoryObjectInfo*) const OVERRIDE;
 
 protected:
+    virtual void computePreferredLogicalWidths(float leadWidth);
     virtual void willBeDestroyed();
 
     virtual void styleWillChange(StyleDifference, const RenderStyle*) { }
