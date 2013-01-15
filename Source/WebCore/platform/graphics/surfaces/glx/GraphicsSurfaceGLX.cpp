@@ -36,6 +36,7 @@
 
 #include <GL/glext.h>
 #include <GL/glx.h>
+#include <X11/Xlib.h>
 #include <X11/extensions/Xcomposite.h>
 #include <X11/extensions/Xrender.h>
 
@@ -51,6 +52,31 @@ static PFNGLGENFRAMEBUFFERSPROC pGlGenFramebuffers = 0;
 static PFNGLDELETEFRAMEBUFFERSPROC pGlDeleteFramebuffers = 0;
 static PFNGLFRAMEBUFFERTEXTURE2DPROC pGlFramebufferTexture2D = 0;
 
+// Used for handling XError.
+static bool validOperation = true;
+static int handleXPixmapCreationError(Display*, XErrorEvent* event)
+{
+    if (event->error_code == BadMatch || event->error_code == BadWindow || event->error_code == BadAlloc) {
+        validOperation = false;
+
+        switch (event->error_code) {
+        case BadMatch:
+            LOG_ERROR("BadMatch.");
+            break;
+        case BadWindow:
+            LOG_ERROR("BadWindow.");
+            break;
+        case BadAlloc:
+            LOG_ERROR("BadAlloc.");
+            break;
+        default:
+            break;
+        }
+    }
+
+    return 0;
+}
+
 static int attributes[] = {
     GLX_LEVEL, 0,
     GLX_DRAWABLE_TYPE, GLX_WINDOW_BIT,
@@ -65,6 +91,37 @@ static int attributes[] = {
     None
 };
 
+class ScopedXPixmapCreationErrorHandler {
+
+public:
+    ScopedXPixmapCreationErrorHandler(Display* display)
+        : m_display(display)
+    {
+        // XSync must be called to ensure that current errors are handled by the original handler.
+        XSync(m_display, false);
+        m_previousErrorHandler = XSetErrorHandler(handleXPixmapCreationError);
+    }
+
+    ~ScopedXPixmapCreationErrorHandler()
+    {
+        // Restore the original handler.
+        XSetErrorHandler(m_previousErrorHandler);
+    }
+
+    bool isValidOperation() const
+    {
+        validOperation = true;
+        // XSync is needed to catch possible errors as they are generated asynchronously.
+        XSync(m_display, false);
+        return validOperation;
+    }
+
+private:
+    XErrorHandler m_previousErrorHandler;
+    Display* m_display;
+};
+
+// FIXME: Take X11WindowResources and GLXConfigSelector into use.
 class OffScreenRootWindow {
 public:
     OffScreenRootWindow()
@@ -193,16 +250,7 @@ struct GraphicsSurfacePrivate {
 
     ~GraphicsSurfacePrivate()
     {
-        if (m_glxPixmap)
-            glXDestroyPixmap(m_display, m_glxPixmap);
-        m_glxPixmap = 0;
-
-        if (m_xPixmap)
-            XFreePixmap(m_display, m_xPixmap);
-        m_xPixmap = 0;
-
-        if (m_glContext)
-            glXDestroyContext(m_display, m_glContext);
+        clear();
     }
 
     uint32_t createSurface(const IntSize& size)
@@ -239,6 +287,12 @@ struct GraphicsSurfacePrivate {
         XWindowAttributes attr;
         if (!XGetWindowAttributes(m_display, winId, &attr))
             return;
+
+        // Ensure that the window is mapped.
+        if (attr.map_state == IsUnmapped || attr.map_state == IsUnviewable)
+            return;
+
+        ScopedXPixmapCreationErrorHandler handler(m_display);
         m_size = IntSize(attr.width, attr.height);
 
         XRenderPictFormat* format = XRenderFindVisualFormat(m_display, attr.visual);
@@ -253,9 +307,13 @@ struct GraphicsSurfacePrivate {
         m_xPixmap = XCompositeNameWindowPixmap(m_display, winId);
         m_glxPixmap = glXCreatePixmap(m_display, config, m_xPixmap, glxAttributes);
 
-        uint inverted = 0;
-        glXQueryDrawable(m_display, m_glxPixmap, GLX_Y_INVERTED_EXT, &inverted);
-        m_textureIsYInverted = !!inverted;
+        if (!handler.isValidOperation())
+            clear();
+        else {
+            uint inverted = 0;
+            glXQueryDrawable(m_display, m_glxPixmap, GLX_Y_INVERTED_EXT, &inverted);
+            m_textureIsYInverted = !!inverted;
+        }
 
         XFree(configs);
     }
@@ -360,14 +418,31 @@ private:
 
             XRenderPictFormat* format = XRenderFindVisualFormat(m_display, visualInfo->visual);
             XFree(visualInfo);
-            if (format && format->direct.alphaMask > 0) {
+
+            if (format && format->direct.alphaMask > 0)
                 return fbConfigs[i];
-                break;
-            }
         }
 
         // Return 1st config as a fallback with no alpha support.
         return fbConfigs[0];
+    }
+
+    void clear()
+    {
+        if (m_glxPixmap) {
+            glXDestroyPixmap(m_display, m_glxPixmap);
+            m_glxPixmap = 0;
+        }
+
+        if (m_xPixmap) {
+            XFreePixmap(m_display, m_xPixmap);
+            m_xPixmap = 0;
+        }
+
+        if (m_glContext) {
+            glXDestroyContext(m_display, m_glContext);
+            m_glContext = 0;
+        }
     }
 
     OffScreenRootWindow m_offScreenWindow;
@@ -438,7 +513,6 @@ void GraphicsSurface::platformCopyFromTexture(uint32_t texture, const IntRect& s
     m_private->copyFromTexture(texture, sourceRect);
 }
 
-
 void GraphicsSurface::platformPaintToTextureMapper(TextureMapper* textureMapper, const FloatRect& targetRect, const TransformationMatrix& transform, float opacity, BitmapTexture* mask)
 {
     TextureMapperGL* texMapGL = static_cast<TextureMapperGL*>(textureMapper);
@@ -462,11 +536,12 @@ uint32_t GraphicsSurface::platformFrontBuffer() const
 
 uint32_t GraphicsSurface::platformSwapBuffers()
 {
-    if (m_private->isReceiver()) {
+    if (m_private->isReceiver() && platformGetTextureID()) {
         glBindTexture(GL_TEXTURE_2D, platformGetTextureID());
         // Release previous lock and rebind texture to surface to get frame update.
         pGlXReleaseTexImageEXT(m_private->display(), m_private->glxPixmap(), GLX_FRONT_EXT);
         pGlXBindTexImageEXT(m_private->display(), m_private->glxPixmap(), GLX_FRONT_EXT, 0);
+
         return 0;
     }
 
