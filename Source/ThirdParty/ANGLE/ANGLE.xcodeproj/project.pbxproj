@@ -152,7 +152,6 @@
 		90D9B0FC12E11DCB002D4255 /* glslang_tab.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = glslang_tab.cpp; sourceTree = "<group>"; };
 		90D9B0FD12E11DCB002D4255 /* glslang_tab.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = glslang_tab.h; sourceTree = "<group>"; };
 		90D9B0FE12E11DCB002D4255 /* glslang.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = glslang.h; sourceTree = "<group>"; };
-		90D9B0FF12E11DCB002D4255 /* ossource_nspr.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ossource_nspr.cpp; sourceTree = "<group>"; };
 		90D9B10012E11DCB002D4255 /* SearchSymbol.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SearchSymbol.cpp; sourceTree = "<group>"; };
 		90D9B10112E11DCB002D4255 /* SearchSymbol.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SearchSymbol.h; sourceTree = "<group>"; };
 		90D9B10B12E11DD6002D4255 /* util.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = util.cpp; sourceTree = "<group>"; };
@@ -414,7 +413,6 @@
 				A0AABE2F13AFE83000F2EBD1 /* MapLongVariableNames.h */,
 				FB39D2371200F35A00088E69 /* MMap.h */,
 				FB39D2381200F35A00088E69 /* osinclude.h */,
-				90D9B0FF12E11DCB002D4255 /* ossource_nspr.cpp */,
 				FB39D2391200F35A00088E69 /* ossource_posix.cpp */,
 				FB39D23A1200F35A00088E69 /* ossource_win.cpp */,
 				A0AABE4213AFE94500F2EBD1 /* OutputESSL.cpp */,

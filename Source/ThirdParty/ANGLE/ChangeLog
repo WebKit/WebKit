@@ -1,3 +1,10 @@
+2013-01-14  David Kilzer  <ddkilzer@apple.com>
+
+        Remove nonexistent file in ANGLE Xcode project
+
+        * ANGLE.xcodeproj/project.pbxproj: Remove references to
+        ossource_nspr.cpp which was removed in r139665.
+
 2013-01-14  Dean Jackson  <dino@apple.com>
 
         Unreviewed QT build fix.
