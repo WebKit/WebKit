@@ -331,6 +331,10 @@ void ContainerNode::parserInsertBefore(PassRefPtr<Node> newChild, Node* nextChil
 
     insertBeforeCommon(nextChild, newChild.get());
 
+#if ENABLE(MUTATION_OBSERVERS)
+    ChildListMutationScope(this).childAdded(newChild.get());
+#endif
+
     childrenChanged(true, newChild->previousSibling(), nextChild, 1);
     ChildNodeInsertionNotifier(this).notify(newChild.get());
 }
@@ -552,6 +556,11 @@ void ContainerNode::parserRemoveChild(Node* oldChild)
     Node* prev = oldChild->previousSibling();
     Node* next = oldChild->nextSibling();
 
+#if ENABLE(MUTATION_OBSERVERS)
+    ChildListMutationScope(this).willRemoveChild(oldChild);
+    oldChild->notifyMutationObserversNodeWillDetach();
+#endif
+
     removeBetween(prev, next, oldChild);
 
     childrenChanged(true, prev, next, -1);
@@ -696,6 +705,10 @@ void ContainerNode::parserAppendChild(PassRefPtr<Node> newChild)
         appendChildToContainer(newChild.get(), this);
         treeScope()->adoptIfNeeded(newChild.get());
     }
+
+#if ENABLE(MUTATION_OBSERVERS)
+    ChildListMutationScope(this).childAdded(newChild.get());
+#endif
 
     childrenChanged(true, last, 0, 1);
     ChildNodeInsertionNotifier(this).notify(newChild.get());

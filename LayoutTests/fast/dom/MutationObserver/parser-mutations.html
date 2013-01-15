@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+
+<body>
+<script src="../../js/resources/js-test-pre.js"></script>
+
+<script>
+    if (window.testRunner)
+        testRunner.dumpAsText();
+
+    var observer = new WebKitMutationObserver(function(mutations, observer) {
+        window.mutations = mutations;
+    });
+    observer.observe(document.body, {childList: true, subtree:true});
+</script>
+
+<p>
+    Mutation records should be delivered for all parser mutations after the above script.
+</p>
+
+<script>
+    shouldBe('mutations.length', '6');
+    shouldBeEqualToString('mutations[1].type', 'childList');
+    shouldBeEqualToString('mutations[1].target.tagName', 'BODY');
+    shouldBe('mutations[1].addedNodes.length', '1');
+    shouldBeEqualToString('mutations[1].addedNodes[0].tagName', 'P');
+</script>
+</body>
