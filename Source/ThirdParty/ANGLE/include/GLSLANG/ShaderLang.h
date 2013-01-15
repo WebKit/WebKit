@@ -23,7 +23,7 @@
 #define COMPILER_EXPORT
 #endif
 
-#include "KHR/khrplatform.h"
+#include "khrplatform.h"
 
 //
 // This is the platform independent interface between an OGL driver

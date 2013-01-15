@@ -78,7 +78,7 @@ if (WTF_USE_3D_GRAPHICS)
     list(APPEND WebKit_INCLUDE_DIRECTORIES
         "${WEBCORE_DIR}/platform/graphics/surfaces"
         "${WEBCORE_DIR}/platform/graphics/texmap"
-        "${THIRDPARTY_DIR}/ANGLE/include"
+        "${THIRDPARTY_DIR}/ANGLE/include/KHR"
         "${THIRDPARTY_DIR}/ANGLE/include/GLSLANG"
     )
 endif ()

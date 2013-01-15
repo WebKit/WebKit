@@ -1,3 +1,15 @@
+2013-01-14  Dean Jackson  <dino@apple.com>
+
+        [ANGLE] Update ANGLE in WebKit
+        https://bugs.webkit.org/show_bug.cgi?id=106274
+
+        Unreviewed attempted build fix.
+
+        The khrplatform.h file is now a public header without a directory
+        prefix. Update the include path to look in the right place.
+
+        * PlatformEfl.cmake:
+
 2013-01-14  Alexey Proskuryakov  <ap@apple.com>
 
         <rdar://problem/12524710> Update sandbox rules after r128003

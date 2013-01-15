@@ -70,7 +70,7 @@
 		A264F8C816974E2A006FAA5A /* HashNames.h in Headers */ = {isa = PBXBuildFile; fileRef = A264F8C516974E2A006FAA5A /* HashNames.h */; };
 		A264F8C916974E2A006FAA5A /* VariablePacker.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A264F8C616974E2A006FAA5A /* VariablePacker.cpp */; };
 		A264F8CA16974E2A006FAA5A /* VariablePacker.h in Headers */ = {isa = PBXBuildFile; fileRef = A264F8C716974E2A006FAA5A /* VariablePacker.h */; };
-		A264F8CD169762AA006FAA5A /* khrplatform.h in Headers */ = {isa = PBXBuildFile; fileRef = A264F8CC169762AA006FAA5A /* khrplatform.h */; settings = {ATTRIBUTES = (); }; };
+		A264F8CD169762AA006FAA5A /* khrplatform.h in Headers */ = {isa = PBXBuildFile; fileRef = A264F8CC169762AA006FAA5A /* khrplatform.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		A26567BB159C21B100398539 /* Diagnostics.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A26567B0159C21B100398539 /* Diagnostics.cpp */; };
 		A26567BC159C21B100398539 /* Diagnostics.h in Headers */ = {isa = PBXBuildFile; fileRef = A26567B1159C21B100398539 /* Diagnostics.h */; };
 		A26567BD159C21B100398539 /* DirectiveHandler.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A26567B2159C21B100398539 /* DirectiveHandler.cpp */; };
@@ -89,7 +89,6 @@
 		A2656841159C23E100398539 /* RestrictFragmentShaderTiming.h in Headers */ = {isa = PBXBuildFile; fileRef = A2656836159C23E100398539 /* RestrictFragmentShaderTiming.h */; };
 		A2656842159C23E100398539 /* RestrictVertexShaderTiming.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A2656837159C23E100398539 /* RestrictVertexShaderTiming.cpp */; };
 		A2656843159C23E100398539 /* RestrictVertexShaderTiming.h in Headers */ = {isa = PBXBuildFile; fileRef = A2656838159C23E100398539 /* RestrictVertexShaderTiming.h */; };
-		A29B15E81697845700111D97 /* khrplatform.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = A264F8CC169762AA006FAA5A /* khrplatform.h */; };
 		FB39D2711200F35A00088E69 /* CodeGenGLSL.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FB39D2221200F35A00088E69 /* CodeGenGLSL.cpp */; };
 		FB39D2751200F35A00088E69 /* debug.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FB39D2261200F35A00088E69 /* debug.cpp */; };
 		FB39D2791200F35A00088E69 /* InfoSink.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FB39D22A1200F35A00088E69 /* InfoSink.cpp */; };
@@ -131,16 +130,6 @@
 				312BDB0E15FECAE50097EBC7 /* ANGLE.txt in CopyFiles */,
 			);
 			runOnlyForDeploymentPostprocessing = 1;
-		};
-		A29B15E61697844500111D97 /* CopyFiles */ = {
-			isa = PBXCopyFilesBuildPhase;
-			buildActionMask = 12;
-			dstPath = usr/local/include/KHR;
-			dstSubfolderSpec = 16;
-			files = (
-				A29B15E81697845700111D97 /* khrplatform.h in CopyFiles */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXCopyFilesBuildPhase section */
 
@@ -521,6 +510,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				FB39D76E120110FC00088E69 /* ShaderLang.h in Headers */,
+				A264F8CD169762AA006FAA5A /* khrplatform.h in Headers */,
 				90D9B10312E11DCB002D4255 /* ExtensionBehavior.h in Headers */,
 				90D9B10612E11DCB002D4255 /* glslang_tab.h in Headers */,
 				90D9B10712E11DCB002D4255 /* glslang.h in Headers */,
@@ -563,7 +553,6 @@
 				A264F8C416974DED006FAA5A /* Tokenizer.h in Headers */,
 				A264F8C816974E2A006FAA5A /* HashNames.h in Headers */,
 				A264F8CA16974E2A006FAA5A /* VariablePacker.h in Headers */,
-				A264F8CD169762AA006FAA5A /* khrplatform.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -579,7 +568,6 @@
 				FB39D0CF1200F0E300088E69 /* Frameworks */,
 				312BDB0B15FECAB00097EBC7 /* CopyFiles */,
 				312BDB0D15FECACE0097EBC7 /* CopyFiles */,
-				A29B15E61697844500111D97 /* CopyFiles */,
 			);
 			buildRules = (
 			);
