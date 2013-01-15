@@ -72,6 +72,7 @@
 		7E29C33E15FFD79B00516D61 /* ObjcRuntimeExtras.h in Headers */ = {isa = PBXBuildFile; fileRef = 7E29C33D15FFD79B00516D61 /* ObjcRuntimeExtras.h */; };
 		8134013815B092FD001FF0B8 /* Base64.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8134013615B092FD001FF0B8 /* Base64.cpp */; };
 		8134013915B092FD001FF0B8 /* Base64.h in Headers */ = {isa = PBXBuildFile; fileRef = 8134013715B092FD001FF0B8 /* Base64.h */; };
+		974CFC8E16A4F327006D5404 /* WeakPtr.h in Headers */ = {isa = PBXBuildFile; fileRef = 974CFC8D16A4F327006D5404 /* WeakPtr.h */; };
 		A876DBD8151816E500DADB95 /* Platform.h in Headers */ = {isa = PBXBuildFile; fileRef = A876DBD7151816E500DADB95 /* Platform.h */; };
 		A8A4737F151A825B004123FF /* Alignment.h in Headers */ = {isa = PBXBuildFile; fileRef = A8A47254151A825A004123FF /* Alignment.h */; };
 		A8A47380151A825B004123FF /* AlwaysInline.h in Headers */ = {isa = PBXBuildFile; fileRef = A8A47255151A825A004123FF /* AlwaysInline.h */; };
@@ -379,6 +380,7 @@
 		7E29C33D15FFD79B00516D61 /* ObjcRuntimeExtras.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ObjcRuntimeExtras.h; sourceTree = "<group>"; };
 		8134013615B092FD001FF0B8 /* Base64.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Base64.cpp; sourceTree = "<group>"; };
 		8134013715B092FD001FF0B8 /* Base64.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Base64.h; sourceTree = "<group>"; };
+		974CFC8D16A4F327006D5404 /* WeakPtr.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WeakPtr.h; sourceTree = "<group>"; };
 		A876DBD7151816E500DADB95 /* Platform.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Platform.h; sourceTree = "<group>"; };
 		A8A47254151A825A004123FF /* Alignment.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Alignment.h; sourceTree = "<group>"; };
 		A8A47255151A825A004123FF /* AlwaysInline.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AlwaysInline.h; sourceTree = "<group>"; };
@@ -876,6 +878,7 @@
 				A8A47370151A825B004123FF /* Vector.h */,
 				A8A47371151A825B004123FF /* VectorTraits.h */,
 				A8A47372151A825B004123FF /* VMTags.h */,
+				974CFC8D16A4F327006D5404 /* WeakPtr.h */,
 				A8A4737A151A825B004123FF /* WTFThreadData.cpp */,
 				A8A4737B151A825B004123FF /* WTFThreadData.h */,
 			);
@@ -1250,6 +1253,7 @@
 				A8A4747E151A825B004123FF /* Vector.h in Headers */,
 				A8A4747F151A825B004123FF /* VectorTraits.h in Headers */,
 				A8A47480151A825B004123FF /* VMTags.h in Headers */,
+				974CFC8E16A4F327006D5404 /* WeakPtr.h in Headers */,
 				A8A47446151A825B004123FF /* WTFString.h in Headers */,
 				A8A47487151A825B004123FF /* WTFThreadData.h in Headers */,
 			);

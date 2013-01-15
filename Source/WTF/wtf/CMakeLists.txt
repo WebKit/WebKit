@@ -122,6 +122,7 @@ set(WTF_HEADERS
     Vector.h
     VectorTraits.h
     WTFThreadData.h
+    WeakPtr.h
     dtoa.h
 
     dtoa/bignum-dtoa.h

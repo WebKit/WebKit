@@ -404,35 +404,6 @@ static void printNavigationErrorMessage(Frame* frame, const KURL& activeURL, con
 
 static HashSet<Document*>* documentsThatNeedStyleRecalc = 0;
 
-class DocumentWeakReference : public ThreadSafeRefCounted<DocumentWeakReference> {
-public:
-    static PassRefPtr<DocumentWeakReference> create(Document* document)
-    {
-        return adoptRef(new DocumentWeakReference(document));
-    }
-
-    Document* document()
-    {
-        ASSERT(isMainThread());
-        return m_document;
-    }
-
-    void clear()
-    {
-        ASSERT(isMainThread());
-        m_document = 0;
-    }
-
-private:
-    DocumentWeakReference(Document* document)
-        : m_document(document)
-    {
-        ASSERT(isMainThread());
-    }
-
-    Document* m_document;
-};
-
 uint64_t Document::s_globalTreeVersion = 0;
 
 Document::Document(Frame* frame, const KURL& url, bool isXHTML, bool isHTML)
@@ -481,7 +452,7 @@ Document::Document(Frame* frame, const KURL& url, bool isXHTML, bool isHTML)
     , m_isSrcdocDocument(false)
     , m_renderer(0)
     , m_eventQueue(DocumentEventQueue::create(this))
-    , m_weakReference(DocumentWeakReference::create(this))
+    , m_weakFactory(this)
     , m_idAttributeName(idAttr)
 #if ENABLE(FULLSCREEN_API)
     , m_areKeysEnabledInFullScreen(0)
@@ -656,8 +627,6 @@ Document::~Document()
 
     if (m_elemSheet)
         m_elemSheet->clearOwnerNode();
-
-    m_weakReference->clear();
 
     clearStyleResolver(); // We need to destory CSSFontSelector before destroying m_cachedResourceLoader.
 
@@ -4808,13 +4777,13 @@ void Document::addMessage(MessageSource source, MessageLevel level, const String
 struct PerformTaskContext {
     WTF_MAKE_NONCOPYABLE(PerformTaskContext); WTF_MAKE_FAST_ALLOCATED;
 public:
-    PerformTaskContext(PassRefPtr<DocumentWeakReference> documentReference, PassOwnPtr<ScriptExecutionContext::Task> task)
-        : documentReference(documentReference)
+    PerformTaskContext(WeakPtr<Document> document, PassOwnPtr<ScriptExecutionContext::Task> task)
+        : documentReference(document)
         , task(task)
     {
     }
 
-    RefPtr<DocumentWeakReference> documentReference;
+    WeakPtr<Document> documentReference;
     OwnPtr<ScriptExecutionContext::Task> task;
 };
 
@@ -4825,7 +4794,7 @@ void Document::didReceiveTask(void* untypedContext)
     OwnPtr<PerformTaskContext> context = adoptPtr(static_cast<PerformTaskContext*>(untypedContext));
     ASSERT(context);
 
-    Document* document = context->documentReference->document();
+    Document* document = context->documentReference.get();
     if (!document)
         return;
 
@@ -4840,7 +4809,7 @@ void Document::didReceiveTask(void* untypedContext)
 
 void Document::postTask(PassOwnPtr<Task> task)
 {
-    callOnMainThread(didReceiveTask, new PerformTaskContext(m_weakReference, task));
+    callOnMainThread(didReceiveTask, new PerformTaskContext(m_weakFactory.createWeakPtr(), task));
 }
 
 void Document::pendingTasksTimerFired(Timer<Document>*)
@@ -5992,7 +5961,7 @@ void Document::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
 #endif
     info.addMember(m_selectorQueryCache);
     info.addMember(m_renderer);
-    info.addMember(m_weakReference);
+    info.addMember(m_weakFactory);
     info.addMember(m_idAttributeName);
 #if ENABLE(FULLSCREEN_API)
     info.addMember(m_fullScreenElement);

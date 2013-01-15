@@ -112,6 +112,7 @@
             'wtf/Vector.h',
             'wtf/VectorTraits.h',
             'wtf/WTFThreadData.h',
+            'wtf/WeakPtr.h',
             'wtf/dtoa.h',
             'wtf/dtoa/bignum-dtoa.h',
             'wtf/dtoa/bignum.h',

@@ -1,3 +1,47 @@
+2013-01-15  Adam Barth  <abarth@webkit.org>
+
+        Generalize DocumentWeakReference into WTF::WeakPtr
+        https://bugs.webkit.org/show_bug.cgi?id=106854
+
+        Reviewed by Darin Adler.
+
+        This patch adds a simple WeakPtr object to WTF. To use WeakPtr, objects
+        must hold a WeakPtrFactory member variable, which clears the WeakPtrs
+        when the object is destructed. The underlying storage is a
+        ThreadSafeRefCounted "WeakReference" object, which is shared by all the
+        WeakPtrs.
+
+        WeakPtr is a generalization of DocumentWeakReference, which is used to
+        check whether the Document object is alive when tasks arive on the main
+        thread from worker threads. We plan to use a similar pattern in the
+        threaded HTML parser, but we want to send tasks to objects other than
+        Document.
+
+        * GNUmakefile.list.am:
+        * WTF.gypi:
+        * WTF.pro:
+        * WTF.vcproj/WTF.vcproj:
+        * WTF.xcodeproj/project.pbxproj:
+        * wtf/CMakeLists.txt:
+        * wtf/WeakPtr.h: Added.
+        (WeakReference):
+            - The ThreadSafeRefCounted object shared by all the WeakPtr
+              instances. This patch uses ThreadSafeRefCounted so that we can
+              use WeakPtrs to cancel cross-thread messages.
+        (WTF::WeakReference::create):
+        (WTF::WeakReference::get):
+        (WTF::WeakReference::clear):
+            - When the object is destroyed, WeakPtrFactory calls this function
+              to clear all the WeakPtrs.
+        (WTF::WeakReference::WeakReference):
+        (WTF::WeakPtr::WeakPtr):
+        (WTF::WeakPtr::get):
+            - We might want to add implicit conversions and Boolean operators
+              in the future, but I've kept this class simple for now.
+        (WTF::WeakPtrFactory::WeakPtrFactory):
+        (WTF::WeakPtrFactory::~WeakPtrFactory):
+        (WTF::WeakPtrFactory::createWeakPtr):
+
 2013-01-12  Csaba Osztrogonác  <ossy@webkit.org>
 
         Use __sync_add_and_fetch instead of __gnu_cxx::__exchange_and_add

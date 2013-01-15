@@ -188,7 +188,8 @@ HEADERS += \
     Vector.h \
     VectorTraits.h \
     VMTags.h \
-    WTFThreadData.h
+    WTFThreadData.h \
+    WeakPtr.h
 
 unix: HEADERS += ThreadIdentifierDataPthreads.h
 

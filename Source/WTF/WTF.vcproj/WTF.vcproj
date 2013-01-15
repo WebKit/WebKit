@@ -1328,6 +1328,10 @@
 			RelativePath="..\wtf\WTFThreadData.h"
 			>
 		</File>
+		<File
+			RelativePath="..\wtf\WeakPtr.h"
+			>
+		</File>
 	</Files>
 	<Globals>
 	</Globals>
