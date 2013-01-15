@@ -1220,7 +1220,12 @@ sub determineIsChromiumNinja()
           $statMake = stat('Makefile.chromium')->mtime;
         }
 
-        $hasUpToDateNinjabuild = $statNinja > $statXcode && $statNinja > $statMake;
+        my $statVisualStudio = 0;
+        if (-e 'Source/WebKit/chromium/All.sln') {
+          $statVisualStudio = stat('Source/WebKit/chromium/All.sln')->mtime;
+        }
+
+        $hasUpToDateNinjabuild = $statNinja > $statXcode && $statNinja > $statMake && $statNinja > $statVisualStudio;
     }
     $isChromiumNinja = $hasUpToDateNinjabuild;
 }
@@ -2552,7 +2557,7 @@ sub buildChromium($@)
     if (isDarwin() && !isChromiumAndroid() && !isChromiumMacMake() && !isChromiumNinja()) {
         # Mac build - builds the root xcode project.
         $result = buildXCodeProject("Source/WebKit/chromium/All", $clean, "-configuration", configuration(), @options);
-    } elsif (isCygwin() || isWindows()) {
+    } elsif ((isCygwin() || isWindows()) && !isChromiumNinja()) {
         # Windows build - builds the root visual studio solution.
         $result = buildChromiumVisualStudioProject("Source/WebKit/chromium/All.sln", $clean);
     } elsif (isChromiumNinja()) {

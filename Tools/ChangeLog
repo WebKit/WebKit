@@ -1,3 +1,18 @@
+2013-01-14  Nico Weber  <thakis@chromium.org>
+
+        [chromium] Enable `update-webkit --chromium --ninja` on windows
+        https://bugs.webkit.org/show_bug.cgi?id=106836
+
+        Reviewed by Eric Seidel.
+
+        After running this, build-webkit --chromium will use ninja to build.
+        Apparently there are some minor issues with that still, so it's
+        not quite ready for use yet.
+
+        * Scripts/webkitdirs.pm:
+        (determineIsChromiumNinja):
+        (buildChromium):
+
 2013-01-14  Dirk Pranke  <dpranke@chromium.org>
 
         nrwt: use the same search path for baselines and TestExpectations on apple mac
