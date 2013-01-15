@@ -1184,14 +1184,19 @@ void Page::setVisibilityState(PageVisibilityState visibilityState, bool isInitia
         m_mainFrame->dispatchVisibilityStateChangeEvent();
 #endif
 
+    if (visibilityState == WebCore::PageVisibilityStateHidden) {
 #if ENABLE(HIDDEN_PAGE_DOM_TIMER_THROTTLING)
-    if (visibilityState == WebCore::PageVisibilityStateHidden)
         setTimerAlignmentInterval(Settings::hiddenPageDOMTimerAlignmentInterval());
-    else
+#endif
+        mainFrame()->animation()->suspendAnimations();
+    } else {
+#if ENABLE(HIDDEN_PAGE_DOM_TIMER_THROTTLING)
         setTimerAlignmentInterval(Settings::defaultDOMTimerAlignmentInterval());
+#endif
+        mainFrame()->animation()->resumeAnimations();
+    }
 #if !ENABLE(PAGE_VISIBILITY_API)
     UNUSED_PARAM(isInitialState);
-#endif
 #endif
 }
 #endif // ENABLE(PAGE_VISIBILITY_API) || ENABLE(HIDDEN_PAGE_DOM_TIMER_THROTTLING)
