@@ -44,9 +44,6 @@
 #include <wtf/MainThread.h>
 #include <wtf/StdLibExtras.h>
 
-// We are part of the WebKit implementation.
-using namespace WebKit;
-
 namespace WebCore {
 
 BlobRegistry& blobRegistry()
@@ -64,7 +61,7 @@ BlobRegistryProxy::BlobRegistryProxy()
 void BlobRegistryProxy::registerBlobURL(const KURL& url, PassOwnPtr<BlobData> blobData)
 {
     if (m_webBlobRegistry) {
-        WebBlobData webBlobData(blobData);
+        WebKit::WebBlobData webBlobData(blobData);
         m_webBlobRegistry->registerBlobURL(url, webBlobData);
     }
 }
