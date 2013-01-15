@@ -131,11 +131,6 @@ public:
     void display(const CppArgumentList&, CppVariant*);
     void displayInvalidatedRegion(const CppArgumentList&, CppVariant*);
 
-    // Clears all databases.
-    void clearAllDatabases(const CppArgumentList&, CppVariant*);
-    // Sets the default quota for all origins
-    void setDatabaseQuota(const CppArgumentList&, CppVariant*);
-
     // Calls setlocale(LC_ALL, ...) for a specified locale.
     // Resets between tests.
     void setPOSIXLocale(const CppArgumentList&, CppVariant*);

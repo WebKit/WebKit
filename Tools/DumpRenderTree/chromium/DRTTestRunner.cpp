@@ -104,7 +104,6 @@ DRTTestRunner::DRTTestRunner(TestShell* shell)
     bindMethod("setMockSpeechRecognitionError", &DRTTestRunner::setMockSpeechRecognitionError);
     bindMethod("wasMockSpeechRecognitionAborted", &DRTTestRunner::wasMockSpeechRecognitionAborted);
 #endif
-    bindMethod("clearAllDatabases", &DRTTestRunner::clearAllDatabases);
 #if ENABLE(POINTER_LOCK)
     bindMethod("didAcquirePointerLock", &DRTTestRunner::didAcquirePointerLock);
     bindMethod("didLosePointerLock", &DRTTestRunner::didLosePointerLock);
@@ -128,7 +127,6 @@ DRTTestRunner::DRTTestRunner(TestShell* shell)
     bindMethod("setAlwaysAcceptCookies", &DRTTestRunner::setAlwaysAcceptCookies);
     bindMethod("setCloseRemainingWindowsWhenComplete", &DRTTestRunner::setCloseRemainingWindowsWhenComplete);
     bindMethod("setCustomPolicyDelegate", &DRTTestRunner::setCustomPolicyDelegate);
-    bindMethod("setDatabaseQuota", &DRTTestRunner::setDatabaseQuota);
     bindMethod("setGeolocationPermission", &DRTTestRunner::setGeolocationPermission);
     bindMethod("setMockDeviceOrientation", &DRTTestRunner::setMockDeviceOrientation);
     bindMethod("setMockGeolocationPositionUnavailableError", &DRTTestRunner::setMockGeolocationPositionUnavailableError);
@@ -401,9 +399,6 @@ void DRTTestRunner::reset()
 
     webkit_support::SetAcceptAllCookies(false);
 
-    // Reset the default quota for each origin to 5MB
-    webkit_support::SetDatabaseQuota(5 * 1024 * 1024);
-
     setlocale(LC_ALL, "");
 
     if (m_closeRemainingWindows)
@@ -585,19 +580,6 @@ void DRTTestRunner::displayInvalidatedRegion(const CppArgumentList& arguments, C
     host->paintInvalidatedRegion();
     host->displayRepaintMask();
     result->setNull();
-}
-
-void DRTTestRunner::clearAllDatabases(const CppArgumentList& arguments, CppVariant* result)
-{
-    result->setNull();
-    webkit_support::ClearAllDatabases();
-}
-
-void DRTTestRunner::setDatabaseQuota(const CppArgumentList& arguments, CppVariant* result)
-{
-    result->setNull();
-    if ((arguments.size() >= 1) && arguments[0].isNumber())
-        webkit_support::SetDatabaseQuota(arguments[0].toInt32());
 }
 
 void DRTTestRunner::setPOSIXLocale(const CppArgumentList& arguments, CppVariant* result)

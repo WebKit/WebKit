@@ -154,6 +154,8 @@ class WebViewHost : public WebKit::WebViewClient, public WebKit::WebFrameClient,
     virtual void showDevTools() OVERRIDE;
     virtual void closeDevTools() OVERRIDE;
     virtual void evaluateInWebInspector(long, const std::string&) OVERRIDE;
+    virtual void clearAllDatabases() OVERRIDE;
+    virtual void setDatabaseQuota(int) OVERRIDE;
 
     // NavigationHost
     virtual bool navigate(const TestNavigationEntry&, bool reload);

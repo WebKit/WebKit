@@ -1069,6 +1069,16 @@ void WebViewHost::evaluateInWebInspector(long callID, const std::string& script)
     m_shell->drtDevToolsAgent()->evaluateInWebInspector(callID, script);
 }
 
+void WebViewHost::clearAllDatabases()
+{
+    webkit_support::ClearAllDatabases();
+}
+
+void WebViewHost::setDatabaseQuota(int quota)
+{
+    webkit_support::SetDatabaseQuota(quota);
+}
+
 // Public functions -----------------------------------------------------------
 
 WebViewHost::WebViewHost(TestShell* shell)

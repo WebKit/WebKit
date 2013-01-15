@@ -85,6 +85,8 @@ public:
     virtual void showDevTools() { }
     virtual void closeDevTools() { }
     virtual void evaluateInWebInspector(long, const std::string&) { }
+    virtual void clearAllDatabases() { }
+    virtual void setDatabaseQuota(int) { }
 };
 
 }

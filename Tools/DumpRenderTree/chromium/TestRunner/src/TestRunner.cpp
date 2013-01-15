@@ -178,6 +178,8 @@ TestRunner::TestRunner()
     bindMethod("showWebInspector", &TestRunner::showWebInspector);
     bindMethod("closeWebInspector", &TestRunner::closeWebInspector);
     bindMethod("evaluateInWebInspector", &TestRunner::evaluateInWebInspector);
+    bindMethod("clearAllDatabases", &TestRunner::clearAllDatabases);
+    bindMethod("setDatabaseQuota", &TestRunner::setDatabaseQuota);
 
     // Properties.
     bindProperty("workerThreadCount", &TestRunner::workerThreadCount);
@@ -243,6 +245,9 @@ void TestRunner::reset()
 #if OS(LINUX) || OS(ANDROID)
     WebFontRendering::setSubpixelPositioning(false);
 #endif
+
+    // Reset the default quota for each origin to 5MB
+    m_delegate->setDatabaseQuota(5 * 1024 * 1024);
 
     m_dumpEditingCallbacks = false;
     m_dumpAsText = false;
@@ -1293,6 +1298,19 @@ void TestRunner::evaluateInWebInspector(const CppArgumentList& arguments, CppVar
     if (arguments.size() < 2 || !arguments[0].isNumber() || !arguments[1].isString())
         return;
     m_delegate->evaluateInWebInspector(arguments[0].toInt32(), arguments[1].toString());
+}
+
+void TestRunner::clearAllDatabases(const CppArgumentList& arguments, CppVariant* result)
+{
+    result->setNull();
+    m_delegate->clearAllDatabases();
+}
+
+void TestRunner::setDatabaseQuota(const CppArgumentList& arguments, CppVariant* result)
+{
+    result->setNull();
+    if ((arguments.size() >= 1) && arguments[0].isNumber())
+        m_delegate->setDatabaseQuota(arguments[0].toInt32());
 }
 
 void TestRunner::dumpEditingCallbacks(const CppArgumentList&, CppVariant* result)

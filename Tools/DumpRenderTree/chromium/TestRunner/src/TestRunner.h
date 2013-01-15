@@ -331,6 +331,11 @@ private:
     // Allows layout tests to exec scripts at WebInspector side.
     void evaluateInWebInspector(const CppArgumentList&, CppVariant*);
 
+    // Clears all databases.
+    void clearAllDatabases(const CppArgumentList&, CppVariant*);
+    // Sets the default quota for all origins
+    void setDatabaseQuota(const CppArgumentList&, CppVariant*);
+
     ///////////////////////////////////////////////////////////////////////////
     // Properties
     void workerThreadCount(CppVariant*);

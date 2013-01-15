@@ -1,3 +1,32 @@
+2013-01-15  Jochen Eisinger  <jochen@chromium.org>
+
+        [chromium] move WebDatabase related methods to TestRunner library
+        https://bugs.webkit.org/show_bug.cgi?id=106905
+
+        Reviewed by Adam Barth.
+
+        * DumpRenderTree/chromium/DRTTestRunner.cpp:
+        (DRTTestRunner::DRTTestRunner):
+        (DRTTestRunner::reset):
+        * DumpRenderTree/chromium/DRTTestRunner.h:
+        (DRTTestRunner):
+        * DumpRenderTree/chromium/TestRunner/public/WebTestDelegate.h:
+        (WebTestRunner::WebTestDelegate::clearAllDatabases):
+        (WebTestRunner::WebTestDelegate::setDatabaseQuota):
+        * DumpRenderTree/chromium/TestRunner/src/TestRunner.cpp:
+        (WebTestRunner::TestRunner::TestRunner):
+        (WebTestRunner::TestRunner::reset):
+        (WebTestRunner::TestRunner::clearAllDatabases):
+        (WebTestRunner):
+        (WebTestRunner::TestRunner::setDatabaseQuota):
+        * DumpRenderTree/chromium/TestRunner/src/TestRunner.h:
+        (TestRunner):
+        * DumpRenderTree/chromium/WebViewHost.cpp:
+        (WebViewHost::clearAllDatabases):
+        (WebViewHost::setDatabaseQuota):
+        * DumpRenderTree/chromium/WebViewHost.h:
+        (WebViewHost):
+
 2013-01-15  Tim 'mithro' Ansell  <mithro@mithis.com>
 
         Renaming CleanWorkingDirectory step to DiscardLocalChanges to make
