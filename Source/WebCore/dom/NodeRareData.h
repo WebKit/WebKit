@@ -266,7 +266,7 @@ public:
     }
 
 private:
-    DOMSettableTokenList() { }
+    NodeMicroDataTokenLists() { }
 
     mutable RefPtr<DOMSettableTokenList> m_itemProp;
     mutable RefPtr<DOMSettableTokenList> m_itemRef;
