@@ -1,3 +1,17 @@
+2013-01-15  Zan Dobersek  <zdobersek@igalia.com>
+
+        [GTK] Limit the number of frames printed out when backtracing with gdb
+        https://bugs.webkit.org/show_bug.cgi?id=106901
+
+        Reviewed by Philippe Normand.
+
+        Printing an unlimited number of frames when dumping the gdb backtracing
+        output can cause timeouts in the builders. This patch limits the number
+        of frames that are printed out to 1024.
+
+        * Scripts/webkitpy/layout_tests/port/gtk.py:
+        (GtkPort._get_gdb_output):
+
 2013-01-15  Andras Becsi  <andras.becsi@digia.com>
 
         [Qt] Fix ImageDiff's image format conversion

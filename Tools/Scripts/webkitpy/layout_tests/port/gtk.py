@@ -125,7 +125,7 @@ class GtkPort(Port):
         self._run_script("run-launcher", run_launcher_args)
 
     def _get_gdb_output(self, coredump_path):
-        cmd = ['gdb', '-ex', 'thread apply all bt', '--batch', str(self._path_to_driver()), coredump_path]
+        cmd = ['gdb', '-ex', 'thread apply all bt 1024', '--batch', str(self._path_to_driver()), coredump_path]
         proc = subprocess.Popen(cmd, stdin=None, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
         proc.wait()
         errors = [l.strip().decode('utf8', 'ignore') for l in proc.stderr.readlines()]
