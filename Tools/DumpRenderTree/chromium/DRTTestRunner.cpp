@@ -87,10 +87,8 @@ using namespace std;
 DRTTestRunner::DRTTestRunner(TestShell* shell)
     : m_shell(shell)
     , m_closeRemainingWindows(false)
-    , m_deferMainResourceDataLoad(false)
     , m_showDebugLayerTree(false)
     , m_workQueue(this)
-    , m_shouldStayOnPageAfterHandlingBeforeUnload(false)
 {
 
     // Initialize the map that associates methods of this class with the names
@@ -114,8 +112,6 @@ DRTTestRunner::DRTTestRunner(TestShell* shell)
 #endif
     bindMethod("display", &DRTTestRunner::display);
     bindMethod("displayInvalidatedRegion", &DRTTestRunner::displayInvalidatedRegion);
-    bindMethod("dumpBackForwardList", &DRTTestRunner::dumpBackForwardList);
-    bindMethod("dumpSelectionRect", &DRTTestRunner::dumpSelectionRect);
 #if ENABLE(NOTIFICATIONS)
     bindMethod("grantWebNotificationPermission", &DRTTestRunner::grantWebNotificationPermission);
 #endif
@@ -129,12 +125,10 @@ DRTTestRunner::DRTTestRunner(TestShell* shell)
     bindMethod("queueLoadHTMLString", &DRTTestRunner::queueLoadHTMLString);
     bindMethod("queueNonLoadingScript", &DRTTestRunner::queueNonLoadingScript);
     bindMethod("queueReload", &DRTTestRunner::queueReload);
-    bindMethod("repaintSweepHorizontally", &DRTTestRunner::repaintSweepHorizontally);
     bindMethod("setAlwaysAcceptCookies", &DRTTestRunner::setAlwaysAcceptCookies);
     bindMethod("setCloseRemainingWindowsWhenComplete", &DRTTestRunner::setCloseRemainingWindowsWhenComplete);
     bindMethod("setCustomPolicyDelegate", &DRTTestRunner::setCustomPolicyDelegate);
     bindMethod("setDatabaseQuota", &DRTTestRunner::setDatabaseQuota);
-    bindMethod("setDeferMainResourceDataLoad", &DRTTestRunner::setDeferMainResourceDataLoad);
     bindMethod("setGeolocationPermission", &DRTTestRunner::setGeolocationPermission);
     bindMethod("setMockDeviceOrientation", &DRTTestRunner::setMockDeviceOrientation);
     bindMethod("setMockGeolocationPositionUnavailableError", &DRTTestRunner::setMockGeolocationPositionUnavailableError);
@@ -144,7 +138,6 @@ DRTTestRunner::DRTTestRunner(TestShell* shell)
     bindMethod("setPointerLockWillFailSynchronously", &DRTTestRunner::setPointerLockWillFailSynchronously);
 #endif
     bindMethod("setPOSIXLocale", &DRTTestRunner::setPOSIXLocale);
-    bindMethod("setPrinting", &DRTTestRunner::setPrinting);
     bindMethod("setBackingScaleFactor", &DRTTestRunner::setBackingScaleFactor);
     bindMethod("setWillSendRequestClearHeader", &DRTTestRunner::setWillSendRequestClearHeader);
     bindMethod("setWillSendRequestReturnsNull", &DRTTestRunner::setWillSendRequestReturnsNull);
@@ -153,12 +146,10 @@ DRTTestRunner::DRTTestRunner(TestShell* shell)
 #if ENABLE(NOTIFICATIONS)
     bindMethod("simulateLegacyWebNotificationClick", &DRTTestRunner::simulateLegacyWebNotificationClick);
 #endif
-    bindMethod("testRepaint", &DRTTestRunner::testRepaint);
     bindMethod("waitForPolicyDelegate", &DRTTestRunner::waitForPolicyDelegate);
     bindMethod("waitUntilDone", &DRTTestRunner::waitUntilDone);
     bindMethod("windowCount", &DRTTestRunner::windowCount);
 
-    bindMethod("setShouldStayOnPageAfterHandlingBeforeUnload", &DRTTestRunner::setShouldStayOnPageAfterHandlingBeforeUnload);
 
     // Shared properties.
     // webHistoryItemCount is used by tests in LayoutTests\http\tests\history
@@ -217,12 +208,6 @@ void DRTTestRunner::WorkQueue::addWork(WorkItem* work)
         return;
     }
     m_queue.append(work);
-}
-
-void DRTTestRunner::dumpBackForwardList(const CppArgumentList&, CppVariant* result)
-{
-    m_dumpBackForwardList = true;
-    result->setNull();
 }
 
 void DRTTestRunner::waitUntilDone(const CppArgumentList&, CppVariant* result)
@@ -409,16 +394,10 @@ void DRTTestRunner::reset()
     TestRunner::reset();
     if (m_shell)
         m_shell->webViewHost()->setDeviceScaleFactor(1);
-    m_dumpBackForwardList = false;
-    m_dumpSelectionRect = false;
     m_waitUntilDone = false;
-    m_testRepaint = false;
-    m_sweepHorizontally = false;
-    m_deferMainResourceDataLoad = true;
     m_webHistoryItemCount.set(0);
     m_titleTextDirection.set("ltr");
     m_interceptPostMessage.set(false);
-    m_isPrinting = false;
 
     webkit_support::SetAcceptAllCookies(false);
 
@@ -433,7 +412,6 @@ void DRTTestRunner::reset()
         m_closeRemainingWindows = true;
     m_workQueue.reset();
     m_taskList.revokeAll();
-    m_shouldStayOnPageAfterHandlingBeforeUnload = false;
 }
 
 void DRTTestRunner::locationChangeDone()
@@ -590,18 +568,6 @@ void DRTTestRunner::simulateLegacyWebNotificationClick(const CppArgumentList& ar
 }
 #endif
 
-void DRTTestRunner::setDeferMainResourceDataLoad(const CppArgumentList& arguments, CppVariant* result)
-{
-    if (arguments.size() == 1)
-        m_deferMainResourceDataLoad = cppVariantToBool(arguments[0]);
-}
-
-void DRTTestRunner::dumpSelectionRect(const CppArgumentList& arguments, CppVariant* result)
-{
-    m_dumpSelectionRect = true;
-    result->setNull();
-}
-
 void DRTTestRunner::display(const CppArgumentList& arguments, CppVariant* result)
 {
     WebViewHost* host = m_shell->webViewHost();
@@ -618,18 +584,6 @@ void DRTTestRunner::displayInvalidatedRegion(const CppArgumentList& arguments, C
     WebViewHost* host = m_shell->webViewHost();
     host->paintInvalidatedRegion();
     host->displayRepaintMask();
-    result->setNull();
-}
-
-void DRTTestRunner::testRepaint(const CppArgumentList&, CppVariant* result)
-{
-    m_testRepaint = true;
-    result->setNull();
-}
-
-void DRTTestRunner::repaintSweepHorizontally(const CppArgumentList&, CppVariant* result)
-{
-    m_sweepHorizontally = true;
     result->setNull();
 }
 
@@ -651,12 +605,6 @@ void DRTTestRunner::setPOSIXLocale(const CppArgumentList& arguments, CppVariant*
     result->setNull();
     if (arguments.size() == 1 && arguments[0].isString())
         setlocale(LC_ALL, arguments[0].toString().c_str());
-}
-
-void DRTTestRunner::setPrinting(const CppArgumentList& arguments, CppVariant* result)
-{
-    setIsPrinting(true);
-    result->setNull();
 }
 
 void DRTTestRunner::numberOfPendingGeolocationPermissionRequests(const CppArgumentList& arguments, CppVariant* result)
@@ -773,14 +721,6 @@ void DRTTestRunner::wasMockSpeechRecognitionAborted(const CppArgumentList&, CppV
         result->set(recognizer->wasAborted());
 }
 #endif
-
-void DRTTestRunner::setShouldStayOnPageAfterHandlingBeforeUnload(const CppArgumentList& arguments, CppVariant* result)
-{
-    if (arguments.size() == 1 && arguments[0].isBool())
-        m_shouldStayOnPageAfterHandlingBeforeUnload = arguments[0].toBoolean();
-
-    result->setNull();
-}
 
 class InvokeCallbackTask : public WebMethodTask<DRTTestRunner> {
 public:

@@ -162,6 +162,13 @@ TestRunner::TestRunner()
     bindMethod("setAllowRunningOfInsecureContent", &TestRunner::setAllowRunningOfInsecureContent);
     bindMethod("dumpStatusCallbacks", &TestRunner::dumpWindowStatusChanges);
     bindMethod("dumpProgressFinishedCallback", &TestRunner::dumpProgressFinishedCallback);
+    bindMethod("dumpBackForwardList", &TestRunner::dumpBackForwardList);
+    bindMethod("setDeferMainResourceDataLoad", &TestRunner::setDeferMainResourceDataLoad);
+    bindMethod("dumpSelectionRect", &TestRunner::dumpSelectionRect);
+    bindMethod("testRepaint", &TestRunner::testRepaint);
+    bindMethod("repaintSweepHorizontally", &TestRunner::repaintSweepHorizontally);
+    bindMethod("setPrinting", &TestRunner::setPrinting);
+    bindMethod("setShouldStayOnPageAfterHandlingBeforeUnload", &TestRunner::setShouldStayOnPageAfterHandlingBeforeUnload);
 
     // The following methods interact with the WebTestProxy.
     bindMethod("sendWebIntentResponse", &TestRunner::sendWebIntentResponse);
@@ -254,6 +261,13 @@ void TestRunner::reset()
     m_dumpResourceResponseMIMETypes = false;
     m_dumpWindowStatusChanges = false;
     m_dumpProgressFinishedCallback = false;
+    m_dumpBackForwardList = false;
+    m_deferMainResourceDataLoad = true;
+    m_dumpSelectionRect = false;
+    m_testRepaint = false;
+    m_sweepHorizontally = false;
+    m_isPrinting = false;
+    m_shouldStayOnPageAfterHandlingBeforeUnload = false;
 
     m_globalFlag.set(false);
     m_platformName.set("chromium");
@@ -378,6 +392,41 @@ bool TestRunner::shouldDumpProgressFinishedCallback() const
     return m_dumpProgressFinishedCallback;
 }
 
+bool TestRunner::shouldDumpBackForwardList() const
+{
+    return m_dumpBackForwardList;
+}
+
+bool TestRunner::deferMainResourceDataLoad() const
+{
+    return m_deferMainResourceDataLoad;
+}
+
+bool TestRunner::shouldDumpSelectionRect() const
+{
+    return m_dumpSelectionRect;
+}
+
+bool TestRunner::testRepaint() const
+{
+    return m_testRepaint;
+}
+
+bool TestRunner::sweepHorizontally() const
+{
+    return m_sweepHorizontally;
+}
+
+bool TestRunner::isPrinting() const
+{
+    return m_isPrinting;
+}
+
+bool TestRunner::shouldStayOnPageAfterHandlingBeforeUnload() const
+{
+    return m_shouldStayOnPageAfterHandlingBeforeUnload;
+}
+
 void TestRunner::dumpPermissionClientCallbacks(const CppArgumentList&, CppVariant* result)
 {
     m_webPermissions->setDumpCallbacks(true);
@@ -437,6 +486,50 @@ void TestRunner::dumpWindowStatusChanges(const CppArgumentList&, CppVariant* res
 void TestRunner::dumpProgressFinishedCallback(const CppArgumentList&, CppVariant* result)
 {
     m_dumpProgressFinishedCallback = true;
+    result->setNull();
+}
+
+void TestRunner::dumpBackForwardList(const CppArgumentList&, CppVariant* result)
+{
+    m_dumpBackForwardList = true;
+    result->setNull();
+}
+
+void TestRunner::setDeferMainResourceDataLoad(const CppArgumentList& arguments, CppVariant* result)
+{
+    if (arguments.size() == 1)
+        m_deferMainResourceDataLoad = cppVariantToBool(arguments[0]);
+}
+
+void TestRunner::dumpSelectionRect(const CppArgumentList& arguments, CppVariant* result)
+{
+    m_dumpSelectionRect = true;
+    result->setNull();
+}
+
+void TestRunner::testRepaint(const CppArgumentList&, CppVariant* result)
+{
+    m_testRepaint = true;
+    result->setNull();
+}
+
+void TestRunner::repaintSweepHorizontally(const CppArgumentList&, CppVariant* result)
+{
+    m_sweepHorizontally = true;
+    result->setNull();
+}
+
+void TestRunner::setPrinting(const CppArgumentList& arguments, CppVariant* result)
+{
+    m_isPrinting = true;
+    result->setNull();
+}
+
+void TestRunner::setShouldStayOnPageAfterHandlingBeforeUnload(const CppArgumentList& arguments, CppVariant* result)
+{
+    if (arguments.size() == 1 && arguments[0].isBool())
+        m_shouldStayOnPageAfterHandlingBeforeUnload = arguments[0].toBoolean();
+
     result->setNull();
 }
 

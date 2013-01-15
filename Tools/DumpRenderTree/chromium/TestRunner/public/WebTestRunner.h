@@ -65,6 +65,13 @@ public:
     virtual WebKit::WebPermissionClient* webPermissions() const { return 0; }
     virtual bool shouldDumpStatusCallbacks() const { return false; }
     virtual bool shouldDumpProgressFinishedCallback() const { return false; }
+    virtual bool shouldDumpBackForwardList() const { return false; }
+    virtual bool deferMainResourceDataLoad() const { return false; }
+    virtual bool shouldDumpSelectionRect() const { return false; }
+    virtual bool testRepaint() const { return false; }
+    virtual bool sweepHorizontally() const { return false; }
+    virtual bool isPrinting() const { return false; }
+    virtual bool shouldStayOnPageAfterHandlingBeforeUnload() const { return false; } 
 };
 
 }

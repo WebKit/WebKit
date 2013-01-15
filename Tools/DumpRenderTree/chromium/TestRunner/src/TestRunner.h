@@ -83,6 +83,13 @@ public:
     virtual WebKit::WebPermissionClient* webPermissions() const OVERRIDE;
     virtual bool shouldDumpStatusCallbacks() const OVERRIDE;
     virtual bool shouldDumpProgressFinishedCallback() const OVERRIDE;
+    virtual bool shouldDumpBackForwardList() const OVERRIDE;
+    virtual bool deferMainResourceDataLoad() const OVERRIDE;
+    virtual bool shouldDumpSelectionRect() const OVERRIDE;
+    virtual bool testRepaint() const OVERRIDE;
+    virtual bool sweepHorizontally() const OVERRIDE;
+    virtual bool isPrinting() const OVERRIDE;
+    virtual bool shouldStayOnPageAfterHandlingBeforeUnload() const OVERRIDE;
 
 protected:
     // FIXME: make these private once the move from DRTTestRunner to TestRunner
@@ -290,6 +297,20 @@ private:
     // arguments, and ignores any that may be present.
     void dumpProgressFinishedCallback(const CppArgumentList&, CppVariant*);
 
+    // This function sets a flag that tells the test_shell to print out a text
+    // representation of the back/forward list. It ignores all arguments.
+    void dumpBackForwardList(const CppArgumentList&, CppVariant*);
+
+    void setDeferMainResourceDataLoad(const CppArgumentList&, CppVariant*);
+    void dumpSelectionRect(const CppArgumentList&, CppVariant*);
+    void testRepaint(const CppArgumentList&, CppVariant*);
+    void repaintSweepHorizontally(const CppArgumentList&, CppVariant*);
+
+    // Causes layout to happen as if targetted to printed pages.
+    void setPrinting(const CppArgumentList&, CppVariant*);
+
+    void setShouldStayOnPageAfterHandlingBeforeUnload(const CppArgumentList&, CppVariant*);
+
     ///////////////////////////////////////////////////////////////////////////
     // Methods interacting with the WebTestProxy
 
@@ -408,6 +429,30 @@ private:
     // If true, the test_shell will output a descriptive line for the progress
     // finished callback.
     bool m_dumpProgressFinishedCallback;
+
+    // If true, the test_shell will produce a dump of the back forward list as
+    // well.
+    bool m_dumpBackForwardList;
+
+    // If false, all new requests will not defer the main resource data load.
+    bool m_deferMainResourceDataLoad;
+
+    // If true, the test_shell will draw the bounds of the current selection rect
+    // taking possible transforms of the selection rect into account.
+    bool m_dumpSelectionRect;
+
+    // If true, pixel dump will be produced as a series of 1px-tall, view-wide
+    // individual paints over the height of the view.
+    bool m_testRepaint;
+
+    // If true and test_repaint_ is true as well, pixel dump will be produced as
+    // a series of 1px-wide, view-tall paints across the width of the view.
+    bool m_sweepHorizontally;
+
+    // If true, layout is to target printed pages.
+    bool m_isPrinting;
+
+    bool m_shouldStayOnPageAfterHandlingBeforeUnload;
 
     // WAV audio data is stored here.
     WebKit::WebArrayBufferView m_audioData;

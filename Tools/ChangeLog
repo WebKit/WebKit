@@ -1,3 +1,43 @@
+2013-01-15  Jochen Eisinger  <jochen@chromium.org>
+
+        [chromium] move remaining methods that just set a boolean flag to TestRunner library
+        https://bugs.webkit.org/show_bug.cgi?id=106823
+
+        Reviewed by Darin Fisher.
+
+        * DumpRenderTree/chromium/DRTTestRunner.cpp:
+        (DRTTestRunner::DRTTestRunner):
+        (DRTTestRunner::reset):
+        * DumpRenderTree/chromium/DRTTestRunner.h:
+        (DRTTestRunner):
+        * DumpRenderTree/chromium/TestRunner/public/WebTestRunner.h:
+        (WebTestRunner::WebTestRunner::shouldDumpBackForwardList):
+        (WebTestRunner::WebTestRunner::deferMainResourceDataLoad):
+        (WebTestRunner::WebTestRunner::shouldDumpSelectionRect):
+        (WebTestRunner::WebTestRunner::testRepaint):
+        (WebTestRunner::WebTestRunner::sweepHorizontally):
+        (WebTestRunner::WebTestRunner::isPrinting):
+        (WebTestRunner::WebTestRunner::shouldStayOnPageAfterHandlingBeforeUnload):
+        * DumpRenderTree/chromium/TestRunner/src/TestRunner.cpp:
+        (WebTestRunner::TestRunner::TestRunner):
+        (WebTestRunner::TestRunner::reset):
+        (WebTestRunner::TestRunner::shouldDumpBackForwardList):
+        (WebTestRunner):
+        (WebTestRunner::TestRunner::deferMainResourceDataLoad):
+        (WebTestRunner::TestRunner::shouldDumpSelectionRect):
+        (WebTestRunner::TestRunner::testRepaint):
+        (WebTestRunner::TestRunner::sweepHorizontally):
+        (WebTestRunner::TestRunner::isPrinting):
+        (WebTestRunner::TestRunner::shouldStayOnPageAfterHandlingBeforeUnload):
+        (WebTestRunner::TestRunner::dumpBackForwardList):
+        (WebTestRunner::TestRunner::setDeferMainResourceDataLoad):
+        (WebTestRunner::TestRunner::dumpSelectionRect):
+        (WebTestRunner::TestRunner::repaintSweepHorizontally):
+        (WebTestRunner::TestRunner::setPrinting):
+        (WebTestRunner::TestRunner::setShouldStayOnPageAfterHandlingBeforeUnload):
+        * DumpRenderTree/chromium/TestRunner/src/TestRunner.h:
+        (TestRunner):
+
 2013-01-14  Dirk Pranke  <dpranke@chromium.org>
 
         nrwt: stub out show_results_html for mock ports

@@ -75,10 +75,6 @@ public:
 
     virtual ~DRTTestRunner();
 
-    // This function sets a flag that tells the test_shell to print out a text
-    // representation of the back/forward list. It ignores all arguments.
-    void dumpBackForwardList(const CppArgumentList&, CppVariant*);
-
     // Functions for dealing with windows. By default we block all new windows.
     void windowCount(const CppArgumentList&, CppVariant*);
     void setCloseRemainingWindowsWhenComplete(const CppArgumentList&, CppVariant*);
@@ -125,8 +121,6 @@ public:
     // Converts a URL starting with file:///tmp/ to the local mapping.
     void pathToLocalResource(const CppArgumentList&, CppVariant*);
 
-    void dumpSelectionRect(const CppArgumentList&, CppVariant*);
-
 #if ENABLE(NOTIFICATIONS)
     // Grants permission for desktop notifications to an origin
     void grantWebNotificationPermission(const CppArgumentList&, CppVariant*);
@@ -134,12 +128,8 @@ public:
     void simulateLegacyWebNotificationClick(const CppArgumentList&, CppVariant*);
 #endif
 
-    void setDeferMainResourceDataLoad(const CppArgumentList&, CppVariant*);
-
     void display(const CppArgumentList&, CppVariant*);
     void displayInvalidatedRegion(const CppArgumentList&, CppVariant*);
-    void testRepaint(const CppArgumentList&, CppVariant*);
-    void repaintSweepHorizontally(const CppArgumentList&, CppVariant*);
 
     // Clears all databases.
     void clearAllDatabases(const CppArgumentList&, CppVariant*);
@@ -149,9 +139,6 @@ public:
     // Calls setlocale(LC_ALL, ...) for a specified locale.
     // Resets between tests.
     void setPOSIXLocale(const CppArgumentList&, CppVariant*);
-
-    // Causes layout to happen as if targetted to printed pages.
-    void setPrinting(const CppArgumentList&, CppVariant*);
 
     // Gets the number of geolocation permissions requests pending.
     void numberOfPendingGeolocationPermissionRequests(const CppArgumentList&, CppVariant*);
@@ -175,8 +162,6 @@ public:
     void wasMockSpeechRecognitionAborted(const CppArgumentList&, CppVariant*);
 #endif
 
-    void setShouldStayOnPageAfterHandlingBeforeUnload(const CppArgumentList&, CppVariant*);
-
 #if ENABLE(POINTER_LOCK)
     void didAcquirePointerLock(const CppArgumentList&, CppVariant*);
     void didNotAcquirePointerLock(const CppArgumentList&, CppVariant*);
@@ -192,9 +177,6 @@ public:
     // The following methods are not exposed to JavaScript.
     void setWorkQueueFrozen(bool frozen) { m_workQueue.setFrozen(frozen); }
 
-    bool shouldDumpSelectionRect() { return m_dumpSelectionRect; }
-    bool shouldDumpBackForwardList() { return m_dumpBackForwardList; }
-    bool deferMainResourceDataLoad() { return m_deferMainResourceDataLoad; }
     void setShowDebugLayerTree(bool value) { m_showDebugLayerTree = value; }
     void setTitleTextDirection(WebKit::WebTextDirection dir)
     {
@@ -205,12 +187,6 @@ public:
     {
         return m_interceptPostMessage.isBool() && m_interceptPostMessage.toBoolean();
     }
-
-    void setIsPrinting(bool value) { m_isPrinting = value; }
-    bool isPrinting() { return m_isPrinting; }
-
-    bool testRepaint() const { return m_testRepaint; }
-    bool sweepHorizontally() const { return m_sweepHorizontally; }
 
     // Called by the webview delegate when the toplevel frame load is done.
     void locationChangeDone();
@@ -233,8 +209,6 @@ public:
     };
 
     WebTaskList* taskList() { return &m_taskList; }
-
-    bool shouldStayOnPageAfterHandlingBeforeUnload() const { return m_shouldStayOnPageAfterHandlingBeforeUnload; }
 
 private:
     friend class WorkItem;
@@ -283,37 +257,16 @@ private:
     // Non-owning pointer. The DRTTestRunner is owned by the host.
     TestShell* m_shell;
 
-    // If true, the test_shell will draw the bounds of the current selection rect
-    // taking possible transforms of the selection rect into account.
-    bool m_dumpSelectionRect;
-
-    // If true, the test_shell will produce a dump of the back forward list as
-    // well.
-    bool m_dumpBackForwardList;
-
     // When reset is called, go through and close all but the main test shell
     // window. By default, set to true but toggled to false using
     // setCloseRemainingWindowsWhenComplete().
     bool m_closeRemainingWindows;
 
-    // If true, pixel dump will be produced as a series of 1px-tall, view-wide
-    // individual paints over the height of the view.
-    bool m_testRepaint;
-    // If true and test_repaint_ is true as well, pixel dump will be produced as
-    // a series of 1px-wide, view-tall paints across the width of the view.
-    bool m_sweepHorizontally;
-
     // If true, don't dump output until notifyDone is called.
     bool m_waitUntilDone;
 
-    // If false, all new requests will not defer the main resource data load.
-    bool m_deferMainResourceDataLoad;
-
     // If true, we will show extended information in the graphics layer tree.
     bool m_showDebugLayerTree;
-
-    // If true, layout is to target printed pages.
-    bool m_isPrinting;
 
     WorkQueue m_workQueue;
 
@@ -325,8 +278,6 @@ private:
 
     // Bound variable to set whether postMessages should be intercepted or not
     CppVariant m_interceptPostMessage;
-
-    bool m_shouldStayOnPageAfterHandlingBeforeUnload;
 };
 
 #endif // DRTTestRunner_h
