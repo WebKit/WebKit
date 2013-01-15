@@ -1,3 +1,26 @@
+2013-01-15  Zan Dobersek  <zdobersek@igalia.com>
+
+        Tests with WontFix expectation are (indirectly) skipped
+        https://bugs.webkit.org/show_bug.cgi?id=105860
+
+        Reviewed by Dirk Pranke.
+
+        Only skip the WontFix expectation if there are no other layout test
+        expectations (like Failure, ImageOnlyFailure) listed for the test.
+        This makes it possible to run an expected failure for which there
+        is no reason or interest to fix. There are some ports that would like
+        to exercise this behavior as well as specific test cases that should use
+        such expectations.
+
+        * Scripts/webkitpy/layout_tests/models/test_expectations.py:
+        (TestExpectationParser._tokenize_line): Only add the SKIP modifier for a
+        WONTFIX test if there are no expectations listed. The warning is adjusted
+        to reflect the new behavior.
+        * Scripts/webkitpy/layout_tests/models/test_expectations_unittest.py: Add
+        and adjust test cases for these changes.
+        (ExpectationSyntaxTests.test_wontfix):
+        (SemanticTests.test_skip_and_wontfix):
+
 2013-01-15  Jochen Eisinger  <jochen@chromium.org>
 
         [chromium] add title text direction attribute to TestRunner

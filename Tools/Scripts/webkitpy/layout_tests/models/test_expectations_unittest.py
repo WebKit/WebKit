@@ -356,6 +356,8 @@ class ExpectationSyntaxTests(Base):
 
     def test_wontfix(self):
         self.assert_tokenize_exp('foo.html [ WontFix ]', modifiers=['WONTFIX', 'SKIP'], expectations=['PASS'])
+        self.assert_tokenize_exp('foo.html [ WontFix ImageOnlyFailure ]', modifiers=['WONTFIX'], expectations=['IMAGE'])
+        self.assert_tokenize_exp('foo.html [ WontFix Pass Failure ]', modifiers=['WONTFIX'], expectations=['PASS', 'FAIL'])
 
     def test_blank_line(self):
         self.assert_tokenize_exp('', name=None)
@@ -391,16 +393,16 @@ class SemanticTests(Base):
         self.assertEqual(line.warnings, ['Test lacks BUG modifier.'])
 
     def test_skip_and_wontfix(self):
-        # Skip and WontFix are not allowed to have other expectations as well, because those
+        # Skip is not allowed to have other expectations as well, because those
         # expectations won't be exercised and may become stale .
         self.parse_exp('failures/expected/text.html [ Failure Skip ]')
         self.assertTrue(self._exp.has_warnings())
 
         self.parse_exp('failures/expected/text.html [ Crash WontFix ]')
-        self.assertTrue(self._exp.has_warnings())
+        self.assertFalse(self._exp.has_warnings())
 
         self.parse_exp('failures/expected/text.html [ Pass WontFix ]')
-        self.assertTrue(self._exp.has_warnings())
+        self.assertFalse(self._exp.has_warnings())
 
     def test_slow_and_timeout(self):
         # A test cannot be SLOW and expected to TIMEOUT.

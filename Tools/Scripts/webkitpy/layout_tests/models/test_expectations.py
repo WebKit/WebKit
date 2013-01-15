@@ -346,12 +346,12 @@ class TestExpectationParser(object):
             elif state not in ('name_found', 'done'):
                 warnings.append('Missing a "]"')
 
-        if 'WONTFIX' in modifiers and 'SKIP' not in modifiers:
+        if 'WONTFIX' in modifiers and 'SKIP' not in modifiers and not expectations:
             modifiers.append('SKIP')
 
         if 'SKIP' in modifiers and expectations:
             # FIXME: This is really a semantic warning and shouldn't be here. Remove when we drop the old syntax.
-            warnings.append('A test marked Skip or WontFix must not have other expectations.')
+            warnings.append('A test marked Skip must not have other expectations.')
         elif not expectations:
             if 'SKIP' not in modifiers and 'REBASELINE' not in modifiers and 'SLOW' not in modifiers:
                 modifiers.append('SKIP')
