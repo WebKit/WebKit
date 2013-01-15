@@ -489,7 +489,7 @@ inline void PlatformContextSkia::drawRRect(const SkRRect& rect, const SkPaint& p
     m_canvas->drawRRect(rect, paint);
 
     if (m_trackOpaqueRegion)
-        m_opaqueRegion.didDrawRect(this, rect.getBounds(), paint, 0);
+        m_opaqueRegion.didDrawBounded(this, rect.getBounds(), paint);
 }
 
 inline void PlatformContextSkia::drawPosText(const void* text, size_t byteLength,

@@ -4210,6 +4210,9 @@ webkit.org/b/104489 [ Win ] http/tests/w3c/webperf/submission/Intel/user-timing/
 webkit.org/b/104489 [ Win ] http/tests/w3c/webperf/submission/Intel/user-timing/test_user_timing_clearMarks.html [ Failure Pass ]
 webkit.org/b/104489 [ Win ] http/tests/w3c/webperf/submission/Intel/user-timing/test_user_timing_measure_associate_with_navigation_timing.html [ Failure Pass ]
 
+# Needs platform-specific results
+webkit.org/b/106898 platform/chromium/compositing/rounded-corners.html [ Pass Missing ]
+
 # Flaky since r136945
 webkit.org/b/94002 [ Win Mac Debug ] inspector/debugger/live-edit-breakpoints.html [ Failure Timeout ]
 webkit.org/b/94002 [ Mac Debug ] inspector/debugger/live-edit.html [ Crash Pass Timeout ]

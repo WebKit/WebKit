@@ -664,6 +664,53 @@ TEST(PlatformContextSkiaTest, trackOpaqueOvalTest)
     EXPECT_PIXELS_MATCH(bitmap, platformContext.opaqueRegion().asRect());
 }
 
+TEST(PlatformContextSkiaTest, trackOpaqueRoundedRectTest)
+{
+    SkBitmap bitmap;
+    bitmap.setConfig(SkBitmap::kARGB_8888_Config, 200, 200);
+    bitmap.allocPixels();
+    bitmap.eraseColor(0);
+    SkCanvas canvas(bitmap);
+
+    PlatformContextSkia platformContext(&canvas);
+    platformContext.setTrackOpaqueRegion(true);
+    GraphicsContext context(&platformContext);
+
+    Color opaque(1.0f, 0.0f, 0.0f, 1.0f);
+    Color alpha(0.0f, 0.0f, 0.0f, 0.0f);
+    IntSize radii(10, 10);
+
+    EXPECT_EQ_RECT(IntRect(0, 0, 0, 0), platformContext.opaqueRegion().asRect());
+    EXPECT_PIXELS_MATCH(bitmap, platformContext.opaqueRegion().asRect());
+
+    context.fillRoundedRect(IntRect(10, 10, 90, 90), radii, radii, radii, radii, opaque, ColorSpaceDeviceRGB);
+    EXPECT_EQ_RECT(IntRect(0, 0, 0, 0), platformContext.opaqueRegion().asRect());
+    EXPECT_PIXELS_MATCH(bitmap, platformContext.opaqueRegion().asRect());
+
+    context.fillRect(FloatRect(10, 10, 90, 90), opaque, ColorSpaceDeviceRGB, CompositeSourceOver);
+    EXPECT_EQ_RECT(IntRect(10, 10, 90, 90), platformContext.opaqueRegion().asRect());
+    EXPECT_PIXELS_MATCH(bitmap, platformContext.opaqueRegion().asRect());
+
+    context.setCompositeOperation(CompositeSourceIn);
+    context.setShouldAntialias(false);
+
+    context.fillRoundedRect(IntRect(10, 10, 50, 30), radii, radii, radii, radii, opaque, ColorSpaceDeviceRGB);
+    EXPECT_EQ_RECT(IntRect(10, 10, 90, 90), platformContext.opaqueRegion().asRect());
+    EXPECT_PIXELS_MATCH(bitmap, platformContext.opaqueRegion().asRect());
+
+    context.fillRoundedRect(IntRect(10, 10, 30, 50), radii, radii, radii, radii, alpha, ColorSpaceDeviceRGB);
+    EXPECT_EQ_RECT(IntRect(40, 10, 60, 90), platformContext.opaqueRegion().asRect());
+    EXPECT_PIXELS_MATCH(bitmap, platformContext.opaqueRegion().asRect());
+
+    context.fillRoundedRect(IntRect(10, 0, 50, 30), radii, radii, radii, radii, alpha, ColorSpaceDeviceRGB);
+    EXPECT_EQ_RECT(IntRect(40, 30, 60, 70), platformContext.opaqueRegion().asRect());
+    EXPECT_PIXELS_MATCH(bitmap, platformContext.opaqueRegion().asRect());
+
+    context.fillRoundedRect(IntRect(30, 0, 70, 50), radii, radii, radii, radii, opaque, ColorSpaceDeviceRGB);
+    EXPECT_EQ_RECT(IntRect(40, 30, 60, 70), platformContext.opaqueRegion().asRect());
+    EXPECT_PIXELS_MATCH(bitmap, platformContext.opaqueRegion().asRect());
+}
+
 TEST(PlatformContextSkiaTest, trackOpaqueIRectTest)
 {
     SkBitmap bitmap;
