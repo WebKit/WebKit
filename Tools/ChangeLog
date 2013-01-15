@@ -1,5 +1,17 @@
 2013-01-15  Zan Dobersek  <zandobersek@gmail.com>
 
+        [GTK] Enable CSS Image Resolution feature
+        https://bugs.webkit.org/show_bug.cgi?id=99038
+
+        Reviewed by Gustavo Noronha Silva.
+
+        Enable the CSS Image Resolution feature for the development
+        builds of the GTK port.
+
+        * Scripts/webkitperl/FeatureList.pm:
+
+2013-01-15  Zan Dobersek  <zandobersek@gmail.com>
+
         [GTK] Stop passing the unstable features flag to configure script when using build-webkit
         https://bugs.webkit.org/show_bug.cgi?id=106579
 

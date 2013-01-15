@@ -373,9 +373,6 @@ webkit.org/b/79203 fast/mediastream [ Skip ]
 webkit.org/b/99057 fast/css/variables [ Skip ]
 webkit.org/b/99057 inspector/styles/variables [ Skip ]
 
-# CSS image-resolution is not yet enabled.
-webkit.org/b/99038 fast/css/image-resolution [ Failure ]
-
 # CSS image-orientation is not yet enabled.
 webkit.org/b/99040 fast/css/image-orientation [ Failure ]
 
