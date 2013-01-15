@@ -381,6 +381,9 @@ HRESULT WebHistory::saveHistoryGuts(CFURLRef url, IWebError** error)
 
     RetainPtr<CFDataRef> data = this->data();
 
+    if (!data.get())
+        return E_FAIL;
+
     RetainPtr<CFWriteStreamRef> stream(AdoptCF, CFWriteStreamCreateWithFile(kCFAllocatorDefault, url));
     if (!stream) 
         return E_FAIL;

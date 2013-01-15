@@ -1,3 +1,13 @@
+2013-01-15  peavo@outlook.com  <peavo@outlook.com>
+
+        Crash when saving history with no items in it.
+        https://bugs.webkit.org/show_bug.cgi?id=104261
+
+        Reviewed by Darin Adler.
+
+        * WebHistory.cpp:
+        (WebHistory::saveHistoryGuts): Added null pointer check
+
 2013-01-09  Levi Weintraub <leviw@chromium.org>
 
         Rolling out r139683. It broke a bunch of webkit_unit_tests. 
