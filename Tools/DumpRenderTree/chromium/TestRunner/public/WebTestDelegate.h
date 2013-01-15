@@ -87,6 +87,11 @@ public:
     virtual void evaluateInWebInspector(long, const std::string&) { }
     virtual void clearAllDatabases() { }
     virtual void setDatabaseQuota(int) { }
+    virtual void setDeviceScaleFactor(float) { }
+    virtual void setFocus(bool) { }
+    virtual void setAcceptAllCookies(bool) { }
+    virtual std::string pathToLocalResource(const std::string& resource) { return std::string(); }
+    virtual void setLocale(const std::string&) { }
 };
 
 }

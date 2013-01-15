@@ -68,7 +68,6 @@
 #include "webkit/support/webkit_support.h"
 #include <algorithm>
 #include <cctype>
-#include <clocale>
 #include <cstdlib>
 #include <limits>
 #include <sstream>
@@ -116,7 +115,6 @@ DRTTestRunner::DRTTestRunner(TestShell* shell)
 #endif
     bindMethod("notifyDone", &DRTTestRunner::notifyDone);
     bindMethod("numberOfPendingGeolocationPermissionRequests", &DRTTestRunner:: numberOfPendingGeolocationPermissionRequests);
-    bindMethod("pathToLocalResource", &DRTTestRunner::pathToLocalResource);
     bindMethod("queueBackNavigation", &DRTTestRunner::queueBackNavigation);
     bindMethod("queueForwardNavigation", &DRTTestRunner::queueForwardNavigation);
     bindMethod("queueLoadingScript", &DRTTestRunner::queueLoadingScript);
@@ -124,7 +122,6 @@ DRTTestRunner::DRTTestRunner(TestShell* shell)
     bindMethod("queueLoadHTMLString", &DRTTestRunner::queueLoadHTMLString);
     bindMethod("queueNonLoadingScript", &DRTTestRunner::queueNonLoadingScript);
     bindMethod("queueReload", &DRTTestRunner::queueReload);
-    bindMethod("setAlwaysAcceptCookies", &DRTTestRunner::setAlwaysAcceptCookies);
     bindMethod("setCloseRemainingWindowsWhenComplete", &DRTTestRunner::setCloseRemainingWindowsWhenComplete);
     bindMethod("setCustomPolicyDelegate", &DRTTestRunner::setCustomPolicyDelegate);
     bindMethod("setGeolocationPermission", &DRTTestRunner::setGeolocationPermission);
@@ -135,12 +132,9 @@ DRTTestRunner::DRTTestRunner(TestShell* shell)
     bindMethod("setPointerLockWillRespondAsynchronously", &DRTTestRunner::setPointerLockWillRespondAsynchronously);
     bindMethod("setPointerLockWillFailSynchronously", &DRTTestRunner::setPointerLockWillFailSynchronously);
 #endif
-    bindMethod("setPOSIXLocale", &DRTTestRunner::setPOSIXLocale);
-    bindMethod("setBackingScaleFactor", &DRTTestRunner::setBackingScaleFactor);
     bindMethod("setWillSendRequestClearHeader", &DRTTestRunner::setWillSendRequestClearHeader);
     bindMethod("setWillSendRequestReturnsNull", &DRTTestRunner::setWillSendRequestReturnsNull);
     bindMethod("setWillSendRequestReturnsNullOnRedirect", &DRTTestRunner::setWillSendRequestReturnsNullOnRedirect);
-    bindMethod("setWindowIsKey", &DRTTestRunner::setWindowIsKey);
 #if ENABLE(NOTIFICATIONS)
     bindMethod("simulateLegacyWebNotificationClick", &DRTTestRunner::simulateLegacyWebNotificationClick);
 #endif
@@ -218,7 +212,7 @@ void DRTTestRunner::waitUntilDone(const CppArgumentList&, CppVariant* result)
 void DRTTestRunner::notifyDone(const CppArgumentList&, CppVariant* result)
 {
     // Test didn't timeout. Kill the timeout timer.
-    m_taskList.revokeAll();
+    taskList()->revokeAll();
 
     completeNotifyDone(false);
     result->setNull();
@@ -389,22 +383,15 @@ void DRTTestRunner::queueLoadHTMLString(const CppArgumentList& arguments, CppVar
 void DRTTestRunner::reset()
 {
     TestRunner::reset();
-    if (m_shell)
-        m_shell->webViewHost()->setDeviceScaleFactor(1);
     m_waitUntilDone = false;
     m_webHistoryItemCount.set(0);
     m_interceptPostMessage.set(false);
-
-    webkit_support::SetAcceptAllCookies(false);
-
-    setlocale(LC_ALL, "");
 
     if (m_closeRemainingWindows)
         m_shell->closeRemainingWindows();
     else
         m_closeRemainingWindows = true;
     m_workQueue.reset();
-    m_taskList.revokeAll();
 }
 
 void DRTTestRunner::locationChangeDone()
@@ -434,20 +421,6 @@ void DRTTestRunner::setCloseRemainingWindowsWhenComplete(const CppArgumentList& 
 {
     if (arguments.size() > 0 && arguments[0].isBool())
         m_closeRemainingWindows = arguments[0].value.boolValue;
-    result->setNull();
-}
-
-void DRTTestRunner::setAlwaysAcceptCookies(const CppArgumentList& arguments, CppVariant* result)
-{
-    if (arguments.size() > 0)
-        webkit_support::SetAcceptAllCookies(cppVariantToBool(arguments[0]));
-    result->setNull();
-}
-
-void DRTTestRunner::setWindowIsKey(const CppArgumentList& arguments, CppVariant* result)
-{
-    if (arguments.size() > 0 && arguments[0].isBool())
-        m_shell->setFocus(m_shell->webView(), arguments[0].value.boolValue);
     result->setNull();
 }
 
@@ -492,44 +465,6 @@ void DRTTestRunner::setWillSendRequestReturnsNull(const CppArgumentList& argumen
     if (arguments.size() > 0 && arguments[0].isBool())
         m_shell->webViewHost()->setRequestReturnNull(arguments[0].value.boolValue);
     result->setNull();
-}
-
-void DRTTestRunner::pathToLocalResource(const CppArgumentList& arguments, CppVariant* result)
-{
-    result->setNull();
-    if (arguments.size() <= 0 || !arguments[0].isString())
-        return;
-
-    string url = arguments[0].toString();
-#if OS(WINDOWS)
-    if (!url.find("/tmp/")) {
-        // We want a temp file.
-        const unsigned tempPrefixLength = 5;
-        size_t bufferSize = MAX_PATH;
-        OwnArrayPtr<WCHAR> tempPath = adoptArrayPtr(new WCHAR[bufferSize]);
-        DWORD tempLength = ::GetTempPathW(bufferSize, tempPath.get());
-        if (tempLength + url.length() - tempPrefixLength + 1 > bufferSize) {
-            bufferSize = tempLength + url.length() - tempPrefixLength + 1;
-            tempPath = adoptArrayPtr(new WCHAR[bufferSize]);
-            tempLength = GetTempPathW(bufferSize, tempPath.get());
-            ASSERT(tempLength < bufferSize);
-        }
-        string resultPath(WebString(tempPath.get(), tempLength).utf8());
-        resultPath.append(url.substr(tempPrefixLength));
-        result->set(resultPath);
-        return;
-    }
-#endif
-
-    // Some layout tests use file://// which we resolve as a UNC path. Normalize
-    // them to just file:///.
-    string lowerUrl = url;
-    transform(lowerUrl.begin(), lowerUrl.end(), lowerUrl.begin(), ::tolower);
-    while (!lowerUrl.find("file:////")) {
-        url = url.substr(0, 8) + url.substr(9);
-        lowerUrl = lowerUrl.substr(0, 8) + lowerUrl.substr(9);
-    }
-    result->set(webkit_support::RewriteLayoutTestsURL(url).spec());
 }
 
 
@@ -578,13 +513,6 @@ void DRTTestRunner::displayInvalidatedRegion(const CppArgumentList& arguments, C
     host->paintInvalidatedRegion();
     host->displayRepaintMask();
     result->setNull();
-}
-
-void DRTTestRunner::setPOSIXLocale(const CppArgumentList& arguments, CppVariant* result)
-{
-    result->setNull();
-    if (arguments.size() == 1 && arguments[0].isString())
-        setlocale(LC_ALL, arguments[0].toString().c_str());
 }
 
 void DRTTestRunner::numberOfPendingGeolocationPermissionRequests(const CppArgumentList& arguments, CppVariant* result)
@@ -701,40 +629,6 @@ void DRTTestRunner::wasMockSpeechRecognitionAborted(const CppArgumentList&, CppV
         result->set(recognizer->wasAborted());
 }
 #endif
-
-class InvokeCallbackTask : public WebMethodTask<DRTTestRunner> {
-public:
-    InvokeCallbackTask(DRTTestRunner* object, PassOwnArrayPtr<CppVariant> callbackArguments, uint32_t numberOfArguments)
-        : WebMethodTask<DRTTestRunner>(object)
-        , m_callbackArguments(callbackArguments)
-        , m_numberOfArguments(numberOfArguments)
-    {
-    }
-
-    virtual void runIfValid()
-    {
-        CppVariant invokeResult;
-        m_callbackArguments[0].invokeDefault(m_callbackArguments.get(), m_numberOfArguments, invokeResult);
-    }
-
-private:
-    OwnArrayPtr<CppVariant> m_callbackArguments;
-    uint32_t m_numberOfArguments;
-};
-
-void DRTTestRunner::setBackingScaleFactor(const CppArgumentList& arguments, CppVariant* result)
-{
-    if (arguments.size() < 2 || !arguments[0].isNumber() || !arguments[1].isObject())
-        return;
-    
-    float value = arguments[0].value.doubleValue;
-    m_shell->webViewHost()->setDeviceScaleFactor(value);
-
-    OwnArrayPtr<CppVariant> callbackArguments = adoptArrayPtr(new CppVariant[1]);
-    callbackArguments[0].set(arguments[1]);
-    result->setNull();
-    postTask(new InvokeCallbackTask(this, callbackArguments.release(), 1));
-}
 
 #if ENABLE(POINTER_LOCK)
 void DRTTestRunner::didAcquirePointerLock(const CppArgumentList&, CppVariant* result)
