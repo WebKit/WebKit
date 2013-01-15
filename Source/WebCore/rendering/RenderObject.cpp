@@ -2626,11 +2626,19 @@ void RenderObject::updateHitTestResult(HitTestResult& result, const LayoutPoint&
     if (result.innerNode())
         return;
 
-    Node* n = node();
-    if (n) {
-        result.setInnerNode(n);
+    Node* node = this->node();
+
+    // If we hit the anonymous renderers inside generated content we should
+    // actually hit the generated content so walk up to the PseudoElement.
+    if (!node && parent() && parent()->isBeforeOrAfterContent()) {
+        for (RenderObject* renderer = parent(); renderer && !node; renderer = renderer->parent())
+            node = renderer->node();
+    }
+
+    if (node) {
+        result.setInnerNode(node);
         if (!result.innerNonSharedNode())
-            result.setInnerNonSharedNode(n);
+            result.setInnerNonSharedNode(node);
         result.setLocalPoint(point);
     }
 }

@@ -1,0 +1,2 @@
+Hovering the generated text should hover the span:
+PASS
