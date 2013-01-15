@@ -36,7 +36,6 @@
 #include "HTMLNames.h"
 #include "HTMLScriptRunnerHost.h"
 #include "IgnoreDestructiveWriteCountIncrementer.h"
-#include "MutationObserver.h"
 #include "NestingLevelIncrementer.h"
 #include "NotImplemented.h"
 #include "ScriptElement.h"
@@ -111,7 +110,7 @@ bool HTMLScriptRunner::isPendingScriptReady(const PendingScript& script)
 void HTMLScriptRunner::executeParsingBlockingScript()
 {
     ASSERT(m_document);
-    ASSERT(!isExecutingScript());
+    ASSERT(!m_scriptNestingLevel);
     ASSERT(m_document->haveStylesheetsLoaded());
     ASSERT(isPendingScriptReady(m_parserBlockingScript));
 
@@ -128,11 +127,6 @@ void HTMLScriptRunner::executePendingScriptAndDispatchEvent(PendingScript& pendi
     if (pendingScript.cachedScript() && pendingScript.watchingForLoad())
         stopWatchingForLoad(pendingScript);
 
-#if ENABLE(MUTATION_OBSERVERS)
-    if (!isExecutingScript())
-        MutationObserver::deliverAllMutations();
-#endif
-
     // Clear the pending script before possible rentrancy from executeScript()
     RefPtr<Element> element = pendingScript.releaseElementAndClear();
     if (ScriptElement* scriptElement = toScriptElement(element.get())) {
@@ -146,7 +140,7 @@ void HTMLScriptRunner::executePendingScriptAndDispatchEvent(PendingScript& pendi
             element->dispatchEvent(createScriptLoadEvent());
         }
     }
-    ASSERT(!isExecutingScript());
+    ASSERT(!m_scriptNestingLevel);
 }
 
 void HTMLScriptRunner::watchForLoad(PendingScript& pendingScript)
@@ -176,7 +170,7 @@ void HTMLScriptRunner::execute(PassRefPtr<Element> scriptElement, const TextPosi
     runScript(scriptElement.get(), scriptStartPosition);
 
     if (hasParserBlockingScript()) {
-        if (isExecutingScript())
+        if (m_scriptNestingLevel)
             return; // Unwind to the outermost HTMLScriptRunner::execute before continuing parsing.
         // If preload scanner got created, it is missing the source after the current insertion point. Append it and scan.
         if (!hadPreloadScanner && m_host->hasPreloadScanner())
@@ -198,7 +192,7 @@ void HTMLScriptRunner::executeParsingBlockingScripts()
 
 void HTMLScriptRunner::executeScriptsWaitingForLoad(CachedResource* cachedScript)
 {
-    ASSERT(!isExecutingScript());
+    ASSERT(!m_scriptNestingLevel);
     ASSERT(hasParserBlockingScript());
     ASSERT_UNUSED(cachedScript, m_parserBlockingScript.cachedScript() == cachedScript);
     ASSERT(m_parserBlockingScript.cachedScript()->isLoaded());
@@ -211,7 +205,7 @@ void HTMLScriptRunner::executeScriptsWaitingForStylesheets()
     // Callers should check hasScriptsWaitingForStylesheets() before calling
     // to prevent parser or script re-entry during </style> parsing.
     ASSERT(hasScriptsWaitingForStylesheets());
-    ASSERT(!isExecutingScript());
+    ASSERT(!m_scriptNestingLevel);
     ASSERT(m_document->haveStylesheetsLoaded());
     executeParsingBlockingScripts();
 }
@@ -219,7 +213,7 @@ void HTMLScriptRunner::executeScriptsWaitingForStylesheets()
 bool HTMLScriptRunner::executeScriptsWaitingForParsing()
 {
     while (!m_scriptsToExecuteAfterParsing.isEmpty()) {
-        ASSERT(!isExecutingScript());
+        ASSERT(!m_scriptNestingLevel);
         ASSERT(!hasParserBlockingScript());
         ASSERT(m_scriptsToExecuteAfterParsing.first().cachedScript());
         if (!m_scriptsToExecuteAfterParsing.first().cachedScript()->isLoaded()) {
@@ -280,6 +274,9 @@ void HTMLScriptRunner::runScript(Element* script, const TextPosition& scriptStar
     ASSERT(m_document);
     ASSERT(!hasParserBlockingScript());
     {
+        InsertionPointRecord insertionPointRecord(m_host->inputStream());
+        NestingLevelIncrementer nestingLevelIncrementer(m_scriptNestingLevel);
+
         ScriptElement* scriptElement = toScriptElement(script);
 
         // This contains both and ASSERTION and a null check since we should not
@@ -289,18 +286,6 @@ void HTMLScriptRunner::runScript(Element* script, const TextPosition& scriptStar
         ASSERT(scriptElement);
         if (!scriptElement)
             return;
-
-#if ENABLE(MUTATION_OBSERVERS)
-        // FIXME: This may be too agressive as we always deliver mutations at
-        // every script element, even if it's not ready to execute yet. There's
-        // unfortuantely no obvious way to tell if prepareScript is going to
-        // execute the script from out here.
-        if (!isExecutingScript())
-            MutationObserver::deliverAllMutations();
-#endif
-
-        InsertionPointRecord insertionPointRecord(m_host->inputStream());
-        NestingLevelIncrementer nestingLevelIncrementer(m_scriptNestingLevel);
 
         scriptElement->prepareScript(scriptStartPosition);
 

@@ -1,3 +1,13 @@
+2013-01-15  Levi Weintraub  <leviw@chromium.org>
+
+        Unreviewed, rolling out r139790.
+        http://trac.webkit.org/changeset/139790
+        https://bugs.webkit.org/show_bug.cgi?id=106948
+
+        The patch is failing its own test.
+
+        * bytecode/GlobalResolveInfo.h: Removed property svn:mergeinfo.
+
 2013-01-15  Zan Dobersek  <zandobersek@gmail.com>
 
         [Autotools] Unify JavaScriptCore sources list, regardless of target OS
