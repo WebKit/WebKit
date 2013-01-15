@@ -13,6 +13,7 @@
         video::cue(b) {color: lime}
         video::cue(.red, .red2) { color:red }
         #testvideo::cue(.green) { color:green }
+        video::cue(#testcue) {color: green}
         video::cue(:future) {color: gray}
         </style>
 
@@ -20,12 +21,19 @@
 
         var cueNode;
         var seekedCount = 0;
+        var seekTimes = [0.3, 0.5, 0.7, 0.9, 1.1, 1.3];
+
         var info = [["rgb(255, 0, 0)", "rgb(0, 128, 0)", "rgb(255, 0, 0)"],
                     ["rgb(128, 0, 128)", "rgb(128, 128, 128)", "rgb(128, 128, 128)"],
                     ["rgb(128, 0, 128)", "rgb(128, 0, 128)", "rgb(128, 128, 128)"],
                     ["rgb(128, 0, 128)", "rgb(128, 0, 128)", "rgb(128, 0, 128)"],
-                    ["rgb(128, 0, 128)", "rgb(255, 255, 0)", "rgb(0, 255, 0)"]];
-        var seekTimes = [0.3, 0.5, 0.7, 0.9, 1.1, 1.3];
+                    ["rgb(128, 0, 128)", "rgb(255, 255, 0)", "rgb(0, 255, 0)"],
+                    ["rgb(0, 128, 0)", "rgb(0, 128, 0)", "rgb(0, 128, 0)"]];
+
+        var description = ["1. Test that cues are being matched properly by the class name",
+                           "2. Test that cues are being matched properly by the ':future' pseudo class.", "", "",
+                           "3. Test that cues are being matched properly by tag.",
+                           "4. Test that cues are being matched properly by id."];
 
         function skipNonElements(root)
         {
@@ -35,20 +43,15 @@
             }
             return nextElementSibling;
         }
-        
+
         function seeked()
         {
             if (testEnded)
                 return;
 
-            if (seekedCount == 1) {
-                consoleWrite("");
-                consoleWrite("");
-                consoleWrite("2. Test that cues are being matched properly by the ':future' pseudo class.");
-            } else if (seekedCount == 4) {
-                consoleWrite("");
-                consoleWrite("");
-                consoleWrite("3. Test that cues are being matched properly by tag.");
+            if (description[seekedCount] != "") {
+                consoleWrite("<br>");
+                consoleWrite(description[seekedCount]);
             }
 
             cueNode = skipNonElements(textTrackDisplayElement(video, 'all-nodes').firstChild);
@@ -69,7 +72,6 @@
 
         function loaded()
         {
-            consoleWrite("1. Test that cues are being matched properly by the class name");
             findMediaElement();
             video.src = findMediaFile('video', '../content/test');
             video.id = "testvideo";

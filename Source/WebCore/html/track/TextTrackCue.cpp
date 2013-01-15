@@ -694,9 +694,13 @@ void TextTrackCue::markFutureAndPastNodes(ContainerNode* root, double previousTi
             if (currentTimestamp > movieTime)
                 isPastNode = false;
         }
-
-        if (child->isElementNode())
+        
+        if (child->isElementNode()) {
             toElement(child)->setWebVTTNodeType(isPastNode ? WebVTTNodeTypePast : WebVTTNodeTypeFuture);
+            // Make an elemenet id match a cue id for style matching purposes.
+            if (!m_id.isEmpty())
+                toElement(child)->setIdAttribute(AtomicString(m_id.characters(), m_id.length()));
+        }
     }
 }
 
