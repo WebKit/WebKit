@@ -49,6 +49,8 @@ def run_command(*args, **kwargs):
 
 class AmbiguousCommitError(Exception):
     def __init__(self, num_local_commits, working_directory_is_clean):
+        Exception.__init__(self, "Found %s local commits and the working directory is %s" % (
+            num_local_commits, ["not clean", "clean"][working_directory_is_clean]))
         self.num_local_commits = num_local_commits
         self.working_directory_is_clean = working_directory_is_clean
 
