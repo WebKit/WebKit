@@ -1,3 +1,9 @@
+2013-01-15  Victor Carbune  <victor@rosedu.org>
+
+        Unreviewed. Update my email addresses.
+
+        * Scripts/webkitpy/common/config/committers.py:
+
 2013-01-15  Zan Dobersek  <zdobersek@igalia.com>
 
         [GTK] Waiting on the gdb process will lead to deadlock
