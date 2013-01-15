@@ -1316,6 +1316,8 @@ void RenderListMarker::layout()
 {
     StackStats::LayoutCheckPoint layoutCheckPoint;
     ASSERT(needsLayout());
+
+    updateMargins();
  
     if (isImage()) {
         setWidth(m_image->imageSize(this, style()->effectiveZoom()).width());
@@ -1367,7 +1369,6 @@ void RenderListMarker::computePreferredLogicalWidths()
         LayoutSize imageSize = m_image->imageSize(this, style()->effectiveZoom());
         m_minPreferredLogicalWidth = m_maxPreferredLogicalWidth = style()->isHorizontalWritingMode() ? imageSize.width() : imageSize.height();
         setPreferredLogicalWidthsDirty(false);
-        updateMargins();
         return;
     }
 
@@ -1478,8 +1479,6 @@ void RenderListMarker::computePreferredLogicalWidths()
     m_maxPreferredLogicalWidth = logicalWidth;
 
     setPreferredLogicalWidthsDirty(false);
-    
-    updateMargins();
 }
 
 void RenderListMarker::updateMargins()
