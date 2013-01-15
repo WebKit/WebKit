@@ -4424,6 +4424,8 @@
             'platform/network/cf/SocketStreamHandleCFNet.cpp',
             'platform/network/chromium/AuthenticationChallenge.h',
             'platform/network/chromium/AuthenticationChallengeChromium.cpp',
+            'platform/network/chromium/BlobRegistryProxy.cpp',
+            'platform/network/chromium/BlobRegistryProxy.h',
             'platform/network/chromium/CookieJarChromium.cpp',
             'platform/network/chromium/DNSChromium.cpp',
             'platform/network/chromium/ResourceError.h',

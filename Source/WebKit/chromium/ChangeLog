@@ -1,3 +1,17 @@
+2013-01-14  Mark Pilgrim  <pilgrim@chromium.org>
+
+        [Chromium] Move BlobRegistryProxy into WebCore
+        https://bugs.webkit.org/show_bug.cgi?id=106831
+
+        Reviewed by Adam Barth.
+
+        Part of a larger refactoring series to remove layering violations
+        in Chromium. See tracking bug 106829.
+
+        * WebKit.gyp:
+        * src/BlobRegistryProxy.cpp: Removed.
+        * src/BlobRegistryProxy.h: Removed.
+
 2013-01-14  Alec Flett  <alecflett@chromium.org>
 
         IndexedDB: Remove IDBObjectStore/IndexBackendImpl and support functions

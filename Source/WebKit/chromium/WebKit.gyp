@@ -354,8 +354,6 @@
                 'src/BackForwardListChromium.h',
                 'src/BatteryClientImpl.cpp',
                 'src/BatteryClientImpl.h',
-                'src/BlobRegistryProxy.cpp',
-                'src/BlobRegistryProxy.h',
                 'src/DateTimeChooserImpl.cpp',
                 'src/DateTimeChooserImpl.h',
                 'src/ChromeClientImpl.cpp',
