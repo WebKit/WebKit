@@ -1,3 +1,16 @@
+2013-01-15  Zan Dobersek  <zandobersek@gmail.com>
+
+        [GTK] Stop passing the unstable features flag to configure script when using build-webkit
+        https://bugs.webkit.org/show_bug.cgi?id=106579
+
+        Reviewed by Gustavo Noronha Silva.
+
+        The --enable-unstable-features flag is not required to be passed anymore
+        to the configure script as it was removed in r138252.
+
+        * Scripts/webkitdirs.pm:
+        (buildAutotoolsProject):
+
 2013-01-15  Tony Chang  <tony@chromium.org>
 
         [chromium] Unreviewed, fix a bug where we don't properly shutdown lighttpd.

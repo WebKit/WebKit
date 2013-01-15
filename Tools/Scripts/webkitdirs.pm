@@ -2079,9 +2079,6 @@ sub buildAutotoolsProject($@)
         push @buildArgs, "--disable-debug";
     }
 
-    # Enable unstable features when building through build-webkit.
-    push @buildArgs, "--enable-unstable-features";
-
     if (checkForArgumentAndRemoveFromArrayRef("--update-gtk", \@buildArgs)) {
         # Force autogen to run, to catch the possibly updated libraries.
         system("rm -f previous-autogen-arguments.txt");
