@@ -1078,7 +1078,6 @@ Bug(GTK) fast/frames/meta-refresh-user-gesture.html [ Failure ]
 # Rounding color problems inside pixman
 webkit.org/b/49964 fast/canvas/canvas-fillPath-shadow.html [ Failure ]
 
-webkit.org/b/50740 editing/spelling/spellcheck-sequencenum.html [ Failure ]
 webkit.org/b/50740 editing/spelling/spellcheck-async-mutation.html [ Failure ]
 
 # DRT does not obey testRunner.addURLToRedirect()
@@ -1278,9 +1277,6 @@ webkit.org/b/80129 fast/frames/flattening/frameset-flattening-advanced.html [ Fa
 
 webkit.org/b/89663 editing/deleting/delete-3800834-fix.html [ Failure ]
 
-webkit.org/b/94952 [ Debug ] platform/gtk/scrollbars/overflow-scrollbar-horizontal-wheel-scroll.html [ Failure ]
-webkit.org/b/94952 [ Debug ] scrollbars/scroll-rtl-or-bt-layer.html [ Failure ]
-
 webkit.org/b/87355 canvas/philip/tests/2d.text.draw.fontface.notinpage.html [ Failure ]
 
 webkit.org/b/95428 media/video-controls-captions.html [ Failure ]
@@ -1371,9 +1367,6 @@ webkit.org/b/85522 http/tests/security/sandboxed-iframe-form-top.html [ Skip ]
 
 webkit.org/b/106015 fast/css-generated-content/pseudo-animation.html [ Failure ]
 webkit.org/b/106015 fast/css-generated-content/pseudo-transition.html [ Failure ]
-
-# Added only temporarily, until a clean build is performed on the builders.
-Bug(GTK) transitions/transitions-parsing.html [ Failure ]
 
 webkit.org/b/106316 accessibility/render-counter-text.html [ Failure ]
 
