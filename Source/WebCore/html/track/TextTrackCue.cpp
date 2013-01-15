@@ -41,6 +41,7 @@
 #include "Event.h"
 #include "HTMLDivElement.h"
 #include "HTMLMediaElement.h"
+#include "HTMLSpanElement.h"
 #include "NodeTraversal.h"
 #include "RenderTextTrackCue.h"
 #include "Text.h"
@@ -200,13 +201,12 @@ TextTrackCue::TextTrackCue(ScriptExecutionContext* context, double start, double
     , m_cueIndex(invalidCueIndex)
     , m_writingDirection(Horizontal)
     , m_cueAlignment(Middle)
-    , m_documentFragment(0)
+    , m_webVTTNodeTree(0)
     , m_track(0)
     , m_scriptExecutionContext(context)
     , m_isActive(false)
     , m_pauseOnExit(false)
     , m_snapToLines(true)
-    , m_hasInnerTimestamps(false)
     , m_allDocumentNodes(HTMLDivElement::create(static_cast<Document*>(context)))
     , m_displayTreeShouldChange(true)
     , m_displayTree(TextTrackCueBox::create(static_cast<Document*>(m_scriptExecutionContext), this))
@@ -463,7 +463,7 @@ void TextTrackCue::setText(const String& text)
     cueWillChange();
     // Clear the document fragment but don't bother to create it again just yet as we can do that
     // when it is requested.
-    m_documentFragment = 0;
+    m_webVTTNodeTree = 0;
     m_content = text;
     cueDidChange();
 }
@@ -481,29 +481,46 @@ void TextTrackCue::invalidateCueIndex()
     m_cueIndex = invalidCueIndex;
 }
 
+void TextTrackCue::createWebVTTNodeTree()
+{
+    if (!m_webVTTNodeTree)
+        m_webVTTNodeTree = WebVTTParser::create(0, m_scriptExecutionContext)->createDocumentFragmentFromCueText(m_content);
+}
+
+void TextTrackCue::copyWebVTTNodeToDOMTree(ContainerNode* webVTTNode, ContainerNode* parent)
+{
+    for (Node* node = webVTTNode->firstChild(); node; node = node->nextSibling()) {
+        RefPtr<Node> clonedNode;
+        // Specs require voice and class WebVTT elements to be spans for DOM trees.
+        if (node->hasTagName(voiceElementTagName()) || node->hasTagName(classElementTagName())) {
+            clonedNode = HTMLSpanElement::create(spanTag, static_cast<Document*>(m_scriptExecutionContext));
+            toElement(clonedNode.get())->setAttribute(classAttr, toElement(node)->getAttribute(classAttr));
+            toElement(clonedNode.get())->setAttribute(titleAttr, toElement(node)->getAttribute(titleAttr));
+        } else
+            clonedNode = node->cloneNode(false);
+
+        parent->appendChild(clonedNode, ASSERT_NO_EXCEPTION);
+        if (node->isContainerNode())
+            copyWebVTTNodeToDOMTree(toContainerNode(node), toContainerNode(clonedNode.get()));
+    }
+}
+
 PassRefPtr<DocumentFragment> TextTrackCue::getCueAsHTML()
 {
+    createWebVTTNodeTree();
+    Document* document = static_cast<Document*>(m_scriptExecutionContext);
+    RefPtr<DocumentFragment> clonedFragment = DocumentFragment::create(document);
+    copyWebVTTNodeToDOMTree(m_webVTTNodeTree.get(), clonedFragment.get());
+    return clonedFragment.release();
+}
+
+PassRefPtr<DocumentFragment> TextTrackCue::createCueRenderingTree()
+{
     RefPtr<DocumentFragment> clonedFragment;
-    Document* document;
-
-    if (!m_documentFragment) {
-        m_hasInnerTimestamps = false;
-        m_documentFragment = WebVTTParser::create(0, m_scriptExecutionContext)->createDocumentFragmentFromCueText(m_content);
-
-        if (!m_documentFragment)
-          return 0;
-
-        for (Node *child = m_documentFragment->firstChild(); !m_hasInnerTimestamps && child; child = child->nextSibling()) {
-            if (child->nodeName() == "timestamp")
-                m_hasInnerTimestamps = true;
-        }
-    }
-
-    document = static_cast<Document*>(m_scriptExecutionContext);
-
+    createWebVTTNodeTree();
+    Document* document = static_cast<Document*>(m_scriptExecutionContext);
     clonedFragment = DocumentFragment::create(document);
-    m_documentFragment->cloneChildNodes(clonedFragment.get());
-
+    m_webVTTNodeTree->cloneChildNodes(clonedFragment.get());
     return clonedFragment.release();
 }
 
@@ -658,7 +675,7 @@ void TextTrackCue::calculateDisplayParameters()
     m_computedLinePosition = calculateComputedLinePosition();
 }
     
-void TextTrackCue::markFutureAndPastNodes(Node* root, double previousTimestamp, double movieTime)
+void TextTrackCue::markFutureAndPastNodes(ContainerNode* root, double previousTimestamp, double movieTime)
 {
     DEFINE_STATIC_LOCAL(const String, timestampTag, (ASCIILiteral("timestamp")));
     
@@ -695,7 +712,7 @@ void TextTrackCue::updateDisplayTree(float movieTime)
     m_allDocumentNodes->removeChildren();
 
     // Update the two sets containing past and future WebVTT objects.
-    RefPtr<DocumentFragment> referenceTree = getCueAsHTML();
+    RefPtr<DocumentFragment> referenceTree = createCueRenderingTree();
     markFutureAndPastNodes(referenceTree.get(), startTime(), movieTime);
     m_allDocumentNodes->appendChild(referenceTree);
 }
@@ -735,9 +752,6 @@ PassRefPtr<TextTrackCueBox> TextTrackCue::getDisplayTree()
     // but if there is a particularly long word, it does not overflow as it
     // normally would in CSS, it is instead forcibly wrapped at the box's edge.)
     m_displayTree->applyCSSProperties();
-
-    if (m_hasInnerTimestamps)
-        updateDisplayTree(track()->mediaElement()->currentTime());
 
     m_displayTreeShouldChange = false;
 

@@ -24,31 +24,31 @@
                 testExpected("video.textTracks[" + i + "].cues.length", "3");
                 
                 var fragment = document.createDocumentFragment();
-                var q = document.createElement("q");
-                q.className = "blue";
-                q.title = "Speaker";
-                q.appendChild(document.createTextNode("Bear is Coming!!!!!"));
-                fragment.appendChild(q);
+                var cspan = document.createElement("span");
+                cspan.className = "blue";
+                cspan.title = "Speaker";
+                cspan.appendChild(document.createTextNode("Bear is Coming!!!!!"));
+                fragment.appendChild(cspan);
                 fragment.appendChild(document.createTextNode("\nText span with a class and an annotation."));
  
                 testExpected(fragment.isEqualNode(video.textTracks[i].cues[0].getCueAsHTML()), true);
                 
                 fragment = document.createDocumentFragment();
-                q = document.createElement("q");
-                q.title = "Doe Hunter";
-                q.appendChild(document.createTextNode("I said Bear is coming!!!!"));
-                fragment.appendChild(q);
+                cspan = document.createElement("span");
+                cspan.title = "Doe Hunter";
+                cspan.appendChild(document.createTextNode("I said Bear is coming!!!!"));
+                fragment.appendChild(cspan);
                 
                 testExpected(fragment.isEqualNode(video.textTracks[i].cues[1].getCueAsHTML()), true);
 
                 
                 fragment = document.createDocumentFragment();
                 fragment.appendChild(document.createTextNode("I said "));
-                q = document.createElement("q");
-                q.className = "blue";
-                q.title = "Speaker";
-                q.appendChild(document.createTextNode("Bear is coming now"));
-                fragment.appendChild(q);
+                cspan = document.createElement("span");
+                cspan.className = "blue";
+                cspan.title = "Speaker";
+                cspan.appendChild(document.createTextNode("Bear is coming now"));
+                fragment.appendChild(cspan);
                 fragment.appendChild(document.createTextNode("!!!!"));
    
                 testExpected(fragment.isEqualNode(video.textTracks[i].cues[2].getCueAsHTML()), true);

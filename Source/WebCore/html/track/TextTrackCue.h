@@ -78,6 +78,18 @@ public:
         return adoptRef(new TextTrackCue(context, start, end, content));
     }
 
+    static const QualifiedName& voiceElementTagName()
+    {
+        DEFINE_STATIC_LOCAL(QualifiedName, vTag, (nullAtom, "v", nullAtom));
+        return vTag;
+    }
+
+    static const QualifiedName& classElementTagName()
+    {
+        DEFINE_STATIC_LOCAL(QualifiedName, cTag, (nullAtom, "c", nullAtom));
+        return cTag;
+    }
+
     virtual ~TextTrackCue();
 
     static const AtomicString& allNodesShadowPseudoId();
@@ -125,6 +137,7 @@ public:
     void invalidateCueIndex();
 
     PassRefPtr<DocumentFragment> getCueAsHTML();
+    PassRefPtr<DocumentFragment> createCueRenderingTree();
 
     using EventTarget::dispatchEvent;
     virtual bool dispatchEvent(PassRefPtr<Event>) OVERRIDE;
@@ -135,7 +148,7 @@ public:
     PassRefPtr<TextTrackCueBox> getDisplayTree();
     void updateDisplayTree(float);
     void removeDisplayTree();
-    void markFutureAndPastNodes(Node*, double, double);
+    void markFutureAndPastNodes(ContainerNode*, double, double);
 
     int calculateComputedLinePosition();
 
@@ -197,7 +210,7 @@ private:
     enum Alignment { Start, Middle, End };
     Alignment m_cueAlignment;
 
-    RefPtr<DocumentFragment> m_documentFragment;
+    RefPtr<DocumentFragment> m_webVTTNodeTree;
     TextTrack* m_track;
 
     EventTargetData m_eventTargetData;
@@ -207,7 +220,6 @@ private:
     bool m_pauseOnExit;
     bool m_snapToLines;
 
-    bool m_hasInnerTimestamps;
     RefPtr<HTMLDivElement> m_allDocumentNodes;
 
     bool m_displayTreeShouldChange;
@@ -221,6 +233,9 @@ private:
     int m_displaySize;
 
     std::pair<float, float> m_displayPosition;
+
+    void createWebVTTNodeTree();
+    void copyWebVTTNodeToDOMTree(ContainerNode* WebVTTNode, ContainerNode* root);
 };
 
 } // namespace WebCore

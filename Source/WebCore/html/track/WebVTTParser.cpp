@@ -346,7 +346,7 @@ void WebVTTParser::constructTreeFromToken(Document* document)
     QualifiedName tagName(nullAtom, tokenTagName, xhtmlNamespaceURI);
 
     // http://dev.w3.org/html5/webvtt/#webvtt-cue-text-dom-construction-rules
-    
+
     switch (m_token.type()) {
     case WebVTTTokenTypes::Character: {
         String content(m_token.characters().data(), m_token.characters().size());
@@ -355,18 +355,18 @@ void WebVTTParser::constructTreeFromToken(Document* document)
         break;
     }
     case WebVTTTokenTypes::StartTag: {
-        RefPtr<HTMLElement> child;
+        RefPtr<Element> child;
         if (isRecognizedTag(tokenTagName))
             child = HTMLElement::create(tagName, document);
         else if (m_token.name().size() == 1 && m_token.name()[0] == 'c')
-            child = HTMLElement::create(spanTag, document);
+            child = Element::create(TextTrackCue::classElementTagName(), document);
         else if (m_token.name().size() == 1 && m_token.name()[0] == 'v')
-            child = HTMLElement::create(qTag, document);
+            child = Element::create(TextTrackCue::voiceElementTagName(), document);
 
         if (child) {
             if (m_token.classes().size() > 0)
                 child->setAttribute(classAttr, AtomicString(m_token.classes().data(), m_token.classes().size()));
-            if (child->hasTagName(qTag))
+            if (child->hasTagName(TextTrackCue::voiceElementTagName()))
                 child->setAttribute(titleAttr, AtomicString(m_token.annotation().data(), m_token.annotation().size()));
             m_currentNode->parserAppendChild(child);
             m_currentNode = child;

@@ -5,25 +5,34 @@ EXPECTED (getComputedStyle(cueNode).color == 'rgb(255, 0, 0)') OK
 EXPECTED (getComputedStyle(cueNode).color == 'rgb(0, 128, 0)') OK
 EXPECTED (getComputedStyle(cueNode).color == 'rgb(255, 0, 0)') OK
 
-RUN(video.currentTime = 2.5)
+RUN(video.currentTime = 0.5)
 EVENT(seeked)
 
 
 2. Test that cues are being matched properly by the ':future' pseudo class.
-EXPECTED (getComputedStyle(cueNode).color == 'rgb(255, 255, 255)') OK
+EXPECTED (getComputedStyle(cueNode).color == 'rgb(128, 0, 128)') OK
 EXPECTED (getComputedStyle(cueNode).color == 'rgb(128, 128, 128)') OK
 EXPECTED (getComputedStyle(cueNode).color == 'rgb(128, 128, 128)') OK
 
-RUN(video.currentTime = 3.5)
+RUN(video.currentTime = 0.7)
 EVENT(seeked)
-EXPECTED (getComputedStyle(cueNode).color == 'rgb(255, 255, 255)') OK
-EXPECTED (getComputedStyle(cueNode).color == 'rgb(255, 255, 255)') OK
+EXPECTED (getComputedStyle(cueNode).color == 'rgb(128, 0, 128)') OK
+EXPECTED (getComputedStyle(cueNode).color == 'rgb(128, 0, 128)') OK
 EXPECTED (getComputedStyle(cueNode).color == 'rgb(128, 128, 128)') OK
 
-RUN(video.currentTime = 4.5)
+RUN(video.currentTime = 0.9)
 EVENT(seeked)
-EXPECTED (getComputedStyle(cueNode).color == 'rgb(255, 255, 255)') OK
-EXPECTED (getComputedStyle(cueNode).color == 'rgb(255, 255, 255)') OK
-EXPECTED (getComputedStyle(cueNode).color == 'rgb(255, 255, 255)') OK
+EXPECTED (getComputedStyle(cueNode).color == 'rgb(128, 0, 128)') OK
+EXPECTED (getComputedStyle(cueNode).color == 'rgb(128, 0, 128)') OK
+EXPECTED (getComputedStyle(cueNode).color == 'rgb(128, 0, 128)') OK
+
+RUN(video.currentTime = 1.1)
+EVENT(seeked)
+
+
+3. Test that cues are being matched properly by tag.
+EXPECTED (getComputedStyle(cueNode).color == 'rgb(128, 0, 128)') OK
+EXPECTED (getComputedStyle(cueNode).color == 'rgb(255, 255, 0)') OK
+EXPECTED (getComputedStyle(cueNode).color == 'rgb(0, 255, 0)') OK
 END OF TEST
 

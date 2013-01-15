@@ -1,13 +1,17 @@
 WEBVTT
 
 1
-00:00.000 --> 00:01.000
+00:00.000 --> 00:00.200
 Lorum ipsum
 
 2
-00:01.000 --> 00:02.000
+00:00.200 --> 00:00.400
 <c.red>dolor sit </c><c.green>amet, consectetur </c><c.red2>adipiscing elit</c>
 
 3
-00:02.000 --> 00:05.000
-<00:02.000><c>Suspendisse accumsan, </c><00:03.000><c>mauris sed </c><00:04.000><c>euismod pharetra</c>
+00:00.400 --> 00:01.000
+<00:00.400><c>Suspendisse accumsan, </c><00:00.600><c>mauris sed </c><00:00.800><c>euismod pharetra</c>
+
+4
+00:01.000 --> 00:01.200
+<c>Aliquam sollicitudin</c> <v>massa ac magna vulputate dignissim</v> <b>posuere et fermentum</b>
