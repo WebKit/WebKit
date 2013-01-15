@@ -34,8 +34,8 @@ class SVGStylable {
 public:
     virtual ~SVGStylable() { }
 
-    virtual CSSStyleDeclaration* style() = 0;
-    virtual PassRefPtr<CSSValue> getPresentationAttribute(const String&) = 0;
+    virtual CSSStyleDeclaration* style() { return 0; };
+    virtual PassRefPtr<CSSValue> getPresentationAttribute(const String&) { return 0; };
 };
 
 } // namespace WebCore

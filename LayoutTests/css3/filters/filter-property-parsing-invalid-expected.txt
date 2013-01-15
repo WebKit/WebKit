@@ -214,16 +214,6 @@ PASS cssRule.type is 1
 PASS declaration.length is 0
 PASS declaration.getPropertyValue('-webkit-filter') is null
 
-Parameter out of bounds (negative) : brightness(-1.1)
-PASS cssRule.type is 1
-PASS declaration.length is 0
-PASS declaration.getPropertyValue('-webkit-filter') is null
-
-Parameter out of bounds (positive) : brightness(101%)
-PASS cssRule.type is 1
-PASS declaration.length is 0
-PASS declaration.getPropertyValue('-webkit-filter') is null
-
 Length instead of number : contrast(10px)
 PASS cssRule.type is 1
 PASS declaration.length is 0

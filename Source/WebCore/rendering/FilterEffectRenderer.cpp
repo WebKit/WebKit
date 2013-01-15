@@ -313,8 +313,8 @@ bool FilterEffectRenderer::build(RenderObject* renderer, const FilterOperations&
             BasicComponentTransferFilterOperation* componentTransferOperation = static_cast<BasicComponentTransferFilterOperation*>(filterOperation);
             ComponentTransferFunction transferFunction;
             transferFunction.type = FECOMPONENTTRANSFER_TYPE_LINEAR;
-            transferFunction.slope = 1;
-            transferFunction.intercept = narrowPrecisionToFloat(componentTransferOperation->amount());
+            transferFunction.slope = narrowPrecisionToFloat(componentTransferOperation->amount());
+            transferFunction.intercept = 0;
 
             ComponentTransferFunction nullFunction;
             effect = FEComponentTransfer::create(this, transferFunction, transferFunction, transferFunction, nullFunction);

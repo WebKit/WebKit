@@ -328,6 +328,16 @@ testFilterRule("Rule combinations",
               ["WebKitCSSFilterValue.CSS_FILTER_BRIGHTNESS", "WebKitCSSFilterValue.CSS_FILTER_GRAYSCALE"],
               ["brightness(0.5)", "grayscale(0.25)"]);
 
+testFilterRule("Parameter less than -100%",
+              "brightness(-1.1)", 1, "brightness(-1.1)",
+              ["WebKitCSSFilterValue.CSS_FILTER_BRIGHTNESS"],
+              ["brightness(-1.1)"]);
+
+testFilterRule("Parameter more than 100%",
+              "brightness(101%)", 1, "brightness(101%)",
+              ["WebKitCSSFilterValue.CSS_FILTER_BRIGHTNESS"],
+              ["brightness(101%)"]);
+
 testFilterRule("Rule combinations",
               "grayscale(0.25) brightness(0.5)", 2, "grayscale(0.25) brightness(0.5)",
               [ "WebKitCSSFilterValue.CSS_FILTER_GRAYSCALE", "WebKitCSSFilterValue.CSS_FILTER_BRIGHTNESS"],

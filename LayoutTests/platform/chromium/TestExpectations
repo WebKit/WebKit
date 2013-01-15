@@ -4266,6 +4266,16 @@ crbug.com/166932 [ Debug ] plugins/embed-attributes-setting.html [ Crash Pass ]
 crbug.com/169550 [ Debug ] fast/lists/big-list-marker.html [ Crash ]
 crbug.com/169550 [ Debug ] platform/chromium/virtual/deferred/fast/images/icon-decoding.html [ Crash ]
 
+# Brightnes filter update needs rebaseline.
+webkit.org/b/106746 css3/filters/effect-brightness-hw.html [ ImageOnlyFailure ]
+webkit.org/b/106746 css3/filters/effect-combined.html [ ImageOnlyFailure ]
+webkit.org/b/106746 css3/filters/effect-brightness-clamping.html [ ImageOnlyFailure ]
+webkit.org/b/106746 css3/filters/multiple-filters-invalidation.html [ ImageOnlyFailure ]
+webkit.org/b/106746 css3/filters/effect-combined-hw.html [ ImageOnlyFailure ]
+webkit.org/b/106746 css3/filters/effect-brightness.html [ ImageOnlyFailure ]
+webkit.org/b/106746 css3/filters/effect-brightness-clamping-hw.html [ ImageOnlyFailure ]
+webkit.org/b/106746 css3/filters/filter-property-parsing.html [ Failure ]
+
 # Transient. Needs rebaseline.
 webkit.org/b/103955 fast/repaint/caret-outside-block.html [ ImageOnlyFailure ]
 webkit.org/b/103955 [ Linux ] fast/repaint/japanese-rl-selection-repaint-in-regions.html [ ImageOnlyFailure ]

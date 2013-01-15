@@ -70,8 +70,6 @@ testInvalidFilterRule("Length instead of number", "brightness(10px)");
 testInvalidFilterRule("Too many parameters", "brightness(0.5 0.5)");
 testInvalidFilterRule("Too many parameters and commas", "brightness(0.5, 0.5)");
 testInvalidFilterRule("Trailing comma", "brightness(0.5,)");
-testInvalidFilterRule("Parameter out of bounds (negative)", "brightness(-1.1)");
-testInvalidFilterRule("Parameter out of bounds (positive)", "brightness(101%)");
 
 testInvalidFilterRule("Length instead of number", "contrast(10px)");
 testInvalidFilterRule("Too many parameters", "contrast(0.5 0.5)");

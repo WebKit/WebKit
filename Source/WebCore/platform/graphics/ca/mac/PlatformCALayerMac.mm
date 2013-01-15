@@ -859,9 +859,9 @@ void PlatformCALayer::setFilters(const FilterOperations& filters)
             CAFilter *filter = [CAFilter filterWithType:kCAFilterColorMatrix];
             
             CAColorMatrix brightnessMatrix = {
-                1, 0, 0, 0, static_cast<float>(op->amount()),
-                0, 1, 0, 0, static_cast<float>(op->amount()),
-                0, 0, 1, 0, static_cast<float>(op->amount()),
+                static_cast<float>(op->amount()), 0, 0, 0, 0,
+                0, static_cast<float>(op->amount()), 0, 0, 0,
+                0, 0, static_cast<float>(op->amount()), 0, 0,
                 0, 0, 0, 1, 0
             };
 

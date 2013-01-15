@@ -8270,7 +8270,7 @@ PassRefPtr<WebKitCSSFilterValue> CSSParser::parseBuiltinFilterArguments(CSSParse
         break;
     }
     case WebKitCSSFilterValue::BrightnessFilterOperation: {
-        // One optional argument, -1 to +1 or -100% to +100%, if missing use 0,
+        // One optional argument, if missing use 100%.
         if (args->size() > 1)
             return 0;
 
@@ -8278,14 +8278,8 @@ PassRefPtr<WebKitCSSFilterValue> CSSParser::parseBuiltinFilterArguments(CSSParse
             CSSParserValue* value = args->current();
             if (!validUnit(value, FNumber | FPercent, CSSStrictMode))
                 return 0;
-                
-            double amount = value->fValue;
-            double minAllowed = value->unit == CSSPrimitiveValue::CSS_PERCENTAGE ? -100.0 : -1.0;
-            double maxAllowed = value->unit == CSSPrimitiveValue::CSS_PERCENTAGE ? 100.0 : 1.0;
-            if (amount < minAllowed || amount > maxAllowed)
-                return 0;
 
-            filterValue->append(cssValuePool().createValue(amount, static_cast<CSSPrimitiveValue::UnitTypes>(value->unit)));
+            filterValue->append(cssValuePool().createValue(value->fValue, static_cast<CSSPrimitiveValue::UnitTypes>(value->unit)));
         }
         break;
     }
