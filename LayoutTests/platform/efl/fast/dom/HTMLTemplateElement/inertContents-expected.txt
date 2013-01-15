@@ -1,7 +1,0 @@
-http://foo.com/shouldLoad.jpg - willSendRequest <NSURLRequest URL http://foo.com/shouldLoad.jpg, main document URL inertContents.html, http method GET> redirectResponse (null)
-Blocked access to external URL http://foo.com/shouldLoad.jpg
-http://foo.com/shouldLoad.jpg - didFailLoadingWithError: <NSError domain NSURLErrorDomain, code -999>
-The test asserts that elements within template contents are "inert", e.g. resources do not fetch, script does not run.
-
-Before template content insertion: script did not run, after template content insertion: script did run.
-

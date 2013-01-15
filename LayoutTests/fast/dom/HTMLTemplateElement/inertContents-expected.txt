@@ -1,7 +1,11 @@
-http://foo.com/shouldLoad.jpg - willSendRequest <NSURLRequest URL http://foo.com/shouldLoad.jpg, main document URL inertContents.html, http method GET> redirectResponse (null)
-Blocked access to external URL http://foo.com/shouldLoad.jpg
-http://foo.com/shouldLoad.jpg - didFailLoadingWithError: <NSError domain NSURLErrorDomain, code -999, failing URL "(null)">
-The test asserts that elements within template contents are "inert", e.g. resources do not fetch, script does not run.
+The test asserts that elements within template contents are "inert", e.g. script does not run.
 
-Before template content insertion: script did not run, after template content insertion: script did run.
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS testVal is "script has not run"
+PASS testVal is "script has run"
+PASS successfullyParsed is true
+
+TEST COMPLETE
 

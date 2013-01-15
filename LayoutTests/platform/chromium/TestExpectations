@@ -4365,5 +4365,4 @@ Bug(schenney) svg/W3C-SVG-1.1/text-text-08-b.svg [ ImageOnlyFailure ]
 Bug(schenney) svg/W3C-SVG-1.2-Tiny/struct-use-recursion-02-t.svg [ ImageOnlyFailure ]
 Bug(schenney) svg/W3C-SVG-1.2-Tiny/struct-use-recursion-03-t.svg [ ImageOnlyFailure ]
 
-webkit.org/b/106810 [ Debug ] fast/dom/HTMLTemplateElement/inertContents.html [ Pass Failure ]
 webkit.org/b/106833 fast/borders/outline-alpha-inline.html [ Pass ImageOnlyFailure ]
