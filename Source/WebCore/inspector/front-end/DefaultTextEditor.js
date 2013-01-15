@@ -1865,6 +1865,49 @@ WebInspector.TextEditorMainPanel.prototype = {
 
     /**
      * @param {Element} lineRow
+     * @param {string} line
+     * @param {Array.<{startColumn: number, endColumn: number, cssClass: string}>} ranges
+     */
+    _renderRanges: function(lineRow, line, ranges)
+    {
+        var decorationsElement = lineRow.decorationsElement;
+
+        if (!decorationsElement)
+            lineRow.removeChildren();
+        else {
+            while (true) {
+                var child = lineRow.firstChild;
+                if (!child || child === decorationsElement)
+                    break;
+                lineRow.removeChild(child);
+            }
+        }
+
+        if (!line)
+            lineRow.insertBefore(document.createElement("br"), decorationsElement);
+
+        var plainTextStart = 0;
+        for(var i = 0; i < ranges.length; i++) {
+            var rangeStart = ranges[i].startColumn;
+            var rangeEnd = ranges[i].endColumn;
+            var cssClass = ranges[i].token ? "webkit-" + ranges[i].token : "";
+
+            if (plainTextStart < rangeStart) {
+                this._insertTextNodeBefore(lineRow, decorationsElement, line.substring(plainTextStart, rangeStart));
+                --this._paintLinesOperationsCredit;
+            }
+            this._insertSpanBefore(lineRow, decorationsElement, line.substring(rangeStart, rangeEnd + 1), cssClass);
+            --this._paintLinesOperationsCredit;
+            plainTextStart = rangeEnd + 1;
+        }
+        if (plainTextStart < line.length) {
+            this._insertTextNodeBefore(lineRow, decorationsElement, line.substring(plainTextStart, line.length));
+            --this._paintLinesOperationsCredit;
+        }
+    },
+
+    /**
+     * @param {Element} lineRow
      */
     _paintLine: function(lineRow)
     {
@@ -1881,42 +1924,9 @@ WebInspector.TextEditorMainPanel.prototype = {
             if (!highlight)
                 return;
 
-            var decorationsElement = lineRow.decorationsElement;
-            if (!decorationsElement)
-                lineRow.removeChildren();
-            else {
-                while (true) {
-                    var child = lineRow.firstChild;
-                    if (!child || child === decorationsElement)
-                        break;
-                    lineRow.removeChild(child);
-                }
-            }
-
             var line = this._textModel.line(lineNumber);
             var ranges = this._highlighter.orderedRangesPerLine(lineNumber);
-
-            if (!line)
-                lineRow.insertBefore(document.createElement("br"), decorationsElement);
-
-            var plainTextStart = 0;
-            for(var i = 0; i < ranges.length; i++) {
-                var rangeStart = ranges[i].startColumn;
-                var rangeEnd = ranges[i].endColumn;
-                var rangeToken = ranges[i].token;
-
-                if (plainTextStart < rangeStart) {
-                    this._insertTextNodeBefore(lineRow, decorationsElement, line.substring(plainTextStart, rangeStart));
-                    --this._paintLinesOperationsCredit;
-                }
-                this._insertSpanBefore(lineRow, decorationsElement, line.substring(rangeStart, rangeEnd + 1), rangeToken);
-                --this._paintLinesOperationsCredit;
-                plainTextStart = rangeEnd + 1;
-            }
-            if (plainTextStart < line.length) {
-                this._insertTextNodeBefore(lineRow, decorationsElement, line.substring(plainTextStart, line.length));
-                --this._paintLinesOperationsCredit;
-            }
+            this._renderRanges(lineRow, line, ranges);
         } finally {
             if (this._rangeToMark && this._rangeToMark.startLine === lineNumber)
                 this._markedRangeElement = WebInspector.highlightSearchResult(lineRow, this._rangeToMark.startColumn, this._rangeToMark.endColumn - this._rangeToMark.startColumn);
@@ -2123,7 +2133,7 @@ WebInspector.TextEditorMainPanel.prototype = {
         }
 
         var span = this._cachedSpans.pop() || document.createElement("span");
-        span.className = "webkit-" + className;
+        span.className = className;
         if (WebInspector.FALSE) // For paint debugging.
             span.addStyleClass("debug-fadeout");
         span.textContent = content;
