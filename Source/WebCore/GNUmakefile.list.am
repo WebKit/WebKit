@@ -603,6 +603,8 @@ webcore_built_sources += \
 	DerivedSources/WebCore/JSPerformanceMeasure.h \
 	DerivedSources/WebCore/JSPerformanceNavigation.cpp \
 	DerivedSources/WebCore/JSPerformanceNavigation.h \
+	DerivedSources/WebCore/JSPerformanceResourceTiming.cpp \
+	DerivedSources/WebCore/JSPerformanceResourceTiming.h \
 	DerivedSources/WebCore/JSPerformanceTiming.cpp \
 	DerivedSources/WebCore/JSPerformanceTiming.h \
 	DerivedSources/WebCore/JSPopStateEvent.cpp \
@@ -2387,6 +2389,7 @@ webcore_sources += \
 	Source/WebCore/bindings/js/JSNodeListCustom.cpp \
 	Source/WebCore/bindings/js/JSOscillatorNodeCustom.cpp \
 	Source/WebCore/bindings/js/JSPannerNodeCustom.cpp \
+	Source/WebCore/bindings/js/JSPerformanceEntryCustom.cpp \
 	Source/WebCore/bindings/js/JSPluginElementFunctions.cpp \
 	Source/WebCore/bindings/js/JSPluginElementFunctions.h \
 	Source/WebCore/bindings/js/JSPopStateEventCustom.cpp \

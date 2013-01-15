@@ -230,6 +230,10 @@ webkitgtk_gdom_built_sources += \
 	DerivedSources/webkitdom/WebKitDOMNodeListPrivate.h \
 	DerivedSources/webkitdom/WebKitDOMNodePrivate.h \
 	DerivedSources/webkitdom/WebKitDOMPerformance.cpp \
+	DerivedSources/webkitdom/WebKitDOMPerformanceEntry.cpp \
+	DerivedSources/webkitdom/WebKitDOMPerformanceEntryList.cpp \
+	DerivedSources/webkitdom/WebKitDOMPerformanceEntryList.h \
+	DerivedSources/webkitdom/WebKitDOMPerformanceEntryPrivate.h \
 	DerivedSources/webkitdom/WebKitDOMPerformancePrivate.h \
 	DerivedSources/webkitdom/WebKitDOMPerformanceNavigation.cpp \
 	DerivedSources/webkitdom/WebKitDOMPerformanceNavigationPrivate.h \
@@ -415,6 +419,8 @@ webkitgtk_gdom_built_h_api += \
 	DerivedSources/webkitdom/WebKitDOMXPathNSResolver.h \
 	DerivedSources/webkitdom/WebKitDOMXPathResult.h \
 	DerivedSources/webkitdom/WebKitDOMPerformance.h \
+	DerivedSources/webkitdom/WebKitDOMPerformanceEntry.h \
+	DerivedSources/webkitdom/WebKitDOMPerformanceEntryList.h \
 	DerivedSources/webkitdom/WebKitDOMPerformanceNavigation.h \
 	DerivedSources/webkitdom/WebKitDOMPerformanceTiming.h \
 	DerivedSources/webkitdom/webkitdom.h \

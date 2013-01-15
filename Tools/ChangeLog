@@ -1,5 +1,16 @@
 2013-01-15  Zan Dobersek  <zandobersek@gmail.com>
 
+        [GTK] Enable Performance Timeline, Resource Timing, Navigation Timing features
+        https://bugs.webkit.org/show_bug.cgi?id=106197
+
+        Reviewed by Martin Robinson.
+
+        * Scripts/webkitperl/FeatureList.pm: Add the configuration options for all three
+        features. Enable them on GTK, meaning they will be enabled in development builds
+        (i.e. when building with build-webkit).
+
+2013-01-15  Zan Dobersek  <zandobersek@gmail.com>
+
         [GTK] Enable CSS Image Resolution feature
         https://bugs.webkit.org/show_bug.cgi?id=99038
 
