@@ -405,6 +405,7 @@ javascriptcore_sources += \
 	Source/JavaScriptCore/jit/ClosureCallStubRoutine.h \
 	Source/JavaScriptCore/jit/ExecutableAllocator.cpp \
 	Source/JavaScriptCore/jit/ExecutableAllocator.h \
+	Source/JavaScriptCore/jit/ExecutableAllocatorFixedVMPool.cpp \
 	Source/JavaScriptCore/jit/GCAwareJITStubRoutine.cpp \
 	Source/JavaScriptCore/jit/GCAwareJITStubRoutine.h \
 	Source/JavaScriptCore/jit/HostCallReturnValue.cpp \
@@ -764,12 +765,6 @@ javascriptcore_sources += \
 	Source/JavaScriptCore/yarr/YarrPattern.h \
 	Source/JavaScriptCore/yarr/YarrSyntaxChecker.cpp \
 	Source/JavaScriptCore/yarr/YarrSyntaxChecker.h
-
-if TARGET_WIN32
-else
-javascriptcore_sources += \
-	Source/JavaScriptCore/jit/ExecutableAllocatorFixedVMPool.cpp
-endif
 
 llint_nosources += \
 	Source/JavaScriptCore/llint/LowLevelInterpreter32_64.asm \

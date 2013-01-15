@@ -1,3 +1,19 @@
+2013-01-15  Zan Dobersek  <zandobersek@gmail.com>
+
+        [Autotools] Unify JavaScriptCore sources list, regardless of target OS
+        https://bugs.webkit.org/show_bug.cgi?id=106007
+
+        Reviewed by Gustavo Noronha Silva.
+
+        Include the Source/JavaScriptCore/jit/ExecutableAllocatorFixedVMPool.cpp target
+        in the general sources list as it is guarded by the ENABLE_EXECUTABLE_ALLOCATOR_FIXED
+        feature define. This define is only used on 64-bit architecture and indirectly depends
+        on enabling either JIT or YARR JIT feature. Both of these defines are disabled on
+        Windows OS when using 64-bit architecture so there's no need to add this target to
+        sources only when the target OS is Windows.
+
+        * GNUmakefile.list.am:
+
 2013-01-11  Filip Pizlo  <fpizlo@apple.com>
 
         DFG should not forget that it had proved something to be a constant during a merge just because it's merging against the empty value
