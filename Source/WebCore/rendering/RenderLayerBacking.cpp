@@ -264,7 +264,7 @@ void RenderLayerBacking::createPrimaryGraphicsLayer()
     m_creatingPrimaryGraphicsLayer = false;
 
     if (m_usingTiledCacheLayer)
-        m_containmentLayer = createGraphicsLayer("TileCache Flattening Layer");
+        m_childContainmentLayer = createGraphicsLayer("TileCache Flattening Layer");
 
     if (m_isMainFrameRenderViewLayer) {
         bool hasOpaqueBackground = false;
@@ -298,9 +298,10 @@ void RenderLayerBacking::destroyGraphicsLayers()
     if (m_graphicsLayer)
         m_graphicsLayer->removeFromParent();
 
+    m_ancestorClippingLayer = nullptr;
     m_graphicsLayer = nullptr;
     m_foregroundLayer = nullptr;
-    m_containmentLayer = nullptr;
+    m_childContainmentLayer = nullptr;
     m_maskLayer = nullptr;
 
     m_scrollingLayer = nullptr;
@@ -781,13 +782,13 @@ void RenderLayerBacking::updateInternalHierarchy()
         m_ancestorClippingLayer->addChild(m_graphicsLayer.get());
     }
 
-    if (m_containmentLayer) {
-        m_containmentLayer->removeFromParent();
-        m_graphicsLayer->addChild(m_containmentLayer.get());
+    if (m_childContainmentLayer) {
+        m_childContainmentLayer->removeFromParent();
+        m_graphicsLayer->addChild(m_childContainmentLayer.get());
     }
 
     if (m_scrollingLayer) {
-        GraphicsLayer* superlayer = m_containmentLayer ? m_containmentLayer.get() : m_graphicsLayer.get();
+        GraphicsLayer* superlayer = m_childContainmentLayer ? m_childContainmentLayer.get() : m_graphicsLayer.get();
         m_scrollingLayer->removeFromParent();
         superlayer->addChild(m_scrollingLayer.get());
     }
@@ -866,14 +867,14 @@ bool RenderLayerBacking::updateClippingLayers(bool needsAncestorClip, bool needs
     }
     
     if (needsDescendantClip) {
-        if (!m_containmentLayer && !m_usingTiledCacheLayer) {
-            m_containmentLayer = createGraphicsLayer("Child clipping Layer");
-            m_containmentLayer->setMasksToBounds(true);
+        if (!m_childContainmentLayer && !m_usingTiledCacheLayer) {
+            m_childContainmentLayer = createGraphicsLayer("Child clipping Layer");
+            m_childContainmentLayer->setMasksToBounds(true);
             layersChanged = true;
         }
     } else if (hasClippingLayer()) {
-        m_containmentLayer->removeFromParent();
-        m_containmentLayer = nullptr;
+        m_childContainmentLayer->removeFromParent();
+        m_childContainmentLayer = nullptr;
         layersChanged = true;
     }
     
@@ -1536,7 +1537,7 @@ GraphicsLayer* RenderLayerBacking::parentForSublayers() const
     if (m_scrollingContentsLayer)
         return m_scrollingContentsLayer.get();
 
-    return m_containmentLayer ? m_containmentLayer.get() : m_graphicsLayer.get();
+    return m_childContainmentLayer ? m_childContainmentLayer.get() : m_graphicsLayer.get();
 }
 
 bool RenderLayerBacking::paintsIntoWindow() const
@@ -2004,7 +2005,7 @@ double RenderLayerBacking::backingStoreMemoryEstimate() const
 {
     double backingMemory;
     
-    // m_ancestorClippingLayer and m_containmentLayer are just used for masking or containment, so have no backing.
+    // m_ancestorClippingLayer and m_childContainmentLayer are just used for masking or containment, so have no backing.
     backingMemory = m_graphicsLayer->backingStoreMemoryEstimate();
     if (m_foregroundLayer)
         backingMemory += m_foregroundLayer->backingStoreMemoryEstimate();
@@ -2047,7 +2048,7 @@ void RenderLayerBacking::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) c
     info.addMember(m_ancestorClippingLayer);
     info.addMember(m_graphicsLayer);
     info.addMember(m_foregroundLayer);
-    info.addMember(m_containmentLayer);
+    info.addMember(m_childContainmentLayer);
     info.addMember(m_maskLayer);
     info.addMember(m_layerForHorizontalScrollbar);
     info.addMember(m_layerForVerticalScrollbar);
