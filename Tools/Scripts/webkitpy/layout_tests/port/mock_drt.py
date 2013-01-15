@@ -124,6 +124,9 @@ class MockDRTPort(object):
     def release_http_lock(self):
         pass
 
+    def show_results_html_file(self, results_filename):
+        pass
+
 
 def main(argv, host, stdin, stdout, stderr):
     """Run the tests."""

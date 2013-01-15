@@ -1,3 +1,20 @@
+2013-01-14  Dirk Pranke  <dpranke@chromium.org>
+
+        nrwt: stub out show_results_html for mock ports
+        https://bugs.webkit.org/show_bug.cgi?id=106848
+
+        Reviewed by Ojan Vafai.
+
+        We were accidentally using the underlying ports'
+        show_results_html_file() implementation, which would, unsurprisingly,
+        fail in many cases (e.g., running mock-efl on the mac).
+
+        No test added since we don't generally add tests for the mock
+        implementation.
+
+        * Scripts/webkitpy/layout_tests/port/mock_drt.py:
+        (MockDRTPort.show_results_html_file):
+
 2013-01-14  Tim 'mithro' Ansell  <mithro@mithis.com>
 
         Changing clean_working_directory/clean_local_commits and related
