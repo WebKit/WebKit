@@ -47,6 +47,7 @@
        (home-literal "/Library/Preferences/com.apple.DownloadAssessment.plist")
        (home-literal "/Library/Preferences/com.apple.HIToolbox.plist")
        (home-literal "/Library/Preferences/com.apple.LaunchServices.plist")
+       (home-literal "/Library/Preferences/com.apple.MultitouchSupport.plist") ;; FIXME: Remove when <rdar://problem/13011633> is fixed.
        (home-literal "/Library/Preferences/com.apple.QTKit.plist")
        (home-literal "/Library/Preferences/com.apple.WebFoundation.plist")
        (home-literal "/Library/Preferences/com.apple.avfoundation.plist")
@@ -73,9 +74,7 @@
        (subpath "/Library/Video/Plug-Ins")
        (subpath "/Library/QuickTime")
 
-       (home-subpath "/Library/Dictionaries")
-       (home-subpath "/Library/Keyboard Layouts")
-       (home-subpath "/Library/Input Methods"))
+       (home-subpath "/Library/Dictionaries"))
 
 ;; This should be updated when <rdar://problem/9355830> is fixed.
 ;; Read-only extensions from UIProcess
@@ -199,6 +198,15 @@
        ;; FIXME: Should be removed after <rdar://problem/10463881> is fixed.
        (home-literal "/Library/Preferences/com.apple.LaunchServices.QuarantineEventsV2")
        (home-literal "/Library/Preferences/com.apple.LaunchServices.QuarantineEventsV2-journal"))
+
+(deny file-read* (with no-log)
+       ;; FIXME: This should not be necessary once <rdar://problem/13011633> is fixed.
+       (subpath "/Library/Components")
+       (subpath "/Library/Keyboard Layouts")
+       (subpath "/Library/Input Methods")
+       (home-subpath "/Library/Components")
+       (home-subpath "/Library/Keyboard Layouts")
+       (home-subpath "/Library/Input Methods"))
 
 (deny mach-lookup (with no-log)
        (global-name "com.apple.coreservices.appleevents"))
