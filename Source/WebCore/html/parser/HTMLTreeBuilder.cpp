@@ -149,8 +149,8 @@ class HTMLTreeBuilder::ExternalCharacterTokenBuffer {
     WTF_MAKE_NONCOPYABLE(ExternalCharacterTokenBuffer);
 public:
     explicit ExternalCharacterTokenBuffer(AtomicHTMLToken* token)
-        : m_current(token->characters().data())
-        , m_end(m_current + token->characters().size())
+        : m_current(token->characters())
+        , m_end(m_current + token->charactersLength())
         , m_isAll8BitData(token->isAll8BitData())
     {
         ASSERT(!isEmpty());
@@ -2854,7 +2854,7 @@ void HTMLTreeBuilder::processTokenInForeignContent(AtomicHTMLToken* token)
         m_tree.insertComment(token);
         return;
     case HTMLTokenTypes::Character: {
-        String characters = String(token->characters().data(), token->characters().size());
+        String characters = String(token->characters(), token->charactersLength());
         m_tree.insertTextNode(characters);
         if (m_framesetOk && !isAllWhitespaceOrReplacementCharacters(characters))
             m_framesetOk = false;

@@ -458,7 +458,8 @@ public:
                 m_data = String(token->comment().data(), token->comment().size());
             break;
         case Token::Type::Character:
-            m_externalCharacters = &token->characters();
+            m_externalCharacters = token->characters().data();
+            m_externalCharactersLength = token->characters().size();
             m_isAll8BitData = token->isAll8BitData();
             break;
         default:
@@ -470,6 +471,7 @@ public:
         : m_type(type)
         , m_name(name)
         , m_externalCharacters(0)
+        , m_externalCharactersLength(0)
         , m_isAll8BitData(false)
         , m_attributes(attributes)
     {
@@ -514,10 +516,16 @@ public:
         return m_attributes;
     }
 
-    const typename Token::DataVector& characters() const
+    const UChar* characters() const
     {
         ASSERT(m_type == Token::Type::Character);
-        return *m_externalCharacters;
+        return m_externalCharacters;
+    }
+
+    size_t charactersLength() const
+    {
+        ASSERT(m_type == Token::Type::Character);
+        return m_externalCharactersLength;
     }
 
     bool isAll8BitData() const
@@ -548,6 +556,7 @@ public:
     void clearExternalCharacters()
     {
         m_externalCharacters = 0;
+        m_externalCharactersLength = 0;
         m_isAll8BitData = false;
     }
 
@@ -575,7 +584,8 @@ protected:
     //
     // FIXME: Add a mechanism for "internalizing" the characters when the
     //        HTMLToken is destructed.
-    const typename Token::DataVector* m_externalCharacters;
+    const UChar* m_externalCharacters;
+    size_t m_externalCharactersLength;
     bool m_isAll8BitData;
 
     // For DOCTYPE

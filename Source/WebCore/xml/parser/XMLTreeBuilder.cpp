@@ -273,7 +273,7 @@ void XMLTreeBuilder::processEndTag(const AtomicXMLToken& token)
 
 void XMLTreeBuilder::processCharacter(const AtomicXMLToken& token)
 {
-    appendToText(token.characters().data(), token.characters().size());
+    appendToText(token.characters(), token.charactersLength());
 }
 
 void XMLTreeBuilder::processCDATA(const AtomicXMLToken& token)
