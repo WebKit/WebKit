@@ -43,12 +43,12 @@ public:
     virtual bool requiresLayer() const { return true; }
 
     virtual void layout();
-    virtual void computePreferredLogicalWidths();
     
     virtual void paint(PaintInfo&, const LayoutPoint&);
 
 private:
     virtual bool isReplica() const { return true; }
+    virtual void computePreferredLogicalWidths();
 
 };
 

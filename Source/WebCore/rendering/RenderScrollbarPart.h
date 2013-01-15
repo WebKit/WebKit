@@ -43,7 +43,6 @@ public:
     virtual bool requiresLayer() const { return false; }
 
     virtual void layout();
-    virtual void computePreferredLogicalWidths();
     
     void paintIntoRect(GraphicsContext*, const LayoutPoint&, const LayoutRect&);
 
@@ -62,6 +61,8 @@ protected:
     virtual void imageChanged(WrappedImagePtr, const IntRect* = 0);
 
 private:
+    virtual void computePreferredLogicalWidths();
+
     void layoutHorizontalPart();
     void layoutVerticalPart();
 
