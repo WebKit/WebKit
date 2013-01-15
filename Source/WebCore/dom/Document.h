@@ -340,6 +340,8 @@ public:
     {
         return m_documentElement.get();
     }
+
+    bool hasManifest() const;
     
     virtual PassRefPtr<Element> createElement(const AtomicString& tagName, ExceptionCode&);
     PassRefPtr<DocumentFragment> createDocumentFragment();

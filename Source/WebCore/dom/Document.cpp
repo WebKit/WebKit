@@ -845,6 +845,11 @@ DOMImplementation* Document::implementation()
     return m_implementation.get();
 }
 
+bool Document::hasManifest() const
+{
+    return documentElement() && documentElement()->hasTagName(htmlTag) && documentElement()->hasAttribute(manifestAttr);
+}
+
 void Document::childrenChanged(bool changedByParser, Node* beforeChange, Node* afterChange, int childCountDelta)
 {
     ContainerNode::childrenChanged(changedByParser, beforeChange, afterChange, childCountDelta);

@@ -1,6 +1,5 @@
 Tests conversion of Inspector's resource representation into HAR format.
 
-Page reloaded.
 {
     0 : {
         id : <string>
@@ -28,4 +27,5 @@ page: page_1 url: http://127.0.0.1:8000/inspector/resources/har-pages-iframe.htm
 page: page_1 url: http://127.0.0.1:8000/inspector/resources/har-pages-navigation-target.html
 page: page_1 url: http://127.0.0.1:8000/inspector/resources/source1.js
 page: page_1 url: http://127.0.0.1:8000/resources/redirect.php?url=/inspector/resources/har-pages-navigation-target.html
+Page reloaded.
 

@@ -30,6 +30,7 @@
 
     DOMString elementRenderTreeAsText(in Element element) raises(DOMException);
     boolean isPreloaded(in Document document, in DOMString url);
+    boolean isLoadingFromMemoryCache(in DOMString url);
 
     unsigned long numberOfScopedHTMLStyleChildren(in Node scope) raises(DOMException);
 

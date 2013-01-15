@@ -1,3 +1,12 @@
+2013-01-14  Nate Chapin  <japhet@chromium.org>
+
+        Enable reuse of cached main resources
+        https://bugs.webkit.org/show_bug.cgi?id=105667
+
+        Reviewed by Antti Koivisto.
+
+        * Source/autotools/symbols.filter: Expose MemoryCache::resourceForURL().
+
 2013-01-14  Alexandre Rostovtsev  <tetromino@gentoo.org>
 
         Do not hardcode -ldl in OPENGL_LIBS
