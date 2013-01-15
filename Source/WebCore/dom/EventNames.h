@@ -182,6 +182,7 @@ namespace WebCore {
     macro(webkitAnimationIteration) \
     \
     macro(webkitTransitionEnd) \
+    macro(transitionend) \
     \
     macro(orientationchange) \
     \

@@ -3727,7 +3727,7 @@ void Document::addListenerTypeIfNeeded(const AtomicString& eventType)
         addListenerType(ANIMATIONEND_LISTENER);
     else if (eventType == eventNames().webkitAnimationIterationEvent)
         addListenerType(ANIMATIONITERATION_LISTENER);
-    else if (eventType == eventNames().webkitTransitionEndEvent)
+    else if (eventType == eventNames().webkitTransitionEndEvent || eventType == eventNames().transitionendEvent)
         addListenerType(TRANSITIONEND_LISTENER);
     else if (eventType == eventNames().beforeloadEvent)
         addListenerType(BEFORELOAD_LISTENER);

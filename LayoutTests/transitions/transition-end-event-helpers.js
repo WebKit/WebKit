@@ -10,12 +10,12 @@ var _processedEvents = false;
 /* Call this function to record manually transition end events:
 
 Function parameters:
-    event [required]: the event passed with "webkitTransitionEnd"
+    event [required]: the event passed with "webkitTransitionEnd" or "transitionend"
 
 */
 function recordTransitionEndEvent(event)
 {
-  if (event.type != "webkitTransitionEnd")
+  if (event.type != "webkitTransitionEnd" && event.type != "transitionend" )
     throw("Invalid transition end event!");
 
   _recordedEvents.push([

@@ -179,7 +179,7 @@ void AnimationControllerPrivate::fireEventsAndUpdateStyle()
     m_eventsToDispatch.clear();
     Vector<EventToDispatch>::const_iterator eventsToDispatchEnd = eventsToDispatch.end();
     for (Vector<EventToDispatch>::const_iterator it = eventsToDispatch.begin(); it != eventsToDispatchEnd; ++it) {
-        if (it->eventType == eventNames().webkitTransitionEndEvent)
+        if (it->eventType == eventNames().transitionendEvent)
             it->element->dispatchEvent(WebKitTransitionEvent::create(it->eventType, it->name, it->elapsedTime));
         else
             it->element->dispatchEvent(WebKitAnimationEvent::create(it->eventType, it->name, it->elapsedTime));
