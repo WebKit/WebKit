@@ -346,8 +346,10 @@ public:
     String trackedRepaintRectsAsText() const;
 
     typedef HashSet<ScrollableArea*> ScrollableAreaSet;
-    void addScrollableArea(ScrollableArea*);
-    void removeScrollableArea(ScrollableArea*);
+    // Returns whether the scrollable area has just been newly added.
+    bool addScrollableArea(ScrollableArea*);
+    // Returns whether the scrollable area has just been removed.
+    bool removeScrollableArea(ScrollableArea*);
     bool containsScrollableArea(ScrollableArea*) const;
     const ScrollableAreaSet* scrollableAreas() const { return m_scrollableAreas.get(); }
 

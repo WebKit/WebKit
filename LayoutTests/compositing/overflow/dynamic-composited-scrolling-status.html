@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <style>
+    #container {
+      width: 200px;
+      height: 200px;
+      overflow: auto;
+    }
+
+    #content {
+      width: 100px;
+      height: 100px;
+      background-color: yellow;
+    }
+  </style>
+
+  <script type="text/javascript" charset="utf-8">
+    if (window.testRunner)
+      testRunner.dumpAsText();
+
+    if (window.internals)
+      window.internals.settings.setAcceleratedCompositingForOverflowScrollEnabled(true);
+
+    function doTest()
+    {
+      document.body.offsetHeight;
+      document.getElementById('content').style.height = '1000px';
+      if (window.internals)
+        document.getElementById('result').innerText = window.internals.nonFastScrollableRects(document).length ? "FAIL" : "PASS";
+    }
+
+    window.addEventListener('load', doTest, false);
+  </script>
+</head>
+
+<body>
+  <div id="container">
+    <div id="content"></div>
+  </div>
+  <pre id="result"></pre>
+</body>
+</html>
+

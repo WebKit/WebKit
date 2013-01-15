@@ -148,7 +148,7 @@ RenderLayer::RenderLayer(RenderLayerModelObject* renderer)
     , m_hasSelfPaintingLayerDescendant(false)
     , m_hasSelfPaintingLayerDescendantDirty(false)
     , m_hasOutOfFlowPositionedDescendant(false)
-    , m_hasOutOfFlowPositionedDescendantDirty(false)
+    , m_hasOutOfFlowPositionedDescendantDirty(true)
     , m_needsCompositedScrolling(false)
     , m_descendantsAreContiguousInStackingOrder(false)
     , m_isRootLayer(renderer->isRenderView())
@@ -990,9 +990,6 @@ void RenderLayer::setAncestorChainHasVisibleDescendant()
 void RenderLayer::updateDescendantDependentFlags(HashSet<const RenderObject*>* outOfFlowDescendantContainingBlocks)
 {
     if (m_visibleDescendantStatusDirty || m_hasSelfPaintingLayerDescendantDirty || m_hasOutOfFlowPositionedDescendantDirty) {
-#if USE(ACCELERATED_COMPOSITING)
-        bool oldHasOutOfFlowPositionedDescendant = m_hasOutOfFlowPositionedDescendant;
-#endif
         m_hasVisibleDescendant = false;
         m_hasSelfPaintingLayerDescendant = false;
         m_hasOutOfFlowPositionedDescendant = false;
@@ -1029,12 +1026,12 @@ void RenderLayer::updateDescendantDependentFlags(HashSet<const RenderObject*>* o
 
         m_visibleDescendantStatusDirty = false;
         m_hasSelfPaintingLayerDescendantDirty = false;
-        m_hasOutOfFlowPositionedDescendantDirty = false;
 
 #if USE(ACCELERATED_COMPOSITING)
-        if (oldHasOutOfFlowPositionedDescendant != m_hasOutOfFlowPositionedDescendant)
+        if (m_hasOutOfFlowPositionedDescendantDirty)
             updateNeedsCompositedScrolling();
 #endif
+        m_hasOutOfFlowPositionedDescendantDirty = false;
     }
 
     if (m_visibleContentStatusDirty) {
@@ -5546,10 +5543,12 @@ void RenderLayer::updateScrollableAreaSet(bool hasOverflow)
     if (HTMLFrameOwnerElement* owner = frame->ownerElement())
         isVisibleToHitTest &= owner->renderer() && owner->renderer()->visibleToHitTesting();
 
-    if (hasOverflow && isVisibleToHitTest)
-        frameView->addScrollableArea(this);
-    else
-        frameView->removeScrollableArea(this);
+    if (hasOverflow && isVisibleToHitTest ? frameView->addScrollableArea(this) : frameView->removeScrollableArea(this))
+#if USE(ACCELERATED_COMPOSITING)
+        updateNeedsCompositedScrolling();
+#else
+        return;
+#endif
 }
 
 void RenderLayer::updateScrollCornerStyle()

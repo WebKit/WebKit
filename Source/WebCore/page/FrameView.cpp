@@ -3732,18 +3732,24 @@ String FrameView::trackedRepaintRectsAsText() const
     return ts.release();
 }
 
-void FrameView::addScrollableArea(ScrollableArea* scrollableArea)
+bool FrameView::addScrollableArea(ScrollableArea* scrollableArea)
 {
     if (!m_scrollableAreas)
         m_scrollableAreas = adoptPtr(new ScrollableAreaSet);
-    m_scrollableAreas->add(scrollableArea);
+    return m_scrollableAreas->add(scrollableArea).isNewEntry;
 }
 
-void FrameView::removeScrollableArea(ScrollableArea* scrollableArea)
+bool FrameView::removeScrollableArea(ScrollableArea* scrollableArea)
 {
     if (!m_scrollableAreas)
-        return;
-    m_scrollableAreas->remove(scrollableArea);
+        return false;
+
+    ScrollableAreaSet::iterator it = m_scrollableAreas->find(scrollableArea);
+    if (it == m_scrollableAreas->end())
+        return false;
+
+    m_scrollableAreas->remove(it);
+    return true;
 }
 
 bool FrameView::containsScrollableArea(ScrollableArea* scrollableArea) const

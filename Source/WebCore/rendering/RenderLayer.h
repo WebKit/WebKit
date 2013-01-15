@@ -474,6 +474,7 @@ public:
     // automatically opt into composited scrolling since this out of flow
     // positioned descendant would become clipped by us, possibly altering the 
     // rendering of the page.
+    // FIXME: We should ASSERT(!m_hasOutOfFlowPositionedDescendantDirty); here but we may hit the same bugs as visible content above.
     bool hasOutOfFlowPositionedDescendant() const { return m_hasOutOfFlowPositionedDescendant; }
 
     // Gets the nearest enclosing positioned ancestor layer (also includes
