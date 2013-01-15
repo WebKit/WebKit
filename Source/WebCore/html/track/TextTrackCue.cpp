@@ -495,7 +495,7 @@ void TextTrackCue::copyWebVTTNodeToDOMTree(ContainerNode* webVTTNode, ContainerN
         if (node->hasTagName(voiceElementTagName()) || node->hasTagName(classElementTagName())) {
             clonedNode = HTMLSpanElement::create(spanTag, static_cast<Document*>(m_scriptExecutionContext));
             toElement(clonedNode.get())->setAttribute(classAttr, toElement(node)->getAttribute(classAttr));
-            toElement(clonedNode.get())->setAttribute(titleAttr, toElement(node)->getAttribute(titleAttr));
+            toElement(clonedNode.get())->setAttribute(titleAttr, toElement(node)->getAttribute(voiceAttributeName()));
         } else
             clonedNode = node->cloneNode(false);
 

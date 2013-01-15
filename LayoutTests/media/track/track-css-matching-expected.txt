@@ -45,5 +45,14 @@ EVENT(seeked)
 EXPECTED (getComputedStyle(cueNode).color == 'rgb(0, 128, 0)') OK
 EXPECTED (getComputedStyle(cueNode).color == 'rgb(0, 128, 0)') OK
 EXPECTED (getComputedStyle(cueNode).color == 'rgb(0, 128, 0)') OK
+
+RUN(video.currentTime = 1.5)
+EVENT(seeked)
+
+
+5. Test that cues are being matched properly by the voice attribute.
+EXPECTED (getComputedStyle(cueNode).color == 'rgb(255, 255, 0)') OK
+EXPECTED (getComputedStyle(cueNode).color == 'rgb(255, 0, 0)') OK
+EXPECTED (getComputedStyle(cueNode).color == 'rgb(0, 128, 0)') OK
 END OF TEST
 

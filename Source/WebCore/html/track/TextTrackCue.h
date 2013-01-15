@@ -89,6 +89,12 @@ public:
         DEFINE_STATIC_LOCAL(QualifiedName, cTag, (nullAtom, "c", nullAtom));
         return cTag;
     }
+    
+    static const QualifiedName& voiceAttributeName()
+    {
+        DEFINE_STATIC_LOCAL(QualifiedName, voiceAttr, (nullAtom, "voice", nullAtom));
+        return voiceAttr;
+    }
 
     virtual ~TextTrackCue();
 

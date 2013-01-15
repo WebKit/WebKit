@@ -10,6 +10,8 @@
         <style>
         video::cue(c) {color: purple}
         video::cue(v) {color: yellow}
+        video::cue(v[voice="Mark"]) {color: red}
+        video::cue(v[voice="Nancy"]) {color: green}
         video::cue(b) {color: lime}
         video::cue(.red, .red2) { color:red }
         #testvideo::cue(.green) { color:green }
@@ -21,19 +23,21 @@
 
         var cueNode;
         var seekedCount = 0;
-        var seekTimes = [0.3, 0.5, 0.7, 0.9, 1.1, 1.3];
+        var seekTimes = [0.3, 0.5, 0.7, 0.9, 1.1, 1.3, 1.5];
 
         var info = [["rgb(255, 0, 0)", "rgb(0, 128, 0)", "rgb(255, 0, 0)"],
                     ["rgb(128, 0, 128)", "rgb(128, 128, 128)", "rgb(128, 128, 128)"],
                     ["rgb(128, 0, 128)", "rgb(128, 0, 128)", "rgb(128, 128, 128)"],
                     ["rgb(128, 0, 128)", "rgb(128, 0, 128)", "rgb(128, 0, 128)"],
                     ["rgb(128, 0, 128)", "rgb(255, 255, 0)", "rgb(0, 255, 0)"],
-                    ["rgb(0, 128, 0)", "rgb(0, 128, 0)", "rgb(0, 128, 0)"]];
+                    ["rgb(0, 128, 0)", "rgb(0, 128, 0)", "rgb(0, 128, 0)"],
+                    ["rgb(255, 255, 0)", "rgb(255, 0, 0)", "rgb(0, 128, 0)"]];
 
         var description = ["1. Test that cues are being matched properly by the class name",
                            "2. Test that cues are being matched properly by the ':future' pseudo class.", "", "",
                            "3. Test that cues are being matched properly by tag.",
-                           "4. Test that cues are being matched properly by id."];
+                           "4. Test that cues are being matched properly by id.",
+                           "5. Test that cues are being matched properly by the voice attribute."];
 
         function skipNonElements(root)
         {

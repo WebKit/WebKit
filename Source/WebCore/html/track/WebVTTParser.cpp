@@ -367,7 +367,7 @@ void WebVTTParser::constructTreeFromToken(Document* document)
             if (m_token.classes().size() > 0)
                 child->setAttribute(classAttr, AtomicString(m_token.classes().data(), m_token.classes().size()));
             if (child->hasTagName(TextTrackCue::voiceElementTagName()))
-                child->setAttribute(titleAttr, AtomicString(m_token.annotation().data(), m_token.annotation().size()));
+                child->setAttribute(TextTrackCue::voiceAttributeName(), AtomicString(m_token.annotation().data(), m_token.annotation().size()));
             m_currentNode->parserAppendChild(child);
             m_currentNode = child;
         }
