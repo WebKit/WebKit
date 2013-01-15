@@ -70,7 +70,7 @@ int main(int argc, char* argv[])
                 // Convert into QImage
                 QImage decodedImage;
                 decodedImage.loadFromData(data.data(), "PNG");
-                decodedImage.convertToFormat(QImage::Format_ARGB32);
+                decodedImage = decodedImage.convertToFormat(QImage::Format_ARGB32);
 
                 // Place it in the right place
                 if (actualImage.isNull())

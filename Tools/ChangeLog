@@ -1,3 +1,17 @@
+2013-01-15  Andras Becsi  <andras.becsi@digia.com>
+
+        [Qt] Fix ImageDiff's image format conversion
+        https://bugs.webkit.org/show_bug.cgi?id=106880
+
+        Reviewed by Csaba Osztrogonác.
+
+        Besides actually doing the conversion this also silences the suspicious warning:
+        "ignoring return value of function declared with warn_unused_result attribute".
+
+        * ImageDiff/qt/ImageDiff.cpp:
+        (main): QImage::convertToFormat, contrary to the assumed behaviour, returns a
+        copy of the image in the given format and does not alter the image itself.
+
 2013-01-15  Jochen Eisinger  <jochen@chromium.org>
 
         [chromium] move remaining methods that just set a boolean flag to TestRunner library
