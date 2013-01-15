@@ -22,6 +22,7 @@
 
 #if USE(ACCELERATED_COMPOSITING)
 
+#include "CustomFilterProgramInfo.h"
 #include "FloatQuad.h"
 #include "GraphicsContext3D.h"
 #include "IntSize.h"
@@ -117,7 +118,7 @@ private:
     bool m_enableEdgeDistanceAntialiasing;
 
 #if ENABLE(CSS_SHADERS)
-    typedef HashMap<CustomFilterProgram*, RefPtr<CustomFilterCompiledProgram> > CustomFilterProgramMap;
+    typedef HashMap<CustomFilterProgramInfo, RefPtr<CustomFilterCompiledProgram> > CustomFilterProgramMap;
     CustomFilterProgramMap m_customFilterPrograms;
 #endif
 

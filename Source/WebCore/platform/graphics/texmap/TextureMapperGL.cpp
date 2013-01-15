@@ -736,6 +736,7 @@ static unsigned getPassesRequiredForFilter(FilterOperation::OperationType type)
     case FilterOperation::OPACITY:
 #if ENABLE(CSS_SHADERS)
     case FilterOperation::CUSTOM:
+    case FilterOperation::VALIDATED_CUSTOM:
 #endif
         return 1;
     case FilterOperation::BLUR:
@@ -843,7 +844,7 @@ static void prepareFilterProgram(TextureMapperShaderProgram* program, const Filt
 #if ENABLE(CSS_SHADERS)
 void TextureMapperGL::removeCachedCustomFilterProgram(CustomFilterProgram* program)
 {
-    m_customFilterPrograms.remove(program);
+    m_customFilterPrograms.remove(program->programInfo());
 }
 
 bool TextureMapperGL::drawUsingCustomFilter(BitmapTexture& target, const BitmapTexture& source, const FilterOperation& filter)
@@ -858,10 +859,10 @@ bool TextureMapperGL::drawUsingCustomFilter(BitmapTexture& target, const BitmapT
         renderer = CustomFilterRenderer::create(m_context3D, program->programType(), customFilter->parameters(), 
             customFilter->meshRows(), customFilter->meshColumns(), customFilter->meshType());
         RefPtr<CustomFilterCompiledProgram> compiledProgram;
-        CustomFilterProgramMap::iterator iter = m_customFilterPrograms.find(program.get());
+        CustomFilterProgramMap::iterator iter = m_customFilterPrograms.find(program->programInfo());
         if (iter == m_customFilterPrograms.end()) {
             compiledProgram = CustomFilterCompiledProgram::create(m_context3D, program->vertexShaderString(), program->fragmentShaderString(), program->programType());
-            m_customFilterPrograms.set(program.get(), compiledProgram);
+            m_customFilterPrograms.set(program->programInfo(), compiledProgram);
         } else
             compiledProgram = iter->value;
         renderer->setCompiledProgram(compiledProgram.release());
@@ -869,9 +870,19 @@ bool TextureMapperGL::drawUsingCustomFilter(BitmapTexture& target, const BitmapT
     }
     case FilterOperation::VALIDATED_CUSTOM: {
         // WebKit1 uses the ValidatedCustomFilterOperation.
-        // FIXME: This path is not working yet as GraphicsContext3D fails to initialize.
-        // https://bugs.webkit.org/show_bug.cgi?id=101532
-        return false;
+        const ValidatedCustomFilterOperation* customFilter = static_cast<const ValidatedCustomFilterOperation*>(&filter);
+        RefPtr<CustomFilterValidatedProgram> program = customFilter->validatedProgram();
+        renderer = CustomFilterRenderer::create(m_context3D, program->programInfo().programType(), customFilter->parameters(),
+            customFilter->meshRows(), customFilter->meshColumns(), customFilter->meshType());
+        RefPtr<CustomFilterCompiledProgram> compiledProgram;
+        CustomFilterProgramMap::iterator iter = m_customFilterPrograms.find(program->programInfo());
+        if (iter == m_customFilterPrograms.end()) {
+            compiledProgram = CustomFilterCompiledProgram::create(m_context3D, program->validatedVertexShader(), program->validatedFragmentShader(), program->programInfo().programType());
+            m_customFilterPrograms.set(program->programInfo(), compiledProgram);
+        } else
+            compiledProgram = iter->value;
+        renderer->setCompiledProgram(compiledProgram.release());
+        break;
     }
     default:
         ASSERT_NOT_REACHED();
@@ -926,7 +937,7 @@ PassRefPtr<BitmapTexture> BitmapTextureGL::applyFilters(TextureMapper* textureMa
             textureMapperGL->bindSurface(target.get());
             const BitmapTexture& sourceTexture = useContentTexture ? contentTexture : *source;
 #if ENABLE(CSS_SHADERS)
-            if (filter->getOperationType() == FilterOperation::CUSTOM) {
+            if (filter->getOperationType() == FilterOperation::CUSTOM || filter->getOperationType() == FilterOperation::VALIDATED_CUSTOM) {
                 if (textureMapperGL->drawUsingCustomFilter(*target, sourceTexture, *filter)) {
                     // Only swap if the draw was successful.
                     std::swap(source, target);
