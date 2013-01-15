@@ -95,6 +95,16 @@ static inline bool isAcceleratedCanvas(RenderObject* renderer)
     return false;
 }
 
+// Get the scrolling coordinator in a way that works inside RenderLayerBacking's destructor.
+static ScrollingCoordinator* scrollingCoordinatorFromLayer(RenderLayer* layer)
+{
+    Page* page = layer->renderer()->frame()->page();
+    if (!page)
+        return 0;
+
+    return page->scrollingCoordinator();
+}
+
 bool RenderLayerBacking::m_creatingPrimaryGraphicsLayer = false;
 
 RenderLayerBacking::RenderLayerBacking(RenderLayer* layer)
@@ -200,7 +210,7 @@ void RenderLayerBacking::adjustTileCacheCoverage()
         if (frameView->verticalScrollbarMode() != ScrollbarAlwaysOff)
             tileCoverage |= TiledBacking::CoverageForVerticalScrolling;
 
-        if (ScrollingCoordinator* scrollingCoordinator = frame->page()->scrollingCoordinator()) {
+        if (ScrollingCoordinator* scrollingCoordinator = scrollingCoordinatorFromLayer(m_owningLayer)) {
             // Ask our TiledBacking for large tiles unless the only reason we're main-thread-scrolling
             // is a page overlay (find-in-page, the Web Inspector highlight mechanism, etc.).
             if (scrollingCoordinator->mainThreadScrollingReasons() & ~ScrollingCoordinator::ForcedOnMainThread)
@@ -569,23 +579,6 @@ void RenderLayerBacking::updateGraphicsLayerGeometry()
     m_graphicsLayer->setPreserves3D(style->transformStyle3D() == TransformStyle3DPreserve3D && !renderer()->hasReflection());
     m_graphicsLayer->setBackfaceVisibility(style->backfaceVisibility() == BackfaceVisibilityVisible);
 
-    // Register fixed position layers and their containers with the scrolling coordinator.
-    if (Page* page = renderer()->frame()->page()) {
-        if (ScrollingCoordinator* scrollingCoordinator = page->scrollingCoordinator()) {
-            if (style->position() == FixedPosition || compositor()->fixedPositionedByAncestor(m_owningLayer))
-                scrollingCoordinator->setLayerIsFixedToContainerLayer(childForSuperlayers(), true);
-            else {
-                if (m_ancestorClippingLayer)
-                    scrollingCoordinator->setLayerIsFixedToContainerLayer(m_ancestorClippingLayer.get(), false);
-                scrollingCoordinator->setLayerIsFixedToContainerLayer(m_graphicsLayer.get(), false);
-            }
-            // Page scale is applied as a transform on the root render view layer. Because the scroll
-            // layer is further up in the hierarchy, we need to avoid marking the root render view
-            // layer as a container.
-            bool isContainer = m_owningLayer->hasTransform() && !m_owningLayer->isRootLayer();
-            scrollingCoordinator->setLayerIsContainerForFixedPositionLayers(childForSuperlayers(), isContainer);
-        }
-    }
     RenderLayer* compAncestor = m_owningLayer->ancestorCompositingLayer();
     
     // We compute everything relative to the enclosing compositing layer.
@@ -770,6 +763,29 @@ void RenderLayerBacking::updateGraphicsLayerGeometry()
     updateBackgroundColor(isSimpleContainer);
     updateDrawsContent(isSimpleContainer);
     updateAfterWidgetResize();
+    registerScrollingLayers();
+}
+
+void RenderLayerBacking::registerScrollingLayers()
+{
+    // Register fixed position layers and their containers with the scrolling coordinator.
+    ScrollingCoordinator* scrollingCoordinator = scrollingCoordinatorFromLayer(m_owningLayer);
+    if (!scrollingCoordinator)
+        return;
+
+    // FIXME: it would be nice to avoid all this work if the platform doesn't implement setLayerIsFixedToContainerLayer().
+    if (renderer()->style()->position() == FixedPosition || compositor()->fixedPositionedByAncestor(m_owningLayer))
+        scrollingCoordinator->setLayerIsFixedToContainerLayer(childForSuperlayers(), true);
+    else {
+        if (m_ancestorClippingLayer)
+            scrollingCoordinator->setLayerIsFixedToContainerLayer(m_ancestorClippingLayer.get(), false);
+        scrollingCoordinator->setLayerIsFixedToContainerLayer(m_graphicsLayer.get(), false);
+    }
+    // Page scale is applied as a transform on the root render view layer. Because the scroll
+    // layer is further up in the hierarchy, we need to avoid marking the root render view
+    // layer as a container.
+    bool isContainer = m_owningLayer->hasTransform() && !m_owningLayer->isRootLayer();
+    scrollingCoordinator->setLayerIsContainerForFixedPositionLayers(childForSuperlayers(), isContainer);
 }
 
 void RenderLayerBacking::updateInternalHierarchy()
@@ -1074,11 +1090,7 @@ bool RenderLayerBacking::updateScrollingLayers(bool needsScrollingLayers)
 
 void RenderLayerBacking::attachToScrollingCoordinatorWithParent(RenderLayerBacking* parent)
 {
-    Page* page = renderer()->frame()->page();
-    if (!page)
-        return;
-
-    ScrollingCoordinator* scrollingCoordinator = page->scrollingCoordinator();
+    ScrollingCoordinator* scrollingCoordinator = scrollingCoordinatorFromLayer(m_owningLayer);
     if (!scrollingCoordinator)
         return;
 
@@ -1102,11 +1114,7 @@ void RenderLayerBacking::detachFromScrollingCoordinator()
     if (!m_scrollLayerID)
         return;
 
-    Page* page = renderer()->frame()->page();
-    if (!page)
-        return;
-
-    ScrollingCoordinator* scrollingCoordinator = page->scrollingCoordinator();
+    ScrollingCoordinator* scrollingCoordinator = scrollingCoordinatorFromLayer(m_owningLayer);
     if (!scrollingCoordinator)
         return;
 
