@@ -258,8 +258,6 @@ public:
 
     virtual void reportMemoryUsage(MemoryObjectInfo*) const;
 
-    virtual bool canReuse(const ResourceRequest&) const { return true; }
-
 protected:
     virtual void checkNotify();
 

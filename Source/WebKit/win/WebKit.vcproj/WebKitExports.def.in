@@ -560,7 +560,6 @@ EXPORTS
         ?addSlowCase@AtomicString@WTF@@CA?AV?$PassRefPtr@VStringImpl@WTF@@@2@PAVStringImpl@2@@Z
         ?cacheDOMStructure@WebCore@@YAPAVStructure@JSC@@PAVJSDOMGlobalObject@1@PAV23@PBUClassInfo@3@@Z
         ?childItemWithTarget@HistoryItem@WebCore@@QBEPAV12@ABVString@WTF@@@Z
-        ?completeURL@Document@WebCore@@QBE?AVKURL@2@ABVString@WTF@@@Z
         ?create@Range@WebCore@@SA?AV?$PassRefPtr@VRange@WebCore@@@WTF@@V?$PassRefPtr@VDocument@WebCore@@@4@V?$PassRefPtr@VNode@WebCore@@@4@H1H@Z
         ?create@SerializedScriptValue@WebCore@@SA?AV?$PassRefPtr@VSerializedScriptValue@WebCore@@@WTF@@ABVString@4@@Z
         ?create@SerializedScriptValue@WebCore@@SA?AV?$PassRefPtr@VSerializedScriptValue@WebCore@@@WTF@@PAVExecState@JSC@@VJSValue@6@PAV?$Vector@V?$RefPtr@VMessagePort@WebCore@@@WTF@@$00@4@PAV?$Vector@V?$RefPtr@VArrayBuffer@WTF@@@WTF@@$00@4@W4SerializationErrorMode@2@@Z
@@ -1391,7 +1390,6 @@ EXPORTS
         ?lastChangeWasUserEdit@HTMLTextFormControlElement@WebCore@@QBE_NXZ
         ?mainThreadScrollingReasonsAsText@Page@WebCore@@QAE?AVString@WTF@@XZ
         ?markersFor@DocumentMarkerController@WebCore@@QAE?AV?$Vector@PAVDocumentMarker@WebCore@@$0A@@WTF@@PAVNode@2@VMarkerTypes@DocumentMarker@2@@Z
-        ?memoryCache@WebCore@@YAPAVMemoryCache@1@XZ
         ?nextSibling@ComposedShadowTreeWalker@WebCore@@QAEXXZ
         ?firstChild@ComposedShadowTreeWalker@WebCore@@QAEXXZ
         ?lastChild@ComposedShadowTreeWalker@WebCore@@QAEXXZ
@@ -1411,7 +1409,6 @@ EXPORTS
         ?rangeFromLocationAndLength@TextIterator@WebCore@@SA?AV?$PassRefPtr@VRange@WebCore@@@WTF@@PAVContainerNode@2@HH_N@Z
         ?remove@String@WTF@@QAEXIH@Z
         ?removedLastRef@Node@WebCore@@AAEXXZ
-        ?resourceForURL@MemoryCache@WebCore@@QAEPAVCachedResource@2@ABVKURL@2@@Z
         ?reverseFind@StringImpl@WTF@@QAEI_WI@Z
         ?saveDocumentAndScrollState@HistoryController@WebCore@@QAEXXZ
         ?scriptExecutionContext@JSDOMGlobalObject@WebCore@@QBEPAVScriptExecutionContext@2@XZ

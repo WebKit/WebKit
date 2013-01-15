@@ -1,11 +1,6 @@
-2013-01-14  Nate Chapin  <japhet@chromium.org>
+2013-01-09  Levi Weintraub <leviw@chromium.org>
 
-        Enable reuse of cached main resources
-        https://bugs.webkit.org/show_bug.cgi?id=105667
-
-        Reviewed by Antti Koivisto.
-
-        * WebKit.vcproj/WebKitExports.def.in: Expose some MemoryCache symbols for use in Internals.
+        Rolling out r139683. It broke a bunch of webkit_unit_tests. 
 
 2013-01-09  Hajime Morrita  <morrita@google.com>
 
