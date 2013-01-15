@@ -1,3 +1,30 @@
+2013-01-15  Simon Fraser  <simon.fraser@apple.com>
+
+        Allow tiled WKViews to have transparent backgrounds
+        https://bugs.webkit.org/show_bug.cgi?id=106400
+
+        Reviewed by Anders Carlsson.
+
+        When WKViews were set to have transparent backgrounds, they still
+        obscured content behind the view, for several reasons.
+        
+        First, when in tiled scrolling mode, WKView set the background
+        of its layer to opaque white. Fix by using the clearColor (effectively
+        removing the background color) if the view has a non-opaque background.
+        
+        Second, RenderLayerBacking just looked at FrameViews's isTransparent()
+        when deciding to make TileCache tiles non-opaque, but it also needs to
+        consider FrameViews with a non-opaque base background color. The
+        same logic was necessary to avoid setting an opaque white background
+        color on the TileCache layer.
+        
+        Finally, for views with non-opaque backgrounds, we don't want to display
+        linen, so RenderLayerCompositor::requiresOverhangAreasLayer() was changed
+        to return false in that case.
+
+        * UIProcess/API/mac/WKView.mm:
+        (-[WKView updateLayer]):
+
 2013-01-14  Dean Jackson  <dino@apple.com>
 
         [ANGLE] Update ANGLE in WebKit

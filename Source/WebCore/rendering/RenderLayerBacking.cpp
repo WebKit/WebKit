@@ -267,11 +267,11 @@ void RenderLayerBacking::createPrimaryGraphicsLayer()
         m_containmentLayer = createGraphicsLayer("TileCache Flattening Layer");
 
     if (m_isMainFrameRenderViewLayer) {
-        bool isTransparent = false;
+        bool hasOpaqueBackground = false;
         if (FrameView* frameView = toRenderView(renderer())->frameView())
-            isTransparent = frameView->isTransparent();
+            hasOpaqueBackground = !frameView->hasOpaqueBackground();
 
-        m_graphicsLayer->setContentsOpaque(!isTransparent);
+        m_graphicsLayer->setContentsOpaque(!hasOpaqueBackground);
         m_graphicsLayer->setAppliesPageScale();
     }
 
@@ -1180,7 +1180,7 @@ void RenderLayerBacking::updateBackgroundColor(bool isSimpleContainer)
         FrameView* frameView = toRenderView(renderer())->frameView();
         if (!frameView->isTransparent()) {
             backgroundColor = frameView->documentBackgroundColor();
-            if (!backgroundColor.isValid() || backgroundColor.hasAlpha())
+            if (frameView->hasOpaqueBackground() && (!backgroundColor.isValid() || backgroundColor.hasAlpha()))
                 backgroundColor = Color::white;
         }
 

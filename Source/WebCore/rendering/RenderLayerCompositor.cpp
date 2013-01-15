@@ -2223,7 +2223,7 @@ bool RenderLayerCompositor::requiresOverhangAreasLayer() const
         return false;
 
     // We do want a layer if we have a scrolling coordinator.
-    if (scrollingCoordinator())
+    if (scrollingCoordinator() && m_renderView->frameView()->hasOpaqueBackground())
         return true;
 
     // Chromium always wants a layer.

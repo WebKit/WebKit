@@ -2969,7 +2969,10 @@ static NSString *pathWithUniqueFilenameForPath(NSString *path)
 
 - (void)updateLayer
 {
-    self.layer.backgroundColor = CGColorGetConstantColor(kCGColorWhite);
+    if ([self drawsBackground] && ![self drawsTransparentBackground])
+        self.layer.backgroundColor = CGColorGetConstantColor(kCGColorWhite);
+    else
+        self.layer.backgroundColor = CGColorGetConstantColor(kCGColorClear);
 
     if (DrawingAreaProxy* drawingArea = _data->_page->drawingArea())
         drawingArea->waitForPossibleGeometryUpdate();
