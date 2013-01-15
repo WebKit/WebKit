@@ -1,3 +1,40 @@
+2013-01-15  David Kilzer  <ddkilzer@apple.com>
+
+        ANGLE should build with -Wshorten-64-to-32
+        <http://webkit.org/b/106798>
+        <http://code.google.com/p/angleproject/issues/detail?id=396>
+
+        Reviewed by Kenneth Russell.
+
+        Most changes below are simply to document issues with #pragma
+        statements per request by upstream.  The change to osinclude.h
+        is the only bug fix, which defines OS_TLSIndex in terms of
+        pthread_key_t instead of unsigned int since pthread_key_t is a
+        64-bit value on 64-bit Mac OS X.
+
+        * Configurations/Base.xcconfig: Enable -Wshorten-64-to-32 by
+        setting GCC_WARN_64_TO_32_BIT_CONVERSION to YES.
+        * src/compiler/Intermediate.cpp:
+        (TIntermTraverser::hash): Add #pragmas for clang to ignore
+        -Wshorten-64-to-32 warning.
+        * src/compiler/MapLongVariableNames.cpp:
+        (LongNameMap::Size): Ditto.
+        * src/compiler/ShaderLang.cpp:
+        (getVariableInfo): Ditto.
+        (ShGetInfo): Ditto.
+        * src/compiler/ValidateLimitations.cpp:
+        (ValidateLimitations::validateFunctionCall): Ditto.
+        * src/compiler/glslang.l: Ditto.
+        * src/compiler/glslang_lex.cpp: Ditto.
+        * src/compiler/osinclude.h: Change type of OS_TLSIndex to
+        pthread_key_t.  Define OS_INVALID_TLS_INDEX by using
+        static_cast<OS_TLSIndex>(-1).
+        * src/compiler/preprocessor/Input.cpp:
+        (pp::Input::Input): Add #pragmas for clang to ignore
+        -Wshorten-64-to-32 warning.
+        * src/compiler/preprocessor/Tokenizer.cpp: Ditto.
+        * src/compiler/preprocessor/Tokenizer.l: Ditto.
+
 2013-01-14  David Kilzer  <ddkilzer@apple.com>
 
         Remove nonexistent file in ANGLE Xcode project

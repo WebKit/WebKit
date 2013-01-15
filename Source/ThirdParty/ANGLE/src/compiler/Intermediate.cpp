@@ -1451,7 +1451,14 @@ TString TIntermTraverser::hash(const TString& name, ShHashFunction64 hashFunctio
 {
     if (hashFunction == NULL || name.empty())
         return name;
+#if defined(__clang__)
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wshorten-64-to-32"
+#endif
     khronos_uint64_t number = (*hashFunction)(name.c_str(), name.length());
+#if defined(__clang__)
+#pragma clang diagnostic pop
+#endif
     TStringStream stream;
     stream << HASHED_NAME_PREFIX << std::hex << number;
     TString hashedName = stream.str();

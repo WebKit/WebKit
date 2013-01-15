@@ -72,7 +72,14 @@ void LongNameMap::Insert(const char* originalName, const char* mappedName)
 
 int LongNameMap::Size() const
 {
+#if defined(__clang__)
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wshorten-64-to-32"
+#endif
     return mLongNameMap.size();
+#if defined(__clang__)
+#pragma clang diagnostic pop
+#endif
 }
 
 MapLongVariableNames::MapLongVariableNames(LongNameMap* globalMap)

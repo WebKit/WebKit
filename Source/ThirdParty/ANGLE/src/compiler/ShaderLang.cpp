@@ -62,7 +62,14 @@ static void getVariableInfo(ShShaderInfo varType,
         return;
 
     const TVariableInfo& varInfo = varList[index];
+#if defined(__clang__)
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wshorten-64-to-32"
+#endif
     if (length) *length = varInfo.name.size();
+#if defined(__clang__)
+#pragma clang diagnostic pop
+#endif
     *size = varInfo.size;
     *type = varInfo.type;
 
@@ -211,13 +218,27 @@ void ShGetInfo(const ShHandle handle, ShShaderInfo pname, int* params)
         *params = compiler->getInfoSink().obj.size() + 1;
         break;
     case SH_ACTIVE_UNIFORMS:
+#if defined(__clang__)
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wshorten-64-to-32"
+#endif
         *params = compiler->getUniforms().size();
+#if defined(__clang__)
+#pragma clang diagnostic pop
+#endif
         break;
     case SH_ACTIVE_UNIFORM_MAX_LENGTH:
         *params = 1 +  MAX_SYMBOL_NAME_LEN;
         break;
     case SH_ACTIVE_ATTRIBUTES:
+#if defined(__clang__)
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wshorten-64-to-32"
+#endif
         *params = compiler->getAttribs().size();
+#if defined(__clang__)
+#pragma clang diagnostic pop
+#endif
         break;
     case SH_ACTIVE_ATTRIBUTE_MAX_LENGTH:
         *params = 1 + MAX_SYMBOL_NAME_LEN;
@@ -241,7 +262,14 @@ void ShGetInfo(const ShHandle handle, ShShaderInfo pname, int* params)
         }
         break;
     case SH_HASHED_NAMES_COUNT:
+#if defined(__clang__)
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wshorten-64-to-32"
+#endif
         *params = compiler->getNameMap().size();
+#if defined(__clang__)
+#pragma clang diagnostic pop
+#endif
         break;
     default: UNREACHABLE();
     }

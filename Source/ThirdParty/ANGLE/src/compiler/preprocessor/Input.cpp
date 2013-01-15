@@ -26,7 +26,14 @@ Input::Input(int count, const char* const string[], const int length[]) :
     for (int i = 0; i < mCount; ++i)
     {
         int len = length ? length[i] : -1;
+#if defined(__clang__)
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wshorten-64-to-32"
+#endif
         mLength.push_back(len < 0 ? std::strlen(mString[i]) : len);
+#if defined(__clang__)
+#pragma clang diagnostic pop
+#endif
     }
 }
 

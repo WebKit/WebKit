@@ -44,8 +44,8 @@
 typedef DWORD OS_TLSIndex;
 #define OS_INVALID_TLS_INDEX (TLS_OUT_OF_INDEXES)
 #elif defined(ANGLE_OS_POSIX)
-typedef unsigned int OS_TLSIndex;
-#define OS_INVALID_TLS_INDEX 0xFFFFFFFF
+typedef pthread_key_t OS_TLSIndex;
+#define OS_INVALID_TLS_INDEX (static_cast<OS_TLSIndex>(-1))
 #endif  // ANGLE_OS_WIN
 
 OS_TLSIndex OS_AllocTLSIndex();
