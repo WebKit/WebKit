@@ -355,7 +355,7 @@ enum TextDecorationStyle {
 };
 
 #if ENABLE(CSS3_TEXT)
-enum ETextAlignLast {
+enum TextAlignLast {
     TextAlignLastAuto, TextAlignLastStart, TextAlignLastEnd, TextAlignLastLeft, TextAlignLastRight, TextAlignLastCenter, TextAlignLastJustify
 };
 #endif // CSS3_TEXT

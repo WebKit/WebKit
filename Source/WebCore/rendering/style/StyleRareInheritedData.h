@@ -117,7 +117,7 @@ public:
     unsigned m_imageResolutionSnap : 1; // ImageResolutionSnap
 #endif
 #if ENABLE(CSS3_TEXT)
-    unsigned m_textAlignLast : 3; // ETextAlignLast
+    unsigned m_textAlignLast : 3; // TextAlignLast
 #endif // CSS3_TEXT
     unsigned m_rubyPosition : 1; // RubyPosition
 

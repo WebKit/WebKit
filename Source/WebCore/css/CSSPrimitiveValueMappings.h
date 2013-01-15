@@ -2238,7 +2238,7 @@ template<> inline CSSPrimitiveValue::operator ETextAlign() const
 }
 
 #if ENABLE(CSS3_TEXT)
-template<> inline CSSPrimitiveValue::CSSPrimitiveValue(ETextAlignLast e)
+template<> inline CSSPrimitiveValue::CSSPrimitiveValue(TextAlignLast e)
     : CSSValue(PrimitiveClass)
 {
     m_primitiveUnitType = CSS_IDENT;
@@ -2267,7 +2267,7 @@ template<> inline CSSPrimitiveValue::CSSPrimitiveValue(ETextAlignLast e)
     }
 }
 
-template<> inline CSSPrimitiveValue::operator ETextAlignLast() const
+template<> inline CSSPrimitiveValue::operator TextAlignLast() const
 {
     switch (m_value.ident) {
     case CSSValueAuto:

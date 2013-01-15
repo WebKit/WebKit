@@ -563,7 +563,7 @@ public:
     ETextDecoration textDecoration() const { return static_cast<ETextDecoration>(visual->textDecoration); }
 #if ENABLE(CSS3_TEXT)
     TextDecorationStyle textDecorationStyle() const { return static_cast<TextDecorationStyle>(rareNonInheritedData->m_textDecorationStyle); }
-    ETextAlignLast textAlignLast() const { return static_cast<ETextAlignLast>(rareInheritedData->m_textAlignLast); }
+    TextAlignLast textAlignLast() const { return static_cast<TextAlignLast>(rareInheritedData->m_textAlignLast); }
 #else
     TextDecorationStyle textDecorationStyle() const { return TextDecorationStyleSolid; }
 #endif // CSS3_TEXT
@@ -1102,7 +1102,7 @@ public:
     void setTextDecoration(ETextDecoration v) { SET_VAR(visual, textDecoration, v); }
 #if ENABLE(CSS3_TEXT)
     void setTextDecorationStyle(TextDecorationStyle v) { SET_VAR(rareNonInheritedData, m_textDecorationStyle, v); }
-    void setTextAlignLast(ETextAlignLast v) { SET_VAR(rareInheritedData, m_textAlignLast, v); }
+    void setTextAlignLast(TextAlignLast v) { SET_VAR(rareInheritedData, m_textAlignLast, v); }
 #endif // CSS3_TEXT
     void setDirection(TextDirection v) { inherited_flags._direction = v; }
     void setLineHeight(Length specifiedLineHeight);
@@ -1560,7 +1560,7 @@ public:
     static ETextDecoration initialTextDecoration() { return TDNONE; }
 #if ENABLE(CSS3_TEXT)
     static TextDecorationStyle initialTextDecorationStyle() { return TextDecorationStyleSolid; }
-    static ETextAlignLast initialTextAlignLast() { return TextAlignLastAuto; }
+    static TextAlignLast initialTextAlignLast() { return TextAlignLastAuto; }
 #endif // CSS3_TEXT
     static float initialZoom() { return 1.0f; }
     static int initialOutlineOffset() { return 0; }
