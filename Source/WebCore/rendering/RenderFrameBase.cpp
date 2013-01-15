@@ -67,8 +67,6 @@ void RenderFrameBase::layoutWithFlattening(bool hasFixedWidth, bool hasFixedHeig
 
     // need to update to calculate min/max correctly
     updateWidgetPosition();
-    if (childRoot->preferredLogicalWidthsDirty())
-        childRoot->computePreferredLogicalWidths();
 
     // if scrollbars are off, and the width or height are fixed
     // we obey them and do not expand. With frame flattening

@@ -114,13 +114,6 @@ void RenderView::updateLogicalWidth()
         setLogicalWidth(viewLogicalWidth());
 }
 
-void RenderView::computePreferredLogicalWidths()
-{
-    ASSERT(preferredLogicalWidthsDirty());
-
-    RenderBlock::computePreferredLogicalWidths();
-}
-
 LayoutUnit RenderView::availableLogicalHeight(AvailableLogicalHeightType heightType) const
 {
     // If we have columns, then the available logical height is reduced to the column height.
