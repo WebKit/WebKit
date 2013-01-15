@@ -95,8 +95,8 @@ webkit.org/b/105785 [ Release ] http/tests/inspector/indexeddb [ Pass Slow ]
 crbug.com/24182 [ Debug ] platform/chromium/virtual/gpu/fast/hidpi/image-set-background-dynamic.html [ Pass Slow ]
 webkit.org/b/106606 fast/canvas/webgl/context-release-upon-reload.html [ Pass Slow ]
 webkit.org/b/106606 platform/chromium/virtual/gpu/fast/canvas/webgl/context-release-upon-reload.html [ Pass Slow ]
-crbug.com/24182 [ Debug ] media/track/track-css-cue-lifetime.html [ Pass Timeout ]
-crbug.com/24182 [ Debug ] fast/images/zoomed-offset-size.html [ Pass Slow ]
+webkit.org/b/106853 [ Debug ] media/track/track-css-cue-lifetime.html [ Pass Timeout ]
+webkit.org/b/106855 [ Debug ] fast/images/zoomed-offset-size.html [ Pass Slow ]
 
 # These tests started being slow when we switched to DRT.
 webkit.org/b/90488 [ Debug ] inspector [ Pass Slow ]
@@ -3952,8 +3952,7 @@ webkit.org/b/99089 transforms/3d/general/perspective-units.html [ Pass ImageOnly
 
 webkit.org/b/99134 platform/chromium/compositing/tiny-layer-rotated.html [ Pass ImageOnlyFailure Failure ]
 
-# schenney uncomment
-# webkit.org/b/99138 [ SnowLeopard ] svg/custom/foreign-object-skew.svg [ Pass ImageOnlyFailure ]
+webkit.org/b/99138 [ SnowLeopard Debug ] svg/custom/foreign-object-skew.svg [ ImageOnlyFailure ]
 
 # Flaky crashing on debug
 webkit.org/b/99604 [ Mac Win ] http/tests/workers/text-encoding.html [ Pass Crash ]
