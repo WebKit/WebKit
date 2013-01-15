@@ -41,6 +41,7 @@
 # Tests that require new results.
 #////////////////////////////////////////////////////////////////////////////////////////
 
+webkit.org/b/106920 accessibility/color-well.html [ Missing ]
 webkit.org/b/84044 accessibility/image-link.html [ Missing ]
 webkit.org/b/84045 accessibility/image-map1.html [ Missing ]
 webkit.org/b/84045 accessibility/image-map2.html [ Missing ]
@@ -502,6 +503,10 @@ webkit.org/b/104684 fast/xmlhttprequest/xmlhttprequest-recursive-sync-event.html
 webkit.org/b/105042 editing/execCommand/indent-paragraphs.html [ Crash ]
 
 webkit.org/b/105689 [ Debug ] plugins/npruntime/embed-property-iframe-equality.html [ Crash ]
+
+webkit.org/b/106922 accessibility/aria-tables.html [ Crash ]
+webkit.org/b/106922 accessibility/aria-hidden-with-elements.html [ Crash ]
+webkit.org/b/106922 platform/gtk/accessibility/aria-table-hierarchy.html [ Crash ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Crashing tests
@@ -1371,6 +1376,8 @@ webkit.org/b/106015 fast/css-generated-content/pseudo-transition.html [ Failure 
 Bug(GTK) transitions/transitions-parsing.html [ Failure ]
 
 webkit.org/b/106316 accessibility/render-counter-text.html [ Failure ]
+
+webkit.org/b/106924 accessibility/heading-level.html [ Failure ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Tests failing
