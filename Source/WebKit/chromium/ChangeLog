@@ -1,3 +1,11 @@
+2013-01-14  Dominic Cooney  <dominicc@chromium.org>
+
+        [Chromium] Unreviewed gardening.
+
+        Roll Chromium to r176801.
+
+        * DEPS: Rollin' on the river.
+
 2013-01-14  Mark Pilgrim  <pilgrim@chromium.org>
 
         [Chromium] Remove unused public/platform/WebColorName.h
