@@ -211,7 +211,6 @@ TestRunner::TestRunner()
     // Properties.
     bindProperty("workerThreadCount", &TestRunner::workerThreadCount);
     bindProperty("globalFlag", &m_globalFlag);
-    bindProperty("titleTextDirection", &m_titleTextDirection);
     bindProperty("platformName", &m_platformName);
 
     // The following are stubs.
@@ -306,7 +305,6 @@ void TestRunner::reset()
     m_shouldStayOnPageAfterHandlingBeforeUnload = false;
 
     m_globalFlag.set(false);
-    m_titleTextDirection.set("ltr");
     m_platformName.set("chromium");
 
     m_userStyleSheetLocation = WebURL();
@@ -464,11 +462,6 @@ bool TestRunner::isPrinting() const
 bool TestRunner::shouldStayOnPageAfterHandlingBeforeUnload() const
 {
     return m_shouldStayOnPageAfterHandlingBeforeUnload;
-}
-
-void TestRunner::setTitleTextDirection(WebKit::WebTextDirection dir)
-{
-    m_titleTextDirection.set(dir == WebKit::WebTextDirectionLeftToRight ? "ltr" : "rtl");
 }
 
 void TestRunner::dumpPermissionClientCallbacks(const CppArgumentList&, CppVariant* result)
