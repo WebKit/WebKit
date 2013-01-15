@@ -26,9 +26,9 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-import unittest
 import re
 import sys
+import unittest
 
 from webkitpy.common.host_mock import MockHost
 from webkitpy.layout_tests.port import test
@@ -62,3 +62,39 @@ class TestHttpServer(unittest.TestCase):
             'alias.url += ( "/mock/another-additional-dir" => "/mock-checkout/one-additional-dir" )',
             'alias.url += ( "/media-resources" => "/test.checkout/LayoutTests/media" )',
         ])
+
+    def test_win32_start_and_stop(self):
+        host = MockHost()
+        test_port = test.TestPort(host)
+        host.filesystem.write_text_file(
+            "/mock-checkout/Tools/Scripts/webkitpy/layout_tests/servers/lighttpd.conf", "Mock Config\n")
+        host.filesystem.write_text_file(
+            "/usr/lib/lighttpd/liblightcomp.dylib", "Mock dylib")
+
+        host.platform.is_win = lambda: True
+        host.platform.is_cygwin = lambda: False
+
+        server = Lighttpd(test_port, "/mock/output_dir",
+                          additional_dirs={
+                              "/mock/one-additional-dir": "/mock-checkout/one-additional-dir",
+                              "/mock/another-additional-dir": "/mock-checkout/one-additional-dir"})
+        server._is_server_running_on_all_ports = lambda: True
+
+        server.start()
+        self.assertNotEquals(host.executive.calls, [])
+
+        def wait_for_action(action):
+            if action():
+                return True
+            return action()
+
+        def mock_returns(return_values):
+            def return_value_thunk(*args, **kwargs):
+                return return_values.pop(0)
+            return return_value_thunk
+
+        host.executive.check_running_pid = mock_returns([True, False])
+        server._wait_for_action = wait_for_action
+
+        server.stop()
+        self.assertEquals(['taskkill.exe', '/f', '/t', 42], host.executive.calls[1])

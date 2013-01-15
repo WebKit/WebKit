@@ -214,6 +214,15 @@ class Lighttpd(http_server_base.HttpServerBase):
 
     def _check_and_kill(self):
         if self._executive.check_running_pid(self._pid):
-            self._executive.kill_process(self._pid)
+            host = self._port_obj.host
+            if host.platform.is_win() and not host.platform.is_cygwin():
+                # FIXME: https://bugs.webkit.org/show_bug.cgi?id=106838
+                # We need to kill all of the child processes as well as the
+                # parent, so we can't use executive.kill_process().
+                #
+                # If this is actually working, we should figure out a clean API.
+                self._executive.run_command(["taskkill.exe", "/f", "/t", self._pid], error_handler=self._executive.ignore_error)
+            else:
+                self._executive.kill_process(self._pid)
             return False
         return True
