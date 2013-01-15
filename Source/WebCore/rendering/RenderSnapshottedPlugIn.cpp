@@ -52,6 +52,7 @@ static const double showLabelAfterMouseOverDelay = 1;
 static const double showLabelAutomaticallyDelay = 3;
 static const int snapshotLabelBlurRadius = 5;
 
+#if ENABLE(FILTERS)
 class RenderSnapshottedPlugInBlurFilter : public Filter {
     WTF_MAKE_FAST_ALLOCATED;
 public:
@@ -96,6 +97,7 @@ void RenderSnapshottedPlugInBlurFilter::apply()
     m_blur->clearResult();
     m_blur->apply();
 }
+#endif
 
 RenderSnapshottedPlugIn::RenderSnapshottedPlugIn(HTMLPlugInImageElement* element)
     : RenderEmbeddedObject(element)
@@ -217,6 +219,7 @@ Image* RenderSnapshottedPlugIn::startLabelImage(LabelSize size) const
     return labelImages[arrayIndex];
 }
 
+#if ENABLE(FILTERS)
 static PassRefPtr<Image> snapshottedPluginImageForLabelDisplay(PassRefPtr<Image> snapshot, const LayoutRect& blurRegion)
 {
     OwnPtr<ImageBuffer> snapshotBuffer = ImageBuffer::create(snapshot->size());
@@ -233,6 +236,7 @@ static PassRefPtr<Image> snapshottedPluginImageForLabelDisplay(PassRefPtr<Image>
     snapshotBuffer->context()->drawImageBuffer(blurFilter->output(), ColorSpaceDeviceRGB, roundedIntPoint(blurRegion.location()));
     return snapshotBuffer->copyImage();
 }
+#endif
 
 void RenderSnapshottedPlugIn::paintReplacedSnapshotWithLabel(PaintInfo& paintInfo, const LayoutPoint& paintOffset)
 {
@@ -264,12 +268,14 @@ void RenderSnapshottedPlugIn::paintReplacedSnapshotWithLabel(PaintInfo& paintInf
     if (!snapshotImage || snapshotImage->isNull())
         return;
 
+#if ENABLE(FILTERS)
     RefPtr<Image> blurredSnapshotImage = m_snapshotResourceForLabel->image();
     if (!blurredSnapshotImage || blurredSnapshotImage->isNull()) {
         blurredSnapshotImage = snapshottedPluginImageForLabelDisplay(snapshotImage, labelRect);
         m_snapshotResourceForLabel->setCachedImage(new CachedImage(blurredSnapshotImage.get()));
     }
     snapshotImage = blurredSnapshotImage;
+#endif
 
     paintSnapshot(snapshotImage.get(), paintInfo, paintOffset);
 
