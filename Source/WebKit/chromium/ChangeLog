@@ -1,5 +1,16 @@
 2013-01-14  Mark Pilgrim  <pilgrim@chromium.org>
 
+        [Chromium] Remove unused public/platform/WebColorName.h
+        https://bugs.webkit.org/show_bug.cgi?id=106865
+
+        Reviewed by Adam Barth.
+
+        This file is no longer referenced anywhere in WebKit or Chromium.
+
+        * public/platform/WebColorName.h: Removed.
+
+2013-01-14  Mark Pilgrim  <pilgrim@chromium.org>
+
         [Chromium] Move BlobRegistryProxy into WebCore
         https://bugs.webkit.org/show_bug.cgi?id=106831
 
