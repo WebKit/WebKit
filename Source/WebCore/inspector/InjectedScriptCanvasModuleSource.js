@@ -396,7 +396,8 @@ Call.prototype = {
     setAttachment: function(name, attachment)
     {
         if (attachment) {
-            this._attachments = this._attachments || {};
+            /** @type {Object.<string, Object>} */
+            this._attachments = this._attachments || Object.create(null);
             this._attachments[name] = attachment;
         } else if (this._attachments)
             delete this._attachments[name];
@@ -446,7 +447,7 @@ Call.prototype = {
      */
     replay: function(replayableCall, cache)
     {
-        var replayObject = ReplayableResource.replay(replayableCall.resource(), cache);
+        var replayObject = ReplayableResource.replay(replayableCall.replayableResource(), cache);
         var replayArgs = replayableCall.args().map(function(obj) {
             return ReplayableResource.replay(obj, cache);
         });
@@ -502,7 +503,7 @@ ReplayableCall.prototype = {
     /**
      * @return {ReplayableResource}
      */
-    resource: function()
+    replayableResource: function()
     {
         return this._thisObject;
     },
@@ -578,11 +579,16 @@ ReplayableCall.prototype = {
 /**
  * @constructor
  * @param {!Object} wrappedObject
+ * @param {string} name
  */
-function Resource(wrappedObject)
+function Resource(wrappedObject, name)
 {
     /** @type {number} */
     this._id = ++Resource._uniqueId;
+    /** @type {string} */
+    this._name = name || "Resource";
+    /** @type {number} */
+    this._kindId = Resource._uniqueKindIds[this._name] = (Resource._uniqueKindIds[this._name] || 0) + 1;
     /** @type {ResourceTrackingManager} */
     this._resourceManager = null;
     /** @type {!Array.<Call>} */
@@ -603,6 +609,11 @@ function Resource(wrappedObject)
  * @type {number}
  */
 Resource._uniqueId = 0;
+
+/**
+ * @type {!Object.<string, number>}
+ */
+Resource._uniqueKindIds = {};
 
 /**
  * @param {*} obj
@@ -703,6 +714,29 @@ Resource.prototype = {
     },
 
     /**
+     * @return {ContextResource}
+     */
+    contextResource: function()
+    {
+        if (this instanceof ContextResource)
+            return /** @type {ContextResource} */ (this);
+
+        if (this._calculatingContextResource)
+            return null;
+
+        this._calculatingContextResource = true;
+        var result = null;
+        for (var i = 0, n = this._calls.length; i < n; ++i) {
+            result = this._calls[i].resource().contextResource();
+            if (result)
+                break;
+        }
+        delete this._calculatingContextResource;
+        console.assert(result, "Failed to find context resource for " + this._name + "@" + this._kindId);
+        return result;
+    },
+
+    /**
      * @param {!Cache} cache
      * @return {!ReplayableResource}
      */
@@ -712,7 +746,9 @@ Resource.prototype = {
         if (result)
             return result;
         var data = {
-            id: this._id
+            id: this._id,
+            name: this._name,
+            kindId: this._kindId
         };
         result = new ReplayableResource(this, data);
         cache.put(this._id, result); // Put into the cache early to avoid loops.
@@ -720,6 +756,9 @@ Resource.prototype = {
             return call.toReplayable(cache);
         });
         this._populateReplayableData(data, cache);
+        var contextResource = this.contextResource();
+        if (contextResource !== this)
+            data.contextResource = Resource.toReplayable(contextResource, cache);
         return result;
     },
 
@@ -743,6 +782,8 @@ Resource.prototype = {
         if (resource)
             return resource;
         this._id = data.id;
+        this._name = data.name;
+        this._kindId = data.kindId;
         this._resourceManager = null;
         this._calls = [];
         this._boundResources = Object.create(null);
@@ -983,10 +1024,11 @@ Resource.WrapFunction.prototype = {
 }
 
 /**
- * @param {function(new:Resource, !Object)} resourceConstructor
+ * @param {function(new:Resource, !Object, string)} resourceConstructor
+ * @param {string} resourceName
  * @return {function(this:Resource.WrapFunction)}
  */
-Resource.WrapFunction.resourceFactoryMethod = function(resourceConstructor)
+Resource.WrapFunction.resourceFactoryMethod = function(resourceConstructor, resourceName)
 {
     /** @this Resource.WrapFunction */
     return function()
@@ -994,7 +1036,7 @@ Resource.WrapFunction.resourceFactoryMethod = function(resourceConstructor)
         var wrappedObject = /** @type {Object} */ (this.result());
         if (!wrappedObject)
             return;
-        var resource = new resourceConstructor(wrappedObject);
+        var resource = new resourceConstructor(wrappedObject, resourceName);
         var manager = this._resource.manager();
         if (manager)
             manager.registerResource(resource);
@@ -1024,6 +1066,22 @@ ReplayableResource.prototype = {
     },
 
     /**
+     * @return {string}
+     */
+    description: function()
+    {
+        return this._data.name + "@" + this._data.kindId;
+    },
+
+    /**
+     * @return {!ReplayableResource}
+     */
+    replayableContextResource: function()
+    {
+        return this._data.contextResource || this;
+    },
+
+    /**
      * @param {!Cache} cache
      * @return {!Resource}
      */
@@ -1049,10 +1107,27 @@ ReplayableResource.replay = function(obj, cache)
 /**
  * @constructor
  * @extends {Resource}
+ * @param {!Object} wrappedObject
+ * @param {string} name
  */
-function LogEverythingResource(wrappedObject)
+function ContextResource(wrappedObject, name)
 {
-    Resource.call(this, wrappedObject);
+    Resource.call(this, wrappedObject, name);
+}
+
+ContextResource.prototype = {
+    __proto__: Resource.prototype
+}
+
+/**
+ * @constructor
+ * @extends {Resource}
+ * @param {!Object} wrappedObject
+ * @param {string} name
+ */
+function LogEverythingResource(wrappedObject, name)
+{
+    Resource.call(this, wrappedObject, name);
 }
 
 LogEverythingResource.prototype = {
@@ -1086,10 +1161,12 @@ LogEverythingResource.prototype = {
 /**
  * @constructor
  * @extends {Resource}
+ * @param {!Object} wrappedObject
+ * @param {string} name
  */
-function WebGLBoundResource(wrappedObject)
+function WebGLBoundResource(wrappedObject, name)
 {
-    Resource.call(this, wrappedObject);
+    Resource.call(this, wrappedObject, name);
     /** @type {!Object.<string, *>} */
     this._state = {};
 }
@@ -1116,14 +1193,9 @@ WebGLBoundResource.prototype = {
      */
     _doReplayCalls: function(data, cache)
     {
-        var state = {};
-        Object.keys(data.state).forEach(function(parameter) {
-            state[parameter] = ReplayableResource.replay(data.state[parameter], cache);
-        });
-        this._state = state;
-
         var gl = this._replayContextResource(data, cache).wrappedObject();
 
+        /** @type {!Object.<string, Array.<string>>} */
         var bindingsData = {
             TEXTURE_2D: ["bindTexture", "TEXTURE_BINDING_2D"],
             TEXTURE_CUBE_MAP: ["bindTexture", "TEXTURE_BINDING_CUBE_MAP"],
@@ -1138,6 +1210,11 @@ WebGLBoundResource.prototype = {
             originalBindings[bindingTarget] = gl.getParameter(gl[bindingParameter]);
         });
 
+        var state = {};
+        Object.keys(data.state).forEach(function(parameter) {
+            state[parameter] = ReplayableResource.replay(data.state[parameter], cache);
+        });
+        this._state = state;
         Resource.prototype._doReplayCalls.call(this, data, cache);
 
         Object.keys(bindingsData).forEach(function(bindingTarget) {
@@ -1153,9 +1230,9 @@ WebGLBoundResource.prototype = {
      */
     _replayContextResource: function(data, cache)
     {
-        var calls = data.calls;
+        var calls = /** @type {!Array.<ReplayableCall>} */ (data.calls);
         for (var i = 0, n = calls.length; i < n; ++i) {
-            var resource = ReplayableResource.replay(calls[i].resource(), cache);
+            var resource = ReplayableResource.replay(calls[i].replayableResource(), cache);
             var contextResource = WebGLRenderingContextResource.forObject(resource);
             if (contextResource)
                 return contextResource;
@@ -1181,10 +1258,12 @@ WebGLBoundResource.prototype = {
 /**
  * @constructor
  * @extends {WebGLBoundResource}
+ * @param {!Object} wrappedObject
+ * @param {string} name
  */
-function WebGLTextureResource(wrappedObject)
+function WebGLTextureResource(wrappedObject, name)
 {
-    WebGLBoundResource.call(this, wrappedObject);
+    WebGLBoundResource.call(this, wrappedObject, name);
 }
 
 WebGLTextureResource.prototype = {
@@ -1254,7 +1333,7 @@ WebGLTextureResource.prototype = {
     {
         var glResource = WebGLRenderingContextResource.forObject(call.resource());
         var gl = glResource.wrappedObject();
-        var framebufferResource = /** @type {WebGLFramebufferResource} */ glResource.currentBinding(gl.FRAMEBUFFER);
+        var framebufferResource = /** @type {WebGLFramebufferResource} */ (glResource.currentBinding(gl.FRAMEBUFFER));
         if (framebufferResource)
             this.pushCall(new Call(glResource, "bindFramebuffer", [gl.FRAMEBUFFER, framebufferResource]));
         else {
@@ -1270,10 +1349,12 @@ WebGLTextureResource.prototype = {
 /**
  * @constructor
  * @extends {Resource}
+ * @param {!Object} wrappedObject
+ * @param {string} name
  */
-function WebGLProgramResource(wrappedObject)
+function WebGLProgramResource(wrappedObject, name)
 {
-    Resource.call(this, wrappedObject);
+    Resource.call(this, wrappedObject, name);
 }
 
 WebGLProgramResource.prototype = {
@@ -1300,7 +1381,7 @@ WebGLProgramResource.prototype = {
         var originalErrors = glResource.getAllErrors();
 
         var uniforms = [];
-        var uniformsCount = /** @type {number} */ gl.getProgramParameter(program, gl.ACTIVE_UNIFORMS);
+        var uniformsCount = /** @type {number} */ (gl.getProgramParameter(program, gl.ACTIVE_UNIFORMS));
         for (var i = 0; i < uniformsCount; ++i) {
             var activeInfo = gl.getActiveUniform(program, i);
             if (!activeInfo)
@@ -1403,10 +1484,12 @@ WebGLProgramResource.prototype = {
 /**
  * @constructor
  * @extends {Resource}
+ * @param {!Object} wrappedObject
+ * @param {string} name
  */
-function WebGLShaderResource(wrappedObject)
+function WebGLShaderResource(wrappedObject, name)
 {
-    Resource.call(this, wrappedObject);
+    Resource.call(this, wrappedObject, name);
 }
 
 WebGLShaderResource.prototype = {
@@ -1439,10 +1522,12 @@ WebGLShaderResource.prototype = {
 /**
  * @constructor
  * @extends {WebGLBoundResource}
+ * @param {!Object} wrappedObject
+ * @param {string} name
  */
-function WebGLBufferResource(wrappedObject)
+function WebGLBufferResource(wrappedObject, name)
 {
-    WebGLBoundResource.call(this, wrappedObject);
+    WebGLBoundResource.call(this, wrappedObject, name);
 }
 
 WebGLBufferResource.prototype = {
@@ -1463,10 +1548,12 @@ WebGLBufferResource.prototype = {
 /**
  * @constructor
  * @extends {WebGLBoundResource}
+ * @param {!Object} wrappedObject
+ * @param {string} name
  */
-function WebGLFramebufferResource(wrappedObject)
+function WebGLFramebufferResource(wrappedObject, name)
 {
-    WebGLBoundResource.call(this, wrappedObject);
+    WebGLBoundResource.call(this, wrappedObject, name);
 }
 
 WebGLFramebufferResource.prototype = {
@@ -1486,10 +1573,12 @@ WebGLFramebufferResource.prototype = {
 /**
  * @constructor
  * @extends {WebGLBoundResource}
+ * @param {!Object} wrappedObject
+ * @param {string} name
  */
-function WebGLRenderbufferResource(wrappedObject)
+function WebGLRenderbufferResource(wrappedObject, name)
 {
-    WebGLBoundResource.call(this, wrappedObject);
+    WebGLBoundResource.call(this, wrappedObject, name);
 }
 
 WebGLRenderbufferResource.prototype = {
@@ -1508,13 +1597,13 @@ WebGLRenderbufferResource.prototype = {
 
 /**
  * @constructor
- * @extends {Resource}
+ * @extends {ContextResource}
  * @param {!WebGLRenderingContext} glContext
  * @param {function():WebGLRenderingContext} replayContextCallback
  */
 function WebGLRenderingContextResource(glContext, replayContextCallback)
 {
-    Resource.call(this, glContext);
+    ContextResource.call(this, glContext, "WebGLRenderingContext");
     this._replayContextCallback = replayContextCallback;
     /** @type {Object.<number, boolean>} */
     this._customErrors = null;
@@ -1613,12 +1702,9 @@ WebGLRenderingContextResource.StateParameters = [
 WebGLRenderingContextResource.forObject = function(obj)
 {
     var resource = Resource.forObject(obj);
-    if (!resource || resource instanceof WebGLRenderingContextResource)
-        return resource;
-    var calls = resource.calls();
-    if (!calls || !calls.length)
+    if (!resource)
         return null;
-    resource = calls[0].resource();
+    resource = resource.contextResource();
     return (resource instanceof WebGLRenderingContextResource) ? resource : null;
 }
 
@@ -1863,7 +1949,7 @@ WebGLRenderingContextResource.prototype = {
         }
         gl.activeTexture(glState.ACTIVE_TEXTURE);
 
-        Resource.prototype._doReplayCalls.call(this, data, cache);
+        ContextResource.prototype._doReplayCalls.call(this, data, cache);
     },
 
     /**
@@ -1931,13 +2017,13 @@ WebGLRenderingContextResource.prototype = {
         if (!wrapFunctions) {
             wrapFunctions = Object.create(null);
 
-            wrapFunctions["createBuffer"] = Resource.WrapFunction.resourceFactoryMethod(WebGLBufferResource);
-            wrapFunctions["createShader"] = Resource.WrapFunction.resourceFactoryMethod(WebGLShaderResource);
-            wrapFunctions["createProgram"] = Resource.WrapFunction.resourceFactoryMethod(WebGLProgramResource);
-            wrapFunctions["createTexture"] = Resource.WrapFunction.resourceFactoryMethod(WebGLTextureResource);
-            wrapFunctions["createFramebuffer"] = Resource.WrapFunction.resourceFactoryMethod(WebGLFramebufferResource);
-            wrapFunctions["createRenderbuffer"] = Resource.WrapFunction.resourceFactoryMethod(WebGLRenderbufferResource);
-            wrapFunctions["getUniformLocation"] = Resource.WrapFunction.resourceFactoryMethod(Resource);
+            wrapFunctions["createBuffer"] = Resource.WrapFunction.resourceFactoryMethod(WebGLBufferResource, "WebGLBuffer");
+            wrapFunctions["createShader"] = Resource.WrapFunction.resourceFactoryMethod(WebGLShaderResource, "WebGLShader");
+            wrapFunctions["createProgram"] = Resource.WrapFunction.resourceFactoryMethod(WebGLProgramResource, "WebGLProgram");
+            wrapFunctions["createTexture"] = Resource.WrapFunction.resourceFactoryMethod(WebGLTextureResource, "WebGLTexture");
+            wrapFunctions["createFramebuffer"] = Resource.WrapFunction.resourceFactoryMethod(WebGLFramebufferResource, "WebGLFramebuffer");
+            wrapFunctions["createRenderbuffer"] = Resource.WrapFunction.resourceFactoryMethod(WebGLRenderbufferResource, "WebGLRenderbuffer");
+            wrapFunctions["getUniformLocation"] = Resource.WrapFunction.resourceFactoryMethod(Resource, "WebGLUniformLocation");
 
             /**
              * @param {string} methodName
@@ -2089,7 +2175,7 @@ WebGLRenderingContextResource.prototype = {
         return wrapFunctions;
     },
 
-    __proto__: Resource.prototype
+    __proto__: ContextResource.prototype
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -2098,13 +2184,13 @@ WebGLRenderingContextResource.prototype = {
 
 /**
  * @constructor
- * @extends {Resource}
+ * @extends {ContextResource}
  * @param {!CanvasRenderingContext2D} context
  * @param {function():CanvasRenderingContext2D} replayContextCallback
  */
 function CanvasRenderingContext2DResource(context, replayContextCallback)
 {
-    Resource.call(this, context);
+    ContextResource.call(this, context, "CanvasRenderingContext2D");
     this._replayContextCallback = replayContextCallback;
 }
 
@@ -2433,9 +2519,9 @@ CanvasRenderingContext2DResource.prototype = {
         if (!wrapFunctions) {
             wrapFunctions = Object.create(null);
 
-            wrapFunctions["createLinearGradient"] = Resource.WrapFunction.resourceFactoryMethod(LogEverythingResource);
-            wrapFunctions["createRadialGradient"] = Resource.WrapFunction.resourceFactoryMethod(LogEverythingResource);
-            wrapFunctions["createPattern"] = Resource.WrapFunction.resourceFactoryMethod(LogEverythingResource);
+            wrapFunctions["createLinearGradient"] = Resource.WrapFunction.resourceFactoryMethod(LogEverythingResource, "CanvasGradient");
+            wrapFunctions["createRadialGradient"] = Resource.WrapFunction.resourceFactoryMethod(LogEverythingResource, "CanvasGradient");
+            wrapFunctions["createPattern"] = Resource.WrapFunction.resourceFactoryMethod(LogEverythingResource, "CanvasPattern");
 
             /**
              * @param {string} methodName
@@ -2472,7 +2558,7 @@ CanvasRenderingContext2DResource.prototype = {
         return wrapFunctions;
     },
 
-    __proto__: Resource.prototype
+    __proto__: ContextResource.prototype
 }
 
 /**
@@ -2516,12 +2602,7 @@ TraceLog.prototype = {
      */
     addCall: function(call)
     {
-        var res = Resource.forObject(call.result());
-        if (res)
-            this.captureResource(res);
-        var size = this._replayablesCache.size();
         this._replayableCalls.push(call.toReplayable(this._replayablesCache));
-        console.assert(this._replayablesCache.size() === size, "Internal error: We should have captured all the resources already by this time.");
     }
 }
 
@@ -2710,7 +2791,7 @@ ResourceTrackingManager.prototype = {
 /**
  * @constructor
  */
-var InjectedScript = function()
+var InjectedCanvasModule = function()
 {
     /** @type {!ResourceTrackingManager} */
     this._manager = new ResourceTrackingManager();
@@ -2724,7 +2805,7 @@ var InjectedScript = function()
     this._replayContexts = [];
 }
 
-InjectedScript.prototype = {
+InjectedCanvasModule.prototype = {
     /**
      * @param {!WebGLRenderingContext} glContext
      * @return {Object}
@@ -2827,30 +2908,40 @@ InjectedScript.prototype = {
         var calls = traceLog.replayableCalls();
         for (var i = startOffset, n = calls.length; i < n; ++i) {
             var call = calls[i];
-            var args = call.args().map(function(argument) {
-                return argument + "";
-            });
+            var contextResource = call.replayableResource().replayableContextResource();
             var stackTrace = call.stackTrace();
             var callFrame = stackTrace ? stackTrace.callFrame(0) || {} : {};
             var traceLogItem = {
-                contextId: this._makeContextId(call.resource().id()),
+                contextId: this._makeContextId(contextResource.id()),
                 sourceURL: callFrame.sourceURL,
                 lineNumber: callFrame.lineNumber,
                 columnNumber: callFrame.columnNumber
             };
             if (call.functionName()) {
                 traceLogItem.functionName = call.functionName();
-                traceLogItem.arguments = args;
+                traceLogItem.arguments = call.args().map(this._createRemoteObject.bind(this));
+                if (call.result() !== undefined)
+                    traceLogItem.result = this._createRemoteObject(call.result());
             } else {
-                traceLogItem.property = args[0];
-                traceLogItem.value = args[1];
+                traceLogItem.property = call.args()[0];
+                traceLogItem.value = this._createRemoteObject(call.args()[1]);
             }
-            var callResult = call.result();
-            if (callResult !== undefined && callResult !== null)
-                traceLogItem.result = callResult + "";
             result.calls.push(traceLogItem);
         }
         return result;
+    },
+
+    /**
+     * @param {*} obj
+     * @return {Object}
+     */
+    _createRemoteObject: function(obj)
+    {
+        if (obj instanceof ReplayableResource)
+            var description = obj.description();
+        else
+            var description = "" + obj;
+        return { description: description };
     },
 
     /**
@@ -2945,7 +3036,7 @@ InjectedScript.prototype = {
     }
 }
 
-var injectedScript = new InjectedScript();
-return injectedScript;
+var injectedCanvasModule = new InjectedCanvasModule();
+return injectedCanvasModule;
 
 })

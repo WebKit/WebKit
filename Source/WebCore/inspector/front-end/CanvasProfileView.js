@@ -217,7 +217,6 @@ WebInspector.CanvasProfileView.prototype = {
      */
     _createCallNode: function(index, call)
     {
-        var traceLogItem = document.createElement("div");
         var data = {};
         data[0] = index + 1;
         data[1] = call.functionName || "context." + call.property;
@@ -229,16 +228,18 @@ WebInspector.CanvasProfileView.prototype = {
             data[2] = this._linkifier.linkifyLocation(call.sourceURL, lineNumber, columnNumber);
         }
 
-        if (call.arguments)
-            data[1] += "(" + call.arguments.join(", ") + ")";
-        else
-            data[1] += " = " + call.value;
+        if (call.arguments) {
+            var args = call.arguments.map(function(argument) {
+                return argument.description;
+            });
+            data[1] += "(" + args.join(", ") + ")";
+        } else
+            data[1] += " = " + call.value.description;
 
         if (typeof call.result !== "undefined")
-            data[1] += " => " + call.result;
+            data[1] += " => " + call.result.description;
 
         var node = new WebInspector.DataGridNode(data);
-        node.call = call;
         node.index = index;
         node.selectable = true;
         return node;

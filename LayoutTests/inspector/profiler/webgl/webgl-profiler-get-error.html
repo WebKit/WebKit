@@ -4,6 +4,61 @@
     <script src="../canvas-profiler-test.js"></script>
 <script>
 
+/**
+ * @constructor
+ */
+function Cache()
+{
+    this.reset();
+}
+
+Cache.prototype = {
+    /**
+     * @return {number}
+     */
+    size: function()
+    {
+        return this._size;
+    },
+
+    reset: function()
+    {
+        /** @type {!Object.<number, Object>} */
+        this._items = Object.create(null);
+        /** @type {number} */
+        this._size = 0;
+    },
+
+    /**
+     * @param {number} key
+     * @return {boolean}
+     */
+    has: function(key)
+    {
+        return key in this._items;
+    },
+
+    /**
+     * @param {number} key
+     * @return {Object}
+     */
+    get: function(key)
+    {
+        return this._items[key];
+    },
+
+    /**
+     * @param {number} key
+     * @param {Object} item
+     */
+    put: function(key, item)
+    {
+        if (!this.has(key))
+            ++this._size;
+        this._items[key] = item;
+    }
+}
+
 var gl;
 var rawGL;
 var glResource;
@@ -83,11 +138,7 @@ function createAndRunWebGLProgram()
     // 4) Check that proxy still has the original errors saved
     var errors = [rawGL.INVALID_ENUM, rawGL.INVALID_VALUE, rawGL.INVALID_OPERATION];
     errors.forEach(generateWebGLError.bind(this, rawGL));
-    var cache = {
-        put: function() {},
-        get: function() {}
-    };
-    glResource.toReplayable(cache);
+    glResource.toReplayable(new Cache());
     assertNoErrors(rawGL);
     assertEqualArrays(errors, getAllErrors(gl));
     assertNoErrors(gl);
@@ -96,11 +147,7 @@ function createAndRunWebGLProgram()
     // 2) Check proxy and RAW errors interleaved
     var errors = [rawGL.INVALID_ENUM, rawGL.INVALID_VALUE, rawGL.INVALID_OPERATION];
     errors.forEach(generateWebGLError.bind(this, rawGL));
-    var cache = {
-        put: function() {},
-        get: function() {}
-    };
-    glResource.toReplayable(cache);
+    glResource.toReplayable(new Cache());
     assertNoErrors(rawGL);
 
     var value = gl.getError();

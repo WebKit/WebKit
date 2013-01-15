@@ -3196,15 +3196,22 @@
                 "description": "Unique context identifier."
             },
             {
+                "id": "CallArgument",
+                "type": "object",
+                "properties": [
+                    { "name": "description", "type": "string" }
+                ]
+            },
+            {
                 "id": "Call",
                 "type": "object",
                 "properties": [
                     { "name": "contextId", "$ref": "ContextId" },
                     { "name": "functionName", "type": "string", "optional": true },
-                    { "name": "arguments", "type": "array", "items": { "type": "string" }, "optional": true },
+                    { "name": "arguments", "type": "array", "items": { "$ref": "CallArgument" }, "optional": true },
+                    { "name": "result", "$ref": "CallArgument", "optional": true },
                     { "name": "property", "type": "string", "optional": true },
-                    { "name": "value", "type": "string", "optional": true },
-                    { "name": "result", "type": "string", "optional": true },
+                    { "name": "value", "$ref": "CallArgument", "optional": true },
                     { "name": "sourceURL", "type": "string", "optional": true },
                     { "name": "lineNumber", "type": "integer", "optional": true },
                     { "name": "columnNumber", "type": "integer", "optional": true }
