@@ -983,12 +983,18 @@ void GraphicsContext::setAlpha(float alpha)
     platformContext()->setGlobalAlpha(alpha);
 }
 
-void GraphicsContext::setPlatformCompositeOperation(CompositeOperator op, BlendMode)
+void GraphicsContext::setPlatformCompositeOperation(CompositeOperator op, BlendMode blendOp)
 {
     if (paintingDisabled())
         return;
 
-    cairo_set_operator(platformContext()->cr(), toCairoOperator(op));
+    cairo_operator_t cairo_op;
+    if (blendOp == BlendModeNormal)
+        cairo_op = toCairoOperator(op);
+    else
+        cairo_op = toCairoOperator(blendOp);
+
+    cairo_set_operator(platformContext()->cr(), cairo_op);
 }
 
 void GraphicsContext::clip(const Path& path)

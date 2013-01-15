@@ -322,10 +322,6 @@ webkit.org/b/71849 inspector/profiler/webgl [ Skip ]
 webkit.org/b/71849 inspector-protocol/layer-tree.html [ Failure ]
 webkit.org/b/71849 transforms/3d [ Skip ]
 
-# The following test fail because blending is not yet implemented
-webkit.org/b/105543 fast/canvas/canvas-blend-image.html [ Skip ]
-webkit.org/b/105543 fast/canvas/canvas-blend-solid.html [ Skip ]
-
 # LAYER_TREE_INCLUDES_VISIBLE_RECTS option to layerTreeAsText is only applicable to Mac.
 Bug(GTK) compositing/visible-rect [ Skip ]
 
