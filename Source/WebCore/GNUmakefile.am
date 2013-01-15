@@ -11,6 +11,7 @@ webcore_cppflags += \
 	-I$(srcdir)/Source/ThirdParty/ANGLE/src \
 	-I$(srcdir)/Source/ThirdParty/ANGLE/include \
 	-I$(srcdir)/Source/ThirdParty/ANGLE/include/GLSLANG \
+	-I$(srcdir)/Source/ThirdParty/ANGLE/include/KHR \
 	-I$(srcdir)/Source/WebCore \
 	-I$(srcdir)/Source/WebCore/Modules/filesystem \
 	-I$(srcdir)/Source/WebCore/Modules/gamepad \
