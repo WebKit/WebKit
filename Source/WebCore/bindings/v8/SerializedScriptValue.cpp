@@ -2231,12 +2231,19 @@ private:
 
 } // namespace
 
-PassRefPtr<SerializedScriptValue> SerializedScriptValue::create(v8::Handle<v8::Value> value,
-                                                                MessagePortArray* messagePorts, ArrayBufferArray* arrayBuffers,
-                                                                bool& didThrow,
-                                                                v8::Isolate* isolate)
+PassRefPtr<SerializedScriptValue> SerializedScriptValue::create(v8::Handle<v8::Value> value, MessagePortArray* messagePorts, ArrayBufferArray* arrayBuffers, bool& didThrow)
+{
+    return create(value, messagePorts, arrayBuffers, didThrow, v8::Isolate::GetCurrent());
+}
+
+PassRefPtr<SerializedScriptValue> SerializedScriptValue::create(v8::Handle<v8::Value> value, MessagePortArray* messagePorts, ArrayBufferArray* arrayBuffers, bool& didThrow, v8::Isolate* isolate)
 {
     return adoptRef(new SerializedScriptValue(value, messagePorts, arrayBuffers, didThrow, isolate));
+}
+
+PassRefPtr<SerializedScriptValue> SerializedScriptValue::create(v8::Handle<v8::Value> value)
+{
+    return create(value, v8::Isolate::GetCurrent());
 }
 
 PassRefPtr<SerializedScriptValue> SerializedScriptValue::create(v8::Handle<v8::Value> value, v8::Isolate* isolate)
@@ -2264,6 +2271,11 @@ PassRefPtr<SerializedScriptValue> SerializedScriptValue::createFromWireBytes(con
     return createFromWire(String::adopt(buffer));
 }
 
+PassRefPtr<SerializedScriptValue> SerializedScriptValue::create(const String& data)
+{
+    return create(data, v8::Isolate::GetCurrent());
+}
+
 PassRefPtr<SerializedScriptValue> SerializedScriptValue::create(const String& data, v8::Isolate* isolate)
 {
     Writer writer(isolate);
@@ -2277,6 +2289,11 @@ PassRefPtr<SerializedScriptValue> SerializedScriptValue::create()
     return adoptRef(new SerializedScriptValue());
 }
 
+PassRefPtr<SerializedScriptValue> SerializedScriptValue::nullValue()
+{
+    return nullValue(v8::Isolate::GetCurrent());
+}
+
 PassRefPtr<SerializedScriptValue> SerializedScriptValue::nullValue(v8::Isolate* isolate)
 {
     Writer writer(isolate);
@@ -2285,12 +2302,22 @@ PassRefPtr<SerializedScriptValue> SerializedScriptValue::nullValue(v8::Isolate* 
     return adoptRef(new SerializedScriptValue(wireData));
 }
 
+PassRefPtr<SerializedScriptValue> SerializedScriptValue::undefinedValue()
+{
+    return undefinedValue(v8::Isolate::GetCurrent());
+}
+
 PassRefPtr<SerializedScriptValue> SerializedScriptValue::undefinedValue(v8::Isolate* isolate)
 {
     Writer writer(isolate);
     writer.writeUndefined();
     String wireData = StringImpl::adopt(writer.data());
     return adoptRef(new SerializedScriptValue(wireData));
+}
+
+PassRefPtr<SerializedScriptValue> SerializedScriptValue::booleanValue(bool value)
+{
+    return booleanValue(value, v8::Isolate::GetCurrent());
 }
 
 PassRefPtr<SerializedScriptValue> SerializedScriptValue::booleanValue(bool value, v8::Isolate* isolate)
@@ -2302,6 +2329,11 @@ PassRefPtr<SerializedScriptValue> SerializedScriptValue::booleanValue(bool value
         writer.writeFalse();
     String wireData = StringImpl::adopt(writer.data());
     return adoptRef(new SerializedScriptValue(wireData));
+}
+
+PassRefPtr<SerializedScriptValue> SerializedScriptValue::numberValue(double value)
+{
+    return numberValue(value, v8::Isolate::GetCurrent());
 }
 
 PassRefPtr<SerializedScriptValue> SerializedScriptValue::numberValue(double value, v8::Isolate* isolate)
@@ -2383,10 +2415,7 @@ PassOwnPtr<SerializedScriptValue::ArrayBufferContentsArray> SerializedScriptValu
     return contents.release();
 }
 
-SerializedScriptValue::SerializedScriptValue(v8::Handle<v8::Value> value, 
-                                             MessagePortArray* messagePorts, ArrayBufferArray* arrayBuffers,
-                                             bool& didThrow,
-                                             v8::Isolate* isolate)
+SerializedScriptValue::SerializedScriptValue(v8::Handle<v8::Value> value, MessagePortArray* messagePorts, ArrayBufferArray* arrayBuffers, bool& didThrow, v8::Isolate* isolate)
     : m_externallyAllocatedMemory(0)
 {
     didThrow = false;

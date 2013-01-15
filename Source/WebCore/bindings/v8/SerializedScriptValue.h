@@ -52,19 +52,24 @@ public:
     // be thrown using v8::ThrowException(), and sets |didThrow|. In this case
     // the caller must not invoke any V8 operations until control returns to
     // V8. When serialization is successful, |didThrow| is false.
-    static PassRefPtr<SerializedScriptValue> create(v8::Handle<v8::Value>,
-                                                    MessagePortArray*, ArrayBufferArray*,
-                                                    bool& didThrow, v8::Isolate* = 0);
-    static PassRefPtr<SerializedScriptValue> create(v8::Handle<v8::Value>, v8::Isolate* = 0);
-    static PassRefPtr<SerializedScriptValue> createFromWire(const String& data);
-    static PassRefPtr<SerializedScriptValue> createFromWireBytes(const Vector<uint8_t>& data);
-    static PassRefPtr<SerializedScriptValue> create(const String& data, v8::Isolate* = 0);
+    static PassRefPtr<SerializedScriptValue> create(v8::Handle<v8::Value>, MessagePortArray*, ArrayBufferArray*, bool&);
+    static PassRefPtr<SerializedScriptValue> create(v8::Handle<v8::Value>, MessagePortArray*, ArrayBufferArray*, bool&, v8::Isolate*);
+    static PassRefPtr<SerializedScriptValue> create(v8::Handle<v8::Value>);
+    static PassRefPtr<SerializedScriptValue> create(v8::Handle<v8::Value>, v8::Isolate*);
+    static PassRefPtr<SerializedScriptValue> createFromWire(const String&);
+    static PassRefPtr<SerializedScriptValue> createFromWireBytes(const Vector<uint8_t>&);
+    static PassRefPtr<SerializedScriptValue> create(const String&);
+    static PassRefPtr<SerializedScriptValue> create(const String&, v8::Isolate*);
     static PassRefPtr<SerializedScriptValue> create();
 
-    static PassRefPtr<SerializedScriptValue> nullValue(v8::Isolate* = 0);
-    static PassRefPtr<SerializedScriptValue> undefinedValue(v8::Isolate* = 0);
-    static PassRefPtr<SerializedScriptValue> booleanValue(bool value, v8::Isolate* = 0);
-    static PassRefPtr<SerializedScriptValue> numberValue(double value, v8::Isolate* = 0);
+    static PassRefPtr<SerializedScriptValue> nullValue();
+    static PassRefPtr<SerializedScriptValue> nullValue(v8::Isolate*);
+    static PassRefPtr<SerializedScriptValue> undefinedValue();
+    static PassRefPtr<SerializedScriptValue> undefinedValue(v8::Isolate*);
+    static PassRefPtr<SerializedScriptValue> booleanValue(bool);
+    static PassRefPtr<SerializedScriptValue> booleanValue(bool, v8::Isolate*);
+    static PassRefPtr<SerializedScriptValue> numberValue(double);
+    static PassRefPtr<SerializedScriptValue> numberValue(double, v8::Isolate*);
 
     static uint32_t wireFormatVersion();
 
