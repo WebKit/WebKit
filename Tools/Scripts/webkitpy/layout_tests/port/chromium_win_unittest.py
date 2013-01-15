@@ -131,3 +131,11 @@ class ChromiumWinTest(chromium_port_testcase.ChromiumPortTestCase):
 
     def test_path_to_image_diff(self):
         self.assertEqual(self.make_port()._path_to_image_diff(), '/mock-checkout/out/Release/ImageDiff.exe')
+
+    def test_default_max_locked_shards(self):
+        # FIXME: Remove this test when we remove the override for default_max_locked_shards() in chromium_win.py
+        port = self.make_port()
+        port.default_child_processes = lambda: 16
+        self.assertEqual(port.default_max_locked_shards(), 1)
+        port.default_child_processes = lambda: 2
+        self.assertEqual(port.default_max_locked_shards(), 1)

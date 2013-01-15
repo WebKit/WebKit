@@ -1,3 +1,23 @@
+2013-01-15  Dirk Pranke  <dpranke@chromium.org>
+
+        nrwt: change the default # of locked shards on chromium_win to 1
+        https://bugs.webkit.org/show_bug.cgi?id=106938
+
+        Reviewed by Eric Seidel.
+
+        It looks like LigHTTPd might be buggy or unstable if we are
+        running multiple http tests in parallel; see
+        http://code.google.com/p/chromium/issues/detail?id=169530 for more
+        context as well. This change will stop running http tests in parallel
+        and we can see if this fixes things.
+
+        * Scripts/webkitpy/layout_tests/port/chromium_win.py:
+        (ChromiumWinPort.default_max_locked_shards):
+        * Scripts/webkitpy/layout_tests/port/chromium_win_unittest.py:
+        (ChromiumWinTest.test_path_to_image_diff):
+        (ChromiumWinTest):
+        (ChromiumWinTest.test_default_max_locked_shards):
+
 2013-01-15  Jochen Eisinger  <jochen@chromium.org>
 
         [chromium] move WebDatabase related methods to TestRunner library
