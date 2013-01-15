@@ -204,6 +204,10 @@ void CoordinatedLayerTreeHost::forceRepaint()
 
 bool CoordinatedLayerTreeHost::forceRepaintAsync(uint64_t callbackID)
 {
+    // Avoid deadlocks when the UI process has requested a forceRepaint by falling back to a synchronous repaint, see caller WebPage::forceRepaint.
+    if (m_waitingForUIProcess)
+        return false;
+
     // We expect the UI process to not require a new repaint until the previous one has finished.
     ASSERT(!m_forceRepaintAsyncCallbackID);
     m_forceRepaintAsyncCallbackID = callbackID;
