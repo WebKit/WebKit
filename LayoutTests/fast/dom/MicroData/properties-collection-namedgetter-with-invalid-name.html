@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../js/resources/js-test-pre.js"></script>
+<script src="resources/microdata-common.js"></script>
+</head>
+<body>
+<div id="testDiv" itemscope><div itemprop="bar"> </div></div>
+<script>
+description("Test to ensure that HTMLPropertiesCollection[name] should return undefined if item doesn't have a property named 'name'.");
+var testDiv = document.getElementById("testDiv");
+
+shouldBe("testDiv.properties['foo']", "undefined");
+shouldBeTrue("!testDiv.properties['foo']");
+testDiv.firstChild.itemProp.add('foo');
+shouldBeTrue("testDiv.properties['foo'] == '[object PropertyNodeList]'");
+testDiv.firstChild.itemProp.remove('bar');
+shouldBe("testDiv.properties['bar']", "undefined");
+shouldBeTrue("!testDiv.properties['bar']");
+</script>
+<script src="../../js/resources/js-test-post.js"></script>
+</body>
+</html>
