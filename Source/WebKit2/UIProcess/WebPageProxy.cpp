@@ -34,6 +34,7 @@
 #include "DrawingAreaProxy.h"
 #include "EventDispatcherMessages.h"
 #include "FindIndicator.h"
+#include "ImmutableArray.h"
 #include "Logging.h"
 #include "MessageID.h"
 #include "NativeWebKeyboardEvent.h"
@@ -365,6 +366,11 @@ void WebPageProxy::initializeUIClient(const WKPageUIClient* client)
 void WebPageProxy::initializeFindClient(const WKPageFindClient* client)
 {
     m_findClient.initialize(client);
+}
+
+void WebPageProxy::initializeFindMatchesClient(const WKPageFindMatchesClient* client)
+{
+    m_findMatchesClient.initialize(client);
 }
 
 #if ENABLE(CONTEXT_MENUS)
@@ -1682,12 +1688,32 @@ void WebPageProxy::setMemoryCacheClientCallsEnabled(bool memoryCacheClientCallsE
     m_process->send(Messages::WebPage::SetMemoryCacheMessagesEnabled(memoryCacheClientCallsEnabled), m_pageID);
 }
 
+void WebPageProxy::findStringMatches(const String& string, FindOptions options, unsigned maxMatchCount)
+{
+    if (string.isEmpty()) {
+        didFindStringMatches(string, Vector<Vector<WebCore::IntRect> > (), 0);
+        return;
+    }
+
+    m_process->send(Messages::WebPage::FindStringMatches(string, options, maxMatchCount), m_pageID);
+}
+
 void WebPageProxy::findString(const String& string, FindOptions options, unsigned maxMatchCount)
 {
     if (m_mainFrameHasCustomRepresentation)
         m_pageClient->findStringInCustomRepresentation(string, options, maxMatchCount);
     else
         m_process->send(Messages::WebPage::FindString(string, options, maxMatchCount), m_pageID);
+}
+
+void WebPageProxy::getImageForFindMatch(int32_t matchIndex)
+{
+    m_process->send(Messages::WebPage::GetImageForFindMatch(matchIndex), m_pageID);
+}
+
+void WebPageProxy::selectFindMatch(int32_t matchIndex)
+{
+    m_process->send(Messages::WebPage::SelectFindMatch(matchIndex), m_pageID);
 }
 
 void WebPageProxy::hideFindUI()
@@ -3024,6 +3050,11 @@ void WebPageProxy::didCountStringMatches(const String& string, uint32_t matchCou
     m_findClient.didCountStringMatches(this, string, matchCount);
 }
 
+void WebPageProxy::didGetImageForFindMatch(const ShareableBitmap::Handle& contentImageHandle, uint32_t matchIndex)
+{
+    m_findMatchesClient.didGetImageForMatchResult(this, WebImage::create(ShareableBitmap::create(contentImageHandle)).get(), matchIndex);
+}
+
 void WebPageProxy::setFindIndicator(const FloatRect& selectionRectInWindowCoordinates, const Vector<FloatRect>& textRectsInSelectionRectCoordinates, float contentImageScaleFactor, const ShareableBitmap::Handle& contentImageHandle, bool fadeOut, bool animate)
 {
     RefPtr<FindIndicator> findIndicator = FindIndicator::create(selectionRectInWindowCoordinates, textRectsInSelectionRectCoordinates, contentImageScaleFactor, contentImageHandle);
@@ -3033,6 +3064,24 @@ void WebPageProxy::setFindIndicator(const FloatRect& selectionRectInWindowCoordi
 void WebPageProxy::didFindString(const String& string, uint32_t matchCount)
 {
     m_findClient.didFindString(this, string, matchCount);
+}
+
+void WebPageProxy::didFindStringMatches(const String& string, Vector<Vector<WebCore::IntRect> > matchRects, int32_t firstIndexAfterSelection)
+{
+    Vector<RefPtr<APIObject> > matches;
+    matches.reserveInitialCapacity(matchRects.size());
+
+    for (size_t i = 0; i < matchRects.size(); ++i) {
+        const Vector<WebCore::IntRect>& rects = matchRects[i];
+        size_t numRects = matchRects[i].size();
+        Vector<RefPtr<APIObject> > apiRects;
+        apiRects.reserveInitialCapacity(numRects);
+
+        for (size_t i = 0; i < numRects; ++i)
+            apiRects.uncheckedAppend(WebRect::create(toAPI(rects[i])));
+        matches.uncheckedAppend(ImmutableArray::adopt(apiRects));
+    }
+    m_findMatchesClient.didFindStringMatches(this, string, ImmutableArray::adopt(matches).get(), firstIndexAfterSelection);
 }
 
 void WebPageProxy::didFailToFindString(const String& string)

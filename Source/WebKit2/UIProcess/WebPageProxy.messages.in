@@ -213,6 +213,8 @@ messages -> WebPageProxy {
     SetFindIndicator(WebCore::FloatRect selectionRect, Vector<WebCore::FloatRect> textRects, float contentImageScaleFactor, WebKit::ShareableBitmap::Handle contentImageHandle, bool fadeOut, bool animate)
     DidFindString(WTF::String string, uint32_t matchCount)
     DidFailToFindString(WTF::String string)
+    DidFindStringMatches(WTF::String string, Vector<Vector<WebCore::IntRect> > matches, int32_t firstIndexAfterSelection)
+    DidGetImageForFindMatch(WebKit::ShareableBitmap::Handle contentImageHandle, uint32_t matchIndex)
 
     # PopupMenu messages
     ShowPopupMenu(WebCore::IntRect rect, uint64_t textDirection, Vector<WebKit::WebPopupItem> items, int32_t selectedIndex, WebKit::PlatformPopupMenuData data)

@@ -177,6 +177,7 @@
 		C0C5D3BE14598B6F00A802A6 /* GetBackingScaleFactor.mm in Sources */ = {isa = PBXBuildFile; fileRef = C0C5D3BC14598B6F00A802A6 /* GetBackingScaleFactor.mm */; };
 		C0C5D3C61459912900A802A6 /* GetBackingScaleFactor_Bundle.mm in Sources */ = {isa = PBXBuildFile; fileRef = C0C5D3BD14598B6F00A802A6 /* GetBackingScaleFactor_Bundle.mm */; };
 		C507E8A714C6545B005D6B3B /* InspectorBar.mm in Sources */ = {isa = PBXBuildFile; fileRef = C507E8A614C6545B005D6B3B /* InspectorBar.mm */; };
+		C51AFB99169F49FF009CCF66 /* FindMatches.mm in Sources */ = {isa = PBXBuildFile; fileRef = C51AFB98169F49FF009CCF66 /* FindMatches.mm */; };
 		C540F776152E4DA000A40C8C /* SimplifyMarkup.mm in Sources */ = {isa = PBXBuildFile; fileRef = C540F775152E4DA000A40C8C /* SimplifyMarkup.mm */; };
 		C540F784152E5A9A00A40C8C /* verboseMarkup.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = C540F783152E5A7800A40C8C /* verboseMarkup.html */; };
 		CD5497B415857F0C00B5BC30 /* MediaTime.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CD5497B315857F0C00B5BC30 /* MediaTime.cpp */; };
@@ -445,6 +446,7 @@
 		C0C5D3BC14598B6F00A802A6 /* GetBackingScaleFactor.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = GetBackingScaleFactor.mm; sourceTree = "<group>"; };
 		C0C5D3BD14598B6F00A802A6 /* GetBackingScaleFactor_Bundle.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = GetBackingScaleFactor_Bundle.mm; sourceTree = "<group>"; };
 		C507E8A614C6545B005D6B3B /* InspectorBar.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = InspectorBar.mm; sourceTree = "<group>"; };
+		C51AFB98169F49FF009CCF66 /* FindMatches.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = FindMatches.mm; sourceTree = "<group>"; };
 		C540F775152E4DA000A40C8C /* SimplifyMarkup.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = SimplifyMarkup.mm; sourceTree = "<group>"; };
 		C540F783152E5A7800A40C8C /* verboseMarkup.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = verboseMarkup.html; sourceTree = "<group>"; };
 		CD5497B315857F0C00B5BC30 /* MediaTime.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = MediaTime.cpp; path = WTF/MediaTime.cpp; sourceTree = "<group>"; };
@@ -614,6 +616,7 @@
 				1A5FEFDC1270E2A3000E2921 /* EvaluateJavaScript.cpp */,
 				BCC8B95A12611F4700DE46A4 /* FailedLoad.cpp */,
 				1A02C84E125D4A8400E3F4BD /* Find.cpp */,
+				C51AFB98169F49FF009CCF66 /* FindMatches.mm */,
 				1ADBEFAD130C689C00D61D19 /* ForceRepaint.cpp */,
 				BCBD370F125AA2EB00D2C29F /* FrameMIMETypeHTML.cpp */,
 				BCBD3760125ABCFE00D2C29F /* FrameMIMETypePNG.cpp */,
@@ -1058,6 +1061,7 @@
 				BC90995E12567BC100083756 /* WKString.cpp in Sources */,
 				BC9099941256ACF100083756 /* WKStringJSString.cpp in Sources */,
 				265AF55015D1E48A00B0CB4A /* WTFString.cpp in Sources */,
+				C51AFB99169F49FF009CCF66 /* FindMatches.mm in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

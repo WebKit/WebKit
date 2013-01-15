@@ -2680,6 +2680,21 @@ void WebPage::findString(const String& string, uint32_t options, uint32_t maxMat
     m_findController.findString(string, static_cast<FindOptions>(options), maxMatchCount);
 }
 
+void WebPage::findStringMatches(const String& string, uint32_t options, uint32_t maxMatchCount)
+{
+    m_findController.findStringMatches(string, static_cast<FindOptions>(options), maxMatchCount);
+}
+
+void WebPage::getImageForFindMatch(uint32_t matchIndex)
+{
+    m_findController.getImageForFindMatch(matchIndex);
+}
+
+void WebPage::selectFindMatch(uint32_t matchIndex)
+{
+    m_findController.selectFindMatch(matchIndex);
+}
+
 void WebPage::hideFindUI()
 {
     m_findController.hideFindUI();

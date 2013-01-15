@@ -316,6 +316,20 @@ enum {
     kWKMoreThanMaximumMatchCount = -1
 };
 
+// Find match client.
+typedef void (*WKPageDidFindStringMatchesCallback)(WKPageRef page, WKStringRef string, WKArrayRef matches, int firstIndex, const void* clientInfo);
+typedef void (*WKPageDidGetImageForMatchResultCallback)(WKPageRef page, WKImageRef image, uint32_t index, const void* clientInfo);
+
+struct WKPageFindMatchesClient {
+    int                                                                 version;
+    const void *                                                        clientInfo;
+    WKPageDidFindStringMatchesCallback                                  didFindStringMatches;
+    WKPageDidGetImageForMatchResultCallback                             didGetImageForMatchResult;
+};
+typedef struct WKPageFindMatchesClient WKPageFindMatchesClient;
+
+enum { kWKPageFindMatchesClientCurrentVersion = 0 };
+
 // ContextMenu client
 typedef void (*WKPageGetContextMenuFromProposedContextMenuCallback)(WKPageRef page, WKArrayRef proposedMenu, WKArrayRef* newMenu, WKHitTestResultRef hitTestResult, WKTypeRef userData, const void* clientInfo);
 typedef void (*WKPageCustomContextMenuItemSelectedCallback)(WKPageRef page, WKContextMenuItemRef contextMenuItem, const void* clientInfo);
@@ -452,9 +466,13 @@ WK_EXPORT void WKPageCenterSelectionInVisibleArea(WKPageRef page);
 WK_EXPORT void WKPageFindString(WKPageRef page, WKStringRef string, WKFindOptions findOptions, unsigned maxMatchCount);
 WK_EXPORT void WKPageHideFindUI(WKPageRef page);
 WK_EXPORT void WKPageCountStringMatches(WKPageRef page, WKStringRef string, WKFindOptions findOptions, unsigned maxMatchCount);
+WK_EXPORT void WKPageFindStringMatches(WKPageRef page, WKStringRef string, WKFindOptions findOptions, unsigned maxMatchCount);
+WK_EXPORT void WKPageGetImageForFindMatch(WKPageRef page, int32_t matchIndex);
+WK_EXPORT void WKPageSelectFindMatch(WKPageRef page, int32_t matchIndex);
 
 WK_EXPORT void WKPageSetPageContextMenuClient(WKPageRef page, const WKPageContextMenuClient* client);
 WK_EXPORT void WKPageSetPageFindClient(WKPageRef page, const WKPageFindClient* client);
+WK_EXPORT void WKPageSetPageFindMatchesClient(WKPageRef page, const WKPageFindMatchesClient* client);
 WK_EXPORT void WKPageSetPageFormClient(WKPageRef page, const WKPageFormClient* client);
 WK_EXPORT void WKPageSetPageLoaderClient(WKPageRef page, const WKPageLoaderClient* client);
 WK_EXPORT void WKPageSetPagePolicyClient(WKPageRef page, const WKPagePolicyClient* client);

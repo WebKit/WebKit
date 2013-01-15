@@ -729,6 +729,9 @@ private:
     void didRemoveEditCommand(uint64_t commandID);
 
     void findString(const String&, uint32_t findOptions, uint32_t maxMatchCount);
+    void findStringMatches(const String&, uint32_t findOptions, uint32_t maxMatchCount);
+    void getImageForFindMatch(uint32_t matchIndex);
+    void selectFindMatch(uint32_t matchIndex);
     void hideFindUI();
     void countStringMatches(const String&, uint32_t findOptions, uint32_t maxMatchCount);
 

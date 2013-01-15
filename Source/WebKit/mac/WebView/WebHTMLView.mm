@@ -6214,7 +6214,7 @@ static void extractUnderlines(NSAttributedString *string, Vector<CompositionUnde
     if (!coreFrame)
         return 0;
 
-    return coreFrame->editor()->countMatchesForText(string, core(range), coreOptions(options), limit, markMatches);
+    return coreFrame->editor()->countMatchesForText(string, core(range), coreOptions(options), limit, markMatches, 0);
 }
 
 - (void)setMarkedTextMatchesAreHighlighted:(BOOL)newValue

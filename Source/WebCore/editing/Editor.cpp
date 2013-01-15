@@ -2742,12 +2742,7 @@ static bool isFrameInRange(Frame* frame, Range* range)
     return inRange;
 }
 
-unsigned Editor::countMatchesForText(const String& target, FindOptions options, unsigned limit, bool markMatches)
-{
-    return countMatchesForText(target, 0, options, limit, markMatches);
-}
-
-unsigned Editor::countMatchesForText(const String& target, Range* range, FindOptions options, unsigned limit, bool markMatches)
+unsigned Editor::countMatchesForText(const String& target, Range* range, FindOptions options, unsigned limit, bool markMatches, Vector<RefPtr<Range> >* matches)
 {
     if (target.isEmpty())
         return 0;
@@ -2779,6 +2774,9 @@ unsigned Editor::countMatchesForText(const String& target, Range* range, FindOpt
         }
 
         ++matchCount;
+        if (matches)
+            matches->append(resultRange);
+        
         if (markMatches)
             m_frame->document()->markers()->addMarker(resultRange.get(), DocumentMarker::TextMatch);
 
@@ -2797,7 +2795,7 @@ unsigned Editor::countMatchesForText(const String& target, Range* range, FindOpt
             searchRange->setEnd(shadowTreeRoot, shadowTreeRoot->childNodeCount(), exception);
     } while (true);
 
-    if (markMatches) {
+    if (markMatches || matches) {
         // Do a "fake" paint in order to execute the code that computes the rendered rect for each text match.
         if (m_frame->view() && m_frame->contentRenderer()) {
             m_frame->document()->updateLayout(); // Ensure layout is up to date.

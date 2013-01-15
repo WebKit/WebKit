@@ -32,13 +32,21 @@
 
 namespace WebKit {
 
+class ImmutableArray;
 class WebPageProxy;
+class WebImage;
 
 class WebFindClient : public APIClient<WKPageFindClient, kWKPageFindClientCurrentVersion> {
 public:
     void didFindString(WebPageProxy*, const String&, uint32_t matchCount);
     void didFailToFindString(WebPageProxy*, const String&);
     void didCountStringMatches(WebPageProxy*, const String&, uint32_t matchCount);
+};
+
+class WebFindMatchesClient : public APIClient<WKPageFindMatchesClient, kWKPageFindMatchesClientCurrentVersion> {
+public:
+    void didFindStringMatches(WebPageProxy*, const String&, ImmutableArray*, int);
+    void didGetImageForMatchResult(WebPageProxy*, WebImage*, uint32_t);
 };
 
 } // namespace WebKit

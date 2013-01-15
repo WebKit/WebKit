@@ -55,5 +55,20 @@ void WebFindClient::didCountStringMatches(WebPageProxy* page, const String& stri
     m_client.didCountStringMatches(toAPI(page), toAPI(string.impl()), matchCount, m_client.clientInfo);
 }
 
+void WebFindMatchesClient::didFindStringMatches(WebPageProxy* page, const String& string, ImmutableArray* matches, int firstIndex)
+{
+    if (!m_client.didFindStringMatches)
+        return;
+
+    m_client.didFindStringMatches(toAPI(page), toAPI(string.impl()), toAPI(matches), firstIndex, m_client.clientInfo);
+}
+
+void WebFindMatchesClient::didGetImageForMatchResult(WebPageProxy* page, WebImage* image, uint32_t index)
+{
+    if (!m_client.didGetImageForMatchResult)
+        return;
+    m_client.didGetImageForMatchResult(toAPI(page), toAPI(image), index, m_client.clientInfo);
+}
+
 } // namespace WebKit
 

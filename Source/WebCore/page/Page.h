@@ -236,6 +236,13 @@ namespace WebCore {
         unsigned markAllMatchesForText(const String&, TextCaseSensitivity, bool shouldHighlight, unsigned);
         void unmarkAllTextMatches();
 
+        // find all the Ranges for the matching text.
+        // Upon return, indexForSelection will be one of the following:
+        // 0 if there is no user selection
+        // the index of the first range after the user selection
+        // NoMatchBeforeUserSelection if there is no matching text after the user selection.
+        enum { NoMatchBeforeUserSelection = -1 };
+        void findStringMatchingRanges(const String&, FindOptions, int maxCount, Vector<RefPtr<Range> >*, int& indexForSelection);
 #if PLATFORM(MAC)
         void addSchedulePair(PassRefPtr<SchedulePair>);
         void removeSchedulePair(PassRefPtr<SchedulePair>);

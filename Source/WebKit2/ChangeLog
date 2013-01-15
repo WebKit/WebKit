@@ -1,3 +1,68 @@
+2013-01-15  Enrica Casucci  <enrica@apple.com>
+
+        Add a new set of WebKit2 APIs for text search and
+        search results management.
+        https://bugs.webkit.org/show_bug.cgi?id=106834.
+        <rdar://problem/12597159>
+
+        Reviewed by Simon Fraser.
+        
+        Adding new API to perform text search in WebKit2 without using
+        the stock UI. The new interface provides all the information
+        necessary to write a custom UI for search. The main logic is
+        implemented in the new functions added to FindController.
+
+        Added new TextWebKitAPI test.
+
+        * UIProcess/API/C/WKPage.cpp:
+        (WKPageFindStringMatches): Added.
+        (WKPageGetImageForFindMatch): Added.
+        (WKPageSelectFindMatch): Added.
+        (WKPageSetPageFindMatchesClient): Added.
+        * UIProcess/API/C/WKPage.h: Added the new API definitions.
+        * UIProcess/WebFindClient.cpp: Added new client callbacks.
+        (WebKit::WebFindMatchesClient::didFindStringMatches):
+        (WebKit::WebFindMatchesClient::didGetImageForMatchResult):
+        * UIProcess/WebFindClient.h:
+        (WebFindMatchesClient): Added.
+        * UIProcess/WebPageProxy.cpp: Added proxy methods.
+        (WebKit::WebPageProxy::initializeFindMatchesClient):
+        (WebKit::WebPageProxy::findStringMatches):
+        (WebKit::WebPageProxy::getImageForFindMatch):
+        (WebKit::WebPageProxy::selectFindMatch):
+        (WebKit::WebPageProxy::didGetImageForFindMatch):
+        (WebKit::WebPageProxy::didFindStringMatches):
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/WebPageProxy.messages.in:
+        * WebProcess/WebPage/FindController.cpp:
+        (WebKit::FindController::findStringMatches): Finds all the matching
+        text according to the find options. All the matching text ranges are
+        stored in a vector until the next call to findStringMatches or until
+        hideFindUI is called. The message that is sent back to the UI process
+        contains a vector containing an entry for each find match (i.e. for each
+        range) and each entry is represented by a vector of the corresponding
+        text rects. It also returns the index in the vector of matches corresponding
+        to the first match after the user selection.
+        If there is no selection the index is always 0 and if there are no
+        matches after the user selection, the index returned is -1.
+        (WebKit::FindController::getFindIndicatorBitmapAndRect): Helper function
+        to share code between updateFindIndicator and getImageForFindMatch.
+        (WebKit::FindController::getImageForFindMatch): Creates the image corresponding
+        to the text matched at the given match index.
+        (WebKit::FindController::selectFindMatch): creates a selection for the range
+        corresponding to the given match index.
+        (WebKit::FindController::hideFindUI): Added logic to clear the vector
+        of matched ranges.
+        (WebKit::FindController::updateFindIndicator): Updated to use the
+        new helper function getFindIndicatorBitmapAndRect.
+        * WebProcess/WebPage/FindController.h:
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::findStringMatches):
+        (WebKit::WebPage::getImageForFindMatch):
+        (WebKit::WebPage::selectFindMatch):
+        * WebProcess/WebPage/WebPage.h:
+        * WebProcess/WebPage/WebPage.messages.in:
+
 2013-01-15  Anders Carlsson  <andersca@apple.com>
 
         Rename LayerTreeHostCAMac to LayerTreeHostMac.

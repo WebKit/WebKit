@@ -1,3 +1,22 @@
+2013-01-15  Enrica Casucci  <enrica@apple.com>
+
+        Add a new set of WebKit2 APIs for text search and
+        search results management.
+        https://bugs.webkit.org/show_bug.cgi?id=106834.
+        <rdar://problem/12597159>
+
+        Reviewed by Simon Fraser.
+        
+        Adding new API to perform text search in WebKit2 without using
+        the stock UI. The new interface provides all the information
+        necessary to write a custom UI for search.
+
+        Added new TextWebKitAPI test.
+
+        * WebView/WebHTMLView.mm:
+        (-[WebHTMLView countMatchesForText:inDOMRange:options:limit:markMatches:]):
+        Modified to reflect the changes to Editor::countMatchesForText interface.
+
 2013-01-10  Zan Dobersek  <zandobersek@gmail.com>
 
         Remove the ENABLE_ANIMATION_API feature define occurences

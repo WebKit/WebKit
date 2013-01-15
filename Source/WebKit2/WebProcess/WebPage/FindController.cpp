@@ -193,8 +193,91 @@ void FindController::findString(const String& string, FindOptions options, unsig
     m_webPage->drawingArea()->dispatchAfterEnsuringUpdatedScrollPosition(WTF::bind(&FindController::updateFindUIAfterPageScroll, this, found, string, options, maxMatchCount));
 }
 
+void FindController::findStringMatches(const String& string, FindOptions options, unsigned maxMatchCount)
+{
+    m_findMatches.clear();
+    int indexForSelection;
+
+    m_webPage->corePage()->findStringMatchingRanges(string, core(options), maxMatchCount, &m_findMatches, indexForSelection);
+
+    Vector<Vector<IntRect> > matchRects;
+    for (size_t i = 0; i < m_findMatches.size(); ++i) {
+        Vector<IntRect> rects;
+        m_findMatches[i]->textRects(rects);
+        matchRects.append(rects);
+    }
+
+    m_webPage->send(Messages::WebPageProxy::DidFindStringMatches(string, matchRects, indexForSelection));
+}
+
+bool FindController::getFindIndicatorBitmapAndRect(Frame* frame, ShareableBitmap::Handle& handle, IntRect& selectionRect)
+{
+    selectionRect = enclosingIntRect(frame->selection()->bounds());
+
+    // Selection rect can be empty for matches that are currently obscured from view.
+    if (selectionRect.isEmpty())
+        return false;
+
+    IntSize backingStoreSize = selectionRect.size();
+    backingStoreSize.scale(m_webPage->corePage()->deviceScaleFactor());
+
+    // Create a backing store and paint the find indicator text into it.
+    RefPtr<ShareableBitmap> findIndicatorTextBackingStore = ShareableBitmap::createShareable(backingStoreSize, ShareableBitmap::SupportsAlpha);
+    if (!findIndicatorTextBackingStore)
+        return false;
+
+    OwnPtr<GraphicsContext> graphicsContext = findIndicatorTextBackingStore->createGraphicsContext();
+    graphicsContext->scale(FloatSize(m_webPage->corePage()->deviceScaleFactor(), m_webPage->corePage()->deviceScaleFactor()));
+
+    IntRect paintRect = selectionRect;
+    paintRect.move(frame->view()->frameRect().x(), frame->view()->frameRect().y());
+    paintRect.move(-frame->view()->scrollOffset());
+
+    graphicsContext->translate(-paintRect.x(), -paintRect.y());
+    frame->view()->setPaintBehavior(PaintBehaviorSelectionOnly | PaintBehaviorForceBlackText | PaintBehaviorFlattenCompositingLayers);
+    frame->document()->updateLayout();
+
+    frame->view()->paint(graphicsContext.get(), paintRect);
+    frame->view()->setPaintBehavior(PaintBehaviorNormal);
+
+    if (!findIndicatorTextBackingStore->createHandle(handle))
+        return false;
+    return true;
+}
+
+void FindController::getImageForFindMatch(uint32_t matchIndex)
+{
+    if (matchIndex >= m_findMatches.size())
+        return;
+    Frame* frame = m_findMatches[matchIndex]->startContainer()->document()->frame();
+    if (!frame)
+        return;
+
+    VisibleSelection oldSelection = frame->selection()->selection();
+    frame->selection()->setSelection(VisibleSelection(m_findMatches[matchIndex].get()));
+
+    IntRect selectionRect;
+    ShareableBitmap::Handle handle;
+    getFindIndicatorBitmapAndRect(frame, handle, selectionRect);
+
+    frame->selection()->setSelection(oldSelection);
+
+    m_webPage->send(Messages::WebPageProxy::DidGetImageForFindMatch(handle, matchIndex));
+}
+
+void FindController::selectFindMatch(uint32_t matchIndex)
+{
+    if (matchIndex >= m_findMatches.size())
+        return;
+    Frame* frame = m_findMatches[matchIndex]->startContainer()->document()->frame();
+    if (!frame)
+        return;
+    frame->selection()->setSelection(VisibleSelection(m_findMatches[matchIndex].get()));
+}
+
 void FindController::hideFindUI()
 {
+    m_findMatches.clear();
     if (m_findPageOverlay)
         m_webPage->uninstallPageOverlay(m_findPageOverlay, false);
 
@@ -213,43 +296,16 @@ bool FindController::updateFindIndicator(Frame* selectedFrame, bool isShowingOve
     if (!selectedFrame)
         return false;
 
-    IntRect selectionRect = enclosingIntRect(selectedFrame->selection()->bounds());
-    
-    // Selection rect can be empty for matches that are currently obscured from view.
-    if (selectionRect.isEmpty())
+    IntRect selectionRect;
+    ShareableBitmap::Handle handle;
+    if (!getFindIndicatorBitmapAndRect(selectedFrame, handle, selectionRect))
         return false;
 
     // We want the selection rect in window coordinates.
     IntRect selectionRectInWindowCoordinates = selectedFrame->view()->contentsToWindow(selectionRect);
-    
+
     Vector<FloatRect> textRects;
     selectedFrame->selection()->getClippedVisibleTextRectangles(textRects);
-
-    IntSize backingStoreSize = selectionRect.size();
-    backingStoreSize.scale(m_webPage->corePage()->deviceScaleFactor());
-
-    // Create a backing store and paint the find indicator text into it.
-    RefPtr<ShareableBitmap> findIndicatorTextBackingStore = ShareableBitmap::createShareable(backingStoreSize, ShareableBitmap::SupportsAlpha);
-    if (!findIndicatorTextBackingStore)
-        return false;
-    
-    OwnPtr<GraphicsContext> graphicsContext = findIndicatorTextBackingStore->createGraphicsContext();
-    graphicsContext->scale(FloatSize(m_webPage->corePage()->deviceScaleFactor(), m_webPage->corePage()->deviceScaleFactor()));
-
-    IntRect paintRect = selectionRect;
-    paintRect.move(selectedFrame->view()->frameRect().x(), selectedFrame->view()->frameRect().y());
-    paintRect.move(-selectedFrame->view()->scrollOffset());
-
-    graphicsContext->translate(-paintRect.x(), -paintRect.y());
-    selectedFrame->view()->setPaintBehavior(PaintBehaviorSelectionOnly | PaintBehaviorForceBlackText | PaintBehaviorFlattenCompositingLayers);
-    selectedFrame->document()->updateLayout();
-
-    selectedFrame->view()->paint(graphicsContext.get(), paintRect);
-    selectedFrame->view()->setPaintBehavior(PaintBehaviorNormal);
-    
-    ShareableBitmap::Handle handle;
-    if (!findIndicatorTextBackingStore->createHandle(handle))
-        return false;
 
     // We want the text rects in selection rect coordinates.
     Vector<FloatRect> textRectsInSelectionRectCoordinates;

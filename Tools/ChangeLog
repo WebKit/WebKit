@@ -1,3 +1,18 @@
+2013-01-15  Enrica Casucci  <enrica@apple.com>
+
+        Add a new set of WebKit2 APIs for text search and
+        search results management.
+        https://bugs.webkit.org/show_bug.cgi?id=106834.
+        <rdar://problem/12597159>
+
+        Added new test for the new WebKit2 API for
+        text search.
+        
+        Reviewed by Simon Fraser.
+
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        * TestWebKitAPI/Tests/WebKit2/FindMatches.mm: Added.
+
 2013-01-15  Levi Weintraub  <leviw@chromium.org>
 
         [chromium] route more webkit_support and webviewhost callbacks through WebTestDelegate

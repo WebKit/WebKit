@@ -361,8 +361,7 @@ public:
 
     void respondToChangedSelection(const VisibleSelection& oldSelection, FrameSelection::SetSelectionOptions);
     bool shouldChangeSelection(const VisibleSelection& oldSelection, const VisibleSelection& newSelection, EAffinity, bool stillSelecting) const;
-    unsigned countMatchesForText(const String&, FindOptions, unsigned limit, bool markMatches);
-    unsigned countMatchesForText(const String&, Range*, FindOptions, unsigned limit, bool markMatches);
+    unsigned countMatchesForText(const String&, Range*, FindOptions, unsigned limit, bool markMatches, Vector<RefPtr<Range> >*);
     bool markedTextMatchesAreHighlighted() const;
     void setMarkedTextMatchesAreHighlighted(bool);
 

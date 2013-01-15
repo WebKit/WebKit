@@ -277,6 +277,7 @@ public:
     void initializeContextMenuClient(const WKPageContextMenuClient*);
 #endif
     void initializeFindClient(const WKPageFindClient*);
+    void initializeFindMatchesClient(const WKPageFindMatchesClient*);
     void initializeFormClient(const WKPageFormClient*);
     void initializeLoaderClient(const WKPageLoaderClient*);
     void initializePolicyClient(const WKPagePolicyClient*);
@@ -534,12 +535,17 @@ public:
 
     // Find.
     void findString(const String&, FindOptions, unsigned maxMatchCount);
+    void findStringMatches(const String&, FindOptions, unsigned maxMatchCount);
+    void getImageForFindMatch(int32_t matchIndex);
+    void selectFindMatch(int32_t matchIndex);
+    void didGetImageForFindMatch(const ShareableBitmap::Handle& contentImageHandle, uint32_t matchIndex);
     void hideFindUI();
     void countStringMatches(const String&, FindOptions, unsigned maxMatchCount);
     void didCountStringMatches(const String&, uint32_t matchCount);
     void setFindIndicator(const WebCore::FloatRect& selectionRectInWindowCoordinates, const Vector<WebCore::FloatRect>& textRectsInSelectionRectCoordinates, float contentImageScaleFactor, const ShareableBitmap::Handle& contentImageHandle, bool fadeOut, bool animate);
     void didFindString(const String&, uint32_t matchCount);
     void didFailToFindString(const String&);
+    void didFindStringMatches(const String&, Vector<Vector<WebCore::IntRect> > matchRects, int32_t firstIndexAfterSelection);
 
     void getContentsAsString(PassRefPtr<StringCallback>);
 #if ENABLE(MHTML)
@@ -1041,6 +1047,7 @@ private:
     WebResourceLoadClient m_resourceLoadClient;
     WebUIClient m_uiClient;
     WebFindClient m_findClient;
+    WebFindMatchesClient m_findMatchesClient;
 #if ENABLE(CONTEXT_MENUS)
     WebPageContextMenuClient m_contextMenuClient;
 #endif
