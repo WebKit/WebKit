@@ -1,3 +1,9 @@
+2013-01-14  Roger Fong  <roger_fong@apple.com>
+
+        Unreviewed. Fix vcproj file. Missing file tag after http://trac.webkit.org/changeset/139541.
+
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore.vcproj:
+
 2013-01-13  Filip Pizlo  <fpizlo@apple.com>
 
         DFG phases that store per-node information should store it in Node itself rather than using a secondary vector
