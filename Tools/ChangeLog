@@ -1,3 +1,9 @@
+2013-01-15  Joshua Bell  <jsbell@chromium.org>
+
+        Unreviewed. Adding Michael Pruett as contributor.
+
+        * Scripts/webkitpy/common/config/committers.py:
+
 2013-01-15  Victor Carbune  <victor@rosedu.org>
 
         Unreviewed. Update my email addresses.
