@@ -16,7 +16,7 @@
 
         var cueNode;
         var seekedCount = 0;
-        var step = 0.1;
+        var step = 0.4;
         var initialTime = 0.6;
         var endTime = 3.0
 
@@ -46,7 +46,7 @@
                 endTest();
             else {
                 consoleWrite("" + seekedCount);
-                run("video.currentTime = " + (initialTime + seekedCount * step));
+                run("video.currentTime = " + Math.round(initialTime + seekedCount * step * 10) / 10);
             }
         }
 
