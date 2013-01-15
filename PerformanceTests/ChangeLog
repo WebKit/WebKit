@@ -1,3 +1,15 @@
+2013-01-15  Dominic Cooney  <dominicc@chromium.org>
+
+        Allow zero values as results from the runFunction.
+        https://bugs.webkit.org/show_bug.cgi?id=102500
+
+        Reviewed by Kentaro Hara.
+
+        DOM/DOMWalk.js fails on the Chromium Win perf bot because one or
+        more parts of the test usually return zero at some point.
+
+        * resources/runner.js: Accept merely non-negative results.
+
 2012-12-28  Yury Semikhatsky  <yurys@chromium.org>
 
         Web Inspector: rename distanceToWindow to distance

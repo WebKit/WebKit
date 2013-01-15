@@ -257,8 +257,8 @@ if (window.testRunner) {
         var end = PerfTestRunner.now();
 
         if (returnValue - 0 === returnValue) {
-            if (returnValue <= 0)
-                PerfTestRunner.log("runFunction returned a non-positive value: " + returnValue);
+            if (returnValue < 0)
+                PerfTestRunner.log("runFunction returned a negative value: " + returnValue);
             return returnValue;
         }
 
