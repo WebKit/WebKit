@@ -1808,6 +1808,12 @@ fast/writing-mode/vertical-subst-font-vert-no-dflt.html
 # https://bugs.webkit.org/show_bug.cgi?id=98751
 fast/xmlhttprequest/xmlhttprequest-nonexistent-file.html
 
+# [Qt] REGRESSION (r139609) - should be unskipped after Qt update (with system libjpeg/libpng)
+# https://bugs.webkit.org/show_bug.cgi?id=104909
+fast/events/mouse-cursor-multiframecur.html
+fast/events/mouse-cursor.html
+fast/images/icon-decoding.html
+
 # ============================================================================= #
 # failing security tests
 # ============================================================================= #
@@ -2507,3 +2513,7 @@ fast/workers/storage/interrupt-database.html
 
 # [Qt] New fast/js/dfg-create-inlined-arguments-in-closure-inline.html asserts on 32 bit
 webkit.org/b/106459 [ Debug ] fast/js/dfg-create-inlined-arguments-in-closure-inline.html
+
+# New inspector/editor/text-editor-formatter.html introduced in r139617 fails on EFL, Mac, QT
+# https://bugs.webkit.org/show_bug.cgi?id=106883
+inspector/editor/text-editor-formatter.html
