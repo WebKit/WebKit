@@ -606,12 +606,12 @@ public:
 
             // Any original result that was >= 1 should not be allowed to fall below 1.
             // This keeps border lines from vanishing.
-            length = primitiveValue->computeLength<T>(styleResolver->style(), styleResolver->rootElementStyle(), 1.0);
-            T zoomedLength = length * zoom;
-            if (zoom < 1.0f && zoomedLength < 1.0 && length >= 1.0)
-                length = 1.0;
-            else
-                length = zoomedLength;
+            length = primitiveValue->computeLength<T>(styleResolver->style(), styleResolver->rootElementStyle(), zoom);
+            if (zoom < 1.0f && length < 1.0) {
+                T originalLength = primitiveValue->computeLength<T>(styleResolver->style(), styleResolver->rootElementStyle(), 1.0);
+                if (originalLength >= 1.0)
+                    length = 1.0;
+            }
 
         } else {
             ASSERT_NOT_REACHED();
