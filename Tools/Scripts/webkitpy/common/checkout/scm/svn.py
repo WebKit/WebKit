@@ -138,10 +138,11 @@ class SVN(SCM, SVNRepository):
     def svn_version(self):
         return self._run_svn(['--version', '--quiet'])
 
-    def working_directory_is_clean(self):
-        return self._run_svn(["diff"], cwd=self.checkout_root, decode_output=False) == ""
+    def has_working_directory_changes(self):
+        # FIXME: What about files which are not committed yet?
+        return self._run_svn(["diff"], cwd=self.checkout_root, decode_output=False) != ""
 
-    def clean_working_directory(self):
+    def discard_working_directory_changes(self):
         # Make sure there are no locks lying around from a previously aborted svn invocation.
         # This is slightly dangerous, as it's possible the user is running another svn process
         # on this checkout at the same time.  However, it's much more likely that we're running

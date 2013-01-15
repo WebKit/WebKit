@@ -111,7 +111,7 @@ class Rollout(IRCCommand):
         return ", ".join(target_nicks)
 
     def _update_working_copy(self, tool):
-        tool.scm().ensure_clean_working_directory(force_clean=True)
+        tool.scm().discard_local_changes()
         tool.executive.run_and_throw_if_fail(tool.deprecated_port().update_webkit_command(), quiet=True, cwd=tool.scm().checkout_root)
 
     def execute(self, nick, args, tool, sheriff):

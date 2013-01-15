@@ -90,26 +90,6 @@ class SCM:
     def script_path(self, script_name):
         return self._filesystem.join(self.scripts_directory(), script_name)
 
-    def ensure_clean_working_directory(self, force_clean):
-        if self.working_directory_is_clean():
-            return
-        if not force_clean:
-            print self.run(self.status_command(), error_handler=Executive.ignore_error, cwd=self.checkout_root)
-            raise ScriptError(message="Working directory has modifications, pass --force-clean or --no-clean to continue.")
-        _log.info("Cleaning working directory")
-        self.clean_working_directory()
-
-    def ensure_no_local_commits(self, force):
-        if not self.supports_local_commits():
-            return
-        commits = self.local_commits()
-        if not len(commits):
-            return
-        if not force:
-            _log.error("Working directory has local commits, pass --force-clean to continue.")
-            sys.exit(1)
-        self.discard_local_commits()
-
     def run_status_and_extract_filenames(self, status_command, status_regexp):
         filenames = []
         # We run with cwd=self.checkout_root so that returned-paths are root-relative.
@@ -146,12 +126,6 @@ class SCM:
     @staticmethod
     def commit_success_regexp():
         SCM._subclass_must_implement()
-
-    def working_directory_is_clean(self):
-        self._subclass_must_implement()
-
-    def clean_working_directory(self):
-        self._subclass_must_implement()
 
     def status_command(self):
         self._subclass_must_implement()
@@ -231,11 +205,27 @@ class SCM:
     def svn_blame(self, path):
         self._subclass_must_implement()
 
+    def has_working_directory_changes(self):
+        self._subclass_must_implement()
+
+    def discard_working_directory_changes(self):
+        self._subclass_must_implement()
+
+    #--------------------------------------------------------------------------
     # Subclasses must indicate if they support local commits,
     # but the SCM baseclass will only call local_commits methods when this is true.
     @staticmethod
     def supports_local_commits():
         SCM._subclass_must_implement()
+
+    def local_commits(self):
+        return []
+
+    def has_local_commits(self):
+        return len(self.local_commits()) > 0
+
+    def discard_local_commits(self):
+        return
 
     def remote_merge_base(self):
         SCM._subclass_must_implement()
@@ -244,8 +234,12 @@ class SCM:
         _log.error("Your source control manager does not support local commits.")
         sys.exit(1)
 
-    def discard_local_commits(self):
-        pass
+    def local_changes_exist(self):
+        return (self.supports_local_commits() and self.has_local_commits()) or self.has_working_directory_changes()
 
-    def local_commits(self):
-        return []
+    def discard_local_changes(self):
+        if self.has_working_directory_changes():
+            self.discard_working_directory_changes()
+
+        if self.has_local_commits():
+            self.discard_local_commits()

@@ -46,13 +46,22 @@ class MockSCM(object):
         if return_exit_code:
             return 0
 
-    def ensure_clean_working_directory(self, force_clean):
+    def has_working_directory_changes(self):
+        return False
+
+    def discard_working_directory_changes(self):
         pass
 
     def supports_local_commits(self):
         return True
 
-    def ensure_no_local_commits(self, force_clean):
+    def has_local_commits(self):
+        return False
+
+    def discard_local_commits(self):
+        pass
+
+    def discard_local_changes(self):
         pass
 
     def exists(self, path):

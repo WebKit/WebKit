@@ -28,6 +28,7 @@
 
 from webkitpy.tool.steps.abstractstep import AbstractStep
 from webkitpy.tool.steps.options import Options
+from webkitpy.common.system.executive import ScriptError
 
 
 class CleanWorkingDirectory(AbstractStep):
@@ -46,5 +47,9 @@ class CleanWorkingDirectory(AbstractStep):
         if not self._options.clean:
             return
         if not self._allow_local_commits:
-            self._tool.scm().ensure_no_local_commits(self._options.force_clean)
-        self._tool.scm().ensure_clean_working_directory(force_clean=self._options.force_clean)
+            if self._tool.scm().has_local_commits() and not self._options.force_clean:
+                raise ScriptError("Repository has local commits, pass --force-clean to continue.")
+            self._tool.scm().discard_local_commits()
+        if self._tool.scm().has_working_directory_changes() and not self._options.force_clean:
+            raise ScriptError("Working directory has changes, pass --force-clean to continue.")
+        self._tool.scm().discard_working_directory_changes()

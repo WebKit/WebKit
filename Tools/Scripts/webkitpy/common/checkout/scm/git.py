@@ -48,11 +48,11 @@ def run_command(*args, **kwargs):
 
 
 class AmbiguousCommitError(Exception):
-    def __init__(self, num_local_commits, working_directory_is_clean):
+    def __init__(self, num_local_commits, has_working_directory_changes):
         Exception.__init__(self, "Found %s local commits and the working directory is %s" % (
-            num_local_commits, ["not clean", "clean"][working_directory_is_clean]))
+            num_local_commits, ["clean", "not clean"][has_working_directory_changes]))
         self.num_local_commits = num_local_commits
-        self.working_directory_is_clean = working_directory_is_clean
+        self.has_working_directory_changes = has_working_directory_changes
 
 
 class Git(SCM, SVNRepository):
@@ -148,13 +148,13 @@ class Git(SCM, SVNRepository):
     def rebase_in_progress(self):
         return self._filesystem.exists(self.absolute_path(self._filesystem.join('.git', 'rebase-apply')))
 
-    def working_directory_is_clean(self):
-        return self._run_git(['diff', self.remote_merge_base(), '--no-renames', '--name-only']) == ""
+    def has_working_directory_changes(self):
+        return self._run_git(['diff', 'HEAD', '--no-renames', '--name-only']) != ""
 
-    def clean_working_directory(self):
-        # Could run git clean here too, but that wouldn't match working_directory_is_clean
-        self._run_git(['reset', '--hard', self.remote_merge_base()])
-        # Aborting rebase even though this does not match working_directory_is_clean
+    def discard_working_directory_changes(self):
+        # Could run git clean here too, but that wouldn't match subversion
+        self._run_git(['reset', 'HEAD', '--hard'])
+        # Aborting rebase even though this does not match subversion
         if self.rebase_in_progress():
             self._run_git(['rebase', '--abort'])
 
@@ -336,30 +336,30 @@ class Git(SCM, SVNRepository):
     def revert_files(self, file_paths):
         self._run_git(['checkout', 'HEAD'] + file_paths)
 
-    def _assert_can_squash(self, working_directory_is_clean):
+    def _assert_can_squash(self, has_working_directory_changes):
         squash = Git.read_git_config('webkit-patch.commit-should-always-squash', cwd=self.checkout_root)
         should_squash = squash and squash.lower() == "true"
 
         if not should_squash:
             # Only warn if there are actually multiple commits to squash.
             num_local_commits = len(self.local_commits())
-            if num_local_commits > 1 or (num_local_commits > 0 and not working_directory_is_clean):
-                raise AmbiguousCommitError(num_local_commits, working_directory_is_clean)
+            if num_local_commits > 1 or (num_local_commits > 0 and has_working_directory_changes):
+                raise AmbiguousCommitError(num_local_commits, has_working_directory_changes)
 
     def commit_with_message(self, message, username=None, password=None, git_commit=None, force_squash=False, changed_files=None):
         # Username is ignored during Git commits.
-        working_directory_is_clean = self.working_directory_is_clean()
+        has_working_directory_changes = self.has_working_directory_changes()
 
         if git_commit:
             # Special-case HEAD.. to mean working-copy changes only.
             if git_commit.upper() == 'HEAD..':
-                if working_directory_is_clean:
+                if not has_working_directory_changes:
                     raise ScriptError(message="The working copy is not modified. --git-commit=HEAD.. only commits working copy changes.")
                 self.commit_locally_with_message(message)
                 return self._commit_on_branch(message, 'HEAD', username=username, password=password)
 
             # Need working directory changes to be committed so we can checkout the merge branch.
-            if not working_directory_is_clean:
+            if has_working_directory_changes:
                 # FIXME: webkit-patch land will modify the ChangeLogs to correct the reviewer.
                 # That will modify the working-copy and cause us to hit this error.
                 # The ChangeLog modification could be made to modify the existing local commit.
@@ -367,7 +367,7 @@ class Git(SCM, SVNRepository):
             return self._commit_on_branch(message, git_commit, username=username, password=password)
 
         if not force_squash:
-            self._assert_can_squash(working_directory_is_clean)
+            self._assert_can_squash(has_working_directory_changes)
         self._run_git(['reset', '--soft', self.remote_merge_base()])
         self.commit_locally_with_message(message)
         return self.push_local_commits_to_server(username=username, password=password)
@@ -408,7 +408,7 @@ class Git(SCM, SVNRepository):
             commit_succeeded = False
         finally:
             # And then swap back to the original branch and clean up.
-            self.clean_working_directory()
+            self.discard_working_directory_changes()
             self._run_git(['checkout', '-q', branch_name])
             self.delete_branch(MERGE_BRANCH_NAME)
 

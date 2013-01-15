@@ -329,8 +329,8 @@ class SCMTest(unittest.TestCase):
             added_files.remove("added_dir")
         self.assertItemsEqual(added_files, ["added_dir/added_file2", "added_file", "added_file3", "added_file4"])
 
-        # Test also to make sure clean_working_directory removes added files
-        self.scm.clean_working_directory()
+        # Test also to make sure discard_working_directory_changes removes added files
+        self.scm.discard_working_directory_changes()
         self.assertItemsEqual(self.scm.added_files(), [])
         self.assertFalse(os.path.exists("added_file"))
         self.assertFalse(os.path.exists("added_file3"))
@@ -889,7 +889,7 @@ END
         write_into_file_at_path(svn_root_lock_path, "", "utf-8")
         # webkit-patch uses a Checkout object and runs update-webkit, just use svn update here.
         self.assertRaises(ScriptError, run_command, ['svn', 'update'])
-        self.scm.clean_working_directory()
+        self.scm.discard_working_directory_changes()
         self.assertFalse(os.path.exists(svn_root_lock_path))
         run_command(['svn', 'update'])  # Should succeed and not raise.
 
@@ -1111,11 +1111,11 @@ class GitSVNTest(SCMTest):
         self.assertTrue(self.scm.rebase_in_progress())
 
         # Make sure our cleanup works.
-        self.scm.clean_working_directory()
+        self.scm.discard_working_directory_changes()
         self.assertFalse(self.scm.rebase_in_progress())
 
         # Make sure cleanup doesn't throw when no rebase is in progress.
-        self.scm.clean_working_directory()
+        self.scm.discard_working_directory_changes()
 
     def test_commitish_parsing(self):
         # Multiple revisions are cherry-picked.

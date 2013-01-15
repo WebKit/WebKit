@@ -31,22 +31,60 @@ import unittest
 from webkitpy.thirdparty.mock import Mock
 from webkitpy.tool.mocktool import MockOptions, MockTool
 from webkitpy.tool.steps.cleanworkingdirectory import CleanWorkingDirectory
+from webkitpy.common.system.executive import ScriptError
 
 
 class CleanWorkingDirectoryTest(unittest.TestCase):
-    def test_run(self):
+    def test_run_working_directory_changes_no_force(self):
         tool = MockTool()
         tool._scm = Mock()
-        tool._scm.checkout_root = '/mock-checkout'
         step = CleanWorkingDirectory(tool, MockOptions(clean=True, force_clean=False))
+        tool._scm.has_working_directory_changes = lambda: True
+        self.assertRaises(ScriptError, step.run, {})
+        self.assertEqual(tool._scm.discard_local_commits.call_count, 0)
+        self.assertEqual(tool._scm.discard_working_directory_changes.call_count, 0)
+
+    def test_run_local_commits_no_force(self):
+        tool = MockTool()
+        tool._scm = Mock()
+        step = CleanWorkingDirectory(tool, MockOptions(clean=True, force_clean=False))
+        tool._scm.has_local_commits = lambda: True
+        self.assertRaises(ScriptError, step.run, {})
+        self.assertEqual(tool._scm.discard_local_commits.call_count, 0)
+        self.assertEqual(tool._scm.discard_working_directory_changes.call_count, 0)
+
+    def test_run_working_directory_changes_force(self):
+        tool = MockTool()
+        tool._scm = Mock()
+        step = CleanWorkingDirectory(tool, MockOptions(clean=True, force_clean=True))
+        tool._scm.has_working_directory_changes = lambda: True
         step.run({})
-        self.assertEqual(tool._scm.ensure_no_local_commits.call_count, 1)
-        self.assertEqual(tool._scm.ensure_clean_working_directory.call_count, 1)
+        self.assertEqual(tool._scm.discard_local_commits.call_count, 1)
+        self.assertEqual(tool._scm.discard_working_directory_changes.call_count, 1)
+
+    def test_run_local_commits_force(self):
+        tool = MockTool()
+        tool._scm = Mock()
+        step = CleanWorkingDirectory(tool, MockOptions(clean=True, force_clean=True))
+        tool._scm.has_local_commits = lambda: True
+        step.run({})
+        self.assertEqual(tool._scm.discard_local_commits.call_count, 1)
+        self.assertEqual(tool._scm.discard_working_directory_changes.call_count, 1)
+
+    def test_run_no_local_changes(self):
+        tool = MockTool()
+        tool._scm = Mock()
+        step = CleanWorkingDirectory(tool, MockOptions(clean=True, force_clean=False))
+        tool._scm.has_working_directory_changes = lambda: False
+        tool._scm.has_local_commits = lambda: False
+        step.run({})
+        self.assertEqual(tool._scm.discard_local_commits.call_count, 1)
+        self.assertEqual(tool._scm.discard_working_directory_changes.call_count, 1)
 
     def test_no_clean(self):
         tool = MockTool()
         tool._scm = Mock()
         step = CleanWorkingDirectory(tool, MockOptions(clean=False))
         step.run({})
-        self.assertEqual(tool._scm.ensure_no_local_commits.call_count, 0)
-        self.assertEqual(tool._scm.ensure_clean_working_directory.call_count, 0)
+        self.assertEqual(tool._scm.discard_local_commits.call_count, 0)
+        self.assertEqual(tool._scm.discard_working_directory_changes.call_count, 0)

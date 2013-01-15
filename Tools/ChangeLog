@@ -1,3 +1,19 @@
+2013-01-14  Tim 'mithro' Ansell  <mithro@mithis.com>
+
+        Changing clean_working_directory/clean_local_commits and related
+        functions to have consistent naming.
+
+        https://bugs.webkit.org/show_bug.cgi?id=104198
+
+        Reviewed by Adam Barth.
+
+        * Scripts/webkitpy/common/checkout/scm/git.py:
+        * Scripts/webkitpy/common/checkout/scm/scm.py:
+        * Scripts/webkitpy/common/checkout/scm/scm_mock.py:
+        * Scripts/webkitpy/common/checkout/scm/scm_unittest.py:
+        * Scripts/webkitpy/tool/steps/cleanworkingdirectory.py:
+        * Scripts/webkitpy/tool/steps/cleanworkingdirectory_unittest.py:
+
 2013-01-14  Alan Cutter  <alancutter@chromium.org>
 
         Fix EWS GCE build scripts to detect which zone is available
