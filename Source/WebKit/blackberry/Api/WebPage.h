@@ -264,7 +264,6 @@ public:
     void setDateTimeInput(const BlackBerry::Platform::String& value);
     void setColorInput(const BlackBerry::Platform::String& value);
 
-    void onInputLocaleChanged(bool isRTL);
     static void onNetworkAvailabilityChanged(bool available);
     static void onCertificateStoreLocationSet(const BlackBerry::Platform::String& caPath);
 

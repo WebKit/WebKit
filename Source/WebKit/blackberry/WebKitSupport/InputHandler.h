@@ -104,7 +104,6 @@ public:
     PassRefPtr<WebCore::Element> currentFocusElement() const { return m_currentFocusElement; }
 
     void ensureFocusElementVisible(bool centerFieldInDisplay = true);
-    void handleInputLocaleChanged(bool isRTL);
 
     // PopupMenu methods.
     bool willOpenPopupForNode(WebCore::Node*);

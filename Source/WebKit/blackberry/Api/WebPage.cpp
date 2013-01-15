@@ -3517,19 +3517,6 @@ void WebPagePrivate::dispatchViewportPropertiesDidChange(const ViewportArguments
         zoomToInitialScaleOnLoad();
 }
 
-void WebPagePrivate::onInputLocaleChanged(bool isRTL)
-{
-    if (isRTL != m_webSettings->isWritingDirectionRTL()) {
-        m_webSettings->setWritingDirectionRTL(isRTL);
-        m_inputHandler->handleInputLocaleChanged(isRTL);
-    }
-}
-
-void WebPage::onInputLocaleChanged(bool isRTL)
-{
-    d->onInputLocaleChanged(isRTL);
-}
-
 void WebPagePrivate::suspendBackingStore()
 {
 #if USE(ACCELERATED_COMPOSITING)

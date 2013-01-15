@@ -326,8 +326,6 @@ public:
 
     void updateCursor();
 
-    void onInputLocaleChanged(bool isRTL);
-
     ViewMode viewMode() const { return m_viewMode; }
     bool setViewMode(ViewMode); // Returns true if the change requires re-layout.
 

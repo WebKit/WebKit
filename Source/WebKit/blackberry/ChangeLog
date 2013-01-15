@@ -1,3 +1,25 @@
+2013-01-15  Mike Fenton  <mifenton@rim.com>
+
+        [BlackBerry] Don't overwrite field dir with current locale.
+        https://bugs.webkit.org/show_bug.cgi?id=106932
+
+        Reviewed by Yong Li.
+
+        PR 212267.
+
+        Remove uncalled onInputLocaleChanged and stop re-writing the dir
+        on input focus which prevented RTL fields from rendering properly.
+
+        Reviewed Internally by Eli Fidler.
+
+        * Api/WebPage.cpp:
+        * Api/WebPage.h:
+        * Api/WebPage_p.h:
+        (WebPagePrivate):
+        * WebKitSupport/InputHandler.cpp:
+        * WebKitSupport/InputHandler.h:
+        (InputHandler):
+
 2013-01-15  Jacky Jiang  <zhajiang@rim.com>
 
         [BlackBerry] Manual zoom propagates to next page load
