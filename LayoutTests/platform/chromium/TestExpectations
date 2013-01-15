@@ -96,8 +96,6 @@ crbug.com/24182 [ Debug ] platform/chromium/virtual/gpu/fast/hidpi/image-set-bac
 webkit.org/b/106606 fast/canvas/webgl/context-release-upon-reload.html [ Pass Slow ]
 webkit.org/b/106606 platform/chromium/virtual/gpu/fast/canvas/webgl/context-release-upon-reload.html [ Pass Slow ]
 webkit.org/b/106853 [ Debug ] media/track/track-css-cue-lifetime.html [ Pass Timeout ]
-webkit.org/b/106855 [ Debug ] fast/images/zoomed-offset-size.html [ Pass Slow ]
-webkit.org/b/106855 [ Debug ] platform/chromium/virtual/deferred/fast/images/zoomed-offset-size.html [ Pass Slow ]
 
 # These tests started being slow when we switched to DRT.
 webkit.org/b/90488 [ Debug ] inspector [ Pass Slow ]
