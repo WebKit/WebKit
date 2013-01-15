@@ -60,14 +60,14 @@ void MediaStreamCenter::addMediaStreamTrack(MediaStreamDescriptor* streamDescrip
 {
     MediaStreamDescriptorClient* client = streamDescriptor->client();
     if (client)
-        client->addTrack(component);
+        client->addRemoteTrack(component);
 }
 
 void MediaStreamCenter::removeMediaStreamTrack(MediaStreamDescriptor* streamDescriptor, MediaStreamComponent* component)
 {
     MediaStreamDescriptorClient* client = streamDescriptor->client();
     if (client)
-        client->removeTrack(component);
+        client->removeRemoteTrack(component);
 }
 
 } // namespace WebCore

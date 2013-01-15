@@ -45,8 +45,8 @@ public:
     virtual ~MediaStreamDescriptorClient() { }
 
     virtual void streamEnded() = 0;
-    virtual void addTrack(MediaStreamComponent*) = 0;
-    virtual void removeTrack(MediaStreamComponent*) = 0;
+    virtual void addRemoteTrack(MediaStreamComponent*) = 0;
+    virtual void removeRemoteTrack(MediaStreamComponent*) = 0;
 };
 
 class MediaStreamDescriptor : public RefCounted<MediaStreamDescriptor> {

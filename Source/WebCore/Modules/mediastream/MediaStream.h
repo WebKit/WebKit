@@ -95,8 +95,8 @@ private:
     virtual void derefEventTarget() OVERRIDE { deref(); }
 
     // MediaStreamDescriptorClient
-    virtual void addTrack(MediaStreamComponent*) OVERRIDE;
-    virtual void removeTrack(MediaStreamComponent*) OVERRIDE;
+    virtual void addRemoteTrack(MediaStreamComponent*) OVERRIDE;
+    virtual void removeRemoteTrack(MediaStreamComponent*) OVERRIDE;
 
     void scheduleDispatchEvent(PassRefPtr<Event>);
     void scheduledEventTimerFired(Timer<MediaStream>*);
