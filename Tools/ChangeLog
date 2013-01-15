@@ -1,3 +1,15 @@
+2013-01-14  Alan Cutter  <alancutter@chromium.org>
+
+        Fix EWS GCE build scripts to detect which zone is available
+        https://bugs.webkit.org/show_bug.cgi?id=106524
+
+        Reviewed by Adam Barth.
+
+        * EWSTools/GoogleComputeEngine/build-chromium-ews.sh:
+        * EWSTools/GoogleComputeEngine/build-commit-queue.sh:
+        * EWSTools/GoogleComputeEngine/build-feeder-style-sheriffbot.sh:
+        * EWSTools/GoogleComputeEngine/findzone.sh: Added.
+
 2013-01-14  Tim 'mithro' Ansell  <mithro@mithis.com>
 
         Adding an error string to AmbiguousCommitError.

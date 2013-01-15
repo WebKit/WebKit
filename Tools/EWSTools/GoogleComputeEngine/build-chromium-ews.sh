@@ -38,8 +38,7 @@ BUGZILLA_USERNAME=webkit.review.bot@gmail.com
 read -s -p "Bugzilla Password: " BUGZILLA_PASSWORD && echo
 
 PROJECT=google.com:webkit
-# FIXME: We should use gcutil to find a zone that's actually up.
-ZONE=us-east1-a
+ZONE=$(findzone.sh $PROJECT)
 IMAGE=projects/google/images/ubuntu-10-04-v20120621
 MACHINE_TYPE=n1-standard-4-d
 

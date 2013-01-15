@@ -41,8 +41,7 @@ SVN_USERNAME=commit-queue@webkit.org
 read -s -p "Subversion Password: " SVN_PASSWORD && echo
 
 PROJECT=google.com:webkit
-# FIXME: We should use gcutil to find a zone that's actually up.
-ZONE=us-east1-a
+ZONE=$(findzone.sh $PROJECT)
 IMAGE=projects/google/images/ubuntu-10-04-v20120621
 MACHINE_TYPE=n1-standard-4-d
 
