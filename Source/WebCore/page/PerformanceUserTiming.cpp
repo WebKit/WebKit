@@ -123,8 +123,14 @@ double UserTiming::findExistingMarkStartTime(const String& markName, ExceptionCo
     if (m_marksMap.contains(markName))
         return m_marksMap.get(markName).last()->startTime();
 
-    if (restrictedKeyMap().contains(markName))
-        return static_cast<double>((m_performance->timing()->*(restrictedKeyMap().get(markName)))()) - m_performance->timing()->navigationStart();
+    if (restrictedKeyMap().contains(markName)) {
+        double value = static_cast<double>((m_performance->timing()->*(restrictedKeyMap().get(markName)))());
+        if (!value) {
+            ec = INVALID_ACCESS_ERR;
+            return 0.0;
+        }
+        return value - m_performance->timing()->navigationStart();
+    }
 
     ec = SYNTAX_ERR;
     return 0.0;

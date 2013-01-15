@@ -10,4 +10,5 @@ PASS Invocation of context.measure("Exception3", "navigationStart", "NonExistMar
 PASS Invocation of context.measure("Exception4", "NonExistMark1", "ExistMark") should throw SYNTAX_ERR Exception. 
 PASS Invocation of context.measure("Exception5", "ExistMark", "NonExistMark1") should throw SYNTAX_ERR Exception. 
 PASS Invocation of context.measure("Exception6", "NonExistMark1", "NonExistMark2") should throw SYNTAX_ERR Exception. 
+PASS Invocation of context.measure("Exception7", "redirectStart") should throw INVALID_ACCESS_ERR Exception. 
 
