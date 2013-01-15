@@ -38,7 +38,7 @@ class SVGElementInstanceList;
 class SVGStyledElement;
 
 // SVGElementInstance mimics Node, but without providing all its functionality
-class SVGElementInstance : public EventTarget, public TreeShared<SVGElementInstance, SVGElementInstance> {
+class SVGElementInstance : public EventTarget, public TreeShared<SVGElementInstance> {
 public:
     static PassRefPtr<SVGElementInstance> create(SVGUseElement* correspondingUseElement, SVGUseElement* directUseElement, PassRefPtr<SVGElement> originalElement)
     {
@@ -47,7 +47,7 @@ public:
 
     virtual ~SVGElementInstance();
 
-    void setParentOrHostNode(SVGElementInstance* instance) { setParent(instance); }
+    void setParentOrHostNode(SVGElementInstance* instance) { m_parentInstance = instance; }
 
     virtual const AtomicString& interfaceName() const;
     virtual ScriptExecutionContext* scriptExecutionContext() const;
@@ -66,7 +66,7 @@ public:
 
     void detach();
 
-    SVGElementInstance* parentNode() const { return parent(); }
+    SVGElementInstance* parentNode() const { return m_parentInstance; }
     PassRefPtr<SVGElementInstanceList> childNodes();
 
     SVGElementInstance* previousSibling() const { return m_previousSibling; }
@@ -98,8 +98,8 @@ public:
     
     static void invalidateAllInstancesOfElement(SVGElement*);
 
-    using TreeShared<SVGElementInstance, SVGElementInstance>::ref;
-    using TreeShared<SVGElementInstance, SVGElementInstance>::deref;
+    using TreeShared<SVGElementInstance>::ref;
+    using TreeShared<SVGElementInstance>::deref;
 
     // EventTarget API
     DEFINE_FORWARDING_ATTRIBUTE_EVENT_LISTENER(correspondingElement(), abort);
@@ -145,13 +145,12 @@ public:
 
 private:
     friend class SVGUseElement;
-    friend class TreeShared<SVGElementInstance, SVGElementInstance>;
-
-    using TreeShared<SVGElementInstance, SVGElementInstance>::parent;
-    using TreeShared<SVGElementInstance, SVGElementInstance>::setParent;
+    friend class TreeShared<SVGElementInstance>;
 
     SVGElementInstance(SVGUseElement*, SVGUseElement*, PassRefPtr<SVGElement> originalElement);
+
     void removedLastRef();
+    bool hasTreeSharedParent() const { return !!m_parentInstance; }
 
     virtual Node* toNode() { return shadowTreeElement(); }
 
@@ -179,6 +178,8 @@ private:
     virtual void derefEventTarget() { deref(); }
     virtual EventTargetData* eventTargetData();
     virtual EventTargetData* ensureEventTargetData();
+
+    SVGElementInstance* m_parentInstance;
 
     SVGUseElement* m_correspondingUseElement;
     SVGUseElement* m_directUseElement;

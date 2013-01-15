@@ -28,16 +28,15 @@
 namespace WebCore {
 
 #ifndef NDEBUG
-template<typename NodeType, typename ParentNodeType> class TreeShared;
-template<typename NodeType, typename ParentNodeType> void adopted(TreeShared<NodeType, ParentNodeType>*);
+template<typename NodeType> class TreeShared;
+template<typename NodeType> void adopted(TreeShared<NodeType>*);
 #endif
 
-template<typename NodeType, typename ParentNodeType> class TreeShared {
+template<typename NodeType> class TreeShared {
     WTF_MAKE_NONCOPYABLE(TreeShared);
 protected:
     TreeShared()
-        : m_parent(0)
-        , m_refCount(1)
+        : m_refCount(1)
 #ifndef NDEBUG
         , m_adoptionIsRequired(true)
 #endif
@@ -74,11 +73,12 @@ public:
         ASSERT(!m_deletionHasBegun);
         ASSERT(!m_inRemovedLastRefFunction);
         ASSERT(!m_adoptionIsRequired);
-        if (--m_refCount <= 0 && !m_parent) {
+        NodeType* thisNode = static_cast<NodeType*>(this);
+        if (--m_refCount <= 0 && !thisNode->hasTreeSharedParent()) {
 #ifndef NDEBUG
             m_inRemovedLastRefFunction = true;
 #endif
-            static_cast<NodeType*>(this)->removedLastRef();
+            thisNode->removedLastRef();
         }
     }
 
@@ -94,35 +94,16 @@ public:
         return m_refCount;
     }
 
-    void setParent(ParentNodeType* parent)
-    { 
-        ASSERT(isMainThread());
-        m_parent = parent; 
-    }
-
-    ParentNodeType* parent() const
-    {
-        ASSERT(isMainThreadOrGCThread());
-        return m_parent;
-    }
-
 #ifndef NDEBUG
     bool m_deletionHasBegun;
     bool m_inRemovedLastRefFunction;
 #endif
 
-    void reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
-    {
-        MemoryClassInfo info(memoryObjectInfo, this);
-        info.addMember(m_parent);
-    }
-
 private:
 #ifndef NDEBUG
-    friend void adopted<>(TreeShared<NodeType, ParentNodeType>*);
+    friend void adopted<>(TreeShared<NodeType>*);
 #endif
 
-    ParentNodeType* m_parent;
     int m_refCount;
 
 #ifndef NDEBUG
@@ -132,7 +113,7 @@ private:
 
 #ifndef NDEBUG
 
-template<typename NodeType, typename ParentNodeType> inline void adopted(TreeShared<NodeType, ParentNodeType>* object)
+template<typename NodeType> inline void adopted(TreeShared<NodeType>* object)
 {
     if (!object)
         return;

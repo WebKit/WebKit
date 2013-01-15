@@ -41,7 +41,8 @@ namespace WebCore {
 DEFINE_DEBUG_ONLY_GLOBAL(WTF::RefCountedLeakCounter, instanceCounter, ("WebCoreSVGElementInstance"));
 
 SVGElementInstance::SVGElementInstance(SVGUseElement* correspondingUseElement, SVGUseElement* directUseElement, PassRefPtr<SVGElement> originalElement)
-    : m_correspondingUseElement(correspondingUseElement)
+    : m_parentInstance(0)
+    , m_correspondingUseElement(correspondingUseElement)
     , m_directUseElement(directUseElement)
     , m_element(originalElement)
     , m_previousSibling(0)

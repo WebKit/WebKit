@@ -2572,8 +2572,8 @@ void Node::removedLastRef()
 void Node::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
 {
     MemoryClassInfo info(memoryObjectInfo, this, WebCoreMemoryTypes::DOM);
-    TreeShared<Node, ContainerNode>::reportMemoryUsage(memoryObjectInfo);
     ScriptWrappable::reportMemoryUsage(memoryObjectInfo);
+    info.addMember(m_parentOrHostNode);
     info.addMember(m_treeScope);
     info.addMember(m_next);
     info.addMember(m_previous);
