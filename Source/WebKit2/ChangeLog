@@ -1,3 +1,14 @@
+2013-01-15  Anders Carlsson  <andersca@apple.com>
+
+        Rename LayerTreeHostCAMac to LayerTreeHostMac.
+
+        Rubber-stamped by Deth Bakin.
+
+        * WebKit2.xcodeproj/project.pbxproj:
+        * WebProcess/WebPage/LayerTreeHost.cpp:
+        * WebProcess/WebPage/mac/LayerTreeHostMac.h: Renamed from Source/WebKit2/WebProcess/WebPage/ca/mac/LayerTreeHostCAMac.h.
+        * WebProcess/WebPage/mac/LayerTreeHostMac.mm: Renamed from Source/WebKit2/WebProcess/WebPage/ca/mac/LayerTreeHostCAMac.mm.
+
 2013-01-15  Dominik Röttsches  <dominik.rottsches@intel.com>
 
         [CoordinatedGraphics] Deadlock when running abspos-child-container-changes-from-relative-to-static.html

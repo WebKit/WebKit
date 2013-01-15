@@ -24,7 +24,7 @@
  */
 
 #import "config.h"
-#import "LayerTreeHostCAMac.h"
+#import "LayerTreeHostMac.h"
 
 #import "LayerHostingContext.h"
 #import "WebPage.h"
@@ -40,25 +40,25 @@ using namespace WebCore;
 
 namespace WebKit {
 
-PassRefPtr<LayerTreeHostCAMac> LayerTreeHostCAMac::create(WebPage* webPage)
+PassRefPtr<LayerTreeHostMac> LayerTreeHostMac::create(WebPage* webPage)
 {
-    RefPtr<LayerTreeHostCAMac> host = adoptRef(new LayerTreeHostCAMac(webPage));
+    RefPtr<LayerTreeHostMac> host = adoptRef(new LayerTreeHostMac(webPage));
     host->initialize();
     return host.release();
 }
 
-LayerTreeHostCAMac::LayerTreeHostCAMac(WebPage* webPage)
+LayerTreeHostMac::LayerTreeHostMac(WebPage* webPage)
     : LayerTreeHostCA(webPage)
     , m_layerFlushScheduler(this)
 {
 }
 
-LayerTreeHostCAMac::~LayerTreeHostCAMac()
+LayerTreeHostMac::~LayerTreeHostMac()
 {
     ASSERT(!m_layerHostingContext);
 }
 
-void LayerTreeHostCAMac::platformInitialize()
+void LayerTreeHostMac::platformInitialize()
 {
     switch (m_webPage->layerHostingMode()) {
     case LayerHostingModeDefault:
@@ -75,12 +75,12 @@ void LayerTreeHostCAMac::platformInitialize()
     m_layerTreeContext.contextID = m_layerHostingContext->contextID();
 }
 
-void LayerTreeHostCAMac::scheduleLayerFlush()
+void LayerTreeHostMac::scheduleLayerFlush()
 {
     m_layerFlushScheduler.schedule();
 }
 
-void LayerTreeHostCAMac::setLayerFlushSchedulingEnabled(bool layerFlushingEnabled)
+void LayerTreeHostMac::setLayerFlushSchedulingEnabled(bool layerFlushingEnabled)
 {
     if (layerFlushingEnabled)
         m_layerFlushScheduler.resume();
@@ -88,7 +88,7 @@ void LayerTreeHostCAMac::setLayerFlushSchedulingEnabled(bool layerFlushingEnable
         m_layerFlushScheduler.suspend();
 }
 
-void LayerTreeHostCAMac::invalidate()
+void LayerTreeHostMac::invalidate()
 {
     m_layerFlushScheduler.invalidate();
 
@@ -98,46 +98,46 @@ void LayerTreeHostCAMac::invalidate()
     LayerTreeHostCA::invalidate();
 }
 
-void LayerTreeHostCAMac::sizeDidChange(const IntSize& newSize)
+void LayerTreeHostMac::sizeDidChange(const IntSize& newSize)
 {
     LayerTreeHostCA::sizeDidChange(newSize);
     [CATransaction flush];
     [CATransaction synchronize];
 }
 
-void LayerTreeHostCAMac::forceRepaint()
+void LayerTreeHostMac::forceRepaint()
 {
     LayerTreeHostCA::forceRepaint();
     [CATransaction flush];
     [CATransaction synchronize];
 }
 
-void LayerTreeHostCAMac::pauseRendering()
+void LayerTreeHostMac::pauseRendering()
 {
     CALayer* root = rootLayer()->platformLayer();
     [root setValue:(id)kCFBooleanTrue forKey:@"NSCAViewRenderPaused"];
     [[NSNotificationCenter defaultCenter] postNotificationName:@"NSCAViewRenderDidPauseNotification" object:nil userInfo:[NSDictionary dictionaryWithObject:root forKey:@"layer"]];
 }
 
-void LayerTreeHostCAMac::resumeRendering()
+void LayerTreeHostMac::resumeRendering()
 {
     CALayer* root = rootLayer()->platformLayer();
     [root setValue:(id)kCFBooleanFalse forKey:@"NSCAViewRenderPaused"];
     [[NSNotificationCenter defaultCenter] postNotificationName:@"NSCAViewRenderDidResumeNotification" object:nil userInfo:[NSDictionary dictionaryWithObject:root forKey:@"layer"]];
 }
 
-bool LayerTreeHostCAMac::flushLayers()
+bool LayerTreeHostMac::flushLayers()
 {
     performScheduledLayerFlush();
     return true;
 }
 
-void LayerTreeHostCAMac::didPerformScheduledLayerFlush()
+void LayerTreeHostMac::didPerformScheduledLayerFlush()
 {
     LayerTreeHostCA::didPerformScheduledLayerFlush();
 }
 
-bool LayerTreeHostCAMac::flushPendingLayerChanges()
+bool LayerTreeHostMac::flushPendingLayerChanges()
 {
     if (m_layerFlushScheduler.isSuspended())
         return false;
@@ -145,7 +145,7 @@ bool LayerTreeHostCAMac::flushPendingLayerChanges()
     return LayerTreeHostCA::flushPendingLayerChanges();
 }
 
-void LayerTreeHostCAMac::setLayerHostingMode(LayerHostingMode layerHostingMode)
+void LayerTreeHostMac::setLayerHostingMode(LayerHostingMode layerHostingMode)
 {
     if (layerHostingMode == m_layerHostingContext->layerHostingMode())
         return;

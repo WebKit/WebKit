@@ -23,8 +23,8 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef LayerTreeHostCAMac_h
-#define LayerTreeHostCAMac_h
+#ifndef LayerTreeHostMac_h
+#define LayerTreeHostMac_h
 
 #include "LayerTreeHostCA.h"
 #include <WebCore/LayerFlushScheduler.h>
@@ -34,13 +34,13 @@ namespace WebKit {
 
 class LayerHostingContext;
 
-class LayerTreeHostCAMac : public LayerTreeHostCA, public WebCore::LayerFlushSchedulerClient {
+class LayerTreeHostMac : public LayerTreeHostCA, public WebCore::LayerFlushSchedulerClient {
 public:
-    static PassRefPtr<LayerTreeHostCAMac> create(WebPage*);
-    virtual ~LayerTreeHostCAMac();
+    static PassRefPtr<LayerTreeHostMac> create(WebPage*);
+    virtual ~LayerTreeHostMac();
 
 private:
-    explicit LayerTreeHostCAMac(WebPage*);
+    explicit LayerTreeHostMac(WebPage*);
 
     // LayerTreeHost.
     virtual void scheduleLayerFlush();
@@ -68,4 +68,4 @@ private:
 
 } // namespace WebKit
 
-#endif // LayerTreeHostCAMac_h
+#endif // LayerTreeHostMac_h

@@ -194,6 +194,8 @@
 		1A91010B1268C8CA001842F5 /* FindIndicatorWindow.mm in Sources */ = {isa = PBXBuildFile; fileRef = 1A9101091268C8CA001842F5 /* FindIndicatorWindow.mm */; };
 		1A92DC1112F8BA460017AF65 /* LayerTreeContext.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A92DC1012F8BA460017AF65 /* LayerTreeContext.h */; };
 		1A92DC1312F8BAB90017AF65 /* LayerTreeContextMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = 1A92DC1212F8BAB90017AF65 /* LayerTreeContextMac.mm */; };
+		1A97E07616A5F9E0000BC9E5 /* LayerTreeHostMac.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A97E07316A5F578000BC9E5 /* LayerTreeHostMac.h */; };
+		1A97E07716A5F9E0000BC9E5 /* LayerTreeHostMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = 1A97E07416A5F578000BC9E5 /* LayerTreeHostMac.mm */; };
 		1A9FBA8D13FF04E600DEED67 /* PluginComplexTextInputState.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A9FBA8C13FF04E600DEED67 /* PluginComplexTextInputState.h */; };
 		1AA2E51D12E4C05E00BC4966 /* CGUtilities.h in Headers */ = {isa = PBXBuildFile; fileRef = 1AA2E51B12E4C05E00BC4966 /* CGUtilities.h */; };
 		1AA2E51E12E4C05E00BC4966 /* CGUtilities.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1AA2E51C12E4C05E00BC4966 /* CGUtilities.cpp */; };
@@ -986,7 +988,6 @@
 		C0337DD3127A2A0E008FF4F4 /* WebKeyboardEvent.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C0337DD2127A2A0E008FF4F4 /* WebKeyboardEvent.cpp */; };
 		C0337DD8127A51B6008FF4F4 /* WebTouchEvent.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C0337DD7127A51B6008FF4F4 /* WebTouchEvent.cpp */; };
 		C0337DDD127A521C008FF4F4 /* WebPlatformTouchPoint.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C0337DDC127A521C008FF4F4 /* WebPlatformTouchPoint.cpp */; };
-		C03A136C133BEBF900D767D1 /* LayerTreeHostCAMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = C03A136B133BEBF900D767D1 /* LayerTreeHostCAMac.mm */; };
 		C064504A133BE709003470E2 /* LayerTreeHostCA.h in Headers */ = {isa = PBXBuildFile; fileRef = C098A053133BE1C500B199A4 /* LayerTreeHostCA.h */; };
 		C06C6095124C144B0001682F /* WebPageCreationParameters.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C06C6093124C14430001682F /* WebPageCreationParameters.cpp */; };
 		C09AE5E9125257C20025825D /* WKNativeEvent.h in Headers */ = {isa = PBXBuildFile; fileRef = C09AE5E8125257C20025825D /* WKNativeEvent.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -997,7 +998,6 @@
 		C0E3AA7A1209E83000A49D01 /* ModuleMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = C0E3AA481209E45000A49D01 /* ModuleMac.mm */; };
 		C0E3AA7B1209E83500A49D01 /* Module.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C0E3AA451209E2BA00A49D01 /* Module.cpp */; };
 		C0E3AA7C1209E83C00A49D01 /* Module.h in Headers */ = {isa = PBXBuildFile; fileRef = C0E3AA441209E2BA00A49D01 /* Module.h */; };
-		C0FA52431345694A0028E8C2 /* LayerTreeHostCAMac.h in Headers */ = {isa = PBXBuildFile; fileRef = C0FA52421345694A0028E8C2 /* LayerTreeHostCAMac.h */; };
 		C517388112DF8F4F00EE3F47 /* DragControllerAction.h in Headers */ = {isa = PBXBuildFile; fileRef = C517388012DF8F4F00EE3F47 /* DragControllerAction.h */; };
 		C5237F6012441CA300780472 /* WebEditorClientMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = C5237F5F12441CA300780472 /* WebEditorClientMac.mm */; };
 		C574A37712E6099D002DFE98 /* WebDragClientMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = C554FFA212E4E8EA002F22C0 /* WebDragClientMac.mm */; };
@@ -1423,6 +1423,8 @@
 		1A9101091268C8CA001842F5 /* FindIndicatorWindow.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = FindIndicatorWindow.mm; sourceTree = "<group>"; };
 		1A92DC1012F8BA460017AF65 /* LayerTreeContext.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LayerTreeContext.h; sourceTree = "<group>"; };
 		1A92DC1212F8BAB90017AF65 /* LayerTreeContextMac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = LayerTreeContextMac.mm; sourceTree = "<group>"; };
+		1A97E07316A5F578000BC9E5 /* LayerTreeHostMac.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LayerTreeHostMac.h; sourceTree = "<group>"; };
+		1A97E07416A5F578000BC9E5 /* LayerTreeHostMac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = LayerTreeHostMac.mm; sourceTree = "<group>"; };
 		1A9FBA8C13FF04E600DEED67 /* PluginComplexTextInputState.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PluginComplexTextInputState.h; sourceTree = "<group>"; };
 		1AA1C79A100E7FC50078DEBC /* WebCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = WebCore.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		1AA1C7DE100E846E0078DEBC /* JavaScriptCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = JavaScriptCore.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -2284,7 +2286,6 @@
 		C0337DD2127A2A0E008FF4F4 /* WebKeyboardEvent.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebKeyboardEvent.cpp; sourceTree = "<group>"; };
 		C0337DD7127A51B6008FF4F4 /* WebTouchEvent.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebTouchEvent.cpp; sourceTree = "<group>"; };
 		C0337DDC127A521C008FF4F4 /* WebPlatformTouchPoint.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebPlatformTouchPoint.cpp; sourceTree = "<group>"; };
-		C03A136B133BEBF900D767D1 /* LayerTreeHostCAMac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = LayerTreeHostCAMac.mm; sourceTree = "<group>"; };
 		C06C6093124C14430001682F /* WebPageCreationParameters.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebPageCreationParameters.cpp; sourceTree = "<group>"; };
 		C06C6094124C14430001682F /* WebPageCreationParameters.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebPageCreationParameters.h; sourceTree = "<group>"; };
 		C098A053133BE1C500B199A4 /* LayerTreeHostCA.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LayerTreeHostCA.h; sourceTree = "<group>"; };
@@ -2300,7 +2301,6 @@
 		C0E3AA441209E2BA00A49D01 /* Module.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Module.h; sourceTree = "<group>"; };
 		C0E3AA451209E2BA00A49D01 /* Module.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Module.cpp; sourceTree = "<group>"; };
 		C0E3AA481209E45000A49D01 /* ModuleMac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = ModuleMac.mm; sourceTree = "<group>"; };
-		C0FA52421345694A0028E8C2 /* LayerTreeHostCAMac.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LayerTreeHostCAMac.h; sourceTree = "<group>"; };
 		C517388012DF8F4F00EE3F47 /* DragControllerAction.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DragControllerAction.h; sourceTree = "<group>"; };
 		C5237F5F12441CA300780472 /* WebEditorClientMac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebEditorClientMac.mm; sourceTree = "<group>"; };
 		C554FFA212E4E8EA002F22C0 /* WebDragClientMac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebDragClientMac.mm; sourceTree = "<group>"; };
@@ -4084,6 +4084,8 @@
 		BC963D6C113DD19500574BE2 /* mac */ = {
 			isa = PBXGroup;
 			children = (
+				1A97E07316A5F578000BC9E5 /* LayerTreeHostMac.h */,
+				1A97E07416A5F578000BC9E5 /* LayerTreeHostMac.mm */,
 				1AB16AEC164B41E400290D62 /* RemoteGraphicsLayer.h */,
 				1AB16AEB164B41E400290D62 /* RemoteGraphicsLayer.mm */,
 				1AB16AE8164B3A8800290D62 /* RemoteLayerTreeContext.h */,
@@ -4281,8 +4283,6 @@
 		C03A136A133BEBF900D767D1 /* mac */ = {
 			isa = PBXGroup;
 			children = (
-				C0FA52421345694A0028E8C2 /* LayerTreeHostCAMac.h */,
-				C03A136B133BEBF900D767D1 /* LayerTreeHostCAMac.mm */,
 			);
 			path = mac;
 			sourceTree = "<group>";
@@ -4651,7 +4651,6 @@
 				1A92DC1112F8BA460017AF65 /* LayerTreeContext.h in Headers */,
 				1A186EEA12EF7618008E5F37 /* LayerTreeHost.h in Headers */,
 				C064504A133BE709003470E2 /* LayerTreeHostCA.h in Headers */,
-				C0FA52431345694A0028E8C2 /* LayerTreeHostCAMac.h in Headers */,
 				51A7F2F3125BF820008AEB1D /* Logging.h in Headers */,
 				BCC56F791159957D001CCAF9 /* MachPort.h in Headers */,
 				1A24B5F311F531E800C38269 /* MachUtilities.h in Headers */,
@@ -5070,6 +5069,7 @@
 				BC2E6E8E1141971500A63B1E /* WorkQueue.h in Headers */,
 				E179088F169BAA6A006904C7 /* SecItemShim.h in Headers */,
 				E1790891169BAA82006904C7 /* SecItemShimMessages.h in Headers */,
+				1A97E07616A5F9E0000BC9E5 /* LayerTreeHostMac.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -5629,7 +5629,6 @@
 				1A92DC1312F8BAB90017AF65 /* LayerTreeContextMac.mm in Sources */,
 				1A186EEB12EF7618008E5F37 /* LayerTreeHost.cpp in Sources */,
 				C0D74DDE133BE2D90089CD44 /* LayerTreeHostCA.cpp in Sources */,
-				C03A136C133BEBF900D767D1 /* LayerTreeHostCAMac.mm in Sources */,
 				51A7F2F5125BF8D4008AEB1D /* Logging.cpp in Sources */,
 				5160BFE113381DF900918999 /* Logging.mac.mm in Sources */,
 				1A24B5F211F531E800C38269 /* MachUtilities.cpp in Sources */,
@@ -6049,6 +6048,7 @@
 				BC0092F8115837A300E0AE2A /* WorkQueueMac.cpp in Sources */,
 				E179088D169BAA62006904C7 /* SecItemShim.cpp in Sources */,
 				E1790890169BAA7F006904C7 /* SecItemShimMessageReceiver.cpp in Sources */,
+				1A97E07716A5F9E0000BC9E5 /* LayerTreeHostMac.mm in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
