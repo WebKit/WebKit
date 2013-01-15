@@ -192,15 +192,17 @@ private:
 template<typename T, typename Traits>
 void dumpOperands(const Operands<T, Traits>& operands, PrintStream& out)
 {
-    for (size_t argument = 0; argument < operands.numberOfArguments(); ++argument) {
+    for (size_t argument = operands.numberOfArguments(); argument--;) {
         if (argument)
             out.printf(" ");
+        out.print("arg", argument, ":");
         Traits::dump(operands.argument(argument), out);
     }
     out.printf(" : ");
     for (size_t local = 0; local < operands.numberOfLocals(); ++local) {
         if (local)
             out.printf(" ");
+        out.print("r", local, ":");
         Traits::dump(operands.local(local), out);
     }
 }

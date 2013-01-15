@@ -1,3 +1,37 @@
+2013-01-11  Filip Pizlo  <fpizlo@apple.com>
+
+        Python implementation reports "MemoryError" instead of doing things
+        https://bugs.webkit.org/show_bug.cgi?id=106690
+
+        Reviewed by Oliver Hunt.
+        
+        The bug was that the CFA was assuming that a variable is dead at the end of a basic block and hence doesn't need to
+        be merged to the next block if the last mention of the variable was dead. This is almost correct, except that it
+        doesn't work if the last mention is a GetLocal - the GetLocal itself may be dead, but that doesn't mean that the
+        variable is dead - it may still be live. The appropriate thing to do is to look at the GetLocal's Phi. If the
+        variable is used in the next block then the next block will have a reference to the last mention in our block unless
+        that last mention is a GetLocal, in which case it will link to the Phi. Doing it this way captures everything that
+        the CFA wants: if the last use is a live GetLocal then the CFA needs to consider the GetLocal itself for possible
+        refinements to the proof of the value in the variable, but if the GetLocal is dead, then this must mean that the
+        variable is not mentioned in the block but may still be "passed through" it, which is what the Phi will tell us.
+        Note that it is not possible for the GetLocal to refer to anything other than a Phi, and it is also not possible
+        for the last mention of a variable to be a dead GetLocal while there are other mentions that aren't dead - if
+        there had been SetLocals or GetLocals prior to the dead one then the dead one wouldn't have been emitted by the
+        parser.
+        
+        This also fixes a similar bug in the handling of captured variables. If a variable is captured, then it doesn't
+        matter if the last mention is dead, or not. Either way, we already know that a captured variable will be live in
+        the next block, so we must merge it no matter what.
+        
+        Finally, this change makes the output of Operands dumping a bit more verbose: it now prints the variable name next
+        to each variable's dump. I've often found the lack of this information confusing particularly for operand dumps
+        that involve a lot of variables.
+
+        * bytecode/Operands.h:
+        (JSC::dumpOperands):
+        * dfg/DFGAbstractState.cpp:
+        (JSC::DFG::AbstractState::mergeStateAtTail):
+
 2013-01-14  Roger Fong  <roger_fong@apple.com>
 
         Unreviewed. Fix vcproj file. Missing file tag after http://trac.webkit.org/changeset/139541.

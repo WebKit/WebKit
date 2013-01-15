@@ -1860,16 +1860,14 @@ inline bool AbstractState::mergeStateAtTail(AbstractValue& destination, Abstract
         return false;
         
     AbstractValue source;
+    
+    Node& tailNode = m_graph[nodeIndex];
+    if (tailNode.variableAccessData()->isCaptured()) {
+        // If it's captured then we know that whatever value was stored into the variable last is the
+        // one we care about. This is true even if the variable at tail is dead, which might happen if
+        // the last thing we did to the variable was a GetLocal and then ended up now using the
+        // GetLocal's result.
         
-    Node& node = m_graph[nodeIndex];
-    if (!node.refCount())
-        return false;
-    
-#if DFG_ENABLE(DEBUG_PROPAGATION_VERBOSE)
-    dataLogF("          It's live, node @%u.\n", nodeIndex);
-#endif
-    
-    if (node.variableAccessData()->isCaptured()) {
         source = inVariable;
 #if DFG_ENABLE(DEBUG_PROPAGATION_VERBOSE)
         dataLogF("          Transfering ");
@@ -1877,6 +1875,25 @@ inline bool AbstractState::mergeStateAtTail(AbstractValue& destination, Abstract
         dataLogF(" from last access due to captured variable.\n");
 #endif
     } else {
+        if (!tailNode.shouldGenerate()) {
+            // If the node at tail is a GetLocal that is dead, then skip it to get to the Phi.
+            // The Phi may be live.
+            if (tailNode.op() != GetLocal)
+                return false;
+            
+            nodeIndex = tailNode.child1().index();
+            ASSERT(m_graph[nodeIndex].op() == Phi);
+            if (!m_graph[nodeIndex].shouldGenerate())
+                return false;
+        }
+        
+        Node& node = m_graph[nodeIndex];
+        ASSERT(node.shouldGenerate());
+
+#if DFG_ENABLE(DEBUG_PROPAGATION_VERBOSE)
+        dataLogF("          It's live, node @%u.\n", nodeIndex);
+#endif
+    
         switch (node.op()) {
         case Phi:
         case SetArgument:
