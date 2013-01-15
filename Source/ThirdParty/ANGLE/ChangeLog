@@ -1,5 +1,26 @@
 2013-01-15  David Kilzer  <ddkilzer@apple.com>
 
+        Upstream iOS changes for ANGLE project
+        <http://webkit.org/b/106913>
+
+        Reviewed by Joseph Pecoraro.
+
+        * ANGLE.xcodeproj/project.pbxproj:
+        - Use $(INSTALL_PATH_PREFIX) with CopyFiles build phase paths.
+        - Add iOS.xcconfig to project.
+        * Configurations/ANGLE.xcconfig:
+        - Use INSTALL_PATH_ACTUAL instead of INSTALL_PATH.  (See below.)
+        - Use $(INSTALL_PATH_PREFIX) with PUBLIC_HEADERS_FOLDER_PATH.
+        * Configurations/Base.xcconfig:
+        - Include iOS.xcconfig.
+        - Add per-platform values for GCC_ENABLE_OBJC_GC and
+          GCC_MODEL_TUNING.
+        - Define INSTALL_PATH when building for macosx SDK.
+        * Configurations/iOS.xcconfig: Add.  Note that missing include
+        files are simply ignored without an error by Xcode.
+
+2013-01-15  David Kilzer  <ddkilzer@apple.com>
+
         ANGLE should build with -Wshorten-64-to-32
         <http://webkit.org/b/106798>
         <http://code.google.com/p/angleproject/issues/detail?id=396>

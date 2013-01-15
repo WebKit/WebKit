@@ -114,7 +114,7 @@
 		312BDB0B15FECAB00097EBC7 /* CopyFiles */ = {
 			isa = PBXCopyFilesBuildPhase;
 			buildActionMask = 8;
-			dstPath = /usr/local/OpenSourceVersions;
+			dstPath = "$(INSTALL_PATH_PREFIX)/usr/local/OpenSourceVersions";
 			dstSubfolderSpec = 0;
 			files = (
 				312BDB0C15FECAC90097EBC7 /* ANGLE.plist in CopyFiles */,
@@ -124,7 +124,7 @@
 		312BDB0D15FECACE0097EBC7 /* CopyFiles */ = {
 			isa = PBXCopyFilesBuildPhase;
 			buildActionMask = 8;
-			dstPath = /usr/local/OpenSourceLicenses;
+			dstPath = "$(INSTALL_PATH_PREFIX)/usr/local/OpenSourceLicenses";
 			dstSubfolderSpec = 0;
 			files = (
 				312BDB0E15FECAE50097EBC7 /* ANGLE.txt in CopyFiles */,
@@ -138,6 +138,7 @@
 		312BDB0A15FECA3A0097EBC7 /* ANGLE.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = ANGLE.txt; sourceTree = "<group>"; };
 		3158EA0C1630968D006BE5EE /* ArrayBoundsClamper.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ArrayBoundsClamper.cpp; sourceTree = "<group>"; };
 		3158EA0D1630968D006BE5EE /* ArrayBoundsClamper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ArrayBoundsClamper.h; sourceTree = "<group>"; };
+		443A3E1512ECF6CC0004F9D7 /* iOS.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = iOS.xcconfig; sourceTree = "<group>"; };
 		49951C0214B7AAB30060E96E /* length_limits.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = length_limits.h; sourceTree = "<group>"; };
 		49951C0514B7AAD70060E96E /* BuiltInFunctionEmulator.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = BuiltInFunctionEmulator.cpp; sourceTree = "<group>"; };
 		49951C0614B7AAD80060E96E /* BuiltInFunctionEmulator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BuiltInFunctionEmulator.h; sourceTree = "<group>"; };
@@ -290,6 +291,7 @@
 				5D7C59C51208C68B001C873E /* ANGLE.xcconfig */,
 				5D7C59C61208C68B001C873E /* Base.xcconfig */,
 				5D7C59C71208C68B001C873E /* DebugRelease.xcconfig */,
+				443A3E1512ECF6CC0004F9D7 /* iOS.xcconfig */,
 			);
 			path = Configurations;
 			sourceTree = "<group>";
