@@ -99,29 +99,23 @@ void MediaStreamTrack::setEnabled(bool enabled)
     MediaStreamCenter::instance().didSetMediaStreamTrackEnabled(m_streamDescriptor.get(), m_component.get());
 }
 
-String MediaStreamTrack::readyState() const
+MediaStreamTrack::ReadyState MediaStreamTrack::readyState() const
 {
     if (m_stopped)
-        return ASCIILiteral("ended");
+        return ENDED;
 
     switch (m_component->source()->readyState()) {
     case MediaStreamSource::ReadyStateLive:
-        return ASCIILiteral("live");
+        return LIVE;
     case MediaStreamSource::ReadyStateMuted:
-        return ASCIILiteral("muted");
+        return MUTED;
     case MediaStreamSource::ReadyStateEnded:
-        return ASCIILiteral("ended");
+        return ENDED;
     }
 
     ASSERT_NOT_REACHED();
-    return String();
+    return ENDED;
 }
-
-bool MediaStreamTrack::ended() const
-{
-    return m_stopped || (m_component->source()->readyState() == MediaStreamSource::ReadyStateEnded);
-}
-
 
 void MediaStreamTrack::sourceChangedState()
 {

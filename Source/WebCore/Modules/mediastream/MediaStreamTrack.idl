@@ -32,7 +32,10 @@
     readonly attribute DOMString label;
              attribute boolean enabled;
 
-    readonly attribute DOMString readyState;
+    const unsigned short LIVE = 0;
+    const unsigned short MUTED = 1;
+    const unsigned short ENDED = 2;
+    readonly attribute unsigned short readyState;
 
     attribute EventListener onmute;
     attribute EventListener onunmute;
