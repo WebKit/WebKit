@@ -29,14 +29,18 @@
 #include "Chrome.h"
 #include "ChromeClient.h"
 #include "Cursor.h"
+#include "FEGaussianBlur.h"
+#include "Filter.h"
 #include "FrameLoaderClient.h"
 #include "FrameView.h"
 #include "Gradient.h"
 #include "HTMLPlugInImageElement.h"
+#include "ImageBuffer.h"
 #include "MouseEvent.h"
 #include "Page.h"
 #include "PaintInfo.h"
 #include "Path.h"
+#include "SourceGraphic.h"
 
 namespace WebCore {
 
@@ -46,6 +50,52 @@ static const int startLabelPadding = 10; // Label should be 10px from edge of bo
 static const int startLabelInset = 20; // But the label is inset from its box also. FIXME: This will be removed when we go to a ShadowDOM approach.
 static const double showLabelAfterMouseOverDelay = 1;
 static const double showLabelAutomaticallyDelay = 3;
+static const int snapshotLabelBlurRadius = 5;
+
+class RenderSnapshottedPlugInBlurFilter : public Filter {
+    WTF_MAKE_FAST_ALLOCATED;
+public:
+    static PassRefPtr<RenderSnapshottedPlugInBlurFilter> create(int radius)
+    {
+        return adoptRef(new RenderSnapshottedPlugInBlurFilter(radius));
+    }
+
+    void setSourceImageRect(const FloatRect& r)
+    {
+        m_sourceImageRect = r;
+        m_filterRegion = r;
+        m_sourceGraphic->setMaxEffectRect(r);
+        m_blur->setMaxEffectRect(r);
+    }
+    virtual FloatRect sourceImageRect() const { return m_sourceImageRect; }
+    virtual FloatRect filterRegion() const { return m_filterRegion; }
+
+    void apply();
+    ImageBuffer* output() const { return m_blur->asImageBuffer(); }
+
+private:
+    RenderSnapshottedPlugInBlurFilter(int radius);
+
+    FloatRect m_sourceImageRect;
+    FloatRect m_filterRegion;
+    RefPtr<SourceGraphic> m_sourceGraphic;
+    RefPtr<FEGaussianBlur> m_blur;
+};
+
+RenderSnapshottedPlugInBlurFilter::RenderSnapshottedPlugInBlurFilter(int radius)
+{
+    setFilterResolution(FloatSize(1, 1));
+    m_sourceGraphic = SourceGraphic::create(this);
+    m_blur = FEGaussianBlur::create(this, radius, radius);
+    m_blur->inputEffects().append(m_sourceGraphic);
+}
+
+void RenderSnapshottedPlugInBlurFilter::apply()
+{
+    m_sourceGraphic->clearResult();
+    m_blur->clearResult();
+    m_blur->apply();
+}
 
 RenderSnapshottedPlugIn::RenderSnapshottedPlugIn(HTMLPlugInImageElement* element)
     : RenderEmbeddedObject(element)
@@ -55,14 +105,18 @@ RenderSnapshottedPlugIn::RenderSnapshottedPlugIn(HTMLPlugInImageElement* element
     , m_showedLabelOnce(false)
     , m_showReason(UserMousedOver)
     , m_showLabelDelayTimer(this, &RenderSnapshottedPlugIn::showLabelDelayTimerFired)
+    , m_snapshotResourceForLabel(RenderImageResource::create())
 {
     m_snapshotResource->initialize(this);
+    m_snapshotResourceForLabel->initialize(this);
 }
 
 RenderSnapshottedPlugIn::~RenderSnapshottedPlugIn()
 {
     ASSERT(m_snapshotResource);
     m_snapshotResource->shutdown();
+    ASSERT(m_snapshotResourceForLabel);
+    m_snapshotResourceForLabel->shutdown();
 }
 
 HTMLPlugInImageElement* RenderSnapshottedPlugIn::plugInImageElement() const
@@ -75,6 +129,11 @@ void RenderSnapshottedPlugIn::updateSnapshot(PassRefPtr<Image> image)
     // Zero-size plugins will have no image.
     if (!image)
         return;
+
+    // We may have stored a version of this snapshot to use when showing the
+    // label. Invalidate it now and it will be regenerated later.
+    if (m_snapshotResourceForLabel->hasImage())
+        m_snapshotResourceForLabel->setCachedImage(0);
 
     m_snapshotResource->setCachedImage(new CachedImage(image.get()));
     repaint();
@@ -95,25 +154,21 @@ void RenderSnapshottedPlugIn::paint(PaintInfo& paintInfo, const LayoutPoint& pai
 void RenderSnapshottedPlugIn::paintReplaced(PaintInfo& paintInfo, const LayoutPoint& paintOffset)
 {
     if (plugInImageElement()->displayState() < HTMLPlugInElement::PlayingWithPendingMouseClick) {
-        paintReplacedSnapshot(paintInfo, paintOffset);
         if (m_shouldShowLabel)
-            paintLabel(paintInfo, paintOffset);
+            paintReplacedSnapshotWithLabel(paintInfo, paintOffset);
+        else
+            paintReplacedSnapshot(paintInfo, paintOffset);
         return;
     }
 
     RenderEmbeddedObject::paintReplaced(paintInfo, paintOffset);
 }
 
-void RenderSnapshottedPlugIn::paintReplacedSnapshot(PaintInfo& paintInfo, const LayoutPoint& paintOffset)
+void RenderSnapshottedPlugIn::paintSnapshot(Image* image, PaintInfo& paintInfo, const LayoutPoint& paintOffset)
 {
-    // This code should be similar to RenderImage::paintReplaced() and RenderImage::paintIntoRect().
     LayoutUnit cWidth = contentWidth();
     LayoutUnit cHeight = contentHeight();
     if (!cWidth || !cHeight)
-        return;
-
-    RefPtr<Image> image = m_snapshotResource->image();
-    if (!image || image->isNull())
         return;
 
     GraphicsContext* context = paintInfo.context;
@@ -131,8 +186,17 @@ void RenderSnapshottedPlugIn::paintReplacedSnapshot(PaintInfo& paintInfo, const 
     if (alignedRect.width() <= 0 || alignedRect.height() <= 0)
         return;
 
-    bool useLowQualityScaling = shouldPaintAtLowQuality(context, image.get(), image.get(), alignedRect.size());
-    context->drawImage(image.get(), style()->colorSpace(), alignedRect, CompositeSourceOver, shouldRespectImageOrientation(), useLowQualityScaling);
+    bool useLowQualityScaling = shouldPaintAtLowQuality(context, image, image, alignedRect.size());
+    context->drawImage(image, style()->colorSpace(), alignedRect, CompositeSourceOver, shouldRespectImageOrientation(), useLowQualityScaling);
+}
+
+void RenderSnapshottedPlugIn::paintReplacedSnapshot(PaintInfo& paintInfo, const LayoutPoint& paintOffset)
+{
+    RefPtr<Image> image = m_snapshotResource->image();
+    if (!image || image->isNull())
+        return;
+
+    paintSnapshot(image.get(), paintInfo, paintOffset);
 }
 
 Image* RenderSnapshottedPlugIn::startLabelImage(LabelSize size) const
@@ -153,7 +217,24 @@ Image* RenderSnapshottedPlugIn::startLabelImage(LabelSize size) const
     return labelImages[arrayIndex];
 }
 
-void RenderSnapshottedPlugIn::paintLabel(PaintInfo& paintInfo, const LayoutPoint& paintOffset)
+static PassRefPtr<Image> snapshottedPluginImageForLabelDisplay(PassRefPtr<Image> snapshot, const LayoutRect& blurRegion)
+{
+    OwnPtr<ImageBuffer> snapshotBuffer = ImageBuffer::create(snapshot->size());
+    snapshotBuffer->context()->drawImage(snapshot.get(), ColorSpaceDeviceRGB, IntPoint(0, 0));
+
+    OwnPtr<ImageBuffer> blurBuffer = ImageBuffer::create(roundedIntSize(blurRegion.size()));
+    blurBuffer->context()->drawImage(snapshot.get(), ColorSpaceDeviceRGB, IntPoint(-blurRegion.x(), -blurRegion.y()));
+
+    RefPtr<RenderSnapshottedPlugInBlurFilter> blurFilter = RenderSnapshottedPlugInBlurFilter::create(snapshotLabelBlurRadius);
+    blurFilter->setSourceImage(blurBuffer.release());
+    blurFilter->setSourceImageRect(FloatRect(FloatPoint(), blurRegion.size()));
+    blurFilter->apply();
+
+    snapshotBuffer->context()->drawImageBuffer(blurFilter->output(), ColorSpaceDeviceRGB, roundedIntPoint(blurRegion.location()));
+    return snapshotBuffer->copyImage();
+}
+
+void RenderSnapshottedPlugIn::paintReplacedSnapshotWithLabel(PaintInfo& paintInfo, const LayoutPoint& paintOffset)
 {
     if (contentBoxRect().isEmpty())
         return;
@@ -178,6 +259,19 @@ void RenderSnapshottedPlugIn::paintLabel(PaintInfo& paintInfo, const LayoutPoint
     Image* labelImage = startLabelImage(size);
     if (!labelImage)
         return;
+
+    RefPtr<Image> snapshotImage = m_snapshotResource->image();
+    if (!snapshotImage || snapshotImage->isNull())
+        return;
+
+    RefPtr<Image> blurredSnapshotImage = m_snapshotResourceForLabel->image();
+    if (!blurredSnapshotImage || blurredSnapshotImage->isNull()) {
+        blurredSnapshotImage = snapshottedPluginImageForLabelDisplay(snapshotImage, labelRect);
+        m_snapshotResourceForLabel->setCachedImage(new CachedImage(blurredSnapshotImage.get()));
+    }
+    snapshotImage = blurredSnapshotImage;
+
+    paintSnapshot(snapshotImage.get(), paintInfo, paintOffset);
 
     // Remember that the labelRect includes the label inset, so we need to adjust for it.
     paintInfo.context->drawImage(labelImage, ColorSpaceDeviceRGB,

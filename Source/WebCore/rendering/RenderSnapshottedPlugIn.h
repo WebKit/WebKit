@@ -63,7 +63,8 @@ private:
     virtual void paintReplaced(PaintInfo&, const LayoutPoint&) OVERRIDE;
 
     void paintReplacedSnapshot(PaintInfo&, const LayoutPoint&);
-    void paintLabel(PaintInfo&, const LayoutPoint&);
+    void paintReplacedSnapshotWithLabel(PaintInfo&, const LayoutPoint&);
+    void paintSnapshot(Image*, PaintInfo&, const LayoutPoint&);
     void repaintLabel();
 
     LayoutRect tryToFitStartLabel(LabelSize, const LayoutRect& contentBox) const;
@@ -82,6 +83,7 @@ private:
     bool m_showedLabelOnce;
     ShowReason m_showReason;
     Timer<RenderSnapshottedPlugIn> m_showLabelDelayTimer;
+    OwnPtr<RenderImageResource> m_snapshotResourceForLabel;
 };
 
 inline RenderSnapshottedPlugIn* toRenderSnapshottedPlugIn(RenderObject* object)
