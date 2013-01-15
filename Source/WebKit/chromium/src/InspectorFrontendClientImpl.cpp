@@ -154,4 +154,25 @@ void InspectorFrontendClientImpl::sendMessageToBackend(const String& message)
     m_client->sendMessageToBackend(message);
 }
 
+bool InspectorFrontendClientImpl::supportsFileSystems()
+{
+    return true;
+}
+
+void InspectorFrontendClientImpl::requestFileSystems()
+{
+    m_client->requestFileSystems();
+}
+
+void InspectorFrontendClientImpl::addFileSystem()
+{
+    m_client->addFileSystem();
+}
+
+void InspectorFrontendClientImpl::removeFileSystem(const String& fileSystemPath)
+{
+    m_client->removeFileSystem(fileSystemPath);
+}
+
+
 } // namespace WebKit

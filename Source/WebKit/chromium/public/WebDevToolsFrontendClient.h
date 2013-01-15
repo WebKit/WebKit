@@ -53,6 +53,10 @@ public:
     virtual void save(const WebString& url, const WebString& content, bool saveAs) { }
     virtual void append(const WebString& url, const WebString& content) { }
 
+    virtual void requestFileSystems() { }
+    virtual void addFileSystem() { }
+    virtual void removeFileSystem(const WebString& fileSystemPath) { }
+
 protected:
     virtual ~WebDevToolsFrontendClient() {}
 };

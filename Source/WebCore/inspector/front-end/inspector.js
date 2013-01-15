@@ -430,6 +430,8 @@ WebInspector._doLoadedDoneWithCapabilities = function()
     this.openAnchorLocationRegistry = new WebInspector.HandlerRegistry(openAnchorLocationSetting);
     this.openAnchorLocationRegistry.registerHandler(autoselectPanel, function() { return false; });
 
+    this.isolatedFileSystemModel = new WebInspector.IsolatedFileSystemModel();
+    this.isolatedFileSystemDispatcher = new WebInspector.IsolatedFileSystemDispatcher(this.isolatedFileSystemModel);
     this.workspace = new WebInspector.Workspace();
     this.networkWorkspaceProvider = new WebInspector.SimpleWorkspaceProvider(this.workspace);
     this.workspace.addProject(WebInspector.projectNames.Network, this.networkWorkspaceProvider);

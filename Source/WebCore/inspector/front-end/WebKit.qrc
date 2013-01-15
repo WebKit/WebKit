@@ -74,6 +74,7 @@
     <file>ExtensionView.js</file>
     <file>FileContentView.js</file>
     <file>FileManager.js</file>
+    <file>FileSystemMapping.js</file>
     <file>FileSystemModel.js</file>
     <file>FileSystemView.js</file>
     <file>FileUtils.js</file>
@@ -100,6 +101,7 @@
     <file>InspectorFrontendHostStub.js</file>
     <file>InspectorView.js</file>
     <file>JSHeapSnapshot.js</file>
+    <file>IsolatedFileSystemModel.js</file>
     <file>JavaScriptFormatter.js</file>
     <file>JavaScriptSourceFrame.js</file>
     <file>jsdifflib.js</file>

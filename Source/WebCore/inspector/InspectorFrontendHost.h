@@ -39,6 +39,7 @@
 namespace WebCore {
 
 class ContextMenuItem;
+class DOMFileSystem;
 class Event;
 class FrontendMenuProvider;
 class InspectorClient;
@@ -84,6 +85,14 @@ public:
     void sendMessageToBackend(const String& message);
 
     String loadResourceSynchronously(const String& url);
+
+    bool supportsFileSystems();
+    void requestFileSystems();
+    void addFileSystem();
+    void removeFileSystem(const String& fileSystemPath);
+#if ENABLE(FILE_SYSTEM)
+    PassRefPtr<DOMFileSystem> isolatedFileSystem(const String& fileSystemName, const String& rootURL);
+#endif
 
 private:
 #if ENABLE(CONTEXT_MENUS)

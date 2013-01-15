@@ -75,6 +75,11 @@ public:
     virtual void inspectedURLChanged(const WTF::String&);
 
     virtual void sendMessageToBackend(const WTF::String&);
+
+    virtual bool supportsFileSystems();
+    virtual void requestFileSystems();
+    virtual void addFileSystem();
+    virtual void removeFileSystem(const String& fileSystemPath);
 private:
     WebCore::Page* m_frontendPage;
     WebDevToolsFrontendClient* m_client;
