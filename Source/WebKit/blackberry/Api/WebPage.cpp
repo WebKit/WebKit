@@ -1779,6 +1779,7 @@ void WebPagePrivate::resetScales()
     m_initialScale = m_webSettings->initialScale() > 0 ? m_webSettings->initialScale() : -1.0;
     m_minimumScale = -1.0;
     m_maximumScale = -1.0;
+    m_client->scaleChanged();
 
     // We have to let WebCore know about updated framerect now that we've
     // reset our scales. See: RIM Bug #401.

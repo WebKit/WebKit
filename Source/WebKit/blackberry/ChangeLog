@@ -1,3 +1,22 @@
+2013-01-15  Jacky Jiang  <zhajiang@rim.com>
+
+        [BlackBerry] Manual zoom propagates to next page load
+        https://bugs.webkit.org/show_bug.cgi?id=106914
+
+        Reviewed by Yong Li.
+        Internally reviewed by Eli Fidler and Jakob Petsovits.
+
+        PR: 280481
+        During load committed, the web page scale was reset. However, UI thread
+        still kept the old scale in UserInterfaceViewportAccessor so that it
+        blitted the contents at the old scale although WebKit thread could
+        update the UI thread scale later when finished the load.
+        We should update the scale of the UI thread right after we reset it in
+        WebKit thread to keep them in sync.
+
+        * Api/WebPage.cpp:
+        (BlackBerry::WebKit::WebPagePrivate::resetScales):
+
 2013-01-14  Otto Derek Cheung  <otcheung@rim.com>
 
         [BlackBerry] FCC appears when switching search engine providers
