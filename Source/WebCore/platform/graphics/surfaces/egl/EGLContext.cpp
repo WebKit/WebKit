@@ -30,10 +30,6 @@
 
 #include <wtf/text/WTFString.h>
 
-#if HAVE(GLX)
-#include <GL/glx.h>
-#endif
-
 namespace WebCore {
 
 static const EGLint contextAttributes[] = {
@@ -63,17 +59,6 @@ static bool isRobustnessExtSupported(EGLDisplay display)
     }
 
     return isRobustnessExtensionSupported;
-}
-
-EGLCurrentContextWrapper::EGLCurrentContextWrapper()
-    : GLPlatformContext()
-{
-}
-
-// FIXME: This is a temporary workaround until we are able to build evas with EGL support.
-PlatformContext EGLCurrentContextWrapper::handle() const
-{
-    return glXGetCurrentContext();
 }
 
 EGLOffScreenContext::EGLOffScreenContext()

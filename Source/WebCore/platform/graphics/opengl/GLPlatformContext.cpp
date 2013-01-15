@@ -36,6 +36,10 @@
 
 #include "NotImplemented.h"
 
+#if HAVE(GLX)
+#include <GL/glx.h>
+#endif
+
 namespace WebCore {
 
 #if USE(OPENGL_ES_2)
@@ -45,23 +49,31 @@ static PFNGLGETGRAPHICSRESETSTATUSARBPROC glGetGraphicsResetStatus = 0;
 #endif
 static GLPlatformContext* m_currentContext = 0;
 
+class GLCurrentContextWrapper : public GLPlatformContext {
+
+public:
+    GLCurrentContextWrapper()
+        : GLPlatformContext()
+    {
+        // FIXME:: This is a workaround until support to build evas with EGL has been added.
+#if USE(GLX) || PLATFORM(EFL)
+        m_contextHandle = glXGetCurrentContext();
+#elif USE(EGL)
+        m_contextHandle = eglGetCurrentContext();
+#endif
+        if (m_contextHandle)
+            m_currentContext = this;
+    }
+
+    virtual ~GLCurrentContextWrapper() { }
+};
+
 static PassOwnPtr<GLPlatformContext> createOffScreenContext()
 {
 #if USE(GLX)
     return adoptPtr(new GLXOffScreenContext());
 #elif USE(EGL)
     return adoptPtr(new EGLOffScreenContext());
-#endif
-
-    return nullptr;
-}
-
-static PassOwnPtr<GLPlatformContext> createCurrentContextWrapper()
-{
-#if USE(GLX)
-    return adoptPtr(new GLXCurrentContextWrapper());
-#elif USE(EGL)
-    return adoptPtr(new EGLCurrentContextWrapper());
 #endif
 
     return nullptr;
@@ -104,12 +116,12 @@ PassOwnPtr<GLPlatformContext> GLPlatformContext::createContext(GraphicsContext3D
 
     switch (renderStyle) {
     case GraphicsContext3D::RenderOffscreen:
-        if (OwnPtr<GLPlatformContext> glxContext = createOffScreenContext())
-            return glxContext.release();
+        if (OwnPtr<GLPlatformContext> context = createOffScreenContext())
+            return context.release();
         break;
     case GraphicsContext3D::RenderToCurrentGLContext:
-        if (OwnPtr<GLPlatformContext> glxContext = createCurrentContextWrapper())
-            return glxContext.release();
+        if (OwnPtr<GLPlatformContext> context = adoptPtr(new GLCurrentContextWrapper()))
+            return context.release();
         break;
     case GraphicsContext3D::RenderDirectlyToHostWindow:
         ASSERT_NOT_REACHED();

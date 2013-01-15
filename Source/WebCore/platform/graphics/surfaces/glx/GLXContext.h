@@ -32,18 +32,6 @@
 
 namespace WebCore {
 
-class GLXCurrentContextWrapper : public GLPlatformContext {
-
-public:
-    GLXCurrentContextWrapper()
-        : GLPlatformContext()
-    {
-        m_contextHandle = glXGetCurrentContext();
-    }
-
-    virtual ~GLXCurrentContextWrapper() { }
-};
-
 class GLXOffScreenContext : public GLPlatformContext {
 
 public:

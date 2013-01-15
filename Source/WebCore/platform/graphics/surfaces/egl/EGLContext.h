@@ -32,14 +32,6 @@
 
 namespace WebCore {
 
-class EGLCurrentContextWrapper : public GLPlatformContext {
-
-public:
-    EGLCurrentContextWrapper();
-    virtual PlatformContext handle() const OVERRIDE;
-    virtual ~EGLCurrentContextWrapper() { }
-};
-
 class EGLOffScreenContext : public GLPlatformContext {
 
 public:
