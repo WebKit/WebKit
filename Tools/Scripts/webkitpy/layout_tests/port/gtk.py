@@ -127,10 +127,9 @@ class GtkPort(Port):
     def _get_gdb_output(self, coredump_path):
         cmd = ['gdb', '-ex', 'thread apply all bt 1024', '--batch', str(self._path_to_driver()), coredump_path]
         proc = subprocess.Popen(cmd, stdin=None, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-        proc.wait()
-        errors = [l.strip().decode('utf8', 'ignore') for l in proc.stderr.readlines()]
-        trace = proc.stdout.read().decode('utf8', 'ignore')
-        return (trace, errors)
+        stdout, stderr = proc.communicate()
+        errors = [l.strip().decode('utf8', 'ignore') for l in stderr.splitlines()]
+        return (stdout.decode('utf8', 'ignore'), errors)
 
     def _get_crash_log(self, name, pid, stdout, stderr, newer_than):
         pid_representation = str(pid or '<unknown>')
