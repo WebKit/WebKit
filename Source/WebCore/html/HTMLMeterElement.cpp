@@ -74,7 +74,7 @@ bool HTMLMeterElement::childShouldCreateRenderer(const NodeRenderingContext& chi
 
 bool HTMLMeterElement::supportsFocus() const
 {
-    return Node::supportsFocus() && !disabled();
+    return HTMLElement::supportsFocus() && !disabled();
 }
 
 void HTMLMeterElement::parseAttribute(const QualifiedName& name, const AtomicString& value)

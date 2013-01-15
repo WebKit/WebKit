@@ -90,7 +90,7 @@ void HTMLProgressElement::willAddAuthorShadowRoot()
 
 bool HTMLProgressElement::supportsFocus() const
 {
-    return Node::supportsFocus() && !disabled();
+    return HTMLElement::supportsFocus() && !disabled();
 }
 
 void HTMLProgressElement::parseAttribute(const QualifiedName& name, const AtomicString& value)

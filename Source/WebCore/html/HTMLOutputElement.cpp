@@ -58,7 +58,7 @@ const AtomicString& HTMLOutputElement::formControlType() const
 
 bool HTMLOutputElement::supportsFocus() const
 {
-    return Node::supportsFocus() && !disabled();
+    return HTMLElement::supportsFocus() && !disabled();
 }
 
 void HTMLOutputElement::parseAttribute(const QualifiedName& name, const AtomicString& value)
