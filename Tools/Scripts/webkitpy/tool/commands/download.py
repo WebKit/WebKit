@@ -47,7 +47,7 @@ class Clean(AbstractSequencedCommand):
     name = "clean"
     help_text = "Clean the working copy"
     steps = [
-        steps.CleanWorkingDirectory,
+        steps.DiscardLocalChanges,
     ]
 
     def _prepare_state(self, options, args, tool):
@@ -58,7 +58,7 @@ class Update(AbstractSequencedCommand):
     name = "update"
     help_text = "Update working copy (used internally)"
     steps = [
-        steps.CleanWorkingDirectory,
+        steps.DiscardLocalChanges,
         steps.Update,
     ]
 
@@ -67,7 +67,7 @@ class Build(AbstractSequencedCommand):
     name = "build"
     help_text = "Update working copy and build"
     steps = [
-        steps.CleanWorkingDirectory,
+        steps.DiscardLocalChanges,
         steps.Update,
         steps.Build,
     ]
@@ -80,7 +80,7 @@ class BuildAndTest(AbstractSequencedCommand):
     name = "build-and-test"
     help_text = "Update working copy, build, and run the tests"
     steps = [
-        steps.CleanWorkingDirectory,
+        steps.DiscardLocalChanges,
         steps.Update,
         steps.Build,
         steps.RunTests,
@@ -235,7 +235,7 @@ class CheckStyle(AbstractPatchSequencingCommand, ProcessAttachmentsMixin):
     help_text = "Run check-webkit-style on the specified attachments"
     argument_names = "ATTACHMENT_ID [ATTACHMENT_IDS]"
     main_steps = [
-        steps.CleanWorkingDirectory,
+        steps.DiscardLocalChanges,
         steps.Update,
         steps.ApplyPatch,
         steps.CheckStyle,
@@ -247,7 +247,7 @@ class BuildAttachment(AbstractPatchSequencingCommand, ProcessAttachmentsMixin):
     help_text = "Apply and build patches from bugzilla"
     argument_names = "ATTACHMENT_ID [ATTACHMENT_IDS]"
     main_steps = [
-        steps.CleanWorkingDirectory,
+        steps.DiscardLocalChanges,
         steps.Update,
         steps.ApplyPatch,
         steps.Build,
@@ -259,7 +259,7 @@ class BuildAndTestAttachment(AbstractPatchSequencingCommand, ProcessAttachmentsM
     help_text = "Apply, build, and test patches from bugzilla"
     argument_names = "ATTACHMENT_ID [ATTACHMENT_IDS]"
     main_steps = [
-        steps.CleanWorkingDirectory,
+        steps.DiscardLocalChanges,
         steps.Update,
         steps.ApplyPatch,
         steps.Build,
@@ -270,7 +270,7 @@ class BuildAndTestAttachment(AbstractPatchSequencingCommand, ProcessAttachmentsM
 class AbstractPatchApplyingCommand(AbstractPatchSequencingCommand):
     prepare_steps = [
         steps.EnsureLocalCommitIfNeeded,
-        steps.CleanWorkingDirectoryWithLocalCommits,
+        steps.CleanWorkingDirectory,
         steps.Update,
     ]
     main_steps = [
@@ -299,7 +299,7 @@ class ApplyWatchList(AbstractPatchSequencingCommand, ProcessAttachmentsMixin):
     help_text = "Applies the watchlist to the specified attachments"
     argument_names = "ATTACHMENT_ID [ATTACHMENT_IDS]"
     main_steps = [
-        steps.CleanWorkingDirectory,
+        steps.DiscardLocalChanges,
         steps.Update,
         steps.ApplyPatch,
         steps.ApplyWatchList,
@@ -310,7 +310,7 @@ Downloads the attachment, applies it locally, runs the watchlist against it, and
 
 class AbstractPatchLandingCommand(AbstractPatchSequencingCommand):
     main_steps = [
-        steps.CleanWorkingDirectory,
+        steps.DiscardLocalChanges,
         steps.Update,
         steps.ApplyPatch,
         steps.ValidateChangeLogs,
@@ -413,7 +413,7 @@ Applies the inverse diff for the provided revision(s).
 Creates an appropriate rollout ChangeLog, including a trac link and bug link.
 """
     steps = [
-        steps.CleanWorkingDirectory,
+        steps.DiscardLocalChanges,
         steps.Update,
         steps.RevertRevision,
         steps.PrepareChangeLogForRevert,
@@ -424,7 +424,7 @@ class CreateRollout(AbstractRolloutPrepCommand):
     name = "create-rollout"
     help_text = "Creates a bug to track the broken SVN revision(s) and uploads a rollout patch."
     steps = [
-        steps.CleanWorkingDirectory,
+        steps.DiscardLocalChanges,
         steps.Update,
         steps.RevertRevision,
         steps.CreateBug,
@@ -470,7 +470,7 @@ Opens the generated ChangeLogs in $EDITOR.
 Shows the prepared diff for confirmation.
 Commits the revert and updates the bug (including re-opening the bug if necessary)."""
     steps = [
-        steps.CleanWorkingDirectory,
+        steps.DiscardLocalChanges,
         steps.Update,
         steps.RevertRevision,
         steps.PrepareChangeLogForRevert,

@@ -41,16 +41,6 @@ class CleanWorkingDirectoryTest(unittest.TestCase):
         step = CleanWorkingDirectory(tool, MockOptions(clean=True, force_clean=False))
         tool._scm.has_working_directory_changes = lambda: True
         self.assertRaises(ScriptError, step.run, {})
-        self.assertEqual(tool._scm.discard_local_commits.call_count, 0)
-        self.assertEqual(tool._scm.discard_working_directory_changes.call_count, 0)
-
-    def test_run_local_commits_no_force(self):
-        tool = MockTool()
-        tool._scm = Mock()
-        step = CleanWorkingDirectory(tool, MockOptions(clean=True, force_clean=False))
-        tool._scm.has_local_commits = lambda: True
-        self.assertRaises(ScriptError, step.run, {})
-        self.assertEqual(tool._scm.discard_local_commits.call_count, 0)
         self.assertEqual(tool._scm.discard_working_directory_changes.call_count, 0)
 
     def test_run_working_directory_changes_force(self):
@@ -59,16 +49,6 @@ class CleanWorkingDirectoryTest(unittest.TestCase):
         step = CleanWorkingDirectory(tool, MockOptions(clean=True, force_clean=True))
         tool._scm.has_working_directory_changes = lambda: True
         step.run({})
-        self.assertEqual(tool._scm.discard_local_commits.call_count, 1)
-        self.assertEqual(tool._scm.discard_working_directory_changes.call_count, 1)
-
-    def test_run_local_commits_force(self):
-        tool = MockTool()
-        tool._scm = Mock()
-        step = CleanWorkingDirectory(tool, MockOptions(clean=True, force_clean=True))
-        tool._scm.has_local_commits = lambda: True
-        step.run({})
-        self.assertEqual(tool._scm.discard_local_commits.call_count, 1)
         self.assertEqual(tool._scm.discard_working_directory_changes.call_count, 1)
 
     def test_run_no_local_changes(self):
@@ -78,7 +58,6 @@ class CleanWorkingDirectoryTest(unittest.TestCase):
         tool._scm.has_working_directory_changes = lambda: False
         tool._scm.has_local_commits = lambda: False
         step.run({})
-        self.assertEqual(tool._scm.discard_local_commits.call_count, 1)
         self.assertEqual(tool._scm.discard_working_directory_changes.call_count, 1)
 
     def test_no_clean(self):
@@ -86,5 +65,4 @@ class CleanWorkingDirectoryTest(unittest.TestCase):
         tool._scm = Mock()
         step = CleanWorkingDirectory(tool, MockOptions(clean=False))
         step.run({})
-        self.assertEqual(tool._scm.discard_local_commits.call_count, 0)
         self.assertEqual(tool._scm.discard_working_directory_changes.call_count, 0)

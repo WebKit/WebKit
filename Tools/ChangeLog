@@ -1,3 +1,31 @@
+2013-01-15  Tim 'mithro' Ansell  <mithro@mithis.com>
+
+        Renaming CleanWorkingDirectory step to DiscardLocalChanges to make
+        functionality match the name.
+        https://bugs.webkit.org/show_bug.cgi?id=106870
+
+        Reviewed by Adam Barth.
+
+        * Scripts/webkitpy/tool/commands/download.py:
+        (Clean):
+        (Update):
+        (Build):
+        (BuildAndTest):
+        (CheckStyle):
+        (BuildAttachment):
+        (BuildAndTestAttachment):
+        (AbstractPatchApplyingCommand):
+        (ApplyWatchList):
+        (AbstractPatchLandingCommand):
+        (CreateRollout):
+        * Scripts/webkitpy/tool/steps/__init__.py:
+        * Scripts/webkitpy/tool/steps/cleanworkingdirectory.py:
+        (CleanWorkingDirectory.options):
+        (CleanWorkingDirectory.run):
+        * Scripts/webkitpy/tool/steps/cleanworkingdirectory_unittest.py:
+        * Scripts/webkitpy/tool/steps/discardlocalchanges.py: Copied from Tools/Scripts/webkitpy/tool/steps/cleanworkingdirectory.py.
+        * Scripts/webkitpy/tool/steps/discardlocalchanges_unittest.py: Copied from Tools/Scripts/webkitpy/tool/steps/cleanworkingdirectory_unittest.py.
+
 2013-01-15  Zan Dobersek  <zandobersek@gmail.com>
 
         [Autotools] Add support for WebKit2-only builds

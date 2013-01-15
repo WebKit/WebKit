@@ -35,13 +35,13 @@ from webkitpy.tool.steps.attachtobug import AttachToBug
 from webkitpy.tool.steps.build import Build
 from webkitpy.tool.steps.checkstyle import CheckStyle
 from webkitpy.tool.steps.cleanworkingdirectory import CleanWorkingDirectory
-from webkitpy.tool.steps.cleanworkingdirectorywithlocalcommits import CleanWorkingDirectoryWithLocalCommits
 from webkitpy.tool.steps.closebug import CloseBug
 from webkitpy.tool.steps.closebugforlanddiff import CloseBugForLandDiff
 from webkitpy.tool.steps.closepatch import ClosePatch
 from webkitpy.tool.steps.commit import Commit
 from webkitpy.tool.steps.confirmdiff import ConfirmDiff
 from webkitpy.tool.steps.createbug import CreateBug
+from webkitpy.tool.steps.discardlocalchanges import DiscardLocalChanges
 from webkitpy.tool.steps.editchangelog import EditChangeLog
 from webkitpy.tool.steps.ensurebugisopenandassigned import EnsureBugIsOpenAndAssigned
 from webkitpy.tool.steps.ensurelocalcommitifneeded import EnsureLocalCommitIfNeeded
