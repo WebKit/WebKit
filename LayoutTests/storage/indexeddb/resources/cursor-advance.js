@@ -28,8 +28,9 @@ var indexData = [
 ];
 
 indexedDBTest(prepareDatabase, onOpen);
-function prepareDatabase()
+function prepareDatabase(evt)
 {
+    preamble(evt);
     db = event.target.result;
     objectStoreName = "People";
     objectStore = evalAndLog("objectStore = db.createObjectStore(objectStoreName);");
@@ -225,8 +226,9 @@ function testPrefetchInRange()
     evalAndLog("request = objectStore.openCursor()");
 
     var currentPos = 0;
-    function prefetch()
+    function prefetch(evt)
     {
+        preamble(evt);
         cursor = event.target.result;
 
         if (!cursor) {
@@ -268,8 +270,9 @@ function testPrefetchOutOfRange()
     evalAndLog("request = objectStore.openCursor()");
 
     var currentPos = 0;
-    function prefetch()
+    function prefetch(evt)
     {
+        preamble(evt);
         cursor = event.target.result;
 
         if (!cursor) {
@@ -307,8 +310,9 @@ function testBadAdvance()
 
     evalAndLog("request = objectStore.openCursor()");
 
-    function advanceBadly()
+    function advanceBadly(evt)
     {
+        preamble(evt);
         cursor = event.target.result;
 
         evalAndExpectExceptionClass("cursor.advance(0)", "TypeError");
@@ -333,7 +337,7 @@ function testEdges()
 
     firstSuccess = true;
     request.onsuccess = function onSuccess(evt) {
-        preamble(event);
+        preamble(evt);
         evalAndLog("cursor = event.target.result");
         if (firstSuccess) {
             shouldBeNonNull("cursor");
@@ -356,8 +360,9 @@ function testDelete()
     evalAndLog("request = objectStore.openCursor()");
 
     var currentPos = 0;
-    function deleteSecond()
+    function deleteSecond(evt)
     {
+        preamble(evt);
         cursor = event.target.result;
 
         if (!cursor) {

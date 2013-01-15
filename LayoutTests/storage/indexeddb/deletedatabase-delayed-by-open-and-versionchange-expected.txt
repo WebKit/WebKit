@@ -8,6 +8,8 @@ indexedDB = self.indexedDB || self.webkitIndexedDB || self.mozIndexedDB || self.
 dbname = "deletedatabase-delayed-by-open-and-versionchange.html"
 indexedDB.deleteDatabase(dbname)
 indexedDB.open(dbname)
+
+prepareDatabase():
 versionChangeComplete = false
 h = event.target.result
 indexedDB.deleteDatabase(dbname)
@@ -20,6 +22,8 @@ deleteDatabaseOnBlocked():
 
 transactionOnComplete():
 versionChangeComplete = true
+
+onOpenSuccess():
 h = event.target.result
 h.close()
 

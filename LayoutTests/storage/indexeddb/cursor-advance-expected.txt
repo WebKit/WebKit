@@ -8,6 +8,8 @@ indexedDB = self.indexedDB || self.webkitIndexedDB || self.mozIndexedDB || self.
 dbname = "cursor-advance.html"
 indexedDB.deleteDatabase(dbname)
 indexedDB.open(dbname)
+
+prepareDatabase():
 objectStore = db.createObjectStore(objectStoreName);
 Now create the indexes.
 objectStore.createIndex(indexData[i].name, indexData[i].keyPath, indexData[i].options);
@@ -84,52 +86,96 @@ testPrefetchInRange()
 trans = db.transaction(objectStoreName)
 objectStore = trans.objectStore(objectStoreName)
 request = objectStore.openCursor()
+
+prefetch():
 PASS expected is "{\"key\":\"237-23-7732\",\"value\":{\"name\":\"Bob\",\"height\":60,\"weight\":120},\"primaryKey\":\"237-23-7732\"}"
 cursor.continue()
+
+prefetch():
 PASS expected is "{\"key\":\"237-23-7733\",\"value\":{\"name\":\"Ann\",\"height\":52,\"weight\":110},\"primaryKey\":\"237-23-7733\"}"
 cursor.continue()
+
+prefetch():
 PASS expected is "{\"key\":\"237-23-7734\",\"value\":{\"name\":\"Ron\",\"height\":73,\"weight\":180},\"primaryKey\":\"237-23-7734\"}"
 cursor.continue()
+
+prefetch():
 PASS expected is "{\"key\":\"237-23-7735\",\"value\":{\"name\":\"Sue\",\"height\":58,\"weight\":130},\"primaryKey\":\"237-23-7735\"}"
 cursor.advance(2)
+
+prefetch():
 PASS expected is "{\"key\":\"237-23-7737\",\"value\":{\"name\":\"Pat\",\"height\":65,\"weight\":100},\"primaryKey\":\"237-23-7737\"}"
 cursor.continue()
+
+prefetch():
 PASS expected is "{\"key\":\"237-23-7738\",\"value\":{\"name\":\"Leo\",\"height\":65,\"weight\":180},\"primaryKey\":\"237-23-7738\"}"
 cursor.continue()
+
+prefetch():
 PASS expected is "{\"key\":\"237-23-7739\",\"value\":{\"name\":\"Jef\",\"height\":65,\"weight\":120},\"primaryKey\":\"237-23-7739\"}"
 cursor.continue()
+
+prefetch():
 PASS expected is "{\"key\":\"237-23-7740\",\"value\":{\"name\":\"Sam\",\"height\":71,\"weight\":110},\"primaryKey\":\"237-23-7740\"}"
 cursor.continue()
+
+prefetch():
 PASS expected is "{\"key\":\"237-23-7741\",\"value\":{\"name\":\"Bug\",\"height\":63,\"weight\":100},\"primaryKey\":\"237-23-7741\"}"
 cursor.continue()
+
+prefetch():
 PASS expected is "{\"key\":\"237-23-7742\",\"value\":{\"name\":\"Tub\",\"height\":69,\"weight\":180},\"primaryKey\":\"237-23-7742\"}"
 cursor.continue()
+
+prefetch():
 PASS expected is "{\"key\":\"237-23-7743\",\"value\":{\"name\":\"Rug\",\"height\":77,\"weight\":120},\"primaryKey\":\"237-23-7743\"}"
 cursor.continue()
+
+prefetch():
 PASS expected is "{\"key\":\"237-23-7744\",\"value\":{\"name\":\"Pug\",\"height\":66,\"weight\":110},\"primaryKey\":\"237-23-7744\"}"
 cursor.continue()
+
+prefetch():
 testPrefetchOutOfRange()
 trans = db.transaction(objectStoreName)
 objectStore = trans.objectStore(objectStoreName)
 request = objectStore.openCursor()
+
+prefetch():
 PASS expected is "{\"key\":\"237-23-7732\",\"value\":{\"name\":\"Bob\",\"height\":60,\"weight\":120},\"primaryKey\":\"237-23-7732\"}"
 cursor.continue()
+
+prefetch():
 PASS expected is "{\"key\":\"237-23-7733\",\"value\":{\"name\":\"Ann\",\"height\":52,\"weight\":110},\"primaryKey\":\"237-23-7733\"}"
 cursor.continue()
+
+prefetch():
 PASS expected is "{\"key\":\"237-23-7734\",\"value\":{\"name\":\"Ron\",\"height\":73,\"weight\":180},\"primaryKey\":\"237-23-7734\"}"
 cursor.continue()
+
+prefetch():
 PASS expected is "{\"key\":\"237-23-7735\",\"value\":{\"name\":\"Sue\",\"height\":58,\"weight\":130},\"primaryKey\":\"237-23-7735\"}"
 cursor.advance(7)
+
+prefetch():
 PASS expected is "{\"key\":\"237-23-7742\",\"value\":{\"name\":\"Tub\",\"height\":69,\"weight\":180},\"primaryKey\":\"237-23-7742\"}"
 cursor.continue()
+
+prefetch():
 PASS expected is "{\"key\":\"237-23-7743\",\"value\":{\"name\":\"Rug\",\"height\":77,\"weight\":120},\"primaryKey\":\"237-23-7743\"}"
 cursor.continue()
+
+prefetch():
 PASS expected is "{\"key\":\"237-23-7744\",\"value\":{\"name\":\"Pug\",\"height\":66,\"weight\":110},\"primaryKey\":\"237-23-7744\"}"
 cursor.continue()
+
+prefetch():
 testBadAdvance()
 trans = db.transaction(objectStoreName, 'readwrite')
 objectStore = trans.objectStore(objectStoreName)
 request = objectStore.openCursor()
+
+advanceBadly():
 Expecting TypeError exception from cursor.advance(0)
 PASS Exception was thrown.
 PASS cursor.advance(0) threw TypeError: Type error
@@ -160,26 +206,48 @@ testDelete()
 trans = db.transaction(objectStoreName, 'readwrite')
 objectStore = trans.objectStore(objectStoreName)
 request = objectStore.openCursor()
+
+deleteSecond():
 PASS expected is "{\"key\":\"237-23-7732\",\"value\":{\"name\":\"Bob\",\"height\":60,\"weight\":120},\"primaryKey\":\"237-23-7732\"}"
 cursor.advance(1)
+
+deleteSecond():
 PASS expected is "{\"key\":\"237-23-7733\",\"value\":{\"name\":\"Ann\",\"height\":52,\"weight\":110},\"primaryKey\":\"237-23-7733\"}"
 cursor.advance(1)
+
+deleteSecond():
 PASS expected is "{\"key\":\"237-23-7734\",\"value\":{\"name\":\"Ron\",\"height\":73,\"weight\":180},\"primaryKey\":\"237-23-7734\"}"
 cursor.delete()
+
+deleteSecond():
 PASS expected is "{\"key\":\"237-23-7738\",\"value\":{\"name\":\"Leo\",\"height\":65,\"weight\":180},\"primaryKey\":\"237-23-7738\"}"
 cursor.advance(1)
+
+deleteSecond():
 PASS expected is "{\"key\":\"237-23-7739\",\"value\":{\"name\":\"Jef\",\"height\":65,\"weight\":120},\"primaryKey\":\"237-23-7739\"}"
 cursor.advance(1)
+
+deleteSecond():
 PASS expected is "{\"key\":\"237-23-7740\",\"value\":{\"name\":\"Sam\",\"height\":71,\"weight\":110},\"primaryKey\":\"237-23-7740\"}"
 cursor.advance(1)
+
+deleteSecond():
 PASS expected is "{\"key\":\"237-23-7741\",\"value\":{\"name\":\"Bug\",\"height\":63,\"weight\":100},\"primaryKey\":\"237-23-7741\"}"
 cursor.advance(1)
+
+deleteSecond():
 PASS expected is "{\"key\":\"237-23-7742\",\"value\":{\"name\":\"Tub\",\"height\":69,\"weight\":180},\"primaryKey\":\"237-23-7742\"}"
 cursor.advance(1)
+
+deleteSecond():
 PASS expected is "{\"key\":\"237-23-7743\",\"value\":{\"name\":\"Rug\",\"height\":77,\"weight\":120},\"primaryKey\":\"237-23-7743\"}"
 cursor.advance(1)
+
+deleteSecond():
 PASS expected is "{\"key\":\"237-23-7744\",\"value\":{\"name\":\"Pug\",\"height\":66,\"weight\":110},\"primaryKey\":\"237-23-7744\"}"
 cursor.advance(1)
+
+deleteSecond():
 PASS successfullyParsed is true
 
 TEST COMPLETE
