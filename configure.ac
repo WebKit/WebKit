@@ -1054,12 +1054,18 @@ if test "$enable_coverage" = "yes"; then
    AC_SUBST([COVERAGE_LDFLAGS])
 fi
 
+# WebKit1
+AC_MSG_CHECKING([whether to build WebKit1])
+AC_ARG_ENABLE(webkit1,
+    AC_HELP_STRING([--enable-webkit1], [build WebKit1 [default=yes]]),
+    [], [enable_webkit1="yes"])
+
 # WebKit2
 # If you change the default here, please also make sure the assumptions made
 # in Tools/Scripts/webkitdirs.pm:buildAutotoolsProject still make sense.
-AC_MSG_CHECKING([whether to build Webkit2])
+AC_MSG_CHECKING([whether to build WebKit2])
 AC_ARG_ENABLE(webkit2,
-    AC_HELP_STRING([--enable-webkit2], [build webkit2 [default=yes]]),
+    AC_HELP_STRING([--enable-webkit2], [build WebKit2 [default=yes]]),
     [], [enable_webkit2="yes"])
 AC_MSG_RESULT([$enable_webkit2])
 if test "$enable_webkit2" = "yes"; then
@@ -1155,6 +1161,7 @@ AM_CONDITIONAL([ENABLE_COVERAGE],[test "$enable_coverage" = "yes"])
 AM_CONDITIONAL([ENABLE_FAST_MALLOC],[test "$enable_fast_malloc" = "yes"])
 AM_CONDITIONAL([ENABLE_WEB_AUDIO],[test "$enable_web_audio" = "yes"])
 AM_CONDITIONAL([ENABLE_OPCODE_STATS],[test "$enable_opcode_stats" = "yes"])
+AM_CONDITIONAL([ENABLE_WEBKIT1],[test "$enable_webkit1" = "yes"])
 AM_CONDITIONAL([ENABLE_WEBKIT2],[test "$enable_webkit2" = "yes"])
 AM_CONDITIONAL([ENABLE_SPELLCHECK],[test "$enable_spellcheck" = "yes"])
 AM_CONDITIONAL([ENABLE_CSS_FILTERS],[test "$enable_css_filters" = "yes"])
@@ -1166,22 +1173,30 @@ AM_CONDITIONAL([ENABLE_INTROSPECTION],[test "$enable_introspection" = "yes"])
 AC_CONFIG_FILES([
 GNUmakefile
 ])
- 
 
 AC_CONFIG_FILES([
-Source/WebKit/gtk/webkit/webkitversion.h
-Source/WebKit/gtk/po/POTFILES
 DerivedSources/WebCore/UserAgentGtk.h:Source/WebCore/platform/gtk/UserAgentGtk.h.in
 ])
 
 AC_CONFIG_FILES([
-Source/WebKit/gtk/${WEBKITGTK_PC_NAME}-${WEBKITGTK_API_VERSION}.pc:Source/WebKit/gtk/webkit.pc.in
-Source/WebKit/gtk/JSCore-${WEBKITGTK_API_VERSION}.gir:Source/WebKit/gtk/JSCore.gir.in
 Source/JavaScriptCore/javascriptcoregtk-${WEBKITGTK_API_VERSION}.pc:Source/JavaScriptCore/javascriptcoregtk.pc.in
+Source/WebKit/gtk/JSCore-${WEBKITGTK_API_VERSION}.gir:Source/WebKit/gtk/JSCore.gir.in
 ]
 ,[WEBKITGTK_API_VERSION=$WEBKITGTK_API_VERSION,WEBKITGTK_PC_NAME=$WEBKITGTK_PC_NAME]
 )
 
+if test "$enable_webkit1" = "yes"; then
+    AC_CONFIG_FILES([
+    Source/WebKit/gtk/webkit/webkitversion.h
+    Source/WebKit/gtk/po/POTFILES
+    ])
+
+    AC_CONFIG_FILES([
+    Source/WebKit/gtk/${WEBKITGTK_PC_NAME}-${WEBKITGTK_API_VERSION}.pc:Source/WebKit/gtk/webkit.pc.in
+    ]
+    ,[WEBKITGTK_API_VERSION=$WEBKITGTK_API_VERSION,WEBKITGTK_PC_NAME=$WEBKITGTK_PC_NAME]
+    )
+fi
 
 if test "$enable_webkit2" = "yes"; then
     AC_CONFIG_FILES([
@@ -1212,6 +1227,7 @@ Build configuration:
 
 Features:
 =======
+ WebKit1 support                                          : $enable_webkit1
  WebKit2 support                                          : $enable_webkit2
  Accelerated Compositing                                  : $enable_accelerated_compositing
  Gamepad support                                          : $enable_gamepad

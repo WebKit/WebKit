@@ -1,5 +1,21 @@
 2013-01-15  Zan Dobersek  <zandobersek@gmail.com>
 
+        [Autotools] Add support for WebKit2-only builds
+        https://bugs.webkit.org/show_bug.cgi?id=106889
+
+        Reviewed by Gustavo Noronha Silva.
+
+        * GNUmakefile.am: Only build the GtkLauncher and DumpRenderTree if building WebKit1.
+        * Scripts/build-webkit: Pass along the information on whether to build WebKit1 when
+        building the GTK port through build-webkit.
+        * Scripts/webkitdirs.pm:
+        (buildAutotoolsProject): Add the --disable-webkit1 configuration flag to the build
+        arguments when not building WebKit1.
+        (buildGtkProject): Pass along the information on whether to build WebKit1 when building
+        through the Autotools build system.
+
+2013-01-15  Zan Dobersek  <zandobersek@gmail.com>
+
         [GTK] Enable Performance Timeline, Resource Timing, Navigation Timing features
         https://bugs.webkit.org/show_bug.cgi?id=106197
 

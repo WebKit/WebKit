@@ -1,7 +1,11 @@
 noinst_PROGRAMS += \
-	Programs/DumpRenderTree \
-	Programs/GtkLauncher \
 	Programs/ImageDiff
+
+if ENABLE_WEBKIT1
+noinst_PROGRAMS += \
+	Programs/DumpRenderTree \
+	Programs/GtkLauncher
+endif
 
 # GtkLauncher
 Programs_GtkLauncher_CPPFLAGS = \
@@ -340,6 +344,7 @@ doc-maintainer-clean-local: clean
 	-@rmdir Documentation
 
 install-data-local:
+if ENABLE_WEBKIT1
 	@installfiles=`echo ./Documentation/webkitgtk/html/*`; \
 	if test "$$installfiles" = './Documentation/webkitgtk/html/*'; \
 	then echo 1>&2 'No documentation to install' ; \
@@ -360,6 +365,7 @@ install-data-local:
 	      $${installdir}/webkitgtk-$(DOC_MODULE_VERSION).devhelp2; \
 	  fi; \
 	fi
+endif
 if ENABLE_WEBKIT2
 	@installfiles=`echo ./Documentation/webkit2gtk/html/*`; \
 	if test "$$installfiles" = './Documentation/webkit2gtk/html/*'; \
@@ -385,6 +391,7 @@ endif
 	@$(AM_V_GEN)$(PYTHON) $(srcdir)/Tools/gtk/generate-gtkdoc --rebase --virtual-root=$${DESTDIR}
 
 uninstall-local:
+if ENABLE_WEBKIT1
 	@DOC_MODULE_VERSION=`cat ./Documentation/webkitgtk/version.xml`; \
 	if test -n "$(DOC_MODULE_VERSION)"; then \
 	  installdir="$(DESTDIR)$(HTML_DIR)/webkitgtk-$(DOC_MODULE_VERSION)"; \
@@ -392,6 +399,7 @@ uninstall-local:
 	  installdir="$(DESTDIR)$(HTML_DIR)/webkitgtk"; \
 	fi; \
 	rm -rf $${installdir}
+endif
 if ENABLE_WEBKIT2
 	@DOC_MODULE_VERSION=`cat ./Documentation/webkit2gtk/version.xml`; \
 	if test -n "$(DOC_MODULE_VERSION)"; then \

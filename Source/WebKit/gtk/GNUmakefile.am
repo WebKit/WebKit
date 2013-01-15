@@ -1,5 +1,7 @@
+if ENABLE_WEBKIT1
 lib_LTLIBRARIES += \
 	libwebkitgtk-@WEBKITGTK_API_MAJOR_VERSION@.@WEBKITGTK_API_MINOR_VERSION@.la
+endif
 
 nodist_libwebkitgtk_@WEBKITGTK_API_MAJOR_VERSION@_@WEBKITGTK_API_MINOR_VERSION@_la_SOURCES = \
 	$(webkitgtk_built_sources)
@@ -278,6 +280,7 @@ webkitgtk_sources += \
 	Source/WebKit/gtk/webkit/webkitwebwindowfeatures.cpp \
 	Source/WebKit/gtk/webkit/webkitwebwindowfeaturesprivate.h
 
+if ENABLE_WEBKIT1
 pkgconfig_DATA += Source/WebKit/gtk/@WEBKITGTK_PC_NAME@-@WEBKITGTK_API_VERSION@.pc
 
 if ENABLE_INTROSPECTION
@@ -334,6 +337,7 @@ JSCore-@WEBKITGTK_API_VERSION@.typelib: JSCore-@WEBKITGTK_API_VERSION@.gir $(G_I
 
 CLEANFILES += $(JSCORE_GIRSOURCES) $(WEBKIT_GIRSOURCES) $(typelibs_DATA)
 
+endif
 endif
 
 EXTRA_DIST += $(top_builddir)/Source/WebKit/gtk/JSCore-@WEBKITGTK_API_VERSION@.gir
@@ -446,6 +450,7 @@ webkit_tests_ldflags = \
 	-no-install \
 	-no-fast-install
 
+if ENABLE_WEBKIT1
 noinst_PROGRAMS += \
 	Programs/unittests/testapplicationcache \
 	Programs/unittests/testcontextmenu \
@@ -475,6 +480,7 @@ noinst_PROGRAMS += \
 	Programs/unittests/testwebview \
 	Programs/unittests/testkeyevents \
 	Programs/unittests/testcopyandpaste
+endif
 
 # Add additional tests here
 Programs_unittests_testapplicationcache_SOURCES = Source/WebKit/gtk/tests/testapplicationcache.c

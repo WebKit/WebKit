@@ -359,7 +359,7 @@ for my $dir (@projects) {
 
     my $project = basename($dir);
     if (isGtk()) {
-        $result = buildGtkProject($project, $clean, $prefixPath, $makeArgs, $noWebKit2, @features);
+        $result = buildGtkProject($project, $clean, $prefixPath, $makeArgs, $noWebKit1, $noWebKit2, @features);
     } elsif (isAppleMacWebKit()) {
         my @local_options = @options;
         push @local_options, XcodeCoverageSupportOptions() if $coverageSupport && $project ne "ANGLE";

@@ -2005,7 +2005,7 @@ sub mustReRunAutogen($@)
 
 sub buildAutotoolsProject($@)
 {
-    my ($project, $clean, $prefix, $makeArgs, $noWebKit2, @features) = @_;
+    my ($project, $clean, $prefix, $makeArgs, $noWebKit1, $noWebKit2, @features) = @_;
 
     my $make = 'make';
     my $dir = productDir();
@@ -2026,6 +2026,9 @@ sub buildAutotoolsProject($@)
     }
 
     my @buildArgs = @ARGV;
+    if ($noWebKit1) {
+        unshift(@buildArgs, "--disable-webkit1");
+    }
     if ($noWebKit2) {
         unshift(@buildArgs, "--disable-webkit2");
     }
@@ -2443,13 +2446,13 @@ EOF
 
 sub buildGtkProject
 {
-    my ($project, $clean, $prefix, $makeArgs, $noWebKit2, @features) = @_;
+    my ($project, $clean, $prefix, $makeArgs, $noWebKit1, $noWebKit2, @features) = @_;
 
     if ($project ne "WebKit" and $project ne "JavaScriptCore" and $project ne "WTF") {
         die "Unsupported project: $project. Supported projects: WebKit, JavaScriptCore, WTF\n";
     }
 
-    return buildAutotoolsProject($project, $clean, $prefix, $makeArgs, $noWebKit2, @features);
+    return buildAutotoolsProject($project, $clean, $prefix, $makeArgs, $noWebKit1, $noWebKit2, @features);
 }
 
 sub buildChromiumMakefile($$@)

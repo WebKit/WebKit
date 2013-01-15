@@ -356,10 +356,12 @@ distclean-local:
 dist-hook: doc-dist-hook
 doc-dist-hook: docs-build.stamp
 	cp $(WebKit)/NEWS $(distdir)
+if ENABLE_WEBKIT1
 	@mkdir -p $(distdir)/Documentation/webkitgtk/html
 	@mkdir -p $(distdir)/Documentation/webkitgtk/tmpl
 	@-cp ./Documentation/webkitgtk/tmpl/*.sgml $(distdir)/Documentation/webkitgtk/tmpl
 	@cp ./Documentation/webkitgtk/html/* $(distdir)/Documentation/webkitgtk/html
+endif
 if ENABLE_WEBKIT2
 	@mkdir -p $(distdir)/Documentation/webkit2gtk/html
 	@mkdir -p $(distdir)/Documentation/webkit2gtk/tmpl
