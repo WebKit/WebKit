@@ -2839,8 +2839,11 @@ ScrollableArea* FrameView::enclosingScrollableArea() const
 
 IntRect FrameView::scrollableAreaBoundingBox() const
 {
-    // FIXME: This isn't correct for transformed frames. We probably need to ask the renderer instead.
-    return frameRect();
+    RenderPart* ownerRenderer = frame()->ownerRenderer();
+    if (!ownerRenderer)
+        return frameRect();
+
+    return ownerRenderer->absoluteContentQuad().enclosingBoundingBox();
 }
 
 bool FrameView::isScrollable()
