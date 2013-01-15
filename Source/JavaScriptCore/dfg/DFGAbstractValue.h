@@ -193,6 +193,9 @@ struct AbstractValue {
     
     bool merge(const AbstractValue& other)
     {
+        if (other.isClear())
+            return false;
+        
 #if !ASSERT_DISABLED
         AbstractValue oldMe = *this;
 #endif

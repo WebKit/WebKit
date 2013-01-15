@@ -1,5 +1,30 @@
 2013-01-11  Filip Pizlo  <fpizlo@apple.com>
 
+        DFG should not forget that it had proved something to be a constant during a merge just because it's merging against the empty value
+        https://bugs.webkit.org/show_bug.cgi?id=106727
+
+        Reviewed by Oliver Hunt.
+        
+        The problem was this statement:
+        
+        if (m_value != other.m_value)
+            m_value = JSValue();
+        
+        This is well-intentioned, in the sense that if we want our abstract value (i.e. this) to become the superset of the other
+        abstract value, and the two abstract values have proven different constants, then our abstract value should rescind its
+        claim that it has been proven to be constant. But this misses the special case that if the other abstract value is
+        completely clear (meaning that it wishes to contribute zero information and so the superset operation shouldn't change
+        this), it will have a clear m_value. So, the code prior to this patch would rescind the constant proof even though it
+        didn't have to.
+        
+        This comes up rarely and I don't believe it will be a performance win, but it is good to have the CFA been consistently
+        precise as often as possible.
+
+        * dfg/DFGAbstractValue.h:
+        (JSC::DFG::AbstractValue::merge):
+
+2013-01-11  Filip Pizlo  <fpizlo@apple.com>
+
         Python implementation reports "MemoryError" instead of doing things
         https://bugs.webkit.org/show_bug.cgi?id=106690
 
