@@ -9,5 +9,5 @@ SOURCE_DIR = $${ROOT_WEBKIT_DIR}/Source/ThirdParty/ANGLE
 
 INCLUDEPATH += \
     $$SOURCE_DIR/include/GLSLANG \
-    $$SOURCE_DIR/include
+    $$SOURCE_DIR/include/KHR
 
