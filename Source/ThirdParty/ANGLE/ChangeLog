@@ -1,5 +1,13 @@
 2013-01-15  David Kilzer  <ddkilzer@apple.com>
 
+        BUILD FIX: Add SUPPORTED_PLATFORMS to Base.xcconfig
+
+        * Configurations/Base.xcconfig: Add SUPPORTED_PLATFORMS so that
+        Xcode knows we can build this project for all three platforms.
+        Previously the Mac OS X SDKs were missing in the scheme picker.
+
+2013-01-15  David Kilzer  <ddkilzer@apple.com>
+
         Upstream iOS changes for ANGLE project
         <http://webkit.org/b/106913>
 
