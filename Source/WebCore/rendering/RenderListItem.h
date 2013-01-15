@@ -65,7 +65,6 @@ private:
     virtual void paint(PaintInfo&, const LayoutPoint&);
 
     virtual void layout();
-    virtual void computePreferredLogicalWidths();
 
     void positionListMarker();
 

@@ -274,15 +274,6 @@ void RenderListItem::updateMarkerLocation()
     }
 }
 
-void RenderListItem::computePreferredLogicalWidths()
-{
-    ASSERT(preferredLogicalWidthsDirty());
-    
-    updateMarkerLocation();
-
-    RenderBlock::computePreferredLogicalWidths();
-}
-
 void RenderListItem::layout()
 {
     StackStats::LayoutCheckPoint layoutCheckPoint;
