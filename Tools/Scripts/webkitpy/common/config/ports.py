@@ -123,7 +123,7 @@ class MacPort(DeprecatedPort):
 
 
 class MacWK2Port(DeprecatedPort):
-    port_flag_name = "mac"
+    port_flag_name = "mac-wk2"
 
     def run_webkit_tests_command(self):
         command = super(MacWK2Port, self).run_webkit_tests_command()

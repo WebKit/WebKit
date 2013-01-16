@@ -1,3 +1,10 @@
+2013-01-15  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Build fix after r139357. The port name of MacWK2EWS should be 'mac-wk2'.
+
+        * Scripts/webkitpy/common/config/ports.py:
+        (MacWK2Port):
+
 2013-01-15  Alan Cutter  <alancutter@chromium.org>
 
         Extend sheriffbot's "help" command to be able to get help on individual commands
