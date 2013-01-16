@@ -1,3 +1,31 @@
+2013-01-16  Mark Pilgrim  <pilgrim@chromium.org>
+
+        [Chromium] Move WebArrayBufferView and WebSerializedScriptValue out of public/platform/
+        https://bugs.webkit.org/show_bug.cgi?id=106863
+
+        Reviewed by Adam Barth.
+
+        These are not being moved into the new top-level Platform
+        directory, so into public they go.
+
+        * WebKit.gyp:
+        * public/WebArrayBufferView.h: Added.
+        (v8):
+        (WebKit):
+        (WebArrayBufferView):
+        (WebKit::WebArrayBufferView::~WebArrayBufferView):
+        (WebKit::WebArrayBufferView::WebArrayBufferView):
+        * public/WebSerializedScriptValue.h: Added.
+        (v8):
+        (WebKit):
+        (WebSerializedScriptValue):
+        (WebKit::WebSerializedScriptValue::~WebSerializedScriptValue):
+        (WebKit::WebSerializedScriptValue::WebSerializedScriptValue):
+        (WebKit::WebSerializedScriptValue::operator=):
+        (WebKit::WebSerializedScriptValue::isNull):
+        * public/platform/WebArrayBufferView.h:
+        * public/platform/WebSerializedScriptValue.h:
+
 2013-01-16  Chris Hopman  <cjhopman@chromium.org>
 
         [Chromium] Remove hardcoded chromium_*.jar in gyp files

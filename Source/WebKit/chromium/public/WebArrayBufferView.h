@@ -26,4 +26,51 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "../WebArrayBufferView.h"
+#ifndef WebArrayBufferView_h
+#define WebArrayBufferView_h
+
+#include "platform/WebCommon.h"
+#include "platform/WebPrivatePtr.h"
+
+#if WEBKIT_USING_V8
+namespace v8 {
+class Value;
+template <class T> class Handle;
+}
+#endif
+
+namespace WTF { class ArrayBufferView; }
+
+namespace WebKit {
+
+// Provides access to an ArrayBufferView.
+class WebArrayBufferView {
+public:
+    ~WebArrayBufferView() { reset(); }
+    WebArrayBufferView() { }
+    WebArrayBufferView(const WebArrayBufferView& v) { assign(v); }
+
+    WEBKIT_EXPORT void* baseAddress() const;
+    WEBKIT_EXPORT unsigned byteOffset() const;
+    WEBKIT_EXPORT unsigned byteLength() const;
+
+    WEBKIT_EXPORT void assign(const WebArrayBufferView&);
+    WEBKIT_EXPORT void reset();
+
+#if WEBKIT_USING_V8
+    WEBKIT_EXPORT static WebArrayBufferView* createFromV8Value(v8::Handle<v8::Value>);
+#endif
+
+#if WEBKIT_IMPLEMENTATION
+    WebArrayBufferView(const WTF::PassRefPtr<WTF::ArrayBufferView>&);
+    WebArrayBufferView& operator=(const WTF::PassRefPtr<WTF::ArrayBufferView>&);
+    operator WTF::PassRefPtr<WTF::ArrayBufferView>() const;
+#endif
+
+private:
+    WebPrivatePtr<WTF::ArrayBufferView> m_private;
+};
+
+} // namespace WebKit
+
+#endif
