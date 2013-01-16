@@ -37,6 +37,7 @@
 #include <string>
 
 namespace WebKit {
+class WebDeviceOrientation;
 class WebGamepads;
 class WebIntentRequest;
 struct WebContextMenuData;
@@ -92,6 +93,7 @@ public:
     virtual void setAcceptAllCookies(bool) { }
     virtual std::string pathToLocalResource(const std::string& resource) { return std::string(); }
     virtual void setLocale(const std::string&) { }
+    virtual void setDeviceOrientation(WebKit::WebDeviceOrientation&) { }
 };
 
 }

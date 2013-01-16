@@ -160,6 +160,7 @@ class WebViewHost : public WebKit::WebViewClient, public WebKit::WebFrameClient,
     virtual void setAcceptAllCookies(bool) OVERRIDE;
     virtual std::string pathToLocalResource(const std::string& url) OVERRIDE;
     virtual void setLocale(const std::string&) OVERRIDE;
+    virtual void setDeviceOrientation(WebKit::WebDeviceOrientation&) OVERRIDE;
 
     // NavigationHost
     virtual bool navigate(const TestNavigationEntry&, bool reload);

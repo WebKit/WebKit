@@ -34,6 +34,7 @@
 
 #include "WebAnimationController.h"
 #include "WebBindings.h"
+#include "WebDeviceOrientation.h"
 #include "WebDocument.h"
 #include "WebElement.h"
 #include "WebFindOptions.h"
@@ -144,6 +145,7 @@ TestRunner::TestRunner()
     bindMethod("enableAutoResizeMode", &TestRunner::enableAutoResizeMode);
     bindMethod("setSmartInsertDeleteEnabled", &TestRunner::setSmartInsertDeleteEnabled);
     bindMethod("setSelectTrailingWhitespaceEnabled", &TestRunner::setSelectTrailingWhitespaceEnabled);
+    bindMethod("setMockDeviceOrientation", &TestRunner::setMockDeviceOrientation);
 
     // The following modify WebPreferences.
     bindMethod("setUserStyleSheetEnabled", &TestRunner::setUserStyleSheetEnabled);
@@ -1104,6 +1106,27 @@ void TestRunner::disableAutoResizeMode(const CppArgumentList& arguments, CppVari
     m_webView->disableAutoResizeMode();
     m_webView->resize(newSize);
     result->set(true);
+}
+
+void TestRunner::setMockDeviceOrientation(const CppArgumentList& arguments, CppVariant* result)
+{
+    result->setNull();
+    if (arguments.size() < 6 || !arguments[0].isBool() || !arguments[1].isNumber() || !arguments[2].isBool() || !arguments[3].isNumber() || !arguments[4].isBool() || !arguments[5].isNumber())
+        return;
+
+    WebDeviceOrientation orientation;
+    orientation.setNull(false);
+    if (arguments[0].toBoolean())
+        orientation.setAlpha(arguments[1].toDouble());
+    if (arguments[2].toBoolean())
+        orientation.setBeta(arguments[3].toDouble());
+    if (arguments[4].toBoolean())
+        orientation.setGamma(arguments[5].toDouble());
+
+    // Note that we only call setOrientation on the main page's mock since this is all that the
+    // tests require. If necessary, we could get a list of WebViewHosts from the TestShell and
+    // call setOrientation on each DeviceOrientationClientMock.
+    m_delegate->setDeviceOrientation(orientation);
 }
 
 void TestRunner::setUserStyleSheetEnabled(const CppArgumentList& arguments, CppVariant* result)

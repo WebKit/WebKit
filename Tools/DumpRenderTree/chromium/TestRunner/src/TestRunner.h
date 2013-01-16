@@ -190,6 +190,9 @@ private:
     void enableAutoResizeMode(const CppArgumentList&, CppVariant*);
     void disableAutoResizeMode(const CppArgumentList&, CppVariant*);
 
+    // DeviceOrientation related functions
+    void setMockDeviceOrientation(const CppArgumentList&, CppVariant*);
+
     ///////////////////////////////////////////////////////////////////////////
     // Methods modifying WebPreferences.
 

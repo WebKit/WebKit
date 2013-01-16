@@ -1135,6 +1135,11 @@ void WebViewHost::setLocale(const std::string& locale)
     setlocale(LC_ALL, locale.c_str());
 }
 
+void WebViewHost::setDeviceOrientation(WebKit::WebDeviceOrientation& orientation)
+{
+    deviceOrientationClientMock()->setOrientation(orientation);
+}
+
 // Public functions -----------------------------------------------------------
 
 WebViewHost::WebViewHost(TestShell* shell)

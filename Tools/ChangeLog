@@ -1,3 +1,28 @@
+2013-01-16  Dan Carney  <dcarney@google.com>
+
+        [chromium] move setMockDeviceOrientation to TestRunner library
+        https://bugs.webkit.org/show_bug.cgi?id=106895
+
+        Reviewed by Jochen Eisinger.
+
+        * DumpRenderTree/chromium/DRTTestRunner.cpp:
+        (DRTTestRunner::DRTTestRunner):
+        * DumpRenderTree/chromium/DRTTestRunner.h:
+        (DRTTestRunner):
+        * DumpRenderTree/chromium/TestRunner/public/WebTestDelegate.h:
+        (WebKit):
+        (WebTestRunner::WebTestDelegate::setDeviceOrientation):
+        * DumpRenderTree/chromium/TestRunner/src/TestRunner.cpp:
+        (WebTestRunner::TestRunner::TestRunner):
+        (WebTestRunner::TestRunner::setMockDeviceOrientation):
+        (WebTestRunner):
+        * DumpRenderTree/chromium/TestRunner/src/TestRunner.h:
+        (TestRunner):
+        * DumpRenderTree/chromium/WebViewHost.cpp:
+        (WebViewHost::setDeviceOrientation):
+        * DumpRenderTree/chromium/WebViewHost.h:
+        (WebViewHost):
+
 2013-01-16  Jochen Eisinger  <jochen@chromium.org>
 
         [chromium] route more webkit_support and webviewhost callbacks through WebTestDelegate

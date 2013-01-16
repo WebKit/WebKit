@@ -41,8 +41,6 @@
 #include "WebAnimationController.h"
 #include "WebBindings.h"
 #include "WebConsoleMessage.h"
-#include "WebDeviceOrientation.h"
-#include "WebDeviceOrientationClientMock.h"
 #include "WebDocument.h"
 #include "WebElement.h"
 #include "WebFindOptions.h"
@@ -125,7 +123,6 @@ DRTTestRunner::DRTTestRunner(TestShell* shell)
     bindMethod("setCloseRemainingWindowsWhenComplete", &DRTTestRunner::setCloseRemainingWindowsWhenComplete);
     bindMethod("setCustomPolicyDelegate", &DRTTestRunner::setCustomPolicyDelegate);
     bindMethod("setGeolocationPermission", &DRTTestRunner::setGeolocationPermission);
-    bindMethod("setMockDeviceOrientation", &DRTTestRunner::setMockDeviceOrientation);
     bindMethod("setMockGeolocationPositionUnavailableError", &DRTTestRunner::setMockGeolocationPositionUnavailableError);
     bindMethod("setMockGeolocationPosition", &DRTTestRunner::setMockGeolocationPosition);
 #if ENABLE(POINTER_LOCK)
@@ -523,27 +520,6 @@ void DRTTestRunner::numberOfPendingGeolocationPermissionRequests(const CppArgume
     for (size_t i = 0; i < windowList.size(); i++)
         numberOfRequests += windowList[i]->geolocationClientMock()->numberOfPendingPermissionRequests();
     result->set(numberOfRequests);
-}
-
-void DRTTestRunner::setMockDeviceOrientation(const CppArgumentList& arguments, CppVariant* result)
-{
-    result->setNull();
-    if (arguments.size() < 6 || !arguments[0].isBool() || !arguments[1].isNumber() || !arguments[2].isBool() || !arguments[3].isNumber() || !arguments[4].isBool() || !arguments[5].isNumber())
-        return;
-
-    WebDeviceOrientation orientation;
-    orientation.setNull(false);
-    if (arguments[0].toBoolean())
-        orientation.setAlpha(arguments[1].toDouble());
-    if (arguments[2].toBoolean())
-        orientation.setBeta(arguments[3].toDouble());
-    if (arguments[4].toBoolean())
-        orientation.setGamma(arguments[5].toDouble());
-
-    // Note that we only call setOrientation on the main page's mock since this is all that the
-    // tests require. If necessary, we could get a list of WebViewHosts from the TestShell and
-    // call setOrientation on each DeviceOrientationClientMock.
-    m_shell->webViewHost()->deviceOrientationClientMock()->setOrientation(orientation);
 }
 
 // FIXME: For greater test flexibility, we should be able to set each page's geolocation mock individually.

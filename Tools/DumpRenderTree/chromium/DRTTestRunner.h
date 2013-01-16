@@ -124,9 +124,6 @@ public:
     // Gets the number of geolocation permissions requests pending.
     void numberOfPendingGeolocationPermissionRequests(const CppArgumentList&, CppVariant*);
 
-    // DeviceOrientation related functions
-    void setMockDeviceOrientation(const CppArgumentList&, CppVariant*);
-
     // Geolocation related functions.
     void setGeolocationPermission(const CppArgumentList&, CppVariant*);
     void setMockGeolocationPosition(const CppArgumentList&, CppVariant*);
