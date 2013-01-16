@@ -34,6 +34,7 @@
 
 #include "CppBoundClass.h"
 #include "WebDeliveredIntentClient.h"
+#include "WebTask.h"
 #include "WebTestRunner.h"
 #include "platform/WebArrayBufferView.h"
 #include "platform/WebURL.h"
@@ -58,6 +59,8 @@ public:
     void setWebView(WebKit::WebView* webView) { m_webView = webView; }
 
     void reset();
+
+    WebTaskList* taskList() { return &m_taskList; }
 
     // WebTestRunner implementation.
     virtual void setTestIsRunning(bool) OVERRIDE;
@@ -337,11 +340,27 @@ private:
     // Sets the default quota for all origins
     void setDatabaseQuota(const CppArgumentList&, CppVariant*);
 
+    // Changes the cookie policy from the default to allow all cookies.
+    void setAlwaysAcceptCookies(const CppArgumentList&, CppVariant*);
+
+    // Gives focus to the window.
+    void setWindowIsKey(const CppArgumentList&, CppVariant*);
+
+    // Converts a URL starting with file:///tmp/ to the local mapping.
+    void pathToLocalResource(const CppArgumentList&, CppVariant*);
+
+    // Used to set the device scale factor.
+    void setBackingScaleFactor(const CppArgumentList&, CppVariant*);
+
+    // Calls setlocale(LC_ALL, ...) for a specified locale.
+    // Resets between tests.
+    void setPOSIXLocale(const CppArgumentList&, CppVariant*);
+
     ///////////////////////////////////////////////////////////////////////////
     // Properties
     void workerThreadCount(CppVariant*);
 
-    ///////////////////////////////////////////////////////////////////////////
+    //////////////////////////////////////////////////////////////////////////
     // Fallback and stub methods
 
     // The fallback method is called when a nonexistent method is called on
@@ -465,6 +484,9 @@ private:
 
     // WAV audio data is stored here.
     WebKit::WebArrayBufferView m_audioData;
+
+    // Used for test timeouts.
+    WebTaskList m_taskList;
 
     WebTestDelegate* m_delegate;
     WebKit::WebView* m_webView;
