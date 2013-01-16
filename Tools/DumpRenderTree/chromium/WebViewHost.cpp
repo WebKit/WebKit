@@ -70,8 +70,6 @@
 #include "skia/ext/platform_canvas.h"
 #include "webkit/support/test_media_stream_client.h"
 #include "webkit/support/webkit_support.h"
-#include <cctype>
-#include <clocale>
 #include <public/WebCString.h>
 #include <public/WebCompositorOutputSurface.h>
 #include <public/WebCompositorSupport.h>
@@ -1081,60 +1079,6 @@ void WebViewHost::setDatabaseQuota(int quota)
     webkit_support::SetDatabaseQuota(quota);
 }
 
-void WebViewHost::setDeviceScaleFactor(float deviceScaleFactor)
-{
-    webView()->setDeviceScaleFactor(deviceScaleFactor);
-    discardBackingStore();
-}
-
-void WebViewHost::setFocus(bool focused)
-{
-    m_shell->setFocus(m_shell->webView(), focused);
-}
-
-void WebViewHost::setAcceptAllCookies(bool acceptCookies)
-{
-    webkit_support::SetAcceptAllCookies(acceptCookies);
-}
-
-string WebViewHost::pathToLocalResource(const string& url)
-{
-#if OS(WINDOWS)
-    if (!url.find("/tmp/")) {
-        // We want a temp file.
-        const unsigned tempPrefixLength = 5;
-        size_t bufferSize = MAX_PATH;
-        OwnArrayPtr<WCHAR> tempPath = adoptArrayPtr(new WCHAR[bufferSize]);
-        DWORD tempLength = ::GetTempPathW(bufferSize, tempPath.get());
-        if (tempLength + url.length() - tempPrefixLength + 1 > bufferSize) {
-            bufferSize = tempLength + url.length() - tempPrefixLength + 1;
-            tempPath = adoptArrayPtr(new WCHAR[bufferSize]);
-            tempLength = GetTempPathW(bufferSize, tempPath.get());
-            ASSERT(tempLength < bufferSize);
-        }
-        string resultPath(WebString(tempPath.get(), tempLength).utf8());
-        resultPath.append(url.substr(tempPrefixLength));
-        return resultPath;
-    }
-#endif
-
-    // Some layout tests use file://// which we resolve as a UNC path. Normalize
-    // them to just file:///.
-    string lowerUrl = url;
-    string result = url;
-    transform(lowerUrl.begin(), lowerUrl.end(), lowerUrl.begin(), ::tolower);
-    while (!lowerUrl.find("file:////")) {
-        result = result.substr(0, 8) + result.substr(9);
-        lowerUrl = lowerUrl.substr(0, 8) + lowerUrl.substr(9);
-    }
-    return webkit_support::RewriteLayoutTestsURL(result).spec();
-}
-
-void WebViewHost::setLocale(const std::string& locale)
-{
-    setlocale(LC_ALL, locale.c_str());
-}
-
 // Public functions -----------------------------------------------------------
 
 WebViewHost::WebViewHost(TestShell* shell)
@@ -1456,6 +1400,12 @@ void WebViewHost::printFrameDescription(WebFrame* webframe)
 void WebViewHost::setPendingExtraData(PassOwnPtr<TestShellExtraData> extraData)
 {
     m_pendingExtraData = extraData;
+}
+
+void WebViewHost::setDeviceScaleFactor(float deviceScaleFactor)
+{
+    webView()->setDeviceScaleFactor(deviceScaleFactor);
+    discardBackingStore();
 }
 
 void WebViewHost::setPageTitle(const WebString&)

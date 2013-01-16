@@ -1,3 +1,40 @@
+2013-01-15  Levi Weintraub  <leviw@chromium.org>
+
+        Unreviewed, rolling out r139792.
+        http://trac.webkit.org/changeset/139792
+        https://bugs.webkit.org/show_bug.cgi?id=106970
+
+        Broke the windows build.
+
+        * DumpRenderTree/chromium/DRTTestRunner.cpp:
+        (DRTTestRunner::DRTTestRunner):
+        (DRTTestRunner::notifyDone):
+        (DRTTestRunner::reset):
+        (DRTTestRunner::setAlwaysAcceptCookies):
+        (DRTTestRunner::setWindowIsKey):
+        (DRTTestRunner::pathToLocalResource):
+        (DRTTestRunner::setPOSIXLocale):
+        (InvokeCallbackTask):
+        (InvokeCallbackTask::InvokeCallbackTask):
+        (InvokeCallbackTask::runIfValid):
+        (DRTTestRunner::setBackingScaleFactor):
+        * DumpRenderTree/chromium/DRTTestRunner.h:
+        (DRTTestRunner):
+        (DRTTestRunner::taskList):
+        * DumpRenderTree/chromium/TestRunner/public/WebTestDelegate.h:
+        (WebTestRunner::WebTestDelegate::setDatabaseQuota):
+        * DumpRenderTree/chromium/TestRunner/src/TestRunner.cpp:
+        (WebTestRunner::TestRunner::TestRunner):
+        (WebTestRunner::TestRunner::reset):
+        (WebTestRunner::TestRunner::setDatabaseQuota):
+        * DumpRenderTree/chromium/TestRunner/src/TestRunner.h:
+        (TestRunner):
+        * DumpRenderTree/chromium/WebViewHost.cpp:
+        (WebViewHost::setPendingExtraData):
+        (WebViewHost::setDeviceScaleFactor):
+        * DumpRenderTree/chromium/WebViewHost.h:
+        (WebViewHost):
+
 2013-01-15  Ryosuke Niwa  <rniwa@webkit.org>
 
         Build fix after r139357. The port name of MacWK2EWS should be 'mac-wk2'.

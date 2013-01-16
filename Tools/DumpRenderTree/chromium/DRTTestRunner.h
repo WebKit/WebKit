@@ -94,6 +94,12 @@ public:
     void queueLoad(const CppArgumentList&, CppVariant*);
     void queueLoadHTMLString(const CppArgumentList&, CppVariant*);
 
+    // Changes the cookie policy from the default to allow all cookies.
+    void setAlwaysAcceptCookies(const CppArgumentList&, CppVariant*);
+
+    // Gives focus to the window.
+    void setWindowIsKey(const CppArgumentList&, CppVariant*);
+
 
     // Causes navigation actions just printout the intended navigation instead
     // of taking you to the page. This is used for cases like mailto, where you
@@ -112,6 +118,9 @@ public:
     // Causes WillSendRequest to return an empty request.
     void setWillSendRequestReturnsNull(const CppArgumentList&, CppVariant*);
 
+    // Converts a URL starting with file:///tmp/ to the local mapping.
+    void pathToLocalResource(const CppArgumentList&, CppVariant*);
+
 #if ENABLE(NOTIFICATIONS)
     // Grants permission for desktop notifications to an origin
     void grantWebNotificationPermission(const CppArgumentList&, CppVariant*);
@@ -121,6 +130,10 @@ public:
 
     void display(const CppArgumentList&, CppVariant*);
     void displayInvalidatedRegion(const CppArgumentList&, CppVariant*);
+
+    // Calls setlocale(LC_ALL, ...) for a specified locale.
+    // Resets between tests.
+    void setPOSIXLocale(const CppArgumentList&, CppVariant*);
 
     // Gets the number of geolocation permissions requests pending.
     void numberOfPendingGeolocationPermissionRequests(const CppArgumentList&, CppVariant*);
@@ -151,6 +164,9 @@ public:
     void setPointerLockWillFailSynchronously(const CppArgumentList&, CppVariant*);
     void setPointerLockWillRespondAsynchronously(const CppArgumentList&, CppVariant*);
 #endif
+
+    // Used to set the device scale factor.
+    void setBackingScaleFactor(const CppArgumentList&, CppVariant*);
 
 public:
     // The following methods are not exposed to JavaScript.
@@ -186,6 +202,8 @@ public:
         // Returns true if this started a load.
         virtual bool run(TestShell*) = 0;
     };
+
+    WebTaskList* taskList() { return &m_taskList; }
 
 private:
     friend class WorkItem;
@@ -227,6 +245,9 @@ private:
         NotifyDoneTimedOutTask(DRTTestRunner* object): WebMethodTask<DRTTestRunner>(object) { }
         virtual void runIfValid() { m_object->completeNotifyDone(true); }
     };
+
+    // Used for test timeouts.
+    WebTaskList m_taskList;
 
     // Non-owning pointer. The DRTTestRunner is owned by the host.
     TestShell* m_shell;

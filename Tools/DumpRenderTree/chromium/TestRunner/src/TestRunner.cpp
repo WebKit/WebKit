@@ -47,14 +47,12 @@
 #include "WebSecurityPolicy.h"
 #include "WebSettings.h"
 #include "WebSurroundingText.h"
-#include "WebTask.h"
 #include "WebTestDelegate.h"
 #include "WebView.h"
 #include "WebWorkerInfo.h"
 #include "platform/WebPoint.h"
 #include "platform/WebSerializedScriptValue.h"
 #include "v8/include/v8.h"
-#include <wtf/OwnArrayPtr.h>
 #include <wtf/text/WTFString.h>
 
 #if OS(LINUX) || OS(ANDROID)
@@ -76,26 +74,6 @@ public:
     virtual void postResult(const WebSerializedScriptValue& data) const { }
     virtual void postFailure(const WebSerializedScriptValue& data) const { }
     virtual void destroy() { }
-};
-
-class InvokeCallbackTask : public WebMethodTask<TestRunner> {
-public:
-    InvokeCallbackTask(TestRunner* object, PassOwnArrayPtr<CppVariant> callbackArguments, uint32_t numberOfArguments)
-        : WebMethodTask<TestRunner>(object)
-        , m_callbackArguments(callbackArguments)
-        , m_numberOfArguments(numberOfArguments)
-    {
-    }
-
-    virtual void runIfValid()
-    {
-        CppVariant invokeResult;
-        m_callbackArguments[0].invokeDefault(m_callbackArguments.get(), m_numberOfArguments, invokeResult);
-    }
-
-private:
-    OwnArrayPtr<CppVariant> m_callbackArguments;
-    uint32_t m_numberOfArguments;
 };
 
 }
@@ -202,11 +180,6 @@ TestRunner::TestRunner()
     bindMethod("evaluateInWebInspector", &TestRunner::evaluateInWebInspector);
     bindMethod("clearAllDatabases", &TestRunner::clearAllDatabases);
     bindMethod("setDatabaseQuota", &TestRunner::setDatabaseQuota);
-    bindMethod("setAlwaysAcceptCookies", &TestRunner::setAlwaysAcceptCookies);
-    bindMethod("setWindowIsKey", &TestRunner::setWindowIsKey);
-    bindMethod("pathToLocalResource", &TestRunner::pathToLocalResource);
-    bindMethod("setBackingScaleFactor", &TestRunner::setBackingScaleFactor);
-    bindMethod("setPOSIXLocale", &TestRunner::setPOSIXLocale);
 
     // Properties.
     bindProperty("workerThreadCount", &TestRunner::workerThreadCount);
@@ -275,9 +248,6 @@ void TestRunner::reset()
 
     // Reset the default quota for each origin to 5MB
     m_delegate->setDatabaseQuota(5 * 1024 * 1024);
-    m_delegate->setDeviceScaleFactor(1);
-    m_delegate->setAcceptAllCookies(false);
-    m_delegate->setLocale("");
 
     m_dumpEditingCallbacks = false;
     m_dumpAsText = false;
@@ -310,8 +280,6 @@ void TestRunner::reset()
     m_userStyleSheetLocation = WebURL();
 
     m_webPermissions->reset();
-
-    m_taskList.revokeAll();
 }
 
 void TestRunner::setTestIsRunning(bool running)
@@ -1343,50 +1311,6 @@ void TestRunner::setDatabaseQuota(const CppArgumentList& arguments, CppVariant* 
     result->setNull();
     if ((arguments.size() >= 1) && arguments[0].isNumber())
         m_delegate->setDatabaseQuota(arguments[0].toInt32());
-}
-
-void TestRunner::setAlwaysAcceptCookies(const CppArgumentList& arguments, CppVariant* result)
-{
-    if (arguments.size() > 0)
-        m_delegate->setAcceptAllCookies(cppVariantToBool(arguments[0]));
-    result->setNull();
-}
-
-void TestRunner::setWindowIsKey(const CppArgumentList& arguments, CppVariant* result)
-{
-    if (arguments.size() > 0 && arguments[0].isBool())
-        m_delegate->setFocus(arguments[0].value.boolValue);
-    result->setNull();
-}
-
-void TestRunner::pathToLocalResource(const CppArgumentList& arguments, CppVariant* result)
-{
-    result->setNull();
-    if (arguments.size() <= 0 || !arguments[0].isString())
-        return;
-
-    result->set(m_delegate->pathToLocalResource(arguments[0].toString()));
-}
-
-void TestRunner::setBackingScaleFactor(const CppArgumentList& arguments, CppVariant* result)
-{
-    if (arguments.size() < 2 || !arguments[0].isNumber() || !arguments[1].isObject())
-        return;
-
-    float value = arguments[0].value.doubleValue;
-    m_delegate->setDeviceScaleFactor(value);
-
-    OwnArrayPtr<CppVariant> callbackArguments = adoptArrayPtr(new CppVariant[1]);
-    callbackArguments[0].set(arguments[1]);
-    result->setNull();
-    m_delegate->postTask(new InvokeCallbackTask(this, callbackArguments.release(), 1));
-}
-
-void TestRunner::setPOSIXLocale(const CppArgumentList& arguments, CppVariant* result)
-{
-    result->setNull();
-    if (arguments.size() == 1 && arguments[0].isString())
-        m_delegate->setLocale(arguments[0].toString());
 }
 
 void TestRunner::dumpEditingCallbacks(const CppArgumentList&, CppVariant* result)

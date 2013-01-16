@@ -96,6 +96,7 @@ class WebViewHost : public WebKit::WebViewClient, public WebKit::WebFrameClient,
     void setBlockRedirects(bool block) { m_blocksRedirects = block; }
     void setRequestReturnNull(bool returnNull) { m_requestReturnNull = returnNull; }
     void setPendingExtraData(PassOwnPtr<TestShellExtraData>);
+    void setDeviceScaleFactor(float);
 
     void paintRect(const WebKit::WebRect&);
     void paintInvalidatedRegion();
@@ -155,11 +156,6 @@ class WebViewHost : public WebKit::WebViewClient, public WebKit::WebFrameClient,
     virtual void evaluateInWebInspector(long, const std::string&) OVERRIDE;
     virtual void clearAllDatabases() OVERRIDE;
     virtual void setDatabaseQuota(int) OVERRIDE;
-    virtual void setDeviceScaleFactor(float) OVERRIDE;
-    virtual void setFocus(bool) OVERRIDE;
-    virtual void setAcceptAllCookies(bool) OVERRIDE;
-    virtual std::string pathToLocalResource(const std::string& url) OVERRIDE;
-    virtual void setLocale(const std::string&) OVERRIDE;
 
     // NavigationHost
     virtual bool navigate(const TestNavigationEntry&, bool reload);
