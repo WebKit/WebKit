@@ -36,6 +36,10 @@
 #include <wtf/PageReservation.h>
 #include <wtf/VMTags.h>
 
+#if OS(DARWIN)
+#include <sys/mman.h>
+#endif
+
 #if OS(LINUX)
 #include <stdio.h>
 #endif

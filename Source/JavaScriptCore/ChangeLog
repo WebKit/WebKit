@@ -1,3 +1,14 @@
+2013-01-16  Jonathan Liu  <net147@gmail.com>
+
+        Add missing sys/mman.h include on Mac
+        https://bugs.webkit.org/show_bug.cgi?id=98089
+
+        Reviewed by Darin Adler.
+
+        The madvise function and MADV_FREE constant require sys/mman.h.
+
+        * jit/ExecutableAllocatorFixedVMPool.cpp:
+
 2013-01-15  Michael Saboff  <msaboff@apple.com>
 
         DFG X86: division in the used-as-int case doesn't correctly check for -2^31/-1
