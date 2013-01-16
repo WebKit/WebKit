@@ -1,5 +1,21 @@
 2013-01-15  Dirk Pranke  <dpranke@chromium.org>
 
+        test-webkitpy: truncate output to the terminal width when necessary
+        https://bugs.webkit.org/show_bug.cgi?id=106973
+
+        Reviewed by Ojan Vafai.
+
+        this implements the same logic for test-webkitpy that we have
+        for run-webkit-tests (and ninja).
+
+        No tests written as this is exercised by running test-webkitpy itself.
+
+        * Scripts/webkitpy/test/printer.py:
+        (Printer.configure):
+        (Printer._test_line):
+
+2013-01-15  Dirk Pranke  <dpranke@chromium.org>
+
         remove extraneous output in test-webkitpy
         https://bugs.webkit.org/show_bug.cgi?id=106971
 

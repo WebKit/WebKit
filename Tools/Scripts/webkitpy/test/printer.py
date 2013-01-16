@@ -25,6 +25,7 @@ import logging
 import StringIO
 
 from webkitpy.common.system import outputcapture
+from webkitpy.common.system.systemhost import SystemHost
 from webkitpy.layout_tests.views.metered_stream import MeteredStream
 
 _log = logging.getLogger(__name__)
@@ -57,7 +58,8 @@ class Printer(object):
         elif options.verbose == 2:
             log_level = logging.DEBUG
 
-        self.meter = MeteredStream(self.stream, (options.verbose == 2))
+        self.meter = MeteredStream(self.stream, (options.verbose == 2),
+            number_of_columns=SystemHost().platform.terminal_width())
 
         handler = logging.StreamHandler(self.stream)
         # We constrain the level on the handler rather than on the root
@@ -159,7 +161,19 @@ class Printer(object):
         self.completed_tests = []
 
     def _test_line(self, test_name, suffix):
-        return '[%d/%d] %s%s' % (self.num_completed, self.num_tests, test_name, suffix)
+        format_string = '[%d/%d] %s%s'
+        status_line = format_string % (self.num_completed, self.num_tests, test_name, suffix)
+        if len(status_line) > self.meter.number_of_columns():
+            overflow_columns = len(status_line) - self.meter.number_of_columns()
+            ellipsis = '...'
+            if len(test_name) < overflow_columns + len(ellipsis) + 3:
+                # We don't have enough space even if we elide, just show the test method name.
+                test_name = test_name.split('.')[-1]
+            else:
+                new_length = len(test_name) - overflow_columns - len(ellipsis)
+                prefix = int(new_length / 2)
+                test_name = test_name[:prefix] + ellipsis + test_name[-(new_length - prefix):]
+        return format_string % (self.num_completed, self.num_tests, test_name, suffix)
 
     def print_result(self, run_time):
         write = self.meter.writeln
