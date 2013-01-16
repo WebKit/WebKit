@@ -1287,6 +1287,3 @@ webkit.org/b/103955 fast/repaint/japanese-rl-selection-repaint.html [ ImageOnlyF
 webkit.org/b/103955 fast/repaint/repaint-across-writing-mode-boundary.html [ ImageOnlyFailure ]
 webkit.org/b/103955 fast/repaint/selection-rl.html [ ImageOnlyFailure ]
 webkit.org/b/103955 fast/repaint/caret-with-transformation.html [ Missing ]
-
-# Needs rebaseline after https://bugs.webkit.org/show_bug.cgi?id=106822
-webkit.org/b/106822 svg/zoom/page/zoom-replaced-intrinsic-ratio-001.htm [ Failure Pass ]
