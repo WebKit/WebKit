@@ -273,19 +273,14 @@ void WebProcess::platformInitializeWebProcess(const WebProcessCreationParameters
     SandboxExtension::consumePermanently(parameters.applicationCacheDirectoryExtensionHandle);
     SandboxExtension::consumePermanently(parameters.diskCacheDirectoryExtensionHandle);
 
-#if ENABLE(NETWORK_PROCESS)
-    if (!parameters.usesNetworkProcess) {
-#endif
-        if (!parameters.diskCacheDirectory.isNull()) {
-            NSUInteger cacheMemoryCapacity = parameters.nsURLCacheMemoryCapacity;
-            NSUInteger cacheDiskCapacity = parameters.nsURLCacheDiskCapacity;
+    // FIXME (NetworkProcess): This should not be necessary once all loading is in NetworkProcess.
+    if (!parameters.diskCacheDirectory.isNull()) {
+        NSUInteger cacheMemoryCapacity = parameters.nsURLCacheMemoryCapacity;
+        NSUInteger cacheDiskCapacity = parameters.nsURLCacheDiskCapacity;
 
-            RetainPtr<NSURLCache> parentProcessURLCache(AdoptNS, [[NSURLCache alloc] initWithMemoryCapacity:cacheMemoryCapacity diskCapacity:cacheDiskCapacity diskPath:parameters.diskCacheDirectory]);
-            [NSURLCache setSharedURLCache:parentProcessURLCache.get()];
-        }
-#if ENABLE(NETWORK_PROCESS)
+        RetainPtr<NSURLCache> parentProcessURLCache(AdoptNS, [[NSURLCache alloc] initWithMemoryCapacity:cacheMemoryCapacity diskCapacity:cacheDiskCapacity diskPath:parameters.diskCacheDirectory]);
+        [NSURLCache setSharedURLCache:parentProcessURLCache.get()];
     }
-#endif
 
     m_shouldForceScreenFontSubstitution = parameters.shouldForceScreenFontSubstitution;
     Font::setDefaultTypesettingFeatures(parameters.shouldEnableKerningAndLigaturesByDefault ? Kerning | Ligatures : 0);

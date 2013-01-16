@@ -89,7 +89,6 @@
 
 ;; Writable preferences and temporary files
 (allow file*
-       (home-subpath "/Library/Caches/com.apple.WebProcess")
        (home-regex #"/Library/Preferences/ByHost/com\.apple\.HIToolbox\.")
        (home-regex #"/Library/Preferences/com\.apple\.WebProcess\.")
 
