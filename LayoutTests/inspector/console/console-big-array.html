@@ -28,6 +28,15 @@ function onload()
       d[i] = i;
     console.dir(d);
 
+    var e = [];
+    for (var i = 0; i < 10; ++i)
+        e[i] = i;
+    e[123] = 123;
+    e[-123] = -123;
+    e[4294967295] = 4294967295;
+    e[4294967296] = 4294967296;
+    console.dir(e);
+
     runTest();
 }
 

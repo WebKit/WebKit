@@ -762,7 +762,7 @@ WebInspector.ArrayGroupingTreeElement._populateNonIndexProperties = function(tre
         var names = Object.getOwnPropertyNames(this);
         for (var i = 0; i < names.length; ++i) {
             var name = names[i];
-            if (!isNaN(name))
+            if (!isNaN(name) && 0 <= name && name < this.length)
                 continue;
             var descriptor = Object.getOwnPropertyDescriptor(this, name);
             if (descriptor)
