@@ -61,18 +61,10 @@ void WebGLBuffer::deleteObjectImpl(GraphicsContext3D* context3d, Platform3DObjec
       context3d->deleteBuffer(object);
 }
 
-bool WebGLBuffer::associateBufferDataImpl(ArrayBuffer* array, GC3Dintptr byteOffset, GC3Dsizeiptr byteLength)
+bool WebGLBuffer::associateBufferDataImpl(const void* data, GC3Dsizeiptr byteLength)
 {
-    if (byteLength < 0 || byteOffset < 0)
+    if (byteLength < 0)
         return false;
-
-    if (array && byteLength) {
-        CheckedInt<GC3Dintptr> checkedOffset(byteOffset);
-        CheckedInt<GC3Dsizeiptr> checkedLength(byteLength);
-        CheckedInt<GC3Dintptr> checkedMax = checkedOffset + checkedLength;
-        if (!checkedMax.isValid() || checkedMax.value() > static_cast<int32_t>(array->byteLength()))
-            return false;
-    }
 
     switch (m_target) {
     case GraphicsContext3D::ELEMENT_ARRAY_BUFFER:
@@ -84,13 +76,11 @@ bool WebGLBuffer::associateBufferDataImpl(ArrayBuffer* array, GC3Dintptr byteOff
                 m_byteLength = 0;
                 return false;
             }
-            if (array) {
+            if (data) {
                 // We must always clone the incoming data because client-side
                 // modifications without calling bufferData or bufferSubData
                 // must never be able to change the validation results.
-                memcpy(static_cast<unsigned char*>(m_elementArrayBuffer->data()),
-                       static_cast<unsigned char*>(array->data()) + byteOffset,
-                       byteLength);
+                memcpy(m_elementArrayBuffer->data(), data, byteLength);
             }
         } else
             m_elementArrayBuffer = 0;
@@ -105,37 +95,33 @@ bool WebGLBuffer::associateBufferDataImpl(ArrayBuffer* array, GC3Dintptr byteOff
 
 bool WebGLBuffer::associateBufferData(GC3Dsizeiptr size)
 {
-    if (size < 0)
-        return false;
-    return associateBufferDataImpl(0, 0, size);
+    return associateBufferDataImpl(0, size);
 }
 
 bool WebGLBuffer::associateBufferData(ArrayBuffer* array)
 {
     if (!array)
         return false;
-    return associateBufferDataImpl(array, 0, array->byteLength());
+    return associateBufferDataImpl(array ? array->data() : 0, array ? array->byteLength() : 0);
 }
 
 bool WebGLBuffer::associateBufferData(ArrayBufferView* array)
 {
     if (!array)
         return false;
-    return associateBufferDataImpl(array->buffer().get(), array->byteOffset(), array->byteLength());
+    return associateBufferDataImpl(array ? array->baseAddress() : 0, array ? array->byteLength() : 0);
 }
 
-bool WebGLBuffer::associateBufferSubDataImpl(GC3Dintptr offset, ArrayBuffer* array, GC3Dintptr arrayByteOffset, GC3Dsizeiptr byteLength)
+bool WebGLBuffer::associateBufferSubDataImpl(GC3Dintptr offset, const void* data, GC3Dsizeiptr byteLength)
 {
-    if (!array || offset < 0 || arrayByteOffset < 0 || byteLength < 0)
+    if (!data || offset < 0 || byteLength < 0)
         return false;
 
     if (byteLength) {
         CheckedInt<GC3Dintptr> checkedBufferOffset(offset);
-        CheckedInt<GC3Dintptr> checkedArrayOffset(arrayByteOffset);
-        CheckedInt<GC3Dsizeiptr> checkedLength(byteLength);
-        CheckedInt<GC3Dintptr> checkedArrayMax = checkedArrayOffset + checkedLength;
-        CheckedInt<GC3Dintptr> checkedBufferMax = checkedBufferOffset + checkedLength;
-        if (!checkedArrayMax.isValid() || checkedArrayMax.value() > static_cast<int32_t>(array->byteLength()) || !checkedBufferMax.isValid() || checkedBufferMax.value() > m_byteLength)
+        CheckedInt<GC3Dsizeiptr> checkedDataLength(byteLength);
+        CheckedInt<GC3Dintptr> checkedBufferMax = checkedBufferOffset + checkedDataLength;
+        if (!checkedBufferMax.isValid() || offset > m_byteLength || checkedBufferMax.value() > m_byteLength)
             return false;
     }
 
@@ -145,9 +131,7 @@ bool WebGLBuffer::associateBufferSubDataImpl(GC3Dintptr offset, ArrayBuffer* arr
         if (byteLength) {
             if (!m_elementArrayBuffer)
                 return false;
-            memcpy(static_cast<unsigned char*>(m_elementArrayBuffer->data()) + offset,
-                   static_cast<unsigned char*>(array->data()) + arrayByteOffset,
-                   byteLength);
+            memcpy(static_cast<unsigned char*>(m_elementArrayBuffer->data()) + offset, data, byteLength);
         }
         return true;
     case GraphicsContext3D::ARRAY_BUFFER:
@@ -161,14 +145,14 @@ bool WebGLBuffer::associateBufferSubData(GC3Dintptr offset, ArrayBuffer* array)
 {
     if (!array)
         return false;
-    return associateBufferSubDataImpl(offset, array, 0, array->byteLength());
+    return associateBufferSubDataImpl(offset, array->data(), array->byteLength());
 }
 
 bool WebGLBuffer::associateBufferSubData(GC3Dintptr offset, ArrayBufferView* array)
 {
     if (!array)
         return false;
-    return associateBufferSubDataImpl(offset, array->buffer().get(), array->byteOffset(), array->byteLength());
+    return associateBufferSubDataImpl(offset, array->baseAddress(), array->byteLength());
 }
 
 GC3Dsizeiptr WebGLBuffer::byteLength() const
