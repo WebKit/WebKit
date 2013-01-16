@@ -187,6 +187,7 @@ void Cursor::ensurePlatformCursor() const
         break;
 
     case Cursor::WestResize:
+    case Cursor::WestPanning:
 #if __MAC_OS_X_VERSION_MIN_REQUIRED >= 1070
         m_platformCursor = wkCursor("ResizeWest");
 #else
@@ -203,7 +204,6 @@ void Cursor::ensurePlatformCursor() const
         break;
 
     case Cursor::EastWestResize:
-    case Cursor::WestPanning:
 #if __MAC_OS_X_VERSION_MIN_REQUIRED >= 1070
         m_platformCursor = wkCursor("ResizeEastWest");
 #else
