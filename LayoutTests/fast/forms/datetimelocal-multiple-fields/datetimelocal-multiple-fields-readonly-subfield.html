@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<body>
+<script src="../../js/resources/js-test-pre.js"></script>
+<script>
+function createInput(min, max, step, value) {
+    var input = document.createElement('input');
+    input.type = 'datetime-local';
+    if (min)
+        input.min = min;
+    if (max)
+        input.max = max;
+    if (step)
+        input.step = step;
+    if (value)
+        input.value = value;
+    return input;
+}
+
+function isReadOnlyField(input, pseudo) {
+    var node = internals.youngestShadowRoot(input).querySelector('*[pseudo="' + pseudo + '"]');
+    if (!node)
+        testFailed('Requested node is missing.');
+    return node && node.hasAttribute('readonly');
+}
+
+var pseudoMinute = '-webkit-datetime-edit-minute-field';
+var pseudoHour = '-webkit-datetime-edit-hour-field';
+var pseudoAMPM = '-webkit-datetime-edit-ampm-field';
+var step1day = '86400';
+
+description('Sub-fields in input[type=datetime-local] should be read-only in some cases. This requires window.internals.');
+debug('createInput argument order: min, max, step, value');
+debug('');
+
+debug('Hour field:');
+shouldBeTrue('isReadOnlyField(createInput("2013-01-16T11:00", "", step1day, ""), pseudoHour)');
+shouldBeTrue('isReadOnlyField(createInput("2013-01-16T11:00", "", step1day, ""), pseudoAMPM)');
+shouldBeTrue('isReadOnlyField(createInput("2013-01-16T11:00", "", step1day, ""), pseudoMinute)');
+
+shouldBeTrue('isReadOnlyField(createInput("2013-01-16T11:30", "", step1day, "2013-01-16T11:30"), pseudoHour)');
+shouldBeTrue('isReadOnlyField(createInput("2013-01-16T11:30", "", step1day, "2013-01-16T11:30"), pseudoAMPM)');
+shouldBeTrue('isReadOnlyField(createInput("2013-01-16T11:30", "", step1day, "2013-01-16T11:30"), pseudoMinute)');
+
+shouldBeFalse('isReadOnlyField(createInput("2013-01-16T11:30", "", step1day, "2013-01-16T12:30"), pseudoHour)');
+shouldBeFalse('isReadOnlyField(createInput("2013-01-16T11:30", "", step1day, "2013-01-16T12:30"), pseudoAMPM)');
+shouldBeTrue('isReadOnlyField(createInput("2013-01-16T11:30", "", step1day, "2013-01-16T12:30"), pseudoMinute)');
+
+shouldBeFalse('isReadOnlyField(createInput("2013-01-16T00:00", "", step1day, "2013-01-16T12:30"), pseudoHour)');
+shouldBeFalse('isReadOnlyField(createInput("2013-01-16T00:00", "", step1day, "2013-01-16T12:30"), pseudoAMPM)');
+shouldBeFalse('isReadOnlyField(createInput("2013-01-16T00:00", "", step1day, "2013-01-16T12:30"), pseudoMinute)');
+
+shouldBeFalse('isReadOnlyField(createInput("2013-01-16T11:00", "2013-01-16T23:00", step1day, ""), pseudoHour)');
+shouldBeFalse('isReadOnlyField(createInput("2013-01-16T11:00", "2013-01-16T23:00", step1day, ""), pseudoAMPM)');
+shouldBeTrue('isReadOnlyField(createInput("2013-01-16T11:00", "2013-01-16T23:00", step1day, ""), pseudoMinute)');
+
+shouldBeFalse('isReadOnlyField(createInput("2013-01-16T11:30", "2013-01-16T23:00", step1day, "2013-01-16T11:30"), pseudoHour)');
+shouldBeFalse('isReadOnlyField(createInput("2013-01-16T11:30", "2013-01-16T23:00", step1day, "2013-01-16T11:30"), pseudoAMPM)');
+shouldBeTrue('isReadOnlyField(createInput("2013-01-16T11:30", "2013-01-16T23:00", step1day, "2013-01-16T11:30"), pseudoMinute)');
+
+shouldBeFalse('isReadOnlyField(createInput("2013-01-16T11:30", "2013-01-16T11:59", step1day, "2013-01-16T11:30"), pseudoHour)');
+shouldBeFalse('isReadOnlyField(createInput("2013-01-16T11:30", "2013-01-16T11:59", step1day, "2013-01-16T11:30"), pseudoAMPM)');
+shouldBeTrue('isReadOnlyField(createInput("2013-01-16T11:30", "2013-01-16T11:59", step1day, "2013-01-16T11:30"), pseudoMinute)');
+
+</script>
+<script src="../../js/resources/js-test-post.js"></script>
+</body>
+

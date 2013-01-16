@@ -53,11 +53,11 @@ shouldBeFalse('isReadOnlyField(createTimeInput("00:30", step1hour, "00:35"), pse
 shouldBeFalse('isReadOnlyField(createTimeInput("00:00", step1hour, "00:35"), pseudoMinute)');
 
 debug('Hour field:');
-shouldBeTrue('isReadOnlyField(createTimeInput("11:00", step1day, ""), pseudoHour)');
-shouldBeTrue('isReadOnlyField(createTimeInput("11:00", step1day, ""), pseudoAMPM)');
+shouldBeFalse('isReadOnlyField(createTimeInput("11:00", step1day, ""), pseudoHour)');
+shouldBeFalse('isReadOnlyField(createTimeInput("11:00", step1day, ""), pseudoAMPM)');
 shouldBeTrue('isReadOnlyField(createTimeInput("11:00", step1day, ""), pseudoMinute)');
-shouldBeTrue('isReadOnlyField(createTimeInput("11:30", step1day, "11:30"), pseudoHour)');
-shouldBeTrue('isReadOnlyField(createTimeInput("11:30", step1day, "11:30"), pseudoAMPM)');
+shouldBeFalse('isReadOnlyField(createTimeInput("11:30", step1day, "11:30"), pseudoHour)');
+shouldBeFalse('isReadOnlyField(createTimeInput("11:30", step1day, "11:30"), pseudoAMPM)');
 shouldBeTrue('isReadOnlyField(createTimeInput("11:30", step1day, "11:30"), pseudoMinute)');
 shouldBeFalse('isReadOnlyField(createTimeInput("11:30", step1day, "12:30"), pseudoHour)');
 shouldBeFalse('isReadOnlyField(createTimeInput("11:30", step1day, "12:30"), pseudoAMPM)');

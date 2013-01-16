@@ -59,7 +59,9 @@ public:
     bool build(const String&);
 
 private:
+    void getRangeOfDayOfMonthField(int& minDay, int& maxDay) const;
     bool needMillisecondField() const;
+    bool shouldDayOfMonthFieldReadOnly(int minDay, int maxDay) const;
     bool shouldHourFieldReadOnly() const;
     bool shouldMillisecondFieldReadOnly() const;
     bool shouldMinuteFieldReadOnly() const;
@@ -90,6 +92,20 @@ bool DateTimeEditBuilder::build(const String& formatString)
     return DateTimeFormat::parse(formatString, *this);
 }
 
+void DateTimeEditBuilder::getRangeOfDayOfMonthField(int& minDay, int& maxDay) const
+{
+    minDay = 1;
+    maxDay = 31;
+    if (m_parameters.minimum.type() != DateComponents::Invalid
+        && m_parameters.maximum.type() != DateComponents::Invalid
+        && m_parameters.minimum.fullYear() == m_parameters.maximum.fullYear()
+        && m_parameters.minimum.month() == m_parameters.maximum.month()
+        && m_parameters.minimum.monthDay() <= m_parameters.maximum.monthDay()) {
+        minDay = m_parameters.minimum.monthDay();
+        maxDay = m_parameters.maximum.monthDay();
+    }
+}
+
 bool DateTimeEditBuilder::needMillisecondField() const
 {
     return m_dateValue.millisecond()
@@ -106,18 +122,11 @@ void DateTimeEditBuilder::visitField(DateTimeFormat::FieldType fieldType, int co
 
     switch (fieldType) {
     case DateTimeFormat::FieldTypeDayOfMonth: {
-        int minDay = 1, maxDay = 31;
-        if (m_parameters.minimum.type() != DateComponents::Invalid
-            && m_parameters.maximum.type() != DateComponents::Invalid
-            && m_parameters.minimum.fullYear() == m_parameters.maximum.fullYear()
-            && m_parameters.minimum.month() == m_parameters.maximum.month()
-            && m_parameters.minimum.monthDay() <= m_parameters.maximum.monthDay()) {
-            minDay = m_parameters.minimum.monthDay();
-            maxDay = m_parameters.maximum.monthDay();
-        }
+        int minDay, maxDay;
+        getRangeOfDayOfMonthField(minDay, maxDay);
         RefPtr<DateTimeFieldElement> field = DateTimeDayFieldElement::create(document, m_editElement, m_parameters.placeholderForDay, minDay, maxDay);
         m_editElement.addField(field);
-        if (minDay == maxDay && minDay == m_dateValue.monthDay() && m_dateValue.type() != DateComponents::Date) {
+        if (shouldDayOfMonthFieldReadOnly(minDay, maxDay)) {
             field->setValueAsDate(m_dateValue);
             field->setReadOnly();
         }
@@ -296,8 +305,24 @@ void DateTimeEditBuilder::visitField(DateTimeFormat::FieldType fieldType, int co
     }
 }
 
+bool DateTimeEditBuilder::shouldDayOfMonthFieldReadOnly(int minDay, int maxDay) const
+{
+    return minDay == maxDay && minDay == m_dateValue.monthDay() && m_dateValue.type() != DateComponents::Date;
+}
+
 bool DateTimeEditBuilder::shouldHourFieldReadOnly() const
 {
+    if (m_dateValue.type() == DateComponents::Time)
+        return false;
+    ASSERT(m_dateValue.type() == DateComponents::DateTimeLocal || m_dateValue.type() == DateComponents::DateTime);
+    int minDay, maxDay;
+    getRangeOfDayOfMonthField(minDay, maxDay);
+    if (shouldDayOfMonthFieldReadOnly(minDay, maxDay)) {
+        ASSERT(m_parameters.minimum.fullYear() == m_parameters.maximum.fullYear());
+        ASSERT(m_parameters.minimum.month() == m_parameters.maximum.month());
+        return false;
+    }
+
     const Decimal decimalMsPerDay(static_cast<int>(msPerDay));
     Decimal hourPartOfMinimum = (stepRange().minimum().abs().remainder(decimalMsPerDay) / static_cast<int>(msPerHour)).floor();
     return hourPartOfMinimum == m_dateValue.hour() && stepRange().step().remainder(decimalMsPerDay).isZero();

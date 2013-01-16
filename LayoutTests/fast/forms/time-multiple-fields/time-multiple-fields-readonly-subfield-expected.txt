@@ -22,11 +22,11 @@ PASS isReadOnlyField(createTimeInput("00:30", step1hour, "00:30"), pseudoMinute)
 PASS isReadOnlyField(createTimeInput("00:30", step1hour, "00:35"), pseudoMinute) is false
 PASS isReadOnlyField(createTimeInput("00:00", step1hour, "00:35"), pseudoMinute) is false
 Hour field:
-PASS isReadOnlyField(createTimeInput("11:00", step1day, ""), pseudoHour) is true
-PASS isReadOnlyField(createTimeInput("11:00", step1day, ""), pseudoAMPM) is true
+PASS isReadOnlyField(createTimeInput("11:00", step1day, ""), pseudoHour) is false
+PASS isReadOnlyField(createTimeInput("11:00", step1day, ""), pseudoAMPM) is false
 PASS isReadOnlyField(createTimeInput("11:00", step1day, ""), pseudoMinute) is true
-PASS isReadOnlyField(createTimeInput("11:30", step1day, "11:30"), pseudoHour) is true
-PASS isReadOnlyField(createTimeInput("11:30", step1day, "11:30"), pseudoAMPM) is true
+PASS isReadOnlyField(createTimeInput("11:30", step1day, "11:30"), pseudoHour) is false
+PASS isReadOnlyField(createTimeInput("11:30", step1day, "11:30"), pseudoAMPM) is false
 PASS isReadOnlyField(createTimeInput("11:30", step1day, "11:30"), pseudoMinute) is true
 PASS isReadOnlyField(createTimeInput("11:30", step1day, "12:30"), pseudoHour) is false
 PASS isReadOnlyField(createTimeInput("11:30", step1day, "12:30"), pseudoAMPM) is false
