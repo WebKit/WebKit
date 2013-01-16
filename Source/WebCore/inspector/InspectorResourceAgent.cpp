@@ -478,21 +478,6 @@ PassRefPtr<TypeBuilder::Network::Initiator> InspectorResourceAgent::buildInitiat
 
 #if ENABLE(WEB_SOCKETS)
 
-// FIXME: More this into the front-end?
-// Create human-readable binary representation, like "01:23:45:67:89:AB:CD:EF".
-static String createReadableStringFromBinary(const unsigned char* value, size_t length)
-{
-    ASSERT(length > 0);
-    StringBuilder builder;
-    builder.reserveCapacity(length * 3 - 1);
-    for (size_t i = 0; i < length; ++i) {
-        if (i > 0)
-            builder.append(':');
-        appendByteAsHex(value[i], builder);
-    }
-    return builder.toString();
-}
-
 void InspectorResourceAgent::didCreateWebSocket(unsigned long identifier, const KURL& requestURL)
 {
     m_frontend->webSocketCreated(IdentifiersFactory::requestId(identifier), requestURL.string());
@@ -501,7 +486,6 @@ void InspectorResourceAgent::didCreateWebSocket(unsigned long identifier, const 
 void InspectorResourceAgent::willSendWebSocketHandshakeRequest(unsigned long identifier, const WebSocketHandshakeRequest& request)
 {
     RefPtr<TypeBuilder::Network::WebSocketRequest> requestObject = TypeBuilder::Network::WebSocketRequest::create()
-        .setRequestKey3(createReadableStringFromBinary(request.key3().value, sizeof(request.key3().value)))
         .setHeaders(buildObjectForHeaders(request.headerFields()));
     m_frontend->webSocketWillSendHandshakeRequest(IdentifiersFactory::requestId(identifier), currentTime(), requestObject);
 }
@@ -511,8 +495,7 @@ void InspectorResourceAgent::didReceiveWebSocketHandshakeResponse(unsigned long 
     RefPtr<TypeBuilder::Network::WebSocketResponse> responseObject = TypeBuilder::Network::WebSocketResponse::create()
         .setStatus(response.statusCode())
         .setStatusText(response.statusText())
-        .setHeaders(buildObjectForHeaders(response.headerFields()))
-        .setChallengeResponse(createReadableStringFromBinary(response.challengeResponse().value, sizeof(response.challengeResponse().value)));
+        .setHeaders(buildObjectForHeaders(response.headerFields()));
     m_frontend->webSocketHandshakeResponseReceived(IdentifiersFactory::requestId(identifier), currentTime(), responseObject);
 }
 

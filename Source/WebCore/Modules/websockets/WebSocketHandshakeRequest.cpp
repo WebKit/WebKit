@@ -40,16 +40,6 @@ using namespace std;
 
 namespace WebCore {
 
-WebSocketHandshakeRequest::Key3::Key3()
-{
-    memset(value, 0, sizeof(value));
-}
-
-void WebSocketHandshakeRequest::Key3::set(const unsigned char key3[8])
-{
-    memcpy(value, key3, sizeof(value));
-}
-
 WebSocketHandshakeRequest::WebSocketHandshakeRequest(const String& requestMethod, const KURL& url)
     : HTTPRequest(requestMethod, url, HTTP_1_1)
 {
@@ -57,16 +47,6 @@ WebSocketHandshakeRequest::WebSocketHandshakeRequest(const String& requestMethod
 
 WebSocketHandshakeRequest::~WebSocketHandshakeRequest()
 {
-}
-
-WebSocketHandshakeRequest::Key3 WebSocketHandshakeRequest::key3() const
-{
-    return m_key3;
-}
-
-void WebSocketHandshakeRequest::setKey3(const unsigned char key3[8])
-{
-    m_key3.set(key3);
 }
 
 } // namespace WebCore

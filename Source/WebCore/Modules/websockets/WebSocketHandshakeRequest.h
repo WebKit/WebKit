@@ -42,18 +42,8 @@ public:
     static PassRefPtr<WebSocketHandshakeRequest> create(const String& requestMethod, const KURL& url) { return adoptRef(new WebSocketHandshakeRequest(requestMethod, url)); }
     ~WebSocketHandshakeRequest();
 
-    struct Key3 {
-        unsigned char value[8];
-
-        Key3();
-        void set(const unsigned char key3[8]);
-    };
-    Key3 key3() const;
-    void setKey3(const unsigned char key3[8]);
-
 private:
     WebSocketHandshakeRequest(const String& requestMethod, const KURL&);
-    Key3 m_key3;
 };
 
 } // namespace WebCore

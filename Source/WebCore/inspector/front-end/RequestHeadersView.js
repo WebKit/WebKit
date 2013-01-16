@@ -285,13 +285,10 @@ WebInspector.RequestHeadersView.prototype = {
 
     _refreshRequestHeaders: function()
     {
-        var additionalRow = null;
-        if (typeof this._request.webSocketRequestKey3 !== "undefined")
-            additionalRow = {name: "(Key3)", value: this._request.webSocketRequestKey3};
         if (this._showRequestHeadersText)
             this._refreshHeadersText(WebInspector.UIString("Request Headers"), this._request.sortedRequestHeaders, this._request.requestHeadersText, this._requestHeadersTreeElement);
         else
-            this._refreshHeaders(WebInspector.UIString("Request Headers"), this._request.sortedRequestHeaders, additionalRow, this._requestHeadersTreeElement);
+            this._refreshHeaders(WebInspector.UIString("Request Headers"), this._request.sortedRequestHeaders, this._requestHeadersTreeElement);
 
         if (this._request.requestHeadersText) {
             var toggleButton = this._createHeadersToggleButton(this._showRequestHeadersText);
@@ -304,13 +301,10 @@ WebInspector.RequestHeadersView.prototype = {
 
     _refreshResponseHeaders: function()
     {
-        var additionalRow = null;
-        if (typeof this._request.webSocketChallengeResponse !== "undefined")
-            additionalRow = {name: "(Challenge Response)", value: this._request.webSocketChallengeResponse};
         if (this._showResponseHeadersText)
             this._refreshHeadersText(WebInspector.UIString("Response Headers"), this._request.sortedResponseHeaders, this._request.responseHeadersText, this._responseHeadersTreeElement);
         else
-            this._refreshHeaders(WebInspector.UIString("Response Headers"), this._request.sortedResponseHeaders, additionalRow, this._responseHeadersTreeElement);
+            this._refreshHeaders(WebInspector.UIString("Response Headers"), this._request.sortedResponseHeaders, this._responseHeadersTreeElement);
 
         if (this._request.responseHeadersText) {
             var toggleButton = this._createHeadersToggleButton(this._showResponseHeadersText);
@@ -363,7 +357,7 @@ WebInspector.RequestHeadersView.prototype = {
         headersTreeElement.listItemElement.appendChild(headerCount);
     },
 
-    _refreshHeaders: function(title, headers, additionalRow, headersTreeElement)
+    _refreshHeaders: function(title, headers, headersTreeElement)
     {
         headersTreeElement.removeChildren();
 
@@ -373,13 +367,6 @@ WebInspector.RequestHeadersView.prototype = {
         for (var i = 0; i < length; ++i) {
             var headerTreeElement = new TreeElement(null, null, false);
             headerTreeElement.title = this._formatHeader(headers[i].name, headers[i].value);
-            headerTreeElement.selectable = false;
-            headersTreeElement.appendChild(headerTreeElement);
-        }
-
-        if (additionalRow) {
-            var headerTreeElement = new TreeElement(null, null, false);
-            headerTreeElement.title = this._formatHeader(additionalRow.name, additionalRow.value);
             headerTreeElement.selectable = false;
             headersTreeElement.appendChild(headerTreeElement);
         }

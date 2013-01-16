@@ -52,20 +52,10 @@ public:
     void addHeaderField(const AtomicString& name, const String& value);
     void clearHeaderFields();
 
-    struct ChallengeResponse {
-        unsigned char value[16];
-
-        ChallengeResponse();
-        void set(const unsigned char challengeResponse[16]);
-    };
-    const ChallengeResponse& challengeResponse() const;
-    void setChallengeResponse(const unsigned char challengeResponse[16]);
-
 private:
     int m_statusCode;
     String m_statusText;
     HTTPHeaderMap m_headerFields;
-    ChallengeResponse m_challengeResponse;
 };
 
 } // namespace WebCore

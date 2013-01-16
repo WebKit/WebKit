@@ -41,16 +41,6 @@ using namespace std;
 
 namespace WebCore {
 
-WebSocketHandshakeResponse::ChallengeResponse::ChallengeResponse()
-{
-    memset(value, 0, sizeof(value));
-}
-
-void WebSocketHandshakeResponse::ChallengeResponse::set(const unsigned char challengeResponse[16])
-{
-    memcpy(value, challengeResponse, sizeof(value));
-}
-
 WebSocketHandshakeResponse::WebSocketHandshakeResponse()
 {
 }
@@ -93,16 +83,6 @@ void WebSocketHandshakeResponse::addHeaderField(const AtomicString& name, const 
 void WebSocketHandshakeResponse::clearHeaderFields()
 {
     m_headerFields.clear();
-}
-
-const WebSocketHandshakeResponse::ChallengeResponse& WebSocketHandshakeResponse::challengeResponse() const
-{
-    return m_challengeResponse;
-}
-
-void WebSocketHandshakeResponse::setChallengeResponse(const unsigned char challengeResponse[16])
-{
-    m_challengeResponse.set(challengeResponse);
 }
 
 } // namespace WebCore

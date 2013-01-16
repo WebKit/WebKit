@@ -865,7 +865,6 @@
                 "description": "WebSocket request data.",
                 "hidden": true,
                 "properties": [
-                    { "name": "requestKey3", "type": "string", "description": "HTTP response status text." },
                     { "name": "headers", "$ref": "Headers", "description": "HTTP response headers." }
                 ]
             },
@@ -877,8 +876,7 @@
                 "properties": [
                     { "name": "status", "type": "number", "description": "HTTP response status code." },
                     { "name": "statusText", "type": "string", "description": "HTTP response status text." },
-                    { "name": "headers", "$ref": "Headers", "description": "HTTP response headers." },
-                    { "name": "challengeResponse", "type": "string", "description": "Challenge response." }
+                    { "name": "headers", "$ref": "Headers", "description": "HTTP response headers." }
                 ]
             },
             {

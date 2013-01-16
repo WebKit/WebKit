@@ -415,7 +415,6 @@ WebInspector.NetworkDispatcher.prototype = {
 
         networkRequest.requestMethod = "GET";
         networkRequest.requestHeaders = this._headersMapToHeadersArray(request.headers);
-        networkRequest.webSocketRequestKey3 = request.requestKey3;
         networkRequest.startTime = time;
 
         this._updateNetworkRequest(networkRequest);
@@ -435,7 +434,6 @@ WebInspector.NetworkDispatcher.prototype = {
         networkRequest.statusCode = response.status;
         networkRequest.statusText = response.statusText;
         networkRequest.responseHeaders = this._headersMapToHeadersArray(response.headers);
-        networkRequest.webSocketChallengeResponse = response.challengeResponse;
         networkRequest.responseReceivedTime = time;
 
         this._updateNetworkRequest(networkRequest);
