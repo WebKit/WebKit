@@ -2388,8 +2388,9 @@ css3/flexbox/flexbox-baseline.html
 #https://bugs.webkit.org/show_bug.cgi?id=99878
 css3/flexbox/flexbox-baseline-margins.html
 
-# css3-conditionals support is not yet enabled. http://webkit.org/b/86146
+# css3-conditionals support is not yet enabled. http://webkit.org/b/86146 http://webkit.org/b/104822
 css3/supports.html
+css3/supports-cssom.html
 
 # https://bugs.webkit.org/show_bug.cgi?id=98169
 http/tests/inspector/stacktraces

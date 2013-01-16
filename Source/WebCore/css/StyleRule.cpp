@@ -28,6 +28,7 @@
 #include "CSSMediaRule.h"
 #include "CSSPageRule.h"
 #include "CSSStyleRule.h"
+#include "CSSSupportsRule.h"
 #include "CSSUnknownRule.h"
 #include "StyleRuleImport.h"
 #include "WebCoreMemoryInstrumentation.h"
@@ -81,6 +82,9 @@ void StyleRuleBase::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
     case Keyframes:
         static_cast<const StyleRuleKeyframes*>(this)->reportDescendantMemoryUsage(memoryObjectInfo);
         return;
+#if ENABLE(CSS3_CONDITIONAL_RULES)
+    case Supports:
+#endif
 #if ENABLE(SHADOW_DOM)
     case Host:
         static_cast<const StyleRuleBlock*>(this)->reportDescendantMemoryUsage(memoryObjectInfo);
@@ -118,6 +122,11 @@ void StyleRuleBase::destroy()
     case Media:
         delete static_cast<StyleRuleMedia*>(this);
         return;
+#if ENABLE(CSS3_CONDITIONAL_RULES)
+    case Supports:
+        delete static_cast<StyleRuleSupports*>(this);
+        return;
+#endif
 #if ENABLE(CSS_REGIONS)
     case Region:
         delete static_cast<StyleRuleRegion*>(this);
@@ -162,6 +171,10 @@ PassRefPtr<StyleRuleBase> StyleRuleBase::copy() const
         return static_cast<const StyleRuleFontFace*>(this)->copy();
     case Media:
         return static_cast<const StyleRuleMedia*>(this)->copy();
+#if ENABLE(CSS3_CONDITIONAL_RULES)
+    case Supports:
+        return static_cast<const StyleRuleSupports*>(this)->copy();
+#endif
 #if ENABLE(CSS_REGIONS)
     case Region:
         return static_cast<const StyleRuleRegion*>(this)->copy();
@@ -210,6 +223,11 @@ PassRefPtr<CSSRule> StyleRuleBase::createCSSOMWrapper(CSSStyleSheet* parentSheet
     case Media:
         rule = CSSMediaRule::create(static_cast<StyleRuleMedia*>(self), parentSheet);
         break;
+#if ENABLE(CSS3_CONDITIONAL_RULES)
+    case Supports:
+        rule = CSSSupportsRule::create(static_cast<StyleRuleSupports*>(self), parentSheet);
+        break;
+#endif
 #if ENABLE(CSS_REGIONS)
     case Region:
         rule = WebKitCSSRegionRule::create(static_cast<StyleRuleRegion*>(self), parentSheet);
@@ -403,6 +421,23 @@ void StyleRuleMedia::reportDescendantMemoryUsage(MemoryObjectInfo* memoryObjectI
     MemoryClassInfo info(memoryObjectInfo, this, WebCoreMemoryTypes::CSS);
     info.addMember(m_mediaQueries);
 }
+
+
+#if ENABLE(CSS3_CONDITIONAL_RULES)
+StyleRuleSupports::StyleRuleSupports(const String& conditionText, bool conditionIsSupported, Vector<RefPtr<StyleRuleBase> >& adoptRules)
+    : StyleRuleBlock(Supports, adoptRules)
+    , m_conditionText(conditionText)
+    , m_conditionIsSupported(conditionIsSupported)
+{
+}
+
+StyleRuleSupports::StyleRuleSupports(const StyleRuleSupports& o)
+    : StyleRuleBlock(o)
+    , m_conditionText(o.m_conditionText)
+    , m_conditionIsSupported(o.m_conditionIsSupported)
+{
+}
+#endif
 
 StyleRuleRegion::StyleRuleRegion(Vector<OwnPtr<CSSParserSelector> >* selectors, Vector<RefPtr<StyleRuleBase> >& adoptRules)
     : StyleRuleBlock(Region, adoptRules)

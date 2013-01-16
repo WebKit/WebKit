@@ -2396,6 +2396,7 @@ webkit.org/b/23166 ietestcenter/css3/bordersbackgrounds/border-radius-clip-002.h
 
 # css3-conditionals support is not yet enabled.
 webkit.org/b/86146 css3/supports.html
+webkit.org/b/104822 css3/supports-cssom.html
 
 # CSS Device Adaptation is not enabled.
 webkit.org/b/95969 css3/device-adapt [ Skip ]

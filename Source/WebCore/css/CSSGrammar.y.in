@@ -464,6 +464,9 @@ block_valid_rule:
   | font_face
   | media
   | keyframes
+#if ENABLE_CSS3_CONDITIONAL_RULES
+  | supports
+#endif
 #if ENABLE_CSS_DEVICE_ADAPTATION
   | viewport
 #endif
@@ -476,9 +479,6 @@ block_rule:
   | namespace
   | import
   | region
-#if ENABLE_CSS3_CONDITIONAL_RULES
-  | supports
-#endif
   ;
 
 at_import_header_end_maybe_space:
@@ -676,13 +676,22 @@ medium:
 
 #if ENABLE_CSS3_CONDITIONAL_RULES
 supports:
-    SUPPORTS_SYM maybe_space supports_condition '{' maybe_space block_rule_list save_block {
-        CSSParser* p = static_cast<CSSParser*>(parser);
-        if ($3 && $6 && p->m_styleSheet) {
-            for (unsigned i = 0; i < $6->size(); i++)
-                p->m_styleSheet->parserAppendRule($6->at(i).release());
-        }
-        $$ = 0;
+    before_supports_rule SUPPORTS_SYM maybe_space supports_condition at_supports_rule_header_end '{' at_rule_body_start maybe_space block_rule_list save_block {
+        $$ = parser->createSupportsRule($4, $9);
+    }
+    ;
+
+before_supports_rule:
+    /* empty */ {
+        parser->markRuleHeaderStart(CSSRuleSourceData::SUPPORTS_RULE);
+        parser->markSupportsRuleHeaderStart();
+    }
+    ;
+
+at_supports_rule_header_end:
+    /* empty */ {
+        parser->markRuleHeaderEnd();
+        parser->markSupportsRuleHeaderEnd();
     }
     ;
 

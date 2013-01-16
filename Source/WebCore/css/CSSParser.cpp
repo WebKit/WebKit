@@ -10703,6 +10703,62 @@ StyleRuleBase* CSSParser::createMediaRule(MediaQuerySet* media, RuleList* rules)
     return result;
 }
 
+#if ENABLE(CSS3_CONDITIONAL_RULES)
+StyleRuleBase* CSSParser::createSupportsRule(bool conditionIsSupported, RuleList* rules)
+{
+    m_allowImportRules = m_allowNamespaceDeclarations = false;
+
+    ASSERT(!m_supportsRuleDataStack->isEmpty());
+    RefPtr<CSSRuleSourceData> data = m_supportsRuleDataStack->last();
+    m_supportsRuleDataStack->removeLast();
+    if (m_supportsRuleDataStack->isEmpty())
+        m_supportsRuleDataStack.clear();
+
+    RefPtr<StyleRuleSupports> rule;
+    String conditionText;
+    unsigned conditionOffset = data->ruleHeaderRange.start + 9;
+    unsigned conditionLength = data->ruleHeaderRange.length() - 9;
+
+    if (is8BitSource())
+        conditionText = String(m_dataStart8.get() + conditionOffset, conditionLength).stripWhiteSpace();
+    else
+        conditionText = String(m_dataStart16.get() + conditionOffset, conditionLength).stripWhiteSpace();
+
+    if (rules)
+        rule = StyleRuleSupports::create(conditionText, conditionIsSupported, *rules);
+    else {
+        RuleList emptyRules;
+        rule = StyleRuleSupports::create(conditionText, conditionIsSupported, emptyRules);
+    }
+
+    StyleRuleSupports* result = rule.get();
+    m_parsedRules.append(rule.release());
+    processAndAddNewRuleToSourceTreeIfNeeded();
+
+    return result;
+}
+
+void CSSParser::markSupportsRuleHeaderStart()
+{
+    if (!m_supportsRuleDataStack)
+        m_supportsRuleDataStack = adoptPtr(new RuleSourceDataList());
+
+    RefPtr<CSSRuleSourceData> data = CSSRuleSourceData::create(CSSRuleSourceData::SUPPORTS_RULE);
+    data->ruleHeaderRange.start = tokenStartOffset();
+    m_supportsRuleDataStack->append(data);
+}
+
+void CSSParser::markSupportsRuleHeaderEnd()
+{
+    ASSERT(!m_supportsRuleDataStack->isEmpty());
+
+    if (is8BitSource())
+        m_supportsRuleDataStack->last()->ruleHeaderRange.end = tokenStart<LChar>() - m_dataStart8.get();
+    else
+        m_supportsRuleDataStack->last()->ruleHeaderRange.end = tokenStart<UChar>() - m_dataStart16.get();
+}
+#endif
+
 CSSParser::RuleList* CSSParser::createRuleList()
 {
     OwnPtr<RuleList> list = adoptPtr(new RuleList);

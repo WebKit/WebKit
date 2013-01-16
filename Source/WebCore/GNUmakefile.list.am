@@ -133,6 +133,8 @@ webcore_built_sources += \
 	DerivedSources/WebCore/JSCSSStyleRule.h \
 	DerivedSources/WebCore/JSCSSStyleSheet.cpp \
 	DerivedSources/WebCore/JSCSSStyleSheet.h \
+	DerivedSources/WebCore/JSCSSSupportsRule.cpp \
+	DerivedSources/WebCore/JSCSSSupportsRule.h \
 	DerivedSources/WebCore/JSCSSValue.cpp \
 	DerivedSources/WebCore/JSCSSValue.h \
 	DerivedSources/WebCore/JSCSSValueList.cpp \
@@ -1329,6 +1331,7 @@ dom_binding_idls += \
 	$(WebCore)/css/CSSStyleDeclaration.idl \
 	$(WebCore)/css/CSSStyleRule.idl \
 	$(WebCore)/css/CSSStyleSheet.idl \
+	$(WebCore)/css/CSSSupportsRule.idl \
 	$(WebCore)/css/CSSValue.idl \
 	$(WebCore)/css/CSSValueList.idl \
 	$(WebCore)/css/Counter.idl \
@@ -2592,6 +2595,8 @@ webcore_sources += \
 	Source/WebCore/css/CSSStyleRule.h \
 	Source/WebCore/css/CSSStyleSheet.cpp \
 	Source/WebCore/css/CSSStyleSheet.h \
+	Source/WebCore/css/CSSSupportsRule.cpp \
+	Source/WebCore/css/CSSSupportsRule.h \
 	Source/WebCore/css/CSSTimingFunctionValue.cpp \
 	Source/WebCore/css/CSSTimingFunctionValue.h \
 	Source/WebCore/css/CSSToStyleMap.cpp \

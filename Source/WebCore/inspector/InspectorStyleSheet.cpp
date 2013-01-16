@@ -37,6 +37,7 @@
 #include "CSSRuleList.h"
 #include "CSSStyleRule.h"
 #include "CSSStyleSheet.h"
+#include "CSSSupportsRule.h"
 #include "ContentSecurityPolicy.h"
 #include "Document.h"
 #include "Element.h"
@@ -109,6 +110,10 @@ static void flattenSourceData(RuleSourceDataList* dataList, RuleSourceDataList* 
             target->append(data);
         else if (data->type == CSSRuleSourceData::MEDIA_RULE)
             flattenSourceData(&data->childRules, target);
+#if ENABLE(CSS3_CONDITIONAL_RULES)
+        else if (data->type == CSSRuleSourceData::SUPPORTS_RULE)
+            flattenSourceData(&data->childRules, target);
+#endif
     }
 }
 
@@ -208,6 +213,11 @@ static PassRefPtr<CSSRuleList> asCSSRuleList(CSSRule* rule)
 
     if (rule->type() == CSSRule::WEBKIT_KEYFRAMES_RULE)
         return static_cast<WebKitCSSKeyframesRule*>(rule)->cssRules();
+
+#if ENABLE(CSS3_CONDITIONAL_RULES)
+    if (rule->type() == CSSRule::SUPPORTS_RULE)
+        return static_cast<CSSSupportsRule*>(rule)->cssRules();
+#endif
 
     return 0;
 }

@@ -287,6 +287,7 @@ SOURCES += \
     css/CSSSegmentedFontFace.cpp \
     css/CSSStyleRule.cpp \
     css/CSSStyleSheet.cpp \
+    css/CSSSupportsRule.cpp \
     css/CSSTimingFunctionValue.cpp \
     css/CSSToStyleMap.cpp \
     css/CSSUnicodeRangeValue.cpp \
@@ -1498,6 +1499,7 @@ HEADERS += \
     css/CSSStyleDeclaration.h \
     css/CSSStyleRule.h \
     css/CSSStyleSheet.h \
+    css/CSSSupportsRule.h \
     css/CSSTimingFunctionValue.h \
     css/CSSToStyleMap.h \
     css/CSSUnicodeRangeValue.h \

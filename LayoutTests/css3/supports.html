@@ -84,24 +84,6 @@
         #t17 { content: "APPLIED" }
     }
 
-    /* Nesting. */
-    @supports (display: none) {
-        @supports (display: deadbeef) {
-            #t18 { content: "FAIL" }
-        }
-        @supports (display: inline) {
-            #t19 { content: "APPLIED" }
-        }
-        @supports (display: inline) {
-        }
-        @media all {
-            #t20 { content: "APPLIED" }
-            @supports (display: inline) {
-                #t21 { content: "APPLIED" }
-            }
-        }
-    }
-
     /* Whitespace/Syntax */
     @supports not( display: deadbeef) {
         #t22 { content: "APPLIED" }
@@ -157,6 +139,39 @@
         #t34 { content: "FAIL" }
     }
 
+    /* Nesting. */
+    @supports (display: none) {
+        @supports (display: deadbeef) {
+            #t18 { content: "FAIL" }
+        }
+        @supports (display: inline) {
+            #t19 { content: "APPLIED" }
+        }
+        @supports (display: inline) {
+        }
+        @media all {
+            #t20 { content: "APPLIED" }
+            @supports (display: inline) {
+                #t21 { content: "APPLIED" }
+            }
+        }
+    }
+
+    @media all {
+        @supports (display: inline) {
+            @media all {
+                @supports (display: none) {
+                    #t35 { content: "APPLIED" }
+                }
+            }
+        }
+    }
+
+    @media not all {
+        @supports (display: none) {
+            #t36 { content: "FAIL" }
+        }
+    }
 </style>
 </head>
 <body>
@@ -164,8 +179,8 @@
 
 <script>
     description("Test the @supports rule.");
-    var numTests = 35;
-    var untouchedTests = [1, 3, 5, 8, 12, 13, 14, 18, 28, 29, 34]; // Tests whose content shouldn't change from the UNTOUCHED default.
+    var numTests = 37;
+    var untouchedTests = [1, 3, 5, 8, 12, 13, 14, 18, 28, 29, 34, 36]; // Tests whose content shouldn't change from the UNTOUCHED default.
 
     var container = document.getElementById("test_container");
     for (var i=0; i < numTests; i++) {

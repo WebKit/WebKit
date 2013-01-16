@@ -40,6 +40,9 @@
 #import "DOMCSSStyleDeclaration.h"
 #import "DOMCSSStyleRule.h"
 #import "DOMCSSStyleSheet.h"
+#if ENABLE(CSS3_CONDITIONAL_RULES)
+#import "DOMCSSSupportsRule.h"
+#endif
 #import "DOMCSSUnknownRule.h"
 #import "DOMCSSValueInternal.h"
 #import "DOMCSSValueList.h"
@@ -99,6 +102,10 @@ Class kitClass(WebCore::CSSRule* impl)
             return [DOMWebKitCSSKeyframesRule class];
         case DOM_WEBKIT_KEYFRAME_RULE:
             return [DOMWebKitCSSKeyframeRule class];
+#if ENABLE(CSS3_CONDITIONAL_RULES)
+        case DOM_SUPPORTS_RULE:
+            return [DOMCSSSupportsRule class];
+#endif
 #if ENABLE(CSS_DEVICE_ADAPTATION)
         case DOM_WEBKIT_VIEWPORT_RULE:
             return [DOMWebKitCSSViewportRule class];

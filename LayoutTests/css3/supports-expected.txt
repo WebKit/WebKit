@@ -38,6 +38,8 @@ PASS getComputedStyle(document.getElementById('t31')).content is "APPLIED"
 PASS getComputedStyle(document.getElementById('t32')).content is "APPLIED"
 PASS getComputedStyle(document.getElementById('t33')).content is "APPLIED"
 PASS getComputedStyle(document.getElementById('t34')).content is "UNTOUCHED"
+PASS getComputedStyle(document.getElementById('t35')).content is "APPLIED"
+PASS getComputedStyle(document.getElementById('t36')).content is "UNTOUCHED"
 PASS successfullyParsed is true
 
 TEST COMPLETE

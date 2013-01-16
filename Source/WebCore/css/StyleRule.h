@@ -49,6 +49,9 @@ public:
 #if ENABLE(SHADOW_DOM)
         Host,
 #endif
+#if ENABLE(CSS3_CONDITIONAL_RULES)
+        Supports = 12,
+#endif
 #if ENABLE(CSS_DEVICE_ADAPTATION)
         Viewport = 15,
 #endif
@@ -63,6 +66,9 @@ public:
     bool isPageRule() const { return type() == Page; }
     bool isStyleRule() const { return type() == Style; }
     bool isRegionRule() const { return type() == Region; }
+#if ENABLE(CSS3_CONDITIONAL_RULES)
+    bool isSupportsRule() const { return type() == Supports; }
+#endif
 #if ENABLE(CSS_DEVICE_ADAPTATION)
     bool isViewportRule() const { return type() == Viewport; }
 #endif
@@ -215,6 +221,27 @@ private:
     RefPtr<MediaQuerySet> m_mediaQueries;
 };
 
+#if ENABLE(CSS3_CONDITIONAL_RULES)
+class StyleRuleSupports : public StyleRuleBlock {
+public:
+    static PassRefPtr<StyleRuleSupports> create(const String& conditionText, bool conditionIsSupported, Vector<RefPtr<StyleRuleBase> >& adoptRules)
+    {
+        return adoptRef(new StyleRuleSupports(conditionText, conditionIsSupported, adoptRules));
+    }
+
+    String conditionText() const { return m_conditionText; }
+    bool conditionIsSupported() const { return m_conditionIsSupported; }
+    PassRefPtr<StyleRuleSupports> copy() const { return adoptRef(new StyleRuleSupports(*this)); }
+
+private:
+    StyleRuleSupports(const String& conditionText, bool conditionIsSupported, Vector<RefPtr<StyleRuleBase> >& adoptRules);
+    StyleRuleSupports(const StyleRuleSupports&);
+
+    String m_conditionText;
+    bool m_conditionIsSupported;
+};
+#endif
+
 class StyleRuleRegion : public StyleRuleBlock {
 public:
     static PassRefPtr<StyleRuleRegion> create(Vector<OwnPtr<CSSParserSelector> >* selectors, Vector<RefPtr<StyleRuleBase> >& adoptRules)
@@ -280,6 +307,14 @@ inline const StyleRuleMedia* toStyleRuleMedia(const StyleRuleBlock* rule)
     ASSERT(!rule || rule->isMediaRule());
     return static_cast<const StyleRuleMedia*>(rule);
 }
+
+#if ENABLE(CSS3_CONDITIONAL_RULES)
+inline const StyleRuleSupports* toStyleRuleSupports(const StyleRuleBlock* rule)
+{
+    ASSERT(!rule || rule->isSupportsRule());
+    return static_cast<const StyleRuleSupports*>(rule);
+}
+#endif
 
 inline const StyleRuleRegion* toStyleRuleRegion(const StyleRuleBlock* rule)
 {

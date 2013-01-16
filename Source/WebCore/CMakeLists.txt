@@ -321,6 +321,7 @@ set(WebCore_IDL_FILES
     css/CSSStyleDeclaration.idl
     css/CSSStyleRule.idl
     css/CSSStyleSheet.idl
+    css/CSSSupportsRule.idl
     css/CSSValue.idl
     css/CSSValueList.idl
     css/MediaList.idl
@@ -1055,6 +1056,7 @@ set(WebCore_SOURCES
     css/CSSSelectorList.cpp
     css/CSSStyleRule.cpp
     css/CSSStyleSheet.cpp
+    css/CSSSupportsRule.cpp
     css/CSSTimingFunctionValue.cpp
     css/CSSToStyleMap.cpp
     css/CSSUnicodeRangeValue.cpp

@@ -64,6 +64,7 @@
 #include "JSCSSStyleDeclaration.cpp"
 #include "JSCSSStyleRule.cpp"
 #include "JSCSSStyleSheet.cpp"
+#include "JSCSSSupportsRule.cpp"
 #include "JSCSSValue.cpp"
 #include "JSCSSValueList.cpp"
 #include "JSCustomEvent.cpp"

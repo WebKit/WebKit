@@ -32,12 +32,14 @@
 #include "CSSMediaRule.h"
 #include "CSSPageRule.h"
 #include "CSSStyleRule.h"
+#include "CSSSupportsRule.h"
 #include "JSCSSCharsetRule.h"
 #include "JSCSSFontFaceRule.h"
 #include "JSCSSImportRule.h"
 #include "JSCSSMediaRule.h"
 #include "JSCSSPageRule.h"
 #include "JSCSSStyleRule.h"
+#include "JSCSSSupportsRule.h"
 #include "JSNode.h"
 #include "JSWebKitCSSKeyframeRule.h"
 #include "JSWebKitCSSKeyframesRule.h"
@@ -96,6 +98,11 @@ JSValue toJS(ExecState* exec, JSDOMGlobalObject* globalObject, CSSRule* rule)
         case CSSRule::WEBKIT_KEYFRAMES_RULE:
             wrapper = CREATE_DOM_WRAPPER(exec, globalObject, WebKitCSSKeyframesRule, rule);
             break;
+#if ENABLE(CSS3_CONDITIONAL_RULES)
+        case CSSRule::SUPPORTS_RULE:
+            wrapper = CREATE_DOM_WRAPPER(exec, globalObject, CSSSupportsRule, rule);
+            break;
+#endif
 #if ENABLE(CSS_DEVICE_ADAPTATION)
         case CSSRule::WEBKIT_VIEWPORT_RULE:
             wrapper = CREATE_DOM_WRAPPER(exec, globalObject, WebKitCSSViewportRule, rule);

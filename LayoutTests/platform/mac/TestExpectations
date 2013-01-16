@@ -1161,6 +1161,7 @@ webkit.org/b/92464 [ Debug ] fast/events/tabindex-focus-blur-all.html [ Crash Pa
 
 # css3-conditionals support is not yet enabled.
 webkit.org/b/86146 css3/supports.html
+webkit.org/b/104822 css3/supports-cssom.html
 
 # CSS Device Adaptation is not enabled.
 webkit.org/b/95959 css3/device-adapt [ Skip ]

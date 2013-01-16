@@ -50,6 +50,9 @@ public:
         // <https://bugs.webkit.org/show_bug.cgi?id=71293>.
         WEBKIT_KEYFRAMES_RULE,
         WEBKIT_KEYFRAME_RULE,
+#if ENABLE(CSS3_CONDITIONAL_RULES)
+        SUPPORTS_RULE = 12,
+#endif
 #if ENABLE(CSS_DEVICE_ADAPTATION)
         WEBKIT_VIEWPORT_RULE = 15,
 #endif

@@ -48,6 +48,7 @@
 #include "CSSSelectorList.h"
 #include "CSSStyleRule.h"
 #include "CSSStyleSheet.h"
+#include "CSSSupportsRule.h"
 #include "CSSTimingFunctionValue.h"
 #include "CSSValueList.h"
 #if ENABLE(CSS_VARIABLES)
@@ -2638,6 +2639,11 @@ static void collectCSSOMWrappers(HashMap<StyleRule*, RefPtr<CSSStyleRule> >& wra
         case CSSRule::MEDIA_RULE:
             collectCSSOMWrappers(wrapperMap, static_cast<CSSMediaRule*>(cssRule));
             break;
+#if ENABLE(CSS3_CONDITIONAL_RULES)
+        case CSSRule::SUPPORTS_RULE:
+            collectCSSOMWrappers(wrapperMap, static_cast<CSSSupportsRule*>(cssRule));
+            break;
+#endif
 #if ENABLE(CSS_REGIONS)
         case CSSRule::WEBKIT_REGION_RULE:
             collectCSSOMWrappers(wrapperMap, static_cast<WebKitCSSRegionRule*>(cssRule));

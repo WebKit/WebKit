@@ -6445,6 +6445,14 @@
 		FBD6AF8C15EF2604008B7110 /* BasicShapes.h in Headers */ = {isa = PBXBuildFile; fileRef = FBD6AF8315EF21A3008B7110 /* BasicShapes.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		FBD6AF8D15EF260A008B7110 /* BasicShapes.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FBD6AF8215EF21A3008B7110 /* BasicShapes.cpp */; };
 		FBF89045169E9F1F0052D86E /* CSSGroupingRule.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FBF89044169E9F1F0052D86E /* CSSGroupingRule.cpp */; };
+		FC63BDB3167AABAC00F9380F /* CSSSupportsRule.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FC63BDB0167AABAC00F9380F /* CSSSupportsRule.cpp */; };
+		FC63BDB4167AABAC00F9380F /* CSSSupportsRule.h in Sources */ = {isa = PBXBuildFile; fileRef = FC63BDB1167AABAC00F9380F /* CSSSupportsRule.h */; };
+		FC7E66E91680EF1F00283716 /* JSCSSSupportsRule.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FC84802D167AB444008CD100 /* JSCSSSupportsRule.cpp */; };
+		FC7E66EA1680EF2200283716 /* JSCSSSupportsRule.h in Sources */ = {isa = PBXBuildFile; fileRef = FC84802E167AB444008CD100 /* JSCSSSupportsRule.h */; };
+		FCD8832A16A49F8200962227 /* DOMCSSSupportsRule.h in Headers */ = {isa = PBXBuildFile; fileRef = FCD8832816A49F8200962227 /* DOMCSSSupportsRule.h */; };
+		FCD8832B16A49F8200962227 /* DOMCSSSupportsRule.mm in Sources */ = {isa = PBXBuildFile; fileRef = FCD8832916A49F8200962227 /* DOMCSSSupportsRule.mm */; };
+		FCD8832C16A49FB000962227 /* DOMCSSSupportsRule.h in Copy Generated Headers */ = {isa = PBXBuildFile; fileRef = FCD8832816A49F8200962227 /* DOMCSSSupportsRule.h */; };
+		FCEBBAAB16A4967A00FA20A6 /* DOMCSSSupportsRuleInternal.h in Headers */ = {isa = PBXBuildFile; fileRef = FCEBBAAA16A4967A00FA20A6 /* DOMCSSSupportsRuleInternal.h */; };
 		FD00D7A414A3F61900734011 /* SincResampler.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FD00D7A214A3F61900734011 /* SincResampler.cpp */; };
 		FD00D7A514A3F61900734011 /* SincResampler.h in Headers */ = {isa = PBXBuildFile; fileRef = FD00D7A314A3F61900734011 /* SincResampler.h */; };
 		FD06DFA5134A4DEF006F5D7D /* DefaultAudioDestinationNode.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FD06DFA3134A4DEF006F5D7D /* DefaultAudioDestinationNode.cpp */; };
@@ -6774,6 +6782,7 @@
 				1ACD1B630B029739007E5016 /* DOMCSSStyleDeclarationInternal.h in Copy Generated Headers */,
 				85F74E090AA8DF8C000DC284 /* DOMCSSStyleRule.h in Copy Generated Headers */,
 				858C39BD0AA905EF00B187A4 /* DOMCSSStyleSheet.h in Copy Generated Headers */,
+				FCD8832C16A49FB000962227 /* DOMCSSSupportsRule.h in Copy Generated Headers */,
 				85F74E0A0AA8DF8C000DC284 /* DOMCSSUnknownRule.h in Copy Generated Headers */,
 				858C39B80AA905EF00B187A4 /* DOMCSSValue.h in Copy Generated Headers */,
 				858C39BA0AA905EF00B187A4 /* DOMCSSValueList.h in Copy Generated Headers */,
@@ -14024,6 +14033,14 @@
 		FBD6AF8615EF21D4008B7110 /* CSSBasicShapes.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CSSBasicShapes.cpp; sourceTree = "<group>"; };
 		FBD6AF8715EF21D4008B7110 /* CSSBasicShapes.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CSSBasicShapes.h; sourceTree = "<group>"; };
 		FBF89044169E9F1F0052D86E /* CSSGroupingRule.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CSSGroupingRule.cpp; sourceTree = "<group>"; };
+		FC63BDB0167AABAC00F9380F /* CSSSupportsRule.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CSSSupportsRule.cpp; sourceTree = "<group>"; };
+		FC63BDB1167AABAC00F9380F /* CSSSupportsRule.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CSSSupportsRule.h; sourceTree = "<group>"; };
+		FC63BDB2167AABAC00F9380F /* CSSSupportsRule.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = CSSSupportsRule.idl; sourceTree = "<group>"; };
+		FC84802D167AB444008CD100 /* JSCSSSupportsRule.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSCSSSupportsRule.cpp; sourceTree = "<group>"; };
+		FC84802E167AB444008CD100 /* JSCSSSupportsRule.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSCSSSupportsRule.h; sourceTree = "<group>"; };
+		FCD8832816A49F8200962227 /* DOMCSSSupportsRule.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DOMCSSSupportsRule.h; path = DOMCSSSupportsRule.h; sourceTree = "<group>"; };
+		FCD8832916A49F8200962227 /* DOMCSSSupportsRule.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = DOMCSSSupportsRule.mm; path = DOMCSSSupportsRule.mm; sourceTree = "<group>"; };
+		FCEBBAAA16A4967A00FA20A6 /* DOMCSSSupportsRuleInternal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DOMCSSSupportsRuleInternal.h; path = DOMCSSSupportsRuleInternal.h; sourceTree = "<group>"; };
 		FCEBCD711623A7910029965E /* CSSGrammar.y.in */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.yacc; path = CSSGrammar.y.in; sourceTree = "<group>"; };
 		FCEBCD721623A7910029965E /* CSSGrammar.y.includes */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.yacc; path = CSSGrammar.y.includes; sourceTree = "<group>"; };
 		FD00D7A214A3F61900734011 /* SincResampler.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SincResampler.cpp; sourceTree = "<group>"; };
@@ -16423,6 +16440,8 @@
 				85032DD40AA8C9BE007D3B7D /* DOMCSSStyleRule.mm */,
 				858C39260AA8FF9D00B187A4 /* DOMCSSStyleSheet.h */,
 				858C39270AA8FF9D00B187A4 /* DOMCSSStyleSheet.mm */,
+				FCD8832816A49F8200962227 /* DOMCSSSupportsRule.h */,
+				FCD8832916A49F8200962227 /* DOMCSSSupportsRule.mm */,
 				85032DD50AA8C9BE007D3B7D /* DOMCSSUnknownRule.h */,
 				85032DD60AA8C9BE007D3B7D /* DOMCSSUnknownRule.mm */,
 				858C381A0AA8E29600B187A4 /* DOMCSSValue.h */,
@@ -17122,6 +17141,7 @@
 				85E711440AC5D5340053270F /* DOMCSSStyleDeclarationInternal.h */,
 				85909CD90ACC7A7E00DF01F1 /* DOMCSSStyleRuleInternal.h */,
 				85909CDA0ACC7A7E00DF01F1 /* DOMCSSStyleSheetInternal.h */,
+				FCEBBAAA16A4967A00FA20A6 /* DOMCSSSupportsRuleInternal.h */,
 				85909CDB0ACC7A7E00DF01F1 /* DOMCSSUnknownRuleInternal.h */,
 				85B498F20ADB336A00925CBB /* DOMCSSValueInternal.h */,
 				85909D280ACC7D5500DF01F1 /* DOMCSSValueListInternal.h */,
@@ -19241,6 +19261,8 @@
 				BC46C2050C0DDCA10020CFC3 /* JSCSSStyleRule.h */,
 				BCC5BDFE0C0E93110011C2DB /* JSCSSStyleSheet.cpp */,
 				BCC5BDFF0C0E93110011C2DB /* JSCSSStyleSheet.h */,
+				FC84802D167AB444008CD100 /* JSCSSSupportsRule.cpp */,
+				FC84802E167AB444008CD100 /* JSCSSSupportsRule.h */,
 				14CF78A309F58CBF00EB3665 /* JSCSSValue.cpp */,
 				14CF78A509F58CD800EB3665 /* JSCSSValue.h */,
 				A8D05FA90A23B30F005E7203 /* JSCSSValueList.cpp */,
@@ -21596,6 +21618,9 @@
 				A8EA80000A19516E00A8EF5F /* CSSStyleSheet.cpp */,
 				A8EA7FFF0A19516E00A8EF5F /* CSSStyleSheet.h */,
 				858C39100AA8FF0000B187A4 /* CSSStyleSheet.idl */,
+				FC63BDB0167AABAC00F9380F /* CSSSupportsRule.cpp */,
+				FC63BDB1167AABAC00F9380F /* CSSSupportsRule.h */,
+				FC63BDB2167AABAC00F9380F /* CSSSupportsRule.idl */,
 				BC80C9850CD294EE00A0B7B3 /* CSSTimingFunctionValue.cpp */,
 				BC80C9860CD294EE00A0B7B3 /* CSSTimingFunctionValue.h */,
 				A882DA1F1593846A000115ED /* CSSToStyleMap.cpp */,
@@ -23218,6 +23243,8 @@
 				85909CE20ACC7A7E00DF01F1 /* DOMCSSStyleRuleInternal.h in Headers */,
 				858C39280AA8FF9D00B187A4 /* DOMCSSStyleSheet.h in Headers */,
 				85909CE30ACC7A7E00DF01F1 /* DOMCSSStyleSheetInternal.h in Headers */,
+				FCD8832A16A49F8200962227 /* DOMCSSSupportsRule.h in Headers */,
+				FCEBBAAB16A4967A00FA20A6 /* DOMCSSSupportsRuleInternal.h in Headers */,
 				85032DE90AA8C9BE007D3B7D /* DOMCSSUnknownRule.h in Headers */,
 				85909CE40ACC7A7E00DF01F1 /* DOMCSSUnknownRuleInternal.h in Headers */,
 				858C381C0AA8E29600B187A4 /* DOMCSSValue.h in Headers */,
@@ -26687,6 +26714,8 @@
 				E4C1789A0EE6903800824D69 /* CSSSelectorList.cpp in Sources */,
 				A80E6CEF0A1989CA007FB8C5 /* CSSStyleRule.cpp in Sources */,
 				A8EA80080A19516E00A8EF5F /* CSSStyleSheet.cpp in Sources */,
+				FC63BDB3167AABAC00F9380F /* CSSSupportsRule.cpp in Sources */,
+				FC63BDB4167AABAC00F9380F /* CSSSupportsRule.h in Sources */,
 				BC80C9870CD294EE00A0B7B3 /* CSSTimingFunctionValue.cpp in Sources */,
 				A882DA201593846A000115ED /* CSSToStyleMap.cpp in Sources */,
 				371F53EA0D2704F900ECE0D5 /* CSSUnicodeRangeValue.cpp in Sources */,
@@ -26807,6 +26836,7 @@
 				85032DE60AA8C9BE007D3B7D /* DOMCSSStyleDeclaration.mm in Sources */,
 				85032DE80AA8C9BE007D3B7D /* DOMCSSStyleRule.mm in Sources */,
 				858C39290AA8FF9D00B187A4 /* DOMCSSStyleSheet.mm in Sources */,
+				FCD8832B16A49F8200962227 /* DOMCSSSupportsRule.mm in Sources */,
 				85032DEA0AA8C9BE007D3B7D /* DOMCSSUnknownRule.mm in Sources */,
 				858C381D0AA8E29600B187A4 /* DOMCSSValue.mm in Sources */,
 				858C383D0AA8ED8200B187A4 /* DOMCSSValueList.mm in Sources */,
@@ -27623,6 +27653,8 @@
 				BC46C2060C0DDCA10020CFC3 /* JSCSSStyleRule.cpp in Sources */,
 				E1AD14E81297377400ACA989 /* JSCSSStyleRuleCustom.cpp in Sources */,
 				BCC5BE000C0E93110011C2DB /* JSCSSStyleSheet.cpp in Sources */,
+				FC7E66E91680EF1F00283716 /* JSCSSSupportsRule.cpp in Sources */,
+				FC7E66EA1680EF2200283716 /* JSCSSSupportsRule.h in Sources */,
 				14CF78A409F58CBF00EB3665 /* JSCSSValue.cpp in Sources */,
 				BC20FB7F0C0E8E6C00D1447F /* JSCSSValueCustom.cpp in Sources */,
 				A8D05FAB0A23B30F005E7203 /* JSCSSValueList.cpp in Sources */,
