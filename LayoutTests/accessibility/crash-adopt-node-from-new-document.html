@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../fast/js/resources/js-test-pre.js"></script>
+</head>
+<body>
+
+<canvas>
+<div id="node1">
+<div id="node2">
+</canvas>
+
+<script>
+document.getElementById("node2").setAttribute("aria-label", "Label");
+document.implementation.createDocument("", "", null).adoptNode(node1);
+
+gc();
+
+alert("This test makes sure that adopting a node with an AccessibilityObject into a new document doesn't crash. Test passed.");
+
+</script>
+<script src="../fast/js/resources/js-test-post.js"></script>
+</body>
+</html>
