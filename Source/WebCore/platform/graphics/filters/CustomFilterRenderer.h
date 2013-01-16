@@ -84,7 +84,7 @@ private:
 
     RefPtr<GraphicsContext3D> m_context;
     RefPtr<CustomFilterCompiledProgram> m_compiledProgram;
-    CustomFilterProgramType m_programType;    
+    CustomFilterProgramType m_programType;
     RefPtr<CustomFilterMesh> m_mesh;
     IntSize m_contextSize;
 
