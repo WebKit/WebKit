@@ -15,13 +15,15 @@ function runTest() {
     var clientRect = document.getElementById('targetLink').getBoundingClientRect();
     x = (clientRect.left + clientRect.right) / 2;
     y = (clientRect.top + clientRect.bottom) / 2;
+    touchWidth = (clientRect.right - clientRect.left) / 4;
+    touchHeight = (clientRect.bottom - clientRect.top) / 4;
     if (window.testRunner) {
         testRunner.dumpAsText(true);
         testRunner.waitUntilDone();
     }
 
     if (window.eventSender) {
-        eventSender.gestureTapDown(x, y);
+        eventSender.gestureTapDown(x, y, touchWidth, touchHeight);
         window.setTimeout(function() { window.testRunner.notifyDone(); }, 0);
     } else {
         debug("This test requires DumpRenderTree.");

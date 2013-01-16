@@ -1,3 +1,18 @@
+2013-01-16  W. James MacLean  <wjmaclean@chromium.org>
+
+        LinkHighlight should use touch adjustment to match active state on GestureTapDown.
+        https://bugs.webkit.org/show_bug.cgi?id=107032
+
+        Reviewed by Adam Barth.
+
+        LinkHighlight node selection should produce results that match the node marked
+        active during GestureTapDown.
+
+        * src/WebViewImpl.cpp:
+        (WebKit::WebViewImpl::bestTouchLinkNode):
+        * tests/LinkHighlightTest.cpp:
+        (WebCore::TEST):
+
 2013-01-16  Kentaro Hara  <haraken@chromium.org>
 
         [V8] Make a creationContext parameter of toV8() mandatory

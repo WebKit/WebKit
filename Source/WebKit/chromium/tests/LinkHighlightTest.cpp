@@ -61,6 +61,7 @@ TEST(LinkHighlightTest, verifyWebViewImplIntegration)
     webViewImpl->layout();
 
     WebGestureEvent touchEvent;
+    touchEvent.type = WebInputEvent::GestureTapDown;
 
     // The coordinates below are linked to absolute positions in the referenced .html file.
     touchEvent.x = 20;
